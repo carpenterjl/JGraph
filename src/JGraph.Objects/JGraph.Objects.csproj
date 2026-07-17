@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <RootNamespace>JGraph.Objects</RootNamespace>
+    <Description>Concrete plot objects for JGraph (line, scatter, bar, grid, legend) and their drawable behavior.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\JGraph.Core\JGraph.Core.csproj" />
+    <ProjectReference Include="..\JGraph.Data\JGraph.Data.csproj" />
+    <ProjectReference Include="..\JGraph.Math\JGraph.Math.csproj" />
+    <ProjectReference Include="..\JGraph.Rendering\JGraph.Rendering.csproj" />
+    <ProjectReference Include="..\JGraph.Signal\JGraph.Signal.csproj" />
+  </ItemGroup>
+
+</Project>

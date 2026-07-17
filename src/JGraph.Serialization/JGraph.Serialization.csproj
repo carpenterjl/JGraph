@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <RootNamespace>JGraph.Serialization</RootNamespace>
+    <Description>Reads and writes the versioned JGraph ".graph" document format (JSON) for the figure object model.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\JGraph.Core\JGraph.Core.csproj" />
+    <ProjectReference Include="..\JGraph.Objects\JGraph.Objects.csproj" />
+  </ItemGroup>
+
+</Project>

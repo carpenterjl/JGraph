@@ -1,0 +1,31 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <RootNamespace>JGraph.Application</RootNamespace>
+    <AssemblyName>JGraph.Application</AssemblyName>
+    <Description>MVVM application shell for JGraph: the figure window, view models, and dependency-injection composition root.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Dirkster.AvalonDock" Version="4.72.1" />
+    <PackageReference Include="Dirkster.AvalonDock.Themes.VS2013" Version="4.72.1" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\JGraph.Core\JGraph.Core.csproj" />
+    <ProjectReference Include="..\JGraph.Data\JGraph.Data.csproj" />
+    <ProjectReference Include="..\JGraph.Math\JGraph.Math.csproj" />
+    <ProjectReference Include="..\JGraph.Objects\JGraph.Objects.csproj" />
+    <ProjectReference Include="..\JGraph.Interaction\JGraph.Interaction.csproj" />
+    <ProjectReference Include="..\JGraph.Api\JGraph.Api.csproj" />
+    <ProjectReference Include="..\JGraph.Controls\JGraph.Controls.csproj" />
+    <ProjectReference Include="..\JGraph.Serialization\JGraph.Serialization.csproj" />
+    <ProjectReference Include="..\JGraph.Plugins\JGraph.Plugins.csproj" />
+    <ProjectReference Include="..\JGraph.Scripting\JGraph.Scripting.csproj" />
+  </ItemGroup>
+
+</Project>

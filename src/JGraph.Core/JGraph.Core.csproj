@@ -1,0 +1,9 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <RootNamespace>JGraph.Core</RootNamespace>
+    <Description>Core object model, events, and primitives for the JGraph scientific graphing framework. No UI or rendering-engine dependencies.</Description>
+  </PropertyGroup>
+
+</Project>

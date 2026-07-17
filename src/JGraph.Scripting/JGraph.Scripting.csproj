@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <RootNamespace>JGraph.Scripting</RootNamespace>
+    <Description>Scripting hosts for JGraph: a language-agnostic IScriptEngine seam with a Roslyn C# engine and a pythonnet (CPython) engine that drive the JG API and the tabular data readers.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Scripting" Version="4.9.2" />
+    <PackageReference Include="pythonnet" Version="3.0.5" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\JGraph.Core\JGraph.Core.csproj" />
+    <ProjectReference Include="..\JGraph.Math\JGraph.Math.csproj" />
+    <ProjectReference Include="..\JGraph.Signal\JGraph.Signal.csproj" />
+    <ProjectReference Include="..\JGraph.Data\JGraph.Data.csproj" />
+    <ProjectReference Include="..\JGraph.Objects\JGraph.Objects.csproj" />
+    <ProjectReference Include="..\JGraph.Api\JGraph.Api.csproj" />
+  </ItemGroup>
+
+</Project>

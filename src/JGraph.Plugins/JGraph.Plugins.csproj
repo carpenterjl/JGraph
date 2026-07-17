@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <RootNamespace>JGraph.Plugins</RootNamespace>
+    <Description>Plugin discovery and registration for JGraph: a registry of themes and colormaps that extensions contribute, plus the built-in standard library and Presentation/IEEE themes.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\JGraph.Core\JGraph.Core.csproj" />
+  </ItemGroup>
+
+</Project>

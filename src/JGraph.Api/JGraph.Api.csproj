@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <RootNamespace>JGraph.Api</RootNamespace>
+    <Description>Matlab-like functional facade over the JGraph object model (JG.Figure, JG.Plot, JG.Title, ...).</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\JGraph.Core\JGraph.Core.csproj" />
+    <ProjectReference Include="..\JGraph.Data\JGraph.Data.csproj" />
+    <ProjectReference Include="..\JGraph.Math\JGraph.Math.csproj" />
+    <ProjectReference Include="..\JGraph.Objects\JGraph.Objects.csproj" />
+  </ItemGroup>
+
+</Project>

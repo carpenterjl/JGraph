@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <RootNamespace>JGraph.Interaction</RootNamespace>
+    <Description>UI-agnostic interaction system for JGraph: interaction modes (zoom, pan, rectangle zoom, data cursor) and the controller that drives them from abstract input events.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\JGraph.Core\JGraph.Core.csproj" />
+    <ProjectReference Include="..\JGraph.Math\JGraph.Math.csproj" />
+    <ProjectReference Include="..\JGraph.Objects\JGraph.Objects.csproj" />
+  </ItemGroup>
+
+</Project>

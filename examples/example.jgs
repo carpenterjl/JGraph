@@ -1,0 +1,45 @@
+# example.jgs — JGraph's built-in scripting language (JGS).
+#
+# How to run: open the figure window (dotnet run --project src/JGraph.Application),
+# click "Script…", choose "JGS" in the language selector, paste this in, and press Run (F5).
+#
+# JGS is a small language built into JGraph. Its built-ins mirror the plotting API —
+# plot, scatter, bar, stem, histogram, errorbar, subplot, title, xlabel, ylabel,
+# legend, grid, xlim, ylim, hold, show — plus element-wise math (sin, cos, exp,
+# sqrt, ...) and array helpers (linspace, range, zeros, ones, sum, mean, min, max).
+
+# --- Build some data ------------------------------------------------------------
+let t = linspace(0, 10, 400)          # 400 evenly-spaced points from 0 to 10
+let envelope = exp(t * -0.35)         # a decaying envelope (math is element-wise)
+let signal = envelope * sin(t * 3)    # damped sine  (array * array, element-wise)
+let carrier = cos(t * 3) * 0.5        # a second series (array * scalar broadcast)
+
+# --- Functions and closures are supported ---------------------------------------
+fn rms(v) {
+    return sqrt(mean(v * v))
+}
+print("signal RMS = " + rms(signal))
+
+# --- Plot both series with full styling -----------------------------------------
+plot(t, signal, "b-")
+hold(true)                            # keep the first series when adding the second
+plot(t, carrier, "r--")
+title("Damped oscillation (JGS)")
+xlabel("time (s)")
+ylabel("amplitude")
+legend("damped sine", "carrier")
+grid(true)
+xlim(0, 10)
+show()
+
+# --- Or load your own data ------------------------------------------------------
+# readcsv parses a delimited file into a table; column names come from the header.
+# Put sample-measurement.csv in the app's working folder, then uncomment:
+#
+#   let data = readcsv("sample-measurement.csv")
+#   plot(data, "time", "voltage", "b-")   # a date/time column becomes a date axis
+#   hold(true)
+#   plot(data, "time", "current", "r-")
+#   title("Measurements")
+#   legend("voltage", "current")
+#   show()

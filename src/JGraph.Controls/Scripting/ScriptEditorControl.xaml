@@ -1,0 +1,11 @@
+<UserControl x:Class="JGraph.Controls.Scripting.ScriptEditorControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:avalon="clr-namespace:ICSharpCode.AvalonEdit;assembly=ICSharpCode.AvalonEdit">
+    <avalon:TextEditor x:Name="Editor"
+                       FontFamily="Consolas" FontSize="13"
+                       ShowLineNumbers="True" WordWrap="False"
+                       HorizontalScrollBarVisibility="Auto"
+                       VerticalScrollBarVisibility="Auto"
+                       TextChanged="OnEditorTextChanged" />
+</UserControl>

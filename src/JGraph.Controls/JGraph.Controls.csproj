@@ -1,0 +1,29 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <RootNamespace>JGraph.Controls</RootNamespace>
+    <Description>WPF controls for JGraph: FigureControl (SkiaSharp-hosted render surface) and the WPF-to-interaction input adapter.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="SkiaSharp.Views.WPF" Version="2.88.8" />
+    <PackageReference Include="AvalonEdit" Version="6.3.0.90" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\JGraph.Core\JGraph.Core.csproj" />
+    <ProjectReference Include="..\JGraph.Math\JGraph.Math.csproj" />
+    <ProjectReference Include="..\JGraph.Rendering\JGraph.Rendering.csproj" />
+    <ProjectReference Include="..\JGraph.Rendering.Skia\JGraph.Rendering.Skia.csproj" />
+    <ProjectReference Include="..\JGraph.Objects\JGraph.Objects.csproj" />
+    <ProjectReference Include="..\JGraph.Interaction\JGraph.Interaction.csproj" />
+    <ProjectReference Include="..\JGraph.Api\JGraph.Api.csproj" />
+    <ProjectReference Include="..\JGraph.Data\JGraph.Data.csproj" />
+    <ProjectReference Include="..\JGraph.Export\JGraph.Export.csproj" />
+    <ProjectReference Include="..\JGraph.Serialization\JGraph.Serialization.csproj" />
+    <ProjectReference Include="..\JGraph.Scripting\JGraph.Scripting.csproj" />
+  </ItemGroup>
+
+</Project>

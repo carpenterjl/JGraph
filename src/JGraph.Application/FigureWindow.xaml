@@ -1,0 +1,89 @@
+<Window x:Class="JGraph.Application.FigureWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:jg="clr-namespace:JGraph.Controls;assembly=JGraph.Controls"
+        xmlns:browser="clr-namespace:JGraph.Controls.Browser;assembly=JGraph.Controls"
+        xmlns:inspector="clr-namespace:JGraph.Controls.Inspector;assembly=JGraph.Controls"
+        Title="JGraph" Height="720" Width="1200">
+    <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVisibility" />
+    </Window.Resources>
+    <DockPanel>
+        <ToolBar DockPanel.Dock="Top">
+            <Button Content="Open…" Command="{Binding OpenCommand}" Margin="2,0"
+                    ToolTip="Open a JGraph (.graph) figure" />
+            <Button Content="Save…" Command="{Binding SaveCommand}" Margin="2,0"
+                    ToolTip="Save the figure as a JGraph (.graph) document" />
+            <Button Content="Import Data…" Command="{Binding ImportDataCommand}" Margin="2,0"
+                    ToolTip="Import data from a CSV/TSV/Excel file or the clipboard and plot it" />
+            <Button Content="Script…" Command="{Binding OpenScriptCommand}" Margin="2,0"
+                    ToolTip="Open the script editor to build figures with C# or Python" />
+            <Separator />
+            <RadioButton x:Name="PanButton" GroupName="Mode" Content="Pan"
+                         IsChecked="{Binding IsPanMode, Mode=TwoWay}" Margin="2,0" />
+            <RadioButton x:Name="ZoomButton" GroupName="Mode" Content="Rectangle Zoom"
+                         IsChecked="{Binding IsRectangleZoomMode, Mode=TwoWay}" Margin="2,0" />
+            <RadioButton x:Name="CursorButton" GroupName="Mode" Content="Data Cursor"
+                         IsChecked="{Binding IsDataCursorMode, Mode=TwoWay}" Margin="2,0" />
+            <RadioButton x:Name="EditButton" GroupName="Mode" Content="Edit"
+                         IsChecked="{Binding IsEditMode, Mode=TwoWay}" Margin="2,0" />
+            <Separator />
+            <Button Content="Reset View" Command="{Binding ResetViewCommand}" Margin="2,0" />
+            <Button Content="Undo" Command="{Binding UndoCommand}" Margin="2,0" />
+            <Button Content="Redo" Command="{Binding RedoCommand}" Margin="2,0" />
+            <Separator />
+            <Button Content="Copy" Command="{Binding CopyImageCommand}" Margin="2,0"
+                    ToolTip="Copy the figure image to the clipboard (Ctrl+C)" />
+            <Button Content="Copy Figure" Command="{Binding CopyFigureCommand}" Margin="2,0"
+                    ToolTip="Copy the figure as an editable object graph for pasting back into JGraph" />
+            <Button Content="Paste Figure" Command="{Binding PasteFigureCommand}" Margin="2,0"
+                    ToolTip="Replace the figure with one copied from the clipboard" />
+            <Button Content="Export…" Command="{Binding ExportCommand}" Margin="2,0"
+                    ToolTip="Export the figure as PNG, JPEG, BMP, TIFF, SVG, or PDF" />
+            <Separator />
+            <ToggleButton Content="Browser" IsChecked="{Binding ShowPlotBrowser, Mode=TwoWay}"
+                          Margin="2,0" ToolTip="Show or hide the plot browser" />
+            <ToggleButton Content="Inspector" IsChecked="{Binding ShowInspector, Mode=TwoWay}"
+                          Margin="2,0" ToolTip="Show or hide the property inspector" />
+            <Separator />
+            <TextBlock Text="Theme:" VerticalAlignment="Center" Margin="4,0,2,0" />
+            <ComboBox Width="140" VerticalAlignment="Center" Margin="2,0"
+                      ItemsSource="{Binding AvailableThemes}"
+                      DisplayMemberPath="Name"
+                      SelectedItem="{Binding CurrentTheme, Mode=TwoWay}"
+                      ToolTip="Choose a figure theme (from the plugin registry)" />
+        </ToolBar>
+
+        <StatusBar DockPanel.Dock="Bottom">
+            <StatusBarItem>
+                <TextBlock Text="{Binding StatusText}" />
+            </StatusBarItem>
+        </StatusBar>
+
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" MinWidth="200" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <browser:PlotBrowserControl x:Name="Browser" Grid.Column="0" Width="230"
+                                        Figure="{Binding Figure}"
+                                        Visibility="{Binding ShowPlotBrowser, Converter={StaticResource BoolToVisibility}}" />
+            <GridSplitter Grid.Column="1" Width="4" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                          Background="Transparent"
+                          Visibility="{Binding ShowPlotBrowser, Converter={StaticResource BoolToVisibility}}" />
+
+            <jg:FigureControl x:Name="FigureView" Grid.Column="2" Figure="{Binding Figure}" />
+
+            <GridSplitter Grid.Column="3" Width="4" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                          Background="Transparent"
+                          Visibility="{Binding ShowInspector, Converter={StaticResource BoolToVisibility}}" />
+            <inspector:PropertyInspectorControl x:Name="Inspector" Grid.Column="4" Width="290"
+                                                Target="{Binding SelectedObject}"
+                                                Visibility="{Binding ShowInspector, Converter={StaticResource BoolToVisibility}}" />
+        </Grid>
+    </DockPanel>
+</Window>

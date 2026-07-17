@@ -1,0 +1,42 @@
+## .NET build output
+[Bb]in/
+[Oo]bj/
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+[Aa][Rr][Mm]/
+build/
+bld/
+[Ll]og/
+[Ll]ogs/
+
+## Visual Studio / Rider
+.vs/
+.idea/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+*.userprefs
+_ReSharper*/
+*.DotSettings.user
+
+## Test / benchmark artifacts
+[Tt]est[Rr]esult*/
+BenchmarkDotNet.Artifacts/
+coverage*.json
+coverage*.xml
+*.coverage
+*.trx
+
+## NuGet
+*.nupkg
+*.snupkg
+.nuget/
+packages/
+!packages/build/
+
+## OS
+.DS_Store
+Thumbs.db

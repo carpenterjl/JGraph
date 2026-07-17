@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <RootNamespace>JGraph.Data</RootNamespace>
+    <Description>Tabular data model and importers for JGraph: an immutable column-oriented Table, delimited-text/xlsx/clipboard readers with type inference, and a UI-free import-wizard model that maps columns onto plots.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\JGraph.Core\JGraph.Core.csproj" />
+  </ItemGroup>
+
+</Project>

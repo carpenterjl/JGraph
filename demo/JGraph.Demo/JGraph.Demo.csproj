@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <RootNamespace>JGraph.Demo</RootNamespace>
+    <AssemblyName>JGraph.Demo</AssemblyName>
+    <Description>Demo gallery for JGraph exercising both the object-oriented and Matlab-like APIs.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Content Include="Assets\sample-measurement.csv" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\JGraph.Core\JGraph.Core.csproj" />
+    <ProjectReference Include="..\..\src\JGraph.Data\JGraph.Data.csproj" />
+    <ProjectReference Include="..\..\src\JGraph.Math\JGraph.Math.csproj" />
+    <ProjectReference Include="..\..\src\JGraph.Objects\JGraph.Objects.csproj" />
+    <ProjectReference Include="..\..\src\JGraph.Interaction\JGraph.Interaction.csproj" />
+    <ProjectReference Include="..\..\src\JGraph.Api\JGraph.Api.csproj" />
+    <ProjectReference Include="..\..\src\JGraph.Controls\JGraph.Controls.csproj" />
+    <ProjectReference Include="..\..\src\JGraph.Plugins\JGraph.Plugins.csproj" />
+  </ItemGroup>
+
+</Project>

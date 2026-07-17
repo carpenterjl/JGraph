@@ -1,0 +1,33 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <RootNamespace>JGraph.Tests</RootNamespace>
+    <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
+    <!-- xUnit theory data and generated test scaffolding trip doc-comment warnings. -->
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.11.1" />
+    <PackageReference Include="xunit" Version="2.9.2" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.8.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\JGraph.Core\JGraph.Core.csproj" />
+    <ProjectReference Include="..\..\src\JGraph.Data\JGraph.Data.csproj" />
+    <ProjectReference Include="..\..\src\JGraph.Math\JGraph.Math.csproj" />
+    <ProjectReference Include="..\..\src\JGraph.Rendering\JGraph.Rendering.csproj" />
+    <ProjectReference Include="..\..\src\JGraph.Objects\JGraph.Objects.csproj" />
+    <ProjectReference Include="..\..\src\JGraph.Signal\JGraph.Signal.csproj" />
+    <ProjectReference Include="..\..\src\JGraph.Serialization\JGraph.Serialization.csproj" />
+    <ProjectReference Include="..\..\src\JGraph.Interaction\JGraph.Interaction.csproj" />
+    <ProjectReference Include="..\..\src\JGraph.Api\JGraph.Api.csproj" />
+    <ProjectReference Include="..\..\src\JGraph.Export\JGraph.Export.csproj" />
+    <ProjectReference Include="..\..\src\JGraph.Plugins\JGraph.Plugins.csproj" />
+    <ProjectReference Include="..\..\src\JGraph.Scripting\JGraph.Scripting.csproj" />
+  </ItemGroup>
+
+</Project>
