@@ -32,6 +32,9 @@ internal static class DtoConvert
 
     public static TextStyle ToTextStyle(TextStyleDto d) => new(d.Color, d.FontSize, d.FontFamily, d.Bold, d.Italic);
 
+    /// <summary>Series above this point count persist as packed base64 doubles (format v4+).</summary>
+    internal const int PackedSeriesThreshold = 10_000;
+
     public static SeriesDto ToDto(IDataSeries data)
     {
         int n = data.Count;
@@ -43,10 +46,56 @@ internal static class DtoConvert
             ys[i] = data.GetY(i);
         }
 
+        // The format declares little-endian payloads; on a big-endian platform (none JGraph
+        // targets) fall back to plain arrays rather than write byte-swapped data.
+        if (n > PackedSeriesThreshold && BitConverter.IsLittleEndian)
+        {
+            return new SeriesDto(
+                Xs: null,
+                Ys: null,
+                XsPacked: System.Runtime.InteropServices.MemoryMarshal.AsBytes<double>(xs).ToArray(),
+                YsPacked: System.Runtime.InteropServices.MemoryMarshal.AsBytes<double>(ys).ToArray(),
+                Count: n);
+        }
+
         return new SeriesDto(xs, ys);
     }
 
-    public static ArrayDataSeries ToSeries(SeriesDto d) => new(d.Xs, d.Ys);
+    public static ArrayDataSeries ToSeries(SeriesDto d)
+    {
+        if (d.XsPacked is not null || d.YsPacked is not null)
+        {
+            return new ArrayDataSeries(
+                UnpackDoubles(d.XsPacked, d.Count, "xsPacked"),
+                UnpackDoubles(d.YsPacked, d.Count, "ysPacked"));
+        }
+
+        if (d.Xs is null || d.Ys is null)
+        {
+            throw new FormatException("A series is missing its data arrays.");
+        }
+
+        return new ArrayDataSeries(d.Xs, d.Ys);
+    }
+
+    private static double[] UnpackDoubles(byte[]? packed, int count, string what)
+    {
+        if (packed is null || count < 0 || packed.Length != count * sizeof(double))
+        {
+            throw new FormatException(
+                $"A packed series is inconsistent: '{what}' holds {packed?.Length ?? 0} bytes for {count} samples.");
+        }
+
+        if (!BitConverter.IsLittleEndian)
+        {
+            throw new FormatException("Packed series data is little-endian; this platform is not.");
+        }
+
+        var values = new double[count];
+        System.Runtime.InteropServices.MemoryMarshal.Cast<byte, double>(packed)
+            .CopyTo(values);
+        return values;
+    }
 
     public static ColormapDto ToDto(Colormap c) => new(c.Name, c.Stops.ToArray());
 

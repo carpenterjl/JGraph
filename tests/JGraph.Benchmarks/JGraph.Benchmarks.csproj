@@ -15,7 +15,11 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\JGraph.Core\JGraph.Core.csproj" />
     <ProjectReference Include="..\..\src\JGraph.Math\JGraph.Math.csproj" />
+    <ProjectReference Include="..\..\src\JGraph.Numerics\JGraph.Numerics.csproj" />
     <ProjectReference Include="..\..\src\JGraph.Objects\JGraph.Objects.csproj" />
+    <ProjectReference Include="..\..\src\JGraph.Scripting\JGraph.Scripting.csproj" />
+    <ProjectReference Include="..\..\src\JGraph.Serialization\JGraph.Serialization.csproj" />
+    <ProjectReference Include="..\..\src\JGraph.Signal\JGraph.Signal.csproj" />
   </ItemGroup>
 
 </Project>

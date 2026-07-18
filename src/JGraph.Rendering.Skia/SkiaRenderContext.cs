@@ -21,6 +21,10 @@ public sealed class SkiaRenderContext : IRenderContext, IDisposable
 
     private SKPoint[] _pointBuffer = new SKPoint[256];
 
+    // Reused across DrawPolyline calls: rebuilding the geometry is unavoidable, but reallocating
+    // a native SKPath per polyline per frame is not (a figure redraws every polyline on every pan).
+    private readonly SKPath _polylinePath = new();
+
     /// <param name="canvas">The Skia canvas to draw onto (raster, SVG, or PDF page).</param>
     /// <param name="size">The drawable size in device-independent units.</param>
     /// <param name="devicePixelRatio">Physical pixels per device-independent unit.</param>
@@ -91,7 +95,8 @@ public sealed class SkiaRenderContext : IRenderContext, IDisposable
         }
 
         int count = CopyToBuffer(points);
-        using var path = new SKPath();
+        SKPath path = _polylinePath;
+        path.Rewind(); // keeps the native allocation, unlike Reset
         path.MoveTo(_pointBuffer[0]);
         for (int i = 1; i < count; i++)
         {
@@ -302,6 +307,7 @@ public sealed class SkiaRenderContext : IRenderContext, IDisposable
 
     public void Dispose()
     {
+        _polylinePath.Dispose();
         _stroke.Dispose();
         _fill.Dispose();
         _text.Dispose();

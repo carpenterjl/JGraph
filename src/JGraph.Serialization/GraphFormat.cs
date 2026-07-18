@@ -20,25 +20,19 @@ public static class GraphFormat
 
     /// <summary>The current schema version. Documents with a newer version are rejected.</summary>
     /// <remarks>Version history: 1 = initial (M8); 2 = 3D axes, surface/contour plots, colorbar (M20);
-    /// 3 = data-tip annotations (M21).</remarks>
-    public const int CurrentVersion = 3;
+    /// 3 = data-tip annotations (M21); 4 = packed base64 storage for large series (M22).</remarks>
+    public const int CurrentVersion = 4;
 
     /// <summary>The conventional file extension for JGraph documents.</summary>
     public const string FileExtension = ".graph";
 
     private static readonly JsonSerializerOptions Options = CreateOptions();
 
-    /// <summary>Serializes a figure to a ".graph" JSON string.</summary>
+    /// <summary>Serializes a figure to a ".graph" JSON string (clipboard interchange).</summary>
     public static string Serialize(FigureModel figure)
     {
         ArgumentNullException.ThrowIfNull(figure);
-        var document = new DocumentDto
-        {
-            Format = FormatTag,
-            FormatVersion = CurrentVersion,
-            Figure = FigureMapper.ToDto(figure),
-        };
-        return JsonSerializer.Serialize(document, Options);
+        return JsonSerializer.Serialize(BuildDocument(figure), Options);
     }
 
     /// <summary>Parses a figure from a ".graph" JSON string.</summary>
@@ -56,6 +50,49 @@ public static class GraphFormat
             throw new GraphFormatException("The document is not valid JGraph JSON.", ex);
         }
 
+        return ValidateAndMap(document);
+    }
+
+    /// <summary>
+    /// Writes a figure to a ".graph" file, streaming JSON straight to the stream — a million-point
+    /// figure never materializes as one giant string.
+    /// </summary>
+    public static void Save(FigureModel figure, string path)
+    {
+        ArgumentNullException.ThrowIfNull(figure);
+        ArgumentException.ThrowIfNullOrEmpty(path);
+        using FileStream stream = File.Create(path);
+        JsonSerializer.Serialize(stream, BuildDocument(figure), Options);
+    }
+
+    /// <summary>Reads a figure from a ".graph" file (streamed, no intermediate string).</summary>
+    /// <exception cref="GraphFormatException">The file content is not a valid JGraph document.</exception>
+    public static FigureModel Load(string path)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(path);
+        DocumentDto? document;
+        try
+        {
+            using FileStream stream = File.OpenRead(path);
+            document = JsonSerializer.Deserialize<DocumentDto>(stream, Options);
+        }
+        catch (JsonException ex)
+        {
+            throw new GraphFormatException("The document is not valid JGraph JSON.", ex);
+        }
+
+        return ValidateAndMap(document);
+    }
+
+    private static DocumentDto BuildDocument(FigureModel figure) => new()
+    {
+        Format = FormatTag,
+        FormatVersion = CurrentVersion,
+        Figure = FigureMapper.ToDto(figure),
+    };
+
+    private static FigureModel ValidateAndMap(DocumentDto? document)
+    {
         if (document is null)
         {
             throw new GraphFormatException("The document is empty.");
@@ -80,22 +117,6 @@ public static class GraphFormat
         {
             throw new GraphFormatException("The document's contents are inconsistent and could not be loaded.", ex);
         }
-    }
-
-    /// <summary>Writes a figure to a ".graph" file.</summary>
-    public static void Save(FigureModel figure, string path)
-    {
-        ArgumentNullException.ThrowIfNull(figure);
-        ArgumentException.ThrowIfNullOrEmpty(path);
-        File.WriteAllText(path, Serialize(figure));
-    }
-
-    /// <summary>Reads a figure from a ".graph" file.</summary>
-    /// <exception cref="GraphFormatException">The file content is not a valid JGraph document.</exception>
-    public static FigureModel Load(string path)
-    {
-        ArgumentException.ThrowIfNullOrEmpty(path);
-        return Deserialize(File.ReadAllText(path));
     }
 
     private static JsonSerializerOptions CreateOptions() => new()

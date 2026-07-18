@@ -1,3 +1,4 @@
+using System.Buffers;
 using System.Numerics;
 
 namespace JGraph.Signal;
@@ -28,34 +29,52 @@ public static class DigitalFilter
         }
 
         int order = System.Math.Max(a.Length, b.Length);
-        var bn = new double[order];
-        var an = new double[order];
-        for (int i = 0; i < b.Length; i++)
-        {
-            bn[i] = b[i] / a0;
-        }
+        int stateLength = order - 1;
 
-        for (int i = 0; i < a.Length; i++)
+        // Normalized coefficients and the delay line are pooled scratch (the output array is the
+        // return value and stays a fresh allocation). Rented arrays hold stale data, so every
+        // slot the recurrence reads is cleared or overwritten before use.
+        var pool = ArrayPool<double>.Shared;
+        double[] bn = pool.Rent(order);
+        double[] an = pool.Rent(order);
+        double[] state = pool.Rent(System.Math.Max(stateLength, 1));
+        try
         {
-            an[i] = a[i] / a0;
-        }
-
-        var state = new double[order - 1];
-        var y = new double[x.Length];
-        for (int i = 0; i < x.Length; i++)
-        {
-            double input = x[i];
-            double output = (bn[0] * input) + (state.Length > 0 ? state[0] : 0);
-            for (int j = 0; j < state.Length; j++)
+            Array.Clear(bn, 0, order);
+            Array.Clear(an, 0, order);
+            Array.Clear(state, 0, System.Math.Max(stateLength, 1));
+            for (int i = 0; i < b.Length; i++)
             {
-                double next = j + 1 < state.Length ? state[j + 1] : 0;
-                state[j] = (bn[j + 1] * input) + next - (an[j + 1] * output);
+                bn[i] = b[i] / a0;
             }
 
-            y[i] = output;
-        }
+            for (int i = 0; i < a.Length; i++)
+            {
+                an[i] = a[i] / a0;
+            }
 
-        return y;
+            var y = new double[x.Length];
+            for (int i = 0; i < x.Length; i++)
+            {
+                double input = x[i];
+                double output = (bn[0] * input) + (stateLength > 0 ? state[0] : 0);
+                for (int j = 0; j < stateLength; j++)
+                {
+                    double next = j + 1 < stateLength ? state[j + 1] : 0;
+                    state[j] = (bn[j + 1] * input) + next - (an[j + 1] * output);
+                }
+
+                y[i] = output;
+            }
+
+            return y;
+        }
+        finally
+        {
+            pool.Return(bn);
+            pool.Return(an);
+            pool.Return(state);
+        }
     }
 
     /// <summary>

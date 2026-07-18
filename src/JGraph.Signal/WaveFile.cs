@@ -137,36 +137,115 @@ public static class WaveFile
         int frameBytes = bytesPerSample * channels;
         int frames = data.Length / frameBytes;
         var samples = new double[frames];
+        int values = frames * channels;
 
-        for (int frame = 0; frame < frames; frame++)
+        // One format dispatch for the whole file, then a dedicated bulk loop — a million-sample
+        // clip decodes without a per-sample switch. 16-bit PCM and float data reinterpret the byte
+        // payload as its sample type in place (WAV is little-endian, as is every platform JGraph
+        // targets — asserted below rather than assumed).
+        if (!BitConverter.IsLittleEndian)
         {
-            double sum = 0;
-            for (int channel = 0; channel < channels; channel++)
-            {
-                int offset = (frame * frameBytes) + (channel * bytesPerSample);
-                sum += (format, bitsPerSample) switch
+            throw new PlatformNotSupportedException("WAV decoding requires a little-endian platform.");
+        }
+
+        switch (format, bitsPerSample)
+        {
+            case (FormatPcm, 8):
+                for (int v = 0; v < values; v++)
                 {
-                    (FormatPcm, 8) => (data[offset] - 128) / 128.0,
-                    (FormatPcm, 16) => BitConverter.ToInt16(data, offset) / 32768.0,
-                    (FormatPcm, 24) => Read24Bit(data, offset) / 8388608.0,
-                    (FormatPcm, 32) => BitConverter.ToInt32(data, offset) / 2147483648.0,
-                    (FormatIeeeFloat, 32) => BitConverter.ToSingle(data, offset),
-                    (FormatIeeeFloat, 64) => BitConverter.ToDouble(data, offset),
-                    _ => throw new InvalidDataException(
-                        $"Unsupported WAV format: format tag {format}, {bitsPerSample} bits per sample."),
-                };
+                    AddSample(samples, channels, v, (data[v] - 128) / 128.0);
+                }
+
+                break;
+            case (FormatPcm, 16):
+            {
+                ReadOnlySpan<short> pcm = System.Runtime.InteropServices.MemoryMarshal
+                    .Cast<byte, short>(data.AsSpan(0, values * 2));
+                for (int v = 0; v < values; v++)
+                {
+                    AddSample(samples, channels, v, pcm[v] / 32768.0);
+                }
+
+                break;
             }
 
-            samples[frame] = sum / channels;
+            case (FormatPcm, 24):
+                for (int v = 0; v < values; v++)
+                {
+                    int offset = v * 3;
+                    int raw = data[offset] | (data[offset + 1] << 8) | (data[offset + 2] << 16);
+                    if (raw >= 0x800000)
+                    {
+                        raw -= 0x1000000;
+                    }
+
+                    AddSample(samples, channels, v, raw / 8388608.0);
+                }
+
+                break;
+            case (FormatPcm, 32):
+            {
+                ReadOnlySpan<int> pcm = System.Runtime.InteropServices.MemoryMarshal
+                    .Cast<byte, int>(data.AsSpan(0, values * 4));
+                for (int v = 0; v < values; v++)
+                {
+                    AddSample(samples, channels, v, pcm[v] / 2147483648.0);
+                }
+
+                break;
+            }
+
+            case (FormatIeeeFloat, 32):
+            {
+                ReadOnlySpan<float> pcm = System.Runtime.InteropServices.MemoryMarshal
+                    .Cast<byte, float>(data.AsSpan(0, values * 4));
+                for (int v = 0; v < values; v++)
+                {
+                    AddSample(samples, channels, v, pcm[v]);
+                }
+
+                break;
+            }
+
+            case (FormatIeeeFloat, 64):
+            {
+                ReadOnlySpan<double> pcm = System.Runtime.InteropServices.MemoryMarshal
+                    .Cast<byte, double>(data.AsSpan(0, values * 8));
+                for (int v = 0; v < values; v++)
+                {
+                    AddSample(samples, channels, v, pcm[v]);
+                }
+
+                break;
+            }
+
+            default:
+                throw new InvalidDataException(
+                    $"Unsupported WAV format: format tag {format}, {bitsPerSample} bits per sample.");
+        }
+
+        if (channels > 1)
+        {
+            for (int frame = 0; frame < frames; frame++)
+            {
+                samples[frame] /= channels;
+            }
         }
 
         return samples;
     }
 
-    private static int Read24Bit(byte[] data, int offset)
+    /// <summary>Accumulates interleaved value <paramref name="v"/> into its frame (mono writes directly).</summary>
+    private static void AddSample(double[] samples, int channels, int v, double value)
     {
-        int value = data[offset] | (data[offset + 1] << 8) | (data[offset + 2] << 16);
-        return value >= 0x800000 ? value - 0x1000000 : value;
+        if (channels == 1)
+        {
+            samples[v] = value;
+        }
+        else
+        {
+            samples[v / channels] += value;
+        }
     }
 
     private static string ReadTag(BinaryReader reader) =>

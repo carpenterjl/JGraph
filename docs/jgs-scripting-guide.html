@@ -183,6 +183,7 @@
       <li><a href="#ref-dsp" class="sub">DSP &amp; audio</a></li>
       <li><a href="#ref-figfiles" class="sub">Figure files</a></li>
       <li><a href="#ref-misc" class="sub">Output &amp; includes</a></li>
+      <li><a href="#performance">Large arrays &amp; performance</a></li>
       <div class="grouplabel">Worked examples</div>
       <li><a href="#ex-analysis">Data analysis</a></li>
       <li><a href="#ex-figures">Figure windows</a></li>
@@ -610,6 +611,22 @@ m[<span class="num">1</span>][<span class="num">0</span>]                       
         <tr><td class="sig"><code><span class="fn">run</span>(path)</code></td><td>Run another JGS script into the current scope (MATLAB-style include) — shares variables and functions.</td></tr>
       </tbody>
     </table></div>
+
+    <h2 id="performance">Large arrays &amp; performance</h2>
+    <p>Since M22, numeric arrays are stored <em>packed</em> — 8 bytes per element in flat buffers with
+    hardware-SIMD elementwise math — so million-sample DSP scripts run in a fraction of the memory
+    and time. This is transparent: semantics, aliasing, indexing, and results are identical. The
+    practical notes:</p>
+    <ul>
+      <li>Arrays longer than <strong>1000 elements</strong> print as a short prefix plus a count
+      (<code>[0, 0.001, …] (3001 elements)</code>) instead of every value.</li>
+      <li>A colon range may produce up to <strong>250 million elements</strong> (2&nbsp;GB); very
+      large arrays automatically move to native memory or, when RAM is tight, an SSD-backed
+      temporary file — slower, but no out-of-memory crash.</li>
+      <li>Double-clicking a variable over <strong>2 million elements</strong> shows a status message
+      instead of the data viewer; index a smaller slice to inspect it.</li>
+      <li><strong>Stop</strong> interrupts even a single giant elementwise operation mid-flight.</li>
+    </ul>
 
     <!-- ================= EXAMPLES ================= -->
     <h2 id="ex-analysis">Worked example — data analysis</h2>

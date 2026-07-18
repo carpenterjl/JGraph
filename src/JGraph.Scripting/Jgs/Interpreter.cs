@@ -1,6 +1,7 @@
 using System.Globalization;
 using System.Numerics;
 using System.Text;
+using JGraph.Numerics;
 
 namespace JGraph.Scripting.Jgs;
 
@@ -20,6 +21,7 @@ internal sealed class Interpreter
     private readonly IJgsDebugHook? _hook;
     private readonly Action<string>? _echo;
     private readonly List<int> _indexTargetLengths = new(); // 'end' resolves to the top entry
+    private readonly Action _cancelCheck; // per-chunk poll inside packed operations
     private long _steps;
     private int _callDepth;
 
@@ -35,6 +37,10 @@ internal sealed class Interpreter
         _cancellationToken = cancellationToken;
         _hook = hook;
         _echo = echo;
+
+        // Packed operations run in ~4M-element chunks and poll this between chunks, so Stop
+        // interrupts a 100M-element elementwise statement mid-flight instead of after it.
+        _cancelCheck = () => _cancellationToken.ThrowIfCancellationRequested();
     }
 
     private enum CompletionKind
@@ -176,16 +182,17 @@ internal sealed class Interpreter
                         $"Destructuring 'let' needs an array on the right-hand side, but got a {tuple.TypeName}.");
                 }
 
-                if (tuple.AsArray.Length != destructure.Names.Count)
+                if (tuple.ArrayLength != destructure.Names.Count)
                 {
                     throw new JgsRuntimeException(destructure.Line, destructure.Column,
-                        $"Destructuring 'let' names {destructure.Names.Count} variables, but the array has {tuple.AsArray.Length} elements.");
+                        $"Destructuring 'let' names {destructure.Names.Count} variables, but the array has {tuple.ArrayLength} elements.");
                 }
 
                 for (int n = 0; n < destructure.Names.Count; n++)
                 {
-                    env.Declare(destructure.Names[n], tuple.AsArray[n]);
-                    EchoBinding(destructure, destructure.Names[n], tuple.AsArray[n]);
+                    JgsValue part = tuple.ElementAt(n);
+                    env.Declare(destructure.Names[n], part);
+                    EchoBinding(destructure, destructure.Names[n], part);
                 }
 
                 return Completion.Normal;
@@ -315,9 +322,9 @@ internal sealed class Interpreter
         }
 
         const int Budget = 100;
-        JgsValue[] items = value.AsArray;
+        int count = value.ArrayLength;
         var sb = new StringBuilder("[");
-        for (int i = 0; i < items.Length; i++)
+        for (int i = 0; i < count; i++)
         {
             if (i > 0)
             {
@@ -326,11 +333,12 @@ internal sealed class Interpreter
 
             if (sb.Length > Budget)
             {
-                sb.Append("… (").Append(items.Length).Append(" elements)");
+                sb.Append("… (").Append(count).Append(" elements)");
                 break;
             }
 
-            sb.Append(items[i].Type == JgsType.Array ? EchoDisplay(items[i]) : items[i].Display());
+            JgsValue item = value.ElementAt(i);
+            sb.Append(item.Type == JgsType.Array ? EchoDisplay(item) : item.Display());
         }
 
         return sb.Append(']').ToString();
@@ -365,8 +373,12 @@ internal sealed class Interpreter
                 $"'for' can only iterate over an array, but got a {iterable.TypeName}.");
         }
 
-        foreach (JgsValue element in iterable.AsArray)
+        // Indexed iteration serves boxed and packed alike (a packed iterable materializes one
+        // element per pass, exactly what the boxed foreach allocated anyway).
+        int iterationCount = iterable.ArrayLength;
+        for (int index = 0; index < iterationCount; index++)
         {
+            JgsValue element = iterable.ElementAt(index);
             Tick();
             var local = new JgsEnvironment(env);
             local.Declare(statement.Variable, element);
@@ -408,6 +420,11 @@ internal sealed class Interpreter
                 for (int i = 0; i < elements.Length; i++)
                 {
                     elements[i] = Evaluate(array.Elements[i], env);
+                }
+
+                if (JgsPacking.Enabled && PackedOps.TryPackElements(elements, out JgsValue packedLiteral))
+                {
+                    return packedLiteral;
                 }
 
                 return JgsValue.Array(elements);
@@ -488,10 +505,19 @@ internal sealed class Interpreter
 
         const double MachineEpsilon = 2.220446049250313e-16;
         long count = (long)Math.Floor(ratio * (1 + (4 * MachineEpsilon))) + 1;
-        if (count > 50_000_000)
+
+        // Packed ranges are 8 bytes/element and may spill to disk, so they get a far higher
+        // ceiling (2 GB) than boxed ranges (whose ~48 bytes/element would exhaust the heap first).
+        long limit = JgsPacking.Enabled ? 250_000_000 : 50_000_000;
+        if (count > limit)
         {
             throw new JgsRuntimeException(range.Line, range.Column,
                 $"This range would produce {count} elements — too many.");
+        }
+
+        if (JgsPacking.Enabled)
+        {
+            return PackedOps.CreateRange(start, step, count, _cancelCheck);
         }
 
         var values = new JgsValue[count];
@@ -538,6 +564,13 @@ internal sealed class Interpreter
 
         if (concatenate)
         {
+            // All-number concatenations ([x_pad; zeros(k, 1)]) build one packed buffer with bulk
+            // span copies; anything mixed falls back to the boxed flatten.
+            if (JgsPacking.Enabled && PackedOps.TryFlattenNumeric(rows, _cancelCheck, out JgsValue flattened))
+            {
+                return flattened;
+            }
+
             var flat = new List<JgsValue>();
             foreach (JgsValue[] row in rows)
             {
@@ -563,7 +596,11 @@ internal sealed class Interpreter
         var result = new JgsValue[rows.Count];
         for (int r = 0; r < result.Length; r++)
         {
-            result[r] = JgsValue.Array(rows[r]);
+            // All-number rows pack individually; the outer array of rows stays boxed.
+            result[r] = JgsPacking.Enabled && PackedOps.TryPackElements(rows[r], out JgsValue packedRow)
+                && packedRow.PackedKind == JgsPackedKind.Number
+                ? packedRow
+                : JgsValue.Array(rows[r]);
         }
 
         return JgsValue.Array(result);
@@ -573,9 +610,10 @@ internal sealed class Interpreter
     {
         if (value.Type == JgsType.Array)
         {
-            foreach (JgsValue element in value.AsArray)
+            int count = value.ArrayLength;
+            for (int i = 0; i < count; i++)
             {
-                FlattenInto(element, into);
+                FlattenInto(value.ElementAt(i), into);
             }
         }
         else
@@ -618,6 +656,32 @@ internal sealed class Interpreter
     /// <summary>Applies a binary operator to already-evaluated operands (shared with compound assignment).</summary>
     private JgsValue ApplyBinary(TokenType op, JgsValue left, JgsValue right, Node at)
     {
+        // Packed fast paths: SIMD kernels over flat buffers when an operand is packed and the
+        // shapes fit; anything else falls through to the boxed code below unchanged. Ordering
+        // comparisons check complex operands first so the boxed error still fires.
+        if ((left.IsPacked || right.IsPacked)
+            && left.Type != JgsType.Complex && right.Type != JgsType.Complex
+            && !(op == TokenType.Plus && (left.Type == JgsType.String || right.Type == JgsType.String)))
+        {
+            if (PackedOps.MapArithmetic(op) is PackedMath.BinaryOp arithmetic
+                && PackedOps.TryArithmetic(arithmetic, OperatorSymbol(op), left, right, _cancelCheck, at.Line, at.Column, out JgsValue fast))
+            {
+                return fast;
+            }
+
+            if (PackedOps.MapComparison(op) is PackedMath.CompareOp comparison
+                && PackedOps.TryCompare(comparison, OperatorSymbol(op), left, right, _cancelCheck, at.Line, at.Column, out fast))
+            {
+                return fast;
+            }
+
+            if (op is TokenType.EqualEqual or TokenType.BangEqual
+                && PackedOps.TryEquality(left, right, op == TokenType.BangEqual, _cancelCheck, at.Line, at.Column, out fast))
+            {
+                return fast;
+            }
+        }
+
         switch (op)
         {
             case TokenType.EqualEqual:
@@ -697,12 +761,52 @@ internal sealed class Interpreter
 
         // The parser guarantees the only other target shape is an array element.
         var element = (IndexExpr)assign.Target;
-        (JgsValue[] array, int index) = ResolveElement(element, env);
+        (JgsValue container, int index) = ResolveElement(element, env);
         JgsValue value = assign.Op == TokenType.Assign
             ? rhs
-            : ApplyBinary(UnderlyingOp(assign.Op), array[index], rhs, assign);
-        array[index] = value;
+            : ApplyBinary(UnderlyingOp(assign.Op), container.ElementAt(index), rhs, assign);
+        WriteElement(container, index, value);
         return value;
+    }
+
+    /// <summary>
+    /// Writes one element of an array value. Packed arrays take the fast path when the value's
+    /// type matches the buffer's kind; any other write demotes the array to boxed in place first
+    /// (all aliases share the wrapper, so they all see the demotion — semantics identical).
+    /// </summary>
+    private static void WriteElement(JgsValue container, int index, JgsValue value)
+    {
+        if (container.IsPacked)
+        {
+            if (container.PackedKind == JgsPackedKind.Number && value.Type == JgsType.Number)
+            {
+                container.AsBuffer.AsSpan()[index] = value.AsNumber;
+                return;
+            }
+
+            if (container.PackedKind == JgsPackedKind.Bool && value.Type == JgsType.Bool)
+            {
+                container.AsBuffer.AsSpan()[index] = value.AsBool ? 1 : 0;
+                return;
+            }
+
+            container.DemoteToBoxed();
+        }
+        else if (container.IsPackedComplex)
+        {
+            if (value.Type is JgsType.Number or JgsType.Complex)
+            {
+                System.Numerics.Complex written = value.AsComplex; // a Number reads as re+0i
+                JgsPackedComplex planes = container.AsPackedComplex;
+                planes.Re.AsSpan()[index] = written.Real;
+                planes.Im.AsSpan()[index] = written.Imaginary;
+                return;
+            }
+
+            container.DemoteToBoxed();
+        }
+
+        container.AsArray[index] = value;
     }
 
     /// <summary>
@@ -725,8 +829,30 @@ internal sealed class Interpreter
                 "Paren-index assignment takes exactly one index argument (an index, a range, a mask, or ':').");
         }
 
+        JgsValue? index = EvaluateIndexArgument(paren.Arguments[0], callee.ArrayLength, env);
+
+        if (callee.IsPacked)
+        {
+            if (TryPackedParenWrite(callee, index, op, rhs, at, out JgsValue packedResult))
+            {
+                return packedResult;
+            }
+
+            // Outside the fast path (logical target, non-numeric right-hand side, …): demote in
+            // place and run the boxed code below — every alias follows, semantics unchanged.
+            callee.DemoteToBoxed();
+        }
+        else if (callee.IsPackedComplex)
+        {
+            if (TryPackedComplexParenWrite(callee, index, op, rhs, at, out JgsValue complexResult))
+            {
+                return complexResult;
+            }
+
+            callee.DemoteToBoxed();
+        }
+
         JgsValue[] array = callee.AsArray;
-        JgsValue? index = EvaluateIndexArgument(paren.Arguments[0], array.Length, env);
 
         // Scalar index: single-element write, no picks array needed.
         if (index is { Type: not JgsType.Array })
@@ -770,6 +896,168 @@ internal sealed class Interpreter
         return rhs;
     }
 
+    /// <summary>
+    /// The packed-target paren write: numeric scalars and packed-number right-hand sides write
+    /// straight into the buffer (bulk fill/scatter for plain assignment, a sequential
+    /// read-modify-write loop for compound operators so aliasing and repeated picks behave exactly
+    /// like the boxed loop). Returns false for shapes the boxed path must handle after demotion.
+    /// </summary>
+    private bool TryPackedParenWrite(JgsValue target, JgsValue? index, TokenType op, JgsValue rhs, Node at, out JgsValue result)
+    {
+        result = rhs;
+        if (target.PackedKind != JgsPackedKind.Number)
+        {
+            return false; // writes into logical masks are rare — demote and let the boxed path decide
+        }
+
+        bool simple = op == TokenType.Assign;
+        bool rhsScalar = rhs.Type == JgsType.Number;
+        bool rhsPacked = rhs.Type == JgsType.Array && rhs.IsPacked && rhs.PackedKind == JgsPackedKind.Number;
+        if (!rhsScalar && !rhsPacked)
+        {
+            return false;
+        }
+
+        NumericBuffer buffer = target.AsBuffer;
+
+        // Scalar index: a single-element write (an array right-hand side would nest, boxed-style).
+        if (index is { Type: not JgsType.Array })
+        {
+            if (!rhsScalar)
+            {
+                return false;
+            }
+
+            int single = ToIndex(index, buffer.Length, at.Line, at.Column, oneBased: true);
+            Span<double> span = buffer.AsSpan();
+            double stored = simple
+                ? rhs.AsNumber
+                : ApplyBinary(UnderlyingOp(op), JgsValue.Number(span[single]), rhs, at).AsNumber;
+            span[single] = stored;
+            result = simple ? rhs : JgsValue.Number(stored);
+            return true;
+        }
+
+        int[] picks = index is null
+            ? AllPicks(buffer.Length)
+            : ComputePicks(index, buffer.Length, oneBased: true, "array", at.Line, at.Column);
+
+        if (rhsPacked && rhs.ArrayLength != picks.Length)
+        {
+            throw new JgsRuntimeException(at.Line, at.Column,
+                $"Cannot assign {rhs.ArrayLength} values into {picks.Length} selected elements.");
+        }
+
+        if (simple)
+        {
+            if (rhsScalar)
+            {
+                PackedMath.ScatterConstant(buffer, picks, rhs.AsNumber);
+            }
+            else
+            {
+                PackedMath.Scatter(buffer, picks, rhs.AsBuffer);
+            }
+
+            return true;
+        }
+
+        // Compound: sequential read-modify-write, identical in order (and therefore in aliasing
+        // and repeated-pick behavior) to the boxed loop. Cancellation polls between stretches.
+        Func<double, double, double> combine = UnderlyingOp(op) switch
+        {
+            TokenType.Plus => static (a, b) => a + b,
+            TokenType.Minus => static (a, b) => a - b,
+            TokenType.Star => static (a, b) => a * b,
+            TokenType.Slash => static (a, b) => a / b,
+            _ => static (a, b) => a % b, // Percent — the only remaining compound operator
+        };
+
+        NumericBuffer? source = rhsPacked ? rhs.AsBuffer : null;
+        double scalarRhs = rhsScalar ? rhs.AsNumber : 0;
+        for (int i = 0; i < picks.Length; i++)
+        {
+            Span<double> span = buffer.AsSpan();
+            span[picks[i]] = combine(span[picks[i]], source is null ? scalarRhs : source.AsSpan()[i]);
+            if ((i & ((1 << 20) - 1)) == (1 << 20) - 1)
+            {
+                _cancelCheck();
+            }
+        }
+
+        GC.KeepAlive(buffer);
+        return true;
+    }
+
+    /// <summary>
+    /// The packed-complex paren write: plain assignment of a number or complex scalar (broadcast
+    /// over the selection) or of a matching packed array writes both planes in place — the
+    /// <c>X(1:k) = 0</c> spectral-zeroing idiom without demoting a million-bin spectrum. Compound
+    /// operators and other right-hand shapes return false for the demote-and-box fallback.
+    /// </summary>
+    private bool TryPackedComplexParenWrite(JgsValue target, JgsValue? index, TokenType op, JgsValue rhs, Node at, out JgsValue result)
+    {
+        result = rhs;
+        if (op != TokenType.Assign)
+        {
+            return false;
+        }
+
+        JgsPackedComplex planes = target.AsPackedComplex;
+        bool rhsScalar = rhs.Type is JgsType.Number or JgsType.Complex;
+        bool rhsPackedReal = rhs is { Type: JgsType.Array, IsPacked: true, PackedKind: JgsPackedKind.Number };
+        bool rhsPackedComplex = rhs.Type == JgsType.Array && rhs.IsPackedComplex;
+        if (!rhsScalar && !rhsPackedReal && !rhsPackedComplex)
+        {
+            return false;
+        }
+
+        // Scalar index: single-element write (array right-hand sides would nest, boxed-style).
+        if (index is { Type: not JgsType.Array })
+        {
+            if (!rhsScalar)
+            {
+                return false;
+            }
+
+            int single = ToIndex(index, planes.Length, at.Line, at.Column, oneBased: true);
+            System.Numerics.Complex written = rhs.AsComplex;
+            planes.Re.AsSpan()[single] = written.Real;
+            planes.Im.AsSpan()[single] = written.Imaginary;
+            return true;
+        }
+
+        int[] picks = index is null
+            ? AllPicks(planes.Length)
+            : ComputePicks(index, planes.Length, oneBased: true, "array", at.Line, at.Column);
+
+        if (!rhsScalar && rhs.ArrayLength != picks.Length)
+        {
+            throw new JgsRuntimeException(at.Line, at.Column,
+                $"Cannot assign {rhs.ArrayLength} values into {picks.Length} selected elements.");
+        }
+
+        if (rhsScalar)
+        {
+            System.Numerics.Complex written = rhs.AsComplex;
+            PackedMath.ScatterConstant(planes.Re, picks, written.Real);
+            PackedMath.ScatterConstant(planes.Im, picks, written.Imaginary);
+        }
+        else if (rhsPackedReal)
+        {
+            PackedMath.Scatter(planes.Re, picks, rhs.AsBuffer);
+            PackedMath.ScatterConstant(planes.Im, picks, 0);
+        }
+        else
+        {
+            JgsPackedComplex source = rhs.AsPackedComplex;
+            PackedMath.Scatter(planes.Re, picks, source.Re);
+            PackedMath.Scatter(planes.Im, picks, source.Im);
+        }
+
+        return true;
+    }
+
     private static int[] AllPicks(int length)
     {
         var picks = new int[length];
@@ -807,26 +1095,25 @@ internal sealed class Interpreter
                     $"'{symbol}' with paren indexing needs an array and a single index, like x(k){symbol}.");
             }
 
-            JgsValue? parenIndex = EvaluateIndexArgument(paren.Arguments[0], callee.AsArray.Length, env);
+            JgsValue? parenIndex = EvaluateIndexArgument(paren.Arguments[0], callee.ArrayLength, env);
             if (parenIndex is null || parenIndex.Type == JgsType.Array)
             {
                 throw new JgsRuntimeException(incDec.Line, incDec.Column,
                     $"'{symbol}' needs a single element, not a slice.");
             }
 
-            JgsValue[] target = callee.AsArray;
-            int single = ToIndex(parenIndex, target.Length, incDec.Line, incDec.Column, oneBased: true);
-            JgsValue previous = target[single];
+            int single = ToIndex(parenIndex, callee.ArrayLength, incDec.Line, incDec.Column, oneBased: true);
+            JgsValue previous = callee.ElementAt(single);
             JgsValue bumped = JgsValue.Number(RequireIncDecNumber(previous, symbol, incDec) + delta);
-            target[single] = bumped;
+            WriteElement(callee, single, bumped);
             return incDec.Prefix ? bumped : previous;
         }
 
         var element = (IndexExpr)incDec.Target;
-        (JgsValue[] array, int index) = ResolveElement(element, env);
-        JgsValue old = array[index];
+        (JgsValue container, int index) = ResolveElement(element, env);
+        JgsValue old = container.ElementAt(index);
         JgsValue result = JgsValue.Number(RequireIncDecNumber(old, symbol, incDec) + delta);
-        array[index] = result;
+        WriteElement(container, index, result);
         return incDec.Prefix ? result : old;
     }
 
@@ -834,7 +1121,7 @@ internal sealed class Interpreter
     /// Evaluates an element-assignment target exactly once: the container expression and the index
     /// expression each evaluate a single time, so <c>a[f(i)] += 1</c> calls <c>f</c> once.
     /// </summary>
-    private (JgsValue[] Array, int Index) ResolveElement(IndexExpr element, JgsEnvironment env)
+    private (JgsValue Container, int Index) ResolveElement(IndexExpr element, JgsEnvironment env)
     {
         JgsValue target = Evaluate(element.Target, env);
         if (target.Type != JgsType.Array)
@@ -843,8 +1130,8 @@ internal sealed class Interpreter
                 $"Cannot assign by index into a {target.TypeName}; only arrays support element assignment.");
         }
 
-        int index = ToIndex(Evaluate(element.Index, env), target.AsArray.Length, element.Line, element.Column);
-        return (target.AsArray, index);
+        int index = ToIndex(Evaluate(element.Index, env), target.ArrayLength, element.Line, element.Column);
+        return (target, index);
     }
 
     private static double RequireIncDecNumber(JgsValue value, string symbol, Node at)
@@ -894,13 +1181,14 @@ internal sealed class Interpreter
                     $"Indexing a {callee.TypeName} takes exactly one argument (an index, an index array, or a mask).");
             }
 
-            int length = callee.Type == JgsType.String ? callee.AsString.Length : callee.AsArray.Length;
+            int length = callee.Type == JgsType.String ? callee.AsString.Length : callee.ArrayLength;
             JgsValue? index = EvaluateIndexArgument(call.Arguments[0], length, env);
             if (index is null)
             {
                 // x(:) — everything, as a fresh array (or the string itself).
-                return callee.Type == JgsType.String
-                    ? callee
+                return callee.Type == JgsType.String ? callee
+                    : callee.IsPacked ? PackedOps.Clone(callee, _cancelCheck)
+                    : callee.IsPackedComplex ? PackedOps.CloneComplex(callee, _cancelCheck)
                     : JgsValue.Array((JgsValue[])callee.AsArray.Clone());
             }
 
@@ -952,12 +1240,12 @@ internal sealed class Interpreter
     private static JgsValue GatherOrIndex(JgsValue target, JgsValue index, int line, int column, bool oneBased = false)
     {
         bool isString = target.Type == JgsType.String;
-        int length = isString ? target.AsString.Length : target.AsArray.Length;
+        int length = isString ? target.AsString.Length : target.ArrayLength;
 
         if (index.Type != JgsType.Array)
         {
             int single = ToIndex(index, length, line, column, oneBased);
-            return isString ? JgsValue.Str(target.AsString[single].ToString()) : target.AsArray[single];
+            return isString ? JgsValue.Str(target.AsString[single].ToString()) : target.ElementAt(single);
         }
 
         int[] picks = ComputePicks(index, length, oneBased, target.TypeName, line, column);
@@ -972,6 +1260,16 @@ internal sealed class Interpreter
             return JgsValue.Str(sb.ToString());
         }
 
+        if (target.IsPacked)
+        {
+            return PackedOps.Gather(target, picks); // a new packed array of the same kind
+        }
+
+        if (target.IsPackedComplex)
+        {
+            return PackedOps.GatherComplex(target, picks);
+        }
+
         var gathered = new JgsValue[picks.Length];
         for (int i = 0; i < gathered.Length; i++)
         {
@@ -984,6 +1282,16 @@ internal sealed class Interpreter
     /// <summary>Resolves an index array (a mask or a list of indices) to 0-based element positions.</summary>
     private static int[] ComputePicks(JgsValue index, int length, bool oneBased, string targetName, int line, int column)
     {
+        if (index.IsPacked)
+        {
+            return PackedOps.PicksFromPacked(index, length, oneBased, targetName, line, column);
+        }
+
+        if (index.IsPackedComplex)
+        {
+            return PackedOps.PicksFromPackedComplex(index, length, oneBased, line, column);
+        }
+
         JgsValue[] selector = index.AsArray;
         var picks = new List<int>(selector.Length);
         if (selector.Length > 0 && Array.TrueForAll(selector, v => v.Type == JgsType.Bool))
@@ -1059,8 +1367,8 @@ internal sealed class Interpreter
 
         if (left.Type == JgsType.Array && right.Type == JgsType.Array)
         {
-            JgsValue[] a = left.AsArray;
-            JgsValue[] b = right.AsArray;
+            JgsValue[] a = left.BoxedElements();
+            JgsValue[] b = right.BoxedElements();
             if (a.Length != b.Length)
             {
                 throw new JgsRuntimeException(at.Line, at.Column,
@@ -1077,7 +1385,7 @@ internal sealed class Interpreter
         }
 
         // One side is a scalar; broadcast it across the array.
-        JgsValue[] array = (left.Type == JgsType.Array ? left : right).AsArray;
+        JgsValue[] array = (left.Type == JgsType.Array ? left : right).BoxedElements();
         JgsValue scalar = left.Type == JgsType.Array ? right : left;
         var result = new JgsValue[array.Length];
         for (int i = 0; i < result.Length; i++)
@@ -1139,8 +1447,8 @@ internal sealed class Interpreter
 
         if (left.Type == JgsType.Array && right.Type == JgsType.Array)
         {
-            JgsValue[] a = left.AsArray;
-            JgsValue[] b = right.AsArray;
+            JgsValue[] a = left.BoxedElements();
+            JgsValue[] b = right.BoxedElements();
             if (a.Length != b.Length)
             {
                 throw new JgsRuntimeException(line, column,
@@ -1158,7 +1466,7 @@ internal sealed class Interpreter
 
         // One side is a scalar; broadcast it across the array.
         bool arrayOnLeft = left.Type == JgsType.Array;
-        JgsValue[] array = (arrayOnLeft ? left : right).AsArray;
+        JgsValue[] array = (arrayOnLeft ? left : right).BoxedElements();
         JgsValue scalar = arrayOnLeft ? right : left;
         var broadcast = new JgsValue[array.Length];
         for (int i = 0; i < broadcast.Length; i++)
@@ -1183,6 +1491,16 @@ internal sealed class Interpreter
 
         if (value.Type == JgsType.Array)
         {
+            if (value.IsPacked)
+            {
+                // The same scalar delegate runs over the flat buffer — bit-identical results with
+                // no per-element boxing (bools read as 0/1, and the result kind is Number, exactly
+                // as the boxed branch produces).
+                NumericBuffer dest = JgsPacking.Allocate(value.ArrayLength);
+                PackedMath.Map(value.AsBuffer, dest, new Func<double, double>(op), _cancelCheck);
+                return JgsValue.Packed(dest);
+            }
+
             JgsValue[] source = value.AsArray;
             var result = new JgsValue[source.Length];
             for (int i = 0; i < result.Length; i++)
@@ -1270,6 +1588,18 @@ internal sealed class Interpreter
         TokenType.Greater => ">",
         TokenType.GreaterEqual => ">=",
         _ => type.ToString(),
+    };
+
+    /// <summary>The user-facing symbol for a binary operator (matches the boxed paths' messages).</summary>
+    private static string OperatorSymbol(TokenType type) => type switch
+    {
+        TokenType.Plus => "+",
+        TokenType.Minus => "-",
+        TokenType.Star => "*",
+        TokenType.Slash => "/",
+        TokenType.Percent => "%",
+        TokenType.Caret => "^",
+        _ => TokenText(type),
     };
 
     private readonly struct Completion

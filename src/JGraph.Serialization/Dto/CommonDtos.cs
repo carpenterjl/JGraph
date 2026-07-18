@@ -20,8 +20,18 @@ public sealed record LineStyleDto(Color Color, double Width, DashStyle Dash, Lin
 /// <summary>A text style.</summary>
 public sealed record TextStyleDto(Color Color, double FontSize, string FontFamily, bool Bold, bool Italic);
 
-/// <summary>A 2D data series as parallel X/Y arrays.</summary>
-public sealed record SeriesDto(double[] Xs, double[] Ys);
+/// <summary>
+/// A 2D data series. Small series store parallel X/Y arrays as readable JSON numbers; large series
+/// (format v4+) store the raw little-endian IEEE-754 doubles as base64 blocks instead — roughly 4x
+/// smaller than digit lists and decoded with one bulk copy. Readers accept either shape (packed
+/// wins when both are present, which writers never produce).
+/// </summary>
+public sealed record SeriesDto(
+    double[]? Xs,
+    double[]? Ys,
+    byte[]? XsPacked = null,
+    byte[]? YsPacked = null,
+    int Count = 0);
 
 /// <summary>A named colormap defined by its evenly spaced color stops.</summary>
 public sealed record ColormapDto(string Name, Color[] Stops);

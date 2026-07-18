@@ -818,6 +818,11 @@ public partial class ScriptWorkspaceWindow : Window
             case double[] array:
                 ShowInDataViewer(TableGridAdapter.ForArray(array), variable.Name);
                 break;
+            case null when variable.Type == "array":
+                // Huge arrays carry no raw copy (see JgsRunner.MaxRawValueElements) — the grid
+                // would freeze on millions of rows anyway.
+                SetStatus($"'{variable.Name}' is too large for the data viewer — index a smaller slice to inspect it.");
+                break;
             default:
                 SetStatus($"'{variable.Name}' has no tabular view — only arrays and tables do.");
                 break;

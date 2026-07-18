@@ -7,6 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <!-- The packed-array parity tests and benchmarks flip the internal JgsPacking switch per run. -->
+    <InternalsVisibleTo Include="JGraph.Tests" />
+    <InternalsVisibleTo Include="JGraph.Benchmarks" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Scripting" Version="4.9.2" />
     <PackageReference Include="pythonnet" Version="3.0.5" />
   </ItemGroup>
@@ -14,6 +20,7 @@
   <ItemGroup>
     <ProjectReference Include="..\JGraph.Core\JGraph.Core.csproj" />
     <ProjectReference Include="..\JGraph.Math\JGraph.Math.csproj" />
+    <ProjectReference Include="..\JGraph.Numerics\JGraph.Numerics.csproj" />
     <ProjectReference Include="..\JGraph.Signal\JGraph.Signal.csproj" />
     <ProjectReference Include="..\JGraph.Data\JGraph.Data.csproj" />
     <ProjectReference Include="..\JGraph.Objects\JGraph.Objects.csproj" />

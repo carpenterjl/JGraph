@@ -5,13 +5,16 @@ the workflow of the MATLAB figure window — an object model of figures, axes, a
 edit, and interact with — while following modern MVVM and SOLID design. It is renderer-agnostic and
 built for performance (millions of points).
 
-> Status: Milestones 1–21 complete. A working, interactive, editable figure window with line,
+> Status: Milestones 1–22 complete. A working, interactive, editable figure window with line,
 > scatter, bar, stem, histogram, error-bar, and image/heatmap plots; interactive 3D surfaces
 > (surf/mesh/meshc with drag rotation), contour/filled-contour plots, and colorbars;
 > MATLAB-compatible JGS scripting (semicolon echo suppression, colon ranges, 1-based paren
 > indexing with `end` and slice writes, `for … end` blocks, complex numbers) with DSP/audio
 > builtins (`fft` at any length, `filter`/`butter`/`firpm`/`freqz`, `audioread`/`sound`) that run
-> real MATLAB lab scripts nearly verbatim; persistent draggable data tips, a pan-plus-pick default
+> real MATLAB lab scripts nearly verbatim; MATLAB-grade large-dataset performance (packed flat
+> script arrays with SIMD elementwise math and RAM-aware managed/native/memory-mapped storage,
+> instant hover over million-point lines, compact binary series in `.graph` v4);
+> persistent draggable data tips, a pan-plus-pick default
 > pointer, and a plot right-click menu (zoom constraints, restore view);
 > engineering plots (Bode,
 > Nyquist, polar, Smith, spectrogram, eye diagram) with an FFT/DSP library; subplots, linked axes,
@@ -49,7 +52,9 @@ built for performance (millions of points).
   automatic, human-readable ticks.
 - **Renderer-agnostic** — all drawing goes through an `IRenderContext` seam (SkiaSharp today; SVG,
   PDF, or GPU backends drop in without touching the model).
-- **Performance-first** — array-backed series with windowed min/max decimation render millions of
+- **Performance-first** — packed script arrays (flat buffers + SIMD, spilling to native or
+  SSD-mapped memory before ever throwing OutOfMemory), and array-backed series with windowed
+  min/max decimation that render millions of
   points smoothly.
 - **Interactive** — mouse-wheel zoom, drag pan, rubber-band zoom, data cursor, and undo/redo of
   navigation.
@@ -284,6 +289,7 @@ appears with no code change.
 | `JGraph.Core` | Object model, primitives, styles, data-series abstraction, invalidation, undo. |
 | `JGraph.Math` | Scale transforms, coordinate mapping, tick generation, decimation. |
 | `JGraph.Signal` | Signal processing (FFT, windows, spectrum, spectrogram, transfer functions) for the engineering plots. |
+| `JGraph.Numerics` | Flat packed numeric storage (managed / native / memory-mapped by available RAM) and chunked SIMD kernels for large script arrays. |
 | `JGraph.Data` | Tabular data: an immutable column `Table`, CSV/TSV/xlsx/clipboard readers with type inference, and the import-wizard model. |
 | `JGraph.Rendering` | Rendering abstractions (`IRenderContext`), figure renderer, layout. |
 | `JGraph.Rendering.Skia` | SkiaSharp implementation of `IRenderContext`. |

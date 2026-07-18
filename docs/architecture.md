@@ -29,6 +29,7 @@ nothing about higher ones.
 | `JGraph.Core` | net8.0 | Object model (`FigureModel` → `AxesModel` → `PlotObject`), primitives (`Point2D`, `Rect2D`, `Color`, `DataRange`), styles, data-series abstraction, invalidation/event system. No UI or graphics-engine dependency. |
 | `JGraph.Math` | net8.0 | Numeric services: scale transforms, the data↔pixel `AxisTransform`, tick generation, min/max decimation. |
 | `JGraph.Signal` | net8.0 | Signal-processing services (FFT, windows, amplitude spectrum, STFT spectrogram, transfer-function frequency response) for the engineering plots. Pure numerics, BCL-only; a leaf like `JGraph.Math`. |
+| `JGraph.Numerics` | net8.0 | Flat contiguous numeric storage for large datasets: the dual-strategy `NumericBuffer` (managed / `NativeMemory` / memory-mapped temp file, chosen by the RAM-aware `BufferAllocator`) and the chunked, cancellable `PackedMath` SIMD kernels over `TensorPrimitives`. The only project that compiles unsafe code. A leaf; consumed by `JGraph.Scripting`. |
 | `JGraph.Data` | net8.0 | Tabular data: an immutable column-oriented `Table`, delimited-text/xlsx/clipboard readers with type inference, and the UI-free import-wizard model. A `Core`-only, BCL-only leaf. |
 | `JGraph.Rendering` | net8.0 | Rendering abstractions: `IRenderContext`, `RenderState`, `IDrawable`, and the layout engine. Contains no concrete graphics library. |
 | `JGraph.Rendering.Skia` | net8.0 | Implements `IRenderContext` over SkiaSharp. |
@@ -43,7 +44,7 @@ nothing about higher ones.
 | `JGraph.Application` | net8.0-windows | MVVM application shell, figure window, DI composition root. |
 | `JGraph.Demo` | net8.0-windows | Gallery exercising both APIs. |
 | `JGraph.Tests` | net8.0 | Unit tests. |
-| `JGraph.Benchmarks` | net8.0 | Performance benchmarks (decimation, render preparation). |
+| `JGraph.Benchmarks` | net8.0 | Performance benchmarks (decimation, packed elementwise math, end-to-end JGS runs, FFT, hover hit-testing, `.graph` save/load). |
 
 ## Core principles
 
@@ -59,6 +60,10 @@ nothing about higher ones.
   what is needed. See [ADR 0002](adr/0002-object-model.md).
 - **Performance is designed in.** Series data lives behind `IDataSeries`; array-backed sources expose
   spans so `MinMaxDecimator` can reduce millions of points to a per-pixel envelope before drawing.
+  Since M22, JGS script arrays are *packed* — flat `NumericBuffer` storage (managed, native, or
+  SSD-mapped by available RAM) with SIMD elementwise kernels — hover hit-testing binary-searches
+  ascending series, and large `.graph` series persist as base64 blocks. See
+  [ADR 0026](adr/0026-packed-numeric-arrays-and-large-dataset-performance.md).
 
 ## Rendering pipeline (target shape)
 
@@ -412,6 +417,20 @@ language — reusing the whole functional API rather than exposing a new one:
     (`RectangleZoomMode.Constraint` — horizontal/vertical bands that restore the free axis
     exactly), data-tip deletion, and per-axes Restore View.
 
+17. **Large-dataset performance (M22).** JGS numeric arrays are packed: `Type` stays `Array`, but
+    homogeneous numeric data lives in a flat `NumericBuffer` (or planar `JgsPackedComplex` for
+    spectra) instead of one heap object per element — 8 bytes per double instead of ~48. The
+    `BufferAllocator` picks the backing per allocation (managed under 1M elements; `NativeMemory`
+    while physical RAM has headroom; an SSD-backed delete-on-close mapped file beyond that, so big
+    arrays degrade instead of OOM). Elementwise operators, comparisons, ranges, slices, and the hot
+    builtins run as chunked `TensorPrimitives` SIMD kernels with a cancellation poll between chunks;
+    a single wrapper per buffer preserves reference/aliasing semantics, and any write outside the
+    numeric fast path demotes the array to boxed in place for every alias at once. `AsArray` throws
+    on packed values so unmigrated code fails loudly; a parity suite runs a script corpus with
+    packing forced on and off and demands byte-identical output. Hover hit-testing
+    (`SeriesHitTester`) binary-searches ascending series instead of scanning every point, and
+    `.graph` v4 stores large series as base64 double blocks with streamed save/load.
+
 See [ADR 0012](adr/0012-scripting-hosts.md), [ADR 0013](adr/0013-custom-scripting-language.md),
 [ADR 0014](adr/0014-script-workspace-and-docking-shell.md),
 [ADR 0015](adr/0015-jgs-debugger.md),
@@ -423,13 +442,14 @@ See [ADR 0012](adr/0012-scripting-hosts.md), [ADR 0013](adr/0013-custom-scriptin
 [ADR 0021](adr/0021-jgs-c-style-expression-semantics.md),
 [ADR 0022](adr/0022-3d-plotting-over-the-2d-pipeline.md),
 [ADR 0023](adr/0023-matlab-compatible-jgs-surface.md),
-[ADR 0024](adr/0024-dsp-builtins-and-audio-seam.md), and
-[ADR 0025](adr/0025-pointer-mode-data-tips-context-menu.md); the
+[ADR 0024](adr/0024-dsp-builtins-and-audio-seam.md),
+[ADR 0025](adr/0025-pointer-mode-data-tips-context-menu.md), and
+[ADR 0026](adr/0026-packed-numeric-arrays-and-large-dataset-performance.md); the
 [data-import walkthrough](import-guide.md) and the `examples/` scripts show all three languages in use.
 
 ## Status
 
-Implemented through Milestone 21 — a working, Matlab-like figure window you can edit, save, publish, extend, feed with imported data, and drive with scripts:
+Implemented through Milestone 22 — a working, Matlab-like figure window you can edit, save, publish, extend, feed with imported data, and drive with scripts:
 
 - **M1** object model, math services (transforms, ticks, decimation), rendering abstractions.
 - **M2** SkiaSharp render context, `FigureRenderer` (chrome + plots), WPF `FigureControl`,
@@ -507,6 +527,13 @@ Implemented through Milestone 21 — a working, Matlab-like figure window you ca
   Pointer tool (pan + hover crosshair + click-to-pin persistent data tips), the roving Data Tips
   tool, the plot right-click menu (zoom constraints, tip deletion, per-axes Restore View), and
   `.graph` format version 3 persisting data tips.
+- **M22** large-dataset performance: the `JGraph.Numerics` project (dual-strategy
+  managed/native/memory-mapped `NumericBuffer` storage picked by available RAM, plus chunked
+  cancellable `TensorPrimitives` SIMD kernels), packed JGS numeric and planar complex arrays with
+  full boxed-mode parity (kill switch + byte-identical corpus tests), bounded display/snapshot of
+  huge arrays, Stop working mid-operation, a pooled direct-sincos FFT twiddle table, windowed
+  binary-search hover hit-testing, reuse of the Skia polyline path, and `.graph` format version 4
+  (packed base64 series, streamed save/load).
 
 The `JGraph.Demo` gallery exercises the plot types, annotations, and both APIs;
 `JGraph.Application` is the interactive figure window with data import and scripting.

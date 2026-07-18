@@ -2,6 +2,7 @@ using System.IO;
 using System.Windows;
 using JGraph.Application.Mvvm;
 using JGraph.Application.Services;
+using JGraph.Numerics;
 using JGraph.Plugins;
 using JGraph.Scripting;
 using JGraph.Scripting.Jgs;
@@ -20,6 +21,10 @@ public partial class App : System.Windows.Application
     protected override void OnStartup(StartupEventArgs e)
     {
         base.OnStartup(e);
+
+        // Delete numeric-buffer temp files orphaned by power loss (a crash alone never orphans:
+        // they are opened delete-on-close). Fire-and-forget; files held by live processes are skipped.
+        Task.Run(() => BufferAllocator.SweepOrphans(BufferAllocator.DefaultMappedDirectory));
 
         var collection = new ServiceCollection();
         ConfigureServices(collection);

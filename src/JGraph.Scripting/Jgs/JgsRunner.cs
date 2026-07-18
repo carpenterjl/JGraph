@@ -25,8 +25,12 @@ internal static class JgsRunner
         string sourceId = "",
         IJgsDebugHook? hook = null)
     {
-        // JGS scripts drive the same static JG facade; start each run from a clean state.
+        // JGS scripts drive the same static JG facade; start each run from a clean state. The
+        // previous completed run's packed buffers are released deterministically here (its figures
+        // and variable snapshots hold copies, never the buffers); finalizers remain the backstop
+        // for everything else.
         JG.Reset();
+        DisposePreviousRunBuffers();
         var globals = new JGraphScriptGlobals(context);
 
         try
@@ -45,7 +49,9 @@ internal static class JgsRunner
 
             interpreter.Run(program);
             globals.ShowUnshownFigures(); // MATLAB expectation: created figures appear without show()
-            return ScriptRunResult.Ok(globals.FiguresShown, SnapshotGlobals(environment, pristine));
+            ScriptRunResult ok = ScriptRunResult.Ok(globals.FiguresShown, SnapshotGlobals(environment, pristine));
+            RegisterCompletedRun(environment, hook);
+            return ok;
         }
         catch (JgsException ex)
         {
@@ -133,14 +139,79 @@ internal static class JgsRunner
         return variables;
     }
 
+    /// <summary>
+    /// Arrays above this size have no <see cref="ScriptVariable.RawValue"/>: copying 100M doubles on
+    /// every Variables refresh (and feeding them to the data-viewer grid) helps nobody.
+    /// </summary>
+    private const int MaxRawValueElements = 2_000_000;
+
     private static object? ToRawValue(JgsValue value) => value.Type switch
     {
         JgsType.Number => value.AsNumber,
         JgsType.Bool => value.AsBool,
         JgsType.String => value.AsString,
         JgsType.Table => value.AsTable,
+        JgsType.Array when value.ArrayLength > MaxRawValueElements => null,
+        JgsType.Array when value.IsPackedComplex => null, // boxed complex arrays have no raw view either
+        JgsType.Array when value.IsPacked =>
+            value.PackedKind == JgsPackedKind.Number ? value.AsBuffer.AsSpan().ToArray() : null,
         JgsType.Array when value.AsArray.All(static e => e.Type == JgsType.Number) =>
             value.AsArray.Select(static e => e.AsNumber).ToArray(),
         _ => null,
     };
+
+    // --- Deterministic release of the previous run's packed buffers -----------------------------
+
+    private static JgsEnvironment? _lastCompletedRun;
+
+    /// <summary>Remembers a completed plain run for disposal when the next run starts. Debugged
+    /// runs are excluded: a debug session's lifetime is managed by its own window, and a paused
+    /// session's buffers must never be freed underneath it.</summary>
+    private static void RegisterCompletedRun(JgsEnvironment environment, IJgsDebugHook? hook)
+    {
+        if (hook is null)
+        {
+            Interlocked.Exchange(ref _lastCompletedRun, environment);
+        }
+    }
+
+    private static void DisposePreviousRunBuffers()
+    {
+        JgsEnvironment? previous = Interlocked.Exchange(ref _lastCompletedRun, null);
+        if (previous is null)
+        {
+            return;
+        }
+
+        var visited = new HashSet<JgsValue>(ReferenceEqualityComparer.Instance);
+        foreach ((_, JgsValue value) in previous.Locals)
+        {
+            DisposePackedIn(value, visited);
+        }
+    }
+
+    private static void DisposePackedIn(JgsValue value, HashSet<JgsValue> visited)
+    {
+        if (value.Type != JgsType.Array || !visited.Add(value))
+        {
+            return; // scalars, and any array already seen (self-referencing arrays are legal)
+        }
+
+        if (value.IsPacked)
+        {
+            value.AsBuffer.Dispose();
+            return;
+        }
+
+        if (value.IsPackedComplex)
+        {
+            value.AsPackedComplex.Dispose();
+            return;
+        }
+
+        foreach (JgsValue element in value.AsArray)
+        {
+            DisposePackedIn(element, visited);
+        }
+    }
 }

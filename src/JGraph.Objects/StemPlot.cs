@@ -3,6 +3,7 @@ using JGraph.Core.Data;
 using JGraph.Core.Drawing;
 using JGraph.Core.Model;
 using JGraph.Core.Primitives;
+using JGraph.Objects.Internal;
 using JGraph.Rendering;
 
 namespace JGraph.Objects;
@@ -132,31 +133,12 @@ public sealed class StemPlot : XYPlot, IDrawable, ILegendItem
             return null;
         }
 
-        double bestDistance = double.MaxValue;
-        int bestIndex = -1;
-        for (int i = 0; i < Data.Count; i++)
-        {
-            double x = Data.GetX(i);
-            double y = Data.GetY(i);
-            if (!double.IsFinite(x) || !double.IsFinite(y))
-            {
-                continue;
-            }
-
-            double distance = mapper.DataToPixel(x, y).DistanceTo(pixelPoint);
-            if (distance < bestDistance)
-            {
-                bestDistance = distance;
-                bestIndex = i;
-            }
-        }
-
         double pick = System.Math.Max(tolerancePixels, _markerSize);
-        if (bestIndex < 0 || bestDistance > pick)
+        if (SeriesHitTester.FindNearest(Data, mapper, pixelPoint, pick) is not var (index, distance))
         {
             return null;
         }
 
-        return new PlotHitResult(this, new Point2D(Data.GetX(bestIndex), Data.GetY(bestIndex)), bestDistance, bestIndex);
+        return new PlotHitResult(this, new Point2D(Data.GetX(index), Data.GetY(index)), distance, index);
     }
 }

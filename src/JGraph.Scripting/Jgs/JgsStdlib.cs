@@ -185,8 +185,8 @@ internal static class JgsStdlib
     {
         if (left.Type == JgsType.Array && right.Type == JgsType.Array)
         {
-            JgsValue[] a = left.AsArray;
-            JgsValue[] b = right.AsArray;
+            JgsValue[] a = left.BoxedElements();
+            JgsValue[] b = right.BoxedElements();
             if (a.Length != b.Length)
             {
                 return false;

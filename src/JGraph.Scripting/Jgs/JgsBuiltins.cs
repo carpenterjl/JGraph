@@ -2,6 +2,7 @@ using System.Globalization;
 using System.IO;
 using System.Numerics;
 using JGraph.Api;
+using JGraph.Numerics;
 using JGraph.Signal;
 using JGraph.Core.Model;
 using JGraph.Data;
@@ -91,14 +92,14 @@ internal static class JgsBuiltins
                 throw new JgsRuntimeException(line, col, "linspace needs a count of at least 1.");
             }
 
-            var result = new JgsValue[count];
+            var result = new double[count];
             for (int i = 0; i < count; i++)
             {
                 double t = count == 1 ? 0 : (double)i / (count - 1);
-                result[i] = JgsValue.Number(start + ((stop - start) * t));
+                result[i] = start + ((stop - start) * t);
             }
 
-            return JgsValue.Array(result);
+            return Numbers(result);
         });
 
         Define("range", (args, line, col) =>
@@ -112,23 +113,23 @@ internal static class JgsBuiltins
                 throw new JgsRuntimeException(line, col, "range step must not be zero.");
             }
 
-            var result = new List<JgsValue>();
+            var result = new List<double>();
             if (step > 0)
             {
                 for (double v = start; v < stop; v += step)
                 {
-                    result.Add(JgsValue.Number(v));
+                    result.Add(v);
                 }
             }
             else
             {
                 for (double v = start; v > stop; v += step)
                 {
-                    result.Add(JgsValue.Number(v));
+                    result.Add(v);
                 }
             }
 
-            return JgsValue.Array(result.ToArray());
+            return Numbers(result.ToArray());
         });
 
         Define("zeros", (args, line, col) => Filled("zeros", args, 0.0, line, col));
@@ -312,9 +313,9 @@ internal static class JgsBuiltins
             Arity("size", args, 1, line, col);
             (int rows, int cols) = args[0].Type switch
             {
-                JgsType.Array when args[0].AsArray is { Length: > 0 } a && a[0].Type == JgsType.Array =>
-                    (a.Length, a[0].AsArray.Length),
-                JgsType.Array => (1, args[0].AsArray.Length),
+                JgsType.Array when args[0].ArrayLength > 0 && args[0].ElementAt(0).Type == JgsType.Array =>
+                    (args[0].ArrayLength, args[0].ElementAt(0).ArrayLength),
+                JgsType.Array => (1, args[0].ArrayLength),
                 JgsType.String => (1, args[0].AsString.Length),
                 _ => (1, 1),
             };
@@ -334,7 +335,7 @@ internal static class JgsBuiltins
             Arity("length", args, 1, line, col);
             return args[0].Type switch
             {
-                JgsType.Array => JgsValue.Number(args[0].AsArray.Length),
+                JgsType.Array => JgsValue.Number(args[0].ArrayLength),
                 JgsType.String => JgsValue.Number(args[0].AsString.Length),
                 _ => throw new JgsRuntimeException(line, col, $"length expects an array or string, but got a {args[0].TypeName}."),
             };
@@ -366,7 +367,7 @@ internal static class JgsBuiltins
             Arity("numel", args, 1, line, col);
             return args[0].Type switch
             {
-                JgsType.Array => JgsValue.Number(args[0].AsArray.Length),
+                JgsType.Array => JgsValue.Number(args[0].ArrayLength),
                 JgsType.String => JgsValue.Number(args[0].AsString.Length),
                 _ => throw new JgsRuntimeException(line, col, $"numel expects an array or string, but got a {args[0].TypeName}."),
             };
@@ -419,6 +420,22 @@ internal static class JgsBuiltins
         Define("find", (args, line, col) =>
         {
             Arity("find", args, 1, line, col);
+            if (args[0].Type == JgsType.Array && args[0].IsPacked)
+            {
+                // Nonzero is truthy for numbers and bools alike (NaN != 0 is true) — same as IsTruthy.
+                ReadOnlySpan<double> span = args[0].AsBuffer.AsSpan();
+                var found = new List<double>();
+                for (int i = 0; i < span.Length; i++)
+                {
+                    if (span[i] != 0)
+                    {
+                        found.Add(i + 1); // 1-based, pairing with MATLAB paren indexing
+                    }
+                }
+
+                return NumbersCopy(System.Runtime.InteropServices.CollectionsMarshal.AsSpan(found));
+            }
+
             JgsValue[] elements = Arr("find", args, 0, line, col);
             var indices = new List<JgsValue>();
             for (int i = 0; i < elements.Length; i++)
@@ -435,12 +452,40 @@ internal static class JgsBuiltins
         Define("any", (args, line, col) =>
         {
             Arity("any", args, 1, line, col);
+            if (args[0].Type == JgsType.Array && args[0].IsPacked)
+            {
+                ReadOnlySpan<double> span = args[0].AsBuffer.AsSpan();
+                foreach (double v in span)
+                {
+                    if (v != 0)
+                    {
+                        return JgsValue.True;
+                    }
+                }
+
+                return JgsValue.False;
+            }
+
             return JgsValue.Bool(System.Array.Exists(Arr("any", args, 0, line, col), static v => v.IsTruthy));
         });
 
         Define("all", (args, line, col) =>
         {
             Arity("all", args, 1, line, col);
+            if (args[0].Type == JgsType.Array && args[0].IsPacked)
+            {
+                ReadOnlySpan<double> span = args[0].AsBuffer.AsSpan();
+                foreach (double v in span)
+                {
+                    if (v == 0)
+                    {
+                        return JgsValue.False;
+                    }
+                }
+
+                return JgsValue.True; // empty is true, matching TrueForAll on an empty array
+            }
+
             return JgsValue.Bool(System.Array.TrueForAll(Arr("all", args, 0, line, col), static v => v.IsTruthy));
         });
 
@@ -456,7 +501,7 @@ internal static class JgsBuiltins
             {
                 if (arg.Type == JgsType.Array)
                 {
-                    joined.AddRange(arg.AsArray);
+                    joined.AddRange(arg.BoxedElements());
                 }
                 else
                 {
@@ -529,7 +574,7 @@ internal static class JgsBuiltins
                 return JgsValue.Bool(!args[0].IsTruthy);
             }
 
-            JgsValue[] source = args[0].AsArray;
+            JgsValue[] source = args[0].BoxedElements();
             var flipped = new JgsValue[source.Length];
             for (int i = 0; i < source.Length; i++)
             {
@@ -695,13 +740,8 @@ internal static class JgsBuiltins
                 throw new JgsRuntimeException(line, col, ex.Message);
             }
 
-            var result = new JgsValue[values.Length];
-            for (int i = 0; i < values.Length; i++)
-            {
-                result[i] = JgsValue.Number(values[i]);
-            }
-
-            return JgsValue.Array(result);
+            // The table column may return its internal storage, so this copies — never adopts.
+            return NumbersCopy(values);
         });
 
         // --- Output --------------------------------------------------------------------------
@@ -1165,9 +1205,7 @@ internal static class JgsBuiltins
             var rows = new JgsValue[count];
             for (int r = 0; r < count; r++)
             {
-                var row = new JgsValue[cols];
-                System.Array.Fill(row, JgsValue.Number(value));
-                rows[r] = JgsValue.Array(row);
+                rows[r] = FilledVector(cols, value, name, line, col);
             }
 
             return JgsValue.Array(rows);
@@ -1181,6 +1219,13 @@ internal static class JgsBuiltins
         if (count < 0)
         {
             throw new JgsRuntimeException(line, col, $"{name} needs a non-negative count.");
+        }
+
+        if (JgsPacking.Enabled)
+        {
+            var buffer = JgsPacking.Allocate(count);
+            PackedMath.FillConstant(buffer, value);
+            return JgsValue.Packed(buffer);
         }
 
         var result = new JgsValue[count];
@@ -1248,9 +1293,38 @@ internal static class JgsBuiltins
 
     // --- Stdlib glue -----------------------------------------------------------------------------
 
-    /// <summary>Wraps a double[] back into a JGS numeric array value.</summary>
+    /// <summary>
+    /// Wraps a double[] back into a JGS numeric array value. CONTRACT: the caller hands over a
+    /// freshly built array — with packing enabled it is adopted as the value's backing storage
+    /// without a copy, so a caller that kept writing through its own reference would corrupt the
+    /// script's array. Use <see cref="NumbersCopy"/> for data that something else still owns.
+    /// </summary>
     private static JgsValue Numbers(double[] values)
     {
+        if (JgsPacking.Enabled)
+        {
+            return JgsValue.Packed(ManagedBuffer.Adopt(values));
+        }
+
+        var result = new JgsValue[values.Length];
+        for (int i = 0; i < values.Length; i++)
+        {
+            result[i] = JgsValue.Number(values[i]);
+        }
+
+        return JgsValue.Array(result);
+    }
+
+    /// <summary>A JGS numeric array copied from <paramref name="values"/> (safe for shared storage).</summary>
+    private static JgsValue NumbersCopy(ReadOnlySpan<double> values)
+    {
+        if (JgsPacking.Enabled)
+        {
+            var buffer = JgsPacking.Allocate(values.Length);
+            values.CopyTo(buffer.AsSpan());
+            return JgsValue.Packed(buffer);
+        }
+
         var result = new JgsValue[values.Length];
         for (int i = 0; i < values.Length; i++)
         {
@@ -1299,7 +1373,7 @@ internal static class JgsBuiltins
 
         if (value.Type == JgsType.Array)
         {
-            JgsValue[] source = value.AsArray;
+            JgsValue[] source = value.BoxedElements();
             var result = new JgsValue[source.Length];
             for (int i = 0; i < source.Length; i++)
             {
@@ -1331,8 +1405,8 @@ internal static class JgsBuiltins
 
         if (left.Type == JgsType.Array && right.Type == JgsType.Array)
         {
-            JgsValue[] a = left.AsArray;
-            JgsValue[] b = right.AsArray;
+            JgsValue[] a = left.BoxedElements();
+            JgsValue[] b = right.BoxedElements();
             if (a.Length != b.Length)
             {
                 throw new JgsRuntimeException(line, col,
@@ -1349,7 +1423,7 @@ internal static class JgsBuiltins
         }
 
         bool arrayOnLeft = left.Type == JgsType.Array;
-        JgsValue[] array = (arrayOnLeft ? left : right).AsArray;
+        JgsValue[] array = (arrayOnLeft ? left : right).BoxedElements();
         bool scalar = (arrayOnLeft ? right : left).IsTruthy;
         var result = new JgsValue[array.Length];
         for (int i = 0; i < result.Length; i++)
@@ -1371,7 +1445,9 @@ internal static class JgsBuiltins
             throw new JgsRuntimeException(line, col, $"{name} expects argument {index + 1} to be an array, but got a {value.TypeName}.");
         }
 
-        return value.AsArray;
+        // Packed inputs materialize a boxed copy here — read-only use, never worse than the
+        // all-boxed world; the hot builtins bypass this with packed fast paths.
+        return value.BoxedElements();
     }
 
 
@@ -1384,6 +1460,14 @@ internal static class JgsBuiltins
 
         if (value.Type == JgsType.Array)
         {
+            if (value.IsPacked)
+            {
+                // Same delegate over the flat buffer: bit-identical results, no per-element boxing.
+                var dest = JgsPacking.Allocate(value.ArrayLength);
+                PackedMath.Map(value.AsBuffer, dest, f);
+                return JgsValue.Packed(dest);
+            }
+
             JgsValue[] source = value.AsArray;
             var result = new JgsValue[source.Length];
             for (int i = 0; i < source.Length; i++)
@@ -1408,10 +1492,60 @@ internal static class JgsBuiltins
             return JgsValue.Number(f(a.AsNumber, b.AsNumber));
         }
 
+        // Packed fast paths: the same delegate over flat buffers (atan2 over a million samples
+        // without a million boxes). Shapes outside these fall through to the boxed recursion.
+        if (a.IsPacked && b.IsPacked)
+        {
+            ReadOnlySpan<double> xs = a.AsBuffer.AsSpan();
+            ReadOnlySpan<double> ys = b.AsBuffer.AsSpan();
+            if (xs.Length != ys.Length)
+            {
+                throw new JgsRuntimeException(line, col,
+                    $"{name} needs arrays of equal length ({xs.Length} and {ys.Length}).");
+            }
+
+            var dest = JgsPacking.Allocate(xs.Length);
+            Span<double> d = dest.AsSpan();
+            for (int i = 0; i < d.Length; i++)
+            {
+                d[i] = f(xs[i], ys[i]);
+            }
+
+            return JgsValue.Packed(dest);
+        }
+
+        if (a.IsPacked && bScalar)
+        {
+            ReadOnlySpan<double> xs = a.AsBuffer.AsSpan();
+            double y = b.AsNumber;
+            var dest = JgsPacking.Allocate(xs.Length);
+            Span<double> d = dest.AsSpan();
+            for (int i = 0; i < d.Length; i++)
+            {
+                d[i] = f(xs[i], y);
+            }
+
+            return JgsValue.Packed(dest);
+        }
+
+        if (aScalar && b.IsPacked)
+        {
+            double x = a.AsNumber;
+            ReadOnlySpan<double> ys = b.AsBuffer.AsSpan();
+            var dest = JgsPacking.Allocate(ys.Length);
+            Span<double> d = dest.AsSpan();
+            for (int i = 0; i < d.Length; i++)
+            {
+                d[i] = f(x, ys[i]);
+            }
+
+            return JgsValue.Packed(dest);
+        }
+
         if (a.Type == JgsType.Array && b.Type == JgsType.Array)
         {
-            JgsValue[] left = a.AsArray;
-            JgsValue[] right = b.AsArray;
+            JgsValue[] left = a.BoxedElements();
+            JgsValue[] right = b.BoxedElements();
             if (left.Length != right.Length)
             {
                 throw new JgsRuntimeException(line, col,
@@ -1429,7 +1563,7 @@ internal static class JgsBuiltins
 
         if (a.Type == JgsType.Array && bScalar)
         {
-            JgsValue[] left = a.AsArray;
+            JgsValue[] left = a.BoxedElements();
             var spread = new JgsValue[left.Length];
             for (int i = 0; i < spread.Length; i++)
             {
@@ -1441,7 +1575,7 @@ internal static class JgsBuiltins
 
         if (aScalar && b.Type == JgsType.Array)
         {
-            JgsValue[] right = b.AsArray;
+            JgsValue[] right = b.BoxedElements();
             var spread = new JgsValue[right.Length];
             for (int i = 0; i < spread.Length; i++)
             {
@@ -1453,6 +1587,46 @@ internal static class JgsBuiltins
 
         throw new JgsRuntimeException(line, col,
             $"{name} expects numbers or numeric arrays, but got {a.TypeName} and {b.TypeName}.");
+    }
+
+    /// <summary>
+    /// The packed-complex arm of <see cref="MapComplexAware"/>: zero-imaginary elements take the
+    /// real path (they read as numbers when boxed), the rest take the complex path, and the result
+    /// packs as a plain number array when no imaginary parts survive (abs/real/imag/angle) or as a
+    /// planar complex array otherwise (conj).
+    /// </summary>
+    private static JgsValue MapPackedComplex(JgsPackedComplex source, Func<double, double> real, Func<Complex, JgsValue> complex)
+    {
+        int count = source.Length;
+        var reOut = JgsPacking.Allocate(count);
+        var imOut = JgsPacking.Allocate(count);
+        bool anyImaginary = false;
+        for (int i = 0; i < count; i++)
+        {
+            double re = source.Re.AsSpan()[i];
+            double im = source.Im.AsSpan()[i];
+            JgsValue mapped = im == 0 ? JgsValue.Number(real(re)) : complex(new Complex(re, im));
+            if (mapped.Type == JgsType.Number)
+            {
+                reOut.AsSpan()[i] = mapped.AsNumber;
+                imOut.AsSpan()[i] = 0;
+            }
+            else
+            {
+                Complex written = mapped.AsComplex;
+                reOut.AsSpan()[i] = written.Real;
+                imOut.AsSpan()[i] = written.Imaginary;
+                anyImaginary = true;
+            }
+        }
+
+        if (anyImaginary)
+        {
+            return JgsValue.PackedComplexArray(new JgsPackedComplex(reOut, imOut));
+        }
+
+        imOut.Dispose();
+        return JgsValue.Packed(reOut);
     }
 
     /// <summary>Elementwise map that takes the real path for numbers and the complex path for complex values.</summary>
@@ -1470,7 +1644,20 @@ internal static class JgsBuiltins
 
         if (value.Type == JgsType.Array)
         {
-            JgsValue[] source = value.AsArray;
+            if (value.IsPacked)
+            {
+                // Every packed element is real, so only the real path applies — flat and box-free.
+                var dest = JgsPacking.Allocate(value.ArrayLength);
+                PackedMath.Map(value.AsBuffer, dest, real);
+                return JgsValue.Packed(dest);
+            }
+
+            if (value.IsPackedComplex)
+            {
+                return MapPackedComplex(value.AsPackedComplex, real, complex);
+            }
+
+            JgsValue[] source = value.BoxedElements();
             var result = new JgsValue[source.Length];
             for (int i = 0; i < source.Length; i++)
             {
@@ -1553,7 +1740,7 @@ internal static class JgsBuiltins
             throw new JgsRuntimeException(line, col, $"{name} expects argument {index + 1} to be an array, but got a {value.TypeName}.");
         }
 
-        return ToDoubles(name, value.AsArray, line, col);
+        return ToDoubles(name, value, line, col);
     }
 
     private static double[] ArrayOfNumbers(string name, IReadOnlyList<JgsValue> args, int line, int col)
@@ -1564,7 +1751,7 @@ internal static class JgsBuiltins
             throw new JgsRuntimeException(line, col, $"{name} expects an array, but got a {args[0].TypeName}.");
         }
 
-        return ToDoubles(name, args[0].AsArray, line, col);
+        return ToDoubles(name, args[0], line, col);
     }
 
     /// <summary>
@@ -1580,14 +1767,14 @@ internal static class JgsBuiltins
                 $"{name} expects argument {index + 1} to be a matrix (an array of row arrays), but got a {value.TypeName}.");
         }
 
-        JgsValue[] rows = value.AsArray;
+        JgsValue[] rows = value.BoxedElements();
         if (rows.Length == 0 || rows[0].Type != JgsType.Array)
         {
             throw new JgsRuntimeException(line, col,
                 $"{name} expects argument {index + 1} to be a matrix (an array of row arrays); build one with meshgrid, zeros(r, c), or nested literals.");
         }
 
-        int cols = rows[0].AsArray.Length;
+        int cols = rows[0].ArrayLength;
         var result = new double[rows.Length, cols];
         for (int r = 0; r < rows.Length; r++)
         {
@@ -1597,7 +1784,7 @@ internal static class JgsBuiltins
                     $"{name}: matrix row {r} is a {rows[r].TypeName}, not an array.");
             }
 
-            double[] row = ToDoubles(name, rows[r].AsArray, line, col);
+            double[] row = ToDoubles(name, rows[r], line, col);
             if (row.Length != cols)
             {
                 throw new JgsRuntimeException(line, col,
@@ -1646,6 +1833,33 @@ internal static class JgsBuiltins
     /// <summary>Converts a JGS array to complex samples (numbers, bools, and complex values allowed).</summary>
     private static Complex[] ComplexArray(string name, IReadOnlyList<JgsValue> args, int index, int line, int col)
     {
+        JgsValue value = args[index];
+        if (value.Type == JgsType.Array && value.IsPacked)
+        {
+            ReadOnlySpan<double> span = value.AsBuffer.AsSpan();
+            var complexes = new Complex[span.Length];
+            for (int i = 0; i < span.Length; i++)
+            {
+                complexes[i] = new Complex(span[i], 0);
+            }
+
+            return complexes;
+        }
+
+        if (value.Type == JgsType.Array && value.IsPackedComplex)
+        {
+            JgsPackedComplex planes = value.AsPackedComplex;
+            ReadOnlySpan<double> re = planes.Re.AsSpan();
+            ReadOnlySpan<double> im = planes.Im.AsSpan();
+            var complexes = new Complex[planes.Length];
+            for (int i = 0; i < complexes.Length; i++)
+            {
+                complexes[i] = new Complex(re[i], im[i]);
+            }
+
+            return complexes;
+        }
+
         JgsValue[] elements = Arr(name, args, index, line, col);
         var result = new Complex[elements.Length];
         for (int i = 0; i < elements.Length; i++)
@@ -1664,6 +1878,43 @@ internal static class JgsBuiltins
 
     private static JgsValue FromComplexArray(Complex[] values)
     {
+        if (JgsPacking.Enabled)
+        {
+            // All-real results pack as plain number arrays (the boxed form would be all Numbers,
+            // via ComplexNum's zero-imaginary normalization); anything else packs planar.
+            bool anyImaginary = false;
+            foreach (Complex value in values)
+            {
+                if (value.Imaginary != 0)
+                {
+                    anyImaginary = true;
+                    break;
+                }
+            }
+
+            var re = JgsPacking.Allocate(values.Length);
+            Span<double> reSpan = re.AsSpan();
+            if (!anyImaginary)
+            {
+                for (int i = 0; i < values.Length; i++)
+                {
+                    reSpan[i] = values[i].Real;
+                }
+
+                return JgsValue.Packed(re);
+            }
+
+            var im = JgsPacking.Allocate(values.Length);
+            Span<double> imSpan = im.AsSpan();
+            for (int i = 0; i < values.Length; i++)
+            {
+                reSpan[i] = values[i].Real;
+                imSpan[i] = values[i].Imaginary;
+            }
+
+            return JgsValue.PackedComplexArray(new JgsPackedComplex(re, im));
+        }
+
         var result = new JgsValue[values.Length];
         for (int i = 0; i < values.Length; i++)
         {
@@ -1707,6 +1958,35 @@ internal static class JgsBuiltins
         }
 
         return result;
+    }
+
+    /// <summary>Numeric unpack of a whole array value: packed buffers bulk-copy, boxed arrays convert per element.</summary>
+    private static double[] ToDoubles(string name, JgsValue array, int line, int col)
+    {
+        if (array.IsPacked)
+        {
+            return array.AsBuffer.AsSpan().ToArray(); // both kinds are numeric doubles (bools are 0/1)
+        }
+
+        if (array.IsPackedComplex)
+        {
+            // Zero-imaginary elements read as plain numbers, so an all-real spectrum unpacks fine;
+            // a truly complex element gets the boxed paths' exact guidance.
+            JgsPackedComplex planes = array.AsPackedComplex;
+            ReadOnlySpan<double> im = planes.Im.AsSpan();
+            for (int i = 0; i < im.Length; i++)
+            {
+                if (im[i] != 0)
+                {
+                    throw new JgsRuntimeException(line, col,
+                        $"{name} expects an array of numbers, but element {i} was a complex number — take abs(), real(), or imag() first.");
+                }
+            }
+
+            return planes.Re.AsSpan().ToArray();
+        }
+
+        return ToDoubles(name, array.AsArray, line, col);
     }
 
     private static double[] ToDoubles(string name, JgsValue[] elements, int line, int col)

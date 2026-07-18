@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <RootNamespace>JGraph.Numerics</RootNamespace>
+    <Description>Flat contiguous numeric storage and SIMD kernels for large datasets: dual-strategy buffers (managed / native / memory-mapped chosen by available-RAM policy) and chunked, cancellable TensorPrimitives operations. The only project in the solution that compiles unsafe code.</Description>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.Numerics.Tensors" Version="9.0.5" />
+  </ItemGroup>
+
+</Project>

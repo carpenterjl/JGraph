@@ -1,3 +1,4 @@
+using System.Buffers;
 using System.Numerics;
 
 namespace JGraph.Signal;
@@ -76,7 +77,7 @@ public static class Fft
 
         if (IsPowerOfTwo(n))
         {
-            Radix2(buffer, inverse);
+            Radix2(buffer, n, inverse);
         }
         else if (n <= 32)
         {
@@ -96,10 +97,9 @@ public static class Fft
         }
     }
 
-    private static void Radix2(Complex[] buffer, bool inverse)
+    /// <summary>In-place radix-2 over the first <paramref name="n"/> elements (n a power of two).</summary>
+    private static void Radix2(Complex[] buffer, int n, bool inverse)
     {
-        int n = buffer.Length;
-
         // Bit-reversal permutation.
         for (int i = 1, j = 0; i < n; i++)
         {
@@ -117,24 +117,40 @@ public static class Fft
             }
         }
 
-        double sign = inverse ? 1.0 : -1.0;
-        for (int len = 2; len <= n; len <<= 1)
+        // One pooled table of the n/2 distinct twiddles exp(sign·2πi·k/n), each from a direct
+        // sincos. Stage `len` reads it with stride n/len, replacing the old per-butterfly
+        // `w *= wLen` recurrence — one complex multiply less per butterfly, and no accumulated
+        // rounding drift across a stage.
+        int half = n >> 1;
+        Complex[] twiddles = ArrayPool<Complex>.Shared.Rent(half);
+        try
         {
-            double angle = sign * 2.0 * System.Math.PI / len;
-            var wLen = new Complex(System.Math.Cos(angle), System.Math.Sin(angle));
-            for (int i = 0; i < n; i += len)
+            double step = (inverse ? 2.0 : -2.0) * System.Math.PI / n;
+            for (int k = 0; k < half; k++)
             {
-                Complex w = Complex.One;
-                int half = len >> 1;
-                for (int k = 0; k < half; k++)
+                double angle = step * k;
+                twiddles[k] = new Complex(System.Math.Cos(angle), System.Math.Sin(angle));
+            }
+
+            for (int len = 2; len <= n; len <<= 1)
+            {
+                int halfLen = len >> 1;
+                int stride = n / len;
+                for (int i = 0; i < n; i += len)
                 {
-                    Complex u = buffer[i + k];
-                    Complex v = buffer[i + k + half] * w;
-                    buffer[i + k] = u + v;
-                    buffer[i + k + half] = u - v;
-                    w *= wLen;
+                    for (int k = 0; k < halfLen; k++)
+                    {
+                        Complex u = buffer[i + k];
+                        Complex v = buffer[i + k + halfLen] * twiddles[k * stride];
+                        buffer[i + k] = u + v;
+                        buffer[i + k + halfLen] = u - v;
+                    }
                 }
             }
+        }
+        finally
+        {
+            ArrayPool<Complex>.Shared.Return(twiddles);
         }
     }
 
@@ -147,42 +163,57 @@ public static class Fft
     {
         int n = buffer.Length;
         double sign = inverse ? 1.0 : -1.0;
-
-        // c[j] = exp(sign·iπ·j²/n), with j² reduced mod 2n (the exponent's true period).
-        var chirp = new Complex[n];
-        long modulus = 2L * n;
-        for (int j = 0; j < n; j++)
-        {
-            long j2 = (long)j * j % modulus;
-            double angle = sign * System.Math.PI * j2 / n;
-            chirp[j] = new Complex(System.Math.Cos(angle), System.Math.Sin(angle));
-        }
-
         int m = NextPowerOfTwo((2 * n) - 1);
-        var a = new Complex[m];
-        for (int j = 0; j < n; j++)
-        {
-            a[j] = buffer[j] * chirp[j];
-        }
 
-        var b = new Complex[m];
-        b[0] = Complex.Conjugate(chirp[0]);
-        for (int j = 1; j < n; j++)
+        // The three large scratch arrays (n + 2m Complex ≈ 5n·32 bytes per call) are pooled;
+        // rented arrays hold stale data, so the regions the algorithm assumes are zero-padded
+        // are cleared explicitly before use.
+        var pool = ArrayPool<Complex>.Shared;
+        Complex[] chirpRented = pool.Rent(n);
+        Complex[] a = pool.Rent(m);
+        Complex[] b = pool.Rent(m);
+        try
         {
-            b[j] = b[m - j] = Complex.Conjugate(chirp[j]);
-        }
+            Array.Clear(a, 0, m);
+            Array.Clear(b, 0, m);
+            // c[j] = exp(sign·iπ·j²/n), with j² reduced mod 2n (the exponent's true period).
+            long modulus = 2L * n;
+            for (int j = 0; j < n; j++)
+            {
+                long j2 = (long)j * j % modulus;
+                double angle = sign * System.Math.PI * j2 / n;
+                chirpRented[j] = new Complex(System.Math.Cos(angle), System.Math.Sin(angle));
+            }
 
-        Radix2(a, inverse: false);
-        Radix2(b, inverse: false);
-        for (int j = 0; j < m; j++)
-        {
-            a[j] *= b[j];
-        }
+            for (int j = 0; j < n; j++)
+            {
+                a[j] = buffer[j] * chirpRented[j];
+            }
 
-        Radix2(a, inverse: true);
-        for (int k = 0; k < n; k++)
+            b[0] = Complex.Conjugate(chirpRented[0]);
+            for (int j = 1; j < n; j++)
+            {
+                b[j] = b[m - j] = Complex.Conjugate(chirpRented[j]);
+            }
+
+            Radix2(a, m, inverse: false);
+            Radix2(b, m, inverse: false);
+            for (int j = 0; j < m; j++)
+            {
+                a[j] *= b[j];
+            }
+
+            Radix2(a, m, inverse: true);
+            for (int k = 0; k < n; k++)
+            {
+                buffer[k] = a[k] / m * chirpRented[k]; // the /m completes the radix-2 inverse
+            }
+        }
+        finally
         {
-            buffer[k] = a[k] / m * chirp[k]; // the /m completes the radix-2 inverse
+            pool.Return(chirpRented);
+            pool.Return(a);
+            pool.Return(b);
         }
     }
 
