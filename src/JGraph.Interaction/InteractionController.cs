@@ -92,8 +92,29 @@ public sealed class InteractionController
 
         double factor = e.Delta > 0 ? 1.0 / WheelZoomStep : WheelZoomStep;
         AxesViewState before = AxesViewState.Capture(axes);
+
+        if (axes.Is3D)
+        {
+            // Dolly: scale all three ranges symmetrically about their centers.
+            ScaleAboutCenter(axes.PrimaryXAxis, factor);
+            ScaleAboutCenter(axes.PrimaryYAxis, factor);
+            ScaleAboutCenter(axes.ZAxis, factor);
+            CommitViewChange(axes, before, "Zoom");
+            return;
+        }
+
         Navigation.ZoomAboutPixel(axes, mapper, e.Position, factor);
         CommitViewChange(axes, before, "Zoom");
+    }
+
+    /// <summary>Scales an axis' visible range about its center and pins auto-scale off.</summary>
+    private static void ScaleAboutCenter(AxisModel axis, double factor)
+    {
+        DataRange range = axis.Range;
+        double center = (range.Min + range.Max) / 2;
+        double half = (range.Max - range.Min) / 2 * factor;
+        axis.AutoScale = false;
+        axis.Range = new DataRange(center - half, center + half);
     }
 
     /// <summary>Undoes the last navigation change.</summary>

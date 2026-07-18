@@ -31,6 +31,12 @@ public sealed class RectangleZoomMode : InteractionModeBase
             return;
         }
 
+        // A pixel rectangle has no meaning in a projected 3D view; use the wheel dolly instead.
+        if (axes.Is3D)
+        {
+            return;
+        }
+
         _axes = axes;
         _mapper = mapper;
         _plotArea = plotArea;

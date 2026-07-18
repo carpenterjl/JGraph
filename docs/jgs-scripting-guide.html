@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>JGS Scripting Guide — JGraph</title>
+<style>
+  :root {
+    --bg: #ffffff;
+    --bg-soft: #f6f8fa;
+    --bg-code: #f2f4f7;
+    --fg: #1c2128;
+    --fg-soft: #57606a;
+    --border: #d7dce2;
+    --accent: #2f6feb;
+    --accent-soft: #ddeaff;
+    --kw: #cf222e;
+    --fn: #6639ba;
+    --str: #0a7d33;
+    --num: #0550ae;
+    --com: #7a828e;
+    --warn-bg: #fff8e6;
+    --warn-bd: #e6c200;
+    --sidebar-w: 262px;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0d1117;
+      --bg-soft: #161b22;
+      --bg-code: #161b22;
+      --fg: #e6edf3;
+      --fg-soft: #9aa5b1;
+      --border: #283040;
+      --accent: #58a6ff;
+      --accent-soft: #10243e;
+      --kw: #ff7b72;
+      --fn: #d2a8ff;
+      --str: #7ee787;
+      --num: #79c0ff;
+      --com: #8b949e;
+      --warn-bg: #23200f;
+      --warn-bd: #9e7c00;
+    }
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; scroll-padding-top: 1rem; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--fg);
+    font: 16px/1.65 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  .layout { display: flex; max-width: 1180px; margin: 0 auto; }
+
+  /* Sidebar */
+  nav.toc {
+    width: var(--sidebar-w);
+    flex: 0 0 var(--sidebar-w);
+    position: sticky;
+    top: 0;
+    align-self: flex-start;
+    height: 100vh;
+    overflow-y: auto;
+    padding: 1.6rem 1rem 3rem 1.4rem;
+    border-right: 1px solid var(--border);
+    font-size: 14px;
+  }
+  nav.toc .brand { font-weight: 700; font-size: 18px; letter-spacing: -0.01em; margin-bottom: 0.2rem; }
+  nav.toc .brand span { color: var(--accent); }
+  nav.toc .tag { color: var(--fg-soft); font-size: 12px; margin-bottom: 1.2rem; }
+  nav.toc ul { list-style: none; margin: 0; padding: 0; }
+  nav.toc > ul > li { margin-bottom: 0.15rem; }
+  nav.toc a { display: block; padding: 3px 8px; border-radius: 6px; color: var(--fg-soft); }
+  nav.toc a:hover { background: var(--bg-soft); color: var(--fg); text-decoration: none; }
+  nav.toc .sub { margin-left: 0.55rem; font-size: 13px; }
+  nav.toc .grouplabel { text-transform: uppercase; letter-spacing: 0.06em; font-size: 11px; color: var(--fg-soft); margin: 1.1rem 0 0.3rem 8px; font-weight: 600; }
+
+  main { flex: 1 1 auto; min-width: 0; padding: 1.6rem 2.4rem 6rem; }
+
+  h1 { font-size: 30px; letter-spacing: -0.02em; margin: 0.4rem 0 0.2rem; }
+  h2 { font-size: 23px; letter-spacing: -0.01em; margin: 2.6rem 0 0.6rem; padding-top: 0.4rem; border-bottom: 1px solid var(--border); padding-bottom: 0.35rem; }
+  h3 { font-size: 17px; margin: 1.7rem 0 0.4rem; }
+  p { margin: 0.6rem 0; }
+  .lead { font-size: 18px; color: var(--fg-soft); }
+
+  code { font-family: "SF Mono", "JetBrains Mono", "Cascadia Code", Consolas, monospace; font-size: 0.88em; }
+  p code, li code, td code { background: var(--bg-code); padding: 0.12em 0.4em; border-radius: 5px; border: 1px solid var(--border); white-space: nowrap; }
+
+  pre {
+    background: var(--bg-code);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1rem 1.1rem;
+    overflow-x: auto;
+    font-family: "SF Mono", "JetBrains Mono", "Cascadia Code", Consolas, monospace;
+    font-size: 13.5px;
+    line-height: 1.6;
+  }
+  pre code { background: none; border: none; padding: 0; white-space: pre; }
+  .kw { color: var(--kw); }
+  .fn { color: var(--fn); }
+  .str { color: var(--str); }
+  .num { color: var(--num); }
+  .com { color: var(--com); font-style: italic; }
+
+  table { border-collapse: collapse; width: 100%; margin: 0.8rem 0 1.4rem; font-size: 14.5px; }
+  th, td { text-align: left; padding: 0.5rem 0.7rem; border-bottom: 1px solid var(--border); vertical-align: top; }
+  th { color: var(--fg-soft); font-weight: 600; font-size: 12.5px; text-transform: uppercase; letter-spacing: 0.04em; }
+  tbody tr:hover { background: var(--bg-soft); }
+  td.sig { white-space: nowrap; }
+  td.sig code { background: none; border: none; padding: 0; white-space: nowrap; color: var(--fg); }
+  td.sig .fn { color: var(--fn); font-weight: 600; }
+  .opt { color: var(--fg-soft); font-style: italic; }
+  .tablewrap { overflow-x: auto; }
+
+  .callout {
+    background: var(--warn-bg);
+    border: 1px solid var(--warn-bd);
+    border-left-width: 4px;
+    border-radius: 8px;
+    padding: 0.7rem 1rem;
+    margin: 1rem 0;
+    font-size: 14.5px;
+  }
+  .callout strong { color: var(--fg); }
+  .note {
+    background: var(--accent-soft);
+    border: 1px solid var(--accent);
+    border-left-width: 4px;
+    border-radius: 8px;
+    padding: 0.7rem 1rem;
+    margin: 1rem 0;
+    font-size: 14.5px;
+  }
+
+  .pill { display: inline-block; background: var(--bg-soft); border: 1px solid var(--border); border-radius: 20px; padding: 0.05rem 0.6rem; font-size: 12.5px; color: var(--fg-soft); margin-right: 0.3rem; }
+
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  @media (max-width: 860px) {
+    nav.toc { display: none; }
+    main { padding: 1.2rem 1.2rem 4rem; }
+    .grid2 { grid-template-columns: 1fr; }
+  }
+  footer { color: var(--fg-soft); font-size: 13px; margin-top: 3rem; border-top: 1px solid var(--border); padding-top: 1rem; }
+</style>
+</head>
+<body>
+<div class="layout">
+  <nav class="toc">
+    <div class="brand">J<span>Graph</span> · JGS</div>
+    <div class="tag">Scripting language reference</div>
+    <ul>
+      <li><a href="#intro">What is JGS?</a></li>
+      <li><a href="#running">Running a script</a></li>
+      <div class="grouplabel">Language</div>
+      <li><a href="#basics">Syntax basics</a></li>
+      <li><a href="#types">Values &amp; types</a></li>
+      <li><a href="#operators">Operators</a></li>
+      <li><a href="#arrays">Arrays &amp; indexing</a></li>
+      <li><a href="#masks">Masks &amp; logical indexing</a></li>
+      <li><a href="#matrices">Matrices</a></li>
+      <li><a href="#control">Control flow</a></li>
+      <li><a href="#functions">Defining functions</a></li>
+      <div class="grouplabel">Plotting model</div>
+      <li><a href="#figmodel">Figures, axes &amp; show</a></li>
+      <li><a href="#linespec">Line-spec strings</a></li>
+      <li><a href="#paths">File paths</a></li>
+      <div class="grouplabel">Built-in reference</div>
+      <li><a href="#ref-math" class="sub">Element-wise math</a></li>
+      <li><a href="#ref-construct" class="sub">Array construction</a></li>
+      <li><a href="#ref-reduce" class="sub">Reductions &amp; stats</a></li>
+      <li><a href="#ref-arrayops" class="sub">Array operations</a></li>
+      <li><a href="#ref-logic" class="sub">Logic</a></li>
+      <li><a href="#ref-strings" class="sub">Strings</a></li>
+      <li><a href="#ref-tables" class="sub">Tables &amp; CSV</a></li>
+      <li><a href="#ref-plot" class="sub">Plotting verbs</a></li>
+      <li><a href="#ref-3d" class="sub">3D, contours &amp; colormaps</a></li>
+      <li><a href="#ref-figfiles" class="sub">Figure files</a></li>
+      <li><a href="#ref-misc" class="sub">Output &amp; includes</a></li>
+      <div class="grouplabel">Worked examples</div>
+      <li><a href="#ex-analysis">Data analysis</a></li>
+      <li><a href="#ex-figures">Figure windows</a></li>
+    </ul>
+  </nav>
+
+  <main>
+    <h1 id="intro">JGS Scripting Guide</h1>
+    <p class="lead">JGS (JGraph Script) is a small, MATLAB-flavored language for reading data, doing analysis, and producing plots inside JGraph. This guide is written for an engineer who has never seen JGraph before.</p>
+
+    <h2>What is JGS?</h2>
+    <p><strong>JGraph</strong> is a desktop plotting and figure-editing application. <strong>JGS</strong> is one of its scripting languages — a purpose-built language (alongside the C# and Python engines) designed to feel familiar to anyone who has used MATLAB. You write a <code>.jgs</code> file, run it, and it builds figures and prints results.</p>
+    <p>A JGS script is a sequence of statements executed top to bottom. It does three kinds of work:</p>
+    <ul>
+      <li><strong>Read data</strong> — load CSV/Excel tables from disk.</li>
+      <li><strong>Compute</strong> — array math, statistics, string handling, filtering by condition.</li>
+      <li><strong>Plot</strong> — issue MATLAB-style plotting commands (<code>plot</code>, <code>scatter</code>, <code>subplot</code>, <code>title</code>, …) that draw into a figure, then <code>show</code> it in a window.</li>
+    </ul>
+    <div class="note"><strong>Mental model:</strong> if you know MATLAB or NumPy, you already know 90% of JGS. Arrays are first-class, indexing is by <em>logical mask</em> or by position, and plotting commands act on a single "current figure / current axes" that you switch with <code>figure</code> and <code>subplot</code>.</div>
+
+    <h2 id="running">Running a script</h2>
+    <p>Open the <strong>Script Workspace</strong> in JGraph, create or open a <code>.jgs</code> file, and run it (the editor gives you syntax highlighting, autocomplete, and a debugger). Nothing draws to the screen until the script calls <code>show()</code> — plotting commands accumulate silently into the current figure, and <code>show</code> opens (or updates) a window for it. Re-running a script reuses the same figure windows by number rather than piling up new ones.</p>
+    <p>A script's only access to the outside world is the table readers (<code>readcsv</code>, <code>readxlsx</code>, <code>readtable</code>), the figure-file commands (<code>savefigure</code>, <code>loadfigure</code>, <code>exportfigure</code>), and <code>run</code> for including another script. There is no arbitrary file, network, or system access.</p>
+
+    <!-- ================= LANGUAGE ================= -->
+    <h2 id="basics">Syntax basics</h2>
+    <table>
+      <tbody>
+        <tr><td class="sig"><code>let x = 5</code></td><td>Declare a variable. Reassign later with <code>x = 6</code> (no <code>let</code>).</td></tr>
+        <tr><td class="sig"><code>x += 2</code> &nbsp; <code>x++</code></td><td>Compound assignment (<code>+= -= *= /= %=</code>) and increment/decrement (<code>x++</code>, <code>++x</code>, <code>x--</code>, <code>--x</code>) — full C semantics, also on array elements (<code>a[i] += 1</code>).</td></tr>
+        <tr><td class="sig"><code>let [X, Y] = pair()</code></td><td>Destructuring: bind the elements of a 2-element (or n-element) array to names — how you receive <code>meshgrid</code>'s two matrices.</td></tr>
+        <tr><td class="sig">newline or <code>;</code></td><td>Statements are separated by line breaks or semicolons. Blank lines are ignored.</td></tr>
+        <tr><td class="sig"><code># ...</code> or <code>// ...</code></td><td>Line comment to end of line. (There are no block comments.)</td></tr>
+        <tr><td class="sig"><code>"text"</code> / <code>'text'</code></td><td>Strings — double or single quotes are interchangeable. Escapes: <code>\n \t \r \\ \" \'</code>.</td></tr>
+        <tr><td class="sig"><code>[1, 2, 3]</code></td><td>Array literal. May span multiple lines (line breaks inside <code>[ ]</code> and <code>( )</code> are not statement separators).</td></tr>
+      </tbody>
+    </table>
+    <p>Identifiers start with a letter or <code>_</code> and continue with letters, digits, or <code>_</code>. Numbers are decimal and may use scientific notation (<code>1.5e-3</code>).</p>
+    <pre><code><span class="com"># A first script</span>
+<span class="kw">let</span> x = <span class="fn">linspace</span>(<span class="num">0</span>, <span class="num">6.28</span>, <span class="num">100</span>)   <span class="com"># 100 points, 0 .. 2π</span>
+<span class="kw">let</span> y = <span class="fn">sin</span>(x)                   <span class="com"># element-wise over the array</span>
+<span class="fn">plot</span>(x, y, <span class="str">"r-"</span>)               <span class="com"># red solid line</span>
+<span class="fn">title</span>(<span class="str">"A sine wave"</span>)
+<span class="fn">show</span>()                            <span class="com"># open it in a window</span></code></pre>
+
+    <h2 id="types">Values &amp; types</h2>
+    <p>Every value has one of these types. Values are dynamically typed; builtins report a clear error if you pass the wrong kind.</p>
+    <table>
+      <thead><tr><th>Type</th><th>Example</th><th>Notes</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Number</strong></td><td><code>3</code>, <code>-2.5</code>, <code>1e6</code></td><td>Double-precision floating point. There is no separate integer type.</td></tr>
+        <tr><td><strong>Bool</strong></td><td><code>true</code>, <code>false</code></td><td>Counts as <code>1</code>/<code>0</code> in numeric contexts — e.g. <code>sum(mask)</code> counts the <code>true</code>s.</td></tr>
+        <tr><td><strong>String</strong></td><td><code>"S/N-4471"</code></td><td>Text. Use for IDs, labels, formatting.</td></tr>
+        <tr><td><strong>Array</strong></td><td><code>[1, 2, 3]</code></td><td>Ordered list. May hold mixed types, but numeric builtins expect all-number (or all-bool) arrays.</td></tr>
+        <tr><td><strong>Table</strong></td><td><code>readcsv("log.csv")</code></td><td>An immutable, read-only spreadsheet of named columns (from a file). Access columns with <code>column</code> / <code>textcolumn</code>.</td></tr>
+        <tr><td><strong>Function</strong></td><td><code>fn f(x) { ... }</code></td><td>A named function you define, or a builtin.</td></tr>
+        <tr><td><strong>Null</strong></td><td>—</td><td>The "no value" a command returns (e.g. <code>title</code>). You rarely handle it directly.</td></tr>
+      </tbody>
+    </table>
+
+    <h2 id="operators">Operators</h2>
+    <p>Arithmetic operators <strong>broadcast element-wise</strong> over arrays, exactly like MATLAB/NumPy: a scalar applies to every element, and two equal-length arrays combine pairwise.</p>
+    <table>
+      <thead><tr><th>Operators</th><th>Meaning</th><th>On arrays</th></tr></thead>
+      <tbody>
+        <tr><td><code>+ - * / %</code></td><td>Add, subtract, multiply, divide, remainder</td><td>Element-wise; scalar broadcasts. <code>[1,2,3] * 2</code> → <code>[2,4,6]</code>.</td></tr>
+        <tr><td><code>&lt; &lt;= &gt; &gt;=</code></td><td>Comparisons</td><td>Element-wise when either side is an array → a <strong>bool array (mask)</strong>. <code>temp &gt; 85</code>.</td></tr>
+        <tr><td><code>== !=</code></td><td>Equal / not equal</td><td>Element-wise when either side is an array (works on string arrays too, e.g. <code>ids == "ABC"</code>). Scalar-to-scalar gives one bool.</td></tr>
+        <tr><td><code>&amp;&amp; ||</code></td><td>Logical AND / OR (short-circuit)</td><td>Scalar only, on whole-value truthiness. For element-wise logic use <code>and</code>/<code>or</code>/<code>not</code>.</td></tr>
+        <tr><td><code>!</code> &nbsp; <code>-</code></td><td>Unary NOT / negate</td><td><code>!</code> negates a bool; <code>-</code> negates a number.</td></tr>
+        <tr><td><code>= += -= *= /= %=</code></td><td>Assignment (plain and compound)</td><td>An <em>expression</em> yielding the stored value: <code>a = b = 0</code> chains, <code>let y = (x += 2)</code> works. Compound forms broadcast like their operator: <code>xs += 1</code> is elementwise.</td></tr>
+        <tr><td><code>++ --</code></td><td>Increment / decrement by 1</td><td>Postfix (<code>x++</code>) yields the <em>old</em> value; prefix (<code>++x</code>) the <em>new</em>. Works on variables and array elements; the target must hold a number.</td></tr>
+      </tbody>
+    </table>
+    <p>Precedence, high to low: unary → <code>* / %</code> → <code>+ -</code> → comparisons → <code>== !=</code> → <code>&amp;&amp;</code> → <code>||</code> → assignment (right-associative). Parenthesize with <code>( )</code> as usual.</p>
+    <div class="callout"><strong>Two C-style footguns to know:</strong> (1) since assignment is an expression, <code>if x = 5 { }</code> is legal and assigns — write <code>==</code> to compare (assigning to an <em>undeclared</em> name is still an error, which catches most slips). (2) <code>5--3</code> no longer parses because <code>--</code> is now the decrement operator — write <code>5 - -3</code>.</div>
+    <div class="callout"><strong>Truthiness (MATLAB rule):</strong> an array is truthy only if it is <em>non-empty and every element is truthy</em>. So <code>if temp &gt; 85 { ... }</code> runs only when <em>all</em> readings exceed 85. To ask "any?" or "how many?", use <code>any(mask)</code>, <code>all(mask)</code>, or <code>sum(mask)</code>. To test emptiness, use <code>length(a) &gt; 0</code>.</div>
+
+    <h2 id="arrays">Arrays &amp; indexing</h2>
+    <p>Arrays are the workhorse. Build them with a literal or a constructor (<code>linspace</code>, <code>range</code>, <code>zeros</code>, <code>ones</code>, <code>rand</code>), then transform them with math and the array builtins.</p>
+    <p><strong>Indexing is 0-based.</strong> Both bracket and paren forms work and mean the same thing:</p>
+    <pre><code><span class="kw">let</span> a = [<span class="num">10</span>, <span class="num">20</span>, <span class="num">30</span>, <span class="num">40</span>]
+a[<span class="num">0</span>]        <span class="com"># 10  — first element (bracket form)</span>
+a(<span class="num">2</span>)        <span class="com"># 30  — paren form, identical meaning</span>
+a[<span class="num">1</span>] = <span class="num">99</span>   <span class="com"># assign one element → [10, 99, 30, 40]</span>
+<span class="fn">length</span>(a)   <span class="com"># 4</span></code></pre>
+    <p>Indexing also accepts an <em>array of indices</em> to gather several elements at once, and strings can be indexed the same way (you get back a string):</p>
+    <pre><code>a[[<span class="num">0</span>, <span class="num">3</span>]]   <span class="com"># [10, 40]  — gather by a list of positions</span></code></pre>
+    <div class="callout"><strong>Note:</strong> only single-element assignment (<code>a[i] = v</code>) is supported. There is no member access (<code>obj.field</code>) and no colon-range syntax (<code>a[2:5]</code>) — use <code>slice(a, 2, 5)</code>, <code>range()</code>, or <code>linspace()</code> instead.</div>
+
+    <h2 id="masks">Masks &amp; logical indexing</h2>
+    <p>This is the heart of JGS analysis. A comparison over an array yields a <strong>mask</strong> — a bool array of the same length. Index an array with a mask to keep only the elements where the mask is <code>true</code>:</p>
+    <pre><code><span class="kw">let</span> temp = <span class="fn">column</span>(t, <span class="str">"Temperature"</span>)
+<span class="kw">let</span> hotOnes = temp(temp &gt; <span class="num">85</span>)   <span class="com"># keep readings above 85 (paren or bracket form)</span></code></pre>
+    <p>Masks align across columns, which is what makes "filter the whole dataset by a condition" work. <code>find</code> turns a mask into the matching <strong>row indices</strong>, and those indices map back to <em>every</em> column of the original data — row 3 of one derived array is the same record as row 3 of another:</p>
+    <pre><code><span class="kw">let</span> hot     = <span class="fn">find</span>(temp &gt; <span class="num">85</span>)   <span class="com"># 0-based row numbers where the condition holds</span>
+<span class="kw">let</span> hotIds  = ids[hot]              <span class="com"># the serial numbers of those same rows</span>
+<span class="kw">let</span> hotVolt = volt[hot]              <span class="com"># and their voltages — all still aligned</span></code></pre>
+    <table>
+      <thead><tr><th>Index value</th><th>Behavior</th></tr></thead>
+      <tbody>
+        <tr><td>a single number</td><td>Returns that one element (0-based).</td></tr>
+        <tr><td>a <strong>bool array</strong> (mask)</td><td>Filters — keeps elements where the mask is <code>true</code>. The mask length must equal the array length.</td></tr>
+        <tr><td>a <strong>number array</strong></td><td>Gathers — returns those elements in that order (great with <code>find</code>).</td></tr>
+      </tbody>
+    </table>
+
+    <h2 id="matrices">Matrices</h2>
+    <p>A <strong>matrix</strong> in JGS is simply an array of equal-length row arrays — there is no separate type. Build one with a nested literal, <code>zeros(rows, cols)</code> / <code>ones(rows, cols)</code>, or <code>meshgrid</code>; index it as <code>m[row][col]</code>.</p>
+    <pre><code><span class="kw">let</span> m = [[<span class="num">1</span>, <span class="num">2</span>], [<span class="num">3</span>, <span class="num">4</span>]]
+m[<span class="num">1</span>][<span class="num">0</span>]                       <span class="com"># 3 — row 1, column 0</span>
+<span class="kw">let</span> [X, Y] = <span class="fn">meshgrid</span>([<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>], [<span class="num">10</span>,<span class="num">20</span>])   <span class="com"># coordinate matrices (2 rows x 3 cols)</span></code></pre>
+    <p>Arithmetic operators and the element-wise math builtins recurse into nested arrays, so the classic MATLAB surface recipe works verbatim:</p>
+    <pre><code><span class="kw">let</span> x = <span class="fn">linspace</span>(-<span class="num">8</span>, <span class="num">8</span>, <span class="num">60</span>)
+<span class="kw">let</span> [X, Y] = <span class="fn">meshgrid</span>(x, x)
+<span class="kw">let</span> R = <span class="fn">sqrt</span>(X * X + Y * Y) + <span class="num">0.01</span>
+<span class="fn">surf</span>(x, x, <span class="fn">sin</span>(R) / R)         <span class="com"># the sinc "sombrero"</span></code></pre>
+    <div class="callout"><strong>Limits:</strong> comparisons/masks and the reductions (<code>sum</code>, <code>mean</code>, …) operate on <em>flat</em> arrays only — apply them per row (<code>sum(m[0])</code>) if needed. Matrix arguments to plotting verbs must be rectangular; ragged rows are an error.</div>
+
+    <h2 id="control">Control flow</h2>
+    <div class="grid2">
+      <div>
+        <h3>if / else if / else</h3>
+        <pre><code><span class="kw">if</span> mean(v) &gt; <span class="num">3.3</span> {
+    <span class="fn">print</span>(<span class="str">"high"</span>)
+} <span class="kw">else if</span> mean(v) &gt; <span class="num">3.0</span> {
+    <span class="fn">print</span>(<span class="str">"nominal"</span>)
+} <span class="kw">else</span> {
+    <span class="fn">print</span>(<span class="str">"low"</span>)
+}</code></pre>
+      </div>
+      <div>
+        <h3>while</h3>
+        <pre><code><span class="kw">let</span> i = <span class="num">0</span>
+<span class="kw">while</span> i &lt; <span class="fn">length</span>(devices) {
+    <span class="fn">print</span>(devices[i])
+    i = i + <span class="num">1</span>
+}</code></pre>
+      </div>
+    </div>
+    <div class="grid2">
+      <div>
+        <h3>for … in</h3>
+        <pre><code><span class="kw">for</span> id <span class="kw">in</span> devices {
+    <span class="fn">print</span>(<span class="str">"device:"</span>, id)
+}</code></pre>
+      </div>
+      <div>
+        <h3>break / continue</h3>
+        <pre><code><span class="kw">for</span> v <span class="kw">in</span> readings {
+    <span class="kw">if</span> <span class="fn">isnan</span>(v) { <span class="kw">continue</span> }
+    <span class="kw">if</span> v &gt; limit { <span class="kw">break</span> }
+}</code></pre>
+      </div>
+    </div>
+    <p>Blocks are always delimited by <code>{ }</code>. The condition is not parenthesized (though you may add parens as grouping). <code>break</code> and <code>continue</code> work inside <code>while</code> and <code>for</code>.</p>
+
+    <h2 id="functions">Defining functions</h2>
+    <p>Define reusable functions with <code>fn</code>. Use <code>return</code> to produce a value; a function with no <code>return</code> yields null.</p>
+    <pre><code><span class="kw">fn</span> <span class="fn">rms</span>(a) {
+    <span class="kw">return</span> <span class="fn">sqrt</span>(<span class="fn">mean</span>(a * a))
+}
+
+<span class="kw">let</span> r = <span class="fn">rms</span>([<span class="num">3</span>, <span class="num">4</span>, <span class="num">0</span>])   <span class="com"># 2.886...</span></code></pre>
+    <p>Brace placement is flexible: the <code>{</code> may sit on its own line (after <code>fn</code>, <code>if</code>, <code>for</code>, <code>while</code>, and <code>else</code>), and a function's parameter list may follow its name on the next line. To return several values, return an array and destructure it: <code>return [slope, offset]</code> … <code>let [m, b] = fit(x, y)</code>.</p>
+
+    <!-- ================= PLOTTING MODEL ================= -->
+    <h2 id="figmodel">Figures, axes &amp; show</h2>
+    <p>JGS follows MATLAB's <em>stateful</em> plotting model. There is always a <strong>current figure</strong> and, within it, a <strong>current axes</strong>. Plotting verbs (<code>plot</code>, <code>scatter</code>, <code>bar</code>, …) draw into the current axes; label verbs (<code>title</code>, <code>xlabel</code>, <code>legend</code>, …) modify it.</p>
+    <table>
+      <tbody>
+        <tr><td class="sig"><code><span class="fn">figure</span>()</code></td><td>Start a new figure and make it current. Returns its number (1, 2, 3, …).</td></tr>
+        <tr><td class="sig"><code><span class="fn">figure</span>(<span class="num">2</span>)</code></td><td>Select figure 2 (creating it if needed) and make it current — the way to switch between figures.</td></tr>
+        <tr><td class="sig"><code><span class="fn">subplot</span>(<span class="num">2</span>,<span class="num">1</span>,<span class="num">1</span>)</code></td><td>Split the figure into a 2×1 grid and select cell 1 (<strong>1-based</strong>, row-major) as the current axes.</td></tr>
+        <tr><td class="sig"><code><span class="fn">hold</span>(<span class="kw">true</span>)</code></td><td>Keep existing series when plotting more, so multiple <code>plot</code> calls overlay on one axes. <code>hold(false)</code> replaces.</td></tr>
+        <tr><td class="sig"><code><span class="fn">show</span>()</code></td><td>Open (or refresh) a window for the current figure. <code>show(2)</code> shows figure 2.</td></tr>
+      </tbody>
+    </table>
+    <p>Each figure opens in its own window with the full JGraph chrome — pan, zoom, the property inspector, and export all work just as in the main app. Nothing appears until you call <code>show</code>; re-running the script updates the same numbered windows in place instead of spawning new ones.</p>
+
+    <h2 id="linespec">Line-spec strings</h2>
+    <p><code>plot</code> and the <code>semilog*</code>/<code>loglog</code> verbs take an optional MATLAB-style spec string combining a color, a line style, and a marker (any order; unknown characters are ignored). Example: <code>"r--o"</code> = red, dashed line, circle markers.</p>
+    <div class="grid2">
+      <div>
+        <h3>Colors</h3>
+        <table>
+          <tbody>
+            <tr><td><code>b</code> blue</td><td><code>g</code> green</td></tr>
+            <tr><td><code>r</code> red</td><td><code>c</code> cyan</td></tr>
+            <tr><td><code>m</code> magenta</td><td><code>y</code> yellow</td></tr>
+            <tr><td><code>k</code> black</td><td><code>w</code> white</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div>
+        <h3>Line styles &amp; markers</h3>
+        <table>
+          <tbody>
+            <tr><td><code>-</code> solid</td><td><code>o</code> circle &nbsp; <code>.</code> point</td></tr>
+            <tr><td><code>--</code> dashed</td><td><code>x</code> cross &nbsp; <code>+</code> plus</td></tr>
+            <tr><td><code>:</code> dotted</td><td><code>*</code> star &nbsp; <code>s</code> square</td></tr>
+            <tr><td><code>-.</code> dash-dot</td><td><code>d</code> diamond &nbsp; <code>^ v</code> triangles</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <p class="note">If the spec names a marker but no line style (e.g. <code>"ro"</code>), you get markers only — no connecting line. Include a line style (<code>"-o"</code>) to draw both.</p>
+
+    <h2 id="paths">File paths</h2>
+    <p>Relative paths passed to <code>readcsv</code>, <code>savefigure</code>, etc. resolve against the script's own folder first, then the workspace root. Absolute paths are used as-is. New files written by <code>savefigure</code>/<code>exportfigure</code> land in the working directory (the script's folder / workspace root), not wherever the app happens to be running.</p>
+
+    <!-- ================= BUILTIN REFERENCE ================= -->
+    <h2 id="ref-math">Built-in reference</h2>
+    <p>Every builtin below is available globally. In signatures, an <span class="opt">italic</span> argument is optional. "Element-wise" means the function accepts a single number <em>or</em> a numeric array and returns the same shape.</p>
+
+    <h3 id="ref-math-h">Element-wise math</h3>
+    <div class="tablewrap"><table>
+      <thead><tr><th>Signature</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td class="sig"><code><span class="fn">sin</span>(x)</code> <code><span class="fn">cos</span>(x)</code> <code><span class="fn">tan</span>(x)</code></td><td>Trig functions, x in radians. Element-wise over arrays.</td></tr>
+        <tr><td class="sig"><code><span class="fn">asin</span>(x)</code> <code><span class="fn">acos</span>(x)</code> <code><span class="fn">atan</span>(x)</code></td><td>Inverse trig, result in radians. Element-wise.</td></tr>
+        <tr><td class="sig"><code><span class="fn">atan2</span>(y, x)</code></td><td>Angle of point (x, y) in radians, correct quadrant.</td></tr>
+        <tr><td class="sig"><code><span class="fn">exp</span>(x)</code> <code><span class="fn">log</span>(x)</code> <code><span class="fn">log10</span>(x)</code></td><td>Exponential, natural log, base-10 log. Element-wise.</td></tr>
+        <tr><td class="sig"><code><span class="fn">sqrt</span>(x)</code> <code><span class="fn">abs</span>(x)</code> <code><span class="fn">sign</span>(x)</code></td><td>Square root, absolute value, sign (−1/0/1). Element-wise.</td></tr>
+        <tr><td class="sig"><code><span class="fn">floor</span>(x)</code> <code><span class="fn">ceil</span>(x)</code> <code><span class="fn">round</span>(x)</code></td><td>Round down / up / to nearest (halves away from zero). Element-wise.</td></tr>
+        <tr><td class="sig"><code><span class="fn">pow</span>(x, exponent)</code></td><td>x raised to <code>exponent</code>. Element-wise over x.</td></tr>
+      </tbody>
+    </table></div>
+
+    <h3 id="ref-construct">Array construction</h3>
+    <div class="tablewrap"><table>
+      <thead><tr><th>Signature</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td class="sig"><code><span class="fn">linspace</span>(start, stop, count)</code></td><td><code>count</code> evenly spaced values from <code>start</code> to <code>stop</code>, inclusive.</td></tr>
+        <tr><td class="sig"><code><span class="fn">range</span>(start, stop, <span class="opt">step</span>)</code></td><td>Values from <code>start</code> (inclusive) to <code>stop</code> (exclusive) stepping by <code>step</code> (default 1).</td></tr>
+        <tr><td class="sig"><code><span class="fn">zeros</span>(count, <span class="opt">cols</span>)</code> <code><span class="fn">ones</span>(count, <span class="opt">cols</span>)</code></td><td>An array of <code>count</code> zeros / ones — or, with two arguments, a <code>rows</code>×<code>cols</code> <a href="#matrices">matrix</a>.</td></tr>
+        <tr><td class="sig"><code><span class="fn">meshgrid</span>(x, y)</code></td><td>Returns <code>[X, Y]</code>: coordinate matrices over the <code>x</code>/<code>y</code> vectors (rows follow <code>y</code>). Destructure with <code>let [X, Y] = meshgrid(x, y)</code>.</td></tr>
+        <tr><td class="sig"><code><span class="fn">rand</span>(count)</code></td><td><code>count</code> uniform random values in [0, 1).</td></tr>
+      </tbody>
+    </table></div>
+
+    <h3 id="ref-reduce">Reductions &amp; statistics</h3>
+    <div class="tablewrap"><table>
+      <thead><tr><th>Signature</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td class="sig"><code><span class="fn">length</span>(value)</code> / <code><span class="fn">numel</span>(value)</code></td><td>Number of elements in an array (or characters in a string). Aliases.</td></tr>
+        <tr><td class="sig"><code><span class="fn">sum</span>(array)</code> <code><span class="fn">mean</span>(array)</code></td><td>Sum / arithmetic mean of a numeric array. <code>mean</code> needs a non-empty array.</td></tr>
+        <tr><td class="sig"><code><span class="fn">min</span>(values)</code> <code><span class="fn">max</span>(values)</code></td><td>Smallest / largest — call as <code>min(array)</code> or <code>min(a, b, ...)</code>.</td></tr>
+        <tr><td class="sig"><code><span class="fn">std</span>(array)</code> <code><span class="fn">variance</span>(array)</code></td><td>Sample standard deviation / variance (n−1 denominator). Needs ≥ 2 values.</td></tr>
+        <tr><td class="sig"><code><span class="fn">median</span>(array)</code> <code><span class="fn">mode</span>(array)</code></td><td>Median / most frequent value (smallest wins ties) of a non-empty array.</td></tr>
+        <tr><td class="sig"><code><span class="fn">percentile</span>(array, p)</code></td><td>The p-th percentile (p from 0–100) by linear interpolation.</td></tr>
+        <tr><td class="sig"><code><span class="fn">cumsum</span>(array)</code> <code><span class="fn">cumprod</span>(array)</code></td><td>Running sums / running products.</td></tr>
+        <tr><td class="sig"><code><span class="fn">diff</span>(array)</code></td><td>Adjacent differences (result length n−1).</td></tr>
+      </tbody>
+    </table></div>
+    <div class="callout"><strong>NaN handling:</strong> statistics propagate <code>NaN</code>. Clean data first by filtering with <code>isnan</code> and a mask, e.g. <code>let clean = v(not(isnan(v)))</code>.</div>
+
+    <h3 id="ref-arrayops">Array operations</h3>
+    <div class="tablewrap"><table>
+      <thead><tr><th>Signature</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td class="sig"><code><span class="fn">sort</span>(array, <span class="opt">order</span>)</code></td><td>Sorted copy of a numeric or string array. <code>order</code> is <code>"asc"</code> (default) or <code>"desc"</code>.</td></tr>
+        <tr><td class="sig"><code><span class="fn">unique</span>(array)</code></td><td>Sorted distinct values — the way to build a list of unique IDs.</td></tr>
+        <tr><td class="sig"><code><span class="fn">find</span>(mask)</code></td><td>0-based indices of the truthy elements. <code>find(temp &gt; 85)</code> → matching row numbers.</td></tr>
+        <tr><td class="sig"><code><span class="fn">any</span>(array)</code> <code><span class="fn">all</span>(array)</code></td><td>Whether at least one / every element is truthy.</td></tr>
+        <tr><td class="sig"><code><span class="fn">concat</span>(first, second, ...)</code></td><td>Join arrays and scalars into one array, in order. <code>concat(a, b)</code>, <code>concat(a, 5)</code>.</td></tr>
+        <tr><td class="sig"><code><span class="fn">slice</span>(array, start, <span class="opt">stop</span>)</code></td><td>Elements [start, stop) by 0-based index; <code>stop</code> defaults to the end. Sub-array "from row 75 on" = <code>slice(a, 75)</code>.</td></tr>
+        <tr><td class="sig"><code><span class="fn">indexof</span>(array, value)</code></td><td>0-based index of the first element equal to <code>value</code>, or −1.</td></tr>
+        <tr><td class="sig"><code><span class="fn">reverse</span>(array)</code></td><td>A reversed copy.</td></tr>
+        <tr><td class="sig"><code><span class="fn">isnan</span>(x)</code></td><td>Whether <code>x</code> is NaN. Element-wise over arrays → a mask.</td></tr>
+        <tr><td class="sig"><code><span class="fn">isequal</span>(a, b)</code></td><td>Deep equality (arrays compared element-by-element) as a single bool.</td></tr>
+      </tbody>
+    </table></div>
+
+    <h3 id="ref-logic">Logic</h3>
+    <div class="tablewrap"><table>
+      <thead><tr><th>Signature</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td class="sig"><code><span class="fn">and</span>(a, b)</code> <code><span class="fn">or</span>(a, b)</code></td><td>Element-wise logical AND / OR, broadcasting a scalar across an array. Use these to combine masks: <code>and(temp &gt; 85, volt &lt; 3.0)</code>.</td></tr>
+        <tr><td class="sig"><code><span class="fn">not</span>(a)</code></td><td>Element-wise logical NOT over an array, or of one value.</td></tr>
+      </tbody>
+    </table></div>
+    <p class="note"><code>&amp;&amp;</code>/<code>||</code>/<code>!</code> are the <em>scalar</em>, short-circuiting operators for <code>if</code>/<code>while</code> conditions; <code>and</code>/<code>or</code>/<code>not</code> are the <em>element-wise</em> functions for combining masks.</p>
+
+    <h3 id="ref-strings">Strings</h3>
+    <div class="tablewrap"><table>
+      <thead><tr><th>Signature</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td class="sig"><code><span class="fn">sprintf</span>(format, values...)</code></td><td>C-style formatting: <code>%d %i %f %e %g %s %x %%</code> with width/precision (<code>%.2f</code>, <code>%8d</code>). Returns a string.</td></tr>
+        <tr><td class="sig"><code><span class="fn">str</span>(value)</code></td><td>Any value formatted as a string.</td></tr>
+        <tr><td class="sig"><code><span class="fn">num</span>(text)</code></td><td>Parse a string to a number; <code>NaN</code> if it doesn't parse (filter bad cells with <code>isnan</code>).</td></tr>
+        <tr><td class="sig"><code><span class="fn">upper</span>(text)</code> <code><span class="fn">lower</span>(text)</code> <code><span class="fn">trim</span>(text)</code></td><td>Upper-case, lower-case, strip leading/trailing whitespace.</td></tr>
+        <tr><td class="sig"><code><span class="fn">split</span>(text, separator)</code></td><td>Split into a string array on each occurrence of <code>separator</code>.</td></tr>
+        <tr><td class="sig"><code><span class="fn">join</span>(array, separator)</code></td><td>Join array elements into one string with <code>separator</code> between them.</td></tr>
+        <tr><td class="sig"><code><span class="fn">startswith</span>(text, prefix)</code> <code><span class="fn">endswith</span>(text, suffix)</code></td><td>Prefix / suffix test → bool.</td></tr>
+        <tr><td class="sig"><code><span class="fn">replace</span>(text, old, new)</code></td><td>Replace every occurrence of <code>old</code> with <code>new</code>.</td></tr>
+        <tr><td class="sig"><code><span class="fn">contains</span>(value, search)</code></td><td>Polymorphic: substring test on a string, or membership test on an array.</td></tr>
+      </tbody>
+    </table></div>
+
+    <h3 id="ref-tables">Tables &amp; CSV</h3>
+    <div class="tablewrap"><table>
+      <thead><tr><th>Signature</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td class="sig"><code><span class="fn">readcsv</span>(path, <span class="opt">skiprows</span>)</code></td><td>Read a delimited text file into a table. <code>skiprows</code> discards that many leading junk lines <em>before</em> the header — handy for logs with a preamble of tester names / rig info.</td></tr>
+        <tr><td class="sig"><code><span class="fn">readxlsx</span>(path, <span class="opt">skiprows</span>)</code></td><td>Read the first sheet of an <code>.xlsx</code> workbook into a table.</td></tr>
+        <tr><td class="sig"><code><span class="fn">readtable</span>(path, <span class="opt">skiprows</span>)</code></td><td>Read a <code>.csv/.tsv/.txt/.xlsx</code> file, picking the reader by extension.</td></tr>
+        <tr><td class="sig"><code><span class="fn">colnames</span>(table)</code></td><td>The column names as a string array.</td></tr>
+        <tr><td class="sig"><code><span class="fn">rowcount</span>(table)</code></td><td>The number of data rows.</td></tr>
+        <tr><td class="sig"><code><span class="fn">column</span>(table, name)</code></td><td>A column as a <strong>numeric</strong> array (for plotting / math).</td></tr>
+        <tr><td class="sig"><code><span class="fn">textcolumn</span>(table, name)</code></td><td>A column as a <strong>string</strong> array (missing cells become <code>""</code>) — for serial numbers and IDs.</td></tr>
+      </tbody>
+    </table></div>
+
+    <h3 id="ref-plot">Plotting verbs</h3>
+    <div class="tablewrap"><table>
+      <thead><tr><th>Signature</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td class="sig"><code><span class="fn">plot</span>(y)</code> · <code>(x, y, <span class="opt">spec</span>)</code> · <code>(table, xCol, yCol, <span class="opt">spec</span>)</code></td><td>Line plot. Give just <code>y</code>, an <code>x</code>/<code>y</code> pair with an optional <a href="#linespec">line-spec</a>, or two table columns by name.</td></tr>
+        <tr><td class="sig"><code><span class="fn">scatter</span>(x, y)</code> · <code>(table, xCol, yCol)</code></td><td>Scatter plot.</td></tr>
+        <tr><td class="sig"><code><span class="fn">bar</span>(x, y)</code> · <code>(table, xCol, yCol)</code></td><td>Bar chart.</td></tr>
+        <tr><td class="sig"><code><span class="fn">stem</span>(y)</code> · <code>(x, y)</code></td><td>Stem plot.</td></tr>
+        <tr><td class="sig"><code><span class="fn">histogram</span>(values, <span class="opt">bins</span>)</code> · <code>(table, col, <span class="opt">bins</span>)</code></td><td>Histogram; <code>bins</code> defaults to 10.</td></tr>
+        <tr><td class="sig"><code><span class="fn">errorbar</span>(x, y, error)</code> · <code>(table, xCol, yCol, errCol)</code></td><td>Line plot with symmetric error bars.</td></tr>
+        <tr><td class="sig"><code><span class="fn">semilogx</span>(x, y, <span class="opt">spec</span>)</code> <code><span class="fn">semilogy</span>(...)</code> <code><span class="fn">loglog</span>(...)</code></td><td>Line plots with a log x-axis / log y-axis / both.</td></tr>
+        <tr><td class="sig"><code><span class="fn">title</span>(text)</code> <code><span class="fn">xlabel</span>(text)</code> <code><span class="fn">ylabel</span>(text)</code></td><td>Set the current axes title / axis labels.</td></tr>
+        <tr><td class="sig"><code><span class="fn">xlim</span>(min, max)</code> <code><span class="fn">ylim</span>(min, max)</code></td><td>Set the axis ranges.</td></tr>
+        <tr><td class="sig"><code><span class="fn">grid</span>(<span class="opt">on</span>)</code> <code><span class="fn">hold</span>(<span class="opt">on</span>)</code></td><td>Toggle grid lines / overlay-mode. Both default to on when called with no argument.</td></tr>
+        <tr><td class="sig"><code><span class="fn">legend</span>(names...)</code></td><td>Set the legend — one string per series.</td></tr>
+        <tr><td class="sig"><code><span class="fn">figure</span>(<span class="opt">n</span>)</code></td><td>Start a new figure (or select figure <code>n</code>) and return its 1-based handle.</td></tr>
+        <tr><td class="sig"><code><span class="fn">subplot</span>(rows, cols, index)</code></td><td>Select cell <code>index</code> (1-based, row-major) of a <code>rows</code>×<code>cols</code> grid as the current axes.</td></tr>
+        <tr><td class="sig"><code><span class="fn">show</span>(<span class="opt">fig</span>)</code></td><td>Show the current figure (or figure <code>fig</code>) in its own window.</td></tr>
+      </tbody>
+    </table></div>
+
+    <h3 id="ref-3d">3D surfaces, contours &amp; colormaps</h3>
+    <p>Surface verbs switch the current axes into <strong>3D mode</strong>: it renders as a rotatable coordinate box. <strong>Drag</strong> the plot to rotate the camera, use the <strong>mouse wheel</strong> to zoom in and out, and undo/redo to step the view back. <code>z</code> arguments are <a href="#matrices">matrices</a>; <code>x</code>/<code>y</code> are grid vectors matching its columns/rows.</p>
+    <div class="tablewrap"><table>
+      <thead><tr><th>Signature</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td class="sig"><code><span class="fn">surf</span>(z)</code> · <code>(x, y, z)</code></td><td>Colormap-filled 3D surface with wireframe edges (MATLAB <code>surf</code>).</td></tr>
+        <tr><td class="sig"><code><span class="fn">mesh</span>(z)</code> · <code>(x, y, z)</code></td><td>Wireframe 3D surface colored by height (MATLAB <code>mesh</code>).</td></tr>
+        <tr><td class="sig"><code><span class="fn">meshc</span>(x, y, z)</code></td><td>Wireframe surface plus contour lines projected on the floor of the box.</td></tr>
+        <tr><td class="sig"><code><span class="fn">contour</span>(x, y, z, <span class="opt">levels</span>)</code></td><td>2D iso-line contours at ~8 automatic levels, or the explicit <code>levels</code> array.</td></tr>
+        <tr><td class="sig"><code><span class="fn">contourf</span>(x, y, z, <span class="opt">levels</span>)</code></td><td>Filled contour bands (2D).</td></tr>
+        <tr><td class="sig"><code><span class="fn">imagesc</span>(z)</code></td><td>Heatmap of matrix <code>z</code> over its cell indices (2D).</td></tr>
+        <tr><td class="sig"><code><span class="fn">pcolor</span>(x, y, z)</code></td><td>Heatmap of matrix <code>z</code> stretched over the <code>x</code>/<code>y</code> extents (2D).</td></tr>
+        <tr><td class="sig"><code><span class="fn">zlabel</span>(text)</code> <code><span class="fn">zlim</span>(min, max)</code></td><td>Z-axis label / range of a 3D axes.</td></tr>
+        <tr><td class="sig"><code><span class="fn">view</span>(azimuth, elevation)</code></td><td>Set the camera angles in degrees (MATLAB convention; default −37.5, 30).</td></tr>
+        <tr><td class="sig"><code><span class="fn">colormap</span>(name)</code></td><td>Apply <code>"viridis"</code>, <code>"jet"</code>, <code>"hot"</code>, <code>"cool"</code>, or <code>"gray"</code> to the current axes' surface/contour/image plots.</td></tr>
+        <tr><td class="sig"><code><span class="fn">colorbar</span>(<span class="opt">on</span>)</code></td><td>Show (default) or hide the color scale beside the plot.</td></tr>
+      </tbody>
+    </table></div>
+    <pre><code><span class="com"># The MATLAB "sombrero", rotatable with the mouse</span>
+<span class="kw">let</span> x = <span class="fn">linspace</span>(-<span class="num">8</span>, <span class="num">8</span>, <span class="num">60</span>)
+<span class="kw">let</span> [X, Y] = <span class="fn">meshgrid</span>(x, x)
+<span class="kw">let</span> R = <span class="fn">sqrt</span>(X * X + Y * Y) + <span class="num">0.01</span>
+<span class="fn">surf</span>(x, x, <span class="fn">sin</span>(R) / R)
+<span class="fn">colormap</span>(<span class="str">"jet"</span>)
+<span class="fn">colorbar</span>()
+<span class="fn">view</span>(-<span class="num">37.5</span>, <span class="num">30</span>)
+<span class="fn">title</span>(<span class="str">"sinc(r)"</span>)
+<span class="fn">show</span>()</code></pre>
+    <div class="note"><strong>Practical size cap:</strong> surfaces re-project and depth-sort every cell while you drag; grids up to ~150×150 stay smooth.</div>
+
+    <h3 id="ref-figfiles">Figure files</h3>
+    <div class="tablewrap"><table>
+      <thead><tr><th>Signature</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td class="sig"><code><span class="fn">savefigure</span>(path, <span class="opt">fig</span>)</code></td><td>Save the current figure (or figure <code>fig</code>) as a <code>.graph</code> document (JGraph's native, reopenable format).</td></tr>
+        <tr><td class="sig"><code><span class="fn">loadfigure</span>(path)</code></td><td>Load a <code>.graph</code> document as a new figure, make it current, and return its handle. Subsequent plot verbs and <code>show()</code> target it.</td></tr>
+        <tr><td class="sig"><code><span class="fn">exportfigure</span>(path, <span class="opt">fig</span>)</code></td><td>Export as an image — format follows the extension: <code>png</code>, <code>jpg</code>, <code>bmp</code>, <code>tiff</code>, <code>svg</code>, <code>pdf</code>.</td></tr>
+      </tbody>
+    </table></div>
+
+    <h3 id="ref-misc">Output &amp; includes</h3>
+    <div class="tablewrap"><table>
+      <thead><tr><th>Signature</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td class="sig"><code><span class="fn">print</span>(values...)</code></td><td>Write the values to the console, space-separated, followed by a newline.</td></tr>
+        <tr><td class="sig"><code><span class="fn">run</span>(path)</code></td><td>Run another JGS script into the current scope (MATLAB-style include) — shares variables and functions.</td></tr>
+      </tbody>
+    </table></div>
+
+    <!-- ================= EXAMPLES ================= -->
+    <h2 id="ex-analysis">Worked example — data analysis</h2>
+    <p>A test log where the real table sits below six lines of junk preamble. This parses it, computes per-device statistics, isolates the over-temperature readings across all columns, and plots the result.</p>
+    <pre><code><span class="com"># Skip 6 preamble lines (tester name, date, rig info) before the header row</span>
+<span class="kw">let</span> t = <span class="fn">readcsv</span>(<span class="str">"test_log.csv"</span>, <span class="num">6</span>)
+<span class="fn">print</span>(<span class="str">"columns:"</span>, <span class="fn">join</span>(<span class="fn">colnames</span>(t), <span class="str">", "</span>), <span class="str">" rows:"</span>, <span class="fn">rowcount</span>(t))
+
+<span class="kw">let</span> ids  = <span class="fn">textcolumn</span>(t, <span class="str">"SerialNumber"</span>)   <span class="com"># IDs stay as strings</span>
+<span class="kw">let</span> temp = <span class="fn">column</span>(t, <span class="str">"Temperature"</span>)
+<span class="kw">let</span> volt = <span class="fn">column</span>(t, <span class="str">"Voltage"</span>)
+
+<span class="com"># Per-device summary — build the unique ID list, then filter by string mask</span>
+<span class="kw">let</span> devices = <span class="fn">unique</span>(ids)
+<span class="kw">for</span> id <span class="kw">in</span> devices {
+    <span class="kw">let</span> mask  = ids == id            <span class="com"># element-wise string compare → mask</span>
+    <span class="kw">let</span> temps = temp(mask)           <span class="com"># logical indexing keeps that device's rows</span>
+    <span class="fn">print</span>(<span class="fn">sprintf</span>(<span class="str">"%s: n=%d mean=%.2f std=%.2f p95=%.1f"</span>,
+        id, <span class="fn">sum</span>(mask), <span class="fn">mean</span>(temps), <span class="fn">std</span>(temps), <span class="fn">percentile</span>(temps, <span class="num">95</span>)))
+}
+
+<span class="com"># Over-temp records — find() gives row indices that map back to EVERY column</span>
+<span class="kw">let</span> hot     = <span class="fn">find</span>(temp &gt; <span class="num">85</span>)
+<span class="kw">let</span> hotIds  = ids[hot]
+<span class="kw">let</span> hotVolt = volt[hot]
+<span class="fn">print</span>(<span class="str">"over-temp readings:"</span>, <span class="fn">length</span>(hot), <span class="str">" first id:"</span>, hotIds[<span class="num">0</span>])
+
+<span class="fn">figure</span>()
+<span class="fn">scatter</span>(hotVolt, temp[hot])
+<span class="fn">title</span>(<span class="str">"Voltage vs Temperature (over 85 C)"</span>)
+<span class="fn">xlabel</span>(<span class="str">"Voltage"</span>)
+<span class="fn">ylabel</span>(<span class="str">"Temperature"</span>)
+<span class="fn">grid</span>(<span class="kw">true</span>)
+<span class="fn">show</span>()</code></pre>
+
+    <h2 id="ex-figures">Worked example — multiple figure windows</h2>
+    <p>Two independent figures, each shown in its own window, then saved and exported.</p>
+    <pre><code><span class="kw">let</span> t = <span class="fn">readcsv</span>(<span class="str">"data.csv"</span>)
+<span class="kw">let</span> x = <span class="fn">column</span>(t, <span class="str">"X"</span>)
+<span class="kw">let</span> y = <span class="fn">column</span>(t, <span class="str">"Y"</span>)
+
+<span class="fn">figure</span>(<span class="num">1</span>)                      <span class="com"># Figure 1: a distribution</span>
+<span class="fn">histogram</span>(y, <span class="num">20</span>)
+<span class="fn">title</span>(<span class="str">"Distribution of Y"</span>)
+
+<span class="fn">figure</span>(<span class="num">2</span>)                      <span class="com"># Figure 2: two stacked panels</span>
+<span class="fn">subplot</span>(<span class="num">2</span>, <span class="num">1</span>, <span class="num">1</span>)
+<span class="fn">plot</span>(x, y, <span class="str">"b-o"</span>)
+<span class="fn">title</span>(<span class="str">"Y vs X"</span>)
+<span class="fn">subplot</span>(<span class="num">2</span>, <span class="num">1</span>, <span class="num">2</span>)
+<span class="fn">bar</span>(x, y)
+
+<span class="fn">show</span>(<span class="num">1</span>)                        <span class="com"># open both windows</span>
+<span class="fn">show</span>(<span class="num">2</span>)
+
+<span class="fn">savefigure</span>(<span class="str">"panels.graph"</span>, <span class="num">2</span>)   <span class="com"># reopenable native document</span>
+<span class="fn">exportfigure</span>(<span class="str">"panels.png"</span>, <span class="num">2</span>)   <span class="com"># image, format by extension</span></code></pre>
+
+    <footer>
+      Reference generated from the JGraph source (builtin catalog, lexer, and parser). Signatures and behavior reflect the current build. JGS also runs alongside C# and Python scripting engines in the Script Workspace.
+    </footer>
+  </main>
+</div>
+</body>
+</html>

@@ -52,6 +52,18 @@ public sealed class AxesDto
 
     public bool Visible { get; set; } = true;
 
+    public bool Is3D { get; set; }
+
+    public double Azimuth { get; set; } = -37.5;
+
+    public double Elevation { get; set; } = 30;
+
+    /// <summary>The Z axis of a 3D axes; null in documents written before format version 2.</summary>
+    public AxisDto? ZAxis { get; set; }
+
+    /// <summary>The colorbar; null in documents written before format version 2.</summary>
+    public ColorbarDto? Colorbar { get; set; }
+
     public List<AxisDto> XAxes { get; set; } = new();
 
     public List<AxisDto> YAxes { get; set; } = new();
@@ -111,6 +123,18 @@ public sealed class GridDto
     public LineStyleDto? MajorLineStyle { get; set; }
 
     public LineStyleDto? MinorLineStyle { get; set; }
+}
+
+/// <summary>The serialized form of a <see cref="ColorbarModel"/>.</summary>
+public sealed class ColorbarDto
+{
+    public bool Visible { get; set; }
+
+    public double Width { get; set; } = 18;
+
+    public string? Label { get; set; }
+
+    public TextStyleDto? TickLabelStyle { get; set; }
 }
 
 /// <summary>The serialized form of a <see cref="LegendModel"/>.</summary>

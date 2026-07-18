@@ -143,10 +143,17 @@ internal static class Lexer
                 case '}': type = TokenType.RBrace; lexeme = "}"; break;
                 case ',': type = TokenType.Comma; lexeme = ","; break;
                 case ';': type = TokenType.Newline; lexeme = ";"; break;
+                case '+' when Peek(source, i) == '+': type = TokenType.PlusPlus; lexeme = "++"; break;
+                case '+' when Peek(source, i) == '=': type = TokenType.PlusAssign; lexeme = "+="; break;
                 case '+': type = TokenType.Plus; lexeme = "+"; break;
+                case '-' when Peek(source, i) == '-': type = TokenType.MinusMinus; lexeme = "--"; break;
+                case '-' when Peek(source, i) == '=': type = TokenType.MinusAssign; lexeme = "-="; break;
                 case '-': type = TokenType.Minus; lexeme = "-"; break;
+                case '*' when Peek(source, i) == '=': type = TokenType.StarAssign; lexeme = "*="; break;
                 case '*': type = TokenType.Star; lexeme = "*"; break;
+                case '/' when Peek(source, i) == '=': type = TokenType.SlashAssign; lexeme = "/="; break;
                 case '/': type = TokenType.Slash; lexeme = "/"; break;
+                case '%' when Peek(source, i) == '=': type = TokenType.PercentAssign; lexeme = "%="; break;
                 case '%': type = TokenType.Percent; lexeme = "%"; break;
                 case '=' when Peek(source, i) == '=': type = TokenType.EqualEqual; lexeme = "=="; break;
                 case '=': type = TokenType.Assign; lexeme = "="; break;

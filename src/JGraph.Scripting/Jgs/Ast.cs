@@ -103,6 +103,37 @@ internal sealed class IndexExpr(Expr target, Expr index) : Expr
     public Expr Index { get; } = index;
 }
 
+/// <summary>
+/// An assignment expression <c>target = value</c> or compound form (<c>+=</c>, <c>-=</c>, <c>*=</c>,
+/// <c>/=</c>, <c>%=</c>). <see cref="Target"/> is a <see cref="VariableExpr"/> or <see cref="IndexExpr"/>
+/// (the parser enforces this); the expression evaluates to the stored value.
+/// </summary>
+internal sealed class AssignExpr(Expr target, TokenType op, Expr value) : Expr
+{
+    public Expr Target { get; } = target;
+
+    /// <summary>Assign for plain <c>=</c>, or PlusAssign/MinusAssign/StarAssign/SlashAssign/PercentAssign.</summary>
+    public TokenType Op { get; } = op;
+
+    public Expr Value { get; } = value;
+}
+
+/// <summary>
+/// An increment or decrement, prefix (<c>++x</c>, evaluates to the new value) or postfix
+/// (<c>x++</c>, evaluates to the old value). <see cref="Target"/> is a <see cref="VariableExpr"/>
+/// or <see cref="IndexExpr"/>.
+/// </summary>
+internal sealed class IncDecExpr(Expr target, bool increment, bool prefix) : Expr
+{
+    public Expr Target { get; } = target;
+
+    /// <summary>True for <c>++</c>, false for <c>--</c>.</summary>
+    public bool Increment { get; } = increment;
+
+    /// <summary>True for the prefix form.</summary>
+    public bool Prefix { get; } = prefix;
+}
+
 // --- Statements -----------------------------------------------------------------------------------
 
 /// <summary>A variable declaration <c>let name = value</c>.</summary>
@@ -113,25 +144,18 @@ internal sealed class LetStmt(string name, Expr value) : Stmt
     public Expr Value { get; } = value;
 }
 
-/// <summary>An assignment to an existing variable <c>name = value</c>.</summary>
-internal sealed class AssignStmt(string name, Expr value) : Stmt
+/// <summary>
+/// A destructuring declaration <c>let [a, b] = value</c>: the value must be an array whose length
+/// matches the name count; each element is bound to the corresponding name.
+/// </summary>
+internal sealed class DestructuringLetStmt(IReadOnlyList<string> names, Expr value) : Stmt
 {
-    public string Name { get; } = name;
+    public IReadOnlyList<string> Names { get; } = names;
 
     public Expr Value { get; } = value;
 }
 
-/// <summary>An assignment to an array element <c>target[index] = value</c>.</summary>
-internal sealed class IndexAssignStmt(Expr target, Expr index, Expr value) : Stmt
-{
-    public Expr Target { get; } = target;
-
-    public Expr Index { get; } = index;
-
-    public Expr Value { get; } = value;
-}
-
-/// <summary>An expression evaluated for its effect (e.g. a plotting call).</summary>
+/// <summary>An expression evaluated for its effect (e.g. a plotting call or an assignment).</summary>
 internal sealed class ExprStmt(Expr expression) : Stmt
 {
     public Expr Expression { get; } = expression;

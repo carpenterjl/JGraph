@@ -31,6 +31,13 @@ internal enum TokenType
     RBracket,
     Comma,
     Assign,       // =
+    PlusAssign,   // +=
+    MinusAssign,  // -=
+    StarAssign,   // *=
+    SlashAssign,  // /=
+    PercentAssign, // %=
+    PlusPlus,     // ++
+    MinusMinus,   // --
     Plus,
     Minus,
     Star,

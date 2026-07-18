@@ -150,4 +150,37 @@ public static class AxesExtensions
         axes.Plots.Add(plot);
         return plot;
     }
+
+    /// <summary>
+    /// Adds a 3D surface over <c>z[row, col]</c> sampled at <c>x[col]</c>/<c>y[row]</c> and switches
+    /// the axes into 3D mode. The style selects surf/mesh appearance.
+    /// </summary>
+    public static SurfacePlot AddSurface(
+        this AxesModel axes,
+        double[] x,
+        double[] y,
+        double[,] z,
+        SurfaceStyle style = SurfaceStyle.FilledWithWireframe)
+    {
+        ArgumentNullException.ThrowIfNull(axes);
+        var plot = new SurfacePlot(x, y, z) { Style = style };
+        axes.Plots.Add(plot);
+        axes.Is3D = true;
+        return plot;
+    }
+
+    /// <summary>Adds a 2D contour (or filled contour) plot of <c>z[row, col]</c> and returns it.</summary>
+    public static ContourPlot AddContour(
+        this AxesModel axes,
+        double[] x,
+        double[] y,
+        double[,] z,
+        double[]? levels = null,
+        bool filled = false)
+    {
+        ArgumentNullException.ThrowIfNull(axes);
+        var plot = new ContourPlot(x, y, z) { Levels = levels, Filled = filled };
+        axes.Plots.Add(plot);
+        return plot;
+    }
 }

@@ -74,6 +74,11 @@ internal static class FigureMapper
             EqualAspect = axes.EqualAspect,
             FrameVisible = axes.FrameVisible,
             Visible = axes.Visible,
+            Is3D = axes.Is3D,
+            Azimuth = axes.Azimuth,
+            Elevation = axes.Elevation,
+            ZAxis = ToDto(axes.ZAxis),
+            Colorbar = ToDto(axes.Colorbar),
             Grid = ToDto(axes.Grid),
             Legend = ToDto(axes.Legend),
         };
@@ -113,7 +118,27 @@ internal static class FigureMapper
             EqualAspect = dto.EqualAspect,
             FrameVisible = dto.FrameVisible,
             Visible = dto.Visible,
+            Is3D = dto.Is3D,
+            Azimuth = dto.Azimuth,
+            Elevation = dto.Elevation,
         };
+
+        // The Z axis instance is owned by the AxesModel; apply the serialized state onto it.
+        if (dto.ZAxis is not null)
+        {
+            ApplyAxis(axes.ZAxis, dto.ZAxis);
+        }
+
+        if (dto.Colorbar is not null)
+        {
+            axes.Colorbar.Visible = dto.Colorbar.Visible;
+            axes.Colorbar.Width = dto.Colorbar.Width;
+            axes.Colorbar.Label = dto.Colorbar.Label;
+            if (dto.Colorbar.TickLabelStyle is not null)
+            {
+                axes.Colorbar.TickLabelStyle = DtoConvert.ToTextStyle(dto.Colorbar.TickLabelStyle);
+            }
+        }
 
         if (dto.TitleStyle is not null)
         {
@@ -177,19 +202,24 @@ internal static class FigureMapper
 
     private static AxisModel ToModel(AxisDto dto)
     {
-        var axis = new AxisModel(dto.Orientation, dto.Position)
-        {
-            Scale = dto.Scale,
-            Range = DtoConvert.ToRange(dto.Range),
-            AutoScale = dto.AutoScale,
-            Inverted = dto.Inverted,
-            Label = dto.Label,
-            ShowMajorTicks = dto.ShowMajorTicks,
-            ShowMinorTicks = dto.ShowMinorTicks,
-            ShowTickLabels = dto.ShowTickLabels,
-            TargetMajorTickCount = dto.TargetMajorTickCount,
-            TickLabelFormat = dto.TickLabelFormat,
-        };
+        var axis = new AxisModel(dto.Orientation, dto.Position);
+        ApplyAxis(axis, dto);
+        return axis;
+    }
+
+    /// <summary>Applies serialized axis state onto an existing axis (used for the owned Z axis too).</summary>
+    private static void ApplyAxis(AxisModel axis, AxisDto dto)
+    {
+        axis.Scale = dto.Scale;
+        axis.Range = DtoConvert.ToRange(dto.Range);
+        axis.AutoScale = dto.AutoScale;
+        axis.Inverted = dto.Inverted;
+        axis.Label = dto.Label;
+        axis.ShowMajorTicks = dto.ShowMajorTicks;
+        axis.ShowMinorTicks = dto.ShowMinorTicks;
+        axis.ShowTickLabels = dto.ShowTickLabels;
+        axis.TargetMajorTickCount = dto.TargetMajorTickCount;
+        axis.TickLabelFormat = dto.TickLabelFormat;
 
         if (dto.Categories is not null)
         {
@@ -205,9 +235,15 @@ internal static class FigureMapper
         {
             axis.TickLabelStyle = DtoConvert.ToTextStyle(dto.TickLabelStyle);
         }
-
-        return axis;
     }
+
+    private static ColorbarDto ToDto(ColorbarModel colorbar) => new()
+    {
+        Visible = colorbar.Visible,
+        Width = colorbar.Width,
+        Label = colorbar.Label,
+        TickLabelStyle = DtoConvert.ToDto(colorbar.TickLabelStyle),
+    };
 
     private static GridDto ToDto(GridModel grid) => new()
     {

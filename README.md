@@ -5,8 +5,10 @@ the workflow of the MATLAB figure window — an object model of figures, axes, a
 edit, and interact with — while following modern MVVM and SOLID design. It is renderer-agnostic and
 built for performance (millions of points).
 
-> Status: Milestones 1–19 complete. A working, interactive, editable figure window with line,
-> scatter, bar, stem, histogram, error-bar, and image/heatmap plots; engineering plots (Bode,
+> Status: Milestones 1–20 complete. A working, interactive, editable figure window with line,
+> scatter, bar, stem, histogram, error-bar, and image/heatmap plots; interactive 3D surfaces
+> (surf/mesh/meshc with drag rotation), contour/filled-contour plots, and colorbars;
+> engineering plots (Bode,
 > Nyquist, polar, Smith, spectrogram, eye diagram) with an FFT/DSP library; subplots, linked axes,
 > date/time and category scales, annotations, an Edit mode, a property inspector, a plot browser,
 > a versioned `.graph` save/open format with figure copy/paste, export
@@ -27,6 +29,9 @@ built for performance (millions of points).
   perceptually uniform colormaps).
 - **Engineering plots** — Bode, Nyquist, polar, Smith, spectrogram, and eye diagrams, backed by a
   built-in signal-processing library (FFT, windows, spectrum, STFT, transfer functions).
+- **Interactive 3D** — MATLAB-style `surf`/`mesh`/`meshc` surfaces you rotate with the mouse
+  (undoable camera), plus `contour`/`contourf`, `imagesc`/`pcolor`, colormaps, and colorbars —
+  from scripts (`meshgrid`, matrix math) or either API.
 - **Multi-panel & synchronized** — tile axes into a subplot grid and link their axes so panning or
   zooming one moves the others together.
 - **Numeric and non-numeric axes** — linear and logarithmic, plus date/time and category scales with

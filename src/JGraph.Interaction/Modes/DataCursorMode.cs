@@ -29,6 +29,13 @@ public sealed class DataCursorMode : InteractionModeBase
             return;
         }
 
+        // The 2D mapper cannot invert a 3D projection, so the readout would be meaningless.
+        if (axes.Is3D)
+        {
+            controller.SetDataCursor(null);
+            return;
+        }
+
         PlotHitResult? best = null;
         foreach (PlotObject plot in axes.Plots)
         {

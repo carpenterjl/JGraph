@@ -160,18 +160,25 @@ internal sealed class Interpreter
                 env.Declare(let.Name, Evaluate(let.Value, env));
                 return Completion.Normal;
 
-            case AssignStmt assign:
-                JgsValue assigned = Evaluate(assign.Value, env);
-                if (!env.TryAssign(assign.Name, assigned))
+            case DestructuringLetStmt destructure:
+                JgsValue tuple = Evaluate(destructure.Value, env);
+                if (tuple.Type != JgsType.Array)
                 {
-                    throw new JgsRuntimeException(assign.Line, assign.Column,
-                        $"'{assign.Name}' is not defined. Declare it first with 'let'.");
+                    throw new JgsRuntimeException(destructure.Line, destructure.Column,
+                        $"Destructuring 'let' needs an array on the right-hand side, but got a {tuple.TypeName}.");
                 }
 
-                return Completion.Normal;
+                if (tuple.AsArray.Length != destructure.Names.Count)
+                {
+                    throw new JgsRuntimeException(destructure.Line, destructure.Column,
+                        $"Destructuring 'let' names {destructure.Names.Count} variables, but the array has {tuple.AsArray.Length} elements.");
+                }
 
-            case IndexAssignStmt indexAssign:
-                ExecuteIndexAssign(indexAssign, env);
+                for (int n = 0; n < destructure.Names.Count; n++)
+                {
+                    env.Declare(destructure.Names[n], tuple.AsArray[n]);
+                }
+
                 return Completion.Normal;
 
             case ExprStmt expr:
@@ -210,19 +217,6 @@ internal sealed class Interpreter
             default:
                 throw new JgsRuntimeException(statement.Line, statement.Column, "Unsupported statement.");
         }
-    }
-
-    private void ExecuteIndexAssign(IndexAssignStmt statement, JgsEnvironment env)
-    {
-        JgsValue target = Evaluate(statement.Target, env);
-        if (target.Type != JgsType.Array)
-        {
-            throw new JgsRuntimeException(statement.Line, statement.Column,
-                $"Cannot assign by index into a {target.TypeName}; only arrays support element assignment.");
-        }
-
-        int index = ToIndex(Evaluate(statement.Index, env), target.AsArray.Length, statement.Line, statement.Column);
-        target.AsArray[index] = Evaluate(statement.Value, env);
     }
 
     private Completion ExecuteWhile(WhileStmt statement, JgsEnvironment env)
@@ -321,6 +315,12 @@ internal sealed class Interpreter
             case CallExpr call:
                 return EvaluateCall(call, env);
 
+            case AssignExpr assign:
+                return EvaluateAssign(assign, env);
+
+            case IncDecExpr incDec:
+                return EvaluateIncDec(incDec, env);
+
             default:
                 throw new JgsRuntimeException(expression.Line, expression.Column, "Unsupported expression.");
         }
@@ -354,37 +354,151 @@ internal sealed class Interpreter
     {
         JgsValue left = Evaluate(binary.Left, env);
         JgsValue right = Evaluate(binary.Right, env);
+        return ApplyBinary(binary.Op, left, right, binary);
+    }
 
-        switch (binary.Op)
+    /// <summary>Applies a binary operator to already-evaluated operands (shared with compound assignment).</summary>
+    private JgsValue ApplyBinary(TokenType op, JgsValue left, JgsValue right, Node at)
+    {
+        switch (op)
         {
             case TokenType.EqualEqual:
-                return Equality(left, right, negate: false, binary);
+                return Equality(left, right, negate: false, at);
             case TokenType.BangEqual:
-                return Equality(left, right, negate: true, binary);
+                return Equality(left, right, negate: true, at);
             case TokenType.Plus when left.Type == JgsType.String || right.Type == JgsType.String:
                 return JgsValue.Str(left.Display() + right.Display());
             case TokenType.Plus:
-                return NumericBinary(left, right, (a, b) => a + b, "+", binary.Line, binary.Column);
+                return NumericBinary(left, right, (a, b) => a + b, "+", at.Line, at.Column);
             case TokenType.Minus:
-                return NumericBinary(left, right, (a, b) => a - b, "-", binary.Line, binary.Column);
+                return NumericBinary(left, right, (a, b) => a - b, "-", at.Line, at.Column);
             case TokenType.Star:
-                return NumericBinary(left, right, (a, b) => a * b, "*", binary.Line, binary.Column);
+                return NumericBinary(left, right, (a, b) => a * b, "*", at.Line, at.Column);
             case TokenType.Slash:
-                return NumericBinary(left, right, (a, b) => a / b, "/", binary.Line, binary.Column);
+                return NumericBinary(left, right, (a, b) => a / b, "/", at.Line, at.Column);
             case TokenType.Percent:
-                return NumericBinary(left, right, (a, b) => a % b, "%", binary.Line, binary.Column);
+                return NumericBinary(left, right, (a, b) => a % b, "%", at.Line, at.Column);
             case TokenType.Less:
-                return Compare(left, right, binary, (a, b) => a < b);
+                return Compare(left, right, op, at, (a, b) => a < b);
             case TokenType.LessEqual:
-                return Compare(left, right, binary, (a, b) => a <= b);
+                return Compare(left, right, op, at, (a, b) => a <= b);
             case TokenType.Greater:
-                return Compare(left, right, binary, (a, b) => a > b);
+                return Compare(left, right, op, at, (a, b) => a > b);
             case TokenType.GreaterEqual:
-                return Compare(left, right, binary, (a, b) => a >= b);
+                return Compare(left, right, op, at, (a, b) => a >= b);
             default:
-                throw new JgsRuntimeException(binary.Line, binary.Column, "Unsupported operator.");
+                throw new JgsRuntimeException(at.Line, at.Column, "Unsupported operator.");
         }
     }
+
+    // --- Assignment expressions ---------------------------------------------------------------
+
+    /// <summary>Maps a compound-assignment token to the underlying binary operator.</summary>
+    private static TokenType UnderlyingOp(TokenType op) => op switch
+    {
+        TokenType.PlusAssign => TokenType.Plus,
+        TokenType.MinusAssign => TokenType.Minus,
+        TokenType.StarAssign => TokenType.Star,
+        TokenType.SlashAssign => TokenType.Slash,
+        TokenType.PercentAssign => TokenType.Percent,
+        _ => TokenType.Assign,
+    };
+
+    private JgsValue EvaluateAssign(AssignExpr assign, JgsEnvironment env)
+    {
+        JgsValue rhs = Evaluate(assign.Value, env);
+
+        if (assign.Target is VariableExpr variable)
+        {
+            JgsValue stored = rhs;
+            if (assign.Op != TokenType.Assign)
+            {
+                if (!env.TryGet(variable.Name, out JgsValue current))
+                {
+                    throw NotDefined(variable.Name, assign);
+                }
+
+                stored = ApplyBinary(UnderlyingOp(assign.Op), current, rhs, assign);
+            }
+
+            if (!env.TryAssign(variable.Name, stored))
+            {
+                throw NotDefined(variable.Name, assign);
+            }
+
+            return stored;
+        }
+
+        // The parser guarantees the only other target shape is an array element.
+        var element = (IndexExpr)assign.Target;
+        (JgsValue[] array, int index) = ResolveElement(element, env);
+        JgsValue value = assign.Op == TokenType.Assign
+            ? rhs
+            : ApplyBinary(UnderlyingOp(assign.Op), array[index], rhs, assign);
+        array[index] = value;
+        return value;
+    }
+
+    private JgsValue EvaluateIncDec(IncDecExpr incDec, JgsEnvironment env)
+    {
+        string symbol = incDec.Increment ? "++" : "--";
+        double delta = incDec.Increment ? 1 : -1;
+
+        if (incDec.Target is VariableExpr variable)
+        {
+            if (!env.TryGet(variable.Name, out JgsValue current))
+            {
+                throw NotDefined(variable.Name, incDec);
+            }
+
+            JgsValue updated = JgsValue.Number(RequireIncDecNumber(current, symbol, incDec) + delta);
+            env.TryAssign(variable.Name, updated); // TryGet succeeded, so the binding exists
+            return incDec.Prefix ? updated : current;
+        }
+
+        var element = (IndexExpr)incDec.Target;
+        (JgsValue[] array, int index) = ResolveElement(element, env);
+        JgsValue old = array[index];
+        JgsValue result = JgsValue.Number(RequireIncDecNumber(old, symbol, incDec) + delta);
+        array[index] = result;
+        return incDec.Prefix ? result : old;
+    }
+
+    /// <summary>
+    /// Evaluates an element-assignment target exactly once: the container expression and the index
+    /// expression each evaluate a single time, so <c>a[f(i)] += 1</c> calls <c>f</c> once.
+    /// </summary>
+    private (JgsValue[] Array, int Index) ResolveElement(IndexExpr element, JgsEnvironment env)
+    {
+        JgsValue target = Evaluate(element.Target, env);
+        if (target.Type != JgsType.Array)
+        {
+            throw new JgsRuntimeException(element.Line, element.Column,
+                $"Cannot assign by index into a {target.TypeName}; only arrays support element assignment.");
+        }
+
+        int index = ToIndex(Evaluate(element.Index, env), target.AsArray.Length, element.Line, element.Column);
+        return (target.AsArray, index);
+    }
+
+    private static double RequireIncDecNumber(JgsValue value, string symbol, Node at)
+    {
+        if (value.Type == JgsType.Number)
+        {
+            return value.AsNumber;
+        }
+
+        if (value.Type == JgsType.Bool)
+        {
+            return value.AsBool ? 1 : 0;
+        }
+
+        throw new JgsRuntimeException(at.Line, at.Column,
+            $"'{symbol}' needs a number, but got a {value.TypeName}.");
+    }
+
+    private static JgsRuntimeException NotDefined(string name, Node at) =>
+        new(at.Line, at.Column, $"'{name}' is not defined. Declare it first with 'let'.");
 
     private JgsValue EvaluateIndex(IndexExpr indexExpr, JgsEnvironment env)
     {
@@ -500,7 +614,7 @@ internal sealed class Interpreter
 
     // --- Numeric helpers ----------------------------------------------------------------------
 
-    private JgsValue Compare(JgsValue left, JgsValue right, BinaryExpr binary, Func<double, double, bool> op)
+    private JgsValue Compare(JgsValue left, JgsValue right, TokenType opToken, Node at, Func<double, double, bool> op)
     {
         if (IsNumericScalar(left) && IsNumericScalar(right))
         {
@@ -510,13 +624,13 @@ internal sealed class Interpreter
         // Element-wise over arrays with scalar broadcasting, producing an array of bools (a mask).
         if (left.Type == JgsType.Array || right.Type == JgsType.Array)
         {
-            string symbol = TokenText(binary.Op);
+            string symbol = TokenText(opToken);
             return JgsValue.Array(Broadcast(left, right,
-                (a, b) => JgsValue.Bool(op(a, b)), symbol, binary.Line, binary.Column));
+                (a, b) => JgsValue.Bool(op(a, b)), symbol, at.Line, at.Column));
         }
 
-        throw new JgsRuntimeException(binary.Line, binary.Column,
-            $"Operator '{TokenText(binary.Op)}' needs two numbers, but got {left.TypeName} and {right.TypeName}.");
+        throw new JgsRuntimeException(at.Line, at.Column,
+            $"Operator '{TokenText(opToken)}' needs two numbers, but got {left.TypeName} and {right.TypeName}.");
     }
 
     /// <summary>
@@ -524,7 +638,7 @@ internal sealed class Interpreter
     /// array — so <c>ids == "ABC"</c> yields a mask — and a single bool otherwise. Mismatched element
     /// types compare unequal rather than throwing. Use <c>isequal</c> for whole-value equality.
     /// </summary>
-    private static JgsValue Equality(JgsValue left, JgsValue right, bool negate, BinaryExpr binary)
+    private static JgsValue Equality(JgsValue left, JgsValue right, bool negate, Node at)
     {
         if (left.Type != JgsType.Array && right.Type != JgsType.Array)
         {
@@ -537,7 +651,7 @@ internal sealed class Interpreter
             JgsValue[] b = right.AsArray;
             if (a.Length != b.Length)
             {
-                throw new JgsRuntimeException(binary.Line, binary.Column,
+                throw new JgsRuntimeException(at.Line, at.Column,
                     $"Cannot apply '{(negate ? "!=" : "==")}' to arrays of different lengths ({a.Length} and {b.Length}).");
             }
 
@@ -587,6 +701,13 @@ internal sealed class Interpreter
     /// </summary>
     private static JgsValue[] Broadcast(JgsValue left, JgsValue right, Func<double, double, JgsValue> combine, string symbol, int line, int column)
     {
+        // Nested arrays recurse, so matrices (arrays of row arrays) broadcast elementwise too:
+        // M + M pairs rows, M + scalar spreads the scalar across every row.
+        JgsValue Element(JgsValue a, JgsValue b) =>
+            a.Type == JgsType.Array || b.Type == JgsType.Array
+                ? JgsValue.Array(Broadcast(a, b, combine, symbol, line, column))
+                : combine(RequireNumber(a, symbol, line, column), RequireNumber(b, symbol, line, column));
+
         if (left.Type == JgsType.Array && right.Type == JgsType.Array)
         {
             JgsValue[] a = left.AsArray;
@@ -600,21 +721,20 @@ internal sealed class Interpreter
             var result = new JgsValue[a.Length];
             for (int i = 0; i < result.Length; i++)
             {
-                result[i] = combine(RequireNumber(a[i], symbol, line, column), RequireNumber(b[i], symbol, line, column));
+                result[i] = Element(a[i], b[i]);
             }
 
             return result;
         }
 
-        // One side is a scalar number; broadcast it across the array.
+        // One side is a scalar; broadcast it across the array.
         bool arrayOnLeft = left.Type == JgsType.Array;
         JgsValue[] array = (arrayOnLeft ? left : right).AsArray;
-        double scalar = RequireNumber(arrayOnLeft ? right : left, symbol, line, column);
+        JgsValue scalar = arrayOnLeft ? right : left;
         var broadcast = new JgsValue[array.Length];
         for (int i = 0; i < broadcast.Length; i++)
         {
-            double element = RequireNumber(array[i], symbol, line, column);
-            broadcast[i] = arrayOnLeft ? combine(element, scalar) : combine(scalar, element);
+            broadcast[i] = arrayOnLeft ? Element(array[i], scalar) : Element(scalar, array[i]);
         }
 
         return broadcast;
@@ -633,7 +753,8 @@ internal sealed class Interpreter
             var result = new JgsValue[source.Length];
             for (int i = 0; i < result.Length; i++)
             {
-                result[i] = JgsValue.Number(op(RequireNumber(source[i], symbol, line, column)));
+                // Recurse so matrices (nested arrays) map elementwise as well.
+                result[i] = MapNumeric(source[i], op, symbol, line, column);
             }
 
             return JgsValue.Array(result);

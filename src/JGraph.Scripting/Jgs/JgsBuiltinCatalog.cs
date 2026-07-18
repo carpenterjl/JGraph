@@ -92,8 +92,8 @@ public static class JgsBuiltinCatalog
         // --- Array construction ----------------------------------------------------------------
         Add("linspace", "count evenly spaced values from start to stop, inclusive.", P("start"), P("stop"), P("count"));
         Add("range", "Values from start (inclusive) to stop (exclusive) in steps of step (default 1).", P("start"), P("stop"), Opt("step"));
-        Add("zeros", "An array of count zeros.", P("count"));
-        Add("ones", "An array of count ones.", P("count"));
+        Add("zeros", "An array of count zeros, or a rows-by-cols matrix of zeros.", P("count"), Opt("cols"));
+        Add("ones", "An array of count ones, or a rows-by-cols matrix of ones.", P("count"), Opt("cols"));
         Add("rand", "An array of count uniform random values in [0, 1).", P("count"));
 
         // --- Reductions and inspection ----------------------------------------------------------
@@ -178,6 +178,21 @@ public static class JgsBuiltinCatalog
         Add("hold", "Keeps existing series when plotting more (default on).", Opt("on"));
         Add("legend", "Sets the legend to the given series names (one string per series).", P("names"));
         Add("show", "Shows the current figure (or figure fig) in its own window.", Opt("fig"));
+
+        // --- 3D surfaces, contours, and images -------------------------------------------------
+        Add("meshgrid", "Returns [X, Y] coordinate matrices over the x and y vectors: let [X, Y] = meshgrid(x, y).", P("x"), P("y"));
+        Add("surf", "Colormap-filled 3D surface of matrix z: surf(z) or surf(x, y, z). Drag to rotate.", P("x"), P("y"), P("z"));
+        Add("mesh", "Wireframe 3D surface of matrix z: mesh(z) or mesh(x, y, z).", P("x"), P("y"), P("z"));
+        Add("meshc", "Wireframe 3D surface with contour lines projected on the floor.", P("x"), P("y"), P("z"));
+        Add("contour", "Iso-line contours of matrix z at auto (or explicit) levels.", P("x"), P("y"), P("z"), Opt("levels"));
+        Add("contourf", "Filled contour bands of matrix z at auto (or explicit) levels.", P("x"), P("y"), P("z"), Opt("levels"));
+        Add("imagesc", "Displays matrix z as a colormapped heatmap over its cell indices.", P("z"));
+        Add("pcolor", "Displays matrix z as a colormapped heatmap over the x/y extents.", P("x"), P("y"), P("z"));
+        Add("zlabel", "Sets the z-axis label of a 3D axes.", P("text"));
+        Add("zlim", "Sets the z-axis range of a 3D axes.", P("min"), P("max"));
+        Add("view", "Sets the 3D camera angles in degrees (MATLAB view convention).", P("azimuth"), P("elevation"));
+        Add("colormap", "Applies a built-in colormap (viridis, jet, hot, cool, gray) to the current axes' plots.", P("name"));
+        Add("colorbar", "Shows (default) or hides the current axes' colorbar.", Opt("on"));
         Add("savefigure", "Saves the current figure (or figure fig) as a .graph document.", P("path"), Opt("fig"));
         Add("loadfigure", "Loads a .graph document as a new figure, makes it current, and returns its handle.", P("path"));
         Add("exportfigure", "Exports the current figure (or figure fig) as an image — png/jpg/bmp/tiff/svg/pdf by extension.", P("path"), Opt("fig"));

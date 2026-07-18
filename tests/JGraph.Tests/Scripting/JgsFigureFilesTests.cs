@@ -52,6 +52,43 @@ public class JgsFigureFilesTests : IDisposable
             files ?? new TestFigureFiles()), default);
 
     [Fact]
+    public async Task SurfFigure_SavesLoadsAndExports_EndToEnd()
+    {
+        // M20b E2E: build a 3D sinc surface from JGS, persist it as .graph, re-load it, and
+        // export a PNG — exercising projection + painter rendering through the real exporter.
+        ScriptRunResult result = await Run("""
+            let x = linspace(-8, 8, 40)
+            let [X, Y] = meshgrid(x, x)
+            let R = sqrt(X * X + Y * Y) + 0.01
+            surf(x, x, sin(R) / R)
+            colormap("jet")
+            colorbar()
+            view(-37.5, 30)
+            title("sinc")
+            savefigure("surf.graph")
+            exportfigure("surf.png")
+
+            let restored = loadfigure("surf.graph")
+            print("handle:", restored)
+            show()
+            """);
+
+        Assert.True(result.Success, result.Message);
+        Assert.True(File.Exists(Path.Combine(_directory, "surf.graph")));
+
+        byte[] png = File.ReadAllBytes(Path.Combine(_directory, "surf.png"));
+        Assert.True(png.Length > 10_000, $"surf.png is suspiciously small ({png.Length} bytes)");
+        Assert.Equal(0x89, png[0]); // PNG magic
+        Assert.Equal((byte)'P', png[1]);
+
+        // The re-loaded figure kept its 3D state.
+        (_, FigureModel figure) = Assert.Single(_shown);
+        Assert.True(figure.Axes[0].Is3D);
+        Assert.Equal(-37.5, figure.Axes[0].Azimuth);
+        Assert.True(figure.Axes[0].Colorbar.Visible);
+    }
+
+    [Fact]
     public async Task SaveThenLoad_RoundTripsTheFigure_AndLoadBecomesCurrent()
     {
         ScriptRunResult result = await Run("""

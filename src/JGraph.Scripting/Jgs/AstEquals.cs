@@ -103,6 +103,10 @@ internal static class AstEquals
                 && x.Arguments.Count == y.Arguments.Count
                 && !x.Arguments.Where((e, i) => !ExpressionsEqual(e, y.Arguments[i])).Any(),
             (IndexExpr x, IndexExpr y) => ExpressionsEqual(x.Target, y.Target) && ExpressionsEqual(x.Index, y.Index),
+            (AssignExpr x, AssignExpr y) =>
+                x.Op == y.Op && ExpressionsEqual(x.Target, y.Target) && ExpressionsEqual(x.Value, y.Value),
+            (IncDecExpr x, IncDecExpr y) =>
+                x.Increment == y.Increment && x.Prefix == y.Prefix && ExpressionsEqual(x.Target, y.Target),
             _ => false,
         };
     }
@@ -113,12 +117,8 @@ internal static class AstEquals
     {
         (LetStmt x, LetStmt y) =>
             string.Equals(x.Name, y.Name, StringComparison.Ordinal) && ExpressionsEqual(x.Value, y.Value),
-        (AssignStmt x, AssignStmt y) =>
-            string.Equals(x.Name, y.Name, StringComparison.Ordinal) && ExpressionsEqual(x.Value, y.Value),
-        (IndexAssignStmt x, IndexAssignStmt y) =>
-            ExpressionsEqual(x.Target, y.Target)
-            && ExpressionsEqual(x.Index, y.Index)
-            && ExpressionsEqual(x.Value, y.Value),
+        (DestructuringLetStmt x, DestructuringLetStmt y) =>
+            x.Names.SequenceEqual(y.Names, StringComparer.Ordinal) && ExpressionsEqual(x.Value, y.Value),
         (ExprStmt x, ExprStmt y) => ExpressionsEqual(x.Expression, y.Expression),
         (IfStmt x, IfStmt y) => ExpressionsEqual(x.Condition, y.Condition),
         (WhileStmt x, WhileStmt y) => ExpressionsEqual(x.Condition, y.Condition),

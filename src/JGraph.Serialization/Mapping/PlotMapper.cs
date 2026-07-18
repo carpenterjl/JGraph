@@ -85,6 +85,31 @@ internal static class PlotMapper
                 Interpolate = p.Interpolate,
                 RowZeroAtTop = p.RowZeroAtTop,
             },
+            SurfacePlot p => new SurfacePlotDto
+            {
+                X = p.X.ToArray(),
+                Y = p.Y.ToArray(),
+                Z = ToJagged(p.Z),
+                Colormap = DtoConvert.ToDto(p.Colormap),
+                Style = p.Style,
+                ShowContourBelow = p.ShowContourBelow,
+                EdgeColor = p.EdgeColor,
+                EdgeWidth = p.EdgeWidth,
+                AutoScaleColor = p.AutoScaleColor,
+                ColorMin = p.ColorMin,
+                ColorMax = p.ColorMax,
+            },
+            ContourPlot p => new ContourPlotDto
+            {
+                X = p.X.ToArray(),
+                Y = p.Y.ToArray(),
+                Z = ToJagged(p.Z),
+                Levels = p.Levels?.ToArray(),
+                LevelCount = p.LevelCount,
+                Filled = p.Filled,
+                Colormap = DtoConvert.ToDto(p.Colormap),
+                LineWidth = p.LineWidth,
+            },
             PolarGrid p => new PolarGridDto
             {
                 MaxRadius = p.MaxRadius,
@@ -182,6 +207,25 @@ internal static class PlotMapper
                 ColorMax = d.ColorMax,
                 Interpolate = d.Interpolate,
                 RowZeroAtTop = d.RowZeroAtTop,
+            },
+            SurfacePlotDto d => new SurfacePlot(d.X, d.Y, To2D(d.Z))
+            {
+                Colormap = DtoConvert.ToColormap(d.Colormap),
+                Style = d.Style,
+                ShowContourBelow = d.ShowContourBelow,
+                EdgeColor = d.EdgeColor,
+                EdgeWidth = d.EdgeWidth,
+                AutoScaleColor = d.AutoScaleColor,
+                ColorMin = d.ColorMin,
+                ColorMax = d.ColorMax,
+            },
+            ContourPlotDto d => new ContourPlot(d.X, d.Y, To2D(d.Z))
+            {
+                Levels = d.Levels,
+                LevelCount = d.LevelCount,
+                Filled = d.Filled,
+                Colormap = DtoConvert.ToColormap(d.Colormap),
+                LineWidth = d.LineWidth,
             },
             PolarGridDto d => ApplyGridLabels(new PolarGrid
             {

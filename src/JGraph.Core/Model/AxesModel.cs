@@ -18,6 +18,9 @@ public sealed class AxesModel : GraphObject
     private double _autoScalePadding = 0.05;
     private bool _equalAspect;
     private bool _frameVisible = true;
+    private bool _is3D;
+    private double _azimuth = -37.5;
+    private double _elevation = 30;
 
     public AxesModel()
     {
@@ -31,6 +34,11 @@ public sealed class AxesModel : GraphObject
         Grid.SetParent(this);
         Legend = new LegendModel();
         Legend.SetParent(this);
+        Colorbar = new ColorbarModel();
+        Colorbar.SetParent(this);
+
+        ZAxis = new AxisModel(AxisOrientation.Vertical, AxisPosition.Left) { Name = "ZAxis" };
+        ZAxis.SetParent(this);
 
         XAxes.Add(new AxisModel(AxisOrientation.Horizontal, AxisPosition.Bottom));
         YAxes.Add(new AxisModel(AxisOrientation.Vertical, AxisPosition.Left));
@@ -57,6 +65,15 @@ public sealed class AxesModel : GraphObject
 
     /// <summary>The legend (hidden until enabled).</summary>
     public LegendModel Legend { get; }
+
+    /// <summary>The colorbar (hidden until enabled). Legends the first color-mapped plot's colormap.</summary>
+    public ColorbarModel Colorbar { get; }
+
+    /// <summary>
+    /// The Z axis. Always constructed so its label/range/tick configuration persists, but only
+    /// consulted (for autoscale, projection, and drawing) when <see cref="Is3D"/> is true.
+    /// </summary>
+    public AxisModel ZAxis { get; }
 
     /// <summary>The primary (first) X axis.</summary>
     public AxisModel PrimaryXAxis => XAxes[0];
@@ -125,6 +142,34 @@ public sealed class AxesModel : GraphObject
         set => SetProperty(ref _frameVisible, value, InvalidationKind.Render);
     }
 
+    /// <summary>
+    /// When true, this axes renders as a 3D coordinate box: plots implementing the 3D drawing
+    /// interface are projected through the camera angles below, and dragging rotates the view
+    /// instead of panning. Set automatically by the surface-plot verbs.
+    /// </summary>
+    [Category("3D View"), DisplayName("3D")]
+    public bool Is3D
+    {
+        get => _is3D;
+        set => SetProperty(ref _is3D, value, InvalidationKind.Layout);
+    }
+
+    /// <summary>The camera azimuth in degrees (rotation about the vertical axis; MATLAB view() convention).</summary>
+    [Category("3D View")]
+    public double Azimuth
+    {
+        get => _azimuth;
+        set => SetProperty(ref _azimuth, value, InvalidationKind.Render);
+    }
+
+    /// <summary>The camera elevation in degrees, clamped to [-90, 90].</summary>
+    [Category("3D View")]
+    public double Elevation
+    {
+        get => _elevation;
+        set => SetProperty(ref _elevation, System.Math.Clamp(value, -90, 90), InvalidationKind.Render);
+    }
+
     /// <summary>Adds a secondary X axis at the given position and returns it.</summary>
     public AxisModel AddXAxis(AxisPosition position = AxisPosition.Top)
     {
@@ -158,6 +203,37 @@ public sealed class AxesModel : GraphObject
     {
         UpdateAxisBounds(XAxes, isX: true);
         UpdateAxisBounds(YAxes, isX: false);
+        UpdateZAxisBounds();
+    }
+
+    /// <summary>Unions the Z extents of visible 3D plots into <see cref="ZAxis"/> (all 3D plots share it).</summary>
+    private void UpdateZAxisBounds()
+    {
+        DataRange bounds = DataRange.Empty;
+        foreach (PlotObject plot in Plots)
+        {
+            if (plot.Visible && plot is IHasZData zData)
+            {
+                DataRange plotBounds = zData.GetZDataBounds();
+                if (!plotBounds.IsEmpty)
+                {
+                    bounds = bounds.Union(plotBounds);
+                }
+            }
+        }
+
+        ZAxis.DataBounds = bounds;
+
+        if (ZAxis.AutoScale)
+        {
+            DataRange fitted = bounds.IsEmpty ? DataRange.Unit : bounds.EnsureValid();
+            if (_autoScalePadding > 0 && fitted.IsValid)
+            {
+                fitted = ExpandForScale(fitted, ZAxis.Scale, _autoScalePadding);
+            }
+
+            ZAxis.Range = fitted;
+        }
     }
 
     private void UpdateAxisBounds(GraphObjectCollection<AxisModel> axes, bool isX)

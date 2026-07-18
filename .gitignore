@@ -1,7 +1,7 @@
 ## .NET build output
 [Bb]in/
 [Oo]bj/
-[Dd]ebug/
+[Bb]in/[Dd]ebug/
 [Rr]elease/
 x64/
 x86/

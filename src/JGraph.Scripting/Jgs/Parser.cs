@@ -48,6 +48,7 @@ internal sealed class Parser
 
     private IReadOnlyList<Stmt> ParseBlock()
     {
+        SkipSeparators(); // allow the '{' on its own line after fn/if/for/while headers
         Expect(TokenType.LBrace, "'{'");
         var statements = new List<Stmt>();
         SkipSeparators();
@@ -95,6 +96,23 @@ internal sealed class Parser
     private Stmt ParseLet(Token start)
     {
         Advance(); // 'let'
+
+        // Destructuring form: let [a, b] = expr
+        if (Match(TokenType.LBracket))
+        {
+            var names = new List<string>();
+            do
+            {
+                names.Add(Expect(TokenType.Identifier, "a variable name").Text);
+            }
+            while (Match(TokenType.Comma));
+
+            Expect(TokenType.RBracket, "']'");
+            Expect(TokenType.Assign, "'='");
+            Expr tuple = ParseExpression();
+            return new DestructuringLetStmt(names, tuple) { Line = start.Line, Column = start.Column };
+        }
+
         Token name = Expect(TokenType.Identifier, "a variable name");
         Expect(TokenType.Assign, "'='");
         Expr value = ParseExpression();
@@ -105,6 +123,7 @@ internal sealed class Parser
     {
         Advance(); // 'fn'
         Token name = Expect(TokenType.Identifier, "a function name");
+        SkipSeparators(); // allow the parameter list on its own line after the name
         Expect(TokenType.LParen, "'('");
         var parameters = new List<string>();
         if (!Check(TokenType.RParen))
@@ -132,6 +151,7 @@ internal sealed class Parser
         SkipSeparators();
         if (Match(TokenType.Else))
         {
+            SkipSeparators(); // allow 'else' and its 'if'/'{' on separate lines
             elseBranch = Check(TokenType.If)
                 ? new[] { ParseStatement() }   // 'else if' chains as a single nested statement
                 : ParseBlock();
@@ -169,26 +189,41 @@ internal sealed class Parser
         return new ReturnStmt(value) { Line = start.Line, Column = start.Column };
     }
 
-    private Stmt ParseAssignmentOrExpression(Token start)
-    {
-        Expr target = ParseExpression();
-        if (Match(TokenType.Assign))
-        {
-            Expr value = ParseExpression();
-            return target switch
-            {
-                VariableExpr variable => new AssignStmt(variable.Name, value) { Line = start.Line, Column = start.Column },
-                IndexExpr index => new IndexAssignStmt(index.Target, index.Index, value) { Line = start.Line, Column = start.Column },
-                _ => throw Error(start, "The left-hand side of '=' must be a variable or an array element."),
-            };
-        }
-
-        return new ExprStmt(target) { Line = start.Line, Column = start.Column };
-    }
+    private Stmt ParseAssignmentOrExpression(Token start) =>
+        new ExprStmt(ParseExpression()) { Line = start.Line, Column = start.Column };
 
     // --- Expressions --------------------------------------------------------------------------
 
-    private Expr ParseExpression() => ParseOr();
+    private static readonly TokenType[] AssignmentOperators =
+    [
+        TokenType.Assign, TokenType.PlusAssign, TokenType.MinusAssign,
+        TokenType.StarAssign, TokenType.SlashAssign, TokenType.PercentAssign,
+    ];
+
+    private Expr ParseExpression() => ParseAssignment();
+
+    private Expr ParseAssignment()
+    {
+        Expr left = ParseOr();
+        if (AssignmentOperators.Contains(Current.Type))
+        {
+            Token op = Advance();
+            Expr value = ParseAssignment(); // right-associative: a = b = 0
+            RequireAssignable(left, op);
+            return new AssignExpr(left, op.Type, value) { Line = op.Line, Column = op.Column };
+        }
+
+        return left;
+    }
+
+    /// <summary>Rejects assignment/increment targets that are not a variable or an array element.</summary>
+    private static void RequireAssignable(Expr target, Token op)
+    {
+        if (target is not (VariableExpr or IndexExpr))
+        {
+            throw Error(op, $"The left-hand side of '{op.Text}' must be a variable or an array element.");
+        }
+    }
 
     private Expr ParseOr()
     {
@@ -250,6 +285,18 @@ internal sealed class Parser
             return new UnaryExpr(op.Type, operand) { Line = op.Line, Column = op.Column };
         }
 
+        if (Check(TokenType.PlusPlus) || Check(TokenType.MinusMinus))
+        {
+            Token op = Advance();
+            Expr target = ParseUnary();
+            RequireAssignable(target, op);
+            return new IncDecExpr(target, op.Type == TokenType.PlusPlus, prefix: true)
+            {
+                Line = op.Line,
+                Column = op.Column,
+            };
+        }
+
         return ParsePostfix();
     }
 
@@ -280,6 +327,16 @@ internal sealed class Parser
                 Expr index = ParseExpression();
                 Expect(TokenType.RBracket, "']'");
                 expr = new IndexExpr(expr, index) { Line = bracket.Line, Column = bracket.Column };
+            }
+            else if (Check(TokenType.PlusPlus) || Check(TokenType.MinusMinus))
+            {
+                Token op = Advance();
+                RequireAssignable(expr, op);
+                expr = new IncDecExpr(expr, op.Type == TokenType.PlusPlus, prefix: false)
+                {
+                    Line = op.Line,
+                    Column = op.Column,
+                };
             }
             else
             {

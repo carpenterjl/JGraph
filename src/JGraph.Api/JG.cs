@@ -209,6 +209,114 @@ public static class JG
         return axes.AddImage(values);
     }
 
+    /// <summary>Displays a scalar field as a colormapped image over explicit X/Y extents (MATLAB <c>pcolor</c>).</summary>
+    public static ImagePlot Pcolor(double[] x, double[] y, double[,] values)
+    {
+        ArgumentNullException.ThrowIfNull(x);
+        ArgumentNullException.ThrowIfNull(y);
+        ArgumentNullException.ThrowIfNull(values);
+        AxesModel axes = PrepareAxes();
+        ImagePlot image = axes.AddImage(
+            values,
+            VectorExtent(x, values.GetLength(1)),
+            VectorExtent(y, values.GetLength(0)));
+        image.RowZeroAtTop = false; // row 0 is y[0] (the low end), math convention
+        return image;
+    }
+
+    /// <summary>Plots a colormap-filled 3D surface (MATLAB <c>surf</c>) and switches the axes to 3D.</summary>
+    public static SurfacePlot Surf(double[] x, double[] y, double[,] z)
+    {
+        AxesModel axes = PrepareAxes();
+        return axes.AddSurface(x, y, z, SurfaceStyle.FilledWithWireframe);
+    }
+
+    /// <summary>Plots a surface of <c>z[row, col]</c> with unit-spaced X/Y (MATLAB <c>surf(Z)</c>).</summary>
+    public static SurfacePlot Surf(double[,] z) => Surf(Ramp(z.GetLength(1)), Ramp(z.GetLength(0)), z);
+
+    /// <summary>Plots a wireframe 3D surface (MATLAB <c>mesh</c>) and switches the axes to 3D.</summary>
+    public static SurfacePlot Mesh(double[] x, double[] y, double[,] z)
+    {
+        AxesModel axes = PrepareAxes();
+        return axes.AddSurface(x, y, z, SurfaceStyle.Wireframe);
+    }
+
+    /// <summary>Plots a wireframe surface with unit-spaced X/Y (MATLAB <c>mesh(Z)</c>).</summary>
+    public static SurfacePlot Mesh(double[,] z) => Mesh(Ramp(z.GetLength(1)), Ramp(z.GetLength(0)), z);
+
+    /// <summary>Plots a wireframe surface with contour lines on the floor (MATLAB <c>meshc</c>).</summary>
+    public static SurfacePlot MeshC(double[] x, double[] y, double[,] z)
+    {
+        SurfacePlot surface = Mesh(x, y, z);
+        surface.ShowContourBelow = true;
+        return surface;
+    }
+
+    /// <summary>Plots iso-line contours of a scalar field (MATLAB <c>contour</c>).</summary>
+    public static ContourPlot Contour(double[] x, double[] y, double[,] z, double[]? levels = null)
+    {
+        AxesModel axes = PrepareAxes();
+        return axes.AddContour(x, y, z, levels);
+    }
+
+    /// <summary>Plots filled contour bands of a scalar field (MATLAB <c>contourf</c>).</summary>
+    public static ContourPlot ContourF(double[] x, double[] y, double[,] z, double[]? levels = null)
+    {
+        AxesModel axes = PrepareAxes();
+        return axes.AddContour(x, y, z, levels, filled: true);
+    }
+
+    /// <summary>Sets the current Z axis label.</summary>
+    public static void ZLabel(string text) => Gca().ZAxis.Label = text;
+
+    /// <summary>Sets the current Z axis limits and disables auto-scaling on it.</summary>
+    public static void ZLim(double min, double max)
+    {
+        AxisModel axis = Gca().ZAxis;
+        axis.AutoScale = false;
+        axis.Range = new DataRange(min, max);
+    }
+
+    /// <summary>Sets the current axes' 3D camera angles in degrees (MATLAB <c>view(az, el)</c>).</summary>
+    public static void View(double azimuth, double elevation)
+    {
+        AxesModel axes = Gca();
+        axes.Azimuth = azimuth;
+        axes.Elevation = elevation;
+    }
+
+    /// <summary>
+    /// Applies a built-in colormap ("viridis", "jet", "hot", "cool", "gray") to every color-mapped
+    /// plot in the current axes (MATLAB <c>colormap</c>).
+    /// </summary>
+    public static void Colormap(string name)
+    {
+        if (!Core.Drawing.Colormap.TryGetByName(name, out Core.Drawing.Colormap map))
+        {
+            throw new ArgumentException(
+                $"Unknown colormap '{name}'. Known colormaps: {string.Join(", ", Core.Drawing.Colormap.KnownNames)}.");
+        }
+
+        foreach (PlotObject plot in Gca().Plots)
+        {
+            switch (plot)
+            {
+                case ImagePlot image:
+                    image.Colormap = map;
+                    break;
+                case SurfacePlot surface:
+                    surface.Colormap = map;
+                    break;
+                case ContourPlot contour:
+                    contour.Colormap = map;
+                    break;
+            }
+        }
+    }
+
+    /// <summary>Shows or hides the current axes' colorbar (MATLAB <c>colorbar</c>).</summary>
+    public static void Colorbar(bool on = true) => Gca().Colorbar.Visible = on;
+
     /// <summary>Reads a table from a file (MATLAB <c>readtable</c>); <c>.xlsx</c> uses the workbook reader.</summary>
     public static Table ReadTable(string path, ImportOptions? options = null)
     {
@@ -460,6 +568,36 @@ public static class JG
         var figure = new FigureModel();
         _currentAxes = null;
         return figure;
+    }
+
+    /// <summary>The data extent of a grid vector (falls back to 0..count for empty/degenerate input).</summary>
+    private static DataRange VectorExtent(double[] values, int count)
+    {
+        if (values.Length == 0)
+        {
+            return new DataRange(0, System.Math.Max(count, 1));
+        }
+
+        double min = values[0];
+        double max = values[0];
+        foreach (double v in values)
+        {
+            min = System.Math.Min(min, v);
+            max = System.Math.Max(max, v);
+        }
+
+        return max > min ? new DataRange(min, max) : new DataRange(min, min + 1);
+    }
+
+    private static double[] Ramp(int count)
+    {
+        var values = new double[count];
+        for (int i = 0; i < count; i++)
+        {
+            values[i] = i;
+        }
+
+        return values;
     }
 
     /// <summary>Whether two normalized-bounds rectangles refer to the same subplot cell.</summary>

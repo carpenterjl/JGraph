@@ -106,4 +106,38 @@ public sealed class Colormap
         "Grayscale",
         Colors.Black,
         Colors.White);
+
+    /// <summary>The names accepted by <see cref="TryGetByName"/>, for error messages and completion.</summary>
+    public static IReadOnlyList<string> KnownNames { get; } = ["viridis", "jet", "hot", "cool", "gray"];
+
+    /// <summary>
+    /// Looks up a built-in colormap by name, case-insensitively ("gray" and "grayscale" both match
+    /// the grayscale map). Used by the scripting <c>colormap(name)</c> verb and deserialization.
+    /// </summary>
+    public static bool TryGetByName(string? name, out Colormap colormap)
+    {
+        colormap = Viridis;
+        if (string.IsNullOrWhiteSpace(name))
+        {
+            return false;
+        }
+
+        Colormap? found = name.Trim().ToLowerInvariant() switch
+        {
+            "viridis" => Viridis,
+            "jet" => Jet,
+            "hot" => Hot,
+            "cool" => Cool,
+            "gray" or "grey" or "grayscale" or "greyscale" => Grayscale,
+            _ => null,
+        };
+
+        if (found is null)
+        {
+            return false;
+        }
+
+        colormap = found;
+        return true;
+    }
 }

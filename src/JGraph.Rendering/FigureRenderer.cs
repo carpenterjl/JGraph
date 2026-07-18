@@ -106,6 +106,36 @@ public sealed class FigureRenderer
         // Axes background.
         context.DrawRectangle(plotArea, stroke: null, fill: axes.Background);
 
+        // 3D axes take a separate path: an axonometric box with projected plots instead of the 2D
+        // grid/frame/tick machinery. The returned info still carries the 2D transform so hit-testing
+        // and wheel routing (which only need the plot rectangle) keep working.
+        if (axes.Is3D)
+        {
+            Render3DContent(axes, context, theme, plotArea);
+
+            if (!string.IsNullOrEmpty(axes.Title))
+            {
+                context.DrawText(
+                    axes.Title,
+                    new Point2D(plotArea.CenterX, plotArea.Top - LabelPadding),
+                    axes.TitleStyle,
+                    HorizontalAlignment.Center,
+                    VerticalAlignment.Bottom);
+            }
+
+            if (axes.Legend.Visible)
+            {
+                LegendRenderer.Draw(context, axes, plotArea, theme);
+            }
+
+            if (axes.Colorbar.Visible)
+            {
+                ColorbarRenderer.Draw(context, axes, plotArea, theme);
+            }
+
+            return new AxesRenderInfo(axes, plotArea, transform);
+        }
+
         // Grid (below data).
         DrawGrid(context, axes.Grid, plotArea, transform, xTicks, yTicks);
 
@@ -137,7 +167,201 @@ public sealed class FigureRenderer
             LegendRenderer.Draw(context, axes, plotArea, theme);
         }
 
+        // Colorbar (its width was reserved by MeasureDecorations).
+        if (axes.Colorbar.Visible)
+        {
+            ColorbarRenderer.Draw(context, axes, plotArea, theme);
+        }
+
         return new AxesRenderInfo(axes, plotArea, transform);
+    }
+
+    /// <summary>
+    /// Renders a 3D axes' content: the far faces of the coordinate box with grid lines, every plot
+    /// implementing <see cref="I3DDrawable"/> projected through the shared camera, and tick/axis
+    /// labels along adaptively chosen front edges. 2D-only plots are skipped.
+    /// </summary>
+    private static void Render3DContent(AxesModel axes, IRenderContext context, ITheme theme, Rect2D plotArea)
+    {
+        AxisModel xAxis = axes.PrimaryXAxis;
+        AxisModel yAxis = axes.PrimaryYAxis;
+        AxisModel zAxis = axes.ZAxis;
+        DataRange xr = xAxis.Range, yr = yAxis.Range, zr = zAxis.Range;
+
+        var projection = new Projection3D(xr, yr, zr, axes.Azimuth, axes.Elevation, plotArea);
+
+        TickSet xTicks = TickGenerators.For(xAxis).Generate(xr, xAxis.TargetMajorTickCount, xAxis.TickLabelFormat);
+        TickSet yTicks = TickGenerators.For(yAxis).Generate(yr, yAxis.TargetMajorTickCount, yAxis.TickLabelFormat);
+        TickSet zTicks = TickGenerators.For(zAxis).Generate(zr, zAxis.TargetMajorTickCount, zAxis.TickLabelFormat);
+
+        // The far value of each axis is the one whose face center sits deeper (painter order: the
+        // three far faces carry the grid; plots draw over them; labels go on the near edges).
+        double CenterDepth(double x, double y, double z) => projection.Project(x, y, z).Depth;
+        double xMid = (xr.Min + xr.Max) / 2, yMid = (yr.Min + yr.Max) / 2, zMid = (zr.Min + zr.Max) / 2;
+        double xFar = CenterDepth(xr.Min, yMid, zMid) <= CenterDepth(xr.Max, yMid, zMid) ? xr.Min : xr.Max;
+        double yFar = CenterDepth(xMid, yr.Min, zMid) <= CenterDepth(xMid, yr.Max, zMid) ? yr.Min : yr.Max;
+        double zFar = CenterDepth(xMid, yMid, zr.Min) <= CenterDepth(xMid, yMid, zr.Max) ? zr.Min : zr.Max;
+        double xNear = xFar == xr.Min ? xr.Max : xr.Min;
+        double yNear = yFar == yr.Min ? yr.Max : yr.Min;
+
+        context.PushClip(plotArea);
+
+        var frameStyle = new LineStyle(theme.AxisLine, 1);
+        var gridStyle = new LineStyle(theme.AxisLine.WithOpacity(0.25), 1);
+
+        void Line3D(double x1, double y1, double z1, double x2, double y2, double z2, LineStyle style) =>
+            context.DrawLine(projection.ProjectPoint(x1, y1, z1), projection.ProjectPoint(x2, y2, z2), style);
+
+        // Floor (z = zFar): grid at x and y ticks.
+        foreach (Tick t in xTicks.MajorTicks)
+        {
+            Line3D(t.Value, yr.Min, zFar, t.Value, yr.Max, zFar, gridStyle);
+        }
+
+        foreach (Tick t in yTicks.MajorTicks)
+        {
+            Line3D(xr.Min, t.Value, zFar, xr.Max, t.Value, zFar, gridStyle);
+        }
+
+        // Back face at x = xFar (spans y and z).
+        foreach (Tick t in yTicks.MajorTicks)
+        {
+            Line3D(xFar, t.Value, zr.Min, xFar, t.Value, zr.Max, gridStyle);
+        }
+
+        foreach (Tick t in zTicks.MajorTicks)
+        {
+            Line3D(xFar, yr.Min, t.Value, xFar, yr.Max, t.Value, gridStyle);
+        }
+
+        // Back face at y = yFar (spans x and z).
+        foreach (Tick t in xTicks.MajorTicks)
+        {
+            Line3D(t.Value, yFar, zr.Min, t.Value, yFar, zr.Max, gridStyle);
+        }
+
+        foreach (Tick t in zTicks.MajorTicks)
+        {
+            Line3D(xr.Min, yFar, t.Value, xr.Max, yFar, t.Value, gridStyle);
+        }
+
+        // Outlines of the three far faces.
+        Line3D(xr.Min, yr.Min, zFar, xr.Max, yr.Min, zFar, frameStyle);
+        Line3D(xr.Min, yr.Max, zFar, xr.Max, yr.Max, zFar, frameStyle);
+        Line3D(xr.Min, yr.Min, zFar, xr.Min, yr.Max, zFar, frameStyle);
+        Line3D(xr.Max, yr.Min, zFar, xr.Max, yr.Max, zFar, frameStyle);
+        Line3D(xFar, yr.Min, zr.Min, xFar, yr.Min, zr.Max, frameStyle);
+        Line3D(xFar, yr.Max, zr.Min, xFar, yr.Max, zr.Max, frameStyle);
+        Line3D(xr.Min, yFar, zr.Min, xr.Min, yFar, zr.Max, frameStyle);
+        Line3D(xr.Max, yFar, zr.Min, xr.Max, yFar, zr.Max, frameStyle);
+
+        // Plot content.
+        IReadOnlyList<Color> palette = theme.SeriesPalette;
+        int colorIndex = 0;
+        foreach (PlotObject plot in axes.Plots.InDrawOrder())
+        {
+            Color seriesColor = palette.Count > 0 ? palette[colorIndex % palette.Count] : Colors.Black;
+            colorIndex++;
+            if (plot.Visible && plot is I3DDrawable drawable)
+            {
+                var state = new RenderState(new NormalizedCoordinateMapper(plotArea), plotArea, seriesColor);
+                drawable.Render3D(context, projection, state);
+            }
+        }
+
+        context.PopClip();
+
+        // Tick labels along the front-bottom edges (drawn unclipped so they may sit in the margins).
+        Point2D floorCenter = projection.ProjectPoint(xMid, yMid, zFar);
+
+        void EdgeLabel(string text, Point2D anchor, TextStyle style, double push)
+        {
+            double dx = anchor.X - floorCenter.X;
+            double dy = anchor.Y - floorCenter.Y;
+            double length = System.Math.Sqrt((dx * dx) + (dy * dy));
+            if (length < 1e-6)
+            {
+                dx = 0;
+                dy = 1;
+                length = 1;
+            }
+
+            var position = new Point2D(anchor.X + (dx / length * push), anchor.Y + (dy / length * push));
+            context.DrawText(text, position, style, HorizontalAlignment.Center, VerticalAlignment.Middle);
+        }
+
+        if (xAxis.ShowTickLabels)
+        {
+            foreach (Tick t in xTicks.MajorTicks)
+            {
+                EdgeLabel(t.Label, projection.ProjectPoint(t.Value, yNear, zFar), xAxis.TickLabelStyle, 14);
+            }
+        }
+
+        if (yAxis.ShowTickLabels)
+        {
+            foreach (Tick t in yTicks.MajorTicks)
+            {
+                EdgeLabel(t.Label, projection.ProjectPoint(xNear, t.Value, zFar), yAxis.TickLabelStyle, 14);
+            }
+        }
+
+        // Z ticks on the leftmost vertical box edge.
+        (double zx, double zy) = LeftmostVerticalEdge(projection, xr, yr, zMid);
+        if (zAxis.ShowTickLabels)
+        {
+            foreach (Tick t in zTicks.MajorTicks)
+            {
+                Point2D p = projection.ProjectPoint(zx, zy, t.Value);
+                context.DrawText(
+                    t.Label,
+                    new Point2D(p.X - 8, p.Y),
+                    zAxis.TickLabelStyle,
+                    HorizontalAlignment.Right,
+                    VerticalAlignment.Middle);
+            }
+        }
+
+        // Axis titles at the edge midpoints, pushed further out than the tick labels.
+        if (!string.IsNullOrEmpty(xAxis.Label))
+        {
+            EdgeLabel(xAxis.Label, projection.ProjectPoint(xMid, yNear, zFar), xAxis.LabelStyle, 34);
+        }
+
+        if (!string.IsNullOrEmpty(yAxis.Label))
+        {
+            EdgeLabel(yAxis.Label, projection.ProjectPoint(xNear, yMid, zFar), yAxis.LabelStyle, 34);
+        }
+
+        if (!string.IsNullOrEmpty(zAxis.Label))
+        {
+            Point2D p = projection.ProjectPoint(zx, zy, zMid);
+            context.DrawText(
+                zAxis.Label,
+                new Point2D(p.X - 34, p.Y),
+                zAxis.LabelStyle,
+                HorizontalAlignment.Center,
+                VerticalAlignment.Bottom,
+                rotationDegrees: -90);
+        }
+    }
+
+    /// <summary>Picks the vertical box edge that projects leftmost on screen, for the Z scale.</summary>
+    private static (double X, double Y) LeftmostVerticalEdge(Projection3D projection, DataRange xr, DataRange yr, double zMid)
+    {
+        (double X, double Y) best = (xr.Min, yr.Min);
+        double bestPx = double.PositiveInfinity;
+        foreach ((double x, double y) in new[] { (xr.Min, yr.Min), (xr.Min, yr.Max), (xr.Max, yr.Min), (xr.Max, yr.Max) })
+        {
+            double px = projection.ProjectPoint(x, y, zMid).X;
+            if (px < bestPx)
+            {
+                bestPx = px;
+                best = (x, y);
+            }
+        }
+
+        return best;
     }
 
     /// <summary>
@@ -221,6 +445,8 @@ public sealed class FigureRenderer
         {
             top += context.MeasureText(axes.Title, axes.TitleStyle).Height + LabelPadding;
         }
+
+        right += ColorbarRenderer.MeasureReservedWidth(axes, context);
 
         return new DecorationMetrics(
             new Thickness(left, top, right, bottom),

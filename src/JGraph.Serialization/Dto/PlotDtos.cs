@@ -17,6 +17,8 @@ namespace JGraph.Serialization.Dto;
 [JsonDerivedType(typeof(HistogramPlotDto), "histogram")]
 [JsonDerivedType(typeof(ErrorBarPlotDto), "errorbar")]
 [JsonDerivedType(typeof(ImagePlotDto), "image")]
+[JsonDerivedType(typeof(SurfacePlotDto), "surface")]
+[JsonDerivedType(typeof(ContourPlotDto), "contour")]
 [JsonDerivedType(typeof(PolarGridDto), "polarGrid")]
 [JsonDerivedType(typeof(SmithGridDto), "smithGrid")]
 [JsonDerivedType(typeof(EyeDiagramPlotDto), "eyeDiagram")]
@@ -162,6 +164,50 @@ public sealed class ImagePlotDto : PlotDto
     public bool Interpolate { get; set; }
 
     public bool RowZeroAtTop { get; set; } = true;
+}
+
+public sealed class SurfacePlotDto : PlotDto
+{
+    public double[] X { get; set; } = Array.Empty<double>();
+
+    public double[] Y { get; set; } = Array.Empty<double>();
+
+    public double[][] Z { get; set; } = Array.Empty<double[]>();
+
+    public ColormapDto Colormap { get; set; } = new("Viridis", Array.Empty<Color>());
+
+    public SurfaceStyle Style { get; set; } = SurfaceStyle.FilledWithWireframe;
+
+    public bool ShowContourBelow { get; set; }
+
+    public Color? EdgeColor { get; set; }
+
+    public double EdgeWidth { get; set; } = 0.75;
+
+    public bool AutoScaleColor { get; set; } = true;
+
+    public double ColorMin { get; set; }
+
+    public double ColorMax { get; set; } = 1;
+}
+
+public sealed class ContourPlotDto : PlotDto
+{
+    public double[] X { get; set; } = Array.Empty<double>();
+
+    public double[] Y { get; set; } = Array.Empty<double>();
+
+    public double[][] Z { get; set; } = Array.Empty<double[]>();
+
+    public double[]? Levels { get; set; }
+
+    public int LevelCount { get; set; } = 8;
+
+    public bool Filled { get; set; }
+
+    public ColormapDto Colormap { get; set; } = new("Viridis", Array.Empty<Color>());
+
+    public double LineWidth { get; set; } = 1.5;
 }
 
 public sealed class PolarGridDto : PlotDto

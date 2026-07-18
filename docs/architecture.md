@@ -367,19 +367,42 @@ language — reusing the whole functional API rather than exposing a new one:
     (Scripting still references neither project); loaded figures join the registry and behave like
     any other handle. Workspace `.graph` double-clicks open numbered windows through the same path.
 
+13. **C-style expression syntax (M20a).** Assignment became a lowest-precedence, right-associative
+    *expression* (`AssignExpr`/`IncDecExpr` replaced the old assignment statements): `+= -= *= /= %=`
+    and prefix/postfix `++`/`--` work on variables and array elements with single evaluation of
+    index targets, compound forms reuse the shared binary-operator dispatch (so `xs += 1`
+    broadcasts), and `let` is still required for first bindings. The parser also allows newlines
+    before a block's `{`, between a function name and its parameter list, and after `else`; and
+    `let [X, Y] = expr` destructures an array into names (the consumer of `meshgrid`).
+
+14. **Interactive 3D plotting (M20b).** 3D is a mode of `AxesModel` (`Is3D`, an owned `ZAxis`,
+    `Azimuth`/`Elevation`); `Projection3D` (JGraph.Math) implements MATLAB's `view` camera as a pure
+    normalized-cube axonometric projection, and `FigureRenderer`'s 3D branch draws the far box faces
+    plus grid and dispatches plots implementing `I3DDrawable` — no render-context changes, surfaces
+    are depth-sorted `DrawPolygon` quads (painter's algorithm). `SurfacePlot` covers
+    surf/mesh/meshc; `ContourPlot` covers contour/contourf via `MarchingSquares` (per-cell band
+    fills); `imagesc`/`pcolor` reuse `ImagePlot`; `ColorbarRenderer` legends the first
+    `IColorMapped` plot. Dragging rotates (PanMode when `Is3D`), the wheel dollies X/Y/Z, and the
+    camera rides the existing `AxesViewState` undo. JGS matrices are arrays of row arrays —
+    elementwise operators and math builtins recurse into nested arrays, `meshgrid` returns `[X, Y]`,
+    and 13 new builtins expose the verbs. `.graph` format version 2 adds the 3D axes fields and the
+    surface/contour DTOs (v1 documents load unchanged).
+
 See [ADR 0012](adr/0012-scripting-hosts.md), [ADR 0013](adr/0013-custom-scripting-language.md),
 [ADR 0014](adr/0014-script-workspace-and-docking-shell.md),
 [ADR 0015](adr/0015-jgs-debugger.md),
 [ADR 0016](adr/0016-set-next-statement-and-live-edit.md),
 [ADR 0017](adr/0017-completion-and-signature-help.md),
 [ADR 0018](adr/0018-workspace-browser-and-path-completion.md),
-[ADR 0019](adr/0019-jgs-data-analysis-stdlib.md), and
-[ADR 0020](adr/0020-script-managed-figure-windows.md); the
+[ADR 0019](adr/0019-jgs-data-analysis-stdlib.md),
+[ADR 0020](adr/0020-script-managed-figure-windows.md),
+[ADR 0021](adr/0021-jgs-c-style-expression-semantics.md), and
+[ADR 0022](adr/0022-3d-plotting-over-the-2d-pipeline.md); the
 [data-import walkthrough](import-guide.md) and the `examples/` scripts show all three languages in use.
 
 ## Status
 
-Implemented through Milestone 19 — a working, Matlab-like figure window you can edit, save, publish, extend, feed with imported data, and drive with scripts:
+Implemented through Milestone 20 — a working, Matlab-like figure window you can edit, save, publish, extend, feed with imported data, and drive with scripts:
 
 - **M1** object model, math services (transforms, ticks, decimation), rendering abstractions.
 - **M2** SkiaSharp render context, `FigureRenderer` (chrome + plots), WPF `FigureControl`,
@@ -442,6 +465,12 @@ Implemented through Milestone 19 — a working, Matlab-like figure window you ca
   (`figure()`/`figure(n)`), a number-carrying show seam, the app's `FigureWindowService` opening one
   full figure window per handle (reused across re-runs; main window untouched), and the
   `savefigure`/`loadfigure`/`exportfigure` builtins over the host-callback `IScriptFigureFiles`.
+- **M20** C-style JGS syntax and interactive 3D plotting: compound assignment and `++`/`--` with
+  full expression semantics, lenient brace/newline placement, destructuring `let [X, Y] = ...`;
+  rotatable `surf`/`mesh`/`meshc` surfaces (drag to rotate, wheel to dolly, undoable camera),
+  `contour`/`contourf`, `imagesc`/`pcolor`, `colormap` + a rendered colorbar, `zlabel`/`zlim`/`view`,
+  matrix-aware JGS arithmetic (`meshgrid`, `zeros(r, c)`, recursive elementwise ops), and `.graph`
+  format version 2 persisting 3D axes and surfaces.
 
 The `JGraph.Demo` gallery exercises the plot types, annotations, and both APIs;
 `JGraph.Application` is the interactive figure window with data import and scripting.

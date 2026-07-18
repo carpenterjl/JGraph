@@ -544,6 +544,85 @@ internal static class JgsBuiltins
         Define("histogram", (args, line, col) => Histogram(args, line, col));
         Define("errorbar", (args, line, col) => ErrorBar(args, line, col));
 
+        // --- 3D surfaces, contours, and images -----------------------------------------------
+        Define("meshgrid", (args, line, col) =>
+        {
+            Arity("meshgrid", args, 2, line, col);
+            double[] x = DoubleArray("meshgrid", args, 0, line, col);
+            double[] y = DoubleArray("meshgrid", args, 1, line, col);
+
+            var xRows = new JgsValue[y.Length];
+            var yRows = new JgsValue[y.Length];
+            for (int r = 0; r < y.Length; r++)
+            {
+                var xRow = new JgsValue[x.Length];
+                var yRow = new JgsValue[x.Length];
+                for (int c = 0; c < x.Length; c++)
+                {
+                    xRow[c] = JgsValue.Number(x[c]);
+                    yRow[c] = JgsValue.Number(y[r]);
+                }
+
+                xRows[r] = JgsValue.Array(xRow);
+                yRows[r] = JgsValue.Array(yRow);
+            }
+
+            return JgsValue.Array([JgsValue.Array(xRows), JgsValue.Array(yRows)]);
+        });
+
+        Define("surf", (args, line, col) => Surface3D("surf", args, line, col,
+            (x, y, z) => JG.Surf(x, y, z), z => JG.Surf(z)));
+        Define("mesh", (args, line, col) => Surface3D("mesh", args, line, col,
+            (x, y, z) => JG.Mesh(x, y, z), z => JG.Mesh(z)));
+        Define("meshc", (args, line, col) => Surface3D("meshc", args, line, col,
+            (x, y, z) => JG.MeshC(x, y, z), z => { JG.Mesh(z).ShowContourBelow = true; }));
+
+        Define("contour", (args, line, col) => Contour("contour", args, line, col, filled: false));
+        Define("contourf", (args, line, col) => Contour("contourf", args, line, col, filled: true));
+
+        Define("imagesc", (args, line, col) =>
+        {
+            Arity("imagesc", args, 1, line, col);
+            JG.Image(Matrix("imagesc", args, 0, line, col));
+            return JgsValue.Null;
+        });
+
+        Define("pcolor", (args, line, col) =>
+        {
+            Arity("pcolor", args, 3, line, col);
+            JG.Pcolor(
+                DoubleArray("pcolor", args, 0, line, col),
+                DoubleArray("pcolor", args, 1, line, col),
+                Matrix("pcolor", args, 2, line, col));
+            return JgsValue.Null;
+        });
+
+        Define("zlabel", (args, line, col) => { Arity("zlabel", args, 1, line, col); JG.ZLabel(Str("zlabel", args, 0, line, col)); return JgsValue.Null; });
+        Define("zlim", (args, line, col) => { Arity("zlim", args, 2, line, col); JG.ZLim(Num("zlim", args, 0, line, col), Num("zlim", args, 1, line, col)); return JgsValue.Null; });
+        Define("view", (args, line, col) => { Arity("view", args, 2, line, col); JG.View(Num("view", args, 0, line, col), Num("view", args, 1, line, col)); return JgsValue.Null; });
+
+        Define("colormap", (args, line, col) =>
+        {
+            Arity("colormap", args, 1, line, col);
+            try
+            {
+                JG.Colormap(Str("colormap", args, 0, line, col));
+            }
+            catch (ArgumentException ex)
+            {
+                throw new JgsRuntimeException(line, col, ex.Message);
+            }
+
+            return JgsValue.Null;
+        });
+
+        Define("colorbar", (args, line, col) =>
+        {
+            ArityRange("colorbar", args, 0, 1, line, col);
+            JG.Colorbar(args.Count == 0 || Truthy(args, 0));
+            return JgsValue.Null;
+        });
+
         Define("semilogy", (args, line, col) => Semilog("semilogy", args, line, col, (x, y, s) => JG.SemilogY(x, y, s)));
         Define("semilogx", (args, line, col) => Semilog("semilogx", args, line, col, (x, y, s) => JG.SemilogX(x, y, s)));
         Define("loglog", (args, line, col) => Semilog("loglog", args, line, col, (x, y, s) => JG.LogLog(x, y, s)));
@@ -741,6 +820,58 @@ internal static class JgsBuiltins
         return JgsValue.Null;
     }
 
+    /// <summary>Dispatches surf/mesh/meshc: (z) with a matrix, or (x, y, z) with grid vectors.</summary>
+    private static JgsValue Surface3D(string name, IReadOnlyList<JgsValue> args, int line, int col,
+        Action<double[], double[], double[,]> full, Action<double[,]> zOnly)
+    {
+        if (args.Count == 1)
+        {
+            zOnly(Matrix(name, args, 0, line, col));
+            return JgsValue.Null;
+        }
+
+        Arity(name, args, 3, line, col);
+        double[] x = DoubleArray(name, args, 0, line, col);
+        double[] y = DoubleArray(name, args, 1, line, col);
+        double[,] z = Matrix(name, args, 2, line, col);
+        try
+        {
+            full(x, y, z);
+        }
+        catch (ArgumentException ex)
+        {
+            throw new JgsRuntimeException(line, col, ex.Message);
+        }
+
+        return JgsValue.Null;
+    }
+
+    private static JgsValue Contour(string name, IReadOnlyList<JgsValue> args, int line, int col, bool filled)
+    {
+        ArityRange(name, args, 3, 4, line, col);
+        double[] x = DoubleArray(name, args, 0, line, col);
+        double[] y = DoubleArray(name, args, 1, line, col);
+        double[,] z = Matrix(name, args, 2, line, col);
+        double[]? levels = args.Count == 4 ? DoubleArray(name, args, 3, line, col) : null;
+        try
+        {
+            if (filled)
+            {
+                JG.ContourF(x, y, z, levels);
+            }
+            else
+            {
+                JG.Contour(x, y, z, levels);
+            }
+        }
+        catch (ArgumentException ex)
+        {
+            throw new JgsRuntimeException(line, col, ex.Message);
+        }
+
+        return JgsValue.Null;
+    }
+
     private static JgsValue Semilog(string name, IReadOnlyList<JgsValue> args, int line, int col, Action<double[], double[], string?> apply)
     {
         ArityRange(name, args, 2, 3, line, col);
@@ -751,11 +882,31 @@ internal static class JgsBuiltins
 
     private static JgsValue Filled(string name, IReadOnlyList<JgsValue> args, double value, int line, int col)
     {
-        Arity(name, args, 1, line, col);
+        ArityRange(name, args, 1, 2, line, col);
         int count = Count(name, args, 0, line, col);
         if (count < 0)
         {
             throw new JgsRuntimeException(line, col, $"{name} needs a non-negative count.");
+        }
+
+        // Two arguments build a rows x cols matrix (an array of row arrays).
+        if (args.Count == 2)
+        {
+            int cols = Count(name, args, 1, line, col);
+            if (cols < 0)
+            {
+                throw new JgsRuntimeException(line, col, $"{name} needs a non-negative count.");
+            }
+
+            var rows = new JgsValue[count];
+            for (int r = 0; r < count; r++)
+            {
+                var row = new JgsValue[cols];
+                System.Array.Fill(row, JgsValue.Number(value));
+                rows[r] = JgsValue.Array(row);
+            }
+
+            return JgsValue.Array(rows);
         }
 
         var result = new JgsValue[count];
@@ -963,12 +1114,8 @@ internal static class JgsBuiltins
             var result = new JgsValue[source.Length];
             for (int i = 0; i < source.Length; i++)
             {
-                if (source[i].Type is not (JgsType.Number or JgsType.Bool))
-                {
-                    throw new JgsRuntimeException(line, col, $"{name} expects numeric array elements, but one was a {source[i].TypeName}.");
-                }
-
-                result[i] = JgsValue.Number(f(source[i].AsNumber));
+                // Recurse so matrices (nested arrays) map elementwise: sin(X) works on meshgrid output.
+                result[i] = MapNumeric(name, source[i], f, line, col);
             }
 
             return JgsValue.Array(result);
@@ -1059,6 +1206,52 @@ internal static class JgsBuiltins
         }
 
         return ToDoubles(name, args[0].AsArray, line, col);
+    }
+
+    /// <summary>
+    /// Converts a JGS matrix — an array of equal-length numeric row arrays, e.g. the output of
+    /// <c>meshgrid</c> or <c>zeros(r, c)</c> — to a <c>double[rows, cols]</c>. Ragged rows error.
+    /// </summary>
+    private static double[,] Matrix(string name, IReadOnlyList<JgsValue> args, int index, int line, int col)
+    {
+        JgsValue value = args[index];
+        if (value.Type != JgsType.Array)
+        {
+            throw new JgsRuntimeException(line, col,
+                $"{name} expects argument {index + 1} to be a matrix (an array of row arrays), but got a {value.TypeName}.");
+        }
+
+        JgsValue[] rows = value.AsArray;
+        if (rows.Length == 0 || rows[0].Type != JgsType.Array)
+        {
+            throw new JgsRuntimeException(line, col,
+                $"{name} expects argument {index + 1} to be a matrix (an array of row arrays); build one with meshgrid, zeros(r, c), or nested literals.");
+        }
+
+        int cols = rows[0].AsArray.Length;
+        var result = new double[rows.Length, cols];
+        for (int r = 0; r < rows.Length; r++)
+        {
+            if (rows[r].Type != JgsType.Array)
+            {
+                throw new JgsRuntimeException(line, col,
+                    $"{name}: matrix row {r} is a {rows[r].TypeName}, not an array.");
+            }
+
+            double[] row = ToDoubles(name, rows[r].AsArray, line, col);
+            if (row.Length != cols)
+            {
+                throw new JgsRuntimeException(line, col,
+                    $"{name}: matrix rows must all be the same length (row 0 has {cols}, row {r} has {row.Length}).");
+            }
+
+            for (int c = 0; c < cols; c++)
+            {
+                result[r, c] = row[c];
+            }
+        }
+
+        return result;
     }
 
     private static double[] ToDoubles(string name, JgsValue[] elements, int line, int col)
