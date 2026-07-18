@@ -3,9 +3,13 @@ namespace JGraph.Interaction;
 /// <summary>Identifies the built-in interaction modes.</summary>
 public enum InteractionModeKind
 {
+    /// <summary>The default (M21): drag pans/rotates, click places persistent data tips.</summary>
+    Pointer,
     Pan,
     RectangleZoom,
-    DataCursor,
+
+    /// <summary>The roving readout tool: each click replaces the tip it placed last.</summary>
+    DataTips,
     Edit,
 }
 

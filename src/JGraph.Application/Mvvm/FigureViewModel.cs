@@ -16,7 +16,7 @@ public sealed class FigureViewModel : ObservableObject
 {
     private FigureModel _figure;
     private IFigureNavigator? _navigator;
-    private InteractionModeKind _activeMode = InteractionModeKind.Pan;
+    private InteractionModeKind _activeMode = InteractionModeKind.Pointer;
     private ITheme _currentTheme;
     private string _statusText = "Ready";
     private GraphObject? _selectedObject;
@@ -50,9 +50,10 @@ public sealed class FigureViewModel : ObservableObject
         UndoCommand = new RelayCommand(() => _navigator?.Undo(), () => _navigator?.CanUndo ?? false);
         RedoCommand = new RelayCommand(() => _navigator?.Redo(), () => _navigator?.CanRedo ?? false);
         ResetViewCommand = new RelayCommand(() => _navigator?.ResetView());
+        PointerModeCommand = new RelayCommand(() => ActiveMode = InteractionModeKind.Pointer);
         PanModeCommand = new RelayCommand(() => ActiveMode = InteractionModeKind.Pan);
         RectangleZoomCommand = new RelayCommand(() => ActiveMode = InteractionModeKind.RectangleZoom);
-        DataCursorCommand = new RelayCommand(() => ActiveMode = InteractionModeKind.DataCursor);
+        DataTipsCommand = new RelayCommand(() => ActiveMode = InteractionModeKind.DataTips);
         EditModeCommand = new RelayCommand(() => ActiveMode = InteractionModeKind.Edit);
         ExportCommand = new RelayCommand(ExportFigure, () => _navigator is not null);
         CopyImageCommand = new RelayCommand(CopyFigureImage, () => _navigator is not null);
@@ -81,10 +82,23 @@ public sealed class FigureViewModel : ObservableObject
         {
             if (SetProperty(ref _activeMode, value))
             {
+                OnPropertyChanged(nameof(IsPointerMode));
                 OnPropertyChanged(nameof(IsPanMode));
                 OnPropertyChanged(nameof(IsRectangleZoomMode));
-                OnPropertyChanged(nameof(IsDataCursorMode));
+                OnPropertyChanged(nameof(IsDataTipsMode));
                 OnPropertyChanged(nameof(IsEditMode));
+            }
+        }
+    }
+
+    public bool IsPointerMode
+    {
+        get => _activeMode == InteractionModeKind.Pointer;
+        set
+        {
+            if (value)
+            {
+                ActiveMode = InteractionModeKind.Pointer;
             }
         }
     }
@@ -113,14 +127,14 @@ public sealed class FigureViewModel : ObservableObject
         }
     }
 
-    public bool IsDataCursorMode
+    public bool IsDataTipsMode
     {
-        get => _activeMode == InteractionModeKind.DataCursor;
+        get => _activeMode == InteractionModeKind.DataTips;
         set
         {
             if (value)
             {
-                ActiveMode = InteractionModeKind.DataCursor;
+                ActiveMode = InteractionModeKind.DataTips;
             }
         }
     }
@@ -187,11 +201,13 @@ public sealed class FigureViewModel : ObservableObject
 
     public RelayCommand ResetViewCommand { get; }
 
+    public RelayCommand PointerModeCommand { get; }
+
     public RelayCommand PanModeCommand { get; }
 
     public RelayCommand RectangleZoomCommand { get; }
 
-    public RelayCommand DataCursorCommand { get; }
+    public RelayCommand DataTipsCommand { get; }
 
     public RelayCommand EditModeCommand { get; }
 

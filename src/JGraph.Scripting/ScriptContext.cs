@@ -29,18 +29,22 @@ public sealed class ScriptContext
     /// script's directory then the workspace root), or null to use <paramref name="workingDirectory"/>.</param>
     /// <param name="figureFiles">Figure save/load/export services, or null when the host offers none
     /// (the corresponding builtins then fail with a clear message).</param>
+    /// <param name="audio">Audio playback for <c>sound(y, fs)</c>, or null when the host offers none
+    /// (the builtin then fails with a clear message).</param>
     public ScriptContext(
         IScriptOutput output,
         Action<int, FigureModel> showFigure,
         string? workingDirectory,
         Func<string, string>? resolvePath,
-        IScriptFigureFiles? figureFiles = null)
+        IScriptFigureFiles? figureFiles = null,
+        IScriptAudio? audio = null)
     {
         Output = output ?? throw new ArgumentNullException(nameof(output));
         ShowFigure = showFigure ?? throw new ArgumentNullException(nameof(showFigure));
         WorkingDirectory = workingDirectory;
         ResolvePath = resolvePath;
         FigureFiles = figureFiles;
+        Audio = audio;
     }
 
     /// <summary>The sink for script output.</summary>
@@ -52,6 +56,9 @@ public sealed class ScriptContext
 
     /// <summary>Figure save/load/export services, or null when the host offers none.</summary>
     public IScriptFigureFiles? FigureFiles { get; }
+
+    /// <summary>Audio playback services, or null when the host offers none.</summary>
+    public IScriptAudio? Audio { get; }
 
     /// <summary>The directory relative file paths resolve against, or null for the process directory.</summary>
     public string? WorkingDirectory { get; }

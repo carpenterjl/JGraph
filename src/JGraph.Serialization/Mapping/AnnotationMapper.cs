@@ -39,6 +39,18 @@ internal static class AnnotationMapper
             },
             RectangleAnnotation a => FillShape(new RectangleAnnotationDto(), a),
             EllipseAnnotation a => FillShape(new EllipseAnnotationDto(), a),
+            DataTipAnnotation a => new DataTipAnnotationDto
+            {
+                Pinned = DtoConvert.ToDto(a.PinnedPoint),
+                LabelPosition = DtoConvert.ToDto(a.LabelPosition),
+                Text = a.Text,
+                SourceSeries = a.SourceSeries,
+                PointIndex = a.PointIndex,
+                FontSize = a.FontSize,
+                Color = a.Color,
+                Background = a.Background,
+                MarkerSize = a.MarkerSize,
+            },
             _ => throw new GraphFormatException($"Cannot serialize annotation type '{annotation.GetType().Name}'."),
         };
 
@@ -78,6 +90,18 @@ internal static class AnnotationMapper
             },
             RectangleAnnotationDto d => FillShape(new RectangleAnnotation(), d),
             EllipseAnnotationDto d => FillShape(new EllipseAnnotation(), d),
+            DataTipAnnotationDto d => new DataTipAnnotation
+            {
+                PinnedPoint = DtoConvert.ToPoint(d.Pinned),
+                LabelPosition = DtoConvert.ToPoint(d.LabelPosition),
+                Text = d.Text,
+                SourceSeries = d.SourceSeries,
+                PointIndex = d.PointIndex,
+                FontSize = d.FontSize,
+                Color = d.Color,
+                Background = d.Background,
+                MarkerSize = d.MarkerSize,
+            },
             _ => throw new GraphFormatException($"Unknown annotation DTO '{dto.GetType().Name}'."),
         };
 

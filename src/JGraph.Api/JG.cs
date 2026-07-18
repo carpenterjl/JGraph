@@ -113,6 +113,17 @@ public static class JG
         return number;
     }
 
+    /// <summary>The numbers of every registered figure, ascending.</summary>
+    public static IReadOnlyList<int> FigureNumbers
+    {
+        get
+        {
+            var numbers = new List<int>(Figures.Keys);
+            numbers.Sort();
+            return numbers;
+        }
+    }
+
     /// <summary>The number a figure is registered under, or 0 when it is not registered.</summary>
     public static int GetFigureNumber(FigureModel figure)
     {

@@ -22,12 +22,13 @@ public sealed class InteractionController
         Surface = surface ?? throw new ArgumentNullException(nameof(surface));
         _modes = new Dictionary<InteractionModeKind, IInteractionMode>
         {
+            [InteractionModeKind.Pointer] = new PointerMode(),
             [InteractionModeKind.Pan] = new PanMode(),
             [InteractionModeKind.RectangleZoom] = new RectangleZoomMode(),
-            [InteractionModeKind.DataCursor] = new DataCursorMode(),
+            [InteractionModeKind.DataTips] = new DataTipsMode(),
             [InteractionModeKind.Edit] = new EditMode(),
         };
-        _current = _modes[InteractionModeKind.Pan];
+        _current = _modes[InteractionModeKind.Pointer];
     }
 
     /// <summary>Raised when the active mode, overlay, or cursor changes so the host can refresh chrome.</summary>
@@ -42,14 +43,34 @@ public sealed class InteractionController
     /// <summary>The active interaction mode.</summary>
     public IInteractionMode CurrentMode => _current;
 
+    /// <summary>The rectangle-zoom mode instance, exposing its <see cref="RectangleZoomMode.Constraint"/>.</summary>
+    public RectangleZoomMode RectangleZoom => (RectangleZoomMode)_modes[InteractionModeKind.RectangleZoom];
+
+    /// <summary>
+    /// Builds the plot surface's right-click menu for a click at <paramref name="pixel"/>: the
+    /// active mode's items (zoom constraints, data-tip deletion), then "Restore View" for the axes
+    /// under the pixel. The host renders the items with its own menu control.
+    /// </summary>
+    public IReadOnlyList<ContextMenuItem> BuildContextMenu(Point2D pixel)
+    {
+        var items = new List<ContextMenuItem>();
+        (_current as IContextMenuSource)?.AddContextMenuItems(this, pixel, items);
+        DataTipMenu.AddItems(this, pixel, items);
+
+        if (items.Count > 0)
+        {
+            items.Add(ContextMenuItem.Separator);
+        }
+
+        items.Add(new ContextMenuItem("Restore View", () => ResetView(pixel)));
+        return items;
+    }
+
     /// <summary>The cursor hint for the current mode.</summary>
     public InteractionCursor Cursor => _current.Cursor;
 
     /// <summary>The current rubber-band selection rectangle in device space, or null when inactive.</summary>
     public Rect2D? RubberBand { get; private set; }
-
-    /// <summary>The current data-cursor point in device space, or null when inactive.</summary>
-    public DataCursorInfo? DataCursor { get; private set; }
 
     /// <summary>Switches the active interaction mode, cancelling any in-progress gesture.</summary>
     public void SetMode(InteractionModeKind kind)
@@ -61,10 +82,15 @@ public sealed class InteractionController
 
         _current.Cancel(this);
         _current = _modes[kind];
-        DataCursor = null;
         RubberBand = null;
         RaiseStateChanged();
     }
+
+    /// <summary>
+    /// Lets a mode with a dynamic cursor (the pointer's hover crosshair) tell the host to re-read
+    /// <see cref="Cursor"/>.
+    /// </summary>
+    internal void NotifyCursorChanged() => RaiseStateChanged();
 
     public void PointerDown(PointerEventArgs e) => _current.OnPointerDown(this, e);
 
@@ -147,14 +173,6 @@ public sealed class InteractionController
     public void SetRubberBand(Rect2D? rect)
     {
         RubberBand = rect;
-        Surface.RequestRender();
-        RaiseStateChanged();
-    }
-
-    /// <summary>Sets the data-cursor overlay and requests a repaint.</summary>
-    public void SetDataCursor(DataCursorInfo? info)
-    {
-        DataCursor = info;
         Surface.RequestRender();
         RaiseStateChanged();
     }

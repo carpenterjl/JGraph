@@ -125,14 +125,15 @@ public class Rotate3DInteractionTests
     }
 
     [Fact]
-    public void DataCursor_ReportsNothing_OnA3DAxes()
+    public void DataTips_PlaceNothing_OnA3DAxes()
     {
-        (InteractionController controller, _, _) = Setup3D();
-        controller.SetMode(InteractionModeKind.DataCursor);
+        (InteractionController controller, AxesModel axes, FakeInteractionSurface surface) = Setup3D();
+        controller.SetMode(InteractionModeKind.DataTips);
 
         controller.PointerDown(new PointerEventArgs(new Point2D(50, 50), PointerButton.Left, ModifierKeys.None));
 
-        Assert.Null(controller.DataCursor);
+        Assert.Empty(axes.Annotations);
+        Assert.False(surface.UndoStack.CanUndo);
     }
 
     [Fact]

@@ -1,4 +1,5 @@
 using System.Globalization;
+using System.Numerics;
 using System.Text;
 
 namespace JGraph.Scripting.Jgs;
@@ -17,6 +18,8 @@ internal sealed class Interpreter
     private readonly JgsEnvironment _globals;
     private readonly CancellationToken _cancellationToken;
     private readonly IJgsDebugHook? _hook;
+    private readonly Action<string>? _echo;
+    private readonly List<int> _indexTargetLengths = new(); // 'end' resolves to the top entry
     private long _steps;
     private int _callDepth;
 
@@ -24,11 +27,14 @@ internal sealed class Interpreter
     /// <param name="globals">The global environment, seeded with the built-ins.</param>
     /// <param name="cancellationToken">Checked cooperatively before every statement.</param>
     /// <param name="hook">The debug hook, or null for a plain full-speed run.</param>
-    public Interpreter(JgsEnvironment globals, CancellationToken cancellationToken, IJgsDebugHook? hook = null)
+    /// <param name="echo">Sink for MATLAB-style console echo of unsuppressed statement results, or
+    /// null to disable echo entirely.</param>
+    public Interpreter(JgsEnvironment globals, CancellationToken cancellationToken, IJgsDebugHook? hook = null, Action<string>? echo = null)
     {
         _globals = globals;
         _cancellationToken = cancellationToken;
         _hook = hook;
+        _echo = echo;
     }
 
     private enum CompletionKind
@@ -157,7 +163,9 @@ internal sealed class Interpreter
         switch (statement)
         {
             case LetStmt let:
-                env.Declare(let.Name, Evaluate(let.Value, env));
+                JgsValue letValue = Evaluate(let.Value, env);
+                env.Declare(let.Name, letValue);
+                EchoBinding(let, let.Name, letValue);
                 return Completion.Normal;
 
             case DestructuringLetStmt destructure:
@@ -177,12 +185,13 @@ internal sealed class Interpreter
                 for (int n = 0; n < destructure.Names.Count; n++)
                 {
                     env.Declare(destructure.Names[n], tuple.AsArray[n]);
+                    EchoBinding(destructure, destructure.Names[n], tuple.AsArray[n]);
                 }
 
                 return Completion.Normal;
 
             case ExprStmt expr:
-                Evaluate(expr.Expression, env);
+                ExecuteExpressionStatement(expr, env);
                 return Completion.Normal;
 
             case FnStmt fn:
@@ -217,6 +226,114 @@ internal sealed class Interpreter
             default:
                 throw new JgsRuntimeException(statement.Line, statement.Column, "Unsupported statement.");
         }
+    }
+
+    /// <summary>
+    /// Runs an expression statement with the MATLAB console conventions: a bare function name calls it
+    /// with no arguments (<c>figure;</c>); a bare variable displays it; an unsuppressed assignment
+    /// echoes the assigned variable; any other unsuppressed non-null result is bound to <c>ans</c> and
+    /// echoed as <c>ans = …</c>.
+    /// </summary>
+    private void ExecuteExpressionStatement(ExprStmt statement, JgsEnvironment env)
+    {
+        Expr expression = statement.Expression;
+
+        if (expression is VariableExpr name && env.TryGet(name.Name, out JgsValue existing))
+        {
+            if (existing.Type == JgsType.Function)
+            {
+                JgsValue called = existing.AsCallable.Call(System.Array.Empty<JgsValue>(), statement.Line, statement.Column);
+                BindAns(statement, called);
+                return;
+            }
+
+            EchoBinding(statement, name.Name, existing);
+            return;
+        }
+
+        JgsValue value = Evaluate(expression, env);
+        switch (expression)
+        {
+            case AssignExpr assign when RootName(assign.Target) is string assigned:
+                EchoVariable(statement, assigned, env);
+                break;
+            case IncDecExpr incDec when RootName(incDec.Target) is string bumped:
+                EchoVariable(statement, bumped, env);
+                break;
+            default:
+                BindAns(statement, value);
+                break;
+        }
+    }
+
+    /// <summary>The variable name at the root of an assignment target (<c>x</c>, <c>x[i]</c>, <c>x(i)</c>).</summary>
+    private static string? RootName(Expr target) => target switch
+    {
+        VariableExpr variable => variable.Name,
+        IndexExpr index => RootName(index.Target),
+        CallExpr call => RootName(call.Callee),
+        _ => null,
+    };
+
+    /// <summary>Binds a bare expression's non-null result to <c>ans</c> and echoes it when unsuppressed.</summary>
+    private void BindAns(Stmt statement, JgsValue value)
+    {
+        if (value.Type == JgsType.Null)
+        {
+            return; // verbs like title(...) return nothing — no ans, no echo
+        }
+
+        _globals.Declare("ans", value);
+        EchoBinding(statement, "ans", value);
+    }
+
+    private void EchoVariable(Stmt statement, string name, JgsEnvironment env)
+    {
+        if (_echo is not null && !statement.Suppressed && env.TryGet(name, out JgsValue value))
+        {
+            EchoBinding(statement, name, value);
+        }
+    }
+
+    private void EchoBinding(Stmt statement, string name, JgsValue value)
+    {
+        if (_echo is not null && !statement.Suppressed)
+        {
+            _echo($"{name} = {EchoDisplay(value)}");
+        }
+    }
+
+    /// <summary>
+    /// A budgeted one-line display for console echo: arrays stop emitting elements once the line is
+    /// long enough and note the total count, so echoing a million-sample signal stays O(line length).
+    /// </summary>
+    private static string EchoDisplay(JgsValue value)
+    {
+        if (value.Type != JgsType.Array)
+        {
+            return value.Display();
+        }
+
+        const int Budget = 100;
+        JgsValue[] items = value.AsArray;
+        var sb = new StringBuilder("[");
+        for (int i = 0; i < items.Length; i++)
+        {
+            if (i > 0)
+            {
+                sb.Append(", ");
+            }
+
+            if (sb.Length > Budget)
+            {
+                sb.Append("… (").Append(items.Length).Append(" elements)");
+                break;
+            }
+
+            sb.Append(items[i].Type == JgsType.Array ? EchoDisplay(items[i]) : items[i].Display());
+        }
+
+        return sb.Append(']').ToString();
     }
 
     private Completion ExecuteWhile(WhileStmt statement, JgsEnvironment env)
@@ -277,6 +394,9 @@ internal sealed class Interpreter
             case NumberLiteral number:
                 return JgsValue.Number(number.Value);
 
+            case ComplexLiteral imaginary:
+                return JgsValue.ComplexNum(new Complex(0, imaginary.Imaginary));
+
             case StringLiteral str:
                 return JgsValue.Str(str.Value);
 
@@ -291,6 +411,25 @@ internal sealed class Interpreter
                 }
 
                 return JgsValue.Array(elements);
+
+            case MatrixLiteral matrix:
+                return EvaluateMatrix(matrix, env);
+
+            case RangeExpr range:
+                return EvaluateRange(range, env);
+
+            case EndExpr:
+                if (_indexTargetLengths.Count == 0)
+                {
+                    throw new JgsRuntimeException(expression.Line, expression.Column,
+                        "'end' is only valid inside an index expression, like x(end).");
+                }
+
+                return JgsValue.Number(_indexTargetLengths[^1]);
+
+            case AllExpr:
+                throw new JgsRuntimeException(expression.Line, expression.Column,
+                    "':' by itself is only valid as an index argument, like x(:).");
 
             case VariableExpr variable:
                 if (env.TryGet(variable.Name, out JgsValue value))
@@ -326,6 +465,125 @@ internal sealed class Interpreter
         }
     }
 
+    /// <summary>
+    /// Evaluates a MATLAB colon range to an inclusive arithmetic sequence. The endpoint uses a small
+    /// floating tolerance so <c>0:0.001:3</c> yields exactly 3001 points despite binary rounding.
+    /// </summary>
+    private JgsValue EvaluateRange(RangeExpr range, JgsEnvironment env)
+    {
+        double start = RangeBound(range.Start, "start", env);
+        double step = range.Step is null ? 1 : RangeBound(range.Step, "step", env);
+        double stop = RangeBound(range.Stop, "stop", env);
+
+        if (step == 0)
+        {
+            throw new JgsRuntimeException(range.Line, range.Column, "A range step must not be zero.");
+        }
+
+        double ratio = (stop - start) / step;
+        if (double.IsNaN(ratio) || ratio < 0)
+        {
+            return JgsValue.Array(System.Array.Empty<JgsValue>());
+        }
+
+        const double MachineEpsilon = 2.220446049250313e-16;
+        long count = (long)Math.Floor(ratio * (1 + (4 * MachineEpsilon))) + 1;
+        if (count > 50_000_000)
+        {
+            throw new JgsRuntimeException(range.Line, range.Column,
+                $"This range would produce {count} elements — too many.");
+        }
+
+        var values = new JgsValue[count];
+        for (long i = 0; i < count; i++)
+        {
+            values[i] = JgsValue.Number(start + (i * step));
+        }
+
+        return JgsValue.Array(values);
+    }
+
+    private double RangeBound(Expr bound, string what, JgsEnvironment env)
+    {
+        JgsValue value = Evaluate(bound, env);
+        if (!IsNumericScalar(value))
+        {
+            throw new JgsRuntimeException(bound.Line, bound.Column,
+                $"The {what} of a range must be a number, but got a {value.TypeName}.");
+        }
+
+        return value.AsNumber;
+    }
+
+    /// <summary>
+    /// Evaluates a semicolon-rowed literal: all-scalar rows build a matrix (nested row arrays, equal
+    /// lengths required); rows containing arrays vertically concatenate into one flat array
+    /// (<c>[a; zeros(k, 1)]</c>).
+    /// </summary>
+    private JgsValue EvaluateMatrix(MatrixLiteral matrix, JgsEnvironment env)
+    {
+        var rows = new List<JgsValue[]>(matrix.Rows.Count);
+        bool concatenate = false;
+        foreach (IReadOnlyList<Expr> row in matrix.Rows)
+        {
+            var evaluated = new JgsValue[row.Count];
+            for (int i = 0; i < evaluated.Length; i++)
+            {
+                evaluated[i] = Evaluate(row[i], env);
+                concatenate |= evaluated[i].Type == JgsType.Array;
+            }
+
+            rows.Add(evaluated);
+        }
+
+        if (concatenate)
+        {
+            var flat = new List<JgsValue>();
+            foreach (JgsValue[] row in rows)
+            {
+                foreach (JgsValue value in row)
+                {
+                    FlattenInto(value, flat);
+                }
+            }
+
+            return JgsValue.Array(flat.ToArray());
+        }
+
+        int width = rows[0].Length;
+        for (int r = 1; r < rows.Count; r++)
+        {
+            if (rows[r].Length != width)
+            {
+                throw new JgsRuntimeException(matrix.Line, matrix.Column,
+                    $"Matrix rows must have equal lengths (row 1 has {width}, row {r + 1} has {rows[r].Length}).");
+            }
+        }
+
+        var result = new JgsValue[rows.Count];
+        for (int r = 0; r < result.Length; r++)
+        {
+            result[r] = JgsValue.Array(rows[r]);
+        }
+
+        return JgsValue.Array(result);
+    }
+
+    private static void FlattenInto(JgsValue value, List<JgsValue> into)
+    {
+        if (value.Type == JgsType.Array)
+        {
+            foreach (JgsValue element in value.AsArray)
+            {
+                FlattenInto(element, into);
+            }
+        }
+        else
+        {
+            into.Add(value);
+        }
+    }
+
     private JgsValue EvaluateUnary(UnaryExpr unary, JgsEnvironment env)
     {
         JgsValue operand = Evaluate(unary.Operand, env);
@@ -334,8 +592,8 @@ internal sealed class Interpreter
             return JgsValue.Bool(!operand.IsTruthy);
         }
 
-        // Minus: numeric negation, element-wise over arrays.
-        return MapNumeric(operand, v => -v, "-", unary.Line, unary.Column);
+        // Minus: numeric negation, element-wise over arrays (complex included).
+        return MapNumeric(operand, v => -v, "-", unary.Line, unary.Column, static c => -c);
     }
 
     private JgsValue EvaluateLogical(LogicalExpr logical, JgsEnvironment env)
@@ -369,15 +627,17 @@ internal sealed class Interpreter
             case TokenType.Plus when left.Type == JgsType.String || right.Type == JgsType.String:
                 return JgsValue.Str(left.Display() + right.Display());
             case TokenType.Plus:
-                return NumericBinary(left, right, (a, b) => a + b, "+", at.Line, at.Column);
+                return NumericBinary(left, right, (a, b) => a + b, "+", at.Line, at.Column, static (a, b) => a + b);
             case TokenType.Minus:
-                return NumericBinary(left, right, (a, b) => a - b, "-", at.Line, at.Column);
+                return NumericBinary(left, right, (a, b) => a - b, "-", at.Line, at.Column, static (a, b) => a - b);
             case TokenType.Star:
-                return NumericBinary(left, right, (a, b) => a * b, "*", at.Line, at.Column);
+                return NumericBinary(left, right, (a, b) => a * b, "*", at.Line, at.Column, static (a, b) => a * b);
             case TokenType.Slash:
-                return NumericBinary(left, right, (a, b) => a / b, "/", at.Line, at.Column);
+                return NumericBinary(left, right, (a, b) => a / b, "/", at.Line, at.Column, static (a, b) => a / b);
             case TokenType.Percent:
                 return NumericBinary(left, right, (a, b) => a % b, "%", at.Line, at.Column);
+            case TokenType.Caret:
+                return NumericBinary(left, right, Math.Pow, "^", at.Line, at.Column, Complex.Pow);
             case TokenType.Less:
                 return Compare(left, right, op, at, (a, b) => a < b);
             case TokenType.LessEqual:
@@ -429,6 +689,12 @@ internal sealed class Interpreter
             return stored;
         }
 
+        // MATLAB paren-index write: x(k) = v, x(1:n) = 0, x(mask) = v, x(:) = v.
+        if (assign.Target is CallExpr paren)
+        {
+            return AssignThroughParen(paren, assign.Op, rhs, assign, env);
+        }
+
         // The parser guarantees the only other target shape is an array element.
         var element = (IndexExpr)assign.Target;
         (JgsValue[] array, int index) = ResolveElement(element, env);
@@ -437,6 +703,82 @@ internal sealed class Interpreter
             : ApplyBinary(UnderlyingOp(assign.Op), array[index], rhs, assign);
         array[index] = value;
         return value;
+    }
+
+    /// <summary>
+    /// A 1-based paren-index write. The callee and the single index argument evaluate exactly once;
+    /// a scalar right-hand side broadcasts over the selection, an array right-hand side must match
+    /// its length. Compound operators apply per element.
+    /// </summary>
+    private JgsValue AssignThroughParen(CallExpr paren, TokenType op, JgsValue rhs, Node at, JgsEnvironment env)
+    {
+        JgsValue callee = Evaluate(paren.Callee, env);
+        if (callee.Type != JgsType.Array)
+        {
+            throw new JgsRuntimeException(at.Line, at.Column,
+                $"Cannot assign into a {callee.TypeName} with paren indexing; the target must be an array.");
+        }
+
+        if (paren.Arguments.Count != 1)
+        {
+            throw new JgsRuntimeException(at.Line, at.Column,
+                "Paren-index assignment takes exactly one index argument (an index, a range, a mask, or ':').");
+        }
+
+        JgsValue[] array = callee.AsArray;
+        JgsValue? index = EvaluateIndexArgument(paren.Arguments[0], array.Length, env);
+
+        // Scalar index: single-element write, no picks array needed.
+        if (index is { Type: not JgsType.Array })
+        {
+            int single = ToIndex(index, array.Length, at.Line, at.Column, oneBased: true);
+            JgsValue stored = op == TokenType.Assign
+                ? rhs
+                : ApplyBinary(UnderlyingOp(op), array[single], rhs, at);
+            array[single] = stored;
+            return stored;
+        }
+
+        int[] picks = index is null
+            ? AllPicks(array.Length)
+            : ComputePicks(index, array.Length, oneBased: true, "array", at.Line, at.Column);
+
+        if (rhs.Type != JgsType.Array)
+        {
+            foreach (int pick in picks)
+            {
+                array[pick] = op == TokenType.Assign ? rhs : ApplyBinary(UnderlyingOp(op), array[pick], rhs, at);
+            }
+        }
+        else
+        {
+            JgsValue[] source = rhs.AsArray;
+            if (source.Length != picks.Length)
+            {
+                throw new JgsRuntimeException(at.Line, at.Column,
+                    $"Cannot assign {source.Length} values into {picks.Length} selected elements.");
+            }
+
+            for (int i = 0; i < picks.Length; i++)
+            {
+                array[picks[i]] = op == TokenType.Assign
+                    ? source[i]
+                    : ApplyBinary(UnderlyingOp(op), array[picks[i]], source[i], at);
+            }
+        }
+
+        return rhs;
+    }
+
+    private static int[] AllPicks(int length)
+    {
+        var picks = new int[length];
+        for (int i = 0; i < picks.Length; i++)
+        {
+            picks[i] = i;
+        }
+
+        return picks;
     }
 
     private JgsValue EvaluateIncDec(IncDecExpr incDec, JgsEnvironment env)
@@ -454,6 +796,30 @@ internal sealed class Interpreter
             JgsValue updated = JgsValue.Number(RequireIncDecNumber(current, symbol, incDec) + delta);
             env.TryAssign(variable.Name, updated); // TryGet succeeded, so the binding exists
             return incDec.Prefix ? updated : current;
+        }
+
+        if (incDec.Target is CallExpr paren)
+        {
+            JgsValue callee = Evaluate(paren.Callee, env);
+            if (callee.Type != JgsType.Array || paren.Arguments.Count != 1)
+            {
+                throw new JgsRuntimeException(incDec.Line, incDec.Column,
+                    $"'{symbol}' with paren indexing needs an array and a single index, like x(k){symbol}.");
+            }
+
+            JgsValue? parenIndex = EvaluateIndexArgument(paren.Arguments[0], callee.AsArray.Length, env);
+            if (parenIndex is null || parenIndex.Type == JgsType.Array)
+            {
+                throw new JgsRuntimeException(incDec.Line, incDec.Column,
+                    $"'{symbol}' needs a single element, not a slice.");
+            }
+
+            JgsValue[] target = callee.AsArray;
+            int single = ToIndex(parenIndex, target.Length, incDec.Line, incDec.Column, oneBased: true);
+            JgsValue previous = target[single];
+            JgsValue bumped = JgsValue.Number(RequireIncDecNumber(previous, symbol, incDec) + delta);
+            target[single] = bumped;
+            return incDec.Prefix ? bumped : previous;
         }
 
         var element = (IndexExpr)incDec.Target;
@@ -518,8 +884,8 @@ internal sealed class Interpreter
     {
         JgsValue callee = Evaluate(call.Callee, env);
 
-        // MATLAB-style: "calling" an array (or string) with one argument is indexing —
-        // a scalar element lookup, a bool-mask filter, or an index-array gather.
+        // MATLAB-style: "calling" an array (or string) with one argument is 1-based indexing —
+        // a scalar element lookup, a bool-mask filter, an index-array/range gather, 'end', or ':'.
         if (callee.Type is JgsType.Array or JgsType.String)
         {
             if (call.Arguments.Count != 1)
@@ -528,7 +894,17 @@ internal sealed class Interpreter
                     $"Indexing a {callee.TypeName} takes exactly one argument (an index, an index array, or a mask).");
             }
 
-            return GatherOrIndex(callee, Evaluate(call.Arguments[0], env), call.Line, call.Column);
+            int length = callee.Type == JgsType.String ? callee.AsString.Length : callee.AsArray.Length;
+            JgsValue? index = EvaluateIndexArgument(call.Arguments[0], length, env);
+            if (index is null)
+            {
+                // x(:) — everything, as a fresh array (or the string itself).
+                return callee.Type == JgsType.String
+                    ? callee
+                    : JgsValue.Array((JgsValue[])callee.AsArray.Clone());
+            }
+
+            return GatherOrIndex(callee, index, call.Line, call.Column, oneBased: true);
         }
 
         if (callee.Type != JgsType.Function)
@@ -546,21 +922,68 @@ internal sealed class Interpreter
     }
 
     /// <summary>
-    /// Resolves <c>target[index]</c> / <c>target(index)</c> for an array or string target:
-    /// a scalar number selects one element; an all-bool array is a mask (must match the target's
-    /// length); an all-number array gathers by 0-based indices. Gathering a string yields a string.
+    /// Evaluates a paren-index argument with <c>end</c> bound to <paramref name="targetLength"/>.
+    /// Returns null for a lone ':' (select everything).
     /// </summary>
-    private static JgsValue GatherOrIndex(JgsValue target, JgsValue index, int line, int column)
+    private JgsValue? EvaluateIndexArgument(Expr argument, int targetLength, JgsEnvironment env)
+    {
+        if (argument is AllExpr)
+        {
+            return null;
+        }
+
+        _indexTargetLengths.Add(targetLength);
+        try
+        {
+            return Evaluate(argument, env);
+        }
+        finally
+        {
+            _indexTargetLengths.RemoveAt(_indexTargetLengths.Count - 1);
+        }
+    }
+
+    /// <summary>
+    /// Resolves <c>target[index]</c> / <c>target(index)</c> for an array or string target: a scalar
+    /// number selects one element; an all-bool array is a mask (must match the target's length); an
+    /// all-number array gathers by index — 0-based for brackets, 1-based for MATLAB parens
+    /// (<paramref name="oneBased"/>). Gathering a string yields a string.
+    /// </summary>
+    private static JgsValue GatherOrIndex(JgsValue target, JgsValue index, int line, int column, bool oneBased = false)
     {
         bool isString = target.Type == JgsType.String;
         int length = isString ? target.AsString.Length : target.AsArray.Length;
 
         if (index.Type != JgsType.Array)
         {
-            int single = ToIndex(index, length, line, column);
+            int single = ToIndex(index, length, line, column, oneBased);
             return isString ? JgsValue.Str(target.AsString[single].ToString()) : target.AsArray[single];
         }
 
+        int[] picks = ComputePicks(index, length, oneBased, target.TypeName, line, column);
+        if (isString)
+        {
+            var sb = new StringBuilder(picks.Length);
+            foreach (int i in picks)
+            {
+                sb.Append(target.AsString[i]);
+            }
+
+            return JgsValue.Str(sb.ToString());
+        }
+
+        var gathered = new JgsValue[picks.Length];
+        for (int i = 0; i < gathered.Length; i++)
+        {
+            gathered[i] = target.AsArray[picks[i]];
+        }
+
+        return JgsValue.Array(gathered);
+    }
+
+    /// <summary>Resolves an index array (a mask or a list of indices) to 0-based element positions.</summary>
+    private static int[] ComputePicks(JgsValue index, int length, bool oneBased, string targetName, int line, int column)
+    {
         JgsValue[] selector = index.AsArray;
         var picks = new List<int>(selector.Length);
         if (selector.Length > 0 && Array.TrueForAll(selector, v => v.Type == JgsType.Bool))
@@ -568,7 +991,7 @@ internal sealed class Interpreter
             if (selector.Length != length)
             {
                 throw new JgsRuntimeException(line, column,
-                    $"A mask must match the {target.TypeName} length (mask {selector.Length}, {target.TypeName} {length}).");
+                    $"A mask must match the {targetName} length (mask {selector.Length}, {targetName} {length}).");
             }
 
             for (int i = 0; i < selector.Length; i++)
@@ -583,7 +1006,7 @@ internal sealed class Interpreter
         {
             foreach (JgsValue position in selector)
             {
-                picks.Add(ToIndex(position, length, line, column));
+                picks.Add(ToIndex(position, length, line, column, oneBased));
             }
         }
         else
@@ -592,30 +1015,19 @@ internal sealed class Interpreter
                 "An index array must be all numbers (indices) or all bools (a mask).");
         }
 
-        if (isString)
-        {
-            var sb = new StringBuilder(picks.Count);
-            foreach (int i in picks)
-            {
-                sb.Append(target.AsString[i]);
-            }
-
-            return JgsValue.Str(sb.ToString());
-        }
-
-        var gathered = new JgsValue[picks.Count];
-        for (int i = 0; i < gathered.Length; i++)
-        {
-            gathered[i] = target.AsArray[picks[i]];
-        }
-
-        return JgsValue.Array(gathered);
+        return picks.ToArray();
     }
 
     // --- Numeric helpers ----------------------------------------------------------------------
 
     private JgsValue Compare(JgsValue left, JgsValue right, TokenType opToken, Node at, Func<double, double, bool> op)
     {
+        if (left.Type == JgsType.Complex || right.Type == JgsType.Complex)
+        {
+            throw new JgsRuntimeException(at.Line, at.Column,
+                $"Operator '{TokenText(opToken)}' is not defined for complex numbers — compare abs(), real(), or imag() instead.");
+        }
+
         if (IsNumericScalar(left) && IsNumericScalar(right))
         {
             return JgsValue.Bool(op(left.AsNumber, right.AsNumber));
@@ -678,35 +1090,52 @@ internal sealed class Interpreter
 
     private static bool AreEqual(JgsValue left, JgsValue right) => JgsValue.AreEqual(left, right);
 
-    private JgsValue NumericBinary(JgsValue left, JgsValue right, Func<double, double, double> op, string symbol, int line, int column)
+    private JgsValue NumericBinary(JgsValue left, JgsValue right, Func<double, double, double> op, string symbol, int line, int column, Func<Complex, Complex, Complex>? complexOp = null)
     {
         if (IsNumericScalar(left) && IsNumericScalar(right))
         {
             return JgsValue.Number(op(left.AsNumber, right.AsNumber));
         }
 
+        // Either side complex (and neither an array): promote and apply the complex form.
+        if (IsComplexOrNumeric(left) && IsComplexOrNumeric(right))
+        {
+            return JgsValue.ComplexNum(RequireComplexOp(complexOp, symbol, line, column)(left.AsComplex, right.AsComplex));
+        }
+
         if (left.Type == JgsType.Array || right.Type == JgsType.Array)
         {
             return JgsValue.Array(Broadcast(left, right,
-                (a, b) => JgsValue.Number(op(a, b)), symbol, line, column));
+                (a, b) => JgsValue.Number(op(a, b)), symbol, line, column, complexOp));
         }
 
         throw new JgsRuntimeException(line, column,
             $"Operator '{symbol}' needs numbers or numeric arrays, but got {left.TypeName} and {right.TypeName}.");
     }
 
+    private static bool IsComplexOrNumeric(JgsValue value) =>
+        value.Type == JgsType.Complex || IsNumericScalar(value);
+
+    private static Func<Complex, Complex, Complex> RequireComplexOp(Func<Complex, Complex, Complex>? complexOp, string symbol, int line, int column) =>
+        complexOp ?? throw new JgsRuntimeException(line, column,
+            $"Operator '{symbol}' is not defined for complex numbers.");
+
     /// <summary>
     /// Applies <paramref name="combine"/> pairwise over two arrays (equal lengths required) or an
-    /// array and a scalar (broadcast). Elements must be numbers or bools (which read as 0/1).
+    /// array and a scalar (broadcast). Elements must be numbers or bools (which read as 0/1) — or
+    /// complex, when the operator supplies a <paramref name="complexOp"/>.
     /// </summary>
-    private static JgsValue[] Broadcast(JgsValue left, JgsValue right, Func<double, double, JgsValue> combine, string symbol, int line, int column)
+    private static JgsValue[] Broadcast(JgsValue left, JgsValue right, Func<double, double, JgsValue> combine, string symbol, int line, int column, Func<Complex, Complex, Complex>? complexOp = null)
     {
         // Nested arrays recurse, so matrices (arrays of row arrays) broadcast elementwise too:
         // M + M pairs rows, M + scalar spreads the scalar across every row.
         JgsValue Element(JgsValue a, JgsValue b) =>
             a.Type == JgsType.Array || b.Type == JgsType.Array
-                ? JgsValue.Array(Broadcast(a, b, combine, symbol, line, column))
-                : combine(RequireNumber(a, symbol, line, column), RequireNumber(b, symbol, line, column));
+                ? JgsValue.Array(Broadcast(a, b, combine, symbol, line, column, complexOp))
+                : a.Type == JgsType.Complex || b.Type == JgsType.Complex
+                    ? JgsValue.ComplexNum(RequireComplexOp(complexOp, symbol, line, column)(
+                        RequireComplex(a, symbol, line, column), RequireComplex(b, symbol, line, column)))
+                    : combine(RequireNumber(a, symbol, line, column), RequireNumber(b, symbol, line, column));
 
         if (left.Type == JgsType.Array && right.Type == JgsType.Array)
         {
@@ -740,11 +1169,16 @@ internal sealed class Interpreter
         return broadcast;
     }
 
-    private JgsValue MapNumeric(JgsValue value, Func<double, double> op, string symbol, int line, int column)
+    private JgsValue MapNumeric(JgsValue value, Func<double, double> op, string symbol, int line, int column, Func<Complex, Complex>? complexOp = null)
     {
         if (IsNumericScalar(value))
         {
             return JgsValue.Number(op(value.AsNumber));
+        }
+
+        if (value.Type == JgsType.Complex && complexOp is not null)
+        {
+            return JgsValue.ComplexNum(complexOp(value.AsComplex));
         }
 
         if (value.Type == JgsType.Array)
@@ -754,7 +1188,7 @@ internal sealed class Interpreter
             for (int i = 0; i < result.Length; i++)
             {
                 // Recurse so matrices (nested arrays) map elementwise as well.
-                result[i] = MapNumeric(source[i], op, symbol, line, column);
+                result[i] = MapNumeric(source[i], op, symbol, line, column, complexOp);
             }
 
             return JgsValue.Array(result);
@@ -777,7 +1211,17 @@ internal sealed class Interpreter
         return value.AsNumber;
     }
 
-    private static int ToIndex(JgsValue index, int length, int line, int column)
+    private static Complex RequireComplex(JgsValue value, string symbol, int line, int column)
+    {
+        if (!IsComplexOrNumeric(value))
+        {
+            throw new JgsRuntimeException(line, column, $"Operator '{symbol}' needs numbers, but an array element was a {value.TypeName}.");
+        }
+
+        return value.AsComplex;
+    }
+
+    private static int ToIndex(JgsValue index, int length, int line, int column, bool oneBased = false)
     {
         if (index.Type != JgsType.Number)
         {
@@ -791,6 +1235,17 @@ internal sealed class Interpreter
         }
 
         int i = (int)raw;
+        if (oneBased)
+        {
+            if (i < 1 || i > length)
+            {
+                throw new JgsRuntimeException(line, column,
+                    $"Index {i} is out of range for length {length} (paren indexing is 1-based).");
+            }
+
+            return i - 1;
+        }
+
         if (i < 0 || i >= length)
         {
             throw new JgsRuntimeException(line, column, $"Index {i} is out of range for length {length}.");

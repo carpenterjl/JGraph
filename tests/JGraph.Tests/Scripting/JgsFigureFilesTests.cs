@@ -81,8 +81,10 @@ public class JgsFigureFilesTests : IDisposable
         Assert.Equal(0x89, png[0]); // PNG magic
         Assert.Equal((byte)'P', png[1]);
 
-        // The re-loaded figure kept its 3D state.
-        (_, FigureModel figure) = Assert.Single(_shown);
+        // The re-loaded figure kept its 3D state. show() displayed it first; the original figure
+        // auto-shows at run end (M21 MATLAB behavior).
+        Assert.Equal(2, _shown.Count);
+        (_, FigureModel figure) = _shown[0];
         Assert.True(figure.Axes[0].Is3D);
         Assert.Equal(-37.5, figure.Axes[0].Azimuth);
         Assert.True(figure.Axes[0].Colorbar.Visible);
@@ -107,11 +109,14 @@ public class JgsFigureFilesTests : IDisposable
         Assert.True(File.Exists(Path.Combine(_directory, "run.graph")));
         Assert.Contains("handle: 2", _output.NormalText); // Figure 1 was the implicit one.
 
-        // show() displayed the loaded figure — with the round-tripped series plus the new one.
-        (int number, FigureModel figure) = Assert.Single(_shown);
+        // show() displayed the loaded figure — with the round-tripped series plus the new one;
+        // the original figure 1 auto-shows at run end (M21 MATLAB behavior).
+        Assert.Equal(2, _shown.Count);
+        (int number, FigureModel figure) = _shown[0];
         Assert.Equal(2, number);
         Assert.Equal(2, figure.Axes[0].Plots.Count);
         Assert.Equal("saved from script", figure.Axes[0].Title);
+        Assert.Equal(1, _shown[1].Number);
     }
 
     [Fact]

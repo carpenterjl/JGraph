@@ -388,6 +388,30 @@ language — reusing the whole functional API rather than exposing a new one:
     and 13 new builtins expose the verbs. `.graph` format version 2 adds the 3D axes fields and the
     surface/contour DTOs (v1 documents load unchanged).
 
+15. **MATLAB-compatible surface (M21).** Semicolon echo suppression with `ans` and MATLAB-style
+    console echo (an `echo` sink on the interpreter, wired by `JgsRunner`), inclusive colon ranges,
+    1-based paren indexing with `end`, `:`, and slice/mask writes (brackets stay 0-based; `find`
+    went 1-based to match), `for k = 2:n … end`/`elseif` blocks alongside braces, `~=`/`.*`/`^`
+    operators, `[a; b]` rows/vertical concat, bare-builtin command form (`figure;`), automatic
+    display of unshown figures after a run, and first-class complex numbers (`JgsType.Complex`
+    boxing `System.Numerics.Complex`, normalizing zero-imaginary back to Number). `JGraph.Signal`
+    gained Bluestein arbitrary-length FFT, `DigitalFilter` (filter/freqz), `IirDesign`
+    (Butterworth), `FirDesign` (Parks–McClellan), and the hand-rolled `WaveFile` codec; scripts
+    reach them through 14 dual-registered builtins plus the `IScriptAudio` playback seam on
+    `ScriptContext` (app: `SoundPlayer` over an in-memory WAV; `pause` waits on the run's
+    cancellation token). Two real MATLAB lab scripts run end to end as the acceptance tests.
+
+16. **Figure-window QOL (M21).** The default tool is the new `PointerMode`: drag pans/rotates via
+    the shared `PanDragGesture`, hovering near a data point shows a crosshair (dynamic mode
+    cursor), and a click pins a persistent `DataTipAnnotation` — a real model object (pin
+    coordinates + movable label anchor + leader line) that serializes (`.graph` v3), edits in the
+    inspector, and rides `Add/Move/RemoveAnnotationAction` undo. `DataTipsMode` replaced the
+    transient data cursor with a roving tip that replaces only its own last placement. The plot
+    surface gained a right-click menu built from a UI-free `ContextMenuItem` model
+    (`InteractionController.BuildContextMenu` + `IContextMenuSource`): zoom-constraint choices
+    (`RectangleZoomMode.Constraint` — horizontal/vertical bands that restore the free axis
+    exactly), data-tip deletion, and per-axes Restore View.
+
 See [ADR 0012](adr/0012-scripting-hosts.md), [ADR 0013](adr/0013-custom-scripting-language.md),
 [ADR 0014](adr/0014-script-workspace-and-docking-shell.md),
 [ADR 0015](adr/0015-jgs-debugger.md),
@@ -396,13 +420,16 @@ See [ADR 0012](adr/0012-scripting-hosts.md), [ADR 0013](adr/0013-custom-scriptin
 [ADR 0018](adr/0018-workspace-browser-and-path-completion.md),
 [ADR 0019](adr/0019-jgs-data-analysis-stdlib.md),
 [ADR 0020](adr/0020-script-managed-figure-windows.md),
-[ADR 0021](adr/0021-jgs-c-style-expression-semantics.md), and
-[ADR 0022](adr/0022-3d-plotting-over-the-2d-pipeline.md); the
+[ADR 0021](adr/0021-jgs-c-style-expression-semantics.md),
+[ADR 0022](adr/0022-3d-plotting-over-the-2d-pipeline.md),
+[ADR 0023](adr/0023-matlab-compatible-jgs-surface.md),
+[ADR 0024](adr/0024-dsp-builtins-and-audio-seam.md), and
+[ADR 0025](adr/0025-pointer-mode-data-tips-context-menu.md); the
 [data-import walkthrough](import-guide.md) and the `examples/` scripts show all three languages in use.
 
 ## Status
 
-Implemented through Milestone 20 — a working, Matlab-like figure window you can edit, save, publish, extend, feed with imported data, and drive with scripts:
+Implemented through Milestone 21 — a working, Matlab-like figure window you can edit, save, publish, extend, feed with imported data, and drive with scripts:
 
 - **M1** object model, math services (transforms, ticks, decimation), rendering abstractions.
 - **M2** SkiaSharp render context, `FigureRenderer` (chrome + plots), WPF `FigureControl`,
@@ -471,6 +498,15 @@ Implemented through Milestone 20 — a working, Matlab-like figure window you ca
   `contour`/`contourf`, `imagesc`/`pcolor`, `colormap` + a rendered colorbar, `zlabel`/`zlim`/`view`,
   matrix-aware JGS arithmetic (`meshgrid`, `zeros(r, c)`, recursive elementwise ops), and `.graph`
   format version 2 persisting 3D axes and surfaces.
+- **M21** MATLAB compatibility and figure QOL: semicolon echo suppression with `ans`, colon ranges,
+  1-based paren indexing with `end`/slices (with `find` 1-based to match), `for … end`/`elseif`
+  blocks, `~=`/`.*`/`^`, `[a; b]`, `figure;` command form with automatic figure display, complex
+  numbers; the DSP/audio builtins (`fft` at any length via Bluestein, `filter`, `butter`, `firpm`,
+  `freqz`, `audioread`/`sound`/`pause`) over new `JGraph.Signal` algorithms and the `IScriptAudio`
+  seam — two real MATLAB lab scripts run unmodified except comments/`let`/commas; plus the default
+  Pointer tool (pan + hover crosshair + click-to-pin persistent data tips), the roving Data Tips
+  tool, the plot right-click menu (zoom constraints, tip deletion, per-axes Restore View), and
+  `.graph` format version 3 persisting data tips.
 
 The `JGraph.Demo` gallery exercises the plot types, annotations, and both APIs;
 `JGraph.Application` is the interactive figure window with data import and scripting.

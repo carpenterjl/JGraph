@@ -5,9 +5,14 @@ the workflow of the MATLAB figure window — an object model of figures, axes, a
 edit, and interact with — while following modern MVVM and SOLID design. It is renderer-agnostic and
 built for performance (millions of points).
 
-> Status: Milestones 1–20 complete. A working, interactive, editable figure window with line,
+> Status: Milestones 1–21 complete. A working, interactive, editable figure window with line,
 > scatter, bar, stem, histogram, error-bar, and image/heatmap plots; interactive 3D surfaces
 > (surf/mesh/meshc with drag rotation), contour/filled-contour plots, and colorbars;
+> MATLAB-compatible JGS scripting (semicolon echo suppression, colon ranges, 1-based paren
+> indexing with `end` and slice writes, `for … end` blocks, complex numbers) with DSP/audio
+> builtins (`fft` at any length, `filter`/`butter`/`firpm`/`freqz`, `audioread`/`sound`) that run
+> real MATLAB lab scripts nearly verbatim; persistent draggable data tips, a pan-plus-pick default
+> pointer, and a plot right-click menu (zoom constraints, restore view);
 > engineering plots (Bode,
 > Nyquist, polar, Smith, spectrogram, eye diagram) with an FFT/DSP library; subplots, linked axes,
 > date/time and category scales, annotations, an Edit mode, a property inspector, a plot browser,
@@ -32,6 +37,12 @@ built for performance (millions of points).
 - **Interactive 3D** — MATLAB-style `surf`/`mesh`/`meshc` surfaces you rotate with the mouse
   (undoable camera), plus `contour`/`contourf`, `imagesc`/`pcolor`, colormaps, and colorbars —
   from scripts (`meshgrid`, matrix math) or either API.
+- **Runs real MATLAB scripts** — semicolon suppression and echo, colon ranges, 1-based paren
+  indexing with `end`, `for … end` blocks, complex numbers, and the DSP/audio surface
+  (`fft`/`ifft` at any length, `filter`, `butter`, `firpm`, `freqz`, `audioread`, `sound`) let
+  MATLAB lab scripts run with only comments and `let` touched up.
+- **Data tips** — the default pointer pans, shows a crosshair over data, and pins persistent,
+  draggable point labels that save with the figure; right-click for zoom modes and tip management.
 - **Multi-panel & synchronized** — tile axes into a subplot grid and link their axes so panning or
   zooming one moves the others together.
 - **Numeric and non-numeric axes** — linear and logarithmic, plus date/time and category scales with

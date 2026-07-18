@@ -1,5 +1,8 @@
 using System.Globalization;
+using System.IO;
+using System.Numerics;
 using JGraph.Api;
+using JGraph.Signal;
 using JGraph.Core.Model;
 using JGraph.Data;
 
@@ -15,7 +18,9 @@ namespace JGraph.Scripting.Jgs;
 internal static class JgsBuiltins
 {
     /// <summary>Creates the global scope over the run's <paramref name="host"/> helpers, seeded with every built-in.</summary>
-    public static JgsEnvironment CreateGlobals(JGraphScriptGlobals host)
+    /// <param name="host">The run's host services.</param>
+    /// <param name="cancellationToken">The run's cancellation token, so <c>pause(seconds)</c> stays interruptible.</param>
+    public static JgsEnvironment CreateGlobals(JGraphScriptGlobals host, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(host);
 
@@ -28,6 +33,12 @@ internal static class JgsBuiltins
         void Math1(string name, Func<double, double> f) =>
             Define(name, (args, line, col) => { Arity(name, args, 1, line, col); return MapNumeric(name, args[0], f, line, col); });
 
+        // --- Constants -----------------------------------------------------------------------
+        env.Declare("pi", JgsValue.Number(System.Math.PI));
+        env.Declare("e", JgsValue.Number(System.Math.E));
+        env.Declare("inf", JgsValue.Number(double.PositiveInfinity));
+        env.Declare("nan", JgsValue.Number(double.NaN));
+
         // --- Element-wise math ---------------------------------------------------------------
         Math1("sin", System.Math.Sin);
         Math1("cos", System.Math.Cos);
@@ -39,11 +50,21 @@ internal static class JgsBuiltins
         Math1("log", System.Math.Log);
         Math1("log10", System.Math.Log10);
         Math1("sqrt", System.Math.Sqrt);
-        Math1("abs", System.Math.Abs);
         Math1("floor", System.Math.Floor);
         Math1("ceil", System.Math.Ceiling);
         Math1("round", x => System.Math.Round(x, MidpointRounding.AwayFromZero));
         Math1("sign", x => System.Math.Sign(x));
+
+        // Complex-aware elementwise functions: real input behaves exactly as before, and complex
+        // input takes the complex definition (abs = magnitude, angle = phase, conj = conjugate).
+        void MathC(string name, Func<double, double> real, Func<Complex, JgsValue> complex) =>
+            Define(name, (args, line, col) => { Arity(name, args, 1, line, col); return MapComplexAware(name, args[0], real, complex, line, col); });
+
+        MathC("abs", System.Math.Abs, static c => JgsValue.Number(Complex.Abs(c)));
+        MathC("real", static x => x, static c => JgsValue.Number(c.Real));
+        MathC("imag", static _ => 0, static c => JgsValue.Number(c.Imaginary));
+        MathC("angle", static x => x >= 0 ? 0 : System.Math.PI, static c => JgsValue.Number(c.Phase));
+        MathC("conj", static x => x, static c => JgsValue.ComplexNum(Complex.Conjugate(c)));
 
         Define("pow", (args, line, col) =>
         {
@@ -55,7 +76,7 @@ internal static class JgsBuiltins
         Define("atan2", (args, line, col) =>
         {
             Arity("atan2", args, 2, line, col);
-            return JgsValue.Number(System.Math.Atan2(Num("atan2", args, 0, line, col), Num("atan2", args, 1, line, col)));
+            return Zip("atan2", args[0], args[1], System.Math.Atan2, line, col);
         });
 
         // --- Array construction --------------------------------------------------------------
@@ -124,6 +145,187 @@ internal static class JgsBuiltins
             }
 
             return JgsValue.Array(result);
+        });
+
+        // --- DSP and audio -------------------------------------------------------------------
+        Define("fft", (args, line, col) =>
+        {
+            ArityRange("fft", args, 1, 2, line, col);
+            Complex[] input = ComplexArray("fft", args, 0, line, col);
+            if (args.Count == 2)
+            {
+                input = PadOrTruncate(input, Count("fft", args, 1, line, col), "fft", line, col);
+            }
+
+            return FromComplexArray(JGraph.Signal.Fft.Forward(input));
+        });
+
+        Define("ifft", (args, line, col) =>
+        {
+            ArityRange("ifft", args, 1, 2, line, col);
+            Complex[] input = ComplexArray("ifft", args, 0, line, col);
+            if (args.Count == 2)
+            {
+                input = PadOrTruncate(input, Count("ifft", args, 1, line, col), "ifft", line, col);
+            }
+
+            return FromComplexArray(JGraph.Signal.Fft.Inverse(input));
+        });
+
+        Define("fftshift", (args, line, col) =>
+        {
+            Arity("fftshift", args, 1, line, col);
+            return JgsValue.Array(Rotate(Arr("fftshift", args, 0, line, col), forward: true));
+        });
+
+        Define("ifftshift", (args, line, col) =>
+        {
+            Arity("ifftshift", args, 1, line, col);
+            return JgsValue.Array(Rotate(Arr("ifftshift", args, 0, line, col), forward: false));
+        });
+
+        Define("filter", (args, line, col) =>
+        {
+            Arity("filter", args, 3, line, col);
+            return Numbers(DigitalFilter.Filter(
+                NumericVector("filter", args, 0, line, col),
+                NumericVector("filter", args, 1, line, col),
+                DoubleArray("filter", args, 2, line, col)));
+        });
+
+        Define("freqz", (args, line, col) =>
+        {
+            ArityRange("freqz", args, 2, 4, line, col);
+            int count = args.Count >= 3 ? Count("freqz", args, 2, line, col) : 512;
+            double fs = args.Count == 4 ? Num("freqz", args, 3, line, col) : 2; // default: normalized 0..1
+            (Complex[] response, double[] frequencies) = DigitalFilter.Freqz(
+                NumericVector("freqz", args, 0, line, col),
+                NumericVector("freqz", args, 1, line, col),
+                count, fs);
+            return JgsValue.Array([FromComplexArray(response), Numbers(frequencies)]);
+        });
+
+        Define("butter", (args, line, col) =>
+        {
+            ArityRange("butter", args, 2, 3, line, col);
+            int order = Count("butter", args, 0, line, col);
+            double[] cutoffs = NumericVector("butter", args, 1, line, col);
+            FilterBandType type = args.Count == 3
+                ? Str("butter", args, 2, line, col).ToLowerInvariant() switch
+                {
+                    "low" => FilterBandType.LowPass,
+                    "high" => FilterBandType.HighPass,
+                    "bandpass" => FilterBandType.BandPass,
+                    "stop" => FilterBandType.BandStop,
+                    string other => throw new JgsRuntimeException(line, col,
+                        $"butter type must be \"low\", \"high\", \"bandpass\", or \"stop\", not \"{other}\"."),
+                }
+                : cutoffs.Length == 2 ? FilterBandType.BandPass : FilterBandType.LowPass;
+            try
+            {
+                (double[] b, double[] a) = IirDesign.Butterworth(order, cutoffs, type);
+                return JgsValue.Array([Numbers(b), Numbers(a)]);
+            }
+            catch (ArgumentException ex)
+            {
+                throw new JgsRuntimeException(line, col, "butter: " + ex.Message);
+            }
+        });
+
+        Define("firpm", (args, line, col) =>
+        {
+            Arity("firpm", args, 3, line, col);
+            int order = Count("firpm", args, 0, line, col);
+            double[] edges = DoubleArray("firpm", args, 1, line, col);
+            double[] amplitudes = DoubleArray("firpm", args, 2, line, col);
+            try
+            {
+                double[] h = FirDesign.Remez(order, edges, amplitudes, out bool converged);
+                if (!converged)
+                {
+                    host.print("firpm: the equiripple exchange did not fully converge; returning the best design found.");
+                }
+
+                return Numbers(h);
+            }
+            catch (ArgumentException ex)
+            {
+                throw new JgsRuntimeException(line, col, "firpm: " + ex.Message);
+            }
+        });
+
+        Define("audioread", (args, line, col) =>
+        {
+            Arity("audioread", args, 1, line, col);
+            string path = Str("audioread", args, 0, line, col);
+            try
+            {
+                (double[] samples, int fs) = host.audioread(path);
+                return JgsValue.Array([Numbers(samples), JgsValue.Number(fs)]);
+            }
+            catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or InvalidDataException)
+            {
+                throw new JgsRuntimeException(line, col, $"audioread: cannot read '{path}': {ex.Message}");
+            }
+        });
+
+        Define("sound", (args, line, col) =>
+        {
+            ArityRange("sound", args, 1, 2, line, col);
+            int fs = args.Count == 2 ? Count("sound", args, 1, line, col) : 8192; // MATLAB's default rate
+            try
+            {
+                host.sound(DoubleArray("sound", args, 0, line, col), fs);
+            }
+            catch (InvalidOperationException ex)
+            {
+                throw new JgsRuntimeException(line, col, ex.Message);
+            }
+
+            return JgsValue.Null;
+        });
+
+        Define("pause", (args, line, col) =>
+        {
+            Arity("pause", args, 1, line, col);
+            double seconds = Num("pause", args, 0, line, col);
+            if (seconds > 0 && !double.IsNaN(seconds))
+            {
+                // Interruptible: waking on the run's cancellation token keeps Stop responsive.
+                cancellationToken.WaitHandle.WaitOne(TimeSpan.FromSeconds(System.Math.Min(seconds, 3600)));
+                cancellationToken.ThrowIfCancellationRequested();
+            }
+
+            return JgsValue.Null;
+        });
+
+        Define("mod", (args, line, col) =>
+        {
+            Arity("mod", args, 2, line, col);
+            double divisor = Num("mod", args, 1, line, col);
+            // MATLAB mod: the result takes the divisor's sign (unlike C's %).
+            return MapNumeric("mod", args[0], x => divisor == 0 ? x : x - (System.Math.Floor(x / divisor) * divisor), line, col);
+        });
+
+        Define("size", (args, line, col) =>
+        {
+            Arity("size", args, 1, line, col);
+            (int rows, int cols) = args[0].Type switch
+            {
+                JgsType.Array when args[0].AsArray is { Length: > 0 } a && a[0].Type == JgsType.Array =>
+                    (a.Length, a[0].AsArray.Length),
+                JgsType.Array => (1, args[0].AsArray.Length),
+                JgsType.String => (1, args[0].AsString.Length),
+                _ => (1, 1),
+            };
+            return JgsValue.Array([JgsValue.Number(rows), JgsValue.Number(cols)]);
+        });
+
+        Define("disp", (args, line, col) =>
+        {
+            Arity("disp", args, 1, line, col);
+            host.print(args[0].Display());
+            return JgsValue.Null;
         });
 
         // --- Reductions and inspection -------------------------------------------------------
@@ -223,7 +425,7 @@ internal static class JgsBuiltins
             {
                 if (elements[i].IsTruthy)
                 {
-                    indices.Add(JgsValue.Number(i));
+                    indices.Add(JgsValue.Number(i + 1)); // 1-based, pairing with MATLAB paren indexing
                 }
             }
 
@@ -630,8 +832,8 @@ internal static class JgsBuiltins
         Define("title", (args, line, col) => { Arity("title", args, 1, line, col); JG.Title(Str("title", args, 0, line, col)); return JgsValue.Null; });
         Define("xlabel", (args, line, col) => { Arity("xlabel", args, 1, line, col); JG.XLabel(Str("xlabel", args, 0, line, col)); return JgsValue.Null; });
         Define("ylabel", (args, line, col) => { Arity("ylabel", args, 1, line, col); JG.YLabel(Str("ylabel", args, 0, line, col)); return JgsValue.Null; });
-        Define("xlim", (args, line, col) => { Arity("xlim", args, 2, line, col); JG.XLim(Num("xlim", args, 0, line, col), Num("xlim", args, 1, line, col)); return JgsValue.Null; });
-        Define("ylim", (args, line, col) => { Arity("ylim", args, 2, line, col); JG.YLim(Num("ylim", args, 0, line, col), Num("ylim", args, 1, line, col)); return JgsValue.Null; });
+        Define("xlim", (args, line, col) => { (double lo, double hi) = LimitPair("xlim", args, line, col); JG.XLim(lo, hi); return JgsValue.Null; });
+        Define("ylim", (args, line, col) => { (double lo, double hi) = LimitPair("ylim", args, line, col); JG.YLim(lo, hi); return JgsValue.Null; });
 
         Define("grid", (args, line, col) => { ArityRange("grid", args, 0, 1, line, col); JG.Grid(args.Count == 0 || Truthy(args, 0)); return JgsValue.Null; });
         Define("hold", (args, line, col) => { ArityRange("hold", args, 0, 1, line, col); JG.Hold(args.Count == 0 || Truthy(args, 0)); return JgsValue.Null; });
@@ -756,8 +958,54 @@ internal static class JgsBuiltins
                 JG.Plot(DoubleArray("plot", args, 0, line, col), DoubleArray("plot", args, 1, line, col), Str("plot", args, 2, line, col));
                 return JgsValue.Null;
             default:
-                throw new JgsRuntimeException(line, col, "plot expects (y), (x, y), (x, y, spec), or (table, xColumn, yColumn[, spec]).");
+                return PlotMultipleSeries(args, line, col);
         }
+    }
+
+    /// <summary>
+    /// MATLAB multi-series plot: repeated (x, y[, spec]) groups — plot(t, a, 'b', t, b, 'r--').
+    /// Later groups are drawn with hold forced on; the caller's hold state is restored afterwards.
+    /// </summary>
+    private static JgsValue PlotMultipleSeries(IReadOnlyList<JgsValue> args, int line, int col)
+    {
+        var groups = new List<(double[] X, double[] Y, string? Spec)>();
+        int i = 0;
+        while (i < args.Count)
+        {
+            if (i + 1 >= args.Count || args[i].Type != JgsType.Array || args[i + 1].Type != JgsType.Array)
+            {
+                throw new JgsRuntimeException(line, col,
+                    "plot expects (y), (x, y[, spec]) groups, or (table, xColumn, yColumn[, spec]).");
+            }
+
+            double[] x = DoubleArray("plot", args, i, line, col);
+            double[] y = DoubleArray("plot", args, i + 1, line, col);
+            string? spec = null;
+            i += 2;
+            if (i < args.Count && args[i].Type == JgsType.String)
+            {
+                spec = Str("plot", args, i, line, col);
+                i++;
+            }
+
+            groups.Add((x, y, spec));
+        }
+
+        bool wasHolding = JG.IsHolding;
+        try
+        {
+            foreach ((double[] x, double[] y, string? spec) in groups)
+            {
+                JG.Plot(x, y, spec);
+                JG.Hold(true);
+            }
+        }
+        finally
+        {
+            JG.Hold(wasHolding);
+        }
+
+        return JgsValue.Null;
     }
 
     private static JgsValue XyOrTable(string name, IReadOnlyList<JgsValue> args, int line, int col,
@@ -883,6 +1131,22 @@ internal static class JgsBuiltins
     private static JgsValue Filled(string name, IReadOnlyList<JgsValue> args, double value, int line, int col)
     {
         ArityRange(name, args, 1, 2, line, col);
+
+        // A size vector spreads into dimensions: zeros(size(t)) with size = [1, n] (or [n]) gives a
+        // flat n-vector; [r, c] with both > 1 gives a matrix.
+        if (args.Count == 1 && args[0].Type == JgsType.Array)
+        {
+            double[] dimensions = DoubleArray(name, args, 0, line, col);
+            return dimensions.Length switch
+            {
+                1 => FilledVector((int)dimensions[0], value, name, line, col),
+                2 when dimensions[0] <= 1 || dimensions[1] <= 1 =>
+                    FilledVector((int)System.Math.Max(dimensions[0] * dimensions[1], 0), value, name, line, col),
+                2 => Filled(name, [JgsValue.Number(dimensions[0]), JgsValue.Number(dimensions[1])], value, line, col),
+                _ => throw new JgsRuntimeException(line, col, $"{name} supports at most 2 dimensions."),
+            };
+        }
+
         int count = Count(name, args, 0, line, col);
         if (count < 0)
         {
@@ -907,6 +1171,16 @@ internal static class JgsBuiltins
             }
 
             return JgsValue.Array(rows);
+        }
+
+        return FilledVector(count, value, name, line, col);
+    }
+
+    private static JgsValue FilledVector(int count, double value, string name, int line, int col)
+    {
+        if (count < 0)
+        {
+            throw new JgsRuntimeException(line, col, $"{name} needs a non-negative count.");
         }
 
         var result = new JgsValue[count];
@@ -1124,6 +1398,91 @@ internal static class JgsBuiltins
         throw new JgsRuntimeException(line, col, $"{name} expects a number or numeric array, but got a {value.TypeName}.");
     }
 
+    /// <summary>Pairwise elementwise application with scalar broadcast (atan2(y, x) over arrays).</summary>
+    private static JgsValue Zip(string name, JgsValue a, JgsValue b, Func<double, double, double> f, int line, int col)
+    {
+        bool aScalar = a.Type is JgsType.Number or JgsType.Bool;
+        bool bScalar = b.Type is JgsType.Number or JgsType.Bool;
+        if (aScalar && bScalar)
+        {
+            return JgsValue.Number(f(a.AsNumber, b.AsNumber));
+        }
+
+        if (a.Type == JgsType.Array && b.Type == JgsType.Array)
+        {
+            JgsValue[] left = a.AsArray;
+            JgsValue[] right = b.AsArray;
+            if (left.Length != right.Length)
+            {
+                throw new JgsRuntimeException(line, col,
+                    $"{name} needs arrays of equal length ({left.Length} and {right.Length}).");
+            }
+
+            var paired = new JgsValue[left.Length];
+            for (int i = 0; i < paired.Length; i++)
+            {
+                paired[i] = Zip(name, left[i], right[i], f, line, col);
+            }
+
+            return JgsValue.Array(paired);
+        }
+
+        if (a.Type == JgsType.Array && bScalar)
+        {
+            JgsValue[] left = a.AsArray;
+            var spread = new JgsValue[left.Length];
+            for (int i = 0; i < spread.Length; i++)
+            {
+                spread[i] = Zip(name, left[i], b, f, line, col);
+            }
+
+            return JgsValue.Array(spread);
+        }
+
+        if (aScalar && b.Type == JgsType.Array)
+        {
+            JgsValue[] right = b.AsArray;
+            var spread = new JgsValue[right.Length];
+            for (int i = 0; i < spread.Length; i++)
+            {
+                spread[i] = Zip(name, a, right[i], f, line, col);
+            }
+
+            return JgsValue.Array(spread);
+        }
+
+        throw new JgsRuntimeException(line, col,
+            $"{name} expects numbers or numeric arrays, but got {a.TypeName} and {b.TypeName}.");
+    }
+
+    /// <summary>Elementwise map that takes the real path for numbers and the complex path for complex values.</summary>
+    private static JgsValue MapComplexAware(string name, JgsValue value, Func<double, double> real, Func<Complex, JgsValue> complex, int line, int col)
+    {
+        if (value.Type is JgsType.Number or JgsType.Bool)
+        {
+            return JgsValue.Number(real(value.AsNumber));
+        }
+
+        if (value.Type == JgsType.Complex)
+        {
+            return complex(value.AsComplex);
+        }
+
+        if (value.Type == JgsType.Array)
+        {
+            JgsValue[] source = value.AsArray;
+            var result = new JgsValue[source.Length];
+            for (int i = 0; i < source.Length; i++)
+            {
+                result[i] = MapComplexAware(name, source[i], real, complex, line, col);
+            }
+
+            return JgsValue.Array(result);
+        }
+
+        throw new JgsRuntimeException(line, col, $"{name} expects a number or numeric array, but got a {value.TypeName}.");
+    }
+
     private static void Arity(string name, IReadOnlyList<JgsValue> args, int count, int line, int col)
     {
         if (args.Count != count)
@@ -1254,12 +1613,114 @@ internal static class JgsBuiltins
         return result;
     }
 
+    /// <summary>xlim/ylim accept (min, max) or a single [min, max] array (MATLAB xlim([a, b])).</summary>
+    private static (double Low, double High) LimitPair(string name, IReadOnlyList<JgsValue> args, int line, int col)
+    {
+        if (args.Count == 1 && args[0].Type == JgsType.Array)
+        {
+            double[] pair = DoubleArray(name, args, 0, line, col);
+            if (pair.Length != 2)
+            {
+                throw new JgsRuntimeException(line, col, $"{name} expects a two-element [min, max] array.");
+            }
+
+            return (pair[0], pair[1]);
+        }
+
+        Arity(name, args, 2, line, col);
+        return (Num(name, args, 0, line, col), Num(name, args, 1, line, col));
+    }
+
+    /// <summary>A numeric vector argument: an array of numbers, or a scalar promoted to [x] (filter(h, 1, x)).</summary>
+    private static double[] NumericVector(string name, IReadOnlyList<JgsValue> args, int index, int line, int col)
+    {
+        JgsValue value = args[index];
+        if (value.Type is JgsType.Number or JgsType.Bool)
+        {
+            return [value.AsNumber];
+        }
+
+        return DoubleArray(name, args, index, line, col);
+    }
+
+    /// <summary>Converts a JGS array to complex samples (numbers, bools, and complex values allowed).</summary>
+    private static Complex[] ComplexArray(string name, IReadOnlyList<JgsValue> args, int index, int line, int col)
+    {
+        JgsValue[] elements = Arr(name, args, index, line, col);
+        var result = new Complex[elements.Length];
+        for (int i = 0; i < elements.Length; i++)
+        {
+            result[i] = elements[i].Type switch
+            {
+                JgsType.Number or JgsType.Bool => new Complex(elements[i].AsNumber, 0),
+                JgsType.Complex => elements[i].AsComplex,
+                _ => throw new JgsRuntimeException(line, col,
+                    $"{name} expects numeric (or complex) samples, but element {i} was a {elements[i].TypeName}."),
+            };
+        }
+
+        return result;
+    }
+
+    private static JgsValue FromComplexArray(Complex[] values)
+    {
+        var result = new JgsValue[values.Length];
+        for (int i = 0; i < values.Length; i++)
+        {
+            result[i] = JgsValue.ComplexNum(values[i]);
+        }
+
+        return JgsValue.Array(result);
+    }
+
+    private static Complex[] PadOrTruncate(Complex[] input, int length, string name, int line, int col)
+    {
+        if (length < 1)
+        {
+            throw new JgsRuntimeException(line, col, $"{name} needs a positive transform length.");
+        }
+
+        if (length == input.Length)
+        {
+            return input;
+        }
+
+        var resized = new Complex[length];
+        System.Array.Copy(input, resized, System.Math.Min(input.Length, length));
+        return resized;
+    }
+
+    /// <summary>fftshift (forward: rotate by n−⌈n/2⌉) and ifftshift (its inverse), as new arrays.</summary>
+    private static JgsValue[] Rotate(JgsValue[] source, bool forward)
+    {
+        int n = source.Length;
+        if (n == 0)
+        {
+            return source;
+        }
+
+        int shift = forward ? n - ((n + 1) / 2) : (n + 1) / 2;
+        var result = new JgsValue[n];
+        for (int i = 0; i < n; i++)
+        {
+            result[i] = source[(i + n - shift) % n];
+        }
+
+        return result;
+    }
+
     private static double[] ToDoubles(string name, JgsValue[] elements, int line, int col)
     {
         // Bools read as 0/1, so a mask is a numeric array: sum(mask) counts its matches.
         var result = new double[elements.Length];
         for (int i = 0; i < elements.Length; i++)
         {
+            if (elements[i].Type == JgsType.Complex)
+            {
+                throw new JgsRuntimeException(line, col,
+                    $"{name} expects an array of numbers, but element {i} was a complex number — take abs(), real(), or imag() first.");
+            }
+
             if (elements[i].Type is not (JgsType.Number or JgsType.Bool))
             {
                 throw new JgsRuntimeException(line, col, $"{name} expects an array of numbers, but element {i} was a {elements[i].TypeName}.");

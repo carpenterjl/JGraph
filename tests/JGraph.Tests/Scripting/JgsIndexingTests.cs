@@ -6,7 +6,10 @@ using Xunit;
 
 namespace JGraph.Tests.Scripting;
 
-/// <summary>M18: logical indexing / gather — both `data(mask)` (MATLAB parens) and `data[mask]`.</summary>
+/// <summary>
+/// M18/M21: logical indexing / gather — `data(mask)` (MATLAB parens, 1-based for numeric indices
+/// since M21) and `data[mask]` (0-based brackets). `find` returns 1-based indices, pairing with parens.
+/// </summary>
 [Collection("JG facade")]
 public class JgsIndexingTests : IDisposable
 {
@@ -53,7 +56,7 @@ public class JgsIndexingTests : IDisposable
     {
         ScriptRunResult result = await Run("""
             let a = [10, 20, 30]
-            print(a([2, 0, 0]))
+            print(a([3, 1, 1]))
             print(a[[1, 2]])
             """);
 
@@ -66,9 +69,9 @@ public class JgsIndexingTests : IDisposable
     public async Task ScalarIndexing_BothForms_SelectOneElement()
     {
         ScriptRunResult result = await Run("""
-            let a = [10, 20, 30]
+            let a = [10, 20, 30];
             print(a[1])
-            print(a(1))
+            print(a(2))
             """);
 
         Assert.True(result.Success, result.Message);
@@ -80,7 +83,7 @@ public class JgsIndexingTests : IDisposable
     {
         ScriptRunResult result = await Run("""
             let s = "abcdef"
-            print(s([0, 2, 4]))
+            print(s([1, 3, 5]))
             print(s[[true, true, false, false, false, true]])
             """);
 
@@ -101,7 +104,7 @@ public class JgsIndexingTests : IDisposable
     [Fact]
     public async Task MixedIndexArray_IsRuntimeError()
     {
-        ScriptRunResult result = await Run("print([1, 2, 3]([0, true, 2]))");
+        ScriptRunResult result = await Run("print([1, 2, 3]([1, true, 2]))");
 
         Assert.False(result.Success);
         Assert.Contains("all numbers", Assert.Single(result.Diagnostics).Message);
@@ -110,7 +113,7 @@ public class JgsIndexingTests : IDisposable
     [Fact]
     public async Task ParenIndexing_WithWrongArgumentCount_IsRuntimeError()
     {
-        ScriptRunResult result = await Run("print([1, 2, 3](0, 1))");
+        ScriptRunResult result = await Run("print([1, 2, 3](1, 2))");
 
         Assert.False(result.Success);
         Assert.Contains("exactly one argument", Assert.Single(result.Diagnostics).Message);
@@ -119,7 +122,7 @@ public class JgsIndexingTests : IDisposable
     [Fact]
     public async Task CallingANonIndexableValue_StillErrors()
     {
-        ScriptRunResult result = await Run("let n = 5\nprint(n(0))");
+        ScriptRunResult result = await Run("let n = 5\nprint(n(1))");
 
         Assert.False(result.Success);
         Assert.Contains("Cannot call a number", Assert.Single(result.Diagnostics).Message);
@@ -138,7 +141,7 @@ public class JgsIndexingTests : IDisposable
             """);
 
         Assert.True(result.Success, result.Message);
-        Assert.Contains("[1, 3]", _output.NormalText);
+        Assert.Contains("[2, 4]", _output.NormalText); // find is 1-based since M21
         Assert.Contains("[3.2, 3.4]", _output.NormalText);
     }
 }

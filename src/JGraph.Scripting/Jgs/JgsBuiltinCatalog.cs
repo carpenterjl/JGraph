@@ -12,15 +12,22 @@ public sealed record JgsBuiltinParameter(string Name, bool Optional = false)
 
 /// <summary>
 /// Editor-facing metadata for one JGS builtin: its parameters and a one-line summary. The
-/// <see cref="Signature"/> is derived so it can never disagree with the parameter list.
+/// <see cref="Signature"/> is derived so it can never disagree with the parameter list. An
+/// <see cref="IsConstant"/> entry is a value binding (like <c>pi</c>), rendered without parentheses
+/// and excluded from signature help.
 /// </summary>
-public sealed record JgsBuiltinInfo(string Name, IReadOnlyList<JgsBuiltinParameter> Parameters, string Summary)
+public sealed record JgsBuiltinInfo(string Name, IReadOnlyList<JgsBuiltinParameter> Parameters, string Summary, bool IsConstant = false)
 {
-    /// <summary>The rendered call signature, e.g. <c>plot(x, y, spec?)</c>.</summary>
+    /// <summary>The rendered call signature, e.g. <c>plot(x, y, spec?)</c> — or the bare name for a constant.</summary>
     public string Signature
     {
         get
         {
+            if (IsConstant)
+            {
+                return Name;
+            }
+
             var sb = new StringBuilder(Name).Append('(');
             for (int i = 0; i < Parameters.Count; i++)
             {
@@ -70,6 +77,15 @@ public static class JgsBuiltinCatalog
         JgsBuiltinParameter P(string parameterName) => new(parameterName);
         JgsBuiltinParameter Opt(string parameterName) => new(parameterName, Optional: true);
 
+        void Constant(string name, string summary) =>
+            infos.Add(name, new JgsBuiltinInfo(name, System.Array.Empty<JgsBuiltinParameter>(), summary, IsConstant: true));
+
+        // --- Constants -------------------------------------------------------------------------
+        Constant("pi", "The circle constant π ≈ 3.14159.");
+        Constant("e", "Euler's number ≈ 2.71828.");
+        Constant("inf", "Positive infinity.");
+        Constant("nan", "Not-a-number (an undefined numeric result).");
+
         // --- Element-wise math (number or numeric array in, same shape out) -------------------
         Add("sin", "Sine of x (radians), element-wise over arrays.", P("x"));
         Add("cos", "Cosine of x (radians), element-wise over arrays.", P("x"));
@@ -82,7 +98,11 @@ public static class JgsBuiltinCatalog
         Add("log", "Natural logarithm of x, element-wise over arrays.", P("x"));
         Add("log10", "Base-10 logarithm of x, element-wise over arrays.", P("x"));
         Add("sqrt", "Square root of x, element-wise over arrays.", P("x"));
-        Add("abs", "Absolute value of x, element-wise over arrays.", P("x"));
+        Add("abs", "Absolute value of x (magnitude for complex values), element-wise over arrays.", P("x"));
+        Add("real", "Real part of x (x itself for real numbers), element-wise over arrays.", P("x"));
+        Add("imag", "Imaginary part of x (0 for real numbers), element-wise over arrays.", P("x"));
+        Add("conj", "Complex conjugate of x (x itself for real numbers), element-wise over arrays.", P("x"));
+        Add("angle", "Phase angle of x in radians, element-wise over arrays.", P("x"));
         Add("floor", "Largest whole number not above x, element-wise over arrays.", P("x"));
         Add("ceil", "Smallest whole number not below x, element-wise over arrays.", P("x"));
         Add("round", "x rounded to the nearest whole number (halves away from zero), element-wise.", P("x"));
@@ -92,9 +112,25 @@ public static class JgsBuiltinCatalog
         // --- Array construction ----------------------------------------------------------------
         Add("linspace", "count evenly spaced values from start to stop, inclusive.", P("start"), P("stop"), P("count"));
         Add("range", "Values from start (inclusive) to stop (exclusive) in steps of step (default 1).", P("start"), P("stop"), Opt("step"));
-        Add("zeros", "An array of count zeros, or a rows-by-cols matrix of zeros.", P("count"), Opt("cols"));
-        Add("ones", "An array of count ones, or a rows-by-cols matrix of ones.", P("count"), Opt("cols"));
+        Add("zeros", "An array of count zeros, a rows-by-cols matrix, or the shape of a size vector (zeros(size(t))).", P("count"), Opt("cols"));
+        Add("ones", "An array of count ones, a rows-by-cols matrix, or the shape of a size vector.", P("count"), Opt("cols"));
         Add("rand", "An array of count uniform random values in [0, 1).", P("count"));
+
+        // --- DSP and audio ----------------------------------------------------------------------
+        Add("fft", "Discrete Fourier transform of a (real or complex) signal; optional length pads or truncates.", P("x"), Opt("n"));
+        Add("ifft", "Inverse discrete Fourier transform; optional length pads or truncates.", P("x"), Opt("n"));
+        Add("fftshift", "Rotates a spectrum so DC sits at the center.", P("x"));
+        Add("ifftshift", "Undoes fftshift, restoring DC-first order.", P("x"));
+        Add("filter", "Applies the digital filter b/a to signal x (MATLAB filter, zero initial state).", P("b"), P("a"), P("x"));
+        Add("freqz", "Frequency response of b/a: [H, f] with complex H at count points (fs defaults to 2 = normalized).", P("b"), P("a"), Opt("count"), Opt("fs"));
+        Add("butter", "Butterworth design: [b, a] for order n and normalized cutoff(s) Wn; type \"low\"/\"high\"/\"bandpass\"/\"stop\".", P("n"), P("Wn"), Opt("type"));
+        Add("firpm", "Parks-McClellan equiripple FIR: order n, normalized band edges f, band amplitudes a.", P("n"), P("f"), P("a"));
+        Add("audioread", "Reads a .wav file: [samples, fs] with samples normalized to [-1, 1] (stereo averaged to mono).", P("path"));
+        Add("sound", "Plays samples through the host's audio output without blocking (fs defaults to 8192).", P("y"), Opt("fs"));
+        Add("pause", "Waits the given number of seconds (interruptible by Stop).", P("seconds"));
+        Add("mod", "MATLAB modulo: x - floor(x/m)*m, element-wise over arrays (result takes m's sign).", P("x"), P("m"));
+        Add("size", "The [rows, cols] of a matrix, [1, n] for a flat array or string, [1, 1] for a scalar.", P("value"));
+        Add("disp", "Writes a value to the console (no name prefix, unlike echo).", P("value"));
 
         // --- Reductions and inspection ----------------------------------------------------------
         Add("length", "The number of elements in an array, or characters in a string.", P("value"));
@@ -117,7 +153,7 @@ public static class JgsBuiltinCatalog
         // --- Array operations ---------------------------------------------------------------------
         Add("sort", "A sorted copy of a numeric or string array; order \"asc\" (default) or \"desc\".", P("array"), Opt("order"));
         Add("unique", "The sorted distinct values of a numeric or string array.", P("array"));
-        Add("find", "0-based indices of the truthy elements — find(temp > 85) gives matching row numbers.", P("mask"));
+        Add("find", "1-based indices of the truthy elements — volt(find(temp > 85)) gathers the matches.", P("mask"));
         Add("any", "Whether at least one element is truthy.", P("array"));
         Add("all", "Whether every element is truthy.", P("array"));
         Add("concat", "One array from arrays and scalars, in order: concat(a, b), concat(a, 5).", P("first"), P("second"));

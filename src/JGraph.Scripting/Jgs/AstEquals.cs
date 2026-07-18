@@ -92,6 +92,18 @@ internal static class AstEquals
             (ArrayLiteral x, ArrayLiteral y) =>
                 x.Elements.Count == y.Elements.Count
                 && !x.Elements.Where((e, i) => !ExpressionsEqual(e, y.Elements[i])).Any(),
+            (MatrixLiteral x, MatrixLiteral y) =>
+                x.Rows.Count == y.Rows.Count
+                && !x.Rows.Where((row, r) =>
+                    row.Count != y.Rows[r].Count
+                    || row.Where((e, i) => !ExpressionsEqual(e, y.Rows[r][i])).Any()).Any(),
+            (ComplexLiteral x, ComplexLiteral y) => x.Imaginary.Equals(y.Imaginary),
+            (RangeExpr x, RangeExpr y) =>
+                ExpressionsEqual(x.Start, y.Start)
+                && ExpressionsEqual(x.Step, y.Step)
+                && ExpressionsEqual(x.Stop, y.Stop),
+            (EndExpr, EndExpr) => true,
+            (AllExpr, AllExpr) => true,
             (VariableExpr x, VariableExpr y) => string.Equals(x.Name, y.Name, StringComparison.Ordinal),
             (UnaryExpr x, UnaryExpr y) => x.Op == y.Op && ExpressionsEqual(x.Operand, y.Operand),
             (BinaryExpr x, BinaryExpr y) =>
@@ -112,8 +124,8 @@ internal static class AstEquals
     }
 
     /// <summary>Whether two statements match apart from their nested blocks (same kind, same
-    /// names/operands/conditions).</summary>
-    private static bool HeaderEqual(Stmt a, Stmt b) => (a, b) switch
+    /// names/operands/conditions). A changed ';' suffix counts: it flips console echo.</summary>
+    private static bool HeaderEqual(Stmt a, Stmt b) => a.Suppressed == b.Suppressed && (a, b) switch
     {
         (LetStmt x, LetStmt y) =>
             string.Equals(x.Name, y.Name, StringComparison.Ordinal) && ExpressionsEqual(x.Value, y.Value),

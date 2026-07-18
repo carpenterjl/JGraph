@@ -55,7 +55,7 @@ internal static class JgsSyntax
             </Keywords>
 
             <Rule color="Number">
-              \b0[xX][0-9a-fA-F]+|\b\d+(\.\d+)?([eE][+-]?\d+)?
+              \b0[xX][0-9a-fA-F]+|\b\d+(\.\d+)?([eE][+-]?\d+)?[ij]?
             </Rule>
           </RuleSet>
         </SyntaxDefinition>

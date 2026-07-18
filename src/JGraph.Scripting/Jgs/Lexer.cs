@@ -6,8 +6,11 @@ namespace JGraph.Scripting.Jgs;
 /// <summary>
 /// Turns JGS source text into a flat list of <see cref="Token"/>s. Newlines are significant statement
 /// separators, except inside round or square brackets (so calls and array literals may span lines); runs of
-/// blank lines collapse to a single separator. Line comments start with <c>#</c> or <c>//</c>. Strings are
-/// double- or single-quoted (interchangeably, MATLAB-style) with the usual <c>\n \t \r \\ \" \'</c> escapes.
+/// blank lines collapse to a single separator. A ';' is its own <see cref="TokenType.Semicolon"/> token — a
+/// separator that additionally suppresses console echo, and a row separator inside array literals. Line
+/// comments start with <c>#</c> or <c>//</c>. Strings are double- or single-quoted (interchangeably,
+/// MATLAB-style) with the usual <c>\n \t \r \\ \" \'</c> escapes. A number with a trailing <c>i</c> or
+/// <c>j</c> (<c>2i</c>, <c>1.5j</c>) is an imaginary literal.
 /// </summary>
 internal static class Lexer
 {
@@ -25,6 +28,8 @@ internal static class Lexer
         ["continue"] = TokenType.Continue,
         ["true"] = TokenType.True,
         ["false"] = TokenType.False,
+        ["end"] = TokenType.End,
+        ["elseif"] = TokenType.ElseIf,
     };
 
     /// <summary>The keyword spellings, for the builtin catalog (and through it, editors).</summary>
@@ -114,6 +119,16 @@ internal static class Lexer
             {
                 string text = ReadNumber(source, ref i);
                 double value = double.Parse(text, NumberStyles.Float, CultureInfo.InvariantCulture);
+
+                // A trailing 'i'/'j' not glued to a longer identifier makes an imaginary literal (2i, 1.5j).
+                if (i < source.Length && (source[i] == 'i' || source[i] == 'j')
+                    && (i + 1 >= source.Length || (!char.IsLetterOrDigit(source[i + 1]) && source[i + 1] != '_')))
+                {
+                    i++;
+                    Add(TokenType.ImaginaryNumber, source[start..i], start, value);
+                    continue;
+                }
+
                 Add(TokenType.Number, text, start, value);
                 continue;
             }
@@ -142,7 +157,14 @@ internal static class Lexer
                 case '{': type = TokenType.LBrace; lexeme = "{"; break;
                 case '}': type = TokenType.RBrace; lexeme = "}"; break;
                 case ',': type = TokenType.Comma; lexeme = ","; break;
-                case ';': type = TokenType.Newline; lexeme = ";"; break;
+                case ';': type = TokenType.Semicolon; lexeme = ";"; break;
+                case ':': type = TokenType.Colon; lexeme = ":"; break;
+                case '^': type = TokenType.Caret; lexeme = "^"; break;
+                case '~' when Peek(source, i) == '=': type = TokenType.BangEqual; lexeme = "~="; break;
+                case '~': type = TokenType.Bang; lexeme = "~"; break;
+                case '.' when Peek(source, i) == '*': type = TokenType.Star; lexeme = ".*"; break;
+                case '.' when Peek(source, i) == '/': type = TokenType.Slash; lexeme = "./"; break;
+                case '.' when Peek(source, i) == '^': type = TokenType.Caret; lexeme = ".^"; break;
                 case '+' when Peek(source, i) == '+': type = TokenType.PlusPlus; lexeme = "++"; break;
                 case '+' when Peek(source, i) == '=': type = TokenType.PlusAssign; lexeme = "+="; break;
                 case '+': type = TokenType.Plus; lexeme = "+"; break;
@@ -179,7 +201,8 @@ internal static class Lexer
             i += lexeme.Length;
         }
 
-        // A trailing newline separator carries no statement; drop it for a cleaner token stream.
+        // A trailing newline separator carries no statement; drop it for a cleaner token stream. A trailing
+        // ';' stays — the parser needs it to mark the final statement as echo-suppressed.
         if (tokens.Count > 0 && tokens[^1].Type == TokenType.Newline)
         {
             tokens.RemoveAt(tokens.Count - 1);

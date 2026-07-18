@@ -1,0 +1,77 @@
+//EE458L
+//Lab 11
+//Jacob Carpenter
+let [audio_sample, fs] = audioread('gc.wav');
+
+let N_orig = length(audio_sample);
+let X = fft(audio_sample);
+let X_shifted = fftshift(X);
+let f_axis_orig = (-N_orig/2 : N_orig/2 - 1) * (fs / N_orig);
+
+figure;
+subplot(3,1,1);
+plot(f_axis_orig,20 * log10(abs(X_shifted)));
+title('Original Audio Spectrum');
+xlabel('Frequency');
+ylabel('Magnitude (dB)');
+xlim([-fs/2, fs/2]);
+
+let N = N_orig;
+let rem8 = mod(N, 8);
+let x_pad = 0;
+if rem8 ~= 0
+    x_pad = [audio_sample; zeros(8 - rem8, 1)];
+    N = length(x_pad);
+else
+    x_pad = audio_sample;
+end
+let X_pad = fft(x_pad);
+let X_pad_shifted = fftshift(X_pad);
+
+let X_comp75 = X_pad_shifted;
+X_comp75(1 : N/8) = 0;
+X_comp75(end - N/8 + 1 : end) = 0;
+let f_axis_pad = (-N/2 : N/2 - 1) * (fs / N);
+
+subplot(3,1,2);
+plot(f_axis_pad, 20 * log10(abs(X_comp75)));
+title('75% Compressed Spectrum (Edge Frequencies Zeroed)');
+xlabel('Frequency');
+ylabel('Magnitude (dB)');
+xlim([-fs/2, fs/2]);
+
+let X_back75 = ifftshift(X_comp75);
+let y75 = real(ifft(X_back75));
+disp('Playing 75% compressed audio...');
+sound(y75, fs);
+pause(N/fs + 1);
+
+N = N_orig;
+let rem4 = mod(N, 4);
+let x_pad4 = 0;
+if rem4 ~= 0
+    x_pad4 = [audio_sample; zeros(4 - rem4, 1)];
+    N = length(x_pad4);
+else
+    x_pad4 = audio_sample;
+end
+let X_pad4 = fft(x_pad4);
+let X_pad4_shifted = fftshift(X_pad4);
+
+let X_comp50 = X_pad4_shifted;
+X_comp50(1 : N/4) = 0;
+X_comp50(end - N/4 + 1 : end) = 0;
+let f_axis_pad4 = (-N/2 : N/2 - 1) * (fs / N);
+
+subplot(3,1,3);
+plot(f_axis_pad4, 20 * log10(abs(X_comp50)));
+title('50% Compressed Spectrum (Edge Frequencies Zeroed)');
+xlabel('Frequency');
+ylabel('Magnitude (dB)');
+xlim([-fs/2, fs/2]);
+
+let X_back50 = ifftshift(X_comp50);
+let y50 = real(ifft(X_back50));
+
+disp('Playing 50% compressed audio...');
+sound(y50, fs);

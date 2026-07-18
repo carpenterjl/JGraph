@@ -7,9 +7,11 @@ using JGraph.Rendering;
 namespace JGraph.Controls;
 
 /// <summary>
-/// Draws transient interaction overlays (the rubber-band zoom rectangle, the data-cursor readout, and
-/// the selection highlight) on top of the rendered figure, using the same backend-independent
-/// <see cref="IRenderContext"/>.
+/// Draws transient interaction overlays (the rubber-band zoom rectangle and the selection highlight)
+/// on top of the rendered figure, using the same backend-independent <see cref="IRenderContext"/>.
+/// Data tips are no longer an overlay: since M21 they are persistent
+/// <see cref="JGraph.Objects.Annotations.DataTipAnnotation"/> model objects drawn by the figure
+/// renderer itself.
 /// </summary>
 internal static class OverlayRenderer
 {
@@ -27,11 +29,6 @@ internal static class OverlayRenderer
         if (controller.RubberBand is { } rect && rect.Width > 0 && rect.Height > 0)
         {
             context.DrawRectangle(rect, new LineStyle(SelectionEdge, 1, DashStyle.Dash), SelectionFill);
-        }
-
-        if (controller.DataCursor is { } cursor)
-        {
-            DrawDataCursor(context, cursor, theme);
         }
     }
 
@@ -119,24 +116,4 @@ internal static class OverlayRenderer
         return right > left && bottom > top ? new Rect2D(left, top, right - left, bottom - top) : null;
     }
 
-    private static void DrawDataCursor(IRenderContext context, DataCursorInfo cursor, ITheme theme)
-    {
-        Point2D p = cursor.PixelPoint;
-        var marker = new MarkerStyle(MarkerType.Circle, 9, fill: theme.AxesBackground, edge: theme.AxisLine, edgeWidth: 1.5);
-        Span<Point2D> one = stackalloc Point2D[1];
-        one[0] = p;
-        context.DrawMarkers(one, marker, theme.AxisLine);
-
-        var textStyle = new TextStyle(theme.TickLabel, 11);
-        Size2D size = context.MeasureText(cursor.Label, textStyle);
-        double pad = 4;
-        var box = new Rect2D(p.X + 10, p.Y - size.Height - (pad * 2) - 6, size.Width + (pad * 2), size.Height + (pad * 2));
-        context.DrawRectangle(box, new LineStyle(theme.AxisLine, 1), theme.AxesBackground.WithOpacity(0.92));
-        context.DrawText(
-            cursor.Label,
-            new Point2D(box.Left + pad, box.Top + pad),
-            textStyle,
-            HorizontalAlignment.Left,
-            VerticalAlignment.Top);
-    }
 }

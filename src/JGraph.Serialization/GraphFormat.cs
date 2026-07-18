@@ -19,8 +19,9 @@ public static class GraphFormat
     public const string FormatTag = "jgraph";
 
     /// <summary>The current schema version. Documents with a newer version are rejected.</summary>
-    /// <remarks>Version history: 1 = initial (M8); 2 = 3D axes, surface/contour plots, colorbar (M20).</remarks>
-    public const int CurrentVersion = 2;
+    /// <remarks>Version history: 1 = initial (M8); 2 = 3D axes, surface/contour plots, colorbar (M20);
+    /// 3 = data-tip annotations (M21).</remarks>
+    public const int CurrentVersion = 3;
 
     /// <summary>The conventional file extension for JGraph documents.</summary>
     public const string FileExtension = ".graph";

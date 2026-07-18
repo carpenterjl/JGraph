@@ -58,9 +58,13 @@ public class JgsFigureWindowTests : IDisposable
             """);
 
         Assert.True(result.Success, result.Message);
-        (int number, FigureModel figure) = Assert.Single(_shown);
+
+        // show() displayed figure 1; figure 2 auto-shows at run end (M21 MATLAB behavior).
+        Assert.Equal(2, _shown.Count);
+        (int number, FigureModel figure) = _shown[0];
         Assert.Equal(1, number);
         Assert.Equal(2, figure.Axes[0].Plots.Count); // Both series landed on figure 1.
+        Assert.Equal(2, _shown[1].Number);
     }
 
     [Fact]

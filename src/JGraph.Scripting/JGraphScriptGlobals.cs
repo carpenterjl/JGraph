@@ -18,6 +18,7 @@ namespace JGraph.Scripting;
 public sealed class JGraphScriptGlobals
 {
     private readonly ScriptContext _context;
+    private readonly HashSet<int> _shownNumbers = new();
     private int _figuresShown;
 
     /// <summary>Creates the globals over a run's <paramref name="context"/>.</summary>
@@ -105,8 +106,35 @@ public sealed class JGraphScriptGlobals
 
     private void Display(int number, FigureModel figure)
     {
+        lock (_shownNumbers)
+        {
+            _shownNumbers.Add(number);
+        }
+
         _context.ShowFigure(number, figure);
         Interlocked.Increment(ref _figuresShown);
+    }
+
+    /// <summary>
+    /// Displays every registered figure the script created but never <c>show()</c>ed — the MATLAB
+    /// expectation, where <c>figure; plot(...)</c> opens a window by itself. Called by the JGS
+    /// runner after a successful run; explicit <c>show()</c> calls are not repeated.
+    /// </summary>
+    internal void ShowUnshownFigures()
+    {
+        foreach (int number in JG.FigureNumbers)
+        {
+            bool alreadyShown;
+            lock (_shownNumbers)
+            {
+                alreadyShown = _shownNumbers.Contains(number);
+            }
+
+            if (!alreadyShown && JG.TryGetFigure(number, out FigureModel figure))
+            {
+                Display(number, figure);
+            }
+        }
     }
 
     // --- Figure files -----------------------------------------------------------------------------
@@ -141,6 +169,21 @@ public sealed class JGraphScriptGlobals
     {
         ArgumentNullException.ThrowIfNull(figure);
         RequireFigureFiles("exportfigure").Export(figure, ResolveForWrite(path));
+    }
+
+    // --- Audio ------------------------------------------------------------------------------------
+
+    /// <summary>Reads a .wav file into normalized mono samples plus its sample rate (MATLAB <c>audioread</c>).</summary>
+    public (double[] Samples, int SampleRate) audioread(string path) =>
+        JGraph.Signal.WaveFile.Read(Resolve(path));
+
+    /// <summary>Starts non-blocking playback of <paramref name="samples"/> (MATLAB <c>sound</c>).</summary>
+    public void sound(double[] samples, int sampleRate)
+    {
+        ArgumentNullException.ThrowIfNull(samples);
+        IScriptAudio audio = _context.Audio
+            ?? throw new InvalidOperationException("sound is not supported by this host.");
+        audio.Play(samples, sampleRate);
     }
 
     /// <summary>

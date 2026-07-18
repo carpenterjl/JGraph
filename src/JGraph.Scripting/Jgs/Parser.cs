@@ -2,8 +2,11 @@ namespace JGraph.Scripting.Jgs;
 
 /// <summary>
 /// A recursive-descent parser that turns the <see cref="Lexer"/>'s tokens into a list of statement nodes.
-/// Statements are separated by significant newlines or semicolons; blocks are delimited by braces. Every
-/// node records the source position of the token it started at, for runtime error reporting.
+/// Statements are separated by significant newlines or semicolons (a trailing ';' additionally marks the
+/// statement <see cref="Stmt.Suppressed"/>). Blocks are delimited by braces, or MATLAB-style: an
+/// <c>if</c>/<c>for</c>/<c>while</c>/<c>fn</c> header not followed by '{' collects statements up to a
+/// closing <c>end</c> (with <c>elseif</c>/<c>else</c> arms sharing the one <c>end</c>). Every node records
+/// the source position of the token it started at, for runtime error reporting.
 /// </summary>
 internal sealed class Parser
 {
@@ -31,6 +34,8 @@ internal sealed class Parser
 
     private Token Current => _tokens[_pos];
 
+    private TokenType NextType => _pos + 1 < _tokens.Count ? _tokens[_pos + 1].Type : TokenType.Eof;
+
     private bool IsAtEnd => Current.Type == TokenType.Eof;
 
     private IReadOnlyList<Stmt> ParseProgram()
@@ -39,7 +44,7 @@ internal sealed class Parser
         SkipSeparators();
         while (!IsAtEnd)
         {
-            statements.Add(ParseStatement());
+            statements.Add(ParseTerminatedStatement());
             SkipSeparators();
         }
 
@@ -54,12 +59,51 @@ internal sealed class Parser
         SkipSeparators();
         while (!Check(TokenType.RBrace) && !IsAtEnd)
         {
-            statements.Add(ParseStatement());
+            statements.Add(ParseTerminatedStatement());
             SkipSeparators();
         }
 
         Expect(TokenType.RBrace, "'}'");
         return statements;
+    }
+
+    /// <summary>A MATLAB-style body: statements up to (not consuming) <c>end</c>/<c>else</c>/<c>elseif</c>.</summary>
+    private IReadOnlyList<Stmt> ParseMatlabBody()
+    {
+        var statements = new List<Stmt>();
+        SkipSeparators();
+        while (Current.Type is not (TokenType.End or TokenType.Else or TokenType.ElseIf) && !IsAtEnd)
+        {
+            statements.Add(ParseTerminatedStatement());
+            SkipSeparators();
+        }
+
+        return statements;
+    }
+
+    /// <summary>
+    /// A loop or function body in either style: a braced block, or a MATLAB body whose closing
+    /// <c>end</c> the caller must consume (signalled by <paramref name="braced"/> = false).
+    /// </summary>
+    private IReadOnlyList<Stmt> ParseBody(out bool braced)
+    {
+        int mark = _pos;
+        SkipSeparators();
+        braced = Check(TokenType.LBrace);
+        _pos = mark;
+        return braced ? ParseBlock() : ParseMatlabBody();
+    }
+
+    /// <summary>Parses one statement and marks it <see cref="Stmt.Suppressed"/> when a ';' follows.</summary>
+    private Stmt ParseTerminatedStatement()
+    {
+        Stmt statement = ParseStatement();
+        if (Check(TokenType.Semicolon))
+        {
+            statement.Suppressed = true; // the separator itself is consumed by the caller's SkipSeparators
+        }
+
+        return statement;
     }
 
     private Stmt ParseStatement()
@@ -75,6 +119,8 @@ internal sealed class Parser
             TokenType.Return => ParseReturn(start),
             TokenType.Break => ParseBreak(start),
             TokenType.Continue => ParseContinue(start),
+            TokenType.End => throw Error(start, "Unexpected 'end': there is no MATLAB-style if/for/while block to close here."),
+            TokenType.ElseIf => throw Error(start, "Unexpected 'elseif': it only follows a MATLAB-style 'if' body."),
             _ => ParseAssignmentOrExpression(start),
         };
         statement.SourceId = _sourceId; // every statement (nested ones included) flows through here
@@ -136,7 +182,12 @@ internal sealed class Parser
         }
 
         Expect(TokenType.RParen, "')'");
-        IReadOnlyList<Stmt> body = ParseBlock();
+        IReadOnlyList<Stmt> body = ParseBody(out bool braced);
+        if (!braced)
+        {
+            Expect(TokenType.End, "'end'");
+        }
+
         return new FnStmt(name.Text, parameters, body) { Line = start.Line, Column = start.Column };
     }
 
@@ -144,10 +195,20 @@ internal sealed class Parser
     {
         Advance(); // 'if'
         Expr condition = ParseExpression();
+
+        int mark = _pos;
+        SkipSeparators();
+        bool braced = Check(TokenType.LBrace);
+        _pos = mark;
+        if (!braced)
+        {
+            return ParseMatlabIfChain(start, condition);
+        }
+
         IReadOnlyList<Stmt> then = ParseBlock();
 
         IReadOnlyList<Stmt>? elseBranch = null;
-        int mark = _pos;
+        mark = _pos;
         SkipSeparators();
         if (Match(TokenType.Else))
         {
@@ -164,13 +225,53 @@ internal sealed class Parser
         return new IfStmt(condition, then, elseBranch) { Line = start.Line, Column = start.Column };
     }
 
+    /// <summary>
+    /// The MATLAB-style if: statements up to <c>elseif</c>/<c>else</c>/<c>end</c>. An <c>elseif</c> arm
+    /// recurses as a nested <see cref="IfStmt"/>; the whole chain shares the single closing <c>end</c>,
+    /// consumed at the innermost arm.
+    /// </summary>
+    private Stmt ParseMatlabIfChain(Token start, Expr condition)
+    {
+        IReadOnlyList<Stmt> then = ParseMatlabBody();
+
+        IReadOnlyList<Stmt>? elseBranch = null;
+        if (Check(TokenType.ElseIf))
+        {
+            Token arm = Advance();
+            Expr armCondition = ParseExpression();
+            Stmt nested = ParseMatlabIfChain(arm, armCondition);
+            nested.SourceId = _sourceId; // built directly, not via ParseStatement
+            elseBranch = new[] { nested };
+        }
+        else if (Match(TokenType.Else))
+        {
+            elseBranch = ParseMatlabBody();
+            Expect(TokenType.End, "'end'");
+        }
+        else
+        {
+            Expect(TokenType.End, "'end'");
+        }
+
+        return new IfStmt(condition, then, elseBranch) { Line = start.Line, Column = start.Column };
+    }
+
     private Stmt ParseFor(Token start)
     {
         Advance(); // 'for'
         Token variable = Expect(TokenType.Identifier, "a loop variable name");
-        Expect(TokenType.In, "'in'");
+        if (!Match(TokenType.In))
+        {
+            Expect(TokenType.Assign, "'in' or '='"); // MATLAB header: for k = 2:n
+        }
+
         Expr iterable = ParseExpression();
-        IReadOnlyList<Stmt> body = ParseBlock();
+        IReadOnlyList<Stmt> body = ParseBody(out bool braced);
+        if (!braced)
+        {
+            Expect(TokenType.End, "'end'");
+        }
+
         return new ForStmt(variable.Text, iterable, body) { Line = start.Line, Column = start.Column };
     }
 
@@ -178,7 +279,12 @@ internal sealed class Parser
     {
         Advance(); // 'while'
         Expr condition = ParseExpression();
-        IReadOnlyList<Stmt> body = ParseBlock();
+        IReadOnlyList<Stmt> body = ParseBody(out bool braced);
+        if (!braced)
+        {
+            Expect(TokenType.End, "'end'");
+        }
+
         return new WhileStmt(condition, body) { Line = start.Line, Column = start.Column };
     }
 
@@ -216,10 +322,14 @@ internal sealed class Parser
         return left;
     }
 
-    /// <summary>Rejects assignment/increment targets that are not a variable or an array element.</summary>
+    /// <summary>
+    /// Rejects assignment/increment targets that are not a variable or an array element. A
+    /// <see cref="CallExpr"/> is allowed for MATLAB paren-index writes (<c>x(k) = v</c>); the
+    /// interpreter validates that the callee is actually an array.
+    /// </summary>
     private static void RequireAssignable(Expr target, Token op)
     {
-        if (target is not (VariableExpr or IndexExpr))
+        if (target is not (VariableExpr or IndexExpr or CallExpr))
         {
             throw Error(op, $"The left-hand side of '{op.Text}' must be a variable or an array element.");
         }
@@ -255,7 +365,28 @@ internal sealed class Parser
         ParseBinary(ParseComparison, TokenType.EqualEqual, TokenType.BangEqual);
 
     private Expr ParseComparison() =>
-        ParseBinary(ParseAdditive, TokenType.Less, TokenType.LessEqual, TokenType.Greater, TokenType.GreaterEqual);
+        ParseBinary(ParseRange, TokenType.Less, TokenType.LessEqual, TokenType.Greater, TokenType.GreaterEqual);
+
+    /// <summary>MATLAB colon ranges: <c>a:b</c> and <c>a:step:b</c> — looser than arithmetic, tighter
+    /// than comparisons (so <c>0:1/fs:3</c> parses each part as an arithmetic expression).</summary>
+    private Expr ParseRange()
+    {
+        Expr first = ParseAdditive();
+        if (!Check(TokenType.Colon))
+        {
+            return first;
+        }
+
+        Token colon = Advance();
+        Expr second = ParseAdditive();
+        if (Match(TokenType.Colon))
+        {
+            Expr stop = ParseAdditive();
+            return new RangeExpr(first, second, stop) { Line = colon.Line, Column = colon.Column };
+        }
+
+        return new RangeExpr(first, null, second) { Line = colon.Line, Column = colon.Column };
+    }
 
     private Expr ParseAdditive() =>
         ParseBinary(ParseMultiplicative, TokenType.Plus, TokenType.Minus);
@@ -297,6 +428,34 @@ internal sealed class Parser
             };
         }
 
+        return ParsePower();
+    }
+
+    /// <summary>
+    /// MATLAB power: <c>^</c> binds tighter than unary minus (<c>-2^2 = -4</c>), associates left
+    /// (<c>2^3^2 = 64</c>), and allows a unary sign on its right operand (<c>2^-3</c>).
+    /// </summary>
+    private Expr ParsePower()
+    {
+        Expr left = ParsePostfix();
+        while (Check(TokenType.Caret))
+        {
+            Token op = Advance();
+            Expr right = ParsePowerOperand();
+            left = new BinaryExpr(TokenType.Caret, left, right) { Line = op.Line, Column = op.Column };
+        }
+
+        return left;
+    }
+
+    private Expr ParsePowerOperand()
+    {
+        if (Check(TokenType.Minus) || Check(TokenType.Bang))
+        {
+            Token op = Advance();
+            return new UnaryExpr(op.Type, ParsePowerOperand()) { Line = op.Line, Column = op.Column };
+        }
+
         return ParsePostfix();
     }
 
@@ -313,7 +472,16 @@ internal sealed class Parser
                 {
                     do
                     {
-                        arguments.Add(ParseExpression());
+                        // A lone ':' filling a whole argument is MATLAB "all elements" (x(:)).
+                        if (Check(TokenType.Colon) && NextType is TokenType.Comma or TokenType.RParen)
+                        {
+                            Token colon = Advance();
+                            arguments.Add(new AllExpr { Line = colon.Line, Column = colon.Column });
+                        }
+                        else
+                        {
+                            arguments.Add(ParseExpression());
+                        }
                     }
                     while (Match(TokenType.Comma));
                 }
@@ -353,6 +521,12 @@ internal sealed class Parser
             case TokenType.Number:
                 Advance();
                 return new NumberLiteral(token.Number) { Line = token.Line, Column = token.Column };
+            case TokenType.ImaginaryNumber:
+                Advance();
+                return new ComplexLiteral(token.Number) { Line = token.Line, Column = token.Column };
+            case TokenType.End:
+                Advance();
+                return new EndExpr { Line = token.Line, Column = token.Column };
             case TokenType.String:
                 Advance();
                 return new StringLiteral(token.Text) { Line = token.Line, Column = token.Column };
@@ -378,28 +552,58 @@ internal sealed class Parser
     private Expr ParseArrayLiteral(Token start)
     {
         Advance(); // '['
-        var elements = new List<Expr>();
+        var rows = new List<IReadOnlyList<Expr>>();
+        var current = new List<Expr>();
         if (!Check(TokenType.RBracket))
         {
-            do
+            while (true)
             {
-                elements.Add(ParseExpression());
+                current.Add(ParseExpression());
+                if (Match(TokenType.Comma))
+                {
+                    continue;
+                }
+
+                // ';' starts a new MATLAB row ([1, 2; 3, 4] / vertical concat [a; b]).
+                if (Match(TokenType.Semicolon))
+                {
+                    rows.Add(current);
+                    current = new List<Expr>();
+                    if (Check(TokenType.RBracket))
+                    {
+                        break; // tolerate a trailing ';' before ']'
+                    }
+
+                    continue;
+                }
+
+                break;
             }
-            while (Match(TokenType.Comma));
         }
 
         Expect(TokenType.RBracket, "']'");
-        return new ArrayLiteral(elements) { Line = start.Line, Column = start.Column };
+        if (rows.Count == 0)
+        {
+            return new ArrayLiteral(current) { Line = start.Line, Column = start.Column };
+        }
+
+        if (current.Count > 0)
+        {
+            rows.Add(current);
+        }
+
+        return new MatrixLiteral(rows) { Line = start.Line, Column = start.Column };
     }
 
     // --- Token helpers ------------------------------------------------------------------------
 
     private bool IsStatementEnd() =>
-        Current.Type is TokenType.Newline or TokenType.RBrace or TokenType.Eof;
+        Current.Type is TokenType.Newline or TokenType.Semicolon or TokenType.RBrace or TokenType.Eof
+            or TokenType.End or TokenType.Else or TokenType.ElseIf;
 
     private void SkipSeparators()
     {
-        while (Check(TokenType.Newline))
+        while (Check(TokenType.Newline) || Check(TokenType.Semicolon))
         {
             Advance();
         }

@@ -4,10 +4,10 @@ namespace JGraph.Signal;
 
 /// <summary>
 /// The discrete Fourier transform. Power-of-two lengths use an in-place iterative radix-2
-/// Cooley–Tukey FFT (O(n log n)); other lengths fall back to a direct O(n²) DFT so any length is
-/// correct (the spectrum and spectrogram helpers keep their frame sizes powers of two to stay on the
-/// fast path). The transform is engine- and model-independent: it operates on
-/// <see cref="System.Numerics.Complex"/> data only.
+/// Cooley–Tukey FFT (O(n log n)); other lengths use Bluestein's chirp-z algorithm (also
+/// O(n log n), built on the radix-2 kernel), with a direct O(n²) DFT only for tiny inputs — so a
+/// million-sample audio clip transforms in milliseconds at any length. The transform is engine- and
+/// model-independent: it operates on <see cref="System.Numerics.Complex"/> data only.
 /// </summary>
 public static class Fft
 {
@@ -78,9 +78,13 @@ public static class Fft
         {
             Radix2(buffer, inverse);
         }
+        else if (n <= 32)
+        {
+            DirectDft(buffer, inverse); // cheaper than Bluestein's three FFTs at tiny sizes
+        }
         else
         {
-            DirectDft(buffer, inverse);
+            Bluestein(buffer, inverse);
         }
 
         if (inverse)
@@ -131,6 +135,54 @@ public static class Fft
                     w *= wLen;
                 }
             }
+        }
+    }
+
+    /// <summary>
+    /// Bluestein's chirp-z transform: expresses an arbitrary-length DFT as a circular convolution of
+    /// length 2n-1 (padded to a power of two), evaluated with the radix-2 kernel. The chirp exponent
+    /// k²/2n is reduced modulo 2n in exact integer arithmetic so phases stay accurate for large n.
+    /// </summary>
+    private static void Bluestein(Complex[] buffer, bool inverse)
+    {
+        int n = buffer.Length;
+        double sign = inverse ? 1.0 : -1.0;
+
+        // c[j] = exp(sign·iπ·j²/n), with j² reduced mod 2n (the exponent's true period).
+        var chirp = new Complex[n];
+        long modulus = 2L * n;
+        for (int j = 0; j < n; j++)
+        {
+            long j2 = (long)j * j % modulus;
+            double angle = sign * System.Math.PI * j2 / n;
+            chirp[j] = new Complex(System.Math.Cos(angle), System.Math.Sin(angle));
+        }
+
+        int m = NextPowerOfTwo((2 * n) - 1);
+        var a = new Complex[m];
+        for (int j = 0; j < n; j++)
+        {
+            a[j] = buffer[j] * chirp[j];
+        }
+
+        var b = new Complex[m];
+        b[0] = Complex.Conjugate(chirp[0]);
+        for (int j = 1; j < n; j++)
+        {
+            b[j] = b[m - j] = Complex.Conjugate(chirp[j]);
+        }
+
+        Radix2(a, inverse: false);
+        Radix2(b, inverse: false);
+        for (int j = 0; j < m; j++)
+        {
+            a[j] *= b[j];
+        }
+
+        Radix2(a, inverse: true);
+        for (int k = 0; k < n; k++)
+        {
+            buffer[k] = a[k] / m * chirp[k]; // the /m completes the radix-2 inverse
         }
     }
 

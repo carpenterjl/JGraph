@@ -19,6 +19,12 @@ internal abstract class Expr : Node
 internal abstract class Stmt : Node
 {
     /// <summary>
+    /// True when the statement ended with a ';' (MATLAB-style echo suppression): its result is not
+    /// echoed to the console. Set by the parser after the statement is built.
+    /// </summary>
+    public bool Suppressed { get; set; }
+
+    /// <summary>
     /// Identifies the source (file path or "") the statement was parsed from, so the debugger can map
     /// breakpoints, the current-line marker, and stack frames onto the right document when a program
     /// spans multiple files via <c>run()</c>. One shared string reference per file, stamped by the
@@ -51,6 +57,47 @@ internal sealed class BoolLiteral(bool value) : Expr
 internal sealed class ArrayLiteral(IReadOnlyList<Expr> elements) : Expr
 {
     public IReadOnlyList<Expr> Elements { get; } = elements;
+}
+
+/// <summary>
+/// A semicolon-rowed array literal such as <c>[1, 2; 3, 4]</c> (MATLAB matrix rows) or
+/// <c>[a; b]</c> (vertical concatenation when row elements are themselves arrays).
+/// </summary>
+internal sealed class MatrixLiteral(IReadOnlyList<IReadOnlyList<Expr>> rows) : Expr
+{
+    public IReadOnlyList<IReadOnlyList<Expr>> Rows { get; } = rows;
+}
+
+/// <summary>An imaginary literal such as <c>2i</c> or <c>1.5j</c>; <see cref="Imaginary"/> is the magnitude.</summary>
+internal sealed class ComplexLiteral(double imaginary) : Expr
+{
+    public double Imaginary { get; } = imaginary;
+}
+
+/// <summary>
+/// A MATLAB colon range <c>start:stop</c> or <c>start:step:stop</c>, evaluating to an inclusive
+/// arithmetic sequence. <see cref="Step"/> is null for the two-part form (step 1).
+/// </summary>
+internal sealed class RangeExpr(Expr start, Expr? step, Expr stop) : Expr
+{
+    public Expr Start { get; } = start;
+
+    public Expr? Step { get; } = step;
+
+    public Expr Stop { get; } = stop;
+}
+
+/// <summary>
+/// MATLAB <c>end</c> used inside an index expression: the length of the array being indexed. Valid
+/// only while an index argument is being evaluated (enforced at runtime).
+/// </summary>
+internal sealed class EndExpr : Expr
+{
+}
+
+/// <summary>A lone <c>:</c> filling a whole index argument (MATLAB "all elements").</summary>
+internal sealed class AllExpr : Expr
+{
 }
 
 /// <summary>A reference to a variable or built-in by name.</summary>

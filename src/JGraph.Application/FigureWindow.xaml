@@ -19,12 +19,15 @@
             <Button Content="Script…" Command="{Binding OpenScriptCommand}" Margin="2,0"
                     ToolTip="Open the script editor to build figures with C# or Python" />
             <Separator />
-            <RadioButton x:Name="PanButton" GroupName="Mode" Content="Pan"
-                         IsChecked="{Binding IsPanMode, Mode=TwoWay}" Margin="2,0" />
-            <RadioButton x:Name="ZoomButton" GroupName="Mode" Content="Rectangle Zoom"
-                         IsChecked="{Binding IsRectangleZoomMode, Mode=TwoWay}" Margin="2,0" />
-            <RadioButton x:Name="CursorButton" GroupName="Mode" Content="Data Cursor"
-                         IsChecked="{Binding IsDataCursorMode, Mode=TwoWay}" Margin="2,0" />
+            <RadioButton x:Name="PointerButton" GroupName="Mode" Content="Pointer"
+                         IsChecked="{Binding IsPointerMode, Mode=TwoWay}" Margin="2,0"
+                         ToolTip="Default: drag pans (or rotates 3D), click a data point to pin a data tip" />
+            <RadioButton x:Name="ZoomButton" GroupName="Mode" Content="Zoom"
+                         IsChecked="{Binding IsRectangleZoomMode, Mode=TwoWay}" Margin="2,0"
+                         ToolTip="Drag a rectangle to zoom; right-click for horizontal/vertical modes" />
+            <RadioButton x:Name="DataTipsButton" GroupName="Mode" Content="Data Tips"
+                         IsChecked="{Binding IsDataTipsMode, Mode=TwoWay}" Margin="2,0"
+                         ToolTip="Roving readout: each click moves the tool's tip to the nearest point" />
             <RadioButton x:Name="EditButton" GroupName="Mode" Content="Edit"
                          IsChecked="{Binding IsEditMode, Mode=TwoWay}" Margin="2,0" />
             <Separator />

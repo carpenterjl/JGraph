@@ -33,6 +33,7 @@ public partial class ScriptWorkspaceWindow : Window
     private readonly IWorkspaceStateService _stateService;
     private readonly IFigureWindowService _figureWindows;
     private readonly ScriptSessionModel _session;
+    private readonly AppScriptAudio _audio = new();
     private readonly List<DocumentEntry> _documents = new();
     private readonly Dictionary<string, List<int>> _persistedBreakpoints = new();
     private readonly Dictionary<string, (DateTime WrittenUtc, IReadOnlyList<JGraph.Scripting.Completion.CompletionItem> Items)> _symbolCache =
@@ -255,7 +256,14 @@ public partial class ScriptWorkspaceWindow : Window
 
     private void OpenNewScript()
     {
-        var model = new ScriptDocumentModel(path: null, Templates["JGS"]);
+        // A near-blank stub (M21): a comment header the user fills in, dated at creation time.
+        string stub = $"""
+            // <description>
+            // Created by:
+            // Date: {DateTime.Now:yyyy-MM-dd}
+
+            """;
+        var model = new ScriptDocumentModel(path: null, stub);
         AddDocument(model, activate: true);
     }
 
@@ -482,7 +490,7 @@ public partial class ScriptWorkspaceWindow : Window
             : path => workspace.Resolve(path, scriptDirectory);
         var context = new ScriptContext(
             new ConsoleOutput(this), ShowFigureOnUi, scriptDirectory ?? workspace?.RootPath, resolver,
-            new AppScriptFigureFiles());
+            new AppScriptFigureFiles(), _audio);
 
         _cts = new System.Threading.CancellationTokenSource();
         ScriptRunResult result;
@@ -1155,59 +1163,6 @@ public partial class ScriptWorkspaceWindow : Window
             return null;
         }
     }
-
-    // --- Templates ------------------------------------------------------------------------------
-
-    internal static readonly IReadOnlyDictionary<string, string> Templates = new Dictionary<string, string>
-    {
-        ["C#"] = """
-            // JGraph C# script. The JG API is in scope directly: Plot, Title, XLabel, Legend, ...
-            // Host helpers: readcsv(path), print(value), show().
-            var x = new double[64];
-            var y = new double[64];
-            for (int i = 0; i < x.Length; i++)
-            {
-                x[i] = i * 0.1;
-                y[i] = Sin(x[i]);
-            }
-
-            Plot(x, y, "b-");
-            Title("Sine wave");
-            XLabel("x");
-            YLabel("sin(x)");
-            Legend("sin");
-            show();
-            """,
-        ["Python"] = """
-            # JGraph Python script. The JG API is available as the JGraph.Api.JG type.
-            # Host helpers: readcsv(path), show(); print() writes to the console below.
-            import math
-
-            x = [i * 0.1 for i in range(64)]
-            y = [math.sin(v) for v in x]
-
-            JG.Plot(x, y, "b-")
-            JG.Title("Sine wave")
-            JG.XLabel("x")
-            JG.YLabel("sin(x)")
-            JG.Legend("sin")
-            show()
-            """,
-        ["JGS"] = """
-            # JGraph Script (JGS) — a small built-in language.
-            # Built-ins mirror the API: plot, title, xlabel, legend, show, plus math like sin/linspace.
-            # run("other.jgs") includes another workspace script; readcsv("data.csv") finds workspace files.
-            let x = linspace(0, 6.28, 100)
-            let y = sin(x)
-
-            plot(x, y, "b-")
-            title("Sine wave")
-            xlabel("x")
-            ylabel("sin(x)")
-            legend("sin")
-            show()
-            """,
-    };
 
     /// <summary>One open document: its dock tab, its editor control, and its UI-free model.</summary>
     private sealed class DocumentEntry

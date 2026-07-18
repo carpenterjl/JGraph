@@ -12,6 +12,7 @@ namespace JGraph.Serialization.Dto;
 [JsonDerivedType(typeof(ArrowAnnotationDto), "arrow")]
 [JsonDerivedType(typeof(RectangleAnnotationDto), "rectangle")]
 [JsonDerivedType(typeof(EllipseAnnotationDto), "ellipse")]
+[JsonDerivedType(typeof(DataTipAnnotationDto), "datatip")]
 public abstract class AnnotationDto
 {
     public string Name { get; set; } = string.Empty;
@@ -50,6 +51,27 @@ public sealed class TextAnnotationDto : AnnotationDto
     public HorizontalAlignment HorizontalAlignment { get; set; } = HorizontalAlignment.Left;
 
     public VerticalAlignment VerticalAlignment { get; set; } = VerticalAlignment.Bottom;
+}
+
+public sealed class DataTipAnnotationDto : AnnotationDto
+{
+    public PointDto Pinned { get; set; } = new(0, 0);
+
+    public PointDto LabelPosition { get; set; } = new(0, 0);
+
+    public string Text { get; set; } = string.Empty;
+
+    public string SourceSeries { get; set; } = string.Empty;
+
+    public int PointIndex { get; set; } = -1;
+
+    public double FontSize { get; set; } = 11;
+
+    public Color? Color { get; set; }
+
+    public Color? Background { get; set; }
+
+    public double MarkerSize { get; set; } = 6;
 }
 
 public sealed class ArrowAnnotationDto : AnnotationDto

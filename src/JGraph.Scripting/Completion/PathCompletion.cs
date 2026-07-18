@@ -34,6 +34,7 @@ public static class PathCompletion
             ["readcsv"] = new[] { ".csv", ".tsv", ".txt" },
             ["readxlsx"] = new[] { ".xlsx" },
             ["readtable"] = new[] { ".csv", ".tsv", ".txt", ".xlsx" },
+            ["audioread"] = new[] { ".wav" },
             ["run"] = new[] { ".jgs" }, // JGS-only; see Detect
         };
 

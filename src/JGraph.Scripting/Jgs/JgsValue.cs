@@ -1,4 +1,5 @@
 using System.Globalization;
+using System.Numerics;
 using System.Text;
 using JGraph.Data;
 
@@ -9,6 +10,7 @@ internal enum JgsType
 {
     Null,
     Number,
+    Complex,
     Bool,
     String,
     Array,
@@ -49,6 +51,14 @@ internal sealed class JgsValue
     /// <summary>Wraps a number.</summary>
     public static JgsValue Number(double value) => new(JgsType.Number, value, null);
 
+    /// <summary>
+    /// Wraps a complex number. A value with zero imaginary part normalizes to a plain
+    /// <see cref="JgsType.Number"/>, so real-valued results of complex math flow back into every
+    /// numeric path (comparisons, plotting, indexing) without special cases.
+    /// </summary>
+    public static JgsValue ComplexNum(Complex value) =>
+        value.Imaginary == 0.0 ? Number(value.Real) : new(JgsType.Complex, 0, value);
+
     /// <summary>Returns the shared boolean value for <paramref name="value"/>.</summary>
     public static JgsValue Bool(bool value) => value ? True : False;
 
@@ -69,6 +79,9 @@ internal sealed class JgsValue
 
     /// <summary>The boolean value.</summary>
     public bool AsBool => _number != 0;
+
+    /// <summary>The complex value (valid for <see cref="JgsType.Complex"/>; a Number reads as re+0i).</summary>
+    public Complex AsComplex => Type == JgsType.Complex ? (Complex)_reference! : new Complex(_number, 0);
 
     /// <summary>The string value.</summary>
     public string AsString => (string)_reference!;
@@ -92,6 +105,7 @@ internal sealed class JgsValue
         JgsType.Null => false,
         JgsType.Bool => _number != 0,
         JgsType.Number => _number != 0,
+        JgsType.Complex => true, // zero-imaginary values normalize to Number, so any Complex is nonzero
         JgsType.String => AsString.Length > 0,
         JgsType.Array => AllTruthy(AsArray),
         _ => true,
@@ -131,6 +145,7 @@ internal sealed class JgsValue
         {
             JgsType.Null => true,
             JgsType.Number => left.AsNumber.Equals(right.AsNumber),
+            JgsType.Complex => left.AsComplex.Equals(right.AsComplex),
             JgsType.Bool => left.AsBool == right.AsBool,
             JgsType.String => string.Equals(left.AsString, right.AsString, StringComparison.Ordinal),
             _ => ReferenceEquals(left, right),
@@ -142,6 +157,7 @@ internal sealed class JgsValue
     {
         JgsType.Null => "null",
         JgsType.Number => "number",
+        JgsType.Complex => "complex",
         JgsType.Bool => "bool",
         JgsType.String => "string",
         JgsType.Array => "array",
@@ -155,6 +171,7 @@ internal sealed class JgsValue
     {
         JgsType.Null => "null",
         JgsType.Number => FormatNumber(_number),
+        JgsType.Complex => FormatComplex(AsComplex),
         JgsType.Bool => _number != 0 ? "true" : "false",
         JgsType.String => AsString,
         JgsType.Array => FormatArray(AsArray),
@@ -165,6 +182,18 @@ internal sealed class JgsValue
 
     private static string FormatNumber(double value) =>
         value.ToString("R", CultureInfo.InvariantCulture);
+
+    /// <summary>Formats like MATLAB: <c>1.2i</c> when purely imaginary, else <c>0.5+1.2i</c> / <c>0.5-1.2i</c>.</summary>
+    private static string FormatComplex(Complex value)
+    {
+        string imaginary = FormatNumber(Math.Abs(value.Imaginary)) + "i";
+        if (value.Real == 0)
+        {
+            return value.Imaginary < 0 ? "-" + imaginary : imaginary;
+        }
+
+        return FormatNumber(value.Real) + (value.Imaginary < 0 ? "-" : "+") + imaginary;
+    }
 
     private static string FormatArray(JgsValue[] elements)
     {

@@ -89,7 +89,7 @@ public class JgsDataWorkflowEndToEndTests : IDisposable
             }
 
             let hot = find(temp > 85)
-            let hotIds  = ids[hot]
+            let hotIds  = ids(hot)
             let hotVolt = volt(hot)
             print("over-temp readings:", length(hot), "first id:", hotIds[0])
 

@@ -94,7 +94,7 @@ public class InteractionControllerTests
     }
 
     [Fact]
-    public void DataCursor_PicksNearestPoint()
+    public void DataTips_ClickPlacesATip_PinnedToTheNearestPoint()
     {
         var figure = new FigureModel();
         AxesModel axes = figure.AddAxes();
@@ -106,13 +106,14 @@ public class InteractionControllerTests
 
         var surface = new FakeInteractionSurface(axes, new Rect2D(0, 0, 100, 100));
         var controller = new InteractionController(surface);
-        controller.SetMode(InteractionModeKind.DataCursor);
+        controller.SetMode(InteractionModeKind.DataTips);
 
         // Pixel (50,50) maps to data (5,5), which is a data point.
         controller.PointerDown(new PointerEventArgs(new Point2D(50, 50), PointerButton.Left, ModifierKeys.None));
 
-        Assert.NotNull(controller.DataCursor);
-        Assert.Equal(5, controller.DataCursor!.DataPoint.X, 6);
-        Assert.Equal(5, controller.DataCursor.DataPoint.Y, 6);
+        var tip = Assert.IsType<JGraph.Objects.Annotations.DataTipAnnotation>(Assert.Single(axes.Annotations));
+        Assert.Equal(5, tip.PinnedPoint.X, 6);
+        Assert.Equal(5, tip.PinnedPoint.Y, 6);
+        Assert.True(surface.UndoStack.CanUndo);
     }
 }

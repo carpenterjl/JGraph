@@ -61,10 +61,11 @@ public class JgsArrayBuiltinTests : IDisposable
     }
 
     [Fact]
-    public async Task Find_ReturnsZeroBasedIndicesOfTruthyElements()
+    public async Task Find_ReturnsOneBasedIndicesOfTruthyElements()
     {
-        Assert.Equal("[1, 3]", await Eval("find([0, 1, 0, 1])"));
-        Assert.Equal("[0, 2]", await Eval("find([true, false, true])"));
+        // 1-based since M21, pairing with MATLAB paren indexing: volt(find(temp > 85)).
+        Assert.Equal("[2, 4]", await Eval("find([0, 1, 0, 1])"));
+        Assert.Equal("[1, 3]", await Eval("find([true, false, true])"));
         Assert.Equal("[]", await Eval("find([false])"));
     }
 

@@ -32,8 +32,9 @@ internal static class JgsRunner
         try
         {
             IReadOnlyList<Stmt> program = Parser.Parse(code, sourceId);
-            JgsEnvironment environment = JgsBuiltins.CreateGlobals(globals);
-            var interpreter = new Interpreter(environment, cancellationToken, hook);
+            JgsEnvironment environment = JgsBuiltins.CreateGlobals(globals, cancellationToken);
+            var interpreter = new Interpreter(environment, cancellationToken, hook,
+                echo: line => context.Output.WriteLine(line));
             DefineRunBuiltin(environment, interpreter, globals);
             hook?.RunStarting(interpreter, environment);
 
@@ -43,6 +44,7 @@ internal static class JgsRunner
                 static p => p.Key, static p => p.Value, StringComparer.Ordinal);
 
             interpreter.Run(program);
+            globals.ShowUnshownFigures(); // MATLAB expectation: created figures appear without show()
             return ScriptRunResult.Ok(globals.FiguresShown, SnapshotGlobals(environment, pristine));
         }
         catch (JgsException ex)

@@ -160,6 +160,7 @@
       <li><a href="#basics">Syntax basics</a></li>
       <li><a href="#types">Values &amp; types</a></li>
       <li><a href="#operators">Operators</a></li>
+      <li><a href="#matlab">MATLAB-style scripting</a></li>
       <li><a href="#arrays">Arrays &amp; indexing</a></li>
       <li><a href="#masks">Masks &amp; logical indexing</a></li>
       <li><a href="#matrices">Matrices</a></li>
@@ -179,6 +180,7 @@
       <li><a href="#ref-tables" class="sub">Tables &amp; CSV</a></li>
       <li><a href="#ref-plot" class="sub">Plotting verbs</a></li>
       <li><a href="#ref-3d" class="sub">3D, contours &amp; colormaps</a></li>
+      <li><a href="#ref-dsp" class="sub">DSP &amp; audio</a></li>
       <li><a href="#ref-figfiles" class="sub">Figure files</a></li>
       <li><a href="#ref-misc" class="sub">Output &amp; includes</a></li>
       <div class="grouplabel">Worked examples</div>
@@ -202,7 +204,7 @@
     <div class="note"><strong>Mental model:</strong> if you know MATLAB or NumPy, you already know 90% of JGS. Arrays are first-class, indexing is by <em>logical mask</em> or by position, and plotting commands act on a single "current figure / current axes" that you switch with <code>figure</code> and <code>subplot</code>.</div>
 
     <h2 id="running">Running a script</h2>
-    <p>Open the <strong>Script Workspace</strong> in JGraph, create or open a <code>.jgs</code> file, and run it (the editor gives you syntax highlighting, autocomplete, and a debugger). Nothing draws to the screen until the script calls <code>show()</code> — plotting commands accumulate silently into the current figure, and <code>show</code> opens (or updates) a window for it. Re-running a script reuses the same figure windows by number rather than piling up new ones.</p>
+    <p>Open the <strong>Script Workspace</strong> in JGraph, create or open a <code>.jgs</code> file, and run it (the editor gives you syntax highlighting, autocomplete, and a debugger). Plotting commands accumulate into the current figure; <code>show()</code> opens (or updates) a window for it at any point, and — MATLAB-style since M21 — any figures the script created but never <code>show()</code>ed are displayed automatically when the run finishes. Re-running a script reuses the same figure windows by number rather than piling up new ones.</p>
     <p>A script's only access to the outside world is the table readers (<code>readcsv</code>, <code>readxlsx</code>, <code>readtable</code>), the figure-file commands (<code>savefigure</code>, <code>loadfigure</code>, <code>exportfigure</code>), and <code>run</code> for including another script. There is no arbitrary file, network, or system access.</p>
 
     <!-- ================= LANGUAGE ================= -->
@@ -212,7 +214,7 @@
         <tr><td class="sig"><code>let x = 5</code></td><td>Declare a variable. Reassign later with <code>x = 6</code> (no <code>let</code>).</td></tr>
         <tr><td class="sig"><code>x += 2</code> &nbsp; <code>x++</code></td><td>Compound assignment (<code>+= -= *= /= %=</code>) and increment/decrement (<code>x++</code>, <code>++x</code>, <code>x--</code>, <code>--x</code>) — full C semantics, also on array elements (<code>a[i] += 1</code>).</td></tr>
         <tr><td class="sig"><code>let [X, Y] = pair()</code></td><td>Destructuring: bind the elements of a 2-element (or n-element) array to names — how you receive <code>meshgrid</code>'s two matrices.</td></tr>
-        <tr><td class="sig">newline or <code>;</code></td><td>Statements are separated by line breaks or semicolons. Blank lines are ignored.</td></tr>
+        <tr><td class="sig">newline or <code>;</code></td><td>Statements are separated by line breaks or semicolons. Blank lines are ignored. A trailing <code>;</code> additionally <strong>suppresses console echo</strong> — see <a href="#matlab">MATLAB-style scripting</a>.</td></tr>
         <tr><td class="sig"><code># ...</code> or <code>// ...</code></td><td>Line comment to end of line. (There are no block comments.)</td></tr>
         <tr><td class="sig"><code>"text"</code> / <code>'text'</code></td><td>Strings — double or single quotes are interchangeable. Escapes: <code>\n \t \r \\ \" \'</code>.</td></tr>
         <tr><td class="sig"><code>[1, 2, 3]</code></td><td>Array literal. May span multiple lines (line breaks inside <code>[ ]</code> and <code>( )</code> are not statement separators).</td></tr>
@@ -253,36 +255,59 @@
         <tr><td><code>!</code> &nbsp; <code>-</code></td><td>Unary NOT / negate</td><td><code>!</code> negates a bool; <code>-</code> negates a number.</td></tr>
         <tr><td><code>= += -= *= /= %=</code></td><td>Assignment (plain and compound)</td><td>An <em>expression</em> yielding the stored value: <code>a = b = 0</code> chains, <code>let y = (x += 2)</code> works. Compound forms broadcast like their operator: <code>xs += 1</code> is elementwise.</td></tr>
         <tr><td><code>++ --</code></td><td>Increment / decrement by 1</td><td>Postfix (<code>x++</code>) yields the <em>old</em> value; prefix (<code>++x</code>) the <em>new</em>. Works on variables and array elements; the target must hold a number.</td></tr>
+        <tr><td><code>^</code> &nbsp; <code>.^</code></td><td>Power (MATLAB rules)</td><td>Element-wise; binds tighter than unary minus (<code>-2^2</code> → <code>-4</code>), associates left (<code>2^3^2</code> → <code>64</code>), and allows <code>2^-3</code>.</td></tr>
+        <tr><td><code>~</code> &nbsp; <code>~=</code> &nbsp; <code>.*</code> &nbsp; <code>./</code></td><td>MATLAB spellings</td><td>Aliases of <code>!</code>, <code>!=</code>, <code>*</code>, <code>/</code> — JGS operators already broadcast element-wise, so <code>a .* b</code> and <code>a * b</code> mean the same thing.</td></tr>
+        <tr><td><code>a:b</code> &nbsp; <code>a:step:b</code></td><td>Colon range</td><td>An <em>inclusive</em> sequence: <code>2:6</code> → <code>[2,3,4,5,6]</code>, <code>0:1/fs:3</code> → 3001 samples. Looser than arithmetic, tighter than comparisons.</td></tr>
       </tbody>
     </table>
-    <p>Precedence, high to low: unary → <code>* / %</code> → <code>+ -</code> → comparisons → <code>== !=</code> → <code>&amp;&amp;</code> → <code>||</code> → assignment (right-associative). Parenthesize with <code>( )</code> as usual.</p>
+    <p>Precedence, high to low: <code>^</code> → unary → <code>* / %</code> → <code>+ -</code> → ranges (<code>:</code>) → comparisons → <code>== !=</code> → <code>&amp;&amp;</code> → <code>||</code> → assignment (right-associative). Parenthesize with <code>( )</code> as usual.</p>
     <div class="callout"><strong>Two C-style footguns to know:</strong> (1) since assignment is an expression, <code>if x = 5 { }</code> is legal and assigns — write <code>==</code> to compare (assigning to an <em>undeclared</em> name is still an error, which catches most slips). (2) <code>5--3</code> no longer parses because <code>--</code> is now the decrement operator — write <code>5 - -3</code>.</div>
     <div class="callout"><strong>Truthiness (MATLAB rule):</strong> an array is truthy only if it is <em>non-empty and every element is truthy</em>. So <code>if temp &gt; 85 { ... }</code> runs only when <em>all</em> readings exceed 85. To ask "any?" or "how many?", use <code>any(mask)</code>, <code>all(mask)</code>, or <code>sum(mask)</code>. To test emptiness, use <code>length(a) &gt; 0</code>.</div>
 
+    <h2 id="matlab">MATLAB-style scripting</h2>
+    <p>Since M21, real MATLAB scripts run in JGS with only minimal edits (convert <code>%</code> comments to <code>//</code>, add <code>let</code> on first assignments, add commas inside array literals). The pieces:</p>
+    <table>
+      <tbody>
+        <tr><td class="sig"><code>x = 5</code> vs <code>x = 5;</code></td><td><strong>Echo &amp; suppression.</strong> A statement <em>without</em> a trailing <code>;</code> echoes its result to the console (<code>x = 5</code>); with <code>;</code> it stays silent. A bare expression binds <code>ans</code> (even when suppressed) and echoes <code>ans = …</code>; a bare variable name displays it. Long arrays truncate with an element count.</td></tr>
+        <tr><td class="sig"><code>for k = 2:n … end</code></td><td><strong>MATLAB blocks.</strong> <code>for</code>/<code>while</code>/<code>if</code>/<code>fn</code> bodies may be closed by <code>end</code> instead of braces; <code>elseif</code> chains share one <code>end</code>. Both styles coexist. <code>end</code> and <code>elseif</code> are reserved words.</td></tr>
+        <tr><td class="sig"><code>t = 0:1/fs:3</code></td><td><strong>Colon ranges</strong>, inclusive with MATLAB's endpoint tolerance (that one is exactly 3001 samples).</td></tr>
+        <tr><td class="sig"><code>[a; b]</code></td><td><strong>Rows &amp; vertical concat.</strong> <code>[1, 2; 3, 4]</code> is a matrix; when rows contain arrays the whole thing flattens into one array — <code>[audio; zeros(k, 1)]</code> pads a signal.</td></tr>
+        <tr><td class="sig"><code>figure;</code></td><td><strong>Command form &amp; auto-display.</strong> A bare builtin name as a statement calls it with no arguments. And every figure a script creates is shown automatically when the run finishes — no <code>show()</code> needed (explicit <code>show()</code> still works and is not repeated).</td></tr>
+        <tr><td class="sig"><code>3 + 4i</code></td><td><strong>Complex numbers.</strong> Literals <code>2i</code>/<code>1.5j</code>; <code>+ - * / ^</code> promote; <code>abs</code> is magnitude, plus <code>real</code>, <code>imag</code>, <code>conj</code>, <code>angle</code>. <code>fft</code> returns complex bins. Ordering comparisons and plotting complex data are errors that tell you to take <code>abs()</code>/<code>real()</code> first. Zero-imaginary results collapse back to plain numbers.</td></tr>
+        <tr><td class="sig"><code>pi e inf nan</code></td><td>Built-in constants.</td></tr>
+      </tbody>
+    </table>
+    <div class="callout"><strong>Deliberate differences from MATLAB:</strong> <code>%</code> is still the modulo operator, not a comment (use <code>//</code> or <code>#</code>; <code>mod(a,b)</code> exists); <code>let</code> is still required for a first binding; array literals need commas (<code>[0 20 30]</code> is an error); and arrays assign by <em>reference</em> — <code>X2 = X1; X2(1) = 0</code> also changes <code>X1</code>.</div>
+
     <h2 id="arrays">Arrays &amp; indexing</h2>
-    <p>Arrays are the workhorse. Build them with a literal or a constructor (<code>linspace</code>, <code>range</code>, <code>zeros</code>, <code>ones</code>, <code>rand</code>), then transform them with math and the array builtins.</p>
-    <p><strong>Indexing is 0-based.</strong> Both bracket and paren forms work and mean the same thing:</p>
+    <p>Arrays are the workhorse. Build them with a literal, a colon range (<code>2:6</code>), or a constructor (<code>linspace</code>, <code>range</code>, <code>zeros</code>, <code>ones</code>, <code>rand</code>), then transform them with math and the array builtins.</p>
+    <p><strong>Two indexing forms with two bases:</strong> square brackets are 0-based (the original JGS form); parentheses are <strong>1-based, MATLAB-style</strong>, and support <code>end</code>, colon slices, and slice assignment:</p>
     <pre><code><span class="kw">let</span> a = [<span class="num">10</span>, <span class="num">20</span>, <span class="num">30</span>, <span class="num">40</span>]
-a[<span class="num">0</span>]        <span class="com"># 10  — first element (bracket form)</span>
-a(<span class="num">2</span>)        <span class="com"># 30  — paren form, identical meaning</span>
-a[<span class="num">1</span>] = <span class="num">99</span>   <span class="com"># assign one element → [10, 99, 30, 40]</span>
-<span class="fn">length</span>(a)   <span class="com"># 4</span></code></pre>
-    <p>Indexing also accepts an <em>array of indices</em> to gather several elements at once, and strings can be indexed the same way (you get back a string):</p>
-    <pre><code>a[[<span class="num">0</span>, <span class="num">3</span>]]   <span class="com"># [10, 40]  — gather by a list of positions</span></code></pre>
-    <div class="callout"><strong>Note:</strong> only single-element assignment (<code>a[i] = v</code>) is supported. There is no member access (<code>obj.field</code>) and no colon-range syntax (<code>a[2:5]</code>) — use <code>slice(a, 2, 5)</code>, <code>range()</code>, or <code>linspace()</code> instead.</div>
+a[<span class="num">0</span>]          <span class="com"># 10  — brackets: 0-based</span>
+a(<span class="num">1</span>)          <span class="com"># 10  — parens: 1-based (MATLAB)</span>
+a(<span class="kw">end</span>)        <span class="com"># 40  — 'end' is the last index (parens only)</span>
+a(<span class="num">2</span>:<span class="kw">end</span>)      <span class="com"># [20, 30, 40] — colon slice</span>
+a(:)          <span class="com"># everything, as a copy</span>
+a(<span class="num">2</span>) = <span class="num">99</span>     <span class="com"># element write → [10, 99, 30, 40]</span>
+a(<span class="num">1</span>:<span class="num">2</span>) = <span class="num">0</span>    <span class="com"># slice write, scalar broadcasts → [0, 0, 30, 40]</span>
+<span class="fn">length</span>(a)     <span class="com"># 4</span></code></pre>
+    <p>Both forms also accept an <em>array of indices</em> to gather several elements at once (1-based in parens, 0-based in brackets), and strings can be indexed the same way (you get back a string):</p>
+    <pre><code>a([<span class="num">1</span>, <span class="num">4</span>])   <span class="com"># [10, 40]  — paren gather (1-based), pairs with find()</span></code></pre>
+    <div class="callout"><strong>Note:</strong> bracket assignment is single-element only (<code>a[i] = v</code>); slice writes need the paren form. There is no member access (<code>obj.field</code>). Colon slices work only inside parens — elsewhere <code>a:b</code> is a free-standing range value.</div>
 
     <h2 id="masks">Masks &amp; logical indexing</h2>
     <p>This is the heart of JGS analysis. A comparison over an array yields a <strong>mask</strong> — a bool array of the same length. Index an array with a mask to keep only the elements where the mask is <code>true</code>:</p>
     <pre><code><span class="kw">let</span> temp = <span class="fn">column</span>(t, <span class="str">"Temperature"</span>)
 <span class="kw">let</span> hotOnes = temp(temp &gt; <span class="num">85</span>)   <span class="com"># keep readings above 85 (paren or bracket form)</span></code></pre>
     <p>Masks align across columns, which is what makes "filter the whole dataset by a condition" work. <code>find</code> turns a mask into the matching <strong>row indices</strong>, and those indices map back to <em>every</em> column of the original data — row 3 of one derived array is the same record as row 3 of another:</p>
-    <pre><code><span class="kw">let</span> hot     = <span class="fn">find</span>(temp &gt; <span class="num">85</span>)   <span class="com"># 0-based row numbers where the condition holds</span>
-<span class="kw">let</span> hotIds  = ids[hot]              <span class="com"># the serial numbers of those same rows</span>
-<span class="kw">let</span> hotVolt = volt[hot]              <span class="com"># and their voltages — all still aligned</span></code></pre>
+    <pre><code><span class="kw">let</span> hot     = <span class="fn">find</span>(temp &gt; <span class="num">85</span>)   <span class="com"># 1-based row numbers where the condition holds</span>
+<span class="kw">let</span> hotIds  = ids(hot)              <span class="com"># the serial numbers of those same rows</span>
+<span class="kw">let</span> hotVolt = volt(hot)              <span class="com"># and their voltages — all still aligned</span></code></pre>
+    <div class="callout"><strong>Since M21, <code>find</code> is 1-based</strong>, pairing with paren indexing — always gather <code>find</code> results with parens (<code>volt(hot)</code>), never brackets.</div>
     <table>
       <thead><tr><th>Index value</th><th>Behavior</th></tr></thead>
       <tbody>
-        <tr><td>a single number</td><td>Returns that one element (0-based).</td></tr>
+        <tr><td>a single number</td><td>Returns that one element (1-based in parens, 0-based in brackets).</td></tr>
         <tr><td>a <strong>bool array</strong> (mask)</td><td>Filters — keeps elements where the mask is <code>true</code>. The mask length must equal the array length.</td></tr>
         <tr><td>a <strong>number array</strong></td><td>Gathers — returns those elements in that order (great with <code>find</code>).</td></tr>
       </tbody>
@@ -444,7 +469,7 @@ m[<span class="num">1</span>][<span class="num">0</span>]                       
       <tbody>
         <tr><td class="sig"><code><span class="fn">sort</span>(array, <span class="opt">order</span>)</code></td><td>Sorted copy of a numeric or string array. <code>order</code> is <code>"asc"</code> (default) or <code>"desc"</code>.</td></tr>
         <tr><td class="sig"><code><span class="fn">unique</span>(array)</code></td><td>Sorted distinct values — the way to build a list of unique IDs.</td></tr>
-        <tr><td class="sig"><code><span class="fn">find</span>(mask)</code></td><td>0-based indices of the truthy elements. <code>find(temp &gt; 85)</code> → matching row numbers.</td></tr>
+        <tr><td class="sig"><code><span class="fn">find</span>(mask)</code></td><td>1-based indices of the truthy elements — gather them with parens: <code>volt(find(temp &gt; 85))</code>.</td></tr>
         <tr><td class="sig"><code><span class="fn">any</span>(array)</code> <code><span class="fn">all</span>(array)</code></td><td>Whether at least one / every element is truthy.</td></tr>
         <tr><td class="sig"><code><span class="fn">concat</span>(first, second, ...)</code></td><td>Join arrays and scalars into one array, in order. <code>concat(a, b)</code>, <code>concat(a, 5)</code>.</td></tr>
         <tr><td class="sig"><code><span class="fn">slice</span>(array, start, <span class="opt">stop</span>)</code></td><td>Elements [start, stop) by 0-based index; <code>stop</code> defaults to the end. Sub-array "from row 75 on" = <code>slice(a, 75)</code>.</td></tr>
@@ -499,7 +524,7 @@ m[<span class="num">1</span>][<span class="num">0</span>]                       
     <div class="tablewrap"><table>
       <thead><tr><th>Signature</th><th>Description</th></tr></thead>
       <tbody>
-        <tr><td class="sig"><code><span class="fn">plot</span>(y)</code> · <code>(x, y, <span class="opt">spec</span>)</code> · <code>(table, xCol, yCol, <span class="opt">spec</span>)</code></td><td>Line plot. Give just <code>y</code>, an <code>x</code>/<code>y</code> pair with an optional <a href="#linespec">line-spec</a>, or two table columns by name.</td></tr>
+        <tr><td class="sig"><code><span class="fn">plot</span>(y)</code> · <code>(x, y, <span class="opt">spec</span>)</code> · <code>(table, xCol, yCol, <span class="opt">spec</span>)</code></td><td>Line plot. Give just <code>y</code>, an <code>x</code>/<code>y</code> pair with an optional <a href="#linespec">line-spec</a>, or two table columns by name. Repeat <code>(x, y, spec)</code> groups to overlay several series in one call — <code>plot(t, a, 'b', t, b, 'r--')</code>.</td></tr>
         <tr><td class="sig"><code><span class="fn">scatter</span>(x, y)</code> · <code>(table, xCol, yCol)</code></td><td>Scatter plot.</td></tr>
         <tr><td class="sig"><code><span class="fn">bar</span>(x, y)</code> · <code>(table, xCol, yCol)</code></td><td>Bar chart.</td></tr>
         <tr><td class="sig"><code><span class="fn">stem</span>(y)</code> · <code>(x, y)</code></td><td>Stem plot.</td></tr>
@@ -507,7 +532,7 @@ m[<span class="num">1</span>][<span class="num">0</span>]                       
         <tr><td class="sig"><code><span class="fn">errorbar</span>(x, y, error)</code> · <code>(table, xCol, yCol, errCol)</code></td><td>Line plot with symmetric error bars.</td></tr>
         <tr><td class="sig"><code><span class="fn">semilogx</span>(x, y, <span class="opt">spec</span>)</code> <code><span class="fn">semilogy</span>(...)</code> <code><span class="fn">loglog</span>(...)</code></td><td>Line plots with a log x-axis / log y-axis / both.</td></tr>
         <tr><td class="sig"><code><span class="fn">title</span>(text)</code> <code><span class="fn">xlabel</span>(text)</code> <code><span class="fn">ylabel</span>(text)</code></td><td>Set the current axes title / axis labels.</td></tr>
-        <tr><td class="sig"><code><span class="fn">xlim</span>(min, max)</code> <code><span class="fn">ylim</span>(min, max)</code></td><td>Set the axis ranges.</td></tr>
+        <tr><td class="sig"><code><span class="fn">xlim</span>(min, max)</code> <code><span class="fn">ylim</span>(min, max)</code></td><td>Set the axis ranges — two numbers or one <code>[min, max]</code> array (<code>xlim([-fs/2, fs/2])</code>).</td></tr>
         <tr><td class="sig"><code><span class="fn">grid</span>(<span class="opt">on</span>)</code> <code><span class="fn">hold</span>(<span class="opt">on</span>)</code></td><td>Toggle grid lines / overlay-mode. Both default to on when called with no argument.</td></tr>
         <tr><td class="sig"><code><span class="fn">legend</span>(names...)</code></td><td>Set the legend — one string per series.</td></tr>
         <tr><td class="sig"><code><span class="fn">figure</span>(<span class="opt">n</span>)</code></td><td>Start a new figure (or select figure <code>n</code>) and return its 1-based handle.</td></tr>
@@ -545,6 +570,27 @@ m[<span class="num">1</span>][<span class="num">0</span>]                       
 <span class="fn">title</span>(<span class="str">"sinc(r)"</span>)
 <span class="fn">show</span>()</code></pre>
     <div class="note"><strong>Practical size cap:</strong> surfaces re-project and depth-sort every cell while you drag; grids up to ~150×150 stay smooth.</div>
+
+    <h3 id="ref-dsp">DSP &amp; audio</h3>
+    <p>MATLAB's signal-processing verbs (M21). The FFT handles <em>any</em> length in O(n log n) (Bluestein's algorithm for non-powers-of-two), so a raw audio clip transforms directly. Frequencies are normalized to Nyquist (0..1) where noted.</p>
+    <div class="tablewrap"><table>
+      <thead><tr><th>Signature</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td class="sig"><code><span class="fn">fft</span>(x, <span class="opt">n</span>)</code> · <code><span class="fn">ifft</span>(x, <span class="opt">n</span>)</code></td><td>Forward / inverse discrete Fourier transform (complex result; optional length pads or truncates). <code>real(ifft(X))</code> recovers a real signal.</td></tr>
+        <tr><td class="sig"><code><span class="fn">fftshift</span>(x)</code> · <code><span class="fn">ifftshift</span>(x)</code></td><td>Rotate a spectrum so DC sits at the center, and back.</td></tr>
+        <tr><td class="sig"><code><span class="fn">filter</span>(b, a, x)</code></td><td>Apply the digital filter b/a to signal x (Direct Form II transposed, zero initial state). <code>a</code> may be the scalar <code>1</code> for FIR.</td></tr>
+        <tr><td class="sig"><code><span class="fn">freqz</span>(b, a, <span class="opt">count</span>, <span class="opt">fs</span>)</code></td><td>Frequency response: <code>let [H, f] = freqz(h, 1, 1024, fs)</code> — complex <code>H</code> plus the frequency axis (fs defaults to 2 → normalized f). Plot <code>abs(H)</code>.</td></tr>
+        <tr><td class="sig"><code><span class="fn">butter</span>(n, Wn, <span class="opt">type</span>)</code></td><td>Butterworth design → <code>[b, a]</code>. <code>Wn</code> normalized (or <code>[lo, hi]</code>); type <code>"low"</code> (default), <code>"high"</code>, <code>"bandpass"</code>, <code>"stop"</code>.</td></tr>
+        <tr><td class="sig"><code><span class="fn">firpm</span>(n, f, a)</code></td><td>Parks–McClellan equiripple FIR: order n, normalized band edges f, band amplitudes a — <code>firpm(127, [0, 0.04, 0.06, 1], [1, 1, 0, 0])</code>.</td></tr>
+        <tr><td class="sig"><code><span class="fn">audioread</span>(path)</code></td><td>Read a .wav → <code>let [y, fs] = audioread('gc.wav')</code>; samples normalized to [-1, 1], stereo averaged to mono.</td></tr>
+        <tr><td class="sig"><code><span class="fn">sound</span>(y, <span class="opt">fs</span>)</code></td><td>Play samples through the speakers without blocking (fs defaults to 8192). Follow with <code>pause(...)</code> to wait for playback.</td></tr>
+        <tr><td class="sig"><code><span class="fn">pause</span>(seconds)</code></td><td>Wait — interruptible by the Stop button.</td></tr>
+        <tr><td class="sig"><code><span class="fn">mod</span>(x, m)</code></td><td>MATLAB modulo (result takes m's sign), element-wise.</td></tr>
+        <tr><td class="sig"><code><span class="fn">size</span>(x)</code></td><td><code>[rows, cols]</code> of a matrix, <code>[1, n]</code> for a flat array or string. <code>zeros(size(t))</code> works.</td></tr>
+        <tr><td class="sig"><code><span class="fn">disp</span>(value)</code></td><td>Write a value to the console with no <code>name =</code> prefix.</td></tr>
+        <tr><td class="sig"><code><span class="fn">real</span>(x)</code> <code><span class="fn">imag</span>(x)</code> <code><span class="fn">conj</span>(x)</code> <code><span class="fn">angle</span>(x)</code></td><td>Complex parts / conjugate / phase, element-wise (real input is fine). <code>abs</code> is complex magnitude.</td></tr>
+      </tbody>
+    </table></div>
 
     <h3 id="ref-figfiles">Figure files</h3>
     <div class="tablewrap"><table>
@@ -587,12 +633,12 @@ m[<span class="num">1</span>][<span class="num">0</span>]                       
 
 <span class="com"># Over-temp records — find() gives row indices that map back to EVERY column</span>
 <span class="kw">let</span> hot     = <span class="fn">find</span>(temp &gt; <span class="num">85</span>)
-<span class="kw">let</span> hotIds  = ids[hot]
-<span class="kw">let</span> hotVolt = volt[hot]
-<span class="fn">print</span>(<span class="str">"over-temp readings:"</span>, <span class="fn">length</span>(hot), <span class="str">" first id:"</span>, hotIds[<span class="num">0</span>])
+<span class="kw">let</span> hotIds  = ids(hot)
+<span class="kw">let</span> hotVolt = volt(hot)
+<span class="fn">print</span>(<span class="str">"over-temp readings:"</span>, <span class="fn">length</span>(hot), <span class="str">" first id:"</span>, hotIds(<span class="num">1</span>))
 
 <span class="fn">figure</span>()
-<span class="fn">scatter</span>(hotVolt, temp[hot])
+<span class="fn">scatter</span>(hotVolt, temp(hot))
 <span class="fn">title</span>(<span class="str">"Voltage vs Temperature (over 85 C)"</span>)
 <span class="fn">xlabel</span>(<span class="str">"Voltage"</span>)
 <span class="fn">ylabel</span>(<span class="str">"Temperature"</span>)

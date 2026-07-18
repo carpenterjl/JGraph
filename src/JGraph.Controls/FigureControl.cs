@@ -29,6 +29,7 @@ public class FigureControl : SKElement, IInteractionSurface, IFigureNavigator
 
     private readonly FigureRenderer _renderer = new();
     private readonly InteractionController _controller;
+    private Point2D? _rightDown;
     private ITheme _theme = Core.Drawing.Theme.Light;
     private FigureRenderResult _lastResult = FigureRenderResult.Empty;
     private bool _isRendering;
@@ -198,6 +199,11 @@ public class FigureControl : SKElement, IInteractionSurface, IFigureNavigator
         base.OnMouseDown(e);
         Focus();
         CaptureMouse();
+        if (e.ChangedButton == MouseButton.Right)
+        {
+            _rightDown = ToPoint(e);
+        }
+
         _controller.PointerDown(ToPointerArgs(e, ButtonOf(e)));
     }
 
@@ -218,6 +224,51 @@ public class FigureControl : SKElement, IInteractionSurface, IFigureNavigator
         base.OnMouseUp(e);
         _controller.PointerUp(ToPointerArgs(e, ButtonOf(e)));
         ReleaseMouseCapture();
+
+        // A right click (not a drag) opens the tool-aware plot context menu.
+        if (e.ChangedButton == MouseButton.Right && _rightDown is { } down)
+        {
+            _rightDown = null;
+            Point2D position = ToPoint(e);
+            if (System.Math.Abs(position.X - down.X) < 4 && System.Math.Abs(position.Y - down.Y) < 4)
+            {
+                OpenContextMenu(position);
+                e.Handled = true;
+            }
+        }
+    }
+
+    private void OpenContextMenu(Point2D position)
+    {
+        IReadOnlyList<ContextMenuItem> items = _controller.BuildContextMenu(position);
+        if (items.Count == 0)
+        {
+            return;
+        }
+
+        var menu = new System.Windows.Controls.ContextMenu { PlacementTarget = this };
+        foreach (ContextMenuItem item in items)
+        {
+            if (item.IsSeparator)
+            {
+                menu.Items.Add(new System.Windows.Controls.Separator());
+                continue;
+            }
+
+            var entry = new System.Windows.Controls.MenuItem
+            {
+                Header = item.Header,
+                IsChecked = item.IsChecked,
+            };
+            if (item.Invoke is { } invoke)
+            {
+                entry.Click += (_, _) => invoke();
+            }
+
+            menu.Items.Add(entry);
+        }
+
+        menu.IsOpen = true;
     }
 
     protected override void OnMouseWheel(MouseWheelEventArgs e)

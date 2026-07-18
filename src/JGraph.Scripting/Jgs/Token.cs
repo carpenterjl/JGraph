@@ -5,6 +5,7 @@ internal enum TokenType
 {
     // Literals and identifiers.
     Number,
+    ImaginaryNumber, // 2i / 1.5i / 3j — the numeric text without the suffix is in Token.Number
     String,
     Identifier,
 
@@ -21,6 +22,8 @@ internal enum TokenType
     Continue,
     True,
     False,
+    End,     // MATLAB block terminator, and "last index" inside an index expression
+    ElseIf,  // MATLAB 'elseif'
 
     // Punctuation and operators.
     LParen,
@@ -43,6 +46,8 @@ internal enum TokenType
     Star,
     Slash,
     Percent,
+    Caret,        // ^ (also the target of '.^')
+    Colon,        // : (MATLAB range, and 'all' inside an index)
     Bang,         // !
     EqualEqual,   // ==
     BangEqual,    // !=
@@ -53,8 +58,11 @@ internal enum TokenType
     AmpAmp,       // &&
     PipePipe,     // ||
 
-    /// <summary>A statement separator (a significant newline or ';').</summary>
+    /// <summary>A statement separator (a significant newline).</summary>
     Newline,
+
+    /// <summary>';' — a statement separator that also suppresses console echo (and separates array rows).</summary>
+    Semicolon,
 
     /// <summary>End of input.</summary>
     Eof,
@@ -72,6 +80,7 @@ internal readonly record struct Token(TokenType Type, string Text, double Number
         TokenType.Eof => "end of input",
         TokenType.Newline => "end of line",
         TokenType.Number => $"number '{Text}'",
+        TokenType.ImaginaryNumber => $"number '{Text}'",
         TokenType.String => "string",
         TokenType.Identifier => $"'{Text}'",
         _ => $"'{Text}'",
