@@ -300,6 +300,153 @@ internal static class JgsBuiltins
             return JgsValue.Null;
         });
 
+        // --- Time & date ---------------------------------------------------------------------
+        // A stopwatch handle is the high-resolution tick count taken relative to when these globals were
+        // built — small enough to survive a round trip through a JGS number (double) without losing
+        // precision. tic starts the default stopwatch and returns a handle; toc reads elapsed seconds
+        // from the last bare tic or from a given handle. Dates use MATLAB serial date numbers, which are
+        // .NET OLE Automation dates plus a fixed offset (so datenum(1970, 1, 1) == 719529, as in MATLAB).
+        long stopwatchBase = System.Diagnostics.Stopwatch.GetTimestamp();
+        double stopwatchFrequency = System.Diagnostics.Stopwatch.Frequency;
+        double? defaultTicHandle = null;
+        const double matlabDatenumOffset = 693960.0;
+
+        double StopwatchTicksNow() => System.Diagnostics.Stopwatch.GetTimestamp() - stopwatchBase;
+
+        double SerialFromComponents(double year, double month, double day, double hour, double minute, double second) =>
+            new DateTime((int)System.Math.Clamp(year, 1, 9999), 1, 1)
+                .AddMonths((int)month - 1)
+                .AddDays(day - 1)
+                .AddHours(hour)
+                .AddMinutes(minute)
+                .AddSeconds(second)
+                .ToOADate() + matlabDatenumOffset;
+
+        Define("tic", (args, line, col) =>
+        {
+            Arity("tic", args, 0, line, col);
+            double handle = StopwatchTicksNow();
+            defaultTicHandle = handle;
+            return JgsValue.Number(handle);
+        });
+
+        Define("toc", (args, line, col) =>
+        {
+            ArityRange("toc", args, 0, 1, line, col);
+            double startTicks;
+            if (args.Count == 1)
+            {
+                startTicks = Num("toc", args, 0, line, col);
+            }
+            else if (defaultTicHandle is double handle)
+            {
+                startTicks = handle;
+            }
+            else
+            {
+                throw new JgsRuntimeException(line, col, "toc: start a timer with tic first.");
+            }
+
+            return JgsValue.Number((StopwatchTicksNow() - startTicks) / stopwatchFrequency);
+        });
+
+        Define("clock", (args, line, col) =>
+        {
+            Arity("clock", args, 0, line, col);
+            DateTime moment = DateTime.Now;
+            return JgsValue.Array(
+            [
+                JgsValue.Number(moment.Year),
+                JgsValue.Number(moment.Month),
+                JgsValue.Number(moment.Day),
+                JgsValue.Number(moment.Hour),
+                JgsValue.Number(moment.Minute),
+                JgsValue.Number(moment.Second + (moment.Millisecond / 1000.0)),
+            ]);
+        });
+
+        Define("now", (args, line, col) =>
+        {
+            Arity("now", args, 0, line, col);
+            return JgsValue.Number(DateTime.Now.ToOADate() + matlabDatenumOffset);
+        });
+
+        Define("datenum", (args, line, col) =>
+        {
+            ArityRange("datenum", args, 1, 6, line, col);
+            double[] components;
+            if (args.Count == 1 && args[0].Type == JgsType.Array)
+            {
+                components = ToDoubles("datenum", args[0], line, col);
+                if (components.Length is not (3 or 6))
+                {
+                    throw new JgsRuntimeException(line, col,
+                        "datenum: a single vector must have 3 ([year, month, day]) or 6 ([..., hour, minute, second]) elements.");
+                }
+            }
+            else if (args.Count is 3 or 6)
+            {
+                components = new double[args.Count];
+                for (int i = 0; i < args.Count; i++)
+                {
+                    components[i] = Num("datenum", args, i, line, col);
+                }
+            }
+            else
+            {
+                throw new JgsRuntimeException(line, col,
+                    "datenum expects year, month, day (optionally hour, minute, second), or a single 3- or 6-element vector.");
+            }
+
+            double hour = components.Length > 3 ? components[3] : 0;
+            double minute = components.Length > 4 ? components[4] : 0;
+            double second = components.Length > 5 ? components[5] : 0;
+            return JgsValue.Number(SerialFromComponents(components[0], components[1], components[2], hour, minute, second));
+        });
+
+        Define("datestr", (args, line, col) =>
+        {
+            ArityRange("datestr", args, 0, 2, line, col);
+            double serial = args.Count >= 1
+                ? Num("datestr", args, 0, line, col)
+                : DateTime.Now.ToOADate() + matlabDatenumOffset;
+
+            double oaDate = serial - matlabDatenumOffset;
+            if (double.IsNaN(oaDate) || oaDate < -657435.0 || oaDate > 2958465.99999999)
+            {
+                throw new JgsRuntimeException(line, col, "datestr: the serial date number is out of range.");
+            }
+
+            DateTime moment = DateTime.FromOADate(oaDate);
+            string format = args.Count >= 2 ? Str("datestr", args, 1, line, col) : "dd-MMM-yyyy HH:mm:ss";
+            try
+            {
+                return JgsValue.Str(moment.ToString(format, CultureInfo.InvariantCulture));
+            }
+            catch (FormatException)
+            {
+                throw new JgsRuntimeException(line, col, $"datestr: '{format}' is not a valid .NET date format string.");
+            }
+        });
+
+        Define("datetime", (args, line, col) =>
+        {
+            Arity("datetime", args, 0, line, col);
+            return JgsValue.Str(DateTime.Now.ToString("dd-MMM-yyyy HH:mm:ss", CultureInfo.InvariantCulture));
+        });
+
+        Define("date", (args, line, col) =>
+        {
+            Arity("date", args, 0, line, col);
+            return JgsValue.Str(DateTime.Now.ToString("dd-MMM-yyyy", CultureInfo.InvariantCulture));
+        });
+
+        Define("time", (args, line, col) =>
+        {
+            Arity("time", args, 0, line, col);
+            return JgsValue.Number(DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() / 1000.0);
+        });
+
         Define("mod", (args, line, col) =>
         {
             Arity("mod", args, 2, line, col);

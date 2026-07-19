@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -42,6 +43,22 @@ public partial class ScriptWorkspaceWindow : Window
     private System.Threading.CancellationTokenSource? _cts;
     private JgsDebugSession? _debugSession;
     private bool _restartRequested;
+
+    // Console output is coalesced: a script (running off the UI thread) can emit output faster than
+    // the UI can render it, so writes accumulate in _pendingConsole and are flushed to the TextBox in
+    // batches via a single scheduled BeginInvoke. This keeps the interpreter thread from ever blocking
+    // on the UI and keeps the UI responsive (and the Stop button clickable) under a print-heavy loop.
+    private readonly object _consoleLock = new();
+    private readonly StringBuilder _pendingConsole = new();
+    private bool _consoleFlushScheduled;
+    private long _runOutputLines;   // script-output lines emitted this run (for the runaway-output budget)
+    private bool _runOutputTruncated;
+
+    /// <summary>Keep at most this many characters in the console TextBox; older text is trimmed.</summary>
+    private const int MaxConsoleChars = 1_000_000;
+
+    /// <summary>Per-run script-output line budget; beyond this, further script lines are dropped.</summary>
+    private const long MaxRunOutputLines = 100_000;
 
     /// <summary>Creates the window over the available engines and persisted state.</summary>
     /// <param name="engines">The script engines to offer, keyed by language.</param>
@@ -480,6 +497,8 @@ public partial class ScriptWorkspaceWindow : Window
             return;
         }
 
+        _runOutputLines = 0;
+        _runOutputTruncated = false;
         AppendConsole($"--- Running {language} script ---");
         SetStatus($"Running {entry.Model.FileName}…");
 
@@ -878,16 +897,99 @@ public partial class ScriptWorkspaceWindow : Window
 
     // --- Console / status -----------------------------------------------------------------------
 
-    private void AppendConsole(string text, bool newline = true)
+    /// <summary>
+    /// Queues host/status text for the console. Callers may be on any thread; the text is buffered and
+    /// flushed to the UI in a coalesced batch, so this never blocks the caller. Host messages (run
+    /// banners, status) are always shown — only script output is subject to the runaway-output budget.
+    /// </summary>
+    private void AppendConsole(string text, bool newline = true) => EnqueueConsole(text, newline);
+
+    /// <summary>
+    /// Queues one piece of script (stdout) output. Called from the interpreter's background thread via
+    /// <see cref="ConsoleOutput"/>. Subject to the per-run line budget so a print-heavy loop can't grow
+    /// the pending buffer without bound; once tripped, a single notice is emitted and the rest dropped.
+    /// </summary>
+    private void AppendScriptOutput(string text, bool newline)
     {
-        if (!Dispatcher.CheckAccess())
+        if (_runOutputTruncated)
         {
-            Dispatcher.Invoke(() => AppendConsole(text, newline));
             return;
         }
 
-        ConsoleBox.AppendText(newline ? text + Environment.NewLine : text);
+        if (newline && ++_runOutputLines > MaxRunOutputLines)
+        {
+            _runOutputTruncated = true;
+            EnqueueConsole(
+                $"(output truncated — this run produced more than {MaxRunOutputLines:N0} lines; " +
+                "wrap prints in a condition or reduce the loop)",
+                newline: true);
+            return;
+        }
+
+        EnqueueConsole(text, newline);
+    }
+
+    private void EnqueueConsole(string text, bool newline)
+    {
+        bool scheduleFlush;
+        lock (_consoleLock)
+        {
+            _pendingConsole.Append(text);
+            if (newline)
+            {
+                _pendingConsole.Append(Environment.NewLine);
+            }
+
+            scheduleFlush = !_consoleFlushScheduled;
+            _consoleFlushScheduled = true;
+        }
+
+        // BeginInvoke (never Invoke): the caller — often the interpreter thread — must not block on the
+        // UI. While this flush is pending or running, further writes just accumulate in the buffer, so
+        // one flush drains everything queued in the meantime: a million writes collapse to a few flushes.
+        if (scheduleFlush)
+        {
+            Dispatcher.BeginInvoke(FlushConsole);
+        }
+    }
+
+    private void FlushConsole()
+    {
+        string batch;
+        lock (_consoleLock)
+        {
+            _consoleFlushScheduled = false;
+            if (_pendingConsole.Length == 0)
+            {
+                return;
+            }
+
+            batch = _pendingConsole.ToString();
+            _pendingConsole.Clear();
+        }
+
+        ConsoleBox.AppendText(batch);
+        TrimConsole();
         ConsoleBox.ScrollToEnd();
+    }
+
+    /// <summary>Caps the console TextBox at <see cref="MaxConsoleChars"/>, dropping the oldest lines.</summary>
+    private void TrimConsole()
+    {
+        string text = ConsoleBox.Text;
+        if (text.Length <= MaxConsoleChars)
+        {
+            return;
+        }
+
+        // Drop the oldest characters (this also removes any previous trim marker, which sits at the
+        // very front) and realign to the next line boundary so the retained text starts on a clean line.
+        int cut = text.Length - MaxConsoleChars;
+        int newline = text.IndexOf('\n', cut);
+        cut = newline >= 0 ? newline + 1 : cut;
+
+        ConsoleBox.Text = "⋯ earlier output trimmed ⋯" + Environment.NewLine + text[cut..];
+        ConsoleBox.CaretIndex = ConsoleBox.Text.Length;
     }
 
     private void SetStatus(string text)
@@ -1207,10 +1309,10 @@ public partial class ScriptWorkspaceWindow : Window
 
         public ConsoleOutput(ScriptWorkspaceWindow window) => _window = window;
 
-        public void Write(string text) => _window.AppendConsole(text, newline: false);
+        public void Write(string text) => _window.AppendScriptOutput(text, newline: false);
 
-        public void WriteLine(string text) => _window.AppendConsole(text);
+        public void WriteLine(string text) => _window.AppendScriptOutput(text, newline: true);
 
-        public void WriteError(string text) => _window.AppendConsole(text);
+        public void WriteError(string text) => _window.AppendScriptOutput(text, newline: true);
     }
 }

@@ -128,6 +128,18 @@ public static class JgsBuiltinCatalog
         Add("audioread", "Reads a .wav file: [samples, fs] with samples normalized to [-1, 1] (stereo averaged to mono).", P("path"));
         Add("sound", "Plays samples through the host's audio output without blocking (fs defaults to 8192).", P("y"), Opt("fs"));
         Add("pause", "Waits the given number of seconds (interruptible by Stop).", P("seconds"));
+
+        // --- Time & date ------------------------------------------------------------------------
+        Add("tic", "Starts a stopwatch and returns a handle; pass it to toc to time a specific interval.");
+        Add("toc", "Elapsed seconds since the last tic, or since the tic that returned handle.", Opt("handle"));
+        Add("clock", "The current local time as a [year, month, day, hour, minute, seconds] vector.");
+        Add("now", "The current local date and time as a MATLAB serial date number.");
+        Add("datenum", "Serial date number from year, month, day (optionally hour, minute, second), or a 3-/6-element vector.", P("year"), P("month"), P("day"), Opt("hour"), Opt("minute"), Opt("second"));
+        Add("datestr", "Formats a serial date number (default: now) as text; format uses .NET date tokens.", Opt("serial"), Opt("format"));
+        Add("datetime", "The current local date and time as a 'dd-MMM-yyyy HH:mm:ss' string.");
+        Add("date", "The current local date as a 'dd-MMM-yyyy' string.");
+        Add("time", "The current time as Unix epoch seconds (UTC), including a fractional part.");
+
         Add("mod", "MATLAB modulo: x - floor(x/m)*m, element-wise over arrays (result takes m's sign).", P("x"), P("m"));
         Add("size", "The [rows, cols] of a matrix, [1, n] for a flat array or string, [1, 1] for a scalar.", P("value"));
         Add("disp", "Writes a value to the console (no name prefix, unlike echo).", P("value"));

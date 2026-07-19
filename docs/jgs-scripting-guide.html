@@ -181,6 +181,7 @@
       <li><a href="#ref-plot" class="sub">Plotting verbs</a></li>
       <li><a href="#ref-3d" class="sub">3D, contours &amp; colormaps</a></li>
       <li><a href="#ref-dsp" class="sub">DSP &amp; audio</a></li>
+      <li><a href="#ref-time" class="sub">Time &amp; date</a></li>
       <li><a href="#ref-figfiles" class="sub">Figure files</a></li>
       <li><a href="#ref-misc" class="sub">Output &amp; includes</a></li>
       <li><a href="#performance">Large arrays &amp; performance</a></li>
@@ -590,6 +591,29 @@ m[<span class="num">1</span>][<span class="num">0</span>]                       
         <tr><td class="sig"><code><span class="fn">size</span>(x)</code></td><td><code>[rows, cols]</code> of a matrix, <code>[1, n]</code> for a flat array or string. <code>zeros(size(t))</code> works.</td></tr>
         <tr><td class="sig"><code><span class="fn">disp</span>(value)</code></td><td>Write a value to the console with no <code>name =</code> prefix.</td></tr>
         <tr><td class="sig"><code><span class="fn">real</span>(x)</code> <code><span class="fn">imag</span>(x)</code> <code><span class="fn">conj</span>(x)</code> <code><span class="fn">angle</span>(x)</code></td><td>Complex parts / conjugate / phase, element-wise (real input is fine). <code>abs</code> is complex magnitude.</td></tr>
+      </tbody>
+    </table></div>
+
+    <h3 id="ref-time">Time &amp; date</h3>
+    <p>A MATLAB-style stopwatch and date functions. Used as bare statements, <code>tic;</code> starts the timer and <code>toc</code> reports the elapsed seconds; inside an expression call them with parentheses (<code>toc()</code>). Dates are <strong>serial date numbers</strong> — the same convention as MATLAB, where <code>datenum(1970, 1, 1)</code> is <code>719529</code> and the fractional part is the time of day. There is no dedicated date type: functions return plain numbers, <code>[y m d h mi s]</code> vectors, or strings.</p>
+    <pre><code><span class="fn">tic</span>;                          <span class="com"># start the stopwatch</span>
+<span class="kw">let</span> y = <span class="fn">fft</span>(<span class="fn">rand</span>(<span class="num">100000</span>))     <span class="com"># ... do some work ...</span>
+<span class="fn">print</span>(<span class="str">'elapsed:'</span>, <span class="fn">toc</span>())      <span class="com"># seconds since tic</span>
+
+<span class="kw">let</span> t0 = <span class="fn">tic</span>()                  <span class="com"># a handle for a specific interval</span>
+<span class="fn">print</span>(<span class="fn">datestr</span>(<span class="fn">now</span>()))         <span class="com"># e.g. 18-Jul-2026 18:43:00</span>
+<span class="fn">print</span>(<span class="fn">toc</span>(t0))               <span class="com"># elapsed since that handle</span></code></pre>
+    <div class="tablewrap"><table>
+      <thead><tr><th>Signature</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td class="sig"><code><span class="fn">tic</span>()</code></td><td>Start the stopwatch and return a handle. As a bare statement (<code>tic;</code>) it sets the default timer that <code>toc</code> reads.</td></tr>
+        <tr><td class="sig"><code><span class="fn">toc</span>(<span class="opt">handle</span>)</code></td><td>Elapsed seconds since the last bare <code>tic</code>, or since the <code>tic()</code> that returned <code>handle</code>.</td></tr>
+        <tr><td class="sig"><code><span class="fn">clock</span>()</code></td><td>The current local time as a <code>[year, month, day, hour, minute, seconds]</code> vector (seconds is fractional).</td></tr>
+        <tr><td class="sig"><code><span class="fn">now</span>()</code></td><td>The current local date and time as a serial date number.</td></tr>
+        <tr><td class="sig"><code><span class="fn">datenum</span>(year, month, day, <span class="opt">hour</span>, <span class="opt">minute</span>, <span class="opt">second</span>)</code></td><td>Serial date number from components, or from a single <code>[y m d]</code> / <code>[y m d h mi s]</code> vector.</td></tr>
+        <tr><td class="sig"><code><span class="fn">datestr</span>(<span class="opt">serial</span>, <span class="opt">format</span>)</code></td><td>Format a serial date number (default: <code>now</code>) as text. <code>format</code> uses .NET date tokens (e.g. <code>'yyyy-MM-dd HH:mm'</code>); the default is <code>dd-MMM-yyyy HH:mm:ss</code>.</td></tr>
+        <tr><td class="sig"><code><span class="fn">datetime</span>()</code> · <code><span class="fn">date</span>()</code></td><td>The current date-and-time or date as a string (<code>dd-MMM-yyyy HH:mm:ss</code> / <code>dd-MMM-yyyy</code>).</td></tr>
+        <tr><td class="sig"><code><span class="fn">time</span>()</code></td><td>The current time as Unix epoch seconds (UTC), including a fractional part.</td></tr>
       </tbody>
     </table></div>
 
