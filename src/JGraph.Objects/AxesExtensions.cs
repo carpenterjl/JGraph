@@ -151,6 +151,15 @@ public static class AxesExtensions
         return plot;
     }
 
+    /// <summary>Adds a true-colour image from row-major 0xAARRGGBB pixels (row 0 at the top).</summary>
+    public static RgbImagePlot AddRgbImage(this AxesModel axes, uint[] pixelsArgb, int width, int height)
+    {
+        ArgumentNullException.ThrowIfNull(axes);
+        var plot = new RgbImagePlot(pixelsArgb, width, height);
+        axes.Plots.Add(plot);
+        return plot;
+    }
+
     /// <summary>
     /// Adds a 3D surface over <c>z[row, col]</c> sampled at <c>x[col]</c>/<c>y[row]</c> and switches
     /// the axes into 3D mode. The style selects surf/mesh appearance.

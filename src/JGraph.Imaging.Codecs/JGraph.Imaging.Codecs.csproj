@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <RootNamespace>JGraph.Imaging.Codecs</RootNamespace>
+    <Description>Image file decoding and encoding for JGraph (PNG/JPEG/BMP) via SkiaSharp. The only image-processing project that depends on a native codec; the algorithms in JGraph.Imaging stay codec-free.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="SkiaSharp" Version="2.88.8" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\JGraph.Imaging\JGraph.Imaging.csproj" />
+  </ItemGroup>
+
+</Project>

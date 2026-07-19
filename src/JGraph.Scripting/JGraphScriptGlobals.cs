@@ -192,7 +192,7 @@ public sealed class JGraphScriptGlobals
     /// it probes for an *existing* file and falls back to the bare name (the process directory) for a
     /// file that is only about to be created.
     /// </summary>
-    private string ResolveForWrite(string path)
+    internal string ResolveForWrite(string path)
     {
         ArgumentNullException.ThrowIfNull(path);
         return _context.WorkingDirectory is { Length: > 0 } baseDir && !Path.IsPathRooted(path)

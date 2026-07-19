@@ -151,6 +151,8 @@ internal static class JgsRunner
         JgsType.Bool => value.AsBool,
         JgsType.String => value.AsString,
         JgsType.Table => value.AsTable,
+        JgsType.Image => null, // images have no Data-Viewer raw copy; the Variables panel shows the label
+
         JgsType.Array when value.ArrayLength > MaxRawValueElements => null,
         JgsType.Array when value.IsPackedComplex => null, // boxed complex arrays have no raw view either
         JgsType.Array when value.IsPacked =>
@@ -192,6 +194,16 @@ internal static class JgsRunner
 
     private static void DisposePackedIn(JgsValue value, HashSet<JgsValue> visited)
     {
+        if (value.Type == JgsType.Image)
+        {
+            if (visited.Add(value))
+            {
+                value.AsImage.Dispose(); // release the image's native/mapped backing buffer
+            }
+
+            return;
+        }
+
         if (value.Type != JgsType.Array || !visited.Add(value))
         {
             return; // scalars, and any array already seen (self-referencing arrays are legal)

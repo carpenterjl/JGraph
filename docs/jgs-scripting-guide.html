@@ -182,6 +182,8 @@
       <li><a href="#ref-3d" class="sub">3D, contours &amp; colormaps</a></li>
       <li><a href="#ref-dsp" class="sub">DSP &amp; audio</a></li>
       <li><a href="#ref-time" class="sub">Time &amp; date</a></li>
+      <li><a href="#ref-rf" class="sub">RF &amp; transmission lines</a></li>
+      <li><a href="#ref-image" class="sub">Image processing</a></li>
       <li><a href="#ref-figfiles" class="sub">Figure files</a></li>
       <li><a href="#ref-misc" class="sub">Output &amp; includes</a></li>
       <li><a href="#performance">Large arrays &amp; performance</a></li>
@@ -614,6 +616,63 @@ m[<span class="num">1</span>][<span class="num">0</span>]                       
         <tr><td class="sig"><code><span class="fn">datestr</span>(<span class="opt">serial</span>, <span class="opt">format</span>)</code></td><td>Format a serial date number (default: <code>now</code>) as text. <code>format</code> uses .NET date tokens (e.g. <code>'yyyy-MM-dd HH:mm'</code>); the default is <code>dd-MMM-yyyy HH:mm:ss</code>.</td></tr>
         <tr><td class="sig"><code><span class="fn">datetime</span>()</code> · <code><span class="fn">date</span>()</code></td><td>The current date-and-time or date as a string (<code>dd-MMM-yyyy HH:mm:ss</code> / <code>dd-MMM-yyyy</code>).</td></tr>
         <tr><td class="sig"><code><span class="fn">time</span>()</code></td><td>The current time as Unix epoch seconds (UTC), including a fractional part.</td></tr>
+      </tbody>
+    </table></div>
+
+    <h3 id="ref-rf">RF &amp; transmission lines</h3>
+    <p>A curated core from MATLAB's RF and RF PCB toolboxes: read Touchstone (<code>.sNp</code>) files, convert between S / Z / Y / ABCD parameters, cascade 2-ports, and plot on rectangular or Smith charts — plus closed-form microstrip and stripline calculators. An S-parameter <strong>network</strong> is carried as a table (a <code>freq</code> column in Hz, per-pair <code>s11_re</code>/<code>s11_im</code>… columns, and a constant <code>z0</code>), so <code>rowcount</code>, <code>colnames</code>, and the Data Viewer all work on it; read a parameter across frequency with <code>rfparam</code> (1-based ports).</p>
+    <pre><code><span class="kw">let</span> net = <span class="fn">sparameters</span>(<span class="str">'amp.s2p'</span>)   <span class="com"># read a 2-port</span>
+<span class="fn">rfplot</span>(net, <span class="num">2</span>, <span class="num">1</span>)                <span class="com"># |S21| in dB vs frequency</span>
+<span class="fn">smithplot</span>(net, <span class="num">1</span>, <span class="num">1</span>)             <span class="com"># S11 locus on a Smith chart</span>
+
+<span class="kw">let</span> [z0, eeff] = <span class="fn">microstrip</span>(<span class="num">3.0</span>, <span class="num">1.0</span>, <span class="num">4.4</span>)  <span class="com"># FR-4: Z0 and effective permittivity</span>
+<span class="fn">print</span>(<span class="fn">microstripw</span>(<span class="num">50</span>, <span class="num">1.0</span>, <span class="num">4.4</span>))       <span class="com"># trace width for a 50 Ω line</span></code></pre>
+    <div class="tablewrap"><table>
+      <thead><tr><th>Signature</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td class="sig"><code><span class="fn">sparameters</span>(path)</code></td><td>Read a Touchstone (<code>.sNp</code>) file into an S-parameter network table.</td></tr>
+        <tr><td class="sig"><code><span class="fn">rffreq</span>(net)</code> · <code><span class="fn">rfparam</span>(net, i, j)</code></td><td>The frequency points (Hz), and the (i, j) parameter across frequency as a complex array (ports 1-based).</td></tr>
+        <tr><td class="sig"><code><span class="fn">s2z</span>(net)</code> · <code><span class="fn">s2y</span>(net)</code> · <code><span class="fn">s2abcd</span>(net)</code></td><td>Convert S parameters to impedance, admittance, or chain (ABCD) parameters (1- or 2-port; ABCD is 2-port).</td></tr>
+        <tr><td class="sig"><code><span class="fn">z2s</span>(net)</code> · <code><span class="fn">y2s</span>(net)</code> · <code><span class="fn">abcd2s</span>(net)</code></td><td>Convert impedance, admittance, or ABCD parameters back to S parameters.</td></tr>
+        <tr><td class="sig"><code><span class="fn">cascadesparams</span>(a, b)</code></td><td>Cascade two 2-port networks (port 2 of <code>a</code> into port 1 of <code>b</code>).</td></tr>
+        <tr><td class="sig"><code><span class="fn">gammain</span>(net, <span class="opt">zl</span>)</code> · <code><span class="fn">gammaout</span>(net, <span class="opt">zs</span>)</code></td><td>Input/output reflection coefficient over frequency for a load/source impedance (default: matched).</td></tr>
+        <tr><td class="sig"><code><span class="fn">vswr</span>(gamma)</code> · <code><span class="fn">db</span>(x)</code></td><td>Standing-wave ratio <code>(1+|Γ|)/(1−|Γ|)</code>, and decibel magnitude <code>20·log10|x|</code>, element-wise.</td></tr>
+        <tr><td class="sig"><code><span class="fn">rfplot</span>(net, <span class="opt">i</span>, <span class="opt">j</span>)</code></td><td>Plot dB magnitude vs frequency for parameter (i, j), or every pair when omitted.</td></tr>
+        <tr><td class="sig"><code><span class="fn">smithplot</span>(net, <span class="opt">i</span>, <span class="opt">j</span>)</code></td><td>Plot a reflection-coefficient locus on a Smith chart — a network's (i, j) parameter, or a complex array given directly.</td></tr>
+        <tr><td class="sig"><code><span class="fn">microstrip</span>(w, h, er)</code> · <code><span class="fn">microstripw</span>(z0, h, er)</code></td><td>Microstrip analysis <code>[Z0, eeff]</code> from geometry, and synthesis of the trace width for a target Z0 (Hammerstad–Jensen).</td></tr>
+        <tr><td class="sig"><code><span class="fn">stripline</span>(w, b, er)</code> · <code><span class="fn">striplinew</span>(z0, b, er)</code></td><td>Stripline analysis (Z0) and synthesis (width for a target Z0), plate spacing <code>b</code> (Pozar).</td></tr>
+        <tr><td class="sig"><code><span class="fn">wavelength</span>(f, eeff)</code></td><td>Guided wavelength (m) at frequency <code>f</code> (Hz) for an effective permittivity, element-wise over <code>f</code>.</td></tr>
+      </tbody>
+    </table></div>
+
+    <h3 id="ref-image">Image processing</h3>
+    <p>A curated core from MATLAB's Image Processing Toolbox: read and write PNG/JPEG/BMP files, display images, and run point, geometry, filtering, edge, morphology, and region-analysis operations. An <strong>image</strong> is its own value type — grayscale (<code>H×W</code>) or RGB (<code>H×W×3</code>), with samples in <code>[0, 1]</code>. Read one sample with 1-based subscripts: <code>img(row, col)</code> for grayscale, <code>img(row, col, channel)</code> for colour; <code>size</code> and <code>numel</code> report its dimensions. Small matrices (kernels, structuring elements) pass in as nested arrays, and <code>bwlabel</code> returns a destructurable <code>[labels, count]</code>.</p>
+    <pre><code><span class="kw">let</span> img = <span class="fn">imread</span>(<span class="str">'sample-image.png'</span>)   <span class="com"># samples in [0, 1]</span>
+<span class="fn">imshow</span>(img)                              <span class="com"># equal aspect, no axes decoration</span>
+
+<span class="kw">let</span> gray = <span class="fn">rgb2gray</span>(img)               <span class="com"># Rec.601 luma</span>
+<span class="kw">let</span> mask = <span class="fn">imbinarize</span>(<span class="fn">imadjust</span>(gray))  <span class="com"># stretch contrast, then Otsu threshold</span>
+<span class="kw">let</span> [labels, count] = <span class="fn">bwlabel</span>(mask)   <span class="com"># connected components</span>
+<span class="fn">print</span>(<span class="str">'regions:'</span>, count)
+<span class="fn">imwrite</span>(mask, <span class="str">'mask.png'</span>)</code></pre>
+    <div class="tablewrap"><table>
+      <thead><tr><th>Signature</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td class="sig"><code><span class="fn">imread</span>(path)</code> · <code><span class="fn">imwrite</span>(image, path, <span class="opt">quality</span>)</code></td><td>Read a PNG/JPEG/BMP file into an image, or write one (format from the extension).</td></tr>
+        <tr><td class="sig"><code><span class="fn">imshow</span>(image)</code></td><td>Display a grayscale or RGB image with equal aspect and no ticks or frame.</td></tr>
+        <tr><td class="sig"><code><span class="fn">rgb2gray</span>(image)</code> · <code><span class="fn">im2gray</span>(image)</code></td><td>Convert RGB to grayscale (Rec.601); <code>im2gray</code> passes an already-gray image through.</td></tr>
+        <tr><td class="sig"><code><span class="fn">mat2im</span>(matrix)</code> · <code><span class="fn">mat2gray</span>(matrix)</code> · <code><span class="fn">im2mat</span>(image, <span class="opt">channel</span>)</code></td><td>Bridge matrices and images: clamp a matrix to an image, min–max-scale one, or copy a channel to a matrix.</td></tr>
+        <tr><td class="sig"><code><span class="fn">imadjust</span>(image, <span class="opt">inRange</span>, <span class="opt">outRange</span>, <span class="opt">gamma</span>)</code></td><td>Map intensities with gamma; defaults stretch the 1–99% range to full scale.</td></tr>
+        <tr><td class="sig"><code><span class="fn">imhist</span>(image, <span class="opt">bins</span>)</code> · <code><span class="fn">histeq</span>(image, <span class="opt">bins</span>)</code></td><td>Grayscale histogram counts (default 256), and histogram equalization (default 64 levels).</td></tr>
+        <tr><td class="sig"><code><span class="fn">graythresh</span>(image)</code> · <code><span class="fn">imbinarize</span>(image, <span class="opt">level</span>)</code></td><td>Otsu's threshold level, and thresholding to a binary image (Otsu by default).</td></tr>
+        <tr><td class="sig"><code><span class="fn">imadd</span>(a, b)</code> · <code><span class="fn">imsubtract</span>(a, b)</code> · <code><span class="fn">imcomplement</span>(image)</code></td><td>Image/scalar arithmetic clamped to <code>[0, 1]</code>, and intensity inversion.</td></tr>
+        <tr><td class="sig"><code><span class="fn">imnoise</span>(image, <span class="opt">type</span>, <span class="opt">amount</span>)</code></td><td>Add <code>'gaussian'</code> (variance) or <code>'salt &amp; pepper'</code> (density) noise.</td></tr>
+        <tr><td class="sig"><code><span class="fn">imresize</span>(image, scaleOrSize, <span class="opt">method</span>)</code> · <code><span class="fn">imrotate</span>(image, degrees, …)</code> · <code><span class="fn">imcrop</span>(image, rect)</code></td><td>Resize (scale or <code>[h, w]</code>), rotate (CCW; <code>'crop'</code>/<code>'loose'</code>), or crop <code>[x, y, w, h]</code>.</td></tr>
+        <tr><td class="sig"><code><span class="fn">imfilter</span>(image, kernel, <span class="opt">boundary</span>)</code> · <code><span class="fn">conv2</span>(a, b, <span class="opt">shape</span>)</code> · <code><span class="fn">medfilt2</span>(image, <span class="opt">window</span>)</code></td><td>2-D correlation, matrix convolution (<code>full</code>/<code>same</code>/<code>valid</code>), and median filtering.</td></tr>
+        <tr><td class="sig"><code><span class="fn">fspecial</span>(type, …)</code></td><td>Build a kernel: <code>average</code>, <code>gaussian</code>, <code>sobel</code>, <code>prewitt</code>, <code>laplacian</code>, <code>disk</code>, or <code>log</code>.</td></tr>
+        <tr><td class="sig"><code><span class="fn">edge</span>(image, <span class="opt">method</span>, <span class="opt">threshold</span>)</code></td><td>Binary edge map: <code>'sobel'</code> (default), <code>'prewitt'</code>, or <code>'canny'</code>.</td></tr>
+        <tr><td class="sig"><code><span class="fn">imerode</span></code> · <code><span class="fn">imdilate</span></code> · <code><span class="fn">imopen</span></code> · <code><span class="fn">imclose</span>(image, <span class="opt">element</span>)</code> · <code><span class="fn">strel</span>(shape, <span class="opt">size</span>)</code></td><td>Morphology over a structuring element (default 3×3 square); <code>strel</code> builds <code>'square'</code>/<code>'disk'</code> elements.</td></tr>
+        <tr><td class="sig"><code><span class="fn">bwlabel</span>(image, <span class="opt">connectivity</span>)</code> · <code><span class="fn">regionprops</span>(labels)</code></td><td>Label connected components (<code>[labels, count]</code>; 4- or 8-connectivity), and measure Area/Centroid/BoundingBox per region as a table.</td></tr>
       </tbody>
     </table></div>
 

@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <RootNamespace>JGraph.Imaging</RootNamespace>
+    <Description>Image-processing services for JGraph (image buffer, point ops, geometry, filters, edge detection, morphology, region analysis) used by the JGS image builtins. Pure numeric code with no rendering, model, or codec dependency.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\JGraph.Numerics\JGraph.Numerics.csproj" />
+  </ItemGroup>
+
+</Project>

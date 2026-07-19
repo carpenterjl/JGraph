@@ -220,6 +220,13 @@ public static class JG
         return axes.AddImage(values);
     }
 
+    /// <summary>Displays a true-colour image from row-major 0xAARRGGBB pixels (MATLAB <c>imshow</c> of RGB).</summary>
+    public static RgbImagePlot RgbImage(uint[] pixelsArgb, int width, int height)
+    {
+        AxesModel axes = PrepareAxes();
+        return axes.AddRgbImage(pixelsArgb, width, height);
+    }
+
     /// <summary>Displays a scalar field as a colormapped image over explicit X/Y extents (MATLAB <c>pcolor</c>).</summary>
     public static ImagePlot Pcolor(double[] x, double[] y, double[,] values)
     {
@@ -389,6 +396,13 @@ public static class JG
     {
         AxesModel axes = PrepareAxes();
         return axes.AddSmith(impedanceReal, impedanceImag);
+    }
+
+    /// <summary>Plots a reflection-coefficient locus on a Smith chart, given Γ directly (Γ = real + j·imag).</summary>
+    public static LinePlot SmithGamma(double[] gammaReal, double[] gammaImag)
+    {
+        AxesModel axes = PrepareAxes();
+        return axes.AddSmithReflection(gammaReal, gammaImag);
     }
 
     /// <summary>Plots an eye diagram of a signal sampled at <paramref name="samplesPerSymbol"/> samples per symbol.</summary>

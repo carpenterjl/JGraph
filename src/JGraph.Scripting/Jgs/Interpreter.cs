@@ -1195,6 +1195,13 @@ internal sealed class Interpreter
             return GatherOrIndex(callee, index, call.Line, call.Column, oneBased: true);
         }
 
+        // MATLAB-style: "calling" an image with two or three subscripts reads one sample, 1-based —
+        // img(r, c) for grayscale, img(r, c, ch) for a colour channel.
+        if (callee.Type == JgsType.Image)
+        {
+            return IndexImage(callee, call, env);
+        }
+
         if (callee.Type != JgsType.Function)
         {
             throw new JgsRuntimeException(call.Line, call.Column, $"Cannot call a {callee.TypeName}; it is not a function.");
@@ -1207,6 +1214,67 @@ internal sealed class Interpreter
         }
 
         return callee.AsCallable.Call(arguments, call.Line, call.Column);
+    }
+
+    /// <summary>Reads one sample from an image value via 1-based <c>img(r, c)</c> / <c>img(r, c, ch)</c>.</summary>
+    private JgsValue IndexImage(JgsValue callee, CallExpr call, JgsEnvironment env)
+    {
+        JGraph.Imaging.ImageBuffer image = callee.AsImage;
+        if (call.Arguments.Count is not (2 or 3))
+        {
+            throw new JgsRuntimeException(call.Line, call.Column,
+                "Index an image with img(row, col) for grayscale or img(row, col, channel) for colour.");
+        }
+
+        int row = ImageSubscript(call.Arguments[0], "row", call, env);
+        int col = ImageSubscript(call.Arguments[1], "column", call, env);
+        int channel;
+        if (call.Arguments.Count == 3)
+        {
+            channel = ImageSubscript(call.Arguments[2], "channel", call, env);
+        }
+        else if (image.Channels == 1)
+        {
+            channel = 1;
+        }
+        else
+        {
+            throw new JgsRuntimeException(call.Line, call.Column,
+                $"This image has {image.Channels} channels; read it with img(row, col, channel).");
+        }
+
+        if ((uint)(row - 1) >= (uint)image.Height ||
+            (uint)(col - 1) >= (uint)image.Width ||
+            (uint)(channel - 1) >= (uint)image.Channels)
+        {
+            throw new JgsRuntimeException(call.Line, call.Column,
+                $"Image subscript ({row}, {col}, {channel}) is out of range for a " +
+                $"{image.Height}x{image.Width}x{image.Channels} image (1-based).");
+        }
+
+        double sample = image[row - 1, col - 1, channel - 1];
+        GC.KeepAlive(image);
+        return JgsValue.Number(sample);
+    }
+
+    private int ImageSubscript(Expr expr, string name, CallExpr call, JgsEnvironment env)
+    {
+        JgsValue value = Evaluate(expr, env);
+        if (value.Type != JgsType.Number)
+        {
+            throw new JgsRuntimeException(call.Line, call.Column,
+                $"Image {name} subscript must be a number, not a {value.TypeName}.");
+        }
+
+        double raw = value.AsNumber;
+        int rounded = (int)Math.Round(raw);
+        if (rounded != raw)
+        {
+            throw new JgsRuntimeException(call.Line, call.Column,
+                $"Image {name} subscript must be a whole number, not {raw.ToString(System.Globalization.CultureInfo.InvariantCulture)}.");
+        }
+
+        return rounded;
     }
 
     /// <summary>

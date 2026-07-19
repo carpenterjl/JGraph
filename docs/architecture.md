@@ -28,8 +28,10 @@ nothing about higher ones.
 | --- | --- | --- |
 | `JGraph.Core` | net8.0 | Object model (`FigureModel` → `AxesModel` → `PlotObject`), primitives (`Point2D`, `Rect2D`, `Color`, `DataRange`), styles, data-series abstraction, invalidation/event system. No UI or graphics-engine dependency. |
 | `JGraph.Math` | net8.0 | Numeric services: scale transforms, the data↔pixel `AxisTransform`, tick generation, min/max decimation. |
-| `JGraph.Signal` | net8.0 | Signal-processing services (FFT, windows, amplitude spectrum, STFT spectrogram, transfer-function frequency response) for the engineering plots. Pure numerics, BCL-only; a leaf like `JGraph.Math`. |
+| `JGraph.Signal` | net8.0 | Signal-processing services (FFT, windows, amplitude spectrum, STFT spectrogram, transfer-function frequency response) for the engineering plots, plus the `Rf/` RF core (Touchstone reader, S/Z/Y/ABCD conversions, microstrip/stripline calculators). Pure numerics, BCL-only; a leaf like `JGraph.Math`. |
 | `JGraph.Numerics` | net8.0 | Flat contiguous numeric storage for large datasets: the dual-strategy `NumericBuffer` (managed / `NativeMemory` / memory-mapped temp file, chosen by the RAM-aware `BufferAllocator`) and the chunked, cancellable `PackedMath` SIMD kernels over `TensorPrimitives`. The only project that compiles unsafe code. A leaf; consumed by `JGraph.Scripting`. |
+| `JGraph.Imaging` | net8.0 | Image-processing core: the `ImageBuffer` value type (interleaved `[0,1]` samples backed by a `NumericBuffer`) and the codec-free algorithms — point ops, histograms, geometry, 2-D filters/kernels, edge detection, morphology, connected-component labeling. Depends only on `JGraph.Numerics`. |
+| `JGraph.Imaging.Codecs` | net8.0 | Image file decoding/encoding (PNG/JPEG/BMP) via SkiaSharp, bridging bytes to `ImageBuffer`. The only image project that touches a native codec; referenced directly by `JGraph.Scripting`. |
 | `JGraph.Data` | net8.0 | Tabular data: an immutable column-oriented `Table`, delimited-text/xlsx/clipboard readers with type inference, and the UI-free import-wizard model. A `Core`-only, BCL-only leaf. |
 | `JGraph.Rendering` | net8.0 | Rendering abstractions: `IRenderContext`, `RenderState`, `IDrawable`, and the layout engine. Contains no concrete graphics library. |
 | `JGraph.Rendering.Skia` | net8.0 | Implements `IRenderContext` over SkiaSharp. |
@@ -534,6 +536,13 @@ Implemented through Milestone 22 — a working, Matlab-like figure window you ca
   huge arrays, Stop working mid-operation, a pooled direct-sincos FFT twiddle table, windowed
   binary-search hover hit-testing, reuse of the Skia polyline path, and `.graph` format version 4
   (packed base64 series, streamed save/load).
+- **M23** RF core: the `JGraph.Signal/Rf/` folder (Touchstone reader, S/Z/Y/ABCD conversions,
+  cascade, Γ/VSWR, microstrip/stripline calculators), S-parameter networks carried as `Table`
+  values, a Γ-direct `smithplot`, and ~20 RF JGS builtins.
+- **M24** image-processing core: the `JGraph.Imaging` + `JGraph.Imaging.Codecs` projects, a new
+  `JgsType.Image` value (`ImageBuffer`, `[0,1]` samples on a `NumericBuffer`), the true-colour
+  `RgbImagePlot` (`.graph` format version 5), and ~35 image JGS builtins spanning IO/display,
+  point/histogram/geometry ops, 2-D filtering, edge detection, morphology, and region analysis.
 
 The `JGraph.Demo` gallery exercises the plot types, annotations, and both APIs;
 `JGraph.Application` is the interactive figure window with data import and scripting.

@@ -20,8 +20,9 @@ public static class GraphFormat
 
     /// <summary>The current schema version. Documents with a newer version are rejected.</summary>
     /// <remarks>Version history: 1 = initial (M8); 2 = 3D axes, surface/contour plots, colorbar (M20);
-    /// 3 = data-tip annotations (M21); 4 = packed base64 storage for large series (M22).</remarks>
-    public const int CurrentVersion = 4;
+    /// 3 = data-tip annotations (M21); 4 = packed base64 storage for large series (M22);
+    /// 5 = true-colour RGB image plot (M24).</remarks>
+    public const int CurrentVersion = 5;
 
     /// <summary>The conventional file extension for JGraph documents.</summary>
     public const string FileExtension = ".graph";

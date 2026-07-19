@@ -144,6 +144,63 @@ public static class JgsBuiltinCatalog
         Add("size", "The [rows, cols] of a matrix, [1, n] for a flat array or string, [1, 1] for a scalar.", P("value"));
         Add("disp", "Writes a value to the console (no name prefix, unlike echo).", P("value"));
 
+        // --- RF networks and transmission lines -------------------------------------------------
+        Add("sparameters", "Reads a Touchstone (.sNp) file into an S-parameter network table.", P("path"));
+        Add("rffreq", "The frequency points (Hz) of a network table.", P("net"));
+        Add("rfparam", "The (i, j) parameter of a network table across frequency, as a complex array (ports 1-based).", P("net"), P("i"), P("j"));
+        Add("s2z", "Converts an S-parameter network table to impedance (Z) parameters (1- or 2-port).", P("net"));
+        Add("s2y", "Converts an S-parameter network table to admittance (Y) parameters (1- or 2-port).", P("net"));
+        Add("s2abcd", "Converts a 2-port S-parameter network table to chain (ABCD) parameters.", P("net"));
+        Add("z2s", "Converts a Z-parameter network table to S parameters (1- or 2-port).", P("net"));
+        Add("y2s", "Converts a Y-parameter network table to S parameters (1- or 2-port).", P("net"));
+        Add("abcd2s", "Converts a 2-port ABCD network table to S parameters.", P("net"));
+        Add("cascadesparams", "Cascades two 2-port networks (port 2 of a into port 1 of b).", P("a"), P("b"));
+        Add("gammain", "Input reflection coefficient Γin over frequency, given a load impedance (default matched).", P("net"), Opt("zl"));
+        Add("gammaout", "Output reflection coefficient Γout over frequency, given a source impedance (default matched).", P("net"), Opt("zs"));
+        Add("vswr", "Voltage standing-wave ratio (1+|Γ|)/(1−|Γ|) from a reflection coefficient, element-wise.", P("gamma"));
+        Add("db", "Decibel magnitude 20·log10|x|, element-wise (works on real or complex values).", P("x"));
+        Add("rfplot", "Plots dB magnitude vs frequency for parameter (i, j), or all pairs when omitted.", P("net"), Opt("i"), Opt("j"));
+        Add("smithplot", "Plots a reflection-coefficient locus on a Smith chart (a network's (i, j) or a complex array).", P("net"), Opt("i"), Opt("j"));
+        Add("microstrip", "Microstrip analysis: [Z0, eeff] from trace width, substrate height, and εr.", P("w"), P("h"), P("er"));
+        Add("microstripw", "Microstrip synthesis: trace width for a target Z0, given substrate height and εr.", P("z0"), P("h"), P("er"));
+        Add("stripline", "Stripline analysis: Z0 from trace width, ground-plane spacing, and εr.", P("w"), P("b"), P("er"));
+        Add("striplinew", "Stripline synthesis: trace width for a target Z0, given plate spacing and εr.", P("z0"), P("b"), P("er"));
+        Add("wavelength", "Guided wavelength (m) at frequency f (Hz) for an effective permittivity, element-wise over f.", P("f"), P("eeff"));
+
+        // --- Image processing -------------------------------------------------------------------
+        Add("imread", "Reads an image file (PNG/JPEG/BMP) into an image value (samples in [0,1]).", P("path"));
+        Add("imwrite", "Writes an image to a file; the extension (.png/.jpg/.bmp) selects the format.", P("image"), P("path"), Opt("quality"));
+        Add("imshow", "Displays an image (grayscale or RGB) with equal aspect and no axes decoration.", P("image"));
+        Add("rgb2gray", "Converts an RGB image to grayscale (Rec.601 luma).", P("image"));
+        Add("im2gray", "Returns a grayscale image: RGB is converted (Rec.601), grayscale is passed through.", P("image"));
+        Add("mat2im", "Wraps a matrix as a grayscale image, clamping values to [0, 1].", P("matrix"));
+        Add("mat2gray", "Scales a matrix to a grayscale image with min→0 and max→1.", P("matrix"));
+        Add("im2mat", "Copies an image channel (default 1) to a nested-array matrix.", P("image"), Opt("channel"));
+        Add("imadjust", "Maps intensities [lowIn,highIn]→[lowOut,highOut] with gamma; defaults stretch the 1–99% range.", P("image"), Opt("inRange"), Opt("outRange"), Opt("gamma"));
+        Add("imhist", "Histogram bin counts of a grayscale image (default 256 bins) as an array.", P("image"), Opt("bins"));
+        Add("histeq", "Histogram-equalizes a grayscale image (default 64 levels).", P("image"), Opt("bins"));
+        Add("graythresh", "Otsu's global threshold level in [0, 1] for a grayscale image.", P("image"));
+        Add("imbinarize", "Thresholds an image to binary; the default level is Otsu's.", P("image"), Opt("level"));
+        Add("imadd", "Adds two images, or an image and a scalar, clamped to [0, 1].", P("a"), P("b"));
+        Add("imsubtract", "Subtracts an image or scalar from an image, clamped to [0, 1].", P("a"), P("b"));
+        Add("imcomplement", "Inverts image intensities (1 - v).", P("image"));
+        Add("imnoise", "Adds noise: 'gaussian' (variance) or 'salt & pepper' (density).", P("image"), Opt("type"), Opt("amount"));
+        Add("imresize", "Resizes an image by a scale or to a [height, width]; 'nearest' or 'bilinear'.", P("image"), P("scaleOrSize"), Opt("method"));
+        Add("imrotate", "Rotates an image counter-clockwise by degrees; options 'nearest'/'bilinear' and 'crop'/'loose'.", P("image"), P("degrees"), Opt("method"), Opt("bbox"));
+        Add("imcrop", "Crops the rectangle [x, y, width, height] (1-based) from an image.", P("image"), P("rect"));
+        Add("imfilter", "Correlates an image with a kernel; boundary 'zero'/'replicate'/'symmetric'.", P("image"), P("kernel"), Opt("boundary"));
+        Add("conv2", "2-D convolution of two matrices; shape 'full' (default), 'same', or 'valid'.", P("a"), P("b"), Opt("shape"));
+        Add("medfilt2", "Median filter over an [m, n] window (default 3×3).", P("image"), Opt("window"));
+        Add("fspecial", "Builds a filter kernel: average, gaussian, sobel, prewitt, laplacian, disk, or log.", P("type"), Opt("p1"), Opt("p2"));
+        Add("edge", "Detects edges (binary image): 'sobel' (default), 'prewitt', or 'canny'.", P("image"), Opt("method"), Opt("threshold"));
+        Add("strel", "Builds a structuring element matrix: 'square' (side) or 'disk' (radius).", P("shape"), Opt("size"));
+        Add("imerode", "Morphological erosion (local minimum) over a structuring element (default 3×3 square).", P("image"), Opt("element"));
+        Add("imdilate", "Morphological dilation (local maximum) over a structuring element (default 3×3 square).", P("image"), Opt("element"));
+        Add("imopen", "Morphological opening (erode then dilate).", P("image"), Opt("element"));
+        Add("imclose", "Morphological closing (dilate then erode).", P("image"), Opt("element"));
+        Add("bwlabel", "Labels connected components of a binary image: [labels, count]; connectivity 4 or 8 (default 8).", P("image"), Opt("connectivity"));
+        Add("regionprops", "Measures Area, Centroid, and BoundingBox per region of a label image, as a table.", P("labels"));
+
         // --- Reductions and inspection ----------------------------------------------------------
         Add("length", "The number of elements in an array, or characters in a string.", P("value"));
         Add("sum", "The sum of a numeric array.", P("array"));

@@ -2,6 +2,7 @@ using System.Globalization;
 using System.Numerics;
 using System.Text;
 using JGraph.Data;
+using JGraph.Imaging;
 using JGraph.Numerics;
 
 namespace JGraph.Scripting.Jgs;
@@ -16,6 +17,7 @@ internal enum JgsType
     String,
     Array,
     Table,
+    Image,
     Function,
 }
 
@@ -109,6 +111,13 @@ internal sealed class JgsValue
 
     /// <summary>Wraps a data table.</summary>
     public static JgsValue Table(Table table) => new(JgsType.Table, 0, table);
+
+    /// <summary>
+    /// Wraps an image. The buffer is used directly (not copied); the single-wrapper convention means
+    /// each image value owns its <see cref="ImageBuffer"/>, which the runtime disposes when the value
+    /// leaves a completed run's locals.
+    /// </summary>
+    public static JgsValue Image(ImageBuffer image) => new(JgsType.Image, 0, image);
 
     /// <summary>Wraps a callable function.</summary>
     public static JgsValue Function(IJgsCallable callable) => new(JgsType.Function, 0, callable);
@@ -243,6 +252,9 @@ internal sealed class JgsValue
     /// <summary>The table value.</summary>
     public Table AsTable => (Table)_reference!;
 
+    /// <summary>The image value.</summary>
+    public ImageBuffer AsImage => (ImageBuffer)_reference!;
+
     /// <summary>The callable value.</summary>
     public IJgsCallable AsCallable => (IJgsCallable)_reference!;
 
@@ -340,6 +352,7 @@ internal sealed class JgsValue
         JgsType.String => "string",
         JgsType.Array => "array",
         JgsType.Table => "table",
+        JgsType.Image => "image",
         JgsType.Function => "function",
         _ => "value",
     };
@@ -354,9 +367,15 @@ internal sealed class JgsValue
         JgsType.String => AsString,
         JgsType.Array => FormatArray(this),
         JgsType.Table => $"table[{AsTable.RowCount}x{AsTable.ColumnCount}]",
+        JgsType.Image => FormatImage(AsImage),
         JgsType.Function => $"fn {AsCallable.Name}",
         _ => "value",
     };
+
+    /// <summary>A constant-size label like <c>image[480x640x3]</c> — never dumps pixels.</summary>
+    private static string FormatImage(ImageBuffer image) => image.Channels == 1
+        ? $"image[{image.Height}x{image.Width}]"
+        : $"image[{image.Height}x{image.Width}x{image.Channels}]";
 
     private static string FormatNumber(double value) =>
         value.ToString("R", CultureInfo.InvariantCulture);

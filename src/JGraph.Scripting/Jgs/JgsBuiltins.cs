@@ -2,8 +2,10 @@ using System.Globalization;
 using System.IO;
 using System.Numerics;
 using JGraph.Api;
+using JGraph.Imaging;
 using JGraph.Numerics;
 using JGraph.Signal;
+using JGraph.Signal.Rf;
 using JGraph.Core.Model;
 using JGraph.Data;
 
@@ -16,7 +18,7 @@ namespace JGraph.Scripting.Jgs;
 /// the static <see cref="JG"/> facade and the host's <see cref="JGraphScriptGlobals"/>. This is the only IO
 /// surface a JGS script has: there is no file, network, or reflection access beyond the table readers.
 /// </summary>
-internal static class JgsBuiltins
+internal static partial class JgsBuiltins
 {
     /// <summary>Creates the global scope over the run's <paramref name="host"/> helpers, seeded with every built-in.</summary>
     /// <param name="host">The run's host services.</param>
@@ -458,6 +460,14 @@ internal static class JgsBuiltins
         Define("size", (args, line, col) =>
         {
             Arity("size", args, 1, line, col);
+            if (args[0].Type == JgsType.Image)
+            {
+                ImageBuffer image = args[0].AsImage;
+                return image.Channels == 1
+                    ? JgsValue.Array([JgsValue.Number(image.Height), JgsValue.Number(image.Width)])
+                    : JgsValue.Array([JgsValue.Number(image.Height), JgsValue.Number(image.Width), JgsValue.Number(image.Channels)]);
+            }
+
             (int rows, int cols) = args[0].Type switch
             {
                 JgsType.Array when args[0].ArrayLength > 0 && args[0].ElementAt(0).Type == JgsType.Array =>
@@ -474,6 +484,142 @@ internal static class JgsBuiltins
             Arity("disp", args, 1, line, col);
             host.print(args[0].Display());
             return JgsValue.Null;
+        });
+
+        // --- RF networks and transmission lines ----------------------------------------------
+        // S-parameter networks are carried as tables (freq column, per-pair re/im columns, a
+        // constant z0 column) so they flow through the existing table accessors; the math runs on
+        // the JGraph.Signal.Rf domain type and converts back.
+        Define("sparameters", (args, line, col) =>
+        {
+            Arity("sparameters", args, 1, line, col);
+            string path = host.Resolve(Str("sparameters", args, 0, line, col));
+            try
+            {
+                return JgsValue.Table(NetworkToTable(Touchstone.Read(path), "s"));
+            }
+            catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or InvalidDataException)
+            {
+                throw new JgsRuntimeException(line, col, $"sparameters: cannot read '{path}': {ex.Message}");
+            }
+        });
+
+        Define("rffreq", (args, line, col) =>
+        {
+            Arity("rffreq", args, 1, line, col);
+            return NumbersCopy(TableSeries.GetNumbers(Tbl("rffreq", args, 0, line, col), "freq"));
+        });
+
+        Define("rfparam", (args, line, col) =>
+        {
+            Arity("rfparam", args, 3, line, col);
+            Table table = Tbl("rfparam", args, 0, line, col);
+            int i = Count("rfparam", args, 1, line, col);
+            int j = Count("rfparam", args, 2, line, col);
+            return FromComplexArray(ReadParam(table, i, j, line, col));
+        });
+
+        Define("s2z", (args, line, col) => ConvertNetwork("s2z", args, "z", NetworkConversions.SToZ, line, col));
+        Define("s2y", (args, line, col) => ConvertNetwork("s2y", args, "y", NetworkConversions.SToY, line, col));
+        Define("s2abcd", (args, line, col) => ConvertNetwork("s2abcd", args, "a", NetworkConversions.SToAbcd, line, col));
+        Define("z2s", (args, line, col) => ConvertNetwork("z2s", args, "s", NetworkConversions.ZToS, line, col));
+        Define("y2s", (args, line, col) => ConvertNetwork("y2s", args, "s", NetworkConversions.YToS, line, col));
+        Define("abcd2s", (args, line, col) => ConvertNetwork("abcd2s", args, "s", NetworkConversions.AbcdToS, line, col));
+
+        Define("cascadesparams", (args, line, col) =>
+        {
+            Arity("cascadesparams", args, 2, line, col);
+            SParameterNetwork a = TableToNetwork(Tbl("cascadesparams", args, 0, line, col));
+            SParameterNetwork b = TableToNetwork(Tbl("cascadesparams", args, 1, line, col));
+            try
+            {
+                return JgsValue.Table(NetworkToTable(NetworkConversions.Cascade(a, b), "s"));
+            }
+            catch (Exception ex) when (ex is ArgumentException or NotSupportedException)
+            {
+                throw new JgsRuntimeException(line, col, "cascadesparams: " + ex.Message);
+            }
+        });
+
+        Define("gammain", (args, line, col) =>
+        {
+            ArityRange("gammain", args, 1, 2, line, col);
+            SParameterNetwork net = TableToNetwork(Tbl("gammain", args, 0, line, col));
+            Complex? zl = args.Count == 2 ? ComplexScalar("gammain", args, 1, line, col) : null;
+            try
+            {
+                return FromComplexArray(NetworkConversions.GammaIn(net, zl));
+            }
+            catch (NotSupportedException ex)
+            {
+                throw new JgsRuntimeException(line, col, "gammain: " + ex.Message);
+            }
+        });
+
+        Define("gammaout", (args, line, col) =>
+        {
+            ArityRange("gammaout", args, 1, 2, line, col);
+            SParameterNetwork net = TableToNetwork(Tbl("gammaout", args, 0, line, col));
+            Complex? zs = args.Count == 2 ? ComplexScalar("gammaout", args, 1, line, col) : null;
+            try
+            {
+                return FromComplexArray(NetworkConversions.GammaOut(net, zs));
+            }
+            catch (NotSupportedException ex)
+            {
+                throw new JgsRuntimeException(line, col, "gammaout: " + ex.Message);
+            }
+        });
+
+        Define("vswr", (args, line, col) =>
+        {
+            Arity("vswr", args, 1, line, col);
+            return MapComplexAware("vswr", args[0],
+                x => (1 + System.Math.Abs(x)) / (1 - System.Math.Abs(x)),
+                c => JgsValue.Number((1 + Complex.Abs(c)) / (1 - Complex.Abs(c))), line, col);
+        });
+
+        Define("db", (args, line, col) =>
+        {
+            Arity("db", args, 1, line, col);
+            return MapComplexAware("db", args[0],
+                x => 20 * System.Math.Log10(System.Math.Abs(x)),
+                c => JgsValue.Number(20 * System.Math.Log10(Complex.Abs(c))), line, col);
+        });
+
+        Define("rfplot", (args, line, col) => RfPlot(args, line, col));
+        Define("smithplot", (args, line, col) => SmithPlot(args, line, col));
+
+        Define("microstrip", (args, line, col) =>
+        {
+            Arity("microstrip", args, 3, line, col);
+            try
+            {
+                (double z0, double eeff) = TransmissionLine.Microstrip(
+                    Num("microstrip", args, 0, line, col),
+                    Num("microstrip", args, 1, line, col),
+                    Num("microstrip", args, 2, line, col));
+                return JgsValue.Array([JgsValue.Number(z0), JgsValue.Number(eeff)]);
+            }
+            catch (ArgumentOutOfRangeException ex)
+            {
+                throw new JgsRuntimeException(line, col, "microstrip: " + ex.Message);
+            }
+        });
+
+        Define("microstripw", (args, line, col) =>
+            LineCalc("microstripw", args, line, col, TransmissionLine.MicrostripWidth));
+        Define("stripline", (args, line, col) =>
+            LineCalc("stripline", args, line, col, TransmissionLine.Stripline));
+        Define("striplinew", (args, line, col) =>
+            LineCalc("striplinew", args, line, col, TransmissionLine.StriplineWidth));
+
+        Define("wavelength", (args, line, col) =>
+        {
+            Arity("wavelength", args, 2, line, col);
+            double eeff = Num("wavelength", args, 1, line, col);
+            return MapNumeric("wavelength", args[0],
+                f => TransmissionLine.GuidedWavelength(f, eeff), line, col);
         });
 
         // --- Reductions and inspection -------------------------------------------------------
@@ -516,6 +662,7 @@ internal static class JgsBuiltins
             {
                 JgsType.Array => JgsValue.Number(args[0].ArrayLength),
                 JgsType.String => JgsValue.Number(args[0].AsString.Length),
+                JgsType.Image => JgsValue.Number(args[0].AsImage.SampleCount),
                 _ => throw new JgsRuntimeException(line, col, $"numel expects an array or string, but got a {args[0].TypeName}."),
             };
         });
@@ -1078,6 +1225,9 @@ internal static class JgsBuiltins
             }
         });
 
+        // --- Image processing (M24) — defined in JgsBuiltins.Imaging.cs ----------------------
+        DefineImagingBuiltins(Define, host, random);
+
         return env;
     }
 
@@ -1312,6 +1462,235 @@ internal static class JgsBuiltins
         ArityRange(name, args, 2, 3, line, col);
         string? spec = args.Count == 3 ? Str(name, args, 2, line, col) : null;
         apply(DoubleArray(name, args, 0, line, col), DoubleArray(name, args, 1, line, col), spec);
+        return JgsValue.Null;
+    }
+
+    // --- RF network table glue -------------------------------------------------------------------
+
+    /// <summary>Projects an N-port network onto a table: a <c>freq</c> column, per-pair
+    /// <c>{prefix}{i}{j}_re/_im</c> columns (ports 1-based), then a constant <c>z0</c> column.</summary>
+    private static Table NetworkToTable(SParameterNetwork net, string prefix)
+    {
+        int points = net.PointCount;
+        var columns = new List<TableColumn> { new NumberColumn("freq", (double[])net.Frequencies.Clone()) };
+        for (int i = 0; i < net.Ports; i++)
+        {
+            for (int j = 0; j < net.Ports; j++)
+            {
+                var re = new double[points];
+                var im = new double[points];
+                for (int f = 0; f < points; f++)
+                {
+                    Complex value = net[f, i, j];
+                    re[f] = value.Real;
+                    im[f] = value.Imaginary;
+                }
+
+                columns.Add(new NumberColumn($"{prefix}{i + 1}{j + 1}_re", re));
+                columns.Add(new NumberColumn($"{prefix}{i + 1}{j + 1}_im", im));
+            }
+        }
+
+        var z0 = new double[points];
+        System.Array.Fill(z0, net.ReferenceImpedance);
+        columns.Add(new NumberColumn("z0", z0));
+        return new Table(columns);
+    }
+
+    /// <summary>Rebuilds the network domain type from a network table, discovering the parameter prefix from its columns.</summary>
+    private static SParameterNetwork TableToNetwork(Table table)
+    {
+        double[] frequencies = TableSeries.GetNumbers(table, "freq");
+        double referenceImpedance = TableSeries.GetNumbers(table, "z0")[0];
+        int ports = (int)System.Math.Round(System.Math.Sqrt((table.ColumnCount - 2) / 2.0));
+        string prefix = ParameterPrefix(table);
+        int points = frequencies.Length;
+        var data = new Complex[points * ports * ports];
+        for (int i = 0; i < ports; i++)
+        {
+            for (int j = 0; j < ports; j++)
+            {
+                double[] re = TableSeries.GetNumbers(table, $"{prefix}{i + 1}{j + 1}_re");
+                double[] im = TableSeries.GetNumbers(table, $"{prefix}{i + 1}{j + 1}_im");
+                for (int f = 0; f < points; f++)
+                {
+                    data[((f * ports) + i) * ports + j] = new Complex(re[f], im[f]);
+                }
+            }
+        }
+
+        return new SParameterNetwork(ports, referenceImpedance, frequencies, data);
+    }
+
+    /// <summary>The leading letters of the first parameter column (e.g. "s" from "s11_re"); "s" if none is found.</summary>
+    private static string ParameterPrefix(Table table)
+    {
+        foreach (string name in table.ColumnNames)
+        {
+            if (name.Equals("freq", StringComparison.OrdinalIgnoreCase) ||
+                name.Equals("z0", StringComparison.OrdinalIgnoreCase))
+            {
+                continue;
+            }
+
+            int end = 0;
+            while (end < name.Length && char.IsLetter(name[end]))
+            {
+                end++;
+            }
+
+            if (end > 0)
+            {
+                return name[..end];
+            }
+        }
+
+        return "s";
+    }
+
+    /// <summary>Reads the (i, j) parameter across frequency from a network table, with 1-based port numbers.</summary>
+    private static Complex[] ReadParam(Table table, int i, int j, int line, int col)
+    {
+        string prefix = ParameterPrefix(table);
+        try
+        {
+            double[] re = TableSeries.GetNumbers(table, $"{prefix}{i}{j}_re");
+            double[] im = TableSeries.GetNumbers(table, $"{prefix}{i}{j}_im");
+            var result = new Complex[re.Length];
+            for (int f = 0; f < result.Length; f++)
+            {
+                result[f] = new Complex(re[f], im[f]);
+            }
+
+            return result;
+        }
+        catch (KeyNotFoundException)
+        {
+            throw new JgsRuntimeException(line, col,
+                $"There is no parameter ({i}, {j}) in this network (columns: {string.Join(", ", table.ColumnNames)}).");
+        }
+    }
+
+    private static JgsValue ConvertNetwork(
+        string name, IReadOnlyList<JgsValue> args, string prefix,
+        Func<SParameterNetwork, SParameterNetwork> convert, int line, int col)
+    {
+        Arity(name, args, 1, line, col);
+        SParameterNetwork net = TableToNetwork(Tbl(name, args, 0, line, col));
+        try
+        {
+            return JgsValue.Table(NetworkToTable(convert(net), prefix));
+        }
+        catch (NotSupportedException ex)
+        {
+            throw new JgsRuntimeException(line, col, $"{name}: " + ex.Message);
+        }
+    }
+
+    private static JgsValue LineCalc(
+        string name, IReadOnlyList<JgsValue> args, int line, int col, Func<double, double, double, double> calc)
+    {
+        Arity(name, args, 3, line, col);
+        try
+        {
+            return JgsValue.Number(calc(
+                Num(name, args, 0, line, col),
+                Num(name, args, 1, line, col),
+                Num(name, args, 2, line, col)));
+        }
+        catch (ArgumentOutOfRangeException ex)
+        {
+            throw new JgsRuntimeException(line, col, $"{name}: " + ex.Message);
+        }
+    }
+
+    /// <summary>Reads a complex-or-real scalar argument (for a load/source impedance).</summary>
+    private static Complex ComplexScalar(string name, IReadOnlyList<JgsValue> args, int index, int line, int col)
+    {
+        JgsValue value = args[index];
+        return value.Type switch
+        {
+            JgsType.Number or JgsType.Bool => new Complex(value.AsNumber, 0),
+            JgsType.Complex => value.AsComplex,
+            _ => throw new JgsRuntimeException(line, col,
+                $"{name} expects argument {index + 1} to be a number or complex value, but got a {value.TypeName}."),
+        };
+    }
+
+    private static JgsValue RfPlot(IReadOnlyList<JgsValue> args, int line, int col)
+    {
+        ArityRange("rfplot", args, 1, 3, line, col);
+        Table table = Tbl("rfplot", args, 0, line, col);
+        double[] frequencies = TableSeries.GetNumbers(table, "freq");
+        int ports = (int)System.Math.Round(System.Math.Sqrt((table.ColumnCount - 2) / 2.0));
+
+        var pairs = new List<(int I, int J)>();
+        if (args.Count == 3)
+        {
+            pairs.Add((Count("rfplot", args, 1, line, col), Count("rfplot", args, 2, line, col)));
+        }
+        else
+        {
+            for (int i = 1; i <= ports; i++)
+            {
+                for (int j = 1; j <= ports; j++)
+                {
+                    pairs.Add((i, j));
+                }
+            }
+        }
+
+        bool wasHolding = JG.IsHolding;
+        try
+        {
+            foreach ((int i, int j) in pairs)
+            {
+                Complex[] parameter = ReadParam(table, i, j, line, col);
+                var magnitudeDb = new double[parameter.Length];
+                for (int f = 0; f < parameter.Length; f++)
+                {
+                    magnitudeDb[f] = 20 * System.Math.Log10(Complex.Abs(parameter[f]));
+                }
+
+                JG.Plot(frequencies, magnitudeDb).DisplayName = $"S{i}{j}";
+                JG.Hold(true);
+            }
+        }
+        finally
+        {
+            JG.Hold(wasHolding);
+        }
+
+        JG.XLabel("Frequency (Hz)");
+        JG.YLabel("Magnitude (dB)");
+        return JgsValue.Null;
+    }
+
+    private static JgsValue SmithPlot(IReadOnlyList<JgsValue> args, int line, int col)
+    {
+        ArityRange("smithplot", args, 1, 3, line, col);
+        Complex[] gamma;
+        if (args[0].Type == JgsType.Table)
+        {
+            Table table = Tbl("smithplot", args, 0, line, col);
+            int i = args.Count >= 2 ? Count("smithplot", args, 1, line, col) : 1;
+            int j = args.Count >= 3 ? Count("smithplot", args, 2, line, col) : 1;
+            gamma = ReadParam(table, i, j, line, col);
+        }
+        else
+        {
+            gamma = ComplexArray("smithplot", args, 0, line, col);
+        }
+
+        var re = new double[gamma.Length];
+        var im = new double[gamma.Length];
+        for (int k = 0; k < gamma.Length; k++)
+        {
+            re[k] = gamma[k].Real;
+            im[k] = gamma[k].Imaginary;
+        }
+
+        JG.SmithGamma(re, im);
         return JgsValue.Null;
     }
 
@@ -1875,6 +2254,17 @@ internal static class JgsBuiltins
         }
 
         return value.AsTable;
+    }
+
+    private static ImageBuffer Img(string name, IReadOnlyList<JgsValue> args, int index, int line, int col)
+    {
+        JgsValue value = args[index];
+        if (value.Type != JgsType.Image)
+        {
+            throw new JgsRuntimeException(line, col, $"{name} expects argument {index + 1} to be an image, but got a {value.TypeName}.");
+        }
+
+        return value.AsImage;
     }
 
     private static bool Truthy(IReadOnlyList<JgsValue> args, int index) => args[index].IsTruthy;

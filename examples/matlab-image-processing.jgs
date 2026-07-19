@@ -1,0 +1,38 @@
+// Image-processing example: read a small RGB image, inspect it, run a segmentation
+// pipeline, and measure the regions — using JGraph's image builtins (M24).
+//
+// sample-image.png is a 96x96 RGB image: a dark gradient background with three
+// bright blobs.
+
+let img = imread('sample-image.png');
+print('image size:', size(img));
+
+// Show the original.
+figure;
+imshow(img);
+title('Original');
+show();
+
+// Convert to grayscale and stretch contrast, then threshold to a binary mask.
+let gray = rgb2gray(img);
+let bright = imadjust(gray);
+let mask = imbinarize(bright);
+
+// Detect edges of the blobs for a second view.
+figure;
+imshow(edge(gray, 'sobel'));
+title('Sobel edges');
+show();
+
+// Clean up the mask with morphology, then label the connected components.
+let cleaned = imopen(mask, strel('disk', 1));
+let [labels, count] = bwlabel(cleaned);
+print('Found', count, 'regions');
+
+// Measure each region and report its area.
+let props = regionprops(labels);
+print('region areas:', column(props, 'Area'));
+
+// Save the binary mask.
+imwrite(mask, 'sample-mask.png');
+print('wrote sample-mask.png');

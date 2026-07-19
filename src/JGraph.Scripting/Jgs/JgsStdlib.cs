@@ -203,6 +203,33 @@ internal static class JgsStdlib
             return true;
         }
 
+        if (left.Type == JgsType.Image && right.Type == JgsType.Image)
+        {
+            return ImagesEqual(left.AsImage, right.AsImage);
+        }
+
         return JgsValue.AreEqual(left, right);
+    }
+
+    private static bool ImagesEqual(JGraph.Imaging.ImageBuffer a, JGraph.Imaging.ImageBuffer b)
+    {
+        if (a.Height != b.Height || a.Width != b.Width || a.Channels != b.Channels)
+        {
+            return false;
+        }
+
+        ReadOnlySpan<double> pa = a.Pixels;
+        ReadOnlySpan<double> pb = b.Pixels;
+        for (int i = 0; i < pa.Length; i++)
+        {
+            if (pa[i] != pb[i])
+            {
+                return false;
+            }
+        }
+
+        GC.KeepAlive(a);
+        GC.KeepAlive(b);
+        return true;
     }
 }

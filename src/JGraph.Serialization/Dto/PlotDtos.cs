@@ -17,6 +17,7 @@ namespace JGraph.Serialization.Dto;
 [JsonDerivedType(typeof(HistogramPlotDto), "histogram")]
 [JsonDerivedType(typeof(ErrorBarPlotDto), "errorbar")]
 [JsonDerivedType(typeof(ImagePlotDto), "image")]
+[JsonDerivedType(typeof(RgbImagePlotDto), "rgbimage")]
 [JsonDerivedType(typeof(SurfacePlotDto), "surface")]
 [JsonDerivedType(typeof(ContourPlotDto), "contour")]
 [JsonDerivedType(typeof(PolarGridDto), "polarGrid")]
@@ -164,6 +165,22 @@ public sealed class ImagePlotDto : PlotDto
     public bool Interpolate { get; set; }
 
     public bool RowZeroAtTop { get; set; } = true;
+}
+
+public sealed class RgbImagePlotDto : PlotDto
+{
+    /// <summary>Base64 of the little-endian 0xAARRGGBB pixel bytes (row-major, row 0 at top).</summary>
+    public string PixelsBase64 { get; set; } = string.Empty;
+
+    public int Width { get; set; }
+
+    public int Height { get; set; }
+
+    public RangeDto XExtent { get; set; } = new(0, 1);
+
+    public RangeDto YExtent { get; set; } = new(0, 1);
+
+    public bool Interpolate { get; set; }
 }
 
 public sealed class SurfacePlotDto : PlotDto

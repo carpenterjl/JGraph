@@ -1,0 +1,33 @@
+// RF example: read a 2-port, inspect it on rectangular and Smith charts,
+// and size a microstrip line — using JGraph's RF builtins (M23).
+//
+// sample.s2p is a 10 nH series inductor in a 50 ohm system.
+
+let net = sparameters('sample.s2p');
+print('frequency points:', rowcount(net));
+print('columns:', colnames(net));
+
+// S21 insertion loss (dB) and S11 return loss (dB) vs frequency.
+figure;
+let f = rffreq(net);
+plot(f, db(rfparam(net, 2, 1)), 'b');
+hold(true);
+plot(f, db(rfparam(net, 1, 1)), 'r');
+legend('S21 (dB)', 'S11 (dB)');
+xlabel('Frequency (Hz)');
+ylabel('Magnitude (dB)');
+title('Series inductor — insertion and return loss');
+show();
+
+// The S11 reflection locus on a Smith chart.
+figure;
+smithplot(net, 1, 1);
+title('S11 on the Smith chart');
+show();
+
+// Standing-wave ratio at each frequency, and a microstrip line for a 50 ohm feed.
+print('VSWR:', vswr(rfparam(net, 1, 1)));
+let [z0, eeff] = microstrip(3.0, 1.0, 4.4);   // FR-4, w = 3 mm, h = 1 mm
+print('microstrip Z0 (ohm):', z0);
+print('effective permittivity:', eeff);
+print('50 ohm trace width (mm):', microstripw(50, 1.0, 4.4));

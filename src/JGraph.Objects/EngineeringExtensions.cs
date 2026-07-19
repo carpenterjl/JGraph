@@ -89,6 +89,28 @@ public static class EngineeringExtensions
         return line;
     }
 
+    /// <summary>
+    /// Adds a Smith-chart trace of a reflection-coefficient locus given directly as Γ = real + j·imag
+    /// (the form S-parameter data provides), configuring the axes as a Smith chart. Unlike
+    /// <see cref="AddSmith"/> this plots Γ as-is, avoiding the z→Γ mapping that is singular as z→∞.
+    /// Returns the underlying line.
+    /// </summary>
+    public static LinePlot AddSmithReflection(this AxesModel axes, double[] gammaReal, double[] gammaImag)
+    {
+        ArgumentNullException.ThrowIfNull(axes);
+        ArgumentNullException.ThrowIfNull(gammaReal);
+        ArgumentNullException.ThrowIfNull(gammaImag);
+        if (gammaReal.Length != gammaImag.Length)
+        {
+            throw new ArgumentException("Reflection real/imag arrays must have the same length.", nameof(gammaImag));
+        }
+
+        EnsureSmithGrid(axes);
+        var line = new LinePlot(gammaReal, gammaImag);
+        axes.Plots.Add(line);
+        return line;
+    }
+
     // ---- Eye diagram ----
 
     /// <summary>Adds an eye diagram of a signal sampled at <paramref name="samplesPerSymbol"/> samples per symbol.</summary>

@@ -85,6 +85,15 @@ internal static class PlotMapper
                 Interpolate = p.Interpolate,
                 RowZeroAtTop = p.RowZeroAtTop,
             },
+            RgbImagePlot p => new RgbImagePlotDto
+            {
+                PixelsBase64 = PixelsToBase64(p.Pixels),
+                Width = p.Width,
+                Height = p.Height,
+                XExtent = DtoConvert.ToDto(p.XExtent),
+                YExtent = DtoConvert.ToDto(p.YExtent),
+                Interpolate = p.Interpolate,
+            },
             SurfacePlot p => new SurfacePlotDto
             {
                 X = p.X.ToArray(),
@@ -208,6 +217,12 @@ internal static class PlotMapper
                 Interpolate = d.Interpolate,
                 RowZeroAtTop = d.RowZeroAtTop,
             },
+            RgbImagePlotDto d => new RgbImagePlot(PixelsFromBase64(d.PixelsBase64, d.Width, d.Height), d.Width, d.Height)
+            {
+                XExtent = DtoConvert.ToRange(d.XExtent),
+                YExtent = DtoConvert.ToRange(d.YExtent),
+                Interpolate = d.Interpolate,
+            },
             SurfacePlotDto d => new SurfacePlot(d.X, d.Y, To2D(d.Z))
             {
                 Colormap = DtoConvert.ToColormap(d.Colormap),
@@ -330,5 +345,22 @@ internal static class PlotMapper
         }
 
         return values;
+    }
+
+    private static string PixelsToBase64(uint[] pixels)
+    {
+        var bytes = new byte[pixels.Length * sizeof(uint)];
+        Buffer.BlockCopy(pixels, 0, bytes, 0, bytes.Length);
+        return Convert.ToBase64String(bytes);
+    }
+
+    private static uint[] PixelsFromBase64(string base64, int width, int height)
+    {
+        byte[] bytes = Convert.FromBase64String(base64 ?? string.Empty);
+        long expected = (long)width * height;
+        var pixels = new uint[expected];
+        int available = Math.Min(bytes.Length / sizeof(uint), (int)expected);
+        Buffer.BlockCopy(bytes, 0, pixels, 0, available * sizeof(uint));
+        return pixels;
     }
 }
