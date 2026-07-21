@@ -72,6 +72,20 @@ public static class Kernels
         { -1, -1, -1 },
     };
 
+    /// <summary>The 2×2 Roberts cross kernel (pair it with <see cref="RobertsCounter"/> for the other diagonal).</summary>
+    public static double[,] Roberts() => new double[,]
+    {
+        { 1, 0 },
+        { 0, -1 },
+    };
+
+    /// <summary>The 2×2 Roberts kernel for the anti-diagonal.</summary>
+    public static double[,] RobertsCounter() => new double[,]
+    {
+        { 0, 1 },
+        { -1, 0 },
+    };
+
     /// <summary>A 3×3 Laplacian kernel; <paramref name="alpha"/> in [0, 1] shapes the diagonal weighting (MATLAB default 0.2).</summary>
     public static double[,] Laplacian(double alpha = 0.2)
     {

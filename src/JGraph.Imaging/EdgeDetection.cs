@@ -14,12 +14,19 @@ public static class EdgeDetection
 
         /// <summary>Canny (Gaussian smoothing, non-max suppression, hysteresis).</summary>
         Canny,
+
+        /// <summary>Roberts cross gradient magnitude thresholding.</summary>
+        Roberts,
+
+        /// <summary>Laplacian-of-Gaussian zero crossings.</summary>
+        Log,
     }
 
     /// <summary>
-    /// Detects edges in a grayscale image, returning a binary image (MATLAB <c>edge</c>). For Sobel and
-    /// Prewitt, <paramref name="threshold"/> overrides the automatic 4×mean-magnitude heuristic; for
-    /// Canny it is the high hysteresis threshold (low = 0.4×high).
+    /// Detects edges in a grayscale image, returning a binary image (MATLAB <c>edge</c>). For Sobel,
+    /// Prewitt, and Roberts, <paramref name="threshold"/> overrides the automatic 4×mean-magnitude
+    /// heuristic; for Canny it is the high hysteresis threshold (low = 0.4×high); for LoG it is the
+    /// minimum slope a zero crossing must have (automatic = 0.75×mean absolute response).
     /// </summary>
     public static ImageBuffer Detect(ImageBuffer image, Method method, double? threshold = null)
     {
@@ -27,9 +34,12 @@ public static class EdgeDetection
         ImageBuffer gray = image.Channels == 1 ? image : PointOps.ToGray(image);
         try
         {
-            return method == Method.Canny
-                ? Canny(gray, threshold)
-                : Gradient(gray, method, threshold);
+            return method switch
+            {
+                Method.Canny => Canny(gray, threshold),
+                Method.Log => LaplacianOfGaussian(gray, threshold),
+                _ => Gradient(gray, method, threshold),
+            };
         }
         finally
         {
@@ -42,13 +52,63 @@ public static class EdgeDetection
 
     private static ImageBuffer Gradient(ImageBuffer gray, Method method, double? threshold)
     {
-        double[,] kx = method == Method.Prewitt ? Kernels.Prewitt() : Kernels.Sobel();
-        double[,] ky = Transpose(kx);
-        (double[,] magnitude, _) = GradientMagnitude(gray, kx, ky);
+        // Roberts pairs two 2×2 diagonal kernels; the 3×3 operators pair a kernel with its transpose.
+        (double[,] kx, double[,] ky) = method switch
+        {
+            Method.Roberts => (Kernels.Roberts(), Kernels.RobertsCounter()),
+            Method.Prewitt => (Kernels.Prewitt(), Transpose(Kernels.Prewitt())),
+            _ => (Kernels.Sobel(), Transpose(Kernels.Sobel())),
+        };
 
+        (double[,] magnitude, _) = GradientMagnitude(gray, kx, ky);
         double level = threshold ?? (4.0 * Mean(magnitude));
         return Threshold(gray.Height, gray.Width, magnitude, level);
     }
+
+    /// <summary>
+    /// LoG edges: filter with a zero-sum Laplacian-of-Gaussian, then keep pixels where the response
+    /// changes sign against the right or lower neighbour by at least <paramref name="threshold"/>.
+    /// </summary>
+    private static ImageBuffer LaplacianOfGaussian(ImageBuffer gray, double? threshold)
+    {
+        using ImageBuffer response = Filters.Correlate(
+            gray, Kernels.LaplacianOfGaussian(9, 2.0), Filters.Boundary.Replicate);
+
+        int h = gray.Height;
+        int w = gray.Width;
+        double total = 0;
+        for (int r = 0; r < h; r++)
+        {
+            for (int c = 0; c < w; c++)
+            {
+                total += Math.Abs(response[r, c, 0]);
+            }
+        }
+
+        double level = threshold ?? (0.75 * total / (h * w));
+        var edges = new ImageBuffer(h, w, 1);
+        if (level <= 0)
+        {
+            return edges; // a flat image has no crossings worth reporting
+        }
+
+        for (int r = 0; r < h; r++)
+        {
+            for (int c = 0; c < w; c++)
+            {
+                double v = response[r, c, 0];
+                bool crossing =
+                    (c + 1 < w && Crosses(v, response[r, c + 1, 0], level)) ||
+                    (r + 1 < h && Crosses(v, response[r + 1, c, 0], level));
+                edges[r, c, 0] = crossing ? 1.0 : 0.0;
+            }
+        }
+
+        return edges;
+    }
+
+    private static bool Crosses(double a, double b, double level) =>
+        ((a >= 0 && b < 0) || (a < 0 && b >= 0)) && Math.Abs(a - b) >= level;
 
     private static ImageBuffer Canny(ImageBuffer gray, double? highThreshold)
     {

@@ -176,6 +176,15 @@ public static class PointOps
     /// <summary>Subtracts <paramref name="b"/> from <paramref name="a"/>, clamping to [0, 1] (MATLAB <c>imsubtract</c>).</summary>
     public static ImageBuffer Subtract(ImageBuffer a, ImageBuffer b) => Combine(a, b, static (x, y) => x - y);
 
+    /// <summary>
+    /// Multiplies two images sample by sample, clamping to [0, 1] (MATLAB <c>immultiply</c>). Masking
+    /// is the common use: multiplying by a binary image keeps the foreground and zeroes the rest.
+    /// </summary>
+    public static ImageBuffer Multiply(ImageBuffer a, ImageBuffer b) => Combine(a, b, static (x, y) => x * y);
+
+    /// <summary>Scales every sample by a constant, clamping to [0, 1].</summary>
+    public static ImageBuffer MultiplyScalar(ImageBuffer image, double value) => Map(image, v => v * value);
+
     /// <summary>Adds a scalar to every sample, clamping to [0, 1].</summary>
     public static ImageBuffer AddScalar(ImageBuffer image, double value) => Map(image, v => v + value);
 

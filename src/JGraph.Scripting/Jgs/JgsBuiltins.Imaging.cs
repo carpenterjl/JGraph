@@ -204,6 +204,7 @@ internal static partial class JgsBuiltins
         // --- Arithmetic ----------------------------------------------------------------------
         define("imadd", (args, line, col) => ImageArithmetic("imadd", args, line, col, PointOps.Add, PointOps.AddScalar));
         define("imsubtract", (args, line, col) => ImageArithmetic("imsubtract", args, line, col, PointOps.Subtract, PointOps.SubtractScalar));
+        define("immultiply", (args, line, col) => ImageArithmetic("immultiply", args, line, col, PointOps.Multiply, PointOps.MultiplyScalar));
         define("imcomplement", (args, line, col) =>
         {
             Arity("imcomplement", args, 1, line, col);
@@ -377,6 +378,28 @@ internal static partial class JgsBuiltins
             return JgsValue.Image(EdgeDetection.Detect(image, method, threshold));
         });
 
+        define("imgradientxy", (args, line, col) =>
+        {
+            ArityRange("imgradientxy", args, 1, 2, line, col);
+            ImageBuffer image = Img("imgradientxy", args, 0, line, col);
+            Gradients.Operator op = args.Count == 2
+                ? ParseGradientOperator("imgradientxy", Str("imgradientxy", args, 1, line, col), line, col)
+                : Gradients.Operator.Sobel;
+            (ImageBuffer gx, ImageBuffer gy) = Gradients.GradientXY(image, op);
+            return JgsValue.Array([JgsValue.Image(gx), JgsValue.Image(gy)]);
+        });
+
+        define("imgradient", (args, line, col) =>
+        {
+            ArityRange("imgradient", args, 1, 2, line, col);
+            ImageBuffer image = Img("imgradient", args, 0, line, col);
+            Gradients.Operator op = args.Count == 2
+                ? ParseGradientOperator("imgradient", Str("imgradient", args, 1, line, col), line, col)
+                : Gradients.Operator.Sobel;
+            (ImageBuffer magnitude, ImageBuffer direction) = Gradients.Gradient(image, op);
+            return JgsValue.Array([JgsValue.Image(magnitude), JgsValue.Image(direction)]);
+        });
+
         // --- Morphology ----------------------------------------------------------------------
         define("strel", (args, line, col) =>
         {
@@ -415,19 +438,131 @@ internal static partial class JgsBuiltins
             }
         });
 
-        define("regionprops", (args, line, col) =>
+        // --- Hough line detection ------------------------------------------------------------
+        define("hough", (args, line, col) =>
         {
-            Arity("regionprops", args, 1, line, col);
-            ImageBuffer labelImage = Img("regionprops", args, 0, line, col);
-            int[,] labels = Regions.ImageToLabels(labelImage);
-            int count = 0;
-            foreach (int label in labels)
+            Arity("hough", args, 1, line, col);
+            ImageBuffer image = Img("hough", args, 0, line, col);
+            try
             {
-                count = Math.Max(count, label);
+                (ImageBuffer accumulator, double[] theta, double[] rho) = HoughTransform.Accumulate(image);
+                return JgsValue.Array([JgsValue.Image(accumulator), Numbers(theta), Numbers(rho)]);
+            }
+            catch (ArgumentException ex)
+            {
+                throw new JgsRuntimeException(line, col, $"hough: {ex.Message}");
+            }
+        });
+
+        define("houghpeaks", (args, line, col) =>
+        {
+            ArityRange("houghpeaks", args, 1, 3, line, col);
+            ImageBuffer accumulator = Img("houghpeaks", args, 0, line, col);
+            int count = args.Count >= 2 ? Count("houghpeaks", args, 1, line, col) : 1;
+            double? threshold = args.Count >= 3 ? Num("houghpeaks", args, 2, line, col) : null;
+            (int RhoIndex, int ThetaIndex)[] peaks = HoughTransform.Peaks(accumulator, count, threshold);
+
+            // One [rhoIndex, thetaIndex] row per peak, 1-based so the indices address theta and rho.
+            var rows = new JgsValue[peaks.Length];
+            for (int i = 0; i < peaks.Length; i++)
+            {
+                rows[i] = Numbers([peaks[i].RhoIndex + 1, peaks[i].ThetaIndex + 1]);
             }
 
-            Regions.RegionProperty[] props = Regions.Measure(labels, count);
-            return JgsValue.Table(RegionPropertiesToTable(props));
+            return JgsValue.Array(rows);
+        });
+
+        define("houghlines", (args, line, col) =>
+        {
+            ArityRange("houghlines", args, 4, 6, line, col);
+            ImageBuffer image = Img("houghlines", args, 0, line, col);
+            double[] theta = ToDoubles("houghlines", args[1], line, col);
+            double[] rho = ToDoubles("houghlines", args[2], line, col);
+            (int, int)[] peaks = PeakIndices(args[3], line, col);
+            double fillGap = args.Count >= 5 ? Num("houghlines", args, 4, line, col) : 20;
+            double minLength = args.Count >= 6 ? Num("houghlines", args, 5, line, col) : 40;
+
+            try
+            {
+                return JgsValue.Table(LineSegmentsToTable(
+                    HoughTransform.Lines(image, theta, rho, peaks, fillGap, minLength)));
+            }
+            catch (ArgumentOutOfRangeException ex)
+            {
+                throw new JgsRuntimeException(line, col, $"houghlines: {ex.Message}");
+            }
+        });
+
+        define("imfill", (args, line, col) =>
+        {
+            ArityRange("imfill", args, 1, 2, line, col);
+            ImageBuffer image = Img("imfill", args, 0, line, col);
+            string mode = args.Count == 2 ? Str("imfill", args, 1, line, col).ToLowerInvariant() : "holes";
+            if (mode != "holes")
+            {
+                throw new JgsRuntimeException(line, col, "imfill only supports the 'holes' mode.");
+            }
+
+            try
+            {
+                return JgsValue.Image(Regions.FillHoles(image));
+            }
+            catch (ArgumentException ex)
+            {
+                throw new JgsRuntimeException(line, col, $"imfill: {ex.Message}");
+            }
+        });
+
+        define("bwareaopen", (args, line, col) =>
+        {
+            ArityRange("bwareaopen", args, 2, 3, line, col);
+            ImageBuffer image = Img("bwareaopen", args, 0, line, col);
+            int minArea = Count("bwareaopen", args, 1, line, col);
+            int connectivity = args.Count == 3 ? Count("bwareaopen", args, 2, line, col) : 8;
+            try
+            {
+                return JgsValue.Image(Regions.AreaOpen(image, minArea, connectivity));
+            }
+            catch (ArgumentOutOfRangeException ex)
+            {
+                throw new JgsRuntimeException(line, col, ex.Message);
+            }
+        });
+
+        define("regionprops", (args, line, col) =>
+        {
+            ArityRange("regionprops", args, 1, 2, line, col);
+            ImageBuffer labelImage = Img("regionprops", args, 0, line, col);
+
+            // MATLAB accepts a binary image directly, so a 0/1 input is labeled here (8-connectivity,
+            // matching bwlabel's default). A one-region label map is indistinguishable from binary,
+            // but labeling it is a no-op, so the result is the same either way.
+            int[,] labels;
+            int count;
+            if (labelImage.IsBinary)
+            {
+                (labels, count) = Regions.Label(labelImage, 8);
+            }
+            else
+            {
+                labels = Regions.ImageToLabels(labelImage);
+                count = 0;
+                foreach (int label in labels)
+                {
+                    count = Math.Max(count, label);
+                }
+            }
+
+            ImageBuffer? intensity = args.Count == 2 ? Img("regionprops", args, 1, line, col) : null;
+            try
+            {
+                return JgsValue.Table(RegionPropertiesToTable(
+                    Regions.Measure(labels, count, intensity), intensity is not null));
+            }
+            catch (ArgumentException ex)
+            {
+                throw new JgsRuntimeException(line, col, $"regionprops: {ex.Message}");
+            }
         });
     }
 
@@ -449,7 +584,20 @@ internal static partial class JgsBuiltins
             "sobel" => EdgeDetection.Method.Sobel,
             "prewitt" => EdgeDetection.Method.Prewitt,
             "canny" => EdgeDetection.Method.Canny,
-            _ => throw new JgsRuntimeException(line, col, $"edge: unknown method '{method}' (use 'sobel', 'prewitt', or 'canny')."),
+            "roberts" => EdgeDetection.Method.Roberts,
+            "log" or "zerocross" => EdgeDetection.Method.Log,
+            _ => throw new JgsRuntimeException(line, col,
+                $"edge: unknown method '{method}' (use 'sobel', 'prewitt', 'roberts', 'canny', or 'log')."),
+        };
+
+    private static Gradients.Operator ParseGradientOperator(string name, string method, int line, int col) =>
+        method.ToLowerInvariant() switch
+        {
+            "sobel" => Gradients.Operator.Sobel,
+            "prewitt" => Gradients.Operator.Prewitt,
+            "roberts" => Gradients.Operator.Roberts,
+            _ => throw new JgsRuntimeException(line, col,
+                $"{name}: unknown method '{method}' (use 'sobel', 'prewitt', or 'roberts')."),
         };
 
     private static double[,] ElementToMatrix(bool[,] element)
@@ -468,9 +616,66 @@ internal static partial class JgsBuiltins
         return values;
     }
 
-    private static JGraph.Data.Table RegionPropertiesToTable(Regions.RegionProperty[] props)
+    /// <summary>Reads a houghpeaks result — rows of 1-based [rhoIndex, thetaIndex] — back to 0-based pairs.</summary>
+    private static (int RhoIndex, int ThetaIndex)[] PeakIndices(JgsValue value, int line, int col)
+    {
+        if (value.Type != JgsType.Array)
+        {
+            throw new JgsRuntimeException(line, col, "houghlines expects the peaks from houghpeaks as argument 4.");
+        }
+
+        JgsValue[] rows = value.BoxedElements();
+        var peaks = new (int, int)[rows.Length];
+        for (int i = 0; i < rows.Length; i++)
+        {
+            double[] pair = ToDoubles("houghlines", rows[i], line, col);
+            if (pair.Length != 2)
+            {
+                throw new JgsRuntimeException(line, col, "each houghlines peak must be a [rhoIndex, thetaIndex] pair.");
+            }
+
+            peaks[i] = ((int)pair[0] - 1, (int)pair[1] - 1);
+        }
+
+        return peaks;
+    }
+
+    private static JGraph.Data.Table LineSegmentsToTable(HoughTransform.LineSegment[] segments)
+    {
+        int n = segments.Length;
+        var x1 = new double[n];
+        var y1 = new double[n];
+        var x2 = new double[n];
+        var y2 = new double[n];
+        var theta = new double[n];
+        var rho = new double[n];
+        for (int i = 0; i < n; i++)
+        {
+            x1[i] = segments[i].Point1X;
+            y1[i] = segments[i].Point1Y;
+            x2[i] = segments[i].Point2X;
+            y2[i] = segments[i].Point2Y;
+            theta[i] = segments[i].Theta;
+            rho[i] = segments[i].Rho;
+        }
+
+        return new JGraph.Data.Table(new List<JGraph.Data.TableColumn>
+        {
+            new JGraph.Data.NumberColumn("Point1X", x1),
+            new JGraph.Data.NumberColumn("Point1Y", y1),
+            new JGraph.Data.NumberColumn("Point2X", x2),
+            new JGraph.Data.NumberColumn("Point2Y", y2),
+            new JGraph.Data.NumberColumn("Theta", theta),
+            new JGraph.Data.NumberColumn("Rho", rho),
+        });
+    }
+
+    private static JGraph.Data.Table RegionPropertiesToTable(Regions.RegionProperty[] props, bool withIntensity)
     {
         int n = props.Length;
+        var mean = new double[n];
+        var wx = new double[n];
+        var wy = new double[n];
         var label = new double[n];
         var area = new double[n];
         var cx = new double[n];
@@ -489,9 +694,12 @@ internal static partial class JgsBuiltins
             by[i] = props[i].BoundingBoxY;
             bw[i] = props[i].BoundingBoxWidth;
             bh[i] = props[i].BoundingBoxHeight;
+            mean[i] = props[i].MeanIntensity;
+            wx[i] = props[i].WeightedCentroidX;
+            wy[i] = props[i].WeightedCentroidY;
         }
 
-        return new JGraph.Data.Table(new List<JGraph.Data.TableColumn>
+        var columns = new List<JGraph.Data.TableColumn>
         {
             new JGraph.Data.NumberColumn("Label", label),
             new JGraph.Data.NumberColumn("Area", area),
@@ -501,7 +709,17 @@ internal static partial class JgsBuiltins
             new JGraph.Data.NumberColumn("BBoxY", by),
             new JGraph.Data.NumberColumn("BBoxW", bw),
             new JGraph.Data.NumberColumn("BBoxH", bh),
-        });
+        };
+
+        // The intensity columns only exist when regionprops was given an intensity image.
+        if (withIntensity)
+        {
+            columns.Add(new JGraph.Data.NumberColumn("MeanIntensity", mean));
+            columns.Add(new JGraph.Data.NumberColumn("WeightedCentroidX", wx));
+            columns.Add(new JGraph.Data.NumberColumn("WeightedCentroidY", wy));
+        }
+
+        return new JGraph.Data.Table(columns);
     }
 
     private static JgsValue ImageArithmetic(

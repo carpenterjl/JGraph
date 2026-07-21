@@ -459,24 +459,43 @@ internal static partial class JgsBuiltins
 
         Define("size", (args, line, col) =>
         {
-            Arity("size", args, 1, line, col);
-            if (args[0].Type == JgsType.Image)
-            {
-                ImageBuffer image = args[0].AsImage;
-                return image.Channels == 1
-                    ? JgsValue.Array([JgsValue.Number(image.Height), JgsValue.Number(image.Width)])
-                    : JgsValue.Array([JgsValue.Number(image.Height), JgsValue.Number(image.Width), JgsValue.Number(image.Channels)]);
-            }
+            ArityRange("size", args, 1, 2, line, col);
 
+            // MATLAB's third dimension: images carry channels, everything else is a plain 2-D value.
+            int channels = args[0].Type == JgsType.Image ? args[0].AsImage.Channels : 1;
             (int rows, int cols) = args[0].Type switch
             {
+                JgsType.Image => (args[0].AsImage.Height, args[0].AsImage.Width),
                 JgsType.Array when args[0].ArrayLength > 0 && args[0].ElementAt(0).Type == JgsType.Array =>
                     (args[0].ArrayLength, args[0].ElementAt(0).ArrayLength),
                 JgsType.Array => (1, args[0].ArrayLength),
                 JgsType.String => (1, args[0].AsString.Length),
                 _ => (1, 1),
             };
-            return JgsValue.Array([JgsValue.Number(rows), JgsValue.Number(cols)]);
+
+            if (args.Count == 2)
+            {
+                int dim = Count("size", args, 1, line, col);
+                // Dimensions past the value's rank are 1, exactly as in MATLAB.
+                return JgsValue.Number(dim switch { 1 => rows, 2 => cols, 3 => channels, _ => 1 });
+            }
+
+            return channels == 1
+                ? JgsValue.Array([JgsValue.Number(rows), JgsValue.Number(cols)])
+                : JgsValue.Array([JgsValue.Number(rows), JgsValue.Number(cols), JgsValue.Number(channels)]);
+        });
+
+        Define("isempty", (args, line, col) =>
+        {
+            Arity("isempty", args, 1, line, col);
+            return JgsValue.Bool(args[0].Type switch
+            {
+                JgsType.Null => true,
+                JgsType.Array => args[0].ArrayLength == 0,
+                JgsType.String => args[0].AsString.Length == 0,
+                JgsType.Table => args[0].AsTable.RowCount == 0,
+                _ => false,
+            });
         });
 
         Define("disp", (args, line, col) =>
@@ -634,9 +653,16 @@ internal static partial class JgsBuiltins
             };
         });
 
-        Define("sum", (args, line, col) => Reduce("sum", args, line, col, (acc, v) => acc + v, 0.0));
+        Define("sum", (args, line, col) => TryReduceImage("sum", args, line, col, out JgsValue imageSum)
+            ? imageSum
+            : Reduce("sum", args, line, col, (acc, v) => acc + v, 0.0));
         Define("mean", (args, line, col) =>
         {
+            if (TryReduceImage("mean", args, line, col, out JgsValue imageMean))
+            {
+                return imageMean;
+            }
+
             double[] values = ArrayOfNumbers("mean", args, line, col);
             if (values.Length == 0)
             {
@@ -895,6 +921,28 @@ internal static partial class JgsBuiltins
             {
                 throw new JgsRuntimeException(line, col, ex.Message);
             }
+        });
+
+        Define("fprintf", (args, line, col) =>
+        {
+            if (args.Count < 1)
+            {
+                throw new JgsRuntimeException(line, col, "fprintf expects a format string first.");
+            }
+
+            string format = Str("fprintf", args, 0, line, col);
+            try
+            {
+                // MATLAB fprintf writes exactly what the format says — the newline comes from the
+                // format's own \n, so this goes through the raw (no-newline) output seam.
+                host.WriteOut(JgsSprintf.Format(format, args.Skip(1).ToArray()));
+            }
+            catch (FormatException ex)
+            {
+                throw new JgsRuntimeException(line, col, ex.Message);
+            }
+
+            return JgsValue.Null;
         });
 
         Define("str", (args, line, col) => { Arity("str", args, 1, line, col); return JgsValue.Str(args[0].Display()); });
@@ -1776,8 +1824,51 @@ internal static partial class JgsBuiltins
         return JgsValue.Number(acc);
     }
 
+    /// <summary>
+    /// The image fast path shared by sum/mean/min/max: a single image argument reduces straight over
+    /// the sample span, so a megapixel image never boxes (and never hits im2mat's element cap).
+    /// </summary>
+    private static bool TryReduceImage(string name, IReadOnlyList<JgsValue> args, int line, int col, out JgsValue result)
+    {
+        result = JgsValue.Null;
+        if (args.Count != 1 || args[0].Type != JgsType.Image)
+        {
+            return false;
+        }
+
+        ReadOnlySpan<double> pixels = args[0].AsImage.Pixels;
+        if (pixels.Length == 0)
+        {
+            throw new JgsRuntimeException(line, col, $"{name} needs a non-empty image.");
+        }
+
+        double total = 0;
+        double lowest = double.PositiveInfinity;
+        double highest = double.NegativeInfinity;
+        foreach (double v in pixels)
+        {
+            total += v;
+            lowest = System.Math.Min(lowest, v);
+            highest = System.Math.Max(highest, v);
+        }
+
+        result = JgsValue.Number(name switch
+        {
+            "sum" => total,
+            "mean" => total / pixels.Length,
+            "min" => lowest,
+            _ => highest,
+        });
+        return true;
+    }
+
     private static JgsValue MinMax(string name, IReadOnlyList<JgsValue> args, int line, int col, bool takeMin)
     {
+        if (TryReduceImage(name, args, line, col, out JgsValue image))
+        {
+            return image;
+        }
+
         double[] values;
         if (args.Count == 1 && args[0].Type == JgsType.Array)
         {

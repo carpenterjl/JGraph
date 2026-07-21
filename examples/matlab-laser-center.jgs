@@ -1,0 +1,49 @@
+// Laser-spot centre detection (M24c) — a port of a MATLAB Image Processing Toolbox script.
+//
+// Two independent estimates of where a laser spot "is", overlaid on the image:
+//   A. Geometric centre — threshold, fill, clean up, then the centroid of the shape.
+//   B. Intensity-weighted centre — the brightness-weighted mean position, which is pulled
+//      towards the bright side of an asymmetric spot.
+//
+// sample-laser.png is a 96x96 grayscale image: a Gaussian core with a brighter lobe to its
+// right, so the two centres land in visibly different places.
+
+let I = imread('sample-laser.png');
+let height = size(I, 1);
+print('image size:', size(I));
+
+// --- Algorithm A: geometric centre ---------------------------------------------------------
+let level = graythresh(I);
+let BW = imbinarize(I, level);
+BW = imfill(BW, 'holes');      // close any dark pinholes inside the spot
+BW = bwareaopen(BW, 50);       // drop specks smaller than 50 pixels
+
+// regionprops takes the binary image directly; passing I as well adds the intensity columns.
+let stats = regionprops(BW, I);
+print('found a spot:', !isempty(stats));
+
+let geomX = column(stats, 'CentroidX')(1);
+let geomY = column(stats, 'CentroidY')(1);
+
+// --- Algorithm B: intensity-weighted centre ------------------------------------------------
+// Everything below 15% of the peak is background, so mask it off and weight by what is left.
+let threshold = 0.15 * max(I);
+let bright = imbinarize(I, threshold);
+let weighted = regionprops(bright, I);
+let intensityX = column(weighted, 'WeightedCentroidX')(1);
+let intensityY = column(weighted, 'WeightedCentroidY')(1);
+
+// --- Display ---------------------------------------------------------------------------------
+// Pixel (col, row) is 1-based; imshow puts row 0 at the top of a 0..height y axis, so a
+// 1-based (x, y) centre plots at (x - 0.5, height - y + 0.5).
+figure;
+imshow(I);
+hold(true);
+plot([geomX - 0.5], [height - geomY + 0.5], 'r+');
+plot([intensityX - 0.5], [height - intensityY + 0.5], 'bo');
+title('Laser Center Detection Comparison');
+legend('Geometric Center (Shape)', 'Intensity Center (Brightness)');
+show();
+
+fprintf('Geometric Center (X, Y):   %.2f, %.2f\n', geomX, geomY);
+fprintf('Intensity Center (X, Y):   %.2f, %.2f\n', intensityX, intensityY);

@@ -141,7 +141,8 @@ public static class JgsBuiltinCatalog
         Add("time", "The current time as Unix epoch seconds (UTC), including a fractional part.");
 
         Add("mod", "MATLAB modulo: x - floor(x/m)*m, element-wise over arrays (result takes m's sign).", P("x"), P("m"));
-        Add("size", "The [rows, cols] of a matrix, [1, n] for a flat array or string, [1, 1] for a scalar.", P("value"));
+        Add("size", "The [rows, cols] of a matrix ([rows, cols, 3] for an RGB image); size(value, dim) returns one dimension.", P("value"), Opt("dim"));
+        Add("isempty", "True when a value has no elements: null, an empty array or string, or a table with no rows.", P("value"));
         Add("disp", "Writes a value to the console (no name prefix, unlike echo).", P("value"));
 
         // --- RF networks and transmission lines -------------------------------------------------
@@ -183,6 +184,7 @@ public static class JgsBuiltinCatalog
         Add("imbinarize", "Thresholds an image to binary; the default level is Otsu's.", P("image"), Opt("level"));
         Add("imadd", "Adds two images, or an image and a scalar, clamped to [0, 1].", P("a"), P("b"));
         Add("imsubtract", "Subtracts an image or scalar from an image, clamped to [0, 1].", P("a"), P("b"));
+        Add("immultiply", "Multiplies two images sample by sample (or an image by a scalar), clamped to [0, 1] — masking.", P("a"), P("b"));
         Add("imcomplement", "Inverts image intensities (1 - v).", P("image"));
         Add("imnoise", "Adds noise: 'gaussian' (variance) or 'salt & pepper' (density).", P("image"), Opt("type"), Opt("amount"));
         Add("imresize", "Resizes an image by a scale or to a [height, width]; 'nearest' or 'bilinear'.", P("image"), P("scaleOrSize"), Opt("method"));
@@ -192,21 +194,28 @@ public static class JgsBuiltinCatalog
         Add("conv2", "2-D convolution of two matrices; shape 'full' (default), 'same', or 'valid'.", P("a"), P("b"), Opt("shape"));
         Add("medfilt2", "Median filter over an [m, n] window (default 3×3).", P("image"), Opt("window"));
         Add("fspecial", "Builds a filter kernel: average, gaussian, sobel, prewitt, laplacian, disk, or log.", P("type"), Opt("p1"), Opt("p2"));
-        Add("edge", "Detects edges (binary image): 'sobel' (default), 'prewitt', or 'canny'.", P("image"), Opt("method"), Opt("threshold"));
+        Add("edge", "Detects edges (binary image): 'sobel' (default), 'prewitt', 'roberts', 'canny', or 'log'.", P("image"), Opt("method"), Opt("threshold"));
+        Add("imgradient", "Gradient magnitude and direction (degrees) of an image: [mag, dir]; method 'sobel' (default), 'prewitt', or 'roberts'.", P("image"), Opt("method"));
+        Add("imgradientxy", "Horizontal and vertical gradient components of an image: [Gx, Gy]; method 'sobel' (default), 'prewitt', or 'roberts'.", P("image"), Opt("method"));
         Add("strel", "Builds a structuring element matrix: 'square' (side) or 'disk' (radius).", P("shape"), Opt("size"));
         Add("imerode", "Morphological erosion (local minimum) over a structuring element (default 3×3 square).", P("image"), Opt("element"));
         Add("imdilate", "Morphological dilation (local maximum) over a structuring element (default 3×3 square).", P("image"), Opt("element"));
         Add("imopen", "Morphological opening (erode then dilate).", P("image"), Opt("element"));
         Add("imclose", "Morphological closing (dilate then erode).", P("image"), Opt("element"));
-        Add("bwlabel", "Labels connected components of a binary image: [labels, count]; connectivity 4 or 8 (default 8).", P("image"), Opt("connectivity"));
-        Add("regionprops", "Measures Area, Centroid, and BoundingBox per region of a label image, as a table.", P("labels"));
+        Add("hough", "Hough line transform of a binary image: [accumulator, theta, rho].", P("image"));
+        Add("houghpeaks", "The strongest peaks of a Hough accumulator, as 1-based [rhoIndex, thetaIndex] rows.", P("accumulator"), Opt("count"), Opt("threshold"));
+        Add("houghlines", "Line segments for the given Hough peaks, as a table of endpoints with Theta and Rho.", P("image"), P("theta"), P("rho"), P("peaks"), Opt("fillGap"), Opt("minLength"));
+        Add("imfill","Fills holes in a binary image — background not reachable from the border becomes foreground.", P("image"), Opt("mode"));
+        Add("bwareaopen", "Removes connected components smaller than minArea pixels from a binary image; connectivity 4 or 8 (default 8).", P("image"), P("minArea"), Opt("connectivity"));
+        Add("bwlabel","Labels connected components of a binary image: [labels, count]; connectivity 4 or 8 (default 8).", P("image"), Opt("connectivity"));
+        Add("regionprops", "Per-region Area/Centroid/BoundingBox of a label or binary image, as a table; an intensity image adds MeanIntensity and WeightedCentroid.", P("labels"), Opt("intensity"));
 
         // --- Reductions and inspection ----------------------------------------------------------
         Add("length", "The number of elements in an array, or characters in a string.", P("value"));
-        Add("sum", "The sum of a numeric array.", P("array"));
-        Add("mean", "The arithmetic mean of a non-empty numeric array.", P("array"));
-        Add("min", "The smallest value: min(array) or min(a, b, ...).", P("values"));
-        Add("max", "The largest value: max(array) or max(a, b, ...).", P("values"));
+        Add("sum", "The sum of a numeric array, or of every sample in an image.", P("array"));
+        Add("mean", "The arithmetic mean of a non-empty numeric array, or of every sample in an image.", P("array"));
+        Add("min", "The smallest value: min(array), min(image), or min(a, b, ...).", P("values"));
+        Add("max", "The largest value: max(array), max(image), or max(a, b, ...).", P("values"));
         Add("numel", "The number of elements in an array, or characters in a string (alias of length).", P("value"));
 
         // --- Statistics -------------------------------------------------------------------------
@@ -237,6 +246,7 @@ public static class JgsBuiltinCatalog
 
         // --- Strings ------------------------------------------------------------------------------
         Add("sprintf", "Formats values C-style: %d %i %f %e %g %s %x %% with width/precision (%.2f, %8d).", P("format"), P("values"));
+        Add("fprintf", "Writes a sprintf-formatted string to the console with no added newline (use \\n in the format).", P("format"), P("values"));
         Add("str", "Any value formatted as a string.", P("value"));
         Add("num", "A string parsed as a number; NaN when it does not parse (filter with isnan).", P("text"));
         Add("upper", "The string in upper case.", P("text"));

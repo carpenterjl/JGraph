@@ -161,6 +161,67 @@ public sealed class JgsImageValueTests : IDisposable
     }
 
     [Fact]
+    public async Task Size_WithADimensionReturnsThatDimensionOnly()
+    {
+        string file = WriteRgb();
+        ScriptRunResult result = await Run($"""
+            let img = imread('{file}');
+            print(size(img, 1))
+            print(size(img, 2))
+            print(size(img, 3))
+            print(size(img, 4))
+            print(size([[1, 2, 3], [4, 5, 6]], 2))
+            print(size([1, 2, 3, 4], 3))
+            """);
+        Assert.True(result.Success, result.Message);
+        // Dimensions past a value's rank are 1, exactly as in MATLAB.
+        Assert.Equal("2\n3\n3\n1\n3\n1", _output.NormalText.Trim().ReplaceLineEndings("\n"));
+    }
+
+    [Fact]
+    public async Task Reductions_WalkEverySampleWithoutBoxing()
+    {
+        // The gray fixture is all zeros except one 51/255 sample, so the reductions are exact.
+        string file = WriteGray("g.png", 2, 5);
+        ScriptRunResult result = await Run($"""
+            let img = imread('{file}');
+            print(max(img))
+            print(min(img))
+            print(sum(img) == max(img))
+            print(mean(img) * 10 == sum(img))
+            """);
+        Assert.True(result.Success, result.Message);
+        Assert.Equal($"{51 / 255.0:R}\n0\ntrue\ntrue",
+            _output.NormalText.Trim().ReplaceLineEndings("\n"));
+    }
+
+    [Fact]
+    public async Task Isempty_DistinguishesEmptyValues()
+    {
+        string file = WriteRgb();
+        ScriptRunResult result = await Run($"""
+            print(isempty([]))
+            print(isempty(''))
+            print(isempty([1, 2]))
+            print(isempty(0))
+            print(isempty(imread('{file}')))
+            """);
+        Assert.True(result.Success, result.Message);
+        Assert.Equal("true\ntrue\nfalse\nfalse\nfalse", _output.NormalText.Trim().ReplaceLineEndings("\n"));
+    }
+
+    [Fact]
+    public async Task Fprintf_WritesOnlyWhatTheFormatSays()
+    {
+        ScriptRunResult result = await Run("""
+            fprintf('%s: %.2f, %.2f\n', 'Center', 1.5, 2.25);
+            fprintf('no newline here')
+            """);
+        Assert.True(result.Success, result.Message);
+        Assert.Equal("Center: 1.50, 2.25\nno newline here", _output.NormalText.ReplaceLineEndings("\n"));
+    }
+
+    [Fact]
     public async Task ForLoop_OverAnImageIsAClearError()
     {
         string file = WriteRgb();
