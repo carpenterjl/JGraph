@@ -1,27 +1,31 @@
 # JGraph
 
 A professional, extensible scientific graphing framework for **C# / .NET 8 / WPF**. JGraph recreates
-the workflow of the MATLAB figure window — an object model of figures, axes, and plots you can build,
+the workflow of a technical-computing figure window — an object model of figures, axes, and plots you can build,
 edit, and interact with — while following modern MVVM and SOLID design. It is renderer-agnostic and
 built for performance (millions of points).
 
-> Status: Milestones 1–22 complete. A working, interactive, editable figure window with line,
+> Status: Milestones 1–24 complete. A working, interactive, editable figure window with line,
 > scatter, bar, stem, histogram, error-bar, and image/heatmap plots; interactive 3D surfaces
 > (surf/mesh/meshc with drag rotation), contour/filled-contour plots, and colorbars;
-> MATLAB-compatible JGS scripting (semicolon echo suppression, colon ranges, 1-based paren
+> technical-computing JGS scripting (semicolon echo suppression, colon ranges, 1-based paren
 > indexing with `end` and slice writes, `for … end` blocks, complex numbers) with DSP/audio
 > builtins (`fft` at any length, `filter`/`butter`/`firpm`/`freqz`, `audioread`/`sound`) that run
-> real MATLAB lab scripts nearly verbatim; MATLAB-grade large-dataset performance (packed flat
+> real lab scripts nearly verbatim; large-dataset performance (packed flat
 > script arrays with SIMD elementwise math and RAM-aware managed/native/memory-mapped storage,
 > instant hover over million-point lines, compact binary series in `.graph` v4);
 > persistent draggable data tips, a pan-plus-pick default
 > pointer, and a plot right-click menu (zoom constraints, restore view);
+> an RF core (Touchstone `.sNp` files, S/Z/Y/ABCD conversions, 2-port cascading, Smith charts,
+> microstrip and stripline calculators) and an image-processing core (read/display images as a
+> first-class value type, point and geometry ops, 2-D filtering, edge detection including the Hough
+> transform, morphology, and region analysis);
 > engineering plots (Bode,
 > Nyquist, polar, Smith, spectrogram, eye diagram) with an FFT/DSP library; subplots, linked axes,
 > date/time and category scales, annotations, an Edit mode, a property inspector, a plot browser,
 > a versioned `.graph` save/open format with figure copy/paste, export
 > (PNG/JPEG/BMP/TIFF/SVG/PDF + clipboard), CSV/Excel/clipboard data import with a mapping wizard,
-> in-app scripting in C#, Python, and a built-in language (JGS) inside a MATLAB-style scripting
+> in-app scripting in C#, Python, and a built-in language (JGS) inside a full scripting
 > workspace (file tree, multi-tab editors, console, variables panel) with an interactive JGS
 > debugger (breakpoints, stepping, set next statement, live code edits while paused, live
 > variables, call stack, and a tabular data viewer), code completion with signature help, two APIs,
@@ -31,19 +35,19 @@ built for performance (millions of points).
 
 ## Highlights
 
-- **One object model, two APIs** — build figures with a fluent object-oriented API or a MATLAB-like
+- **One object model, two APIs** — build figures with a fluent object-oriented API or a concise
   functional API; both drive the same model.
 - **Many plot types** — line, scatter, bar, stem, histogram, error bar, and image/heatmap (with
   perceptually uniform colormaps).
 - **Engineering plots** — Bode, Nyquist, polar, Smith, spectrogram, and eye diagrams, backed by a
   built-in signal-processing library (FFT, windows, spectrum, STFT, transfer functions).
-- **Interactive 3D** — MATLAB-style `surf`/`mesh`/`meshc` surfaces you rotate with the mouse
+- **Interactive 3D** — `surf`/`mesh`/`meshc` surfaces you rotate with the mouse
   (undoable camera), plus `contour`/`contourf`, `imagesc`/`pcolor`, colormaps, and colorbars —
   from scripts (`meshgrid`, matrix math) or either API.
-- **Runs real MATLAB scripts** — semicolon suppression and echo, colon ranges, 1-based paren
+- **Runs real technical-computing scripts** — semicolon suppression and echo, colon ranges, 1-based paren
   indexing with `end`, `for … end` blocks, complex numbers, and the DSP/audio surface
   (`fft`/`ifft` at any length, `filter`, `butter`, `firpm`, `freqz`, `audioread`, `sound`) let
-  MATLAB lab scripts run with only comments and `let` touched up.
+  existing lab scripts run with only comments and `let` touched up.
 - **Data tips** — the default pointer pans, shows a crosshair over data, and pins persistent,
   draggable point labels that save with the figure; right-click for zoom modes and tip management.
 - **Multi-panel & synchronized** — tile axes into a subplot grid and link their axes so panning or
@@ -81,7 +85,7 @@ built for performance (millions of points).
   (file tree, multi-tab editors, console, and a variables panel); scripts find workspace data files by
   bare name (`readcsv("data.csv")`), JGS scripts compose via `run("helpers.jgs")`, and the window
   remembers your workspace, open files, breakpoints, and layout between sessions. The Files pane is a
-  MATLAB-style Current Folder browser: an address bar and Up button, double-click a folder (or
+  Current Folder browser: an address bar and Up button, double-click a folder (or
   right-click → "Set as workspace root") to browse into it, and double-click files to open them by
   type — scripts in tabs, csv/tsv/xlsx in the Data Viewer, saved `.graph` documents as live figures,
   text files as plain tabs. Hidden tool panes come back from the toolbar's View menu.
@@ -92,21 +96,22 @@ built for performance (millions of points).
   statement — skip code or run it again) and **edit the code live**: compatible edits apply on resume,
   down to the remaining iterations of the loop you're standing in.
 - **A data viewer** — open CSV/Excel files from the workspace tree, or double-click any array/table
-  variable, to inspect it in a paged, MATLAB-style spreadsheet grid.
+  variable, to inspect it in a paged spreadsheet grid.
 - **Code completion** — Ctrl+Space (or just keep typing) completes JGS keywords, builtins, your
   variables, and functions from every workspace script; typing `plot(` pops signature help with the
   active parameter in bold; completing a function inserts its parameters ready to overtype. C# and
-  Python tabs complete keywords and the `JG` API. Inside `readcsv("`, `readtable("`, `readxlsx("`,
-  or `run("` the list offers matching workspace files and folders, so data files complete like code
-  (JGS strings may be single- or double-quoted, MATLAB-style).
+  Python tabs complete keywords and the `JG` API. Inside the file-reading builtins — `readcsv("`,
+  `readtable("`, `readxlsx("`, `audioread("`, `imread("`, `sparameters("`, `loadfigure("`, or
+  `run("` — the list offers matching workspace files and folders, so data files complete like code
+  (JGS strings may be single- or double-quoted).
 - **Data analysis in JGS** — comparisons work element-wise and produce masks (`ids == "SN-1"`,
-  `temp > 85`), arrays index MATLAB-style with masks and index arrays (`data(parameter > threshold)`
+  `temp > 85`), arrays index with masks and index arrays (`data(parameter > threshold)`
   or `data[mask]`, with `find` mapping matches back to original row numbers), and a compact stdlib
   covers statistics (`std`, `median`, `percentile`, …), array ops (`sort`, `unique`, `slice`,
   `concat`, …), strings (`sprintf`, `split`/`join`, `num`/`str`), and table inspection
   (`colnames`, `rowcount`, `textcolumn` for serial-number columns). Messy files parse too:
   `readcsv("log.csv", 6)` skips six junk preamble lines above the real table.
-- **Script-managed figure windows** — `figure()` returns a MATLAB-style numbered handle and each
+- **Script-managed figure windows** — `figure()` returns a numbered handle and each
   shown figure opens its **own full figure window** (pan/zoom, edit mode, inspector, export — the
   works); re-running the script updates the same windows instead of spawning more, and the main
   window is left alone. Scripts also `savefigure("run.graph")`, `loadfigure` (a saved figure comes
@@ -129,7 +134,7 @@ axes.AddArrow(2.5, 0.8, 1.6, 1.0);          // annotations, in data coordinates
 axes.AddText(2.6, 0.8, "overshoot");
 ```
 
-MATLAB-like:
+Functional:
 
 ```csharp
 JG.Figure();
@@ -208,7 +213,7 @@ Table table = Table.ReadCsv("measurements.csv");   // or JG.ReadTable(path) / Ta
 
 axes.AddLine(table, "time", "voltage");            // a date/time column → a date axis, automatically
 axes.AddLine(table, "time", "current");
-JG.Plot(table, "time", "current", "r--");          // same from the MATLAB-like facade
+JG.Plot(table, "time", "current", "r--");          // same from the functional facade
 ```
 
 The reader auto-detects the delimiter, header row, number culture, and each column's type (number,
@@ -298,7 +303,7 @@ appears with no code change.
 | `JGraph.Plugins` | Plugin discovery/registration; the theme + colormap registry and the built-in Light/Dark/Presentation/IEEE themes. |
 | `JGraph.Objects` | Concrete plots (line, scatter, bar), annotations, and the fluent OO API. |
 | `JGraph.Interaction` | UI-independent interaction modes, selection, editing descriptors, navigation. |
-| `JGraph.Api` | MATLAB-like `JG` facade. |
+| `JGraph.Api` | Functional `JG` facade. |
 | `JGraph.Scripting` | Scripting hosts: the `IScriptEngine` seam with a Roslyn C# engine, a pythonnet (CPython) engine, and the built-in **JGS** language (a self-contained interpreter), all driving the `JG` API and the table readers. |
 | `JGraph.Controls` | WPF `FigureControl`, property inspector, plot browser, input adapter, and the script editor. |
 | `JGraph.Application` | MVVM figure window and DI composition root. |

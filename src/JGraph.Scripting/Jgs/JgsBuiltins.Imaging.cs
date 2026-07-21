@@ -564,6 +564,34 @@ internal static partial class JgsBuiltins
                 throw new JgsRuntimeException(line, col, $"regionprops: {ex.Message}");
             }
         });
+
+        define("imcentroid", (args, line, col) =>
+        {
+            ArityRange("imcentroid", args, 1, 2, line, col);
+            ImageBuffer image = Img("imcentroid", args, 0, line, col);
+
+            // With a mask, weigh only what the mask keeps — the whole-image counterpart of
+            // regionprops' WeightedCentroid, and immune to how many blobs the mask happens to have.
+            ImageBuffer? masked = null;
+            try
+            {
+                if (args.Count == 2)
+                {
+                    masked = PointOps.Multiply(image, Img("imcentroid", args, 1, line, col));
+                }
+
+                (double x, double y) = Regions.WeightedCentroid(masked ?? image);
+                return JgsValue.Array([JgsValue.Number(x), JgsValue.Number(y)]);
+            }
+            catch (ArgumentException ex)
+            {
+                throw new JgsRuntimeException(line, col, $"imcentroid: {ex.Message}");
+            }
+            finally
+            {
+                masked?.Dispose();
+            }
+        });
     }
 
     private static JgsValue Morph(

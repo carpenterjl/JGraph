@@ -85,6 +85,25 @@ public class JGFacadeTests
     }
 
     [Fact]
+    public void Legend_SkipsPlotsThatCannotAppearInIt()
+    {
+        // An imshow-style backdrop is not an ILegendItem, so it must not consume "a" and leave the
+        // second series unnamed — the legend would then show one entry, against the wrong marker.
+        JG.Figure();
+        JG.Image(new double[,] { { 0, 1 }, { 1, 0 } });
+        JG.Hold(true);
+        JG.Plot(new double[] { 0, 1 }, new double[] { 0, 1 });
+        JG.Plot(new double[] { 0, 1 }, new double[] { 1, 0 });
+        JG.Legend("a", "b");
+
+        AxesModel axes = JG.Gca();
+        Assert.Equal(3, axes.Plots.Count);
+        Assert.Equal(string.Empty, axes.Plots[0].DisplayName);
+        Assert.Equal("a", axes.Plots[1].DisplayName);
+        Assert.Equal("b", axes.Plots[2].DisplayName);
+    }
+
+    [Fact]
     public void XLim_DisablesAutoScale()
     {
         JG.Figure();

@@ -11,7 +11,7 @@ namespace JGraph.Tests.Scripting;
 
 /// <summary>
 /// M24: the image builtins driven from JGS — imread/imwrite round-trips, and imshow producing the
-/// right plot object (grayscale via ImagePlot, RGB via RgbImagePlot) with MATLAB imshow axes styling.
+/// right plot object (grayscale via ImagePlot, RGB via RgbImagePlot) with image-display axes styling.
 /// </summary>
 [Collection("JG facade")]
 public sealed class JgsImageBuiltinTests : IDisposable
@@ -159,6 +159,45 @@ public sealed class JgsImageBuiltinTests : IDisposable
     }
 
     [Fact]
+    public async Task Imcentroid_WeighsTheWholeImage_NotJustOneComponent()
+    {
+        // Two separate bright pixels either side of the middle, plus a dim one that the mask drops.
+        // regionprops would report the first component; the weighted centre of the pair is the middle.
+        using (var image = new ImageBuffer(1, 5, 1))
+        {
+            image[0, 0, 0] = 1.0;
+            image[0, 2, 0] = 8 / 255.0;
+            image[0, 4, 0] = 1.0;
+            ImageCodec.Write(Path.Combine(_directory, "pair.png"), image);
+        }
+
+        ScriptRunResult result = await Run("""
+            let I = imread('pair.png');
+            let mask = imbinarize(I, 0.5);
+            let c = imcentroid(I, mask);
+            print(c(1), c(2))
+            print(column(regionprops(mask, I), 'WeightedCentroidX')(1))
+            """);
+
+        Assert.True(result.Success, result.Message);
+        // The pair straddles column 3 (1-based) on the single row; regionprops sees only column 1.
+        Assert.Equal("3 1\n1", _output.NormalText.Trim().ReplaceLineEndings("\n"));
+    }
+
+    [Fact]
+    public async Task Imcentroid_WithNothingAboveTheMask_ReportsAScriptError()
+    {
+        string source = WriteGray();
+        ScriptRunResult result = await Run($"""
+            let I = imread('{source}');
+            let c = imcentroid(I, imbinarize(I, 0.99));
+            """);
+
+        Assert.False(result.Success);
+        Assert.Contains("imcentroid", result.Message, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
     public async Task Immultiply_MasksAnImageAndScalesIt()
     {
         using (var image = new ImageBuffer(1, 2, 1))
@@ -185,10 +224,10 @@ public sealed class JgsImageBuiltinTests : IDisposable
     [Fact]
     public async Task ShippedExample_RunsEndToEnd_AndFindsThreeRegions()
     {
-        // Runs examples/matlab-image-processing.jgs against examples/sample-image.png exactly as
+        // Runs examples/image-processing.jgs against examples/sample-image.png exactly as
         // shipped, so the documented walkthrough (and the segmentation count) can never silently rot.
         string examples = LocateExamplesDirectory();
-        string script = await File.ReadAllTextAsync(Path.Combine(examples, "matlab-image-processing.jgs"));
+        string script = await File.ReadAllTextAsync(Path.Combine(examples, "image-processing.jgs"));
 
         ScriptRunResult result = await _engine.RunAsync(
             script, new ScriptContext(_output, (_, figure) => _figures.Add(figure), examples), default);
@@ -213,10 +252,10 @@ public sealed class JgsImageBuiltinTests : IDisposable
     [Fact]
     public async Task ShippedLaserExample_RunsEndToEnd_AndSeparatesTheTwoCentres()
     {
-        // Runs examples/matlab-laser-center.jgs exactly as shipped, so the ported MATLAB
-        // walkthrough (and the two centre estimates it prints) can never silently rot.
+        // Runs examples/laser-center.jgs exactly as shipped, so the walkthrough (and the two
+        // centre estimates it prints) can never silently rot.
         string examples = LocateExamplesDirectory();
-        string script = await File.ReadAllTextAsync(Path.Combine(examples, "matlab-laser-center.jgs"));
+        string script = await File.ReadAllTextAsync(Path.Combine(examples, "laser-center.jgs"));
 
         ScriptRunResult result = await _engine.RunAsync(
             script, new ScriptContext(_output, (_, figure) => _figures.Add(figure), examples), default);
@@ -255,7 +294,7 @@ public sealed class JgsImageBuiltinTests : IDisposable
         while (dir is not null)
         {
             string candidate = Path.Combine(dir.FullName, "examples");
-            if (File.Exists(Path.Combine(candidate, "matlab-image-processing.jgs")))
+            if (File.Exists(Path.Combine(candidate, "image-processing.jgs")))
             {
                 return candidate;
             }

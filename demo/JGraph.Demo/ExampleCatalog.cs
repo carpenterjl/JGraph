@@ -10,7 +10,7 @@ using JGraph.Objects.Engineering;
 
 namespace JGraph.Demo;
 
-/// <summary>Builds the set of gallery examples exercising both the object-oriented and MATLAB-like APIs.</summary>
+/// <summary>Builds the set of gallery examples exercising both the object-oriented and functional APIs.</summary>
 internal static class ExampleCatalog
 {
     public static IReadOnlyList<GalleryExample> Build() => new List<GalleryExample>
@@ -28,7 +28,7 @@ internal static class ExampleCatalog
         new("Dashed line styles", "Styling", DashStyles),
         new("Annotations", "Styling", Annotations),
         new("Subplots (2×2)", "Layout", Subplots),
-        new("Log Y axis (MATLAB API)", "Scales", SemilogY),
+        new("Log Y axis (functional API)", "Scales", SemilogY),
         new("Category bars", "Scales", CategoryBars),
         new("Date/time axis", "Scales", DateTimeAxisExample),
         new("CSV import (Table API)", "Data", CsvImport),
@@ -39,7 +39,7 @@ internal static class ExampleCatalog
         new("Spectrogram (chirp)", "Engineering", Spectrogram),
         new("Eye diagram", "Engineering", Eye),
         new("1,000,000 points", "Performance", MillionPoints),
-        new("MATLAB-style API", "API", MatlabApi),
+        new("Functional API", "API", FunctionalApi),
     };
 
     private static FigureModel LinePlot()
@@ -497,7 +497,7 @@ internal static class ExampleCatalog
         return figure;
     }
 
-    private static FigureModel MatlabApi()
+    private static FigureModel FunctionalApi()
     {
         JG.Reset();
         JG.Figure();

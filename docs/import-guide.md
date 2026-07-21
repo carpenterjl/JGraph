@@ -62,7 +62,7 @@ Map columns onto a plot:
 - **Error column** — shown only for an **Error bar** plot; pick the column holding the error magnitudes.
 - **Bins** — shown only for a **Histogram**; the number of bins.
 - **Target** — **New figure** opens the result in a fresh figure, or **Current axes (append)** overlays
-  it on what you already have (MATLAB "hold on" semantics).
+  it on what you already have (the usual "hold on" semantics).
 
 | Plot type | Needs |
 | --- | --- |
@@ -132,7 +132,7 @@ var axes = new FigureModel().AddAxes();
 axes.AddLine(table, "time", "voltage");   // a date/time column → a date axis, automatically
 axes.AddLine(table, "time", "current");
 
-// …or the MATLAB-flavored facade:
+// …or the functional facade:
 JG.Plot(table, "time", "current", "r--");
 ```
 

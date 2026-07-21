@@ -451,7 +451,7 @@ See [ADR 0012](adr/0012-scripting-hosts.md), [ADR 0013](adr/0013-custom-scriptin
 
 ## Status
 
-Implemented through Milestone 22 — a working, Matlab-like figure window you can edit, save, publish, extend, feed with imported data, and drive with scripts:
+Implemented through Milestone 24 — a working figure window you can edit, save, publish, extend, feed with imported data, and drive with scripts:
 
 - **M1** object model, math services (transforms, ticks, decimation), rendering abstractions.
 - **M2** SkiaSharp render context, `FigureRenderer` (chrome + plots), WPF `FigureControl`,
@@ -548,6 +548,12 @@ Implemented through Milestone 22 — a working, Matlab-like figure window you ca
   (`HoughTransform.cs`), binary cleanup (`imfill`, `bwareaopen`), `immultiply`, `regionprops` on a
   binary image with optional intensity weighting, image-wide `sum`/`mean`/`min`/`max`, and the
   `size(x, dim)`, `isempty`, and `fprintf` script utilities.
+- **M24d** correctness follow-ups: `imcentroid` (`Regions.WeightedCentroid`) measures the
+  intensity-weighted centre of a whole masked image, so a speckled spot broken into many
+  components cannot bias the answer the way picking one region does; `JG.Legend` assigns names
+  only to plots that can appear in a legend, so an `imshow` backdrop no longer swallows the first
+  label; filename completion covers every file-reading builtin (`imread`, `sparameters`,
+  `loadfigure`, `audioread`, …), not just the table readers.
 
 The `JGraph.Demo` gallery exercises the plot types, annotations, and both APIs;
 `JGraph.Application` is the interactive figure window with data import and scripting.

@@ -121,7 +121,7 @@ public static class JgsBuiltinCatalog
         Add("ifft", "Inverse discrete Fourier transform; optional length pads or truncates.", P("x"), Opt("n"));
         Add("fftshift", "Rotates a spectrum so DC sits at the center.", P("x"));
         Add("ifftshift", "Undoes fftshift, restoring DC-first order.", P("x"));
-        Add("filter", "Applies the digital filter b/a to signal x (MATLAB filter, zero initial state).", P("b"), P("a"), P("x"));
+        Add("filter", "Applies the digital filter b/a to signal x (zero initial state).", P("b"), P("a"), P("x"));
         Add("freqz", "Frequency response of b/a: [H, f] with complex H at count points (fs defaults to 2 = normalized).", P("b"), P("a"), Opt("count"), Opt("fs"));
         Add("butter", "Butterworth design: [b, a] for order n and normalized cutoff(s) Wn; type \"low\"/\"high\"/\"bandpass\"/\"stop\".", P("n"), P("Wn"), Opt("type"));
         Add("firpm", "Parks-McClellan equiripple FIR: order n, normalized band edges f, band amplitudes a.", P("n"), P("f"), P("a"));
@@ -133,14 +133,14 @@ public static class JgsBuiltinCatalog
         Add("tic", "Starts a stopwatch and returns a handle; pass it to toc to time a specific interval.");
         Add("toc", "Elapsed seconds since the last tic, or since the tic that returned handle.", Opt("handle"));
         Add("clock", "The current local time as a [year, month, day, hour, minute, seconds] vector.");
-        Add("now", "The current local date and time as a MATLAB serial date number.");
+        Add("now", "The current local date and time as a serial date number (days since year 0).");
         Add("datenum", "Serial date number from year, month, day (optionally hour, minute, second), or a 3-/6-element vector.", P("year"), P("month"), P("day"), Opt("hour"), Opt("minute"), Opt("second"));
         Add("datestr", "Formats a serial date number (default: now) as text; format uses .NET date tokens.", Opt("serial"), Opt("format"));
         Add("datetime", "The current local date and time as a 'dd-MMM-yyyy HH:mm:ss' string.");
         Add("date", "The current local date as a 'dd-MMM-yyyy' string.");
         Add("time", "The current time as Unix epoch seconds (UTC), including a fractional part.");
 
-        Add("mod", "MATLAB modulo: x - floor(x/m)*m, element-wise over arrays (result takes m's sign).", P("x"), P("m"));
+        Add("mod", "Modulo x - floor(x/m)*m, element-wise over arrays (result takes m's sign).", P("x"), P("m"));
         Add("size", "The [rows, cols] of a matrix ([rows, cols, 3] for an RGB image); size(value, dim) returns one dimension.", P("value"), Opt("dim"));
         Add("isempty", "True when a value has no elements: null, an empty array or string, or a table with no rows.", P("value"));
         Add("disp", "Writes a value to the console (no name prefix, unlike echo).", P("value"));
@@ -209,6 +209,7 @@ public static class JgsBuiltinCatalog
         Add("bwareaopen", "Removes connected components smaller than minArea pixels from a binary image; connectivity 4 or 8 (default 8).", P("image"), P("minArea"), Opt("connectivity"));
         Add("bwlabel","Labels connected components of a binary image: [labels, count]; connectivity 4 or 8 (default 8).", P("image"), Opt("connectivity"));
         Add("regionprops", "Per-region Area/Centroid/BoundingBox of a label or binary image, as a table; an intensity image adds MeanIntensity and WeightedCentroid.", P("labels"), Opt("intensity"));
+        Add("imcentroid", "The intensity-weighted centre [x, y] of a whole image (1-based), optionally weighing only what a mask keeps.", P("image"), Opt("mask"));
 
         // --- Reductions and inspection ----------------------------------------------------------
         Add("length", "The number of elements in an array, or characters in a string.", P("value"));
@@ -269,7 +270,7 @@ public static class JgsBuiltinCatalog
         Add("textcolumn", "A table column as a string array (missing cells become \"\") — for serial numbers and IDs.", P("table"), P("name"));
 
         // --- Composition and output ---------------------------------------------------------------
-        Add("run", "Runs another JGS script into the current global scope (MATLAB-style include).", P("path"));
+        Add("run", "Runs another JGS script into the current global scope (an include).", P("path"));
         Add("print", "Writes the values to the console, space-separated.", P("values"));
 
         // --- Figure setup and plotting -------------------------------------------------------------
@@ -305,7 +306,7 @@ public static class JgsBuiltinCatalog
         Add("pcolor", "Displays matrix z as a colormapped heatmap over the x/y extents.", P("x"), P("y"), P("z"));
         Add("zlabel", "Sets the z-axis label of a 3D axes.", P("text"));
         Add("zlim", "Sets the z-axis range of a 3D axes.", P("min"), P("max"));
-        Add("view", "Sets the 3D camera angles in degrees (MATLAB view convention).", P("azimuth"), P("elevation"));
+        Add("view", "Sets the 3D camera angles in degrees (azimuth about z, elevation above the xy plane).", P("azimuth"), P("elevation"));
         Add("colormap", "Applies a built-in colormap (viridis, jet, hot, cool, gray) to the current axes' plots.", P("name"));
         Add("colorbar", "Shows (default) or hides the current axes' colorbar.", Opt("on"));
         Add("savefigure", "Saves the current figure (or figure fig) as a .graph document.", P("path"), Opt("fig"));

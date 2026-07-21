@@ -1,6 +1,6 @@
-//EE458L
-//Lab 9
-//Jacob Carpenter
+// FM modulation and demodulation example: build an FM carrier from a 1 Hz message with a
+// VCO, then recover the message by mixing it down in quadrature, low-pass filtering both
+// arms with an equiripple FIR, and taking the phase.
 
 let fc = 15;
 let fs = 1000;

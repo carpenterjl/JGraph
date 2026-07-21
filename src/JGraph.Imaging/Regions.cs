@@ -193,6 +193,44 @@ public static class Regions
     }
 
     /// <summary>
+    /// The intensity-weighted centre of a whole grayscale image: the sample-weighted mean of the
+    /// 1-based pixel coordinates, <c>Σ(x·w) / Σw</c>. Unlike <see cref="Measure"/> this ignores
+    /// connectivity entirely — every nonzero sample pulls on the result — which is what a
+    /// centre-of-mass estimate over a thresholded (masked) image means. Zero out the background
+    /// first; a sample of 0 contributes nothing.
+    /// </summary>
+    /// <exception cref="ArgumentException">The image is not grayscale, or every sample is zero.</exception>
+    public static (double X, double Y) WeightedCentroid(ImageBuffer weights)
+    {
+        ArgumentNullException.ThrowIfNull(weights);
+        if (weights.Channels != 1)
+        {
+            throw new ArgumentException("The weight image must be grayscale.", nameof(weights));
+        }
+
+        double total = 0;
+        double sumX = 0;
+        double sumY = 0;
+        for (int r = 0; r < weights.Height; r++)
+        {
+            for (int c = 0; c < weights.Width; c++)
+            {
+                double value = weights[r, c, 0];
+                total += value;
+                sumX += value * c;
+                sumY += value * r;
+            }
+        }
+
+        if (total <= 0)
+        {
+            throw new ArgumentException("The weight image has no positive samples.", nameof(weights));
+        }
+
+        return ((sumX / total) + 1, (sumY / total) + 1);
+    }
+
+    /// <summary>
     /// Fills holes in a binary image (MATLAB <c>imfill(bw, 'holes')</c>): background pixels that cannot
     /// be reached from the image border become foreground. Reachability uses 4-connectivity on the
     /// background, the complement of <c>bwlabel</c>'s default 8-connected foreground.

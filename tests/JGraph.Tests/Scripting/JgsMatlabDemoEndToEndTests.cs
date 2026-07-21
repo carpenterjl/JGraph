@@ -9,10 +9,10 @@ using Xunit;
 namespace JGraph.Tests.Scripting;
 
 /// <summary>
-/// M21's acceptance gate: the two real MATLAB lab scripts from the demo workspace (FM modulation /
-/// demodulation with firpm+freqz+filter, and FFT audio compression with audioread+sound+pause) run
-/// headless end to end. The scripts here mirror the adapted workspace files verbatim, except the
-/// audio test uses a short generated gc.wav so pause() stays quick.
+/// M21's acceptance gate: the two shipped signal-processing examples (FM modulation / demodulation
+/// with firpm+freqz+filter, and FFT audio compression with audioread+sound+pause) run headless end
+/// to end. The scripts here mirror examples/fm-demod.jgs and examples/audio-compression.jgs, except
+/// the audio test uses a short generated gc.wav so pause() stays quick.
 /// </summary>
 [Collection("JG facade")]
 public class JgsMatlabDemoEndToEndTests : IDisposable
@@ -50,12 +50,8 @@ public class JgsMatlabDemoEndToEndTests : IDisposable
     [Fact]
     public async Task FmModulationLab_RunsEndToEnd_WithFourFigures()
     {
-        // The adapted matlab_style_script.jgs (EE458L Lab 9), verbatim.
+        // examples/fm-demod.jgs, verbatim.
         ScriptRunResult result = await Run("""
-            //EE458L
-            //Lab 9
-            //Jacob Carpenter
-
             let fc = 15;
             let fs = 1000;
             let t = 0:1/fs:3;
@@ -170,11 +166,8 @@ public class JgsMatlabDemoEndToEndTests : IDisposable
             WaveFile.Write16BitPcm(stream, pluck, rate);
         }
 
-        // The adapted matlab_sound_demo.jgs (EE458L Lab 11), verbatim.
+        // examples/audio-compression.jgs, verbatim.
         ScriptRunResult result = await Run("""
-            //EE458L
-            //Lab 11
-            //Jacob Carpenter
             let [audio_sample, fs] = audioread('gc.wav');
 
             let N_orig = length(audio_sample);

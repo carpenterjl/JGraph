@@ -4,9 +4,10 @@ using Xunit;
 namespace JGraph.Tests.Scripting;
 
 /// <summary>
-/// M17: workspace filename completion inside the string arguments of the file builtins
-/// (readcsv/readxlsx/readtable, and run in JGS) — detection, prefix segmentation, extension
-/// filtering, and the workspace-tree flattening, all through the public engine-agnostic API.
+/// M17: workspace filename completion inside the string arguments of the file-reading builtins
+/// (readcsv/readxlsx/readtable/audioread/imread/sparameters/loadfigure, and run in JGS) — detection,
+/// prefix segmentation, extension filtering, and the workspace-tree flattening, all through the
+/// public engine-agnostic API.
 /// </summary>
 public sealed class PathCompletionTests
 {
@@ -21,6 +22,9 @@ public sealed class PathCompletionTests
         new WorkspaceFileEntry("report.xlsx", IsDirectory: false),
         new WorkspaceFileEntry("notes.txt", IsDirectory: false),
         new WorkspaceFileEntry("picture.png", IsDirectory: false),
+        new WorkspaceFileEntry("amp.s2p", IsDirectory: false),
+        new WorkspaceFileEntry("saved-figure.graph", IsDirectory: false),
+        new WorkspaceFileEntry("clip.wav", IsDirectory: false),
     };
 
     // --- Detect -------------------------------------------------------------------------------
@@ -108,6 +112,22 @@ public sealed class PathCompletionTests
         Assert.DoesNotContain(items, static i => i.Text == "picture.png");
         Assert.DoesNotContain(items, static i => i.Text == "main.jgs");
         Assert.Equal(CompletionItemKind.Folder, items[0].Kind); // folders first
+    }
+
+    [Theory]
+    [InlineData("imread", "picture.png")]
+    [InlineData("sparameters", "amp.s2p")]
+    [InlineData("loadfigure", "saved-figure.graph")]
+    [InlineData("audioread", "clip.wav")]
+    public void Completions_CoverEveryFileReadingBuiltin_NotJustTheTableReaders(string function, string expected)
+    {
+        string code = $"let x = {function}('";
+        PathCompletionContext? context = PathCompletion.Detect(code, code.Length, "JGS");
+
+        Assert.Equal(function, context!.FunctionName);
+        IReadOnlyList<CompletionItem> items = PathCompletion.GetCompletions(context, Workspace);
+        Assert.Contains(items, i => i.Text == expected && i.Kind == CompletionItemKind.File);
+        Assert.DoesNotContain(items, static i => i.Text == "notes.txt"); // each reader keeps its own extensions
     }
 
     [Fact]

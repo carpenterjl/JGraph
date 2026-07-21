@@ -19,8 +19,9 @@ public sealed record PathCompletionContext(
     int ReplaceStart);
 
 /// <summary>
-/// Workspace filename completion inside the string argument of the file builtins
-/// (<c>readcsv</c>/<c>readxlsx</c>/<c>readtable</c>, and <c>run</c> in JGS). Engine-agnostic by design —
+/// Workspace filename completion inside the string argument of the file-reading builtins
+/// (<c>readcsv</c>/<c>readxlsx</c>/<c>readtable</c>, <c>audioread</c>, <c>imread</c>,
+/// <c>sparameters</c>, <c>loadfigure</c>, and <c>run</c> in JGS). Engine-agnostic by design —
 /// the same helpers exist in the C# and Python hosts — so detection is a single-line lexical scan over
 /// both quote kinds, never a parse. Only workspace-relative paths complete: a rooted path (or one that
 /// escapes via <c>..</c>) is outside the workspace's knowledge and offers nothing.
@@ -35,6 +36,9 @@ public static class PathCompletion
             ["readxlsx"] = new[] { ".xlsx" },
             ["readtable"] = new[] { ".csv", ".tsv", ".txt", ".xlsx" },
             ["audioread"] = new[] { ".wav" },
+            ["imread"] = new[] { ".png", ".jpg", ".jpeg", ".bmp" },
+            ["sparameters"] = new[] { ".s1p", ".s2p", ".s3p", ".s4p" },
+            ["loadfigure"] = new[] { ".graph" },
             ["run"] = new[] { ".jgs" }, // JGS-only; see Detect
         };
 

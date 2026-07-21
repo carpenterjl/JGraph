@@ -1,6 +1,6 @@
-//EE458L
-//Lab 11
-//Jacob Carpenter
+// Audio compression example: read a wav file, look at its spectrum, zero the outer
+// 75% (then 50%) of the frequency axis, and play back what survives.
+
 let [audio_sample, fs] = audioread('gc.wav');
 
 let N_orig = length(audio_sample);

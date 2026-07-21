@@ -160,7 +160,7 @@
       <li><a href="#basics">Syntax basics</a></li>
       <li><a href="#types">Values &amp; types</a></li>
       <li><a href="#operators">Operators</a></li>
-      <li><a href="#matlab">MATLAB-style scripting</a></li>
+      <li><a href="#arraylang">Array-language scripting</a></li>
       <li><a href="#arrays">Arrays &amp; indexing</a></li>
       <li><a href="#masks">Masks &amp; logical indexing</a></li>
       <li><a href="#matrices">Matrices</a></li>
@@ -195,20 +195,20 @@
 
   <main>
     <h1 id="intro">JGS Scripting Guide</h1>
-    <p class="lead">JGS (JGraph Script) is a small, MATLAB-flavored language for reading data, doing analysis, and producing plots inside JGraph. This guide is written for an engineer who has never seen JGraph before.</p>
+    <p class="lead">JGS (JGraph Script) is a small array language for reading data, doing analysis, and producing plots inside JGraph. This guide is written for an engineer who has never seen JGraph before.</p>
 
     <h2>What is JGS?</h2>
-    <p><strong>JGraph</strong> is a desktop plotting and figure-editing application. <strong>JGS</strong> is one of its scripting languages — a purpose-built language (alongside the C# and Python engines) designed to feel familiar to anyone who has used MATLAB. You write a <code>.jgs</code> file, run it, and it builds figures and prints results.</p>
+    <p><strong>JGraph</strong> is a desktop plotting and figure-editing application. <strong>JGS</strong> is one of its scripting languages — a purpose-built language (alongside the C# and Python engines) designed to feel familiar to anyone who has used an engineering array language. You write a <code>.jgs</code> file, run it, and it builds figures and prints results.</p>
     <p>A JGS script is a sequence of statements executed top to bottom. It does three kinds of work:</p>
     <ul>
       <li><strong>Read data</strong> — load CSV/Excel tables from disk.</li>
       <li><strong>Compute</strong> — array math, statistics, string handling, filtering by condition.</li>
-      <li><strong>Plot</strong> — issue MATLAB-style plotting commands (<code>plot</code>, <code>scatter</code>, <code>subplot</code>, <code>title</code>, …) that draw into a figure, then <code>show</code> it in a window.</li>
+      <li><strong>Plot</strong> — issue stateful plotting commands (<code>plot</code>, <code>scatter</code>, <code>subplot</code>, <code>title</code>, …) that draw into a figure, then <code>show</code> it in a window.</li>
     </ul>
-    <div class="note"><strong>Mental model:</strong> if you know MATLAB or NumPy, you already know 90% of JGS. Arrays are first-class, indexing is by <em>logical mask</em> or by position, and plotting commands act on a single "current figure / current axes" that you switch with <code>figure</code> and <code>subplot</code>.</div>
+    <div class="note"><strong>Mental model:</strong> if you know NumPy or any engineering array language, you already know 90% of JGS. Arrays are first-class, indexing is by <em>logical mask</em> or by position, and plotting commands act on a single "current figure / current axes" that you switch with <code>figure</code> and <code>subplot</code>.</div>
 
     <h2 id="running">Running a script</h2>
-    <p>Open the <strong>Script Workspace</strong> in JGraph, create or open a <code>.jgs</code> file, and run it (the editor gives you syntax highlighting, autocomplete, and a debugger). Plotting commands accumulate into the current figure; <code>show()</code> opens (or updates) a window for it at any point, and — MATLAB-style since M21 — any figures the script created but never <code>show()</code>ed are displayed automatically when the run finishes. Re-running a script reuses the same figure windows by number rather than piling up new ones.</p>
+    <p>Open the <strong>Script Workspace</strong> in JGraph, create or open a <code>.jgs</code> file, and run it (the editor gives you syntax highlighting, autocomplete, and a debugger). Plotting commands accumulate into the current figure; <code>show()</code> opens (or updates) a window for it at any point, and — since M21 — any figures the script created but never <code>show()</code>ed are displayed automatically when the run finishes. Re-running a script reuses the same figure windows by number rather than piling up new ones.</p>
     <p>A script's only access to the outside world is the table readers (<code>readcsv</code>, <code>readxlsx</code>, <code>readtable</code>), the figure-file commands (<code>savefigure</code>, <code>loadfigure</code>, <code>exportfigure</code>), and <code>run</code> for including another script. There is no arbitrary file, network, or system access.</p>
 
     <!-- ================= LANGUAGE ================= -->
@@ -218,7 +218,7 @@
         <tr><td class="sig"><code>let x = 5</code></td><td>Declare a variable. Reassign later with <code>x = 6</code> (no <code>let</code>).</td></tr>
         <tr><td class="sig"><code>x += 2</code> &nbsp; <code>x++</code></td><td>Compound assignment (<code>+= -= *= /= %=</code>) and increment/decrement (<code>x++</code>, <code>++x</code>, <code>x--</code>, <code>--x</code>) — full C semantics, also on array elements (<code>a[i] += 1</code>).</td></tr>
         <tr><td class="sig"><code>let [X, Y] = pair()</code></td><td>Destructuring: bind the elements of a 2-element (or n-element) array to names — how you receive <code>meshgrid</code>'s two matrices.</td></tr>
-        <tr><td class="sig">newline or <code>;</code></td><td>Statements are separated by line breaks or semicolons. Blank lines are ignored. A trailing <code>;</code> additionally <strong>suppresses console echo</strong> — see <a href="#matlab">MATLAB-style scripting</a>.</td></tr>
+        <tr><td class="sig">newline or <code>;</code></td><td>Statements are separated by line breaks or semicolons. Blank lines are ignored. A trailing <code>;</code> additionally <strong>suppresses console echo</strong> — see <a href="#arraylang">array-language scripting</a>.</td></tr>
         <tr><td class="sig"><code># ...</code> or <code>// ...</code></td><td>Line comment to end of line. (There are no block comments.)</td></tr>
         <tr><td class="sig"><code>"text"</code> / <code>'text'</code></td><td>Strings — double or single quotes are interchangeable. Escapes: <code>\n \t \r \\ \" \'</code>.</td></tr>
         <tr><td class="sig"><code>[1, 2, 3]</code></td><td>Array literal. May span multiple lines (line breaks inside <code>[ ]</code> and <code>( )</code> are not statement separators).</td></tr>
@@ -248,7 +248,7 @@
     </table>
 
     <h2 id="operators">Operators</h2>
-    <p>Arithmetic operators <strong>broadcast element-wise</strong> over arrays, exactly like MATLAB/NumPy: a scalar applies to every element, and two equal-length arrays combine pairwise.</p>
+    <p>Arithmetic operators <strong>broadcast element-wise</strong> over arrays, exactly like NumPy: a scalar applies to every element, and two equal-length arrays combine pairwise.</p>
     <table>
       <thead><tr><th>Operators</th><th>Meaning</th><th>On arrays</th></tr></thead>
       <tbody>
@@ -259,36 +259,36 @@
         <tr><td><code>!</code> &nbsp; <code>-</code></td><td>Unary NOT / negate</td><td><code>!</code> negates a bool; <code>-</code> negates a number.</td></tr>
         <tr><td><code>= += -= *= /= %=</code></td><td>Assignment (plain and compound)</td><td>An <em>expression</em> yielding the stored value: <code>a = b = 0</code> chains, <code>let y = (x += 2)</code> works. Compound forms broadcast like their operator: <code>xs += 1</code> is elementwise.</td></tr>
         <tr><td><code>++ --</code></td><td>Increment / decrement by 1</td><td>Postfix (<code>x++</code>) yields the <em>old</em> value; prefix (<code>++x</code>) the <em>new</em>. Works on variables and array elements; the target must hold a number.</td></tr>
-        <tr><td><code>^</code> &nbsp; <code>.^</code></td><td>Power (MATLAB rules)</td><td>Element-wise; binds tighter than unary minus (<code>-2^2</code> → <code>-4</code>), associates left (<code>2^3^2</code> → <code>64</code>), and allows <code>2^-3</code>.</td></tr>
-        <tr><td><code>~</code> &nbsp; <code>~=</code> &nbsp; <code>.*</code> &nbsp; <code>./</code></td><td>MATLAB spellings</td><td>Aliases of <code>!</code>, <code>!=</code>, <code>*</code>, <code>/</code> — JGS operators already broadcast element-wise, so <code>a .* b</code> and <code>a * b</code> mean the same thing.</td></tr>
+        <tr><td><code>^</code> &nbsp; <code>.^</code></td><td>Power</td><td>Element-wise; binds tighter than unary minus (<code>-2^2</code> → <code>-4</code>), associates left (<code>2^3^2</code> → <code>64</code>), and allows <code>2^-3</code>.</td></tr>
+        <tr><td><code>~</code> &nbsp; <code>~=</code> &nbsp; <code>.*</code> &nbsp; <code>./</code></td><td>Array-language spellings</td><td>Aliases of <code>!</code>, <code>!=</code>, <code>*</code>, <code>/</code> — JGS operators already broadcast element-wise, so <code>a .* b</code> and <code>a * b</code> mean the same thing.</td></tr>
         <tr><td><code>a:b</code> &nbsp; <code>a:step:b</code></td><td>Colon range</td><td>An <em>inclusive</em> sequence: <code>2:6</code> → <code>[2,3,4,5,6]</code>, <code>0:1/fs:3</code> → 3001 samples. Looser than arithmetic, tighter than comparisons.</td></tr>
       </tbody>
     </table>
     <p>Precedence, high to low: <code>^</code> → unary → <code>* / %</code> → <code>+ -</code> → ranges (<code>:</code>) → comparisons → <code>== !=</code> → <code>&amp;&amp;</code> → <code>||</code> → assignment (right-associative). Parenthesize with <code>( )</code> as usual.</p>
     <div class="callout"><strong>Two C-style footguns to know:</strong> (1) since assignment is an expression, <code>if x = 5 { }</code> is legal and assigns — write <code>==</code> to compare (assigning to an <em>undeclared</em> name is still an error, which catches most slips). (2) <code>5--3</code> no longer parses because <code>--</code> is now the decrement operator — write <code>5 - -3</code>.</div>
-    <div class="callout"><strong>Truthiness (MATLAB rule):</strong> an array is truthy only if it is <em>non-empty and every element is truthy</em>. So <code>if temp &gt; 85 { ... }</code> runs only when <em>all</em> readings exceed 85. To ask "any?" or "how many?", use <code>any(mask)</code>, <code>all(mask)</code>, or <code>sum(mask)</code>. To test emptiness, use <code>length(a) &gt; 0</code>.</div>
+    <div class="callout"><strong>Truthiness:</strong> an array is truthy only if it is <em>non-empty and every element is truthy</em>. So <code>if temp &gt; 85 { ... }</code> runs only when <em>all</em> readings exceed 85. To ask "any?" or "how many?", use <code>any(mask)</code>, <code>all(mask)</code>, or <code>sum(mask)</code>. To test emptiness, use <code>length(a) &gt; 0</code>.</div>
 
-    <h2 id="matlab">MATLAB-style scripting</h2>
-    <p>Since M21, real MATLAB scripts run in JGS with only minimal edits (convert <code>%</code> comments to <code>//</code>, add <code>let</code> on first assignments, add commas inside array literals). The pieces:</p>
+    <h2 id="arraylang">Array-language scripting</h2>
+    <p>Since M21, scripts written for other engineering array languages run in JGS with only minimal edits (convert <code>%</code> comments to <code>//</code>, add <code>let</code> on first assignments, add commas inside array literals). The pieces:</p>
     <table>
       <tbody>
         <tr><td class="sig"><code>x = 5</code> vs <code>x = 5;</code></td><td><strong>Echo &amp; suppression.</strong> A statement <em>without</em> a trailing <code>;</code> echoes its result to the console (<code>x = 5</code>); with <code>;</code> it stays silent. A bare expression binds <code>ans</code> (even when suppressed) and echoes <code>ans = …</code>; a bare variable name displays it. Long arrays truncate with an element count.</td></tr>
-        <tr><td class="sig"><code>for k = 2:n … end</code></td><td><strong>MATLAB blocks.</strong> <code>for</code>/<code>while</code>/<code>if</code>/<code>fn</code> bodies may be closed by <code>end</code> instead of braces; <code>elseif</code> chains share one <code>end</code>. Both styles coexist. <code>end</code> and <code>elseif</code> are reserved words.</td></tr>
-        <tr><td class="sig"><code>t = 0:1/fs:3</code></td><td><strong>Colon ranges</strong>, inclusive with MATLAB's endpoint tolerance (that one is exactly 3001 samples).</td></tr>
+        <tr><td class="sig"><code>for k = 2:n … end</code></td><td><strong><code>end</code>-terminated blocks.</strong> <code>for</code>/<code>while</code>/<code>if</code>/<code>fn</code> bodies may be closed by <code>end</code> instead of braces; <code>elseif</code> chains share one <code>end</code>. Both styles coexist. <code>end</code> and <code>elseif</code> are reserved words.</td></tr>
+        <tr><td class="sig"><code>t = 0:1/fs:3</code></td><td><strong>Colon ranges</strong>, inclusive with an endpoint tolerance (that one is exactly 3001 samples).</td></tr>
         <tr><td class="sig"><code>[a; b]</code></td><td><strong>Rows &amp; vertical concat.</strong> <code>[1, 2; 3, 4]</code> is a matrix; when rows contain arrays the whole thing flattens into one array — <code>[audio; zeros(k, 1)]</code> pads a signal.</td></tr>
         <tr><td class="sig"><code>figure;</code></td><td><strong>Command form &amp; auto-display.</strong> A bare builtin name as a statement calls it with no arguments. And every figure a script creates is shown automatically when the run finishes — no <code>show()</code> needed (explicit <code>show()</code> still works and is not repeated).</td></tr>
         <tr><td class="sig"><code>3 + 4i</code></td><td><strong>Complex numbers.</strong> Literals <code>2i</code>/<code>1.5j</code>; <code>+ - * / ^</code> promote; <code>abs</code> is magnitude, plus <code>real</code>, <code>imag</code>, <code>conj</code>, <code>angle</code>. <code>fft</code> returns complex bins. Ordering comparisons and plotting complex data are errors that tell you to take <code>abs()</code>/<code>real()</code> first. Zero-imaginary results collapse back to plain numbers.</td></tr>
         <tr><td class="sig"><code>pi e inf nan</code></td><td>Built-in constants.</td></tr>
       </tbody>
     </table>
-    <div class="callout"><strong>Deliberate differences from MATLAB:</strong> <code>%</code> is still the modulo operator, not a comment (use <code>//</code> or <code>#</code>; <code>mod(a,b)</code> exists); <code>let</code> is still required for a first binding; array literals need commas (<code>[0 20 30]</code> is an error); and arrays assign by <em>reference</em> — <code>X2 = X1; X2(1) = 0</code> also changes <code>X1</code>.</div>
+    <div class="callout"><strong>Deliberate differences from the languages JGS borrows from:</strong> <code>%</code> is still the modulo operator, not a comment (use <code>//</code> or <code>#</code>; <code>mod(a,b)</code> exists); <code>let</code> is still required for a first binding; array literals need commas (<code>[0 20 30]</code> is an error); and arrays assign by <em>reference</em> — <code>X2 = X1; X2(1) = 0</code> also changes <code>X1</code>.</div>
 
     <h2 id="arrays">Arrays &amp; indexing</h2>
     <p>Arrays are the workhorse. Build them with a literal, a colon range (<code>2:6</code>), or a constructor (<code>linspace</code>, <code>range</code>, <code>zeros</code>, <code>ones</code>, <code>rand</code>), then transform them with math and the array builtins.</p>
-    <p><strong>Two indexing forms with two bases:</strong> square brackets are 0-based (the original JGS form); parentheses are <strong>1-based, MATLAB-style</strong>, and support <code>end</code>, colon slices, and slice assignment:</p>
+    <p><strong>Two indexing forms with two bases:</strong> square brackets are 0-based (the original JGS form); parentheses are <strong>1-based</strong>, and support <code>end</code>, colon slices, and slice assignment:</p>
     <pre><code><span class="kw">let</span> a = [<span class="num">10</span>, <span class="num">20</span>, <span class="num">30</span>, <span class="num">40</span>]
 a[<span class="num">0</span>]          <span class="com"># 10  — brackets: 0-based</span>
-a(<span class="num">1</span>)          <span class="com"># 10  — parens: 1-based (MATLAB)</span>
+a(<span class="num">1</span>)          <span class="com"># 10  — parens: 1-based</span>
 a(<span class="kw">end</span>)        <span class="com"># 40  — 'end' is the last index (parens only)</span>
 a(<span class="num">2</span>:<span class="kw">end</span>)      <span class="com"># [20, 30, 40] — colon slice</span>
 a(:)          <span class="com"># everything, as a copy</span>
@@ -322,7 +322,7 @@ a(<span class="num">1</span>:<span class="num">2</span>) = <span class="num">0</
     <pre><code><span class="kw">let</span> m = [[<span class="num">1</span>, <span class="num">2</span>], [<span class="num">3</span>, <span class="num">4</span>]]
 m[<span class="num">1</span>][<span class="num">0</span>]                       <span class="com"># 3 — row 1, column 0</span>
 <span class="kw">let</span> [X, Y] = <span class="fn">meshgrid</span>([<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>], [<span class="num">10</span>,<span class="num">20</span>])   <span class="com"># coordinate matrices (2 rows x 3 cols)</span></code></pre>
-    <p>Arithmetic operators and the element-wise math builtins recurse into nested arrays, so the classic MATLAB surface recipe works verbatim:</p>
+    <p>Arithmetic operators and the element-wise math builtins recurse into nested arrays, so the classic surface recipe works verbatim:</p>
     <pre><code><span class="kw">let</span> x = <span class="fn">linspace</span>(-<span class="num">8</span>, <span class="num">8</span>, <span class="num">60</span>)
 <span class="kw">let</span> [X, Y] = <span class="fn">meshgrid</span>(x, x)
 <span class="kw">let</span> R = <span class="fn">sqrt</span>(X * X + Y * Y) + <span class="num">0.01</span>
@@ -378,7 +378,7 @@ m[<span class="num">1</span>][<span class="num">0</span>]                       
 
     <!-- ================= PLOTTING MODEL ================= -->
     <h2 id="figmodel">Figures, axes &amp; show</h2>
-    <p>JGS follows MATLAB's <em>stateful</em> plotting model. There is always a <strong>current figure</strong> and, within it, a <strong>current axes</strong>. Plotting verbs (<code>plot</code>, <code>scatter</code>, <code>bar</code>, …) draw into the current axes; label verbs (<code>title</code>, <code>xlabel</code>, <code>legend</code>, …) modify it.</p>
+    <p>JGS follows the classic <em>stateful</em> plotting model. There is always a <strong>current figure</strong> and, within it, a <strong>current axes</strong>. Plotting verbs (<code>plot</code>, <code>scatter</code>, <code>bar</code>, …) draw into the current axes; label verbs (<code>title</code>, <code>xlabel</code>, <code>legend</code>, …) modify it.</p>
     <table>
       <tbody>
         <tr><td class="sig"><code><span class="fn">figure</span>()</code></td><td>Start a new figure and make it current. Returns its number (1, 2, 3, …).</td></tr>
@@ -391,7 +391,7 @@ m[<span class="num">1</span>][<span class="num">0</span>]                       
     <p>Each figure opens in its own window with the full JGraph chrome — pan, zoom, the property inspector, and export all work just as in the main app. Nothing appears until you call <code>show</code>; re-running the script updates the same numbered windows in place instead of spawning new ones.</p>
 
     <h2 id="linespec">Line-spec strings</h2>
-    <p><code>plot</code> and the <code>semilog*</code>/<code>loglog</code> verbs take an optional MATLAB-style spec string combining a color, a line style, and a marker (any order; unknown characters are ignored). Example: <code>"r--o"</code> = red, dashed line, circle markers.</p>
+    <p><code>plot</code> and the <code>semilog*</code>/<code>loglog</code> verbs take an optional spec string combining a color, a line style, and a marker (any order; unknown characters are ignored). Example: <code>"r--o"</code> = red, dashed line, circle markers.</p>
     <div class="grid2">
       <div>
         <h3>Colors</h3>
@@ -551,20 +551,20 @@ m[<span class="num">1</span>][<span class="num">0</span>]                       
     <div class="tablewrap"><table>
       <thead><tr><th>Signature</th><th>Description</th></tr></thead>
       <tbody>
-        <tr><td class="sig"><code><span class="fn">surf</span>(z)</code> · <code>(x, y, z)</code></td><td>Colormap-filled 3D surface with wireframe edges (MATLAB <code>surf</code>).</td></tr>
-        <tr><td class="sig"><code><span class="fn">mesh</span>(z)</code> · <code>(x, y, z)</code></td><td>Wireframe 3D surface colored by height (MATLAB <code>mesh</code>).</td></tr>
+        <tr><td class="sig"><code><span class="fn">surf</span>(z)</code> · <code>(x, y, z)</code></td><td>Colormap-filled 3D surface with wireframe edges.</td></tr>
+        <tr><td class="sig"><code><span class="fn">mesh</span>(z)</code> · <code>(x, y, z)</code></td><td>Wireframe 3D surface colored by height.</td></tr>
         <tr><td class="sig"><code><span class="fn">meshc</span>(x, y, z)</code></td><td>Wireframe surface plus contour lines projected on the floor of the box.</td></tr>
         <tr><td class="sig"><code><span class="fn">contour</span>(x, y, z, <span class="opt">levels</span>)</code></td><td>2D iso-line contours at ~8 automatic levels, or the explicit <code>levels</code> array.</td></tr>
         <tr><td class="sig"><code><span class="fn">contourf</span>(x, y, z, <span class="opt">levels</span>)</code></td><td>Filled contour bands (2D).</td></tr>
         <tr><td class="sig"><code><span class="fn">imagesc</span>(z)</code></td><td>Heatmap of matrix <code>z</code> over its cell indices (2D).</td></tr>
         <tr><td class="sig"><code><span class="fn">pcolor</span>(x, y, z)</code></td><td>Heatmap of matrix <code>z</code> stretched over the <code>x</code>/<code>y</code> extents (2D).</td></tr>
         <tr><td class="sig"><code><span class="fn">zlabel</span>(text)</code> <code><span class="fn">zlim</span>(min, max)</code></td><td>Z-axis label / range of a 3D axes.</td></tr>
-        <tr><td class="sig"><code><span class="fn">view</span>(azimuth, elevation)</code></td><td>Set the camera angles in degrees (MATLAB convention; default −37.5, 30).</td></tr>
+        <tr><td class="sig"><code><span class="fn">view</span>(azimuth, elevation)</code></td><td>Set the camera angles in degrees (azimuth about z, elevation above the xy plane; default −37.5, 30).</td></tr>
         <tr><td class="sig"><code><span class="fn">colormap</span>(name)</code></td><td>Apply <code>"viridis"</code>, <code>"jet"</code>, <code>"hot"</code>, <code>"cool"</code>, or <code>"gray"</code> to the current axes' surface/contour/image plots.</td></tr>
         <tr><td class="sig"><code><span class="fn">colorbar</span>(<span class="opt">on</span>)</code></td><td>Show (default) or hide the color scale beside the plot.</td></tr>
       </tbody>
     </table></div>
-    <pre><code><span class="com"># The MATLAB "sombrero", rotatable with the mouse</span>
+    <pre><code><span class="com"># The classic "sombrero", rotatable with the mouse</span>
 <span class="kw">let</span> x = <span class="fn">linspace</span>(-<span class="num">8</span>, <span class="num">8</span>, <span class="num">60</span>)
 <span class="kw">let</span> [X, Y] = <span class="fn">meshgrid</span>(x, x)
 <span class="kw">let</span> R = <span class="fn">sqrt</span>(X * X + Y * Y) + <span class="num">0.01</span>
@@ -577,7 +577,7 @@ m[<span class="num">1</span>][<span class="num">0</span>]                       
     <div class="note"><strong>Practical size cap:</strong> surfaces re-project and depth-sort every cell while you drag; grids up to ~150×150 stay smooth.</div>
 
     <h3 id="ref-dsp">DSP &amp; audio</h3>
-    <p>MATLAB's signal-processing verbs (M21). The FFT handles <em>any</em> length in O(n log n) (Bluestein's algorithm for non-powers-of-two), so a raw audio clip transforms directly. Frequencies are normalized to Nyquist (0..1) where noted.</p>
+    <p>The signal-processing verbs (M21). The FFT handles <em>any</em> length in O(n log n) (Bluestein's algorithm for non-powers-of-two), so a raw audio clip transforms directly. Frequencies are normalized to Nyquist (0..1) where noted.</p>
     <div class="tablewrap"><table>
       <thead><tr><th>Signature</th><th>Description</th></tr></thead>
       <tbody>
@@ -590,8 +590,8 @@ m[<span class="num">1</span>][<span class="num">0</span>]                       
         <tr><td class="sig"><code><span class="fn">audioread</span>(path)</code></td><td>Read a .wav → <code>let [y, fs] = audioread('gc.wav')</code>; samples normalized to [-1, 1], stereo averaged to mono.</td></tr>
         <tr><td class="sig"><code><span class="fn">sound</span>(y, <span class="opt">fs</span>)</code></td><td>Play samples through the speakers without blocking (fs defaults to 8192). Follow with <code>pause(...)</code> to wait for playback.</td></tr>
         <tr><td class="sig"><code><span class="fn">pause</span>(seconds)</code></td><td>Wait — interruptible by the Stop button.</td></tr>
-        <tr><td class="sig"><code><span class="fn">mod</span>(x, m)</code></td><td>MATLAB modulo (result takes m's sign), element-wise.</td></tr>
-        <tr><td class="sig"><code><span class="fn">size</span>(x, <span class="opt">dim</span>)</code></td><td><code>[rows, cols]</code> of a matrix (<code>[rows, cols, 3]</code> for an RGB image), <code>[1, n]</code> for a flat array or string. <code>zeros(size(t))</code> works. With <code>dim</code> it returns that one dimension — dimensions past the value's rank are <code>1</code>, as in MATLAB.</td></tr>
+        <tr><td class="sig"><code><span class="fn">mod</span>(x, m)</code></td><td>Modulo (result takes m's sign), element-wise.</td></tr>
+        <tr><td class="sig"><code><span class="fn">size</span>(x, <span class="opt">dim</span>)</code></td><td><code>[rows, cols]</code> of a matrix (<code>[rows, cols, 3]</code> for an RGB image), <code>[1, n]</code> for a flat array or string. <code>zeros(size(t))</code> works. With <code>dim</code> it returns that one dimension — dimensions past the value's rank are <code>1</code>.</td></tr>
         <tr><td class="sig"><code><span class="fn">isempty</span>(x)</code></td><td>True for null, an empty array or string, or a table with no rows; false for anything with content.</td></tr>
         <tr><td class="sig"><code><span class="fn">disp</span>(value)</code></td><td>Write a value to the console with no <code>name =</code> prefix.</td></tr>
         <tr><td class="sig"><code><span class="fn">real</span>(x)</code> <code><span class="fn">imag</span>(x)</code> <code><span class="fn">conj</span>(x)</code> <code><span class="fn">angle</span>(x)</code></td><td>Complex parts / conjugate / phase, element-wise (real input is fine). <code>abs</code> is complex magnitude.</td></tr>
@@ -599,7 +599,7 @@ m[<span class="num">1</span>][<span class="num">0</span>]                       
     </table></div>
 
     <h3 id="ref-time">Time &amp; date</h3>
-    <p>A MATLAB-style stopwatch and date functions. Used as bare statements, <code>tic;</code> starts the timer and <code>toc</code> reports the elapsed seconds; inside an expression call them with parentheses (<code>toc()</code>). Dates are <strong>serial date numbers</strong> — the same convention as MATLAB, where <code>datenum(1970, 1, 1)</code> is <code>719529</code> and the fractional part is the time of day. There is no dedicated date type: functions return plain numbers, <code>[y m d h mi s]</code> vectors, or strings.</p>
+    <p>A stopwatch and date functions. Used as bare statements, <code>tic;</code> starts the timer and <code>toc</code> reports the elapsed seconds; inside an expression call them with parentheses (<code>toc()</code>). Dates are <strong>serial date numbers</strong> — days since year 0, where <code>datenum(1970, 1, 1)</code> is <code>719529</code> and the fractional part is the time of day. There is no dedicated date type: functions return plain numbers, <code>[y m d h mi s]</code> vectors, or strings.</p>
     <pre><code><span class="fn">tic</span>;                          <span class="com"># start the stopwatch</span>
 <span class="kw">let</span> y = <span class="fn">fft</span>(<span class="fn">rand</span>(<span class="num">100000</span>))     <span class="com"># ... do some work ...</span>
 <span class="fn">print</span>(<span class="str">'elapsed:'</span>, <span class="fn">toc</span>())      <span class="com"># seconds since tic</span>
@@ -622,7 +622,7 @@ m[<span class="num">1</span>][<span class="num">0</span>]                       
     </table></div>
 
     <h3 id="ref-rf">RF &amp; transmission lines</h3>
-    <p>A curated core from MATLAB's RF and RF PCB toolboxes: read Touchstone (<code>.sNp</code>) files, convert between S / Z / Y / ABCD parameters, cascade 2-ports, and plot on rectangular or Smith charts — plus closed-form microstrip and stripline calculators. An S-parameter <strong>network</strong> is carried as a table (a <code>freq</code> column in Hz, per-pair <code>s11_re</code>/<code>s11_im</code>… columns, and a constant <code>z0</code>), so <code>rowcount</code>, <code>colnames</code>, and the Data Viewer all work on it; read a parameter across frequency with <code>rfparam</code> (1-based ports).</p>
+    <p>A curated RF and RF-PCB core: read Touchstone (<code>.sNp</code>) files, convert between S / Z / Y / ABCD parameters, cascade 2-ports, and plot on rectangular or Smith charts — plus closed-form microstrip and stripline calculators. An S-parameter <strong>network</strong> is carried as a table (a <code>freq</code> column in Hz, per-pair <code>s11_re</code>/<code>s11_im</code>… columns, and a constant <code>z0</code>), so <code>rowcount</code>, <code>colnames</code>, and the Data Viewer all work on it; read a parameter across frequency with <code>rfparam</code> (1-based ports).</p>
     <pre><code><span class="kw">let</span> net = <span class="fn">sparameters</span>(<span class="str">'amp.s2p'</span>)   <span class="com"># read a 2-port</span>
 <span class="fn">rfplot</span>(net, <span class="num">2</span>, <span class="num">1</span>)                <span class="com"># |S21| in dB vs frequency</span>
 <span class="fn">smithplot</span>(net, <span class="num">1</span>, <span class="num">1</span>)             <span class="com"># S11 locus on a Smith chart</span>
@@ -648,7 +648,7 @@ m[<span class="num">1</span>][<span class="num">0</span>]                       
     </table></div>
 
     <h3 id="ref-image">Image processing</h3>
-    <p>A curated core from MATLAB's Image Processing Toolbox: read and write PNG/JPEG/BMP files, display images, and run point, geometry, filtering, edge, morphology, and region-analysis operations. An <strong>image</strong> is its own value type — grayscale (<code>H×W</code>) or RGB (<code>H×W×3</code>), with samples in <code>[0, 1]</code>. Read one sample with 1-based subscripts: <code>img(row, col)</code> for grayscale, <code>img(row, col, channel)</code> for colour; <code>size</code> and <code>numel</code> report its dimensions. Small matrices (kernels, structuring elements) pass in as nested arrays, and <code>bwlabel</code> returns a destructurable <code>[labels, count]</code>.</p>
+    <p>A curated image-processing core: read and write PNG/JPEG/BMP files, display images, and run point, geometry, filtering, edge, morphology, and region-analysis operations. An <strong>image</strong> is its own value type — grayscale (<code>H×W</code>) or RGB (<code>H×W×3</code>), with samples in <code>[0, 1]</code>. Read one sample with 1-based subscripts: <code>img(row, col)</code> for grayscale, <code>img(row, col, channel)</code> for colour; <code>size</code> and <code>numel</code> report its dimensions. Small matrices (kernels, structuring elements) pass in as nested arrays, and <code>bwlabel</code> returns a destructurable <code>[labels, count]</code>.</p>
     <pre><code><span class="kw">let</span> img = <span class="fn">imread</span>(<span class="str">'sample-image.png'</span>)   <span class="com"># samples in [0, 1]</span>
 <span class="fn">imshow</span>(img)                              <span class="com"># equal aspect, no axes decoration</span>
 
@@ -678,6 +678,7 @@ m[<span class="num">1</span>][<span class="num">0</span>]                       
         <tr><td class="sig"><code><span class="fn">imerode</span></code> · <code><span class="fn">imdilate</span></code> · <code><span class="fn">imopen</span></code> · <code><span class="fn">imclose</span>(image, <span class="opt">element</span>)</code> · <code><span class="fn">strel</span>(shape, <span class="opt">size</span>)</code></td><td>Morphology over a structuring element (default 3×3 square); <code>strel</code> builds <code>'square'</code>/<code>'disk'</code> elements.</td></tr>
         <tr><td class="sig"><code><span class="fn">imfill</span>(image, <span class="opt">'holes'</span>)</code> · <code><span class="fn">bwareaopen</span>(image, minArea, <span class="opt">connectivity</span>)</code></td><td>Binary cleanup: fill background that is unreachable from the border, and drop components below <code>minArea</code> pixels.</td></tr>
         <tr><td class="sig"><code><span class="fn">bwlabel</span>(image, <span class="opt">connectivity</span>)</code> · <code><span class="fn">regionprops</span>(labels, <span class="opt">intensity</span>)</code></td><td>Label connected components (<code>[labels, count]</code>; 4- or 8-connectivity), and measure Area/Centroid/BoundingBox per region as a table. <code>regionprops</code> also accepts a binary image directly; passing an intensity image adds <code>MeanIntensity</code> and <code>WeightedCentroidX/Y</code> columns.</td></tr>
+        <tr><td class="sig"><code><span class="fn">imcentroid</span>(image, <span class="opt">mask</span>)</code></td><td>The intensity-weighted centre <code>[x, y]</code> (1-based) of the <em>whole</em> image, weighing every sample the optional mask keeps. Use this rather than <code>regionprops</code> when the bright area is speckled or broken into many components — connectivity never enters into it.</td></tr>
       </tbody>
     </table></div>
 
@@ -696,7 +697,7 @@ m[<span class="num">1</span>][<span class="num">0</span>]                       
       <thead><tr><th>Signature</th><th>Description</th></tr></thead>
       <tbody>
         <tr><td class="sig"><code><span class="fn">print</span>(values...)</code></td><td>Write the values to the console, space-separated, followed by a newline.</td></tr>
-        <tr><td class="sig"><code><span class="fn">run</span>(path)</code></td><td>Run another JGS script into the current scope (MATLAB-style include) — shares variables and functions.</td></tr>
+        <tr><td class="sig"><code><span class="fn">run</span>(path)</code></td><td>Run another JGS script into the current scope (an include) — shares variables and functions.</td></tr>
       </tbody>
     </table></div>
 

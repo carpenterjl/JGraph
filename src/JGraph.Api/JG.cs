@@ -5,6 +5,7 @@ using JGraph.Data.Import;
 using JGraph.Objects;
 using JGraph.Objects.Annotations;
 using JGraph.Objects.Engineering;
+using JGraph.Rendering;
 
 namespace JGraph.Api;
 
@@ -522,15 +523,25 @@ public static class JG
         Gca().Grid.Visible = true;
     }
 
-    /// <summary>Enables the legend, optionally assigning display names to the plots in order.</summary>
+    /// <summary>
+    /// Enables the legend, optionally assigning display names to the plots in order. Only plots that
+    /// can appear in a legend are counted: a backdrop image (imshow) or another non-legend plot must
+    /// not swallow the first name and push every series' label one place along.
+    /// </summary>
     public static void Legend(params string[] names)
     {
         AxesModel axes = Gca();
-        for (int i = 0; i < names.Length && i < axes.Plots.Count; i++)
+        int next = 0;
+        foreach (PlotObject plot in axes.Plots)
         {
-            if (axes.Plots[i] is PlotObject plot)
+            if (next >= names.Length)
             {
-                plot.DisplayName = names[i];
+                break;
+            }
+
+            if (plot is ILegendItem)
+            {
+                plot.DisplayName = names[next++];
             }
         }
 

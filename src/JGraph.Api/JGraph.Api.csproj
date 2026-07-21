@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
     <RootNamespace>JGraph.Api</RootNamespace>
-    <Description>Matlab-like functional facade over the JGraph object model (JG.Figure, JG.Plot, JG.Title, ...).</Description>
+    <Description>Functional facade over the JGraph object model (JG.Figure, JG.Plot, JG.Title, ...).</Description>
   </PropertyGroup>
 
   <ItemGroup>

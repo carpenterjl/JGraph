@@ -409,4 +409,28 @@ public class ImageEdgeMorphologyTests
         (int[,] labels, int count) = Regions.Label(image, 8);
         Assert.Throws<ArgumentException>(() => Regions.Measure(labels, count, wrongSize));
     }
+
+    [Fact]
+    public void WeightedCentroid_AveragesEverySample_AcrossDisconnectedBlobs()
+    {
+        // Two blobs of unequal weight, four columns apart: the centre lands two thirds of the way
+        // towards the heavier one, which no per-component measurement would ever report.
+        using ImageBuffer image = Gray(new double[,]
+        {
+            { 0.25, 0, 0, 0, 0.50 },
+            { 0.25, 0, 0, 0, 0.50 },
+        });
+
+        (double x, double y) = Regions.WeightedCentroid(image);
+
+        Assert.Equal(1 + (4 * (2.0 / 3)), x, 6); // 1-based: 1 and 5 weighted 0.5 : 1.0
+        Assert.Equal(1.5, y, 6);                 // both rows carry the same weight
+    }
+
+    [Fact]
+    public void WeightedCentroid_OfAnAllZeroImageThrows()
+    {
+        using ImageBuffer image = Gray(new double[2, 2]);
+        Assert.Throws<ArgumentException>(() => Regions.WeightedCentroid(image));
+    }
 }

@@ -6,7 +6,7 @@
     <UseWPF>true</UseWPF>
     <RootNamespace>JGraph.Demo</RootNamespace>
     <AssemblyName>JGraph.Demo</AssemblyName>
-    <Description>Demo gallery for JGraph exercising both the object-oriented and Matlab-like APIs.</Description>
+    <Description>Demo gallery for JGraph exercising both the object-oriented and functional APIs.</Description>
   </PropertyGroup>
 
   <ItemGroup>

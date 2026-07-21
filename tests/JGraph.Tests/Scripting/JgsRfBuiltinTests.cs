@@ -174,10 +174,10 @@ public class JgsRfBuiltinTests : IDisposable
     [Fact]
     public async Task ShippedExample_RunsEndToEnd_AndProducesTwoFigures()
     {
-        // Runs examples/matlab-rf-match.jgs against examples/sample.s2p exactly as shipped, so the
+        // Runs examples/rf-match.jgs against examples/sample.s2p exactly as shipped, so the
         // documented walkthrough can never silently rot.
         string examples = LocateExamplesDirectory();
-        string script = await File.ReadAllTextAsync(Path.Combine(examples, "matlab-rf-match.jgs"));
+        string script = await File.ReadAllTextAsync(Path.Combine(examples, "rf-match.jgs"));
 
         ScriptRunResult result = await _engine.RunAsync(
             script, new ScriptContext(_output, (_, figure) => _figures.Add(figure), examples), default);
@@ -194,7 +194,7 @@ public class JgsRfBuiltinTests : IDisposable
         while (dir is not null)
         {
             string candidate = Path.Combine(dir.FullName, "examples");
-            if (File.Exists(Path.Combine(candidate, "matlab-rf-match.jgs")))
+            if (File.Exists(Path.Combine(candidate, "rf-match.jgs")))
             {
                 return candidate;
             }

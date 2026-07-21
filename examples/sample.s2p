@@ -1,5 +1,5 @@
 ! Sample 2-port: a 10 nH series inductor in a 50 ohm system.
-! Synthetic data for the JGraph RF example (matlab-rf-match.jgs).
+! Synthetic data for the JGraph RF example (rf-match.jgs).
 # GHz S RI R 50
 0.1     0.00393  0.06258   0.99607 -0.06258   0.99607 -0.06258   0.00393  0.06258
 0.3     0.03431  0.18203   0.96569 -0.18203   0.96569 -0.18203   0.03431  0.18203
