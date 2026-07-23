@@ -5,11 +5,12 @@ the workflow of a technical-computing figure window — an object model of figur
 edit, and interact with — while following modern MVVM and SOLID design. It is renderer-agnostic and
 built for performance (millions of points).
 
-> Status: Milestones 1–24 complete. A working, interactive, editable figure window with line,
+> Status: Milestones 1–25 complete. A working, interactive, editable figure window with line,
 > scatter, bar, stem, histogram, error-bar, and image/heatmap plots; interactive 3D surfaces
 > (surf/mesh/meshc with drag rotation), contour/filled-contour plots, and colorbars;
-> technical-computing JGS scripting (semicolon echo suppression, colon ranges, 1-based paren
-> indexing with `end` and slice writes, `for … end` blocks, complex numbers) with DSP/audio
+> technical-computing JGS scripting (semicolon echo suppression, colon ranges, uniform 0-based
+> indexing in both `a[i]` and `a(i)` spellings with `end`, slice and mask writes, `for … end`
+> blocks, complex numbers) with DSP/audio
 > builtins (`fft` at any length, `filter`/`butter`/`firpm`/`freqz`, `audioread`/`sound`) that run
 > real lab scripts nearly verbatim; large-dataset performance (packed flat
 > script arrays with SIMD elementwise math and RAM-aware managed/native/memory-mapped storage,
@@ -44,10 +45,10 @@ built for performance (millions of points).
 - **Interactive 3D** — `surf`/`mesh`/`meshc` surfaces you rotate with the mouse
   (undoable camera), plus `contour`/`contourf`, `imagesc`/`pcolor`, colormaps, and colorbars —
   from scripts (`meshgrid`, matrix math) or either API.
-- **Runs real technical-computing scripts** — semicolon suppression and echo, colon ranges, 1-based paren
-  indexing with `end`, `for … end` blocks, complex numbers, and the DSP/audio surface
-  (`fft`/`ifft` at any length, `filter`, `butter`, `firpm`, `freqz`, `audioread`, `sound`) let
-  existing lab scripts run with only comments and `let` touched up.
+- **Runs real technical-computing scripts** — semicolon suppression and echo, colon ranges, 0-based
+  indexing with `end`, slice and mask writes, `for … end` blocks, complex numbers, and the DSP/audio
+  surface (`fft`/`ifft` at any length, `filter`, `butter`, `firpm`, `freqz`, `audioread`, `sound`)
+  let existing lab scripts run with little more than `let` and the index base touched up.
 - **Data tips** — the default pointer pans, shows a crosshair over data, and pins persistent,
   draggable point labels that save with the figure; right-click for zoom modes and tip management.
 - **Multi-panel & synchronized** — tile axes into a subplot grid and link their axes so panning or
@@ -82,7 +83,9 @@ built for performance (millions of points).
   sandboxed interpreter) in the in-app editor; every script calls the same `JG` API, so every plot type
   and option is available.
 - **A scripting workspace** — open a folder of scripts and data files in the docking scripting window
-  (file tree, multi-tab editors, console, and a variables panel); scripts find workspace data files by
+  (file tree, multi-tab editors, console, and a variables panel). **New Script** asks which language
+  you want and opens `NewScript.jgs` / `.csx` / `.py`, so highlighting and the Run engine are right
+  before you save anything; scripts find workspace data files by
   bare name (`readcsv("data.csv")`), JGS scripts compose via `run("helpers.jgs")`, and the window
   remembers your workspace, open files, breakpoints, and layout between sessions. The Files pane is a
   Current Folder browser: an address bar and Up button, double-click a folder (or

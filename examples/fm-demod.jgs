@@ -14,7 +14,7 @@ let c = 8;
 
 let theta = zeros(size(t));
 
-for k = 2:length(t)
+for k = 1:length(t) - 1
     theta(k) = theta(k-1) + (w0 + c*v(k))/fs;
 end
 
@@ -53,9 +53,9 @@ let lp_1 = filter(h, 1, cos_carrier .* x_fm);
 let lp_2 = filter(h, 1, sin_carrier .* x_fm);
 let output = atan2(-lp_2,lp_1);
 figure;
-plot(t,output(1:length(t)));
+plot(t,output(0:length(t) - 1));
 title('Demodulated Signal')
 figure;
-plot(t, kx, 'b', t, output(1:length(t)), 'r--');
+plot(t, kx, 'b', t, output(0:length(t) - 1), 'r--');
 legend('Original kx(t)', 'Demodulated');
 title('Verification of FM Demodulation');

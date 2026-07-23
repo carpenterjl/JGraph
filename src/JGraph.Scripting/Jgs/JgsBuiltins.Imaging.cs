@@ -456,17 +456,19 @@ internal static partial class JgsBuiltins
 
         define("houghpeaks", (args, line, col) =>
         {
-            ArityRange("houghpeaks", args, 1, 3, line, col);
+            ArityRange("houghpeaks", args, 1, 4, line, col);
             ImageBuffer accumulator = Img("houghpeaks", args, 0, line, col);
             int count = args.Count >= 2 ? Count("houghpeaks", args, 1, line, col) : 1;
             double? threshold = args.Count >= 3 ? Num("houghpeaks", args, 2, line, col) : null;
+            int origin = args.Count >= 4 ? IndexOrigin("houghpeaks", args, 3, line, col) : 0;
             (int RhoIndex, int ThetaIndex)[] peaks = HoughTransform.Peaks(accumulator, count, threshold);
 
-            // One [rhoIndex, thetaIndex] row per peak, 1-based so the indices address theta and rho.
+            // One [rhoIndex, thetaIndex] row per peak, 0-based so the indices address rho and theta
+            // directly (ADR 0028); pass a base of 1 for MATLAB numbering.
             var rows = new JgsValue[peaks.Length];
             for (int i = 0; i < peaks.Length; i++)
             {
-                rows[i] = Numbers([peaks[i].RhoIndex + 1, peaks[i].ThetaIndex + 1]);
+                rows[i] = Numbers([peaks[i].RhoIndex + origin, peaks[i].ThetaIndex + origin]);
             }
 
             return JgsValue.Array(rows);
@@ -644,7 +646,7 @@ internal static partial class JgsBuiltins
         return values;
     }
 
-    /// <summary>Reads a houghpeaks result — rows of 1-based [rhoIndex, thetaIndex] — back to 0-based pairs.</summary>
+    /// <summary>Reads a houghpeaks result — rows of 0-based [rhoIndex, thetaIndex] — back to pairs.</summary>
     private static (int RhoIndex, int ThetaIndex)[] PeakIndices(JgsValue value, int line, int col)
     {
         if (value.Type != JgsType.Array)
@@ -662,7 +664,7 @@ internal static partial class JgsBuiltins
                 throw new JgsRuntimeException(line, col, "each houghlines peak must be a [rhoIndex, thetaIndex] pair.");
             }
 
-            peaks[i] = ((int)pair[0] - 1, (int)pair[1] - 1);
+            peaks[i] = ((int)pair[0], (int)pair[1]);
         }
 
         return peaks;

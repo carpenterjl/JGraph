@@ -7,7 +7,7 @@
 // sample-laser.png is a 96x96 grayscale image: a uniform disk with a brighter core to the
 // right of its middle, so the two centres land in visibly different places.
 
-let I = imread('laser_test2.png');
+let I = imread('sample-laser.png');
 let height = size(I, 1);
 print('image size:', size(I));
 
@@ -21,8 +21,8 @@ BW = bwareaopen(BW, 50);       // drop specks smaller than 50 pixels
 let stats = regionprops(BW, I);
 print('found a spot:', !isempty(stats));
 
-let geomX = column(stats, 'CentroidX')(1);
-let geomY = column(stats, 'CentroidY')(1);
+let geomX = column(stats, 'CentroidX')(0);
+let geomY = column(stats, 'CentroidY')(0);
 
 // --- Algorithm B: intensity-weighted centre ------------------------------------------------
 // Everything below 15% of the peak is background, so mask it off and let every surviving
@@ -30,17 +30,17 @@ let geomY = column(stats, 'CentroidY')(1);
 // breaking the spot into many blobs cannot bias the answer the way picking one region would.
 let mask = imbinarize(I, 0.15 * max(I));
 let centre = imcentroid(I, mask);
-let intensityX = centre(1);
-let intensityY = centre(2);
+let intensityX = centre(0);
+let intensityY = centre(1);
 
 // --- Display ---------------------------------------------------------------------------------
-// Pixel (col, row) is 1-based; imshow puts row 0 at the top of a 0..height y axis, so a
-// 1-based (x, y) centre plots at (x - 0.5, height - y + 0.5).
+// Pixel (col, row) is 0-based and imshow puts row 0 at the top of a 0..height y axis, so a
+// centre at (x, y) plots at (x + 0.5, height - y - 0.5) — the middle of that pixel's cell.
 figure;
 imshow(I);
 hold(true);
-plot([geomX - 0.5], [height - geomY + 0.5], 'r+');
-plot([intensityX - 0.5], [height - intensityY + 0.5], 'bo');
+plot([geomX + 0.5], [height - geomY - 0.5], 'r+');
+plot([intensityX + 0.5], [height - intensityY - 0.5], 'bo');
 title('Laser Center Detection Comparison');
 legend('Geometric Center (Shape)', 'Intensity Center (Brightness)');
 show();

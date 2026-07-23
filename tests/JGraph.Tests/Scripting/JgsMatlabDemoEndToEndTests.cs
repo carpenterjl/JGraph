@@ -64,7 +64,7 @@ public class JgsMatlabDemoEndToEndTests : IDisposable
 
             let theta = zeros(size(t));
 
-            for k = 2:length(t)
+            for k = 1:length(t) - 1
                 theta(k) = theta(k-1) + (w0 + c*v(k))/fs;
             end
 
@@ -103,10 +103,10 @@ public class JgsMatlabDemoEndToEndTests : IDisposable
             let lp_2 = filter(h, 1, sin_carrier .* x_fm);
             let output = atan2(-lp_2,lp_1);
             figure;
-            plot(t,output(1:length(t)));
+            plot(t,output(0:length(t) - 1));
             title('Demodulated Signal')
             figure;
-            plot(t, kx, 'b', t, output(1:length(t)), 'r--');
+            plot(t, kx, 'b', t, output(0:length(t) - 1), 'r--');
             legend('Original kx(t)', 'Demodulated');
             title('Verification of FM Demodulation');
             """);
@@ -196,7 +196,7 @@ public class JgsMatlabDemoEndToEndTests : IDisposable
             let X_pad_shifted = fftshift(X_pad);
 
             let X_comp75 = X_pad_shifted;
-            X_comp75(1 : N/8) = 0;
+            X_comp75(0 : N/8 - 1) = 0;
             X_comp75(end - N/8 + 1 : end) = 0;
             let f_axis_pad = (-N/2 : N/2 - 1) * (fs / N);
 
@@ -226,7 +226,7 @@ public class JgsMatlabDemoEndToEndTests : IDisposable
             let X_pad4_shifted = fftshift(X_pad4);
 
             let X_comp50 = X_pad4_shifted;
-            X_comp50(1 : N/4) = 0;
+            X_comp50(0 : N/4 - 1) = 0;
             X_comp50(end - N/4 + 1 : end) = 0;
             let f_axis_pad4 = (-N/2 : N/2 - 1) * (fs / N);
 

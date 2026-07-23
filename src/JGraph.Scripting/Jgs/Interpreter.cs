@@ -442,7 +442,9 @@ internal sealed class Interpreter
                         "'end' is only valid inside an index expression, like x(end).");
                 }
 
-                return JgsValue.Number(_indexTargetLengths[^1]);
+                // The stack holds target *lengths*; 'end' is the last valid *index*, and indexing is
+                // 0-based — so it is one less. Not a bug: x(end) must still be the last element.
+                return JgsValue.Number(_indexTargetLengths[^1] - 1);
 
             case AllExpr:
                 throw new JgsRuntimeException(expression.Line, expression.Column,
@@ -753,20 +755,15 @@ internal sealed class Interpreter
             return stored;
         }
 
-        // MATLAB paren-index write: x(k) = v, x(1:n) = 0, x(mask) = v, x(:) = v.
-        if (assign.Target is CallExpr paren)
+        // An index write in either spelling: x(k) = v, x[0:n] = 0, x(mask) = v, x[:] = v. The parser
+        // guarantees the only remaining target shapes are these two.
+        (Expr container, IReadOnlyList<Expr> subscripts) = assign.Target switch
         {
-            return AssignThroughParen(paren, assign.Op, rhs, assign, env);
-        }
+            CallExpr paren => (paren.Callee, paren.Arguments),
+            _ => (((IndexExpr)assign.Target).Target, ((IndexExpr)assign.Target).Indices),
+        };
 
-        // The parser guarantees the only other target shape is an array element.
-        var element = (IndexExpr)assign.Target;
-        (JgsValue container, int index) = ResolveElement(element, env);
-        JgsValue value = assign.Op == TokenType.Assign
-            ? rhs
-            : ApplyBinary(UnderlyingOp(assign.Op), container.ElementAt(index), rhs, assign);
-        WriteElement(container, index, value);
-        return value;
+        return AssignThroughIndex(container, subscripts, assign.Op, rhs, assign, env);
     }
 
     /// <summary>
@@ -810,26 +807,28 @@ internal sealed class Interpreter
     }
 
     /// <summary>
-    /// A 1-based paren-index write. The callee and the single index argument evaluate exactly once;
-    /// a scalar right-hand side broadcasts over the selection, an array right-hand side must match
-    /// its length. Compound operators apply per element.
+    /// An index write (0-based), shared by <c>a[…] = v</c> and <c>a(…) = v</c>. The target and its
+    /// single subscript evaluate exactly once, so <c>a[f(i)] += 1</c> calls <c>f</c> once; a scalar
+    /// right-hand side broadcasts over the selection, an array right-hand side must match its length.
+    /// Compound operators apply per element.
     /// </summary>
-    private JgsValue AssignThroughParen(CallExpr paren, TokenType op, JgsValue rhs, Node at, JgsEnvironment env)
+    private JgsValue AssignThroughIndex(
+        Expr target, IReadOnlyList<Expr> subscripts, TokenType op, JgsValue rhs, Node at, JgsEnvironment env)
     {
-        JgsValue callee = Evaluate(paren.Callee, env);
+        JgsValue callee = Evaluate(target, env);
         if (callee.Type != JgsType.Array)
         {
             throw new JgsRuntimeException(at.Line, at.Column,
-                $"Cannot assign into a {callee.TypeName} with paren indexing; the target must be an array.");
+                $"Cannot assign by index into a {callee.TypeName}; only arrays support element assignment.");
         }
 
-        if (paren.Arguments.Count != 1)
+        if (subscripts.Count != 1)
         {
             throw new JgsRuntimeException(at.Line, at.Column,
-                "Paren-index assignment takes exactly one index argument (an index, a range, a mask, or ':').");
+                "Index assignment takes exactly one subscript (an index, a range, a mask, or ':').");
         }
 
-        JgsValue? index = EvaluateIndexArgument(paren.Arguments[0], callee.ArrayLength, env);
+        JgsValue? index = EvaluateIndexArgument(subscripts[0], callee.ArrayLength, env);
 
         if (callee.IsPacked)
         {
@@ -857,7 +856,7 @@ internal sealed class Interpreter
         // Scalar index: single-element write, no picks array needed.
         if (index is { Type: not JgsType.Array })
         {
-            int single = ToIndex(index, array.Length, at.Line, at.Column, oneBased: true);
+            int single = ToIndex(index, array.Length, at.Line, at.Column);
             JgsValue stored = op == TokenType.Assign
                 ? rhs
                 : ApplyBinary(UnderlyingOp(op), array[single], rhs, at);
@@ -867,7 +866,7 @@ internal sealed class Interpreter
 
         int[] picks = index is null
             ? AllPicks(array.Length)
-            : ComputePicks(index, array.Length, oneBased: true, "array", at.Line, at.Column);
+            : ComputePicks(index, array.Length, "array", at.Line, at.Column);
 
         if (rhs.Type != JgsType.Array)
         {
@@ -928,7 +927,7 @@ internal sealed class Interpreter
                 return false;
             }
 
-            int single = ToIndex(index, buffer.Length, at.Line, at.Column, oneBased: true);
+            int single = ToIndex(index, buffer.Length, at.Line, at.Column);
             Span<double> span = buffer.AsSpan();
             double stored = simple
                 ? rhs.AsNumber
@@ -940,7 +939,7 @@ internal sealed class Interpreter
 
         int[] picks = index is null
             ? AllPicks(buffer.Length)
-            : ComputePicks(index, buffer.Length, oneBased: true, "array", at.Line, at.Column);
+            : ComputePicks(index, buffer.Length, "array", at.Line, at.Column);
 
         if (rhsPacked && rhs.ArrayLength != picks.Length)
         {
@@ -1020,7 +1019,7 @@ internal sealed class Interpreter
                 return false;
             }
 
-            int single = ToIndex(index, planes.Length, at.Line, at.Column, oneBased: true);
+            int single = ToIndex(index, planes.Length, at.Line, at.Column);
             System.Numerics.Complex written = rhs.AsComplex;
             planes.Re.AsSpan()[single] = written.Real;
             planes.Im.AsSpan()[single] = written.Imaginary;
@@ -1029,7 +1028,7 @@ internal sealed class Interpreter
 
         int[] picks = index is null
             ? AllPicks(planes.Length)
-            : ComputePicks(index, planes.Length, oneBased: true, "array", at.Line, at.Column);
+            : ComputePicks(index, planes.Length, "array", at.Line, at.Column);
 
         if (!rhsScalar && rhs.ArrayLength != picks.Length)
         {
@@ -1086,52 +1085,32 @@ internal sealed class Interpreter
             return incDec.Prefix ? updated : current;
         }
 
-        if (incDec.Target is CallExpr paren)
+        // x(k)++ / x[k]++ — one element of an array, in either spelling.
+        (Expr targetExpr, IReadOnlyList<Expr> subscripts) = incDec.Target switch
         {
-            JgsValue callee = Evaluate(paren.Callee, env);
-            if (callee.Type != JgsType.Array || paren.Arguments.Count != 1)
-            {
-                throw new JgsRuntimeException(incDec.Line, incDec.Column,
-                    $"'{symbol}' with paren indexing needs an array and a single index, like x(k){symbol}.");
-            }
+            CallExpr paren => (paren.Callee, paren.Arguments),
+            _ => (((IndexExpr)incDec.Target).Target, ((IndexExpr)incDec.Target).Indices),
+        };
 
-            JgsValue? parenIndex = EvaluateIndexArgument(paren.Arguments[0], callee.ArrayLength, env);
-            if (parenIndex is null || parenIndex.Type == JgsType.Array)
-            {
-                throw new JgsRuntimeException(incDec.Line, incDec.Column,
-                    $"'{symbol}' needs a single element, not a slice.");
-            }
-
-            int single = ToIndex(parenIndex, callee.ArrayLength, incDec.Line, incDec.Column, oneBased: true);
-            JgsValue previous = callee.ElementAt(single);
-            JgsValue bumped = JgsValue.Number(RequireIncDecNumber(previous, symbol, incDec) + delta);
-            WriteElement(callee, single, bumped);
-            return incDec.Prefix ? bumped : previous;
+        JgsValue container = Evaluate(targetExpr, env);
+        if (container.Type != JgsType.Array || subscripts.Count != 1)
+        {
+            throw new JgsRuntimeException(incDec.Line, incDec.Column,
+                $"'{symbol}' by index needs an array and a single index, like x(k){symbol}.");
         }
 
-        var element = (IndexExpr)incDec.Target;
-        (JgsValue container, int index) = ResolveElement(element, env);
-        JgsValue old = container.ElementAt(index);
-        JgsValue result = JgsValue.Number(RequireIncDecNumber(old, symbol, incDec) + delta);
-        WriteElement(container, index, result);
-        return incDec.Prefix ? result : old;
-    }
-
-    /// <summary>
-    /// Evaluates an element-assignment target exactly once: the container expression and the index
-    /// expression each evaluate a single time, so <c>a[f(i)] += 1</c> calls <c>f</c> once.
-    /// </summary>
-    private (JgsValue Container, int Index) ResolveElement(IndexExpr element, JgsEnvironment env)
-    {
-        JgsValue target = Evaluate(element.Target, env);
-        if (target.Type != JgsType.Array)
+        JgsValue? index = EvaluateIndexArgument(subscripts[0], container.ArrayLength, env);
+        if (index is null || index.Type == JgsType.Array)
         {
-            throw new JgsRuntimeException(element.Line, element.Column,
-                $"Cannot assign by index into a {target.TypeName}; only arrays support element assignment.");
+            throw new JgsRuntimeException(incDec.Line, incDec.Column,
+                $"'{symbol}' needs a single element, not a slice.");
         }
 
-        int index = ToIndex(Evaluate(element.Index, env), target.ArrayLength, element.Line, element.Column);
-        return (target, index);
+        int single = ToIndex(index, container.ArrayLength, incDec.Line, incDec.Column);
+        JgsValue previous = container.ElementAt(single);
+        JgsValue bumped = JgsValue.Number(RequireIncDecNumber(previous, symbol, incDec) + delta);
+        WriteElement(container, single, bumped);
+        return incDec.Prefix ? bumped : previous;
     }
 
     private static double RequireIncDecNumber(JgsValue value, string symbol, Node at)
@@ -1153,53 +1132,31 @@ internal sealed class Interpreter
     private static JgsRuntimeException NotDefined(string name, Node at) =>
         new(at.Line, at.Column, $"'{name}' is not defined. Declare it first with 'let'.");
 
+    /// <summary>Evaluates <c>target[…]</c>. Brackets never call: <c>f[x]</c> on a function is an error
+    /// even though <c>f(x)</c> would invoke it — that distinction is the two forms' only difference.</summary>
     private JgsValue EvaluateIndex(IndexExpr indexExpr, JgsEnvironment env)
     {
         JgsValue target = Evaluate(indexExpr.Target, env);
-        JgsValue index = Evaluate(indexExpr.Index, env);
-
-        if (target.Type is not (JgsType.Array or JgsType.String))
+        if (target.Type is not (JgsType.Array or JgsType.String or JgsType.Image))
         {
             throw new JgsRuntimeException(indexExpr.Line, indexExpr.Column,
-                $"Cannot index a {target.TypeName}.");
+                target.Type == JgsType.Function
+                    ? "Cannot index a function; call it with parentheses instead."
+                    : $"Cannot index a {target.TypeName}.");
         }
 
-        return GatherOrIndex(target, index, indexExpr.Line, indexExpr.Column);
+        return IndexInto(target, indexExpr.Indices, indexExpr, env);
     }
 
     private JgsValue EvaluateCall(CallExpr call, JgsEnvironment env)
     {
         JgsValue callee = Evaluate(call.Callee, env);
 
-        // MATLAB-style: "calling" an array (or string) with one argument is 1-based indexing —
-        // a scalar element lookup, a bool-mask filter, an index-array/range gather, 'end', or ':'.
-        if (callee.Type is JgsType.Array or JgsType.String)
+        // "Calling" an array, string, or image with subscripts is indexing, identical to the bracket
+        // form — a scalar lookup, a bool-mask filter, an index-array/range gather, 'end', or ':'.
+        if (callee.Type is JgsType.Array or JgsType.String or JgsType.Image)
         {
-            if (call.Arguments.Count != 1)
-            {
-                throw new JgsRuntimeException(call.Line, call.Column,
-                    $"Indexing a {callee.TypeName} takes exactly one argument (an index, an index array, or a mask).");
-            }
-
-            int length = callee.Type == JgsType.String ? callee.AsString.Length : callee.ArrayLength;
-            JgsValue? index = EvaluateIndexArgument(call.Arguments[0], length, env);
-            if (index is null)
-            {
-                // x(:) — everything, as a fresh array (or the string itself).
-                return callee.Type == JgsType.String ? callee
-                    : callee.IsPacked ? PackedOps.Clone(callee, _cancelCheck)
-                    : callee.IsPackedComplex ? PackedOps.CloneComplex(callee, _cancelCheck)
-                    : JgsValue.Array((JgsValue[])callee.AsArray.Clone());
-            }
-
-            return GatherOrIndex(callee, index, call.Line, call.Column, oneBased: true);
-        }
-
-        // MATLAB-style: "calling" an image with two or three subscripts reads one sample, 1-based —
-        // img(r, c) for grayscale, img(r, c, ch) for a colour channel.
-        if (callee.Type == JgsType.Image)
-        {
-            return IndexImage(callee, call, env);
+            return IndexInto(callee, call.Arguments, call, env);
         }
 
         if (callee.Type != JgsType.Function)
@@ -1216,53 +1173,84 @@ internal sealed class Interpreter
         return callee.AsCallable.Call(arguments, call.Line, call.Column);
     }
 
-    /// <summary>Reads one sample from an image value via 1-based <c>img(r, c)</c> / <c>img(r, c, ch)</c>.</summary>
-    private JgsValue IndexImage(JgsValue callee, CallExpr call, JgsEnvironment env)
+    /// <summary>
+    /// The one index read shared by <c>a[…]</c> and <c>a(…)</c>: an array or string takes a single
+    /// subscript (scalar, range, mask, ':' or 'end'), an image takes two or three.
+    /// </summary>
+    private JgsValue IndexInto(JgsValue target, IReadOnlyList<Expr> subscripts, Node at, JgsEnvironment env)
+    {
+        if (target.Type == JgsType.Image)
+        {
+            return IndexImage(target, subscripts, at, env);
+        }
+
+        if (subscripts.Count != 1)
+        {
+            throw new JgsRuntimeException(at.Line, at.Column,
+                $"Indexing a {target.TypeName} takes exactly one subscript (an index, an index array, or a mask).");
+        }
+
+        int length = target.Type == JgsType.String ? target.AsString.Length : target.ArrayLength;
+        JgsValue? index = EvaluateIndexArgument(subscripts[0], length, env);
+        if (index is null)
+        {
+            // x(:) — everything, as a fresh array (or the string itself).
+            return target.Type == JgsType.String ? target
+                : target.IsPacked ? PackedOps.Clone(target, _cancelCheck)
+                : target.IsPackedComplex ? PackedOps.CloneComplex(target, _cancelCheck)
+                : JgsValue.Array((JgsValue[])target.AsArray.Clone());
+        }
+
+        return GatherOrIndex(target, index, at.Line, at.Column);
+    }
+
+    /// <summary>Reads one sample from an image value via 0-based <c>img(r, c)</c> / <c>img(r, c, ch)</c>.</summary>
+    private JgsValue IndexImage(JgsValue callee, IReadOnlyList<Expr> subscripts, Node at, JgsEnvironment env)
     {
         JGraph.Imaging.ImageBuffer image = callee.AsImage;
-        if (call.Arguments.Count is not (2 or 3))
+        if (subscripts.Count is not (2 or 3))
         {
-            throw new JgsRuntimeException(call.Line, call.Column,
+            throw new JgsRuntimeException(at.Line, at.Column,
                 "Index an image with img(row, col) for grayscale or img(row, col, channel) for colour.");
         }
 
-        int row = ImageSubscript(call.Arguments[0], "row", call, env);
-        int col = ImageSubscript(call.Arguments[1], "column", call, env);
+        int row = ImageSubscript(subscripts[0], "row", at, env);
+        int col = ImageSubscript(subscripts[1], "column", at, env);
         int channel;
-        if (call.Arguments.Count == 3)
+        if (subscripts.Count == 3)
         {
-            channel = ImageSubscript(call.Arguments[2], "channel", call, env);
+            channel = ImageSubscript(subscripts[2], "channel", at, env);
         }
         else if (image.Channels == 1)
         {
-            channel = 1;
+            channel = 0;
         }
         else
         {
-            throw new JgsRuntimeException(call.Line, call.Column,
+            throw new JgsRuntimeException(at.Line, at.Column,
                 $"This image has {image.Channels} channels; read it with img(row, col, channel).");
         }
 
-        if ((uint)(row - 1) >= (uint)image.Height ||
-            (uint)(col - 1) >= (uint)image.Width ||
-            (uint)(channel - 1) >= (uint)image.Channels)
+        if ((uint)row >= (uint)image.Height ||
+            (uint)col >= (uint)image.Width ||
+            (uint)channel >= (uint)image.Channels)
         {
-            throw new JgsRuntimeException(call.Line, call.Column,
+            throw new JgsRuntimeException(at.Line, at.Column,
                 $"Image subscript ({row}, {col}, {channel}) is out of range for a " +
-                $"{image.Height}x{image.Width}x{image.Channels} image (1-based).");
+                $"{image.Height}x{image.Width}x{image.Channels} image (subscripts are 0-based).");
         }
 
-        double sample = image[row - 1, col - 1, channel - 1];
+        double sample = image[row, col, channel];
         GC.KeepAlive(image);
         return JgsValue.Number(sample);
     }
 
-    private int ImageSubscript(Expr expr, string name, CallExpr call, JgsEnvironment env)
+    private int ImageSubscript(Expr expr, string name, Node at, JgsEnvironment env)
     {
         JgsValue value = Evaluate(expr, env);
         if (value.Type != JgsType.Number)
         {
-            throw new JgsRuntimeException(call.Line, call.Column,
+            throw new JgsRuntimeException(at.Line, at.Column,
                 $"Image {name} subscript must be a number, not a {value.TypeName}.");
         }
 
@@ -1270,7 +1258,7 @@ internal sealed class Interpreter
         int rounded = (int)Math.Round(raw);
         if (rounded != raw)
         {
-            throw new JgsRuntimeException(call.Line, call.Column,
+            throw new JgsRuntimeException(at.Line, at.Column,
                 $"Image {name} subscript must be a whole number, not {raw.ToString(System.Globalization.CultureInfo.InvariantCulture)}.");
         }
 
@@ -1302,21 +1290,21 @@ internal sealed class Interpreter
     /// <summary>
     /// Resolves <c>target[index]</c> / <c>target(index)</c> for an array or string target: a scalar
     /// number selects one element; an all-bool array is a mask (must match the target's length); an
-    /// all-number array gathers by index — 0-based for brackets, 1-based for MATLAB parens
-    /// (<paramref name="oneBased"/>). Gathering a string yields a string.
+    /// all-number array gathers by index. Both spellings are 0-based (ADR 0028). Gathering a string
+    /// yields a string.
     /// </summary>
-    private static JgsValue GatherOrIndex(JgsValue target, JgsValue index, int line, int column, bool oneBased = false)
+    private static JgsValue GatherOrIndex(JgsValue target, JgsValue index, int line, int column)
     {
         bool isString = target.Type == JgsType.String;
         int length = isString ? target.AsString.Length : target.ArrayLength;
 
         if (index.Type != JgsType.Array)
         {
-            int single = ToIndex(index, length, line, column, oneBased);
+            int single = ToIndex(index, length, line, column);
             return isString ? JgsValue.Str(target.AsString[single].ToString()) : target.ElementAt(single);
         }
 
-        int[] picks = ComputePicks(index, length, oneBased, target.TypeName, line, column);
+        int[] picks = ComputePicks(index, length, target.TypeName, line, column);
         if (isString)
         {
             var sb = new StringBuilder(picks.Length);
@@ -1348,16 +1336,16 @@ internal sealed class Interpreter
     }
 
     /// <summary>Resolves an index array (a mask or a list of indices) to 0-based element positions.</summary>
-    private static int[] ComputePicks(JgsValue index, int length, bool oneBased, string targetName, int line, int column)
+    private static int[] ComputePicks(JgsValue index, int length, string targetName, int line, int column)
     {
         if (index.IsPacked)
         {
-            return PackedOps.PicksFromPacked(index, length, oneBased, targetName, line, column);
+            return PackedOps.PicksFromPacked(index, length, targetName, line, column);
         }
 
         if (index.IsPackedComplex)
         {
-            return PackedOps.PicksFromPackedComplex(index, length, oneBased, line, column);
+            return PackedOps.PicksFromPackedComplex(index, length, line, column);
         }
 
         JgsValue[] selector = index.AsArray;
@@ -1382,7 +1370,7 @@ internal sealed class Interpreter
         {
             foreach (JgsValue position in selector)
             {
-                picks.Add(ToIndex(position, length, line, column, oneBased));
+                picks.Add(ToIndex(position, length, line, column));
             }
         }
         else
@@ -1607,7 +1595,9 @@ internal sealed class Interpreter
         return value.AsComplex;
     }
 
-    private static int ToIndex(JgsValue index, int length, int line, int column, bool oneBased = false)
+    /// <summary>An index value as a 0-based element position. Both spellings — <c>a[i]</c> and
+    /// <c>a(i)</c> — share this one base (ADR 0028).</summary>
+    private static int ToIndex(JgsValue index, int length, int line, int column)
     {
         if (index.Type != JgsType.Number)
         {
@@ -1621,20 +1611,10 @@ internal sealed class Interpreter
         }
 
         int i = (int)raw;
-        if (oneBased)
-        {
-            if (i < 1 || i > length)
-            {
-                throw new JgsRuntimeException(line, column,
-                    $"Index {i} is out of range for length {length} (paren indexing is 1-based).");
-            }
-
-            return i - 1;
-        }
-
         if (i < 0 || i >= length)
         {
-            throw new JgsRuntimeException(line, column, $"Index {i} is out of range for length {length}.");
+            throw new JgsRuntimeException(line, column,
+                $"Index {i} is out of range for length {length} (indexing is 0-based).");
         }
 
         return i;

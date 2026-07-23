@@ -148,7 +148,7 @@ public static class JgsBuiltinCatalog
         // --- RF networks and transmission lines -------------------------------------------------
         Add("sparameters", "Reads a Touchstone (.sNp) file into an S-parameter network table.", P("path"));
         Add("rffreq", "The frequency points (Hz) of a network table.", P("net"));
-        Add("rfparam", "The (i, j) parameter of a network table across frequency, as a complex array (ports 1-based).", P("net"), P("i"), P("j"));
+        Add("rfparam", "The (i, j) parameter of a network table across frequency, as a complex array (port numbers, so 1-based: s11 is rfparam(net, 1, 1)).", P("net"), P("i"), P("j"));
         Add("s2z", "Converts an S-parameter network table to impedance (Z) parameters (1- or 2-port).", P("net"));
         Add("s2y", "Converts an S-parameter network table to admittance (Y) parameters (1- or 2-port).", P("net"));
         Add("s2abcd", "Converts a 2-port S-parameter network table to chain (ABCD) parameters.", P("net"));
@@ -189,7 +189,7 @@ public static class JgsBuiltinCatalog
         Add("imnoise", "Adds noise: 'gaussian' (variance) or 'salt & pepper' (density).", P("image"), Opt("type"), Opt("amount"));
         Add("imresize", "Resizes an image by a scale or to a [height, width]; 'nearest' or 'bilinear'.", P("image"), P("scaleOrSize"), Opt("method"));
         Add("imrotate", "Rotates an image counter-clockwise by degrees; options 'nearest'/'bilinear' and 'crop'/'loose'.", P("image"), P("degrees"), Opt("method"), Opt("bbox"));
-        Add("imcrop", "Crops the rectangle [x, y, width, height] (1-based) from an image.", P("image"), P("rect"));
+        Add("imcrop", "Crops the rectangle [x, y, width, height] (0-based origin) from an image.", P("image"), P("rect"));
         Add("imfilter", "Correlates an image with a kernel; boundary 'zero'/'replicate'/'symmetric'.", P("image"), P("kernel"), Opt("boundary"));
         Add("conv2", "2-D convolution of two matrices; shape 'full' (default), 'same', or 'valid'.", P("a"), P("b"), Opt("shape"));
         Add("medfilt2", "Median filter over an [m, n] window (default 3×3).", P("image"), Opt("window"));
@@ -203,13 +203,13 @@ public static class JgsBuiltinCatalog
         Add("imopen", "Morphological opening (erode then dilate).", P("image"), Opt("element"));
         Add("imclose", "Morphological closing (dilate then erode).", P("image"), Opt("element"));
         Add("hough", "Hough line transform of a binary image: [accumulator, theta, rho].", P("image"));
-        Add("houghpeaks", "The strongest peaks of a Hough accumulator, as 1-based [rhoIndex, thetaIndex] rows.", P("accumulator"), Opt("count"), Opt("threshold"));
+        Add("houghpeaks", "The strongest peaks of a Hough accumulator, as 0-based [rhoIndex, thetaIndex] rows; pass base 1 for MATLAB numbering.", P("accumulator"), Opt("count"), Opt("threshold"), Opt("base"));
         Add("houghlines", "Line segments for the given Hough peaks, as a table of endpoints with Theta and Rho.", P("image"), P("theta"), P("rho"), P("peaks"), Opt("fillGap"), Opt("minLength"));
         Add("imfill","Fills holes in a binary image — background not reachable from the border becomes foreground.", P("image"), Opt("mode"));
         Add("bwareaopen", "Removes connected components smaller than minArea pixels from a binary image; connectivity 4 or 8 (default 8).", P("image"), P("minArea"), Opt("connectivity"));
         Add("bwlabel","Labels connected components of a binary image: [labels, count]; connectivity 4 or 8 (default 8).", P("image"), Opt("connectivity"));
-        Add("regionprops", "Per-region Area/Centroid/BoundingBox of a label or binary image, as a table; an intensity image adds MeanIntensity and WeightedCentroid.", P("labels"), Opt("intensity"));
-        Add("imcentroid", "The intensity-weighted centre [x, y] of a whole image (1-based), optionally weighing only what a mask keeps.", P("image"), Opt("mask"));
+        Add("regionprops", "Per-region Area/Centroid/BoundingBox of a label or binary image, as a table (0-based pixel coordinates); an intensity image adds MeanIntensity and WeightedCentroid.", P("labels"), Opt("intensity"));
+        Add("imcentroid", "The intensity-weighted centre [x, y] of a whole image (0-based pixel coordinates), optionally weighing only what a mask keeps.", P("image"), Opt("mask"));
 
         // --- Reductions and inspection ----------------------------------------------------------
         Add("length", "The number of elements in an array, or characters in a string.", P("value"));
@@ -232,7 +232,7 @@ public static class JgsBuiltinCatalog
         // --- Array operations ---------------------------------------------------------------------
         Add("sort", "A sorted copy of a numeric or string array; order \"asc\" (default) or \"desc\".", P("array"), Opt("order"));
         Add("unique", "The sorted distinct values of a numeric or string array.", P("array"));
-        Add("find", "1-based indices of the truthy elements — volt(find(temp > 85)) gathers the matches.", P("mask"));
+        Add("find", "0-based indices of the truthy elements — volt(find(temp > 85)) gathers the matches; pass base 1 for MATLAB numbering.", P("mask"), Opt("base"));
         Add("any", "Whether at least one element is truthy.", P("array"));
         Add("all", "Whether every element is truthy.", P("array"));
         Add("concat", "One array from arrays and scalars, in order: concat(a, b), concat(a, 5).", P("first"), P("second"));
@@ -274,8 +274,8 @@ public static class JgsBuiltinCatalog
         Add("print", "Writes the values to the console, space-separated.", P("values"));
 
         // --- Figure setup and plotting -------------------------------------------------------------
-        Add("figure", "Starts a new figure (or selects figure n) and returns its 1-based handle.", Opt("n"));
-        Add("subplot", "Selects cell index (1-based, row-major) of a rows-by-cols axes grid.", P("rows"), P("cols"), P("index"));
+        Add("figure", "Starts a new figure (or selects figure n) and returns its handle (a figure number, so it starts at 1).", Opt("n"));
+        Add("subplot", "Selects cell index of a rows-by-cols axes grid (a grid cell number, so 1-based, row-major).", P("rows"), P("cols"), P("index"));
         Add("plot", "Line plot: plot(y), plot(x, y, spec?), or plot(table, xColumn, yColumn, spec?).", P("x"), P("y"), Opt("spec"));
         Add("scatter", "Scatter plot: scatter(x, y) or scatter(table, xColumn, yColumn).", P("x"), P("y"));
         Add("bar", "Bar chart: bar(x, y) or bar(table, xColumn, yColumn).", P("x"), P("y"));

@@ -94,7 +94,7 @@ public static class Regions
     /// Measures Area, Centroid, and BoundingBox for each labeled region. When an
     /// <paramref name="intensity"/> image is supplied (grayscale, same height and width as the label
     /// map) each region also gets its MeanIntensity and its intensity-weighted centroid
-    /// (MATLAB <c>WeightedCentroid</c>): the sample-weighted mean of the 1-based pixel coordinates.
+    /// (MATLAB <c>WeightedCentroid</c>): the sample-weighted mean of the 0-based pixel coordinates.
     /// </summary>
     /// <param name="labels">The label map, 0 = background.</param>
     /// <param name="count">The number of labeled regions.</param>
@@ -172,16 +172,17 @@ public static class Regions
             // silently reporting the geometric one.
             (double mean, double wx, double wy) = intensity is null || weight[i] == 0
                 ? (double.NaN, double.NaN, double.NaN)
-                : (weight[i] / area[i], (weightedX[i] / weight[i]) + 1, (weightedY[i] / weight[i]) + 1);
+                : (weight[i] / area[i], weightedX[i] / weight[i], weightedY[i] / weight[i]);
 
-            // Centroid is 1-based (MATLAB); bounding box starts half a pixel before the first pixel.
+            // Coordinates are 0-based, like every other index in this library; the bounding box still
+            // starts half a pixel before the first pixel, so pixel 0 spans -0.5 to 0.5.
             result[i - 1] = new RegionProperty(
                 i,
                 area[i],
-                (sumX[i] / area[i]) + 1,
-                (sumY[i] / area[i]) + 1,
-                minX[i] + 0.5,
-                minY[i] + 0.5,
+                sumX[i] / area[i],
+                sumY[i] / area[i],
+                minX[i] - 0.5,
+                minY[i] - 0.5,
                 maxX[i] - minX[i] + 1,
                 maxY[i] - minY[i] + 1,
                 mean,
@@ -194,7 +195,7 @@ public static class Regions
 
     /// <summary>
     /// The intensity-weighted centre of a whole grayscale image: the sample-weighted mean of the
-    /// 1-based pixel coordinates, <c>Σ(x·w) / Σw</c>. Unlike <see cref="Measure"/> this ignores
+    /// 0-based pixel coordinates, <c>Σ(x·w) / Σw</c>. Unlike <see cref="Measure"/> this ignores
     /// connectivity entirely — every nonzero sample pulls on the result — which is what a
     /// centre-of-mass estimate over a thresholded (masked) image means. Zero out the background
     /// first; a sample of 0 contributes nothing.
@@ -227,7 +228,7 @@ public static class Regions
             throw new ArgumentException("The weight image has no positive samples.", nameof(weights));
         }
 
-        return ((sumX / total) + 1, (sumY / total) + 1);
+        return (sumX / total, sumY / total);
     }
 
     /// <summary>

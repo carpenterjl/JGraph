@@ -76,7 +76,7 @@ public class JgsTimeBuiltinTests : IDisposable
     {
         ScriptRunResult result = await Run("""
             let c = clock();
-            print(c(1))
+            print(c(0))
             """);
 
         Assert.True(result.Success, result.Message);

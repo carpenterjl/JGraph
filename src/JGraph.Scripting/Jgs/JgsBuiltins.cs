@@ -739,7 +739,13 @@ internal static partial class JgsBuiltins
 
         Define("find", (args, line, col) =>
         {
-            Arity("find", args, 1, line, col);
+            ArityRange("find", args, 1, 2, line, col);
+
+            // Indices are 0-based like everything else (ADR 0028). find(mask, 1) numbers them from 1
+            // instead — the escape hatch for a ported MATLAB script, where 0-based results would be
+            // silently off by one rather than erroring.
+            int origin = args.Count == 2 ? IndexOrigin("find", args, 1, line, col) : 0;
+
             if (args[0].Type == JgsType.Array && args[0].IsPacked)
             {
                 // Nonzero is truthy for numbers and bools alike (NaN != 0 is true) — same as IsTruthy.
@@ -749,7 +755,7 @@ internal static partial class JgsBuiltins
                 {
                     if (span[i] != 0)
                     {
-                        found.Add(i + 1); // 1-based, pairing with MATLAB paren indexing
+                        found.Add(i + origin);
                     }
                 }
 
@@ -762,7 +768,7 @@ internal static partial class JgsBuiltins
             {
                 if (elements[i].IsTruthy)
                 {
-                    indices.Add(JgsValue.Number(i + 1)); // 1-based, pairing with MATLAB paren indexing
+                    indices.Add(JgsValue.Number(i + origin));
                 }
             }
 
@@ -2301,6 +2307,22 @@ internal static partial class JgsBuiltins
         {
             throw new JgsRuntimeException(line, col, $"{name} expects between {min} and {max} argument(s), but got {args.Count}.");
         }
+    }
+
+    /// <summary>
+    /// Reads an optional index-base argument: 0 (the JGS default) or 1 (MATLAB numbering). Only these
+    /// two are accepted — an arbitrary offset would be a silent way to produce nonsense indices.
+    /// </summary>
+    internal static int IndexOrigin(string name, IReadOnlyList<JgsValue> args, int index, int line, int col)
+    {
+        double raw = Num(name, args, index, line, col);
+        if (raw is not (0 or 1))
+        {
+            throw new JgsRuntimeException(line, col,
+                $"{name}: the index base must be 0 (the default) or 1, not {raw.ToString(CultureInfo.InvariantCulture)}.");
+        }
+
+        return (int)raw;
     }
 
     private static double Num(string name, IReadOnlyList<JgsValue> args, int index, int line, int col)

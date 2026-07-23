@@ -5,13 +5,13 @@ namespace JGraph.Imaging;
 /// and segment extraction — MATLAB's <c>hough</c>, <c>houghpeaks</c>, and <c>houghlines</c>.
 /// </summary>
 /// <remarks>
-/// A pixel at 1-based (x, y) votes for every line satisfying <c>rho = x·cos θ + y·sin θ</c>. Theta runs
+/// A pixel at 0-based (x, y) votes for every line satisfying <c>rho = x·cos θ + y·sin θ</c>. Theta runs
 /// over −90°…89° in 1° steps and rho over −D…D in 1-pixel steps, where D is the image diagonal, so the
 /// accumulator is indexed [rho, theta] exactly as MATLAB's is.
 /// </remarks>
 public static class HoughTransform
 {
-    /// <summary>One extracted line segment (MATLAB <c>houghlines</c>), with 1-based endpoints.</summary>
+    /// <summary>One extracted line segment (MATLAB <c>houghlines</c>), with 0-based endpoints.</summary>
     public readonly record struct LineSegment(
         double Point1X, double Point1Y, double Point2X, double Point2Y, double Theta, double Rho);
 
@@ -59,8 +59,8 @@ public static class HoughTransform
                     continue;
                 }
 
-                double x = c + 1;
-                double y = r + 1;
+                double x = c;
+                double y = r;
                 for (int t = 0; t < 180; t++)
                 {
                     int index = (int)Math.Round((x * cos[t]) + (y * sin[t])) + diagonal;
@@ -197,8 +197,8 @@ public static class HoughTransform
                         continue;
                     }
 
-                    double x = c + 1;
-                    double y = r + 1;
+                    double x = c;
+                    double y = r;
                     if (Math.Round((x * cos) + (y * sin)) == target)
                     {
                         points.Add(((x * -sin) + (y * cos), x, y));

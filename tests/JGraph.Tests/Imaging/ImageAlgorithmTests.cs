@@ -159,11 +159,11 @@ public class ImageAlgorithmTests
             }
         }
 
-        using ImageBuffer cropped = Geometry.Crop(image, x: 2, y: 2, width: 2, height: 2);
+        using ImageBuffer cropped = Geometry.Crop(image, x: 1, y: 1, width: 2, height: 2);
         image.Dispose();
         Assert.Equal(2, cropped.Height);
         Assert.Equal(2, cropped.Width);
-        // rect starts at 1-based (col 2, row 2) → 0-based (1,1) → value (1*4+1)/16 = 5/16
+        // rect starts at (col 1, row 1) — 0-based, like every other index → value (1*4+1)/16 = 5/16
         Assert.Equal(5 / 16.0, cropped[0, 0, 0], 6);
     }
 

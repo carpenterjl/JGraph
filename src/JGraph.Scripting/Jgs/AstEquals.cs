@@ -110,17 +110,33 @@ internal static class AstEquals
                 x.Op == y.Op && ExpressionsEqual(x.Left, y.Left) && ExpressionsEqual(x.Right, y.Right),
             (LogicalExpr x, LogicalExpr y) =>
                 x.Op == y.Op && ExpressionsEqual(x.Left, y.Left) && ExpressionsEqual(x.Right, y.Right),
-            (CallExpr x, CallExpr y) =>
-                ExpressionsEqual(x.Callee, y.Callee)
-                && x.Arguments.Count == y.Arguments.Count
-                && !x.Arguments.Where((e, i) => !ExpressionsEqual(e, y.Arguments[i])).Any(),
-            (IndexExpr x, IndexExpr y) => ExpressionsEqual(x.Target, y.Target) && ExpressionsEqual(x.Index, y.Index),
+            (CallExpr x, CallExpr y) => ExpressionsEqual(x.Callee, y.Callee) && ListsEqual(x.Arguments, y.Arguments),
+            (IndexExpr x, IndexExpr y) => ExpressionsEqual(x.Target, y.Target) && ListsEqual(x.Indices, y.Indices),
             (AssignExpr x, AssignExpr y) =>
                 x.Op == y.Op && ExpressionsEqual(x.Target, y.Target) && ExpressionsEqual(x.Value, y.Value),
             (IncDecExpr x, IncDecExpr y) =>
                 x.Increment == y.Increment && x.Prefix == y.Prefix && ExpressionsEqual(x.Target, y.Target),
             _ => false,
         };
+    }
+
+    /// <summary>Whether two argument/subscript lists match element by element.</summary>
+    private static bool ListsEqual(IReadOnlyList<Expr> a, IReadOnlyList<Expr> b)
+    {
+        if (a.Count != b.Count)
+        {
+            return false;
+        }
+
+        for (int i = 0; i < a.Count; i++)
+        {
+            if (!ExpressionsEqual(a[i], b[i]))
+            {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     /// <summary>Whether two statements match apart from their nested blocks (same kind, same

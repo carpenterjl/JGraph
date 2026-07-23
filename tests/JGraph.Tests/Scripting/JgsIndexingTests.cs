@@ -56,7 +56,7 @@ public class JgsIndexingTests : IDisposable
     {
         ScriptRunResult result = await Run("""
             let a = [10, 20, 30]
-            print(a([3, 1, 1]))
+            print(a([2, 0, 0]))
             print(a[[1, 2]])
             """);
 
@@ -71,7 +71,7 @@ public class JgsIndexingTests : IDisposable
         ScriptRunResult result = await Run("""
             let a = [10, 20, 30];
             print(a[1])
-            print(a(2))
+            print(a(1))
             """);
 
         Assert.True(result.Success, result.Message);
@@ -83,7 +83,7 @@ public class JgsIndexingTests : IDisposable
     {
         ScriptRunResult result = await Run("""
             let s = "abcdef"
-            print(s([1, 3, 5]))
+            print(s([0, 2, 4]))
             print(s[[true, true, false, false, false, true]])
             """);
 
@@ -116,7 +116,7 @@ public class JgsIndexingTests : IDisposable
         ScriptRunResult result = await Run("print([1, 2, 3](1, 2))");
 
         Assert.False(result.Success);
-        Assert.Contains("exactly one argument", Assert.Single(result.Diagnostics).Message);
+        Assert.Contains("exactly one subscript", Assert.Single(result.Diagnostics).Message);
     }
 
     [Fact]
@@ -141,7 +141,66 @@ public class JgsIndexingTests : IDisposable
             """);
 
         Assert.True(result.Success, result.Message);
-        Assert.Contains("[2, 4]", _output.NormalText); // find is 1-based since M21
+        Assert.Contains("[1, 3]", _output.NormalText); // find is 0-based, matching both index spellings
         Assert.Contains("[3.2, 3.4]", _output.NormalText);
+    }
+
+    [Fact]
+    public async Task Brackets_TakeEverythingParensDo_EndColonRangesAndMasks()
+    {
+        // The two spellings are one indexing form with two skins; anything legal in parens is legal
+        // in brackets and means the same thing.
+        ScriptRunResult result = await Run("""
+            let a = [10, 20, 30, 40];
+            print(a[end]);
+            print(a[1:2]);
+            print(a[:]);
+            print(a[[false, true, false, true]]);
+            """);
+
+        Assert.True(result.Success, result.Message);
+        Assert.Equal(
+            "40\n[20, 30]\n[10, 20, 30, 40]\n[20, 40]",
+            _output.NormalText.Trim().Replace("\r", string.Empty));
+    }
+
+    [Fact]
+    public async Task BracketWrite_AcceptsSlicesAndMasks_LikeTheParenForm()
+    {
+        ScriptRunResult result = await Run("""
+            let a = [1, 2, 3, 4, 5];
+            a[1:2] = 0;
+            a[[true, false, false, false, true]] = 9;
+            print(a);
+
+            let b = [1, 2, 3];
+            b[end] += 10;
+            print(b);
+            """);
+
+        Assert.True(result.Success, result.Message);
+        Assert.Equal("[9, 0, 0, 4, 9]\n[1, 2, 13]", _output.NormalText.Trim().Replace("\r", string.Empty));
+    }
+
+    [Fact]
+    public async Task Brackets_DoNotCall_EvenThoughParensWould()
+    {
+        // The one thing that still distinguishes the two forms: f(x) invokes, f[x] does not.
+        ScriptRunResult result = await Run("""
+            fn double(x) { return x * 2 }
+            print(double[3])
+            """);
+
+        Assert.False(result.Success);
+        Assert.Contains("Cannot index a function", Assert.Single(result.Diagnostics).Message);
+    }
+
+    [Fact]
+    public async Task OutOfRangeIndex_SaysWhichBaseItMeant()
+    {
+        ScriptRunResult result = await Run("let a = [1, 2, 3];\nprint(a(3))");
+
+        Assert.False(result.Success);
+        Assert.Contains("indexing is 0-based", Assert.Single(result.Diagnostics).Message);
     }
 }

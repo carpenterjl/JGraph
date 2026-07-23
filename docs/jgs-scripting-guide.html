@@ -285,33 +285,34 @@
 
     <h2 id="arrays">Arrays &amp; indexing</h2>
     <p>Arrays are the workhorse. Build them with a literal, a colon range (<code>2:6</code>), or a constructor (<code>linspace</code>, <code>range</code>, <code>zeros</code>, <code>ones</code>, <code>rand</code>), then transform them with math and the array builtins.</p>
-    <p><strong>Two indexing forms with two bases:</strong> square brackets are 0-based (the original JGS form); parentheses are <strong>1-based</strong>, and support <code>end</code>, colon slices, and slice assignment:</p>
+    <p><strong>Indexing is 0-based, in two interchangeable spellings.</strong> <code>a[i]</code> and <code>a(i)</code> mean exactly the same thing and both support <code>end</code>, colon slices, masks, gathers, and slice assignment:</p>
     <pre><code><span class="kw">let</span> a = [<span class="num">10</span>, <span class="num">20</span>, <span class="num">30</span>, <span class="num">40</span>]
-a[<span class="num">0</span>]          <span class="com"># 10  — brackets: 0-based</span>
-a(<span class="num">1</span>)          <span class="com"># 10  — parens: 1-based</span>
-a(<span class="kw">end</span>)        <span class="com"># 40  — 'end' is the last index (parens only)</span>
-a(<span class="num">2</span>:<span class="kw">end</span>)      <span class="com"># [20, 30, 40] — colon slice</span>
-a(:)          <span class="com"># everything, as a copy</span>
-a(<span class="num">2</span>) = <span class="num">99</span>     <span class="com"># element write → [10, 99, 30, 40]</span>
-a(<span class="num">1</span>:<span class="num">2</span>) = <span class="num">0</span>    <span class="com"># slice write, scalar broadcasts → [0, 0, 30, 40]</span>
+a[<span class="num">0</span>]          <span class="com"># 10  — the first element</span>
+a(<span class="num">0</span>)          <span class="com"># 10  — same thing, other spelling</span>
+a[<span class="kw">end</span>]        <span class="com"># 40  — 'end' is the last index, i.e. length - 1</span>
+a(<span class="num">1</span>:<span class="kw">end</span>)      <span class="com"># [20, 30, 40] — colon slice</span>
+a[:]          <span class="com"># everything, as a copy</span>
+a(<span class="num">1</span>) = <span class="num">99</span>     <span class="com"># element write → [10, 99, 30, 40]</span>
+a[<span class="num">0</span>:<span class="num">1</span>] = <span class="num">0</span>    <span class="com"># slice write, scalar broadcasts → [0, 0, 30, 40]</span>
 <span class="fn">length</span>(a)     <span class="com"># 4</span></code></pre>
-    <p>Both forms also accept an <em>array of indices</em> to gather several elements at once (1-based in parens, 0-based in brackets), and strings can be indexed the same way (you get back a string):</p>
-    <pre><code>a([<span class="num">1</span>, <span class="num">4</span>])   <span class="com"># [10, 40]  — paren gather (1-based), pairs with find()</span></code></pre>
-    <div class="callout"><strong>Note:</strong> bracket assignment is single-element only (<code>a[i] = v</code>); slice writes need the paren form. There is no member access (<code>obj.field</code>). Colon slices work only inside parens — elsewhere <code>a:b</code> is a free-standing range value.</div>
+    <p>Both forms also accept an <em>array of indices</em> to gather several elements at once, and strings can be indexed the same way (you get back a string):</p>
+    <pre><code>a([<span class="num">0</span>, <span class="num">3</span>])   <span class="com"># [10, 40]  — a gather, pairs with find()</span></code></pre>
+    <div class="callout"><strong>The one difference between the spellings:</strong> <code>f(x)</code> calls a function, <code>f[x]</code> does not — so brackets are the unambiguous way to say "index this". There is no member access (<code>obj.field</code>). Colon slices work only inside an index — elsewhere <code>a:b</code> is a free-standing range value.</div>
+    <div class="callout"><strong>Porting from MATLAB?</strong> Every index drops by one: <code>x(1)</code> becomes <code>x(0)</code>, <code>x(1:n)</code> becomes <code>x(0:n-1)</code>, and a <code>for k = 2:N</code> accumulator loop becomes <code>for k = 1:N-1</code>. Expressions written against <code>end</code> usually survive untouched, because <code>end</code> shifts down with them. <code>find(mask, 1)</code> restores MATLAB numbering where you would rather not rewrite the call site.</div>
 
     <h2 id="masks">Masks &amp; logical indexing</h2>
     <p>This is the heart of JGS analysis. A comparison over an array yields a <strong>mask</strong> — a bool array of the same length. Index an array with a mask to keep only the elements where the mask is <code>true</code>:</p>
     <pre><code><span class="kw">let</span> temp = <span class="fn">column</span>(t, <span class="str">"Temperature"</span>)
 <span class="kw">let</span> hotOnes = temp(temp &gt; <span class="num">85</span>)   <span class="com"># keep readings above 85 (paren or bracket form)</span></code></pre>
     <p>Masks align across columns, which is what makes "filter the whole dataset by a condition" work. <code>find</code> turns a mask into the matching <strong>row indices</strong>, and those indices map back to <em>every</em> column of the original data — row 3 of one derived array is the same record as row 3 of another:</p>
-    <pre><code><span class="kw">let</span> hot     = <span class="fn">find</span>(temp &gt; <span class="num">85</span>)   <span class="com"># 1-based row numbers where the condition holds</span>
+    <pre><code><span class="kw">let</span> hot     = <span class="fn">find</span>(temp &gt; <span class="num">85</span>)   <span class="com"># row numbers (0-based) where the condition holds</span>
 <span class="kw">let</span> hotIds  = ids(hot)              <span class="com"># the serial numbers of those same rows</span>
 <span class="kw">let</span> hotVolt = volt(hot)              <span class="com"># and their voltages — all still aligned</span></code></pre>
-    <div class="callout"><strong>Since M21, <code>find</code> is 1-based</strong>, pairing with paren indexing — always gather <code>find</code> results with parens (<code>volt(hot)</code>), never brackets.</div>
+    <div class="callout"><strong><code>find</code> returns 0-based indices</strong>, so its result gathers directly in either spelling — <code>volt(hot)</code> and <code>volt[hot]</code> are the same. Pass a base of 1 (<code>find(mask, 1)</code>) when you want MATLAB's numbering for a report or a ported script.</div>
     <table>
       <thead><tr><th>Index value</th><th>Behavior</th></tr></thead>
       <tbody>
-        <tr><td>a single number</td><td>Returns that one element (1-based in parens, 0-based in brackets).</td></tr>
+        <tr><td>a single number</td><td>Returns that one element (0-based, in either spelling).</td></tr>
         <tr><td>a <strong>bool array</strong> (mask)</td><td>Filters — keeps elements where the mask is <code>true</code>. The mask length must equal the array length.</td></tr>
         <tr><td>a <strong>number array</strong></td><td>Gathers — returns those elements in that order (great with <code>find</code>).</td></tr>
       </tbody>
@@ -383,7 +384,7 @@ m[<span class="num">1</span>][<span class="num">0</span>]                       
       <tbody>
         <tr><td class="sig"><code><span class="fn">figure</span>()</code></td><td>Start a new figure and make it current. Returns its number (1, 2, 3, …).</td></tr>
         <tr><td class="sig"><code><span class="fn">figure</span>(<span class="num">2</span>)</code></td><td>Select figure 2 (creating it if needed) and make it current — the way to switch between figures.</td></tr>
-        <tr><td class="sig"><code><span class="fn">subplot</span>(<span class="num">2</span>,<span class="num">1</span>,<span class="num">1</span>)</code></td><td>Split the figure into a 2×1 grid and select cell 1 (<strong>1-based</strong>, row-major) as the current axes.</td></tr>
+        <tr><td class="sig"><code><span class="fn">subplot</span>(<span class="num">2</span>,<span class="num">1</span>,<span class="num">1</span>)</code></td><td>Split the figure into a 2×1 grid and select cell 1 (a grid cell <em>number</em>, so it starts at 1, row-major) as the current axes.</td></tr>
         <tr><td class="sig"><code><span class="fn">hold</span>(<span class="kw">true</span>)</code></td><td>Keep existing series when plotting more, so multiple <code>plot</code> calls overlay on one axes. <code>hold(false)</code> replaces.</td></tr>
         <tr><td class="sig"><code><span class="fn">show</span>()</code></td><td>Open (or refresh) a window for the current figure. <code>show(2)</code> shows figure 2.</td></tr>
       </tbody>
@@ -473,7 +474,7 @@ m[<span class="num">1</span>][<span class="num">0</span>]                       
       <tbody>
         <tr><td class="sig"><code><span class="fn">sort</span>(array, <span class="opt">order</span>)</code></td><td>Sorted copy of a numeric or string array. <code>order</code> is <code>"asc"</code> (default) or <code>"desc"</code>.</td></tr>
         <tr><td class="sig"><code><span class="fn">unique</span>(array)</code></td><td>Sorted distinct values — the way to build a list of unique IDs.</td></tr>
-        <tr><td class="sig"><code><span class="fn">find</span>(mask)</code></td><td>1-based indices of the truthy elements — gather them with parens: <code>volt(find(temp &gt; 85))</code>.</td></tr>
+        <tr><td class="sig"><code><span class="fn">find</span>(mask)</code></td><td>0-based indices of the truthy elements — <code>volt(find(temp &gt; 85))</code> gathers the matches. Pass a base of 1 for MATLAB numbering.</td></tr>
         <tr><td class="sig"><code><span class="fn">any</span>(array)</code> <code><span class="fn">all</span>(array)</code></td><td>Whether at least one / every element is truthy.</td></tr>
         <tr><td class="sig"><code><span class="fn">concat</span>(first, second, ...)</code></td><td>Join arrays and scalars into one array, in order. <code>concat(a, b)</code>, <code>concat(a, 5)</code>.</td></tr>
         <tr><td class="sig"><code><span class="fn">slice</span>(array, start, <span class="opt">stop</span>)</code></td><td>Elements [start, stop) by 0-based index; <code>stop</code> defaults to the end. Sub-array "from row 75 on" = <code>slice(a, 75)</code>.</td></tr>
@@ -540,8 +541,8 @@ m[<span class="num">1</span>][<span class="num">0</span>]                       
         <tr><td class="sig"><code><span class="fn">xlim</span>(min, max)</code> <code><span class="fn">ylim</span>(min, max)</code></td><td>Set the axis ranges — two numbers or one <code>[min, max]</code> array (<code>xlim([-fs/2, fs/2])</code>).</td></tr>
         <tr><td class="sig"><code><span class="fn">grid</span>(<span class="opt">on</span>)</code> <code><span class="fn">hold</span>(<span class="opt">on</span>)</code></td><td>Toggle grid lines / overlay-mode. Both default to on when called with no argument.</td></tr>
         <tr><td class="sig"><code><span class="fn">legend</span>(names...)</code></td><td>Set the legend — one string per series.</td></tr>
-        <tr><td class="sig"><code><span class="fn">figure</span>(<span class="opt">n</span>)</code></td><td>Start a new figure (or select figure <code>n</code>) and return its 1-based handle.</td></tr>
-        <tr><td class="sig"><code><span class="fn">subplot</span>(rows, cols, index)</code></td><td>Select cell <code>index</code> (1-based, row-major) of a <code>rows</code>×<code>cols</code> grid as the current axes.</td></tr>
+        <tr><td class="sig"><code><span class="fn">figure</span>(<span class="opt">n</span>)</code></td><td>Start a new figure (or select figure <code>n</code>) and return its handle (a figure <em>number</em>, so it starts at 1).</td></tr>
+        <tr><td class="sig"><code><span class="fn">subplot</span>(rows, cols, index)</code></td><td>Select cell <code>index</code> (a grid cell number, so 1-based, row-major) of a <code>rows</code>×<code>cols</code> grid as the current axes.</td></tr>
         <tr><td class="sig"><code><span class="fn">show</span>(<span class="opt">fig</span>)</code></td><td>Show the current figure (or figure <code>fig</code>) in its own window.</td></tr>
       </tbody>
     </table></div>
@@ -622,7 +623,7 @@ m[<span class="num">1</span>][<span class="num">0</span>]                       
     </table></div>
 
     <h3 id="ref-rf">RF &amp; transmission lines</h3>
-    <p>A curated RF and RF-PCB core: read Touchstone (<code>.sNp</code>) files, convert between S / Z / Y / ABCD parameters, cascade 2-ports, and plot on rectangular or Smith charts — plus closed-form microstrip and stripline calculators. An S-parameter <strong>network</strong> is carried as a table (a <code>freq</code> column in Hz, per-pair <code>s11_re</code>/<code>s11_im</code>… columns, and a constant <code>z0</code>), so <code>rowcount</code>, <code>colnames</code>, and the Data Viewer all work on it; read a parameter across frequency with <code>rfparam</code> (1-based ports).</p>
+    <p>A curated RF and RF-PCB core: read Touchstone (<code>.sNp</code>) files, convert between S / Z / Y / ABCD parameters, cascade 2-ports, and plot on rectangular or Smith charts — plus closed-form microstrip and stripline calculators. An S-parameter <strong>network</strong> is carried as a table (a <code>freq</code> column in Hz, per-pair <code>s11_re</code>/<code>s11_im</code>… columns, and a constant <code>z0</code>), so <code>rowcount</code>, <code>colnames</code>, and the Data Viewer all work on it; read a parameter across frequency with <code>rfparam</code> (port <em>numbers</em>, so s11 is <code>rfparam(net, 1, 1)</code>).</p>
     <pre><code><span class="kw">let</span> net = <span class="fn">sparameters</span>(<span class="str">'amp.s2p'</span>)   <span class="com"># read a 2-port</span>
 <span class="fn">rfplot</span>(net, <span class="num">2</span>, <span class="num">1</span>)                <span class="com"># |S21| in dB vs frequency</span>
 <span class="fn">smithplot</span>(net, <span class="num">1</span>, <span class="num">1</span>)             <span class="com"># S11 locus on a Smith chart</span>
@@ -633,7 +634,7 @@ m[<span class="num">1</span>][<span class="num">0</span>]                       
       <thead><tr><th>Signature</th><th>Description</th></tr></thead>
       <tbody>
         <tr><td class="sig"><code><span class="fn">sparameters</span>(path)</code></td><td>Read a Touchstone (<code>.sNp</code>) file into an S-parameter network table.</td></tr>
-        <tr><td class="sig"><code><span class="fn">rffreq</span>(net)</code> · <code><span class="fn">rfparam</span>(net, i, j)</code></td><td>The frequency points (Hz), and the (i, j) parameter across frequency as a complex array (ports 1-based).</td></tr>
+        <tr><td class="sig"><code><span class="fn">rffreq</span>(net)</code> · <code><span class="fn">rfparam</span>(net, i, j)</code></td><td>The frequency points (Hz), and the (i, j) parameter across frequency as a complex array (port numbers, so s11 is <code>rfparam(net, 1, 1)</code>).</td></tr>
         <tr><td class="sig"><code><span class="fn">s2z</span>(net)</code> · <code><span class="fn">s2y</span>(net)</code> · <code><span class="fn">s2abcd</span>(net)</code></td><td>Convert S parameters to impedance, admittance, or chain (ABCD) parameters (1- or 2-port; ABCD is 2-port).</td></tr>
         <tr><td class="sig"><code><span class="fn">z2s</span>(net)</code> · <code><span class="fn">y2s</span>(net)</code> · <code><span class="fn">abcd2s</span>(net)</code></td><td>Convert impedance, admittance, or ABCD parameters back to S parameters.</td></tr>
         <tr><td class="sig"><code><span class="fn">cascadesparams</span>(a, b)</code></td><td>Cascade two 2-port networks (port 2 of <code>a</code> into port 1 of <code>b</code>).</td></tr>
@@ -648,7 +649,7 @@ m[<span class="num">1</span>][<span class="num">0</span>]                       
     </table></div>
 
     <h3 id="ref-image">Image processing</h3>
-    <p>A curated image-processing core: read and write PNG/JPEG/BMP files, display images, and run point, geometry, filtering, edge, morphology, and region-analysis operations. An <strong>image</strong> is its own value type — grayscale (<code>H×W</code>) or RGB (<code>H×W×3</code>), with samples in <code>[0, 1]</code>. Read one sample with 1-based subscripts: <code>img(row, col)</code> for grayscale, <code>img(row, col, channel)</code> for colour; <code>size</code> and <code>numel</code> report its dimensions. Small matrices (kernels, structuring elements) pass in as nested arrays, and <code>bwlabel</code> returns a destructurable <code>[labels, count]</code>.</p>
+    <p>A curated image-processing core: read and write PNG/JPEG/BMP files, display images, and run point, geometry, filtering, edge, morphology, and region-analysis operations. An <strong>image</strong> is its own value type — grayscale (<code>H×W</code>) or RGB (<code>H×W×3</code>), with samples in <code>[0, 1]</code>. Read one sample with 0-based subscripts, in either spelling: <code>img(row, col)</code> or <code>img[row, col]</code> for grayscale, plus a channel for colour; <code>size</code> and <code>numel</code> report its dimensions. Small matrices (kernels, structuring elements) pass in as nested arrays, and <code>bwlabel</code> returns a destructurable <code>[labels, count]</code>.</p>
     <pre><code><span class="kw">let</span> img = <span class="fn">imread</span>(<span class="str">'sample-image.png'</span>)   <span class="com"># samples in [0, 1]</span>
 <span class="fn">imshow</span>(img)                              <span class="com"># equal aspect, no axes decoration</span>
 
@@ -674,11 +675,11 @@ m[<span class="num">1</span>][<span class="num">0</span>]                       
         <tr><td class="sig"><code><span class="fn">fspecial</span>(type, …)</code></td><td>Build a kernel: <code>average</code>, <code>gaussian</code>, <code>sobel</code>, <code>prewitt</code>, <code>laplacian</code>, <code>disk</code>, or <code>log</code>.</td></tr>
         <tr><td class="sig"><code><span class="fn">edge</span>(image, <span class="opt">method</span>, <span class="opt">threshold</span>)</code></td><td>Binary edge map: <code>'sobel'</code> (default), <code>'prewitt'</code>, <code>'roberts'</code>, <code>'canny'</code>, or <code>'log'</code>.</td></tr>
         <tr><td class="sig"><code><span class="fn">imgradient</span>(image, <span class="opt">method</span>)</code> · <code><span class="fn">imgradientxy</span>(image, <span class="opt">method</span>)</code></td><td>Gradient magnitude and direction (degrees), or the <code>[Gx, Gy]</code> components. Results are signed, so they are not clamped — view one via <code>mat2gray</code>-style normalization.</td></tr>
-        <tr><td class="sig"><code><span class="fn">hough</span>(image)</code> · <code><span class="fn">houghpeaks</span>(acc, <span class="opt">count</span>, <span class="opt">threshold</span>)</code> · <code><span class="fn">houghlines</span>(image, theta, rho, peaks, <span class="opt">fillGap</span>, <span class="opt">minLength</span>)</code></td><td>Line detection from a binary edge map: <code>[accumulator, theta, rho]</code>, the strongest 1-based <code>[rhoIndex, thetaIndex]</code> peaks, and the segments they stand for as a table of endpoints.</td></tr>
+        <tr><td class="sig"><code><span class="fn">hough</span>(image)</code> · <code><span class="fn">houghpeaks</span>(acc, <span class="opt">count</span>, <span class="opt">threshold</span>)</code> · <code><span class="fn">houghlines</span>(image, theta, rho, peaks, <span class="opt">fillGap</span>, <span class="opt">minLength</span>)</code></td><td>Line detection from a binary edge map: <code>[accumulator, theta, rho]</code>, the strongest <code>[rhoIndex, thetaIndex]</code> peaks (0-based), and the segments they stand for as a table of endpoints.</td></tr>
         <tr><td class="sig"><code><span class="fn">imerode</span></code> · <code><span class="fn">imdilate</span></code> · <code><span class="fn">imopen</span></code> · <code><span class="fn">imclose</span>(image, <span class="opt">element</span>)</code> · <code><span class="fn">strel</span>(shape, <span class="opt">size</span>)</code></td><td>Morphology over a structuring element (default 3×3 square); <code>strel</code> builds <code>'square'</code>/<code>'disk'</code> elements.</td></tr>
         <tr><td class="sig"><code><span class="fn">imfill</span>(image, <span class="opt">'holes'</span>)</code> · <code><span class="fn">bwareaopen</span>(image, minArea, <span class="opt">connectivity</span>)</code></td><td>Binary cleanup: fill background that is unreachable from the border, and drop components below <code>minArea</code> pixels.</td></tr>
         <tr><td class="sig"><code><span class="fn">bwlabel</span>(image, <span class="opt">connectivity</span>)</code> · <code><span class="fn">regionprops</span>(labels, <span class="opt">intensity</span>)</code></td><td>Label connected components (<code>[labels, count]</code>; 4- or 8-connectivity), and measure Area/Centroid/BoundingBox per region as a table. <code>regionprops</code> also accepts a binary image directly; passing an intensity image adds <code>MeanIntensity</code> and <code>WeightedCentroidX/Y</code> columns.</td></tr>
-        <tr><td class="sig"><code><span class="fn">imcentroid</span>(image, <span class="opt">mask</span>)</code></td><td>The intensity-weighted centre <code>[x, y]</code> (1-based) of the <em>whole</em> image, weighing every sample the optional mask keeps. Use this rather than <code>regionprops</code> when the bright area is speckled or broken into many components — connectivity never enters into it.</td></tr>
+        <tr><td class="sig"><code><span class="fn">imcentroid</span>(image, <span class="opt">mask</span>)</code></td><td>The intensity-weighted centre <code>[x, y]</code> (0-based pixel coordinates) of the <em>whole</em> image, weighing every sample the optional mask keeps. Use this rather than <code>regionprops</code> when the bright area is speckled or broken into many components — connectivity never enters into it.</td></tr>
       </tbody>
     </table></div>
 

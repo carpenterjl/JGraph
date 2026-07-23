@@ -103,15 +103,15 @@ public static class Geometry
     }
 
     /// <summary>
-    /// Crops a rectangle from an image (MATLAB <c>imcrop</c> spatial convention: <paramref name="x"/> is the
-    /// 1-based left column, <paramref name="y"/> the 1-based top row, and width/height in pixels). The rect
-    /// is clamped to the image bounds.
+    /// Crops a rectangle from an image: <paramref name="x"/> is the 0-based left column,
+    /// <paramref name="y"/> the 0-based top row, and width/height are in pixels. The rect is clamped
+    /// to the image bounds.
     /// </summary>
     public static ImageBuffer Crop(ImageBuffer image, int x, int y, int width, int height)
     {
         ArgumentNullException.ThrowIfNull(image);
-        int col0 = Math.Clamp(x - 1, 0, image.Width - 1);
-        int row0 = Math.Clamp(y - 1, 0, image.Height - 1);
+        int col0 = Math.Clamp(x, 0, image.Width - 1);
+        int row0 = Math.Clamp(y, 0, image.Height - 1);
         int col1 = Math.Clamp(col0 + width - 1, col0, image.Width - 1);
         int row1 = Math.Clamp(row0 + height - 1, row0, image.Height - 1);
 

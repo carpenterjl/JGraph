@@ -2,7 +2,9 @@
 
 ## Status
 
-Accepted (M21, 2026-07-18).
+Accepted (M21, 2026-07-18). §3 (1-based paren indexing and 1-based `find`) superseded by
+[ADR 0028](0028-uniform-zero-based-indexing.md) (M25) — JGS is now uniformly 0-based. The rest of
+this ADR stands.
 
 ## Context
 

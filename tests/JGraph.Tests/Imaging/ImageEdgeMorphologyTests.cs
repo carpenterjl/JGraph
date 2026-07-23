@@ -370,11 +370,11 @@ public class ImageEdgeMorphologyTests
         Assert.Single(props);
         Regions.RegionProperty region = props[0];
         Assert.Equal(6, region.Area);
-        Assert.Equal(0.5 + 1, region.BoundingBoxX); // col 1 (0-based) → x = 1.5
-        Assert.Equal(0.5 + 1, region.BoundingBoxY);
+        Assert.Equal(0.5, region.BoundingBoxX); // col 1 spans 0.5..1.5
+        Assert.Equal(0.5, region.BoundingBoxY);
         Assert.Equal(3, region.BoundingBoxWidth);
         Assert.Equal(2, region.BoundingBoxHeight);
-        Assert.Equal(3.0, region.CentroidX, 6); // mean col (2 in 0-based) + 1 = 3
+        Assert.Equal(2.0, region.CentroidX, 6); // mean of cols 1..3
         Assert.True(double.IsNaN(region.MeanIntensity)); // no intensity image was supplied
     }
 
@@ -394,11 +394,11 @@ public class ImageEdgeMorphologyTests
         (int[,] labels, int count) = Regions.Label(image, 8);
         Regions.RegionProperty region = Assert.Single(Regions.Measure(labels, count, intensity));
 
-        Assert.Equal(3.0, region.CentroidX, 6);          // geometric: middle of cols 1..3 → 2 + 1
+        Assert.Equal(2.0, region.CentroidX, 6);          // geometric: middle of cols 1..3
         Assert.Equal(1.0 / 3.0, region.MeanIntensity, 6); // (0.1 + 0.1 + 0.8) / 3
-        // Weighted: (0.1*1 + 0.1*2 + 0.8*3) / 1.0 = 2.7, then +1 for MATLAB's 1-based coordinates.
-        Assert.Equal(3.7, region.WeightedCentroidX, 6);
-        Assert.Equal(2.0, region.WeightedCentroidY, 6);  // every pixel is on row 1 → 1 + 1
+        // Weighted: (0.1*1 + 0.1*2 + 0.8*3) / 1.0 = 2.7 — pulled towards the bright right pixel.
+        Assert.Equal(2.7, region.WeightedCentroidX, 6);
+        Assert.Equal(1.0, region.WeightedCentroidY, 6);  // every pixel is on row 1
     }
 
     [Fact]
@@ -423,8 +423,8 @@ public class ImageEdgeMorphologyTests
 
         (double x, double y) = Regions.WeightedCentroid(image);
 
-        Assert.Equal(1 + (4 * (2.0 / 3)), x, 6); // 1-based: 1 and 5 weighted 0.5 : 1.0
-        Assert.Equal(1.5, y, 6);                 // both rows carry the same weight
+        Assert.Equal(4 * (2.0 / 3), x, 6); // cols 0 and 4, weighted 0.5 : 1.0
+        Assert.Equal(0.5, y, 6);           // both rows carry the same weight
     }
 
     [Fact]

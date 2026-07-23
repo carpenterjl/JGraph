@@ -68,9 +68,9 @@ public sealed class JgsImageBuiltinTests : IDisposable
             let a = imread('{source}');
             imwrite(a, 'out.png');
             let b = imread('out.png');
-            print(b(1, 1, 1))
-            print(b(1, 2, 2))
-            print(b(2, 1, 3))
+            print(b(0, 0, 0))
+            print(b(0, 1, 1))
+            print(b(1, 0, 2))
             """);
 
         Assert.True(result.Success, result.Message);
@@ -147,15 +147,15 @@ public sealed class JgsImageBuiltinTests : IDisposable
             let BW = imbinarize(I, 0.05);
             let stats = regionprops(BW, I);
             print(rowcount(stats))
-            print(column(stats, 'Area')(1))
-            print(column(stats, 'CentroidX')(1))
-            print(column(stats, 'WeightedCentroidX')(1) > column(stats, 'CentroidX')(1))
+            print(column(stats, 'Area')(0))
+            print(column(stats, 'CentroidX')(0))
+            print(column(stats, 'WeightedCentroidX')(0) > column(stats, 'CentroidX')(0))
             """);
 
         Assert.True(result.Success, result.Message);
-        // regionprops labels the binary image itself: one 3-pixel region centred on column 3 (1-based),
-        // whose intensity-weighted centre sits to the right of it because pixel 3 is brightest.
-        Assert.Equal("1\n3\n3\ntrue", _output.NormalText.Trim().ReplaceLineEndings("\n"));
+        // regionprops labels the binary image itself: one 3-pixel region centred on column 2, whose
+        // intensity-weighted centre sits to the right of it because the last pixel is brightest.
+        Assert.Equal("1\n3\n2\ntrue", _output.NormalText.Trim().ReplaceLineEndings("\n"));
     }
 
     [Fact]
@@ -175,13 +175,13 @@ public sealed class JgsImageBuiltinTests : IDisposable
             let I = imread('pair.png');
             let mask = imbinarize(I, 0.5);
             let c = imcentroid(I, mask);
-            print(c(1), c(2))
-            print(column(regionprops(mask, I), 'WeightedCentroidX')(1))
+            print(c(0), c(1))
+            print(column(regionprops(mask, I), 'WeightedCentroidX')(0))
             """);
 
         Assert.True(result.Success, result.Message);
-        // The pair straddles column 3 (1-based) on the single row; regionprops sees only column 1.
-        Assert.Equal("3 1\n1", _output.NormalText.Trim().ReplaceLineEndings("\n"));
+        // The pair straddles column 2 on the single row; regionprops sees only column 0.
+        Assert.Equal("2 0\n0", _output.NormalText.Trim().ReplaceLineEndings("\n"));
     }
 
     [Fact]
@@ -211,9 +211,9 @@ public sealed class JgsImageBuiltinTests : IDisposable
             let I = imread('two.png');
             let mask = imbinarize(I, 0.4);
             let masked = immultiply(I, mask);
-            print(masked(1, 1))
-            print(masked(1, 2))
-            print(immultiply(I, 0)(1, 1))
+            print(masked(0, 0))
+            print(masked(0, 1))
+            print(immultiply(I, 0)(0, 0))
             """);
 
         Assert.True(result.Success, result.Message);

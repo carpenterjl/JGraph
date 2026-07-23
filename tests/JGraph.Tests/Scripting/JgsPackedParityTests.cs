@@ -122,13 +122,13 @@ public class JgsPackedParityTests : IDisposable
     public Task Aliasing_SharedArrays_SeeEachOthersWrites() => AssertParity("""
         let x1 = [1, 2, 3, 4];
         let x2 = x1;
-        x2(1:2) = 0;
+        x2(0:1) = 0;
         print(x1); print(x2)
-        x1(4) = 99;
+        x1(3) = 99;
         print(x2)
         let y = x1(:);
-        y(1) = -1;
-        print(x1(1)); print(y(1))
+        y(0) = -1;
+        print(x1(0)); print(y(0))
         """);
 
     [Fact]

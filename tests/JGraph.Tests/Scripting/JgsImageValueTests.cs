@@ -88,16 +88,16 @@ public sealed class JgsImageValueTests : IDisposable
     }
 
     [Fact]
-    public async Task Indexing_ReadsOneBasedSamples()
+    public async Task Indexing_ReadsZeroBasedSamples()
     {
         string file = WriteRgb();
         ScriptRunResult result = await Run($"""
             let img = imread('{file}');
-            print(img(1, 1, 1))
-            print(img(2, 3, 3))
+            print(img(0, 0, 0))
+            print(img[1, 2, 2])
             """);
         Assert.True(result.Success, result.Message);
-        // img(1,1,1) = red at (0,0) = 0 ; img(2,3,3) = blue at (1,2) = (255-102)/255 = 0.6
+        // Both spellings index alike: red at (0,0) = 0 ; blue at (1,2) = (255-102)/255 = 0.6
         Assert.Equal("0\n0.6", _output.NormalText.Trim().ReplaceLineEndings("\n"));
     }
 
@@ -105,7 +105,7 @@ public sealed class JgsImageValueTests : IDisposable
     public async Task Indexing_GrayscaleAllowsTwoSubscripts()
     {
         string file = WriteGray("g.png", 2, 2);
-        ScriptRunResult result = await Run($"print(imread('{file}')(2, 1))");
+        ScriptRunResult result = await Run($"print(imread('{file}')(1, 0))");
         Assert.True(result.Success, result.Message);
         Assert.Equal((51 / 255.0).ToString("R", System.Globalization.CultureInfo.InvariantCulture),
             _output.NormalText.Trim());
@@ -115,7 +115,7 @@ public sealed class JgsImageValueTests : IDisposable
     public async Task Indexing_RgbWithoutChannelIsAnError()
     {
         string file = WriteRgb();
-        ScriptRunResult result = await Run($"print(imread('{file}')(1, 1))");
+        ScriptRunResult result = await Run($"print(imread('{file}')(0, 0))");
         Assert.False(result.Success);
         Assert.Contains("channel", result.Message, StringComparison.OrdinalIgnoreCase);
     }
@@ -124,7 +124,7 @@ public sealed class JgsImageValueTests : IDisposable
     public async Task Indexing_OutOfRangeIsAnError()
     {
         string file = WriteRgb();
-        ScriptRunResult result = await Run($"print(imread('{file}')(3, 1, 1))");
+        ScriptRunResult result = await Run($"print(imread('{file}')(2, 0, 0))");
         Assert.False(result.Success);
         Assert.Contains("out of range", result.Message, StringComparison.OrdinalIgnoreCase);
     }

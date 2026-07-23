@@ -79,11 +79,51 @@ public class ScriptSessionModelTests
     public void DocumentModel_SaveAs_RehomesFileAndLanguage()
     {
         var model = new ScriptDocumentModel(path: null, "print(1)");
-        Assert.Equal("Untitled", model.FileName);
+        Assert.Equal("NewScript.jgs", model.FileName);
         Assert.Equal("JGS", model.Language);
 
         model.SetFilePath(@"C:\ws\analysis.py");
         Assert.Equal("analysis.py", model.FileName);
         Assert.Equal("Python", model.Language);
+    }
+
+    [Theory]
+    [InlineData("JGS", "NewScript.jgs")]
+    [InlineData("C#", "NewScript.csx")]
+    [InlineData("Python", "NewScript.py")]
+    [InlineData("Text", "NewScript.txt")]
+    public void DocumentModel_UnsavedDocument_KeepsTheLanguageItWasCreatedAs(string language, string fileName)
+    {
+        // The New Script picker's whole point: highlighting and the Run engine are right immediately,
+        // without waiting for a save to reveal the extension.
+        var model = new ScriptDocumentModel(path: null, "// stub", language);
+
+        Assert.Equal(language, model.Language);
+        Assert.Equal(fileName, model.FileName);
+    }
+
+    [Fact]
+    public void DocumentModel_ExtensionForLanguage_InvertsLanguageForFile()
+    {
+        foreach (string language in new[] { "JGS", "C#", "Python" })
+        {
+            string extension = ScriptDocumentModel.ExtensionForLanguage(language);
+            Assert.Equal(language, ScriptDocumentModel.LanguageForFile("x" + extension));
+        }
+
+        // A language with no engine has no script extension of its own.
+        Assert.Equal(".txt", ScriptDocumentModel.ExtensionForLanguage("Text"));
+        Assert.Equal(".txt", ScriptDocumentModel.ExtensionForLanguage(null));
+    }
+
+    [Fact]
+    public void DocumentModel_SavingUnderAnotherExtension_BeatsTheChosenLanguage()
+    {
+        // A file's extension is the durable truth; a Python tab saved as .jgs really is JGS now.
+        var model = new ScriptDocumentModel(path: null, "print(1)", "Python");
+        Assert.Equal("Python", model.Language);
+
+        model.SetFilePath(@"C:\ws\ported.jgs");
+        Assert.Equal("JGS", model.Language);
     }
 }

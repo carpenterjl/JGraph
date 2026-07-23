@@ -77,6 +77,7 @@ public partial class ScriptWorkspaceWindow : Window
         _session = new ScriptSessionModel(engines.Where(e => e.IsAvailable).Select(e => e.Language));
         _session.StateChanged += (_, _) => Dispatcher.Invoke(UpdateCommandStates);
         DockManager.ActiveContentChanged += (_, _) => UpdateCommandStates(); // Run reflects the active tab
+        BuildNewScriptMenu(engines);
 
         try
         {
@@ -90,7 +91,7 @@ public partial class ScriptWorkspaceWindow : Window
 
         if (_documents.Count == 0)
         {
-            OpenNewScript();
+            OpenNewScript("JGS");
         }
 
         UpdateCommandStates();
@@ -269,18 +270,59 @@ public partial class ScriptWorkspaceWindow : Window
 
     // --- Documents ------------------------------------------------------------------------------
 
-    private void OnNewScriptClick(object sender, RoutedEventArgs e) => OpenNewScript();
-
-    private void OpenNewScript()
+    /// <summary>
+    /// Fills the New Script menu with one entry per registered engine, in registration order, plus a
+    /// plain text file. An engine with no runtime (Python, typically) is listed but disabled with the
+    /// same explanation Run gives — hiding it outright would leave the user guessing why.
+    /// </summary>
+    private void BuildNewScriptMenu(IReadOnlyList<IScriptEngine> engines)
     {
-        // A near-blank stub (M21): a comment header the user fills in, dated at creation time.
-        string stub = $"""
-            // <description>
-            // Created by:
-            // Date: {DateTime.Now:yyyy-MM-dd}
+        foreach (IScriptEngine engine in engines)
+        {
+            var item = new MenuItem
+            {
+                Header = $"{engine.Language} script ({ScriptDocumentModel.ExtensionForLanguage(engine.Language)})",
+                Tag = engine.Language,
+                IsEnabled = engine.IsAvailable,
+                ToolTip = engine.IsAvailable ? null : PythonScriptEngine.UnavailableMessage,
+            };
+            item.Click += OnNewScriptLanguageClick;
+            NewScriptMenu.Items.Add(item);
+        }
 
-            """;
-        var model = new ScriptDocumentModel(path: null, stub);
+        NewScriptMenu.Items.Add(new Separator());
+        var text = new MenuItem { Header = "Text file (.txt)", Tag = "Text" };
+        text.Click += OnNewScriptLanguageClick;
+        NewScriptMenu.Items.Add(text);
+    }
+
+    private void OnNewScriptLanguageClick(object sender, RoutedEventArgs e)
+    {
+        if (sender is MenuItem { Tag: string language })
+        {
+            OpenNewScript(language);
+        }
+    }
+
+    private void OpenNewScript(string language)
+    {
+        // A near-blank stub (M21): a comment header the user fills in, dated at creation time. Text
+        // documents get nothing — there is no comment syntax to write it in.
+        string? comment = language switch
+        {
+            "JGS" or "C#" => "//",
+            "Python" => "#",
+            _ => null,
+        };
+        string stub = comment is null
+            ? string.Empty
+            : $"""
+                {comment} <description>
+                {comment} Created by:
+                {comment} Date: {DateTime.Now:yyyy-MM-dd}
+
+                """;
+        var model = new ScriptDocumentModel(path: null, stub, language);
         AddDocument(model, activate: true);
     }
 
@@ -424,7 +466,17 @@ public partial class ScriptWorkspaceWindow : Window
                 Title = "Save script",
                 Filter = "JGS script (*.jgs)|*.jgs|C# script (*.csx)|*.csx|Python script (*.py)|*.py|All files (*.*)|*.*",
                 InitialDirectory = _workspace?.RootPath,
-                FileName = "script.jgs",
+
+                // The tab is already named for the language it was created as ("NewScript.py"), so the
+                // dialog only has to agree with it — name and filter both follow the document.
+                FileName = entry.Model.FileName,
+                FilterIndex = entry.Model.Language switch
+                {
+                    "JGS" => 1,
+                    "C#" => 2,
+                    "Python" => 3,
+                    _ => 4,
+                },
             };
             if (dialog.ShowDialog(this) != true)
             {

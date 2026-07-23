@@ -31,8 +31,8 @@ public class ImageHoughTests
     [Fact]
     public void Peaks_FindAHorizontalLineAtTheExpectedRhoAndTheta()
     {
-        // A horizontal run on row 4 (1-based y = 5). Theta spans -90..89, so a horizontal line is
-        // theta = -90° with rho = -y, exactly as MATLAB reports it.
+        // A horizontal run on row 4 (y = 4, 0-based). Theta spans -90..89, so a horizontal line is
+        // theta = -90° with rho = -y.
         using ImageBuffer image = Blank(9, 20);
         for (int c = 2; c < 18; c++)
         {
@@ -46,7 +46,7 @@ public class ImageHoughTests
             (int rhoIndex, int thetaIndex) = Assert.Single(peaks);
 
             Assert.Equal(-90, theta[thetaIndex]);
-            Assert.Equal(-5, rho[rhoIndex]);
+            Assert.Equal(-4, rho[rhoIndex]);
             Assert.Equal(16, accumulator[rhoIndex, thetaIndex, 0]); // every pixel voted for it
         }
     }
@@ -91,11 +91,11 @@ public class ImageHoughTests
             HoughTransform.LineSegment segment = Assert.Single(
                 HoughTransform.Lines(image, theta, rho, peaks, fillGap: 5, minLength: 10));
 
-            // 1-based endpoints: columns 4 and 24 → x = 5 and 25, both on row 4 → y = 5.
-            Assert.Equal(5, Math.Min(segment.Point1X, segment.Point2X));
-            Assert.Equal(25, Math.Max(segment.Point1X, segment.Point2X));
-            Assert.Equal(5, segment.Point1Y);
-            Assert.Equal(5, segment.Point2Y);
+            // 0-based endpoints: columns 4 and 24, both on row 4.
+            Assert.Equal(4, Math.Min(segment.Point1X, segment.Point2X));
+            Assert.Equal(24, Math.Max(segment.Point1X, segment.Point2X));
+            Assert.Equal(4, segment.Point1Y);
+            Assert.Equal(4, segment.Point2Y);
             Assert.Equal(-90, segment.Theta);
         }
     }

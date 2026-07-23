@@ -60,7 +60,7 @@ public class JgsDspBuiltinTests : IDisposable
             """);
 
         Assert.True(result.Success, result.Message);
-        Assert.Equal(new[] { "[9, 57]\n", "true\n" }, _output.Normal); // 1-based bins
+        Assert.Equal(new[] { "[8, 56]\n", "true\n" }, _output.Normal); // 0-based bins
     }
 
     [Fact]

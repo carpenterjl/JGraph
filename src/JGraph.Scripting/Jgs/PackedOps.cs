@@ -289,7 +289,7 @@ internal static class PackedOps
     /// Resolves a packed selector to 0-based picks: a packed logical is a mask (length-checked), a
     /// packed number array is an index list. Mirrors the boxed selector rules and messages.
     /// </summary>
-    public static int[] PicksFromPacked(JgsValue selector, int targetLength, bool oneBased,
+    public static int[] PicksFromPacked(JgsValue selector, int targetLength,
                                         string targetName, int line, int column)
     {
         NumericBuffer buffer = selector.AsBuffer;
@@ -320,7 +320,7 @@ internal static class PackedOps
         {
             for (int i = 0; i < span.Length; i++)
             {
-                picks.Add(ToIndex(span[i], targetLength, line, column, oneBased));
+                picks.Add(ToIndex(span[i], targetLength, line, column));
             }
         }
 
@@ -333,7 +333,7 @@ internal static class PackedOps
     /// as plain numbers, so the boxed form would be an all-number index list); otherwise the boxed
     /// mixed-type selector error.
     /// </summary>
-    public static int[] PicksFromPackedComplex(JgsValue selector, int targetLength, bool oneBased, int line, int column)
+    public static int[] PicksFromPackedComplex(JgsValue selector, int targetLength, int line, int column)
     {
         JgsPackedComplex planes = selector.AsPackedComplex;
         Span<double> im = planes.Im.AsSpan();
@@ -350,7 +350,7 @@ internal static class PackedOps
         var picks = new int[re.Length];
         for (int i = 0; i < re.Length; i++)
         {
-            picks[i] = ToIndex(re[i], targetLength, line, column, oneBased);
+            picks[i] = ToIndex(re[i], targetLength, line, column);
         }
 
         GC.KeepAlive(planes);
@@ -358,7 +358,7 @@ internal static class PackedOps
     }
 
     /// <summary>A raw double as a 0-based element position, with the boxed paths' exact messages.</summary>
-    public static int ToIndex(double raw, int length, int line, int column, bool oneBased)
+    public static int ToIndex(double raw, int length, int line, int column)
     {
         if (raw != Math.Floor(raw) || double.IsNaN(raw) || double.IsInfinity(raw))
         {
@@ -367,20 +367,10 @@ internal static class PackedOps
         }
 
         int i = (int)raw;
-        if (oneBased)
-        {
-            if (i < 1 || i > length)
-            {
-                throw new JgsRuntimeException(line, column,
-                    $"Index {i} is out of range for length {length} (paren indexing is 1-based).");
-            }
-
-            return i - 1;
-        }
-
         if (i < 0 || i >= length)
         {
-            throw new JgsRuntimeException(line, column, $"Index {i} is out of range for length {length}.");
+            throw new JgsRuntimeException(line, column,
+                $"Index {i} is out of range for length {length} (indexing is 0-based).");
         }
 
         return i;

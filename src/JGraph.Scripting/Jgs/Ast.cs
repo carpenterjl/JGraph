@@ -142,12 +142,16 @@ internal sealed class CallExpr(Expr callee, IReadOnlyList<Expr> arguments) : Exp
     public IReadOnlyList<Expr> Arguments { get; } = arguments;
 }
 
-/// <summary>An element access <c>target[index]</c>.</summary>
-internal sealed class IndexExpr(Expr target, Expr index) : Expr
+/// <summary>
+/// An element access <c>target[index]</c>. Brackets take the same subscript list as a paren index
+/// (a scalar, a range, a mask, ':', 'end', or several subscripts for an image) and mean the same
+/// thing — the two spellings differ only in that <c>f(x)</c> calls a function and <c>f[x]</c> does not.
+/// </summary>
+internal sealed class IndexExpr(Expr target, IReadOnlyList<Expr> indices) : Expr
 {
     public Expr Target { get; } = target;
 
-    public Expr Index { get; } = index;
+    public IReadOnlyList<Expr> Indices { get; } = indices;
 }
 
 /// <summary>

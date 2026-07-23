@@ -467,34 +467,16 @@ internal sealed class Parser
             if (Check(TokenType.LParen))
             {
                 Token paren = Advance();
-                var arguments = new List<Expr>();
-                if (!Check(TokenType.RParen))
-                {
-                    do
-                    {
-                        // A lone ':' filling a whole argument is MATLAB "all elements" (x(:)).
-                        if (Check(TokenType.Colon) && NextType is TokenType.Comma or TokenType.RParen)
-                        {
-                            Token colon = Advance();
-                            arguments.Add(new AllExpr { Line = colon.Line, Column = colon.Column });
-                        }
-                        else
-                        {
-                            arguments.Add(ParseExpression());
-                        }
-                    }
-                    while (Match(TokenType.Comma));
-                }
-
-                Expect(TokenType.RParen, "')'");
+                List<Expr> arguments = ParseSubscripts(TokenType.RParen, "')'");
                 expr = new CallExpr(expr, arguments) { Line = paren.Line, Column = paren.Column };
             }
             else if (Check(TokenType.LBracket))
             {
+                // Brackets take the same subscripts as parens — ':' , 'end', ranges, masks, and the
+                // multi-subscript form for images — so the two spellings index alike.
                 Token bracket = Advance();
-                Expr index = ParseExpression();
-                Expect(TokenType.RBracket, "']'");
-                expr = new IndexExpr(expr, index) { Line = bracket.Line, Column = bracket.Column };
+                List<Expr> indices = ParseSubscripts(TokenType.RBracket, "']'");
+                expr = new IndexExpr(expr, indices) { Line = bracket.Line, Column = bracket.Column };
             }
             else if (Check(TokenType.PlusPlus) || Check(TokenType.MinusMinus))
             {
@@ -511,6 +493,34 @@ internal sealed class Parser
                 return expr;
             }
         }
+    }
+
+    /// <summary>
+    /// Parses a comma-separated subscript/argument list up to <paramref name="closer"/>. A lone ':'
+    /// filling a whole slot is "all elements" (<c>x(:)</c>).
+    /// </summary>
+    private List<Expr> ParseSubscripts(TokenType closer, string closerText)
+    {
+        var arguments = new List<Expr>();
+        if (!Check(closer))
+        {
+            do
+            {
+                if (Check(TokenType.Colon) && (NextType == TokenType.Comma || NextType == closer))
+                {
+                    Token colon = Advance();
+                    arguments.Add(new AllExpr { Line = colon.Line, Column = colon.Column });
+                }
+                else
+                {
+                    arguments.Add(ParseExpression());
+                }
+            }
+            while (Match(TokenType.Comma));
+        }
+
+        Expect(closer, closerText);
+        return arguments;
     }
 
     private Expr ParsePrimary()

@@ -14,18 +14,33 @@ public sealed class ScriptDocumentModel
 
     /// <summary>Opens a document over a file's <paramref name="path"/> and saved <paramref name="text"/>.</summary>
     public ScriptDocumentModel(string? path, string text)
+        : this(path, text, language: null)
+    {
+    }
+
+    /// <summary>
+    /// Opens a document over a file's <paramref name="path"/> and saved <paramref name="text"/>, with
+    /// <paramref name="language"/> naming the language of an <em>unsaved</em> document (the New Script
+    /// picker). A saved file's extension always wins — it is the durable truth about what the file is.
+    /// </summary>
+    public ScriptDocumentModel(string? path, string text, string? language)
     {
         FilePath = path;
         _savedText = text;
         _text = text;
-        Language = LanguageForFile(path);
+        Language = path is null ? language ?? "JGS" : LanguageForFile(path);
     }
 
     /// <summary>The document's file path, or null while it is unsaved.</summary>
     public string? FilePath { get; private set; }
 
-    /// <summary>The file name shown on the tab ("Untitled" while unsaved).</summary>
-    public string FileName => FilePath is null ? "Untitled" : Path.GetFileName(FilePath);
+    /// <summary>
+    /// The file name shown on the tab. An unsaved document is named for the language it was created
+    /// as ("NewScript.jgs"), so the tab and the Save dialog's suggested name already agree.
+    /// </summary>
+    public string FileName => FilePath is null
+        ? "NewScript" + ExtensionForLanguage(Language)
+        : Path.GetFileName(FilePath);
 
     /// <summary>The scripting language, decided by the file extension (JGS when unknown).</summary>
     public string Language { get; private set; }
@@ -48,6 +63,17 @@ public sealed class ScriptDocumentModel
             ".py" => "Python",
             _ => "Text",
         };
+
+    /// <summary>The file extension a new <paramref name="language"/> document is saved as — the inverse
+    /// of <see cref="LanguageForFile"/>. C# scripts are ".csx" (what the engine actually runs, not a
+    /// compiled ".cs"); anything with no engine is a plain ".txt".</summary>
+    public static string ExtensionForLanguage(string? language) => language switch
+    {
+        "JGS" => ".jgs",
+        "C#" => ".csx",
+        "Python" => ".py",
+        _ => ".txt",
+    };
 
     /// <summary>Updates the buffer text (typically from the editor's TextChanged).</summary>
     public void SetText(string text) => _text = text ?? string.Empty;

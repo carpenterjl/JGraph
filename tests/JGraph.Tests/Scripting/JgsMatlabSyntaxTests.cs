@@ -86,7 +86,7 @@ public class JgsMatlabSyntaxTests : IDisposable
     {
         ScriptRunResult result = await Run("""
             let x = [1, 2, 3];
-            x(2) = 9
+            x(1) = 9
             """);
 
         Assert.True(result.Success, result.Message);
@@ -209,7 +209,7 @@ public class JgsMatlabSyntaxTests : IDisposable
             let a = [10, 20, 30, 40];
             print(a(end))
             print(a(end - 1))
-            print(a(2:end))
+            print(a(1:end))
             """);
 
         Assert.True(result.Success, result.Message);
@@ -234,7 +234,7 @@ public class JgsMatlabSyntaxTests : IDisposable
         // The sound demo's X_comp75(1 : N/8) = 0 pattern.
         ScriptRunResult result = await Run("""
             let x = [1, 2, 3, 4, 5, 6, 7, 8];
-            x(1:2) = 0;
+            x(0:1) = 0;
             x(end - 1 : end) = 0;
             print(x)
             """);
@@ -248,9 +248,9 @@ public class JgsMatlabSyntaxTests : IDisposable
     {
         ScriptRunResult result = await Run("""
             let x = [1, 2, 3, 4];
-            x(2:3) = [9, 8];
+            x(1:2) = [9, 8];
             print(x)
-            x(2:3) = [1, 2, 3]
+            x(1:2) = [1, 2, 3]
             """);
 
         Assert.False(result.Success);
@@ -259,11 +259,11 @@ public class JgsMatlabSyntaxTests : IDisposable
     }
 
     [Fact]
-    public async Task ElementWrite_ParenForm_IsOneBased_AndSingleEval()
+    public async Task ElementWrite_ParenForm_IsZeroBased_AndSingleEval()
     {
         ScriptRunResult result = await Run("""
             let calls = 0;
-            fn pick() { calls += 1; return 2 }
+            fn pick() { calls += 1; return 1 }
             let theta = [0, 0, 0];
             theta(pick()) += 5;
             print(theta)
@@ -291,14 +291,14 @@ public class JgsMatlabSyntaxTests : IDisposable
         // The demo's VCO accumulator: theta(k) = theta(k-1) + ...
         ScriptRunResult result = await Run("""
             let theta = zeros(5);
-            for k = 2:5
+            for k = 1:4
                 theta(k) = theta(k-1) + k;
             end
             print(theta)
             """);
 
         Assert.True(result.Success, result.Message);
-        Assert.Equal(new[] { "[0, 2, 5, 9, 14]\n" }, _output.Normal);
+        Assert.Equal(new[] { "[0, 1, 3, 6, 10]\n" }, _output.Normal);
     }
 
     [Fact]

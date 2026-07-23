@@ -11,8 +11,10 @@
             <StackPanel Orientation="Horizontal">
                 <Button Content="Open Workspace…" Padding="10,2" Margin="0,0,2,0"
                         Click="OnOpenWorkspaceClick" ToolTip="Open a folder of scripts and data files" />
-                <Button Content="New Script" Padding="10,2" Margin="2,0"
-                        Click="OnNewScriptClick" ToolTip="Create a new untitled JGS script" />
+                <Menu Background="Transparent" VerticalAlignment="Center" Margin="2,0">
+                    <MenuItem x:Name="NewScriptMenu" Header="New Script" Padding="8,2"
+                              ToolTip="Create a new script — pick its language" />
+                </Menu>
                 <Button Content="Open File…" Padding="10,2" Margin="2,0"
                         Click="OnOpenFileClick" ToolTip="Open a script file" />
                 <Button x:Name="SaveButton" Content="Save" Padding="10,2" Margin="2,0"

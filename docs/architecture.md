@@ -554,6 +554,13 @@ Implemented through Milestone 24 — a working figure window you can edit, save,
   only to plots that can appear in a legend, so an `imshow` backdrop no longer swallows the first
   label; filename completion covers every file-reading builtin (`imread`, `sparameters`,
   `loadfigure`, `audioread`, …), not just the table readers.
+- **M25** consistency pass: **New Script** is a language menu (JGS / C# / Python / plain text) that
+  names the tab `NewScript` with the right extension, so highlighting and the Run engine are correct
+  before the first save; and **JGS indexing is uniformly 0-based** (ADR 0028, superseding ADR 0023
+  §3) — `a[i]` and `a(i)` are one operation with `end`, `:`, slice and mask writes, and image
+  subscripts in both spellings; `find`/`houghpeaks` and every pixel coordinate in `JGraph.Imaging`
+  moved with it. Figure handles, `subplot` cells, and RF port numbers stay 1-based, being names
+  rather than offsets.
 
 The `JGraph.Demo` gallery exercises the plot types, annotations, and both APIs;
 `JGraph.Application` is the interactive figure window with data import and scripting.
