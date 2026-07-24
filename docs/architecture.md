@@ -116,9 +116,20 @@ Editing reuses the same seams instead of adding new ones:
    (`JGraph.Interaction.Editing`) turns ComponentModel attributes (`[Category]`, `[DisplayName]`,
    `[Browsable(false)]`) into typed editor descriptors with culture-aware parsing; the WPF
    `PropertyInspectorControl` and `PlotBrowserControl` (in `JGraph.Controls`) are thin views over
-   those descriptors and the model tree.
+   those descriptors and the model tree. Struct-valued properties (`TextStyle`, `LineStyle`,
+   `Rect2D`, `Size2D`, `Point2D`) expand into a collapsible header row plus a child row per member;
+   a child reads the whole struct, swaps one member and writes it back, and records undo against the
+   root property so one step restores the whole style (ADR 0029).
+5. **The legend is an editable object.** `LegendModel` owns an ordered list of `LegendEntryModel`
+   rows, each bound to a plot with a label override and an include flag; `SyncEntries` (run from the
+   renderer's pre-layout pass, idempotent) keeps the rows in step with the plots. It has a `Custom`
+   position with a fractional `Location`, is draggable in `EditMode` via bounds the renderer
+   publishes on `AxesRenderInfo`, and its multi-property drag undoes in one step through
+   `CompositeAction`. New elements are added through the UI-free `FigureElementCommands` and the
+   descriptor-based `ElementMenuBuilder`, surfaced as the plot browser's context menu and "Add ▾"
+   button (ADR 0029).
 
-See [ADR 0005](adr/0005-editing-and-annotations.md).
+See [ADR 0005](adr/0005-editing-and-annotations.md) and [ADR 0029](adr/0029-editable-figure-legend-and-add-elements.md).
 
 ## Export pipeline
 
@@ -561,6 +572,13 @@ Implemented through Milestone 24 — a working figure window you can edit, save,
   subscripts in both spellings; `find`/`houghpeaks` and every pixel coordinate in `JGraph.Imaging`
   moved with it. Figure handles, `subplot` cells, and RF port numbers stay 1-based, being names
   rather than offsets.
+- **M26** a fully editable figure: the inspector expands struct-valued properties (`TextStyle`,
+  `LineStyle`, `Rect2D`, …) into editable child rows with an editable font-family picker; the legend
+  became a first-class object with reorderable, renamable, includable `LegendEntryModel` rows, a
+  `Custom` free placement it can be dragged to, and the standard selection box; and elements
+  (titles, legend, colorbar, extra/secondary axes, subplot grids, annotations) can be added from the
+  plot browser's context menu or "Add ▾" button through the UI-free `FigureElementCommands`. The
+  `.graph` format stayed at version 5 — the new legend fields are optional (ADR 0029).
 
 The `JGraph.Demo` gallery exercises the plot types, annotations, and both APIs;
 `JGraph.Application` is the interactive figure window with data import and scripting.

@@ -49,7 +49,14 @@ internal sealed class RecordingRenderContext : IRenderContext
 
     public void PopClip() => ClipDepth--;
 
-    public void DrawLine(Point2D a, Point2D b, LineStyle style) => LineCount++;
+    public void DrawLine(Point2D a, Point2D b, LineStyle style)
+    {
+        LineCount++;
+        LineColors.Add(style.Color);
+    }
+
+    /// <summary>The stroke color of every line drawn — lets tests check legend swatch colors.</summary>
+    public List<Color> LineColors { get; } = new();
 
     public void DrawPolyline(ReadOnlySpan<Point2D> points, LineStyle style) => PolylineCount++;
 
@@ -80,7 +87,14 @@ internal sealed class RecordingRenderContext : IRenderContext
         TextStyle style,
         HorizontalAlignment horizontal = HorizontalAlignment.Left,
         VerticalAlignment vertical = VerticalAlignment.Baseline,
-        double rotationDegrees = 0) => TextCount++;
+        double rotationDegrees = 0)
+    {
+        TextCount++;
+        Texts.Add(text);
+    }
+
+    /// <summary>Every string drawn, in draw order — lets tests assert on legend rows and labels.</summary>
+    public List<string> Texts { get; } = new();
 
     public Size2D MeasureText(string text, TextStyle style) =>
         new(text.Length * style.FontSize * 0.5, style.FontSize * 1.2);

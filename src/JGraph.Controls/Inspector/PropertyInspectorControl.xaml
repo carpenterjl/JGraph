@@ -77,6 +77,13 @@
                      Text="{Binding Text, UpdateSourceTrigger=LostFocus}" />
         </DataTemplate>
 
+        <DataTemplate x:Key="FontFamilyEditor">
+            <ComboBox IsEditable="True" Padding="4,1"
+                      ToolTip="A font family; one that is not installed here still renders wherever it is"
+                      ItemsSource="{Binding Source={x:Static inspector:PropertyRowViewModel.FontFamilies}}"
+                      Text="{Binding Text, UpdateSourceTrigger=LostFocus}" />
+        </DataTemplate>
+
         <inspector:EditorTemplateSelector x:Key="EditorSelector"
                                           TextTemplate="{StaticResource TextEditor}"
                                           NumberTemplate="{StaticResource NumberEditor}"
@@ -84,7 +91,8 @@
                                           EnumTemplate="{StaticResource EnumEditor}"
                                           ColorTemplate="{StaticResource ColorEditor}"
                                           OptionalColorTemplate="{StaticResource OptionalColorEditor}"
-                                          RangeTemplate="{StaticResource RangeEditor}" />
+                                          RangeTemplate="{StaticResource RangeEditor}"
+                                          FontFamilyTemplate="{StaticResource FontFamilyEditor}" />
     </UserControl.Resources>
 
     <DockPanel>
@@ -122,9 +130,19 @@
                                 <ColumnDefinition Width="Auto" SharedSizeGroup="Names" MinWidth="90" />
                                 <ColumnDefinition Width="*" />
                             </Grid.ColumnDefinitions>
-                            <TextBlock Grid.Column="0" Text="{Binding DisplayName}"
-                                       VerticalAlignment="Center" Margin="0,0,8,0"
-                                       ToolTip="{Binding DisplayName}" />
+                            <StackPanel Grid.Column="0" Orientation="Horizontal" Margin="{Binding Indent}">
+                                <ToggleButton Width="14" Padding="0" Margin="0,0,2,0"
+                                              Background="Transparent" BorderThickness="0"
+                                              Focusable="False"
+                                              Visibility="{Binding ExpanderVisibility}"
+                                              IsChecked="{Binding IsExpanded}"
+                                              Content="{Binding ExpanderGlyph}"
+                                              ToolTip="Show or hide these sub-properties" />
+                                <TextBlock Text="{Binding DisplayName}"
+                                           FontWeight="{Binding NameWeight}"
+                                           VerticalAlignment="Center" Margin="0,0,8,0"
+                                           ToolTip="{Binding DisplayName}" />
+                            </StackPanel>
                             <ContentPresenter Grid.Column="1" Content="{Binding}"
                                               ContentTemplateSelector="{StaticResource EditorSelector}" />
                         </Grid>

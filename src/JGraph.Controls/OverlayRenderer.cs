@@ -90,6 +90,11 @@ internal static class OverlayRenderer
                 return clipped is { } c ? Inflate(c, 2) : null;
             }
 
+            case LegendModel legend when legend.Parent is AxesModel legendAxes:
+                return surface.GetLegendBounds(legendAxes) is { } legendBounds
+                    ? Inflate(legendBounds, 2)
+                    : null;
+
             case AxesModel axes:
                 return surface.GetMapper(axes) is { } axesMapper ? Inflate(axesMapper.PlotArea, 1) : null;
 

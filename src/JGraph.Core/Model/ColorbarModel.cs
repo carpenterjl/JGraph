@@ -1,4 +1,4 @@
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using JGraph.Core.Drawing;
 
 namespace JGraph.Core.Model;
@@ -38,6 +38,7 @@ public sealed class ColorbarModel : GraphObject
     }
 
     /// <summary>The style of the value labels beside the strip.</summary>
+    [Category("Ticks"), DisplayName("Tick label style")]
     public TextStyle TickLabelStyle
     {
         get => _tickLabelStyle;

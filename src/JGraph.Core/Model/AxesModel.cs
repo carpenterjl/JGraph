@@ -1,4 +1,4 @@
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using JGraph.Core.Drawing;
 using JGraph.Core.Primitives;
 
@@ -88,6 +88,8 @@ public sealed class AxesModel : GraphObject
         set => SetProperty(ref _title, value ?? string.Empty, InvalidationKind.Layout);
     }
 
+    /// <summary>How the axes title is drawn (font, size, weight, color).</summary>
+    [Category("General"), DisplayName("Title style")]
     public TextStyle TitleStyle
     {
         get => _titleStyle;
@@ -105,6 +107,7 @@ public sealed class AxesModel : GraphObject
     /// This axes' placement within the figure expressed as fractions in [0, 1] of the figure size
     /// (X and Y measured from the top-left). Defaults to the whole figure.
     /// </summary>
+    [Category("Appearance"), DisplayName("Bounds")]
     public Rect2D NormalizedBounds
     {
         get => _normalizedBounds;

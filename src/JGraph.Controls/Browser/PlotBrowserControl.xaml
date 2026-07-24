@@ -7,7 +7,12 @@
 
     <DockPanel>
         <Border DockPanel.Dock="Top" Padding="8,6" Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}">
-            <TextBlock FontWeight="SemiBold" Text="Plot Browser" />
+            <DockPanel>
+                <Button x:Name="AddButton" DockPanel.Dock="Right" Content="Add ▾" Padding="6,1"
+                        Click="OnAddButtonClick"
+                        ToolTip="Add an element to the selected object" />
+                <TextBlock FontWeight="SemiBold" Text="Plot Browser" VerticalAlignment="Center" />
+            </DockPanel>
         </Border>
 
         <TreeView x:Name="Tree" BorderThickness="0" ContextMenuOpening="OnContextMenuOpening">
@@ -29,9 +34,7 @@
                 </HierarchicalDataTemplate>
             </TreeView.ItemTemplate>
             <TreeView.ContextMenu>
-                <ContextMenu>
-                    <MenuItem x:Name="DeleteMenuItem" Header="Delete" Click="OnDeleteClick" />
-                </ContextMenu>
+                <ContextMenu x:Name="TreeContextMenu" />
             </TreeView.ContextMenu>
         </TreeView>
     </DockPanel>

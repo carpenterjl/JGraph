@@ -80,7 +80,7 @@ internal static class FigureMapper
             ZAxis = ToDto(axes.ZAxis),
             Colorbar = ToDto(axes.Colorbar),
             Grid = ToDto(axes.Grid),
-            Legend = ToDto(axes.Legend),
+            Legend = ToLegendDto(axes),
         };
 
         foreach (AxisModel axis in axes.XAxes)
@@ -172,6 +172,9 @@ internal static class FigureMapper
         {
             axes.Plots.Add(PlotMapper.ToModel(plotDto));
         }
+
+        // After the plots, so each row's plot index resolves.
+        ApplyLegendEntries(axes, dto.Legend);
 
         foreach (AnnotationDto annotationDto in dto.Annotations)
         {
@@ -270,16 +273,40 @@ internal static class FigureMapper
         }
     }
 
-    private static LegendDto ToDto(LegendModel legend) => new()
+    private static LegendDto ToLegendDto(AxesModel axes)
     {
-        Visible = legend.Visible,
-        Position = legend.Position,
-        Background = legend.Background,
-        BorderColor = legend.BorderColor,
-        ShowBorder = legend.ShowBorder,
-        TextStyle = DtoConvert.ToDto(legend.TextStyle),
-        Title = legend.Title,
-    };
+        LegendModel legend = axes.Legend;
+        var dto = new LegendDto
+        {
+            Visible = legend.Visible,
+            Position = legend.Position,
+            Background = legend.Background,
+            BorderColor = legend.BorderColor,
+            ShowBorder = legend.ShowBorder,
+            TextStyle = DtoConvert.ToDto(legend.TextStyle),
+            Title = legend.Title,
+            LocationX = legend.Location.X,
+            LocationY = legend.Location.Y,
+        };
+
+        foreach (LegendEntryModel entry in legend.Entries)
+        {
+            int index = entry.Plot is null ? -1 : axes.Plots.IndexOf(entry.Plot);
+            if (index < 0)
+            {
+                continue;
+            }
+
+            dto.Entries.Add(new LegendEntryDto
+            {
+                PlotIndex = index,
+                Label = entry.Label,
+                Visible = entry.Visible,
+            });
+        }
+
+        return dto;
+    }
 
     private static void ApplyLegend(LegendModel legend, LegendDto dto)
     {
@@ -294,5 +321,30 @@ internal static class FigureMapper
         }
 
         legend.Title = dto.Title;
+        legend.Location = new Core.Primitives.Point2D(dto.LocationX, dto.LocationY);
+    }
+
+    /// <summary>
+    /// Rebuilds the legend rows once the plots exist, resolving each row's plot index. Rows whose
+    /// index no longer resolves are skipped; the renderer's sync pass then supplies a default row for
+    /// any plot left without one, which is also what happens for a document written before M26.
+    /// </summary>
+    private static void ApplyLegendEntries(AxesModel axes, LegendDto dto)
+    {
+        axes.Legend.Entries.Clear();
+        foreach (LegendEntryDto entryDto in dto.Entries)
+        {
+            if (entryDto.PlotIndex < 0 || entryDto.PlotIndex >= axes.Plots.Count)
+            {
+                continue;
+            }
+
+            axes.Legend.Entries.Add(new LegendEntryModel
+            {
+                Plot = axes.Plots[entryDto.PlotIndex],
+                Label = entryDto.Label,
+                Visible = entryDto.Visible,
+            });
+        }
     }
 }

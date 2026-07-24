@@ -38,6 +38,8 @@ public sealed class GraphNodeViewModel : ViewModelBase, IDisposable
         AxisModel axis => WithDetail(axis.IsHorizontal ? "X axis" : "Y axis", axis.Label),
         GridModel => "Grid",
         LegendModel => "Legend",
+        ColorbarModel => "Colorbar",
+        LegendEntryModel entry => WithDetail("Entry", EntryLabel(entry)),
         TextAnnotation text => WithDetail("Text", Truncate(text.Text)),
         AnnotationObject annotation => annotation.Name,
         PlotObject plot => WithDetail(plot.Name, plot.DisplayName),
@@ -135,7 +137,7 @@ public sealed class GraphNodeViewModel : ViewModelBase, IDisposable
             case nameof(GraphObject.Name):
             case nameof(PlotObject.DisplayName):
             case nameof(AxesModel.Title):
-            case nameof(AxisModel.Label):
+            case nameof(AxisModel.Label):   // also covers LegendEntryModel.Label (same name)
             case nameof(TextAnnotation.Text):
                 OnPropertyChanged(nameof(Header));
                 break;
@@ -144,6 +146,11 @@ public sealed class GraphNodeViewModel : ViewModelBase, IDisposable
                 break;
         }
     }
+
+    private static string EntryLabel(LegendEntryModel entry) =>
+        !string.IsNullOrEmpty(entry.Label) ? entry.Label
+        : entry.Plot is { DisplayName: { Length: > 0 } name } ? name
+        : entry.Plot?.Name ?? string.Empty;
 
     private static string WithDetail(string kind, string? detail) =>
         string.IsNullOrEmpty(detail) ? kind : $"{kind} — {detail}";

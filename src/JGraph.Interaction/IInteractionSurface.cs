@@ -28,6 +28,13 @@ public interface IInteractionSurface
     ICoordinateMapper? GetMapper(AxesModel axes);
 
     /// <summary>
+    /// The device-space box an axes' legend was drawn in during the most recent paint, or null when
+    /// it is hidden, empty, or the axes has not been painted. Lets the legend be hit-tested and
+    /// dragged without re-running layout.
+    /// </summary>
+    Rect2D? GetLegendBounds(AxesModel axes);
+
+    /// <summary>
     /// The mapper from normalized [0, 1] figure coordinates to device space from the most recent
     /// paint (used by figure-space annotations), or null before the first paint.
     /// </summary>

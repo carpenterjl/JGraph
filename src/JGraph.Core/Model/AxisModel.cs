@@ -1,4 +1,4 @@
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using JGraph.Core.Drawing;
 using JGraph.Core.Primitives;
 
@@ -128,12 +128,16 @@ public sealed class AxisModel : GraphObject
         set => SetProperty(ref _tickLabelFormat, value, InvalidationKind.Layout);
     }
 
+    /// <summary>How the axis label is drawn.</summary>
+    [Category("General"), DisplayName("Label style")]
     public TextStyle LabelStyle
     {
         get => _labelStyle;
         set => SetProperty(ref _labelStyle, value, InvalidationKind.Layout);
     }
 
+    /// <summary>How the tick labels are drawn.</summary>
+    [Category("Ticks"), DisplayName("Tick label style")]
     public TextStyle TickLabelStyle
     {
         get => _tickLabelStyle;

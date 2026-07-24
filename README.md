@@ -64,8 +64,11 @@ built for performance (millions of points).
 - **Interactive** — mouse-wheel zoom, drag pan, rubber-band zoom, data cursor, and undo/redo of
   navigation.
 - **Editable** — annotations (text, arrows, shapes) in data or figure space; select, drag, and
-  delete them in Edit mode; edit any object in the VS-style property inspector or the plot browser
-  tree, with full undo of property edits and moves.
+  delete them in Edit mode; edit any object — down to a title's font, size, weight and colour — in the
+  VS-style property inspector or the plot browser tree, with full undo of property edits and moves.
+  The legend is a first-class object: rename, reorder, hide, or add its entries, and drag it anywhere.
+  Missing pieces (titles, legend, colorbar, extra axes, subplot grids, annotations) are added from the
+  browser's context menu or "Add ▾" button.
 - **Publishable** — export to PNG/JPEG/BMP/TIFF (print-quality supersampling) or true-vector
   SVG/PDF at exact physical size, and copy the figure image with Ctrl+C; headless export works on
   any .NET 8 platform.

@@ -197,7 +197,15 @@ public partial class PlotBrowserControl : UserControl
             }
 
             axesNode.Children.Add(new GraphNodeViewModel(axes.Grid, this));
-            axesNode.Children.Add(new GraphNodeViewModel(axes.Legend, this));
+
+            var legendNode = new GraphNodeViewModel(axes.Legend, this);
+            foreach (LegendEntryModel entry in axes.Legend.Entries)
+            {
+                legendNode.Children.Add(new GraphNodeViewModel(entry, this));
+            }
+
+            axesNode.Children.Add(legendNode);
+            axesNode.Children.Add(new GraphNodeViewModel(axes.Colorbar, this));
 
             foreach (PlotObject plot in axes.Plots)
             {
@@ -250,8 +258,102 @@ public partial class PlotBrowserControl : UserControl
         }
     }
 
-    private void OnContextMenuOpening(object sender, ContextMenuEventArgs e) =>
-        DeleteMenuItem.IsEnabled = Tree.SelectedItem is GraphNodeViewModel { CanDelete: true };
+    private void OnContextMenuOpening(object sender, ContextMenuEventArgs e)
+    {
+        if (Tree.SelectedItem is not GraphNodeViewModel node)
+        {
+            e.Handled = true;   // nothing selected: no menu
+            return;
+        }
+
+        TreeContextMenu.Items.Clear();
+
+        foreach (ElementMenuItem item in BuildAddItems(node.Model))
+        {
+            TreeContextMenu.Items.Add(CreateMenuItem(item));
+        }
+
+        if (TreeContextMenu.Items.Count > 0 && node.CanDelete)
+        {
+            TreeContextMenu.Items.Add(new Separator());
+        }
+
+        if (node.CanDelete)
+        {
+            var delete = new MenuItem { Header = "Delete" };
+            delete.Click += OnDeleteClick;
+            TreeContextMenu.Items.Add(delete);
+        }
+
+        if (TreeContextMenu.Items.Count == 0)
+        {
+            e.Handled = true;
+        }
+    }
+
+    private void OnAddButtonClick(object sender, RoutedEventArgs e)
+    {
+        GraphObject? target = (Tree.SelectedItem as GraphNodeViewModel)?.Model ?? Figure;
+        if (target is null)
+        {
+            return;
+        }
+
+        var menu = new ContextMenu { PlacementTarget = AddButton, Placement = System.Windows.Controls.Primitives.PlacementMode.Bottom };
+        foreach (ElementMenuItem item in BuildAddItems(target))
+        {
+            menu.Items.Add(CreateMenuItem(item));
+        }
+
+        if (menu.Items.Count == 0)
+        {
+            menu.Items.Add(new MenuItem { Header = "Nothing to add here", IsEnabled = false });
+        }
+
+        menu.IsOpen = true;
+    }
+
+    /// <summary>The applicable add-menu for a model object, or an empty list when it offers nothing.</summary>
+    private IReadOnlyList<ElementMenuItem> BuildAddItems(GraphObject model)
+    {
+        if (Figure is not { } figure)
+        {
+            return Array.Empty<ElementMenuItem>();
+        }
+
+        return ElementMenuBuilder.Build(model, figure, UndoStack, Confirm);
+    }
+
+    private static bool Confirm(string title, string message) =>
+        MessageBox.Show(message, title, MessageBoxButton.OKCancel, MessageBoxImage.Warning) == MessageBoxResult.OK;
+
+    /// <summary>Turns a descriptor (and any children) into a WPF menu item.</summary>
+    private static MenuItem CreateMenuItem(ElementMenuItem descriptor)
+    {
+        var item = new MenuItem
+        {
+            Header = descriptor.Header,
+            IsEnabled = descriptor.Enabled,
+            ToolTip = descriptor.Tooltip,
+        };
+
+        // Without this, a disabled item's tooltip — the reason it is unavailable — would not show.
+        ToolTipService.SetShowOnDisabled(item, descriptor.Tooltip is not null);
+
+        if (descriptor.Children is { Count: > 0 } children)
+        {
+            foreach (ElementMenuItem child in children)
+            {
+                item.Items.Add(CreateMenuItem(child));
+            }
+        }
+        else if (descriptor.Invoke is { } invoke)
+        {
+            item.Click += (_, _) => invoke();
+        }
+
+        return item;
+    }
 
     private void OnDeleteClick(object sender, RoutedEventArgs e)
     {

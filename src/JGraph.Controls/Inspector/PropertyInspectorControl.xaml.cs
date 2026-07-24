@@ -24,6 +24,11 @@ public partial class PropertyInspectorControl : UserControl
 
     private List<PropertyRowViewModel> _rows = new();
 
+    /// <summary>The header row of each composite, keyed by the group name its children carry.</summary>
+    private Dictionary<string, PropertyRowViewModel> _headers = new(StringComparer.Ordinal);
+
+    private ListCollectionView? _view;
+
     public PropertyInspectorControl()
     {
         InitializeComponent();
@@ -44,12 +49,19 @@ public partial class PropertyInspectorControl : UserControl
 
     private void Rebuild()
     {
+        foreach (PropertyRowViewModel header in _headers.Values)
+        {
+            header.PropertyChanged -= OnHeaderPropertyChanged;
+        }
+
         foreach (PropertyRowViewModel row in _rows)
         {
             row.Dispose();
         }
 
         _rows = new List<PropertyRowViewModel>();
+        _headers = new Dictionary<string, PropertyRowViewModel>(StringComparer.Ordinal);
+        _view = null;
 
         GraphObject? target = Target;
         if (target is null)
@@ -63,16 +75,38 @@ public partial class PropertyInspectorControl : UserControl
 
         foreach (EditableProperty property in EditablePropertyFactory.Describe(target))
         {
-            _rows.Add(new PropertyRowViewModel(target, property, UndoStack));
+            var row = new PropertyRowViewModel(target, property, UndoStack);
+            _rows.Add(row);
+
+            if (row.IsHeader)
+            {
+                _headers[row.DisplayName] = row;
+                row.PropertyChanged += OnHeaderPropertyChanged;
+            }
         }
 
         HeaderType.Text = target.GetType().Name;
         HeaderName.Text = target.Name;
         EmptyHint.Visibility = Visibility.Collapsed;
 
-        var view = new ListCollectionView(_rows);
-        view.GroupDescriptions.Add(new PropertyGroupDescription(nameof(PropertyRowViewModel.Category)));
-        Rows.ItemsSource = view;
+        _view = new ListCollectionView(_rows);
+        _view.GroupDescriptions.Add(new PropertyGroupDescription(nameof(PropertyRowViewModel.Category)));
+
+        // Children of a composite are hidden until their header is expanded. Filtering (rather than a
+        // nested items control) keeps the single flat, category-grouped list the inspector already is.
+        _view.Filter = item => item is not PropertyRowViewModel row
+            || row.Group is null
+            || (_headers.TryGetValue(row.Group, out PropertyRowViewModel? header) && header.IsExpanded);
+
+        Rows.ItemsSource = _view;
+    }
+
+    private void OnHeaderPropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName == nameof(PropertyRowViewModel.IsExpanded))
+        {
+            _view?.Refresh();
+        }
     }
 
     /// <summary>Commits a text editor on Enter and reverts it on Escape.</summary>

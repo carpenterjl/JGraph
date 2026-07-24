@@ -153,4 +153,30 @@ public sealed class LegendDto
     public TextStyleDto? TextStyle { get; set; }
 
     public string? Title { get; set; }
+
+    /// <summary>The custom placement, as a fraction of the plot area. Used only when <see cref="Position"/> is Custom.</summary>
+    public double LocationX { get; set; } = 0.6;
+
+    public double LocationY { get; set; } = 0.05;
+
+    /// <summary>
+    /// The legend rows. Absent in documents written before legends had editable rows; the renderer's
+    /// sync pass rebuilds them from the plots on first paint, which is the pre-M26 behavior.
+    /// </summary>
+    public List<LegendEntryDto> Entries { get; set; } = new();
+}
+
+/// <summary>
+/// The serialized form of a <see cref="LegendEntryModel"/>. The series is referenced by its index
+/// within the owning axes' plot list rather than by id: plots carry no id in this format, and the
+/// index is stable for the lifetime of a document. An index that no longer resolves is dropped, and
+/// the sync pass re-creates a default row for that plot.
+/// </summary>
+public sealed class LegendEntryDto
+{
+    public int PlotIndex { get; set; }
+
+    public string? Label { get; set; }
+
+    public bool Visible { get; set; } = true;
 }

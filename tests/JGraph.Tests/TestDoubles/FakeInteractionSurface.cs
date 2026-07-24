@@ -50,5 +50,11 @@ internal sealed class FakeInteractionSurface : IInteractionSurface
     public ICoordinateMapper? GetMapper(AxesModel axes) =>
         AxisTransform.Create(_plotArea, _axes.PrimaryXAxis, _axes.PrimaryYAxis);
 
+    /// <summary>Settable so tests can place a legend box without running a real paint.</summary>
+    public Rect2D? LegendBounds { get; set; }
+
+    public Rect2D? GetLegendBounds(AxesModel axes) =>
+        ReferenceEquals(axes, _axes) ? LegendBounds : null;
+
     public void RequestRender() => RenderRequests++;
 }

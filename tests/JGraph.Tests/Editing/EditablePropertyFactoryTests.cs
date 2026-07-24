@@ -134,6 +134,108 @@ public class EditablePropertyFactoryTests
     }
 
     [Fact]
+    public void Describe_ExpandsTextStyleIntoHeaderAndMembers()
+    {
+        var axes = new AxesModel();
+        IReadOnlyList<EditableProperty> properties = EditablePropertyFactory.Describe(axes);
+
+        EditableProperty[] style = properties
+            .Where(p => p.Name == nameof(AxesModel.TitleStyle))
+            .ToArray();
+
+        Assert.Equal(6, style.Length);
+        Assert.True(style[0].IsHeader);
+        Assert.Null(style[0].Group);
+        Assert.Equal(
+            new[] { "Font", "Font size", "Bold", "Italic", "Color" },
+            style.Skip(1).Select(p => p.DisplayName));
+
+        // Children carry the root's category (so they sort with it) and the header's name as their group.
+        Assert.All(style, p => Assert.Equal("General", p.Category));
+        Assert.All(style.Skip(1), p => Assert.Equal("Title style", p.Group));
+
+        Assert.Equal(PropertyEditorKind.FontFamily, style[1].Editor);
+        Assert.Equal(typeof(string), style[1].ValueType);
+        Assert.Equal(PropertyEditorKind.Color, style[5].Editor);
+        Assert.Equal(typeof(Color), style[5].ValueType);
+    }
+
+    [Fact]
+    public void Describe_CompositeChild_ReadsAndRebuildsLeavingSiblingsIntact()
+    {
+        var axes = new AxesModel { TitleStyle = new TextStyle(Colors.Red, 15, "Consolas", bold: true) };
+        EditableProperty size = Assert.Single(
+            EditablePropertyFactory.Describe(axes),
+            p => p.Name == nameof(AxesModel.TitleStyle) && p.DisplayName == "Font size");
+
+        Assert.Equal(15d, size.GetValue(axes));
+
+        size.SetValue(axes, 22d);
+
+        Assert.Equal(22, axes.TitleStyle.FontSize);
+        Assert.Equal("Consolas", axes.TitleStyle.FontFamily);
+        Assert.True(axes.TitleStyle.Bold);
+        Assert.Equal(Colors.Red, axes.TitleStyle.Color);
+    }
+
+    [Fact]
+    public void Describe_CompositeChild_RecordsTheWholeStructForUndo()
+    {
+        var axes = new AxesModel { TitleStyle = new TextStyle(Colors.Black, 12, "Segoe UI") };
+        EditableProperty bold = Assert.Single(
+            EditablePropertyFactory.Describe(axes),
+            p => p.Name == nameof(AxesModel.TitleStyle) && p.DisplayName == "Bold");
+
+        // The undo path records the root property, so the whole style is restored in one step.
+        Assert.Equal(nameof(AxesModel.TitleStyle), bold.Name);
+        Assert.IsType<TextStyle>(bold.GetRootValue(axes));
+    }
+
+    [Fact]
+    public void Describe_CompositeChild_TakesItsEnumValuesFromTheMemberNotTheComposite()
+    {
+        var grid = new AxesModel().Grid;
+        EditableProperty dash = Assert.Single(
+            EditablePropertyFactory.Describe(grid),
+            p => p.Name == nameof(GridModel.MajorLineStyle) && p.DisplayName == "Dash");
+
+        // Reading the enum's values off Property.PropertyType would yield LineStyle and throw.
+        Assert.Equal(typeof(DashStyle), dash.ValueType);
+        Assert.True(EditablePropertyFactory.TryParse(dash, "dot", out object? parsed));
+        Assert.Equal(DashStyle.Dot, parsed);
+
+        dash.SetValue(grid, DashStyle.Dot);
+        Assert.Equal(DashStyle.Dot, grid.MajorLineStyle.Dash);
+    }
+
+    [Fact]
+    public void Describe_CompositeChild_FormatRoundTripsThroughTryParse()
+    {
+        var axes = new AxesModel();
+        EditableProperty font = Assert.Single(
+            EditablePropertyFactory.Describe(axes),
+            p => p.Name == nameof(AxesModel.TitleStyle) && p.DisplayName == "Font");
+
+        string text = EditablePropertyFactory.Format(font, axes.TitleStyle.FontFamily);
+        Assert.True(EditablePropertyFactory.TryParse(font, text, out object? value));
+        Assert.Equal(axes.TitleStyle.FontFamily, value);
+        Assert.False(EditablePropertyFactory.TryParse(font, "  ", out _));
+    }
+
+    [Fact]
+    public void Describe_LeavesNonCompositeTypesFlat()
+    {
+        // Marker styling is exposed as flat properties on the plot, so nothing here expands: a
+        // MarkerStyle entry in the composite table would be dead code.
+        IReadOnlyList<EditableProperty> properties =
+            EditablePropertyFactory.Describe(typeof(LinePlot));
+
+        Assert.DoesNotContain(properties, p => p.IsHeader);
+        Assert.All(properties, p => Assert.Null(p.Group));
+        Assert.Equal(PropertyEditorKind.Number, Find(properties, "MarkerSize").Editor);
+    }
+
+    [Fact]
     public void PropertiesWithoutAttributes_GetHumanizedNamesAndDefaultCategory()
     {
         // TestPlot's DataRange properties carry no ComponentModel attributes at all.

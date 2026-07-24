@@ -21,6 +21,8 @@ public sealed class EditorTemplateSelector : DataTemplateSelector
 
     public DataTemplate? RangeTemplate { get; set; }
 
+    public DataTemplate? FontFamilyTemplate { get; set; }
+
     /// <inheritdoc />
     public override DataTemplate? SelectTemplate(object? item, DependencyObject container)
     {
@@ -38,6 +40,9 @@ public sealed class EditorTemplateSelector : DataTemplateSelector
             PropertyEditorKind.Color => ColorTemplate,
             PropertyEditorKind.OptionalColor => OptionalColorTemplate,
             PropertyEditorKind.Range => RangeTemplate,
+            PropertyEditorKind.FontFamily => FontFamilyTemplate,
+
+            // Header rows have no editor: the value column stays empty.
             _ => base.SelectTemplate(item, container),
         };
     }

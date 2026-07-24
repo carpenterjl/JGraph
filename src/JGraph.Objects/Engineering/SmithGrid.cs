@@ -1,4 +1,4 @@
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Globalization;
 using JGraph.Core.Drawing;
 using JGraph.Core.Model;
@@ -35,6 +35,7 @@ public sealed class SmithGrid : PlotObject, IDrawable
         set => SetProperty(ref _gridColor, value, InvalidationKind.Render);
     }
 
+    [Category("Appearance"), DisplayName("Label style")]
     public TextStyle LabelStyle
     {
         get => _labelStyle;

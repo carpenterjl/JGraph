@@ -1,4 +1,4 @@
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using JGraph.Core.Drawing;
 using JGraph.Core.Primitives;
 
@@ -42,6 +42,7 @@ public sealed class FigureModel : GraphObject
     }
 
     /// <summary>The nominal figure size in device-independent units (used for export and defaults).</summary>
+    [Category("Appearance")]
     public Size2D Size
     {
         get => _size;
@@ -56,6 +57,8 @@ public sealed class FigureModel : GraphObject
         set => SetProperty(ref _title, value ?? string.Empty, InvalidationKind.Layout);
     }
 
+    /// <summary>How the figure title is drawn (font, size, weight, color).</summary>
+    [Category("General"), DisplayName("Title style")]
     public TextStyle TitleStyle
     {
         get => _titleStyle;

@@ -30,6 +30,15 @@ public sealed class FigureRenderer
         // Ensure auto-scaled axes reflect the current data before we lay anything out.
         figure.RecomputeDataBounds();
 
+        // Same idea for the legends: reconcile their rows with the plots. This mutates the model from
+        // a render path, which is deliberate — it is the one place that knows both the plot list and
+        // which plots can be legended. SyncEntries is idempotent and only invalidates when the rows
+        // really changed, so adding a plot costs one rebuild and a steady-state repaint costs nothing.
+        foreach (AxesModel axes in figure.Axes)
+        {
+            LegendRenderer.SyncEntries(axes);
+        }
+
         context.Clear(figure.Background);
 
         Size2D size = context.Size;
@@ -123,17 +132,16 @@ public sealed class FigureRenderer
                     VerticalAlignment.Bottom);
             }
 
-            if (axes.Legend.Visible)
-            {
-                LegendRenderer.Draw(context, axes, plotArea, theme);
-            }
+            Rect2D? legendBox = axes.Legend.Visible
+                ? LegendRenderer.Draw(context, axes, plotArea, theme)
+                : null;
 
             if (axes.Colorbar.Visible)
             {
                 ColorbarRenderer.Draw(context, axes, plotArea, theme);
             }
 
-            return new AxesRenderInfo(axes, plotArea, transform);
+            return new AxesRenderInfo(axes, plotArea, transform, legendBox);
         }
 
         // Grid (below data).
@@ -162,10 +170,9 @@ public sealed class FigureRenderer
         DrawAxisTitles(context, axes, xAxis, yAxis, plotArea, metrics);
 
         // Legend.
-        if (axes.Legend.Visible)
-        {
-            LegendRenderer.Draw(context, axes, plotArea, theme);
-        }
+        Rect2D? legendBounds = axes.Legend.Visible
+            ? LegendRenderer.Draw(context, axes, plotArea, theme)
+            : null;
 
         // Colorbar (its width was reserved by MeasureDecorations).
         if (axes.Colorbar.Visible)
@@ -173,7 +180,7 @@ public sealed class FigureRenderer
             ColorbarRenderer.Draw(context, axes, plotArea, theme);
         }
 
-        return new AxesRenderInfo(axes, plotArea, transform);
+        return new AxesRenderInfo(axes, plotArea, transform, legendBounds);
     }
 
     /// <summary>

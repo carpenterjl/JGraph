@@ -1,4 +1,4 @@
-using JGraph.Core.Model;
+﻿using JGraph.Core.Model;
 using JGraph.Core.Primitives;
 using JGraph.Interaction;
 using JGraph.Objects;
@@ -201,6 +201,123 @@ public class EditModeTests
         controller.PointerDown(Pointer(50, 50));
 
         Assert.NotSame(annotation, controller.Selection.Selected);
+    }
+
+    // ---- Legend ----
+
+    /// <summary>Marks the legend visible and publishes a 40×20 box at (20, 10) as its last paint.</summary>
+    private static LegendModel ShowLegendAt(AxesModel axes, FakeInteractionSurface surface)
+    {
+        axes.Legend.Visible = true;
+        surface.LegendBounds = new Rect2D(20, 10, 40, 20);
+        return axes.Legend;
+    }
+
+    [Fact]
+    public void Click_OnLegend_SelectsIt()
+    {
+        (_, AxesModel axes, FakeInteractionSurface surface, InteractionController controller) = CreateRig();
+        LegendModel legend = ShowLegendAt(axes, surface);
+
+        controller.PointerDown(Pointer(30, 15));
+
+        Assert.Same(legend, controller.Selection.Selected);
+    }
+
+    [Fact]
+    public void Click_OnLegend_WinsOverAnAnnotationBeneathIt()
+    {
+        (_, AxesModel axes, FakeInteractionSurface surface, InteractionController controller) = CreateRig();
+        LegendModel legend = ShowLegendAt(axes, surface);
+        TestAnnotation annotation = AddAnnotationAt(axes, 4, 9);   // painted bounds cover (30, 0)-(50, 20)
+
+        controller.PointerDown(Pointer(35, 15));
+
+        // The legend draws over the plot area, so it is picked first.
+        Assert.Same(legend, controller.Selection.Selected);
+        Assert.False(annotation.IsSelected);
+    }
+
+    [Fact]
+    public void Drag_MovesTheLegendAndSwitchesToCustomPlacement()
+    {
+        (_, AxesModel axes, FakeInteractionSurface surface, InteractionController controller) = CreateRig();
+        LegendModel legend = ShowLegendAt(axes, surface);
+
+        controller.PointerDown(Pointer(30, 15));
+        controller.PointerMove(Pointer(50, 45));
+        controller.PointerUp(Pointer(50, 45));
+
+        Assert.Equal(LegendPosition.Custom, legend.Position);
+
+        // The box started at (20, 10) in a 100×100 plot area and moved by (+20, +30).
+        Assert.Equal(0.4, legend.Location.X, 6);
+        Assert.Equal(0.4, legend.Location.Y, 6);
+    }
+
+    [Fact]
+    public void Drag_IsUndoneInASingleStep()
+    {
+        (_, AxesModel axes, FakeInteractionSurface surface, InteractionController controller) = CreateRig();
+        LegendModel legend = ShowLegendAt(axes, surface);
+        legend.Position = LegendPosition.TopLeft;
+
+        controller.PointerDown(Pointer(30, 15));
+        controller.PointerMove(Pointer(50, 45));
+        controller.PointerUp(Pointer(50, 45));
+
+        Assert.Equal("Move legend", surface.UndoStack.NextUndoDescription);
+
+        surface.UndoStack.Undo();
+
+        // One step restores both the placement mode and the location.
+        Assert.False(surface.UndoStack.CanUndo);
+        Assert.Equal(LegendPosition.TopLeft, legend.Position);
+        Assert.Equal(0.2, legend.Location.X, 6);
+        Assert.Equal(0.1, legend.Location.Y, 6);
+    }
+
+    [Fact]
+    public void Drag_DoesNotAccumulateAcrossMoves()
+    {
+        (_, AxesModel axes, FakeInteractionSurface surface, InteractionController controller) = CreateRig();
+        LegendModel legend = ShowLegendAt(axes, surface);
+
+        controller.PointerDown(Pointer(30, 15));
+        controller.PointerMove(Pointer(40, 25));
+        controller.PointerMove(Pointer(50, 45));
+        controller.PointerUp(Pointer(50, 45));
+
+        // Each move re-derives from the gesture start, so the intermediate move leaves no residue.
+        Assert.Equal(0.4, legend.Location.X, 6);
+        Assert.Equal(0.4, legend.Location.Y, 6);
+    }
+
+    [Fact]
+    public void Escape_CancelsALegendDrag()
+    {
+        (_, AxesModel axes, FakeInteractionSurface surface, InteractionController controller) = CreateRig();
+        LegendModel legend = ShowLegendAt(axes, surface);
+        legend.Position = LegendPosition.BottomRight;
+
+        controller.PointerDown(Pointer(30, 15));
+        controller.PointerMove(Pointer(50, 45));
+        controller.KeyDown(new KeyEventArgs(InteractionKey.Escape, ModifierKeys.None));
+
+        Assert.Equal(LegendPosition.BottomRight, legend.Position);
+        Assert.False(surface.UndoStack.CanUndo);
+    }
+
+    [Fact]
+    public void Click_OnHiddenLegend_FallsThroughToWhatIsBelow()
+    {
+        (_, AxesModel axes, FakeInteractionSurface surface, InteractionController controller) = CreateRig();
+        ShowLegendAt(axes, surface);
+        axes.Legend.Visible = false;
+
+        controller.PointerDown(Pointer(30, 15));
+
+        Assert.NotSame(axes.Legend, controller.Selection.Selected);
     }
 
     [Fact]

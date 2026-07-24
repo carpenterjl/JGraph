@@ -234,6 +234,64 @@ public class SerializationTests
         Assert.Equal("Series", loaded.Title);
     }
 
+    [Fact]
+    public void LegendEntries_RoundTripRenamedReorderedAndExcludedRows()
+    {
+        var figure = new FigureModel();
+        AxesModel axes = figure.AddAxes();
+        foreach (string name in new[] { "Alpha", "Beta", "Gamma" })
+        {
+            axes.AddLine(new double[] { 0, 1 }, new double[] { 0, 1 }).DisplayName = name;
+        }
+
+        axes.Legend.Visible = true;
+        axes.Legend.SyncEntries(axes.Plots);
+        axes.Legend.Entries[2].Label = "Renamed";
+        axes.Legend.Entries[1].Visible = false;
+        axes.Legend.Entries.Move(2, 0);
+
+        LegendModel loaded = RoundTrip(figure).Axes[0].Legend;
+
+        Assert.Equal(3, loaded.Entries.Count);
+        Assert.Equal(new[] { "Gamma", "Alpha", "Beta" }, loaded.Entries.Select(e => e.Plot?.DisplayName));
+        Assert.Equal("Renamed", loaded.Entries[0].Label);
+        Assert.Null(loaded.Entries[1].Label);
+        Assert.False(loaded.Entries[2].Visible);
+    }
+
+    [Fact]
+    public void LegendCustomPlacement_RoundTrips()
+    {
+        var figure = new FigureModel();
+        AxesModel axes = figure.AddAxes();
+        axes.AddLine(new double[] { 0, 1 }, new double[] { 0, 1 });
+        axes.Legend.Visible = true;
+        axes.Legend.Position = LegendPosition.Custom;
+        axes.Legend.Location = new Point2D(0.31, 0.72);
+
+        LegendModel loaded = RoundTrip(figure).Axes[0].Legend;
+
+        Assert.Equal(LegendPosition.Custom, loaded.Position);
+        Assert.Equal(0.31, loaded.Location.X, 6);
+        Assert.Equal(0.72, loaded.Location.Y, 6);
+    }
+
+    [Fact]
+    public void LegendEntries_AreRebuiltWhenADocumentHasNone()
+    {
+        // Documents written before legends had rows carry no entries; the first paint reconciles them.
+        var figure = new FigureModel();
+        AxesModel axes = figure.AddAxes();
+        axes.AddLine(new double[] { 0, 1 }, new double[] { 0, 1 }).DisplayName = "Alpha";
+        axes.Legend.Visible = true;
+
+        AxesModel loaded = RoundTrip(figure).Axes[0];
+        Assert.Empty(loaded.Legend.Entries);
+
+        Assert.True(loaded.Legend.SyncEntries(loaded.Plots));
+        Assert.Same(loaded.Plots[0], Assert.Single(loaded.Legend.Entries).Plot);
+    }
+
     // ---- Annotations ----
 
     [Fact]

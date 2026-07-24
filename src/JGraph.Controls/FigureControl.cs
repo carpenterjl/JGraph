@@ -155,6 +155,20 @@ public class FigureControl : SKElement, IInteractionSurface, IFigureNavigator
     }
 
     /// <inheritdoc />
+    public Rect2D? GetLegendBounds(AxesModel axes)
+    {
+        foreach (AxesRenderInfo info in _lastResult.Axes)
+        {
+            if (ReferenceEquals(info.Axes, axes))
+            {
+                return info.LegendBounds;
+            }
+        }
+
+        return null;
+    }
+
+    /// <inheritdoc />
     public void RequestRender() => InvalidateVisual();
 
     protected override void OnPaintSurface(SKPaintSurfaceEventArgs e)

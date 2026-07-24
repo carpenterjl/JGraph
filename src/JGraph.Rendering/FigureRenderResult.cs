@@ -7,11 +7,12 @@ namespace JGraph.Rendering;
 /// <summary>The device-space geometry produced for one axes during a paint.</summary>
 public sealed class AxesRenderInfo
 {
-    public AxesRenderInfo(AxesModel axes, Rect2D plotArea, AxisTransform transform)
+    public AxesRenderInfo(AxesModel axes, Rect2D plotArea, AxisTransform transform, Rect2D? legendBounds = null)
     {
         Axes = axes;
         PlotArea = plotArea;
         Transform = transform;
+        LegendBounds = legendBounds;
     }
 
     public AxesModel Axes { get; }
@@ -21,6 +22,12 @@ public sealed class AxesRenderInfo
 
     /// <summary>The data↔device mapper for this axes' primary axes.</summary>
     public AxisTransform Transform { get; }
+
+    /// <summary>
+    /// The box the legend was drawn in, or null when it is hidden or empty. Published so the
+    /// interaction layer can hit-test and drag the legend without re-running layout.
+    /// </summary>
+    public Rect2D? LegendBounds { get; }
 }
 
 /// <summary>

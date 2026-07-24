@@ -1,4 +1,4 @@
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using JGraph.Core.Drawing;
 
 namespace JGraph.Core.Model;
@@ -34,12 +34,14 @@ public sealed class GridModel : GraphObject
         set => SetProperty(ref _showMinor, value, InvalidationKind.Render);
     }
 
+    [Category("Appearance"), DisplayName("Major lines")]
     public LineStyle MajorLineStyle
     {
         get => _majorLineStyle;
         set => SetProperty(ref _majorLineStyle, value, InvalidationKind.Render);
     }
 
+    [Category("Appearance"), DisplayName("Minor lines")]
     public LineStyle MinorLineStyle
     {
         get => _minorLineStyle;
