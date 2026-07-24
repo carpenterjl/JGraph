@@ -288,6 +288,9 @@ internal static partial class JgsBuiltins
             return JgsValue.Null;
         });
 
+        Define("exit", (args, line, col) => Exit("exit", args, line, col));
+        Define("quit", (args, line, col) => Exit("quit", args, line, col));
+
         Define("pause", (args, line, col) =>
         {
             Arity("pause", args, 1, line, col);
@@ -2291,6 +2294,17 @@ internal static partial class JgsBuiltins
         }
 
         throw new JgsRuntimeException(line, col, $"{name} expects a number or numeric array, but got a {value.TypeName}.");
+    }
+
+    /// <summary>
+    /// The body of <c>exit</c>/<c>quit</c>: never returns. The request travels as an exception so it
+    /// unwinds loops and function calls the way a script author expects "stop now" to.
+    /// </summary>
+    private static JgsValue Exit(string name, IReadOnlyList<JgsValue> args, int line, int col)
+    {
+        ArityRange(name, args, 0, 1, line, col);
+        int code = args.Count == 0 ? 0 : (int)Num(name, args, 0, line, col);
+        throw new ScriptExitException(code);
     }
 
     private static void Arity(string name, IReadOnlyList<JgsValue> args, int count, int line, int col)

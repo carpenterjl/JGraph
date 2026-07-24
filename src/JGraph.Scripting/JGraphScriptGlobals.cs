@@ -171,6 +171,20 @@ public sealed class JGraphScriptGlobals
         RequireFigureFiles("exportfigure").Export(figure, ResolveForWrite(path));
     }
 
+    // --- Ending the session -----------------------------------------------------------------------
+
+    /// <summary>Stops the script and asks the host to exit with code 0.</summary>
+    public void exit() => exit(0);
+
+    /// <summary>Stops the script and asks the host to exit with <paramref name="code"/>.</summary>
+    public void exit(int code) => throw new ScriptExitException(code);
+
+    /// <summary>An alias for <see cref="exit()"/>.</summary>
+    public void quit() => exit(0);
+
+    /// <summary>An alias for <see cref="exit(int)"/>.</summary>
+    public void quit(int code) => exit(code);
+
     // --- Audio ------------------------------------------------------------------------------------
 
     /// <summary>Reads a .wav file into normalized mono samples plus its sample rate (MATLAB <c>audioread</c>).</summary>

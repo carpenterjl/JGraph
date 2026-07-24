@@ -75,6 +75,15 @@ public sealed class PythonScriptEngine : IScriptEngine
                 scope.Exec(code);
                 return ScriptRunResult.Ok(globals.FiguresShown, SnapshotVariables(scope));
             }
+            catch (PythonException ex) when (ScriptExitException.Unwrap(ex) is { } exit)
+            {
+                // pythonnet wraps the .NET exception exit() threw; the request is inside.
+                return ScriptRunResult.Exited(exit.ExitCode, globals.FiguresShown);
+            }
+            catch (ScriptExitException ex)
+            {
+                return ScriptRunResult.Exited(ex.ExitCode, globals.FiguresShown);
+            }
             catch (PythonException ex)
             {
                 context.Output.WriteError(ex.Message);

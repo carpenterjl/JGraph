@@ -5,7 +5,7 @@ the workflow of a technical-computing figure window — an object model of figur
 edit, and interact with — while following modern MVVM and SOLID design. It is renderer-agnostic and
 built for performance (millions of points).
 
-> Status: Milestones 1–25 complete. A working, interactive, editable figure window with line,
+> Status: Milestones 1–27 complete. A working, interactive, editable figure window with line,
 > scatter, bar, stem, histogram, error-bar, and image/heatmap plots; interactive 3D surfaces
 > (surf/mesh/meshc with drag rotation), contour/filled-contour plots, and colorbars;
 > technical-computing JGS scripting (semicolon echo suppression, colon ranges, uniform 0-based
@@ -31,7 +31,8 @@ built for performance (millions of points).
 > debugger (breakpoints, stepping, set next statement, live code edits while paused, live
 > variables, call stack, and a tabular data viewer), code completion with signature help, two APIs,
 > a plugin system with
-> Light/Dark/Presentation/IEEE themes, and undo/redo. See
+> Light/Dark/Presentation/IEEE themes, undo/redo, and a command-line launcher
+> (`-batch`/`-r`/`-logfile`/`-help`) that runs scripts headlessly. See
 > [docs/architecture.md](docs/architecture.md) for the design.
 
 ## Highlights
@@ -268,6 +269,34 @@ The C# and JGS engines are always available; the Python engine runs when a CPyth
 (from the `PYTHONNET_PYDLL` environment variable or the `python`/`py` launcher) and reports a clear
 message when it is not.
 
+## Run it from the command line
+
+`jgraph.exe` (the `JGraph.Cli` project) is JGraph's command-line face. `-batch` runs a script with no
+window at all — no display needed, so it works over a remote session or as a build step — and returns
+a real exit code.
+
+```sh
+jgraph                                          # open the interactive application
+jgraph -batch "let x = 1:10; disp(sum(x))"      # run, log to stdout, exit
+jgraph -batch "analysis.jgs" -logfile run.log   # run a script file, tee everything to a log
+jgraph -r "plot(1:10)"                          # run, then leave the session open
+jgraph -help                                    # the flag reference, plus the scripting guide
+```
+
+| Flag | Behaviour |
+| --- | --- |
+| `-batch "statement"` | Runs non-interactively, logs to standard output, and exits. |
+| `-r "statement"` | Runs the statement, then keeps the interactive session open until the script calls `exit`. |
+| `-logfile "path"` | Also writes all output, results and errors to a text file. |
+| `-showfigures` | With `-batch`: show figures in standalone windows (no main window) instead of suppressing them; the process exits when the last one closes. |
+| `-sd "directory"` | Use this directory instead of the shell's current one for relative paths. |
+| `-h`, `-help` | Show the startup options and open the scripting guide. |
+
+The statement is JGS source unless it names a file that exists, in which case that file runs and its
+extension picks the language (`.jgs`, `.csx`/`.cs`, `.py`). Relative paths — including
+`exportfigure`'s output — resolve against the shell's current directory. Exit codes: `0` finished,
+`1` failed, `2` bad command line, or whatever the script passed to `exit(n)`.
+
 ## Themes and plugins
 
 ```csharp
@@ -312,7 +341,8 @@ appears with no code change.
 | `JGraph.Api` | Functional `JG` facade. |
 | `JGraph.Scripting` | Scripting hosts: the `IScriptEngine` seam with a Roslyn C# engine, a pythonnet (CPython) engine, and the built-in **JGS** language (a self-contained interpreter), all driving the `JG` API and the table readers. |
 | `JGraph.Controls` | WPF `FigureControl`, property inspector, plot browser, input adapter, and the script editor. |
-| `JGraph.Application` | MVVM figure window and DI composition root. |
+| `JGraph.Application` | MVVM figure window and DI composition root; also runs `-batch -showfigures` and `-r`. |
+| `JGraph.Cli` | `jgraph.exe` — the command-line launcher. Runs `-batch` headlessly (no WPF, no display) and starts the application for the modes that need a window. |
 | `JGraph.Demo` | Example gallery. |
 | `JGraph.Tests` / `JGraph.Benchmarks` | Unit tests and performance benchmarks. |
 
@@ -323,6 +353,7 @@ dotnet build JGraph.sln
 dotnet test tests/JGraph.Tests/JGraph.Tests.csproj
 dotnet run --project demo/JGraph.Demo          # example gallery
 dotnet run --project src/JGraph.Application     # interactive figure window
+dotnet run --project src/JGraph.Cli -- -help    # the command-line launcher
 dotnet run -c Release --project tests/JGraph.Benchmarks   # decimation benchmarks
 ```
 

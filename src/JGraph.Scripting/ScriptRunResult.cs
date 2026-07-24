@@ -15,13 +15,15 @@ public sealed class ScriptRunResult
         string? message,
         IReadOnlyList<ScriptDiagnostic> diagnostics,
         int figuresShown,
-        IReadOnlyList<ScriptVariable> variables)
+        IReadOnlyList<ScriptVariable> variables,
+        int? exitCode = null)
     {
         Success = success;
         Message = message;
         Diagnostics = diagnostics;
         FiguresShown = figuresShown;
         Variables = variables;
+        ExitCode = exitCode;
     }
 
     /// <summary>Whether the script compiled and ran to completion without an unhandled error.</summary>
@@ -42,9 +44,23 @@ public sealed class ScriptRunResult
     /// </summary>
     public IReadOnlyList<ScriptVariable> Variables { get; }
 
+    /// <summary>
+    /// The exit code the script asked for with <c>exit(code)</c>, or null when it never called it.
+    /// A batch host returns this from the process; an interactive host shuts down with it.
+    /// </summary>
+    public int? ExitCode { get; }
+
     /// <summary>A successful run that displayed <paramref name="figuresShown"/> figures.</summary>
     public static ScriptRunResult Ok(int figuresShown, IReadOnlyList<ScriptVariable>? variables = null) =>
         new(success: true, message: null, NoDiagnostics, figuresShown, variables ?? NoVariables);
+
+    /// <summary>
+    /// A run the script ended itself with <c>exit</c>/<c>quit</c>. It counts as a success — the script
+    /// did what it meant to — but carries the code it asked the process to exit with.
+    /// </summary>
+    public static ScriptRunResult Exited(
+        int exitCode, int figuresShown, IReadOnlyList<ScriptVariable>? variables = null) =>
+        new(success: true, message: null, NoDiagnostics, figuresShown, variables ?? NoVariables, exitCode);
 
     /// <summary>A failed run with a summary <paramref name="message"/> and optional <paramref name="diagnostics"/>.</summary>
     public static ScriptRunResult Failed(string message, IReadOnlyList<ScriptDiagnostic>? diagnostics = null) =>

@@ -156,6 +156,7 @@
     <ul>
       <li><a href="#intro">What is JGS?</a></li>
       <li><a href="#running">Running a script</a></li>
+      <li><a href="#commandline">From the command line</a></li>
       <div class="grouplabel">Language</div>
       <li><a href="#basics">Syntax basics</a></li>
       <li><a href="#types">Values &amp; types</a></li>
@@ -208,8 +209,36 @@
     <div class="note"><strong>Mental model:</strong> if you know NumPy or any engineering array language, you already know 90% of JGS. Arrays are first-class, indexing is by <em>logical mask</em> or by position, and plotting commands act on a single "current figure / current axes" that you switch with <code>figure</code> and <code>subplot</code>.</div>
 
     <h2 id="running">Running a script</h2>
-    <p>Open the <strong>Script Workspace</strong> in JGraph, create or open a <code>.jgs</code> file, and run it (the editor gives you syntax highlighting, autocomplete, and a debugger). Plotting commands accumulate into the current figure; <code>show()</code> opens (or updates) a window for it at any point, and — since M21 — any figures the script created but never <code>show()</code>ed are displayed automatically when the run finishes. Re-running a script reuses the same figure windows by number rather than piling up new ones.</p>
-    <p>A script's only access to the outside world is the table readers (<code>readcsv</code>, <code>readxlsx</code>, <code>readtable</code>), the figure-file commands (<code>savefigure</code>, <code>loadfigure</code>, <code>exportfigure</code>), and <code>run</code> for including another script. There is no arbitrary file, network, or system access.</p>
+    <p>Open the <strong>Script Workspace</strong> in JGraph, create or open a <code>.jgs</code> file, and run it (the editor gives you syntax highlighting, autocomplete, and a debugger). Plotting commands accumulate into the current figure; <code>show()</code> opens (or updates) a window for it at any point, and — since M21 — any figures the script created but never <code>show()</code>ed are displayed automatically when the run finishes. Re-running a script reuses the same figure windows by number rather than piling up new ones. A script can also be run <a href="#commandline">from the command line</a>, with no user interface at all.</p>
+    <p>A script's only access to the outside world is the table readers (<code>readcsv</code>, <code>readxlsx</code>, <code>readtable</code>), the image readers (<code>imread</code>, <code>imwrite</code>), the figure-file commands (<code>savefigure</code>, <code>loadfigure</code>, <code>exportfigure</code>), and <code>run</code> for including another script. There is no arbitrary file, network, or system access.</p>
+    <p>Everything a figure contains is also editable <em>after</em> the script has drawn it, by hand: select an object in the plot browser and edit it in the property inspector — down to a title's font, size, weight and colour. The legend is a first-class object whose entries you can rename, reorder, and hide, and which you can drag anywhere on the plot; missing pieces (titles, a legend, a colorbar, extra axes, subplot grids, annotations) are added from the browser's context menu or its <strong>Add ▾</strong> button. Save the result with <code>savefigure</code>, or from the figure window, and it reopens exactly as you left it.</p>
+
+    <h2 id="commandline">From the command line</h2>
+    <p><code>jgraph.exe</code> runs a script without opening JGraph at all. There is no window, no user interface, and <strong>no display is required</strong> — so a script can run over a remote session, from a build step, or on a schedule. It writes to standard output, and returns an exit code the shell can act on.</p>
+    <pre><code>jgraph -batch <span class="str">"let x = 1:10; disp(sum(x))"</span>       <span class="com"># prints 55, then exits</span>
+jgraph -batch <span class="str">"analysis.jgs"</span> -logfile run.log     <span class="com"># run a file, tee everything to a log</span>
+jgraph -r <span class="str">"plot(1:10)"</span>                            <span class="com"># run, then leave the session open</span>
+jgraph -help                                     <span class="com"># the flag reference, and this guide</span></code></pre>
+    <table>
+      <tbody>
+        <tr><td class="sig"><code>-batch "statement"</code></td><td>Run without a user interface, log to standard output, and exit when the script finishes.</td></tr>
+        <tr><td class="sig"><code>-r "statement"</code></td><td>Run the statement in the interactive application and <strong>keep the session open</strong>, so you can carry on from where the script left off. The application closes when a script calls <code>exit</code>.</td></tr>
+        <tr><td class="sig"><code>-logfile "path"</code></td><td>Also write all output, results, and errors to a text file. The file is appended to and flushed after every line, so it survives an interrupted run.</td></tr>
+        <tr><td class="sig"><code>-showfigures</code></td><td>With <code>-batch</code> only: display figures in standalone windows (there is no main window) instead of suppressing them. The process then exits once the last window is closed.</td></tr>
+        <tr><td class="sig"><code>-sd "directory"</code></td><td>Use this directory instead of the shell's current one for relative paths.</td></tr>
+        <tr><td class="sig"><code>-h</code>, <code>-help</code></td><td>Print the startup options, and open this guide.</td></tr>
+      </tbody>
+    </table>
+    <p>The statement is <strong>JGS source unless it names a file that exists</strong>, in which case that file is run and its extension picks the language (<code>.jgs</code>, <code>.csx</code>/<code>.cs</code>, <code>.py</code>). Relative paths — including where <code>exportfigure</code> writes — resolve against the shell's current directory; a script run by path can still read data files sitting beside it.</p>
+    <div class="note"><strong>Figures under <code>-batch</code>:</strong> there is nowhere to show them, so <code>show()</code> reports the figure instead of displaying it. Produce output with <code>exportfigure</code> (PNG/SVG/PDF/…) or <code>savefigure</code> — both work perfectly well with no display — or pass <code>-showfigures</code> when you do want windows.</div>
+    <p>Exit codes: <strong>0</strong> the script finished · <strong>1</strong> the script failed · <strong>2</strong> the command line was invalid · <strong>n</strong> whatever the script passed to <code>exit(n)</code>. That last one is how a script signals a result to a build or a scheduled job:</p>
+    <pre><code><span class="kw">let</span> t = <span class="fn">readcsv</span>(<span class="str">"batch_yield.csv"</span>)
+<span class="kw">let</span> yield = <span class="fn">mean</span>(<span class="fn">column</span>(t, <span class="str">"pass"</span>))
+<span class="fn">exportfigure</span>(<span class="str">"yield.png"</span>)
+<span class="kw">if</span> yield &lt; <span class="num">0.95</span> {
+    <span class="fn">disp</span>(<span class="str">"Yield below target"</span>)
+    <span class="fn">exit</span>(<span class="num">1</span>)          <span class="com"># the build step fails</span>
+}</code></pre>
 
     <!-- ================= LANGUAGE ================= -->
     <h2 id="basics">Syntax basics</h2>
@@ -699,6 +728,7 @@ m[<span class="num">1</span>][<span class="num">0</span>]                       
       <tbody>
         <tr><td class="sig"><code><span class="fn">print</span>(values...)</code></td><td>Write the values to the console, space-separated, followed by a newline.</td></tr>
         <tr><td class="sig"><code><span class="fn">run</span>(path)</code></td><td>Run another JGS script into the current scope (an include) — shares variables and functions.</td></tr>
+        <tr><td class="sig"><code><span class="fn">exit</span>(<span class="opt">code</span>)</code> &nbsp; <code><span class="fn">quit</span>(<span class="opt">code</span>)</code></td><td>Stop the script immediately — unwinding out of loops and functions — and close JGraph, with an optional process exit code (default 0). Under <a href="#commandline"><code>-batch</code></a> this becomes the process's exit status; in the editor it closes the application.</td></tr>
       </tbody>
     </table></div>
 
@@ -776,7 +806,7 @@ m[<span class="num">1</span>][<span class="num">0</span>]                       
 <span class="fn">exportfigure</span>(<span class="str">"panels.png"</span>, <span class="num">2</span>)   <span class="com"># image, format by extension</span></code></pre>
 
     <footer>
-      Reference generated from the JGraph source (builtin catalog, lexer, and parser). Signatures and behavior reflect the current build. JGS also runs alongside C# and Python scripting engines in the Script Workspace.
+      Reference generated from the JGraph source (builtin catalog, lexer, and parser). Signatures and behavior reflect the current build. JGS also runs alongside C# and Python scripting engines in the Script Workspace, and headlessly through <code>jgraph -batch</code>.
     </footer>
   </main>
 </div>

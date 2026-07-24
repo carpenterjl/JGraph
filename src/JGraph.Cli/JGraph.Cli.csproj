@@ -1,0 +1,32 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <RootNamespace>JGraph.Cli</RootNamespace>
+    <!-- The command users type. Deliberately not "JGraph.Cli": this is the product's CLI face. -->
+    <AssemblyName>jgraph</AssemblyName>
+    <Description>Command-line launcher for JGraph: runs scripts headlessly (-batch) and starts the application with startup options (-r, -logfile, -h).</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- -h opens the scripting guide, so it has to travel with the executable. -->
+    <Content Include="..\..\docs\jgs-scripting-guide.html" Link="docs\jgs-scripting-guide.html" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\JGraph.Core\JGraph.Core.csproj" />
+    <ProjectReference Include="..\JGraph.Api\JGraph.Api.csproj" />
+    <ProjectReference Include="..\JGraph.Export\JGraph.Export.csproj" />
+    <ProjectReference Include="..\JGraph.Plugins\JGraph.Plugins.csproj" />
+    <ProjectReference Include="..\JGraph.Scripting\JGraph.Scripting.csproj" />
+    <ProjectReference Include="..\JGraph.Serialization\JGraph.Serialization.csproj" />
+
+    <!-- Build order only: the launcher starts the WPF application as a separate process for the
+         modes that need a window, and must never link against it (that would drag WPF in here). -->
+    <ProjectReference Include="..\JGraph.Application\JGraph.Application.csproj"
+                      ReferenceOutputAssembly="false" Private="false"
+                      SkipGetTargetFrameworkProperties="true" />
+  </ItemGroup>
+
+</Project>

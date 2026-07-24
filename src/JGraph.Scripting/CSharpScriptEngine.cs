@@ -74,6 +74,12 @@ public sealed class CSharpScriptEngine : IScriptEngine
 
             if (state.Exception is not null)
             {
+                // exit()/quit() unwind through the same channel as a failure, but mean the opposite.
+                if (ScriptExitException.Unwrap(state.Exception) is { } exit)
+                {
+                    return ScriptRunResult.Exited(exit.ExitCode, globals.FiguresShown);
+                }
+
                 context.Output.WriteError(state.Exception.ToString());
                 return ScriptRunResult.Failed(state.Exception.Message);
             }

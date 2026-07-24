@@ -33,12 +33,27 @@ public sealed class ScriptingService : IScriptingService
     }
 
     /// <inheritdoc />
-    public void OpenEditor()
+    public void OpenEditor() => Open();
+
+    /// <inheritdoc />
+    public void OpenEditorAndRun(string statement, string? logFile)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(statement);
+        ScriptWorkspaceWindow window = Open();
+        if (logFile is { Length: > 0 })
+        {
+            window.SetLogFile(logFile);
+        }
+
+        window.RunStartupStatement(statement);
+    }
+
+    private ScriptWorkspaceWindow Open()
     {
         if (_window is not null)
         {
             _window.Activate();
-            return;
+            return _window;
         }
 
         _window = new ScriptWorkspaceWindow(_engines, _stateService, _figureWindows)
@@ -49,5 +64,6 @@ public sealed class ScriptingService : IScriptingService
         };
         _window.Closed += (_, _) => _window = null;
         _window.Show();
+        return _window;
     }
 }

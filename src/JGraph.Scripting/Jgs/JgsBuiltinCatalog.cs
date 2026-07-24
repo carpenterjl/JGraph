@@ -128,6 +128,8 @@ public static class JgsBuiltinCatalog
         Add("audioread", "Reads a .wav file: [samples, fs] with samples normalized to [-1, 1] (stereo averaged to mono).", P("path"));
         Add("sound", "Plays samples through the host's audio output without blocking (fs defaults to 8192).", P("y"), Opt("fs"));
         Add("pause", "Waits the given number of seconds (interruptible by Stop).", P("seconds"));
+        Add("exit", "Ends the script and closes the application, with an optional process exit code.", Opt("code"));
+        Add("quit", "An alias for exit.", Opt("code"));
 
         // --- Time & date ------------------------------------------------------------------------
         Add("tic", "Starts a stopwatch and returns a handle; pass it to toc to time a specific interval.");

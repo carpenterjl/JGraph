@@ -53,6 +53,13 @@ internal static class JgsRunner
             RegisterCompletedRun(environment, hook);
             return ok;
         }
+        catch (Exception ex) when (ScriptExitException.Unwrap(ex) is { } exit)
+        {
+            // The script stopped itself. Its figures still count, and the code it asked for rides
+            // out on the result for the host to act on.
+            globals.ShowUnshownFigures();
+            return ScriptRunResult.Exited(exit.ExitCode, globals.FiguresShown);
+        }
         catch (JgsException ex)
         {
             var diagnostic = new ScriptDiagnostic(ex.Line, ex.Column, ex.Message, IsError: true);

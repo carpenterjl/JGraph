@@ -14,6 +14,7 @@ using JGraph.Data;
 using JGraph.Data.Import;
 using JGraph.Scripting;
 using JGraph.Scripting.Jgs;
+using JGraph.Scripting.Startup;
 using JGraph.Scripting.Jgs.Debug;
 using JGraph.Scripting.Workspace;
 using JGraph.Serialization.Workspace;
@@ -41,6 +42,8 @@ public partial class ScriptWorkspaceWindow : Window
         new(StringComparer.OrdinalIgnoreCase);
     private ScriptWorkspace? _workspace;
     private System.Threading.CancellationTokenSource? _cts;
+    private IScriptOutput? _output;
+    private IDisposable? _logFile;
     private JgsDebugSession? _debugSession;
     private bool _restartRequested;
 
@@ -560,7 +563,7 @@ public partial class ScriptWorkspaceWindow : Window
             ? null
             : path => workspace.Resolve(path, scriptDirectory);
         var context = new ScriptContext(
-            new ConsoleOutput(this), ShowFigureOnUi, scriptDirectory ?? workspace?.RootPath, resolver,
+            _output ??= new ConsoleOutput(this), ShowFigureOnUi, scriptDirectory ?? workspace?.RootPath, resolver,
             new AppScriptFigureFiles(), _audio);
 
         _cts = new System.Threading.CancellationTokenSource();
@@ -594,6 +597,15 @@ public partial class ScriptWorkspaceWindow : Window
             ? $"Done — {result.FiguresShown} figure(s), {result.Variables.Count} variable(s)."
             : $"Failed: {result.Message}");
 
+        if (result.ExitCode is { } exitCode)
+        {
+            // The script called exit()/quit(). Honour it here too, not only under -batch: a script
+            // that says "stop" means the same thing whichever way it was started.
+            AppendConsole($"--- exit({exitCode}) — closing JGraph. ---");
+            System.Windows.Application.Current?.Shutdown(exitCode);
+            return;
+        }
+
         if (_restartRequested)
         {
             // An incompatible live edit chose "restart": rerun the same script with the new code.
@@ -601,6 +613,47 @@ public partial class ScriptWorkspaceWindow : Window
             AppendConsole("--- Restarting with the edited code ---");
             _ = RunActiveAsync(entry);
         }
+    }
+
+    // --- Startup options ---------------------------------------------------------------------------
+
+    /// <summary>
+    /// Tees this window's console to <paramref name="path"/> as well — the <c>-logfile</c> option. The
+    /// pane and the file then see identical text, so a log is a faithful transcript of the session.
+    /// </summary>
+    public void SetLogFile(string path)
+    {
+        var file = new FileScriptOutput(path);
+        _logFile = file;
+        _output = new TeeScriptOutput(new ConsoleOutput(this), file);
+        AppendConsole($"--- Logging to {Path.GetFullPath(path)} ---");
+    }
+
+    /// <summary>
+    /// Runs the <c>-r</c> statement: an existing file opens as a document, anything else becomes an
+    /// unsaved JGS scratch document, and either way it runs immediately. The session then stays open,
+    /// which is the whole point of <c>-r</c> — the script is a starting point, not the whole job.
+    /// </summary>
+    public void RunStartupStatement(string statement)
+    {
+        ResolvedStatement resolved = StartupStatement.Resolve(statement, Environment.CurrentDirectory);
+        if (resolved.Error is { } error)
+        {
+            SetStatus(error);
+            AppendConsole("--- " + error + " ---");
+            return;
+        }
+
+        if (resolved.SourcePath is { } path)
+        {
+            OpenDocument(path);
+        }
+        else
+        {
+            AddDocument(new ScriptDocumentModel(null, resolved.Code, resolved.Language), activate: true);
+        }
+
+        _ = RunActiveAsync();
     }
 
     // --- Debugging (JGS) --------------------------------------------------------------------------
@@ -1305,6 +1358,7 @@ public partial class ScriptWorkspaceWindow : Window
         _stateService.Save(state);
 
         _workspace?.Dispose();
+        _logFile?.Dispose();
         base.OnClosed(e);
     }
 
