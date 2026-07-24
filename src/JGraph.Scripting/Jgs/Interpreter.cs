@@ -21,6 +21,15 @@ internal sealed class Interpreter
     private readonly IJgsDebugHook? _hook;
     private readonly Action<string>? _echo;
     private readonly List<int> _indexTargetLengths = new(); // 'end' resolves to the top entry
+
+    /// <summary>
+    /// Names a MATLAB <c>global</c> declaration has bound to the global scope. Reads and writes of
+    /// these names go straight to the globals wherever they appear, which is how a function and the
+    /// script that calls it share one variable. (MATLAB scopes the declaration per function; treating
+    /// it as run-wide differs only for a script that also uses the name as an ordinary local.)
+    /// </summary>
+    private readonly HashSet<string> _globalNames = new(StringComparer.Ordinal);
+
     private readonly Action _cancelCheck; // per-chunk poll inside packed operations
     private long _steps;
     private int _callDepth;
@@ -31,17 +40,27 @@ internal sealed class Interpreter
     /// <param name="hook">The debug hook, or null for a plain full-speed run.</param>
     /// <param name="echo">Sink for MATLAB-style console echo of unsuppressed statement results, or
     /// null to disable echo entirely.</param>
-    public Interpreter(JgsEnvironment globals, CancellationToken cancellationToken, IJgsDebugHook? hook = null, Action<string>? echo = null)
+    /// <param name="dialect">The language variant being run, or null for <see cref="JgsDialect.Jgs"/>.</param>
+    public Interpreter(
+        JgsEnvironment globals,
+        CancellationToken cancellationToken,
+        IJgsDebugHook? hook = null,
+        Action<string>? echo = null,
+        JgsDialect? dialect = null)
     {
         _globals = globals;
         _cancellationToken = cancellationToken;
         _hook = hook;
         _echo = echo;
+        Dialect = dialect ?? JgsDialect.Jgs;
 
         // Packed operations run in ~4M-element chunks and poll this between chunks, so Stop
         // interrupts a 100M-element elementwise statement mid-flight instead of after it.
         _cancelCheck = () => _cancellationToken.ThrowIfCancellationRequested();
     }
+
+    /// <summary>The language variant this run speaks; every JGS/MATLAB difference reads from it.</summary>
+    public JgsDialect Dialect { get; }
 
     private enum CompletionKind
     {
@@ -208,11 +227,11 @@ internal sealed class Interpreter
             case IfStmt ifStmt:
                 if (Evaluate(ifStmt.Condition, env).IsTruthy)
                 {
-                    return ExecuteBlock(ifStmt.Then, new JgsEnvironment(env));
+                    return ExecuteBlock(ifStmt.Then, BlockScope(env));
                 }
 
                 return ifStmt.Else is not null
-                    ? ExecuteBlock(ifStmt.Else, new JgsEnvironment(env))
+                    ? ExecuteBlock(ifStmt.Else, BlockScope(env))
                     : Completion.Normal;
 
             case WhileStmt whileStmt:
@@ -229,6 +248,28 @@ internal sealed class Interpreter
 
             case ContinueStmt cont:
                 return Completion.MakeContinue(cont.Line, cont.Column);
+
+            case SwitchStmt switchStmt:
+                return ExecuteSwitch(switchStmt, env);
+
+            case TryStmt tryStmt:
+                return ExecuteTry(tryStmt, env);
+
+            case GlobalStmt globalStmt:
+                foreach (string name in globalStmt.Names)
+                {
+                    _globalNames.Add(name);
+                    if (!_globals.Contains(name))
+                    {
+                        _globals.Declare(name, JgsValue.Array(System.Array.Empty<JgsValue>()));
+                    }
+                }
+
+                return Completion.Normal;
+
+            case MultiAssignStmt multi:
+                ExecuteMultiAssign(multi, env);
+                return Completion.Normal;
 
             default:
                 throw new JgsRuntimeException(statement.Line, statement.Column, "Unsupported statement.");
@@ -279,6 +320,8 @@ internal sealed class Interpreter
         VariableExpr variable => variable.Name,
         IndexExpr index => RootName(index.Target),
         CallExpr call => RootName(call.Callee),
+        BraceIndexExpr brace => RootName(brace.Target),
+        MemberExpr member => RootName(member.Target),
         _ => null,
     };
 
@@ -344,12 +387,155 @@ internal sealed class Interpreter
         return sb.Append(']').ToString();
     }
 
+    /// <summary>Reads a name, honouring any <c>global</c> declaration that redirects it.</summary>
+    private bool LookUp(string name, JgsEnvironment env, out JgsValue value)
+    {
+        if (_globalNames.Contains(name) && _globals.TryGet(name, out value))
+        {
+            return true;
+        }
+
+        return env.TryGet(name, out value);
+    }
+
+    /// <summary>
+    /// The message for a name that resolves to nothing, in the dialect's own vocabulary. A MATLAB
+    /// function JGraph knows about but does not implement says so by name, which is a far better
+    /// answer than "not recognized" when a script reaches for a toolbox that is not here.
+    /// </summary>
+    private string Undefined(string name)
+    {
+        if (!Dialect.IsMatlab)
+        {
+            return $"'{name}' is not defined.";
+        }
+
+        return JgsBuiltins.IsUnsupportedMatlabFunction(name, out string what)
+            ? $"'{name}' is not supported in JGraph ({what})."
+            : $"'{name}' is not recognized as a variable or a function.";
+    }
+
+    /// <summary>
+    /// A MATLAB <c>switch</c>: the first arm whose value matches runs, arms never fall through, and
+    /// <c>case {a, b}</c> matches any member of the cell.
+    /// </summary>
+    private Completion ExecuteSwitch(SwitchStmt statement, JgsEnvironment env)
+    {
+        JgsValue subject = Evaluate(statement.Subject, env);
+        foreach (SwitchCase arm in statement.Cases)
+        {
+            JgsValue candidate = Evaluate(arm.Value, env);
+            bool matched = candidate.Type == JgsType.Cell
+                ? System.Array.Exists(candidate.AsCell, alternative => JgsValue.AreEqual(subject, alternative))
+                : JgsValue.AreEqual(subject, candidate);
+
+            if (matched)
+            {
+                return ExecuteBlock(arm.Body, BlockScope(env));
+            }
+        }
+
+        return statement.Otherwise is not null
+            ? ExecuteBlock(statement.Otherwise, BlockScope(env))
+            : Completion.Normal;
+    }
+
+    /// <summary>
+    /// A MATLAB <c>try</c>/<c>catch</c>. It catches the script's own runtime errors only: cancellation,
+    /// the step limit, and <c>exit</c> must still unwind, or a script could trap the user's Stop button.
+    /// </summary>
+    private Completion ExecuteTry(TryStmt statement, JgsEnvironment env)
+    {
+        try
+        {
+            return ExecuteBlock(statement.Body, BlockScope(env));
+        }
+        catch (JgsRuntimeException error)
+        {
+            JgsEnvironment handler = BlockScope(env);
+            if (statement.ErrorVariable is { } name)
+            {
+                var fields = new Dictionary<string, JgsValue>(StringComparer.Ordinal)
+                {
+                    ["message"] = JgsValue.Str(error.Message),
+                    ["identifier"] = JgsValue.Str(string.Empty),
+                };
+                handler.Declare(name, JgsValue.Struct(fields));
+            }
+
+            return ExecuteBlock(statement.Handler, handler);
+        }
+    }
+
+    /// <summary>
+    /// A MATLAB multiple-output call: <c>[a, b] = size(x)</c>. Each target takes the output in its
+    /// position; a <c>~</c> target discards one.
+    /// </summary>
+    private void ExecuteMultiAssign(MultiAssignStmt statement, JgsEnvironment env)
+    {
+        JgsValue[] outputs = EvaluateForOutputs(statement.Call, statement.Targets.Count, env);
+        for (int i = 0; i < statement.Targets.Count; i++)
+        {
+            if (statement.Targets[i] is not { } target)
+            {
+                continue; // '~': the output was computed, and is deliberately dropped
+            }
+
+            if (i >= outputs.Length)
+            {
+                throw new JgsRuntimeException(statement.Line, statement.Column,
+                    $"This call returns {outputs.Length} value(s), but {statement.Targets.Count} were asked for.");
+            }
+
+            var assignment = new AssignExpr(target, TokenType.Assign, new PreEvaluated(outputs[i]))
+            {
+                Line = statement.Line,
+                Column = statement.Column,
+            };
+            EvaluateAssign(assignment, env);
+        }
+    }
+
+    /// <summary>
+    /// Evaluates a call that is expected to produce <paramref name="wanted"/> outputs. User functions
+    /// hand back their named outputs; a builtin that knows how to produce several does so; anything
+    /// else produces its single value.
+    /// </summary>
+    private JgsValue[] EvaluateForOutputs(Expr call, int wanted, JgsEnvironment env)
+    {
+        if (call is CallExpr invocation && Evaluate(invocation.Callee, env) is { Type: JgsType.Function } callee)
+        {
+            var arguments = new JgsValue[invocation.Arguments.Count];
+            for (int i = 0; i < arguments.Length; i++)
+            {
+                arguments[i] = Evaluate(invocation.Arguments[i], env);
+            }
+
+            if (callee.AsCallable is IJgsMultiCallable multi)
+            {
+                return multi.CallMultiple(arguments, wanted, invocation.Line, invocation.Column);
+            }
+
+            return [callee.AsCallable.Call(arguments, invocation.Line, invocation.Column)];
+        }
+
+        return [Evaluate(call, env)];
+    }
+
+    /// <summary>
+    /// The environment an if/loop body runs in. JGS gives each block a scope of its own, so a variable
+    /// declared inside one does not leak out; MATLAB has only function scope, where 'if c; x = 1; end'
+    /// must leave x visible afterwards.
+    /// </summary>
+    private JgsEnvironment BlockScope(JgsEnvironment env) =>
+        Dialect.FunctionScope ? env : new JgsEnvironment(env);
+
     private Completion ExecuteWhile(WhileStmt statement, JgsEnvironment env)
     {
         while (Evaluate(statement.Condition, env).IsTruthy)
         {
             Tick();
-            Completion completion = ExecuteBlock(statement.Body, new JgsEnvironment(env));
+            Completion completion = ExecuteBlock(statement.Body, BlockScope(env));
             if (completion.Kind == CompletionKind.Break)
             {
                 break;
@@ -378,9 +564,9 @@ internal sealed class Interpreter
         int iterationCount = iterable.ArrayLength;
         for (int index = 0; index < iterationCount; index++)
         {
-            JgsValue element = iterable.ElementAt(index);
+            JgsValue element = CopyForBinding(iterable.ElementAt(index));
             Tick();
-            var local = new JgsEnvironment(env);
+            JgsEnvironment local = BlockScope(env);
             local.Declare(statement.Variable, element);
             Completion completion = ExecuteBlock(statement.Body, local);
             if (completion.Kind == CompletionKind.Break)
@@ -442,21 +628,24 @@ internal sealed class Interpreter
                         "'end' is only valid inside an index expression, like x(end).");
                 }
 
-                // The stack holds target *lengths*; 'end' is the last valid *index*, and indexing is
-                // 0-based — so it is one less. Not a bug: x(end) must still be the last element.
-                return JgsValue.Number(_indexTargetLengths[^1] - 1);
+                // The stack holds target *lengths*; 'end' is the last valid *index*, which in a
+                // 0-based dialect is one less and in a 1-based one is the length itself.
+                return JgsValue.Number(_indexTargetLengths[^1] - 1 + Dialect.IndexBase);
 
             case AllExpr:
                 throw new JgsRuntimeException(expression.Line, expression.Column,
                     "':' by itself is only valid as an index argument, like x(:).");
 
             case VariableExpr variable:
-                if (env.TryGet(variable.Name, out JgsValue value))
+                if (LookUp(variable.Name, env, out JgsValue value))
                 {
                     return value;
                 }
 
-                throw new JgsRuntimeException(variable.Line, variable.Column, $"'{variable.Name}' is not defined.");
+                throw new JgsRuntimeException(variable.Line, variable.Column, Undefined(variable.Name));
+
+            case PreEvaluated ready:
+                return ready.Value;
 
             case UnaryExpr unary:
                 return EvaluateUnary(unary, env);
@@ -478,6 +667,30 @@ internal sealed class Interpreter
 
             case IncDecExpr incDec:
                 return EvaluateIncDec(incDec, env);
+
+            case TransposeExpr transpose:
+                return EvaluateTranspose(transpose, env);
+
+            case CellLiteral cell:
+                return EvaluateCellLiteral(cell, env);
+
+            case BraceIndexExpr brace:
+                return EvaluateBraceIndex(brace, env);
+
+            case MemberExpr member:
+                return EvaluateMember(member, env);
+
+            case AnonymousFnExpr anonymous:
+                return JgsValue.Function(AnonymousFunction.Create(anonymous, env, this));
+
+            case FunctionHandleExpr handle:
+                if (env.TryGet(handle.Name, out JgsValue referenced) && referenced.Type == JgsType.Function)
+                {
+                    return referenced;
+                }
+
+                throw new JgsRuntimeException(handle.Line, handle.Column,
+                    $"'@{handle.Name}': there is no function called '{handle.Name}'.");
 
             default:
                 throw new JgsRuntimeException(expression.Line, expression.Column, "Unsupported expression.");
@@ -658,6 +871,31 @@ internal sealed class Interpreter
     /// <summary>Applies a binary operator to already-evaluated operands (shared with compound assignment).</summary>
     private JgsValue ApplyBinary(TokenType op, JgsValue left, JgsValue right, Node at)
     {
+        // MATLAB's '*', '/' and '^' are matrix operations; only the dotted spellings are elementwise.
+        // Everything below this point is elementwise, so the matrix forms are resolved first.
+        if (Dialect.IsMatlab)
+        {
+            if (op is TokenType.DotStar or TokenType.DotSlash or TokenType.DotCaret)
+            {
+                op = op switch
+                {
+                    TokenType.DotStar => TokenType.Star,
+                    TokenType.DotSlash => TokenType.Slash,
+                    _ => TokenType.Caret,
+                };
+            }
+            else if (op is TokenType.Star or TokenType.Slash or TokenType.Caret
+                     && left.Type == JgsType.Array && right.Type == JgsType.Array)
+            {
+                return MatrixOperation(op, left, right, at);
+            }
+        }
+
+        if (op is TokenType.Amp or TokenType.Pipe)
+        {
+            return ElementwiseLogical(op, left, right, at);
+        }
+
         // Packed fast paths: SIMD kernels over flat buffers when an operand is packed and the
         // shapes fit; anything else falls through to the boxed code below unchanged. Ordering
         // comparisons check complex operands first so the boxed error still fires.
@@ -719,6 +957,83 @@ internal sealed class Interpreter
 
     // --- Assignment expressions ---------------------------------------------------------------
 
+    /// <summary>
+    /// The value to store when binding a name, under the dialect's assignment semantics. MATLAB copies
+    /// containers, so <c>b = a; b(1) = 0</c> leaves <c>a</c> alone; JGS shares the reference, which is
+    /// cheaper and is what its own scripts already rely on. Applied at the three places a name is
+    /// bound: assignment, a loop variable, and a function's arguments.
+    /// </summary>
+    public JgsValue CopyForBinding(JgsValue value)
+    {
+        if (!Dialect.CopyOnAssign || value.Type is not (JgsType.Array or JgsType.Cell or JgsType.Struct))
+        {
+            return value; // scalars, strings and functions are immutable — nothing to copy
+        }
+
+        return CopyContainer(value);
+    }
+
+    /// <summary>Evaluates one expression in <paramref name="env"/> — the entry point a callable body needs.</summary>
+    public JgsValue EvaluateIn(Expr expression, JgsEnvironment env) => Evaluate(expression, env);
+
+    private JgsValue CopyContainer(JgsValue value)
+    {
+        if (value.Type == JgsType.Cell)
+        {
+            JgsValue[] cell = value.AsCell;
+            var copied = new JgsValue[cell.Length];
+            for (int i = 0; i < copied.Length; i++)
+            {
+                copied[i] = CopyForBinding(cell[i]);
+            }
+
+            return JgsValue.Cell(copied);
+        }
+
+        if (value.Type == JgsType.Struct)
+        {
+            var fields = new Dictionary<string, JgsValue>(StringComparer.Ordinal);
+            foreach ((string name, JgsValue field) in value.AsStruct)
+            {
+                fields[name] = CopyForBinding(field);
+            }
+
+            return JgsValue.Struct(fields);
+        }
+
+        if (value.IsPacked)
+        {
+            // A fresh wrapper over a fresh buffer: the single-wrapper invariant holds, and the
+            // previous-run disposal walk (which compares by reference) sees two distinct arrays.
+            NumericBuffer source = value.AsBuffer;
+            NumericBuffer copy = JgsPacking.Allocate(source.Length);
+            source.AsSpan().CopyTo(copy.AsSpan());
+            GC.KeepAlive(source);
+            return JgsValue.Packed(copy, value.PackedKind);
+        }
+
+        if (value.IsPackedComplex)
+        {
+            JgsPackedComplex planes = value.AsPackedComplex;
+            NumericBuffer re = JgsPacking.Allocate(planes.Length);
+            NumericBuffer im = JgsPacking.Allocate(planes.Length);
+            planes.Re.AsSpan().CopyTo(re.AsSpan());
+            planes.Im.AsSpan().CopyTo(im.AsSpan());
+            GC.KeepAlive(planes);
+            return JgsValue.PackedComplexArray(new JgsPackedComplex(re, im));
+        }
+
+        JgsValue[] source2 = value.AsArray;
+        var elements = new JgsValue[source2.Length];
+        for (int i = 0; i < elements.Length; i++)
+        {
+            // Rows of a matrix are arrays too, and MATLAB copies the whole thing.
+            elements[i] = source2[i].Type == JgsType.Array ? CopyContainer(source2[i]) : source2[i];
+        }
+
+        return JgsValue.Array(elements);
+    }
+
     /// <summary>Maps a compound-assignment token to the underlying binary operator.</summary>
     private static TokenType UnderlyingOp(TokenType op) => op switch
     {
@@ -736,23 +1051,58 @@ internal sealed class Interpreter
 
         if (assign.Target is VariableExpr variable)
         {
+            // A name declared 'global' is written where every scope can see it.
+            JgsEnvironment scope = _globalNames.Contains(variable.Name) ? _globals : env;
             JgsValue stored = rhs;
             if (assign.Op != TokenType.Assign)
             {
-                if (!env.TryGet(variable.Name, out JgsValue current))
+                if (!scope.TryGet(variable.Name, out JgsValue current))
                 {
                     throw NotDefined(variable.Name, assign);
                 }
 
                 stored = ApplyBinary(UnderlyingOp(assign.Op), current, rhs, assign);
             }
-
-            if (!env.TryAssign(variable.Name, stored))
+            else
             {
-                throw NotDefined(variable.Name, assign);
+                stored = CopyForBinding(stored);
+            }
+
+            if (!scope.TryAssign(variable.Name, stored))
+            {
+                // A first plain assignment declares the variable where 'let' is optional; where it is
+                // required, not having one is the typo the requirement exists to catch.
+                if (Dialect.RequireLet || assign.Op != TokenType.Assign)
+                {
+                    throw NotDefined(variable.Name, assign);
+                }
+
+                scope.Declare(variable.Name, stored);
             }
 
             return stored;
+        }
+
+        if (assign.Target is MemberExpr member)
+        {
+            if (assign.Op != TokenType.Assign)
+            {
+                JgsValue current = EvaluateMember(member, env);
+                return AssignToMember(member, ApplyBinary(UnderlyingOp(assign.Op), current, rhs, assign), env);
+            }
+
+            return AssignToMember(member, CopyForBinding(rhs), env);
+        }
+
+        if (assign.Target is BraceIndexExpr brace)
+        {
+            if (assign.Op != TokenType.Assign)
+            {
+                JgsValue current = EvaluateBraceIndex(brace, env);
+                return AssignToBraceIndex(brace, ApplyBinary(UnderlyingOp(assign.Op), current, rhs, assign), env);
+            }
+
+            return AssignToBraceIndex(brace, CopyForBinding(rhs), env);
         }
 
         // An index write in either spelling: x(k) = v, x[0:n] = 0, x(mask) = v, x[:] = v. The parser
@@ -1159,6 +1509,32 @@ internal sealed class Interpreter
             return IndexInto(callee, call.Arguments, call, env);
         }
 
+        // c(i) on a cell array selects a sub-cell; c{i} (the brace form) takes the contents out.
+        if (callee.Type == JgsType.Cell)
+        {
+            JgsValue[] elements = callee.AsCell;
+            JgsValue? index = EvaluateIndexArgument(
+                Single(call.Arguments, call, "Indexing a cell"), elements.Length, env);
+            if (index is null)
+            {
+                return JgsValue.Cell((JgsValue[])elements.Clone()); // c(:) is the whole cell
+            }
+
+            if (index.Type == JgsType.Array)
+            {
+                int[] picks = ComputePicks(index, elements.Length, "cell", call.Line, call.Column);
+                var selected = new JgsValue[picks.Length];
+                for (int i = 0; i < picks.Length; i++)
+                {
+                    selected[i] = elements[picks[i]];
+                }
+
+                return JgsValue.Cell(selected);
+            }
+
+            return JgsValue.Cell([elements[ToIndex(index, elements.Length, call.Line, call.Column)]]);
+        }
+
         if (callee.Type != JgsType.Function)
         {
             throw new JgsRuntimeException(call.Line, call.Column, $"Cannot call a {callee.TypeName}; it is not a function.");
@@ -1293,7 +1669,7 @@ internal sealed class Interpreter
     /// all-number array gathers by index. Both spellings are 0-based (ADR 0028). Gathering a string
     /// yields a string.
     /// </summary>
-    private static JgsValue GatherOrIndex(JgsValue target, JgsValue index, int line, int column)
+    private JgsValue GatherOrIndex(JgsValue target, JgsValue index, int line, int column)
     {
         bool isString = target.Type == JgsType.String;
         int length = isString ? target.AsString.Length : target.ArrayLength;
@@ -1336,16 +1712,16 @@ internal sealed class Interpreter
     }
 
     /// <summary>Resolves an index array (a mask or a list of indices) to 0-based element positions.</summary>
-    private static int[] ComputePicks(JgsValue index, int length, string targetName, int line, int column)
+    private int[] ComputePicks(JgsValue index, int length, string targetName, int line, int column)
     {
         if (index.IsPacked)
         {
-            return PackedOps.PicksFromPacked(index, length, targetName, line, column);
+            return PackedOps.PicksFromPacked(index, length, targetName, Dialect.IndexBase, line, column);
         }
 
         if (index.IsPackedComplex)
         {
-            return PackedOps.PicksFromPackedComplex(index, length, line, column);
+            return PackedOps.PicksFromPackedComplex(index, length, Dialect.IndexBase, line, column);
         }
 
         JgsValue[] selector = index.AsArray;
@@ -1383,6 +1759,448 @@ internal sealed class Interpreter
     }
 
     // --- Numeric helpers ----------------------------------------------------------------------
+
+    /// <summary>
+    /// MATLAB's elementwise logical operators. Unlike <c>&amp;&amp;</c>/<c>||</c> they evaluate both
+    /// sides and work over whole arrays, producing a mask.
+    /// </summary>
+    private JgsValue ElementwiseLogical(TokenType op, JgsValue left, JgsValue right, Node at)
+    {
+        bool and = op == TokenType.Amp;
+        if (left.Type != JgsType.Array && right.Type != JgsType.Array)
+        {
+            return JgsValue.Bool(and ? left.IsTruthy && right.IsTruthy : left.IsTruthy || right.IsTruthy);
+        }
+
+        string symbol = and ? "&" : "|";
+        return JgsValue.Array(Broadcast(left, right,
+            (a, b) => JgsValue.Bool(and ? a != 0 && b != 0 : a != 0 || b != 0), symbol, at.Line, at.Column));
+    }
+
+    /// <summary>
+    /// MATLAB's matrix <c>*</c> for two arrays. JGraph's arrays are one-dimensional — a matrix is an
+    /// array of row arrays, and a vector has no row/column orientation — so the shapes that can be
+    /// resolved unambiguously are matrix×matrix and matrix×vector. Anything else is refused rather than
+    /// guessed at: an elementwise answer where MATLAB would give a matrix product is a wrong number, and
+    /// a wrong number is worse than an error.
+    /// </summary>
+    private JgsValue MatrixOperation(TokenType op, JgsValue left, JgsValue right, Node at)
+    {
+        string symbol = op == TokenType.Star ? "*" : op == TokenType.Slash ? "/" : "^";
+        if (op != TokenType.Star)
+        {
+            throw new JgsRuntimeException(at.Line, at.Column,
+                $"'{symbol}' between two arrays is a matrix operation, which JGraph does not implement. "
+                + $"Use '.{symbol}' for the elementwise form.");
+        }
+
+        double[][] a = AsRows(left);
+        double[][] b = AsRows(right);
+        bool leftIsVector = !IsMatrix(left);
+        bool rightIsVector = !IsMatrix(right);
+
+        if (leftIsVector && rightIsVector)
+        {
+            throw new JgsRuntimeException(at.Line, at.Column,
+                "'*' between two vectors is ambiguous here: JGraph's arrays have no row/column "
+                + "orientation. Use '.*' for the elementwise product, or dot(a, b) for the inner product.");
+        }
+
+        // A vector meeting a matrix is whichever orientation makes the product work: a row on the left,
+        // a column on the right.
+        if (leftIsVector)
+        {
+            a = [a[0]];
+        }
+
+        if (rightIsVector)
+        {
+            b = b[0].Select(static v => new[] { v }).ToArray();
+        }
+
+        int inner = a[0].Length;
+        if (inner != b.Length)
+        {
+            throw new JgsRuntimeException(at.Line, at.Column,
+                $"Matrix dimensions do not agree for '*': the left has {inner} columns and the right has {b.Length} rows.");
+        }
+
+        int columns = b[0].Length;
+        var product = new JgsValue[a.Length];
+        for (int r = 0; r < a.Length; r++)
+        {
+            var row = new double[columns];
+            for (int c = 0; c < columns; c++)
+            {
+                double sum = 0;
+                for (int k = 0; k < inner; k++)
+                {
+                    if (b[k].Length != columns)
+                    {
+                        throw new JgsRuntimeException(at.Line, at.Column, "Matrix rows must have equal lengths.");
+                    }
+
+                    sum += a[r][k] * b[k][c];
+                }
+
+                row[c] = sum;
+            }
+
+            product[r] = NumbersOf(row);
+        }
+
+        // A single row (or a single column) is a plain vector again, as MATLAB would show it.
+        if (product.Length == 1)
+        {
+            return product[0];
+        }
+
+        if (columns == 1)
+        {
+            return NumbersOf(product.Select(static p => p.ElementAt(0).AsNumber).ToArray());
+        }
+
+        return JgsValue.Array(product);
+    }
+
+    // --- Cells and structs ----------------------------------------------------------------------
+
+    /// <summary>
+    /// Builds a cell array. Rows are flattened: JGraph's containers are one-dimensional, so a
+    /// <c>{1, 2; 3, 4}</c> literal holds four elements in reading order.
+    /// </summary>
+    private JgsValue EvaluateCellLiteral(CellLiteral literal, JgsEnvironment env)
+    {
+        var elements = new List<JgsValue>();
+        foreach (IReadOnlyList<Expr> row in literal.Rows)
+        {
+            foreach (Expr element in row)
+            {
+                elements.Add(Evaluate(element, env));
+            }
+        }
+
+        return JgsValue.Cell(elements.ToArray());
+    }
+
+    /// <summary>Reads <c>c{i}</c> — the contents of a cell, where <c>c(i)</c> would give a cell back.</summary>
+    private JgsValue EvaluateBraceIndex(BraceIndexExpr brace, JgsEnvironment env)
+    {
+        JgsValue target = Evaluate(brace.Target, env);
+        if (target.Type != JgsType.Cell)
+        {
+            throw new JgsRuntimeException(brace.Line, brace.Column,
+                $"Braces index a cell array, but this is a {target.TypeName}. Use parentheses to index it.");
+        }
+
+        JgsValue[] elements = target.AsCell;
+        JgsValue? index = EvaluateIndexArgument(Single(brace.Indices, brace, "A cell index"), elements.Length, env);
+        return elements[ToIndex(index!, elements.Length, brace.Line, brace.Column)];
+    }
+
+    /// <summary>Reads <c>s.field</c> (or the dynamic <c>s.('field')</c>).</summary>
+    private JgsValue EvaluateMember(MemberExpr member, JgsEnvironment env)
+    {
+        JgsValue target = Evaluate(member.Target, env);
+        string field = FieldName(member, env);
+        if (target.Type != JgsType.Struct)
+        {
+            throw new JgsRuntimeException(member.Line, member.Column,
+                $"'.{field}' needs a struct, but this is a {target.TypeName}.");
+        }
+
+        if (target.AsStruct.TryGetValue(field, out JgsValue? value))
+        {
+            return value;
+        }
+
+        throw new JgsRuntimeException(member.Line, member.Column, $"This struct has no field '{field}'.");
+    }
+
+    private string FieldName(MemberExpr member, JgsEnvironment env)
+    {
+        if (member.Field is { } literal)
+        {
+            return literal;
+        }
+
+        JgsValue name = Evaluate(member.FieldName!, env);
+        if (name.Type != JgsType.String)
+        {
+            throw new JgsRuntimeException(member.Line, member.Column,
+                $"A dynamic field name must be a string, but got a {name.TypeName}.");
+        }
+
+        return name.AsString;
+    }
+
+    private static Expr Single(IReadOnlyList<Expr> subscripts, Node at, string what)
+    {
+        if (subscripts.Count != 1)
+        {
+            throw new JgsRuntimeException(at.Line, at.Column, $"{what} takes exactly one subscript.");
+        }
+
+        return subscripts[0];
+    }
+
+    /// <summary>
+    /// Writes <c>s.field = v</c>, creating the struct — and any struct on the way to it — if it does
+    /// not exist yet, which is how MATLAB scripts routinely build one up field by field.
+    /// </summary>
+    private JgsValue AssignToMember(MemberExpr member, JgsValue value, JgsEnvironment env)
+    {
+        JgsValue container = ResolveStructForWrite(member.Target, env);
+        container.AsStruct[FieldName(member, env)] = value;
+        return value;
+    }
+
+    private JgsValue ResolveStructForWrite(Expr expr, JgsEnvironment env)
+    {
+        switch (expr)
+        {
+            case VariableExpr variable:
+                if (env.TryGet(variable.Name, out JgsValue existing))
+                {
+                    if (existing.Type != JgsType.Struct)
+                    {
+                        throw new JgsRuntimeException(variable.Line, variable.Column,
+                            $"Cannot set a field on '{variable.Name}': it is a {existing.TypeName}, not a struct.");
+                    }
+
+                    return existing;
+                }
+
+                JgsValue created = JgsValue.EmptyStruct();
+                env.Declare(variable.Name, created);
+                return created;
+
+            case MemberExpr nested:
+                JgsValue parent = ResolveStructForWrite(nested.Target, env);
+                string field = FieldName(nested, env);
+                if (!parent.AsStruct.TryGetValue(field, out JgsValue? child) || child.Type != JgsType.Struct)
+                {
+                    child = JgsValue.EmptyStruct();
+                    parent.AsStruct[field] = child;
+                }
+
+                return child;
+
+            default:
+                JgsValue evaluated = Evaluate(expr, env);
+                if (evaluated.Type != JgsType.Struct)
+                {
+                    throw new JgsRuntimeException(expr.Line, expr.Column,
+                        $"Cannot set a field on a {evaluated.TypeName}.");
+                }
+
+                return evaluated;
+        }
+    }
+
+    /// <summary>
+    /// Writes <c>c{i} = v</c>. Assigning past the end grows the cell (filling the gap with empty
+    /// arrays), which is what makes MATLAB's <c>c{end+1} = x</c> accumulation idiom work.
+    /// </summary>
+    private JgsValue AssignToBraceIndex(BraceIndexExpr brace, JgsValue value, JgsEnvironment env)
+    {
+        if (brace.Target is not VariableExpr variable)
+        {
+            throw new JgsRuntimeException(brace.Line, brace.Column,
+                "Only a named cell array can be assigned into with braces.");
+        }
+
+        if (!env.TryGet(variable.Name, out JgsValue target))
+        {
+            target = JgsValue.Cell(System.Array.Empty<JgsValue>());
+            env.Declare(variable.Name, target);
+        }
+
+        if (target.Type != JgsType.Cell)
+        {
+            throw new JgsRuntimeException(brace.Line, brace.Column,
+                $"Braces assign into a cell array, but '{variable.Name}' is a {target.TypeName}.");
+        }
+
+        JgsValue[] elements = target.AsCell;
+        JgsValue? index = EvaluateIndexArgument(
+            Single(brace.Indices, brace, "A cell index"), elements.Length, env);
+        if (index is null || index.Type != JgsType.Number)
+        {
+            throw new JgsRuntimeException(brace.Line, brace.Column, "A cell index must be a single number.");
+        }
+
+        int position = (int)index.AsNumber - Dialect.IndexBase;
+        if (position < 0)
+        {
+            throw new JgsRuntimeException(brace.Line, brace.Column,
+                $"Index {(int)index.AsNumber} is out of range (indexing is {Dialect.IndexBase}-based).");
+        }
+
+        if (position >= elements.Length)
+        {
+            var grown = new JgsValue[position + 1];
+            System.Array.Copy(elements, grown, elements.Length);
+            for (int i = elements.Length; i < grown.Length; i++)
+            {
+                grown[i] = JgsValue.Array(System.Array.Empty<JgsValue>());
+            }
+
+            grown[position] = value;
+            env.TryAssign(variable.Name, JgsValue.Cell(grown));
+            return value;
+        }
+
+        elements[position] = value;
+        return value;
+    }
+
+    /// <summary>
+    /// MATLAB's transpose. A matrix — an array of row arrays — is genuinely transposed. A vector has no
+    /// row/column orientation in this model, so <c>v'</c> hands back its values unchanged (conjugated
+    /// for <c>'</c> when they are complex), which is what makes the ubiquitous <c>(0:0.1:1)'</c> idiom
+    /// work. A scalar is its own transpose.
+    /// </summary>
+    private JgsValue EvaluateTranspose(TransposeExpr transpose, JgsEnvironment env)
+    {
+        JgsValue value = Evaluate(transpose.Operand, env);
+        if (value.Type == JgsType.Complex)
+        {
+            return transpose.Conjugate ? JgsValue.ComplexNum(Complex.Conjugate(value.AsComplex)) : value;
+        }
+
+        if (value.Type != JgsType.Array)
+        {
+            return value;
+        }
+
+        if (!IsMatrix(value))
+        {
+            return transpose.Conjugate ? Conjugated(value) : CopyContainer(value);
+        }
+
+        int rows = value.ArrayLength;
+        int columns = value.ElementAt(0).ArrayLength;
+        var transposed = new JgsValue[columns];
+        for (int c = 0; c < columns; c++)
+        {
+            var column = new JgsValue[rows];
+            for (int r = 0; r < rows; r++)
+            {
+                JgsValue row = value.ElementAt(r);
+                if (row.ArrayLength != columns)
+                {
+                    throw new JgsRuntimeException(transpose.Line, transpose.Column,
+                        "Only a rectangular matrix can be transposed (its rows have different lengths).");
+                }
+
+                JgsValue element = row.ElementAt(c);
+                column[r] = transpose.Conjugate && element.Type == JgsType.Complex
+                    ? JgsValue.ComplexNum(Complex.Conjugate(element.AsComplex))
+                    : element;
+            }
+
+            transposed[c] = JgsPacking.Enabled && PackedOps.TryPackElements(column, out JgsValue packed)
+                ? packed
+                : JgsValue.Array(column);
+        }
+
+        return JgsValue.Array(transposed);
+    }
+
+    /// <summary>A copy of an array with every complex element conjugated.</summary>
+    private JgsValue Conjugated(JgsValue value)
+    {
+        if (value.IsPacked)
+        {
+            return CopyContainer(value); // real numbers are their own conjugates
+        }
+
+        if (value.IsPackedComplex)
+        {
+            JgsPackedComplex planes = value.AsPackedComplex;
+            NumericBuffer re = JgsPacking.Allocate(planes.Length);
+            NumericBuffer im = JgsPacking.Allocate(planes.Length);
+            planes.Re.AsSpan().CopyTo(re.AsSpan());
+            Span<double> source = planes.Im.AsSpan();
+            Span<double> target = im.AsSpan();
+            for (int i = 0; i < source.Length; i++)
+            {
+                target[i] = -source[i];
+            }
+
+            GC.KeepAlive(planes);
+            return JgsValue.PackedComplexArray(new JgsPackedComplex(re, im));
+        }
+
+        JgsValue[] source2 = value.AsArray;
+        var conjugated = new JgsValue[source2.Length];
+        for (int i = 0; i < conjugated.Length; i++)
+        {
+            conjugated[i] = source2[i].Type == JgsType.Complex
+                ? JgsValue.ComplexNum(Complex.Conjugate(source2[i].AsComplex))
+                : source2[i];
+        }
+
+        return JgsValue.Array(conjugated);
+    }
+
+    /// <summary>Whether a value is a matrix in this model: an array whose elements are themselves arrays.</summary>
+    private static bool IsMatrix(JgsValue value) =>
+        value.Type == JgsType.Array && !value.IsPacked && !value.IsPackedComplex
+        && value.ArrayLength > 0 && value.ElementAt(0).Type == JgsType.Array;
+
+    /// <summary>A numeric array or matrix as rows of doubles; a vector becomes a single row.</summary>
+    private double[][] AsRows(JgsValue value)
+    {
+        if (!IsMatrix(value))
+        {
+            return [RowOf(value)];
+        }
+
+        var rows = new double[value.ArrayLength][];
+        for (int r = 0; r < rows.Length; r++)
+        {
+            rows[r] = RowOf(value.ElementAt(r));
+        }
+
+        return rows;
+    }
+
+    private double[] RowOf(JgsValue value)
+    {
+        int length = value.ArrayLength;
+        var row = new double[length];
+        for (int i = 0; i < length; i++)
+        {
+            JgsValue element = value.ElementAt(i);
+            if (element.Type is not (JgsType.Number or JgsType.Bool))
+            {
+                throw new JgsRuntimeException(0, 0, $"'*' needs numbers, but an element was a {element.TypeName}.");
+            }
+
+            row[i] = element.AsNumber;
+        }
+
+        return row;
+    }
+
+    /// <summary>Wraps a freshly built double[] as a numeric array value (adopted, not copied).</summary>
+    private static JgsValue NumbersOf(double[] values)
+    {
+        if (JgsPacking.Enabled)
+        {
+            return JgsValue.Packed(ManagedBuffer.Adopt(values));
+        }
+
+        var boxed = new JgsValue[values.Length];
+        for (int i = 0; i < boxed.Length; i++)
+        {
+            boxed[i] = JgsValue.Number(values[i]);
+        }
+
+        return JgsValue.Array(boxed);
+    }
 
     private JgsValue Compare(JgsValue left, JgsValue right, TokenType opToken, Node at, Func<double, double, bool> op)
     {
@@ -1595,29 +2413,18 @@ internal sealed class Interpreter
         return value.AsComplex;
     }
 
-    /// <summary>An index value as a 0-based element position. Both spellings — <c>a[i]</c> and
-    /// <c>a(i)</c> — share this one base (ADR 0028).</summary>
-    private static int ToIndex(JgsValue index, int length, int line, int column)
+    /// <summary>
+    /// An index value as a 0-based element position, counted from the dialect's base — 0 in JGS
+    /// (ADR 0028), 1 in MATLAB. Both spellings, <c>a[i]</c> and <c>a(i)</c>, share it.
+    /// </summary>
+    private int ToIndex(JgsValue index, int length, int line, int column)
     {
         if (index.Type != JgsType.Number)
         {
             throw new JgsRuntimeException(line, column, $"An index must be a number, but got a {index.TypeName}.");
         }
 
-        double raw = index.AsNumber;
-        if (raw != Math.Floor(raw) || double.IsNaN(raw) || double.IsInfinity(raw))
-        {
-            throw new JgsRuntimeException(line, column, $"An index must be a whole number, but got {raw.ToString("R", CultureInfo.InvariantCulture)}.");
-        }
-
-        int i = (int)raw;
-        if (i < 0 || i >= length)
-        {
-            throw new JgsRuntimeException(line, column,
-                $"Index {i} is out of range for length {length} (indexing is 0-based).");
-        }
-
-        return i;
+        return PackedOps.ToIndex(index.AsNumber, length, Dialect.IndexBase, line, column);
     }
 
     private void Tick()

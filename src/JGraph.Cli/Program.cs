@@ -4,6 +4,7 @@ using JGraph.Plugins;
 using JGraph.Scripting;
 using JGraph.Scripting.Jgs;
 using JGraph.Scripting.Startup;
+using JGraph.Serialization.Settings;
 
 namespace JGraph.Cli;
 
@@ -75,9 +76,15 @@ internal static class Program
     /// </summary>
     private static async Task<int> RunHeadlessAsync(StartupOptions options)
     {
-        // The theme and colormap plugins the application loads, so a batch-rendered figure matches
-        // what the same script draws interactively.
-        PluginLoader.LoadDefault(Path.Combine(AppContext.BaseDirectory, "plugins"));
+        // The same preferences the application reads, so a batch run behaves like an interactive one:
+        // the user's plugin choices and their JGS language options.
+        UserSettingsDto settings = LoadUserSettings();
+
+        // The theme and colormap plugins the application loads (minus any the user disabled), so a
+        // batch-rendered figure matches what the same script draws interactively.
+        PluginLoader.LoadDefault(
+            Path.Combine(AppContext.BaseDirectory, "plugins"),
+            plugin => !settings.DisabledPlugins.Contains(plugin.GetType().FullName ?? plugin.GetType().Name, StringComparer.Ordinal));
 
         IScriptOutput console = ConsoleScriptOutput.Instance;
         TeeScriptOutput? tee = options.LogFile is { Length: > 0 } log
@@ -95,9 +102,12 @@ internal static class Program
 
         try
         {
+            var jgsOptions = new JgsLanguageOptions(
+                RequireLet: !settings.JgsOptionalLet, IndexBase: settings.JgsIndexBase);
             IScriptEngine[] engines =
             [
-                new JgsScriptEngine(),
+                new JgsScriptEngine(() => jgsOptions),
+                new MatlabScriptEngine(),
                 new CSharpScriptEngine(),
                 new PythonScriptEngine(),
             ];
@@ -116,6 +126,29 @@ internal static class Program
             Console.CancelKeyPress -= onCancel;
             tee?.Dispose();
         }
+    }
+
+    /// <summary>
+    /// Reads the user's preferences from <c>%AppData%\JGraph\settings.json</c>, or the shipped defaults
+    /// when the file is missing or unreadable — a batch run must never fail over settings.
+    /// </summary>
+    private static UserSettingsDto LoadUserSettings()
+    {
+        string path = Path.Combine(
+            Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "JGraph", "settings.json");
+        try
+        {
+            if (File.Exists(path) && UserSettingsFormat.Deserialize(File.ReadAllText(path)) is { } settings)
+            {
+                return settings;
+            }
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+        {
+            // Fall through to defaults.
+        }
+
+        return new UserSettingsDto();
     }
 
     private static void SuppressFigure(IScriptOutput output, int number, FigureModel figure) =>

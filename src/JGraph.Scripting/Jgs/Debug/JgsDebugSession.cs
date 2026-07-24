@@ -41,8 +41,15 @@ public sealed class JgsDebugSession
     private int? _pendingJump;
     private bool _jumpArrival;
 
-    /// <summary>Creates a session. Obtain one from <see cref="JgsScriptEngine.CreateDebugSession"/>.</summary>
-    internal JgsDebugSession() => _hook = new Hook(this);
+    private readonly JgsDialect _dialect;
+
+    /// <summary>Creates a session. Obtain one from an engine's <c>CreateDebugSession</c>.</summary>
+    /// <param name="dialect">The language variant to debug, or null for <see cref="JgsDialect.Jgs"/>.</param>
+    internal JgsDebugSession(JgsDialect? dialect = null)
+    {
+        _dialect = dialect ?? JgsDialect.Jgs;
+        _hook = new Hook(this);
+    }
 
     private static StringComparer SourceIdComparer =>
         OperatingSystem.IsWindows() ? StringComparer.OrdinalIgnoreCase : StringComparer.Ordinal;
@@ -101,7 +108,7 @@ public sealed class JgsDebugSession
 
         _runToken = cancellationToken;
         return Task.Run(
-            () => JgsRunner.Run(code, context, cancellationToken, sourceId, _hook),
+            () => JgsRunner.Run(code, context, cancellationToken, sourceId, _hook, _dialect),
             cancellationToken);
     }
 
@@ -263,7 +270,7 @@ public sealed class JgsDebugSession
         IReadOnlyList<Stmt> newProgram;
         try
         {
-            newProgram = Parser.Parse(newCode, sourceId);
+            newProgram = Parser.Parse(newCode, sourceId, _dialect);
         }
         catch (JgsException ex)
         {

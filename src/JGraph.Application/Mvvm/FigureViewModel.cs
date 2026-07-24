@@ -27,6 +27,7 @@ public sealed class FigureViewModel : ObservableObject
     private readonly IFigureDocumentService _documentService;
     private readonly IDataImportService _importService;
     private readonly IScriptingService _scriptingService;
+    private readonly IOptionsService _optionsService;
 
     public FigureViewModel(
         IFigureFactory figureFactory,
@@ -34,18 +35,28 @@ public sealed class FigureViewModel : ObservableObject
         IFigureDocumentService documentService,
         IDataImportService importService,
         IScriptingService scriptingService,
-        PluginRegistry pluginRegistry)
+        PluginRegistry pluginRegistry,
+        ISettingsService settingsService,
+        IOptionsService optionsService)
     {
         ArgumentNullException.ThrowIfNull(figureFactory);
         ArgumentNullException.ThrowIfNull(pluginRegistry);
+        ArgumentNullException.ThrowIfNull(settingsService);
         _exportService = exportService ?? throw new ArgumentNullException(nameof(exportService));
         _documentService = documentService ?? throw new ArgumentNullException(nameof(documentService));
         _importService = importService ?? throw new ArgumentNullException(nameof(importService));
         _scriptingService = scriptingService ?? throw new ArgumentNullException(nameof(scriptingService));
+        _optionsService = optionsService ?? throw new ArgumentNullException(nameof(optionsService));
         _figure = figureFactory.CreateSample();
 
         AvailableThemes = pluginRegistry.Themes;
-        _currentTheme = AvailableThemes.Count > 0 ? AvailableThemes[0] : Theme.Light;
+
+        // Start on the user's preferred theme when it is available, else the first registered one.
+        string? preferred = settingsService.Current.DefaultFigureTheme;
+        _currentTheme = (preferred is not null
+                ? AvailableThemes.FirstOrDefault(t => string.Equals(t.Name, preferred, StringComparison.Ordinal))
+                : null)
+            ?? (AvailableThemes.Count > 0 ? AvailableThemes[0] : Theme.Light);
 
         UndoCommand = new RelayCommand(() => _navigator?.Undo(), () => _navigator?.CanUndo ?? false);
         RedoCommand = new RelayCommand(() => _navigator?.Redo(), () => _navigator?.CanRedo ?? false);
@@ -61,6 +72,7 @@ public sealed class FigureViewModel : ObservableObject
         SaveCommand = new RelayCommand(SaveDocument);
         ImportDataCommand = new RelayCommand(ImportData);
         OpenScriptCommand = new RelayCommand(OpenScript);
+        OptionsCommand = new RelayCommand(() => _optionsService.ShowOptions());
         CopyFigureCommand = new RelayCommand(CopyFigureObject);
         PasteFigureCommand = new RelayCommand(PasteFigureObject);
 
@@ -222,6 +234,8 @@ public sealed class FigureViewModel : ObservableObject
     public RelayCommand ImportDataCommand { get; }
 
     public RelayCommand OpenScriptCommand { get; }
+
+    public RelayCommand OptionsCommand { get; }
 
     public RelayCommand CopyFigureCommand { get; }
 

@@ -49,8 +49,15 @@ internal sealed class CompletionSupport
     private string? _insightName;
     private int _insightActive;
 
-    /// <summary>The document's language ("JGS", "C#", "Python"); anything else disables completion.</summary>
+    /// <summary>The document's language ("JGS", "MATLAB", "C#", "Python"); anything else disables completion.</summary>
     public string? Language { get; set; }
+
+    /// <summary>Whether this document runs on our own interpreter, which is what powers builtin
+    /// completion and signature help. Both of its dialects qualify.</summary>
+    private bool UsesOurInterpreter => Language == JgsSyntax.Name || Language == MatlabSyntax.Name;
+
+    /// <summary>Whether the buffer is MATLAB, which is lexed by MATLAB's rules.</summary>
+    private bool IsMatlab => Language == MatlabSyntax.Name;
 
     /// <summary>Supplies symbols from the rest of the workspace (JGS only): <c>fn</c>s defined in other
     /// scripts, harvested by the host via <see cref="JgsCompletionEngine.HarvestFunctions"/>.</summary>
@@ -107,7 +114,7 @@ internal sealed class CompletionSupport
         }
 
         char typed = e.Text[^1];
-        if (Language == JgsSyntax.Name && typed is '(' or ',')
+        if (UsesOurInterpreter && typed is '(' or ',')
         {
             UpdateSignatureHelp(openIfClosed: true);
             return;
@@ -138,9 +145,10 @@ internal sealed class CompletionSupport
             items = PathCompletion.GetCompletions(pathContext, WorkspaceFiles());
             isPath = true;
         }
-        else if (Language == JgsSyntax.Name)
+        else if (UsesOurInterpreter)
         {
-            JgsCompletionResult result = JgsCompletionEngine.GetCompletions(_editor.Text, offset, WorkspaceSymbols?.Invoke());
+            JgsCompletionResult result = JgsCompletionEngine.GetCompletions(
+                _editor.Text, offset, WorkspaceSymbols?.Invoke(), IsMatlab);
             replaceStart = result.ReplaceStart;
             items = result.Items;
         }
@@ -166,7 +174,7 @@ internal sealed class CompletionSupport
         }
 
         var window = new CompletionWindow(_editor.TextArea) { StartOffset = replaceStart };
-        bool insertCallTemplates = !isPath && Language == JgsSyntax.Name;
+        bool insertCallTemplates = !isPath && UsesOurInterpreter;
         foreach (CompletionItem item in items)
         {
             window.CompletionList.CompletionData.Add(new CompletionData(item, insertCallTemplates));
@@ -199,8 +207,9 @@ internal sealed class CompletionSupport
     /// parameter changed. Only the explicit triggers ('(' and ',') may open a closed tooltip.</summary>
     private void UpdateSignatureHelp(bool openIfClosed)
     {
-        JgsSignatureHelp? help = Language == JgsSyntax.Name
-            ? JgsCompletionEngine.GetSignatureHelp(_editor.Text, _editor.CaretOffset, WorkspaceSymbols?.Invoke())
+        JgsSignatureHelp? help = UsesOurInterpreter
+            ? JgsCompletionEngine.GetSignatureHelp(
+                _editor.Text, _editor.CaretOffset, WorkspaceSymbols?.Invoke(), IsMatlab)
             : null;
         if (help is null)
         {

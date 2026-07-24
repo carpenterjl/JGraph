@@ -23,10 +23,14 @@ internal static partial class JgsBuiltins
     /// <summary>Creates the global scope over the run's <paramref name="host"/> helpers, seeded with every built-in.</summary>
     /// <param name="host">The run's host services.</param>
     /// <param name="cancellationToken">The run's cancellation token, so <c>pause(seconds)</c> stays interruptible.</param>
-    public static JgsEnvironment CreateGlobals(JGraphScriptGlobals host, CancellationToken cancellationToken = default)
+    /// <param name="dialect">The run's language variant, or null for <see cref="JgsDialect.Jgs"/>. Builtins that
+    /// hand back indices (<c>find</c> and friends) report them in this dialect's index base.</param>
+    public static JgsEnvironment CreateGlobals(
+        JGraphScriptGlobals host, CancellationToken cancellationToken = default, JgsDialect? dialect = null)
     {
         ArgumentNullException.ThrowIfNull(host);
 
+        dialect ??= JgsDialect.Jgs;
         var env = new JgsEnvironment();
         var random = new Random();
 
@@ -495,6 +499,8 @@ internal static partial class JgsBuiltins
             {
                 JgsType.Null => true,
                 JgsType.Array => args[0].ArrayLength == 0,
+                JgsType.Cell => args[0].AsCell.Length == 0,
+                JgsType.Struct => args[0].AsStruct.Count == 0,
                 JgsType.String => args[0].AsString.Length == 0,
                 JgsType.Table => args[0].AsTable.RowCount == 0,
                 _ => false,
@@ -651,8 +657,9 @@ internal static partial class JgsBuiltins
             return args[0].Type switch
             {
                 JgsType.Array => JgsValue.Number(args[0].ArrayLength),
+                JgsType.Cell => JgsValue.Number(args[0].AsCell.Length),
                 JgsType.String => JgsValue.Number(args[0].AsString.Length),
-                _ => throw new JgsRuntimeException(line, col, $"length expects an array or string, but got a {args[0].TypeName}."),
+                _ => throw new JgsRuntimeException(line, col, $"length expects an array, cell, or string, but got a {args[0].TypeName}."),
             };
         });
 
@@ -690,9 +697,10 @@ internal static partial class JgsBuiltins
             return args[0].Type switch
             {
                 JgsType.Array => JgsValue.Number(args[0].ArrayLength),
+                JgsType.Cell => JgsValue.Number(args[0].AsCell.Length),
                 JgsType.String => JgsValue.Number(args[0].AsString.Length),
                 JgsType.Image => JgsValue.Number(args[0].AsImage.SampleCount),
-                _ => throw new JgsRuntimeException(line, col, $"numel expects an array or string, but got a {args[0].TypeName}."),
+                _ => throw new JgsRuntimeException(line, col, $"numel expects an array, cell, or string, but got a {args[0].TypeName}."),
             };
         });
 
@@ -744,10 +752,10 @@ internal static partial class JgsBuiltins
         {
             ArityRange("find", args, 1, 2, line, col);
 
-            // Indices are 0-based like everything else (ADR 0028). find(mask, 1) numbers them from 1
-            // instead — the escape hatch for a ported MATLAB script, where 0-based results would be
-            // silently off by one rather than erroring.
-            int origin = args.Count == 2 ? IndexOrigin("find", args, 1, line, col) : 0;
+            // Indices come back in the dialect's own base — 0 in JGS (ADR 0028), 1 in MATLAB — so they
+            // can be fed straight back into a subscript. find(mask, 1) overrides it, the escape hatch
+            // for a JGS script ported from MATLAB where 0-based results would be silently off by one.
+            int origin = args.Count == 2 ? IndexOrigin("find", args, 1, line, col) : dialect.IndexBase;
 
             if (args[0].Type == JgsType.Array && args[0].IsPacked)
             {
@@ -1284,6 +1292,10 @@ internal static partial class JgsBuiltins
 
         // --- Image processing (M24) — defined in JgsBuiltins.Imaging.cs ----------------------
         DefineImagingBuiltins(Define, host, random);
+
+        // --- MATLAB names (M28) — defined in JgsBuiltins.Matlab.cs ---------------------------
+        // Registered last: the multiple-output forms wrap builtins declared above.
+        RegisterMatlabBuiltins(env, host, random, dialect);
 
         return env;
     }

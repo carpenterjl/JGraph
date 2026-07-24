@@ -34,6 +34,8 @@ public partial class ScriptWorkspaceWindow : Window
     private readonly IReadOnlyDictionary<string, IScriptEngine> _engines;
     private readonly IWorkspaceStateService _stateService;
     private readonly IFigureWindowService _figureWindows;
+    private readonly ISettingsService? _settings;
+    private readonly IOptionsService? _options;
     private readonly ScriptSessionModel _session;
     private readonly AppScriptAudio _audio = new();
     private readonly List<DocumentEntry> _documents = new();
@@ -67,16 +69,22 @@ public partial class ScriptWorkspaceWindow : Window
     /// <param name="engines">The script engines to offer, keyed by language.</param>
     /// <param name="stateService">Loads/saves the workspace state between sessions.</param>
     /// <param name="figureWindows">Opens/reuses a numbered figure window for each figure a script shows.</param>
+    /// <param name="settings">The user's preferences (default language and script directory), or null.</param>
+    /// <param name="options">Opens the Options dialog from the View menu, or null to hide that item.</param>
     public ScriptWorkspaceWindow(
         IReadOnlyList<IScriptEngine> engines,
         IWorkspaceStateService stateService,
-        IFigureWindowService figureWindows)
+        IFigureWindowService figureWindows,
+        ISettingsService? settings = null,
+        IOptionsService? options = null)
     {
         InitializeComponent();
 
         _engines = engines.ToDictionary(e => e.Language);
         _stateService = stateService;
         _figureWindows = figureWindows;
+        _settings = settings;
+        _options = options;
         _session = new ScriptSessionModel(engines.Where(e => e.IsAvailable).Select(e => e.Language));
         _session.StateChanged += (_, _) => Dispatcher.Invoke(UpdateCommandStates);
         DockManager.ActiveContentChanged += (_, _) => UpdateCommandStates(); // Run reflects the active tab
@@ -94,7 +102,7 @@ public partial class ScriptWorkspaceWindow : Window
 
         if (_documents.Count == 0)
         {
-            OpenNewScript("JGS");
+            OpenNewScript(DefaultNewScriptLanguage());
         }
 
         UpdateCommandStates();
@@ -243,7 +251,7 @@ public partial class ScriptWorkspaceWindow : Window
             case ".graph":
                 OpenGraphFile(entry.FullPath);
                 break;
-            case ".jgs" or ".csx" or ".cs" or ".py" or ".txt" or ".md" or ".json":
+            case ".jgs" or ".m" or ".csx" or ".cs" or ".py" or ".txt" or ".md" or ".json":
                 OpenDocument(entry.FullPath);
                 break;
             case var extension:
@@ -307,6 +315,21 @@ public partial class ScriptWorkspaceWindow : Window
         }
     }
 
+    /// <summary>The language a blank New Script opens in: the user's preference when it names an
+    /// available engine, otherwise JGS.</summary>
+    private string DefaultNewScriptLanguage()
+    {
+        string? preferred = _settings?.Current.DefaultNewScriptLanguage;
+        return preferred is not null && _engines.ContainsKey(preferred) ? preferred : "JGS";
+    }
+
+    /// <summary>The folder open/save dialogs start in when no workspace is open, from the user's settings.</summary>
+    private string? DefaultScriptDirectory()
+    {
+        string? directory = _settings?.Current.DefaultScriptDirectory;
+        return string.IsNullOrWhiteSpace(directory) ? null : directory;
+    }
+
     private void OpenNewScript(string language)
     {
         // A near-blank stub (M21): a comment header the user fills in, dated at creation time. Text
@@ -314,6 +337,7 @@ public partial class ScriptWorkspaceWindow : Window
         string? comment = language switch
         {
             "JGS" or "C#" => "//",
+            "MATLAB" => "%",
             "Python" => "#",
             _ => null,
         };
@@ -334,8 +358,8 @@ public partial class ScriptWorkspaceWindow : Window
         var dialog = new OpenFileDialog
         {
             Title = "Open script",
-            Filter = "Scripts (*.jgs;*.csx;*.cs;*.py)|*.jgs;*.csx;*.cs;*.py|All files (*.*)|*.*",
-            InitialDirectory = _workspace?.RootPath,
+            Filter = "Scripts (*.jgs;*.m;*.csx;*.cs;*.py)|*.jgs;*.m;*.csx;*.cs;*.py|All files (*.*)|*.*",
+            InitialDirectory = _workspace?.RootPath ?? DefaultScriptDirectory(),
         };
         if (dialog.ShowDialog(this) == true)
         {
@@ -467,8 +491,9 @@ public partial class ScriptWorkspaceWindow : Window
             var dialog = new SaveFileDialog
             {
                 Title = "Save script",
-                Filter = "JGS script (*.jgs)|*.jgs|C# script (*.csx)|*.csx|Python script (*.py)|*.py|All files (*.*)|*.*",
-                InitialDirectory = _workspace?.RootPath,
+                Filter = "JGS script (*.jgs)|*.jgs|MATLAB script (*.m)|*.m|C# script (*.csx)|*.csx|"
+                    + "Python script (*.py)|*.py|All files (*.*)|*.*",
+                InitialDirectory = _workspace?.RootPath ?? DefaultScriptDirectory(),
 
                 // The tab is already named for the language it was created as ("NewScript.py"), so the
                 // dialog only has to agree with it — name and filter both follow the document.
@@ -476,9 +501,10 @@ public partial class ScriptWorkspaceWindow : Window
                 FilterIndex = entry.Model.Language switch
                 {
                     "JGS" => 1,
-                    "C#" => 2,
-                    "Python" => 3,
-                    _ => 4,
+                    "MATLAB" => 2,
+                    "C#" => 3,
+                    "Python" => 4,
+                    _ => 5,
                 },
             };
             if (dialog.ShowDialog(this) != true)
@@ -570,8 +596,9 @@ public partial class ScriptWorkspaceWindow : Window
         ScriptRunResult result;
         try
         {
-            // JGS runs under a debug session (breakpoints, pause, stepping); the hosted engines run plain.
-            result = engine is JgsScriptEngine jgs
+            // Our own interpreter (JGS and MATLAB) runs under a debug session — breakpoints, pause,
+            // stepping; the hosted engines run plain.
+            result = engine is IJgsDebuggable jgs
                 ? await RunJgsDebugAsync(jgs, entry, context, _cts.Token)
                 : await engine.RunAsync(entry.Editor.ScriptText, context, _cts.Token);
         }
@@ -656,10 +683,10 @@ public partial class ScriptWorkspaceWindow : Window
         _ = RunActiveAsync();
     }
 
-    // --- Debugging (JGS) --------------------------------------------------------------------------
+    // --- Debugging (JGS and MATLAB) ---------------------------------------------------------------
 
     private Task<ScriptRunResult> RunJgsDebugAsync(
-        JgsScriptEngine engine, DocumentEntry entry, ScriptContext context, System.Threading.CancellationToken token)
+        IJgsDebuggable engine, DocumentEntry entry, ScriptContext context, System.Threading.CancellationToken token)
     {
         JgsDebugSession session = engine.CreateDebugSession();
         _debugSession = session;
@@ -1305,6 +1332,8 @@ public partial class ScriptWorkspaceWindow : Window
             ShowPane(contentId);
         }
     }
+
+    private void OnOptionsClick(object sender, RoutedEventArgs e) => _options?.ShowOptions();
 
     private void EnsureKnownPane(string contentId, string title, object content)
     {

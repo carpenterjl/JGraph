@@ -170,6 +170,80 @@ internal sealed class AssignExpr(Expr target, TokenType op, Expr value) : Expr
 }
 
 /// <summary>
+/// A MATLAB transpose: <c>a'</c> (<see cref="Conjugate"/> true — conjugates complex elements) or
+/// <c>a.'</c> (plain).
+/// </summary>
+internal sealed class TransposeExpr(Expr operand, bool conjugate) : Expr
+{
+    public Expr Operand { get; } = operand;
+
+    /// <summary>True for <c>'</c>, which also conjugates; false for <c>.'</c>.</summary>
+    public bool Conjugate { get; } = conjugate;
+}
+
+/// <summary>
+/// A MATLAB cell literal such as <c>{1, 'two'}</c> or <c>{1, 2; 3, 4}</c>. Rows mirror
+/// <see cref="MatrixLiteral"/>: a single row is the common case.
+/// </summary>
+internal sealed class CellLiteral(IReadOnlyList<IReadOnlyList<Expr>> rows) : Expr
+{
+    public IReadOnlyList<IReadOnlyList<Expr>> Rows { get; } = rows;
+}
+
+/// <summary>
+/// A MATLAB brace index <c>c{i}</c>: the *contents* of a cell, where <c>c(i)</c> would give a
+/// one-element cell back.
+/// </summary>
+internal sealed class BraceIndexExpr(Expr target, IReadOnlyList<Expr> indices) : Expr
+{
+    public Expr Target { get; } = target;
+
+    public IReadOnlyList<Expr> Indices { get; } = indices;
+}
+
+/// <summary>
+/// A MATLAB struct field access: <c>s.name</c> (<see cref="Field"/> set) or the dynamic form
+/// <c>s.(expression)</c> (<see cref="FieldName"/> set), where the field is chosen at run time.
+/// </summary>
+internal sealed class MemberExpr(Expr target, string? field, Expr? fieldName) : Expr
+{
+    public Expr Target { get; } = target;
+
+    /// <summary>The literal field name, or null for the dynamic form.</summary>
+    public string? Field { get; } = field;
+
+    /// <summary>The expression naming the field, or null for the literal form.</summary>
+    public Expr? FieldName { get; } = fieldName;
+}
+
+/// <summary>
+/// A MATLAB anonymous function <c>@(x, y) expr</c>. MATLAB captures the values of the free variables
+/// when the handle is created, not when it is called, so the interpreter snapshots them here.
+/// </summary>
+internal sealed class AnonymousFnExpr(IReadOnlyList<string> parameters, Expr body) : Expr
+{
+    public IReadOnlyList<string> Parameters { get; } = parameters;
+
+    public Expr Body { get; } = body;
+}
+
+/// <summary>A MATLAB function handle <c>@name</c>, naming a user function or a builtin.</summary>
+internal sealed class FunctionHandleExpr(string name) : Expr
+{
+    public string Name { get; } = name;
+}
+
+/// <summary>
+/// A value the interpreter has already computed, wrapped so it can be handed to the ordinary
+/// assignment machinery. Never produced by the parser — it exists so a multiple-output call can reuse
+/// one assignment path for every target shape instead of duplicating it.
+/// </summary>
+internal sealed class PreEvaluated(JgsValue value) : Expr
+{
+    public JgsValue Value { get; } = value;
+}
+
+/// <summary>
 /// An increment or decrement, prefix (<c>++x</c>, evaluates to the new value) or postfix
 /// (<c>x++</c>, evaluates to the old value). <see cref="Target"/> is a <see cref="VariableExpr"/>
 /// or <see cref="IndexExpr"/>.
@@ -240,14 +314,79 @@ internal sealed class ForStmt(string variable, Expr iterable, IReadOnlyList<Stmt
     public IReadOnlyList<Stmt> Body { get; } = body;
 }
 
-/// <summary>A function declaration <c>fn name(params) { ... }</c>.</summary>
-internal sealed class FnStmt(string name, IReadOnlyList<string> parameters, IReadOnlyList<Stmt> body) : Stmt
+/// <summary>
+/// A function declaration: <c>fn name(params) { ... }</c> in JGS, or MATLAB's
+/// <c>function [out1, out2] = name(params) ... end</c>. A JGS function hands back the value of its
+/// <c>return</c>; a MATLAB one hands back the values its named <see cref="Outputs"/> hold when it ends.
+/// </summary>
+internal sealed class FnStmt(
+    string name,
+    IReadOnlyList<string> parameters,
+    IReadOnlyList<Stmt> body,
+    IReadOnlyList<string>? outputs = null) : Stmt
 {
+    private static readonly string[] NoOutputs = [];
+
     public string Name { get; } = name;
 
     public IReadOnlyList<string> Parameters { get; } = parameters;
 
     public IReadOnlyList<Stmt> Body { get; } = body;
+
+    /// <summary>The MATLAB output variable names, in order; empty for a JGS <c>fn</c>.</summary>
+    public IReadOnlyList<string> Outputs { get; } = outputs ?? NoOutputs;
+}
+
+/// <summary>
+/// A MATLAB multiple-output call: <c>[a, b] = size(x)</c>. A null entry in <see cref="Targets"/> is
+/// MATLAB's <c>~</c> placeholder — that output is computed and discarded.
+/// </summary>
+internal sealed class MultiAssignStmt(IReadOnlyList<Expr?> targets, Expr call) : Stmt
+{
+    public IReadOnlyList<Expr?> Targets { get; } = targets;
+
+    public Expr Call { get; } = call;
+}
+
+/// <summary>One <c>case</c> arm of a <see cref="SwitchStmt"/>.</summary>
+internal sealed class SwitchCase(Expr value, IReadOnlyList<Stmt> body)
+{
+    /// <summary>The value to compare against, or a <see cref="CellLiteral"/> of alternatives.</summary>
+    public Expr Value { get; } = value;
+
+    public IReadOnlyList<Stmt> Body { get; } = body;
+}
+
+/// <summary>
+/// A MATLAB <c>switch</c>. Arms do not fall through, and <see cref="Otherwise"/> is the <c>otherwise</c>
+/// block when there is one.
+/// </summary>
+internal sealed class SwitchStmt(Expr subject, IReadOnlyList<SwitchCase> cases, IReadOnlyList<Stmt>? otherwise) : Stmt
+{
+    public Expr Subject { get; } = subject;
+
+    public IReadOnlyList<SwitchCase> Cases { get; } = cases;
+
+    public IReadOnlyList<Stmt>? Otherwise { get; } = otherwise;
+}
+
+/// <summary>
+/// A MATLAB <c>try</c>/<c>catch</c>. <see cref="ErrorVariable"/> is the name bound to the error struct
+/// (<c>catch err</c>), or null for a bare <c>catch</c>.
+/// </summary>
+internal sealed class TryStmt(IReadOnlyList<Stmt> body, string? errorVariable, IReadOnlyList<Stmt> handler) : Stmt
+{
+    public IReadOnlyList<Stmt> Body { get; } = body;
+
+    public string? ErrorVariable { get; } = errorVariable;
+
+    public IReadOnlyList<Stmt> Handler { get; } = handler;
+}
+
+/// <summary>A MATLAB <c>global a b</c> declaration: the named variables refer to the global scope.</summary>
+internal sealed class GlobalStmt(IReadOnlyList<string> names) : Stmt
+{
+    public IReadOnlyList<string> Names { get; } = names;
 }
 
 /// <summary>A <c>return</c> statement; <see cref="Value"/> is null for a bare <c>return</c>.</summary>

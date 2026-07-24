@@ -63,6 +63,10 @@ public static class JgsBuiltinCatalog
     public static IReadOnlyList<string> Keywords { get; } =
         Lexer.KeywordNames.OrderBy(static k => k, StringComparer.Ordinal).ToArray();
 
+    /// <summary>The MATLAB language keywords, from the same table the MATLAB lexer reads.</summary>
+    public static IReadOnlyList<string> MatlabKeywords { get; } =
+        Lexer.MatlabKeywordNames.OrderBy(static k => k, StringComparer.Ordinal).ToArray();
+
     /// <summary>Looks up a builtin by name; null when <paramref name="name"/> is not a builtin.</summary>
     public static JgsBuiltinInfo? Find(string name) =>
         ByName.TryGetValue(name, out JgsBuiltinInfo? info) ? info : null;
@@ -130,6 +134,39 @@ public static class JgsBuiltinCatalog
         Add("pause", "Waits the given number of seconds (interruptible by Stop).", P("seconds"));
         Add("exit", "Ends the script and closes the application, with an optional process exit code.", Opt("code"));
         Add("quit", "An alias for exit.", Opt("code"));
+
+        // --- MATLAB names (M28) -----------------------------------------------------------------
+        Add("rem", "Remainder after division, taking the sign of the dividend (mod takes the divisor's).", P("x"), P("divisor"));
+        Add("fix", "Rounds toward zero.", P("x"));
+        Add("randn", "Normally distributed random numbers: randn(n), randn(r, c), or randn(size(x)).", Opt("n"), Opt("m"));
+        Add("repmat", "Repeats a value or array end to end the given number of times.", P("x"), P("times"), Opt("times2"));
+        Add("isnumeric", "True for a number, a complex number, or an array of numbers.", P("x"));
+        Add("ischar", "True for a string.", P("x"));
+        Add("islogical", "True for a bool or an array of bools (a mask).", P("x"));
+        Add("iscell", "True for a cell array.", P("x"));
+        Add("isstruct", "True for a struct.", P("x"));
+        Add("strcmp", "Compares two strings (or a cell of strings against one), case-sensitively.", P("a"), P("b"));
+        Add("strcmpi", "Compares two strings ignoring case.", P("a"), P("b"));
+        Add("strrep", "Replaces every occurrence of one substring with another.", P("text"), P("find"), P("replace"));
+        Add("strtrim", "Removes leading and trailing whitespace.", P("text"));
+        Add("strsplit", "Splits text into a cell of pieces, on a delimiter or on whitespace.", P("text"), Opt("delimiter"));
+        Add("strjoin", "Joins a cell (or array) of pieces into one string.", P("parts"), Opt("separator"));
+        Add("num2str", "Formats a number as text, optionally to a given number of significant digits.", P("x"), Opt("digits"));
+        Add("str2double", "Parses text as a number, or NaN when it is not one.", P("text"));
+        Add("error", "Stops the script with a message (accepts a format string and an optional 'id:sub' first).", P("message"), Opt("args..."));
+        Add("warning", "Writes a warning to the console without stopping; warning('off') is accepted and ignored.", P("message"), Opt("args..."));
+        Add("assert", "Stops the script when the condition is false, with an optional message.", P("condition"), Opt("message"));
+        Add("cell", "Creates a cell array of the given size, filled with empty arrays.", P("count"), Opt("count2"));
+        Add("struct", "Builds a struct from name/value pairs.", Opt("name"), Opt("value"));
+        Add("fieldnames", "The names of a struct's fields, as a cell.", P("s"));
+        Add("isfield", "True when the struct has the named field.", P("s"), P("name"));
+        Add("rmfield", "A copy of the struct without the named field.", P("s"), P("name"));
+        Add("num2cell", "Puts each element of an array into its own cell.", P("x"));
+        Add("cell2mat", "Flattens a cell of numbers (or arrays of numbers) into one array.", P("c"));
+        Add("feval", "Calls a function handle with the given arguments.", P("f"), Opt("args..."));
+        Add("cellfun", "Applies a function to every cell; add 'UniformOutput', false to collect a cell.", P("f"), P("c"), Opt("options..."));
+        Add("sub2ind", "The single index of a row/column position in an array of the given size.", P("size"), P("row"), P("column"));
+        Add("ind2sub", "The row and column of a single index in an array of the given size.", P("size"), P("index"));
 
         // --- Time & date ------------------------------------------------------------------------
         Add("tic", "Starts a stopwatch and returns a handle; pass it to toc to time a specific interval.");

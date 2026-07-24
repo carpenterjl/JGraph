@@ -19,6 +19,12 @@ internal enum JgsType
     Table,
     Image,
     Function,
+
+    /// <summary>A MATLAB cell array: a list whose elements may be of any type, written <c>{1, 'two'}</c>.</summary>
+    Cell,
+
+    /// <summary>A MATLAB struct: named fields, written <c>s.field</c>.</summary>
+    Struct,
 }
 
 /// <summary>The element kind of a packed array: MATLAB doubles or a MATLAB-style logical mask.</summary>
@@ -121,6 +127,24 @@ internal sealed class JgsValue
 
     /// <summary>Wraps a callable function.</summary>
     public static JgsValue Function(IJgsCallable callable) => new(JgsType.Function, 0, callable);
+
+    /// <summary>
+    /// Wraps a cell array (the array is used directly, not copied). Like an ordinary array it is
+    /// mutable in place, so aliases in JGS see each other's writes; MATLAB copies on assignment.
+    /// </summary>
+    public static JgsValue Cell(JgsValue[] elements) => new(JgsType.Cell, 0, elements);
+
+    /// <summary>Wraps a struct's fields (the dictionary is used directly, not copied).</summary>
+    public static JgsValue Struct(Dictionary<string, JgsValue> fields) => new(JgsType.Struct, 0, fields);
+
+    /// <summary>An empty struct, ready for fields to be assigned.</summary>
+    public static JgsValue EmptyStruct() => Struct(new Dictionary<string, JgsValue>(StringComparer.Ordinal));
+
+    /// <summary>The cell array's elements (valid only for <see cref="JgsType.Cell"/>).</summary>
+    public JgsValue[] AsCell => (JgsValue[])_reference!;
+
+    /// <summary>The struct's fields, in insertion order (valid only for <see cref="JgsType.Struct"/>).</summary>
+    public Dictionary<string, JgsValue> AsStruct => (Dictionary<string, JgsValue>)_reference!;
 
     /// <summary>The numeric value (valid for <see cref="JgsType.Number"/> and <see cref="JgsType.Bool"/>).</summary>
     public double AsNumber => _number;
@@ -354,6 +378,8 @@ internal sealed class JgsValue
         JgsType.Table => "table",
         JgsType.Image => "image",
         JgsType.Function => "function",
+        JgsType.Cell => "cell",
+        JgsType.Struct => "struct",
         _ => "value",
     };
 
@@ -369,8 +395,51 @@ internal sealed class JgsValue
         JgsType.Table => $"table[{AsTable.RowCount}x{AsTable.ColumnCount}]",
         JgsType.Image => FormatImage(AsImage),
         JgsType.Function => $"fn {AsCallable.Name}",
+        JgsType.Cell => FormatCell(AsCell),
+        JgsType.Struct => FormatStruct(AsStruct),
         _ => "value",
     };
+
+    /// <summary>Formats a cell array as MATLAB writes one: <c>{1, 'two'}</c>, capped like an array.</summary>
+    private static string FormatCell(JgsValue[] elements)
+    {
+        var sb = new StringBuilder("{");
+        int shown = Math.Min(elements.Length, DisplayMaxElements);
+        for (int i = 0; i < shown; i++)
+        {
+            if (i > 0)
+            {
+                sb.Append(", ");
+            }
+
+            sb.Append(elements[i].Type == JgsType.String ? $"'{elements[i].AsString}'" : elements[i].Display());
+        }
+
+        if (shown < elements.Length)
+        {
+            sb.Append(", … (").Append(elements.Length).Append(" elements)");
+        }
+
+        return sb.Append('}').ToString();
+    }
+
+    private static string FormatStruct(Dictionary<string, JgsValue> fields)
+    {
+        var sb = new StringBuilder("struct(");
+        bool first = true;
+        foreach ((string name, JgsValue value) in fields)
+        {
+            if (!first)
+            {
+                sb.Append(", ");
+            }
+
+            first = false;
+            sb.Append(name).Append(": ").Append(value.Display());
+        }
+
+        return sb.Append(')').ToString();
+    }
 
     /// <summary>A constant-size label like <c>image[480x640x3]</c> — never dumps pixels.</summary>
     private static string FormatImage(ImageBuffer image) => image.Channels == 1

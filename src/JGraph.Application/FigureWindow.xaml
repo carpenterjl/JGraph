@@ -18,6 +18,8 @@
                     ToolTip="Import data from a CSV/TSV/Excel file or the clipboard and plot it" />
             <Button Content="Script…" Command="{Binding OpenScriptCommand}" Margin="2,0"
                     ToolTip="Open the script editor to build figures with C# or Python" />
+            <Button Content="Options…" Command="{Binding OptionsCommand}" Margin="2,0"
+                    ToolTip="Language options, default theme and folder, and plugins" />
             <Separator />
             <RadioButton x:Name="PointerButton" GroupName="Mode" Content="Pointer"
                          IsChecked="{Binding IsPointerMode, Mode=TwoWay}" Margin="2,0"

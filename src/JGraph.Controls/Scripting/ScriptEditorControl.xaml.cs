@@ -19,11 +19,18 @@ public partial class ScriptEditorControl : UserControl
 
     static ScriptEditorControl()
     {
-        // Teach the shared highlighting manager about JGS so GetDefinition("JGS") resolves like the
-        // built-in "C#"/"Python" definitions do. Registering is idempotent for our purposes (this runs once).
-        using var reader = XmlReader.Create(new StringReader(JgsSyntax.Xshd));
-        IHighlightingDefinition definition = HighlightingLoader.Load(reader, HighlightingManager.Instance);
-        HighlightingManager.Instance.RegisterHighlighting(JgsSyntax.Name, new[] { ".jgs" }, definition);
+        // Teach the shared highlighting manager about our two languages so GetDefinition("JGS") and
+        // GetDefinition("MATLAB") resolve like the built-in "C#"/"Python" definitions do. Registering is
+        // idempotent for our purposes (this runs once).
+        Register(JgsSyntax.Name, JgsSyntax.Xshd, ".jgs");
+        Register(MatlabSyntax.Name, MatlabSyntax.Xshd, ".m");
+
+        static void Register(string name, string xshd, string extension)
+        {
+            using var reader = XmlReader.Create(new StringReader(xshd));
+            IHighlightingDefinition definition = HighlightingLoader.Load(reader, HighlightingManager.Instance);
+            HighlightingManager.Instance.RegisterHighlighting(name, new[] { extension }, definition);
+        }
     }
 
     private readonly BreakpointMargin _breakpointMargin = new();

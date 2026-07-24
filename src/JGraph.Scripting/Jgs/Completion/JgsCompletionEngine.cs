@@ -30,7 +30,9 @@ public static class JgsCompletionEngine
     /// <param name="code">The buffer text (possibly syntactically broken).</param>
     /// <param name="offset">The cursor offset, clamped into the buffer.</param>
     /// <param name="workspaceSymbols">Extra symbols from other workspace scripts (see <see cref="HarvestFunctions"/>).</param>
-    public static JgsCompletionResult GetCompletions(string code, int offset, IReadOnlyList<CompletionItem>? workspaceSymbols = null)
+    /// <param name="matlab">True for a MATLAB buffer, where '%' starts a comment.</param>
+    public static JgsCompletionResult GetCompletions(
+        string code, int offset, IReadOnlyList<CompletionItem>? workspaceSymbols = null, bool matlab = false)
     {
         ArgumentNullException.ThrowIfNull(code);
         offset = System.Math.Clamp(offset, 0, code.Length);
@@ -42,7 +44,7 @@ public static class JgsCompletionEngine
         }
 
         // Inside a number ("12|"), a string, or a comment, completion stays quiet.
-        if ((replaceStart < offset && char.IsDigit(code[replaceStart])) || IsInStringOrComment(code, replaceStart))
+        if ((replaceStart < offset && char.IsDigit(code[replaceStart])) || IsInStringOrComment(code, replaceStart, matlab))
         {
             return new JgsCompletionResult(offset, Array.Empty<CompletionItem>());
         }
@@ -104,12 +106,17 @@ public static class JgsCompletionEngine
     /// Null when the cursor is not inside a call or the callee is unknown. The callee is looked up in the
     /// builtin catalog, then among <c>fn</c>s in the buffer, then in <paramref name="workspaceSymbols"/>.
     /// </summary>
-    public static JgsSignatureHelp? GetSignatureHelp(string code, int offset, IReadOnlyList<CompletionItem>? workspaceSymbols = null)
+    /// <param name="code">The buffer text.</param>
+    /// <param name="offset">The cursor offset.</param>
+    /// <param name="workspaceSymbols">Extra symbols from other workspace scripts.</param>
+    /// <param name="matlab">True for a MATLAB buffer, which is lexed by MATLAB's rules.</param>
+    public static JgsSignatureHelp? GetSignatureHelp(
+        string code, int offset, IReadOnlyList<CompletionItem>? workspaceSymbols = null, bool matlab = false)
     {
         ArgumentNullException.ThrowIfNull(code);
         offset = System.Math.Clamp(offset, 0, code.Length);
 
-        IReadOnlyList<Token> tokens = Lexer.Tokenize(code, tolerant: true);
+        IReadOnlyList<Token> tokens = Lexer.Tokenize(code, tolerant: true, Dialect(matlab));
         int[] lineStarts = LineStarts(code);
 
         // Walk the tokens before the cursor keeping a stack of open brackets; call frames (an identifier
@@ -317,9 +324,14 @@ public static class JgsCompletionEngine
     private static int Offset(Token token, int[] lineStarts) =>
         lineStarts[System.Math.Min(token.Line, lineStarts.Length) - 1] + token.Column - 1;
 
+    /// <summary>The dialect a completion request is lexed in.</summary>
+    private static JgsDialect Dialect(bool matlab) => matlab ? JgsDialect.Matlab : JgsDialect.Jgs;
+
     /// <summary>Whether <paramref name="offset"/> sits inside a string literal or a line comment — the two
-    /// places completion must stay quiet. Both end at the line break, so scanning the current line suffices.</summary>
-    private static bool IsInStringOrComment(string code, int offset)
+    /// places completion must stay quiet. Both end at the line break, so scanning the current line suffices.
+    /// In MATLAB a '%' opens a comment where JGS would read modulo.</summary>
+
+    private static bool IsInStringOrComment(string code, int offset, bool matlab)
     {
         int lineStart = offset;
         while (lineStart > 0 && code[lineStart - 1] != '\n')
@@ -346,7 +358,7 @@ public static class JgsCompletionEngine
             {
                 stringQuote = c;
             }
-            else if (c == '#' || (c == '/' && i + 1 < offset && code[i + 1] == '/'))
+            else if (c == '#' || (matlab && c == '%') || (c == '/' && i + 1 < offset && code[i + 1] == '/'))
             {
                 return true;
             }

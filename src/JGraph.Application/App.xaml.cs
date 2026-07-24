@@ -167,23 +167,33 @@ public partial class App : System.Windows.Application
 
     private static void ConfigureServices(IServiceCollection services)
     {
+        // User settings, loaded first: the plugin filter and the JGS engine's language options both
+        // read from them.
+        var settings = new SettingsService();
+        services.AddSingleton<ISettingsService>(settings);
+
         // The plugin registry: the built-in standard library (Light/Dark/Presentation/IEEE themes and
-        // colormaps) plus anything discovered in a "plugins" folder next to the executable.
+        // colormaps) plus anything discovered in a "plugins" folder next to the executable that the
+        // user has not turned off.
         string pluginDirectory = Path.Combine(AppContext.BaseDirectory, "plugins");
-        services.AddSingleton(PluginLoader.LoadDefault(pluginDirectory));
+        services.AddSingleton(PluginLoader.LoadDefault(
+            pluginDirectory, plugin => settings.Current.IsPluginEnabled(plugin.GetType().FullName ?? plugin.GetType().Name)));
 
         services.AddSingleton<IFigureFactory, SampleFigureFactory>();
         services.AddSingleton<IFigureExportService, FigureExportService>();
         services.AddSingleton<IFigureDocumentService, FigureDocumentService>();
         services.AddSingleton<IDataImportService, DataImportService>();
 
-        // Scripting engines: C# and JGS are always available; Python is available when a CPython runtime is found.
+        // Scripting engines: C#, JGS and MATLAB are always available; Python is available when a
+        // CPython runtime is found. JGS reads the user's language options on each run.
         services.AddSingleton<IScriptEngine, CSharpScriptEngine>();
         services.AddSingleton<IScriptEngine, PythonScriptEngine>();
-        services.AddSingleton<IScriptEngine, JgsScriptEngine>();
+        services.AddSingleton<IScriptEngine>(new JgsScriptEngine(() => settings.Current.ToJgsOptions()));
+        services.AddSingleton<IScriptEngine, MatlabScriptEngine>();
         services.AddSingleton<IWorkspaceStateService, WorkspaceStateService>();
         services.AddSingleton<IFigureWindowService, FigureWindowService>();
         services.AddSingleton<IScriptingService, ScriptingService>();
+        services.AddSingleton<IOptionsService, OptionsService>();
 
         services.AddTransient<FigureViewModel>();
         services.AddTransient<FigureWindow>();

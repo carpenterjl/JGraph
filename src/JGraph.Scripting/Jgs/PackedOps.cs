@@ -290,7 +290,7 @@ internal static class PackedOps
     /// packed number array is an index list. Mirrors the boxed selector rules and messages.
     /// </summary>
     public static int[] PicksFromPacked(JgsValue selector, int targetLength,
-                                        string targetName, int line, int column)
+                                        string targetName, int indexBase, int line, int column)
     {
         NumericBuffer buffer = selector.AsBuffer;
         Span<double> span = buffer.AsSpan();
@@ -320,7 +320,7 @@ internal static class PackedOps
         {
             for (int i = 0; i < span.Length; i++)
             {
-                picks.Add(ToIndex(span[i], targetLength, line, column));
+                picks.Add(ToIndex(span[i], targetLength, indexBase, line, column));
             }
         }
 
@@ -333,7 +333,7 @@ internal static class PackedOps
     /// as plain numbers, so the boxed form would be an all-number index list); otherwise the boxed
     /// mixed-type selector error.
     /// </summary>
-    public static int[] PicksFromPackedComplex(JgsValue selector, int targetLength, int line, int column)
+    public static int[] PicksFromPackedComplex(JgsValue selector, int targetLength, int indexBase, int line, int column)
     {
         JgsPackedComplex planes = selector.AsPackedComplex;
         Span<double> im = planes.Im.AsSpan();
@@ -350,15 +350,18 @@ internal static class PackedOps
         var picks = new int[re.Length];
         for (int i = 0; i < re.Length; i++)
         {
-            picks[i] = ToIndex(re[i], targetLength, line, column);
+            picks[i] = ToIndex(re[i], targetLength, indexBase, line, column);
         }
 
         GC.KeepAlive(planes);
         return picks;
     }
 
-    /// <summary>A raw double as a 0-based element position, with the boxed paths' exact messages.</summary>
-    public static int ToIndex(double raw, int length, int line, int column)
+    /// <summary>
+    /// A raw double as an element position, counted from <paramref name="indexBase"/> (0 in JGS, 1 in
+    /// MATLAB), with the boxed paths' exact messages.
+    /// </summary>
+    public static int ToIndex(double raw, int length, int indexBase, int line, int column)
     {
         if (raw != Math.Floor(raw) || double.IsNaN(raw) || double.IsInfinity(raw))
         {
@@ -366,11 +369,11 @@ internal static class PackedOps
                 $"An index must be a whole number, but got {raw.ToString("R", CultureInfo.InvariantCulture)}.");
         }
 
-        int i = (int)raw;
+        int i = (int)raw - indexBase;
         if (i < 0 || i >= length)
         {
             throw new JgsRuntimeException(line, column,
-                $"Index {i} is out of range for length {length} (indexing is 0-based).");
+                $"Index {(int)raw} is out of range for length {length} (indexing is {indexBase}-based).");
         }
 
         return i;

@@ -16,20 +16,28 @@ public sealed class ScriptingService : IScriptingService
     private readonly IReadOnlyList<IScriptEngine> _engines;
     private readonly IWorkspaceStateService _stateService;
     private readonly IFigureWindowService _figureWindows;
+    private readonly ISettingsService _settings;
+    private readonly IOptionsService _options;
     private ScriptWorkspaceWindow? _window;
 
     /// <summary>Creates the service over the registered script engines.</summary>
     public ScriptingService(
         IEnumerable<IScriptEngine> engines,
         IWorkspaceStateService stateService,
-        IFigureWindowService figureWindows)
+        IFigureWindowService figureWindows,
+        ISettingsService settings,
+        IOptionsService options)
     {
         ArgumentNullException.ThrowIfNull(engines);
         ArgumentNullException.ThrowIfNull(stateService);
         ArgumentNullException.ThrowIfNull(figureWindows);
+        ArgumentNullException.ThrowIfNull(settings);
+        ArgumentNullException.ThrowIfNull(options);
         _engines = engines.ToList();
         _stateService = stateService;
         _figureWindows = figureWindows;
+        _settings = settings;
+        _options = options;
     }
 
     /// <inheritdoc />
@@ -56,7 +64,7 @@ public sealed class ScriptingService : IScriptingService
             return _window;
         }
 
-        _window = new ScriptWorkspaceWindow(_engines, _stateService, _figureWindows)
+        _window = new ScriptWorkspaceWindow(_engines, _stateService, _figureWindows, _settings, _options)
         {
             Owner = System.Windows.Application.Current?.Windows
                 .OfType<Window>()

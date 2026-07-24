@@ -16,12 +16,16 @@ public static class PluginLoader
     /// plugins found in <paramref name="pluginDirectory"/> (if given and present). This is the
     /// entry point applications use at startup.
     /// </summary>
-    public static PluginRegistry LoadDefault(string? pluginDirectory = null)
+    /// <param name="pluginDirectory">The folder to discover plugins in, or null for none.</param>
+    /// <param name="include">A filter deciding which discovered plugins to apply — the user's
+    /// enable/disable choice — or null to apply every one. The built-in standard library is always
+    /// applied, so its themes and colormaps can never be turned off.</param>
+    public static PluginRegistry LoadDefault(string? pluginDirectory = null, Func<IPlugin, bool>? include = null)
     {
         PluginRegistry registry = PluginRegistry.CreateDefault();
         if (!string.IsNullOrWhiteSpace(pluginDirectory))
         {
-            AddFromDirectory(registry, pluginDirectory);
+            AddFromDirectory(registry, pluginDirectory, include);
         }
 
         return registry;
@@ -29,14 +33,18 @@ public static class PluginLoader
 
     /// <summary>
     /// Discovers plugins in the assemblies loaded from <paramref name="directory"/> and applies each
-    /// to <paramref name="registry"/>. A missing directory is treated as "no plugins".
+    /// one <paramref name="include"/> accepts to <paramref name="registry"/>. A missing directory is
+    /// treated as "no plugins".
     /// </summary>
-    public static void AddFromDirectory(PluginRegistry registry, string directory)
+    public static void AddFromDirectory(PluginRegistry registry, string directory, Func<IPlugin, bool>? include = null)
     {
         ArgumentNullException.ThrowIfNull(registry);
         foreach (IPlugin plugin in DiscoverPlugins(LoadAssemblies(directory)))
         {
-            registry.Apply(plugin);
+            if (include is null || include(plugin))
+            {
+                registry.Apply(plugin);
+            }
         }
     }
 

@@ -48,6 +48,8 @@
                         <MenuItem Header="Call Stack" Tag="callstack" Click="OnViewPaneClick" />
                         <MenuItem Header="Data Viewer" Tag="dataviewer" Click="OnViewPaneClick" />
                     </MenuItem>
+                    <MenuItem Header="Options…" Padding="8,2" Click="OnOptionsClick"
+                              ToolTip="Language options, default theme and folder, and plugins" />
                 </Menu>
             </StackPanel>
         </Border>

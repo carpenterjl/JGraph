@@ -167,6 +167,7 @@
       <li><a href="#matrices">Matrices</a></li>
       <li><a href="#control">Control flow</a></li>
       <li><a href="#functions">Defining functions</a></li>
+      <li><a href="#matlab">Running MATLAB (.m) files</a></li>
       <div class="grouplabel">Plotting model</div>
       <li><a href="#figmodel">Figures, axes &amp; show</a></li>
       <li><a href="#linespec">Line-spec strings</a></li>
@@ -310,7 +311,7 @@ jgraph -help                                     <span class="com"># the flag re
         <tr><td class="sig"><code>pi e inf nan</code></td><td>Built-in constants.</td></tr>
       </tbody>
     </table>
-    <div class="callout"><strong>Deliberate differences from the languages JGS borrows from:</strong> <code>%</code> is still the modulo operator, not a comment (use <code>//</code> or <code>#</code>; <code>mod(a,b)</code> exists); <code>let</code> is still required for a first binding; array literals need commas (<code>[0 20 30]</code> is an error); and arrays assign by <em>reference</em> — <code>X2 = X1; X2(1) = 0</code> also changes <code>X1</code>.</div>
+    <div class="callout"><strong>Deliberate differences from the languages JGS borrows from:</strong> <code>%</code> is still the modulo operator, not a comment (use <code>//</code> or <code>#</code>; <code>mod(a,b)</code> exists); <code>let</code> is still required for a first binding; array literals need commas (<code>[0 20 30]</code> is an error); and arrays assign by <em>reference</em> — <code>X2 = X1; X2(1) = 0</code> also changes <code>X1</code>. If you want the MATLAB spellings instead — <code>%</code> comments, 1-based indexing, no <code>let</code>, value semantics — write a <a href="#matlab"><code>.m</code> file</a>, or set the JGS options in <strong>Tools → Options</strong>.</div>
 
     <h2 id="arrays">Arrays &amp; indexing</h2>
     <p>Arrays are the workhorse. Build them with a literal, a colon range (<code>2:6</code>), or a constructor (<code>linspace</code>, <code>range</code>, <code>zeros</code>, <code>ones</code>, <code>rand</code>), then transform them with math and the array builtins.</p>
@@ -405,6 +406,29 @@ m[<span class="num">1</span>][<span class="num">0</span>]                       
 
 <span class="kw">let</span> r = <span class="fn">rms</span>([<span class="num">3</span>, <span class="num">4</span>, <span class="num">0</span>])   <span class="com"># 2.886...</span></code></pre>
     <p>Brace placement is flexible: the <code>{</code> may sit on its own line (after <code>fn</code>, <code>if</code>, <code>for</code>, <code>while</code>, and <code>else</code>), and a function's parameter list may follow its name on the next line. To return several values, return an array and destructure it: <code>return [slope, offset]</code> … <code>let [m, b] = fit(x, y)</code>.</p>
+
+    <h2 id="matlab">Running MATLAB (.m) files</h2>
+    <p>JGraph runs MATLAB scripts directly. Open or create a <code>.m</code> file in the Script Workspace — or run one from the command line with <code>jgraph -batch analysis.m</code> — and it executes with MATLAB's own rules, <strong>unchanged</strong>: the same file runs in JGraph and in MATLAB and means the same thing. Everything above about the <code>JG</code> plotting model, the figure files, and the workspace applies; only the language surface differs.</p>
+    <p>In a <code>.m</code> file:</p>
+    <ul>
+      <li><code>%</code> starts a comment (and <code>%{ … %}</code> a block comment); <code>mod</code> and <code>rem</code> are the modulo functions.</li>
+      <li>Indexing is <strong>1-based</strong>: <code>x(1)</code> is the first element, <code>x(end)</code> the last.</li>
+      <li>A first assignment needs no <code>let</code> — <code>x = 1</code> just works.</li>
+      <li>Array literals separate elements by spaces or commas: <code>[1 2 3]</code>, and <code>[1 -2]</code> is two elements while <code>[1 - 2]</code> is one.</li>
+      <li>Assignment <strong>copies</strong>: <code>b = a; b(1) = 0</code> leaves <code>a</code> untouched.</li>
+      <li><code>'</code> is transpose (<code>A'</code>, and <code>v'</code> makes a column); a char literal escapes a quote by doubling it (<code>'it''s'</code>) and has no backslash escapes, so Windows paths write plainly.</li>
+      <li><code>function [a, b] = name(x)</code> declarations, multiple returns (<code>[v, i] = max(x)</code>), <code>nargin</code>/<code>varargin</code>, <code>switch</code>/<code>case</code>/<code>otherwise</code>, <code>try</code>/<code>catch</code>, <code>global</code>, and command syntax (<code>hold on</code>) all work.</li>
+      <li>Cell arrays (<code>{1, 'two'}</code>, <code>c{i}</code>), structs (<code>s.field</code>, dynamic <code>s.(name)</code>), and anonymous functions (<code>@(x) x.^2</code>) are supported.</li>
+    </ul>
+    <div class="callout"><strong>Matrix vs. elementwise:</strong> in a <code>.m</code> file <code>*</code>, <code>/</code>, and <code>^</code> are matrix operations and the dotted forms <code>.*</code>, <code>./</code>, <code>.^</code> are elementwise, exactly as MATLAB has them. JGraph's arrays are one-dimensional, so <code>*</code> implements matrix×matrix and matrix×vector; a product of two plain vectors is ambiguous and raises an error naming <code>.*</code> and <code>dot</code>, rather than silently returning the wrong thing.</div>
+    <div class="note"><strong>What is not supported</strong> is named plainly rather than failing obscurely: <code>classdef</code>, <code>parfor</code>, struct arrays (<code>s(2).f</code>), and toolbox functions JGraph does not have (<code>ode45</code>, <code>fmincon</code>, <code>syms</code>, …) report exactly what is missing. See <a href="#" onclick="return false;">ADR 0031</a> for the full boundary, including how the 1-D array model shapes <code>size</code> and transpose.</div>
+    <pre><code><span class="com">% A MATLAB script — unmodified.</span>
+t = <span class="num">0</span>:<span class="num">0.01</span>:<span class="num">1</span>;
+y = <span class="fn">exp</span>(<span class="num">-3</span>*t) .* <span class="fn">sin</span>(<span class="num">2</span>*<span class="kw">pi</span>*<span class="num">5</span>*t);
+[peak, at] = <span class="fn">max</span>(y);
+<span class="fn">fprintf</span>(<span class="str">'peak %.3f at sample %d\n'</span>, peak, at);   <span class="com">% escapes decode in the format string</span>
+<span class="fn">plot</span>(t, y);
+<span class="fn">title</span>(<span class="str">'damped sine'</span>);</code></pre>
 
     <!-- ================= PLOTTING MODEL ================= -->
     <h2 id="figmodel">Figures, axes &amp; show</h2>

@@ -13,6 +13,8 @@ internal static class AstChildren
     {
         IfStmt => 2,
         WhileStmt or ForStmt or FnStmt => 1,
+        TryStmt => 2,                             // 0 = the guarded body, 1 = the handler
+        SwitchStmt s => s.Cases.Count + 1,        // one per case, then 'otherwise'
         _ => 0,
     };
 
@@ -25,6 +27,10 @@ internal static class AstChildren
         (WhileStmt s, 0) => s.Body,
         (ForStmt s, 0) => s.Body,
         (FnStmt s, 0) => s.Body,
+        (TryStmt s, 0) => s.Body,
+        (TryStmt s, 1) => s.Handler,
+        (SwitchStmt s, int i) when i < s.Cases.Count => s.Cases[i].Body,
+        (SwitchStmt s, int i) when i == s.Cases.Count => s.Otherwise,
         _ => null,
     };
 

@@ -5,7 +5,7 @@ the workflow of a technical-computing figure window — an object model of figur
 edit, and interact with — while following modern MVVM and SOLID design. It is renderer-agnostic and
 built for performance (millions of points).
 
-> Status: Milestones 1–27 complete. A working, interactive, editable figure window with line,
+> Status: Milestones 1–29 complete. A working, interactive, editable figure window with line,
 > scatter, bar, stem, histogram, error-bar, and image/heatmap plots; interactive 3D surfaces
 > (surf/mesh/meshc with drag rotation), contour/filled-contour plots, and colorbars;
 > technical-computing JGS scripting (semicolon echo suppression, colon ranges, uniform 0-based
@@ -83,12 +83,13 @@ built for performance (millions of points).
   (auto-detecting delimiter, header, culture, and column types), then plot columns from the API or the
   figure window's **Import Data…** wizard.
 - **Scriptable** — build figures from **C#** (Roslyn), **Python** (real CPython via pythonnet, with your
-  installed packages like numpy importable), or the built-in **JGS** language (a dependency-free,
-  sandboxed interpreter) in the in-app editor; every script calls the same `JG` API, so every plot type
-  and option is available.
+  installed packages like numpy importable), the built-in **JGS** language (a dependency-free, sandboxed
+  interpreter), or **MATLAB** — a `.m` file runs unmodified, with `%` comments, 1-based indexing,
+  `function` definitions, cells, and structs (see [the scripting guide](docs/jgs-scripting-guide.html)) —
+  in the in-app editor; every script calls the same `JG` API, so every plot type and option is available.
 - **A scripting workspace** — open a folder of scripts and data files in the docking scripting window
   (file tree, multi-tab editors, console, and a variables panel). **New Script** asks which language
-  you want and opens `NewScript.jgs` / `.csx` / `.py`, so highlighting and the Run engine are right
+  you want and opens `NewScript.jgs` / `.m` / `.csx` / `.py`, so highlighting and the Run engine are right
   before you save anything; scripts find workspace data files by
   bare name (`readcsv("data.csv")`), JGS scripts compose via `run("helpers.jgs")`, and the window
   remembers your workspace, open files, breakpoints, and layout between sessions. The Files pane is a
@@ -278,7 +279,7 @@ a real exit code.
 ```sh
 jgraph                                          # open the interactive application
 jgraph -batch "let x = 1:10; disp(sum(x))"      # run, log to stdout, exit
-jgraph -batch "analysis.jgs" -logfile run.log   # run a script file, tee everything to a log
+jgraph -batch "analysis.m" -logfile run.log     # run a MATLAB (or .jgs) file, tee to a log
 jgraph -r "plot(1:10)"                          # run, then leave the session open
 jgraph -help                                    # the flag reference, plus the scripting guide
 ```
@@ -293,7 +294,7 @@ jgraph -help                                    # the flag reference, plus the s
 | `-h`, `-help` | Show the startup options and open the scripting guide. |
 
 The statement is JGS source unless it names a file that exists, in which case that file runs and its
-extension picks the language (`.jgs`, `.csx`/`.cs`, `.py`). Relative paths — including
+extension picks the language (`.jgs`, `.m`, `.csx`/`.cs`, `.py`). Relative paths — including
 `exportfigure`'s output — resolve against the shell's current directory. Exit codes: `0` finished,
 `1` failed, `2` bad command line, or whatever the script passed to `exit(n)`.
 
@@ -321,6 +322,16 @@ public sealed class MyThemePlugin : IPlugin
 
 In the figure window, the **Theme** selector lists everything in the registry, so a plugin's theme
 appears with no code change.
+
+## Settings
+
+**Tools → Options** (the **Options…** button on the figure toolbar, or the script workspace's View
+menu) saves your preferences to `%AppData%\JGraph\settings.json`: whether `.jgs` scripts require `let`
+and index from 0 or 1, the default figure theme and new-script language, the default script folder, and
+which discovered plugins to load. The JGS language options take effect on the next run; disabling a
+plugin takes effect on the next launch. MATLAB (`.m`) files are unaffected — they always run with
+MATLAB's own rules. The command-line launcher reads the same file, so a `-batch` run honours your
+plugin and language choices too.
 
 ## Solution layout
 

@@ -18,13 +18,17 @@ internal static class JgsRunner
     /// <param name="sourceId">The identity of <paramref name="code"/> (file path or ""), stamped on its
     /// statements so a debugger can map execution to the right document.</param>
     /// <param name="hook">The debug hook, or null for a plain run.</param>
+    /// <param name="dialect">The language variant to run, or null for <see cref="JgsDialect.Jgs"/>.</param>
     public static ScriptRunResult Run(
         string code,
         ScriptContext context,
         CancellationToken cancellationToken,
         string sourceId = "",
-        IJgsDebugHook? hook = null)
+        IJgsDebugHook? hook = null,
+        JgsDialect? dialect = null)
     {
+        dialect ??= JgsDialect.Jgs;
+
         // JGS scripts drive the same static JG facade; start each run from a clean state. The
         // previous completed run's packed buffers are released deterministically here (its figures
         // and variable snapshots hold copies, never the buffers); finalizers remain the backstop
@@ -35,11 +39,11 @@ internal static class JgsRunner
 
         try
         {
-            IReadOnlyList<Stmt> program = Parser.Parse(code, sourceId);
-            JgsEnvironment environment = JgsBuiltins.CreateGlobals(globals, cancellationToken);
+            IReadOnlyList<Stmt> program = Parser.Parse(code, sourceId, dialect);
+            JgsEnvironment environment = JgsBuiltins.CreateGlobals(globals, cancellationToken, dialect);
             var interpreter = new Interpreter(environment, cancellationToken, hook,
-                echo: line => context.Output.WriteLine(line));
-            DefineRunBuiltin(environment, interpreter, globals);
+                echo: line => context.Output.WriteLine(line), dialect);
+            DefineRunBuiltin(environment, interpreter, globals, dialect);
             hook?.RunStarting(interpreter, environment);
 
             // Capture the pristine builtin bindings so the post-run snapshot lists only what the
@@ -79,9 +83,11 @@ internal static class JgsRunner
     /// <summary>
     /// Defines the <c>run(path)</c> builtin: it resolves the path like the table readers do, parses the
     /// file, and executes it into the global scope (functions hoisted first) — MATLAB-style script
-    /// composition. Re-entrant includes are guarded so a cycle fails with a clear error.
+    /// composition. Re-entrant includes are guarded so a cycle fails with a clear error. An included
+    /// file is parsed in the caller's dialect unless it is a <c>.m</c> file, which always means MATLAB.
     /// </summary>
-    private static void DefineRunBuiltin(JgsEnvironment environment, Interpreter interpreter, JGraphScriptGlobals globals)
+    private static void DefineRunBuiltin(
+        JgsEnvironment environment, Interpreter interpreter, JGraphScriptGlobals globals, JgsDialect dialect)
     {
         var including = new HashSet<string>(OperatingSystem.IsWindows()
             ? StringComparer.OrdinalIgnoreCase
@@ -116,7 +122,7 @@ internal static class JgsRunner
             {
                 // Stamp the included file's statements with its resolved path so breakpoints hit and
                 // step-in lands in the right editor tab.
-                interpreter.Run(Parser.Parse(source, fullPath));
+                interpreter.Run(Parser.Parse(source, fullPath, DialectForInclude(fullPath, dialect)));
             }
             finally
             {
@@ -126,6 +132,13 @@ internal static class JgsRunner
             return JgsValue.Null;
         })));
     }
+
+    /// <summary>
+    /// The dialect an included file is parsed in: MATLAB for a <c>.m</c> file, otherwise the including
+    /// script's own. A <c>.m</c> file has to mean the same thing however it was reached.
+    /// </summary>
+    private static JgsDialect DialectForInclude(string path, JgsDialect caller) =>
+        Path.GetExtension(path).Equals(".m", StringComparison.OrdinalIgnoreCase) ? JgsDialect.Matlab : caller;
 
     private static IReadOnlyList<ScriptVariable> SnapshotGlobals(
         JgsEnvironment environment, Dictionary<string, JgsValue> pristine)
@@ -206,6 +219,27 @@ internal static class JgsRunner
             if (visited.Add(value))
             {
                 value.AsImage.Dispose(); // release the image's native/mapped backing buffer
+            }
+
+            return;
+        }
+
+        // Cells and structs can hold arrays, so the walk has to go through them too.
+        if (value.Type == JgsType.Cell && visited.Add(value))
+        {
+            foreach (JgsValue element in value.AsCell)
+            {
+                DisposePackedIn(element, visited);
+            }
+
+            return;
+        }
+
+        if (value.Type == JgsType.Struct && visited.Add(value))
+        {
+            foreach ((_, JgsValue field) in value.AsStruct)
+            {
+                DisposePackedIn(field, visited);
             }
 
             return;

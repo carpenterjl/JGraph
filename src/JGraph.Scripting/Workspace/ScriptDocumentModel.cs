@@ -51,14 +51,15 @@ public sealed class ScriptDocumentModel
     /// <summary>Whether the buffer differs from the last saved text.</summary>
     public bool IsDirty => !string.Equals(_text, _savedText, StringComparison.Ordinal);
 
-    /// <summary>Maps a file path to its scripting language: .jgs → JGS, .csx/.cs → C#, .py → Python;
-    /// other extensions are plain "Text" (no engine, no highlighting). An unsaved document (null path)
-    /// is a JGS scratch script.</summary>
+    /// <summary>Maps a file path to its scripting language: .jgs → JGS, .m → MATLAB, .csx/.cs → C#,
+    /// .py → Python; other extensions are plain "Text" (no engine, no highlighting). An unsaved
+    /// document (null path) is a JGS scratch script.</summary>
     public static string LanguageForFile(string? path) => path is null
         ? "JGS"
         : Path.GetExtension(path).ToLowerInvariant() switch
         {
             ".jgs" => "JGS",
+            ".m" => "MATLAB",
             ".csx" or ".cs" => "C#",
             ".py" => "Python",
             _ => "Text",
@@ -70,6 +71,7 @@ public sealed class ScriptDocumentModel
     public static string ExtensionForLanguage(string? language) => language switch
     {
         "JGS" => ".jgs",
+        "MATLAB" => ".m",
         "C#" => ".csx",
         "Python" => ".py",
         _ => ".txt",

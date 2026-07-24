@@ -92,11 +92,7 @@ internal static class AstEquals
             (ArrayLiteral x, ArrayLiteral y) =>
                 x.Elements.Count == y.Elements.Count
                 && !x.Elements.Where((e, i) => !ExpressionsEqual(e, y.Elements[i])).Any(),
-            (MatrixLiteral x, MatrixLiteral y) =>
-                x.Rows.Count == y.Rows.Count
-                && !x.Rows.Where((row, r) =>
-                    row.Count != y.Rows[r].Count
-                    || row.Where((e, i) => !ExpressionsEqual(e, y.Rows[r][i])).Any()).Any(),
+            (MatrixLiteral x, MatrixLiteral y) => RowsEqual(x.Rows, y.Rows),
             (ComplexLiteral x, ComplexLiteral y) => x.Imaginary.Equals(y.Imaginary),
             (RangeExpr x, RangeExpr y) =>
                 ExpressionsEqual(x.Start, y.Start)
@@ -116,8 +112,40 @@ internal static class AstEquals
                 x.Op == y.Op && ExpressionsEqual(x.Target, y.Target) && ExpressionsEqual(x.Value, y.Value),
             (IncDecExpr x, IncDecExpr y) =>
                 x.Increment == y.Increment && x.Prefix == y.Prefix && ExpressionsEqual(x.Target, y.Target),
+            (TransposeExpr x, TransposeExpr y) =>
+                x.Conjugate == y.Conjugate && ExpressionsEqual(x.Operand, y.Operand),
+            (CellLiteral x, CellLiteral y) => RowsEqual(x.Rows, y.Rows),
+            (BraceIndexExpr x, BraceIndexExpr y) =>
+                ExpressionsEqual(x.Target, y.Target) && ListsEqual(x.Indices, y.Indices),
+            (MemberExpr x, MemberExpr y) =>
+                string.Equals(x.Field, y.Field, StringComparison.Ordinal)
+                && ExpressionsEqual(x.FieldName, y.FieldName)
+                && ExpressionsEqual(x.Target, y.Target),
+            (AnonymousFnExpr x, AnonymousFnExpr y) =>
+                x.Parameters.SequenceEqual(y.Parameters, StringComparer.Ordinal)
+                && ExpressionsEqual(x.Body, y.Body),
+            (FunctionHandleExpr x, FunctionHandleExpr y) => string.Equals(x.Name, y.Name, StringComparison.Ordinal),
             _ => false,
         };
+    }
+
+    /// <summary>Whether two matrix/cell literals hold the same rows of the same expressions.</summary>
+    private static bool RowsEqual(IReadOnlyList<IReadOnlyList<Expr>> a, IReadOnlyList<IReadOnlyList<Expr>> b)
+    {
+        if (a.Count != b.Count)
+        {
+            return false;
+        }
+
+        for (int r = 0; r < a.Count; r++)
+        {
+            if (!ListsEqual(a[r], b[r]))
+            {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     /// <summary>Whether two argument/subscript lists match element by element.</summary>
@@ -155,10 +183,21 @@ internal static class AstEquals
             && ExpressionsEqual(x.Iterable, y.Iterable),
         (FnStmt x, FnStmt y) =>
             string.Equals(x.Name, y.Name, StringComparison.Ordinal)
-            && x.Parameters.SequenceEqual(y.Parameters, StringComparer.Ordinal),
+            && x.Parameters.SequenceEqual(y.Parameters, StringComparer.Ordinal)
+            && x.Outputs.SequenceEqual(y.Outputs, StringComparer.Ordinal),
         (ReturnStmt x, ReturnStmt y) => ExpressionsEqual(x.Value, y.Value),
         (BreakStmt, BreakStmt) => true,
         (ContinueStmt, ContinueStmt) => true,
+        (MultiAssignStmt x, MultiAssignStmt y) =>
+            x.Targets.Count == y.Targets.Count
+            && !x.Targets.Where((t, i) => !ExpressionsEqual(t, y.Targets[i])).Any()
+            && ExpressionsEqual(x.Call, y.Call),
+        (SwitchStmt x, SwitchStmt y) =>
+            ExpressionsEqual(x.Subject, y.Subject)
+            && x.Cases.Count == y.Cases.Count
+            && !x.Cases.Where((c, i) => !ExpressionsEqual(c.Value, y.Cases[i].Value)).Any(),
+        (TryStmt x, TryStmt y) => string.Equals(x.ErrorVariable, y.ErrorVariable, StringComparison.Ordinal),
+        (GlobalStmt x, GlobalStmt y) => x.Names.SequenceEqual(y.Names, StringComparer.Ordinal),
         _ => false,
     };
 }

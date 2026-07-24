@@ -1,0 +1,74 @@
+<Window x:Class="JGraph.Application.OptionsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Options" Height="560" Width="520"
+        WindowStartupLocation="CenterOwner" ShowInTaskbar="False">
+    <DockPanel Margin="12">
+        <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,12,0,0">
+            <Button Content="OK" Width="80" Margin="4,0" IsDefault="True" Click="OnOk" />
+            <Button Content="Cancel" Width="80" Margin="4,0" IsCancel="True" />
+        </StackPanel>
+
+        <ScrollViewer VerticalScrollBarVisibility="Auto">
+            <StackPanel>
+                <!-- JGS language -->
+                <GroupBox Header="JGS language" Padding="8" Margin="0,0,0,10">
+                    <StackPanel>
+                        <CheckBox x:Name="OptionalLetBox" Margin="0,2"
+                                  Content="Allow a first assignment without 'let' (x = 1)" />
+                        <TextBlock Margin="0,4,0,2" Text="Indexing" FontWeight="SemiBold" />
+                        <RadioButton x:Name="ZeroBasedButton" GroupName="IndexBase" Margin="0,2"
+                                     Content="0-based — the first element is x(0) (default)" />
+                        <RadioButton x:Name="OneBasedButton" GroupName="IndexBase" Margin="0,2"
+                                     Content="1-based — the first element is x(1)" />
+                        <TextBlock Margin="0,6,0,0" TextWrapping="Wrap" Foreground="Gray"
+                                   Text="These apply to .jgs scripts. MATLAB (.m) files always use 1-based indexing and their own rules." />
+                    </StackPanel>
+                </GroupBox>
+
+                <!-- Scripts and figures -->
+                <GroupBox Header="Scripts and figures" Padding="8" Margin="0,0,0,10">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+
+                        <TextBlock Grid.Row="0" Grid.Column="0" Text="New script language" VerticalAlignment="Center" Margin="0,4,8,4" />
+                        <ComboBox Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2" x:Name="LanguageCombo" Margin="0,4" />
+
+                        <TextBlock Grid.Row="1" Grid.Column="0" Text="Default figure theme" VerticalAlignment="Center" Margin="0,4,8,4" />
+                        <ComboBox Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" x:Name="ThemeCombo" Margin="0,4" />
+
+                        <TextBlock Grid.Row="2" Grid.Column="0" Text="Default script folder" VerticalAlignment="Center" Margin="0,4,8,4" />
+                        <TextBox Grid.Row="2" Grid.Column="1" x:Name="DirectoryBox" Margin="0,4" VerticalContentAlignment="Center" />
+                        <Button Grid.Row="2" Grid.Column="2" Content="Browse…" Margin="6,4,0,4" Padding="8,0" Click="OnBrowse" />
+                    </Grid>
+                </GroupBox>
+
+                <!-- Plugins -->
+                <GroupBox Header="Plugins" Padding="8">
+                    <StackPanel>
+                        <TextBlock TextWrapping="Wrap" Foreground="Gray" Margin="0,0,0,6"
+                                   Text="Turn discovered plugins on or off. Changes take effect the next time JGraph starts." />
+                        <ItemsControl x:Name="PluginList">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <CheckBox Content="{Binding DisplayName}" IsChecked="{Binding Enabled}" Margin="0,2" />
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                        <TextBlock x:Name="NoPluginsLabel" Foreground="Gray"
+                                   Text="No plugins were found in the plugins folder." />
+                    </StackPanel>
+                </GroupBox>
+            </StackPanel>
+        </ScrollViewer>
+    </DockPanel>
+</Window>
