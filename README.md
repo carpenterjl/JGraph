@@ -231,9 +231,32 @@ columns onto a plot type — into a new figure or the current axes.
 
 ## Script it (C#, Python, or JGS)
 
-The figure window's **Script…** editor runs scripts that build figures with the same API. Scripts call
-`JG` directly; `readcsv`, `print`, and `show` are provided by the host. Runnable examples for all three
-languages live in [`examples/`](examples/).
+JGraph opens into a scripting workspace: a file browser, tabbed editors, a console, a workspace
+variables panel and a data viewer, with figures opening in their own windows as scripts show them.
+Scripts call `JG` directly; `readcsv`, `print`, and `show` are provided by the host. Runnable examples
+for all four languages live in [`examples/`](examples/) — on a first run they are copied into
+`Documents\JGraph\Examples` and opened for you.
+
+To brand the startup splash, drop a `splash.png` (or `.jpg`/`.bmp`) into `%AppData%\JGraph` — or beside
+the executable to brand a whole deployment. No rebuild needed.
+
+### The console
+
+The Console pane is a live prompt, not just an output log. Pick a language from the dropdown (JGS,
+MATLAB, C# or Python), type a statement and press Enter — Shift+Enter adds a line, Up/Down recall
+history, and Ctrl+C interrupts a running statement. Variables persist from one statement to the next
+and appear in the Workspace pane, where you can double-click an array, matrix, cell, struct or table
+to open it in the Data Viewer, or right-click to plot it. `analysis.jgs` at the prompt runs that file;
+`disp(1)` runs as source.
+
+**The prompt and F5 share one workspace**, MATLAB-style: a variable a script leaves behind is there at
+the prompt, and vice versa. Set a breakpoint and F5 runs under the debugger instead, which keeps its
+own variables — the console says so when it does. `clear` (or Run → Clear Workspace) empties the
+workspace and releases the memory it held; figures stay open.
+
+Python at the prompt runs in a child process — that is what makes Ctrl+C work — so its variables are
+separate from those of a `.py` file run with F5. Its `plot`, `title`, `figure` and friends open real
+JGraph figure windows.
 
 C#:
 
@@ -323,12 +346,23 @@ public sealed class MyThemePlugin : IPlugin
 In the figure window, the **Theme** selector lists everything in the registry, so a plugin's theme
 appears with no code change.
 
+### Light and dark
+
+JGraph itself has a **Light** and a **Dark** theme, chosen in **Tools → Options → Appearance** and
+applied immediately to every open window — the shell, the editor and its syntax colours, the docked
+panes, the figure windows and the dialogs. It is remembered between launches.
+
+That is the *application's* theme, and it is deliberately separate from the figure themes above. A
+figure theme is plot ink: it is saved inside `.graph` files and baked into exported images, so a dark
+IDE does not darken your plots. If you want it to, tick **Match new figures to the application
+theme** — it affects new figures only, never one already open or loaded from a file.
+
 ## Settings
 
 **Tools → Options** (the **Options…** button on the figure toolbar, or the script workspace's View
-menu) saves your preferences to `%AppData%\JGraph\settings.json`: whether `.jgs` scripts require `let`
-and index from 0 or 1, the default figure theme and new-script language, the default script folder, and
-which discovered plugins to load. The JGS language options take effect on the next run; disabling a
+menu) saves your preferences to `%AppData%\JGraph\settings.json`: the application theme, whether `.jgs`
+scripts require `let` and index from 0 or 1, the default figure theme and new-script language, the
+default script folder, and which discovered plugins to load. The JGS language options take effect on the next run; disabling a
 plugin takes effect on the next launch. MATLAB (`.m`) files are unaffected — they always run with
 MATLAB's own rules. The command-line launcher reads the same file, so a `-batch` run honours your
 plugin and language choices too.
@@ -363,7 +397,7 @@ plugin and language choices too.
 dotnet build JGraph.sln
 dotnet test tests/JGraph.Tests/JGraph.Tests.csproj
 dotnet run --project demo/JGraph.Demo          # example gallery
-dotnet run --project src/JGraph.Application     # interactive figure window
+dotnet run --project src/JGraph.Application     # the interactive workspace
 dotnet run --project src/JGraph.Cli -- -help    # the command-line launcher
 dotnet run -c Release --project tests/JGraph.Benchmarks   # decimation benchmarks
 ```
@@ -375,6 +409,7 @@ Requires the .NET 8 SDK (or newer) on Windows (the UI projects target `net8.0-wi
 - [Architecture overview](docs/architecture.md)
 - [Importing and graphing data — a walkthrough](docs/import-guide.md)
 - [Example scripts (C#, Python, JGS)](examples/)
+- [Theme keys — the contract for styling JGraph's own UI](docs/theme-keys.md)
 - [Architecture Decision Records](docs/adr/)
 
 ## License

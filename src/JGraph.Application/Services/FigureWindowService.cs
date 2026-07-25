@@ -40,6 +40,17 @@ public sealed class FigureWindowService : IFigureWindowService
     }
 
     /// <inheritdoc />
+    public int OpenBlankFigure()
+    {
+        // Through JG, so the new figure joins the same numbering scripts and the console use and
+        // becomes the current figure — an immediate `plot(...)` then lands in the window just opened.
+        FigureModel figure = JGraph.Api.JG.Figure();
+        int number = JGraph.Api.JG.CurrentFigureNumber;
+        ShowScriptFigure(number, figure);
+        return number;
+    }
+
+    /// <inheritdoc />
     public void CloseAll()
     {
         foreach (FigureWindow window in _windows.Values.ToArray())

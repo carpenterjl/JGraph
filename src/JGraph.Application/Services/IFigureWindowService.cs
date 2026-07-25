@@ -13,6 +13,13 @@ public interface IFigureWindowService
     /// creating that window on first use. Must be called on the UI thread.</summary>
     void ShowScriptFigure(int number, FigureModel figure);
 
+    /// <summary>
+    /// Opens an empty figure window under the next unused figure number and returns that number.
+    /// It is numbered like any other figure, so a script or the console can address it with
+    /// <c>figure(n)</c> and draw into it. Must be called on the UI thread.
+    /// </summary>
+    int OpenBlankFigure();
+
     /// <summary>Closes every script figure window.</summary>
     void CloseAll();
 }

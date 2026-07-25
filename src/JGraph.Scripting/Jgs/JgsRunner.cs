@@ -86,7 +86,7 @@ internal static class JgsRunner
     /// composition. Re-entrant includes are guarded so a cycle fails with a clear error. An included
     /// file is parsed in the caller's dialect unless it is a <c>.m</c> file, which always means MATLAB.
     /// </summary>
-    private static void DefineRunBuiltin(
+    internal static void DefineRunBuiltin(
         JgsEnvironment environment, Interpreter interpreter, JGraphScriptGlobals globals, JgsDialect dialect)
     {
         var including = new HashSet<string>(OperatingSystem.IsWindows()
@@ -140,7 +140,13 @@ internal static class JgsRunner
     private static JgsDialect DialectForInclude(string path, JgsDialect caller) =>
         Path.GetExtension(path).Equals(".m", StringComparison.OrdinalIgnoreCase) ? JgsDialect.Matlab : caller;
 
-    private static IReadOnlyList<ScriptVariable> SnapshotGlobals(
+    /// <summary>
+    /// Projects the bindings <paramref name="environment"/> holds that are not still the pristine
+    /// builtin binding recorded in <paramref name="pristine"/> — i.e. exactly what the user's code
+    /// defined or rebound. Reference equality is the test, so rebinding <c>pi</c> shows up but the
+    /// hundreds of untouched builtins and constants do not.
+    /// </summary>
+    internal static IReadOnlyList<ScriptVariable> SnapshotGlobals(
         JgsEnvironment environment, Dictionary<string, JgsValue> pristine)
     {
         var variables = new List<ScriptVariable>();
@@ -179,8 +185,80 @@ internal static class JgsRunner
             value.PackedKind == JgsPackedKind.Number ? value.AsBuffer.AsSpan().ToArray() : null,
         JgsType.Array when value.AsArray.All(static e => e.Type == JgsType.Number) =>
             value.AsArray.Select(static e => e.AsNumber).ToArray(),
+
+        // Anything else with a table shape becomes formatted text the host can grid without knowing
+        // the value model: a matrix (an array of arrays), a cell array, or a struct.
+        JgsType.Array when value.AsArray.All(static e => e.Type == JgsType.Array) => MatrixGrid(value.AsArray),
+        JgsType.Cell => CellGrid(value.AsCell),
+        JgsType.Struct => StructGrid(value.AsStruct),
         _ => null,
     };
+
+    private static ScriptValueGrid? MatrixGrid(IReadOnlyList<JgsValue> rows)
+    {
+        int columns = rows.Count == 0 ? 0 : rows.Max(static r => r.ArrayLength);
+        if (rows.Count == 0 || columns == 0 || (long)rows.Count * columns > ScriptValueGrid.MaxCells)
+        {
+            return null;
+        }
+
+        var text = new List<string[]>(rows.Count);
+        foreach (JgsValue row in rows)
+        {
+            var cells = new string[columns];
+            int length = row.ArrayLength;
+            for (int c = 0; c < columns; c++)
+            {
+                // ElementAt, not AsArray: a numeric row is packed, and asking a packed array for
+                // boxed elements throws by design. Ragged rows are legal (JGS arrays need not be
+                // rectangular), so a short row gets empty trailing cells rather than failing the
+                // whole projection.
+                cells[c] = c < length ? Cell(row.ElementAt(c)) : string.Empty;
+            }
+
+            text.Add(cells);
+        }
+
+        return new ScriptValueGrid("matrix", Numbered(columns), text);
+    }
+
+    private static ScriptValueGrid? CellGrid(IReadOnlyList<JgsValue> elements)
+    {
+        if (elements.Count == 0 || elements.Count > ScriptValueGrid.MaxCells)
+        {
+            return null;
+        }
+
+        // A cell array of rows displays as a grid; a flat one as a single row, which is what it is.
+        if (elements.All(static e => e.Type == JgsType.Array))
+        {
+            ScriptValueGrid? matrix = MatrixGrid(elements);
+            return matrix is null ? null : matrix with { Kind = "cell" };
+        }
+
+        return new ScriptValueGrid(
+            "cell", Numbered(elements.Count), new[] { elements.Select(Cell).ToArray() });
+    }
+
+    private static ScriptValueGrid? StructGrid(IReadOnlyDictionary<string, JgsValue> fields)
+    {
+        if (fields.Count == 0 || fields.Count > ScriptValueGrid.MaxCells)
+        {
+            return null;
+        }
+
+        // Field per row, MATLAB's own struct display: a wide struct is far more readable down the page.
+        var rows = fields
+            .OrderBy(static f => f.Key, StringComparer.Ordinal)
+            .Select(static f => new[] { f.Key, f.Value.TypeName, Cell(f.Value) })
+            .ToList();
+        return new ScriptValueGrid("struct", new[] { "Field", "Type", "Value" }, rows);
+    }
+
+    private static string Cell(JgsValue value) => ScriptVariable.Truncate(value.Display());
+
+    private static string[] Numbered(int count) =>
+        Enumerable.Range(0, count).Select(static i => i.ToString(System.Globalization.CultureInfo.InvariantCulture)).ToArray();
 
     // --- Deterministic release of the previous run's packed buffers -----------------------------
 
@@ -205,8 +283,19 @@ internal static class JgsRunner
             return;
         }
 
+        DisposeBuffers(previous.Locals.Values);
+    }
+
+    /// <summary>
+    /// Releases the packed buffers and image handles reachable from <paramref name="values"/>. The walk
+    /// is reference-deduplicated because several bindings can share one buffer and arrays may
+    /// self-reference. Callers must be certain nothing else still reads these values — an interactive
+    /// session only does this from <c>clear</c> and disposal.
+    /// </summary>
+    internal static void DisposeBuffers(IEnumerable<JgsValue> values)
+    {
         var visited = new HashSet<JgsValue>(ReferenceEqualityComparer.Instance);
-        foreach ((_, JgsValue value) in previous.Locals)
+        foreach (JgsValue value in values)
         {
             DisposePackedIn(value, visited);
         }

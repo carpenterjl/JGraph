@@ -10,7 +10,7 @@ namespace JGraph.Scripting;
 /// host helpers as the C# engine (<c>readcsv</c>, <c>show</c>, and a <c>print</c> that writes to the
 /// console). When no CPython runtime is found the engine reports that gracefully instead of failing hard.
 /// </summary>
-public sealed class PythonScriptEngine : IScriptEngine
+public sealed class PythonScriptEngine : IScriptEngine, IScriptRepl
 {
     /// <summary>The user-facing message shown when no CPython runtime could be found.</summary>
     public const string UnavailableMessage =
@@ -47,6 +47,15 @@ public sealed class PythonScriptEngine : IScriptEngine
 
         return Task.Run(() => RunCore(code, context), cancellationToken);
     }
+
+    /// <summary>
+    /// Creates an interactive Python session. Unlike this engine's script path, the console runs Python
+    /// in a <em>child process</em> — see <see cref="PythonConsole.PythonReplSession"/> for why. The two
+    /// therefore do not share a namespace: a variable created at the prompt is not visible to a
+    /// <c>.py</c> file run with F5, and vice versa.
+    /// </summary>
+    public IScriptSession CreateSession(ScriptContext context) =>
+        new PythonConsole.PythonReplSession(context, _runtime, Language);
 
     private ScriptRunResult RunCore(string code, ScriptContext context)
     {

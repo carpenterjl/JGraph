@@ -16,6 +16,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <!-- Seeds the first-run workspace (see ExampleWorkspaceSeeder): with nothing to open, JGraph
+         copies these into the user's documents and roots the workspace there. -->
+    <Content Include="..\..\examples\**\*" LinkBase="examples" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\JGraph.Core\JGraph.Core.csproj" />
     <ProjectReference Include="..\JGraph.Data\JGraph.Data.csproj" />
     <ProjectReference Include="..\JGraph.Math\JGraph.Math.csproj" />

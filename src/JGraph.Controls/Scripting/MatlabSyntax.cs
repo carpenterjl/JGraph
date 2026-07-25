@@ -14,15 +14,17 @@ internal static class MatlabSyntax
     /// <summary>The name MATLAB is registered and looked up under (also the engine's Language).</summary>
     public const string Name = "MATLAB";
 
-    /// <summary>The <c>.xshd</c> highlighting definition for MATLAB.</summary>
-    public static string Xshd { get; } = $"""
+    /// <summary>The <c>.xshd</c> highlighting definition for MATLAB, coloured for <paramref name="palette"/>.</summary>
+    /// <param name="definitionName">The name to register the definition under.</param>
+    /// <param name="palette">The token colours for the theme in force.</param>
+    public static string Xshd(string definitionName, SyntaxPalette palette) => $"""
         <?xml version="1.0"?>
-        <SyntaxDefinition name="MATLAB" xmlns="http://icsharpcode.net/sharpdevelop/syntaxdefinition/2008">
-          <Color name="Comment" foreground="#FF57A64A" />
-          <Color name="String" foreground="#FFD69D85" />
-          <Color name="Number" foreground="#FFB5CEA8" />
-          <Color name="Keyword" foreground="#FF569CD6" fontWeight="bold" />
-          <Color name="Builtin" foreground="#FF4EC9B0" />
+        <SyntaxDefinition name="{SecurityElement.Escape(definitionName)}" xmlns="http://icsharpcode.net/sharpdevelop/syntaxdefinition/2008">
+          <Color name="Comment" foreground="{palette.Comment}" />
+          <Color name="String" foreground="{palette.Text}" />
+          <Color name="Number" foreground="{palette.Number}" />
+          <Color name="Keyword" foreground="{palette.Keyword}" fontWeight="bold" />
+          <Color name="Builtin" foreground="{palette.Builtin}" />
 
           <RuleSet ignoreCase="false">
             <Span color="Comment" begin="%" />

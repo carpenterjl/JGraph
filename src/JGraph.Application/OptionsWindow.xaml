@@ -11,6 +11,20 @@
 
         <ScrollViewer VerticalScrollBarVisibility="Auto">
             <StackPanel>
+                <!-- Appearance -->
+                <GroupBox Header="Appearance" Padding="8" Margin="0,0,0,10">
+                    <StackPanel>
+                        <DockPanel Margin="0,2">
+                            <TextBlock Text="Application theme" VerticalAlignment="Center" Margin="0,0,8,0" />
+                            <ComboBox x:Name="AppThemeCombo" DisplayMemberPath="Name" />
+                        </DockPanel>
+                        <CheckBox x:Name="LinkFigureThemeBox" Margin="0,8,0,2"
+                                  Content="Match new figures to the application theme" />
+                        <TextBlock Margin="0,4,0,0" TextWrapping="Wrap" Foreground="{DynamicResource JG.Brush.TextSecondary}"
+                                   Text="Off by default. Figure themes are plot ink — they are saved inside .graph files and exported images, so a dark IDE does not darken your plots unless you ask. This affects new figures only; figures already open keep their theme." />
+                    </StackPanel>
+                </GroupBox>
+
                 <!-- JGS language -->
                 <GroupBox Header="JGS language" Padding="8" Margin="0,0,0,10">
                     <StackPanel>
@@ -21,7 +35,7 @@
                                      Content="0-based — the first element is x(0) (default)" />
                         <RadioButton x:Name="OneBasedButton" GroupName="IndexBase" Margin="0,2"
                                      Content="1-based — the first element is x(1)" />
-                        <TextBlock Margin="0,6,0,0" TextWrapping="Wrap" Foreground="Gray"
+                        <TextBlock Margin="0,6,0,0" TextWrapping="Wrap" Foreground="{DynamicResource JG.Brush.TextSecondary}"
                                    Text="These apply to .jgs scripts. MATLAB (.m) files always use 1-based indexing and their own rules." />
                     </StackPanel>
                 </GroupBox>
@@ -55,7 +69,7 @@
                 <!-- Plugins -->
                 <GroupBox Header="Plugins" Padding="8">
                     <StackPanel>
-                        <TextBlock TextWrapping="Wrap" Foreground="Gray" Margin="0,0,0,6"
+                        <TextBlock TextWrapping="Wrap" Foreground="{DynamicResource JG.Brush.TextSecondary}" Margin="0,0,0,6"
                                    Text="Turn discovered plugins on or off. Changes take effect the next time JGraph starts." />
                         <ItemsControl x:Name="PluginList">
                             <ItemsControl.ItemTemplate>
@@ -64,7 +78,7 @@
                                 </DataTemplate>
                             </ItemsControl.ItemTemplate>
                         </ItemsControl>
-                        <TextBlock x:Name="NoPluginsLabel" Foreground="Gray"
+                        <TextBlock x:Name="NoPluginsLabel" Foreground="{DynamicResource JG.Brush.TextSecondary}"
                                    Text="No plugins were found in the plugins folder." />
                     </StackPanel>
                 </GroupBox>

@@ -56,6 +56,26 @@ public sealed class TableGridAdapter
                 : values[row].ToString("G", System.Globalization.CultureInfo.InvariantCulture));
     }
 
+    /// <summary>
+    /// Views an already-formatted grid — a matrix, a cell array or a struct that the scripting engine
+    /// flattened to text because it has no simpler host representation.
+    /// </summary>
+    /// <param name="title">The viewer caption, e.g. "matrix 3×4".</param>
+    /// <param name="columnNames">The column headers.</param>
+    /// <param name="rows">The rows; each must have one entry per column.</param>
+    public static TableGridAdapter ForGrid(
+        string title, IReadOnlyList<string> columnNames, IReadOnlyList<string[]> rows)
+    {
+        ArgumentNullException.ThrowIfNull(title);
+        ArgumentNullException.ThrowIfNull(columnNames);
+        ArgumentNullException.ThrowIfNull(rows);
+        return new TableGridAdapter(title, columnNames, rows.Count, (row, column) =>
+        {
+            string[] cells = rows[row];
+            return column < cells.Length ? cells[column] : string.Empty;
+        });
+    }
+
     /// <summary>The formatted text of one cell (0-based absolute row and column).</summary>
     public string GetText(int row, int column)
     {

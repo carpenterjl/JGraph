@@ -10,4 +10,7 @@ namespace JGraph.Scripting;
 /// <param name="Dll">The full path of the CPython shared library.</param>
 /// <param name="Home">The interpreter's <c>sys.prefix</c>, or null when unknown.</param>
 /// <param name="SearchPaths">The interpreter's <c>sys.path</c> entries, or empty when unknown.</param>
-public sealed record PythonRuntimeInfo(string Dll, string? Home, IReadOnlyList<string> SearchPaths);
+/// <param name="Executable">The interpreter's <c>sys.executable</c>, or null when unknown. This is what
+/// the out-of-process console launches; the DLL above is only usable by the embedded runtime.</param>
+public sealed record PythonRuntimeInfo(
+    string Dll, string? Home, IReadOnlyList<string> SearchPaths, string? Executable = null);

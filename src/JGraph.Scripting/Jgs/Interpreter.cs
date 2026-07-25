@@ -17,7 +17,7 @@ internal sealed class Interpreter
     private const int MaxCallDepth = 250;
 
     private readonly JgsEnvironment _globals;
-    private readonly CancellationToken _cancellationToken;
+    private CancellationToken _cancellationToken;
     private readonly IJgsDebugHook? _hook;
     private readonly Action<string>? _echo;
     private readonly List<int> _indexTargetLengths = new(); // 'end' resolves to the top entry
@@ -61,6 +61,22 @@ internal sealed class Interpreter
 
     /// <summary>The language variant this run speaks; every JGS/MATLAB difference reads from it.</summary>
     public JgsDialect Dialect { get; }
+
+    /// <summary>
+    /// Rebinds this interpreter for the next statement of an interactive session: a fresh cancellation
+    /// token (each prompt gets its own Stop) and a fresh step budget (the limit exists to catch one
+    /// runaway statement, so it must not accumulate across a session that stays alive for hours).
+    /// A one-shot run never calls this — its token and budget come from the constructor.
+    /// </summary>
+    /// <remarks>
+    /// Safe because a session executes statements one at a time: <c>_cancelCheck</c> reads the field
+    /// rather than capturing the token, so the new token takes effect for the whole next statement.
+    /// </remarks>
+    public void BeginStatement(CancellationToken cancellationToken)
+    {
+        _cancellationToken = cancellationToken;
+        _steps = 0;
+    }
 
     private enum CompletionKind
     {

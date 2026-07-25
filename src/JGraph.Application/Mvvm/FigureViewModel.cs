@@ -52,9 +52,17 @@ public sealed class FigureViewModel : ObservableObject
         AvailableThemes = pluginRegistry.Themes;
 
         // Start on the user's preferred theme when it is available, else the first registered one.
-        string? preferred = settingsService.Current.DefaultFigureTheme;
+        // With the app-theme link on, the application's own theme id ("light"/"dark") names the
+        // figure theme instead — a new figure matches the IDE. Only a new one: nothing here touches
+        // a figure that is already open, or one loaded from a .graph file, which carries its own.
+        UserSettings userSettings = settingsService.Current;
+        string? preferred = userSettings.LinkFigureThemeToAppTheme
+            ? userSettings.AppTheme ?? "Light"
+            : userSettings.DefaultFigureTheme;
         _currentTheme = (preferred is not null
-                ? AvailableThemes.FirstOrDefault(t => string.Equals(t.Name, preferred, StringComparison.Ordinal))
+                // Ignore case: the figure themes are named "Light"/"Dark" and the app theme ids are
+                // lower-case, and matching them up is the whole point of the link.
+                ? AvailableThemes.FirstOrDefault(t => string.Equals(t.Name, preferred, StringComparison.OrdinalIgnoreCase))
                 : null)
             ?? (AvailableThemes.Count > 0 ? AvailableThemes[0] : Theme.Light);
 

@@ -1,9 +1,6 @@
-using System.IO;
 using System.Windows;
 using System.Windows.Controls;
-using System.Xml;
-using ICSharpCode.AvalonEdit.Highlighting;
-using ICSharpCode.AvalonEdit.Highlighting.Xshd;
+using System.Windows.Media;
 
 namespace JGraph.Controls.Scripting;
 
@@ -17,34 +14,53 @@ public partial class ScriptEditorControl : UserControl
 {
     private string? _language;
 
-    static ScriptEditorControl()
-    {
-        // Teach the shared highlighting manager about our two languages so GetDefinition("JGS") and
-        // GetDefinition("MATLAB") resolve like the built-in "C#"/"Python" definitions do. Registering is
-        // idempotent for our purposes (this runs once).
-        Register(JgsSyntax.Name, JgsSyntax.Xshd, ".jgs");
-        Register(MatlabSyntax.Name, MatlabSyntax.Xshd, ".m");
-
-        static void Register(string name, string xshd, string extension)
-        {
-            using var reader = XmlReader.Create(new StringReader(xshd));
-            IHighlightingDefinition definition = HighlightingLoader.Load(reader, HighlightingManager.Instance);
-            HighlightingManager.Instance.RegisterHighlighting(name, new[] { extension }, definition);
-        }
-    }
-
     private readonly BreakpointMargin _breakpointMargin = new();
     private readonly CurrentLineRenderer _currentLineRenderer = new();
     private readonly CompletionSupport _completion;
+
+    /// <summary>
+    /// The band drawn behind the line the debugger is paused at. Themed, and pushed into
+    /// <see cref="CurrentLineRenderer"/> — which is a background renderer, not an element, so it
+    /// cannot resolve a resource itself.
+    /// </summary>
+    public static readonly DependencyProperty CurrentLineBrushProperty =
+        DependencyProperty.Register(
+            nameof(CurrentLineBrush), typeof(Brush), typeof(ScriptEditorControl),
+            new FrameworkPropertyMetadata(Brushes.Transparent, OnCurrentLineBrushChanged));
+
+    /// <summary>
+    /// Whether the dark theme is in force, which decides the syntax palette. Bound to the theme's own
+    /// <c>JG.Theme.IsDark</c> flag, so switching themes re-highlights every open document.
+    /// </summary>
+    public static readonly DependencyProperty SyntaxIsDarkProperty =
+        DependencyProperty.Register(
+            nameof(SyntaxIsDark), typeof(bool), typeof(ScriptEditorControl),
+            new FrameworkPropertyMetadata(false, OnSyntaxIsDarkChanged));
 
     public ScriptEditorControl()
     {
         InitializeComponent();
         _completion = new CompletionSupport(Editor);
+        SetResourceReference(CurrentLineBrushProperty, Themes.ThemeKeys.CurrentLineHighlight);
+        SetResourceReference(SyntaxIsDarkProperty, Themes.ThemeKeys.ThemeIsDark);
         Editor.TextArea.LeftMargins.Insert(0, _breakpointMargin);
         Editor.TextArea.TextView.BackgroundRenderers.Add(_currentLineRenderer);
         _breakpointMargin.BreakpointToggled += (_, _) => BreakpointsChanged?.Invoke(this, EventArgs.Empty);
         _breakpointMargin.SetNextLineRequested += (_, line) => SetNextStatementRequested?.Invoke(this, line);
+    }
+
+    /// <summary>The band drawn behind the line the debugger is paused at.</summary>
+    public Brush CurrentLineBrush
+    {
+        get => (Brush)GetValue(CurrentLineBrushProperty);
+        set => SetValue(CurrentLineBrushProperty, value);
+    }
+
+    /// <summary>Whether the dark syntax palette is in force.</summary>
+    public bool SyntaxIsDark
+    {
+        get => (bool)GetValue(SyntaxIsDarkProperty);
+        set => SetValue(SyntaxIsDarkProperty, value);
     }
 
     /// <summary>Raised whenever the buffer text changes.</summary>
@@ -91,7 +107,7 @@ public partial class ScriptEditorControl : UserControl
         {
             _language = value;
             _completion.Language = value;
-            Editor.SyntaxHighlighting = value is null ? null : HighlightingManager.Instance.GetDefinition(value);
+            ApplyHighlighting();
         }
     }
 
@@ -137,6 +153,31 @@ public partial class ScriptEditorControl : UserControl
             Editor.Focus();
         };
         Editor.Loaded += once;
+    }
+
+    private void ApplyHighlighting()
+    {
+        if (_language is null)
+        {
+            Editor.SyntaxHighlighting = null;
+            return;
+        }
+
+        // The editor's own background, not the theme's: it is what the highlighted text is actually
+        // drawn on, and it is a DynamicResource so it is already correct for the theme in force.
+        Color background = (Editor.Background as SolidColorBrush)?.Color ?? Colors.White;
+        Editor.SyntaxHighlighting = SyntaxThemes.Resolve(_language, SyntaxIsDark, background);
+    }
+
+    private static void OnSyntaxIsDarkChanged(DependencyObject d, DependencyPropertyChangedEventArgs e) =>
+        ((ScriptEditorControl)d).ApplyHighlighting();
+
+    private static void OnCurrentLineBrushChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+        var control = (ScriptEditorControl)d;
+        control._currentLineRenderer.HighlightBrush = (Brush)e.NewValue;
+        control.Editor.TextArea.TextView.InvalidateLayer(
+            ICSharpCode.AvalonEdit.Rendering.KnownLayer.Background);
     }
 
     private void OnEditorTextChanged(object sender, EventArgs e) => TextChanged?.Invoke(this, EventArgs.Empty);

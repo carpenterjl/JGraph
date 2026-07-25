@@ -13,7 +13,8 @@
                     ToolTip="Next page" Click="OnNextPageClick" />
             <Button x:Name="PrevPageButton" DockPanel.Dock="Right" Content="◀" Width="24" Margin="8,0,0,0"
                     ToolTip="Previous page" Click="OnPrevPageClick" />
-            <TextBlock x:Name="PageText" DockPanel.Dock="Right" VerticalAlignment="Center" Foreground="Gray" />
+            <TextBlock x:Name="PageText" DockPanel.Dock="Right" VerticalAlignment="Center"
+                       Foreground="{DynamicResource JG.Brush.TextSecondary}" />
         </DockPanel>
 
         <DataGrid x:Name="Grid" Grid.Row="1"

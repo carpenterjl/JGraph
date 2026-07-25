@@ -310,6 +310,7 @@ public static class JgsBuiltinCatalog
 
         // --- Composition and output ---------------------------------------------------------------
         Add("run", "Runs another JGS script into the current global scope (an include).", P("path"));
+        Add("clear", "Clears the workspace: drops every variable and reverts any rebound built-in. Figures stay open.");
         Add("print", "Writes the values to the console, space-separated.", P("values"));
 
         // --- Figure setup and plotting -------------------------------------------------------------

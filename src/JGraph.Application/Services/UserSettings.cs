@@ -29,6 +29,12 @@ public sealed class UserSettings
     /// <summary>The language a blank New Script starts in, or null for JGS.</summary>
     public string? DefaultNewScriptLanguage { get; set; }
 
+    /// <summary>The application chrome theme by id ("light", "dark"), or null for the shipped default.</summary>
+    public string? AppTheme { get; set; }
+
+    /// <summary>Whether a new figure starts on the figure theme matching the application theme.</summary>
+    public bool LinkFigureThemeToAppTheme { get; set; }
+
     /// <summary>The JGS language options these settings imply (sanitized against a hand-edited index base).</summary>
     public JgsLanguageOptions ToJgsOptions() =>
         new JgsLanguageOptions(RequireLet: !JgsOptionalLet, IndexBase: JgsIndexBase).Sanitized();
@@ -49,6 +55,8 @@ public sealed class UserSettings
             DefaultFigureTheme = dto.DefaultFigureTheme,
             DisabledPlugins = [.. dto.DisabledPlugins],
             DefaultNewScriptLanguage = dto.DefaultNewScriptLanguage,
+            AppTheme = dto.AppTheme,
+            LinkFigureThemeToAppTheme = dto.LinkFigureThemeToAppTheme,
         };
     }
 
@@ -61,6 +69,8 @@ public sealed class UserSettings
         DefaultFigureTheme = DefaultFigureTheme,
         DisabledPlugins = [.. DisabledPlugins],
         DefaultNewScriptLanguage = DefaultNewScriptLanguage,
+        AppTheme = AppTheme,
+        LinkFigureThemeToAppTheme = LinkFigureThemeToAppTheme,
     };
 
     /// <summary>A copy, so the Options dialog can edit a draft and discard it on Cancel.</summary>

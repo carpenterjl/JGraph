@@ -156,6 +156,7 @@
     <ul>
       <li><a href="#intro">What is JGS?</a></li>
       <li><a href="#running">Running a script</a></li>
+      <li><a href="#console">The console</a></li>
       <li><a href="#commandline">From the command line</a></li>
       <div class="grouplabel">Language</div>
       <li><a href="#basics">Syntax basics</a></li>
@@ -213,6 +214,12 @@
     <p>Open the <strong>Script Workspace</strong> in JGraph, create or open a <code>.jgs</code> file, and run it (the editor gives you syntax highlighting, autocomplete, and a debugger). Plotting commands accumulate into the current figure; <code>show()</code> opens (or updates) a window for it at any point, and — since M21 — any figures the script created but never <code>show()</code>ed are displayed automatically when the run finishes. Re-running a script reuses the same figure windows by number rather than piling up new ones. A script can also be run <a href="#commandline">from the command line</a>, with no user interface at all.</p>
     <p>A script's only access to the outside world is the table readers (<code>readcsv</code>, <code>readxlsx</code>, <code>readtable</code>), the image readers (<code>imread</code>, <code>imwrite</code>), the figure-file commands (<code>savefigure</code>, <code>loadfigure</code>, <code>exportfigure</code>), and <code>run</code> for including another script. There is no arbitrary file, network, or system access.</p>
     <p>Everything a figure contains is also editable <em>after</em> the script has drawn it, by hand: select an object in the plot browser and edit it in the property inspector — down to a title's font, size, weight and colour. The legend is a first-class object whose entries you can rename, reorder, and hide, and which you can drag anywhere on the plot; missing pieces (titles, a legend, a colorbar, extra axes, subplot grids, annotations) are added from the browser's context menu or its <strong>Add ▾</strong> button. Save the result with <code>savefigure</code>, or from the figure window, and it reopens exactly as you left it.</p>
+
+    <h2 id="console">The console</h2>
+    <p>The <strong>Console</strong> pane is a live prompt as well as an output log. Choose a language from the dropdown — JGS, MATLAB, C# or Python — type a statement, and press <kbd>Enter</kbd>. <kbd>Shift+Enter</kbd> adds a line to the same statement, <kbd>Up</kbd>/<kbd>Down</kbd> recall what you typed before, and <kbd>Ctrl+C</kbd> interrupts a statement that is still running. Typing the name of a script file runs that file; anything else runs as source, the same rule <code>-r</code> follows.</p>
+    <p>Variables persist from one statement to the next and appear in the <strong>Workspace</strong> pane as they are created. Double-click an array, matrix, cell, struct or table there to open it in the Data Viewer, or right-click it to plot it. <code>clear</code> empties the workspace and releases the memory it held; figures stay open.</p>
+    <p><strong>The prompt and the Run button share one workspace</strong>, as MATLAB does: a variable a script leaves behind is there at the prompt afterwards, and a variable you defined at the prompt is visible to the next script you run. Set a breakpoint and <kbd>F5</kbd> runs under the debugger instead, which keeps its own separate variables — the console says so when that happens.</p>
+    <p>Python at the prompt runs in a separate process (which is what makes <kbd>Ctrl+C</kbd> work), so its variables are separate from those of a <code>.py</code> file run with <kbd>F5</kbd>. Its <code>plot</code>, <code>title</code>, <code>figure</code> and related commands open real JGraph figure windows.</p>
 
     <h2 id="commandline">From the command line</h2>
     <p><code>jgraph.exe</code> runs a script without opening JGraph at all. There is no window, no user interface, and <strong>no display is required</strong> — so a script can run over a remote session, from a build step, or on a schedule. It writes to standard output, and returns an exit code the shell can act on.</p>

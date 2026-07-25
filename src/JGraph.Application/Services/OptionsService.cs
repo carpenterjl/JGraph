@@ -2,6 +2,7 @@ using System.IO;
 using System.Linq;
 using System.Windows;
 using JGraph.Application.Mvvm;
+using JGraph.Application.Theming;
 using JGraph.Plugins;
 using JGraph.Scripting;
 
@@ -15,14 +16,20 @@ public sealed class OptionsService : IOptionsService
 {
     private readonly ISettingsService _settings;
     private readonly PluginRegistry _plugins;
+    private readonly IAppThemeCatalog _appThemes;
     private readonly IReadOnlyList<string> _languages;
 
-    /// <summary>Creates the service over the registered settings, plugin registry, and script engines.</summary>
-    public OptionsService(ISettingsService settings, PluginRegistry plugins, IEnumerable<IScriptEngine> engines)
+    /// <summary>Creates the service over the registered settings, plugin registry, themes and script engines.</summary>
+    public OptionsService(
+        ISettingsService settings,
+        PluginRegistry plugins,
+        IAppThemeCatalog appThemes,
+        IEnumerable<IScriptEngine> engines)
     {
         ArgumentNullException.ThrowIfNull(engines);
         _settings = settings ?? throw new ArgumentNullException(nameof(settings));
         _plugins = plugins ?? throw new ArgumentNullException(nameof(plugins));
+        _appThemes = appThemes ?? throw new ArgumentNullException(nameof(appThemes));
 
         // The languages a new script can start in: every engine, plus a plain text file.
         _languages = [.. engines.Select(e => e.Language), "Text"];
@@ -32,7 +39,7 @@ public sealed class OptionsService : IOptionsService
     public void ShowOptions()
     {
         string pluginDirectory = Path.Combine(AppContext.BaseDirectory, "plugins");
-        var model = new OptionsViewModel(_settings, _plugins.Themes, _languages, pluginDirectory);
+        var model = new OptionsViewModel(_settings, _plugins.Themes, _appThemes, _languages, pluginDirectory);
         var window = new OptionsWindow(model)
         {
             Owner = System.Windows.Application.Current?.Windows

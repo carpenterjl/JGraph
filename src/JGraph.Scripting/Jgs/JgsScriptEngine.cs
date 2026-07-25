@@ -17,7 +17,7 @@ public interface IJgsDebuggable
     Debug.JgsDebugSession CreateDebugSession();
 }
 
-public sealed class JgsScriptEngine : IScriptEngine, IJgsDebuggable
+public sealed class JgsScriptEngine : IScriptEngine, IJgsDebuggable, IScriptRepl
 {
     private readonly Func<JgsLanguageOptions> _options;
 
@@ -59,6 +59,14 @@ public sealed class JgsScriptEngine : IScriptEngine, IJgsDebuggable
     public Debug.JgsDebugSession CreateDebugSession() => new(JgsDialect.JgsWith(_options().Sanitized()));
 
     /// <summary>
+    /// Creates an interactive JGS session. The dialect is fixed when the session is created, so a
+    /// change to the user's language options takes effect on the next session rather than mid-workspace
+    /// — variables created under 0-based indexing must not silently change meaning underneath the user.
+    /// </summary>
+    public IScriptSession CreateSession(ScriptContext context) =>
+        new JgsReplSession(context, JgsDialect.JgsWith(_options().Sanitized()), Language);
+
+    /// <summary>
     /// The names of every JGS builtin (including <c>run</c>), for editors and completion. Derived from
     /// the live registration, so it can never drift from the language.
     /// </summary>
@@ -66,7 +74,9 @@ public sealed class JgsScriptEngine : IScriptEngine, IJgsDebuggable
     {
         var context = new ScriptContext(NullScriptOutput.Instance, static (_, _) => { });
         JgsEnvironment globals = JgsBuiltins.CreateGlobals(new JGraphScriptGlobals(context));
-        var names = new List<string>(globals.Locals.Keys) { "run" };
+        // 'run' and 'clear' are not seeded by CreateGlobals: they need the interpreter and the session
+        // respectively, so they are declared afterwards by whoever owns those. Editors still know them.
+        var names = new List<string>(globals.Locals.Keys) { "run", "clear" };
         names.Sort(StringComparer.Ordinal);
         return names;
     }

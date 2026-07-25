@@ -3,56 +3,94 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:dock="https://github.com/Dirkster99/AvalonDock"
         xmlns:controls="clr-namespace:JGraph.Controls.Scripting;assembly=JGraph.Controls"
-        Title="JGraph Scripting Workspace" Width="1180" Height="760"
-        PreviewKeyDown="OnPreviewKeyDown">
+        xmlns:local="clr-namespace:JGraph.Application.Scripting"
+        Title="JGraph" Width="1180" Height="760">
     <DockPanel>
-        <Border DockPanel.Dock="Top" Padding="6,4"
-                Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}">
-            <StackPanel Orientation="Horizontal">
-                <Button Content="Open Workspace…" Padding="10,2" Margin="0,0,2,0"
-                        Click="OnOpenWorkspaceClick" ToolTip="Open a folder of scripts and data files" />
-                <Menu Background="Transparent" VerticalAlignment="Center" Margin="2,0">
-                    <MenuItem x:Name="NewScriptMenu" Header="New Script" Padding="8,2"
-                              ToolTip="Create a new script — pick its language" />
-                </Menu>
-                <Button Content="Open File…" Padding="10,2" Margin="2,0"
-                        Click="OnOpenFileClick" ToolTip="Open a script file" />
-                <Button x:Name="SaveButton" Content="Save" Padding="10,2" Margin="2,0"
-                        Click="OnSaveClick" ToolTip="Save the active script (Ctrl+S)" />
-                <Separator Margin="8,0" />
-                <Button x:Name="RunButton" Content="▶ Run (F5)" Padding="12,2" Margin="2,0"
-                        Click="OnRunClick" ToolTip="Run the active script; continues when paused (F5)" />
-                <Button x:Name="PauseButton" Content="⏸ Pause" Padding="10,2" Margin="2,0"
-                        IsEnabled="False" Click="OnPauseClick"
-                        ToolTip="Pause the running JGS script at its next statement" />
-                <Button x:Name="StopButton" Content="■ Stop" Padding="12,2" Margin="2,0"
-                        IsEnabled="False" Click="OnStopClick"
+        <Menu DockPanel.Dock="Top">
+            <MenuItem Header="_File">
+                <MenuItem x:Name="NewScriptMenu" Header="_New Script" />
+                <Separator />
+                <MenuItem Header="_Open File…" Command="{x:Static local:WorkspaceCommands.OpenFile}" />
+                <MenuItem Header="Open _Workspace…" Command="{x:Static local:WorkspaceCommands.OpenWorkspace}" />
+                <Separator />
+                <MenuItem Header="_Save" Command="{x:Static local:WorkspaceCommands.Save}" />
+                <MenuItem Header="_Close Tab" Command="{x:Static local:WorkspaceCommands.CloseTab}" />
+                <Separator />
+                <MenuItem Header="E_xit" Command="{x:Static local:WorkspaceCommands.Exit}" />
+            </MenuItem>
+            <MenuItem Header="_Edit">
+                <MenuItem Header="_Undo" Command="Undo" />
+                <MenuItem Header="_Redo" Command="Redo" />
+                <Separator />
+                <MenuItem Header="Cu_t" Command="Cut" />
+                <MenuItem Header="_Copy" Command="Copy" />
+                <MenuItem Header="_Paste" Command="Paste" />
+                <Separator />
+                <MenuItem Header="Select _All" Command="SelectAll" />
+                <MenuItem Header="_Find…" Command="Find" />
+            </MenuItem>
+            <MenuItem x:Name="ViewMenu" Header="_View" />
+            <MenuItem Header="_Run">
+                <MenuItem x:Name="RunMenuItem" Header="_Run"
+                          Command="{x:Static local:WorkspaceCommands.RunOrContinue}" />
+                <MenuItem Header="_Stop" Command="{x:Static local:WorkspaceCommands.Stop}" />
+                <MenuItem Header="_Pause" Command="{x:Static local:WorkspaceCommands.Pause}" />
+                <Separator />
+                <MenuItem Header="Step _Over" Command="{x:Static local:WorkspaceCommands.StepOver}" />
+                <MenuItem Header="Step _In" Command="{x:Static local:WorkspaceCommands.StepIn}" />
+                <MenuItem Header="Step Ou_t" Command="{x:Static local:WorkspaceCommands.StepOut}" />
+                <Separator />
+                <MenuItem Header="C_lear Workspace"
+                          Command="{x:Static local:WorkspaceCommands.ClearWorkspace}" />
+                <Separator />
+                <MenuItem Header="Toggle _Breakpoint"
+                          Command="{x:Static local:WorkspaceCommands.ToggleBreakpoint}" />
+            </MenuItem>
+            <MenuItem Header="_Tools">
+                <MenuItem Header="New _Figure Window"
+                          Command="{x:Static local:WorkspaceCommands.NewFigureWindow}" />
+                <Separator />
+                <MenuItem Header="_Options…" Command="{x:Static local:WorkspaceCommands.Options}" />
+            </MenuItem>
+            <MenuItem Header="_Help">
+                <MenuItem Header="_Scripting Guide"
+                          Command="{x:Static local:WorkspaceCommands.ScriptingGuide}" />
+            </MenuItem>
+        </Menu>
+
+        <ToolBarTray DockPanel.Dock="Top" IsLocked="True">
+            <ToolBar ToolBarTray.IsLocked="True">
+                <Button Content="Open Workspace…" Padding="8,2"
+                        Command="{x:Static local:WorkspaceCommands.OpenWorkspace}"
+                        ToolTip="Open a folder of scripts and data files (Ctrl+Shift+O)" />
+                <Button Content="Open File…" Padding="8,2"
+                        Command="{x:Static local:WorkspaceCommands.OpenFile}"
+                        ToolTip="Open a script file (Ctrl+O)" />
+                <Button Content="Save" Padding="8,2"
+                        Command="{x:Static local:WorkspaceCommands.Save}"
+                        ToolTip="Save the active script (Ctrl+S)" />
+                <Separator />
+                <Button x:Name="RunButton" Content="▶ Run (F5)" Padding="10,2"
+                        Command="{x:Static local:WorkspaceCommands.RunOrContinue}"
+                        ToolTip="Run the active script; continues when paused (F5)" />
+                <Button Content="⏸ Pause" Padding="8,2"
+                        Command="{x:Static local:WorkspaceCommands.Pause}"
+                        ToolTip="Pause the running script at its next statement" />
+                <Button Content="■ Stop" Padding="10,2"
+                        Command="{x:Static local:WorkspaceCommands.Stop}"
                         ToolTip="Stop the running script (Shift+F5)" />
-                <Separator Margin="8,0" />
-                <Button x:Name="StepOverButton" Content="Step Over (F10)" Padding="8,2" Margin="2,0"
-                        IsEnabled="False" Click="OnStepOverClick"
+                <Separator />
+                <Button Content="Step Over" Padding="8,2"
+                        Command="{x:Static local:WorkspaceCommands.StepOver}"
                         ToolTip="Execute the paused statement, running calls to completion (F10)" />
-                <Button x:Name="StepInButton" Content="Step In (F11)" Padding="8,2" Margin="2,0"
-                        IsEnabled="False" Click="OnStepInClick"
+                <Button Content="Step In" Padding="8,2"
+                        Command="{x:Static local:WorkspaceCommands.StepIn}"
                         ToolTip="Execute the paused statement, entering functions (F11)" />
-                <Button x:Name="StepOutButton" Content="Step Out" Padding="8,2" Margin="2,0"
-                        IsEnabled="False" Click="OnStepOutClick"
+                <Button Content="Step Out" Padding="8,2"
+                        Command="{x:Static local:WorkspaceCommands.StepOut}"
                         ToolTip="Run until the current function returns (Shift+F11)" />
-                <Separator Margin="8,0" />
-                <Menu Background="Transparent" VerticalAlignment="Center">
-                    <MenuItem Header="View" Padding="8,2"
-                              ToolTip="Show a hidden panel">
-                        <MenuItem Header="Files" Tag="files" Click="OnViewPaneClick" />
-                        <MenuItem Header="Console" Tag="console" Click="OnViewPaneClick" />
-                        <MenuItem Header="Variables" Tag="variables" Click="OnViewPaneClick" />
-                        <MenuItem Header="Call Stack" Tag="callstack" Click="OnViewPaneClick" />
-                        <MenuItem Header="Data Viewer" Tag="dataviewer" Click="OnViewPaneClick" />
-                    </MenuItem>
-                    <MenuItem Header="Options…" Padding="8,2" Click="OnOptionsClick"
-                              ToolTip="Language options, default theme and folder, and plugins" />
-                </Menu>
-            </StackPanel>
-        </Border>
+            </ToolBar>
+        </ToolBarTray>
 
         <StatusBar DockPanel.Dock="Bottom">
             <StatusBarItem>
@@ -84,11 +122,38 @@
                         <dock:LayoutDocumentPane x:Name="DocumentPane" />
                         <dock:LayoutAnchorablePane DockHeight="170">
                             <dock:LayoutAnchorable Title="Console" ContentId="console" CanClose="False">
-                                <TextBox x:Name="ConsoleBox" IsReadOnly="True" IsReadOnlyCaretVisible="True"
-                                         FontFamily="Consolas" FontSize="12" Padding="4,2"
-                                         TextWrapping="NoWrap" BorderThickness="0"
-                                         VerticalScrollBarVisibility="Auto"
-                                         HorizontalScrollBarVisibility="Auto" />
+                                <DockPanel x:Name="ConsolePanel">
+                                    <!-- The prompt row. Scrollback above it is shared with script runs,
+                                         so one pane is the whole transcript of the session. -->
+                                    <DockPanel DockPanel.Dock="Bottom" Margin="2">
+                                        <ComboBox x:Name="ConsoleLanguage" DockPanel.Dock="Left" Width="90"
+                                                  Margin="0,0,4,0" SelectionChanged="OnConsoleLanguageChanged"
+                                                  ToolTip="The language the prompt runs" />
+                                        <TextBlock DockPanel.Dock="Left" Text="&gt;&gt;" Margin="0,0,4,0"
+                                                   FontFamily="{DynamicResource JG.Font.Mono}"
+                                                   Foreground="{DynamicResource JG.Brush.Accent}"
+                                                   VerticalAlignment="Center" />
+                                        <TextBox x:Name="ConsolePrompt"
+                                                 FontFamily="{DynamicResource JG.Font.Mono}"
+                                                 FontSize="{DynamicResource JG.FontSize.Normal}"
+                                                 Background="{DynamicResource JG.Brush.EditorBackground}"
+                                                 Foreground="{DynamicResource JG.Brush.EditorForeground}"
+                                                 AcceptsReturn="True" MaxHeight="120"
+                                                 VerticalScrollBarVisibility="Auto"
+                                                 VerticalContentAlignment="Center"
+                                                 PreviewKeyDown="OnConsolePromptKeyDown"
+                                                 ToolTip="Enter runs · Shift+Enter adds a line · Up/Down recalls history · Ctrl+C interrupts" />
+                                    </DockPanel>
+                                    <TextBox x:Name="ConsoleBox" IsReadOnly="True" IsReadOnlyCaretVisible="True"
+                                             FontFamily="{DynamicResource JG.Font.Mono}"
+                                             FontSize="{DynamicResource JG.FontSize.Normal}"
+                                             Background="{DynamicResource JG.Brush.EditorBackground}"
+                                             Foreground="{DynamicResource JG.Brush.EditorForeground}"
+                                             Padding="4,2"
+                                             TextWrapping="NoWrap" BorderThickness="0"
+                                             VerticalScrollBarVisibility="Auto"
+                                             HorizontalScrollBarVisibility="Auto" />
+                                </DockPanel>
                             </dock:LayoutAnchorable>
                             <dock:LayoutAnchorable Title="Data Viewer" ContentId="dataviewer" CanClose="False">
                                 <controls:DataGridTableControl x:Name="DataViewer" />
@@ -98,10 +163,19 @@
 
                     <dock:LayoutPanel Orientation="Vertical" DockWidth="290">
                         <dock:LayoutAnchorablePane>
-                            <dock:LayoutAnchorable Title="Variables" ContentId="variables" CanClose="False">
+                            <dock:LayoutAnchorable Title="Workspace" ContentId="variables" CanClose="False">
                                 <ListView x:Name="VariablesList" BorderThickness="0"
                                           MouseDoubleClick="OnVariablesDoubleClick"
-                                          ToolTip="Double-click an array or table to open it in the Data Viewer">
+                                          ToolTip="Double-click an array, matrix, cell, struct or table to open it in the Data Viewer">
+                                    <ListView.ContextMenu>
+                                        <ContextMenu>
+                                            <MenuItem Header="_Plot" Click="OnPlotVariableClick" />
+                                            <MenuItem Header="Open in _Data Viewer" Click="OnOpenVariableClick" />
+                                            <Separator />
+                                            <MenuItem Header="C_lear Workspace"
+                                                      Command="{x:Static local:WorkspaceCommands.ClearWorkspace}" />
+                                        </ContextMenu>
+                                    </ListView.ContextMenu>
                                     <ListView.View>
                                         <GridView>
                                             <GridViewColumn Header="Name" Width="90"

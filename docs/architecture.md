@@ -43,7 +43,7 @@ nothing about higher ones.
 | `JGraph.Api` | net8.0 | MATLAB-like functional facade (`JG.Plot`, `JG.Title`, …). |
 | `JGraph.Scripting` | net8.0 | Scripting hosts: the `IScriptEngine` seam, a Roslyn C# engine, a pythonnet (CPython) engine, and the built-in **JGS** language (a self-contained lexer/parser/interpreter under `Jgs/`). The same pipeline runs **MATLAB** (`.m`) as a second dialect: a `JgsDialect` record threads through the lexer, parser, and interpreter, and `MatlabScriptEngine` fixes it to MATLAB (1-based, `%` comments, `function` defs, cells/structs, value semantics) — see ADR 0031. The `JGraphScriptGlobals` bridge drives the `JG` API and the `Table` readers. Also the UI-free `Workspace/` layer: `ScriptWorkspace` (folder enumeration, watcher, bare-filename resolution) and the session/document state models behind the scripting window. WPF-free, no dependency for JGS. Also `Startup/`: the shared command-line parser, statement resolution, output sinks (console/file/tee) and `BatchRunner` that both executables run. |
 | `JGraph.Controls` | net8.0-windows | WPF `FigureControl` hosting the Skia surface, the WPF→interaction input adapter, and the AvalonEdit-based `ScriptEditorControl`. |
-| `JGraph.Application` | net8.0-windows | MVVM application shell, figure window, DI composition root. Acts on the startup options: `-r` runs a statement and leaves the session open, `-batch -showfigures` runs one with the main window never shown. Holds the user settings (`SettingsService` over `%AppData%\JGraph\settings.json`) and the Tools → Options dialog; the JGS engine and the plugin loader read from them. See ADR 0032. |
+| `JGraph.Application` | net8.0-windows | MVVM application shell and DI composition root. The **scripting workspace is the main window** (menu bar, toolbar, docked panes, `RoutedUICommand`s in `WorkspaceCommands`, panes in `PaneCatalog`), brought up behind a splash by `Startup/InteractiveStartup`; figure windows are transient and number-keyed, opened by scripts, `.graph` files, or Tools → New Figure Window. See ADR 0033. Acts on the startup options: `-r` runs a statement and leaves the session open, `-batch -showfigures` runs one with no shell at all. Holds the user settings (`SettingsService` over `%AppData%\JGraph\settings.json`) and the Tools → Options dialog; the JGS engine and the plugin loader read from them. See ADR 0032. |
 | `JGraph.Cli` | net8.0 | `jgraph.exe` — the command-line launcher. Parses the startup options, owns stdout/stderr and the process exit code, and runs `-batch` **in-process with no WPF and no display**. References `JGraph.Application` for build order only (`ReferenceOutputAssembly="false"`); the two meet as processes. See ADR 0030. |
 | `JGraph.Demo` | net8.0-windows | Gallery exercising both APIs. |
 | `JGraph.Tests` | net8.0 | Unit tests. |
@@ -279,7 +279,11 @@ language — reusing the whole functional API rather than exposing a new one:
    (`Language`, `IsAvailable`, `RunAsync(code, ScriptContext, ct) → ScriptRunResult`). Engines report
    syntax errors, runtime exceptions, and a missing runtime as a failed result with 1-based
    `ScriptDiagnostic`s — never by throwing. A host selects an engine by language and streams its output
-   to a console.
+   to a console. **Interactivity is a separate capability**: `IScriptRepl.CreateSession(context)` hands
+   back an `IScriptSession` whose variables, functions and figures survive from one `ExecuteAsync` to
+   the next, and which only gives its memory back on `Clear()` or disposal. Hosts feature-detect it
+   (`engine is IScriptRepl`), exactly as they do for `IJgsDebuggable` — an engine that only knows how
+   to run a whole file stays valid (ADR 0035).
 2. **Scripts drive `JG`.** There is no new plotting surface: the C# engine imports the static `JG`
    facade (so `Plot(...)`, `Title(...)` are top-level), and the Python engine imports the `JG` type — so
    every plot type, scale, and option the functional API has is scriptable in both languages. The few
@@ -580,6 +584,29 @@ Implemented through Milestone 24 — a working figure window you can edit, save,
   (titles, legend, colorbar, extra/secondary axes, subplot grids, annotations) can be added from the
   plot browser's context menu or "Add ▾" button through the UI-free `FigureElementCommands`. The
   `.graph` format stayed at version 5 — the new legend fields are optional (ADR 0029).
+- **M30** the scripting workspace became the application shell: it is the main window, brought up
+  behind a progress splash whose artwork is replaceable without a rebuild; every action is a
+  `RoutedUICommand` shared by a real menu bar, the toolbar and the keyboard; tool panes come from a
+  `PaneCatalog` that also decides where a pane missing from a saved layout is put back; the window's
+  placement is remembered; and a first run seeds and opens a workspace of the shipped examples
+  (ADR 0033).
+- **M31** the console became interactive. `IScriptRepl`/`IScriptSession` is a capability beside
+  `IScriptEngine` (feature-detected like `IJgsDebuggable`) giving each language a live workspace that
+  survives between statements: `JgsReplSession` for JGS and MATLAB, `CSharpReplSession` over Roslyn's
+  `ContinueWithAsync`, and `PythonReplSession` running CPython **out of process** over
+  newline-delimited JSON so Ctrl+C can actually interrupt it. F5 runs the active document *inside*
+  that session, so a script and the prompt share one workspace — unless a breakpoint is set, which
+  still routes the run through the debugger and its own environment. Matrices, cells and structs reach
+  the Data Viewer as a `ScriptValueGrid` (ADR 0035).
+- **M32** the application got a light and a dark theme. `JGraph.Controls/Themes/` holds the key
+  contract (`ThemeKeys`), the two value dictionaries and the implicit styles;
+  `JGraph.Application/Theming/ThemeManager` swaps **one** merged dictionary, found by the
+  `JG.Theme.Id` sentinel each theme carries, and everything reads its colours through
+  `DynamicResource` so the change is live. The docking frame is handed AvalonDock's matching
+  `Vs2013{Light,Dark}Theme`; the code editor gets both syntax palettes, and AvalonEdit's own
+  light-tuned C#/Python definitions are re-contrasted by rule against the editor background. App
+  chrome stays separate from `JGraph.Core.Drawing.ITheme`, which is plot ink and ends up inside
+  `.graph` files (ADR 0034).
 
 The `JGraph.Demo` gallery exercises the plot types, annotations, and both APIs;
 `JGraph.Application` is the interactive figure window with data import and scripting.

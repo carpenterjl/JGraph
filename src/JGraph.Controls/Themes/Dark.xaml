@@ -1,0 +1,84 @@
+<!--
+    The dark application theme.
+
+    The palette follows Visual Studio's dark theme, which is what a scientific IDE's users already
+    have their eyes calibrated to, and — more practically — what AvalonDock's Vs2013Dark chrome
+    paints, so the docking frame and our panes agree instead of fighting.
+
+    Two constraints shaped the values:
+
+    * Surfaces step 1E1E1E (editor) -> 252526 (data surfaces) -> 2D2D30 (chrome). The editor being
+      the darkest is deliberate: it is where the eye rests longest.
+    * Every text-on-surface pair clears WCAG AA (4.5:1). #FFF1F1F1 on #FF2D2D30 is 13.5:1;
+      #FF9D9D9D on #FF2D2D30, the worst pair here, is 5.5:1.
+
+    Key set must match Light.xaml exactly — the parity test enforces it.
+-->
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:sys="clr-namespace:System;assembly=mscorlib">
+
+    <sys:String x:Key="JG.Theme.Id">dark</sys:String>
+    <sys:String x:Key="JG.Theme.Name">Dark</sys:String>
+    <sys:Boolean x:Key="JG.Theme.IsDark">True</sys:Boolean>
+
+    <!-- Surfaces. -->
+    <SolidColorBrush x:Key="JG.Brush.Window" Color="#FF2D2D30" />
+    <SolidColorBrush x:Key="JG.Brush.Surface" Color="#FF252526" />
+    <SolidColorBrush x:Key="JG.Brush.Panel" Color="#FF2D2D30" />
+    <SolidColorBrush x:Key="JG.Brush.ToolBar" Color="#FF2D2D30" />
+    <SolidColorBrush x:Key="JG.Brush.StatusBar" Color="#FF2D2D30" />
+    <SolidColorBrush x:Key="JG.Brush.Menu" Color="#FF2D2D30" />
+    <SolidColorBrush x:Key="JG.Brush.Control" Color="#FF3F3F46" />
+    <SolidColorBrush x:Key="JG.Brush.ControlBorder" Color="#FF54545C" />
+
+    <!-- Lines. -->
+    <SolidColorBrush x:Key="JG.Brush.Border" Color="#FF3F3F46" />
+    <SolidColorBrush x:Key="JG.Brush.BorderStrong" Color="#FF6A6A70" />
+    <SolidColorBrush x:Key="JG.Brush.Separator" Color="#FF3F3F46" />
+
+    <!-- Text. -->
+    <SolidColorBrush x:Key="JG.Brush.Text" Color="#FFF1F1F1" />
+    <SolidColorBrush x:Key="JG.Brush.TextSecondary" Color="#FF9D9D9D" />
+    <SolidColorBrush x:Key="JG.Brush.TextDisabled" Color="#FF6D6D6D" />
+    <SolidColorBrush x:Key="JG.Brush.TextOnAccent" Color="#FFFFFFFF" />
+
+    <!-- Interaction. -->
+    <SolidColorBrush x:Key="JG.Brush.Accent" Color="#FF007ACC" />
+    <SolidColorBrush x:Key="JG.Brush.Hover" Color="#FF3E3E42" />
+    <SolidColorBrush x:Key="JG.Brush.Pressed" Color="#FF007ACC" />
+    <SolidColorBrush x:Key="JG.Brush.Selection" Color="#FF264F78" />
+    <SolidColorBrush x:Key="JG.Brush.SelectionText" Color="#FFFFFFFF" />
+    <SolidColorBrush x:Key="JG.Brush.FocusRing" Color="#FFCCCCCC" />
+
+    <!-- Semantics: lightened so they read on a dark surface. The light theme's #FFC0392B on
+         #FF2D2D30 is 3.1:1, which fails AA for the one colour that must never be missed. -->
+    <SolidColorBrush x:Key="JG.Brush.Error" Color="#FFF48771" />
+    <SolidColorBrush x:Key="JG.Brush.Warning" Color="#FFE9A700" />
+    <SolidColorBrush x:Key="JG.Brush.Success" Color="#FF8CC98C" />
+
+    <!-- Script editor. -->
+    <SolidColorBrush x:Key="JG.Brush.EditorBackground" Color="#FF1E1E1E" />
+    <SolidColorBrush x:Key="JG.Brush.EditorForeground" Color="#FFDCDCDC" />
+    <SolidColorBrush x:Key="JG.Brush.LineNumber" Color="#FF858585" />
+    <SolidColorBrush x:Key="JG.Brush.CurrentLineHighlight" Color="#40F5DD60" />
+    <SolidColorBrush x:Key="JG.Brush.BreakpointFill" Color="#FFE04343" />
+    <SolidColorBrush x:Key="JG.Brush.BreakpointMargin" Color="#FF252526" />
+    <SolidColorBrush x:Key="JG.Brush.ExecutionArrow" Color="#FFFFD94A" />
+    <SolidColorBrush x:Key="JG.Brush.ExecutionArrowBorder" Color="#FF8A7100" />
+    <SolidColorBrush x:Key="JG.Brush.ExecutionArrowGhost" Color="#60FFD94A" />
+
+    <!-- Data grid. -->
+    <SolidColorBrush x:Key="JG.Brush.GridHeader" Color="#FF333337" />
+    <SolidColorBrush x:Key="JG.Brush.GridRowAlt" Color="#FF2A2A2C" />
+    <SolidColorBrush x:Key="JG.Brush.GridLine" Color="#FF3F3F46" />
+
+    <!-- Typography: identical to Light. Dark changes colour, not metrics. -->
+    <FontFamily x:Key="JG.Font.UI">Segoe UI</FontFamily>
+    <FontFamily x:Key="JG.Font.Mono">Consolas</FontFamily>
+    <sys:Double x:Key="JG.FontSize.Small">11</sys:Double>
+    <sys:Double x:Key="JG.FontSize.Normal">12</sys:Double>
+    <sys:Double x:Key="JG.FontSize.Large">16</sys:Double>
+    <sys:Double x:Key="JG.FontSize.Code">13</sys:Double>
+
+</ResourceDictionary>

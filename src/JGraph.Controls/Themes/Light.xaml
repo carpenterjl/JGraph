@@ -1,0 +1,80 @@
+<!--
+    The light application theme.
+
+    Every value here is the colour WPF's own Aero2 theme (or the control's own hard-coded default)
+    already produced, so switching JGraph to a themed resource lookup changed nothing on screen.
+    That is the point: light is the baseline, and any drift from it is a regression, not a
+    redesign. Values that came from JGraph's own code — the breakpoint dot, the execution arrow,
+    the current-line band, the error/warning text in the import wizard — carry the exact ARGB the
+    hard-coded brush used.
+
+    Brushes and typography only: no styles. Styles live in Shared.xaml so a theme swap replaces
+    values, never templates.
+-->
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:sys="clr-namespace:System;assembly=mscorlib">
+
+    <sys:String x:Key="JG.Theme.Id">light</sys:String>
+    <sys:String x:Key="JG.Theme.Name">Light</sys:String>
+    <sys:Boolean x:Key="JG.Theme.IsDark">False</sys:Boolean>
+
+    <!-- Surfaces. Window/Surface are SystemColors.Window; Panel is SystemColors.Control. -->
+    <SolidColorBrush x:Key="JG.Brush.Window" Color="#FFFFFFFF" />
+    <SolidColorBrush x:Key="JG.Brush.Surface" Color="#FFFFFFFF" />
+    <SolidColorBrush x:Key="JG.Brush.Panel" Color="#FFF0F0F0" />
+    <SolidColorBrush x:Key="JG.Brush.ToolBar" Color="#FFF0F0F0" />
+    <SolidColorBrush x:Key="JG.Brush.StatusBar" Color="#FFF0F0F0" />
+    <SolidColorBrush x:Key="JG.Brush.Menu" Color="#FFF0F0F0" />
+    <SolidColorBrush x:Key="JG.Brush.Control" Color="#FFDDDDDD" />
+    <SolidColorBrush x:Key="JG.Brush.ControlBorder" Color="#FF707070" />
+
+    <!-- Lines. -->
+    <SolidColorBrush x:Key="JG.Brush.Border" Color="#FFACACAC" />
+    <SolidColorBrush x:Key="JG.Brush.BorderStrong" Color="#FF707070" />
+    <SolidColorBrush x:Key="JG.Brush.Separator" Color="#FFD7D7D7" />
+
+    <!-- Text. TextSecondary is Brushes.Gray, which is what the hint labels already used. -->
+    <SolidColorBrush x:Key="JG.Brush.Text" Color="#FF000000" />
+    <SolidColorBrush x:Key="JG.Brush.TextSecondary" Color="#FF808080" />
+    <SolidColorBrush x:Key="JG.Brush.TextDisabled" Color="#FF6D6D6D" />
+    <SolidColorBrush x:Key="JG.Brush.TextOnAccent" Color="#FFFFFFFF" />
+
+    <!-- Interaction. Hover/Pressed are Aero2's button-over and button-pressed fills. -->
+    <SolidColorBrush x:Key="JG.Brush.Accent" Color="#FF0078D7" />
+    <SolidColorBrush x:Key="JG.Brush.Hover" Color="#FFBEE6FD" />
+    <SolidColorBrush x:Key="JG.Brush.Pressed" Color="#FFC4E5F6" />
+    <SolidColorBrush x:Key="JG.Brush.Selection" Color="#FF3399FF" />
+    <SolidColorBrush x:Key="JG.Brush.SelectionText" Color="#FFFFFFFF" />
+    <SolidColorBrush x:Key="JG.Brush.FocusRing" Color="#FF000000" />
+
+    <!-- Semantics. Error/Warning are the import wizard's existing message colours. -->
+    <SolidColorBrush x:Key="JG.Brush.Error" Color="#FFC0392B" />
+    <SolidColorBrush x:Key="JG.Brush.Warning" Color="#FFB9770E" />
+    <SolidColorBrush x:Key="JG.Brush.Success" Color="#FF2E7D32" />
+
+    <!-- Script editor. These match BreakpointMargin's and CurrentLineRenderer's hard-coded brushes. -->
+    <SolidColorBrush x:Key="JG.Brush.EditorBackground" Color="#FFFFFFFF" />
+    <SolidColorBrush x:Key="JG.Brush.EditorForeground" Color="#FF000000" />
+    <SolidColorBrush x:Key="JG.Brush.LineNumber" Color="#FF808080" />
+    <SolidColorBrush x:Key="JG.Brush.CurrentLineHighlight" Color="#50F5DD60" />
+    <SolidColorBrush x:Key="JG.Brush.BreakpointFill" Color="#FFC82A2A" />
+    <SolidColorBrush x:Key="JG.Brush.BreakpointMargin" Color="#FFF0F0F0" />
+    <SolidColorBrush x:Key="JG.Brush.ExecutionArrow" Color="#FFE8C000" />
+    <SolidColorBrush x:Key="JG.Brush.ExecutionArrowBorder" Color="#FF8A7100" />
+    <SolidColorBrush x:Key="JG.Brush.ExecutionArrowGhost" Color="#60E8C000" />
+
+    <!-- Data grid. -->
+    <SolidColorBrush x:Key="JG.Brush.GridHeader" Color="#FFF0F0F0" />
+    <SolidColorBrush x:Key="JG.Brush.GridRowAlt" Color="#FFF7F7F7" />
+    <SolidColorBrush x:Key="JG.Brush.GridLine" Color="#FFD0D0D0" />
+
+    <!-- Typography. Shared by both themes; kept here so a theme could change it. -->
+    <FontFamily x:Key="JG.Font.UI">Segoe UI</FontFamily>
+    <FontFamily x:Key="JG.Font.Mono">Consolas</FontFamily>
+    <sys:Double x:Key="JG.FontSize.Small">11</sys:Double>
+    <sys:Double x:Key="JG.FontSize.Normal">12</sys:Double>
+    <sys:Double x:Key="JG.FontSize.Large">16</sys:Double>
+    <sys:Double x:Key="JG.FontSize.Code">13</sys:Double>
+
+</ResourceDictionary>

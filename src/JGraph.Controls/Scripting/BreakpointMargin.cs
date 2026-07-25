@@ -16,24 +16,92 @@ internal sealed class BreakpointMargin : AbstractMargin
 {
     private const double MarginWidth = 18;
 
-    private static readonly Brush BackgroundBrush = new SolidColorBrush(Color.FromRgb(0xF0, 0xF0, 0xF0));
-    private static readonly Brush BreakpointBrush = new SolidColorBrush(Color.FromRgb(0xC8, 0x2A, 0x2A));
-    private static readonly Brush ArrowBrush = new SolidColorBrush(Color.FromRgb(0xE8, 0xC0, 0x00));
-    private static readonly Brush GhostArrowBrush = new SolidColorBrush(Color.FromArgb(0x60, 0xE8, 0xC0, 0x00));
-    private static readonly Pen ArrowPen = new(new SolidColorBrush(Color.FromRgb(0x8a, 0x71, 0x00)), 1);
+    /// <summary>The gutter's background. Themed.</summary>
+    public static readonly DependencyProperty MarginBrushProperty = Register(nameof(MarginBrush));
+
+    /// <summary>The breakpoint dot's fill. Themed.</summary>
+    public static readonly DependencyProperty BreakpointBrushProperty = Register(nameof(BreakpointBrush));
+
+    /// <summary>The execution arrow's fill. Themed.</summary>
+    public static readonly DependencyProperty ArrowBrushProperty = Register(nameof(ArrowBrush));
+
+    /// <summary>The execution arrow's outline. Themed.</summary>
+    public static readonly DependencyProperty ArrowBorderBrushProperty =
+        DependencyProperty.Register(
+            nameof(ArrowBorderBrush), typeof(Brush), typeof(BreakpointMargin),
+            new FrameworkPropertyMetadata(
+                Brushes.Transparent, FrameworkPropertyMetadataOptions.AffectsRender, OnArrowBorderBrushChanged));
+
+    /// <summary>The ghost arrow shown while dragging to set the next statement. Themed.</summary>
+    public static readonly DependencyProperty GhostArrowBrushProperty = Register(nameof(GhostArrowBrush));
 
     private readonly HashSet<int> _breakpoints = new();
+    private Pen _arrowPen = new(Brushes.Transparent, 1);
     private int? _currentLine;
     private int? _dragTargetLine;
     private bool _dragging;
 
-    static BreakpointMargin()
+    public BreakpointMargin()
     {
-        BackgroundBrush.Freeze();
-        BreakpointBrush.Freeze();
-        ArrowBrush.Freeze();
-        GhostArrowBrush.Freeze();
-        ArrowPen.Freeze();
+        // Dependency properties rather than the static frozen brushes these used to be: a static
+        // field is read once and never notices a theme swap, and this is a FrameworkElement, so
+        // SetResourceReference gives it a live DynamicResource binding for free. AffectsRender then
+        // repaints the gutter without anyone having to remember to invalidate it.
+        SetResourceReference(MarginBrushProperty, Themes.ThemeKeys.BreakpointMargin);
+        SetResourceReference(BreakpointBrushProperty, Themes.ThemeKeys.BreakpointFill);
+        SetResourceReference(ArrowBrushProperty, Themes.ThemeKeys.ExecutionArrow);
+        SetResourceReference(ArrowBorderBrushProperty, Themes.ThemeKeys.ExecutionArrowBorder);
+        SetResourceReference(GhostArrowBrushProperty, Themes.ThemeKeys.ExecutionArrowGhost);
+    }
+
+    /// <summary>The gutter's background.</summary>
+    public Brush MarginBrush
+    {
+        get => (Brush)GetValue(MarginBrushProperty);
+        set => SetValue(MarginBrushProperty, value);
+    }
+
+    /// <summary>The breakpoint dot's fill.</summary>
+    public Brush BreakpointBrush
+    {
+        get => (Brush)GetValue(BreakpointBrushProperty);
+        set => SetValue(BreakpointBrushProperty, value);
+    }
+
+    /// <summary>The execution arrow's fill.</summary>
+    public Brush ArrowBrush
+    {
+        get => (Brush)GetValue(ArrowBrushProperty);
+        set => SetValue(ArrowBrushProperty, value);
+    }
+
+    /// <summary>The execution arrow's outline.</summary>
+    public Brush ArrowBorderBrush
+    {
+        get => (Brush)GetValue(ArrowBorderBrushProperty);
+        set => SetValue(ArrowBorderBrushProperty, value);
+    }
+
+    /// <summary>The ghost arrow shown while dragging to set the next statement.</summary>
+    public Brush GhostArrowBrush
+    {
+        get => (Brush)GetValue(GhostArrowBrushProperty);
+        set => SetValue(GhostArrowBrushProperty, value);
+    }
+
+    private static DependencyProperty Register(string name) =>
+        DependencyProperty.Register(
+            name, typeof(Brush), typeof(BreakpointMargin),
+            new FrameworkPropertyMetadata(Brushes.Transparent, FrameworkPropertyMetadataOptions.AffectsRender));
+
+    private static void OnArrowBorderBrushChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+        // The pen is rebuilt here rather than in OnRender: the gutter repaints on every visual-lines
+        // change, and the outline colour changes about twice a session.
+        var margin = (BreakpointMargin)d;
+        var pen = new Pen((Brush)e.NewValue, 1);
+        pen.Freeze();
+        margin._arrowPen = pen;
     }
 
     /// <summary>Raised when the user toggles a breakpoint by clicking the margin.</summary>
@@ -100,7 +168,7 @@ internal sealed class BreakpointMargin : AbstractMargin
     /// <inheritdoc />
     protected override void OnRender(DrawingContext drawingContext)
     {
-        drawingContext.DrawRectangle(BackgroundBrush, null, new Rect(0, 0, RenderSize.Width, RenderSize.Height));
+        drawingContext.DrawRectangle(MarginBrush, null, new Rect(0, 0, RenderSize.Width, RenderSize.Height));
 
         TextView? textView = TextView;
         if (textView is null || !textView.VisualLinesValid)
@@ -121,7 +189,7 @@ internal sealed class BreakpointMargin : AbstractMargin
 
             if (_currentLine == line)
             {
-                drawingContext.DrawGeometry(ArrowBrush, ArrowPen, BuildArrow(centerY));
+                drawingContext.DrawGeometry(ArrowBrush, _arrowPen, BuildArrow(centerY));
             }
 
             if (_dragging && _dragTargetLine == line && _dragTargetLine != _currentLine)

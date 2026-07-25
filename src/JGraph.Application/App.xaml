@@ -1,5 +1,18 @@
 <Application x:Class="JGraph.Application.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-    <Application.Resources />
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <!--
+                    The theme-independent styles. The theme itself is deliberately *not* merged
+                    here: ThemeManager inserts it at startup and replaces that one entry on every
+                    swap, locating it by the JG.Theme.Id sentinel. Merging a theme here as well
+                    would give the manager two candidates and make which one wins depend on file
+                    order.
+                -->
+                <ResourceDictionary Source="pack://application:,,,/JGraph.Controls;component/Themes/Shared.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Application.Resources>
 </Application>

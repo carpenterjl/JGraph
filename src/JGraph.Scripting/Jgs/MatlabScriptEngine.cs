@@ -6,7 +6,7 @@ namespace JGraph.Scripting.Jgs;
 /// declarations, cells and structs. A <c>.m</c> file means the same thing here as it does in MATLAB
 /// however JGraph was started, so this engine never consults the user's JGS language settings.
 /// </summary>
-public sealed class MatlabScriptEngine : IScriptEngine, IJgsDebuggable
+public sealed class MatlabScriptEngine : IScriptEngine, IJgsDebuggable, IScriptRepl
 {
     /// <inheritdoc />
     public string Language => "MATLAB";
@@ -26,4 +26,8 @@ public sealed class MatlabScriptEngine : IScriptEngine, IJgsDebuggable
 
     /// <inheritdoc />
     public Debug.JgsDebugSession CreateDebugSession() => new(JgsDialect.Matlab);
+
+    /// <inheritdoc />
+    public IScriptSession CreateSession(ScriptContext context) =>
+        new JgsReplSession(context, JgsDialect.Matlab, Language);
 }

@@ -31,6 +31,12 @@
                       Padding="4,1" />
         </DataTemplate>
 
+        <!--
+            The swatch fills are the user's chosen figure colour — data, not chrome — so they stay on
+            HexBrush and never follow the app theme. Their outlines stay a hard-coded mid grey for
+            the same reason: it is the one value that keeps a white swatch visible on a light theme
+            and a black one visible on a dark theme, which a themed border cannot do.
+        -->
         <DataTemplate x:Key="ColorSwatchAndHex">
             <DockPanel>
                 <ComboBox DockPanel.Dock="Right" Width="17" Padding="0" Margin="2,0,0,0"
@@ -96,16 +102,16 @@
     </UserControl.Resources>
 
     <DockPanel>
-        <Border DockPanel.Dock="Top" Padding="8,6" Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}">
+        <Border DockPanel.Dock="Top" Padding="8,6" Background="{DynamicResource JG.Brush.Panel}">
             <StackPanel>
                 <TextBlock x:Name="HeaderType" FontWeight="SemiBold" Text="Properties" />
-                <TextBlock x:Name="HeaderName" Foreground="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}"
+                <TextBlock x:Name="HeaderName" Foreground="{DynamicResource JG.Brush.TextSecondary}"
                            TextTrimming="CharacterEllipsis" />
             </StackPanel>
         </Border>
 
         <TextBlock x:Name="EmptyHint" DockPanel.Dock="Top" Margin="8,10"
-                   Foreground="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}"
+                   Foreground="{DynamicResource JG.Brush.TextSecondary}"
                    TextWrapping="Wrap"
                    Text="Select an object in the figure (Edit mode) or the plot browser to edit its properties." />
 
@@ -115,7 +121,7 @@
                     <GroupStyle>
                         <GroupStyle.HeaderTemplate>
                             <DataTemplate>
-                                <Border Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"
+                                <Border Background="{DynamicResource JG.Brush.Panel}"
                                         Padding="6,3" Margin="0,4,0,1">
                                     <TextBlock Text="{Binding Name}" FontWeight="SemiBold" />
                                 </Border>

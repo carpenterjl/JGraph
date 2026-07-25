@@ -1,6 +1,7 @@
 using System.Collections.ObjectModel;
 using System.IO;
 using JGraph.Application.Services;
+using JGraph.Application.Theming;
 using JGraph.Core.Drawing;
 using JGraph.Plugins;
 using JGraph.Scripting;
@@ -45,16 +46,19 @@ public sealed class OptionsViewModel
     /// <summary>Creates the draft from the current settings and the available themes, languages and plugins.</summary>
     /// <param name="settings">The settings service the dialog reads from and commits back to.</param>
     /// <param name="themes">The figure themes to choose a default from (the plugin registry's list).</param>
+    /// <param name="appThemes">The application chrome themes to choose between.</param>
     /// <param name="languages">The script languages a new document can start in.</param>
     /// <param name="pluginDirectory">The folder to discover toggleable plugins in, or null for none.</param>
     public OptionsViewModel(
         ISettingsService settings,
         IReadOnlyList<ITheme> themes,
+        IAppThemeCatalog appThemes,
         IReadOnlyList<string> languages,
         string? pluginDirectory)
     {
         ArgumentNullException.ThrowIfNull(settings);
         ArgumentNullException.ThrowIfNull(themes);
+        ArgumentNullException.ThrowIfNull(appThemes);
         ArgumentNullException.ThrowIfNull(languages);
         _settings = settings;
 
@@ -62,6 +66,10 @@ public sealed class OptionsViewModel
         OptionalLet = current.JgsOptionalLet;
         OneBasedIndexing = current.JgsIndexBase == 1;
         DefaultScriptDirectory = current.DefaultScriptDirectory ?? string.Empty;
+
+        AppThemes = appThemes.Themes;
+        SelectedAppTheme = appThemes.Resolve(current.AppTheme);
+        LinkFigureThemeToAppTheme = current.LinkFigureThemeToAppTheme;
 
         AvailableThemes = ["(first available)", .. themes.Select(t => t.Name)];
         DefaultTheme = current.DefaultFigureTheme is { } theme && AvailableThemes.Contains(theme)
@@ -84,6 +92,18 @@ public sealed class OptionsViewModel
 
     /// <summary>The folder new open/save dialogs start in when no workspace is open (empty for the shell default).</summary>
     public string DefaultScriptDirectory { get; set; }
+
+    /// <summary>The application chrome themes to offer.</summary>
+    public IReadOnlyList<AppThemeDescriptor> AppThemes { get; }
+
+    /// <summary>The selected application theme. Applied live on OK, and persisted.</summary>
+    public AppThemeDescriptor SelectedAppTheme { get; set; }
+
+    /// <summary>
+    /// Whether a new figure starts on the figure theme matching the application theme. Off by
+    /// default, and it never touches a figure that is already open or already saved.
+    /// </summary>
+    public bool LinkFigureThemeToAppTheme { get; set; }
 
     /// <summary>The theme names to offer, with a "(first available)" sentinel first.</summary>
     public IReadOnlyList<string> AvailableThemes { get; }
@@ -115,6 +135,8 @@ public sealed class OptionsViewModel
             DefaultFigureTheme = DefaultTheme == AvailableThemes[0] ? null : DefaultTheme,
             DefaultNewScriptLanguage = DefaultNewScriptLanguage,
             DisabledPlugins = [.. Plugins.Where(p => !p.Enabled).Select(p => p.TypeName)],
+            AppTheme = SelectedAppTheme.Id,
+            LinkFigureThemeToAppTheme = LinkFigureThemeToAppTheme,
         };
 
         PluginsChanged = !updated.DisabledPlugins.ToHashSet(StringComparer.Ordinal)

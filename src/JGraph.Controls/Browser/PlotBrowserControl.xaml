@@ -6,7 +6,7 @@
     </UserControl.Resources>
 
     <DockPanel>
-        <Border DockPanel.Dock="Top" Padding="8,6" Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}">
+        <Border DockPanel.Dock="Top" Padding="8,6" Background="{DynamicResource JG.Brush.Panel}">
             <DockPanel>
                 <Button x:Name="AddButton" DockPanel.Dock="Right" Content="Add ▾" Padding="6,1"
                         Click="OnAddButtonClick"

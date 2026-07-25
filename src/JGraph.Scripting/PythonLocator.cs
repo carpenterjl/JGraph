@@ -87,8 +87,11 @@ public static class PythonLocator
 
             startInfo.ArgumentList.Add("-c");
             startInfo.ArgumentList.Add(
+                // sys.executable comes before the path join because the join can be empty and blank
+                // lines are filtered out — an optional field has to be last.
                 "import sys,os;print(sys.version_info[0]);print(sys.version_info[1]);" +
-                "print(sys.base_prefix);print(sys.prefix);print(os.pathsep.join(sys.path))");
+                "print(sys.base_prefix);print(sys.prefix);print(sys.executable);" +
+                "print(os.pathsep.join(sys.path))");
 
             using Process? process = Process.Start(startInfo);
             if (process is null)
@@ -111,7 +114,7 @@ public static class PythonLocator
             string[] lines = output.Split('\n', StringSplitOptions.TrimEntries)
                 .Where(static line => line.Length > 0)
                 .ToArray();
-            if (lines.Length < 4
+            if (lines.Length < 5
                 || !int.TryParse(lines[0], out int major)
                 || !int.TryParse(lines[1], out int minor))
             {
@@ -122,8 +125,9 @@ public static class PythonLocator
             // environment's own prefix so its site-packages resolves.
             string basePrefix = lines[2];
             string home = lines[3];
-            string[] searchPaths = lines.Length >= 5
-                ? lines[4].Split(Path.PathSeparator, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+            string executable = lines[4];
+            string[] searchPaths = lines.Length >= 6
+                ? lines[5].Split(Path.PathSeparator, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
                 : [];
 
             // Microsoft Store Python lives under WindowsApps and cannot be embedded (pythonnet fails
@@ -137,7 +141,7 @@ public static class PythonLocator
             {
                 if (File.Exists(candidate))
                 {
-                    info = new PythonRuntimeInfo(candidate, home, searchPaths);
+                    info = new PythonRuntimeInfo(candidate, home, searchPaths, executable);
                     return true;
                 }
             }

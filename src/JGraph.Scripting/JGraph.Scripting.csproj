@@ -13,6 +13,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <!-- The out-of-process Python console's child script, copied beside every host that references
+         this project (the WPF app and the CLI launcher both need it). -->
+    <Content Include="..\..\python\**\*.py" LinkBase="python" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Scripting" Version="4.9.2" />
     <PackageReference Include="pythonnet" Version="3.0.5" />
   </ItemGroup>

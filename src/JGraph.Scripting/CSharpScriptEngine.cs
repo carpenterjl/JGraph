@@ -18,9 +18,10 @@ namespace JGraph.Scripting;
 /// <c>Title(...)</c>, etc. need no qualifier) and the host helpers (<c>readcsv</c>, <c>print</c>,
 /// <c>show</c>) come from the <see cref="JGraphScriptGlobals"/> globals object.
 /// </summary>
-public sealed class CSharpScriptEngine : IScriptEngine
+public sealed class CSharpScriptEngine : IScriptEngine, IScriptRepl
 {
-    private static readonly ScriptOptions Options = BuildOptions();
+    /// <summary>The references and imports every C# script and console statement compiles against.</summary>
+    internal static readonly ScriptOptions Options = BuildOptions();
 
     /// <inheritdoc />
     public string Language => "C#";
@@ -105,7 +106,11 @@ public sealed class CSharpScriptEngine : IScriptEngine
         }
     }
 
-    private static IReadOnlyList<ScriptVariable> SnapshotVariables(ScriptState<object> state)
+    /// <inheritdoc />
+    public IScriptSession CreateSession(ScriptContext context) => new CSharpReplSession(context, Language);
+
+    /// <summary>The variables a script state has declared, projected for a workspace panel.</summary>
+    internal static IReadOnlyList<ScriptVariable> SnapshotVariables(ScriptState<object> state)
     {
         try
         {
@@ -148,7 +153,9 @@ public sealed class CSharpScriptEngine : IScriptEngine
 
         object? raw = value switch
         {
-            double or bool or string => value,
+            // int is what `var n = 3;` actually produces, so it has to be here for the workspace panel
+            // to treat an ordinary C# number as a value rather than as an opaque object.
+            double or int or long or float or bool or string => value,
             double[] => value,
             Table => value,
             _ => null,
@@ -171,7 +178,8 @@ public sealed class CSharpScriptEngine : IScriptEngine
         _ => type.Name,
     };
 
-    private static ScriptDiagnostic Map(Diagnostic diagnostic)
+    /// <summary>Maps a Roslyn diagnostic to the host-facing shape, with 1-based line/column.</summary>
+    internal static ScriptDiagnostic Map(Diagnostic diagnostic)
     {
         bool inSource = diagnostic.Location.IsInSource;
         LinePosition start = diagnostic.Location.GetLineSpan().StartLinePosition;

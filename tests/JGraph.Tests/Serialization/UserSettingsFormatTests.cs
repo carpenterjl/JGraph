@@ -21,6 +21,8 @@ public class UserSettingsFormatTests
             DefaultFigureTheme = "Dark",
             DisabledPlugins = { "Acme.Plugins.Noisy", "Acme.Plugins.Legacy" },
             DefaultNewScriptLanguage = "MATLAB",
+            AppTheme = "dark",
+            LinkFigureThemeToAppTheme = true,
         };
 
         UserSettingsDto? loaded = UserSettingsFormat.Deserialize(UserSettingsFormat.Serialize(settings));
@@ -32,6 +34,24 @@ public class UserSettingsFormatTests
         Assert.Equal("Dark", loaded.DefaultFigureTheme);
         Assert.Equal(new[] { "Acme.Plugins.Noisy", "Acme.Plugins.Legacy" }, loaded.DisabledPlugins);
         Assert.Equal("MATLAB", loaded.DefaultNewScriptLanguage);
+        Assert.Equal("dark", loaded.AppTheme);
+        Assert.True(loaded.LinkFigureThemeToAppTheme);
+    }
+
+    [Fact]
+    public void AppearanceDefaultsToLightAndAnUnlinkedFigureTheme()
+    {
+        // M32 added these two fields without bumping CurrentVersion — additive members take their
+        // initializers, so a settings file written before M32 must still load with the app on its
+        // default theme and the figure link off. Bumping instead would make new files unreadable by
+        // an older build and silently reset every preference on a downgrade.
+        UserSettingsDto? loaded = UserSettingsFormat.Deserialize(
+            "{ \"format\": \"jgraph-settings\", \"formatVersion\": 1, \"defaultFigureTheme\": \"IEEE\" }");
+
+        Assert.NotNull(loaded);
+        Assert.Equal("IEEE", loaded.DefaultFigureTheme);
+        Assert.Null(loaded.AppTheme);
+        Assert.False(loaded.LinkFigureThemeToAppTheme);
     }
 
     [Fact]

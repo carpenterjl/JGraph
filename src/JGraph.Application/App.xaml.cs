@@ -3,7 +3,10 @@ using System.IO;
 using System.Windows;
 using System.Windows.Threading;
 using JGraph.Application.Mvvm;
+using JGraph.Application.Scripting;
 using JGraph.Application.Services;
+using JGraph.Application.Startup;
+using JGraph.Application.Theming;
 using JGraph.Core.Model;
 using JGraph.Numerics;
 using JGraph.Plugins;
@@ -53,18 +56,52 @@ public partial class App : System.Windows.Application
         ConfigureServices(collection);
         _services = collection.BuildServiceProvider();
 
+        // The theme is installed before anything is on screen — the splash is the very next thing
+        // created, and a window built under one theme and swapped to another re-renders visibly.
+        var themes = _services.GetRequiredService<ThemeManager>();
+        var settingsService = _services.GetRequiredService<ISettingsService>();
+        themes.Apply(settingsService.Current.AppTheme);
+
+        // Saving the Options dialog is the entire live-switch trigger: Changed already fires on
+        // every Save, and re-applying the theme already in force is a no-op.
+        settingsService.Changed += (_, _) => themes.Apply(settingsService.Current.AppTheme);
+
         if (options.Mode == StartupMode.Batch)
         {
             RunBatch(options);
             return;
         }
 
-        var window = _services.GetRequiredService<FigureWindow>();
-        window.Show();
+        // The scripting workspace is the application shell (M30). Figures open beside it on demand —
+        // from a script, from the console, or by opening a .graph file — never as the main window.
+        _ = ShowShellAsync(options);
+    }
+
+    private async Task ShowShellAsync(StartupOptions options)
+    {
+        // No main window exists yet, so nothing must be able to end the session before the shell is
+        // up: closing the splash would otherwise look like the last window closing.
+        ShutdownMode = ShutdownMode.OnExplicitShutdown;
+
+        ScriptWorkspaceWindow shell;
+        try
+        {
+            shell = await InteractiveStartup.PrepareShellAsync(_services!);
+        }
+        catch (Exception ex)
+        {
+            ShowText("JGraph could not start: " + ex.Message, "JGraph");
+            Shutdown(StartupExitCodes.ScriptError);
+            return;
+        }
+
+        MainWindow = shell;
+        shell.Show();
+        ShutdownMode = ShutdownMode.OnMainWindowClose;
 
         if (options.Mode == StartupMode.Run && options.Statement is { Length: > 0 } statement)
         {
-            _services.GetRequiredService<IScriptingService>().OpenEditorAndRun(statement, options.LogFile);
+            _services!.GetRequiredService<IScriptingService>().OpenEditorAndRun(statement, options.LogFile);
         }
     }
 
@@ -175,9 +212,16 @@ public partial class App : System.Windows.Application
         // The plugin registry: the built-in standard library (Light/Dark/Presentation/IEEE themes and
         // colormaps) plus anything discovered in a "plugins" folder next to the executable that the
         // user has not turned off.
+        // Registered as a factory, not an instance: scanning the folder is the slowest thing at
+        // startup, so the splash resolves it off the UI thread and reports progress while it runs.
         string pluginDirectory = Path.Combine(AppContext.BaseDirectory, "plugins");
-        services.AddSingleton(PluginLoader.LoadDefault(
+        services.AddSingleton(_ => PluginLoader.LoadDefault(
             pluginDirectory, plugin => settings.Current.IsPluginEnabled(plugin.GetType().FullName ?? plugin.GetType().Name)));
+
+        // Application chrome. The catalog is a fixed built-in set (see IAppThemeCatalog); the
+        // manager owns the one swappable entry in Application.Resources.MergedDictionaries.
+        services.AddSingleton<IAppThemeCatalog, AppThemeCatalog>();
+        services.AddSingleton(sp => new ThemeManager(sp.GetRequiredService<IAppThemeCatalog>()));
 
         services.AddSingleton<IFigureFactory, SampleFigureFactory>();
         services.AddSingleton<IFigureExportService, FigureExportService>();
@@ -194,6 +238,15 @@ public partial class App : System.Windows.Application
         services.AddSingleton<IFigureWindowService, FigureWindowService>();
         services.AddSingleton<IScriptingService, ScriptingService>();
         services.AddSingleton<IOptionsService, OptionsService>();
+
+        // The shell is a singleton — it is the main window, and closing it ends the session. Figure
+        // windows stay transient: FigureWindowService mints one per figure number.
+        services.AddSingleton(sp => new ScriptWorkspaceWindow(
+            sp.GetServices<IScriptEngine>().ToList(),
+            sp.GetRequiredService<IWorkspaceStateService>(),
+            sp.GetRequiredService<IFigureWindowService>(),
+            sp.GetRequiredService<ISettingsService>(),
+            sp.GetRequiredService<IOptionsService>()));
 
         services.AddTransient<FigureViewModel>();
         services.AddTransient<FigureWindow>();

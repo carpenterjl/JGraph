@@ -15,6 +15,19 @@
     <PackageReference Include="xunit.runner.visualstudio" Version="2.8.2" />
   </ItemGroup>
 
+  <!--
+    Theme-key parity. JGraph.Controls is net8.0-windows and unreachable from here, but neither half
+    of the contract actually needs WPF: ThemeKeys is nothing but string constants, and a theme
+    dictionary is plain XML to an XDocument. Linking the one and copying the others lets the most
+    valuable theming test run in the standard gate.
+  -->
+  <ItemGroup>
+    <Compile Include="..\..\src\JGraph.Controls\Themes\ThemeKeys.cs" Link="Theming\ThemeKeys.cs" />
+    <Content Include="..\..\src\JGraph.Controls\Themes\*.xaml"
+             Link="Themes\%(Filename)%(Extension)"
+             CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\..\src\JGraph.Core\JGraph.Core.csproj" />
     <ProjectReference Include="..\..\src\JGraph.Data\JGraph.Data.csproj" />

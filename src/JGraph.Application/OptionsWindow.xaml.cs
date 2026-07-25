@@ -1,5 +1,6 @@
 using System.Windows;
 using JGraph.Application.Mvvm;
+using JGraph.Application.Theming;
 using Microsoft.Win32;
 
 namespace JGraph.Application;
@@ -24,6 +25,10 @@ public partial class OptionsWindow : Window
         ZeroBasedButton.IsChecked = !model.OneBasedIndexing;
         OneBasedButton.IsChecked = model.OneBasedIndexing;
         DirectoryBox.Text = model.DefaultScriptDirectory;
+
+        AppThemeCombo.ItemsSource = model.AppThemes;
+        AppThemeCombo.SelectedItem = model.SelectedAppTheme;
+        LinkFigureThemeBox.IsChecked = model.LinkFigureThemeToAppTheme;
 
         LanguageCombo.ItemsSource = model.NewScriptLanguages;
         LanguageCombo.SelectedItem = model.DefaultNewScriptLanguage;
@@ -54,6 +59,8 @@ public partial class OptionsWindow : Window
         _model.DefaultScriptDirectory = DirectoryBox.Text;
         _model.DefaultNewScriptLanguage = LanguageCombo.SelectedItem as string ?? _model.DefaultNewScriptLanguage;
         _model.DefaultTheme = ThemeCombo.SelectedItem as string ?? _model.DefaultTheme;
+        _model.SelectedAppTheme = AppThemeCombo.SelectedItem as AppThemeDescriptor ?? _model.SelectedAppTheme;
+        _model.LinkFigureThemeToAppTheme = LinkFigureThemeBox.IsChecked == true;
         _model.Apply();
 
         if (_model.PluginsChanged)

@@ -30,4 +30,17 @@ public sealed class UserSettingsDto
 
     /// <summary>The language a blank New Script starts in ("JGS", "MATLAB", …), or null for JGS.</summary>
     public string? DefaultNewScriptLanguage { get; set; }
+
+    /// <summary>
+    /// The application chrome theme by id ("light", "dark"), or null for the shipped default.
+    /// This is the IDE's own colours — quite separate from <see cref="DefaultFigureTheme"/>, which is
+    /// plot ink and ends up inside saved <c>.graph</c> files.
+    /// </summary>
+    public string? AppTheme { get; set; }
+
+    /// <summary>
+    /// Whether a new figure should start on the figure theme matching the application theme. Default
+    /// false: silently darkening an exported plot because the IDE is dark would be a real surprise.
+    /// </summary>
+    public bool LinkFigureThemeToAppTheme { get; set; }
 }

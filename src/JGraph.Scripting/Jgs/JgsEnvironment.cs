@@ -21,6 +21,35 @@ internal sealed class JgsEnvironment
     /// <summary>Declares (or redeclares) <paramref name="name"/> in this scope with <paramref name="value"/>.</summary>
     public void Declare(string name, JgsValue value) => _values[name] = value;
 
+    /// <summary>
+    /// Removes every binding in this scope except those still holding the exact value recorded in
+    /// <paramref name="pristine"/> — restoring it to the state <paramref name="pristine"/> was captured
+    /// from. This is what <c>clear</c> means at an interactive prompt: user variables go, the built-ins
+    /// stay, and a rebound built-in reverts. It mutates the scope in place rather than returning a new
+    /// one because a live interpreter and every closure it has created hold a reference to this
+    /// instance.
+    /// </summary>
+    public void RetainOnly(IReadOnlyDictionary<string, JgsValue> pristine)
+    {
+        foreach (string name in _values.Keys.ToList())
+        {
+            if (!pristine.TryGetValue(name, out JgsValue? original))
+            {
+                _values.Remove(name);
+            }
+            else if (!ReferenceEquals(original, _values[name]))
+            {
+                _values[name] = original;
+            }
+        }
+
+        // A built-in the user deleted outright (possible via clear in a nested call) comes back too.
+        foreach ((string name, JgsValue value) in pristine)
+        {
+            _values.TryAdd(name, value);
+        }
+    }
+
     /// <summary>Whether <paramref name="name"/> resolves in this scope or any enclosing scope.</summary>
     public bool Contains(string name) =>
         _values.ContainsKey(name) || (_parent?.Contains(name) ?? false);

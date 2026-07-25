@@ -1,44 +1,20 @@
-using System.Linq;
-using System.Windows;
 using JGraph.Application.Scripting;
-using JGraph.Core.Model;
-using JGraph.Scripting;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace JGraph.Application.Services;
 
 /// <summary>
-/// The WPF implementation of <see cref="IScriptingService"/>: hosts a single modeless
-/// <see cref="ScriptWorkspaceWindow"/> over the available script engines. Re-opening while it is
-/// already up just brings it to the front.
+/// The WPF implementation of <see cref="IScriptingService"/>: brings the scripting workspace to the
+/// front. Since M30 that window is the application shell — a DI singleton created at startup and
+/// already visible — so this is now an activation service rather than a window factory.
 /// </summary>
 public sealed class ScriptingService : IScriptingService
 {
-    private readonly IReadOnlyList<IScriptEngine> _engines;
-    private readonly IWorkspaceStateService _stateService;
-    private readonly IFigureWindowService _figureWindows;
-    private readonly ISettingsService _settings;
-    private readonly IOptionsService _options;
-    private ScriptWorkspaceWindow? _window;
+    private readonly IServiceProvider _services;
 
-    /// <summary>Creates the service over the registered script engines.</summary>
-    public ScriptingService(
-        IEnumerable<IScriptEngine> engines,
-        IWorkspaceStateService stateService,
-        IFigureWindowService figureWindows,
-        ISettingsService settings,
-        IOptionsService options)
-    {
-        ArgumentNullException.ThrowIfNull(engines);
-        ArgumentNullException.ThrowIfNull(stateService);
-        ArgumentNullException.ThrowIfNull(figureWindows);
-        ArgumentNullException.ThrowIfNull(settings);
-        ArgumentNullException.ThrowIfNull(options);
-        _engines = engines.ToList();
-        _stateService = stateService;
-        _figureWindows = figureWindows;
-        _settings = settings;
-        _options = options;
-    }
+    /// <summary>Creates the service over the container that owns the shell window.</summary>
+    public ScriptingService(IServiceProvider services) =>
+        _services = services ?? throw new ArgumentNullException(nameof(services));
 
     /// <inheritdoc />
     public void OpenEditor() => Open();
@@ -58,20 +34,15 @@ public sealed class ScriptingService : IScriptingService
 
     private ScriptWorkspaceWindow Open()
     {
-        if (_window is not null)
+        // Never Owner-ed: the shell is the main window, and an owned window can never be one.
+        var window = _services.GetRequiredService<ScriptWorkspaceWindow>();
+        if (!window.IsVisible)
         {
-            _window.Activate();
-            return _window;
+            window.RestoreSession(); // no-op once the startup sequence has already run it
+            window.Show();
         }
 
-        _window = new ScriptWorkspaceWindow(_engines, _stateService, _figureWindows, _settings, _options)
-        {
-            Owner = System.Windows.Application.Current?.Windows
-                .OfType<Window>()
-                .FirstOrDefault(w => w.IsActive),
-        };
-        _window.Closed += (_, _) => _window = null;
-        _window.Show();
-        return _window;
+        window.Activate();
+        return window;
     }
 }

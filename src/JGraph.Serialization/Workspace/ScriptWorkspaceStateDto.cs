@@ -27,4 +27,28 @@ public sealed class ScriptWorkspaceStateDto
 
     /// <summary>The docking layout as serialized by the dock manager, or null for the default layout.</summary>
     public string? DockLayoutXml { get; set; }
+
+    /// <summary>
+    /// The arrangement generation <see cref="DockLayoutXml"/> was written by (see
+    /// <see cref="ScriptWorkspaceStateFormat.CurrentLayoutSchema"/>). A release that rearranges the
+    /// default panes incompatibly bumps it, and a layout from an older generation is discarded rather
+    /// than half-restored. Separate from <see cref="FormatVersion"/> so the two can move independently.
+    /// </summary>
+    public int LayoutSchema { get; set; }
+
+    /// <summary>The shell window's last position, or null when it was never recorded.</summary>
+    public double? WindowLeft { get; set; }
+
+    /// <summary>The shell window's last position, or null when it was never recorded.</summary>
+    public double? WindowTop { get; set; }
+
+    /// <summary>The shell window's last size, or null when it was never recorded.</summary>
+    public double? WindowWidth { get; set; }
+
+    /// <summary>The shell window's last size, or null when it was never recorded.</summary>
+    public double? WindowHeight { get; set; }
+
+    /// <summary>The shell window's last state ("Normal" or "Maximized"), or null. A minimized window
+    /// is recorded as normal — reopening minimized would look like a failure to launch.</summary>
+    public string? WindowState { get; set; }
 }
