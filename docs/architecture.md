@@ -614,6 +614,14 @@ Implemented through Milestone 24 — a working figure window you can edit, save,
   an "add JGraph to PATH" checkbox whose choice is remembered across upgrades; re-running the MSI
   updates in place (`MajorUpgrade`, immutable UpgradeCode) and uninstalling removes the PATH entry
   with the product (ADR 0036).
+- **M34** MATLAB function files run, and the editor stopped losing work. A file that is nothing but
+  function definitions now auto-invokes its first function on a file run (`ExecuteFileAsync` on
+  `IScriptSession` + `JgsRunner.InvokeMainIfFunctionFile`; prompt input still only defines). The
+  File menu gained Save As…; closing a dirty tab or the app prompts Save/Don't Save/Cancel through
+  the same `TrySave` path, and saving onto a read-only file offers to strip the attribute or divert
+  to a writable copy instead of failing into the status bar. The console gained `clc` (a `Clear()`
+  default method on `IScriptOutput`), `dir` (a cell of names via the host resolver), and a
+  display-only `path`; `addpath`/`rmpath` name the missing search path explicitly (ADR 0037).
 
 The `JGraph.Demo` gallery exercises the plot types, annotations, and both APIs;
 `JGraph.Application` is the interactive figure window with data import and scripting.

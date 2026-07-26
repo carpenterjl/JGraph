@@ -218,6 +218,13 @@ public sealed class JGraphScriptGlobals
         _context.FigureFiles
             ?? throw new InvalidOperationException($"{operation} is not supported by this host.");
 
+    /// <summary>Clears the output sink's display — the <c>clc</c> builtin. Sinks without a display ignore it.</summary>
+    internal void ClearOutput() => _context.Output.Clear();
+
+    /// <summary>The run's working directory (the workspace root, or the batch start folder), or null
+    /// when the host supplied none — what <c>dir</c> and <c>path</c> report against.</summary>
+    internal string? WorkingDirectory => _context.WorkingDirectory;
+
     /// <summary>Resolves a script-supplied path through the context's workspace resolver, falling back
     /// to the working directory. Also used by engine-level file access such as the JGS <c>run()</c>.</summary>
     internal string Resolve(string path)

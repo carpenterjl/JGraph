@@ -14,4 +14,12 @@ public interface IScriptOutput
 
     /// <summary>Writes a line of error output (stderr, diagnostics, exceptions).</summary>
     void WriteError(string text);
+
+    /// <summary>
+    /// Clears the sink's display (<c>clc</c>). The default is a no-op so sinks with nothing to clear —
+    /// null sinks, batch stdout, recorders — need not care; a console panel overrides it.
+    /// </summary>
+    void Clear()
+    {
+    }
 }

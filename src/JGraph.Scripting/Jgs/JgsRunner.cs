@@ -52,6 +52,7 @@ internal static class JgsRunner
                 static p => p.Key, static p => p.Value, StringComparer.Ordinal);
 
             interpreter.Run(program);
+            InvokeMainIfFunctionFile(program, environment);
             globals.ShowUnshownFigures(); // MATLAB expectation: created figures appear without show()
             ScriptRunResult ok = ScriptRunResult.Ok(globals.FiguresShown, SnapshotGlobals(environment, pristine));
             RegisterCompletedRun(environment, hook);
@@ -73,6 +74,35 @@ internal static class JgsRunner
         catch (OperationCanceledException)
         {
             return ScriptRunResult.Failed("Script run was cancelled.");
+        }
+    }
+
+    /// <summary>
+    /// MATLAB's function-file rule: a file whose first non-comment token is <c>function</c> is a
+    /// function file, and running it invokes its main (first) function. The parsed shape of such a
+    /// file is a program of nothing but <see cref="FnStmt"/>s — comments produce no statements, so a
+    /// leading comment block still counts. Prompt input must never trigger this (defining a function
+    /// at the console only defines it), which is why the check lives behind file entry points only.
+    /// </summary>
+    internal static bool IsFunctionFile(IReadOnlyList<Stmt> program) =>
+        program.Count > 0 && program.All(static s => s is FnStmt);
+
+    /// <summary>
+    /// Invokes the main function of a function file with no arguments, discarding any result —
+    /// MATLAB dispatches on the file name, and the first function in the file is that function.
+    /// Arity and runtime errors surface as ordinary diagnostics from the call site of the file.
+    /// </summary>
+    internal static void InvokeMainIfFunctionFile(IReadOnlyList<Stmt> program, JgsEnvironment environment)
+    {
+        if (!IsFunctionFile(program))
+        {
+            return;
+        }
+
+        var main = (FnStmt)program[0];
+        if (environment.TryGet(main.Name, out JgsValue value) && value.Type == JgsType.Function)
+        {
+            value.AsCallable.Call(System.Array.Empty<JgsValue>(), main.Line, main.Column);
         }
     }
 

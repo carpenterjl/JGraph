@@ -14,6 +14,7 @@
                 <MenuItem Header="Open _Workspace…" Command="{x:Static local:WorkspaceCommands.OpenWorkspace}" />
                 <Separator />
                 <MenuItem Header="_Save" Command="{x:Static local:WorkspaceCommands.Save}" />
+                <MenuItem Header="Save _As…" Command="{x:Static local:WorkspaceCommands.SaveAs}" />
                 <MenuItem Header="_Close Tab" Command="{x:Static local:WorkspaceCommands.CloseTab}" />
                 <Separator />
                 <MenuItem Header="E_xit" Command="{x:Static local:WorkspaceCommands.Exit}" />

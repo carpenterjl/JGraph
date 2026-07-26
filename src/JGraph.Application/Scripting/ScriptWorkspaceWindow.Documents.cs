@@ -138,6 +138,7 @@ public partial class ScriptWorkspaceWindow
             model.SetText(editor.ScriptText);
             entry.Document.Title = model.FileName + (model.IsDirty ? " *" : string.Empty);
         };
+        document.Closing += (_, e) => e.Cancel = !CanCloseDocument(entry);
         document.Closed += (_, _) =>
         {
             RememberBreakpoints(entry);
@@ -205,57 +206,154 @@ public partial class ScriptWorkspaceWindow
     private DocumentEntry? ActiveDocument =>
         _documents.FirstOrDefault(d => d.Document.IsActive) ?? _documents.FirstOrDefault();
 
+    /// <summary>Set once every dirty document has been dealt with in <c>OnClosing</c>, so the
+    /// per-tab Closing handlers do not re-prompt while the window tears its documents down.</summary>
+    private bool _shutdownApproved;
+
     private void SaveActive()
     {
-        DocumentEntry? entry = ActiveDocument;
-        if (entry is null)
+        if (ActiveDocument is { } entry)
         {
-            return;
+            TrySave(entry);
+        }
+    }
+
+    private void SaveAsActive()
+    {
+        if (ActiveDocument is { } entry)
+        {
+            TrySaveAs(entry);
+        }
+    }
+
+    /// <summary>Saves <paramref name="entry"/> to its own path, prompting for one when it has none.
+    /// False means the document is still unsaved — the dialog was cancelled or the write failed —
+    /// which a pending close must treat as "do not close".</summary>
+    private bool TrySave(DocumentEntry entry) =>
+        entry.Model.FilePath is null ? TrySaveAs(entry) : TryWriteDocument(entry, entry.Model.FilePath);
+
+    /// <summary>Save As: always prompts, writes first, and only re-homes the document (path, language,
+    /// tab identity) once the write has actually succeeded.</summary>
+    private bool TrySaveAs(DocumentEntry entry)
+    {
+        var dialog = new SaveFileDialog
+        {
+            Title = "Save script",
+            Filter = "JGS script (*.jgs)|*.jgs|MATLAB script (*.m)|*.m|C# script (*.csx)|*.csx|"
+                + "Python script (*.py)|*.py|All files (*.*)|*.*",
+            InitialDirectory = Path.GetDirectoryName(entry.Model.FilePath)
+                ?? _workspace?.RootPath ?? DefaultScriptDirectory(),
+
+            // The tab is already named for the language it was created as ("NewScript.py"), so the
+            // dialog only has to agree with it — name and filter both follow the document.
+            FileName = entry.Model.FileName,
+            FilterIndex = entry.Model.Language switch
+            {
+                "JGS" => 1,
+                "MATLAB" => 2,
+                "C#" => 3,
+                "Python" => 4,
+                _ => 5,
+            },
+        };
+        if (dialog.ShowDialog(this) != true)
+        {
+            return false;
         }
 
-        if (entry.Model.FilePath is null)
+        if (!TryWriteDocument(entry, dialog.FileName))
         {
-            var dialog = new SaveFileDialog
-            {
-                Title = "Save script",
-                Filter = "JGS script (*.jgs)|*.jgs|MATLAB script (*.m)|*.m|C# script (*.csx)|*.csx|"
-                    + "Python script (*.py)|*.py|All files (*.*)|*.*",
-                InitialDirectory = _workspace?.RootPath ?? DefaultScriptDirectory(),
-
-                // The tab is already named for the language it was created as ("NewScript.py"), so the
-                // dialog only has to agree with it — name and filter both follow the document.
-                FileName = entry.Model.FileName,
-                FilterIndex = entry.Model.Language switch
-                {
-                    "JGS" => 1,
-                    "MATLAB" => 2,
-                    "C#" => 3,
-                    "Python" => 4,
-                    _ => 5,
-                },
-            };
-            if (dialog.ShowDialog(this) != true)
-            {
-                return;
-            }
-
-            entry.Model.SetFilePath(dialog.FileName);
-            entry.Editor.ScriptLanguage = entry.Model.Language;
-            entry.Document.ContentId = dialog.FileName;
+            return false;
         }
 
+        entry.Model.SetFilePath(dialog.FileName);
+        entry.Editor.ScriptLanguage = entry.Model.Language;
+        entry.Document.ContentId = dialog.FileName;
+        entry.Document.Title = entry.Model.FileName;
+        return true;
+    }
+
+    /// <summary>
+    /// The one place document text reaches disk. A read-only target is surfaced rather than swallowed:
+    /// the user can strip the attribute, divert to a writable copy, or abort. Any remaining failure
+    /// gets a dialog, not just a status-bar line a close prompt would race past.
+    /// </summary>
+    private bool TryWriteDocument(DocumentEntry entry, string path)
+    {
         try
         {
-            File.WriteAllText(entry.Model.FilePath!, entry.Editor.ScriptText);
+            if (File.Exists(path))
+            {
+                FileAttributes attributes = File.GetAttributes(path);
+                if ((attributes & FileAttributes.ReadOnly) != 0)
+                {
+                    MessageBoxResult choice = MessageBox.Show(this,
+                        $"'{Path.GetFileName(path)}' is read-only, so it cannot be saved as it stands.\n\n"
+                        + "Yes removes the read-only attribute and saves.\n"
+                        + "No saves a writable copy under a different name.\n"
+                        + "Cancel does not save.",
+                        "Read-only file", MessageBoxButton.YesNoCancel, MessageBoxImage.Warning);
+                    switch (choice)
+                    {
+                        case MessageBoxResult.Yes:
+                            File.SetAttributes(path, attributes & ~FileAttributes.ReadOnly);
+                            break;
+                        case MessageBoxResult.No:
+                            return TrySaveAs(entry);
+                        default:
+                            return false;
+                    }
+                }
+            }
+
+            File.WriteAllText(path, entry.Editor.ScriptText);
             entry.Model.SetText(entry.Editor.ScriptText);
             entry.Model.MarkSaved();
             entry.Document.Title = entry.Model.FileName;
-            SetStatus($"Saved {entry.Model.FilePath}");
+            SetStatus($"Saved {path}");
+            return true;
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
         {
             SetStatus($"Could not save: {ex.Message}");
+            MessageBox.Show(this, $"Could not save '{path}'.\n\n{ex.Message}",
+                "Save failed", MessageBoxButton.OK, MessageBoxImage.Error);
+            return false;
         }
+    }
+
+    /// <summary>The per-tab close gate: once app-wide shutdown has already settled every dirty
+    /// document, the teardown of individual tabs must not ask again.</summary>
+    private bool CanCloseDocument(DocumentEntry entry) => _shutdownApproved || ConfirmDiscardOrSave(entry);
+
+    /// <summary>
+    /// The gate every close path runs through: true means the document may close. A clean document
+    /// passes silently; a dirty one asks — Yes saves (a failed or cancelled save keeps it open),
+    /// No discards the edits, Cancel keeps it open.
+    /// </summary>
+    private bool ConfirmDiscardOrSave(DocumentEntry entry)
+    {
+        if (!entry.Model.IsDirty)
+        {
+            return true;
+        }
+
+        // A never-saved document is not restored next session, so discarding it loses it entirely —
+        // say so, rather than letting "No" sound like it only rewinds a few edits.
+        string consequence = entry.Model.FilePath is null
+            ? "It has never been saved, so its whole content will be lost."
+            : "Its unsaved changes will be lost.";
+        MessageBoxResult choice = MessageBox.Show(this,
+            $"Save changes to '{entry.Model.FileName}'?\n\n"
+            + $"{consequence}\n\n"
+            + "Yes saves, No closes without saving, Cancel keeps it open.",
+            "Unsaved changes", MessageBoxButton.YesNoCancel, MessageBoxImage.Warning);
+        return choice switch
+        {
+            MessageBoxResult.Yes => TrySave(entry),
+            MessageBoxResult.No => true,
+            _ => false,
+        };
     }
 
     /// <summary>One open document: its dock tab, its editor control, and its UI-free model.</summary>
@@ -279,11 +377,12 @@ public partial class ScriptWorkspaceWindow
         public string? DebugBaseline { get; set; }
 
         /// <summary>Points the entry at the <paramref name="document"/> a layout restore created,
-        /// rewiring the close handler the original tab carried.</summary>
-        public void Rebind(LayoutDocument document, Action onClosed, out ScriptEditorControl editor)
+        /// rewiring the close handlers the original tab carried.</summary>
+        public void Rebind(LayoutDocument document, Func<bool> canClose, Action onClosed, out ScriptEditorControl editor)
         {
             Document = document;
             document.Title = Model.FileName;
+            document.Closing += (_, e) => e.Cancel = !canClose();
             document.Closed += (_, _) => onClosed();
             editor = Editor;
         }

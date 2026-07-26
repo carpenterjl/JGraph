@@ -312,6 +312,9 @@ public static class JgsBuiltinCatalog
         Add("run", "Runs another JGS script into the current global scope (an include).", P("path"));
         Add("clear", "Clears the workspace: drops every variable and reverts any rebound built-in. Figures stay open.");
         Add("print", "Writes the values to the console, space-separated.", P("values"));
+        Add("clc", "Clears the console display. Variables and figures are untouched.");
+        Add("dir", "The files and folders in the working directory (or matching pattern) as a cell array of names; folders end with the path separator.", Opt("pattern"));
+        Add("path", "The folder that bare file names resolve against (the workspace root, or the batch start folder).");
 
         // --- Figure setup and plotting -------------------------------------------------------------
         Add("figure", "Starts a new figure (or selects figure n) and returns its handle (a figure number, so it starts at 1).", Opt("n"));

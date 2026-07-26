@@ -89,7 +89,10 @@ public partial class ScriptWorkspaceWindow
             }
             else if (SessionFor(language) is { } session)
             {
-                result = await session.ExecuteAsync(
+                // ExecuteFileAsync, not ExecuteAsync: F5 runs a document, so a function file gets
+                // its main function invoked. The prompt path stays on ExecuteAsync, where a typed
+                // function definition only defines.
+                result = await session.ExecuteFileAsync(
                     entry.Editor.ScriptText, SourceIdOf(entry), _cts.Token);
             }
             else

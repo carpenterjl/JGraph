@@ -55,6 +55,15 @@ internal sealed class JgsReplSession : IScriptSession
     }
 
     /// <inheritdoc />
+    public Task<ScriptRunResult> ExecuteFileAsync(string code, string sourceId, CancellationToken cancellationToken)
+    {
+        ArgumentNullException.ThrowIfNull(code);
+        ArgumentNullException.ThrowIfNull(sourceId);
+        ObjectDisposedException.ThrowIf(_disposed, this);
+        return Task.Run(() => Execute(code, sourceId, cancellationToken, asFile: true), CancellationToken.None);
+    }
+
+    /// <inheritdoc />
     public IReadOnlyList<ScriptVariable> GetVariables() =>
         _disposed ? Array.Empty<ScriptVariable>() : JgsRunner.SnapshotGlobals(_environment, _pristine);
 
@@ -84,12 +93,20 @@ internal sealed class JgsReplSession : IScriptSession
         return ValueTask.CompletedTask;
     }
 
-    private ScriptRunResult Execute(string code, string sourceId, CancellationToken cancellationToken)
+    private ScriptRunResult Execute(string code, string sourceId, CancellationToken cancellationToken, bool asFile = false)
     {
         _interpreter.BeginStatement(cancellationToken);
         try
         {
-            _interpreter.Run(Parser.Parse(code, sourceId, _dialect));
+            IReadOnlyList<Stmt> program = Parser.Parse(code, sourceId, _dialect);
+            _interpreter.Run(program);
+            if (asFile)
+            {
+                // A file that is nothing but function definitions is a MATLAB function file: running
+                // it means calling its main function. Prompt input never takes this branch.
+                JgsRunner.InvokeMainIfFunctionFile(program, _environment);
+            }
+
             _globals.ShowUnshownFigures();
             return ScriptRunResult.Ok(TakeFiguresShown(), GetVariables());
         }

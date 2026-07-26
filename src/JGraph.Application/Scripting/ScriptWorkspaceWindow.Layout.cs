@@ -210,7 +210,10 @@ public partial class ScriptWorkspaceWindow
                         string.Equals(d.Model.FilePath, path, StringComparison.OrdinalIgnoreCase));
                     if (entry is not null)
                     {
-                        entry.Rebind(document, () => _documents.Remove(entry), out ScriptEditorControl editor);
+                        entry.Rebind(document,
+                            () => CanCloseDocument(entry),
+                            () => _documents.Remove(entry),
+                            out ScriptEditorControl editor);
                         e.Content = editor;
                     }
                     else
@@ -307,6 +310,23 @@ public partial class ScriptWorkspaceWindow
     /// <inheritdoc />
     protected override void OnClosing(System.ComponentModel.CancelEventArgs e)
     {
+        // Every dirty document gets its say before anything shuts down; one Cancel keeps the whole
+        // app open. Script-driven exit() bypasses this by pre-approving shutdown — a script that
+        // says exit means it, and a batch run must never block on a dialog.
+        if (!_shutdownApproved)
+        {
+            foreach (DocumentEntry entry in _documents.Where(static d => d.Model.IsDirty).ToList())
+            {
+                if (!ConfirmDiscardOrSave(entry))
+                {
+                    e.Cancel = true;
+                    return;
+                }
+            }
+
+            _shutdownApproved = true; // the per-tab Closing handlers must not re-prompt during teardown
+        }
+
         // Placement must be read while the window still exists: RestoreBounds is only valid for a
         // live window, and by OnClosed the native window is gone.
         _closingPlacement = (RestoreBounds, WindowState == System.Windows.WindowState.Maximized);

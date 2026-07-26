@@ -44,6 +44,20 @@ public interface IScriptSession : IAsyncDisposable
     /// <param name="cancellationToken">Interrupts the statement; how promptly is engine-specific.</param>
     Task<ScriptRunResult> ExecuteAsync(string code, string sourceId, CancellationToken cancellationToken);
 
+    /// <summary>
+    /// Executes <paramref name="code"/> as a whole file rather than prompt input. Identical to
+    /// <see cref="ExecuteAsync"/> except that an engine may apply whole-file semantics — for JGS and
+    /// MATLAB, a <em>function file</em> (a file that is nothing but function definitions) has its main
+    /// function invoked after the definitions load, exactly as running the file does in MATLAB. A
+    /// function defined at the prompt must only be defined, so hosts route typed input through
+    /// <see cref="ExecuteAsync"/> and document runs through this method.
+    /// </summary>
+    /// <param name="code">The complete text of the file being run.</param>
+    /// <param name="sourceId">The file's path, or "" for an unsaved document.</param>
+    /// <param name="cancellationToken">Interrupts the run; how promptly is engine-specific.</param>
+    Task<ScriptRunResult> ExecuteFileAsync(string code, string sourceId, CancellationToken cancellationToken) =>
+        ExecuteAsync(code, sourceId, cancellationToken);
+
     /// <summary>The session's current workspace, for a variables panel. Cheap enough to call after
     /// every statement.</summary>
     IReadOnlyList<ScriptVariable> GetVariables();

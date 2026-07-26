@@ -106,6 +106,73 @@ public class MatlabEngineEndToEndTests : IDisposable
     }
 
     [Fact]
+    public async Task AFunctionFileAutoInvokesItsMainFunction()
+    {
+        // The whole file is one end-less function definition — MATLAB's classic function-file
+        // shape. Running the file must invoke it, so the plot appears.
+        ScriptRunResult result = await Run("""
+            function test1
+
+            x = 1:9;
+            y = [1 9 2 8 3 7 4 6 5];
+
+            figure(1)
+            plot(x, y)
+            title('Figure 1')
+            """);
+
+        Assert.True(result.Success, result.Message + _output.ErrorText);
+        Assert.Equal(1, result.FiguresShown);
+        FigureModel figure = Assert.Single(_figures);
+        Assert.Equal("Figure 1", figure.Axes[0].Title);
+    }
+
+    [Fact]
+    public async Task AFunctionFileInvokesOnlyItsFirstFunction()
+    {
+        ScriptRunResult result = await Run("""
+            function main
+            fprintf('main ran\n');
+
+            function helper
+            fprintf('helper ran\n');
+            """);
+
+        Assert.True(result.Success, result.Message + _output.ErrorText);
+        Assert.Contains("main ran", _output.NormalText, StringComparison.Ordinal);
+        Assert.DoesNotContain("helper ran", _output.NormalText, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public async Task AScriptWithATrailingFunctionIsNotAutoInvoked()
+    {
+        // Top-level statements make this a script file, not a function file: the function runs
+        // once (called explicitly), never a second time.
+        ScriptRunResult result = await Run("""
+            shout();
+
+            function shout
+            fprintf('once\n');
+            end
+            """);
+
+        Assert.True(result.Success, result.Message + _output.ErrorText);
+        Assert.Single(System.Text.RegularExpressions.Regex.Matches(_output.NormalText, "once"));
+    }
+
+    [Fact]
+    public async Task AFunctionFileWhoseMainNeedsArgumentsFails()
+    {
+        ScriptRunResult result = await Run("""
+            function scale(factor)
+            disp(factor * 2)
+            """);
+
+        Assert.False(result.Success);
+        Assert.NotEmpty(result.Diagnostics);
+    }
+
+    [Fact]
     public async Task ASyntaxErrorReportsItsLine()
     {
         ScriptRunResult result = await Run("x = 1;\ny = [1 2;\n");

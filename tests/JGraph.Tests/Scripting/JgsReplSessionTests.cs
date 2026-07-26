@@ -168,6 +168,71 @@ public class JgsReplSessionTests : IDisposable
     }
 
     [Fact]
+    public async Task FunctionOnlyCodeAtThePrompt_DefinesWithoutInvoking()
+    {
+        await using IScriptSession session = NewSession(new MatlabScriptEngine());
+
+        ScriptRunResult result = await Exec(session, "function poke\nfprintf('ran\\n');");
+
+        Assert.True(result.Success, result.Message);
+        Assert.DoesNotContain("ran", _output.NormalText, StringComparison.Ordinal);
+        Assert.True((await Exec(session, "poke")).Success); // defined and callable, exactly once asked
+        Assert.Contains("ran", _output.NormalText, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public async Task ExecuteFile_InvokesAMatlabFunctionFile()
+    {
+        await using IScriptSession session = NewSession(new MatlabScriptEngine());
+
+        ScriptRunResult result = await session.ExecuteFileAsync(
+            "function test1\nplot([1 2], [3 4])\ntitle('Figure 1')",
+            sourceId: "", CancellationToken.None);
+
+        Assert.True(result.Success, result.Message + _output.ErrorText);
+        Assert.Equal(1, result.FiguresShown);
+        Assert.Equal("Figure 1", Assert.Single(_figures).Axes[0].Title);
+    }
+
+    [Fact]
+    public async Task ExecuteFile_InvokesAJgsFunctionOnlyFile()
+    {
+        await using IScriptSession session = NewSession(new JgsScriptEngine());
+
+        ScriptRunResult result = await session.ExecuteFileAsync(
+            "fn main() { plot([0, 1], [0, 1]) }",
+            sourceId: "", CancellationToken.None);
+
+        Assert.True(result.Success, result.Message + _output.ErrorText);
+        Assert.Equal(1, result.FiguresShown);
+    }
+
+    [Fact]
+    public async Task ExecuteFile_RunsOrdinaryScriptsExactlyLikeExecute()
+    {
+        await using IScriptSession session = NewSession(new JgsScriptEngine());
+
+        ScriptRunResult result = await session.ExecuteFileAsync(
+            "let x = 2\nlet y = x + 1", sourceId: "", CancellationToken.None);
+
+        Assert.True(result.Success, result.Message);
+        Assert.Equal(3d, Assert.Single(result.Variables, v => v.Name == "y").RawValue);
+    }
+
+    [Fact]
+    public async Task ClcAtThePrompt_ClearsTheDisplay_ButLeavesTheWorkspaceAlone()
+    {
+        await using IScriptSession session = NewSession(new JgsScriptEngine());
+        await Exec(session, "let keep = 5");
+
+        ScriptRunResult result = await Exec(session, "clc");
+
+        Assert.True(result.Success, result.Message);
+        Assert.Equal(1, _output.ClearCount);
+        Assert.Equal(5d, Assert.Single(session.GetVariables(), v => v.Name == "keep").RawValue);
+    }
+
+    [Fact]
     public async Task ExitAtThePrompt_ComesBackAsAnExitCode_RatherThanAnError()
     {
         await using IScriptSession session = NewSession(new JgsScriptEngine());

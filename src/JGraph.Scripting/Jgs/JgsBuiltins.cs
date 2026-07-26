@@ -1,5 +1,6 @@
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Numerics;
 using JGraph.Api;
 using JGraph.Imaging;
@@ -512,6 +513,30 @@ internal static partial class JgsBuiltins
             Arity("disp", args, 1, line, col);
             host.print(args[0].Display());
             return JgsValue.Null;
+        });
+
+        // --- Console and folder commands ------------------------------------------------------
+        Define("clc", (args, line, col) =>
+        {
+            Arity("clc", args, 0, line, col);
+            host.ClearOutput();
+            return JgsValue.Null;
+        });
+
+        Define("dir", (args, line, col) =>
+        {
+            if (args.Count > 1)
+            {
+                throw new JgsRuntimeException(line, col, "dir(pattern) expects at most one argument.");
+            }
+
+            return ListDirectory(host, args.Count == 1 ? Str("dir", args, 0, line, col) : string.Empty, line, col);
+        });
+
+        Define("path", (args, line, col) =>
+        {
+            Arity("path", args, 0, line, col);
+            return JgsValue.Str(host.WorkingDirectory ?? string.Empty);
         });
 
         // --- RF networks and transmission lines ----------------------------------------------
@@ -2306,6 +2331,73 @@ internal static partial class JgsBuiltins
         }
 
         throw new JgsRuntimeException(line, col, $"{name} expects a number or numeric array, but got a {value.TypeName}.");
+    }
+
+    /// <summary>
+    /// The body of <c>dir</c>: the names in a folder as a cell array of strings, folders suffixed with
+    /// the directory separator, sorted ordinally. The bare-name echo of the cell <em>is</em> the
+    /// listing, and <c>d = dir('*.m')</c> captures it — builtins have no nargout, so MATLAB's struct
+    /// array form is deliberately not attempted. A missing folder yields an empty cell.
+    /// </summary>
+    private static JgsValue ListDirectory(JGraphScriptGlobals host, string query, int line, int col)
+    {
+        string directory;
+        string pattern;
+        string leaf = Path.GetFileName(query);
+        if (query.Length == 0)
+        {
+            directory = ResolveFolder(host, string.Empty);
+            pattern = "*";
+        }
+        else if (leaf.Contains('*', StringComparison.Ordinal) || leaf.Contains('?', StringComparison.Ordinal))
+        {
+            directory = ResolveFolder(host, Path.GetDirectoryName(query) ?? string.Empty);
+            pattern = leaf;
+        }
+        else
+        {
+            // A plain name: a folder lists its contents; anything else is matched as a file name.
+            string resolved = ResolveFolder(host, query);
+            (directory, pattern) = Directory.Exists(resolved)
+                ? (resolved, "*")
+                : (Path.GetDirectoryName(resolved) ?? resolved, leaf);
+        }
+
+        if (!Directory.Exists(directory))
+        {
+            return JgsValue.Cell(System.Array.Empty<JgsValue>());
+        }
+
+        try
+        {
+            var names = new List<string>();
+            foreach (string folder in Directory.EnumerateDirectories(directory, pattern))
+            {
+                names.Add(Path.GetFileName(folder) + Path.DirectorySeparatorChar);
+            }
+
+            foreach (string file in Directory.EnumerateFiles(directory, pattern))
+            {
+                names.Add(Path.GetFileName(file));
+            }
+
+            names.Sort(StringComparer.Ordinal);
+            return JgsValue.Cell(names.Select(JgsValue.Str).ToArray());
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or ArgumentException)
+        {
+            throw new JgsRuntimeException(line, col, $"dir: cannot list '{directory}': {ex.Message}");
+        }
+    }
+
+    /// <summary>Anchors a (possibly empty) relative folder to the run's working directory. Patterns
+    /// cannot go through the workspace resolver — it probes for existing files.</summary>
+    private static string ResolveFolder(JGraphScriptGlobals host, string path)
+    {
+        string baseDir = host.WorkingDirectory is { Length: > 0 } working
+            ? working
+            : Directory.GetCurrentDirectory();
+        return path.Length == 0 ? baseDir : Path.IsPathRooted(path) ? path : Path.Combine(baseDir, path);
     }
 
     /// <summary>

@@ -31,6 +31,8 @@ internal static partial class JgsBuiltins
         ["save"] = "MAT-files — use savefigure for figures",
         ["parfeval"] = "parallel execution",
         ["gpuArray"] = "GPU arrays",
+        ["addpath"] = "a search path — files resolve against the script's folder and the workspace root",
+        ["rmpath"] = "a search path — files resolve against the script's folder and the workspace root",
     };
 
     /// <summary>Whether <paramref name="name"/> is a MATLAB function JGraph deliberately does not have.</summary>

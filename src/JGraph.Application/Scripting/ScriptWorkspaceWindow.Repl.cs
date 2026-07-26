@@ -265,6 +265,10 @@ public partial class ScriptWorkspaceWindow
         if (result.ExitCode is { } exitCode)
         {
             AppendConsole($"--- exit({exitCode}) — closing JGraph. ---");
+
+            // A script that says exit means it: pre-approve shutdown so the unsaved-changes prompts
+            // stay out of the way (Shutdown ignores a Cancel anyway, but must not raise dialogs).
+            _shutdownApproved = true;
             System.Windows.Application.Current?.Shutdown(exitCode);
         }
     }

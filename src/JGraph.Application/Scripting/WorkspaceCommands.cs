@@ -23,6 +23,9 @@ public static class WorkspaceCommands
     /// <summary>Saves the active script, prompting for a path when it has none.</summary>
     public static RoutedUICommand Save { get; } = Create("Save", Key.S, ModifierKeys.Control);
 
+    /// <summary>Saves the active script to a path the user picks, re-homing the document there.</summary>
+    public static RoutedUICommand SaveAs { get; } = Create("Save As…", Key.S, ModifierKeys.Control | ModifierKeys.Shift);
+
     /// <summary>Closes the active script tab.</summary>
     public static RoutedUICommand CloseTab { get; } = Create("Close Tab", Key.W, ModifierKeys.Control);
 

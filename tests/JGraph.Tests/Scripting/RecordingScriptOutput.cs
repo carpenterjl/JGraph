@@ -18,4 +18,9 @@ internal sealed class RecordingScriptOutput : IScriptOutput
     public void WriteLine(string text) => Normal.Add(text + "\n");
 
     public void WriteError(string text) => Errors.Add(text);
+
+    /// <summary>How many times <c>clc</c> cleared the display (the recorded text is kept for asserts).</summary>
+    public int ClearCount { get; private set; }
+
+    public void Clear() => ClearCount++;
 }

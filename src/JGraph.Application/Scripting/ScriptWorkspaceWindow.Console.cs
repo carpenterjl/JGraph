@@ -85,6 +85,22 @@ public partial class ScriptWorkspaceWindow
         ConsoleBox.ScrollToEnd();
     }
 
+    /// <summary>
+    /// Empties the console display (the <c>clc</c> builtin). Callers may be on any thread. The pending
+    /// buffer must be dropped under the lock first: text already queued but not yet flushed would
+    /// otherwise reappear after the clear, since flushes ride the same dispatcher queue.
+    /// </summary>
+    private void ClearConsole()
+    {
+        lock (_consoleLock)
+        {
+            _pendingConsole.Clear();
+        }
+
+        // BeginInvoke (never Invoke): the interpreter thread must not block on the UI thread.
+        Dispatcher.BeginInvoke(() => ConsoleBox.Clear());
+    }
+
     /// <summary>Caps the console TextBox at <see cref="MaxConsoleChars"/>, dropping the oldest lines.</summary>
     private void TrimConsole()
     {
@@ -116,5 +132,7 @@ public partial class ScriptWorkspaceWindow
         public void WriteLine(string text) => _window.AppendScriptOutput(text, newline: true);
 
         public void WriteError(string text) => _window.AppendScriptOutput(text, newline: true);
+
+        public void Clear() => _window.ClearConsole();
     }
 }
