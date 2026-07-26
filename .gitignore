@@ -30,6 +30,9 @@ coverage*.xml
 *.coverage
 *.trx
 
+## Installer build output (see installer/build-installer.ps1)
+installer/staging/
+
 ## NuGet
 *.nupkg
 *.snupkg

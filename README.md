@@ -321,6 +321,25 @@ extension picks the language (`.jgs`, `.m`, `.csx`/`.cs`, `.py`). Relative paths
 `exportfigure`'s output — resolve against the shell's current directory. Exit codes: `0` finished,
 `1` failed, `2` bad command line, or whatever the script passed to `exit(n)`.
 
+## Install it
+
+`installer/build-installer.ps1` builds a per-machine MSI (WiX 6 — restored from NuGet, nothing to
+install first):
+
+```sh
+powershell -File installer/build-installer.ps1
+```
+
+The installer puts JGraph in `Program Files\JGraph`, adds a Start Menu entry, and asks whether to
+add JGraph to the system `PATH` so `jgraph` works from any command prompt (the default; consoles
+that were already open won't see it until reopened — and the choice is remembered the next time
+the installer runs). Re-running the installer **updates** an existing installation in place;
+uninstalling from **Apps & Features** removes the program and its PATH entry, but leaves your
+settings and your `Documents\JGraph` files alone.
+
+Target machines need the [.NET 8 Desktop Runtime](https://dotnet.microsoft.com/download/dotnet/8.0)
+— if it's missing, the app itself shows a download link on first launch.
+
 ## Themes and plugins
 
 ```csharp
@@ -403,6 +422,7 @@ dotnet run -c Release --project tests/JGraph.Benchmarks   # decimation benchmark
 ```
 
 Requires the .NET 8 SDK (or newer) on Windows (the UI projects target `net8.0-windows` / WPF).
+To produce the MSI instead, see [Install it](#install-it).
 
 ## Documentation
 

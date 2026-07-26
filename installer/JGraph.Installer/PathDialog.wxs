@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--
+  PathOptionsDlg: one checkbox - add JGraph to the system PATH - inserted between
+  InstallDirDlg and VerifyReadyDlg. Insertion works by publishing NewDialog events with a
+  higher Order than the stock set's own: for one control, MSI runs every event whose
+  condition holds in Order, and the last NewDialog wins. The stock InstallDirDlg "Next"
+  chain ends with NewDialog VerifyReadyDlg, so this fragment publishes PathOptionsDlg at a
+  higher Order and lands there instead.
+  VerifyReadyDlg's "Back" is overridden the same way, but only for a fresh install -
+  maintenance mode (repair/remove) never shows the PATH page.
+-->
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
+  <Fragment>
+    <UI Id="PathOptionsUI">
+
+      <Dialog Id="PathOptionsDlg" Width="370" Height="270" Title="[ProductName] Setup">
+        <Control Id="BannerBitmap" Type="Bitmap" X="0" Y="0" Width="370" Height="44"
+                 TabSkip="no" Text="WixUI_Bmp_Banner" />
+        <Control Id="Title" Type="Text" X="15" Y="6" Width="280" Height="15"
+                 Transparent="yes" NoPrefix="yes"
+                 Text="{\WixUI_Font_Title}Command-line access" />
+        <Control Id="Description" Type="Text" X="25" Y="23" Width="280" Height="15"
+                 Transparent="yes" NoPrefix="yes"
+                 Text="Choose whether jgraph can be run from a command prompt." />
+        <Control Id="BannerLine" Type="Line" X="0" Y="44" Width="370" Height="0" />
+
+        <Control Id="AddToPathCheckBox" Type="CheckBox" X="20" Y="65" Width="330" Height="17"
+                 Property="ADDTOPATH" CheckBoxValue="1"
+                 Text="Add JGraph to the PATH environment variable" />
+        <Control Id="AddToPathHint" Type="Text" X="33" Y="85" Width="317" Height="30"
+                 NoPrefix="yes"
+                 Text="Lets you (and other programs) run 'jgraph' from any command prompt. Consoles that are already open will not see the change until reopened." />
+
+        <Control Id="BottomLine" Type="Line" X="0" Y="234" Width="370" Height="0" />
+        <Control Id="Back" Type="PushButton" X="180" Y="243" Width="56" Height="17"
+                 Text="&amp;Back">
+          <Publish Event="NewDialog" Value="InstallDirDlg" />
+        </Control>
+        <Control Id="Next" Type="PushButton" X="236" Y="243" Width="56" Height="17"
+                 Default="yes" Text="&amp;Next">
+          <Publish Event="NewDialog" Value="VerifyReadyDlg" />
+        </Control>
+        <Control Id="Cancel" Type="PushButton" X="304" Y="243" Width="56" Height="17"
+                 Cancel="yes" Text="Cancel">
+          <Publish Event="SpawnDialog" Value="CancelDlg" />
+        </Control>
+      </Dialog>
+
+      <!-- Reroute the stock flow around the new page (fresh installs only). No condition on
+           the InstallDirDlg override: the stock CheckTargetPath event at Order 1 already
+           aborts the whole chain on an invalid path, so reaching Order 10 means the path is
+           good. (v6's InstallDirDlg no longer sets WIXUI_INSTALLDIR_VALID - conditioning on
+           it would silently skip this page.) -->
+      <Publish Dialog="InstallDirDlg" Control="Next" Event="NewDialog" Value="PathOptionsDlg"
+               Order="10" />
+      <Publish Dialog="VerifyReadyDlg" Control="Back" Event="NewDialog" Value="PathOptionsDlg"
+               Order="10" Condition="NOT Installed" />
+
+    </UI>
+  </Fragment>
+</Wix>

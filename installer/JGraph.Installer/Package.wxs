@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--
+  The JGraph Windows installer (per-machine MSI).
+
+  Layout: everything installer/build-installer.ps1 published into ../staging is harvested
+  wholesale into Program Files\JGraph, which is exactly the "deployed layout" jgraph.exe
+  expects (JGraph.Application.exe beside it). Individual files are deliberately not authored:
+  future milestones add content items, and a wildcard harvest ships them without touching
+  this file.
+
+  PATH: the ADDTOPATH property drives one Environment component. The choice is remembered in
+  HKLM\SOFTWARE\JGraph\AddToPath so a re-run or upgrade defaults to what the user picked last
+  time - see the property block below for the mechanics.
+-->
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs"
+     xmlns:ui="http://wixtoolset.org/schemas/v4/wxs/ui">
+
+  <Package Name="JGraph"
+           Manufacturer="JGraph contributors"
+           Version="$(var.ProductVersion)"
+           Scope="perMachine"
+           Compressed="yes"
+           UpgradeCode="266EE39B-347D-4ED2-94A8-484A03A6A127">
+    <!-- ^ The UpgradeCode is this product's permanent identity: it is how a re-run finds and
+         replaces an existing installation. NEVER change it - a new value would orphan every
+         existing install as a second "JGraph" in Apps & Features. -->
+
+    <MediaTemplate EmbedCab="yes" />
+
+    <!-- Re-running an equal-or-newer MSI replaces the installed product in one transaction.
+         Same-version upgrades are allowed because the product version does not move every
+         milestone. -->
+    <MajorUpgrade AllowSameVersionUpgrades="yes"
+                  DowngradeErrorMessage="A newer version of JGraph is already installed. Uninstall it first to install this older version." />
+
+    <Icon Id="JGraphIcon" SourceFile="..\..\src\JGraph.Application\Assets\jgraph.ico" />
+    <Property Id="ARPPRODUCTICON" Value="JGraphIcon" />
+    <Property Id="ARPHELPLINK" Value="https://github.com/jgraph/jgraph" />
+    <!-- ARPNOMODIFY comes from WixUI_InstallDir itself; defining it here would collide. -->
+
+    <!--
+      ADDTOPATH: set (to "1") = add the install folder to the system PATH; absent = don't.
+      MSI checkboxes are checked when their property has ANY value, so "remember the choice"
+      cannot simply read the old value back into ADDTOPATH - a remembered "0" would render as
+      a checked box. Instead the previous choice lands in JGRAPH_PREVADDTOPATH and a declined
+      "0" clears ADDTOPATH. Sequence="first" runs the clear in whichever sequence executes
+      first, so a silent re-run honours the remembered choice without clobbering a fresh UI
+      selection. Secure="yes" lets the UI-chosen value cross to the elevated server side.
+    -->
+    <Property Id="ADDTOPATH" Value="1" Secure="yes" />
+    <Property Id="JGRAPH_PREVADDTOPATH">
+      <RegistrySearch Id="PrevAddToPathSearch" Root="HKLM" Key="SOFTWARE\JGraph"
+                      Name="AddToPath" Type="raw" Bitness="always64" />
+    </Property>
+    <SetProperty Id="ADDTOPATH" Value="{}" After="AppSearch" Sequence="first"
+                 Condition="JGRAPH_PREVADDTOPATH = &quot;0&quot;" />
+
+    <StandardDirectory Id="ProgramFiles64Folder">
+      <Directory Id="INSTALLFOLDER" Name="JGraph" />
+    </StandardDirectory>
+
+    <!-- Everything the publish produced, subfolders preserved. -->
+    <ComponentGroup Id="ProductFiles" Directory="INSTALLFOLDER">
+      <Files Include="$(var.StagingDir)\**" />
+    </ComponentGroup>
+
+    <ComponentGroup Id="ProductConfiguration" Directory="INSTALLFOLDER">
+      <!-- The PATH entry itself. Permanent="no" + Part="last" means: appended on install,
+           removed (entry only, not the whole variable) on uninstall; MSI broadcasts
+           WM_SETTINGCHANGE itself, so new consoles see it - already-open ones do not. -->
+      <Component Id="PathEnvironment" Guid="57BB1482-DDD7-461E-A12A-B6473C2DC00E"
+                 Condition="ADDTOPATH" Transitive="yes" Bitness="always64">
+        <RegistryValue Root="HKLM" Key="SOFTWARE\JGraph" Name="AddToPath"
+                       Type="string" Value="1" KeyPath="yes" />
+        <Environment Id="JGraphPathEntry" Name="PATH" Value="[INSTALLFOLDER]"
+                     Part="last" Action="set" System="yes" Permanent="no" />
+      </Component>
+      <!-- The declined case still has to be remembered, or the next upgrade would silently
+           re-add PATH. Transitive on both components lets a repair flip the choice. -->
+      <Component Id="PathDeclined" Guid="4D46D8E5-3C46-4B15-B23A-0CE85A84AA3A"
+                 Condition="NOT ADDTOPATH" Transitive="yes" Bitness="always64">
+        <RegistryValue Root="HKLM" Key="SOFTWARE\JGraph" Name="AddToPath"
+                       Type="string" Value="0" KeyPath="yes" />
+      </Component>
+    </ComponentGroup>
+
+    <StandardDirectory Id="ProgramMenuFolder">
+      <Component Id="StartMenuShortcut" Guid="FB5F5BDD-34F1-48DC-8EE4-C2F814570ABE"
+                 Bitness="always64">
+        <Shortcut Id="JGraphShortcut" Name="JGraph"
+                  Description="Scientific graphing and scripting workspace"
+                  Target="[INSTALLFOLDER]JGraph.Application.exe"
+                  WorkingDirectory="INSTALLFOLDER" Icon="JGraphIcon" />
+        <!-- HKMU = HKLM under perMachine; the literal root the shortcut ICEs accept. -->
+        <RegistryValue Root="HKMU" Key="SOFTWARE\JGraph" Name="StartMenuShortcut"
+                       Type="integer" Value="1" KeyPath="yes" />
+      </Component>
+    </StandardDirectory>
+
+    <Feature Id="Main" Title="JGraph" Level="1">
+      <ComponentGroupRef Id="ProductFiles" />
+      <ComponentGroupRef Id="ProductConfiguration" />
+      <ComponentRef Id="StartMenuShortcut" />
+    </Feature>
+
+    <!-- License -> install dir -> PATH checkbox (PathDialog.wxs) -> verify. -->
+    <ui:WixUI Id="WixUI_InstallDir" InstallDirectory="INSTALLFOLDER" />
+    <WixVariable Id="WixUILicenseRtf" Value="License.rtf" />
+    <UIRef Id="PathOptionsUI" />
+
+  </Package>
+</Wix>

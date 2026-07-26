@@ -6,6 +6,7 @@
     <UseWPF>true</UseWPF>
     <RootNamespace>JGraph.Application</RootNamespace>
     <AssemblyName>JGraph.Application</AssemblyName>
+    <ApplicationIcon>Assets\jgraph.ico</ApplicationIcon>
     <Description>MVVM application shell for JGraph: the figure window, view models, and dependency-injection composition root.</Description>
   </PropertyGroup>
 

@@ -6,6 +6,8 @@
     <RootNamespace>JGraph.Cli</RootNamespace>
     <!-- The command users type. Deliberately not "JGraph.Cli": this is the product's CLI face. -->
     <AssemblyName>jgraph</AssemblyName>
+    <!-- The application project owns the product icon; the launcher wears the same one. -->
+    <ApplicationIcon>..\JGraph.Application\Assets\jgraph.ico</ApplicationIcon>
     <Description>Command-line launcher for JGraph: runs scripts headlessly (-batch) and starts the application with startup options (-r, -logfile, -h).</Description>
   </PropertyGroup>
 

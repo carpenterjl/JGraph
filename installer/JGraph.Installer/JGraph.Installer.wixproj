@@ -1,0 +1,27 @@
+<Project Sdk="WixToolset.Sdk/6.0.2">
+
+  <!--
+    The JGraph MSI. Deliberately NOT part of JGraph.sln: it consumes ../staging, which only
+    exists after installer/build-installer.ps1 has published both executables, so it must not
+    run on an ordinary solution build. Build it through that script.
+  -->
+  <PropertyGroup>
+    <ProductVersion Condition="'$(ProductVersion)' == ''">0.1.0</ProductVersion>
+    <StagingDir Condition="'$(StagingDir)' == ''">$(MSBuildThisFileDirectory)..\staging</StagingDir>
+    <OutputName>JGraph-$(ProductVersion)</OutputName>
+    <!-- 64-bit package: ProgramFiles64Folder and the 64-bit registry view. -->
+    <InstallerPlatform>x64</InstallerPlatform>
+    <DefineConstants>$(DefineConstants);ProductVersion=$(ProductVersion);StagingDir=$(StagingDir)</DefineConstants>
+    <!-- Inherited from Directory.Build.props but meaningless to a WiX build. -->
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+    <!-- ICE61 is the expected "same version upgrade" note from AllowSameVersionUpgrades.
+         ICE57 is the known false positive for an all-users Start Menu shortcut in a
+         perMachine package (ProgramMenuFolder counts as "per-user data" regardless). -->
+    <SuppressIces>ICE57;ICE61</SuppressIces>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="WixToolset.UI.wixext" Version="6.0.2" />
+  </ItemGroup>
+
+</Project>

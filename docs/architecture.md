@@ -607,6 +607,13 @@ Implemented through Milestone 24 — a working figure window you can edit, save,
   light-tuned C#/Python definitions are re-contrasted by rule against the editor background. App
   chrome stays separate from `JGraph.Core.Drawing.ITheme`, which is plot ink and ends up inside
   `.graph` files (ADR 0034).
+- **M33** JGraph got an installer. `installer/build-installer.ps1` publishes both executables into
+  one staging folder — the "deployed layout" `GuiLauncher` already expected — and builds a
+  per-machine MSI from it with WiX 6 (`installer/JGraph.Installer`, deliberately outside the
+  solution). The MSI harvests the staging folder wholesale, adds a Start Menu shortcut, and offers
+  an "add JGraph to PATH" checkbox whose choice is remembered across upgrades; re-running the MSI
+  updates in place (`MajorUpgrade`, immutable UpgradeCode) and uninstalling removes the PATH entry
+  with the product (ADR 0036).
 
 The `JGraph.Demo` gallery exercises the plot types, annotations, and both APIs;
 `JGraph.Application` is the interactive figure window with data import and scripting.
