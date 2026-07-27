@@ -112,4 +112,16 @@ public partial class ScriptWorkspaceWindow
             Dispatcher.Invoke(() => _figureWindows.ShowScriptFigure(number, figure));
         }
     }
+
+    private void CloseFigureOnUi(int number)
+    {
+        if (Dispatcher.CheckAccess())
+        {
+            _figureWindows.CloseScriptFigure(number);
+        }
+        else
+        {
+            Dispatcher.Invoke(() => _figureWindows.CloseScriptFigure(number));
+        }
+    }
 }

@@ -319,6 +319,10 @@ public static class JgsBuiltinCatalog
         // --- Figure setup and plotting -------------------------------------------------------------
         Add("figure", "Starts a new figure (or selects figure n) and returns its handle (a figure number, so it starts at 1).", Opt("n"));
         Add("subplot", "Selects cell index of a rows-by-cols axes grid (a grid cell number, so 1-based, row-major).", P("rows"), P("cols"), P("index"));
+        Add("close", "Closes the current figure, figure n, or every figure with close all.", Opt("n"));
+        Add("clf", "Clears the current figure (or figure n), keeping its window open.", Opt("n"));
+        Add("gcf", "The current figure's number.");
+        Add("gca", "Selects the current axes, creating a figure and axes if there are none.");
         Add("plot", "Line plot: plot(y), plot(x, y, spec?), or plot(table, xColumn, yColumn, spec?).", P("x"), P("y"), Opt("spec"));
         Add("scatter", "Scatter plot: scatter(x, y) or scatter(table, xColumn, yColumn).", P("x"), P("y"));
         Add("bar", "Bar chart: bar(x, y) or bar(table, xColumn, yColumn).", P("x"), P("y"));

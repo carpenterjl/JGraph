@@ -31,13 +31,17 @@ public sealed class ScriptContext
     /// (the corresponding builtins then fail with a clear message).</param>
     /// <param name="audio">Audio playback for <c>sound(y, fs)</c>, or null when the host offers none
     /// (the builtin then fails with a clear message).</param>
+    /// <param name="closeFigure">Invoked when the script calls <c>close</c>, with the figure's number,
+    /// so the host can close the window it opened. Null when the host shows figures somewhere that
+    /// cannot be closed (batch runs, tests).</param>
     public ScriptContext(
         IScriptOutput output,
         Action<int, FigureModel> showFigure,
         string? workingDirectory,
         Func<string, string>? resolvePath,
         IScriptFigureFiles? figureFiles = null,
-        IScriptAudio? audio = null)
+        IScriptAudio? audio = null,
+        Action<int>? closeFigure = null)
     {
         Output = output ?? throw new ArgumentNullException(nameof(output));
         ShowFigure = showFigure ?? throw new ArgumentNullException(nameof(showFigure));
@@ -45,6 +49,7 @@ public sealed class ScriptContext
         ResolvePath = resolvePath;
         FigureFiles = figureFiles;
         Audio = audio;
+        CloseFigure = closeFigure;
     }
 
     /// <summary>The sink for script output.</summary>
@@ -53,6 +58,9 @@ public sealed class ScriptContext
     /// <summary>The callback that displays a figure produced by the script, keyed by its 1-based number
     /// so the host can reuse one window per figure across runs.</summary>
     public Action<int, FigureModel> ShowFigure { get; }
+
+    /// <summary>The callback that closes the window showing a figure, or null when the host has none.</summary>
+    public Action<int>? CloseFigure { get; }
 
     /// <summary>Figure save/load/export services, or null when the host offers none.</summary>
     public IScriptFigureFiles? FigureFiles { get; }

@@ -135,6 +135,15 @@ public sealed class AxesModel : GraphObject
     }
 
     /// <summary>
+    /// When true, plotting into these axes adds to what is already there instead of replacing it
+    /// (MATLAB <c>hold on</c>). Hold belongs to the axes, as in MATLAB, so it ends when the axes does —
+    /// a new figure or <c>clf</c> starts unheld. It is a transient editing mode, not part of the
+    /// figure's appearance, so it is neither saved to a <c>.graph</c> file nor shown in the inspector.
+    /// </summary>
+    [Browsable(false)]
+    public bool Hold { get; set; }
+
+    /// <summary>
     /// When true (default), the rectangular axis frame is drawn around the plot area. Polar and Smith
     /// charts turn it off because they draw their own circular grid instead.
     /// </summary>

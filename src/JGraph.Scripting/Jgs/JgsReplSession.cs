@@ -23,7 +23,6 @@ internal sealed class JgsReplSession : IScriptSession
     private JgsEnvironment _environment = null!;
     private Interpreter _interpreter = null!;
     private Dictionary<string, JgsValue> _pristine = null!;
-    private int _figuresReported;
     private bool _disposed;
 
     /// <summary>Creates a session and its first workspace. Resets the figure registry: a new session
@@ -77,7 +76,6 @@ internal sealed class JgsReplSession : IScriptSession
 
         ReleaseWorkspace();
         JG.Reset();
-        _figuresReported = 0;
         Build();
     }
 
@@ -95,6 +93,7 @@ internal sealed class JgsReplSession : IScriptSession
 
     private ScriptRunResult Execute(string code, string sourceId, CancellationToken cancellationToken, bool asFile = false)
     {
+        _globals.BeginRun(asFile ? ScriptDirectoryOf(sourceId) : null);
         _interpreter.BeginStatement(cancellationToken);
         try
         {
@@ -107,13 +106,13 @@ internal sealed class JgsReplSession : IScriptSession
                 JgsRunner.InvokeMainIfFunctionFile(program, _environment);
             }
 
-            _globals.ShowUnshownFigures();
-            return ScriptRunResult.Ok(TakeFiguresShown(), GetVariables());
+            _globals.ShowTouchedFigures();
+            return ScriptRunResult.Ok(_globals.FiguresShown, GetVariables());
         }
         catch (Exception ex) when (ScriptExitException.Unwrap(ex) is { } exit)
         {
-            _globals.ShowUnshownFigures();
-            return ScriptRunResult.Exited(exit.ExitCode, TakeFiguresShown(), GetVariables());
+            _globals.ShowTouchedFigures();
+            return ScriptRunResult.Exited(exit.ExitCode, _globals.FiguresShown, GetVariables());
         }
         catch (JgsException ex)
         {
@@ -121,28 +120,24 @@ internal sealed class JgsReplSession : IScriptSession
             // Whatever ran before the error keeps its effect, exactly as MATLAB does.
             var diagnostic = new ScriptDiagnostic(ex.Line, ex.Column, ex.Message, IsError: true);
             _context.Output.WriteError(diagnostic.ToString());
-            _globals.ShowUnshownFigures();
+            _globals.ShowTouchedFigures();
             return ScriptRunResult.Failed(ex.Message, new[] { diagnostic });
         }
         catch (OperationCanceledException)
         {
-            _globals.ShowUnshownFigures();
+            _globals.ShowTouchedFigures();
             return ScriptRunResult.Failed("Statement was cancelled.");
         }
     }
 
     /// <summary>
-    /// The figures displayed by the statement that just finished. <see cref="JGraphScriptGlobals"/>
-    /// counts for the life of the session, so the host is told the delta — otherwise every statement
-    /// would report every figure the session has ever opened.
+    /// The folder a file run's relative paths are tried against. The source id is the document's path
+    /// when it has one; an unsaved document passes an empty id and simply has no folder of its own.
     /// </summary>
-    private int TakeFiguresShown()
-    {
-        int total = _globals.FiguresShown;
-        int delta = total - _figuresReported;
-        _figuresReported = total;
-        return delta < 0 ? 0 : delta;
-    }
+    private static string? ScriptDirectoryOf(string sourceId) =>
+        sourceId.Length > 0 && System.IO.Path.IsPathRooted(sourceId)
+            ? System.IO.Path.GetDirectoryName(sourceId)
+            : null;
 
     private void Build()
     {

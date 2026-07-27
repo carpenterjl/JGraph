@@ -622,6 +622,17 @@ Implemented through Milestone 24 — a working figure window you can edit, save,
   to a writable copy instead of failing into the status bar. The console gained `clc` (a `Clear()`
   default method on `IScriptOutput`), `dir` (a cell of names via the host resolver), and a
   display-only `path`; `addpath`/`rmpath` name the missing search path explicitly (ADR 0037).
+- **M35** Running a script twice does the same thing twice. Figure display became per run: `JG`
+  stamps every figure a run touches, and the run displays exactly those — so a re-run brings its
+  windows back (recreating any the user closed) and the figure count stops counting figures the run
+  never touched. Closing a figure window now retires the figure itself, and scripts gained `close`,
+  `close all`, `clf`, `gcf`, and `gca` over a new `ScriptContext.CloseFigure` host callback.
+  `figure(n)` as a statement prints nothing and sets no `ans`, and `ans` inside a function body stays
+  in the call frame. `hold` moved onto the axes (so it ends with them), and `hold off`/`grid off`
+  read the word instead of its truthiness — they used to turn the feature *on*. Plotting without hold
+  resets the axes the way MATLAB's `NextPlot='replace'` does, so a re-run no longer inherits the
+  previous run's title or frozen limits. F5 resolves a script's relative paths beside the script
+  again (ADR 0038).
 
 The `JGraph.Demo` gallery exercises the plot types, annotations, and both APIs;
 `JGraph.Application` is the interactive figure window with data import and scripting.

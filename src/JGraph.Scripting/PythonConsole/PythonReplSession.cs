@@ -37,7 +37,6 @@ internal sealed class PythonReplSession : IScriptSession
     private IReadOnlyList<ScriptVariable> _variables = Array.Empty<ScriptVariable>();
     private string? _startFailure;
     private int _nextId;
-    private int _figuresReported;
     private bool _disposed;
 
     /// <summary>Creates a session. The child process is not started until the first statement, so
@@ -76,6 +75,7 @@ internal sealed class PythonReplSession : IScriptSession
             return ScriptRunResult.Failed(_startFailure ?? PythonScriptEngine.UnavailableMessage);
         }
 
+        _globals.BeginRun();
         var done = new TaskCompletionSource<PythonConsoleMessage>(TaskCreationOptions.RunContinuationsAsynchronously);
         _pendingDone = done;
         int id = ++_nextId;
@@ -91,16 +91,16 @@ internal sealed class PythonReplSession : IScriptSession
             {
                 PythonConsoleMessage result = await done.Task.ConfigureAwait(false);
                 await RefreshVariablesAsync().ConfigureAwait(false);
-                _globals.ShowUnshownFigures();
+                _globals.ShowTouchedFigures();
 
                 if (result.Exit is { } exitCode)
                 {
-                    return ScriptRunResult.Exited(exitCode, TakeFiguresShown(), _variables);
+                    return ScriptRunResult.Exited(exitCode, _globals.FiguresShown, _variables);
                 }
 
                 if (result.Ok)
                 {
-                    return ScriptRunResult.Ok(TakeFiguresShown(), _variables);
+                    return ScriptRunResult.Ok(_globals.FiguresShown, _variables);
                 }
 
                 string message = result.Message ?? "The statement failed.";
@@ -110,7 +110,7 @@ internal sealed class PythonReplSession : IScriptSession
         }
         catch (SessionRestartedException)
         {
-            _globals.ShowUnshownFigures();
+            _globals.ShowTouchedFigures();
             return ScriptRunResult.Failed("Statement was cancelled. The Python session restarted — variables were lost.");
         }
         catch (Exception ex) when (ex is IOException or InvalidOperationException or ObjectDisposedException)
@@ -132,7 +132,6 @@ internal sealed class PythonReplSession : IScriptSession
         StopChild();
         JG.Reset();
         _variables = Array.Empty<ScriptVariable>();
-        _figuresReported = 0;
         _globals = new JGraphScriptGlobals(_context);
         _bridge = new PythonHostBridge(_globals);
     }
@@ -374,15 +373,6 @@ internal sealed class PythonReplSession : IScriptSession
         _pendingDone?.TrySetException(failure);
         _pendingVars?.TrySetException(failure);
         _pendingReady?.TrySetResult(false);
-    }
-
-    /// <summary>Figures displayed by the statement that just ran — see the note in <c>JgsReplSession</c>.</summary>
-    private int TakeFiguresShown()
-    {
-        int total = _globals.FiguresShown;
-        int delta = total - _figuresReported;
-        _figuresReported = total;
-        return delta < 0 ? 0 : delta;
     }
 
     /// <summary>Signals that the child was killed under a statement, so the caller can say why.</summary>

@@ -448,9 +448,10 @@ y = <span class="fn">exp</span>(<span class="num">-3</span>*t) .* <span class="f
         <tr><td class="sig"><code><span class="fn">subplot</span>(<span class="num">2</span>,<span class="num">1</span>,<span class="num">1</span>)</code></td><td>Split the figure into a 2×1 grid and select cell 1 (a grid cell <em>number</em>, so it starts at 1, row-major) as the current axes.</td></tr>
         <tr><td class="sig"><code><span class="fn">hold</span>(<span class="kw">true</span>)</code></td><td>Keep existing series when plotting more, so multiple <code>plot</code> calls overlay on one axes. <code>hold(false)</code> replaces.</td></tr>
         <tr><td class="sig"><code><span class="fn">show</span>()</code></td><td>Open (or refresh) a window for the current figure. <code>show(2)</code> shows figure 2.</td></tr>
+        <tr><td class="sig"><code><span class="fn">close</span>()</code></td><td>Close the current figure, or <code>close(2)</code> / <code>close all</code>. <code>clf</code> empties a figure instead, keeping its window.</td></tr>
       </tbody>
     </table>
-    <p>Each figure opens in its own window with the full JGraph chrome — pan, zoom, the property inspector, and export all work just as in the main app. Nothing appears until you call <code>show</code>; re-running the script updates the same numbered windows in place instead of spawning new ones.</p>
+    <p>Each figure opens in its own window with the full JGraph chrome — pan, zoom, the property inspector, and export all work just as in the main app. A run displays every figure it drew into, whether or not you called <code>show</code>, so running a script always leaves its figures on screen: re-running updates the same numbered windows in place, and brings back any you closed in between. Closing a window retires that figure — the next <code>figure(n)</code> under the same number starts fresh.</p>
 
     <h2 id="linespec">Line-spec strings</h2>
     <p><code>plot</code> and the <code>semilog*</code>/<code>loglog</code> verbs take an optional spec string combining a color, a line style, and a marker (any order; unknown characters are ignored). Example: <code>"r--o"</code> = red, dashed line, circle markers.</p>
@@ -601,11 +602,14 @@ y = <span class="fn">exp</span>(<span class="num">-3</span>*t) .* <span class="f
         <tr><td class="sig"><code><span class="fn">semilogx</span>(x, y, <span class="opt">spec</span>)</code> <code><span class="fn">semilogy</span>(...)</code> <code><span class="fn">loglog</span>(...)</code></td><td>Line plots with a log x-axis / log y-axis / both.</td></tr>
         <tr><td class="sig"><code><span class="fn">title</span>(text)</code> <code><span class="fn">xlabel</span>(text)</code> <code><span class="fn">ylabel</span>(text)</code></td><td>Set the current axes title / axis labels.</td></tr>
         <tr><td class="sig"><code><span class="fn">xlim</span>(min, max)</code> <code><span class="fn">ylim</span>(min, max)</code></td><td>Set the axis ranges — two numbers or one <code>[min, max]</code> array (<code>xlim([-fs/2, fs/2])</code>).</td></tr>
-        <tr><td class="sig"><code><span class="fn">grid</span>(<span class="opt">on</span>)</code> <code><span class="fn">hold</span>(<span class="opt">on</span>)</code></td><td>Toggle grid lines / overlay-mode. Both default to on when called with no argument.</td></tr>
+        <tr><td class="sig"><code><span class="fn">grid</span>(<span class="opt">on</span>)</code> <code><span class="fn">hold</span>(<span class="opt">on</span>)</code></td><td>Grid lines / overlay-mode. Takes <code>true</code>/<code>false</code> or the words <code>'on'</code>/<code>'off'</code> (so MATLAB's <code>hold off</code> really turns it off). A bare call turns it on in JGS and toggles in the MATLAB dialect. Hold belongs to the current axes, so a new figure or <code>clf</code> starts unheld.</td></tr>
         <tr><td class="sig"><code><span class="fn">legend</span>(names...)</code></td><td>Set the legend — one string per series.</td></tr>
         <tr><td class="sig"><code><span class="fn">figure</span>(<span class="opt">n</span>)</code></td><td>Start a new figure (or select figure <code>n</code>) and return its handle (a figure <em>number</em>, so it starts at 1).</td></tr>
         <tr><td class="sig"><code><span class="fn">subplot</span>(rows, cols, index)</code></td><td>Select cell <code>index</code> (a grid cell number, so 1-based, row-major) of a <code>rows</code>×<code>cols</code> grid as the current axes.</td></tr>
         <tr><td class="sig"><code><span class="fn">show</span>(<span class="opt">fig</span>)</code></td><td>Show the current figure (or figure <code>fig</code>) in its own window.</td></tr>
+        <tr><td class="sig"><code><span class="fn">close</span>(<span class="opt">n</span>)</code> <code>close all</code></td><td>Close the current figure, figure <code>n</code>, or every figure. A closed figure is gone: the next <code>figure(n)</code> with that number starts a fresh one.</td></tr>
+        <tr><td class="sig"><code><span class="fn">clf</span>(<span class="opt">n</span>)</code></td><td>Empty the current figure (or figure <code>n</code>), keeping its window open.</td></tr>
+        <tr><td class="sig"><code><span class="fn">gcf</span>()</code> <code><span class="fn">gca</span>()</code></td><td>The current figure's number / select the current axes, creating a figure and axes if there are none.</td></tr>
       </tbody>
     </table></div>
 

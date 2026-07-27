@@ -13,14 +13,14 @@ namespace JGraph.Tests.Scripting;
 [Collection("JG facade")]
 public class JgsReplSessionTests : IDisposable
 {
-    private readonly List<FigureModel> _figures = new();
+    private readonly List<(int Number, FigureModel Figure)> _figures = new();
     private readonly RecordingScriptOutput _output = new();
 
     public JgsReplSessionTests() => JG.Reset();
 
     public void Dispose() => JG.Reset();
 
-    private ScriptContext Context() => new(_output, (_, figure) => _figures.Add(figure));
+    private ScriptContext Context() => new(_output, (number, figure) => _figures.Add((number, figure)));
 
     private IScriptSession NewSession(IScriptEngine engine) =>
         Assert.IsAssignableFrom<IScriptRepl>(engine).CreateSession(Context());
@@ -87,7 +87,7 @@ public class JgsReplSessionTests : IDisposable
     }
 
     [Fact]
-    public async Task Figures_SurviveAcrossStatements_AndOnlyNewOnesAreCounted()
+    public async Task AStatementThatTouchesAFigure_RefreshesTheSameWindow()
     {
         await using IScriptSession session = NewSession(new JgsScriptEngine());
 
@@ -95,8 +95,11 @@ public class JgsReplSessionTests : IDisposable
         ScriptRunResult second = await Exec(session, "title(\"second statement\")");
 
         Assert.Equal(1, first.FiguresShown);
-        Assert.Equal(0, second.FiguresShown); // the same figure, not a new one
-        Assert.Equal("second statement", Assert.Single(_figures).Axes[0].Title);
+        Assert.Equal(1, second.FiguresShown); // the same figure again, displayed with its new title
+        Assert.Equal(2, _figures.Count);
+        Assert.Same(_figures[0].Figure, _figures[1].Figure);
+        Assert.Equal(1, _figures[1].Number);
+        Assert.Equal("second statement", _figures[1].Figure.Axes[0].Title);
     }
 
     [Fact]
@@ -191,7 +194,7 @@ public class JgsReplSessionTests : IDisposable
 
         Assert.True(result.Success, result.Message + _output.ErrorText);
         Assert.Equal(1, result.FiguresShown);
-        Assert.Equal("Figure 1", Assert.Single(_figures).Axes[0].Title);
+        Assert.Equal("Figure 1", Assert.Single(_figures).Figure.Axes[0].Title);
     }
 
     [Fact]

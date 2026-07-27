@@ -20,6 +20,12 @@ public interface IFigureWindowService
     /// </summary>
     int OpenBlankFigure();
 
+    /// <summary>
+    /// Closes the window showing figure <paramref name="number"/>, if one is open — the host half of
+    /// the script's <c>close</c>. Must be called on the UI thread.
+    /// </summary>
+    void CloseScriptFigure(int number);
+
     /// <summary>Closes every script figure window.</summary>
     void CloseAll();
 }

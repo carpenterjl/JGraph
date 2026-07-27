@@ -17,16 +17,25 @@ namespace JGraph.Api;
 /// </summary>
 public static class JG
 {
+    // The registry is the one part of this type two threads reach: a script runs on the engine's
+    // thread while the UI thread retires a figure whose window the user just closed. Everything
+    // else here stays single-threaded (UI-thread) by design.
+    private static readonly object Registry = new();
     private static readonly Dictionary<int, FigureModel> Figures = new();
+    private static readonly Dictionary<int, long> TouchStamps = new();
     private static FigureModel? _currentFigure;
     private static int _currentNumber;
     private static AxesModel? _currentAxes;
+    private static long _touchCounter;
 
     /// <summary>Raised when <see cref="Show"/> is called, so a host can open a window for the figure.</summary>
     public static event EventHandler<FigureModel>? FigureShown;
 
-    /// <summary>Whether new plots accumulate (hold on) or replace existing content (hold off, default).</summary>
-    public static bool IsHolding { get; private set; }
+    /// <summary>
+    /// Whether new plots accumulate (hold on) or replace existing content (hold off, default).
+    /// Hold lives on the current axes, as in MATLAB, so it ends when those axes do.
+    /// </summary>
+    public static bool IsHolding => _currentAxes?.Hold ?? false;
 
     /// <summary>The current figure, creating figure 1 if none exists yet.</summary>
     public static FigureModel CurrentFigure => _currentFigure ?? Figure(1);
@@ -44,13 +53,16 @@ public static class JG
     /// <summary>Creates a new figure under the next unused number, makes it current, and returns it.</summary>
     public static FigureModel Figure()
     {
-        int number = 1;
-        while (Figures.ContainsKey(number))
+        lock (Registry)
         {
-            number++;
-        }
+            int number = 1;
+            while (Figures.ContainsKey(number))
+            {
+                number++;
+            }
 
-        return Figure(number);
+            return Figure(number);
+        }
     }
 
     /// <summary>
@@ -64,25 +76,32 @@ public static class JG
             throw new ArgumentOutOfRangeException(nameof(number), "Figure numbers are 1-based.");
         }
 
-        if (!Figures.TryGetValue(number, out FigureModel? figure))
+        lock (Registry)
         {
-            figure = CreateFigure();
-            Figures[number] = figure;
-        }
+            if (!Figures.TryGetValue(number, out FigureModel? figure))
+            {
+                figure = CreateFigure();
+                Figures[number] = figure;
+            }
 
-        _currentFigure = figure;
-        _currentNumber = number;
-        _currentAxes = figure.Axes.Count > 0 ? figure.Axes[^1] : null;
-        return figure;
+            _currentFigure = figure;
+            _currentNumber = number;
+            _currentAxes = figure.Axes.Count > 0 ? figure.Axes[^1] : null;
+            Touch(number);
+            return figure;
+        }
     }
 
     /// <summary>Gets the figure registered under <paramref name="number"/>, if any.</summary>
     public static bool TryGetFigure(int number, out FigureModel figure)
     {
-        if (Figures.TryGetValue(number, out FigureModel? found))
+        lock (Registry)
         {
-            figure = found;
-            return true;
+            if (Figures.TryGetValue(number, out FigureModel? found))
+            {
+                figure = found;
+                return true;
+            }
         }
 
         figure = null!;
@@ -96,22 +115,63 @@ public static class JG
     public static int RegisterFigure(FigureModel figure)
     {
         ArgumentNullException.ThrowIfNull(figure);
-        int number = GetFigureNumber(figure);
-        if (number == 0)
+        lock (Registry)
         {
-            number = 1;
-            while (Figures.ContainsKey(number))
+            int number = GetFigureNumber(figure);
+            if (number == 0)
             {
-                number++;
+                number = 1;
+                while (Figures.ContainsKey(number))
+                {
+                    number++;
+                }
+
+                Figures[number] = figure;
             }
 
-            Figures[number] = figure;
+            _currentFigure = figure;
+            _currentNumber = number;
+            _currentAxes = figure.Axes.Count > 0 ? figure.Axes[^1] : null;
+            Touch(number);
+            return number;
+        }
+    }
+
+    /// <summary>
+    /// A marker for "now" in the figure-touch sequence. Pair it with <see cref="FiguresTouchedSince"/>
+    /// to learn which figures a stretch of script work selected, created, or drew into.
+    /// </summary>
+    public static long TouchStamp => _touchCounter;
+
+    /// <summary>
+    /// The registered figures touched after <paramref name="stamp"/>, ascending by number. A script run
+    /// uses this to display exactly the figures it worked on, leaving figures opened elsewhere alone.
+    /// </summary>
+    public static IReadOnlyList<int> FiguresTouchedSince(long stamp)
+    {
+        var numbers = new List<int>();
+        lock (Registry)
+        {
+            foreach ((int number, long touched) in TouchStamps)
+            {
+                if (touched > stamp && Figures.ContainsKey(number))
+                {
+                    numbers.Add(number);
+                }
+            }
         }
 
-        _currentFigure = figure;
-        _currentNumber = number;
-        _currentAxes = figure.Axes.Count > 0 ? figure.Axes[^1] : null;
-        return number;
+        numbers.Sort();
+        return numbers;
+    }
+
+    /// <summary>Records that figure <paramref name="number"/> was selected, created, or drawn into.</summary>
+    private static void Touch(int number)
+    {
+        if (number >= 1)
+        {
+            TouchStamps[number] = ++_touchCounter;
+        }
     }
 
     /// <summary>The numbers of every registered figure, ascending.</summary>
@@ -119,7 +179,12 @@ public static class JG
     {
         get
         {
-            var numbers = new List<int>(Figures.Keys);
+            List<int> numbers;
+            lock (Registry)
+            {
+                numbers = new List<int>(Figures.Keys);
+            }
+
             numbers.Sort();
             return numbers;
         }
@@ -128,11 +193,14 @@ public static class JG
     /// <summary>The number a figure is registered under, or 0 when it is not registered.</summary>
     public static int GetFigureNumber(FigureModel figure)
     {
-        foreach ((int number, FigureModel candidate) in Figures)
+        lock (Registry)
         {
-            if (ReferenceEquals(candidate, figure))
+            foreach ((int number, FigureModel candidate) in Figures)
             {
-                return number;
+                if (ReferenceEquals(candidate, figure))
+                {
+                    return number;
+                }
             }
         }
 
@@ -143,9 +211,17 @@ public static class JG
     public static FigureModel Gcf() => CurrentFigure;
 
     /// <summary>Returns the current axes, creating a figure and axes if necessary (MATLAB <c>gca</c>).</summary>
-    public static AxesModel Gca() => _currentAxes ??= CurrentFigure.Axes.Count > 0
-        ? CurrentFigure.Axes[^1]
-        : CurrentFigure.AddAxes();
+    public static AxesModel Gca()
+    {
+        AxesModel axes = _currentAxes ??= CurrentFigure.Axes.Count > 0
+            ? CurrentFigure.Axes[^1]
+            : CurrentFigure.AddAxes();
+
+        // Every drawing verb funnels through here, so this is where a figure earns its "touched
+        // this run" stamp — the run then knows which windows to display when it finishes.
+        Touch(_currentNumber);
+        return axes;
+    }
 
     /// <summary>Plots a line, applying an optional MATLAB line-spec such as <c>"r--o"</c>.</summary>
     public static LinePlot Plot(double[] xs, double[] ys, string? lineSpec = null)
@@ -449,6 +525,7 @@ public static class JG
         _currentAxes = null;
         BodeChart chart = figure.AddBode(numerator, denominator, omegaMin, omegaMax, points);
         _currentAxes = chart.Magnitude;
+        Touch(_currentNumber);
         return chart;
     }
 
@@ -465,12 +542,14 @@ public static class JG
             if (BoundsClose(existing.NormalizedBounds, bounds))
             {
                 _currentAxes = existing;
+                Touch(_currentNumber);
                 return existing;
             }
         }
 
         AxesModel axes = figure.AddSubplot(rows, cols, index);
         _currentAxes = axes;
+        Touch(_currentNumber);
         return axes;
     }
 
@@ -560,7 +639,7 @@ public static class JG
         Gca().AddLineAnnotation(x1, y1, x2, y2);
 
     /// <summary>Sets whether subsequent plots accumulate (MATLAB <c>hold on/off</c>).</summary>
-    public static void Hold(bool on = true) => IsHolding = on;
+    public static void Hold(bool on = true) => Gca().Hold = on;
 
     /// <summary>Sets the current X axis limits and disables auto-scaling on it.</summary>
     public static void XLim(double min, double max)
@@ -584,6 +663,59 @@ public static class JG
         _currentFigure?.Axes.Clear();
         _currentFigure?.Annotations.Clear();
         _currentAxes = null;
+        Touch(_currentNumber);
+    }
+
+    /// <summary>Clears figure <paramref name="number"/>, making it current first (MATLAB <c>clf(n)</c>).</summary>
+    public static void Clf(int number)
+    {
+        Figure(number);
+        Clf();
+    }
+
+    /// <summary>
+    /// Removes figure <paramref name="number"/> from the registry (MATLAB <c>close</c>), returning
+    /// whether it was there. The most recently touched surviving figure becomes current, so a later
+    /// <c>gcf</c> or bare <c>plot</c> lands somewhere sensible; with none left, the next figure verb
+    /// starts again at figure 1.
+    /// </summary>
+    public static bool CloseFigure(int number)
+    {
+        lock (Registry)
+        {
+            if (!Figures.Remove(number))
+            {
+                return false;
+            }
+
+            TouchStamps.Remove(number);
+            if (_currentNumber != number)
+            {
+                return true;
+            }
+
+            _currentFigure = null;
+            _currentNumber = 0;
+            _currentAxes = null;
+
+            int successor = 0;
+            long best = long.MinValue;
+            foreach ((int candidate, long touched) in TouchStamps)
+            {
+                if (touched > best && Figures.ContainsKey(candidate))
+                {
+                    successor = candidate;
+                    best = touched;
+                }
+            }
+
+            if (successor != 0)
+            {
+                Figure(successor);
+            }
+
+            return true;
+        }
     }
 
     /// <summary>Signals a host to display the current figure.</summary>
@@ -592,11 +724,15 @@ public static class JG
     /// <summary>Resets the figure registry and the current-figure/current-axes/hold state (run start, tests).</summary>
     public static void Reset()
     {
-        Figures.Clear();
+        lock (Registry)
+        {
+            Figures.Clear();
+            TouchStamps.Clear();
+        }
+
         _currentFigure = null;
         _currentNumber = 0;
-        _currentAxes = null;
-        IsHolding = false;
+        _currentAxes = null; // hold lives on the axes, so dropping them drops it
     }
 
     private static FigureModel CreateFigure()
@@ -646,17 +782,61 @@ public static class JG
             && System.Math.Abs(a.Height - b.Height) < tol;
     }
 
-    /// <summary>Returns the current axes, clearing it first when not holding.</summary>
+    /// <summary>Returns the current axes, resetting it first when not holding.</summary>
     private static AxesModel PrepareAxes()
     {
         AxesModel axes = Gca();
         if (!IsHolding)
         {
-            axes.Plots.Clear();
-            axes.Annotations.Clear();
+            ResetAxesForReplace(axes);
         }
 
         return axes;
+    }
+
+    /// <summary>
+    /// Returns axes to the state a fresh plot expects — MATLAB's <c>NextPlot = 'replace'</c>. Plotting
+    /// over an old plot must not inherit its title, labels, frozen limits, colorbar, or 3D view, or a
+    /// script run a second time draws its new data inside the first run's decoration.
+    /// The subplot cell (<see cref="AxesModel.NormalizedBounds"/>), the background, the title's font,
+    /// and hold are kept: those describe the axes, not the plot that was in it.
+    /// </summary>
+    private static void ResetAxesForReplace(AxesModel axes)
+    {
+        axes.Plots.Clear();
+        axes.Annotations.Clear();
+        axes.Title = string.Empty;
+
+        while (axes.XAxes.Count > 1)
+        {
+            axes.XAxes.RemoveAt(axes.XAxes.Count - 1);
+        }
+
+        while (axes.YAxes.Count > 1)
+        {
+            axes.YAxes.RemoveAt(axes.YAxes.Count - 1);
+        }
+
+        ResetAxis(axes.PrimaryXAxis);
+        ResetAxis(axes.PrimaryYAxis);
+        ResetAxis(axes.ZAxis);
+
+        axes.Grid.ShowMajor = false;
+        axes.Grid.ShowMinor = false;
+        axes.Legend.Visible = false;
+        axes.Colorbar.Visible = false;
+        axes.EqualAspect = false;
+        axes.FrameVisible = true;
+        axes.Is3D = false;
+        axes.Azimuth = -37.5;
+        axes.Elevation = 30;
+    }
+
+    private static void ResetAxis(AxisModel axis)
+    {
+        axis.Label = string.Empty;
+        axis.AutoScale = true;
+        axis.Scale = AxisScaleType.Linear;
     }
 
     private static void ApplyLineSpec(LinePlot plot, LineSpec spec)

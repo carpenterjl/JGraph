@@ -181,8 +181,10 @@ required to be rectangular.
 - **Killing the child on every statement** to guarantee isolation. That is not a session.
 - **A `close all` builtin** to match `clear`. Needs a host callback to close the window, not just the
   registry entry; deferred. The window's close button and **Clear Workspace** cover it for now.
+  *(Superseded: ADR 0038 adds that callback along with `close`, `clf`, `gcf`, and `gca`.)*
 - **`clc`.** Clearing the scrollback is a host concern, and adding `Clear()` to `IScriptOutput` would
   change an interface with several implementations for a cosmetic verb. Deferred.
+  *(Superseded: ADR 0037 adds it as a default interface method.)*
 
 ## Testing
 

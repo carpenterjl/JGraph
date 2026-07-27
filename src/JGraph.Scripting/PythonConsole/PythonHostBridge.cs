@@ -206,6 +206,8 @@ internal sealed class PythonHostBridge
         JsonValueKind.True => true,
         JsonValueKind.False => false,
         JsonValueKind.Number => element.GetDouble() != 0,
+        // MATLAB's words, for symmetry with the script dialects — "off" must not read as truthy.
+        JsonValueKind.String when "off".Equals(element.GetString(), StringComparison.OrdinalIgnoreCase) => false,
         _ => true,
     };
 

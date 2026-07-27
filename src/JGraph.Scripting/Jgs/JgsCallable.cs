@@ -41,6 +41,13 @@ internal sealed class BuiltinFunction : IJgsCallable
     /// <inheritdoc />
     public string Name { get; }
 
+    /// <summary>
+    /// Whether a bare call statement binds this built-in's result to <c>ans</c> and echoes it.
+    /// MATLAB's <c>figure(1)</c> as a statement prints nothing, while <c>h = figure(1)</c> still hands
+    /// back the handle; with no nargout plumbing in the interpreter, this flag is how the two differ.
+    /// </summary>
+    public bool BindsAnsAsStatement { get; init; } = true;
+
     /// <inheritdoc />
     public JgsValue Call(IReadOnlyList<JgsValue> arguments, int line, int column) =>
         _implementation(arguments, line, column);

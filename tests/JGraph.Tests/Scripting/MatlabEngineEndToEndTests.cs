@@ -17,7 +17,7 @@ namespace JGraph.Tests.Scripting;
 public class MatlabEngineEndToEndTests : IDisposable
 {
     private readonly MatlabScriptEngine _engine = new();
-    private readonly List<FigureModel> _figures = new();
+    private readonly List<(int Number, FigureModel Figure)> _figures = new();
     private readonly RecordingScriptOutput _output = new();
 
     public MatlabEngineEndToEndTests() => JG.Reset();
@@ -25,7 +25,7 @@ public class MatlabEngineEndToEndTests : IDisposable
     public void Dispose() => JG.Reset();
 
     private Task<ScriptRunResult> Run(string code) =>
-        _engine.RunAsync(code, new ScriptContext(_output, (_, figure) => _figures.Add(figure), null), default);
+        _engine.RunAsync(code, new ScriptContext(_output, (number, figure) => _figures.Add((number, figure)), null), default);
 
     [Fact]
     public void TheEngineIsAvailableAndNamed()
@@ -100,7 +100,7 @@ public class MatlabEngineEndToEndTests : IDisposable
             """);
 
         Assert.True(result.Success, result.Message + _output.ErrorText);
-        FigureModel figure = Assert.Single(_figures);
+        FigureModel figure = Assert.Single(_figures).Figure;
         Assert.Equal("sine", figure.Axes[0].Title);
         Assert.NotEmpty(figure.Axes[0].Plots);
     }
@@ -123,7 +123,7 @@ public class MatlabEngineEndToEndTests : IDisposable
 
         Assert.True(result.Success, result.Message + _output.ErrorText);
         Assert.Equal(1, result.FiguresShown);
-        FigureModel figure = Assert.Single(_figures);
+        FigureModel figure = Assert.Single(_figures).Figure;
         Assert.Equal("Figure 1", figure.Axes[0].Title);
     }
 
@@ -219,7 +219,7 @@ public class MatlabEngineEndToEndTests : IDisposable
                 options,
                 [new JgsScriptEngine(), new MatlabScriptEngine()],
                 _output,
-                (_, figure) => _figures.Add(figure));
+                (number, figure) => _figures.Add((number, figure)));
 
             Assert.Equal(0, code);
             Assert.Contains("10", _output.NormalText, StringComparison.Ordinal);

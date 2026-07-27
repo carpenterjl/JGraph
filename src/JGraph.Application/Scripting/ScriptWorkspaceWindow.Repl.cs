@@ -236,7 +236,8 @@ public partial class ScriptWorkspaceWindow
         _workspace?.RootPath,
         path => _workspace is { } workspace ? workspace.Resolve(path, null) : path,
         new AppScriptFigureFiles(),
-        _audio);
+        _audio,
+        CloseFigureOnUi);
 
     /// <summary>
     /// Reports a finished run or statement in the console, the status bar and the Workspace pane.

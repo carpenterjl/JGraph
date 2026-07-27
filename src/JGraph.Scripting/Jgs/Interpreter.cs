@@ -307,7 +307,11 @@ internal sealed class Interpreter
             if (existing.Type == JgsType.Function)
             {
                 JgsValue called = existing.AsCallable.Call(System.Array.Empty<JgsValue>(), statement.Line, statement.Column);
-                BindAns(statement, called);
+                if (BindsAns(existing))
+                {
+                    BindAns(statement, called, env);
+                }
+
                 return;
             }
 
@@ -324,11 +328,25 @@ internal sealed class Interpreter
             case IncDecExpr incDec when RootName(incDec.Target) is string bumped:
                 EchoVariable(statement, bumped, env);
                 break;
+            case CallExpr call when !BindsAns(CalleeValue(call, env)):
+                break;
             default:
-                BindAns(statement, value);
+                BindAns(statement, value, env);
                 break;
         }
     }
+
+    /// <summary>The callable a call expression resolved to, when it is a plain name that is in scope.</summary>
+    private static JgsValue CalleeValue(CallExpr call, JgsEnvironment env) =>
+        call.Callee is VariableExpr name && env.TryGet(name.Name, out JgsValue value)
+            ? value
+            : JgsValue.Null;
+
+    /// <summary>Whether a bare call of this value should bind and echo <c>ans</c>.</summary>
+    private static bool BindsAns(JgsValue callee) =>
+        callee.Type != JgsType.Function
+        || callee.AsCallable is not BuiltinFunction builtin
+        || builtin.BindsAnsAsStatement;
 
     /// <summary>The variable name at the root of an assignment target (<c>x</c>, <c>x[i]</c>, <c>x(i)</c>).</summary>
     private static string? RootName(Expr target) => target switch
@@ -341,15 +359,20 @@ internal sealed class Interpreter
         _ => null,
     };
 
-    /// <summary>Binds a bare expression's non-null result to <c>ans</c> and echoes it when unsuppressed.</summary>
-    private void BindAns(Stmt statement, JgsValue value)
+    /// <summary>
+    /// Binds a bare expression's non-null result to <c>ans</c> and echoes it when unsuppressed.
+    /// <c>ans</c> lands in the scope the statement ran in: at the prompt that is the base workspace,
+    /// but inside a function body it is the call frame, which dies with the call — as in MATLAB,
+    /// where running a function file leaves the base workspace untouched.
+    /// </summary>
+    private void BindAns(Stmt statement, JgsValue value, JgsEnvironment env)
     {
         if (value.Type == JgsType.Null)
         {
             return; // verbs like title(...) return nothing — no ans, no echo
         }
 
-        _globals.Declare("ans", value);
+        env.Declare("ans", value);
         EchoBinding(statement, "ans", value);
     }
 

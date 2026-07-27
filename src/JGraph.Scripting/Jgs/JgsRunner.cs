@@ -53,7 +53,7 @@ internal static class JgsRunner
 
             interpreter.Run(program);
             InvokeMainIfFunctionFile(program, environment);
-            globals.ShowUnshownFigures(); // MATLAB expectation: created figures appear without show()
+            globals.ShowTouchedFigures(); // MATLAB expectation: created figures appear without show()
             ScriptRunResult ok = ScriptRunResult.Ok(globals.FiguresShown, SnapshotGlobals(environment, pristine));
             RegisterCompletedRun(environment, hook);
             return ok;
@@ -62,7 +62,7 @@ internal static class JgsRunner
         {
             // The script stopped itself. Its figures still count, and the code it asked for rides
             // out on the result for the host to act on.
-            globals.ShowUnshownFigures();
+            globals.ShowTouchedFigures();
             return ScriptRunResult.Exited(exit.ExitCode, globals.FiguresShown);
         }
         catch (JgsException ex)

@@ -38,6 +38,11 @@ internal static partial class JgsBuiltins
         void Define(string name, Func<IReadOnlyList<JgsValue>, int, int, JgsValue> body) =>
             env.Declare(name, JgsValue.Function(new BuiltinFunction(name, body)));
 
+        // For verbs that hand back a handle but print nothing as a bare statement (MATLAB `figure(1)`).
+        void DefineSilent(string name, Func<IReadOnlyList<JgsValue>, int, int, JgsValue> body) =>
+            env.Declare(name, JgsValue.Function(
+                new BuiltinFunction(name, body) { BindsAnsAsStatement = false }));
+
         void Math1(string name, Func<double, double> f) =>
             Define(name, (args, line, col) => { Arity(name, args, 1, line, col); return MapNumeric(name, args[0], f, line, col); });
 
@@ -1136,7 +1141,7 @@ internal static partial class JgsBuiltins
         });
 
         // --- Figure setup and plotting -------------------------------------------------------
-        Define("figure", (args, line, col) =>
+        DefineSilent("figure", (args, line, col) =>
         {
             ArityRange("figure", args, 0, 1, line, col);
             if (args.Count == 1)
@@ -1158,6 +1163,79 @@ internal static partial class JgsBuiltins
         {
             Arity("subplot", args, 3, line, col);
             JG.Subplot(Count("subplot", args, 0, line, col), Count("subplot", args, 1, line, col), Count("subplot", args, 2, line, col));
+            return JgsValue.Null;
+        });
+
+        Define("close", (args, line, col) =>
+        {
+            ArityRange("close", args, 0, 1, line, col);
+            if (args.Count == 0)
+            {
+                // MATLAB closes the current figure; with none open there is nothing to do.
+                if (JG.FigureNumbers.Count > 0)
+                {
+                    host.CloseFigure(JG.CurrentFigureNumber);
+                }
+
+                return JgsValue.Null;
+            }
+
+            if (args[0].Type == JgsType.String)
+            {
+                string what = Str("close", args, 0, line, col);
+                if (!what.Equals("all", StringComparison.OrdinalIgnoreCase))
+                {
+                    throw new JgsRuntimeException(line, col, $"close does not understand '{what}' — use close, close(n), or close all.");
+                }
+
+                foreach (int number in JG.FigureNumbers)
+                {
+                    host.CloseFigure(number);
+                }
+
+                return JgsValue.Null;
+            }
+
+            int target = Count("close", args, 0, line, col);
+            if (!host.CloseFigure(target))
+            {
+                throw new JgsRuntimeException(line, col, $"There is no figure {target} to close.");
+            }
+
+            return JgsValue.Null;
+        });
+
+        Define("clf", (args, line, col) =>
+        {
+            ArityRange("clf", args, 0, 1, line, col);
+            if (args.Count == 0)
+            {
+                JG.Clf();
+                return JgsValue.Null;
+            }
+
+            int number = Count("clf", args, 0, line, col);
+            if (!JG.TryGetFigure(number, out _))
+            {
+                throw new JgsRuntimeException(line, col, $"There is no figure {number} to clear.");
+            }
+
+            JG.Clf(number);
+            return JgsValue.Null;
+        });
+
+        Define("gcf", (args, line, col) =>
+        {
+            Arity("gcf", args, 0, line, col);
+            return JgsValue.Number(JG.CurrentFigureNumber);
+        });
+
+        // gca has no value to hand back — JGS has no axes-handle type — but it still creates the
+        // figure and axes MATLAB would, so `gca; xlabel('t')` behaves the same way.
+        Define("gca", (args, line, col) =>
+        {
+            Arity("gca", args, 0, line, col);
+            JG.Gca();
             return JgsValue.Null;
         });
 
@@ -1245,7 +1323,7 @@ internal static partial class JgsBuiltins
         Define("colorbar", (args, line, col) =>
         {
             ArityRange("colorbar", args, 0, 1, line, col);
-            JG.Colorbar(args.Count == 0 || Truthy(args, 0));
+            JG.Colorbar(OnOff("colorbar", args, line, col, dialect, () => JG.Gca().Colorbar.Visible));
             return JgsValue.Null;
         });
 
@@ -1259,8 +1337,18 @@ internal static partial class JgsBuiltins
         Define("xlim", (args, line, col) => { (double lo, double hi) = LimitPair("xlim", args, line, col); JG.XLim(lo, hi); return JgsValue.Null; });
         Define("ylim", (args, line, col) => { (double lo, double hi) = LimitPair("ylim", args, line, col); JG.YLim(lo, hi); return JgsValue.Null; });
 
-        Define("grid", (args, line, col) => { ArityRange("grid", args, 0, 1, line, col); JG.Grid(args.Count == 0 || Truthy(args, 0)); return JgsValue.Null; });
-        Define("hold", (args, line, col) => { ArityRange("hold", args, 0, 1, line, col); JG.Hold(args.Count == 0 || Truthy(args, 0)); return JgsValue.Null; });
+        Define("grid", (args, line, col) =>
+        {
+            ArityRange("grid", args, 0, 1, line, col);
+            JG.Grid(OnOff("grid", args, line, col, dialect, () => JG.Gca().Grid.ShowMajor));
+            return JgsValue.Null;
+        });
+        Define("hold", (args, line, col) =>
+        {
+            ArityRange("hold", args, 0, 1, line, col);
+            JG.Hold(OnOff("hold", args, line, col, dialect, () => JG.IsHolding));
+            return JgsValue.Null;
+        });
 
         Define("legend", (args, line, col) =>
         {
@@ -2499,6 +2587,39 @@ internal static partial class JgsBuiltins
     }
 
     private static bool Truthy(IReadOnlyList<JgsValue> args, int index) => args[index].IsTruthy;
+
+    /// <summary>
+    /// Reads a MATLAB-style on/off switch. Command syntax turns <c>hold off</c> into <c>hold("off")</c>,
+    /// and every non-empty string is truthy, so these switches must read the word rather than the
+    /// truthiness. With no argument MATLAB toggles; JGS keeps its older "bare call turns it on".
+    /// </summary>
+    private static bool OnOff(
+        string name, IReadOnlyList<JgsValue> args, int line, int col, JgsDialect dialect, Func<bool> current)
+    {
+        if (args.Count == 0)
+        {
+            return !dialect.MatlabFunctions || !current();
+        }
+
+        JgsValue value = args[0];
+        if (value.Type == JgsType.String)
+        {
+            string word = value.AsString;
+            if (word.Equals("on", StringComparison.OrdinalIgnoreCase))
+            {
+                return true;
+            }
+
+            if (word.Equals("off", StringComparison.OrdinalIgnoreCase))
+            {
+                return false;
+            }
+
+            throw new JgsRuntimeException(line, col, $"{name} expects 'on' or 'off', but got '{word}'.");
+        }
+
+        return value.IsTruthy;
+    }
 
     private static double[] DoubleArray(string name, IReadOnlyList<JgsValue> args, int index, int line, int col)
     {

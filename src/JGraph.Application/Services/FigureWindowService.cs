@@ -27,14 +27,26 @@ public sealed class FigureWindowService : IFigureWindowService
         if (_windows.TryGetValue(number, out FigureWindow? window))
         {
             window.ViewModel.DisplayFigure(figure, status);
-            window.Show(); // Restores a minimized window; no-op when already visible.
+            if (window.WindowState == System.Windows.WindowState.Minimized)
+            {
+                window.WindowState = System.Windows.WindowState.Normal;
+            }
+
+            window.Show(); // No-op when already visible; deliberately does not steal focus.
             return;
         }
 
         window = _services.GetRequiredService<FigureWindow>();
         window.Title = $"Figure {number}";
         window.ViewModel.DisplayFigure(figure, status);
-        window.Closed += (_, _) => _windows.Remove(number);
+
+        // Closing the window retires the figure itself, so the engine stops handing scripts a model
+        // nothing can display — the next figure(n) builds a new one and opens a new window.
+        window.Closed += (_, _) =>
+        {
+            _windows.Remove(number);
+            JGraph.Api.JG.CloseFigure(number);
+        };
         _windows[number] = window;
         window.Show();
     }
@@ -48,6 +60,15 @@ public sealed class FigureWindowService : IFigureWindowService
         int number = JGraph.Api.JG.CurrentFigureNumber;
         ShowScriptFigure(number, figure);
         return number;
+    }
+
+    /// <inheritdoc />
+    public void CloseScriptFigure(int number)
+    {
+        if (_windows.TryGetValue(number, out FigureWindow? window))
+        {
+            window.Close(); // The Closed handler evicts it from the map.
+        }
     }
 
     /// <inheritdoc />

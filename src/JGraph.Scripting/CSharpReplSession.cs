@@ -25,7 +25,6 @@ internal sealed class CSharpReplSession : IScriptSession
     private readonly ScriptContext _context;
     private JGraphScriptGlobals _globals;
     private ScriptState<object>? _state;
-    private int _figuresReported;
     private bool _disposed;
 
     /// <summary>Creates a session. Resets the figure registry, as a new workspace should.</summary>
@@ -61,7 +60,6 @@ internal sealed class CSharpReplSession : IScriptSession
         // Dropping the state drops every variable it held; the next statement starts a new chain.
         _state = null;
         JG.Reset();
-        _figuresReported = 0;
         _globals = new JGraphScriptGlobals(_context);
     }
 
@@ -75,6 +73,7 @@ internal sealed class CSharpReplSession : IScriptSession
 
     private async Task<ScriptRunResult> ExecuteCoreAsync(string code, CancellationToken cancellationToken)
     {
+        _globals.BeginRun();
         try
         {
             _state = _state is null
@@ -90,18 +89,18 @@ internal sealed class CSharpReplSession : IScriptSession
             {
                 if (ScriptExitException.Unwrap(_state.Exception) is { } exit)
                 {
-                    _globals.ShowUnshownFigures();
-                    return ScriptRunResult.Exited(exit.ExitCode, TakeFiguresShown(), GetVariables());
+                    _globals.ShowTouchedFigures();
+                    return ScriptRunResult.Exited(exit.ExitCode, _globals.FiguresShown, GetVariables());
                 }
 
                 _context.Output.WriteError(_state.Exception.ToString());
-                _globals.ShowUnshownFigures();
+                _globals.ShowTouchedFigures();
                 return ScriptRunResult.Failed(_state.Exception.Message);
             }
 
             EchoReturnValue(_state.ReturnValue);
-            _globals.ShowUnshownFigures();
-            return ScriptRunResult.Ok(TakeFiguresShown(), GetVariables());
+            _globals.ShowTouchedFigures();
+            return ScriptRunResult.Ok(_globals.FiguresShown, GetVariables());
         }
         catch (CompilationErrorException ex)
         {
@@ -143,14 +142,5 @@ internal sealed class CSharpReplSession : IScriptSession
             IFormattable f => f.ToString(null, CultureInfo.InvariantCulture),
             _ => value.ToString() ?? string.Empty,
         });
-    }
-
-    /// <summary>Figures displayed by the statement that just ran — see the note in <c>JgsReplSession</c>.</summary>
-    private int TakeFiguresShown()
-    {
-        int total = _globals.FiguresShown;
-        int delta = total - _figuresReported;
-        _figuresReported = total;
-        return delta < 0 ? 0 : delta;
     }
 }

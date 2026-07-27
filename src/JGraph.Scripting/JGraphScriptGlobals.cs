@@ -18,15 +18,40 @@ namespace JGraph.Scripting;
 public sealed class JGraphScriptGlobals
 {
     private readonly ScriptContext _context;
-    private readonly HashSet<int> _shownNumbers = new();
+    private readonly HashSet<int> _shownThisRun = new();
+    private long _runStartStamp;
+    private string? _runScriptDirectory;
     private int _figuresShown;
 
     /// <summary>Creates the globals over a run's <paramref name="context"/>.</summary>
-    public JGraphScriptGlobals(ScriptContext context) =>
+    public JGraphScriptGlobals(ScriptContext context)
+    {
         _context = context ?? throw new ArgumentNullException(nameof(context));
+        BeginRun();
+    }
 
-    /// <summary>How many figures the script has displayed via <c>show()</c> so far.</summary>
+    /// <summary>How many figures the current run has displayed.</summary>
     public int FiguresShown => Volatile.Read(ref _figuresShown);
+
+    /// <summary>
+    /// Starts a new run: figure display is tracked per run, so a script that plots into figures it
+    /// already opened in an earlier run displays them again — the MATLAB expectation, where running
+    /// a script always leaves its figures on screen. A long-lived console session calls this for
+    /// every statement and every F5.
+    /// </summary>
+    /// <param name="scriptDirectory">The folder of the file being run, tried first for its relative
+    /// paths, or null for prompt input (which has no file to sit beside).</param>
+    internal void BeginRun(string? scriptDirectory = null)
+    {
+        lock (_shownThisRun)
+        {
+            _shownThisRun.Clear();
+        }
+
+        _runStartStamp = JG.TouchStamp;
+        _runScriptDirectory = scriptDirectory;
+        Volatile.Write(ref _figuresShown, 0);
+    }
 
     // --- Output -----------------------------------------------------------------------------------
 
@@ -106,9 +131,9 @@ public sealed class JGraphScriptGlobals
 
     private void Display(int number, FigureModel figure)
     {
-        lock (_shownNumbers)
+        lock (_shownThisRun)
         {
-            _shownNumbers.Add(number);
+            _shownThisRun.Add(number);
         }
 
         _context.ShowFigure(number, figure);
@@ -116,18 +141,19 @@ public sealed class JGraphScriptGlobals
     }
 
     /// <summary>
-    /// Displays every registered figure the script created but never <c>show()</c>ed — the MATLAB
-    /// expectation, where <c>figure; plot(...)</c> opens a window by itself. Called by the JGS
-    /// runner after a successful run; explicit <c>show()</c> calls are not repeated.
+    /// Displays every figure this run touched but has not shown yet — the MATLAB expectation, where
+    /// <c>figure; plot(...)</c> opens a window by itself and re-running the script brings the window
+    /// back. Called after a run finishes; a figure the run explicitly <c>show()</c>ed is not shown
+    /// twice, and figures the run never touched (opened from a file, say) are left alone.
     /// </summary>
-    internal void ShowUnshownFigures()
+    internal void ShowTouchedFigures()
     {
-        foreach (int number in JG.FigureNumbers)
+        foreach (int number in JG.FiguresTouchedSince(_runStartStamp))
         {
             bool alreadyShown;
-            lock (_shownNumbers)
+            lock (_shownThisRun)
             {
-                alreadyShown = _shownNumbers.Contains(number);
+                alreadyShown = _shownThisRun.Contains(number);
             }
 
             if (!alreadyShown && JG.TryGetFigure(number, out FigureModel figure))
@@ -135,6 +161,27 @@ public sealed class JGraphScriptGlobals
                 Display(number, figure);
             }
         }
+    }
+
+    /// <summary>
+    /// Closes figure <paramref name="number"/>: drops it from the registry and asks the host to close
+    /// the window it opened. Returns whether there was such a figure. A later <c>figure(n)</c> with the
+    /// same number therefore builds a fresh figure and opens a fresh window, exactly as in MATLAB.
+    /// </summary>
+    internal bool CloseFigure(int number)
+    {
+        bool existed = JG.CloseFigure(number);
+        lock (_shownThisRun)
+        {
+            _shownThisRun.Remove(number);
+        }
+
+        if (existed)
+        {
+            _context.CloseFigure?.Invoke(number);
+        }
+
+        return existed;
     }
 
     // --- Figure files -----------------------------------------------------------------------------
@@ -209,9 +256,16 @@ public sealed class JGraphScriptGlobals
     internal string ResolveForWrite(string path)
     {
         ArgumentNullException.ThrowIfNull(path);
-        return _context.WorkingDirectory is { Length: > 0 } baseDir && !Path.IsPathRooted(path)
-            ? Path.Combine(baseDir, path)
-            : path;
+        if (Path.IsPathRooted(path))
+        {
+            return path;
+        }
+
+        // A file run writes beside the script, matching where its reads come from.
+        string? baseDirectory = _runScriptDirectory is { Length: > 0 } scriptDir
+            ? scriptDir
+            : _context.WorkingDirectory;
+        return baseDirectory is { Length: > 0 } directory ? Path.Combine(directory, path) : path;
     }
 
     private IScriptFigureFiles RequireFigureFiles(string operation) =>
@@ -230,6 +284,18 @@ public sealed class JGraphScriptGlobals
     internal string Resolve(string path)
     {
         ArgumentNullException.ThrowIfNull(path);
+
+        // A file run looks in the script's own folder first: `readcsv('data.csv')` in a script means
+        // the copy sitting beside it, not one that happens to share its name at the workspace root.
+        if (!Path.IsPathRooted(path) && _runScriptDirectory is { Length: > 0 } scriptDir)
+        {
+            string beside = Path.Combine(scriptDir, path);
+            if (File.Exists(beside))
+            {
+                return beside;
+            }
+        }
+
         if (_context.ResolvePath is { } resolve)
             return resolve(path);
         return _context.WorkingDirectory is { Length: > 0 } baseDir && !Path.IsPathRooted(path)
