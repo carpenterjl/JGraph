@@ -559,6 +559,20 @@ internal sealed class Parser
                 case TokenType.Identifier or TokenType.Number or TokenType.String:
                     words++;
                     p++;
+                    // A file name glues on through its dot: 'load results.mat' is one word as long
+                    // as nothing separates the pieces.
+                    while (GluedDotAt(p))
+                    {
+                        p += 2;
+                    }
+
+                    break;
+                case TokenType.Minus when p + 1 < _tokens.Count
+                    && _tokens[p + 1].Type == TokenType.Identifier
+                    && !_tokens[p + 1].PrecededByWhitespace:
+                    // An option word: 'save data.txt -ascii'.
+                    words++;
+                    p += 2;
                     break;
                 case TokenType.Newline or TokenType.Semicolon or TokenType.Comma or TokenType.Eof:
                     return words > 0;
@@ -570,14 +584,35 @@ internal sealed class Parser
         return words > 0;
     }
 
+    /// <summary>Whether a glued <c>.piece</c> continues the word ending at <paramref name="p"/>.</summary>
+    private bool GluedDotAt(int p) =>
+        p + 1 < _tokens.Count
+        && _tokens[p].Type == TokenType.Dot && !_tokens[p].PrecededByWhitespace
+        && _tokens[p + 1].Type is TokenType.Identifier or TokenType.Number
+        && !_tokens[p + 1].PrecededByWhitespace;
+
     private Stmt ParseCommandSyntax(Token start)
     {
         Token name = Advance();
         var arguments = new List<Expr>();
-        while (Current.Type is TokenType.Identifier or TokenType.Number or TokenType.String)
+        while (Current.Type is TokenType.Identifier or TokenType.Number or TokenType.String
+               or TokenType.Minus)
         {
             Token word = Advance();
-            arguments.Add(new StringLiteral(word.Text) { Line = word.Line, Column = word.Column });
+            string text = word.Text;
+            if (word.Type == TokenType.Minus)
+            {
+                text = "-" + Advance().Text; // '-ascii' — the detector guaranteed the glued word
+            }
+
+            // Reassemble a dotted file name: 'results' '.' 'mat' → "results.mat".
+            while (GluedDotAt(_pos))
+            {
+                Advance();
+                text += "." + Advance().Text;
+            }
+
+            arguments.Add(new StringLiteral(text) { Line = word.Line, Column = word.Column });
         }
 
         var callee = new VariableExpr(name.Text) { Line = name.Line, Column = name.Column };
@@ -689,7 +724,7 @@ internal sealed class Parser
 
     private Expr ParseMultiplicative() =>
         ParseBinary(ParseUnary, TokenType.Star, TokenType.Slash, TokenType.Percent,
-            TokenType.DotStar, TokenType.DotSlash);
+            TokenType.DotStar, TokenType.DotSlash, TokenType.Backslash, TokenType.DotBackslash);
 
     private Expr ParseBinary(Func<Expr> operand, params TokenType[] operators)
     {

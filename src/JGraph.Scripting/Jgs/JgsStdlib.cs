@@ -208,6 +208,13 @@ internal static class JgsStdlib
             return ImagesEqual(left.AsImage, right.AsImage);
         }
 
+        // MATLAB's isequal compares logicals and doubles by value: isequal(true, 1) is true,
+        // so a mask can be checked against a plain [1 0] literal.
+        if (left.Type is JgsType.Number or JgsType.Bool && right.Type is JgsType.Number or JgsType.Bool)
+        {
+            return left.AsNumber.Equals(right.AsNumber);
+        }
+
         return JgsValue.AreEqual(left, right);
     }
 

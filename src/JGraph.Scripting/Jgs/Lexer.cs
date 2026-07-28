@@ -271,6 +271,8 @@ internal static class Lexer
                 case '.' when Peek(source, i) == '*': type = matlab ? TokenType.DotStar : TokenType.Star; lexeme = ".*"; break;
                 case '.' when Peek(source, i) == '/': type = matlab ? TokenType.DotSlash : TokenType.Slash; lexeme = "./"; break;
                 case '.' when Peek(source, i) == '^': type = matlab ? TokenType.DotCaret : TokenType.Caret; lexeme = ".^"; break;
+                case '.' when matlab && Peek(source, i) == '\\': type = TokenType.DotBackslash; lexeme = ".\\"; break;
+                case '\\' when matlab: type = TokenType.Backslash; lexeme = "\\"; break;
                 case '.' when matlab && Peek(source, i) == '\'': type = TokenType.DotTranspose; lexeme = ".'"; break;
                 case '.' when matlab: type = TokenType.Dot; lexeme = "."; break;
                 case '@' when matlab: type = TokenType.At; lexeme = "@"; break;

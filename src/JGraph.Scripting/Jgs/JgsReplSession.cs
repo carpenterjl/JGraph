@@ -150,6 +150,8 @@ internal sealed class JgsReplSession : IScriptSession
             echo: line => _context.Output.WriteLine(line), _dialect);
         JgsRunner.DefineRunBuiltin(_environment, _interpreter, _globals, _dialect);
         DefineClearBuiltin(_environment);
+        DefineWhosBuiltin(_environment);
+        JgsWorkspaceIo.DefineSaveLoad(_environment, _globals, () => UserVariables());
 
         _pristine = _environment.Locals.ToDictionary(
             static p => p.Key, static p => p.Value, StringComparer.Ordinal);
@@ -169,25 +171,86 @@ internal sealed class JgsReplSession : IScriptSession
                 throw new JgsRuntimeException(line, column, "clear takes no arguments.");
             }
 
-            JgsRunner.DisposeBuffers(UserValues());
+            JgsRunner.DisposeBuffers(UserVariables().Select(static pair => pair.Value));
             environment.RetainOnly(_pristine);
             return JgsValue.Null;
         })));
 
-    private void ReleaseWorkspace() => JgsRunner.DisposeBuffers(UserValues());
-
     /// <summary>
-    /// The values the user's code owns — everything except a built-in still bound to its original
-    /// value. Disposing a built-in's buffers would free something the next statement still uses.
+    /// Defines <c>whos</c>: an aligned name / size / class listing of the user's variables — the
+    /// console twin of the Workspace pane, and session-owned for the same reason <c>clear</c> is
+    /// (only the session knows which names the user created).
     /// </summary>
-    private IEnumerable<JgsValue> UserValues()
+    private void DefineWhosBuiltin(JgsEnvironment environment) =>
+        environment.Declare("whos", JgsValue.Function(new BuiltinFunction("whos", (args, line, column) =>
+        {
+            if (args.Count != 0)
+            {
+                throw new JgsRuntimeException(line, column, "whos takes no arguments.");
+            }
+
+            List<(string Name, string Size, string Kind)> rows = UserVariables()
+                .OrderBy(static pair => pair.Name, StringComparer.Ordinal)
+                .Select(pair => (pair.Name, SizeOf(pair.Value), KindOf(pair.Value)))
+                .ToList();
+            if (rows.Count == 0)
+            {
+                return JgsValue.Null;
+            }
+
+            int nameWidth = Math.Max("Name".Length, rows.Max(static r => r.Name.Length));
+            int sizeWidth = Math.Max("Size".Length, rows.Max(static r => r.Size.Length));
+            _context.Output.WriteLine($"  {"Name".PadRight(nameWidth)}  {"Size".PadRight(sizeWidth)}  Class");
+            foreach ((string name, string size, string kind) in rows)
+            {
+                _context.Output.WriteLine($"  {name.PadRight(nameWidth)}  {size.PadRight(sizeWidth)}  {kind}");
+            }
+
+            return JgsValue.Null;
+        })));
+
+    private static string SizeOf(JgsValue value) => value.Type switch
+    {
+        JgsType.Array when value.ArrayLength > 0 && value.ElementAt(0).Type == JgsType.Array =>
+            $"{value.ArrayLength}x{value.ElementAt(0).ArrayLength}",
+        JgsType.Array => $"1x{value.ArrayLength}",
+        JgsType.String => $"1x{value.AsString.Length}",
+        JgsType.Cell => $"1x{value.AsCell.Length}",
+        JgsType.Table => $"{value.AsTable.RowCount}x{value.AsTable.ColumnCount}",
+        JgsType.Image => $"{value.AsImage.Height}x{value.AsImage.Width}x{value.AsImage.Channels}",
+        _ => "1x1",
+    };
+
+    private static string KindOf(JgsValue value) => value.Type switch
+    {
+        JgsType.Number or JgsType.Array => "double",
+        JgsType.Complex => "complex",
+        JgsType.Bool => "logical",
+        JgsType.String => "char",
+        JgsType.Cell => "cell",
+        JgsType.Struct => "struct",
+        JgsType.Table => "table",
+        JgsType.Image => "image",
+        JgsType.Function => "function_handle",
+        _ => value.TypeName,
+    };
+
+    /// <summary>The user-created (or rebound) names and their values, the set <c>whos</c> lists.</summary>
+    private IEnumerable<(string Name, JgsValue Value)> UserVariables()
     {
         foreach ((string name, JgsValue value) in _environment.Locals)
         {
             if (!_pristine.TryGetValue(name, out JgsValue? original) || !ReferenceEquals(original, value))
             {
-                yield return value;
+                yield return (name, value);
             }
         }
     }
+
+    private void ReleaseWorkspace()
+    {
+        _globals.CloseAllFiles();
+        JgsRunner.DisposeBuffers(UserVariables().Select(static pair => pair.Value));
+    }
+
 }

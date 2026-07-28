@@ -272,6 +272,70 @@ public sealed class JGraphScriptGlobals
         _context.FigureFiles
             ?? throw new InvalidOperationException($"{operation} is not supported by this host.");
 
+    // --- File handles (fopen/fclose and friends) --------------------------------------------------
+
+    private readonly Dictionary<int, FileStream> _openFiles = new();
+    private int _nextFileId = 3; // MATLAB reserves 0-2 for stdin/stdout/stderr
+
+    /// <summary>
+    /// Opens a file for the <c>fopen</c> builtin and returns its id, or -1 when it cannot be opened —
+    /// MATLAB's convention, so scripts can test <c>fid == -1</c>. Modes: r, w, a, r+ (a trailing
+    /// 'b'/'t' is accepted and ignored; everything here is binary-exact).
+    /// </summary>
+    internal int OpenFile(string path, string mode)
+    {
+        string trimmed = mode.TrimEnd('b', 't');
+        try
+        {
+            FileStream stream = trimmed switch
+            {
+                "r" => new FileStream(Resolve(path), FileMode.Open, FileAccess.Read),
+                "w" => new FileStream(ResolveForWrite(path), FileMode.Create, FileAccess.Write),
+                "a" => new FileStream(ResolveForWrite(path), FileMode.Append, FileAccess.Write),
+                "r+" => new FileStream(Resolve(path), FileMode.Open, FileAccess.ReadWrite),
+                _ => throw new ArgumentException($"fopen does not support the mode '{mode}'."),
+            };
+
+            int id = _nextFileId++;
+            _openFiles[id] = stream;
+            return id;
+        }
+        catch (IOException)
+        {
+            return -1;
+        }
+        catch (UnauthorizedAccessException)
+        {
+            return -1;
+        }
+    }
+
+    /// <summary>The stream behind a file id, or null when the id is not open.</summary>
+    internal FileStream? FileFor(int id) => _openFiles.TryGetValue(id, out FileStream? stream) ? stream : null;
+
+    /// <summary>Closes one file id; false when it was not open.</summary>
+    internal bool CloseFile(int id)
+    {
+        if (!_openFiles.Remove(id, out FileStream? stream))
+        {
+            return false;
+        }
+
+        stream.Dispose();
+        return true;
+    }
+
+    /// <summary>Closes every open file — <c>fclose('all')</c>, and the session's own teardown.</summary>
+    internal void CloseAllFiles()
+    {
+        foreach (FileStream stream in _openFiles.Values)
+        {
+            stream.Dispose();
+        }
+
+        _openFiles.Clear();
+    }
+
     /// <summary>Clears the output sink's display — the <c>clc</c> builtin. Sinks without a display ignore it.</summary>
     internal void ClearOutput() => _context.Output.Clear();
 

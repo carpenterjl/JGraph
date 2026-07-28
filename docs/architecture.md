@@ -633,6 +633,19 @@ Implemented through Milestone 24 — a working figure window you can edit, save,
   resets the axes the way MATLAB's `NextPlot='replace'` does, so a re-run no longer inherits the
   previous run's title or frozen limits. F5 resolves a script's relative paths beside the script
   again (ADR 0038).
+- **M36** The MATLAB foundational core: every item of the minimum-viable command set is in.
+  Builtins produce multiple outputs (`[X, Y] = meshgrid`, `[m, i] = max`, `[V, D] = eig`) through a
+  `MultiOutput` seam on `BuiltinFunction`; `JGraph.Numerics.LinearAlgebra` gained LU/QR/SVD/eigen
+  kernels behind the new `\` `/` `^` matrix operators and the `inv`/`det`/`rank`/`norm`/`trace`/
+  `eig`/`lu`/`qr`/`svd`/`dot` builtins; the shape family arrived (`eye`, `diag`, `magic`,
+  `logspace`, `reshape`, `cat`, flips, `permute`, `prod`, `ismember`) and MATLAB-dialect reductions
+  go column-wise over matrices with `dim`/`'all'` arguments while JGS stays flat. `whos`, `help`
+  (reading the builtin catalog), and `format` cover the environment; `save`/`load` speak real
+  MAT-file v5 (compressed files included) plus `-ascii`, and `fopen`/`fclose`/`fread`/`fwrite`/
+  `fgetl`/`fprintf(fid, …)` give byte-level access over a per-run file-id table. Command syntax
+  learned dotted file names and `-option` words (`save state.mat -ascii`), and
+  `tools/matlab-checklist/` regenerates the documented-command tracker (ADR 0039,
+  [matlab-foundational-coverage.md](matlab-foundational-coverage.md)).
 
 The `JGraph.Demo` gallery exercises the plot types, annotations, and both APIs;
 `JGraph.Application` is the interactive figure window with data import and scripting.

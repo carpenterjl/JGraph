@@ -910,10 +910,36 @@ internal sealed class Interpreter
     /// <summary>Applies a binary operator to already-evaluated operands (shared with compound assignment).</summary>
     private JgsValue ApplyBinary(TokenType op, JgsValue left, JgsValue right, Node at)
     {
-        // MATLAB's '*', '/' and '^' are matrix operations; only the dotted spellings are elementwise.
-        // Everything below this point is elementwise, so the matrix forms are resolved first.
+        // MATLAB's '*', '/', '\' and '^' are matrix operations; only the dotted spellings are
+        // elementwise. Everything below this point is elementwise, so the matrix forms resolve first.
         if (Dialect.IsMatlab)
         {
+            if (op == TokenType.DotBackslash)
+            {
+                // a .\ b is b ./ a — elementwise division read the other way around. Mapping onto
+                // './' (not '/') keeps the swapped operands off the matrix-division branch below.
+                (left, right) = (right, left);
+                op = TokenType.DotSlash;
+            }
+
+            if (op == TokenType.Backslash)
+            {
+                if (left.Type == JgsType.Array && right.Type == JgsType.Array)
+                {
+                    return MatrixOperation(op, left, right, at);
+                }
+
+                if (left.Type == JgsType.Array)
+                {
+                    throw new JgsRuntimeException(at.Line, at.Column,
+                        "'\\' expects a right-hand side with as many rows as the left matrix.");
+                }
+
+                // scalar \ x is x / scalar.
+                (left, right) = (right, left);
+                op = TokenType.Slash;
+            }
+
             if (op is TokenType.DotStar or TokenType.DotSlash or TokenType.DotCaret)
             {
                 op = op switch
@@ -927,6 +953,11 @@ internal sealed class Interpreter
                      && left.Type == JgsType.Array && right.Type == JgsType.Array)
             {
                 return MatrixOperation(op, left, right, at);
+            }
+            else if (op == TokenType.Caret && IsMatrix(left)
+                     && right.Type is JgsType.Number or JgsType.Bool)
+            {
+                return MatrixPower(left, right.AsNumber, at);
             }
         }
 
@@ -1825,12 +1856,31 @@ internal sealed class Interpreter
     /// </summary>
     private JgsValue MatrixOperation(TokenType op, JgsValue left, JgsValue right, Node at)
     {
-        string symbol = op == TokenType.Star ? "*" : op == TokenType.Slash ? "/" : "^";
-        if (op != TokenType.Star)
+        if (op == TokenType.Caret)
         {
             throw new JgsRuntimeException(at.Line, at.Column,
-                $"'{symbol}' between two arrays is a matrix operation, which JGraph does not implement. "
-                + $"Use '.{symbol}' for the elementwise form.");
+                "'^' between two arrays is not defined. Use '.^' for the elementwise power.");
+        }
+
+        if (op == TokenType.Backslash)
+        {
+            // A\B: the solution of A·X = B.
+            double[,] coefficients = Rect(AsRows(left), at);
+            double[,] rhs = Rect(AsRows(right), at);
+            if (!IsMatrix(right) && coefficients.GetLength(0) != 1)
+            {
+                rhs = JGraph.Numerics.LinearAlgebra.Linear.Transpose(rhs); // a vector rhs is a column
+            }
+
+            return MatrixSolve(coefficients, rhs, transposeResult: false, at);
+        }
+
+        if (op == TokenType.Slash)
+        {
+            // A/B: the solution of X·B = A, computed as (Bᵀ \ Aᵀ)ᵀ.
+            double[,] coefficients = JGraph.Numerics.LinearAlgebra.Linear.Transpose(Rect(AsRows(right), at));
+            double[,] rhs = JGraph.Numerics.LinearAlgebra.Linear.Transpose(Rect(AsRows(left), at));
+            return MatrixSolve(coefficients, rhs, transposeResult: true, at);
         }
 
         double[][] a = AsRows(left);
@@ -1900,6 +1950,106 @@ internal sealed class Interpreter
         }
 
         return JgsValue.Array(product);
+    }
+
+    /// <summary>Jagged rows as a rectangular matrix, validating equal row lengths.</summary>
+    private static double[,] Rect(double[][] rows, Node at)
+    {
+        int width = rows.Length == 0 ? 0 : rows[0].Length;
+        var rect = new double[rows.Length, width];
+        for (int r = 0; r < rows.Length; r++)
+        {
+            if (rows[r].Length != width)
+            {
+                throw new JgsRuntimeException(at.Line, at.Column, "Matrix rows must have equal lengths.");
+            }
+
+            for (int c = 0; c < width; c++)
+            {
+                rect[r, c] = rows[r][c];
+            }
+        }
+
+        return rect;
+    }
+
+    /// <summary>Runs the dense solver, translating its shape and rank complaints into script errors.</summary>
+    private JgsValue MatrixSolve(double[,] a, double[,] b, bool transposeResult, Node at)
+    {
+        try
+        {
+            double[,] x = JGraph.Numerics.LinearAlgebra.Linear.Solve(a, b);
+            return MatrixResult(transposeResult ? JGraph.Numerics.LinearAlgebra.Linear.Transpose(x) : x);
+        }
+        catch (ArgumentException)
+        {
+            throw new JgsRuntimeException(at.Line, at.Column,
+                "Matrix dimensions do not agree for the division: the right-hand side must have as many rows as the matrix.");
+        }
+        catch (InvalidOperationException ex)
+        {
+            throw new JgsRuntimeException(at.Line, at.Column, ex.Message);
+        }
+    }
+
+    /// <summary>MATLAB's <c>A^p</c>: an integer matrix power (negative p inverts first).</summary>
+    private JgsValue MatrixPower(JgsValue matrix, double exponent, Node at)
+    {
+        if (System.Math.Abs(exponent - System.Math.Round(exponent)) > 1e-12)
+        {
+            throw new JgsRuntimeException(at.Line, at.Column,
+                "'^' on a matrix supports integer exponents only. Use '.^' for the elementwise power.");
+        }
+
+        double[,] a = Rect(AsRows(matrix), at);
+        if (a.GetLength(0) != a.GetLength(1))
+        {
+            throw new JgsRuntimeException(at.Line, at.Column, "'^' needs a square matrix.");
+        }
+
+        try
+        {
+            return MatrixResult(JGraph.Numerics.LinearAlgebra.Linear.Power(a, (int)System.Math.Round(exponent)));
+        }
+        catch (InvalidOperationException ex)
+        {
+            throw new JgsRuntimeException(at.Line, at.Column, ex.Message);
+        }
+    }
+
+    /// <summary>A rectangular result as a script value: one row or one column collapses to a vector.</summary>
+    private JgsValue MatrixResult(double[,] matrix)
+    {
+        int rows = matrix.GetLength(0);
+        int cols = matrix.GetLength(1);
+        if (rows == 1 || cols == 1)
+        {
+            var flat = new double[rows * cols];
+            int at = 0;
+            for (int r = 0; r < rows; r++)
+            {
+                for (int c = 0; c < cols; c++)
+                {
+                    flat[at++] = matrix[r, c];
+                }
+            }
+
+            return NumbersOf(flat);
+        }
+
+        var wrapped = new JgsValue[rows];
+        for (int r = 0; r < rows; r++)
+        {
+            var row = new double[cols];
+            for (int c = 0; c < cols; c++)
+            {
+                row[c] = matrix[r, c];
+            }
+
+            wrapped[r] = NumbersOf(row);
+        }
+
+        return JgsValue.Array(wrapped);
     }
 
     // --- Cells and structs ----------------------------------------------------------------------

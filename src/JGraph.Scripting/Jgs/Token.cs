@@ -71,6 +71,8 @@ internal enum TokenType
     DotStar,      // .* — elementwise multiply, where '*' is matrix multiplication
     DotSlash,     // ./ — elementwise divide
     DotCaret,     // .^ — elementwise power
+    Backslash,    // \ — left division (the mldivide solver)
+    DotBackslash, // .\ — elementwise left division
     Amp,          // & — elementwise logical AND (non-short-circuiting)
     Pipe,         // | — elementwise logical OR
     Transpose,    // ' — complex-conjugate transpose

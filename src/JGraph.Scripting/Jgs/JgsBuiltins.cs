@@ -35,6 +35,9 @@ internal static partial class JgsBuiltins
         var env = new JgsEnvironment();
         var random = new Random();
 
+        // A new scope is a new console session: numeric display returns to its default precision.
+        JgsNumberFormat.Reset();
+
         void Define(string name, Func<IReadOnlyList<JgsValue>, int, int, JgsValue> body) =>
             env.Declare(name, JgsValue.Function(new BuiltinFunction(name, body)));
 
@@ -528,6 +531,75 @@ internal static partial class JgsBuiltins
             return JgsValue.Null;
         });
 
+        Define("format", (args, line, col) =>
+        {
+            ArityRange("format", args, 0, 1, line, col);
+            if (args.Count == 0)
+            {
+                JgsNumberFormat.Reset();
+                return JgsValue.Null;
+            }
+
+            string word = Str("format", args, 0, line, col).ToLowerInvariant();
+            switch (word)
+            {
+                case "short" or "shortg":
+                    JgsNumberFormat.Current = JgsNumberFormat.Mode.Short;
+                    break;
+                case "long" or "longg":
+                    JgsNumberFormat.Current = JgsNumberFormat.Mode.Long;
+                    break;
+                case "shorte":
+                    JgsNumberFormat.Current = JgsNumberFormat.Mode.ShortE;
+                    break;
+                case "longe":
+                    JgsNumberFormat.Current = JgsNumberFormat.Mode.LongE;
+                    break;
+                case "compact" or "loose":
+                    // The console already writes one line per result and never pads with blank
+                    // lines, so the spacing words are accepted and change nothing.
+                    break;
+                default:
+                    throw new JgsRuntimeException(line, col,
+                        $"format does not recognize '{word}'. Try short, long, shortE, longE, compact, or loose.");
+            }
+
+            return JgsValue.Null;
+        });
+
+        Define("help", (args, line, col) =>
+        {
+            ArityRange("help", args, 0, 1, line, col);
+            if (args.Count == 0)
+            {
+                host.print("Type help followed by a name, like: help plot");
+                host.print("Functions: " + string.Join(", ",
+                    JgsBuiltinCatalog.All.Select(static info => info.Name)));
+                return JgsValue.Null;
+            }
+
+            string name = Str("help", args, 0, line, col);
+            JgsBuiltinInfo? info = JgsBuiltinCatalog.Find(name);
+            if (info is not null)
+            {
+                host.print(info.Signature);
+                host.print("  " + info.Summary);
+                return JgsValue.Null;
+            }
+
+            IReadOnlyList<string> keywords = dialect.IsMatlab
+                ? JgsBuiltinCatalog.MatlabKeywords
+                : JgsBuiltinCatalog.Keywords;
+            if (keywords.Contains(name, StringComparer.Ordinal))
+            {
+                host.print($"'{name}' is a language keyword.");
+                return JgsValue.Null;
+            }
+
+            host.print($"No help found for '{name}'.");
+            return JgsValue.Null;
+        });
+
         Define("dir", (args, line, col) =>
         {
             if (args.Count > 1)
@@ -977,16 +1049,46 @@ internal static partial class JgsBuiltins
                 throw new JgsRuntimeException(line, col, "fprintf expects a format string first.");
             }
 
-            string format = Str("fprintf", args, 0, line, col);
+            // A leading number is a file id: 1 = the console, 2 = the error console, 3+ = fopen.
+            int start = 0;
+            int fid = 1;
+            if (args[0].Type is JgsType.Number or JgsType.Bool)
+            {
+                fid = (int)args[0].AsNumber;
+                start = 1;
+                if (args.Count < 2)
+                {
+                    throw new JgsRuntimeException(line, col, "fprintf expects a format string after the file id.");
+                }
+            }
+
+            string format = Str("fprintf", args, start, line, col);
+            string text;
             try
             {
                 // MATLAB fprintf writes exactly what the format says — the newline comes from the
                 // format's own \n, so this goes through the raw (no-newline) output seam.
-                host.WriteOut(JgsSprintf.Format(format, args.Skip(1).ToArray()));
+                text = JgsSprintf.Format(format, args.Skip(start + 1).ToArray());
             }
             catch (FormatException ex)
             {
                 throw new JgsRuntimeException(line, col, ex.Message);
+            }
+
+            switch (fid)
+            {
+                case 1:
+                    host.WriteOut(text);
+                    break;
+                case 2:
+                    host.WriteErr(text);
+                    break;
+                default:
+                    System.IO.FileStream stream = host.FileFor(fid)
+                        ?? throw new JgsRuntimeException(line, col, $"fprintf: file id {fid} is not open.");
+                    byte[] bytes = System.Text.Encoding.UTF8.GetBytes(text);
+                    stream.Write(bytes, 0, bytes.Length);
+                    break;
             }
 
             return JgsValue.Null;
@@ -1409,6 +1511,16 @@ internal static partial class JgsBuiltins
         // --- MATLAB names (M28) — defined in JgsBuiltins.Matlab.cs ---------------------------
         // Registered last: the multiple-output forms wrap builtins declared above.
         RegisterMatlabBuiltins(env, host, random, dialect);
+
+        // Shape/generation builtins may re-register MATLAB-shaped constructors, and the reduction
+        // semantics wrap builtins the two calls above declared — order matters here.
+        RegisterShapeBuiltins(env, random, dialect);
+        RegisterLinearAlgebraBuiltins(env, dialect);
+        RegisterFileIoBuiltins(env, host);
+        if (dialect.IsMatlab)
+        {
+            RegisterMatlabReductions(env, dialect);
+        }
 
         return env;
     }

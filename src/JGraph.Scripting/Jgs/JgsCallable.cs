@@ -27,7 +27,7 @@ internal interface IJgsMultiCallable
 }
 
 /// <summary>A built-in function implemented in C#, exposed to scripts by name.</summary>
-internal sealed class BuiltinFunction : IJgsCallable
+internal sealed class BuiltinFunction : IJgsCallable, IJgsMultiCallable
 {
     private readonly Func<IReadOnlyList<JgsValue>, int, int, JgsValue> _implementation;
 
@@ -48,9 +48,22 @@ internal sealed class BuiltinFunction : IJgsCallable
     /// </summary>
     public bool BindsAnsAsStatement { get; init; } = true;
 
+    /// <summary>
+    /// Optional multi-output implementation, for MATLAB's <c>[X, Y] = meshgrid(x, y)</c>: given
+    /// (arguments, wanted, line, column), produces up to <c>wanted</c> outputs. Null for the many
+    /// builtins that only ever produce one value — asking those for more reports a shortfall.
+    /// </summary>
+    public Func<IReadOnlyList<JgsValue>, int, int, int, JgsValue[]>? MultiOutput { get; init; }
+
     /// <inheritdoc />
     public JgsValue Call(IReadOnlyList<JgsValue> arguments, int line, int column) =>
         _implementation(arguments, line, column);
+
+    /// <inheritdoc />
+    public JgsValue[] CallMultiple(IReadOnlyList<JgsValue> arguments, int wanted, int line, int column) =>
+        MultiOutput is { } multi && wanted > 1
+            ? multi(arguments, wanted, line, column)
+            : [Call(arguments, line, column)];
 }
 
 /// <summary>A user-defined function: its parameters, body, and captured defining environment (a closure).</summary>

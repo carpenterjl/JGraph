@@ -110,4 +110,5 @@ session, without changing the session seam.
   (what prints and what `ans` holds), `MatlabCommandSyntaxTests` (`hold off` really is off).
 - Still missing, and now visible: builtins cannot return multiple outputs, so `[X, Y] =
   meshgrid(x, y)` fails in the MATLAB dialect, and `rand`/`randn` have no `rng(seed)`. Both are
-  separate work.
+  separate work. *(Superseded: ADR 0039 gives builtins a `MultiOutput` seam — meshgrid, size,
+  max/min, sort, find, and ind2sub produce real multiple outputs now. `rng(seed)` is still open.)*

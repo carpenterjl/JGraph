@@ -27,8 +27,6 @@ internal static partial class JgsBuiltins
         ["readmatrix"] = "readmatrix — use readcsv or readtable",
         ["uifigure"] = "app building",
         ["uicontrol"] = "app building",
-        ["load"] = "MAT-files",
-        ["save"] = "MAT-files — use savefigure for figures",
         ["parfeval"] = "parallel execution",
         ["gpuArray"] = "GPU arrays",
         ["addpath"] = "a search path — files resolve against the script's folder and the workspace root",
@@ -455,16 +453,22 @@ internal static partial class JgsBuiltins
             IJgsCallable inner = existing.AsCallable;
             env.Declare(name, JgsValue.Function(new BuiltinFunction(name, (args, line, col) =>
             {
-                if (args.Count == 0 || args[0].Type != JgsType.String)
+                // The format is normally first; fprintf(fid, fmt, …) shifts it one slot right.
+                int at = args.Count > 0 && args[0].Type == JgsType.String
+                    ? 0
+                    : args.Count > 1 && args[0].Type is JgsType.Number or JgsType.Bool
+                        && args[1].Type == JgsType.String
+                        ? 1
+                        : -1;
+                if (at < 0)
                 {
                     return inner.Call(args, line, col);
                 }
 
                 var unescaped = new JgsValue[args.Count];
-                unescaped[0] = JgsValue.Str(UnescapeFormat(args[0].AsString));
-                for (int i = 1; i < args.Count; i++)
+                for (int i = 0; i < args.Count; i++)
                 {
-                    unescaped[i] = args[i];
+                    unescaped[i] = i == at ? JgsValue.Str(UnescapeFormat(args[i].AsString)) : args[i];
                 }
 
                 return inner.Call(unescaped, line, col);
@@ -514,7 +518,7 @@ internal static partial class JgsBuiltins
     /// </summary>
     private static void RegisterMultiOutputForms(JgsEnvironment env, JgsDialect dialect)
     {
-        void Wrap(string name, Func<IReadOnlyList<JgsValue>, int, int, JgsValue[]> both)
+        void Wrap(string name, Func<IReadOnlyList<JgsValue>, int, int, int, JgsValue[]> both)
         {
             if (!env.TryGet(name, out JgsValue existing) || existing.Type != JgsType.Function)
             {
@@ -522,10 +526,11 @@ internal static partial class JgsBuiltins
             }
 
             IJgsCallable single = existing.AsCallable;
-            env.Declare(name, JgsValue.Function(new MultiOutputBuiltin(name, single, both)));
+            env.Declare(name, JgsValue.Function(
+                new BuiltinFunction(name, single.Call) { MultiOutput = both }));
         }
 
-        Wrap("size", (args, line, col) =>
+        Wrap("size", (args, wanted, line, col) =>
         {
             JgsValue result = SingleOf(env, "size", args, line, col);
             if (result.Type != JgsType.Array)
@@ -533,19 +538,36 @@ internal static partial class JgsBuiltins
                 return [result];
             }
 
-            var dimensions = new JgsValue[result.ArrayLength];
+            var dimensions = new double[result.ArrayLength];
             for (int i = 0; i < dimensions.Length; i++)
             {
-                dimensions[i] = result.ElementAt(i);
+                dimensions[i] = result.ElementAt(i).AsNumber;
             }
 
-            return dimensions;
+            // MATLAB pads missing dimensions with 1 and folds the ones past the last requested
+            // output into it: [r, c] = size(rgb) reports c = width * channels.
+            var outputs = new JgsValue[wanted];
+            for (int i = 0; i < wanted; i++)
+            {
+                double dim = i < dimensions.Length ? dimensions[i] : 1;
+                if (i == wanted - 1)
+                {
+                    for (int j = wanted; j < dimensions.Length; j++)
+                    {
+                        dim *= dimensions[j];
+                    }
+                }
+
+                outputs[i] = JgsValue.Number(dim);
+            }
+
+            return outputs;
         });
 
-        Wrap("max", (args, line, col) => ExtremeWithIndex(env, "max", args, dialect, line, col));
-        Wrap("min", (args, line, col) => ExtremeWithIndex(env, "min", args, dialect, line, col));
+        Wrap("max", (args, _, line, col) => ExtremeWithIndex(env, "max", args, dialect, line, col));
+        Wrap("min", (args, _, line, col) => ExtremeWithIndex(env, "min", args, dialect, line, col));
 
-        Wrap("sort", (args, line, col) =>
+        Wrap("sort", (args, _, line, col) =>
         {
             JgsValue sorted = SingleOf(env, "sort", args, line, col);
             double[] original = ToDoubles("sort", args[0], line, col);
@@ -570,6 +592,94 @@ internal static partial class JgsBuiltins
 
             return [sorted, JgsValue.Array(order)];
         });
+
+        Wrap("find", (args, wanted, line, col) => FindSubscripts(args, dialect, wanted, line, col));
+
+        Wrap("ind2sub", (args, _, line, col) =>
+        {
+            JgsValue pair = SingleOf(env, "ind2sub", args, line, col);
+            return [pair.ElementAt(0), pair.ElementAt(1)];
+        });
+
+        // meshgrid computes its [X, Y] pair as one array value; the wrapped form peels the pair
+        // apart for MATLAB's [X, Y] = meshgrid(x, y). The one-output form is X alone in MATLAB,
+        // while JGS keeps the pair — that is what 'let [X, Y] = meshgrid(x, y)' destructures.
+        if (env.TryGet("meshgrid", out JgsValue mesh) && mesh.Type == JgsType.Function)
+        {
+            IJgsCallable pairForm = mesh.AsCallable;
+            Func<IReadOnlyList<JgsValue>, int, int, JgsValue> single = dialect.IsMatlab
+                ? (args, line, col) => pairForm.Call(args, line, col).ElementAt(0)
+                : pairForm.Call;
+            env.Declare("meshgrid", JgsValue.Function(new BuiltinFunction("meshgrid", single)
+            {
+                MultiOutput = (args, _, line, col) =>
+                {
+                    JgsValue pair = pairForm.Call(args, line, col);
+                    return [pair.ElementAt(0), pair.ElementAt(1)];
+                },
+            }));
+        }
+    }
+
+    /// <summary>
+    /// MATLAB's <c>[row, col] = find(x)</c> (optionally <c>[row, col, v]</c>): subscripts of the truthy
+    /// elements, column-major over a matrix. JGraph vectors have no orientation and are treated as row
+    /// vectors, so their row subscripts are all the dialect's first index.
+    /// </summary>
+    private static JgsValue[] FindSubscripts(
+        IReadOnlyList<JgsValue> args, JgsDialect dialect, int wanted, int line, int col)
+    {
+        ArityRange("find", args, 1, 2, line, col);
+        int origin = args.Count == 2 ? IndexOrigin("find", args, 1, line, col) : dialect.IndexBase;
+
+        var rows = new List<JgsValue>();
+        var cols = new List<JgsValue>();
+        var values = new List<JgsValue>();
+        JgsValue subject = args[0];
+
+        bool isMatrix = !subject.IsPacked && subject.Type == JgsType.Array
+            && subject.ArrayLength > 0 && subject.ElementAt(0).Type == JgsType.Array;
+        if (isMatrix)
+        {
+            int height = subject.ArrayLength;
+            int width = subject.ElementAt(0).ArrayLength;
+            for (int c = 0; c < width; c++)
+            {
+                for (int r = 0; r < height; r++)
+                {
+                    JgsValue row = subject.ElementAt(r);
+                    if (c >= row.ArrayLength)
+                    {
+                        throw new JgsRuntimeException(line, col, "find: matrix rows must have equal lengths.");
+                    }
+
+                    JgsValue element = row.ElementAt(c);
+                    if (element.IsTruthy)
+                    {
+                        rows.Add(JgsValue.Number(r + origin));
+                        cols.Add(JgsValue.Number(c + origin));
+                        values.Add(element);
+                    }
+                }
+            }
+        }
+        else
+        {
+            JgsValue[] elements = Arr("find", args, 0, line, col);
+            for (int i = 0; i < elements.Length; i++)
+            {
+                if (elements[i].IsTruthy)
+                {
+                    rows.Add(JgsValue.Number(origin));
+                    cols.Add(JgsValue.Number(i + origin));
+                    values.Add(elements[i]);
+                }
+            }
+        }
+
+        return wanted >= 3
+            ? [JgsValue.Array(rows.ToArray()), JgsValue.Array(cols.ToArray()), JgsValue.Array(values.ToArray())]
+            : [JgsValue.Array(rows.ToArray()), JgsValue.Array(cols.ToArray())];
     }
 
     private static JgsValue[] ExtremeWithIndex(
@@ -599,7 +709,7 @@ internal static partial class JgsBuiltins
     {
         env.TryGet(name, out JgsValue value);
         return value is { Type: JgsType.Function } callable
-            ? ((MultiOutputBuiltin)callable.AsCallable).CallSingle(args, line, col)
+            ? callable.AsCallable.Call(args, line, col)
             : throw new JgsRuntimeException(line, col, $"'{name}' is not available.");
     }
 
@@ -684,30 +794,4 @@ internal static partial class JgsBuiltins
             : format;
     }
 
-    /// <summary>A builtin that can also produce several outputs for <c>[a, b] = f(x)</c>.</summary>
-    private sealed class MultiOutputBuiltin : IJgsCallable, IJgsMultiCallable
-    {
-        private readonly IJgsCallable _single;
-        private readonly Func<IReadOnlyList<JgsValue>, int, int, JgsValue[]> _multiple;
-
-        public MultiOutputBuiltin(
-            string name, IJgsCallable single, Func<IReadOnlyList<JgsValue>, int, int, JgsValue[]> multiple)
-        {
-            Name = name;
-            _single = single;
-            _multiple = multiple;
-        }
-
-        public string Name { get; }
-
-        /// <summary>The original single-value implementation, for the multi-output form to build on.</summary>
-        public JgsValue CallSingle(IReadOnlyList<JgsValue> arguments, int line, int column) =>
-            _single.Call(arguments, line, column);
-
-        public JgsValue Call(IReadOnlyList<JgsValue> arguments, int line, int column) =>
-            _single.Call(arguments, line, column);
-
-        public JgsValue[] CallMultiple(IReadOnlyList<JgsValue> arguments, int wanted, int line, int column) =>
-            wanted <= 1 ? [_single.Call(arguments, line, column)] : _multiple(arguments, line, column);
-    }
 }

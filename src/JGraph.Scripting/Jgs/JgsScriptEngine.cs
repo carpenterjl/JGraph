@@ -76,7 +76,7 @@ public sealed class JgsScriptEngine : IScriptEngine, IJgsDebuggable, IScriptRepl
         JgsEnvironment globals = JgsBuiltins.CreateGlobals(new JGraphScriptGlobals(context));
         // 'run' and 'clear' are not seeded by CreateGlobals: they need the interpreter and the session
         // respectively, so they are declared afterwards by whoever owns those. Editors still know them.
-        var names = new List<string>(globals.Locals.Keys) { "run", "clear" };
+        var names = new List<string>(globals.Locals.Keys) { "run", "clear", "whos", "save", "load" };
         names.Sort(StringComparer.Ordinal);
         return names;
     }

@@ -446,8 +446,7 @@ internal sealed class JgsValue
         ? $"image[{image.Height}x{image.Width}]"
         : $"image[{image.Height}x{image.Width}x{image.Channels}]";
 
-    private static string FormatNumber(double value) =>
-        value.ToString("R", CultureInfo.InvariantCulture);
+    private static string FormatNumber(double value) => JgsNumberFormat.Format(value);
 
     /// <summary>Formats like MATLAB: <c>1.2i</c> when purely imaginary, else <c>0.5+1.2i</c> / <c>0.5-1.2i</c>.</summary>
     private static string FormatComplex(Complex value)

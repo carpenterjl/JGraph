@@ -118,7 +118,35 @@ public static class JgsBuiltinCatalog
         Add("range", "Values from start (inclusive) to stop (exclusive) in steps of step (default 1).", P("start"), P("stop"), Opt("step"));
         Add("zeros", "An array of count zeros, a rows-by-cols matrix, or the shape of a size vector (zeros(size(t))).", P("count"), Opt("cols"));
         Add("ones", "An array of count ones, a rows-by-cols matrix, or the shape of a size vector.", P("count"), Opt("cols"));
-        Add("rand", "An array of count uniform random values in [0, 1).", P("count"));
+        Add("rand", "Uniform random values in [0, 1): rand(count) — and rand(), rand(n) as n-by-n, rand(r, c) in MATLAB.", P("count"));
+        Add("eye", "The identity matrix: eye(n), eye(r, c), or eye([r c]).", Opt("n"), Opt("cols"));
+        Add("diag", "A diagonal matrix from a vector, or a matrix's diagonal as a vector; offset k picks another diagonal.", P("x"), Opt("k"));
+        Add("magic", "An n-by-n magic square (every row, column, and diagonal sums alike).", P("n"));
+        Add("logspace", "count (default 50) logarithmically spaced values from 10^start to 10^stop.", P("start"), P("stop"), Opt("count"));
+        Add("ndims", "The number of dimensions: 2 for everything here except multi-channel images (3).", P("x"));
+        Add("reshape", "The same elements in a new rows-by-cols shape, read and filled column by column; one dimension may be [].", P("x"), P("rows"), P("cols"));
+        Add("cat", "Concatenates values along a dimension: 1 stacks rows, 2 joins columns.", P("dim"), P("first"), Opt("more..."));
+        Add("horzcat", "Joins values side by side — [a, b] as a function.", P("first"), Opt("more..."));
+        Add("vertcat", "Stacks values top to bottom — [a; b] as a function.", P("first"), Opt("more..."));
+        Add("flip", "Reverses a vector, or a matrix along dim (default 1, its rows).", P("x"), Opt("dim"));
+        Add("fliplr", "Reverses left-right: a vector's order, or each matrix row.", P("x"));
+        Add("flipud", "Reverses up-down: a matrix's row order (a vector is a single row, so it is unchanged).", P("x"));
+        Add("squeeze", "Removes singleton dimensions — a no-op here, where values are at most 2-D.", P("x"));
+        Add("permute", "Rearranges dimensions: [1 2] leaves x alone, [2 1] transposes it.", P("x"), P("order"));
+        Add("transpose", "The non-conjugate transpose, x.' as a function.", P("x"));
+        Add("ctranspose", "The complex-conjugate transpose, x' as a function.", P("x"));
+        Add("prod", "The product of a numeric array (column-wise over matrices in MATLAB).", P("array"));
+        Add("ismember", "Whether each element of x is in the set — a mask the shape of x.", P("x"), P("set"));
+        Add("dot", "The inner product of two equal-length vectors (conjugating the first when complex).", P("a"), P("b"));
+        Add("inv", "The inverse of a square matrix (errors when singular).", P("A"));
+        Add("det", "The determinant of a square matrix.", P("A"));
+        Add("rank", "The number of linearly independent rows/columns, by singular values above tol.", P("A"), Opt("tol"));
+        Add("trace", "The sum of a square matrix's diagonal.", P("A"));
+        Add("norm", "Vector norms (2 by default, any p, inf) and matrix norms (1, 2, inf, 'fro').", P("x"), Opt("p"));
+        Add("eig", "Eigenvalues of a square matrix; [V, D] = eig(A) adds the eigenvectors.", P("A"));
+        Add("lu", "LU factorization: [L, U, P] = lu(A) with P*A = L*U ([L, U] folds P into L).", P("A"));
+        Add("qr", "QR factorization: [Q, R] = qr(A) with A = Q*R (economy-size Q).", P("A"));
+        Add("svd", "Singular values of a matrix; [U, S, V] = svd(A) adds the singular vectors (economy-size).", P("A"));
 
         // --- DSP and audio ----------------------------------------------------------------------
         Add("fft", "Discrete Fourier transform of a (real or complex) signal; optional length pads or truncates.", P("x"), Opt("n"));
@@ -313,6 +341,17 @@ public static class JgsBuiltinCatalog
         Add("clear", "Clears the workspace: drops every variable and reverts any rebound built-in. Figures stay open.");
         Add("print", "Writes the values to the console, space-separated.", P("values"));
         Add("clc", "Clears the console display. Variables and figures are untouched.");
+        Add("whos", "Lists the workspace's variables with their size and class.");
+        Add("save", "Writes workspace variables to a MAT-file (or text with '-ascii'): save file, save('f.mat', 'x').", Opt("path"), Opt("names..."));
+        Add("load", "Reads a MAT-file's (or numeric text file's) variables into the workspace.", Opt("path"), Opt("names..."));
+        Add("fopen", "Opens a file and returns its id (-1 on failure); modes r (default), w, a, r+.", P("path"), Opt("mode"));
+        Add("fclose", "Closes a file id, or every open file with fclose('all').", P("fid"));
+        Add("fread", "Reads binary values from a file: fread(fid, count?, precision?) — uint8 by default.", P("fid"), Opt("count"), Opt("precision"));
+        Add("fwrite", "Writes values to a file in binary: fwrite(fid, data, precision?) — uint8 by default.", P("fid"), P("data"), Opt("precision"));
+        Add("fgetl", "The next text line of a file, without its newline; -1 (a number) at end of file.", P("fid"));
+        Add("image", "Displays a matrix as a colormapped image over its cell indices (an image value shows as-is).", P("z"));
+        Add("help", "Shows a builtin's signature and summary; help alone lists every function.", Opt("name"));
+        Add("format", "Sets numeric display precision: short, long, shortE, longE (bare format resets).", Opt("mode"));
         Add("dir", "The files and folders in the working directory (or matching pattern) as a cell array of names; folders end with the path separator.", Opt("pattern"));
         Add("path", "The folder that bare file names resolve against (the workspace root, or the batch start folder).");
 
