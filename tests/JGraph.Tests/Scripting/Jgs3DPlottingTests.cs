@@ -32,13 +32,15 @@ public class Jgs3DPlottingTests : IDisposable
     {
         ScriptRunResult result = await Run("""
             let [X, Y] = meshgrid([1, 2, 3], [10, 20])
-            print(X[0], X[1])
-            print(Y[0], Y[1])
+            print(X(0, :), X(1, :))
+            print(Y(0, :), Y(1, :))
+            print(size(X))
             """);
 
         Assert.True(result.Success, result.Message);
         Assert.Contains("[1, 2, 3] [1, 2, 3]", _output.NormalText);
         Assert.Contains("[10, 10, 10] [20, 20, 20]", _output.NormalText);
+        Assert.Contains("[2, 3]", _output.NormalText);
     }
 
     [Fact]
@@ -47,9 +49,9 @@ public class Jgs3DPlottingTests : IDisposable
         ScriptRunResult result = await Run("""
             let [X, Y] = meshgrid([1, 2], [3, 4])
             let S = X * X + Y
-            print(S[0], S[1])
+            print(S(0, :), S(1, :))
             let T = S * 10
-            print(T[0])
+            print(T(0, :))
             """);
 
         Assert.True(result.Success, result.Message);

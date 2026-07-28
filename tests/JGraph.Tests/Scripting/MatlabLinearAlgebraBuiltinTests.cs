@@ -123,9 +123,20 @@ public class MatlabLinearAlgebraBuiltinTests : IDisposable
     [Fact]
     public Task Qr_FactorsReassembleTheMatrix() => RunAsserting("""
         A = [1 1; 1 2; 1 3];
+
+        % qr(A) is the full factorization: Q is square, so it is a basis for the whole space and
+        % R carries A's shape. qr(A, 0) is the economy form, where Q spans only A's range.
         [Q, R] = qr(A);
+        assert(isequal(size(Q), [3 3]));
+        assert(isequal(size(R), [3 2]));
         assert(norm(Q * R - A, 'fro') < 1e-12);
-        assert(norm(Q' * Q - eye(2), 'fro') < 1e-12);
+        assert(norm(Q' * Q - eye(3), 'fro') < 1e-12);
+
+        [Qe, Re] = qr(A, 0);
+        assert(isequal(size(Qe), [3 2]));
+        assert(isequal(size(Re), [2 2]));
+        assert(norm(Qe * Re - A, 'fro') < 1e-12);
+        assert(norm(Qe' * Qe - eye(2), 'fro') < 1e-12);
         """);
 
     [Fact]

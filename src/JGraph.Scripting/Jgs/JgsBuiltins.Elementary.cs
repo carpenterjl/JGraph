@@ -171,10 +171,10 @@ internal static partial class JgsBuiltins
         Predicate("isvector", IsVectorShape);
         Predicate("ismatrix", static v => v.Type != JgsType.Image || v.AsImage.Channels == 1);
 
-        // A JGS vector has no orientation (M36 settled this for the flip/transpose family), so it
-        // reads as a row; only a 1-by-1 is both a row and a column.
-        Predicate("isrow", IsVectorShape);
-        Predicate("iscolumn", static v => v.Type is not (JgsType.Array or JgsType.Cell) || Extent(v) == 1);
+        // Arrays carry a shape now (ADR 0043), so these read it: a literal is 1-by-n and answers
+        // isrow, and a transposed vector or a column of a matrix genuinely answers iscolumn.
+        Predicate("isrow", IsRowShape);
+        Predicate("iscolumn", IsColumnShape);
 
         Predicate("isstr", static v => v.Type == JgsType.String); // the pre-R2016 spelling of ischar
         Predicate("isstring", static _ => false);                 // no string-array type to be one of
@@ -323,7 +323,7 @@ internal static partial class JgsBuiltins
         _ => 1,
     };
 
-    /// <summary>Whether a value is a vector: a scalar, or a flat array with no nested rows.</summary>
+    /// <summary>Whether a value is a vector: a scalar, or an array with a singleton dimension.</summary>
     private static bool IsVectorShape(JgsValue value)
     {
         if (value.Type is not (JgsType.Array or JgsType.Cell))
@@ -331,13 +331,21 @@ internal static partial class JgsBuiltins
             return true;
         }
 
-        if (value.Type == JgsType.Cell)
-        {
-            return true;
-        }
-
-        return value.IsPacked || Array.TrueForAll(value.AsArray, static e => e.Type != JgsType.Array);
+        return value.Type == JgsType.Cell
+            || JgsMatrix.RowCount(value) == 1
+            || JgsMatrix.ColCount(value) == 1;
     }
+
+    /// <summary>Whether a value is a single row — a scalar, or an array whose row count is one.</summary>
+    private static bool IsRowShape(JgsValue value) =>
+        value.Type is not (JgsType.Array or JgsType.Cell) || value.Type == JgsType.Cell
+        || JgsMatrix.RowCount(value) == 1;
+
+    /// <summary>Whether a value is a single column.</summary>
+    private static bool IsColumnShape(JgsValue value) =>
+        value.Type is not (JgsType.Array or JgsType.Cell)
+            ? true
+            : value.Type == JgsType.Cell ? Extent(value) == 1 : JgsMatrix.ColCount(value) == 1;
 
     // --- Trigonometry ---------------------------------------------------------------------------
 

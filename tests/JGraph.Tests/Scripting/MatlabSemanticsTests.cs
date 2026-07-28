@@ -154,7 +154,9 @@ public class MatlabSemanticsTests : IDisposable
     [Fact]
     public void StarBetweenAMatrixAndAVector_IsAMatrixProduct()
     {
-        Assert.Contains("[4, 6]", RunAndRead("A = [1 0; 0 1];\nv = [4 6];\ndisp(A * v)"), StringComparison.Ordinal);
+        // A row vector's orientation is often incidental, so it is turned into the column the
+        // product needs — and the result is the column MATLAB would give.
+        Assert.Contains("[4; 6]", RunAndRead("A = [1 0; 0 1];\nv = [4 6];\ndisp(A * v)"), StringComparison.Ordinal);
     }
 
     [Fact]
@@ -198,14 +200,18 @@ public class MatlabSemanticsTests : IDisposable
     [Fact]
     public void TransposingAVector_KeepsItsValues()
     {
-        // JGraph's arrays carry no row/column orientation, so the ubiquitous column idiom is a copy.
-        Assert.Contains("[1, 2, 3]", RunAndRead("disp((1:3)')"), StringComparison.Ordinal);
+        // Arrays carry a shape now (ADR 0043), so the ubiquitous column idiom produces a real column
+        // — same values, down the page.
+        Assert.Contains("[1; 2; 3]", RunAndRead("disp((1:3)')"), StringComparison.Ordinal);
+
+        _output.Normal.Clear();
+        Assert.Contains("[3, 1]", RunAndRead("disp(size((1:3)'))"), StringComparison.Ordinal);
     }
 
     [Fact]
     public void TransposingAMatrix_SwapsRowsAndColumns()
     {
-        Assert.Contains("[[1, 3], [2, 4]]", RunAndRead("A = [1 2; 3 4];\ndisp(A')"), StringComparison.Ordinal);
+        Assert.Contains("[1, 3; 2, 4]", RunAndRead("A = [1 2; 3 4];\ndisp(A')"), StringComparison.Ordinal);
     }
 
     [Fact]

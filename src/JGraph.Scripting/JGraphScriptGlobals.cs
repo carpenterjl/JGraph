@@ -22,6 +22,7 @@ public sealed class JGraphScriptGlobals
     private readonly HashSet<int> _shownThisRun = new();
     private long _runStartStamp;
     private string? _runScriptDirectory;
+    private string? _runScriptPath;
     private int _figuresShown;
 
     /// <summary>Creates the globals over a run's <paramref name="context"/>.</summary>
@@ -42,7 +43,9 @@ public sealed class JGraphScriptGlobals
     /// </summary>
     /// <param name="scriptDirectory">The folder of the file being run, tried first for its relative
     /// paths, or null for prompt input (which has no file to sit beside).</param>
-    internal void BeginRun(string? scriptDirectory = null)
+    /// <param name="scriptPath">The file being run, which <c>mfilename</c> reports; null at the
+    /// prompt, where MATLAB reports an empty name for the same reason.</param>
+    internal void BeginRun(string? scriptDirectory = null, string? scriptPath = null)
     {
         lock (_shownThisRun)
         {
@@ -51,8 +54,12 @@ public sealed class JGraphScriptGlobals
 
         _runStartStamp = JG.TouchStamp;
         _runScriptDirectory = scriptDirectory;
+        _runScriptPath = scriptPath;
         Volatile.Write(ref _figuresShown, 0);
     }
+
+    /// <summary>The file the current run came from, or null when the code came from the prompt.</summary>
+    internal string? RunScriptPath => _runScriptPath ?? _context.ScriptPath;
 
     // --- Output -----------------------------------------------------------------------------------
 
@@ -67,6 +74,7 @@ public sealed class JGraphScriptGlobals
         }
 
         _context.Output.WriteLine(text);
+        Record(text + "\n");
     }
 
     /// <summary>Writes raw text (no newline) to the output console. Backs Python's redirected stdout.</summary>
@@ -79,6 +87,48 @@ public sealed class JGraphScriptGlobals
         }
 
         _context.Output.Write(text);
+        Record(text);
+    }
+
+    // --- Diary ------------------------------------------------------------------------------------
+
+    private StreamWriter? _diary;
+
+    /// <summary>The file <c>diary</c> is echoing to, or null when it is off.</summary>
+    internal string? DiaryPath { get; private set; }
+
+    /// <summary>
+    /// Starts echoing console output to <paramref name="path"/>, appending to whatever is there.
+    /// Appending rather than truncating is what makes a diary a record of a session rather than of
+    /// its last few lines.
+    /// </summary>
+    internal void StartDiary(string path)
+    {
+        StopDiary();
+        _diary = new StreamWriter(path, append: true);
+        DiaryPath = path;
+    }
+
+    /// <summary>Stops echoing and closes the file.</summary>
+    internal void StopDiary()
+    {
+        _diary?.Dispose();
+        _diary = null;
+        DiaryPath = null;
+    }
+
+    /// <summary>
+    /// Copies console text into the diary. Text captured by <c>evalc</c> never reaches here, which
+    /// is right: the diary is a transcript of what the session showed, and captured output was not
+    /// shown to anyone.
+    /// </summary>
+    private void Record(string text)
+    {
+        if (_diary is { } writer)
+        {
+            writer.Write(text);
+            writer.Flush();
+        }
     }
 
     /// <summary>

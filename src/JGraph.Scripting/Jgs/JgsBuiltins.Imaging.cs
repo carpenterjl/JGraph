@@ -465,13 +465,8 @@ internal static partial class JgsBuiltins
 
             // One [rhoIndex, thetaIndex] row per peak, 0-based so the indices address rho and theta
             // directly (ADR 0028); pass a base of 1 for MATLAB numbering.
-            var rows = new JgsValue[peaks.Length];
-            for (int i = 0; i < peaks.Length; i++)
-            {
-                rows[i] = Numbers([peaks[i].RhoIndex + origin, peaks[i].ThetaIndex + origin]);
-            }
-
-            return JgsValue.Array(rows);
+            return JgsMatrix.Build(peaks.Length, 2,
+                (i, c) => (c == 0 ? peaks[i].RhoIndex : peaks[i].ThetaIndex) + origin);
         });
 
         define("houghlines", (args, line, col) =>
@@ -815,24 +810,12 @@ internal static partial class JgsBuiltins
             _ => throw new JgsRuntimeException(line, col, $"unknown interpolation '{method}' (use 'nearest' or 'bilinear')."),
         };
 
-    /// <summary>Builds a JGS nested-array matrix (array of row arrays) from a scalar field.</summary>
+    /// <summary>Builds a shaped matrix value from a scalar field.</summary>
     private static JgsValue MatrixToRows(double[,] values)
     {
         int rows = values.GetLength(0);
         int cols = values.GetLength(1);
-        var result = new JgsValue[rows];
-        for (int r = 0; r < rows; r++)
-        {
-            var row = new double[cols];
-            for (int c = 0; c < cols; c++)
-            {
-                row[c] = values[r, c];
-            }
-
-            result[r] = Numbers(row);
-        }
-
-        return JgsValue.Array(result);
+        return JgsMatrix.Build(rows, cols, (r, c) => values[r, c]);
     }
 
     /// <summary>Copies a single-channel image into a <c>[rows, cols]</c> scalar field for <see cref="ImagePlot"/>.</summary>

@@ -20,7 +20,10 @@ internal sealed class Interpreter
     private CancellationToken _cancellationToken;
     private readonly IJgsDebugHook? _hook;
     private readonly Action<string>? _echo;
-    private readonly List<int> _indexTargetLengths = new(); // 'end' resolves to the top entry
+    // 'end' resolves against the top entry: the extents of the value being subscripted, and which
+    // subscript slot is being evaluated. Two entries make A(end, end) mean the last row and the last
+    // column rather than the last element twice.
+    private readonly List<(int[] Extents, int Slot)> _indexContext = new();
 
     /// <summary>
     /// Names a MATLAB <c>global</c> declaration has bound to the global scope. Reads and writes of
@@ -80,6 +83,15 @@ internal sealed class Interpreter
     /// which is why it tracks function frames rather than every block.
     /// </summary>
     internal JgsEnvironment CurrentFrame { get; private set; } = null!;
+
+    /// <summary>
+    /// The call expression that created the innermost function frame, or null at the top level.
+    /// <c>inputname</c> reads its argument list to name the caller's variables.
+    /// </summary>
+    internal CallExpr? CurrentCall { get; private set; }
+
+    /// <summary>The call being made right now, handed to the frame it is about to create.</summary>
+    private CallExpr? _pendingCall;
 
     /// <summary>The global environment — <c>evalin('base', …)</c>'s workspace.</summary>
     internal JgsEnvironment Globals => _globals;
@@ -198,9 +210,14 @@ internal sealed class Interpreter
         }
 
         // eval and friends work in the scope that called them, which is this frame while the body
-        // runs and the caller's again the moment it returns.
+        // runs and the caller's again the moment it returns. inputname wants the call site the same
+        // way, so the pending node moves into the frame here and is cleared so a later frame with no
+        // call expression behind it cannot inherit this one's.
         JgsEnvironment callerFrame = CurrentFrame;
+        CallExpr? callerCall = CurrentCall;
         CurrentFrame = local;
+        CurrentCall = _pendingCall;
+        _pendingCall = null;
 
         _hook?.EnterFunction(declaration, callLine, local);
         try
@@ -219,6 +236,7 @@ internal sealed class Interpreter
         finally
         {
             CurrentFrame = callerFrame;
+            CurrentCall = callerCall;
             _callDepth--;
             _hook?.ExitFunction();
         }
@@ -736,18 +754,7 @@ internal sealed class Interpreter
                 return JgsValue.Bool(boolean.Value);
 
             case ArrayLiteral array:
-                var elements = new JgsValue[array.Elements.Count];
-                for (int i = 0; i < elements.Length; i++)
-                {
-                    elements[i] = Evaluate(array.Elements[i], env);
-                }
-
-                if (JgsPacking.Enabled && PackedOps.TryPackElements(elements, out JgsValue packedLiteral))
-                {
-                    return packedLiteral;
-                }
-
-                return JgsValue.Array(elements);
+                return EvaluateArrayLiteral(array, env);
 
             case MatrixLiteral matrix:
                 return EvaluateMatrix(matrix, env);
@@ -756,15 +763,17 @@ internal sealed class Interpreter
                 return EvaluateRange(range, env);
 
             case EndExpr:
-                if (_indexTargetLengths.Count == 0)
+                if (_indexContext.Count == 0)
                 {
                     throw new JgsRuntimeException(expression.Line, expression.Column,
                         "'end' is only valid inside an index expression, like x(end).");
                 }
 
-                // The stack holds target *lengths*; 'end' is the last valid *index*, which in a
-                // 0-based dialect is one less and in a 1-based one is the length itself.
-                return JgsValue.Number(_indexTargetLengths[^1] - 1 + Dialect.IndexBase);
+                // The stack holds the target's *extents* and which subscript is being evaluated;
+                // 'end' is the last valid *index* along that dimension, which in a 0-based dialect
+                // is one less than the extent and in a 1-based one is the extent itself.
+                (int[] extents, int slot) = _indexContext[^1];
+                return JgsValue.Number(extents[slot] - 1 + Dialect.IndexBase);
 
             case AllExpr:
                 throw new JgsRuntimeException(expression.Line, expression.Column,
@@ -897,68 +906,278 @@ internal sealed class Interpreter
     }
 
     /// <summary>
-    /// Evaluates a semicolon-rowed literal: all-scalar rows build a matrix (nested row arrays, equal
-    /// lengths required); rows containing arrays vertically concatenate into one flat array
-    /// (<c>[a; zeros(k, 1)]</c>).
+    /// Evaluates a bracketed literal as MATLAB concatenation: each element is a block, blocks in a
+    /// row join left to right and must agree on height, and the rows stack and must agree on width.
+    /// The result carries the shape that implies (ADR 0043).
     /// </summary>
+    /// <remarks>
+    /// One deliberate leniency, because a JGS vector carries no orientation: in a <em>stacked</em>
+    /// literal whose blocks are all vectors, if any of them is a column then the rows are read as
+    /// columns too. That is what keeps <c>[audio; zeros(k, 1)]</c> meaning "pad this signal" when
+    /// the signal came from a reader that had no orientation to give it. Two genuine row vectors
+    /// still stack into a 2-by-n matrix, because neither of them is a column.
+    /// </remarks>
     private JgsValue EvaluateMatrix(MatrixLiteral matrix, JgsEnvironment env)
     {
         var rows = new List<JgsValue[]>(matrix.Rows.Count);
-        bool concatenate = false;
         foreach (IReadOnlyList<Expr> row in matrix.Rows)
         {
             var evaluated = new JgsValue[row.Count];
             for (int i = 0; i < evaluated.Length; i++)
             {
                 evaluated[i] = Evaluate(row[i], env);
-                concatenate |= evaluated[i].Type == JgsType.Array;
             }
 
             rows.Add(evaluated);
         }
 
-        if (concatenate)
+        var shapes = new List<(int Height, int Width)[]>(rows.Count);
+        foreach (JgsValue[] row in rows)
         {
-            // All-number concatenations ([x_pad; zeros(k, 1)]) build one packed buffer with bulk
-            // span copies; anything mixed falls back to the boxed flatten.
-            if (JgsPacking.Enabled && PackedOps.TryFlattenNumeric(rows, _cancelCheck, out JgsValue flattened))
+            var rowShapes = new (int, int)[row.Length];
+            for (int i = 0; i < row.Length; i++)
             {
-                return flattened;
+                rowShapes[i] = BlockShape(row[i]);
             }
 
-            var flat = new List<JgsValue>();
-            foreach (JgsValue[] row in rows)
+            shapes.Add(rowShapes);
+        }
+
+        if (rows.Count > 1)
+        {
+            ReadRowsAsColumns(shapes);
+        }
+
+        (int height, int width) = MeasureLiteral(rows, shapes, matrix);
+        return height == 0 || width == 0
+            ? JgsValue.Array([])
+            : AssembleLiteral(rows, shapes, height, width);
+    }
+
+    /// <summary>
+    /// A single-row bracket literal. All-scalar elements — the overwhelmingly common case — build a
+    /// plain row directly; anything containing an array is a horizontal concatenation and goes
+    /// through the same block machinery a semicolon-rowed literal uses, so <c>[A, B]</c> joins two
+    /// matrices side by side rather than nesting them.
+    /// </summary>
+    private JgsValue EvaluateArrayLiteral(ArrayLiteral array, JgsEnvironment env)
+    {
+        var elements = new JgsValue[array.Elements.Count];
+        bool concatenating = false;
+        for (int i = 0; i < elements.Length; i++)
+        {
+            elements[i] = Evaluate(array.Elements[i], env);
+            concatenating |= elements[i].Type == JgsType.Array;
+        }
+
+        // In JGS a bracket literal is a list, so [[1, 2], [3, 4]] is a matrix by nesting — the
+        // spelling its own scripts and guide have always used. Only MATLAB concatenates here.
+        concatenating &= Dialect.ConcatenatesBrackets;
+
+        if (!concatenating)
+        {
+            return JgsPacking.Enabled && PackedOps.TryPackElements(elements, out JgsValue packed)
+                ? packed
+                : JgsValue.Array(elements);
+        }
+
+        var rows = new List<JgsValue[]> { elements };
+        var shapes = new List<(int Height, int Width)[]> { new (int, int)[elements.Length] };
+        for (int i = 0; i < elements.Length; i++)
+        {
+            shapes[0][i] = BlockShape(elements[i]);
+        }
+
+        (int height, int width) = MeasureLiteral(rows, shapes, array.Line, array.Column);
+        return height == 0 || width == 0
+            ? JgsValue.Array([])
+            : AssembleLiteral(rows, shapes, height, width);
+    }
+
+    /// <summary>The block a value contributes to a literal; an empty array contributes nothing.</summary>
+    private static (int Height, int Width) BlockShape(JgsValue value) => value.Type != JgsType.Array
+        ? (1, 1)
+        : value.ArrayLength == 0 ? (0, 0) : (JgsMatrix.RowCount(value), JgsMatrix.ColCount(value));
+
+    /// <summary>
+    /// Applies the orientation-free-vector leniency described on <see cref="EvaluateMatrix"/>: turns
+    /// every 1-by-n block into n-by-1 when the literal stacks vectors and at least one is a column.
+    /// </summary>
+    private static void ReadRowsAsColumns(List<(int Height, int Width)[]> shapes)
+    {
+        bool allVectors = true;
+        bool anyColumn = false;
+        foreach ((int Height, int Width)[] row in shapes)
+        {
+            foreach ((int height, int width) in row)
             {
-                foreach (JgsValue value in row)
+                if (height == 0)
                 {
-                    FlattenInto(value, flat);
+                    continue;
+                }
+
+                allVectors &= height == 1 || width == 1;
+                anyColumn |= width == 1 && height > 1;
+            }
+        }
+
+        if (!allVectors || !anyColumn)
+        {
+            return;
+        }
+
+        foreach ((int Height, int Width)[] row in shapes)
+        {
+            for (int i = 0; i < row.Length; i++)
+            {
+                if (row[i].Height == 1 && row[i].Width > 1)
+                {
+                    row[i] = (row[i].Width, 1);
                 }
             }
+        }
+    }
 
-            return JgsValue.Array(flat.ToArray());
+    /// <summary>Checks that the blocks tile a rectangle and returns its size.</summary>
+    private static (int Height, int Width) MeasureLiteral(
+        List<JgsValue[]> rows, List<(int Height, int Width)[]> shapes, Node at) =>
+        MeasureLiteral(rows, shapes, at.Line, at.Column);
+
+    private static (int Height, int Width) MeasureLiteral(
+        List<JgsValue[]> rows, List<(int Height, int Width)[]> shapes, int atLine, int atColumn)
+    {
+        int height = 0;
+        int width = -1;
+        for (int r = 0; r < rows.Count; r++)
+        {
+            int rowHeight = -1;
+            int rowWidth = 0;
+            for (int i = 0; i < shapes[r].Length; i++)
+            {
+                (int blockHeight, int blockWidth) = shapes[r][i];
+                if (blockHeight == 0)
+                {
+                    continue; // [] contributes nothing, exactly as in MATLAB
+                }
+
+                if (rowHeight < 0)
+                {
+                    rowHeight = blockHeight;
+                }
+                else if (blockHeight != rowHeight)
+                {
+                    throw new JgsRuntimeException(atLine, atColumn,
+                        $"Cannot join these side by side: row {r + 1} starts {rowHeight} rows tall but element {i + 1} is {blockHeight}x{blockWidth}.");
+                }
+
+                rowWidth += blockWidth;
+            }
+
+            if (rowHeight < 0)
+            {
+                continue; // a row of nothing but empties
+            }
+
+            if (width < 0)
+            {
+                width = rowWidth;
+            }
+            else if (rowWidth != width)
+            {
+                throw new JgsRuntimeException(atLine, atColumn,
+                    $"Cannot stack these: the literal is {width} columns wide but row {r + 1} is {rowWidth}.");
+            }
+
+            height += rowHeight;
         }
 
-        int width = rows[0].Length;
-        for (int r = 1; r < rows.Count; r++)
+        return (height, width < 0 ? 0 : width);
+    }
+
+    /// <summary>
+    /// Writes the blocks into one column-major result. Packed numeric blocks — the case a padded
+    /// signal hits — go straight into a double buffer; anything else boxes and then repacks.
+    /// </summary>
+    private JgsValue AssembleLiteral(
+        List<JgsValue[]> rows, List<(int Height, int Width)[]> shapes, int height, int width)
+    {
+        bool numeric = true;
+        foreach (JgsValue[] row in rows)
         {
-            if (rows[r].Length != width)
+            foreach (JgsValue value in row)
             {
-                throw new JgsRuntimeException(matrix.Line, matrix.Column,
-                    $"Matrix rows must have equal lengths (row 1 has {width}, row {r + 1} has {rows[r].Length}).");
+                numeric &= value.Type == JgsType.Number
+                    || (value.Type == JgsType.Array && value.IsPacked && value.PackedKind == JgsPackedKind.Number);
             }
         }
 
-        var result = new JgsValue[rows.Count];
-        for (int r = 0; r < result.Length; r++)
+        if (numeric && JgsPacking.Enabled)
         {
-            // All-number rows pack individually; the outer array of rows stays boxed.
-            result[r] = JgsPacking.Enabled && PackedOps.TryPackElements(rows[r], out JgsValue packedRow)
-                && packedRow.PackedKind == JgsPackedKind.Number
-                ? packedRow
-                : JgsValue.Array(rows[r]);
+            var flat = new double[height * width];
+            FillLiteral(rows, shapes, height, (destination, element) => flat[destination] = element.AsNumber);
+            return JgsMatrix.FromColumnMajor(flat, height, width);
         }
 
-        return JgsValue.Array(result);
+        var boxed = new JgsValue[height * width];
+        FillLiteral(rows, shapes, height, (destination, element) => boxed[destination] = element);
+        if (JgsPacking.Enabled && PackedOps.TryPackElements(boxed, out JgsValue packed))
+        {
+            packed.Reshape(height, width);
+            return packed;
+        }
+
+        return JgsValue.Shaped(boxed, height, width);
+    }
+
+    private void FillLiteral(
+        List<JgsValue[]> rows, List<(int Height, int Width)[]> shapes, int height, Action<int, JgsValue> write)
+    {
+        int rowOrigin = 0;
+        for (int r = 0; r < rows.Count; r++)
+        {
+            int colOrigin = 0;
+            int rowHeight = 0;
+            for (int i = 0; i < rows[r].Length; i++)
+            {
+                (int blockHeight, int blockWidth) = shapes[r][i];
+                if (blockHeight == 0)
+                {
+                    continue;
+                }
+
+                JgsValue block = rows[r][i];
+                for (int c = 0; c < blockWidth; c++)
+                {
+                    int destination = ((colOrigin + c) * height) + rowOrigin;
+                    for (int row = 0; row < blockHeight; row++)
+                    {
+                        write(destination + row, ReadBlock(block, blockHeight, row, c));
+                    }
+                }
+
+                colOrigin += blockWidth;
+                rowHeight = blockHeight;
+            }
+
+            rowOrigin += rowHeight;
+            _cancelCheck?.Invoke();
+        }
+    }
+
+    /// <summary>
+    /// Element <c>(row, col)</c> of a literal block, read against the height the literal settled on
+    /// rather than the block's own — which is what makes an adapted row vector read as a column.
+    /// </summary>
+    private static JgsValue ReadBlock(JgsValue block, int blockHeight, int row, int col)
+    {
+        if (block.Type != JgsType.Array)
+        {
+            return block;
+        }
+
+        return JgsMatrix.IsNested(block)
+            ? block.ElementAt(row).ElementAt(col)
+            : block.ElementAt((col * blockHeight) + row);
     }
 
     private static void FlattenInto(JgsValue value, List<JgsValue> into)
@@ -1180,7 +1399,7 @@ internal sealed class Interpreter
             NumericBuffer copy = JgsPacking.Allocate(source.Length);
             source.AsSpan().CopyTo(copy.AsSpan());
             GC.KeepAlive(source);
-            return JgsValue.Packed(copy, value.PackedKind);
+            return KeepShape(value, JgsValue.Packed(copy, value.PackedKind));
         }
 
         if (value.IsPackedComplex)
@@ -1191,18 +1410,33 @@ internal sealed class Interpreter
             planes.Re.AsSpan().CopyTo(re.AsSpan());
             planes.Im.AsSpan().CopyTo(im.AsSpan());
             GC.KeepAlive(planes);
-            return JgsValue.PackedComplexArray(new JgsPackedComplex(re, im));
+            return KeepShape(value, JgsValue.PackedComplexArray(new JgsPackedComplex(re, im)));
         }
 
         JgsValue[] source2 = value.AsArray;
         var elements = new JgsValue[source2.Length];
         for (int i = 0; i < elements.Length; i++)
         {
-            // Rows of a matrix are arrays too, and MATLAB copies the whole thing.
+            // Nested arrays are copied too, and MATLAB copies the whole thing.
             elements[i] = source2[i].Type == JgsType.Array ? CopyContainer(source2[i]) : source2[i];
         }
 
-        return JgsValue.Array(elements);
+        return KeepShape(value, JgsValue.Array(elements));
+    }
+
+    /// <summary>
+    /// Gives a freshly built copy the shape of what it was copied from. Shape lives on the wrapper,
+    /// so every path that mints a new wrapper has to carry it across or the copy silently becomes a
+    /// flat row — which is exactly what a MATLAB-dialect binding does to every matrix it touches.
+    /// </summary>
+    private static JgsValue KeepShape(JgsValue source, JgsValue copy)
+    {
+        if (source.IsShaped)
+        {
+            copy.Reshape(source.Rows, source.Cols);
+        }
+
+        return copy;
     }
 
     /// <summary>Maps a compound-assignment token to the underlying binary operator.</summary>
@@ -1284,7 +1518,295 @@ internal sealed class Interpreter
             _ => (((IndexExpr)assign.Target).Target, ((IndexExpr)assign.Target).Indices),
         };
 
-        return AssignThroughIndex(container, subscripts, assign.Op, rhs, assign, env);
+        return subscripts.Count == 2
+            ? AssignTwoSubscripts(container, subscripts, assign.Op, rhs, assign, env)
+            : AssignThroughIndex(container, subscripts, assign.Op, rhs, assign, env);
+    }
+
+    /// <summary>
+    /// <c>A(i, j) = v</c>: a scalar right-hand side fills the selection, an array must match its
+    /// shape. Writing past an edge grows the matrix and zero-fills, and <c>A(i, :) = []</c> deletes —
+    /// both of which reallocate, so they need a plain variable to rebind.
+    /// </summary>
+    private JgsValue AssignTwoSubscripts(
+        Expr target, IReadOnlyList<Expr> subscripts, TokenType op, JgsValue rhs, Node at, JgsEnvironment env)
+    {
+        JgsValue callee = Evaluate(target, env);
+        if (callee.Type != JgsType.Array)
+        {
+            throw new JgsRuntimeException(at.Line, at.Column,
+                $"Cannot assign by index into a {callee.TypeName}; only arrays support element assignment.");
+        }
+
+        int rows = JgsMatrix.RowCount(callee);
+        int cols = JgsMatrix.ColCount(callee);
+        int[] extents = [rows, cols];
+        JgsValue? rowIndex = EvaluateIndexArgument(subscripts[0], extents, 0, env);
+        JgsValue? colIndex = EvaluateIndexArgument(subscripts[1], extents, 1, env);
+
+        if (op == TokenType.Assign && rhs.Type == JgsType.Array && rhs.ArrayLength == 0)
+        {
+            return DeleteSlice(target, callee, rowIndex, colIndex, rows, cols, at, env);
+        }
+
+        int[] rowPicks = WritePicks(rowIndex, rows, at);
+        int[] colPicks = WritePicks(colIndex, cols, at);
+
+        int neededRows = Math.Max(rows, Highest(rowPicks) + 1);
+        int neededCols = Math.Max(cols, Highest(colPicks) + 1);
+        if (neededRows > rows || neededCols > cols)
+        {
+            callee = Grow(target, callee, rows, cols, neededRows, neededCols, at, env);
+            rows = neededRows;
+        }
+
+        bool scalarRhs = rhs.Type is not JgsType.Array;
+        if (!scalarRhs)
+        {
+            int wanted = rowPicks.Length * colPicks.Length;
+            if (rhs.ArrayLength != wanted)
+            {
+                throw new JgsRuntimeException(at.Line, at.Column,
+                    $"Cannot assign {rhs.ArrayLength} values into a {rowPicks.Length}x{colPicks.Length} selection.");
+            }
+        }
+
+        for (int c = 0; c < colPicks.Length; c++)
+        {
+            for (int r = 0; r < rowPicks.Length; r++)
+            {
+                int slot = rowPicks[r] + (colPicks[c] * rows);
+                JgsValue source = scalarRhs ? rhs : rhs.ElementAt((c * rowPicks.Length) + r);
+                JgsValue stored = op == TokenType.Assign
+                    ? source
+                    : ApplyBinary(UnderlyingOp(op), callee.ElementAt(slot), source, at);
+                WriteElement(callee, slot, stored);
+            }
+        }
+
+        return rhs;
+    }
+
+    private static int Highest(int[] picks)
+    {
+        int highest = -1;
+        foreach (int pick in picks)
+        {
+            highest = Math.Max(highest, pick);
+        }
+
+        return highest;
+    }
+
+    /// <summary>
+    /// Subscript positions for a write. Unlike a read, an index past the end is not an error — it is
+    /// how a matrix grows — so only the lower bound is checked here. A mask still has to fit, because
+    /// a mask that does not match the dimension is a mistake rather than a request to grow.
+    /// </summary>
+    private int[] WritePicks(JgsValue? index, int extent, Node at)
+    {
+        if (index is null)
+        {
+            return AllPicks(extent);
+        }
+
+        if (index.Type != JgsType.Array)
+        {
+            return [WriteIndex(index, at)];
+        }
+
+        if (IsLogicalIndex(index))
+        {
+            return ComputePicks(index, extent, "array", at.Line, at.Column);
+        }
+
+        int count = index.ArrayLength;
+        var picks = new int[count];
+        for (int i = 0; i < count; i++)
+        {
+            picks[i] = WriteIndex(index.ElementAt(i), at);
+        }
+
+        return picks;
+    }
+
+    private int WriteIndex(JgsValue position, Node at)
+    {
+        if (position.Type is not (JgsType.Number or JgsType.Bool))
+        {
+            throw new JgsRuntimeException(at.Line, at.Column,
+                $"An index must be a number, but got a {position.TypeName}.");
+        }
+
+        double raw = position.AsNumber;
+        if (raw != Math.Floor(raw) || double.IsNaN(raw))
+        {
+            throw new JgsRuntimeException(at.Line, at.Column, $"An index must be a whole number, not {raw}.");
+        }
+
+        int slot = (int)raw - Dialect.IndexBase;
+        if (slot < 0)
+        {
+            throw new JgsRuntimeException(at.Line, at.Column,
+                $"Index {(int)raw} is out of range (indexing is {Dialect.IndexBase}-based).");
+        }
+
+        return slot;
+    }
+
+    /// <summary>
+    /// Reallocates a matrix to a larger shape, zero-filling the new cells and rebinding the name.
+    /// Growth has to replace the value, not mutate it, so the target must be a plain variable — the
+    /// same restriction cell growth has had since <c>c{end + 1} = x</c>.
+    /// </summary>
+    private JgsValue Grow(
+        Expr target, JgsValue current, int rows, int cols, int newRows, int newCols, Node at, JgsEnvironment env)
+    {
+        if (target is not VariableExpr variable)
+        {
+            throw new JgsRuntimeException(at.Line, at.Column,
+                $"Assigning outside a {rows}x{cols} matrix would grow it, which needs a plain variable on the left.");
+        }
+
+        var elements = new JgsValue[newRows * newCols];
+        Array.Fill(elements, JgsValue.Number(0));
+        for (int c = 0; c < cols; c++)
+        {
+            for (int r = 0; r < rows; r++)
+            {
+                elements[r + (c * newRows)] = JgsMatrix.At(current, r, c);
+            }
+        }
+
+        JgsValue grown = JgsMatrix.FromElements(elements, newRows, newCols);
+        if (!env.TryAssign(variable.Name, grown))
+        {
+            env.Declare(variable.Name, grown);
+        }
+
+        return grown;
+    }
+
+    /// <summary>
+    /// <c>A(i, :) = []</c> and <c>A(:, j) = []</c>: MATLAB deletes whole rows or columns, and refuses
+    /// anything else, because removing a lone element from a rectangle has no answer.
+    /// </summary>
+    private JgsValue DeleteSlice(
+        Expr target, JgsValue current, JgsValue? rowIndex, JgsValue? colIndex, int rows, int cols, Node at, JgsEnvironment env)
+    {
+        if (target is not VariableExpr variable)
+        {
+            throw new JgsRuntimeException(at.Line, at.Column,
+                "Deleting rows or columns needs a plain variable on the left.");
+        }
+
+        bool deletingRows = colIndex is null;
+        if (deletingRows == (rowIndex is null))
+        {
+            throw new JgsRuntimeException(at.Line, at.Column,
+                "Deleting from a matrix takes a whole row or column: A(i, :) = [] or A(:, j) = [].");
+        }
+
+        int[] removed = deletingRows
+            ? ComputePicks(AsIndexArray(rowIndex!), rows, "row", at.Line, at.Column)
+            : ComputePicks(AsIndexArray(colIndex!), cols, "column", at.Line, at.Column);
+        var drop = new HashSet<int>(removed);
+
+        int[] keptRows = deletingRows ? Remaining(rows, drop) : AllPicks(rows);
+        int[] keptCols = deletingRows ? AllPicks(cols) : Remaining(cols, drop);
+
+        JgsValue trimmed = JgsMatrix.BuildValues(keptRows.Length, keptCols.Length,
+            (r, c) => JgsMatrix.At(current, keptRows[r], keptCols[c]));
+        if (!env.TryAssign(variable.Name, trimmed))
+        {
+            env.Declare(variable.Name, trimmed);
+        }
+
+        return trimmed;
+    }
+
+    /// <summary>
+    /// Extends a vector to <paramref name="needed"/> elements, zero-filling, and rebinds the name —
+    /// the <c>x(end + 1) = v</c> idiom. The vector keeps whichever orientation it already had.
+    /// </summary>
+    private JgsValue GrowVector(Expr target, JgsValue current, int needed, Node at, JgsEnvironment env)
+    {
+        if (target is not VariableExpr variable)
+        {
+            throw new JgsRuntimeException(at.Line, at.Column,
+                $"Assigning past the end of a {current.ArrayLength}-element array would grow it, "
+                + "which needs a plain variable on the left.");
+        }
+
+        var elements = new JgsValue[needed];
+        Array.Fill(elements, JgsValue.Number(0));
+        for (int i = 0; i < current.ArrayLength; i++)
+        {
+            elements[i] = current.ElementAt(i);
+        }
+
+        bool wasColumn = current.Cols == 1 && current.Rows > 1;
+        JgsValue grown = JgsMatrix.FromElements(elements, wasColumn ? needed : 1, wasColumn ? 1 : needed);
+        if (!env.TryAssign(variable.Name, grown))
+        {
+            env.Declare(variable.Name, grown);
+        }
+
+        return grown;
+    }
+
+    /// <summary>
+    /// <c>x(idx) = []</c>: removes the selected elements and rebinds. A matrix cannot lose a lone
+    /// element and stay rectangular, so it takes a whole row or column instead.
+    /// </summary>
+    private JgsValue DeleteElements(Expr target, JgsValue current, JgsValue index, Node at, JgsEnvironment env)
+    {
+        if (target is not VariableExpr variable)
+        {
+            throw new JgsRuntimeException(at.Line, at.Column, "Deleting elements needs a plain variable on the left.");
+        }
+
+        if (current.Rows > 1 && current.Cols > 1)
+        {
+            throw new JgsRuntimeException(at.Line, at.Column,
+                "Deleting from a matrix takes a whole row or column: A(i, :) = [] or A(:, j) = [].");
+        }
+
+        var removed = new HashSet<int>(ComputePicks(AsIndexArray(index), current.ArrayLength, "array", at.Line, at.Column));
+        int[] kept = Remaining(current.ArrayLength, removed);
+        var elements = new JgsValue[kept.Length];
+        for (int i = 0; i < kept.Length; i++)
+        {
+            elements[i] = current.ElementAt(kept[i]);
+        }
+
+        bool wasColumn = current.Cols == 1 && current.Rows > 1;
+        JgsValue trimmed = JgsMatrix.FromElements(
+            elements, wasColumn ? elements.Length : 1, wasColumn ? 1 : elements.Length);
+        if (!env.TryAssign(variable.Name, trimmed))
+        {
+            env.Declare(variable.Name, trimmed);
+        }
+
+        return trimmed;
+    }
+
+    /// <summary>A scalar subscript read as a one-element index array, so one code path covers both.</summary>
+    private static JgsValue AsIndexArray(JgsValue index) =>
+        index.Type == JgsType.Array ? index : JgsValue.Array([index]);
+
+    private static int[] Remaining(int extent, HashSet<int> removed)
+    {
+        var kept = new List<int>(extent);
+        for (int i = 0; i < extent; i++)
+        {
+            if (!removed.Contains(i))
+            {
+                kept.Add(i);
+            }
+        }
+
+        return kept.ToArray();
     }
 
     /// <summary>
@@ -1346,10 +1868,31 @@ internal sealed class Interpreter
         if (subscripts.Count != 1)
         {
             throw new JgsRuntimeException(at.Line, at.Column,
-                "Index assignment takes exactly one subscript (an index, a range, a mask, or ':').");
+                "Index assignment takes one subscript (an index, a range, a mask, or ':') or two (a row and a column).");
         }
 
         JgsValue? index = EvaluateIndexArgument(subscripts[0], callee.ArrayLength, env);
+
+        // x(idx) = [] removes those elements; x(n) = v past the end grows and zero-fills. Both
+        // replace the value rather than writing into it, so both need a plain variable to rebind.
+        if (op == TokenType.Assign && index is not null && rhs.Type == JgsType.Array && rhs.ArrayLength == 0)
+        {
+            return DeleteElements(target, callee, index, at, env);
+        }
+
+        if (index is not null)
+        {
+            int[] wanted = WritePicks(index, callee.ArrayLength, at);
+            int needed = Highest(wanted) + 1;
+            if (needed > callee.ArrayLength)
+            {
+                callee = JgsMatrix.IsMatrix(callee)
+                    ? throw new JgsRuntimeException(at.Line, at.Column,
+                        $"Index {needed - 1 + Dialect.IndexBase} is past the end of a "
+                        + $"{JgsMatrix.RowCount(callee)}x{JgsMatrix.ColCount(callee)} matrix; grow it with two subscripts, like A({needed}, 1).")
+                    : GrowVector(target, callee, needed, at, env);
+            }
+        }
 
         if (callee.IsPacked)
         {
@@ -1614,20 +2157,40 @@ internal sealed class Interpreter
         };
 
         JgsValue container = Evaluate(targetExpr, env);
-        if (container.Type != JgsType.Array || subscripts.Count != 1)
+        if (container.Type != JgsType.Array || subscripts.Count is not (1 or 2))
         {
             throw new JgsRuntimeException(incDec.Line, incDec.Column,
-                $"'{symbol}' by index needs an array and a single index, like x(k){symbol}.");
+                $"'{symbol}' by index needs an array and an index, like x(k){symbol} or A(i, j){symbol}.");
         }
 
-        JgsValue? index = EvaluateIndexArgument(subscripts[0], container.ArrayLength, env);
-        if (index is null || index.Type == JgsType.Array)
+        int single;
+        if (subscripts.Count == 2)
         {
-            throw new JgsRuntimeException(incDec.Line, incDec.Column,
-                $"'{symbol}' needs a single element, not a slice.");
+            int rows = JgsMatrix.RowCount(container);
+            int[] extents = [rows, JgsMatrix.ColCount(container)];
+            JgsValue? rowIndex = EvaluateIndexArgument(subscripts[0], extents, 0, env);
+            JgsValue? colIndex = EvaluateIndexArgument(subscripts[1], extents, 1, env);
+            if (rowIndex is null or { Type: JgsType.Array } || colIndex is null or { Type: JgsType.Array })
+            {
+                throw new JgsRuntimeException(incDec.Line, incDec.Column,
+                    $"'{symbol}' needs a single element, not a slice.");
+            }
+
+            single = ToIndex(rowIndex, rows, incDec.Line, incDec.Column)
+                + (ToIndex(colIndex, extents[1], incDec.Line, incDec.Column) * rows);
+        }
+        else
+        {
+            JgsValue? index = EvaluateIndexArgument(subscripts[0], container.ArrayLength, env);
+            if (index is null || index.Type == JgsType.Array)
+            {
+                throw new JgsRuntimeException(incDec.Line, incDec.Column,
+                    $"'{symbol}' needs a single element, not a slice.");
+            }
+
+            single = ToIndex(index, container.ArrayLength, incDec.Line, incDec.Column);
         }
 
-        int single = ToIndex(index, container.ArrayLength, incDec.Line, incDec.Column);
         JgsValue previous = container.ElementAt(single);
         JgsValue bumped = JgsValue.Number(RequireIncDecNumber(previous, symbol, incDec) + delta);
         WriteElement(container, single, bumped);
@@ -1717,12 +2280,17 @@ internal sealed class Interpreter
             arguments[i] = Evaluate(call.Arguments[i], env);
         }
 
+        // inputname reports the caller's variable name for an argument, so the call expression has
+        // to reach the frame the call creates. Handing over the node itself costs one field write —
+        // building a list of names here would cost an allocation on every call in the language.
+        _pendingCall = call;
         return callee.AsCallable.Call(arguments, call.Line, call.Column);
     }
 
     /// <summary>
-    /// The one index read shared by <c>a[…]</c> and <c>a(…)</c>: an array or string takes a single
-    /// subscript (scalar, range, mask, ':' or 'end'), an image takes two or three.
+    /// The one index read shared by <c>a[…]</c> and <c>a(…)</c>: one subscript indexes linearly
+    /// (column-major over a matrix, ADR 0043), two name a row and a column. An image takes two or
+    /// three. A string takes one.
     /// </summary>
     private JgsValue IndexInto(JgsValue target, IReadOnlyList<Expr> subscripts, Node at, JgsEnvironment env)
     {
@@ -1731,25 +2299,79 @@ internal sealed class Interpreter
             return IndexImage(target, subscripts, at, env);
         }
 
+        if (subscripts.Count == 2 && target.Type == JgsType.Array)
+        {
+            return IndexTwoSubscripts(target, subscripts, at, env);
+        }
+
         if (subscripts.Count != 1)
         {
             throw new JgsRuntimeException(at.Line, at.Column,
-                $"Indexing a {target.TypeName} takes exactly one subscript (an index, an index array, or a mask).");
+                $"Indexing a {target.TypeName} takes one subscript (an index, an index array, or a mask) or two (a row and a column).");
         }
 
         int length = target.Type == JgsType.String ? target.AsString.Length : target.ArrayLength;
         JgsValue? index = EvaluateIndexArgument(subscripts[0], length, env);
         if (index is null)
         {
-            // x(:) — everything, as a fresh array (or the string itself).
-            return target.Type == JgsType.String ? target
-                : target.IsPacked ? PackedOps.Clone(target, _cancelCheck)
+            // x(:) — every element, in storage order, as a column. MATLAB's one reliable way to
+            // flatten, and for a shaped value it is a buffer clone rather than a gather.
+            if (target.Type == JgsType.String)
+            {
+                return target;
+            }
+
+            JgsValue all = target.IsPacked ? PackedOps.Clone(target, _cancelCheck)
                 : target.IsPackedComplex ? PackedOps.CloneComplex(target, _cancelCheck)
                 : JgsValue.Array((JgsValue[])target.AsArray.Clone());
+            if (all.ArrayLength > 1)
+            {
+                all.Reshape(all.ArrayLength, 1);
+            }
+
+            return all;
         }
 
         return GatherOrIndex(target, index, at.Line, at.Column);
     }
+
+    /// <summary>
+    /// <c>A(i, j)</c>: two scalars select an element, and any range, vector, mask or ':' in either
+    /// slot selects the submatrix they name, with the shape that implies.
+    /// </summary>
+    private JgsValue IndexTwoSubscripts(JgsValue target, IReadOnlyList<Expr> subscripts, Node at, JgsEnvironment env)
+    {
+        int rows = JgsMatrix.RowCount(target);
+        int cols = JgsMatrix.ColCount(target);
+        int[] extents = [rows, cols];
+
+        JgsValue? rowIndex = EvaluateIndexArgument(subscripts[0], extents, 0, env);
+        JgsValue? colIndex = EvaluateIndexArgument(subscripts[1], extents, 1, env);
+
+        bool rowScalar = rowIndex is { Type: not JgsType.Array };
+        bool colScalar = colIndex is { Type: not JgsType.Array };
+        int[] rowPicks = SubscriptPicks(rowIndex, rows, "row", at);
+        int[] colPicks = SubscriptPicks(colIndex, cols, "column", at);
+
+        if (rowScalar && colScalar)
+        {
+            return JgsMatrix.At(target, rowPicks[0], colPicks[0]);
+        }
+
+        return JgsMatrix.BuildValues(rowPicks.Length, colPicks.Length,
+            (r, c) => JgsMatrix.At(target, rowPicks[r], colPicks[c]));
+    }
+
+    /// <summary>
+    /// One subscript slot resolved to 0-based positions along its dimension: null is ':', a scalar
+    /// is a single position, and an array is a mask or a list of indices.
+    /// </summary>
+    private int[] SubscriptPicks(JgsValue? index, int extent, string dimension, Node at) => index switch
+    {
+        null => AllPicks(extent),
+        { Type: JgsType.Array } => ComputePicks(index, extent, dimension, at.Line, at.Column),
+        _ => [ToIndex(index, extent, at.Line, at.Column)],
+    };
 
     /// <summary>Reads one sample from an image value via 0-based <c>img(r, c)</c> / <c>img(r, c, ch)</c>.</summary>
     private JgsValue IndexImage(JgsValue callee, IReadOnlyList<Expr> subscripts, Node at, JgsEnvironment env)
@@ -1816,21 +2438,28 @@ internal sealed class Interpreter
     /// Evaluates a paren-index argument with <c>end</c> bound to <paramref name="targetLength"/>.
     /// Returns null for a lone ':' (select everything).
     /// </summary>
-    private JgsValue? EvaluateIndexArgument(Expr argument, int targetLength, JgsEnvironment env)
+    private JgsValue? EvaluateIndexArgument(Expr argument, int targetLength, JgsEnvironment env) =>
+        EvaluateIndexArgument(argument, [targetLength], 0, env);
+
+    /// <summary>
+    /// Evaluates one subscript with <c>end</c> bound to the extent of the slot it occupies.
+    /// Returns null for a lone ':' (select everything along this dimension).
+    /// </summary>
+    private JgsValue? EvaluateIndexArgument(Expr argument, int[] extents, int slot, JgsEnvironment env)
     {
         if (argument is AllExpr)
         {
             return null;
         }
 
-        _indexTargetLengths.Add(targetLength);
+        _indexContext.Add((extents, slot));
         try
         {
             return Evaluate(argument, env);
         }
         finally
         {
-            _indexTargetLengths.RemoveAt(_indexTargetLengths.Count - 1);
+            _indexContext.RemoveAt(_indexContext.Count - 1);
         }
     }
 
@@ -1865,12 +2494,12 @@ internal sealed class Interpreter
 
         if (target.IsPacked)
         {
-            return PackedOps.Gather(target, picks); // a new packed array of the same kind
+            return OrientGather(PackedOps.Gather(target, picks), target, index); // same packed kind
         }
 
         if (target.IsPackedComplex)
         {
-            return PackedOps.GatherComplex(target, picks);
+            return OrientGather(PackedOps.GatherComplex(target, picks), target, index);
         }
 
         var gathered = new JgsValue[picks.Length];
@@ -1879,8 +2508,56 @@ internal sealed class Interpreter
             gathered[i] = target.AsArray[picks[i]];
         }
 
-        return JgsValue.Array(gathered);
+        return OrientGather(JgsValue.Array(gathered), target, index);
     }
+
+    /// <summary>
+    /// MATLAB's shape rule for linear indexing. When the target and the index are both vectors the
+    /// target's own orientation wins, which is what keeps <c>v(1:3)</c> looking like <c>v</c>.
+    /// Otherwise the result takes the index's shape — except for a logical mask, which always
+    /// gathers into a column, since the elements it picked out are scattered rather than laid out.
+    /// </summary>
+    private static JgsValue OrientGather(JgsValue result, JgsValue target, JgsValue index)
+    {
+        if (result.ArrayLength <= 1)
+        {
+            return result;
+        }
+
+        bool targetIsVector = target.Rows == 1 || target.Cols == 1;
+        bool indexIsVector = index.Rows == 1 || index.Cols == 1;
+
+        if (targetIsVector && indexIsVector)
+        {
+            if (target.Cols == 1 && target.Rows > 1)
+            {
+                result.Reshape(result.ArrayLength, 1);
+            }
+
+            return result;
+        }
+
+        if (!indexIsVector && !IsLogicalIndex(index))
+        {
+            // A numeric index matrix picks in its own column-major order, which is the order the
+            // gather already produced, so the shape can simply be applied.
+            result.Reshape(index.Rows, index.Cols);
+            return result;
+        }
+
+        if (index.Cols == 1 || !indexIsVector)
+        {
+            result.Reshape(result.ArrayLength, 1);
+        }
+
+        return result;
+    }
+
+    /// <summary>Whether an index value is a logical mask rather than a list of positions.</summary>
+    private static bool IsLogicalIndex(JgsValue index) => index.IsPacked
+        ? index.PackedKind == JgsPackedKind.Bool
+        : index.Type == JgsType.Array && index.ArrayLength > 0
+          && Array.TrueForAll(index.AsArray, static v => v.Type == JgsType.Bool);
 
     /// <summary>Resolves an index array (a mask or a list of indices) to 0-based element positions.</summary>
     private int[] ComputePicks(JgsValue index, int length, string targetName, int line, int column)
@@ -1984,28 +2661,33 @@ internal sealed class Interpreter
             return MatrixSolve(coefficients, rhs, transposeResult: true, at);
         }
 
-        double[][] a = AsRows(left);
-        double[][] b = AsRows(right);
-        bool leftIsVector = !IsMatrix(left);
-        bool rightIsVector = !IsMatrix(right);
+        double[][] a = JgsMatrix.ToRows("'*'", left, at.Line, at.Column);
+        double[][] b = JgsMatrix.ToRows("'*'", right, at.Line, at.Column);
+        bool leftIsVector = IsVector(left);
+        bool rightIsVector = IsVector(right);
 
-        if (leftIsVector && rightIsVector)
+        // Two bare rows carry no orientation between them, so which product was meant is a guess.
+        if (JgsMatrix.RowCount(left) == 1 && JgsMatrix.RowCount(right) == 1
+            && left.ArrayLength > 1 && right.ArrayLength > 1)
         {
             throw new JgsRuntimeException(at.Line, at.Column,
-                "'*' between two vectors is ambiguous here: JGraph's arrays have no row/column "
-                + "orientation. Use '.*' for the elementwise product, or dot(a, b) for the inner product.");
+                "'*' between two row vectors is ambiguous: transpose one of them to say which product "
+                + "you mean, or use '.*' for the elementwise product and dot(a, b) for the inner product.");
         }
 
-        // A vector meeting a matrix is whichever orientation makes the product work: a row on the left,
-        // a column on the right.
-        if (leftIsVector)
+        // A vector's orientation is often incidental — it came from a reader or a range that had
+        // none to give. So the shapes as written are tried first, and only if they do not meet is a
+        // vector turned the other way. A matrix is never reinterpreted: its shape is real.
+        if (a[0].Length != b.Length)
         {
-            a = [a[0]];
-        }
-
-        if (rightIsVector)
-        {
-            b = b[0].Select(static v => new[] { v }).ToArray();
+            if (rightIsVector)
+            {
+                b = TransposeRows(b);
+            }
+            else if (leftIsVector)
+            {
+                a = TransposeRows(a);
+            }
         }
 
         int inner = a[0].Length;
@@ -2016,41 +2698,24 @@ internal sealed class Interpreter
         }
 
         int columns = b[0].Length;
-        var product = new JgsValue[a.Length];
-        for (int r = 0; r < a.Length; r++)
+        foreach (double[] row in b)
         {
-            var row = new double[columns];
-            for (int c = 0; c < columns; c++)
+            if (row.Length != columns)
             {
-                double sum = 0;
-                for (int k = 0; k < inner; k++)
-                {
-                    if (b[k].Length != columns)
-                    {
-                        throw new JgsRuntimeException(at.Line, at.Column, "Matrix rows must have equal lengths.");
-                    }
+                throw new JgsRuntimeException(at.Line, at.Column, "Matrix rows must have equal lengths.");
+            }
+        }
 
-                    sum += a[r][k] * b[k][c];
-                }
-
-                row[c] = sum;
+        return JgsMatrix.Build(a.Length, columns, (r, c) =>
+        {
+            double sum = 0;
+            for (int k = 0; k < inner; k++)
+            {
+                sum += a[r][k] * b[k][c];
             }
 
-            product[r] = NumbersOf(row);
-        }
-
-        // A single row (or a single column) is a plain vector again, as MATLAB would show it.
-        if (product.Length == 1)
-        {
-            return product[0];
-        }
-
-        if (columns == 1)
-        {
-            return NumbersOf(product.Select(static p => p.ElementAt(0).AsNumber).ToArray());
-        }
-
-        return JgsValue.Array(product);
+            return sum;
+        });
     }
 
     /// <summary>Jagged rows as a rectangular matrix, validating equal row lengths.</summary>
@@ -2118,40 +2783,9 @@ internal sealed class Interpreter
         }
     }
 
-    /// <summary>A rectangular result as a script value: one row or one column collapses to a vector.</summary>
-    private JgsValue MatrixResult(double[,] matrix)
-    {
-        int rows = matrix.GetLength(0);
-        int cols = matrix.GetLength(1);
-        if (rows == 1 || cols == 1)
-        {
-            var flat = new double[rows * cols];
-            int at = 0;
-            for (int r = 0; r < rows; r++)
-            {
-                for (int c = 0; c < cols; c++)
-                {
-                    flat[at++] = matrix[r, c];
-                }
-            }
-
-            return NumbersOf(flat);
-        }
-
-        var wrapped = new JgsValue[rows];
-        for (int r = 0; r < rows; r++)
-        {
-            var row = new double[cols];
-            for (int c = 0; c < cols; c++)
-            {
-                row[c] = matrix[r, c];
-            }
-
-            wrapped[r] = NumbersOf(row);
-        }
-
-        return JgsValue.Array(wrapped);
-    }
+    /// <summary>A rectangular result as a script value, carrying the shape it was computed at.</summary>
+    private static JgsValue MatrixResult(double[,] matrix) =>
+        JgsMatrix.Build(matrix.GetLength(0), matrix.GetLength(1), (r, c) => matrix[r, c]);
 
     // --- Cells and structs ----------------------------------------------------------------------
 
@@ -2346,10 +2980,10 @@ internal sealed class Interpreter
     }
 
     /// <summary>
-    /// MATLAB's transpose. A matrix — an array of row arrays — is genuinely transposed. A vector has no
-    /// row/column orientation in this model, so <c>v'</c> hands back its values unchanged (conjugated
-    /// for <c>'</c> when they are complex), which is what makes the ubiquitous <c>(0:0.1:1)'</c> idiom
-    /// work. A scalar is its own transpose.
+    /// MATLAB's transpose: an r-by-c value becomes c-by-r, with <c>'</c> also conjugating. Now that
+    /// arrays carry a shape (ADR 0043) this is finally true of vectors as well — <c>(0:0.1:1)'</c> is
+    /// a real column, where it used to hand the same row back — so a transposed vector can be
+    /// concatenated into a matrix and reports its own size. A scalar is its own transpose.
     /// </summary>
     private JgsValue EvaluateTranspose(TransposeExpr transpose, JgsEnvironment env)
     {
@@ -2364,38 +2998,36 @@ internal sealed class Interpreter
             return value;
         }
 
-        if (!IsMatrix(value))
+        int rows = JgsMatrix.RowCount(value);
+        int columns = JgsMatrix.ColCount(value);
+        var transposed = new JgsValue[rows * columns];
+        for (int r = 0; r < rows; r++)
         {
-            return transpose.Conjugate ? Conjugated(value) : CopyContainer(value);
-        }
-
-        int rows = value.ArrayLength;
-        int columns = value.ElementAt(0).ArrayLength;
-        var transposed = new JgsValue[columns];
-        for (int c = 0; c < columns; c++)
-        {
-            var column = new JgsValue[rows];
-            for (int r = 0; r < rows; r++)
+            // Element (r, c) of the source lands at (c, r) of the result, whose column-major
+            // position is c + r*columns — so the source row walks the result's storage in order.
+            int origin = r * columns;
+            for (int c = 0; c < columns; c++)
             {
-                JgsValue row = value.ElementAt(r);
-                if (row.ArrayLength != columns)
-                {
-                    throw new JgsRuntimeException(transpose.Line, transpose.Column,
-                        "Only a rectangular matrix can be transposed (its rows have different lengths).");
-                }
-
-                JgsValue element = row.ElementAt(c);
-                column[r] = transpose.Conjugate && element.Type == JgsType.Complex
+                JgsValue element = JgsMatrix.At(value, r, c);
+                transposed[origin + c] = transpose.Conjugate && element.Type == JgsType.Complex
                     ? JgsValue.ComplexNum(Complex.Conjugate(element.AsComplex))
                     : element;
             }
-
-            transposed[c] = JgsPacking.Enabled && PackedOps.TryPackElements(column, out JgsValue packed)
-                ? packed
-                : JgsValue.Array(column);
         }
 
-        return JgsValue.Array(transposed);
+        return ShapedFrom(transposed, columns, rows);
+    }
+
+    /// <summary>Packs freshly built elements if they are homogeneous, then applies the shape.</summary>
+    private static JgsValue ShapedFrom(JgsValue[] elements, int rows, int cols)
+    {
+        if (JgsPacking.Enabled && PackedOps.TryPackElements(elements, out JgsValue packed))
+        {
+            packed.Reshape(rows, cols);
+            return packed;
+        }
+
+        return JgsValue.Shaped(elements, rows, cols);
     }
 
     /// <summary>A copy of an array with every complex element conjugated.</summary>
@@ -2420,7 +3052,7 @@ internal sealed class Interpreter
             }
 
             GC.KeepAlive(planes);
-            return JgsValue.PackedComplexArray(new JgsPackedComplex(re, im));
+            return KeepShape(value, JgsValue.PackedComplexArray(new JgsPackedComplex(re, im)));
         }
 
         JgsValue[] source2 = value.AsArray;
@@ -2432,30 +3064,36 @@ internal sealed class Interpreter
                 : source2[i];
         }
 
-        return JgsValue.Array(conjugated);
+        return KeepShape(value, JgsValue.Array(conjugated));
     }
 
-    /// <summary>Whether a value is a matrix in this model: an array whose elements are themselves arrays.</summary>
-    private static bool IsMatrix(JgsValue value) =>
-        value.Type == JgsType.Array && !value.IsPacked && !value.IsPackedComplex
-        && value.ArrayLength > 0 && value.ElementAt(0).Type == JgsType.Array;
+    /// <summary>Whether a value is a matrix — see <see cref="JgsMatrix"/> for what that means now.</summary>
+    private static bool IsMatrix(JgsValue value) => JgsMatrix.IsMatrix(value);
+
+    /// <summary>Whether an array has a singleton dimension, so its orientation could be flipped.</summary>
+    private static bool IsVector(JgsValue value) =>
+        JgsMatrix.RowCount(value) == 1 || JgsMatrix.ColCount(value) == 1;
+
+    private static double[][] TransposeRows(double[][] rows)
+    {
+        int height = rows.Length;
+        int width = height == 0 ? 0 : rows[0].Length;
+        var transposed = new double[width][];
+        for (int c = 0; c < width; c++)
+        {
+            transposed[c] = new double[height];
+            for (int r = 0; r < height; r++)
+            {
+                transposed[c][r] = rows[r][c];
+            }
+        }
+
+        return transposed;
+    }
 
     /// <summary>A numeric array or matrix as rows of doubles; a vector becomes a single row.</summary>
-    private double[][] AsRows(JgsValue value)
-    {
-        if (!IsMatrix(value))
-        {
-            return [RowOf(value)];
-        }
-
-        var rows = new double[value.ArrayLength][];
-        for (int r = 0; r < rows.Length; r++)
-        {
-            rows[r] = RowOf(value.ElementAt(r));
-        }
-
-        return rows;
-    }
+    private double[][] AsRows(JgsValue value) =>
+        IsMatrix(value) ? JgsMatrix.ToRows("'*'", value, 0, 0) : [RowOf(value)];
 
     private double[] RowOf(JgsValue value)
     {
@@ -2545,7 +3183,7 @@ internal sealed class Interpreter
                 pairwise[i] = JgsValue.Bool(AreEqual(a[i], b[i]) != negate);
             }
 
-            return JgsValue.Array(pairwise);
+            return ShapeLike(JgsValue.Array(pairwise), left, right);
         }
 
         // One side is a scalar; broadcast it across the array.
@@ -2557,7 +3195,22 @@ internal sealed class Interpreter
             result[i] = JgsValue.Bool(AreEqual(array[i], scalar) != negate);
         }
 
-        return JgsValue.Array(result);
+        return ShapeLike(JgsValue.Array(result), left, right);
+    }
+
+    /// <summary>The boxed twin of <c>PackedOps.KeepShape</c>: an elementwise result is the same
+    /// shape as the operand it was computed over.</summary>
+    private static JgsValue ShapeLike(JgsValue result, JgsValue left, JgsValue right)
+    {
+        JgsValue model = left.Type == JgsType.Array && left.IsShaped ? left
+            : right.Type == JgsType.Array && right.IsShaped ? right
+            : JgsValue.Null;
+        if (model.Type == JgsType.Array && model.ArrayLength == result.ArrayLength)
+        {
+            result.Reshape(model.Rows, model.Cols);
+        }
+
+        return result;
     }
 
     private static bool AreEqual(JgsValue left, JgsValue right) => JgsValue.AreEqual(left, right);
@@ -2577,8 +3230,9 @@ internal sealed class Interpreter
 
         if (left.Type == JgsType.Array || right.Type == JgsType.Array)
         {
-            return JgsValue.Array(Broadcast(left, right,
-                (a, b) => JgsValue.Number(op(a, b)), symbol, line, column, complexOp));
+            return ShapeLike(
+                JgsValue.Array(Broadcast(left, right, (a, b) => JgsValue.Number(op(a, b)), symbol, line, column, complexOp)),
+                left, right);
         }
 
         throw new JgsRuntimeException(line, column,
@@ -2662,18 +3316,18 @@ internal sealed class Interpreter
                 // as the boxed branch produces).
                 NumericBuffer dest = JgsPacking.Allocate(value.ArrayLength);
                 PackedMath.Map(value.AsBuffer, dest, new Func<double, double>(op), _cancelCheck);
-                return JgsValue.Packed(dest);
+                return KeepShape(value, JgsValue.Packed(dest));
             }
 
             JgsValue[] source = value.AsArray;
             var result = new JgsValue[source.Length];
             for (int i = 0; i < result.Length; i++)
             {
-                // Recurse so matrices (nested arrays) map elementwise as well.
+                // Recurse so nested arrays map elementwise as well.
                 result[i] = MapNumeric(source[i], op, symbol, line, column, complexOp);
             }
 
-            return JgsValue.Array(result);
+            return KeepShape(value, JgsValue.Array(result));
         }
 
         throw new JgsRuntimeException(line, column, $"Operator '{symbol}' needs a number or numeric array, but got {value.TypeName}.");

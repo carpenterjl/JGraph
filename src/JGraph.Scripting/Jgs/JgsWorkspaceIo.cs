@@ -152,15 +152,14 @@ internal static class JgsWorkspaceIo
             case JgsType.Number or JgsType.Bool:
                 yield return [value.AsNumber];
                 break;
-            case JgsType.Array when value.ArrayLength > 0 && !value.IsPacked
-                && value.ElementAt(0).Type == JgsType.Array:
-                for (int r = 0; r < value.ArrayLength; r++)
+            case JgsType.Array when JgsMatrix.IsMatrix(value):
+                int cols = JgsMatrix.ColCount(value);
+                for (int r = 0; r < JgsMatrix.RowCount(value); r++)
                 {
-                    JgsValue row = value.ElementAt(r);
-                    var values = new double[row.ArrayLength];
-                    for (int c = 0; c < values.Length; c++)
+                    var values = new double[cols];
+                    for (int c = 0; c < cols; c++)
                     {
-                        values[c] = row.ElementAt(c).AsNumber;
+                        values[c] = JgsMatrix.At(value, r, c).AsNumber;
                     }
 
                     yield return values;

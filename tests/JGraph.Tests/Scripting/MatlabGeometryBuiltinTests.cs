@@ -54,7 +54,7 @@ public class MatlabGeometryBuiltinTests : IDisposable
         m = true(2, 3);
         assert(isequal(size(m), [2 3]));
         assert(all(all(m)));
-        assert(islogical(m(1)(1)));
+        assert(islogical(m(1, 1)));
 
         z = false(3);
         assert(isequal(size(z), [3 3]));
@@ -71,9 +71,9 @@ public class MatlabGeometryBuiltinTests : IDisposable
         % A constant matrix has all its energy at DC: the (1,1) bin holds the total, the rest is zero.
         A = ones(2, 2);
         F = fft2(A);
-        assert(abs(F(1)(1) - 4) < 1e-12);
-        assert(abs(F(1)(2)) < 1e-12);
-        assert(abs(F(2)(1)) < 1e-12);
+        assert(abs(F(1, 1) - 4) < 1e-12);
+        assert(abs(F(1, 2)) < 1e-12);
+        assert(abs(F(2, 1)) < 1e-12);
 
         % And the inverse puts it back.
         B = [1 2; 3 4];

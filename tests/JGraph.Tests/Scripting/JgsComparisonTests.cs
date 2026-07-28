@@ -85,10 +85,12 @@ public class JgsComparisonTests : IDisposable
     [Fact]
     public async Task Equality_MixedElementTypes_CompareUnequal_NotAnError()
     {
+        // A logical equals the number it stands for (ADR 0043); text is unrelated, and comparing it
+        // is false rather than an error.
         ScriptRunResult result = await Run("print([1, \"1\", true] == 1)");
 
         Assert.True(result.Success, result.Message);
-        Assert.Contains("[true, false, false]", _output.NormalText);
+        Assert.Contains("[true, false, true]", _output.NormalText);
     }
 
     [Fact]

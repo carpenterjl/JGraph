@@ -72,6 +72,14 @@ public sealed class ScriptContext
     public string? WorkingDirectory { get; }
 
     /// <summary>
+    /// The file the code being run came from, or null when it came from the prompt or from a
+    /// string. It is what <c>mfilename</c> reports; the run entry points take a source id for the
+    /// same purpose, but the batch launcher runs whole files through <c>RunAsync</c>, which does
+    /// not carry one.
+    /// </summary>
+    public string? ScriptPath { get; init; }
+
+    /// <summary>
     /// The workspace path resolver script file access flows through, or null to resolve against
     /// <see cref="WorkingDirectory"/>. Invoked on the engine's background thread.
     /// </summary>

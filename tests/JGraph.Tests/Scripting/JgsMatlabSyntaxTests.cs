@@ -222,10 +222,12 @@ public class JgsMatlabSyntaxTests : IDisposable
         ScriptRunResult result = await Run("""
             let a = [1, 2, 3];
             print(a(:))
+            print(size(a(:)))
             """);
 
+        // a(:) is MATLAB's flatten, which is always a column.
         Assert.True(result.Success, result.Message);
-        Assert.Equal(new[] { "[1, 2, 3]\n" }, _output.Normal);
+        Assert.Equal(new[] { "[1; 2; 3]\n", "[3, 1]\n" }, _output.Normal);
     }
 
     [Fact]
@@ -365,28 +367,34 @@ public class JgsMatlabSyntaxTests : IDisposable
     [Fact]
     public async Task MatrixRows_ScalarRows_BuildAMatrix()
     {
+        // Two subscripts name an element, one indexes linearly down the columns (ADR 0043), and a
+        // whole row comes back from the ':' form.
         ScriptRunResult result = await Run("""
             let m = [1, 2; 3, 4];
-            print(m[0])
-            print(m[1])
+            print(m(0, 1))
+            print(m(1))
+            print(m(1, :))
+            print(size(m))
             """);
 
         Assert.True(result.Success, result.Message);
-        Assert.Equal(new[] { "[1, 2]\n", "[3, 4]\n" }, _output.Normal);
+        Assert.Equal(new[] { "2\n", "3\n", "[3, 4]\n", "[2, 2]\n" }, _output.Normal);
     }
 
     [Fact]
     public async Task MatrixRows_ArrayRows_VerticallyConcatenate()
     {
-        // The sound demo's x_pad = [audio_sample; zeros(8 - rem8, 1)] pattern.
+        // The sound demo's x_pad = [audio_sample; zeros(8 - rem8, 1)] pattern. Stacking vectors
+        // where one of them is a column reads them all as columns, so the pad lands end to end.
         ScriptRunResult result = await Run("""
             let a = [1, 2, 3];
             let x = [a; zeros(2, 1)];
             print(x)
+            print(size(x))
             """);
 
         Assert.True(result.Success, result.Message);
-        Assert.Equal(new[] { "[1, 2, 3, 0, 0]\n" }, _output.Normal);
+        Assert.Equal(new[] { "[1; 2; 3; 0; 0]\n", "[5, 1]\n" }, _output.Normal);
     }
 
     [Fact]
@@ -395,7 +403,7 @@ public class JgsMatlabSyntaxTests : IDisposable
         ScriptRunResult result = await Run("let m = [1, 2; 3]");
 
         Assert.False(result.Success);
-        Assert.Contains("equal lengths", Assert.Single(result.Diagnostics).Message);
+        Assert.Contains("Cannot stack these", Assert.Single(result.Diagnostics).Message);
     }
 
     [Fact]

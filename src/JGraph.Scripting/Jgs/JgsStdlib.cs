@@ -189,18 +189,24 @@ internal static class JgsStdlib
     {
         if (left.Type == JgsType.Array && right.Type == JgsType.Array)
         {
-            JgsValue[] a = left.BoxedElements();
-            JgsValue[] b = right.BoxedElements();
-            if (a.Length != b.Length)
+            // Sizes must agree, which is what MATLAB's isequal means by equal — and comparing
+            // through JgsMatrix rather than raw element order is what lets a shaped matrix and a
+            // value still in the older array-of-rows form compare as the same matrix.
+            int rows = JgsMatrix.RowCount(left);
+            int cols = JgsMatrix.ColCount(left);
+            if (rows != JgsMatrix.RowCount(right) || cols != JgsMatrix.ColCount(right))
             {
                 return false;
             }
 
-            for (int i = 0; i < a.Length; i++)
+            for (int c = 0; c < cols; c++)
             {
-                if (!DeepEquals(a[i], b[i], nanEqual))
+                for (int r = 0; r < rows; r++)
                 {
-                    return false;
+                    if (!DeepEquals(JgsMatrix.At(left, r, c), JgsMatrix.At(right, r, c), nanEqual))
+                    {
+                        return false;
+                    }
                 }
             }
 

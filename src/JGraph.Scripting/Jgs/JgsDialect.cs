@@ -23,6 +23,9 @@ namespace JGraph.Scripting.Jgs;
 /// False in JGS, where braces delimit block bodies; cell *values* still exist in both.</param>
 /// <param name="FunctionScope">Whether an <c>if</c>/<c>for</c>/<c>while</c> body shares the enclosing
 /// scope (MATLAB) rather than getting a child scope of its own (JGS).</param>
+/// <param name="ConcatenatesBrackets">Whether <c>[a, b]</c> joins its elements side by side (MATLAB
+/// concatenation) rather than building a list of them (JGS, where <c>[[1, 2], [3, 4]]</c> is how a
+/// matrix has always been written).</param>
 internal sealed record JgsDialect(
     string Name,
     int IndexBase,
@@ -33,7 +36,8 @@ internal sealed record JgsDialect(
     bool MatlabFunctions,
     bool MatlabBlocks,
     bool CellBraceSyntax,
-    bool FunctionScope)
+    bool FunctionScope,
+    bool ConcatenatesBrackets)
 {
     /// <summary>JGS as shipped: 0-based, <c>let</c> required, <c>%</c> is modulo, references are shared.</summary>
     public static readonly JgsDialect Jgs = new(
@@ -46,7 +50,8 @@ internal sealed record JgsDialect(
         MatlabFunctions: false,
         MatlabBlocks: false,
         CellBraceSyntax: false,
-        FunctionScope: false);
+        FunctionScope: false,
+        ConcatenatesBrackets: false);
 
     /// <summary>
     /// MATLAB semantics, fixed. A <c>.m</c> file must behave the same in JGraph as it does in MATLAB, so
@@ -62,7 +67,8 @@ internal sealed record JgsDialect(
         MatlabFunctions: true,
         MatlabBlocks: true,
         CellBraceSyntax: true,
-        FunctionScope: true);
+        FunctionScope: true,
+        ConcatenatesBrackets: true);
 
     /// <summary>True when this dialect is MATLAB rather than JGS, for the handful of message flavours.</summary>
     public bool IsMatlab => PercentComment;

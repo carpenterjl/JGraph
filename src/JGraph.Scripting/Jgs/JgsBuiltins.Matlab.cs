@@ -637,23 +637,15 @@ internal static partial class JgsBuiltins
         var values = new List<JgsValue>();
         JgsValue subject = args[0];
 
-        bool isMatrix = !subject.IsPacked && subject.Type == JgsType.Array
-            && subject.ArrayLength > 0 && subject.ElementAt(0).Type == JgsType.Array;
-        if (isMatrix)
+        if (JgsMatrix.IsMatrix(subject))
         {
-            int height = subject.ArrayLength;
-            int width = subject.ElementAt(0).ArrayLength;
+            int height = JgsMatrix.RowCount(subject);
+            int width = JgsMatrix.ColCount(subject);
             for (int c = 0; c < width; c++)
             {
                 for (int r = 0; r < height; r++)
                 {
-                    JgsValue row = subject.ElementAt(r);
-                    if (c >= row.ArrayLength)
-                    {
-                        throw new JgsRuntimeException(line, col, "find: matrix rows must have equal lengths.");
-                    }
-
-                    JgsValue element = row.ElementAt(c);
+                    JgsValue element = JgsMatrix.At(subject, r, c);
                     if (element.IsTruthy)
                     {
                         rows.Add(JgsValue.Number(r + origin));

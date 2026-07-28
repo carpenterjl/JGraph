@@ -37,6 +37,12 @@ internal static class JgsRunner
         DisposePreviousRunBuffers();
         var globals = new JGraphScriptGlobals(context);
 
+        // A one-shot run knows which file it came from, and mfilename has to be able to say so.
+        if (sourceId.Length > 0 && Path.IsPathRooted(sourceId))
+        {
+            globals.BeginRun(Path.GetDirectoryName(sourceId), sourceId);
+        }
+
         try
         {
             IReadOnlyList<Stmt> program = Parser.Parse(code, sourceId, dialect);
@@ -45,6 +51,7 @@ internal static class JgsRunner
                 echo: line => context.Output.WriteLine(line), dialect);
             DefineRunBuiltin(environment, interpreter, globals, dialect);
             JgsBuiltins.RegisterEvalBuiltins(environment, interpreter, globals, dialect);
+            JgsBuiltins.RegisterSessionBuiltins(environment, globals);
 
             // Capture the pristine builtin bindings so the post-run snapshot lists only what the
             // script itself defined (or rebound). save/load must be declared before the capture, or
@@ -221,21 +228,52 @@ internal static class JgsRunner
         JgsType.Image => null, // images have no Data-Viewer raw copy; the Variables panel shows the label
 
         JgsType.Array when value.ArrayLength > MaxRawValueElements => null,
+
+        // A matrix becomes formatted text the host can grid without knowing the value model. This
+        // comes before the packed arms: a matrix is packed too, and a flat double[] would lose the
+        // shape that makes it worth looking at.
+        // A ragged array-of-rows is not a matrix but still grids usefully, so it keeps the padding
+        // projection it had before shapes existed.
+        JgsType.Array when JgsMatrix.IsNested(value) => CellRowsGrid(value.BoxedElements()),
+        JgsType.Array when JgsMatrix.IsMatrix(value) => MatrixGrid(value),
+
         JgsType.Array when value.IsPackedComplex => null, // boxed complex arrays have no raw view either
         JgsType.Array when value.IsPacked =>
             value.PackedKind == JgsPackedKind.Number ? value.AsBuffer.AsSpan().ToArray() : null,
         JgsType.Array when value.AsArray.All(static e => e.Type == JgsType.Number) =>
             value.AsArray.Select(static e => e.AsNumber).ToArray(),
 
-        // Anything else with a table shape becomes formatted text the host can grid without knowing
-        // the value model: a matrix (an array of arrays), a cell array, or a struct.
-        JgsType.Array when value.AsArray.All(static e => e.Type == JgsType.Array) => MatrixGrid(value.AsArray),
         JgsType.Cell => CellGrid(value.AsCell),
         JgsType.Struct => StructGrid(value.AsStruct),
         _ => null,
     };
 
-    private static ScriptValueGrid? MatrixGrid(IReadOnlyList<JgsValue> rows)
+    private static ScriptValueGrid? MatrixGrid(JgsValue matrix)
+    {
+        int rows = JgsMatrix.RowCount(matrix);
+        int columns = JgsMatrix.ColCount(matrix);
+        if (rows == 0 || columns == 0 || (long)rows * columns > ScriptValueGrid.MaxCells)
+        {
+            return null;
+        }
+
+        var text = new List<string[]>(rows);
+        for (int r = 0; r < rows; r++)
+        {
+            var cells = new string[columns];
+            for (int c = 0; c < columns; c++)
+            {
+                cells[c] = Cell(JgsMatrix.At(matrix, r, c));
+            }
+
+            text.Add(cells);
+        }
+
+        return new ScriptValueGrid("matrix", Numbered(columns), text);
+    }
+
+    /// <summary>A cell array of row cells, which has a grid shape without being a numeric matrix.</summary>
+    private static ScriptValueGrid? CellRowsGrid(IReadOnlyList<JgsValue> rows)
     {
         int columns = rows.Count == 0 ? 0 : rows.Max(static r => r.ArrayLength);
         if (rows.Count == 0 || columns == 0 || (long)rows.Count * columns > ScriptValueGrid.MaxCells)
@@ -251,9 +289,9 @@ internal static class JgsRunner
             for (int c = 0; c < columns; c++)
             {
                 // ElementAt, not AsArray: a numeric row is packed, and asking a packed array for
-                // boxed elements throws by design. Ragged rows are legal (JGS arrays need not be
-                // rectangular), so a short row gets empty trailing cells rather than failing the
-                // whole projection.
+                // boxed elements throws by design. Ragged rows are legal (a cell's entries need not
+                // be the same length), so a short row gets empty trailing cells rather than failing
+                // the whole projection.
                 cells[c] = c < length ? Cell(row.ElementAt(c)) : string.Empty;
             }
 
@@ -273,7 +311,7 @@ internal static class JgsRunner
         // A cell array of rows displays as a grid; a flat one as a single row, which is what it is.
         if (elements.All(static e => e.Type == JgsType.Array))
         {
-            ScriptValueGrid? matrix = MatrixGrid(elements);
+            ScriptValueGrid? matrix = CellRowsGrid(elements);
             return matrix is null ? null : matrix with { Kind = "cell" };
         }
 

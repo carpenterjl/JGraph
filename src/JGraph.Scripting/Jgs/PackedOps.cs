@@ -37,7 +37,7 @@ internal static class PackedOps
             RequireSameLengths(symbol, left.ArrayLength, right.ArrayLength, line, column);
             NumericBuffer dest = JgsPacking.Allocate(left.ArrayLength);
             PackedMath.Binary(op, left.AsBuffer, right.AsBuffer, dest, cancelCheck);
-            result = JgsValue.Packed(dest);
+            result = KeepShape(JgsValue.Packed(dest), left, right);
             return true;
         }
 
@@ -45,7 +45,7 @@ internal static class PackedOps
         {
             NumericBuffer dest = JgsPacking.Allocate(left.ArrayLength);
             PackedMath.BinaryScalarRight(op, left.AsBuffer, right.AsNumber, dest, cancelCheck);
-            result = JgsValue.Packed(dest);
+            result = KeepShape(JgsValue.Packed(dest), left, right);
             return true;
         }
 
@@ -53,7 +53,7 @@ internal static class PackedOps
         {
             NumericBuffer dest = JgsPacking.Allocate(right.ArrayLength);
             PackedMath.BinaryScalarLeft(op, left.AsNumber, right.AsBuffer, dest, cancelCheck);
-            result = JgsValue.Packed(dest);
+            result = KeepShape(JgsValue.Packed(dest), left, right);
             return true;
         }
 
@@ -80,7 +80,7 @@ internal static class PackedOps
             RequireSameLengths(symbol, left.ArrayLength, right.ArrayLength, line, column);
             NumericBuffer dest = JgsPacking.Allocate(left.ArrayLength);
             PackedMath.Compare(op, left.AsBuffer, right.AsBuffer, dest, cancelCheck);
-            result = JgsValue.Packed(dest, JgsPackedKind.Bool);
+            result = KeepShape(JgsValue.Packed(dest, JgsPackedKind.Bool), left, right);
             return true;
         }
 
@@ -88,7 +88,7 @@ internal static class PackedOps
         {
             NumericBuffer dest = JgsPacking.Allocate(left.ArrayLength);
             PackedMath.CompareScalar(op, left.AsBuffer, right.AsNumber, dest, scalarOnLeft: false, cancelCheck);
-            result = JgsValue.Packed(dest, JgsPackedKind.Bool);
+            result = KeepShape(JgsValue.Packed(dest, JgsPackedKind.Bool), left, right);
             return true;
         }
 
@@ -96,7 +96,7 @@ internal static class PackedOps
         {
             NumericBuffer dest = JgsPacking.Allocate(right.ArrayLength);
             PackedMath.CompareScalar(op, right.AsBuffer, left.AsNumber, dest, scalarOnLeft: true, cancelCheck);
-            result = JgsValue.Packed(dest, JgsPackedKind.Bool);
+            result = KeepShape(JgsValue.Packed(dest, JgsPackedKind.Bool), left, right);
             return true;
         }
 
@@ -106,8 +106,8 @@ internal static class PackedOps
 
     /// <summary>
     /// Elementwise <c>==</c>/<c>!=</c> over packed operands, honoring boxed equality semantics:
-    /// numbers compare to numbers and bools to bools; mismatched element types compare unequal
-    /// (never an error), so a packed-number array against a string scalar is a constant mask.
+    /// numbers and logicals compare by value, so a mask meets <c>[1 0]</c> as MATLAB expects; a
+    /// non-numeric scalar is unequal to every element (never an error), giving a constant mask.
     /// </summary>
     public static bool TryEquality(JgsValue left, JgsValue right, bool negate,
                                    Action? cancelCheck, int line, int column, out JgsValue result)
@@ -122,18 +122,11 @@ internal static class PackedOps
                     $"Cannot apply '{(negate ? "!=" : "==")}' to arrays of different lengths ({left.ArrayLength} and {right.ArrayLength}).");
             }
 
+            // Logicals are stored as 0.0/1.0, so a number/logical mix compares by value with no
+            // conversion — the same answer the boxed path now gives.
             NumericBuffer dest = JgsPacking.Allocate(left.ArrayLength);
-            if (left.PackedKind == right.PackedKind)
-            {
-                PackedMath.Compare(op, left.AsBuffer, right.AsBuffer, dest, cancelCheck);
-            }
-            else
-            {
-                // Number elements never equal bool elements in boxed semantics.
-                PackedMath.FillConstant(dest, negate ? 1.0 : 0.0, cancelCheck);
-            }
-
-            result = JgsValue.Packed(dest, JgsPackedKind.Bool);
+            PackedMath.Compare(op, left.AsBuffer, right.AsBuffer, dest, cancelCheck);
+            result = KeepShape(JgsValue.Packed(dest, JgsPackedKind.Bool), left, right);
             return true;
         }
 
@@ -145,8 +138,7 @@ internal static class PackedOps
         }
 
         NumericBuffer mask = JgsPacking.Allocate(packed.ArrayLength);
-        bool comparable = (packed.PackedKind, scalar.Type) is
-            (JgsPackedKind.Number, JgsType.Number) or (JgsPackedKind.Bool, JgsType.Bool);
+        bool comparable = scalar.Type is JgsType.Number or JgsType.Bool;
         if (comparable)
         {
             PackedMath.CompareScalar(op, packed.AsBuffer, scalar.AsNumber, mask, scalarOnLeft: false, cancelCheck);
@@ -156,8 +148,25 @@ internal static class PackedOps
             PackedMath.FillConstant(mask, negate ? 1.0 : 0.0, cancelCheck);
         }
 
-        result = JgsValue.Packed(mask, JgsPackedKind.Bool);
+        result = KeepShape(JgsValue.Packed(mask, JgsPackedKind.Bool), left, right);
         return true;
+    }
+
+    /// <summary>
+    /// An elementwise result is the same shape as the operand it was computed over. Shape lives on
+    /// the wrapper, so a freshly allocated buffer starts out a flat row and has to be told.
+    /// </summary>
+    private static JgsValue KeepShape(JgsValue result, JgsValue left, JgsValue right)
+    {
+        JgsValue model = left.Type == JgsType.Array && left.IsShaped ? left
+            : right.Type == JgsType.Array && right.IsShaped ? right
+            : JgsValue.Null;
+        if (model.Type == JgsType.Array)
+        {
+            result.Reshape(model.Rows, model.Cols);
+        }
+
+        return result;
     }
 
     /// <summary>Elementwise negation of a packed array (bools negate to numbers, as when boxed).</summary>

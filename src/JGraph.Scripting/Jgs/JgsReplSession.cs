@@ -93,7 +93,7 @@ internal sealed class JgsReplSession : IScriptSession
 
     private ScriptRunResult Execute(string code, string sourceId, CancellationToken cancellationToken, bool asFile = false)
     {
-        _globals.BeginRun(asFile ? ScriptDirectoryOf(sourceId) : null);
+        _globals.BeginRun(asFile ? ScriptDirectoryOf(sourceId) : null, asFile ? sourceId : null);
         _interpreter.BeginStatement(cancellationToken);
         try
         {
@@ -150,6 +150,7 @@ internal sealed class JgsReplSession : IScriptSession
             echo: line => _context.Output.WriteLine(line), _dialect);
         JgsRunner.DefineRunBuiltin(_environment, _interpreter, _globals, _dialect);
         JgsBuiltins.RegisterEvalBuiltins(_environment, _interpreter, _globals, _dialect);
+        JgsBuiltins.RegisterSessionBuiltins(_environment, _globals);
         DefineClearBuiltin(_environment);
         DefineWhosBuiltin(_environment);
         JgsWorkspaceIo.DefineSaveLoad(_environment, _globals, () => UserVariables());
@@ -212,9 +213,7 @@ internal sealed class JgsReplSession : IScriptSession
 
     private static string SizeOf(JgsValue value) => value.Type switch
     {
-        JgsType.Array when value.ArrayLength > 0 && value.ElementAt(0).Type == JgsType.Array =>
-            $"{value.ArrayLength}x{value.ElementAt(0).ArrayLength}",
-        JgsType.Array => $"1x{value.ArrayLength}",
+        JgsType.Array => $"{JgsMatrix.RowCount(value)}x{JgsMatrix.ColCount(value)}",
         JgsType.String => $"1x{value.AsString.Length}",
         JgsType.Cell => $"1x{value.AsCell.Length}",
         JgsType.Table => $"{value.AsTable.RowCount}x{value.AsTable.ColumnCount}",

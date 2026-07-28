@@ -62,7 +62,10 @@ public static class BatchRunner
             workingDirectory,
             ReadResolver(workingDirectory, resolved.SourceDirectory),
             figureFiles,
-            audio);
+            audio)
+        {
+            ScriptPath = resolved.SourcePath,
+        };
 
         ScriptRunResult result;
         try

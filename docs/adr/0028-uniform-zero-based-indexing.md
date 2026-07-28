@@ -3,6 +3,9 @@
 ## Status
 
 Accepted (M25, 2026-07-22). Supersedes [ADR 0023](0023-matlab-compatible-jgs-surface.md) §3.
+Partly superseded by [ADR 0043](0043-shaped-arrays.md): the index *base* decided here still stands,
+but "a matrix is an array of row arrays, indexed `m[row][col]`" does not — arrays carry a shape and
+take two subscripts.
 
 ## Context
 

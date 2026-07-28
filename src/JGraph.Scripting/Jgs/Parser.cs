@@ -843,7 +843,13 @@ internal sealed class Parser
                 }
                 else
                 {
-                    Token field = Expect(TokenType.Identifier, "a field name");
+                    // A struct field may be spelled like a keyword — functions() returns one called
+                    // 'function' — and after a dot there is nothing else the word could be, so any
+                    // token carrying an identifier-shaped name is taken as the field.
+                    Token field = Check(TokenType.Identifier) || IsKeywordWord(Current.Type)
+                        ? Advance()
+                        : Expect(TokenType.Identifier, "a field name");
+
                     expr = new MemberExpr(expr, field.Text, null) { Line = dot.Line, Column = dot.Column };
                 }
             }
@@ -1154,6 +1160,18 @@ internal sealed class Parser
     }
 
     private bool Check(TokenType type) => Current.Type == type;
+
+    /// <summary>
+    /// Whether a token is a keyword — a word the lexer claimed before the parser saw it. After a
+    /// dot such a word is a struct field and nothing else, so this is what lets <c>s.function</c>
+    /// and <c>s.end</c> parse.
+    /// </summary>
+    private static bool IsKeywordWord(TokenType type) => type
+        is TokenType.Let or TokenType.Fn or TokenType.Return or TokenType.If or TokenType.Else
+        or TokenType.For or TokenType.While or TokenType.In or TokenType.Break or TokenType.Continue
+        or TokenType.True or TokenType.False or TokenType.End or TokenType.ElseIf
+        or TokenType.Function or TokenType.Switch or TokenType.Case or TokenType.Otherwise
+        or TokenType.Try or TokenType.Catch or TokenType.Global;
 
     private bool Match(TokenType type)
     {

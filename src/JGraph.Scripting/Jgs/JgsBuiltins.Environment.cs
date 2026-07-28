@@ -23,19 +23,26 @@ internal static partial class JgsBuiltins
         void Command(string name, Func<IReadOnlyList<JgsValue>, int, int, JgsValue> body) =>
             env.Declare(name, JgsValue.Function(new BuiltinFunction(name, body) { BindsAnsAsStatement = false }));
 
-        RegisterDirectoryBuiltins(Command, host);
-        RegisterPathBuiltins(Define, host);
+        // A question that takes no arguments has to answer when its bare name is mentioned, or
+        // disp(pwd) hands disp the function rather than the folder. Callee position is exempted by
+        // the interpreter, so a form that does take arguments still reaches the function.
+        void Query(string name, Func<IReadOnlyList<JgsValue>, int, int, JgsValue> body) =>
+            env.Declare(name, JgsValue.Function(new BuiltinFunction(name, body) { AutoCallsBare = true }));
+
+        RegisterDirectoryBuiltins(Command, Query, host);
+        RegisterPathBuiltins(Define, Query, host);
         RegisterStreamBuiltins(Define, host);
-        RegisterMachineBuiltins(Define, host);
+        RegisterMachineBuiltins(Define, Query, host);
         RegisterJsonBuiltins(Define);
     }
 
     // --- Directories ------------------------------------------------------------------------------
 
     private static void RegisterDirectoryBuiltins(
-        Action<string, Func<IReadOnlyList<JgsValue>, int, int, JgsValue>> Define, JGraphScriptGlobals host)
+        Action<string, Func<IReadOnlyList<JgsValue>, int, int, JgsValue>> Define,
+        Action<string, Func<IReadOnlyList<JgsValue>, int, int, JgsValue>> Query, JGraphScriptGlobals host)
     {
-        Define("pwd", (args, line, col) =>
+        Query("pwd", (args, line, col) =>
         {
             ArityRange("pwd", args, 0, 0, line, col);
             return JgsValue.Str(host.CurrentDirectory);
@@ -156,15 +163,16 @@ internal static partial class JgsBuiltins
     // --- Path names -------------------------------------------------------------------------------
 
     private static void RegisterPathBuiltins(
-        Action<string, Func<IReadOnlyList<JgsValue>, int, int, JgsValue>> Define, JGraphScriptGlobals host)
+        Action<string, Func<IReadOnlyList<JgsValue>, int, int, JgsValue>> Define,
+        Action<string, Func<IReadOnlyList<JgsValue>, int, int, JgsValue>> Query, JGraphScriptGlobals host)
     {
-        Define("filesep", (args, line, col) =>
+        Query("filesep", (args, line, col) =>
         {
             ArityRange("filesep", args, 0, 0, line, col);
             return JgsValue.Str(Path.DirectorySeparatorChar.ToString());
         });
 
-        Define("filemarker", (args, line, col) =>
+        Query("filemarker", (args, line, col) =>
         {
             ArityRange("filemarker", args, 0, 0, line, col);
             return JgsValue.Str(">"); // what separates a file from a local function inside it
@@ -337,7 +345,8 @@ internal static partial class JgsBuiltins
     // --- The machine ------------------------------------------------------------------------------
 
     private static void RegisterMachineBuiltins(
-        Action<string, Func<IReadOnlyList<JgsValue>, int, int, JgsValue>> Define, JGraphScriptGlobals host)
+        Action<string, Func<IReadOnlyList<JgsValue>, int, int, JgsValue>> Define,
+        Action<string, Func<IReadOnlyList<JgsValue>, int, int, JgsValue>> Query, JGraphScriptGlobals host)
     {
         Define("getenv", (args, line, col) =>
         {
@@ -356,17 +365,17 @@ internal static partial class JgsBuiltins
 
         // These three answer about the machine, not about MATLAB, so they are honest questions with
         // honest answers even though JGraph is not MATLAB.
-        Define("ispc", (args, line, col) => { ArityRange("ispc", args, 0, 0, line, col); return JgsValue.Bool(OperatingSystem.IsWindows()); });
-        Define("isunix", (args, line, col) => { ArityRange("isunix", args, 0, 0, line, col); return JgsValue.Bool(OperatingSystem.IsLinux() || OperatingSystem.IsMacOS()); });
-        Define("ismac", (args, line, col) => { ArityRange("ismac", args, 0, 0, line, col); return JgsValue.Bool(OperatingSystem.IsMacOS()); });
+        Query("ispc", (args, line, col) => { ArityRange("ispc", args, 0, 0, line, col); return JgsValue.Bool(OperatingSystem.IsWindows()); });
+        Query("isunix", (args, line, col) => { ArityRange("isunix", args, 0, 0, line, col); return JgsValue.Bool(OperatingSystem.IsLinux() || OperatingSystem.IsMacOS()); });
+        Query("ismac", (args, line, col) => { ArityRange("ismac", args, 0, 0, line, col); return JgsValue.Bool(OperatingSystem.IsMacOS()); });
 
-        Define("namelengthmax", (args, line, col) =>
+        Query("namelengthmax", (args, line, col) =>
         {
             ArityRange("namelengthmax", args, 0, 0, line, col);
             return JgsValue.Number(63); // MATLAB's limit, which JGraph matches so scripts agree
         });
 
-        Define("cputime", (args, line, col) =>
+        Query("cputime", (args, line, col) =>
         {
             ArityRange("cputime", args, 0, 0, line, col);
             return JgsValue.Number(Environment.TickCount64 / 1000.0);

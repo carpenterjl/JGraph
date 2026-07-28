@@ -156,6 +156,69 @@ public sealed class QrDecomposition
         }
     }
 
+    /// <summary>
+    /// The full m-by-m orthogonal factor, as against <see cref="Q"/>'s economy-size m-by-n. The
+    /// extra columns span the orthogonal complement of A's range, which is what a rank-one update
+    /// needs in order to stay a factorization of the whole space.
+    /// </summary>
+    public double[,] FullQ
+    {
+        get
+        {
+            var q = new double[_m, _m];
+            for (int i = 0; i < _m; i++)
+            {
+                q[i, i] = 1;
+            }
+
+            // The reflectors are applied in reverse, which is what turns the stored vectors back
+            // into the product they represent.
+            for (int k = Math.Min(_n, _m) - 1; k >= 0; k--)
+            {
+                if (_qr[k, k] == 0)
+                {
+                    continue;
+                }
+
+                for (int c = 0; c < _m; c++)
+                {
+                    double s = 0;
+                    for (int r = k; r < _m; r++)
+                    {
+                        s += _qr[r, k] * q[r, c];
+                    }
+
+                    s = -s / _qr[k, k];
+                    for (int r = k; r < _m; r++)
+                    {
+                        q[r, c] += s * _qr[r, k];
+                    }
+                }
+            }
+
+            return q;
+        }
+    }
+
+    /// <summary>The full m-by-n upper-triangular factor, the partner of <see cref="FullQ"/>.</summary>
+    public double[,] FullR
+    {
+        get
+        {
+            var r = new double[_m, _n];
+            for (int i = 0; i < Math.Min(_m, _n); i++)
+            {
+                r[i, i] = _rDiag[i];
+                for (int j = i + 1; j < _n; j++)
+                {
+                    r[i, j] = _qr[i, j];
+                }
+            }
+
+            return r;
+        }
+    }
+
     /// <summary>The least-squares solution of A·X ≈ B (minimizing ‖A·X − B‖ column by column).</summary>
     /// <exception cref="InvalidOperationException">A is rank deficient.</exception>
     /// <exception cref="ArgumentException">B's row count is not A's row count.</exception>

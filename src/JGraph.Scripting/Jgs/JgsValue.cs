@@ -53,6 +53,11 @@ internal enum JgsPackedKind : byte
 /// <see cref="BoxedElements"/> / <see cref="ElementAt"/> / <see cref="ArrayLength"/>;
 /// <see cref="AsArray"/> throws for packed values so a missed call site fails loudly instead of
 /// silently misbehaving.
+/// <para>
+/// An array also carries a <see cref="Rows"/>-by-<see cref="Cols"/> shape over that flat storage,
+/// column-major (ADR 0043). A value built by <see cref="Array"/> or <see cref="Packed"/> is a row —
+/// 1-by-n — so nothing that does not ask for a shape sees one.
+/// </para>
 /// </remarks>
 internal sealed class JgsValue
 {
@@ -68,6 +73,8 @@ internal sealed class JgsValue
     private readonly double _number;
     private object? _reference; // mutable ONLY by DemoteToBoxed
     private readonly JgsPackedKind _packedKind;
+    private int _rows; // mutable ONLY by Reshape
+    private int _cols;
 
     private JgsValue(JgsType type, double number, object? reference, JgsPackedKind packedKind = JgsPackedKind.Number)
     {
@@ -75,7 +82,32 @@ internal sealed class JgsValue
         _number = number;
         _reference = reference;
         _packedKind = packedKind;
+
+        // An array with no shape asked for is a row: 1-by-n, which is what a flat literal means.
+        _rows = 1;
+        _cols = type == JgsType.Array ? ElementCount(reference) : 0;
     }
+
+    private JgsValue(JgsType type, object? reference, JgsPackedKind packedKind, int rows, int cols)
+        : this(type, 0, reference, packedKind)
+    {
+        int count = ElementCount(reference);
+        if ((long)rows * cols != count)
+        {
+            throw new ArgumentException($"A {rows}x{cols} shape does not describe {count} elements.", nameof(rows));
+        }
+
+        _rows = rows;
+        _cols = cols;
+    }
+
+    private static int ElementCount(object? reference) => reference switch
+    {
+        NumericBuffer buffer => buffer.Length,
+        JgsPackedComplex complex => complex.Length,
+        JgsValue[] elements => elements.Length,
+        _ => 0,
+    };
 
     /// <summary>The runtime kind of this value.</summary>
     public JgsType Type { get; }
@@ -114,6 +146,23 @@ internal sealed class JgsValue
     /// </summary>
     public static JgsValue PackedComplexArray(JgsPackedComplex payload) =>
         new(JgsType.Array, 0, payload);
+
+    /// <summary>
+    /// Wraps a packed buffer as a <paramref name="rows"/>-by-<paramref name="cols"/> matrix. Elements
+    /// are stored column-major, which is what MATLAB means by linear order: element <c>k</c> of
+    /// <c>A(:)</c> is <c>A(k % rows, k / rows)</c>, so <c>A(:)</c> is a buffer clone rather than a
+    /// gather and a MAT-file's own column-major payload writes straight out.
+    /// </summary>
+    public static JgsValue Shaped(NumericBuffer buffer, int rows, int cols, JgsPackedKind kind = JgsPackedKind.Number) =>
+        new(JgsType.Array, buffer, kind, rows, cols);
+
+    /// <summary>Wraps a boxed element array as a column-major matrix (the array is used directly).</summary>
+    public static JgsValue Shaped(JgsValue[] elements, int rows, int cols) =>
+        new(JgsType.Array, elements, JgsPackedKind.Number, rows, cols);
+
+    /// <summary>Wraps a packed planar complex payload as a column-major matrix.</summary>
+    public static JgsValue ShapedComplex(JgsPackedComplex payload, int rows, int cols) =>
+        new(JgsType.Array, payload, JgsPackedKind.Number, rows, cols);
 
     /// <summary>Wraps a data table.</summary>
     public static JgsValue Table(Table table) => new(JgsType.Table, 0, table);
@@ -190,6 +239,37 @@ internal sealed class JgsValue
         _ => AsArray.Length,
     };
 
+    /// <summary>Row count of an array value. A value built without a shape is a row, so this is 1.</summary>
+    public int Rows => _rows;
+
+    /// <summary>Column count of an array value; <c>Rows * Cols</c> is always <see cref="ArrayLength"/>.</summary>
+    public int Cols => _cols;
+
+    /// <summary>
+    /// Whether this array is a matrix rather than a row: more than one row, which is the only case
+    /// where the distinction between linear and two-subscript indexing can be observed.
+    /// </summary>
+    public bool IsShaped => _rows != 1;
+
+    /// <summary>
+    /// Changes the shape in place, keeping the elements and their column-major order. Every alias
+    /// shares this wrapper (single-wrapper invariant), so all names see the new shape.
+    /// </summary>
+    public void Reshape(int rows, int cols)
+    {
+        int count = ArrayLength;
+        if ((long)rows * cols != count)
+        {
+            throw new InvalidOperationException($"A {rows}x{cols} shape does not describe {count} elements.");
+        }
+
+        _rows = rows;
+        _cols = cols;
+    }
+
+    /// <summary>The column-major position of <c>(row, col)</c> in this array's storage.</summary>
+    public int LinearIndex(int row, int col) => row + (col * _rows);
+
     /// <summary>Element <paramref name="index"/> of an array value, packed or boxed (0-based).</summary>
     public JgsValue ElementAt(int index)
     {
@@ -257,7 +337,8 @@ internal sealed class JgsValue
     /// <summary>
     /// Converts a packed array to boxed in place, e.g. when a script writes a non-numeric value into
     /// one of its slots. Every alias shares this wrapper (single-wrapper invariant), so all names see
-    /// the demoted array; the backing storage is disposed. No-op for already-boxed arrays.
+    /// the demoted array; the backing storage is disposed. No-op for already-boxed arrays. The shape
+    /// rides on the wrapper, not the storage, so it survives the swap untouched.
     /// </summary>
     public void DemoteToBoxed()
     {
@@ -344,12 +425,23 @@ internal sealed class JgsValue
     }
 
     /// <summary>
-    /// Shallow value equality, the semantics of scalar <c>==</c>: matching type and value for
-    /// null/number/bool/string, reference identity for arrays, tables, and functions. Values of
-    /// different types are unequal, never an error. See the <c>isequal</c> builtin for deep equality.
+    /// Shallow value equality, the semantics of scalar <c>==</c>: by value for numbers, logicals and
+    /// strings, reference identity for arrays, tables and functions. Values of unrelated types are
+    /// unequal, never an error. See the <c>isequal</c> builtin for deep equality.
     /// </summary>
+    /// <remarks>
+    /// A logical compares equal to the number it stands for, so <c>true == 1</c> — MATLAB treats
+    /// logicals as numeric, ordering comparisons here already did, and a mask that could not be
+    /// checked against <c>[1 0]</c> was the sharpest edge left in the model. NaN equals nothing,
+    /// itself included, which is what every other language and MATLAB both say.
+    /// </remarks>
     public static bool AreEqual(JgsValue left, JgsValue right)
     {
+        if (left.Type is JgsType.Number or JgsType.Bool && right.Type is JgsType.Number or JgsType.Bool)
+        {
+            return left._number == right._number; // '==' on doubles, so NaN is unequal to itself
+        }
+
         if (left.Type != right.Type)
         {
             return false;
@@ -358,9 +450,7 @@ internal sealed class JgsValue
         return left.Type switch
         {
             JgsType.Null => true,
-            JgsType.Number => left.AsNumber.Equals(right.AsNumber),
             JgsType.Complex => left.AsComplex.Equals(right.AsComplex),
-            JgsType.Bool => left.AsBool == right.AsBool,
             JgsType.String => string.Equals(left.AsString, right.AsString, StringComparison.Ordinal),
             _ => ReferenceEquals(left, right),
         };
@@ -470,6 +560,11 @@ internal sealed class JgsValue
     /// </summary>
     private static string FormatArray(JgsValue array)
     {
+        if (array.IsShaped)
+        {
+            return FormatMatrix(array);
+        }
+
         int count = array.ArrayLength;
         int shown = count <= DisplayMaxElements ? count : DisplayPrefixElements;
         var sb = new StringBuilder("[");
@@ -486,5 +581,40 @@ internal sealed class JgsValue
         return shown < count
             ? sb.Append(", …] (").Append(count).Append(" elements)").ToString()
             : sb.Append(']').ToString();
+    }
+
+    /// <summary>
+    /// A matrix prints the way it was written — rows separated by semicolons — because a column-major
+    /// element run would be unreadable for the one value whose whole point is its layout.
+    /// </summary>
+    private static string FormatMatrix(JgsValue matrix)
+    {
+        int rows = matrix.Rows;
+        int cols = matrix.Cols;
+        if ((long)rows * cols > DisplayMaxElements)
+        {
+            return $"[{rows}x{cols} matrix]";
+        }
+
+        var sb = new StringBuilder("[");
+        for (int r = 0; r < rows; r++)
+        {
+            if (r > 0)
+            {
+                sb.Append("; ");
+            }
+
+            for (int c = 0; c < cols; c++)
+            {
+                if (c > 0)
+                {
+                    sb.Append(", ");
+                }
+
+                sb.Append(matrix.ElementAt((c * rows) + r).Display());
+            }
+        }
+
+        return sb.Append(']').ToString();
     }
 }

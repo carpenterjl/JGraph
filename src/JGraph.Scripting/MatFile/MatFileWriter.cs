@@ -94,24 +94,16 @@ internal static class MatFileWriter
     {
         // Boolean masks become logicals; complex elements a complex array; anything else doubles.
         int count = value.ArrayLength;
-        bool isMatrix = !value.IsPacked && count > 0 && value.ElementAt(0).Type == JgsType.Array;
-
-        if (isMatrix)
+        if (JgsMatrix.IsMatrix(value))
         {
-            int rows = count;
-            int cols = value.ElementAt(0).ArrayLength;
+            int rows = JgsMatrix.RowCount(value);
+            int cols = JgsMatrix.ColCount(value);
             var real = new double[rows, cols];
-            for (int r = 0; r < rows; r++)
+            for (int c = 0; c < cols; c++)
             {
-                JgsValue row = value.ElementAt(r);
-                if (row.ArrayLength != cols)
+                for (int r = 0; r < rows; r++)
                 {
-                    throw new NotSupportedException("Only rectangular matrices can be saved.");
-                }
-
-                for (int c = 0; c < cols; c++)
-                {
-                    real[r, c] = row.ElementAt(c).AsNumber;
+                    real[r, c] = JgsMatrix.At(value, r, c).AsNumber;
                 }
             }
 

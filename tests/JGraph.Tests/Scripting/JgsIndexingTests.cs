@@ -113,10 +113,28 @@ public class JgsIndexingTests : IDisposable
     [Fact]
     public async Task ParenIndexing_WithWrongArgumentCount_IsRuntimeError()
     {
-        ScriptRunResult result = await Run("print([1, 2, 3](1, 2))");
+        // Two subscripts are a row and a column, so a third has nothing to name.
+        ScriptRunResult result = await Run("print([1, 2, 3](1, 2, 3))");
 
         Assert.False(result.Success);
-        Assert.Contains("exactly one subscript", Assert.Single(result.Diagnostics).Message);
+        Assert.Contains("one subscript", Assert.Single(result.Diagnostics).Message);
+    }
+
+    [Fact]
+    public async Task TwoSubscripts_NameARowAndAColumn()
+    {
+        ScriptRunResult result = await Run("""
+            let m = [1, 2, 3; 4, 5, 6];
+            print(m(1, 2));
+            print(m(0, :));
+            print(m(:, 1));
+            print(m(end, end));
+            """);
+
+        Assert.True(result.Success, result.Message);
+        Assert.Equal(
+            "6\n[1, 2, 3]\n[2; 5]\n6",
+            _output.NormalText.Trim().Replace("\r", string.Empty));
     }
 
     [Fact]
@@ -158,9 +176,10 @@ public class JgsIndexingTests : IDisposable
             print(a[[false, true, false, true]]);
             """);
 
+        // a[:] is MATLAB's flatten, which is always a column — semicolons in the printed form.
         Assert.True(result.Success, result.Message);
         Assert.Equal(
-            "40\n[20, 30]\n[10, 20, 30, 40]\n[20, 40]",
+            "40\n[20, 30]\n[10; 20; 30; 40]\n[20, 40]",
             _output.NormalText.Trim().Replace("\r", string.Empty));
     }
 

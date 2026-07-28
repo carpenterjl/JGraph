@@ -1,4 +1,7 @@
 using System.Numerics;
+using JGraph.Core.Primitives;
+using JGraph.Maths.Contours;
+using JGraph.Maths.Geometry;
 
 namespace JGraph.Scripting.Jgs;
 
@@ -18,6 +21,182 @@ internal static partial class JgsBuiltins
         RegisterLogicalConstructors(Define);
         RegisterTwoDimensionalTransforms(Define);
         RegisterHulls(Define);
+        RegisterTriangulation(Define);
+        RegisterContourMatrix(Define);
+    }
+
+    // --- Triangulation ----------------------------------------------------------------------------
+
+    private static void RegisterTriangulation(Action<string, Func<IReadOnlyList<JgsValue>, int, int, JgsValue>> Define)
+    {
+        Define("delaunay", (args, line, col) =>
+        {
+            ArityRange("delaunay", args, 1, 2, line, col);
+
+            double[] xs;
+            double[] ys;
+
+            if (args.Count == 1)
+            {
+                // delaunay(P) takes the points as an n-by-2 matrix.
+                double[,] points = RectOf("delaunay", args[0], line, col);
+                if (points.GetLength(1) != 2)
+                {
+                    throw new JgsRuntimeException(line, col,
+                        "delaunay: a single argument must be an n-by-2 matrix of points.");
+                }
+
+                int n = points.GetLength(0);
+                xs = new double[n];
+                ys = new double[n];
+                for (int i = 0; i < n; i++)
+                {
+                    xs[i] = points[i, 0];
+                    ys[i] = points[i, 1];
+                }
+            }
+            else
+            {
+                xs = ToDoubles("delaunay", args[0], line, col);
+                ys = ToDoubles("delaunay", args[1], line, col);
+            }
+
+            if (xs.Length != ys.Length)
+            {
+                throw new JgsRuntimeException(line, col, "delaunay needs the same number of x and y coordinates.");
+            }
+
+            if (xs.Length < 3)
+            {
+                throw new JgsRuntimeException(line, col, "delaunay needs at least 3 points.");
+            }
+
+            int[,] triangles = Delaunay.Triangulate(xs, ys);
+
+            // The kernel counts from zero; MATLAB's connectivity list counts from one, and this is a
+            // list of vertex numbers rather than an index into anything JGraph subscripts.
+            return JgsMatrix.Build(triangles.GetLength(0), 3, (t, v) => triangles[t, v] + 1.0);
+        });
+    }
+
+    // --- Contour matrix ---------------------------------------------------------------------------
+
+    private static void RegisterContourMatrix(Action<string, Func<IReadOnlyList<JgsValue>, int, int, JgsValue>> Define)
+    {
+        Define("contourc", (args, line, col) =>
+        {
+            ArityRange("contourc", args, 1, 4, line, col);
+
+            // contourc(Z, ...) and contourc(x, y, Z, ...) differ by where the matrix sits.
+            bool gridded = args.Count >= 3;
+            double[,] z = RectOf("contourc", args[gridded ? 2 : 0], line, col);
+            int rows = z.GetLength(0);
+            int columns = z.GetLength(1);
+
+            double[] x = gridded ? ToDoubles("contourc", args[0], line, col) : Sequence(columns);
+            double[] y = gridded ? ToDoubles("contourc", args[1], line, col) : Sequence(rows);
+
+            if (x.Length != columns || y.Length != rows)
+            {
+                throw new JgsRuntimeException(line, col,
+                    $"contourc: the grid is {y.Length}x{x.Length} but the matrix is {rows}x{columns}.");
+            }
+
+            // The level argument reads two ways: a vector lists the levels outright, and a lone
+            // number asks for that many chosen automatically. MATLAB gives the same argument both
+            // readings, and a caller wanting a single named level writes it twice.
+            int levelIndex = gridded ? 3 : 1;
+            double[] levels = AutomaticLevels(z, 10);
+            if (levelIndex < args.Count)
+            {
+                levels = args[levelIndex].Type is JgsType.Number or JgsType.Bool
+                    ? AutomaticLevels(z, Count("contourc", args, levelIndex, line, col))
+                    : ToDoubles("contourc", args[levelIndex], line, col);
+            }
+
+            return ContourMatrix(x, y, z, levels);
+        });
+    }
+
+    /// <summary>1, 2, … n — the implied grid coordinates when contourc is given only a matrix.</summary>
+    private static double[] Sequence(int count)
+    {
+        var values = new double[count];
+        for (int i = 0; i < count; i++)
+        {
+            values[i] = i + 1;
+        }
+
+        return values;
+    }
+
+    /// <summary>
+    /// Evenly spaced levels strictly inside the data's range. The extremes are left out because a
+    /// level exactly at the minimum or maximum touches the surface without crossing it, so it
+    /// produces no line — the same rule JGraph's own contour plot uses, so the two agree.
+    /// </summary>
+    private static double[] AutomaticLevels(double[,] z, int count)
+    {
+        double min = double.PositiveInfinity;
+        double max = double.NegativeInfinity;
+        foreach (double v in z)
+        {
+            if (double.IsFinite(v))
+            {
+                min = Math.Min(min, v);
+                max = Math.Max(max, v);
+            }
+        }
+
+        if (!double.IsFinite(min) || !double.IsFinite(max) || min == max)
+        {
+            return [];
+        }
+
+        var levels = new double[count];
+        for (int i = 0; i < count; i++)
+        {
+            levels[i] = min + ((max - min) * (i + 1) / (count + 1.0));
+        }
+
+        return levels;
+    }
+
+    /// <summary>
+    /// MATLAB's contour matrix: a 2-row array in which each line is introduced by a column holding
+    /// its level and its point count, followed by that many columns of coordinates. It is an odd
+    /// shape for a return value, but it is the one <c>contourc</c> is defined to produce and the one
+    /// any code that consumes a contour matrix expects to walk.
+    /// </summary>
+    private static JgsValue ContourMatrix(double[] x, double[] y, double[,] z, double[] levels)
+    {
+        var top = new List<double>();
+        var bottom = new List<double>();
+
+        double span = Math.Max(
+            Math.Max(x[^1] - x[0], y[^1] - y[0]),
+            1e-12);
+
+        foreach (double level in levels)
+        {
+            foreach (Point2D[] path in ContourPaths.Assemble(MarchingSquares.Lines(x, y, z, level), span * 1e-10))
+            {
+                if (path.Length < 2)
+                {
+                    continue;
+                }
+
+                top.Add(level);
+                bottom.Add(path.Length);
+                foreach (Point2D point in path)
+                {
+                    top.Add(point.X);
+                    bottom.Add(point.Y);
+                }
+            }
+        }
+
+        return JgsValue.Array([Numbers([.. top]), Numbers([.. bottom])]);
     }
 
     // --- Logical array constructors ---------------------------------------------------------------
@@ -55,22 +234,7 @@ internal static partial class JgsBuiltins
                 }
 
                 JgsValue element = JgsValue.Bool(value);
-                if (rows == 1 || cols == 1)
-                {
-                    var flat = new JgsValue[rows * cols];
-                    Array.Fill(flat, element);
-                    return JgsValue.Array(flat);
-                }
-
-                var matrix = new JgsValue[rows];
-                for (int r = 0; r < rows; r++)
-                {
-                    var row = new JgsValue[cols];
-                    Array.Fill(row, element);
-                    matrix[r] = JgsValue.Array(row);
-                }
-
-                return JgsValue.Array(matrix);
+                return JgsMatrix.BuildValues(rows, cols, (_, _) => element);
             });
 
         Constructor("true", true);
@@ -113,19 +277,7 @@ internal static partial class JgsBuiltins
                     }
                 }
 
-                var result = new JgsValue[height];
-                for (int r = 0; r < height; r++)
-                {
-                    var wrapped = new JgsValue[width];
-                    for (int c = 0; c < width; c++)
-                    {
-                        wrapped[c] = ComplexValue(rows[r][c]);
-                    }
-
-                    result[r] = JgsValue.Array(wrapped);
-                }
-
-                return height == 1 ? result[0] : JgsValue.Array(result);
+                return JgsMatrix.BuildValues(height, width, (r, c) => ComplexValue(rows[r][c]));
             });
 
         Transform2D("fft2", inverse: false);

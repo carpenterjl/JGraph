@@ -1,3 +1,4 @@
+using System.Numerics;
 using JGraph.Numerics;
 
 namespace JGraph.Scripting.Jgs;
@@ -80,6 +81,134 @@ internal static partial class JgsBuiltins
                 ? MapNumeric("psi", args[0], SpecialFunctions.Digamma, line, col)
                 : MapNumeric("psi", args[1], x => SpecialFunctions.Polygamma(Count("psi", args, 0, line, col), x), line, col);
         });
+
+        RegisterBesselBuiltins(Define);
+    }
+
+    // --- Bessel and Airy ------------------------------------------------------------------------------
+
+    /// <summary>
+    /// The cylinder functions (M39). All four take an optional trailing scale flag, which for J and Y
+    /// of a real argument is a no-op — MATLAB scales those by e^-|Im z|, and there is no imaginary
+    /// part here — but for I and K is the difference between an answer and an overflow.
+    /// </summary>
+    private static void RegisterBesselBuiltins(Action<string, Func<IReadOnlyList<JgsValue>, int, int, JgsValue>> Define)
+    {
+        void Cylinder(string name, Func<double, double, bool, double> f) =>
+            Define(name, (args, line, col) =>
+            {
+                ArityRange(name, args, 2, 3, line, col);
+                bool scaled = ScaleWanted(name, args, 2, line, col);
+                return Guarded(name, line, col, () => Zip(name, args[0], args[1], (nu, x) => f(nu, x, scaled), line, col));
+            });
+
+        Cylinder("besselj", static (nu, x, _) => BesselFunctions.J(nu, x));
+        Cylinder("bessely", static (nu, x, _) => BesselFunctions.Y(nu, x));
+        Cylinder("besseli", static (nu, x, scaled) => BesselFunctions.I(nu, x, scaled));
+        Cylinder("besselk", static (nu, x, scaled) => BesselFunctions.K(nu, x, scaled));
+
+        Define("besselh", (args, line, col) =>
+        {
+            ArityRange("besselh", args, 2, 4, line, col);
+
+            // besselh(nu, Z) means the first kind; the three-argument form names it explicitly, and
+            // a fourth argument is the scale flag.
+            bool named = args.Count >= 3 && args[1].Type is JgsType.Number or JgsType.Bool;
+            int kind = named ? Count("besselh", args, 1, line, col) : 1;
+            JgsValue z = named ? args[2] : args[1];
+            if (kind is not (1 or 2))
+            {
+                throw new JgsRuntimeException(line, col, $"besselh: the kind must be 1 or 2, not {kind}.");
+            }
+
+            return Guarded("besselh", line, col, () => ZipToValue("besselh", args[0], z, (nu, x) =>
+            {
+                Complex h = BesselFunctions.H(nu, kind, x);
+                return JgsValue.ComplexNum(h);
+            }, line, col));
+        });
+
+        Define("airy", (args, line, col) =>
+        {
+            ArityRange("airy", args, 1, 3, line, col);
+
+            // airy(Z) is Ai; airy(k, Z) names which of the four is wanted.
+            bool named = args.Count >= 2;
+            int kind = named ? Count("airy", args, 0, line, col) : 0;
+            JgsValue z = named ? args[1] : args[0];
+            if (kind is < 0 or > 3)
+            {
+                throw new JgsRuntimeException(line, col, $"airy: the kind must be 0 (Ai), 1 (Ai'), 2 (Bi), or 3 (Bi'), not {kind}.");
+            }
+
+            bool scaled = ScaleWanted("airy", args, 2, line, col);
+            return Guarded("airy", line, col, () => MapNumeric("airy", z, x => BesselFunctions.Airy(kind, x, scaled), line, col));
+        });
+    }
+
+    /// <summary>Reads the optional trailing scale flag the Bessel and Airy builtins accept.</summary>
+    private static bool ScaleWanted(string name, IReadOnlyList<JgsValue> args, int index, int line, int col) =>
+        index < args.Count && Num(name, args, index, line, col) != 0;
+
+    /// <summary>
+    /// Turns the "this argument would make the answer complex" refusal the kernel raises into a
+    /// script-level error carrying the call's position, so the message names the line it came from.
+    /// </summary>
+    private static JgsValue Guarded(string name, int line, int col, Func<JgsValue> body)
+    {
+        try
+        {
+            return body();
+        }
+        catch (ArgumentOutOfRangeException error)
+        {
+            throw new JgsRuntimeException(line, col, $"{name}: {error.Message.Split(" (Parameter")[0]}");
+        }
+    }
+
+    /// <summary>
+    /// Pairwise elementwise application producing whole values rather than doubles, so a builtin
+    /// whose answer is complex — besselh — can broadcast the same way the real ones do.
+    /// </summary>
+    private static JgsValue ZipToValue(
+        string name, JgsValue a, JgsValue b, Func<double, double, JgsValue> f, int line, int col)
+    {
+        bool aScalar = a.Type is JgsType.Number or JgsType.Bool;
+        bool bScalar = b.Type is JgsType.Number or JgsType.Bool;
+
+        if (aScalar && bScalar)
+        {
+            return f(a.AsNumber, b.AsNumber);
+        }
+
+        if (aScalar || bScalar)
+        {
+            JgsValue[] many = (aScalar ? b : a).BoxedElements();
+            var broadcast = new JgsValue[many.Length];
+            for (int i = 0; i < many.Length; i++)
+            {
+                broadcast[i] = aScalar
+                    ? ZipToValue(name, a, many[i], f, line, col)
+                    : ZipToValue(name, many[i], b, f, line, col);
+            }
+
+            return JgsValue.Array(broadcast);
+        }
+
+        JgsValue[] xs = a.BoxedElements();
+        JgsValue[] ys = b.BoxedElements();
+        if (xs.Length != ys.Length)
+        {
+            throw new JgsRuntimeException(line, col, $"{name} needs arrays of equal length ({xs.Length} and {ys.Length}).");
+        }
+
+        var result = new JgsValue[xs.Length];
+        for (int i = 0; i < xs.Length; i++)
+        {
+            result[i] = ZipToValue(name, xs[i], ys[i], f, line, col);
+        }
+
+        return JgsValue.Array(result);
     }
 
     /// <summary>Reads the optional 'upper'/'lower' tail word the incomplete integrals accept.</summary>

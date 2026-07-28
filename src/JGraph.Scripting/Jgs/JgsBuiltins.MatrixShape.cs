@@ -425,20 +425,10 @@ internal static partial class JgsBuiltins
 
         if (IsMatrixValue(subject))
         {
-            var rows = new JgsValue[subject.ArrayLength];
-            for (int r = 0; r < rows.Length; r++)
-            {
-                JgsValue row = subject.ElementAt(r);
-                var mask = new JgsValue[row.ArrayLength];
-                for (int c = 0; c < mask.Length; c++)
-                {
-                    mask[c] = JgsValue.Bool(Contains(row.ElementAt(c)));
-                }
-
-                rows[r] = JgsValue.Array(mask);
-            }
-
-            return JgsValue.Array(rows);
+            return JgsMatrix.BuildValues(
+                JgsMatrix.RowCount(subject),
+                JgsMatrix.ColCount(subject),
+                (r, c) => JgsValue.Bool(Contains(JgsMatrix.At(subject, r, c))));
         }
 
         return JgsValue.Bool(Contains(subject));
@@ -805,77 +795,19 @@ internal static partial class JgsBuiltins
 
     // --- Shared matrix helpers ------------------------------------------------------------------
 
-    /// <summary>Whether a value is a matrix in this model: an array whose elements are arrays.</summary>
-    private static bool IsMatrixValue(JgsValue value) =>
-        value.Type == JgsType.Array && !value.IsPacked && !value.IsPackedComplex
-        && value.ArrayLength > 0 && value.ElementAt(0).Type == JgsType.Array;
+    /// <summary>Whether a value is a matrix — see <see cref="JgsMatrix"/> for what that means now.</summary>
+    private static bool IsMatrixValue(JgsValue value) => JgsMatrix.IsMatrix(value);
 
     /// <summary>A matrix value as rectangular jagged rows of doubles.</summary>
-    private static double[][] RowsOfMatrix(string name, JgsValue value, int line, int col)
-    {
-        var rows = new double[value.ArrayLength][];
-        for (int r = 0; r < rows.Length; r++)
-        {
-            JgsValue row = value.ElementAt(r);
-            if (row.Type != JgsType.Array)
-            {
-                throw new JgsRuntimeException(line, col, $"{name}: matrix row {r} is a {row.TypeName}, not an array.");
-            }
-
-            rows[r] = ToDoubles(name, row, line, col);
-            if (rows[r].Length != rows[0].Length)
-            {
-                throw new JgsRuntimeException(line, col,
-                    $"{name}: matrix rows must all be the same length (row 0 has {rows[0].Length}, row {r} has {rows[r].Length}).");
-            }
-        }
-
-        return rows;
-    }
+    private static double[][] RowsOfMatrix(string name, JgsValue value, int line, int col) =>
+        JgsMatrix.ToRows(name, value, line, col);
 
     /// <summary>Wraps jagged rows as a matrix value; a single row collapses to a flat vector.</summary>
-    private static JgsValue MatrixFromRows(double[][] rows)
-    {
-        if (rows.Length == 1)
-        {
-            return Numbers(rows[0]);
-        }
-
-        var wrapped = new JgsValue[rows.Length];
-        for (int r = 0; r < rows.Length; r++)
-        {
-            wrapped[r] = Numbers(rows[r]);
-        }
-
-        return JgsValue.Array(wrapped);
-    }
+    private static JgsValue MatrixFromRows(double[][] rows) => JgsMatrix.FromRows(rows);
 
     /// <summary>Builds a rows-by-cols matrix from a per-cell function; one row collapses to a vector.</summary>
-    private static JgsValue BuildMatrix(int rows, int cols, Func<int, int, double> cell)
-    {
-        if (rows < 0 || cols < 0)
-        {
-            rows = System.Math.Max(rows, 0);
-            cols = System.Math.Max(cols, 0);
-        }
-
-        if (rows == 1 && cols == 1)
-        {
-            return JgsValue.Number(cell(0, 0));
-        }
-
-        var jagged = new double[System.Math.Max(rows, 1)][];
-        for (int r = 0; r < rows; r++)
-        {
-            jagged[r] = new double[cols];
-            for (int c = 0; c < cols; c++)
-            {
-                jagged[r][c] = cell(r, c);
-            }
-        }
-
-        return rows == 0 ? JgsValue.Array([]) : MatrixFromRows(jagged[..rows]);
-    }
+    private static JgsValue BuildMatrix(int rows, int cols, Func<int, int, double> cell) =>
+        JgsMatrix.Build(rows, cols, cell);
 
     private static double[][] TransposeRows(double[][] rows)
     {

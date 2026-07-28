@@ -114,8 +114,8 @@ public class MatlabMatrixBuiltinTests : IDisposable
     public Task Expm_IsTheMatrixExponentialNotTheElementwiseOne() => RunAsserting("""
         % A diagonal matrix is the case where the two agree, and it pins the scaling.
         D = expm([0 0; 0 1]);
-        assert(abs(D(1)(1) - 1) < 1e-13);
-        assert(abs(D(2)(2) - exp(1)) < 1e-13);
+        assert(abs(D(1, 1) - 1) < 1e-13);
+        assert(abs(D(2, 2) - exp(1)) < 1e-13);
 
         % A nilpotent matrix has an exact answer: e^N = I + N.
         N = [0 1; 0 0];

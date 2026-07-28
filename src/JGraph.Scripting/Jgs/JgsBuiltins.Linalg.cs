@@ -133,17 +133,27 @@ internal static partial class JgsBuiltins
                 ];
             });
 
+        // MATLAB's qr(A) is the full factorization — Q is m-by-m — and qr(A, 0) is the economy one.
+        // The difference matters to anything that treats Q as an orthogonal basis for the whole
+        // space rather than just A's range, qrupdate above all.
+        static bool Economy(IReadOnlyList<JgsValue> args, string name, int line, int col)
+        {
+            ArityRange(name, args, 1, 2, line, col);
+            return args.Count == 2 && Num(name, args, 1, line, col) == 0;
+        }
+
         Define("qr",
             (args, line, col) =>
             {
-                Arity("qr", args, 1, line, col);
-                return FromRect(QrDecomposition.Factor(RectOf("qr", args[0], line, col)).R);
+                QrDecomposition qr = QrDecomposition.Factor(RectOf("qr", args[0], line, col));
+                return FromRect(Economy(args, "qr", line, col) ? qr.R : qr.FullR);
             },
             (args, _, line, col) =>
             {
-                Arity("qr", args, 1, line, col);
                 QrDecomposition qr = QrDecomposition.Factor(RectOf("qr", args[0], line, col));
-                return [FromRect(qr.Q), FromRect(qr.R)];
+                return Economy(args, "qr", line, col)
+                    ? [FromRect(qr.Q), FromRect(qr.R)]
+                    : [FromRect(qr.FullQ), FromRect(qr.FullR)];
             });
 
         Define("svd",
@@ -351,19 +361,7 @@ internal static partial class JgsBuiltins
             return ComplexValue(matrix[0, 0]);
         }
 
-        var wrapped = new JgsValue[rows];
-        for (int r = 0; r < rows; r++)
-        {
-            var row = new JgsValue[cols];
-            for (int c = 0; c < cols; c++)
-            {
-                row[c] = ComplexValue(matrix[r, c]);
-            }
-
-            wrapped[r] = JgsValue.Array(row);
-        }
-
-        return rows == 1 ? wrapped[0] : JgsValue.Array(wrapped);
+        return JgsMatrix.BuildValues(rows, cols, (r, c) => ComplexValue(matrix[r, c]));
     }
 
     private static JgsValue ComplexValue(Complex value) =>

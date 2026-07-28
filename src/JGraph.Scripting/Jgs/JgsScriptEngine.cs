@@ -80,6 +80,7 @@ public sealed class JgsScriptEngine : IScriptEngine, IJgsDebuggable, IScriptRepl
         var names = new List<string>(globals.Locals.Keys) { "run", "clear", "whos", "save", "load" };
         names.AddRange(JgsBuiltins.OperatorFunctionNames);
         names.AddRange(JgsBuiltins.EvalBuiltinNames);
+        names.AddRange(JgsBuiltins.SessionBuiltinNames);
         names.Sort(StringComparer.Ordinal);
         return names;
     }

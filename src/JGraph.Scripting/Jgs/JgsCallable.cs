@@ -196,6 +196,9 @@ internal sealed class AnonymousFunction : IJgsCallable
     /// <inheritdoc />
     public string Name => "@anonymous";
 
+    /// <summary>The expression the handle was written as, which <c>func2str</c> prints back.</summary>
+    public AnonymousFnExpr Declaration => _declaration;
+
     /// <summary>Creates the handle, snapshotting every name its body refers to that is not a parameter.</summary>
     public static AnonymousFunction Create(AnonymousFnExpr declaration, JgsEnvironment defining, Interpreter interpreter)
     {

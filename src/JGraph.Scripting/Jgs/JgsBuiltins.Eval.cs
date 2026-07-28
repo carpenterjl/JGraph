@@ -18,6 +18,7 @@ internal static partial class JgsBuiltins
         "eval", "evalc", "evalin", "assignin", "str2func",
         "exist", "who", "which", "narginchk", "nargoutchk", "nargchk",
         "lasterr", "lasterror", "lastwarn", "rethrow",
+        "func2str", "functions", "mfilename", "inputname",
     ];
 
     /// <summary>Declares the interpreter-backed builtins into <paramref name="env"/>.</summary>
@@ -27,10 +28,107 @@ internal static partial class JgsBuiltins
         void Define(string name, Func<IReadOnlyList<JgsValue>, int, int, JgsValue> body) =>
             env.Declare(name, JgsValue.Function(new BuiltinFunction(name, body)));
 
+        void DefineBare(string name, Func<IReadOnlyList<JgsValue>, int, int, JgsValue> body) =>
+            env.Declare(name, JgsValue.Function(new BuiltinFunction(name, body) { AutoCallsBare = true }));
+
         RegisterEvaluation(Define, env, interpreter, host);
         RegisterWorkspaceQuestions(Define, env, interpreter, host);
         RegisterErrorHistory(Define, env, interpreter);
+        RegisterIntrospection(Define, DefineBare, interpreter, host);
         _ = dialect;
+    }
+
+    // --- Introspection ----------------------------------------------------------------------------
+
+    /// <summary>
+    /// The builtins that ask a function or a script about itself (M39). Each needs something the
+    /// interpreter holds and nothing else does: the handle's own syntax tree, the running file, or
+    /// the expression the current call was written as.
+    /// </summary>
+    private static void RegisterIntrospection(
+        Action<string, Func<IReadOnlyList<JgsValue>, int, int, JgsValue>> Define,
+        Action<string, Func<IReadOnlyList<JgsValue>, int, int, JgsValue>> DefineBare,
+        Interpreter interpreter, JGraphScriptGlobals host)
+    {
+        Define("func2str", (args, line, col) =>
+        {
+            Arity("func2str", args, 1, line, col);
+            return JgsValue.Str(SourceTextOf("func2str", args[0], line, col));
+        });
+
+        Define("functions", (args, line, col) =>
+        {
+            Arity("functions", args, 1, line, col);
+            if (args[0].Type != JgsType.Function)
+            {
+                throw new JgsRuntimeException(line, col, "functions expects a function handle.");
+            }
+
+            bool anonymous = args[0].AsCallable is AnonymousFunction;
+            return JgsValue.Struct(new Dictionary<string, JgsValue>(StringComparer.Ordinal)
+            {
+                ["function"] = JgsValue.Str(SourceTextOf("functions", args[0], line, col).TrimStart('@')),
+                ["type"] = JgsValue.Str(anonymous ? "anonymous" : args[0].AsCallable is UserFunction ? "simple" : "builtin"),
+                ["file"] = JgsValue.Str(args[0].AsCallable is UserFunction ? host.RunScriptPath ?? string.Empty : string.Empty),
+            });
+        });
+
+        // mfilename answers when its bare name is mentioned, the way MATLAB's does; without that,
+        // disp(mfilename) would hand disp the function rather than the file's name.
+        DefineBare("mfilename", (args, line, col) =>
+        {
+            ArityRange("mfilename", args, 0, 1, line, col);
+            string? path = host.RunScriptPath;
+
+            // Bare mfilename is the name without its extension; 'fullpath' asks for the whole path
+            // minus the extension. Code typed at the prompt has no file, and reports nothing.
+            if (string.IsNullOrEmpty(path))
+            {
+                return JgsValue.Str(string.Empty);
+            }
+
+            bool full = args.Count == 1 && Str("mfilename", args, 0, line, col) == "fullpath";
+            string withoutExtension = Path.Combine(
+                Path.GetDirectoryName(path) ?? string.Empty, Path.GetFileNameWithoutExtension(path));
+
+            return JgsValue.Str(full ? withoutExtension : Path.GetFileNameWithoutExtension(path));
+        });
+
+        Define("inputname", (args, line, col) =>
+        {
+            Arity("inputname", args, 1, line, col);
+            int which = Count("inputname", args, 0, line, col);
+            if (interpreter.CurrentCall is not { } call)
+            {
+                throw new JgsRuntimeException(line, col, "inputname can only be used inside a function.");
+            }
+
+            if (which < 1 || which > call.Arguments.Count)
+            {
+                throw new JgsRuntimeException(line, col,
+                    $"inputname: argument {which} does not exist; the call passed {call.Arguments.Count}.");
+            }
+
+            // An argument that was not written as a plain variable has no name to report, and
+            // MATLAB returns the empty string rather than inventing one.
+            return JgsValue.Str(call.Arguments[which - 1] is VariableExpr variable ? variable.Name : string.Empty);
+        });
+    }
+
+    /// <summary>The source text of a function handle, as func2str prints it.</summary>
+    private static string SourceTextOf(string name, JgsValue value, int line, int col)
+    {
+        if (value.Type != JgsType.Function)
+        {
+            throw new JgsRuntimeException(line, col, $"{name} expects a function handle.");
+        }
+
+        return value.AsCallable switch
+        {
+            AnonymousFunction anonymous => AstPrinter.Print(anonymous.Declaration),
+            { } callable => "@" + callable.Name,
+            _ => throw new JgsRuntimeException(line, col, $"{name} expects a function handle."),
+        };
     }
 
     // --- Evaluating text --------------------------------------------------------------------------

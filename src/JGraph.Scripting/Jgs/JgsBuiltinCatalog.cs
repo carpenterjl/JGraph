@@ -201,6 +201,35 @@ public static class JgsBuiltinCatalog
         Add("lasterror", "The last caught error as a struct with message and identifier fields.", Opt("err"));
         Add("lastwarn", "The message of the last warning; an argument replaces it.", Opt("message"));
         Add("rethrow", "Raises the error a catch block was handed, unchanged.", P("err"));
+        Add("func2str", "The source text of a function handle.", P("f"));
+        Add("functions", "What a function handle is, as a struct with function, type, and file.", P("f"));
+        Add("mfilename", "The name of the running script file; 'fullpath' asks for its whole path.", Opt("option"));
+        Add("inputname", "The caller's variable name for the k-th argument, or '' if it had none.", P("k"));
+
+        // --- The console session --------------------------------------------------------------------
+        Add("diary", "Echoes console output to a file; 'off' stops, a name chooses the file.", Opt("target"));
+        Add("echo", "Turns function-file line echoing on or off.", Opt("state"), Opt("target"));
+        Add("home", "Clears the console, the way a terminal's home key once did.");
+        Add("more", "Turns output paging on or off, or sets the page size.", Opt("state"));
+        Add("input", "Prompts for a value at the console; 's' keeps the reply as text.", P("prompt"), Opt("kind"));
+        Add("lookfor", "Lists the builtins whose name or summary mentions a word.", P("word"));
+        Add("what", "The script, data, and figure files in a folder, grouped by kind.", Opt("folder"));
+        Add("beep", "Sounds the console bell, or turns it on or off.", Opt("state"));
+        Add("pack", "Asks the runtime to collect and compact memory now.", Opt("target"));
+        Add("recycle", "Reports whether delete recycles rather than removes; JGraph always removes.", Opt("state"));
+        Add("rehash", "A no-op: JGraph looks for files when it needs them rather than caching them.", Opt("scope"));
+        Add("display", "Prints a value the way the console would.", P("value"));
+
+        // --- The installation -----------------------------------------------------------------------
+        Add("version", "The JGraph version; '-release' and '-date' ask for parts of it.", Opt("option"));
+        Add("computer", "The platform name, or its short form with 'arch'.", Opt("option"));
+        Add("matlabroot", "The folder JGraph is installed in.");
+        Add("matlabdrive", "Empty: JGraph has no cloud drive to point at.");
+        Add("license", "The licence name, or 1 from license('test', feature) — everything is present.", Opt("option"), Opt("feature"));
+        Add("isstudent", "False: JGraph has no student edition.");
+        Add("memory", "A struct of available and used memory, in bytes.");
+        Add("maxNumCompThreads", "The computation thread count; an argument sets it and returns the old one.", Opt("count"));
+        Add("fftw", "Reports or sets the FFT planner mode; JGraph's transform has no plan to tune.", P("what"), Opt("mode"));
 
         // --- Files, folders, and the machine --------------------------------------------------------
         Add("pwd", "The working directory relative paths resolve against.");
@@ -311,6 +340,13 @@ public static class JgsBuiltinCatalog
         Add("pinv", "The Moore-Penrose pseudoinverse of a.", P("a"));
         Add("cross", "The cross product of two 3-element vectors.", P("a"), P("b"));
         Add("vecnorm", "The p-norm of a vector, or of each column of a matrix (p = 2 by default).", P("a"), Opt("p"));
+        Add("schur", "The real Schur form T, or [U, T] with U orthogonal and U*T*U' equal to a.", P("a"), Opt("kind"));
+        Add("ordeig", "The eigenvalues of a quasi-triangular matrix, in the order its blocks appear.", P("t"));
+        Add("ordschur", "Reorders a Schur form so the selected eigenvalues come first.", P("u"), P("t"), P("select"));
+        Add("cholupdate", "The Cholesky factor of r'*r + x*x', or of r'*r - x*x' with '-'.", P("r"), P("x"), Opt("sign"));
+        Add("qrupdate", "The QR factors of a + u*v', from the factors of a.", P("q"), P("r"), P("u"), P("v"));
+        Add("delaunay", "The Delaunay triangulation of a set of points, as triangle vertex indices.", P("x"), Opt("y"));
+        Add("contourc", "The contour matrix of z at the given levels, without drawing anything.", P("z"), Opt("a"), Opt("b"), Opt("levels"));
 
         // --- Special functions ---------------------------------------------------------------------
         Add("erf", "The error function, element-wise.", P("x"));
@@ -327,6 +363,12 @@ public static class JgsBuiltinCatalog
         Add("betainc", "The regularized incomplete beta I_x(a, b), or its upper tail with 'upper'.", P("x"), P("a"), P("b"), Opt("tail"));
         Add("betaincinv", "The x whose incomplete beta is y.", P("y"), P("a"), P("b"), Opt("tail"));
         Add("psi", "The digamma function ψ(x), or its k-th derivative as psi(k, x).", P("x"), Opt("x2"));
+        Add("besselj", "The Bessel function of the first kind J_nu(x).", P("nu"), P("x"), Opt("scale"));
+        Add("bessely", "The Bessel function of the second kind Y_nu(x).", P("nu"), P("x"), Opt("scale"));
+        Add("besseli", "The modified Bessel function I_nu(x); scale gives exp(-abs(x))·I.", P("nu"), P("x"), Opt("scale"));
+        Add("besselk", "The modified Bessel function K_nu(x); scale gives exp(x)·K.", P("nu"), P("x"), Opt("scale"));
+        Add("besselh", "The Hankel function H_nu of kind 1 (default) or 2.", P("nu"), P("kind"), Opt("x"), Opt("scale"));
+        Add("airy", "The Airy function Ai (kind 0), Ai' (1), Bi (2), or Bi' (3).", P("kind"), Opt("x"), Opt("scale"));
 
         // --- Bit manipulation ----------------------------------------------------------------------
         Add("bitand", "Bitwise AND, element-wise; the optional class name sets the width.", P("a"), P("b"), Opt("type"));

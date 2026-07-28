@@ -672,6 +672,39 @@ Implemented through Milestone 24 — a working figure window you can edit, save,
   output through a buffer on `JGraphScriptGlobals`. `true(n)`/`false(n)` are logical-array
   constructors recognized in the parser, since both words are lexer keywords. The Bessel family is
   deliberately still absent — it needs a dedicated kernel to be worth the name (ADR 0041).
+- **M39** The third coverage batch, 326 → 363 of 514, which is the whole implementable remainder.
+  `JGraph.Numerics` gained `BesselFunctions` — Steed's method for J, Y, I and K of real order, with
+  the I/K pair worked in exponentially scaled terms so `besselk(0, 800, 1)` is an ordinary number
+  where the plain call correctly underflows, and Airy built on top of it — and `LinearAlgebra/Schur`,
+  the Francis double-shift iteration behind `schur`, `ordeig` and `ordschur`, whose block exchange
+  solves a small Sylvester equation rather than casing on the four block-size pairings.
+  **Validating that turned up a real bug: `eig` on a general non-symmetric matrix was returning wrong
+  eigenvalues**, and now reads them off the Schur form, where they reproduce the trace and the
+  determinant to fourteen digits. `qrupdate` needed the full orthogonal factor, so `[Q, R] = qr(A)`
+  is now MATLAB's full factorization with `qr(A, 0)` for the economy one. `JGraph.Maths` gained
+  `Contours/ContourPaths` (chaining marching-squares segments into polylines) and `Geometry/Delaunay`
+  behind `contourc` and `delaunay`. Script-side: `func2str` prints from a new `AstPrinter` rather
+  than from retained source text, `inputname` reads the `CallExpr` the interpreter hands to each new
+  frame, and the console-session and installation queries (`diary`, `lookfor`, `what`, `version`,
+  `computer`, `memory`, …) arrive through `RegisterSessionBuiltins`. Every zero-argument question now
+  answers to its bare name, which fixes `disp(pwd)` and its neighbours from M38 as well. Six of what
+  is left — `fill`, `fill3`, `patch`, `plot3`, `line`, `text` — are figure-model work rather than
+  builtin coverage: each needs a drawing primitive the object model does not have (ADR 0042).
+- **M40** Arrays carry a rows-by-columns shape over flat **column-major** storage, which closes the
+  two fidelity gaps the coverage document had been recording. `A(i, j)`, `A(i, :)`, `A(:, j)`,
+  submatrix reads and writes, growth (`A(3, 4) = 1` zero-fills), deletion (`A(i, :) = []`) and a
+  per-dimension `end` all work; a single subscript on a matrix is column-major linear, so an index
+  from `find` reads back the element it found; `A(:)` is MATLAB's flatten; and a transposed vector is
+  a genuine column, so `[(1:3)', (4:6)']` builds a 3×2. Column-major was chosen because it is what
+  MATLAB means by linear order, what `reshape` already assumed, and how a MAT-file is laid out on
+  disk. `JgsMatrix` is the single place that knows the layout, and pointing the four pre-existing
+  helpers at it is why **fifty call sites across the linear algebra, reductions, geometry and Schur
+  builtins needed no edit**. Shape lives on the value wrapper, so every path that mints a new
+  wrapper — a copy, an elementwise map, a comparison, a gather, a transpose — carries it across
+  explicitly. Bracket literals became real MATLAB concatenation behind a new dialect flag, since in
+  JGS `[[1, 2], [3, 4]]` is still a list of lists. Separately, **`true == 1` is now true** and
+  **`NaN == NaN` is now false** — the packed comparison path carried its own copy of the strict rule
+  and changed with it — and `isequal` compares sizes, not just elements (ADR 0043).
 
 The `JGraph.Demo` gallery exercises the plot types, annotations, and both APIs;
 `JGraph.Application` is the interactive figure window with data import and scripting.

@@ -482,10 +482,9 @@ internal static partial class JgsBuiltins
             (int rows, int cols) = args[0].Type switch
             {
                 JgsType.Image => (args[0].AsImage.Height, args[0].AsImage.Width),
-                JgsType.Array when args[0].ArrayLength > 0 && args[0].ElementAt(0).Type == JgsType.Array =>
-                    (args[0].ArrayLength, args[0].ElementAt(0).ArrayLength),
-                JgsType.Array => (1, args[0].ArrayLength),
+                JgsType.Array => (JgsMatrix.RowCount(args[0]), JgsMatrix.ColCount(args[0])),
                 JgsType.String => (1, args[0].AsString.Length),
+                JgsType.Cell => (1, args[0].AsCell.Length),
                 _ => (1, 1),
             };
 
@@ -872,7 +871,8 @@ internal static partial class JgsBuiltins
                     }
                 }
 
-                return NumbersCopy(System.Runtime.InteropServices.CollectionsMarshal.AsSpan(found));
+                return FoundIndices(
+                    NumbersCopy(System.Runtime.InteropServices.CollectionsMarshal.AsSpan(found)), args[0]);
             }
 
             JgsValue[] elements = Arr("find", args, 0, line, col);
@@ -885,7 +885,7 @@ internal static partial class JgsBuiltins
                 }
             }
 
-            return JgsValue.Array(indices.ToArray());
+            return FoundIndices(JgsValue.Array(indices.ToArray()), args[0]);
         });
 
         Define("any", (args, line, col) =>
@@ -1358,23 +1358,10 @@ internal static partial class JgsBuiltins
             double[] x = DoubleArray("meshgrid", args, 0, line, col);
             double[] y = DoubleArray("meshgrid", args, 1, line, col);
 
-            var xRows = new JgsValue[y.Length];
-            var yRows = new JgsValue[y.Length];
-            for (int r = 0; r < y.Length; r++)
-            {
-                var xRow = new JgsValue[x.Length];
-                var yRow = new JgsValue[x.Length];
-                for (int c = 0; c < x.Length; c++)
-                {
-                    xRow[c] = JgsValue.Number(x[c]);
-                    yRow[c] = JgsValue.Number(y[r]);
-                }
-
-                xRows[r] = JgsValue.Array(xRow);
-                yRows[r] = JgsValue.Array(yRow);
-            }
-
-            return JgsValue.Array([JgsValue.Array(xRows), JgsValue.Array(yRows)]);
+            return JgsValue.Array([
+                JgsMatrix.Build(y.Length, x.Length, (r, c) => x[c]),
+                JgsMatrix.Build(y.Length, x.Length, (r, c) => y[r]),
+            ]);
         });
 
         Define("surf", (args, line, col) => Surface3D("surf", args, line, col,
@@ -1522,6 +1509,7 @@ internal static partial class JgsBuiltins
         RegisterNumericBuiltins(env);
         RegisterSpecialFunctionBuiltins(env);
         RegisterMatrixBuiltins(env);
+        RegisterSchurBuiltins(env);
         RegisterTextBuiltins(env, dialect);
         RegisterArrayBuiltins(env, random, dialect);
         RegisterEnvironmentBuiltins(env, host);
@@ -2236,6 +2224,20 @@ internal static partial class JgsBuiltins
             var other => throw new JgsRuntimeException(line, col, $"{name} order must be \"asc\" or \"desc\", but got \"{other}\"."),
         };
 
+    /// <summary>
+    /// find's result takes the orientation MATLAB gives it: a column when the subject is a matrix or
+    /// a column, so <c>A(find(A &gt; 5))</c> comes back shaped the way the subject was searched.
+    /// </summary>
+    private static JgsValue FoundIndices(JgsValue indices, JgsValue subject)
+    {
+        if (indices.ArrayLength > 1 && (JgsMatrix.IsMatrix(subject) || subject.Cols == 1))
+        {
+            indices.Reshape(indices.ArrayLength, 1);
+        }
+
+        return indices;
+    }
+
     private static JgsValue MapToBool(string name, JgsValue value, Func<double, bool> test, int line, int col)
     {
         if (value.Type is JgsType.Number or JgsType.Bool)
@@ -2265,7 +2267,7 @@ internal static partial class JgsBuiltins
                 result[i] = JgsValue.Bool(test(source[i].AsNumber));
             }
 
-            return JgsValue.Array(result);
+            return JgsMatrix.Like(value, JgsValue.Array(result));
         }
 
         throw new JgsRuntimeException(line, col, $"{name} expects a number or numeric array, but got a {value.TypeName}.");
@@ -2345,18 +2347,18 @@ internal static partial class JgsBuiltins
                 // Same delegate over the flat buffer: bit-identical results, no per-element boxing.
                 var dest = JgsPacking.Allocate(value.ArrayLength);
                 PackedMath.Map(value.AsBuffer, dest, f);
-                return JgsValue.Packed(dest);
+                return JgsMatrix.Like(value, JgsValue.Packed(dest));
             }
 
             JgsValue[] source = value.AsArray;
             var result = new JgsValue[source.Length];
             for (int i = 0; i < source.Length; i++)
             {
-                // Recurse so matrices (nested arrays) map elementwise: sin(X) works on meshgrid output.
+                // Recurse so nested arrays map elementwise: sin(X) works on meshgrid output.
                 result[i] = MapNumeric(name, source[i], f, line, col);
             }
 
-            return JgsValue.Array(result);
+            return JgsMatrix.Like(value, JgsValue.Array(result));
         }
 
         throw new JgsRuntimeException(line, col, $"{name} expects a number or numeric array, but got a {value.TypeName}.");
@@ -2785,33 +2787,20 @@ internal static partial class JgsBuiltins
                 $"{name} expects argument {index + 1} to be a matrix (an array of row arrays), but got a {value.TypeName}.");
         }
 
-        JgsValue[] rows = value.BoxedElements();
-        if (rows.Length == 0 || rows[0].Type != JgsType.Array)
+        if (!JgsMatrix.IsMatrix(value))
         {
             throw new JgsRuntimeException(line, col,
-                $"{name} expects argument {index + 1} to be a matrix (an array of row arrays); build one with meshgrid, zeros(r, c), or nested literals.");
+                $"{name} expects argument {index + 1} to be a matrix; build one with meshgrid, zeros(r, c), or a semicolon-rowed literal.");
         }
 
-        int cols = rows[0].ArrayLength;
+        double[][] rows = JgsMatrix.ToRows(name, value, line, col);
+        int cols = rows.Length == 0 ? 0 : rows[0].Length;
         var result = new double[rows.Length, cols];
         for (int r = 0; r < rows.Length; r++)
         {
-            if (rows[r].Type != JgsType.Array)
-            {
-                throw new JgsRuntimeException(line, col,
-                    $"{name}: matrix row {r} is a {rows[r].TypeName}, not an array.");
-            }
-
-            double[] row = ToDoubles(name, rows[r], line, col);
-            if (row.Length != cols)
-            {
-                throw new JgsRuntimeException(line, col,
-                    $"{name}: matrix rows must all be the same length (row 0 has {cols}, row {r} has {row.Length}).");
-            }
-
             for (int c = 0; c < cols; c++)
             {
-                result[r, c] = row[c];
+                result[r, c] = rows[r][c];
             }
         }
 

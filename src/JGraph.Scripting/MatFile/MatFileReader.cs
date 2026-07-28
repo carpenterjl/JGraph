@@ -167,59 +167,13 @@ internal static class MatFileReader
             return JgsValue.Number(real[0]);
         }
 
-        if (rows == 1 || cols == 1)
-        {
-            var flat = new JgsValue[real.Length];
-            for (int i = 0; i < real.Length; i++)
-            {
-                flat[i] = JgsValue.Number(real[i]);
-            }
-
-            return JgsValue.Array(flat);
-        }
-
-        // Column-major on disk, rows of arrays here.
-        var wrapped = new JgsValue[rows];
-        for (int r = 0; r < rows; r++)
-        {
-            var row = new JgsValue[cols];
-            for (int c = 0; c < cols; c++)
-            {
-                row[c] = JgsValue.Number(real[(c * rows) + r]);
-            }
-
-            wrapped[r] = JgsValue.Array(row);
-        }
-
-        return JgsValue.Array(wrapped);
+        // Column-major on disk is exactly how a shaped value stores itself, so this is a straight
+        // adoption rather than a transpose (ADR 0043).
+        return JgsMatrix.FromColumnMajor(real, rows, cols);
     }
 
-    private static JgsValue ShapeBoxed(JgsValue[] columnMajor, int rows, int cols)
-    {
-        if (columnMajor.Length == 1)
-        {
-            return columnMajor[0];
-        }
-
-        if (rows == 1 || cols == 1)
-        {
-            return JgsValue.Array(columnMajor);
-        }
-
-        var wrapped = new JgsValue[rows];
-        for (int r = 0; r < rows; r++)
-        {
-            var row = new JgsValue[cols];
-            for (int c = 0; c < cols; c++)
-            {
-                row[c] = columnMajor[(c * rows) + r];
-            }
-
-            wrapped[r] = JgsValue.Array(row);
-        }
-
-        return JgsValue.Array(wrapped);
-    }
+    private static JgsValue ShapeBoxed(JgsValue[] columnMajor, int rows, int cols) =>
+        columnMajor.Length == 1 ? columnMajor[0] : JgsMatrix.FromElements(columnMajor, rows, cols);
 
     private static JgsValue ReadChar(byte[] bytes, ref int at, int count)
     {
