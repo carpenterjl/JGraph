@@ -46,7 +46,7 @@ index-mapping primitive), `any`, `all`, `concat`, `slice` (0-based, stop-exclusi
 `reverse`, `isnan`, `isequal`, `and`/`or`/`not`. Strings: `sprintf` (fixed C-subset
 `%d %i %f %e %g %s %x %%` with width/precision, invariant culture, loud errors on anything else),
 `str`/`num` (NaN on parse failure, MATLAB `str2double`), `upper`/`lower`/`trim`,
-`split`/`join`, `startswith`/`endswith`/`replace`, and polymorphic `contains` (substring or array
+`split`/`join`, `startsWith`/`endsWith` (renamed to MATLAB's spelling in M37)/`replace`, and polymorphic `contains` (substring or array
 membership).
 
 ### 4. Tables open up: names, row count, text columns, and junk-preamble skipping

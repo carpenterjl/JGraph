@@ -89,6 +89,19 @@ public static class JgsBuiltinCatalog
         Constant("e", "Euler's number ≈ 2.71828.");
         Constant("inf", "Positive infinity.");
         Constant("nan", "Not-a-number (an undefined numeric result).");
+        Constant("Inf", "Positive infinity (MATLAB's spelling of inf).");
+        Constant("NaN", "Not-a-number (MATLAB's spelling of nan).");
+        Constant("i", "The imaginary unit, √-1.");
+        Constant("j", "The imaginary unit, √-1 (the engineering spelling of i).");
+        Constant("newline", "A single newline character.");
+
+        // --- Numeric limits (MATLAB writes these as functions; a bare mention is the value) ----
+        Add("eps", "Floating-point spacing: eps is 2.2e-16, eps(x) the gap to the next value after x.", Opt("x"));
+        Add("realmax", "The largest finite double, or single with 'single'.", Opt("precision"));
+        Add("realmin", "The smallest normalized double, or single with 'single'.", Opt("precision"));
+        Add("flintmax", "The largest consecutive integer a double represents exactly, 2^53.", Opt("precision"));
+        Add("intmax", "The largest value of an integer class, 'int32' by default.", Opt("type"));
+        Add("intmin", "The smallest value of an integer class, 'int32' by default.", Opt("type"));
 
         // --- Element-wise math (number or numeric array in, same shape out) -------------------
         Add("sin", "Sine of x (radians), element-wise over arrays.", P("x"));
@@ -98,6 +111,37 @@ public static class JgsBuiltinCatalog
         Add("acos", "Inverse cosine of x, in radians, element-wise over arrays.", P("x"));
         Add("atan", "Inverse tangent of x, in radians, element-wise over arrays.", P("x"));
         Add("atan2", "Angle of the point (x, y) in radians, in the correct quadrant.", P("y"), P("x"));
+        Add("sec", "Secant of x (radians), element-wise over arrays.", P("x"));
+        Add("csc", "Cosecant of x (radians), element-wise over arrays.", P("x"));
+        Add("cot", "Cotangent of x (radians), element-wise over arrays.", P("x"));
+        Add("asec", "Inverse secant of x, in radians.", P("x"));
+        Add("acsc", "Inverse cosecant of x, in radians.", P("x"));
+        Add("acot", "Inverse cotangent of x, in radians.", P("x"));
+        Add("sinh", "Hyperbolic sine of x, element-wise over arrays.", P("x"));
+        Add("cosh", "Hyperbolic cosine of x, element-wise over arrays.", P("x"));
+        Add("tanh", "Hyperbolic tangent of x, element-wise over arrays.", P("x"));
+        Add("sech", "Hyperbolic secant of x.", P("x"));
+        Add("csch", "Hyperbolic cosecant of x.", P("x"));
+        Add("coth", "Hyperbolic cotangent of x.", P("x"));
+        Add("asinh", "Inverse hyperbolic sine of x.", P("x"));
+        Add("acosh", "Inverse hyperbolic cosine of x.", P("x"));
+        Add("atanh", "Inverse hyperbolic tangent of x.", P("x"));
+        Add("asech", "Inverse hyperbolic secant of x.", P("x"));
+        Add("acsch", "Inverse hyperbolic cosecant of x.", P("x"));
+        Add("acoth", "Inverse hyperbolic cotangent of x.", P("x"));
+        Add("sind", "Sine of x in degrees; exact zero at multiples of 180.", P("x"));
+        Add("cosd", "Cosine of x in degrees; exact zero at odd multiples of 90.", P("x"));
+        Add("tand", "Tangent of x in degrees.", P("x"));
+        Add("secd", "Secant of x in degrees.", P("x"));
+        Add("cscd", "Cosecant of x in degrees.", P("x"));
+        Add("cotd", "Cotangent of x in degrees.", P("x"));
+        Add("asind", "Inverse sine of x, in degrees.", P("x"));
+        Add("acosd", "Inverse cosine of x, in degrees.", P("x"));
+        Add("atand", "Inverse tangent of x, in degrees.", P("x"));
+        Add("asecd", "Inverse secant of x, in degrees.", P("x"));
+        Add("acscd", "Inverse cosecant of x, in degrees.", P("x"));
+        Add("acotd", "Inverse cotangent of x, in degrees.", P("x"));
+        Add("atan2d", "Angle of the point (x, y) in degrees, in the correct quadrant.", P("y"), P("x"));
         Add("exp", "e raised to x, element-wise over arrays.", P("x"));
         Add("log", "Natural logarithm of x, element-wise over arrays.", P("x"));
         Add("log10", "Base-10 logarithm of x, element-wise over arrays.", P("x"));
@@ -111,7 +155,225 @@ public static class JgsBuiltinCatalog
         Add("ceil", "Smallest whole number not below x, element-wise over arrays.", P("x"));
         Add("round", "x rounded to the nearest whole number (halves away from zero), element-wise.", P("x"));
         Add("sign", "-1, 0, or 1 by the sign of x, element-wise over arrays.", P("x"));
-        Add("pow", "x raised to exponent, element-wise over arrays.", P("x"), P("exponent"));
+        Add("hypot", "sqrt(a² + b²) without the overflow the written-out formula suffers.", P("a"), P("b"));
+        Add("log2", "Base-2 logarithm of x, element-wise over arrays.", P("x"));
+        Add("log1p", "log(1 + x), accurate for x near zero.", P("x"));
+        Add("expm1", "exp(x) - 1, accurate for x near zero.", P("x"));
+        Add("pow2", "2^x, or f·2^e when two arguments are given.", P("x"), Opt("e"));
+        Add("nthroot", "The real nth root of x, so nthroot(-8, 3) is -2.", P("x"), P("n"));
+        Add("realsqrt", "Square root of x, an error where the result would be complex.", P("x"));
+        Add("reallog", "Natural logarithm of x, an error where the result would be complex.", P("x"));
+        Add("realpow", "x raised to y, an error where the result would be complex.", P("x"), P("y"));
+        Add("deg2rad", "Degrees converted to radians, element-wise.", P("x"));
+        Add("rad2deg", "Radians converted to degrees, element-wise.", P("x"));
+        Add("complex", "A complex value from real and imaginary parts (imaginary 0 by default).", P("re"), Opt("im"));
+
+        // --- Integer arithmetic --------------------------------------------------------------------
+        Add("gcd", "The greatest common divisor of a and b, element-wise.", P("a"), P("b"));
+        Add("lcm", "The least common multiple of a and b, element-wise.", P("a"), P("b"));
+        Add("factorial", "n! for a non-negative whole number, element-wise.", P("n"));
+        Add("nchoosek", "The number of ways to choose k from n — or, given a vector, every such combination.", P("n"), P("k"));
+        Add("primes", "Every prime up to and including n.", P("n"));
+        Add("isprime", "Whether each element is prime.", P("x"));
+
+        // --- Logical constructors, 2-D transforms, geometry ------------------------------------------
+        Add("true", "A logical array of the given size, all true; bare true is still the literal.", Opt("rows"), Opt("cols"));
+        Add("false", "A logical array of the given size, all false; bare false is still the literal.", Opt("rows"), Opt("cols"));
+        Add("fft2", "The two-dimensional discrete Fourier transform of a matrix.", P("a"));
+        Add("ifft2", "The inverse two-dimensional discrete Fourier transform.", P("a"));
+        Add("fftn", "The Fourier transform along every dimension — fft2 for a matrix.", P("a"));
+        Add("ifftn", "The inverse transform along every dimension.", P("a"));
+        Add("convhull", "The indices of the points on the convex hull, closed and counter-clockwise.", P("x"), P("y"));
+
+        // --- Evaluating text and asking about the workspace -----------------------------------------
+        Add("eval", "Runs a string as code in the current scope; a second string runs if the first fails.", P("code"), Opt("onError"));
+        Add("evalc", "Runs a string as code and returns everything it printed.", P("code"));
+        Add("evalin", "Runs a string as code in the 'base' or 'caller' workspace.", P("workspace"), P("code"));
+        Add("assignin", "Creates a variable in the 'base' or 'caller' workspace.", P("workspace"), P("name"), P("value"));
+        Add("str2func", "A function handle from its name, or from an @(x) … expression.", P("text"));
+        Add("exist", "What a name is: 1 a variable, 2 a file, 5 a builtin, 7 a folder, 0 nothing.", P("name"), Opt("kind"));
+        Add("who", "The names of the variables in scope, as a cell array.", Opt("pattern"));
+        Add("which", "Where a name comes from — a builtin, or the file it resolves to.", P("name"));
+        Add("narginchk", "Fails unless the enclosing function got between low and high arguments.", P("low"), P("high"));
+        Add("nargoutchk", "Fails unless the enclosing function was asked for between low and high outputs.", P("low"), P("high"));
+        Add("nargchk", "The pre-R2011 spelling of narginchk.", P("low"), P("high"));
+        Add("lasterr", "The message of the last caught error; an argument replaces it.", Opt("message"));
+        Add("lasterror", "The last caught error as a struct with message and identifier fields.", Opt("err"));
+        Add("lastwarn", "The message of the last warning; an argument replaces it.", Opt("message"));
+        Add("rethrow", "Raises the error a catch block was handed, unchanged.", P("err"));
+
+        // --- Files, folders, and the machine --------------------------------------------------------
+        Add("pwd", "The working directory relative paths resolve against.");
+        Add("cd", "Moves to a folder; with no argument it reports where it is.", Opt("folder"));
+        Add("mkdir", "Creates a folder, including any parents it needs.", P("folder"), Opt("name"));
+        Add("rmdir", "Removes an empty folder — or a whole tree when the second argument is 's'.", P("folder"), Opt("s"));
+        Add("copyfile", "Copies a file, overwriting the destination.", P("source"), P("destination"), Opt("mode"));
+        Add("movefile", "Moves a file, overwriting the destination.", P("source"), P("destination"), Opt("mode"));
+        Add("delete", "Deletes the named files.", P("path"));
+        Add("fileattrib", "A struct of a file's attributes, or false when it does not exist.", P("path"));
+        Add("filesep", "The character that separates folders on this system.");
+        Add("filemarker", "The character that separates a file from a function inside it.");
+        Add("isfile", "Whether the path names a file that exists.", P("path"));
+        Add("isfolder", "Whether the path names a folder that exists.", P("path"));
+        Add("fullfile", "Path pieces joined with the right separator.", P("part"), Opt("more"));
+        Add("fileparts", "A path split into {folder, name, extension}.", P("path"));
+        Add("feof", "Whether an open file is at its end.", P("fid"));
+        Add("ferror", "The last error on an open file — empty, since failures are raised instead.", P("fid"), Opt("clear"));
+        Add("ftell", "The current byte position in an open file.", P("fid"));
+        Add("fseek", "Moves the position in an open file; 0 on success, -1 on failure.", P("fid"), P("offset"), Opt("origin"));
+        Add("fgets", "The next line of an open file, keeping its newline; -1 at the end.", P("fid"));
+        Add("fscanf", "Numbers or text read from an open file under a scanf format.", P("fid"), P("format"), Opt("count"));
+        Add("textscan", "The rest of an open file read under a format, wrapped in a cell.", P("fid"), P("format"));
+        Add("type", "Prints a file's contents to the console.", P("path"));
+        Add("getenv", "The value of an environment variable, or '' when it is not set.", P("name"));
+        Add("setenv", "Sets an environment variable for this process.", P("name"), Opt("value"));
+        Add("ispc", "Whether this machine runs Windows.");
+        Add("isunix", "Whether this machine runs Linux or macOS.");
+        Add("ismac", "Whether this machine runs macOS.");
+        Add("namelengthmax", "The longest name a variable may have.");
+        Add("cputime", "Seconds of processor time used, for timing a long computation.");
+        Add("drawnow", "Flushes pending graphics — nothing to do in JGraph, which draws as it goes.", Opt("mode"));
+        Add("jsonencode", "A value written as JSON text.", P("x"), Opt("option"), Opt("value"));
+        Add("jsondecode", "JSON text read back as numbers, cells, and structs.", P("text"));
+
+        // --- Array statistics and rearrangement -----------------------------------------------------
+        Add("arrayfun", "Applies a function to each element; 'UniformOutput', false gives a cell.", P("f"), P("a"), Opt("option"));
+        Add("bsxfun", "Applies a function pairwise, expanding a scalar across the other array.", P("f"), P("a"), P("b"));
+        Add("structfun", "Applies a function to each field of a struct.", P("f"), P("s"), Opt("option"));
+        Add("struct2cell", "A struct's field values as a cell array.", P("s"));
+        Add("cell2struct", "A struct built from a cell of values and a cell of field names.", P("values"), P("names"), Opt("dim"));
+        Add("accumarray", "Sums values into bins their subscripts name; a function handle reduces differently.", P("subs"), P("values"), Opt("size"), Opt("f"), Opt("fill"));
+        Add("cummax", "The running maximum so far at each position.", P("x"));
+        Add("cummin", "The running minimum so far at each position.", P("x"));
+        Add("maxk", "The k largest values, largest first.", P("x"), P("k"));
+        Add("mink", "The k smallest values, smallest first.", P("x"), P("k"));
+        Add("histc", "How many values fall in each bin the edges define.", P("x"), P("edges"));
+        Add("uniquetol", "The unique values, treating any two within a tolerance as one.", P("x"), Opt("tol"));
+        Add("ismembertol", "Whether each value is within a tolerance of something in the set.", P("x"), P("set"), Opt("tol"));
+        Add("issortedrows", "Whether a matrix's rows are in lexicographic order.", P("a"));
+        Add("randi", "Uniform whole numbers from 1 to imax, or from the range [low high].", P("imax"), Opt("rows"), Opt("cols"));
+        Add("randperm", "A random permutation of 1..n, or k values drawn from it.", P("n"), Opt("k"));
+        Add("circshift", "The values moved along by k places, wrapping around.", P("x"), P("k"));
+        Add("rot90", "A matrix turned a quarter turn counter-clockwise, k times.", P("a"), Opt("k"));
+        Add("movmean", "The mean over a sliding window of width k.", P("x"), P("k"));
+        Add("movmedian", "The median over a sliding window of width k.", P("x"), P("k"));
+        Add("movsum", "The sum over a sliding window of width k.", P("x"), P("k"));
+        Add("movprod", "The product over a sliding window of width k.", P("x"), P("k"));
+        Add("movmax", "The maximum over a sliding window of width k.", P("x"), P("k"));
+        Add("movmin", "The minimum over a sliding window of width k.", P("x"), P("k"));
+        Add("movstd", "The standard deviation over a sliding window of width k.", P("x"), P("k"));
+        Add("movvar", "The variance over a sliding window of width k.", P("x"), P("k"));
+        Add("movmad", "The mean absolute deviation over a sliding window of width k.", P("x"), P("k"));
+
+        // --- Text search, shaping, and regular expressions ------------------------------------------
+        Add("strfind", "Every position where a pattern appears in a string.", P("text"), P("pattern"));
+        Add("findstr", "The positions where the shorter of two strings appears in the longer.", P("a"), P("b"));
+        Add("strncmp", "Whether two strings agree in their first n characters.", P("a"), P("b"), P("n"));
+        Add("strncmpi", "Whether two strings agree in their first n characters, ignoring case.", P("a"), P("b"), P("n"));
+        Add("count", "How many times a pattern appears in a string, or in each of a cell of strings.", P("text"), P("pattern"));
+        Add("matches", "Whether a string is exactly the pattern.", P("text"), P("pattern"));
+        Add("strlength", "The number of characters in a string, or in each of a cell of strings.", P("text"));
+        Add("deblank", "A string with its trailing whitespace removed.", P("text"));
+        Add("blanks", "A string of n spaces.", P("n"));
+        Add("strcat", "Strings joined end to end, each with its trailing whitespace dropped.", P("a"), Opt("b"));
+        Add("setstr", "Character codes as text (the pre-R2006 spelling of char).", P("codes"));
+        Add("convertCharsToStrings", "The value unchanged: JGraph's text is char, and there is no string type to convert to.", P("x"));
+        Add("convertStringsToChars", "The value unchanged: JGraph's text is already char.", P("x"));
+        Add("convertContainedStringsToChars", "The value unchanged: JGraph's text is already char.", P("x"));
+        Add("regexp", "Regular expression search: start positions, or the outputs the option words name.", P("text"), P("expr"), Opt("option"));
+        Add("regexpi", "Regular expression search, ignoring case.", P("text"), P("expr"), Opt("option"));
+        Add("regexprep", "Every match of a regular expression replaced; $1 refers to a captured group.", P("text"), P("expr"), P("replacement"), Opt("option"));
+        Add("regexptranslate", "A string turned into a regular expression: 'escape', 'wildcard', or 'flexible'.", P("mode"), P("text"));
+        Add("isstrprop", "Which characters belong to a category ('alpha', 'digit', 'wspace', …).", P("text"), P("category"));
+        Add("unicode2native", "The bytes a string encodes to (UTF-8 by default).", P("text"), Opt("encoding"));
+        Add("native2unicode", "The string a sequence of bytes decodes to (UTF-8 by default).", P("bytes"), Opt("encoding"));
+        Add("typecast", "The same bits read as another numeric class.", P("x"), P("type"));
+        Add("sscanf", "Numbers or text read out of a string under a scanf format.", P("text"), P("format"), Opt("count"));
+
+        // --- Matrix shape questions and linear algebra -----------------------------------------------
+        Add("istril", "Whether every entry above the diagonal is zero.", P("a"));
+        Add("istriu", "Whether every entry below the diagonal is zero.", P("a"));
+        Add("isdiag", "Whether every entry off the diagonal is zero.", P("a"));
+        Add("issymmetric", "Whether the matrix equals its own transpose, exactly.", P("a"));
+        Add("ishermitian", "Whether the matrix equals its conjugate transpose (its transpose, for real data).", P("a"));
+        Add("isbanded", "Whether the matrix fits inside the given lower and upper bandwidths.", P("a"), P("lower"), P("upper"));
+        Add("bandwidth", "How far the non-zeros reach below the diagonal — or 'upper' for above; [lo, up] for both.", P("a"), Opt("which"));
+        Add("tril", "The lower triangle of a matrix, from the k-th diagonal down.", P("a"), Opt("k"));
+        Add("triu", "The upper triangle of a matrix, from the k-th diagonal up.", P("a"), Opt("k"));
+        Add("chol", "The Cholesky factor of a positive definite matrix: upper by default, 'lower' for L.", P("a"), Opt("shape"));
+        Add("ldl", "The LDL' factorization of a symmetric matrix, as [L, D] or [L, D, P].", P("a"));
+        Add("hess", "The upper Hessenberg form of a matrix, as H or [Q, H].", P("a"));
+        Add("expm", "The matrix exponential e^A — not exp applied element by element.", P("a"));
+        Add("linsolve", "Solves the linear system a·x = b.", P("a"), P("b"));
+        Add("rcond", "The reciprocal condition number in the 1-norm; near 0 means near singular.", P("a"));
+        Add("null", "An orthonormal basis for the null space of a.", P("a"));
+        Add("orth", "An orthonormal basis for the range of a.", P("a"));
+        Add("pinv", "The Moore-Penrose pseudoinverse of a.", P("a"));
+        Add("cross", "The cross product of two 3-element vectors.", P("a"), P("b"));
+        Add("vecnorm", "The p-norm of a vector, or of each column of a matrix (p = 2 by default).", P("a"), Opt("p"));
+
+        // --- Special functions ---------------------------------------------------------------------
+        Add("erf", "The error function, element-wise.", P("x"));
+        Add("erfc", "1 - erf(x), evaluated so the tail keeps its digits.", P("x"));
+        Add("erfcx", "exp(x²)·erfc(x), the scaled complementary error function.", P("x"));
+        Add("erfinv", "The inverse error function.", P("y"));
+        Add("erfcinv", "The inverse complementary error function.", P("y"));
+        Add("gamma", "The gamma function Γ(x), element-wise.", P("x"));
+        Add("gammaln", "ln Γ(x), which stays finite where Γ itself overflows.", P("x"));
+        Add("gammainc", "The regularized incomplete gamma P(a, x), or Q with 'upper'.", P("x"), P("a"), Opt("tail"));
+        Add("gammaincinv", "The x whose incomplete gamma is y.", P("y"), P("a"), Opt("tail"));
+        Add("beta", "The beta function B(a, b).", P("a"), P("b"));
+        Add("betaln", "ln B(a, b).", P("a"), P("b"));
+        Add("betainc", "The regularized incomplete beta I_x(a, b), or its upper tail with 'upper'.", P("x"), P("a"), P("b"), Opt("tail"));
+        Add("betaincinv", "The x whose incomplete beta is y.", P("y"), P("a"), P("b"), Opt("tail"));
+        Add("psi", "The digamma function ψ(x), or its k-th derivative as psi(k, x).", P("x"), Opt("x2"));
+
+        // --- Bit manipulation ----------------------------------------------------------------------
+        Add("bitand", "Bitwise AND, element-wise; the optional class name sets the width.", P("a"), P("b"), Opt("type"));
+        Add("bitor", "Bitwise OR, element-wise; the optional class name sets the width.", P("a"), P("b"), Opt("type"));
+        Add("bitxor", "Bitwise exclusive OR, element-wise; the optional class name sets the width.", P("a"), P("b"), Opt("type"));
+        Add("bitcmp", "Bitwise complement within the assumed width (53 bits by default).", P("x"), Opt("type"));
+        Add("bitget", "The bit at a 1-based position, counting from the least significant.", P("x"), P("position"), Opt("type"));
+        Add("bitset", "x with the bit at a 1-based position set (or cleared when value is 0).", P("x"), P("position"), Opt("value"), Opt("type"));
+        Add("bitshift", "x shifted left by k bits, or right when k is negative.", P("x"), P("k"), Opt("type"));
+
+        // --- Radix conversion ----------------------------------------------------------------------
+        Add("dec2bin", "A number as binary text, zero-padded to at least minLength digits.", P("x"), Opt("minLength"));
+        Add("dec2hex", "A number as hexadecimal text, zero-padded to at least minLength digits.", P("x"), Opt("minLength"));
+        Add("dec2base", "A number as text in a base from 2 to 36.", P("x"), P("base"), Opt("minLength"));
+        Add("bin2dec", "The number a string of binary digits stands for.", P("text"));
+        Add("hex2dec", "The number a string of hexadecimal digits stands for.", P("text"));
+        Add("base2dec", "The number a string of digits in the given base stands for.", P("text"), P("base"));
+
+        // --- Dense storage answers (JGraph has no sparse type) --------------------------------------
+        Add("issparse", "Always false: JGraph stores every matrix densely.", P("x"));
+        Add("full", "x itself — dense storage is the only storage there is.", P("x"));
+        Add("nnz", "How many elements are not zero.", P("x"));
+        Add("nonzeros", "The non-zero elements, as a vector.", P("x"));
+
+        // --- Operator function forms (the interpreter declares these; see RegisterOperatorFunctions)
+        Add("plus", "a + b.", P("a"), P("b"));
+        Add("minus", "a - b.", P("a"), P("b"));
+        Add("times", "a .* b, element-wise multiplication.", P("a"), P("b"));
+        Add("mtimes", "a * b, matrix multiplication.", P("a"), P("b"));
+        Add("rdivide", "a ./ b, element-wise right division.", P("a"), P("b"));
+        Add("ldivide", "a .\\ b, element-wise left division.", P("a"), P("b"));
+        Add("mrdivide", "a / b, matrix right division.", P("a"), P("b"));
+        Add("mldivide", "a \\ b, matrix left division (solves a system).", P("a"), P("b"));
+        Add("power", "a .^ b, element-wise power.", P("a"), P("b"));
+        Add("mpower", "a ^ b, matrix power.", P("a"), P("b"));
+        Add("uminus", "-a.", P("a"));
+        Add("uplus", "+a.", P("a"));
+        Add("eq", "a == b, element-wise.", P("a"), P("b"));
+        Add("ne", "a ~= b, element-wise.", P("a"), P("b"));
+        Add("lt", "a < b, element-wise.", P("a"), P("b"));
+        Add("le", "a <= b, element-wise.", P("a"), P("b"));
+        Add("gt", "a > b, element-wise.", P("a"), P("b"));
+        Add("ge", "a >= b, element-wise.", P("a"), P("b"));
+        Add("xor", "Exclusive or, element-wise over arrays.", P("a"), P("b"));
+        Add("colon", "The range a:b, or a:step:b when three arguments are given.", P("a"), P("b"), Opt("stop"));
+
+        Add("pow","x raised to exponent, element-wise over arrays.", P("x"), P("exponent"));
 
         // --- Array construction ----------------------------------------------------------------
         Add("linspace", "count evenly spaced values from start to stop, inclusive.", P("start"), P("stop"), P("count"));
@@ -308,6 +570,30 @@ public static class JgsBuiltinCatalog
         Add("reverse", "A reversed copy of an array.", P("array"));
         Add("isnan", "Whether x is NaN, element-wise over arrays.", P("x"));
         Add("isequal", "Deep equality of two values (arrays element-by-element), as one bool.", P("a"), P("b"));
+        Add("isequaln", "Deep equality treating NaN as equal to NaN.", P("a"), P("b"));
+        Add("isequalwithequalnans", "The pre-R2012a name for isequaln.", P("a"), P("b"));
+        Add("isfinite", "Whether x is finite, element-wise over arrays.", P("x"));
+        Add("isinf", "Whether x is infinite, element-wise over arrays.", P("x"));
+        Add("isfloat", "True for a value stored as floating point — every JGraph number.", P("x"));
+        Add("isinteger", "True for an integer class; always false, since JGraph numbers are doubles.", P("x"));
+        Add("isreal", "True when a value carries no imaginary part.", P("x"));
+        Add("isscalar", "True for a single value rather than an array.", P("x"));
+        Add("isvector", "True for a scalar or a flat array (no nested rows).", P("x"));
+        Add("ismatrix", "True for any two-dimensional value.", P("x"));
+        Add("isrow", "True for a vector; JGraph vectors have no orientation and read as rows.", P("x"));
+        Add("iscolumn", "True only for a single value, since vectors read as rows.", P("x"));
+        Add("isstr", "True for a string (the pre-R2016 spelling of ischar).", P("x"));
+        Add("isstring", "Always false — JGraph has char text, not MATLAB string arrays.", P("x"));
+        Add("iscellstr", "True for a cell array whose every element is a string.", P("x"));
+        Add("isletter", "Whether each character is a letter, as a mask.", P("text"));
+        Add("isspace", "Whether each character is whitespace, as a mask.", P("text"));
+        Add("issorted", "Whether the values are in non-decreasing order.", P("x"));
+        Add("class", "The class name of a value: double, logical, char, cell, struct, function_handle.", P("x"));
+        Add("isa", "Whether a value has the named class, or is 'numeric'/'float'/'integer'.", P("x"), P("type"));
+        Add("logical", "The value converted to a logical (true where non-zero).", P("x"));
+        Add("cast", "The value converted to the named class.", P("x"), P("type"));
+        Add("double", "x as a number: a logical becomes 0 or 1, and text becomes its character codes.", P("x"));
+        Add("single", "x rounded to single precision (still stored as a double).", P("x"));
         Add("and", "Element-wise logical AND, broadcasting a scalar across an array.", P("a"), P("b"));
         Add("or", "Element-wise logical OR, broadcasting a scalar across an array.", P("a"), P("b"));
         Add("not", "Element-wise logical NOT over an array, or of one value.", P("a"));
@@ -322,8 +608,8 @@ public static class JgsBuiltinCatalog
         Add("trim", "The string without leading/trailing whitespace.", P("text"));
         Add("split", "The pieces of text between occurrences of separator, as a string array.", P("text"), P("separator"));
         Add("join", "The array's elements joined into one string with separator between them.", P("array"), P("separator"));
-        Add("startswith", "Whether text starts with prefix.", P("text"), P("prefix"));
-        Add("endswith", "Whether text ends with suffix.", P("text"), P("suffix"));
+        Add("startsWith", "Whether text starts with prefix.", P("text"), P("prefix"));
+        Add("endsWith", "Whether text ends with suffix.", P("text"), P("suffix"));
         Add("replace", "text with every occurrence of old replaced by new.", P("text"), P("old"), P("new"));
         Add("contains", "Whether a string contains a substring, or an array contains a value.", P("value"), P("search"));
 

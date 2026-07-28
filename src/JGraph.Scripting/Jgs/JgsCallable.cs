@@ -49,6 +49,14 @@ internal sealed class BuiltinFunction : IJgsCallable, IJgsMultiCallable
     public bool BindsAnsAsStatement { get; init; } = true;
 
     /// <summary>
+    /// Whether a bare mention of this name means its value rather than the function itself, so
+    /// <c>x = eps</c> stores 2.2e-16 and not a handle. MATLAB implements its constants as
+    /// zero-argument functions and calls them on sight; the flag opts a builtin into that without
+    /// disturbing ordinary names, which stay callable values (<c>f = @sin</c>, <c>sin(x)</c>).
+    /// </summary>
+    public bool AutoCallsBare { get; init; }
+
+    /// <summary>
     /// Optional multi-output implementation, for MATLAB's <c>[X, Y] = meshgrid(x, y)</c>: given
     /// (arguments, wanted, line, column), produces up to <c>wanted</c> outputs. Null for the many
     /// builtins that only ever produce one value — asking those for more reports a shortfall.

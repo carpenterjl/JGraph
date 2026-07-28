@@ -180,8 +180,12 @@ internal static class JgsStdlib
         return null;
     }
 
-    /// <summary>Deep equality: arrays element-by-element (recursively), scalars by value.</summary>
-    public static bool DeepEquals(JgsValue left, JgsValue right)
+    /// <summary>
+    /// Deep equality: arrays element-by-element (recursively), scalars by value. NaN is unequal to
+    /// itself, which is what <c>isequal</c> reports; <paramref name="nanEqual"/> switches to the
+    /// <c>isequaln</c> reading, where two NaNs in the same position match.
+    /// </summary>
+    public static bool DeepEquals(JgsValue left, JgsValue right, bool nanEqual = false)
     {
         if (left.Type == JgsType.Array && right.Type == JgsType.Array)
         {
@@ -194,7 +198,7 @@ internal static class JgsStdlib
 
             for (int i = 0; i < a.Length; i++)
             {
-                if (!DeepEquals(a[i], b[i]))
+                if (!DeepEquals(a[i], b[i], nanEqual))
                 {
                     return false;
                 }
@@ -209,10 +213,13 @@ internal static class JgsStdlib
         }
 
         // MATLAB's isequal compares logicals and doubles by value: isequal(true, 1) is true,
-        // so a mask can be checked against a plain [1 0] literal.
+        // so a mask can be checked against a plain [1 0] literal. NaN is the exception — it matches
+        // nothing, itself included, unless the caller asked for the isequaln reading.
         if (left.Type is JgsType.Number or JgsType.Bool && right.Type is JgsType.Number or JgsType.Bool)
         {
-            return left.AsNumber.Equals(right.AsNumber);
+            double x = left.AsNumber;
+            double y = right.AsNumber;
+            return double.IsNaN(x) || double.IsNaN(y) ? nanEqual && double.IsNaN(x) && double.IsNaN(y) : x == y;
         }
 
         return JgsValue.AreEqual(left, right);

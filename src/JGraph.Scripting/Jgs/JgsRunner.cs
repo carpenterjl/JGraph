@@ -44,6 +44,7 @@ internal static class JgsRunner
             var interpreter = new Interpreter(environment, cancellationToken, hook,
                 echo: line => context.Output.WriteLine(line), dialect);
             DefineRunBuiltin(environment, interpreter, globals, dialect);
+            JgsBuiltins.RegisterEvalBuiltins(environment, interpreter, globals, dialect);
 
             // Capture the pristine builtin bindings so the post-run snapshot lists only what the
             // script itself defined (or rebound). save/load must be declared before the capture, or

@@ -753,6 +753,14 @@ internal sealed class Parser
             return new UnaryExpr(op.Type, operand) { Line = op.Line, Column = op.Column };
         }
 
+        if (Check(TokenType.Plus))
+        {
+            // Unary plus. It has no effect on a number, but MATLAB accepts it and scripts written
+            // for symmetry (+a versus -a) should not trip over it.
+            Advance();
+            return ParseUnary();
+        }
+
         if (Check(TokenType.PlusPlus) || Check(TokenType.MinusMinus))
         {
             Token op = Advance();
@@ -915,6 +923,19 @@ internal sealed class Parser
             case TokenType.True:
             case TokenType.False:
                 Advance();
+
+                // MATLAB also spells the logical-array constructors true(n) and false(m, n). They
+                // are keywords to the lexer, so the call form has to be recognized here: followed by
+                // '(' the word names a builtin, and on its own it is still the literal.
+                if (Check(TokenType.LParen))
+                {
+                    return new VariableExpr(token.Type == TokenType.True ? "true" : "false")
+                    {
+                        Line = token.Line,
+                        Column = token.Column,
+                    };
+                }
+
                 return new BoolLiteral(token.Type == TokenType.True) { Line = token.Line, Column = token.Column };
             case TokenType.Identifier:
                 Advance();

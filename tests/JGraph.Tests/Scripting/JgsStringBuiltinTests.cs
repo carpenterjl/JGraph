@@ -97,9 +97,9 @@ public class JgsStringBuiltinTests : IDisposable
     [Fact]
     public async Task SearchHelpers_AreOrdinal()
     {
-        Assert.Equal("true", await Eval("startswith(\"SN-042\", \"SN-\")"));
-        Assert.Equal("false", await Eval("startswith(\"sn-042\", \"SN-\")"));
-        Assert.Equal("true", await Eval("endswith(\"data.csv\", \".csv\")"));
+        Assert.Equal("true", await Eval("startsWith(\"SN-042\", \"SN-\")"));
+        Assert.Equal("false", await Eval("startsWith(\"sn-042\", \"SN-\")"));
+        Assert.Equal("true", await Eval("endsWith(\"data.csv\", \".csv\")"));
         Assert.Equal("a_b_c", await Eval("replace(\"a-b-c\", \"-\", \"_\")"));
         Assert.Equal("true", await Eval("contains(\"filename.csv\", \"name\")"));
         Assert.Equal("false", await Eval("contains(\"abc\", \"z\")"));

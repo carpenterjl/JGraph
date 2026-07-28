@@ -1,0 +1,313 @@
+namespace JGraph.Scripting.Jgs;
+
+/// <summary>
+/// The builtins that need the running interpreter itself: <c>eval</c> and its family, the workspace
+/// questions (<c>exist</c>, <c>who</c>), argument checking, and the error history. Like the operator
+/// function forms, only something holding the interpreter can declare these, so the two workspace
+/// owners call <see cref="RegisterEvalBuiltins"/> right after they build one.
+/// </summary>
+internal static partial class JgsBuiltins
+{
+    /// <summary>
+    /// Every name <see cref="RegisterEvalBuiltins"/> declares that <c>CreateGlobals</c> does not, so
+    /// the editor's name list can be told about them the same way it is told about <c>run</c>.
+    /// (<c>warning</c> is left out: it is re-declared here, but it already exists.)
+    /// </summary>
+    internal static IReadOnlyList<string> EvalBuiltinNames { get; } =
+    [
+        "eval", "evalc", "evalin", "assignin", "str2func",
+        "exist", "who", "which", "narginchk", "nargoutchk", "nargchk",
+        "lasterr", "lasterror", "lastwarn", "rethrow",
+    ];
+
+    /// <summary>Declares the interpreter-backed builtins into <paramref name="env"/>.</summary>
+    internal static void RegisterEvalBuiltins(
+        JgsEnvironment env, Interpreter interpreter, JGraphScriptGlobals host, JgsDialect dialect)
+    {
+        void Define(string name, Func<IReadOnlyList<JgsValue>, int, int, JgsValue> body) =>
+            env.Declare(name, JgsValue.Function(new BuiltinFunction(name, body)));
+
+        RegisterEvaluation(Define, env, interpreter, host);
+        RegisterWorkspaceQuestions(Define, env, interpreter, host);
+        RegisterErrorHistory(Define, env, interpreter);
+        _ = dialect;
+    }
+
+    // --- Evaluating text --------------------------------------------------------------------------
+
+    private static void RegisterEvaluation(
+        Action<string, Func<IReadOnlyList<JgsValue>, int, int, JgsValue>> Define,
+        JgsEnvironment env, Interpreter interpreter, JGraphScriptGlobals host)
+    {
+        Define("eval", (args, line, col) =>
+        {
+            ArityRange("eval", args, 1, 2, line, col);
+
+            // eval(try, catch) runs the second string only if the first fails — MATLAB's pre-try/catch
+            // way of writing a recovery, and still in plenty of code.
+            if (args.Count == 2)
+            {
+                try
+                {
+                    return interpreter.EvaluateSource(Str("eval", args, 0, line, col), interpreter.CurrentFrame, line, col);
+                }
+                catch (JgsRuntimeException error)
+                {
+                    interpreter.LastError = error.Message;
+                    return interpreter.EvaluateSource(Str("eval", args, 1, line, col), interpreter.CurrentFrame, line, col);
+                }
+            }
+
+            return interpreter.EvaluateSource(Str("eval", args, 0, line, col), interpreter.CurrentFrame, line, col);
+        });
+
+        Define("evalc", (args, line, col) =>
+        {
+            ArityRange("evalc", args, 1, 2, line, col);
+            if (!host.BeginCapture())
+            {
+                throw new JgsRuntimeException(line, col, "evalc is already capturing output; it does not nest.");
+            }
+
+            string captured;
+
+            try
+            {
+                interpreter.EvaluateSource(Str("evalc", args, 0, line, col), interpreter.CurrentFrame, line, col);
+            }
+            finally
+            {
+                // The buffer is closed even when the code failed part way through: leaving it open
+                // would silently swallow the rest of the session's output.
+                captured = host.EndCapture();
+            }
+
+            return JgsValue.Str(captured);
+        });
+
+        Define("evalin", (args, line, col) =>
+        {
+            Arity("evalin", args, 2, line, col);
+            return interpreter.EvaluateSource(
+                Str("evalin", args, 1, line, col), WorkspaceNamed("evalin", args, 0, interpreter, line, col), line, col);
+        });
+
+        Define("assignin", (args, line, col) =>
+        {
+            Arity("assignin", args, 3, line, col);
+            WorkspaceNamed("assignin", args, 0, interpreter, line, col)
+                .Declare(Str("assignin", args, 1, line, col), args[2]);
+            return JgsValue.Null;
+        });
+
+        Define("str2func", (args, line, col) =>
+        {
+            Arity("str2func", args, 1, line, col);
+            string text = Str("str2func", args, 0, line, col).Trim();
+
+            // An @(…) body is a function to build; anything else is the name of one that exists.
+            if (text.StartsWith('@'))
+            {
+                return interpreter.EvaluateSource(text, interpreter.CurrentFrame, line, col);
+            }
+
+            return env.TryGet(text, out JgsValue found) && found.Type == JgsType.Function
+                ? found
+                : throw new JgsRuntimeException(line, col, $"str2func: '{text}' is not a function.");
+        });
+
+        _ = host;
+    }
+
+    /// <summary>Resolves MATLAB's workspace words to an environment.</summary>
+    private static JgsEnvironment WorkspaceNamed(
+        string name, IReadOnlyList<JgsValue> args, int index, Interpreter interpreter, int line, int col) =>
+        Str(name, args, index, line, col) switch
+        {
+            "base" => interpreter.Globals,
+
+            // JGraph has one call frame's worth of history, so 'caller' means the scope that called
+            // the builtin — which, from inside a function, is that function's own frame.
+            "caller" => interpreter.CurrentFrame,
+            var other => throw new JgsRuntimeException(line, col, $"{name}: '{other}' is not 'base' or 'caller'."),
+        };
+
+    // --- Workspace questions ----------------------------------------------------------------------
+
+    private static void RegisterWorkspaceQuestions(
+        Action<string, Func<IReadOnlyList<JgsValue>, int, int, JgsValue>> Define,
+        JgsEnvironment env, Interpreter interpreter, JGraphScriptGlobals host)
+    {
+        Define("exist", (args, line, col) =>
+        {
+            ArityRange("exist", args, 1, 2, line, col);
+            string name = Str("exist", args, 0, line, col);
+            string? kind = args.Count == 2 ? Str("exist", args, 1, line, col) : null;
+
+            bool wantVariable = kind is null or "var";
+            bool wantFile = kind is null or "file" or "dir";
+            bool wantFunction = kind is null or "builtin";
+
+            // MATLAB's return code is a category, not a boolean: 1 variable, 2 file, 5 builtin.
+            if (wantVariable && interpreter.CurrentFrame.TryGet(name, out JgsValue found)
+                && found.Type != JgsType.Function)
+            {
+                return JgsValue.Number(1);
+            }
+
+            if (wantFile)
+            {
+                string resolved = host.Resolve(name);
+                if (File.Exists(resolved))
+                {
+                    return JgsValue.Number(2);
+                }
+
+                if (Directory.Exists(resolved))
+                {
+                    return JgsValue.Number(7);
+                }
+            }
+
+            if (wantFunction && env.TryGet(name, out JgsValue callable) && callable.Type == JgsType.Function)
+            {
+                return JgsValue.Number(5);
+            }
+
+            return JgsValue.Number(0);
+        });
+
+        Define("who", (args, line, col) =>
+        {
+            ArityRange("who", args, 0, 1, line, col);
+            var names = new List<JgsValue>();
+            foreach ((string name, JgsValue value) in interpreter.CurrentFrame.Locals)
+            {
+                // A workspace listing is variables, not the builtins sitting behind them.
+                if (value.Type != JgsType.Function)
+                {
+                    names.Add(JgsValue.Str(name));
+                }
+            }
+
+            names.Sort(static (a, b) => string.CompareOrdinal(a.AsString, b.AsString));
+            return JgsValue.Cell(names.ToArray());
+        });
+
+        Define("which", (args, line, col) =>
+        {
+            Arity("which", args, 1, line, col);
+            string name = Str("which", args, 0, line, col);
+            if (env.TryGet(name, out JgsValue value) && value.Type == JgsType.Function)
+            {
+                return JgsValue.Str($"{name} is a built-in function.");
+            }
+
+            string resolved = host.Resolve(name);
+            return JgsValue.Str(File.Exists(resolved) ? resolved : string.Empty);
+        });
+
+        // narginchk and its relatives read the nargin/nargout the current frame was called with, so
+        // they only mean anything inside a function — exactly as in MATLAB.
+        void ArgumentCheck(string name, string counter, bool checkLow, bool checkHigh) =>
+            Define(name, (args, line, col) =>
+            {
+                Arity(name, args, 2, line, col);
+                if (!interpreter.CurrentFrame.TryGet(counter, out JgsValue count))
+                {
+                    throw new JgsRuntimeException(line, col, $"{name} can only be used inside a function.");
+                }
+
+                double actual = count.AsNumber;
+                if (checkLow && actual < Num(name, args, 0, line, col))
+                {
+                    throw new JgsRuntimeException(line, col, "Not enough input arguments.");
+                }
+
+                if (checkHigh && actual > Num(name, args, 1, line, col))
+                {
+                    throw new JgsRuntimeException(line, col, "Too many input arguments.");
+                }
+
+                return JgsValue.Null;
+            });
+
+        ArgumentCheck("narginchk", "nargin", checkLow: true, checkHigh: true);
+        ArgumentCheck("nargoutchk", "nargout", checkLow: true, checkHigh: true);
+        ArgumentCheck("nargchk", "nargin", checkLow: true, checkHigh: true); // the pre-R2011 spelling
+    }
+
+    // --- Error history ----------------------------------------------------------------------------
+
+    private static void RegisterErrorHistory(
+        Action<string, Func<IReadOnlyList<JgsValue>, int, int, JgsValue>> Define,
+        JgsEnvironment env, Interpreter interpreter)
+    {
+        Define("lasterr", (args, line, col) =>
+        {
+            ArityRange("lasterr", args, 0, 1, line, col);
+            string previous = interpreter.LastError;
+            if (args.Count == 1)
+            {
+                interpreter.LastError = Str("lasterr", args, 0, line, col);
+            }
+
+            return JgsValue.Str(previous);
+        });
+
+        Define("lasterror", (args, line, col) =>
+        {
+            ArityRange("lasterror", args, 0, 1, line, col);
+            return JgsValue.Struct(new Dictionary<string, JgsValue>(StringComparer.Ordinal)
+            {
+                ["message"] = JgsValue.Str(interpreter.LastError),
+                ["identifier"] = JgsValue.Str(string.Empty),
+            });
+        });
+
+        Define("lastwarn", (args, line, col) =>
+        {
+            ArityRange("lastwarn", args, 0, 1, line, col);
+            string previous = interpreter.LastWarning;
+            if (args.Count == 1)
+            {
+                interpreter.LastWarning = Str("lastwarn", args, 0, line, col);
+            }
+
+            return JgsValue.Str(previous);
+        });
+
+        Define("rethrow", (args, line, col) =>
+        {
+            Arity("rethrow", args, 1, line, col);
+            if (args[0].Type != JgsType.Struct)
+            {
+                throw new JgsRuntimeException(line, col, "rethrow takes the error struct a catch block was given.");
+            }
+
+            Dictionary<string, JgsValue> error = args[0].AsStruct;
+            if (!error.ContainsKey("message"))
+            {
+                throw new JgsRuntimeException(line, col, "rethrow: the error struct has no message field.");
+            }
+
+            JgsValue message = error["message"];
+            throw new JgsRuntimeException(line, col, message.Type == JgsType.String ? message.AsString : message.Display());
+        });
+
+        // warning already exists; wrapping it here is what lets lastwarn report the message without
+        // the warning builtin having to know the interpreter exists.
+        if (env.TryGet("warning", out JgsValue existing) && existing.AsCallable is { } inner)
+        {
+            Define("warning", (args, line, col) =>
+            {
+                if (args.Count > 0 && args[0].Type == JgsType.String)
+                {
+                    interpreter.LastWarning = args[0].AsString;
+                }
+
+                return inner.Call(args, line, col);
+            });
+        }
+    }
+}

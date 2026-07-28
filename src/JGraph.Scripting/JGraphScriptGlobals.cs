@@ -1,5 +1,6 @@
 using System.Globalization;
 using System.IO;
+using System.Text;
 using System.Threading;
 using JGraph.Api;
 using JGraph.Core.Model;
@@ -56,11 +57,78 @@ public sealed class JGraphScriptGlobals
     // --- Output -----------------------------------------------------------------------------------
 
     /// <summary>Writes a value followed by a newline to the output console (C# scripts).</summary>
-    public void print(object? value = null) =>
-        _context.Output.WriteLine(Format(value));
+    public void print(object? value = null)
+    {
+        string text = Format(value);
+        if (_capture is { } buffer)
+        {
+            buffer.Append(text).Append('\n');
+            return;
+        }
+
+        _context.Output.WriteLine(text);
+    }
 
     /// <summary>Writes raw text (no newline) to the output console. Backs Python's redirected stdout.</summary>
-    public void WriteOut(string text) => _context.Output.Write(text);
+    public void WriteOut(string text)
+    {
+        if (_capture is { } buffer)
+        {
+            buffer.Append(text);
+            return;
+        }
+
+        _context.Output.Write(text);
+    }
+
+    /// <summary>
+    /// Where console output goes while <c>evalc</c> is running, or null for the console itself. It is
+    /// a single buffer rather than a stack because MATLAB's evalc does not nest meaningfully: an
+    /// inner one would capture text the outer already claimed.
+    /// </summary>
+    private StringBuilder? _capture;
+
+    /// <summary>Starts capturing console output for <c>evalc</c>; returns false when already capturing.</summary>
+    internal bool BeginCapture()
+    {
+        if (_capture is not null)
+        {
+            return false;
+        }
+
+        _capture = new StringBuilder();
+        return true;
+    }
+
+    /// <summary>Stops capturing and returns everything written since <see cref="BeginCapture"/>.</summary>
+    internal string EndCapture()
+    {
+        string captured = _capture?.ToString() ?? string.Empty;
+        _capture = null;
+        return captured;
+    }
+
+    /// <summary>
+    /// The directory <c>cd</c> has moved to, or null while the run is still in the folder it started
+    /// in. Relative paths resolve against it first, which is what makes <c>cd</c> mean anything.
+    /// </summary>
+    private string? _currentDirectory;
+
+    /// <summary>The working directory as <c>pwd</c> reports it.</summary>
+    internal string CurrentDirectory =>
+        _currentDirectory ?? _runScriptDirectory ?? _context.WorkingDirectory ?? Directory.GetCurrentDirectory();
+
+    /// <summary>Moves to <paramref name="path"/>, which must already exist.</summary>
+    internal void ChangeDirectory(string path)
+    {
+        string target = Path.GetFullPath(Path.IsPathRooted(path) ? path : Path.Combine(CurrentDirectory, path));
+        if (!Directory.Exists(target))
+        {
+            throw new DirectoryNotFoundException($"There is no folder '{path}'.");
+        }
+
+        _currentDirectory = target;
+    }
 
     /// <summary>Writes raw text (no newline) to the error console. Backs Python's redirected stderr.</summary>
     public void WriteErr(string text) => _context.Output.WriteError(text);
@@ -261,10 +329,13 @@ public sealed class JGraphScriptGlobals
             return path;
         }
 
-        // A file run writes beside the script, matching where its reads come from.
-        string? baseDirectory = _runScriptDirectory is { Length: > 0 } scriptDir
-            ? scriptDir
-            : _context.WorkingDirectory;
+        // A file run writes beside the script, matching where its reads come from — unless the
+        // script has moved with cd, which then wins.
+        string? baseDirectory = _currentDirectory is { Length: > 0 } moved
+            ? moved
+            : _runScriptDirectory is { Length: > 0 } scriptDir
+                ? scriptDir
+                : _context.WorkingDirectory;
         return baseDirectory is { Length: > 0 } directory ? Path.Combine(directory, path) : path;
     }
 
@@ -348,6 +419,16 @@ public sealed class JGraphScriptGlobals
     internal string Resolve(string path)
     {
         ArgumentNullException.ThrowIfNull(path);
+
+        // Where cd has moved to comes first: a script that changed folder means files there.
+        if (!Path.IsPathRooted(path) && _currentDirectory is { Length: > 0 } moved)
+        {
+            string inside = Path.Combine(moved, path);
+            if (File.Exists(inside) || Directory.Exists(inside))
+            {
+                return inside;
+            }
+        }
 
         // A file run looks in the script's own folder first: `readcsv('data.csv')` in a script means
         // the copy sitting beside it, not one that happens to share its name at the workspace root.

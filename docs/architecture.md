@@ -646,6 +646,32 @@ Implemented through Milestone 24 — a working figure window you can edit, save,
   learned dotted file names and `-option` words (`save state.mat -ascii`), and
   `tools/matlab-checklist/` regenerates the documented-command tracker (ADR 0039,
   [matlab-foundational-coverage.md](matlab-foundational-coverage.md)).
+- **M37** The first coverage batch off the documented-builtin tracker, 109 → 185 of 515: the numeric
+  constants and limits (`Inf`, `NaN`, `i`/`j`, `newline`, `eps`, `realmax`, `realmin`, `flintmax`,
+  `intmax`, `intmin`), the type predicates and `class`/`isa`/`cast`/`logical`, the trigonometry
+  MATLAB has beyond the original six (degree forms exact at the quadrants, hyperbolics, the
+  reciprocal family), and the operator function forms (`plus` … `mldivide`, `xor`, `colon`) — which
+  are the interpreter's own operators under function names, declared by the interpreter itself so
+  there is only one definition of what `\` means. `BuiltinFunction.AutoCallsBare` lets a builtin be
+  a value on sight (`x = eps`) and a function when called (`eps(x)`). `startswith`/`endswith` were
+  renamed to MATLAB's `startsWith`/`endsWith`, and `isequal(NaN, NaN)` is false again, with
+  `isequaln` for the other reading (ADR 0040,
+  [matlab-builtin-coverage.md](matlab-builtin-coverage.md)).
+- **M38** The second coverage batch, 185 → 326 of 515 — essentially everything the value model can
+  already express. `JGraph.Numerics` gained `SpecialFunctions` (the gamma and error families, the
+  incomplete gamma and beta integrals with their inverses, polygamma) built on one Lanczos log-gamma
+  and modified-Lentz continued fractions, so `erfcx(30)` is exact where `erfc(30)` underflows to
+  zero, and `LinearAlgebra/Factorizations` (Cholesky, LDLᵀ, Hessenberg, the matrix exponential)
+  behind `chol`/`ldl`/`hess`/`expm`/`linsolve`/`rcond`/`null`/`orth`/`pinv`. Script-side: bit
+  manipulation and radix conversion, the accuracy-preserving elementary functions, the matrix shape
+  questions, full regular expressions with MATLAB's option-word output ordering, `sscanf`, the array
+  and nine `mov*` windowed statistics, `accumarray`/`arrayfun`/`bsxfun`, and a file and environment
+  layer (`cd`/`pwd`/`mkdir`/`isfile`/`fseek`/`jsonencode`/…). `eval`, `evalin`, `assignin`,
+  `exist`, `who` and the argument checks need the running scope, so the workspace owners declare them
+  through `RegisterEvalBuiltins` against a new `Interpreter.CurrentFrame`; `evalc` captures console
+  output through a buffer on `JGraphScriptGlobals`. `true(n)`/`false(n)` are logical-array
+  constructors recognized in the parser, since both words are lexer keywords. The Bessel family is
+  deliberately still absent — it needs a dedicated kernel to be worth the name (ADR 0041).
 
 The `JGraph.Demo` gallery exercises the plot types, annotations, and both APIs;
 `JGraph.Application` is the interactive figure window with data import and scripting.

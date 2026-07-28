@@ -1135,16 +1135,17 @@ internal static partial class JgsBuiltins
             return JgsValue.Str(string.Join(separator, parts.Select(static p => p.Display())));
         });
 
-        Define("startswith", (args, line, col) =>
+        // MATLAB spells these with the interior capital, and one canonical spelling beats two.
+        Define("startsWith", (args, line, col) =>
         {
-            Arity("startswith", args, 2, line, col);
-            return JgsValue.Bool(Str("startswith", args, 0, line, col).StartsWith(Str("startswith", args, 1, line, col), StringComparison.Ordinal));
+            Arity("startsWith", args, 2, line, col);
+            return JgsValue.Bool(Str("startsWith", args, 0, line, col).StartsWith(Str("startsWith", args, 1, line, col), StringComparison.Ordinal));
         });
 
-        Define("endswith", (args, line, col) =>
+        Define("endsWith", (args, line, col) =>
         {
-            Arity("endswith", args, 2, line, col);
-            return JgsValue.Bool(Str("endswith", args, 0, line, col).EndsWith(Str("endswith", args, 1, line, col), StringComparison.Ordinal));
+            Arity("endsWith", args, 2, line, col);
+            return JgsValue.Bool(Str("endsWith", args, 0, line, col).EndsWith(Str("endsWith", args, 1, line, col), StringComparison.Ordinal));
         });
 
         Define("replace", (args, line, col) =>
@@ -1517,6 +1518,14 @@ internal static partial class JgsBuiltins
         RegisterShapeBuiltins(env, random, dialect);
         RegisterLinearAlgebraBuiltins(env, dialect);
         RegisterFileIoBuiltins(env, host);
+        RegisterElementaryBuiltins(env);
+        RegisterNumericBuiltins(env);
+        RegisterSpecialFunctionBuiltins(env);
+        RegisterMatrixBuiltins(env);
+        RegisterTextBuiltins(env, dialect);
+        RegisterArrayBuiltins(env, random, dialect);
+        RegisterEnvironmentBuiltins(env, host);
+        RegisterGeometryBuiltins(env);
         if (dialect.IsMatlab)
         {
             RegisterMatlabReductions(env, dialect);
@@ -2240,6 +2249,14 @@ internal static partial class JgsBuiltins
             var result = new JgsValue[source.Length];
             for (int i = 0; i < source.Length; i++)
             {
+                if (source[i].Type == JgsType.Array)
+                {
+                    // Recurse so a matrix (an array of rows) yields a matrix-shaped mask, matching
+                    // how MapNumeric treats the same shape.
+                    result[i] = MapToBool(name, source[i], test, line, col);
+                    continue;
+                }
+
                 if (source[i].Type is not (JgsType.Number or JgsType.Bool))
                 {
                     throw new JgsRuntimeException(line, col, $"{name} expects numeric array elements, but one was a {source[i].TypeName}.");

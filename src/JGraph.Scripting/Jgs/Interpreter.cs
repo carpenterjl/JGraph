@@ -49,6 +49,7 @@ internal sealed class Interpreter
         JgsDialect? dialect = null)
     {
         _globals = globals;
+        CurrentFrame = globals;
         _cancellationToken = cancellationToken;
         _hook = hook;
         _echo = echo;
@@ -57,10 +58,84 @@ internal sealed class Interpreter
         // Packed operations run in ~4M-element chunks and poll this between chunks, so Stop
         // interrupts a 100M-element elementwise statement mid-flight instead of after it.
         _cancelCheck = () => _cancellationToken.ThrowIfCancellationRequested();
+
+        // plus/minus/mldivide/… are the operators under function names, so only something that can
+        // apply an operator may declare them. Declaring here also puts them in the globals before a
+        // workspace owner snapshots it, which keeps them out of whos and save.
+        JgsBuiltins.RegisterOperatorFunctions(globals, this);
     }
 
     /// <summary>The language variant this run speaks; every JGS/MATLAB difference reads from it.</summary>
     public JgsDialect Dialect { get; }
+
+    /// <summary>The message of the last error a <c>try</c> caught — what <c>lasterr</c> reports.</summary>
+    internal string LastError { get; set; } = string.Empty;
+
+    /// <summary>The message of the last warning raised — what <c>lastwarn</c> reports.</summary>
+    internal string LastWarning { get; set; } = string.Empty;
+
+    /// <summary>
+    /// The environment of the innermost running function, or the globals when the script itself is
+    /// running. It is the scope <c>eval</c> evaluates in and <c>exist</c>/<c>who</c> answer about,
+    /// which is why it tracks function frames rather than every block.
+    /// </summary>
+    internal JgsEnvironment CurrentFrame { get; private set; } = null!;
+
+    /// <summary>The global environment — <c>evalin('base', …)</c>'s workspace.</summary>
+    internal JgsEnvironment Globals => _globals;
+
+    /// <summary>
+    /// Parses and runs <paramref name="code"/> in <paramref name="env"/>, returning the value of a
+    /// trailing bare expression so <c>x = eval('1+1')</c> is 2. A parse failure becomes a runtime
+    /// error at the call site, because from the script's point of view that is where it happened.
+    /// </summary>
+    internal JgsValue EvaluateSource(string code, JgsEnvironment env, int line, int column)
+    {
+        IReadOnlyList<Stmt> program;
+        try
+        {
+            program = Parser.Parse(code, sourceId: "eval", Dialect);
+        }
+        catch (JgsException ex)
+        {
+            throw new JgsRuntimeException(line, column, ex.Message);
+        }
+
+        JgsValue result = JgsValue.Null;
+        for (int i = 0; i < program.Count; i++)
+        {
+            if (i == program.Count - 1 && program[i] is ExprStmt tail && tail.Expression is not AssignExpr)
+            {
+                result = Evaluate(tail.Expression, env);
+                continue;
+            }
+
+            Execute(program[i], env);
+        }
+
+        return result;
+    }
+
+    /// <summary>
+    /// Applies a binary operator to two already-evaluated values, for the builtins that are the
+    /// function forms of the operators (<c>plus</c>, <c>mldivide</c>, …). The line and column stand in
+    /// for the syntax node the operator normally reports errors against.
+    /// </summary>
+    internal JgsValue ApplyOperator(TokenType op, JgsValue left, JgsValue right, int line, int column) =>
+        ApplyBinary(op, left, right, new PreEvaluated(JgsValue.Null) { Line = line, Column = column });
+
+    /// <summary>Builds a range from already-evaluated bounds, for <c>colon(a, b)</c>.</summary>
+    internal JgsValue BuildRange(JgsValue start, JgsValue? step, JgsValue stop, int line, int column) =>
+        EvaluateRange(
+            new RangeExpr(
+                new PreEvaluated(start),
+                step is { } increment ? new PreEvaluated(increment) : null,
+                new PreEvaluated(stop))
+            {
+                Line = line,
+                Column = column,
+            },
+            _globals);
 
     /// <summary>
     /// Rebinds this interpreter for the next statement of an interactive session: a fresh cancellation
@@ -122,6 +197,11 @@ internal sealed class Interpreter
             throw new JgsRuntimeException(0, 0, "Maximum call depth exceeded (possible infinite recursion).");
         }
 
+        // eval and friends work in the scope that called them, which is this frame while the body
+        // runs and the caller's again the moment it returns.
+        JgsEnvironment callerFrame = CurrentFrame;
+        CurrentFrame = local;
+
         _hook?.EnterFunction(declaration, callLine, local);
         try
         {
@@ -138,6 +218,7 @@ internal sealed class Interpreter
         }
         finally
         {
+            CurrentFrame = callerFrame;
             _callDepth--;
             _hook?.ExitFunction();
         }
@@ -336,6 +417,16 @@ internal sealed class Interpreter
         }
     }
 
+    /// <summary>
+    /// Resolves what is being called. Identical to <see cref="Evaluate"/> except that a plain name is
+    /// taken as-is: an auto-calling constant such as <c>eps</c> must stay a function here, so
+    /// <c>eps(x)</c> reaches the builtin instead of trying to subscript the number it evaluates to.
+    /// </summary>
+    private JgsValue EvaluateCallee(Expr callee, JgsEnvironment env) =>
+        callee is VariableExpr name && LookUp(name.Name, env, out JgsValue resolved)
+            ? resolved
+            : Evaluate(callee, env);
+
     /// <summary>The callable a call expression resolved to, when it is a plain name that is in scope.</summary>
     private static JgsValue CalleeValue(CallExpr call, JgsEnvironment env) =>
         call.Callee is VariableExpr name && env.TryGet(name.Name, out JgsValue value)
@@ -491,6 +582,10 @@ internal sealed class Interpreter
         }
         catch (JgsRuntimeException error)
         {
+            // MATLAB remembers the last caught error for lasterr/lasterror, and this is where the
+            // catching happens — recording it anywhere else would miss the runtime's own errors.
+            LastError = error.Message;
+
             JgsEnvironment handler = BlockScope(env);
             if (statement.ErrorVariable is { } name)
             {
@@ -542,7 +637,7 @@ internal sealed class Interpreter
     /// </summary>
     private JgsValue[] EvaluateForOutputs(Expr call, int wanted, JgsEnvironment env)
     {
-        if (call is CallExpr invocation && Evaluate(invocation.Callee, env) is { Type: JgsType.Function } callee)
+        if (call is CallExpr invocation && EvaluateCallee(invocation.Callee, env) is { Type: JgsType.Function } callee)
         {
             var arguments = new JgsValue[invocation.Arguments.Count];
             for (int i = 0; i < arguments.Length; i++)
@@ -678,7 +773,13 @@ internal sealed class Interpreter
             case VariableExpr variable:
                 if (LookUp(variable.Name, env, out JgsValue value))
                 {
-                    return value;
+                    // MATLAB writes its constants as zero-argument functions, and a bare mention of
+                    // one means its value: x = eps is 2.2e-16. Only builtins that opt in behave this
+                    // way, and callee position resolves through EvaluateCallee, so eps(x) still calls.
+                    return value.Type == JgsType.Function
+                        && value.AsCallable is BuiltinFunction { AutoCallsBare: true } constant
+                            ? constant.Call(System.Array.Empty<JgsValue>(), variable.Line, variable.Column)
+                            : value;
                 }
 
                 throw new JgsRuntimeException(variable.Line, variable.Column, Undefined(variable.Name));
@@ -1570,7 +1671,7 @@ internal sealed class Interpreter
 
     private JgsValue EvaluateCall(CallExpr call, JgsEnvironment env)
     {
-        JgsValue callee = Evaluate(call.Callee, env);
+        JgsValue callee = EvaluateCallee(call.Callee, env);
 
         // "Calling" an array, string, or image with subscripts is indexing, identical to the bracket
         // form — a scalar lookup, a bool-mask filter, an index-array/range gather, 'end', or ':'.

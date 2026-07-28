@@ -149,6 +149,7 @@ internal sealed class JgsReplSession : IScriptSession
         _interpreter = new Interpreter(_environment, CancellationToken.None, hook: null,
             echo: line => _context.Output.WriteLine(line), _dialect);
         JgsRunner.DefineRunBuiltin(_environment, _interpreter, _globals, _dialect);
+        JgsBuiltins.RegisterEvalBuiltins(_environment, _interpreter, _globals, _dialect);
         DefineClearBuiltin(_environment);
         DefineWhosBuiltin(_environment);
         JgsWorkspaceIo.DefineSaveLoad(_environment, _globals, () => UserVariables());

@@ -75,8 +75,11 @@ public sealed class JgsScriptEngine : IScriptEngine, IJgsDebuggable, IScriptRepl
         var context = new ScriptContext(NullScriptOutput.Instance, static (_, _) => { });
         JgsEnvironment globals = JgsBuiltins.CreateGlobals(new JGraphScriptGlobals(context));
         // 'run' and 'clear' are not seeded by CreateGlobals: they need the interpreter and the session
-        // respectively, so they are declared afterwards by whoever owns those. Editors still know them.
+        // respectively, so they are declared afterwards by whoever owns those. The operator function
+        // forms come from the interpreter for the same reason. Editors still know them all.
         var names = new List<string>(globals.Locals.Keys) { "run", "clear", "whos", "save", "load" };
+        names.AddRange(JgsBuiltins.OperatorFunctionNames);
+        names.AddRange(JgsBuiltins.EvalBuiltinNames);
         names.Sort(StringComparer.Ordinal);
         return names;
     }
