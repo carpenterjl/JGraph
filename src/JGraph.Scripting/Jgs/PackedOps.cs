@@ -158,12 +158,12 @@ internal static class PackedOps
     /// </summary>
     private static JgsValue KeepShape(JgsValue result, JgsValue left, JgsValue right)
     {
-        JgsValue model = left.Type == JgsType.Array && left.IsShaped ? left
-            : right.Type == JgsType.Array && right.IsShaped ? right
+        JgsValue model = left.Type == JgsType.Array && (left.IsShaped || left.IsNd) ? left
+            : right.Type == JgsType.Array && (right.IsShaped || right.IsNd) ? right
             : JgsValue.Null;
         if (model.Type == JgsType.Array)
         {
-            result.Reshape(model.Rows, model.Cols);
+            result.TakeShapeOf(model);
         }
 
         return result;

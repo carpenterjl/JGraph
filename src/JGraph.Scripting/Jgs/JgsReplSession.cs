@@ -48,9 +48,10 @@ internal sealed class JgsReplSession : IScriptSession
         ArgumentNullException.ThrowIfNull(code);
         ArgumentNullException.ThrowIfNull(sourceId);
         ObjectDisposedException.ThrowIf(_disposed, this);
-        // The token is deliberately not passed to Task.Run: Execute maps cancellation to a failed
-        // result, and a token already cancelled at call time would otherwise fault the task instead.
-        return Task.Run(() => Execute(code, sourceId, cancellationToken), CancellationToken.None);
+        // The token is deliberately not passed to ScriptThread.Run: Execute maps cancellation to a
+        // failed result, and a token already cancelled at call time would otherwise cancel the task
+        // instead.
+        return ScriptThread.Run(() => Execute(code, sourceId, cancellationToken));
     }
 
     /// <inheritdoc />
@@ -59,7 +60,7 @@ internal sealed class JgsReplSession : IScriptSession
         ArgumentNullException.ThrowIfNull(code);
         ArgumentNullException.ThrowIfNull(sourceId);
         ObjectDisposedException.ThrowIf(_disposed, this);
-        return Task.Run(() => Execute(code, sourceId, cancellationToken, asFile: true), CancellationToken.None);
+        return ScriptThread.Run(() => Execute(code, sourceId, cancellationToken, asFile: true));
     }
 
     /// <inheritdoc />
@@ -151,89 +152,12 @@ internal sealed class JgsReplSession : IScriptSession
         JgsRunner.DefineRunBuiltin(_environment, _interpreter, _globals, _dialect);
         JgsBuiltins.RegisterEvalBuiltins(_environment, _interpreter, _globals, _dialect);
         JgsBuiltins.RegisterSessionBuiltins(_environment, _globals);
-        DefineClearBuiltin(_environment);
-        DefineWhosBuiltin(_environment);
         JgsWorkspaceIo.DefineSaveLoad(_environment, _globals, () => UserVariables());
+        JgsRunner.DefineWorkspaceBuiltins(_environment, _interpreter, _context.Output, () => _pristine);
 
         _pristine = _environment.Locals.ToDictionary(
             static p => p.Key, static p => p.Value, StringComparer.Ordinal);
     }
-
-    /// <summary>
-    /// Defines <c>clear</c>: the in-statement half of <see cref="Clear"/>. It drops the user's variables
-    /// and reverts any rebound built-in, but does not touch figures or rebuild the scope — a live
-    /// interpreter and every closure it has made hold a reference to this environment, so the scope has
-    /// to be emptied in place rather than replaced.
-    /// </summary>
-    private void DefineClearBuiltin(JgsEnvironment environment) =>
-        environment.Declare("clear", JgsValue.Function(new BuiltinFunction("clear", (args, line, column) =>
-        {
-            if (args.Count != 0)
-            {
-                throw new JgsRuntimeException(line, column, "clear takes no arguments.");
-            }
-
-            JgsRunner.DisposeBuffers(UserVariables().Select(static pair => pair.Value));
-            environment.RetainOnly(_pristine);
-            return JgsValue.Null;
-        })));
-
-    /// <summary>
-    /// Defines <c>whos</c>: an aligned name / size / class listing of the user's variables — the
-    /// console twin of the Workspace pane, and session-owned for the same reason <c>clear</c> is
-    /// (only the session knows which names the user created).
-    /// </summary>
-    private void DefineWhosBuiltin(JgsEnvironment environment) =>
-        environment.Declare("whos", JgsValue.Function(new BuiltinFunction("whos", (args, line, column) =>
-        {
-            if (args.Count != 0)
-            {
-                throw new JgsRuntimeException(line, column, "whos takes no arguments.");
-            }
-
-            List<(string Name, string Size, string Kind)> rows = UserVariables()
-                .OrderBy(static pair => pair.Name, StringComparer.Ordinal)
-                .Select(pair => (pair.Name, SizeOf(pair.Value), KindOf(pair.Value)))
-                .ToList();
-            if (rows.Count == 0)
-            {
-                return JgsValue.Null;
-            }
-
-            int nameWidth = Math.Max("Name".Length, rows.Max(static r => r.Name.Length));
-            int sizeWidth = Math.Max("Size".Length, rows.Max(static r => r.Size.Length));
-            _context.Output.WriteLine($"  {"Name".PadRight(nameWidth)}  {"Size".PadRight(sizeWidth)}  Class");
-            foreach ((string name, string size, string kind) in rows)
-            {
-                _context.Output.WriteLine($"  {name.PadRight(nameWidth)}  {size.PadRight(sizeWidth)}  {kind}");
-            }
-
-            return JgsValue.Null;
-        })));
-
-    private static string SizeOf(JgsValue value) => value.Type switch
-    {
-        JgsType.Array => $"{JgsMatrix.RowCount(value)}x{JgsMatrix.ColCount(value)}",
-        JgsType.String => $"1x{value.AsString.Length}",
-        JgsType.Cell => $"1x{value.AsCell.Length}",
-        JgsType.Table => $"{value.AsTable.RowCount}x{value.AsTable.ColumnCount}",
-        JgsType.Image => $"{value.AsImage.Height}x{value.AsImage.Width}x{value.AsImage.Channels}",
-        _ => "1x1",
-    };
-
-    private static string KindOf(JgsValue value) => value.Type switch
-    {
-        JgsType.Number or JgsType.Array => "double",
-        JgsType.Complex => "complex",
-        JgsType.Bool => "logical",
-        JgsType.String => "char",
-        JgsType.Cell => "cell",
-        JgsType.Struct => "struct",
-        JgsType.Table => "table",
-        JgsType.Image => "image",
-        JgsType.Function => "function_handle",
-        _ => value.TypeName,
-    };
 
     /// <summary>The user-created (or rebound) names and their values, the set <c>whos</c> lists.</summary>
     private IEnumerable<(string Name, JgsValue Value)> UserVariables()

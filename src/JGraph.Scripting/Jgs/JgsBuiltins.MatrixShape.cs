@@ -20,8 +20,13 @@ internal static partial class JgsBuiltins
         Define("eye", (args, line, col) =>
         {
             ArityRange("eye", args, 0, 2, line, col);
-            (int rows, int cols) = SquareShape("eye", args, line, col);
-            return BuildMatrix(rows, cols, static (r, c) => r == c ? 1.0 : 0.0);
+            int[] dims = SquareDims("eye", args, line, col);
+            if (dims.Length != 2)
+            {
+                throw new JgsRuntimeException(line, col, "eye builds 2-D identity matrices only.");
+            }
+
+            return BuildMatrix(dims[0], dims[1], static (r, c) => r == c ? 1.0 : 0.0);
         });
 
         Define("diag", (args, line, col) =>
@@ -107,9 +112,13 @@ internal static partial class JgsBuiltins
         {
             Arity("ndims", args, 1, line, col);
 
-            // Everything in MATLAB is at least 2-D; only a multi-channel image adds a third.
-            return JgsValue.Number(
-                args[0].Type == JgsType.Image && args[0].AsImage.Channels > 1 ? 3 : 2);
+            // Everything in MATLAB is at least 2-D; N-D arrays and multi-channel images say more.
+            return JgsValue.Number(args[0].Type switch
+            {
+                JgsType.Array => args[0].DimCount,
+                JgsType.Image when args[0].AsImage.Channels > 1 => 3,
+                _ => 2,
+            });
         });
 
         Define("reshape", (args, line, col) => Reshape(args, line, col));
@@ -169,20 +178,106 @@ internal static partial class JgsBuiltins
         Define("squeeze", (args, line, col) =>
         {
             Arity("squeeze", args, 1, line, col);
-            return args[0]; // nothing here has singleton dimensions beyond 2-D to remove
+            if (args[0].Type != JgsType.Array || !args[0].IsNd)
+            {
+                return args[0]; // 2-D values keep their shape, exactly as in MATLAB
+            }
+
+            // Drop every singleton dimension; storage order is untouched, so this is a flat copy
+            // with a new shape stamp.
+            int[] dims = args[0].Dims;
+            var kept = new List<int>(dims.Length);
+            foreach (int dim in dims)
+            {
+                if (dim != 1)
+                {
+                    kept.Add(dim);
+                }
+            }
+
+            while (kept.Count < 2)
+            {
+                kept.Add(1);
+            }
+
+            double[] flat = FlattenColumnMajor("squeeze", args[0], line, col);
+            return JgsMatrix.FromColumnMajorDims(flat, kept);
         });
 
         Define("permute", (args, line, col) =>
         {
             Arity("permute", args, 2, line, col);
-            double[] order = ToDoubles("permute", args[1], line, col);
-            if (order.Length != 2 || order.Min() != 1 || order.Max() != 2)
+            double[] orderRaw = ToDoubles("permute", args[1], line, col);
+            if (args[0].Type != JgsType.Array)
             {
-                throw new JgsRuntimeException(line, col,
-                    "permute supports 2-D orders only: [1 2] (unchanged) or [2 1] (transpose).");
+                return args[0]; // a scalar is 1-by-1 whichever way its dimensions are ordered
             }
 
-            return order[0] == 2 ? TransposeValue("permute", args[0], line, col) : args[0];
+            int[] source = JgsMatrix.DimsOf(args[0]);
+            if (orderRaw.Length < source.Length)
+            {
+                throw new JgsRuntimeException(line, col,
+                    $"permute needs an order covering all {source.Length} dimensions.");
+            }
+
+            var order = new int[orderRaw.Length];
+            var seen = new bool[orderRaw.Length];
+            for (int i = 0; i < order.Length; i++)
+            {
+                order[i] = (int)orderRaw[i] - 1;
+                if (order[i] < 0 || order[i] >= order.Length || seen[order[i]])
+                {
+                    throw new JgsRuntimeException(line, col, "permute's order must use each dimension exactly once.");
+                }
+
+                seen[order[i]] = true;
+            }
+
+            // Pad the source with singletons up to the order's length, then gather column-major.
+            var padded = new int[order.Length];
+            for (int i = 0; i < padded.Length; i++)
+            {
+                padded[i] = i < source.Length ? source[i] : 1;
+            }
+
+            double[] flat = FlattenColumnMajor("permute", args[0], line, col);
+            var strides = new long[padded.Length];
+            long stride = 1;
+            for (int i = 0; i < padded.Length; i++)
+            {
+                strides[i] = stride;
+                stride *= padded[i];
+            }
+
+            var resultDims = new int[order.Length];
+            for (int i = 0; i < order.Length; i++)
+            {
+                resultDims[i] = padded[order[i]];
+            }
+
+            var result = new double[flat.Length];
+            var counter = new int[order.Length]; // odometer over the RESULT dims, column-major
+            for (int i = 0; i < result.Length; i++)
+            {
+                long sourceIndex = 0;
+                for (int d = 0; d < order.Length; d++)
+                {
+                    sourceIndex += counter[d] * strides[order[d]];
+                }
+
+                result[i] = flat[sourceIndex];
+                for (int d = 0; d < order.Length; d++)
+                {
+                    if (++counter[d] < resultDims[d])
+                    {
+                        break;
+                    }
+
+                    counter[d] = 0;
+                }
+            }
+
+            return JgsMatrix.FromColumnMajorDims(result, resultDims);
         });
 
         Define("transpose", (args, line, col) =>
@@ -244,24 +339,10 @@ internal static partial class JgsBuiltins
         void Redefine(string name, Func<IReadOnlyList<JgsValue>, int, int, JgsValue> body) =>
             env.Declare(name, JgsValue.Function(new BuiltinFunction(name, body)));
 
-        void Filled(string name, IJgsCallable inner) =>
-            Redefine(name, (args, line, col) =>
-                args.Count == 1 && args[0].Type is JgsType.Number or JgsType.Bool && Count(name, args, 0, line, col) > 1
-                    ? inner.Call([args[0], args[0]], line, col)
-                    : inner.Call(args, line, col));
-
-        if (env.TryGet("zeros", out JgsValue zeros) && zeros.Type == JgsType.Function)
-        {
-            Filled("zeros", zeros.AsCallable);
-        }
-
-        if (env.TryGet("ones", out JgsValue ones) && ones.Type == JgsType.Function)
-        {
-            Filled("ones", ones.AsCallable);
-        }
-
+        Redefine("zeros", (args, line, col) => NdConstructorValue("zeros", args, line, col, static () => 0.0));
+        Redefine("ones", (args, line, col) => NdConstructorValue("ones", args, line, col, static () => 1.0));
         Redefine("rand", (args, line, col) =>
-            RandomValue("rand", args, line, col, random.NextDouble));
+            NdConstructorValue("rand", args, line, col, random.NextDouble));
 
         double NextGaussian()
         {
@@ -272,120 +353,164 @@ internal static partial class JgsBuiltins
         }
 
         Redefine("randn", (args, line, col) =>
-            RandomValue("randn", args, line, col, NextGaussian));
+            NdConstructorValue("randn", args, line, col, NextGaussian));
     }
 
-    /// <summary>MATLAB random shapes: () scalar, (n) n-by-n, (r, c) or ([r c]) a matrix.</summary>
-    private static JgsValue RandomValue(
+    /// <summary>
+    /// The MATLAB constructor shapes: () scalar, (n) n-by-n, (r, c, …) or a size vector as written —
+    /// any number of dimensions, empty ones included (<c>zeros(5, 0, 2)</c>).
+    /// </summary>
+    private static JgsValue NdConstructorValue(
         string name, IReadOnlyList<JgsValue> args, int line, int col, Func<double> next)
     {
-        ArityRange(name, args, 0, 2, line, col);
-        (int rows, int cols) = SquareShape(name, args, line, col);
-        if (rows == 1 && cols == 1)
+        int[] dims = SquareDims(name, args, line, col);
+        bool scalar = true;
+        long count = 1;
+        foreach (int dim in dims)
+        {
+            scalar &= dim == 1;
+            count *= dim;
+        }
+
+        if (scalar)
         {
             return JgsValue.Number(next());
         }
 
-        if (rows == 1)
+        if (count > int.MaxValue)
         {
-            var flat = new double[cols];
-            for (int i = 0; i < cols; i++)
-            {
-                flat[i] = next();
-            }
-
-            return Numbers(flat);
+            throw new JgsRuntimeException(line, col, $"{name}: a {string.Join("x", dims)} array is too large.");
         }
 
-        return BuildMatrix(rows, cols, (_, _) => next());
+        var flat = new double[count];
+        for (int i = 0; i < flat.Length; i++)
+        {
+            flat[i] = next();
+        }
+
+        return JgsMatrix.FromColumnMajorDims(flat, dims);
     }
 
     /// <summary>
-    /// The (rows, cols) a square-defaulting constructor was asked for: () is 1-by-1, (n) is n-by-n,
-    /// (r, c) and ([r c]) are as written, ([n]) is n-by-n.
+    /// The dimensions a square-defaulting constructor was asked for: () is 1-by-1, (n) is n-by-n,
+    /// (d1, d2, …) and size vectors are as written ([n] alone is n-by-n). Negative sizes clamp to
+    /// zero, as MATLAB's do.
     /// </summary>
-    private static (int Rows, int Cols) SquareShape(string name, IReadOnlyList<JgsValue> args, int line, int col)
+    private static int[] SquareDims(string name, IReadOnlyList<JgsValue> args, int line, int col)
     {
+        static int Dim(double raw) => raw > 0 ? (int)raw : 0;
+
         switch (args.Count)
         {
             case 0:
-                return (1, 1);
+                return [1, 1];
             case 1 when args[0].Type == JgsType.Array:
-                double[] dims = ToDoubles(name, args[0], line, col);
-                return dims.Length switch
+                double[] size = ToDoubles(name, args[0], line, col);
+                return size.Length switch
                 {
-                    1 => ((int)dims[0], (int)dims[0]),
-                    2 => ((int)dims[0], (int)dims[1]),
-                    _ => throw new JgsRuntimeException(line, col, $"{name} supports at most 2 dimensions."),
+                    0 => throw new JgsRuntimeException(line, col, $"{name}: a size vector needs at least one dimension."),
+                    1 => [Dim(size[0]), Dim(size[0])],
+                    _ => Array.ConvertAll(size, Dim),
                 };
             case 1:
-                int n = Count(name, args, 0, line, col);
-                return (n, n);
+                int n = Dim(Count(name, args, 0, line, col));
+                return [n, n];
             default:
-                return (Count(name, args, 0, line, col), Count(name, args, 1, line, col));
+                var dims = new int[args.Count];
+                for (int i = 0; i < dims.Length; i++)
+                {
+                    dims[i] = Dim(Count(name, args, i, line, col));
+                }
+
+                return dims;
         }
     }
 
-    /// <summary>reshape(A, r, c), reshape(A, [r c]), with one dimension allowed to be [].</summary>
+    /// <summary>
+    /// reshape(A, d1, d2, …), reshape(A, [d1 d2 …]) — any number of dimensions, with one dimension
+    /// allowed to be [] ("whatever makes the count work"). MATLAB reads and fills column by column,
+    /// which is exactly the storage order, so a reshape is a shape stamp on a flat copy.
+    /// </summary>
     private static JgsValue Reshape(IReadOnlyList<JgsValue> args, int line, int col)
     {
-        ArityRange("reshape", args, 2, 3, line, col);
+        ArityRange("reshape", args, 2, int.MaxValue, line, col);
         double[] flat = FlattenColumnMajor("reshape", args[0], line, col);
 
-        int rows, cols;
-        if (args.Count == 2)
+        // Collect the requested size; -1 marks the (at most one) [] wildcard.
+        var dims = new List<int>();
+        int wild = -1;
+        if (args.Count == 2 && args[1].Type == JgsType.Array && args[1].ArrayLength > 0)
         {
-            double[] dims = ToDoubles("reshape", args[1], line, col);
-            if (dims.Length != 2)
+            double[] size = ToDoubles("reshape", args[1], line, col);
+            if (size.Length < 2)
             {
-                throw new JgsRuntimeException(line, col, "reshape expects a two-element size, like reshape(A, [r c]).");
+                throw new JgsRuntimeException(line, col, "reshape expects a size with at least two dimensions.");
             }
 
-            rows = (int)dims[0];
-            cols = (int)dims[1];
+            foreach (double dim in size)
+            {
+                dims.Add((int)dim);
+            }
         }
         else
         {
-            // An empty [] dimension means "whatever makes the count work".
-            bool rowsWild = args[1].Type == JgsType.Array && args[1].ArrayLength == 0;
-            bool colsWild = args[2].Type == JgsType.Array && args[2].ArrayLength == 0;
-            if (rowsWild && colsWild)
+            for (int i = 1; i < args.Count; i++)
             {
-                throw new JgsRuntimeException(line, col, "reshape can infer at most one dimension from [].");
+                if (args[i].Type == JgsType.Array && args[i].ArrayLength == 0)
+                {
+                    if (wild >= 0)
+                    {
+                        throw new JgsRuntimeException(line, col, "reshape can infer at most one dimension from [].");
+                    }
+
+                    wild = dims.Count;
+                    dims.Add(1);
+                }
+                else
+                {
+                    dims.Add(Count("reshape", args, i, line, col));
+                }
             }
 
-            cols = colsWild ? 0 : Count("reshape", args, 2, line, col);
-            rows = rowsWild ? 0 : Count("reshape", args, 1, line, col);
-            if (rowsWild)
+            if (dims.Count < 2)
             {
-                if (cols == 0 || flat.Length % cols != 0)
-                {
-                    throw new JgsRuntimeException(line, col,
-                        $"reshape cannot split {flat.Length} element(s) into columns of {cols}.");
-                }
-
-                rows = flat.Length / cols;
-            }
-            else if (colsWild)
-            {
-                if (rows == 0 || flat.Length % rows != 0)
-                {
-                    throw new JgsRuntimeException(line, col,
-                        $"reshape cannot split {flat.Length} element(s) into rows of {rows}.");
-                }
-
-                cols = flat.Length / rows;
+                throw new JgsRuntimeException(line, col, "reshape expects a size with at least two dimensions.");
             }
         }
 
-        if (rows * cols != flat.Length)
+        if (wild >= 0)
+        {
+            long known = 1;
+            for (int i = 0; i < dims.Count; i++)
+            {
+                if (i != wild)
+                {
+                    known *= dims[i];
+                }
+            }
+
+            if (known == 0 || flat.Length % known != 0)
+            {
+                throw new JgsRuntimeException(line, col,
+                    $"reshape cannot infer the [] dimension: {flat.Length} element(s) do not divide by {known}.");
+            }
+
+            dims[wild] = (int)(flat.Length / known);
+        }
+
+        long product = 1;
+        foreach (int dim in dims)
+        {
+            product *= dim;
+        }
+
+        if (product != flat.Length)
         {
             throw new JgsRuntimeException(line, col,
-                $"reshape must keep the element count: {flat.Length} element(s) do not fill {rows}x{cols}.");
+                $"reshape must keep the element count: {flat.Length} element(s) do not fill {string.Join("x", dims)}.");
         }
 
-        // MATLAB reads and fills column by column.
-        return BuildMatrix(rows, cols, (r, c) => flat[(c * rows) + r]);
+        return product == 1 ? JgsValue.Number(flat[0]) : JgsMatrix.FromColumnMajorDims(flat, dims);
     }
 
     /// <summary>Elementwise set membership: each element of <paramref name="subject"/> against the set.</summary>
@@ -522,12 +647,16 @@ internal static partial class JgsBuiltins
                 return inner.Call(SliceArgs(FlattenColumnMajor(name, subject, line, col), extra), line, col);
             }
 
-            if (!IsMatrixValue(subject))
+            // A vector — row or column — reduces to a scalar, not a per-column array of one; a
+            // column carries its orientation through the shape-keeping reductions (cumsum, sort).
+            if (!IsMatrixValue(subject) || ReducesAsVector(subject))
             {
-                // A vector's first dimension is the singleton one, so reducing along it changes
-                // nothing; otherwise the inner builtin runs on the vector alone — a recognized dim
-                // argument must never reach it as a value to reduce.
-                if (dim == 1)
+                bool column = subject.Type == JgsType.Array
+                    && JgsMatrix.ColCount(subject) == 1 && JgsMatrix.RowCount(subject) > 1;
+
+                // Reducing along a vector's singleton dimension changes nothing; a recognized dim
+                // argument must never reach the inner builtin as a value to reduce.
+                if (dim == (column ? 2 : 1))
                 {
                     return subject;
                 }
@@ -535,7 +664,13 @@ internal static partial class JgsBuiltins
                 var direct = new JgsValue[extra.Length + 1];
                 direct[0] = subject;
                 System.Array.Copy(extra, 0, direct, 1, extra.Length);
-                return inner.Call(direct, line, col);
+                JgsValue reduced = inner.Call(direct, line, col);
+                if (keepShape && column && reduced.Type == JgsType.Array && reduced.ArrayLength > 1)
+                {
+                    reduced.Reshape(reduced.ArrayLength, 1);
+                }
+
+                return reduced;
             }
 
             double[][] rows = RowsOfMatrix(name, subject, line, col);
@@ -553,7 +688,7 @@ internal static partial class JgsBuiltins
         JgsValue[] Multi(IReadOnlyList<JgsValue> args, int wanted, int line, int col)
         {
             (JgsValue subject, int? dim, JgsValue[] extra, bool all) = Split(args, line, col);
-            if (all || !IsMatrixValue(subject))
+            if (all || !IsMatrixValue(subject) || ReducesAsVector(subject))
             {
                 if (all || dim is not null)
                 {
@@ -661,15 +796,24 @@ internal static partial class JgsBuiltins
             if (IsDimForm(args))
             {
                 int dim = Count(name, args, 2, line, col);
-                if (!IsMatrixValue(args[0]))
+                if (!IsMatrixValue(args[0]) || ReducesAsVector(args[0]))
                 {
-                    return dim == 1 ? args[0] : inner.Call([args[0]], line, col);
+                    bool column = args[0].Type == JgsType.Array
+                        && JgsMatrix.ColCount(args[0]) == 1 && JgsMatrix.RowCount(args[0]) > 1;
+                    return dim == (column ? 2 : 1) ? args[0] : inner.Call([args[0]], line, col);
                 }
 
                 double[][] rows = RowsOfMatrix(name, args[0], line, col);
                 double[][] slices = dim == 1 ? TransposeRows(rows) : rows;
                 (JgsValue[] extremes, _) = ReduceSlices(slices, dialect, line, col);
                 return AssembleSliceResults(name, extremes, byColumn: dim == 1, keepShape: false, line, col);
+            }
+
+            // A vector — either orientation — has a scalar extreme, and the inner builtin already
+            // says so; only genuine matrices reduce per column.
+            if (args.Count == 1 && ReducesAsVector(args[0]))
+            {
+                return inner.Call(args, line, col);
             }
 
             if (args.Count == 1 && IsMatrixValue(args[0]))
@@ -707,7 +851,7 @@ internal static partial class JgsBuiltins
                 ];
             }
 
-            if (args.Count == 1 && IsMatrixValue(args[0]))
+            if (args.Count == 1 && IsMatrixValue(args[0]) && !ReducesAsVector(args[0]))
             {
                 double[][] columns = TransposeRows(RowsOfMatrix(name, args[0], line, col));
                 (JgsValue[] extremes, JgsValue[] indices) = ReduceSlices(columns, dialect, line, col);
@@ -721,6 +865,14 @@ internal static partial class JgsBuiltins
 
         env.Declare(name, JgsValue.Function(new BuiltinFunction(name, Single) { MultiOutput = Multi }));
     }
+
+    /// <summary>
+    /// Whether a value reduces the way a vector does — one significant dimension, so its reduction
+    /// is a scalar rather than a per-column array of one. N-D arrays never qualify.
+    /// </summary>
+    private static bool ReducesAsVector(JgsValue value) =>
+        value.Type == JgsType.Array && !value.IsNd
+        && (JgsMatrix.RowCount(value) == 1 || JgsMatrix.ColCount(value) == 1);
 
     private static double ExtremeOf(string name, double[] values, bool takeMin, int line, int col)
     {

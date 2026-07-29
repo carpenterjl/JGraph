@@ -258,11 +258,12 @@ public class MatlabBuiltinTests : IDisposable
     [Fact]
     public void AnUnsupportedMatlabFunction_IsNamedInTheError()
     {
-        ScriptRunResult result = RunMatlab("y = ode45(@(t, x) -x, [0 1], 1);");
+        // ode45 graduated to a real builtin in M42, so the deliberately absent example is symbolic math.
+        ScriptRunResult result = RunMatlab("y = solve(x + 1);");
 
         Assert.False(result.Success);
-        Assert.Contains("'ode45' is not supported in JGraph", result.Message!, StringComparison.Ordinal);
-        Assert.Contains("differential-equation solvers", result.Message!, StringComparison.Ordinal);
+        Assert.Contains("'solve' is not supported in JGraph", result.Message!, StringComparison.Ordinal);
+        Assert.Contains("symbolic math", result.Message!, StringComparison.Ordinal);
     }
 
     [Fact]

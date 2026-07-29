@@ -60,6 +60,7 @@ internal static class JgsRunner
             JgsWorkspaceIo.DefineSaveLoad(environment, globals, () => environment.Locals
                 .Where(p => !pristine.TryGetValue(p.Key, out JgsValue? original) || !ReferenceEquals(original, p.Value))
                 .Select(static p => (p.Key, p.Value)));
+            DefineWorkspaceBuiltins(environment, interpreter, context.Output, () => pristine);
             hook?.RunStarting(interpreter, environment);
 
             pristine = environment.Locals.ToDictionary(
@@ -169,8 +170,10 @@ internal static class JgsRunner
             try
             {
                 // Stamp the included file's statements with its resolved path so breakpoints hit and
-                // step-in lands in the right editor tab.
-                interpreter.Run(Parser.Parse(source, fullPath, DialectForInclude(fullPath, dialect)));
+                // step-in lands in the right editor tab. The include runs under its own dialect, not
+                // just parses in it — a .m reached from JGS must still index 1-based and auto-declare.
+                JgsDialect included = DialectForInclude(fullPath, dialect);
+                interpreter.RunInDialect(included, () => interpreter.Run(Parser.Parse(source, fullPath, included)));
             }
             finally
             {
@@ -187,6 +190,141 @@ internal static class JgsRunner
     /// </summary>
     private static JgsDialect DialectForInclude(string path, JgsDialect caller) =>
         Path.GetExtension(path).Equals(".m", StringComparison.OrdinalIgnoreCase) ? JgsDialect.Matlab : caller;
+
+    /// <summary>
+    /// Declares the workspace-management builtins — <c>clear</c>, <c>clearvars</c>, <c>whos</c> —
+    /// shared by every workspace owner: one-shot runs, batch, the debugger, and the interactive
+    /// session. Each reads its owner's pristine snapshot through <paramref name="pristine"/>, which
+    /// the owner captures <em>after</em> all of its registrations (these included), so the closure
+    /// is deliberately late-bound.
+    /// </summary>
+    internal static void DefineWorkspaceBuiltins(
+        JgsEnvironment environment, Interpreter interpreter, IScriptOutput output,
+        Func<IReadOnlyDictionary<string, JgsValue>> pristine)
+    {
+        IEnumerable<(string Name, JgsValue Value)> UserVariables()
+        {
+            IReadOnlyDictionary<string, JgsValue> baseline = pristine();
+            foreach ((string name, JgsValue value) in environment.Locals)
+            {
+                if (!baseline.TryGetValue(name, out JgsValue? original) || !ReferenceEquals(original, value))
+                {
+                    yield return (name, value);
+                }
+            }
+        }
+
+        // 'clear' and 'clearvars' behave identically here: user variables go, built-ins stay, and a
+        // rebound built-in reverts (which is all clearvars' "variables only" restriction can mean in
+        // a workspace where the built-ins are ordinary bindings).
+        void DefineClear(string builtin)
+        {
+            environment.Declare(builtin, JgsValue.Function(new BuiltinFunction(builtin, (args, line, column) =>
+            {
+                IReadOnlyDictionary<string, JgsValue> baseline = pristine();
+                var names = new List<string>();
+                foreach (JgsValue argument in args)
+                {
+                    if (argument.Type != JgsType.String)
+                    {
+                        throw new JgsRuntimeException(line, column,
+                            $"{builtin} takes variable names, but got a {argument.TypeName}.");
+                    }
+
+                    names.Add(argument.AsString);
+                }
+
+                if (names.Count == 0 || names.Contains("all") || names.Contains("variables"))
+                {
+                    // Dropping everything at once takes every user wrapper (aliases included), so
+                    // their packed buffers can be released deterministically. MATLAB's plain clear
+                    // drops variables but not the functions a script defined — those need 'clear all'.
+                    bool everything = names.Contains("all");
+                    var dropped = new List<JgsValue>();
+                    foreach ((string cleared, JgsValue value) in UserVariables().ToList())
+                    {
+                        if (!everything && value.Type == JgsType.Function
+                            && interpreter.ScriptFunctionNames.Contains(cleared))
+                        {
+                            continue;
+                        }
+
+                        dropped.Add(value);
+                        environment.Forget(cleared, baseline);
+                    }
+
+                    DisposeBuffers(dropped);
+                    return JgsValue.Null;
+                }
+
+                foreach (string cleared in names)
+                {
+                    // No buffer disposal here: in JGS another name may still alias the wrapper.
+                    environment.Forget(cleared, baseline);
+                }
+
+                return JgsValue.Null;
+            })));
+        }
+
+        DefineClear("clear");
+        DefineClear("clearvars");
+
+        environment.Declare("whos", JgsValue.Function(new BuiltinFunction("whos", (args, line, column) =>
+        {
+            if (args.Count != 0)
+            {
+                throw new JgsRuntimeException(line, column, "whos takes no arguments.");
+            }
+
+            List<(string Name, string Size, string Kind)> rows = UserVariables()
+                .OrderBy(static pair => pair.Name, StringComparer.Ordinal)
+                .Select(pair => (pair.Name, SizeOf(pair.Value), KindOf(pair.Value)))
+                .ToList();
+            if (rows.Count == 0)
+            {
+                return JgsValue.Null;
+            }
+
+            int nameWidth = System.Math.Max("Name".Length, rows.Max(static r => r.Name.Length));
+            int sizeWidth = System.Math.Max("Size".Length, rows.Max(static r => r.Size.Length));
+            output.WriteLine($"  {"Name".PadRight(nameWidth)}  {"Size".PadRight(sizeWidth)}  Class");
+            foreach ((string name, string size, string kind) in rows)
+            {
+                output.WriteLine($"  {name.PadRight(nameWidth)}  {size.PadRight(sizeWidth)}  {kind}");
+            }
+
+            return JgsValue.Null;
+        })));
+    }
+
+    /// <summary>The size column of <c>whos</c> and the Workspace pane.</summary>
+    internal static string SizeOf(JgsValue value) => value.Type switch
+    {
+        JgsType.Array => string.Join("x", JgsMatrix.DimsOf(value)),
+        JgsType.String => $"1x{value.AsString.Length}",
+        JgsType.Cell => $"{value.Rows}x{value.Cols}",
+        JgsType.Table => $"{value.AsTable.RowCount}x{value.AsTable.ColumnCount}",
+        JgsType.Image => $"{value.AsImage.Height}x{value.AsImage.Width}x{value.AsImage.Channels}",
+        JgsType.Sparse => $"{value.AsSparse.Rows}x{value.AsSparse.Cols}",
+        _ => "1x1",
+    };
+
+    /// <summary>The class column of <c>whos</c> and the Workspace pane.</summary>
+    internal static string KindOf(JgsValue value) => value.Type switch
+    {
+        JgsType.Number or JgsType.Array => "double",
+        JgsType.Complex => "complex",
+        JgsType.Bool => "logical",
+        JgsType.String => "char",
+        JgsType.Cell => "cell",
+        JgsType.Struct => "struct",
+        JgsType.Table => "table",
+        JgsType.Image => "image",
+        JgsType.Sparse => "double (sparse)",
+        JgsType.Function => "function_handle",
+        _ => value.TypeName,
+    };
 
     /// <summary>
     /// Projects the bindings <paramref name="environment"/> holds that are not still the pristine

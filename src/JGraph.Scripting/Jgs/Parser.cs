@@ -23,10 +23,21 @@ internal sealed class Parser
         ["classdef"] = "class definitions are not supported",
         ["parfor"] = "parallel loops are not supported — use a plain 'for'",
         ["spmd"] = "parallel blocks are not supported",
-        ["persistent"] = "persistent variables are not supported",
     };
 
     private readonly bool _matlab;
+
+    /// <summary>
+    /// Whether this MATLAB file closes its functions with <c>end</c>. MATLAB's rule is all-or-nothing
+    /// per file, and it decides what a <c>function</c> in a function body means: in the end-closed
+    /// style it is a nested function (part of the body); in the classic style it terminates the body
+    /// and starts the next subfunction. Detected by a token pre-scan, because the answer is needed
+    /// while the first function is still being parsed.
+    /// </summary>
+    private readonly bool _functionEnds;
+
+    /// <summary>How many <c>function</c> bodies the parser is currently inside.</summary>
+    private int _functionDepth;
 
     /// <summary>
     /// How deep the parser is inside a MATLAB <c>[...]</c>/<c>{...}</c> literal, ignoring anything nested
@@ -41,6 +52,54 @@ internal sealed class Parser
         _sourceId = sourceId;
         Dialect = dialect;
         _matlab = dialect.IsMatlab;
+        _functionEnds = _matlab && DetectFunctionEnds(tokens);
+    }
+
+    /// <summary>
+    /// Whether any <c>function</c> in the token stream is closed by its own <c>end</c>. Walks the
+    /// tokens tracking bracket depth (an <c>end</c> inside <c>A(end)</c> or <c>A{end}</c> is an index,
+    /// not a block closer) and a stack of open block keywords; the first <c>end</c> that pops a
+    /// <c>function</c> settles the file's style. A keyword right after a dot is a struct field name
+    /// (<c>s.end</c>, <c>s.function</c>) and is ignored outright.
+    /// </summary>
+    private static bool DetectFunctionEnds(IReadOnlyList<Token> tokens)
+    {
+        var openers = new Stack<bool>(); // true = 'function', false = any other block keyword
+        int bracketDepth = 0;
+        for (int i = 0; i < tokens.Count; i++)
+        {
+            TokenType type = tokens[i].Type;
+            if (i > 0 && tokens[i - 1].Type == TokenType.Dot && IsKeywordWord(type))
+            {
+                continue;
+            }
+
+            switch (type)
+            {
+                case TokenType.LParen or TokenType.LBracket or TokenType.LBrace:
+                    bracketDepth++;
+                    break;
+                case TokenType.RParen or TokenType.RBracket or TokenType.RBrace:
+                    bracketDepth = System.Math.Max(0, bracketDepth - 1);
+                    break;
+                case TokenType.Function when bracketDepth == 0:
+                    openers.Push(true);
+                    break;
+                case TokenType.If or TokenType.For or TokenType.While or TokenType.Switch or TokenType.Try
+                    when bracketDepth == 0:
+                    openers.Push(false);
+                    break;
+                case TokenType.End when bracketDepth == 0:
+                    if (openers.Count > 0 && openers.Pop())
+                    {
+                        return true;
+                    }
+
+                    break;
+            }
+        }
+
+        return false;
     }
 
     /// <summary>The language variant being parsed.</summary>
@@ -118,7 +177,11 @@ internal sealed class Parser
     private bool IsBodyTerminator() => Current.Type switch
     {
         TokenType.End or TokenType.Else or TokenType.ElseIf => true,
-        TokenType.Case or TokenType.Otherwise or TokenType.Catch or TokenType.Function => _matlab,
+        TokenType.Case or TokenType.Otherwise or TokenType.Catch => _matlab,
+        // In the classic style a 'function' starts the next subfunction, ending this body. In the
+        // end-closed style a 'function' inside a function is a nested function — an ordinary body
+        // statement — so only a top-level one terminates.
+        TokenType.Function => _matlab && !(_functionEnds && _functionDepth > 0),
         _ => false,
     };
 
@@ -178,6 +241,9 @@ internal sealed class Parser
             TokenType.Catch => throw Error(start, "Unexpected 'catch': it only follows a 'try' body."),
             TokenType.Identifier when _matlab && UnsupportedWords.TryGetValue(start.Text, out string? why) =>
                 throw Error(start, $"'{start.Text}': {why} in JGraph."),
+            // Before command syntax, which 'persistent count' would otherwise match.
+            TokenType.Identifier when _matlab && start.Text == "persistent" && NextType == TokenType.Identifier =>
+                ParsePersistent(start),
             TokenType.LBracket when _matlab && LooksLikeMultiAssign() => ParseMultiAssign(start),
             TokenType.Identifier when _matlab && LooksLikeCommandSyntax() => ParseCommandSyntax(start),
             _ => ParseAssignmentOrExpression(start),
@@ -410,8 +476,27 @@ internal sealed class Parser
             Expect(TokenType.RParen, "')'");
         }
 
-        IReadOnlyList<Stmt> body = ParseMatlabBody();
-        Match(TokenType.End); // present in the modern style, absent in a classic function file
+        // One-line bodies spell 'function f(), body; end' — the comma is the ordinary MATLAB
+        // statement separator, consumed by the body's own separator skipping.
+        _functionDepth++;
+        IReadOnlyList<Stmt> body;
+        try
+        {
+            body = ParseMatlabBody();
+        }
+        finally
+        {
+            _functionDepth--;
+        }
+
+        if (_functionEnds)
+        {
+            Expect(TokenType.End, "'end' to close the function"); // all-or-nothing per file
+        }
+        else
+        {
+            Match(TokenType.End); // present in the modern style, absent in a classic function file
+        }
 
         return new FnStmt(name.Text, parameters, body, outputs) { Line = start.Line, Column = start.Column };
     }
@@ -475,6 +560,19 @@ internal sealed class Parser
         while (Match(TokenType.Comma) || Check(TokenType.Identifier)); // 'global a b' or 'global a, b'
 
         return new GlobalStmt(names) { Line = start.Line, Column = start.Column };
+    }
+
+    private Stmt ParsePersistent(Token start)
+    {
+        Advance(); // 'persistent'
+        var names = new List<string>();
+        do
+        {
+            names.Add(Expect(TokenType.Identifier, "a variable name").Text);
+        }
+        while (Match(TokenType.Comma) || Check(TokenType.Identifier)); // 'persistent a b' or 'persistent a, b'
+
+        return new PersistentStmt(names) { Line = start.Line, Column = start.Column };
     }
 
     /// <summary>
@@ -1149,11 +1247,16 @@ internal sealed class Parser
     private bool IsStatementEnd() =>
         Current.Type is TokenType.Newline or TokenType.Semicolon or TokenType.RBrace or TokenType.Eof
             or TokenType.End or TokenType.Else or TokenType.ElseIf
+        || (_matlab && Current.Type == TokenType.Comma)
         || IsBodyTerminator();
 
     private void SkipSeparators()
     {
-        while (Check(TokenType.Newline) || Check(TokenType.Semicolon))
+        // In MATLAB a comma separates statements the way a newline does (display, not suppress):
+        // 'if cond, stmt; end' and 'a = 1, b = 2' are everyday spellings. Commas inside literals,
+        // argument lists and multi-assigns never reach here — those parsers consume their own.
+        while (Check(TokenType.Newline) || Check(TokenType.Semicolon)
+            || (_matlab && Check(TokenType.Comma)))
         {
             Advance();
         }

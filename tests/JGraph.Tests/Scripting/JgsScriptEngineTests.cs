@@ -267,17 +267,18 @@ public class JgsScriptEngineTests : IDisposable
     [Fact]
     public async Task RunAsync_OnUndefinedVariable_ReportsRuntimeErrorWithLocation()
     {
+        // 'missing' became a real constant in M43, so the undefined name is now 'absent'.
         const string code = """
             let a = 1
-            print(missing)
+            print(absent)
             """;
 
         ScriptRunResult result = await Run(code);
 
         Assert.False(result.Success);
         ScriptDiagnostic diagnostic = Assert.Single(result.Diagnostics);
-        Assert.Equal(2, diagnostic.Line); // 'missing' is on line 2
-        Assert.Contains("missing", diagnostic.Message);
+        Assert.Equal(2, diagnostic.Line); // 'absent' is on line 2
+        Assert.Contains("absent", diagnostic.Message);
     }
 
     [Fact]

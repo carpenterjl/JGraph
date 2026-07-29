@@ -107,8 +107,29 @@ public sealed class Colormap
         Colors.Black,
         Colors.White);
 
+    /// <summary>
+    /// Google's "turbo" map (blue → cyan → green → yellow → red) — an improved rainbow that avoids
+    /// jet's artificial bright bands. Stops sampled from the published lookup table.
+    /// </summary>
+    public static Colormap Turbo { get; } = new(
+        "Turbo",
+        Color.FromRgb(0x30, 0x12, 0x3B),
+        Color.FromRgb(0x41, 0x45, 0xAB),
+        Color.FromRgb(0x46, 0x75, 0xED),
+        Color.FromRgb(0x39, 0xA2, 0xFC),
+        Color.FromRgb(0x1B, 0xCF, 0xD4),
+        Color.FromRgb(0x24, 0xEC, 0xA6),
+        Color.FromRgb(0x61, 0xFC, 0x6C),
+        Color.FromRgb(0xA4, 0xFC, 0x3C),
+        Color.FromRgb(0xD1, 0xE8, 0x35),
+        Color.FromRgb(0xF3, 0xC6, 0x3A),
+        Color.FromRgb(0xFE, 0x92, 0x2A),
+        Color.FromRgb(0xEA, 0x4F, 0x0D),
+        Color.FromRgb(0xBE, 0x21, 0x02),
+        Color.FromRgb(0x7A, 0x03, 0x03));
+
     /// <summary>The names accepted by <see cref="TryGetByName"/>, for error messages and completion.</summary>
-    public static IReadOnlyList<string> KnownNames { get; } = ["viridis", "jet", "hot", "cool", "gray"];
+    public static IReadOnlyList<string> KnownNames { get; } = ["viridis", "jet", "hot", "cool", "gray", "turbo"];
 
     /// <summary>
     /// Looks up a built-in colormap by name, case-insensitively ("gray" and "grayscale" both match
@@ -129,6 +150,7 @@ public sealed class Colormap
             "hot" => Hot,
             "cool" => Cool,
             "gray" or "grey" or "grayscale" or "greyscale" => Grayscale,
+            "turbo" => Turbo,
             _ => null,
         };
 

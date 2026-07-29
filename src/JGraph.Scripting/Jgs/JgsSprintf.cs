@@ -16,7 +16,56 @@ internal static class JgsSprintf
     {
         var sb = new StringBuilder(format.Length + 16);
         int argIndex = 0;
+        Emit(sb, format, args, ref argIndex, stopWhenExhausted: false);
 
+        if (argIndex < args.Count)
+        {
+            throw new FormatException($"sprintf got {args.Count - argIndex} more argument(s) than the format uses.");
+        }
+
+        return sb.ToString();
+    }
+
+    /// <summary>
+    /// MATLAB's reading (M43): array arguments flatten into one value stream, and the format
+    /// repeats until every value is consumed — <c>sprintf('%d,', 1:5)</c> is <c>1,2,3,4,5,</c>.
+    /// A pass that runs out of values mid-format stops there, as MATLAB does.
+    /// </summary>
+    public static string FormatMatlab(string format, IReadOnlyList<JgsValue> args)
+    {
+        var stream = new List<JgsValue>();
+        foreach (JgsValue arg in args)
+        {
+            if (arg.Type == JgsType.Array)
+            {
+                stream.AddRange(arg.BoxedElements());
+            }
+            else
+            {
+                stream.Add(arg);
+            }
+        }
+
+        var sb = new StringBuilder(format.Length + 16);
+        int at = 0;
+        do
+        {
+            int before = at;
+            Emit(sb, format, stream, ref at, stopWhenExhausted: true);
+            if (at == before)
+            {
+                break; // the format consumes nothing — one pass is the whole answer
+            }
+        }
+        while (at < stream.Count);
+
+        return sb.ToString();
+    }
+
+    /// <summary>One pass over the format, consuming values from <paramref name="argIndex"/> on.</summary>
+    private static void Emit(StringBuilder sb, string format, IReadOnlyList<JgsValue> args, ref int argIndex,
+        bool stopWhenExhausted)
+    {
         for (int i = 0; i < format.Length; i++)
         {
             char c = format[i];
@@ -77,13 +126,18 @@ internal static class JgsSprintf
             }
 
             char verb = format[i];
-            if (verb is not ('d' or 'i' or 'f' or 'e' or 'g' or 's' or 'x'))
+            if (verb is not ('d' or 'i' or 'f' or 'e' or 'g' or 's' or 'x' or 'o'))
             {
-                throw new FormatException($"sprintf does not support the specifier \"%{verb}\" (supported: %d %i %f %e %g %s %x %%).");
+                throw new FormatException($"sprintf does not support the specifier \"%{verb}\" (supported: %d %i %f %e %g %s %x %o %%).");
             }
 
             if (argIndex >= args.Count)
             {
+                if (stopWhenExhausted)
+                {
+                    return; // MATLAB stops mid-format when the values run out
+                }
+
                 throw new FormatException($"sprintf format needs more arguments: nothing left for \"{format[specStart..(i + 1)]}\".");
             }
 
@@ -104,13 +158,6 @@ internal static class JgsSprintf
 
             sb.Append(text);
         }
-
-        if (argIndex < args.Count)
-        {
-            throw new FormatException($"sprintf got {args.Count - argIndex} more argument(s) than the format uses.");
-        }
-
-        return sb.ToString();
     }
 
     private static string FormatOne(char verb, int precision, JgsValue arg)
@@ -133,6 +180,7 @@ internal static class JgsSprintf
             'e' => value.ToString("0." + new string('0', precision < 0 ? 6 : precision) + "e+00", CultureInfo.InvariantCulture),
             'g' => FormatGeneral(value, precision),
             'x' => ((long)Math.Round(value, MidpointRounding.AwayFromZero)).ToString("x", CultureInfo.InvariantCulture),
+            'o' => Convert.ToString((long)Math.Round(value, MidpointRounding.AwayFromZero), 8),
             _ => throw new FormatException($"sprintf does not support the specifier \"%{verb}\"."),
         };
     }

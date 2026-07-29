@@ -445,7 +445,37 @@ public static class JgsBuiltinCatalog
         Add("inv", "The inverse of a square matrix (errors when singular).", P("A"));
         Add("det", "The determinant of a square matrix.", P("A"));
         Add("rank", "The number of linearly independent rows/columns, by singular values above tol.", P("A"), Opt("tol"));
-        Add("trace", "The sum of a square matrix's diagonal.", P("A"));
+        Add("trace", "The sum of a square matrix's diagonal (complex-aware).", P("A"));
+        Add("hilb", "The n-by-n Hilbert matrix, H(i,j) = 1/(i+j-1) — the classic ill-conditioned test matrix.", P("n"));
+        Add("polyval", "Evaluates polynomial p (highest power first) at x, element-wise.", P("p"), P("x"));
+        Add("peaks", "The peaks demonstration surface; [X, Y, Z] = peaks(n) hands back the grids too.", Opt("n"));
+        Add("cond", "The condition number of a matrix (2-norm by default; 1, Inf, and 'fro' accepted).", P("A"), Opt("p"));
+        Add("sqrtm", "The principal matrix square root, by the Denman-Beavers iteration.", P("A"));
+        Add("logm", "The principal matrix logarithm, by inverse scaling and squaring over sqrtm.", P("A"));
+        Add("ode45", "Solves dy/dt = f(t, y): [t, y] = ode45(f, tspan, y0), Dormand-Prince with adaptive steps.", P("f"), P("tspan"), P("y0"));
+        Add("sparse", "Converts to sparse storage: sparse(A), sparse(m, n), or sparse(i, j, v, m, n).", P("A"));
+        Add("sprand", "A sparse random matrix with roughly m*n*density uniform nonzeros.", P("m"), P("n"), P("density"));
+        Add("eigs", "The k eigenvalues of largest magnitude (Arnoldi); [V, D] = eigs(A, k) adds Ritz vectors.", P("A"), P("k"));
+        Add("spy", "Plots the nonzero pattern of a matrix, row 1 at the top.", P("A"));
+
+        // --- Data types and conversions (M43) ---------------------------------------------------
+        Add("table", "Builds a table from column variables; a trailing 'VariableNames', {…} names them (default Var1…VarN).", P("var1"), Opt("var2"));
+        Add("timetable", "A table whose first variable is the row times: timetable(rowTimes, var1, …).", P("rowTimes"), P("var1"));
+        Add("seconds", "A duration of x seconds (stored as its number, so it transposes and plots).", P("x"));
+        Add("categorical", "Category labels from a cell or array (represented as the cell of names).", P("x"));
+        Add("summary", "Per-variable statistics of a table, or category counts of a categorical, as a struct.", P("x"));
+        Add("string", "The value as strings: cells and arrays convert per element.", P("x"));
+        Add("cellstr", "A string array as a cell of character rows.", P("x"));
+        Add("compose", "Formats each element through the format string, one output string per element.", P("format"), P("values"));
+        Add("missing", "The missing value: a string slot with nothing in it (displays as <missing>).");
+        Add("ismissing", "Whether each element is missing (the missing string, or NaN).", P("x"));
+        Add("tiledlayout", "Starts an r-by-c tile grid on the current figure; nexttile advances through it.", P("rows"), P("cols"));
+        Add("nexttile", "Moves to the next tile of the tiledlayout grid (or tile n).", Opt("n"));
+        Add("axis", "Aspect and limit control: axis equal/image/square/tight/off, or axis([xmin xmax ymin ymax]).", Opt("option"));
+        Add("shading", "Accepted for compatibility: surfaces are always smoothly shaded.", Opt("mode"));
+        Add("lighting", "Accepted for compatibility: surface lighting is built in.", Opt("mode"));
+        Add("camlight", "Accepted for compatibility: surface lighting is built in.", Opt("position"));
+        Add("rotate3d", "Accepted for compatibility: 3-D rotation is always interactive (drag the axes).", Opt("state"));
         Add("norm", "Vector norms (2 by default, any p, inf) and matrix norms (1, 2, inf, 'fro').", P("x"), Opt("p"));
         Add("eig", "Eigenvalues of a square matrix; [V, D] = eig(A) adds the eigenvectors.", P("A"));
         Add("lu", "LU factorization: [L, U, P] = lu(A) with P*A = L*U ([L, U] folds P into L).", P("A"));
@@ -636,6 +666,11 @@ public static class JgsBuiltinCatalog
         Add("cast", "The value converted to the named class.", P("x"), P("type"));
         Add("double", "x as a number: a logical becomes 0 or 1, and text becomes its character codes.", P("x"));
         Add("single", "x rounded to single precision (still stored as a double).", P("x"));
+        foreach (string integerClass in new[] { "int8", "int16", "int32", "int64", "uint8", "uint16", "uint32", "uint64" })
+        {
+            Add(integerClass, $"x rounded and saturated to the {integerClass} range (stored as a double); {integerClass}.empty(m, n) builds an empty.", P("x"));
+        }
+
         Add("and", "Element-wise logical AND, broadcasting a scalar across an array.", P("a"), P("b"));
         Add("or", "Element-wise logical OR, broadcasting a scalar across an array.", P("a"), P("b"));
         Add("not", "Element-wise logical NOT over an array, or of one value.", P("a"));
@@ -666,7 +701,8 @@ public static class JgsBuiltinCatalog
 
         // --- Composition and output ---------------------------------------------------------------
         Add("run", "Runs another JGS script into the current global scope (an include).", P("path"));
-        Add("clear", "Clears the workspace: drops every variable and reverts any rebound built-in. Figures stay open.");
+        Add("clear", "Clears the workspace (or just the named variables) and reverts any rebound built-in. Figures stay open.", Opt("names"));
+        Add("clearvars", "Clears the user's variables (all, or just the named ones). Built-ins are untouched.", Opt("names"));
         Add("print", "Writes the values to the console, space-separated.", P("values"));
         Add("clc", "Clears the console display. Variables and figures are untouched.");
         Add("whos", "Lists the workspace's variables with their size and class.");

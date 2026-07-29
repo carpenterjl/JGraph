@@ -189,16 +189,30 @@ internal static class JgsMatrix
     /// <summary>
     /// Gives a freshly built result the shape of the value it was computed from. Shape lives on the
     /// wrapper, so every helper that mints a new array has to carry it across or an elementwise map
-    /// silently flattens the matrix it was given.
+    /// silently flattens the matrix it was given. N-D shapes ride along too — a shape can be worth
+    /// keeping even when the first dimension is 1 (a 1-by-1-by-4, say), which is why this checks
+    /// <see cref="JgsValue.IsNd"/> and not just <see cref="JgsValue.IsShaped"/>.
     /// </summary>
     public static JgsValue Like(JgsValue source, JgsValue result)
     {
-        if (source.IsShaped && source.ArrayLength == result.ArrayLength)
+        if ((source.IsShaped || source.IsNd) && source.ArrayLength == result.ArrayLength)
         {
-            result.Reshape(source.Rows, source.Cols);
+            result.TakeShapeOf(source);
         }
 
         return result;
+    }
+
+    /// <summary>The size of any array value per dimension; the pre-shape nested form reads as 2-D.</summary>
+    public static int[] DimsOf(JgsValue value) =>
+        IsNested(value) ? [value.ArrayLength, value.ElementAt(0).ArrayLength] : value.Dims;
+
+    /// <summary>Adopts an already-column-major buffer as an array with the given dimensions.</summary>
+    public static JgsValue FromColumnMajorDims(double[] flat, IReadOnlyList<int> dims)
+    {
+        JgsValue value = Adopt(flat);
+        value.ReshapeDims(dims);
+        return value;
     }
 
     /// <summary>Packs freshly built column-major elements if they are homogeneous, then shapes them.</summary>

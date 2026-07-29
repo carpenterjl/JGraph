@@ -44,7 +44,8 @@ public class MatlabLinearAlgebraBuiltinTests : IDisposable
     public Task Backslash_SolvesSquareSystems() => RunAsserting("""
         A = [1 2; 3 4];
         x = A \ [5; 11];
-        assert(norm(x - [1 2]) < 1e-9);
+        % x is a column, so the reference must be one too — a row would outer-expand (M41).
+        assert(norm(x - [1; 2]) < 1e-9);
         assert(norm(A * x - [5; 11]) < 1e-9);
         """);
 
@@ -52,7 +53,7 @@ public class MatlabLinearAlgebraBuiltinTests : IDisposable
     public Task Backslash_TallSystem_IsLeastSquares() => RunAsserting("""
         A = [1 1; 1 2; 1 3];
         x = A \ [6; 0; 0];
-        assert(norm(x - [8 -3]) < 1e-9);
+        assert(norm(x - [8; -3]) < 1e-9);
         """);
 
     [Fact]

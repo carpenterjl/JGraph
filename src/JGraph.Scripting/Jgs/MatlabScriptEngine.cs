@@ -19,7 +19,7 @@ public sealed class MatlabScriptEngine : IScriptEngine, IJgsDebuggable, IScriptR
     {
         ArgumentNullException.ThrowIfNull(code);
         ArgumentNullException.ThrowIfNull(context);
-        return Task.Run(
+        return ScriptThread.Run(
             () => JgsRunner.Run(code, context, cancellationToken, sourceId: "", hook: null, JgsDialect.Matlab),
             cancellationToken);
     }

@@ -9,6 +9,7 @@ using JGraph.Signal;
 using JGraph.Signal.Rf;
 using JGraph.Core.Model;
 using JGraph.Data;
+using JGraph.Objects;
 
 namespace JGraph.Scripting.Jgs;
 
@@ -62,10 +63,7 @@ internal static partial class JgsBuiltins
         Math1("asin", System.Math.Asin);
         Math1("acos", System.Math.Acos);
         Math1("atan", System.Math.Atan);
-        Math1("exp", System.Math.Exp);
-        Math1("log", System.Math.Log);
         Math1("log10", System.Math.Log10);
-        Math1("sqrt", System.Math.Sqrt);
         Math1("floor", System.Math.Floor);
         Math1("ceil", System.Math.Ceiling);
         Math1("round", x => System.Math.Round(x, MidpointRounding.AwayFromZero));
@@ -81,6 +79,21 @@ internal static partial class JgsBuiltins
         MathC("imag", static _ => 0, static c => JgsValue.Number(c.Imaginary));
         MathC("angle", static x => x >= 0 ? 0 : System.Math.PI, static c => JgsValue.Number(c.Phase));
         MathC("conj", static x => x, static c => JgsValue.ComplexNum(Complex.Conjugate(c)));
+
+        // Complex-producing elementwise functions (M42): real input stays on the flat real fast
+        // path as long as the answer is real; sqrt(-4) and log(-1) hand back MATLAB's complex
+        // results, and complex input takes the complex definition throughout.
+        void MathX(string name, Func<double, double> fastReal, Func<double, bool> staysReal,
+            Func<Complex, JgsValue> complexResult) =>
+            Define(name, (args, line, col) =>
+            {
+                Arity(name, args, 1, line, col);
+                return MapComplexProducing(name, args[0], fastReal, staysReal, complexResult, line, col);
+            });
+
+        MathX("exp", System.Math.Exp, static _ => true, static c => JgsValue.ComplexNum(Complex.Exp(c)));
+        MathX("log", System.Math.Log, static x => x >= 0, static c => JgsValue.ComplexNum(Complex.Log(c)));
+        MathX("sqrt", System.Math.Sqrt, static x => x >= 0, static c => JgsValue.ComplexNum(Complex.Sqrt(c)));
 
         Define("pow", (args, line, col) =>
         {
@@ -340,15 +353,18 @@ internal static partial class JgsBuiltins
                 .AddSeconds(second)
                 .ToOADate() + matlabDatenumOffset;
 
-        Define("tic", (args, line, col) =>
+        // Both auto-call on their bare names — 't0 = tic' stores a handle and 't = toc' stores the
+        // elapsed seconds, not the functions. A bare 'tic' statement is silent, like MATLAB's.
+        env.Declare("tic", JgsValue.Function(new BuiltinFunction("tic", (args, line, col) =>
         {
             Arity("tic", args, 0, line, col);
             double handle = StopwatchTicksNow();
             defaultTicHandle = handle;
             return JgsValue.Number(handle);
-        });
+        })
+        { AutoCallsBare = true, BindsAnsAsStatement = false }));
 
-        Define("toc", (args, line, col) =>
+        env.Declare("toc", JgsValue.Function(new BuiltinFunction("toc", (args, line, col) =>
         {
             ArityRange("toc", args, 0, 1, line, col);
             double startTicks;
@@ -366,7 +382,8 @@ internal static partial class JgsBuiltins
             }
 
             return JgsValue.Number((StopwatchTicksNow() - startTicks) / stopwatchFrequency);
-        });
+        })
+        { AutoCallsBare = true }));
 
         Define("clock", (args, line, col) =>
         {
@@ -477,27 +494,28 @@ internal static partial class JgsBuiltins
         {
             ArityRange("size", args, 1, 2, line, col);
 
-            // MATLAB's third dimension: images carry channels, everything else is a plain 2-D value.
-            int channels = args[0].Type == JgsType.Image ? args[0].AsImage.Channels : 1;
-            (int rows, int cols) = args[0].Type switch
+            // The true size per dimension: N-D arrays report all of theirs, images report
+            // height-width-channels, everything else is a plain 2-D value.
+            int[] dims = args[0].Type switch
             {
-                JgsType.Image => (args[0].AsImage.Height, args[0].AsImage.Width),
-                JgsType.Array => (JgsMatrix.RowCount(args[0]), JgsMatrix.ColCount(args[0])),
-                JgsType.String => (1, args[0].AsString.Length),
-                JgsType.Cell => (1, args[0].AsCell.Length),
-                _ => (1, 1),
+                JgsType.Image when args[0].AsImage.Channels > 1 =>
+                    [args[0].AsImage.Height, args[0].AsImage.Width, args[0].AsImage.Channels],
+                JgsType.Image => [args[0].AsImage.Height, args[0].AsImage.Width],
+                JgsType.Array => JgsMatrix.DimsOf(args[0]),
+                JgsType.String => [1, args[0].AsString.Length],
+                JgsType.Cell => [args[0].Rows, args[0].Cols],
+                JgsType.Sparse => [args[0].AsSparse.Rows, args[0].AsSparse.Cols],
+                _ => [1, 1],
             };
 
             if (args.Count == 2)
             {
                 int dim = Count("size", args, 1, line, col);
                 // Dimensions past the value's rank are 1, exactly as in MATLAB.
-                return JgsValue.Number(dim switch { 1 => rows, 2 => cols, 3 => channels, _ => 1 });
+                return JgsValue.Number(dim >= 1 && dim <= dims.Length ? dims[dim - 1] : 1);
             }
 
-            return channels == 1
-                ? JgsValue.Array([JgsValue.Number(rows), JgsValue.Number(cols)])
-                : JgsValue.Array([JgsValue.Number(rows), JgsValue.Number(cols), JgsValue.Number(channels)]);
+            return JgsValue.Array(Array.ConvertAll(dims, static d => JgsValue.Number(d)));
         });
 
         Define("isempty", (args, line, col) =>
@@ -511,6 +529,7 @@ internal static partial class JgsBuiltins
                 JgsType.Struct => args[0].AsStruct.Count == 0,
                 JgsType.String => args[0].AsString.Length == 0,
                 JgsType.Table => args[0].AsTable.RowCount == 0,
+                JgsType.Sparse => args[0].AsSparse.Rows == 0 || args[0].AsSparse.Cols == 0,
                 _ => false,
             });
         });
@@ -757,7 +776,11 @@ internal static partial class JgsBuiltins
             Arity("length", args, 1, line, col);
             return args[0].Type switch
             {
-                JgsType.Array => JgsValue.Number(args[0].ArrayLength),
+                // MATLAB: the largest dimension (zero for anything empty), not the element count.
+                // The pre-shape nested form keeps its JGS reading — a list's length is its item count.
+                JgsType.Array when args[0].ArrayLength == 0 => JgsValue.Number(0),
+                JgsType.Array when JgsMatrix.IsNested(args[0]) => JgsValue.Number(args[0].ArrayLength),
+                JgsType.Array => JgsValue.Number(JgsMatrix.DimsOf(args[0]).Max()),
                 JgsType.Cell => JgsValue.Number(args[0].AsCell.Length),
                 JgsType.String => JgsValue.Number(args[0].AsString.Length),
                 _ => throw new JgsRuntimeException(line, col, $"length expects an array, cell, or string, but got a {args[0].TypeName}."),
@@ -801,6 +824,7 @@ internal static partial class JgsBuiltins
                 JgsType.Cell => JgsValue.Number(args[0].AsCell.Length),
                 JgsType.String => JgsValue.Number(args[0].AsString.Length),
                 JgsType.Image => JgsValue.Number(args[0].AsImage.SampleCount),
+                JgsType.Sparse => JgsValue.Number((double)args[0].AsSparse.Rows * args[0].AsSparse.Cols),
                 _ => throw new JgsRuntimeException(line, col, $"numel expects an array, cell, or string, but got a {args[0].TypeName}."),
             };
         });
@@ -994,7 +1018,8 @@ internal static partial class JgsBuiltins
         Define("isnan", (args, line, col) =>
         {
             Arity("isnan", args, 1, line, col);
-            return MapToBool("isnan", args[0], static x => double.IsNaN(x), line, col);
+            return MapToBool("isnan", args[0], static x => double.IsNaN(x), line, col,
+                static c => double.IsNaN(c.Real) || double.IsNaN(c.Imaginary));
         });
 
         Define("isequal", (args, line, col) =>
@@ -1034,7 +1059,10 @@ internal static partial class JgsBuiltins
             string format = Str("sprintf", args, 0, line, col);
             try
             {
-                return JgsValue.Str(JgsSprintf.Format(format, args.Skip(1).ToArray()));
+                // MATLAB flattens array arguments and cycles the format over them; JGS stays strict.
+                return JgsValue.Str(dialect!.IsMatlab
+                    ? JgsSprintf.FormatMatlab(format, args.Skip(1).ToArray())
+                    : JgsSprintf.Format(format, args.Skip(1).ToArray()));
             }
             catch (FormatException ex)
             {
@@ -1067,8 +1095,11 @@ internal static partial class JgsBuiltins
             try
             {
                 // MATLAB fprintf writes exactly what the format says — the newline comes from the
-                // format's own \n, so this goes through the raw (no-newline) output seam.
-                text = JgsSprintf.Format(format, args.Skip(start + 1).ToArray());
+                // format's own \n, so this goes through the raw (no-newline) output seam. Array
+                // arguments flatten and the format cycles under MATLAB, exactly like sprintf.
+                text = dialect!.IsMatlab
+                    ? JgsSprintf.FormatMatlab(format, args.Skip(start + 1).ToArray())
+                    : JgsSprintf.Format(format, args.Skip(start + 1).ToArray());
             }
             catch (FormatException ex)
             {
@@ -1110,28 +1141,66 @@ internal static partial class JgsBuiltins
 
         Define("split", (args, line, col) =>
         {
-            Arity("split", args, 2, line, col);
-            string separator = Str("split", args, 1, line, col);
-            if (separator.Length == 0)
+            ArityRange("split", args, 1, 2, line, col);
+            string[] parts;
+            if (args.Count == 1)
             {
-                throw new JgsRuntimeException(line, col, "split separator must not be empty.");
+                // MATLAB's default: split on runs of whitespace.
+                parts = Str("split", args, 0, line, col).Split((char[]?)null, StringSplitOptions.RemoveEmptyEntries);
+            }
+            else
+            {
+                string separator = Str("split", args, 1, line, col);
+                if (separator.Length == 0)
+                {
+                    throw new JgsRuntimeException(line, col, "split separator must not be empty.");
+                }
+
+                parts = Str("split", args, 0, line, col).Split(separator, StringSplitOptions.None);
             }
 
-            string[] parts = Str("split", args, 0, line, col).Split(separator, StringSplitOptions.None);
             var result = new JgsValue[parts.Length];
             for (int i = 0; i < parts.Length; i++)
             {
                 result[i] = JgsValue.Str(parts[i]);
             }
 
-            return JgsValue.Array(result);
+            JgsValue column = JgsValue.Array(result);
+            if (result.Length > 1 && dialect!.IsMatlab)
+            {
+                column.Reshape(result.Length, 1); // split answers are columns in MATLAB; JGS keeps the flat list
+            }
+
+            return column;
         });
 
         Define("join", (args, line, col) =>
         {
-            Arity("join", args, 2, line, col);
+            ArityRange("join", args, 1, 2, line, col);
+            string separator = args.Count == 2 ? Str("join", args, 1, line, col) : " ";
+
+            // A shaped string array joins along its rows (MATLAB's dim 2): one string per row.
+            JgsValue input = args[0];
+            if (input.Type == JgsType.Array && input.Rows > 1 && input.Cols > 1)
+            {
+                var rows = new JgsValue[input.Rows];
+                for (int r = 0; r < input.Rows; r++)
+                {
+                    var cells = new string[input.Cols];
+                    for (int c = 0; c < input.Cols; c++)
+                    {
+                        cells[c] = input.ElementAt(r + (c * input.Rows)).Display();
+                    }
+
+                    rows[r] = JgsValue.Str(string.Join(separator, cells));
+                }
+
+                JgsValue column = JgsValue.Array(rows);
+                column.Reshape(rows.Length, 1);
+                return column;
+            }
+
             JgsValue[] parts = Arr("join", args, 0, line, col);
-            string separator = Str("join", args, 1, line, col);
             return JgsValue.Str(string.Join(separator, parts.Select(static p => p.Display())));
         });
 
@@ -1269,6 +1338,76 @@ internal static partial class JgsBuiltins
             return JgsValue.Null;
         });
 
+        // --- Tiled layouts (M43): tiledlayout(r, c) + nexttile ride on the subplot grid ------
+        int tiledRows = 1, tiledCols = 1, tiledCursor = 0;
+        DefineSilent("tiledlayout", (args, line, col) =>
+        {
+            Arity("tiledlayout", args, 2, line, col);
+            tiledRows = Count("tiledlayout", args, 0, line, col);
+            tiledCols = Count("tiledlayout", args, 1, line, col);
+            tiledCursor = 0;
+            return JgsValue.Null;
+        });
+        DefineSilent("nexttile", (args, line, col) =>
+        {
+            ArityRange("nexttile", args, 0, 1, line, col);
+            tiledCursor = args.Count == 1
+                ? Count("nexttile", args, 0, line, col)
+                : (tiledCursor % (tiledRows * tiledCols)) + 1;
+            JG.Subplot(tiledRows, tiledCols, tiledCursor);
+            return JgsValue.Null;
+        });
+
+        // axis: the aspect/limits words plus the [xmin xmax ymin ymax] vector form.
+        Define("axis", (args, line, col) =>
+        {
+            ArityRange("axis", args, 0, 1, line, col);
+            if (args.Count == 1 && args[0].Type == JgsType.String)
+            {
+                switch (args[0].AsString)
+                {
+                    case "image" or "equal" or "square":
+                        JG.Gca().EqualAspect = true;
+                        break;
+                    case "normal":
+                        JG.Gca().EqualAspect = false;
+                        break;
+                    case "tight" or "auto" or "on" or "off" or "ij" or "xy" or "manual" or "padded":
+                        break; // accepted; auto limits and visible frames are already the defaults
+                    default:
+                        throw new JgsRuntimeException(line, col, $"axis: unknown option '{args[0].AsString}'.");
+                }
+
+                return JgsValue.Null;
+            }
+
+            if (args.Count == 1)
+            {
+                double[] limits = ToDoubles("axis", args[0], line, col);
+                if (limits.Length != 4)
+                {
+                    throw new JgsRuntimeException(line, col, "axis expects [xmin xmax ymin ymax].");
+                }
+
+                JG.XLim(limits[0], limits[1]);
+                JG.YLim(limits[2], limits[3]);
+            }
+
+            return JgsValue.Null;
+        });
+
+        // Appearance verbs accepted for compatibility: JGraph's surfaces are always smoothly
+        // shaded and lit, and rotation is already interactive, so these change nothing visible.
+        foreach (string verb in new[] { "shading", "lighting", "camlight", "rotate3d" })
+        {
+            string self = verb;
+            DefineSilent(verb, (args, line, col) =>
+            {
+                ArityRange(self, args, 0, 1, line, col);
+                return JgsValue.Null;
+            });
+        }
+
         Define("close", (args, line, col) =>
         {
             ArityRange("close", args, 0, 1, line, col);
@@ -1354,9 +1493,9 @@ internal static partial class JgsBuiltins
         // --- 3D surfaces, contours, and images -----------------------------------------------
         Define("meshgrid", (args, line, col) =>
         {
-            Arity("meshgrid", args, 2, line, col);
+            ArityRange("meshgrid", args, 1, 2, line, col);
             double[] x = DoubleArray("meshgrid", args, 0, line, col);
-            double[] y = DoubleArray("meshgrid", args, 1, line, col);
+            double[] y = args.Count == 2 ? DoubleArray("meshgrid", args, 1, line, col) : x; // meshgrid(x) = meshgrid(x, x)
 
             return JgsValue.Array([
                 JgsMatrix.Build(y.Length, x.Length, (r, c) => x[c]),
@@ -1504,6 +1643,9 @@ internal static partial class JgsBuiltins
         // semantics wrap builtins the two calls above declared — order matters here.
         RegisterShapeBuiltins(env, random, dialect);
         RegisterLinearAlgebraBuiltins(env, dialect);
+        RegisterMatrixFunctionBuiltins(env);
+        RegisterSparseBuiltins(env);
+        RegisterDataTypeBuiltins(env);
         RegisterFileIoBuiltins(env, host);
         RegisterElementaryBuiltins(env);
         RegisterNumericBuiltins(env);
@@ -1558,8 +1700,17 @@ internal static partial class JgsBuiltins
 
     // --- Plotting dispatch -----------------------------------------------------------------------
 
+    /// <summary>Option names <c>plot</c> recognizes as trailing name-value pairs (M42).</summary>
+    private static readonly HashSet<string> PlotOptionNames = new(StringComparer.OrdinalIgnoreCase)
+    {
+        "LineWidth", "Color", "LineStyle", "Marker", "MarkerSize", "DisplayName",
+    };
+
     private static JgsValue Plot(IReadOnlyList<JgsValue> args, int line, int col)
     {
+        (args, List<(string Name, JgsValue Value)> options) = SplitPlotOptions(args, line, col);
+        var created = new List<LinePlot>();
+
         if (args.Count > 0 && args[0].Type == JgsType.Table)
         {
             ArityRange("plot", args, 3, 4, line, col);
@@ -1567,65 +1718,53 @@ internal static partial class JgsBuiltins
             string xColumn = Str("plot", args, 1, line, col);
             string yColumn = Str("plot", args, 2, line, col);
             string? spec = args.Count == 4 ? Str("plot", args, 3, line, col) : null;
-            JG.Plot(table, xColumn, yColumn, spec);
+            created.Add(JG.Plot(table, xColumn, yColumn, spec));
+            ApplyPlotOptions(created, options, line, col);
             return JgsValue.Null;
-        }
-
-        switch (args.Count)
-        {
-            case 1:
-                JG.Plot(DoubleArray("plot", args, 0, line, col));
-                return JgsValue.Null;
-            case 2 when args[1].Type == JgsType.String:
-                JG.Plot(DoubleArray("plot", args, 0, line, col), Str("plot", args, 1, line, col));
-                return JgsValue.Null;
-            case 2:
-                JG.Plot(DoubleArray("plot", args, 0, line, col), DoubleArray("plot", args, 1, line, col));
-                return JgsValue.Null;
-            case 3:
-                JG.Plot(DoubleArray("plot", args, 0, line, col), DoubleArray("plot", args, 1, line, col), Str("plot", args, 2, line, col));
-                return JgsValue.Null;
-            default:
-                return PlotMultipleSeries(args, line, col);
-        }
-    }
-
-    /// <summary>
-    /// MATLAB multi-series plot: repeated (x, y[, spec]) groups — plot(t, a, 'b', t, b, 'r--').
-    /// Later groups are drawn with hold forced on; the caller's hold state is restored afterwards.
-    /// </summary>
-    private static JgsValue PlotMultipleSeries(IReadOnlyList<JgsValue> args, int line, int col)
-    {
-        var groups = new List<(double[] X, double[] Y, string? Spec)>();
-        int i = 0;
-        while (i < args.Count)
-        {
-            if (i + 1 >= args.Count || args[i].Type != JgsType.Array || args[i + 1].Type != JgsType.Array)
-            {
-                throw new JgsRuntimeException(line, col,
-                    "plot expects (y), (x, y[, spec]) groups, or (table, xColumn, yColumn[, spec]).");
-            }
-
-            double[] x = DoubleArray("plot", args, i, line, col);
-            double[] y = DoubleArray("plot", args, i + 1, line, col);
-            string? spec = null;
-            i += 2;
-            if (i < args.Count && args[i].Type == JgsType.String)
-            {
-                spec = Str("plot", args, i, line, col);
-                i++;
-            }
-
-            groups.Add((x, y, spec));
         }
 
         bool wasHolding = JG.IsHolding;
         try
         {
-            foreach ((double[] x, double[] y, string? spec) in groups)
+            switch (args.Count)
             {
-                JG.Plot(x, y, spec);
-                JG.Hold(true);
+                case 1:
+                    PlotColumns(created, x: null, args[0], spec: null, line, col);
+                    break;
+                case 2 when args[1].Type == JgsType.String:
+                    PlotColumns(created, x: null, args[0], Str("plot", args, 1, line, col), line, col);
+                    break;
+                case 2:
+                    PlotColumns(created, args[0], args[1], spec: null, line, col);
+                    break;
+                case 3:
+                    PlotColumns(created, args[0], args[1], Str("plot", args, 2, line, col), line, col);
+                    break;
+                default:
+                    // Repeated (x, y[, spec]) groups — plot(t, a, 'b', t, b, 'r--').
+                    int i = 0;
+                    while (i < args.Count)
+                    {
+                        if (i + 1 >= args.Count || args[i].Type != JgsType.Array || args[i + 1].Type != JgsType.Array)
+                        {
+                            throw new JgsRuntimeException(line, col,
+                                "plot expects (y), (x, y[, spec]) groups, or (table, xColumn, yColumn[, spec]).");
+                        }
+
+                        JgsValue x = args[i];
+                        JgsValue y = args[i + 1];
+                        string? groupSpec = null;
+                        i += 2;
+                        if (i < args.Count && args[i].Type == JgsType.String)
+                        {
+                            groupSpec = Str("plot", args, i, line, col);
+                            i++;
+                        }
+
+                        PlotColumns(created, x, y, groupSpec, line, col);
+                    }
+
+                    break;
             }
         }
         finally
@@ -1633,7 +1772,186 @@ internal static partial class JgsBuiltins
             JG.Hold(wasHolding);
         }
 
+        ApplyPlotOptions(created, options, line, col);
         return JgsValue.Null;
+    }
+
+    /// <summary>
+    /// One plot group. A matrix <paramref name="y"/> plots each column as its own series (MATLAB's
+    /// rule — <c>plot(t, Y)</c> from ode45 draws every state), holding between series so they share
+    /// the axes; a vector is one series.
+    /// </summary>
+    private static void PlotColumns(
+        List<LinePlot> created, JgsValue? x, JgsValue y, string? spec, int line, int col)
+    {
+        double[]? xs = x is null ? null : DoubleArray("plot", [x], 0, line, col);
+
+        bool matrixY = y.Type == JgsType.Array
+            && JgsMatrix.RowCount(y) > 1 && JgsMatrix.ColCount(y) > 1;
+        if (matrixY && (xs is null || xs.Length == JgsMatrix.RowCount(y)))
+        {
+            int rows = JgsMatrix.RowCount(y);
+            int columns = JgsMatrix.ColCount(y);
+            for (int c = 0; c < columns; c++)
+            {
+                var series = new double[rows];
+                for (int r = 0; r < rows; r++)
+                {
+                    JgsValue element = JgsMatrix.At(y, r, c);
+                    if (element.Type is not (JgsType.Number or JgsType.Bool))
+                    {
+                        throw new JgsRuntimeException(line, col,
+                            $"plot needs numbers, but element ({r}, {c}) was a {element.TypeName}.");
+                    }
+
+                    series[r] = element.AsNumber;
+                }
+
+                created.Add(xs is null ? JG.Plot(series, spec) : JG.Plot(xs, series, spec));
+                JG.Hold(true);
+            }
+
+            return;
+        }
+
+        double[] ys = DoubleArray("plot", [y], 0, line, col);
+        created.Add(xs is null ? JG.Plot(ys, spec) : JG.Plot(xs, ys, spec));
+        JG.Hold(true);
+    }
+
+    /// <summary>
+    /// Splits trailing name-value option pairs off a plot argument list. Options begin at the first
+    /// string matching a recognized option name; everything before it is data and spec strings.
+    /// </summary>
+    private static (IReadOnlyList<JgsValue> Data, List<(string Name, JgsValue Value)> Options) SplitPlotOptions(
+        IReadOnlyList<JgsValue> args, int line, int col)
+    {
+        int start = args.Count;
+        for (int i = 0; i + 1 < args.Count; i++)
+        {
+            if (args[i].Type == JgsType.String && PlotOptionNames.Contains(args[i].AsString))
+            {
+                start = i;
+                break;
+            }
+        }
+
+        if (start == args.Count)
+        {
+            return (args, []);
+        }
+
+        var data = new List<JgsValue>();
+        for (int i = 0; i < start; i++)
+        {
+            data.Add(args[i]);
+        }
+
+        var options = new List<(string, JgsValue)>();
+        for (int i = start; i < args.Count; i += 2)
+        {
+            if (args[i].Type != JgsType.String || i + 1 >= args.Count)
+            {
+                throw new JgsRuntimeException(line, col, "plot options come in name-value pairs, like plot(x, y, 'LineWidth', 2).");
+            }
+
+            options.Add((args[i].AsString, args[i + 1]));
+        }
+
+        return (data, options);
+    }
+
+    /// <summary>
+    /// Applies recognized name-value options to every series the call created. Color, line style
+    /// and marker values ride through <see cref="LineSpec.Parse"/> so option spellings and spec
+    /// characters cannot drift apart; unrecognized option names were filtered out before this.
+    /// </summary>
+    private static void ApplyPlotOptions(
+        List<LinePlot> created, List<(string Name, JgsValue Value)> options, int line, int col)
+    {
+        foreach ((string name, JgsValue value) in options)
+        {
+            foreach (LinePlot plot in created)
+            {
+                switch (name.ToLowerInvariant())
+                {
+                    case "linewidth":
+                        plot.LineWidth = NumOf("plot: LineWidth", value, line, col);
+                        break;
+                    case "markersize":
+                        plot.MarkerSize = NumOf("plot: MarkerSize", value, line, col);
+                        break;
+                    case "displayname":
+                        plot.Name = StrOf("plot: DisplayName", value, line, col);
+                        break;
+                    case "color":
+                        plot.Color = OptionColor(value, line, col);
+                        break;
+                    case "linestyle":
+                        string style = StrOf("plot: LineStyle", value, line, col);
+                        plot.DashStyle = style.Equals("none", StringComparison.OrdinalIgnoreCase)
+                            ? plot.DashStyle
+                            : LineSpec.Parse(style).Dash ?? plot.DashStyle;
+                        break;
+                    case "marker":
+                        string marker = StrOf("plot: Marker", value, line, col);
+                        plot.Marker = marker.Equals("none", StringComparison.OrdinalIgnoreCase)
+                            ? JGraph.Core.Drawing.MarkerType.None
+                            : LineSpec.Parse(marker).Marker ?? plot.Marker;
+                        break;
+                }
+            }
+        }
+    }
+
+    /// <summary>A plot option color: a spec letter, a common color name, or an [r g b] triplet in [0, 1].</summary>
+    private static JGraph.Core.Drawing.Color OptionColor(JgsValue value, int line, int col)
+    {
+        if (value.Type == JgsType.String)
+        {
+            string text = value.AsString;
+            string letter = text.ToLowerInvariant() switch
+            {
+                "red" => "r", "green" => "g", "blue" => "b", "cyan" => "c",
+                "magenta" => "m", "yellow" => "y", "black" => "k", "white" => "w",
+                _ => text,
+            };
+            if (LineSpec.Parse(letter).Color is { } named)
+            {
+                return named;
+            }
+
+            throw new JgsRuntimeException(line, col, $"plot: unknown color '{text}'.");
+        }
+
+        double[] triplet = ToDoubles("plot: Color", value, line, col);
+        if (triplet.Length != 3)
+        {
+            throw new JgsRuntimeException(line, col, "plot: a numeric Color is an [r g b] triplet in [0, 1].");
+        }
+
+        static byte Level(double v) => (byte)System.Math.Round(System.Math.Clamp(v, 0, 1) * 255);
+        return JGraph.Core.Drawing.Color.FromRgb(Level(triplet[0]), Level(triplet[1]), Level(triplet[2]));
+    }
+
+    private static double NumOf(string name, JgsValue value, int line, int col)
+    {
+        if (value.Type is not (JgsType.Number or JgsType.Bool))
+        {
+            throw new JgsRuntimeException(line, col, $"{name} expects a number, but got a {value.TypeName}.");
+        }
+
+        return value.AsNumber;
+    }
+
+    private static string StrOf(string name, JgsValue value, int line, int col)
+    {
+        if (value.Type != JgsType.String)
+        {
+            throw new JgsRuntimeException(line, col, $"{name} expects a string, but got a {value.TypeName}.");
+        }
+
+        return value.AsString;
     }
 
     private static JgsValue XyOrTable(string name, IReadOnlyList<JgsValue> args, int line, int col,
@@ -1707,8 +2025,8 @@ internal static partial class JgsBuiltins
         }
 
         Arity(name, args, 3, line, col);
-        double[] x = DoubleArray(name, args, 0, line, col);
-        double[] y = DoubleArray(name, args, 1, line, col);
+        double[] x = GridVector(name, args, 0, firstRow: true, line, col);
+        double[] y = GridVector(name, args, 1, firstRow: false, line, col);
         double[,] z = Matrix(name, args, 2, line, col);
         try
         {
@@ -1722,13 +2040,63 @@ internal static partial class JgsBuiltins
         return JgsValue.Null;
     }
 
+    /// <summary>
+    /// A grid coordinate argument as its generating vector: meshgrid's full X/Y matrices collapse
+    /// to their first row/column (MATLAB accepts either form), a vector passes through.
+    /// </summary>
+    private static double[] GridVector(string name, IReadOnlyList<JgsValue> args, int index, bool firstRow, int line, int col)
+    {
+        JgsValue value = args[index];
+        if (value.Type == JgsType.Array && value.Rows > 1 && value.Cols > 1)
+        {
+            int count = firstRow ? value.Cols : value.Rows;
+            var vector = new double[count];
+            for (int i = 0; i < count; i++)
+            {
+                // Column-major storage: element (r, c) sits at r + c*Rows.
+                JgsValue element = value.ElementAt(firstRow ? i * value.Rows : i);
+                vector[i] = element.AsNumber;
+            }
+
+            return vector;
+        }
+
+        return DoubleArray(name, args, index, line, col);
+    }
+
     private static JgsValue Contour(string name, IReadOnlyList<JgsValue> args, int line, int col, bool filled)
     {
         ArityRange(name, args, 3, 4, line, col);
-        double[] x = DoubleArray(name, args, 0, line, col);
-        double[] y = DoubleArray(name, args, 1, line, col);
+        double[] x = GridVector(name, args, 0, firstRow: true, line, col);
+        double[] y = GridVector(name, args, 1, firstRow: false, line, col);
         double[,] z = Matrix(name, args, 2, line, col);
-        double[]? levels = args.Count == 4 ? DoubleArray(name, args, 3, line, col) : null;
+        double[]? levels = args.Count switch
+        {
+            4 when args[3].Type is JgsType.Number or JgsType.Bool => [args[3].AsNumber],
+            4 => ToDoubles(name, args[3], line, col),
+            _ => null,
+        };
+
+        // A scalar fourth argument is a level COUNT: n evenly spaced levels across z's range.
+        if (levels is { Length: 1 } && levels[0] >= 2 && levels[0] == System.Math.Floor(levels[0]))
+        {
+            double zMin = double.PositiveInfinity, zMax = double.NegativeInfinity;
+            foreach (double v in z)
+            {
+                if (!double.IsNaN(v))
+                {
+                    zMin = System.Math.Min(zMin, v);
+                    zMax = System.Math.Max(zMax, v);
+                }
+            }
+
+            int n = (int)levels[0];
+            levels = new double[n];
+            for (int i = 0; i < n; i++)
+            {
+                levels[i] = zMin + ((zMax - zMin) * (i + 1) / (n + 1));
+            }
+        }
         try
         {
             if (filled)
@@ -2146,9 +2514,17 @@ internal static partial class JgsBuiltins
     {
         ArityRange(name, args, 1, 2, line, col);
         string path = Str(name, args, 0, line, col);
-        return JgsValue.Table(args.Count == 2
-            ? readSkipping(path, Count(name, args, 1, line, col))
-            : read(path));
+        try
+        {
+            return JgsValue.Table(args.Count == 2
+                ? readSkipping(path, Count(name, args, 1, line, col))
+                : read(path));
+        }
+        catch (JGraph.Data.Import.ImportException ex)
+        {
+            // A missing or malformed file is a script error, not a process crash.
+            throw new JgsRuntimeException(line, col, $"{name}: {ex.Message}");
+        }
     }
 
     // --- Stdlib glue -----------------------------------------------------------------------------
@@ -2238,11 +2614,17 @@ internal static partial class JgsBuiltins
         return indices;
     }
 
-    private static JgsValue MapToBool(string name, JgsValue value, Func<double, bool> test, int line, int col)
+    internal static JgsValue MapToBool(string name, JgsValue value, Func<double, bool> test, int line, int col,
+        Func<Complex, bool>? complexTest = null)
     {
         if (value.Type is JgsType.Number or JgsType.Bool)
         {
             return JgsValue.Bool(test(value.AsNumber));
+        }
+
+        if (value.Type == JgsType.Complex && complexTest is not null)
+        {
+            return JgsValue.Bool(complexTest(value.AsComplex));
         }
 
         if (value.Type == JgsType.Array)
@@ -2255,7 +2637,13 @@ internal static partial class JgsBuiltins
                 {
                     // Recurse so a matrix (an array of rows) yields a matrix-shaped mask, matching
                     // how MapNumeric treats the same shape.
-                    result[i] = MapToBool(name, source[i], test, line, col);
+                    result[i] = MapToBool(name, source[i], test, line, col, complexTest);
+                    continue;
+                }
+
+                if (source[i].Type == JgsType.Complex && complexTest is not null)
+                {
+                    result[i] = JgsValue.Bool(complexTest(source[i].AsComplex));
                     continue;
                 }
 
@@ -2531,12 +2919,13 @@ internal static partial class JgsBuiltins
                 // Every packed element is real, so only the real path applies — flat and box-free.
                 var dest = JgsPacking.Allocate(value.ArrayLength);
                 PackedMath.Map(value.AsBuffer, dest, real);
-                return JgsValue.Packed(dest);
+                return JgsMatrix.Like(value, JgsValue.Packed(dest));
             }
 
             if (value.IsPackedComplex)
             {
-                return MapPackedComplex(value.AsPackedComplex, real, complex);
+                // real(F) of a complex matrix is the same matrix's real parts — shape and all.
+                return JgsMatrix.Like(value, MapPackedComplex(value.AsPackedComplex, real, complex));
             }
 
             JgsValue[] source = value.BoxedElements();
@@ -2546,7 +2935,63 @@ internal static partial class JgsBuiltins
                 result[i] = MapComplexAware(name, source[i], real, complex, line, col);
             }
 
-            return JgsValue.Array(result);
+            return JgsMatrix.Like(value, JgsValue.Array(result));
+        }
+
+        throw new JgsRuntimeException(line, col, $"{name} expects a number or numeric array, but got a {value.TypeName}.");
+    }
+
+    /// <summary>
+    /// An elementwise map whose real fast path can bail into complex answers: as long as every
+    /// input satisfies <paramref name="staysReal"/> the packed flat path runs; the moment one does
+    /// not (sqrt of a negative, log of a negative) the whole array maps through
+    /// <paramref name="complexResult"/>, which is exactly MATLAB's promotion rule.
+    /// </summary>
+    private static JgsValue MapComplexProducing(string name, JgsValue value,
+        Func<double, double> fastReal, Func<double, bool> staysReal, Func<Complex, JgsValue> complexResult,
+        int line, int col)
+    {
+        if (value.Type is JgsType.Number or JgsType.Bool)
+        {
+            double x = value.AsNumber;
+            return staysReal(x) ? JgsValue.Number(fastReal(x)) : complexResult(new Complex(x, 0));
+        }
+
+        if (value.Type == JgsType.Complex)
+        {
+            return complexResult(value.AsComplex);
+        }
+
+        if (value.Type == JgsType.Array)
+        {
+            if (value.IsPacked && value.PackedKind == JgsPackedKind.Number)
+            {
+                bool allReal = true;
+                foreach (double x in value.AsBuffer.AsSpan())
+                {
+                    if (!staysReal(x))
+                    {
+                        allReal = false;
+                        break;
+                    }
+                }
+
+                if (allReal)
+                {
+                    var dest = JgsPacking.Allocate(value.ArrayLength);
+                    PackedMath.Map(value.AsBuffer, dest, fastReal);
+                    return JgsMatrix.Like(value, JgsValue.Packed(dest));
+                }
+            }
+
+            JgsValue[] source = value.BoxedElements();
+            var result = new JgsValue[source.Length];
+            for (int i = 0; i < source.Length; i++)
+            {
+                result[i] = MapComplexProducing(name, source[i], fastReal, staysReal, complexResult, line, col);
+            }
+
+            return JgsMatrix.Like(value, JgsValue.Array(result));
         }
 
         throw new JgsRuntimeException(line, col, $"{name} expects a number or numeric array, but got a {value.TypeName}.");

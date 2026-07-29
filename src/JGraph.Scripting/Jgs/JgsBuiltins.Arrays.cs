@@ -66,7 +66,13 @@ internal static partial class JgsBuiltins
                 }
             }
 
-            return uniform ? JgsValue.Array(results) : JgsValue.Cell(results);
+            if (!uniform)
+            {
+                return JgsValue.Cell(results);
+            }
+
+            // The uniform result takes the first array's shape — 2-D or N-D — the way MATLAB's does.
+            return JgsMatrix.Like(args[1], JgsMatrix.FromElements(results, 1, results.Length));
         });
 
         Define("bsxfun", (args, line, col) =>
@@ -76,25 +82,17 @@ internal static partial class JgsBuiltins
                 throw new JgsRuntimeException(line, col, "bsxfun(f, a, b) applies a function handle pairwise.");
             }
 
-            // Singleton expansion: a scalar stands in for a whole array, which is the one shape rule
-            // bsxfun exists to spell out. Element-wise operators do this implicitly nowadays.
-            JgsValue[] left = ElementsOf("bsxfun", args[1]);
-            JgsValue[] right = ElementsOf("bsxfun", args[2]);
-            int length = Math.Max(left.Length, right.Length);
-            if ((left.Length != length && left.Length != 1) || (right.Length != length && right.Length != 1))
+            // Singleton expansion is the one shape rule bsxfun exists to spell out; the same engine
+            // now backs the elementwise operators, so bsxfun and '+' cannot disagree about a shape.
+            IJgsCallable f = args[0].AsCallable;
+            if (args[1].Type != JgsType.Array || args[2].Type != JgsType.Array)
             {
-                throw new JgsRuntimeException(line, col,
-                    $"bsxfun cannot expand a {left.Length}-element array against a {right.Length}-element one.");
+                JgsValue direct = f.Call([args[1], args[2]], line, col);
+                return direct;
             }
 
-            var results = new JgsValue[length];
-            for (int i = 0; i < length; i++)
-            {
-                results[i] = args[0].AsCallable.Call(
-                    [left[left.Length == 1 ? 0 : i], right[right.Length == 1 ? 0 : i]], line, col);
-            }
-
-            return JgsValue.Array(results);
+            return JgsBroadcast.Map(args[1], args[2], "bsxfun", line, col,
+                (a, b) => f.Call([a, b], line, col));
         });
 
         Define("structfun", (args, line, col) =>
@@ -369,7 +367,7 @@ internal static partial class JgsBuiltins
     {
         Define("randi", (args, line, col) =>
         {
-            ArityRange("randi", args, 1, 3, line, col);
+            ArityRange("randi", args, 1, int.MaxValue, line, col);
 
             // randi(imax) draws from 1..imax; randi([lo hi]) from the range it names.
             int low = 1;
@@ -400,24 +398,33 @@ internal static partial class JgsBuiltins
                 return JgsValue.Number(random.Next(low, high + 1));
             }
 
-            int rows = Count("randi", args, 1, line, col);
-            int cols = args.Count == 3 ? Count("randi", args, 2, line, col) : rows;
-            if (args.Count == 2 && rows == 1)
+            // Everything after the range is the requested shape: (n), (r, c, …), or a size vector
+            // (randi([0 1], size(A))), any number of dimensions.
+            var sizeArgs = new JgsValue[args.Count - 1];
+            for (int i = 1; i < args.Count; i++)
             {
-                return Numbers([random.Next(low, high + 1)]);
+                sizeArgs[i - 1] = args[i];
             }
 
-            var matrix = new double[rows][];
-            for (int r = 0; r < rows; r++)
+            int[] dims = SquareDims("randi", sizeArgs, line, col);
+            long total = 1;
+            foreach (int dim in dims)
             {
-                matrix[r] = new double[cols];
-                for (int c = 0; c < cols; c++)
-                {
-                    matrix[r][c] = random.Next(low, high + 1);
-                }
+                total *= dim;
             }
 
-            return rows == 1 ? Numbers(matrix[0]) : MatrixFromRows(matrix);
+            if (Array.TrueForAll(dims, static d => d == 1))
+            {
+                return JgsValue.Number(random.Next(low, high + 1));
+            }
+
+            var flat = new double[total];
+            for (int i = 0; i < flat.Length; i++)
+            {
+                flat[i] = random.Next(low, high + 1);
+            }
+
+            return JgsMatrix.FromColumnMajorDims(flat, dims);
         });
 
         Define("randperm", (args, line, col) =>

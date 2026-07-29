@@ -18,12 +18,10 @@ internal static partial class JgsBuiltins
     {
         ["syms"] = "symbolic math",
         ["solve"] = "symbolic math",
-        ["ode45"] = "differential-equation solvers",
-        ["ode23"] = "differential-equation solvers",
+        ["ode23"] = "stiffness-tuned ODE solvers — ode45 is implemented",
         ["fmincon"] = "optimization",
         ["fminsearch"] = "optimization",
         ["lsqcurvefit"] = "optimization",
-        ["table"] = "MATLAB tables — use readtable to load tabular data",
         ["readmatrix"] = "readmatrix — use readcsv or readtable",
         ["uifigure"] = "app building",
         ["uicontrol"] = "app building",
@@ -182,6 +180,19 @@ internal static partial class JgsBuiltins
         Define("num2str", (args, line, col) =>
         {
             ArityRange("num2str", args, 1, 2, line, col);
+            if (args.Count == 2 && args[1].Type == JgsType.String)
+            {
+                // num2str(x, '%08.3f'): the second argument is a sprintf format (M43).
+                try
+                {
+                    return JgsValue.Str(JgsSprintf.FormatMatlab(args[1].AsString, [args[0]]));
+                }
+                catch (FormatException ex)
+                {
+                    throw new JgsRuntimeException(line, col, ex.Message);
+                }
+            }
+
             if (args.Count == 2)
             {
                 int digits = Count("num2str", args, 1, line, col);
@@ -252,17 +263,24 @@ internal static partial class JgsBuiltins
         {
             ArityRange("cell", args, 1, 2, line, col);
 
-            // cell(n) makes an n-element cell here: JGraph's containers are one-dimensional, so
-            // cell(r, c) allocates r*c elements rather than a grid.
-            int count = Count("cell", args, 0, line, col);
-            if (args.Count == 2)
+            // cell(n) is an n-element row; cell(r, c) carries its grid shape (M41), so C{r, c}
+            // addresses the element MATLAB means — column-major over the flat storage, like arrays.
+            int rows = Count("cell", args, 0, line, col);
+            int cols = args.Count == 2 ? Count("cell", args, 1, line, col) : rows;
+            if (args.Count == 1)
             {
-                count *= Count("cell", args, 1, line, col);
+                (rows, cols) = (1, rows);
             }
 
-            var elements = new JgsValue[count];
-            System.Array.Fill(elements, JgsValue.Array(System.Array.Empty<JgsValue>()));
-            return JgsValue.Cell(elements);
+            var elements = new JgsValue[rows * cols];
+            for (int i = 0; i < elements.Length; i++)
+            {
+                elements[i] = JgsValue.Array(System.Array.Empty<JgsValue>());
+            }
+
+            JgsValue built = JgsValue.Cell(elements);
+            built.Reshape(rows, cols);
+            return built;
         });
 
         Define("struct", (args, line, col) =>

@@ -389,6 +389,15 @@ internal sealed class GlobalStmt(IReadOnlyList<string> names) : Stmt
     public IReadOnlyList<string> Names { get; } = names;
 }
 
+/// <summary>
+/// A MATLAB <c>persistent a b</c> declaration: the named variables keep their values between calls
+/// to the function that declares them, starting out as <c>[]</c>.
+/// </summary>
+internal sealed class PersistentStmt(IReadOnlyList<string> names) : Stmt
+{
+    public IReadOnlyList<string> Names { get; } = names;
+}
+
 /// <summary>A <c>return</c> statement; <see cref="Value"/> is null for a bare <c>return</c>.</summary>
 internal sealed class ReturnStmt(Expr? value) : Stmt
 {

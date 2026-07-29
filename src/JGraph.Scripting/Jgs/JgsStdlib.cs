@@ -191,13 +191,15 @@ internal static class JgsStdlib
         {
             // Sizes must agree, which is what MATLAB's isequal means by equal — and comparing
             // through JgsMatrix rather than raw element order is what lets a shaped matrix and a
-            // value still in the older array-of-rows form compare as the same matrix.
-            int rows = JgsMatrix.RowCount(left);
-            int cols = JgsMatrix.ColCount(left);
-            if (rows != JgsMatrix.RowCount(right) || cols != JgsMatrix.ColCount(right))
+            // value still in the older array-of-rows form compare as the same matrix. N-D shapes
+            // must match in full: a 2x3x4 is never equal to the 2x12 that holds the same numbers.
+            if (!JgsMatrix.DimsOf(left).AsSpan().SequenceEqual(JgsMatrix.DimsOf(right)))
             {
                 return false;
             }
+
+            int rows = JgsMatrix.RowCount(left);
+            int cols = JgsMatrix.ColCount(left);
 
             for (int c = 0; c < cols; c++)
             {

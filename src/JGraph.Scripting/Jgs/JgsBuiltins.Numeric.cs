@@ -611,15 +611,28 @@ internal static partial class JgsBuiltins
 
     private static void RegisterDenseAnswers(Action<string, Func<IReadOnlyList<JgsValue>, int, int, JgsValue>> Define)
     {
-        // JGraph stores every matrix densely. These four are the parts of MATLAB's sparse interface
-        // that still mean something without a sparse type, and they answer for dense storage rather
-        // than pretending the storage exists.
-        Define("issparse", (args, line, col) => { Arity("issparse", args, 1, line, col); return JgsValue.Bool(false); });
-        Define("full", (args, line, col) => { Arity("full", args, 1, line, col); return args[0]; });
+        // Since M42 a real sparse type exists (JgsBuiltins.Sparse.cs); these answer for both storages.
+        Define("issparse", (args, line, col) => { Arity("issparse", args, 1, line, col); return JgsValue.Bool(args[0].Type == JgsType.Sparse); });
+        Define("full", (args, line, col) =>
+        {
+            Arity("full", args, 1, line, col);
+            if (args[0].Type != JgsType.Sparse)
+            {
+                return args[0]; // dense stays dense
+            }
+
+            JGraph.Numerics.Sparse.CscMatrix sparse = args[0].AsSparse;
+            return JgsMatrix.FromColumnMajorDims(sparse.ToColumnMajor(), [sparse.Rows, sparse.Cols]);
+        });
 
         Define("nnz", (args, line, col) =>
         {
             Arity("nnz", args, 1, line, col);
+            if (args[0].Type == JgsType.Sparse)
+            {
+                return JgsValue.Number(args[0].AsSparse.NonZeroCount);
+            }
+
             int count = 0;
             foreach (double value in Flatten("nnz", args[0], line, col))
             {

@@ -107,7 +107,7 @@ public sealed class JgsDebugSession
         }
 
         _runToken = cancellationToken;
-        return Task.Run(
+        return ScriptThread.Run(
             () => JgsRunner.Run(code, context, cancellationToken, sourceId, _hook, _dialect),
             cancellationToken);
     }

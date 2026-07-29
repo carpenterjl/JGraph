@@ -22,6 +22,11 @@ internal static partial class JgsBuiltins
         Define("inv", (args, line, col) =>
         {
             Arity("inv", args, 1, line, col);
+            if (HasComplexElements(args[0]))
+            {
+                return ComplexInverse("inv", args[0], line, col);
+            }
+
             double[,] a = SquareRect("inv", args[0], line, col);
             LuDecomposition lu = LuDecomposition.Factor(a);
             if (lu.IsSingular)
@@ -35,6 +40,11 @@ internal static partial class JgsBuiltins
         Define("det", (args, line, col) =>
         {
             Arity("det", args, 1, line, col);
+            if (HasComplexElements(args[0]))
+            {
+                return ComplexDeterminant("det", args[0], line, col);
+            }
+
             return JgsValue.Number(LuDecomposition.Factor(SquareRect("det", args[0], line, col)).Determinant);
         });
 
@@ -55,14 +65,21 @@ internal static partial class JgsBuiltins
         Define("trace", (args, line, col) =>
         {
             Arity("trace", args, 1, line, col);
-            double[,] a = SquareRect("trace", args[0], line, col);
-            double sum = 0;
+            if (args[0].Type is JgsType.Number or JgsType.Bool or JgsType.Complex)
+            {
+                return args[0]; // the trace of a 1x1 is itself
+            }
+
+            // Complex-aware on purpose: eig of a general matrix hands back complex eigenvalues, and
+            // trace(D) over that diagonal is the everyday check that they sum to the trace.
+            Complex[,] a = ComplexSquareOf("trace", args[0], line, col);
+            Complex sum = Complex.Zero;
             for (int i = 0; i < a.GetLength(0); i++)
             {
                 sum += a[i, i];
             }
 
-            return JgsValue.Number(sum);
+            return JgsValue.ComplexNum(sum);
         });
 
         Define("norm", (args, line, col) => Norm(args, line, col));
@@ -71,6 +88,25 @@ internal static partial class JgsBuiltins
             (args, line, col) =>
             {
                 Arity("eig", args, 1, line, col);
+                if (HasComplexElements(args[0]))
+                {
+                    // Complex input takes the complex QR path (values only, like MATLAB's e = eig(A)).
+                    Complex[] complexValues = ComplexEigen.Values(ComplexSquareOf("eig", args[0], line, col));
+                    var boxed = new JgsValue[complexValues.Length];
+                    for (int i = 0; i < boxed.Length; i++)
+                    {
+                        boxed[i] = ComplexValue(complexValues[i]);
+                    }
+
+                    JgsValue column = JgsValue.Array(boxed);
+                    if (boxed.Length > 1)
+                    {
+                        column.Reshape(boxed.Length, 1);
+                    }
+
+                    return column;
+                }
+
                 Eigen eigen = Eigen.Factor(SquareRect("eig", args[0], line, col));
                 var values = new JgsValue[eigen.Values.Length];
                 for (int i = 0; i < values.Length; i++)
@@ -83,6 +119,12 @@ internal static partial class JgsBuiltins
             (args, _, line, col) =>
             {
                 Arity("eig", args, 1, line, col);
+                if (HasComplexElements(args[0]))
+                {
+                    throw new JgsRuntimeException(line, col,
+                        "[V, D] = eig(A) is not supported for a complex A; e = eig(A) computes the eigenvalues.");
+                }
+
                 Eigen eigen = Eigen.Factor(SquareRect("eig", args[0], line, col));
                 int n = eigen.Values.Length;
                 var d = new Complex[n, n];
@@ -98,6 +140,12 @@ internal static partial class JgsBuiltins
             (args, line, col) =>
             {
                 Arity("lu", args, 1, line, col);
+                if (args[0].Type == JgsType.Sparse)
+                {
+                    throw new JgsRuntimeException(line, col,
+                        "lu of a sparse matrix returns its factors: use [L, U] = lu(A).");
+                }
+
                 LuDecomposition lu = LuDecomposition.Factor(SquareRect("lu", args[0], line, col));
 
                 // MATLAB's one-output lu is the two factors in one matrix: L below the (unit)
@@ -119,6 +167,27 @@ internal static partial class JgsBuiltins
             (args, wanted, line, col) =>
             {
                 Arity("lu", args, 1, line, col);
+                if (args[0].Type == JgsType.Sparse)
+                {
+                    if (wanted >= 3)
+                    {
+                        throw new JgsRuntimeException(line, col,
+                            "lu of a sparse matrix supports the two-output form [L, U] = lu(A).");
+                    }
+
+                    // Gilbert–Peierls, permutation folded into L (the same contract as dense [L, U]).
+                    try
+                    {
+                        (JGraph.Numerics.Sparse.CscMatrix lower, JGraph.Numerics.Sparse.CscMatrix upper) =
+                            args[0].AsSparse.LowerUpper();
+                        return [JgsValue.Sparse(lower), JgsValue.Sparse(upper)];
+                    }
+                    catch (ArgumentException ex)
+                    {
+                        throw new JgsRuntimeException(line, col, ex.Message);
+                    }
+                }
+
                 LuDecomposition lu = LuDecomposition.Factor(SquareRect("lu", args[0], line, col));
                 if (wanted >= 3)
                 {
@@ -160,11 +229,29 @@ internal static partial class JgsBuiltins
             (args, line, col) =>
             {
                 Arity("svd", args, 1, line, col);
+                if (HasComplexElements(args[0]))
+                {
+                    double[] sigma = ComplexEigen.SingularValues(ComplexRectOf("svd", args[0], line, col));
+                    JgsValue column = Numbers(sigma);
+                    if (sigma.Length > 1)
+                    {
+                        column.Reshape(sigma.Length, 1);
+                    }
+
+                    return column;
+                }
+
                 return Numbers(Svd.Factor(RectOf("svd", args[0], line, col)).Values);
             },
             (args, _, line, col) =>
             {
                 Arity("svd", args, 1, line, col);
+                if (HasComplexElements(args[0]))
+                {
+                    throw new JgsRuntimeException(line, col,
+                        "[U, S, V] = svd(A) is not supported for a complex A; s = svd(A) computes the singular values.");
+                }
+
                 Svd svd = Svd.Factor(RectOf("svd", args[0], line, col));
                 int k = svd.Values.Length;
                 var s = new double[k, k];
@@ -335,7 +422,15 @@ internal static partial class JgsBuiltins
                 flat[at++] = v;
             }
 
-            return Numbers(flat);
+            // A single column keeps its orientation — linsolve(A, b) must agree in shape with
+            // A \ b, or subtracting the two becomes an outer difference under implicit expansion.
+            JgsValue vector = Numbers(flat);
+            if (cols == 1 && rows > 1)
+            {
+                vector.Reshape(rows, 1);
+            }
+
+            return vector;
         }
 
         var jagged = new double[rows][];

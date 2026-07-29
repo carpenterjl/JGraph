@@ -100,7 +100,13 @@ public class JgsComparisonTests : IDisposable
         Assert.True(ok.Success, ok.Message);
         Assert.Contains("[true, false]", _output.NormalText);
 
-        ScriptRunResult bad = await Run("print([1] == [1, 2])");
+        // A one-element array expands like a scalar (implicit expansion, M41)…
+        ScriptRunResult expanded = await Run("print([1] == [1, 2])");
+        Assert.True(expanded.Success, expanded.Message);
+        Assert.Contains("[true, false]", _output.NormalText);
+
+        // …but two multi-element lengths that disagree are still an error.
+        ScriptRunResult bad = await Run("print([1, 2] == [1, 2, 3])");
         Assert.False(bad.Success);
         Assert.Contains("different lengths", Assert.Single(bad.Diagnostics).Message);
     }

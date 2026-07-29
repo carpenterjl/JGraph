@@ -25,6 +25,9 @@ internal enum JgsType
 
     /// <summary>A MATLAB struct: named fields, written <c>s.field</c>.</summary>
     Struct,
+
+    /// <summary>A sparse matrix (M42): compressed sparse column storage, built by <c>sparse</c>/<c>sprand</c>.</summary>
+    Sparse,
 }
 
 /// <summary>The element kind of a packed array: MATLAB doubles or a MATLAB-style logical mask.</summary>
@@ -71,10 +74,23 @@ internal sealed class JgsValue
     public static readonly JgsValue False = new(JgsType.Bool, 0, null);
 
     private readonly double _number;
-    private object? _reference; // mutable ONLY by DemoteToBoxed
+    private object? _reference; // mutable ONLY by DemoteToBoxed, TryGrowInPlace and CompactInPlace
     private readonly JgsPackedKind _packedKind;
-    private int _rows; // mutable ONLY by Reshape
+    private int _rows; // mutable ONLY by Reshape and TryGrowInPlace
     private int _cols;
+
+    // Growth capacity (M41): 0 means compact storage — the buffer is exactly Rows*Cols, column-major.
+    // Non-zero means a packed numeric buffer laid out with this column stride, so the buffer holds
+    // spare rows and columns and A(i, j) writes past the edge can grow the logical shape without
+    // copying anything. Only TryGrowInPlace installs a stride; CompactInPlace and DemoteToBoxed
+    // remove it, and AsBuffer compacts on sight so no raw-buffer consumer can ever see the slack.
+    private int _strideRows;
+
+    // N-D shape (M41, ADR 0044): null for every 2-D value. When set (always length >= 3, trailing
+    // singletons trimmed), it is the true size of the array, and _rows/_cols hold MATLAB's own 2-D
+    // view of it — dims[0] rows by prod(dims[1..]) columns — so every two-subscript reader sees
+    // exactly the fold MATLAB defines and only size/ndims/N-subscript indexing consult the truth.
+    private int[]? _dims;
 
     private JgsValue(JgsType type, double number, object? reference, JgsPackedKind packedKind = JgsPackedKind.Number)
     {
@@ -83,9 +99,10 @@ internal sealed class JgsValue
         _reference = reference;
         _packedKind = packedKind;
 
-        // An array with no shape asked for is a row: 1-by-n, which is what a flat literal means.
+        // An array (or cell) with no shape asked for is a row: 1-by-n, which is what a flat
+        // literal means. Cells gained their shape in M41 so cell(r, c) can carry it the same way.
         _rows = 1;
-        _cols = type == JgsType.Array ? ElementCount(reference) : 0;
+        _cols = type is JgsType.Array or JgsType.Cell ? ElementCount(reference) : 0;
     }
 
     private JgsValue(JgsType type, object? reference, JgsPackedKind packedKind, int rows, int cols)
@@ -178,6 +195,15 @@ internal sealed class JgsValue
     public static JgsValue Function(IJgsCallable callable) => new(JgsType.Function, 0, callable);
 
     /// <summary>
+    /// Wraps a sparse matrix. <see cref="JGraph.Numerics.Sparse.CscMatrix"/> is immutable, so
+    /// bindings share the instance freely — no copy-on-assign bookkeeping is needed.
+    /// </summary>
+    public static JgsValue Sparse(JGraph.Numerics.Sparse.CscMatrix matrix) => new(JgsType.Sparse, 0, matrix);
+
+    /// <summary>The sparse payload (valid only for <see cref="JgsType.Sparse"/>).</summary>
+    public JGraph.Numerics.Sparse.CscMatrix AsSparse => (JGraph.Numerics.Sparse.CscMatrix)_reference!;
+
+    /// <summary>
     /// Wraps a cell array (the array is used directly, not copied). Like an ordinary array it is
     /// mutable in place, so aliases in JGS see each other's writes; MATLAB copies on assignment.
     /// </summary>
@@ -216,14 +242,128 @@ internal sealed class JgsValue
         ? throw new InvalidOperationException("A packed array was accessed as boxed elements — this call site must use BoxedElements/ElementAt/ArrayLength.")
         : (JgsValue[])_reference!;
 
+    /// <summary>
+    /// Compacts a growth-capacity buffer (see <see cref="TryGrowInPlace"/>) back to exactly
+    /// Rows*Cols. This is the guard that lets every raw-buffer consumer stay ignorant of capacity:
+    /// the only way to reach the buffer is through <see cref="AsBuffer"/>, and by then it is compact.
+    /// </summary>
+    private void CompactInPlace()
+    {
+        var strided = (NumericBuffer)_reference!;
+        NumericBuffer compact = JgsPacking.Allocate(_rows * _cols);
+        Span<double> source = strided.AsSpan();
+        Span<double> destination = compact.AsSpan();
+        for (int c = 0; c < _cols; c++)
+        {
+            source.Slice(c * _strideRows, _rows).CopyTo(destination.Slice(c * _rows, _rows));
+        }
+
+        GC.KeepAlive(strided);
+        _reference = compact;
+        _strideRows = 0;
+        strided.Dispose();
+    }
+
+    /// <summary>The storage slot of logical column-major element <paramref name="index"/>.</summary>
+    private int StorageSlot(int index) =>
+        _strideRows == 0 ? index : (index % _rows) + (index / _rows * _strideRows);
+
+    /// <summary>
+    /// Writes logical element <paramref name="index"/> of a packed real buffer, capacity-aware —
+    /// the indexed-assignment path must not go through <see cref="AsBuffer"/>, whose compaction
+    /// guard would undo the amortized growth it exists to make fast.
+    /// </summary>
+    internal void SetPackedNumber(int index, double value)
+    {
+        var buffer = (NumericBuffer)_reference!;
+        buffer.AsSpan()[StorageSlot(index)] = value;
+    }
+
+    /// <summary>
+    /// Grows the logical shape in place to <paramref name="newRows"/>-by-<paramref name="newCols"/>,
+    /// zero-filling, with geometric over-allocation so a loop that grows a matrix one row and column
+    /// at a time costs amortized O(1) per element instead of a full copy per step. Only valid for a
+    /// packed real buffer; anything else returns false and the caller rebuilds the slow way. The
+    /// caller owns the semantics question: mutating in place is only safe where the wrapper is
+    /// uniquely owned, which MATLAB's copy-on-assign guarantees and JGS's reference semantics do not.
+    /// </summary>
+    internal bool TryGrowInPlace(int newRows, int newCols)
+    {
+        if (_reference is not NumericBuffer buffer || Type != JgsType.Array || _dims is not null)
+        {
+            return false;
+        }
+
+        int stride = _strideRows == 0 ? _rows : _strideRows;
+        int capCols = stride == 0 ? 0 : buffer.Length / stride;
+        if (_strideRows > 0 && newRows <= stride && newCols <= capCols)
+        {
+            // Fits in the slack. The buffer was zero-filled when the capacity was allocated and
+            // logical writes never touch the slack, so the newly exposed cells are already zero.
+            _rows = newRows;
+            _cols = newCols;
+            return true;
+        }
+
+        // Only a dimension that is actually growing earns slack — a row vector must not be handed
+        // spare rows it will never use.
+        int capRows = newRows <= stride ? stride : GrownDimension(newRows, stride);
+        int grownCols = newCols <= capCols ? capCols : GrownDimension(newCols, capCols);
+        if ((long)capRows * grownCols > 64_000_000)
+        {
+            // Past ~512 MB the slack itself is the problem; fall back to exact dimensions.
+            capRows = newRows;
+            grownCols = newCols;
+            if ((long)capRows * grownCols > int.MaxValue)
+            {
+                return false;
+            }
+        }
+
+        NumericBuffer grown = JgsPacking.Allocate(capRows * grownCols);
+        Span<double> destination = grown.AsSpan();
+        destination.Clear();
+        Span<double> source = buffer.AsSpan();
+        for (int c = 0; c < _cols; c++)
+        {
+            source.Slice(c * stride, _rows).CopyTo(destination.Slice(c * capRows, _rows));
+        }
+
+        GC.KeepAlive(buffer);
+        _reference = grown;
+        _strideRows = capRows == newRows && grown.Length == newRows * newCols ? 0 : capRows;
+        _rows = newRows;
+        _cols = newCols;
+        buffer.Dispose();
+        return true;
+    }
+
+    /// <summary>Half-again growth with a small floor, so tiny matrices do not realloc per step.</summary>
+    private static int GrownDimension(int needed, int current) =>
+        System.Math.Max(needed, current + (current >> 1) + 8);
+
     /// <summary>Whether this array value is backed by a packed real-number buffer.</summary>
     public bool IsPacked => _reference is NumericBuffer;
 
     /// <summary>Whether this array value is backed by a packed planar complex payload.</summary>
     public bool IsPackedComplex => _reference is JgsPackedComplex;
 
-    /// <summary>The packed buffer (valid only when <see cref="IsPacked"/>).</summary>
-    public NumericBuffer AsBuffer => (NumericBuffer)_reference!;
+    /// <summary>
+    /// The packed buffer (valid only when <see cref="IsPacked"/>). Compacts growth capacity first,
+    /// so raw-buffer consumers always see exactly Rows*Cols column-major elements.
+    /// </summary>
+    public NumericBuffer AsBuffer
+    {
+        get
+        {
+            if (_strideRows > 0)
+            {
+                CompactInPlace();
+            }
+
+            return (NumericBuffer)_reference!;
+        }
+    }
 
     /// <summary>The packed complex payload (valid only when <see cref="IsPackedComplex"/>).</summary>
     public JgsPackedComplex AsPackedComplex => (JgsPackedComplex)_reference!;
@@ -231,10 +371,10 @@ internal sealed class JgsValue
     /// <summary>The element kind of a packed array (valid only when <see cref="IsPacked"/>).</summary>
     public JgsPackedKind PackedKind => _packedKind;
 
-    /// <summary>Element count of an array value, packed or boxed.</summary>
+    /// <summary>Element count of an array value, packed or boxed. Growth capacity does not count.</summary>
     public int ArrayLength => _reference switch
     {
-        NumericBuffer buffer => buffer.Length,
+        NumericBuffer buffer => _strideRows > 0 ? _rows * _cols : buffer.Length,
         JgsPackedComplex complex => complex.Length,
         _ => AsArray.Length,
     };
@@ -251,18 +391,97 @@ internal sealed class JgsValue
     /// </summary>
     public bool IsShaped => _rows != 1;
 
+    /// <summary>Whether this array carries three or more dimensions.</summary>
+    public bool IsNd => _dims is not null;
+
+    /// <summary>How many dimensions the array has (2 for everything that is not N-D).</summary>
+    public int DimCount => _dims?.Length ?? 2;
+
+    /// <summary>The array's size per dimension; a fresh copy, safe for callers to keep.</summary>
+    public int[] Dims => _dims is int[] dims ? (int[])dims.Clone() : [_rows, _cols];
+
+    /// <summary>
+    /// Changes the shape in place to an arbitrary dimension list (column-major order unchanged).
+    /// Trailing singleton dimensions beyond the second are trimmed, so <c>reshape(x, [n 1 1])</c>
+    /// is the n-by-1 column it means; two significant dimensions land back in the plain 2-D shape.
+    /// </summary>
+    public void ReshapeDims(IReadOnlyList<int> size)
+    {
+        int significant = size.Count;
+        while (significant > 2 && size[significant - 1] == 1)
+        {
+            significant--;
+        }
+
+        if (significant <= 2)
+        {
+            int rows = significant > 0 ? size[0] : 1;
+            int cols = significant > 1 ? size[1] : 1;
+            Reshape(rows, cols);
+            return;
+        }
+
+        if (_strideRows > 0)
+        {
+            CompactInPlace();
+        }
+
+        long product = 1;
+        var dims = new int[significant];
+        for (int i = 0; i < significant; i++)
+        {
+            dims[i] = size[i];
+            product *= size[i];
+        }
+
+        if (product != ArrayLength)
+        {
+            throw new InvalidOperationException(
+                $"A {string.Join("x", dims)} shape does not describe {ArrayLength} elements.");
+        }
+
+        _dims = dims;
+        _rows = dims[0];
+        int fold = 1;
+        for (int i = 1; i < significant; i++)
+        {
+            fold *= dims[i];
+        }
+
+        _cols = fold;
+    }
+
+    /// <summary>Gives this array the shape (2-D or N-D) of <paramref name="source"/>.</summary>
+    internal void TakeShapeOf(JgsValue source)
+    {
+        if (source._dims is int[] dims)
+        {
+            ReshapeDims(dims);
+        }
+        else
+        {
+            Reshape(source._rows, source._cols);
+        }
+    }
+
     /// <summary>
     /// Changes the shape in place, keeping the elements and their column-major order. Every alias
     /// shares this wrapper (single-wrapper invariant), so all names see the new shape.
     /// </summary>
     public void Reshape(int rows, int cols)
     {
+        if (_strideRows > 0)
+        {
+            CompactInPlace();
+        }
+
         int count = ArrayLength;
         if ((long)rows * cols != count)
         {
             throw new InvalidOperationException($"A {rows}x{cols} shape does not describe {count} elements.");
         }
 
+        _dims = null; // a two-dimensional reshape flattens away any higher shape
         _rows = rows;
         _cols = cols;
     }
@@ -276,7 +495,7 @@ internal sealed class JgsValue
         switch (_reference)
         {
             case NumericBuffer buffer:
-                double raw = buffer.AsSpan()[index];
+                double raw = buffer.AsSpan()[StorageSlot(index)];
                 return _packedKind == JgsPackedKind.Bool ? Bool(raw != 0) : Number(raw);
             case JgsPackedComplex complex:
                 // ComplexNum normalizes zero-imaginary entries to numbers, matching the mixed
@@ -314,19 +533,20 @@ internal sealed class JgsValue
 
         var buffer = (NumericBuffer)_reference!;
         Span<double> span = buffer.AsSpan();
-        var elements = new JgsValue[span.Length];
+        int count = ArrayLength; // logical: growth capacity must not leak into the boxed copy
+        var elements = new JgsValue[count];
         if (_packedKind == JgsPackedKind.Bool)
         {
-            for (int i = 0; i < span.Length; i++)
+            for (int i = 0; i < count; i++)
             {
-                elements[i] = Bool(span[i] != 0);
+                elements[i] = Bool(span[StorageSlot(i)] != 0);
             }
         }
         else
         {
-            for (int i = 0; i < span.Length; i++)
+            for (int i = 0; i < count; i++)
             {
-                elements[i] = Number(span[i]);
+                elements[i] = Number(span[StorageSlot(i)]);
             }
         }
 
@@ -344,7 +564,8 @@ internal sealed class JgsValue
     {
         if (_reference is NumericBuffer buffer)
         {
-            _reference = MaterializeBoxed();
+            _reference = MaterializeBoxed(); // stride-aware, so the boxed copy is exactly logical
+            _strideRows = 0;
             buffer.Dispose();
         }
         else if (_reference is JgsPackedComplex complex)
@@ -377,7 +598,8 @@ internal sealed class JgsValue
         JgsType.String => AsString.Length > 0,
         JgsType.Array => _reference switch
         {
-            NumericBuffer buffer => PackedMath.AllNonZero(buffer), // empty false, NaN nonzero — the boxed fold
+            // AsBuffer (not the pattern variable) so growth capacity is compacted out of the fold.
+            NumericBuffer => PackedMath.AllNonZero(AsBuffer), // empty false, NaN nonzero — the boxed fold
             JgsPackedComplex complex => AllComplexNonZero(complex),
             _ => AllTruthy(AsArray),
         },
@@ -470,6 +692,7 @@ internal sealed class JgsValue
         JgsType.Function => "function",
         JgsType.Cell => "cell",
         JgsType.Struct => "struct",
+        JgsType.Sparse => "sparse",
         _ => "value",
     };
 
@@ -487,8 +710,34 @@ internal sealed class JgsValue
         JgsType.Function => $"fn {AsCallable.Name}",
         JgsType.Cell => FormatCell(AsCell),
         JgsType.Struct => FormatStruct(AsStruct),
+        JgsType.Sparse => FormatSparse(AsSparse),
         _ => "value",
     };
+
+    /// <summary>Formats a sparse matrix the way MATLAB does: one <c>(r,c)  v</c> line per nonzero.</summary>
+    private static string FormatSparse(JGraph.Numerics.Sparse.CscMatrix matrix)
+    {
+        var sb = new StringBuilder();
+        sb.Append(matrix.Rows).Append('x').Append(matrix.Cols)
+          .Append(" sparse double, ").Append(matrix.NonZeroCount).Append(" nonzeros");
+        int shown = 0;
+        for (int c = 0; c < matrix.Cols && shown < DisplayMaxElements; c++)
+        {
+            for (int i = matrix.ColumnStarts[c]; i < matrix.ColumnStarts[c + 1] && shown < DisplayMaxElements; i++)
+            {
+                sb.Append("\n   (").Append(matrix.RowIndices[i] + 1).Append(',').Append(c + 1)
+                  .Append(")  ").Append(FormatNumber(matrix.Values[i]));
+                shown++;
+            }
+        }
+
+        if (shown < matrix.NonZeroCount)
+        {
+            sb.Append("\n   ... (").Append(matrix.NonZeroCount - shown).Append(" more)");
+        }
+
+        return sb.ToString();
+    }
 
     /// <summary>Formats a cell array as MATLAB writes one: <c>{1, 'two'}</c>, capped like an array.</summary>
     private static string FormatCell(JgsValue[] elements)

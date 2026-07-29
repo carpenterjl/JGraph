@@ -50,6 +50,22 @@ internal sealed class JgsEnvironment
         }
     }
 
+    /// <summary>
+    /// Drops <paramref name="name"/> from this scope, reverting it to the binding recorded in
+    /// <paramref name="pristine"/> when it had one — the named form of <c>clear a b</c>.
+    /// </summary>
+    public void Forget(string name, IReadOnlyDictionary<string, JgsValue> pristine)
+    {
+        if (pristine.TryGetValue(name, out JgsValue? original))
+        {
+            _values[name] = original;
+        }
+        else
+        {
+            _values.Remove(name);
+        }
+    }
+
     /// <summary>Whether <paramref name="name"/> resolves in this scope or any enclosing scope.</summary>
     public bool Contains(string name) =>
         _values.ContainsKey(name) || (_parent?.Contains(name) ?? false);

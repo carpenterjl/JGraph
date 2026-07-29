@@ -1,0 +1,349 @@
+using JGraph.Data;
+
+namespace JGraph.Scripting.Jgs;
+
+/// <summary>
+/// The data-type builtins the stress tests asked for (M43): the <c>table</c>/<c>timetable</c>
+/// constructors over the existing <see cref="Table"/>, <c>categorical</c> and <c>summary</c>,
+/// string/cell conversions (<c>string</c>, <c>cellstr</c>, <c>compose</c>), <c>missing</c> with
+/// <c>ismissing</c>, and <c>seconds</c>. Documented divergences, all recorded in the coverage doc:
+/// a categorical is a cell of category names, a duration is its number of seconds, and a missing
+/// string is the sentinel <c>&lt;missing&gt;</c> — the shapes scripts actually consume, without a
+/// tagged-type system the object model does not have.
+/// </summary>
+internal static partial class JgsBuiltins
+{
+    /// <summary>The stand-in for MATLAB's missing value inside string arrays.</summary>
+    internal const string MissingSentinel = "<missing>";
+
+    /// <summary>Registers the data-type builtins into <paramref name="env"/>.</summary>
+    private static void RegisterDataTypeBuiltins(JgsEnvironment env)
+    {
+        void Define(string name, Func<IReadOnlyList<JgsValue>, int, int, JgsValue> body) =>
+            env.Declare(name, JgsValue.Function(new BuiltinFunction(name, body)));
+
+        // missing is a value, not a function: ["apple", missing, "banana"] must just evaluate.
+        env.Declare("missing", JgsValue.Str(MissingSentinel));
+
+        Define("ismissing", (args, line, col) =>
+        {
+            Arity("ismissing", args, 1, line, col);
+            if (args[0].Type == JgsType.String)
+            {
+                return JgsValue.Bool(args[0].AsString == MissingSentinel);
+            }
+
+            return MapToBool("ismissing", args[0], double.IsNaN, line, col);
+        });
+
+        Define("string", (args, line, col) =>
+        {
+            Arity("string", args, 1, line, col);
+            JgsValue input = args[0];
+            return input.Type switch
+            {
+                JgsType.String => input,
+                JgsType.Cell => ShapedLike(input, Array.ConvertAll(input.AsCell, StringOf)),
+                JgsType.Array => ShapedLike(input, Array.ConvertAll(input.BoxedElements(), StringOf)),
+                _ => JgsValue.Str(input.Display()),
+            };
+        });
+
+        Define("cellstr", (args, line, col) =>
+        {
+            Arity("cellstr", args, 1, line, col);
+            JgsValue input = args[0];
+            return input.Type switch
+            {
+                JgsType.Cell => input,
+                JgsType.String => JgsValue.Cell([input]),
+                JgsType.Array => JgsValue.Cell(Array.ConvertAll(input.BoxedElements(), StringOf)),
+                _ => throw new JgsRuntimeException(line, col,
+                    $"cellstr expects a string array or cell, but got a {input.TypeName}."),
+            };
+        });
+
+        Define("compose", (args, line, col) =>
+        {
+            Arity("compose", args, 2, line, col);
+            string format = Str("compose", args, 0, line, col);
+            JgsValue[] elements = args[1].Type == JgsType.Array
+                ? args[1].BoxedElements()
+                : [args[1]];
+            var formatted = new JgsValue[elements.Length];
+            try
+            {
+                for (int i = 0; i < elements.Length; i++)
+                {
+                    formatted[i] = JgsValue.Str(JgsSprintf.Format(format, [elements[i]]));
+                }
+            }
+            catch (FormatException ex)
+            {
+                throw new JgsRuntimeException(line, col, ex.Message);
+            }
+
+            return ShapedLike(args[1], formatted);
+        });
+
+        // A categorical is its cell of category names; class() will say cell, and summary counts.
+        Define("categorical", (args, line, col) =>
+        {
+            Arity("categorical", args, 1, line, col);
+            JgsValue input = args[0];
+            return input.Type switch
+            {
+                JgsType.Cell => JgsValue.Cell(Array.ConvertAll(input.AsCell, StringOf)),
+                JgsType.Array => JgsValue.Cell(Array.ConvertAll(input.BoxedElements(), StringOf)),
+                JgsType.String => JgsValue.Cell([input]),
+                _ => throw new JgsRuntimeException(line, col,
+                    $"categorical expects a cell or array, but got a {input.TypeName}."),
+            };
+        });
+
+        Define("summary", (args, line, col) =>
+        {
+            Arity("summary", args, 1, line, col);
+            if (args[0].Type == JgsType.Table)
+            {
+                return TableSummary(args[0].AsTable);
+            }
+
+            if (args[0].Type is JgsType.Cell or JgsType.Array)
+            {
+                // Category counts, in first-appearance order — what summary(categorical) reports.
+                JgsValue[] elements = args[0].Type == JgsType.Cell ? args[0].AsCell : args[0].BoxedElements();
+                var counts = new Dictionary<string, int>(StringComparer.Ordinal);
+                var order = new List<string>();
+                foreach (JgsValue element in elements)
+                {
+                    string category = StringOf(element).AsString;
+                    if (counts.TryGetValue(category, out int soFar))
+                    {
+                        counts[category] = soFar + 1;
+                    }
+                    else
+                    {
+                        counts[category] = 1;
+                        order.Add(category);
+                    }
+                }
+
+                var fields = new Dictionary<string, JgsValue>(StringComparer.Ordinal);
+                foreach (string category in order)
+                {
+                    fields[category] = JgsValue.Number(counts[category]);
+                }
+
+                return JgsValue.Struct(fields);
+            }
+
+            throw new JgsRuntimeException(line, col,
+                $"summary expects a table or categorical, but got a {args[0].TypeName}.");
+        });
+
+        Define("table", (args, line, col) => BuildTable("table", args, timeColumn: null, line, col));
+
+        // A duration is its count of seconds — transposable, plottable, storable in a timetable.
+        Define("seconds", (args, line, col) =>
+        {
+            Arity("seconds", args, 1, line, col);
+            return MapNumeric("seconds", args[0], static x => x, line, col);
+        });
+
+        Define("timetable", (args, line, col) =>
+        {
+            if (args.Count < 2)
+            {
+                throw new JgsRuntimeException(line, col, "timetable expects row times and at least one variable.");
+            }
+
+            double[] times = ToDoubles("timetable", args[0], line, col);
+            return BuildTable("timetable", args.Skip(1).ToArray(), new NumberColumn("Time", times), line, col);
+        });
+    }
+
+    /// <summary>
+    /// Builds a <see cref="Table"/> from column arguments plus an optional trailing
+    /// <c>'VariableNames', {…}</c> pair; unnamed columns become Var1…VarN.
+    /// </summary>
+    private static JgsValue BuildTable(string name, IReadOnlyList<JgsValue> args, TableColumn? timeColumn, int line, int col)
+    {
+        string[]? names = null;
+        int columnCount = args.Count;
+        if (columnCount >= 2 && args[columnCount - 2].Type == JgsType.String
+            && args[columnCount - 2].AsString == "VariableNames")
+        {
+            JgsValue nameList = args[columnCount - 1];
+            JgsValue[] nameValues = nameList.Type == JgsType.Cell ? nameList.AsCell
+                : nameList.Type == JgsType.Array ? nameList.BoxedElements()
+                : throw new JgsRuntimeException(line, col, $"{name}: 'VariableNames' takes a cell of names.");
+            names = Array.ConvertAll(nameValues, v => StringOf(v).AsString);
+            columnCount -= 2;
+        }
+
+        if (columnCount == 0)
+        {
+            throw new JgsRuntimeException(line, col, $"{name} needs at least one variable.");
+        }
+
+        if (names is not null && names.Length != columnCount)
+        {
+            throw new JgsRuntimeException(line, col,
+                $"{name}: {columnCount} variables but {names.Length} names.");
+        }
+
+        var columns = new List<TableColumn>();
+        if (timeColumn is not null)
+        {
+            columns.Add(timeColumn);
+        }
+
+        for (int i = 0; i < columnCount; i++)
+        {
+            string columnName = names is not null ? names[i] : $"Var{i + 1}";
+            JgsValue value = args[i];
+            if (value.Type == JgsType.Cell || (value.Type == JgsType.Array && HasStringElements(value)))
+            {
+                JgsValue[] elements = value.Type == JgsType.Cell ? value.AsCell : value.BoxedElements();
+                columns.Add(new TextColumn(columnName, Array.ConvertAll(elements, v => (string?)StringOf(v).AsString)));
+            }
+            else
+            {
+                columns.Add(new NumberColumn(columnName, ToDoubles(name, value, line, col)));
+            }
+        }
+
+        int rows = columns[0].RowCount;
+        foreach (TableColumn column in columns)
+        {
+            if (column.RowCount != rows)
+            {
+                throw new JgsRuntimeException(line, col,
+                    $"{name}: every variable needs the same number of rows ({column.Name} has {column.RowCount}, expected {rows}).");
+            }
+        }
+
+        return JgsValue.Table(new Table(columns));
+    }
+
+    /// <summary>
+    /// A table column as a script value — what <c>T.Code</c> reads: numeric columns come back as
+    /// column vectors, text columns as cells of char (so <c>T.Code{2}</c> braces in).
+    /// </summary>
+    internal static JgsValue TableColumnValue(Table table, string columnName, int line, int col)
+    {
+        if (!table.TryGetColumn(columnName, out TableColumn column))
+        {
+            throw new JgsRuntimeException(line, col,
+                $"The table has no variable '{columnName}'. Its variables are: {string.Join(", ", table.ColumnNames)}.");
+        }
+
+        if (column.Type == ColumnType.Text)
+        {
+            var cells = new JgsValue[column.RowCount];
+            for (int r = 0; r < column.RowCount; r++)
+            {
+                cells[r] = JgsValue.Str(column.GetText(r));
+            }
+
+            JgsValue cell = JgsValue.Cell(cells);
+            cell.Reshape(cells.Length, 1);
+            return cell;
+        }
+
+        var values = new double[column.RowCount];
+        for (int r = 0; r < column.RowCount; r++)
+        {
+            values[r] = column.GetNumber(r);
+        }
+
+        return JgsMatrix.FromColumnMajorDims(values, [values.Length, 1]);
+    }
+
+    /// <summary>Per-variable min/max/mean (numeric) or size/type (text) — <c>summary(T)</c>.</summary>
+    private static JgsValue TableSummary(Table table)
+    {
+        var fields = new Dictionary<string, JgsValue>(StringComparer.Ordinal);
+        foreach (TableColumn column in table.Columns)
+        {
+            var info = new Dictionary<string, JgsValue>(StringComparer.Ordinal)
+            {
+                ["Size"] = JgsValue.Array([JgsValue.Number(column.RowCount), JgsValue.Number(1)]),
+            };
+            if (column.Type == ColumnType.Text)
+            {
+                info["Type"] = JgsValue.Str("cell");
+            }
+            else
+            {
+                info["Type"] = JgsValue.Str("double");
+                double min = double.PositiveInfinity, max = double.NegativeInfinity, sum = 0;
+                int counted = 0;
+                for (int r = 0; r < column.RowCount; r++)
+                {
+                    double x = column.GetNumber(r);
+                    if (double.IsNaN(x))
+                    {
+                        continue;
+                    }
+
+                    min = System.Math.Min(min, x);
+                    max = System.Math.Max(max, x);
+                    sum += x;
+                    counted++;
+                }
+
+                if (counted > 0)
+                {
+                    info["Min"] = JgsValue.Number(min);
+                    info["Max"] = JgsValue.Number(max);
+                    info["Mean"] = JgsValue.Number(sum / counted);
+                }
+            }
+
+            fields[column.Name] = JgsValue.Struct(info);
+        }
+
+        return JgsValue.Struct(fields);
+    }
+
+    /// <summary>Whether a boxed array holds any string element (a string array, for table purposes).</summary>
+    private static bool HasStringElements(JgsValue value)
+    {
+        if (value.IsPacked)
+        {
+            return false; // packed storage is numbers by construction
+        }
+
+        foreach (JgsValue element in value.BoxedElements())
+        {
+            if (element.Type == JgsType.String)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /// <summary>One element as a string value, through Display for non-strings.</summary>
+    private static JgsValue StringOf(JgsValue value) =>
+        value.Type == JgsType.String ? value : JgsValue.Str(value.Display());
+
+    /// <summary>Wraps freshly built elements in the input's shape (or a plain row when unshaped).</summary>
+    private static JgsValue ShapedLike(JgsValue input, JgsValue[] elements)
+    {
+        JgsValue result = JgsValue.Array(elements);
+        if (input.Rows > 1 && input.Cols > 1)
+        {
+            result.Reshape(input.Rows, input.Cols);
+        }
+        else if (elements.Length > 1 && input.Type == JgsType.Array && input.Cols == 1 && input.Rows > 1)
+        {
+            result.Reshape(elements.Length, 1);
+        }
+
+        return result;
+    }
+}

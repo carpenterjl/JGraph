@@ -705,6 +705,47 @@ Implemented through Milestone 24 — a working figure window you can edit, save,
   JGS `[[1, 2], [3, 4]]` is still a list of lists. Separately, **`true == 1` is now true** and
   **`NaN == NaN` is now false** — the packed comparison path carried its own copy of the strict rule
   and changed with it — and `isequal` compares sizes, not just elements (ADR 0043).
+- **M41** The language and value-model half of making the sixteen MATLAB stress-test scripts run
+  clean. Scripts execute on dedicated 16 MB-stack threads (`ScriptThread`), so 400-deep recursion is
+  survivable and the interpreter's limit (512) trips as a catchable error instead of a process-killing
+  stack overflow; a packed matrix grows **in place with amortized capacity** under MATLAB's
+  copy-on-assign (the 5000-step `A(i,i)=i` loop went from hours to a quarter-second), with `AsBuffer`
+  compacting on sight so no raw-buffer consumer can observe the slack. The parser gained MATLAB's
+  comma statement separator (`if cond, stmt; end`, one-line `function` bodies), nested functions in
+  end-closed files (a token pre-scan settles the file's style; nested bodies close over the parent's
+  live frame), and `persistent`. Arrays became **N-D** — an `int[]` of dimensions over the same flat
+  column-major storage, with `_rows`/`_cols` holding MATLAB's own 2-D fold so two-subscript readers
+  needed no edits — and elementwise operators, comparisons and `bsxfun` all route through one
+  **implicit-expansion** engine (`JgsBroadcast`), so a column plus a row is their outer sum. Cells
+  carry the same wrapper shape (`cell(r,c)`, `C{r,c}`), a struct array is a cell of structs grown by
+  `S(n).f = v`, `for` iterates matrix columns, `run('file.m')` executes under the file's dialect, and
+  `clear`/`clearvars`/`whos` are workspace builtins in every host, with plain `clear` sparing
+  script-defined functions (ADR 0044).
+- **M42** The numerics half of the same campaign. A real sparse class: `JgsType.Sparse` over an
+  immutable CSC `CscMatrix` (`JGraph.Numerics/Sparse`), operators dispatched ahead of the dense
+  machinery (sparse±sparse and sparse×sparse stay sparse, sparse×dense densifies, anything else
+  errors by name and points at `full()`), two-output `lu` by Gilbert–Peierls with the permutation
+  folded into L, and `eigs` by one generous Arnoldi expansion with Ritz vectors recovered by shifted
+  inverse iteration — the 5000×5000 `sprand` script factors and runs end-to-end in half a minute.
+  Integer classes are MATLAB conversions (round half away from zero, saturate, NaN→0) on double
+  storage, with `uint8.empty(0, 5)` reached by letting member access on a builtin consult a statics
+  table. The dense `*` moved from a per-element delegate loop to a **parallel column-major saxpy
+  kernel** (`DenseProduct`) — 100 iterations of `A*A'` at n = 1000 in ~80 s instead of hours.
+  Complex `det`/`inv`/`trace`/`eig`/`svd` and complex-producing `exp`/`log`/`sqrt` dispatch
+  additively off `HasComplexElements` (a new `ComplexEigen` QR kernel); `sqrtm` is Denman–Beavers,
+  `logm` inverse scaling-and-squaring over it, and `ode45` is Dormand–Prince 5(4) with FSAL, with
+  `plot` accepting name-value pairs and matrix columns so the results can be looked at (ADR 0045).
+- **M43** The data types and graphics verbs that finished the campaign: `table(...)`/`timetable`
+  construct the existing `JGraph.Data.Table` (member access reads a column — text columns as cells,
+  so `T.Code{2}` braces in), `categorical`/`summary`, `seconds`, and `missing` are documented
+  untyped stand-ins, and the string family completed (1-arg `split`/`join`, `string`, `cellstr`,
+  `compose`, `ismissing`). MATLAB's `sprintf`/`fprintf` **flatten arrays and cycle the format**,
+  `~` is element-wise over arrays, `num2str` honours a format string, and brace assignment reaches
+  through dot chains. `tiledlayout`/`nexttile` ride on the subplot grid, `axis` learned its aspect
+  words and limit vector, `colormap` gained turbo, `surf`/`contourf` accept full meshgrid matrices
+  (and a scalar level count), and `shading`/`lighting`/`camlight`/`rotate3d` are accepted no-op
+  verbs. **All twenty stress scripts — the sixteen user-written ones plus the four self-checking
+  Fable scripts (stess_17–20) — run clean under `jgraph -batch`** (ADR 0046).
 
 The `JGraph.Demo` gallery exercises the plot types, annotations, and both APIs;
 `JGraph.Application` is the interactive figure window with data import and scripting.

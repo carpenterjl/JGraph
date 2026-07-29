@@ -111,13 +111,17 @@ public class JgsIndexingTests : IDisposable
     }
 
     [Fact]
-    public async Task ParenIndexing_WithWrongArgumentCount_IsRuntimeError()
+    public async Task ParenIndexing_WithExtraSubscripts_FollowsTrailingSingletons()
     {
-        // Two subscripts are a row and a column, so a third has nothing to name.
-        ScriptRunResult result = await Run("print([1, 2, 3](1, 2, 3))");
+        // Subscripts past the array's rank index singleton dimensions (M41): in-range trailing
+        // subscripts read through, and an out-of-range one is a plain range error.
+        ScriptRunResult ok = await Run("print([1, 2, 3](0, 1, 0))");
+        Assert.True(ok.Success, ok.Message);
+        Assert.Contains("2", _output.NormalText);
 
-        Assert.False(result.Success);
-        Assert.Contains("one subscript", Assert.Single(result.Diagnostics).Message);
+        ScriptRunResult outOfRange = await Run("print([1, 2, 3](0, 1, 3))");
+        Assert.False(outOfRange.Success);
+        Assert.Contains("out of range", Assert.Single(outOfRange.Diagnostics).Message);
     }
 
     [Fact]
