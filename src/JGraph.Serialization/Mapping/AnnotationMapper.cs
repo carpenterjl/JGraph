@@ -14,6 +14,7 @@ internal static class AnnotationMapper
             TextAnnotation a => new TextAnnotationDto
             {
                 Position = DtoConvert.ToDto(a.Position),
+                Z = a.Z,
                 Text = a.Text,
                 FontSize = a.FontSize,
                 FontFamily = a.FontFamily,
@@ -65,6 +66,7 @@ internal static class AnnotationMapper
             TextAnnotationDto d => new TextAnnotation
             {
                 Position = DtoConvert.ToPoint(d.Position),
+                Z = d.Z,
                 Text = d.Text,
                 FontSize = d.FontSize,
                 FontFamily = d.FontFamily,

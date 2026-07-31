@@ -15,7 +15,7 @@ namespace JGraph.Objects;
 public sealed class ImagePlot : PlotObject, IDrawable
 {
     private double[,] _values;
-    private Colormap _colormap = Colormap.Viridis;
+    private Colormap _colormap = Colormap.Parula;
     private DataRange _xExtent;
     private DataRange _yExtent;
     private bool _autoScaleColor = true;

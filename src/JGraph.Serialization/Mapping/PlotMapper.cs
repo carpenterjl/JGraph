@@ -99,14 +99,24 @@ internal static class PlotMapper
                 X = p.X.ToArray(),
                 Y = p.Y.ToArray(),
                 Z = ToJagged(p.Z),
+                XGrid = p.XGrid is { } xg ? ToJagged(xg) : null,
+                YGrid = p.YGrid is { } yg ? ToJagged(yg) : null,
                 Colormap = DtoConvert.ToDto(p.Colormap),
                 Style = p.Style,
+                Shading = p.Shading,
                 ShowContourBelow = p.ShowContourBelow,
+                ContourLevels = p.ContourLevels,
                 EdgeColor = p.EdgeColor,
                 EdgeWidth = p.EdgeWidth,
                 AutoScaleColor = p.AutoScaleColor,
                 ColorMin = p.ColorMin,
                 ColorMax = p.ColorMax,
+                FaceLighting = p.FaceLighting,
+                AmbientStrength = p.AmbientStrength,
+                DiffuseStrength = p.DiffuseStrength,
+                SpecularStrength = p.SpecularStrength,
+                SpecularExponent = p.SpecularExponent,
+                SpecularColorReflectance = p.SpecularColorReflectance,
             },
             ContourPlot p => new ContourPlotDto
             {
@@ -118,6 +128,72 @@ internal static class PlotMapper
                 Filled = p.Filled,
                 Colormap = DtoConvert.ToDto(p.Colormap),
                 LineWidth = p.LineWidth,
+                AutoScaleColor = p.AutoScaleColor,
+                ColorMin = p.ColorMin,
+                ColorMax = p.ColorMax,
+            },
+            Line3DPlot p => new Line3DPlotDto
+            {
+                X = p.X.ToArray(),
+                Y = p.Y.ToArray(),
+                Z = p.Z.ToArray(),
+                Color = p.Color,
+                LineWidth = p.LineWidth,
+                DashStyle = p.DashStyle,
+                Marker = p.Marker,
+                MarkerSize = p.MarkerSize,
+                MarkerFill = p.MarkerFill,
+            },
+            Scatter3DPlot p => new Scatter3DPlotDto
+            {
+                X = p.X.ToArray(),
+                Y = p.Y.ToArray(),
+                Z = p.Z.ToArray(),
+                SizeData = p.SizeData?.ToArray(),
+                ColorData = p.ColorData?.ToArray(),
+                Color = p.Color,
+                Marker = p.Marker,
+                MarkerSize = p.MarkerSize,
+                Filled = p.Filled,
+                EdgeWidth = p.EdgeWidth,
+                Colormap = DtoConvert.ToDto(p.Colormap),
+                AutoScaleColor = p.AutoScaleColor,
+                ColorMin = p.ColorMin,
+                ColorMax = p.ColorMax,
+            },
+            PatchPlot p => new PatchPlotDto
+            {
+                X = p.X.ToArray(),
+                Y = p.Y.ToArray(),
+                Z = p.Z.ToArray(),
+                Faces = p.Faces.Select(f => f.ToArray()).ToArray(),
+                ColorData = p.ColorData?.ToArray(),
+                FaceColor = p.FaceColor,
+                FaceVisible = p.FaceVisible,
+                EdgeColor = p.EdgeColor,
+                EdgeVisible = p.EdgeColor is not null,
+                EdgeWidth = p.EdgeWidth,
+                Shading = p.Shading,
+                Colormap = DtoConvert.ToDto(p.Colormap),
+                AutoScaleColor = p.AutoScaleColor,
+                ColorMin = p.ColorMin,
+                ColorMax = p.ColorMax,
+            },
+            QuiverPlot p => new QuiverPlotDto
+            {
+                X = p.X.ToArray(),
+                Y = p.Y.ToArray(),
+                Z = p.Z.ToArray(),
+                U = p.U.ToArray(),
+                V = p.V.ToArray(),
+                W = p.W.ToArray(),
+                Color = p.Color,
+                LineWidth = p.LineWidth,
+                AutoScale = p.AutoScale,
+                AutoScaleFactor = p.AutoScaleFactor,
+                Scale = p.Scale,
+                ShowArrowHead = p.ShowArrowHead,
+                MaxHeadSize = p.MaxHeadSize,
             },
             PolarGrid p => new PolarGridDto
             {
@@ -223,17 +299,7 @@ internal static class PlotMapper
                 YExtent = DtoConvert.ToRange(d.YExtent),
                 Interpolate = d.Interpolate,
             },
-            SurfacePlotDto d => new SurfacePlot(d.X, d.Y, To2D(d.Z))
-            {
-                Colormap = DtoConvert.ToColormap(d.Colormap),
-                Style = d.Style,
-                ShowContourBelow = d.ShowContourBelow,
-                EdgeColor = d.EdgeColor,
-                EdgeWidth = d.EdgeWidth,
-                AutoScaleColor = d.AutoScaleColor,
-                ColorMin = d.ColorMin,
-                ColorMax = d.ColorMax,
-            },
+            SurfacePlotDto d => ToSurface(d),
             ContourPlotDto d => new ContourPlot(d.X, d.Y, To2D(d.Z))
             {
                 Levels = d.Levels,
@@ -241,6 +307,55 @@ internal static class PlotMapper
                 Filled = d.Filled,
                 Colormap = DtoConvert.ToColormap(d.Colormap),
                 LineWidth = d.LineWidth,
+                AutoScaleColor = d.AutoScaleColor,
+                ColorMin = d.ColorMin,
+                ColorMax = d.ColorMax,
+            },
+            Line3DPlotDto d => new Line3DPlot(d.X, d.Y, d.Z)
+            {
+                Color = d.Color,
+                LineWidth = d.LineWidth,
+                DashStyle = d.DashStyle,
+                Marker = d.Marker,
+                MarkerSize = d.MarkerSize,
+                MarkerFill = d.MarkerFill,
+            },
+            Scatter3DPlotDto d => new Scatter3DPlot(d.X, d.Y, d.Z)
+            {
+                SizeData = d.SizeData,
+                ColorData = d.ColorData,
+                Color = d.Color,
+                Marker = d.Marker,
+                MarkerSize = d.MarkerSize,
+                Filled = d.Filled,
+                EdgeWidth = d.EdgeWidth,
+                Colormap = DtoConvert.ToColormap(d.Colormap),
+                AutoScaleColor = d.AutoScaleColor,
+                ColorMin = d.ColorMin,
+                ColorMax = d.ColorMax,
+            },
+            PatchPlotDto d => new PatchPlot(d.X, d.Y, d.Z, d.Faces)
+            {
+                ColorData = d.ColorData,
+                FaceColor = d.FaceColor,
+                FaceVisible = d.FaceVisible,
+                EdgeColor = d.EdgeVisible ? d.EdgeColor ?? JGraph.Core.Drawing.Colors.Black : null,
+                EdgeWidth = d.EdgeWidth,
+                Shading = d.Shading,
+                Colormap = DtoConvert.ToColormap(d.Colormap),
+                AutoScaleColor = d.AutoScaleColor,
+                ColorMin = d.ColorMin,
+                ColorMax = d.ColorMax,
+            },
+            QuiverPlotDto d => new QuiverPlot(d.X, d.Y, d.Z, d.U, d.V, d.W)
+            {
+                Color = d.Color,
+                LineWidth = d.LineWidth,
+                AutoScale = d.AutoScale,
+                AutoScaleFactor = d.AutoScaleFactor,
+                Scale = d.Scale,
+                ShowArrowHead = d.ShowArrowHead,
+                MaxHeadSize = d.MaxHeadSize,
             },
             PolarGridDto d => ApplyGridLabels(new PolarGrid
             {
@@ -309,6 +424,35 @@ internal static class PlotMapper
         plot.HitTestVisible = dto.HitTestVisible;
         plot.XAxisIndex = dto.XAxisIndex;
         plot.YAxisIndex = dto.YAxisIndex;
+    }
+
+    /// <summary>
+    /// Rebuilds a surface. The two grid forms need different constructors, and an object initializer
+    /// cannot follow a conditional, so this is a method rather than a switch arm.
+    /// </summary>
+    private static SurfacePlot ToSurface(SurfacePlotDto d)
+    {
+        SurfacePlot surface = d.XGrid is not null && d.YGrid is not null
+            ? new SurfacePlot(To2D(d.XGrid), To2D(d.YGrid), To2D(d.Z))
+            : new SurfacePlot(d.X, d.Y, To2D(d.Z));
+
+        surface.Colormap = DtoConvert.ToColormap(d.Colormap);
+        surface.Style = d.Style;
+        surface.Shading = d.Shading;
+        surface.ShowContourBelow = d.ShowContourBelow;
+        surface.ContourLevels = d.ContourLevels;
+        surface.EdgeColor = d.EdgeColor;
+        surface.EdgeWidth = d.EdgeWidth;
+        surface.AutoScaleColor = d.AutoScaleColor;
+        surface.ColorMin = d.ColorMin;
+        surface.ColorMax = d.ColorMax;
+        surface.FaceLighting = d.FaceLighting;
+        surface.AmbientStrength = d.AmbientStrength;
+        surface.DiffuseStrength = d.DiffuseStrength;
+        surface.SpecularStrength = d.SpecularStrength;
+        surface.SpecularExponent = d.SpecularExponent;
+        surface.SpecularColorReflectance = d.SpecularColorReflectance;
+        return surface;
     }
 
     private static double[][] ToJagged(double[,] values)

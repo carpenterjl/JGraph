@@ -30,6 +30,12 @@ public sealed class TextAnnotationDto : AnnotationDto
 {
     public PointDto Position { get; set; } = new(0, 0);
 
+    /// <summary>
+    /// The anchor's height in a 3D axes. Zero is the default and what every label written before M45
+    /// carries, which is the floor of the box.
+    /// </summary>
+    public double Z { get; set; }
+
     public string Text { get; set; } = string.Empty;
 
     public double FontSize { get; set; } = 12;

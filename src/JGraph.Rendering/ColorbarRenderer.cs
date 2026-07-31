@@ -119,7 +119,7 @@ public static class ColorbarRenderer
     {
         foreach (PlotObject plot in axes.Plots)
         {
-            if (plot.Visible && plot is IColorMapped mapped)
+            if (plot.Visible && plot is IColorMapped { HasMappedData: true } mapped)
             {
                 return mapped;
             }

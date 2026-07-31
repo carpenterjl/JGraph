@@ -143,9 +143,10 @@ public static class FigureExporter
 
         // Disposing the canvas finalizes the SVG document, so it must happen before the caller
         // reads or closes the stream. Skia's SVG backend drops dash path effects, so dashed
-        // strokes are flattened into explicit segments for this format.
+        // strokes are flattened into explicit segments for this format, and it drops vertex meshes
+        // outright (a surface would simply be absent from the file), so those become paths.
         using SKCanvas canvas = SKSvgCanvas.Create(bounds, stream);
-        using var context = new SkiaRenderContext(canvas, size, 1.0, flattenDashes: true);
+        using var context = new SkiaRenderContext(canvas, size, 1.0, flattenDashes: true, supportsMeshes: false);
         new FigureRenderer().Render(figure, context, theme);
     }
 
@@ -166,14 +167,23 @@ public static class FigureExporter
             (float)(size.Width * PointsPerDiu),
             (float)(size.Height * PointsPerDiu));
         canvas.Scale(PointsPerDiu);
-        RenderTo(canvas, figure, size, theme);
+
+        // As with SVG, Skia's PDF backend discards vertex meshes silently, so surfaces have to be
+        // emitted as paths for this format.
+        RenderTo(canvas, figure, size, theme, supportsMeshes: false);
         document.EndPage();
         document.Close();
     }
 
-    private static void RenderTo(SKCanvas canvas, FigureModel figure, Size2D size, ITheme theme, double pixelRatio = 1.0)
+    private static void RenderTo(
+        SKCanvas canvas,
+        FigureModel figure,
+        Size2D size,
+        ITheme theme,
+        double pixelRatio = 1.0,
+        bool supportsMeshes = true)
     {
-        using var context = new SkiaRenderContext(canvas, size, pixelRatio);
+        using var context = new SkiaRenderContext(canvas, size, pixelRatio, supportsMeshes: supportsMeshes);
         new FigureRenderer().Render(figure, context, theme);
     }
 }

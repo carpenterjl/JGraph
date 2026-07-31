@@ -5,6 +5,9 @@ namespace JGraph.Serialization.Dto;
 /// <summary>A 2D point in the document format.</summary>
 public sealed record PointDto(double X, double Y);
 
+/// <summary>A 3D point or direction in the document format.</summary>
+public sealed record Point3Dto(double X, double Y, double Z);
+
 /// <summary>A closed numeric interval [Min, Max].</summary>
 public sealed record RangeDto(double Min, double Max);
 
@@ -33,5 +36,9 @@ public sealed record SeriesDto(
     byte[]? YsPacked = null,
     int Count = 0);
 
-/// <summary>A named colormap defined by its evenly spaced color stops.</summary>
-public sealed record ColormapDto(string Name, Color[] Stops);
+/// <summary>
+/// A named colormap defined by its evenly spaced color stops. <paramref name="Discrete"/> marks a
+/// palette whose stops are used unblended, one bin each, rather than interpolated; it is optional so
+/// that documents written before it existed still read back.
+/// </summary>
+public sealed record ColormapDto(string Name, Color[] Stops, bool Discrete = false);

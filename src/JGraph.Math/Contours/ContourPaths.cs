@@ -35,7 +35,11 @@ public static class ContourPaths
 
         for (int i = 0; i < segments.Count; i++)
         {
-            if (segments[i].Length < 2)
+            // A sample sitting exactly on the level makes the cells around it interpolate both of
+            // their crossings to that one grid vertex, so marching squares emits a segment from a
+            // point to itself. It carries no geometry, it cannot be chained to anything, and left
+            // in it comes back as a stray one-point path among the real curves.
+            if (segments[i].Length < 2 || (segments[i].Length == 2 && Key(segments[i][0]) == Key(segments[i][1])))
             {
                 used[i] = true;
                 continue;

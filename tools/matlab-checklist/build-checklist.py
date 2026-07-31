@@ -40,9 +40,22 @@ EXTRA_IMPLEMENTED = {
 
 
 def catalog_names(repo: Path) -> set[str]:
-    """Every name JgsBuiltinCatalog registers (Add/Constant entries)."""
-    source = (repo / "src/JGraph.Scripting/Jgs/JgsBuiltinCatalog.cs").read_text(encoding="utf-8")
-    return set(re.findall(r'(?:Add|Constant)\("([^"]+)"', source))
+    """Every name JgsBuiltinCatalog registers.
+
+    Two shapes, because the catalog has two. Most entries are a literal ``Add("name", ...)`` — and
+    the name may sit on the line below the paren when the help string is long, so the pattern spans
+    the break. The colormap generators are registered from a loop over a table in
+    ``JgsBuiltins.Graphics3D.cs`` instead, so a regex over the catalog alone silently missed all
+    sixteen of them and reported ``parula`` as unimplemented while it was working.
+    """
+    catalog = (repo / "src/JGraph.Scripting/Jgs/JgsBuiltinCatalog.cs").read_text(encoding="utf-8")
+    names = set(re.findall(r'(?:Add|Constant)\(\s*"([^"]+)"', catalog))
+
+    graphics = (repo / "src/JGraph.Scripting/Jgs/JgsBuiltins.Graphics3D.cs").read_text(encoding="utf-8")
+    table = re.search(r"ColormapGenerators\s*=\s*\[(.*?)\];", graphics, re.S)
+    if table:
+        names |= set(re.findall(r'\("([^"]+)"', table.group(1)))
+    return names
 
 
 def main() -> int:

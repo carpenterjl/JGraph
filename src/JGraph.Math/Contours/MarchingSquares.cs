@@ -156,7 +156,7 @@ public static class MarchingSquares
     /// Sutherland–Hodgman clip of a value-annotated polygon against an iso-value: keeps vertices with
     /// value ≥ (or ≤) <paramref name="level"/> and inserts linearly interpolated crossing points.
     /// </summary>
-    private static int Clip(
+    internal static int Clip(
         ReadOnlySpan<(Point2D P, double V)> input,
         int count,
         Span<(Point2D P, double V)> output,
@@ -196,7 +196,7 @@ public static class MarchingSquares
         return a + ((b - a) * System.Math.Clamp(t, 0, 1));
     }
 
-    private static void Validate(double[] x, double[] y, double[,] z)
+    internal static void Validate(double[] x, double[] y, double[,] z)
     {
         ArgumentNullException.ThrowIfNull(x);
         ArgumentNullException.ThrowIfNull(y);

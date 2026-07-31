@@ -1,4 +1,5 @@
 using JGraph.Core.Model;
+using JGraph.Core.Primitives;
 using JGraph.Serialization.Dto;
 
 namespace JGraph.Serialization.Mapping;
@@ -103,6 +104,14 @@ internal static class FigureMapper
             dto.Annotations.Add(AnnotationMapper.ToDto(annotation));
         }
 
+        foreach (LightModel light in axes.Lights)
+        {
+            dto.Lights.Add(ToDto(light));
+        }
+
+        dto.ColorOrder = axes.ColorOrder is { } order ? [.. order] : null;
+        dto.PlotBoxAspect = new Point3Dto(
+            axes.PlotBoxAspect.X, axes.PlotBoxAspect.Y, axes.PlotBoxAspect.Z);
         return dto;
     }
 
@@ -181,8 +190,36 @@ internal static class FigureMapper
             axes.Annotations.Add(AnnotationMapper.ToModel(annotationDto));
         }
 
+        foreach (LightDto lightDto in dto.Lights)
+        {
+            axes.Lights.Add(ToModel(lightDto));
+        }
+
+        axes.ColorOrder = dto.ColorOrder is { Count: > 0 } order ? [.. order] : null;
+        axes.PlotBoxAspect = new Vector3D(
+            dto.PlotBoxAspect.X, dto.PlotBoxAspect.Y, dto.PlotBoxAspect.Z);
         return axes;
     }
+
+    private static LightDto ToDto(LightModel light) => new()
+    {
+        Name = light.Name,
+        Visible = light.Visible,
+        Style = light.Style,
+        Position = new Point3Dto(light.Position.X, light.Position.Y, light.Position.Z),
+        Color = light.Color,
+        FollowsCamera = light.FollowsCamera,
+    };
+
+    private static LightModel ToModel(LightDto dto) => new()
+    {
+        Name = dto.Name,
+        Visible = dto.Visible,
+        Style = dto.Style,
+        Position = new Vector3D(dto.Position.X, dto.Position.Y, dto.Position.Z),
+        Color = dto.Color,
+        FollowsCamera = dto.FollowsCamera,
+    };
 
     private static AxisDto ToDto(AxisModel axis) => new()
     {

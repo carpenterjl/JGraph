@@ -173,6 +173,99 @@ public class FigureExporterTests
         Assert.True(moveCommands >= 20, $"Expected many dash segments; found {moveCommands} move commands.");
     }
 
+    /// <summary>
+    /// M44: vector export runs the same render context as the screen, so any change to how a
+    /// surface issues its geometry has to keep working here. Skia's SVG and PDF devices do not
+    /// implement every canvas operation — a primitive they silently drop would empty the surface out
+    /// of an exported figure with nothing else to notice. A surf must land as real vector paths.
+    /// </summary>
+    [Theory]
+    [InlineData(ExportFormat.Svg)]
+    [InlineData(ExportFormat.Pdf)]
+    public void Surface_ExportsToVectorFormats_WithItsGeometry(ExportFormat format)
+    {
+        const int n = 12;
+        var x = new double[n];
+        var y = new double[n];
+        for (int i = 0; i < n; i++)
+        {
+            x[i] = i;
+            y[i] = i;
+        }
+
+        var z = new double[n, n];
+        for (int r = 0; r < n; r++)
+        {
+            for (int c = 0; c < n; c++)
+            {
+                z[r, c] = System.Math.Sin(c * 0.4) * System.Math.Cos(r * 0.4);
+            }
+        }
+
+        var surfaceFigure = new FigureModel();
+        surfaceFigure.AddAxes().AddSurface(x, y, z);
+        byte[] withSurface = FigureExporter.ExportBytes(surfaceFigure, format, Options());
+
+        // An axes box on its own already draws lines and labels, and a PDF carries half a megabyte
+        // of embedded fonts besides, so the baseline is subtracted rather than scaled. What matters
+        // is that each grid cell contributes geometry: a dropped primitive shows up as a delta of
+        // roughly nothing, not as a smaller file.
+        var emptyFigure = new FigureModel();
+        emptyFigure.AddAxes();
+        byte[] withoutSurface = FigureExporter.ExportBytes(emptyFigure, format, Options());
+
+        int cells = (n - 1) * (n - 1);
+        int added = withSurface.Length - withoutSurface.Length;
+        Assert.True(
+            added > cells * 20,
+            $"{format} export of a {n}x{n} surface added only {added} bytes over an empty figure's "
+            + $"{withoutSurface.Length} — {cells} cells of surface geometry are missing.");
+    }
+
+    /// <summary>
+    /// M45.D: an interp-shaded patch is the second caller of the triangle primitive, and it is the
+    /// one that reaches it from a plain 2D axes. The same silent-drop hazard applies, so it gets the
+    /// same guard: a fan of triangles has to land as real vector geometry, not as nothing.
+    /// </summary>
+    [Theory]
+    [InlineData(ExportFormat.Svg)]
+    [InlineData(ExportFormat.Pdf)]
+    public void InterpolatedPatch_ExportsToVectorFormats_WithItsGeometry(ExportFormat format)
+    {
+        const int Faces = 24;
+        var x = new double[Faces * 3];
+        var y = new double[Faces * 3];
+        var faces = new int[Faces][];
+        for (int f = 0; f < Faces; f++)
+        {
+            double angle = f * 2 * System.Math.PI / Faces;
+            for (int v = 0; v < 3; v++)
+            {
+                int index = (f * 3) + v;
+                x[index] = System.Math.Cos(angle) + (v * 0.1);
+                y[index] = System.Math.Sin(angle) + (v * 0.1);
+            }
+
+            faces[f] = [f * 3, (f * 3) + 1, (f * 3) + 2];
+        }
+
+        var patchFigure = new FigureModel();
+        PatchPlot patch = patchFigure.AddAxes().AddPatch(x, y, new double[Faces * 3], faces);
+        patch.ColorData = Enumerable.Range(0, Faces * 3).Select(i => (double)i).ToArray();
+        patch.Shading = PatchShading.Interp;
+        byte[] withPatch = FigureExporter.ExportBytes(patchFigure, format, Options());
+
+        var emptyFigure = new FigureModel();
+        emptyFigure.AddAxes();
+        byte[] withoutPatch = FigureExporter.ExportBytes(emptyFigure, format, Options());
+
+        int added = withPatch.Length - withoutPatch.Length;
+        Assert.True(
+            added > Faces * 20,
+            $"{format} export of a {Faces}-face interp patch added only {added} bytes over an empty "
+            + $"figure's {withoutPatch.Length} — the triangle geometry is missing.");
+    }
+
     [Fact]
     public void Pdf_HasPdfHeaderAndTrailer()
     {

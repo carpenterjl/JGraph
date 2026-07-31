@@ -195,7 +195,8 @@ public sealed class FigureRenderer
         AxisModel zAxis = axes.ZAxis;
         DataRange xr = xAxis.Range, yr = yAxis.Range, zr = zAxis.Range;
 
-        var projection = new Projection3D(xr, yr, zr, axes.Azimuth, axes.Elevation, plotArea);
+        var projection = new Projection3D(
+            xr, yr, zr, axes.Azimuth, axes.Elevation, plotArea, axes.PlotBoxAspect);
 
         TickSet xTicks = TickGenerators.For(xAxis).Generate(xr, xAxis.TargetMajorTickCount, xAxis.TickLabelFormat);
         TickSet yTicks = TickGenerators.For(yAxis).Generate(yr, yAxis.TargetMajorTickCount, yAxis.TickLabelFormat);
@@ -263,7 +264,7 @@ public sealed class FigureRenderer
         Line3D(xr.Max, yFar, zr.Min, xr.Max, yFar, zr.Max, frameStyle);
 
         // Plot content.
-        IReadOnlyList<Color> palette = theme.SeriesPalette;
+        IReadOnlyList<Color> palette = axes.ColorOrder ?? theme.SeriesPalette;
         int colorIndex = 0;
         foreach (PlotObject plot in axes.Plots.InDrawOrder())
         {
@@ -273,6 +274,19 @@ public sealed class FigureRenderer
             {
                 var state = new RenderState(new NormalizedCoordinateMapper(plotArea), plotArea, seriesColor);
                 drawable.Render3D(context, projection, state);
+            }
+        }
+
+        // Data-space annotations sit above the plots and are projected through the same camera, which
+        // is what lets a `text` label follow the point it names as the box rotates. An annotation that
+        // has no 3D form is skipped rather than drawn at a meaningless 2D position.
+        var annotationState = new RenderState(
+            new NormalizedCoordinateMapper(plotArea), plotArea, theme.AxisLabel);
+        foreach (AnnotationObject annotation in axes.Annotations.InDrawOrder())
+        {
+            if (annotation.Visible && annotation is I3DDrawable projected)
+            {
+                projected.Render3D(context, projection, annotationState);
             }
         }
 
@@ -513,7 +527,7 @@ public sealed class FigureRenderer
 
     private static void DrawPlots(AxesModel axes, IRenderContext context, Rect2D plotArea, ITheme theme)
     {
-        IReadOnlyList<Color> palette = theme.SeriesPalette;
+        IReadOnlyList<Color> palette = axes.ColorOrder ?? theme.SeriesPalette;
         int colorIndex = 0;
 
         context.PushClip(plotArea);

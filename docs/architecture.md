@@ -78,6 +78,12 @@ nothing about higher ones.
    draws grid + axes chrome, clips to the plot area, and invokes `IDrawable.Render` on each plot.
 4. Concrete plots (in `JGraph.Objects`) map their data to pixels through the `RenderState.Mapper` and
    issue backend-independent draw calls.
+5. Bulk geometry goes through two batching primitives rather than one call per cell:
+   `DrawTriangles` (a non-indexed triangle soup with per-vertex colors) and `DrawPaths` (many
+   sub-paths filled and stroked as one path, so adjacent sub-paths tile without antialiasing seams).
+   Skia's SVG and PDF backends silently drop `drawVertices`, so the context carries a
+   `supportsMeshes` flag — false for vector export, which falls back to one path fill per triangle.
+   See [ADR 0047](adr/0047-surface-rendering-quality-and-performance.md).
 
 ## Interaction pipeline
 
@@ -467,7 +473,7 @@ See [ADR 0012](adr/0012-scripting-hosts.md), [ADR 0013](adr/0013-custom-scriptin
 
 ## Status
 
-Implemented through Milestone 24 — a working figure window you can edit, save, publish, extend, feed with imported data, and drive with scripts:
+Implemented through Milestone 45 — a working figure window you can edit, save, publish, extend, feed with imported data, and drive with scripts:
 
 - **M1** object model, math services (transforms, ticks, decimation), rendering abstractions.
 - **M2** SkiaSharp render context, `FigureRenderer` (chrome + plots), WPF `FigureControl`,
@@ -746,6 +752,42 @@ Implemented through Milestone 24 — a working figure window you can edit, save,
   (and a scalar level count), and `shading`/`lighting`/`camlight`/`rotate3d` are accepted no-op
   verbs. **All twenty stress scripts — the sixteen user-written ones plus the four self-checking
   Fable scripts (stess_17–20) — run clean under `jgraph -batch`** (ADR 0046).
+- **M44** Surface and contour rendering, measured rather than guessed. Two new batching primitives on
+  the render seam — `DrawTriangles` (a non-indexed soup, since Skia 2.88 caps indexed meshes at 65,536
+  vertices and faceted shading needs unshared vertices) and `DrawPaths` — turn `rows·cols` draw calls
+  into `rows + cols - 3`, batched by **anti-diagonal wavefront** because row banding lets a cell
+  occlude its own neighbour. Painter order became analytic: under orthographic projection occlusion
+  depends only on the ground footprint, so sorting by the sweep direction is *more* correct than the
+  mean-depth sort it replaced, which mis-ordered a spike against a flat neighbour — the depth sort
+  stays live behind a monotonicity check, and stays for M45's parametric surfaces. Contour geometry
+  now outlives its frame: one sweep extracts every band (`ContourBands`), assembled iso-lines are
+  cached (`ContourLineSet`, which also fixes dashed contours restarting their pattern every two
+  points), and a pan/zoom/resize/theme change only re-maps. A 500² `surf` frame went 498 ms and
+  27.6 MB to **143 ms and 80 KB**; a `contourf` repaint went 23.0 ms and 9.15 MB to **1.16 ms and one
+  byte**. **Parula** exists and is the default for surfaces, contours and images, alongside eight more
+  MATLAB maps, each carrying exactly the stop count its own definition turns at. **Lighting is real
+  and off by default** — `LightingModel` (MATLAB's material presets over Blinn-Phong) plus
+  `AxesModel.Lights`, with normals in the projection's normalized cube space and a non-uniform
+  stencil, so `lighting`/`material`/`light`/`lightangle`/`camlight` stopped being no-ops. An axes with
+  no lights renders exactly what it always did, which is MATLAB's behavior too. Figure windows now
+  open with both side panels hidden (ADR 0047).
+- **M45** The 3-D command surface — 36 verbs, and the reason the gap was invisible. The coverage doc
+  tracked only what MATLAB documents as kind *builtin*; nearly the whole plotting surface is kind
+  *function*, so a command never written looked exactly like one already there. It now tracks both:
+  **372 of 514 builtins** and **78 of 263 graphics functions**, with the remaining 185 partitioned
+  into five families that sum exactly. `SurfacePlot` gained full **X/Y matrices** alongside the
+  vectors, reversing ADR 0046 §6's meshgrid collapse — a sphere is not a height field, which is also
+  why it takes M44's depth-sort fallback rather than the analytic sweep. Four new plot objects
+  (`Line3DPlot`, `Scatter3DPlot`, `PatchPlot`, `QuiverPlot`) plus a 3-D anchor on `TextAnnotation`
+  finish the drawing primitives the coverage doc had called the most useful thing left — `plot3`,
+  `line`, `text`, `fill`, `fill3`, `patch`, `surface`, `light`. The colormap generators return
+  m-by-3 tables so `colormap(parula(64))` works, and `caxis`/`material`/`lightangle`/`camlight`
+  reach M44's lighting model. The camera verbs map onto the orthographic projection and **say where
+  they cannot** — `campos` reads direction only, `camtarget`/`camup` are fixed, `camva` is a zoom.
+  Nine of the twelve surface variants turned out to be geometry rather than rendering: `meshz` rings
+  the grid with a curtain at the base height, `waterfall` is one closed polygon per row, `contour3`
+  is the existing tracer with each vertex placed at its own level. `.graph` stays v5, every addition
+  being a new derived DTO or a defaulted property (ADR 0048).
 
 The `JGraph.Demo` gallery exercises the plot types, annotations, and both APIs;
 `JGraph.Application` is the interactive figure window with data import and scripting.

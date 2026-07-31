@@ -16,14 +16,25 @@ public sealed class SkiaRenderContext : IRenderContext, IDisposable
     private readonly SKPaint _stroke;
     private readonly SKPaint _fill;
     private readonly SKPaint _text;
+    private readonly SKPaint _mesh;
     private readonly bool _flattenDashes;
+    private readonly bool _supportsMeshes;
     private readonly Dictionary<(string Family, bool Bold, bool Italic), SKTypeface> _typefaces = new();
 
     private SKPoint[] _pointBuffer = new SKPoint[256];
 
-    // Reused across DrawPolyline calls: rebuilding the geometry is unavoidable, but reallocating
-    // a native SKPath per polyline per frame is not (a figure redraws every polyline on every pan).
-    private readonly SKPath _polylinePath = new();
+    // DrawVertices takes exactly-sized arrays in SkiaSharp 2.88, so an oversized buffer cannot be
+    // reused and batch-to-batch size changes would allocate on every call. Batches are therefore
+    // padded up to a power-of-two triangle count and one buffer pair is kept per size class; a
+    // surface cycles through only a handful of classes, so after the first frame nothing allocates.
+    private readonly SKPoint[]?[] _meshPoints = new SKPoint[24][];
+    private readonly SKColor[]?[] _meshColors = new SKColor[24][];
+
+    // Reused across DrawPolyline and DrawPolygon: rebuilding the geometry is unavoidable, but
+    // reallocating a native SKPath per call per frame is not (a figure redraws every polyline on
+    // every pan, and a 3D surface draws one polygon per grid cell). Neither method reenters the
+    // other, and DrawDashFlattened builds its own path, so a single scratch path is safe.
+    private readonly SKPath _scratchPath = new();
 
     /// <param name="canvas">The Skia canvas to draw onto (raster, SVG, or PDF page).</param>
     /// <param name="size">The drawable size in device-independent units.</param>
@@ -33,16 +44,31 @@ public sealed class SkiaRenderContext : IRenderContext, IDisposable
     /// Skia's SVG backend drops dash path effects (drawing them solid), so the SVG exporter enables
     /// this; raster and PDF targets keep the faster path effect.
     /// </param>
-    public SkiaRenderContext(SKCanvas canvas, Size2D size, double devicePixelRatio = 1.0, bool flattenDashes = false)
+    /// <param name="supportsMeshes">
+    /// Whether the canvas can rasterize <see cref="DrawTriangles"/> as a vertex mesh. Skia's SVG and
+    /// PDF backends drop <c>DrawVertices</c> silently — the geometry simply never appears in the
+    /// file — so those exporters pass false and get one filled path per triangle instead.
+    /// </param>
+    public SkiaRenderContext(
+        SKCanvas canvas,
+        Size2D size,
+        double devicePixelRatio = 1.0,
+        bool flattenDashes = false,
+        bool supportsMeshes = true)
     {
         _canvas = canvas;
         Size = size;
         DevicePixelRatio = devicePixelRatio;
         _flattenDashes = flattenDashes;
+        _supportsMeshes = supportsMeshes;
 
         _stroke = new SKPaint { IsAntialias = true, Style = SKPaintStyle.Stroke };
         _fill = new SKPaint { IsAntialias = true, Style = SKPaintStyle.Fill };
         _text = new SKPaint { IsAntialias = true, Style = SKPaintStyle.Fill, SubpixelText = true };
+
+        // Its own paint, not _fill: DrawRectangle/DrawPolygon/DrawMarkers overwrite that one's color
+        // and path effect, and a mesh draw must not inherit either.
+        _mesh = new SKPaint { Style = SKPaintStyle.Fill };
     }
 
     /// <inheritdoc />
@@ -95,7 +121,7 @@ public sealed class SkiaRenderContext : IRenderContext, IDisposable
         }
 
         int count = CopyToBuffer(points);
-        SKPath path = _polylinePath;
+        SKPath path = _scratchPath;
         path.Rewind(); // keeps the native allocation, unlike Reset
         path.MoveTo(_pointBuffer[0]);
         for (int i = 1; i < count; i++)
@@ -149,7 +175,8 @@ public sealed class SkiaRenderContext : IRenderContext, IDisposable
         }
 
         int count = CopyToBuffer(points);
-        using var path = new SKPath();
+        SKPath path = _scratchPath;
+        path.Rewind();
         path.MoveTo(_pointBuffer[0]);
         for (int i = 1; i < count; i++)
         {
@@ -203,6 +230,108 @@ public sealed class SkiaRenderContext : IRenderContext, IDisposable
         foreach (Point2D p in points)
         {
             DrawMarker(style.Type, (float)p.X, (float)p.Y, radius, fillColor.HasValue);
+        }
+    }
+
+    /// <inheritdoc />
+    public void DrawTriangles(ReadOnlySpan<Point2D> vertices, ReadOnlySpan<uint> colorsArgb)
+    {
+        int count = vertices.Length - (vertices.Length % 3);
+        if (count == 0 || colorsArgb.Length < count)
+        {
+            return;
+        }
+
+        // The size-class table tops out well above any batch JGraph issues; a caller that somehow
+        // exceeds it still draws, just through the slower per-triangle path.
+        if (!_supportsMeshes || count / 3 > 1 << (_meshPoints.Length - 1))
+        {
+            DrawTrianglesAsPaths(vertices, colorsArgb, count);
+            return;
+        }
+
+        (SKPoint[] points, SKColor[] colors) = MeshBuffers(count / 3);
+        for (int i = 0; i < count; i++)
+        {
+            points[i] = new SKPoint((float)vertices[i].X, (float)vertices[i].Y);
+            colors[i] = ToSk(colorsArgb[i]);
+        }
+
+        // The buffer is a whole size class, so the tail is padded with triangles that collapse to a
+        // single transparent point: zero area and zero alpha, so Skia rasterizes nothing for them.
+        for (int i = count; i < points.Length; i++)
+        {
+            points[i] = default;
+            colors[i] = SKColor.Empty;
+        }
+
+        _canvas.DrawVertices(SKVertexMode.Triangles, points, colors, _mesh);
+    }
+
+    /// <inheritdoc />
+    public void DrawPaths(
+        ReadOnlySpan<Point2D> vertices,
+        ReadOnlySpan<int> starts,
+        bool closed,
+        LineStyle? stroke,
+        Color? fill)
+    {
+        if (starts.Length == 0 || vertices.Length < 2)
+        {
+            return;
+        }
+
+        int count = CopyToBuffer(vertices);
+        SKPath path = _scratchPath;
+        path.Rewind();
+
+        // Fill type is sticky state on a reused path, and even-odd would cancel adjacent sub-paths
+        // into holes instead of tiling them.
+        path.FillType = SKPathFillType.Winding;
+
+        for (int s = 0; s < starts.Length; s++)
+        {
+            int begin = starts[s];
+            int end = s + 1 < starts.Length ? starts[s + 1] : count;
+            if (begin < 0 || end > count || end - begin < 2)
+            {
+                continue;
+            }
+
+            path.MoveTo(_pointBuffer[begin]);
+            for (int i = begin + 1; i < end; i++)
+            {
+                path.LineTo(_pointBuffer[i]);
+            }
+
+            if (closed)
+            {
+                path.Close();
+            }
+        }
+
+        if (path.IsEmpty)
+        {
+            return;
+        }
+
+        if (fill is { } fillColor && !fillColor.IsTransparent)
+        {
+            _fill.Color = ToSk(fillColor);
+            _canvas.DrawPath(path, _fill);
+        }
+
+        if (stroke is { } strokeStyle && strokeStyle.IsVisible)
+        {
+            if (NeedsDashFlattening(strokeStyle))
+            {
+                DrawDashFlattened(path, strokeStyle);
+                return;
+            }
+
+            ConfigureStroke(strokeStyle, out SKPathEffect? dash);
+            _canvas.DrawPath(path, _stroke);
+            dash?.Dispose();
         }
     }
 
@@ -307,16 +436,77 @@ public sealed class SkiaRenderContext : IRenderContext, IDisposable
 
     public void Dispose()
     {
-        _polylinePath.Dispose();
+        _scratchPath.Dispose();
         _stroke.Dispose();
         _fill.Dispose();
         _text.Dispose();
+        _mesh.Dispose();
         foreach (SKTypeface typeface in _typefaces.Values)
         {
             typeface.Dispose();
         }
 
         _typefaces.Clear();
+    }
+
+    /// <summary>
+    /// The vertex/color buffer pair for a batch of <paramref name="triangles"/>, rounded up to a
+    /// power-of-two size class so repeated batches of similar size share one allocation.
+    /// </summary>
+    private (SKPoint[] Points, SKColor[] Colors) MeshBuffers(int triangles)
+    {
+        int slot = 0;
+        int capacity = 1;
+        while (capacity < triangles)
+        {
+            capacity <<= 1;
+            slot++;
+        }
+
+        SKPoint[]? points = _meshPoints[slot];
+        if (points is null)
+        {
+            points = new SKPoint[capacity * 3];
+            _meshPoints[slot] = points;
+            _meshColors[slot] = new SKColor[capacity * 3];
+        }
+
+        return (points, _meshColors[slot]!);
+    }
+
+    /// <summary>
+    /// The vector-backend path for <see cref="DrawTriangles"/>: one filled path per triangle, in the
+    /// mean of its vertex colors. Exact for flat-shaded facets, an approximation for interpolated
+    /// ones, and the only option on a canvas whose backend discards vertex meshes.
+    /// </summary>
+    private void DrawTrianglesAsPaths(ReadOnlySpan<Point2D> vertices, ReadOnlySpan<uint> colorsArgb, int count)
+    {
+        SKPath path = _scratchPath;
+        _fill.PathEffect = null;
+        for (int i = 0; i < count; i += 3)
+        {
+            uint a = colorsArgb[i];
+            uint b = colorsArgb[i + 1];
+            uint c = colorsArgb[i + 2];
+            byte alpha = (byte)((((a >> 24) & 0xFF) + ((b >> 24) & 0xFF) + ((c >> 24) & 0xFF)) / 3);
+            if (alpha == 0)
+            {
+                continue;
+            }
+
+            path.Rewind();
+            path.MoveTo((float)vertices[i].X, (float)vertices[i].Y);
+            path.LineTo((float)vertices[i + 1].X, (float)vertices[i + 1].Y);
+            path.LineTo((float)vertices[i + 2].X, (float)vertices[i + 2].Y);
+            path.Close();
+
+            _fill.Color = new SKColor(
+                (byte)((((a >> 16) & 0xFF) + ((b >> 16) & 0xFF) + ((c >> 16) & 0xFF)) / 3),
+                (byte)((((a >> 8) & 0xFF) + ((b >> 8) & 0xFF) + ((c >> 8) & 0xFF)) / 3),
+                (byte)(((a & 0xFF) + (b & 0xFF) + (c & 0xFF)) / 3),
+                alpha);
+            _canvas.DrawPath(path, _fill);
+        }
     }
 
     private void DrawMarker(MarkerType type, float cx, float cy, float r, bool hasFill)
@@ -530,6 +720,9 @@ public sealed class SkiaRenderContext : IRenderContext, IDisposable
     }
 
     private static SKColor ToSk(Color c) => new(c.R, c.G, c.B, c.A);
+
+    private static SKColor ToSk(uint argb) =>
+        new((byte)(argb >> 16), (byte)(argb >> 8), (byte)argb, (byte)(argb >> 24));
 
     private static SKRect ToSk(Rect2D r) => new((float)r.Left, (float)r.Top, (float)r.Right, (float)r.Bottom);
 }

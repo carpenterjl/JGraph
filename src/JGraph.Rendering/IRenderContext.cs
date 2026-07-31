@@ -42,6 +42,28 @@ public interface IRenderContext
     void DrawMarkers(ReadOnlySpan<Point2D> points, MarkerStyle style, Color seriesColor);
 
     /// <summary>
+    /// Draws a triangle soup with per-vertex colors interpolated across each triangle.
+    /// <paramref name="vertices"/> is consecutive triples and <paramref name="colorsArgb"/> carries
+    /// one 0xAARRGGBB entry per vertex (straight alpha, as in <see cref="DrawImage"/>). Triangles
+    /// are rasterized in the order given with no depth test, so the caller supplies painter order;
+    /// edges are not antialiased, which is what lets adjacent triangles tile seamlessly.
+    /// </summary>
+    void DrawTriangles(ReadOnlySpan<Point2D> vertices, ReadOnlySpan<uint> colorsArgb);
+
+    /// <summary>
+    /// Draws many sub-paths as one path, so a single fill and/or stroke covers all of them:
+    /// adjacent sub-paths tile without antialiasing seams and overlapping strokes are not blended
+    /// twice. <paramref name="starts"/> gives each sub-path's first vertex index, ascending and
+    /// beginning at 0; a sub-path runs to the next start, or to the end of the buffer for the last.
+    /// </summary>
+    void DrawPaths(
+        ReadOnlySpan<Point2D> vertices,
+        ReadOnlySpan<int> starts,
+        bool closed,
+        LineStyle? stroke,
+        Color? fill);
+
+    /// <summary>
     /// Draws a rectangular raster image scaled to fill <paramref name="destination"/>. Pixels are
     /// row-major, top row first, each packed as 0xAARRGGBB (straight, non-premultiplied alpha). This
     /// is the single primitive image/heatmap plots need; vector backends embed it as a raster tile.

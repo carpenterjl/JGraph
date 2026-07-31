@@ -26,10 +26,21 @@ public sealed class StandardLibraryPlugin : IPlugin
         registry.AddTheme(Theme.Presentation);
         registry.AddTheme(Theme.Ieee);
 
+        registry.AddColormap(Colormap.Parula);
         registry.AddColormap(Colormap.Viridis);
+        registry.AddColormap(Colormap.Turbo);
         registry.AddColormap(Colormap.Jet);
         registry.AddColormap(Colormap.Hot);
         registry.AddColormap(Colormap.Cool);
         registry.AddColormap(Colormap.Grayscale);
+        registry.AddColormap(Colormap.Hsv);
+        registry.AddColormap(Colormap.Bone);
+        registry.AddColormap(Colormap.Copper);
+        registry.AddColormap(Colormap.Pink);
+        registry.AddColormap(Colormap.Spring);
+        registry.AddColormap(Colormap.Summer);
+        registry.AddColormap(Colormap.Autumn);
+        registry.AddColormap(Colormap.Winter);
+        registry.AddColormap(Colormap.Lines);
     }
 }

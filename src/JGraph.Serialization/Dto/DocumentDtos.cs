@@ -58,11 +58,29 @@ public sealed class AxesDto
 
     public double Elevation { get; set; } = 30;
 
+    /// <summary>
+    /// The 3D plot box's relative side lengths (MATLAB <c>pbaspect</c>). The default cube is what
+    /// every document written before M45 holds.
+    /// </summary>
+    public Point3Dto PlotBoxAspect { get; set; } = new(1, 1, 1);
+
     /// <summary>The Z axis of a 3D axes; null in documents written before format version 2.</summary>
     public AxisDto? ZAxis { get; set; }
 
     /// <summary>The colorbar; null in documents written before format version 2.</summary>
     public ColorbarDto? Colorbar { get; set; }
+
+    /// <summary>
+    /// The lights on this axes. Empty in every document written before lighting existed, which reads
+    /// back as the unlit surface those documents were saved with.
+    /// </summary>
+    public List<LightDto> Lights { get; set; } = new();
+
+    /// <summary>
+    /// The per-axes color cycle (MATLAB <c>colororder</c>). Null — the default, and what every
+    /// document written before M45 holds — leaves the theme in charge.
+    /// </summary>
+    public List<Color>? ColorOrder { get; set; }
 
     public List<AxisDto> XAxes { get; set; } = new();
 
@@ -135,6 +153,23 @@ public sealed class ColorbarDto
     public string? Label { get; set; }
 
     public TextStyleDto? TickLabelStyle { get; set; }
+}
+
+/// <summary>The serialized form of a <see cref="LightModel"/>.</summary>
+public sealed class LightDto
+{
+    public string Name { get; set; } = string.Empty;
+
+    public bool Visible { get; set; } = true;
+
+    public LightStyle Style { get; set; }
+
+    /// <summary>The direction or position, in the projection's normalized cube space.</summary>
+    public Point3Dto Position { get; set; } = new(1, 0, 1);
+
+    public Color Color { get; set; }
+
+    public bool FollowsCamera { get; set; }
 }
 
 /// <summary>The serialized form of a <see cref="LegendModel"/>.</summary>

@@ -194,7 +194,6 @@ public static class EngineeringExtensions
             XExtent = new DataRange(result.TimeMin, result.TimeMax),
             YExtent = new DataRange(result.FrequencyMin, result.FrequencyMax),
             RowZeroAtTop = false, // frequency bin 0 (DC) at the bottom
-            Colormap = Colormap.Viridis,
             Interpolate = true,
             DisplayName = "spectrogram",
         };

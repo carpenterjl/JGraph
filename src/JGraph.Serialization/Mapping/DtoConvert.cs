@@ -97,8 +97,10 @@ internal static class DtoConvert
         return values;
     }
 
-    public static ColormapDto ToDto(Colormap c) => new(c.Name, c.Stops.ToArray());
+    public static ColormapDto ToDto(Colormap c) => new(c.Name, c.Stops.ToArray(), c.Discrete);
 
     public static Colormap ToColormap(ColormapDto d) =>
-        d.Stops.Length >= 2 ? new Colormap(string.IsNullOrEmpty(d.Name) ? "Custom" : d.Name, d.Stops) : Colormap.Viridis;
+        d.Stops.Length >= 2
+            ? new Colormap(string.IsNullOrEmpty(d.Name) ? "Custom" : d.Name, d.Stops) { Discrete = d.Discrete }
+            : Colormap.Parula;
 }

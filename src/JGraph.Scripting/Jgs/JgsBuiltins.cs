@@ -7,7 +7,9 @@ using JGraph.Imaging;
 using JGraph.Numerics;
 using JGraph.Signal;
 using JGraph.Signal.Rf;
+using JGraph.Core.Drawing;
 using JGraph.Core.Model;
+using JGraph.Core.Primitives;
 using JGraph.Data;
 using JGraph.Objects;
 
@@ -1374,6 +1376,12 @@ internal static partial class JgsBuiltins
                         break;
                     case "tight" or "auto" or "on" or "off" or "ij" or "xy" or "manual" or "padded":
                         break; // accepted; auto limits and visible frames are already the defaults
+
+                    // vis3d stops MATLAB's box from being refitted as the camera turns. This
+                    // projection refits every frame by design, so the word is accepted and the
+                    // divergence is recorded rather than pretended away.
+                    case "vis3d":
+                        break;
                     default:
                         throw new JgsRuntimeException(line, col, $"axis: unknown option '{args[0].AsString}'.");
                 }
@@ -1396,17 +1404,200 @@ internal static partial class JgsBuiltins
             return JgsValue.Null;
         });
 
-        // Appearance verbs accepted for compatibility: JGraph's surfaces are always smoothly
-        // shaded and lit, and rotation is already interactive, so these change nothing visible.
-        foreach (string verb in new[] { "shading", "lighting", "camlight", "rotate3d" })
+        // shading: MATLAB drives this through the surface's FaceColor and EdgeColor, and so does
+        // JGraph -- 'faceted' is flat faces with grid lines, 'flat' drops the lines, and 'interp'
+        // additionally colors each corner and interpolates between them. A mesh keeps its lines
+        // whatever the mode, since without them there would be nothing left to draw.
+        DefineSilent("shading", (args, line, col) =>
         {
-            string self = verb;
-            DefineSilent(verb, (args, line, col) =>
+            ArityRange("shading", args, 0, 1, line, col);
+            string mode = args.Count == 1 ? args[0].AsString.ToLowerInvariant() : "faceted";
+            SurfaceShading shading = mode switch
             {
-                ArityRange(self, args, 0, 1, line, col);
-                return JgsValue.Null;
+                "faceted" or "flat" => SurfaceShading.Flat,
+                "interp" => SurfaceShading.Interp,
+                _ => throw new JgsRuntimeException(line, col, $"shading: unknown mode '{mode}'."),
+            };
+
+            foreach (SurfacePlot surface in JG.Gca().Plots.OfType<SurfacePlot>())
+            {
+                surface.Shading = shading;
+                if (surface.Style == SurfaceStyle.Wireframe)
+                {
+                    continue;
+                }
+
+                surface.Style = mode == "faceted" ? SurfaceStyle.FilledWithWireframe : SurfaceStyle.Filled;
+            }
+
+            return JgsValue.Null;
+        });
+
+        // lighting: MATLAB's per-surface FaceLighting. 'none' opts a surface out; the other two decide
+        // whether a facet takes one normal or interpolates its corners'. Nothing shows until a light
+        // exists -- as in MATLAB, where a surf is flat colormap color until then.
+        DefineSilent("lighting", (args, line, col) =>
+        {
+            ArityRange("lighting", args, 0, 1, line, col);
+            string mode = args.Count == 1 ? args[0].AsString.ToLowerInvariant() : "flat";
+            SurfaceLighting lighting = mode switch
+            {
+                "none" => SurfaceLighting.None,
+                "flat" => SurfaceLighting.Flat,
+
+                // MATLAB dropped Phong shading but still takes the word; it maps onto gouraud.
+                "gouraud" or "phong" => SurfaceLighting.Gouraud,
+                _ => throw new JgsRuntimeException(line, col, $"lighting: unknown mode '{mode}'."),
+            };
+
+            foreach (SurfacePlot surface in JG.Gca().Plots.OfType<SurfacePlot>())
+            {
+                surface.FaceLighting = lighting;
+            }
+
+            return JgsValue.Null;
+        });
+
+        // material: the five reflectance coefficients, by preset name or as MATLAB's vector.
+        DefineSilent("material", (args, line, col) =>
+        {
+            ArityRange("material", args, 0, 1, line, col);
+            LightingModel material;
+            if (args.Count == 0 || args[0].Type == JgsType.String)
+            {
+                string name = args.Count == 0 ? "default" : args[0].AsString;
+                if (!LightingModel.TryGetByName(name, out material))
+                {
+                    throw new JgsRuntimeException(
+                        line, col, $"material: unknown preset '{name}'. Use shiny, dull, metal, or default.");
+                }
+            }
+            else
+            {
+                double[] v = ToDoubles("material", args[0], line, col);
+                if (v.Length is < 3 or > 5)
+                {
+                    throw new JgsRuntimeException(
+                        line,
+                        col,
+                        "material expects [ka kd ks], optionally with the specular exponent and color reflectance.");
+                }
+
+                LightingModel fallback = LightingModel.Default;
+                material = new LightingModel(
+                    v[0],
+                    v[1],
+                    v[2],
+                    v.Length > 3 ? v[3] : fallback.SpecularExponent,
+                    v.Length > 4 ? v[4] : fallback.SpecularColorReflectance);
+            }
+
+            foreach (SurfacePlot surface in JG.Gca().Plots.OfType<SurfacePlot>())
+            {
+                surface.Material = material;
+            }
+
+            return JgsValue.Null;
+        });
+
+        DefineSilent("light", (args, line, col) =>
+        {
+            var light = new LightModel();
+            ApplyLightOptions("light", light, args, 0, line, col);
+            JG.Gca().Lights.Add(light);
+            return JgsValue.Null;
+        });
+
+        // lightangle(az, el) places a light on the same spherical convention view() uses, so the two
+        // read the same way: azimuth about the vertical axis, elevation toward the viewer.
+        DefineSilent("lightangle", (args, line, col) =>
+        {
+            ArityRange("lightangle", args, 2, 2, line, col);
+            double az = NumOf("lightangle: az", args[0], line, col) * System.Math.PI / 180;
+            double el = NumOf("lightangle: el", args[1], line, col) * System.Math.PI / 180;
+            JG.Gca().Lights.Add(new LightModel
+            {
+                Name = "Lightangle",
+                Position = new Vector3D(
+                    System.Math.Cos(el) * System.Math.Sin(az),
+                    -System.Math.Cos(el) * System.Math.Cos(az),
+                    System.Math.Sin(el)),
             });
-        }
+
+            return JgsValue.Null;
+        });
+
+        // camlight: a light positioned relative to the camera -- 30 degrees right and up by default,
+        // headlight for straight down the view axis. One documented divergence from MATLAB, which
+        // freezes the world position at the call and so leaves its highlight behind on the first
+        // drag: this light follows the camera, which is the useful reading for a figure you rotate.
+        DefineSilent("camlight", (args, line, col) =>
+        {
+            ArityRange("camlight", args, 0, 3, line, col);
+            double az = 30;
+            double el = 30;
+            var style = LightStyle.Infinite;
+            int i = 0;
+
+            if (i < args.Count && args[i].Type != JgsType.String)
+            {
+                if (args.Count - i < 2)
+                {
+                    throw new JgsRuntimeException(line, col, "camlight expects camlight(az, el).");
+                }
+
+                az = NumOf("camlight: az", args[i], line, col);
+                el = NumOf("camlight: el", args[i + 1], line, col);
+                i += 2;
+            }
+            else if (i < args.Count && !IsLightStyleWord(args[i].AsString))
+            {
+                switch (args[i].AsString.ToLowerInvariant())
+                {
+                    case "right":
+                        break;
+                    case "left":
+                        az = -30;
+                        break;
+                    case "headlight":
+                        az = 0;
+                        el = 0;
+                        break;
+                    default:
+                        throw new JgsRuntimeException(
+                            line, col, $"camlight: unknown position '{args[i].AsString}'. Use right, left, or headlight.");
+                }
+
+                i++;
+            }
+
+            if (i < args.Count)
+            {
+                style = ParseLightStyle("camlight", args[i], line, col);
+                i++;
+            }
+
+            if (i != args.Count)
+            {
+                throw new JgsRuntimeException(line, col, "camlight: too many arguments.");
+            }
+
+            JG.Gca().Lights.Add(new LightModel
+            {
+                Name = "Camlight",
+                FollowsCamera = true,
+                Style = style,
+                Position = CameraLightPosition(az, el),
+            });
+
+            return JgsValue.Null;
+        });
+
+        DefineSilent("rotate3d", (args, line, col) =>
+        {
+            ArityRange("rotate3d", args, 0, 1, line, col);
+            return JgsValue.Null;
+        });
 
         Define("close", (args, line, col) =>
         {
@@ -1504,11 +1695,12 @@ internal static partial class JgsBuiltins
         });
 
         Define("surf", (args, line, col) => Surface3D("surf", args, line, col,
-            (x, y, z) => JG.Surf(x, y, z), z => JG.Surf(z)));
+            (x, y, z) => JG.Surf(x, y, z), z => JG.Surf(z), (x, y, z) => JG.Surf(x, y, z)));
         Define("mesh", (args, line, col) => Surface3D("mesh", args, line, col,
-            (x, y, z) => JG.Mesh(x, y, z), z => JG.Mesh(z)));
+            (x, y, z) => JG.Mesh(x, y, z), z => JG.Mesh(z), (x, y, z) => JG.Mesh(x, y, z)));
         Define("meshc", (args, line, col) => Surface3D("meshc", args, line, col,
-            (x, y, z) => JG.MeshC(x, y, z), z => { JG.Mesh(z).ShowContourBelow = true; }));
+            (x, y, z) => JG.MeshC(x, y, z), z => { JG.Mesh(z).ShowContourBelow = true; },
+            (x, y, z) => JG.MeshC(x, y, z)));
 
         Define("contour", (args, line, col) => Contour("contour", args, line, col, filled: false));
         Define("contourf", (args, line, col) => Contour("contourf", args, line, col, filled: true));
@@ -1532,14 +1724,23 @@ internal static partial class JgsBuiltins
 
         Define("zlabel", (args, line, col) => { Arity("zlabel", args, 1, line, col); JG.ZLabel(Str("zlabel", args, 0, line, col)); return JgsValue.Null; });
         Define("zlim", (args, line, col) => { Arity("zlim", args, 2, line, col); JG.ZLim(Num("zlim", args, 0, line, col), Num("zlim", args, 1, line, col)); return JgsValue.Null; });
-        Define("view", (args, line, col) => { Arity("view", args, 2, line, col); JG.View(Num("view", args, 0, line, col), Num("view", args, 1, line, col)); return JgsValue.Null; });
+        env.Declare("view", JgsValue.Function(new BuiltinFunction("view", View) { AutoCallsBare = true }));
 
         Define("colormap", (args, line, col) =>
         {
             Arity("colormap", args, 1, line, col);
             try
             {
-                JG.Colormap(Str("colormap", args, 0, line, col));
+                if (args[0].Type == JgsType.String)
+                {
+                    JG.Colormap(Str("colormap", args, 0, line, col));
+                }
+                else
+                {
+                    // An m-by-3 table of components in [0, 1], which is what every generator returns
+                    // and so what `colormap(parula(64))` and `colormap(flipud(gray))` hand over.
+                    JG.Colormap(Colormap.FromRows("custom", Matrix("colormap", args, 0, line, col)));
+                }
             }
             catch (ArgumentException ex)
             {
@@ -1656,6 +1857,10 @@ internal static partial class JgsBuiltins
         RegisterArrayBuiltins(env, random, dialect);
         RegisterEnvironmentBuiltins(env, host);
         RegisterGeometryBuiltins(env);
+        RegisterColorControlBuiltins(env, dialect);
+        RegisterCameraBuiltins(env);
+        RegisterPrimitive3DBuiltins(env);
+        RegisterSurfaceVariantBuiltins(env, dialect);
         if (dialect.IsMatlab)
         {
             RegisterMatlabReductions(env, dialect);
@@ -1904,8 +2109,69 @@ internal static partial class JgsBuiltins
         }
     }
 
+    /// <summary>
+    /// Applies MATLAB's <c>'Name', value</c> light options. Position is read in the projection's
+    /// normalized cube space (the data box is [-0.5, 0.5] on every axis), not in data units — which is
+    /// what stops a surface whose Z spans millions from lighting like a vertical wall.
+    /// </summary>
+    private static void ApplyLightOptions(
+        string verb, LightModel light, IReadOnlyList<JgsValue> args, int start, int line, int col)
+    {
+        if ((args.Count - start) % 2 != 0)
+        {
+            throw new JgsRuntimeException(line, col, $"{verb}: options come in 'Name', value pairs.");
+        }
+
+        for (int i = start; i < args.Count; i += 2)
+        {
+            string name = StrOf($"{verb}: option name", args[i], line, col);
+            JgsValue value = args[i + 1];
+            switch (name.ToLowerInvariant())
+            {
+                case "position":
+                    double[] p = ToDoubles($"{verb}: Position", value, line, col);
+                    if (p.Length != 3)
+                    {
+                        throw new JgsRuntimeException(line, col, $"{verb}: Position is an [x y z] vector.");
+                    }
+
+                    light.Position = new Vector3D(p[0], p[1], p[2]);
+                    break;
+                case "color":
+                    light.Color = OptionColor(value, line, col, verb);
+                    break;
+                case "style":
+                    light.Style = ParseLightStyle(verb, value, line, col);
+                    break;
+                case "visible":
+                    light.Visible = !StrOf($"{verb}: Visible", value, line, col)
+                        .Equals("off", StringComparison.OrdinalIgnoreCase);
+                    break;
+                default:
+                    throw new JgsRuntimeException(
+                        line, col, $"{verb}: unknown option '{name}'. Use Position, Color, Style, or Visible.");
+            }
+        }
+    }
+
+    private static bool IsLightStyleWord(string text) =>
+        text.Equals("infinite", StringComparison.OrdinalIgnoreCase)
+        || text.Equals("local", StringComparison.OrdinalIgnoreCase);
+
+    private static LightStyle ParseLightStyle(string verb, JgsValue value, int line, int col)
+    {
+        string style = StrOf($"{verb}: Style", value, line, col);
+        return style.ToLowerInvariant() switch
+        {
+            "infinite" => LightStyle.Infinite,
+            "local" => LightStyle.Local,
+            _ => throw new JgsRuntimeException(
+                line, col, $"{verb}: Style is 'infinite' or 'local', but got '{style}'."),
+        };
+    }
+
     /// <summary>A plot option color: a spec letter, a common color name, or an [r g b] triplet in [0, 1].</summary>
-    private static JGraph.Core.Drawing.Color OptionColor(JgsValue value, int line, int col)
+    private static JGraph.Core.Drawing.Color OptionColor(JgsValue value, int line, int col, string what = "plot")
     {
         if (value.Type == JgsType.String)
         {
@@ -1921,13 +2187,13 @@ internal static partial class JgsBuiltins
                 return named;
             }
 
-            throw new JgsRuntimeException(line, col, $"plot: unknown color '{text}'.");
+            throw new JgsRuntimeException(line, col, $"{what}: unknown color '{text}'.");
         }
 
-        double[] triplet = ToDoubles("plot: Color", value, line, col);
+        double[] triplet = ToDoubles($"{what}: Color", value, line, col);
         if (triplet.Length != 3)
         {
-            throw new JgsRuntimeException(line, col, "plot: a numeric Color is an [r g b] triplet in [0, 1].");
+            throw new JgsRuntimeException(line, col, $"{what}: a numeric Color is an [r g b] triplet in [0, 1].");
         }
 
         static byte Level(double v) => (byte)System.Math.Round(System.Math.Clamp(v, 0, 1) * 255);
@@ -2014,9 +2280,14 @@ internal static partial class JgsBuiltins
         return JgsValue.Null;
     }
 
-    /// <summary>Dispatches surf/mesh/meshc: (z) with a matrix, or (x, y, z) with grid vectors.</summary>
+    /// <summary>
+    /// Dispatches surf/mesh/meshc: (z) with a matrix, or (x, y, z) with either grid vectors, a
+    /// meshgrid pair, or a genuinely parametric pair.
+    /// </summary>
     private static JgsValue Surface3D(string name, IReadOnlyList<JgsValue> args, int line, int col,
-        Action<double[], double[], double[,]> full, Action<double[,]> zOnly)
+        Action<double[], double[], double[,]> full,
+        Action<double[,]> zOnly,
+        Action<double[,], double[,], double[,]> parametric)
     {
         if (args.Count == 1)
         {
@@ -2025,12 +2296,28 @@ internal static partial class JgsBuiltins
         }
 
         Arity(name, args, 3, line, col);
-        double[] x = GridVector(name, args, 0, firstRow: true, line, col);
-        double[] y = GridVector(name, args, 1, firstRow: false, line, col);
         double[,] z = Matrix(name, args, 2, line, col);
         try
         {
-            full(x, y, z);
+            // A full X/Y pair that is really a meshgrid collapses to its generating vectors, which is
+            // the rectilinear fast path and what every surface built on `meshgrid` wants. A pair that
+            // varies in both directions -- a sphere, a cylinder -- has no generating vectors to
+            // collapse to and is carried through per vertex.
+            if (IsFullGrid(args[0]) && IsFullGrid(args[1]))
+            {
+                double[,] xGrid = Matrix(name, args, 0, line, col);
+                double[,] yGrid = Matrix(name, args, 1, line, col);
+                if (!IsRectilinearGrid(xGrid, yGrid))
+                {
+                    parametric(xGrid, yGrid, z);
+                    return JgsValue.Null;
+                }
+            }
+
+            full(
+                GridVector(name, args, 0, firstRow: true, line, col),
+                GridVector(name, args, 1, firstRow: false, line, col),
+                z);
         }
         catch (ArgumentException ex)
         {
@@ -2038,6 +2325,38 @@ internal static partial class JgsBuiltins
         }
 
         return JgsValue.Null;
+    }
+
+    /// <summary>Whether a grid argument arrived as a full matrix rather than a generating vector.</summary>
+    private static bool IsFullGrid(JgsValue value) =>
+        value.Type == JgsType.Array && value.Rows > 1 && value.Cols > 1;
+
+    /// <summary>
+    /// Whether an X/Y pair is what <c>meshgrid</c> produces: X the same down every column and Y the
+    /// same across every row, so the pair carries no more information than two vectors. A NaN
+    /// anywhere fails the comparison and keeps the grid parametric, which is the safe direction.
+    /// </summary>
+    private static bool IsRectilinearGrid(double[,] x, double[,] y)
+    {
+        int rows = x.GetLength(0);
+        int cols = x.GetLength(1);
+        if (y.GetLength(0) != rows || y.GetLength(1) != cols)
+        {
+            return false;
+        }
+
+        for (int r = 0; r < rows; r++)
+        {
+            for (int c = 0; c < cols; c++)
+            {
+                if (x[r, c] != x[0, c] || y[r, c] != y[r, 0])
+                {
+                    return false;
+                }
+            }
+        }
+
+        return true;
     }
 
     /// <summary>
@@ -2064,7 +2383,12 @@ internal static partial class JgsBuiltins
         return DoubleArray(name, args, index, line, col);
     }
 
-    private static JgsValue Contour(string name, IReadOnlyList<JgsValue> args, int line, int col, bool filled)
+    /// <summary>
+    /// Dispatches contour/contourf/contour3. The three differ only in where the geometry ends up:
+    /// flat lines, flat bands, or lines lifted to the height of the level each one traces.
+    /// </summary>
+    private static JgsValue Contour(
+        string name, IReadOnlyList<JgsValue> args, int line, int col, bool filled, bool elevated = false)
     {
         ArityRange(name, args, 3, 4, line, col);
         double[] x = GridVector(name, args, 0, firstRow: true, line, col);
@@ -2099,7 +2423,11 @@ internal static partial class JgsBuiltins
         }
         try
         {
-            if (filled)
+            if (elevated)
+            {
+                JG.Contour3(x, y, z, levels);
+            }
+            else if (filled)
             {
                 JG.ContourF(x, y, z, levels);
             }

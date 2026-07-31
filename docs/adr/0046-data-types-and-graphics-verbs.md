@@ -51,11 +51,23 @@ bool, sprintf could not cycle a format over an array, `num2str` rejected a forma
    and `rotate3d` are accepted verbs that change nothing visible, because surfaces are always
    smoothly shaded and rotation is already interactive — each says so in its catalog line.
 
+   > **Corrected by M44** (ADR 0047). "Surfaces are always smoothly shaded and lit" was false when
+   > it was written: every facet was flat-filled with one colormap sample taken at the mean of its
+   > four corner heights, and there was no lighting code anywhere in the repo. `shading` became real
+   > in M44 wave 1 and `lighting`/`material`/`light`/`lightangle`/`camlight` in wave 4. Only
+   > `rotate3d` is still an accepted no-op, and for the reason given — rotation really is always
+   > interactive.
+
 6. **Surface builtins accept full meshgrid matrices**: `surf(X, Y, Z)` with 200×200 X/Y collapses
    them to their generating vectors (first row / first column), which is the form `peaks(200)`
    hands out; `contourf(X, Y, Z, 40)` reads a scalar fourth argument as a level count, spacing
    that many levels across z's range. `meshgrid(x)` is `meshgrid(x, x)`, and the colormap table
    gained **turbo**.
+
+   > **Superseded by M45.A** ([ADR 0048](0048-the-3d-command-surface.md)). Collapsing to generating
+   > vectors was only correct because every grid reaching `surf` was rectilinear. `sphere`,
+   > `cylinder`, `ellipsoid` and `ribbon` produce grids that are not, so `SurfacePlot` now stores
+   > full X/Y matrices and the collapse happens only when the matrices really are a meshgrid.
 
 7. **Brace assignment reaches through a dot chain**: `s.a.b{r, c} = v` evaluates the chain to the
    stored cell and writes in place (member reads hand back the stored reference). Growth by brace

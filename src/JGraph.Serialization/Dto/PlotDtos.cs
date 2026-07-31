@@ -20,6 +20,10 @@ namespace JGraph.Serialization.Dto;
 [JsonDerivedType(typeof(RgbImagePlotDto), "rgbimage")]
 [JsonDerivedType(typeof(SurfacePlotDto), "surface")]
 [JsonDerivedType(typeof(ContourPlotDto), "contour")]
+[JsonDerivedType(typeof(Line3DPlotDto), "line3d")]
+[JsonDerivedType(typeof(Scatter3DPlotDto), "scatter3d")]
+[JsonDerivedType(typeof(PatchPlotDto), "patch")]
+[JsonDerivedType(typeof(QuiverPlotDto), "quiver")]
 [JsonDerivedType(typeof(PolarGridDto), "polarGrid")]
 [JsonDerivedType(typeof(SmithGridDto), "smithGrid")]
 [JsonDerivedType(typeof(EyeDiagramPlotDto), "eyeDiagram")]
@@ -150,7 +154,7 @@ public sealed class ImagePlotDto : PlotDto
 {
     public double[][] Values { get; set; } = Array.Empty<double[]>();
 
-    public ColormapDto Colormap { get; set; } = new("Viridis", Array.Empty<Color>());
+    public ColormapDto Colormap { get; set; } = new("Parula", Array.Empty<Color>());
 
     public RangeDto XExtent { get; set; } = new(0, 1);
 
@@ -191,11 +195,24 @@ public sealed class SurfacePlotDto : PlotDto
 
     public double[][] Z { get; set; } = Array.Empty<double[]>();
 
-    public ColormapDto Colormap { get; set; } = new("Viridis", Array.Empty<Color>());
+    /// <summary>
+    /// A position per vertex for a parametric surface (a sphere, a cylinder). Null on the rectilinear
+    /// surfaces every document written before M45 holds, which is what <see cref="X"/>/<see cref="Y"/>
+    /// describe on their own.
+    /// </summary>
+    public double[][]? XGrid { get; set; }
+
+    public double[][]? YGrid { get; set; }
+
+    public ColormapDto Colormap { get; set; } = new("Parula", Array.Empty<Color>());
 
     public SurfaceStyle Style { get; set; } = SurfaceStyle.FilledWithWireframe;
 
+    public SurfaceShading Shading { get; set; } = SurfaceShading.Flat;
+
     public bool ShowContourBelow { get; set; }
+
+    public int ContourLevels { get; set; } = 8;
 
     public Color? EdgeColor { get; set; }
 
@@ -206,6 +223,22 @@ public sealed class SurfacePlotDto : PlotDto
     public double ColorMin { get; set; }
 
     public double ColorMax { get; set; } = 1;
+
+    /// <summary>
+    /// The lighting properties. Their defaults are what a surface has always had, so a document
+    /// written before lighting existed reads back unchanged — and unlit, since the axes has no lights.
+    /// </summary>
+    public SurfaceLighting FaceLighting { get; set; } = SurfaceLighting.Flat;
+
+    public double AmbientStrength { get; set; } = 0.3;
+
+    public double DiffuseStrength { get; set; } = 0.6;
+
+    public double SpecularStrength { get; set; } = 0.9;
+
+    public double SpecularExponent { get; set; } = 10;
+
+    public double SpecularColorReflectance { get; set; } = 1;
 }
 
 public sealed class ContourPlotDto : PlotDto
@@ -222,9 +255,144 @@ public sealed class ContourPlotDto : PlotDto
 
     public bool Filled { get; set; }
 
-    public ColormapDto Colormap { get; set; } = new("Viridis", Array.Empty<Color>());
+    public ColormapDto Colormap { get; set; } = new("Parula", Array.Empty<Color>());
 
     public double LineWidth { get; set; } = 1.5;
+
+    public bool AutoScaleColor { get; set; } = true;
+
+    public double ColorMin { get; set; }
+
+    public double ColorMax { get; set; } = 1;
+}
+
+/// <summary>The serialized form of a <see cref="Line3DPlot"/>.</summary>
+public sealed class Line3DPlotDto : PlotDto
+{
+    public double[] X { get; set; } = Array.Empty<double>();
+
+    public double[] Y { get; set; } = Array.Empty<double>();
+
+    public double[] Z { get; set; } = Array.Empty<double>();
+
+    public Color? Color { get; set; }
+
+    public double LineWidth { get; set; } = 1.5;
+
+    public DashStyle DashStyle { get; set; }
+
+    public MarkerType Marker { get; set; }
+
+    public double MarkerSize { get; set; } = 6;
+
+    public Color? MarkerFill { get; set; }
+}
+
+/// <summary>The serialized form of a <see cref="Scatter3DPlot"/>.</summary>
+public sealed class Scatter3DPlotDto : PlotDto
+{
+    public double[] X { get; set; } = Array.Empty<double>();
+
+    public double[] Y { get; set; } = Array.Empty<double>();
+
+    public double[] Z { get; set; } = Array.Empty<double>();
+
+    /// <summary>Per-point marker area, or null for a uniform <see cref="MarkerSize"/>.</summary>
+    public double[]? SizeData { get; set; }
+
+    /// <summary>Per-point colormapped values, or null for a single-colored cloud.</summary>
+    public double[]? ColorData { get; set; }
+
+    public Color? Color { get; set; }
+
+    public MarkerType Marker { get; set; } = MarkerType.Circle;
+
+    public double MarkerSize { get; set; } = 7;
+
+    public bool Filled { get; set; }
+
+    public double EdgeWidth { get; set; } = 1.0;
+
+    public ColormapDto Colormap { get; set; } = new("Parula", Array.Empty<Color>());
+
+    public bool AutoScaleColor { get; set; } = true;
+
+    public double ColorMin { get; set; }
+
+    public double ColorMax { get; set; } = 1;
+}
+
+/// <summary>The serialized form of a <see cref="PatchPlot"/>.</summary>
+public sealed class PatchPlotDto : PlotDto
+{
+    public double[] X { get; set; } = Array.Empty<double>();
+
+    public double[] Y { get; set; } = Array.Empty<double>();
+
+    public double[] Z { get; set; } = Array.Empty<double>();
+
+    /// <summary>The vertex indices of each face.</summary>
+    public int[][] Faces { get; set; } = Array.Empty<int[]>();
+
+    /// <summary>Per-face or per-vertex colormapped values, or null for a single-colored patch.</summary>
+    public double[]? ColorData { get; set; }
+
+    public Color? FaceColor { get; set; }
+
+    /// <summary>Whether the faces are filled at all — false is MATLAB's <c>'FaceColor', 'none'</c>.</summary>
+    public bool FaceVisible { get; set; } = true;
+
+    /// <summary>
+    /// The outline color. Null means the black outline a patch carries by default: this format omits
+    /// null properties, so "absent" and "default" have to read the same. An outline that was
+    /// explicitly turned off is recorded by <see cref="EdgeVisible"/> instead.
+    /// </summary>
+    public Color? EdgeColor { get; set; }
+
+    /// <summary>Whether the patch is outlined at all — false is MATLAB's <c>'EdgeColor', 'none'</c>.</summary>
+    public bool EdgeVisible { get; set; } = true;
+
+    public double EdgeWidth { get; set; } = 0.75;
+
+    public PatchShading Shading { get; set; }
+
+    public ColormapDto Colormap { get; set; } = new("Parula", Array.Empty<Color>());
+
+    public bool AutoScaleColor { get; set; } = true;
+
+    public double ColorMin { get; set; }
+
+    public double ColorMax { get; set; } = 1;
+}
+
+/// <summary>A field of arrows (MATLAB <c>quiver</c>/<c>quiver3</c>).</summary>
+public sealed class QuiverPlotDto : PlotDto
+{
+    public double[] X { get; set; } = Array.Empty<double>();
+
+    public double[] Y { get; set; } = Array.Empty<double>();
+
+    public double[] Z { get; set; } = Array.Empty<double>();
+
+    public double[] U { get; set; } = Array.Empty<double>();
+
+    public double[] V { get; set; } = Array.Empty<double>();
+
+    public double[] W { get; set; } = Array.Empty<double>();
+
+    public Color? Color { get; set; }
+
+    public double LineWidth { get; set; } = 1;
+
+    public bool AutoScale { get; set; } = true;
+
+    public double AutoScaleFactor { get; set; } = 0.9;
+
+    public double Scale { get; set; } = 1;
+
+    public bool ShowArrowHead { get; set; } = true;
+
+    public double MaxHeadSize { get; set; } = 0.2;
 }
 
 public sealed class PolarGridDto : PlotDto

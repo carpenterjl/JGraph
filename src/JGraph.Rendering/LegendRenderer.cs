@@ -28,7 +28,7 @@ internal static class LegendRenderer
     /// <summary>Draws the legend and returns the box it occupied, or null when nothing was drawn.</summary>
     public static Rect2D? Draw(IRenderContext context, AxesModel axes, Rect2D plotArea, ITheme theme)
     {
-        IReadOnlyList<Color> palette = theme.SeriesPalette;
+        IReadOnlyList<Color> palette = axes.ColorOrder ?? theme.SeriesPalette;
 
         // Palette index follows draw order, never row order (see the type comment).
         var colors = new Dictionary<PlotObject, Color>();

@@ -329,8 +329,25 @@ public static class JG
     /// <summary>Plots a surface of <c>z[row, col]</c> with unit-spaced X/Y (MATLAB <c>surf(Z)</c>).</summary>
     public static SurfacePlot Surf(double[,] z) => Surf(Ramp(z.GetLength(1)), Ramp(z.GetLength(0)), z);
 
+    /// <summary>
+    /// Plots a parametric surface, with a position per vertex rather than per row and column — the
+    /// form <c>sphere</c>, <c>cylinder</c> and <c>ellipsoid</c> produce.
+    /// </summary>
+    public static SurfacePlot Surf(double[,] x, double[,] y, double[,] z)
+    {
+        AxesModel axes = PrepareAxes();
+        return axes.AddSurface(x, y, z, SurfaceStyle.FilledWithWireframe);
+    }
+
     /// <summary>Plots a wireframe 3D surface (MATLAB <c>mesh</c>) and switches the axes to 3D.</summary>
     public static SurfacePlot Mesh(double[] x, double[] y, double[,] z)
+    {
+        AxesModel axes = PrepareAxes();
+        return axes.AddSurface(x, y, z, SurfaceStyle.Wireframe);
+    }
+
+    /// <summary>Plots a parametric wireframe surface (MATLAB <c>mesh</c> with full X/Y matrices).</summary>
+    public static SurfacePlot Mesh(double[,] x, double[,] y, double[,] z)
     {
         AxesModel axes = PrepareAxes();
         return axes.AddSurface(x, y, z, SurfaceStyle.Wireframe);
@@ -345,6 +362,384 @@ public static class JG
         SurfacePlot surface = Mesh(x, y, z);
         surface.ShowContourBelow = true;
         return surface;
+    }
+
+    /// <summary>
+    /// The parametric form of <see cref="MeshC(double[], double[], double[,])"/>. The floor contours
+    /// are recorded but not drawn: tracing them needs a height field over a rectilinear grid, which
+    /// a parametric surface is not.
+    /// </summary>
+    public static SurfacePlot MeshC(double[,] x, double[,] y, double[,] z)
+    {
+        SurfacePlot surface = Mesh(x, y, z);
+        surface.ShowContourBelow = true;
+        return surface;
+    }
+
+    /// <summary>Plots a polyline through points in space (MATLAB <c>plot3</c>) and switches to 3D.</summary>
+    public static Line3DPlot Plot3(double[] x, double[] y, double[] z, string? lineSpec = null)
+    {
+        AxesModel axes = PrepareAxes();
+        Line3DPlot plot = axes.AddLine3D(x, y, z);
+        ApplyLineSpec(plot, LineSpec.Parse(lineSpec));
+        return plot;
+    }
+
+    /// <summary>Plots markers at points in space (MATLAB <c>scatter3</c>) and switches to 3D.</summary>
+    public static Scatter3DPlot Scatter3(double[] x, double[] y, double[] z)
+    {
+        AxesModel axes = PrepareAxes();
+        return axes.AddScatter3D(x, y, z);
+    }
+
+    /// <summary>
+    /// Fills one polygon in the current 2D axes (MATLAB <c>fill</c>). The polygon closes itself, so the
+    /// caller need not repeat the first point.
+    /// </summary>
+    public static PatchPlot Fill(double[] x, double[] y, Core.Drawing.Color color)
+    {
+        ArgumentNullException.ThrowIfNull(x);
+        AxesModel axes = PrepareAxes();
+        PatchPlot patch = axes.AddPatch(x, y, new double[x.Length]);
+        patch.FaceColor = color;
+        return patch;
+    }
+
+    /// <summary>Fills one polygon in space (MATLAB <c>fill3</c>) and switches the axes to 3D.</summary>
+    public static PatchPlot Fill3(double[] x, double[] y, double[] z, Core.Drawing.Color color)
+    {
+        AxesModel axes = PrepareAxes();
+        PatchPlot patch = axes.AddPatch(x, y, z);
+        patch.FaceColor = color;
+        axes.Is3D = true;
+        return patch;
+    }
+
+    /// <summary>
+    /// Adds a patch over an explicit vertex list and face table (MATLAB
+    /// <c>patch('Faces', F, 'Vertices', V)</c>). The axes mode is left alone; set
+    /// <see cref="AxesModel.Is3D"/> for a 3D patch.
+    /// </summary>
+    public static PatchPlot Patch(double[] x, double[] y, double[] z, int[][] faces)
+    {
+        AxesModel axes = PrepareAxes();
+        return axes.AddPatch(x, y, z, faces);
+    }
+
+    /// <summary>Plots a filled surface with floor contours over unit-spaced X/Y (MATLAB <c>surfc(Z)</c>).</summary>
+    public static SurfacePlot SurfC(double[,] z) => SurfC(Ramp(z.GetLength(1)), Ramp(z.GetLength(0)), z);
+
+    /// <summary>Plots a curtained wireframe over unit-spaced X/Y (MATLAB <c>meshz(Z)</c>).</summary>
+    public static SurfacePlot MeshZ(double[,] z) => MeshZ(Ramp(z.GetLength(1)), Ramp(z.GetLength(0)), z);
+
+    /// <summary>Plots waterfall curves over unit-spaced X/Y (MATLAB <c>waterfall(Z)</c>).</summary>
+    public static PatchPlot Waterfall(double[,] z) => Waterfall(Ramp(z.GetLength(1)), Ramp(z.GetLength(0)), z);
+
+    /// <summary>Plots a filled surface with contour lines on the floor (MATLAB <c>surfc</c>).</summary>
+    public static SurfacePlot SurfC(double[] x, double[] y, double[,] z)
+    {
+        SurfacePlot surface = Surf(x, y, z);
+        surface.ShowContourBelow = true;
+        return surface;
+    }
+
+    /// <summary>
+    /// The parametric form of <see cref="SurfC(double[], double[], double[,])"/>. As with
+    /// <c>meshc</c>, the floor contours are recorded but not drawn — tracing them needs a height
+    /// field over a rectilinear grid.
+    /// </summary>
+    public static SurfacePlot SurfC(double[,] x, double[,] y, double[,] z)
+    {
+        SurfacePlot surface = Surf(x, y, z);
+        surface.ShowContourBelow = true;
+        return surface;
+    }
+
+    /// <summary>
+    /// Plots a wireframe surface with a curtain dropped from its perimeter to the floor (MATLAB
+    /// <c>meshz</c>).
+    /// </summary>
+    /// <remarks>
+    /// The curtain is not a second object: the grid is padded with one ring of vertices that repeat
+    /// the border positions at the base height, so the extra cells are vertical walls in the same
+    /// mesh. That is how MATLAB builds it too, and it means the curtain rotates, colors, and paints
+    /// in order with everything else for free.
+    /// </remarks>
+    public static SurfacePlot MeshZ(double[] x, double[] y, double[,] z)
+    {
+        (double[] px, double[] py, double[,] pz) = WithCurtain(x, y, z);
+        return Mesh(px, py, pz);
+    }
+
+    /// <summary>The parametric form of <see cref="MeshZ(double[], double[], double[,])"/>.</summary>
+    public static SurfacePlot MeshZ(double[,] x, double[,] y, double[,] z)
+    {
+        double baseHeight = BaseHeightOf(z);
+        return Mesh(
+            RingedWith(x, (r, c) => x[r, c]),
+            RingedWith(y, (r, c) => y[r, c]),
+            RingedWith(z, (_, _) => baseHeight));
+    }
+
+    /// <summary>
+    /// Plots each row of <paramref name="z"/> as a curve in space with the area beneath it filled
+    /// down to a common base (MATLAB <c>waterfall</c>). The fill is what hides the rows behind.
+    /// </summary>
+    /// <remarks>
+    /// A row containing a non-finite height is dropped whole rather than broken in two: a patch face
+    /// is one polygon, and the closed area under a broken curve is not well defined.
+    /// </remarks>
+    public static PatchPlot Waterfall(double[] x, double[] y, double[,] z)
+    {
+        ArgumentNullException.ThrowIfNull(x);
+        ArgumentNullException.ThrowIfNull(y);
+        ArgumentNullException.ThrowIfNull(z);
+        int rows = z.GetLength(0);
+        int cols = z.GetLength(1);
+        if (rows < 1 || cols < 2)
+        {
+            throw new ArgumentException("A waterfall needs at least one row of at least two heights.", nameof(z));
+        }
+
+        double baseHeight = BaseHeightOf(z);
+
+        // Each row becomes one closed polygon: down to the base at the left, along the curve, and
+        // back down to the base at the right.
+        int perRow = cols + 2;
+        var vx = new double[rows * perRow];
+        var vy = new double[rows * perRow];
+        var vz = new double[rows * perRow];
+        var faces = new int[rows][];
+        var levels = new double[rows];
+        for (int r = 0; r < rows; r++)
+        {
+            int at = r * perRow;
+            var face = new int[perRow];
+            double sum = 0;
+            int finite = 0;
+            for (int i = 0; i < perRow; i++)
+            {
+                int c = System.Math.Clamp(i - 1, 0, cols - 1);
+                vx[at + i] = x[c];
+                vy[at + i] = y[r];
+                vz[at + i] = i == 0 || i == perRow - 1 ? baseHeight : z[r, c];
+                face[i] = at + i;
+                if (i > 0 && i < perRow - 1 && double.IsFinite(z[r, c]))
+                {
+                    sum += z[r, c];
+                    finite++;
+                }
+            }
+
+            faces[r] = face;
+            levels[r] = finite > 0 ? sum / finite : baseHeight;
+        }
+
+        AxesModel axes = PrepareAxes();
+        PatchPlot patch = axes.AddPatch(vx, vy, vz, faces);
+        patch.ColorData = levels;
+        patch.Name = "Waterfall";
+        axes.Is3D = true;
+        return patch;
+    }
+
+    /// <summary>
+    /// Plots each column of <paramref name="z"/> as a flat strip standing in space (MATLAB
+    /// <c>ribbon</c>): strip <c>j</c> is centred at <c>x = j + 1</c> and <paramref name="width"/>
+    /// wide, runs along <paramref name="y"/>, and rises to that column's values.
+    /// </summary>
+    /// <remarks>
+    /// Every strip is its own surface, as it is in MATLAB, but they share one color range so that a
+    /// height means the same thing across the whole plot rather than being rescaled per strip.
+    /// </remarks>
+    public static IReadOnlyList<SurfacePlot> Ribbon(double[] y, double[,] z, double width = 0.75)
+    {
+        ArgumentNullException.ThrowIfNull(y);
+        ArgumentNullException.ThrowIfNull(z);
+        int rows = z.GetLength(0);
+        int cols = z.GetLength(1);
+        if (y.Length != rows)
+        {
+            throw new ArgumentException(
+                $"ribbon needs one y value per row of z, but got {y.Length} for {rows} rows.", nameof(y));
+        }
+
+        double min = double.PositiveInfinity, max = double.NegativeInfinity;
+        foreach (double v in z)
+        {
+            if (double.IsFinite(v))
+            {
+                min = System.Math.Min(min, v);
+                max = System.Math.Max(max, v);
+            }
+        }
+
+        AxesModel axes = PrepareAxes();
+        var strips = new SurfacePlot[cols];
+        for (int c = 0; c < cols; c++)
+        {
+            var gx = new double[rows, 2];
+            var gy = new double[rows, 2];
+            var gz = new double[rows, 2];
+            for (int r = 0; r < rows; r++)
+            {
+                gx[r, 0] = c + 1 - (width / 2);
+                gx[r, 1] = c + 1 + (width / 2);
+                gy[r, 0] = gy[r, 1] = y[r];
+                gz[r, 0] = gz[r, 1] = z[r, c];
+            }
+
+            SurfacePlot strip = axes.AddSurface(gx, gy, gz);
+            strip.Name = $"Ribbon {c + 1}";
+            if (min < max)
+            {
+                strip.AutoScaleColor = false;
+                strip.ColorMin = min;
+                strip.ColorMax = max;
+            }
+
+            strips[c] = strip;
+        }
+
+        axes.Is3D = true;
+        return strips;
+    }
+
+    /// <summary>
+    /// Plots iso-lines of a scalar field at the height of their own level (MATLAB <c>contour3</c>)
+    /// and switches the axes to 3D.
+    /// </summary>
+    public static ContourPlot Contour3(double[] x, double[] y, double[,] z, double[]? levels = null)
+    {
+        AxesModel axes = PrepareAxes();
+        ContourPlot contour = axes.AddContour(x, y, z, levels);
+        axes.Is3D = true;
+        return contour;
+    }
+
+    /// <summary>
+    /// Plots a triangulated surface over a vertex list (MATLAB <c>trisurf</c>) and switches to 3D.
+    /// Faces are zero-based here; the script layer converts MATLAB's one-based table.
+    /// </summary>
+    public static PatchPlot TriSurf(int[][] faces, double[] x, double[] y, double[] z, double[]? c = null)
+    {
+        AxesModel axes = PrepareAxes();
+        PatchPlot patch = axes.AddPatch(x, y, z, faces);
+        patch.ColorData = c ?? z;
+        patch.Name = "Trisurf";
+        axes.Is3D = true;
+        return patch;
+    }
+
+    /// <summary>
+    /// The same triangulation drawn as edges only, each triangle outlined in the color its face
+    /// would have had (MATLAB <c>trimesh</c>).
+    /// </summary>
+    public static PatchPlot TriMesh(int[][] faces, double[] x, double[] y, double[] z, double[]? c = null)
+    {
+        PatchPlot patch = TriSurf(faces, x, y, z, c);
+        patch.FaceVisible = false;
+        patch.Name = "Trimesh";
+        return patch;
+    }
+
+    /// <summary>Plots a field of arrows in the plane (MATLAB <c>quiver</c>).</summary>
+    public static QuiverPlot Quiver(double[] x, double[] y, double[] u, double[] v)
+    {
+        AxesModel axes = PrepareAxes();
+        return axes.AddQuiver(x, y, u, v);
+    }
+
+    /// <summary>Plots a field of arrows in space (MATLAB <c>quiver3</c>) and switches to 3D.</summary>
+    public static QuiverPlot Quiver3(double[] x, double[] y, double[] z, double[] u, double[] v, double[] w)
+    {
+        AxesModel axes = PrepareAxes();
+        return axes.AddQuiver3(x, y, z, u, v, w);
+    }
+
+    /// <summary>
+    /// A grid ringed by one extra row and column that repeat the border positions at the lowest
+    /// height, which is exactly the curtain <c>meshz</c> draws.
+    /// </summary>
+    private static (double[] X, double[] Y, double[,] Z) WithCurtain(double[] x, double[] y, double[,] z)
+    {
+        ArgumentNullException.ThrowIfNull(x);
+        ArgumentNullException.ThrowIfNull(y);
+        ArgumentNullException.ThrowIfNull(z);
+        int rows = z.GetLength(0);
+        int cols = z.GetLength(1);
+        if (rows != y.Length || cols != x.Length)
+        {
+            throw new ArgumentException(
+                $"z must be [{y.Length} rows x {x.Length} cols] to match y and x, but was [{rows} x {cols}].",
+                nameof(z));
+        }
+
+        double baseHeight = BaseHeightOf(z);
+        var px = new double[cols + 2];
+        var py = new double[rows + 2];
+        for (int c = 0; c < cols + 2; c++)
+        {
+            px[c] = x[System.Math.Clamp(c - 1, 0, cols - 1)];
+        }
+
+        for (int r = 0; r < rows + 2; r++)
+        {
+            py[r] = y[System.Math.Clamp(r - 1, 0, rows - 1)];
+        }
+
+        var pz = new double[rows + 2, cols + 2];
+        for (int r = 0; r < rows + 2; r++)
+        {
+            for (int c = 0; c < cols + 2; c++)
+            {
+                pz[r, c] = r == 0 || r == rows + 1 || c == 0 || c == cols + 1
+                    ? baseHeight
+                    : z[r - 1, c - 1];
+            }
+        }
+
+        return (px, py, pz);
+    }
+
+    /// <summary>
+    /// A matrix ringed by one extra row and column, the border values repeated outward except where
+    /// <paramref name="onRing"/> supplies something else — which is how the height matrix gets its
+    /// base while the two coordinate matrices keep their edge positions.
+    /// </summary>
+    private static double[,] RingedWith(double[,] values, Func<int, int, double> onRing)
+    {
+        int rows = values.GetLength(0);
+        int cols = values.GetLength(1);
+        var ringed = new double[rows + 2, cols + 2];
+        for (int r = 0; r < rows + 2; r++)
+        {
+            int sr = System.Math.Clamp(r - 1, 0, rows - 1);
+            for (int c = 0; c < cols + 2; c++)
+            {
+                int sc = System.Math.Clamp(c - 1, 0, cols - 1);
+                ringed[r, c] = r == 0 || r == rows + 1 || c == 0 || c == cols + 1
+                    ? onRing(sr, sc)
+                    : values[sr, sc];
+            }
+        }
+
+        return ringed;
+    }
+
+    /// <summary>The lowest finite height in a grid, or zero when there is none.</summary>
+    private static double BaseHeightOf(double[,] z)
+    {
+        double lowest = double.PositiveInfinity;
+        foreach (double v in z)
+        {
+            if (double.IsFinite(v) && v < lowest)
+            {
+                lowest = v;
+            }
+        }
+
+        return double.IsFinite(lowest) ? lowest : 0;
     }
 
     /// <summary>Plots iso-line contours of a scalar field (MATLAB <c>contour</c>).</summary>
@@ -381,8 +776,9 @@ public static class JG
     }
 
     /// <summary>
-    /// Applies a built-in colormap ("viridis", "jet", "hot", "cool", "gray") to every color-mapped
-    /// plot in the current axes (MATLAB <c>colormap</c>).
+    /// Applies a built-in colormap ("parula", "viridis", "turbo", "jet", "hot", "cool", "gray",
+    /// "hsv", "bone", "copper", "pink", "spring", "summer", "autumn", "winter", "lines") to every
+    /// color-mapped plot in the current axes (MATLAB <c>colormap</c>).
     /// </summary>
     public static void Colormap(string name)
     {
@@ -392,6 +788,16 @@ public static class JG
                 $"Unknown colormap '{name}'. Known colormaps: {string.Join(", ", Core.Drawing.Colormap.KnownNames)}.");
         }
 
+        Colormap(map);
+    }
+
+    /// <summary>
+    /// Applies a colormap object to every color-mapped plot in the current axes — the form
+    /// <c>colormap(map)</c> with an N-by-3 table takes, once the table has been turned into a map.
+    /// </summary>
+    public static void Colormap(Core.Drawing.Colormap map)
+    {
+        ArgumentNullException.ThrowIfNull(map);
         foreach (PlotObject plot in Gca().Plots)
         {
             switch (plot)
@@ -408,6 +814,110 @@ public static class JG
             }
         }
     }
+
+    /// <summary>The colormap of the first color-mapped plot in the current axes, or parula if there is none.</summary>
+    public static Core.Drawing.Colormap CurrentColormap()
+    {
+        foreach (PlotObject plot in Gca().Plots)
+        {
+            if (plot is IColorMapped mapped)
+            {
+                return mapped.Colormap;
+            }
+        }
+
+        return Core.Drawing.Colormap.Parula;
+    }
+
+    /// <summary>
+    /// Pins the color limits of every color-mapped plot in the current axes (MATLAB <c>caxis</c> /
+    /// <c>clim</c>), which is what makes several plots share one colorbar scale.
+    /// </summary>
+    public static void CLim(double min, double max)
+    {
+        if (!double.IsFinite(min) || !double.IsFinite(max) || min >= max)
+        {
+            throw new ArgumentException($"Color limits must be finite and increasing, but were [{min}, {max}].");
+        }
+
+        foreach (PlotObject plot in Gca().Plots)
+        {
+            switch (plot)
+            {
+                case ImagePlot image:
+                    image.AutoScaleColor = false;
+                    image.ColorMin = min;
+                    image.ColorMax = max;
+                    break;
+                case SurfacePlot surface:
+                    surface.AutoScaleColor = false;
+                    surface.ColorMin = min;
+                    surface.ColorMax = max;
+                    break;
+                case ContourPlot contour:
+                    contour.AutoScaleColor = false;
+                    contour.ColorMin = min;
+                    contour.ColorMax = max;
+                    break;
+            }
+        }
+    }
+
+    /// <summary>Returns the color limits to each plot's own data range (MATLAB <c>caxis auto</c>).</summary>
+    public static void CLimAuto()
+    {
+        foreach (PlotObject plot in Gca().Plots)
+        {
+            switch (plot)
+            {
+                case ImagePlot image:
+                    image.AutoScaleColor = true;
+                    break;
+                case SurfacePlot surface:
+                    surface.AutoScaleColor = true;
+                    break;
+                case ContourPlot contour:
+                    contour.AutoScaleColor = true;
+                    break;
+            }
+        }
+    }
+
+    /// <summary>
+    /// The color limits currently in force — the first color-mapped plot's, which is the one the
+    /// colorbar is drawn from. <c>[0, 1]</c> when the axes has nothing color-mapped in it.
+    /// </summary>
+    public static (double Min, double Max) GetCLim()
+    {
+        foreach (PlotObject plot in Gca().Plots)
+        {
+            if (plot is IColorMapped mapped)
+            {
+                return mapped.ColorRange;
+            }
+        }
+
+        return (0, 1);
+    }
+
+    /// <summary>
+    /// Brightens (<paramref name="beta"/> &gt; 0) or darkens (&lt; 0) the current colormap by MATLAB's
+    /// gamma rule, and applies the result (MATLAB <c>brighten</c>).
+    /// </summary>
+    public static void Brighten(double beta) => Colormap(CurrentColormap().Brighten(beta));
+
+    /// <summary>
+    /// Sets the colors plots in the current axes cycle through (MATLAB <c>colororder</c>). An empty
+    /// list hands the axes back to the theme.
+    /// </summary>
+    public static void ColorOrder(IReadOnlyList<Core.Drawing.Color> colors)
+    {
+        ArgumentNullException.ThrowIfNull(colors);
+        Gca().ColorOrder = colors.Count > 0 ? colors.ToArray() : null;
+    }
+
+    /// <summary>The colors the current axes cycles through, or null when the theme decides.</summary>
+    public static IReadOnlyList<Core.Drawing.Color>? GetColorOrder() => Gca().ColorOrder;
 
     /// <summary>Shows or hides the current axes' colorbar (MATLAB <c>colorbar</c>).</summary>
     public static void Colorbar(bool on = true) => Gca().Colorbar.Visible = on;
@@ -630,6 +1140,17 @@ public static class JG
     /// <summary>Adds a text label at the given data point on the current axes (MATLAB <c>text</c>).</summary>
     public static TextAnnotation Text(double x, double y, string text) => Gca().AddText(x, y, text);
 
+    /// <summary>
+    /// Adds a text label at a point in space (MATLAB <c>text(x, y, z, str)</c>). The height is only
+    /// read in a 3D axes, so this is safe to call before the axes has been switched into 3D.
+    /// </summary>
+    public static TextAnnotation Text(double x, double y, double z, string text)
+    {
+        TextAnnotation annotation = Gca().AddText(x, y, text);
+        annotation.Z = z;
+        return annotation;
+    }
+
     /// <summary>Adds an arrow between two data points on the current axes (MATLAB <c>annotation('arrow')</c>).</summary>
     public static ArrowAnnotation Arrow(double x1, double y1, double x2, double y2) =>
         Gca().AddArrow(x1, y1, x2, y2);
@@ -805,6 +1326,7 @@ public static class JG
     {
         axes.Plots.Clear();
         axes.Annotations.Clear();
+        axes.Lights.Clear();
         axes.Title = string.Empty;
 
         while (axes.XAxes.Count > 1)
@@ -841,24 +1363,59 @@ public static class JG
 
     private static void ApplyLineSpec(LinePlot plot, LineSpec spec)
     {
-        if (spec.Color is { } color)
+        (Core.Drawing.Color? color, Core.Drawing.DashStyle? dash, Core.Drawing.MarkerType? marker) = ResolveLineSpec(spec);
+        if (color is { } c)
         {
-            plot.Color = color;
+            plot.Color = c;
         }
 
-        if (spec.LineSpecified && spec.Dash is { } dash)
+        if (dash is { } d)
         {
-            plot.DashStyle = dash;
+            plot.DashStyle = d;
+        }
+
+        if (marker is { } m)
+        {
+            plot.Marker = m;
+        }
+    }
+
+    /// <summary>The 3D twin of the line-spec applier; the two plot types share no base that carries these.</summary>
+    private static void ApplyLineSpec(Line3DPlot plot, LineSpec spec)
+    {
+        (Core.Drawing.Color? color, Core.Drawing.DashStyle? dash, Core.Drawing.MarkerType? marker) = ResolveLineSpec(spec);
+        if (color is { } c)
+        {
+            plot.Color = c;
+        }
+
+        if (dash is { } d)
+        {
+            plot.DashStyle = d;
+        }
+
+        if (marker is { } m)
+        {
+            plot.Marker = m;
+        }
+    }
+
+    /// <summary>
+    /// What a parsed line-spec actually changes, with null meaning "leave the plot's own value". A
+    /// marker with no line character means markers only, which is MATLAB's reading of a bare "o".
+    /// </summary>
+    private static (Core.Drawing.Color? Color, Core.Drawing.DashStyle? Dash, Core.Drawing.MarkerType? Marker) ResolveLineSpec(LineSpec spec)
+    {
+        Core.Drawing.DashStyle? dash = null;
+        if (spec.LineSpecified && spec.Dash is { } explicitDash)
+        {
+            dash = explicitDash;
         }
         else if (spec.MarkerSpecified && !spec.LineSpecified)
         {
-            // Markers only, no connecting line (MATLAB behavior for e.g. "o").
-            plot.DashStyle = Core.Drawing.DashStyle.None;
+            dash = Core.Drawing.DashStyle.None;
         }
 
-        if (spec.Marker is { } marker)
-        {
-            plot.Marker = marker;
-        }
+        return (spec.Color, dash, spec.Marker);
     }
 }

@@ -788,6 +788,18 @@ internal sealed class Interpreter
             return [callee.AsCallable.Call(arguments, invocation.Line, invocation.Column)];
         }
 
+        // A bare name that auto-calls is still a call when several outputs are asked for, so
+        // `[x, y, z] = sphere` means what `[x, y, z] = sphere()` does. Reading it as a value instead
+        // would evaluate the name through the zero-argument path — drawing a sphere on the way — and
+        // then report a shortfall, which is the wrong answer twice over.
+        if (call is VariableExpr bare
+            && LookUp(bare.Name, env, out JgsValue named)
+            && named.Type == JgsType.Function
+            && named.AsCallable is BuiltinFunction { AutoCallsBare: true } and IJgsMultiCallable zeroArgument)
+        {
+            return zeroArgument.CallMultiple(System.Array.Empty<JgsValue>(), wanted, bare.Line, bare.Column);
+        }
+
         return [Evaluate(call, env)];
     }
 

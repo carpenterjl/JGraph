@@ -178,6 +178,92 @@ public static class AxesExtensions
         return plot;
     }
 
+    /// <summary>
+    /// Adds a parametric 3D surface — a position per vertex rather than per row and column — and
+    /// switches the axes into 3D mode. This is the form a sphere or a cylinder needs.
+    /// </summary>
+    public static SurfacePlot AddSurface(
+        this AxesModel axes,
+        double[,] x,
+        double[,] y,
+        double[,] z,
+        SurfaceStyle style = SurfaceStyle.FilledWithWireframe)
+    {
+        ArgumentNullException.ThrowIfNull(axes);
+        var plot = new SurfacePlot(x, y, z) { Style = style };
+        axes.Plots.Add(plot);
+        axes.Is3D = true;
+        return plot;
+    }
+
+    /// <summary>
+    /// Adds a polyline through points in space (MATLAB <c>plot3</c>) and switches the axes into 3D mode.
+    /// </summary>
+    public static Line3DPlot AddLine3D(this AxesModel axes, double[] x, double[] y, double[] z)
+    {
+        ArgumentNullException.ThrowIfNull(axes);
+        var plot = new Line3DPlot(x, y, z);
+        axes.Plots.Add(plot);
+        axes.Is3D = true;
+        return plot;
+    }
+
+    /// <summary>
+    /// Adds markers at points in space (MATLAB <c>scatter3</c>) and switches the axes into 3D mode.
+    /// </summary>
+    public static Scatter3DPlot AddScatter3D(this AxesModel axes, double[] x, double[] y, double[] z)
+    {
+        ArgumentNullException.ThrowIfNull(axes);
+        var plot = new Scatter3DPlot(x, y, z);
+        axes.Plots.Add(plot);
+        axes.Is3D = true;
+        return plot;
+    }
+
+    /// <summary>
+    /// Adds filled polygons over a shared vertex list (MATLAB <c>patch</c>). The axes is left in
+    /// whatever mode it is already in — a patch draws in both — so <c>fill</c> and <c>fill3</c> differ
+    /// only in whether the caller sets <see cref="AxesModel.Is3D"/> afterwards.
+    /// </summary>
+    public static PatchPlot AddPatch(this AxesModel axes, double[] x, double[] y, double[] z, int[][] faces)
+    {
+        ArgumentNullException.ThrowIfNull(axes);
+        var plot = new PatchPlot(x, y, z, faces);
+        axes.Plots.Add(plot);
+        return plot;
+    }
+
+    /// <summary>Adds a single-face patch through the given points, in the order given.</summary>
+    public static PatchPlot AddPatch(this AxesModel axes, double[] x, double[] y, double[] z)
+    {
+        ArgumentNullException.ThrowIfNull(axes);
+        var plot = new PatchPlot(x, y, z);
+        axes.Plots.Add(plot);
+        return plot;
+    }
+
+    /// <summary>Adds a field of arrows in the plane (MATLAB <c>quiver</c>) and returns it.</summary>
+    public static QuiverPlot AddQuiver(this AxesModel axes, double[] x, double[] y, double[] u, double[] v)
+    {
+        ArgumentNullException.ThrowIfNull(axes);
+        var plot = new QuiverPlot(x, y, u, v);
+        axes.Plots.Add(plot);
+        return plot;
+    }
+
+    /// <summary>
+    /// Adds a field of arrows in space (MATLAB <c>quiver3</c>) and switches the axes into 3D mode.
+    /// </summary>
+    public static QuiverPlot AddQuiver3(
+        this AxesModel axes, double[] x, double[] y, double[] z, double[] u, double[] v, double[] w)
+    {
+        ArgumentNullException.ThrowIfNull(axes);
+        var plot = new QuiverPlot(x, y, z, u, v, w);
+        axes.Plots.Add(plot);
+        axes.Is3D = true;
+        return plot;
+    }
+
     /// <summary>Adds a 2D contour (or filled contour) plot of <c>z[row, col]</c> and returns it.</summary>
     public static ContourPlot AddContour(
         this AxesModel axes,

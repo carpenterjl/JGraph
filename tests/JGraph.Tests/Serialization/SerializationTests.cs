@@ -137,6 +137,22 @@ public class SerializationTests
         Assert.False(loaded.RowZeroAtTop);
     }
 
+    /// <summary>
+    /// M44 wave 3: a palette is not a gradient, and the flag saying so has to survive the file. A
+    /// discrete map that came back interpolating would blend its colors into each other and look
+    /// nothing like what was saved.
+    /// </summary>
+    [Fact]
+    public void Image_RoundTripsADiscretePalette()
+    {
+        var image = new ImagePlot(new double[,] { { 0, 1 }, { 2, 3 } }) { Colormap = Colormap.Lines };
+        var loaded = (ImagePlot)RoundTrip(WithAxes(image)).Axes[0].Plots[0];
+
+        Assert.Equal("Lines", loaded.Colormap.Name);
+        Assert.True(loaded.Colormap.Discrete);
+        Assert.Equal(Colormap.Lines.Stops, loaded.Colormap.Stops);
+    }
+
     [Fact]
     public void Polar_RoundTripsGridAndConvertedSeries()
     {

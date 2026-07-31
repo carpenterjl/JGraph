@@ -16,8 +16,9 @@ public class PluginRegistryTests
         Assert.Equal(
             new[] { "Light", "Dark", "Presentation", "IEEE" },
             registry.Themes.Select(t => t.Name).ToArray());
+        Assert.Contains(registry.Colormaps, c => c.Name == "Parula");
         Assert.Contains(registry.Colormaps, c => c.Name == "Viridis");
-        Assert.Equal(5, registry.Colormaps.Count);
+        Assert.Equal(Colormap.KnownNames.Count, registry.Colormaps.Count);
         Assert.Single(registry.Plugins);
     }
 

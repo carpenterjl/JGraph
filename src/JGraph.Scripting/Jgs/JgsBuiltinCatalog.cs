@@ -472,9 +472,12 @@ public static class JgsBuiltinCatalog
         Add("tiledlayout", "Starts an r-by-c tile grid on the current figure; nexttile advances through it.", P("rows"), P("cols"));
         Add("nexttile", "Moves to the next tile of the tiledlayout grid (or tile n).", Opt("n"));
         Add("axis", "Aspect and limit control: axis equal/image/square/tight/off, or axis([xmin xmax ymin ymax]).", Opt("option"));
-        Add("shading", "Accepted for compatibility: surfaces are always smoothly shaded.", Opt("mode"));
-        Add("lighting", "Accepted for compatibility: surface lighting is built in.", Opt("mode"));
-        Add("camlight", "Accepted for compatibility: surface lighting is built in.", Opt("position"));
+        Add("shading", "Surface face shading: faceted (flat faces with grid lines), flat (no lines), or interp.", Opt("mode"));
+        Add("lighting", "How surfaces respond to lights: none, flat (one normal per facet), or gouraud.", Opt("mode"));
+        Add("material", "Surface reflectance: shiny, dull, metal, default, or [ambient diffuse specular exponent reflectance].", Opt("preset"));
+        Add("light", "Adds a light to the current axes: light('Position', [x y z], 'Color', c, 'Style', 'infinite'|'local').", Opt("name"), Opt("value"));
+        Add("lightangle", "Adds a light at an azimuth and elevation, on the same convention as view.", P("az"), P("el"));
+        Add("camlight", "Adds a light beside the camera: right (default), left, headlight, or camlight(az, el).", Opt("position"));
         Add("rotate3d", "Accepted for compatibility: 3-D rotation is always interactive (drag the axes).", Opt("state"));
         Add("norm", "Vector norms (2 by default, any p, inf) and matrix norms (1, 2, inf, 'fro').", P("x"), Opt("p"));
         Add("eig", "Eigenvalues of a square matrix; [V, D] = eig(A) adds the eigenvectors.", P("A"));
@@ -756,9 +759,53 @@ public static class JgsBuiltinCatalog
         Add("pcolor", "Displays matrix z as a colormapped heatmap over the x/y extents.", P("x"), P("y"), P("z"));
         Add("zlabel", "Sets the z-axis label of a 3D axes.", P("text"));
         Add("zlim", "Sets the z-axis range of a 3D axes.", P("min"), P("max"));
-        Add("view", "Sets the 3D camera angles in degrees (azimuth about z, elevation above the xy plane).", P("azimuth"), P("elevation"));
-        Add("colormap", "Applies a built-in colormap (viridis, jet, hot, cool, gray) to the current axes' plots.", P("name"));
+        Add("view", "Reads or sets the 3D camera angles in degrees: view(az, el), view([az el]), view(2), or view(3).", Opt("azimuth"), Opt("elevation"));
+        Add("campos", "Reads or sets the camera position in data coordinates; only its direction from the box centre matters.", Opt("position"));
+        Add("camtarget", "The point the camera looks at — always the centre of the data box.", Opt("target"));
+        Add("camup", "The direction that appears as up on screen — always the +z axis.", Opt("up"));
+        Add("camorbit", "Turns the camera by an azimuth and elevation increment in degrees.", P("dtheta"), P("dphi"));
+        Add("camzoom", "Zooms the current axes about the centre of its limits; factors above 1 zoom in.", P("factor"));
+        Add("camva", "Reads or sets the camera view angle in degrees, applied as a zoom about the default framing.", Opt("angle"));
+        Add("pbaspect", "Reads or sets the relative side lengths of the 3D plot box, or 'auto' for a cube.", Opt("aspect"));
+        Add("daspect", "Reads or sets how many data units one box unit is worth on each axis, or 'auto'.", Opt("aspect"));
+        Add(
+            "colormap",
+            "Applies a colormap to the current axes' plots: a built-in name (parula, viridis, turbo, "
+                + "jet, hot, cool, gray, hsv, bone, copper, pink, spring, summer, autumn, winter, "
+                + "lines) or an m-by-3 table of RGB rows.",
+            P("map"));
         Add("colorbar", "Shows (default) or hides the current axes' colorbar.", Opt("on"));
+        Add("caxis", "Reads or sets the color limits of the current axes: caxis([lo hi]), caxis(lo, hi), or caxis('auto').", Opt("limits"), Opt("high"));
+        Add("clim", "The same as caxis: reads or sets the current axes' color limits.", Opt("limits"), Opt("high"));
+        Add("brighten", "Brightens (beta > 0) or darkens (beta < 0) the current colormap.", P("beta"));
+        Add("colororder", "Reads or sets the colors plots cycle through in the current axes.", Opt("colors"));
+        Add("plot3", "A line through points in space: plot3(x, y, z, spec?). Matrix arguments draw one line per column.", P("x"), P("y"), P("z"), Opt("spec"));
+        Add("scatter3", "Markers at points in space: scatter3(x, y, z, sizes?, colors?, 'filled'?).", P("x"), P("y"), P("z"), Opt("sizes"), Opt("colors"));
+        Add("fill", "A filled polygon: fill(x, y, color). A matrix fills one polygon per column.", P("x"), P("y"), P("color"));
+        Add("fill3", "A filled polygon in space: fill3(x, y, z, color).", P("x"), P("y"), P("z"), P("color"));
+        Add("patch", "Filled polygons: patch(x, y, color), patch(x, y, z, color), or patch('Faces', F, 'Vertices', V).", P("x"), P("y"), Opt("z"), Opt("color"));
+        Add("line", "A line added to the current axes without clearing it: line(x, y) or line(x, y, z).", P("x"), P("y"), Opt("z"));
+        Add("text", "A text label at a point: text(x, y, string) or text(x, y, z, string).", P("x"), P("y"), P("string"));
+        Add("surface", "The same surface as surf, drawn without resetting the axes.", P("x"), Opt("y"), Opt("z"));
+        Add("surfl", "A 3D surface lit from beside the camera (surf plus a light 45 degrees round from the view).", P("x"), Opt("y"), Opt("z"));
+        Add("surfnorm", "The unit surface normals of a grid, as [nx, ny, nz] in data units.", P("x"), Opt("y"), Opt("z"));
+        Add("surfc", "A filled 3D surface with contour lines projected on the floor.", P("x"), Opt("y"), Opt("z"));
+        Add("meshz", "A wireframe 3D surface with a curtain dropped from its edges to the floor.", P("x"), Opt("y"), Opt("z"));
+        Add("waterfall", "Each row of z as a curve in space, filled down to a common base.", P("x"), Opt("y"), Opt("z"));
+        Add("ribbon", "The columns of y as flat strips standing side by side: ribbon(y) or ribbon(x, y, width).", P("y"), Opt("z"), Opt("width"));
+        Add("contour3", "Iso-lines of z drawn in 3D at the height of their own level.", P("x"), P("y"), P("z"), Opt("levels"));
+        Add("quiver", "Arrows in the plane: quiver(u, v) or quiver(x, y, u, v), with an optional scale.", P("x"), P("y"), Opt("u"), Opt("v"), Opt("scale"));
+        Add("quiver3", "Arrows in space: quiver3(x, y, z, u, v, w), with an optional scale.", P("x"), P("y"), P("z"), P("u"), P("v"), P("w"));
+        Add("trisurf", "A triangulated surface over a vertex list: trisurf(tri, x, y, z).", P("tri"), P("x"), P("y"), P("z"), Opt("c"));
+        Add("trimesh", "The same triangulation drawn as colored edges only.", P("tri"), P("x"), P("y"), P("z"), Opt("c"));
+        Add("sphere", "The unit sphere: [X, Y, Z] = sphere(n), or sphere(n) to draw one.", Opt("n"));
+        Add("cylinder", "A surface of revolution: [X, Y, Z] = cylinder(r, n), or cylinder(r) to draw one.", Opt("r"), Opt("n"));
+        Add("ellipsoid", "An ellipsoid grid: [X, Y, Z] = ellipsoid(xc, yc, zc, xr, yr, zr, n).", P("xc"), P("yc"), P("zc"), P("xr"), P("yr"), P("zr"), Opt("n"));
+
+        foreach (string name in JgsBuiltins.ColormapGeneratorNames)
+        {
+            Add(name, $"The {name} colormap as an m-by-3 table of RGB rows (default 256).", Opt("m"));
+        }
         Add("savefigure", "Saves the current figure (or figure fig) as a .graph document.", P("path"), Opt("fig"));
         Add("loadfigure", "Loads a .graph document as a new figure, makes it current, and returns its handle.", P("path"));
         Add("exportfigure", "Exports the current figure (or figure fig) as an image — png/jpg/bmp/tiff/svg/pdf by extension.", P("path"), Opt("fig"));

@@ -20,8 +20,10 @@ public sealed class FigureViewModel : ObservableObject
     private ITheme _currentTheme;
     private string _statusText = "Ready";
     private GraphObject? _selectedObject;
-    private bool _showPlotBrowser = true;
-    private bool _showInspector = true;
+    // The figure opens on the plot itself: both side panels start hidden and the toolbar toggles
+    // bring them in. Neither flag is persisted, so this is the only place the default lives.
+    private bool _showPlotBrowser;
+    private bool _showInspector;
 
     private readonly IFigureExportService _exportService;
     private readonly IFigureDocumentService _documentService;

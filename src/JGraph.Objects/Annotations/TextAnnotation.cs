@@ -2,6 +2,7 @@ using System.ComponentModel;
 using JGraph.Core.Drawing;
 using JGraph.Core.Model;
 using JGraph.Core.Primitives;
+using JGraph.Maths.Transforms;
 using JGraph.Rendering;
 
 namespace JGraph.Objects.Annotations;
@@ -11,10 +12,15 @@ namespace JGraph.Objects.Annotations;
 /// in data coordinates (or normalized figure coordinates when <see cref="AnnotationObject.Space"/> is
 /// <see cref="AnnotationSpace.Figure"/>); the alignment properties say which corner/edge of the text
 /// box sits on the anchor.
+///
+/// In a 3D axes the anchor is <see cref="Position"/> plus <see cref="Z"/>, projected through the same
+/// camera as the plots — which is what makes MATLAB's <c>text(x, y, z, str)</c> label a point on a
+/// surface. The label itself stays upright and screen-sized; only its anchor moves with the camera.
 /// </summary>
-public sealed class TextAnnotation : AnnotationObject, IDrawable
+public sealed class TextAnnotation : AnnotationObject, IDrawable, I3DDrawable
 {
     private Point2D _position;
+    private double _z;
     private string _text = string.Empty;
     private double _fontSize = 12;
     private string _fontFamily = "Segoe UI";
@@ -45,6 +51,17 @@ public sealed class TextAnnotation : AnnotationObject, IDrawable
     {
         get => _position;
         set => SetProperty(ref _position, value, InvalidationKind.Render);
+    }
+
+    /// <summary>
+    /// The anchor's height, used only in a 3D axes. Zero — the default, and what every label written
+    /// before M45 carries — puts the label on the floor of the box, which is where a 2D label sits.
+    /// </summary>
+    [Category("General")]
+    public double Z
+    {
+        get => _z;
+        set => SetProperty(ref _z, value, InvalidationKind.Render);
     }
 
     /// <summary>The text to display.</summary>
@@ -149,6 +166,21 @@ public sealed class TextAnnotation : AnnotationObject, IDrawable
     /// <inheritdoc />
     public void Render(IRenderContext context, RenderState state)
     {
+        ArgumentNullException.ThrowIfNull(state);
+        DrawAt(context, state, () => state.Mapper.DataToPixel(_position.X, _position.Y));
+    }
+
+    /// <inheritdoc />
+    public void Render3D(IRenderContext context, Projection3D projection, RenderState state)
+    {
+        ArgumentNullException.ThrowIfNull(projection);
+        DrawAt(context, state, () => projection.ProjectPoint(_position.X, _position.Y, _z));
+    }
+
+    private void DrawAt(IRenderContext context, RenderState state, Func<Point2D> anchorAt)
+    {
+        ArgumentNullException.ThrowIfNull(context);
+        ArgumentNullException.ThrowIfNull(state);
         if (string.IsNullOrEmpty(_text))
         {
             SetRenderedBounds(Rect2D.Empty);
@@ -159,7 +191,7 @@ public sealed class TextAnnotation : AnnotationObject, IDrawable
         var style = new TextStyle(ink, _fontSize, _fontFamily, _bold, _italic);
         Size2D textSize = context.MeasureText(_text, style);
 
-        Point2D anchor = state.Mapper.DataToPixel(_position.X, _position.Y);
+        Point2D anchor = anchorAt();
         double boxWidth = textSize.Width + (_padding * 2);
         double boxHeight = textSize.Height + (_padding * 2);
 

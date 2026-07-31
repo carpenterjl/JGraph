@@ -105,7 +105,12 @@ internal static class SeriesRenderer
         return new DataRange(System.Math.Min(xa, xb), System.Math.Max(xa, xb));
     }
 
-    private static void DrawWithGaps(IRenderContext context, Point2D[] pixels, int count, LineStyle line)
+    /// <summary>
+    /// Draws a run of projected points as one polyline per unbroken stretch, so a non-finite point is
+    /// a break in the line rather than a jump through the origin. Public within this assembly because
+    /// the 3D line plot projects its own points but wants exactly this treatment of gaps.
+    /// </summary>
+    public static void DrawWithGaps(IRenderContext context, Point2D[] pixels, int count, LineStyle line)
     {
         int start = -1;
         for (int i = 0; i < count; i++)
@@ -135,7 +140,7 @@ internal static class SeriesRenderer
         }
     }
 
-    private static void EnsureCapacity(ref Point2D[] buffer, int required)
+    public static void EnsureCapacity(ref Point2D[] buffer, int required)
     {
         if (buffer.Length < required)
         {

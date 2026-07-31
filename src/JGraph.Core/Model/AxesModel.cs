@@ -21,6 +21,8 @@ public sealed class AxesModel : GraphObject
     private bool _is3D;
     private double _azimuth = -37.5;
     private double _elevation = 30;
+    private IReadOnlyList<Color>? _colorOrder;
+    private Vector3D _plotBoxAspect = new(1, 1, 1);
 
     public AxesModel()
     {
@@ -29,6 +31,7 @@ public sealed class AxesModel : GraphObject
         YAxes = new GraphObjectCollection<AxisModel>(this);
         Plots = new GraphObjectCollection<PlotObject>(this);
         Annotations = new GraphObjectCollection<AnnotationObject>(this);
+        Lights = new GraphObjectCollection<LightModel>(this);
 
         Grid = new GridModel();
         Grid.SetParent(this);
@@ -59,6 +62,25 @@ public sealed class AxesModel : GraphObject
     /// zoom and pan. Annotations never influence auto-scaling.
     /// </summary>
     public GraphObjectCollection<AnnotationObject> Annotations { get; }
+
+    /// <summary>
+    /// The lights illuminating this axes' 3D content. Empty by default, which is what makes a
+    /// <c>surf</c> flat colormap color until a script says otherwise, exactly as in MATLAB. Lights
+    /// sum, and 2D content ignores them entirely.
+    /// </summary>
+    public GraphObjectCollection<LightModel> Lights { get; }
+
+    /// <summary>
+    /// The colors plots cycle through, overriding the theme's series palette for this axes only
+    /// (MATLAB <c>colororder</c>). Null — the default — leaves the theme in charge, which is what
+    /// keeps a figure following a theme switch.
+    /// </summary>
+    [Browsable(false)]
+    public IReadOnlyList<Color>? ColorOrder
+    {
+        get => _colorOrder;
+        set => SetProperty(ref _colorOrder, value, InvalidationKind.Render);
+    }
 
     /// <summary>The grid lines.</summary>
     public GridModel Grid { get; }
@@ -180,6 +202,18 @@ public sealed class AxesModel : GraphObject
     {
         get => _elevation;
         set => SetProperty(ref _elevation, System.Math.Clamp(value, -90, 90), InvalidationKind.Render);
+    }
+
+    /// <summary>
+    /// The relative side lengths of the 3D plot box (MATLAB <c>pbaspect</c>). The default cube is what
+    /// every 3D axes had before M45; only the ratios matter, since the box is scaled to fit the plot
+    /// area either way.
+    /// </summary>
+    [Category("3D View"), DisplayName("Plot box aspect")]
+    public Vector3D PlotBoxAspect
+    {
+        get => _plotBoxAspect;
+        set => SetProperty(ref _plotBoxAspect, value, InvalidationKind.Render);
     }
 
     /// <summary>Adds a secondary X axis at the given position and returns it.</summary>
