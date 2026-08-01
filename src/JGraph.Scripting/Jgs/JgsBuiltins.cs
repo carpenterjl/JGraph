@@ -1834,7 +1834,7 @@ internal static partial class JgsBuiltins
         });
 
         // --- Image processing (M24) — defined in JgsBuiltins.Imaging.cs ----------------------
-        DefineImagingBuiltins(Define, host, random);
+        DefineImagingBuiltins(Define, host, random, dialect);
 
         // --- MATLAB names (M28) — defined in JgsBuiltins.Matlab.cs ---------------------------
         // Registered last: the multiple-output forms wrap builtins declared above.
@@ -1848,7 +1848,7 @@ internal static partial class JgsBuiltins
         RegisterSparseBuiltins(env);
         RegisterDataTypeBuiltins(env);
         RegisterFileIoBuiltins(env, host);
-        RegisterElementaryBuiltins(env);
+        RegisterElementaryBuiltins(env, dialect);
         RegisterNumericBuiltins(env);
         RegisterSpecialFunctionBuiltins(env);
         RegisterMatrixBuiltins(env);
@@ -1861,6 +1861,9 @@ internal static partial class JgsBuiltins
         RegisterCameraBuiltins(env);
         RegisterPrimitive3DBuiltins(env);
         RegisterSurfaceVariantBuiltins(env, dialect);
+
+        // After every imaging define, since these wrap builtins declared above.
+        RegisterImagingMultiOutputForms(env, host, dialect);
         if (dialect.IsMatlab)
         {
             RegisterMatlabReductions(env, dialect);

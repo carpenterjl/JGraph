@@ -1,5 +1,7 @@
 using System.Numerics;
 
+using JGraph.Imaging;
+
 namespace JGraph.Scripting.Jgs;
 
 /// <summary>
@@ -18,7 +20,7 @@ internal static partial class JgsBuiltins
     private const float SingleEps = 1.1920929e-07f;
 
     /// <summary>Registers the constants, limits, predicates, and trigonometry (M37).</summary>
-    private static void RegisterElementaryBuiltins(JgsEnvironment env)
+    private static void RegisterElementaryBuiltins(JgsEnvironment env, JgsDialect dialect)
     {
         void Define(string name, Func<IReadOnlyList<JgsValue>, int, int, JgsValue> body) =>
             env.Declare(name, JgsValue.Function(new BuiltinFunction(name, body)));
@@ -30,7 +32,7 @@ internal static partial class JgsBuiltins
             env.Declare(name, JgsValue.Function(new BuiltinFunction(name, body) { AutoCallsBare = true }));
 
         RegisterLimits(env, Constant);
-        RegisterTypePredicates(env, Define);
+        RegisterTypePredicates(env, Define, dialect);
         RegisterTrigonometry(Define);
     }
 
@@ -128,7 +130,9 @@ internal static partial class JgsBuiltins
     // --- Type predicates ------------------------------------------------------------------------
 
     private static void RegisterTypePredicates(
-        JgsEnvironment env, Action<string, Func<IReadOnlyList<JgsValue>, int, int, JgsValue>> Define)
+        JgsEnvironment env,
+        Action<string, Func<IReadOnlyList<JgsValue>, int, int, JgsValue>> Define,
+        JgsDialect dialect)
     {
         void Predicate(string name, Func<JgsValue, bool> test) =>
             Define(name, (args, line, col) => { Arity(name, args, 1, line, col); return JgsValue.Bool(test(args[0])); });
@@ -230,20 +234,20 @@ internal static partial class JgsBuiltins
         Define("class", (args, line, col) =>
         {
             Arity("class", args, 1, line, col);
-            return JgsValue.Str(ClassOf(args[0]));
+            return JgsValue.Str(ClassOf(args[0], dialect));
         });
 
         Define("isa", (args, line, col) =>
         {
             Arity("isa", args, 2, line, col);
             string wanted = Str("isa", args, 1, line, col);
-            string actual = ClassOf(args[0]);
+            string actual = ClassOf(args[0], dialect);
             return JgsValue.Bool(wanted switch
             {
                 // MATLAB accepts three category words alongside the class names themselves.
-                "numeric" => actual is "double" or "single",
+                "numeric" => actual is "double" or "single" or "uint8" or "uint16" or "int16",
                 "float" => actual is "double" or "single",
-                "integer" => false,
+                "integer" => actual is "uint8" or "uint16" or "int16",
                 _ => string.Equals(actual, wanted, StringComparison.Ordinal),
             });
         });
@@ -384,7 +388,12 @@ internal static partial class JgsBuiltins
     }
 
     /// <summary>The MATLAB class name of a value, as <c>class</c> reports it.</summary>
-    private static string ClassOf(JgsValue value) => value.Type switch
+    /// <remarks>
+    /// An image answers with its numeric class under MATLAB — <c>uint8</c> for a picture just read from
+    /// a file — because that is what a <c>.m</c> script branches on. JGS has a first-class image type
+    /// that is not a numeric array, and says so.
+    /// </remarks>
+    private static string ClassOf(JgsValue value, JgsDialect dialect) => value.Type switch
     {
         JgsType.Number or JgsType.Complex or JgsType.Array => "double",
         JgsType.Bool => "logical",
@@ -393,7 +402,7 @@ internal static partial class JgsBuiltins
         JgsType.Struct => "struct",
         JgsType.Function => "function_handle",
         JgsType.Table => "table",
-        JgsType.Image => "image",
+        JgsType.Image => dialect.IsMatlab ? value.AsImage.Class.MatlabName() : "image",
         JgsType.Sparse => "double", // MATLAB: sparsity is an attribute, not a class
         _ => "double",
     };

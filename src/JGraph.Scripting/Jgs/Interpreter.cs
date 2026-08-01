@@ -3,6 +3,8 @@ using System.Numerics;
 using System.Text;
 using JGraph.Numerics;
 
+using JGraph.Imaging;
+
 namespace JGraph.Scripting.Jgs;
 
 /// <summary>
@@ -2744,22 +2746,31 @@ internal sealed class Interpreter
         _ => [ToIndex(index, extent, at.Line, at.Column)],
     };
 
-    /// <summary>Reads one sample from an image value via 0-based <c>img(r, c)</c> / <c>img(r, c, ch)</c>.</summary>
+    /// <summary>
+    /// Reads one sample from an image value: <c>img(r, c)</c> or <c>img(r, c, ch)</c>, in the dialect's
+    /// own index base and its own intensity scale.
+    /// </summary>
+    /// <remarks>
+    /// Both of those were wrong for MATLAB before M46. Subscripts ignored <see cref="Dialect"/>
+    /// entirely, so a <c>.m</c> script's <c>img(1, 1)</c> quietly read the pixel diagonally in from the
+    /// corner; and the sample came back in [0, 1] where MATLAB reports a <c>uint8</c> picture's pixels
+    /// as 0–255. JGS keeps 0-based subscripts (ADR 0028) and its documented [0, 1] samples.
+    /// </remarks>
     private JgsValue IndexImage(JgsValue callee, IReadOnlyList<Expr> subscripts, Node at, JgsEnvironment env)
     {
         JGraph.Imaging.ImageBuffer image = callee.AsImage;
         if (subscripts.Count is not (2 or 3))
         {
             throw new JgsRuntimeException(at.Line, at.Column,
-                "Index an image with img(row, col) for grayscale or img(row, col, channel) for colour.");
+                $"Index an image with img(row, col) for grayscale or img(row, col, channel) for colour.");
         }
 
-        int row = ImageSubscript(subscripts[0], "row", at, env);
-        int col = ImageSubscript(subscripts[1], "column", at, env);
+        int row = ImageSubscript(subscripts[0], "row", image.Height, at, env);
+        int col = ImageSubscript(subscripts[1], "column", image.Width, at, env);
         int channel;
         if (subscripts.Count == 3)
         {
-            channel = ImageSubscript(subscripts[2], "channel", at, env);
+            channel = ImageSubscript(subscripts[2], "channel", image.Channels, at, env);
         }
         else if (image.Channels == 1)
         {
@@ -2776,22 +2787,26 @@ internal sealed class Interpreter
             (uint)channel >= (uint)image.Channels)
         {
             throw new JgsRuntimeException(at.Line, at.Column,
-                $"Image subscript ({row}, {col}, {channel}) is out of range for a " +
-                $"{image.Height}x{image.Width}x{image.Channels} image (subscripts are 0-based).");
+                $"Image subscript ({row + Dialect.IndexBase}, {col + Dialect.IndexBase}, " +
+                $"{channel + Dialect.IndexBase}) is out of range for a " +
+                $"{image.Height}x{image.Width}x{image.Channels} image " +
+                $"(subscripts are {Dialect.IndexBase}-based).");
         }
 
         double sample = image[row, col, channel];
         GC.KeepAlive(image);
-        return JgsValue.Number(sample);
+        return JgsValue.Number(Dialect.IsMatlab ? image.Class.ToNative(sample) : sample);
     }
 
-    private int ImageSubscript(Expr expr, string name, Node at, JgsEnvironment env)
+    private int ImageSubscript(Expr expr, string name, int extent, Node at, JgsEnvironment env)
     {
-        JgsValue value = Evaluate(expr, env);
-        if (value.Type != JgsType.Number)
+        // Routed through the ordinary index-argument path so `end` means the last row, column or
+        // channel here exactly as it does for an array.
+        JgsValue? value = EvaluateIndexArgument(expr, extent, env);
+        if (value is not { Type: JgsType.Number })
         {
             throw new JgsRuntimeException(at.Line, at.Column,
-                $"Image {name} subscript must be a number, not a {value.TypeName}.");
+                $"Image {name} subscript must be a number, not a {(value is null ? "range" : value.TypeName)}.");
         }
 
         double raw = value.AsNumber;
@@ -2802,7 +2817,7 @@ internal sealed class Interpreter
                 $"Image {name} subscript must be a whole number, not {raw.ToString(System.Globalization.CultureInfo.InvariantCulture)}.");
         }
 
-        return rounded;
+        return rounded - Dialect.IndexBase;
     }
 
     /// <summary>

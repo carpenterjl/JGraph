@@ -34,8 +34,6 @@ public static class PointOps
     public static ImageBuffer Normalize(double[,] values)
     {
         ArgumentNullException.ThrowIfNull(values);
-        int h = values.GetLength(0);
-        int w = values.GetLength(1);
         double min = double.PositiveInfinity;
         double max = double.NegativeInfinity;
         foreach (double v in values)
@@ -44,13 +42,31 @@ public static class PointOps
             if (v > max) { max = v; }
         }
 
+        return max > min ? Normalize(values, min, max) : new ImageBuffer(values.GetLength(0), values.GetLength(1), 1);
+    }
+
+    /// <summary>
+    /// Scales a scalar field with an explicit window: <paramref name="min"/>→0 and
+    /// <paramref name="max"/>→1, clamping outside (MATLAB <c>mat2gray(A, [amin amax])</c>). Fixing the
+    /// window is what lets a sequence of frames share one brightness scale.
+    /// </summary>
+    public static ImageBuffer Normalize(double[,] values, double min, double max)
+    {
+        ArgumentNullException.ThrowIfNull(values);
+        if (max <= min)
+        {
+            throw new ArgumentException("mat2gray limits require amax > amin.", nameof(max));
+        }
+
+        int h = values.GetLength(0);
+        int w = values.GetLength(1);
         double range = max - min;
         var image = new ImageBuffer(h, w, 1);
         for (int r = 0; r < h; r++)
         {
             for (int c = 0; c < w; c++)
             {
-                image[r, c, 0] = range > 0 ? Math.Clamp((values[r, c] - min) / range, 0, 1) : 0.0;
+                image[r, c, 0] = Math.Clamp((values[r, c] - min) / range, 0, 1);
             }
         }
 

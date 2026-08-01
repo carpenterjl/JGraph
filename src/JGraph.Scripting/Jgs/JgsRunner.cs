@@ -2,6 +2,8 @@ using System.IO;
 using System.Linq;
 using JGraph.Api;
 
+using JGraph.Imaging;
+
 namespace JGraph.Scripting.Jgs;
 
 /// <summary>
@@ -127,7 +129,13 @@ internal static class JgsRunner
 
     /// <summary>Projects a JGS value to the UI-facing <see cref="ScriptVariable"/> shape.</summary>
     public static ScriptVariable ToScriptVariable(string name, JgsValue value) =>
-        new(name, value.TypeName, ScriptVariable.Truncate(value.Display()), ToRawValue(value));
+        new(
+            name,
+            // The panel names JGS types — "number", "string" — but an image's numeric class is the
+            // interesting fact about it, and it is what whos reports too.
+            value.Type == JgsType.Image ? KindOf(value) : value.TypeName,
+            ScriptVariable.Truncate(value.Display()),
+            ToRawValue(value));
 
     /// <summary>
     /// Defines the <c>run(path)</c> builtin: it resolves the path like the table readers do, parses the
@@ -320,7 +328,12 @@ internal static class JgsRunner
         JgsType.Cell => "cell",
         JgsType.Struct => "struct",
         JgsType.Table => "table",
-        JgsType.Image => "image",
+        // A picture read from a file reports the class it carries — uint8, logical after a threshold —
+        // which is the useful answer and matches MATLAB's own whos. A computed [0, 1] image has no
+        // more specific class to give, so it stays the plain label it has always had.
+        JgsType.Image => value.AsImage.Class == JGraph.Imaging.ImageClass.Double
+            ? "image"
+            : $"{value.AsImage.Class.MatlabName()} image",
         JgsType.Sparse => "double (sparse)",
         JgsType.Function => "function_handle",
         _ => value.TypeName,

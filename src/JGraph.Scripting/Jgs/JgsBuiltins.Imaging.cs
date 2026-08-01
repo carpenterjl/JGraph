@@ -20,32 +20,80 @@ internal static partial class JgsBuiltins
     private static void DefineImagingBuiltins(
         Action<string, Func<IReadOnlyList<JgsValue>, int, int, JgsValue>> define,
         JGraphScriptGlobals host,
-        Random random)
+        Random random,
+        JgsDialect dialect)
     {
         // --- File IO -------------------------------------------------------------------------
         define("imread", (args, line, col) =>
         {
-            Arity("imread", args, 1, line, col);
+            ArityRange("imread", args, 1, 2, line, col);
             string path = host.Resolve(Str("imread", args, 0, line, col));
+            int frame = args.Count == 2 ? Count("imread", args, 1, line, col) - dialect.IndexBase : 0;
             try
             {
-                return JgsValue.Image(ImageCodec.Read(path));
+                return JgsValue.Image(ImageCodec.Read(path, frame));
             }
-            catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or InvalidDataException)
+            catch (Exception ex) when (ex is IOException or UnauthorizedAccessException
+                                          or InvalidDataException or ArgumentOutOfRangeException)
             {
                 throw new JgsRuntimeException(line, col, $"imread: cannot read '{path}': {ex.Message}");
             }
         });
 
-        define("imwrite", (args, line, col) =>
+        define("imfinfo", (args, line, col) =>
         {
-            ArityRange("imwrite", args, 2, 3, line, col);
-            ImageBuffer image = Img("imwrite", args, 0, line, col);
-            string path = host.ResolveForWrite(Str("imwrite", args, 1, line, col));
-            int? quality = args.Count == 3 ? Count("imwrite", args, 2, line, col) : null;
+            Arity("imfinfo", args, 1, line, col);
+            string path = host.Resolve(Str("imfinfo", args, 0, line, col));
             try
             {
-                ImageCodec.Write(path, image, quality);
+                using ImageBuffer probe = ImageCodec.Read(path);
+                var info = new Dictionary<string, JgsValue>(StringComparer.Ordinal)
+                {
+                    ["Filename"] = JgsValue.Str(Path.GetFullPath(path)),
+                    ["FileSize"] = JgsValue.Number(new FileInfo(path).Length),
+                    ["Format"] = JgsValue.Str(Path.GetExtension(path).TrimStart('.').ToUpperInvariant()),
+                    ["Width"] = JgsValue.Number(probe.Width),
+                    ["Height"] = JgsValue.Number(probe.Height),
+                    ["BitDepth"] = JgsValue.Number(
+                        (probe.Class == ImageClass.UInt16 ? 16 : 8) * probe.Channels),
+                    ["ColorType"] = JgsValue.Str(probe.Channels == 1 ? "grayscale" : "truecolor"),
+                };
+                return JgsValue.Struct(info);
+            }
+            catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or InvalidDataException)
+            {
+                throw new JgsRuntimeException(line, col, $"imfinfo: cannot read '{path}': {ex.Message}");
+            }
+        });
+
+        define("imwrite", (args, line, col) =>
+        {
+            ImgArgs parsed = WriteSpec.Parse(args, positionalMax: 3, line, col);
+            if (parsed.Positional.Count < 2)
+            {
+                throw new JgsRuntimeException(line, col, "imwrite needs an image and a path.");
+            }
+
+            ImageBuffer image = Img("imwrite", parsed.Positional, 0, line, col);
+            string path = host.ResolveForWrite(Str("imwrite", parsed.Positional, 1, line, col));
+
+            // The pre-M46 positional third argument was the JPEG quality; 'Quality' is MATLAB's spelling
+            // and both work, because JGS scripts in the wild use the short form.
+            int? quality = parsed.Positional.Count == 3
+                ? Count("imwrite", parsed.Positional, 2, line, col)
+                : null;
+            double q = parsed.Scalar("Quality", double.NaN);
+            if (!double.IsNaN(q))
+            {
+                quality = (int)Math.Round(q);
+            }
+
+            double depth = parsed.Scalar("BitDepth", double.NaN);
+            ImageBuffer? alpha = parsed.Named("Alpha") is { Type: JgsType.Image } a ? a.AsImage : null;
+            try
+            {
+                ImageCodec.Write(path, image, new CodecWriteOptions(
+                    quality, double.IsNaN(depth) ? null : (int)Math.Round(depth), alpha));
             }
             catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or ArgumentException or InvalidDataException)
             {
@@ -58,23 +106,58 @@ internal static partial class JgsBuiltins
         // --- Display -------------------------------------------------------------------------
         define("imshow", (args, line, col) =>
         {
-            Arity("imshow", args, 1, line, col);
-            if (args[0].Type != JgsType.Image)
+            ImgArgs parsed = ShowSpec.Parse(args, positionalMax: 2, line, col);
+            if (parsed.Positional.Count == 0 || parsed.Positional[0].Type != JgsType.Image)
             {
+                JgsValue given = parsed.Positional.Count > 0 ? parsed.Positional[0] : JgsValue.Null;
                 throw new JgsRuntimeException(line, col,
-                    args[0].Type == JgsType.Array
+                    given.Type == JgsType.Array
                         ? "imshow displays an image value; for a numeric matrix use imagesc."
-                        : $"imshow expects an image, but got a {args[0].TypeName}.");
+                        : $"imshow expects an image, but got a {given.TypeName}.");
             }
 
-            ImageBuffer image = args[0].AsImage;
+            ImageBuffer image = parsed.Positional[0].AsImage;
+
+            // imshow(I, [low high]) and imshow(I, []) set the display window. The limits are quoted in
+            // the image's own class, so a uint8 picture takes [0 255] — normalize before use.
+            (double low, double high) = (0.0, 1.0);
+            if (parsed.Positional.Count == 2)
+            {
+                double[] range = ToDoubles("imshow", parsed.Positional[1], line, col);
+                if (range.Length == 0)
+                {
+                    (low, high) = SampleRange(image);
+                }
+                else if (range.Length == 2)
+                {
+                    low = image.Class.FromNative(range[0]);
+                    high = image.Class.FromNative(range[1]);
+                }
+                else
+                {
+                    throw new JgsRuntimeException(line, col,
+                        "imshow display range must be [low high], or [] to use the image's own range.");
+                }
+            }
+            else if (parsed.Named("DisplayRange") is { } named)
+            {
+                double[] range = ToDoubles("imshow", named, line, col);
+                if (range.Length != 2)
+                {
+                    throw new JgsRuntimeException(line, col, "imshow: 'DisplayRange' takes [low high].");
+                }
+
+                low = image.Class.FromNative(range[0]);
+                high = image.Class.FromNative(range[1]);
+            }
+
             if (image.Channels == 1)
             {
                 ImagePlot plot = JG.Image(ToScalarField(image));
                 plot.Colormap = Colormap.Grayscale;
                 plot.AutoScaleColor = false;
-                plot.ColorMin = 0;
-                plot.ColorMax = 1;
+                plot.ColorMin = low;
+                plot.ColorMax = high;
                 plot.Interpolate = false;
             }
             else
@@ -96,25 +179,38 @@ internal static partial class JgsBuiltins
                 throw new JgsRuntimeException(line, col, "rgb2gray expects an RGB image; a grayscale image is already gray.");
             }
 
-            return JgsValue.Image(PointOps.ToGray(image));
+            return ImgOut(PointOps.ToGray(image), image);
         });
 
         define("im2gray", (args, line, col) =>
         {
             Arity("im2gray", args, 1, line, col);
-            return JgsValue.Image(PointOps.ToGray(Img("im2gray", args, 0, line, col)));
+            ImageBuffer source = Img("im2gray", args, 0, line, col);
+            return ImgOut(PointOps.ToGray(source), source);
         });
 
         define("mat2im", (args, line, col) =>
         {
             Arity("mat2im", args, 1, line, col);
-            return JgsValue.Image(PointOps.FromMatrix(Matrix("mat2im", args, 0, line, col)));
+            return ImgOut(PointOps.FromMatrix(Matrix("mat2im", args, 0, line, col)), ImageClass.Double);
         });
 
         define("mat2gray", (args, line, col) =>
         {
-            Arity("mat2gray", args, 1, line, col);
-            return JgsValue.Image(PointOps.Normalize(Matrix("mat2gray", args, 0, line, col)));
+            ArityRange("mat2gray", args, 1, 2, line, col);
+            double[,] values = Matrix("mat2gray", args, 0, line, col);
+            if (args.Count == 1)
+            {
+                return ImgOut(PointOps.Normalize(values), ImageClass.Double);
+            }
+
+            (double low, double high) = Pair("mat2gray", args, 1, line, col);
+            if (high <= low)
+            {
+                throw new JgsRuntimeException(line, col, "mat2gray limits must have amax > amin.");
+            }
+
+            return ImgOut(PointOps.Normalize(values, low, high), ImageClass.Double);
         });
 
         define("im2mat", (args, line, col) =>
@@ -134,7 +230,74 @@ internal static partial class JgsBuiltins
                     $"im2mat would box {image.Height * image.Width} elements; downsample with imresize first.");
             }
 
-            return MatrixToRows(PointOps.ToMatrix(image, channel));
+            return MatrixToRows(ScaleForDialect(PointOps.ToMatrix(image, channel), image.Class, dialect));
+        });
+
+        // --- Class conversion ----------------------------------------------------------------
+        // MATLAB's im2* family changes an image's class, rescaling the numbers so the picture looks the
+        // same. Here the storage is already normalized, so for an image these are pure re-tags; for a
+        // plain matrix they do the arithmetic a MATLAB user expects to see in the workspace.
+        void Convert(string name, ImageClass target)
+        {
+            define(name, (args, line, col) =>
+            {
+                ArityRange(name, args, 1, 2, line, col);
+                if (args[0].Type == JgsType.Image)
+                {
+                    return ImgOut(args[0].AsImage.Clone(), target);
+                }
+
+                double[,] values = Matrix(name, args, 0, line, col);
+                int rows = values.GetLength(0);
+                int cols = values.GetLength(1);
+                var scaled = new double[rows, cols];
+                for (int r = 0; r < rows; r++)
+                {
+                    for (int c = 0; c < cols; c++)
+                    {
+                        scaled[r, c] = target.ToNative(Math.Clamp(values[r, c], 0, 1));
+                    }
+                }
+
+                return MatrixToRows(scaled);
+            });
+        }
+
+        Convert("im2double", ImageClass.Double);
+        Convert("im2single", ImageClass.Single);
+        Convert("im2uint8", ImageClass.UInt8);
+        Convert("im2uint16", ImageClass.UInt16);
+        Convert("im2int16", ImageClass.Int16);
+
+        define("intlut", (args, line, col) =>
+        {
+            Arity("intlut", args, 2, line, col);
+            ImageBuffer image = Img("intlut", args, 0, line, col);
+            if (!image.Class.IsInteger())
+            {
+                throw new JgsRuntimeException(line, col,
+                    $"intlut needs an integer-class image; this one is {image.Class.MatlabName()} " +
+                    "(convert with im2uint8 first).");
+            }
+
+            double[] table = ToDoubles("intlut", args[1], line, col);
+            int expected = (int)image.Class.Scale() + 1;
+            if (table.Length != expected)
+            {
+                throw new JgsRuntimeException(line, col,
+                    $"intlut needs a {expected}-entry table for a {image.Class.MatlabName()} image.");
+            }
+
+            ImageBuffer result = image.Clone();
+            Span<double> px = result.Pixels;
+            for (int i = 0; i < px.Length; i++)
+            {
+                int index = (int)Math.Clamp(image.Class.ToNative(px[i]) - image.Class.Offset(), 0, expected - 1);
+                px[i] = image.Class.FromNative(table[index]);
+            }
+
+            GC.KeepAlive(result);
+            return ImgOut(result, image.Class);
         });
 
         // --- Intensity + histogram -----------------------------------------------------------
@@ -149,7 +312,7 @@ internal static partial class JgsBuiltins
             double gamma = args.Count >= 4 ? Num("imadjust", args, 3, line, col) : 1.0;
             try
             {
-                return JgsValue.Image(PointOps.Adjust(image, lowIn, highIn, lowOut, highOut, gamma));
+                return ImgOut(PointOps.Adjust(image, lowIn, highIn, lowOut, highOut, gamma), image);
             }
             catch (ArgumentException ex)
             {
@@ -161,7 +324,7 @@ internal static partial class JgsBuiltins
         {
             ArityRange("imhist", args, 1, 2, line, col);
             ImageBuffer image = Img("imhist", args, 0, line, col);
-            int bins = args.Count == 2 ? Count("imhist", args, 1, line, col) : 256;
+            int bins = args.Count == 2 ? Count("imhist", args, 1, line, col) : DefaultBins(image);
             try
             {
                 return Numbers(Histograms.Histogram(image, bins));
@@ -172,6 +335,85 @@ internal static partial class JgsBuiltins
             }
         });
 
+        define("otsuthresh", (args, line, col) =>
+        {
+            Arity("otsuthresh", args, 1, line, col);
+            double[] counts = ToDoubles("otsuthresh", args[0], line, col);
+            try
+            {
+                return JgsValue.Number(Histograms.OtsuFromCounts(counts).Level);
+            }
+            catch (ArgumentException ex)
+            {
+                throw new JgsRuntimeException(line, col, ex.Message);
+            }
+        });
+
+        define("stretchlim", (args, line, col) =>
+        {
+            ArityRange("stretchlim", args, 1, 2, line, col);
+            ImageBuffer image = Img("stretchlim", args, 0, line, col);
+            double lowFraction = 0.01;
+            double highFraction = 0.99;
+            if (args.Count == 2)
+            {
+                double[] tol = ToDoubles("stretchlim", args[1], line, col);
+                switch (tol.Length)
+                {
+                    case 1:
+                        lowFraction = tol[0];
+                        highFraction = 1.0 - tol[0];
+                        break;
+                    case 2:
+                        lowFraction = tol[0];
+                        highFraction = tol[1];
+                        break;
+                    default:
+                        throw new JgsRuntimeException(line, col, "stretchlim tolerance is a fraction or a [low high] pair.");
+                }
+            }
+
+            (double low, double high) = PointOps.StretchLimits(image, lowFraction, highFraction);
+            return JgsMatrix.Build(2, 1, (r, _) => r == 0 ? low : high);
+        });
+
+        define("adaptthresh", (args, line, col) =>
+        {
+            ImgArgs parsed = AdaptThreshSpec.Parse(args, positionalMax: 2, line, col);
+            if (parsed.Positional.Count == 0)
+            {
+                throw new JgsRuntimeException(line, col, "adaptthresh needs an image.");
+            }
+
+            ImageBuffer image = Img("adaptthresh", parsed.Positional, 0, line, col);
+            double sensitivity = parsed.Positional.Count >= 2
+                ? Num("adaptthresh", parsed.Positional, 1, line, col)
+                : 0.5;
+            string statisticWord = parsed.Text("Statistic") ?? "mean";
+            Histograms.LocalStatistic statistic = statisticWord.ToLowerInvariant() switch
+            {
+                "mean" => Histograms.LocalStatistic.Mean,
+                "median" => Histograms.LocalStatistic.Median,
+                "gaussian" => Histograms.LocalStatistic.Gaussian,
+                _ => throw new JgsRuntimeException(line, col,
+                    $"adaptthresh: unknown statistic '{statisticWord}' (use 'mean', 'median', or 'gaussian')."),
+            };
+
+            string polarity = parsed.Text("ForegroundPolarity") ?? "bright";
+            try
+            {
+                return ImgOut(
+                    Histograms.AdaptiveThreshold(
+                        image, sensitivity, parsed.Window("NeighborhoodSize"), statistic,
+                        polarity.Equals("dark", StringComparison.OrdinalIgnoreCase)),
+                    ImageClass.Double);
+            }
+            catch (ArgumentException ex)
+            {
+                throw new JgsRuntimeException(line, col, $"adaptthresh: {ex.Message}");
+            }
+        });
+
         define("histeq", (args, line, col) =>
         {
             ArityRange("histeq", args, 1, 2, line, col);
@@ -179,7 +421,7 @@ internal static partial class JgsBuiltins
             int bins = args.Count == 2 ? Count("histeq", args, 1, line, col) : 64;
             try
             {
-                return JgsValue.Image(Histograms.Equalize(image, bins));
+                return ImgOut(Histograms.Equalize(image, bins), image);
             }
             catch (ArgumentException ex)
             {
@@ -195,20 +437,118 @@ internal static partial class JgsBuiltins
 
         define("imbinarize", (args, line, col) =>
         {
-            ArityRange("imbinarize", args, 1, 2, line, col);
-            ImageBuffer image = Img("imbinarize", args, 0, line, col);
-            double? level = args.Count == 2 ? Num("imbinarize", args, 1, line, col) : null;
-            return JgsValue.Image(Histograms.Binarize(image, level));
+            ImgArgs parsed = BinarizeSpec.Parse(args, positionalMax: 2, line, col);
+            if (parsed.Positional.Count == 0)
+            {
+                throw new JgsRuntimeException(line, col, "imbinarize needs an image.");
+            }
+
+            ImageBuffer image = Img("imbinarize", parsed.Positional, 0, line, col);
+            if (parsed.Has("adaptive"))
+            {
+                using ImageBuffer thresholds = Histograms.AdaptiveThreshold(
+                    image,
+                    parsed.Scalar("Sensitivity", 0.5),
+                    parsed.Window("NeighborhoodSize"),
+                    Histograms.LocalStatistic.Mean,
+                    string.Equals(parsed.Text("ForegroundPolarity"), "dark", StringComparison.OrdinalIgnoreCase));
+                return ImgOut(Histograms.Binarize(image, thresholds), ImageClass.Logical);
+            }
+
+            // A second positional argument is either a global level or a whole threshold surface, which
+            // is what adaptthresh hands back — MATLAB accepts both under the same name.
+            if (parsed.Positional.Count == 2)
+            {
+                // The level is normalized in both dialects: MATLAB documents imbinarize's threshold as
+                // [0, 1] whatever the image's class, and graythresh hands back exactly that.
+                return parsed.Positional[1].Type == JgsType.Image
+                    ? ImgOut(Histograms.Binarize(image, parsed.Positional[1].AsImage), ImageClass.Logical)
+                    : ImgOut(
+                        Histograms.Binarize(image, Num("imbinarize", parsed.Positional, 1, line, col)),
+                        ImageClass.Logical);
+            }
+
+            return ImgOut(Histograms.Binarize(image, (double?)null), ImageClass.Logical);
         });
 
         // --- Arithmetic ----------------------------------------------------------------------
-        define("imadd", (args, line, col) => ImageArithmetic("imadd", args, line, col, PointOps.Add, PointOps.AddScalar));
-        define("imsubtract", (args, line, col) => ImageArithmetic("imsubtract", args, line, col, PointOps.Subtract, PointOps.SubtractScalar));
-        define("immultiply", (args, line, col) => ImageArithmetic("immultiply", args, line, col, PointOps.Multiply, PointOps.MultiplyScalar));
+        // Clamping to [0, 1] is the normalized form of MATLAB's saturating integer arithmetic, and the
+        // output class follows the first image, so uint8 + uint8 stays uint8 and lands on 1/255 steps.
+        define("imadd", (args, line, col) =>
+            ImageArithmetic("imadd", args, line, col, PointOps.Add, PointOps.AddScalar, dialect, scalarIsLevel: true));
+        define("imsubtract", (args, line, col) =>
+            ImageArithmetic("imsubtract", args, line, col, PointOps.Subtract, PointOps.SubtractScalar, dialect, scalarIsLevel: true));
+        define("immultiply", (args, line, col) =>
+            ImageArithmetic("immultiply", args, line, col, PointOps.Multiply, PointOps.MultiplyScalar, dialect, scalarIsLevel: false));
+        define("imdivide", (args, line, col) =>
+            ImageArithmetic("imdivide", args, line, col, Arithmetic.Divide, Arithmetic.DivideScalar, dialect, scalarIsLevel: false));
+        define("imabsdiff", (args, line, col) =>
+        {
+            Arity("imabsdiff", args, 2, line, col);
+            ImageBuffer a = Img("imabsdiff", args, 0, line, col);
+            ImageBuffer b = Img("imabsdiff", args, 1, line, col);
+            try
+            {
+                return ImgOut(Arithmetic.AbsoluteDifference(a, b), a);
+            }
+            catch (ArgumentException ex)
+            {
+                throw new JgsRuntimeException(line, col, ex.Message);
+            }
+        });
+
+        define("imlincomb", (args, line, col) =>
+        {
+            if (args.Count < 2)
+            {
+                throw new JgsRuntimeException(line, col, "imlincomb takes weight, image pairs: imlincomb(k1, A, k2, B).");
+            }
+
+            var weights = new List<double>();
+            var images = new List<ImageBuffer>();
+            for (int i = 0; i < args.Count; i++)
+            {
+                if (args[i].Type == JgsType.Image)
+                {
+                    images.Add(args[i].AsImage);
+                }
+                else
+                {
+                    weights.Add(Num("imlincomb", args, i, line, col));
+                }
+            }
+
+            try
+            {
+                return ImgOut(Arithmetic.LinearCombination(weights, images), images[0]);
+            }
+            catch (ArgumentException ex)
+            {
+                throw new JgsRuntimeException(line, col, $"imlincomb: {ex.Message}");
+            }
+        });
+
+        define("imapplymatrix", (args, line, col) =>
+        {
+            ArityRange("imapplymatrix", args, 2, 3, line, col);
+            double[,] matrix = Matrix("imapplymatrix", args, 0, line, col);
+            ImageBuffer image = Img("imapplymatrix", args, 1, line, col);
+            double[]? offsets = args.Count == 3 ? ToDoubles("imapplymatrix", args[2], line, col) : null;
+            try
+            {
+                return ImgOut(Arithmetic.ApplyMatrix(matrix, image, offsets), image);
+            }
+            catch (ArgumentException ex)
+            {
+                throw new JgsRuntimeException(line, col, $"imapplymatrix: {ex.Message}");
+            }
+        });
+
         define("imcomplement", (args, line, col) =>
         {
             Arity("imcomplement", args, 1, line, col);
-            return JgsValue.Image(PointOps.Complement(Img("imcomplement", args, 0, line, col)));
+            ImageBuffer image = Img("imcomplement", args, 0, line, col);
+            return ImgOut(PointOps.Complement(image), image);
         });
 
         define("imnoise", (args, line, col) =>
@@ -218,10 +558,10 @@ internal static partial class JgsBuiltins
             string kind = args.Count >= 2 ? Str("imnoise", args, 1, line, col).ToLowerInvariant() : "gaussian";
             return kind switch
             {
-                "gaussian" => JgsValue.Image(PointOps.GaussianNoise(image, 0.0,
-                    args.Count >= 3 ? Num("imnoise", args, 2, line, col) : 0.01, random)),
-                "salt & pepper" or "salt&pepper" or "saltpepper" => JgsValue.Image(PointOps.SaltPepperNoise(image,
-                    args.Count >= 3 ? Num("imnoise", args, 2, line, col) : 0.05, random)),
+                "gaussian" => ImgOut(PointOps.GaussianNoise(image, 0.0,
+                    args.Count >= 3 ? Num("imnoise", args, 2, line, col) : 0.01, random), image),
+                "salt & pepper" or "salt&pepper" or "saltpepper" => ImgOut(PointOps.SaltPepperNoise(image,
+                    args.Count >= 3 ? Num("imnoise", args, 2, line, col) : 0.05, random), image),
                 _ => throw new JgsRuntimeException(line, col, $"imnoise: unknown noise type '{kind}' (use 'gaussian' or 'salt & pepper')."),
             };
         });
@@ -235,7 +575,7 @@ internal static partial class JgsBuiltins
             Geometry.Interpolation method = args.Count == 3
                 ? ParseInterpolation(Str("imresize", args, 2, line, col), line, col)
                 : Geometry.Interpolation.Bilinear;
-            return JgsValue.Image(Geometry.Resize(image, newHeight, newWidth, method));
+            return ImgOut(Geometry.Resize(image, newHeight, newWidth, method), image);
         });
 
         define("imrotate", (args, line, col) =>
@@ -258,7 +598,7 @@ internal static partial class JgsBuiltins
                 }
             }
 
-            return JgsValue.Image(Geometry.Rotate(image, degrees, method, loose));
+            return ImgOut(Geometry.Rotate(image, degrees, method, loose), image);
         });
 
         define("imcrop", (args, line, col) =>
@@ -271,9 +611,9 @@ internal static partial class JgsBuiltins
                 throw new JgsRuntimeException(line, col, "imcrop rect must be [x, y, width, height].");
             }
 
-            return JgsValue.Image(Geometry.Crop(image,
+            return ImgOut(Geometry.Crop(image,
                 (int)Math.Round(rect[0]), (int)Math.Round(rect[1]),
-                (int)Math.Round(rect[2]), (int)Math.Round(rect[3])));
+                (int)Math.Round(rect[2]), (int)Math.Round(rect[3])), image);
         });
 
         DefineImagingWaveB(define);
@@ -287,7 +627,7 @@ internal static partial class JgsBuiltins
             Filters.Boundary boundary = args.Count == 3
                 ? ParseBoundary(Str("imfilter", args, 2, line, col), line, col)
                 : Filters.Boundary.Zero;
-            return JgsValue.Image(Filters.Correlate(image, kernel, boundary));
+            return ImgOut(Filters.Correlate(image, kernel, boundary), image);
         });
 
         define("conv2", (args, line, col) =>
@@ -317,7 +657,7 @@ internal static partial class JgsBuiltins
                 mw = Math.Max(1, (int)Math.Round(size[1]));
             }
 
-            return JgsValue.Image(Filters.Median(image, mh, mw));
+            return ImgOut(Filters.Median(image, mh, mw), image);
         });
 
         define("fspecial", (args, line, col) =>
@@ -375,7 +715,7 @@ internal static partial class JgsBuiltins
                 ? ParseEdgeMethod(Str("edge", args, 1, line, col), line, col)
                 : EdgeDetection.Method.Sobel;
             double? threshold = args.Count >= 3 ? Num("edge", args, 2, line, col) : null;
-            return JgsValue.Image(EdgeDetection.Detect(image, method, threshold));
+            return ImgOut(EdgeDetection.Detect(image, method, threshold), ImageClass.Logical);
         });
 
         define("imgradientxy", (args, line, col) =>
@@ -386,7 +726,7 @@ internal static partial class JgsBuiltins
                 ? ParseGradientOperator("imgradientxy", Str("imgradientxy", args, 1, line, col), line, col)
                 : Gradients.Operator.Sobel;
             (ImageBuffer gx, ImageBuffer gy) = Gradients.GradientXY(image, op);
-            return JgsValue.Array([JgsValue.Image(gx), JgsValue.Image(gy)]);
+            return JgsValue.Array([ImgOut(gx, ImageClass.Double), ImgOut(gy, ImageClass.Double)]);
         });
 
         define("imgradient", (args, line, col) =>
@@ -397,7 +737,7 @@ internal static partial class JgsBuiltins
                 ? ParseGradientOperator("imgradient", Str("imgradient", args, 1, line, col), line, col)
                 : Gradients.Operator.Sobel;
             (ImageBuffer magnitude, ImageBuffer direction) = Gradients.Gradient(image, op);
-            return JgsValue.Array([JgsValue.Image(magnitude), JgsValue.Image(direction)]);
+            return JgsValue.Array([ImgOut(magnitude, ImageClass.Double), ImgOut(direction, ImageClass.Double)]);
         });
 
         // --- Morphology ----------------------------------------------------------------------
@@ -430,7 +770,7 @@ internal static partial class JgsBuiltins
             try
             {
                 (int[,] labels, int count) = Regions.Label(image, connectivity);
-                return JgsValue.Array([JgsValue.Image(Regions.LabelsToImage(labels)), JgsValue.Number(count)]);
+                return JgsValue.Array([ImgOut(Regions.LabelsToImage(labels), ImageClass.Double), JgsValue.Number(count)]);
             }
             catch (ArgumentOutOfRangeException ex)
             {
@@ -446,7 +786,7 @@ internal static partial class JgsBuiltins
             try
             {
                 (ImageBuffer accumulator, double[] theta, double[] rho) = HoughTransform.Accumulate(image);
-                return JgsValue.Array([JgsValue.Image(accumulator), Numbers(theta), Numbers(rho)]);
+                return JgsValue.Array([ImgOut(accumulator, ImageClass.Double), Numbers(theta), Numbers(rho)]);
             }
             catch (ArgumentException ex)
             {
@@ -502,7 +842,7 @@ internal static partial class JgsBuiltins
 
             try
             {
-                return JgsValue.Image(Regions.FillHoles(image));
+                return ImgOut(Regions.FillHoles(image), ImageClass.Logical);
             }
             catch (ArgumentException ex)
             {
@@ -518,7 +858,7 @@ internal static partial class JgsBuiltins
             int connectivity = args.Count == 3 ? Count("bwareaopen", args, 2, line, col) : 8;
             try
             {
-                return JgsValue.Image(Regions.AreaOpen(image, minArea, connectivity));
+                return ImgOut(Regions.AreaOpen(image, minArea, connectivity), ImageClass.Logical);
             }
             catch (ArgumentOutOfRangeException ex)
             {
@@ -600,7 +940,7 @@ internal static partial class JgsBuiltins
         bool[,] element = args.Count == 2
             ? Morphology.ToElement(Matrix(name, args, 1, line, col))
             : Morphology.Square(3);
-        return JgsValue.Image(op(image, element));
+        return ImgOut(op(image, element), image);
     }
 
     private static EdgeDetection.Method ParseEdgeMethod(string method, int line, int col) =>
@@ -750,7 +1090,9 @@ internal static partial class JgsBuiltins
     private static JgsValue ImageArithmetic(
         string name, IReadOnlyList<JgsValue> args, int line, int col,
         Func<ImageBuffer, ImageBuffer, ImageBuffer> combine,
-        Func<ImageBuffer, double, ImageBuffer> scalar)
+        Func<ImageBuffer, double, ImageBuffer> scalar,
+        JgsDialect dialect,
+        bool scalarIsLevel)
     {
         Arity(name, args, 2, line, col);
         ImageBuffer image = Img(name, args, 0, line, col);
@@ -758,7 +1100,7 @@ internal static partial class JgsBuiltins
         {
             try
             {
-                return JgsValue.Image(combine(image, args[1].AsImage));
+                return ImgOut(combine(image, args[1].AsImage), image);
             }
             catch (ArgumentException ex)
             {
@@ -766,8 +1108,95 @@ internal static partial class JgsBuiltins
             }
         }
 
-        return JgsValue.Image(scalar(image, Num(name, args, 1, line, col)));
+        // An added or subtracted constant is an intensity, so under MATLAB it is quoted in the image's
+        // own class — imadd(uint8Image, 50) means 50 grey levels, not 50 times the full range. A
+        // multiplier is dimensionless in either dialect, and JGS quotes everything in [0, 1] (ADR 0028).
+        double value = Num(name, args, 1, line, col);
+        if (scalarIsLevel && dialect.IsMatlab)
+        {
+            value /= image.Class.Scale();
+        }
+
+        try
+        {
+            return ImgOut(scalar(image, value), image);
+        }
+        catch (ArgumentException ex)
+        {
+            throw new JgsRuntimeException(line, col, ex.Message);
+        }
     }
+
+    /// <summary>
+    /// Rescales a channel matrix to the values a script should see. MATLAB has no separate image type,
+    /// so a <c>uint8</c> picture's pixels are 0–255 there; JGS documents images as [0, 1] samples and
+    /// its shipped scripts rely on that, so the scale — unlike the class tag itself — is per dialect.
+    /// </summary>
+    private static double[,] ScaleForDialect(double[,] values, ImageClass imageClass, JgsDialect dialect)
+    {
+        if (!dialect.IsMatlab || !imageClass.IsInteger())
+        {
+            return values;
+        }
+
+        int rows = values.GetLength(0);
+        int cols = values.GetLength(1);
+        for (int r = 0; r < rows; r++)
+        {
+            for (int c = 0; c < cols; c++)
+            {
+                values[r, c] = imageClass.ToNative(values[r, c]);
+            }
+        }
+
+        return values;
+    }
+
+    /// <summary>The smallest and largest sample in an image, for <c>imshow(I, [])</c>.</summary>
+    private static (double Low, double High) SampleRange(ImageBuffer image)
+    {
+        double low = double.PositiveInfinity;
+        double high = double.NegativeInfinity;
+        ReadOnlySpan<double> px = image.Pixels;
+        for (int i = 0; i < px.Length; i++)
+        {
+            if (px[i] < low) { low = px[i]; }
+            if (px[i] > high) { high = px[i]; }
+        }
+
+        GC.KeepAlive(image);
+        return high > low ? (low, high) : (0.0, 1.0);
+    }
+
+    /// <summary>
+    /// MATLAB's default <c>imhist</c> bin count: one bin per representable level for an integer class,
+    /// 256 for a floating-point image, and 2 for a logical one.
+    /// </summary>
+    private static int DefaultBins(ImageBuffer image) => image.Class switch
+    {
+        ImageClass.Logical => 2,
+        ImageClass.UInt8 => 256,
+        _ => 256,
+    };
+
+    // --- Option specs --------------------------------------------------------------------------
+    private static readonly ImgOptionSpec WriteSpec = new(
+        "imwrite", Flags: [], Names: ["Quality", "BitDepth", "Alpha"], StringPositionals: 2);
+
+    private static readonly ImgOptionSpec ShowSpec = new(
+        "imshow",
+        Flags: [],
+        Names: ["DisplayRange", "InitialMagnification", "Border", "Colormap", "Parent", "Interpolation"]);
+
+    private static readonly ImgOptionSpec BinarizeSpec = new(
+        "imbinarize",
+        Flags: ["global", "adaptive"],
+        Names: ["Sensitivity", "ForegroundPolarity", "NeighborhoodSize"]);
+
+    private static readonly ImgOptionSpec AdaptThreshSpec = new(
+        "adaptthresh",
+        Flags: [],
+        Names: ["NeighborhoodSize", "ForegroundPolarity", "Statistic"]);
 
     private static (double Low, double High) Pair(string name, IReadOnlyList<JgsValue> args, int index, int line, int col)
     {

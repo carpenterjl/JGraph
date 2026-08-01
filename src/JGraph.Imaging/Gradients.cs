@@ -3,7 +3,7 @@ namespace JGraph.Imaging;
 /// <summary>
 /// Directional gradients of a grayscale image (MATLAB <c>imgradientxy</c> and <c>imgradient</c>) — the
 /// support functions around <see cref="EdgeDetection"/>. Results are signed, so they are not clamped to
-/// [0, 1]; normalize with <see cref="PointOps.Normalize"/> before displaying one.
+/// [0, 1]; normalize with <see cref="PointOps.Normalize(double[,])"/> before displaying one.
 /// </summary>
 public static class Gradients
 {

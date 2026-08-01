@@ -58,6 +58,15 @@ public sealed class ImageBuffer : IDisposable
     /// <summary>Number of channels: 1 (grayscale) or 3 (RGB).</summary>
     public int Channels { get; }
 
+    /// <summary>
+    /// The MATLAB numeric class these [0, 1] samples stand for. Defaults to
+    /// <see cref="ImageClass.Double"/>, so an image an algorithm builds behaves exactly as it did
+    /// before this existed; the scripting boundary stamps the real class on results (a filtered
+    /// <c>uint8</c> image stays <c>uint8</c>, a threshold produces <c>logical</c>). The algorithms in
+    /// this project neither read nor set it — they compute in the normalized range regardless.
+    /// </summary>
+    public ImageClass Class { get; set; } = ImageClass.Double;
+
     /// <summary>Total sample count, <c>Height * Width * Channels</c>.</summary>
     public long SampleCount => (long)Height * Width * Channels;
 
@@ -116,7 +125,10 @@ public sealed class ImageBuffer : IDisposable
     /// <summary>Creates an independent copy with its own backing buffer.</summary>
     public ImageBuffer Clone()
     {
-        var copy = new ImageBuffer(Height, Width, Channels, BufferAllocator.Shared.Allocate(SampleCount));
+        var copy = new ImageBuffer(Height, Width, Channels, BufferAllocator.Shared.Allocate(SampleCount))
+        {
+            Class = Class,
+        };
         Pixels.CopyTo(copy.Pixels);
         GC.KeepAlive(this);
         return copy;

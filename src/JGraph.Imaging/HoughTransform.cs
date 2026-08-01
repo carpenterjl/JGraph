@@ -18,7 +18,7 @@ public static class HoughTransform
     /// <summary>
     /// Accumulates votes from every nonzero pixel of a binary image. The counts come back as an image
     /// (rows = rho, columns = theta) so large accumulators stay on the tiered buffers; normalize with
-    /// <see cref="PointOps.Normalize"/> before displaying one.
+    /// <see cref="PointOps.Normalize(double[,])"/> before displaying one.
     /// </summary>
     public static (ImageBuffer Accumulator, double[] Theta, double[] Rho) Accumulate(ImageBuffer image)
     {

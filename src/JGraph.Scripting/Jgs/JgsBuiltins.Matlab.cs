@@ -126,8 +126,13 @@ internal static partial class JgsBuiltins
         Define("islogical", (args, line, col) =>
         {
             Arity("islogical", args, 1, line, col);
+
+            // A mask an imaging builtin produced — edge, imbinarize, bwareaopen — is tagged logical, so
+            // the predicate every MATLAB masking example opens with answers true for it.
             return JgsValue.Bool(args[0].Type == JgsType.Bool
-                || (args[0].Type == JgsType.Array && AllOfType(args[0], JgsType.Bool)));
+                || (args[0].Type == JgsType.Array && AllOfType(args[0], JgsType.Bool))
+                || (args[0].Type == JgsType.Image
+                    && args[0].AsImage.Class == JGraph.Imaging.ImageClass.Logical));
         });
 
         Define("iscell", (args, line, col) =>

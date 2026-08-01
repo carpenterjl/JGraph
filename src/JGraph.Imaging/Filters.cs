@@ -138,6 +138,93 @@ public static class Filters
         return result;
     }
 
+    /// <summary>
+    /// The local mean over an m×n window (MATLAB <c>imboxfilt</c>), computed with running sums so the
+    /// cost is independent of the window size. Averaging is the inner loop of adaptive thresholding,
+    /// guided filtering and box filtering alike, so it is worth having once and O(1) per pixel.
+    /// </summary>
+    public static ImageBuffer BoxMean(
+        ImageBuffer image, int windowHeight, int windowWidth, Boundary boundary = Boundary.Replicate)
+    {
+        ArgumentNullException.ThrowIfNull(image);
+        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(windowHeight);
+        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(windowWidth);
+
+        int height = image.Height;
+        int width = image.Width;
+        var result = new ImageBuffer(height, width, image.Channels);
+        var horizontal = new double[height * width];
+        int anchorR = windowHeight / 2;
+        int anchorC = windowWidth / 2;
+        double area = (double)windowHeight * windowWidth;
+
+        for (int ch = 0; ch < image.Channels; ch++)
+        {
+            // Horizontal pass: a prefix sum over each padded row turns a window sum into one subtraction.
+            var padded = new double[width + windowWidth];
+            for (int r = 0; r < height; r++)
+            {
+                padded[0] = 0;
+                for (int i = 0; i < width + windowWidth - 1; i++)
+                {
+                    padded[i + 1] = padded[i] + Sample(image, r, i - anchorC, ch, boundary);
+                }
+
+                int rowBase = r * width;
+                for (int c = 0; c < width; c++)
+                {
+                    horizontal[rowBase + c] = padded[c + windowWidth] - padded[c];
+                }
+            }
+
+            // Vertical pass over the row sums, which makes the whole window sum separable.
+            var column = new double[height + windowHeight];
+            for (int c = 0; c < width; c++)
+            {
+                column[0] = 0;
+                for (int i = 0; i < height + windowHeight - 1; i++)
+                {
+                    int sr = i - anchorR;
+                    double value;
+                    if ((uint)sr < (uint)height)
+                    {
+                        value = horizontal[(sr * width) + c];
+                    }
+                    else
+                    {
+                        // Zero padding contributes nothing; the other rules fold the index back inside,
+                        // matching what the horizontal pass already did along the other axis.
+                        value = boundary == Boundary.Zero
+                            ? 0.0
+                            : horizontal[(MapIndex(sr, height, boundary) * width) + c];
+                    }
+
+                    column[i + 1] = column[i] + value;
+                }
+
+                for (int r = 0; r < height; r++)
+                {
+                    result[r, c, ch] = (column[r + windowHeight] - column[r]) / area;
+                }
+            }
+        }
+
+        GC.KeepAlive(image);
+        return result;
+    }
+
+    /// <summary>Maps an out-of-range index onto a real one for the given boundary rule.</summary>
+    /// <remarks>
+    /// <see cref="Boundary.Zero"/> has no in-range answer, so it clamps here and callers that need
+    /// true zero padding sample through <c>Sample</c> instead. Only the separable pass uses this, and
+    /// it pads by replication or mirroring.
+    /// </remarks>
+    private static int MapIndex(int index, int length, Boundary boundary) => boundary switch
+    {
+        Boundary.Symmetric => Mirror(index, length),
+        _ => Math.Clamp(index, 0, length - 1),
+    };
+
     private static double Sample(ImageBuffer image, int r, int c, int channel, Boundary boundary)
     {
         switch (boundary)
