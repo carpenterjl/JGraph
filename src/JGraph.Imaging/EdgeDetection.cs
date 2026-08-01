@@ -20,7 +20,29 @@ public static class EdgeDetection
 
         /// <summary>Laplacian-of-Gaussian zero crossings.</summary>
         Log,
+
+        /// <summary>A faster, coarser Canny: fixed 3-tap smoothing and a quantized magnitude.</summary>
+        ApproximateCanny,
     }
+
+    /// <summary>Which edge orientations a gradient method keeps (MATLAB's <c>direction</c> argument).</summary>
+    public enum Direction
+    {
+        /// <summary>Both orientations, combined as a gradient magnitude (MATLAB default).</summary>
+        Both,
+
+        /// <summary>Horizontal edges only — the response that differences down the rows.</summary>
+        Horizontal,
+
+        /// <summary>Vertical edges only — the response that differences across the columns.</summary>
+        Vertical,
+    }
+
+    /// <summary>An edge map and the thresholds that produced it (MATLAB's <c>threshOut</c>).</summary>
+    /// <param name="Edges">The binary edge image.</param>
+    /// <param name="Low">The lower hysteresis threshold; equal to <paramref name="High"/> for the single-threshold methods.</param>
+    /// <param name="High">The threshold a pixel must exceed to start an edge.</param>
+    public readonly record struct EdgeResult(ImageBuffer Edges, double Low, double High);
 
     /// <summary>
     /// Detects edges in a grayscale image, returning a binary image (MATLAB <c>edge</c>). For Sobel,
@@ -28,7 +50,25 @@ public static class EdgeDetection
     /// heuristic; for Canny it is the high hysteresis threshold (low = 0.4×high); for LoG it is the
     /// minimum slope a zero crossing must have (automatic = 0.75×mean absolute response).
     /// </summary>
-    public static ImageBuffer Detect(ImageBuffer image, Method method, double? threshold = null)
+    public static ImageBuffer Detect(ImageBuffer image, Method method, double? threshold = null) =>
+        Detect(image, method, threshold, null, null, Direction.Both).Edges;
+
+    /// <summary>
+    /// Detects edges with the full option surface (MATLAB <c>edge</c>), reporting the thresholds used.
+    /// </summary>
+    /// <param name="image">The image; colour input is converted to grayscale first.</param>
+    /// <param name="method">The detector.</param>
+    /// <param name="high">The threshold, or the upper hysteresis threshold; null selects it automatically.</param>
+    /// <param name="low">The lower hysteresis threshold for Canny; null takes 0.4×<paramref name="high"/>.</param>
+    /// <param name="sigma">The smoothing width for Canny and LoG; null takes the method's default.</param>
+    /// <param name="direction">Which orientations the gradient methods keep.</param>
+    public static EdgeResult Detect(
+        ImageBuffer image,
+        Method method,
+        double? high,
+        double? low,
+        double? sigma,
+        Direction direction)
     {
         ArgumentNullException.ThrowIfNull(image);
         ImageBuffer gray = image.Channels == 1 ? image : PointOps.ToGray(image);
@@ -36,9 +76,10 @@ public static class EdgeDetection
         {
             return method switch
             {
-                Method.Canny => Canny(gray, threshold),
-                Method.Log => LaplacianOfGaussian(gray, threshold),
-                _ => Gradient(gray, method, threshold),
+                Method.Canny => Canny(gray, high, low, sigma ?? Math.Sqrt(2)),
+                Method.ApproximateCanny => Canny(gray, high, low, sigma ?? 1.0, approximate: true),
+                Method.Log => LaplacianOfGaussian(gray, high, sigma ?? 2.0),
+                _ => Gradient(gray, method, high, direction),
             };
         }
         finally
@@ -50,7 +91,7 @@ public static class EdgeDetection
         }
     }
 
-    private static ImageBuffer Gradient(ImageBuffer gray, Method method, double? threshold)
+    private static EdgeResult Gradient(ImageBuffer gray, Method method, double? threshold, Direction direction)
     {
         // Roberts pairs two 2×2 diagonal kernels; the 3×3 operators pair a kernel with its transpose.
         (double[,] kx, double[,] ky) = method switch
@@ -60,19 +101,45 @@ public static class EdgeDetection
             _ => (Kernels.Sobel(), Transpose(Kernels.Sobel())),
         };
 
-        (double[,] magnitude, _) = GradientMagnitude(gray, kx, ky);
+        // A single direction thresholds one component's magnitude; both combine them. Passing the same
+        // kernel twice would double the magnitude, so the unwanted component is dropped instead.
+        (double[,] magnitude, _) = direction switch
+        {
+            Direction.Horizontal => SingleMagnitude(gray, kx),
+            Direction.Vertical => SingleMagnitude(gray, ky),
+            _ => GradientMagnitude(gray, kx, ky),
+        };
+
         double level = threshold ?? (4.0 * Mean(magnitude));
-        return Threshold(gray.Height, gray.Width, magnitude, level);
+        return new EdgeResult(Threshold(gray.Height, gray.Width, magnitude, level), level, level);
+    }
+
+    private static (double[,] Magnitude, double[,] Direction) SingleMagnitude(ImageBuffer gray, double[,] kernel)
+    {
+        using ImageBuffer response = Filters.Correlate(gray, kernel, Filters.Boundary.Replicate);
+        int h = gray.Height;
+        int w = gray.Width;
+        var magnitude = new double[h, w];
+        for (int r = 0; r < h; r++)
+        {
+            for (int c = 0; c < w; c++)
+            {
+                magnitude[r, c] = Math.Abs(response[r, c, 0]);
+            }
+        }
+
+        return (magnitude, new double[h, w]);
     }
 
     /// <summary>
     /// LoG edges: filter with a zero-sum Laplacian-of-Gaussian, then keep pixels where the response
     /// changes sign against the right or lower neighbour by at least <paramref name="threshold"/>.
     /// </summary>
-    private static ImageBuffer LaplacianOfGaussian(ImageBuffer gray, double? threshold)
+    private static EdgeResult LaplacianOfGaussian(ImageBuffer gray, double? threshold, double sigma)
     {
+        int size = (2 * (int)Math.Ceiling(2 * sigma)) + 1;
         using ImageBuffer response = Filters.Correlate(
-            gray, Kernels.LaplacianOfGaussian(9, 2.0), Filters.Boundary.Replicate);
+            gray, Kernels.LaplacianOfGaussian(size, sigma), Filters.Boundary.Replicate);
 
         int h = gray.Height;
         int w = gray.Width;
@@ -89,7 +156,7 @@ public static class EdgeDetection
         var edges = new ImageBuffer(h, w, 1);
         if (level <= 0)
         {
-            return edges; // a flat image has no crossings worth reporting
+            return new EdgeResult(edges, level, level); // a flat image has no crossings worth reporting
         }
 
         for (int r = 0; r < h; r++)
@@ -104,15 +171,18 @@ public static class EdgeDetection
             }
         }
 
-        return edges;
+        return new EdgeResult(edges, level, level);
     }
 
     private static bool Crosses(double a, double b, double level) =>
         ((a >= 0 && b < 0) || (a < 0 && b >= 0)) && Math.Abs(a - b) >= level;
 
-    private static ImageBuffer Canny(ImageBuffer gray, double? highThreshold)
+    private static EdgeResult Canny(
+        ImageBuffer gray, double? highThreshold, double? lowThreshold, double sigma, bool approximate = false)
     {
-        using ImageBuffer smoothed = Filters.Correlate(gray, Kernels.Gaussian(5, Math.Sqrt(2)), Filters.Boundary.Replicate);
+        int size = (2 * (int)Math.Ceiling(2 * sigma)) + 1;
+        using ImageBuffer smoothed = Filters.Correlate(
+            gray, Kernels.Gaussian(size, sigma), Filters.Boundary.Replicate);
         double[,] kx = Kernels.Sobel();
         double[,] ky = Transpose(kx);
         (double[,] magnitude, double[,] direction) = GradientMagnitude(smoothed, kx, ky);
@@ -127,6 +197,13 @@ public static class EdgeDetection
                 double angle = direction[r, c];
                 (int dr, int dc) = QuantizeDirection(angle);
                 double m = magnitude[r, c];
+                if (approximate)
+                {
+                    // The approximate detector works on a coarsely quantized magnitude, which is what
+                    // makes its suppression cheaper and its edge map blockier than full Canny's.
+                    m = Math.Round(m * 255.0) / 255.0;
+                }
+
                 double a = Neighbour(magnitude, r + dr, c + dc, h, w);
                 double b = Neighbour(magnitude, r - dr, c - dc, h, w);
                 suppressed[r, c] = (m >= a && m >= b) ? m : 0.0;
@@ -134,13 +211,13 @@ public static class EdgeDetection
         }
 
         double high = highThreshold ?? PercentileThreshold(suppressed, 0.7);
+        double low = lowThreshold ?? (0.4 * high);
         if (high <= 0)
         {
-            return new ImageBuffer(h, w, 1); // no gradient anywhere → no edges
+            return new EdgeResult(new ImageBuffer(h, w, 1), low, high); // no gradient anywhere → no edges
         }
 
-        double low = 0.4 * high;
-        return Hysteresis(suppressed, high, low);
+        return new EdgeResult(Hysteresis(suppressed, high, low), low, high);
     }
 
     private static (double[,] Magnitude, double[,] Direction) GradientMagnitude(ImageBuffer gray, double[,] kx, double[,] ky)

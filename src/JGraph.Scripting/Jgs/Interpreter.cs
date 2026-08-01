@@ -2759,10 +2759,20 @@ internal sealed class Interpreter
     private JgsValue IndexImage(JgsValue callee, IReadOnlyList<Expr> subscripts, Node at, JgsEnvironment env)
     {
         JGraph.Imaging.ImageBuffer image = callee.AsImage;
+
+        // img(:) — every sample as a column, in MATLAB's column-major order. This is how a script
+        // reduces over a whole picture (`sum(BW(:))`, `max(I(:))`), and without it the imaging
+        // builtins that return a mask would be unusable in the idiom they exist to serve.
+        if (subscripts.Count == 1 && EvaluateIndexArgument(subscripts[0], SampleCountOf(image), env) is null)
+        {
+            return FlattenImage(image);
+        }
+
         if (subscripts.Count is not (2 or 3))
         {
             throw new JgsRuntimeException(at.Line, at.Column,
-                $"Index an image with img(row, col) for grayscale or img(row, col, channel) for colour.");
+                "Index an image with img(row, col) for grayscale, img(row, col, channel) for colour, " +
+                "or img(:) for every sample as a column.");
         }
 
         int row = ImageSubscript(subscripts[0], "row", image.Height, at, env);
@@ -2796,6 +2806,39 @@ internal sealed class Interpreter
         double sample = image[row, col, channel];
         GC.KeepAlive(image);
         return JgsValue.Number(Dialect.IsMatlab ? image.Class.ToNative(sample) : sample);
+    }
+
+    private static int SampleCountOf(JGraph.Imaging.ImageBuffer image) =>
+        (int)Math.Min(int.MaxValue, image.SampleCount);
+
+    /// <summary>
+    /// <c>img(:)</c> as a column vector. Storage here is row-major and interleaved, so the walk is
+    /// written out rather than copied: MATLAB reads down each column of each colour plane in turn.
+    /// </summary>
+    private JgsValue FlattenImage(JGraph.Imaging.ImageBuffer image)
+    {
+        var flat = new double[SampleCountOf(image)];
+        int k = 0;
+        for (int ch = 0; ch < image.Channels; ch++)
+        {
+            for (int c = 0; c < image.Width; c++)
+            {
+                for (int r = 0; r < image.Height; r++)
+                {
+                    double sample = image[r, c, ch];
+                    flat[k++] = Dialect.IsMatlab ? image.Class.ToNative(sample) : sample;
+                }
+            }
+        }
+
+        GC.KeepAlive(image);
+        JgsValue column = NumbersOf(flat);
+        if (flat.Length > 1)
+        {
+            column.Reshape(flat.Length, 1);
+        }
+
+        return column;
     }
 
     private int ImageSubscript(Expr expr, string name, int extent, Node at, JgsEnvironment env)

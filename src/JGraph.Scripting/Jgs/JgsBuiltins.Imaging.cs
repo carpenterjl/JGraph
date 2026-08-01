@@ -617,82 +617,124 @@ internal static partial class JgsBuiltins
         });
 
         DefineImagingWaveB(define);
+        DefineFilteringBuiltins(define, dialect);
 
         // --- Filtering -----------------------------------------------------------------------
         define("imfilter", (args, line, col) =>
         {
-            ArityRange("imfilter", args, 2, 3, line, col);
-            ImageBuffer image = Img("imfilter", args, 0, line, col);
-            double[,] kernel = Matrix("imfilter", args, 1, line, col);
-            Filters.Boundary boundary = args.Count == 3
-                ? ParseBoundary(Str("imfilter", args, 2, line, col), line, col)
-                : Filters.Boundary.Zero;
-            return ImgOut(Filters.Correlate(image, kernel, boundary), image);
+            ArityRange("imfilter", args, 2, 8, line, col);
+            ImgArgs parsed = ImFilterSpec.Parse(args, 2, line, col);
+            if (parsed.Positional.Count < 2)
+            {
+                throw new JgsRuntimeException(line, col, "imfilter(A, h) needs the array and a kernel.");
+            }
+
+            using ImgArg source = ImgLike("imfilter", parsed.Positional, 0, line, col);
+            double[,] kernel = Matrix("imfilter", parsed.Positional, 1, line, col);
+
+            Filters.Boundary boundary =
+                parsed.Has("replicate") ? Filters.Boundary.Replicate :
+                parsed.Has("symmetric") ? Filters.Boundary.Symmetric :
+                parsed.Has("circular") ? Filters.Boundary.Circular :
+                Filters.Boundary.Zero;
+            double padValue = parsed.NumericFlag?.AsNumber ?? 0.0;
+            bool convolve = parsed.OneOf("corr", "corr", "conv") == "conv";
+            bool full = parsed.OneOf("same", "same", "full") == "full";
+
+            return ImgLikeOut(
+                Filters.Filter(source.Buffer, kernel, boundary, padValue, convolve, full), source);
         });
 
         define("conv2", (args, line, col) =>
         {
-            ArityRange("conv2", args, 2, 3, line, col);
-            double[,] a = Matrix("conv2", args, 0, line, col);
-            double[,] b = Matrix("conv2", args, 1, line, col);
-            Conv2Shape shape = args.Count == 3 ? ParseConv2Shape(Str("conv2", args, 2, line, col), line, col) : Conv2Shape.Full;
-            return MatrixToRows(Filters.Convolve2(a, b, shape));
+            ArityRange("conv2", args, 2, 4, line, col);
+
+            // conv2(u, v, A) is the separable form: the outer product of two vectors is the kernel, and
+            // the shape is still taken relative to A, so it is folded into the general path here rather
+            // than filtering twice.
+            bool separable = args.Count >= 3 && args[2].Type != JgsType.String;
+            int shapeIndex = separable ? 3 : 2;
+            Conv2Shape shape = args.Count > shapeIndex
+                ? ParseConv2Shape(Str("conv2", args, shapeIndex, line, col), line, col)
+                : Conv2Shape.Full;
+
+            if (!separable)
+            {
+                double[,] a = Matrix("conv2", args, 0, line, col);
+                double[,] b = Matrix("conv2", args, 1, line, col);
+                return MatrixToRows(Filters.Convolve2(a, b, shape));
+            }
+
+            double[] u = ToDoubles("conv2", args[0], line, col);
+            double[] v = ToDoubles("conv2", args[1], line, col);
+            double[,] data = Matrix("conv2", args, 2, line, col);
+            var outer = new double[u.Length, v.Length];
+            for (int r = 0; r < u.Length; r++)
+            {
+                for (int c = 0; c < v.Length; c++)
+                {
+                    outer[r, c] = u[r] * v[c];
+                }
+            }
+
+            return MatrixToRows(Filters.Convolve2(data, outer, shape));
         });
 
         define("medfilt2", (args, line, col) =>
         {
-            ArityRange("medfilt2", args, 1, 2, line, col);
-            ImageBuffer image = Img("medfilt2", args, 0, line, col);
-            int mh = 3;
-            int mw = 3;
-            if (args.Count == 2)
-            {
-                double[] size = ToDoubles("medfilt2", args[1], line, col);
-                if (size.Length != 2)
-                {
-                    throw new JgsRuntimeException(line, col, "medfilt2 window must be [rows, cols].");
-                }
-
-                mh = Math.Max(1, (int)Math.Round(size[0]));
-                mw = Math.Max(1, (int)Math.Round(size[1]));
-            }
-
-            return ImgOut(Filters.Median(image, mh, mw), image);
+            ArityRange("medfilt2", args, 1, 3, line, col);
+            ImgArgs parsed = MedFiltSpec.Parse(args, 2, line, col);
+            using ImgArg source = ImgLike("medfilt2", parsed.Positional, 0, line, col);
+            (int mh, int mw) = parsed.Positional.Count >= 2
+                ? WindowOf("medfilt2", parsed.Positional[1], line, col)
+                : (3, 3);
+            Filters.Boundary boundary =
+                parsed.Has("symmetric") ? Filters.Boundary.Symmetric : Filters.Boundary.Zero;
+            return ImgLikeOut(Filters.Median(source.Buffer, mh, mw, boundary), source);
         });
 
         define("fspecial", (args, line, col) =>
         {
             ArityRange("fspecial", args, 1, 3, line, col);
             string type = Str("fspecial", args, 0, line, col).ToLowerInvariant();
+            (int rows, int cols) Size(int fallback) => args.Count >= 2
+                ? WindowOf("fspecial", args[1], line, col)
+                : (fallback, fallback);
+
             double[,] kernel = type switch
             {
-                "average" => Kernels.Average(args.Count >= 2 ? Count("fspecial", args, 1, line, col) : 3),
-                "gaussian" => Kernels.Gaussian(
-                    args.Count >= 2 ? Count("fspecial", args, 1, line, col) : 3,
-                    args.Count >= 3 ? Num("fspecial", args, 2, line, col) : 0.5),
+                "average" => Sized(Size(3), Kernels.Average),
+                "gaussian" => Sized(Size(3), (r, c) =>
+                    Kernels.Gaussian(r, c, args.Count >= 3 ? Num("fspecial", args, 2, line, col) : 0.5)),
                 "sobel" => Kernels.Sobel(),
                 "prewitt" => Kernels.Prewitt(),
                 "laplacian" => Kernels.Laplacian(args.Count >= 2 ? Num("fspecial", args, 1, line, col) : 0.2),
                 "disk" => Kernels.Disk(args.Count >= 2 ? Count("fspecial", args, 1, line, col) : 5),
-                "log" => Kernels.LaplacianOfGaussian(
-                    args.Count >= 2 ? Count("fspecial", args, 1, line, col) : 5,
-                    args.Count >= 3 ? Num("fspecial", args, 2, line, col) : 0.5),
+                "log" => Sized(Size(5), (r, c) =>
+                    Kernels.LaplacianOfGaussian(r, c, args.Count >= 3 ? Num("fspecial", args, 2, line, col) : 0.5)),
+                "motion" => Kernels.Motion(
+                    args.Count >= 2 ? Num("fspecial", args, 1, line, col) : 9,
+                    args.Count >= 3 ? Num("fspecial", args, 2, line, col) : 0),
+                "unsharp" => Kernels.Unsharp(args.Count >= 2 ? Num("fspecial", args, 1, line, col) : 0.2),
                 _ => throw new JgsRuntimeException(line, col,
-                    $"fspecial: unknown filter '{type}' (use average, gaussian, sobel, prewitt, laplacian, disk, or log)."),
+                    $"fspecial: unknown filter '{type}' (use average, gaussian, sobel, prewitt, laplacian, " +
+                    "disk, log, motion, or unsharp)."),
             };
 
             return MatrixToRows(kernel);
         });
     }
 
-    private static Filters.Boundary ParseBoundary(string mode, int line, int col) =>
-        mode.ToLowerInvariant() switch
-        {
-            "zero" or "0" => Filters.Boundary.Zero,
-            "replicate" => Filters.Boundary.Replicate,
-            "symmetric" => Filters.Boundary.Symmetric,
-            _ => throw new JgsRuntimeException(line, col, $"imfilter: unknown boundary '{mode}' (use zero, replicate, or symmetric)."),
-        };
+    private static readonly ImgOptionSpec ImFilterSpec = new(
+        "imfilter",
+        ["replicate", "symmetric", "circular", "corr", "conv", "same", "full"],
+        [],
+        AllowNumericFlag: true);
+
+    private static readonly ImgOptionSpec MedFiltSpec = new("medfilt2", ["zeros", "symmetric"], []);
+
+    private static double[,] Sized((int Rows, int Cols) size, Func<int, int, double[,]> build) =>
+        build(size.Rows, size.Cols);
 
     private static Conv2Shape ParseConv2Shape(string shape, int line, int col) =>
         shape.ToLowerInvariant() switch
@@ -707,36 +749,45 @@ internal static partial class JgsBuiltins
         Action<string, Func<IReadOnlyList<JgsValue>, int, int, JgsValue>> define)
     {
         // --- Edge detection ------------------------------------------------------------------
-        define("edge", (args, line, col) =>
-        {
-            ArityRange("edge", args, 1, 3, line, col);
-            ImageBuffer image = Img("edge", args, 0, line, col);
-            EdgeDetection.Method method = args.Count >= 2
-                ? ParseEdgeMethod(Str("edge", args, 1, line, col), line, col)
-                : EdgeDetection.Method.Sobel;
-            double? threshold = args.Count >= 3 ? Num("edge", args, 2, line, col) : null;
-            return ImgOut(EdgeDetection.Detect(image, method, threshold), ImageClass.Logical);
-        });
+        define("edge", (args, line, col) => EdgeOutputs(args, 1, line, col)[0]);
 
         define("imgradientxy", (args, line, col) =>
         {
             ArityRange("imgradientxy", args, 1, 2, line, col);
-            ImageBuffer image = Img("imgradientxy", args, 0, line, col);
+            using ImgArg source = ImgLike("imgradientxy", args, 0, line, col);
             Gradients.Operator op = args.Count == 2
                 ? ParseGradientOperator("imgradientxy", Str("imgradientxy", args, 1, line, col), line, col)
                 : Gradients.Operator.Sobel;
-            (ImageBuffer gx, ImageBuffer gy) = Gradients.GradientXY(image, op);
+            (ImageBuffer gx, ImageBuffer gy) = Gradients.GradientXY(source.Buffer, op);
             return JgsValue.Array([ImgOut(gx, ImageClass.Double), ImgOut(gy, ImageClass.Double)]);
         });
 
         define("imgradient", (args, line, col) =>
         {
             ArityRange("imgradient", args, 1, 2, line, col);
-            ImageBuffer image = Img("imgradient", args, 0, line, col);
+
+            // imgradient(Gx, Gy) hands over components a script computed itself; imgradient(I, method)
+            // computes them. The two are told apart by the second argument, exactly as MATLAB does it.
+            if (args.Count == 2 && args[1].Type != JgsType.String)
+            {
+                using ImgArg gxArg = ImgLike("imgradient", args, 0, line, col);
+                using ImgArg gyArg = ImgLike("imgradient", args, 1, line, col);
+                try
+                {
+                    (ImageBuffer m, ImageBuffer d) = Gradients.FromComponents(gxArg.Buffer, gyArg.Buffer);
+                    return JgsValue.Array([ImgOut(m, ImageClass.Double), ImgOut(d, ImageClass.Double)]);
+                }
+                catch (ArgumentException ex)
+                {
+                    throw new JgsRuntimeException(line, col, ex.Message);
+                }
+            }
+
+            using ImgArg source = ImgLike("imgradient", args, 0, line, col);
             Gradients.Operator op = args.Count == 2
                 ? ParseGradientOperator("imgradient", Str("imgradient", args, 1, line, col), line, col)
                 : Gradients.Operator.Sobel;
-            (ImageBuffer magnitude, ImageBuffer direction) = Gradients.Gradient(image, op);
+            (ImageBuffer magnitude, ImageBuffer direction) = Gradients.Gradient(source.Buffer, op);
             return JgsValue.Array([ImgOut(magnitude, ImageClass.Double), ImgOut(direction, ImageClass.Double)]);
         });
 
@@ -943,16 +994,99 @@ internal static partial class JgsBuiltins
         return ImgOut(op(image, element), image);
     }
 
+    /// <summary>
+    /// The body of <c>edge</c>, shared by the plain call and the <c>[BW, threshOut] = edge(...)</c>
+    /// form the MATLAB dialect registers.
+    /// </summary>
+    /// <remarks>
+    /// The fourth argument is a direction word for the gradient methods and a smoothing width for
+    /// Canny and LoG, which is MATLAB's own overloading; it is read by type rather than by position so
+    /// both spellings work without the caller declaring which they meant.
+    /// </remarks>
+    private static JgsValue[] EdgeOutputs(IReadOnlyList<JgsValue> args, int wanted, int line, int col)
+    {
+        ArityRange("edge", args, 1, 5, line, col);
+        using ImgArg source = ImgLike("edge", args, 0, line, col);
+        EdgeDetection.Method method = args.Count >= 2
+            ? ParseEdgeMethod(Str("edge", args, 1, line, col), line, col)
+            : EdgeDetection.Method.Sobel;
+
+        double? high = null;
+        double? low = null;
+        if (args.Count >= 3 && args[2].Type != JgsType.String)
+        {
+            double[] levels = NumericVector("edge", args[2], line, col);
+            switch (levels.Length)
+            {
+                case 0: break; // edge(I, 'canny', []) asks for the automatic thresholds
+                case 1: high = levels[0]; break;
+                case 2: low = levels[0]; high = levels[1]; break;
+                default:
+                    throw new JgsRuntimeException(line, col,
+                        "edge: the threshold is one number or a [low high] pair.");
+            }
+        }
+
+        double? sigma = null;
+        var direction = EdgeDetection.Direction.Both;
+        for (int i = 3; i < args.Count; i++)
+        {
+            if (args[i].Type == JgsType.Number)
+            {
+                sigma = args[i].AsNumber;
+                continue;
+            }
+
+            string word = Str("edge", args, i, line, col).ToLowerInvariant();
+            switch (word)
+            {
+                case "horizontal": direction = EdgeDetection.Direction.Horizontal; break;
+                case "vertical": direction = EdgeDetection.Direction.Vertical; break;
+                case "both": direction = EdgeDetection.Direction.Both; break;
+
+                // Thinning is always on here: the non-maximum suppression Canny needs is not optional
+                // in this implementation, and the gradient methods have no separate thinning pass to
+                // switch off. The words are accepted so a MATLAB script runs, and 'nothinning' is the
+                // one that does nothing rather than silently changing the result.
+                case "thinning":
+                case "nothinning": break;
+                default:
+                    throw new JgsRuntimeException(line, col,
+                        $"edge: unknown option '{word}' (use 'horizontal', 'vertical', 'both', or 'nothinning').");
+            }
+        }
+
+        if (sigma is <= 0)
+        {
+            throw new JgsRuntimeException(line, col, "edge: sigma must be positive.");
+        }
+
+        EdgeDetection.EdgeResult result = EdgeDetection.Detect(source.Buffer, method, high, low, sigma, direction);
+        JgsValue edges = ImgOut(result.Edges, ImageClass.Logical);
+        if (wanted < 2)
+        {
+            return [edges];
+        }
+
+        // Canny reports the pair it used; the single-threshold methods report the one level.
+        JgsValue threshold = method is EdgeDetection.Method.Canny or EdgeDetection.Method.ApproximateCanny
+            ? Numbers([result.Low, result.High])
+            : JgsValue.Number(result.High);
+        return [edges, threshold];
+    }
+
     private static EdgeDetection.Method ParseEdgeMethod(string method, int line, int col) =>
         method.ToLowerInvariant() switch
         {
             "sobel" => EdgeDetection.Method.Sobel,
             "prewitt" => EdgeDetection.Method.Prewitt,
             "canny" => EdgeDetection.Method.Canny,
+            "approxcanny" => EdgeDetection.Method.ApproximateCanny,
             "roberts" => EdgeDetection.Method.Roberts,
             "log" or "zerocross" => EdgeDetection.Method.Log,
             _ => throw new JgsRuntimeException(line, col,
-                $"edge: unknown method '{method}' (use 'sobel', 'prewitt', 'roberts', 'canny', or 'log')."),
+                $"edge: unknown method '{method}' (use 'sobel', 'prewitt', 'roberts', 'canny', " +
+                "'approxcanny', or 'log')."),
         };
 
     private static Gradients.Operator ParseGradientOperator(string name, string method, int line, int col) =>
@@ -961,8 +1095,11 @@ internal static partial class JgsBuiltins
             "sobel" => Gradients.Operator.Sobel,
             "prewitt" => Gradients.Operator.Prewitt,
             "roberts" => Gradients.Operator.Roberts,
+            "central" => Gradients.Operator.Central,
+            "intermediate" => Gradients.Operator.Intermediate,
             _ => throw new JgsRuntimeException(line, col,
-                $"{name}: unknown method '{method}' (use 'sobel', 'prewitt', or 'roberts')."),
+                $"{name}: unknown method '{method}' (use 'sobel', 'prewitt', 'roberts', 'central', " +
+                "or 'intermediate')."),
         };
 
     private static double[,] ElementToMatrix(bool[,] element)

@@ -283,4 +283,69 @@ internal static partial class JgsBuiltins
 
     /// <summary>Wraps a result that keeps its input's class — filters, geometry, most arithmetic.</summary>
     private static JgsValue ImgOut(ImageBuffer result, ImageBuffer source) => ImgOut(result, source.Class);
+
+    /// <summary>
+    /// An argument to a builtin that MATLAB applies to images and to plain numeric data alike —
+    /// <c>imfilter</c>, <c>padarray</c>, <c>ordfilt2</c>, the block family. MATLAB draws no line here
+    /// because an image simply is a matrix; JGraph has a distinct image value, so the line is drawn
+    /// once, at the boundary, and the result is handed back in whatever form the argument arrived in.
+    /// </summary>
+    /// <remarks>
+    /// A matrix argument is wrapped in a temporary buffer this owns and must dispose. An image
+    /// argument is owned by its <see cref="JgsValue"/> and must not be — hence the flag rather than a
+    /// blanket <c>using</c>.
+    /// </remarks>
+    private readonly struct ImgArg(ImageBuffer buffer, bool fromMatrix) : IDisposable
+    {
+        /// <summary>The samples, however they arrived.</summary>
+        public ImageBuffer Buffer => buffer;
+
+        /// <summary>Whether the caller passed a matrix, and so expects a matrix back.</summary>
+        public bool FromMatrix => fromMatrix;
+
+        /// <summary>Releases the temporary buffer a matrix argument was wrapped in.</summary>
+        public void Dispose()
+        {
+            if (fromMatrix)
+            {
+                buffer.Dispose();
+            }
+        }
+    }
+
+    /// <summary>Reads an argument that may be an image value or a numeric matrix.</summary>
+    private static ImgArg ImgLike(string name, IReadOnlyList<JgsValue> args, int index, int line, int col)
+    {
+        JgsValue value = args[index];
+        if (value.Type == JgsType.Image)
+        {
+            return new ImgArg(value.AsImage, false);
+        }
+
+        if (value.Type == JgsType.Number)
+        {
+            // A 1×1 matrix is a scalar in MATLAB, and a script that filters one should not be told to
+            // go and build a matrix first.
+            return new ImgArg(PointOps.WrapValues(new[,] { { value.AsNumber } }), true);
+        }
+
+        return new ImgArg(PointOps.WrapValues(Matrix(name, args, index, line, col)), true);
+    }
+
+    /// <summary>
+    /// Hands a result back in the shape its input arrived in: a matrix for a matrix, a classed image
+    /// for an image.
+    /// </summary>
+    private static JgsValue ImgLikeOut(ImageBuffer result, ImgArg source)
+    {
+        if (!source.FromMatrix)
+        {
+            return ImgOut(result, source.Buffer.Class);
+        }
+
+        using (result)
+        {
+            return MatrixToRows(PointOps.ToMatrix(result, 0));
+        }
+    }
 }

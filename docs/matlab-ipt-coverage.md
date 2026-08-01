@@ -1,6 +1,6 @@
 # MATLAB Image Processing Toolbox coverage
 
-**55 of 409 documented** Image Processing Toolbox names are implemented, as of M46 wave A.
+**72 of 409 documented** Image Processing Toolbox names are implemented, as of M46 wave B.
 
 ## Where this list comes from
 
@@ -32,59 +32,56 @@ counted here too.
 
 JGraph-only names — `mat2im`, `im2mat`, `imcentroid` — are in neither MATLAB nor these counts.
 
-## Implemented — 55
-
-`adaptthresh`, `bwareaopen`, `bwlabel`, `edge`, `fft2`, `fftshift`
-`fspecial`, `graythresh`, `histeq`, `hough`, `houghlines`, `houghpeaks`
-`ifft2`, `ifftshift`, `im2double`, `im2gray`, `im2int16`, `im2single`
+## Implemented — 72
+`adaptthresh`, `bestblk`, `blockproc`, `bwareaopen`, `bwlabel`, `col2im`
+`colfilt`, `edge`, `entropyfilt`, `fft2`, `fftshift`, `fspecial`
+`graythresh`, `histeq`, `hough`, `houghlines`, `houghpeaks`, `ifft2`
+`ifftshift`, `im2col`, `im2double`, `im2gray`, `im2int16`, `im2single`
 `im2uint16`, `im2uint8`, `imabsdiff`, `imadd`, `imadjust`, `imapplymatrix`
-`imbinarize`, `imclose`, `imcomplement`, `imcrop`, `imdilate`, `imdivide`
-`imerode`, `imfill`, `imfilter`, `imfinfo`, `imgradient`, `imgradientxy`
-`imhist`, `imlincomb`, `immultiply`, `imnoise`, `imopen`, `imread`
-`imresize`, `imrotate`, `imshow`, `imsubtract`, `imwrite`, `intlut`
-`mat2gray`, `medfilt2`, `otsuthresh`, `regionprops`, `rgb2gray`, `strel`
-`stretchlim`
+`imbinarize`, `imboxfilt`, `imclose`, `imcomplement`, `imcrop`, `imdilate`
+`imdivide`, `imerode`, `imfill`, `imfilter`, `imfinfo`, `imgaussfilt`
+`imgradient`, `imgradientxy`, `imhist`, `imlincomb`, `immultiply`, `imnoise`
+`imopen`, `imread`, `imresize`, `imrotate`, `imshow`, `imsubtract`
+`imwrite`, `integralBoxFilter`, `integralImage`, `intlut`, `mat2gray`, `medfilt2`
+`modefilt`, `nlfilter`, `ordfilt2`, `otsuthresh`, `padarray`, `rangefilt`
+`regionprops`, `rgb2gray`, `stdfilt`, `strel`, `stretchlim`, `wiener2`
 
-## Not implemented — 211
+## Not implemented — 194
+Planned across M46 waves C–K. Nothing here is refused on principle; it is work not yet done.
 
-Planned across M46 waves B–K. Nothing here is refused on principle; it is work not yet done.
-
-`activecontour`, `adapthisteq`, `affine2d`, `affineOutputView`, `applylut`, `bestblk`
-`bfscore`, `blockproc`, `boundarymask`, `bwarea`, `bwareafilt`, `bwboundaries`
-`bwconncomp`, `bwconvhull`, `bwdist`, `bwdistgeodesic`, `bweuler`, `bwferet`
-`bwhitmiss`, `bwlabeln`, `bwlookup`, `bwmorph`, `bwmorph3`, `bwperim`
-`bwpropfilt`, `bwselect`, `bwselect3`, `bwskel`, `bwtraceboundary`, `bwulterode`
-`checkerboard`, `chromadapt`, `cmap2gray`, `col2im`, `colfilt`, `colorangle`
-`conndef`, `convmtx2`, `corr2`, `dct2`, `dctmtx`, `deconvblind`
-`deconvlucy`, `deconvreg`, `deconvwnr`, `decorrstretch`, `deltaE`, `demosaic`
-`dice`, `edge3`, `edgetaper`, `entropy`, `entropyfilt`, `fibermetric`
-`fitgeotrans`, `freqspace`, `freqz2`, `fsamp2`, `fspecial3`, `ftrans2`
-`fwind1`, `fwind2`, `gabor`, `gradientweight`, `gray2ind`, `graycomatrix`
-`grayconnected`, `graycoprops`, `graydiffweight`, `graydist`, `grayslice`, `hsv2rgb`
-`idct2`, `illumgray`, `illumpca`, `illumwhite`, `im2col`, `imadjustn`
-`imapprox`, `imbilatfilt`, `imbothat`, `imboxfilt`, `imboxfilt3`, `imclearborder`
-`imcolordiff`, `imcontour`, `imcrop3`, `imdiffuseest`, `imdiffusefilt`, `imextendedmax`
-`imextendedmin`, `imfindcircles`, `imflatfield`, `imfuse`, `imgaborfilt`, `imgaussfilt`
-`imgaussfilt3`, `imgradient3`, `imgradientxyz`, `imguidedfilter`, `imhistmatch`, `imhistmatchn`
-`imhmax`, `imhmin`, `imimposemin`, `imlocalbrighten`, `immse`, `imnlmfilt`
-`imoverlay`, `impixel`, `improfile`, `impyramid`, `imquantize`, `imreconstruct`
-`imreducehaze`, `imref2d`, `imregcorr`, `imregionalmax`, `imregionalmin`, `imresize3`
-`imrotate3`, `imsegfmm`, `imsegkmeans`, `imsegkmeans3`, `imsharpen`, `imshowpair`
-`imsplit`, `imtophat`, `imtranslate`, `imwarp`, `ind2gray`, `ind2rgb`
-`integralBoxFilter`, `integralBoxFilter3`, `integralImage`, `integralImage3`, `iptcheckconn`, `iptgetpref`
-`iptsetpref`, `iradon`, `jaccard`, `lab2double`, `lab2rgb`, `lab2uint16`
-`lab2uint8`, `lab2xyz`, `label2idx`, `label2rgb`, `labelmatrix`, `labeloverlay`
-`lin2rgb`, `makelut`, `maxhessiannorm`, `mean2`, `medfilt3`, `modefilt`
-`montage`, `multissim`, `multissim3`, `multithresh`, `nlfilter`, `normxcorr2`
-`ntsc2rgb`, `obliqueslice`, `offsetstrel`, `ordfilt2`, `otf2psf`, `padarray`
-`phantom`, `poly2label`, `poly2mask`, `projective2d`, `psf2otf`, `psnr`
-`qtdecomp`, `qtgetblk`, `qtsetblk`, `radon`, `rangefilt`, `reducepoly`
-`regionfill`, `regionprops3`, `rgb2hsv`, `rgb2ind`, `rgb2lab`, `rgb2lightness`
-`rgb2lin`, `rgb2ntsc`, `rgb2xyz`, `rgb2ycbcr`, `rigid2d`, `roicolor`
-`roifilt2`, `roipoly`, `ssim`, `std2`, `stdfilt`, `superpixels`
-`superpixels3`, `transformPointsForward`, `transformPointsInverse`, `visboundaries`, `viscircles`, `watershed`
-`whitepoint`, `wiener2`, `xyz2double`, `xyz2lab`, `xyz2rgb`, `xyz2uint16`
-`ycbcr2rgb`
+`activecontour`, `adapthisteq`, `affine2d`, `affineOutputView`, `applylut`, `bfscore`
+`boundarymask`, `bwarea`, `bwareafilt`, `bwboundaries`, `bwconncomp`, `bwconvhull`
+`bwdist`, `bwdistgeodesic`, `bweuler`, `bwferet`, `bwhitmiss`, `bwlabeln`
+`bwlookup`, `bwmorph`, `bwmorph3`, `bwperim`, `bwpropfilt`, `bwselect`
+`bwselect3`, `bwskel`, `bwtraceboundary`, `bwulterode`, `checkerboard`, `chromadapt`
+`cmap2gray`, `colorangle`, `conndef`, `convmtx2`, `corr2`, `dct2`
+`dctmtx`, `deconvblind`, `deconvlucy`, `deconvreg`, `deconvwnr`, `decorrstretch`
+`deltaE`, `demosaic`, `dice`, `edge3`, `edgetaper`, `entropy`
+`fibermetric`, `fitgeotrans`, `freqspace`, `freqz2`, `fsamp2`, `fspecial3`
+`ftrans2`, `fwind1`, `fwind2`, `gabor`, `gradientweight`, `gray2ind`
+`graycomatrix`, `grayconnected`, `graycoprops`, `graydiffweight`, `graydist`, `grayslice`
+`hsv2rgb`, `idct2`, `illumgray`, `illumpca`, `illumwhite`, `imadjustn`
+`imapprox`, `imbilatfilt`, `imbothat`, `imboxfilt3`, `imclearborder`, `imcolordiff`
+`imcontour`, `imcrop3`, `imdiffuseest`, `imdiffusefilt`, `imextendedmax`, `imextendedmin`
+`imfindcircles`, `imflatfield`, `imfuse`, `imgaborfilt`, `imgaussfilt3`, `imgradient3`
+`imgradientxyz`, `imguidedfilter`, `imhistmatch`, `imhistmatchn`, `imhmax`, `imhmin`
+`imimposemin`, `imlocalbrighten`, `immse`, `imnlmfilt`, `imoverlay`, `impixel`
+`improfile`, `impyramid`, `imquantize`, `imreconstruct`, `imreducehaze`, `imref2d`
+`imregcorr`, `imregionalmax`, `imregionalmin`, `imresize3`, `imrotate3`, `imsegfmm`
+`imsegkmeans`, `imsegkmeans3`, `imsharpen`, `imshowpair`, `imsplit`, `imtophat`
+`imtranslate`, `imwarp`, `ind2gray`, `ind2rgb`, `integralBoxFilter3`, `integralImage3`
+`iptcheckconn`, `iptgetpref`, `iptsetpref`, `iradon`, `jaccard`, `lab2double`
+`lab2rgb`, `lab2uint16`, `lab2uint8`, `lab2xyz`, `label2idx`, `label2rgb`
+`labelmatrix`, `labeloverlay`, `lin2rgb`, `makelut`, `maxhessiannorm`, `mean2`
+`medfilt3`, `montage`, `multissim`, `multissim3`, `multithresh`, `normxcorr2`
+`ntsc2rgb`, `obliqueslice`, `offsetstrel`, `otf2psf`, `phantom`, `poly2label`
+`poly2mask`, `projective2d`, `psf2otf`, `psnr`, `qtdecomp`, `qtgetblk`
+`qtsetblk`, `radon`, `reducepoly`, `regionfill`, `regionprops3`, `rgb2hsv`
+`rgb2ind`, `rgb2lab`, `rgb2lightness`, `rgb2lin`, `rgb2ntsc`, `rgb2xyz`
+`rgb2ycbcr`, `rigid2d`, `roicolor`, `roifilt2`, `roipoly`, `ssim`
+`std2`, `superpixels`, `superpixels3`, `transformPointsForward`, `transformPointsInverse`, `visboundaries`
+`viscircles`, `watershed`, `whitepoint`, `xyz2double`, `xyz2lab`, `xyz2rgb`
+`xyz2uint16`, `ycbcr2rgb`
 
 ## Excluded — 143 names and 8 families
 
@@ -162,6 +159,23 @@ By reason:
 
 ## Recorded divergences
 
+- **`imgaussfilt`'s `'FilterDomain'` is accepted but never changes the answer.** MATLAB offers
+  `'auto'`, `'spatial'` and `'frequency'` because its spatial path slows down as the kernel grows.
+  The one here is separable, so it already costs `kh + kw` multiplies per pixel rather than
+  `kh · kw`, and filtering in the frequency domain would only change the rounding. The option is
+  taken so a MATLAB script runs unchanged, and an unrecognized value is still an error.
+- **`edge`'s `'nothinning'` is accepted and does nothing.** Canny's non-maximum suppression is not
+  optional in this implementation, and the gradient methods have no separate thinning pass to switch
+  off. Accepting the word keeps scripts running; silently producing a differently-thinned map would
+  not.
+- **`'approxcanny'` is Canny on a quantized magnitude**, not MATLAB's own approximation. It is
+  faster and blockier than full Canny, which is what the name promises, but the two will not agree
+  pixel for pixel.
+- **`bestblk`'s tie-breaking is stated rather than matched.** MATLAB documents the goal — blocks that
+  divide the image evenly, or as evenly as possible — but not how it chooses between candidates. The
+  rule here searches `[ceil(k/2), k]`, prefers an exact divisor, and otherwise takes the size leaving
+  the largest final block. Confining the search matters: every number divides by one, and a block
+  size of one divides perfectly while being useless.
 - **16-bit PNG degrades to 8 bits.** Measured on SkiaSharp 2.88.8, in both directions: the PNG
   encoder accepts the 16-bit colour type and copies the pixels, then writes a depth-8 IHDR anyway,
   and the decoder will not return 16-bit samples from a file that genuinely has them. `imwrite` with

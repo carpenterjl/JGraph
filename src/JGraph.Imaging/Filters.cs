@@ -14,36 +14,74 @@ public static class Filters
 
         /// <summary>Out-of-range samples mirror across the edge.</summary>
         Symmetric,
+
+        /// <summary>Out-of-range samples wrap around, treating the image as one tile of a periodic plane.</summary>
+        Circular,
     }
 
     /// <summary>
     /// Correlates an image with a kernel (MATLAB <c>imfilter</c> default), producing a same-size result.
     /// Each output channel is filtered independently. The kernel is applied as-is (no flip).
     /// </summary>
-    public static ImageBuffer Correlate(ImageBuffer image, double[,] kernel, Boundary boundary = Boundary.Zero)
+    public static ImageBuffer Correlate(ImageBuffer image, double[,] kernel, Boundary boundary = Boundary.Zero) =>
+        Filter(image, kernel, boundary);
+
+    /// <summary>
+    /// The general spatial filter behind MATLAB <c>imfilter</c>: correlation or convolution, a same-size
+    /// or full-size result, and any boundary rule or a constant pad value.
+    /// </summary>
+    /// <param name="image">The image to filter; each channel is filtered independently.</param>
+    /// <param name="kernel">The filter kernel.</param>
+    /// <param name="boundary">How samples beyond the edge are supplied.</param>
+    /// <param name="padValue">The constant used when <paramref name="boundary"/> is <see cref="Boundary.Zero"/>.</param>
+    /// <param name="convolve">Convolve (flip the kernel) rather than correlate.</param>
+    /// <param name="full">Return the full (H+kh-1)×(W+kw-1) result rather than the same-size centre.</param>
+    /// <remarks>
+    /// Correlation puts the kernel origin at <c>(kh-1)/2</c>, which is MATLAB's
+    /// <c>floor((size(h)+1)/2)</c> written 0-based. Convolution flips the kernel and takes the
+    /// complementary anchor <c>kh/2</c>; that is exactly the offset which makes
+    /// <c>Filter(A, h, convolve: true)</c> and <see cref="Convolve2"/> with
+    /// <see cref="Conv2Shape.Same"/> agree, including for even-sized kernels where the two anchors
+    /// differ.
+    /// </remarks>
+    public static ImageBuffer Filter(
+        ImageBuffer image,
+        double[,] kernel,
+        Boundary boundary = Boundary.Zero,
+        double padValue = 0.0,
+        bool convolve = false,
+        bool full = false)
     {
         ArgumentNullException.ThrowIfNull(image);
         ArgumentNullException.ThrowIfNull(kernel);
         int kh = kernel.GetLength(0);
         int kw = kernel.GetLength(1);
-        int anchorR = kh / 2;
-        int anchorC = kw / 2;
+        double[,] applied = convolve ? Rotate180(kernel) : kernel;
+        int anchorR = convolve ? kh / 2 : (kh - 1) / 2;
+        int anchorC = convolve ? kw / 2 : (kw - 1) / 2;
 
-        var result = new ImageBuffer(image.Height, image.Width, image.Channels);
-        for (int r = 0; r < image.Height; r++)
+        // 'full' is the same filter evaluated over a window that starts before the image and ends
+        // after it, so it is one index shift away from the same-size case rather than a second loop.
+        int offsetR = full ? kh - 1 - anchorR : 0;
+        int offsetC = full ? kw - 1 - anchorC : 0;
+        int height = full ? image.Height + kh - 1 : image.Height;
+        int width = full ? image.Width + kw - 1 : image.Width;
+
+        var result = new ImageBuffer(height, width, image.Channels);
+        for (int r = 0; r < height; r++)
         {
-            for (int c = 0; c < image.Width; c++)
+            for (int c = 0; c < width; c++)
             {
                 for (int ch = 0; ch < image.Channels; ch++)
                 {
                     double acc = 0;
                     for (int kr = 0; kr < kh; kr++)
                     {
-                        int sr = r + kr - anchorR;
+                        int sr = r - offsetR + kr - anchorR;
                         for (int kc = 0; kc < kw; kc++)
                         {
-                            int sc = c + kc - anchorC;
-                            acc += kernel[kr, kc] * Sample(image, sr, sc, ch, boundary);
+                            int sc = c - offsetC + kc - anchorC;
+                            acc += applied[kr, kc] * Sample(image, sr, sc, ch, boundary, padValue);
                         }
                     }
 
@@ -54,6 +92,85 @@ public static class Filters
 
         GC.KeepAlive(image);
         return result;
+    }
+
+    /// <summary>
+    /// Gaussian smoothing with independent row and column standard deviations (MATLAB
+    /// <c>imgaussfilt</c>), applied as two 1-D passes.
+    /// </summary>
+    /// <param name="image">The image to smooth.</param>
+    /// <param name="sigmaRows">Standard deviation down the rows.</param>
+    /// <param name="sigmaCols">Standard deviation across the columns.</param>
+    /// <param name="filterHeight">Row extent of the kernel; odd, and defaulted from sigma when 0.</param>
+    /// <param name="filterWidth">Column extent of the kernel; odd, and defaulted from sigma when 0.</param>
+    /// <param name="boundary">How samples beyond the edge are supplied.</param>
+    /// <remarks>
+    /// A 2-D Gaussian is the outer product of two 1-D Gaussians, so filtering rows then columns costs
+    /// <c>kh + kw</c> multiplies per pixel instead of <c>kh · kw</c> and is exact rather than an
+    /// approximation. Separating it is what makes a sigma of 20 — the kind <c>imgaussfilt</c> is asked
+    /// for when it stands in for a background estimate — affordable.
+    /// </remarks>
+    public static ImageBuffer GaussianBlur(
+        ImageBuffer image,
+        double sigmaRows,
+        double sigmaCols,
+        int filterHeight = 0,
+        int filterWidth = 0,
+        Boundary boundary = Boundary.Replicate)
+    {
+        ArgumentNullException.ThrowIfNull(image);
+        double[] down = Gaussian1D(sigmaRows, filterHeight);
+        double[] across = Gaussian1D(sigmaCols, filterWidth);
+
+        var rows = new double[1, across.Length];
+        for (int i = 0; i < across.Length; i++)
+        {
+            rows[0, i] = across[i];
+        }
+
+        var cols = new double[down.Length, 1];
+        for (int i = 0; i < down.Length; i++)
+        {
+            cols[i, 0] = down[i];
+        }
+
+        using ImageBuffer horizontal = Filter(image, rows, boundary);
+        return Filter(horizontal, cols, boundary);
+    }
+
+    /// <summary>
+    /// A normalized 1-D Gaussian. <paramref name="size"/> of 0 takes MATLAB's default extent,
+    /// <c>2·ceil(2σ)+1</c>, which holds better than four sigma of the mass.
+    /// </summary>
+    public static double[] Gaussian1D(double sigma, int size = 0)
+    {
+        if (sigma <= 0)
+        {
+            throw new ArgumentOutOfRangeException(nameof(sigma), sigma, "gaussian sigma must be positive.");
+        }
+
+        if (size <= 0)
+        {
+            size = (2 * (int)Math.Ceiling(2 * sigma)) + 1;
+        }
+
+        var kernel = new double[size];
+        double centre = (size - 1) / 2.0;
+        double twoSigmaSq = 2 * sigma * sigma;
+        double sum = 0;
+        for (int i = 0; i < size; i++)
+        {
+            double d = i - centre;
+            kernel[i] = Math.Exp(-(d * d) / twoSigmaSq);
+            sum += kernel[i];
+        }
+
+        for (int i = 0; i < size; i++)
+        {
+            kernel[i] /= sum;
+        }
+
+        return kernel;
     }
 
     /// <summary>2-D convolution of two matrices (MATLAB <c>conv2</c>), with 'full', 'same', or 'valid' shape.</summary>
@@ -100,8 +217,12 @@ public static class Filters
         };
     }
 
-    /// <summary>Median filter over an m×n window (MATLAB <c>medfilt2</c>), zero-padded at the edges.</summary>
-    public static ImageBuffer Median(ImageBuffer image, int windowHeight = 3, int windowWidth = 3)
+    /// <summary>
+    /// Median filter over an m×n window (MATLAB <c>medfilt2</c>). The default zero padding is MATLAB's
+    /// <c>'zeros'</c> <c>padopt</c>; <see cref="Boundary.Symmetric"/> is its <c>'symmetric'</c>.
+    /// </summary>
+    public static ImageBuffer Median(
+        ImageBuffer image, int windowHeight = 3, int windowWidth = 3, Boundary boundary = Boundary.Zero)
     {
         ArgumentNullException.ThrowIfNull(image);
         ArgumentOutOfRangeException.ThrowIfNegativeOrZero(windowHeight);
@@ -124,7 +245,7 @@ public static class Filters
                         for (int wc = 0; wc < windowWidth; wc++)
                         {
                             int sc = c + wc - anchorC;
-                            window[count++] = Sample(image, sr, sc, ch, Boundary.Zero);
+                            window[count++] = Sample(image, sr, sc, ch, boundary);
                         }
                     }
 
@@ -216,16 +337,23 @@ public static class Filters
     /// <summary>Maps an out-of-range index onto a real one for the given boundary rule.</summary>
     /// <remarks>
     /// <see cref="Boundary.Zero"/> has no in-range answer, so it clamps here and callers that need
-    /// true zero padding sample through <c>Sample</c> instead. Only the separable pass uses this, and
-    /// it pads by replication or mirroring.
+    /// true constant padding sample through <see cref="Sample"/> instead. Only the separable pass uses
+    /// this, and it pads by replication, mirroring, or wrapping.
     /// </remarks>
-    private static int MapIndex(int index, int length, Boundary boundary) => boundary switch
+    internal static int MapIndex(int index, int length, Boundary boundary) => boundary switch
     {
         Boundary.Symmetric => Mirror(index, length),
+        Boundary.Circular => Wrap(index, length),
         _ => Math.Clamp(index, 0, length - 1),
     };
 
-    private static double Sample(ImageBuffer image, int r, int c, int channel, Boundary boundary)
+    /// <summary>
+    /// One sample, with out-of-range coordinates resolved by the boundary rule.
+    /// <paramref name="padValue"/> supplies the constant for <see cref="Boundary.Zero"/>, which is how
+    /// <c>imfilter</c>'s numeric pad argument reaches the inner loop.
+    /// </summary>
+    internal static double Sample(
+        ImageBuffer image, int r, int c, int channel, Boundary boundary, double padValue = 0.0)
     {
         switch (boundary)
         {
@@ -237,9 +365,38 @@ public static class Filters
                 r = Mirror(r, image.Height);
                 c = Mirror(c, image.Width);
                 return image[r, c, channel];
+            case Boundary.Circular:
+                r = Wrap(r, image.Height);
+                c = Wrap(c, image.Width);
+                return image[r, c, channel];
             default:
-                return (uint)r < (uint)image.Height && (uint)c < (uint)image.Width ? image[r, c, channel] : 0.0;
+                return (uint)r < (uint)image.Height && (uint)c < (uint)image.Width
+                    ? image[r, c, channel]
+                    : padValue;
         }
+    }
+
+    /// <summary>Rotates a kernel by 180°, which turns correlation into convolution.</summary>
+    internal static double[,] Rotate180(double[,] kernel)
+    {
+        int h = kernel.GetLength(0);
+        int w = kernel.GetLength(1);
+        var result = new double[h, w];
+        for (int r = 0; r < h; r++)
+        {
+            for (int c = 0; c < w; c++)
+            {
+                result[r, c] = kernel[h - 1 - r, w - 1 - c];
+            }
+        }
+
+        return result;
+    }
+
+    private static int Wrap(int index, int length)
+    {
+        index %= length;
+        return index < 0 ? index + length : index;
     }
 
     private static int Mirror(int index, int length)

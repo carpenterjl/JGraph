@@ -71,6 +71,13 @@ internal static partial class JgsBuiltins
         Unpack("hough");
         Unpack("imcentroid");
 
+        // M46 wave B. These three share their single-output body with the bracketed form rather than
+        // returning an array, because their first output is itself a vector in one case (bestblk) and
+        // an image in the others — unpacking an array would be ambiguous.
+        Wrap("edge", EdgeOutputs);
+        Wrap("wiener2", WienerOutputs);
+        Wrap("bestblk", BestBlkOutputs);
+
         // [counts, binLocations] = imhist(I). The locations are quoted in the image's own class, so a
         // uint8 picture's bins are centred on 0…255 while a double one's span [0, 1].
         Wrap("imhist", (args, wanted, line, col) =>

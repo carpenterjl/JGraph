@@ -608,13 +608,33 @@ public static class JgsBuiltinCatalog
         Add("imresize", "Resizes an image by a scale or to a [height, width]; 'nearest' or 'bilinear'.", P("image"), P("scaleOrSize"), Opt("method"));
         Add("imrotate", "Rotates an image counter-clockwise by degrees; options 'nearest'/'bilinear' and 'crop'/'loose'.", P("image"), P("degrees"), Opt("method"), Opt("bbox"));
         Add("imcrop", "Crops the rectangle [x, y, width, height] (0-based origin) from an image.", P("image"), P("rect"));
-        Add("imfilter", "Correlates an image with a kernel; boundary 'zero'/'replicate'/'symmetric'.", P("image"), P("kernel"), Opt("boundary"));
-        Add("conv2", "2-D convolution of two matrices; shape 'full' (default), 'same', or 'valid'.", P("a"), P("b"), Opt("shape"));
-        Add("medfilt2", "Median filter over an [m, n] window (default 3×3).", P("image"), Opt("window"));
-        Add("fspecial", "Builds a filter kernel: average, gaussian, sobel, prewitt, laplacian, disk, or log.", P("type"), Opt("p1"), Opt("p2"));
-        Add("edge", "Detects edges (binary image): 'sobel' (default), 'prewitt', 'roberts', 'canny', or 'log'.", P("image"), Opt("method"), Opt("threshold"));
-        Add("imgradient", "Gradient magnitude and direction (degrees) of an image: [mag, dir]; method 'sobel' (default), 'prewitt', or 'roberts'.", P("image"), Opt("method"));
-        Add("imgradientxy", "Horizontal and vertical gradient components of an image: [Gx, Gy]; method 'sobel' (default), 'prewitt', or 'roberts'.", P("image"), Opt("method"));
+        Add("imfilter", "Filters an image or matrix with a kernel; 'corr'/'conv', 'same'/'full', 'replicate'/'symmetric'/'circular' or a pad value.", P("image"), P("kernel"), Opt("options"));
+        Add("conv2", "2-D convolution; conv2(A, B, shape) or the separable conv2(u, v, A, shape). Shape 'full' (default), 'same', or 'valid'.", P("a"), P("b"), Opt("c"), Opt("shape"));
+        Add("medfilt2", "Median filter over an [m, n] window (default 3×3); padding 'zeros' (default) or 'symmetric'.", P("image"), Opt("window"), Opt("padopt"));
+        Add("fspecial", "Builds a filter kernel: average, gaussian, sobel, prewitt, laplacian, disk, log, motion, or unsharp.", P("type"), Opt("p1"), Opt("p2"));
+        Add("edge", "Detects edges (binary image): 'sobel' (default), 'prewitt', 'roberts', 'canny', 'approxcanny', or 'log'. [BW, threshOut] reports the level used.", P("image"), Opt("method"), Opt("threshold"), Opt("sigmaOrDirection"));
+        Add("imgradient", "Gradient magnitude and direction (degrees): [mag, dir]. Takes an image with a method — 'sobel', 'prewitt', 'roberts', 'central', 'intermediate' — or the components Gx and Gy.", P("image"), Opt("methodOrGy"));
+        Add("imgradientxy", "Horizontal and vertical gradient components: [Gx, Gy]; method 'sobel' (default), 'prewitt', 'roberts', 'central', or 'intermediate'.", P("image"), Opt("method"));
+
+        // M46 wave B — filtering, neighbourhood statistics, and block processing. Each of these takes
+        // an image or a plain matrix and answers in kind.
+        Add("padarray", "Extends an array with padding: a constant, or 'replicate'/'symmetric'/'circular', in direction 'both' (default), 'pre', or 'post'.", P("array"), P("padsize"), Opt("padval"), Opt("direction"));
+        Add("imgaussfilt", "Gaussian smoothing with a separable kernel; sigma is one number or [sy sx]. Options: 'FilterSize', 'Padding', 'FilterDomain'.", P("image"), Opt("sigma"), Opt("options"));
+        Add("imboxfilt", "Local mean over an odd [m, n] window, computed with running sums. Options: 'Padding', 'NormalizationFactor'.", P("image"), Opt("filterSize"), Opt("options"));
+        Add("integralImage", "The summed-area table of a plane, one row and column larger than it; orientation 'upright' (default) or 'rotated'.", P("image"), Opt("orientation"));
+        Add("integralBoxFilter", "Box filtering straight off an integral image, over the region where the window fits. Option: 'NormalizationFactor'.", P("integral"), Opt("filterSize"), Opt("options"));
+        Add("ordfilt2", "The order-th smallest value in each neighbourhood, with optional per-position offsets; padding 'zeros' (default) or 'symmetric'.", P("array"), P("order"), P("domain"), Opt("offsets"), Opt("padopt"));
+        Add("stdfilt", "The local standard deviation over a neighbourhood (default 3×3).", P("image"), Opt("nhood"));
+        Add("rangefilt", "The local max minus min over a neighbourhood (default 3×3).", P("image"), Opt("nhood"));
+        Add("entropyfilt", "The local entropy in bits over a neighbourhood (default 9×9).", P("image"), Opt("nhood"));
+        Add("modefilt", "The most frequent value in each [m, n] window (default 3×3), ties going to the smallest.", P("image"), Opt("window"), Opt("padopt"));
+        Add("wiener2", "Adaptive noise-removal filtering; [J, noise] also reports the noise power used.", P("image"), Opt("window"), Opt("noise"));
+        Add("nlfilter", "Applies a function to every sliding [m, n] neighbourhood, one scalar per pixel.", P("array"), P("window"), P("fun"));
+        Add("im2col", "Rearranges 'sliding' (default) or 'distinct' image blocks into the columns of a matrix.", P("array"), P("block"), Opt("kind"));
+        Add("col2im", "Rebuilds a matrix from column-packed blocks; 'sliding' (default) or 'distinct'.", P("columns"), P("block"), P("size"), Opt("kind"));
+        Add("colfilt", "Column-oriented block filtering: the function is handed every block at once as columns.", P("array"), P("block"), P("kind"), P("fun"));
+        Add("bestblk", "A block size at most k (default 100) that divides the array as evenly as possible; [mb, nb] splits the pair.", P("size"), Opt("k"));
+        Add("blockproc", "Applies a function to each distinct block, which arrives as a struct with data, blockSize, border, imageSize, and location. Options: 'BorderSize', 'TrimBorder', 'PadPartialBlocks', 'PadMethod'.", P("array"), P("block"), P("fun"), Opt("options"));
         Add("strel", "Builds a structuring element matrix: 'square' (side) or 'disk' (radius).", P("shape"), Opt("size"));
         Add("imerode", "Morphological erosion (local minimum) over a structuring element (default 3×3 square).", P("image"), Opt("element"));
         Add("imdilate", "Morphological dilation (local maximum) over a structuring element (default 3×3 square).", P("image"), Opt("element"));

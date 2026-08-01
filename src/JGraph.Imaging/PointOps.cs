@@ -91,6 +91,34 @@ public static class PointOps
         return image;
     }
 
+    /// <summary>
+    /// Carries a scalar field as a single-channel image <em>without</em> the [0, 1] clamp.
+    /// </summary>
+    /// <remarks>
+    /// The [0, 1] range is this project's convention for pictures, not a constraint the buffer
+    /// enforces, and MATLAB's filtering family — <c>imfilter</c>, <c>padarray</c>, <c>ordfilt2</c>,
+    /// <c>blockproc</c> — is routinely applied to plain numeric data that has never been an image.
+    /// This is the door those builtins come through, so a matrix survives a filter with its own
+    /// numbers rather than a saturated copy of them. Use <see cref="FromMatrix"/> when the values are
+    /// meant to be intensities and clamping is the right answer.
+    /// </remarks>
+    public static ImageBuffer WrapValues(double[,] values)
+    {
+        ArgumentNullException.ThrowIfNull(values);
+        int h = values.GetLength(0);
+        int w = values.GetLength(1);
+        var image = new ImageBuffer(h, w, 1);
+        for (int r = 0; r < h; r++)
+        {
+            for (int c = 0; c < w; c++)
+            {
+                image[r, c, 0] = values[r, c];
+            }
+        }
+
+        return image;
+    }
+
     /// <summary>Copies an image channel to a scalar field (0-based channel).</summary>
     public static double[,] ToMatrix(ImageBuffer image, int channel)
     {
