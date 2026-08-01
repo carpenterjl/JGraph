@@ -93,7 +93,7 @@ public class ImageAlgorithmTests
     }
 
     [Fact]
-    public void Resize_PreservesCornersWithAlignCorners()
+    public void Resize_UsesMatlabsHalfPixelMapping()
     {
         // 2x2 with distinct corners; upsampling keeps the four corner values exactly.
         var image = new ImageBuffer(2, 2, 1);
@@ -109,8 +109,11 @@ public class ImageAlgorithmTests
         Assert.Equal(1.0, big[0, 3, 0], 6);
         Assert.Equal(0.5, big[3, 0, 0], 6);
         Assert.Equal(0.25, big[3, 3, 0], 6);
-        // Interior point dst(0,1) maps to srcC = 1*(1/3) = 0.333 on the top row → 0*(0.667)+1*(0.333).
-        Assert.Equal(1.0 / 3.0, big[0, 1, 0], 4);
+
+        // MATLAB samples output pixel x at x/scale + ½(1 − 1/scale), so dst(0,1) reads the source at
+        // 1.25 — a quarter of the way from the first column to the second — rather than the ⅓ an
+        // align-corners mapping would give. Corners survive because the border folds back on itself.
+        Assert.Equal(0.25, big[0, 1, 0], 6);
     }
 
     [Fact]
@@ -135,6 +138,25 @@ public class ImageAlgorithmTests
         image.Dispose();
         Assert.Equal(0.9, rotated[0, 0, 0], 6); // old bottom-right is now top-left
         Assert.Equal(0.1, rotated[1, 1, 0], 6);
+    }
+
+    [Fact]
+    public void Rotate90_TurnsCounterClockwiseLikeMatlab()
+    {
+        // [1 2; 3 4] rotated a quarter turn anticlockwise is [2 4; 1 3] — the top-right corner ends
+        // up top-left. Turning it the other way is the mistake this pins down.
+        var image = new ImageBuffer(2, 2, 1);
+        image[0, 0, 0] = 0.1;
+        image[0, 1, 0] = 0.2;
+        image[1, 0, 0] = 0.3;
+        image[1, 1, 0] = 0.4;
+        using ImageBuffer rotated = Geometry.Rotate(image, 90, Geometry.Interpolation.Nearest, loose: false);
+        image.Dispose();
+
+        Assert.Equal(0.2, rotated[0, 0, 0], 6);
+        Assert.Equal(0.4, rotated[0, 1, 0], 6);
+        Assert.Equal(0.1, rotated[1, 0, 0], 6);
+        Assert.Equal(0.3, rotated[1, 1, 0], 6);
     }
 
     [Fact]

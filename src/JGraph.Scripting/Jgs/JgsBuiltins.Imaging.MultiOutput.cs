@@ -78,6 +78,17 @@ internal static partial class JgsBuiltins
         Wrap("wiener2", WienerOutputs);
         Wrap("bestblk", BestBlkOutputs);
 
+        // M46 wave C. Each of these hands back a spatial reference or a second coordinate alongside
+        // the picture, and imcrop is replaced outright: MATLAB's rect is a rectangle in world
+        // coordinates whose edges fall between pixels, where JGS keeps the 0-based pixel box.
+        Wrap("imwarp", ImWarpOutputs);
+        Wrap("imtranslate", ImTranslateOutputs);
+        Wrap("imcrop", (args, wanted, line, col) => MatlabCropOutputs(args, wanted, line, col));
+        Wrap("transformPointsForward",
+            (args, wanted, line, col) => TransformPointsOutputs("transformPointsForward", args, wanted, line, col));
+        Wrap("transformPointsInverse",
+            (args, wanted, line, col) => TransformPointsOutputs("transformPointsInverse", args, wanted, line, col));
+
         // [counts, binLocations] = imhist(I). The locations are quoted in the image's own class, so a
         // uint8 picture's bins are centred on 0…255 while a double one's span [0, 1].
         Wrap("imhist", (args, wanted, line, col) =>

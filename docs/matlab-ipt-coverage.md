@@ -1,6 +1,6 @@
 # MATLAB Image Processing Toolbox coverage
 
-**72 of 409 documented** Image Processing Toolbox names are implemented, as of M46 wave B.
+**84 of 409 documented** Image Processing Toolbox names are implemented, as of M46 wave C.
 
 ## Where this list comes from
 
@@ -32,54 +32,54 @@ counted here too.
 
 JGraph-only names — `mat2im`, `im2mat`, `imcentroid` — are in neither MATLAB nor these counts.
 
-## Implemented — 72
-`adaptthresh`, `bestblk`, `blockproc`, `bwareaopen`, `bwlabel`, `col2im`
-`colfilt`, `edge`, `entropyfilt`, `fft2`, `fftshift`, `fspecial`
-`graythresh`, `histeq`, `hough`, `houghlines`, `houghpeaks`, `ifft2`
-`ifftshift`, `im2col`, `im2double`, `im2gray`, `im2int16`, `im2single`
-`im2uint16`, `im2uint8`, `imabsdiff`, `imadd`, `imadjust`, `imapplymatrix`
-`imbinarize`, `imboxfilt`, `imclose`, `imcomplement`, `imcrop`, `imdilate`
-`imdivide`, `imerode`, `imfill`, `imfilter`, `imfinfo`, `imgaussfilt`
-`imgradient`, `imgradientxy`, `imhist`, `imlincomb`, `immultiply`, `imnoise`
-`imopen`, `imread`, `imresize`, `imrotate`, `imshow`, `imsubtract`
-`imwrite`, `integralBoxFilter`, `integralImage`, `intlut`, `mat2gray`, `medfilt2`
-`modefilt`, `nlfilter`, `ordfilt2`, `otsuthresh`, `padarray`, `rangefilt`
-`regionprops`, `rgb2gray`, `stdfilt`, `strel`, `stretchlim`, `wiener2`
+## Implemented — 84
+`adaptthresh`, `affine2d`, `affineOutputView`, `bestblk`, `blockproc`, `bwareaopen`
+`bwlabel`, `checkerboard`, `col2im`, `colfilt`, `edge`, `entropyfilt`
+`fft2`, `fftshift`, `fitgeotrans`, `fspecial`, `graythresh`, `histeq`
+`hough`, `houghlines`, `houghpeaks`, `ifft2`, `ifftshift`, `im2col`
+`im2double`, `im2gray`, `im2int16`, `im2single`, `im2uint16`, `im2uint8`
+`imabsdiff`, `imadd`, `imadjust`, `imapplymatrix`, `imbinarize`, `imboxfilt`
+`imclose`, `imcomplement`, `imcrop`, `imdilate`, `imdivide`, `imerode`
+`imfill`, `imfilter`, `imfinfo`, `imgaussfilt`, `imgradient`, `imgradientxy`
+`imhist`, `imlincomb`, `immultiply`, `imnoise`, `imopen`, `impyramid`
+`imread`, `imref2d`, `imresize`, `imrotate`, `imshow`, `imsubtract`
+`imtranslate`, `imwarp`, `imwrite`, `integralBoxFilter`, `integralImage`, `intlut`
+`mat2gray`, `medfilt2`, `modefilt`, `nlfilter`, `ordfilt2`, `otsuthresh`
+`padarray`, `projective2d`, `rangefilt`, `regionprops`, `rgb2gray`, `rigid2d`
+`stdfilt`, `strel`, `stretchlim`, `transformPointsForward`, `transformPointsInverse`, `wiener2`
 
-## Not implemented — 194
-Planned across M46 waves C–K. Nothing here is refused on principle; it is work not yet done.
+## Not implemented — 182
+Planned across M46 waves D–K. Nothing here is refused on principle; it is work not yet done.
 
-`activecontour`, `adapthisteq`, `affine2d`, `affineOutputView`, `applylut`, `bfscore`
-`boundarymask`, `bwarea`, `bwareafilt`, `bwboundaries`, `bwconncomp`, `bwconvhull`
-`bwdist`, `bwdistgeodesic`, `bweuler`, `bwferet`, `bwhitmiss`, `bwlabeln`
-`bwlookup`, `bwmorph`, `bwmorph3`, `bwperim`, `bwpropfilt`, `bwselect`
-`bwselect3`, `bwskel`, `bwtraceboundary`, `bwulterode`, `checkerboard`, `chromadapt`
-`cmap2gray`, `colorangle`, `conndef`, `convmtx2`, `corr2`, `dct2`
-`dctmtx`, `deconvblind`, `deconvlucy`, `deconvreg`, `deconvwnr`, `decorrstretch`
-`deltaE`, `demosaic`, `dice`, `edge3`, `edgetaper`, `entropy`
-`fibermetric`, `fitgeotrans`, `freqspace`, `freqz2`, `fsamp2`, `fspecial3`
-`ftrans2`, `fwind1`, `fwind2`, `gabor`, `gradientweight`, `gray2ind`
-`graycomatrix`, `grayconnected`, `graycoprops`, `graydiffweight`, `graydist`, `grayslice`
-`hsv2rgb`, `idct2`, `illumgray`, `illumpca`, `illumwhite`, `imadjustn`
-`imapprox`, `imbilatfilt`, `imbothat`, `imboxfilt3`, `imclearborder`, `imcolordiff`
-`imcontour`, `imcrop3`, `imdiffuseest`, `imdiffusefilt`, `imextendedmax`, `imextendedmin`
-`imfindcircles`, `imflatfield`, `imfuse`, `imgaborfilt`, `imgaussfilt3`, `imgradient3`
-`imgradientxyz`, `imguidedfilter`, `imhistmatch`, `imhistmatchn`, `imhmax`, `imhmin`
-`imimposemin`, `imlocalbrighten`, `immse`, `imnlmfilt`, `imoverlay`, `impixel`
-`improfile`, `impyramid`, `imquantize`, `imreconstruct`, `imreducehaze`, `imref2d`
+`activecontour`, `adapthisteq`, `applylut`, `bfscore`, `boundarymask`, `bwarea`
+`bwareafilt`, `bwboundaries`, `bwconncomp`, `bwconvhull`, `bwdist`, `bwdistgeodesic`
+`bweuler`, `bwferet`, `bwhitmiss`, `bwlabeln`, `bwlookup`, `bwmorph`
+`bwmorph3`, `bwperim`, `bwpropfilt`, `bwselect`, `bwselect3`, `bwskel`
+`bwtraceboundary`, `bwulterode`, `chromadapt`, `cmap2gray`, `colorangle`, `conndef`
+`convmtx2`, `corr2`, `dct2`, `dctmtx`, `deconvblind`, `deconvlucy`
+`deconvreg`, `deconvwnr`, `decorrstretch`, `deltaE`, `demosaic`, `dice`
+`edge3`, `edgetaper`, `entropy`, `fibermetric`, `freqspace`, `freqz2`
+`fsamp2`, `fspecial3`, `ftrans2`, `fwind1`, `fwind2`, `gabor`
+`gradientweight`, `gray2ind`, `graycomatrix`, `grayconnected`, `graycoprops`, `graydiffweight`
+`graydist`, `grayslice`, `hsv2rgb`, `idct2`, `illumgray`, `illumpca`
+`illumwhite`, `imadjustn`, `imapprox`, `imbilatfilt`, `imbothat`, `imboxfilt3`
+`imclearborder`, `imcolordiff`, `imcontour`, `imcrop3`, `imdiffuseest`, `imdiffusefilt`
+`imextendedmax`, `imextendedmin`, `imfindcircles`, `imflatfield`, `imfuse`, `imgaborfilt`
+`imgaussfilt3`, `imgradient3`, `imgradientxyz`, `imguidedfilter`, `imhistmatch`, `imhistmatchn`
+`imhmax`, `imhmin`, `imimposemin`, `imlocalbrighten`, `immse`, `imnlmfilt`
+`imoverlay`, `impixel`, `improfile`, `imquantize`, `imreconstruct`, `imreducehaze`
 `imregcorr`, `imregionalmax`, `imregionalmin`, `imresize3`, `imrotate3`, `imsegfmm`
 `imsegkmeans`, `imsegkmeans3`, `imsharpen`, `imshowpair`, `imsplit`, `imtophat`
-`imtranslate`, `imwarp`, `ind2gray`, `ind2rgb`, `integralBoxFilter3`, `integralImage3`
-`iptcheckconn`, `iptgetpref`, `iptsetpref`, `iradon`, `jaccard`, `lab2double`
-`lab2rgb`, `lab2uint16`, `lab2uint8`, `lab2xyz`, `label2idx`, `label2rgb`
-`labelmatrix`, `labeloverlay`, `lin2rgb`, `makelut`, `maxhessiannorm`, `mean2`
-`medfilt3`, `montage`, `multissim`, `multissim3`, `multithresh`, `normxcorr2`
-`ntsc2rgb`, `obliqueslice`, `offsetstrel`, `otf2psf`, `phantom`, `poly2label`
-`poly2mask`, `projective2d`, `psf2otf`, `psnr`, `qtdecomp`, `qtgetblk`
-`qtsetblk`, `radon`, `reducepoly`, `regionfill`, `regionprops3`, `rgb2hsv`
-`rgb2ind`, `rgb2lab`, `rgb2lightness`, `rgb2lin`, `rgb2ntsc`, `rgb2xyz`
-`rgb2ycbcr`, `rigid2d`, `roicolor`, `roifilt2`, `roipoly`, `ssim`
-`std2`, `superpixels`, `superpixels3`, `transformPointsForward`, `transformPointsInverse`, `visboundaries`
+`ind2gray`, `ind2rgb`, `integralBoxFilter3`, `integralImage3`, `iptcheckconn`, `iptgetpref`
+`iptsetpref`, `iradon`, `jaccard`, `lab2double`, `lab2rgb`, `lab2uint16`
+`lab2uint8`, `lab2xyz`, `label2idx`, `label2rgb`, `labelmatrix`, `labeloverlay`
+`lin2rgb`, `makelut`, `maxhessiannorm`, `mean2`, `medfilt3`, `montage`
+`multissim`, `multissim3`, `multithresh`, `normxcorr2`, `ntsc2rgb`, `obliqueslice`
+`offsetstrel`, `otf2psf`, `phantom`, `poly2label`, `poly2mask`, `psf2otf`
+`psnr`, `qtdecomp`, `qtgetblk`, `qtsetblk`, `radon`, `reducepoly`
+`regionfill`, `regionprops3`, `rgb2hsv`, `rgb2ind`, `rgb2lab`, `rgb2lightness`
+`rgb2lin`, `rgb2ntsc`, `rgb2xyz`, `rgb2ycbcr`, `roicolor`, `roifilt2`
+`roipoly`, `ssim`, `std2`, `superpixels`, `superpixels3`, `visboundaries`
 `viscircles`, `watershed`, `whitepoint`, `xyz2double`, `xyz2lab`, `xyz2rgb`
 `xyz2uint16`, `ycbcr2rgb`
 
@@ -176,6 +176,28 @@ By reason:
   rule here searches `[ceil(k/2), k]`, prefers an exact divisor, and otherwise takes the size leaving
   the largest final block. Confining the search matters: every number divides by one, and a block
   size of one divides perfectly while being useless.
+- **The transform classes are tagged structs.** MATLAB ships `affine2d`, `projective2d`, `rigid2d`
+  and `imref2d` as classes; JGraph has no object system to put them in, so each is a struct with a
+  `Type` field naming the class it stands for. `tform.T`, `tform.Rotation`, `R.XWorldLimits` and
+  `class(tform)` all read as they do in MATLAB, and every consumer here can tell a transform from a
+  spatial reference. What is missing is method syntax: there is no `tform.invert()` or
+  `R.worldToIntrinsic(...)`. `transformPointsForward` and `transformPointsInverse` take the transform
+  as their first argument, which is the form MATLAB documents anyway, and the extra `Type` field is
+  visible when a script displays the struct.
+- **`fitgeotrans` refuses the local transformation types by name.** `'polynomial'`, `'pwl'` and
+  `'lwm'` have no 3×3 matrix form and no `imwarp` path here, so they error saying so rather than
+  falling back to something that would silently be a different transform.
+- **`checkerboard` returns an image, not a double array.** MATLAB draws no line between the two;
+  JGraph does, and `imshow` takes only images. Since the pattern exists to be displayed and warped,
+  the image form is the useful one. Everything else about it matches: `2·p·n` by `2·q·n`, with the
+  light squares in the right half at 0.7 rather than 1.
+- **`imcrop` with no rectangle returns the whole image.** MATLAB opens a window and waits for one to
+  be drawn. There is no window to draw on in a batch run, so the honest answer is the whole picture
+  and the rectangle that describes it.
+- **`imwarp` accepts `'SmoothEdges'` and implements it as fill-value interpolation** at the border
+  rather than by padding the input first. The visible effect is the same — the edge fades into the
+  fill instead of being extended — but a pixel-for-pixel comparison against MATLAB may differ in the
+  outermost row and column.
 - **16-bit PNG degrades to 8 bits.** Measured on SkiaSharp 2.88.8, in both directions: the PNG
   encoder accepts the 16-bit colour type and copies the pixels, then writes a depth-8 IHDR anyway,
   and the decoder will not return 16-bit samples from a file that genuinely has them. `imwrite` with
@@ -198,3 +220,22 @@ By reason:
 - **A `.m` file included from a JGS session keeps JGS-flavoured returns.** Builtins learn the dialect
   when they are registered, not when they are called, so `run('file.m')` from a JGS script gets the
   JGS shapes. `sprintf` has behaved this way since M28; it is recorded rather than fought.
+
+## Answers corrected while building this mirror
+
+Not divergences — places where JGraph was giving a different answer from MATLAB and now does not.
+Each changed an existing result, so each is written down.
+
+- **`imrotate` turned the wrong way** (M46 wave C). The inverse map's sine terms had the sign that
+  reads as a clockwise turn on screen, so `imrotate([1 2; 3 4], 90)` gave `[3 1; 4 2]` where MATLAB
+  gives `[2 4; 1 3]`. Multiples of 180° were unaffected, which is why it survived this long. The
+  default method also moved from bilinear to `'nearest'`, which is MATLAB's.
+- **`imresize` sampled on the wrong grid** (M46 wave C). It mapped output pixel centres onto input
+  corners; MATLAB samples output pixel `x` at `x/scale + ½(1 − 1/scale)`, folding past the border
+  through the mirror `[1…n, n…1]`. The default method also moved from bilinear to `'bicubic'`, and
+  a scale now rounds the output size up rather than to nearest, both of which are MATLAB's.
+- **`repmat` ignored all but its last count** (M46 wave C). It predates shaped arrays (M40) and laid
+  the copies end to end, so `repmat([1 2; 3 4], 2, 1)` came back as a flat four-element row and
+  `repmat(A, 3, 1)` did not repeat at all. It now tiles in two dimensions. This one is a base-MATLAB
+  builtin rather than a toolbox function; it is recorded here because the imaging work is what found
+  it.

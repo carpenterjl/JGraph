@@ -85,28 +85,48 @@ internal static partial class JgsBuiltins
             return MapNumeric("fix", args[0], Math.Truncate, line, col);
         });
 
+        // repmat tiles in two dimensions: repmat(A, m, n) is m copies down by n across, and
+        // repmat(A, m) is m by m. It predates shaped arrays (M40) and used to read only the last
+        // count and lay the copies end to end, so repmat([1 2; 3 4], 2, 1) came back as a flat
+        // four-element row instead of a 4-by-2.
         Define("repmat", (args, line, col) =>
         {
             ArityRange("repmat", args, 2, 3, line, col);
-            int times = Count("repmat", args, args.Count - 1, line, col);
-            JgsValue source = args[0];
-            var repeated = new List<JgsValue>();
-            for (int t = 0; t < times; t++)
+            int down;
+            int across;
+            if (args.Count == 3)
             {
-                if (source.Type == JgsType.Array)
+                down = Count("repmat", args, 1, line, col);
+                across = Count("repmat", args, 2, line, col);
+            }
+            else
+            {
+                double[] counts = NumericVector("repmat", args, 1, line, col);
+                if (counts.Length is not (1 or 2))
                 {
-                    for (int i = 0; i < source.ArrayLength; i++)
-                    {
-                        repeated.Add(source.ElementAt(i));
-                    }
+                    throw new JgsRuntimeException(line, col,
+                        "repmat takes a count, a [down across] pair, or two counts.");
                 }
-                else
-                {
-                    repeated.Add(source);
-                }
+
+                down = (int)Math.Round(counts[0]);
+                across = (int)Math.Round(counts[^1]);
             }
 
-            return JgsValue.Array(repeated.ToArray());
+            if (down < 0 || across < 0)
+            {
+                throw new JgsRuntimeException(line, col, "repmat counts cannot be negative.");
+            }
+
+            JgsValue source = args[0];
+            if (source.Type != JgsType.Array)
+            {
+                return JgsMatrix.BuildValues(down, across, (_, _) => source);
+            }
+
+            int rows = JgsMatrix.RowCount(source);
+            int cols = JgsMatrix.ColCount(source);
+            return JgsMatrix.BuildValues(
+                rows * down, cols * across, (r, c) => JgsMatrix.At(source, r % rows, c % cols));
         });
 
         // --- Type predicates --------------------------------------------------------------------

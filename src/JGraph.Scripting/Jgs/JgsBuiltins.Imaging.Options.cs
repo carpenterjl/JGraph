@@ -317,19 +317,47 @@ internal static partial class JgsBuiltins
     private static ImgArg ImgLike(string name, IReadOnlyList<JgsValue> args, int index, int line, int col)
     {
         JgsValue value = args[index];
-        if (value.Type == JgsType.Image)
+        return value.Type == JgsType.Image
+            ? new ImgArg(value.AsImage, false)
+            : new ImgArg(PointOps.WrapValues(Rectangle($"{name} argument {index + 1}", value, line, col)), true);
+    }
+
+    /// <summary>
+    /// Numeric data as a rectangular field. A scalar is a 1×1, and a plain vector — a range, a
+    /// <c>linspace</c>, anything that never had a shape put on it — is one row. MATLAB makes no
+    /// distinction between those and a matrix, and neither can any function that claims to take "an
+    /// array": <c>imresize(1:8, [1 16])</c> is ordinary code.
+    /// </summary>
+    private static double[,] Rectangle(string what, JgsValue value, int line, int col)
+    {
+        if (value.Type is JgsType.Number or JgsType.Bool)
         {
-            return new ImgArg(value.AsImage, false);
+            return new[,] { { value.AsNumber } };
         }
 
-        if (value.Type == JgsType.Number)
+        if (value.Type != JgsType.Array)
         {
-            // A 1×1 matrix is a scalar in MATLAB, and a script that filters one should not be told to
-            // go and build a matrix first.
-            return new ImgArg(PointOps.WrapValues(new[,] { { value.AsNumber } }), true);
+            throw new JgsRuntimeException(line, col,
+                $"{what} must be numeric data, but got a {value.TypeName}.");
         }
 
-        return new ImgArg(PointOps.WrapValues(Matrix(name, args, index, line, col)), true);
+        double[][] rows = JgsMatrix.ToRows(what, value, line, col);
+        int cols = rows.Length == 0 ? 0 : rows[0].Length;
+        if (rows.Length == 0 || cols == 0)
+        {
+            throw new JgsRuntimeException(line, col, $"{what} is empty.");
+        }
+
+        var result = new double[rows.Length, cols];
+        for (int r = 0; r < rows.Length; r++)
+        {
+            for (int c = 0; c < cols; c++)
+            {
+                result[r, c] = rows[r][c];
+            }
+        }
+
+        return result;
     }
 
     /// <summary>

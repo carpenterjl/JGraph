@@ -605,9 +605,9 @@ public static class JgsBuiltinCatalog
         Add("immultiply", "Multiplies two images sample by sample (or an image by a scalar), clamped to [0, 1] — masking.", P("a"), P("b"));
         Add("imcomplement", "Inverts image intensities across the class range.", P("image"));
         Add("imnoise", "Adds noise: 'gaussian' (variance) or 'salt & pepper' (density).", P("image"), Opt("type"), Opt("amount"));
-        Add("imresize", "Resizes an image by a scale or to a [height, width]; 'nearest' or 'bilinear'.", P("image"), P("scaleOrSize"), Opt("method"));
-        Add("imrotate", "Rotates an image counter-clockwise by degrees; options 'nearest'/'bilinear' and 'crop'/'loose'.", P("image"), P("degrees"), Opt("method"), Opt("bbox"));
-        Add("imcrop", "Crops the rectangle [x, y, width, height] (0-based origin) from an image.", P("image"), P("rect"));
+        Add("imresize", "Resizes an image or matrix by a scale or to a [rows, cols] (one may be NaN); methods 'nearest', 'box', 'bilinear', 'bicubic' (default), 'lanczos2', 'lanczos3', with 'Antialiasing', 'Scale', and 'OutputSize'.", P("image"), Opt("scaleOrSize"), Opt("options"));
+        Add("imrotate", "Rotates an image counter-clockwise by degrees; methods 'nearest' (default), 'bilinear', 'bicubic', and bounds 'crop'/'loose'.", P("image"), P("degrees"), Opt("method"), Opt("bbox"));
+        Add("imcrop", "Crops a rectangle from an image. JGS takes [x, y, width, height] in 0-based pixels; MATLAB takes a spatial [xmin, ymin, width, height] and [J, rect] reports the one used.", P("image"), Opt("refOrRect"), Opt("rect"));
         Add("imfilter", "Filters an image or matrix with a kernel; 'corr'/'conv', 'same'/'full', 'replicate'/'symmetric'/'circular' or a pad value.", P("image"), P("kernel"), Opt("options"));
         Add("conv2", "2-D convolution; conv2(A, B, shape) or the separable conv2(u, v, A, shape). Shape 'full' (default), 'same', or 'valid'.", P("a"), P("b"), Opt("c"), Opt("shape"));
         Add("medfilt2", "Median filter over an [m, n] window (default 3×3); padding 'zeros' (default) or 'symmetric'.", P("image"), Opt("window"), Opt("padopt"));
@@ -635,6 +635,22 @@ public static class JgsBuiltinCatalog
         Add("colfilt", "Column-oriented block filtering: the function is handed every block at once as columns.", P("array"), P("block"), P("kind"), P("fun"));
         Add("bestblk", "A block size at most k (default 100) that divides the array as evenly as possible; [mb, nb] splits the pair.", P("size"), Opt("k"));
         Add("blockproc", "Applies a function to each distinct block, which arrives as a struct with data, blockSize, border, imageSize, and location. Options: 'BorderSize', 'TrimBorder', 'PadPartialBlocks', 'PadMethod'.", P("array"), P("block"), P("fun"), Opt("options"));
+        // M46 wave C — geometric transforms. affine2d, projective2d, rigid2d and imref2d are MATLAB
+        // classes; here they are structs whose Type field names the class, so class(tform) still
+        // answers 'affine2d' and tform.T reads the same way.
+        Add("affine2d", "An affine transform from a 3-by-3 T whose last column is [0; 0; 1]; no argument gives the identity.", Opt("t"));
+        Add("projective2d", "A projective transform (homography) from a 3-by-3 T; no argument gives the identity.", Opt("t"));
+        Add("rigid2d", "A rotation-and-translation transform, from a 3-by-3 T or from a 2-by-2 rotation and a [tx ty].", Opt("tOrRotation"), Opt("translation"));
+        Add("imref2d", "The world coordinates an image occupies: a size with world limits, or with the size of one pixel.", Opt("imageSize"), Opt("xLimitsOrExtent"), Opt("yLimitsOrExtent"));
+        Add("fitgeotrans", "Estimates a transform carrying moving points onto fixed ones: 'nonreflectivesimilarity', 'similarity', 'affine', or 'projective'.", P("movingPoints"), P("fixedPoints"), P("transformType"));
+        Add("transformPointsForward", "Maps points through a transform: an n-by-2 array of [x y] rows, or separate x and y.", P("tform"), P("pointsOrX"), Opt("y"));
+        Add("transformPointsInverse", "Maps points back through a transform: an n-by-2 array of [x y] rows, or separate x and y.", P("tform"), P("pointsOrX"), Opt("y"));
+        Add("affineOutputView", "The imref2d a warp should target: 'BoundsStyle' 'CenterOutput' (default), 'FollowOutput', or 'SameAsInput'.", P("imageSize"), P("tform"), Opt("options"));
+        Add("imwarp", "Applies a geometric transform to an image; [B, RB] also reports where the result sits. Options: 'OutputView', 'FillValues', 'SmoothEdges', and a method word.", P("image"), Opt("refOrTform"), Opt("tform"), Opt("options"));
+        Add("imtranslate", "Shifts an image by [tx ty] pixels; [B, RB] also reports the frame. Options: 'OutputView' ('same' or 'full'), 'FillValues', 'Method'.", P("image"), Opt("refOrShift"), Opt("shift"), Opt("options"));
+        Add("impyramid", "One level of a Gaussian pyramid: 'reduce' halves the image, 'expand' doubles it.", P("image"), P("direction"));
+        Add("checkerboard", "A checkerboard test pattern: squares of n pixels, p tile rows by q tile columns, the right half grey.", Opt("squareSize"), Opt("rows"), Opt("cols"));
+
         Add("strel", "Builds a structuring element matrix: 'square' (side) or 'disk' (radius).", P("shape"), Opt("size"));
         Add("imerode", "Morphological erosion (local minimum) over a structuring element (default 3×3 square).", P("image"), Opt("element"));
         Add("imdilate", "Morphological dilation (local maximum) over a structuring element (default 3×3 square).", P("image"), Opt("element"));

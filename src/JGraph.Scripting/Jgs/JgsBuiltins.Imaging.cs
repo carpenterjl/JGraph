@@ -569,38 +569,68 @@ internal static partial class JgsBuiltins
         // --- Geometry ------------------------------------------------------------------------
         define("imresize", (args, line, col) =>
         {
-            ArityRange("imresize", args, 2, 3, line, col);
-            ImageBuffer image = Img("imresize", args, 0, line, col);
-            (int newHeight, int newWidth) = ResizeTarget(image, args[1], line, col);
-            Geometry.Interpolation method = args.Count == 3
-                ? ParseInterpolation(Str("imresize", args, 2, line, col), line, col)
-                : Geometry.Interpolation.Bilinear;
-            return ImgOut(Geometry.Resize(image, newHeight, newWidth, method), image);
+            ArityRange("imresize", args, 1, 10, line, col);
+            ImgArgs parsed = ImResizeSpec.Parse(args, 2, line, col);
+            if (parsed.Positional.Count < 1)
+            {
+                throw new JgsRuntimeException(line, col, "imresize(A, scale) needs an image or matrix.");
+            }
+
+            using ImgArg source = ImgLike("imresize", parsed.Positional, 0, line, col);
+            (Geometry.Interpolation method, bool antialiasByDefault) = ResizeMethod(parsed, line, col);
+            bool antialias = parsed.Flag("Antialiasing", antialiasByDefault);
+
+            double[]? scale = parsed.Named("Scale") is { } s
+                ? NumericVector("imresize", s, line, col)
+                : null;
+            double[]? outputSize = parsed.Named("OutputSize") is { } o
+                ? NumericVector("imresize", o, line, col)
+                : null;
+            if (parsed.Positional.Count >= 2)
+            {
+                double[] target = NumericVector("imresize", parsed.Positional[1], line, col);
+                // MATLAB reads one number as a factor and two as the size to land on — never the
+                // other way round, so [0.5 0.5] is a half-pixel image and not a halving.
+                if (target.Length == 1)
+                {
+                    scale = target;
+                }
+                else
+                {
+                    outputSize = target;
+                }
+            }
+
+            (int newHeight, int newWidth) = outputSize is not null
+                ? SizeTarget(source.Buffer, outputSize, line, col)
+                : ScaleTarget(source.Buffer, scale, line, col);
+            return ImgLikeOut(
+                Geometry.Resize(source.Buffer, newHeight, newWidth, method, antialias), source);
         });
 
         define("imrotate", (args, line, col) =>
         {
             ArityRange("imrotate", args, 2, 4, line, col);
-            ImageBuffer image = Img("imrotate", args, 0, line, col);
-            double degrees = Num("imrotate", args, 1, line, col);
-            Geometry.Interpolation method = Geometry.Interpolation.Bilinear;
-            bool loose = true;
-            for (int i = 2; i < args.Count; i++)
+            ImgArgs parsed = ImRotateSpec.Parse(args, 2, line, col);
+            if (parsed.Positional.Count < 2)
             {
-                string option = Str("imrotate", args, i, line, col).ToLowerInvariant();
-                switch (option)
-                {
-                    case "nearest": method = Geometry.Interpolation.Nearest; break;
-                    case "bilinear": case "linear": method = Geometry.Interpolation.Bilinear; break;
-                    case "crop": loose = false; break;
-                    case "loose": loose = true; break;
-                    default: throw new JgsRuntimeException(line, col, $"imrotate: unknown option '{option}'.");
-                }
+                throw new JgsRuntimeException(line, col, "imrotate(A, angle) needs an image and an angle.");
             }
 
-            return ImgOut(Geometry.Rotate(image, degrees, method, loose), image);
+            using ImgArg source = ImgLike("imrotate", parsed.Positional, 0, line, col);
+            double degrees = NumericVector("imrotate", parsed.Positional[1], line, col) is [var only]
+                ? only
+                : throw new JgsRuntimeException(line, col, "imrotate: the angle is one number, in degrees.");
+
+            string word = parsed.OneOf("nearest", "nearest", "bilinear", "linear", "bicubic", "cubic");
+            string bbox = parsed.OneOf("loose", "crop", "loose");
+            return ImgLikeOut(
+                Geometry.Rotate(source.Buffer, degrees, ParseInterpolation(word, line, col), bbox == "loose"),
+                source);
         });
 
+        // The MATLAB dialect replaces this with the spatial-coordinate form in
+        // RegisterImagingMultiOutputForms; JGS keeps the 0-based pixel rectangle ADR 0028 settled on.
         define("imcrop", (args, line, col) =>
         {
             Arity("imcrop", args, 2, line, col);
@@ -618,6 +648,7 @@ internal static partial class JgsBuiltins
 
         DefineImagingWaveB(define);
         DefineFilteringBuiltins(define, dialect);
+        DefineGeometryBuiltins(define, dialect);
 
         // --- Filtering -----------------------------------------------------------------------
         define("imfilter", (args, line, col) =>
@@ -1346,34 +1377,111 @@ internal static partial class JgsBuiltins
         return (pair[0], pair[1]);
     }
 
-    private static (int Height, int Width) ResizeTarget(ImageBuffer image, JgsValue target, int line, int col)
-    {
-        if (target.Type == JgsType.Number)
-        {
-            double scale = target.AsNumber;
-            if (scale <= 0)
-            {
-                throw new JgsRuntimeException(line, col, "imresize scale must be positive.");
-            }
+    private static readonly ImgOptionSpec ImResizeSpec = new(
+        "imresize",
+        ["nearest", "box", "bilinear", "triangle", "linear", "bicubic", "cubic", "lanczos2", "lanczos3"],
+        ["Antialiasing", "Method", "OutputSize", "Scale"]);
 
-            return (Math.Max(1, (int)Math.Round(image.Height * scale)), Math.Max(1, (int)Math.Round(image.Width * scale)));
+    private static readonly ImgOptionSpec ImRotateSpec = new(
+        "imrotate",
+        ["nearest", "bilinear", "linear", "bicubic", "cubic", "crop", "loose"],
+        []);
+
+    /// <summary>
+    /// The output size for a resize given as a factor. MATLAB rounds up, so halving an odd dimension
+    /// keeps the extra row rather than dropping it.
+    /// </summary>
+    private static (int Height, int Width) ScaleTarget(ImageBuffer image, double[]? scale, int line, int col)
+    {
+        if (scale is null)
+        {
+            throw new JgsRuntimeException(line, col,
+                "imresize needs a scale, a [rows, cols] size, or an 'OutputSize'/'Scale' option.");
         }
 
-        double[] size = ToDoubles("imresize", target, line, col);
+        if (scale.Length is not (1 or 2))
+        {
+            throw new JgsRuntimeException(line, col, "imresize: the scale is one number or a [sy sx] pair.");
+        }
+
+        double rowScale = scale[0];
+        double colScale = scale[^1];
+        if (rowScale <= 0 || colScale <= 0)
+        {
+            throw new JgsRuntimeException(line, col, "imresize scale must be positive.");
+        }
+
+        return (
+            Math.Max(1, (int)Math.Ceiling((image.Height * rowScale) - 1e-9)),
+            Math.Max(1, (int)Math.Ceiling((image.Width * colScale) - 1e-9)));
+    }
+
+    /// <summary>
+    /// The output size for a resize given as a size. One entry may be NaN, which asks for whatever
+    /// keeps the aspect ratio — <c>imresize(I, [100 NaN])</c>.
+    /// </summary>
+    private static (int Height, int Width) SizeTarget(ImageBuffer image, double[] size, int line, int col)
+    {
         if (size.Length != 2)
         {
-            throw new JgsRuntimeException(line, col, "imresize size must be a scale or a [height, width] pair.");
+            throw new JgsRuntimeException(line, col, "imresize size must be a [rows, cols] pair.");
         }
 
-        return (Math.Max(1, (int)Math.Round(size[0])), Math.Max(1, (int)Math.Round(size[1])));
+        double rows = size[0];
+        double cols = size[1];
+        if (double.IsNaN(rows) && double.IsNaN(cols))
+        {
+            throw new JgsRuntimeException(line, col, "imresize: only one of the two sizes may be NaN.");
+        }
+
+        if (double.IsNaN(rows))
+        {
+            rows = Math.Round(cols * image.Height / image.Width);
+        }
+        else if (double.IsNaN(cols))
+        {
+            cols = Math.Round(rows * image.Width / image.Height);
+        }
+
+        if (rows < 1 || cols < 1)
+        {
+            throw new JgsRuntimeException(line, col, "imresize: the output size must be at least one pixel.");
+        }
+
+        return ((int)Math.Round(rows), (int)Math.Round(cols));
+    }
+
+    /// <summary>
+    /// The kernel <c>imresize</c> was asked for, and whether that kernel antialiases when shrinking.
+    /// 'nearest' is the one method MATLAB leaves unantialiased by default; 'box' is the same kernel
+    /// with antialiasing on, which is the whole difference between the two words.
+    /// </summary>
+    private static (Geometry.Interpolation Method, bool Antialias) ResizeMethod(ImgArgs parsed, int line, int col)
+    {
+        string flag = parsed.OneOf(
+            string.Empty,
+            "nearest", "box", "bilinear", "triangle", "linear", "bicubic", "cubic", "lanczos2", "lanczos3");
+        string? named = parsed.Text("Method");
+        if (flag.Length > 0 && named is not null)
+        {
+            throw new JgsRuntimeException(line, col,
+                $"imresize: the method was given twice, as '{flag}' and as 'Method', '{named}'.");
+        }
+
+        string word = flag.Length > 0 ? flag : named ?? "bicubic";
+        return (ParseInterpolation(word, line, col), !word.Equals("nearest", StringComparison.OrdinalIgnoreCase));
     }
 
     private static Geometry.Interpolation ParseInterpolation(string method, int line, int col) =>
         method.ToLowerInvariant() switch
         {
-            "nearest" => Geometry.Interpolation.Nearest,
-            "bilinear" or "linear" => Geometry.Interpolation.Bilinear,
-            _ => throw new JgsRuntimeException(line, col, $"unknown interpolation '{method}' (use 'nearest' or 'bilinear')."),
+            "nearest" or "box" => Geometry.Interpolation.Nearest,
+            "bilinear" or "linear" or "triangle" => Geometry.Interpolation.Bilinear,
+            "bicubic" or "cubic" => Geometry.Interpolation.Bicubic,
+            "lanczos2" => Geometry.Interpolation.Lanczos2,
+            "lanczos3" => Geometry.Interpolation.Lanczos3,
+            _ => throw new JgsRuntimeException(line, col,
+                $"unknown interpolation '{method}' (use 'nearest', 'bilinear', 'bicubic', 'lanczos2', or 'lanczos3')."),
         };
 
     /// <summary>Builds a shaped matrix value from a scalar field.</summary>

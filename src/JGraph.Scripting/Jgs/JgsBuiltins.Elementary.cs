@@ -399,7 +399,9 @@ internal static partial class JgsBuiltins
         JgsType.Bool => "logical",
         JgsType.String => "char",
         JgsType.Cell => "cell",
-        JgsType.Struct => "struct",
+        // A transform or spatial reference is a struct carrying the name of the MATLAB class it
+        // stands in for, so class(tform) answers 'affine2d' rather than the mechanism underneath.
+        JgsType.Struct => TaggedClassOf(value) ?? "struct",
         JgsType.Function => "function_handle",
         JgsType.Table => "table",
         JgsType.Image => dialect.IsMatlab ? value.AsImage.Class.MatlabName() : "image",

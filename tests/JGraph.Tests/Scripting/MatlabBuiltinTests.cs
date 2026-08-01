@@ -50,9 +50,14 @@ public class MatlabBuiltinTests : IDisposable
     }
 
     [Fact]
-    public void RepmatRepeats()
+    public void RepmatTilesInTwoDimensions()
     {
-        Assert.Contains("[1, 2, 1, 2]", RunAndRead("disp(repmat([1 2], 2))"), StringComparison.Ordinal);
+        // repmat(A, n) is n copies each way, so a 1-by-2 row becomes 2-by-4 — not the flat
+        // four-element row this used to produce.
+        Assert.Contains("[2, 4]", RunAndRead("disp(size(repmat([1 2], 2)))"), StringComparison.Ordinal);
+        Assert.Contains("[4, 2]", RunAndRead("disp(size(repmat([1 2; 3 4], 2, 1)))"), StringComparison.Ordinal);
+        Assert.Contains("[3, 2]", RunAndRead("disp(size(repmat(5, 3, 2)))"), StringComparison.Ordinal);
+        Assert.Contains("[1, 2, 1, 2]", RunAndRead("disp(repmat([1 2], 1, 2))"), StringComparison.Ordinal);
     }
 
     [Fact]
