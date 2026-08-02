@@ -701,6 +701,7 @@ internal static partial class JgsBuiltins
         DefineTransformBuiltins(define, dialect);
         DefineDesignBuiltins(define);
         DefineMetricBuiltins(define, dialect);
+        DefineVolumeBuiltins(define, dialect);
 
         // --- Filtering -----------------------------------------------------------------------
         define("imfilter", (args, line, col) =>
@@ -1002,6 +1003,11 @@ internal static partial class JgsBuiltins
         define("bwareaopen", (args, line, col) =>
         {
             ArityRange("bwareaopen", args, 2, 3, line, col);
+            if (IsVolumeArg(args[0]))
+            {
+                return AreaOpenVolume(args, line, col);
+            }
+
             ImageBuffer image = Img("bwareaopen", args, 0, line, col);
             int minArea = Count("bwareaopen", args, 1, line, col);
             int connectivity = args.Count == 3 ? Count("bwareaopen", args, 2, line, col) : 8;

@@ -1,6 +1,6 @@
 # MATLAB Image Processing Toolbox coverage
 
-**244 of 409 documented** Image Processing Toolbox names are implemented, as of M46 wave J.
+**266 of 409 documented** Image Processing Toolbox names are implemented, as of M46 wave K.
 
 ## Where this list comes from
 
@@ -32,57 +32,57 @@ counted here too.
 
 JGraph-only names — `mat2im`, `im2mat`, `imcentroid` — are in neither MATLAB nor these counts.
 
-## Implemented — 244
+## Implemented — 266
 `activecontour`, `adapthisteq`, `adaptthresh`, `affine2d`, `affineOutputView`, `applylut`
 `bestblk`, `bfscore`, `blockproc`, `boundarymask`, `bwarea`, `bwareafilt`
 `bwareaopen`, `bwboundaries`, `bwconncomp`, `bwconvhull`, `bwdist`, `bwdistgeodesic`
-`bweuler`, `bwferet`, `bwhitmiss`, `bwlabel`, `bwlookup`, `bwmorph`
-`bwperim`, `bwpropfilt`, `bwselect`, `bwskel`, `bwtraceboundary`, `bwulterode`
-`checkerboard`, `chromadapt`, `cmap2gray`, `col2im`, `colfilt`, `colorangle`
-`conndef`, `convmtx2`, `corr2`, `dct2`, `dctmtx`, `deconvblind`
-`deconvlucy`, `deconvreg`, `deconvwnr`, `decorrstretch`, `deltaE`, `demosaic`
-`dice`, `edge`, `edgetaper`, `entropy`, `entropyfilt`, `fft2`
-`fftshift`, `fibermetric`, `fitgeotrans`, `freqspace`, `freqz2`, `fsamp2`
-`fspecial`, `ftrans2`, `fwind1`, `fwind2`, `gabor`, `gradientweight`
-`gray2ind`, `graycomatrix`, `grayconnected`, `graycoprops`, `graydiffweight`, `graydist`
-`grayslice`, `graythresh`, `histeq`, `hough`, `houghlines`, `houghpeaks`
-`hsv2rgb`, `idct2`, `ifft2`, `ifftshift`, `illumgray`, `illumpca`
-`illumwhite`, `im2col`, `im2double`, `im2gray`, `im2int16`, `im2single`
-`im2uint16`, `im2uint8`, `imabsdiff`, `imadd`, `imadjust`, `imapplymatrix`
-`imapprox`, `imbilatfilt`, `imbinarize`, `imbothat`, `imboxfilt`, `imclearborder`
-`imclose`, `imcolordiff`, `imcomplement`, `imcontour`, `imcrop`, `imdiffuseest`
-`imdiffusefilt`, `imdilate`, `imdivide`, `imerode`, `imextendedmax`, `imextendedmin`
-`imfill`, `imfilter`, `imfindcircles`, `imfinfo`, `imflatfield`, `imfuse`
-`imgaborfilt`, `imgaussfilt`, `imgradient`, `imgradientxy`, `imguidedfilter`, `imhist`
-`imhistmatch`, `imhmax`, `imhmin`, `imimposemin`, `imlincomb`, `imlocalbrighten`
+`bweuler`, `bwferet`, `bwhitmiss`, `bwlabel`, `bwlabeln`, `bwlookup`
+`bwmorph`, `bwmorph3`, `bwperim`, `bwpropfilt`, `bwselect`, `bwselect3`
+`bwskel`, `bwtraceboundary`, `bwulterode`, `checkerboard`, `chromadapt`, `cmap2gray`
+`col2im`, `colfilt`, `colorangle`, `conndef`, `convmtx2`, `corr2`
+`dct2`, `dctmtx`, `deconvblind`, `deconvlucy`, `deconvreg`, `deconvwnr`
+`decorrstretch`, `deltaE`, `demosaic`, `dice`, `edge`, `edge3`
+`edgetaper`, `entropy`, `entropyfilt`, `fft2`, `fftshift`, `fibermetric`
+`fitgeotrans`, `freqspace`, `freqz2`, `fsamp2`, `fspecial`, `fspecial3`
+`ftrans2`, `fwind1`, `fwind2`, `gabor`, `gradientweight`, `gray2ind`
+`graycomatrix`, `grayconnected`, `graycoprops`, `graydiffweight`, `graydist`, `grayslice`
+`graythresh`, `histeq`, `hough`, `houghlines`, `houghpeaks`, `hsv2rgb`
+`idct2`, `ifft2`, `ifftshift`, `illumgray`, `illumpca`, `illumwhite`
+`im2col`, `im2double`, `im2gray`, `im2int16`, `im2single`, `im2uint16`
+`im2uint8`, `imabsdiff`, `imadd`, `imadjust`, `imadjustn`, `imapplymatrix`
+`imapprox`, `imbilatfilt`, `imbinarize`, `imbothat`, `imboxfilt`, `imboxfilt3`
+`imclearborder`, `imclose`, `imcolordiff`, `imcomplement`, `imcontour`, `imcrop`
+`imcrop3`, `imdiffuseest`, `imdiffusefilt`, `imdilate`, `imdivide`, `imerode`
+`imextendedmax`, `imextendedmin`, `imfill`, `imfilter`, `imfindcircles`, `imfinfo`
+`imflatfield`, `imfuse`, `imgaborfilt`, `imgaussfilt`, `imgaussfilt3`, `imgradient`
+`imgradient3`, `imgradientxy`, `imgradientxyz`, `imguidedfilter`, `imhist`, `imhistmatch`
+`imhistmatchn`, `imhmax`, `imhmin`, `imimposemin`, `imlincomb`, `imlocalbrighten`
 `immse`, `immultiply`, `imnlmfilt`, `imnoise`, `imopen`, `imoverlay`
 `impixel`, `improfile`, `impyramid`, `imquantize`, `imread`, `imreconstruct`
 `imreducehaze`, `imref2d`, `imregcorr`, `imregionalmax`, `imregionalmin`, `imresize`
-`imrotate`, `imsegfmm`, `imsegkmeans`, `imsharpen`, `imshow`, `imshowpair`
-`imsplit`, `imsubtract`, `imtophat`, `imtranslate`, `imwarp`, `imwrite`
-`ind2gray`, `ind2rgb`, `integralBoxFilter`, `integralImage`, `intlut`, `iptcheckconn`
-`iptgetpref`, `iptsetpref`, `iradon`, `jaccard`, `lab2double`, `lab2rgb`
-`lab2uint16`, `lab2uint8`, `lab2xyz`, `label2idx`, `label2rgb`, `labelmatrix`
-`labeloverlay`, `lin2rgb`, `makelut`, `mat2gray`, `maxhessiannorm`, `mean2`
-`medfilt2`, `modefilt`, `montage`, `multissim`, `multithresh`, `nlfilter`
-`normxcorr2`, `ntsc2rgb`, `offsetstrel`, `ordfilt2`, `otf2psf`, `otsuthresh`
-`padarray`, `phantom`, `poly2label`, `poly2mask`, `projective2d`, `psf2otf`
-`psnr`, `qtdecomp`, `qtgetblk`, `qtsetblk`, `radon`, `rangefilt`
-`reducepoly`, `regionfill`, `regionprops`, `rgb2gray`, `rgb2hsv`, `rgb2ind`
-`rgb2lab`, `rgb2lightness`, `rgb2lin`, `rgb2ntsc`, `rgb2xyz`, `rgb2ycbcr`
-`rigid2d`, `roicolor`, `roifilt2`, `roipoly`, `ssim`, `std2`
-`stdfilt`, `strel`, `stretchlim`, `superpixels`, `transformPointsForward`, `transformPointsInverse`
-`visboundaries`, `viscircles`, `watershed`, `whitepoint`, `wiener2`, `xyz2double`
-`xyz2lab`, `xyz2rgb`, `xyz2uint16`, `ycbcr2rgb`
+`imresize3`, `imrotate`, `imrotate3`, `imsegfmm`, `imsegkmeans`, `imsegkmeans3`
+`imsharpen`, `imshow`, `imshowpair`, `imsplit`, `imsubtract`, `imtophat`
+`imtranslate`, `imwarp`, `imwrite`, `ind2gray`, `ind2rgb`, `integralBoxFilter`
+`integralBoxFilter3`, `integralImage`, `integralImage3`, `intlut`, `iptcheckconn`, `iptgetpref`
+`iptsetpref`, `iradon`, `jaccard`, `lab2double`, `lab2rgb`, `lab2uint16`
+`lab2uint8`, `lab2xyz`, `label2idx`, `label2rgb`, `labelmatrix`, `labeloverlay`
+`lin2rgb`, `makelut`, `mat2gray`, `maxhessiannorm`, `mean2`, `medfilt2`
+`medfilt3`, `modefilt`, `montage`, `multissim`, `multissim3`, `multithresh`
+`nlfilter`, `normxcorr2`, `ntsc2rgb`, `obliqueslice`, `offsetstrel`, `ordfilt2`
+`otf2psf`, `otsuthresh`, `padarray`, `phantom`, `poly2label`, `poly2mask`
+`projective2d`, `psf2otf`, `psnr`, `qtdecomp`, `qtgetblk`, `qtsetblk`
+`radon`, `rangefilt`, `reducepoly`, `regionfill`, `regionprops`, `regionprops3`
+`rgb2gray`, `rgb2hsv`, `rgb2ind`, `rgb2lab`, `rgb2lightness`, `rgb2lin`
+`rgb2ntsc`, `rgb2xyz`, `rgb2ycbcr`, `rigid2d`, `roicolor`, `roifilt2`
+`roipoly`, `ssim`, `std2`, `stdfilt`, `strel`, `stretchlim`
+`superpixels`, `superpixels3`, `transformPointsForward`, `transformPointsInverse`, `visboundaries`, `viscircles`
+`watershed`, `whitepoint`, `wiener2`, `xyz2double`, `xyz2lab`, `xyz2rgb`
+`xyz2uint16`, `ycbcr2rgb`
 
-## Not implemented — 22
-Planned in M46 wave K.
-Nothing here is refused on principle; it is work not yet done.
+## Not implemented — 0
 
-`bwlabeln`, `bwmorph3`, `bwselect3`, `edge3`, `fspecial3`, `imadjustn`
-`imboxfilt3`, `imcrop3`, `imgaussfilt3`, `imgradient3`, `imgradientxyz`, `imhistmatchn`
-`imresize3`, `imrotate3`, `imsegkmeans3`, `integralBoxFilter3`, `integralImage3`, `medfilt3`
-`multissim3`, `obliqueslice`, `regionprops3`, `superpixels3`
+Every documented name outside the exclusions below is implemented. What remains is recorded in
+Excluded, with the reason.
 
 ## Excluded — 143 names and 8 families
 
@@ -490,6 +490,51 @@ By reason:
   these do not, because every preference here changes only how a picture is shown and a persisted
   copy would be one more thing to migrate. `iptgetpref` with no argument answers a struct of all
   seven, and a name that is not one of them is an error listing the ones that are.
+- **A volume is a plain N-D array, and the volume functions refuse an image value.** MATLAB has one
+  numeric array type and so draws no line here at all. JGraph has a distinct image value, and an
+  image and a volume are both three-dimensional arrays of numbers that mean opposite things by the
+  third dimension — colour against depth. Passing an image to `medfilt3` therefore errors rather than
+  filtering its channels as though they were slices. The one place the ambiguity remains is a plain
+  `h×w×3` array: `bwconncomp` and `bwareaopen` read that as a volume, because MATLAB documents them
+  as N-D and a mask has no colour to read, while `padarray` reads it as a volume only when the pad
+  size names all three dimensions. Under JGS a volume is built with `reshape(zeros(1, n), [h w d])`
+  rather than `zeros(h, w, d)`: ADR 0028 keeps the JGS constructors at their documented one- and
+  two-argument forms, where a single size is a length rather than a square, and the volume functions
+  did not seem like a reason to move that.
+- **`fspecial3('laplacian')`'s two shape parameters weight the edge and corner neighbours.** MATLAB
+  documents the arguments as controlling the operator's shape in `[0, 1]` but not the formula. Here
+  the six face neighbours weigh 1, the twelve edge neighbours γ₁, the eight corner neighbours γ₂, the
+  centre the negated total, and the kernel is divided by `1 + γ₁ + γ₂`. At the default of zero it is
+  the plain six-neighbour second difference, and it sums to zero at every setting.
+- **`fspecial3('ellipsoid')` grades its boundary by supersampling** — each voxel's weight is the
+  share of it inside the ellipsoid, estimated on a 3×3×3 subgrid — rather than by MATLAB's
+  unpublished antialiasing. The kernel sums to one either way; individual boundary weights will
+  differ in the third decimal.
+- **`imsegkmeans3` seeds deterministically.** The initial centres are spread evenly through the value
+  range instead of being drawn at random, so the same volume always segments the same way. MATLAB
+  runs `'NumAttempts'` random restarts and keeps the best; that option is accepted and ignored, since
+  with a fixed start there is nothing to restart.
+- **`obliqueslice` chooses the in-plane axes and states the rule.** A plane has no preferred direction
+  within itself, so the two axes of the returned slice are a choice MATLAB does not document. Here
+  they are built from whichever coordinate axis the normal leans on least, ordered so that
+  `(u, v, normal)` is right-handed — which makes a cut along the plane axis come back the same way up
+  as the plane itself, and leaves any other orientation rotated within its own frame by an amount
+  that depends on the normal.
+- **`regionprops3` returns a table with one column per number and omits what a column cannot hold.**
+  That is the same rule `regionprops` follows in JGS, applied in both dialects here because MATLAB's
+  own `regionprops3` returns a table too. `EigenVectors`, `VoxelList`, `VoxelIdxList`, `VoxelValues`
+  and `Image` are measured but not returned, and the convex-hull trio — `ConvexHull`, `ConvexImage`,
+  `ConvexVolume` and the `Solidity` derived from them — is absent outright, because a three
+  dimensional hull is a different algorithm from the two-dimensional one wave G built.
+- **`regionprops3`'s `SurfaceArea` counts outward-facing voxel faces**, so a 4×4×4 cube measures 96.
+  MATLAB estimates the area of a smoothed surface through the voxels instead, which reads lower for
+  anything curved. The count here is exact for what it measures and is comparable between regions of
+  the same shape; it is not comparable with MATLAB's number.
+- **`edge3`'s Sobel form takes `'alpha'` as a smoothing width.** MATLAB documents it as a smoothing
+  factor without giving units; here it is the standard deviation of a Gaussian applied before the
+  gradient, and zero means no smoothing at all.
+- **`multissim3` filters with a spherical Gaussian and downsamples by a 2×2×2 average**, the direct
+  reading of the two-dimensional method rather than a separately published three-dimensional one.
 
 ## Answers corrected while building this mirror
 

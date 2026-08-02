@@ -13,7 +13,7 @@ namespace JGraph.Imaging;
 /// multiscale form admits that the right scale depends on how far away you sit, and the overlap
 /// measures give up on intensity entirely and ask only whether the same pixels were chosen.
 /// </remarks>
-public static class QualityMetrics
+public static partial class QualityMetrics
 {
     /// <summary>The weights MS-SSIM was published with, one per scale, already summing to one.</summary>
     public static double[] DefaultScaleWeights => [0.0448, 0.2856, 0.3001, 0.2363, 0.1333];
@@ -67,7 +67,10 @@ public static class QualityMetrics
         return 10 * Math.Log10(peak * peak / error);
     }
 
-    /// <summary>The knobs on <see cref="StructuralSimilarity"/>, defaulted to MATLAB's own.</summary>
+    /// <summary>
+    /// The knobs on <see cref="StructuralSimilarity(double[,], double[,], SsimOptions)"/>, defaulted to
+    /// MATLAB's own.
+    /// </summary>
     /// <param name="DynamicRange">The span of the sample values, which sets the two stabilizing constants.</param>
     /// <param name="Radius">The standard deviation of the Gaussian window the local statistics are taken through.</param>
     /// <param name="Exponents">The weights on luminance, contrast and structure.</param>

@@ -851,6 +851,32 @@ public static class JgsBuiltinCatalog
         Add("iptgetpref", "An image-processing preference, or a struct of all of them when called bare.", Opt("name"));
         Add("iptsetpref", "Sets an image-processing preference for the rest of the session.", P("name"), P("value"));
 
+        // M46 wave K — volumes. A volume is a plain three-dimensional array, not an image with extra
+        // channels: its third dimension is depth, so every filter here reaches through the stack
+        // rather than treating each plane on its own, and connectivity becomes a real choice.
+        Add("medfilt3", "A 3-D median filter, 3x3x3 by default. 'symmetric' (the default), 'replicate' or 'zeros'.", P("volume"), Opt("size"), Opt("padding"));
+        Add("imgaussfilt3", "A separable 3-D Gaussian blur. 'FilterSize', 'Padding', 'FilterDomain'.", P("volume"), Opt("sigma"), Opt("options"));
+        Add("imboxfilt3", "A 3-D box mean over an odd window. 'NormalizationFactor', 'Padding'.", P("volume"), Opt("size"), Opt("options"));
+        Add("integralImage3", "The summed-area volume, one sample larger per axis, so any box sum costs eight lookups.", P("volume"));
+        Add("integralBoxFilter3", "A box filter read off an integral volume. 'NormalizationFactor'.", P("integral"), Opt("size"), Opt("options"));
+        Add("fspecial3", "A 3-D filter kernel: 'average', 'ellipsoid', 'gaussian', 'laplacian', 'log', 'prewitt' or 'sobel'.", P("type"), Opt("size"), Opt("parameter"));
+        Add("imadjustn", "Remaps a volume's values, defaulting to its own 1% stretch limits.", P("volume"), Opt("inRange"), Opt("outRange"), Opt("gamma"));
+        Add("imhistmatchn", "Remaps a volume so its histogram matches a reference volume's.", P("volume"), P("reference"), Opt("bins"));
+        Add("edge3", "Finds surfaces in a volume: 'approxcanny' or 'Sobel', with a threshold or a [low high] pair.", P("volume"), P("method"), P("threshold"), Opt("sigma"));
+        Add("imgradientxyz", "The three directional gradients: [Gx, Gy, Gz]. 'sobel', 'prewitt', 'central' or 'intermediate'.", P("volume"), Opt("method"));
+        Add("imgradient3", "Gradient magnitude with azimuth and elevation in degrees: [Gmag, Gaz, Gel].", P("volume"), Opt("method"));
+        Add("imresize3", "Resizes a volume by a factor or to a size. 'nearest', 'linear' (the default), 'cubic'; 'Antialiasing'.", P("volume"), P("scaleOrSize"), Opt("options"));
+        Add("imrotate3", "Rotates a volume about an axis through its centre. 'crop' or 'loose'; 'FillValues'.", P("volume"), P("degrees"), P("axis"), Opt("options"));
+        Add("imcrop3", "Cuts a box out of a volume, given as [x y z width height depth].", P("volume"), P("cuboid"));
+        Add("obliqueslice", "The slice a plane cuts through a volume: [B, x, y, z]. 'OutputSize', 'Method', 'FillValues'.", P("volume"), P("point"), P("normal"), Opt("options"));
+        Add("bwlabeln", "Labels the connected regions of a binary volume: [L, n]. Connectivity 6, 18 or 26.", P("mask"), Opt("connectivity"));
+        Add("bwmorph3", "A 3-D neighbourhood operation: 'branchpoints', 'clean', 'endpoints', 'fill', 'majority' or 'remove'.", P("mask"), P("operation"));
+        Add("bwselect3", "The regions of a volume containing the given seed voxels.", P("mask"), P("columns"), P("rows"), P("planes"), Opt("connectivity"));
+        Add("regionprops3", "Measures the regions of a volume as a table: 'Volume', 'Centroid', 'PrincipalAxisLength', 'all'.", P("volume"), Opt("intensity"), Opt("properties"));
+        Add("imsegkmeans3", "Clusters a volume's values with k-means: [L, centers]. 'MaxIterations'.", P("volume"), P("clusters"), Opt("options"));
+        Add("superpixels3", "SLIC supervoxels: [L, count]. 'Compactness', 'NumIterations'.", P("volume"), P("count"), Opt("options"));
+        Add("multissim3", "Multiscale structural similarity between two volumes: [score, maps]. 'NumScales', 'ScaleWeights', 'Sigma'.", P("volume"), P("reference"), Opt("options"));
+
         // --- Reductions and inspection ----------------------------------------------------------
         Add("length", "The number of elements in an array, or characters in a string.", P("value"));
         Add("sum", "The sum of a numeric array, or of every sample in an image.", P("array"));

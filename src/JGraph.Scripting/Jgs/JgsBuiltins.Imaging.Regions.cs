@@ -69,6 +69,14 @@ internal static partial class JgsBuiltins
         define("bwconncomp", (args, line, col) =>
         {
             ArityRange("bwconncomp", args, 1, 2, line, col);
+
+            // MATLAB documents bwconncomp as N-D, so a three-dimensional array is a volume here even
+            // though wave A reads the same shape as colour planes: a mask has no colour to read.
+            if (IsVolumeArg(args[0]))
+            {
+                return ComponentsOfVolume(args, line, col, dialect);
+            }
+
             using ImgArg source = ImgLike("bwconncomp", args, 0, line, col);
             int connectivity = args.Count == 2 ? Connectivity("bwconncomp", args, 1, line, col) : 8;
             (int[,] labels, int count) = Regions.Label(source.Buffer, connectivity);

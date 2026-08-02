@@ -54,9 +54,6 @@ internal static partial class JgsBuiltins
                 throw new JgsRuntimeException(line, col, "padarray(A, [r c]) needs the array and a pad size.");
             }
 
-            using ImgArg source = ImgLike("padarray", parsed.Positional, 0, line, col);
-            (int padRows, int padCols) = WindowOf("padarray", parsed.Positional[1], line, col, allowZero: true);
-
             Filters.Boundary boundary = Filters.Boundary.Zero;
             if (parsed.Has("circular")) { boundary = Filters.Boundary.Circular; }
             else if (parsed.Has("replicate")) { boundary = Filters.Boundary.Replicate; }
@@ -68,6 +65,16 @@ internal static partial class JgsBuiltins
                 parsed.Has("post") ? Neighborhoods.PadDirection.Post :
                 Neighborhoods.PadDirection.Both;
 
+            // A three-element pad size is what says the caller means all three dimensions. A 3-D array
+            // with a two-element size is padded in its first two dimensions and left alone in the
+            // third, which is both MATLAB's rule and the one that keeps padding an RGB array working.
+            if (NumericVector("padarray", parsed.Positional[1], line, col) is { Length: 3 } spread)
+            {
+                return PadVolume(parsed.Positional[0], spread, boundary, padValue, direction, line, col);
+            }
+
+            using ImgArg source = ImgLike("padarray", parsed.Positional, 0, line, col);
+            (int padRows, int padCols) = WindowOf("padarray", parsed.Positional[1], line, col, allowZero: true);
             return ImgLikeOut(
                 Neighborhoods.Pad(source.Buffer, padRows, padCols, boundary, padValue, direction), source);
         });

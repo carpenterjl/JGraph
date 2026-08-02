@@ -164,6 +164,18 @@ internal static partial class JgsBuiltins
         Wrap("graycomatrix", (args, wanted, line, col) => ComatrixOutputs(args, wanted, line, col, dialect));
         Wrap("improfile", (args, wanted, line, col) => ImProfileOutputs(args, wanted, line, col, dialect));
 
+        // M46 wave K. A volume's extra outputs are the same kinds of thing a picture's are: how many
+        // regions a labelling found, where a slice was cut from, the components a magnitude was built
+        // out of. Nothing here is volume-specific except that every array involved has three sizes.
+        Wrap("bwlabeln", LabelNOutputs);
+        Wrap("imgradientxyz", GradientXyzOutputs);
+        Wrap("imgradient3", Gradient3Outputs);
+        Wrap("imsegkmeans3", KMeans3Outputs);
+        Wrap("superpixels3", Superpixels3Outputs);
+        Wrap("multissim3", MultiSsim3Outputs);
+        Wrap("obliqueslice",
+            (args, wanted, line, col) => ObliqueSliceOutputs(args, wanted, line, col, dialect));
+
         // [counts, binLocations] = imhist(I). The locations are quoted in the image's own class, so a
         // uint8 picture's bins are centred on 0…255 while a double one's span [0, 1].
         Wrap("imhist", (args, wanted, line, col) =>
