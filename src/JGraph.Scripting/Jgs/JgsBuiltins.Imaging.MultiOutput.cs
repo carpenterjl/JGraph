@@ -153,6 +153,17 @@ internal static partial class JgsBuiltins
         Wrap("deconvblind", DeconvBlindOutputs);
         Wrap("imgaborfilt", GaborFiltOutputs);
 
+        // M46 wave J. A metric's extra outputs are the working it showed on the way to the number:
+        // the per-pixel map a similarity score is the mean of, the precision and recall an F1 balances,
+        // the quantized picture a co-occurrence table was counted on. psnr's second output is the same
+        // error against a different reference level, and improfile's are where each sample was taken.
+        Wrap("psnr", (args, wanted, line, col) => PsnrOutputs(args, wanted, line, col, dialect));
+        Wrap("ssim", (args, wanted, line, col) => SsimOutputs(args, wanted, line, col, dialect));
+        Wrap("multissim", (args, wanted, line, col) => MultiSsimOutputs(args, wanted, line, col, dialect));
+        Wrap("bfscore", (args, wanted, line, col) => BfScoreOutputs(args, wanted, line, col, dialect));
+        Wrap("graycomatrix", (args, wanted, line, col) => ComatrixOutputs(args, wanted, line, col, dialect));
+        Wrap("improfile", (args, wanted, line, col) => ImProfileOutputs(args, wanted, line, col, dialect));
+
         // [counts, binLocations] = imhist(I). The locations are quoted in the image's own class, so a
         // uint8 picture's bins are centred on 0…255 while a double one's span [0, 1].
         Wrap("imhist", (args, wanted, line, col) =>

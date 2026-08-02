@@ -1,6 +1,6 @@
 # MATLAB Image Processing Toolbox coverage
 
-**223 of 409 documented** Image Processing Toolbox names are implemented, as of M46 wave I.
+**244 of 409 documented** Image Processing Toolbox names are implemented, as of M46 wave J.
 
 ## Where this list comes from
 
@@ -32,58 +32,57 @@ counted here too.
 
 JGraph-only names — `mat2im`, `im2mat`, `imcentroid` — are in neither MATLAB nor these counts.
 
-## Implemented — 223
+## Implemented — 244
 `activecontour`, `adapthisteq`, `adaptthresh`, `affine2d`, `affineOutputView`, `applylut`
-`bestblk`, `blockproc`, `boundarymask`, `bwarea`, `bwareafilt`, `bwareaopen`
-`bwboundaries`, `bwconncomp`, `bwconvhull`, `bwdist`, `bwdistgeodesic`, `bweuler`
-`bwferet`, `bwhitmiss`, `bwlabel`, `bwlookup`, `bwmorph`, `bwperim`
-`bwpropfilt`, `bwselect`, `bwskel`, `bwtraceboundary`, `bwulterode`, `checkerboard`
-`chromadapt`, `cmap2gray`, `col2im`, `colfilt`, `colorangle`, `conndef`
-`convmtx2`, `dct2`, `dctmtx`, `deconvblind`, `deconvlucy`, `deconvreg`
-`deconvwnr`, `decorrstretch`, `deltaE`, `demosaic`, `edge`, `edgetaper`
-`entropyfilt`, `fft2`, `fftshift`, `fibermetric`, `fitgeotrans`, `freqspace`
-`freqz2`, `fsamp2`, `fspecial`, `ftrans2`, `fwind1`, `fwind2`
-`gabor`, `gradientweight`, `gray2ind`, `grayconnected`, `graydiffweight`, `graydist`
+`bestblk`, `bfscore`, `blockproc`, `boundarymask`, `bwarea`, `bwareafilt`
+`bwareaopen`, `bwboundaries`, `bwconncomp`, `bwconvhull`, `bwdist`, `bwdistgeodesic`
+`bweuler`, `bwferet`, `bwhitmiss`, `bwlabel`, `bwlookup`, `bwmorph`
+`bwperim`, `bwpropfilt`, `bwselect`, `bwskel`, `bwtraceboundary`, `bwulterode`
+`checkerboard`, `chromadapt`, `cmap2gray`, `col2im`, `colfilt`, `colorangle`
+`conndef`, `convmtx2`, `corr2`, `dct2`, `dctmtx`, `deconvblind`
+`deconvlucy`, `deconvreg`, `deconvwnr`, `decorrstretch`, `deltaE`, `demosaic`
+`dice`, `edge`, `edgetaper`, `entropy`, `entropyfilt`, `fft2`
+`fftshift`, `fibermetric`, `fitgeotrans`, `freqspace`, `freqz2`, `fsamp2`
+`fspecial`, `ftrans2`, `fwind1`, `fwind2`, `gabor`, `gradientweight`
+`gray2ind`, `graycomatrix`, `grayconnected`, `graycoprops`, `graydiffweight`, `graydist`
 `grayslice`, `graythresh`, `histeq`, `hough`, `houghlines`, `houghpeaks`
 `hsv2rgb`, `idct2`, `ifft2`, `ifftshift`, `illumgray`, `illumpca`
 `illumwhite`, `im2col`, `im2double`, `im2gray`, `im2int16`, `im2single`
 `im2uint16`, `im2uint8`, `imabsdiff`, `imadd`, `imadjust`, `imapplymatrix`
 `imapprox`, `imbilatfilt`, `imbinarize`, `imbothat`, `imboxfilt`, `imclearborder`
-`imclose`, `imcolordiff`, `imcomplement`, `imcrop`, `imdiffuseest`, `imdiffusefilt`
-`imdilate`, `imdivide`, `imerode`, `imextendedmax`, `imextendedmin`, `imfill`
-`imfilter`, `imfindcircles`, `imfinfo`, `imflatfield`, `imgaborfilt`, `imgaussfilt`
-`imgradient`, `imgradientxy`, `imguidedfilter`, `imhist`, `imhistmatch`, `imhmax`
-`imhmin`, `imimposemin`, `imlincomb`, `imlocalbrighten`, `immultiply`, `imnlmfilt`
-`imnoise`, `imopen`, `imoverlay`, `impyramid`, `imquantize`, `imread`
-`imreconstruct`, `imreducehaze`, `imref2d`, `imregcorr`, `imregionalmax`, `imregionalmin`
-`imresize`, `imrotate`, `imsegfmm`, `imsegkmeans`, `imsharpen`, `imshow`
+`imclose`, `imcolordiff`, `imcomplement`, `imcontour`, `imcrop`, `imdiffuseest`
+`imdiffusefilt`, `imdilate`, `imdivide`, `imerode`, `imextendedmax`, `imextendedmin`
+`imfill`, `imfilter`, `imfindcircles`, `imfinfo`, `imflatfield`, `imfuse`
+`imgaborfilt`, `imgaussfilt`, `imgradient`, `imgradientxy`, `imguidedfilter`, `imhist`
+`imhistmatch`, `imhmax`, `imhmin`, `imimposemin`, `imlincomb`, `imlocalbrighten`
+`immse`, `immultiply`, `imnlmfilt`, `imnoise`, `imopen`, `imoverlay`
+`impixel`, `improfile`, `impyramid`, `imquantize`, `imread`, `imreconstruct`
+`imreducehaze`, `imref2d`, `imregcorr`, `imregionalmax`, `imregionalmin`, `imresize`
+`imrotate`, `imsegfmm`, `imsegkmeans`, `imsharpen`, `imshow`, `imshowpair`
 `imsplit`, `imsubtract`, `imtophat`, `imtranslate`, `imwarp`, `imwrite`
 `ind2gray`, `ind2rgb`, `integralBoxFilter`, `integralImage`, `intlut`, `iptcheckconn`
-`iradon`, `lab2double`, `lab2rgb`, `lab2uint16`, `lab2uint8`, `lab2xyz`
-`label2idx`, `label2rgb`, `labelmatrix`, `labeloverlay`, `lin2rgb`, `makelut`
-`mat2gray`, `maxhessiannorm`, `medfilt2`, `modefilt`, `multithresh`, `nlfilter`
+`iptgetpref`, `iptsetpref`, `iradon`, `jaccard`, `lab2double`, `lab2rgb`
+`lab2uint16`, `lab2uint8`, `lab2xyz`, `label2idx`, `label2rgb`, `labelmatrix`
+`labeloverlay`, `lin2rgb`, `makelut`, `mat2gray`, `maxhessiannorm`, `mean2`
+`medfilt2`, `modefilt`, `montage`, `multissim`, `multithresh`, `nlfilter`
 `normxcorr2`, `ntsc2rgb`, `offsetstrel`, `ordfilt2`, `otf2psf`, `otsuthresh`
 `padarray`, `phantom`, `poly2label`, `poly2mask`, `projective2d`, `psf2otf`
-`qtdecomp`, `qtgetblk`, `qtsetblk`, `radon`, `rangefilt`, `reducepoly`
-`regionfill`, `regionprops`, `rgb2gray`, `rgb2hsv`, `rgb2ind`, `rgb2lab`
-`rgb2lightness`, `rgb2lin`, `rgb2ntsc`, `rgb2xyz`, `rgb2ycbcr`, `rigid2d`
-`roicolor`, `roifilt2`, `roipoly`, `stdfilt`, `strel`, `stretchlim`
-`superpixels`, `transformPointsForward`, `transformPointsInverse`, `visboundaries`, `viscircles`, `watershed`
-`whitepoint`, `wiener2`, `xyz2double`, `xyz2lab`, `xyz2rgb`, `xyz2uint16`
-`ycbcr2rgb`
+`psnr`, `qtdecomp`, `qtgetblk`, `qtsetblk`, `radon`, `rangefilt`
+`reducepoly`, `regionfill`, `regionprops`, `rgb2gray`, `rgb2hsv`, `rgb2ind`
+`rgb2lab`, `rgb2lightness`, `rgb2lin`, `rgb2ntsc`, `rgb2xyz`, `rgb2ycbcr`
+`rigid2d`, `roicolor`, `roifilt2`, `roipoly`, `ssim`, `std2`
+`stdfilt`, `strel`, `stretchlim`, `superpixels`, `transformPointsForward`, `transformPointsInverse`
+`visboundaries`, `viscircles`, `watershed`, `whitepoint`, `wiener2`, `xyz2double`
+`xyz2lab`, `xyz2rgb`, `xyz2uint16`, `ycbcr2rgb`
 
-## Not implemented — 43
-Planned across M46 waves J–K.
+## Not implemented — 22
+Planned in M46 wave K.
 Nothing here is refused on principle; it is work not yet done.
 
-`bfscore`, `bwlabeln`, `bwmorph3`, `bwselect3`, `corr2`, `dice`
-`edge3`, `entropy`, `fspecial3`, `graycomatrix`, `graycoprops`, `imadjustn`
-`imboxfilt3`, `imcontour`, `imcrop3`, `imfuse`, `imgaussfilt3`, `imgradient3`
-`imgradientxyz`, `imhistmatchn`, `immse`, `impixel`, `improfile`, `imresize3`
-`imrotate3`, `imsegkmeans3`, `imshowpair`, `integralBoxFilter3`, `integralImage3`, `iptgetpref`
-`iptsetpref`, `jaccard`, `mean2`, `medfilt3`, `montage`, `multissim`
-`multissim3`, `obliqueslice`, `psnr`, `regionprops3`, `ssim`, `std2`
-`superpixels3`
+`bwlabeln`, `bwmorph3`, `bwselect3`, `edge3`, `fspecial3`, `imadjustn`
+`imboxfilt3`, `imcrop3`, `imgaussfilt3`, `imgradient3`, `imgradientxyz`, `imhistmatchn`
+`imresize3`, `imrotate3`, `imsegkmeans3`, `integralBoxFilter3`, `integralImage3`, `medfilt3`
+`multissim3`, `obliqueslice`, `regionprops3`, `superpixels3`
 
 ## Excluded — 143 names and 8 families
 
@@ -449,6 +448,48 @@ By reason:
   magnitude is not comparable between the two. The filter is applied by convolution with the border
   extended by repetition, and `imgaborfilt(I, wavelength, orientation)` takes one of each — a bank
   goes through `gabor`, which is where MATLAB puts it too.
+- **The metrics are quoted in the units the dialect quotes.** `immse` on a pair of `uint8` pictures
+  answers in grey levels squared, as MATLAB's does; the same pair converted to double answers in the
+  same units divided by 255², which is the same measurement in different units and not a different
+  answer. `psnr` divides by the peak the class can hold, so it lands on the same decibel figure
+  either way, which is the property that makes it worth quoting at all. Under the JGS dialect
+  everything stays in the documented `[0, 1]` (ADR 0028), so a JGS script's `immse` reads as though
+  the picture were double — which it is, there.
+- **`ssim` and `multissim` score a colour picture channel by channel and average.** MATLAB filters
+  the three planes as one volume, so its window reaches across channels; here each channel is scored
+  on its own. The two agree exactly for a grey picture and differ in the third decimal for a colour
+  one. `ssim`'s second output is the map for a grey picture and an `h×w×3` stack for a colour one.
+- **`multissim` downsamples with a two-by-two average**, which is what the multiscale method was
+  published with, rather than with `imresize`. The point of the low-pass is to stop the next level
+  seeing aliases of detail it is meant to have left behind, not to look good, and MathWorks does not
+  document which filter it uses. The default scale weights are the published ones.
+- **`bfscore`'s outline is the set of region pixels that touch something outside the region**, with
+  the picture's own border counting as outside. MATLAB does not document its boundary extraction, and
+  the tolerance — three quarters of one percent of the diagonal, as MATLAB documents — is what makes
+  the choice immaterial for anything but an exact match.
+- **`dice` and `jaccard` read a pair of maps as masks when nothing in either exceeds one**, and as
+  label maps otherwise, answering once per label. A label neither map used scores one, since two
+  empty regions agree perfectly and any other reading would drag the average down for a label that
+  was never in question.
+- **`graycomatrix`'s default grey limits depend on the class**, as MATLAB's do: an integer picture is
+  quantized against everything its class can hold, so two exposures of one scene give comparable
+  tables, and a floating-point one falls back to its own extremes. `'GrayLimits', []` asks for the
+  picture's own range explicitly.
+- **`improfile` always returns the profile and never draws it.** MATLAB plots when it is called with
+  no output arguments; a builtin here cannot see that it was called for its effect rather than its
+  value, so the drawing form is absent. `imcontour`, `montage` and `imshowpair` are display verbs and
+  return nothing, which is the same distinction drawn the other way.
+- **`montage` takes a cell of pictures, a four-dimensional stack, or a three-dimensional one.** The
+  third of those is not a MATLAB form — MATLAB wants `h×w×1×n` — but `h×w×n` is what a script that
+  built a stack of grey pictures actually has, and refusing it would be pedantry. Filenames are not
+  accepted; read the pictures first.
+- **`imfuse` and `imshowpair` pad to the larger of two different sizes** rather than taking a pair of
+  spatial references, and `imfuse` returns the picture alone. MATLAB's second output is an `imref2d`
+  for the fused frame, which is only meaningful once the two pictures carry world coordinates.
+- **The `ipt*` preferences last for the session, not for the user.** MATLAB's survive a restart;
+  these do not, because every preference here changes only how a picture is shown and a persisted
+  copy would be one more thing to migrate. `iptgetpref` with no argument answers a struct of all
+  seven, and a name that is not one of them is an error listing the ones that are.
 
 ## Answers corrected while building this mirror
 

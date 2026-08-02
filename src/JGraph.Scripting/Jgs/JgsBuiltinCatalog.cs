@@ -826,6 +826,31 @@ public static class JgsBuiltinCatalog
         Add("gabor", "A Gabor filter, or a bank of them: a sinusoid of one wavelength and direction seen through a Gaussian window. 'SpatialFrequencyBandwidth', 'SpatialAspectRatio'.", P("wavelength"), P("orientation"), Opt("options"));
         Add("imgaborfilt", "Applies a Gabor filter to a picture: [magnitude, phase]. Takes a wavelength and a direction, or a bank built with gabor.", P("image"), P("wavelengthOrBank"), Opt("orientation"), Opt("options"));
 
+        // M46 wave J — measurement, texture and composites. Everything here answers a question about
+        // a picture rather than producing another one: how much it says, how close it is to another,
+        // how its grey levels are arranged, and what two of them look like in one frame.
+        Add("mean2", "The mean of every sample in a picture.", P("image"));
+        Add("std2", "The standard deviation of every sample in a picture, normalized by n-1.", P("image"));
+        Add("corr2", "The correlation coefficient between two same-size pictures; NaN when either is flat.", P("a"), P("b"));
+        Add("entropy", "The Shannon entropy of a picture's histogram, in bits: 256 levels, or 2 for a mask.", P("image"));
+        Add("immse", "The mean squared difference between two same-size pictures.", P("a"), P("b"));
+        Add("psnr", "Peak signal-to-noise ratio in decibels: [peaksnr, snr]. The peak defaults to the largest value the class holds.", P("image"), P("reference"), Opt("peak"));
+        Add("ssim", "Structural similarity: [score, map]. 'DynamicRange', 'Radius', 'Exponents', 'RegularizationConstants'.", P("image"), P("reference"), Opt("options"));
+        Add("multissim", "Structural similarity down a pyramid: [score, maps]. 'NumScales', 'ScaleWeights', 'Sigma', 'DynamicRange'.", P("image"), P("reference"), Opt("options"));
+        Add("dice", "The Dice overlap of two masks, or one value per label for two label maps.", P("a"), P("b"));
+        Add("jaccard", "The Jaccard overlap of two masks, or one value per label for two label maps.", P("a"), P("b"));
+        Add("bfscore", "Boundary F1 score against a truth: [score, precision, recall]. The tolerance defaults to 0.75% of the diagonal.", P("prediction"), P("truth"), Opt("threshold"));
+        Add("graycomatrix", "Grey-level co-occurrence matrices: [glcms, scaled]. 'NumLevels', 'GrayLimits', 'Offset', 'Symmetric'.", P("image"), Opt("options"));
+        Add("graycoprops", "Contrast, Correlation, Energy and Homogeneity read off a co-occurrence matrix, as a struct.", P("glcm"), Opt("properties"));
+        Add("impixel", "The colour at each named point, as an n-by-3 list; a grey picture answers three times over.", P("image"), P("columns"), P("rows"));
+        Add("improfile", "The samples along a path: [cx, cy, profile]. 'nearest' (the default), 'bilinear' or 'bicubic'.", P("image"), P("x"), P("y"), Opt("n"), Opt("method"));
+        Add("imcontour", "Draws a picture's level lines on picture axes: square pixels, row one at the top.", P("image"), Opt("levelsOrCount"));
+        Add("montage", "Lays pictures out in a grid and shows them. 'Size', 'BorderSize', 'BackgroundColor', 'DisplayRange', 'ThumbnailSize'.", P("images"), Opt("options"));
+        Add("imfuse", "Combines two pictures into one: 'falsecolor' (the default), 'blend', 'diff' or 'montage'. 'Scaling', 'ColorChannels'.", P("a"), P("b"), Opt("method"), Opt("options"));
+        Add("imshowpair", "Shows two pictures combined, with the same methods and options as imfuse.", P("a"), P("b"), Opt("method"), Opt("options"));
+        Add("iptgetpref", "An image-processing preference, or a struct of all of them when called bare.", Opt("name"));
+        Add("iptsetpref", "Sets an image-processing preference for the rest of the session.", P("name"), P("value"));
+
         // --- Reductions and inspection ----------------------------------------------------------
         Add("length", "The number of elements in an array, or characters in a string.", P("value"));
         Add("sum", "The sum of a numeric array, or of every sample in an image.", P("array"));
