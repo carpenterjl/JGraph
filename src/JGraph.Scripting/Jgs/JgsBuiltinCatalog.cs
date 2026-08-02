@@ -790,6 +790,21 @@ public static class JgsBuiltinCatalog
         Add("regionprops", "Per-region Area/Centroid/BoundingBox of a label or binary image, as a table (0-based pixel coordinates); an intensity image adds MeanIntensity and WeightedCentroid.", P("labels"), Opt("intensity"));
         Add("imcentroid", "The intensity-weighted centre [x, y] of a whole image (0-based pixel coordinates), optionally weighing only what a mask keeps.", P("image"), Opt("mask"));
 
+        // M46 wave H — transforms and correlation. Each of these answers with plain numbers rather
+        // than a picture: coefficients, projections and correlation surfaces are measurements about
+        // an image, not images.
+        Add("dct2", "The two-dimensional discrete cosine transform, padded or cropped to an optional size.", P("a"), Opt("rowsOrSize"), Opt("cols"));
+        Add("idct2", "The inverse two-dimensional discrete cosine transform.", P("b"), Opt("rowsOrSize"), Opt("cols"));
+        Add("dctmtx", "The n-by-n orthonormal DCT matrix, so that dct2(A) is D*A*D'.", P("n"));
+        Add("radon", "Projects an image at each angle: [sinogram, xp]; the angles default to 0:179.", P("image"), Opt("theta"));
+        Add("iradon", "Filtered backprojection: [image, filterResponse]. Words choose the interpolation ('nearest', 'linear') and the filter ('Ram-Lak', 'Shepp-Logan', 'Cosine', 'Hamming', 'Hann', 'none'); a number at most 1 is the frequency scaling and a larger one the output size.", P("sinogram"), P("theta"), Opt("options"));
+        Add("phantom", "The Shepp-Logan head phantom: [picture, ellipses]. Takes a name ('Shepp-Logan', 'Modified Shepp-Logan'), or your own six-column ellipse table.", Opt("definition"), Opt("n"));
+        Add("qtdecomp", "Quadtree decomposition as a sparse map of block sizes; splits while a block's spread exceeds the threshold, or while your own test says so.", P("image"), Opt("thresholdOrFun"), Opt("sizeLimits"));
+        Add("qtgetblk", "The blocks of a given size a quadtree found: [values, r, c], the values stacked as pages.", P("image"), P("sizes"), P("dim"));
+        Add("qtsetblk", "Writes a stack of blocks back into the picture at the corners of the given size.", P("image"), P("sizes"), P("dim"), P("values"));
+        Add("normxcorr2", "Normalized cross-correlation of a template against a picture; the peak is the match, and its value is bounded by one.", P("template"), P("image"));
+        Add("imregcorr", "Registers two pictures by phase correlation: [tform, peak]. 'translation', 'rigid' or 'similarity' (the default).", P("moving"), P("fixed"), Opt("options"));
+
         // --- Reductions and inspection ----------------------------------------------------------
         Add("length", "The number of elements in an array, or characters in a string.", P("value"));
         Add("sum", "The sum of a numeric array, or of every sample in an image.", P("array"));

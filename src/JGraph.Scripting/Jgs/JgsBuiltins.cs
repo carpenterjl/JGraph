@@ -3769,6 +3769,14 @@ internal static partial class JgsBuiltins
             return planes.Re.AsSpan().ToArray();
         }
 
+        if (array.Type != JgsType.Array)
+        {
+            // Without this a scalar reaches AsArray, which is null for anything else, and the caller
+            // sees a NullReferenceException instead of being told what it actually passed.
+            throw new JgsRuntimeException(line, col,
+                $"{name} expects an array of numbers, but got a {array.TypeName}.");
+        }
+
         return ToDoubles(name, array.AsArray, line, col);
     }
 

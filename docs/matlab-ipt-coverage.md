@@ -1,6 +1,6 @@
 # MATLAB Image Processing Toolbox coverage
 
-**196 of 409 documented** Image Processing Toolbox names are implemented, as of M46 wave G.
+**207 of 409 documented** Image Processing Toolbox names are implemented, as of M46 wave H.
 
 ## Where this list comes from
 
@@ -32,57 +32,57 @@ counted here too.
 
 JGraph-only names — `mat2im`, `im2mat`, `imcentroid` — are in neither MATLAB nor these counts.
 
-## Implemented — 196
+## Implemented — 207
 `activecontour`, `adapthisteq`, `adaptthresh`, `affine2d`, `affineOutputView`, `applylut`
 `bestblk`, `blockproc`, `boundarymask`, `bwarea`, `bwareafilt`, `bwareaopen`
 `bwboundaries`, `bwconncomp`, `bwconvhull`, `bwdist`, `bwdistgeodesic`, `bweuler`
 `bwferet`, `bwhitmiss`, `bwlabel`, `bwlookup`, `bwmorph`, `bwperim`
 `bwpropfilt`, `bwselect`, `bwskel`, `bwtraceboundary`, `bwulterode`, `checkerboard`
 `chromadapt`, `cmap2gray`, `col2im`, `colfilt`, `colorangle`, `conndef`
-`decorrstretch`, `deltaE`, `demosaic`, `edge`, `entropyfilt`, `fft2`
-`fftshift`, `fibermetric`, `fitgeotrans`, `fspecial`, `gradientweight`, `gray2ind`
-`grayconnected`, `graydiffweight`, `graydist`, `grayslice`, `graythresh`, `histeq`
-`hough`, `houghlines`, `houghpeaks`, `hsv2rgb`, `ifft2`, `ifftshift`
-`illumgray`, `illumpca`, `illumwhite`, `im2col`, `im2double`, `im2gray`
-`im2int16`, `im2single`, `im2uint16`, `im2uint8`, `imabsdiff`, `imadd`
-`imadjust`, `imapplymatrix`, `imapprox`, `imbilatfilt`, `imbinarize`, `imbothat`
-`imboxfilt`, `imclearborder`, `imclose`, `imcolordiff`, `imcomplement`, `imcrop`
-`imdiffuseest`, `imdiffusefilt`, `imdilate`, `imdivide`, `imerode`, `imextendedmax`
-`imextendedmin`, `imfill`, `imfilter`, `imfindcircles`, `imfinfo`, `imflatfield`
-`imgaussfilt`, `imgradient`, `imgradientxy`, `imguidedfilter`, `imhist`, `imhistmatch`
-`imhmax`, `imhmin`, `imimposemin`, `imlincomb`, `imlocalbrighten`, `immultiply`
-`imnlmfilt`, `imnoise`, `imopen`, `imoverlay`, `impyramid`, `imquantize`
-`imread`, `imreconstruct`, `imreducehaze`, `imref2d`, `imregionalmax`, `imregionalmin`
-`imresize`, `imrotate`, `imsegfmm`, `imsegkmeans`, `imsharpen`, `imshow`
-`imsplit`, `imsubtract`, `imtophat`, `imtranslate`, `imwarp`, `imwrite`
-`ind2gray`, `ind2rgb`, `integralBoxFilter`, `integralImage`, `intlut`, `iptcheckconn`
-`lab2double`, `lab2rgb`, `lab2uint16`, `lab2uint8`, `lab2xyz`, `label2idx`
-`label2rgb`, `labelmatrix`, `labeloverlay`, `lin2rgb`, `makelut`, `mat2gray`
-`maxhessiannorm`, `medfilt2`, `modefilt`, `multithresh`, `nlfilter`, `ntsc2rgb`
-`offsetstrel`, `ordfilt2`, `otsuthresh`, `padarray`, `poly2label`, `poly2mask`
-`projective2d`, `rangefilt`, `reducepoly`, `regionfill`, `regionprops`, `rgb2gray`
-`rgb2hsv`, `rgb2ind`, `rgb2lab`, `rgb2lightness`, `rgb2lin`, `rgb2ntsc`
-`rgb2xyz`, `rgb2ycbcr`, `rigid2d`, `roicolor`, `roifilt2`, `roipoly`
-`stdfilt`, `strel`, `stretchlim`, `superpixels`, `transformPointsForward`, `transformPointsInverse`
-`visboundaries`, `viscircles`, `watershed`, `whitepoint`, `wiener2`, `xyz2double`
-`xyz2lab`, `xyz2rgb`, `xyz2uint16`, `ycbcr2rgb`
+`dct2`, `dctmtx`, `decorrstretch`, `deltaE`, `demosaic`, `edge`
+`entropyfilt`, `fft2`, `fftshift`, `fibermetric`, `fitgeotrans`, `fspecial`
+`gradientweight`, `gray2ind`, `grayconnected`, `graydiffweight`, `graydist`, `grayslice`
+`graythresh`, `histeq`, `hough`, `houghlines`, `houghpeaks`, `hsv2rgb`
+`idct2`, `ifft2`, `ifftshift`, `illumgray`, `illumpca`, `illumwhite`
+`im2col`, `im2double`, `im2gray`, `im2int16`, `im2single`, `im2uint16`
+`im2uint8`, `imabsdiff`, `imadd`, `imadjust`, `imapplymatrix`, `imapprox`
+`imbilatfilt`, `imbinarize`, `imbothat`, `imboxfilt`, `imclearborder`, `imclose`
+`imcolordiff`, `imcomplement`, `imcrop`, `imdiffuseest`, `imdiffusefilt`, `imdilate`
+`imdivide`, `imerode`, `imextendedmax`, `imextendedmin`, `imfill`, `imfilter`
+`imfindcircles`, `imfinfo`, `imflatfield`, `imgaussfilt`, `imgradient`, `imgradientxy`
+`imguidedfilter`, `imhist`, `imhistmatch`, `imhmax`, `imhmin`, `imimposemin`
+`imlincomb`, `imlocalbrighten`, `immultiply`, `imnlmfilt`, `imnoise`, `imopen`
+`imoverlay`, `impyramid`, `imquantize`, `imread`, `imreconstruct`, `imreducehaze`
+`imref2d`, `imregcorr`, `imregionalmax`, `imregionalmin`, `imresize`, `imrotate`
+`imsegfmm`, `imsegkmeans`, `imsharpen`, `imshow`, `imsplit`, `imsubtract`
+`imtophat`, `imtranslate`, `imwarp`, `imwrite`, `ind2gray`, `ind2rgb`
+`integralBoxFilter`, `integralImage`, `intlut`, `iptcheckconn`, `iradon`, `lab2double`
+`lab2rgb`, `lab2uint16`, `lab2uint8`, `lab2xyz`, `label2idx`, `label2rgb`
+`labelmatrix`, `labeloverlay`, `lin2rgb`, `makelut`, `mat2gray`, `maxhessiannorm`
+`medfilt2`, `modefilt`, `multithresh`, `nlfilter`, `normxcorr2`, `ntsc2rgb`
+`offsetstrel`, `ordfilt2`, `otsuthresh`, `padarray`, `phantom`, `poly2label`
+`poly2mask`, `projective2d`, `qtdecomp`, `qtgetblk`, `qtsetblk`, `radon`
+`rangefilt`, `reducepoly`, `regionfill`, `regionprops`, `rgb2gray`, `rgb2hsv`
+`rgb2ind`, `rgb2lab`, `rgb2lightness`, `rgb2lin`, `rgb2ntsc`, `rgb2xyz`
+`rgb2ycbcr`, `rigid2d`, `roicolor`, `roifilt2`, `roipoly`, `stdfilt`
+`strel`, `stretchlim`, `superpixels`, `transformPointsForward`, `transformPointsInverse`, `visboundaries`
+`viscircles`, `watershed`, `whitepoint`, `wiener2`, `xyz2double`, `xyz2lab`
+`xyz2rgb`, `xyz2uint16`, `ycbcr2rgb`
 
-## Not implemented — 70
-Planned across M46 waves H–K.
+## Not implemented — 59
+Planned across M46 waves I–K.
 Nothing here is refused on principle; it is work not yet done.
 
 `bfscore`, `bwlabeln`, `bwmorph3`, `bwselect3`, `convmtx2`, `corr2`
-`dct2`, `dctmtx`, `deconvblind`, `deconvlucy`, `deconvreg`, `deconvwnr`
-`dice`, `edge3`, `edgetaper`, `entropy`, `freqspace`, `freqz2`
-`fsamp2`, `fspecial3`, `ftrans2`, `fwind1`, `fwind2`, `gabor`
-`graycomatrix`, `graycoprops`, `idct2`, `imadjustn`, `imboxfilt3`, `imcontour`
-`imcrop3`, `imfuse`, `imgaborfilt`, `imgaussfilt3`, `imgradient3`, `imgradientxyz`
-`imhistmatchn`, `immse`, `impixel`, `improfile`, `imregcorr`, `imresize3`
-`imrotate3`, `imsegkmeans3`, `imshowpair`, `integralBoxFilter3`, `integralImage3`, `iptgetpref`
-`iptsetpref`, `iradon`, `jaccard`, `mean2`, `medfilt3`, `montage`
-`multissim`, `multissim3`, `normxcorr2`, `obliqueslice`, `otf2psf`, `phantom`
-`psf2otf`, `psnr`, `qtdecomp`, `qtgetblk`, `qtsetblk`, `radon`
-`regionprops3`, `ssim`, `std2`, `superpixels3`
+`deconvblind`, `deconvlucy`, `deconvreg`, `deconvwnr`, `dice`, `edge3`
+`edgetaper`, `entropy`, `freqspace`, `freqz2`, `fsamp2`, `fspecial3`
+`ftrans2`, `fwind1`, `fwind2`, `gabor`, `graycomatrix`, `graycoprops`
+`imadjustn`, `imboxfilt3`, `imcontour`, `imcrop3`, `imfuse`, `imgaborfilt`
+`imgaussfilt3`, `imgradient3`, `imgradientxyz`, `imhistmatchn`, `immse`, `impixel`
+`improfile`, `imresize3`, `imrotate3`, `imsegkmeans3`, `imshowpair`, `integralBoxFilter3`
+`integralImage3`, `iptgetpref`, `iptsetpref`, `jaccard`, `mean2`, `medfilt3`
+`montage`, `multissim`, `multissim3`, `obliqueslice`, `otf2psf`, `psf2otf`
+`psnr`, `regionprops3`, `ssim`, `std2`, `superpixels3`
 
 ## Excluded — 143 names and 8 families
 
@@ -375,6 +375,39 @@ By reason:
 - **`roipoly` with no polygon returns the whole picture**, for the same reason `imcrop` with no
   rectangle does: MATLAB opens a window and waits for one to be drawn, and there is no window in a
   batch run.
+- **`radon` and `iradon` project about the picture's geometric centre**, at `((rows−1)/2,
+  (cols−1)/2)`, where MATLAB's inverse uses a `ceil(n/2)` grid that sits half a pixel off centre for
+  an even size. Sharing one convention is what makes the pair invert each other exactly, which is
+  the property a script can check; against a sinogram MATLAB produced, an even-sized reconstruction
+  will be half a pixel out.
+- **`iradon`'s ramp is built from its impulse response**, transformed, rather than written down as
+  `|ω|` and sampled. Sampling the ramp in frequency gives it a spurious DC term — the continuous
+  ramp is zero at zero but its sampled inverse is not — and the visible result is a reconstruction
+  sitting on a constant offset. This is MATLAB's own approach, stated here because the two differ by
+  a hair at the top of the band where the impulse response is truncated.
+- **`phantom` rasterizes by pixel centre**, so an ellipse edge falls between two pixels rather than
+  being anti-aliased across them. MATLAB does the same; what differs is that the three small
+  low-contrast ellipses can gain or lose a pixel at very small sizes, where the shell is thinner
+  than the sampling.
+- **`qtdecomp` requires the picture's side to be the smallest block size times a power of two**, and
+  says so by name when it is not. MATLAB's message is vaguer; the constraint is the same one, since
+  halving has to land exactly on both the floor and the ceiling.
+- **`qtdecomp`'s test function is called once per level, not once per block**, with every block of
+  that size stacked as pages of an `m×m×k` array — which is MATLAB's own contract. What is not
+  supported is passing extra arguments through to it (`qtdecomp(I, fun, P1, P2)`); a handle that
+  captures what it needs does the same job, and the error says so.
+- **`qtdecomp` returns a sparse map in both dialects.** It is genuinely sparse — one entry per block,
+  so a picture split into a hundred blocks has a hundred entries however many pixels it holds — and
+  `qtgetblk` and `qtsetblk` both read it back, so there is no reason for the two dialects to differ.
+- **`imregcorr` recovers rotation and scale by log-polar phase correlation**, with Reddy and
+  Chatterji's high-pass emphasis on the spectrum. The angle is quantized to the 180 bins it resamples
+  on, so a degree is its resolution rather than its error, and a picture with no high-frequency
+  content has little for the match to work on. `'Window'` is accepted; the log-polar stage always
+  tapers, because a rectangular window leaks a cross along both axes of the spectrum that would
+  dominate any polar match.
+- **`imregcorr` resolves the half-turn ambiguity by trying both.** A magnitude spectrum is symmetric
+  through the origin, so a turn and the same turn plus 180° are indistinguishable there; both
+  candidates are applied and the one that actually lines the pictures up is kept.
 
 ## Answers corrected while building this mirror
 

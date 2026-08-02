@@ -3,11 +3,18 @@
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
     <RootNamespace>JGraph.Imaging</RootNamespace>
-    <Description>Image-processing services for JGraph (image buffer, point ops, geometry, filters, edge detection, morphology, region analysis) used by the JGS image builtins. Pure numeric code with no rendering, model, or codec dependency.</Description>
+    <Description>Image-processing services for JGraph (image buffer, point ops, geometry, filters, edge detection, morphology, region analysis, transforms) used by the JGS image builtins. Pure numeric code with no rendering, model, or codec dependency.</Description>
   </PropertyGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\JGraph.Numerics\JGraph.Numerics.csproj" />
+    <!--
+      M46 wave H. The cosine transform, the Radon filter and normalized cross-correlation are all
+      built on the Fourier transform, and so is every deconvolution in wave I. JGraph.Signal already
+      owns a tested radix-2/Bluestein kernel and depends on nothing itself, so imaging borrows it
+      rather than carrying a second FFT that would have to be kept correct twice.
+    -->
+    <ProjectReference Include="..\JGraph.Signal\JGraph.Signal.csproj" />
   </ItemGroup>
 
 </Project>

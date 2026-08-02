@@ -132,6 +132,16 @@ internal static partial class JgsBuiltins
         Wrap("superpixels", SuperpixelsOutputs);
         Wrap("imfindcircles", (args, wanted, line, col) => FindCirclesOutputs(args, wanted, line, col, dialect));
 
+        // M46 wave H. Each of these knows something the caller would otherwise have to recompute from
+        // the same inputs: the bin coordinates a projection was measured on, the filter a
+        // reconstruction was run through, the ellipse table a phantom was drawn from, where in the
+        // picture each block sits, and how well the registration it just made actually agreed.
+        Wrap("radon", RadonOutputs);
+        Wrap("iradon", IradonOutputs);
+        Wrap("phantom", PhantomOutputs);
+        Wrap("qtgetblk", (args, wanted, line, col) => QtGetBlkOutputs(args, wanted, line, col, dialect));
+        Wrap("imregcorr", ImRegCorrOutputs);
+
         // [counts, binLocations] = imhist(I). The locations are quoted in the image's own class, so a
         // uint8 picture's bins are centred on 0…255 while a double one's span [0, 1].
         Wrap("imhist", (args, wanted, line, col) =>
