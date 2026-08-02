@@ -34,42 +34,142 @@ public static class Histograms
     }
 
     /// <summary>Histogram equalization of a grayscale image over <paramref name="bins"/> levels (MATLAB <c>histeq</c>).</summary>
-    public static ImageBuffer Equalize(ImageBuffer image, int bins = 64)
+    public static ImageBuffer Equalize(ImageBuffer image, int bins = 64) => Equalize(image, Flat(bins)).Result;
+
+    /// <summary>A flat target histogram of the given length.</summary>
+    private static double[] Flat(int bins)
+    {
+        if (bins < 2)
+        {
+            throw new ArgumentException("histeq needs at least two levels.", nameof(bins));
+        }
+
+        var shape = new double[bins];
+        Array.Fill(shape, 1.0);
+        return shape;
+    }
+
+    /// <summary>
+    /// Reshapes a grayscale image's histogram towards <paramref name="targetShape"/> and hands back
+    /// the mapping it used (MATLAB <c>[J, T] = histeq(I, hgram)</c>).
+    /// </summary>
+    /// <remarks>
+    /// Equalization is the special case where the target is flat, so the two share one routine: what
+    /// MATLAB's <c>histeq(I, n)</c> does is match against <c>n</c> equal bins. The mapping is the
+    /// second output because a transformation measured on one frame is often the one you want applied
+    /// to the next, and recomputing it per frame is what makes a sequence flicker.
+    /// </remarks>
+    public static (ImageBuffer Result, double[] Transform) Equalize(
+        ImageBuffer image, IReadOnlyList<double> targetShape)
     {
         ArgumentNullException.ThrowIfNull(image);
+        ArgumentNullException.ThrowIfNull(targetShape);
         if (image.Channels != 1)
         {
             throw new ArgumentException("histeq expects a grayscale image; convert with rgb2gray first.");
         }
 
-        double[] histogram = Histogram(image, bins);
-        int total = image.Height * image.Width;
-
-        // Cumulative distribution, mapped so the darkest occupied level goes to 0 and the brightest to 1.
-        var cdf = new double[bins];
-        double running = 0;
-        for (int i = 0; i < bins; i++)
-        {
-            running += histogram[i];
-            cdf[i] = running / total;
-        }
+        double[] transform = MatchingTransform(
+            Histogram(image, 256), targetShape, (double)image.Height * image.Width);
 
         var result = new ImageBuffer(image.Height, image.Width, 1);
         ReadOnlySpan<double> src = image.Pixels;
         Span<double> dst = result.Pixels;
         for (int i = 0; i < dst.Length; i++)
         {
-            int bin = (int)(Math.Clamp(src[i], 0, 1) * bins);
-            if (bin >= bins)
-            {
-                bin = bins - 1;
-            }
-
-            dst[i] = cdf[bin];
+            dst[i] = transform[(int)Math.Round(Math.Clamp(src[i], 0, 1) * 255)];
         }
 
         GC.KeepAlive(image);
-        return result;
+        return (result, transform);
+    }
+
+    /// <summary>
+    /// The lookup table that carries a measured histogram onto a wanted one: for each of 256 input
+    /// levels, the output level whose cumulative count comes closest to the input's.
+    /// </summary>
+    /// <remarks>
+    /// A discrete histogram can rarely be reshaped exactly — a level holding a tenth of the pixels
+    /// cannot be split — so this is stated as a minimization rather than an inversion, which is how
+    /// MATLAB states it too. The half-bin tolerance added to each input level is what breaks the ties
+    /// that a flat stretch of the cumulative curve otherwise produces, and levels that would have to
+    /// map backwards are disqualified outright so the table stays monotone.
+    /// </remarks>
+    /// <param name="sourceCounts">The measured histogram, 256 bins.</param>
+    /// <param name="targetShape">The wanted histogram, at any number of levels.</param>
+    /// <param name="totalPixels">How many samples the source histogram counted.</param>
+    public static double[] MatchingTransform(
+        IReadOnlyList<double> sourceCounts, IReadOnlyList<double> targetShape, double totalPixels)
+    {
+        ArgumentNullException.ThrowIfNull(sourceCounts);
+        ArgumentNullException.ThrowIfNull(targetShape);
+        int levels = targetShape.Count;
+        if (levels < 2)
+        {
+            throw new ArgumentException("histeq needs a target histogram with at least two levels.", nameof(targetShape));
+        }
+
+        int points = sourceCounts.Count;
+        double targetTotal = 0;
+        foreach (double value in targetShape)
+        {
+            if (value < 0)
+            {
+                throw new ArgumentException("histeq target histogram counts cannot be negative.", nameof(targetShape));
+            }
+
+            targetTotal += value;
+        }
+
+        if (targetTotal <= 0)
+        {
+            throw new ArgumentException("histeq target histogram is empty.", nameof(targetShape));
+        }
+
+        var sourceCumulative = new double[points];
+        double running = 0;
+        for (int j = 0; j < points; j++)
+        {
+            running += sourceCounts[j];
+            sourceCumulative[j] = running;
+        }
+
+        var targetCumulative = new double[levels];
+        running = 0;
+        for (int k = 0; k < levels; k++)
+        {
+            running += targetShape[k] * totalPixels / targetTotal;
+            targetCumulative[k] = running;
+        }
+
+        double disqualified = totalPixels;
+        double slack = totalPixels * Math.Sqrt(2.220446049250313e-16);
+        var transform = new double[points];
+        for (int j = 0; j < points; j++)
+        {
+            // The ends get no tolerance: black and white have nowhere to spread to.
+            double tolerance = j == 0 || j == points - 1 ? 0 : sourceCounts[j] / 2;
+            double bestError = double.PositiveInfinity;
+            int bestLevel = 0;
+            for (int k = 0; k < levels; k++)
+            {
+                double error = targetCumulative[k] - sourceCumulative[j] + tolerance;
+                if (error < -slack)
+                {
+                    error = disqualified;
+                }
+
+                if (error < bestError)
+                {
+                    bestError = error;
+                    bestLevel = k;
+                }
+            }
+
+            transform[j] = bestLevel / (double)(levels - 1);
+        }
+
+        return transform;
     }
 
     /// <summary>

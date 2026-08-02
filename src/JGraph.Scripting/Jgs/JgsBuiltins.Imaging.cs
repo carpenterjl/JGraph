@@ -423,20 +423,7 @@ internal static partial class JgsBuiltins
             }
         });
 
-        define("histeq", (args, line, col) =>
-        {
-            ArityRange("histeq", args, 1, 2, line, col);
-            ImageBuffer image = Img("histeq", args, 0, line, col);
-            int bins = args.Count == 2 ? Count("histeq", args, 1, line, col) : 64;
-            try
-            {
-                return ImgOut(Histograms.Equalize(image, bins), image);
-            }
-            catch (ArgumentException ex)
-            {
-                throw new JgsRuntimeException(line, col, ex.Message);
-            }
-        });
+        define("histeq", (args, line, col) => HistEqOutputs(args, 1, line, col)[0]);
 
         define("graythresh", (args, line, col) =>
         {
@@ -562,17 +549,67 @@ internal static partial class JgsBuiltins
 
         define("imnoise", (args, line, col) =>
         {
-            ArityRange("imnoise", args, 1, 3, line, col);
-            ImageBuffer image = Img("imnoise", args, 0, line, col);
+            ArityRange("imnoise", args, 1, 4, line, col);
+
+            // MATLAB adds noise to an array as readily as to an image, and a script that built its
+            // test picture with zeros() has an array in its hands.
+            using ImgArg source = ImgLike("imnoise", args, 0, line, col);
+            ImageBuffer image = source.Buffer;
             string kind = args.Count >= 2 ? Str("imnoise", args, 1, line, col).ToLowerInvariant() : "gaussian";
-            return kind switch
+            switch (kind)
             {
-                "gaussian" => ImgOut(PointOps.GaussianNoise(image, 0.0,
-                    args.Count >= 3 ? Num("imnoise", args, 2, line, col) : 0.01, random), image),
-                "salt & pepper" or "salt&pepper" or "saltpepper" => ImgOut(PointOps.SaltPepperNoise(image,
-                    args.Count >= 3 ? Num("imnoise", args, 2, line, col) : 0.05, random), image),
-                _ => throw new JgsRuntimeException(line, col, $"imnoise: unknown noise type '{kind}' (use 'gaussian' or 'salt & pepper')."),
-            };
+                case "gaussian":
+                    // Two numbers follow, in MATLAB's order: the mean first, then the variance.
+                    return ImgLikeOut(
+                        PointOps.GaussianNoise(
+                            image,
+                            args.Count >= 3 ? Num("imnoise", args, 2, line, col) : 0.0,
+                            args.Count >= 4 ? Num("imnoise", args, 3, line, col) : 0.01,
+                            random),
+                        source);
+
+                case "localvar":
+                    if (args.Count < 3)
+                    {
+                        throw new JgsRuntimeException(line, col,
+                            "imnoise 'localvar' needs a variance image, or an intensity/variance curve.");
+                    }
+
+                    return ImgLikeOut(
+                        PointOps.LocalVarianceNoise(
+                            image, LocalVariance(image, args, line, col), random),
+                        source);
+
+                case "poisson":
+                    // How many photon counts a full-scale sample stands for. MATLAB reads that off
+                    // the class, and a double image's 10¹² is what makes the noise invisible there.
+                    return ImgLikeOut(
+                        PointOps.PoissonNoise(image, image.Class switch
+                        {
+                            ImageClass.UInt8 or ImageClass.Logical => 255.0,
+                            ImageClass.UInt16 => 65535.0,
+                            ImageClass.Single => 1e6,
+                            _ => 1e12,
+                        }, random),
+                        source);
+
+                case "speckle":
+                    return ImgLikeOut(
+                        PointOps.SpeckleNoise(
+                            image, args.Count >= 3 ? Num("imnoise", args, 2, line, col) : 0.05, random),
+                        source);
+
+                case "salt & pepper" or "salt&pepper" or "saltpepper":
+                    return ImgLikeOut(
+                        PointOps.SaltPepperNoise(
+                            image, args.Count >= 3 ? Num("imnoise", args, 2, line, col) : 0.05, random),
+                        source);
+
+                default:
+                    throw new JgsRuntimeException(line, col,
+                        $"imnoise: unknown noise type '{kind}' (use 'gaussian', 'localvar', " +
+                        "'poisson', 'salt & pepper', or 'speckle').");
+            }
         });
 
         // --- Geometry ------------------------------------------------------------------------
@@ -659,6 +696,7 @@ internal static partial class JgsBuiltins
         DefineFilteringBuiltins(define, dialect);
         DefineGeometryBuiltins(define, dialect);
         DefineColorBuiltins(define, dialect);
+        DefineEnhancementBuiltins(define, dialect);
 
         // --- Filtering -----------------------------------------------------------------------
         define("imfilter", (args, line, col) =>

@@ -597,14 +597,14 @@ public static class JgsBuiltinCatalog
         Add("im2mat", "Copies an image channel (default 1) to a nested-array matrix.", P("image"), Opt("channel"));
         Add("imadjust", "Maps intensities [lowIn,highIn]→[lowOut,highOut] with gamma; defaults stretch the 1–99% range.", P("image"), Opt("inRange"), Opt("outRange"), Opt("gamma"));
         Add("imhist", "Histogram bin counts of a grayscale image (default 256 bins); under MATLAB [counts, binLocations].", P("image"), Opt("bins"));
-        Add("histeq", "Histogram-equalizes a grayscale image (default 64 levels).", P("image"), Opt("bins"));
+        Add("histeq", "Histogram-equalizes a grayscale image (default 64 levels), or matches a given target histogram; [J, T] also returns the mapping.", P("image"), Opt("binsOrHgram"));
         Add("graythresh", "Otsu's global threshold level in [0, 1]; under MATLAB [level, effectiveness].", P("image"));
         Add("imbinarize", "Thresholds an image to a logical one: a global level (Otsu by default), a threshold surface, or 'adaptive' with 'Sensitivity'.", P("image"), Opt("levelOrOptions"));
         Add("imadd", "Adds two images, or an image and a scalar, clamped to [0, 1].", P("a"), P("b"));
         Add("imsubtract", "Subtracts an image or scalar from an image, clamped to [0, 1].", P("a"), P("b"));
         Add("immultiply", "Multiplies two images sample by sample (or an image by a scalar), clamped to [0, 1] — masking.", P("a"), P("b"));
         Add("imcomplement", "Inverts image intensities across the class range.", P("image"));
-        Add("imnoise", "Adds noise: 'gaussian' (variance) or 'salt & pepper' (density).", P("image"), Opt("type"), Opt("amount"));
+        Add("imnoise", "Adds noise: 'gaussian' (mean, variance), 'localvar' (a variance image, or an intensity/variance curve), 'poisson', 'salt & pepper' (density), or 'speckle' (variance).", P("image"), Opt("type"), Opt("p1"), Opt("p2"));
         Add("imresize", "Resizes an image or matrix by a scale or to a [rows, cols] (one may be NaN); methods 'nearest', 'box', 'bilinear', 'bicubic' (default), 'lanczos2', 'lanczos3', with 'Antialiasing', 'Scale', and 'OutputSize'.", P("image"), Opt("scaleOrSize"), Opt("options"));
         Add("imrotate", "Rotates an image counter-clockwise by degrees; methods 'nearest' (default), 'bilinear', 'bicubic', and bounds 'crop'/'loose'.", P("image"), P("degrees"), Opt("method"), Opt("bbox"));
         Add("imcrop", "Crops a rectangle from an image. JGS takes [x, y, width, height] in 0-based pixels; MATLAB takes a spatial [xmin, ymin, width, height] and [J, rect] reports the one used.", P("image"), Opt("refOrRect"), Opt("rect"));
@@ -689,6 +689,24 @@ public static class JgsBuiltinCatalog
         Add("cmap2gray", "Converts a colormap to its grayscale equivalent.", P("map"));
         Add("imsplit", "Splits a colour image into its channels: [R, G, B].", P("image"));
         Add("demosaic", "Reconstructs colour from a Bayer colour-filter array; alignment 'gbrg', 'grbg', 'bggr', or 'rggb'.", P("cfa"), P("sensorAlignment"));
+
+        // M46 wave E — enhancement and denoising. The defaults MATLAB states against the image class
+        // (0.01·range² for a degree of smoothing, 0.1·range for a gradient threshold) come out as one
+        // number here, because images are carried on [0, 1] whatever class tag they wear.
+        Add("adapthisteq", "Contrast-limited adaptive histogram equalization: equalizes each tile, then blends the tiles' mappings. Options: 'NumTiles', 'ClipLimit', 'NBins', 'Range', 'Distribution', 'Alpha'.", P("image"), Opt("options"));
+        Add("imhistmatch", "Reshapes an image's histogram to resemble a reference's: [J, hgram]. Default 64 bins; 'Method' is 'uniform' or 'polynomial'.", P("image"), P("reference"), Opt("bins"), Opt("options"));
+        Add("imflatfield", "Removes a smooth illumination gradient by dividing out a wide Gaussian blur. Option: 'FilterSize'.", P("image"), P("sigma"), Opt("mask"), Opt("options"));
+        Add("decorrstretch", "Decorrelates and rescales an image's bands, pulling colour out of channels that nearly agree. Options: 'Mode', 'TargetMean', 'TargetSigma', 'Tol', 'SampleSubs'.", P("image"), Opt("options"));
+        Add("imsharpen", "Unsharp masking: adds back what a Gaussian blur removed. Options: 'Radius', 'Amount', 'Threshold'.", P("image"), Opt("options"));
+        Add("imbilatfilt", "Bilateral filtering — a Gaussian blur that will not cross an edge. Options: 'NeighborhoodSize', 'Padding'.", P("image"), Opt("degreeOfSmoothing"), Opt("spatialSigma"), Opt("options"));
+        Add("imguidedfilter", "Guided filtering: smooths one image while borrowing another's edges; one argument guides itself. Options: 'NeighborhoodSize', 'DegreeOfSmoothing'.", P("image"), Opt("guide"), Opt("options"));
+        Add("imdiffusefilt", "Anisotropic (Perona–Malik) diffusion. Options: 'GradientThreshold', 'NumberOfIterations', 'Connectivity', 'ConductionMethod'.", P("image"), Opt("options"));
+        Add("imdiffuseest", "Suggests diffusion settings for an image: [gradThresh, numIter]. Options: 'Connectivity', 'ConductionMethod', 'NumberOfIterations'.", P("image"), Opt("options"));
+        Add("imnlmfilt", "Non-local means: averages each pixel with distant pixels whose surroundings match. [B, estDoS] also reports the noise estimate. Options: 'DegreeOfSmoothing', 'SearchWindowSize', 'ComparisonWindowSize'.", P("image"), Opt("options"));
+        Add("imreducehaze", "Removes atmospheric haze by the dark-channel prior: [B, T] also gives the transmission map. Options: 'Method', 'AtmosphericLight', 'ContrastEnhancement', 'BoostAmount'.", P("image"), Opt("amount"), Opt("options"));
+        Add("imlocalbrighten", "Brightens dark regions — haze removal run on the negative: [B, T]. Option: 'AlphaBlend'.", P("image"), Opt("amount"), Opt("options"));
+        Add("fibermetric", "Frangi vesselness: how tube-like each pixel is, taken over a range of fibre widths. Options: 'StructureSensitivity', 'ObjectPolarity'.", P("image"), Opt("thickness"), Opt("options"));
+        Add("maxhessiannorm", "The largest Frobenius norm of the image Hessian at one scale; half of it is fibermetric's usual structure sensitivity.", P("image"), Opt("thickness"));
 
         Add("strel", "Builds a structuring element matrix: 'square' (side) or 'disk' (radius).", P("shape"), Opt("size"));
         Add("imerode", "Morphological erosion (local minimum) over a structuring element (default 3×3 square).", P("image"), Opt("element"));

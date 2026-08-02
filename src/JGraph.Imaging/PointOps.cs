@@ -297,6 +297,131 @@ public static class PointOps
         return result;
     }
 
+    /// <summary>
+    /// Adds zero-mean Gaussian noise whose variance is set per pixel (MATLAB <c>imnoise</c>
+    /// 'localvar'), which is how a sensor's noise is actually distributed: worse where the signal is.
+    /// </summary>
+    public static ImageBuffer LocalVarianceNoise(ImageBuffer image, double[,] variance, Random random)
+    {
+        ArgumentNullException.ThrowIfNull(image);
+        ArgumentNullException.ThrowIfNull(variance);
+        ArgumentNullException.ThrowIfNull(random);
+        if (variance.GetLength(0) != image.Height || variance.GetLength(1) != image.Width)
+        {
+            throw new ArgumentException("imnoise 'localvar' needs a variance the same size as the image.");
+        }
+
+        var result = new ImageBuffer(image.Height, image.Width, image.Channels);
+        for (int r = 0; r < image.Height; r++)
+        {
+            for (int c = 0; c < image.Width; c++)
+            {
+                double sigma = Math.Sqrt(Math.Max(0, variance[r, c]));
+                for (int ch = 0; ch < image.Channels; ch++)
+                {
+                    result[r, c, ch] = Math.Clamp(image[r, c, ch] + (sigma * Normal(random)), 0, 1);
+                }
+            }
+        }
+
+        GC.KeepAlive(image);
+        return result;
+    }
+
+    /// <summary>
+    /// Adds multiplicative uniform noise (MATLAB <c>imnoise</c> 'speckle'): <c>J = I + n·I</c>, with
+    /// <c>n</c> zero-mean of the given variance.
+    /// </summary>
+    /// <remarks>
+    /// Multiplicative rather than additive because that is how coherent imaging — radar, ultrasound —
+    /// actually degrades: the interference scales with what is being measured, so a bright return is
+    /// corrupted more than a dim one.
+    /// </remarks>
+    public static ImageBuffer SpeckleNoise(ImageBuffer image, double variance, Random random)
+    {
+        ArgumentNullException.ThrowIfNull(image);
+        ArgumentNullException.ThrowIfNull(random);
+
+        // A uniform on ±√(3v) has variance v, which is the distribution MATLAB uses here.
+        double half = Math.Sqrt(3 * Math.Max(0, variance));
+        var result = new ImageBuffer(image.Height, image.Width, image.Channels);
+        ReadOnlySpan<double> src = image.Pixels;
+        Span<double> dst = result.Pixels;
+        for (int i = 0; i < dst.Length; i++)
+        {
+            double n = ((2 * random.NextDouble()) - 1) * half;
+            dst[i] = Math.Clamp(src[i] + (n * src[i]), 0, 1);
+        }
+
+        GC.KeepAlive(image);
+        return result;
+    }
+
+    /// <summary>
+    /// Replaces each sample with a Poisson draw about its own value (MATLAB <c>imnoise</c> 'poisson').
+    /// </summary>
+    /// <remarks>
+    /// Poisson noise is not added to the picture — the picture is the rate parameter, which is why
+    /// this takes no strength argument. <paramref name="counts"/> is how many photons a full-scale
+    /// sample stands for, and it is what decides how visible the result is: at 255 the shot noise on
+    /// a mid-grey is plain, and at the 10¹² MATLAB uses for a double image it is beneath rounding.
+    /// </remarks>
+    public static ImageBuffer PoissonNoise(ImageBuffer image, double counts, Random random)
+    {
+        ArgumentNullException.ThrowIfNull(image);
+        ArgumentNullException.ThrowIfNull(random);
+        var result = new ImageBuffer(image.Height, image.Width, image.Channels);
+        ReadOnlySpan<double> src = image.Pixels;
+        Span<double> dst = result.Pixels;
+        for (int i = 0; i < dst.Length; i++)
+        {
+            dst[i] = Math.Clamp(Poisson(Math.Max(0, src[i]) * counts, random) / counts, 0, 1);
+        }
+
+        GC.KeepAlive(image);
+        return result;
+    }
+
+    /// <summary>One standard normal draw, by the Box–Muller transform.</summary>
+    private static double Normal(Random random)
+    {
+        double u1 = 1.0 - random.NextDouble();
+        double u2 = 1.0 - random.NextDouble();
+        return Math.Sqrt(-2.0 * Math.Log(u1)) * Math.Cos(2.0 * Math.PI * u2);
+    }
+
+    /// <summary>One Poisson draw with the given mean.</summary>
+    /// <remarks>
+    /// Knuth's product method below a mean of thirty, and the normal approximation above it. The
+    /// crossover is where the product method starts needing tens of uniforms per draw, and where the
+    /// approximation's relative error has already fallen under a percent — at the 10¹² a double image
+    /// uses, the two are indistinguishable and the product method would never terminate.
+    /// </remarks>
+    private static double Poisson(double mean, Random random)
+    {
+        if (mean <= 0)
+        {
+            return 0;
+        }
+
+        if (mean >= 30)
+        {
+            return Math.Max(0, Math.Round(mean + (Math.Sqrt(mean) * Normal(random))));
+        }
+
+        double limit = Math.Exp(-mean);
+        double product = 1.0;
+        int k = 0;
+        do
+        {
+            k++;
+            product *= random.NextDouble();
+        }
+        while (product > limit);
+
+        return k - 1;
+    }
+
     /// <summary>Adds salt &amp; pepper noise at the given density (MATLAB <c>imnoise</c> 'salt &amp; pepper').</summary>
     public static ImageBuffer SaltPepperNoise(ImageBuffer image, double density, Random random)
     {

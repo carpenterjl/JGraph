@@ -107,6 +107,16 @@ internal static partial class JgsBuiltins
         Wrap("imapprox", (args, wanted, line, col) => ImApproxOutputs(args, wanted, line, col, dialect));
         Wrap("imsplit", ImSplitOutputs);
 
+        // M46 wave E. Each hands back the thing it measured alongside the picture it produced — the
+        // mapping histeq built, the histogram it was matched to, the transmission map the haze
+        // estimate found, the noise level non-local means chose for itself.
+        Wrap("histeq", HistEqOutputs);
+        Wrap("imhistmatch", HistMatchOutputs);
+        Wrap("imdiffuseest", DiffuseEstimateOutputs);
+        Wrap("imnlmfilt", NonLocalMeansOutputs);
+        Wrap("imreducehaze", ReduceHazeOutputs);
+        Wrap("imlocalbrighten", LocalBrightenOutputs);
+
         // [counts, binLocations] = imhist(I). The locations are quoted in the image's own class, so a
         // uint8 picture's bins are centred on 0…255 while a double one's span [0, 1].
         Wrap("imhist", (args, wanted, line, col) =>

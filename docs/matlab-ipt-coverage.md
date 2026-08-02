@@ -1,6 +1,6 @@
 # MATLAB Image Processing Toolbox coverage
 
-**120 of 409 documented** Image Processing Toolbox names are implemented, as of M46 wave D.
+**134 of 409 documented** Image Processing Toolbox names are implemented, as of M46 wave E.
 
 ## Where this list comes from
 
@@ -32,56 +32,57 @@ counted here too.
 
 JGraph-only names — `mat2im`, `im2mat`, `imcentroid` — are in neither MATLAB nor these counts.
 
-## Implemented — 120
-`adaptthresh`, `affine2d`, `affineOutputView`, `bestblk`, `blockproc`, `bwareaopen`
-`bwlabel`, `checkerboard`, `chromadapt`, `cmap2gray`, `col2im`, `colfilt`
-`colorangle`, `deltaE`, `demosaic`, `edge`, `entropyfilt`, `fft2`
-`fftshift`, `fitgeotrans`, `fspecial`, `gray2ind`, `graythresh`, `histeq`
-`hough`, `houghlines`, `houghpeaks`, `hsv2rgb`, `ifft2`, `ifftshift`
-`illumgray`, `illumpca`, `illumwhite`, `im2col`, `im2double`, `im2gray`
-`im2int16`, `im2single`, `im2uint16`, `im2uint8`, `imabsdiff`, `imadd`
-`imadjust`, `imapplymatrix`, `imapprox`, `imbinarize`, `imboxfilt`, `imclose`
-`imcolordiff`, `imcomplement`, `imcrop`, `imdilate`, `imdivide`, `imerode`
-`imfill`, `imfilter`, `imfinfo`, `imgaussfilt`, `imgradient`, `imgradientxy`
-`imhist`, `imlincomb`, `immultiply`, `imnoise`, `imopen`, `impyramid`
-`imread`, `imref2d`, `imresize`, `imrotate`, `imshow`, `imsplit`
-`imsubtract`, `imtranslate`, `imwarp`, `imwrite`, `ind2gray`, `ind2rgb`
-`integralBoxFilter`, `integralImage`, `intlut`, `lab2double`, `lab2rgb`, `lab2uint16`
-`lab2uint8`, `lab2xyz`, `lin2rgb`, `mat2gray`, `medfilt2`, `modefilt`
-`nlfilter`, `ntsc2rgb`, `ordfilt2`, `otsuthresh`, `padarray`, `projective2d`
-`rangefilt`, `regionprops`, `rgb2gray`, `rgb2hsv`, `rgb2ind`, `rgb2lab`
-`rgb2lightness`, `rgb2lin`, `rgb2ntsc`, `rgb2xyz`, `rgb2ycbcr`, `rigid2d`
-`stdfilt`, `strel`, `stretchlim`, `transformPointsForward`, `transformPointsInverse`, `whitepoint`
-`wiener2`, `xyz2double`, `xyz2lab`, `xyz2rgb`, `xyz2uint16`, `ycbcr2rgb`
+## Implemented — 134
+`adapthisteq`, `adaptthresh`, `affine2d`, `affineOutputView`, `bestblk`, `blockproc`
+`bwareaopen`, `bwlabel`, `checkerboard`, `chromadapt`, `cmap2gray`, `col2im`
+`colfilt`, `colorangle`, `decorrstretch`, `deltaE`, `demosaic`, `edge`
+`entropyfilt`, `fft2`, `fftshift`, `fibermetric`, `fitgeotrans`, `fspecial`
+`gray2ind`, `graythresh`, `histeq`, `hough`, `houghlines`, `houghpeaks`
+`hsv2rgb`, `ifft2`, `ifftshift`, `illumgray`, `illumpca`, `illumwhite`
+`im2col`, `im2double`, `im2gray`, `im2int16`, `im2single`, `im2uint16`
+`im2uint8`, `imabsdiff`, `imadd`, `imadjust`, `imapplymatrix`, `imapprox`
+`imbilatfilt`, `imbinarize`, `imboxfilt`, `imclose`, `imcolordiff`, `imcomplement`
+`imcrop`, `imdiffuseest`, `imdiffusefilt`, `imdilate`, `imdivide`, `imerode`
+`imfill`, `imfilter`, `imfinfo`, `imflatfield`, `imgaussfilt`, `imgradient`
+`imgradientxy`, `imguidedfilter`, `imhist`, `imhistmatch`, `imlincomb`, `imlocalbrighten`
+`immultiply`, `imnlmfilt`, `imnoise`, `imopen`, `impyramid`, `imread`
+`imreducehaze`, `imref2d`, `imresize`, `imrotate`, `imsharpen`, `imshow`
+`imsplit`, `imsubtract`, `imtranslate`, `imwarp`, `imwrite`, `ind2gray`
+`ind2rgb`, `integralBoxFilter`, `integralImage`, `intlut`, `lab2double`, `lab2rgb`
+`lab2uint16`, `lab2uint8`, `lab2xyz`, `lin2rgb`, `mat2gray`, `maxhessiannorm`
+`medfilt2`, `modefilt`, `nlfilter`, `ntsc2rgb`, `ordfilt2`, `otsuthresh`
+`padarray`, `projective2d`, `rangefilt`, `regionprops`, `rgb2gray`, `rgb2hsv`
+`rgb2ind`, `rgb2lab`, `rgb2lightness`, `rgb2lin`, `rgb2ntsc`, `rgb2xyz`
+`rgb2ycbcr`, `rigid2d`, `stdfilt`, `strel`, `stretchlim`, `transformPointsForward`
+`transformPointsInverse`, `whitepoint`, `wiener2`, `xyz2double`, `xyz2lab`, `xyz2rgb`
+`xyz2uint16`, `ycbcr2rgb`
 
-## Not implemented — 146
-Planned across M46 waves E–K. Nothing here is refused on principle; it is work not yet done.
+## Not implemented — 132
+Planned across M46 waves F–K.
+Nothing here is refused on principle; it is work not yet done.
 
-`activecontour`, `adapthisteq`, `applylut`, `bfscore`, `boundarymask`, `bwarea`
-`bwareafilt`, `bwboundaries`, `bwconncomp`, `bwconvhull`, `bwdist`, `bwdistgeodesic`
-`bweuler`, `bwferet`, `bwhitmiss`, `bwlabeln`, `bwlookup`, `bwmorph`
-`bwmorph3`, `bwperim`, `bwpropfilt`, `bwselect`, `bwselect3`, `bwskel`
-`bwtraceboundary`, `bwulterode`, `conndef`, `convmtx2`, `corr2`, `dct2`
-`dctmtx`, `deconvblind`, `deconvlucy`, `deconvreg`, `deconvwnr`, `decorrstretch`
-`dice`, `edge3`, `edgetaper`, `entropy`, `fibermetric`, `freqspace`
-`freqz2`, `fsamp2`, `fspecial3`, `ftrans2`, `fwind1`, `fwind2`
-`gabor`, `gradientweight`, `graycomatrix`, `grayconnected`, `graycoprops`, `graydiffweight`
-`graydist`, `grayslice`, `idct2`, `imadjustn`, `imbilatfilt`, `imbothat`
-`imboxfilt3`, `imclearborder`, `imcontour`, `imcrop3`, `imdiffuseest`, `imdiffusefilt`
-`imextendedmax`, `imextendedmin`, `imfindcircles`, `imflatfield`, `imfuse`, `imgaborfilt`
-`imgaussfilt3`, `imgradient3`, `imgradientxyz`, `imguidedfilter`, `imhistmatch`, `imhistmatchn`
-`imhmax`, `imhmin`, `imimposemin`, `imlocalbrighten`, `immse`, `imnlmfilt`
-`imoverlay`, `impixel`, `improfile`, `imquantize`, `imreconstruct`, `imreducehaze`
+`activecontour`, `applylut`, `bfscore`, `boundarymask`, `bwarea`, `bwareafilt`
+`bwboundaries`, `bwconncomp`, `bwconvhull`, `bwdist`, `bwdistgeodesic`, `bweuler`
+`bwferet`, `bwhitmiss`, `bwlabeln`, `bwlookup`, `bwmorph`, `bwmorph3`
+`bwperim`, `bwpropfilt`, `bwselect`, `bwselect3`, `bwskel`, `bwtraceboundary`
+`bwulterode`, `conndef`, `convmtx2`, `corr2`, `dct2`, `dctmtx`
+`deconvblind`, `deconvlucy`, `deconvreg`, `deconvwnr`, `dice`, `edge3`
+`edgetaper`, `entropy`, `freqspace`, `freqz2`, `fsamp2`, `fspecial3`
+`ftrans2`, `fwind1`, `fwind2`, `gabor`, `gradientweight`, `graycomatrix`
+`grayconnected`, `graycoprops`, `graydiffweight`, `graydist`, `grayslice`, `idct2`
+`imadjustn`, `imbothat`, `imboxfilt3`, `imclearborder`, `imcontour`, `imcrop3`
+`imextendedmax`, `imextendedmin`, `imfindcircles`, `imfuse`, `imgaborfilt`, `imgaussfilt3`
+`imgradient3`, `imgradientxyz`, `imhistmatchn`, `imhmax`, `imhmin`, `imimposemin`
+`immse`, `imoverlay`, `impixel`, `improfile`, `imquantize`, `imreconstruct`
 `imregcorr`, `imregionalmax`, `imregionalmin`, `imresize3`, `imrotate3`, `imsegfmm`
-`imsegkmeans`, `imsegkmeans3`, `imsharpen`, `imshowpair`, `imtophat`, `integralBoxFilter3`
-`integralImage3`, `iptcheckconn`, `iptgetpref`, `iptsetpref`, `iradon`, `jaccard`
-`label2idx`, `label2rgb`, `labelmatrix`, `labeloverlay`, `makelut`, `maxhessiannorm`
-`mean2`, `medfilt3`, `montage`, `multissim`, `multissim3`, `multithresh`
-`normxcorr2`, `obliqueslice`, `offsetstrel`, `otf2psf`, `phantom`, `poly2label`
-`poly2mask`, `psf2otf`, `psnr`, `qtdecomp`, `qtgetblk`, `qtsetblk`
-`radon`, `reducepoly`, `regionfill`, `regionprops3`, `roicolor`, `roifilt2`
-`roipoly`, `ssim`, `std2`, `superpixels`, `superpixels3`, `visboundaries`
-`viscircles`, `watershed`
+`imsegkmeans`, `imsegkmeans3`, `imshowpair`, `imtophat`, `integralBoxFilter3`, `integralImage3`
+`iptcheckconn`, `iptgetpref`, `iptsetpref`, `iradon`, `jaccard`, `label2idx`
+`label2rgb`, `labelmatrix`, `labeloverlay`, `makelut`, `mean2`, `medfilt3`
+`montage`, `multissim`, `multissim3`, `multithresh`, `normxcorr2`, `obliqueslice`
+`offsetstrel`, `otf2psf`, `phantom`, `poly2label`, `poly2mask`, `psf2otf`
+`psnr`, `qtdecomp`, `qtgetblk`, `qtsetblk`, `radon`, `reducepoly`
+`regionfill`, `regionprops3`, `roicolor`, `roifilt2`, `roipoly`, `ssim`
+`std2`, `superpixels`, `superpixels3`, `visboundaries`, `viscircles`, `watershed`
 
 ## Excluded — 143 names and 8 families
 
@@ -216,6 +217,51 @@ By reason:
   `h×w×3` numeric array (which is what MATLAB calls an RGB image, and what a script that wrote
   `zeros(h, w, 3)` is holding), or an `n×3` colormap. That is wider than MATLAB, not narrower — but
   it means `rgb2lab` of an array gives an array back rather than an image value.
+- **A picture argument takes three shapes and answers in kind**: an image value, a plain matrix, or
+  an `h×w×3` array. MATLAB has no separate image type, so a script that wrote `zeros(h, w, 3)` and
+  filled the planes is holding what MATLAB calls an RGB image, and every function that takes a colour
+  picture has to take that too. The rule is uniform across the filtering, geometry and enhancement
+  families: whatever arrived comes back, except that an operation returning one value per pixel —
+  `fibermetric`, a transmission map — is a plain matrix whatever went in.
+- **`adapthisteq`'s Rayleigh and exponential distributions are derived rather than matched.** Each is
+  its own inverse cumulative distribution applied to the tile's cumulative histogram, normalized so a
+  cumulative fraction of one lands exactly on white. Without that normalization the two shapes would
+  stop short of white by an amount depending on alpha, and neighbouring tiles would disagree about
+  what white is. MathWorks documents which distributions are offered, not the constants.
+- **`imhistmatch`'s `'polynomial'` method is a monotone cubic through the mapping `'uniform'`
+  produces.** MathWorks says the polynomial method gives a smoother transformation but not the
+  polynomial's order or its knots. A Fritsch–Carlson fit through every eighth entry is smooth and,
+  crucially, still monotone — an ordinary spline would overshoot at each step and map a lighter input
+  to a darker output, which reads as a band rather than a smoother gradient.
+- **`imsharpen`'s `'Threshold'` is measured against the largest local difference in the picture.** The
+  documentation calls it "the minimum contrast required for a pixel to be considered an edge pixel"
+  on a `[0, 1]` scale, which fixes the meaning but not the reference; taking it relative to the
+  strongest edge present makes one setting behave the same on a flat scene and a contrasty one.
+- **`imbilatfilt` measures colour distance in L\*a\*b\*, divided by 100.** MATLAB filters colour in
+  L\*a\*b\* too, so that equally visible differences weigh equally whatever the hue. Dividing by the
+  span of L\* is what lets one `degreeOfSmoothing` default mean the same thing for a colour picture as
+  for a grayscale one.
+- **`imguidedfilter` with a colour guide filters channel by channel.** He's paper gives a colour form
+  that fits each window against all three guide channels at once through a 3×3 covariance; the one
+  here fits each channel against its own. The difference shows only where an edge exists in
+  chrominance but not in any single channel.
+- **Anisotropic diffusion steps by one over the total neighbour weight**, with the diagonal
+  neighbours at half — the square of their distance. That keeps the diagonals from diffusing faster
+  than the axes, which would turn a round blob square, and keeps the update stable at every
+  connectivity. MathWorks documents the conduction functions and the connectivity choice, not the
+  step size.
+- **`imdiffuseest`'s rule is stated rather than matched.** The first threshold is the ninetieth
+  percentile of the gradient magnitude and the rest fall linearly to a fifth of it over five
+  iterations, so each pass conducts across less than the last. What MathWorks documents is what the
+  estimate is for.
+- **`imreducehaze`'s `'boost'` contrast enhancement adds back a share of what a wide blur removed**,
+  scaled by `'BoostAmount'`. The documentation says only that the option increases contrast by that
+  amount. `'global'` and `'none'` are unambiguous and match.
+- **`decorrstretch` uses the symmetric whitening `V·Λ^(−½)·Vᵀ`.** Any square root of the inverse
+  covariance decorrelates the bands, and MathWorks specifies the result — uncorrelated bands with the
+  requested means and spreads — rather than the factorization. The symmetric one is the whitening
+  closest to doing nothing, which is what keeps the output recognizable as the same scene rather than
+  a differently-coloured one.
 - **`lab2double` and `xyz2double` need a class tag.** They undo an integer encoding, and the class is
   the only record of which encoding was used, so they take an image and refuse a bare colormap.
 - **16-bit PNG degrades to 8 bits.** Measured on SkiaSharp 2.88.8, in both directions: the PNG
@@ -254,6 +300,21 @@ Each changed an existing result, so each is written down.
   corners; MATLAB samples output pixel `x` at `x/scale + ½(1 − 1/scale)`, folding past the border
   through the mirror `[1…n, n…1]`. The default method also moved from bilinear to `'bicubic'`, and
   a scale now rounds the output size up rather than to nearest, both of which are MATLAB's.
+- **`imnoise`'s Gaussian noise read its mean as a variance** (M46 wave E). MATLAB's third argument is
+  the mean and its fourth the variance, so `imnoise(I, 'gaussian', 0.1)` shifts the picture by a tenth
+  and leaves the variance at its 0.01 default. Here the third argument was taken as the variance and
+  the mean was pinned at zero, which meant that call added roughly three times the noise it should
+  have and no offset at all.
+- **`histeq` equalized with a plain cumulative distribution** (M46 wave E). MATLAB does not map each
+  level to its own cumulative fraction; it picks, for each of 256 input levels, the output level whose
+  cumulative count comes closest — a minimization, because a discrete histogram can rarely be reshaped
+  exactly. The two agree on a well-populated picture and differ at the ends and wherever a level holds
+  a large share. Stating it as MATLAB does is also what makes `histeq(I, hgram)` and the second output
+  `T` possible at all, since both are the same machinery.
+- **An option that documents "a size or a pair" refused the size** (M46 wave E). `'FilterSize', 5`
+  errored where `'FilterSize', [5 5]` worked, because the reader behind every such option asked for an
+  array. It has taken a bare number since wave B's `imgaussfilt`; this is the first wave whose own
+  tests exercised the scalar form.
 - **`repmat` ignored all but its last count** (M46 wave C). It predates shaped arrays (M40) and laid
   the copies end to end, so `repmat([1 2; 3 4], 2, 1)` came back as a flat four-element row and
   `repmat(A, 3, 1)` did not repeat at all. It now tiles in two dimensions. This one is a base-MATLAB

@@ -232,9 +232,12 @@ internal static partial class JgsBuiltins
             return value.AsString;
         }
 
-        /// <summary>A numeric-vector name-value option, or null.</summary>
+        /// <summary>
+        /// A numeric-vector name-value option, or null. A single number counts as a one-element
+        /// vector — <c>'FilterSize', 5</c> and <c>'FilterSize', [5 5]</c> are both ordinary MATLAB.
+        /// </summary>
         public double[]? Vector(string name) =>
-            Named(name) is { } value ? ToDoubles(builtin, value, line, col) : null;
+            Named(name) is { } value ? NumericVector(builtin, value, line, col) : null;
 
         /// <summary>
         /// A window-size option: one number means a square window, a pair means (rows, cols). Null when
@@ -292,34 +295,76 @@ internal static partial class JgsBuiltins
     /// </summary>
     /// <remarks>
     /// A matrix argument is wrapped in a temporary buffer this owns and must dispose. An image
-    /// argument is owned by its <see cref="JgsValue"/> and must not be — hence the flag rather than a
-    /// blanket <c>using</c>.
+    /// argument is owned by its <see cref="JgsValue"/> and must not be — hence the shape rather than
+    /// a blanket <c>using</c>.
     /// </remarks>
-    private readonly struct ImgArg(ImageBuffer buffer, bool fromMatrix) : IDisposable
+    private readonly struct ImgArg(ImageBuffer buffer, ImgShape shape) : IDisposable
     {
         /// <summary>The samples, however they arrived.</summary>
         public ImageBuffer Buffer => buffer;
 
-        /// <summary>Whether the caller passed a matrix, and so expects a matrix back.</summary>
-        public bool FromMatrix => fromMatrix;
+        /// <summary>Which form arrived, and so which must come back.</summary>
+        public ImgShape Shape => shape;
 
-        /// <summary>Releases the temporary buffer a matrix argument was wrapped in.</summary>
+        /// <summary>Whether the caller passed plain numbers, and so expects plain numbers back.</summary>
+        public bool FromMatrix => shape != ImgShape.Image;
+
+        /// <summary>Releases the temporary buffer a numeric argument was wrapped in.</summary>
         public void Dispose()
         {
-            if (fromMatrix)
+            if (shape != ImgShape.Image)
             {
                 buffer.Dispose();
             }
         }
     }
 
-    /// <summary>Reads an argument that may be an image value or a numeric matrix.</summary>
+    /// <summary>The three forms a picture arrives in.</summary>
+    private enum ImgShape
+    {
+        /// <summary>An image value, carrying a class tag.</summary>
+        Image,
+
+        /// <summary>A plain numeric matrix — one channel.</summary>
+        Matrix,
+
+        /// <summary>
+        /// A plain <c>h×w×3</c> array. MATLAB has no separate image type, so a script that wrote
+        /// <c>zeros(h, w, 3)</c> and filled the planes is holding what MATLAB calls an RGB image, and
+        /// every function that takes a colour picture has to take this too.
+        /// </summary>
+        Planes,
+    }
+
+    /// <summary>Reads an argument that may be an image value, a numeric matrix, or colour planes.</summary>
     private static ImgArg ImgLike(string name, IReadOnlyList<JgsValue> args, int index, int line, int col)
     {
         JgsValue value = args[index];
-        return value.Type == JgsType.Image
-            ? new ImgArg(value.AsImage, false)
-            : new ImgArg(PointOps.WrapValues(Rectangle($"{name} argument {index + 1}", value, line, col)), true);
+        if (value.Type == JgsType.Image)
+        {
+            return new ImgArg(value.AsImage, ImgShape.Image);
+        }
+
+        if (value.Type == JgsType.Array && JgsMatrix.DimsOf(value) is [int high, int wide, 3])
+        {
+            var planes = new ImageBuffer(high, wide, 3);
+            for (int ch = 0; ch < 3; ch++)
+            {
+                for (int c = 0; c < wide; c++)
+                {
+                    for (int r = 0; r < high; r++)
+                    {
+                        // Column-major storage: page ch, column c, row r.
+                        planes[r, c, ch] = value.ElementAt(r + (c * high) + (ch * high * wide)).AsNumber;
+                    }
+                }
+            }
+
+            return new ImgArg(planes, ImgShape.Planes);
+        }
+
+        return new ImgArg(
+            PointOps.WrapValues(Rectangle($"{name} argument {index + 1}", value, line, col)), ImgShape.Matrix);
     }
 
     /// <summary>
@@ -366,13 +411,32 @@ internal static partial class JgsBuiltins
     /// </summary>
     private static JgsValue ImgLikeOut(ImageBuffer result, ImgArg source)
     {
-        if (!source.FromMatrix)
+        if (source.Shape == ImgShape.Image)
         {
             return ImgOut(result, source.Buffer.Class);
         }
 
         using (result)
         {
+            // Colour planes came in, so colour planes go back — unless the operation collapsed the
+            // picture to one value per pixel, which is a plain matrix in anybody's reading.
+            if (source.Shape == ImgShape.Planes && result.Channels == 3)
+            {
+                var flat = new double[result.Height * result.Width * 3];
+                for (int ch = 0; ch < 3; ch++)
+                {
+                    for (int c = 0; c < result.Width; c++)
+                    {
+                        for (int r = 0; r < result.Height; r++)
+                        {
+                            flat[r + (c * result.Height) + (ch * result.Height * result.Width)] = result[r, c, ch];
+                        }
+                    }
+                }
+
+                return JgsMatrix.FromColumnMajorDims(flat, [result.Height, result.Width, 3]);
+            }
+
             return MatrixToRows(PointOps.ToMatrix(result, 0));
         }
     }
