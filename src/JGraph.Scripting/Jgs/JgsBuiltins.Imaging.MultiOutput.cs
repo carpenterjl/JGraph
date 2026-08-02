@@ -117,6 +117,10 @@ internal static partial class JgsBuiltins
         Wrap("imreducehaze", ReduceHazeOutputs);
         Wrap("imlocalbrighten", LocalBrightenOutputs);
 
+        // M46 wave F. The distance transform's second output says which seed each pixel was measured
+        // against, which is how a script turns a distance map into a nearest-object map.
+        Wrap("bwdist", (args, wanted, line, col) => BwDistOutputs(args, wanted, line, col, dialect));
+
         // [counts, binLocations] = imhist(I). The locations are quoted in the image's own class, so a
         // uint8 picture's bins are centred on 0…255 while a double one's span [0, 1].
         Wrap("imhist", (args, wanted, line, col) =>

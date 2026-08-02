@@ -813,14 +813,15 @@ internal static partial class JgsBuiltins
     }
 
     private static (int Row, int Col) Subscript(
-        double row, double column, ImageBuffer image, JgsDialect dialect, int line, int col)
+        double row, double column, ImageBuffer image, JgsDialect dialect, int line, int col,
+        string what = "decorrstretch: 'SampleSubs'")
     {
         int r = (int)Math.Round(row) - dialect.IndexBase;
         int c = (int)Math.Round(column) - dialect.IndexBase;
         if ((uint)r >= (uint)image.Height || (uint)c >= (uint)image.Width)
         {
             throw new JgsRuntimeException(line, col,
-                $"decorrstretch: 'SampleSubs' names a pixel outside the image ({row}, {column}).");
+                $"{what} names a pixel outside the image ({row}, {column}).");
         }
 
         return (r, c);

@@ -697,6 +697,7 @@ internal static partial class JgsBuiltins
         DefineGeometryBuiltins(define, dialect);
         DefineColorBuiltins(define, dialect);
         DefineEnhancementBuiltins(define, dialect);
+        DefineMorphologyBuiltins(define, dialect);
 
         // --- Filtering -----------------------------------------------------------------------
         define("imfilter", (args, line, col) =>
@@ -870,27 +871,6 @@ internal static partial class JgsBuiltins
             return JgsValue.Array([ImgOut(magnitude, ImageClass.Double), ImgOut(direction, ImageClass.Double)]);
         });
 
-        // --- Morphology ----------------------------------------------------------------------
-        define("strel", (args, line, col) =>
-        {
-            ArityRange("strel", args, 1, 2, line, col);
-            string shape = Str("strel", args, 0, line, col).ToLowerInvariant();
-            int size = args.Count == 2 ? Count("strel", args, 1, line, col) : (shape == "disk" ? 1 : 3);
-            bool[,] element = shape switch
-            {
-                "square" => Morphology.Square(size),
-                "disk" => Morphology.Disk(size),
-                _ => throw new JgsRuntimeException(line, col, $"strel: unknown shape '{shape}' (use 'square' or 'disk')."),
-            };
-
-            return MatrixToRows(ElementToMatrix(element));
-        });
-
-        define("imerode", (args, line, col) => Morph("imerode", args, line, col, Morphology.Erode));
-        define("imdilate", (args, line, col) => Morph("imdilate", args, line, col, Morphology.Dilate));
-        define("imopen", (args, line, col) => Morph("imopen", args, line, col, Morphology.Open));
-        define("imclose", (args, line, col) => Morph("imclose", args, line, col, Morphology.Close));
-
         // --- Region analysis -----------------------------------------------------------------
         define("bwlabel", (args, line, col) =>
         {
@@ -957,26 +937,6 @@ internal static partial class JgsBuiltins
             catch (ArgumentOutOfRangeException ex)
             {
                 throw new JgsRuntimeException(line, col, $"houghlines: {ex.Message}");
-            }
-        });
-
-        define("imfill", (args, line, col) =>
-        {
-            ArityRange("imfill", args, 1, 2, line, col);
-            ImageBuffer image = Img("imfill", args, 0, line, col);
-            string mode = args.Count == 2 ? Str("imfill", args, 1, line, col).ToLowerInvariant() : "holes";
-            if (mode != "holes")
-            {
-                throw new JgsRuntimeException(line, col, "imfill only supports the 'holes' mode.");
-            }
-
-            try
-            {
-                return ImgOut(Regions.FillHoles(image), ImageClass.Logical);
-            }
-            catch (ArgumentException ex)
-            {
-                throw new JgsRuntimeException(line, col, $"imfill: {ex.Message}");
             }
         });
 
@@ -1181,21 +1141,6 @@ internal static partial class JgsBuiltins
                 "or 'intermediate')."),
         };
 
-    private static double[,] ElementToMatrix(bool[,] element)
-    {
-        int h = element.GetLength(0);
-        int w = element.GetLength(1);
-        var values = new double[h, w];
-        for (int r = 0; r < h; r++)
-        {
-            for (int c = 0; c < w; c++)
-            {
-                values[r, c] = element[r, c] ? 1.0 : 0.0;
-            }
-        }
-
-        return values;
-    }
 
     /// <summary>Reads a houghpeaks result — rows of 0-based [rhoIndex, thetaIndex] — back to pairs.</summary>
     private static (int RhoIndex, int ThetaIndex)[] PeakIndices(JgsValue value, int line, int col)

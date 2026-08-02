@@ -708,15 +708,43 @@ public static class JgsBuiltinCatalog
         Add("fibermetric", "Frangi vesselness: how tube-like each pixel is, taken over a range of fibre widths. Options: 'StructureSensitivity', 'ObjectPolarity'.", P("image"), Opt("thickness"), Opt("options"));
         Add("maxhessiannorm", "The largest Frobenius norm of the image Hessian at one scale; half of it is fibermetric's usual structure sensitivity.", P("image"), Opt("thickness"));
 
-        Add("strel", "Builds a structuring element matrix: 'square' (side) or 'disk' (radius).", P("shape"), Opt("size"));
+        // M46 wave F — morphology and distance. A structuring element is now a tagged struct with a
+        // Neighborhood field rather than a bare matrix, and every operation that takes one still
+        // accepts the matrix, which is what scripts written before this wave hand over.
+        Add("strel", "Builds a structuring element: 'square', 'rectangle', 'disk', 'diamond', 'octagon', 'line', 'cube', 'cuboid', 'sphere', or a 0/1 neighbourhood matrix.", P("shape"), Opt("size"), Opt("angle"));
+        Add("offsetstrel", "Builds a non-flat structuring element: 'ball' (radius, height) or 'offset' (a height matrix, -Inf outside).", P("shape"), Opt("radius"), Opt("height"));
+        Add("conndef", "The default connectivity neighbourhood for a rank: 'minimal' (4 or 6) or 'maximal' (8 or 26).", P("rank"), Opt("type"));
+        Add("iptcheckconn", "Errors unless the value is a valid connectivity — 1, 4, 8, 6, 18, 26, or a symmetric odd-sized 0/1 array.", P("conn"), Opt("caller"), Opt("variable"), Opt("position"));
         Add("imerode", "Morphological erosion (local minimum) over a structuring element (default 3×3 square).", P("image"), Opt("element"));
-        Add("imdilate", "Morphological dilation (local maximum) over a structuring element (default 3×3 square).", P("image"), Opt("element"));
+        Add("imdilate", "Morphological dilation (local maximum) over a structuring element, reflected about its origin.", P("image"), Opt("element"));
         Add("imopen", "Morphological opening (erode then dilate).", P("image"), Opt("element"));
         Add("imclose", "Morphological closing (dilate then erode).", P("image"), Opt("element"));
+        Add("imtophat", "Top-hat transform: the image minus its own opening — small bright detail, whatever the background does.", P("image"), Opt("element"));
+        Add("imbothat", "Bottom-hat transform: the closing minus the image — small dark detail.", P("image"), Opt("element"));
+        Add("bwhitmiss", "Hit-or-miss: pixels matching one element in the foreground and another in the background, or a single 1/-1/0 interval.", P("image"), P("element"), Opt("background"));
+        Add("imreconstruct", "Morphological reconstruction: grows the marker by dilation, never above the mask.", P("marker"), P("mask"), Opt("connectivity"));
+        Add("imclearborder", "Removes whatever touches the image border (default 8-connectivity).", P("image"), Opt("connectivity"));
+        Add("imhmax", "Suppresses maxima that rise less than h above their surroundings.", P("image"), P("h"), Opt("connectivity"));
+        Add("imhmin", "Suppresses minima shallower than h.", P("image"), P("h"), Opt("connectivity"));
+        Add("imextendedmax", "The regional maxima of the h-maxima transform: significant peaks as a mask.", P("image"), P("h"), Opt("connectivity"));
+        Add("imextendedmin", "The regional minima of the h-minima transform.", P("image"), P("h"), Opt("connectivity"));
+        Add("imregionalmax", "The regional maxima: connected plateaux with nothing higher beside them.", P("image"), Opt("connectivity"));
+        Add("imregionalmin", "The regional minima.", P("image"), Opt("connectivity"));
+        Add("imimposemin", "Forces the regional minima to sit exactly where the marker is, and nowhere else.", P("image"), P("marker"), Opt("connectivity"));
         Add("hough", "Hough line transform of a binary image: [accumulator, theta, rho].", P("image"));
         Add("houghpeaks", "The strongest peaks of a Hough accumulator, as 0-based [rhoIndex, thetaIndex] rows; pass base 1 for MATLAB numbering.", P("accumulator"), Opt("count"), Opt("threshold"), Opt("base"));
         Add("houghlines", "Line segments for the given Hough peaks, as a table of endpoints with Theta and Rho.", P("image"), P("theta"), P("rho"), P("peaks"), Opt("fillGap"), Opt("minLength"));
-        Add("imfill","Fills holes in a binary image — background not reachable from the border becomes foreground.", P("image"), Opt("mode"));
+        Add("imfill","Fills holes — background not reachable from the border — or, given locations, the background regions containing them.", P("image"), Opt("locations"), Opt("connectivity"));
+        Add("makelut", "Answers a rule for every possible 2×2 or 3×3 neighbourhood, giving a 16- or 512-entry lookup table.", P("function"), Opt("order"));
+        Add("bwlookup", "Applies a neighbourhood lookup table to a binary image.", P("image"), P("lut"));
+        Add("applylut", "Applies a neighbourhood lookup table to a binary image (the older name for bwlookup).", P("image"), P("lut"));
+        Add("bwperim", "The perimeter pixels: foreground with at least one background neighbour.", P("image"), Opt("connectivity"));
+        Add("bwmorph", "One of the named binary operations — 'skel', 'thin', 'clean', 'bridge', 'spur', 'majority', 'branchpoints' and the rest — repeated n times (Inf for until stable).", P("image"), P("operation"), Opt("n"));
+        Add("bwskel", "Reduces objects to single-pixel strokes, pruning branches shorter than 'MinBranchLength'.", P("image"), Opt("options"));
+        Add("bwulterode", "The ultimate erosion: the last points of each object to survive continued erosion.", P("image"), Opt("method"));
+        Add("bwdist", "Distance to the nearest nonzero pixel: [D, idx]. Methods 'euclidean' (exact, default), 'cityblock', 'chessboard', 'quasi-euclidean'.", P("image"), Opt("method"));
+        Add("bwdistgeodesic", "Geodesic distance from the seeds, travelling only inside the mask; unreachable pixels are Inf.", P("mask"), P("seeds"), Opt("method"));
+        Add("graydist", "Gray-weighted distance: each step costs the average of the two samples it joins.", P("image"), P("seeds"), Opt("method"));
         Add("bwareaopen", "Removes connected components smaller than minArea pixels from a binary image; connectivity 4 or 8 (default 8).", P("image"), P("minArea"), Opt("connectivity"));
         Add("bwlabel","Labels connected components of a binary image: [labels, count]; connectivity 4 or 8 (default 8).", P("image"), Opt("connectivity"));
         Add("regionprops", "Per-region Area/Centroid/BoundingBox of a label or binary image, as a table (0-based pixel coordinates); an intensity image adds MeanIntensity and WeightedCentroid.", P("labels"), Opt("intensity"));

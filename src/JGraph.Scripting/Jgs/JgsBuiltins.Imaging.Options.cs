@@ -440,4 +440,15 @@ internal static partial class JgsBuiltins
             return MatrixToRows(PointOps.ToMatrix(result, 0));
         }
     }
+
+    /// <summary>
+    /// Hands back a result that is a mask rather than a picture — an edge map, a set of extrema, a
+    /// perimeter. It follows the input's shape like <see cref="ImgLikeOut"/>, but an image result is
+    /// stamped logical instead of inheriting the input's class: thresholding a <c>uint8</c> photograph
+    /// does not produce a <c>uint8</c> answer.
+    /// </summary>
+    private static JgsValue ImgMaskOut(ImageBuffer result, ImgArg source) =>
+        source.Shape == ImgShape.Image
+            ? ImgOut(result, ImageClass.Logical)
+            : ImgLikeOut(result, source);
 }

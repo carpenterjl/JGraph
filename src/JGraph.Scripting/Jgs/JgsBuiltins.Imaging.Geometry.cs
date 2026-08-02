@@ -515,6 +515,7 @@ internal static partial class JgsBuiltins
         return tag.AsString switch
         {
             "affine2d" or "projective2d" or "rigid2d" or "imref2d" => tag.AsString,
+            "strel" or "offsetstrel" => tag.AsString,
             _ => null,
         };
     }

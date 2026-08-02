@@ -1,6 +1,6 @@
 # MATLAB Image Processing Toolbox coverage
 
-**134 of 409 documented** Image Processing Toolbox names are implemented, as of M46 wave E.
+**159 of 409 documented** Image Processing Toolbox names are implemented, as of M46 wave F.
 
 ## Where this list comes from
 
@@ -32,57 +32,57 @@ counted here too.
 
 JGraph-only names — `mat2im`, `im2mat`, `imcentroid` — are in neither MATLAB nor these counts.
 
-## Implemented — 134
-`adapthisteq`, `adaptthresh`, `affine2d`, `affineOutputView`, `bestblk`, `blockproc`
-`bwareaopen`, `bwlabel`, `checkerboard`, `chromadapt`, `cmap2gray`, `col2im`
-`colfilt`, `colorangle`, `decorrstretch`, `deltaE`, `demosaic`, `edge`
-`entropyfilt`, `fft2`, `fftshift`, `fibermetric`, `fitgeotrans`, `fspecial`
-`gray2ind`, `graythresh`, `histeq`, `hough`, `houghlines`, `houghpeaks`
-`hsv2rgb`, `ifft2`, `ifftshift`, `illumgray`, `illumpca`, `illumwhite`
-`im2col`, `im2double`, `im2gray`, `im2int16`, `im2single`, `im2uint16`
-`im2uint8`, `imabsdiff`, `imadd`, `imadjust`, `imapplymatrix`, `imapprox`
-`imbilatfilt`, `imbinarize`, `imboxfilt`, `imclose`, `imcolordiff`, `imcomplement`
-`imcrop`, `imdiffuseest`, `imdiffusefilt`, `imdilate`, `imdivide`, `imerode`
-`imfill`, `imfilter`, `imfinfo`, `imflatfield`, `imgaussfilt`, `imgradient`
-`imgradientxy`, `imguidedfilter`, `imhist`, `imhistmatch`, `imlincomb`, `imlocalbrighten`
+## Implemented — 159
+`adapthisteq`, `adaptthresh`, `affine2d`, `affineOutputView`, `applylut`, `bestblk`
+`blockproc`, `bwareaopen`, `bwdist`, `bwdistgeodesic`, `bwhitmiss`, `bwlabel`
+`bwlookup`, `bwmorph`, `bwperim`, `bwskel`, `bwulterode`, `checkerboard`
+`chromadapt`, `cmap2gray`, `col2im`, `colfilt`, `colorangle`, `conndef`
+`decorrstretch`, `deltaE`, `demosaic`, `edge`, `entropyfilt`, `fft2`
+`fftshift`, `fibermetric`, `fitgeotrans`, `fspecial`, `gray2ind`, `graydist`
+`graythresh`, `histeq`, `hough`, `houghlines`, `houghpeaks`, `hsv2rgb`
+`ifft2`, `ifftshift`, `illumgray`, `illumpca`, `illumwhite`, `im2col`
+`im2double`, `im2gray`, `im2int16`, `im2single`, `im2uint16`, `im2uint8`
+`imabsdiff`, `imadd`, `imadjust`, `imapplymatrix`, `imapprox`, `imbilatfilt`
+`imbinarize`, `imbothat`, `imboxfilt`, `imclearborder`, `imclose`, `imcolordiff`
+`imcomplement`, `imcrop`, `imdiffuseest`, `imdiffusefilt`, `imdilate`, `imdivide`
+`imerode`, `imextendedmax`, `imextendedmin`, `imfill`, `imfilter`, `imfinfo`
+`imflatfield`, `imgaussfilt`, `imgradient`, `imgradientxy`, `imguidedfilter`, `imhist`
+`imhistmatch`, `imhmax`, `imhmin`, `imimposemin`, `imlincomb`, `imlocalbrighten`
 `immultiply`, `imnlmfilt`, `imnoise`, `imopen`, `impyramid`, `imread`
-`imreducehaze`, `imref2d`, `imresize`, `imrotate`, `imsharpen`, `imshow`
-`imsplit`, `imsubtract`, `imtranslate`, `imwarp`, `imwrite`, `ind2gray`
-`ind2rgb`, `integralBoxFilter`, `integralImage`, `intlut`, `lab2double`, `lab2rgb`
-`lab2uint16`, `lab2uint8`, `lab2xyz`, `lin2rgb`, `mat2gray`, `maxhessiannorm`
-`medfilt2`, `modefilt`, `nlfilter`, `ntsc2rgb`, `ordfilt2`, `otsuthresh`
-`padarray`, `projective2d`, `rangefilt`, `regionprops`, `rgb2gray`, `rgb2hsv`
-`rgb2ind`, `rgb2lab`, `rgb2lightness`, `rgb2lin`, `rgb2ntsc`, `rgb2xyz`
-`rgb2ycbcr`, `rigid2d`, `stdfilt`, `strel`, `stretchlim`, `transformPointsForward`
-`transformPointsInverse`, `whitepoint`, `wiener2`, `xyz2double`, `xyz2lab`, `xyz2rgb`
-`xyz2uint16`, `ycbcr2rgb`
+`imreconstruct`, `imreducehaze`, `imref2d`, `imregionalmax`, `imregionalmin`, `imresize`
+`imrotate`, `imsharpen`, `imshow`, `imsplit`, `imsubtract`, `imtophat`
+`imtranslate`, `imwarp`, `imwrite`, `ind2gray`, `ind2rgb`, `integralBoxFilter`
+`integralImage`, `intlut`, `iptcheckconn`, `lab2double`, `lab2rgb`, `lab2uint16`
+`lab2uint8`, `lab2xyz`, `lin2rgb`, `makelut`, `mat2gray`, `maxhessiannorm`
+`medfilt2`, `modefilt`, `nlfilter`, `ntsc2rgb`, `offsetstrel`, `ordfilt2`
+`otsuthresh`, `padarray`, `projective2d`, `rangefilt`, `regionprops`, `rgb2gray`
+`rgb2hsv`, `rgb2ind`, `rgb2lab`, `rgb2lightness`, `rgb2lin`, `rgb2ntsc`
+`rgb2xyz`, `rgb2ycbcr`, `rigid2d`, `stdfilt`, `strel`, `stretchlim`
+`transformPointsForward`, `transformPointsInverse`, `whitepoint`, `wiener2`, `xyz2double`, `xyz2lab`
+`xyz2rgb`, `xyz2uint16`, `ycbcr2rgb`
 
-## Not implemented — 132
-Planned across M46 waves F–K.
+## Not implemented — 107
+Planned across M46 waves G–K.
 Nothing here is refused on principle; it is work not yet done.
 
-`activecontour`, `applylut`, `bfscore`, `boundarymask`, `bwarea`, `bwareafilt`
-`bwboundaries`, `bwconncomp`, `bwconvhull`, `bwdist`, `bwdistgeodesic`, `bweuler`
-`bwferet`, `bwhitmiss`, `bwlabeln`, `bwlookup`, `bwmorph`, `bwmorph3`
-`bwperim`, `bwpropfilt`, `bwselect`, `bwselect3`, `bwskel`, `bwtraceboundary`
-`bwulterode`, `conndef`, `convmtx2`, `corr2`, `dct2`, `dctmtx`
-`deconvblind`, `deconvlucy`, `deconvreg`, `deconvwnr`, `dice`, `edge3`
-`edgetaper`, `entropy`, `freqspace`, `freqz2`, `fsamp2`, `fspecial3`
-`ftrans2`, `fwind1`, `fwind2`, `gabor`, `gradientweight`, `graycomatrix`
-`grayconnected`, `graycoprops`, `graydiffweight`, `graydist`, `grayslice`, `idct2`
-`imadjustn`, `imbothat`, `imboxfilt3`, `imclearborder`, `imcontour`, `imcrop3`
-`imextendedmax`, `imextendedmin`, `imfindcircles`, `imfuse`, `imgaborfilt`, `imgaussfilt3`
-`imgradient3`, `imgradientxyz`, `imhistmatchn`, `imhmax`, `imhmin`, `imimposemin`
-`immse`, `imoverlay`, `impixel`, `improfile`, `imquantize`, `imreconstruct`
-`imregcorr`, `imregionalmax`, `imregionalmin`, `imresize3`, `imrotate3`, `imsegfmm`
-`imsegkmeans`, `imsegkmeans3`, `imshowpair`, `imtophat`, `integralBoxFilter3`, `integralImage3`
-`iptcheckconn`, `iptgetpref`, `iptsetpref`, `iradon`, `jaccard`, `label2idx`
-`label2rgb`, `labelmatrix`, `labeloverlay`, `makelut`, `mean2`, `medfilt3`
+`activecontour`, `bfscore`, `boundarymask`, `bwarea`, `bwareafilt`, `bwboundaries`
+`bwconncomp`, `bwconvhull`, `bweuler`, `bwferet`, `bwlabeln`, `bwmorph3`
+`bwpropfilt`, `bwselect`, `bwselect3`, `bwtraceboundary`, `convmtx2`, `corr2`
+`dct2`, `dctmtx`, `deconvblind`, `deconvlucy`, `deconvreg`, `deconvwnr`
+`dice`, `edge3`, `edgetaper`, `entropy`, `freqspace`, `freqz2`
+`fsamp2`, `fspecial3`, `ftrans2`, `fwind1`, `fwind2`, `gabor`
+`gradientweight`, `graycomatrix`, `grayconnected`, `graycoprops`, `graydiffweight`, `grayslice`
+`idct2`, `imadjustn`, `imboxfilt3`, `imcontour`, `imcrop3`, `imfindcircles`
+`imfuse`, `imgaborfilt`, `imgaussfilt3`, `imgradient3`, `imgradientxyz`, `imhistmatchn`
+`immse`, `imoverlay`, `impixel`, `improfile`, `imquantize`, `imregcorr`
+`imresize3`, `imrotate3`, `imsegfmm`, `imsegkmeans`, `imsegkmeans3`, `imshowpair`
+`integralBoxFilter3`, `integralImage3`, `iptgetpref`, `iptsetpref`, `iradon`, `jaccard`
+`label2idx`, `label2rgb`, `labelmatrix`, `labeloverlay`, `mean2`, `medfilt3`
 `montage`, `multissim`, `multissim3`, `multithresh`, `normxcorr2`, `obliqueslice`
-`offsetstrel`, `otf2psf`, `phantom`, `poly2label`, `poly2mask`, `psf2otf`
-`psnr`, `qtdecomp`, `qtgetblk`, `qtsetblk`, `radon`, `reducepoly`
-`regionfill`, `regionprops3`, `roicolor`, `roifilt2`, `roipoly`, `ssim`
-`std2`, `superpixels`, `superpixels3`, `visboundaries`, `viscircles`, `watershed`
+`otf2psf`, `phantom`, `poly2label`, `poly2mask`, `psf2otf`, `psnr`
+`qtdecomp`, `qtgetblk`, `qtsetblk`, `radon`, `reducepoly`, `regionfill`
+`regionprops3`, `roicolor`, `roifilt2`, `roipoly`, `ssim`, `std2`
+`superpixels`, `superpixels3`, `visboundaries`, `viscircles`, `watershed`
 
 ## Excluded — 143 names and 8 families
 
@@ -286,6 +286,52 @@ By reason:
 - **A `.m` file included from a JGS session keeps JGS-flavoured returns.** Builtins learn the dialect
   when they are registered, not when they are called, so `run('file.m')` from a JGS script gets the
   JGS shapes. `sprintf` has behaved this way since M28; it is recorded rather than fought.
+- **`strel` and `offsetstrel` are tagged structs**, the same device as the transform classes above:
+  a struct whose `Type` field names the class it stands for, with `Neighborhood`, `Dimensionality`
+  and — for a non-flat element — `Offset`. `se.Neighborhood` and `class(se)` read as they do in
+  MATLAB; `se.decompose()`, `se.reflect()` and the rest of the method surface do not exist. Every
+  operation that takes an element also still takes a plain 0/1 matrix, which is what JGS scripts
+  written before this wave hand over.
+- **`strel('disk', r)` is the exact disk**, the shape MATLAB gives for `strel('disk', r, 0)`. By
+  default MATLAB approximates the disk with a decomposition into periodic lines, which is faster and
+  a slightly different shape; the decomposition count is accepted and ignored here. The same holds
+  for `offsetstrel('ball', r, h)`, which is the exact half-ellipsoid.
+- **`bwmorph`'s thinning operations follow published algorithms rather than MATLAB's tables.**
+  `'thin'` is Zhang–Suen, `'skel'` is Guo–Hall, `'shrink'` is Zhang–Suen without the rule that
+  preserves free ends, and `'thicken'` is `'thin'` run on the background. All four are
+  topology-preserving — a ring stays a ring — and all four reduce a stroke to single-pixel width,
+  but they will not agree with MATLAB pixel for pixel. MATLAB documents what these do and ships the
+  512-entry table that does it; the table itself is not published.
+- **The single-pixel rules follow the documented effect.** `'bridge'` sets a background pixel whose
+  neighbours form two or more separate runs; `'diag'` fills the elbow between two diagonally joined
+  pixels; `'branchpoints'` is a skeleton pixel with three or more incoming strokes, counted by
+  transitions round the ring; `'endpoints'` is one with at most one neighbour. Each is the rule
+  MATLAB's documentation states, arrived at independently of its table.
+- **`bwskel` is two-dimensional** and is that thinning followed by branch pruning, where MATLAB uses
+  Lee's algorithm, which also handles volumes. `'MinBranchLength'` prunes iteratively: taking a short
+  spur off can shorten the branch that carried it.
+- **`bwulterode` takes the regional maxima of the whole distance transform** rather than working
+  object by object. For separated objects the two agree; two objects joined by a narrow neck can
+  differ, because a maximum on one side of the neck is measured against the whole field.
+- **`imimposemin` marks the imposed minima with 0, not −∞.** MATLAB genuinely returns `-Inf` there.
+  Images here carry `[0, 1]`, so the imposed minima land on the bottom of that range instead — still
+  strictly below everything else, because the reconstruction raises the rest of the picture by a grey
+  step first, which is the property the operation exists to provide.
+- **`bwdist`'s second output is quoted per dialect.** MATLAB's `idx` is a 1-based column-major linear
+  index; that is what a `.m` script gets. JGS gets the 0-based row-major index it uses everywhere
+  else (ADR 0028). Pixels with no seed anywhere report 0.
+- **`bwdistgeodesic` and `graydist` return infinity for what they cannot reach**, including pixels
+  outside the mask. Their default metric is `'chessboard'`, MATLAB's.
+- **Non-flat morphology saturates at the ends of the range.** Dilating by an `offsetstrel` adds its
+  heights, which can push a sample past 1; the result is clamped, which is what MATLAB does for every
+  class but `double` — and `[0, 1]` is the only range an image carries here.
+- **`conndef(3, …)` returns a real 3×3×3 array, and nothing consumes it yet.** The 3-D connectivities
+  and the `'cube'`, `'cuboid'` and `'sphere'` structuring elements are built and readable; the volume
+  operations that take them arrive in wave K, and the two-dimensional morphology refuses a
+  three-dimensional element by name rather than silently flattening it.
+- **A mask-shaped result follows its input's shape, but never its class.** `bwperim`, `bwmorph`,
+  `imregionalmax` and the rest hand back a plain matrix for a matrix and a `logical` image for an
+  image: thresholding a `uint8` photograph does not produce a `uint8` answer.
 
 ## Answers corrected while building this mirror
 
@@ -315,6 +361,13 @@ Each changed an existing result, so each is written down.
   errored where `'FilterSize', [5 5]` worked, because the reader behind every such option asked for an
   array. It has taken a bare number since wave B's `imgaussfilt`; this is the first wave whose own
   tests exercised the scalar form.
+- **`imdilate` did not reflect the structuring element** (M46 wave F). Dilation is the Minkowski sum:
+  laying the element down on each foreground pixel, offsets and all. Reading the neighbourhood as
+  given instead is correlation, which gathers from the opposite side — so an element extending to the
+  right moved the picture left. Every element that existed before this wave was symmetric (the 3×3
+  square, the disk), so the two agreed and nothing showed it; `strel('line', 5, 30)` is the first
+  argument that can tell them apart. Erosion is unchanged: it is the one that does not reflect, and
+  the reflection is exactly what makes the two duals of each other.
 - **`repmat` ignored all but its last count** (M46 wave C). It predates shaped arrays (M40) and laid
   the copies end to end, so `repmat([1 2; 3 4], 2, 1)` came back as a flat four-element row and
   `repmat(A, 3, 1)` did not repeat at all. It now tiles in two dimensions. This one is a base-MATLAB
