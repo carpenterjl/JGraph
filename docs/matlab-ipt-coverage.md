@@ -1,6 +1,6 @@
 # MATLAB Image Processing Toolbox coverage
 
-**207 of 409 documented** Image Processing Toolbox names are implemented, as of M46 wave H.
+**223 of 409 documented** Image Processing Toolbox names are implemented, as of M46 wave I.
 
 ## Where this list comes from
 
@@ -32,57 +32,58 @@ counted here too.
 
 JGraph-only names — `mat2im`, `im2mat`, `imcentroid` — are in neither MATLAB nor these counts.
 
-## Implemented — 207
+## Implemented — 223
 `activecontour`, `adapthisteq`, `adaptthresh`, `affine2d`, `affineOutputView`, `applylut`
 `bestblk`, `blockproc`, `boundarymask`, `bwarea`, `bwareafilt`, `bwareaopen`
 `bwboundaries`, `bwconncomp`, `bwconvhull`, `bwdist`, `bwdistgeodesic`, `bweuler`
 `bwferet`, `bwhitmiss`, `bwlabel`, `bwlookup`, `bwmorph`, `bwperim`
 `bwpropfilt`, `bwselect`, `bwskel`, `bwtraceboundary`, `bwulterode`, `checkerboard`
 `chromadapt`, `cmap2gray`, `col2im`, `colfilt`, `colorangle`, `conndef`
-`dct2`, `dctmtx`, `decorrstretch`, `deltaE`, `demosaic`, `edge`
-`entropyfilt`, `fft2`, `fftshift`, `fibermetric`, `fitgeotrans`, `fspecial`
-`gradientweight`, `gray2ind`, `grayconnected`, `graydiffweight`, `graydist`, `grayslice`
-`graythresh`, `histeq`, `hough`, `houghlines`, `houghpeaks`, `hsv2rgb`
-`idct2`, `ifft2`, `ifftshift`, `illumgray`, `illumpca`, `illumwhite`
-`im2col`, `im2double`, `im2gray`, `im2int16`, `im2single`, `im2uint16`
-`im2uint8`, `imabsdiff`, `imadd`, `imadjust`, `imapplymatrix`, `imapprox`
-`imbilatfilt`, `imbinarize`, `imbothat`, `imboxfilt`, `imclearborder`, `imclose`
-`imcolordiff`, `imcomplement`, `imcrop`, `imdiffuseest`, `imdiffusefilt`, `imdilate`
-`imdivide`, `imerode`, `imextendedmax`, `imextendedmin`, `imfill`, `imfilter`
-`imfindcircles`, `imfinfo`, `imflatfield`, `imgaussfilt`, `imgradient`, `imgradientxy`
-`imguidedfilter`, `imhist`, `imhistmatch`, `imhmax`, `imhmin`, `imimposemin`
-`imlincomb`, `imlocalbrighten`, `immultiply`, `imnlmfilt`, `imnoise`, `imopen`
-`imoverlay`, `impyramid`, `imquantize`, `imread`, `imreconstruct`, `imreducehaze`
-`imref2d`, `imregcorr`, `imregionalmax`, `imregionalmin`, `imresize`, `imrotate`
-`imsegfmm`, `imsegkmeans`, `imsharpen`, `imshow`, `imsplit`, `imsubtract`
-`imtophat`, `imtranslate`, `imwarp`, `imwrite`, `ind2gray`, `ind2rgb`
-`integralBoxFilter`, `integralImage`, `intlut`, `iptcheckconn`, `iradon`, `lab2double`
-`lab2rgb`, `lab2uint16`, `lab2uint8`, `lab2xyz`, `label2idx`, `label2rgb`
-`labelmatrix`, `labeloverlay`, `lin2rgb`, `makelut`, `mat2gray`, `maxhessiannorm`
-`medfilt2`, `modefilt`, `multithresh`, `nlfilter`, `normxcorr2`, `ntsc2rgb`
-`offsetstrel`, `ordfilt2`, `otsuthresh`, `padarray`, `phantom`, `poly2label`
-`poly2mask`, `projective2d`, `qtdecomp`, `qtgetblk`, `qtsetblk`, `radon`
-`rangefilt`, `reducepoly`, `regionfill`, `regionprops`, `rgb2gray`, `rgb2hsv`
-`rgb2ind`, `rgb2lab`, `rgb2lightness`, `rgb2lin`, `rgb2ntsc`, `rgb2xyz`
-`rgb2ycbcr`, `rigid2d`, `roicolor`, `roifilt2`, `roipoly`, `stdfilt`
-`strel`, `stretchlim`, `superpixels`, `transformPointsForward`, `transformPointsInverse`, `visboundaries`
-`viscircles`, `watershed`, `whitepoint`, `wiener2`, `xyz2double`, `xyz2lab`
-`xyz2rgb`, `xyz2uint16`, `ycbcr2rgb`
+`convmtx2`, `dct2`, `dctmtx`, `deconvblind`, `deconvlucy`, `deconvreg`
+`deconvwnr`, `decorrstretch`, `deltaE`, `demosaic`, `edge`, `edgetaper`
+`entropyfilt`, `fft2`, `fftshift`, `fibermetric`, `fitgeotrans`, `freqspace`
+`freqz2`, `fsamp2`, `fspecial`, `ftrans2`, `fwind1`, `fwind2`
+`gabor`, `gradientweight`, `gray2ind`, `grayconnected`, `graydiffweight`, `graydist`
+`grayslice`, `graythresh`, `histeq`, `hough`, `houghlines`, `houghpeaks`
+`hsv2rgb`, `idct2`, `ifft2`, `ifftshift`, `illumgray`, `illumpca`
+`illumwhite`, `im2col`, `im2double`, `im2gray`, `im2int16`, `im2single`
+`im2uint16`, `im2uint8`, `imabsdiff`, `imadd`, `imadjust`, `imapplymatrix`
+`imapprox`, `imbilatfilt`, `imbinarize`, `imbothat`, `imboxfilt`, `imclearborder`
+`imclose`, `imcolordiff`, `imcomplement`, `imcrop`, `imdiffuseest`, `imdiffusefilt`
+`imdilate`, `imdivide`, `imerode`, `imextendedmax`, `imextendedmin`, `imfill`
+`imfilter`, `imfindcircles`, `imfinfo`, `imflatfield`, `imgaborfilt`, `imgaussfilt`
+`imgradient`, `imgradientxy`, `imguidedfilter`, `imhist`, `imhistmatch`, `imhmax`
+`imhmin`, `imimposemin`, `imlincomb`, `imlocalbrighten`, `immultiply`, `imnlmfilt`
+`imnoise`, `imopen`, `imoverlay`, `impyramid`, `imquantize`, `imread`
+`imreconstruct`, `imreducehaze`, `imref2d`, `imregcorr`, `imregionalmax`, `imregionalmin`
+`imresize`, `imrotate`, `imsegfmm`, `imsegkmeans`, `imsharpen`, `imshow`
+`imsplit`, `imsubtract`, `imtophat`, `imtranslate`, `imwarp`, `imwrite`
+`ind2gray`, `ind2rgb`, `integralBoxFilter`, `integralImage`, `intlut`, `iptcheckconn`
+`iradon`, `lab2double`, `lab2rgb`, `lab2uint16`, `lab2uint8`, `lab2xyz`
+`label2idx`, `label2rgb`, `labelmatrix`, `labeloverlay`, `lin2rgb`, `makelut`
+`mat2gray`, `maxhessiannorm`, `medfilt2`, `modefilt`, `multithresh`, `nlfilter`
+`normxcorr2`, `ntsc2rgb`, `offsetstrel`, `ordfilt2`, `otf2psf`, `otsuthresh`
+`padarray`, `phantom`, `poly2label`, `poly2mask`, `projective2d`, `psf2otf`
+`qtdecomp`, `qtgetblk`, `qtsetblk`, `radon`, `rangefilt`, `reducepoly`
+`regionfill`, `regionprops`, `rgb2gray`, `rgb2hsv`, `rgb2ind`, `rgb2lab`
+`rgb2lightness`, `rgb2lin`, `rgb2ntsc`, `rgb2xyz`, `rgb2ycbcr`, `rigid2d`
+`roicolor`, `roifilt2`, `roipoly`, `stdfilt`, `strel`, `stretchlim`
+`superpixels`, `transformPointsForward`, `transformPointsInverse`, `visboundaries`, `viscircles`, `watershed`
+`whitepoint`, `wiener2`, `xyz2double`, `xyz2lab`, `xyz2rgb`, `xyz2uint16`
+`ycbcr2rgb`
 
-## Not implemented — 59
-Planned across M46 waves I–K.
+## Not implemented — 43
+Planned across M46 waves J–K.
 Nothing here is refused on principle; it is work not yet done.
 
-`bfscore`, `bwlabeln`, `bwmorph3`, `bwselect3`, `convmtx2`, `corr2`
-`deconvblind`, `deconvlucy`, `deconvreg`, `deconvwnr`, `dice`, `edge3`
-`edgetaper`, `entropy`, `freqspace`, `freqz2`, `fsamp2`, `fspecial3`
-`ftrans2`, `fwind1`, `fwind2`, `gabor`, `graycomatrix`, `graycoprops`
-`imadjustn`, `imboxfilt3`, `imcontour`, `imcrop3`, `imfuse`, `imgaborfilt`
-`imgaussfilt3`, `imgradient3`, `imgradientxyz`, `imhistmatchn`, `immse`, `impixel`
-`improfile`, `imresize3`, `imrotate3`, `imsegkmeans3`, `imshowpair`, `integralBoxFilter3`
-`integralImage3`, `iptgetpref`, `iptsetpref`, `jaccard`, `mean2`, `medfilt3`
-`montage`, `multissim`, `multissim3`, `obliqueslice`, `otf2psf`, `psf2otf`
-`psnr`, `regionprops3`, `ssim`, `std2`, `superpixels3`
+`bfscore`, `bwlabeln`, `bwmorph3`, `bwselect3`, `corr2`, `dice`
+`edge3`, `entropy`, `fspecial3`, `graycomatrix`, `graycoprops`, `imadjustn`
+`imboxfilt3`, `imcontour`, `imcrop3`, `imfuse`, `imgaussfilt3`, `imgradient3`
+`imgradientxyz`, `imhistmatchn`, `immse`, `impixel`, `improfile`, `imresize3`
+`imrotate3`, `imsegkmeans3`, `imshowpair`, `integralBoxFilter3`, `integralImage3`, `iptgetpref`
+`iptsetpref`, `jaccard`, `mean2`, `medfilt3`, `montage`, `multissim`
+`multissim3`, `obliqueslice`, `psnr`, `regionprops3`, `ssim`, `std2`
+`superpixels3`
 
 ## Excluded — 143 names and 8 families
 
@@ -408,6 +409,46 @@ By reason:
 - **`imregcorr` resolves the half-turn ambiguity by trying both.** A magnitude spectrum is symmetric
   through the origin, so a turn and the same turn plus 180° are indistinguishable there; both
   candidates are applied and the one that actually lines the pictures up is kept.
+- **`freqz2` evaluates the response from its definition rather than by zero-padding and
+  transforming.** It costs one multiply-add per tap per sample, which for the sizes involved is
+  nothing, and it buys the form where the caller names the frequencies — a response along one line
+  through the plane, say — which a transform cannot give at all. The kernel's origin is its middle
+  tap, so a symmetric kernel answers with a real response and no phase to unwrap.
+- **`fsamp2`, `fwind1` and `fwind2` in their `(f1, f2, Hd, …)` form evaluate the inverse transform as
+  a sum at the frequencies given**, rather than interpolating the response onto a regular grid first
+  and transforming that. Handed the grid `freqspace` produces, the sum reduces term for term to the
+  transform, which is the identity the two forms are tested against; handed scattered points it is
+  the frequency-sampling design those points describe, with no interpolation error in between.
+- **`fwind1`'s two-window form takes the first window along the rows.** MathWorks documents that the
+  two are multiplied out and not which goes where; the common case passes the same window twice,
+  where it cannot matter.
+- **`convmtx2` refuses to build a matrix above sixty-four million entries.** Filtering is linear so
+  it has a matrix, but the matrix for a modest 64×64 picture already has sixteen million entries.
+  The error says to filter the picture directly instead of building the thing that would do it.
+- **`deconvlucy` is accelerated by Biggs and Andrews' vector extrapolation**, as MATLAB's is. Two
+  successive corrections that point the same way are read as a direction and stepped further along,
+  which changes how fast the same answer is reached and not what the answer is; a given iteration
+  count therefore lands further along the path than plain Richardson–Lucy would. `SUBSMPL` is not
+  implemented — the spread function must be given at the picture's own resolution — and a value
+  other than one is an error rather than a silent single-rate run.
+- **`deconvreg` solves for its multiplier by bisecting in the log.** The residual a given multiplier
+  leaves is monotone in it, so there is exactly one multiplier at which the residual equals the noise
+  power the caller stated, and it is found rather than guessed. With no noise stated the answer is the
+  bottom of the range, which is inverse filtering with just enough regularization to stay finite.
+- **`deconvblind` improves the picture and the blur in turn, sharing one ratio between the two
+  half-steps.** Both sequences are extrapolated. A guess that is far wider than the true blur lets the
+  picture over-sharpen faster than the blur can narrow, so the useful reading is after a few rounds
+  rather than a few hundred; handed the true blur it stays on it and reduces to `deconvlucy`.
+- **`edgetaper` uses the spread function as given.** Every spread function in this family sums to one,
+  and one that does not will change the border's brightness rather than only its sharpness.
+- **`gabor` returns one tagged struct for one filter and a cell of them for a bank**, so
+  `g = gabor(4, 90); g.Wavelength` reads the way it does in MATLAB rather than needing `g{1}`.
+  `class(g)` answers `'gabor'`.
+- **`imgaborfilt`'s envelope is normalized to unit volume.** MathWorks does not document the scaling
+  of its kernel, so magnitudes agree in shape and in relative strength across a bank, but an absolute
+  magnitude is not comparable between the two. The filter is applied by convolution with the border
+  extended by repetition, and `imgaborfilt(I, wavelength, orientation)` takes one of each — a bank
+  goes through `gabor`, which is where MATLAB puts it too.
 
 ## Answers corrected while building this mirror
 

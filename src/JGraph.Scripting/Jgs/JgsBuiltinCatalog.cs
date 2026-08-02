@@ -805,6 +805,27 @@ public static class JgsBuiltinCatalog
         Add("normxcorr2", "Normalized cross-correlation of a template against a picture; the peak is the match, and its value is bounded by one.", P("template"), P("image"));
         Add("imregcorr", "Registers two pictures by phase correlation: [tform, peak]. 'translation', 'rigid' or 'similarity' (the default).", P("moving"), P("fixed"), Opt("options"));
 
+        // M46 wave I — filter design and deblurring. Design runs the opposite way round from
+        // filtering: say what response you want and a kernel comes back. Deblurring runs it backwards
+        // again, and every method differs only in how much it trusts the data where the blur left
+        // nothing behind.
+        Add("freqspace", "The frequency grid a response is sampled on: [f1, f2] for a size or an [m n] pair, or one vector on its own. 'meshgrid' returns them as matrices.", P("nOrSize"), Opt("meshgrid"));
+        Add("freqz2", "The frequency response of a 2-D filter: [H, f1, f2]. Sizes default to 64 by 64; give two vectors instead to read named frequencies.", P("kernel"), Opt("n1OrF1"), Opt("n2OrF2"));
+        Add("fsamp2", "Designs a 2-D FIR filter whose response matches the samples given, exactly at those points.", P("f1OrResponse"), Opt("f2"), Opt("response"), Opt("size"));
+        Add("ftrans2", "Designs a 2-D FIR filter by mapping a 1-D filter's frequency axis onto the plane; the transform defaults to McClellan's.", P("b"), Opt("t"));
+        Add("fwind1", "Designs a 2-D FIR filter from a sampled response and a 1-D window, turned about its centre — or two windows, multiplied out.", P("f1OrResponse"), P("windowOrF2"), Opt("window2OrResponse"), Opt("window"), Opt("window2"));
+        Add("fwind2", "Designs a 2-D FIR filter from a sampled response and a 2-D window, which fixes the answer's size.", P("f1OrResponse"), P("windowOrF2"), Opt("response"), Opt("window"));
+        Add("convmtx2", "The matrix that performs a convolution on a picture read out column by column.", P("kernel"), P("rowsOrSize"), Opt("cols"));
+        Add("psf2otf", "The optical transfer function of a point spread function, padded to an optional size with its centre tap on zero frequency.", P("psf"), Opt("outSize"));
+        Add("otf2psf", "The point spread function a transfer function stands for; psf2otf undone.", P("otf"), Opt("outSize"));
+        Add("edgetaper", "Blurs a picture's borders into its own wrapped edges, so a deconvolution has no false seam to ring against.", P("image"), P("psf"));
+        Add("deconvwnr", "Wiener deconvolution. The third argument is the noise-to-signal ratio (a number or a spectrum), or give the noise and signal autocorrelations as two.", P("image"), P("psf"), Opt("nsrOrNcorr"), Opt("icorr"));
+        Add("deconvreg", "Regularized deconvolution: [image, lagrange]. Solves for the multiplier that fits the stated noise power, searching within an optional [low high] range.", P("image"), P("psf"), Opt("noisePower"), Opt("range"), Opt("regularizer"));
+        Add("deconvlucy", "Richardson-Lucy deconvolution, accelerated: non-negative, brightness-preserving, ten iterations by default. Damping suppresses corrections smaller than the noise.", P("image"), P("psf"), Opt("iterations"), Opt("damping"), Opt("weight"), Opt("readout"));
+        Add("deconvblind", "Blind deconvolution: [image, psf]. Improves the picture and the blur in turn, starting from a guess whose size is the largest blur that can be found.", P("image"), P("initialPsf"), Opt("iterations"), Opt("damping"), Opt("weight"), Opt("readout"));
+        Add("gabor", "A Gabor filter, or a bank of them: a sinusoid of one wavelength and direction seen through a Gaussian window. 'SpatialFrequencyBandwidth', 'SpatialAspectRatio'.", P("wavelength"), P("orientation"), Opt("options"));
+        Add("imgaborfilt", "Applies a Gabor filter to a picture: [magnitude, phase]. Takes a wavelength and a direction, or a bank built with gabor.", P("image"), P("wavelengthOrBank"), Opt("orientation"), Opt("options"));
+
         // --- Reductions and inspection ----------------------------------------------------------
         Add("length", "The number of elements in an array, or characters in a string.", P("value"));
         Add("sum", "The sum of a numeric array, or of every sample in an image.", P("array"));

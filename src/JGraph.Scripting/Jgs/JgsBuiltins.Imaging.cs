@@ -699,6 +699,7 @@ internal static partial class JgsBuiltins
         DefineMorphologyBuiltins(define, dialect);
         DefineRegionBuiltins(define, random, dialect);
         DefineTransformBuiltins(define, dialect);
+        DefineDesignBuiltins(define);
 
         // --- Filtering -----------------------------------------------------------------------
         define("imfilter", (args, line, col) =>

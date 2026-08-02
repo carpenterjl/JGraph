@@ -516,6 +516,7 @@ internal static partial class JgsBuiltins
         {
             "affine2d" or "projective2d" or "rigid2d" or "imref2d" => tag.AsString,
             "strel" or "offsetstrel" => tag.AsString,
+            "gabor" => tag.AsString,
             _ => null,
         };
     }

@@ -146,4 +146,41 @@ public static class FourierGrid
 
         return shifted;
     }
+
+    /// <summary>
+    /// The same quadrant swap over a complex grid, and its exact inverse.
+    /// </summary>
+    /// <remarks>
+    /// For an odd size the two directions are genuinely different — the origin moves to
+    /// <c>floor(n/2)</c> going one way and has to come back from it going the other — and a design
+    /// that samples a response on a centred grid has to undo the shift before transforming it. Both
+    /// directions live here so the convention is decided in one place.
+    /// </remarks>
+    /// <param name="grid">The values to shift, row-major.</param>
+    /// <param name="height">The number of rows.</param>
+    /// <param name="width">The number of columns.</param>
+    /// <param name="inverse">Whether to undo a shift rather than apply one.</param>
+    /// <returns>A fresh row-major grid.</returns>
+    public static Complex[] Shift(ReadOnlySpan<Complex> grid, int height, int width, bool inverse)
+    {
+        var shifted = new Complex[height * width];
+        int halfRow = height / 2;
+        int halfCol = width / 2;
+        for (int r = 0; r < height; r++)
+        {
+            for (int c = 0; c < width; c++)
+            {
+                if (inverse)
+                {
+                    shifted[(r * width) + c] = grid[(((r + halfRow) % height) * width) + ((c + halfCol) % width)];
+                }
+                else
+                {
+                    shifted[(((r + halfRow) % height) * width) + ((c + halfCol) % width)] = grid[(r * width) + c];
+                }
+            }
+        }
+
+        return shifted;
+    }
 }

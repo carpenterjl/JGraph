@@ -142,6 +142,17 @@ internal static partial class JgsBuiltins
         Wrap("qtgetblk", (args, wanted, line, col) => QtGetBlkOutputs(args, wanted, line, col, dialect));
         Wrap("imregcorr", ImRegCorrOutputs);
 
+        // M46 wave I. freqspace answers differently depending on how many outputs are asked for — one
+        // is a half axis, two are the pair a 2-D grid is built from — and the rest hand back the
+        // measurement they had to make anyway: the frequencies a response was read at, the multiplier
+        // the regularization settled on, the blur the blind form found, the phase alongside the
+        // magnitude.
+        Wrap("freqspace", FreqSpaceOutputs);
+        Wrap("freqz2", FreqZ2Outputs);
+        Wrap("deconvreg", DeconvRegOutputs);
+        Wrap("deconvblind", DeconvBlindOutputs);
+        Wrap("imgaborfilt", GaborFiltOutputs);
+
         // [counts, binLocations] = imhist(I). The locations are quoted in the image's own class, so a
         // uint8 picture's bins are centred on 0…255 while a double one's span [0, 1].
         Wrap("imhist", (args, wanted, line, col) =>
