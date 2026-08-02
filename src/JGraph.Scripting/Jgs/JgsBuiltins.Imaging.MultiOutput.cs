@@ -19,7 +19,7 @@ namespace JGraph.Scripting.Jgs;
 internal static partial class JgsBuiltins
 {
     private static void RegisterImagingMultiOutputForms(
-        JgsEnvironment env, JGraphScriptGlobals host, JgsDialect dialect)
+        JgsEnvironment env, JGraphScriptGlobals host, Random random, JgsDialect dialect)
     {
         if (!dialect.IsMatlab)
         {
@@ -120,6 +120,17 @@ internal static partial class JgsBuiltins
         // M46 wave F. The distance transform's second output says which seed each pixel was measured
         // against, which is how a script turns a distance map into a nearest-object map.
         Wrap("bwdist", (args, wanted, line, col) => BwDistOutputs(args, wanted, line, col, dialect));
+
+        // M46 wave G. Each of these measured something on the way to its answer and MATLAB hands the
+        // measurement back rather than making the caller compute it twice: the label map a boundary
+        // trace already built, the arrival times a front already walked, the radius a circle already
+        // had to know.
+        Wrap("bwboundaries", (args, wanted, line, col) => BoundariesOutputs(args, wanted, line, col, dialect));
+        Wrap("multithresh", MultiThresholdOutputs);
+        Wrap("imsegfmm", (args, wanted, line, col) => FastMarchOutputs(args, wanted, line, col, dialect));
+        Wrap("imsegkmeans", (args, wanted, line, col) => KMeansOutputs(args, wanted, line, col, random));
+        Wrap("superpixels", SuperpixelsOutputs);
+        Wrap("imfindcircles", (args, wanted, line, col) => FindCirclesOutputs(args, wanted, line, col, dialect));
 
         // [counts, binLocations] = imhist(I). The locations are quoted in the image's own class, so a
         // uint8 picture's bins are centred on 0…255 while a double one's span [0, 1].

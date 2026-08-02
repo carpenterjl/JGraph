@@ -115,11 +115,12 @@ public sealed class JgsImageBuiltinTests : IDisposable
     }
 
     [Fact]
-    public async Task Imshow_OfAMatrix_PointsAtImagesc()
+    public async Task Imshow_TakesAMatrixAsReadilyAsAnImage()
     {
-        ScriptRunResult result = await Run("imshow([[1, 2], [3, 4]])");
-        Assert.False(result.Success);
-        Assert.Contains("imagesc", result.Message, StringComparison.OrdinalIgnoreCase);
+        // Before M46 wave G this pointed at imagesc instead. MATLAB draws no line between a picture
+        // and a matrix, and by that wave nothing else in the imaging surface did either.
+        ScriptRunResult result = await Run("imshow([[0.1, 0.2], [0.3, 0.4]])");
+        Assert.True(result.Success, result.Message);
     }
 
     [Fact]

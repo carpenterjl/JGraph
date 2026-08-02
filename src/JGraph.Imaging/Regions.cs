@@ -320,6 +320,146 @@ public static class Regions
         return kept;
     }
 
+    /// <summary>
+    /// Keeps only the components reachable from the given seed pixels (MATLAB <c>bwselect</c>).
+    /// Seeds are 0-based (row, column) pairs; a seed on background selects nothing.
+    /// </summary>
+    public static ImageBuffer Select(
+        ImageBuffer image, IReadOnlyList<(int Row, int Col)> seeds, int connectivity = 8)
+    {
+        ArgumentNullException.ThrowIfNull(image);
+        ArgumentNullException.ThrowIfNull(seeds);
+        (int[,] labels, int count) = Label(image, connectivity);
+        var wanted = new bool[count + 1];
+        foreach ((int row, int col) in seeds)
+        {
+            if ((uint)row >= (uint)image.Height || (uint)col >= (uint)image.Width)
+            {
+                throw new ArgumentOutOfRangeException(nameof(seeds),
+                    $"seed ({row}, {col}) is outside the {image.Height}x{image.Width} image.");
+            }
+
+            wanted[labels[row, col]] = true;
+        }
+
+        wanted[0] = false;
+        var kept = new ImageBuffer(image.Height, image.Width, 1);
+        for (int r = 0; r < image.Height; r++)
+        {
+            for (int c = 0; c < image.Width; c++)
+            {
+                kept[r, c, 0] = wanted[labels[r, c]] ? 1.0 : 0.0;
+            }
+        }
+
+        return kept;
+    }
+
+    /// <summary>
+    /// Keeps the components whose measured value falls in a range, or the extreme few of them
+    /// (MATLAB <c>bwareafilt</c> and <c>bwpropfilt</c>).
+    /// </summary>
+    /// <param name="image">The binary image.</param>
+    /// <param name="values">One measurement per region, in label order.</param>
+    /// <param name="labels">The label map those measurements came from.</param>
+    /// <param name="count">How many regions there are.</param>
+    /// <param name="range">Keep regions whose value lies within this closed interval, or null.</param>
+    /// <param name="pick">Keep this many regions, or null.</param>
+    /// <param name="largest">Whether <paramref name="pick"/> takes the largest or the smallest.</param>
+    /// <remarks>
+    /// MATLAB's tie-breaking is documented and worth copying: asking for the three largest when four
+    /// regions tie at the same size returns all four, because refusing to choose arbitrarily between
+    /// equals is more useful than returning whichever the sort happened to put first.
+    /// </remarks>
+    public static ImageBuffer Filter(
+        ImageBuffer image, double[] values, int[,] labels, int count,
+        (double Low, double High)? range = null, int? pick = null, bool largest = true)
+    {
+        ArgumentNullException.ThrowIfNull(image);
+        ArgumentNullException.ThrowIfNull(values);
+        ArgumentNullException.ThrowIfNull(labels);
+
+        var keep = new bool[count + 1];
+        if (range is { } window)
+        {
+            for (int i = 1; i <= count; i++)
+            {
+                keep[i] = values[i - 1] >= window.Low && values[i - 1] <= window.High;
+            }
+        }
+        else
+        {
+            int wanted = Math.Min(pick ?? count, count);
+            var order = new int[count];
+            for (int i = 0; i < count; i++)
+            {
+                order[i] = i;
+            }
+
+            Array.Sort(order, (a, b) => largest
+                ? values[b].CompareTo(values[a])
+                : values[a].CompareTo(values[b]));
+
+            if (wanted > 0 && wanted < count)
+            {
+                // Everything tied with the last one kept is kept too.
+                double edge = values[order[wanted - 1]];
+                for (int i = 0; i < count; i++)
+                {
+                    keep[i + 1] = largest ? values[i] >= edge : values[i] <= edge;
+                }
+            }
+            else
+            {
+                for (int i = 0; i < count; i++)
+                {
+                    keep[i + 1] = wanted > 0;
+                }
+            }
+        }
+
+        var result = new ImageBuffer(image.Height, image.Width, 1);
+        for (int r = 0; r < image.Height; r++)
+        {
+            for (int c = 0; c < image.Width; c++)
+            {
+                result[r, c, 0] = keep[labels[r, c]] ? 1.0 : 0.0;
+            }
+        }
+
+        return result;
+    }
+
+    /// <summary>
+    /// The pixels of each labelled region, as 0-based (row, column) lists in label order — the data
+    /// behind <c>bwconncomp</c>'s <c>PixelIdxList</c> and <c>label2idx</c>.
+    /// </summary>
+    public static List<(int Row, int Col)>[] PixelLists(int[,] labels, int count)
+    {
+        ArgumentNullException.ThrowIfNull(labels);
+        var lists = new List<(int Row, int Col)>[count];
+        for (int i = 0; i < count; i++)
+        {
+            lists[i] = [];
+        }
+
+        int h = labels.GetLength(0);
+        int w = labels.GetLength(1);
+        for (int r = 0; r < h; r++)
+        {
+            for (int c = 0; c < w; c++)
+            {
+                int label = labels[r, c];
+                if (label >= 1 && label <= count)
+                {
+                    lists[label - 1].Add((r, c));
+                }
+            }
+        }
+
+        return lists;
+    }
+
     /// <summary>Wraps an integer label map as a grayscale image (label values stored as-is).</summary>
     public static ImageBuffer LabelsToImage(int[,] labels)
     {

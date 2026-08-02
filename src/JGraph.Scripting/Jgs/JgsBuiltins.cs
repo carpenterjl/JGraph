@@ -1863,7 +1863,7 @@ internal static partial class JgsBuiltins
         RegisterSurfaceVariantBuiltins(env, dialect);
 
         // After every imaging define, since these wrap builtins declared above.
-        RegisterImagingMultiOutputForms(env, host, dialect);
+        RegisterImagingMultiOutputForms(env, host, random, dialect);
         if (dialect.IsMatlab)
         {
             RegisterMatlabReductions(env, dialect);

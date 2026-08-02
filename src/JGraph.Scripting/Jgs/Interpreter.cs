@@ -3049,9 +3049,14 @@ internal sealed class Interpreter
             return JgsValue.Bool(and ? left.IsTruthy && right.IsTruthy : left.IsTruthy || right.IsTruthy);
         }
 
+        // The mask has to keep the operand's shape, the way every other elementwise operator does:
+        // `A > 2 | A < 0` is a 4-by-6 answer about a 4-by-6 picture, not a row of twenty-four bools.
         string symbol = and ? "&" : "|";
-        return JgsValue.Array(Broadcast(left, right,
-            (a, b) => JgsValue.Bool(and ? a != 0 && b != 0 : a != 0 || b != 0), symbol, at.Line, at.Column));
+        return ShapeLike(
+            JgsValue.Array(Broadcast(left, right,
+                (a, b) => JgsValue.Bool(and ? a != 0 && b != 0 : a != 0 || b != 0),
+                symbol, at.Line, at.Column)),
+            left, right);
     }
 
     /// <summary>
@@ -3331,6 +3336,10 @@ internal sealed class Interpreter
         {
             target = target.AsCell[0];
         }
+        else if (target.Type == JgsType.Cell && IsStructArray(target))
+        {
+            return StructArrayField(target, field, member);
+        }
 
         if (target.Type != JgsType.Struct)
         {
@@ -3344,6 +3353,68 @@ internal sealed class Interpreter
         }
 
         throw new JgsRuntimeException(member.Line, member.Column, $"This struct has no field '{field}'.");
+    }
+
+    /// <summary>Whether a cell holds nothing but structs, which is what M41 calls a struct array.</summary>
+    private static bool IsStructArray(JgsValue value)
+    {
+        JgsValue[] elements = value.AsCell;
+        if (elements.Length == 0)
+        {
+            return false;
+        }
+
+        foreach (JgsValue element in elements)
+        {
+            if (element.Type != JgsType.Struct)
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /// <summary>
+    /// One field read across every element of a struct array — <c>stats.Area</c>.
+    /// </summary>
+    /// <remarks>
+    /// MATLAB calls this a comma-separated list, a thing that exists only in argument and bracket
+    /// positions and which JGraph has no value for. The nearest honest answer is the collection
+    /// itself: a row array when every field is a number, a cell otherwise. That makes
+    /// <c>[stats.Area]</c> — the form scripts actually write, and the one MATLAB needs the brackets
+    /// for — come out right, and <c>stats.Area</c> alone yields the row rather than printing each
+    /// value in turn.
+    /// </remarks>
+    private JgsValue StructArrayField(JgsValue array, string field, Node member)
+    {
+        JgsValue[] elements = array.AsCell;
+        var gathered = new JgsValue[elements.Length];
+        bool allNumbers = true;
+        for (int i = 0; i < elements.Length; i++)
+        {
+            if (!elements[i].AsStruct.TryGetValue(field, out JgsValue? value))
+            {
+                throw new JgsRuntimeException(member.Line, member.Column,
+                    $"Element {i + Dialect.IndexBase} of this struct array has no field '{field}'.");
+            }
+
+            gathered[i] = value;
+            allNumbers &= value.Type is JgsType.Number or JgsType.Bool;
+        }
+
+        if (!allNumbers)
+        {
+            return JgsValue.Cell(gathered);
+        }
+
+        var numbers = new double[gathered.Length];
+        for (int i = 0; i < gathered.Length; i++)
+        {
+            numbers[i] = gathered[i].AsNumber;
+        }
+
+        return NumbersOf(numbers);
     }
 
     private string FieldName(MemberExpr member, JgsEnvironment env)
@@ -3770,8 +3841,9 @@ internal sealed class Interpreter
         if (left.Type == JgsType.Array || right.Type == JgsType.Array)
         {
             string symbol = TokenText(opToken);
-            return JgsValue.Array(Broadcast(left, right,
-                (a, b) => JgsValue.Bool(op(a, b)), symbol, at.Line, at.Column));
+            return ShapeLike(
+                JgsValue.Array(Broadcast(left, right, (a, b) => JgsValue.Bool(op(a, b)), symbol, at.Line, at.Column)),
+                left, right);
         }
 
         throw new JgsRuntimeException(at.Line, at.Column,

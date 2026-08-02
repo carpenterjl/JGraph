@@ -787,10 +787,23 @@ internal static partial class JgsBuiltins
         return elements;
     }
 
-    private static Dictionary<string, JgsValue> StructOf(string name, JgsValue value, int line, int col) =>
-        value.Type == JgsType.Struct
-            ? value.AsStruct
-            : throw new JgsRuntimeException(line, col, $"{name} expects a struct, but got a {value.TypeName}.");
+    private static Dictionary<string, JgsValue> StructOf(string name, JgsValue value, int line, int col)
+    {
+        if (value.Type == JgsType.Struct)
+        {
+            return value.AsStruct;
+        }
+
+        // A struct array is a cell of structs (M41), and every element carries the same fields — so
+        // fieldnames and isfield answer for the array as readily as for one element, which is what
+        // MATLAB does and what a script asking about a regionprops result needs.
+        if (value.Type == JgsType.Cell && value.AsCell is [{ Type: JgsType.Struct } first, ..])
+        {
+            return first.AsStruct;
+        }
+
+        throw new JgsRuntimeException(line, col, $"{name} expects a struct, but got a {value.TypeName}.");
+    }
 
     /// <summary>
     /// String comparison in MATLAB's shape: two strings give a single answer, and a cell of strings on

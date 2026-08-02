@@ -20,7 +20,15 @@ public static class HoughTransform
     /// (rows = rho, columns = theta) so large accumulators stay on the tiered buffers; normalize with
     /// <see cref="PointOps.Normalize(double[,])"/> before displaying one.
     /// </summary>
-    public static (ImageBuffer Accumulator, double[] Theta, double[] Rho) Accumulate(ImageBuffer image)
+    /// <param name="image">The binary edge map to accumulate.</param>
+    /// <param name="angles">
+    /// The angles to test, in degrees; null tests −90°…89° in 1° steps. Restricting the range is the
+    /// cheapest possible way to look for lines of a known orientation, and it also stops a strong
+    /// line at another angle drowning out the one being looked for.
+    /// </param>
+    /// <param name="rhoResolution">The spacing between rho bins, in pixels.</param>
+    public static (ImageBuffer Accumulator, double[] Theta, double[] Rho) Accumulate(
+        ImageBuffer image, IReadOnlyList<double>? angles = null, double rhoResolution = 1.0)
     {
         ArgumentNullException.ThrowIfNull(image);
         if (image.Channels != 1)
@@ -28,25 +36,44 @@ public static class HoughTransform
             throw new ArgumentException("hough needs a binary (single-channel) image.", nameof(image));
         }
 
+        if (rhoResolution <= 0)
+        {
+            throw new ArgumentOutOfRangeException(
+                nameof(rhoResolution), rhoResolution, "the rho resolution must be positive.");
+        }
+
         int h = image.Height;
         int w = image.Width;
-        int diagonal = (int)Math.Ceiling(Math.Sqrt(((double)h * h) + ((double)w * w)));
+        double diagonal = Math.Sqrt(((double)h * h) + ((double)w * w));
 
-        var theta = new double[180];
-        var cos = new double[180];
-        var sin = new double[180];
-        for (int t = 0; t < 180; t++)
+        double[] theta;
+        if (angles is { Count: > 0 })
         {
-            theta[t] = t - 90;
+            theta = [.. angles];
+        }
+        else
+        {
+            theta = new double[180];
+            for (int t = 0; t < 180; t++)
+            {
+                theta[t] = t - 90;
+            }
+        }
+
+        var cos = new double[theta.Length];
+        var sin = new double[theta.Length];
+        for (int t = 0; t < theta.Length; t++)
+        {
             double radians = theta[t] * Math.PI / 180.0;
             cos[t] = Math.Cos(radians);
             sin[t] = Math.Sin(radians);
         }
 
-        var rho = new double[(2 * diagonal) + 1];
+        int half = (int)Math.Ceiling(diagonal / rhoResolution);
+        var rho = new double[(2 * half) + 1];
         for (int i = 0; i < rho.Length; i++)
         {
-            rho[i] = i - diagonal;
+            rho[i] = (i - half) * rhoResolution;
         }
 
         var accumulator = new ImageBuffer(rho.Length, theta.Length, 1);
@@ -61,9 +88,9 @@ public static class HoughTransform
 
                 double x = c;
                 double y = r;
-                for (int t = 0; t < 180; t++)
+                for (int t = 0; t < theta.Length; t++)
                 {
-                    int index = (int)Math.Round((x * cos[t]) + (y * sin[t])) + diagonal;
+                    int index = (int)Math.Round(((x * cos[t]) + (y * sin[t])) / rhoResolution) + half;
                     if ((uint)index < (uint)rho.Length)
                     {
                         accumulator[index, t, 0] += 1.0;
@@ -72,6 +99,7 @@ public static class HoughTransform
             }
         }
 
+        GC.KeepAlive(image);
         return (accumulator, theta, rho);
     }
 

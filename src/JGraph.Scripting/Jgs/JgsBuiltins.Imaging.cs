@@ -107,16 +107,15 @@ internal static partial class JgsBuiltins
         define("imshow", (args, line, col) =>
         {
             ImgArgs parsed = ShowSpec.Parse(args, positionalMax: 2, line, col);
-            if (parsed.Positional.Count == 0 || parsed.Positional[0].Type != JgsType.Image)
+            if (parsed.Positional.Count == 0)
             {
-                JgsValue given = parsed.Positional.Count > 0 ? parsed.Positional[0] : JgsValue.Null;
-                throw new JgsRuntimeException(line, col,
-                    given.Type == JgsType.Array
-                        ? "imshow displays an image value; for a numeric matrix use imagesc."
-                        : $"imshow expects an image, but got a {given.TypeName}.");
+                throw new JgsRuntimeException(line, col, "imshow needs a picture.");
             }
 
-            ImageBuffer image = parsed.Positional[0].AsImage;
+            // A matrix is a picture too, so it is wrapped rather than refused; the temporary buffer
+            // is disposed once the plot has taken a copy of the samples it needs.
+            using ImgArg source = ImgLike("imshow", parsed.Positional, 0, line, col);
+            ImageBuffer image = source.Buffer;
 
             // imshow(I, [low high]) and imshow(I, []) set the display window. The limits are quoted in
             // the image's own class, so a uint8 picture takes [0 255] — normalize before use.
@@ -692,12 +691,13 @@ internal static partial class JgsBuiltins
                 (int)Math.Round(rect[2]), (int)Math.Round(rect[3])), image);
         });
 
-        DefineImagingWaveB(define);
+        DefineImagingWaveB(define, dialect);
         DefineFilteringBuiltins(define, dialect);
         DefineGeometryBuiltins(define, dialect);
         DefineColorBuiltins(define, dialect);
         DefineEnhancementBuiltins(define, dialect);
         DefineMorphologyBuiltins(define, dialect);
+        DefineRegionBuiltins(define, random, dialect);
 
         // --- Filtering -----------------------------------------------------------------------
         define("imfilter", (args, line, col) =>
@@ -826,7 +826,7 @@ internal static partial class JgsBuiltins
         };
 
     private static void DefineImagingWaveB(
-        Action<string, Func<IReadOnlyList<JgsValue>, int, int, JgsValue>> define)
+        Action<string, Func<IReadOnlyList<JgsValue>, int, int, JgsValue>> define, JgsDialect dialect)
     {
         // --- Edge detection ------------------------------------------------------------------
         define("edge", (args, line, col) => EdgeOutputs(args, 1, line, col)[0]);
@@ -875,12 +875,13 @@ internal static partial class JgsBuiltins
         define("bwlabel", (args, line, col) =>
         {
             ArityRange("bwlabel", args, 1, 2, line, col);
-            ImageBuffer image = Img("bwlabel", args, 0, line, col);
+            using ImgArg source = ImgLike("bwlabel", args, 0, line, col);
             int connectivity = args.Count == 2 ? Count("bwlabel", args, 1, line, col) : 8;
             try
             {
-                (int[,] labels, int count) = Regions.Label(image, connectivity);
-                return JgsValue.Array([ImgOut(Regions.LabelsToImage(labels), ImageClass.Double), JgsValue.Number(count)]);
+                (int[,] labels, int count) = Regions.Label(source.Buffer, connectivity);
+                return JgsValue.Array(
+                    [ImgLikeOut(Regions.LabelsToImage(labels), source), JgsValue.Number(count)]);
             }
             catch (ArgumentOutOfRangeException ex)
             {
@@ -891,11 +892,20 @@ internal static partial class JgsBuiltins
         // --- Hough line detection ------------------------------------------------------------
         define("hough", (args, line, col) =>
         {
-            Arity("hough", args, 1, line, col);
-            ImageBuffer image = Img("hough", args, 0, line, col);
+            ArityRange("hough", args, 1, 5, line, col);
+            ImgArgs parsed = HoughSpec.Parse(args, 1, line, col);
+            if (parsed.Positional.Count < 1)
+            {
+                throw new JgsRuntimeException(line, col, "hough needs a binary edge map.");
+            }
+
+            using ImgArg source = ImgLike("hough", parsed.Positional, 0, line, col);
+            double[]? angles = parsed.Vector("Theta");
+            double resolution = parsed.Scalar("RhoResolution", 1.0);
             try
             {
-                (ImageBuffer accumulator, double[] theta, double[] rho) = HoughTransform.Accumulate(image);
+                (ImageBuffer accumulator, double[] theta, double[] rho) =
+                    HoughTransform.Accumulate(source.Buffer, angles, resolution);
                 return JgsValue.Array([ImgOut(accumulator, ImageClass.Double), Numbers(theta), Numbers(rho)]);
             }
             catch (ArgumentException ex)
@@ -906,15 +916,38 @@ internal static partial class JgsBuiltins
 
         define("houghpeaks", (args, line, col) =>
         {
-            ArityRange("houghpeaks", args, 1, 4, line, col);
-            ImageBuffer accumulator = Img("houghpeaks", args, 0, line, col);
-            int count = args.Count >= 2 ? Count("houghpeaks", args, 1, line, col) : 1;
-            double? threshold = args.Count >= 3 ? Num("houghpeaks", args, 2, line, col) : null;
-            int origin = args.Count >= 4 ? IndexOrigin("houghpeaks", args, 3, line, col) : 0;
-            (int RhoIndex, int ThetaIndex)[] peaks = HoughTransform.Peaks(accumulator, count, threshold);
+            ArityRange("houghpeaks", args, 1, 7, line, col);
+            ImgArgs parsed = HoughPeaksSpec.Parse(args, 3, line, col);
+            if (parsed.Positional.Count < 1)
+            {
+                throw new JgsRuntimeException(line, col, "houghpeaks needs an accumulator.");
+            }
+
+            using ImgArg source = ImgLike("houghpeaks", parsed.Positional, 0, line, col);
+            int count = parsed.Positional.Count >= 2
+                ? Count("houghpeaks", parsed.Positional, 1, line, col)
+                : 1;
+
+            // The pre-M46 third positional argument was the threshold, and 'Threshold' is MATLAB's
+            // spelling; both work, because JGS scripts in the wild use the short form.
+            double? threshold = parsed.Positional.Count >= 3
+                ? Num("houghpeaks", parsed.Positional, 2, line, col)
+                : null;
+            double named = parsed.Scalar("Threshold", double.NaN);
+            if (!double.IsNaN(named))
+            {
+                threshold = named;
+            }
+
+            (int Height, int Width)? window = parsed.Window("NHoodSize");
+            int origin = parsed.Positional.Count >= 4
+                ? IndexOrigin("houghpeaks", parsed.Positional, 3, line, col)
+                : dialect.IndexBase;
+            (int RhoIndex, int ThetaIndex)[] peaks = HoughTransform.Peaks(
+                source.Buffer, count, threshold, window?.Height);
 
             // One [rhoIndex, thetaIndex] row per peak, 0-based so the indices address rho and theta
-            // directly (ADR 0028); pass a base of 1 for MATLAB numbering.
+            // directly (ADR 0028); MATLAB numbers them from one.
             return JgsMatrix.Build(peaks.Length, 2,
                 (i, c) => (c == 0 ? peaks[i].RhoIndex : peaks[i].ThetaIndex) + origin);
         });
@@ -922,17 +955,40 @@ internal static partial class JgsBuiltins
         define("houghlines", (args, line, col) =>
         {
             ArityRange("houghlines", args, 4, 6, line, col);
-            ImageBuffer image = Img("houghlines", args, 0, line, col);
+            using ImgArg source = ImgLike("houghlines", args, 0, line, col);
+            ImageBuffer image = source.Buffer;
             double[] theta = ToDoubles("houghlines", args[1], line, col);
             double[] rho = ToDoubles("houghlines", args[2], line, col);
-            (int, int)[] peaks = PeakIndices(args[3], line, col);
+            (int, int)[] peaks = PeakIndices(args[3], line, col, dialect.IndexBase);
             double fillGap = args.Count >= 5 ? Num("houghlines", args, 4, line, col) : 20;
             double minLength = args.Count >= 6 ? Num("houghlines", args, 5, line, col) : 40;
 
             try
             {
-                return JgsValue.Table(LineSegmentsToTable(
-                    HoughTransform.Lines(image, theta, rho, peaks, fillGap, minLength)));
+                HoughTransform.LineSegment[] segments =
+                    HoughTransform.Lines(image, theta, rho, peaks, fillGap, minLength);
+
+                // MATLAB hands these back as a 1-by-n struct array with point1/point2/theta/rho;
+                // JGS keeps the table it has always had.
+                if (!dialect.IsMatlab)
+                {
+                    return JgsValue.Table(LineSegmentsToTable(segments));
+                }
+
+                var elements = new JgsValue[segments.Length];
+                for (int i = 0; i < segments.Length; i++)
+                {
+                    HoughTransform.LineSegment segment = segments[i];
+                    elements[i] = JgsValue.Struct(new Dictionary<string, JgsValue>(StringComparer.Ordinal)
+                    {
+                        ["point1"] = Numbers([segment.Point1X + 1, segment.Point1Y + 1]),
+                        ["point2"] = Numbers([segment.Point2X + 1, segment.Point2Y + 1]),
+                        ["theta"] = JgsValue.Number(segment.Theta),
+                        ["rho"] = JgsValue.Number(segment.Rho),
+                    });
+                }
+
+                return JgsValue.Cell(elements);
             }
             catch (ArgumentOutOfRangeException ex)
             {
@@ -1143,24 +1199,22 @@ internal static partial class JgsBuiltins
 
 
     /// <summary>Reads a houghpeaks result — rows of 0-based [rhoIndex, thetaIndex] — back to pairs.</summary>
-    private static (int RhoIndex, int ThetaIndex)[] PeakIndices(JgsValue value, int line, int col)
+    private static (int RhoIndex, int ThetaIndex)[] PeakIndices(
+        JgsValue value, int line, int col, int indexBase)
     {
-        if (value.Type != JgsType.Array)
+        double[,] rows = Rectangle("houghlines argument 4", value, line, col);
+        if (rows.GetLength(1) != 2)
         {
-            throw new JgsRuntimeException(line, col, "houghlines expects the peaks from houghpeaks as argument 4.");
+            throw new JgsRuntimeException(line, col,
+                "houghlines expects the peaks from houghpeaks: an n-by-2 array of [rhoIndex, thetaIndex] rows.");
         }
 
-        JgsValue[] rows = value.BoxedElements();
-        var peaks = new (int, int)[rows.Length];
-        for (int i = 0; i < rows.Length; i++)
+        var peaks = new (int, int)[rows.GetLength(0)];
+        for (int i = 0; i < peaks.Length; i++)
         {
-            double[] pair = ToDoubles("houghlines", rows[i], line, col);
-            if (pair.Length != 2)
-            {
-                throw new JgsRuntimeException(line, col, "each houghlines peak must be a [rhoIndex, thetaIndex] pair.");
-            }
-
-            peaks[i] = ((int)pair[0], (int)pair[1]);
+            // The indices come back numbered the way this dialect numbers them, and the accumulator
+            // underneath is always 0-based.
+            peaks[i] = ((int)Math.Round(rows[i, 0]) - indexBase, (int)Math.Round(rows[i, 1]) - indexBase);
         }
 
         return peaks;

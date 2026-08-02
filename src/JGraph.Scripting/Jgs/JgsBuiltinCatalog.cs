@@ -745,6 +745,46 @@ public static class JgsBuiltinCatalog
         Add("bwdist", "Distance to the nearest nonzero pixel: [D, idx]. Methods 'euclidean' (exact, default), 'cityblock', 'chessboard', 'quasi-euclidean'.", P("image"), Opt("method"));
         Add("bwdistgeodesic", "Geodesic distance from the seeds, travelling only inside the mask; unreachable pixels are Inf.", P("mask"), P("seeds"), Opt("method"));
         Add("graydist", "Gray-weighted distance: each step costs the average of the two samples it joins.", P("image"), P("seeds"), Opt("method"));
+
+        // M46 wave G — segmentation, regions and ROI. regionprops answers with a struct array under
+        // the MATLAB dialect and a Table under JGS, because only one of the two can hold a pixel list.
+        Add("bwconncomp", "Connected components as a struct: Connectivity, ImageSize, NumObjects and PixelIdxList.", P("image"), Opt("connectivity"));
+        Add("labelmatrix", "Turns a bwconncomp struct back into a label map.", P("components"));
+        Add("label2idx", "The pixel indices of each label, as a cell array.", P("labels"));
+        Add("bwarea", "The area of a binary image, weighting each 2×2 pattern so a diagonal edge measures its true length.", P("image"));
+        Add("bweuler", "The Euler number: objects minus holes.", P("image"), Opt("connectivity"));
+        Add("bwferet", "Feret measurements per object, as a table: MaxDiameter, MaxAngle, MinDiameter, MinAngle.", P("image"), Opt("properties"));
+        Add("bwselect", "Keeps only the components containing the given pixels.", P("image"), P("columns"), Opt("rows"), Opt("connectivity"));
+        Add("bwareafilt", "Keeps components by area: a count of the largest or smallest, or a [low high] range.", P("image"), P("countOrRange"), Opt("keep"), Opt("connectivity"));
+        Add("bwpropfilt", "Keeps components by any regionprops measurement.", P("image"), P("property"), P("countOrRange"), Opt("keep"), Opt("connectivity"));
+        Add("bwboundaries", "Traces every object outline (and hole): [B, L, n, A]. Options 'holes' or 'noholes'.", P("image"), Opt("connectivity"), Opt("mode"));
+        Add("bwtraceboundary", "Traces one outline from a starting pixel and a compass direction.", P("image"), P("point"), P("direction"), Opt("connectivity"), Opt("maxPoints"), Opt("clockwise"));
+        Add("boundarymask", "Pixels sitting on a border between two labels.", P("labels"), Opt("connectivity"));
+        Add("bwconvhull", "The convex hull of every object ('objects') or of all of them together ('union').", P("image"), Opt("method"), Opt("connectivity"));
+        Add("reducepoly", "Drops vertices a polyline can do without, by Ramer–Douglas–Peucker.", P("points"), Opt("tolerance"));
+        Add("multithresh", "Otsu's method carried to N thresholds: [thresh, metric].", P("image"), Opt("levels"));
+        Add("imquantize", "Assigns each sample the level its value falls in, numbering from 1; optional per-level values.", P("image"), P("thresholds"), Opt("values"));
+        Add("grayslice", "Slices an intensity image into equal bands, numbering from 0.", P("image"), Opt("levels"));
+        Add("watershed", "Watershed segmentation by flooding from every regional minimum; ridges are 0.", P("image"), Opt("connectivity"));
+        Add("grayconnected", "Grows a region from a seed while the intensity stays within a tolerance.", P("image"), P("row"), P("column"), Opt("tolerance"));
+        Add("gradientweight", "A weight image that is small where the gradient is large.", P("image"), Opt("sigma"));
+        Add("graydiffweight", "A weight image that is small where the intensity is far from the seeds'.", P("image"), P("seeds"), Opt("column"));
+        Add("imsegfmm", "Fast marching from seeds over a weight image: [BW, D].", P("weight"), P("seeds"), P("threshold"), Opt("more"));
+        Add("imsegkmeans", "k-means over pixel colour: [L, centers]. Options: 'NormalizeInput', 'NumAttempts', 'MaxIterations'.", P("image"), P("clusters"), Opt("options"));
+        Add("superpixels", "SLIC superpixels: [L, N]. Options: 'Compactness', 'Method' ('slic0' or 'slic'), 'NumIterations'.", P("image"), P("count"), Opt("options"));
+        Add("activecontour", "Evolves a mask to the region the image says is there: 'Chan-Vese' (default) or 'edge'. Options: 'SmoothFactor', 'ContractionBias'.", P("image"), P("mask"), Opt("iterations"), Opt("options"));
+        Add("poly2mask", "Rasterizes a polygon: a pixel joins the mask when its centre falls inside.", P("x"), P("y"), P("rows"), P("cols"));
+        Add("poly2label", "Labels a picture by which of several polygons each pixel falls in.", P("polygons"), P("ids"), P("size"));
+        Add("roipoly", "A polygon mask over an image; with no polygon, the whole picture.", P("image"), Opt("x"), Opt("y"));
+        Add("roicolor", "Selects samples in an intensity range, or matching any of a set of values.", P("image"), P("lowOrValues"), Opt("high"));
+        Add("roifilt2", "Puts a filtered version of a picture back only where a mask allows.", P("kernelOrImage"), P("imageOrMask"), P("maskOrFunction"));
+        Add("regionfill", "Fills a region smoothly from its own boundary by solving Laplace's equation inside it.", P("image"), P("maskOrX"), Opt("y"));
+        Add("label2rgb", "Colours a label map; background takes the zero colour, 'shuffle' reorders the palette.", P("labels"), Opt("colormap"), Opt("zeroColor"), Opt("order"));
+        Add("labeloverlay", "Blends a label map over a picture. Options: 'Colormap', 'IncludedLabels', 'Transparency'.", P("image"), P("labels"), Opt("options"));
+        Add("imoverlay", "Burns a binary mask into a picture in one flat colour.", P("image"), P("mask"), Opt("color"));
+        Add("viscircles", "Draws circles on the current axes. Options: 'Color', 'LineWidth'.", P("centers"), P("radii"), Opt("options"));
+        Add("visboundaries", "Draws region outlines on the current axes, from a mask or a set of boundaries.", P("maskOrBoundaries"), Opt("options"));
+        Add("imfindcircles", "Circular Hough detection: [centers, radii, metric]. Options: 'ObjectPolarity', 'Sensitivity', 'EdgeThreshold'.", P("image"), P("radiusRange"), Opt("options"));
         Add("bwareaopen", "Removes connected components smaller than minArea pixels from a binary image; connectivity 4 or 8 (default 8).", P("image"), P("minArea"), Opt("connectivity"));
         Add("bwlabel","Labels connected components of a binary image: [labels, count]; connectivity 4 or 8 (default 8).", P("image"), Opt("connectivity"));
         Add("regionprops", "Per-region Area/Centroid/BoundingBox of a label or binary image, as a table (0-based pixel coordinates); an intensity image adds MeanIntensity and WeightedCentroid.", P("labels"), Opt("intensity"));
