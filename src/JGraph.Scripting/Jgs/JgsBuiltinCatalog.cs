@@ -590,7 +590,7 @@ public static class JgsBuiltinCatalog
         Add("imabsdiff", "The absolute difference of two images.", P("a"), P("b"));
         Add("imlincomb", "A weighted sum of images: imlincomb(k1, A, k2, B), with an optional trailing constant.", P("weightsAndImages"));
         Add("imapplymatrix", "Mixes colour channels through a matrix, with optional per-channel offsets.", P("matrix"), P("image"), Opt("offsets"));
-        Add("rgb2gray", "Converts an RGB image to grayscale (Rec.601 luma).", P("image"));
+        Add("rgb2gray", "Converts an RGB image to grayscale (Rec.601 luma); a colormap becomes its grayscale equivalent.", P("imageOrMap"));
         Add("im2gray", "Returns a grayscale image: RGB is converted (Rec.601), grayscale is passed through.", P("image"));
         Add("mat2im", "Wraps a matrix as a grayscale image, clamping values to [0, 1].", P("matrix"));
         Add("mat2gray", "Scales a matrix to a grayscale image with min→0 and max→1, or over an explicit [amin amax] window.", P("matrix"), Opt("limits"));
@@ -650,6 +650,45 @@ public static class JgsBuiltinCatalog
         Add("imtranslate", "Shifts an image by [tx ty] pixels; [B, RB] also reports the frame. Options: 'OutputView' ('same' or 'full'), 'FillValues', 'Method'.", P("image"), Opt("refOrShift"), Opt("shift"), Opt("options"));
         Add("impyramid", "One level of a Gaussian pyramid: 'reduce' halves the image, 'expand' doubles it.", P("image"), P("direction"));
         Add("checkerboard", "A checkerboard test pattern: squares of n pixels, p tile rows by q tile columns, the right half grey.", Opt("squareSize"), Opt("rows"), Opt("cols"));
+
+        // M46 wave D — colour. Every conversion takes a three-channel image or an n-by-3 colormap
+        // and answers in the same shape.
+        Add("rgb2hsv", "Converts RGB to hue, saturation and value, all in [0, 1].", P("rgb"));
+        Add("hsv2rgb", "Converts hue, saturation and value back to RGB.", P("hsv"));
+        Add("whitepoint", "The CIE XYZ of a standard illuminant: 'a', 'c', 'e', 'd50', 'd55', 'd65', or 'icc' (the default).", Opt("illuminant"));
+        Add("rgb2xyz", "Converts RGB to CIE 1931 XYZ. Options: 'ColorSpace', 'WhitePoint'.", P("rgb"), Opt("options"));
+        Add("xyz2rgb", "Converts CIE 1931 XYZ to RGB. Options: 'ColorSpace', 'WhitePoint', 'OutputType'.", P("xyz"), Opt("options"));
+        Add("rgb2lab", "Converts RGB to CIE L*a*b*. Options: 'ColorSpace', 'WhitePoint'.", P("rgb"), Opt("options"));
+        Add("lab2rgb", "Converts CIE L*a*b* to RGB. Options: 'ColorSpace', 'WhitePoint', 'OutputType'.", P("lab"), Opt("options"));
+        Add("xyz2lab", "Converts CIE XYZ to CIE L*a*b*. Option: 'WhitePoint'.", P("xyz"), Opt("options"));
+        Add("lab2xyz", "Converts CIE L*a*b* to CIE XYZ. Option: 'WhitePoint'.", P("lab"), Opt("options"));
+        Add("rgb2lightness", "The L* channel alone — perceptual lightness with the colour taken out.", P("rgb"));
+        Add("rgb2ycbcr", "Converts RGB to studio-swing Y'CbCr (BT.601), luma running 16 to 235.", P("rgb"));
+        Add("ycbcr2rgb", "Converts studio-swing Y'CbCr back to RGB.", P("ycbcr"));
+        Add("rgb2ntsc", "Converts RGB to the NTSC luminance and chrominance triple (YIQ).", P("rgb"));
+        Add("ntsc2rgb", "Converts an NTSC YIQ triple back to RGB.", P("yiq"));
+        Add("rgb2lin", "Undoes a colour space's transfer function, giving values proportional to light. Options: 'ColorSpace', 'OutputType'.", P("rgb"), Opt("options"));
+        Add("lin2rgb", "Applies a colour space's transfer function to linear values. Options: 'ColorSpace', 'OutputType'.", P("linear"), Opt("options"));
+        Add("chromadapt", "White-balances an image so the given illuminant comes out neutral. Options: 'ColorSpace', 'Method' ('bradford', 'vonkries', 'simple').", P("image"), P("illuminant"), Opt("options"));
+        Add("illumgray", "The grey-world illuminant estimate, over the pixels left after trimming both tails. Options: 'Mask', 'Norm'.", P("image"), Opt("percentile"), Opt("options"));
+        Add("illumwhite", "The white-patch illuminant estimate: the mean of the brightest pixels. Option: 'Mask'.", P("image"), Opt("topPercentile"), Opt("options"));
+        Add("illumpca", "The principal-component illuminant estimate, built from the most strongly coloured pixels. Option: 'Mask'.", P("image"), Opt("percentage"), Opt("options"));
+        Add("colorangle", "The angle in degrees between two RGB triples read as vectors.", P("rgb1"), P("rgb2"));
+        Add("deltaE", "CIE76 colour difference between two images. Option: 'isInputLab'.", P("a"), P("b"), Opt("options"));
+        Add("imcolordiff", "Colour difference by 'CIEDE2000' (default) or 'CIE94'. Options: 'Standard', 'isInputLab', 'kL', 'K1', 'K2'.", P("a"), P("b"), Opt("options"));
+        Add("lab2double", "Decodes a uint8 or uint16 encoded L*a*b* array back to double.", P("lab"));
+        Add("lab2uint8", "Encodes L*a*b* as uint8: L over 0 to 255, a and b offset by 128.", P("lab"));
+        Add("lab2uint16", "Encodes L*a*b* as uint16.", P("lab"));
+        Add("xyz2double", "Decodes a uint16 encoded XYZ array back to double.", P("xyz"));
+        Add("xyz2uint16", "Encodes XYZ as uint16, with 1.0 at 32768.", P("xyz"));
+        Add("gray2ind", "Converts a grayscale image to indices into a grey colormap: [X, map]; default 64 levels.", P("image"), Opt("levels"));
+        Add("ind2gray", "Converts an indexed image and its colormap to grayscale.", P("indices"), P("map"));
+        Add("ind2rgb", "Expands an indexed image through its colormap into an RGB image.", P("indices"), P("map"));
+        Add("rgb2ind", "Reduces an RGB image to a palette: [X, map]. Give a colour count (median cut), a tolerance below one (uniform grid), or a colormap; 'dither' (default) or 'nodither'.", P("rgb"), Opt("colorsOrMap"), Opt("dither"));
+        Add("imapprox", "Re-quantizes an indexed image over a smaller palette: [Y, newmap].", P("indices"), P("map"), P("colorsOrTolerance"), Opt("dither"));
+        Add("cmap2gray", "Converts a colormap to its grayscale equivalent.", P("map"));
+        Add("imsplit", "Splits a colour image into its channels: [R, G, B].", P("image"));
+        Add("demosaic", "Reconstructs colour from a Bayer colour-filter array; alignment 'gbrg', 'grbg', 'bggr', or 'rggb'.", P("cfa"), P("sensorAlignment"));
 
         Add("strel", "Builds a structuring element matrix: 'square' (side) or 'disk' (radius).", P("shape"), Opt("size"));
         Add("imerode", "Morphological erosion (local minimum) over a structuring element (default 3×3 square).", P("image"), Opt("element"));

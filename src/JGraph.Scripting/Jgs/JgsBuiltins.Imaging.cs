@@ -173,7 +173,16 @@ internal static partial class JgsBuiltins
         define("rgb2gray", (args, line, col) =>
         {
             Arity("rgb2gray", args, 1, line, col);
-            ImageBuffer image = Img("rgb2gray", args, 0, line, col);
+
+            // MATLAB's rgb2gray takes a colormap as readily as a picture, and answers with a
+            // colormap — the same conversion applied to three columns instead of three planes.
+            if (args[0].Type != JgsType.Image)
+            {
+                return MatrixToRows(
+                    IndexedImages.ColormapToGray(ColormapRows("rgb2gray", args, 0, line, col)));
+            }
+
+            ImageBuffer image = args[0].AsImage;
             if (image.Channels != 3)
             {
                 throw new JgsRuntimeException(line, col, "rgb2gray expects an RGB image; a grayscale image is already gray.");
@@ -649,6 +658,7 @@ internal static partial class JgsBuiltins
         DefineImagingWaveB(define);
         DefineFilteringBuiltins(define, dialect);
         DefineGeometryBuiltins(define, dialect);
+        DefineColorBuiltins(define, dialect);
 
         // --- Filtering -----------------------------------------------------------------------
         define("imfilter", (args, line, col) =>

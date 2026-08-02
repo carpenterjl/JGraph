@@ -1,6 +1,6 @@
 # MATLAB Image Processing Toolbox coverage
 
-**84 of 409 documented** Image Processing Toolbox names are implemented, as of M46 wave C.
+**120 of 409 documented** Image Processing Toolbox names are implemented, as of M46 wave D.
 
 ## Where this list comes from
 
@@ -32,56 +32,56 @@ counted here too.
 
 JGraph-only names — `mat2im`, `im2mat`, `imcentroid` — are in neither MATLAB nor these counts.
 
-## Implemented — 84
+## Implemented — 120
 `adaptthresh`, `affine2d`, `affineOutputView`, `bestblk`, `blockproc`, `bwareaopen`
-`bwlabel`, `checkerboard`, `col2im`, `colfilt`, `edge`, `entropyfilt`
-`fft2`, `fftshift`, `fitgeotrans`, `fspecial`, `graythresh`, `histeq`
-`hough`, `houghlines`, `houghpeaks`, `ifft2`, `ifftshift`, `im2col`
-`im2double`, `im2gray`, `im2int16`, `im2single`, `im2uint16`, `im2uint8`
-`imabsdiff`, `imadd`, `imadjust`, `imapplymatrix`, `imbinarize`, `imboxfilt`
-`imclose`, `imcomplement`, `imcrop`, `imdilate`, `imdivide`, `imerode`
+`bwlabel`, `checkerboard`, `chromadapt`, `cmap2gray`, `col2im`, `colfilt`
+`colorangle`, `deltaE`, `demosaic`, `edge`, `entropyfilt`, `fft2`
+`fftshift`, `fitgeotrans`, `fspecial`, `gray2ind`, `graythresh`, `histeq`
+`hough`, `houghlines`, `houghpeaks`, `hsv2rgb`, `ifft2`, `ifftshift`
+`illumgray`, `illumpca`, `illumwhite`, `im2col`, `im2double`, `im2gray`
+`im2int16`, `im2single`, `im2uint16`, `im2uint8`, `imabsdiff`, `imadd`
+`imadjust`, `imapplymatrix`, `imapprox`, `imbinarize`, `imboxfilt`, `imclose`
+`imcolordiff`, `imcomplement`, `imcrop`, `imdilate`, `imdivide`, `imerode`
 `imfill`, `imfilter`, `imfinfo`, `imgaussfilt`, `imgradient`, `imgradientxy`
 `imhist`, `imlincomb`, `immultiply`, `imnoise`, `imopen`, `impyramid`
-`imread`, `imref2d`, `imresize`, `imrotate`, `imshow`, `imsubtract`
-`imtranslate`, `imwarp`, `imwrite`, `integralBoxFilter`, `integralImage`, `intlut`
-`mat2gray`, `medfilt2`, `modefilt`, `nlfilter`, `ordfilt2`, `otsuthresh`
-`padarray`, `projective2d`, `rangefilt`, `regionprops`, `rgb2gray`, `rigid2d`
-`stdfilt`, `strel`, `stretchlim`, `transformPointsForward`, `transformPointsInverse`, `wiener2`
+`imread`, `imref2d`, `imresize`, `imrotate`, `imshow`, `imsplit`
+`imsubtract`, `imtranslate`, `imwarp`, `imwrite`, `ind2gray`, `ind2rgb`
+`integralBoxFilter`, `integralImage`, `intlut`, `lab2double`, `lab2rgb`, `lab2uint16`
+`lab2uint8`, `lab2xyz`, `lin2rgb`, `mat2gray`, `medfilt2`, `modefilt`
+`nlfilter`, `ntsc2rgb`, `ordfilt2`, `otsuthresh`, `padarray`, `projective2d`
+`rangefilt`, `regionprops`, `rgb2gray`, `rgb2hsv`, `rgb2ind`, `rgb2lab`
+`rgb2lightness`, `rgb2lin`, `rgb2ntsc`, `rgb2xyz`, `rgb2ycbcr`, `rigid2d`
+`stdfilt`, `strel`, `stretchlim`, `transformPointsForward`, `transformPointsInverse`, `whitepoint`
+`wiener2`, `xyz2double`, `xyz2lab`, `xyz2rgb`, `xyz2uint16`, `ycbcr2rgb`
 
-## Not implemented — 182
-Planned across M46 waves D–K. Nothing here is refused on principle; it is work not yet done.
+## Not implemented — 146
+Planned across M46 waves E–K. Nothing here is refused on principle; it is work not yet done.
 
 `activecontour`, `adapthisteq`, `applylut`, `bfscore`, `boundarymask`, `bwarea`
 `bwareafilt`, `bwboundaries`, `bwconncomp`, `bwconvhull`, `bwdist`, `bwdistgeodesic`
 `bweuler`, `bwferet`, `bwhitmiss`, `bwlabeln`, `bwlookup`, `bwmorph`
 `bwmorph3`, `bwperim`, `bwpropfilt`, `bwselect`, `bwselect3`, `bwskel`
-`bwtraceboundary`, `bwulterode`, `chromadapt`, `cmap2gray`, `colorangle`, `conndef`
-`convmtx2`, `corr2`, `dct2`, `dctmtx`, `deconvblind`, `deconvlucy`
-`deconvreg`, `deconvwnr`, `decorrstretch`, `deltaE`, `demosaic`, `dice`
-`edge3`, `edgetaper`, `entropy`, `fibermetric`, `freqspace`, `freqz2`
-`fsamp2`, `fspecial3`, `ftrans2`, `fwind1`, `fwind2`, `gabor`
-`gradientweight`, `gray2ind`, `graycomatrix`, `grayconnected`, `graycoprops`, `graydiffweight`
-`graydist`, `grayslice`, `hsv2rgb`, `idct2`, `illumgray`, `illumpca`
-`illumwhite`, `imadjustn`, `imapprox`, `imbilatfilt`, `imbothat`, `imboxfilt3`
-`imclearborder`, `imcolordiff`, `imcontour`, `imcrop3`, `imdiffuseest`, `imdiffusefilt`
+`bwtraceboundary`, `bwulterode`, `conndef`, `convmtx2`, `corr2`, `dct2`
+`dctmtx`, `deconvblind`, `deconvlucy`, `deconvreg`, `deconvwnr`, `decorrstretch`
+`dice`, `edge3`, `edgetaper`, `entropy`, `fibermetric`, `freqspace`
+`freqz2`, `fsamp2`, `fspecial3`, `ftrans2`, `fwind1`, `fwind2`
+`gabor`, `gradientweight`, `graycomatrix`, `grayconnected`, `graycoprops`, `graydiffweight`
+`graydist`, `grayslice`, `idct2`, `imadjustn`, `imbilatfilt`, `imbothat`
+`imboxfilt3`, `imclearborder`, `imcontour`, `imcrop3`, `imdiffuseest`, `imdiffusefilt`
 `imextendedmax`, `imextendedmin`, `imfindcircles`, `imflatfield`, `imfuse`, `imgaborfilt`
 `imgaussfilt3`, `imgradient3`, `imgradientxyz`, `imguidedfilter`, `imhistmatch`, `imhistmatchn`
 `imhmax`, `imhmin`, `imimposemin`, `imlocalbrighten`, `immse`, `imnlmfilt`
 `imoverlay`, `impixel`, `improfile`, `imquantize`, `imreconstruct`, `imreducehaze`
 `imregcorr`, `imregionalmax`, `imregionalmin`, `imresize3`, `imrotate3`, `imsegfmm`
-`imsegkmeans`, `imsegkmeans3`, `imsharpen`, `imshowpair`, `imsplit`, `imtophat`
-`ind2gray`, `ind2rgb`, `integralBoxFilter3`, `integralImage3`, `iptcheckconn`, `iptgetpref`
-`iptsetpref`, `iradon`, `jaccard`, `lab2double`, `lab2rgb`, `lab2uint16`
-`lab2uint8`, `lab2xyz`, `label2idx`, `label2rgb`, `labelmatrix`, `labeloverlay`
-`lin2rgb`, `makelut`, `maxhessiannorm`, `mean2`, `medfilt3`, `montage`
-`multissim`, `multissim3`, `multithresh`, `normxcorr2`, `ntsc2rgb`, `obliqueslice`
-`offsetstrel`, `otf2psf`, `phantom`, `poly2label`, `poly2mask`, `psf2otf`
-`psnr`, `qtdecomp`, `qtgetblk`, `qtsetblk`, `radon`, `reducepoly`
-`regionfill`, `regionprops3`, `rgb2hsv`, `rgb2ind`, `rgb2lab`, `rgb2lightness`
-`rgb2lin`, `rgb2ntsc`, `rgb2xyz`, `rgb2ycbcr`, `roicolor`, `roifilt2`
+`imsegkmeans`, `imsegkmeans3`, `imsharpen`, `imshowpair`, `imtophat`, `integralBoxFilter3`
+`integralImage3`, `iptcheckconn`, `iptgetpref`, `iptsetpref`, `iradon`, `jaccard`
+`label2idx`, `label2rgb`, `labelmatrix`, `labeloverlay`, `makelut`, `maxhessiannorm`
+`mean2`, `medfilt3`, `montage`, `multissim`, `multissim3`, `multithresh`
+`normxcorr2`, `obliqueslice`, `offsetstrel`, `otf2psf`, `phantom`, `poly2label`
+`poly2mask`, `psf2otf`, `psnr`, `qtdecomp`, `qtgetblk`, `qtsetblk`
+`radon`, `reducepoly`, `regionfill`, `regionprops3`, `roicolor`, `roifilt2`
 `roipoly`, `ssim`, `std2`, `superpixels`, `superpixels3`, `visboundaries`
-`viscircles`, `watershed`, `whitepoint`, `xyz2double`, `xyz2lab`, `xyz2rgb`
-`xyz2uint16`, `ycbcr2rgb`
+`viscircles`, `watershed`
 
 ## Excluded — 143 names and 8 families
 
@@ -198,6 +198,26 @@ By reason:
   rather than by padding the input first. The visible effect is the same — the edge fades into the
   fill instead of being extended — but a pixel-for-pixel comparison against MATLAB may differ in the
   outermost row and column.
+- **An indexed image's indices are one-based doubles.** MATLAB's `gray2ind` and `rgb2ind` hand back
+  `uint8` when the palette fits in 256 entries, and a `uint8` index array counts from zero — so
+  `max(X(:))` there is `n − 1`. JGraph has no integer array class, so `X` is always the other form
+  MATLAB itself accepts: a double array counting from one. `ind2rgb`, `ind2gray` and `imapprox` read
+  it that way, so the round trip is identical; a script that inspects `X`'s raw values or its class
+  will differ by one. Under JGS the indices count from zero, matching that dialect's own subscripts
+  (ADR 0028).
+- **`illumgray`, `illumwhite` and `illumpca` normalize on the largest channel.** MathWorks documents
+  what each estimator measures but not how the returned triple is scaled. The scale does not reach
+  the answer: `chromadapt` normalizes the illuminant to unit luminance before building its adaptation
+  matrix, so any positive multiple of an estimate gives the same correction.
+- **`chromadapt`'s 'simple' method preserves brightness.** MATLAB documents it only as "scale the
+  colour channels by the illuminant". Here each linear channel is scaled by the illuminant's mean
+  over that channel, which turns the illuminant grey without also making the picture brighter.
+- **The colour functions take three shapes and answer in kind**: a three-channel image value, a plain
+  `h×w×3` numeric array (which is what MATLAB calls an RGB image, and what a script that wrote
+  `zeros(h, w, 3)` is holding), or an `n×3` colormap. That is wider than MATLAB, not narrower — but
+  it means `rgb2lab` of an array gives an array back rather than an image value.
+- **`lab2double` and `xyz2double` need a class tag.** They undo an integer encoding, and the class is
+  the only record of which encoding was used, so they take an image and refuse a bare colormap.
 - **16-bit PNG degrades to 8 bits.** Measured on SkiaSharp 2.88.8, in both directions: the PNG
   encoder accepts the 16-bit colour type and copies the pixels, then writes a depth-8 IHDR anyway,
   and the decoder will not return 16-bit samples from a file that genuinely has them. `imwrite` with

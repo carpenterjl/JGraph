@@ -89,6 +89,24 @@ internal static partial class JgsBuiltins
         Wrap("transformPointsInverse",
             (args, wanted, line, col) => TransformPointsOutputs("transformPointsInverse", args, wanted, line, col));
 
+        // M46 wave D. Each of these hands back a palette or a set of planes alongside its picture.
+        // A bare `whitepoint` is the default illuminant, the way a bare `eps` is a number — M37's
+        // AutoCallsBare, applied to the one wave-D builtin whose no-argument form is the common one.
+        if (env.TryGet("whitepoint", out JgsValue whitepoint) && whitepoint.Type == JgsType.Function)
+        {
+            IJgsCallable body = whitepoint.AsCallable;
+            env.Declare("whitepoint", JgsValue.Function(new BuiltinFunction(
+                "whitepoint", (args, line, col) => body.Call(args, line, col))
+            {
+                AutoCallsBare = true,
+            }));
+        }
+
+        Wrap("gray2ind", (args, wanted, line, col) => GrayToIndOutputs(args, wanted, line, col, dialect));
+        Wrap("rgb2ind", (args, wanted, line, col) => RgbToIndOutputs(args, wanted, line, col, dialect));
+        Wrap("imapprox", (args, wanted, line, col) => ImApproxOutputs(args, wanted, line, col, dialect));
+        Wrap("imsplit", ImSplitOutputs);
+
         // [counts, binLocations] = imhist(I). The locations are quoted in the image's own class, so a
         // uint8 picture's bins are centred on 0…255 while a double one's span [0, 1].
         Wrap("imhist", (args, wanted, line, col) =>
