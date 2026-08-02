@@ -136,7 +136,7 @@ internal static partial class JgsBuiltins
             {
                 1 => ConcatVertical("cat", parts, line, col),
                 2 => ConcatHorizontal("cat", parts, line, col),
-                _ => throw new JgsRuntimeException(line, col, "cat supports dimensions 1 and 2."),
+                _ => ConcatAlongDimension("cat", dim, parts, line, col),
             };
         });
 
@@ -1060,6 +1060,106 @@ internal static partial class JgsBuiltins
         {
             yield return array.ElementAt(i);
         }
+    }
+
+    /// <summary>
+    /// <c>cat(dim, …)</c> past the second dimension — the form that stacks planes.
+    /// </summary>
+    /// <remarks>
+    /// Absent until M46 wave L, which is a gap the imaging work had been walking around: <c>cat(3,
+    /// R, G, B)</c> is how MATLAB documents building a colour picture out of its planes, and how
+    /// wave K's own error message tells a script to build a volume. Storage is already column-major
+    /// with real dimensions (M41), so the copy is one contiguous run per piece per trailing position:
+    /// everything before the joined dimension moves together, and everything after it repeats.
+    /// </remarks>
+    private static JgsValue ConcatAlongDimension(string name, int dim, JgsValue[] parts, int line, int col)
+    {
+        if (parts.Length == 0)
+        {
+            return JgsValue.Array([]);
+        }
+
+        var flats = new double[parts.Length][];
+        var sizes = new int[parts.Length][];
+        for (int i = 0; i < parts.Length; i++)
+        {
+            JgsValue part = parts[i];
+            if (part.Type is JgsType.Number or JgsType.Bool)
+            {
+                flats[i] = [part.AsNumber];
+                sizes[i] = Extend([1, 1], dim);
+                continue;
+            }
+
+            if (part.Type != JgsType.Array || JgsMatrix.IsNested(part))
+            {
+                throw new JgsRuntimeException(line, col,
+                    $"{name} along dimension {dim} joins numeric arrays, but piece {i + 1} is a {part.TypeName}.");
+            }
+
+            flats[i] = ToDoubles(name, part, line, col);
+            sizes[i] = Extend(JgsMatrix.DimsOf(part), dim);
+        }
+
+        // Every dimension but the joined one has to agree, exactly as for rows and columns.
+        for (int d = 0; d < dim; d++)
+        {
+            if (d == dim - 1)
+            {
+                continue;
+            }
+
+            for (int i = 1; i < parts.Length; i++)
+            {
+                if (sizes[i][d] != sizes[0][d])
+                {
+                    throw new JgsRuntimeException(line, col,
+                        $"{name} along dimension {dim}: piece {i + 1} is {sizes[i][d]} long in dimension " +
+                        $"{d + 1} where the first is {sizes[0][d]}.");
+                }
+            }
+        }
+
+        int inner = 1;
+        for (int d = 0; d < dim - 1; d++)
+        {
+            inner *= sizes[0][d];
+        }
+
+        int outer = 1;
+        for (int d = dim; d < sizes[0].Length; d++)
+        {
+            outer *= sizes[0][d];
+        }
+
+        int joined = sizes.Sum(s => s[dim - 1]);
+        var result = new double[(long)inner * joined * outer];
+        int at = 0;
+        for (int o = 0; o < outer; o++)
+        {
+            for (int i = 0; i < parts.Length; i++)
+            {
+                int run = inner * sizes[i][dim - 1];
+                Array.Copy(flats[i], o * run, result, at, run);
+                at += run;
+            }
+        }
+
+        int[] dims = (int[])sizes[0].Clone();
+        dims[dim - 1] = joined;
+        return JgsMatrix.FromColumnMajorDims(result, dims);
+    }
+
+    /// <summary>Pads a size vector with trailing ones, so a matrix has a third dimension of 1.</summary>
+    private static int[] Extend(IReadOnlyList<int> dims, int length)
+    {
+        var padded = new int[Math.Max(dims.Count, length)];
+        for (int i = 0; i < padded.Length; i++)
+        {
+            padded[i] = i < dims.Count ? dims[i] : 1;
+        }
+
+        return padded;
     }
 
     private static JgsValue ConcatHorizontal(string name, IReadOnlyList<JgsValue> parts, int line, int col)

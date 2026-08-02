@@ -74,7 +74,8 @@ internal static partial class JgsBuiltins
                 throw new JgsRuntimeException(line, col, "imwrite needs an image and a path.");
             }
 
-            ImageBuffer image = Img("imwrite", parsed.Positional, 0, line, col);
+            using ImgArg source = ImgLike("imwrite", parsed.Positional, 0, line, col);
+            ImageBuffer image = source.Buffer;
             string path = host.ResolveForWrite(Str("imwrite", parsed.Positional, 1, line, col));
 
             // The pre-M46 positional third argument was the JPEG quality; 'Quality' is MATLAB's spelling
@@ -193,8 +194,11 @@ internal static partial class JgsBuiltins
         define("im2gray", (args, line, col) =>
         {
             Arity("im2gray", args, 1, line, col);
-            ImageBuffer source = Img("im2gray", args, 0, line, col);
-            return ImgOut(PointOps.ToGray(source), source);
+
+            // The whole point of im2gray is to take colour, and colour arrives as a plain h×w×3 array
+            // as often as it arrives as an image value.
+            using ImgArg source = ImgLike("im2gray", args, 0, line, col);
+            return ImgLikeOut(PointOps.ToGray(source.Buffer), source);
         });
 
         define("mat2im", (args, line, col) =>
@@ -280,6 +284,9 @@ internal static partial class JgsBuiltins
         define("intlut", (args, line, col) =>
         {
             Arity("intlut", args, 2, line, col);
+
+            // Strictly an image: the table is indexed by the sample's own integer value, and a plain
+            // array carries no class to say what those values mean.
             ImageBuffer image = Img("intlut", args, 0, line, col);
             if (!image.Class.IsInteger())
             {
@@ -312,7 +319,8 @@ internal static partial class JgsBuiltins
         define("imadjust", (args, line, col) =>
         {
             ArityRange("imadjust", args, 1, 4, line, col);
-            ImageBuffer image = Img("imadjust", args, 0, line, col);
+            using ImgArg source = ImgLike("imadjust", args, 0, line, col);
+            ImageBuffer image = source.Buffer;
             (double lowIn, double highIn) = args.Count >= 2
                 ? Pair("imadjust", args, 1, line, col)
                 : PointOps.StretchLimits(image);
@@ -320,7 +328,7 @@ internal static partial class JgsBuiltins
             double gamma = args.Count >= 4 ? Num("imadjust", args, 3, line, col) : 1.0;
             try
             {
-                return ImgOut(PointOps.Adjust(image, lowIn, highIn, lowOut, highOut, gamma), image);
+                return ImgLikeOut(PointOps.Adjust(image, lowIn, highIn, lowOut, highOut, gamma), source);
             }
             catch (ArgumentException ex)
             {
@@ -331,7 +339,8 @@ internal static partial class JgsBuiltins
         define("imhist", (args, line, col) =>
         {
             ArityRange("imhist", args, 1, 2, line, col);
-            ImageBuffer image = Img("imhist", args, 0, line, col);
+            using ImgArg source = ImgLike("imhist", args, 0, line, col);
+            ImageBuffer image = source.Buffer;
             int bins = args.Count == 2 ? Count("imhist", args, 1, line, col) : DefaultBins(image);
             try
             {
@@ -360,7 +369,8 @@ internal static partial class JgsBuiltins
         define("stretchlim", (args, line, col) =>
         {
             ArityRange("stretchlim", args, 1, 2, line, col);
-            ImageBuffer image = Img("stretchlim", args, 0, line, col);
+            using ImgArg source = ImgLike("stretchlim", args, 0, line, col);
+            ImageBuffer image = source.Buffer;
             double lowFraction = 0.01;
             double highFraction = 0.99;
             if (args.Count == 2)
@@ -393,7 +403,8 @@ internal static partial class JgsBuiltins
                 throw new JgsRuntimeException(line, col, "adaptthresh needs an image.");
             }
 
-            ImageBuffer image = Img("adaptthresh", parsed.Positional, 0, line, col);
+            using ImgArg source = ImgLike("adaptthresh", parsed.Positional, 0, line, col);
+            ImageBuffer image = source.Buffer;
             double sensitivity = parsed.Positional.Count >= 2
                 ? Num("adaptthresh", parsed.Positional, 1, line, col)
                 : 0.5;
@@ -410,11 +421,15 @@ internal static partial class JgsBuiltins
             string polarity = parsed.Text("ForegroundPolarity") ?? "bright";
             try
             {
-                return ImgOut(
-                    Histograms.AdaptiveThreshold(
-                        image, sensitivity, parsed.Window("NeighborhoodSize"), statistic,
-                        polarity.Equals("dark", StringComparison.OrdinalIgnoreCase)),
-                    ImageClass.Double);
+                ImageBuffer thresholds = Histograms.AdaptiveThreshold(
+                    image, sensitivity, parsed.Window("NeighborhoodSize"), statistic,
+                    polarity.Equals("dark", StringComparison.OrdinalIgnoreCase));
+
+                // A threshold surface is a fraction of full scale whatever the picture's class, so it
+                // comes back double rather than inheriting the input's class.
+                return source.FromMatrix
+                    ? ImgLikeOut(thresholds, source)
+                    : ImgOut(thresholds, ImageClass.Double);
             }
             catch (ArgumentException ex)
             {
@@ -427,7 +442,8 @@ internal static partial class JgsBuiltins
         define("graythresh", (args, line, col) =>
         {
             Arity("graythresh", args, 1, line, col);
-            return JgsValue.Number(Histograms.OtsuLevel(Img("graythresh", args, 0, line, col)));
+            using ImgArg source = ImgLike("graythresh", args, 0, line, col);
+            return JgsValue.Number(Histograms.OtsuLevel(source.Buffer));
         });
 
         define("imbinarize", (args, line, col) =>
@@ -438,7 +454,8 @@ internal static partial class JgsBuiltins
                 throw new JgsRuntimeException(line, col, "imbinarize needs an image.");
             }
 
-            ImageBuffer image = Img("imbinarize", parsed.Positional, 0, line, col);
+            using ImgArg source = ImgLike("imbinarize", parsed.Positional, 0, line, col);
+            ImageBuffer image = source.Buffer;
             if (parsed.Has("adaptive"))
             {
                 using ImageBuffer thresholds = Histograms.AdaptiveThreshold(
@@ -447,7 +464,7 @@ internal static partial class JgsBuiltins
                     parsed.Window("NeighborhoodSize"),
                     Histograms.LocalStatistic.Mean,
                     string.Equals(parsed.Text("ForegroundPolarity"), "dark", StringComparison.OrdinalIgnoreCase));
-                return ImgOut(Histograms.Binarize(image, thresholds), ImageClass.Logical);
+                return ImgMaskOut(Histograms.Binarize(image, thresholds), source);
             }
 
             // A second positional argument is either a global level or a whole threshold surface, which
@@ -456,14 +473,24 @@ internal static partial class JgsBuiltins
             {
                 // The level is normalized in both dialects: MATLAB documents imbinarize's threshold as
                 // [0, 1] whatever the image's class, and graythresh hands back exactly that.
-                return parsed.Positional[1].Type == JgsType.Image
-                    ? ImgOut(Histograms.Binarize(image, parsed.Positional[1].AsImage), ImageClass.Logical)
-                    : ImgOut(
-                        Histograms.Binarize(image, Num("imbinarize", parsed.Positional, 1, line, col)),
-                        ImageClass.Logical);
+                if (parsed.Positional[1].Type == JgsType.Image)
+                {
+                    return ImgMaskOut(Histograms.Binarize(image, parsed.Positional[1].AsImage), source);
+                }
+
+                // A surface can also arrive as plain numbers, which is what adaptthresh gives back
+                // when it was handed plain numbers.
+                if (JgsMatrix.IsMatrix(parsed.Positional[1]))
+                {
+                    using ImgArg surface = ImgLike("imbinarize", parsed.Positional, 1, line, col);
+                    return ImgMaskOut(Histograms.Binarize(image, surface.Buffer), source);
+                }
+
+                return ImgMaskOut(
+                    Histograms.Binarize(image, Num("imbinarize", parsed.Positional, 1, line, col)), source);
             }
 
-            return ImgOut(Histograms.Binarize(image, (double?)null), ImageClass.Logical);
+            return ImgMaskOut(Histograms.Binarize(image, (double?)null), source);
         });
 
         // --- Arithmetic ----------------------------------------------------------------------
@@ -480,11 +507,11 @@ internal static partial class JgsBuiltins
         define("imabsdiff", (args, line, col) =>
         {
             Arity("imabsdiff", args, 2, line, col);
-            ImageBuffer a = Img("imabsdiff", args, 0, line, col);
-            ImageBuffer b = Img("imabsdiff", args, 1, line, col);
+            using ImgArg first = ImgLike("imabsdiff", args, 0, line, col);
+            using ImgArg second = ImgLike("imabsdiff", args, 1, line, col);
             try
             {
-                return ImgOut(Arithmetic.AbsoluteDifference(a, b), a);
+                return ImgLikeOut(Arithmetic.AbsoluteDifference(first.Buffer, second.Buffer), first);
             }
             catch (ArgumentException ex)
             {
@@ -527,11 +554,11 @@ internal static partial class JgsBuiltins
         {
             ArityRange("imapplymatrix", args, 2, 3, line, col);
             double[,] matrix = Matrix("imapplymatrix", args, 0, line, col);
-            ImageBuffer image = Img("imapplymatrix", args, 1, line, col);
+            using ImgArg source = ImgLike("imapplymatrix", args, 1, line, col);
             double[]? offsets = args.Count == 3 ? ToDoubles("imapplymatrix", args[2], line, col) : null;
             try
             {
-                return ImgOut(Arithmetic.ApplyMatrix(matrix, image, offsets), image);
+                return ImgLikeOut(Arithmetic.ApplyMatrix(matrix, source.Buffer, offsets), source);
             }
             catch (ArgumentException ex)
             {
@@ -542,8 +569,8 @@ internal static partial class JgsBuiltins
         define("imcomplement", (args, line, col) =>
         {
             Arity("imcomplement", args, 1, line, col);
-            ImageBuffer image = Img("imcomplement", args, 0, line, col);
-            return ImgOut(PointOps.Complement(image), image);
+            using ImgArg source = ImgLike("imcomplement", args, 0, line, col);
+            return ImgLikeOut(PointOps.Complement(source.Buffer), source);
         });
 
         define("imnoise", (args, line, col) =>
@@ -679,16 +706,16 @@ internal static partial class JgsBuiltins
         define("imcrop", (args, line, col) =>
         {
             Arity("imcrop", args, 2, line, col);
-            ImageBuffer image = Img("imcrop", args, 0, line, col);
+            using ImgArg source = ImgLike("imcrop", args, 0, line, col);
             double[] rect = ToDoubles("imcrop", args[1], line, col);
             if (rect.Length != 4)
             {
                 throw new JgsRuntimeException(line, col, "imcrop rect must be [x, y, width, height].");
             }
 
-            return ImgOut(Geometry.Crop(image,
+            return ImgLikeOut(Geometry.Crop(source.Buffer,
                 (int)Math.Round(rect[0]), (int)Math.Round(rect[1]),
-                (int)Math.Round(rect[2]), (int)Math.Round(rect[3])), image);
+                (int)Math.Round(rect[2]), (int)Math.Round(rect[3])), source);
         });
 
         DefineImagingWaveB(define, dialect);
@@ -1008,12 +1035,12 @@ internal static partial class JgsBuiltins
                 return AreaOpenVolume(args, line, col);
             }
 
-            ImageBuffer image = Img("bwareaopen", args, 0, line, col);
+            using ImgArg source = ImgLike("bwareaopen", args, 0, line, col);
             int minArea = Count("bwareaopen", args, 1, line, col);
             int connectivity = args.Count == 3 ? Count("bwareaopen", args, 2, line, col) : 8;
             try
             {
-                return ImgOut(Regions.AreaOpen(image, minArea, connectivity), ImageClass.Logical);
+                return ImgMaskOut(Regions.AreaOpen(source.Buffer, minArea, connectivity), source);
             }
             catch (ArgumentOutOfRangeException ex)
             {
@@ -1060,7 +1087,8 @@ internal static partial class JgsBuiltins
         define("imcentroid", (args, line, col) =>
         {
             ArityRange("imcentroid", args, 1, 2, line, col);
-            ImageBuffer image = Img("imcentroid", args, 0, line, col);
+            using ImgArg source = ImgLike("imcentroid", args, 0, line, col);
+            ImageBuffer image = source.Buffer;
 
             // With a mask, weigh only what the mask keeps — the whole-image counterpart of
             // regionprops' WeightedCentroid, and immune to how many blobs the mask happens to have.
@@ -1069,7 +1097,8 @@ internal static partial class JgsBuiltins
             {
                 if (args.Count == 2)
                 {
-                    masked = PointOps.Multiply(image, Img("imcentroid", args, 1, line, col));
+                    using ImgArg mask = ImgLike("imcentroid", args, 1, line, col);
+                    masked = PointOps.Multiply(image, mask.Buffer);
                 }
 
                 (double x, double y) = Regions.WeightedCentroid(masked ?? image);

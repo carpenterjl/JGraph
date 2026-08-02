@@ -1738,12 +1738,29 @@ internal sealed class Interpreter
             }
         }
 
+        // A nested matrix stores one array per row rather than one column-major run, so the flat slot
+        // below would index the list of rows instead of the elements. The read path has always gone
+        // through JgsMatrix.At, which knows both forms; the write path did not, and walked off the end
+        // of the row list for any selection reaching past the row count — `A(1:2, 1:2) = 5` on a JGS
+        // 4×4 crashed the interpreter outright rather than raising a script error.
+        bool nested = JgsMatrix.IsNested(callee);
+
         for (int c = 0; c < colPicks.Length; c++)
         {
             for (int r = 0; r < rowPicks.Length; r++)
             {
-                int slot = rowPicks[r] + (colPicks[c] * rows);
                 JgsValue source = scalarRhs ? rhs : rhs.ElementAt((c * rowPicks.Length) + r);
+                if (nested)
+                {
+                    JgsValue row = callee.ElementAt(rowPicks[r]);
+                    JgsValue nestedStored = op == TokenType.Assign
+                        ? source
+                        : ApplyBinary(UnderlyingOp(op), row.ElementAt(colPicks[c]), source, at);
+                    WriteElement(row, colPicks[c], nestedStored);
+                    continue;
+                }
+
+                int slot = rowPicks[r] + (colPicks[c] * rows);
                 JgsValue stored = op == TokenType.Assign
                     ? source
                     : ApplyBinary(UnderlyingOp(op), callee.ElementAt(slot), source, at);
@@ -2747,14 +2764,25 @@ internal sealed class Interpreter
     };
 
     /// <summary>
-    /// Reads one sample from an image value: <c>img(r, c)</c> or <c>img(r, c, ch)</c>, in the dialect's
-    /// own index base and its own intensity scale.
+    /// Reads from an image value: <c>img(r, c)</c>, <c>img(r, c, ch)</c>, or any of those with a range,
+    /// a mask or <c>:</c> in a slot — in the dialect's own index base and its own intensity scale.
     /// </summary>
     /// <remarks>
-    /// Both of those were wrong for MATLAB before M46. Subscripts ignored <see cref="Dialect"/>
-    /// entirely, so a <c>.m</c> script's <c>img(1, 1)</c> quietly read the pixel diagonally in from the
-    /// corner; and the sample came back in [0, 1] where MATLAB reports a <c>uint8</c> picture's pixels
-    /// as 0–255. JGS keeps 0-based subscripts (ADR 0028) and its documented [0, 1] samples.
+    /// <para>
+    /// The index base and the scale were both wrong for MATLAB before M46. Subscripts ignored
+    /// <see cref="Dialect"/> entirely, so a <c>.m</c> script's <c>img(1, 1)</c> quietly read the pixel
+    /// diagonally in from the corner; and the sample came back in [0, 1] where MATLAB reports a
+    /// <c>uint8</c> picture's pixels as 0–255. JGS keeps 0-based subscripts (ADR 0028) and its
+    /// documented [0, 1] samples.
+    /// </para>
+    /// <para>
+    /// Slicing (M46 wave L) is the third of those. Every subscript slot was required to be a single
+    /// number, so <c>BW(:, 19:22)</c> on a mask that an imaging builtin had just returned was an
+    /// error — while the same expression on the matrix that produced it worked. A picture and a
+    /// matrix are the same thing under a subscript, so the slots now go through the ordinary
+    /// <see cref="SubscriptPicks"/> path and a selection wider than one sample comes back as a
+    /// matrix rather than a number.
+    /// </para>
     /// </remarks>
     private JgsValue IndexImage(JgsValue callee, IReadOnlyList<Expr> subscripts, Node at, JgsEnvironment env)
     {
@@ -2775,16 +2803,23 @@ internal sealed class Interpreter
                 "or img(:) for every sample as a column.");
         }
 
-        int row = ImageSubscript(subscripts[0], "row", image.Height, at, env);
-        int col = ImageSubscript(subscripts[1], "column", image.Width, at, env);
-        int channel;
+        int[] extents = subscripts.Count == 3
+            ? [image.Height, image.Width, image.Channels]
+            : [image.Height, image.Width];
+
+        int[] rows = SubscriptPicks(
+            EvaluateIndexArgument(subscripts[0], extents, 0, env), image.Height, "image row", at);
+        int[] cols = SubscriptPicks(
+            EvaluateIndexArgument(subscripts[1], extents, 1, env), image.Width, "image column", at);
+        int[] channels;
         if (subscripts.Count == 3)
         {
-            channel = ImageSubscript(subscripts[2], "channel", image.Channels, at, env);
+            channels = SubscriptPicks(
+                EvaluateIndexArgument(subscripts[2], extents, 2, env), image.Channels, "image channel", at);
         }
         else if (image.Channels == 1)
         {
-            channel = 0;
+            channels = [0];
         }
         else
         {
@@ -2792,20 +2827,42 @@ internal sealed class Interpreter
                 $"This image has {image.Channels} channels; read it with img(row, col, channel).");
         }
 
-        if ((uint)row >= (uint)image.Height ||
-            (uint)col >= (uint)image.Width ||
-            (uint)channel >= (uint)image.Channels)
+        if (rows.Length == 1 && cols.Length == 1 && channels.Length == 1)
         {
-            throw new JgsRuntimeException(at.Line, at.Column,
-                $"Image subscript ({row + Dialect.IndexBase}, {col + Dialect.IndexBase}, " +
-                $"{channel + Dialect.IndexBase}) is out of range for a " +
-                $"{image.Height}x{image.Width}x{image.Channels} image " +
-                $"(subscripts are {Dialect.IndexBase}-based).");
+            double sample = image[rows[0], cols[0], channels[0]];
+            GC.KeepAlive(image);
+            return JgsValue.Number(Dialect.IsMatlab ? image.Class.ToNative(sample) : sample);
         }
 
-        double sample = image[row, col, channel];
+        return SliceImage(image, rows, cols, channels);
+    }
+
+    /// <summary>
+    /// A rectangular selection out of an image, laid out column-major as an ordinary numeric array —
+    /// two-dimensional when one channel was picked, three when several were, which is the shape the
+    /// rest of the imaging surface already reads.
+    /// </summary>
+    private JgsValue SliceImage(JGraph.Imaging.ImageBuffer image, int[] rows, int[] cols, int[] channels)
+    {
+        var flat = new double[(long)rows.Length * cols.Length * channels.Length];
+        int k = 0;
+        foreach (int ch in channels)
+        {
+            foreach (int c in cols)
+            {
+                foreach (int r in rows)
+                {
+                    double sample = image[r, c, ch];
+                    flat[k++] = Dialect.IsMatlab ? image.Class.ToNative(sample) : sample;
+                }
+            }
+        }
+
         GC.KeepAlive(image);
-        return JgsValue.Number(Dialect.IsMatlab ? image.Class.ToNative(sample) : sample);
+        int[] dims = channels.Length == 1
+            ? [rows.Length, cols.Length]
+            : [rows.Length, cols.Length, channels.Length];
+        return JgsMatrix.FromColumnMajorDims(flat, dims);
     }
 
     private static int SampleCountOf(JGraph.Imaging.ImageBuffer image) =>
@@ -2839,28 +2896,6 @@ internal sealed class Interpreter
         }
 
         return column;
-    }
-
-    private int ImageSubscript(Expr expr, string name, int extent, Node at, JgsEnvironment env)
-    {
-        // Routed through the ordinary index-argument path so `end` means the last row, column or
-        // channel here exactly as it does for an array.
-        JgsValue? value = EvaluateIndexArgument(expr, extent, env);
-        if (value is not { Type: JgsType.Number })
-        {
-            throw new JgsRuntimeException(at.Line, at.Column,
-                $"Image {name} subscript must be a number, not a {(value is null ? "range" : value.TypeName)}.");
-        }
-
-        double raw = value.AsNumber;
-        int rounded = (int)Math.Round(raw);
-        if (rounded != raw)
-        {
-            throw new JgsRuntimeException(at.Line, at.Column,
-                $"Image {name} subscript must be a whole number, not {raw.ToString(System.Globalization.CultureInfo.InvariantCulture)}.");
-        }
-
-        return rounded - Dialect.IndexBase;
     }
 
     /// <summary>

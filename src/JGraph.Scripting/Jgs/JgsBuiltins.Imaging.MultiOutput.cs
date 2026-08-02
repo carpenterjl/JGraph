@@ -181,7 +181,8 @@ internal static partial class JgsBuiltins
         Wrap("imhist", (args, wanted, line, col) =>
         {
             ArityRange("imhist", args, 1, 2, line, col);
-            ImageBuffer image = Img("imhist", args, 0, line, col);
+            using ImgArg source = ImgLike("imhist", args, 0, line, col);
+            ImageBuffer image = source.Buffer;
             int bins = args.Count == 2 ? Count("imhist", args, 1, line, col) : DefaultBins(image);
             double[] counts;
             try
@@ -213,7 +214,8 @@ internal static partial class JgsBuiltins
         Wrap("graythresh", (args, wanted, line, col) =>
         {
             Arity("graythresh", args, 1, line, col);
-            (double level, double metric) = Histograms.OtsuLevelAndMetric(Img("graythresh", args, 0, line, col));
+            using ImgArg source = ImgLike("graythresh", args, 0, line, col);
+            (double level, double metric) = Histograms.OtsuLevelAndMetric(source.Buffer);
             return wanted < 2 ? [JgsValue.Number(level)] : [JgsValue.Number(level), JgsValue.Number(metric)];
         });
 

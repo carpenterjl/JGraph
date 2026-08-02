@@ -1,6 +1,6 @@
 # MATLAB Image Processing Toolbox coverage
 
-**266 of 409 documented** Image Processing Toolbox names are implemented, as of M46 wave K.
+**266 of 409 documented** Image Processing Toolbox names are implemented, as of M46 (complete).
 
 ## Where this list comes from
 
@@ -160,6 +160,16 @@ By reason:
 
 ## Recorded divergences
 
+- **A class tag rides on a picture, not on a plain array of numbers.** `imread` answers `uint8`,
+  `class(I)` says so, `I(1, 1)` reads 0–255 and `im2double`/`im2uint16` re-tag as they convert. But
+  MATLAB also carries a class on an ordinary array, so its `class(uint8(7))` is `'uint8'` where this
+  answers `'double'`: integer conversion here rounds and saturates the values on double storage
+  (ADR 0045) without recording what it did. `intlut` is the one toolbox function that therefore
+  needs a real picture rather than an array, since its table is indexed by the sample's own integer
+  value and an untagged array cannot say what those values mean.
+- **A picture and a plain matrix are interchangeable almost everywhere, and the exceptions are
+  named.** Every function that measures or filters takes either. `imwrite` takes either. The ones
+  that genuinely need a picture are `intlut` (above) and `im2mat`, which exists to unwrap one.
 - **`imgaussfilt`'s `'FilterDomain'` is accepted but never changes the answer.** MATLAB offers
   `'auto'`, `'spatial'` and `'frequency'` because its spatial path slows down as the kernel grows.
   The one here is separable, so it already costs `kh + kw` multiplies per pixel rather than
@@ -589,3 +599,26 @@ Each changed an existing result, so each is written down.
   `repmat(A, 3, 1)` did not repeat at all. It now tiles in two dimensions. This one is a base-MATLAB
   builtin rather than a toolbox function; it is recorded here because the imaging work is what found
   it.
+- **A picture could not be sliced** (M46 wave L). Every subscript slot on an image value had to be a
+  single number, so `BW(:, 19:22)` on a mask an imaging builtin had just returned was an error while
+  the same expression on the matrix that produced it worked. Reads now go through the same
+  subscript-resolution path an array uses, so a range, a mask or `:` selects a submatrix and only a
+  single-sample selection comes back as a number. `img(:)` and the one-based, native-scale scalar
+  read from wave A are unchanged.
+- **`cat` refused any dimension past the second** (M46 wave L). `cat(3, R, G, B)` is how MATLAB
+  documents building a colour picture out of its planes, and it is what wave K's own error message
+  tells a script to do to build a volume — so the message was pointing at something that did not
+  work. It now joins along any dimension. This is a base-MATLAB builtin; it is recorded here because
+  the imaging surface is what depends on it.
+- **Nine point and threshold functions refused a plain matrix** (M46 wave L). `imhist`, `graythresh`,
+  `stretchlim`, `adaptthresh`, `imbinarize`, `imadjust`, `imcomplement`, `imabsdiff`, `imapplymatrix`,
+  `im2gray`, `imcrop`, `imcentroid`, `bwareaopen` and `imwrite` all required a picture value where
+  the hundred-odd functions around them took either. MATLAB draws no such line, and wave G had
+  already had to fix the same thing for `imshow`. A matrix in now means a matrix out, and colour
+  planes in mean colour planes out.
+- **A submatrix write walked off the end of its own storage** (M46 wave L). A JGS matrix is stored as
+  an array of row arrays; the two-subscript write path computed a flat column-major slot regardless,
+  which indexed the list of rows. `A(1:2, 1:2) = 5` on a JGS 4×4 threw an `IndexOutOfRangeException`
+  out of the interpreter rather than raising a script error, and any selection reaching past the row
+  count did the same. The read path had always known both storage forms; now the write path does too.
+  This is base-language rather than toolbox, and it was found by writing the milestone's own script.

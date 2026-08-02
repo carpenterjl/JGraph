@@ -226,4 +226,39 @@ public class JgsIndexingTests : IDisposable
         Assert.False(result.Success);
         Assert.Contains("indexing is 0-based", Assert.Single(result.Diagnostics).Message);
     }
+
+    /// <summary>
+    /// M46 wave L. A JGS matrix is stored as an array of row arrays, and the two-subscript write path
+    /// used to compute a flat column-major slot regardless — which indexed the list of rows and threw
+    /// an <see cref="IndexOutOfRangeException"/> out of the interpreter rather than raising a script
+    /// error. The read path always knew both forms, so the two disagreed.
+    /// </summary>
+    [Fact]
+    public async Task SubmatrixWrite_ReachesEveryPickedElement()
+    {
+        ScriptRunResult result = await Run("""
+            let m = zeros(4, 4);
+            m(1:2, 1:2) = 5;
+            print(m(1, 1))
+            print(m(2, 2))
+            print(m(0, 0))
+            print(m(3, 3))
+            """);
+
+        Assert.True(result.Success, result.Message);
+        Assert.Equal("5\n5\n0\n0", _output.NormalText.Trim().Replace("\r", string.Empty));
+    }
+
+    [Fact]
+    public async Task CompoundSubmatrixWrite_ReadsBeforeItWrites()
+    {
+        ScriptRunResult result = await Run("""
+            let m = [[1, 2], [3, 4]];
+            m(0:1, 0:1) += 10;
+            print(m)
+            """);
+
+        Assert.True(result.Success, result.Message);
+        Assert.Contains("[[11, 12], [13, 14]]", _output.NormalText);
+    }
 }

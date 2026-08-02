@@ -14,11 +14,18 @@ below used to list as missing and call the most useful thing left: `plot3`, `lin
 
 **78 of the 263 documented graphics functions** — the second table below, new in M45.
 
-Across every callable kind — builtin, function, operator, keyword, script — the count is **596 of
-2,027**. That is up from 560, not from the 556 this file used to claim: the checklist tool read the
-implemented set with a regular expression that only matched a name literal directly inside `Add(`,
-so it missed the sixteen colormap generators, which are registered from a loop, and reported
-`parula` as unimplemented the whole time it was working. Both shapes are read now.
+Across every callable kind — builtin, function, operator, keyword, script — the count is **605 of
+2,027** (596 after M45, up from 560, and not from the 556 this file used to claim: the checklist tool
+read the implemented set with a regular expression that only matched a name literal directly inside
+`Add(`, so it missed the sixteen colormap generators, which are registered from a loop, and reported
+`parula` as unimplemented the whole time it was working. Both shapes are read now).
+
+M46 moved that total by **nine and moved neither table above**, which is worth stating plainly. The
+Image Processing Toolbox is tracked separately in `matlab-ipt-coverage.md` because the R2021b dump
+behind this file came from an install without the toolbox, so none of M46's ~215 new names can appear
+here at all. The nine that do are the ones MATLAB documents under a base folder rather than
+`toolbox/images`: `cmap2gray`, `hsv2rgb`, `im2double`, `im2gray`, `imapprox`, `imfinfo`, `ind2rgb`,
+`rgb2hsv` and `rgb2ind`.
 
 The remaining 142 builtins divide into six families that each need machinery JGraph does not have,
 plus a short list of eleven odds and ends. Every one of them is accounted for below.

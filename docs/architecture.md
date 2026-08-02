@@ -788,6 +788,27 @@ Implemented through Milestone 45 — a working figure window you can edit, save,
   the grid with a curtain at the base height, `waterfall` is one closed polygon per row, `contour3`
   is the existing tracer with each vertex placed at its own level. `.graph` stays v5, every addition
   being a new derived DTO or a defaulted property (ADR 0048).
+- **M46** The Image Processing Toolbox surface — **266 of the 409 documented names**, in twelve
+  waves, with **zero pending**: everything outside the recorded exclusions is implemented, and each
+  exclusion names the subsystem it would need. The list had to be transcribed by hand from MathWorks'
+  reference, because the R2021b dump the base tracker reads came from an install without the toolbox,
+  so `verify-ipt-coverage.py` was written before the first wave rather than after the last. The
+  algorithm layer went from 12 files to 51 and the builtin layer from one 871-line file to thirteen
+  partials. **A class tag rides on `ImageBuffer`** — `imread` answers `uint8`, `class(I)` says so,
+  `I(1, 1)` reads 0–255 — while the *visible scale* is dialect-scoped, so JGS keeps its documented
+  `[0, 1]`, zero-based surface and every existing JGS test passes unchanged. **A volume is a plain
+  N-D array**, not a third value type and not an image with a third size: an image's third dimension
+  is colour and a volume's is depth, so the volume functions refuse an image outright rather than
+  filtering its channels as though they were slices. Options are parsed once by a shared spec —
+  exact case-insensitive matching, no prefix matching, and an unknown option lists the documented
+  spellings. Under MATLAB `regionprops` returns a struct array and `bwconncomp` MATLAB's struct;
+  under JGS both stay Tables, branched once at registration time. **Eighteen answers were corrected
+  rather than added** — `imrotate` turned the wrong way, `imresize` sampled on the wrong grid,
+  `imdilate` did not reflect its structuring element, `eig` on a general matrix returned wrong
+  eigenvalues — and four of those came from the milestone's own stress script: a picture could not be
+  sliced, `cat` refused any dimension past the second, fourteen functions refused a plain matrix, and
+  a two-subscript write on a JGS matrix threw out of the interpreter. `.graph` stays v5, since every
+  display verb bakes to RGB (ADR 0049).
 
 The `JGraph.Demo` gallery exercises the plot types, annotations, and both APIs;
 `JGraph.Application` is the interactive figure window with data import and scripting.
