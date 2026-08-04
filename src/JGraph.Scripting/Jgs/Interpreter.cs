@@ -836,10 +836,15 @@ internal sealed class Interpreter
     private Completion ExecuteFor(ForStmt statement, JgsEnvironment env)
     {
         JgsValue iterable = Evaluate(statement.Iterable, env);
+        if (iterable.Type == JgsType.Cell)
+        {
+            return ExecuteForOverCell(statement, iterable, env);
+        }
+
         if (iterable.Type != JgsType.Array)
         {
             throw new JgsRuntimeException(statement.Line, statement.Column,
-                $"'for' can only iterate over an array, but got a {iterable.TypeName}.");
+                $"'for' can only iterate over an array or a cell, but got a {iterable.TypeName}.");
         }
 
         // MATLAB iterates the COLUMNS of the loop expression: over a matrix the variable is each
@@ -854,6 +859,47 @@ internal sealed class Interpreter
             JgsValue element = byColumns
                 ? JgsMatrix.BuildValues(columnRows, 1, (r, _) => JgsMatrix.At(iterable, r, column))
                 : CopyForBinding(iterable.ElementAt(index));
+            Tick();
+            JgsEnvironment local = BlockScope(env);
+            local.Declare(statement.Variable, element);
+            Completion completion = ExecuteBlock(statement.Body, local);
+            if (completion.Kind == CompletionKind.Break)
+            {
+                break;
+            }
+
+            if (completion.Kind == CompletionKind.Return)
+            {
+                return completion;
+            }
+        }
+
+        return Completion.Normal;
+    }
+
+    /// <summary>Runs a <c>for</c> whose loop expression is a cell array, column by column.</summary>
+    /// <remarks>
+    /// A cell iterates exactly the way a matrix does — one column per pass — but the bound value
+    /// stays a cell, so a one-row cell binds a 1-by-1 cell each time and the body reads it with
+    /// <c>x{1}</c> rather than <c>x</c>. That is what makes <c>for name = {'line', 'diamond'}</c> the
+    /// ordinary way to walk a list of words; until M47 it was an error, and a script had to index a
+    /// cell by hand to get the same loop.
+    /// </remarks>
+    private Completion ExecuteForOverCell(ForStmt statement, JgsValue iterable, JgsEnvironment env)
+    {
+        JgsValue[] elements = iterable.AsCell;
+        int rows = System.Math.Max(iterable.Rows, 0);
+        int cols = rows == 0 ? 0 : elements.Length / rows;
+        for (int c = 0; c < cols; c++)
+        {
+            var column = new JgsValue[rows];
+            for (int r = 0; r < rows; r++)
+            {
+                column[r] = CopyForBinding(elements[r + (c * rows)]);
+            }
+
+            JgsValue element = JgsValue.Cell(column);
+            element.Reshape(rows, 1);
             Tick();
             JgsEnvironment local = BlockScope(env);
             local.Declare(statement.Variable, element);
@@ -1088,7 +1134,27 @@ internal sealed class Interpreter
         (int height, int width) = MeasureLiteral(rows, shapes, matrix);
         return height == 0 || width == 0
             ? JgsValue.Array([])
-            : AssembleLiteral(rows, shapes, height, width);
+            : StampLiteral(AssembleLiteral(rows, shapes, height, width), rows, matrix);
+    }
+
+    /// <summary>Gives an assembled literal the numeric class its pieces agree on (M47).</summary>
+    /// <remarks>
+    /// An integer class wins over the doubles beside it, so <c>[int8(1) 300]</c> is an int8 row whose
+    /// second element saturates to 127 — the same rule concatenation follows in MATLAB.
+    /// </remarks>
+    private JgsValue StampLiteral(JgsValue assembled, List<JgsValue[]> rows, Node at)
+    {
+        JgsNumericClass numericClass = JgsNumericClass.Double;
+        foreach (JgsValue[] row in rows)
+        {
+            foreach (JgsValue piece in row)
+            {
+                numericClass = JgsNumericClasses.CombineForConcat(
+                    numericClass, piece.NumericClass, "A bracket literal", at.Line, at.Column);
+            }
+        }
+
+        return JgsNumericClasses.Stamp(assembled, numericClass);
     }
 
     /// <summary>
@@ -1111,14 +1177,15 @@ internal sealed class Interpreter
         // spelling its own scripts and guide have always used. Only MATLAB concatenates here.
         concatenating &= Dialect.ConcatenatesBrackets;
 
+        var rows = new List<JgsValue[]> { elements };
         if (!concatenating)
         {
-            return JgsPacking.Enabled && PackedOps.TryPackElements(elements, out JgsValue packed)
+            JgsValue list = JgsPacking.Enabled && PackedOps.TryPackElements(elements, out JgsValue packed)
                 ? packed
                 : JgsValue.Array(elements);
+            return StampLiteral(list, rows, array);
         }
 
-        var rows = new List<JgsValue[]> { elements };
         var shapes = new List<(int Height, int Width)[]> { new (int, int)[elements.Length] };
         for (int i = 0; i < elements.Length; i++)
         {
@@ -1128,7 +1195,7 @@ internal sealed class Interpreter
         (int height, int width) = MeasureLiteral(rows, shapes, array.Line, array.Column);
         return height == 0 || width == 0
             ? JgsValue.Array([])
-            : AssembleLiteral(rows, shapes, height, width);
+            : StampLiteral(AssembleLiteral(rows, shapes, height, width), rows, array);
     }
 
     /// <summary>The block a value contributes to a literal; an empty array contributes nothing.</summary>
@@ -1348,8 +1415,11 @@ internal sealed class Interpreter
             return JgsValue.Bool(!operand.IsTruthy);
         }
 
-        // Minus: numeric negation, element-wise over arrays (complex included).
-        return MapNumeric(operand, v => -v, "-", unary.Line, unary.Column, static c => -c);
+        // Minus: numeric negation, element-wise over arrays (complex included). Negation stays inside
+        // the operand's class, so -uint8(5) saturates to 0 rather than escaping to a negative double.
+        return JgsNumericClasses.Stamp(
+            MapNumeric(operand, v => -v, "-", unary.Line, unary.Column, static c => -c),
+            operand.NumericClass);
     }
 
     private JgsValue EvaluateLogical(LogicalExpr logical, JgsEnvironment env)
@@ -1372,7 +1442,39 @@ internal sealed class Interpreter
     }
 
     /// <summary>Applies a binary operator to already-evaluated operands (shared with compound assignment).</summary>
+    /// <summary>
+    /// Applies a binary operator, then puts the answer back into the numeric class its operands
+    /// agree on (M47).
+    /// </summary>
+    /// <remarks>
+    /// Only arithmetic takes a class: a comparison answers a logical whatever it compared, and
+    /// <c>&amp;</c>/<c>|</c> likewise. The rule itself lives in
+    /// <see cref="JgsNumericClasses.Combine"/>, and it is what makes <c>uint8(200) + uint8(100)</c>
+    /// saturate at 255 instead of quietly becoming 300.
+    /// </remarks>
     private JgsValue ApplyBinary(TokenType op, JgsValue left, JgsValue right, Node at)
+    {
+        if (left.NumericClass == JgsNumericClass.Double && right.NumericClass == JgsNumericClass.Double)
+        {
+            return ApplyBinaryCore(op, left, right, at);
+        }
+
+        if (!IsArithmetic(op))
+        {
+            return ApplyBinaryCore(op, left, right, at);
+        }
+
+        JgsNumericClass numericClass =
+            JgsNumericClasses.Combine(left, right, OperatorSymbol(op), at.Line, at.Column);
+        return JgsNumericClasses.Stamp(ApplyBinaryCore(op, left, right, at), numericClass);
+    }
+
+    /// <summary>The operators whose result carries a numeric class; everything else answers logical.</summary>
+    private static bool IsArithmetic(TokenType op) => op is TokenType.Plus or TokenType.Minus
+        or TokenType.Star or TokenType.Slash or TokenType.Backslash or TokenType.Caret
+        or TokenType.DotStar or TokenType.DotSlash or TokenType.DotBackslash or TokenType.DotCaret;
+
+    private JgsValue ApplyBinaryCore(TokenType op, JgsValue left, JgsValue right, Node at)
     {
         // Sparse operands route through their own kernels (M42) before any dense machinery sees them.
         if (left.Type == JgsType.Sparse || right.Type == JgsType.Sparse)
@@ -1589,9 +1691,10 @@ internal sealed class Interpreter
     }
 
     /// <summary>
-    /// Gives a freshly built copy the shape of what it was copied from. Shape lives on the wrapper,
-    /// so every path that mints a new wrapper has to carry it across or the copy silently becomes a
-    /// flat row — which is exactly what a MATLAB-dialect binding does to every matrix it touches.
+    /// Gives a freshly built copy the shape and the numeric class of what it was copied from. Both
+    /// live on the wrapper, so every path that mints a new wrapper has to carry them across or the
+    /// copy silently becomes a flat row of doubles — which is exactly what a MATLAB-dialect binding
+    /// does to every matrix it touches.
     /// </summary>
     private static JgsValue KeepShape(JgsValue source, JgsValue copy)
     {
@@ -1600,6 +1703,7 @@ internal sealed class Interpreter
             copy.TakeShapeOf(source);
         }
 
+        copy.SetNumericClass(source.NumericClass);
         return copy;
     }
 
@@ -2497,6 +2601,18 @@ internal sealed class Interpreter
     /// </summary>
     private JgsValue IndexInto(JgsValue target, IReadOnlyList<Expr> subscripts, Node at, JgsEnvironment env)
     {
+        // A selection out of a uint8 array is still uint8 (M47). The samples are already inside the
+        // class, so stamping the wrapper the read produced costs nothing but keeps class(x(1)) right.
+        if (target.NumericClass != JgsNumericClass.Double)
+        {
+            return JgsNumericClasses.Stamp(IndexIntoCore(target, subscripts, at, env), target.NumericClass);
+        }
+
+        return IndexIntoCore(target, subscripts, at, env);
+    }
+
+    private JgsValue IndexIntoCore(JgsValue target, IReadOnlyList<Expr> subscripts, Node at, JgsEnvironment env)
+    {
         if (target.Type == JgsType.Image)
         {
             return IndexImage(target, subscripts, at, env);
@@ -3285,18 +3401,39 @@ internal sealed class Interpreter
     /// Builds a cell array. Rows are flattened: JGraph's containers are one-dimensional, so a
     /// <c>{1, 2; 3, 4}</c> literal holds four elements in reading order.
     /// </summary>
+    /// <summary>Builds a cell literal, rows and all.</summary>
+    /// <remarks>
+    /// A semicolon-rowed literal used to be flattened row by row into a single 1-by-n cell, so
+    /// <c>{1, 'two'; 3, 'four'}</c> reported a size of 1-by-4 and <c>C{2,1}</c> was out of range
+    /// (M47). Storage is column-major here as everywhere else, which is what makes <c>C{2}</c> the
+    /// second element <em>down</em> and lets a cell iterate a column at a time.
+    /// </remarks>
     private JgsValue EvaluateCellLiteral(CellLiteral literal, JgsEnvironment env)
     {
-        var elements = new List<JgsValue>();
-        foreach (IReadOnlyList<Expr> row in literal.Rows)
+        int rows = literal.Rows.Count;
+        int cols = rows == 0 ? 0 : literal.Rows[0].Count;
+        for (int r = 1; r < rows; r++)
         {
-            foreach (Expr element in row)
+            if (literal.Rows[r].Count != cols)
             {
-                elements.Add(Evaluate(element, env));
+                throw new JgsRuntimeException(literal.Line, literal.Column,
+                    $"Every row of a cell literal needs the same number of entries; row {r + 1} has " +
+                    $"{literal.Rows[r].Count} where the first has {cols}.");
             }
         }
 
-        return JgsValue.Cell(elements.ToArray());
+        var elements = new JgsValue[rows * cols];
+        for (int r = 0; r < rows; r++)
+        {
+            for (int c = 0; c < cols; c++)
+            {
+                elements[r + (c * rows)] = Evaluate(literal.Rows[r][c], env);
+            }
+        }
+
+        JgsValue cell = JgsValue.Cell(elements);
+        cell.Reshape(rows, cols);
+        return cell;
     }
 
     /// <summary>Reads <c>c{i}</c> — the contents of a cell, where <c>c(i)</c> would give a cell back.</summary>

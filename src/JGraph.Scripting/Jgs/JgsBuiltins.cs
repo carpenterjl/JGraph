@@ -495,20 +495,7 @@ internal static partial class JgsBuiltins
         Define("size", (args, line, col) =>
         {
             ArityRange("size", args, 1, 2, line, col);
-
-            // The true size per dimension: N-D arrays report all of theirs, images report
-            // height-width-channels, everything else is a plain 2-D value.
-            int[] dims = args[0].Type switch
-            {
-                JgsType.Image when args[0].AsImage.Channels > 1 =>
-                    [args[0].AsImage.Height, args[0].AsImage.Width, args[0].AsImage.Channels],
-                JgsType.Image => [args[0].AsImage.Height, args[0].AsImage.Width],
-                JgsType.Array => JgsMatrix.DimsOf(args[0]),
-                JgsType.String => [1, args[0].AsString.Length],
-                JgsType.Cell => [args[0].Rows, args[0].Cols],
-                JgsType.Sparse => [args[0].AsSparse.Rows, args[0].AsSparse.Cols],
-                _ => [1, 1],
-            };
+            int[] dims = SizeDims(args[0]);
 
             if (args.Count == 2)
             {
@@ -518,6 +505,23 @@ internal static partial class JgsBuiltins
             }
 
             return JgsValue.Array(Array.ConvertAll(dims, static d => JgsValue.Number(d)));
+        });
+
+        // height and width are how a MATLAB script asks a table how big it is, and since R2020b
+        // they answer for an ordinary array too — the first and second dimensions, nothing more.
+        // A table's second dimension is its variable count, which is why size had to learn tables
+        // at the same time: numel(T.SomeColumn) was the workaround for both.
+        Define("height", (args, line, col) =>
+        {
+            Arity("height", args, 1, line, col);
+            return JgsValue.Number(SizeDims(args[0])[0]);
+        });
+
+        Define("width", (args, line, col) =>
+        {
+            Arity("width", args, 1, line, col);
+            int[] dims = SizeDims(args[0]);
+            return JgsValue.Number(dims.Length > 1 ? dims[1] : 1);
         });
 
         Define("isempty", (args, line, col) =>
@@ -2926,9 +2930,11 @@ internal static partial class JgsBuiltins
     private static bool OrderIsDescending(string name, IReadOnlyList<JgsValue> args, int line, int col) =>
         Str(name, args, 1, line, col) switch
         {
-            "asc" => false,
-            "desc" => true,
-            var other => throw new JgsRuntimeException(line, col, $"{name} order must be \"asc\" or \"desc\", but got \"{other}\"."),
+            // MATLAB spells these 'ascend' and 'descend'; JGS's own shorter words still work.
+            "asc" or "ascend" => false,
+            "desc" or "descend" => true,
+            var other => throw new JgsRuntimeException(line, col,
+                $"{name} order must be \"ascend\" or \"descend\", but got \"{other}\"."),
         };
 
     /// <summary>
@@ -3448,6 +3454,24 @@ internal static partial class JgsBuiltins
 
         return value.AsNumber;
     }
+
+    /// <summary>The size of a value per dimension, as <c>size</c>, <c>height</c> and <c>width</c> read it.</summary>
+    /// <remarks>
+    /// N-D arrays report all of theirs, images report height-width-channels, a table reports its rows
+    /// and its variable count, and everything else is a plain 2-D value.
+    /// </remarks>
+    private static int[] SizeDims(JgsValue value) => value.Type switch
+    {
+        JgsType.Image when value.AsImage.Channels > 1 =>
+            [value.AsImage.Height, value.AsImage.Width, value.AsImage.Channels],
+        JgsType.Image => [value.AsImage.Height, value.AsImage.Width],
+        JgsType.Array => JgsMatrix.DimsOf(value),
+        JgsType.String => [1, value.AsString.Length],
+        JgsType.Cell => [value.Rows, value.Cols],
+        JgsType.Sparse => [value.AsSparse.Rows, value.AsSparse.Cols],
+        JgsType.Table => [value.AsTable.RowCount, value.AsTable.ColumnCount],
+        _ => [1, 1],
+    };
 
     private static int Count(string name, IReadOnlyList<JgsValue> args, int index, int line, int col)
     {

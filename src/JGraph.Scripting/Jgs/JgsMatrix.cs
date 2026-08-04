@@ -207,10 +207,142 @@ internal static class JgsMatrix
     public static int[] DimsOf(JgsValue value) =>
         IsNested(value) ? [value.ArrayLength, value.ElementAt(0).ArrayLength] : value.Dims;
 
+    /// <summary>
+    /// The dimension a reduction walks when the script did not name one: MATLAB's first non-singleton.
+    /// That single rule is what makes <c>max(A)</c> per-column for a matrix and a scalar for a row
+    /// vector, without either being a special case.
+    /// </summary>
+    public static int DefaultDim(IReadOnlyList<int> dims)
+    {
+        for (int i = 0; i < dims.Count; i++)
+        {
+            if (dims[i] != 1)
+            {
+                return i + 1;
+            }
+        }
+
+        return 1;
+    }
+
+    /// <summary>
+    /// The one-dimensional slices of column-major storage along <paramref name="dim"/> (1-based),
+    /// together with the shape a per-slice reduction takes — the same dimensions with the reduced one
+    /// collapsed to 1.
+    /// </summary>
+    /// <remarks>
+    /// A slice steps by the product of the dimensions below <paramref name="dim"/>, and the slices
+    /// themselves come out in the order the reduced array stores them. That one rule covers a row
+    /// vector, a column, a matrix and an N-D array alike, which is why the reductions no longer need a
+    /// branch per shape. A dimension past the last is a singleton, so each element is its own slice
+    /// and the reduction changes nothing — which is exactly what MATLAB does with <c>max(A, [], 5)</c>.
+    /// </remarks>
+    public static (double[][] Slices, int[] ReducedDims) SlicesAlong(
+        double[] columnMajor, IReadOnlyList<int> dims, int dim)
+    {
+        int inner = 1;
+        for (int i = 0; i < dim - 1 && i < dims.Count; i++)
+        {
+            inner *= dims[i];
+        }
+
+        int length = dim <= dims.Count ? dims[dim - 1] : 1;
+        int outer = 1;
+        for (int i = dim; i < dims.Count; i++)
+        {
+            outer *= dims[i];
+        }
+
+        var slices = new double[inner * outer][];
+        for (int o = 0; o < outer; o++)
+        {
+            int page = o * inner * length;
+            for (int i = 0; i < inner; i++)
+            {
+                var slice = new double[length];
+                for (int j = 0; j < length; j++)
+                {
+                    slice[j] = columnMajor[page + i + (j * inner)];
+                }
+
+                slices[(o * inner) + i] = slice;
+            }
+        }
+
+        return (slices, ShapeAlong(dims, dim, 1));
+    }
+
+    /// <summary>
+    /// The inverse of <see cref="SlicesAlong"/>: writes one vector per slice back along
+    /// <paramref name="dim"/>, and reports the shape that makes. Every slice must be the same length,
+    /// which is the length the reduced dimension takes — the same as the original for
+    /// <c>cumsum</c> and <c>sort</c>, one shorter for <c>diff</c>, and 1 for a reduction that yields
+    /// a single value per slice.
+    /// </summary>
+    public static (double[] ColumnMajor, int[] Dims) JoinAlong(
+        double[][] slices, IReadOnlyList<int> dims, int dim)
+    {
+        int length = slices.Length == 0 ? 0 : slices[0].Length;
+        int inner = 1;
+        for (int i = 0; i < dim - 1 && i < dims.Count; i++)
+        {
+            inner *= dims[i];
+        }
+
+        int outer = inner == 0 ? 0 : slices.Length / System.Math.Max(inner, 1);
+        var joined = new double[inner * outer * length];
+        for (int o = 0; o < outer; o++)
+        {
+            int page = o * inner * length;
+            for (int i = 0; i < inner; i++)
+            {
+                double[] slice = slices[(o * inner) + i];
+                for (int j = 0; j < length; j++)
+                {
+                    joined[page + i + (j * inner)] = slice[j];
+                }
+            }
+        }
+
+        return (joined, ShapeAlong(dims, dim, length));
+    }
+
+    /// <summary>The given dimensions with the <paramref name="dim"/>th one set to a new length.</summary>
+    private static int[] ShapeAlong(IReadOnlyList<int> dims, int dim, int length)
+    {
+        var shape = new int[System.Math.Max(dims.Count, dim)];
+        for (int i = 0; i < shape.Length; i++)
+        {
+            shape[i] = i < dims.Count ? dims[i] : 1;
+        }
+
+        shape[dim - 1] = length;
+        return shape;
+    }
+
     /// <summary>Adopts an already-column-major buffer as an array with the given dimensions.</summary>
     public static JgsValue FromColumnMajorDims(double[] flat, IReadOnlyList<int> dims)
     {
         JgsValue value = Adopt(flat);
+        value.ReshapeDims(dims);
+        return value;
+    }
+
+    /// <summary>
+    /// Packs freshly built column-major elements if they are homogeneous, then shapes them to any
+    /// number of dimensions. A single element is a scalar, not a one-element array — which is what
+    /// keeps <c>sum</c> of a vector a number.
+    /// </summary>
+    public static JgsValue FromElementsDims(JgsValue[] columnMajor, IReadOnlyList<int> dims)
+    {
+        if (columnMajor.Length == 1)
+        {
+            return columnMajor[0];
+        }
+
+        JgsValue value = JgsPacking.Enabled && PackedOps.TryPackElements(columnMajor, out JgsValue packed)
+            ? packed
+            : JgsValue.Array(columnMajor);
         value.ReshapeDims(dims);
         return value;
     }

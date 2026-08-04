@@ -586,16 +586,23 @@ internal static partial class JgsBuiltins
             WrapColumnwise(env, name, keepShape: false);
         }
 
-        foreach (string name in new[] { "cumsum", "cumprod", "diff", "sort" })
+        foreach (string name in new[] { "cumsum", "cumprod", "sort" })
         {
             WrapColumnwise(env, name, keepShape: true);
         }
+
+        // diff is the one name here whose second argument is not the dimension: MATLAB spells it
+        // diff(X, n, dim), where n is how many times to difference.
+        WrapColumnwise(env, "diff", keepShape: true, orderArg: true);
 
         WrapExtreme(env, "max", dialect, takeMin: false);
         WrapExtreme(env, "min", dialect, takeMin: true);
     }
 
-    private static void WrapColumnwise(JgsEnvironment env, string name, bool keepShape)
+    // orderArg says the second argument is a repetition count rather than the dimension — MATLAB's
+    // diff(X, n, dim), the one signature in this family that puts something else in the dimension's
+    // usual place.
+    private static void WrapColumnwise(JgsEnvironment env, string name, bool keepShape, bool orderArg = false)
     {
         if (!env.TryGet(name, out JgsValue existing) || existing.Type != JgsType.Function)
         {
@@ -606,25 +613,78 @@ internal static partial class JgsBuiltins
 
         // A numeric second argument is the dimension; anything else ('descend', a bin count) is the
         // inner builtin's own business and rides along on every per-slice call.
-        (JgsValue Subject, int? Dim, JgsValue[] Extra, bool All) Split(IReadOnlyList<JgsValue> args, int line, int col)
+        (JgsValue Subject, int? Dim, JgsValue[] Extra, bool All, int Order) Split(
+            IReadOnlyList<JgsValue> args, int line, int col)
         {
             if (args.Count == 0)
             {
                 throw new JgsRuntimeException(line, col, $"{name} needs at least one argument.");
             }
 
+            // diff(X, n, dim): the repetition count sits where every other reduction keeps the
+            // dimension, so the dimension moves along one and [] in the count's place asks for the
+            // default of a single difference.
+            if (orderArg)
+            {
+                if (args.Count > 3)
+                {
+                    throw new JgsRuntimeException(line, col,
+                        $"{name} takes at most three arguments (the array, how many times to difference, and the dimension), but got {args.Count}.");
+                }
+
+                int order = args.Count >= 2 && !IsPlaceholder(args[1])
+                    ? Whole(args[1], "number of differences", line, col)
+                    : 1;
+                if (order < 0)
+                {
+                    throw new JgsRuntimeException(line, col,
+                        $"{name}: the number of differences must be zero or more, but was {order}.");
+                }
+
+                int? along = args.Count >= 3 ? Whole(args[2], "dimension", line, col) : null;
+                return (args[0], along, [], All: false, Order: order);
+            }
+
             if (args.Count >= 2 && args[1].Type == JgsType.String
                 && args[1].AsString.Equals("all", StringComparison.OrdinalIgnoreCase))
             {
-                return (args[0], null, args.Skip(2).ToArray(), All: true);
+                return (args[0], null, args.Skip(2).ToArray(), All: true, Order: 1);
             }
 
             if (args.Count >= 2 && args[1].Type == JgsType.Number)
             {
-                return (args[0], (int)args[1].AsNumber, args.Skip(2).ToArray(), All: false);
+                return (args[0], (int)args[1].AsNumber, args.Skip(2).ToArray(), All: false, Order: 1);
             }
 
-            return (args[0], null, args.Skip(1).ToArray(), All: false);
+            return (args[0], null, args.Skip(1).ToArray(), All: false, Order: 1);
+        }
+
+        static bool IsPlaceholder(JgsValue value) =>
+            value.Type == JgsType.Array && value.ArrayLength == 0;
+
+        int Whole(JgsValue value, string what, int line, int col)
+        {
+            if (value.Type != JgsType.Number || value.AsNumber != System.Math.Floor(value.AsNumber))
+            {
+                throw new JgsRuntimeException(line, col,
+                    $"{name}: the {what} must be a whole number.");
+            }
+
+            return (int)value.AsNumber;
+        }
+
+        // Differencing n times along one dimension is the base builtin applied n times to each slice,
+        // because the slices are walked independently of each other. Every other reduction here has an
+        // order of 1, so this is one call for them.
+        JgsValue Reduce(JgsValue[] callArgs, int order, int line, int col)
+        {
+            JgsValue result = inner.Call(callArgs, line, col);
+            for (int again = 1; again < order; again++)
+            {
+                result = inner.Call([result], line, col);
+            }
+
+            return result;
         }
 
         JgsValue[] SliceArgs(double[] slice, JgsValue[] rest)
@@ -639,56 +699,126 @@ internal static partial class JgsBuiltins
             return sliceArgs;
         }
 
+        // Only a non-empty numeric array is sliced here. A string array, a complex array, an image, a
+        // scalar and sum([]) all keep the answer the builtin already gave them.
+        static bool Reduces(JgsValue subject) =>
+            IsNumericArray(subject) && subject.ArrayLength > 0;
+
+        // Everything else, exactly as before: reducing along a vector's singleton dimension changes
+        // nothing, and a column carries its orientation through the shape-keeping reductions.
+        JgsValue Defer(JgsValue subject, int? dim, JgsValue[] extra, int order, int line, int col)
+        {
+            bool column = subject.Type == JgsType.Array
+                && JgsMatrix.ColCount(subject) == 1 && JgsMatrix.RowCount(subject) > 1;
+            if (dim == (column ? 2 : 1))
+            {
+                return subject;
+            }
+
+            var direct = new JgsValue[extra.Length + 1];
+            direct[0] = subject;
+            System.Array.Copy(extra, 0, direct, 1, extra.Length);
+            JgsValue reduced = Reduce(direct, order, line, col);
+            if (keepShape && column && reduced.Type == JgsType.Array && reduced.ArrayLength > 1)
+            {
+                reduced.Reshape(reduced.ArrayLength, 1);
+            }
+
+            return reduced;
+        }
+
+        // The slices to reduce, in the order the result stores them, plus the shape one value per
+        // slice takes. MATLAB's default is the first non-singleton dimension.
+        (double[][] Slices, int[] Reduced, int[] Dims, int Dim) Cut(
+            JgsValue subject, int? named, int line, int col)
+        {
+            int[] dims = JgsMatrix.DimsOf(subject);
+            int dim = named ?? JgsMatrix.DefaultDim(dims);
+            if (dim < 1)
+            {
+                throw new JgsRuntimeException(line, col,
+                    $"{name}: the dimension must be a positive whole number, but was {dim}.");
+            }
+
+            double[] flat = FlattenColumnMajor(name, subject, line, col);
+            (double[][] slices, int[] reduced) = JgsMatrix.SlicesAlong(flat, dims, dim);
+            return (slices, reduced, dims, dim);
+        }
+
+        // One value per slice lands in the reduced shape; a whole vector per slice is scattered back
+        // along the dimension it came from, which is what keeps cumsum and sort the size of the input.
+        JgsValue Assemble(
+            JgsValue[] results, int[] reduced, int[] dims, int dim, int line, int col)
+        {
+            if (!keepShape)
+            {
+                return JgsMatrix.FromElementsDims(results, reduced);
+            }
+
+            var vectors = new double[results.Length][];
+            for (int i = 0; i < results.Length; i++)
+            {
+                vectors[i] = ToDoubles(name, results[i], line, col);
+                if (vectors[i].Length != vectors[0].Length)
+                {
+                    throw new JgsRuntimeException(line, col,
+                        $"{name} gave slices of different lengths ({vectors[0].Length} and {vectors[i].Length}), so the result has no shape.");
+                }
+            }
+
+            (double[] joined, int[] shape) = JgsMatrix.JoinAlong(vectors, dims, dim);
+            if (joined.Length == 0)
+            {
+                return JgsValue.Array([]);
+            }
+
+            // One value left is a number rather than a one-element array — the same rule the
+            // scalar-per-slice path follows, and what makes diff([1 4 9 16], 3) answer 0.
+            return joined.Length == 1
+                ? JgsValue.Number(joined[0])
+                : JgsMatrix.FromColumnMajorDims(joined, shape);
+        }
+
         JgsValue Single(IReadOnlyList<JgsValue> args, int line, int col)
         {
-            (JgsValue subject, int? dim, JgsValue[] extra, bool all) = Split(args, line, col);
+            (JgsValue subject, int? dim, JgsValue[] extra, bool all, int order) = Split(args, line, col);
+            if (order == 0)
+            {
+                // diff(X, 0) is MATLAB's "difference it no times", which is X itself.
+                return subject;
+            }
+
             if (all)
             {
                 return inner.Call(SliceArgs(FlattenColumnMajor(name, subject, line, col), extra), line, col);
             }
 
-            // A vector — row or column — reduces to a scalar, not a per-column array of one; a
-            // column carries its orientation through the shape-keeping reductions (cumsum, sort).
-            if (!IsMatrixValue(subject) || ReducesAsVector(subject))
+            if (!Reduces(subject))
             {
-                bool column = subject.Type == JgsType.Array
-                    && JgsMatrix.ColCount(subject) == 1 && JgsMatrix.RowCount(subject) > 1;
-
-                // Reducing along a vector's singleton dimension changes nothing; a recognized dim
-                // argument must never reach the inner builtin as a value to reduce.
-                if (dim == (column ? 2 : 1))
-                {
-                    return subject;
-                }
-
-                var direct = new JgsValue[extra.Length + 1];
-                direct[0] = subject;
-                System.Array.Copy(extra, 0, direct, 1, extra.Length);
-                JgsValue reduced = inner.Call(direct, line, col);
-                if (keepShape && column && reduced.Type == JgsType.Array && reduced.ArrayLength > 1)
-                {
-                    reduced.Reshape(reduced.ArrayLength, 1);
-                }
-
-                return reduced;
+                return Defer(subject, dim, extra, order, line, col);
             }
 
-            double[][] rows = RowsOfMatrix(name, subject, line, col);
-            bool byColumn = (dim ?? 1) == 1;
-            double[][] slices = byColumn ? TransposeRows(rows) : rows;
+            (double[][] slices, int[] reduced, int[] dims, int along) = Cut(subject, dim, line, col);
             var results = new JgsValue[slices.Length];
             for (int i = 0; i < slices.Length; i++)
             {
-                results[i] = inner.Call(SliceArgs(slices[i], extra), line, col);
+                results[i] = Reduce(SliceArgs(slices[i], extra), order, line, col);
             }
 
-            return AssembleSliceResults(name, results, byColumn, keepShape, line, col);
+            return Assemble(results, reduced, dims, along, line, col);
         }
 
         JgsValue[] Multi(IReadOnlyList<JgsValue> args, int wanted, int line, int col)
         {
-            (JgsValue subject, int? dim, JgsValue[] extra, bool all) = Split(args, line, col);
-            if (all || !IsMatrixValue(subject) || ReducesAsVector(subject))
+            // diff has no second output, and its repeated form is a chain of single-output calls, so
+            // the whole decision stays in Single rather than being mirrored here.
+            if (orderArg)
+            {
+                return [Single(args, line, col)];
+            }
+
+            (JgsValue subject, int? dim, JgsValue[] extra, bool all, int _) = Split(args, line, col);
+            if (all || !Reduces(subject))
             {
                 if (all || dim is not null)
                 {
@@ -705,9 +835,7 @@ internal static partial class JgsBuiltins
                 return [Single(args, line, col)];
             }
 
-            double[][] rows = RowsOfMatrix(name, subject, line, col);
-            bool byColumn = (dim ?? 1) == 1;
-            double[][] slices = byColumn ? TransposeRows(rows) : rows;
+            (double[][] slices, int[] reduced, int[] dims, int along) = Cut(subject, dim, line, col);
             var perSlice = new JgsValue[slices.Length][];
             int produced = int.MaxValue;
             for (int i = 0; i < slices.Length; i++)
@@ -719,13 +847,13 @@ internal static partial class JgsBuiltins
             var outputs = new JgsValue[System.Math.Min(produced, wanted)];
             for (int o = 0; o < outputs.Length; o++)
             {
-                var column = new JgsValue[slices.Length];
+                var perOutput = new JgsValue[slices.Length];
                 for (int i = 0; i < slices.Length; i++)
                 {
-                    column[i] = perSlice[i][o];
+                    perOutput[i] = perSlice[i][o];
                 }
 
-                outputs[o] = AssembleSliceResults(name, column, byColumn, keepShape, line, col);
+                outputs[o] = Assemble(perOutput, reduced, dims, along, line, col);
             }
 
             return outputs;
@@ -735,34 +863,60 @@ internal static partial class JgsBuiltins
     }
 
     /// <summary>
-    /// Reassembles per-slice results: scalar results become a row vector (by column) or an n-by-1
-    /// column (by row); vector results become the matrix they slice back into.
+    /// Whether a value is an array of plain numbers — the only thing the dimension reductions can
+    /// slice. A cell, a string array and a complex array all answer false, so they stay with the
+    /// builtin that already knows what to do with them.
     /// </summary>
-    private static JgsValue AssembleSliceResults(
-        string name, JgsValue[] results, bool byColumn, bool keepShape, int line, int col)
+    private static bool IsNumericArray(JgsValue value)
     {
-        if (!keepShape)
+        if (value.Type != JgsType.Array)
         {
-            // One value per slice. Reducing columns yields a row vector; reducing rows a column.
-            return byColumn
-                ? JgsValue.Array(results)
-                : JgsValue.Array(results.Select(static v => JgsValue.Array([v])).ToArray());
+            return false;
         }
 
-        var sliceRows = new double[results.Length][];
-        for (int i = 0; i < results.Length; i++)
+        if (value.IsPacked)
         {
-            sliceRows[i] = ToDoubles(name, results[i], line, col);
+            return true;
         }
 
-        double[][] shaped = byColumn ? TransposeRows(sliceRows) : sliceRows;
-        return MatrixFromRows(shaped);
+        if (value.IsPackedComplex)
+        {
+            return false;
+        }
+
+        for (int i = 0; i < value.ArrayLength; i++)
+        {
+            JgsValue element = value.ElementAt(i);
+            if (element.Type is JgsType.Number or JgsType.Bool)
+            {
+                continue;
+            }
+
+            // The pre-shape representation is an array of row arrays, and is still what a MAT-file
+            // load or a workspace restore can produce.
+            if (element.Type == JgsType.Array && IsNumericArray(element))
+            {
+                continue;
+            }
+
+            return false;
+        }
+
+        return true;
     }
 
     /// <summary>
-    /// MATLAB max/min: over a matrix, per-column extremes (and per-column indices for the two-output
-    /// form); with two array arguments, the elementwise extreme with scalar broadcast.
+    /// MATLAB max/min: <c>max(A)</c> reduces along the first non-singleton dimension, <c>max(A, [],
+    /// dim)</c> along the one named, <c>max(A, [], 'all')</c> to a single value, and every form has a
+    /// second output giving the position the extreme came from. Two array arguments are the
+    /// elementwise extreme with scalar broadcast instead.
     /// </summary>
+    /// <remarks>
+    /// The reduction reads its slices straight out of column-major storage
+    /// (<see cref="JgsMatrix.SlicesAlong"/>) rather than folding the value into rows first. Folding is
+    /// what limited this to two dimensions: an N-D array read as rows is its pages laid side by side,
+    /// so <c>max(A, [], 3)</c> quietly reduced along the fold instead of along the pages.
+    /// </remarks>
     private static void WrapExtreme(JgsEnvironment env, string name, JgsDialect dialect, bool takeMin)
     {
         if (!env.TryGet(name, out JgsValue existing) || existing.Type != JgsType.Function)
@@ -773,59 +927,85 @@ internal static partial class JgsBuiltins
         IJgsCallable inner = existing.AsCallable;
         double Pick(double a, double b) => takeMin ? System.Math.Min(a, b) : System.Math.Max(a, b);
 
-        // max(A, [], dim): the [] placeholder says "one input, reduce along dim".
+        // max(A, [], dim) and max(A, [], 'all'): the [] placeholder says "one input, reduce it".
         bool IsDimForm(IReadOnlyList<JgsValue> args) =>
             args.Count == 3 && args[1].Type == JgsType.Array && args[1].ArrayLength == 0;
 
-        (JgsValue[] Extremes, JgsValue[] Indices) ReduceSlices(double[][] slices, JgsDialect within, int line, int col)
+        static bool IsAll(JgsValue value) =>
+            value.Type == JgsType.String && value.AsString.Equals("all", StringComparison.OrdinalIgnoreCase);
+
+        // A one-element result is a scalar, not a one-element array — which is what makes max of a
+        // vector a number, and keeps every caller that expected one working.
+        static JgsValue Shaped(double[] values, IReadOnlyList<int> dims) =>
+            values.Length == 1 ? JgsValue.Number(values[0]) : JgsMatrix.FromColumnMajorDims(values, dims);
+
+        // The extreme of every slice along one dimension, paired with the position inside the slice it
+        // came from. Ties go to the first, as MATLAB's do.
+        JgsValue[] ReduceAlong(JgsValue subject, int? named, int line, int col)
         {
-            var extremes = new JgsValue[slices.Length];
-            var indices = new JgsValue[slices.Length];
+            double[] flat = FlattenColumnMajor(name, subject, line, col);
+            int[] dims = JgsMatrix.DimsOf(subject);
+            int dim = named ?? JgsMatrix.DefaultDim(dims);
+            if (dim < 1)
+            {
+                throw new JgsRuntimeException(line, col,
+                    $"{name}: the dimension must be a positive whole number, but was {dim}.");
+            }
+
+            if (flat.Length == 0)
+            {
+                return [JgsValue.Array([]), JgsValue.Array([])];
+            }
+
+            (double[][] slices, int[] reduced) = JgsMatrix.SlicesAlong(flat, dims, dim);
+            var extremes = new double[slices.Length];
+            var indices = new double[slices.Length];
             for (int i = 0; i < slices.Length; i++)
             {
                 double best = ExtremeOf(name, slices[i], takeMin, line, col);
-                extremes[i] = JgsValue.Number(best);
-                indices[i] = JgsValue.Number(System.Array.IndexOf(slices[i], best) + within.IndexBase);
+                extremes[i] = best;
+                indices[i] = System.Array.IndexOf(slices[i], best) + dialect.IndexBase;
             }
 
-            return (extremes, indices);
+            return [Shaped(extremes, reduced), Shaped(indices, reduced)];
         }
 
-        JgsValue Single(IReadOnlyList<JgsValue> args, int line, int col)
+        // 'all' reduces everything at once, so the index it reports is a linear one over the whole
+        // array — the same number A(k) would take.
+        JgsValue[] ReduceAll(JgsValue subject, int line, int col)
+        {
+            double[] flat = FlattenColumnMajor(name, subject, line, col);
+            if (flat.Length == 0)
+            {
+                return [JgsValue.Array([]), JgsValue.Array([])];
+            }
+
+            double best = ExtremeOf(name, flat, takeMin, line, col);
+            return [JgsValue.Number(best), JgsValue.Number(System.Array.IndexOf(flat, best) + dialect.IndexBase)];
+        }
+
+        JgsValue[] Both(IReadOnlyList<JgsValue> args, int line, int col)
         {
             if (IsDimForm(args))
             {
-                int dim = Count(name, args, 2, line, col);
-                if (!IsMatrixValue(args[0]) || ReducesAsVector(args[0]))
-                {
-                    bool column = args[0].Type == JgsType.Array
-                        && JgsMatrix.ColCount(args[0]) == 1 && JgsMatrix.RowCount(args[0]) > 1;
-                    return dim == (column ? 2 : 1) ? args[0] : inner.Call([args[0]], line, col);
-                }
-
-                double[][] rows = RowsOfMatrix(name, args[0], line, col);
-                double[][] slices = dim == 1 ? TransposeRows(rows) : rows;
-                (JgsValue[] extremes, _) = ReduceSlices(slices, dialect, line, col);
-                return AssembleSliceResults(name, extremes, byColumn: dim == 1, keepShape: false, line, col);
+                return IsAll(args[2])
+                    ? ReduceAll(args[0], line, col)
+                    : ReduceAlong(args[0], Count(name, args, 2, line, col), line, col);
             }
 
-            // A vector — either orientation — has a scalar extreme, and the inner builtin already
-            // says so; only genuine matrices reduce per column.
-            if (args.Count == 1 && ReducesAsVector(args[0]))
-            {
-                return inner.Call(args, line, col);
-            }
+            return ReduceAlong(args[0], null, line, col);
+        }
 
-            if (args.Count == 1 && IsMatrixValue(args[0]))
-            {
-                double[][] columns = TransposeRows(RowsOfMatrix(name, args[0], line, col));
-                var extremes = new double[columns.Length];
-                for (int c = 0; c < columns.Length; c++)
-                {
-                    extremes[c] = ExtremeOf(name, columns[c], takeMin, line, col);
-                }
+        // Only a numeric array reduces here. An image, a scalar, the elementwise two-argument form and
+        // anything else stay with the builtin that already knows them.
+        bool Reduces(IReadOnlyList<JgsValue> args) =>
+            args.Count > 0 && args[0].Type == JgsType.Array && (args.Count == 1 || IsDimForm(args));
 
-                return Numbers(extremes);
+        JgsValue Single(IReadOnlyList<JgsValue> args, int line, int col)
+        {
+            if (Reduces(args))
+            {
+                return Both(args, line, col)[0];
             }
 
             if (args.Count == 2 && (args[0].Type == JgsType.Array || args[1].Type == JgsType.Array))
@@ -838,24 +1018,9 @@ internal static partial class JgsBuiltins
 
         JgsValue[] Multi(IReadOnlyList<JgsValue> args, int wanted, int line, int col)
         {
-            if (IsDimForm(args) && IsMatrixValue(args[0]))
+            if (Reduces(args))
             {
-                int dim = Count(name, args, 2, line, col);
-                double[][] rows = RowsOfMatrix(name, args[0], line, col);
-                double[][] slices = dim == 1 ? TransposeRows(rows) : rows;
-                (JgsValue[] extremes, JgsValue[] indices) = ReduceSlices(slices, dialect, line, col);
-                return
-                [
-                    AssembleSliceResults(name, extremes, byColumn: dim == 1, keepShape: false, line, col),
-                    AssembleSliceResults(name, indices, byColumn: dim == 1, keepShape: false, line, col),
-                ];
-            }
-
-            if (args.Count == 1 && IsMatrixValue(args[0]) && !ReducesAsVector(args[0]))
-            {
-                double[][] columns = TransposeRows(RowsOfMatrix(name, args[0], line, col));
-                (JgsValue[] extremes, JgsValue[] indices) = ReduceSlices(columns, dialect, line, col);
-                return [JgsValue.Array(extremes), JgsValue.Array(indices)];
+                return Both(args, line, col);
             }
 
             return inner is IJgsMultiCallable multi
@@ -865,14 +1030,6 @@ internal static partial class JgsBuiltins
 
         env.Declare(name, JgsValue.Function(new BuiltinFunction(name, Single) { MultiOutput = Multi }));
     }
-
-    /// <summary>
-    /// Whether a value reduces the way a vector does — one significant dimension, so its reduction
-    /// is a scalar rather than a per-column array of one. N-D arrays never qualify.
-    /// </summary>
-    private static bool ReducesAsVector(JgsValue value) =>
-        value.Type == JgsType.Array && !value.IsNd
-        && (JgsMatrix.RowCount(value) == 1 || JgsMatrix.ColCount(value) == 1);
 
     private static double ExtremeOf(string name, double[] values, bool takeMin, int line, int col)
     {

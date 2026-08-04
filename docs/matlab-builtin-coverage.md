@@ -14,8 +14,8 @@ below used to list as missing and call the most useful thing left: `plot3`, `lin
 
 **78 of the 263 documented graphics functions** — the second table below, new in M45.
 
-Across every callable kind — builtin, function, operator, keyword, script — the count is **605 of
-2,027** (596 after M45, up from 560, and not from the 556 this file used to claim: the checklist tool
+Across every callable kind — builtin, function, operator, keyword, script — the count is **607 of
+2,027** (605 after M46, 596 after M45, up from 560, and not from the 556 this file used to claim: the checklist tool
 read the implemented set with a regular expression that only matched a name literal directly inside
 `Add(`, so it missed the sixteen colormap generators, which are registered from a loop, and reported
 `parula` as unimplemented the whole time it was working. Both shapes are read now).
@@ -26,6 +26,32 @@ behind this file came from an install without the toolbox, so none of M46's ~215
 here at all. The nine that do are the ones MATLAB documents under a base folder rather than
 `toolbox/images`: `cmap2gray`, `hsv2rgb`, `im2double`, `im2gray`, `imapprox`, `imfinfo`, `ind2rgb`,
 `rgb2hsv` and `rgb2ind`.
+
+M47 moved it by **two**, both documented as functions rather than builtins: `height` and `width`,
+which are the ordinary way a script asks a table how many rows and how many variables it has. They
+answer for an ordinary array too, as they have since R2020b, and teaching them tables meant teaching
+`size` tables at the same time — it had been answering 1-by-1 for one.
+
+M48 moved it by **none**, and is recorded anyway: `max` and `min` were counted as implemented while
+`max(A, [], 3)` gave the wrong answer. Both reduced by folding the array into rows first, and an N-D
+array read as rows is its pages laid side by side, so a reduction past the second dimension went along
+the fold. They now read their slices straight out of column-major storage and reduce along any
+dimension of any shape, with the index output and the `'all'` form composing with it. A count is only
+as honest as the signature behind the name, which is why this paragraph exists.
+
+M49 moved it by **none** either, and finishes what M48 started: the twelve other reductions folded the
+same way, so `sum(A, 3)` on a 2-by-2-by-3 answered a 1-by-2 of column sums. They now read their slices
+out of column-major storage and write them back the same way, which is what the shape-keeping four
+(`cumsum`, `cumprod`, `diff`, `sort`) needed and what M48 deferred them for. `sort` also learned
+MATLAB's own `'ascend'` and `'descend'` — it had accepted only JGraph's shorter `'asc'` and `'desc'`,
+so the documented spelling was an error.
+
+M50 moved it by **none** as well, and closes the signature M49 recorded instead of fixing: `diff` read
+its second argument as the dimension, where MATLAB reads it as how many times to difference. It is now
+`diff(X, n, dim)` — `diff(A, 2)` is the second difference along the first non-singleton dimension,
+`diff(A, 1, 2)` walks dimension 2, and `diff(A, [], dim)` takes the default single difference. Repeated
+differencing did not exist at all before, so the name was counted as implemented while a documented
+form of it errored.
 
 The remaining 142 builtins divide into six families that each need machinery JGraph does not have,
 plus a short list of eleven odds and ends. Every one of them is accounted for below.
@@ -168,7 +194,9 @@ rather than a graphics one, so it is recorded under known differences below.
 
 These are deliberate, not oversights, and are documented in the scripting guide:
 
-- Every number is a double, so `isinteger` is always false and `intmax` reports its limit as a double.
+- Every number is stored as a double, but since M47 a value remembers the class it was asked for, so
+  `class(uint8(7))` is `'uint8'` and `isinteger` answers for it. `intmax` still reports its limit as
+  a double, and a reduction (`sum`, `max`) still answers `double` where MATLAB would answer natively.
 - There is no string-array type: text is `char`, so `isstring` is always false and the three
   `convert*Strings*` functions hand the value straight back.
 - A vector written as a literal is a row, so `isrow([1 2 3])` is true; orientation appears where
@@ -183,7 +211,9 @@ These are deliberate, not oversights, and are documented in the scripting guide:
   of category names, a *duration* is its number of seconds, and *missing* is a sentinel string —
   untyped stand-ins that carry the shapes scripts consume, without the class names.
 - The integer classes `int8`…`uint64` are MATLAB conversions (round half away from zero, saturate,
-  NaN to 0) on double storage, with `.empty(m, n)` statics; `class(uint8(5))` still says `double`.
+  NaN to 0) on double storage, with `.empty(m, n)` statics. Since M47 the class is carried on the
+  value, so arithmetic saturates inside it and mixing two integer classes is refused as MATLAB
+  refuses it; a long expression rounds once at the end rather than at every step (ADR 0050).
 - `dec2bin` and friends give a string for one value and a cell of strings for an array, because
   JGraph has no char matrix to return.
 - `schur` produces the real form only. Its 2×2 blocks hold the conjugate pairs, which is the whole
@@ -203,6 +233,25 @@ false — were fixed in M40 (ADR 0043). Arrays now carry a rows-by-columns shape
 storage, so two subscripts, `A(:)`, column-major linear indexing, growth, deletion and a genuinely
 transposed vector all behave as MATLAB does; and a logical compares equal to the number it stands
 for, with `NaN == NaN` false.
+
+The entry M48 left here — the other reductions folding an N-D array into rows — was closed in M49.
+All twelve now read their slices through `JgsMatrix.SlicesAlong` and, for the shape-keeping four,
+write them back through `JgsMatrix.JoinAlong`, which is the scatter that mirrors the gather and the
+decision M48 was waiting on: a shape-keeping reduction puts each slice's whole result back where the
+slice came from, so `cumsum(A, 3)` keeps the size of its input and `diff(A, 1, 3)` shortens only the
+dimension it walks.
+
+The `diff` signature M49 recorded here — its second argument being the dimension where MATLAB's is the
+difference order — was closed in M50. `WrapColumnwise` now takes a flag saying the second argument is a
+repetition count, which is what `diff` alone in its list needs, and differencing *n* times along a
+dimension is the base builtin applied *n* times to each slice, because the slices are walked
+independently. `diff(A, 2)` is the second difference, `diff(A, 1, 2)` walks dimension 2, `diff(A, [],
+dim)` takes the default, and `diff(A, 0)` is `A`. The JGS dialect never calls that wrapper, so its own
+`diff(array)` is untouched.
+
+One entry remains from M49: **a scalar does not reduce.** `sum(7)` and `cumsum(5)` report that they
+expected an array, where MATLAB answers `7` and `5`. These are one-line guards in the base builtins
+rather than anything about shape.
 
 One entry, found in M45: **`gradient` is not implemented.** It is documented as kind *function*, so
 neither this file nor the tracker ever counted it as a gap, and it surfaced only because M45's smoke

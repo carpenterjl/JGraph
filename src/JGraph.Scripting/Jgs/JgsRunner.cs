@@ -321,7 +321,9 @@ internal static class JgsRunner
     /// <summary>The class column of <c>whos</c> and the Workspace pane.</summary>
     internal static string KindOf(JgsValue value) => value.Type switch
     {
-        JgsType.Number or JgsType.Array => "double",
+        // A number or array reports the class it was asked for (M47) — uint8 after a conversion,
+        // double otherwise — which is what MATLAB's own whos column says.
+        JgsType.Number or JgsType.Array => value.NumericClass.MatlabName(),
         JgsType.Complex => "complex",
         JgsType.Bool => "logical",
         JgsType.String => "char",

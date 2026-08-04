@@ -809,6 +809,47 @@ Implemented through Milestone 45 — a working figure window you can edit, save,
   sliced, `cat` refused any dimension past the second, fourteen functions refused a plain matrix, and
   a two-subscript write on a JGS matrix threw out of the interpreter. `.graph` stays v5, since every
   display verb bakes to RGB (ADR 0049).
+- **M47** The three base-language gaps M46 recorded and left, closed. **A number remembers the class
+  it was asked for**: `JgsValue` carries a `NumericClass` tag, so `class(uint8(7))` answers `'uint8'`
+  and `isinteger` is true, while storage stays doubles — the same shape ADR 0043 chose for shape
+  itself, and for the same reason. Arithmetic keeps the answer inside the narrower class
+  (`uint8(200) + uint8(100)` is 255) and refuses what MATLAB refuses: two different integer classes,
+  or an integer array beside a non-scalar double. Concatenation follows the same precedence, so
+  `[int8(1) 300]` saturates its second element. The tag rides along through the three paths that mint
+  wrappers — `KeepShape`, `IndexInto`, and the literal builders — which is the M40 lesson applied
+  unchanged. **A `for` loop walks a cell array** a column at a time, binding a cell, so
+  `for name = {'line', 'diamond'}` reads the way scripts write it; **`height`/`width`** read the first
+  two dimensions of anything, and a table's are its rows and its variables, which meant teaching
+  `size` tables at the same time (it had been answering `[1 1]` for one). Two further defects
+  surfaced while closing these and were fixed: a rowed cell literal was flattened row-major into a
+  1-by-n cell, and the assignment copy dropped the class (ADR 0050).
+- **M48** `max` and `min` reduce along **any dimension of any shape**. Both were counted as
+  implemented while `max(A, [], 3)` gave the wrong answer: they folded the array into rows first, and
+  an N-D array read as rows is its pages laid side by side, so the reduction went along the fold.
+  They now read their slices straight out of column-major storage through a new
+  `JgsMatrix.SlicesAlong`, which is one rule — a slice steps by the product of the dimensions below
+  the reduced one — for a row vector, a column, a matrix and a volume alike, so the four shape
+  branches the wrapper used to carry are gone. `max(A)` picks the first non-singleton dimension,
+  `max(A, [], 'all')` reduces everything with a linear index, and the second output composes with all
+  of it. The other reductions still fold, and that is recorded in `matlab-builtin-coverage.md` rather
+  than left to be rediscovered.
+- **M49** the **other twelve reductions** follow. `sum` `prod` `mean` `median` `std` `variance` `mode`
+  `any` `all` and the shape-keeping `cumsum` `cumprod` `diff` `sort` shared a wrapper that folded into
+  rows exactly as max/min had, so `sum(A, 3)` summed the pages laid side by side. They now gather
+  through `JgsMatrix.SlicesAlong` and — this is what M48 deferred them for — scatter back through a
+  new `JgsMatrix.JoinAlong`, which writes one whole vector per slice to where the slice came from and
+  reports the shape that makes. One rule covers both groups: a scalar per slice is the same scatter
+  with a length of 1, so the reduced shape is not a separate calculation. A non-numeric array (a
+  string array, a complex one) and an empty one still go straight to the builtin that already knows
+  them, which is why `sort(["b" "a"])` and `sum([])` did not move. `sort` also learned MATLAB's
+  `'ascend'`/`'descend'`.
+- **M50** gives `diff` **MATLAB's own signature**, `diff(X, n, dim)`. It was the one name in that
+  wrapper's list whose second argument is not the dimension, so `diff(A, 2)` meant dimension 2 here and
+  the second difference in MATLAB, and repeated differencing had no spelling at all. `WrapColumnwise`
+  takes a flag for it rather than growing a bespoke wrapper, and differencing *n* times along a
+  dimension is the base builtin applied *n* times to each slice — the slices are walked independently,
+  so nothing about the gather or the scatter changes. `diff(A, 0)` is `A`, `diff(A, [], dim)` takes the
+  default, and the JGS dialect (which never calls the wrapper) keeps its own one-argument `diff`.
 
 The `JGraph.Demo` gallery exercises the plot types, annotations, and both APIs;
 `JGraph.Application` is the interactive figure window with data import and scripting.

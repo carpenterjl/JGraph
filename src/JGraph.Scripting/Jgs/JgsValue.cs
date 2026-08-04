@@ -86,6 +86,11 @@ internal sealed class JgsValue
     // remove it, and AsBuffer compacts on sight so no raw-buffer consumer can ever see the slack.
     private int _strideRows;
 
+    // The numeric class this value remembers being asked for (M47, ADR 0050). Double for everything
+    // that never went through a class constructor, which is why nothing that ignores the tag ever
+    // sees one. Mutable ONLY by SetNumericClass, at mint time, exactly like Reshape.
+    private JgsNumericClass _numericClass;
+
     // N-D shape (M41, ADR 0044): null for every 2-D value. When set (always length >= 3, trailing
     // singletons trimmed), it is the true size of the array, and _rows/_cols hold MATLAB's own 2-D
     // view of it — dims[0] rows by prod(dims[1..]) columns — so every two-subscript reader sees
@@ -450,6 +455,18 @@ internal sealed class JgsValue
 
         _cols = fold;
     }
+
+    /// <summary>
+    /// The numeric class this value carries — <see cref="JgsNumericClass.Double"/> unless a class
+    /// constructor, an arithmetic result or an indexing read stamped it (M47).
+    /// </summary>
+    public JgsNumericClass NumericClass => _numericClass;
+
+    /// <summary>
+    /// Records the numeric class of a freshly-minted value. Mint-time only: a value already bound to
+    /// a name must never change class under it, so every caller stamps a wrapper it has just built.
+    /// </summary>
+    public void SetNumericClass(JgsNumericClass numericClass) => _numericClass = numericClass;
 
     /// <summary>Gives this array the shape (2-D or N-D) of <paramref name="source"/>.</summary>
     internal void TakeShapeOf(JgsValue source)

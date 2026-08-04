@@ -158,12 +158,13 @@ matrix threw an `IndexOutOfRangeException` out of the interpreter rather than ra
 None of the four would have been found by the unit suites, which had always fed each function the
 shape it expected.
 
-**Three gaps were found and left, with reasons.** `class(uint8(7))` answers `'double'`: integer
+**Three gaps were found and left, with reasons.** `class(uint8(7))` answered `'double'`: integer
 conversion rounds and saturates on double storage (ADR 0045) without recording what it did, so a
-plain array carries no class where MATLAB's does. `for x = {'a', 'b'}` does not iterate a cell array
-into 1×1 cells. `height`/`width` on a table are absent. All three are base-language rather than
-toolbox, none blocks the imaging surface, and each is written down instead of being folded into a
-milestone that was not about them.
+plain array carried no class where MATLAB's does. `for x = {'a', 'b'}` did not iterate a cell array
+into 1×1 cells. `height`/`width` on a table were absent. All three are base-language rather than
+toolbox, none blocked the imaging surface, and each was written down instead of being folded into a
+milestone that was not about them. **All three were closed in M47** — see ADR 0050, which also
+records the two further defects that closing them exposed.
 
 The base tracker moved by **nine, to 605 of 2,027 callable** — `cmap2gray`, `hsv2rgb`, `im2double`,
 `im2gray`, `imapprox`, `imfinfo`, `ind2rgb`, `rgb2hsv`, `rgb2ind`. That is not an understatement of

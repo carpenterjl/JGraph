@@ -174,10 +174,11 @@ internal static partial class JgsBuiltins
         CharacterClass("isletter", char.IsLetter);
         CharacterClass("isspace", char.IsWhiteSpace);
 
-        // Every JGraph number is a double, so isfloat mirrors isnumeric and isinteger is never true —
-        // MATLAB-correct answers for a workspace with no integer classes in it.
-        Predicate("isfloat", static v => IsNumericValue(v));
-        Predicate("isinteger", static _ => false);
+        // Storage is always doubles, but a value remembers the class it was asked for (M47), so these
+        // read the tag: isinteger is true exactly for a value that went through one of the eight
+        // integer constructors, and isfloat is true for everything else numeric.
+        Predicate("isfloat", static v => IsNumericValue(v) && !v.NumericClass.IsInteger());
+        Predicate("isinteger", static v => v.NumericClass.IsInteger());
         Predicate("isreal", static v => !HasComplexPart(v));
         Predicate("isscalar", static v =>
             v.Type == JgsType.Array ? !v.IsNd && Extent(v) == 1
@@ -242,12 +243,13 @@ internal static partial class JgsBuiltins
             Arity("isa", args, 2, line, col);
             string wanted = Str("isa", args, 1, line, col);
             string actual = ClassOf(args[0], dialect);
+            JgsNumericClass? numericClass = JgsNumericClasses.Parse(actual);
             return JgsValue.Bool(wanted switch
             {
                 // MATLAB accepts three category words alongside the class names themselves.
-                "numeric" => actual is "double" or "single" or "uint8" or "uint16" or "int16",
-                "float" => actual is "double" or "single",
-                "integer" => actual is "uint8" or "uint16" or "int16",
+                "numeric" => numericClass is not null,
+                "float" => numericClass is JgsNumericClass.Double or JgsNumericClass.Single,
+                "integer" => numericClass?.IsInteger() == true,
                 _ => string.Equals(actual, wanted, StringComparison.Ordinal),
             });
         });
@@ -264,29 +266,26 @@ internal static partial class JgsBuiltins
         Define("double", (args, line, col) =>
         {
             Arity("double", args, 1, line, col);
-            return args[0].Type == JgsType.String
-                ? CharactersAsCodes(args[0].AsString)
-                : MapNumeric("double", args[0], static x => x, line, col);
+            return ToNumericClass("double", JgsNumericClass.Double, args[0], line, col);
         });
 
         Define("single", (args, line, col) =>
         {
             Arity("single", args, 1, line, col);
-            return MapNumeric("single", args[0], static x => (float)x, line, col);
+            return ToNumericClass("single", JgsNumericClass.Single, args[0], line, col);
         });
 
         Define("cast", (args, line, col) =>
         {
             Arity("cast", args, 2, line, col);
             string target = Str("cast", args, 1, line, col);
-            if (IntegerClassRange(target) is (double min, double max))
+            if (JgsNumericClasses.Parse(target) is JgsNumericClass numericClass)
             {
-                return MapNumeric("cast", args[0], x => IntegerConvert(x, min, max), line, col);
+                return ToNumericClass("cast", numericClass, args[0], line, col);
             }
 
             return target switch
             {
-                "double" or "single" => MapNumeric("cast", args[0], static x => x, line, col),
                 "logical" => MapToBool("cast", args[0], static x => x != 0, line, col),
                 "char" => JgsValue.Str(args[0].Type == JgsType.String ? args[0].AsString : args[0].Display()),
                 _ => throw new JgsRuntimeException(line, col, $"cast: JGraph has no '{target}' class."),
@@ -294,41 +293,39 @@ internal static partial class JgsBuiltins
         });
 
         // The integer class constructors (M42): MATLAB conversion semantics — round half away from
-        // zero, saturate at the class limits, NaN becomes 0 — on JGraph's double storage. class()
-        // keeps reporting double; the coverage doc records the divergence.
+        // zero, saturate at the class limits, NaN becomes 0 — on JGraph's double storage. M47 added
+        // the tag that records which class was asked for, so class() now answers it and arithmetic
+        // keeps the result inside the same class.
         foreach (string name in IntegerClassNames)
         {
-            (double min, double max) = IntegerClassRange(name)!.Value;
             string self = name;
+            JgsNumericClass numericClass = JgsNumericClasses.Parse(name)!.Value;
             Define(name, (args, line, col) =>
             {
                 Arity(self, args, 1, line, col);
-                return MapNumeric(self, args[0], x => IntegerConvert(x, min, max), line, col);
+                return ToNumericClass(self, numericClass, args[0], line, col);
             });
         }
+    }
+
+    /// <summary>Converts one value into a numeric class and tags the result with it.</summary>
+    /// <remarks>
+    /// The tag rides on the wrapper <see cref="MapNumeric"/> has just built, which is always a fresh
+    /// one — that is what keeps the single-wrapper invariant intact while the class changes.
+    /// </remarks>
+    private static JgsValue ToNumericClass(
+        string name, JgsNumericClass numericClass, JgsValue value, int line, int col)
+    {
+        // A char array converts through its codes, which is what makes double('A') 65.
+        JgsValue source = value.Type == JgsType.String ? CharactersAsCodes(value.AsString) : value;
+        JgsValue result = MapNumeric(name, source, x => JgsNumericClasses.Convert(x, numericClass), line, col);
+        result.SetNumericClass(numericClass);
+        return result;
     }
 
     /// <summary>The eight MATLAB integer classes, each a constructor and an <c>.empty</c> static.</summary>
     private static readonly string[] IntegerClassNames =
         ["int8", "int16", "int32", "int64", "uint8", "uint16", "uint32", "uint64"];
-
-    /// <summary>The saturation range of a MATLAB integer class, or null for any other name.</summary>
-    private static (double Min, double Max)? IntegerClassRange(string name) => name switch
-    {
-        "int8" => (sbyte.MinValue, sbyte.MaxValue),
-        "int16" => (short.MinValue, short.MaxValue),
-        "int32" => (int.MinValue, int.MaxValue),
-        "int64" => (long.MinValue, long.MaxValue),
-        "uint8" => (0, byte.MaxValue),
-        "uint16" => (0, ushort.MaxValue),
-        "uint32" => (0, uint.MaxValue),
-        "uint64" => (0, ulong.MaxValue),
-        _ => null,
-    };
-
-    /// <summary>One element through MATLAB integer conversion: round, saturate, NaN to 0.</summary>
-    private static double IntegerConvert(double x, double min, double max) =>
-        double.IsNaN(x) ? 0 : System.Math.Clamp(System.Math.Round(x, MidpointRounding.AwayFromZero), min, max);
 
     /// <summary>
     /// The statics a class-constructor builtin exposes through field access — today just
@@ -392,10 +389,15 @@ internal static partial class JgsBuiltins
     /// An image answers with its numeric class under MATLAB — <c>uint8</c> for a picture just read from
     /// a file — because that is what a <c>.m</c> script branches on. JGS has a first-class image type
     /// that is not a numeric array, and says so.
+    /// <para>
+    /// A plain number or array answers with the class it was asked for (M47): <c>uint8</c> once it
+    /// has been through the constructor, <c>double</c> otherwise. Storage never changes — the tag is
+    /// what carries the answer.
+    /// </para>
     /// </remarks>
     private static string ClassOf(JgsValue value, JgsDialect dialect) => value.Type switch
     {
-        JgsType.Number or JgsType.Complex or JgsType.Array => "double",
+        JgsType.Number or JgsType.Complex or JgsType.Array => value.NumericClass.MatlabName(),
         JgsType.Bool => "logical",
         JgsType.String => "char",
         JgsType.Cell => "cell",

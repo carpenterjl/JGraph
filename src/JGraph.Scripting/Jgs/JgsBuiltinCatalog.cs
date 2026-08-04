@@ -546,6 +546,8 @@ public static class JgsBuiltinCatalog
 
         Add("mod", "Modulo x - floor(x/m)*m, element-wise over arrays (result takes m's sign).", P("x"), P("m"));
         Add("size", "The [rows, cols] of a matrix ([rows, cols, 3] for an RGB image); size(value, dim) returns one dimension.", P("value"), Opt("dim"));
+        Add("height", "The number of rows: size(value, 1), and the row count of a table.", P("value"));
+        Add("width", "The number of columns: size(value, 2), and the variable count of a table.", P("value"));
         Add("isempty", "True when a value has no elements: null, an empty array or string, or a table with no rows.", P("value"));
         Add("disp", "Writes a value to the console (no name prefix, unlike echo).", P("value"));
 
@@ -893,10 +895,15 @@ public static class JgsBuiltinCatalog
         Add("percentile", "The p-th percentile (0-100) of a non-empty array, by linear interpolation.", P("array"), P("p"));
         Add("cumsum", "Running sums of a numeric array.", P("array"));
         Add("cumprod", "Running products of a numeric array.", P("array"));
-        Add("diff", "Adjacent differences of a numeric array (length n-1).", P("array"));
+        Add(
+            "diff",
+            "Adjacent differences of a numeric array (length n-1); n differences along a dimension.",
+            P("array"),
+            Opt("n"),
+            Opt("dim"));
 
         // --- Array operations ---------------------------------------------------------------------
-        Add("sort", "A sorted copy of a numeric or string array; order \"asc\" (default) or \"desc\".", P("array"), Opt("order"));
+        Add("sort", "A sorted copy of a numeric or string array; order \"ascend\" (default) or \"descend\".", P("array"), Opt("order"));
         Add("unique", "The sorted distinct values of a numeric or string array.", P("array"));
         Add("find", "0-based indices of the truthy elements — volt(find(temp > 85)) gathers the matches; pass base 1 for MATLAB numbering.", P("mask"), Opt("base"));
         Add("any", "Whether at least one element is truthy.", P("array"));
