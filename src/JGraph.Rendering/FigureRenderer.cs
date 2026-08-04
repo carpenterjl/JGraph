@@ -132,7 +132,7 @@ public sealed class FigureRenderer
                     VerticalAlignment.Bottom);
             }
 
-            Rect2D? legendBox = axes.Legend.Visible
+            LegendLayout? legendBox = axes.Legend.Visible
                 ? LegendRenderer.Draw(context, axes, plotArea, theme)
                 : null;
 
@@ -170,7 +170,7 @@ public sealed class FigureRenderer
         DrawAxisTitles(context, axes, xAxis, yAxis, plotArea, metrics);
 
         // Legend.
-        Rect2D? legendBounds = axes.Legend.Visible
+        LegendLayout? legendBounds = axes.Legend.Visible
             ? LegendRenderer.Draw(context, axes, plotArea, theme)
             : null;
 

@@ -210,6 +210,27 @@ public static class JG
     /// <summary>Returns the current figure (MATLAB <c>gcf</c>).</summary>
     public static FigureModel Gcf() => CurrentFigure;
 
+    /// <summary>The current axes, or null when no figure has been drawn into yet.</summary>
+    public static AxesModel? CurrentAxesOrNull => _currentAxes;
+
+    /// <summary>
+    /// Makes <paramref name="axes"/> current, along with the figure that owns it. This is how a verb
+    /// aimed at a named axes (<c>plot(ax, …)</c>) reaches it without the caller having to select it
+    /// first — and, since the caller puts the previous axes back, without moving <c>gca</c>.
+    /// </summary>
+    public static void MakeCurrent(AxesModel axes)
+    {
+        ArgumentNullException.ThrowIfNull(axes);
+        if (axes.Parent is FigureModel figure)
+        {
+            _currentFigure = figure;
+            _currentNumber = GetFigureNumber(figure);
+        }
+
+        _currentAxes = axes;
+        Touch(_currentNumber);
+    }
+
     /// <summary>Returns the current axes, creating a figure and axes if necessary (MATLAB <c>gca</c>).</summary>
     public static AxesModel Gca()
     {
@@ -1135,6 +1156,46 @@ public static class JG
         }
 
         axes.Legend.Visible = true;
+    }
+
+    /// <summary>
+    /// Enables <paramref name="axes"/>' legend showing exactly <paramref name="plots"/>, in that
+    /// order. Every other series on the axes keeps its row but is left out of the drawing, which is
+    /// what MATLAB's <c>legend(ax, h)</c> means: name these, hide the rest.
+    /// </summary>
+    public static LegendModel Legend(AxesModel axes, IReadOnlyList<PlotObject> plots)
+    {
+        ArgumentNullException.ThrowIfNull(axes);
+        ArgumentNullException.ThrowIfNull(plots);
+
+        LegendModel legend = axes.Legend;
+        legend.SyncEntries(axes.Plots.OfType<ILegendItem>().Cast<PlotObject>().ToList());
+
+        foreach (LegendEntryModel entry in legend.Entries)
+        {
+            entry.Visible = entry.Plot is not null && plots.Any(p => ReferenceEquals(p, entry.Plot));
+        }
+
+        // Rows are drawn in list order, so the requested order has to become the list order.
+        for (int wanted = 0; wanted < plots.Count; wanted++)
+        {
+            for (int at = wanted; at < legend.Entries.Count; at++)
+            {
+                if (ReferenceEquals(legend.Entries[at].Plot, plots[wanted]))
+                {
+                    if (at != wanted)
+                    {
+                        legend.Entries.Move(at, wanted);
+                    }
+
+                    break;
+                }
+            }
+        }
+
+        legend.Visible = true;
+        Touch(GetFigureNumber(axes.Parent as FigureModel ?? CurrentFigure));
+        return legend;
     }
 
     /// <summary>Adds a text label at the given data point on the current axes (MATLAB <c>text</c>).</summary>

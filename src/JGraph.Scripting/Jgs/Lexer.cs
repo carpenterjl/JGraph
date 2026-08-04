@@ -94,9 +94,9 @@ internal static class Lexer
 
         int Column(int index) => index - lineStart + 1;
 
-        void Add(TokenType type, string text, int startIndex, double number = 0)
+        void Add(TokenType type, string text, int startIndex, double number = 0, bool isChar = false)
         {
-            tokens.Add(new Token(type, text, number, line, Column(startIndex), spaceBefore));
+            tokens.Add(new Token(type, text, number, line, Column(startIndex), spaceBefore, isChar));
             spaceBefore = false;
         }
 
@@ -191,7 +191,13 @@ internal static class Lexer
 
             if (matlab && c is '"' or '\'')
             {
-                Add(TokenType.String, ReadMatlabString(source, ref i, line, Column(start), c, tolerant), start);
+                // Which quote was used is the difference between a char row and a string: ['a' 'b']
+                // is one four-character word, ["a" "b"] is two words side by side.
+                Add(
+                    TokenType.String,
+                    ReadMatlabString(source, ref i, line, Column(start), c, tolerant),
+                    start,
+                    isChar: c == '\'');
                 continue;
             }
 

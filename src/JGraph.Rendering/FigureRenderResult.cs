@@ -4,15 +4,48 @@ using JGraph.Maths.Transforms;
 
 namespace JGraph.Rendering;
 
+/// <summary>Where one legend row was drawn, and which series it names.</summary>
+public readonly record struct LegendRowBounds(PlotObject Plot, Rect2D Bounds);
+
+/// <summary>Where a legend landed in a paint: its whole box, and each row inside it.</summary>
+public sealed class LegendLayout
+{
+    public LegendLayout(Rect2D box, IReadOnlyList<LegendRowBounds> rows)
+    {
+        Box = box;
+        Rows = rows;
+    }
+
+    public Rect2D Box { get; }
+
+    /// <summary>The rows, top to bottom, each spanning the box's width.</summary>
+    public IReadOnlyList<LegendRowBounds> Rows { get; }
+
+    /// <summary>The series whose row contains a device-space point, or null.</summary>
+    public PlotObject? HitTest(Point2D pixel)
+    {
+        foreach (LegendRowBounds row in Rows)
+        {
+            if (row.Bounds.Contains(pixel))
+            {
+                return row.Plot;
+            }
+        }
+
+        return null;
+    }
+}
+
 /// <summary>The device-space geometry produced for one axes during a paint.</summary>
 public sealed class AxesRenderInfo
 {
-    public AxesRenderInfo(AxesModel axes, Rect2D plotArea, AxisTransform transform, Rect2D? legendBounds = null)
+    public AxesRenderInfo(
+        AxesModel axes, Rect2D plotArea, AxisTransform transform, LegendLayout? legend = null)
     {
         Axes = axes;
         PlotArea = plotArea;
         Transform = transform;
-        LegendBounds = legendBounds;
+        Legend = legend;
     }
 
     public AxesModel Axes { get; }
@@ -24,10 +57,13 @@ public sealed class AxesRenderInfo
     public AxisTransform Transform { get; }
 
     /// <summary>
-    /// The box the legend was drawn in, or null when it is hidden or empty. Published so the
-    /// interaction layer can hit-test and drag the legend without re-running layout.
+    /// Where the legend was drawn, or null when it is hidden or empty. Published so the interaction
+    /// layer can hit-test, drag, and click through the legend without re-running layout.
     /// </summary>
-    public Rect2D? LegendBounds { get; }
+    public LegendLayout? Legend { get; }
+
+    /// <summary>The box the legend was drawn in, or null when it is hidden or empty.</summary>
+    public Rect2D? LegendBounds => Legend?.Box;
 }
 
 /// <summary>

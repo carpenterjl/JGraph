@@ -993,7 +993,7 @@ public static class JgsBuiltinCatalog
 
         // --- Figure setup and plotting -------------------------------------------------------------
         Add("figure", "Starts a new figure (or selects figure n) and returns its handle (a figure number, so it starts at 1).", Opt("n"));
-        Add("subplot", "Selects cell index of a rows-by-cols axes grid (a grid cell number, so 1-based, row-major).", P("rows"), P("cols"), P("index"));
+        Add("subplot", "Selects cell index of a rows-by-cols axes grid (a grid cell number, so 1-based, row-major) and returns a handle on it.", P("rows"), P("cols"), P("index"));
         Add("close", "Closes the current figure, figure n, or every figure with close all.", Opt("n"));
         Add("clf", "Clears the current figure (or figure n), keeping its window open.", Opt("n"));
         Add("gcf", "The current figure's number.");
@@ -1014,7 +1014,8 @@ public static class JgsBuiltinCatalog
         Add("ylim", "Sets the y-axis range.", P("min"), P("max"));
         Add("grid", "Turns grid lines on (default) or off.", Opt("on"));
         Add("hold", "Keeps existing series when plotting more (default on).", Opt("on"));
-        Add("legend", "Sets the legend to the given series names (one string per series).", P("names"));
+        Add("legend", "Shows the legend, named by a list of series names or built from a vector of line handles, with an optional 'Location'.", P("names"), Opt("location"));
+        Add("linkaxes", "Links a vector of axes handles so they pan and zoom together along 'x', 'y', or 'xy'.", P("axes"), Opt("which"));
         Add("show", "Shows the current figure (or figure fig) in its own window.", Opt("fig"));
 
         // --- 3D surfaces, contours, and images -------------------------------------------------

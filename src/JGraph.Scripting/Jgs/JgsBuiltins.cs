@@ -875,6 +875,18 @@ internal static partial class JgsBuiltins
         Define("unique", (args, line, col) =>
         {
             Arity("unique", args, 1, line, col);
+
+            // A cell of char is how a table hands over a text variable, and it is the shape MATLAB
+            // code reaches for when it asks which serial numbers appear in a log.
+            if (args[0].Type == JgsType.Cell)
+            {
+                JgsValue[] distinct = JgsStdlib.Unique(args[0].AsCell)
+                    ?? throw new JgsRuntimeException(line, col, "unique needs a cell of text.");
+                JgsValue cell = JgsValue.Cell(distinct);
+                cell.Reshape(distinct.Length, 1);
+                return cell;
+            }
+
             return JgsValue.Array(JgsStdlib.Unique(Arr("unique", args, 0, line, col))
                 ?? throw new JgsRuntimeException(line, col, "unique needs an array of all numbers or all strings."));
         });
@@ -1337,11 +1349,14 @@ internal static partial class JgsBuiltins
             JG.Figure();
             return JgsValue.Number(JG.CurrentFigureNumber);
         });
-        Define("subplot", (args, line, col) =>
+        DefineSilent("subplot", (args, line, col) =>
         {
             Arity("subplot", args, 3, line, col);
-            JG.Subplot(Count("subplot", args, 0, line, col), Count("subplot", args, 1, line, col), Count("subplot", args, 2, line, col));
-            return JgsValue.Null;
+            AxesModel axes = JG.Subplot(
+                Count("subplot", args, 0, line, col),
+                Count("subplot", args, 1, line, col),
+                Count("subplot", args, 2, line, col));
+            return JgsHandleRegistry.For(JgsHandleKind.Axes, axes);
         });
 
         // --- Tiled layouts (M43): tiledlayout(r, c) + nexttile ride on the subplot grid ------
@@ -1765,34 +1780,69 @@ internal static partial class JgsBuiltins
         Define("semilogx", (args, line, col) => Semilog("semilogx", args, line, col, (x, y, s) => JG.SemilogX(x, y, s)));
         Define("loglog", (args, line, col) => Semilog("loglog", args, line, col, (x, y, s) => JG.LogLog(x, y, s)));
 
-        Define("title", (args, line, col) => { Arity("title", args, 1, line, col); JG.Title(Str("title", args, 0, line, col)); return JgsValue.Null; });
-        Define("xlabel", (args, line, col) => { Arity("xlabel", args, 1, line, col); JG.XLabel(Str("xlabel", args, 0, line, col)); return JgsValue.Null; });
-        Define("ylabel", (args, line, col) => { Arity("ylabel", args, 1, line, col); JG.YLabel(Str("ylabel", args, 0, line, col)); return JgsValue.Null; });
-        Define("xlim", (args, line, col) => { (double lo, double hi) = LimitPair("xlim", args, line, col); JG.XLim(lo, hi); return JgsValue.Null; });
-        Define("ylim", (args, line, col) => { (double lo, double hi) = LimitPair("ylim", args, line, col); JG.YLim(lo, hi); return JgsValue.Null; });
+        // Every axes-facing verb accepts a leading axes handle, MATLAB's title(ax, '…') form. The
+        // named axes is made current only for the call, so gca does not move (M51).
+        void DefineOnAxes(string name, Func<IReadOnlyList<JgsValue>, int, int, JgsValue> body) =>
+            Define(name, (args, line, col) =>
+            {
+                (AxesModel? axes, IReadOnlyList<JgsValue> rest) = PeelAxes(args);
+                return OnAxes(axes, () => body(rest, line, col));
+            });
 
-        Define("grid", (args, line, col) =>
+        DefineOnAxes("title", (args, line, col) => { Arity("title", args, 1, line, col); JG.Title(Str("title", args, 0, line, col)); return JgsValue.Null; });
+        DefineOnAxes("xlabel", (args, line, col) => { Arity("xlabel", args, 1, line, col); JG.XLabel(Str("xlabel", args, 0, line, col)); return JgsValue.Null; });
+        DefineOnAxes("ylabel", (args, line, col) => { Arity("ylabel", args, 1, line, col); JG.YLabel(Str("ylabel", args, 0, line, col)); return JgsValue.Null; });
+        DefineOnAxes("xlim", (args, line, col) => { (double lo, double hi) = LimitPair("xlim", args, line, col); JG.XLim(lo, hi); return JgsValue.Null; });
+        DefineOnAxes("ylim", (args, line, col) => { (double lo, double hi) = LimitPair("ylim", args, line, col); JG.YLim(lo, hi); return JgsValue.Null; });
+
+        DefineOnAxes("grid", (args, line, col) =>
         {
             ArityRange("grid", args, 0, 1, line, col);
             JG.Grid(OnOff("grid", args, line, col, dialect, () => JG.Gca().Grid.ShowMajor));
             return JgsValue.Null;
         });
-        Define("hold", (args, line, col) =>
+        DefineOnAxes("hold", (args, line, col) =>
         {
             ArityRange("hold", args, 0, 1, line, col);
             JG.Hold(OnOff("hold", args, line, col, dialect, () => JG.IsHolding));
             return JgsValue.Null;
         });
 
-        Define("legend", (args, line, col) =>
+        DefineSilent("legend", (args, line, col) =>
         {
-            var names = new string[args.Count];
-            for (int i = 0; i < args.Count; i++)
+            (AxesModel? axes, IReadOnlyList<JgsValue> rest) = PeelAxes(args);
+            return OnAxes(axes, () => Legend(rest, line, col));
+        });
+
+        Define("linkaxes", (args, line, col) =>
+        {
+            ArityRange("linkaxes", args, 1, 2, line, col);
+            var linked = new List<AxesModel>();
+            JgsValue handles = args[0];
+            int count = handles.Type == JgsType.Array ? handles.ArrayLength : 1;
+            for (int i = 0; i < count; i++)
             {
-                names[i] = Str("legend", args, i, line, col);
+                JgsValue element = handles.Type == JgsType.Array ? handles.ElementAt(i) : handles;
+                JgsHandleEntry entry = JgsHandleRegistry.Require(element, line, col);
+                if (entry.Target is not AxesModel axes)
+                {
+                    throw new JgsRuntimeException(line, col, "linkaxes wants handles to axes, such as the ones subplot hands back.");
+                }
+
+                linked.Add(axes);
             }
 
-            JG.Legend(names);
+            string which = args.Count == 2 ? Str("linkaxes", args, 1, line, col) : "xy";
+            AxisLinkMode mode = which.ToLowerInvariant() switch
+            {
+                "x" => AxisLinkMode.X,
+                "y" => AxisLinkMode.Y,
+                "xy" or "both" => AxisLinkMode.Both,
+                "off" => AxisLinkMode.Both,
+                _ => throw new JgsRuntimeException(line, col, $"linkaxes: '{which}' is not 'x', 'y', or 'xy'."),
+            };
+
+            JG.LinkAxes(mode, linked.ToArray());
             return JgsValue.Null;
         });
 
@@ -1871,6 +1921,7 @@ internal static partial class JgsBuiltins
         if (dialect.IsMatlab)
         {
             RegisterMatlabReductions(env, dialect);
+            RegisterGraphicsNamespace(env);
         }
 
         return env;
@@ -1915,10 +1966,68 @@ internal static partial class JgsBuiltins
     /// <summary>Option names <c>plot</c> recognizes as trailing name-value pairs (M42).</summary>
     private static readonly HashSet<string> PlotOptionNames = new(StringComparer.OrdinalIgnoreCase)
     {
-        "LineWidth", "Color", "LineStyle", "Marker", "MarkerSize", "DisplayName",
+        "LineWidth", "Color", "LineStyle", "Marker", "MarkerSize", "DisplayName", "HandleVisibility",
     };
 
+    /// <summary>
+    /// <c>legend</c>: either a list of names for the series in order (the old form), or a vector of
+    /// line handles saying exactly which series to show and in what order, followed by
+    /// <c>'Location', where</c> pairs. Hands back a handle on the legend so a script can go on to
+    /// place it or give it a click callback.
+    /// </summary>
+    private static JgsValue Legend(IReadOnlyList<JgsValue> args, int line, int col)
+    {
+        var names = new List<string>();
+        List<PlotObject>? chosen = null;
+        LegendPosition? location = null;
+
+        for (int i = 0; i < args.Count; i++)
+        {
+            if (args[i].Type == JgsType.String
+                && args[i].AsString.Equals("Location", StringComparison.OrdinalIgnoreCase)
+                && i + 1 < args.Count)
+            {
+                location = ParseLegendLocation(Str("legend", args, i + 1, line, col), line, col);
+                i++;
+                continue;
+            }
+
+            if (args[i].Type == JgsType.String)
+            {
+                names.Add(args[i].AsString);
+                continue;
+            }
+
+            chosen ??= [];
+            chosen.AddRange(PlotsOf("legend", args[i], line, col));
+        }
+
+        LegendModel legend;
+        if (chosen is not null)
+        {
+            legend = JG.Legend(JG.Gca(), chosen);
+        }
+        else
+        {
+            JG.Legend(names.ToArray());
+            legend = JG.Gca().Legend;
+        }
+
+        if (location is { } position)
+        {
+            legend.Position = position;
+        }
+
+        return JgsHandleRegistry.For(JgsHandleKind.Legend, legend);
+    }
+
     private static JgsValue Plot(IReadOnlyList<JgsValue> args, int line, int col)
+    {
+        (AxesModel? target, args) = PeelAxes(args);
+        return OnAxes(target, () => PlotCore(args, line, col));
+    }
+
+    private static JgsValue PlotCore(IReadOnlyList<JgsValue> args, int line, int col)
     {
         (args, List<(string Name, JgsValue Value)> options) = SplitPlotOptions(args, line, col);
         var created = new List<LinePlot>();
@@ -1932,7 +2041,7 @@ internal static partial class JgsBuiltins
             string? spec = args.Count == 4 ? Str("plot", args, 3, line, col) : null;
             created.Add(JG.Plot(table, xColumn, yColumn, spec));
             ApplyPlotOptions(created, options, line, col);
-            return JgsValue.Null;
+            return HandlesFor(created);
         }
 
         bool wasHolding = JG.IsHolding;
@@ -1985,7 +2094,32 @@ internal static partial class JgsBuiltins
         }
 
         ApplyPlotOptions(created, options, line, col);
-        return JgsValue.Null;
+        return HandlesFor(created);
+    }
+
+    /// <summary>
+    /// The handles for the series a plot call made: one on its own, several as a column, which is
+    /// the shape MATLAB gives back and the shape <c>h(i) = plot(…)</c> expects.
+    /// </summary>
+    private static JgsValue HandlesFor(List<LinePlot> created)
+    {
+        if (created.Count == 0)
+        {
+            return JgsValue.Array([]);
+        }
+
+        if (created.Count == 1)
+        {
+            return JgsHandleRegistry.For(JgsHandleKind.Line, created[0]);
+        }
+
+        var handles = new double[created.Count];
+        for (int i = 0; i < created.Count; i++)
+        {
+            handles[i] = JgsHandleRegistry.For(JgsHandleKind.Line, created[i]).AsNumber;
+        }
+
+        return JgsMatrix.FromColumnMajor(handles, created.Count, 1);
     }
 
     /// <summary>
@@ -2081,6 +2215,13 @@ internal static partial class JgsBuiltins
     private static void ApplyPlotOptions(
         List<LinePlot> created, List<(string Name, JgsValue Value)> options, int line, int col)
     {
+        // Every series gets the colour it will be drawn in written down now, so a script can read it
+        // back off the handle and match a second series to it.
+        foreach (LinePlot plot in created)
+        {
+            plot.Color ??= PaletteColorFor(plot);
+        }
+
         foreach ((string name, JgsValue value) in options)
         {
             foreach (LinePlot plot in created)
@@ -2094,7 +2235,13 @@ internal static partial class JgsBuiltins
                         plot.MarkerSize = NumOf("plot: MarkerSize", value, line, col);
                         break;
                     case "displayname":
-                        plot.Name = StrOf("plot: DisplayName", value, line, col);
+                        SetDisplayName(plot, StrOf("plot: DisplayName", value, line, col));
+                        break;
+                    case "handlevisibility":
+                        JgsHandleEntry entry = JgsHandleRegistry.Require(
+                            JgsHandleRegistry.For(JgsHandleKind.Line, plot), line, col);
+                        entry.HandleVisible = !StrOf("plot: HandleVisibility", value, line, col)
+                            .Equals("off", StringComparison.OrdinalIgnoreCase);
                         break;
                     case "color":
                         plot.Color = OptionColor(value, line, col);
@@ -2111,6 +2258,11 @@ internal static partial class JgsBuiltins
                             ? JGraph.Core.Drawing.MarkerType.None
                             : LineSpec.Parse(marker).Marker ?? plot.Marker;
                         break;
+                    default:
+                        // Unreachable through SplitPlotOptions, which only collects known names —
+                        // but a silent drop here is how a misspelling would go unnoticed.
+                        throw new JgsRuntimeException(line, col,
+                            $"plot: unknown option '{name}'. Use {string.Join(", ", PlotOptionNames)}.");
                 }
             }
         }

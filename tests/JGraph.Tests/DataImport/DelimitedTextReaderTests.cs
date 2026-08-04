@@ -179,4 +179,77 @@ public class DelimitedTextReaderTests
     {
         Assert.Throws<ImportException>(() => DelimitedTextReader.Read("Z:/does/not/exist_42.csv"));
     }
+
+    // --- Preamble before the data block -----------------------------------------------------------
+
+    private const string WithPreamble = """
+        Station: BENCH-4
+        Start Time: 07/27/26 14:26:48
+
+        Board Index, Board Serial
+        7,7
+        1,1
+
+        SN,TEMP,VOLTS,FLAGS
+        A1,100,3.3,0
+        A2,110,3.4,0
+        A3,120,3.5,1
+        """;
+
+    [Fact]
+    public void Parse_PreambleBeforeTheDataBlock_IsSkipped()
+    {
+        ImportResult result = DelimitedTextReader.Parse(WithPreamble);
+        Assert.Equal(new[] { "SN", "TEMP", "VOLTS", "FLAGS" }, result.Table.ColumnNames);
+        Assert.Equal(3, result.Table.RowCount);
+        Assert.Equal(110.0, result.Table["TEMP"].GetNumber(1));
+        Assert.Contains(result.Warnings, w => w.Contains("preamble", StringComparison.Ordinal));
+    }
+
+    [Fact]
+    public void Parse_ExplicitSkipRows_WinsOverDetection()
+    {
+        // Counting the lines by hand asks for exactly that many to go, detector or no detector.
+        ImportResult result = DelimitedTextReader.Parse(WithPreamble, new ImportOptions { SkipRows = 7 });
+        Assert.Equal(new[] { "SN", "TEMP", "VOLTS", "FLAGS" }, result.Table.ColumnNames);
+        Assert.Equal(3, result.Table.RowCount);
+        Assert.DoesNotContain(result.Warnings, w => w.Contains("preamble", StringComparison.Ordinal));
+    }
+
+    [Fact]
+    public void Parse_PreambleWithNoHeaderOverTheBlock_StillFindsTheBlock()
+    {
+        ImportResult result = DelimitedTextReader.Parse("note\nrun 4\n1,2,3\n4,5,6\n7,8,9");
+        Assert.Equal(3, result.Table.ColumnCount);
+        Assert.Equal(3, result.Table.RowCount);
+        Assert.Equal(new[] { "Column1", "Column2", "Column3" }, result.Table.ColumnNames);
+    }
+
+    [Fact]
+    public void Parse_CleanFile_IsUntouchedByDetection()
+    {
+        ImportResult result = DelimitedTextReader.Parse("x,y\n1,2\n3,4\n5,6");
+        Assert.Equal(new[] { "x", "y" }, result.Table.ColumnNames);
+        Assert.Equal(3, result.Table.RowCount);
+        Assert.Empty(result.Warnings);
+    }
+
+    [Fact]
+    public void Parse_OneWideRowInAHeaderlessFile_DoesNotSwallowTheRowsAboveIt()
+    {
+        // The wide row is a stray, not the start of a block: it is outnumbered by the ordinary rows
+        // that follow it, so the file keeps its old pad-to-widest reading.
+        ImportResult result = DelimitedTextReader.Parse("1,2\n3,4\n5,6,7\n8,9\n10,11");
+        Assert.Equal(3, result.Table.ColumnCount);
+        Assert.Equal(5, result.Table.RowCount);
+    }
+
+    [Fact]
+    public void Parse_RaggedShortRowUnderAHeader_StillPadsRatherThanSkipping()
+    {
+        ImportResult result = DelimitedTextReader.Parse("a,b,c\n1,2,3\n4,5\n6,7,8");
+        Assert.Equal(new[] { "a", "b", "c" }, result.Table.ColumnNames);
+        Assert.Equal(3, result.Table.RowCount);
+        Assert.True(result.Table["c"].IsMissing(1));
+    }
 }

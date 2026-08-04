@@ -102,8 +102,11 @@ internal enum TokenType
 /// <param name="PrecededByWhitespace">Whether whitespace (or a <c>...</c> continuation) separated this
 /// token from the one before it. MATLAB needs it to read <c>[1 -2]</c> as two elements and
 /// <c>[1 - 2]</c> as one, and to tell <c>a'</c> (transpose) from <c>[a 'b']</c> (a char literal).</param>
+/// <param name="IsCharLiteral">Whether a string token was single-quoted — MATLAB's char row rather than
+/// its string. Inside a bracket literal char rows join and strings stand side by side.</param>
 internal readonly record struct Token(
-    TokenType Type, string Text, double Number, int Line, int Column, bool PrecededByWhitespace = false)
+    TokenType Type, string Text, double Number, int Line, int Column, bool PrecededByWhitespace = false,
+    bool IsCharLiteral = false)
 {
     /// <summary>A short human-readable description of the token, for error messages.</summary>
     public string Describe() => Type switch

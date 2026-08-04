@@ -13,7 +13,7 @@ namespace JGraph.Scripting.Jgs;
 /// numeric operators. Runaway scripts are bounded three ways: a per-statement step budget, a call-depth
 /// limit, and a cooperative cancellation check — so even a tight <c>while true {}</c> loop is interruptible.
 /// </summary>
-internal sealed class Interpreter
+internal sealed partial class Interpreter
 {
     private const long MaxSteps = 50_000_000;
 
@@ -1176,6 +1176,22 @@ internal sealed class Interpreter
         // In JGS a bracket literal is a list, so [[1, 2], [3, 4]] is a matrix by nesting — the
         // spelling its own scripts and guide have always used. Only MATLAB concatenates here.
         concatenating &= Dialect.ConcatenatesBrackets;
+
+        // Char rows join into one longer char row: ['SN:' id] is how a MATLAB script builds a label.
+        // Double-quoted strings are a different thing and stay side by side, so a single-quoted piece
+        // has to be present for this to be char concatenation at all.
+        if (Dialect.ConcatenatesBrackets && elements.Length > 0
+            && Array.TrueForAll(elements, static e => e.Type == JgsType.String)
+            && array.Elements.Any(static e => e is StringLiteral { IsChar: true }))
+        {
+            var text = new StringBuilder();
+            foreach (JgsValue piece in elements)
+            {
+                text.Append(piece.AsString);
+            }
+
+            return JgsValue.Str(text.ToString());
+        }
 
         var rows = new List<JgsValue[]> { elements };
         if (!concatenating)
@@ -2528,6 +2544,11 @@ internal sealed class Interpreter
     private JgsValue EvaluateIndex(IndexExpr indexExpr, JgsEnvironment env)
     {
         JgsValue target = Evaluate(indexExpr.Target, env);
+        if (target.Type == JgsType.Table)
+        {
+            return IndexTableParen(target, indexExpr.Indices, indexExpr, env);
+        }
+
         if (target.Type is not (JgsType.Array or JgsType.String or JgsType.Image))
         {
             throw new JgsRuntimeException(indexExpr.Line, indexExpr.Column,
@@ -2548,6 +2569,12 @@ internal sealed class Interpreter
         if (callee.Type is JgsType.Array or JgsType.String or JgsType.Image)
         {
             return IndexInto(callee, call.Arguments, call, env);
+        }
+
+        // T(rows, vars) on a table selects a smaller table; T{rows, vars} takes the contents out.
+        if (callee.Type == JgsType.Table)
+        {
+            return IndexTableParen(callee, call.Arguments, call, env);
         }
 
         // c(i) on a cell array selects a sub-cell; c{i} (the brace form) takes the contents out.
@@ -3440,6 +3467,11 @@ internal sealed class Interpreter
     private JgsValue EvaluateBraceIndex(BraceIndexExpr brace, JgsEnvironment env)
     {
         JgsValue target = Evaluate(brace.Target, env);
+        if (target.Type == JgsType.Table)
+        {
+            return IndexTableBrace(target, brace.Indices, brace, env);
+        }
+
         if (target.Type != JgsType.Cell)
         {
             throw new JgsRuntimeException(brace.Line, brace.Column,
@@ -3491,6 +3523,13 @@ internal sealed class Interpreter
         if (target.Type == JgsType.Table)
         {
             return JgsBuiltins.TableColumnValue(target.AsTable, field, member.Line, member.Column);
+        }
+
+        // A handle on a figure object is a number (M51), so a dot on one reads that object's
+        // property rather than a struct field.
+        if (JgsHandleRegistry.TryGet(target, out JgsHandleEntry? handle))
+        {
+            return JgsBuiltins.GetHandleProperty(handle, field, member.Line, member.Column);
         }
 
         // Class-constructor statics (M42): uint8.empty(0, 5) reads a builtin off a builtin —
@@ -3622,10 +3661,51 @@ internal sealed class Interpreter
     /// </summary>
     private JgsValue AssignToMember(MemberExpr member, JgsValue value, JgsEnvironment env)
     {
+        // A dotted write onto a handle sets a figure object's property (M51). This has to be asked
+        // before the struct path, which would otherwise refuse the number or, worse, overwrite the
+        // variable with a fresh struct.
+        if (TryResolveHandleTarget(member.Target, env) is { } handle)
+        {
+            JgsBuiltins.SetHandleProperty(handle, FieldName(member, env), value, member.Line, member.Column);
+            return value;
+        }
+
         JgsValue container = ResolveStructForWrite(member.Target, env);
         container.AsStruct[FieldName(member, env)] = value;
         return value;
     }
+
+    /// <summary>
+    /// The figure object a dotted write is aimed at, or null when the write is an ordinary struct
+    /// field. Only a bound variable and a subscript into one are considered: anywhere else the target
+    /// would have to be evaluated on the chance it is a handle, and evaluating twice is not free.
+    /// </summary>
+    private JgsHandleEntry? TryResolveHandleTarget(Expr expr, JgsEnvironment env)
+    {
+        switch (expr)
+        {
+            case VariableExpr variable when env.TryGet(variable.Name, out JgsValue bound):
+                return JgsHandleRegistry.TryGet(bound, out JgsHandleEntry? entry) ? entry : null;
+
+            // h(i).Color = c — a handle out of an array of them. A numeric array can hold nothing
+            // but handles here, so a miss is an error rather than a fall-through to the struct path.
+            case CallExpr { Arguments.Count: 1, Callee: VariableExpr callee } call
+                when IsHandleArray(callee, env):
+                return JgsHandleRegistry.Require(Evaluate(call, env), call.Line, call.Column);
+            case IndexExpr { Indices.Count: 1, Target: VariableExpr target } indexed
+                when IsHandleArray(target, env):
+                return JgsHandleRegistry.Require(Evaluate(indexed, env), indexed.Line, indexed.Column);
+
+            default:
+                return null;
+        }
+    }
+
+    private static bool IsHandleArray(VariableExpr variable, JgsEnvironment env) =>
+        env.TryGet(variable.Name, out JgsValue value)
+        && value.Type == JgsType.Array
+        && value.ArrayLength > 0
+        && JgsHandleRegistry.TryGet(value.ElementAt(0), out _);
 
     private JgsValue ResolveStructForWrite(Expr expr, JgsEnvironment env)
     {
@@ -3731,6 +3811,13 @@ internal sealed class Interpreter
                 elements = new JgsValue[slot + 1];
                 System.Array.Copy(current, elements, current.Length);
             }
+        }
+        else if (existing.Type == JgsType.Struct)
+        {
+            // A lone struct is a one-element struct array, so writing past it grows one — which is
+            // how `s = struct('a', []);` followed by `s(i).a = v` in a loop builds the array.
+            elements = new JgsValue[slot + 1];
+            elements[0] = existing;
         }
         else
         {

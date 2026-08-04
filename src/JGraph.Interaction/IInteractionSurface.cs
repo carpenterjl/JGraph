@@ -35,6 +35,18 @@ public interface IInteractionSurface
     Rect2D? GetLegendBounds(AxesModel axes);
 
     /// <summary>
+    /// The series whose legend row was drawn under <paramref name="pixel"/> in the most recent paint,
+    /// or null. This is what turns a click on a legend row into the line it names.
+    /// </summary>
+    PlotObject? GetLegendRowAt(AxesModel axes, Point2D pixel);
+
+    /// <summary>
+    /// Reports that a legend row was clicked rather than dragged. The host decides what that means —
+    /// in the app it runs the legend's <c>ItemHitFcn</c> in the live script session.
+    /// </summary>
+    void OnLegendRowClicked(AxesModel axes, PlotObject plot);
+
+    /// <summary>
     /// The mapper from normalized [0, 1] figure coordinates to device space from the most recent
     /// paint (used by figure-space annotations), or null before the first paint.
     /// </summary>

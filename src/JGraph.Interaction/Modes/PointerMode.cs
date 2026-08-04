@@ -28,6 +28,10 @@ public sealed class PointerMode : InteractionModeBase
     private bool _draggingLabel;
     private bool _labelMoved;
 
+    // The legend row the press landed on, released as a click if the pointer never left it.
+    private AxesModel? _legendAxes;
+    private PlotObject? _legendRow;
+
     public override InteractionModeKind Kind => InteractionModeKind.Pointer;
 
     /// <summary>Dynamic: a hand while dragging, a crosshair near a pickable point, otherwise an arrow.</summary>
@@ -55,6 +59,17 @@ public sealed class PointerMode : InteractionModeBase
             _dragStartAnchors = tip.GetAnchorPoints().ToArray();
             _draggingLabel = true;
             _labelMoved = false;
+            return;
+        }
+
+        // A legend row is clickable with the default tool too: toggling a series should not require
+        // switching to the edit tool first.
+        if (controller.Surface.TryGetAxesAt(e.Position, out AxesModel legendAxes, out _, out _)
+            && legendAxes.Legend.Visible
+            && controller.Surface.GetLegendRowAt(legendAxes, e.Position) is { } row)
+        {
+            _legendAxes = legendAxes;
+            _legendRow = row;
             return;
         }
 
@@ -108,6 +123,22 @@ public sealed class PointerMode : InteractionModeBase
 
     public override void OnPointerUp(InteractionController controller, PointerEventArgs e)
     {
+        if (_legendRow is not null)
+        {
+            AxesModel? axes = _legendAxes;
+            PlotObject row = _legendRow;
+            _legendAxes = null;
+            _legendRow = null;
+
+            // Only a release still on the same row counts; sliding off it cancels, the way a button does.
+            if (axes is not null && ReferenceEquals(controller.Surface.GetLegendRowAt(axes, e.Position), row))
+            {
+                controller.Surface.OnLegendRowClicked(axes, row);
+            }
+
+            return;
+        }
+
         if (_draggingLabel)
         {
             if (_labelMoved && _dragTip is not null)

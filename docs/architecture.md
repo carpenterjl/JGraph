@@ -851,5 +851,21 @@ Implemented through Milestone 45 — a working figure window you can edit, save,
   so nothing about the gather or the scatter changes. `diff(A, 0)` is `A`, `diff(A, [], dim)` takes the
   default, and the JGS dialect (which never calls the wrapper) keeps its own one-argument `diff`.
 
+- **M51** gives a script **handles on figure objects**, and gives a table subscripts
+  ([ADR 0051](adr/0051-handles-on-figure-objects.md)). It came from running an ordinary user analysis
+  script, which failed on its sixth line and then on most of what followed. A handle is an ordinary
+  number keyed into `JgsHandleRegistry` — pre-HG2 MATLAB's own model, chosen because handles then live
+  in arrays, compare by identity, and gather out of struct-array fields with no new machinery.
+  `subplot` and `plot` hand them back, `plot(ax, …)` and `title(ax, …)` aim a verb at a named axes
+  without moving `gca`, `p.Color` and `p.Visible = 'off'` read and write properties, and
+  `legend(ax, h, 'Location', 'best')` returns a legend handle whose `ItemHitFcn` **runs when the row
+  is clicked in the window** — `LegendRenderer` publishes each row's rectangle, the click travels out
+  through `IInteractionSurface` to `ScriptGraphicsCallbacks`, and the live console session runs the
+  callback under a one-slot busy flag so it can never interleave with a running statement. On the data
+  side, `T{rows, vars}` and `T(rows, vars)` reuse the array subscript machinery (so `:`, `end`, ranges
+  and masks come free), `readtable` finds the data block under a file's preamble by width, `unique`
+  accepts a cell of char, and the lexer now records which quote a string literal used, because
+  `['SN:' id]` is one char row where `["a" "b"]` is two strings.
+
 The `JGraph.Demo` gallery exercises the plot types, annotations, and both APIs;
 `JGraph.Application` is the interactive figure window with data import and scripting.

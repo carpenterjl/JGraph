@@ -1,4 +1,5 @@
 using JGraph.Api;
+using JGraph.Core.Model;
 
 namespace JGraph.Scripting.Jgs;
 
@@ -25,6 +26,9 @@ internal sealed class JgsReplSession : IScriptSession
     private Dictionary<string, JgsValue> _pristine = null!;
     private bool _disposed;
 
+    /// <summary>1 while a statement or a callback owns the interpreter (the two must not overlap).</summary>
+    private int _busy;
+
     /// <summary>Creates a session and its first workspace. Resets the figure registry: a new session
     /// is a new workspace, and its figure numbers start from a known state.</summary>
     /// <param name="context">The host services for the session's whole lifetime.</param>
@@ -36,6 +40,7 @@ internal sealed class JgsReplSession : IScriptSession
         _dialect = dialect ?? throw new ArgumentNullException(nameof(dialect));
         Language = language ?? throw new ArgumentNullException(nameof(language));
         JG.Reset();
+        JgsHandleRegistry.Clear();
         Build();
     }
 
@@ -77,6 +82,7 @@ internal sealed class JgsReplSession : IScriptSession
 
         ReleaseWorkspace();
         JG.Reset();
+        JgsHandleRegistry.Clear();
         Build();
     }
 
@@ -86,6 +92,7 @@ internal sealed class JgsReplSession : IScriptSession
         if (!_disposed)
         {
             _disposed = true;
+            ScriptGraphicsCallbacks.SetLegendItemHitInvoker(null);
             ReleaseWorkspace();
         }
 
@@ -93,6 +100,19 @@ internal sealed class JgsReplSession : IScriptSession
     }
 
     private ScriptRunResult Execute(string code, string sourceId, CancellationToken cancellationToken, bool asFile = false)
+    {
+        Interlocked.Exchange(ref _busy, 1);
+        try
+        {
+            return ExecuteCore(code, sourceId, cancellationToken, asFile);
+        }
+        finally
+        {
+            Interlocked.Exchange(ref _busy, 0);
+        }
+    }
+
+    private ScriptRunResult ExecuteCore(string code, string sourceId, CancellationToken cancellationToken, bool asFile)
     {
         _globals.BeginRun(asFile ? ScriptDirectoryOf(sourceId) : null, asFile ? sourceId : null);
         _interpreter.BeginStatement(cancellationToken);
@@ -157,6 +177,54 @@ internal sealed class JgsReplSession : IScriptSession
 
         _pristine = _environment.Locals.ToDictionary(
             static p => p.Key, static p => p.Value, StringComparer.Ordinal);
+
+        // A figure window outlives the run that drew it, so its clicks come back to this session.
+        ScriptGraphicsCallbacks.SetLegendItemHitInvoker(InvokeLegendItemHit);
+    }
+
+    /// <summary>
+    /// Runs a legend's <c>ItemHitFcn</c> for a clicked series, with MATLAB's two arguments: the
+    /// legend itself, and an event whose <c>Peer</c> is the line that was clicked. Returns false when
+    /// that legend has no callback, so the caller can leave the click alone.
+    /// </summary>
+    private bool InvokeLegendItemHit(AxesModel axes, PlotObject plot)
+    {
+        if (_disposed || !JgsHandleRegistry.TryGet(
+                JgsHandleRegistry.For(JgsHandleKind.Legend, axes.Legend), out JgsHandleEntry? legend)
+            || legend.ItemHitFcn is not { } callback)
+        {
+            return false;
+        }
+
+        // The interpreter is not re-entrant, and a click arrives on the window's thread. A statement
+        // already running owns it; say so and let the click go rather than corrupt the workspace.
+        if (Interlocked.CompareExchange(ref _busy, 1, 0) != 0)
+        {
+            _context.Output.WriteLine("The workspace is busy; the legend click was ignored.");
+            return true;
+        }
+
+        JgsValue source = JgsHandleRegistry.For(JgsHandleKind.Legend, axes.Legend);
+        JgsValue peer = JgsHandleRegistry.For(JgsHandleKind.Line, plot);
+        var eventFields = new Dictionary<string, JgsValue>(StringComparer.Ordinal) { ["Peer"] = peer };
+
+        _globals.BeginRun(null, null);
+        _interpreter.BeginStatement(CancellationToken.None);
+        try
+        {
+            callback.AsCallable.Call([source, JgsValue.Struct(eventFields)], 0, 0);
+        }
+        catch (JgsException ex)
+        {
+            _context.Output.WriteError(new ScriptDiagnostic(ex.Line, ex.Column, ex.Message, IsError: true).ToString());
+        }
+        finally
+        {
+            _globals.ShowTouchedFigures();
+            Interlocked.Exchange(ref _busy, 0);
+        }
+
+        return true;
     }
 
     /// <summary>The user-created (or rebound) names and their values, the set <c>whos</c> lists.</summary>

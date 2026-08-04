@@ -107,6 +107,15 @@ public sealed class EditMode : InteractionModeBase
 
     public override void OnPointerUp(InteractionController controller, PointerEventArgs e)
     {
+        // A press and release on a legend row with no movement in between is a click on that entry,
+        // not a drag of the legend that happened to go nowhere.
+        if (_dragging && !_moved && _legendTarget is not null
+            && _legendTarget.Parent is AxesModel clickedAxes
+            && controller.Surface.GetLegendRowAt(clickedAxes, e.Position) is { } clickedPlot)
+        {
+            controller.Surface.OnLegendRowClicked(clickedAxes, clickedPlot);
+        }
+
         if (_dragging && _moved && _legendTarget is not null)
         {
             // Placement and the position mode changed together, so they undo together.

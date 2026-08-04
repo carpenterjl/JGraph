@@ -25,8 +25,12 @@ internal static class LegendRenderer
     public static bool SyncEntries(AxesModel axes) =>
         axes.Legend.SyncEntries(axes.Plots.Where(static p => p is ILegendItem));
 
-    /// <summary>Draws the legend and returns the box it occupied, or null when nothing was drawn.</summary>
-    public static Rect2D? Draw(IRenderContext context, AxesModel axes, Rect2D plotArea, ITheme theme)
+    /// <summary>
+    /// Draws the legend and returns where it landed, or null when nothing was drawn. Each row's own
+    /// rectangle comes back beside the box, so a click can be traced to the series it names without
+    /// the interaction layer having to lay the legend out again.
+    /// </summary>
+    public static LegendLayout? Draw(IRenderContext context, AxesModel axes, Rect2D plotArea, ITheme theme)
     {
         IReadOnlyList<Color> palette = axes.ColorOrder ?? theme.SeriesPalette;
 
@@ -40,7 +44,7 @@ internal static class LegendRenderer
         }
 
         LegendModel legend = axes.Legend;
-        var entries = new List<(string Label, LegendKey Key)>();
+        var entries = new List<(string Label, LegendKey Key, PlotObject Plot)>();
         foreach (LegendEntryModel entry in legend.Entries)
         {
             if (!entry.Visible
@@ -56,7 +60,7 @@ internal static class LegendRenderer
                 continue;
             }
 
-            entries.Add((label, item.GetLegendKey(colors.TryGetValue(plot, out Color c) ? c : Colors.Black)));
+            entries.Add((label, item.GetLegendKey(colors.TryGetValue(plot, out Color c) ? c : Colors.Black), plot));
         }
 
         if (entries.Count == 0)
@@ -66,7 +70,7 @@ internal static class LegendRenderer
 
         double rowHeight = 0;
         double maxLabelWidth = 0;
-        foreach ((string label, _) in entries)
+        foreach ((string label, _, _) in entries)
         {
             Size2D size = context.MeasureText(label, legend.TextStyle);
             rowHeight = System.Math.Max(rowHeight, size.Height);
@@ -82,7 +86,8 @@ internal static class LegendRenderer
         context.DrawRectangle(box, border, legend.Background);
 
         double y = box.Top + Padding;
-        foreach ((string label, LegendKey key) in entries)
+        var rows = new List<LegendRowBounds>(entries.Count);
+        foreach ((string label, LegendKey key, PlotObject plot) in entries)
         {
             double rowCenterY = y + (rowHeight / 2);
             double swatchLeft = box.Left + Padding;
@@ -95,10 +100,13 @@ internal static class LegendRenderer
                 HorizontalAlignment.Left,
                 VerticalAlignment.Middle);
 
+            // The clickable row spans the whole box width, not just the drawn glyphs — a click just
+            // right of a short label is still a click on that row.
+            rows.Add(new LegendRowBounds(plot, new Rect2D(box.Left, y, box.Width, rowHeight)));
             y += rowHeight + RowGap;
         }
 
-        return box;
+        return new LegendLayout(box, rows);
     }
 
     private static void DrawSwatch(IRenderContext context, LegendKey key, double left, double centerY)

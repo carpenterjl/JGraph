@@ -169,6 +169,30 @@ public class FigureControl : SKElement, IInteractionSurface, IFigureNavigator
     }
 
     /// <inheritdoc />
+    public PlotObject? GetLegendRowAt(AxesModel axes, Point2D pixel)
+    {
+        foreach (AxesRenderInfo info in _lastResult.Axes)
+        {
+            if (ReferenceEquals(info.Axes, axes))
+            {
+                return info.Legend?.HitTest(pixel);
+            }
+        }
+
+        return null;
+    }
+
+    /// <summary>
+    /// Raised when a legend row is clicked rather than dragged. The host decides what a click means;
+    /// the control only knows which series was under the pointer.
+    /// </summary>
+    public event EventHandler<LegendRowClickedEventArgs>? LegendRowClicked;
+
+    /// <inheritdoc />
+    public void OnLegendRowClicked(AxesModel axes, PlotObject plot) =>
+        LegendRowClicked?.Invoke(this, new LegendRowClickedEventArgs(axes, plot));
+
+    /// <inheritdoc />
     public void RequestRender() => InvalidateVisual();
 
     protected override void OnPaintSurface(SKPaintSurfaceEventArgs e)

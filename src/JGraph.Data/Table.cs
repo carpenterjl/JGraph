@@ -93,6 +93,96 @@ public sealed class Table
         return false;
     }
 
+    /// <summary>
+    /// A new table holding the given rows of the given columns, in the order asked for. The columns keep
+    /// their names and types; the source table is unchanged.
+    /// </summary>
+    /// <exception cref="ArgumentOutOfRangeException">A row or column index is outside the table.</exception>
+    /// <exception cref="ArgumentException">A column is picked more than once (names must stay unique).</exception>
+    public Table Select(IReadOnlyList<int> rows, IReadOnlyList<int> columns)
+    {
+        ArgumentNullException.ThrowIfNull(rows);
+        ArgumentNullException.ThrowIfNull(columns);
+
+        var picked = new TableColumn[columns.Count];
+        for (int c = 0; c < columns.Count; c++)
+        {
+            int index = columns[c];
+            if (index < 0 || index >= _columns.Length)
+            {
+                throw new ArgumentOutOfRangeException(
+                    nameof(columns), index, $"Column index {index} is outside a table with {_columns.Length} column(s).");
+            }
+
+            picked[c] = SelectRows(_columns[index], rows, RowCount);
+        }
+
+        return new Table(picked);
+    }
+
+    private static TableColumn SelectRows(TableColumn column, IReadOnlyList<int> rows, int rowCount)
+    {
+        switch (column)
+        {
+            case NumberColumn numbers:
+            {
+                var values = new double[rows.Count];
+                for (int r = 0; r < rows.Count; r++)
+                {
+                    values[r] = numbers.Values[CheckRow(rows[r], rowCount)];
+                }
+
+                return new NumberColumn(column.Name, values);
+            }
+
+            case DateTimeColumn dates:
+            {
+                var values = new double[rows.Count];
+                for (int r = 0; r < rows.Count; r++)
+                {
+                    values[r] = dates.Values[CheckRow(rows[r], rowCount)];
+                }
+
+                return new DateTimeColumn(column.Name, values);
+            }
+
+            case TextColumn text:
+            {
+                var values = new string?[rows.Count];
+                for (int r = 0; r < rows.Count; r++)
+                {
+                    values[r] = text.GetString(CheckRow(rows[r], rowCount));
+                }
+
+                return new TextColumn(column.Name, values);
+            }
+
+            default:
+            {
+                // An unknown column kind still has the text view every column promises.
+                var values = new string?[rows.Count];
+                for (int r = 0; r < rows.Count; r++)
+                {
+                    int row = CheckRow(rows[r], rowCount);
+                    values[r] = column.IsMissing(row) ? null : column.GetText(row);
+                }
+
+                return new TextColumn(column.Name, values);
+            }
+        }
+    }
+
+    private static int CheckRow(int row, int rowCount)
+    {
+        if (row < 0 || row >= rowCount)
+        {
+            throw new ArgumentOutOfRangeException(
+                nameof(row), row, $"Row index {row} is outside a table with {rowCount} row(s).");
+        }
+
+        return row;
+    }
+
     /// <summary>Reads a table from a delimited-text (CSV/TSV) file.</summary>
     public static Table ReadCsv(string path, ImportOptions? options = null) =>
         DelimitedTextReader.Read(path, options).Table;

@@ -135,14 +135,14 @@ value type the model does not have. **`slice` cannot take its own name at all**:
 array builtin since M18, and shadowing a working builtin to add a volume verb JGraph could not draw
 anyway would be a straight loss.
 
-**Handle graphics and figure tooling — 43.** `alim` `alpha` `alphamap` `annotation` `cla` `gobjects`
-`findall` `gcbf` `getframe` `getappdata` `isappdata` `newplot` `ishold` `linkprop` `linkaxes`
+**Handle graphics and figure tooling — 42.** `alim` `alpha` `alphamap` `annotation` `cla` `gobjects`
+`findall` `gcbf` `getframe` `getappdata` `isappdata` `newplot` `ishold` `linkprop`
 `openfig` `savefig` `hgload` `hgsave` `plotedit` `plottools` `plotbrowser` `propertyeditor`
 `figurepalette` `datacursormode` `pan` `rotate` `rbbox` `refresh` `refreshdata` `printdlg`
 `printpreview` `pagesetupdlg` `exportsetupdlg` `axtoolbar` `axtoolbarbtn` `cameratoolbar`
-`showplottool` `uiaxes` `geoaxes` and the three interactivity toggles. These need the handle value
-type recorded under the builtin list below, or address an editing surface JGraph already has in the
-plot browser and inspector.
+`showplottool` `uiaxes` `geoaxes` and the three interactivity toggles. Most of these address an
+editing surface JGraph already has in the plot browser and inspector. **`linkaxes` left this list in
+M51**, which gave a script real axes handles to hand it.
 
 **Properties, rulers, and legacy appearance — 70.** Small, mostly independent, mostly one property
 each: the 23 tick/ruler commands (`xticks` `xticklabels` `xtickangle` `xtickformat` and their y, z,
@@ -253,6 +253,14 @@ One entry remains from M49: **a scalar does not reduce.** `sum(7)` and `cumsum(5
 expected an array, where MATLAB answers `7` and `5`. These are one-line guards in the base builtins
 rather than anything about shape.
 
+M51 found four more while making a real user script run, and closed all four. A table answered only
+to `T.Var`, so `data{:,1}` and `data(1:5, :)` both threw where MATLAB reads a variable's contents and
+a smaller table; `readtable` could not find the data block under a file's preamble, where MATLAB
+detects it; `unique` refused a cell of char, which is exactly the shape a text variable comes back
+as; and `['SN:' id]` built a two-element list instead of one char row, because the two quote styles
+were not told apart. The last of those needed the lexer to record which quote a string literal used —
+`["a" "b"]` is still two strings side by side, as MATLAB has it.
+
 One entry, found in M45: **`gradient` is not implemented.** It is documented as kind *function*, so
 neither this file nor the tracker ever counted it as a gap, and it surfaced only because M45's smoke
 script reached for it to build a vector field for `quiver`. Nothing about the value model stands in
@@ -269,9 +277,17 @@ it is written here because otherwise nothing in the process would remember it.
 `setappdata` `uicontextmenu` `uicontrol` `uimenu` `uipanel` `uipushtool` `uitoggletool` `uitoolbar`
 `waitfor` `waitforbuttonpress`
 
-What is left here really is about handles: `get`/`set`/`findobj` need a handle value type over the
-figure object model, which is a deliberate non-goal — the figure is edited through the plot browser
-and inspector instead — and the `ui*` family is app building.
+**M51 overturned the non-goal this section used to record.** A script *does* get handles on figure
+objects now (ADR 0051): `subplot` and `plot` hand them back, `plot(ax, …)` and `title(ax, …)` aim a
+verb at a named axes, `p.Color` and `p.Visible = 'off'` read and write properties, `legend(ax, h,
+'Location', …)` returns a legend handle, and `lgd.ItemHitFcn` runs when a legend row is clicked in
+the window. A handle is an ordinary number keyed into a runtime registry — pre-HG2 MATLAB's own
+model — which is what lets handles live in arrays, compare by identity, and gather out of struct
+arrays with no new machinery.
+
+What is left here is the rest of the family. `get`/`set`/`findobj` are a name-driven property
+interface over every object kind, where M51 gave the dot a fixed set per kind; they are a natural
+next step rather than a barrier. The `ui*` family is app building and stays out.
 
 The eight this section used to also list — `fill`, `fill3`, `patch`, `plot3`, `line`, `text`,
 `surface` and `light` — were never about handles. They were drawing primitives the figure model did

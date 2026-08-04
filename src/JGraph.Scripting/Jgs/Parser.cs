@@ -1023,7 +1023,10 @@ internal sealed class Parser
                 return new EndExpr { Line = token.Line, Column = token.Column };
             case TokenType.String:
                 Advance();
-                return new StringLiteral(token.Text) { Line = token.Line, Column = token.Column };
+                return new StringLiteral(token.Text)
+                {
+                    Line = token.Line, Column = token.Column, IsChar = token.IsCharLiteral,
+                };
             case TokenType.True:
             case TokenType.False:
                 Advance();

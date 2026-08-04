@@ -56,5 +56,18 @@ internal sealed class FakeInteractionSurface : IInteractionSurface
     public Rect2D? GetLegendBounds(AxesModel axes) =>
         ReferenceEquals(axes, _axes) ? LegendBounds : null;
 
+    /// <summary>Settable so tests can place one clickable legend row without running a real paint.</summary>
+    public (PlotObject Plot, Rect2D Bounds)? LegendRow { get; set; }
+
+    /// <summary>The rows a test clicked, in order.</summary>
+    public List<(AxesModel Axes, PlotObject Plot)> LegendRowClicks { get; } = new();
+
+    public PlotObject? GetLegendRowAt(AxesModel axes, Point2D pixel) =>
+        ReferenceEquals(axes, _axes) && LegendRow is { } row && row.Bounds.Contains(pixel)
+            ? row.Plot
+            : null;
+
+    public void OnLegendRowClicked(AxesModel axes, PlotObject plot) => LegendRowClicks.Add((axes, plot));
+
     public void RequestRender() => RenderRequests++;
 }

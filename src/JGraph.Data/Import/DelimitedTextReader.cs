@@ -78,8 +78,22 @@ public static class DelimitedTextReader
             throw new ImportException("No rows were found to import.");
         }
 
+        // A caller who counted the preamble themselves has said where the data starts; only look for it
+        // when they have not. Dropping the preamble before the culture sample also keeps its cells from
+        // voting on the decimal mark.
+        int preamble = options.SkipRows > 0 ? 0 : DataBlockDetector.Detect(records);
+        if (preamble > 0)
+        {
+            records.RemoveRange(0, preamble);
+        }
+
         CultureInfo culture = options.Culture ?? DetectCulture(records, delimiter);
         (Table table, bool hasHeader, List<string> warnings) = TableBuilder.Build(records, options.HasHeader, culture);
+
+        if (preamble > 0)
+        {
+            warnings.Insert(0, $"Skipped {preamble} row(s) of preamble before the data block.");
+        }
 
         return new ImportResult(table, delimiter, hasHeader, culture, warnings);
     }

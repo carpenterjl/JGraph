@@ -45,6 +45,12 @@ internal sealed class NumberLiteral(double value) : Expr
 internal sealed class StringLiteral(string value) : Expr
 {
     public string Value { get; } = value;
+
+    /// <summary>
+    /// Whether the literal was written with single quotes — MATLAB's char row rather than its string.
+    /// The two differ inside a bracket literal, where char rows join and strings stand side by side.
+    /// </summary>
+    public bool IsChar { get; init; }
 }
 
 /// <summary>A boolean literal (<c>true</c>/<c>false</c>).</summary>

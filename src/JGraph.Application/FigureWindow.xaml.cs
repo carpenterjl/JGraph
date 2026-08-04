@@ -3,6 +3,7 @@ using System.Globalization;
 using System.Windows;
 using JGraph.Application.Mvvm;
 using JGraph.Core.Primitives;
+using JGraph.Scripting;
 
 namespace JGraph.Application;
 
@@ -39,6 +40,11 @@ public partial class FigureWindow : Window
         Browser.UndoStack = FigureView.UndoStack;
         Inspector.UndoStack = FigureView.UndoStack;
         FigureView.Selection.SelectionChanged += (_, selected) => _viewModel.SelectedObject = selected;
+
+        // Clicking a legend entry runs the script callback the legend was given, if any — MATLAB's
+        // ItemHitFcn. A figure with no script behind it simply has nothing to run.
+        FigureView.LegendRowClicked += (_, clicked) =>
+            ScriptGraphicsCallbacks.InvokeLegendItemHit(clicked.Axes, clicked.Plot);
 
         FigureView.Theme = _viewModel.CurrentTheme;
         FigureView.ActiveMode = _viewModel.ActiveMode;

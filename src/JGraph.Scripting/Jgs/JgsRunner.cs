@@ -36,6 +36,7 @@ internal static class JgsRunner
         // and variable snapshots hold copies, never the buffers); finalizers remain the backstop
         // for everything else.
         JG.Reset();
+        JgsHandleRegistry.Clear();
         DisposePreviousRunBuffers();
         var globals = new JGraphScriptGlobals(context);
 
