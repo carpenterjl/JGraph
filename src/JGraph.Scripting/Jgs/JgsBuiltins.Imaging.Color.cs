@@ -15,26 +15,26 @@ namespace JGraph.Scripting.Jgs;
 /// </remarks>
 internal static partial class JgsBuiltins
 {
-    private static readonly ImgOptionSpec XyzSpec = new("rgb2xyz", [], ["ColorSpace", "WhitePoint"]);
+    private static readonly OptionSpec XyzSpec = new("rgb2xyz", [], ["ColorSpace", "WhitePoint"]);
 
-    private static readonly ImgOptionSpec LabSpec = new("rgb2lab", [], ["ColorSpace", "WhitePoint"]);
+    private static readonly OptionSpec LabSpec = new("rgb2lab", [], ["ColorSpace", "WhitePoint"]);
 
-    private static readonly ImgOptionSpec ToRgbSpec = new(
+    private static readonly OptionSpec ToRgbSpec = new(
         "lab2rgb", [], ["ColorSpace", "WhitePoint", "OutputType"]);
 
-    private static readonly ImgOptionSpec WhitePointOnlySpec = new("xyz2lab", [], ["WhitePoint"]);
+    private static readonly OptionSpec WhitePointOnlySpec = new("xyz2lab", [], ["WhitePoint"]);
 
-    private static readonly ImgOptionSpec GammaSpec = new("rgb2lin", [], ["ColorSpace", "OutputType"]);
+    private static readonly OptionSpec GammaSpec = new("rgb2lin", [], ["ColorSpace", "OutputType"]);
 
-    private static readonly ImgOptionSpec ChromadaptSpec = new("chromadapt", [], ["ColorSpace", "Method"]);
+    private static readonly OptionSpec ChromadaptSpec = new("chromadapt", [], ["ColorSpace", "Method"]);
 
-    private static readonly ImgOptionSpec IllumGraySpec = new("illumgray", [], ["Mask", "Norm"]);
+    private static readonly OptionSpec IllumGraySpec = new("illumgray", [], ["Mask", "Norm"]);
 
-    private static readonly ImgOptionSpec IllumSpec = new("illumwhite", [], ["Mask"]);
+    private static readonly OptionSpec IllumSpec = new("illumwhite", [], ["Mask"]);
 
-    private static readonly ImgOptionSpec DeltaESpec = new("deltaE", [], ["isInputLab"]);
+    private static readonly OptionSpec DeltaESpec = new("deltaE", [], ["isInputLab"]);
 
-    private static readonly ImgOptionSpec ColorDiffSpec = new(
+    private static readonly OptionSpec ColorDiffSpec = new(
         "imcolordiff", [], ["Standard", "isInputLab", "kL", "K1", "K2"]);
 
     private static void DefineColorBuiltins(
@@ -65,7 +65,7 @@ internal static partial class JgsBuiltins
 
         define("rgb2xyz", (args, line, col) =>
         {
-            ImgArgs parsed = XyzSpec.Parse(args, 1, line, col);
+            ParsedArgs parsed = XyzSpec.Parse(args, 1, line, col);
             ColorArg source = Triples("rgb2xyz", parsed.Positional, 0, line, col);
             (RgbColorSpace space, double[] white) = SpaceAndWhite("rgb2xyz", parsed, line, col);
             return ColorOut(ColorSpaces.RgbToXyz(source.Triples, space, white), source, ImageClass.Double);
@@ -73,7 +73,7 @@ internal static partial class JgsBuiltins
 
         define("xyz2rgb", (args, line, col) =>
         {
-            ImgArgs parsed = ToRgbSpec.Parse(args, 1, line, col);
+            ParsedArgs parsed = ToRgbSpec.Parse(args, 1, line, col);
             ColorArg source = Triples("xyz2rgb", parsed.Positional, 0, line, col);
             (RgbColorSpace space, double[] white) = SpaceAndWhite("xyz2rgb", parsed, line, col);
             return ColorOut(
@@ -82,7 +82,7 @@ internal static partial class JgsBuiltins
 
         define("rgb2lab", (args, line, col) =>
         {
-            ImgArgs parsed = LabSpec.Parse(args, 1, line, col);
+            ParsedArgs parsed = LabSpec.Parse(args, 1, line, col);
             ColorArg source = Triples("rgb2lab", parsed.Positional, 0, line, col);
             (RgbColorSpace space, double[] white) = SpaceAndWhite("rgb2lab", parsed, line, col);
             return ColorOut(ColorSpaces.RgbToLab(source.Triples, space, white), source, ImageClass.Double);
@@ -90,7 +90,7 @@ internal static partial class JgsBuiltins
 
         define("lab2rgb", (args, line, col) =>
         {
-            ImgArgs parsed = ToRgbSpec.Parse(args, 1, line, col);
+            ParsedArgs parsed = ToRgbSpec.Parse(args, 1, line, col);
             ColorArg source = Triples("lab2rgb", parsed.Positional, 0, line, col);
             (RgbColorSpace space, double[] white) = SpaceAndWhite("lab2rgb", parsed, line, col);
             return ColorOut(
@@ -99,7 +99,7 @@ internal static partial class JgsBuiltins
 
         define("xyz2lab", (args, line, col) =>
         {
-            ImgArgs parsed = WhitePointOnlySpec.Parse(args, 1, line, col);
+            ParsedArgs parsed = WhitePointOnlySpec.Parse(args, 1, line, col);
             ColorArg source = Triples("xyz2lab", parsed.Positional, 0, line, col);
             double[] white = WhitePointOption("xyz2lab", parsed, line, col);
             return ColorOut(ColorSpaces.XyzToLab(source.Triples, white), source, ImageClass.Double);
@@ -107,7 +107,7 @@ internal static partial class JgsBuiltins
 
         define("lab2xyz", (args, line, col) =>
         {
-            ImgArgs parsed = WhitePointOnlySpec.Parse(args, 1, line, col);
+            ParsedArgs parsed = WhitePointOnlySpec.Parse(args, 1, line, col);
             ColorArg source = Triples("lab2xyz", parsed.Positional, 0, line, col);
             double[] white = WhitePointOption("lab2xyz", parsed, line, col);
             return ColorOut(ColorSpaces.LabToXyz(source.Triples, white), source, ImageClass.Double);
@@ -153,7 +153,7 @@ internal static partial class JgsBuiltins
         // --- Gamma -----------------------------------------------------------------------------
         define("rgb2lin", (args, line, col) =>
         {
-            ImgArgs parsed = GammaSpec.Parse(args, 1, line, col);
+            ParsedArgs parsed = GammaSpec.Parse(args, 1, line, col);
             ColorArg source = Triples("rgb2lin", parsed.Positional, 0, line, col);
             RgbColorSpace space = SpaceOption("rgb2lin", parsed, line, col);
             return ColorOut(
@@ -162,7 +162,7 @@ internal static partial class JgsBuiltins
 
         define("lin2rgb", (args, line, col) =>
         {
-            ImgArgs parsed = GammaSpec.Parse(args, 1, line, col);
+            ParsedArgs parsed = GammaSpec.Parse(args, 1, line, col);
             ColorArg source = Triples("lin2rgb", parsed.Positional, 0, line, col);
             RgbColorSpace space = SpaceOption("lin2rgb", parsed, line, col);
             return ColorOut(
@@ -172,7 +172,7 @@ internal static partial class JgsBuiltins
         // --- White balance ---------------------------------------------------------------------
         define("chromadapt", (args, line, col) =>
         {
-            ImgArgs parsed = ChromadaptSpec.Parse(args, 2, line, col);
+            ParsedArgs parsed = ChromadaptSpec.Parse(args, 2, line, col);
             if (parsed.Positional.Count < 2)
             {
                 throw new JgsRuntimeException(line, col,
@@ -205,7 +205,7 @@ internal static partial class JgsBuiltins
 
         define("illumgray", (args, line, col) =>
         {
-            ImgArgs parsed = IllumGraySpec.Parse(args, 2, line, col);
+            ParsedArgs parsed = IllumGraySpec.Parse(args, 2, line, col);
             ColorArg source = Triples("illumgray", parsed.Positional, 0, line, col);
             double[] percentiles = parsed.Positional.Count >= 2
                 ? NumericVector("illumgray", parsed.Positional[1], line, col)
@@ -230,7 +230,7 @@ internal static partial class JgsBuiltins
 
         define("illumwhite", (args, line, col) =>
         {
-            ImgArgs parsed = IllumSpec.Parse(args, 2, line, col);
+            ParsedArgs parsed = IllumSpec.Parse(args, 2, line, col);
             ColorArg source = Triples("illumwhite", parsed.Positional, 0, line, col);
             double top = parsed.Positional.Count >= 2
                 ? Num("illumwhite", parsed.Positional, 1, line, col)
@@ -241,7 +241,7 @@ internal static partial class JgsBuiltins
 
         define("illumpca", (args, line, col) =>
         {
-            ImgArgs parsed = IllumSpec.Parse(args, 2, line, col);
+            ParsedArgs parsed = IllumSpec.Parse(args, 2, line, col);
             ColorArg source = Triples("illumpca", parsed.Positional, 0, line, col);
             double percentage = parsed.Positional.Count >= 2
                 ? Num("illumpca", parsed.Positional, 1, line, col)
@@ -266,7 +266,7 @@ internal static partial class JgsBuiltins
 
         define("deltaE", (args, line, col) =>
         {
-            ImgArgs parsed = DeltaESpec.Parse(args, 2, line, col);
+            ParsedArgs parsed = DeltaESpec.Parse(args, 2, line, col);
             (ColorArg source, double[,] lab1, double[,] lab2) =
                 LabPair("deltaE", parsed, parsed.Flag("isInputLab", false), line, col);
             return ScalarOut(ColorSpaces.DeltaE76(lab1, lab2), source);
@@ -274,7 +274,7 @@ internal static partial class JgsBuiltins
 
         define("imcolordiff", (args, line, col) =>
         {
-            ImgArgs parsed = ColorDiffSpec.Parse(args, 2, line, col);
+            ParsedArgs parsed = ColorDiffSpec.Parse(args, 2, line, col);
             (ColorArg source, double[,] lab1, double[,] lab2) =
                 LabPair("imcolordiff", parsed, parsed.Flag("isInputLab", false), line, col);
 
@@ -618,12 +618,12 @@ internal static partial class JgsBuiltins
         }
     }
 
-    private static double[] WhitePointOption(string name, ImgArgs parsed, int line, int col) =>
+    private static double[] WhitePointOption(string name, ParsedArgs parsed, int line, int col) =>
         parsed.Named("WhitePoint") is { } value
             ? WhitePointOf(name, value, line, col)
             : ColorSpaces.WhitePoint("d65");
 
-    private static RgbColorSpace SpaceOption(string name, ImgArgs parsed, int line, int col)
+    private static RgbColorSpace SpaceOption(string name, ParsedArgs parsed, int line, int col)
     {
         string word = (parsed.Text("ColorSpace") ?? "srgb").ToLowerInvariant();
         return word switch
@@ -638,11 +638,11 @@ internal static partial class JgsBuiltins
         };
     }
 
-    private static (RgbColorSpace Space, double[] White) SpaceAndWhite(string name, ImgArgs parsed, int line, int col) =>
+    private static (RgbColorSpace Space, double[] White) SpaceAndWhite(string name, ParsedArgs parsed, int line, int col) =>
         (SpaceOption(name, parsed, line, col), WhitePointOption(name, parsed, line, col));
 
     /// <summary>The <c>'OutputType'</c> option, which names the class the result should carry.</summary>
-    private static ImageClass? OutputClass(string name, ImgArgs parsed, int line, int col)
+    private static ImageClass? OutputClass(string name, ParsedArgs parsed, int line, int col)
     {
         if (parsed.Text("OutputType") is not { } word)
         {
@@ -656,7 +656,7 @@ internal static partial class JgsBuiltins
 
     /// <summary>Runs an illuminant estimator, applying a 'Mask' option first if one was given.</summary>
     private static JgsValue Estimate(
-        string name, ImgArgs parsed, ColorArg source, Func<bool[]?, double[]> estimator, int line, int col)
+        string name, ParsedArgs parsed, ColorArg source, Func<bool[]?, double[]> estimator, int line, int col)
     {
         bool[]? mask = null;
         if (parsed.Named("Mask") is { } value)
@@ -688,7 +688,7 @@ internal static partial class JgsBuiltins
 
     /// <summary>Reads the two pictures a colour-difference metric compares, as L*a*b*.</summary>
     private static (ColorArg Source, double[,] First, double[,] Second) LabPair(
-        string name, ImgArgs parsed, bool alreadyLab, int line, int col)
+        string name, ParsedArgs parsed, bool alreadyLab, int line, int col)
     {
         if (parsed.Positional.Count < 2)
         {

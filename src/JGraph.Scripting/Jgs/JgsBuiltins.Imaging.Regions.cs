@@ -28,34 +28,34 @@ namespace JGraph.Scripting.Jgs;
 /// </remarks>
 internal static partial class JgsBuiltins
 {
-    private static readonly ImgOptionSpec BwAreaFiltSpec = new("bwareafilt", ["largest", "smallest"], []);
+    private static readonly OptionSpec BwAreaFiltSpec = new("bwareafilt", ["largest", "smallest"], []);
 
     // The property word is positional, not an option — 'Area' has to reach the body rather than be
     // reported as an unrecognized option.
-    private static readonly ImgOptionSpec BwPropFiltSpec = new(
+    private static readonly OptionSpec BwPropFiltSpec = new(
         "bwpropfilt", ["largest", "smallest"], [], StringPositionals: 3);
 
-    private static readonly ImgOptionSpec SuperpixelsSpec = new(
+    private static readonly OptionSpec SuperpixelsSpec = new(
         "superpixels", [], ["Compactness", "IsInputLab", "Method", "NumIterations"]);
 
-    private static readonly ImgOptionSpec KMeansSpec = new(
+    private static readonly OptionSpec KMeansSpec = new(
         "imsegkmeans", [], ["NormalizeInput", "NumAttempts", "MaxIterations", "Threshold"]);
 
-    private static readonly ImgOptionSpec ActiveContourSpec = new(
+    private static readonly OptionSpec ActiveContourSpec = new(
         "activecontour", ["Chan-Vese", "edge"], ["SmoothFactor", "ContractionBias"]);
 
-    private static readonly ImgOptionSpec FindCirclesSpec = new(
+    private static readonly OptionSpec FindCirclesSpec = new(
         "imfindcircles", [], ["ObjectPolarity", "Sensitivity", "EdgeThreshold", "Method"]);
 
-    private static readonly ImgOptionSpec LabelOverlaySpec = new(
+    private static readonly OptionSpec LabelOverlaySpec = new(
         "labeloverlay", [], ["Colormap", "IncludedLabels", "Transparency"]);
 
-    private static readonly ImgOptionSpec HoughSpec = new("hough", [], ["Theta", "RhoResolution"]);
+    private static readonly OptionSpec HoughSpec = new("hough", [], ["Theta", "RhoResolution"]);
 
-    private static readonly ImgOptionSpec HoughPeaksSpec = new(
+    private static readonly OptionSpec HoughPeaksSpec = new(
         "houghpeaks", [], ["Threshold", "NHoodSize"]);
 
-    private static readonly ImgOptionSpec VisSpec = new(
+    private static readonly OptionSpec VisSpec = new(
         "viscircles", [], ["Color", "LineWidth", "LineStyle", "EnhanceVisibility"]);
 
     private static void DefineRegionBuiltins(
@@ -389,7 +389,7 @@ internal static partial class JgsBuiltins
         define("activecontour", (args, line, col) =>
         {
             ArityRange("activecontour", args, 2, 8, line, col);
-            ImgArgs parsed = ActiveContourSpec.Parse(args, 3, line, col);
+            ParsedArgs parsed = ActiveContourSpec.Parse(args, 3, line, col);
             if (parsed.Positional.Count < 2)
             {
                 throw new JgsRuntimeException(line, col, "activecontour(A, mask) needs a picture and a mask.");
@@ -602,7 +602,7 @@ internal static partial class JgsBuiltins
         define("labeloverlay", (args, line, col) =>
         {
             ArityRange("labeloverlay", args, 2, 8, line, col);
-            ImgArgs parsed = LabelOverlaySpec.Parse(args, 2, line, col);
+            ParsedArgs parsed = LabelOverlaySpec.Parse(args, 2, line, col);
             if (parsed.Positional.Count < 2)
             {
                 throw new JgsRuntimeException(line, col, "labeloverlay(A, L) needs a picture and labels.");
@@ -658,7 +658,7 @@ internal static partial class JgsBuiltins
         define("viscircles", (args, line, col) =>
         {
             ArityRange("viscircles", args, 2, 10, line, col);
-            ImgArgs parsed = VisSpec.Parse(args, 2, line, col);
+            ParsedArgs parsed = VisSpec.Parse(args, 2, line, col);
             if (parsed.Positional.Count < 2)
             {
                 throw new JgsRuntimeException(line, col, "viscircles(centers, radii) needs both.");
@@ -687,7 +687,7 @@ internal static partial class JgsBuiltins
         define("visboundaries", (args, line, col) =>
         {
             ArityRange("visboundaries", args, 1, 9, line, col);
-            ImgArgs parsed = VisSpec.Parse(args, 1, line, col);
+            ParsedArgs parsed = VisSpec.Parse(args, 1, line, col);
             if (parsed.Positional.Count < 1)
             {
                 throw new JgsRuntimeException(line, col, "visboundaries needs a mask or a set of boundaries.");
@@ -900,7 +900,7 @@ internal static partial class JgsBuiltins
         IReadOnlyList<JgsValue> args, int wanted, int line, int col, Random random)
     {
         ArityRange("imsegkmeans", args, 2, 10, line, col);
-        ImgArgs parsed = KMeansSpec.Parse(args, 2, line, col);
+        ParsedArgs parsed = KMeansSpec.Parse(args, 2, line, col);
         if (parsed.Positional.Count < 2)
         {
             throw new JgsRuntimeException(line, col, "imsegkmeans(I, k) needs a picture and a cluster count.");
@@ -937,7 +937,7 @@ internal static partial class JgsBuiltins
         IReadOnlyList<JgsValue> args, int wanted, int line, int col)
     {
         ArityRange("superpixels", args, 2, 10, line, col);
-        ImgArgs parsed = SuperpixelsSpec.Parse(args, 2, line, col);
+        ParsedArgs parsed = SuperpixelsSpec.Parse(args, 2, line, col);
         if (parsed.Positional.Count < 2)
         {
             throw new JgsRuntimeException(line, col, "superpixels(A, N) needs a picture and a count.");
@@ -975,7 +975,7 @@ internal static partial class JgsBuiltins
         IReadOnlyList<JgsValue> args, int wanted, int line, int col, JgsDialect dialect)
     {
         ArityRange("imfindcircles", args, 2, 10, line, col);
-        ImgArgs parsed = FindCirclesSpec.Parse(args, 2, line, col);
+        ParsedArgs parsed = FindCirclesSpec.Parse(args, 2, line, col);
         if (parsed.Positional.Count < 2)
         {
             throw new JgsRuntimeException(line, col, "imfindcircles(A, radius) needs a picture and a radius.");
@@ -1435,8 +1435,8 @@ internal static partial class JgsBuiltins
     private static JgsValue PropertyFilter(
         string name, IReadOnlyList<JgsValue> args, int line, int col, JgsDialect dialect)
     {
-        ImgOptionSpec spec = name == "bwareafilt" ? BwAreaFiltSpec : BwPropFiltSpec;
-        ImgArgs parsed = spec.Parse(args, name == "bwareafilt" ? 3 : 5, line, col);
+        OptionSpec spec = name == "bwareafilt" ? BwAreaFiltSpec : BwPropFiltSpec;
+        ParsedArgs parsed = spec.Parse(args, name == "bwareafilt" ? 3 : 5, line, col);
         if (parsed.Positional.Count < 2)
         {
             throw new JgsRuntimeException(line, col, $"{name} needs an image and a range or a count.");

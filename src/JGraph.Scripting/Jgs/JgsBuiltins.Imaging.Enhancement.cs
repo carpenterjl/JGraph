@@ -15,41 +15,41 @@ namespace JGraph.Scripting.Jgs;
 /// </remarks>
 internal static partial class JgsBuiltins
 {
-    private static readonly ImgOptionSpec AdaptHistEqSpec = new(
+    private static readonly OptionSpec AdaptHistEqSpec = new(
         "adapthisteq", [], ["NumTiles", "ClipLimit", "NBins", "Range", "Distribution", "Alpha"]);
 
-    private static readonly ImgOptionSpec HistMatchSpec = new("imhistmatch", [], ["Method"]);
+    private static readonly OptionSpec HistMatchSpec = new("imhistmatch", [], ["Method"]);
 
-    private static readonly ImgOptionSpec FlatFieldSpec = new("imflatfield", [], ["FilterSize"]);
+    private static readonly OptionSpec FlatFieldSpec = new("imflatfield", [], ["FilterSize"]);
 
-    private static readonly ImgOptionSpec DecorrStretchSpec = new(
+    private static readonly OptionSpec DecorrStretchSpec = new(
         "decorrstretch", [], ["Mode", "TargetMean", "TargetSigma", "Tol", "SampleSubs"]);
 
-    private static readonly ImgOptionSpec SharpenSpec = new(
+    private static readonly OptionSpec SharpenSpec = new(
         "imsharpen", [], ["Radius", "Amount", "Threshold"]);
 
-    private static readonly ImgOptionSpec BilateralSpec = new(
+    private static readonly OptionSpec BilateralSpec = new(
         "imbilatfilt", [], ["NeighborhoodSize", "Padding"]);
 
-    private static readonly ImgOptionSpec GuidedSpec = new(
+    private static readonly OptionSpec GuidedSpec = new(
         "imguidedfilter", [], ["NeighborhoodSize", "DegreeOfSmoothing"]);
 
-    private static readonly ImgOptionSpec DiffuseSpec = new(
+    private static readonly OptionSpec DiffuseSpec = new(
         "imdiffusefilt", [],
         ["GradientThreshold", "NumberOfIterations", "Connectivity", "ConductionMethod"]);
 
-    private static readonly ImgOptionSpec DiffuseEstimateSpec = new(
+    private static readonly OptionSpec DiffuseEstimateSpec = new(
         "imdiffuseest", [], ["Connectivity", "ConductionMethod", "NumberOfIterations"]);
 
-    private static readonly ImgOptionSpec NonLocalMeansSpec = new(
+    private static readonly OptionSpec NonLocalMeansSpec = new(
         "imnlmfilt", [], ["DegreeOfSmoothing", "SearchWindowSize", "ComparisonWindowSize"]);
 
-    private static readonly ImgOptionSpec ReduceHazeSpec = new(
+    private static readonly OptionSpec ReduceHazeSpec = new(
         "imreducehaze", [], ["Method", "AtmosphericLight", "ContrastEnhancement", "BoostAmount"]);
 
-    private static readonly ImgOptionSpec LocalBrightenSpec = new("imlocalbrighten", [], ["AlphaBlend"]);
+    private static readonly OptionSpec LocalBrightenSpec = new("imlocalbrighten", [], ["AlphaBlend"]);
 
-    private static readonly ImgOptionSpec FiberMetricSpec = new(
+    private static readonly OptionSpec FiberMetricSpec = new(
         "fibermetric", [], ["StructureSensitivity", "ObjectPolarity"]);
 
     private static void DefineEnhancementBuiltins(
@@ -59,7 +59,7 @@ internal static partial class JgsBuiltins
         define("adapthisteq", (args, line, col) =>
         {
             ArityRange("adapthisteq", args, 1, 13, line, col);
-            ImgArgs parsed = AdaptHistEqSpec.Parse(args, 1, line, col);
+            ParsedArgs parsed = AdaptHistEqSpec.Parse(args, 1, line, col);
             if (parsed.Positional.Count < 1)
             {
                 throw new JgsRuntimeException(line, col, "adapthisteq needs an image.");
@@ -108,7 +108,7 @@ internal static partial class JgsBuiltins
         define("imflatfield", (args, line, col) =>
         {
             ArityRange("imflatfield", args, 2, 5, line, col);
-            ImgArgs parsed = FlatFieldSpec.Parse(args, 3, line, col);
+            ParsedArgs parsed = FlatFieldSpec.Parse(args, 3, line, col);
             if (parsed.Positional.Count < 2)
             {
                 throw new JgsRuntimeException(line, col, "imflatfield(I, sigma) needs an image and a sigma.");
@@ -138,7 +138,7 @@ internal static partial class JgsBuiltins
         define("decorrstretch", (args, line, col) =>
         {
             ArityRange("decorrstretch", args, 1, 11, line, col);
-            ImgArgs parsed = DecorrStretchSpec.Parse(args, 1, line, col);
+            ParsedArgs parsed = DecorrStretchSpec.Parse(args, 1, line, col);
             if (parsed.Positional.Count < 1)
             {
                 throw new JgsRuntimeException(line, col, "decorrstretch needs an image.");
@@ -188,7 +188,7 @@ internal static partial class JgsBuiltins
         define("imsharpen", (args, line, col) =>
         {
             ArityRange("imsharpen", args, 1, 7, line, col);
-            ImgArgs parsed = SharpenSpec.Parse(args, 1, line, col);
+            ParsedArgs parsed = SharpenSpec.Parse(args, 1, line, col);
             if (parsed.Positional.Count < 1)
             {
                 throw new JgsRuntimeException(line, col, "imsharpen needs an image.");
@@ -215,7 +215,7 @@ internal static partial class JgsBuiltins
         define("imbilatfilt", (args, line, col) =>
         {
             ArityRange("imbilatfilt", args, 1, 7, line, col);
-            ImgArgs parsed = BilateralSpec.Parse(args, 3, line, col);
+            ParsedArgs parsed = BilateralSpec.Parse(args, 3, line, col);
             if (parsed.Positional.Count < 1)
             {
                 throw new JgsRuntimeException(line, col, "imbilatfilt needs an image.");
@@ -247,7 +247,7 @@ internal static partial class JgsBuiltins
         define("imguidedfilter", (args, line, col) =>
         {
             ArityRange("imguidedfilter", args, 1, 6, line, col);
-            ImgArgs parsed = GuidedSpec.Parse(args, 2, line, col);
+            ParsedArgs parsed = GuidedSpec.Parse(args, 2, line, col);
             if (parsed.Positional.Count < 1)
             {
                 throw new JgsRuntimeException(line, col, "imguidedfilter needs an image.");
@@ -276,7 +276,7 @@ internal static partial class JgsBuiltins
         define("imdiffusefilt", (args, line, col) =>
         {
             ArityRange("imdiffusefilt", args, 1, 9, line, col);
-            ImgArgs parsed = DiffuseSpec.Parse(args, 1, line, col);
+            ParsedArgs parsed = DiffuseSpec.Parse(args, 1, line, col);
             if (parsed.Positional.Count < 1)
             {
                 throw new JgsRuntimeException(line, col, "imdiffusefilt needs an image.");
@@ -327,7 +327,7 @@ internal static partial class JgsBuiltins
         define("fibermetric", (args, line, col) =>
         {
             ArityRange("fibermetric", args, 1, 6, line, col);
-            ImgArgs parsed = FiberMetricSpec.Parse(args, 2, line, col);
+            ParsedArgs parsed = FiberMetricSpec.Parse(args, 2, line, col);
             if (parsed.Positional.Count < 1)
             {
                 throw new JgsRuntimeException(line, col, "fibermetric needs an image.");
@@ -420,7 +420,7 @@ internal static partial class JgsBuiltins
     private static JgsValue[] HistMatchOutputs(IReadOnlyList<JgsValue> args, int wanted, int line, int col)
     {
         ArityRange("imhistmatch", args, 2, 5, line, col);
-        ImgArgs parsed = HistMatchSpec.Parse(args, 3, line, col);
+        ParsedArgs parsed = HistMatchSpec.Parse(args, 3, line, col);
         if (parsed.Positional.Count < 2)
         {
             throw new JgsRuntimeException(line, col, "imhistmatch(A, ref) needs two images.");
@@ -458,7 +458,7 @@ internal static partial class JgsBuiltins
         IReadOnlyList<JgsValue> args, int wanted, int line, int col)
     {
         ArityRange("imdiffuseest", args, 1, 7, line, col);
-        ImgArgs parsed = DiffuseEstimateSpec.Parse(args, 1, line, col);
+        ParsedArgs parsed = DiffuseEstimateSpec.Parse(args, 1, line, col);
         if (parsed.Positional.Count < 1)
         {
             throw new JgsRuntimeException(line, col, "imdiffuseest needs an image.");
@@ -489,7 +489,7 @@ internal static partial class JgsBuiltins
         IReadOnlyList<JgsValue> args, int wanted, int line, int col)
     {
         ArityRange("imnlmfilt", args, 1, 7, line, col);
-        ImgArgs parsed = NonLocalMeansSpec.Parse(args, 1, line, col);
+        ParsedArgs parsed = NonLocalMeansSpec.Parse(args, 1, line, col);
         if (parsed.Positional.Count < 1)
         {
             throw new JgsRuntimeException(line, col, "imnlmfilt needs an image.");
@@ -520,7 +520,7 @@ internal static partial class JgsBuiltins
     private static JgsValue[] ReduceHazeOutputs(IReadOnlyList<JgsValue> args, int wanted, int line, int col)
     {
         ArityRange("imreducehaze", args, 1, 10, line, col);
-        ImgArgs parsed = ReduceHazeSpec.Parse(args, 2, line, col);
+        ParsedArgs parsed = ReduceHazeSpec.Parse(args, 2, line, col);
         if (parsed.Positional.Count < 1)
         {
             throw new JgsRuntimeException(line, col, "imreducehaze needs an image.");
@@ -575,7 +575,7 @@ internal static partial class JgsBuiltins
         IReadOnlyList<JgsValue> args, int wanted, int line, int col)
     {
         ArityRange("imlocalbrighten", args, 1, 4, line, col);
-        ImgArgs parsed = LocalBrightenSpec.Parse(args, 2, line, col);
+        ParsedArgs parsed = LocalBrightenSpec.Parse(args, 2, line, col);
         if (parsed.Positional.Count < 1)
         {
             throw new JgsRuntimeException(line, col, "imlocalbrighten needs an image.");
@@ -703,7 +703,7 @@ internal static partial class JgsBuiltins
 
     /// <summary>The <c>'Connectivity'</c> and <c>'ConductionMethod'</c> pair the diffusion builtins share.</summary>
     private static (bool EightConnected, Denoising.Conduction Conduction) DiffusionOptions(
-        string name, ImgArgs parsed, int line, int col)
+        string name, ParsedArgs parsed, int line, int col)
     {
         string connectivity = parsed.Text("Connectivity") ?? "maximal";
         bool eight = connectivity.ToLowerInvariant() switch
@@ -728,7 +728,7 @@ internal static partial class JgsBuiltins
     }
 
     /// <summary>A window-size option that has to be odd, so the window has a centre pixel.</summary>
-    private static int OddWindow(string name, ImgArgs parsed, string option, int fallback, int line, int col)
+    private static int OddWindow(string name, ParsedArgs parsed, string option, int fallback, int line, int col)
     {
         double value = parsed.Scalar(option, fallback);
         int size = (int)Math.Round(value);

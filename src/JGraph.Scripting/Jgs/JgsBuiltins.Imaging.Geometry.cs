@@ -22,15 +22,15 @@ internal static partial class JgsBuiltins
     /// <summary>The field that says which MATLAB class a tagged struct is standing in for.</summary>
     private const string TransformTag = "Type";
 
-    private static readonly ImgOptionSpec ImWarpSpec = new(
+    private static readonly OptionSpec ImWarpSpec = new(
         "imwarp",
         ["nearest", "linear", "bilinear", "cubic", "bicubic", "lanczos2", "lanczos3"],
         ["OutputView", "FillValues", "SmoothEdges"]);
 
-    private static readonly ImgOptionSpec ImTranslateSpec = new(
+    private static readonly OptionSpec ImTranslateSpec = new(
         "imtranslate", [], ["OutputView", "FillValues", "Method"]);
 
-    private static readonly ImgOptionSpec AffineOutputViewSpec = new(
+    private static readonly OptionSpec AffineOutputViewSpec = new(
         "affineOutputView", [], ["BoundsStyle"]);
 
     private static void DefineGeometryBuiltins(
@@ -206,7 +206,7 @@ internal static partial class JgsBuiltins
         define("affineOutputView", (args, line, col) =>
         {
             ArityRange("affineOutputView", args, 2, 4, line, col);
-            ImgArgs parsed = AffineOutputViewSpec.Parse(args, 2, line, col);
+            ParsedArgs parsed = AffineOutputViewSpec.Parse(args, 2, line, col);
             if (parsed.Positional.Count < 2)
             {
                 throw new JgsRuntimeException(line, col, "affineOutputView(sizeA, tform) needs a size and a transform.");
@@ -277,7 +277,7 @@ internal static partial class JgsBuiltins
     private static JgsValue[] ImWarpOutputs(IReadOnlyList<JgsValue> args, int wanted, int line, int col)
     {
         ArityRange("imwarp", args, 2, 10, line, col);
-        ImgArgs parsed = ImWarpSpec.Parse(args, 3, line, col);
+        ParsedArgs parsed = ImWarpSpec.Parse(args, 3, line, col);
         if (parsed.Positional.Count < 2)
         {
             throw new JgsRuntimeException(line, col, "imwarp(A, tform) needs an image and a transform.");
@@ -310,7 +310,7 @@ internal static partial class JgsBuiltins
     private static JgsValue[] ImTranslateOutputs(IReadOnlyList<JgsValue> args, int wanted, int line, int col)
     {
         ArityRange("imtranslate", args, 2, 9, line, col);
-        ImgArgs parsed = ImTranslateSpec.Parse(args, 3, line, col);
+        ParsedArgs parsed = ImTranslateSpec.Parse(args, 3, line, col);
         if (parsed.Positional.Count < 2)
         {
             throw new JgsRuntimeException(line, col, "imtranslate(A, [tx ty]) needs an image and a translation.");
@@ -619,7 +619,7 @@ internal static partial class JgsBuiltins
 
     /// <summary>The interpolation word from a warp option tail, in any of MATLAB's spellings.</summary>
     private static Geometry.Interpolation WarpMethod(
-        string name, ImgArgs parsed, Geometry.Interpolation fallback, int line, int col)
+        string name, ParsedArgs parsed, Geometry.Interpolation fallback, int line, int col)
     {
         string word = parsed.OneOf(
             string.Empty, "nearest", "linear", "bilinear", "cubic", "bicubic", "lanczos2", "lanczos3");
@@ -630,7 +630,7 @@ internal static partial class JgsBuiltins
     /// A 'FillValues' option, converted from the image's own class so a script that writes 255 for a
     /// <c>uint8</c> picture gets white rather than a clipped nonsense value.
     /// </summary>
-    private static double[] FillValues(string name, ImgArgs parsed, ImageBuffer image, int line, int col)
+    private static double[] FillValues(string name, ParsedArgs parsed, ImageBuffer image, int line, int col)
     {
         if (parsed.Named("FillValues") is not { } value)
         {

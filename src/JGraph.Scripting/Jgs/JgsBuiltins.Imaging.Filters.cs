@@ -15,28 +15,28 @@ namespace JGraph.Scripting.Jgs;
 /// </remarks>
 internal static partial class JgsBuiltins
 {
-    private static readonly ImgOptionSpec PadArraySpec = new(
+    private static readonly OptionSpec PadArraySpec = new(
         "padarray",
         ["circular", "replicate", "symmetric", "pre", "post", "both"],
         [],
         AllowNumericFlag: true);
 
-    private static readonly ImgOptionSpec GaussFilterSpec = new(
+    private static readonly OptionSpec GaussFilterSpec = new(
         "imgaussfilt", [], ["FilterSize", "Padding", "FilterDomain"]);
 
-    private static readonly ImgOptionSpec BoxFilterSpec = new(
+    private static readonly OptionSpec BoxFilterSpec = new(
         "imboxfilt", [], ["Padding", "NormalizationFactor"]);
 
-    private static readonly ImgOptionSpec IntegralBoxSpec = new(
+    private static readonly OptionSpec IntegralBoxSpec = new(
         "integralBoxFilter", [], ["NormalizationFactor"]);
 
-    private static readonly ImgOptionSpec OrdFiltSpec = new(
+    private static readonly OptionSpec OrdFiltSpec = new(
         "ordfilt2", ["zeros", "symmetric"], []);
 
-    private static readonly ImgOptionSpec ModeFiltSpec = new(
+    private static readonly OptionSpec ModeFiltSpec = new(
         "modefilt", ["zeros", "symmetric", "replicate"], []);
 
-    private static readonly ImgOptionSpec BlockProcSpec = new(
+    private static readonly OptionSpec BlockProcSpec = new(
         "blockproc",
         [],
         ["BorderSize", "PadPartialBlocks", "PadMethod", "TrimBorder", "UseParallel", "DisplayWaitbar"]);
@@ -48,7 +48,7 @@ internal static partial class JgsBuiltins
         define("padarray", (args, line, col) =>
         {
             ArityRange("padarray", args, 2, 4, line, col);
-            ImgArgs parsed = PadArraySpec.Parse(args, 2, line, col);
+            ParsedArgs parsed = PadArraySpec.Parse(args, 2, line, col);
             if (parsed.Positional.Count < 2)
             {
                 throw new JgsRuntimeException(line, col, "padarray(A, [r c]) needs the array and a pad size.");
@@ -83,7 +83,7 @@ internal static partial class JgsBuiltins
         define("imgaussfilt", (args, line, col) =>
         {
             ArityRange("imgaussfilt", args, 1, 8, line, col);
-            ImgArgs parsed = GaussFilterSpec.Parse(args, 2, line, col);
+            ParsedArgs parsed = GaussFilterSpec.Parse(args, 2, line, col);
             using ImgArg source = ImgLike("imgaussfilt", parsed.Positional, 0, line, col);
 
             double[] sigmas = parsed.Positional.Count >= 2
@@ -123,7 +123,7 @@ internal static partial class JgsBuiltins
         define("imboxfilt", (args, line, col) =>
         {
             ArityRange("imboxfilt", args, 1, 6, line, col);
-            ImgArgs parsed = BoxFilterSpec.Parse(args, 2, line, col);
+            ParsedArgs parsed = BoxFilterSpec.Parse(args, 2, line, col);
             using ImgArg source = ImgLike("imboxfilt", parsed.Positional, 0, line, col);
             (int rows, int cols) = parsed.Positional.Count >= 2
                 ? WindowOf("imboxfilt", parsed.Positional[1], line, col)
@@ -180,7 +180,7 @@ internal static partial class JgsBuiltins
         define("integralBoxFilter", (args, line, col) =>
         {
             ArityRange("integralBoxFilter", args, 1, 4, line, col);
-            ImgArgs parsed = IntegralBoxSpec.Parse(args, 2, line, col);
+            ParsedArgs parsed = IntegralBoxSpec.Parse(args, 2, line, col);
             double[,] integral = Matrix("integralBoxFilter", parsed.Positional, 0, line, col);
             (int rows, int cols) = parsed.Positional.Count >= 2
                 ? WindowOf("integralBoxFilter", parsed.Positional[1], line, col)
@@ -207,7 +207,7 @@ internal static partial class JgsBuiltins
         define("ordfilt2", (args, line, col) =>
         {
             ArityRange("ordfilt2", args, 3, 5, line, col);
-            ImgArgs parsed = OrdFiltSpec.Parse(args, 4, line, col);
+            ParsedArgs parsed = OrdFiltSpec.Parse(args, 4, line, col);
             if (parsed.Positional.Count < 3)
             {
                 throw new JgsRuntimeException(line, col,
@@ -263,7 +263,7 @@ internal static partial class JgsBuiltins
         define("modefilt", (args, line, col) =>
         {
             ArityRange("modefilt", args, 1, 3, line, col);
-            ImgArgs parsed = ModeFiltSpec.Parse(args, 2, line, col);
+            ParsedArgs parsed = ModeFiltSpec.Parse(args, 2, line, col);
             using ImgArg source = ImgLike("modefilt", parsed.Positional, 0, line, col);
             (int rows, int cols) = parsed.Positional.Count >= 2
                 ? WindowOf("modefilt", parsed.Positional[1], line, col)
@@ -412,7 +412,7 @@ internal static partial class JgsBuiltins
         define("blockproc", (args, line, col) =>
         {
             ArityRange("blockproc", args, 3, 15, line, col);
-            ImgArgs parsed = BlockProcSpec.Parse(args, 3, line, col);
+            ParsedArgs parsed = BlockProcSpec.Parse(args, 3, line, col);
             if (parsed.Positional.Count < 3)
             {
                 throw new JgsRuntimeException(line, col,
@@ -581,15 +581,6 @@ internal static partial class JgsBuiltins
         return trimmed;
     }
 
-    /// <summary>
-    /// Reads a number or an array of numbers as a vector. MATLAB writes a one-element vector as a bare
-    /// scalar — <c>imgaussfilt(I, 2)</c>, <c>edge(I, 'canny', 0.3)</c>, <c>medfilt2(I, 3)</c> — so
-    /// every option that accepts "one value or a pair" has to come through here rather than assuming
-    /// an array arrived.
-    /// </summary>
-    private static double[] NumericVector(string name, JgsValue value, int line, int col) =>
-        value.Type == JgsType.Number ? [value.AsNumber] : ToDoubles(name, value, line, col);
-
     /// <summary>A window size given as one number (square) or a [rows, cols] pair.</summary>
     private static (int Rows, int Cols) WindowOf(
         string name, JgsValue value, int line, int col, bool allowZero = false)
@@ -654,7 +645,7 @@ internal static partial class JgsBuiltins
     /// a constant to fill with.
     /// </summary>
     private static (Filters.Boundary Boundary, double PadValue) PaddingOption(
-        string name, ImgArgs parsed, Filters.Boundary fallback, int line, int col, string option = "Padding")
+        string name, ParsedArgs parsed, Filters.Boundary fallback, int line, int col, string option = "Padding")
     {
         if (parsed.Named(option) is not { } value)
         {

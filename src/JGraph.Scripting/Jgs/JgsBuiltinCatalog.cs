@@ -282,6 +282,7 @@ public static class JgsBuiltinCatalog
         Add("issortedrows", "Whether a matrix's rows are in lexicographic order.", P("a"));
         Add("randi", "Uniform whole numbers from 1 to imax, or from the range [low high].", P("imax"), Opt("rows"), Opt("cols"));
         Add("randperm", "A random permutation of 1..n, or k values drawn from it.", P("n"), Opt("k"));
+        Add("rng", "Seeds the random stream, or reports its state: rng(seed), rng('default'), rng('shuffle'), s = rng.", Opt("seed"), Opt("generator"));
         Add("circshift", "The values moved along by k places, wrapping around.", P("x"), P("k"));
         Add("rot90", "A matrix turned a quarter turn counter-clockwise, k times.", P("a"), Opt("k"));
         Add("movmean", "The mean over a sliding window of width k.", P("x"), P("k"));

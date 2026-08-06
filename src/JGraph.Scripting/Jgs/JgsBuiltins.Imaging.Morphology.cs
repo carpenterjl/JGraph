@@ -25,14 +25,14 @@ namespace JGraph.Scripting.Jgs;
 /// </remarks>
 internal static partial class JgsBuiltins
 {
-    private static readonly ImgOptionSpec ImFillSpec = new("imfill", ["holes"], [], StringPositionals: 0);
+    private static readonly OptionSpec ImFillSpec = new("imfill", ["holes"], [], StringPositionals: 0);
 
-    private static readonly ImgOptionSpec BwSkelSpec = new("bwskel", [], ["MinBranchLength"]);
+    private static readonly OptionSpec BwSkelSpec = new("bwskel", [], ["MinBranchLength"]);
 
-    private static readonly ImgOptionSpec BwDistSpec = new(
+    private static readonly OptionSpec BwDistSpec = new(
         "bwdist", ["euclidean", "cityblock", "chessboard", "quasi-euclidean"], []);
 
-    private static readonly ImgOptionSpec BwUlterodeSpec = new(
+    private static readonly OptionSpec BwUlterodeSpec = new(
         "bwulterode", ["euclidean", "cityblock", "chessboard", "quasi-euclidean"], []);
 
     private static void DefineMorphologyBuiltins(
@@ -283,7 +283,7 @@ internal static partial class JgsBuiltins
         define("imfill", (args, line, col) =>
         {
             ArityRange("imfill", args, 1, 3, line, col);
-            ImgArgs parsed = ImFillSpec.Parse(args, 2, line, col);
+            ParsedArgs parsed = ImFillSpec.Parse(args, 2, line, col);
             if (parsed.Positional.Count < 1)
             {
                 throw new JgsRuntimeException(line, col, "imfill needs an image.");
@@ -373,7 +373,7 @@ internal static partial class JgsBuiltins
         define("bwskel", (args, line, col) =>
         {
             ArityRange("bwskel", args, 1, 3, line, col);
-            ImgArgs parsed = BwSkelSpec.Parse(args, 1, line, col);
+            ParsedArgs parsed = BwSkelSpec.Parse(args, 1, line, col);
             if (parsed.Positional.Count < 1)
             {
                 throw new JgsRuntimeException(line, col, "bwskel needs a binary image.");
@@ -394,7 +394,7 @@ internal static partial class JgsBuiltins
         define("bwulterode", (args, line, col) =>
         {
             ArityRange("bwulterode", args, 1, 3, line, col);
-            ImgArgs parsed = BwUlterodeSpec.Parse(args, 1, line, col);
+            ParsedArgs parsed = BwUlterodeSpec.Parse(args, 1, line, col);
             if (parsed.Positional.Count < 1)
             {
                 throw new JgsRuntimeException(line, col, "bwulterode needs a binary image.");
@@ -451,7 +451,7 @@ internal static partial class JgsBuiltins
         IReadOnlyList<JgsValue> args, int wanted, int line, int col, JgsDialect dialect)
     {
         ArityRange("bwdist", args, 1, 2, line, col);
-        ImgArgs parsed = BwDistSpec.Parse(args, 1, line, col);
+        ParsedArgs parsed = BwDistSpec.Parse(args, 1, line, col);
         if (parsed.Positional.Count < 1)
         {
             throw new JgsRuntimeException(line, col, "bwdist needs a binary image.");

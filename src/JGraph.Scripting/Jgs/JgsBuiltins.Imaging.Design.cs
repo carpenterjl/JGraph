@@ -16,12 +16,12 @@ namespace JGraph.Scripting.Jgs;
 /// </remarks>
 internal static partial class JgsBuiltins
 {
-    private static readonly ImgOptionSpec GaborSpec = new(
+    private static readonly OptionSpec GaborSpec = new(
         "gabor",
         [],
         ["SpatialFrequencyBandwidth", "SpatialAspectRatio"]);
 
-    private static readonly ImgOptionSpec GaborFiltSpec = new(
+    private static readonly OptionSpec GaborFiltSpec = new(
         "imgaborfilt",
         [],
         ["SpatialFrequencyBandwidth", "SpatialAspectRatio"]);
@@ -230,7 +230,7 @@ internal static partial class JgsBuiltins
         define("gabor", (args, line, col) =>
         {
             ArityRange("gabor", args, 2, 6, line, col);
-            ImgArgs parsed = GaborSpec.Parse(args, 2, line, col);
+            ParsedArgs parsed = GaborSpec.Parse(args, 2, line, col);
             if (parsed.Positional.Count < 2)
             {
                 throw new JgsRuntimeException(line, col,
@@ -563,7 +563,7 @@ internal static partial class JgsBuiltins
             return bank;
         }
 
-        ImgArgs parsed = GaborFiltSpec.Parse(args, 3, line, col);
+        ParsedArgs parsed = GaborFiltSpec.Parse(args, 3, line, col);
         if (parsed.Positional.Count < 3)
         {
             throw new JgsRuntimeException(line, col,

@@ -68,7 +68,7 @@ internal static partial class JgsBuiltins
 
         define("imwrite", (args, line, col) =>
         {
-            ImgArgs parsed = WriteSpec.Parse(args, positionalMax: 3, line, col);
+            ParsedArgs parsed = WriteSpec.Parse(args, positionalMax: 3, line, col);
             if (parsed.Positional.Count < 2)
             {
                 throw new JgsRuntimeException(line, col, "imwrite needs an image and a path.");
@@ -107,7 +107,7 @@ internal static partial class JgsBuiltins
         // --- Display -------------------------------------------------------------------------
         define("imshow", (args, line, col) =>
         {
-            ImgArgs parsed = ShowSpec.Parse(args, positionalMax: 2, line, col);
+            ParsedArgs parsed = ShowSpec.Parse(args, positionalMax: 2, line, col);
             if (parsed.Positional.Count == 0)
             {
                 throw new JgsRuntimeException(line, col, "imshow needs a picture.");
@@ -397,7 +397,7 @@ internal static partial class JgsBuiltins
 
         define("adaptthresh", (args, line, col) =>
         {
-            ImgArgs parsed = AdaptThreshSpec.Parse(args, positionalMax: 2, line, col);
+            ParsedArgs parsed = AdaptThreshSpec.Parse(args, positionalMax: 2, line, col);
             if (parsed.Positional.Count == 0)
             {
                 throw new JgsRuntimeException(line, col, "adaptthresh needs an image.");
@@ -448,7 +448,7 @@ internal static partial class JgsBuiltins
 
         define("imbinarize", (args, line, col) =>
         {
-            ImgArgs parsed = BinarizeSpec.Parse(args, positionalMax: 2, line, col);
+            ParsedArgs parsed = BinarizeSpec.Parse(args, positionalMax: 2, line, col);
             if (parsed.Positional.Count == 0)
             {
                 throw new JgsRuntimeException(line, col, "imbinarize needs an image.");
@@ -642,7 +642,7 @@ internal static partial class JgsBuiltins
         define("imresize", (args, line, col) =>
         {
             ArityRange("imresize", args, 1, 10, line, col);
-            ImgArgs parsed = ImResizeSpec.Parse(args, 2, line, col);
+            ParsedArgs parsed = ImResizeSpec.Parse(args, 2, line, col);
             if (parsed.Positional.Count < 1)
             {
                 throw new JgsRuntimeException(line, col, "imresize(A, scale) needs an image or matrix.");
@@ -683,7 +683,7 @@ internal static partial class JgsBuiltins
         define("imrotate", (args, line, col) =>
         {
             ArityRange("imrotate", args, 2, 4, line, col);
-            ImgArgs parsed = ImRotateSpec.Parse(args, 2, line, col);
+            ParsedArgs parsed = ImRotateSpec.Parse(args, 2, line, col);
             if (parsed.Positional.Count < 2)
             {
                 throw new JgsRuntimeException(line, col, "imrotate(A, angle) needs an image and an angle.");
@@ -734,7 +734,7 @@ internal static partial class JgsBuiltins
         define("imfilter", (args, line, col) =>
         {
             ArityRange("imfilter", args, 2, 8, line, col);
-            ImgArgs parsed = ImFilterSpec.Parse(args, 2, line, col);
+            ParsedArgs parsed = ImFilterSpec.Parse(args, 2, line, col);
             if (parsed.Positional.Count < 2)
             {
                 throw new JgsRuntimeException(line, col, "imfilter(A, h) needs the array and a kernel.");
@@ -794,7 +794,7 @@ internal static partial class JgsBuiltins
         define("medfilt2", (args, line, col) =>
         {
             ArityRange("medfilt2", args, 1, 3, line, col);
-            ImgArgs parsed = MedFiltSpec.Parse(args, 2, line, col);
+            ParsedArgs parsed = MedFiltSpec.Parse(args, 2, line, col);
             using ImgArg source = ImgLike("medfilt2", parsed.Positional, 0, line, col);
             (int mh, int mw) = parsed.Positional.Count >= 2
                 ? WindowOf("medfilt2", parsed.Positional[1], line, col)
@@ -836,13 +836,13 @@ internal static partial class JgsBuiltins
         });
     }
 
-    private static readonly ImgOptionSpec ImFilterSpec = new(
+    private static readonly OptionSpec ImFilterSpec = new(
         "imfilter",
         ["replicate", "symmetric", "circular", "corr", "conv", "same", "full"],
         [],
         AllowNumericFlag: true);
 
-    private static readonly ImgOptionSpec MedFiltSpec = new("medfilt2", ["zeros", "symmetric"], []);
+    private static readonly OptionSpec MedFiltSpec = new("medfilt2", ["zeros", "symmetric"], []);
 
     private static double[,] Sized((int Rows, int Cols) size, Func<int, int, double[,]> build) =>
         build(size.Rows, size.Cols);
@@ -924,7 +924,7 @@ internal static partial class JgsBuiltins
         define("hough", (args, line, col) =>
         {
             ArityRange("hough", args, 1, 5, line, col);
-            ImgArgs parsed = HoughSpec.Parse(args, 1, line, col);
+            ParsedArgs parsed = HoughSpec.Parse(args, 1, line, col);
             if (parsed.Positional.Count < 1)
             {
                 throw new JgsRuntimeException(line, col, "hough needs a binary edge map.");
@@ -948,7 +948,7 @@ internal static partial class JgsBuiltins
         define("houghpeaks", (args, line, col) =>
         {
             ArityRange("houghpeaks", args, 1, 7, line, col);
-            ImgArgs parsed = HoughPeaksSpec.Parse(args, 3, line, col);
+            ParsedArgs parsed = HoughPeaksSpec.Parse(args, 3, line, col);
             if (parsed.Positional.Count < 1)
             {
                 throw new JgsRuntimeException(line, col, "houghpeaks needs an accumulator.");
@@ -1433,20 +1433,20 @@ internal static partial class JgsBuiltins
     };
 
     // --- Option specs --------------------------------------------------------------------------
-    private static readonly ImgOptionSpec WriteSpec = new(
+    private static readonly OptionSpec WriteSpec = new(
         "imwrite", Flags: [], Names: ["Quality", "BitDepth", "Alpha"], StringPositionals: 2);
 
-    private static readonly ImgOptionSpec ShowSpec = new(
+    private static readonly OptionSpec ShowSpec = new(
         "imshow",
         Flags: [],
         Names: ["DisplayRange", "InitialMagnification", "Border", "Colormap", "Parent", "Interpolation"]);
 
-    private static readonly ImgOptionSpec BinarizeSpec = new(
+    private static readonly OptionSpec BinarizeSpec = new(
         "imbinarize",
         Flags: ["global", "adaptive"],
         Names: ["Sensitivity", "ForegroundPolarity", "NeighborhoodSize"]);
 
-    private static readonly ImgOptionSpec AdaptThreshSpec = new(
+    private static readonly OptionSpec AdaptThreshSpec = new(
         "adaptthresh",
         Flags: [],
         Names: ["NeighborhoodSize", "ForegroundPolarity", "Statistic"]);
@@ -1462,12 +1462,12 @@ internal static partial class JgsBuiltins
         return (pair[0], pair[1]);
     }
 
-    private static readonly ImgOptionSpec ImResizeSpec = new(
+    private static readonly OptionSpec ImResizeSpec = new(
         "imresize",
         ["nearest", "box", "bilinear", "triangle", "linear", "bicubic", "cubic", "lanczos2", "lanczos3"],
         ["Antialiasing", "Method", "OutputSize", "Scale"]);
 
-    private static readonly ImgOptionSpec ImRotateSpec = new(
+    private static readonly OptionSpec ImRotateSpec = new(
         "imrotate",
         ["nearest", "bilinear", "linear", "bicubic", "cubic", "crop", "loose"],
         []);
@@ -1541,7 +1541,7 @@ internal static partial class JgsBuiltins
     /// 'nearest' is the one method MATLAB leaves unantialiased by default; 'box' is the same kernel
     /// with antialiasing on, which is the whole difference between the two words.
     /// </summary>
-    private static (Geometry.Interpolation Method, bool Antialias) ResizeMethod(ImgArgs parsed, int line, int col)
+    private static (Geometry.Interpolation Method, bool Antialias) ResizeMethod(ParsedArgs parsed, int line, int col)
     {
         string flag = parsed.OneOf(
             string.Empty,

@@ -23,7 +23,7 @@ internal static partial class JgsBuiltins
     private static readonly string[] IradonFilters =
         ["Ram-Lak", "Shepp-Logan", "Cosine", "Hamming", "Hann", "none"];
 
-    private static readonly ImgOptionSpec ImRegCorrSpec = new(
+    private static readonly OptionSpec ImRegCorrSpec = new(
         "imregcorr",
         ["translation", "rigid", "similarity"],
         ["transformType", "Window"],
@@ -403,7 +403,7 @@ internal static partial class JgsBuiltins
         IReadOnlyList<JgsValue> args, int wanted, int line, int col)
     {
         ArityRange("imregcorr", args, 2, 8, line, col);
-        ImgArgs parsed = ImRegCorrSpec.Parse(args, 2, line, col);
+        ParsedArgs parsed = ImRegCorrSpec.Parse(args, 2, line, col);
         if (parsed.Positional.Count < 2)
         {
             throw new JgsRuntimeException(line, col, "imregcorr(moving, fixed) needs two pictures.");

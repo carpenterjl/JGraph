@@ -22,34 +22,34 @@ namespace JGraph.Scripting.Jgs;
 /// </remarks>
 internal static partial class JgsBuiltins
 {
-    private static readonly ImgOptionSpec SsimSpec = new(
+    private static readonly OptionSpec SsimSpec = new(
         "ssim",
         [],
         ["DynamicRange", "Exponents", "RegularizationConstants", "Radius"]);
 
-    private static readonly ImgOptionSpec MultiSsimSpec = new(
+    private static readonly OptionSpec MultiSsimSpec = new(
         "multissim",
         [],
         ["NumScales", "ScaleWeights", "Sigma", "DynamicRange"]);
 
-    private static readonly ImgOptionSpec ComatrixSpec = new(
+    private static readonly OptionSpec ComatrixSpec = new(
         "graycomatrix",
         [],
         ["NumLevels", "GrayLimits", "Offset", "Symmetric"]);
 
-    private static readonly ImgOptionSpec MontageSpec = new(
+    private static readonly OptionSpec MontageSpec = new(
         "montage",
         [],
         ["Size", "BorderSize", "BackgroundColor", "DisplayRange", "ThumbnailSize"],
         StringPositionals: 1);
 
-    private static readonly ImgOptionSpec FuseSpec = new(
+    private static readonly OptionSpec FuseSpec = new(
         "imfuse",
         [],
         ["Scaling", "ColorChannels"],
         StringPositionals: 3);
 
-    private static readonly ImgOptionSpec ShowPairSpec = new(
+    private static readonly OptionSpec ShowPairSpec = new(
         "imshowpair",
         [],
         ["Scaling", "ColorChannels"],
@@ -276,7 +276,7 @@ internal static partial class JgsBuiltins
 
         define("montage", (args, line, col) =>
         {
-            ImgArgs parsed = MontageSpec.Parse(args, positionalMax: 1, line, col);
+            ParsedArgs parsed = MontageSpec.Parse(args, positionalMax: 1, line, col);
             if (parsed.Positional.Count == 0)
             {
                 throw new JgsRuntimeException(line, col, "montage needs pictures to lay out.");
@@ -428,7 +428,7 @@ internal static partial class JgsBuiltins
     private static JgsValue[] SsimOutputs(
         IReadOnlyList<JgsValue> args, int wanted, int line, int col, JgsDialect dialect)
     {
-        ImgArgs parsed = SsimSpec.Parse(args, positionalMax: 2, line, col);
+        ParsedArgs parsed = SsimSpec.Parse(args, positionalMax: 2, line, col);
         if (parsed.Positional.Count != 2)
         {
             throw new JgsRuntimeException(line, col, "ssim compares a picture against a reference.");
@@ -474,7 +474,7 @@ internal static partial class JgsBuiltins
     private static JgsValue[] MultiSsimOutputs(
         IReadOnlyList<JgsValue> args, int wanted, int line, int col, JgsDialect dialect)
     {
-        ImgArgs parsed = MultiSsimSpec.Parse(args, positionalMax: 2, line, col);
+        ParsedArgs parsed = MultiSsimSpec.Parse(args, positionalMax: 2, line, col);
         if (parsed.Positional.Count != 2)
         {
             throw new JgsRuntimeException(line, col, "multissim compares a picture against a reference.");
@@ -560,7 +560,7 @@ internal static partial class JgsBuiltins
     private static JgsValue[] ComatrixOutputs(
         IReadOnlyList<JgsValue> args, int wanted, int line, int col, JgsDialect dialect)
     {
-        ImgArgs parsed = ComatrixSpec.Parse(args, positionalMax: 1, line, col);
+        ParsedArgs parsed = ComatrixSpec.Parse(args, positionalMax: 1, line, col);
         if (parsed.Positional.Count != 1)
         {
             throw new JgsRuntimeException(line, col, "graycomatrix needs a picture.");
@@ -739,9 +739,9 @@ internal static partial class JgsBuiltins
 
     /// <summary>Builds the fused picture <c>imfuse</c> returns and <c>imshowpair</c> shows.</summary>
     private static ImageBuffer FuseFrom(
-        string name, ImgOptionSpec spec, IReadOnlyList<JgsValue> args, int line, int col)
+        string name, OptionSpec spec, IReadOnlyList<JgsValue> args, int line, int col)
     {
-        ImgArgs parsed = spec.Parse(args, positionalMax: 3, line, col);
+        ParsedArgs parsed = spec.Parse(args, positionalMax: 3, line, col);
         if (parsed.Positional.Count < 2)
         {
             throw new JgsRuntimeException(line, col, $"{name} needs two pictures.");
@@ -892,7 +892,7 @@ internal static partial class JgsBuiltins
     }
 
     /// <summary>Shows a composite the way <c>imshow</c> would, honouring a display range if one was given.</summary>
-    private static void Display(ImageBuffer image, ImgArgs? parsed, int line, int col)
+    private static void Display(ImageBuffer image, ParsedArgs? parsed, int line, int col)
     {
         (double low, double high) = (0.0, 1.0);
         if (parsed?.Named("DisplayRange") is { } given)

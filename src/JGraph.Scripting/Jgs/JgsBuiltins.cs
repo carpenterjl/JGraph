@@ -36,7 +36,10 @@ internal static partial class JgsBuiltins
 
         dialect ??= JgsDialect.Jgs;
         var env = new JgsEnvironment();
-        var random = new Random();
+
+        // One stream for the whole run, so `rng(7)` makes every later draw repeatable rather than
+        // just the next one. Sparse used to keep a second, private generator; it shares this now.
+        var random = new JgsRandomSource();
 
         // A new scope is a new console session: numeric display returns to its default precision.
         JgsNumberFormat.Reset();
@@ -1900,7 +1903,7 @@ internal static partial class JgsBuiltins
         RegisterShapeBuiltins(env, random, dialect);
         RegisterLinearAlgebraBuiltins(env, dialect);
         RegisterMatrixFunctionBuiltins(env);
-        RegisterSparseBuiltins(env);
+        RegisterSparseBuiltins(env, random);
         RegisterDataTypeBuiltins(env);
         RegisterFileIoBuiltins(env, host);
         RegisterElementaryBuiltins(env, dialect);

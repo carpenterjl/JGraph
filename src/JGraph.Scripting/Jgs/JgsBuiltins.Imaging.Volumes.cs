@@ -23,51 +23,51 @@ namespace JGraph.Scripting.Jgs;
 /// </remarks>
 internal static partial class JgsBuiltins
 {
-    private static readonly ImgOptionSpec GaussFilt3Spec = new("imgaussfilt3", [],
+    private static readonly OptionSpec GaussFilt3Spec = new("imgaussfilt3", [],
         ["FilterSize", "Padding", "FilterDomain"]);
 
-    private static readonly ImgOptionSpec BoxFilt3Spec = new("imboxfilt3", [],
+    private static readonly OptionSpec BoxFilt3Spec = new("imboxfilt3", [],
         ["NormalizationFactor", "Padding"]);
 
-    private static readonly ImgOptionSpec IntegralBox3Spec = new("integralBoxFilter3", [],
+    private static readonly OptionSpec IntegralBox3Spec = new("integralBoxFilter3", [],
         ["NormalizationFactor"]);
 
-    private static readonly ImgOptionSpec Resize3Spec = new("imresize3",
+    private static readonly OptionSpec Resize3Spec = new("imresize3",
         ["nearest", "linear", "cubic", "box", "triangle"],
         ["Method", "Antialiasing", "Scale", "OutputSize"], StringPositionals: 0);
 
-    private static readonly ImgOptionSpec Rotate3Spec = new("imrotate3",
+    private static readonly OptionSpec Rotate3Spec = new("imrotate3",
         ["nearest", "linear", "cubic", "crop", "loose"], ["FillValues"], StringPositionals: 0);
 
-    private static readonly ImgOptionSpec MedFilt3Spec = new("medfilt3",
+    private static readonly OptionSpec MedFilt3Spec = new("medfilt3",
         ["symmetric", "replicate", "zeros"], []);
 
-    private static readonly ImgOptionSpec MultiSsim3Spec = new("multissim3", [],
+    private static readonly OptionSpec MultiSsim3Spec = new("multissim3", [],
         ["NumScales", "ScaleWeights", "Sigma", "DynamicRange"]);
 
-    private static readonly ImgOptionSpec ObliqueSpec = new("obliqueslice", [],
+    private static readonly OptionSpec ObliqueSpec = new("obliqueslice", [],
         ["OutputSize", "Method", "FillValues"]);
 
-    private static readonly ImgOptionSpec Superpixels3Spec = new("superpixels3", [],
+    private static readonly OptionSpec Superpixels3Spec = new("superpixels3", [],
         ["Compactness", "NumIterations", "Method"]);
 
-    private static readonly ImgOptionSpec KMeans3Spec = new("imsegkmeans3", [],
+    private static readonly OptionSpec KMeans3Spec = new("imsegkmeans3", [],
         ["NumAttempts", "MaxIterations", "Threshold", "NormalizeInput"]);
 
     // The method word sits in the second positional slot, so two slots may hold a string before the
     // option tail starts — otherwise 'Sobel' would be read as a misspelled option name.
-    private static readonly ImgOptionSpec Edge3Spec = new("edge3", [], ["alpha"], StringPositionals: 2);
+    private static readonly OptionSpec Edge3Spec = new("edge3", [], ["alpha"], StringPositionals: 2);
 
-    private static readonly ImgOptionSpec FSpecial3Spec = new("fspecial3", [], [], StringPositionals: 1);
+    private static readonly OptionSpec FSpecial3Spec = new("fspecial3", [], [], StringPositionals: 1);
 
-    private static readonly ImgOptionSpec BwMorph3Spec = new("bwmorph3", [], [], StringPositionals: 2);
+    private static readonly OptionSpec BwMorph3Spec = new("bwmorph3", [], [], StringPositionals: 2);
 
     private static void DefineVolumeBuiltins(
         Action<string, Func<IReadOnlyList<JgsValue>, int, int, JgsValue>> define, JgsDialect dialect)
     {
         define("medfilt3", (args, line, col) =>
         {
-            ImgArgs parsed = MedFilt3Spec.Parse(args, 2, line, col);
+            ParsedArgs parsed = MedFilt3Spec.Parse(args, 2, line, col);
             ArityRange("medfilt3", parsed.Positional, 1, 2, line, col);
             using Volume volume = Vol("medfilt3", parsed.Positional, 0, line, col);
             (int, int, int) window = parsed.Positional.Count > 1
@@ -83,7 +83,7 @@ internal static partial class JgsBuiltins
 
         define("imgaussfilt3", (args, line, col) =>
         {
-            ImgArgs parsed = GaussFilt3Spec.Parse(args, 2, line, col);
+            ParsedArgs parsed = GaussFilt3Spec.Parse(args, 2, line, col);
             ArityRange("imgaussfilt3", parsed.Positional, 1, 2, line, col);
             using Volume volume = Vol("imgaussfilt3", parsed.Positional, 0, line, col);
             double[] sigma = parsed.Positional.Count > 1
@@ -107,7 +107,7 @@ internal static partial class JgsBuiltins
 
         define("imboxfilt3", (args, line, col) =>
         {
-            ImgArgs parsed = BoxFilt3Spec.Parse(args, 2, line, col);
+            ParsedArgs parsed = BoxFilt3Spec.Parse(args, 2, line, col);
             ArityRange("imboxfilt3", parsed.Positional, 1, 2, line, col);
             using Volume volume = Vol("imboxfilt3", parsed.Positional, 0, line, col);
             (int, int, int) size = parsed.Positional.Count > 1
@@ -133,7 +133,7 @@ internal static partial class JgsBuiltins
 
         define("integralBoxFilter3", (args, line, col) =>
         {
-            ImgArgs parsed = IntegralBox3Spec.Parse(args, 2, line, col);
+            ParsedArgs parsed = IntegralBox3Spec.Parse(args, 2, line, col);
             ArityRange("integralBoxFilter3", parsed.Positional, 1, 2, line, col);
             using Volume integral = Vol("integralBoxFilter3", parsed.Positional, 0, line, col);
             (int, int, int) size = parsed.Positional.Count > 1
@@ -149,7 +149,7 @@ internal static partial class JgsBuiltins
 
         define("fspecial3", (args, line, col) =>
         {
-            ImgArgs parsed = FSpecial3Spec.Parse(args, 3, line, col);
+            ParsedArgs parsed = FSpecial3Spec.Parse(args, 3, line, col);
             ArityRange("fspecial3", parsed.Positional, 1, 3, line, col);
             string type = Str("fspecial3", parsed.Positional, 0, line, col).ToLowerInvariant();
             using Volume kernel = Guarded(() => Kernel3(type, parsed.Positional, line, col), line, col);
@@ -191,7 +191,7 @@ internal static partial class JgsBuiltins
 
         define("imresize3", (args, line, col) =>
         {
-            ImgArgs parsed = Resize3Spec.Parse(args, 2, line, col);
+            ParsedArgs parsed = Resize3Spec.Parse(args, 2, line, col);
             ArityRange("imresize3", parsed.Positional, 1, 2, line, col);
             using Volume volume = Vol("imresize3", parsed.Positional, 0, line, col);
             VolumeGeometry.Interpolation method = Resample3(parsed, line, col);
@@ -233,7 +233,7 @@ internal static partial class JgsBuiltins
 
         define("imrotate3", (args, line, col) =>
         {
-            ImgArgs parsed = Rotate3Spec.Parse(args, 3, line, col);
+            ParsedArgs parsed = Rotate3Spec.Parse(args, 3, line, col);
             Arity("imrotate3", parsed.Positional, 3, line, col);
             using Volume volume = Vol("imrotate3", parsed.Positional, 0, line, col);
             double degrees = ScalarOf("imrotate3", parsed.Positional[1], line, col);
@@ -280,7 +280,7 @@ internal static partial class JgsBuiltins
 
         define("bwmorph3", (args, line, col) =>
         {
-            ImgArgs parsed = BwMorph3Spec.Parse(args, 2, line, col);
+            ParsedArgs parsed = BwMorph3Spec.Parse(args, 2, line, col);
             Arity("bwmorph3", parsed.Positional, 2, line, col);
             using Volume volume = Vol("bwmorph3", parsed.Positional, 0, line, col);
             string operation = Str("bwmorph3", parsed.Positional, 1, line, col);
@@ -342,7 +342,7 @@ internal static partial class JgsBuiltins
     /// <summary>[BW, thresh] is not a documented pair, so edge3 is single-output.</summary>
     private static JgsValue Edge3Outputs(IReadOnlyList<JgsValue> args, int line, int col)
     {
-        ImgArgs parsed = Edge3Spec.Parse(args, 4, line, col);
+        ParsedArgs parsed = Edge3Spec.Parse(args, 4, line, col);
         ArityRange("edge3", parsed.Positional, 3, 4, line, col);
         using Volume volume = Vol("edge3", parsed.Positional, 0, line, col);
         string method = Str("edge3", parsed.Positional, 1, line, col).ToLowerInvariant();
@@ -485,7 +485,7 @@ internal static partial class JgsBuiltins
 
     private static JgsValue[] KMeans3Outputs(IReadOnlyList<JgsValue> args, int wanted, int line, int col)
     {
-        ImgArgs parsed = KMeans3Spec.Parse(args, 2, line, col);
+        ParsedArgs parsed = KMeans3Spec.Parse(args, 2, line, col);
         Arity("imsegkmeans3", parsed.Positional, 2, line, col);
         using Volume volume = Vol("imsegkmeans3", parsed.Positional, 0, line, col);
         int clusters = Count("imsegkmeans3", parsed.Positional, 1, line, col);
@@ -505,7 +505,7 @@ internal static partial class JgsBuiltins
     private static JgsValue[] Superpixels3Outputs(
         IReadOnlyList<JgsValue> args, int wanted, int line, int col)
     {
-        ImgArgs parsed = Superpixels3Spec.Parse(args, 2, line, col);
+        ParsedArgs parsed = Superpixels3Spec.Parse(args, 2, line, col);
         Arity("superpixels3", parsed.Positional, 2, line, col);
         using Volume volume = Vol("superpixels3", parsed.Positional, 0, line, col);
         int count = Count("superpixels3", parsed.Positional, 1, line, col);
@@ -526,7 +526,7 @@ internal static partial class JgsBuiltins
     private static JgsValue[] MultiSsim3Outputs(
         IReadOnlyList<JgsValue> args, int wanted, int line, int col)
     {
-        ImgArgs parsed = MultiSsim3Spec.Parse(args, 2, line, col);
+        ParsedArgs parsed = MultiSsim3Spec.Parse(args, 2, line, col);
         Arity("multissim3", parsed.Positional, 2, line, col);
         using Volume volume = Vol("multissim3", parsed.Positional, 0, line, col);
         using Volume reference = Vol("multissim3", parsed.Positional, 1, line, col);
@@ -566,7 +566,7 @@ internal static partial class JgsBuiltins
     private static JgsValue[] ObliqueSliceOutputs(
         IReadOnlyList<JgsValue> args, int wanted, int line, int col, JgsDialect dialect)
     {
-        ImgArgs parsed = ObliqueSpec.Parse(args, 3, line, col);
+        ParsedArgs parsed = ObliqueSpec.Parse(args, 3, line, col);
         Arity("obliqueslice", parsed.Positional, 3, line, col);
         using Volume volume = Vol("obliqueslice", parsed.Positional, 0, line, col);
         double[] point = Triple("obliqueslice", parsed.Positional[1], line, col);
@@ -1065,7 +1065,7 @@ internal static partial class JgsBuiltins
                 $"{name}: unknown method '{word}' (one of: 'sobel', 'prewitt', 'central', 'intermediate')."),
         };
 
-    private static VolumeGeometry.Interpolation Resample3(ImgArgs parsed, int line, int col)
+    private static VolumeGeometry.Interpolation Resample3(ParsedArgs parsed, int line, int col)
     {
         string word = parsed.Text("Method") ?? parsed.OneOf("linear", "nearest", "linear", "cubic", "box", "triangle");
         return word.ToLowerInvariant() switch

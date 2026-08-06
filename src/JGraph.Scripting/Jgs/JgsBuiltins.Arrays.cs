@@ -8,8 +8,8 @@ namespace JGraph.Scripting.Jgs;
 /// </summary>
 internal static partial class JgsBuiltins
 {
-    /// <summary>Registers the array and moving-statistics builtins (M38).</summary>
-    private static void RegisterArrayBuiltins(JgsEnvironment env, Random random, JgsDialect dialect)
+    /// <summary>Registers the array and moving-statistics builtins (M38), and <c>rng</c> (M52).</summary>
+    private static void RegisterArrayBuiltins(JgsEnvironment env, JgsRandomSource random, JgsDialect dialect)
     {
         void Define(string name, Func<IReadOnlyList<JgsValue>, int, int, JgsValue> body) =>
             env.Declare(name, JgsValue.Function(new BuiltinFunction(name, body)));
@@ -18,6 +18,7 @@ internal static partial class JgsBuiltins
         RegisterRunningStatistics(Define);
         RegisterSelectionAndSets(Define, dialect);
         RegisterRandomDraws(Define, random);
+        RegisterRng(env, random);
         RegisterRearrangements(Define);
         RegisterMovingStatistics(Define);
     }
@@ -362,9 +363,114 @@ internal static partial class JgsBuiltins
 
     // --- Random draws -----------------------------------------------------------------------------
 
-    private static void RegisterRandomDraws(
-        Action<string, Func<IReadOnlyList<JgsValue>, int, int, JgsValue>> Define, Random random)
+    /// <summary>
+    /// Registers <c>rng</c> (M52). Declared against the scope rather than through the local
+    /// <c>Define</c> because it needs two flags: it auto-calls on its bare name, so <c>s = rng</c> is a
+    /// state rather than the builtin itself, and it prints nothing when a statement seeds the stream.
+    /// </summary>
+    private static void RegisterRng(JgsEnvironment env, JgsRandomSource random)
     {
+        // rng(seed) — and the query/restore pair that lets a script put the stream back where it was.
+        // The state is two plain numbers rather than MATLAB's 625-element vector, because that vector
+        // is the Mersenne Twister's internals and this is not that generator; see JgsRandomSource.
+        JgsValue Rng(IReadOnlyList<JgsValue> args, int line, int col)
+        {
+            ArityRange("rng", args, 0, 2, line, col);
+
+            if (args.Count == 0)
+            {
+                return RngState(random);
+            }
+
+            if (args.Count == 2)
+            {
+                // The second argument names the generator. One is offered, and a script asking for
+                // another gets told so rather than quietly getting this one.
+                string generator = Str("rng", args, 1, line, col);
+                if (!string.Equals(generator, "twister", StringComparison.OrdinalIgnoreCase))
+                {
+                    throw new JgsRuntimeException(line, col,
+                        $"rng: generator '{generator}' is not available (only 'twister').");
+                }
+            }
+
+            switch (args[0].Type)
+            {
+                case JgsType.Number:
+                {
+                    double seed = args[0].AsNumber;
+                    if (seed != System.Math.Floor(seed) || seed < 0 || seed > uint.MaxValue)
+                    {
+                        throw new JgsRuntimeException(line, col,
+                            "rng: a seed is a whole number from 0 to 2^32-1.");
+                    }
+
+                    random.Reset(unchecked((int)(uint)seed));
+                    return JgsValue.Null;
+                }
+
+                case JgsType.String:
+                {
+                    string word = args[0].AsString;
+                    if (string.Equals(word, "default", StringComparison.OrdinalIgnoreCase))
+                    {
+                        random.Reset(0);
+                        return JgsValue.Null;
+                    }
+
+                    if (string.Equals(word, "shuffle", StringComparison.OrdinalIgnoreCase))
+                    {
+                        random.Shuffle();
+                        return JgsValue.Null;
+                    }
+
+                    throw new JgsRuntimeException(line, col,
+                        $"rng: unknown option '{word}' (options: 'default', 'shuffle').");
+                }
+
+                case JgsType.Struct:
+                {
+                    // rng(s), where s came from a previous `s = rng`.
+                    IReadOnlyDictionary<string, JgsValue> fields = args[0].AsStruct;
+                    if (!fields.TryGetValue("Seed", out JgsValue? seed)
+                        || !fields.TryGetValue("Draws", out JgsValue? draws)
+                        || seed.Type != JgsType.Number
+                        || draws.Type != JgsType.Number)
+                    {
+                        throw new JgsRuntimeException(line, col,
+                            "rng: that struct did not come from rng — it needs Seed and Draws.");
+                    }
+
+                    random.Restore((unchecked((int)(uint)seed.AsNumber), (long)draws.AsNumber));
+                    return JgsValue.Null;
+                }
+
+                default:
+                    throw new JgsRuntimeException(line, col,
+                        $"rng takes a seed, 'default', 'shuffle', or a saved state, but got a {args[0].TypeName}.");
+            }
+        }
+
+        env.Declare("rng", JgsValue.Function(
+            new BuiltinFunction("rng", Rng) { AutoCallsBare = true, BindsAnsAsStatement = false }));
+    }
+
+    /// <summary>The stream's position as a script sees it: which generator, which seed, how far in.</summary>
+    private static JgsValue RngState(JgsRandomSource random)
+    {
+        (int seed, long draws) = random.Snapshot();
+        return JgsValue.Struct(new Dictionary<string, JgsValue>(StringComparer.Ordinal)
+        {
+            ["Type"] = JgsValue.Str(random.Kind),
+            ["Seed"] = JgsValue.Number(unchecked((uint)seed)),
+            ["Draws"] = JgsValue.Number(draws),
+        });
+    }
+
+    private static void RegisterRandomDraws(
+        Action<string, Func<IReadOnlyList<JgsValue>, int, int, JgsValue>> Define, JgsRandomSource random)
+    {
+
         Define("randi", (args, line, col) =>
         {
             ArityRange("randi", args, 1, int.MaxValue, line, col);

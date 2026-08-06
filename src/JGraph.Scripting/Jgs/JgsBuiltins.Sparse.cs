@@ -13,13 +13,13 @@ namespace JGraph.Scripting.Jgs;
 internal static partial class JgsBuiltins
 {
     /// <summary>Registers the sparse builtins into <paramref name="env"/>.</summary>
-    private static void RegisterSparseBuiltins(JgsEnvironment env)
+    /// <param name="env">The scope to declare into.</param>
+    /// <param name="random">The run's shared stream, so <c>sprand</c> answers to <c>rng</c> like everything else.</param>
+    private static void RegisterSparseBuiltins(JgsEnvironment env, Random random)
     {
         void Define(string name, Func<IReadOnlyList<JgsValue>, int, int, JgsValue> body,
             Func<IReadOnlyList<JgsValue>, int, int, int, JgsValue[]>? multi = null) =>
             env.Declare(name, JgsValue.Function(new BuiltinFunction(name, body) { MultiOutput = multi }));
-
-        var random = new Random();
 
         Define("sparse", (args, line, col) =>
         {
