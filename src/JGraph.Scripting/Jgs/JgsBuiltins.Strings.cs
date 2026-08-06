@@ -590,22 +590,22 @@ internal static partial class JgsBuiltins
         if (question == "isclass")
         {
             string wanted = TextIn("cellfun", detail!, line, col);
-            JgsValue actual = CallBuiltin(env, builtin, [item], line, col);
+            JgsValue actual = CallBuiltin(env, "cellfun", builtin, [item], line, col);
             return JgsValue.Bool(string.Equals(actual.AsString, wanted, StringComparison.Ordinal));
         }
 
         return question == "size"
-            ? CallBuiltin(env, builtin, [item, detail!], line, col)
-            : CallBuiltin(env, builtin, [item], line, col);
+            ? CallBuiltin(env, "cellfun", builtin, [item, detail!], line, col)
+            : CallBuiltin(env, "cellfun", builtin, [item], line, col);
     }
 
     /// <summary>Calls a registered builtin by name, so a question is answered in exactly one place.</summary>
     private static JgsValue CallBuiltin(
-        JgsEnvironment env, string name, JgsValue[] args, int line, int col)
+        JgsEnvironment env, string caller, string name, JgsValue[] args, int line, int col)
     {
         if (!env.TryGet(name, out JgsValue found) || found.Type != JgsType.Function)
         {
-            throw new JgsRuntimeException(line, col, $"cellfun: '{name}' is not available here.");
+            throw new JgsRuntimeException(line, col, $"{caller}: '{name}' is not available here.");
         }
 
         return found.AsCallable.Call(args, line, col);
@@ -835,5 +835,99 @@ internal static partial class JgsBuiltins
             ? value.ToString("0", CultureInfo.InvariantCulture)
             : JgsSprintf.FormatMatlab(
                 "%." + precision.ToString(CultureInfo.InvariantCulture) + "g", [JgsValue.Number(value)]);
+    }
+
+    // --- mat2str, int2str and deal (M52 wave E) ---------------------------------------------------
+
+    /// <summary>
+    /// <c>mat2str(A)</c>, <c>mat2str(A, n)</c>: the value written the way the language would read it
+    /// back — brackets, spaces between columns, semicolons between rows.
+    /// </summary>
+    /// <remarks>
+    /// This is <c>num2str</c>'s opposite number: <c>num2str</c> lays a matrix out for a person, so it
+    /// pads columns and hands back one string per row, while <c>mat2str</c> writes one string that
+    /// <c>eval</c> would turn back into the same value. Fifteen significant digits is MATLAB's
+    /// default, which is what makes the round trip exact for a double.
+    /// </remarks>
+    private static JgsValue MatrixText(IReadOnlyList<JgsValue> args, int line, int col)
+    {
+        ArityRange("mat2str", args, 1, 2, line, col);
+        JgsValue subject = args[0];
+        int precision = args.Count == 2 ? Count("mat2str", args, 1, line, col) : 15;
+        if (precision < 1)
+        {
+            throw new JgsRuntimeException(line, col, "mat2str: the precision is a count of digits, so it is at least 1.");
+        }
+
+        if (subject.Type == JgsType.String)
+        {
+            // A char row reads back as a char row, which means the quotes are part of the answer.
+            return JgsValue.Str("\"" + subject.AsString + "\"");
+        }
+
+        bool logical = IsLogicalValue(subject);
+        double[][] rows = subject.Type is JgsType.Number or JgsType.Bool
+            ? [[subject.AsNumber]]
+            : JgsMatrix.ToRows("mat2str", subject, line, col);
+
+        string One(double value) => logical
+            ? value != 0 ? "true" : "false"
+            : OneNumber(value, precision);
+
+        if (rows.Length == 1 && rows[0].Length == 1)
+        {
+            return JgsValue.Str(One(rows[0][0]));
+        }
+
+        var written = new List<string>(rows.Length);
+        foreach (double[] row in rows)
+        {
+            written.Add(string.Join(" ", row.Select(One)));
+        }
+
+        return JgsValue.Str("[" + string.Join(";", written) + "]");
+    }
+
+    /// <summary>
+    /// <c>int2str(x)</c>: the value rounded to whole numbers and written out. Everything about the
+    /// layout is <c>num2str</c>'s, because it is the same question asked of numbers that happen to
+    /// have no fractional part.
+    /// </summary>
+    private static JgsValue WholeNumberText(IReadOnlyList<JgsValue> args, int line, int col)
+    {
+        Arity("int2str", args, 1, line, col);
+        JgsValue rounded = MapNumeric(
+            "int2str", args[0], static x => double.IsFinite(x) ? Math.Round(x, MidpointRounding.AwayFromZero) : x,
+            line, col);
+        return NumberText([rounded], line, col);
+    }
+
+    /// <summary>
+    /// <c>[a, b, …] = deal(…)</c>: one value handed to every output, or one value each. It exists
+    /// because a function's outputs are the only place several values can be assigned at once, and
+    /// sometimes the several values are already in hand.
+    /// </summary>
+    private static JgsValue[] Dealt(IReadOnlyList<JgsValue> args, int wanted, int line, int col)
+    {
+        if (args.Count == 0)
+        {
+            throw new JgsRuntimeException(line, col, "deal needs a value to hand out.");
+        }
+
+        int outputs = Math.Max(wanted, 1);
+        if (args.Count == 1)
+        {
+            var copies = new JgsValue[outputs];
+            Array.Fill(copies, args[0]);
+            return copies;
+        }
+
+        if (args.Count != outputs)
+        {
+            throw new JgsRuntimeException(line, col,
+                $"deal: {args.Count} value(s) cannot fill {outputs} output(s) — pass one value, or one each.");
+        }
+
+        return [.. args];
     }
 }

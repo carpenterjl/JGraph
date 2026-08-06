@@ -590,6 +590,7 @@ internal static partial class JgsBuiltins
         WrapColumnwise(env, "mean", new(Words: TailWords.Nan | TailWords.Outtype));
         WrapColumnwise(env, "median", new(Words: TailWords.Nan));
         WrapColumnwise(env, "mode", new());
+        WrapColumnwise(env, "rms", new(Words: TailWords.Nan));
 
         // std(X, w, dim) and var(X, w, dim): the weight sits where every other reduction keeps the
         // dimension, so the dimension moves along one.

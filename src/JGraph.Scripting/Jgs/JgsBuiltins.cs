@@ -1916,6 +1916,11 @@ internal static partial class JgsBuiltins
         RegisterPrimitive3DBuiltins(env);
         RegisterSurfaceVariantBuiltins(env, dialect);
 
+        // After every other define, because three of these replace a name declared above; and before
+        // the reductions, so rms is wrapped for a dimension the same way mean is.
+        RegisterDataAnalysisBuiltins(env, dialect);
+        RegisterSetOperations(env, dialect);
+
         // After every imaging define, since these wrap builtins declared above.
         RegisterImagingMultiOutputForms(env, host, random, dialect);
         if (dialect.IsMatlab)

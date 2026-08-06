@@ -186,6 +186,11 @@ internal static partial class JgsBuiltins
         Define("strjoin", (args, line, col) => JoinText(args, line, col));
         Define("num2str", (args, line, col) => NumberText(args, line, col));
 
+        // num2str writes a number for a person to read; mat2str writes one for the language to read
+        // back, which is why it keeps the brackets and the semicolons (M52 wave E).
+        Define("mat2str", (args, line, col) => MatrixText(args, line, col));
+        Define("int2str", (args, line, col) => WholeNumberText(args, line, col));
+
         Define("str2double", (args, line, col) =>
         {
             Arity("str2double", args, 1, line, col);
@@ -495,6 +500,15 @@ internal static partial class JgsBuiltins
             env.Declare(name, JgsValue.Function(
                 new BuiltinFunction(name, single.Call) { MultiOutput = both }));
         }
+
+        // deal exists only to feed several outputs at once, so it is declared where the several-output
+        // forms are (M52 wave E). One value is handed to every output; several must match them.
+        env.Declare("deal", JgsValue.Function(new BuiltinFunction(
+            "deal",
+            (args, line, col) => Dealt(args, 1, line, col)[0])
+        {
+            MultiOutput = Dealt,
+        }));
 
         Wrap("size", (args, wanted, line, col) =>
         {

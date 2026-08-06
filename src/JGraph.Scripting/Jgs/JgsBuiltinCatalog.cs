@@ -153,7 +153,7 @@ public static class JgsBuiltinCatalog
         Add("angle", "Phase angle of x in radians, element-wise over arrays.", P("x"));
         Add("floor", "Largest whole number not above x, element-wise over arrays.", P("x"));
         Add("ceil", "Smallest whole number not below x, element-wise over arrays.", P("x"));
-        Add("round", "x rounded to the nearest whole number (halves away from zero), element-wise.", P("x"));
+        Add("round", "x rounded (halves away from zero), element-wise: round(x), round(x, n), round(x, n, 'significant').", P("x"), Opt("n"), Opt("type"));
         Add("sign", "-1, 0, or 1 by the sign of x, element-wise over arrays.", P("x"));
         Add("hypot", "sqrt(a² + b²) without the overflow the written-out formula suffers.", P("a"), P("b"));
         Add("log2", "Base-2 logarithm of x, element-wise over arrays.", P("x"));
@@ -419,7 +419,7 @@ public static class JgsBuiltinCatalog
         Add("pow","x raised to exponent, element-wise over arrays.", P("x"), P("exponent"));
 
         // --- Array construction ----------------------------------------------------------------
-        Add("linspace", "count evenly spaced values from start to stop, inclusive.", P("start"), P("stop"), P("count"));
+        Add("linspace", "count (default 100) evenly spaced values from start to stop, inclusive.", P("start"), P("stop"), Opt("count"));
         Add("range", "Values from start (inclusive) to stop (exclusive) in steps of step (default 1).", P("start"), P("stop"), Opt("step"));
         Add("zeros", "An array of count zeros, a rows-by-cols matrix, or the shape of a size vector (zeros(size(t))).", P("count"), Opt("cols"));
         Add("ones", "An array of count ones, a rows-by-cols matrix, or the shape of a size vector.", P("count"), Opt("cols"));
@@ -441,14 +441,18 @@ public static class JgsBuiltinCatalog
         Add("transpose", "The non-conjugate transpose, x.' as a function.", P("x"));
         Add("ctranspose", "The complex-conjugate transpose, x' as a function.", P("x"));
         Add("prod", "The product of a numeric array (column-wise over matrices in MATLAB).", P("array"));
-        Add("ismember", "Whether each element of x is in the set — a mask the shape of x.", P("x"), P("set"));
+        Add("ismember", "Whether each element of x is in the set: [tf, loc] = ismember(x, set, 'rows') also says where.", P("x"), P("set"), Opt("option"));
+        Add("union", "Every value in either set, once: [c, ia, ib] = union(a, b, 'rows', 'stable').", P("a"), P("b"), Opt("option"));
+        Add("intersect", "The values in both sets: [c, ia, ib] = intersect(a, b, 'rows', 'stable').", P("a"), P("b"), Opt("option"));
+        Add("setdiff", "The values in a that are not in b: [c, ia] = setdiff(a, b, 'rows', 'stable').", P("a"), P("b"), Opt("option"));
+        Add("setxor", "The values in exactly one of the sets: [c, ia, ib] = setxor(a, b, 'rows', 'stable').", P("a"), P("b"), Opt("option"));
         Add("dot", "The inner product of two equal-length vectors (conjugating the first when complex).", P("a"), P("b"));
         Add("inv", "The inverse of a square matrix (errors when singular).", P("A"));
         Add("det", "The determinant of a square matrix.", P("A"));
         Add("rank", "The number of linearly independent rows/columns, by singular values above tol.", P("A"), Opt("tol"));
         Add("trace", "The sum of a square matrix's diagonal (complex-aware).", P("A"));
         Add("hilb", "The n-by-n Hilbert matrix, H(i,j) = 1/(i+j-1) — the classic ill-conditioned test matrix.", P("n"));
-        Add("polyval", "Evaluates polynomial p (highest power first) at x, element-wise.", P("p"), P("x"));
+        Add("polyval", "Evaluates polynomial p (highest power first) at x; [y, delta] = polyval(p, x, s, mu) adds polyfit's error estimate.", P("p"), P("x"), Opt("s"), Opt("mu"));
         Add("peaks", "The peaks demonstration surface; [X, Y, Z] = peaks(n) hands back the grids too.", Opt("n"));
         Add("cond", "The condition number of a matrix (2-norm by default; 1, Inf, and 'fro' accepted).", P("A"), Opt("p"));
         Add("sqrtm", "The principal matrix square root, by the Denman-Beavers iteration.", P("A"));
@@ -518,6 +522,9 @@ public static class JgsBuiltinCatalog
         Add("strsplit", "Splits text into a cell of pieces, on a delimiter (or a cell of them) or on whitespace; [C, matches] also reports the delimiters cut on.", P("text"), Opt("delimiter"), Opt("option"), Opt("value"));
         Add("strjoin", "Joins a cell (or array) of pieces into one string; a cell separator gives every gap its own.", P("parts"), Opt("separator"));
         Add("num2str", "Formats a number or an array as text, optionally to a given number of significant digits or a sprintf format.", P("x"), Opt("digits"));
+        Add("mat2str", "Writes a value the way the language reads it back: '[1 2;3 4]', to n significant digits.", P("x"), Opt("digits"));
+        Add("int2str", "Rounds to whole numbers and formats them as text.", P("x"));
+        Add("deal", "Hands one value to every output, or one value each: [a, b] = deal(1, 2).", P("value"), Opt("more..."));
         Add("str2double", "Parses text as a number, or NaN when it is not one.", P("text"));
         Add("error", "Stops the script with a message (accepts a format string and an optional 'id:sub' first).", P("message"), Opt("args..."));
         Add("warning", "Writes a warning to the console without stopping; warning('off') is accepted and ignored.", P("message"), Opt("args..."));
@@ -895,6 +902,17 @@ public static class JgsBuiltinCatalog
         Add("median", "Median of a non-empty numeric array.", P("array"));
         Add("mode", "Most frequent value of a non-empty numeric array (smallest wins ties).", P("array"));
         Add("percentile", "The p-th percentile (0-100) of a non-empty array, by linear interpolation.", P("array"), P("p"));
+        Add("rms", "The root mean square, per slice along dim: rms(x), rms(x, dim), rms(x, 'all'), rms(x, 'omitnan').", P("array"), Opt("dim"));
+        Add("bounds", "The smallest and largest together: [s, l] = bounds(x, dim), or bounds(x, 'all').", P("array"), Opt("dim"));
+        Add("cov", "Covariance between columns: cov(A), cov(x, y), cov(..., 1) to divide by n, then 'omitrows' or 'partialrows'.", P("A"), Opt("B"), Opt("weight"), Opt("nanflag"));
+        Add("corrcoef", "Correlation between columns: [r, p, rl, ru] = corrcoef(A, 'Alpha', 0.05, 'Rows', 'complete').", P("A"), Opt("B"), Opt("option"), Opt("value"));
+        Add("histcounts", "Values per bin: [n, edges, bin] = histcounts(x, nbins | edges, 'BinWidth', w, 'BinLimits', [a b], 'BinMethod', m, 'Normalization', how).", P("x"), Opt("bins"), Opt("option"), Opt("value"));
+        Add("sortrows", "Rows in order of whole columns: [b, i] = sortrows(a, cols, 'descend'); a negative column is descending.", P("a"), Opt("columns"), Opt("direction"));
+        Add("gradient", "Numerical gradient by central differences: [fx, fy] = gradient(f, hx, hy).", P("f"), Opt("hx"), Opt("hy"));
+        Add("trapz", "The area under sampled data by the trapezoid rule: trapz(y), trapz(x, y), trapz(y, dim), trapz(x, y, dim).", P("first"), Opt("y"), Opt("dim"));
+        Add("cumtrapz", "The running area under sampled data, starting at zero: cumtrapz(y), cumtrapz(x, y), cumtrapz(x, y, dim).", P("first"), Opt("y"), Opt("dim"));
+        Add("interp1", "Values between samples: interp1(x, v, xq, method, 'extrap'); methods 'linear' 'nearest' 'next' 'previous' 'pchip' 'spline'.", P("x"), P("v"), Opt("xq"), Opt("method"), Opt("extrapolation"));
+        Add("polyfit", "The least-squares polynomial of degree n: [p, s, mu] = polyfit(x, y, n).", P("x"), P("y"), P("n"));
         Add("cumsum", "Running sums of a numeric array.", P("array"));
         Add("cumprod", "Running products of a numeric array.", P("array"));
         Add(

@@ -3518,7 +3518,16 @@ internal sealed partial class Interpreter
         }
 
         JgsValue? index = EvaluateIndexArgument(Single(subscripts, at, "A cell index"), elements.Length, env);
-        return ToIndex(index!, elements.Length, at.Line, at.Column);
+        if (index is null)
+        {
+            // c{:} is MATLAB's comma-separated list, which is not a value and has no place to go
+            // here. Saying so is the point: without this the colon reached ToIndex as a null and
+            // came back out of the interpreter as a NullReferenceException (M52).
+            throw new JgsRuntimeException(at.Line, at.Column,
+                "A brace index selects one cell element, so ':' does not name one — index the cell one element at a time.");
+        }
+
+        return ToIndex(index, elements.Length, at.Line, at.Column);
     }
 
     /// <summary>Reads <c>s.field</c> (or the dynamic <c>s.('field')</c>).</summary>
