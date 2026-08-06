@@ -806,6 +806,15 @@ internal sealed partial class Interpreter
     }
 
     /// <summary>
+    /// Evaluates <paramref name="expression"/> asking for <paramref name="wanted"/> outputs. This is
+    /// how an anonymous handle passes an output count through to whatever it wraps, so that
+    /// <c>[a, b] = f(x)</c> means the same thing whether <c>f</c> is <c>@minmax</c> or
+    /// <c>@(x) minmax(x)</c>.
+    /// </summary>
+    internal JgsValue[] EvaluateForOutputsIn(Expr expression, int wanted, JgsEnvironment env) =>
+        EvaluateForOutputs(expression, wanted, env);
+
+    /// <summary>
     /// The environment an if/loop body runs in. JGS gives each block a scope of its own, so a variable
     /// declared inside one does not leak out; MATLAB has only function scope, where 'if c; x = 1; end'
     /// must leave x visible afterwards.

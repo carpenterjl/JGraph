@@ -182,49 +182,9 @@ internal static partial class JgsBuiltins
             return JgsValue.Str(Str("strtrim", args, 0, line, col).Trim());
         });
 
-        Define("strsplit", (args, line, col) =>
-        {
-            ArityRange("strsplit", args, 1, 2, line, col);
-            string text = Str("strsplit", args, 0, line, col);
-            string[] parts = args.Count == 2
-                ? text.Split(Str("strsplit", args, 1, line, col), StringSplitOptions.None)
-                : text.Split((char[]?)null, StringSplitOptions.RemoveEmptyEntries);
-            return JgsValue.Cell(parts.Select(JgsValue.Str).ToArray());
-        });
-
-        Define("strjoin", (args, line, col) =>
-        {
-            ArityRange("strjoin", args, 1, 2, line, col);
-            string separator = args.Count == 2 ? Str("strjoin", args, 1, line, col) : " ";
-            IEnumerable<string> parts = Elements("strjoin", args[0], line, col).Select(static v => v.Display());
-            return JgsValue.Str(string.Join(separator, parts));
-        });
-
-        Define("num2str", (args, line, col) =>
-        {
-            ArityRange("num2str", args, 1, 2, line, col);
-            if (args.Count == 2 && args[1].Type == JgsType.String)
-            {
-                // num2str(x, '%08.3f'): the second argument is a sprintf format (M43).
-                try
-                {
-                    return JgsValue.Str(JgsSprintf.FormatMatlab(args[1].AsString, [args[0]]));
-                }
-                catch (FormatException ex)
-                {
-                    throw new JgsRuntimeException(line, col, ex.Message);
-                }
-            }
-
-            if (args.Count == 2)
-            {
-                int digits = Count("num2str", args, 1, line, col);
-                return JgsValue.Str(Num("num2str", args, 0, line, col)
-                    .ToString("G" + digits.ToString(CultureInfo.InvariantCulture), CultureInfo.InvariantCulture));
-            }
-
-            return JgsValue.Str(args[0].Display());
-        });
+        Define("strsplit", (args, line, col) => SplitText(args, 1, line, col)[0]);
+        Define("strjoin", (args, line, col) => JoinText(args, line, col));
+        Define("num2str", (args, line, col) => NumberText(args, line, col));
 
         Define("str2double", (args, line, col) =>
         {
@@ -397,44 +357,9 @@ internal static partial class JgsBuiltins
             return args[0].AsCallable.Call(args.Skip(1).ToArray(), line, col);
         });
 
-        Define("cellfun", (args, line, col) =>
-        {
-            if (args.Count < 2 || args[0].Type != JgsType.Function)
-            {
-                throw new JgsRuntimeException(line, col, "cellfun(f, c) applies a function handle to each cell.");
-            }
-
-            if (args[1].Type != JgsType.Cell)
-            {
-                throw new JgsRuntimeException(line, col, $"cellfun expects a cell array, but got a {args[1].TypeName}.");
-            }
-
-            // cellfun(..., 'UniformOutput', false) hands back a cell instead of an array — without it,
-            // every result has to be a scalar, exactly as MATLAB insists.
-            bool uniform = true;
-            for (int i = 2; i + 1 < args.Count; i += 2)
-            {
-                if (args[i].Type == JgsType.String
-                    && string.Equals(args[i].AsString, "UniformOutput", StringComparison.OrdinalIgnoreCase))
-                {
-                    uniform = args[i + 1].IsTruthy;
-                }
-            }
-
-            JgsValue[] source = args[1].AsCell;
-            var results = new JgsValue[source.Length];
-            for (int i = 0; i < source.Length; i++)
-            {
-                results[i] = args[0].AsCallable.Call([source[i]], line, col);
-                if (uniform && results[i].Type is not (JgsType.Number or JgsType.Bool))
-                {
-                    throw new JgsRuntimeException(line, col,
-                        $"cellfun: element {i + 1} produced a {results[i].TypeName}. Add 'UniformOutput', false to collect a cell.");
-                }
-            }
-
-            return uniform ? JgsValue.Array(results) : JgsValue.Cell(results);
-        });
+        // cellfun(..., 'UniformOutput', false) hands back a cell instead of an array — without it,
+        // every result has to be a scalar, exactly as MATLAB insists.
+        Define("cellfun", (args, line, col) => ApplyOverCells(env, args, 1, line, col)[0]);
 
         // --- Index arithmetic -------------------------------------------------------------------
         Define("sub2ind", (args, line, col) =>
@@ -639,6 +564,11 @@ internal static partial class JgsBuiltins
         // [C, ia, ic] = unique(...). Wrapped here rather than declared with its outputs because the
         // one-output form is registered with the base builtins, before this file runs.
         Wrap("unique", (args, wanted, line, col) => UniqueParts(args, dialect, wanted, line, col));
+
+        // [C, matches] = strsplit(...) reports the delimiters it actually cut on, and
+        // [a, b] = cellfun(...) asks each element's function for that many answers.
+        Wrap("strsplit", (args, wanted, line, col) => SplitText(args, wanted, line, col));
+        Wrap("cellfun", (args, wanted, line, col) => ApplyOverCells(env, args, wanted, line, col));
 
         Wrap("ind2sub", (args, _, line, col) =>
         {

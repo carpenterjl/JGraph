@@ -1,4 +1,4 @@
-using System.Globalization;
+﻿using System.Globalization;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -228,20 +228,7 @@ internal static partial class JgsBuiltins
         Search("regexp", RegexOptions.None);
         Search("regexpi", RegexOptions.IgnoreCase);
 
-        Define("regexprep", (args, line, col) =>
-        {
-            ArityRange("regexprep", args, 3, 4, line, col);
-            string text = Str("regexprep", args, 0, line, col);
-            string pattern = Str("regexprep", args, 1, line, col);
-            string replacement = Str("regexprep", args, 2, line, col);
-            RegexOptions options = args.Count == 4 && Str("regexprep", args, 3, line, col) == "ignorecase"
-                ? RegexOptions.IgnoreCase
-                : RegexOptions.None;
-
-            // MATLAB and .NET spell a capture reference the same way ($1), so the replacement text
-            // passes straight through.
-            return JgsValue.Str(Compile("regexprep", pattern, options, line, col).Replace(text, replacement));
-        }, null);
+        Define("regexprep", (args, line, col) => ReplaceMatches(args, line, col), null);
 
         Define("regexptranslate", (args, line, col) =>
         {
@@ -279,48 +266,36 @@ internal static partial class JgsBuiltins
         string text = Str(name, args, 0, line, col);
         string pattern = Str(name, args, 1, line, col);
 
-        bool once = false;
         var requested = new List<string>();
-        for (int i = 2; i < args.Count; i++)
+        RegexMode mode = ReadRegexWords(name, args, 2, options, requested, line, col);
+        if (requested.Count == 0)
         {
-            string word = Str(name, args, i, line, col);
-            switch (word)
+            requested.AddRange(RegexOutputWords);
+        }
+
+        // MATLAB ignores a zero-length match unless 'emptymatch' asks for it, which is the opposite
+        // of what .NET does with the same expression.
+        var matches = new List<Match>();
+        foreach (Match match in Compile(name, pattern, mode.Options, line, col).Matches(text))
+        {
+            if (match.Length > 0 || mode.EmptyMatch)
             {
-                case "once":
-                    once = true;
-                    break;
-                case "ignorecase":
-                    options |= RegexOptions.IgnoreCase;
-                    break;
-                case "matchcase":
-                    options &= ~RegexOptions.IgnoreCase;
-                    break;
-                case "start" or "end" or "tokenExtents" or "match" or "tokens" or "names" or "split":
-                    requested.Add(word);
-                    break;
-                default:
-                    throw new JgsRuntimeException(line, col, $"{name} does not recognize the option '{word}'.");
+                matches.Add(match);
             }
         }
 
-        if (requested.Count == 0)
-        {
-            requested.AddRange(["start", "end", "tokenExtents", "match", "tokens", "names", "split"]);
-        }
-
-        MatchCollection matches = Compile(name, pattern, options, line, col).Matches(text);
         int produced = Math.Min(Math.Max(wanted, 1), requested.Count);
         var outputs = new JgsValue[produced];
         for (int i = 0; i < produced; i++)
         {
-            outputs[i] = RegexOutput(requested[i], matches, text, dialect.IndexBase, once);
+            outputs[i] = RegexOutput(requested[i], matches, text, dialect.IndexBase, mode.Once);
         }
 
         return outputs;
     }
 
     /// <summary>Builds one named <c>regexp</c> output from the match list.</summary>
-    private static JgsValue RegexOutput(string kind, MatchCollection matches, string text, int origin, bool once)
+    private static JgsValue RegexOutput(string kind, IReadOnlyList<Match> matches, string text, int origin, bool once)
     {
         switch (kind)
         {
@@ -401,7 +376,7 @@ internal static partial class JgsBuiltins
         return JgsValue.Struct(fields);
     }
 
-    private static JgsValue SplitOn(MatchCollection matches, string text)
+    private static JgsValue SplitOn(IReadOnlyList<Match> matches, string text)
     {
         var pieces = new List<JgsValue>();
         int at = 0;

@@ -189,10 +189,18 @@ internal static class JgsSprintf
     {
         // %g: shortest of fixed/scientific at the given significant digits (default 6, like C).
         int digits = precision <= 0 ? 6 : precision;
-        return value.ToString("G" + digits, CultureInfo.InvariantCulture)
-            .Replace("E+0", "e+", StringComparison.Ordinal)
-            .Replace("E-0", "e-", StringComparison.Ordinal)
-            .Replace("E+", "e+", StringComparison.Ordinal)
-            .Replace("E-", "e-", StringComparison.Ordinal);
+        string text = value.ToString("G" + digits, CultureInfo.InvariantCulture);
+        int at = text.IndexOf('E', StringComparison.Ordinal);
+        if (at < 0)
+        {
+            return text;
+        }
+
+        // C — and MATLAB after it — writes at least two exponent digits, where .NET's "G" writes as
+        // few as one. %g of 1.2345e-5 reads 1.2345e-05 everywhere else, so the zero is padding the
+        // exponent to its minimum width, not a digit to be trimmed.
+        string sign = text[at + 1] == '-' ? "-" : "+";
+        string exponent = text[(at + 2)..].TrimStart('0');
+        return text[..at] + "e" + sign + exponent.PadLeft(2, '0');
     }
 }

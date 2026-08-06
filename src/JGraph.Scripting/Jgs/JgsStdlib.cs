@@ -176,6 +176,53 @@ internal static class JgsStdlib
             return DeepEquals(left, right.ElementAt(0), nanEqual);
         }
 
+        // A cell is equal element by element, the same reading as an array — which is what lets a
+        // script check a split, a fieldnames list or a cellfun result against a literal. Without it
+        // isequal fell through to reference equality and answered false for two identical cells,
+        // so the natural way to assert about text was quietly always wrong (M52).
+        if (left.Type == JgsType.Cell && right.Type == JgsType.Cell)
+        {
+            JgsValue[] ours = left.AsCell;
+            JgsValue[] theirs = right.AsCell;
+            if (ours.Length != theirs.Length
+                || JgsMatrix.RowCount(left) != JgsMatrix.RowCount(right))
+            {
+                return false;
+            }
+
+            for (int i = 0; i < ours.Length; i++)
+            {
+                if (!DeepEquals(ours[i], theirs[i], nanEqual))
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        // A struct is equal when it holds the same fields with the same values. MATLAB does not care
+        // what order the fields were added in, only that both sides name the same set.
+        if (left.Type == JgsType.Struct && right.Type == JgsType.Struct)
+        {
+            Dictionary<string, JgsValue> mine = left.AsStruct;
+            Dictionary<string, JgsValue> yours = right.AsStruct;
+            if (mine.Count != yours.Count)
+            {
+                return false;
+            }
+
+            foreach (KeyValuePair<string, JgsValue> field in mine)
+            {
+                if (!yours.TryGetValue(field.Key, out JgsValue? other) || !DeepEquals(field.Value, other, nanEqual))
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
         if (left.Type == JgsType.Image && right.Type == JgsType.Image)
         {
             return ImagesEqual(left.AsImage, right.AsImage);

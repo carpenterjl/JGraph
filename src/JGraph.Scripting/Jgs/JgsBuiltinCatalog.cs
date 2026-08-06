@@ -1,4 +1,4 @@
-using System.Text;
+﻿using System.Text;
 
 namespace JGraph.Scripting.Jgs;
 
@@ -312,7 +312,7 @@ public static class JgsBuiltinCatalog
         Add("convertContainedStringsToChars", "The value unchanged: JGraph's text is already char.", P("x"));
         Add("regexp", "Regular expression search: start positions, or the outputs the option words name.", P("text"), P("expr"), Opt("option"));
         Add("regexpi", "Regular expression search, ignoring case.", P("text"), P("expr"), Opt("option"));
-        Add("regexprep", "Every match of a regular expression replaced; $1 refers to a captured group.", P("text"), P("expr"), P("replacement"), Opt("option"));
+        Add("regexprep", "Every match of a regular expression replaced; $1 refers to a captured group. Option words: 'once', 'ignorecase', 'preservecase', 'emptymatch', 'dotexceptnewline', 'lineanchors', 'freespacing'.", P("text"), P("expr"), P("replacement"), Opt("option"), Opt("option2"));
         Add("regexptranslate", "A string turned into a regular expression: 'escape', 'wildcard', or 'flexible'.", P("mode"), P("text"));
         Add("isstrprop", "Which characters belong to a category ('alpha', 'digit', 'wspace', …).", P("text"), P("category"));
         Add("unicode2native", "The bytes a string encodes to (UTF-8 by default).", P("text"), Opt("encoding"));
@@ -515,9 +515,9 @@ public static class JgsBuiltinCatalog
         Add("strcmpi", "Compares two strings ignoring case.", P("a"), P("b"));
         Add("strrep", "Replaces every occurrence of one substring with another.", P("text"), P("find"), P("replace"));
         Add("strtrim", "Removes leading and trailing whitespace.", P("text"));
-        Add("strsplit", "Splits text into a cell of pieces, on a delimiter or on whitespace.", P("text"), Opt("delimiter"));
-        Add("strjoin", "Joins a cell (or array) of pieces into one string.", P("parts"), Opt("separator"));
-        Add("num2str", "Formats a number as text, optionally to a given number of significant digits.", P("x"), Opt("digits"));
+        Add("strsplit", "Splits text into a cell of pieces, on a delimiter (or a cell of them) or on whitespace; [C, matches] also reports the delimiters cut on.", P("text"), Opt("delimiter"), Opt("option"), Opt("value"));
+        Add("strjoin", "Joins a cell (or array) of pieces into one string; a cell separator gives every gap its own.", P("parts"), Opt("separator"));
+        Add("num2str", "Formats a number or an array as text, optionally to a given number of significant digits or a sprintf format.", P("x"), Opt("digits"));
         Add("str2double", "Parses text as a number, or NaN when it is not one.", P("text"));
         Add("error", "Stops the script with a message (accepts a format string and an optional 'id:sub' first).", P("message"), Opt("args..."));
         Add("warning", "Writes a warning to the console without stopping; warning('off') is accepted and ignored.", P("message"), Opt("args..."));
@@ -530,7 +530,7 @@ public static class JgsBuiltinCatalog
         Add("num2cell", "Puts each element of an array into its own cell.", P("x"));
         Add("cell2mat", "Flattens a cell of numbers (or arrays of numbers) into one array.", P("c"));
         Add("feval", "Calls a function handle with the given arguments.", P("f"), Opt("args..."));
-        Add("cellfun", "Applies a function to every cell; add 'UniformOutput', false to collect a cell.", P("f"), P("c"), Opt("options..."));
+        Add("cellfun", "Applies a function — or a named question like 'isempty' — to every cell of one or more cells; add 'UniformOutput', false to collect a cell.", P("f"), P("c"), Opt("options..."));
         Add("sub2ind", "The single index of a row/column position in an array of the given size.", P("size"), P("row"), P("column"));
         Add("ind2sub", "The row and column of a single index in an array of the given size.", P("size"), P("index"));
 

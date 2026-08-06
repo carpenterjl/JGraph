@@ -180,7 +180,7 @@ internal sealed class UserFunction : IJgsCallable, IJgsMultiCallable
 /// the handle is created, not when it is called, so the environment here is a snapshot: changing a
 /// captured variable afterwards does not change what the handle computes.
 /// </summary>
-internal sealed class AnonymousFunction : IJgsCallable
+internal sealed class AnonymousFunction : IJgsCallable, IJgsMultiCallable
 {
     private readonly AnonymousFnExpr _declaration;
     private readonly JgsEnvironment _captured;
@@ -217,6 +217,18 @@ internal sealed class AnonymousFunction : IJgsCallable
     /// <inheritdoc />
     public JgsValue Call(IReadOnlyList<JgsValue> arguments, int line, int column)
     {
+        JgsValue[] outputs = CallMultiple(arguments, wanted: 1, line, column);
+        return outputs.Length > 0 ? outputs[0] : JgsValue.Null;
+    }
+
+    /// <summary>
+    /// Invokes the handle asking for several outputs. A handle is a wrapper, not a function with
+    /// outputs of its own, so the count passes through to whatever the body calls: that is what makes
+    /// <c>[a, b] = f(x)</c> behave the same for <c>@minmax</c> and for <c>@(x) minmax(x)</c>, and it
+    /// is what lets <c>cellfun</c> ask each element for two answers.
+    /// </summary>
+    public JgsValue[] CallMultiple(IReadOnlyList<JgsValue> arguments, int wanted, int line, int column)
+    {
         if (arguments.Count != _declaration.Parameters.Count)
         {
             throw new JgsRuntimeException(line, column,
@@ -229,7 +241,7 @@ internal sealed class AnonymousFunction : IJgsCallable
             local.Declare(_declaration.Parameters[i], _interpreter.CopyForBinding(arguments[i]));
         }
 
-        return _interpreter.EvaluateIn(_declaration.Body, local);
+        return _interpreter.EvaluateForOutputsIn(_declaration.Body, wanted, local);
     }
 
     /// <summary>Every identifier the body mentions apart from the parameters.</summary>
