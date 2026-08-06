@@ -274,26 +274,26 @@ public static class JgsBuiltinCatalog
         Add("accumarray", "Sums values into bins their subscripts name; a function handle reduces differently.", P("subs"), P("values"), Opt("size"), Opt("f"), Opt("fill"));
         Add("cummax", "The running maximum so far at each position.", P("x"));
         Add("cummin", "The running minimum so far at each position.", P("x"));
-        Add("maxk", "The k largest values, largest first.", P("x"), P("k"));
-        Add("mink", "The k smallest values, smallest first.", P("x"), P("k"));
-        Add("histc", "How many values fall in each bin the edges define.", P("x"), P("edges"));
-        Add("uniquetol", "The unique values, treating any two within a tolerance as one.", P("x"), Opt("tol"));
-        Add("ismembertol", "Whether each value is within a tolerance of something in the set.", P("x"), P("set"), Opt("tol"));
+        Add("maxk", "The k largest values of each slice, largest first: [b, i] = maxk(x, k, dim).", P("x"), P("k"), Opt("dim"));
+        Add("mink", "The k smallest values of each slice, smallest first: [b, i] = mink(x, k, dim).", P("x"), P("k"), Opt("dim"));
+        Add("histc", "How many values fall in each bin the edges define, per slice along dim.", P("x"), P("edges"), Opt("dim"));
+        Add("uniquetol", "The unique values, treating any two within a tolerance as one: [c, ia, ic] = uniquetol(x, tol, 'ByRows', true, 'DataScale', s, 'OutputAllIndices', true).", P("x"), Opt("tol"), Opt("option"), Opt("value"));
+        Add("ismembertol", "Whether each value is within a tolerance of something in the set: [lia, locb] = ismembertol(x, set, tol, 'ByRows', true).", P("x"), P("set"), Opt("tol"), Opt("option"), Opt("value"));
         Add("issortedrows", "Whether a matrix's rows are in lexicographic order.", P("a"));
-        Add("randi", "Uniform whole numbers from 1 to imax, or from the range [low high].", P("imax"), Opt("rows"), Opt("cols"));
+        Add("randi", "Uniform whole numbers from 1 to imax, or from the range [low high]; a trailing class name (or 'like', x) says what they come back as.", P("imax"), Opt("rows"), Opt("cols"), Opt("class"));
         Add("randperm", "A random permutation of 1..n, or k values drawn from it.", P("n"), Opt("k"));
         Add("rng", "Seeds the random stream, or reports its state: rng(seed), rng('default'), rng('shuffle'), s = rng.", Opt("seed"), Opt("generator"));
-        Add("circshift", "The values moved along by k places, wrapping around.", P("x"), P("k"));
+        Add("circshift", "The values moved along by k places, wrapping around: circshift(x, k, dim), or a k per dimension.", P("x"), P("k"), Opt("dim"));
         Add("rot90", "A matrix turned a quarter turn counter-clockwise, k times.", P("a"), Opt("k"));
-        Add("movmean", "The mean over a sliding window of width k.", P("x"), P("k"));
-        Add("movmedian", "The median over a sliding window of width k.", P("x"), P("k"));
-        Add("movsum", "The sum over a sliding window of width k.", P("x"), P("k"));
-        Add("movprod", "The product over a sliding window of width k.", P("x"), P("k"));
-        Add("movmax", "The maximum over a sliding window of width k.", P("x"), P("k"));
-        Add("movmin", "The minimum over a sliding window of width k.", P("x"), P("k"));
-        Add("movstd", "The standard deviation over a sliding window of width k.", P("x"), P("k"));
-        Add("movvar", "The variance over a sliding window of width k.", P("x"), P("k"));
-        Add("movmad", "The mean absolute deviation over a sliding window of width k.", P("x"), P("k"));
+        Add("movmean", "The mean over a sliding window of width k, or a [before after] reach; 'Endpoints' says what an incomplete window at the ends means.", P("x"), P("k"), Opt("dim"), Opt("option"), Opt("value"));
+        Add("movmedian", "The median over a sliding window of width k, or a [before after] reach; 'Endpoints' says what an incomplete window at the ends means.", P("x"), P("k"), Opt("dim"), Opt("option"), Opt("value"));
+        Add("movsum", "The sum over a sliding window of width k, or a [before after] reach; 'Endpoints' says what an incomplete window at the ends means.", P("x"), P("k"), Opt("dim"), Opt("option"), Opt("value"));
+        Add("movprod", "The product over a sliding window of width k, or a [before after] reach; 'Endpoints' says what an incomplete window at the ends means.", P("x"), P("k"), Opt("dim"), Opt("option"), Opt("value"));
+        Add("movmax", "The maximum over a sliding window of width k, or a [before after] reach; 'Endpoints' says what an incomplete window at the ends means.", P("x"), P("k"), Opt("dim"), Opt("option"), Opt("value"));
+        Add("movmin", "The minimum over a sliding window of width k, or a [before after] reach; 'Endpoints' says what an incomplete window at the ends means.", P("x"), P("k"), Opt("dim"), Opt("option"), Opt("value"));
+        Add("movstd", "The standard deviation over a sliding window of width k, or a [before after] reach; 'Endpoints' says what an incomplete window at the ends means.", P("x"), P("k"), Opt("dim"), Opt("option"), Opt("value"));
+        Add("movvar", "The variance over a sliding window of width k, or a [before after] reach; 'Endpoints' says what an incomplete window at the ends means.", P("x"), P("k"), Opt("dim"), Opt("option"), Opt("value"));
+        Add("movmad", "The mean absolute deviation over a sliding window of width k, or a [before after] reach; 'Endpoints' says what an incomplete window at the ends means.", P("x"), P("k"), Opt("dim"), Opt("option"), Opt("value"));
 
         // --- Text search, shaping, and regular expressions ------------------------------------------
         Add("strfind", "Every position where a pattern appears in a string.", P("text"), P("pattern"));
@@ -889,8 +889,9 @@ public static class JgsBuiltinCatalog
         Add("numel", "The number of elements in an array, or characters in a string (alias of length).", P("value"));
 
         // --- Statistics -------------------------------------------------------------------------
-        Add("std", "Sample standard deviation (n-1 denominator) of at least 2 values.", P("array"));
-        Add("variance", "Sample variance (n-1 denominator) of at least 2 values.", P("array"));
+        Add("std", "Standard deviation: weight 0 (default) divides by n-1, 1 divides by n, a vector weights each value.", P("array"), Opt("weight"), Opt("dim"));
+        Add("variance", "Variance: weight 0 (default) divides by n-1, 1 divides by n, a vector weights each value.", P("array"), Opt("weight"), Opt("dim"));
+        Add("var", "Variance, MATLAB's spelling: var(x), var(x, 1), var(x, w), var(x, w, dim).", P("array"), Opt("weight"), Opt("dim"));
         Add("median", "Median of a non-empty numeric array.", P("array"));
         Add("mode", "Most frequent value of a non-empty numeric array (smallest wins ties).", P("array"));
         Add("percentile", "The p-th percentile (0-100) of a non-empty array, by linear interpolation.", P("array"), P("p"));
@@ -904,9 +905,9 @@ public static class JgsBuiltinCatalog
             Opt("dim"));
 
         // --- Array operations ---------------------------------------------------------------------
-        Add("sort", "A sorted copy of a numeric or string array; order \"ascend\" (default) or \"descend\".", P("array"), Opt("order"));
-        Add("unique", "The sorted distinct values of a numeric or string array.", P("array"));
-        Add("find", "0-based indices of the truthy elements — volt(find(temp > 85)) gathers the matches; pass base 1 for MATLAB numbering.", P("mask"), Opt("base"));
+        Add("sort", "A sorted copy of a numeric or string array; order \"ascend\" (default) or \"descend\", with 'MissingPlacement' and 'ComparisonMethod' for where NaN lands and how complex numbers order.", P("array"), Opt("order"), Opt("option"), Opt("value"));
+        Add("unique", "The distinct values of a numeric or string array: [c, ia, ic] = unique(x, 'rows', 'stable', 'last'), where c = x(ia) and x = c(ic).", P("array"), Opt("option"), Opt("more"));
+        Add("find", "Indices of the truthy elements: volt(find(temp > 85)) gathers the matches. In a .m file find(x, k) keeps the first k ('last' for the other end); in JGS the second argument is the index base, 0 by default.", P("mask"), Opt("k"), Opt("direction"));
         Add("any", "Whether at least one element is truthy.", P("array"));
         Add("all", "Whether every element is truthy.", P("array"));
         Add("concat", "One array from arrays and scalars, in order: concat(a, b), concat(a, 5).", P("first"), P("second"));

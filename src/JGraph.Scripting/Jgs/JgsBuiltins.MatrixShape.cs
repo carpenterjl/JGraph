@@ -581,39 +581,148 @@ internal static partial class JgsBuiltins
     /// </summary>
     private static void RegisterMatlabReductions(JgsEnvironment env, JgsDialect dialect)
     {
-        foreach (string name in new[] { "sum", "prod", "mean", "median", "std", "variance", "mode", "any", "all" })
+        // One row per name, and every difference between one reduction and another lives here rather
+        // than in the wrapper's body. Before M52 the only such difference was a bool for diff, and
+        // std(x, 1) paid for it: the weight landed in the slot the wrapper reads as the dimension, so
+        // asking for the population standard deviation silently reduced along dimension 1 instead.
+        WrapColumnwise(env, "sum", new(Words: TailWords.Nan | TailWords.Outtype, Identity: 0));
+        WrapColumnwise(env, "prod", new(Words: TailWords.Nan | TailWords.Outtype, Identity: 1));
+        WrapColumnwise(env, "mean", new(Words: TailWords.Nan | TailWords.Outtype));
+        WrapColumnwise(env, "median", new(Words: TailWords.Nan));
+        WrapColumnwise(env, "mode", new());
+
+        // std(X, w, dim) and var(X, w, dim): the weight sits where every other reduction keeps the
+        // dimension, so the dimension moves along one.
+        foreach (string spread in new[] { "std", "variance", "var" })
         {
-            WrapColumnwise(env, name, keepShape: false);
+            WrapColumnwise(env, spread, new(LeadingArgs: 1, Words: TailWords.Nan));
         }
 
-        foreach (string name in new[] { "cumsum", "cumprod", "sort" })
-        {
-            WrapColumnwise(env, name, keepShape: true);
-        }
+        // any and all take no 'omitnan': MATLAB counts NaN as nonzero, so there is nothing to omit.
+        WrapColumnwise(env, "any", new());
+        WrapColumnwise(env, "all", new());
 
-        // diff is the one name here whose second argument is not the dimension: MATLAB spells it
-        // diff(X, n, dim), where n is how many times to difference.
-        WrapColumnwise(env, "diff", keepShape: true, orderArg: true);
+        WrapColumnwise(env, "cumsum", new(KeepShape: true, Words: TailWords.Nan | TailWords.Reverse, Identity: 0));
+        WrapColumnwise(env, "cumprod", new(KeepShape: true, Words: TailWords.Nan | TailWords.Reverse, Identity: 1));
+        WrapColumnwise(env, "sort", new(KeepShape: true));
+
+        // diff(X, n, dim): n is how many times to difference, not the dimension.
+        WrapColumnwise(env, "diff", new(KeepShape: true, LeadingArgs: 1, RepeatsInner: true));
 
         WrapExtreme(env, "max", dialect, takeMin: false);
         WrapExtreme(env, "min", dialect, takeMin: true);
     }
 
-    // orderArg says the second argument is a repetition count rather than the dimension — MATLAB's
-    // diff(X, n, dim), the one signature in this family that puts something else in the dimension's
-    // usual place.
-    private static void WrapColumnwise(JgsEnvironment env, string name, bool keepShape, bool orderArg = false)
+    /// <summary>
+    /// The trailing option words a reduction answers itself rather than handing to the builtin
+    /// underneath. Anything not listed rides along on every per-slice call instead, which is how
+    /// <c>sort(A, 'descend')</c> still reaches the sort that knows what to do with it.
+    /// </summary>
+    [Flags]
+    private enum TailWords
+    {
+        None = 0,
+
+        /// <summary><c>'omitnan'</c> / <c>'includenan'</c>.</summary>
+        Nan = 1,
+
+        /// <summary><c>'reverse'</c> / <c>'forward'</c> — the cumulative reductions.</summary>
+        Reverse = 2,
+
+        /// <summary><c>'default'</c> / <c>'double'</c> / <c>'native'</c> — MATLAB's output class.</summary>
+        Outtype = 4,
+    }
+
+    /// <summary>
+    /// What one reduction name puts in each argument slot after the array, and which option words it
+    /// answers itself. The defaults are the plain <c>sum(A, dim)</c> shape, so a name registered with
+    /// <c>new()</c> behaves exactly as it did before these roles existed.
+    /// </summary>
+    /// <param name="KeepShape">
+    /// Whether a slice reduces to a whole vector rather than one value — <c>cumsum</c>, <c>sort</c>,
+    /// <c>diff</c> — which is what decides how the results are scattered back.
+    /// </param>
+    /// <param name="LeadingArgs">
+    /// How many arguments sit between the array and the dimension. They ride along to every per-slice
+    /// call untouched, so the builtin underneath is the one that has to understand them.
+    /// </param>
+    /// <param name="RepeatsInner">
+    /// Whether the leading argument is a repetition count the wrapper consumes rather than passes on:
+    /// differencing n times along a dimension is the base builtin applied n times to each slice.
+    /// </param>
+    /// <param name="Words">The option words this name answers itself.</param>
+    /// <param name="Identity">
+    /// What a slice reduces to once <c>'omitnan'</c> has emptied it — 0 for a sum, 1 for a product,
+    /// NaN for a mean, which has nothing left to average. The cumulative reductions put it in the
+    /// NaN's place instead, because their result has to stay the length of their input.
+    /// </param>
+    private readonly record struct ReductionSpec(
+        bool KeepShape = false,
+        int LeadingArgs = 0,
+        bool RepeatsInner = false,
+        TailWords Words = TailWords.None,
+        double Identity = double.NaN);
+
+    private static void WrapColumnwise(JgsEnvironment env, string name, ReductionSpec spec)
     {
         if (!env.TryGet(name, out JgsValue existing) || existing.Type != JgsType.Function)
         {
             return;
         }
 
+        bool keepShape = spec.KeepShape;
         IJgsCallable inner = existing.AsCallable;
 
-        // A numeric second argument is the dimension; anything else ('descend', a bin count) is the
-        // inner builtin's own business and rides along on every per-slice call.
-        (JgsValue Subject, int? Dim, JgsValue[] Extra, bool All, int Order) Split(
+        static bool IsPlaceholder(JgsValue value) =>
+            value.Type == JgsType.Array && value.ArrayLength == 0;
+
+        // The option words this name answers itself, pulled out wherever they sit. MATLAB only ever
+        // writes them after the positional arguments, so taking them first leaves the slots below
+        // unambiguous — and a word this name does not claim stays put, so sort still sees 'descend'.
+        (bool OmitNan, bool Reverse, JgsValue[] Remaining) TakeWords(
+            IReadOnlyList<JgsValue> args, int line, int col)
+        {
+            bool omitNan = false;
+            bool reverse = false;
+            var rest = new List<JgsValue> { args[0] };
+            for (int i = 1; i < args.Count; i++)
+            {
+                string word = args[i].Type == JgsType.String ? args[i].AsString.ToLowerInvariant() : string.Empty;
+                bool nan = spec.Words.HasFlag(TailWords.Nan);
+                bool order = spec.Words.HasFlag(TailWords.Reverse);
+                bool outtype = spec.Words.HasFlag(TailWords.Outtype);
+
+                if (nan && word is "omitnan" or "includenan")
+                {
+                    omitNan = word == "omitnan";
+                }
+                else if (order && word is "reverse" or "forward")
+                {
+                    reverse = word == "reverse";
+                }
+                else if (outtype && word is "default" or "double")
+                {
+                    // Every number in here is already a double, so the two spellings that ask for one
+                    // are the same no-op.
+                }
+                else if (outtype && word == "native")
+                {
+                    throw new JgsRuntimeException(line, col,
+                        $"{name}: 'native' asks for the answer in the input's own class, which this reduction does not do — it always answers in double.");
+                }
+                else
+                {
+                    rest.Add(args[i]);
+                }
+            }
+
+            return (omitNan, reverse, rest.ToArray());
+        }
+
+        // What is left after the words: the array, then this name's leading arguments, then the
+        // dimension. A numeric argument in the dimension's slot is the dimension; anything else
+        // ('descend', a bin count) is the inner builtin's own business and rides along per slice.
+        (JgsValue Subject, int? Dim, JgsValue[] Extra, bool All, int Order, bool OmitNan, bool Reverse) Split(
             IReadOnlyList<JgsValue> args, int line, int col)
         {
             if (args.Count == 0)
@@ -621,46 +730,52 @@ internal static partial class JgsBuiltins
                 throw new JgsRuntimeException(line, col, $"{name} needs at least one argument.");
             }
 
-            // diff(X, n, dim): the repetition count sits where every other reduction keeps the
-            // dimension, so the dimension moves along one and [] in the count's place asks for the
-            // default of a single difference.
-            if (orderArg)
+            (bool omitNan, bool reverse, JgsValue[] rest) = TakeWords(args, line, col);
+            int next = 1;
+            int order = 1;
+            var extra = new List<JgsValue>();
+            for (int taken = 0; taken < spec.LeadingArgs && next < rest.Length; taken++, next++)
             {
-                if (args.Count > 3)
+                if (!spec.RepeatsInner)
                 {
-                    throw new JgsRuntimeException(line, col,
-                        $"{name} takes at most three arguments (the array, how many times to difference, and the dimension), but got {args.Count}.");
+                    extra.Add(rest[next]); // the builtin underneath is the one that reads it
+                    continue;
                 }
 
-                int order = args.Count >= 2 && !IsPlaceholder(args[1])
-                    ? Whole(args[1], "number of differences", line, col)
-                    : 1;
+                // [] in the count's place asks for the default of a single difference.
+                order = IsPlaceholder(rest[next]) ? 1 : Whole(rest[next], "number of differences", line, col);
                 if (order < 0)
                 {
                     throw new JgsRuntimeException(line, col,
                         $"{name}: the number of differences must be zero or more, but was {order}.");
                 }
-
-                int? along = args.Count >= 3 ? Whole(args[2], "dimension", line, col) : null;
-                return (args[0], along, [], All: false, Order: order);
             }
 
-            if (args.Count >= 2 && args[1].Type == JgsType.String
-                && args[1].AsString.Equals("all", StringComparison.OrdinalIgnoreCase))
+            bool all = next < rest.Length && rest[next].Type == JgsType.String
+                && rest[next].AsString.Equals("all", StringComparison.OrdinalIgnoreCase);
+            int? dim = null;
+            if (all)
             {
-                return (args[0], null, args.Skip(2).ToArray(), All: true, Order: 1);
+                next++;
             }
-
-            if (args.Count >= 2 && args[1].Type == JgsType.Number)
+            else if (next < rest.Length && rest[next].Type == JgsType.Number)
             {
-                return (args[0], (int)args[1].AsNumber, args.Skip(2).ToArray(), All: false, Order: 1);
+                dim = (int)rest[next].AsNumber;
+                next++;
             }
 
-            return (args[0], null, args.Skip(1).ToArray(), All: false, Order: 1);
+            extra.AddRange(rest.Skip(next));
+
+            // A name whose leading argument the wrapper consumes passes nothing else down, so anything
+            // past the dimension is a mistake rather than an argument the builtin underneath wants.
+            if (spec.RepeatsInner && extra.Count > 0)
+            {
+                throw new JgsRuntimeException(line, col,
+                    $"{name} takes at most three arguments (the array, how many times to difference, and the dimension), but got {args.Count}.");
+            }
+
+            return (rest[0], dim, extra.ToArray(), all, order, omitNan, reverse);
         }
-
-        static bool IsPlaceholder(JgsValue value) =>
-            value.Type == JgsType.Array && value.ArrayLength == 0;
 
         int Whole(JgsValue value, string what, int line, int col)
         {
@@ -697,6 +812,50 @@ internal static partial class JgsBuiltins
             }
 
             return sliceArgs;
+        }
+
+        // One slice, through the option words this name answers, and into the builtin underneath.
+        // Omitting NaN is deletion for a reduction — a mean's denominator has to shrink with it — and
+        // replacement by the identity for a cumulative one, whose answer stays the length of its input.
+        JgsValue ReduceSlice(
+            double[] slice, JgsValue[] extra, int order, bool omitNan, bool reverse, int line, int col)
+        {
+            double[] prepared = slice;
+            if (omitNan && keepShape)
+            {
+                prepared = (double[])prepared.Clone();
+                for (int i = 0; i < prepared.Length; i++)
+                {
+                    if (double.IsNaN(prepared[i]))
+                    {
+                        prepared[i] = spec.Identity;
+                    }
+                }
+            }
+            else if (omitNan)
+            {
+                prepared = System.Array.FindAll(prepared, static v => !double.IsNaN(v));
+                if (prepared.Length == 0)
+                {
+                    // Every value was NaN. What is left is the reduction of nothing: 0 for a sum,
+                    // 1 for a product, NaN for a mean, which has nothing to average.
+                    return JgsValue.Number(spec.Identity);
+                }
+            }
+
+            if (!reverse)
+            {
+                return Reduce(SliceArgs(prepared, extra), order, line, col);
+            }
+
+            // 'reverse' runs the slice backwards, so a running total accumulates from the far end. The
+            // answer comes back in the same order it went in.
+            prepared = (double[])prepared.Clone();
+            System.Array.Reverse(prepared);
+            JgsValue reversed = Reduce(SliceArgs(prepared, extra), order, line, col);
+            double[] back = ToDoubles(name, reversed, line, col);
+            System.Array.Reverse(back);
+            return back.Length == 1 ? JgsValue.Number(back[0]) : Numbers(back);
         }
 
         // Only a non-empty numeric array is sliced here. A string array, a complex array, an image, a
@@ -781,7 +940,8 @@ internal static partial class JgsBuiltins
 
         JgsValue Single(IReadOnlyList<JgsValue> args, int line, int col)
         {
-            (JgsValue subject, int? dim, JgsValue[] extra, bool all, int order) = Split(args, line, col);
+            (JgsValue subject, int? dim, JgsValue[] extra, bool all, int order, bool omitNan, bool reverse) =
+                Split(args, line, col);
             if (order == 0)
             {
                 // diff(X, 0) is MATLAB's "difference it no times", which is X itself.
@@ -790,7 +950,8 @@ internal static partial class JgsBuiltins
 
             if (all)
             {
-                return inner.Call(SliceArgs(FlattenColumnMajor(name, subject, line, col), extra), line, col);
+                return ReduceSlice(
+                    FlattenColumnMajor(name, subject, line, col), extra, order, omitNan, reverse, line, col);
             }
 
             if (!Reduces(subject))
@@ -802,7 +963,7 @@ internal static partial class JgsBuiltins
             var results = new JgsValue[slices.Length];
             for (int i = 0; i < slices.Length; i++)
             {
-                results[i] = Reduce(SliceArgs(slices[i], extra), order, line, col);
+                results[i] = ReduceSlice(slices[i], extra, order, omitNan, reverse, line, col);
             }
 
             return Assemble(results, reduced, dims, along, line, col);
@@ -812,12 +973,16 @@ internal static partial class JgsBuiltins
         {
             // diff has no second output, and its repeated form is a chain of single-output calls, so
             // the whole decision stays in Single rather than being mirrored here.
-            if (orderArg)
+            if (spec.RepeatsInner)
             {
                 return [Single(args, line, col)];
             }
 
-            (JgsValue subject, int? dim, JgsValue[] extra, bool all, int _) = Split(args, line, col);
+            // The words are discarded rather than applied: the only name here with a second output is
+            // sort, which claims none of them. A name that gained both would have to say what its
+            // index output means once values have been dropped, and none does yet.
+            (JgsValue subject, int? dim, JgsValue[] extra, bool all, int _, bool _, bool _) =
+                Split(args, line, col);
             if (all || !Reduces(subject))
             {
                 if (all || dim is not null)
@@ -925,11 +1090,65 @@ internal static partial class JgsBuiltins
         }
 
         IJgsCallable inner = existing.AsCallable;
-        double Pick(double a, double b) => takeMin ? System.Math.Min(a, b) : System.Math.Max(a, b);
+
+        // MATLAB's default is 'omitnan': a NaN in the data is a reading that is missing, not one that
+        // beats everything else. Math.Max and Math.Min propagate it instead, so before M52 a single
+        // NaN anywhere made max of the whole column NaN — the wrong answer, and a quiet one.
+        double Pick(double a, double b, bool omitNan)
+        {
+            if (omitNan && double.IsNaN(a))
+            {
+                return b;
+            }
+
+            if (omitNan && double.IsNaN(b))
+            {
+                return a;
+            }
+
+            return takeMin ? System.Math.Min(a, b) : System.Math.Max(a, b);
+        }
+
+        // The trailing option words, taken off the end wherever the call stops being positional.
+        // 'all' is not among them: it sits in the dimension's slot and means something there.
+        (bool OmitNan, bool Linear, IReadOnlyList<JgsValue> Remaining) TakeWords(
+            IReadOnlyList<JgsValue> args, int line, int col)
+        {
+            bool omitNan = true;
+            bool linear = false;
+            var rest = new List<JgsValue>(args);
+            while (rest.Count > 1 && rest[^1].Type == JgsType.String)
+            {
+                switch (rest[^1].AsString.ToLowerInvariant())
+                {
+                    case "omitnan":
+                        omitNan = true;
+                        break;
+                    case "includenan":
+                        omitNan = false;
+                        break;
+                    case "linear":
+                        linear = true;
+                        break;
+                    default:
+                        return (omitNan, linear, rest);
+                }
+
+                rest.RemoveAt(rest.Count - 1);
+            }
+
+            if (linear && rest.Count < 3)
+            {
+                throw new JgsRuntimeException(line, col,
+                    $"{name}: 'linear' asks for an index into the whole array, so it needs the reducing form — {name}(A, [], dim, 'linear').");
+            }
+
+            return (omitNan, linear, rest);
+        }
 
         // max(A, [], dim) and max(A, [], 'all'): the [] placeholder says "one input, reduce it".
-        bool IsDimForm(IReadOnlyList<JgsValue> args) =>
-            args.Count == 3 && args[1].Type == JgsType.Array && args[1].ArrayLength == 0;
+        static bool IsDimForm(IReadOnlyList<JgsValue> args) =>
+            args.Count is 2 or 3 && args[1].Type == JgsType.Array && args[1].ArrayLength == 0;
 
         static bool IsAll(JgsValue value) =>
             value.Type == JgsType.String && value.AsString.Equals("all", StringComparison.OrdinalIgnoreCase);
@@ -939,9 +1158,10 @@ internal static partial class JgsBuiltins
         static JgsValue Shaped(double[] values, IReadOnlyList<int> dims) =>
             values.Length == 1 ? JgsValue.Number(values[0]) : JgsMatrix.FromColumnMajorDims(values, dims);
 
-        // The extreme of every slice along one dimension, paired with the position inside the slice it
-        // came from. Ties go to the first, as MATLAB's do.
-        JgsValue[] ReduceAlong(JgsValue subject, int? named, int line, int col)
+        // The extreme of every slice along one dimension, paired with the position it came from. Ties
+        // go to the first, as MATLAB's do. 'linear' asks for that position as an index into the whole
+        // array instead of into its slice, which is what makes A(i) round-trip back to the extreme.
+        JgsValue[] ReduceAlong(JgsValue subject, int? named, bool omitNan, bool linear, int line, int col)
         {
             double[] flat = FlattenColumnMajor(name, subject, line, col);
             int[] dims = JgsMatrix.DimsOf(subject);
@@ -958,21 +1178,36 @@ internal static partial class JgsBuiltins
             }
 
             (double[][] slices, int[] reduced) = JgsMatrix.SlicesAlong(flat, dims, dim);
+
+            // Where each slice's elements came from, read by cutting 0, 1, 2, ... the same way the
+            // data was cut. Asking the layout rather than re-deriving it means the two cannot disagree.
+            double[][]? origins = null;
+            if (linear)
+            {
+                var positions = new double[flat.Length];
+                for (int i = 0; i < positions.Length; i++)
+                {
+                    positions[i] = i;
+                }
+
+                (origins, _) = JgsMatrix.SlicesAlong(positions, dims, dim);
+            }
+
             var extremes = new double[slices.Length];
             var indices = new double[slices.Length];
             for (int i = 0; i < slices.Length; i++)
             {
-                double best = ExtremeOf(name, slices[i], takeMin, line, col);
+                (double best, int at) = ExtremeOf(name, slices[i], takeMin, omitNan, line, col);
                 extremes[i] = best;
-                indices[i] = System.Array.IndexOf(slices[i], best) + dialect.IndexBase;
+                indices[i] = (origins is null ? at : origins[i][at]) + dialect.IndexBase;
             }
 
             return [Shaped(extremes, reduced), Shaped(indices, reduced)];
         }
 
         // 'all' reduces everything at once, so the index it reports is a linear one over the whole
-        // array — the same number A(k) would take.
-        JgsValue[] ReduceAll(JgsValue subject, int line, int col)
+        // array — the same number A(k) would take, which is why 'linear' adds nothing here.
+        JgsValue[] ReduceAll(JgsValue subject, bool omitNan, int line, int col)
         {
             double[] flat = FlattenColumnMajor(name, subject, line, col);
             if (flat.Length == 0)
@@ -980,58 +1215,65 @@ internal static partial class JgsBuiltins
                 return [JgsValue.Array([]), JgsValue.Array([])];
             }
 
-            double best = ExtremeOf(name, flat, takeMin, line, col);
-            return [JgsValue.Number(best), JgsValue.Number(System.Array.IndexOf(flat, best) + dialect.IndexBase)];
+            (double best, int at) = ExtremeOf(name, flat, takeMin, omitNan, line, col);
+            return [JgsValue.Number(best), JgsValue.Number(at + dialect.IndexBase)];
         }
 
-        JgsValue[] Both(IReadOnlyList<JgsValue> args, int line, int col)
+        JgsValue[] Both(IReadOnlyList<JgsValue> args, bool omitNan, bool linear, int line, int col)
         {
-            if (IsDimForm(args))
+            if (!IsDimForm(args) || args.Count == 2)
             {
-                return IsAll(args[2])
-                    ? ReduceAll(args[0], line, col)
-                    : ReduceAlong(args[0], Count(name, args, 2, line, col), line, col);
+                return ReduceAlong(args[0], null, omitNan, linear, line, col);
             }
 
-            return ReduceAlong(args[0], null, line, col);
+            return IsAll(args[2])
+                ? ReduceAll(args[0], omitNan, line, col)
+                : ReduceAlong(args[0], Count(name, args, 2, line, col), omitNan, linear, line, col);
         }
 
         // Only a numeric array reduces here. An image, a scalar, the elementwise two-argument form and
         // anything else stay with the builtin that already knows them.
-        bool Reduces(IReadOnlyList<JgsValue> args) =>
+        static bool Reduces(IReadOnlyList<JgsValue> args) =>
             args.Count > 0 && args[0].Type == JgsType.Array && (args.Count == 1 || IsDimForm(args));
 
         JgsValue Single(IReadOnlyList<JgsValue> args, int line, int col)
         {
-            if (Reduces(args))
+            (bool omitNan, bool linear, IReadOnlyList<JgsValue> rest) = TakeWords(args, line, col);
+            if (Reduces(rest))
             {
-                return Both(args, line, col)[0];
+                return Both(rest, omitNan, linear, line, col)[0];
             }
 
-            if (args.Count == 2 && (args[0].Type == JgsType.Array || args[1].Type == JgsType.Array))
+            if (rest.Count == 2 && (rest[0].Type == JgsType.Array || rest[1].Type == JgsType.Array))
             {
-                return ElementwiseExtreme(name, args[0], args[1], Pick, line, col);
+                return ElementwiseExtreme(name, rest[0], rest[1], (a, b) => Pick(a, b, omitNan), line, col);
             }
 
-            return inner.Call(args, line, col);
+            return inner.Call(rest, line, col);
         }
 
         JgsValue[] Multi(IReadOnlyList<JgsValue> args, int wanted, int line, int col)
         {
-            if (Reduces(args))
+            (bool omitNan, bool linear, IReadOnlyList<JgsValue> rest) = TakeWords(args, line, col);
+            if (Reduces(rest))
             {
-                return Both(args, line, col);
+                return Both(rest, omitNan, linear, line, col);
             }
 
             return inner is IJgsMultiCallable multi
-                ? multi.CallMultiple(args, wanted, line, col)
+                ? multi.CallMultiple(rest, wanted, line, col)
                 : [Single(args, line, col)];
         }
 
         env.Declare(name, JgsValue.Function(new BuiltinFunction(name, Single) { MultiOutput = Multi }));
     }
 
-    private static double ExtremeOf(string name, double[] values, bool takeMin, int line, int col)
+    /// <summary>
+    /// The extreme value and the position it came from. Under <c>'omitnan'</c> — MATLAB's default —
+    /// a NaN never wins, so an all-NaN run answers NaN at the first position rather than nothing.
+    /// </summary>
+    private static (double Value, int At) ExtremeOf(
+        string name, double[] values, bool takeMin, bool omitNan, int line, int col)
     {
         if (values.Length == 0)
         {
@@ -1039,12 +1281,30 @@ internal static partial class JgsBuiltins
         }
 
         double best = values[0];
+        int at = 0;
         for (int i = 1; i < values.Length; i++)
         {
-            best = takeMin ? System.Math.Min(best, values[i]) : System.Math.Max(best, values[i]);
+            double candidate = values[i];
+
+            // Under 'includenan' a NaN swallows the answer the moment one turns up, and the position
+            // reported is where it turned up. Comparison alone can never do that: NaN loses every
+            // < and > it takes part in, so without this the flag would quietly mean nothing.
+            if (!omitNan && double.IsNaN(candidate))
+            {
+                return (double.NaN, i);
+            }
+
+            bool wins = double.IsNaN(best)
+                ? !double.IsNaN(candidate)
+                : takeMin ? candidate < best : candidate > best;
+            if (wins)
+            {
+                best = candidate;
+                at = i;
+            }
         }
 
-        return best;
+        return (best, at);
     }
 
     private static JgsValue ElementwiseExtreme(

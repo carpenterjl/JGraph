@@ -39,14 +39,13 @@ public class JgsStatsBuiltinTests : IDisposable
     public async Task Std_IsSquareRootOfVariance() =>
         Assert.Equal("2", await Eval("std([1, 3, 5])"));
 
+    /// <summary>
+    /// M52: a spread over one reading used to be refused. MATLAB answers 0 under either normalization,
+    /// which is the honest answer — there is no deviation from the mean when there is one value — and
+    /// refusing it made a per-group std break on whichever group happened to have a single member.
+    /// </summary>
     [Fact]
-    public async Task Std_WithFewerThanTwoValues_IsRuntimeError()
-    {
-        ScriptRunResult result = await Run("print(std([1]))");
-
-        Assert.False(result.Success);
-        Assert.Contains("at least 2", Assert.Single(result.Diagnostics).Message);
-    }
+    public async Task Std_OfOneValue_IsZero() => Assert.Equal("0", await Eval("std([1])"));
 
     [Fact]
     public async Task Median_OddAndEvenCounts()

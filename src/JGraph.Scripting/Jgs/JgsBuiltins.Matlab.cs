@@ -148,11 +148,9 @@ internal static partial class JgsBuiltins
             Arity("islogical", args, 1, line, col);
 
             // A mask an imaging builtin produced — edge, imbinarize, bwareaopen — is tagged logical, so
-            // the predicate every MATLAB masking example opens with answers true for it.
-            return JgsValue.Bool(args[0].Type == JgsType.Bool
-                || (args[0].Type == JgsType.Array && AllOfType(args[0], JgsType.Bool))
-                || (args[0].Type == JgsType.Image
-                    && args[0].AsImage.Class == JGraph.Imaging.ImageClass.Logical));
+            // the predicate every MATLAB masking example opens with answers true for it. class() reads
+            // the same helper, so the two can no longer drift apart.
+            return JgsValue.Bool(IsLogicalValue(args[0]));
         });
 
         Define("iscell", (args, line, col) =>
@@ -638,6 +636,10 @@ internal static partial class JgsBuiltins
 
         Wrap("find", (args, wanted, line, col) => FindSubscripts(args, dialect, wanted, line, col));
 
+        // [C, ia, ic] = unique(...). Wrapped here rather than declared with its outputs because the
+        // one-output form is registered with the base builtins, before this file runs.
+        Wrap("unique", (args, wanted, line, col) => UniqueParts(args, dialect, wanted, line, col));
+
         Wrap("ind2sub", (args, _, line, col) =>
         {
             JgsValue pair = SingleOf(env, "ind2sub", args, line, col);
@@ -670,10 +672,10 @@ internal static partial class JgsBuiltins
     /// vectors, so their row subscripts are all the dialect's first index.
     /// </summary>
     private static JgsValue[] FindSubscripts(
-        IReadOnlyList<JgsValue> args, JgsDialect dialect, int wanted, int line, int col)
+        IReadOnlyList<JgsValue> args, JgsDialect dialect, int outputs, int line, int col)
     {
-        ArityRange("find", args, 1, 2, line, col);
-        int origin = args.Count == 2 ? IndexOrigin("find", args, 1, line, col) : dialect.IndexBase;
+        ArityRange("find", args, 1, dialect.IsMatlab ? 3 : 2, line, col);
+        (int origin, int? wanted, bool fromEnd) = FindLimit("find", args, dialect, line, col);
 
         var rows = new List<JgsValue>();
         var cols = new List<JgsValue>();
@@ -712,7 +714,12 @@ internal static partial class JgsBuiltins
             }
         }
 
-        return wanted >= 3
+        // All three lists were filled in step, so limiting them the same way keeps them in step.
+        rows = Limited(rows, wanted, fromEnd);
+        cols = Limited(cols, wanted, fromEnd);
+        values = Limited(values, wanted, fromEnd);
+
+        return outputs >= 3
             ? [JgsValue.Array(rows.ToArray()), JgsValue.Array(cols.ToArray()), JgsValue.Array(values.ToArray())]
             : [JgsValue.Array(rows.ToArray()), JgsValue.Array(cols.ToArray())];
     }

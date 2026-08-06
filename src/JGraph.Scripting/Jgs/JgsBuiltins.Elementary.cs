@@ -395,10 +395,13 @@ internal static partial class JgsBuiltins
     /// what carries the answer.
     /// </para>
     /// </remarks>
-    private static string ClassOf(JgsValue value, JgsDialect dialect) => value.Type switch
+    private static string ClassOf(JgsValue value, JgsDialect dialect) =>
+        // A mask has to be asked about before the numeric class is, because logical is not one of
+        // them: masks are structural (a Bool element, or a packed buffer of them), and adding a
+        // Logical to JgsNumericClass would put a second, contradictory answer in the value.
+        IsLogicalValue(value) ? "logical" : value.Type switch
     {
         JgsType.Number or JgsType.Complex or JgsType.Array => value.NumericClass.MatlabName(),
-        JgsType.Bool => "logical",
         JgsType.String => "char",
         JgsType.Cell => "cell",
         // A transform or spatial reference is a struct carrying the name of the MATLAB class it
@@ -413,6 +416,32 @@ internal static partial class JgsBuiltins
 
     private static bool IsNumericValue(JgsValue value) =>
         value.Type is JgsType.Number or JgsType.Complex or JgsType.Bool or JgsType.Array or JgsType.Sparse;
+
+    /// <summary>
+    /// Whether a value is a mask: a single true/false, an array of them, or an image an imaging
+    /// builtin tagged logical. Both <c>islogical</c> and <c>class</c> read it, which is the point —
+    /// they used to disagree, because only <c>islogical</c> looked inside an array and
+    /// <c>class(mask)</c> answered <c>'double'</c>.
+    /// </summary>
+    /// <remarks>
+    /// An empty array is not a mask. Every element of one satisfies any test you like, so the loop
+    /// below would call <c>[]</c> logical and make <c>class([])</c> answer <c>'logical'</c> where
+    /// MATLAB says <c>'double'</c> — the emptiness carries no type, so the default has to win.
+    /// </remarks>
+    private static bool IsLogicalValue(JgsValue value)
+    {
+        if (value.Type == JgsType.Bool)
+        {
+            return true;
+        }
+
+        if (value.Type == JgsType.Image)
+        {
+            return value.AsImage.Class == JGraph.Imaging.ImageClass.Logical;
+        }
+
+        return value.Type == JgsType.Array && value.ArrayLength > 0 && AllOfType(value, JgsType.Bool);
+    }
 
     /// <summary>Whether a value carries a non-zero imaginary part anywhere inside it.</summary>
     private static bool HasComplexPart(JgsValue value)

@@ -792,6 +792,8 @@ internal static partial class JgsBuiltins
                 JgsType.Array => JgsValue.Number(JgsMatrix.DimsOf(args[0]).Max()),
                 JgsType.Cell => JgsValue.Number(args[0].AsCell.Length),
                 JgsType.String => JgsValue.Number(args[0].AsString.Length),
+                // A scalar is 1-by-1, so its longest dimension is 1 — the same answer size(7) gives.
+                JgsType.Number or JgsType.Bool or JgsType.Complex => JgsValue.Number(1),
                 _ => throw new JgsRuntimeException(line, col, $"length expects an array, cell, or string, but got a {args[0].TypeName}."),
             };
         });
@@ -834,6 +836,7 @@ internal static partial class JgsBuiltins
                 JgsType.String => JgsValue.Number(args[0].AsString.Length),
                 JgsType.Image => JgsValue.Number(args[0].AsImage.SampleCount),
                 JgsType.Sparse => JgsValue.Number((double)args[0].AsSparse.Rows * args[0].AsSparse.Cols),
+                JgsType.Number or JgsType.Bool or JgsType.Complex => JgsValue.Number(1), // a scalar is one element
                 _ => throw new JgsRuntimeException(line, col, $"numel expects an array, cell, or string, but got a {args[0].TypeName}."),
             };
         });
@@ -841,6 +844,10 @@ internal static partial class JgsBuiltins
         // --- Statistics ----------------------------------------------------------------------
         Define("std", (args, line, col) => JgsValue.Number(System.Math.Sqrt(SampleVariance("std", args, line, col))));
         Define("variance", (args, line, col) => JgsValue.Number(SampleVariance("variance", args, line, col)));
+
+        // var is MATLAB's spelling of variance, and it takes the same weight. Both names are here
+        // rather than one aliasing the other so the reduction wrapper can find each of them by name.
+        Define("var", (args, line, col) => JgsValue.Number(SampleVariance("var", args, line, col)));
         Define("median", (args, line, col) => JgsValue.Number(JgsStdlib.Median(NonEmpty("median", args, line, col))));
         Define("mode", (args, line, col) => JgsValue.Number(JgsStdlib.Mode(NonEmpty("mode", args, line, col))));
 
@@ -869,39 +876,26 @@ internal static partial class JgsBuiltins
         // --- Array operations ----------------------------------------------------------------
         Define("sort", (args, line, col) =>
         {
-            ArityRange("sort", args, 1, 2, line, col);
-            bool descending = args.Count == 2 && OrderIsDescending("sort", args, line, col);
-            return JgsValue.Array(JgsStdlib.Sort(Arr("sort", args, 0, line, col), descending)
+            if (args.Count == 0)
+            {
+                throw new JgsRuntimeException(line, col, "sort needs an array.");
+            }
+
+            ParsedArgs parsed = SortOptions.Parse(args, 1, line, col);
+            bool descending = parsed.OneOf("ascend", "ascend", "descend", "asc", "desc") is "descend" or "desc";
+            string missing = parsed.Word("MissingPlacement", "auto", "auto", "first", "last");
+            string comparison = parsed.Word("ComparisonMethod", "auto", "auto", "real", "abs");
+            return JgsValue.Array(
+                SortElements(Arr("sort", parsed.Positional, 0, line, col), descending, missing, comparison, line, col)
                 ?? throw new JgsRuntimeException(line, col, "sort needs an array of all numbers or all strings."));
         });
 
-        Define("unique", (args, line, col) =>
-        {
-            Arity("unique", args, 1, line, col);
-
-            // A cell of char is how a table hands over a text variable, and it is the shape MATLAB
-            // code reaches for when it asks which serial numbers appear in a log.
-            if (args[0].Type == JgsType.Cell)
-            {
-                JgsValue[] distinct = JgsStdlib.Unique(args[0].AsCell)
-                    ?? throw new JgsRuntimeException(line, col, "unique needs a cell of text.");
-                JgsValue cell = JgsValue.Cell(distinct);
-                cell.Reshape(distinct.Length, 1);
-                return cell;
-            }
-
-            return JgsValue.Array(JgsStdlib.Unique(Arr("unique", args, 0, line, col))
-                ?? throw new JgsRuntimeException(line, col, "unique needs an array of all numbers or all strings."));
-        });
+        Define("unique", (args, line, col) => UniqueParts(args, dialect, 1, line, col)[0]);
 
         Define("find", (args, line, col) =>
         {
-            ArityRange("find", args, 1, 2, line, col);
-
-            // Indices come back in the dialect's own base — 0 in JGS (ADR 0028), 1 in MATLAB — so they
-            // can be fed straight back into a subscript. find(mask, 1) overrides it, the escape hatch
-            // for a JGS script ported from MATLAB where 0-based results would be silently off by one.
-            int origin = args.Count == 2 ? IndexOrigin("find", args, 1, line, col) : dialect.IndexBase;
+            ArityRange("find", args, 1, dialect.IsMatlab ? 3 : 2, line, col);
+            (int origin, int? wanted, bool fromEnd) = FindLimit("find", args, dialect, line, col);
 
             if (args[0].Type == JgsType.Array && args[0].IsPacked)
             {
@@ -917,7 +911,9 @@ internal static partial class JgsBuiltins
                 }
 
                 return FoundIndices(
-                    NumbersCopy(System.Runtime.InteropServices.CollectionsMarshal.AsSpan(found)), args[0]);
+                    NumbersCopy(System.Runtime.InteropServices.CollectionsMarshal.AsSpan(
+                        Limited(found, wanted, fromEnd))),
+                    args[0]);
             }
 
             JgsValue[] elements = Arr("find", args, 0, line, col);
@@ -930,7 +926,7 @@ internal static partial class JgsBuiltins
                 }
             }
 
-            return FoundIndices(JgsValue.Array(indices.ToArray()), args[0]);
+            return FoundIndices(JgsValue.Array([.. Limited(indices, wanted, fromEnd)]), args[0]);
         });
 
         Define("any", (args, line, col) =>
@@ -3061,15 +3057,67 @@ internal static partial class JgsBuiltins
         return JgsValue.Array(result);
     }
 
+    /// <summary>
+    /// The variance behind <c>std</c>, <c>variance</c> and <c>var</c>, with MATLAB's weight argument:
+    /// <c>0</c> (or absent, or <c>[]</c>) divides by n−1, <c>1</c> divides by n, and a vector of
+    /// weights gives each observation its own say. <c>std(x, 1)</c> used to be read as "reduce along
+    /// dimension 1" one layer up, which is the bug this argument exists to close.
+    /// </summary>
     private static double SampleVariance(string name, IReadOnlyList<JgsValue> args, int line, int col)
     {
-        double[] values = ArrayOfNumbers(name, args, line, col);
-        if (values.Length < 2)
+        ArityRange(name, args, 1, 2, line, col);
+        double[] values = ArrayOfNumbers(name, [args[0]], line, col);
+
+        // MATLAB answers 0 for one value under either normalization and NaN for none, rather than
+        // refusing: a spread over a single reading is a real question with a boring answer.
+        if (values.Length == 0)
         {
-            throw new JgsRuntimeException(line, col, $"{name} needs at least 2 values.");
+            return double.NaN;
         }
 
-        return JgsStdlib.Variance(values);
+        if (values.Length == 1)
+        {
+            return 0;
+        }
+
+        if (args.Count < 2 || (args[1].Type == JgsType.Array && args[1].ArrayLength == 0))
+        {
+            return JgsStdlib.Variance(values);
+        }
+
+        if (args[1].Type is JgsType.Number or JgsType.Bool)
+        {
+            double flag = args[1].AsNumber;
+            if (flag == 0)
+            {
+                return JgsStdlib.Variance(values);
+            }
+
+            if (flag != 1)
+            {
+                throw new JgsRuntimeException(line, col,
+                    $"{name}: the weight must be 0 (divide by n-1), 1 (divide by n), or a vector of weights, but was {flag.ToString(CultureInfo.InvariantCulture)}.");
+            }
+
+            double mean = values.Sum() / values.Length;
+            return values.Sum(v => (v - mean) * (v - mean)) / values.Length;
+        }
+
+        double[] weights = ToDoubles(name, args[1], line, col);
+        if (weights.Length != values.Length)
+        {
+            throw new JgsRuntimeException(line, col,
+                $"{name}: the weight vector has {weights.Length} values but the data has {values.Length}.");
+        }
+
+        double total = weights.Sum();
+        if (total <= 0 || weights.Any(static w => w < 0))
+        {
+            throw new JgsRuntimeException(line, col, $"{name}: the weights must be non-negative and add up to more than zero.");
+        }
+
+        double weightedMean = values.Select((v, i) => v * weights[i]).Sum() / total;
+        return values.Select((v, i) => weights[i] * (v - weightedMean) * (v - weightedMean)).Sum() / total;
     }
 
     private static double[] NonEmpty(string name, IReadOnlyList<JgsValue> args, int line, int col)
@@ -3082,16 +3130,6 @@ internal static partial class JgsBuiltins
 
         return values;
     }
-
-    private static bool OrderIsDescending(string name, IReadOnlyList<JgsValue> args, int line, int col) =>
-        Str(name, args, 1, line, col) switch
-        {
-            // MATLAB spells these 'ascend' and 'descend'; JGS's own shorter words still work.
-            "asc" or "ascend" => false,
-            "desc" or "descend" => true,
-            var other => throw new JgsRuntimeException(line, col,
-                $"{name} order must be \"ascend\" or \"descend\", but got \"{other}\"."),
-        };
 
     /// <summary>
     /// find's result takes the orientation MATLAB gives it: a column when the subject is a matrix or
@@ -3200,9 +3238,24 @@ internal static partial class JgsBuiltins
 
     // --- Argument helpers ------------------------------------------------------------------------
 
+    // ScalarAsArray (M52) — why the four helpers below take a bare number where they ask for an array.
+    //
+    // A scalar is a 1-by-1 array. Rejecting one made sum(7), cumsum(5), diff(5) and every sibling an
+    // error where MATLAB answers, and the error was never a considered decision: it was the guard that
+    // stopped a scalar reaching AsArray and returning null. Promoting instead turns errors into
+    // answers and cannot change an answer that already existed, because the builtins that mean
+    // something different by a scalar branch on the type before they ever reach these helpers — the
+    // elementwise max(a, b) form, the image reductions, the scalar constructors. Both dialects get it:
+    // refusing a scalar was never part of the JGS surface.
+
     private static JgsValue[] Arr(string name, IReadOnlyList<JgsValue> args, int index, int line, int col)
     {
         JgsValue value = args[index];
+        if (value.Type is JgsType.Number or JgsType.Bool)
+        {
+            return [value]; // a scalar is a 1-by-1 array — see ScalarAsArray
+        }
+
         if (value.Type != JgsType.Array)
         {
             throw new JgsRuntimeException(line, col, $"{name} expects argument {index + 1} to be an array, but got a {value.TypeName}.");
@@ -3585,6 +3638,66 @@ internal static partial class JgsBuiltins
     }
 
     /// <summary>
+    /// What <c>find</c>'s optional arguments mean, which is not the same question in the two dialects.
+    /// MATLAB reads <c>find(X, k)</c> as "the first k of them", with <c>find(X, k, 'last')</c> for the
+    /// other end. JGS reads the same slot as the index base, the escape hatch ADR 0028 §"find" put
+    /// there so a script ported from MATLAB can ask for 1-based answers.
+    /// </summary>
+    /// <remarks>
+    /// These readings cannot both be right, and MATLAB's has to win inside a <c>.m</c> file: a MATLAB
+    /// script that wrote <c>find(mask, 1)</c> meant the first match and was silently getting every
+    /// match instead, numbered from 1 — which is the same answer whenever there is exactly one, and a
+    /// different one the moment there are two. The JGS reading stays put, because a JGS script that
+    /// wrote it meant the base and would break.
+    /// </remarks>
+    private static (int Origin, int? Wanted, bool FromEnd) FindLimit(
+        string name, IReadOnlyList<JgsValue> args, JgsDialect dialect, int line, int col)
+    {
+        if (!dialect.IsMatlab)
+        {
+            return (args.Count == 2 ? IndexOrigin(name, args, 1, line, col) : dialect.IndexBase, null, false);
+        }
+
+        int? wanted = null;
+        if (args.Count >= 2)
+        {
+            wanted = Count(name, args, 1, line, col);
+            if (wanted < 0)
+            {
+                throw new JgsRuntimeException(line, col,
+                    $"{name}: the number of matches to keep must be zero or more, but was {wanted}.");
+            }
+        }
+
+        bool fromEnd = false;
+        if (args.Count == 3)
+        {
+            string direction = Str(name, args, 2, line, col);
+            fromEnd = direction.Equals("last", StringComparison.OrdinalIgnoreCase)
+                || (direction.Equals("first", StringComparison.OrdinalIgnoreCase)
+                    ? false
+                    : throw new JgsRuntimeException(line, col,
+                        $"{name}: the direction must be 'first' or 'last', but got '{direction}'."));
+        }
+
+        return (dialect.IndexBase, wanted, fromEnd);
+    }
+
+    /// <summary>
+    /// The first (or last) <paramref name="wanted"/> of <paramref name="found"/>, in order either way
+    /// — MATLAB's <c>find(X, 2, 'last')</c> answers the last two ascending, not reversed.
+    /// </summary>
+    private static List<T> Limited<T>(List<T> found, int? wanted, bool fromEnd)
+    {
+        if (wanted is not { } keep || keep >= found.Count)
+        {
+            return found;
+        }
+
+        return fromEnd ? found.GetRange(found.Count - keep, keep) : found.GetRange(0, keep);
+    }
+
+    /// <summary>
     /// Reads an optional index-base argument: 0 (the JGS default) or 1 (MATLAB numbering). Only these
     /// two are accepted — an arbitrary offset would be a silent way to produce nonsense indices.
     /// </summary>
@@ -3711,7 +3824,7 @@ internal static partial class JgsBuiltins
     private static double[] DoubleArray(string name, IReadOnlyList<JgsValue> args, int index, int line, int col)
     {
         JgsValue value = args[index];
-        if (value.Type != JgsType.Array)
+        if (value.Type is not (JgsType.Array or JgsType.Number or JgsType.Bool))
         {
             throw new JgsRuntimeException(line, col, $"{name} expects argument {index + 1} to be an array, but got a {value.TypeName}.");
         }
@@ -3722,7 +3835,7 @@ internal static partial class JgsBuiltins
     private static double[] ArrayOfNumbers(string name, IReadOnlyList<JgsValue> args, int line, int col)
     {
         Arity(name, args, 1, line, col);
-        if (args[0].Type != JgsType.Array)
+        if (args[0].Type is not (JgsType.Array or JgsType.Number or JgsType.Bool))
         {
             throw new JgsRuntimeException(line, col, $"{name} expects an array, but got a {args[0].TypeName}.");
         }
@@ -3949,9 +4062,14 @@ internal static partial class JgsBuiltins
             return planes.Re.AsSpan().ToArray();
         }
 
+        if (array.Type is JgsType.Number or JgsType.Bool)
+        {
+            return [array.AsNumber]; // a scalar is a 1-by-1 array — see ScalarAsArray
+        }
+
         if (array.Type != JgsType.Array)
         {
-            // Without this a scalar reaches AsArray, which is null for anything else, and the caller
+            // Without this a value reaches AsArray, which is null for anything else, and the caller
             // sees a NullReferenceException instead of being told what it actually passed.
             throw new JgsRuntimeException(line, col,
                 $"{name} expects an array of numbers, but got a {array.TypeName}.");

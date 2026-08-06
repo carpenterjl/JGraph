@@ -54,8 +54,29 @@ public class MatlabReductionAlongDimensionTests : IDisposable
         assert(isequal(mean(b, 3), [5 7; 6 8]));
         assert(isequal(median(b, 3), [5 7; 6 8]));
         assert(isequal(mode(b, 3), [1 3; 2 4]));
-        assert(isequal(std(b, 3), [4 4; 4 4]));
-        assert(isequal(variance(b, 3), [16 16; 16 16]));
+        assert(isequal(std(b, 0, 3), [4 4; 4 4]));
+        assert(isequal(variance(b, 0, 3), [16 16; 16 16]));
+        assert(isequal(var(b, 0, 3), [16 16; 16 16]));
+        """);
+
+    /// <summary>
+    /// M52: the dimension moves along one for the spread reductions, because MATLAB puts the weight in
+    /// the slot every other reduction keeps it in. Before this, std(x, 1) asked for the population
+    /// standard deviation and silently got a reduction along dimension 1 instead.
+    /// </summary>
+    [Fact]
+    public Task TheSpreadReductions_ReadTheirSecondArgumentAsAWeight() => RunAsserting("""
+        x = [2 4 4 4 5 5 7 9];
+        assert(abs(var(x, 0) - 32 / 7) < 1e-12);
+        assert(abs(var(x, 1) - 4) < 1e-12);
+        assert(abs(std(x, 1) - 2) < 1e-12);
+        assert(abs(std(x, []) - std(x)) < 1e-12);
+        w = [1 1 1 1 1 1 1 1];
+        assert(abs(var(x, w) - var(x, 1)) < 1e-12);
+        m = [1 2; 3 4];
+        assert(isequal(var(m, 0, 2), [0.5; 0.5]));
+        assert(isequal(var(m, 1, 2), [0.25; 0.25]));
+        assert(isequal(var(m, 0, 'all'), var(m(:), 0)));
         """);
 
     [Fact]

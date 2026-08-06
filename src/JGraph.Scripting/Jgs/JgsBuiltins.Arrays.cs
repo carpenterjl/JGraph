@@ -2,9 +2,10 @@ namespace JGraph.Scripting.Jgs;
 
 /// <summary>
 /// The array-level statistics and rearrangements (M38): the function-application family
-/// (<c>arrayfun</c>, <c>bsxfun</c>, <c>structfun</c>), running and partial extremes
-/// (<c>cummax</c>, <c>maxk</c>), the tolerance-aware set operations, and the nine <c>mov*</c>
-/// windowed statistics.
+/// (<c>arrayfun</c>, <c>bsxfun</c>, <c>structfun</c>), the running extremes (<c>cummax</c>,
+/// <c>cummin</c>), the random draws and <c>rng</c>, and the rearrangements. The set, selection and
+/// sliding-window builtins registered from here live in JgsBuiltins.SetsAndWindows.cs, which is where
+/// their option surfaces are.
 /// </summary>
 internal static partial class JgsBuiltins
 {
@@ -16,11 +17,11 @@ internal static partial class JgsBuiltins
 
         RegisterApplication(Define);
         RegisterRunningStatistics(Define);
-        RegisterSelectionAndSets(Define, dialect);
+        RegisterSelectionAndSets(env, dialect);
         RegisterRandomDraws(Define, random);
         RegisterRng(env, random);
         RegisterRearrangements(Define);
-        RegisterMovingStatistics(Define);
+        RegisterMovingStatistics(env);
     }
 
     // --- Applying a function ----------------------------------------------------------------------
@@ -216,151 +217,6 @@ internal static partial class JgsBuiltins
         Running("cummin", Math.Min);
     }
 
-    // --- Selection and set membership -------------------------------------------------------------
-
-    private static void RegisterSelectionAndSets(
-        Action<string, Func<IReadOnlyList<JgsValue>, int, int, JgsValue>> Define, JgsDialect dialect)
-    {
-        void Extremes(string name, bool largest) =>
-            Define(name, (args, line, col) =>
-            {
-                Arity(name, args, 2, line, col);
-                double[] values = ToDoubles(name, args[0], line, col);
-                int k = Math.Min(Math.Max(0, Count(name, args, 1, line, col)), values.Length);
-                var sorted = (double[])values.Clone();
-                Array.Sort(sorted);
-                if (largest)
-                {
-                    Array.Reverse(sorted);
-                }
-
-                return Numbers(sorted[..k]);
-            });
-
-        Extremes("maxk", largest: true);
-        Extremes("mink", largest: false);
-
-        Define("histc", (args, line, col) =>
-        {
-            Arity("histc", args, 2, line, col);
-            double[] values = ToDoubles("histc", args[0], line, col);
-            double[] edges = ToDoubles("histc", args[1], line, col);
-            var counts = new double[edges.Length];
-            foreach (double value in values)
-            {
-                for (int b = edges.Length - 1; b >= 0; b--)
-                {
-                    // The last bin counts only exact hits on the final edge; every other bin is
-                    // half open. That asymmetry is histc's documented behaviour.
-                    bool inside = b == edges.Length - 1
-                        ? value == edges[b]
-                        : value >= edges[b] && value < edges[b + 1];
-                    if (inside)
-                    {
-                        counts[b]++;
-                        break;
-                    }
-                }
-            }
-
-            return Numbers(counts);
-        });
-
-        Define("uniquetol", (args, line, col) =>
-        {
-            ArityRange("uniquetol", args, 1, 2, line, col);
-            double[] values = ToDoubles("uniquetol", args[0], line, col);
-            double tolerance = ToleranceFor(values, args, 1, line, col);
-            var kept = new List<double>();
-            foreach (double value in values.OrderBy(static v => v))
-            {
-                if (kept.Count == 0 || Math.Abs(value - kept[^1]) > tolerance)
-                {
-                    kept.Add(value);
-                }
-            }
-
-            return Numbers(kept.ToArray());
-        });
-
-        Define("ismembertol", (args, line, col) =>
-        {
-            ArityRange("ismembertol", args, 2, 3, line, col);
-            double[] probes = ToDoubles("ismembertol", args[0], line, col);
-            double[] set = ToDoubles("ismembertol", args[1], line, col);
-            double tolerance = ToleranceFor(set.Concat(probes).ToArray(), args, 2, line, col);
-            var mask = new JgsValue[probes.Length];
-            for (int i = 0; i < probes.Length; i++)
-            {
-                mask[i] = JgsValue.Bool(Array.Exists(set, s => Math.Abs(s - probes[i]) <= tolerance));
-            }
-
-            return JgsValue.Array(mask);
-        });
-
-        Define("issortedrows", (args, line, col) =>
-        {
-            Arity("issortedrows", args, 1, line, col);
-            if (!IsMatrixValue(args[0]))
-            {
-                double[] flat = ToDoubles("issortedrows", args[0], line, col);
-                return JgsValue.Bool(IsAscending(flat));
-            }
-
-            // Rows compare lexicographically: the first column that differs decides, which is what
-            // sortrows produces and therefore what issortedrows has to check.
-            double[,] a = RectOf("issortedrows", args[0], line, col);
-            for (int r = 1; r < a.GetLength(0); r++)
-            {
-                for (int c = 0; c < a.GetLength(1); c++)
-                {
-                    if (a[r, c] > a[r - 1, c])
-                    {
-                        break;
-                    }
-
-                    if (a[r, c] < a[r - 1, c])
-                    {
-                        return JgsValue.Bool(false);
-                    }
-                }
-            }
-
-            return JgsValue.Bool(true);
-        });
-
-        _ = dialect;
-    }
-
-    /// <summary>The absolute tolerance a tol-suffixed set operation uses, defaulting as MATLAB does.</summary>
-    private static double ToleranceFor(double[] values, IReadOnlyList<JgsValue> args, int index, int line, int col)
-    {
-        double relative = index < args.Count ? Num("tolerance", args, index, line, col) : 1e-6;
-
-        // MATLAB scales the tolerance by the largest magnitude in the data, so it means "this many
-        // significant figures" rather than a fixed distance.
-        double scale = 0;
-        foreach (double value in values)
-        {
-            scale = Math.Max(scale, Math.Abs(value));
-        }
-
-        return relative * Math.Max(scale, 1.0);
-    }
-
-    private static bool IsAscending(double[] values)
-    {
-        for (int i = 1; i < values.Length; i++)
-        {
-            if (values[i] < values[i - 1])
-            {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
     // --- Random draws -----------------------------------------------------------------------------
 
     /// <summary>
@@ -475,6 +331,10 @@ internal static partial class JgsBuiltins
         {
             ArityRange("randi", args, 1, int.MaxValue, line, col);
 
+            // A trailing class name says what the numbers come back as. It is peeled off first so the
+            // shape arguments below never have to wonder whether their last slot is a size or a word.
+            (args, JgsNumericClass? asClass, bool asLogical) = DrawnClass("randi", args, line, col);
+
             // randi(imax) draws from 1..imax; randi([lo hi]) from the range it names.
             int low = 1;
             int high;
@@ -499,9 +359,24 @@ internal static partial class JgsBuiltins
                 throw new JgsRuntimeException(line, col, "randi: the range is empty.");
             }
 
+            JgsValue Tagged(JgsValue drawn)
+            {
+                if (asLogical)
+                {
+                    return MapToBool("randi", drawn, static x => x != 0, line, col);
+                }
+
+                if (asClass is { } numericClass)
+                {
+                    drawn.SetNumericClass(numericClass);
+                }
+
+                return drawn;
+            }
+
             if (args.Count == 1)
             {
-                return JgsValue.Number(random.Next(low, high + 1));
+                return Tagged(JgsValue.Number(random.Next(low, high + 1)));
             }
 
             // Everything after the range is the requested shape: (n), (r, c, …), or a size vector
@@ -521,7 +396,7 @@ internal static partial class JgsBuiltins
 
             if (Array.TrueForAll(dims, static d => d == 1))
             {
-                return JgsValue.Number(random.Next(low, high + 1));
+                return Tagged(JgsValue.Number(random.Next(low, high + 1)));
             }
 
             var flat = new double[total];
@@ -530,7 +405,7 @@ internal static partial class JgsBuiltins
                 flat[i] = random.Next(low, high + 1);
             }
 
-            return JgsMatrix.FromColumnMajorDims(flat, dims);
+            return Tagged(JgsMatrix.FromColumnMajorDims(flat, dims));
         });
 
         Define("randperm", (args, line, col) =>
@@ -563,43 +438,45 @@ internal static partial class JgsBuiltins
 
     private static void RegisterRearrangements(Action<string, Func<IReadOnlyList<JgsValue>, int, int, JgsValue>> Define)
     {
+        // circshift(A, k), circshift(A, k, dim) and circshift(A, [k1 k2 …]): every form is the same
+        // rotation applied to one dimension, so the third form is the first one repeated. The default
+        // dimension is MATLAB's first non-singleton, which is what makes a vector shift along itself
+        // and a matrix shift its rows without either being a special case.
         Define("circshift", (args, line, col) =>
         {
-            Arity("circshift", args, 2, line, col);
-            int by = Count("circshift", args, 1, line, col);
-
-            if (IsMatrixValue(args[0]))
-            {
-                // A matrix shifts down its rows, matching MATLAB's default of the first dimension.
-                double[,] a = RectOf("circshift", args[0], line, col);
-                int rows = a.GetLength(0);
-                int cols = a.GetLength(1);
-                var shifted = new double[rows, cols];
-                for (int r = 0; r < rows; r++)
-                {
-                    int source = ((r - by) % rows + rows) % rows;
-                    for (int c = 0; c < cols; c++)
-                    {
-                        shifted[r, c] = a[source, c];
-                    }
-                }
-
-                return FromRect(shifted);
-            }
-
-            double[] values = ToDoubles("circshift", args[0], line, col);
-            if (values.Length == 0)
+            ArityRange("circshift", args, 2, 3, line, col);
+            if (args[0].Type == JgsType.Array && args[0].ArrayLength == 0)
             {
                 return args[0];
             }
 
-            var result = new double[values.Length];
-            for (int i = 0; i < values.Length; i++)
+            int[] dims = JgsMatrix.DimsOf(args[0]);
+            double[] flat = FlattenColumnMajor("circshift", args[0], line, col);
+            double[] by = NumericVector("circshift", args[1], line, col);
+
+            if (args.Count == 3)
             {
-                result[i] = values[((i - by) % values.Length + values.Length) % values.Length];
+                if (by.Length != 1)
+                {
+                    throw new JgsRuntimeException(line, col,
+                        "circshift: naming a dimension shifts along that one, so it takes a single amount.");
+                }
+
+                flat = RotateAlong(flat, dims, Count("circshift", args, 2, line, col), (int)by[0], line, col);
+            }
+            else if (by.Length == 1)
+            {
+                flat = RotateAlong(flat, dims, JgsMatrix.DefaultDim(dims), (int)by[0], line, col);
+            }
+            else
+            {
+                for (int d = 0; d < by.Length; d++)
+                {
+                    flat = RotateAlong(flat, dims, d + 1, (int)by[d], line, col);
+                }
             }
 
-            return Numbers(result);
+            return JgsMatrix.FromColumnMajorDims(flat, dims);
         });
 
         Define("rot90", (args, line, col) =>
@@ -707,83 +584,72 @@ internal static partial class JgsBuiltins
         });
     }
 
-    // --- Moving statistics ------------------------------------------------------------------------
-
-    private static void RegisterMovingStatistics(Action<string, Func<IReadOnlyList<JgsValue>, int, int, JgsValue>> Define)
+    /// <summary>
+    /// Peels a trailing class name off a random-draw call — <c>randi(10, 1, 5, 'int32')</c>, or
+    /// <c>'like'</c> followed by a value whose class to copy — and hands back the arguments without
+    /// it, so the shape arguments behind it never have to tell a size from a word.
+    /// </summary>
+    private static (IReadOnlyList<JgsValue> Args, JgsNumericClass? Class, bool Logical) DrawnClass(
+        string name, IReadOnlyList<JgsValue> args, int line, int col)
     {
-        void Moving(string name, Func<double[], double> statistic) =>
-            Define(name, (args, line, col) =>
-            {
-                Arity(name, args, 2, line, col);
-                double[] values = ToDoubles(name, args[0], line, col);
-                int window = Count(name, args, 1, line, col);
-                if (window < 1)
-                {
-                    throw new JgsRuntimeException(line, col, $"{name}: the window must be at least 1 wide.");
-                }
-
-                // MATLAB centres an odd window on the point; an even one covers the current element
-                // and the k/2 before it, so the extra element is behind. The window shrinks at the
-                // ends rather than padding with zeros.
-                int behind = window / 2;
-                int ahead = (window - 1) / 2;
-                var result = new double[values.Length];
-                for (int i = 0; i < values.Length; i++)
-                {
-                    int from = Math.Max(0, i - behind);
-                    int to = Math.Min(values.Length - 1, i + ahead);
-                    result[i] = statistic(values[from..(to + 1)]);
-                }
-
-                return Numbers(result);
-            });
-
-        Moving("movmean", static w => w.Average());
-        Moving("movsum", static w => w.Sum());
-        Moving("movmax", static w => w.Max());
-        Moving("movmin", static w => w.Min());
-        Moving("movprod", static w => w.Aggregate(1.0, static (product, x) => product * x));
-        Moving("movmedian", MedianOf);
-        Moving("movvar", SampleVarianceOf);
-        Moving("movstd", static w => Math.Sqrt(SampleVarianceOf(w)));
-
-        // The mean absolute deviation about the window's own mean.
-        Moving("movmad", static w =>
+        if (args.Count >= 3 && args[^2].Type == JgsType.String
+            && string.Equals(args[^2].AsString, "like", StringComparison.OrdinalIgnoreCase))
         {
-            double mean = w.Average();
-            double total = 0;
-            foreach (double x in w)
+            // 'like' copies a prototype's class rather than naming one, which is how a script keeps a
+            // draw in whatever class the data it is about to join already uses.
+            JgsValue prototype = args[^1];
+            bool copyLogical = IsLogicalValue(prototype);
+            return (args.Take(args.Count - 2).ToArray(), copyLogical ? null : prototype.NumericClass, copyLogical);
+        }
+
+        if (args.Count >= 2 && args[^1].Type == JgsType.String)
+        {
+            string word = args[^1].AsString;
+            JgsValue[] trimmed = args.Take(args.Count - 1).ToArray();
+            if (string.Equals(word, "logical", StringComparison.OrdinalIgnoreCase))
             {
-                total += Math.Abs(x - mean);
+                return (trimmed, null, true);
             }
 
-            return total / w.Length;
-        });
-    }
-
-    private static double MedianOf(double[] window)
-    {
-        var sorted = (double[])window.Clone();
-        Array.Sort(sorted);
-        int middle = sorted.Length / 2;
-        return sorted.Length % 2 == 1 ? sorted[middle] : (sorted[middle - 1] + sorted[middle]) / 2.0;
-    }
-
-    /// <summary>The sample variance (dividing by n-1), which is what MATLAB's var and movvar report.</summary>
-    private static double SampleVarianceOf(double[] window)
-    {
-        if (window.Length < 2)
-        {
-            return 0;
+            return JgsNumericClasses.Parse(word) is { } numericClass
+                ? (trimmed, numericClass, false)
+                : throw new JgsRuntimeException(line, col, $"{name}: JGraph has no '{word}' class.");
         }
 
-        double mean = window.Average();
-        double total = 0;
-        foreach (double x in window)
+        return (args, null, false);
+    }
+
+    /// <summary>
+    /// One dimension's worth of rotation over column-major storage, wrapping around. Reading the
+    /// slices through <see cref="JgsMatrix.SlicesAlong"/> rather than indexing by hand is what lets
+    /// circshift take a vector of amounts: shifting several dimensions is this, several times.
+    /// </summary>
+    private static double[] RotateAlong(double[] flat, int[] dims, int dim, int by, int line, int col)
+    {
+        if (dim < 1)
         {
-            total += (x - mean) * (x - mean);
+            throw new JgsRuntimeException(line, col,
+                $"circshift: the dimension must be a positive whole number, but was {dim}.");
         }
 
-        return total / (window.Length - 1);
+        (double[][] slices, _) = JgsMatrix.SlicesAlong(flat, dims, dim);
+        foreach (double[] slice in slices)
+        {
+            if (slice.Length < 2)
+            {
+                continue;
+            }
+
+            var moved = new double[slice.Length];
+            for (int i = 0; i < slice.Length; i++)
+            {
+                moved[i] = slice[(((i - by) % slice.Length) + slice.Length) % slice.Length];
+            }
+
+            moved.CopyTo(slice, 0);
+        }
+
+        (double[] joined, _) = JgsMatrix.JoinAlong(slices, dims, dim);
+        return joined;
     }
 }

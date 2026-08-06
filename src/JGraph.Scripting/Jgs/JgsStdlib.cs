@@ -2,7 +2,7 @@ namespace JGraph.Scripting.Jgs;
 
 /// <summary>
 /// The numeric and array algorithms behind the JGS data-analysis builtins (<c>std</c>, <c>median</c>,
-/// <c>unique</c>, <c>sort</c>, …). Pure functions over plain doubles and <see cref="JgsValue"/> arrays;
+/// <c>cumsum</c>, …). Pure functions over plain doubles and <see cref="JgsValue"/> arrays;
 /// argument checking and registration live in <see cref="JgsBuiltins"/>. NaN propagates through every
 /// statistic — scripts clean data first with <c>isnan</c> and a mask.
 /// </summary>
@@ -125,68 +125,15 @@ internal static class JgsStdlib
     }
 
     /// <summary>
-    /// A sorted copy of a homogeneous numeric or string array; <paramref name="descending"/> flips the
-    /// order. Returns null when the array mixes kinds (the caller raises the error).
-    /// </summary>
-    public static JgsValue[]? Sort(JgsValue[] elements, bool descending)
-    {
-        JgsValue[]? sorted = SortAscending(elements);
-        if (sorted is not null && descending)
-        {
-            Array.Reverse(sorted);
-        }
-
-        return sorted;
-    }
-
-    /// <summary>
-    /// The sorted distinct values of a homogeneous numeric or string array; null when mixed.
-    /// </summary>
-    public static JgsValue[]? Unique(JgsValue[] elements)
-    {
-        JgsValue[]? sorted = SortAscending(elements);
-        if (sorted is null || sorted.Length == 0)
-        {
-            return sorted;
-        }
-
-        var distinct = new List<JgsValue> { sorted[0] };
-        for (int i = 1; i < sorted.Length; i++)
-        {
-            if (!JgsValue.AreEqual(sorted[i], sorted[i - 1]))
-            {
-                distinct.Add(sorted[i]);
-            }
-        }
-
-        return distinct.ToArray();
-    }
-
-    private static JgsValue[]? SortAscending(JgsValue[] elements)
-    {
-        var copy = (JgsValue[])elements.Clone();
-        if (Array.TrueForAll(copy, static v => v.Type is JgsType.Number or JgsType.Bool))
-        {
-            Array.Sort(copy, static (a, b) => a.AsNumber.CompareTo(b.AsNumber));
-            return copy;
-        }
-
-        if (Array.TrueForAll(copy, static v => v.Type == JgsType.String))
-        {
-            Array.Sort(copy, static (a, b) => string.CompareOrdinal(a.AsString, b.AsString));
-            return copy;
-        }
-
-        return null;
-    }
-
-    /// <summary>
     /// Deep equality: arrays element-by-element (recursively), scalars by value. NaN is unequal to
     /// itself, which is what <c>isequal</c> reports; <paramref name="nanEqual"/> switches to the
     /// <c>isequaln</c> reading, where two NaNs in the same position match.
     /// </summary>
     public static bool DeepEquals(JgsValue left, JgsValue right, bool nanEqual = false)
     {
+        static bool IsOneElementArray(JgsValue value) =>
+            value.Type == JgsType.Array && value.ArrayLength == 1 && !value.IsNd;
+
         if (left.Type == JgsType.Array && right.Type == JgsType.Array)
         {
             // Sizes must agree, which is what MATLAB's isequal means by equal — and comparing
@@ -213,6 +160,20 @@ internal static class JgsStdlib
             }
 
             return true;
+        }
+
+        // A one-element array and a bare number are both 1-by-1, and size is what isequal compares, so
+        // they have to match (M52). They did not, which made every "did this answer what I expected"
+        // check on a reduction of a single value fail for a reason the script could not see: size
+        // reported 1 1 for both, == answered true, and only isequal disagreed.
+        if (IsOneElementArray(left) && right.Type is JgsType.Number or JgsType.Bool)
+        {
+            return DeepEquals(left.ElementAt(0), right, nanEqual);
+        }
+
+        if (IsOneElementArray(right) && left.Type is JgsType.Number or JgsType.Bool)
+        {
+            return DeepEquals(left, right.ElementAt(0), nanEqual);
         }
 
         if (left.Type == JgsType.Image && right.Type == JgsType.Image)
