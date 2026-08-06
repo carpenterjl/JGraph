@@ -99,6 +99,15 @@ public sealed class AxisLinkGroup : IDisposable
         _syncing = true;
         try
         {
+            // An auto-scaling axis only holds the range it will be drawn with once the layout pass
+            // has fitted it to the data; until then it holds the placeholder unit range. Linking
+            // turns auto-scaling off, so without fitting first the group would pin every member to
+            // 0..1 and hide the data it was asked to keep in step.
+            foreach (AxesModel m in _members)
+            {
+                m.RecomputeDataBounds();
+            }
+
             if (LinksX)
             {
                 UnifyDimension(isX: true);

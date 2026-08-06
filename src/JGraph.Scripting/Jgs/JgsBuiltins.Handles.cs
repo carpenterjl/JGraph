@@ -261,12 +261,28 @@ internal static partial class JgsBuiltins
             "title" => JgsValue.Str(axes.Title),
             "xlabel" => JgsValue.Str(axes.PrimaryXAxis.Label),
             "ylabel" => JgsValue.Str(axes.PrimaryYAxis.Label),
-            "xlim" => RangeValue(axes.PrimaryXAxis.Range),
-            "ylim" => RangeValue(axes.PrimaryYAxis.Range),
+            "xlim" => RangeValue(FittedAxis(axes, x: true).Range),
+            "ylim" => RangeValue(FittedAxis(axes, x: false).Range),
             "visible" => OnOffValue(axes.Visible),
             _ => throw new JgsRuntimeException(line, col,
                 $"An axes has no property '{name}'. It answers to Title, XLabel, YLabel, XLim, YLim, and Visible."),
         };
+
+    /// <summary>
+    /// The axis behind XLim or YLim, fitted to its data first. A script reads the limits it would
+    /// see drawn, and while an axis auto-scales those only exist after the fit — the stored range is
+    /// still the placeholder the axes was created with.
+    /// </summary>
+    private static AxisModel FittedAxis(AxesModel axes, bool x)
+    {
+        AxisModel axis = x ? axes.PrimaryXAxis : axes.PrimaryYAxis;
+        if (axis.AutoScale)
+        {
+            axes.RecomputeDataBounds();
+        }
+
+        return axis;
+    }
 
     private static void SetAxesProperty(AxesModel axes, string name, JgsValue value, int line, int col)
     {

@@ -1682,14 +1682,15 @@ internal static partial class JgsBuiltins
             return JgsValue.Number(JG.CurrentFigureNumber);
         });
 
-        // gca has no value to hand back — JGS has no axes-handle type — but it still creates the
-        // figure and axes MATLAB would, so `gca; xlabel('t')` behaves the same way.
-        Define("gca", (args, line, col) =>
+        // gca creates the figure and axes MATLAB would and hands back a handle on them, so both
+        // `gca; xlabel('t')` and `ax = gca; xlabel(ax, 't')` behave the same way. Auto-calling on
+        // the bare name is what makes the second form an axes rather than the builtin itself.
+        env.Declare("gca", JgsValue.Function(new BuiltinFunction("gca", (args, line, col) =>
         {
             Arity("gca", args, 0, line, col);
-            JG.Gca();
-            return JgsValue.Null;
-        });
+            return JgsHandleRegistry.For(JgsHandleKind.Axes, JG.Gca());
+        })
+        { AutoCallsBare = true, BindsAnsAsStatement = false }));
 
         Define("plot", (args, line, col) => Plot(args, line, col));
         Define("scatter", (args, line, col) => XyOrTable("scatter", args, line, col,

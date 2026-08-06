@@ -1,5 +1,6 @@
 using JGraph.Core.Model;
 using JGraph.Core.Primitives;
+using JGraph.Objects;
 using Xunit;
 
 namespace JGraph.Tests.Model;
@@ -87,6 +88,24 @@ public class AxisLinkGroupTests
 
         Assert.False(a.PrimaryXAxis.AutoScale);
         Assert.False(b.PrimaryXAxis.AutoScale);
+    }
+
+    [Fact]
+    public void LinkingAutoScaledAxesFitsThemToTheirDataFirst()
+    {
+        // Neither axes has been laid out, so each still holds the placeholder unit range. Linking
+        // turns auto-scaling off, so it has to fit them to the data before unifying or it pins both
+        // to 0..1 and hides the very data it was asked to keep in step.
+        var a = new AxesModel();
+        a.AddLine([0, 50, 100, 164], [1, 2, 3, 4]);
+        var b = new AxesModel();
+        b.AddLine([10, 200], [5, 6]);
+
+        using var _ = AxisLinkGroup.Link(AxisLinkMode.X, a, b);
+
+        Assert.Equal(a.PrimaryXAxis.Range, b.PrimaryXAxis.Range);
+        Assert.True(a.PrimaryXAxis.Range.Min <= 0);
+        Assert.True(a.PrimaryXAxis.Range.Max >= 200);
     }
 
     [Fact]

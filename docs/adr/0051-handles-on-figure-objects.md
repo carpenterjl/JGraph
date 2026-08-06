@@ -72,7 +72,8 @@ loop that follows the preallocation cannot see, and one that makes growth unambi
 
 `LegendRenderer` already computed each row's rectangle; it now publishes them beside the box, so a
 click can be traced to the series it names without laying the legend out again. A press and release
-on the same row is a click (the legend could already be dragged; nothing about that changed), raised
+on the same row is a click (the legend could already be dragged with the edit tool; the default
+pointer learned to as well — see Consequences), raised
 through `IInteractionSurface` to the figure window and on to `ScriptGraphicsCallbacks`, where the live
 console session has registered an invoker. The invoker builds MATLAB's two arguments — the legend
 handle, and an event struct whose `Peer` is the clicked line's handle — runs the callback, and shows
@@ -112,6 +113,21 @@ last branch, which is what makes the change invisible to files that never needed
   draw position. Reading `p.Color` gives a definite answer, which is what lets a second series be
   drawn to match the first. A figure rendered under a non-default theme keeps the stamped colour;
   this is recorded rather than fixed.
+- An auto-scaling axis holds a placeholder range until the layout pass fits it to the data, and two
+  callers were reading it before the fit. `linkaxes` turns auto-scaling off as it unifies, so it was
+  pinning every linked axes to `0..1`; reading `ax.XLim` had the same answer for the same reason.
+  Both now fit first. This was a latent defect in `AxisLinkGroup` from M6, invisible until a script
+  could call `linkaxes` at all.
+- `gca` hands back an axes handle and auto-calls on its bare name, so `ax = gca` is an axes rather
+  than the builtin itself. It used to answer nothing, because there was nothing for it to answer.
+- Using the legend the way MATLAB's is used exposed three interaction gaps, fixed together. Every
+  legend gesture was gated on the axes' plot area, so the part of a long legend hanging below its
+  subplot — the user's 38-serial legend reached well past it — ignored the pointer entirely; the
+  interaction surface now finds a legend by its own drawn box (`TryGetLegendAt`). The default
+  pointer can now drag the legend, not just click its rows, through a `LegendDragGesture` shared
+  with the edit tool. And a series whose `Visible` is `'off'` keeps its legend row, drawn faded,
+  instead of vanishing — the row is the way the series comes back, so removing it stranded every
+  series an `ItemHitFcn` toggled off.
 - The lexer now records whether a string literal was single- or double-quoted. That distinction is
   MATLAB's char-versus-string divide, and bracket concatenation is the one place JGraph needs it.
 - `'best'` places the legend at the top right rather than searching for the least-obstructed corner.

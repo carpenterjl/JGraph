@@ -261,6 +261,15 @@ as; and `['SN:' id]` built a two-element list instead of one char row, because t
 were not told apart. The last of those needed the lexer to record which quote a string literal used —
 `["a" "b"]` is still two strings side by side, as MATLAB has it.
 
+Running that script all the way to its picture then found three more, all one defect wearing three
+faces: **an auto-scaling axis holds a placeholder range until the layout pass fits it to the data**,
+and two callers read it before the fit. `linkaxes` turns auto-scaling off as it unifies, so it was
+pinning every linked axes to `0..1` and hiding the data it had been asked to keep in step — the
+user's own error-count subplot looked flat at zero when its lines actually climbed to twenty.
+Reading `ax.XLim` had the same answer for the same reason. Both now fit first. The third was
+`gca`, which answered nothing because it predated handles; it now hands back an axes handle and
+auto-calls on its bare name, so `ax = gca` is an axes rather than the builtin itself.
+
 One entry, found in M45: **`gradient` is not implemented.** It is documented as kind *function*, so
 neither this file nor the tracker ever counted it as a gap, and it surfaced only because M45's smoke
 script reached for it to build a vector field for `quiver`. Nothing about the value model stands in

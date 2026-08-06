@@ -139,15 +139,36 @@ public class LegendTests
     }
 
     [Fact]
-    public void Render_HidingTheSeriesAlsoDropsItsRow()
+    public void Render_HidingTheSeriesKeepsItsRowButDimsIt()
     {
         (FigureModel figure, AxesModel axes, RecordingRenderContext _) = ThreeSeriesFigure();
 
         axes.Plots[1].Visible = false;
 
-        List<string> texts = Render(figure);
-        Assert.DoesNotContain("Beta", texts);
+        // The row stays — clicking it is how the series comes back — but its ink fades, so the
+        // legend still says which series are off.
+        RecordingRenderContext context = Paint(figure);
+        int beta = context.Texts.IndexOf("Beta");
+        int alpha = context.Texts.IndexOf("Alpha");
+        Assert.True(beta >= 0, "the hidden series keeps its legend row");
+        Assert.True(context.TextStyles[beta].Color.A < context.TextStyles[alpha].Color.A,
+            "the hidden series' label is faded while a visible one is not");
         Assert.Equal(3, axes.Legend.Entries.Count);
+    }
+
+    [Fact]
+    public void Render_DimmedRowStillHitTestsToItsSeries()
+    {
+        (FigureModel figure, AxesModel axes, RecordingRenderContext _) = ThreeSeriesFigure();
+        axes.Plots[1].Visible = false;
+
+        var context = new RecordingRenderContext(new Size2D(400, 300));
+        FigureRenderResult result = new FigureRenderer().Render(figure, context, Theme.Light);
+
+        // The click that re-shows the series must resolve through the faded row.
+        LegendLayout legend = result.Axes[0].Legend!;
+        Assert.Equal(3, legend.Rows.Count);
+        Assert.Contains(legend.Rows, r => ReferenceEquals(r.Plot, axes.Plots[1]));
     }
 
     [Fact]

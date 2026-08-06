@@ -155,6 +155,28 @@ public class FigureControl : SKElement, IInteractionSurface, IFigureNavigator
     }
 
     /// <inheritdoc />
+    public bool TryGetLegendAt(Point2D pixel, out AxesModel axes, out Rect2D plotArea)
+    {
+        // Topmost-first, mirroring TryGetAxesAt — but keyed on the legend's own box, because a long
+        // legend can hang well outside the plot area and still belongs to its axes.
+        IReadOnlyList<AxesRenderInfo> infos = _lastResult.Axes;
+        for (int i = infos.Count - 1; i >= 0; i--)
+        {
+            AxesRenderInfo info = infos[i];
+            if (info.Axes.Legend.Visible && info.Legend is { } legend && legend.Box.Contains(pixel))
+            {
+                axes = info.Axes;
+                plotArea = info.PlotArea;
+                return true;
+            }
+        }
+
+        axes = null!;
+        plotArea = Rect2D.Empty;
+        return false;
+    }
+
+    /// <inheritdoc />
     public Rect2D? GetLegendBounds(AxesModel axes)
     {
         foreach (AxesRenderInfo info in _lastResult.Axes)

@@ -53,6 +53,21 @@ internal sealed class FakeInteractionSurface : IInteractionSurface
     /// <summary>Settable so tests can place a legend box without running a real paint.</summary>
     public Rect2D? LegendBounds { get; set; }
 
+    public bool TryGetLegendAt(Point2D pixel, out AxesModel axes, out Rect2D plotArea)
+    {
+        // Deliberately not gated on the plot area: a long legend hangs outside it and must still hit.
+        if (_axes.Legend.Visible && LegendBounds is { } box && box.Contains(pixel))
+        {
+            axes = _axes;
+            plotArea = _plotArea;
+            return true;
+        }
+
+        axes = null!;
+        plotArea = Rect2D.Empty;
+        return false;
+    }
+
     public Rect2D? GetLegendBounds(AxesModel axes) =>
         ReferenceEquals(axes, _axes) ? LegendBounds : null;
 

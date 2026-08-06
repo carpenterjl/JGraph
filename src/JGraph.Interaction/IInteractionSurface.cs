@@ -35,6 +35,14 @@ public interface IInteractionSurface
     Rect2D? GetLegendBounds(AxesModel axes);
 
     /// <summary>
+    /// Finds the axes whose visible legend box contains <paramref name="pixel"/> in the most recent
+    /// paint, returning that axes' plot rectangle. This is deliberately not
+    /// <see cref="TryGetAxesAt"/>: a long legend often hangs outside the plot area, and every part of
+    /// it must respond to the pointer, not just the part in front of the data.
+    /// </summary>
+    bool TryGetLegendAt(Point2D pixel, out AxesModel axes, out Rect2D plotArea);
+
+    /// <summary>
     /// The series whose legend row was drawn under <paramref name="pixel"/> in the most recent paint,
     /// or null. This is what turns a click on a legend row into the line it names.
     /// </summary>

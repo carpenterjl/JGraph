@@ -206,6 +206,7 @@ internal sealed class RecordingRenderContext : IRenderContext
         TextCount++;
         Texts.Add(text);
         TextPositions.Add(position);
+        TextStyles.Add(style);
     }
 
     /// <summary>Every string drawn, in draw order — lets tests assert on legend rows and labels.</summary>
@@ -213,6 +214,9 @@ internal sealed class RecordingRenderContext : IRenderContext
 
     /// <summary>Where each string was anchored, parallel to <see cref="Texts"/>.</summary>
     public List<Point2D> TextPositions { get; } = new();
+
+    /// <summary>The style of each string, parallel to <see cref="Texts"/> — how a dimmed label is told apart.</summary>
+    public List<TextStyle> TextStyles { get; } = new();
 
     public Size2D MeasureText(string text, TextStyle style) =>
         new(text.Length * style.FontSize * 0.5, style.FontSize * 1.2);

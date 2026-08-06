@@ -38,6 +38,9 @@ public class LegendRowClickTests
     private static void Press(InteractionController c, double x, double y) =>
         c.PointerDown(new PointerEventArgs(new Point2D(x, y), PointerButton.Left, ModifierKeys.None));
 
+    private static void Move(InteractionController c, double x, double y) =>
+        c.PointerMove(new PointerEventArgs(new Point2D(x, y), PointerButton.None, ModifierKeys.None));
+
     private static void Release(InteractionController c, double x, double y) =>
         c.PointerUp(new PointerEventArgs(new Point2D(x, y), PointerButton.Left, ModifierKeys.None));
 
@@ -74,6 +77,71 @@ public class LegendRowClickTests
         Release(controller, 70, 12);
 
         Assert.Empty(axes.Annotations);
+    }
+
+    [Fact]
+    public void JitterWithinTheThreshold_IsStillAClick()
+    {
+        (InteractionController controller, LinePlot plot, FakeInteractionSurface surface) = Setup();
+
+        Press(controller, 70, 12);
+        Move(controller, 71, 13); // a hand is never perfectly still
+        Release(controller, 71, 13);
+
+        (AxesModel _, PlotObject clicked) = Assert.Single(surface.LegendRowClicks);
+        Assert.Same(plot, clicked);
+        Assert.NotEqual(LegendPosition.Custom, surface.DefaultAxes!.Legend.Position);
+    }
+
+    [Fact]
+    public void DraggingTheLegendWithTheDefaultPointer_MovesItInsteadOfClicking()
+    {
+        (InteractionController controller, _, FakeInteractionSurface surface) = Setup();
+        LegendModel legend = surface.DefaultAxes!.Legend;
+
+        Press(controller, 70, 12);
+        Move(controller, 90, 40);
+        Release(controller, 90, 40);
+
+        // The box followed the pointer: it started drawn at (60, 5) in a 100×100 plot area and the
+        // pointer travelled (+20, +28), so the stored fraction is the drawn origin plus that.
+        Assert.Equal(LegendPosition.Custom, legend.Position);
+        Assert.Equal(0.8, legend.Location.X, 6);
+        Assert.Equal(0.33, legend.Location.Y, 6);
+        Assert.Empty(surface.LegendRowClicks);
+        Assert.True(surface.UndoStack.CanUndo);
+    }
+
+    [Fact]
+    public void DraggingTheLegend_UndoesInOneStep()
+    {
+        (InteractionController controller, _, FakeInteractionSurface surface) = Setup();
+        LegendModel legend = surface.DefaultAxes!.Legend;
+        LegendPosition before = legend.Position;
+
+        Press(controller, 70, 12);
+        Move(controller, 90, 40);
+        Release(controller, 90, 40);
+        surface.UndoStack.Undo();
+
+        Assert.Equal(before, legend.Position);
+        Assert.False(surface.UndoStack.CanUndo);
+    }
+
+    [Fact]
+    public void TheLegendAnswersBelowThePlotAreaToo()
+    {
+        // A long legend hangs outside the plot area — the user's 38-serial legend reached well below
+        // its subplot — and every part of it must respond, not just the part in front of the data.
+        (InteractionController controller, LinePlot plot, FakeInteractionSurface surface) = Setup();
+        surface.LegendBounds = new Rect2D(60, 80, 35, 60);          // bottom edge at y = 140
+        surface.LegendRow = (plot, new Rect2D(60, 120, 35, 15));    // a row entirely below y = 100
+
+        Press(controller, 70, 125);
+        Release(controller, 70, 125);
+
+        (AxesModel _, PlotObject clicked) = Assert.Single(surface.LegendRowClicks);
+        Assert.Same(plot, clicked);
     }
 
     [Fact]

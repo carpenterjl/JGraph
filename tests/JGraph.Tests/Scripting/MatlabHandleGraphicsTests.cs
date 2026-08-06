@@ -161,6 +161,39 @@ public class MatlabHandleGraphicsTests : IDisposable
         """);
 
     [Fact]
+    public Task LimitsReadBackTheOnesTheAxesWillBeDrawnWith() => RunAsserting("""
+        ax = subplot(1,1,1);
+        plot(ax, [0 50 100 164], [1 2 3 4]);
+        % An auto-scaling axes only fits itself to the data at layout time, so reading its limits
+        % has to ask for that fit rather than answer the unit range it was created with.
+        assert(ax.XLim(1) <= 0);
+        assert(ax.XLim(2) >= 164);
+        assert(ax.YLim(1) <= 1);
+        assert(ax.YLim(2) >= 4);
+        """);
+
+    [Fact]
+    public Task LinkingAxesKeepsTheDataInViewInsteadOfPinningThemToZeroToOne() => RunAsserting("""
+        ax1 = subplot(2,1,1);
+        ax2 = subplot(2,1,2);
+        plot(ax1, [0 50 100 164], [1 2 3 4]);
+        plot(ax2, [0 50 100 164], [2 4 6 8]);
+        linkaxes([ax1, ax2], 'x');
+        assert(isequal(ax1.XLim, ax2.XLim));
+        assert(ax1.XLim(2) >= 164);
+        """);
+
+    [Fact]
+    public Task GcaHandsBackTheCurrentAxes() => RunAsserting("""
+        ax = subplot(1,1,1);
+        here = gca;
+        assert(isnumeric(here));
+        assert(here == ax);
+        title(gca, 'From gca');
+        assert(strcmp(ax.Title, 'From gca'));
+        """);
+
+    [Fact]
     public Task SingleQuotedPiecesJoinIntoOneWordAndDoubleQuotedOnesDoNot() => RunAsserting("""
         id = 'A1';
         label = ['SN:' id];

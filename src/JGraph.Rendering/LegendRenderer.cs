@@ -44,11 +44,11 @@ internal static class LegendRenderer
         }
 
         LegendModel legend = axes.Legend;
-        var entries = new List<(string Label, LegendKey Key, PlotObject Plot)>();
+        var entries = new List<(string Label, LegendKey Key, PlotObject Plot, bool Dimmed)>();
         foreach (LegendEntryModel entry in legend.Entries)
         {
             if (!entry.Visible
-                || entry.Plot is not { Visible: true } plot
+                || entry.Plot is not { } plot
                 || plot is not ILegendItem item)
             {
                 continue;
@@ -60,7 +60,10 @@ internal static class LegendRenderer
                 continue;
             }
 
-            entries.Add((label, item.GetLegendKey(colors.TryGetValue(plot, out Color c) ? c : Colors.Black), plot));
+            // A hidden series keeps its row, drawn faded — clicking that row is how the series
+            // comes back, so removing it would strand the series off-screen.
+            LegendKey key = item.GetLegendKey(colors.TryGetValue(plot, out Color c) ? c : Colors.Black);
+            entries.Add((label, key, plot, !plot.Visible));
         }
 
         if (entries.Count == 0)
@@ -70,7 +73,7 @@ internal static class LegendRenderer
 
         double rowHeight = 0;
         double maxLabelWidth = 0;
-        foreach ((string label, _, _) in entries)
+        foreach ((string label, _, _, _) in entries)
         {
             Size2D size = context.MeasureText(label, legend.TextStyle);
             rowHeight = System.Math.Max(rowHeight, size.Height);
@@ -87,16 +90,23 @@ internal static class LegendRenderer
 
         double y = box.Top + Padding;
         var rows = new List<LegendRowBounds>(entries.Count);
-        foreach ((string label, LegendKey key, PlotObject plot) in entries)
+        foreach ((string label, LegendKey key, PlotObject plot, bool dimmed) in entries)
         {
             double rowCenterY = y + (rowHeight / 2);
             double swatchLeft = box.Left + Padding;
-            DrawSwatch(context, key, swatchLeft, rowCenterY);
+            DrawSwatch(context, dimmed ? Dim(key) : key, swatchLeft, rowCenterY);
+
+            TextStyle text = legend.TextStyle;
+            if (dimmed)
+            {
+                text = new TextStyle(
+                    text.Color.WithOpacity(DimOpacity), text.FontSize, text.FontFamily, text.Bold, text.Italic);
+            }
 
             context.DrawText(
                 label,
                 new Point2D(swatchLeft + SwatchWidth + SwatchGap, rowCenterY),
-                legend.TextStyle,
+                text,
                 HorizontalAlignment.Left,
                 VerticalAlignment.Middle);
 
@@ -108,6 +118,22 @@ internal static class LegendRenderer
 
         return new LegendLayout(box, rows);
     }
+
+    /// <summary>How much of a hidden series' ink survives in its dimmed legend row.</summary>
+    private const double DimOpacity = 0.35;
+
+    /// <summary>The same key with every color faded, for the row of a hidden series.</summary>
+    private static LegendKey Dim(LegendKey key) => new(
+        key.Line is { } line ? line.WithColor(line.Color.WithOpacity(DimOpacity)) : null,
+        key.Marker is { } marker
+            ? new MarkerStyle(
+                marker.Type,
+                marker.Size,
+                marker.Fill?.WithOpacity(DimOpacity),
+                (marker.Edge ?? Colors.Black).WithOpacity(DimOpacity),
+                marker.EdgeWidth)
+            : null,
+        key.Swatch?.WithOpacity(DimOpacity));
 
     private static void DrawSwatch(IRenderContext context, LegendKey key, double left, double centerY)
     {

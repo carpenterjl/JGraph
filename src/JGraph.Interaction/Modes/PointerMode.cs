@@ -28,15 +28,18 @@ public sealed class PointerMode : InteractionModeBase
     private bool _draggingLabel;
     private bool _labelMoved;
 
-    // The legend row the press landed on, released as a click if the pointer never left it.
+    // A press on the legend: dragging past the threshold moves the box (like MATLAB's default
+    // pointer); staying put and releasing on the row the press landed on is a click on that entry.
+    private readonly LegendDragGesture _legendDrag = new();
     private AxesModel? _legendAxes;
+    private Rect2D _legendPlotArea;
     private PlotObject? _legendRow;
 
     public override InteractionModeKind Kind => InteractionModeKind.Pointer;
 
     /// <summary>Dynamic: a hand while dragging, a crosshair near a pickable point, otherwise an arrow.</summary>
     public override InteractionCursor Cursor =>
-        _pan.Active ? InteractionCursor.Hand
+        _pan.Active || _legendDrag.Active ? InteractionCursor.Hand
         : _hoverNearPoint ? InteractionCursor.Cross
         : InteractionCursor.Arrow;
 
@@ -62,14 +65,14 @@ public sealed class PointerMode : InteractionModeBase
             return;
         }
 
-        // A legend row is clickable with the default tool too: toggling a series should not require
-        // switching to the edit tool first.
-        if (controller.Surface.TryGetAxesAt(e.Position, out AxesModel legendAxes, out _, out _)
-            && legendAxes.Legend.Visible
-            && controller.Surface.GetLegendRowAt(legendAxes, e.Position) is { } row)
+        // The legend answers to the default tool too: a still click on a row toggles that series and
+        // a drag moves the whole box, without switching to the edit tool first. The lookup goes by
+        // the legend's own box, because a long legend can hang outside the plot area.
+        if (controller.Surface.TryGetLegendAt(e.Position, out AxesModel legendAxes, out Rect2D legendPlotArea))
         {
             _legendAxes = legendAxes;
-            _legendRow = row;
+            _legendPlotArea = legendPlotArea;
+            _legendRow = controller.Surface.GetLegendRowAt(legendAxes, e.Position);
             return;
         }
 
@@ -78,6 +81,26 @@ public sealed class PointerMode : InteractionModeBase
 
     public override void OnPointerMove(InteractionController controller, PointerEventArgs e)
     {
+        if (_legendAxes is not null)
+        {
+            if (_legendDrag.Active)
+            {
+                _legendDrag.Move(e.Position);
+                return;
+            }
+
+            // Below the threshold the press is still a click-in-progress; past it, it is a drag of
+            // the legend box — begun from the press pixel so the box never jumps.
+            if (Distance(_downPixel, e.Position) >= DragThresholdPixels
+                && _legendDrag.Begin(controller.Surface, _legendAxes, _downPixel, _legendPlotArea))
+            {
+                _legendDrag.Move(e.Position);
+                controller.NotifyCursorChanged();
+            }
+
+            return;
+        }
+
         if (_draggingLabel && _dragTip is not null && _dragMapper is not null)
         {
             Vector2D delta = e.Position - _downPixel;
@@ -123,15 +146,19 @@ public sealed class PointerMode : InteractionModeBase
 
     public override void OnPointerUp(InteractionController controller, PointerEventArgs e)
     {
-        if (_legendRow is not null)
+        if (_legendAxes is not null)
         {
-            AxesModel? axes = _legendAxes;
-            PlotObject row = _legendRow;
-            _legendAxes = null;
-            _legendRow = null;
+            AxesModel axes = _legendAxes;
+            PlotObject? row = _legendRow;
+            bool dragged = _legendDrag.Moved;
+            _legendDrag.End(controller.Surface);
+            ResetLegendPress();
+            controller.NotifyCursorChanged();
 
-            // Only a release still on the same row counts; sliding off it cancels, the way a button does.
-            if (axes is not null && ReferenceEquals(controller.Surface.GetLegendRowAt(axes, e.Position), row))
+            // Only a still release on the row the press landed on counts; dragging the box or
+            // sliding off the row cancels, the way a button does.
+            if (!dragged && row is not null
+                && ReferenceEquals(controller.Surface.GetLegendRowAt(axes, e.Position), row))
             {
                 controller.Surface.OnLegendRowClicked(axes, row);
             }
@@ -187,6 +214,8 @@ public sealed class PointerMode : InteractionModeBase
             controller.Surface.RequestRender();
         }
 
+        _legendDrag.Cancel();
+        ResetLegendPress();
         _pan.Cancel(controller);
         ResetLabelDrag();
         _armed = false;
@@ -216,6 +245,13 @@ public sealed class PointerMode : InteractionModeBase
 
     private static double Distance(Point2D a, Point2D b) =>
         System.Math.Sqrt(((a.X - b.X) * (a.X - b.X)) + ((a.Y - b.Y) * (a.Y - b.Y)));
+
+    private void ResetLegendPress()
+    {
+        _legendAxes = null;
+        _legendRow = null;
+        _legendPlotArea = Rect2D.Empty;
+    }
 
     private void ResetLabelDrag()
     {
