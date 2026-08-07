@@ -663,9 +663,14 @@ internal static partial class JgsBuiltins
         cols = Limited(cols, wanted, fromEnd);
         values = Limited(values, wanted, fromEnd);
 
+        // Subscripts stand up the same way the single-output form's linear indices do: a row for a row
+        // vector, a column for anything else. Without this the two forms of the same call disagreed
+        // about shape, which stess_24 caught (M52).
+        JgsValue Shaped(List<JgsValue> found) => FoundIndices(JgsValue.Array(found.ToArray()), subject);
+
         return outputs >= 3
-            ? [JgsValue.Array(rows.ToArray()), JgsValue.Array(cols.ToArray()), JgsValue.Array(values.ToArray())]
-            : [JgsValue.Array(rows.ToArray()), JgsValue.Array(cols.ToArray())];
+            ? [Shaped(rows), Shaped(cols), Shaped(values)]
+            : [Shaped(rows), Shaped(cols)];
     }
 
     private static JgsValue[] ExtremeWithIndex(

@@ -867,5 +867,23 @@ Implemented through Milestone 45 — a working figure window you can edit, save,
   accepts a cell of char, and the lexer now records which quote a string literal used, because
   `['SN:' id]` is one char row where `["a" "b"]` is two strings.
 
+- **M52** makes every registered name take **the arguments MATLAB documents for it**
+  ([ADR 0052](adr/0052-the-documented-argument-surface.md)). Three pieces of shared machinery carry it:
+  `OptionSpec`/`ParsedArgs` moved out of the imaging namespace into `JgsBuiltins.Options.cs` — it was
+  never about pictures, and a spec that knows every legal word can *name the alternatives* where a
+  hand-rolled tail silently ignored what it did not recognize; `WrapColumnwise` now reads a
+  `ReductionSpec` row per name instead of assuming slot two is the dimension, which is what
+  `std(x, 1)` had been paying for; and a new `JgsRandomSource` gives every generator one seedable
+  stream behind `rng`, deterministic under a seed but deliberately not bit-compatible with MATLAB's.
+  On top of those, the option surfaces of `unique`, `sort`, the `mov*` family, the tolerance pair,
+  `strsplit`, `strjoin`, `regexprep`, `cellfun` and `num2str`; a scalar accepted wherever an array is
+  asked for; `find(X, k)` split by dialect; `max`/`min` omitting NaN as MATLAB does; and the twelve
+  data-analysis names the base language never had, `interp1` among them — its spline and pchip differ
+  only in which slopes they choose, so `JGraph.Numerics/Interpolation.cs` is one kernel rather than
+  two. An audit of ninety documented call forms found seven everyday names missing that **no coverage
+  arithmetic could have reported**, because the tables track builtins and graphics functions and these
+  are documented as plain functions; `tools/run-stress.ps1` turned the stress gate from a manual pass
+  into a repeatable one, and `stess_24.m` is its twenty-two-section proof.
+
 The `JGraph.Demo` gallery exercises the plot types, annotations, and both APIs;
 `JGraph.Application` is the interactive figure window with data import and scripting.

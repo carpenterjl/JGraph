@@ -124,8 +124,8 @@ public class MatlabMultiOutputTests : IDisposable
 
         ScriptRunResult result = await Run(session, """
             [r, c] = find([0 1; 1 0]);
-            assert(isequal(r, [2 1]));
-            assert(isequal(c, [1 2]));
+            assert(isequal(r, [2; 1]));
+            assert(isequal(c, [1; 2]));
             """);
 
         AssertRan(result);

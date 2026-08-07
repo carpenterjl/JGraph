@@ -7,18 +7,26 @@ so long. The live tracker is `matlab-r2021b-documented.html` in the demo workspa
 `tools/matlab-checklist/build-checklist.py`; this file is the standing summary, so the shape of what
 is left does not have to be re-derived each time.
 
-**372 of 514 builtins implemented** as of M45 (364 after M43, 363 after M39, 326 after M38, 185
-after M37, 109 after M36). M45's eight are the drawing primitives the "handle graphics" section
+**372 of 514 builtins implemented**, unchanged since M45 (364 after M43, 363 after M39, 326 after
+M38, 185 after M37, 109 after M36) — M46 through M52 all added names MATLAB documents as *functions*,
+which this table does not hold. M45's eight are the drawing primitives the "handle graphics" section
 below used to list as missing and call the most useful thing left: `plot3`, `line`, `text`, `fill`,
 `fill3`, `patch`, `surface`, `light`.
 
 **78 of the 263 documented graphics functions** — the second table below, new in M45.
 
-Across every callable kind — builtin, function, operator, keyword, script — the count is **607 of
-2,027** (605 after M46, 596 after M45, up from 560, and not from the 556 this file used to claim: the checklist tool
+Across every callable kind — builtin, function, operator, keyword, script — the count is **633 of
+2,027** as of M52 (619 after M51, up from 560, and not from the 556 this file used to claim: the checklist tool
 read the implemented set with a regular expression that only matched a name literal directly inside
 `Add(`, so it missed the sixteen colormap generators, which are registered from a loop, and reported
 `parula` as unimplemented the whole time it was working. Both shapes are read now).
+
+The 605-after-M46 and 607-after-M47 figures this paragraph used to carry were understated, and the
+correction is worth recording rather than quietly overwriting: re-running today's tool against the M46
+and M47 catalogs reports 616 and 618. The pattern that reads the catalog was widened after those
+numbers were written — it now also matches a `Constant(` entry and a name that wraps to the line below
+its `Add(` — and the older totals were never recomputed. M51 added one counted name (`linkaxes`); M52
+added fourteen.
 
 M46 moved that total by **nine and moved neither table above**, which is worth stating plainly. The
 Image Processing Toolbox is tracked separately in `matlab-ipt-coverage.md` because the R2021b dump
@@ -53,6 +61,26 @@ its second argument as the dimension, where MATLAB reads it as how many times to
 differencing did not exist at all before, so the name was counted as implemented while a documented
 form of it errored.
 
+M52 moved it by **fourteen** and left the builtin table standing at 372, because every name it added
+is documented as kind *function*: `var` `gradient` `trapz` `cumtrapz` `interp1` `polyfit` `histcounts`
+`corrcoef` `cov` `bounds` `deal` `mat2str` `int2str` `rng`. Six more that it also implemented —
+`union` `intersect` `setdiff` `setxor` `sortrows` `rms` — move **nothing**, and that is the milestone's
+most useful finding rather than a footnote. The first five are in the R2021b dump with kind `function`
+but without the documented flag, so they were never in the 2,027-row callable set; `rms` is not in that
+install's tree at all. Added to the structural blind spot this file has always had — it tracks
+builtins plus graphics functions, and everyday base names documented as plain functions under
+`toolbox/matlab/…` are in neither table — **no arithmetic over these tables could ever have reported
+those seven names as missing.** They were found by running ninety documented call forms through
+`jgraph -batch` and reading the answers, which is the only instrument that can see them (ADR 0052).
+
+M52 is also the first milestone to ask, systematically, whether a name that *is* registered takes the
+arguments MATLAB documents for it. It did not, in dozens of places: `std(x, 1)` reduced along
+dimension 1 instead of taking a weight, `unique` had no `'stable'`, `'rows'` or index outputs,
+`regexprep` understood one option word out of twelve, `max` propagated a NaN where MATLAB omits it,
+`sum(7)` was an error, and `find(X, k)` read `k` as an index origin. A count is only as honest as the
+signatures behind the names, which is the same point M48's paragraph makes about one name and this one
+makes about the whole surface.
+
 The remaining 142 builtins divide into six families that each need machinery JGraph does not have,
 plus a short list of eleven odds and ends. Every one of them is accounted for below.
 
@@ -82,6 +110,7 @@ plus a short list of eleven odds and ends. Every one of them is accounted for be
 | Stress-test numerics and sparse | M42 | `sparse` `sprand` `eigs` `spy` `hilb` `polyval` `peaks` `cond` `sqrtm` `logm` `ode45` `int8`…`uint64` (with `.empty` statics) — plus complex `det`/`inv`/`trace`/`eig`/`svd`/`exp`/`log`/`sqrt` and the parallel dense product |
 | Stress-test data types and verbs | M43 | `table` `timetable` `seconds` `categorical` `summary` `string` `cellstr` `compose` `missing` `ismissing` `tiledlayout` `nexttile` `axis` `shading` `lighting` `camlight` `rotate3d` — plus sprintf format cycling, element-wise `~`, and `colormap turbo` |
 | Drawing primitives | M45 | `plot3` `line` `text` `fill` `fill3` `patch` `surface` `light` |
+| Data analysis, sets and formatting | M52 | `rng` `var` `gradient` `trapz` `cumtrapz` `interp1` `polyfit` `histcounts` `corrcoef` `cov` `rms` `bounds` `sortrows` `union` `intersect` `setdiff` `setxor` `mat2str` `int2str` `deal` — all documented as *functions*, so only the fourteen the dump flags as documented move the across-every-kind total |
 
 ## Graphics commands MATLAB documents as functions
 
@@ -225,6 +254,28 @@ These are deliberate, not oversights, and are documented in the scripting guide:
   accepted, because a caller turns it on precisely so that a mistake stays recoverable.
 - `input` reads from the process's console. That exists under `jgraph -batch` and does not inside
   the workspace window, where the call reports so rather than hanging.
+- The random stream is **deterministic under a seed but not stream-compatible with MATLAB** (M52).
+  `rng(seed)`, `rng('default')`, `rng('shuffle')` and a saved state all behave as documented, and the
+  same seed gives the same run twice; the bits themselves are .NET's generator, not the Mersenne
+  Twister. Reproducing MATLAB's stream exactly would pin every future numeric change to a generator
+  we do not otherwise want.
+- **`histcounts`'s automatic bin width follows the published formula**, not MATLAB's `binpicker`
+  internals, so a call naming neither edges nor a count may choose a different number of bins. Named
+  `'BinLimits'` are exact rather than widened to a nice number.
+- **`interp1`'s nearest neighbour takes the later sample at the halfway point**, as MATLAB's does
+  (it rounds the fractional index away from zero). Its cubics extrapolate by default; the piecewise
+  methods answer NaN outside the data unless given `'extrap'` or a fill value. `makima` and `v5cubic`
+  are refused by name rather than answered with a different curve.
+- **Bin numbers and column keys count from the dialect's index base.** `histcounts`'s third output
+  and `sortrows`'s column argument are 1-based under MATLAB and 0-based under JGS, with "outside every
+  bin" one below the base. A negative column means descending under MATLAB; JGS gets a named error
+  pointing at `'descend'`, because a negative index is not a JGS idiom.
+- **`max` and `min` omit NaN by default** (M52), as MATLAB's do — this changed existing answers on
+  data containing NaN, and `'includenan'` asks for the old one. The `mov*` family keeps
+  `'includenan'` as its default, because MATLAB's does.
+- **`unique([NaN NaN])` is two values.** A key holding a missing reading is its own group every time,
+  which is what keeps `C(ic)` rebuilding the input exactly and what keeps a NaN out of every
+  intersection, including one with itself.
 
 ## Known differences worth fixing
 
@@ -249,9 +300,14 @@ independently. `diff(A, 2)` is the second difference, `diff(A, 1, 2)` walks dime
 dim)` takes the default, and `diff(A, 0)` is `A`. The JGS dialect never calls that wrapper, so its own
 `diff(array)` is untouched.
 
-One entry remains from M49: **a scalar does not reduce.** `sum(7)` and `cumsum(5)` report that they
-expected an array, where MATLAB answers `7` and `5`. These are one-line guards in the base builtins
-rather than anything about shape.
+The entry M49 left here — **a scalar does not reduce** — was closed in M52. Four argument helpers
+(`Arr`, `ToDoubles`, `DoubleArray`, `ArrayOfNumbers`) threw when handed a bare number and now promote
+it to a one-by-one array, so `sum(7)`, `cumsum(5)`, `diff(5)` and `plot(2, 3)` all answer. The change
+can only turn an error into an answer: every builtin that means something *different* by a scalar —
+the elementwise `max(a, b)`, the image reductions, the scalar constructors — branches on the type
+before it reaches those helpers. `isequal` learned the same reading, and a one-element array now
+compares equal to the bare number it holds; `size` and `==` had always agreed, and only `isequal`
+disagreed.
 
 M51 found four more while making a real user script run, and closed all four. A table answered only
 to `T.Var`, so `data{:,1}` and `data(1:5, :)` both threw where MATLAB reads a variable's contents and
@@ -270,11 +326,29 @@ Reading `ax.XLim` had the same answer for the same reason. Both now fit first. T
 `gca`, which answered nothing because it predated handles; it now hands back an axes handle and
 auto-calls on its bare name, so `ax = gca` is an axes rather than the builtin itself.
 
-One entry, found in M45: **`gradient` is not implemented.** It is documented as kind *function*, so
-neither this file nor the tracker ever counted it as a gap, and it surfaced only because M45's smoke
-script reached for it to build a vector field for `quiver`. Nothing about the value model stands in
-the way — it is a numeric command that belongs in the next coverage batch, not a graphics one, and
-it is written here because otherwise nothing in the process would remember it.
+The entry M45 recorded here — **`gradient` is not implemented** — was closed in M52, along with the
+eleven other data-analysis names beside it. It is worth keeping the note that found it: `gradient` is
+documented as kind *function*, so neither this file nor the tracker ever counted it as a gap, and it
+surfaced only because M45's smoke script reached for it. Seven years of that same blind spot is what
+M52's audit went looking for on purpose.
+
+M52 left these behind, each named rather than silent (the full table is in
+[ADR 0052](adr/0052-the-documented-argument-surface.md)):
+
+- **`arrayfun` still swallows its option tail.** `'ErrorHandler'` is ignored, and so is a misspelling,
+  because the scan reads one word and drops the rest — the defect class M52 closed for `cellfun`. It
+  also has no multi-output form. Both close by sharing `cellfun`'s loop.
+- **The elementwise string verbs do not map over a cell.** `strtrim`, `strrep`, `strcat`,
+  `str2double`, `contains` and `join` each want one string where MATLAB takes a cell of them; one
+  shared wrapper covers all six.
+- **`zeros(n, 'uint8')` and `size(A, [1 2])`** are argument-shape gaps, not capability gaps — the
+  class tag has existed since M47.
+- **The data-preprocessing family** (`normalize` `rescale` `discretize` `fillmissing` `rmmissing`
+  `islocalmax` `islocalmin` `smoothdata` `groupsummary`) and **the string-editing family** (`pad`
+  `erase` `insertAfter` `insertBefore` `extractBefore` `extractAfter` `extractBetween`) are each a
+  wave of their own. So are `kron`, `perms`, `factor` and `idivide`, which are trivial each.
+- **`interp2`, `'native'` output classes, `histogram` object options and `'SamplePoints'`** were
+  scoped out of M52 deliberately.
 
 ## Not implemented — 142
 

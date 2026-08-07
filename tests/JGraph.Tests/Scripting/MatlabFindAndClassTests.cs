@@ -89,12 +89,30 @@ public class MatlabFindAndClassTests : IDisposable
     public Task TheSubscriptFormLimitsInStepAcrossAllItsOutputs() => RunAsserting("""
         a = [1 0 3; 0 5 0];
         [r, c] = find(a, 2);
-        assert(isequal(r, [1 2]));
-        assert(isequal(c, [1 2]));
+        assert(isequal(r, [1; 2]));
+        assert(isequal(c, [1; 2]));
         [r2, c2, v] = find(a, 2, 'last');
         assert(numel(r2) == 2);
         assert(numel(c2) == 2);
-        assert(isequal(v, [5 3]));
+        assert(isequal(v, [5; 3]));
+        """);
+
+    /// <summary>
+    /// Subscripts stand up the way linear indices already did — a row for a row vector, a column for
+    /// anything else. The two forms of the same call used to disagree, which only stess_24 caught.
+    /// </summary>
+    [Fact]
+    public Task TheSubscriptFormStandsUpTheSameWayTheIndexFormDoes() => RunAsserting("""
+        [r, c] = find([0 1; 1 0]);
+        assert(isequal(size(r), [2 1]));
+        assert(isequal(r, [2; 1]) && isequal(c, [1; 2]));
+        [r2, c2, v2] = find([0 3; 4 0]);
+        assert(isequal(v2, [4; 3]));
+        % A row vector keeps its orientation, both here and in the one-output form.
+        [r3, c3] = find([0 3 0 5]);
+        assert(isequal(size(r3), [1 2]));
+        assert(isequal(r3, [1 1]) && isequal(c3, [2 4]));
+        assert(isequal(size(find([0 1; 1 0])), [2 1]));
         """);
 
     /// <summary>
