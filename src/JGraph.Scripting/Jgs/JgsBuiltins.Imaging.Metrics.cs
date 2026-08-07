@@ -80,7 +80,7 @@ internal static partial class JgsBuiltins
         {
             Arity("mean2", args, 1, line, col);
             using ImgArg source = ImgLike("mean2", args, 0, line, col);
-            return JgsValue.Number(Across(source, dialect, Statistics.Mean));
+            return JgsValue.Number(Across(source, dialect, ImageStatistics.Mean));
         });
 
         define("std2", (args, line, col) =>
@@ -90,7 +90,7 @@ internal static partial class JgsBuiltins
 
             // Across channels the spread is one number about all the samples, not the mean of three
             // spreads, so the planes are stacked into one column rather than averaged.
-            return JgsValue.Number(Statistics.StandardDeviation(Stacked(source, dialect)));
+            return JgsValue.Number(ImageStatistics.StandardDeviation(Stacked(source, dialect)));
         });
 
         define("corr2", (args, line, col) =>
@@ -100,7 +100,7 @@ internal static partial class JgsBuiltins
             using ImgArg second = ImgLike("corr2", args, 1, line, col);
             try
             {
-                return JgsValue.Number(Statistics.Correlation(
+                return JgsValue.Number(ImageStatistics.Correlation(
                     Stacked(first, dialect), Stacked(second, dialect)));
             }
             catch (ArgumentException ex)
@@ -123,7 +123,7 @@ internal static partial class JgsBuiltins
             }
 
             int bins = source.Buffer.Class == ImageClass.Logical ? 2 : 256;
-            return JgsValue.Number(Statistics.Entropy(samples, bins));
+            return JgsValue.Number(ImageStatistics.Entropy(samples, bins));
         });
 
         // --- Quality metrics ---------------------------------------------------------------------

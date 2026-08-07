@@ -29,6 +29,7 @@
     <ProjectReference Include="..\JGraph.Numerics\JGraph.Numerics.csproj" />
     <ProjectReference Include="..\JGraph.Signal\JGraph.Signal.csproj" />
     <ProjectReference Include="..\JGraph.Imaging\JGraph.Imaging.csproj" />
+    <ProjectReference Include="..\JGraph.Statistics\JGraph.Statistics.csproj" />
     <ProjectReference Include="..\JGraph.Imaging.Codecs\JGraph.Imaging.Codecs.csproj" />
     <ProjectReference Include="..\JGraph.Data\JGraph.Data.csproj" />
     <ProjectReference Include="..\JGraph.Objects\JGraph.Objects.csproj" />

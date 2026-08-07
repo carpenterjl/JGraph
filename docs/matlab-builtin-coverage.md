@@ -35,6 +35,10 @@ here at all. The nine that do are the ones MATLAB documents under a base folder 
 `toolbox/images`: `cmap2gray`, `hsv2rgb`, `im2double`, `im2gray`, `imapprox`, `imfinfo`, `ind2rgb`,
 `rgb2hsv` and `rgb2ind`.
 
+The Statistics and Machine Learning Toolbox is tracked the same way, in `matlab-stats-coverage.md`,
+and for the same reason: the dump behind this file holds no `toolbox/stats` rows either. M53 builds
+that mirror, and none of its names will move the counts here.
+
 M47 moved it by **two**, both documented as functions rather than builtins: `height` and `width`,
 which are the ordinary way a script asks a table how many rows and how many variables it has. They
 answer for an ordinary array too, as they have since R2020b, and teaching them tables meant teaching

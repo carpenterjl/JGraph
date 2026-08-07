@@ -420,7 +420,7 @@ public static class JgsBuiltinCatalog
 
         // --- Array construction ----------------------------------------------------------------
         Add("linspace", "count (default 100) evenly spaced values from start to stop, inclusive.", P("start"), P("stop"), Opt("count"));
-        Add("range", "Values from start (inclusive) to stop (exclusive) in steps of step (default 1).", P("start"), P("stop"), Opt("step"));
+        Add("range", "In JGS, values from start (inclusive) to stop (exclusive) in steps of step (default 1). In the MATLAB dialect the statistic instead: range(x) is max minus min, with range(A, dim) and range(A, 'all').", P("start"), P("stop"), Opt("step"));
         Add("zeros", "An array of count zeros, a rows-by-cols matrix, or the shape of a size vector (zeros(size(t))).", P("count"), Opt("cols"));
         Add("ones", "An array of count ones, a rows-by-cols matrix, or the shape of a size vector.", P("count"), Opt("cols"));
         Add("rand", "Uniform random values in [0, 1): rand(count) — and rand(), rand(n) as n-by-n, rand(r, c) in MATLAB.", P("count"));
@@ -921,6 +921,38 @@ public static class JgsBuiltinCatalog
             P("array"),
             Opt("n"),
             Opt("dim"));
+
+        // --- Descriptive and robust statistics (M53) ----------------------------------------------
+        Add("prctile", "Percentiles by MATLAB's midpoint rule: prctile(x, p), prctile(A, p, dim), prctile(A, p, 'all').", P("array"), P("percent"), Opt("dim"));
+        Add("quantile", "Quantiles at probabilities, or N evenly spaced ones: quantile(x, p), quantile(x, N), quantile(A, p, dim).", P("array"), P("p"), Opt("dim"));
+        Add("skewness", "Skewness: skewness(x), skewness(x, 0) for the bias-corrected form, skewness(A, flag, dim).", P("array"), Opt("flag"), Opt("dim"));
+        Add("kurtosis", "Kurtosis, 3 for a normal sample: kurtosis(x), kurtosis(x, 0), kurtosis(A, flag, dim).", P("array"), Opt("flag"), Opt("dim"));
+        Add("moment", "The k-th central moment: moment(x, k), moment(A, k, dim).", P("array"), P("order"), Opt("dim"));
+        Add("mad", "Absolute deviation: mad(x) about the mean, mad(x, 1) about the median, mad(A, flag, dim).", P("array"), Opt("flag"), Opt("dim"));
+        Add("trimmean", "The mean with a percentage trimmed from each tail: trimmean(x, pct, 'round' | 'floor' | 'weighted', dim).", P("array"), P("percent"), Opt("rule"), Opt("dim"));
+        Add("geomean", "The geometric mean: geomean(x), geomean(A, dim), geomean(A, 'all'), geomean(x, 'omitnan').", P("array"), Opt("dim"));
+        Add("harmmean", "The harmonic mean: harmmean(x), harmmean(A, dim), harmmean(A, 'all'), harmmean(x, 'omitnan').", P("array"), Opt("dim"));
+        Add("zscore", "Standardized scores: [z, mu, sigma] = zscore(x), zscore(x, 1) to divide by n, zscore(A, flag, dim).", P("array"), Opt("flag"), Opt("dim"));
+        Add("tiedrank", "Ranks with ties averaged: [r, tieadj] = tiedrank(x); tiedrank(x, 1) for the Wilcoxon correction, tiedrank(x, 0, 1) to rank from the outside in.", P("array"), Opt("tieflag"), Opt("bootflag"));
+        Add("tabulate", "A frequency table: a row per value with its count and percentage.", P("array"));
+        Add("crosstab", "Counts per combination of grouping values: [tbl, chi2, p, labels] = crosstab(x1, x2).", P("group1"), Opt("group2"), Opt("group3"));
+        Add("grpstats", "Summary statistics by group: [means, sem, counts, names] = grpstats(X, group).", P("X"), Opt("group"));
+        Add("corr", "Correlation between columns: [rho, p] = corr(X, Y, 'type', 'Pearson' | 'Kendall' | 'Spearman', 'rows', how, 'tail', side).", P("X"), Opt("Y"), Opt("option"), Opt("value"));
+        Add("partialcorr", "Correlation with other variables held fixed: [rho, p] = partialcorr(X), partialcorr(X, Z), partialcorr(X, Y, Z).", P("X"), Opt("Y"), Opt("Z"), Opt("option"), Opt("value"));
+        Add("partialcorri", "Correlation between each response and each predictor, holding the other predictors fixed: partialcorri(Y, X, Z).", P("Y"), P("X"), Opt("Z"), Opt("option"), Opt("value"));
+        Add("corrcov", "The correlation matrix a covariance matrix implies: [R, sigma] = corrcov(C).", P("C"));
+        Add("nearcorr", "The nearest correlation matrix to a symmetric one: nearcorr(A, 'Tolerance', t, 'MaxIterations', n).", P("A"), Opt("option"), Opt("value"));
+        Add("ecdf", "The empirical distribution function, Kaplan-Meier when censored: [f, x, flo, fup] = ecdf(y, 'Censoring', c, 'Function', 'survivor').", P("y"), Opt("option"), Opt("value"));
+        Add("ecdfhist", "Histogram heights that agree with an empirical distribution: [n, c] = ecdfhist(f, x, bins).", P("f"), P("x"), Opt("bins"));
+        Add("ksdensity", "A kernel-smoothed distribution: [f, xi] = ksdensity(x, pts, 'Kernel', k, 'Bandwidth', b, 'Support', s, 'Function', 'pdf').", P("x"), Opt("points"), Opt("option"), Opt("value"));
+        Add("nanmax", "The largest value, ignoring NaN (the legacy spelling of max(x, [], 'omitnan')).", P("array"), Opt("dim"));
+        Add("nanmin", "The smallest value, ignoring NaN (the legacy spelling of min(x, [], 'omitnan')).", P("array"), Opt("dim"));
+        Add("nanmean", "The mean, ignoring NaN (the legacy spelling of mean(x, 'omitnan')).", P("array"), Opt("dim"));
+        Add("nanmedian", "The median, ignoring NaN (the legacy spelling of median(x, 'omitnan')).", P("array"), Opt("dim"));
+        Add("nanstd", "The standard deviation, ignoring NaN (the legacy spelling of std(x, 'omitnan')).", P("array"), Opt("dim"));
+        Add("nansum", "The sum, ignoring NaN (the legacy spelling of sum(x, 'omitnan')).", P("array"), Opt("dim"));
+        Add("nanvar", "The variance, ignoring NaN (the legacy spelling of var(x, 'omitnan')).", P("array"), Opt("dim"));
+        Add("nancov", "Covariance with incomplete observations dropped (the legacy spelling of cov(..., 'omitrows')).", P("A"), Opt("B"));
 
         // --- Array operations ---------------------------------------------------------------------
         Add("sort", "A sorted copy of a numeric or string array; order \"ascend\" (default) or \"descend\", with 'MissingPlacement' and 'ComparisonMethod' for where NaN lands and how complex numbers order.", P("array"), Opt("order"), Opt("option"), Opt("value"));

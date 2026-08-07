@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <RootNamespace>JGraph.Statistics</RootNamespace>
+    <Description>Statistical services for JGraph (descriptive and robust statistics, correlation, empirical distributions, probability distributions, hypothesis tests, regression and clustering) used by the JGS statistics builtins. Pure numeric code with no rendering, model, or scripting dependency.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!--
+      M53. The special functions the distributions need — the error function, the regularized
+      incomplete beta and gamma, and their inverses — already live in JGraph.Numerics and are
+      tested there. A second copy would have to be kept correct twice.
+    -->
+    <ProjectReference Include="..\JGraph.Numerics\JGraph.Numerics.csproj" />
+  </ItemGroup>
+
+</Project>

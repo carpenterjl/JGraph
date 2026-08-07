@@ -11,7 +11,7 @@ namespace JGraph.Imaging;
 /// histogram, so it depends on how finely the range is divided, and MATLAB fixes that at 256 levels
 /// rather than leaving it to the caller.
 /// </remarks>
-public static class Statistics
+public static class ImageStatistics
 {
     /// <summary>The mean of every sample (MATLAB <c>mean2</c>).</summary>
     public static double Mean(double[,] values)

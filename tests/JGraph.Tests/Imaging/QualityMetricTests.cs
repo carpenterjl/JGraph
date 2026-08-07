@@ -10,16 +10,16 @@ namespace JGraph.Tests.Imaging;
 /// </summary>
 public sealed class QualityMetricTests
 {
-    // --- Statistics ----------------------------------------------------------------------------
+    // --- ImageStatistics ----------------------------------------------------------------------------
 
     [Fact]
     public void Mean_And_StandardDeviation_MatchTheHandComputedValues()
     {
         double[,] values = { { 1, 2 }, { 3, 4 } };
-        Assert.Equal(2.5, Statistics.Mean(values), 12);
+        Assert.Equal(2.5, ImageStatistics.Mean(values), 12);
 
         // Normalized by n − 1, which is MATLAB's default for std and so for std2.
-        Assert.Equal(Math.Sqrt(5.0 / 3.0), Statistics.StandardDeviation(values), 12);
+        Assert.Equal(Math.Sqrt(5.0 / 3.0), ImageStatistics.StandardDeviation(values), 12);
     }
 
     [Fact]
@@ -37,7 +37,7 @@ public sealed class QualityMetricTests
 
         // The same picture brighter and with more contrast is still the same picture as far as a
         // correlation is concerned — that is what taking the mean out and normalizing does.
-        Assert.Equal(1.0, Statistics.Correlation(values, doubled), 12);
+        Assert.Equal(1.0, ImageStatistics.Correlation(values, doubled), 12);
     }
 
     [Fact]
@@ -45,14 +45,14 @@ public sealed class QualityMetricTests
     {
         double[,] flat = { { 0.5, 0.5 }, { 0.5, 0.5 } };
         double[,] ramp = { { 0.0, 0.25 }, { 0.5, 0.75 } };
-        Assert.True(double.IsNaN(Statistics.Correlation(flat, ramp)));
+        Assert.True(double.IsNaN(ImageStatistics.Correlation(flat, ramp)));
     }
 
     [Fact]
     public void Entropy_IsZeroForAFlatFieldAndOneBitForABalancedMask()
     {
         double[,] flat = new double[8, 8];
-        Assert.Equal(0.0, Statistics.Entropy(flat), 12);
+        Assert.Equal(0.0, ImageStatistics.Entropy(flat), 12);
 
         var half = new double[8, 8];
         for (int r = 0; r < 8; r++)
@@ -63,7 +63,7 @@ public sealed class QualityMetricTests
             }
         }
 
-        Assert.Equal(1.0, Statistics.Entropy(half, 2), 12);
+        Assert.Equal(1.0, ImageStatistics.Entropy(half, 2), 12);
     }
 
     // --- Error metrics -------------------------------------------------------------------------

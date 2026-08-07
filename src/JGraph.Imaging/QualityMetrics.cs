@@ -23,7 +23,7 @@ public static partial class QualityMetrics
     {
         ArgumentNullException.ThrowIfNull(a);
         ArgumentNullException.ThrowIfNull(b);
-        Statistics.RequireSameSize(a, b);
+        ImageStatistics.RequireSameSize(a, b);
 
         int rows = a.GetLength(0);
         int cols = a.GetLength(1);
@@ -105,7 +105,7 @@ public static partial class QualityMetrics
     {
         ArgumentNullException.ThrowIfNull(a);
         ArgumentNullException.ThrowIfNull(b);
-        Statistics.RequireSameSize(a, b);
+        ImageStatistics.RequireSameSize(a, b);
 
         double range = options.DynamicRange <= 0 ? 1.0 : options.DynamicRange;
         double radius = options.Radius <= 0 ? 1.5 : options.Radius;
@@ -195,7 +195,7 @@ public static partial class QualityMetrics
     {
         ArgumentNullException.ThrowIfNull(a);
         ArgumentNullException.ThrowIfNull(b);
-        Statistics.RequireSameSize(a, b);
+        ImageStatistics.RequireSameSize(a, b);
         ArgumentOutOfRangeException.ThrowIfLessThan(scales, 1);
 
         double[] scaleWeights = weights ?? DefaultScaleWeights;
@@ -277,7 +277,7 @@ public static partial class QualityMetrics
     {
         ArgumentNullException.ThrowIfNull(prediction);
         ArgumentNullException.ThrowIfNull(truth);
-        Statistics.RequireSameSize(prediction, truth);
+        ImageStatistics.RequireSameSize(prediction, truth);
         ArgumentOutOfRangeException.ThrowIfNegative(threshold);
 
         (int[] labels, bool binary) = LabelsOf(prediction, truth);
@@ -427,7 +427,7 @@ public static partial class QualityMetrics
     {
         ArgumentNullException.ThrowIfNull(a);
         ArgumentNullException.ThrowIfNull(b);
-        Statistics.RequireSameSize(a, b);
+        ImageStatistics.RequireSameSize(a, b);
 
         (int[] labels, bool binary) = LabelsOf(a, b);
         var result = new double[labels.Length];

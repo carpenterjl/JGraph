@@ -1921,6 +1921,10 @@ internal static partial class JgsBuiltins
         RegisterDataAnalysisBuiltins(env, dialect);
         RegisterSetOperations(env, dialect);
 
+        // The Statistics Toolbox (M53), after the base names it replaces or leans on and before the
+        // reductions, so a statistic that reduces columns is wrapped for a dimension exactly once.
+        RegisterStatisticsBuiltins(env, dialect);
+
         // After every imaging define, since these wrap builtins declared above.
         RegisterImagingMultiOutputForms(env, host, random, dialect);
         if (dialect.IsMatlab)
