@@ -1189,6 +1189,44 @@ public static class JgsBuiltinCatalog
         Add("mvregresslike", "How improbable the data is at stated multivariate parameters: [nlogL, COVB] = mvregresslike(X, Y, beta, Sigma).", P("X"), P("Y"), P("beta"), P("Sigma"), Opt("algorithm"), Opt("option"), Opt("value"));
         Add("coxphfit", "How predictors multiply the rate of failure, without saying what that rate is: [b, logl, H, stats] = coxphfit(X, T, 'censoring', c, 'ties', 'efron').", P("X"), P("T"), Opt("option"), Opt("value"));
 
+        // --- Clustering, distances and multivariate analysis (M53 wave H) ---------------------------
+        Add("pdist", "The distance between every pair of rows, as one long vector: D = pdist(X, 'minkowski', 3).", P("X"), Opt("metric"), Opt("arg"));
+        Add("pdist2", "Every row of one set against every row of another: D = pdist2(X, Y, 'cosine').", P("X"), P("Y"), Opt("metric"), Opt("arg"));
+        Add("squareform", "The pairwise distances as a square matrix, or a square matrix condensed back: Z = squareform(D, 'tomatrix').", P("D"), Opt("direction"));
+        Add("mahal", "How far each point is from a sample's centre in that sample's own metric: d = mahal(Y, X).", P("Y"), P("X"));
+        Add("knnsearch", "The nearest members of a set to each query point: [idx, d] = knnsearch(X, Y, 'K', 3, 'Distance', 'cityblock').", P("X"), P("Y"), Opt("option"), Opt("value"));
+        Add("rangesearch", "Every member within a radius of each query point: [idx, d] = rangesearch(X, Y, r, 'Distance', 'chebychev').", P("X"), P("Y"), P("radius"), Opt("option"), Opt("value"));
+        Add("linkage", "The agglomerative tree over the data or over distances already computed: Z = linkage(X, 'ward', 'euclidean').", P("X"), Opt("method"), Opt("metric"), Opt("arg"));
+        Add("cluster", "Which cluster each observation falls in when the tree is cut: T = cluster(Z, 'maxclust', 3) or cluster(Z, 'cutoff', c).", P("Z"), P("option"), P("value"), Opt("more"), Opt("value"));
+        Add("clusterdata", "Linkage and cut in one step: T = clusterdata(X, 'maxclust', 3, 'linkage', 'average').", P("X"), Opt("cutoff"), Opt("option"), Opt("value"));
+        Add("cophenet", "How faithfully the tree reproduces the distances it was built from: [c, d] = cophenet(Z, Y).", P("Z"), P("Y"));
+        Add("inconsistent", "Each merge's height against the merges below it: Y = inconsistent(Z, depth).", P("Z"), Opt("depth"));
+        Add("optimalleaforder", "The leaf order that keeps neighbouring leaves as close as the tree allows: order = optimalleaforder(Z, D).", P("Z"), P("D"), Opt("option"), Opt("value"));
+        Add("kmeans", "Clusters around their own means: [idx, C, sumd, D] = kmeans(X, 3, 'Replicates', 5, 'Start', 'plus').", P("X"), P("k"), Opt("option"), Opt("value"));
+        Add("kmedoids", "Clusters around members rather than means, in any metric: [idx, C, sumd, D, midx, info] = kmedoids(X, 3, 'Distance', 'correlation').", P("X"), P("k"), Opt("option"), Opt("value"));
+        Add("dbscan", "Clusters found by density, leaving sparse points in none: [idx, corepts] = dbscan(X, epsilon, minpts).", P("X"), P("epsilon"), P("minpts"), Opt("option"), Opt("value"));
+        Add("spectralcluster", "Clusters found in the eigenvectors of the affinity matrix: [idx, V, D] = spectralcluster(X, 3, 'KernelScale', 1).", P("X"), P("k"), Opt("option"), Opt("value"));
+        Add("silhouette", "How well each observation sits in its cluster, between -1 and 1: s = silhouette(X, idx, 'cityblock').", P("X"), P("clust"), Opt("metric"), Opt("arg"));
+        Add("pca", "The directions the data varies in most: [coeff, score, latent, tsquared, explained, mu] = pca(X, 'NumComponents', 2).", P("X"), Opt("option"), Opt("value"));
+        Add("pcacov", "The same components from a covariance matrix already formed: [coeff, latent, explained] = pcacov(V).", P("V"));
+        Add("pcares", "What the first few components fail to account for: [residuals, reconstructed] = pcares(X, ndim).", P("X"), P("ndim"));
+        Add("ppca", "Components fitted by maximum likelihood, so a missing value costs one entry and not a whole row: [coeff, score, pcvar, mu, v, S] = ppca(Y, k).", P("Y"), P("k"), Opt("option"), Opt("value"));
+        Add("nnmf", "A factorization into parts that only ever add: [W, H, D] = nnmf(A, k, 'Replicates', 5, 'Algorithm', 'mult').", P("A"), P("k"), Opt("option"), Opt("value"));
+        Add("rotatefactors", "Loadings turned so each variable loads on few components: [B, T] = rotatefactors(A, 'Method', 'promax').", P("A"), Opt("option"), Opt("value"));
+        Add("cmdscale", "Coordinates whose distances reproduce the ones given: [Y, e] = cmdscale(D, p).", P("D"), Opt("p"));
+        Add("procrustes", "How much of one configuration is left once it has been moved onto another: [d, Z, transform] = procrustes(X, Y, 'Scaling', false).", P("X"), P("Y"), Opt("option"), Opt("value"));
+        Add("canoncorr", "The combinations of two sets of variables that agree most: [A, B, r, U, V, stats] = canoncorr(X, Y).", P("X"), P("Y"));
+        Add("robustcov", "A covariance a handful of outliers cannot move, and the outliers: [sig, mu, mah, outliers, s] = robustcov(X, 'Method', 'ogk').", P("X"), Opt("option"), Opt("value"));
+        Add("grp2idx", "A grouping variable as numbers, with the level names: [G, GN, GL] = grp2idx(S).", P("S"));
+        Add("confusionmat", "How often each known class was predicted as each other: [C, order] = confusionmat(known, predicted).", P("known"), P("predicted"), Opt("option"), Opt("value"));
+        Add("onehotencode", "One indicator column per class, a single one in each row: A = onehotencode(labels, dim).", P("labels"), Opt("dim"));
+        Add("onehotdecode", "The class each row's largest indicator names: labels = onehotdecode(A, classes, dim).", P("A"), P("classes"), Opt("dim"));
+        Add("hmmgenerate", "A sequence drawn from a hidden Markov model: [seq, states] = hmmgenerate(len, TRANS, EMIS, 'Symbols', s).", P("len"), P("TRANS"), P("EMIS"), Opt("option"), Opt("value"));
+        Add("hmmdecode", "The probability of each state at each step of an observed sequence: [pstates, logpseq, fs, bs, s] = hmmdecode(seq, TRANS, EMIS).", P("seq"), P("TRANS"), P("EMIS"), Opt("option"), Opt("value"));
+        Add("hmmviterbi", "The single most likely path through a model: [states, logp] = hmmviterbi(seq, TRANS, EMIS).", P("seq"), P("TRANS"), P("EMIS"), Opt("option"), Opt("value"));
+        Add("hmmestimate", "The two matrices counted from a sequence whose states are known: [TRANS, EMIS] = hmmestimate(seq, states).", P("seq"), P("states"), Opt("option"), Opt("value"));
+        Add("hmmtrain", "The two matrices estimated from the observations alone: [TRANS, EMIS] = hmmtrain(seqs, guessTR, guessE, 'Tolerance', 1e-6).", P("seqs"), P("guessTR"), P("guessE"), Opt("option"), Opt("value"));
+
         // --- Array operations ---------------------------------------------------------------------
         Add("sort", "A sorted copy of a numeric or string array; order \"ascend\" (default) or \"descend\", with 'MissingPlacement' and 'ComparisonMethod' for where NaN lands and how complex numbers order.", P("array"), Opt("order"), Opt("option"), Opt("value"));
         Add("unique", "The distinct values of a numeric or string array: [c, ia, ic] = unique(x, 'rows', 'stable', 'last'), where c = x(ia) and x = c(ic).", P("array"), Opt("option"), Opt("more"));

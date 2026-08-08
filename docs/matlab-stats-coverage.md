@@ -1,10 +1,11 @@
 # MATLAB Statistics and Machine Learning Toolbox coverage
 
-**248 of 589 documented** Statistics and Machine Learning Toolbox names are implemented, as of
-M53 wave G. Wave A built the scaffold — the list, this document and its verifier; wave B added the
+**284 of 589 documented** Statistics and Machine Learning Toolbox names are implemented, as of
+M53 wave H. Wave A built the scaffold — the list, this document and its verifier; wave B added the
 descriptive and robust statistics; wave C the continuous distribution families; wave D the discrete
 ones; wave E the distributions of a vector, and the samplers; wave F the hypothesis tests and the
-analysis of variance; wave G the regressions.
+analysis of variance; wave G the regressions; wave H the distances, the clusterings and the
+multivariate analyses.
 
 ## Where this list comes from
 
@@ -53,7 +54,7 @@ The four names in this list that JGraph's catalog already registers — `mean`, 
 statistic *of a probability distribution object*, which JGraph's base builtins do not take. `range`
 is the sharper case and is recorded as a divergence below.
 
-## Implemented — 248
+## Implemented — 284
 
 ### Descriptive and robust statistics, and the correlations — 31
 
@@ -167,33 +168,46 @@ censoring, frequencies, a baseline and either tie rule.
 `mvregresslike`, `nlinfit`, `nlparci`, `nlpredci`, `plsregress`, `polyconf`
 `regress`, `regstats`, `ridge`, `robustfit`, `stepwisefit`, `x2fx`
 
-## Not implemented — 137
+### Clustering, distances and multivariate analysis — 36
 
-The rest of the milestone's working set, in the order the waves take it:
-regression, clustering and multivariate analysis, the distribution objects, the copulas, and the
-plotting verbs.
+How far apart observations are, the groups that follow from it, and the directions a cloud of them
+varies in. Everything reads one observation per row. The twelve documented distance words are shared
+by every name that measures one, each with the extra argument its own metric needs — the Minkowski
+exponent, the standardizing scale, the Mahalanobis covariance — and a set of pairwise distances
+travels between these names as MathWorks' condensed row vector, which `linkage`, `cluster` and
+`silhouette` tell apart from raw observations by shape rather than by a word.
+
+Everything that starts from a guess draws from the one seeded stream, so a seeded script repeats
+itself: the k-means++ choice of first centres, the random subsets `robustcov` concentrates from, the
+starting factors of `nnmf`, and the sequences `hmmgenerate` draws.
+
+`canoncorr`, `cluster`, `clusterdata`, `cmdscale`, `confusionmat`, `cophenet`
+`dbscan`, `grp2idx`, `hmmdecode`, `hmmestimate`, `hmmgenerate`, `hmmtrain`
+`hmmviterbi`, `inconsistent`, `kmeans`, `kmedoids`, `knnsearch`, `linkage`
+`mahal`, `nnmf`, `onehotdecode`, `onehotencode`, `optimalleaforder`, `pca`
+`pcacov`, `pcares`, `pdist`, `pdist2`, `ppca`, `procrustes`
+`rangesearch`, `robustcov`, `rotatefactors`, `silhouette`, `spectralcluster`, `squareform`
+
+## Not implemented — 101
+
+The rest of the milestone's working set, in the order the waves take it: the distribution objects, the
+copulas, the plotting verbs, the enumerable designs of experiments, and the file readers.
 
 `addedvarplot`, `andrewsplot`, `bbdesign`, `BetaDistribution`, `BinomialDistribution`, `biplot`
-`BirnbaumSaundersDistribution`, `boxplot`, `BurrDistribution`, `canoncorr`, `capability`, `capaplot`
-`caseread`, `casewrite`, `ccdesign`, `cdfplot`, `cluster`, `clusterdata`
-`cmdscale`, `confusionmat`, `cophenet`, `copulacdf`, `copulafit`, `copulaparam`
-`copulapdf`, `copularnd`, `copulastat`, `createns`, `dbscan`, `dendrogram`
-`ExhaustiveSearcher`, `ExponentialDistribution`, `ExtremeValueDistribution`, `ff2n`, `fitdist`, `fracfact`
-`fracfactgen`, `fullfact`, `gagerr`, `GammaDistribution`, `GeneralizedExtremeValueDistribution`, `GeneralizedParetoDistribution`
-`glyphplot`, `gplotmatrix`, `grp2idx`, `gscatter`, `HalfNormalDistribution`, `hist3`
-`histfit`, `hmmdecode`, `hmmestimate`, `hmmgenerate`, `hmmtrain`, `hmmviterbi`
-`inconsistent`, `interactionplot`, `InverseGaussianDistribution`, `iqr`, `johnsrnd`, `KDTreeSearcher`
-`KernelDistribution`, `kmeans`, `kmedoids`, `knnsearch`, `lassoPlot`, `linkage`
-`LogisticDistribution`, `LoglogisticDistribution`, `LognormalDistribution`, `LoguniformDistribution`, `lsline`, `mahal`
-`maineffectsplot`, `makedist`, `manovacluster`, `mean`, `median`, `mhsample`
-`mlecov`, `MultinomialDistribution`, `multivarichart`, `NakagamiDistribution`, `NegativeBinomialDistribution`, `negloglik`
-`nnmf`, `NormalDistribution`, `normplot`, `normspec`, `onehotdecode`, `onehotencode`
-`optimalleaforder`, `parallelcoords`, `paramci`, `paretotails`, `pca`, `pcacov`
-`pcares`, `pdist`, `pdist2`, `pearsrnd`, `perfcurve`, `PiecewiseLinearDistribution`
-`PoissonDistribution`, `ppca`, `probplot`, `procrustes`, `proflik`, `qqplot`
-`rangesearch`, `RayleighDistribution`, `rcoplot`, `refcurve`, `refline`, `RicianDistribution`
-`robustcov`, `rotatefactors`, `scatterhist`, `silhouette`, `slicesample`, `spectralcluster`
-`squareform`, `StableDistribution`, `statget`, `statset`, `std`, `tblread`
+`BirnbaumSaundersDistribution`, `boxplot`, `BurrDistribution`, `capability`, `capaplot`, `caseread`
+`casewrite`, `ccdesign`, `cdfplot`, `copulacdf`, `copulafit`, `copulaparam`
+`copulapdf`, `copularnd`, `copulastat`, `createns`, `dendrogram`, `ExhaustiveSearcher`
+`ExponentialDistribution`, `ExtremeValueDistribution`, `ff2n`, `fitdist`, `fracfact`, `fracfactgen`
+`fullfact`, `gagerr`, `GammaDistribution`, `GeneralizedExtremeValueDistribution`, `GeneralizedParetoDistribution`, `glyphplot`
+`gplotmatrix`, `gscatter`, `HalfNormalDistribution`, `hist3`, `histfit`, `interactionplot`
+`InverseGaussianDistribution`, `iqr`, `johnsrnd`, `KDTreeSearcher`, `KernelDistribution`, `lassoPlot`
+`LogisticDistribution`, `LoglogisticDistribution`, `LognormalDistribution`, `LoguniformDistribution`, `lsline`, `maineffectsplot`
+`makedist`, `manovacluster`, `mean`, `median`, `mhsample`, `mlecov`
+`MultinomialDistribution`, `multivarichart`, `NakagamiDistribution`, `NegativeBinomialDistribution`, `negloglik`, `NormalDistribution`
+`normplot`, `normspec`, `parallelcoords`, `paramci`, `paretotails`, `pearsrnd`
+`perfcurve`, `PiecewiseLinearDistribution`, `PoissonDistribution`, `probplot`, `proflik`, `qqplot`
+`RayleighDistribution`, `rcoplot`, `refcurve`, `refline`, `RicianDistribution`, `scatterhist`
+`slicesample`, `StableDistribution`, `statget`, `statset`, `std`, `tblread`
 `tblwrite`, `tdfread`, `tLocationScaleDistribution`, `TriangularDistribution`, `truncate`, `tsne`
 `UniformDistribution`, `var`, `wblplot`, `WeibullDistribution`, `xptread`
 
@@ -542,3 +556,64 @@ optimizer tolerances, bounded numerics, seeding. Filled in as the waves land.
   Greenwood's formula and the interval is symmetric about the estimate, then clipped to [0, 1] — not
   transformed onto a log or log-log scale first. The bounds therefore agree with MATLAB's in the
   middle of the curve and pull in at the ends.
+
+- **The minimum-norm choice reappears in `pca` and stays out of `pcacov`.** The components come from a
+  singular value decomposition of the centred data rather than from the eigenvectors of its
+  covariance, because forming the covariance squares the condition number and a nearly collinear data
+  set — which is what anyone runs this on — loses half its digits in the forming. `pcacov` exists for
+  the caller who has only the covariance and takes that loss knowingly, so the two names can differ in
+  the last few digits of a small eigenvalue.
+- **A component's sign is chosen, not left to the arithmetic.** Negating a loading vector and its
+  scores describes the same direction, so `pca`, `pcacov`, `ppca`, `cmdscale` and `rotatefactors` each
+  turn every component until its largest-magnitude entry is positive. MathWorks makes no such promise,
+  so a column here may be the negative of MATLAB's — with the scores negated to match, which is what
+  keeps the reconstruction identical.
+- **`pca` will not pad its answer with components the data does not support.** `'Economy'` off asks
+  for as many columns as there are variables, filled out with zeros past the rank; that is refused by
+  name, because those columns carry no variance and span nothing. `'Rows','pairwise'` is refused for a
+  sharper reason: a covariance assembled from whatever pairs happen to be observed need not be a
+  covariance at all. Dropping incomplete rows is the default, and `ppca` models the gaps instead.
+- **`kmeans` measures in the squared Euclidean distance only.** MATLAB's other four distances each
+  need a different centre — the median for cityblock, the normalized mean for cosine — and a mean
+  paired with a distance it does not minimize would report a total that nothing minimizes. `kmedoids`,
+  whose centre is a member of the cluster whatever the metric, takes all twelve distance words.
+- **A non-negative factorization finds a local minimum, and the two algorithms find different ones.**
+  The alternating solve clamps an unconstrained least-squares step, which is fast and can stall; the
+  multiplicative update descends monotonically and is slower. Neither is wrong and MathWorks documents
+  the same dependence — `'Replicates'` is the answer to it, and the two algorithms are worth trying
+  against each other on a matrix that matters.
+- **`spectralcluster` builds the Gaussian-kernel graph only.** The nearest-neighbour similarity graph
+  and the random-walk Laplacian are refused by name rather than substituted; `'KernelScale'` sets the
+  kernel's width, and left out it is the median pairwise distance, which puts a typical pair at an
+  affinity of about six tenths.
+- **`knnsearch` and `rangesearch` always search exhaustively.** `'NSMethod'` and `'BucketSize'` choose
+  between search structures that trade exactness for speed; there is nothing to choose here, so both
+  are refused by name. `'SortIndices'` cannot be turned off for the same reason — the neighbours always
+  come back nearest first. `'IncludeTies'` is refused with a pointer to `rangesearch`, which returns
+  exactly the variable-length neighbourhood it asks for.
+- **A tie between two equally distant points is broken by which came first.** Nothing in a sort
+  promises that, so the comparison says so explicitly, in `knnsearch`, `rangesearch`, `linkage` and the
+  concentration step of `robustcov`. The answers are therefore reproducible rather than merely correct.
+- **The centroid and median trees may invert, and the inversion is left in.** A merged centroid can sit
+  closer to a third cluster than either parent did, which makes a merge height smaller than the one
+  below it. MathWorks leaves those in rather than hiding them, and so does this — but `cluster` orders
+  the merges by height before cutting into k groups, so the cut still means "the k tightest".
+- **`silhouette` returns its values rather than drawing them.** MathWorks draws the silhouette when
+  nothing catches the answer; the plotting verbs are deferred with the rest of wave J, so the values
+  are the answer either way and the console echoes them — the same choice `tabulate` made in wave B.
+- **`robustcov` corrects for its own selection and reports no bias correction beyond that.** The
+  covariance of the tightest half is too small by a known factor because the half was chosen for being
+  tight, and that consistency factor is applied. MathWorks' small-sample bias correction is a separate
+  table of fitted constants and is not applied; on a sample of any size worth running this on the two
+  agree, and on a very small one the estimate here is slightly the tighter.
+- **A hidden Markov model moves before it emits.** MathWorks' generator takes a transition step first,
+  so the state it was handed is where the walk begins and never where an observation came from; the
+  forward-backward recursion here is written over one extra step for the same reason, which is why
+  `hmmdecode` answers a matrix one column wider than the sequence. Getting this backwards would shift
+  every sequence by one step and quietly change every estimate downstream.
+- **`hmmtrain` estimates by Baum-Welch only.** Viterbi training assigns each observation to its single
+  most likely state, which is a different estimator with a different answer, and it is refused by name
+  rather than silently replaced by the one that weights every path.
+- **A state the data never visited keeps an empty row.** `hmmestimate` and `hmmtrain` normalize each
+  row by its own total, and a row with no evidence in it stays at zero rather than being filled with a
+  uniform distribution the data never showed. Pseudocounts are how a caller says otherwise.
