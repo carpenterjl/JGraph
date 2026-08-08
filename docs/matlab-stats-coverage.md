@@ -1,9 +1,9 @@
 # MATLAB Statistics and Machine Learning Toolbox coverage
 
-**176 of 589 documented** Statistics and Machine Learning Toolbox names are implemented, as of
-M53 wave D. Wave A built the scaffold — the list, this document and its verifier; wave B added the
+**195 of 589 documented** Statistics and Machine Learning Toolbox names are implemented, as of
+M53 wave E. Wave A built the scaffold — the list, this document and its verifier; wave B added the
 descriptive and robust statistics; wave C the continuous distribution families; wave D the discrete
-ones.
+ones; wave E the distributions of a vector, and the samplers.
 
 ## Where this list comes from
 
@@ -52,7 +52,7 @@ The four names in this list that JGraph's catalog already registers — `mean`, 
 statistic *of a probability distribution object*, which JGraph's base builtins do not take. `range`
 is the sharper case and is recorded as a divergence below.
 
-## Implemented — 176
+## Implemented — 195
 
 ### Descriptive and robust statistics, and the correlations — 31
 
@@ -111,48 +111,59 @@ function has reached the probability asked for, found by search rather than by r
 `poisscdf`, `poissfit`, `poissinv`, `poisspdf`, `poissrnd`, `poisstat`
 `unidcdf`, `unidinv`, `unidpdf`, `unidrnd`, `unidstat`
 
-## Not implemented — 213
+### Multivariate distributions, sampling and resampling — 19
 
-The rest of the milestone's working set, in the order the waves take it: multivariate distributions,
-random sampling and resampling, hypothesis tests and ANOVA, regression, clustering and multivariate
-analysis, the distribution objects, and the plotting verbs.
+The distributions of a vector rather than a number, and the three ways of choosing points. Every one
+reads its data as one observation per row and one variable per column. The multivariate probabilities
+are quadratures rather than closed forms, so their second output is an error estimate and their
+dimension is capped; everything that draws takes the one stream that rng seeds, so a seeded script repeats
+itself. The resampling three call back into the script, because their subject is a function the caller
+wrote, and each resample re-indexes every data argument by the same rows.
+
+`bootci`, `bootstrp`, `cholcov`, `combnk`, `datasample`, `iwishrnd`
+`jackknife`, `lhsdesign`, `lhsnorm`, `mvksdensity`, `mvncdf`, `mvnpdf`
+`mvnrnd`, `mvtcdf`, `mvtpdf`, `mvtrnd`, `randg`, `randsample`
+`wishrnd`
+
+## Not implemented — 194
+
+The rest of the milestone's working set, in the order the waves take it: hypothesis tests and ANOVA,
+regression, clustering and multivariate analysis, the distribution objects, the copulas, and the
+plotting verbs.
 
 `addedvarplot`, `adtest`, `andrewsplot`, `anova1`, `anova2`, `anovan`
 `ansaribradley`, `barttest`, `bbdesign`, `BetaDistribution`, `BinomialDistribution`, `biplot`
-`BirnbaumSaundersDistribution`, `bootci`, `bootstrp`, `boxplot`, `BurrDistribution`, `canoncorr`
-`capability`, `capaplot`, `caseread`, `casewrite`, `ccdesign`, `cdfplot`
-`chi2gof`, `cholcov`, `cluster`, `clusterdata`, `cmdscale`, `combnk`
-`confusionmat`, `cophenet`, `copulacdf`, `copulafit`, `copulaparam`, `copulapdf`
-`copularnd`, `copulastat`, `coxphfit`, `createns`, `datasample`, `dbscan`
-`dendrogram`, `dummyvar`, `dwtest`, `ExhaustiveSearcher`, `ExponentialDistribution`, `ExtremeValueDistribution`
-`ff2n`, `fishertest`, `fitdist`, `fitrm`, `fracfact`, `fracfactgen`
-`friedman`, `fullfact`, `gagerr`, `GammaDistribution`, `GeneralizedExtremeValueDistribution`, `GeneralizedParetoDistribution`
-`glmfit`, `glmval`, `glyphplot`, `gplotmatrix`, `grp2idx`, `gscatter`
-`HalfNormalDistribution`, `hist3`, `histfit`, `hmmdecode`, `hmmestimate`, `hmmgenerate`
-`hmmtrain`, `hmmviterbi`, `hougen`, `inconsistent`, `interactionplot`, `InverseGaussianDistribution`
-`invpred`, `iqr`, `iwishrnd`, `jackknife`, `jbtest`, `johnsrnd`
-`KDTreeSearcher`, `KernelDistribution`, `kmeans`, `kmedoids`, `knnsearch`, `kruskalwallis`
-`kstest`, `kstest2`, `lasso`, `lassoglm`, `lassoPlot`, `leverage`
-`lhsdesign`, `lhsnorm`, `lillietest`, `linhyptest`, `linkage`, `LogisticDistribution`
-`LoglogisticDistribution`, `LognormalDistribution`, `LoguniformDistribution`, `lsline`, `mahal`, `maineffectsplot`
-`makedist`, `manova1`, `manovacluster`, `mean`, `median`, `mhsample`
-`mlecov`, `mnrfit`, `mnrval`, `multcompare`, `MultinomialDistribution`, `multivarichart`
-`mvksdensity`, `mvncdf`, `mvnpdf`, `mvnrnd`, `mvregress`, `mvregresslike`
-`mvtcdf`, `mvtpdf`, `mvtrnd`, `NakagamiDistribution`, `NegativeBinomialDistribution`, `negloglik`
-`nlinfit`, `nlparci`, `nlpredci`, `nnmf`, `NormalDistribution`, `normplot`
-`normspec`, `onehotdecode`, `onehotencode`, `optimalleaforder`, `parallelcoords`, `paramci`
-`paretotails`, `pca`, `pcacov`, `pcares`, `pdist`, `pdist2`
-`pearsrnd`, `perfcurve`, `PiecewiseLinearDistribution`, `plsregress`, `PoissonDistribution`, `polyconf`
-`ppca`, `probplot`, `procrustes`, `proflik`, `qqplot`, `randg`
-`randsample`, `rangesearch`, `ranksum`, `RayleighDistribution`, `rcoplot`, `refcurve`
+`BirnbaumSaundersDistribution`, `boxplot`, `BurrDistribution`, `canoncorr`, `capability`, `capaplot`
+`caseread`, `casewrite`, `ccdesign`, `cdfplot`, `chi2gof`, `cluster`
+`clusterdata`, `cmdscale`, `confusionmat`, `cophenet`, `copulacdf`, `copulafit`
+`copulaparam`, `copulapdf`, `copularnd`, `copulastat`, `coxphfit`, `createns`
+`dbscan`, `dendrogram`, `dummyvar`, `dwtest`, `ExhaustiveSearcher`, `ExponentialDistribution`
+`ExtremeValueDistribution`, `ff2n`, `fishertest`, `fitdist`, `fitrm`, `fracfact`
+`fracfactgen`, `friedman`, `fullfact`, `gagerr`, `GammaDistribution`, `GeneralizedExtremeValueDistribution`
+`GeneralizedParetoDistribution`, `glmfit`, `glmval`, `glyphplot`, `gplotmatrix`, `grp2idx`
+`gscatter`, `HalfNormalDistribution`, `hist3`, `histfit`, `hmmdecode`, `hmmestimate`
+`hmmgenerate`, `hmmtrain`, `hmmviterbi`, `hougen`, `inconsistent`, `interactionplot`
+`InverseGaussianDistribution`, `invpred`, `iqr`, `jbtest`, `johnsrnd`, `KDTreeSearcher`
+`KernelDistribution`, `kmeans`, `kmedoids`, `knnsearch`, `kruskalwallis`, `kstest`
+`kstest2`, `lasso`, `lassoglm`, `lassoPlot`, `leverage`, `lillietest`
+`linhyptest`, `linkage`, `LogisticDistribution`, `LoglogisticDistribution`, `LognormalDistribution`, `LoguniformDistribution`
+`lsline`, `mahal`, `maineffectsplot`, `makedist`, `manova1`, `manovacluster`
+`mean`, `median`, `mhsample`, `mlecov`, `mnrfit`, `mnrval`
+`multcompare`, `MultinomialDistribution`, `multivarichart`, `mvregress`, `mvregresslike`, `NakagamiDistribution`
+`NegativeBinomialDistribution`, `negloglik`, `nlinfit`, `nlparci`, `nlpredci`, `nnmf`
+`NormalDistribution`, `normplot`, `normspec`, `onehotdecode`, `onehotencode`, `optimalleaforder`
+`parallelcoords`, `paramci`, `paretotails`, `pca`, `pcacov`, `pcares`
+`pdist`, `pdist2`, `pearsrnd`, `perfcurve`, `PiecewiseLinearDistribution`, `plsregress`
+`PoissonDistribution`, `polyconf`, `ppca`, `probplot`, `procrustes`, `proflik`
+`qqplot`, `rangesearch`, `ranksum`, `RayleighDistribution`, `rcoplot`, `refcurve`
 `refline`, `regress`, `regstats`, `RepeatedMeasuresModel`, `RicianDistribution`, `ridge`
 `robustcov`, `robustfit`, `rotatefactors`, `runstest`, `sampsizepwr`, `scatterhist`
 `signrank`, `signtest`, `silhouette`, `slicesample`, `spectralcluster`, `squareform`
 `StableDistribution`, `statget`, `statset`, `std`, `stepwisefit`, `stepwiseglm`
 `stepwiselm`, `tblread`, `tblwrite`, `tdfread`, `tLocationScaleDistribution`, `TriangularDistribution`
 `truncate`, `tsne`, `ttest`, `ttest2`, `UniformDistribution`, `var`
-`vartest`, `vartest2`, `vartestn`, `wblplot`, `WeibullDistribution`, `wishrnd`
-`x2fx`, `xptread`, `ztest`
+`vartest`, `vartest2`, `vartestn`, `wblplot`, `WeibullDistribution`, `x2fx`
+`xptread`, `ztest`
 
 ## Excluded — 200
 
@@ -338,6 +349,36 @@ By reason:
 - **A fitter whose third documented argument is an options structure ignores it.** `gevfit`, `gpfit`
   and `nbinfit` accept the argument and take no notice; only the fitters that document a fourth
   positional argument read slots three and four as censoring and frequency.
+
+- **A multivariate probability is a quadrature, and its dimension is capped.** One and two variables
+  have exact reductions and are used. Above that the integral goes through Genz's transformation and a
+  tensor Gauss–Legendre rule, whose cost grows as a power of the dimension — so `mvncdf` takes up to
+  five variables and `mvtcdf` up to four, and asks for more are refused by name rather than run for an
+  hour. MATLAB integrates any dimension with a randomized quasi-Monte Carlo rule, whose answer changes
+  slightly from call to call; this one does not, and the second output is the gap between the rule and
+  a coarser one rather than a sampling error.
+- **A separate covariance for every observation is not accepted.** `mvnpdf` and `mvncdf` take one
+  covariance matrix, or a row of variances standing for a diagonal one. MathWorks also accepts a page
+  of them, one per row of the data; that form is refused by name.
+- **`mvksdensity` requires its bandwidth, and estimates the density only.** MathWorks requires the
+  bandwidth too — there is no agreed rule of thumb in more than one dimension. The kernel is a product
+  of the four one-dimensional ones, and the cumulative and inverse forms the univariate `ksdensity`
+  offers have no unambiguous multivariate reading, so they are not offered.
+- **`combnk` lists its combinations in ascending order.** MathWorks documents no order for `combnk` and
+  points at nchoosek instead; this one answers what nchoosek would, which is the order a script can
+  reason about.
+- **`bootci` does not compute the studentized interval.** `'stud'` needs a bootstrap inside every
+  bootstrap, or a standard error the statistic reports for itself. It is refused with the reason and
+  the four intervals that are computed — the percentile, the bias-corrected percentile, the accelerated
+  one, and the normal.
+- **A Wishart draw uses Bartlett's decomposition wherever it applies.** More degrees of freedom than
+  variables, whole or not, take the triangular construction; fewer, and only a whole number of them,
+  fall back to the sum of outer products the definition gives, which is singular and correctly so. A
+  fractional degree of freedom below the variable count has neither and is refused.
+- **`lhsnorm` stratifies an ordinary draw rather than transforming a design.** A multivariate normal
+  sample is drawn and its values are then moved, in rank order, onto the stratum midpoints of the same
+  marginal. Ranks carry the correlation, so the covariance survives; the sample is not the one MATLAB
+  would produce, for the reason every seeded answer here differs from MATLAB's.
 
 ## Answers this mirror will state rather than match
 

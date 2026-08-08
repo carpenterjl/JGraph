@@ -575,6 +575,16 @@ public static class EmpiricalDistribution
         return grid[^1];
     }
 
+    /// <summary>
+    /// The kernel's own shape at <paramref name="u"/> standard widths from the centre, before any
+    /// bandwidth is divided out.
+    /// </summary>
+    /// <remarks>
+    /// Public because the multivariate estimate (M53 wave E) is a product of these one per variable,
+    /// and a second copy of four one-line formulas is a second thing to keep right.
+    /// </remarks>
+    public static double KernelWeight(Kernel kernel, double u) => KernelValue(kernel, u);
+
     private static double KernelValue(Kernel kernel, double u) => kernel switch
     {
         Kernel.Box => Math.Abs(u) <= 1 ? 0.5 : 0,

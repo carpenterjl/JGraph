@@ -57,6 +57,8 @@ internal static partial class JgsBuiltins
         DefineBoth("grpstats", GroupStatistics);
 
         RegisterDistributionBuiltins(env, random);
+        RegisterMultivariateBuiltins(env, random);
+        RegisterSamplingBuiltins(env, random, dialect);
         RegisterCorrelationBuiltins(env);
         RegisterEmpiricalBuiltins(env);
         RegisterLegacyNanBuiltins(env);

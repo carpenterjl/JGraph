@@ -238,6 +238,13 @@ public static class SpecialFunctions
             return double.NaN;
         }
 
+        // The limits, named rather than computed: the tail formula below multiplies exp(-x²) by x,
+        // which is zero times infinity at the ends and answers NaN where the function is exactly ±1.
+        if (double.IsInfinity(x))
+        {
+            return Math.Sign(x);
+        }
+
         if (x < 0)
         {
             return -Erf(-x);
@@ -252,6 +259,11 @@ public static class SpecialFunctions
         if (double.IsNaN(x))
         {
             return double.NaN;
+        }
+
+        if (double.IsInfinity(x))
+        {
+            return x > 0 ? 0 : 2;
         }
 
         if (x < 0)
@@ -278,6 +290,11 @@ public static class SpecialFunctions
         if (double.IsNaN(x))
         {
             return double.NaN;
+        }
+
+        if (double.IsInfinity(x))
+        {
+            return x > 0 ? 0 : double.PositiveInfinity;
         }
 
         if (x < 0)

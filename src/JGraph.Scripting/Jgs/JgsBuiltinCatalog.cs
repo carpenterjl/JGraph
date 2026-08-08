@@ -1111,6 +1111,27 @@ public static class JgsBuiltinCatalog
         Add("mnpdf", "The multinomial probability of each row of counts: mnpdf(x, p).", P("x"), P("p"));
         Add("mnrnd", "Multinomial random counts: mnrnd(n, p) or mnrnd(n, p, m).", P("n"), P("p"), Opt("m"));
 
+        // --- Multivariate distributions, sampling and resampling (M53 wave E) -----------------------
+        Add("cholcov", "A factor T with T'*T = SIGMA — the Cholesky factor, or a shorter one where the covariance is singular: [T, num] = cholcov(SIGMA).", P("sigma"), Opt("flag"));
+        Add("mvnpdf", "The multivariate normal density of each row: mvnpdf(X, Mu, Sigma).", P("X"), Opt("Mu"), Opt("Sigma"));
+        Add("mvncdf", "The multivariate normal probability below each row, or inside a box: mvncdf(X, mu, sigma) or mvncdf(xl, xu, mu, sigma).", P("X"), Opt("mu"), Opt("sigma"), Opt("more"));
+        Add("mvnrnd", "Multivariate normal random rows: mvnrnd(mu, sigma) or mvnrnd(mu, sigma, n).", P("mu"), P("sigma"), Opt("n"));
+        Add("mvtpdf", "The multivariate t density of each row: mvtpdf(X, C, df).", P("X"), P("C"), P("df"));
+        Add("mvtcdf", "The multivariate t probability below each row, or inside a box: mvtcdf(X, C, df) or mvtcdf(xl, xu, C, df).", P("X"), P("C"), P("df"), Opt("more"));
+        Add("mvtrnd", "Multivariate t random rows: mvtrnd(C, df) or mvtrnd(C, df, n).", P("C"), P("df"), Opt("n"));
+        Add("wishrnd", "A Wishart random matrix with mean df*sigma: [W, D] = wishrnd(sigma, df, D).", P("sigma"), P("df"), Opt("D"));
+        Add("iwishrnd", "An inverse Wishart random matrix: [W, DI] = iwishrnd(tau, df, DI).", P("tau"), P("df"), Opt("DI"));
+        Add("mvksdensity", "A multivariate kernel density estimate at the given points: mvksdensity(x, pts, 'Bandwidth', bw).", P("x"), P("pts"), P("option"), P("value"));
+        Add("randsample", "Values drawn from a population, or from the integers up to n: randsample(population, k, replace, w).", P("population"), P("k"), Opt("replace"), Opt("w"));
+        Add("datasample", "Observations drawn from data along a dimension: [y, idx] = datasample(data, k, dim, 'Replace', false, 'Weights', w).", P("data"), P("k"), Opt("dim"), Opt("option"), Opt("value"));
+        Add("randg", "Gamma random numbers of unit scale: randg(A), randg(A, m, n) or randg(A, [m n]).", Opt("A"), Opt("m"), Opt("n"));
+        Add("lhsdesign", "A Latin hypercube design of n points in p variables: lhsdesign(n, p, 'criterion', 'maximin', 'iterations', 5, 'smooth', 'off').", P("n"), P("p"), Opt("option"), Opt("value"));
+        Add("lhsnorm", "A multivariate normal sample whose every marginal is stratified: [X, Z] = lhsnorm(mu, sigma, n, 'off').", P("mu"), P("sigma"), P("n"), Opt("smooth"));
+        Add("bootstrp", "A statistic recomputed on nboot resamples of the rows: [bootstat, bootsam] = bootstrp(nboot, bootfun, d1).", P("nboot"), P("bootfun"), P("d1"), Opt("more"));
+        Add("bootci", "A bootstrap confidence interval, two rows: bootci(nboot, bootfun, d1) or bootci(nboot, {bootfun, d1}, 'alpha', 0.05, 'type', 'bca').", P("nboot"), P("bootfun"), P("d1"), Opt("more"));
+        Add("jackknife", "A statistic recomputed with each observation left out: jackknife(jackfun, X).", P("jackfun"), P("X"), Opt("more"));
+        Add("combnk", "Every way of choosing k of the values, one combination per row: combnk(v, k).", P("v"), P("k"));
+
         // --- Array operations ---------------------------------------------------------------------
         Add("sort", "A sorted copy of a numeric or string array; order \"ascend\" (default) or \"descend\", with 'MissingPlacement' and 'ComparisonMethod' for where NaN lands and how complex numbers order.", P("array"), Opt("order"), Opt("option"), Opt("value"));
         Add("unique", "The distinct values of a numeric or string array: [c, ia, ic] = unique(x, 'rows', 'stable', 'last'), where c = x(ia) and x = c(ic).", P("array"), Opt("option"), Opt("more"));
