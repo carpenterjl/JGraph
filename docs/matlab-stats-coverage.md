@@ -1,10 +1,10 @@
 # MATLAB Statistics and Machine Learning Toolbox coverage
 
-**224 of 589 documented** Statistics and Machine Learning Toolbox names are implemented, as of
-M53 wave F. Wave A built the scaffold — the list, this document and its verifier; wave B added the
+**248 of 589 documented** Statistics and Machine Learning Toolbox names are implemented, as of
+M53 wave G. Wave A built the scaffold — the list, this document and its verifier; wave B added the
 descriptive and robust statistics; wave C the continuous distribution families; wave D the discrete
 ones; wave E the distributions of a vector, and the samplers; wave F the hypothesis tests and the
-analysis of variance.
+analysis of variance; wave G the regressions.
 
 ## Where this list comes from
 
@@ -53,7 +53,7 @@ The four names in this list that JGraph's catalog already registers — `mean`, 
 statistic *of a probability distribution object*, which JGraph's base builtins do not take. `range`
 is the sharper case and is recorded as a divergence below.
 
-## Implemented — 224
+## Implemented — 248
 
 ### Descriptive and robust statistics, and the correlations — 31
 
@@ -145,7 +145,29 @@ tie and continuity corrections it calls for.
 `ranksum`, `runstest`, `sampsizepwr`, `signrank`, `signtest`, `ttest`
 `ttest2`, `vartest`, `vartest2`, `vartestn`, `ztest`
 
-## Not implemented — 163
+### Regression — 24
+
+Every one of these fits arrays and answers arrays, which is the line the milestone draws: a name whose
+deliverable is a fitted model object is excluded with a reason, and the deterministic core it would have
+wrapped is reached through the name here instead. `regress`, `regstats` and `leverage` take the design
+matrix the caller built, intercept column and all, because a model without an intercept is a real model
+and a function that quietly added one would put it out of reach; `robustfit`, `glmfit` and
+`stepwisefit` add theirs, because their documentation says they do, and each takes the word that turns
+it off.
+
+The outputs are in MathWorks' order and the structures carry the field names their documentation lists.
+`robustfit` takes all nine weight functions at their documented tuning constants; `glmfit` takes the
+five error distributions and eight links, an offset, prior weights and a binomial response written
+either as a proportion or as a count beside its trials; `mnrfit` takes the nominal, ordinal and
+hierarchical models, with separate or shared slopes and four links between them; `coxphfit` takes
+censoring, frequencies, a baseline and either tie rule.
+
+`coxphfit`, `dummyvar`, `glmfit`, `glmval`, `hougen`, `invpred`
+`lasso`, `lassoglm`, `leverage`, `mnrfit`, `mnrval`, `mvregress`
+`mvregresslike`, `nlinfit`, `nlparci`, `nlpredci`, `plsregress`, `polyconf`
+`regress`, `regstats`, `ridge`, `robustfit`, `stepwisefit`, `x2fx`
+
+## Not implemented — 137
 
 The rest of the milestone's working set, in the order the waves take it:
 regression, clustering and multivariate analysis, the distribution objects, the copulas, and the
@@ -155,32 +177,27 @@ plotting verbs.
 `BirnbaumSaundersDistribution`, `boxplot`, `BurrDistribution`, `canoncorr`, `capability`, `capaplot`
 `caseread`, `casewrite`, `ccdesign`, `cdfplot`, `cluster`, `clusterdata`
 `cmdscale`, `confusionmat`, `cophenet`, `copulacdf`, `copulafit`, `copulaparam`
-`copulapdf`, `copularnd`, `copulastat`, `coxphfit`, `createns`, `dbscan`
-`dendrogram`, `dummyvar`, `ExhaustiveSearcher`, `ExponentialDistribution`, `ExtremeValueDistribution`, `ff2n`
-`fitdist`, `fracfact`, `fracfactgen`, `fullfact`, `gagerr`, `GammaDistribution`
-`GeneralizedExtremeValueDistribution`, `GeneralizedParetoDistribution`, `glmfit`, `glmval`, `glyphplot`, `gplotmatrix`
-`grp2idx`, `gscatter`, `HalfNormalDistribution`, `hist3`, `histfit`, `hmmdecode`
-`hmmestimate`, `hmmgenerate`, `hmmtrain`, `hmmviterbi`, `hougen`, `inconsistent`
-`interactionplot`, `InverseGaussianDistribution`, `invpred`, `iqr`, `johnsrnd`, `KDTreeSearcher`
-`KernelDistribution`, `kmeans`, `kmedoids`, `knnsearch`, `lasso`, `lassoglm`
-`lassoPlot`, `leverage`, `linkage`, `LogisticDistribution`, `LoglogisticDistribution`, `LognormalDistribution`
-`LoguniformDistribution`, `lsline`, `mahal`, `maineffectsplot`, `makedist`, `manovacluster`
-`mean`, `median`, `mhsample`, `mlecov`, `mnrfit`, `mnrval`
-`MultinomialDistribution`, `multivarichart`, `mvregress`, `mvregresslike`, `NakagamiDistribution`, `NegativeBinomialDistribution`
-`negloglik`, `nlinfit`, `nlparci`, `nlpredci`, `nnmf`, `NormalDistribution`
-`normplot`, `normspec`, `onehotdecode`, `onehotencode`, `optimalleaforder`, `parallelcoords`
-`paramci`, `paretotails`, `pca`, `pcacov`, `pcares`, `pdist`
-`pdist2`, `pearsrnd`, `perfcurve`, `PiecewiseLinearDistribution`, `plsregress`, `PoissonDistribution`
-`polyconf`, `ppca`, `probplot`, `procrustes`, `proflik`, `qqplot`
-`rangesearch`, `RayleighDistribution`, `rcoplot`, `refcurve`, `refline`, `regress`
-`regstats`, `RicianDistribution`, `ridge`, `robustcov`, `robustfit`, `rotatefactors`
-`scatterhist`, `silhouette`, `slicesample`, `spectralcluster`, `squareform`, `StableDistribution`
-`statget`, `statset`, `std`, `stepwisefit`, `stepwiseglm`, `stepwiselm`
-`tblread`, `tblwrite`, `tdfread`, `tLocationScaleDistribution`, `TriangularDistribution`, `truncate`
-`tsne`, `UniformDistribution`, `var`, `wblplot`, `WeibullDistribution`, `x2fx`
-`xptread`
+`copulapdf`, `copularnd`, `copulastat`, `createns`, `dbscan`, `dendrogram`
+`ExhaustiveSearcher`, `ExponentialDistribution`, `ExtremeValueDistribution`, `ff2n`, `fitdist`, `fracfact`
+`fracfactgen`, `fullfact`, `gagerr`, `GammaDistribution`, `GeneralizedExtremeValueDistribution`, `GeneralizedParetoDistribution`
+`glyphplot`, `gplotmatrix`, `grp2idx`, `gscatter`, `HalfNormalDistribution`, `hist3`
+`histfit`, `hmmdecode`, `hmmestimate`, `hmmgenerate`, `hmmtrain`, `hmmviterbi`
+`inconsistent`, `interactionplot`, `InverseGaussianDistribution`, `iqr`, `johnsrnd`, `KDTreeSearcher`
+`KernelDistribution`, `kmeans`, `kmedoids`, `knnsearch`, `lassoPlot`, `linkage`
+`LogisticDistribution`, `LoglogisticDistribution`, `LognormalDistribution`, `LoguniformDistribution`, `lsline`, `mahal`
+`maineffectsplot`, `makedist`, `manovacluster`, `mean`, `median`, `mhsample`
+`mlecov`, `MultinomialDistribution`, `multivarichart`, `NakagamiDistribution`, `NegativeBinomialDistribution`, `negloglik`
+`nnmf`, `NormalDistribution`, `normplot`, `normspec`, `onehotdecode`, `onehotencode`
+`optimalleaforder`, `parallelcoords`, `paramci`, `paretotails`, `pca`, `pcacov`
+`pcares`, `pdist`, `pdist2`, `pearsrnd`, `perfcurve`, `PiecewiseLinearDistribution`
+`PoissonDistribution`, `ppca`, `probplot`, `procrustes`, `proflik`, `qqplot`
+`rangesearch`, `RayleighDistribution`, `rcoplot`, `refcurve`, `refline`, `RicianDistribution`
+`robustcov`, `rotatefactors`, `scatterhist`, `silhouette`, `slicesample`, `spectralcluster`
+`squareform`, `StableDistribution`, `statget`, `statset`, `std`, `tblread`
+`tblwrite`, `tdfread`, `tLocationScaleDistribution`, `TriangularDistribution`, `truncate`, `tsne`
+`UniformDistribution`, `var`, `wblplot`, `WeibullDistribution`, `xptread`
 
-## Excluded — 202
+## Excluded — 204
 
 `aoctool`, `BayesianOptimization`, `bayesopt`, `binScatterPlot`, `CalinskiHarabaszEvaluation`, `candexch`
 `candgen`, `cell2dataset`, `ClassificationBaggedEnsemble`, `ClassificationDiscriminant`, `ClassificationECOC`, `ClassificationECOCCoderConfigurer`
@@ -213,9 +230,9 @@ plotting verbs.
 `relieff`, `RepeatedMeasuresModel`, `rica`, `robustdemo`, `rowexch`, `rsmdemo`
 `rstool`, `saveCompactModel`, `saveLearnerForCoder`, `SemiSupervisedGraphModel`, `SemiSupervisedSelfTrainingModel`, `sequentialfs`
 `shapley`, `SilhouetteEvaluation`, `sobolset`, `sortClasses`, `sparsefilt`, `SparseFiltering`
-`stepwise`, `struct2dataset`, `surfht`, `table2dataset`, `templateDiscriminant`, `templateECOC`
-`templateEnsemble`, `templateKernel`, `templateKNN`, `templateLinear`, `templateNaiveBayes`, `templateSVM`
-`templateTree`, `testcholdout`, `testckfold`, `TreeBagger`
+`stepwise`, `stepwiseglm`, `stepwiselm`, `struct2dataset`, `surfht`, `table2dataset`
+`templateDiscriminant`, `templateECOC`, `templateEnsemble`, `templateKernel`, `templateKNN`, `templateLinear`
+`templateNaiveBayes`, `templateSVM`, `templateTree`, `testcholdout`, `testckfold`, `TreeBagger`
 
 By reason:
 
@@ -458,6 +475,59 @@ By reason:
   and the size is the smallest one that reaches it, found by doubling and then bisecting. For the exact
   binomial test the power is not monotone in the sample size — it steps as the critical count moves —
   so the search walks back one observation at a time to make sure the answer really is the smallest.
+
+- **A rank-deficient design gets the minimum-norm coefficients, not a basic solution.** Every fit in
+  the regression wave factors the design rather than inverting its cross-product, so a design with two
+  ways of writing the same predictor answers a fit instead of dividing by nearly nothing. MATLAB picks
+  a subset of columns and zeroes the rest; the two answers differ, but the fitted values, the
+  residuals and every statistic derived from them agree, because those depend only on the space the
+  columns span.
+- **`regress`'s residual intervals use the residual degrees of freedom, not one fewer.** The interval
+  around each residual is built from the error variance re-estimated without that observation — which
+  is the point, or a single wild point would inflate the very spread meant to reveal it — and the
+  multiplier is Student's t on the model's own degrees of freedom.
+- **`robustfit` reports the ordinary scale where the robust one degenerates to zero.** A fit that
+  passes exactly through everything it still trusts leaves no spread to measure, and the median
+  absolute residual is then rounding error rather than a scale. Below a noise floor it is treated as
+  zero: the weights become the ones and zeros that limit calls for, and the scale reported is the
+  spread of the observations the fit kept, or the ordinary one if that is zero too.
+- **The generalized linear fit is Fisher scoring throughout.** Where the link is the family's
+  canonical one that is exactly Newton's method on the likelihood; where it is not, it is the
+  expected-information variant, which reaches the same answer by a slightly different route and can
+  differ in the last iteration's worth of digits.
+- **`nlinfit`'s Jacobian is taken by forward differences, and every interval after it is the linear
+  formula with that Jacobian substituted in.** A model given as a script function has no derivative to
+  hand. The intervals are therefore the linearization's, which is optimistic for a badly curved model
+  — that is the approximation `nlparci` and `nlpredci` are documented to make, and it is not corrected
+  here. `'ErrorModel'` takes `'constant'`, `'proportional'` and `'exponential'`; `'combined'` needs
+  the two error parameters fitted alongside the model and is refused by name.
+- **The penalized paths report the fit's own error, not a cross-validated one.** `lasso` and
+  `lassoglm` answer the coefficients, the penalties, the count of non-zero coefficients and the
+  criterion at each penalty. `'CV'` is refused by name rather than answered with the training error
+  under a name that means the held-out one, and `'PredictorNames'` is refused because nothing here
+  reports by name. The same applies to `plsregress`, whose error table is the fit's own.
+- **`plsregress` extracts its components by SIMPLS.** De Jong's method deflates the cross-product
+  rather than the data matrices. With as many components as predictors it reproduces ordinary least
+  squares exactly, which is what the implementation is pinned against.
+- **`mnrfit`'s curvature is differenced from an exact gradient.** The three models' second derivatives
+  are three different pieces of bookkeeping over the same small parameter vector; differencing the
+  analytic gradient is accurate to about half of working precision, several digits more than the
+  standard errors it feeds are worth. `coxphfit` does the same. A nominal model takes only the logit,
+  because it has one probability per category rather than a single one to transform.
+- **`mvregress` fits by alternating generalized least squares and answers the maximum-likelihood
+  covariance.** The error covariance is the residual cross-product over the number of observations,
+  not over the residual degrees of freedom. A shared design matrix means each response has its own
+  coefficients over the same columns, so the answer is one column of coefficients per response, and
+  the loop then converges immediately to fitting each response on its own. `'algorithm'` is accepted
+  and the three spellings name the same estimator.
+- **`coxphfit`'s baseline hazard is Breslow's estimator under either tie rule.** The rule chosen
+  changes the coefficients — Efron's shrinks the risk set across tied failures and is the less biased
+  of the two — but the cumulative hazard is accumulated the same way afterwards.
+- **`stepwisefit` stops once nothing is left to explain.** A response some predictor already reproduces
+  exactly leaves residuals of rounding error, whose ratio to a standard error that is also rounding
+  error is a perfectly ordinary-looking statistic; below a noise floor the search declines to read that
+  as evidence. `'display'` can only be `'off'` — nothing in this surface is drawn, and the numbers a
+  display would show are the ones already answered.
 
 ## Answers this mirror will state rather than match
 

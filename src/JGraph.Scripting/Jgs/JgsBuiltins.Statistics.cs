@@ -61,6 +61,7 @@ internal static partial class JgsBuiltins
         RegisterSamplingBuiltins(env, random, dialect);
         RegisterHypothesisTestBuiltins(env);
         RegisterAnovaBuiltins(env);
+        RegisterRegressionBuiltins(env);
         RegisterCorrelationBuiltins(env);
         RegisterEmpiricalBuiltins(env);
         RegisterLegacyNanBuiltins(env);

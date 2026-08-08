@@ -279,6 +279,29 @@ public class MatlabParserTests
             static () => Parse("parfor k = 1:3\nend")).Message, StringComparison.Ordinal);
     }
 
+    /// <summary>
+    /// Inside a literal, whitespace separates elements, so nothing after it can attach to what came
+    /// before: <c>[ones(3,1) (1:3)']</c> is two columns rather than a call subscripted by a range. The
+    /// rule stops at the literal's own parentheses, where <c>f (x)</c> is still a call.
+    /// </summary>
+    [Fact]
+    public void ABracketAfterWhitespace_StartsAnElementRatherThanSubscriptingTheLastOne()
+    {
+        var literal = Assert.IsType<ArrayLiteral>(Expression("[ones(3,1) (1:3)']"));
+        Assert.Equal(2, literal.Elements.Count);
+        Assert.IsType<CallExpr>(literal.Elements[0]);
+        Assert.IsType<TransposeExpr>(literal.Elements[1]);
+
+        Assert.Equal(3, Assert.IsType<ArrayLiteral>(Expression("[c {1} {2}]")).Elements.Count);
+
+        // No space, so it is still a call; and inside parentheses the rule is suspended, so a space
+        // there means nothing.
+        Assert.IsType<CallExpr>(Assert.Single(
+            Assert.IsType<ArrayLiteral>(Expression("[ones(3,1)]")).Elements));
+        Assert.IsType<CallExpr>(Assert.Single(
+            Assert.IsType<ArrayLiteral>(Expression("[sum(f (2))]")).Elements));
+    }
+
     // --- JGS is untouched -----------------------------------------------------------------------
 
     [Fact]

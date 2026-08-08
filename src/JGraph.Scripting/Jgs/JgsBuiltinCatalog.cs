@@ -1163,6 +1163,32 @@ public static class JgsBuiltinCatalog
         Add("friedman", "The two-way analysis asked of ranks taken within each block: [p, tbl, stats] = friedman(X, reps).", P("X"), Opt("reps"), Opt("displayopt"));
         Add("multcompare", "Every pair of estimates compared at a family-wide level: [c, m, h, gnames] = multcompare(stats, 'CType', 'bonferroni', 'Alpha', 0.05).", P("stats"), Opt("option"), Opt("value"));
 
+        // --- Regression (M53 wave G) ----------------------------------------------------------------
+        Add("regress", "Multiple linear regression against a design you built, intercept column and all: [b, bint, r, rint, stats] = regress(y, X, alpha).", P("y"), P("X"), Opt("alpha"));
+        Add("regstats", "One fit described every way: stats = regstats(y, X, 'quadratic') or regstats(y, X, 'linear', {'beta','cookd'}).", P("y"), P("X"), Opt("model"), Opt("whichstats"));
+        Add("leverage", "How far each observation pulls its own fitted value: h = leverage(data, 'linear').", P("data"), Opt("model"));
+        Add("ridge", "Least squares with the size of the coefficients penalized: b = ridge(y, X, k, scaled), one column per ridge parameter.", P("y"), P("X"), P("k"), Opt("scaled"));
+        Add("x2fx", "The design matrix a model description names: D = x2fx(X, 'quadratic', categ) or a matrix of exponents.", P("X"), Opt("model"), Opt("categ"), Opt("catlevels"));
+        Add("dummyvar", "An indicator column for every level of every grouping column: D = dummyvar(group).", P("group"));
+        Add("polyconf", "A polynomial evaluated with an interval around it: [y, delta] = polyconf(p, x, S, 'alpha', 0.05, 'predopt', 'curve').", P("p"), P("x"), Opt("S"), Opt("option"), Opt("value"));
+        Add("invpred", "The x at which a straight-line fit would have produced y0: [x0, dxlo, dxup] = invpred(x, y, y0, 'predopt', 'curve').", P("x"), P("y"), P("y0"), Opt("option"), Opt("value"));
+        Add("robustfit", "Least squares that gives up on outliers: [b, stats] = robustfit(X, y, 'bisquare', tune, 'on').", P("X"), P("y"), Opt("wfun"), Opt("tune"), Opt("const"));
+        Add("glmfit", "A linear model for a counted, proportioned or positive response: [b, dev, stats] = glmfit(X, y, 'poisson', 'link', 'log').", P("X"), P("y"), Opt("distr"), Opt("option"), Opt("value"));
+        Add("glmval", "What a generalized fit predicts, with its interval: [yhat, dlo, dhi] = glmval(b, X, 'logit', stats, 'Confidence', 0.95).", P("b"), P("X"), P("link"), Opt("stats"), Opt("option"), Opt("value"));
+        Add("stepwisefit", "Which predictors belong in the model, found by adding and removing them: [b, se, pval, inmodel, stats, nextstep, history] = stepwisefit(X, y, 'penter', 0.05).", P("X"), P("y"), Opt("option"), Opt("value"));
+        Add("nlinfit", "A model of any shape fitted by least squares: [beta, R, J, CovB, MSE] = nlinfit(X, y, @model, beta0, options).", P("X"), P("y"), P("modelfun"), P("beta0"), Opt("options"), Opt("option"), Opt("value"));
+        Add("nlparci", "An interval around each parameter of a nonlinear fit: ci = nlparci(beta, R, 'jacobian', J, 'alpha', 0.05).", P("beta"), P("resid"), Opt("option"), Opt("value"));
+        Add("nlpredci", "What a nonlinear fit predicts at new rows, with its interval: [y, delta] = nlpredci(@model, X, beta, R, 'Jacobian', J).", P("modelfun"), P("X"), P("beta"), P("R"), Opt("option"), Opt("value"));
+        Add("hougen", "The Hougen-Watson reaction rate, the documented nonlinear example: y = hougen(beta, x).", P("beta"), P("x"));
+        Add("lasso", "The whole path of penalized fits, from keeping everything to keeping nothing: [B, FitInfo] = lasso(X, y, 'Alpha', 1, 'NumLambda', 100).", P("X"), P("y"), Opt("option"), Opt("value"));
+        Add("lassoglm", "The penalized path for a response the squared-error loss does not describe: [B, FitInfo] = lassoglm(X, y, 'binomial', 'Alpha', 0.5).", P("X"), P("y"), Opt("distr"), Opt("option"), Opt("value"));
+        Add("plsregress", "Regression through directions chosen to explain the response: [XL, YL, XS, YS, BETA, PCTVAR, MSE, stats] = plsregress(X, Y, ncomp).", P("X"), P("Y"), Opt("ncomp"), Opt("option"), Opt("value"));
+        Add("mnrfit", "A logistic regression for a response of several categories: [B, dev, stats] = mnrfit(X, Y, 'model', 'ordinal', 'link', 'probit').", P("X"), P("Y"), Opt("option"), Opt("value"));
+        Add("mnrval", "The probability of each category at each row: [p, dlo, dhi] = mnrval(B, X, stats, 'type', 'cumulative').", P("B"), P("X"), Opt("stats"), Opt("option"), Opt("value"));
+        Add("mvregress", "Several responses fitted together so their errors may be correlated: [beta, Sigma, E, CovB, logL] = mvregress(X, Y).", P("X"), P("Y"), Opt("option"), Opt("value"));
+        Add("mvregresslike", "How improbable the data is at stated multivariate parameters: [nlogL, COVB] = mvregresslike(X, Y, beta, Sigma).", P("X"), P("Y"), P("beta"), P("Sigma"), Opt("algorithm"), Opt("option"), Opt("value"));
+        Add("coxphfit", "How predictors multiply the rate of failure, without saying what that rate is: [b, logl, H, stats] = coxphfit(X, T, 'censoring', c, 'ties', 'efron').", P("X"), P("T"), Opt("option"), Opt("value"));
+
         // --- Array operations ---------------------------------------------------------------------
         Add("sort", "A sorted copy of a numeric or string array; order \"ascend\" (default) or \"descend\", with 'MissingPlacement' and 'ComparisonMethod' for where NaN lands and how complex numbers order.", P("array"), Opt("order"), Opt("option"), Opt("value"));
         Add("unique", "The distinct values of a numeric or string array: [c, ia, ic] = unique(x, 'rows', 'stable', 'last'), where c = x(ia) and x = c(ic).", P("array"), Opt("option"), Opt("more"));

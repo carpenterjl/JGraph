@@ -907,7 +907,7 @@ internal sealed class Parser
         Expr expr = ParsePrimary();
         while (true)
         {
-            if (Check(TokenType.LParen))
+            if (Check(TokenType.LParen) && !OpensANewLiteralElement())
             {
                 Token paren = Advance();
                 List<Expr> arguments = ParseSubscripts(TokenType.RParen, "')'");
@@ -922,7 +922,7 @@ internal sealed class Parser
                 List<Expr> indices = ParseSubscripts(TokenType.RBracket, "']'");
                 expr = new IndexExpr(expr, indices) { Line = bracket.Line, Column = bracket.Column };
             }
-            else if (_matlab && Check(TokenType.LBrace))
+            else if (_matlab && Check(TokenType.LBrace) && !OpensANewLiteralElement())
             {
                 Token brace = Advance();
                 List<Expr> indices = ParseSubscripts(TokenType.RBrace, "'}'");
@@ -1174,6 +1174,20 @@ internal sealed class Parser
         && Current.PrecededByWhitespace
         && _pos + 1 < _tokens.Count
         && !_tokens[_pos + 1].PrecededByWhitespace;
+
+    /// <summary>
+    /// Whether an opening bracket begins the next element of a space-separated MATLAB literal rather
+    /// than subscripting what came before it.
+    /// </summary>
+    /// <remarks>
+    /// <c>[ones(3,1) (1:3)']</c> is a three-by-two matrix, not a call to <c>ones</c> indexed by a
+    /// range: inside a literal, whitespace is a separator and nothing that follows it can attach to
+    /// what came before. Outside a literal — and inside any parentheses within one, where
+    /// <see cref="OutsideLiteral"/> suspends the rule — spacing means nothing and <c>f (x)</c> is
+    /// still a call.
+    /// </remarks>
+    private bool OpensANewLiteralElement() =>
+        _matlab && _literalDepth > 0 && Current.PrecededByWhitespace;
 
     /// <summary>Whether the current token ends a row, consuming it when it does.</summary>
     private bool IsRowSeparator()
