@@ -1,11 +1,11 @@
 # MATLAB Statistics and Machine Learning Toolbox coverage
 
-**284 of 589 documented** Statistics and Machine Learning Toolbox names are implemented, as of
-M53 wave H. Wave A built the scaffold — the list, this document and its verifier; wave B added the
+**324 of 589 documented** Statistics and Machine Learning Toolbox names are implemented, as of
+M53 wave I. Wave A built the scaffold — the list, this document and its verifier; wave B added the
 descriptive and robust statistics; wave C the continuous distribution families; wave D the discrete
 ones; wave E the distributions of a vector, and the samplers; wave F the hypothesis tests and the
 analysis of variance; wave G the regressions; wave H the distances, the clusterings and the
-multivariate analyses.
+multivariate analyses; wave I the distribution objects.
 
 ## Where this list comes from
 
@@ -54,7 +54,7 @@ The four names in this list that JGraph's catalog already registers — `mean`, 
 statistic *of a probability distribution object*, which JGraph's base builtins do not take. `range`
 is the sharper case and is recorded as a divergence below.
 
-## Implemented — 284
+## Implemented — 324
 
 ### Descriptive and robust statistics, and the correlations — 31
 
@@ -188,28 +188,44 @@ starting factors of `nnmf`, and the sequences `hmmgenerate` draws.
 `pcacov`, `pcares`, `pdist`, `pdist2`, `ppca`, `procrustes`
 `rangesearch`, `robustcov`, `rotatefactors`, `silhouette`, `spectralcluster`, `squareform`
 
-## Not implemented — 101
+### Distribution objects — 40
 
-The rest of the milestone's working set, in the order the waves take it: the distribution objects, the
-copulas, the plotting verbs, the enumerable designs of experiments, and the file readers.
+A distribution as a value: built from parameters by `makedist` or fitted to data by `fitdist`,
+conditioned on an interval by `truncate`, and asked about by the same names that take a distribution
+as a word. Twenty-nine classes, of which twenty-eight can be made by name and one — the kernel
+smoothing — only fitted. Each publishes the properties MathWorks documents, and the class question
+answers the package-qualified class name.
 
-`addedvarplot`, `andrewsplot`, `bbdesign`, `BetaDistribution`, `BinomialDistribution`, `biplot`
-`BirnbaumSaundersDistribution`, `boxplot`, `BurrDistribution`, `capability`, `capaplot`, `caseread`
-`casewrite`, `ccdesign`, `cdfplot`, `copulacdf`, `copulafit`, `copulaparam`
-`copulapdf`, `copularnd`, `copulastat`, `createns`, `dendrogram`, `ExhaustiveSearcher`
-`ExponentialDistribution`, `ExtremeValueDistribution`, `ff2n`, `fitdist`, `fracfact`, `fracfactgen`
-`fullfact`, `gagerr`, `GammaDistribution`, `GeneralizedExtremeValueDistribution`, `GeneralizedParetoDistribution`, `glyphplot`
-`gplotmatrix`, `gscatter`, `HalfNormalDistribution`, `hist3`, `histfit`, `interactionplot`
-`InverseGaussianDistribution`, `iqr`, `johnsrnd`, `KDTreeSearcher`, `KernelDistribution`, `lassoPlot`
-`LogisticDistribution`, `LoglogisticDistribution`, `LognormalDistribution`, `LoguniformDistribution`, `lsline`, `maineffectsplot`
-`makedist`, `manovacluster`, `mean`, `median`, `mhsample`, `mlecov`
-`MultinomialDistribution`, `multivarichart`, `NakagamiDistribution`, `NegativeBinomialDistribution`, `negloglik`, `NormalDistribution`
-`normplot`, `normspec`, `parallelcoords`, `paramci`, `paretotails`, `pearsrnd`
-`perfcurve`, `PiecewiseLinearDistribution`, `PoissonDistribution`, `probplot`, `proflik`, `qqplot`
-`RayleighDistribution`, `rcoplot`, `refcurve`, `refline`, `RicianDistribution`, `scatterhist`
-`slicesample`, `StableDistribution`, `statget`, `statset`, `std`, `tblread`
-`tblwrite`, `tdfread`, `tLocationScaleDistribution`, `TriangularDistribution`, `truncate`, `tsne`
-`UniformDistribution`, `var`, `wblplot`, `WeibullDistribution`, `xptread`
+Thirteen names live under the prob package in the documentation and are counted here rather than
+as methods, because they are the generic interface: `cdf`, `icdf`, `pdf` and `random` were already
+implemented in waves C and D and are counted there, and the nine remaining — `mean`, `median`, `std`,
+`var`, `iqr`, `truncate`, `negloglik`, `paramci`, `proflik` — arrive here. The first five keep
+everything they did for data; the object check stands in front of them rather than replacing them.
+
+`BetaDistribution`, `BinomialDistribution`, `BirnbaumSaundersDistribution`, `BurrDistribution`, `ExponentialDistribution`, `ExtremeValueDistribution`
+`fitdist`, `GammaDistribution`, `GeneralizedExtremeValueDistribution`, `GeneralizedParetoDistribution`, `HalfNormalDistribution`, `InverseGaussianDistribution`
+`iqr`, `KernelDistribution`, `LogisticDistribution`, `LoglogisticDistribution`, `LognormalDistribution`, `LoguniformDistribution`
+`makedist`, `mean`, `median`, `MultinomialDistribution`, `NakagamiDistribution`, `NegativeBinomialDistribution`
+`negloglik`, `NormalDistribution`, `paramci`, `PiecewiseLinearDistribution`, `PoissonDistribution`, `proflik`
+`RayleighDistribution`, `RicianDistribution`, `StableDistribution`, `std`, `tLocationScaleDistribution`, `TriangularDistribution`
+`truncate`, `UniformDistribution`, `var`, `WeibullDistribution`
+
+## Not implemented — 61
+
+The rest of the milestone's working set, in the order the waves take it: the copulas, the plotting
+verbs, the enumerable designs of experiments, the search structures, and the file readers.
+
+`addedvarplot`, `andrewsplot`, `bbdesign`, `biplot`, `boxplot`, `capability`
+`capaplot`, `caseread`, `casewrite`, `ccdesign`, `cdfplot`, `copulacdf`
+`copulafit`, `copulaparam`, `copulapdf`, `copularnd`, `copulastat`, `createns`
+`dendrogram`, `ExhaustiveSearcher`, `ff2n`, `fracfact`, `fracfactgen`, `fullfact`
+`gagerr`, `glyphplot`, `gplotmatrix`, `gscatter`, `hist3`, `histfit`
+`interactionplot`, `johnsrnd`, `KDTreeSearcher`, `lassoPlot`, `lsline`, `maineffectsplot`
+`manovacluster`, `mhsample`, `mlecov`, `multivarichart`, `normplot`, `normspec`
+`parallelcoords`, `paretotails`, `pearsrnd`, `perfcurve`, `probplot`, `qqplot`
+`rcoplot`, `refcurve`, `refline`, `scatterhist`, `slicesample`, `statget`
+`statset`, `tblread`, `tblwrite`, `tdfread`, `tsne`, `wblplot`
+`xptread`
 
 ## Excluded — 204
 
@@ -543,6 +559,46 @@ By reason:
   as evidence. `'display'` can only be `'off'` — nothing in this surface is drawn, and the numbers a
   display would show are the ones already answered.
 
+- **A distribution object is a struct that knows what class it is.** MathWorks' distributions are
+  value classes, so a copy that is truncated must leave the original alone; a struct gives that where
+  a registry handle would have to be taught it. Two things follow. A script can assign to a property
+  — `pd.mu = 3` — which MathWorks refuses; the object stays consistent, because every function reads
+  the parameters back out of the struct, but nothing stops the write. And the struct carries a `Type`
+  field holding the class name, which MathWorks' objects do not have, so it shows up in a field list.
+  The class question answers the package-qualified name either way, and a structure test answers yes
+  where MathWorks answers no.
+- **The class names construct as well as describe.** MathWorks documents `makedist` and `fitdist` as
+  the way to build a distribution and says nothing about calling the class. Here the class name is
+  also a constructor taking the same name-value pairs, which is purely additive: a spelling that
+  errored now works, and no spelling that worked has changed.
+- **A truncated mean and variance are integrated, not derived.** Conditioning on an interval destroys
+  every closed form for the moments, so they are integrated over probability rather than over the
+  variable — which keeps the range finite even where the interval is not. The mesh is graded towards
+  both ends, where the quantile is steepest; on the families here that reproduces the closed forms
+  that do exist to about six figures, and a distribution whose truncated tail is heavy enough to
+  matter will be less accurate than that.
+- **`fitdist` fits a piecewise-linear distribution to the empirical distribution function.** Every
+  distinct observation becomes a breakpoint, and the height at it is the proportion at or below.
+  MathWorks does not document what `fitdist(x, 'PiecewiseLinear')` fits; this is the reading that
+  makes the fitted object reproduce the sample it came from.
+- **A kernel fit's default bandwidth is Silverman's rule.** The scale is the smaller of the standard
+  deviation and the interquartile range over 1.349, times 1.06 n^(-1/5). Naming `'Width'` overrides
+  it, and the four documented kernels — normal, box, triangle and epanechnikov — each carry their own
+  variance into the smoothed spread, which is why the standard deviation of a kernel fit exceeds the
+  standard deviation of the sample it smoothed.
+- **`paramci` asks the fitter again rather than reading a stored covariance.** The interval comes back
+  from the same code that produced the estimate, at the confidence requested — so a family with an
+  exact interval keeps it, and there is no second formula here to disagree with the first. It needs
+  the data, so it refuses an object built by `makedist`.
+- **`proflik` walks forty-one points and re-fits at each.** The range, when not named, spans three
+  standard errors either side of the estimate, cut off above zero for a parameter that must stay
+  positive. A profile can therefore report a likelihood slightly above the one at the fitted
+  parameters, because several families' fitters return the unbiased estimate where the profile
+  maximizes the likelihood itself.
+- **`makedist` knows the twenty-eight classes MathWorks lets it build.** The chi-square, t, F,
+  geometric, hypergeometric, discrete uniform and noncentral families have no distribution object in
+  the documentation and have none here; they are reached by name, as `pdf('Chi-square', …)`.
+
 ## Answers this mirror will state rather than match
 
 Reserved for the numbers where a faithful mirror is not possible or not worth it — iterative
@@ -617,3 +673,10 @@ optimizer tolerances, bounded numerics, seeding. Filled in as the waves land.
 - **A state the data never visited keeps an empty row.** `hmmestimate` and `hmmtrain` normalize each
   row by its own total, and a row with no evidence in it stays at zero rather than being filled with a
   uniform distribution the data never showed. Pseudocounts are how a caller says otherwise.
+- **A stable distribution's density and distribution function are quadratures.** Only the normal, the
+  Cauchy and the Lévy have a density that can be written down; the first two are answered in closed
+  form and everything else comes from Nolan's integral over an angle, cut at the places where the
+  exponent crosses a fixed ladder of values so that a peak a millionth of a radian wide is still
+  bracketed. That reproduces the Lévy to six figures and is continuous across a stability index of
+  one; it is not the last-digit answer a dedicated stable library would give, and a script asking for
+  a thousand densities will notice that each one is an integral.

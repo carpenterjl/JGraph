@@ -1933,6 +1933,11 @@ internal static partial class JgsBuiltins
             RegisterGraphicsNamespace(env);
         }
 
+        // Last of all: the distribution objects put a check in front of nine names declared above,
+        // six of which the reductions have just wrapped for a dimension. Anywhere earlier and the
+        // object check would sit under that wrapping rather than in front of it.
+        RegisterDistributionObjectForms(env, random);
+
         return env;
     }
 

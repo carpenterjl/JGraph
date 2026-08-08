@@ -36,6 +36,12 @@ internal static partial class JgsBuiltins
         Define("moment", CentralMoment);
         Define("mad", MeanAbsoluteDeviation);
         Define("trimmean", TrimmedMean);
+        Define("iqr", (args, line, col) =>
+        {
+            ArityRange("iqr", args, 1, 2, line, col);
+            (int? dim, bool all) = Dimension("iqr", args, 1, line, col);
+            return Reduce("iqr", args[0], dim, all, DescriptiveStatistics.InterquartileRange, line, col);
+        });
         Define("geomean", (args, line, col) =>
             SimpleMean("geomean", args, DescriptiveStatistics.GeometricMean, nanFlag: true, line, col));
         Define("harmmean", (args, line, col) =>

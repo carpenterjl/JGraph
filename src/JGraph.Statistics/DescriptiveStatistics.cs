@@ -308,6 +308,20 @@ public static class DescriptiveStatistics
     }
 
     /// <summary>
+    /// The distance between the quartiles: a spread that a handful of wild observations cannot move,
+    /// where the range is defined by exactly the two most extreme of them.
+    /// </summary>
+    /// <remarks>
+    /// Read through <see cref="Percentiles"/>, so it uses the midpoint convention MathWorks documents
+    /// rather than a second interpolation rule that would disagree with <c>prctile(x, [25 75])</c>.
+    /// </remarks>
+    public static double InterquartileRange(IReadOnlyList<double> values)
+    {
+        double[] quartiles = Percentiles(values, [25, 75]);
+        return quartiles[1] - quartiles[0];
+    }
+
+    /// <summary>
     /// The distance from the smallest observation to the largest. NaN is ignored, because MATLAB's
     /// <c>range</c> is <c>max</c> minus <c>min</c> and both of those ignore it.
     /// </summary>

@@ -929,6 +929,7 @@ public static class JgsBuiltinCatalog
         Add("kurtosis", "Kurtosis, 3 for a normal sample: kurtosis(x), kurtosis(x, 0), kurtosis(A, flag, dim).", P("array"), Opt("flag"), Opt("dim"));
         Add("moment", "The k-th central moment: moment(x, k), moment(A, k, dim).", P("array"), P("order"), Opt("dim"));
         Add("mad", "Absolute deviation: mad(x) about the mean, mad(x, 1) about the median, mad(A, flag, dim).", P("array"), Opt("flag"), Opt("dim"));
+        Add("iqr", "The distance between the quartiles, of data or of a distribution object: r = iqr(x, 2) or iqr(pd).", P("x"), Opt("dim"));
         Add("trimmean", "The mean with a percentage trimmed from each tail: trimmean(x, pct, 'round' | 'floor' | 'weighted', dim).", P("array"), P("percent"), Opt("rule"), Opt("dim"));
         Add("geomean", "The geometric mean: geomean(x), geomean(A, dim), geomean(A, 'all'), geomean(x, 'omitnan').", P("array"), Opt("dim"));
         Add("harmmean", "The harmonic mean: harmmean(x), harmmean(A, dim), harmmean(A, 'all'), harmmean(x, 'omitnan').", P("array"), Opt("dim"));
@@ -1189,6 +1190,42 @@ public static class JgsBuiltinCatalog
         Add("mvregresslike", "How improbable the data is at stated multivariate parameters: [nlogL, COVB] = mvregresslike(X, Y, beta, Sigma).", P("X"), P("Y"), P("beta"), P("Sigma"), Opt("algorithm"), Opt("option"), Opt("value"));
         Add("coxphfit", "How predictors multiply the rate of failure, without saying what that rate is: [b, logl, H, stats] = coxphfit(X, T, 'censoring', c, 'ties', 'efron').", P("X"), P("T"), Opt("option"), Opt("value"));
 
+        // --- Distribution objects (M53 wave I) -------------------------------------------------------
+        Add("makedist", "A probability distribution object built from its parameters: pd = makedist('Normal', 'mu', 10, 'sigma', 2).", Opt("name"), Opt("property"), Opt("value"));
+        Add("fitdist", "A probability distribution fitted to data: pd = fitdist(x, 'Weibull', 'Censoring', c).", P("x"), P("name"), Opt("option"), Opt("value"));
+        Add("truncate", "The same distribution conditioned on an interval: t = truncate(pd, 0, 10).", P("pd"), P("lower"), P("upper"));
+        Add("negloglik", "The negative log-likelihood of the data a distribution was fitted to: nll = negloglik(pd).", P("pd"));
+        Add("paramci", "A confidence interval for each fitted parameter: ci = paramci(pd, 'Alpha', 0.01).", P("pd"), Opt("option"), Opt("value"));
+        Add("proflik", "The likelihood as one parameter is walked, the others re-fitted at each step: [ll, p] = proflik(pd, 1).", P("pd"), P("pnum"), Opt("option"), Opt("value"));
+        Add("BetaDistribution", "A beta distribution, built from its parameters: pd = BetaDistribution('a', 2, 'b', 5).", Opt("property"), Opt("value"));
+        Add("BinomialDistribution", "A binomial distribution, built from its parameters: pd = BinomialDistribution('N', 20, 'p', 0.3).", Opt("property"), Opt("value"));
+        Add("BirnbaumSaundersDistribution", "A birnbaum-saunders distribution, built from its parameters: pd = BirnbaumSaundersDistribution('beta', 2, 'gamma', 0.5).", Opt("property"), Opt("value"));
+        Add("BurrDistribution", "A burr distribution, built from its parameters: pd = BurrDistribution('alpha', 1, 'c', 2, 'k', 3).", Opt("property"), Opt("value"));
+        Add("ExponentialDistribution", "An exponential distribution, built from its parameters: pd = ExponentialDistribution('mu', 4).", Opt("property"), Opt("value"));
+        Add("ExtremeValueDistribution", "An extreme value distribution, built from its parameters: pd = ExtremeValueDistribution('mu', 0, 'sigma', 2).", Opt("property"), Opt("value"));
+        Add("GammaDistribution", "A gamma distribution, built from its parameters: pd = GammaDistribution('a', 3, 'b', 2).", Opt("property"), Opt("value"));
+        Add("GeneralizedExtremeValueDistribution", "A generalized extreme value distribution, built from its parameters: pd = GeneralizedExtremeValueDistribution('k', 0.1, 'sigma', 1, 'mu', 0).", Opt("property"), Opt("value"));
+        Add("GeneralizedParetoDistribution", "A generalized pareto distribution, built from its parameters: pd = GeneralizedParetoDistribution('k', 0.2, 'sigma', 1, 'theta', 0).", Opt("property"), Opt("value"));
+        Add("HalfNormalDistribution", "A half-normal distribution, built from its parameters: pd = HalfNormalDistribution('mu', 0, 'sigma', 3).", Opt("property"), Opt("value"));
+        Add("InverseGaussianDistribution", "An inverse gaussian distribution, built from its parameters: pd = InverseGaussianDistribution('mu', 1, 'lambda', 4).", Opt("property"), Opt("value"));
+        Add("KernelDistribution", "A kernel-smoothed distribution — the object fitdist(x, 'Kernel') returns.", Opt("property"), Opt("value"));
+        Add("LogisticDistribution", "A logistic distribution, built from its parameters: pd = LogisticDistribution('mu', 0, 'sigma', 2).", Opt("property"), Opt("value"));
+        Add("LoglogisticDistribution", "A log-logistic distribution, built from its parameters: pd = LoglogisticDistribution('mu', 0, 'sigma', 0.5).", Opt("property"), Opt("value"));
+        Add("LognormalDistribution", "A lognormal distribution, built from its parameters: pd = LognormalDistribution('mu', 0, 'sigma', 1).", Opt("property"), Opt("value"));
+        Add("LoguniformDistribution", "A log-uniform distribution, built from its parameters: pd = LoguniformDistribution('Lower', 1, 'Upper', 100).", Opt("property"), Opt("value"));
+        Add("MultinomialDistribution", "A multinomial distribution, built from its parameters: pd = MultinomialDistribution('probabilities', [0.2 0.5 0.3]).", Opt("property"), Opt("value"));
+        Add("NakagamiDistribution", "A nakagami distribution, built from its parameters: pd = NakagamiDistribution('mu', 1.5, 'omega', 2).", Opt("property"), Opt("value"));
+        Add("NegativeBinomialDistribution", "A negative binomial distribution, built from its parameters: pd = NegativeBinomialDistribution('R', 3, 'p', 0.4).", Opt("property"), Opt("value"));
+        Add("NormalDistribution", "A normal distribution, built from its parameters: pd = NormalDistribution('mu', 10, 'sigma', 2).", Opt("property"), Opt("value"));
+        Add("PiecewiseLinearDistribution", "A piecewise-linear distribution, built from its parameters: pd = PiecewiseLinearDistribution('x', [0 1 3], 'Fx', [0 0.5 1]).", Opt("property"), Opt("value"));
+        Add("PoissonDistribution", "A poisson distribution, built from its parameters: pd = PoissonDistribution('lambda', 4).", Opt("property"), Opt("value"));
+        Add("RayleighDistribution", "A rayleigh distribution, built from its parameters: pd = RayleighDistribution('B', 2).", Opt("property"), Opt("value"));
+        Add("RicianDistribution", "A rician distribution, built from its parameters: pd = RicianDistribution('s', 2, 'sigma', 1).", Opt("property"), Opt("value"));
+        Add("StableDistribution", "A stable distribution, built from its parameters: pd = StableDistribution('alpha', 1.5, 'beta', 0, 'gam', 1, 'delta', 0).", Opt("property"), Opt("value"));
+        Add("TriangularDistribution", "A triangular distribution, built from its parameters: pd = TriangularDistribution('A', 0, 'B', 1, 'C', 3).", Opt("property"), Opt("value"));
+        Add("UniformDistribution", "A uniform distribution, built from its parameters: pd = UniformDistribution('Lower', 0, 'Upper', 10).", Opt("property"), Opt("value"));
+        Add("WeibullDistribution", "A weibull distribution, built from its parameters: pd = WeibullDistribution('A', 2, 'B', 1.5).", Opt("property"), Opt("value"));
+        Add("tLocationScaleDistribution", "A t location-scale distribution, built from its parameters: pd = tLocationScaleDistribution('mu', 0, 'sigma', 1, 'nu', 5).", Opt("property"), Opt("value"));
         // --- Clustering, distances and multivariate analysis (M53 wave H) ---------------------------
         Add("pdist", "The distance between every pair of rows, as one long vector: D = pdist(X, 'minkowski', 3).", P("X"), Opt("metric"), Opt("arg"));
         Add("pdist2", "Every row of one set against every row of another: D = pdist2(X, Y, 'cosine').", P("X"), P("Y"), Opt("metric"), Opt("arg"));

@@ -357,9 +357,42 @@ public static class DistributionFitting
     /// stay positive are searched as their logarithms, which is what lets an unconstrained simplex be
     /// used without it ever proposing a negative scale.
     /// </summary>
-    private static double[] Maximize(DistributionFamily family, in Sample sample, bool[]? held)
+    /// <summary>
+    /// The maximizing parameters with one or more slots pinned at values the caller chose, which is
+    /// what a profile likelihood is: the best the other parameters can do while this one is held.
+    /// </summary>
+    /// <param name="family">The distribution.</param>
+    /// <param name="sample">The observations.</param>
+    /// <param name="pinned">A value per parameter, or null in the slots left free.</param>
+    public static double[] MaximizeGiven(DistributionFamily family, in Sample sample, double?[] pinned)
+    {
+        ArgumentNullException.ThrowIfNull(family);
+        ArgumentNullException.ThrowIfNull(pinned);
+
+        var held = new bool[pinned.Length];
+        for (int i = 0; i < pinned.Length; i++)
+        {
+            held[i] = pinned[i] is not null;
+        }
+
+        return Maximize(family, sample, held, pinned);
+    }
+
+    private static double[] Maximize(
+        DistributionFamily family, in Sample sample, bool[]? held, double?[]? pinned = null)
     {
         double[] start = StartingPoint(family, sample);
+        if (pinned is not null)
+        {
+            for (int i = 0; i < start.Length && i < pinned.Length; i++)
+            {
+                if (pinned[i] is double fixedAt)
+                {
+                    start[i] = fixedAt;
+                }
+            }
+        }
+
         bool[] positive = family.PositiveParameters;
         int[] free = FreeIndices(start.Length, held);
 

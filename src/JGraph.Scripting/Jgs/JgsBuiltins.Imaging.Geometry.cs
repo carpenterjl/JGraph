@@ -512,6 +512,14 @@ internal static partial class JgsBuiltins
             return null;
         }
 
+        // A distribution object (M53 wave I) is tagged with the package-qualified class it stands for,
+        // which is what class(pd) has to answer — so the whole tag is the name and there is no list of
+        // twenty-nine spellings to keep in step with the table that mints them.
+        if (tag.AsString.StartsWith("prob.", StringComparison.Ordinal))
+        {
+            return tag.AsString;
+        }
+
         return tag.AsString switch
         {
             "affine2d" or "projective2d" or "rigid2d" or "imref2d" => tag.AsString,
