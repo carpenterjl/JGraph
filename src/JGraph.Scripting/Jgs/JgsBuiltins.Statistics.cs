@@ -19,7 +19,7 @@ namespace JGraph.Scripting.Jgs;
 internal static partial class JgsBuiltins
 {
     /// <summary>Registers the Statistics Toolbox builtins.</summary>
-    private static void RegisterStatisticsBuiltins(JgsEnvironment env, JgsDialect dialect)
+    private static void RegisterStatisticsBuiltins(JgsEnvironment env, Random random, JgsDialect dialect)
     {
         void Define(string name, Func<IReadOnlyList<JgsValue>, int, int, JgsValue> body,
             Func<IReadOnlyList<JgsValue>, int, int, int, JgsValue[]>? multi = null) =>
@@ -56,6 +56,7 @@ internal static partial class JgsBuiltins
         DefineBoth("crosstab", CrossTabulate);
         DefineBoth("grpstats", GroupStatistics);
 
+        RegisterDistributionBuiltins(env, random);
         RegisterCorrelationBuiltins(env);
         RegisterEmpiricalBuiltins(env);
         RegisterLegacyNanBuiltins(env);
