@@ -84,7 +84,13 @@ public sealed class Svd
 
                     rotated = true;
                     double zeta = (beta - alpha) / (2 * gamma);
-                    double t = Math.Sign(zeta) / (Math.Abs(zeta) + Math.Sqrt(1 + (zeta * zeta)));
+
+                    // A ζ of exactly zero means the two columns have the same norm, and the rotation
+                    // that makes them orthogonal is exactly 45°. Math.Sign answers 0 there, which asks
+                    // for no rotation at all — so a matrix whose equal-norm columns are parallel, like
+                    // a matrix of ones, would never converge and would come out looking full rank.
+                    double direction = zeta >= 0 ? 1 : -1;
+                    double t = direction / (Math.Abs(zeta) + Math.Sqrt(1 + (zeta * zeta)));
                     double c = 1 / Math.Sqrt(1 + (t * t));
                     double s = c * t;
 

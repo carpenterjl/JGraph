@@ -173,6 +173,15 @@ internal static class JgsSprintf
         }
 
         double value = arg.AsNumber;
+
+        // Infinity and NaN are written the way MATLAB writes them, whichever numeric specifier asked
+        // for them: .NET spells the first one "Infinity", and the integer specifiers would try to cast
+        // it to a whole number and answer a large negative one.
+        if (!double.IsFinite(value))
+        {
+            return double.IsNaN(value) ? "NaN" : value > 0 ? "Inf" : "-Inf";
+        }
+
         return verb switch
         {
             'd' or 'i' => ((long)Math.Round(value, MidpointRounding.AwayFromZero)).ToString(CultureInfo.InvariantCulture),

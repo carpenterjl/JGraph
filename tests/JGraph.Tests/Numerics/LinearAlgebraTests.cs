@@ -185,6 +185,28 @@ public class LinearAlgebraTests
         Assert.Equal(3, Svd.Factor(magic4).Rank(4, 4)); // MATLAB: rank(magic(4)) == 3
     }
 
+    /// <summary>
+    /// Equal-norm parallel columns are the one-sided Jacobi sweep's degenerate case: the rotation that
+    /// separates them is exactly 45°, and asking <c>Math.Sign</c> for the direction of a zero answers
+    /// zero, which is a rotation by nothing. A matrix of ones came out with three equal singular values
+    /// and full rank until that was fixed.
+    /// </summary>
+    [Fact]
+    public void Svd_EqualNormParallelColumns_AreStillRankOne()
+    {
+        double[,] ones = { { 1, 1, 1 }, { 1, 1, 1 }, { 1, 1, 1 } };
+        Svd svd = Svd.Factor(ones);
+
+        Assert.Equal(1, svd.Rank(3, 3));
+        Assert.Equal(3, svd.Values[0], 12);
+        Assert.Equal(0, svd.Values[1], 12);
+        Assert.Equal(0, svd.Values[2], 12);
+
+        // The same shape at another scale, and with two identical columns beside a third.
+        Assert.Equal(1, Svd.Factor(new double[,] { { 5, 5 }, { 5, 5 } }).Rank(2, 2));
+        Assert.Equal(2, Svd.Factor(new double[,] { { 1, 1, 0 }, { 1, 1, 0 }, { 0, 0, 2 } }).Rank(3, 3));
+    }
+
     // --- Eigen ----------------------------------------------------------------------------------
 
     [Fact]

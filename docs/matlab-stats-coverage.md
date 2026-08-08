@@ -1,9 +1,10 @@
 # MATLAB Statistics and Machine Learning Toolbox coverage
 
-**195 of 589 documented** Statistics and Machine Learning Toolbox names are implemented, as of
-M53 wave E. Wave A built the scaffold — the list, this document and its verifier; wave B added the
+**224 of 589 documented** Statistics and Machine Learning Toolbox names are implemented, as of
+M53 wave F. Wave A built the scaffold — the list, this document and its verifier; wave B added the
 descriptive and robust statistics; wave C the continuous distribution families; wave D the discrete
-ones; wave E the distributions of a vector, and the samplers.
+ones; wave E the distributions of a vector, and the samplers; wave F the hypothesis tests and the
+analysis of variance.
 
 ## Where this list comes from
 
@@ -52,7 +53,7 @@ The four names in this list that JGraph's catalog already registers — `mean`, 
 statistic *of a probability distribution object*, which JGraph's base builtins do not take. `range`
 is the sharper case and is recorded as a divergence below.
 
-## Implemented — 195
+## Implemented — 224
 
 ### Descriptive and robust statistics, and the correlations — 31
 
@@ -125,47 +126,61 @@ wrote, and each resample re-indexes every data argument by the same rows.
 `mvnrnd`, `mvtcdf`, `mvtpdf`, `mvtrnd`, `randg`, `randsample`
 `wishrnd`
 
-## Not implemented — 194
+### Hypothesis tests and analysis of variance — 29
 
-The rest of the milestone's working set, in the order the waves take it: hypothesis tests and ANOVA,
+Every test answers the same four things — whether the null hypothesis is rejected at the level asked
+for, how improbable the data would be if it held, an interval for whatever was being tested, and a
+structure holding the statistic itself — and takes `'Alpha'` and `'Tail'` wherever MathWorks documents
+them. The output *order* is MathWorks' and is not uniform: the parametric tests lead with the decision,
+the three rank tests of location lead with the probability, and `vartestn`, `dwtest` and `linhyptest`
+report no decision at all. The tests of a mean or a variance work column by column when handed a matrix,
+so their decision and probability come back one per column and their interval two rows tall. Where a
+small sample has an exact null distribution — the rank tests, the runs test, the two-by-two table — it
+is counted rather than approximated, and above the cut-off the normal approximation takes over with the
+tie and continuity corrections it calls for.
+
+`adtest`, `anova1`, `anova2`, `anovan`, `ansaribradley`, `barttest`
+`chi2gof`, `dwtest`, `fishertest`, `friedman`, `jbtest`, `kruskalwallis`
+`kstest`, `kstest2`, `lillietest`, `linhyptest`, `manova1`, `multcompare`
+`ranksum`, `runstest`, `sampsizepwr`, `signrank`, `signtest`, `ttest`
+`ttest2`, `vartest`, `vartest2`, `vartestn`, `ztest`
+
+## Not implemented — 163
+
+The rest of the milestone's working set, in the order the waves take it:
 regression, clustering and multivariate analysis, the distribution objects, the copulas, and the
 plotting verbs.
 
-`addedvarplot`, `adtest`, `andrewsplot`, `anova1`, `anova2`, `anovan`
-`ansaribradley`, `barttest`, `bbdesign`, `BetaDistribution`, `BinomialDistribution`, `biplot`
+`addedvarplot`, `andrewsplot`, `bbdesign`, `BetaDistribution`, `BinomialDistribution`, `biplot`
 `BirnbaumSaundersDistribution`, `boxplot`, `BurrDistribution`, `canoncorr`, `capability`, `capaplot`
-`caseread`, `casewrite`, `ccdesign`, `cdfplot`, `chi2gof`, `cluster`
-`clusterdata`, `cmdscale`, `confusionmat`, `cophenet`, `copulacdf`, `copulafit`
-`copulaparam`, `copulapdf`, `copularnd`, `copulastat`, `coxphfit`, `createns`
-`dbscan`, `dendrogram`, `dummyvar`, `dwtest`, `ExhaustiveSearcher`, `ExponentialDistribution`
-`ExtremeValueDistribution`, `ff2n`, `fishertest`, `fitdist`, `fitrm`, `fracfact`
-`fracfactgen`, `friedman`, `fullfact`, `gagerr`, `GammaDistribution`, `GeneralizedExtremeValueDistribution`
-`GeneralizedParetoDistribution`, `glmfit`, `glmval`, `glyphplot`, `gplotmatrix`, `grp2idx`
-`gscatter`, `HalfNormalDistribution`, `hist3`, `histfit`, `hmmdecode`, `hmmestimate`
-`hmmgenerate`, `hmmtrain`, `hmmviterbi`, `hougen`, `inconsistent`, `interactionplot`
-`InverseGaussianDistribution`, `invpred`, `iqr`, `jbtest`, `johnsrnd`, `KDTreeSearcher`
-`KernelDistribution`, `kmeans`, `kmedoids`, `knnsearch`, `kruskalwallis`, `kstest`
-`kstest2`, `lasso`, `lassoglm`, `lassoPlot`, `leverage`, `lillietest`
-`linhyptest`, `linkage`, `LogisticDistribution`, `LoglogisticDistribution`, `LognormalDistribution`, `LoguniformDistribution`
-`lsline`, `mahal`, `maineffectsplot`, `makedist`, `manova1`, `manovacluster`
+`caseread`, `casewrite`, `ccdesign`, `cdfplot`, `cluster`, `clusterdata`
+`cmdscale`, `confusionmat`, `cophenet`, `copulacdf`, `copulafit`, `copulaparam`
+`copulapdf`, `copularnd`, `copulastat`, `coxphfit`, `createns`, `dbscan`
+`dendrogram`, `dummyvar`, `ExhaustiveSearcher`, `ExponentialDistribution`, `ExtremeValueDistribution`, `ff2n`
+`fitdist`, `fracfact`, `fracfactgen`, `fullfact`, `gagerr`, `GammaDistribution`
+`GeneralizedExtremeValueDistribution`, `GeneralizedParetoDistribution`, `glmfit`, `glmval`, `glyphplot`, `gplotmatrix`
+`grp2idx`, `gscatter`, `HalfNormalDistribution`, `hist3`, `histfit`, `hmmdecode`
+`hmmestimate`, `hmmgenerate`, `hmmtrain`, `hmmviterbi`, `hougen`, `inconsistent`
+`interactionplot`, `InverseGaussianDistribution`, `invpred`, `iqr`, `johnsrnd`, `KDTreeSearcher`
+`KernelDistribution`, `kmeans`, `kmedoids`, `knnsearch`, `lasso`, `lassoglm`
+`lassoPlot`, `leverage`, `linkage`, `LogisticDistribution`, `LoglogisticDistribution`, `LognormalDistribution`
+`LoguniformDistribution`, `lsline`, `mahal`, `maineffectsplot`, `makedist`, `manovacluster`
 `mean`, `median`, `mhsample`, `mlecov`, `mnrfit`, `mnrval`
-`multcompare`, `MultinomialDistribution`, `multivarichart`, `mvregress`, `mvregresslike`, `NakagamiDistribution`
-`NegativeBinomialDistribution`, `negloglik`, `nlinfit`, `nlparci`, `nlpredci`, `nnmf`
-`NormalDistribution`, `normplot`, `normspec`, `onehotdecode`, `onehotencode`, `optimalleaforder`
-`parallelcoords`, `paramci`, `paretotails`, `pca`, `pcacov`, `pcares`
-`pdist`, `pdist2`, `pearsrnd`, `perfcurve`, `PiecewiseLinearDistribution`, `plsregress`
-`PoissonDistribution`, `polyconf`, `ppca`, `probplot`, `procrustes`, `proflik`
-`qqplot`, `rangesearch`, `ranksum`, `RayleighDistribution`, `rcoplot`, `refcurve`
-`refline`, `regress`, `regstats`, `RepeatedMeasuresModel`, `RicianDistribution`, `ridge`
-`robustcov`, `robustfit`, `rotatefactors`, `runstest`, `sampsizepwr`, `scatterhist`
-`signrank`, `signtest`, `silhouette`, `slicesample`, `spectralcluster`, `squareform`
-`StableDistribution`, `statget`, `statset`, `std`, `stepwisefit`, `stepwiseglm`
-`stepwiselm`, `tblread`, `tblwrite`, `tdfread`, `tLocationScaleDistribution`, `TriangularDistribution`
-`truncate`, `tsne`, `ttest`, `ttest2`, `UniformDistribution`, `var`
-`vartest`, `vartest2`, `vartestn`, `wblplot`, `WeibullDistribution`, `x2fx`
-`xptread`, `ztest`
+`MultinomialDistribution`, `multivarichart`, `mvregress`, `mvregresslike`, `NakagamiDistribution`, `NegativeBinomialDistribution`
+`negloglik`, `nlinfit`, `nlparci`, `nlpredci`, `nnmf`, `NormalDistribution`
+`normplot`, `normspec`, `onehotdecode`, `onehotencode`, `optimalleaforder`, `parallelcoords`
+`paramci`, `paretotails`, `pca`, `pcacov`, `pcares`, `pdist`
+`pdist2`, `pearsrnd`, `perfcurve`, `PiecewiseLinearDistribution`, `plsregress`, `PoissonDistribution`
+`polyconf`, `ppca`, `probplot`, `procrustes`, `proflik`, `qqplot`
+`rangesearch`, `RayleighDistribution`, `rcoplot`, `refcurve`, `refline`, `regress`
+`regstats`, `RicianDistribution`, `ridge`, `robustcov`, `robustfit`, `rotatefactors`
+`scatterhist`, `silhouette`, `slicesample`, `spectralcluster`, `squareform`, `StableDistribution`
+`statget`, `statset`, `std`, `stepwisefit`, `stepwiseglm`, `stepwiselm`
+`tblread`, `tblwrite`, `tdfread`, `tLocationScaleDistribution`, `TriangularDistribution`, `truncate`
+`tsne`, `UniformDistribution`, `var`, `wblplot`, `WeibullDistribution`, `x2fx`
+`xptread`
 
-## Excluded — 200
+## Excluded — 202
 
 `aoctool`, `BayesianOptimization`, `bayesopt`, `binScatterPlot`, `CalinskiHarabaszEvaluation`, `candexch`
 `candgen`, `cell2dataset`, `ClassificationBaggedEnsemble`, `ClassificationDiscriminant`, `ClassificationECOC`, `ClassificationECOCCoderConfigurer`
@@ -183,24 +198,24 @@ plotting verbs.
 `fitclinear`, `fitcnb`, `fitcnet`, `fitcox`, `fitcsvm`, `fitctree`
 `fitensemble`, `fitglm`, `fitglme`, `fitgmdist`, `fitlm`, `fitlme`
 `fitlmematrix`, `fitnlm`, `fitrauto`, `fitrensemble`, `fitrgam`, `fitrgp`
-`fitrkernel`, `fitrlinear`, `fitrnet`, `fitrsvm`, `fitrtree`, `fitsemigraph`
-`fitsemiself`, `fitSVMPosterior`, `fscchi2`, `fscmrmr`, `fscnca`, `fsrftest`
-`fsrnca`, `fsulaplacian`, `fsurfht`, `GapEvaluation`, `gencfeatures`, `GeneralizedLinearMixedModel`
-`GeneralizedLinearModel`, `generateLearnerDataTypeFcn`, `genrfeatures`, `gline`, `gmdistribution`, `gname`
-`haltonset`, `HamiltonianSampler`, `hmcSampler`, `hyperparameters`, `iforest`, `incrementalClassificationLinear`
-`incrementalClassificationNaiveBayes`, `incrementalRegressionLinear`, `IsolationForest`, `learnerCoderConfigurer`, `lime`, `LinearMixedModel`
-`LinearModel`, `loadCompactModel`, `loadLearnerForCoder`, `makecdiscr`, `mat2dataset`, `mdscale`
-`nlintool`, `nlmefit`, `nlmefitsa`, `nominal`, `NonLinearModel`, `optimizableVariable`
-`ordinal`, `polytool`, `qrandstream`, `randtool`, `ReconstructionICA`, `RegressionBaggedEnsemble`
-`RegressionEnsemble`, `RegressionGAM`, `RegressionGP`, `RegressionKernel`, `RegressionLinear`, `RegressionLinearCoderConfigurer`
-`RegressionNeuralNetwork`, `RegressionPartitionedEnsemble`, `RegressionPartitionedGAM`, `RegressionPartitionedKernel`, `RegressionPartitionedLinear`, `RegressionPartitionedModel`
-`RegressionPartitionedSVM`, `RegressionSVM`, `RegressionSVMCoderConfigurer`, `RegressionTree`, `RegressionTreeCoderConfigurer`, `relieff`
-`rica`, `robustdemo`, `rowexch`, `rsmdemo`, `rstool`, `saveCompactModel`
-`saveLearnerForCoder`, `SemiSupervisedGraphModel`, `SemiSupervisedSelfTrainingModel`, `sequentialfs`, `shapley`, `SilhouetteEvaluation`
-`sobolset`, `sortClasses`, `sparsefilt`, `SparseFiltering`, `stepwise`, `struct2dataset`
-`surfht`, `table2dataset`, `templateDiscriminant`, `templateECOC`, `templateEnsemble`, `templateKernel`
-`templateKNN`, `templateLinear`, `templateNaiveBayes`, `templateSVM`, `templateTree`, `testcholdout`
-`testckfold`, `TreeBagger`
+`fitrkernel`, `fitrlinear`, `fitrm`, `fitrnet`, `fitrsvm`, `fitrtree`
+`fitsemigraph`, `fitsemiself`, `fitSVMPosterior`, `fscchi2`, `fscmrmr`, `fscnca`
+`fsrftest`, `fsrnca`, `fsulaplacian`, `fsurfht`, `GapEvaluation`, `gencfeatures`
+`GeneralizedLinearMixedModel`, `GeneralizedLinearModel`, `generateLearnerDataTypeFcn`, `genrfeatures`, `gline`, `gmdistribution`
+`gname`, `haltonset`, `HamiltonianSampler`, `hmcSampler`, `hyperparameters`, `iforest`
+`incrementalClassificationLinear`, `incrementalClassificationNaiveBayes`, `incrementalRegressionLinear`, `IsolationForest`, `learnerCoderConfigurer`, `lime`
+`LinearMixedModel`, `LinearModel`, `loadCompactModel`, `loadLearnerForCoder`, `makecdiscr`, `mat2dataset`
+`mdscale`, `nlintool`, `nlmefit`, `nlmefitsa`, `nominal`, `NonLinearModel`
+`optimizableVariable`, `ordinal`, `polytool`, `qrandstream`, `randtool`, `ReconstructionICA`
+`RegressionBaggedEnsemble`, `RegressionEnsemble`, `RegressionGAM`, `RegressionGP`, `RegressionKernel`, `RegressionLinear`
+`RegressionLinearCoderConfigurer`, `RegressionNeuralNetwork`, `RegressionPartitionedEnsemble`, `RegressionPartitionedGAM`, `RegressionPartitionedKernel`, `RegressionPartitionedLinear`
+`RegressionPartitionedModel`, `RegressionPartitionedSVM`, `RegressionSVM`, `RegressionSVMCoderConfigurer`, `RegressionTree`, `RegressionTreeCoderConfigurer`
+`relieff`, `RepeatedMeasuresModel`, `rica`, `robustdemo`, `rowexch`, `rsmdemo`
+`rstool`, `saveCompactModel`, `saveLearnerForCoder`, `SemiSupervisedGraphModel`, `SemiSupervisedSelfTrainingModel`, `sequentialfs`
+`shapley`, `SilhouetteEvaluation`, `sobolset`, `sortClasses`, `sparsefilt`, `SparseFiltering`
+`stepwise`, `struct2dataset`, `surfht`, `table2dataset`, `templateDiscriminant`, `templateECOC`
+`templateEnsemble`, `templateKernel`, `templateKNN`, `templateLinear`, `templateNaiveBayes`, `templateSVM`
+`templateTree`, `testcholdout`, `testckfold`, `TreeBagger`
 
 By reason:
 
@@ -217,6 +232,11 @@ By reason:
   classes. These need a Wilkinson notation parser and a model-object runtime, and the deterministic
   core they wrap — least squares, the generalized linear fit, robust and nonlinear fitting — is
   reached instead through the array-in, array-out names in the working set above.
+- **Repeated-measures models** — `fitrm` and `RepeatedMeasuresModel`. The deliverable is a fitted
+  object whose value is the methods hanging off it — the repeated-measures analysis, the sphericity
+  corrections, the marginal means, the comparison — and a within-subject design written in Wilkinson
+  notation. The between-subject question it wraps is reached instead through the general analysis of
+  variance, and half of a model object is worse than none.
 - **Mixed-effects and Gaussian mixture models** — `fitlme`, `fitglme`, `fitlmematrix`, `nlmefit`,
   `nlmefitsa` and their two classes, plus `gmdistribution` and `fitgmdist`. Same reason: an EM or
   restricted-likelihood loop whose answer is an object.
@@ -256,7 +276,6 @@ By reason:
   working set), `binScatterPlot` (a tall-array display), `confusionchart` with `sortClasses` (a
   chart container), and `lime`, `shapley`, `testcholdout` and `testckfold` (model interpretation
   and model comparison, both of which need models).
-
 ## Recorded divergences
 
 - **`range` is a name collision, not a missing function.** MATLAB's statistics `range(x)` answers
@@ -379,6 +398,66 @@ By reason:
   sample is drawn and its values are then moved, in rank order, onto the stratum midpoints of the same
   marginal. Ranks carry the correlation, so the covariance survives; the sample is not the one MATLAB
   would produce, for the reason every seeded answer here differs from MATLAB's.
+
+- **A composite goodness-of-fit probability is read off a published table, not simulated.**
+  Lilliefors' statistic and Anderson–Darling's have a different null distribution once the parameters
+  are estimated from the same sample, and it has no closed form. MathWorks simulates one; this reads
+  Stephens' published critical values and interpolates between them in the logarithm of the
+  probability, which is smooth between the tabulated points and clamped to the range they cover — so a
+  probability of 0.15 may mean "0.15 or more" and one of 0.01 may mean "0.01 or less". `'MCTol'` is
+  refused by name rather than accepted and ignored, for the same reason. The one exception is the
+  composite normal case of `adtest`, which has a published closed-form probability covering the whole
+  range and uses it.
+- **`jbtest` always refers its statistic to the limiting chi-square.** MathWorks uses a simulated table
+  below two thousand observations and the chi-square above it; here the chi-square with two degrees of
+  freedom is used throughout, so a small sample's probability is a little optimistic. The third
+  argument, which asks for a simulation tolerance, is refused with the reason.
+- **A rank test counts its null distribution below MathWorks' own cut-offs and approximates it above.**
+  `ranksum` counts when the smaller sample is below ten and the two together below twenty, `signrank`
+  at fifteen or fewer differences, `signtest` at a hundred or fewer, and `ansaribradley` at
+  twenty-five or fewer observations — the same rules MathWorks documents. Ties make the count wrong
+  rather than slow, because it enumerates arrangements of distinct ranks, so an exact test asked for
+  over tied data is refused rather than answered. The approximation carries the half-step continuity
+  correction and the tie correction to the variance.
+- **`signtest` reports the number of positive differences.** MathWorks documents `stats.sign` as "the
+  value of the sign test statistic" without saying which count it is; this one is the number of
+  differences above zero, which is what the right-hand tail is computed from.
+- **The analysis-of-variance names answer numbers and draw nothing.** `anova1`, `anova2`, `anovan`,
+  `kruskalwallis`, `friedman`, `vartestn` and `multcompare` open a figure in MATLAB when nothing
+  catches their output. Here the table is the second output, a cell array the console prints, and the
+  display argument is read and accepted so that a script passing `'off'` is not told it is unexpected.
+  `multcompare`'s third output is the figure handle in MATLAB and is an empty here.
+- **`anovan` fits crossed, fixed, categorical factors.** `'nested'`, `'random'` and `'continuous'` each
+  name a different model — a hierarchy, a variance component, and a covariate — and each would need its
+  own error term rather than the residual one every F here is measured against. All three are refused
+  by name. The rest of the surface is there: the three sums of squares, the model as a word, an
+  interaction order or a term matrix, and named variables.
+- **`multcompare`'s studentized range is a quadrature.** Tukey and Kramer's correction needs the
+  distribution of the largest gap between several means, which is a double integral with no closed form
+  above two means. It is computed with the same Gauss–Legendre rule the multivariate probabilities use,
+  over ranges taken from the quantiles of the distributions involved; at two means it reproduces the
+  exact identity — √2 times a Student's t — to eight figures, and the published tables to the two
+  decimals they are given to.
+- **`kstest`'s distribution is a function or a table, not an object.** MathWorks accepts a probability
+  distribution object; those arrive with the distribution objects in a later wave. A two-column matrix
+  of points and probabilities works as documented, read by interpolation, and a function handle is
+  accepted in the object's place.
+- **`dwtest`'s exact probability comes from Imhof's inversion.** The Durbin–Watson statistic is a ratio
+  of quadratic forms whose distribution depends on the design matrix, and the event "the statistic is
+  below d" is exactly "a particular weighted sum of squared normals is below zero". That probability is
+  an integral of the characteristic function, and it is computed rather than tabulated. The
+  approximation matches the first two moments of the same ratio.
+- **`barttest` uses the classical correction factor.** The statistic is
+  `(n − 1 − (2p + 11)/6)` times the log ratio of the arithmetic and geometric means of the remaining
+  eigenvalues. MathWorks does not document which correction it applies, and the two differ in the
+  second digit of the statistic on a small sample; the dimension they report is the same.
+- **`fishertest`'s interval is the normal one on the logarithm of the odds ratio.** MathWorks documents
+  it as asymptotic and so is this. The probability itself is exact — every table with the same margins
+  is enumerated, and the two-sided one adds up every table no more likely than the one seen.
+- **`sampsizepwr` finds a sample size by search.** The power is computed in closed form for each test
+  and the size is the smallest one that reaches it, found by doubling and then bisecting. For the exact
+  binomial test the power is not monotone in the sample size — it steps as the critical count moves —
+  so the search walks back one observation at a time to make sure the answer really is the smallest.
 
 ## Answers this mirror will state rather than match
 

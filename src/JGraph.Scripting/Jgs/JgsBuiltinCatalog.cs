@@ -1132,6 +1132,37 @@ public static class JgsBuiltinCatalog
         Add("jackknife", "A statistic recomputed with each observation left out: jackknife(jackfun, X).", P("jackfun"), P("X"), Opt("more"));
         Add("combnk", "Every way of choosing k of the values, one combination per row: combnk(v, k).", P("v"), P("k"));
 
+        // --- Hypothesis tests and analysis of variance (M53 wave F) ---------------------------------
+        Add("ttest", "Whether a normal sample's mean is m, or two paired samples differ: [h, p, ci, stats] = ttest(x, m, 'Alpha', 0.05, 'Tail', 'both', 'Dim', 1).", P("x"), Opt("m"), Opt("option"), Opt("value"));
+        Add("ttest2", "Whether two independent samples have the same mean: [h, p, ci, stats] = ttest2(x, y, 'Vartype', 'unequal') for Welch's test.", P("x"), P("y"), Opt("option"), Opt("value"));
+        Add("ztest", "The one-sample mean test with a known standard deviation: [h, p, ci, stats] = ztest(x, m, sigma, 'Tail', 'right').", P("x"), P("m"), P("sigma"), Opt("option"), Opt("value"));
+        Add("vartest", "Whether a normal sample's variance is v: [h, p, ci, stats] = vartest(x, v, 'Alpha', 0.05, 'Tail', 'both').", P("x"), P("v"), Opt("option"), Opt("value"));
+        Add("vartest2", "Whether two samples share a variance, through the ratio of the two estimates: [h, p, ci, stats] = vartest2(x, y).", P("x"), P("y"), Opt("option"), Opt("value"));
+        Add("vartestn", "Whether several groups share a variance: [p, stats] = vartestn(X, 'TestType', 'BrownForsythe') or vartestn(x, group).", P("X"), Opt("group"), Opt("option"), Opt("value"));
+        Add("kstest", "Whether a sample came from a fully specified distribution: [h, p, ksstat, cv] = kstest(x, 'CDF', cdf, 'Tail', 'unequal').", P("x"), Opt("option"), Opt("value"));
+        Add("kstest2", "Whether two samples came from the same distribution: [h, p, ks2stat] = kstest2(x1, x2, 'Alpha', 0.05, 'Tail', 'unequal').", P("x1"), P("x2"), Opt("option"), Opt("value"));
+        Add("lillietest", "The Kolmogorov-Smirnov test where the parameters were estimated from the same sample: [h, p, kstat, critval] = lillietest(x, 'Distr', 'norm').", P("x"), Opt("option"), Opt("value"));
+        Add("adtest", "Anderson and Darling's test, which weights the tails: [h, p, adstat, cv] = adtest(x, 'Distribution', 'exp').", P("x"), Opt("option"), Opt("value"));
+        Add("jbtest", "Whether a sample's skewness and kurtosis are the normal distribution's: [h, p, jbstat, critval] = jbtest(x, alpha).", P("x"), Opt("alpha"));
+        Add("chi2gof", "The binned goodness-of-fit test: [h, p, stats] = chi2gof(x, 'NBins', 10, 'CDF', @fun, 'EMin', 5).", P("x"), Opt("option"), Opt("value"));
+        Add("runstest", "Whether a sequence alternates about its median the way an independent one would: [h, p, stats] = runstest(x, v, 'Method', 'exact').", P("x"), Opt("v"), Opt("option"), Opt("value"));
+        Add("ranksum", "Wilcoxon's rank sum test of two independent samples: [p, h, stats] = ranksum(x, y, 'tail', 'right', 'method', 'exact').", P("x"), P("y"), Opt("option"), Opt("value"));
+        Add("signrank", "Wilcoxon's signed rank test of matched pairs: [p, h, stats] = signrank(x, y) or signrank(x, m).", P("x"), Opt("y"), Opt("option"), Opt("value"));
+        Add("signtest", "The sign test of matched pairs: [p, h, stats] = signtest(x, y) or signtest(x, m).", P("x"), Opt("y"), Opt("option"), Opt("value"));
+        Add("ansaribradley", "Whether two samples are equally dispersed: [h, p, stats] = ansaribradley(x, y, 'tail', 'both').", P("x"), P("y"), Opt("option"), Opt("value"));
+        Add("barttest", "How many principal components a set of variables needs: [ndim, prob, chisquare] = barttest(x, alpha).", P("x"), Opt("alpha"));
+        Add("fishertest", "Fisher's exact test of a two-by-two table of counts: [h, p, stats] = fishertest(x, 'Tail', 'right').", P("x"), Opt("option"), Opt("value"));
+        Add("dwtest", "Whether a model's residuals are correlated with their neighbours: [p, d] = dwtest(r, x, 'Method', 'exact', 'Tail', 'both').", P("r"), P("x"), Opt("option"), Opt("value"));
+        Add("linhyptest", "Whether a linear combination of coefficients takes a stated value: [p, F, r] = linhyptest(beta, COVB, c, H, dfe).", P("beta"), P("COVB"), Opt("c"), Opt("H"), Opt("dfe"));
+        Add("sampsizepwr", "Whichever of the effect, the power and the sample size was left out as []: n = sampsizepwr('t', [mu0 sigma], mu1, 0.8).", P("testtype"), P("p0"), P("p1"), Opt("power"), Opt("n"), Opt("option"), Opt("value"));
+        Add("anova1", "One-way analysis of variance: [p, tbl, stats] = anova1(X) over a matrix's columns, or anova1(x, group).", P("X"), Opt("group"), Opt("displayopt"));
+        Add("anova2", "Two-way analysis of a balanced grid: [p, tbl, stats] = anova2(X, reps), with p in the order columns, rows, interaction.", P("X"), Opt("reps"), Opt("displayopt"));
+        Add("anovan", "Analysis with any number of crossed factors: [p, tbl, stats] = anovan(y, group, 'model', 'interaction', 'sstype', 3, 'varnames', names).", P("y"), P("group"), Opt("option"), Opt("value"));
+        Add("manova1", "Whether several groups share a mean vector, answered as the dimension their means span: [d, p, stats] = manova1(X, group, alpha).", P("X"), P("group"), Opt("alpha"));
+        Add("kruskalwallis", "The one-way analysis asked of the ranks: [p, tbl, stats] = kruskalwallis(X) or kruskalwallis(x, group).", P("X"), Opt("group"), Opt("displayopt"));
+        Add("friedman", "The two-way analysis asked of ranks taken within each block: [p, tbl, stats] = friedman(X, reps).", P("X"), Opt("reps"), Opt("displayopt"));
+        Add("multcompare", "Every pair of estimates compared at a family-wide level: [c, m, h, gnames] = multcompare(stats, 'CType', 'bonferroni', 'Alpha', 0.05).", P("stats"), Opt("option"), Opt("value"));
+
         // --- Array operations ---------------------------------------------------------------------
         Add("sort", "A sorted copy of a numeric or string array; order \"ascend\" (default) or \"descend\", with 'MissingPlacement' and 'ComparisonMethod' for where NaN lands and how complex numbers order.", P("array"), Opt("order"), Opt("option"), Opt("value"));
         Add("unique", "The distinct values of a numeric or string array: [c, ia, ic] = unique(x, 'rows', 'stable', 'last'), where c = x(ia) and x = c(ic).", P("array"), Opt("option"), Opt("more"));
