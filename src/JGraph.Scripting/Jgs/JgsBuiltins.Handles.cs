@@ -109,8 +109,60 @@ internal static partial class JgsBuiltins
             JgsHandleKind.Line => GetLineProperty(entry, (LinePlot)entry.Target, name, line, col),
             JgsHandleKind.Axes => GetAxesProperty((AxesModel)entry.Target, name, line, col),
             JgsHandleKind.Legend => GetLegendProperty(entry, (LegendModel)entry.Target, name, line, col),
+            JgsHandleKind.Plot => GetPlotProperty(entry, (PlotObject)entry.Target, name, line, col),
             _ => throw UnknownProperty(entry, name, line, col),
         };
+
+    /// <summary>
+    /// The properties every drawn series has, whatever shape it is drawn in. A patch and a set of bars
+    /// have no line width and no marker, so a handle to one answers what it does have and says so about
+    /// the rest, rather than pretending to be a line.
+    /// </summary>
+    private static JgsValue GetPlotProperty(
+        JgsHandleEntry entry, PlotObject plot, string name, int line, int col) =>
+        name.ToLowerInvariant() switch
+        {
+            "visible" => OnOffValue(plot.Visible),
+            "displayname" => JgsValue.Str(plot.DisplayName),
+            "handlevisibility" => OnOffValue(entry.HandleVisible),
+            "type" => JgsValue.Str(plot.GetType().Name),
+            "facecolor" or "color" when plot is PatchPlot patch && patch.FaceColor is { } fill =>
+                ColorValue(fill),
+            "color" when plot is ScatterPlot scatter =>
+                ColorValue(scatter.Color ?? PaletteColorFor(plot)),
+            "color" or "facecolor" when plot is BarPlot bar =>
+                ColorValue(bar.FillColor ?? PaletteColorFor(plot)),
+            _ => throw UnknownProperty(entry, name, line, col),
+        };
+
+    /// <summary>The writable half of the same short list.</summary>
+    private static void SetPlotProperty(
+        JgsHandleEntry entry, PlotObject plot, string name, JgsValue value, int line, int col)
+    {
+        switch (name.ToLowerInvariant())
+        {
+            case "visible":
+                plot.Visible = OnOffOf("Visible", value, line, col);
+                return;
+            case "displayname":
+                SetDisplayName(plot, StrOf("plot: DisplayName", value, line, col));
+                return;
+            case "handlevisibility":
+                entry.HandleVisible = OnOffOf("HandleVisibility", value, line, col);
+                return;
+            case "color" or "facecolor" when plot is PatchPlot patch:
+                patch.FaceColor = OptionColor(value, line, col, "patch");
+                return;
+            case "color" when plot is ScatterPlot scatter:
+                scatter.Color = OptionColor(value, line, col, "scatter");
+                return;
+            case "color" or "facecolor" when plot is BarPlot bar:
+                bar.FillColor = OptionColor(value, line, col, "bar");
+                return;
+            default:
+                throw UnknownProperty(entry, name, line, col);
+        }
+    }
 
     /// <summary>Writes one property through a handle.</summary>
     internal static void SetHandleProperty(JgsHandleEntry entry, string name, JgsValue value, int line, int col)
@@ -125,6 +177,9 @@ internal static partial class JgsBuiltins
                 return;
             case JgsHandleKind.Legend:
                 SetLegendProperty(entry, (LegendModel)entry.Target, name, value, line, col);
+                return;
+            case JgsHandleKind.Plot:
+                SetPlotProperty(entry, (PlotObject)entry.Target, name, value, line, col);
                 return;
             default:
                 throw UnknownProperty(entry, name, line, col);

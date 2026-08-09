@@ -525,6 +525,10 @@ internal static partial class JgsBuiltins
             "affine2d" or "projective2d" or "rigid2d" or "imref2d" => tag.AsString,
             "strel" or "offsetstrel" => tag.AsString,
             "gabor" => tag.AsString,
+
+            // M53 wave J: the two neighbourhood searchers and the piecewise distribution, which are
+            // objects in the toolbox and tagged structs here for the same reason the transforms are.
+            "ExhaustiveSearcher" or "KDTreeSearcher" or "paretotails" => tag.AsString,
             _ => null,
         };
     }

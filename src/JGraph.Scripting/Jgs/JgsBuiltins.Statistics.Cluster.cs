@@ -179,7 +179,7 @@ internal static partial class JgsBuiltins
     /// <summary><c>[idx, d] = knnsearch(X, Y, …)</c>: the nearest members of X to each row of Y.</summary>
     private static JgsValue[] NearestNeighbours(IReadOnlyList<JgsValue> args, int wanted, int line, int col)
     {
-        ParsedArgs parsed = NearestNeighbourOptions.Parse(args, 2, line, col);
+        ParsedArgs parsed = NearestNeighbourOptions.Parse(ExpandSearcher(args), 2, line, col);
         if (parsed.Positional.Count != 2)
         {
             throw new JgsRuntimeException(line, col, "knnsearch takes the data and the query points.");
@@ -227,7 +227,7 @@ internal static partial class JgsBuiltins
     /// <summary><c>[idx, d] = rangesearch(X, Y, r, …)</c>: every member of X within r of each query.</summary>
     private static JgsValue[] NeighboursWithin(IReadOnlyList<JgsValue> args, int wanted, int line, int col)
     {
-        ParsedArgs parsed = RadiusSearchOptions.Parse(args, 3, line, col);
+        ParsedArgs parsed = RadiusSearchOptions.Parse(ExpandSearcher(args), 3, line, col);
         if (parsed.Positional.Count != 3)
         {
             throw new JgsRuntimeException(line, col,
@@ -943,11 +943,12 @@ internal static partial class JgsBuiltins
 
     private static void RefuseSearcherOptions(string name, ParsedArgs parsed, int line, int col)
     {
-        if (parsed.Named("nsmethod") is not null || parsed.Named("bucketsize") is not null)
+        // 'NSMethod' and 'BucketSize' choose between search structures, and the two structures answer
+        // the same question exactly. Both words are therefore accepted and neither changes the answer;
+        // what changes is how long it takes, and the search here is exhaustive either way.
+        if (parsed.Named("nsmethod") is not null)
         {
-            throw new JgsRuntimeException(line, col,
-                $"{name}: 'NSMethod' and 'BucketSize' choose between search structures. The search here is "
-                + "exhaustive and always exact, so there is nothing to choose.");
+            parsed.Word("nsmethod", "exhaustive", "exhaustive", "kdtree");
         }
 
         if (parsed.Named("sortindices") is { } sorted && !sorted.IsTruthy)

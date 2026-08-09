@@ -63,6 +63,18 @@ internal sealed class BuiltinFunction : IJgsCallable, IJgsMultiCallable
     /// </summary>
     public Func<IReadOnlyList<JgsValue>, int, int, int, JgsValue[]>? MultiOutput { get; init; }
 
+    /// <summary>
+    /// Whether this builtin is told when its answer is being thrown away — a call written as a
+    /// statement reaches <see cref="MultiOutput"/> with <c>wanted</c> zero rather than one.
+    /// </summary>
+    /// <remarks>
+    /// Almost nothing needs this: a function that answers the same thing either way cannot tell the
+    /// difference and should not ask. What needs it is the handful of names that <em>draw</em> when
+    /// nobody wanted the numbers — <c>ecdf(x)</c> on its own is a plot, and <c>F = ecdf(x)</c> is a
+    /// vector — which is a distinction that cannot be made after the fact.
+    /// </remarks>
+    public bool KnowsWhenDiscarded { get; init; }
+
     /// <inheritdoc />
     public JgsValue Call(IReadOnlyList<JgsValue> arguments, int line, int column) =>
         _implementation(arguments, line, column);

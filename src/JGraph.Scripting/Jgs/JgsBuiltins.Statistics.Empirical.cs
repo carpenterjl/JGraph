@@ -27,9 +27,19 @@ internal static partial class JgsBuiltins
                 name, (args, line, col) => both(args, 1, line, col)[0])
             { MultiOutput = both }));
 
-        DefineBoth("ecdf", Empirical);
+        // ecdf and ksdensity draw the curve when nobody asked for the numbers, which is what makes
+        // ecdf(x) on its own a plot; wanted is zero exactly then (M53 wave J).
+        void DefineDrawing(string name, Func<IReadOnlyList<JgsValue>, int, int, int, JgsValue[]> both) =>
+            env.Declare(name, JgsValue.Function(new BuiltinFunction(
+                name, (args, line, col) => both(args, 1, line, col)[0])
+            {
+                MultiOutput = both,
+                KnowsWhenDiscarded = true,
+            }));
+
+        DefineDrawing("ecdf", Empirical);
         DefineBoth("ecdfhist", EmpiricalHistogram);
-        DefineBoth("ksdensity", SmoothedDensity);
+        DefineDrawing("ksdensity", SmoothedDensity);
     }
 
     /// <summary>
@@ -91,6 +101,14 @@ internal static partial class JgsBuiltins
 
         EmpiricalDistribution.EmpiricalCurve curve =
             EmpiricalDistribution.Empirical(values, censored, frequency, kind, alpha);
+
+        if (wanted == 0)
+        {
+            JGraph.Api.JG.Plot(curve.Points, curve.Values).DisplayName = "Empirical CDF";
+            JGraph.Api.JG.XLabel("x");
+            JGraph.Api.JG.YLabel("F(x)");
+            return [];
+        }
 
         return Outputs(
             wanted,
@@ -269,6 +287,14 @@ internal static partial class JgsBuiltins
 
         double[] curve = EmpiricalDistribution.KernelDensity(
             sample, weights, at, bandwidth, kernel, kind, lower, upper, rule);
+
+        if (wanted == 0)
+        {
+            JGraph.Api.JG.Plot(at, curve).DisplayName = "Kernel estimate";
+            JGraph.Api.JG.XLabel("x");
+            JGraph.Api.JG.YLabel(kind.ToString());
+            return [];
+        }
 
         return Outputs(wanted, Column(curve), Column(at));
     }

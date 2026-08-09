@@ -1190,6 +1190,73 @@ public static class JgsBuiltinCatalog
         Add("mvregresslike", "How improbable the data is at stated multivariate parameters: [nlogL, COVB] = mvregresslike(X, Y, beta, Sigma).", P("X"), P("Y"), P("beta"), P("Sigma"), Opt("algorithm"), Opt("option"), Opt("value"));
         Add("coxphfit", "How predictors multiply the rate of failure, without saying what that rate is: [b, logl, H, stats] = coxphfit(X, T, 'censoring', c, 'ties', 'efron').", P("X"), P("T"), Opt("option"), Opt("value"));
 
+        // --- Designs, plot verbs, files and utilities (M53 wave J) -----------------------------------
+        Add("fullfact", "Every combination of the levels of each factor, one run per row: d = fullfact([2 3 3]).", P("levels"));
+        Add("ff2n", "The two-level full factorial over n factors, coded zero and one: d = ff2n(4).", P("n"));
+        Add("fracfact", "A two-level fraction from its generators, and what its effects are confounded with: [X, conf] = fracfact('a b c abc', 'MaxInt', 3).", P("gen"), Opt("option"), Opt("value"));
+        Add("fracfactgen", "Generators for a fraction of the named factors at a wanted resolution: g = fracfactgen('a b c d e', 4, 4).", P("terms"), Opt("k"), Opt("R"));
+        Add("bbdesign", "The Box-Behnken design of n factors: [d, blocks] = bbdesign(3, 'center', 5).", P("n"), Opt("option"), Opt("value"));
+        Add("ccdesign", "The central composite design of n factors: [d, blocks] = ccdesign(3, 'type', 'faced').", P("n"), Opt("option"), Opt("value"));
+        Add("capability", "How well a process meets its specification: S = capability(data, [lower upper]).", P("data"), P("specs"));
+        Add("capaplot", "The fitted distribution drawn against the specification: [p, h] = capaplot(data, specs).", P("data"), P("specs"));
+        Add("normspec", "The same picture from a stated mean and deviation: [p, h] = normspec(specs, mu, sigma).", P("specs"), Opt("mu"), Opt("sigma"));
+        Add("gagerr", "How much of the spread in a set of measurements is the measuring: [sd, tbl, stats] = gagerr(y, {part, op}, 'model', 'linear').", P("y"), P("group"), Opt("option"), Opt("value"));
+        Add("statset", "The settings structure the iterative names take: opts = statset('MaxIter', 500).", Opt("option"), Opt("value"));
+        Add("statget", "One setting out of that structure, or a fallback: n = statget(opts, 'MaxIter', 100).", P("options"), P("name"), Opt("default"));
+
+        Add("copulacdf", "The probability a copula puts below a point of the unit cube: y = copulacdf('Clayton', u, 1.5).", P("family"), P("u"), P("param"), Opt("nu"));
+        Add("copulapdf", "The density of a copula at a point of the unit cube: y = copulapdf('t', u, rho, 5).", P("family"), P("u"), P("param"), Opt("nu"));
+        Add("copularnd", "Draws from a copula, one per row: u = copularnd('Gumbel', 2, 500).", P("family"), P("param"), P("n"), Opt("extra"));
+        Add("copulastat", "The rank correlation a copula parameter produces: r = copulastat('Frank', 4, 'type', 'Spearman').", P("family"), P("param"), Opt("option"), Opt("value"));
+        Add("copulaparam", "The parameter that produces a wanted rank correlation: a = copulaparam('Clayton', 0.4).", P("family"), P("r"), Opt("option"), Opt("value"));
+        Add("copulafit", "The copula parameter that makes observed probabilities most likely: [p, nu] = copulafit('t', u).", P("family"), P("u"), Opt("option"), Opt("value"));
+
+        Add("johnsrnd", "Draws from the Johnson curve through four quantiles: [r, type, coefs] = johnsrnd(quantiles, 1000, 1).", P("quantiles"), Opt("m"), Opt("n"));
+        Add("pearsrnd", "Draws from the Pearson curve with four given moments: [r, type, coefs] = pearsrnd(0, 1, 0.5, 4, 100, 1).", P("mu"), P("sigma"), P("skew"), P("kurt"), Opt("m"), Opt("n"));
+        Add("mhsample", "A Metropolis-Hastings chain aimed at a density you can only write down: [x, accept] = mhsample(x0, n, 'pdf', f, 'proprnd', g, 'symmetric', true).", P("start"), P("nsamples"), Opt("option"), Opt("value"));
+        Add("slicesample", "A slice sampler, which needs no proposal at all: [x, neval] = slicesample(x0, n, 'pdf', f, 'width', 5).", P("start"), P("nsamples"), Opt("option"), Opt("value"));
+        Add("mlecov", "How precise a maximum likelihood estimate is: acov = mlecov(phat, data, 'pdf', f).", P("params"), P("data"), Opt("option"), Opt("value"));
+        Add("paretotails", "A distribution empirical in the middle and Pareto in each tail: pd = paretotails(x, 0.1, 0.9).", P("x"), P("pl"), P("pu"), Opt("cdffun"));
+        Add("createns", "A set of points prepared to be asked for neighbours later: ns = createns(X, 'NSMethod', 'kdtree').", P("X"), Opt("option"), Opt("value"));
+        Add("ExhaustiveSearcher", "The same, comparing against every point: ns = ExhaustiveSearcher(X, 'Distance', 'cityblock').", P("X"), Opt("option"), Opt("value"));
+        Add("KDTreeSearcher", "The same, over a space-partitioning tree: ns = KDTreeSearcher(X, 'BucketSize', 20).", P("X"), Opt("option"), Opt("value"));
+        Add("tsne", "A low-dimensional picture in which near stays near: [Y, loss] = tsne(X, 'Perplexity', 15).", P("X"), Opt("option"), Opt("value"));
+
+        Add("caseread", "One name per line, read as a cell of char rows: names = caseread('cases.dat').", P("file"));
+        Add("casewrite", "The same file written back: casewrite(names, 'cases.dat').", P("names"), P("file"));
+        Add("tblread", "A data file with named variables and named cases: [data, vars, cases] = tblread('sat.dat').", P("file"), Opt("delimiter"));
+        Add("tblwrite", "The same file written back: tblwrite(data, vars, cases, 'sat.dat').", P("data"), P("varnames"), P("casenames"), P("file"), Opt("delimiter"));
+        Add("tdfread", "A tab-delimited file read into one field per column: s = tdfread('sat.dat').", P("file"), Opt("delimiter"));
+        Add("xptread", "A SAS transport file read into one field per variable: s = xptread('sample.xpt').", P("file"), Opt("option"));
+
+        Add("cdfplot", "The empirical distribution function, drawn as a staircase: [h, stats] = cdfplot(x).", P("x"));
+        Add("histfit", "A histogram with a fitted density over it: h = histfit(data, 12, 'gamma').", P("data"), Opt("nbins"), Opt("dist"));
+        Add("normplot", "How straight a sample looks against a normal: h = normplot(x).", P("x"));
+        Add("wblplot", "The same question asked of a Weibull: h = wblplot(x).", P("x"));
+        Add("probplot", "The same question asked of any family: h = probplot('exponential', x).", Opt("dist"), P("y"), Opt("option"));
+        Add("qqplot", "One sample's quantiles against another's, or against a normal's: h = qqplot(x, y).", P("x"), Opt("y"), Opt("pvec"));
+        Add("boxplot", "A box and whisker per group: boxplot(x, g, 'Notch', 'on', 'Whisker', 1.5).", P("x"), Opt("group"), Opt("option"), Opt("value"));
+        Add("gscatter", "A scatter with one colour per group: h = gscatter(x, y, g, 'rgb', 'os^').", P("x"), P("y"), P("group"), Opt("clr"), Opt("sym"), Opt("siz"));
+        Add("lsline", "A least-squares line through every series already drawn: h = lsline.", Opt("ax"));
+        Add("refline", "A straight reference line over the current axes: h = refline(2, 1).", Opt("m"), Opt("b"));
+        Add("refcurve", "A polynomial reference curve over the current axes: h = refcurve([1 -2 3]).", P("p"));
+        Add("gplotmatrix", "A grid of scatters, one per pair of variables: [h, ax, bigax] = gplotmatrix(x, y, g).", P("x"), Opt("y"), Opt("group"), Opt("option"), Opt("value"));
+        Add("scatterhist", "A scatter with the two marginal histograms beside it: h = scatterhist(x, y).", P("x"), P("y"));
+        Add("dendrogram", "The agglomerative tree drawn as the links that made it: [H, T, perm] = dendrogram(Z, 20, 'Orientation', 'left').", P("tree"), Opt("p"), Opt("option"), Opt("value"));
+        Add("manovacluster", "The dendrogram of the group means a multivariate analysis compared: manovacluster(stats, 'average').", P("stats"), Opt("method"));
+        Add("andrewsplot", "Each observation as a Fourier curve in its own variables: andrewsplot(X, 'Group', g).", P("X"), Opt("option"), Opt("value"));
+        Add("parallelcoords", "Each observation as a line across its variables: parallelcoords(X, 'Standardize', 'on').", P("X"), Opt("option"), Opt("value"));
+        Add("glyphplot", "Each observation as a star whose rays are its variables: glyphplot(X, 'ObsLabels', names).", P("X"), Opt("option"), Opt("value"));
+        Add("biplot", "The variables as arrows and the observations as points, together: biplot(coefs, 'Scores', score).", P("coefs"), Opt("option"), Opt("value"));
+        Add("hist3", "How many observations fall in each cell of a grid: [N, C] = hist3(X, [10 10]).", P("X"), Opt("nbins"), Opt("option"), Opt("value"));
+        Add("addedvarplot", "What one predictor adds to a model that already holds the others: addedvarplot(X, y, 2, inmodel).", P("X"), P("y"), P("num"), Opt("inmodel"));
+        Add("rcoplot", "The residuals in case order, each with its interval: rcoplot(r, rint).", P("r"), P("rint"));
+        Add("interactionplot", "The response's mean at each level of one factor, per level of another: interactionplot(y, {a, b}).", P("Y"), P("group"), Opt("option"), Opt("value"));
+        Add("maineffectsplot", "The response's mean at each level of each factor: maineffectsplot(y, {a, b}).", P("Y"), P("group"), Opt("option"), Opt("value"));
+        Add("multivarichart", "The same means read as a multi-vari chart: multivarichart(y, {a, b}).", P("y"), P("group"), Opt("option"), Opt("value"));
+        Add("lassoPlot", "How the penalized coefficients shrink as the penalty grows: lassoPlot(B, FitInfo, 'PlotType', 'Lambda').", P("B"), Opt("fitinfo"), Opt("option"), Opt("value"));
+        Add("perfcurve", "How a classifier's two error rates trade off: [X, Y, T, AUC] = perfcurve(labels, scores, 1).", P("labels"), P("scores"), P("posclass"), Opt("option"), Opt("value"));
+
         // --- Distribution objects (M53 wave I) -------------------------------------------------------
         Add("makedist", "A probability distribution object built from its parameters: pd = makedist('Normal', 'mu', 10, 'sigma', 2).", Opt("name"), Opt("property"), Opt("value"));
         Add("fitdist", "A probability distribution fitted to data: pd = fitdist(x, 'Weibull', 'Censoring', c).", P("x"), P("name"), Opt("option"), Opt("value"));

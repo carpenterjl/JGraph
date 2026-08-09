@@ -9,6 +9,13 @@ internal enum JgsHandleKind
     Axes,
     Line,
     Legend,
+
+    /// <summary>
+    /// Any other drawn series — a patch, a scatter, a set of bars. It answers the properties every
+    /// plotted thing has rather than the ones a line has, which is what the statistics plot verbs
+    /// (M53 wave J) need for the shapes they draw that are not lines.
+    /// </summary>
+    Plot,
 }
 
 /// <summary>

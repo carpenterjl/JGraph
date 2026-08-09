@@ -146,10 +146,23 @@ public class MatlabClusterTests : IDisposable
         assert(all(d{1} <= 1.5));
         """);
 
+    /// <summary>
+    /// M53 wave J made the search structures objects, and with them the two words that name a
+    /// structure became words this search accepts: both name a search that is exact, so both must give
+    /// the same neighbours. A third word is still not one of them.
+    /// </summary>
     [Fact]
-    public async Task Knnsearch_RefusesTheSearchStructureOptionsItCannotHonour() =>
+    public Task Knnsearch_AnswersTheSameWhicheverSearchStructureIsNamed() => RunAsserting("""
+        [tree, dtree] = knnsearch([1 1; 2 2; 9 9], [1.4 1.4], 'NSMethod', 'kdtree');
+        [flat, dflat] = knnsearch([1 1; 2 2; 9 9], [1.4 1.4], 'NSMethod', 'exhaustive');
+        assert(tree == flat);
+        assert(abs(dtree - dflat) < 1e-12);
+        """);
+
+    [Fact]
+    public async Task Knnsearch_RefusesASearchStructureThatIsNotOne() =>
         Assert.Contains("exhaustive", await RunExpectingFailure(
-            "knnsearch([1 1; 2 2], [1 1], 'NSMethod', 'kdtree');"));
+            "knnsearch([1 1; 2 2], [1 1], 'NSMethod', 'balltree');"));
 
     // --- linkage, cluster, clusterdata, cophenet, inconsistent, optimalleaforder --------------------------
 

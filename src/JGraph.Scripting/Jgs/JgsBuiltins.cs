@@ -1923,7 +1923,7 @@ internal static partial class JgsBuiltins
 
         // The Statistics Toolbox (M53), after the base names it replaces or leans on and before the
         // reductions, so a statistic that reduces columns is wrapped for a dimension exactly once.
-        RegisterStatisticsBuiltins(env, random, dialect);
+        RegisterStatisticsBuiltins(env, host, random, dialect);
 
         // After every imaging define, since these wrap builtins declared above.
         RegisterImagingMultiOutputForms(env, host, random, dialect);

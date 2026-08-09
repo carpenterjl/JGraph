@@ -1,11 +1,15 @@
 # MATLAB Statistics and Machine Learning Toolbox coverage
 
-**324 of 589 documented** Statistics and Machine Learning Toolbox names are implemented, as of
-M53 wave I. Wave A built the scaffold — the list, this document and its verifier; wave B added the
+**385 of 589 documented** Statistics and Machine Learning Toolbox names are implemented, as of
+M53 wave J. Wave A built the scaffold — the list, this document and its verifier; wave B added the
 descriptive and robust statistics; wave C the continuous distribution families; wave D the discrete
 ones; wave E the distributions of a vector, and the samplers; wave F the hypothesis tests and the
 analysis of variance; wave G the regressions; wave H the distances, the clusterings and the
-multivariate analyses; wave I the distribution objects.
+multivariate analyses; wave I the distribution objects; wave J the designs of experiments, the
+copulas, the remaining simulation names, the file readers and the plot verbs.
+
+Nothing in the working set is pending: every name that is not implemented is excluded, by name, with
+a reason.
 
 ## Where this list comes from
 
@@ -54,7 +58,7 @@ The four names in this list that JGraph's catalog already registers — `mean`, 
 statistic *of a probability distribution object*, which JGraph's base builtins do not take. `range`
 is the sharper case and is recorded as a divergence below.
 
-## Implemented — 324
+## Implemented — 385
 
 ### Descriptive and robust statistics, and the correlations — 31
 
@@ -210,22 +214,61 @@ everything they did for data; the object check stands in front of them rather th
 `RayleighDistribution`, `RicianDistribution`, `StableDistribution`, `std`, `tLocationScaleDistribution`, `TriangularDistribution`
 `truncate`, `UniformDistribution`, `var`, `WeibullDistribution`
 
-## Not implemented — 61
+### Designs of experiments, process capability and options — 10
 
-The rest of the milestone's working set, in the order the waves take it: the copulas, the plotting
-verbs, the enumerable designs of experiments, the search structures, and the file readers.
+The designs whose run list is enumerable rather than searched: the full factorial and its two-level
+form, the fractions and the generator search behind them, and the two response-surface designs. The
+iterative exchange algorithms that search for a design are excluded, because their answer depends on
+where the search started. Beside them, the two questions a measured process answers about itself, and
+the options structure the iterative names take.
 
-`addedvarplot`, `andrewsplot`, `bbdesign`, `biplot`, `boxplot`, `capability`
-`capaplot`, `caseread`, `casewrite`, `ccdesign`, `cdfplot`, `copulacdf`
-`copulafit`, `copulaparam`, `copulapdf`, `copularnd`, `copulastat`, `createns`
-`dendrogram`, `ExhaustiveSearcher`, `ff2n`, `fracfact`, `fracfactgen`, `fullfact`
-`gagerr`, `glyphplot`, `gplotmatrix`, `gscatter`, `hist3`, `histfit`
-`interactionplot`, `johnsrnd`, `KDTreeSearcher`, `lassoPlot`, `lsline`, `maineffectsplot`
-`manovacluster`, `mhsample`, `mlecov`, `multivarichart`, `normplot`, `normspec`
-`parallelcoords`, `paretotails`, `pearsrnd`, `perfcurve`, `probplot`, `qqplot`
-`rcoplot`, `refcurve`, `refline`, `scatterhist`, `slicesample`, `statget`
-`statset`, `tblread`, `tblwrite`, `tdfread`, `tsne`, `wblplot`
-`xptread`
+`bbdesign`, `capability`, `ccdesign`, `ff2n`, `fracfact`, `fracfactgen`
+`fullfact`, `gagerr`, `statget`, `statset`
+
+### Copulas — 6
+
+The dependence between variables, separated from what each of them is on its own. Two elliptical
+families in any number of dimensions and three Archimedean ones which are, as MathWorks documents
+them, bivariate. Rank correlation goes both ways for all five.
+
+`copulacdf`, `copulafit`, `copulaparam`, `copulapdf`, `copularnd`, `copulastat`
+
+### Simulation, search structures and the piecewise distribution — 10
+
+Drawing from a distribution described by its own quantiles or moments rather than by name; the two
+Markov chains, which need a density only up to a constant; the covariance of an estimate, read off
+the curvature of the likelihood; a distribution that is empirical in the middle and generalized
+Pareto in each tail; the two neighbourhood searchers; and the stochastic embedding.
+
+`createns`, `ExhaustiveSearcher`, `johnsrnd`, `KDTreeSearcher`, `mhsample`, `mlecov`
+`paretotails`, `pearsrnd`, `slicesample`, `tsne`
+
+### File readers and writers — 6
+
+The toolbox's own plain-text formats, which the base readers do not cover: one name per line, a
+rectangle of numbers wrapped in variable and case names, a tab-delimited file read into one field per
+column — and the one binary among them, a SAS transport file, whose numbers are in the floating-point
+format of a machine nobody has run since the 1970s.
+
+`caseread`, `casewrite`, `tblread`, `tblwrite`, `tdfread`, `xptread`
+
+### Plot verbs — 29
+
+Every one of these draws out of the primitives the figure model already has — lines, patches,
+scatters, bars and text — and none of them adds a plot object. What they carry is the arithmetic in
+front of the drawing: which quartiles a box is built from, where a dendrogram's links go, what a
+probability plot puts on its axis, how a performance curve trades one error rate against the other.
+
+`addedvarplot`, `andrewsplot`, `biplot`, `boxplot`, `capaplot`, `cdfplot`
+`dendrogram`, `glyphplot`, `gplotmatrix`, `gscatter`, `hist3`, `histfit`
+`interactionplot`, `lassoPlot`, `lsline`, `maineffectsplot`, `manovacluster`, `multivarichart`
+`normplot`, `normspec`, `parallelcoords`, `perfcurve`, `probplot`, `qqplot`
+`rcoplot`, `refcurve`, `refline`, `scatterhist`, `wblplot`
+
+## Not implemented — 0
+
+Empty, as of wave J. Every documented name is either implemented above or excluded below with its
+reason.
 
 ## Excluded — 204
 
@@ -324,6 +367,73 @@ By reason:
   chart container), and `lime`, `shapley`, `testcholdout` and `testckfold` (model interpretation
   and model comparison, both of which need models).
 ## Recorded divergences
+
+### Wave J: designs, files and the plot verbs
+
+- **A probability plot puts the quantile on its vertical axis, not a probability scale.** MATLAB
+  draws these on an axis whose tick positions are probabilities and whose spacing is the family's own
+  quantile function. JGraph has no such scale, so `normplot`, `wblplot` and `probplot` plot the
+  quantile itself and label the axis with what it is. The points and the reference line land in the
+  same places; only the tick labels differ.
+- **`hist3` draws a surface where MATLAB draws three-dimensional bars**, because the bars need a
+  drawing primitive this build does not have. The counts are the same, and asking for them rather
+  than for the picture gives exactly MathWorks' two outputs. `'Ctrs'` and `'Edges'`, which place the
+  bins by hand, are refused by name; `'Nbins'` says how many to spread over the data.
+- **`boxplot` draws the traditional box only.** The quartiles, the median, the whiskers at a
+  multiple of the interquartile range, the outliers beyond them, and the notch — all of those are
+  here, with `'Notch'`, `'Whisker'`, `'Labels'`, `'Positions'`, `'Widths'`, `'Colors'`, `'Symbol'`
+  and `'Orientation'`. The options that change how the box is drawn rather than what it says —
+  `'PlotStyle'`, `'BoxStyle'`, `'MedianStyle'`, `'Jitter'` and the rest — are refused by name.
+- **Blocking a design is refused rather than guessed.** `bbdesign` and `ccdesign` accept
+  `'center'`, and `ccdesign` accepts `'fraction'` and `'type'`, but `'blocksize'` is refused:
+  splitting the runs into blocks confounds the block difference with an effect, and which effect is
+  the experimenter's decision. Both names answer a second output that is all ones.
+- **Box-Behnken designs beyond seven factors use every pair of factors.** The published designs run
+  to seven; above that the construction here puts a two-level factorial in each pair, which is a
+  valid design of the same shape but has more runs than MathWorks' table.
+- **The default centre-point counts are the published uniform-precision ones.** They are a table in
+  every source that gives them rather than a formula, and MathWorks does not document which table it
+  uses; `'center'` says how many to use when the default is not wanted.
+- **`fracfact` lists the constant among its confounding groups**, because in a fraction the constant
+  is confounded with the defining word and that is worth reading. `fracfactgen` picks its own basic
+  factors: the search over assignments is exhaustive, so naming them cannot help it, and naming them
+  is refused rather than ignored.
+- **The Archimedean copulas are bivariate**, as MathWorks documents them, and the elliptical pair
+  work in any number of dimensions. Spearman's rank correlation of an Archimedean copula is
+  integrated rather than interpolated from a table, which makes it exact where MATLAB's is
+  interpolated; the two agree to about three digits.
+- **`tsne` is the exact embedding, its step is bounded, and its scale is its own.** `'Algorithm'`,
+  `'barneshut'` is refused by name — approximating the repulsion with a tree is a second
+  approximation on top of the one the method already is. The learning rate defaults to a twentieth of
+  the number of observations rather than to five hundred, and no point may move further in one step
+  than the picture currently reaches: without both, a small set is thrown apart on its first step and
+  never comes back. What the picture says about which points are near which is the answer; the
+  coordinates themselves are not comparable with MATLAB's, and never were between two runs either.
+- **The options structure is carried but barely read.** `statset` publishes every documented field
+  and `statget` reads any of them back, so a script that sets one and passes it along keeps working.
+  What actually reads one is `tsne`'s iteration count; every other name here has fixed tolerances,
+  tight enough that the answer does not depend on them.
+- **The two search structures answer the same question.** `createns`, `ExhaustiveSearcher` and
+  `KDTreeSearcher` all build an object that `knnsearch` and `rangesearch` accept, and the object
+  remembers which was asked for so that the class question answers it — but the search underneath is
+  exhaustive either way, and both give exactly the same neighbours. `'BucketSize'` is remembered and
+  changes nothing.
+- **`paretotails` fits its middle empirically only.** MathWorks lets the middle be a kernel estimate
+  or a function of the caller's; the tails are what the name is about, and the other two spellings
+  are refused rather than quietly treated as the first.
+- **Four verbs answer less than their whole documented output.** `lassoPlot` has no cross-validated
+  form, because the penalized fit here does not compute one; `perfcurve` draws no confidence bands,
+  because `'NBoot'` resamples; `mhsample` runs one chain at a time, so `'nchain'` is refused; and
+  `glyphplot` draws stars, because a face glyph needs a drawing primitive this build lacks. `biplot`
+  draws two components, and refuses three by name.
+- **`xptread` reads version 5 transport files.** Every kind of missing value the format distinguishes
+  reads as not-a-number, which is the only kind JGraph has.
+- **A call written as a statement is told that nobody wanted its answer.** `ecdf`, `ksdensity`,
+  `hist3` and `perfcurve` compute when something catches their outputs and draw when nothing does,
+  which is what their documentation says and what could not be expressed before this wave: the
+  interpreter now hands a builtin that asks for it an output count of zero. Nothing else in the
+  language can tell the difference, and nothing else asks.
+
 
 - **`range` is a name collision, not a missing function.** MATLAB's statistics `range(x)` answers
   `max(x) - min(x)`. JGS has had `range(start, stop, step)` since M12 — the Python-shaped sequence

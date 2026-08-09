@@ -537,6 +537,24 @@ internal sealed partial class Interpreter
             return;
         }
 
+        // A few builtins draw when nothing was asked for and answer numbers when something was, and
+        // that is a distinction only the statement itself can make: by the time the call has been
+        // evaluated, "nobody wanted this" looks exactly like "somebody wanted one of these".
+        if (expression is CallExpr discarded
+            && CalleeValue(discarded, env).Type == JgsType.Function
+            && CalleeValue(discarded, env).AsCallable is BuiltinFunction { KnowsWhenDiscarded: true } knowing
+            && knowing.MultiOutput is { } none)
+        {
+            var given = new JgsValue[discarded.Arguments.Count];
+            for (int i = 0; i < given.Length; i++)
+            {
+                given[i] = Evaluate(discarded.Arguments[i], env);
+            }
+
+            none(given, 0, discarded.Line, discarded.Column);
+            return;
+        }
+
         JgsValue value = Evaluate(expression, env);
         switch (expression)
         {
