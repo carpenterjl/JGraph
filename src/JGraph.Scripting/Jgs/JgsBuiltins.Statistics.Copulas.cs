@@ -72,6 +72,55 @@ internal static partial class JgsBuiltins
         Define("KDTreeSearcher", (args, line, col) => Searcher("KDTreeSearcher", args, line, col));
 
         DefineBoth("tsne", (args, wanted, line, col) => Embed(random, args, wanted, line, col));
+
+        // A piecewise distribution is a distribution, so the three names that ask one a question take
+        // it. The wave-I guard in front of these names knows the fitted families and falls through on
+        // anything else; this one stands in front of that and knows this one extra shape. Both work
+        // the same way — recognize the first argument or hand the call on untouched.
+        GuardPiecewise(env, "pdf", static (fitted, x) => fitted.Pdf(x));
+        GuardPiecewise(env, "cdf", static (fitted, x) => fitted.Cdf(x));
+        GuardPiecewise(env, "icdf", static (fitted, p) => fitted.Inv(p));
+    }
+
+    /// <summary>
+    /// Puts a <c>paretotails</c> check in front of a name that answers about a distribution. The
+    /// previous definition is what a call falls through to, so nothing this name already did changes.
+    /// </summary>
+    private static void GuardPiecewise(JgsEnvironment env, string name, Func<ParetoTails, double, double> answer)
+    {
+        if (!env.TryGet(name, out JgsValue existing) || existing.Type != JgsType.Function)
+        {
+            return;
+        }
+
+        IJgsCallable inner = existing.AsCallable;
+        var builtin = inner as BuiltinFunction;
+
+        JgsValue[] Both(IReadOnlyList<JgsValue> args, int wanted, int line, int col)
+        {
+            if (args.Count == 2 && TryReadParetoTails(args[0], out ParetoTails? fitted) && fitted is not null)
+            {
+                (double[][] columns, int[] dims) = AlignArguments(name, [args[1]], line, col);
+                var curve = new double[columns[0].Length];
+                for (int i = 0; i < curve.Length; i++)
+                {
+                    curve[i] = answer(fitted, columns[0][i]);
+                }
+
+                return [ShapedResult(curve, dims)];
+            }
+
+            return wanted > 1 && builtin?.MultiOutput is { } multi
+                ? multi(args, wanted, line, col)
+                : [inner.Call(args, line, col)];
+        }
+
+        env.Declare(name, JgsValue.Function(new BuiltinFunction(
+            name, (args, line, col) => Both(args, 1, line, col)[0])
+        {
+            MultiOutput = Both,
+            AutoCallsBare = builtin?.AutoCallsBare ?? false,
+        }));
     }
 
     // --- Copulas -------------------------------------------------------------------------------------

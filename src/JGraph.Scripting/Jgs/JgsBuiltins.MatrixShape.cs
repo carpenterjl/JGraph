@@ -339,9 +339,16 @@ internal static partial class JgsBuiltins
         void Redefine(string name, Func<IReadOnlyList<JgsValue>, int, int, JgsValue> body) =>
             env.Declare(name, JgsValue.Function(new BuiltinFunction(name, body)));
 
+        // rand and randn are questions as well as constructors: MATLAB's `x = rand` is one number,
+        // and `@(t) t + randn` is how a proposal distribution is written. Without the bare call the
+        // name evaluates to the function itself and the addition fails, which is how stess_25 found
+        // this. zeros and ones stay as they are — nobody writes a bare `zeros`.
+        void RedefineAutoCalling(string name, Func<IReadOnlyList<JgsValue>, int, int, JgsValue> body) =>
+            env.Declare(name, JgsValue.Function(new BuiltinFunction(name, body) { AutoCallsBare = true }));
+
         Redefine("zeros", (args, line, col) => NdConstructorValue("zeros", args, line, col, static () => 0.0));
         Redefine("ones", (args, line, col) => NdConstructorValue("ones", args, line, col, static () => 1.0));
-        Redefine("rand", (args, line, col) =>
+        RedefineAutoCalling("rand", (args, line, col) =>
             NdConstructorValue("rand", args, line, col, random.NextDouble));
 
         double NextGaussian()
@@ -352,7 +359,7 @@ internal static partial class JgsBuiltins
             return System.Math.Sqrt(-2.0 * System.Math.Log(u1)) * System.Math.Sin(2.0 * System.Math.PI * u2);
         }
 
-        Redefine("randn", (args, line, col) =>
+        RedefineAutoCalling("randn", (args, line, col) =>
             NdConstructorValue("randn", args, line, col, NextGaussian));
     }
 

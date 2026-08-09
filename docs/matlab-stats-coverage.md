@@ -1,12 +1,14 @@
 # MATLAB Statistics and Machine Learning Toolbox coverage
 
 **385 of 589 documented** Statistics and Machine Learning Toolbox names are implemented, as of
-M53 wave J. Wave A built the scaffold — the list, this document and its verifier; wave B added the
+M53 wave K, which closed the milestone. Wave A built the scaffold — the list, this document and its verifier; wave B added the
 descriptive and robust statistics; wave C the continuous distribution families; wave D the discrete
 ones; wave E the distributions of a vector, and the samplers; wave F the hypothesis tests and the
 analysis of variance; wave G the regressions; wave H the distances, the clusterings and the
 multivariate analyses; wave I the distribution objects; wave J the designs of experiments, the
-copulas, the remaining simulation names, the file readers and the plot verbs.
+copulas, the remaining simulation names, the file readers and the plot verbs; wave K closed the
+milestone with `stess_25.m`, [ADR 0053](adr/0053-the-statistics-toolbox-surface.md) and the three
+defects that script found.
 
 Nothing in the working set is pending: every name that is not implemented is excluded, by name, with
 a reason.

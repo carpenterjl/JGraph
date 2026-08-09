@@ -220,8 +220,9 @@ internal static partial class JgsBuiltins
     }
 
     /// <summary>
-    /// <c>[F, XI] = ksdensity(x)</c>: a kernel-smoothed estimate of the distribution the sample came
-    /// from, evaluated either at points the caller names or on a grid covering the sample.
+    /// <c>[F, XI, BW] = ksdensity(x)</c>: a kernel-smoothed estimate of the distribution the sample
+    /// came from, evaluated either at points the caller names or on a grid covering the sample, and
+    /// the bandwidth it was smoothed with.
     /// </summary>
     private static JgsValue[] SmoothedDensity(IReadOnlyList<JgsValue> args, int wanted, int line, int col)
     {
@@ -288,6 +289,13 @@ internal static partial class JgsBuiltins
         double[] curve = EmpiricalDistribution.KernelDensity(
             sample, weights, at, bandwidth, kernel, kind, lower, upper, rule);
 
+        // The third output is the width the estimate actually used, which is the interesting one
+        // exactly when the caller did not name it: it is how a script reports what the automatic
+        // rule chose, and what it passes back to make a second estimate comparable to the first.
+        double used = bandwidth > 0
+            ? bandwidth
+            : EmpiricalDistribution.DefaultBandwidth(DescriptiveStatistics.WithoutNaN(sample));
+
         if (wanted == 0)
         {
             JGraph.Api.JG.Plot(at, curve).DisplayName = "Kernel estimate";
@@ -296,7 +304,7 @@ internal static partial class JgsBuiltins
             return [];
         }
 
-        return Outputs(wanted, Column(curve), Column(at));
+        return Outputs(wanted, Column(curve), Column(at), JgsValue.Number(used));
     }
 
     /// <summary>

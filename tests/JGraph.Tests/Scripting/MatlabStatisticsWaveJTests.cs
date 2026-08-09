@@ -707,4 +707,37 @@ public class MatlabStatisticsWaveJTests : IDisposable
 
         Assert.Single(JG.Gca().Plots);
     }
+
+    // --- What stess_25 found in wave K ---------------------------------------------------------
+
+    [Fact]
+    public Task ASmoothedDensityReportsTheWidthItSmoothedWith() => RunAsserting("""
+        rng(3);
+        x = randn(1, 200);
+        [f, xi, chosen] = ksdensity(x);
+        assert(chosen > 0);
+        [~, ~, named] = ksdensity(x, 'Bandwidth', 0.5);
+        assert(abs(named - 0.5) < 1e-12);
+        assert(numel(f) == numel(xi));
+        """);
+
+    [Fact]
+    public Task APiecewiseDistributionIsADistribution() => RunAsserting("""
+        rng(4);
+        x = randn(1, 300);
+        pd = paretotails(x, 0.1, 0.9);
+        assert(abs(cdf(pd, icdf(pd, 0.5)) - 0.5) < 1e-6);
+        assert(pdf(pd, 0) > 0);
+        assert(numel(cdf(pd, [-1 0 1])) == 3);
+        assert(strcmp(class(pd), 'paretotails'));
+        """);
+
+    [Fact]
+    public Task AskingForOneDrawNeedsNoBracketsAfterTheName() => RunAsserting("""
+        rng(5);
+        a = rand;
+        b = 1 + randn;
+        assert(a >= 0 && a <= 1);
+        assert(isnumeric(b) && numel(b) == 1);
+        """);
 }
