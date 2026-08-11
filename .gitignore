@@ -43,3 +43,7 @@ packages/
 ## OS
 .DS_Store
 Thumbs.db
+
+## Python bytecode from the checklist tools
+__pycache__/
+*.pyc

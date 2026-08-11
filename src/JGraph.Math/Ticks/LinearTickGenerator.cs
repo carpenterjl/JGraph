@@ -97,18 +97,34 @@ public sealed class LinearTickGenerator : ITickGenerator
         return snapped == 0 ? 0 : snapped;
     }
 
-    private static int DecimalsFor(double step)
+    /// <summary>
+    /// How many decimals a step of this size needs — enough to write the step itself exactly. Shared
+    /// with manual tick placement.
+    /// <para>
+    /// The obvious ceil(-log10(step)) is one short for the 2.5 steps this generator chooses: it labels
+    /// a tick sitting at 2.5 as "2", which is not where the tick is.
+    /// </para>
+    /// </summary>
+    internal static int DecimalsFor(double step)
     {
         if (step <= 0)
         {
             return 0;
         }
 
-        int decimals = (int)System.Math.Ceiling(-System.Math.Log10(step));
-        return System.Math.Clamp(decimals, 0, 12);
+        for (int decimals = 0; decimals < 12; decimals++)
+        {
+            if (System.Math.Abs(System.Math.Round(step, decimals) - step) <= System.Math.Abs(step) * 1e-9)
+            {
+                return decimals;
+            }
+        }
+
+        return 12;
     }
 
-    private static string FormatValue(double value, int decimals, string? labelFormat)
+    /// <summary>The label a value earns at this many decimals. Shared with manual tick placement.</summary>
+    internal static string FormatValue(double value, int decimals, string? labelFormat)
     {
         if (!string.IsNullOrEmpty(labelFormat))
         {

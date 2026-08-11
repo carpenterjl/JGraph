@@ -238,9 +238,11 @@ public static class JgsBuiltinCatalog
         Add("rmdir", "Removes an empty folder — or a whole tree when the second argument is 's'.", P("folder"), Opt("s"));
         Add("copyfile", "Copies a file, overwriting the destination.", P("source"), P("destination"), Opt("mode"));
         Add("movefile", "Moves a file, overwriting the destination.", P("source"), P("destination"), Opt("mode"));
-        Add("delete", "Deletes the named files.", P("path"));
+        Add("delete", "Deletes the named files, or removes the figure objects a handle names: delete(h).", P("path"));
         Add("fileattrib", "A struct of a file's attributes, or false when it does not exist.", P("path"));
         Add("filesep", "The character that separates folders on this system.");
+        Add("tempdir", "The system's folder for temporary files.");
+        Add("tempname", "A full path in the temporary folder that nothing is using yet.");
         Add("filemarker", "The character that separates a file from a function inside it.");
         Add("isfile", "Whether the path names a file that exists.", P("path"));
         Add("isfolder", "Whether the path names a folder that exists.", P("path"));
@@ -1427,6 +1429,50 @@ public static class JgsBuiltinCatalog
         Add("clf", "Clears the current figure (or figure n), keeping its window open.", Opt("n"));
         Add("gcf", "The current figure's number.");
         Add("gca", "Selects the current axes, creating a figure and axes if there are none.");
+
+        // --- Handle graphics (M54) -----------------------------------------------------------------
+        Add("get", "Reads a figure object's properties through its handle: get(h, 'Color'), get(h, {'A','B'}), or get(h) for all of them as a struct.", P("h"), Opt("name"));
+        Add("set", "Writes properties through a handle: set(h, 'LineWidth', 2, 'Color', 'r'), set(h, {'A','B'}, {1, 2}), or set(h) for the writable names.", P("h"), Opt("name"), Opt("value"));
+        Add("findobj", "Finds figure objects whose properties match: findobj('Type', 'line'), findobj(ax, 'Tag', 't'), with 'flat' or '-depth' n to limit how deep it looks.", Opt("h"), Opt("name"), Opt("value"));
+        Add("findall", "Like findobj, but also finds objects that asked to stay hidden from a search.", Opt("h"), Opt("name"), Opt("value"));
+        Add("ishandle", "Whether each number names a live figure object.", P("h"));
+        Add("ishghandle", "Whether each number names a live figure object (the same question as ishandle).", P("h"));
+        Add("isgraphics", "Whether each number names a live figure object, optionally of a named kind: isgraphics(h, 'axes').", P("h"), Opt("type"));
+        Add("ancestor", "The nearest enclosing object of a named kind: ancestor(p, 'axes'), or 'toplevel' for the outermost one.", P("h"), P("type"), Opt("toplevel"));
+        Add("copyobj", "Copies a figure object into another parent and returns a handle on the copy: copyobj(p, otherAxes).", P("h"), P("parent"));
+        Add("gobjects", "A block of empty handles to fill in: gobjects(n) or gobjects(rows, cols).", Opt("rows"), Opt("cols"));
+        Add("gco", "The object the user last clicked, or empty when none has been.");
+        Add("gcbo", "The object whose callback is running, or empty outside a callback.");
+        Add("gcbf", "The figure of the object whose callback is running, or empty outside a callback.");
+        Add("cla", "Empties the current axes (or a named one); cla reset also puts its settings back.", Opt("ax"), Opt("reset"));
+        Add("ishold", "Whether the current axes (or a named one) is keeping what is already drawn.", Opt("ax"));
+        Add("newplot", "Readies an axes for the next drawing verb, honouring hold, and returns a handle on it.", Opt("ax"));
+        Add("shg", "Shows the current figure.");
+
+        // --- Rulers and ticks (M54) ------------------------------------------------------------------
+        Add("xticks", "Where the x ticks go: xticks(0:5), xticks('auto'), xticks('manual'), or xticks to read them back.", Opt("ax"), Opt("values"));
+        Add("yticks", "Where the y ticks go: yticks(0:5), yticks('auto'), yticks('manual'), or yticks to read them back.", Opt("ax"), Opt("values"));
+        Add("zticks", "Where the z ticks go: zticks(0:5), zticks('auto'), zticks('manual'), or zticks to read them back.", Opt("ax"), Opt("values"));
+        Add("xticklabels", "What the x ticks read: xticklabels({'low','high'}), 'auto', 'manual', or xticklabels to read them back.", Opt("ax"), Opt("labels"));
+        Add("yticklabels", "What the y ticks read: yticklabels({'low','high'}), 'auto', 'manual', or yticklabels to read them back.", Opt("ax"), Opt("labels"));
+        Add("zticklabels", "What the z ticks read: zticklabels({'low','high'}), 'auto', 'manual', or zticklabels to read them back.", Opt("ax"), Opt("labels"));
+        Add("xtickangle", "Turns the x tick labels: xtickangle(45), or xtickangle to read the angle back.", Opt("ax"), Opt("angle"));
+        Add("ytickangle", "Turns the y tick labels: ytickangle(45), or ytickangle to read the angle back.", Opt("ax"), Opt("angle"));
+        Add("ztickangle", "Turns the z tick labels: ztickangle(45), or ztickangle to read the angle back.", Opt("ax"), Opt("angle"));
+        Add("xtickformat", "How the x tick numbers are written: xtickformat('%.2f'), or a word such as usd, degrees, percentage, auto.", Opt("ax"), Opt("format"));
+        Add("ytickformat", "How the y tick numbers are written: ytickformat('%.2f'), or a word such as usd, degrees, percentage, auto.", Opt("ax"), Opt("format"));
+        Add("ztickformat", "How the z tick numbers are written: ztickformat('%.2f'), or a word such as usd, degrees, percentage, auto.", Opt("ax"), Opt("format"));
+        Add("num2ruler", "A number as its ruler reads it: num2ruler(x, ax.XAxis).", P("x"), P("ruler"));
+        Add("ruler2num", "A ruler value as a plain number: ruler2num(v, ax.XAxis).", P("v"), P("ruler"));
+        Add("rticks", "Where the r ticks of a polar axes go. Polar axes are not drawn yet.", Opt("values"));
+        Add("thetaticks", "Where the theta ticks of a polar axes go. Polar axes are not drawn yet.", Opt("values"));
+        Add("rticklabels", "What the r ticks of a polar axes read. Polar axes are not drawn yet.", Opt("labels"));
+        Add("thetaticklabels", "What the theta ticks of a polar axes read. Polar axes are not drawn yet.", Opt("labels"));
+        Add("rtickformat", "How the r tick numbers of a polar axes are written. Polar axes are not drawn yet.", Opt("format"));
+        Add("thetatickformat", "How the theta tick numbers of a polar axes are written. Polar axes are not drawn yet.", Opt("format"));
+        Add("rtickangle", "How far the r tick labels of a polar axes are turned. Polar axes are not drawn yet.", Opt("angle"));
+        Add("rlim", "The radial range of a polar axes. Polar axes are not drawn yet.", Opt("limits"));
+        Add("thetalim", "The angular range of a polar axes. Polar axes are not drawn yet.", Opt("limits"));
         Add("plot", "Line plot: plot(y), plot(x, y, spec?), or plot(table, xColumn, yColumn, spec?).", P("x"), P("y"), Opt("spec"));
         Add("scatter", "Scatter plot: scatter(x, y) or scatter(table, xColumn, yColumn).", P("x"), P("y"));
         Add("bar", "Bar chart: bar(x, y) or bar(table, xColumn, yColumn).", P("x"), P("y"));
@@ -1436,11 +1482,19 @@ public static class JgsBuiltinCatalog
         Add("semilogx", "Line plot with a logarithmic x axis.", P("x"), P("y"), Opt("spec"));
         Add("semilogy", "Line plot with a logarithmic y axis.", P("x"), P("y"), Opt("spec"));
         Add("loglog", "Line plot with logarithmic x and y axes.", P("x"), P("y"), Opt("spec"));
-        Add("title", "Sets the current axes title.", P("text"));
-        Add("xlabel", "Sets the x-axis label.", P("text"));
-        Add("ylabel", "Sets the y-axis label.", P("text"));
-        Add("xlim", "Sets the x-axis range.", P("min"), P("max"));
-        Add("ylim", "Sets the y-axis range.", P("min"), P("max"));
+        Add("title", "Sets the current axes title, with optional text properties: title('t', 'Color', 'r', 'FontSize', 14).", P("text"), Opt("name"), Opt("value"));
+        Add("subtitle", "Sets a second line under the axes title, with the same text properties title takes.", P("text"), Opt("name"), Opt("value"));
+        Add("sgtitle", "Sets a title over the whole figure, above every subplot in it.", P("text"), Opt("name"), Opt("value"));
+        Add("xlabel", "Sets the x-axis label, with optional text properties.", P("text"), Opt("name"), Opt("value"));
+        Add("ylabel", "Sets the label of the active y ruler, with optional text properties.", P("text"), Opt("name"), Opt("value"));
+        Add("box", "Turns the rectangular frame around the axes on (default) or off.", Opt("on"));
+        Add("xline", "Draws a vertical reference line at x, or one per value: xline(0), xline([1 2], '--r', 'limit').", P("x"), Opt("linespec"), Opt("label"));
+        Add("yline", "Draws a horizontal reference line at y, or one per value: yline(mean(v), '-k', 'mean').", P("y"), Opt("linespec"), Opt("label"));
+        Add("clabel", "Writes each contour level's value into its own curve: [C, h] = contour(X, Y, Z); clabel(C, h).", P("C"), Opt("h"), Opt("levels"));
+        Add("texlabel", "The TeX an expression written in plain characters would have been: texlabel('lambda12^(3y)').", P("expression"), Opt("literal"));
+        Add("xlim", "The x-axis range: xlim([0 10]), xlim(0, 10), xlim('auto'), xlim('manual'), or xlim to read it back.", Opt("ax"), Opt("limits"), Opt("max"));
+        Add("ylim", "The range of the active y ruler: ylim([0 10]), ylim(0, 10), ylim('auto'), ylim('manual'), or ylim to read it back.", Opt("ax"), Opt("limits"), Opt("max"));
+        Add("yyaxis", "Makes one side's y ruler active, so the label, limits, ticks, and the plots drawn next belong to it: yyaxis left or yyaxis right.", P("side"));
         Add("grid", "Turns grid lines on (default) or off.", Opt("on"));
         Add("hold", "Keeps existing series when plotting more (default on).", Opt("on"));
         Add("legend", "Shows the legend, named by a list of series names or built from a vector of line handles, with an optional 'Location'.", P("names"), Opt("location"));
@@ -1452,12 +1506,12 @@ public static class JgsBuiltinCatalog
         Add("surf", "Colormap-filled 3D surface of matrix z: surf(z) or surf(x, y, z). Drag to rotate.", P("x"), P("y"), P("z"));
         Add("mesh", "Wireframe 3D surface of matrix z: mesh(z) or mesh(x, y, z).", P("x"), P("y"), P("z"));
         Add("meshc", "Wireframe 3D surface with contour lines projected on the floor.", P("x"), P("y"), P("z"));
-        Add("contour", "Iso-line contours of matrix z at auto (or explicit) levels.", P("x"), P("y"), P("z"), Opt("levels"));
+        Add("contour", "Iso-line contours at auto (or explicit) levels: contour(z), contour(z, levels), or contour(x, y, z, levels).", P("x"), P("y"), P("z"), Opt("levels"));
         Add("contourf", "Filled contour bands of matrix z at auto (or explicit) levels.", P("x"), P("y"), P("z"), Opt("levels"));
         Add("imagesc", "Displays matrix z as a colormapped heatmap over its cell indices.", P("z"));
         Add("pcolor", "Displays matrix z as a colormapped heatmap over the x/y extents.", P("x"), P("y"), P("z"));
-        Add("zlabel", "Sets the z-axis label of a 3D axes.", P("text"));
-        Add("zlim", "Sets the z-axis range of a 3D axes.", P("min"), P("max"));
+        Add("zlabel", "Sets the z-axis label of a 3D axes, with optional text properties.", P("text"), Opt("name"), Opt("value"));
+        Add("zlim", "The z-axis range of a 3D axes: zlim([0 10]), zlim(0, 10), zlim('auto'), zlim('manual'), or zlim to read it back.", Opt("ax"), Opt("limits"), Opt("max"));
         Add("view", "Reads or sets the 3D camera angles in degrees: view(az, el), view([az el]), view(2), or view(3).", Opt("azimuth"), Opt("elevation"));
         Add("campos", "Reads or sets the camera position in data coordinates; only its direction from the box centre matters.", Opt("position"));
         Add("camtarget", "The point the camera looks at — always the centre of the data box.", Opt("target"));
@@ -1471,8 +1525,9 @@ public static class JgsBuiltinCatalog
             "colormap",
             "Applies a colormap to the current axes' plots: a built-in name (parula, viridis, turbo, "
                 + "jet, hot, cool, gray, hsv, bone, copper, pink, spring, summer, autumn, winter, "
-                + "lines) or an m-by-3 table of RGB rows.",
-            P("map"));
+                + "lines, flag, prism) or an m-by-3 table of RGB rows. With no argument it reads the "
+                + "current map back as a table.",
+            Opt("map"));
         Add("colorbar", "Shows (default) or hides the current axes' colorbar.", Opt("on"));
         Add("caxis", "Reads or sets the color limits of the current axes: caxis([lo hi]), caxis(lo, hi), or caxis('auto').", Opt("limits"), Opt("high"));
         Add("clim", "The same as caxis: reads or sets the current axes' color limits.", Opt("limits"), Opt("high"));
@@ -1500,6 +1555,29 @@ public static class JgsBuiltinCatalog
         Add("sphere", "The unit sphere: [X, Y, Z] = sphere(n), or sphere(n) to draw one.", Opt("n"));
         Add("cylinder", "A surface of revolution: [X, Y, Z] = cylinder(r, n), or cylinder(r) to draw one.", Opt("r"), Opt("n"));
         Add("ellipsoid", "An ellipsoid grid: [X, Y, Z] = ellipsoid(xc, yc, zc, xr, yr, zr, n).", P("xc"), P("yc"), P("zc"), P("xr"), P("yr"), P("zr"), Opt("n"));
+
+        // M54 wave F: camera extras and the legacy appearance commands.
+        Add("viewmtx", "The 4-by-4 view transformation for a camera: viewmtx(az, el), or viewmtx(az, el, phi, target) for perspective.", P("az"), P("el"), Opt("phi"), Opt("target"));
+        Add("makehgtform", "A 4-by-4 transform from named steps, multiplied in order: makehgtform('translate', [1 2 0], 'zrotate', pi/4). Angles in radians.", Opt("name"), Opt("value"));
+        Add("camroll", "Turns the camera about the direction it is looking, by an angle in degrees.", P("degrees"));
+        Add("camdolly", "Slides the view: camdolly(dx, dy, dz) in fractions of the scene, or with 'movetarget' and 'camera'/'data'.", P("dx"), P("dy"), P("dz"), Opt("targetmode"), Opt("coordsys"));
+        Add("campan", "Swings the view by two angles in degrees: campan(dtheta, dphi), optionally in 'camera' or 'data' coordinates.", P("dtheta"), P("dphi"), Opt("coordsys"));
+        Add("camlookat", "Frames the objects named, or everything in the axes, by fitting the limits around them.", Opt("handles"));
+        Add("camproj", "Reads the projection back, always 'orthographic'; setting it accepts 'orthographic' or 'perspective'.", Opt("projection"));
+        Add("colorcube", "A colormap of regularly spaced RGB-cube colours plus pure and grey ramps: colorcube(64).", Opt("m"));
+        Add("rgbplot", "Plots a colormap's three columns against the row number, in red, green and blue.", P("map"));
+        Add("validatecolor", "A colour as an RGB row in [0, 1]: validatecolor('r'), validatecolor({'r' '#00FF00'}, 'multiple').", P("color"), Opt("one|multiple"));
+        Add("diffuse", "Diffuse reflectance of a surface with normals Nx, Ny, Nz lit from S — an [x y z] or [az el] direction.", P("Nx"), P("Ny"), P("Nz"), P("S"));
+        Add("specular", "Specular reflectance toward a viewer at V of a surface lit from S; the spread exponent defaults to 10.", P("Nx"), P("Ny"), P("Nz"), P("S"), P("V"), Opt("spread"));
+        Add("contrast", "A grey colormap that spreads a picture's own histogram evenly: colormap(contrast(X)).", P("X"), Opt("m"));
+        Add("hidden", "Whether a mesh hides what is behind it, by painting its faces the axes background: hidden on, hidden off.", Opt("on"));
+        Add("orient", "The paper orientation, always 'portrait'; 'landscape' and 'tall' are accepted and change nothing.", Opt("orientation"));
+        Add("whitebg", "Puts the figure on a background colour and moves the ink to suit it; with no colour it toggles light and dark.", Opt("fig"), Opt("color"));
+        Add("colordef", "The whole light or dark look by name: colordef white, colordef black, colordef none.", Opt("fig"), P("choice"));
+        Add("opengl", "Accepted and does nothing — there is no renderer to select.", Opt("mode"));
+        Add("cmpermute", "Shuffles a colormap and reindexes the picture to match: [Y, newmap] = cmpermute(X, map, order).", P("X"), P("map"), Opt("order"));
+        Add("cmunique", "The same picture over a palette with no colour twice: [Y, newmap] = cmunique(X, map), or cmunique(RGB).", P("X"), Opt("map"));
+        Add("dither", "Trades resolution for depth by error diffusion: dither(RGB, map) indexes, dither(I) gives black and white.", P("X"), Opt("map"));
 
         foreach (string name in JgsBuiltins.ColormapGeneratorNames)
         {

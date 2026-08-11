@@ -106,6 +106,7 @@ internal static class PlotMapper
                 Shading = p.Shading,
                 ShowContourBelow = p.ShowContourBelow,
                 ContourLevels = p.ContourLevels,
+                FaceColor = p.FaceColor,
                 EdgeColor = p.EdgeColor,
                 EdgeWidth = p.EdgeWidth,
                 AutoScaleColor = p.AutoScaleColor,
@@ -131,6 +132,21 @@ internal static class PlotMapper
                 AutoScaleColor = p.AutoScaleColor,
                 ColorMin = p.ColorMin,
                 ColorMax = p.ColorMax,
+                ShowText = p.ShowText,
+                LabelLevels = p.LabelLevels?.ToArray(),
+                LabelStyle = p.LabelStyle is { } contourLabel ? DtoConvert.ToDto(contourLabel) : null,
+            },
+            ConstantLinePlot p => new ConstantLinePlotDto
+            {
+                Direction = p.Direction,
+                Value = p.Value,
+                Color = p.Color,
+                LineWidth = p.LineWidth,
+                Dash = p.Dash,
+                Label = p.Label,
+                LabelStyle = p.LabelStyle is { } lineLabel ? DtoConvert.ToDto(lineLabel) : null,
+                LabelHorizontalAlignment = p.LabelHorizontalAlignment,
+                LabelVerticalAlignment = p.LabelVerticalAlignment,
             },
             Line3DPlot p => new Line3DPlotDto
             {
@@ -310,6 +326,19 @@ internal static class PlotMapper
                 AutoScaleColor = d.AutoScaleColor,
                 ColorMin = d.ColorMin,
                 ColorMax = d.ColorMax,
+                ShowText = d.ShowText,
+                LabelLevels = d.LabelLevels,
+                LabelStyle = d.LabelStyle is { } contourLabel ? DtoConvert.ToTextStyle(contourLabel) : null,
+            },
+            ConstantLinePlotDto d => new ConstantLinePlot(d.Direction, d.Value)
+            {
+                Color = d.Color,
+                LineWidth = d.LineWidth,
+                Dash = d.Dash,
+                Label = d.Label,
+                LabelStyle = d.LabelStyle is { } lineLabel ? DtoConvert.ToTextStyle(lineLabel) : null,
+                LabelHorizontalAlignment = d.LabelHorizontalAlignment,
+                LabelVerticalAlignment = d.LabelVerticalAlignment,
             },
             Line3DPlotDto d => new Line3DPlot(d.X, d.Y, d.Z)
             {
@@ -441,6 +470,7 @@ internal static class PlotMapper
         surface.Shading = d.Shading;
         surface.ShowContourBelow = d.ShowContourBelow;
         surface.ContourLevels = d.ContourLevels;
+        surface.FaceColor = d.FaceColor;
         surface.EdgeColor = d.EdgeColor;
         surface.EdgeWidth = d.EdgeWidth;
         surface.AutoScaleColor = d.AutoScaleColor;

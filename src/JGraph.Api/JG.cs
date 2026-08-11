@@ -1120,11 +1120,33 @@ public static class JG
     /// <summary>Sets the current axes title.</summary>
     public static void Title(string text) => Gca().Title = text;
 
+    /// <summary>Sets the second line under the current axes' title (MATLAB <c>subtitle</c>).</summary>
+    public static void Subtitle(string text) => Gca().Subtitle = text;
+
+    /// <summary>Sets the title over the whole current figure (MATLAB <c>sgtitle</c>).</summary>
+    public static void SgTitle(string text) => CurrentFigure.Title = text;
+
+    /// <summary>Shows or hides the rectangular frame around the current axes (MATLAB <c>box</c>).</summary>
+    public static void Box(bool on = true) => Gca().FrameVisible = on;
+
+    /// <summary>Adds a reference line down the current axes at one X (MATLAB <c>xline</c>).</summary>
+    public static ConstantLinePlot XLine(double x) => Gca().AddXLine(x);
+
+    /// <summary>Adds a reference line across the current axes at one Y (MATLAB <c>yline</c>).</summary>
+    public static ConstantLinePlot YLine(double y) => Gca().AddYLine(y);
+
     /// <summary>Sets the current X axis label.</summary>
     public static void XLabel(string text) => Gca().PrimaryXAxis.Label = text;
 
-    /// <summary>Sets the current Y axis label.</summary>
-    public static void YLabel(string text) => Gca().PrimaryYAxis.Label = text;
+    /// <summary>Sets the label of the Y ruler <c>yyaxis</c> has made active (the left one by default).</summary>
+    public static void YLabel(string text) => Gca().ActiveYAxis.Label = text;
+
+    /// <summary>
+    /// Makes one side's Y ruler the active one (MATLAB <c>yyaxis left</c> / <c>yyaxis right</c>),
+    /// creating the right-hand ruler on first use. Everything y-facing — the label, the limits, the
+    /// ticks, and the plots drawn next — follows the active side.
+    /// </summary>
+    public static AxisModel YyAxis(bool right) => Gca().UseYAxis(right ? 1 : 0);
 
     /// <summary>Turns the current axes grid on or off.</summary>
     public static void Grid(bool on = true)
@@ -1231,10 +1253,10 @@ public static class JG
         axis.Range = new DataRange(min, max);
     }
 
-    /// <summary>Sets the current Y axis limits and disables auto-scaling on it.</summary>
+    /// <summary>Sets the active Y ruler's limits and disables auto-scaling on it.</summary>
     public static void YLim(double min, double max)
     {
-        AxisModel axis = Gca().PrimaryYAxis;
+        AxisModel axis = Gca().ActiveYAxis;
         axis.AutoScale = false;
         axis.Range = new DataRange(min, max);
     }
@@ -1385,6 +1407,25 @@ public static class JG
     /// </summary>
     private static void ResetAxesForReplace(AxesModel axes)
     {
+        // An axes with two Y rulers belongs to yyaxis, and there each side is replaced on its own:
+        // plotting against the right ruler must not wipe the left series, or the second half of every
+        // two-sided script would erase the first. The shared decoration is left alone for the same
+        // reason — the other side is still using the x ruler, the title, and the legend.
+        if (axes.YAxes.Count > 1)
+        {
+            int active = axes.ActiveYAxisIndex;
+            for (int i = axes.Plots.Count - 1; i >= 0; i--)
+            {
+                if (axes.Plots[i].YAxisIndex == active)
+                {
+                    axes.Plots.RemoveAt(i);
+                }
+            }
+
+            ResetAxis(axes.ActiveYAxis);
+            return;
+        }
+
         axes.Plots.Clear();
         axes.Annotations.Clear();
         axes.Lights.Clear();

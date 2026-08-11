@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using System.Globalization;
 using JGraph.Core.Drawing;
 using JGraph.Core.Model;
 using JGraph.Core.Primitives;
@@ -31,6 +32,9 @@ public sealed class ContourPlot : PlotObject, IDrawable, I3DDrawable, IHasZData,
     private double _lineWidth = 1.5;
     private int _levelCount = 8;
     private bool _autoScaleColor = true;
+    private bool _showText;
+    private double[]? _labelLevels;
+    private TextStyle? _labelStyle;
     private double _colorMin;
     private double _colorMax = 1;
 
@@ -119,6 +123,41 @@ public sealed class ContourPlot : PlotObject, IDrawable, I3DDrawable, IHasZData,
         set => SetProperty(ref _levelCount, System.Math.Clamp(value, 1, 64), InvalidationKind.Render);
     }
 
+    /// <summary>
+    /// When true, each labelled level carries its own value written into a gap in the curve
+    /// (MATLAB <c>clabel</c> / the <c>ShowText</c> property).
+    /// </summary>
+    [Category("Appearance"), DisplayName("Show text")]
+    public bool ShowText
+    {
+        get => _showText;
+        set => SetProperty(ref _showText, value, InvalidationKind.Render);
+    }
+
+    /// <summary>
+    /// Which levels are labelled when <see cref="ShowText"/> is on; null labels every level. A level
+    /// is matched to the nearest drawn one, so <c>clabel(C, h, v)</c> works with the values a script
+    /// read out of the contour matrix.
+    /// </summary>
+    [Browsable(false)]
+    public double[]? LabelLevels
+    {
+        get => _labelLevels;
+        set
+        {
+            _labelLevels = value;
+            Invalidate(InvalidationKind.Render);
+        }
+    }
+
+    /// <summary>How level labels are drawn, or null to follow each level's own color at 9 point.</summary>
+    [Category("Appearance"), DisplayName("Label style")]
+    public TextStyle? LabelStyle
+    {
+        get => _labelStyle;
+        set => SetProperty(ref _labelStyle, value, InvalidationKind.Render);
+    }
+
     /// <summary>When true, the bands between levels are filled (contourf); otherwise iso-lines are drawn.</summary>
     [Category("Appearance")]
     public bool Filled
@@ -199,6 +238,17 @@ public sealed class ContourPlot : PlotObject, IDrawable, I3DDrawable, IHasZData,
     /// <inheritdoc />
     public DataRange GetZDataBounds() => ZBounds();
 
+    /// <summary>
+    /// The levels actually drawn: the explicit list if there is one, otherwise the evenly spaced ones
+    /// this plot chose for itself. What <c>clabel</c> and the contour matrix have to agree with.
+    /// <para>
+    /// Not browsable: it is the answer <c>LevelList</c> gives, and an inspector row that recomputed
+    /// itself on every read and could not be written would be a worse one than <c>Levels</c>.
+    /// </para>
+    /// </summary>
+    [Browsable(false)]
+    public double[] ResolvedLevels => ResolveLevels(ZBounds(), exclusive: false);
+
     /// <inheritdoc />
     public void Render(IRenderContext context, RenderState state)
     {
@@ -225,7 +275,7 @@ public sealed class ContourPlot : PlotObject, IDrawable, I3DDrawable, IHasZData,
             {
                 DrawLines(
                     context, (x, y, _) => state.Mapper.DataToPixel(x, y),
-                    levels, colorMin, colorMax, opacity, exclusive);
+                    levels, colorMin, colorMax, opacity, exclusive, _showText);
             }
         }
         finally
@@ -356,11 +406,15 @@ public sealed class ContourPlot : PlotObject, IDrawable, I3DDrawable, IHasZData,
         double colorMin,
         double colorMax,
         double opacity,
-        bool exclusive)
+        bool exclusive,
+        bool label = false)
     {
         ContourLineSet lines = Lines(levels);
         Point2D[] pixels = RenderScratch.Rent(ref _pixels, System.Math.Max(1, lines.MaxLevelVertices), exclusive);
-        int[] starts = RenderScratch.Rent(ref _starts, System.Math.Max(1, lines.MaxLevelPaths), exclusive);
+
+        // One more slot than there are paths: labelling breaks the curve it writes into, which turns
+        // one path into two.
+        int[] starts = RenderScratch.Rent(ref _starts, System.Math.Max(1, lines.MaxLevelPaths + 1), exclusive);
 
         for (int level = 0; level < levels.Length; level++)
         {
@@ -370,20 +424,171 @@ public sealed class ContourPlot : PlotObject, IDrawable, I3DDrawable, IHasZData,
                 continue;
             }
 
+            // The longest curve at this level is the one with room for the text.
+            int labelled = label && IsLabelled(levels[level]) ? LongestPath(lines, level, paths) : -1;
+            int labelFrom = 0;
+            int labelTo = 0;
+
             int v = 0;
             for (int i = 0; i < paths; i++)
             {
                 starts[i] = v;
+                if (i == labelled)
+                {
+                    labelFrom = v;
+                }
+
                 foreach (Point2D p in lines.Path(level, i))
                 {
                     pixels[v++] = place(p.X, p.Y, levels[level]);
                 }
+
+                if (i == labelled)
+                {
+                    labelTo = v;
+                }
             }
 
             Color color = _colormap.Sample(levels[level], colorMin, colorMax).WithOpacity(opacity);
+            LevelLabel? text = labelled >= 0
+                ? OpenGap(context, pixels, starts, ref v, ref paths, labelled, labelFrom, labelTo, levels[level], color)
+                : null;
+
             context.DrawPaths(
                 pixels.AsSpan(0, v), starts.AsSpan(0, paths), closed: false, new LineStyle(color, _lineWidth), null);
+
+            if (text is { } drawn)
+            {
+                context.DrawText(
+                    drawn.Text,
+                    drawn.At,
+                    _labelStyle ?? new TextStyle(color, 9),
+                    HorizontalAlignment.Center,
+                    VerticalAlignment.Middle,
+                    drawn.RotationDegrees);
+            }
         }
+    }
+
+    /// <summary>Where a level's own value is written, and which way up.</summary>
+    private readonly record struct LevelLabel(string Text, Point2D At, double RotationDegrees);
+
+    /// <summary>Whether a level is one of the ones asked for, nearest-match as MATLAB's clabel is.</summary>
+    private bool IsLabelled(double level)
+    {
+        if (_labelLevels is not { Length: > 0 } wanted)
+        {
+            return true;
+        }
+
+        foreach (double v in wanted)
+        {
+            if (System.Math.Abs(v - level) <= 1e-9 * System.Math.Max(1, System.Math.Abs(level)))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private static int LongestPath(ContourLineSet lines, int level, int paths)
+    {
+        int best = -1;
+        int longest = 4; // Below this there is nowhere to put text without swallowing the curve.
+        for (int i = 0; i < paths; i++)
+        {
+            int length = lines.Path(level, i).Length;
+            if (length > longest)
+            {
+                longest = length;
+                best = i;
+            }
+        }
+
+        return best;
+    }
+
+    /// <summary>
+    /// Cuts the text's own width out of the curve so the label sits in the line rather than on top of
+    /// it, which is how a contour map is read. The vertices inside the gap are removed from the shared
+    /// buffer and the path they belonged to becomes two, so the drawing call below sees only the two
+    /// stubs. Returns null — leaving the curve whole — when the curve is too short to give up the room.
+    /// </summary>
+    private LevelLabel? OpenGap(
+        IRenderContext context,
+        Point2D[] pixels,
+        int[] starts,
+        ref int count,
+        ref int paths,
+        int path,
+        int from,
+        int to,
+        double level,
+        Color color)
+    {
+        string text = level.ToString("G4", CultureInfo.InvariantCulture);
+        double half = (context.MeasureText(text, _labelStyle ?? new TextStyle(color, 9)).Width / 2) + 2;
+
+        int middle = (from + to) / 2;
+        Point2D at = pixels[middle];
+
+        int a = middle;
+        while (a > from && Distance(pixels[a], at) < half)
+        {
+            a--;
+        }
+
+        int b = middle;
+        while (b < to - 1 && Distance(pixels[b], at) < half)
+        {
+            b++;
+        }
+
+        if (a == middle || b == middle || b - a < 2)
+        {
+            return null;
+        }
+
+        double rotation = Angle(pixels[a], pixels[b]);
+
+        // Close the buffer over the removed vertices, then split the path in two at the gap.
+        int removed = b - a - 1;
+        Array.Copy(pixels, b, pixels, a + 1, count - b);
+        count -= removed;
+
+        for (int i = paths; i > path + 1; i--)
+        {
+            starts[i] = starts[i - 1] - removed;
+        }
+
+        starts[path + 1] = a + 1;
+        paths++;
+
+        return new LevelLabel(text, at, rotation);
+    }
+
+    private static double Distance(Point2D a, Point2D b)
+    {
+        double dx = a.X - b.X;
+        double dy = a.Y - b.Y;
+        return System.Math.Sqrt((dx * dx) + (dy * dy));
+    }
+
+    /// <summary>The heading of a gap, turned so the text always reads left to right.</summary>
+    private static double Angle(Point2D a, Point2D b)
+    {
+        double degrees = System.Math.Atan2(b.Y - a.Y, b.X - a.X) * 180 / System.Math.PI;
+        if (degrees > 90)
+        {
+            degrees -= 180;
+        }
+        else if (degrees < -90)
+        {
+            degrees += 180;
+        }
+
+        return degrees;
     }
 
     /// <summary>The band geometry, re-clipped only when the data or the boundaries change.</summary>

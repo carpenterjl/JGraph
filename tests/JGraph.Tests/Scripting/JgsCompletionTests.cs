@@ -208,7 +208,7 @@ public sealed class JgsCompletionTests
         JgsSignatureHelp? help = JgsCompletionEngine.GetSignatureHelp(code, code.Length);
 
         Assert.Equal("xlim", help!.Name);
-        Assert.Equal(1, help.ActiveParameter); // clamped to 'max'
+        Assert.Equal(2, help.ActiveParameter); // clamped to the last parameter, 'max'
     }
 
     [Fact]

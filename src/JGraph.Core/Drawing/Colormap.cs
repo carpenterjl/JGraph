@@ -440,11 +440,35 @@ public sealed class Colormap
         Color.FromRgb(0xA2, 0x14, 0x2F))
     { Discrete = true };
 
+    /// <summary>
+    /// MATLAB's <c>flag</c>: red, white, blue and black, repeating. A palette rather than a
+    /// gradient, so four stops are the whole definition and every resampling of it is exact.
+    /// </summary>
+    public static Colormap Flag { get; } = new Colormap(
+        "Flag",
+        Color.FromRgb(0xFF, 0x00, 0x00),
+        Colors.White,
+        Color.FromRgb(0x00, 0x00, 0xFF),
+        Colors.Black)
+    { Discrete = true };
+
+    /// <summary>MATLAB's <c>prism</c>: the six spectrum colours, repeating. Exact for the same reason.</summary>
+    public static Colormap Prism { get; } = new Colormap(
+        "Prism",
+        Color.FromRgb(0xFF, 0x00, 0x00),
+        Color.FromRgb(0xFF, 0x80, 0x00),
+        Color.FromRgb(0xFF, 0xFF, 0x00),
+        Color.FromRgb(0x00, 0xFF, 0x00),
+        Color.FromRgb(0x00, 0x00, 0xFF),
+        Color.FromRgb(0x80, 0x00, 0xFF))
+    { Discrete = true };
+
     /// <summary>The names accepted by <see cref="TryGetByName"/>, for error messages and completion.</summary>
     public static IReadOnlyList<string> KnownNames { get; } =
     [
         "parula", "viridis", "turbo", "jet", "hot", "cool", "gray", "hsv",
         "bone", "copper", "pink", "spring", "summer", "autumn", "winter", "lines",
+        "flag", "prism",
     ];
 
     /// <summary>
@@ -477,6 +501,8 @@ public sealed class Colormap
             "autumn" => Autumn,
             "winter" => Winter,
             "lines" => Lines,
+            "flag" => Flag,
+            "prism" => Prism,
             _ => null,
         };
 

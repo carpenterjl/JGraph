@@ -1,39 +1,32 @@
 using System.Diagnostics.CodeAnalysis;
+using JGraph.Api;
 using JGraph.Core.Model;
 
 namespace JGraph.Scripting.Jgs;
 
-/// <summary>What kind of figure object a handle names.</summary>
-internal enum JgsHandleKind
-{
-    Axes,
-    Line,
-    Legend,
-
-    /// <summary>
-    /// Any other drawn series — a patch, a scatter, a set of bars. It answers the properties every
-    /// plotted thing has rather than the ones a line has, which is what the statistics plot verbs
-    /// (M53 wave J) need for the shapes they draw that are not lines.
-    /// </summary>
-    Plot,
-}
-
 /// <summary>
-/// What the script layer knows about one live figure object: which kind it is, the model object itself,
-/// and the two pieces of state that belong to the script rather than to the figure — whether the object
-/// asked to be kept out of legends, and the callback a legend was given.
+/// What the script layer knows about one live figure object: the model object itself, and the two
+/// pieces of state that belong to the script rather than to the figure — whether the object asked to
+/// be kept out of legends, and the callback a legend was given.
+/// <para>
+/// There is deliberately no "kind" field. M51 carried one, and M53 had to widen it with a catch-all
+/// <c>Plot</c> member the moment the statistics verbs drew something that was not a line. The object
+/// already knows what it is: its CLR type is the answer, and
+/// <see cref="JgsGraphicsProperties.TypeNameOf(GraphObject)"/> is where that is read. A chart type
+/// added in a later milestone therefore joins the handle surface by existing.
+/// </para>
 /// </summary>
 internal sealed class JgsHandleEntry
 {
-    public JgsHandleEntry(JgsHandleKind kind, GraphObject target)
+    public JgsHandleEntry(GraphObject target)
     {
-        Kind = kind;
         Target = target;
     }
 
-    public JgsHandleKind Kind { get; }
-
     public GraphObject Target { get; }
+
+    /// <summary>The MATLAB type word for this object — what <c>get(h, 'Type')</c> answers.</summary>
+    public string TypeName => JgsGraphicsProperties.TypeNameOf(Target);
 
     /// <summary>False when the object was created with <c>'HandleVisibility', 'off'</c>.</summary>
     public bool HandleVisible { get; set; } = true;
@@ -53,7 +46,9 @@ internal sealed class JgsHandleEntry
 /// </para>
 /// The numbers are minted with a half so they cannot be confused with a figure number, a loop counter,
 /// or anything a script is likely to compute; dotting into a number that is not in the book still fails
-/// the way it always did.
+/// the way it always did. A <em>figure</em> is the exception and is never minted at all: its handle is
+/// its number, which is what MATLAB has always done and what makes <c>close(1)</c>, <c>figure(1)</c> and
+/// <c>get(1, 'Color')</c> name the same thing without any bookkeeping to keep in step.
 /// </summary>
 internal static class JgsHandleRegistry
 {
@@ -66,9 +61,20 @@ internal static class JgsHandleRegistry
     private static double _next = FirstHandle;
 
     /// <summary>The handle for a figure object, minting one the first time it is asked for.</summary>
-    public static JgsValue For(JgsHandleKind kind, GraphObject target)
+    public static JgsValue For(GraphObject target)
     {
         ArgumentNullException.ThrowIfNull(target);
+
+        // A figure is its number. Minting one would give the same figure two names.
+        if (target is FigureModel figure)
+        {
+            int number = JG.GetFigureNumber(figure);
+            if (number > 0)
+            {
+                return JgsValue.Number(number);
+            }
+        }
+
         lock (Gate)
         {
             if (Handles.TryGetValue(target, out double existing))
@@ -78,25 +84,52 @@ internal static class JgsHandleRegistry
 
             double handle = _next;
             _next += 1;
-            Entries[handle] = new JgsHandleEntry(kind, target);
+            Entries[handle] = new JgsHandleEntry(target);
             Handles[target] = handle;
             return JgsValue.Number(handle);
         }
     }
 
+    /// <summary>
+    /// The entry for an object, minting its handle if it has none. A search needs this: it walks
+    /// objects rather than numbers, and still has to ask each one whether it wants to be found.
+    /// </summary>
+    public static JgsHandleEntry EntryFor(GraphObject target)
+    {
+        JgsValue handle = For(target);
+        return TryGet(handle, out JgsHandleEntry? entry)
+            ? entry
+            : new JgsHandleEntry(target);
+    }
+
     /// <summary>The entry a value names, when the value is a number this registry knows.</summary>
     public static bool TryGet(JgsValue value, [NotNullWhen(true)] out JgsHandleEntry? entry)
     {
+        entry = null;
         if (value.Type != JgsType.Number)
         {
-            entry = null;
             return false;
         }
 
+        double handle = value.AsNumber;
         lock (Gate)
         {
-            return Entries.TryGetValue(value.AsNumber, out entry);
+            if (Entries.TryGetValue(handle, out entry))
+            {
+                return true;
+            }
         }
+
+        // A whole number may be a live figure. Resolving it here rather than minting on figure
+        // creation is what keeps a closed-and-reopened number pointing at the current figure.
+        if (handle > 0 && handle == System.Math.Floor(handle) && handle < int.MaxValue
+            && JG.TryGetFigure((int)handle, out FigureModel figure))
+        {
+            entry = FigureEntry(figure);
+            return true;
+        }
+
+        return false;
     }
 
     /// <summary>The entry for a handle, or an error naming the handle as dead.</summary>
@@ -118,7 +151,87 @@ internal static class JgsHandleRegistry
         {
             Entries.Clear();
             Handles.Clear();
+            FigureEntries.Clear();
             _next = FirstHandle;
+            JgsGraphicsCallbackState.Clear();
+        }
+    }
+
+    /// <summary>
+    /// Drops the handles of objects no longer reachable from a live figure. Closing a window retires
+    /// its figure, and without this the entries — and through them the whole model subtree — would be
+    /// held alive by the registry for as long as the session lasted.
+    /// </summary>
+    public static void DropUnreachable()
+    {
+        var live = new HashSet<GraphObject>(ReferenceEquality.Instance);
+        foreach (int number in JG.FigureNumbers)
+        {
+            if (JG.TryGetFigure(number, out FigureModel figure))
+            {
+                Collect(figure, live);
+            }
+        }
+
+        lock (Gate)
+        {
+            var dead = new List<double>();
+            foreach ((double handle, JgsHandleEntry entry) in Entries)
+            {
+                if (!live.Contains(entry.Target))
+                {
+                    dead.Add(handle);
+                    Handles.Remove(entry.Target);
+                }
+            }
+
+            foreach (double handle in dead)
+            {
+                Entries.Remove(handle);
+            }
+
+            foreach (FigureModel figure in FigureEntries.Keys.ToList())
+            {
+                if (!live.Contains(figure))
+                {
+                    FigureEntries.Remove(figure);
+                }
+            }
+        }
+    }
+
+    /// <summary>Every object a figure owns, itself included, in no particular order.</summary>
+    internal static void Collect(GraphObject root, HashSet<GraphObject> into)
+    {
+        if (!into.Add(root))
+        {
+            return;
+        }
+
+        foreach (GraphObject child in JgsGraphicsProperties.ChildrenOf(root))
+        {
+            Collect(child, into);
+        }
+    }
+
+    /// <summary>
+    /// The entry for a figure. Figures are not in <see cref="Entries"/> — their handle is their number —
+    /// but they still need somewhere to keep the script-side state an entry carries.
+    /// </summary>
+    private static readonly Dictionary<FigureModel, JgsHandleEntry> FigureEntries =
+        new(FigureEquality.Instance);
+
+    private static JgsHandleEntry FigureEntry(FigureModel figure)
+    {
+        lock (Gate)
+        {
+            if (!FigureEntries.TryGetValue(figure, out JgsHandleEntry? entry))
+            {
+                entry = new JgsHandleEntry(figure);
+                FigureEntries[figure] = entry;
+            }
+
+            return entry;
         }
     }
 
@@ -130,5 +243,14 @@ internal static class JgsHandleRegistry
         public bool Equals(GraphObject? x, GraphObject? y) => ReferenceEquals(x, y);
 
         public int GetHashCode(GraphObject obj) => System.Runtime.CompilerServices.RuntimeHelpers.GetHashCode(obj);
+    }
+
+    private sealed class FigureEquality : IEqualityComparer<FigureModel>
+    {
+        public static readonly FigureEquality Instance = new();
+
+        public bool Equals(FigureModel? x, FigureModel? y) => ReferenceEquals(x, y);
+
+        public int GetHashCode(FigureModel obj) => System.Runtime.CompilerServices.RuntimeHelpers.GetHashCode(obj);
     }
 }

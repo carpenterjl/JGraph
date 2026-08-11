@@ -95,7 +95,11 @@ public sealed class FigureRenderer
         TickSet xTicks = TickGenerators.For(xAxis).Generate(xAxis.Range, xAxis.TargetMajorTickCount, xAxis.TickLabelFormat);
         TickSet yTicks = TickGenerators.For(yAxis).Generate(yAxis.Range, yAxis.TargetMajorTickCount, yAxis.TickLabelFormat);
 
-        DecorationMetrics metrics = MeasureDecorations(axes, context, xAxis, yAxis, xTicks, yTicks);
+        // Rulers past the first are yyaxis' work: they stand outside the right edge, each one clear of
+        // the one before it, and they are measured before the layout so the plot area makes room.
+        IReadOnlyList<SideRuler> sideRulers = MeasureSideRulers(axes, context, theme);
+
+        DecorationMetrics metrics = MeasureDecorations(axes, context, xAxis, yAxis, xTicks, yTicks, sideRulers);
         AxesLayout layout = LayoutEngine.Compute(axes, outer, metrics.Margins);
         Rect2D plotArea = layout.PlotArea;
         if (plotArea.IsEmpty)
@@ -122,15 +126,7 @@ public sealed class FigureRenderer
         {
             Render3DContent(axes, context, theme, plotArea);
 
-            if (!string.IsNullOrEmpty(axes.Title))
-            {
-                context.DrawText(
-                    axes.Title,
-                    new Point2D(plotArea.CenterX, plotArea.Top - LabelPadding),
-                    axes.TitleStyle,
-                    HorizontalAlignment.Center,
-                    VerticalAlignment.Bottom);
-            }
+            DrawTitleBlock(context, axes, plotArea);
 
             LegendLayout? legendBox = axes.Legend.Visible
                 ? LegendRenderer.Draw(context, axes, plotArea, theme)
@@ -162,12 +158,15 @@ public sealed class FigureRenderer
             context.DrawRectangle(plotArea, frameStyle, fill: null);
         }
 
-        // Ticks and tick labels.
+        // Ticks and tick labels. On a two-sided axes each ruler is tinted like the data it measures,
+        // which is the only thing telling a reader which curve belongs to which scale.
+        Color? leftTint = TintFor(axes, theme, 0);
         DrawXTicks(context, xAxis, plotArea, transform, xTicks, theme);
-        DrawYTicks(context, yAxis, plotArea, transform, yTicks, theme);
+        DrawYTicks(context, yAxis, plotArea, transform, yTicks, theme, leftTint);
+        DrawSideRulers(context, sideRulers, xAxis, plotArea, theme);
 
         // Axis labels and title.
-        DrawAxisTitles(context, axes, xAxis, yAxis, plotArea, metrics);
+        DrawAxisTitles(context, axes, xAxis, yAxis, plotArea, metrics, leftTint);
 
         // Legend.
         LegendLayout? legendBounds = axes.Legend.Visible
@@ -196,7 +195,7 @@ public sealed class FigureRenderer
         DataRange xr = xAxis.Range, yr = yAxis.Range, zr = zAxis.Range;
 
         var projection = new Projection3D(
-            xr, yr, zr, axes.Azimuth, axes.Elevation, plotArea, axes.PlotBoxAspect);
+            xr, yr, zr, axes.Azimuth, axes.Elevation, plotArea, axes.PlotBoxAspect, axes.Roll);
 
         TickSet xTicks = TickGenerators.For(xAxis).Generate(xr, xAxis.TargetMajorTickCount, xAxis.TickLabelFormat);
         TickSet yTicks = TickGenerators.For(yAxis).Generate(yr, yAxis.TargetMajorTickCount, yAxis.TickLabelFormat);
@@ -409,6 +408,148 @@ public sealed class FigureRenderer
         return new Rect2D(x, y, w, h);
     }
 
+    /// <summary>
+    /// A Y ruler drawn outside the right edge of the plot area (yyaxis' second side), together with
+    /// what it needs from the layout: its ticks, how wide its labels are, and how far out it sits.
+    /// </summary>
+    private readonly record struct SideRuler(
+        AxisModel Axis,
+        TickSet Ticks,
+        double TickWidth,
+        double LabelHeight,
+        double Offset,
+        Color? Tint);
+
+    /// <summary>
+    /// Measures the rulers after the first, stacking them outward from the plot area's right edge.
+    /// An axes with one Y ruler — every figure that has never seen yyaxis — measures nothing here and
+    /// lays out exactly as it did before.
+    /// </summary>
+    private static IReadOnlyList<SideRuler> MeasureSideRulers(AxesModel axes, IRenderContext context, ITheme theme)
+    {
+        if (axes.YAxes.Count < 2 || axes.Is3D)
+        {
+            return Array.Empty<SideRuler>();
+        }
+
+        var rulers = new List<SideRuler>(axes.YAxes.Count - 1);
+        double offset = 0;
+        for (int i = 1; i < axes.YAxes.Count; i++)
+        {
+            AxisModel axis = axes.YAxes[i];
+            TickSet ticks = TickGenerators.For(axis).Generate(axis.Range, axis.TargetMajorTickCount, axis.TickLabelFormat);
+
+            double tickWidth = 0;
+            if (axis.ShowTickLabels)
+            {
+                foreach (Tick tick in ticks.MajorTicks)
+                {
+                    Size2D size = context.MeasureText(tick.Label, axis.TickLabelStyle);
+                    tickWidth = System.Math.Max(tickWidth, RotatedExtent(size, axis.TickLabelAngle, horizontal: true));
+                }
+            }
+
+            double labelHeight = string.IsNullOrEmpty(axis.Label)
+                ? 0
+                : context.MeasureText(axis.Label, axis.LabelStyle).Height;
+
+            rulers.Add(new SideRuler(axis, ticks, tickWidth, labelHeight, offset, TintFor(axes, theme, i)));
+
+            offset += TickLength + LabelPadding + tickWidth;
+            if (labelHeight > 0)
+            {
+                offset += LabelPadding + labelHeight;
+            }
+        }
+
+        return rulers;
+    }
+
+    /// <summary>
+    /// The colour a Y ruler takes on a two-sided axes: the series colour of the first plot bound to it,
+    /// found the same way <see cref="DrawPlots"/> hands colours out so the ruler and its curve agree.
+    /// Null on a one-ruler axes, where the theme's ink is right and nothing should change.
+    /// </summary>
+    private static Color? TintFor(AxesModel axes, ITheme theme, int yAxisIndex)
+    {
+        if (axes.YAxes.Count < 2)
+        {
+            return null;
+        }
+
+        IReadOnlyList<Color> palette = axes.ColorOrder ?? theme.SeriesPalette;
+        if (palette.Count == 0)
+        {
+            return null;
+        }
+
+        int colorIndex = 0;
+        foreach (PlotObject plot in axes.Plots.InDrawOrder())
+        {
+            if (axes.GetYAxisFor(plot) == axes.YAxes[yAxisIndex])
+            {
+                return palette[colorIndex % palette.Count];
+            }
+
+            colorIndex++;
+        }
+
+        return null;
+    }
+
+    /// <summary>Draws the rulers outside the right edge: ticks, labels, and each one's axis label.</summary>
+    private static void DrawSideRulers(
+        IRenderContext context,
+        IReadOnlyList<SideRuler> rulers,
+        AxisModel xAxis,
+        Rect2D plotArea,
+        ITheme theme)
+    {
+        foreach (SideRuler ruler in rulers)
+        {
+            var transform = AxisTransform.Create(plotArea, xAxis, ruler.Axis);
+            double edge = plotArea.Right + ruler.Offset;
+            var tickStyle = new LineStyle(ruler.Tint ?? theme.AxisLine, 1);
+
+            foreach (Tick tick in ruler.Ticks.MajorTicks)
+            {
+                double py = transform.DataToPixelY(tick.Value);
+                if (ruler.Axis.ShowMajorTicks)
+                {
+                    context.DrawLine(new Point2D(edge, py), new Point2D(edge + TickLength, py), tickStyle);
+                }
+
+                if (ruler.Axis.ShowTickLabels)
+                {
+                    context.DrawText(
+                        tick.Label,
+                        new Point2D(edge + TickLength + LabelPadding, py),
+                        Tinted(ruler.Axis.TickLabelStyle, ruler.Tint),
+                        HorizontalAlignment.Left,
+                        VerticalAlignment.Middle,
+                        ruler.Axis.TickLabelAngle);
+                }
+            }
+
+            if (!string.IsNullOrEmpty(ruler.Axis.Label))
+            {
+                // Turned the other way from the left-hand label, so both read from inside the figure.
+                double x = edge + TickLength + LabelPadding + ruler.TickWidth + LabelPadding;
+                context.DrawText(
+                    ruler.Axis.Label,
+                    new Point2D(x, plotArea.CenterY),
+                    Tinted(ruler.Axis.LabelStyle, ruler.Tint),
+                    HorizontalAlignment.Center,
+                    VerticalAlignment.Bottom,
+                    rotationDegrees: 90);
+            }
+        }
+    }
+
+    /// <summary>The same text style in another colour, or unchanged when there is no tint.</summary>
+    private static TextStyle Tinted(TextStyle style, Color? tint) =>
+        tint is { } color ? style.WithColor(color) : style;
+
     /// <summary>Text measurements that drive both the plot-area margins and the label placement.</summary>
     private readonly record struct DecorationMetrics(
         Thickness Margins,
@@ -423,7 +564,8 @@ public sealed class FigureRenderer
         AxisModel xAxis,
         AxisModel yAxis,
         TickSet xTicks,
-        TickSet yTicks)
+        TickSet yTicks,
+        IReadOnlyList<SideRuler> sideRulers)
     {
         double left = EdgePadding;
         double bottom = EdgePadding;
@@ -435,7 +577,8 @@ public sealed class FigureRenderer
         {
             foreach (Tick tick in yTicks.MajorTicks)
             {
-                yTickWidth = System.Math.Max(yTickWidth, context.MeasureText(tick.Label, yAxis.TickLabelStyle).Width);
+                Size2D size = context.MeasureText(tick.Label, yAxis.TickLabelStyle);
+                yTickWidth = System.Math.Max(yTickWidth, RotatedExtent(size, yAxis.TickLabelAngle, horizontal: true));
             }
 
             left += yTickWidth + TickLength + LabelPadding;
@@ -451,7 +594,21 @@ public sealed class FigureRenderer
         double xTickHeight = 0;
         if (xAxis.ShowTickLabels)
         {
-            xTickHeight = context.MeasureText("0", xAxis.TickLabelStyle).Height;
+            // Upright labels are all one line tall, so one measurement answers for the row. A rotated
+            // one stands as tall as its longest text is wide, so the row has to be measured.
+            if (xAxis.TickLabelAngle == 0)
+            {
+                xTickHeight = context.MeasureText("0", xAxis.TickLabelStyle).Height;
+            }
+            else
+            {
+                foreach (Tick tick in xTicks.MajorTicks)
+                {
+                    Size2D size = context.MeasureText(tick.Label, xAxis.TickLabelStyle);
+                    xTickHeight = System.Math.Max(xTickHeight, RotatedExtent(size, xAxis.TickLabelAngle, horizontal: false));
+                }
+            }
+
             bottom += xTickHeight + TickLength + LabelPadding;
         }
 
@@ -467,6 +624,22 @@ public sealed class FigureRenderer
             top += context.MeasureText(axes.Title, axes.TitleStyle).Height + LabelPadding;
         }
 
+        // The subtitle sits between the title and the plot area, so it needs its own band whether or
+        // not there is a title above it — subtitle() on an untitled axes is legal and must still fit.
+        if (!string.IsNullOrEmpty(axes.Subtitle))
+        {
+            top += context.MeasureText(axes.Subtitle, axes.SubtitleStyle).Height + LabelPadding;
+        }
+
+        // The rulers yyaxis put outside the right edge were measured already; their stacked width is
+        // what the plot area has to give up so the outermost one's label still fits on the page.
+        if (sideRulers.Count > 0)
+        {
+            SideRuler last = sideRulers[^1];
+            right += last.Offset + TickLength + LabelPadding + last.TickWidth
+                + (last.LabelHeight > 0 ? LabelPadding + last.LabelHeight : 0);
+        }
+
         right += ColorbarRenderer.MeasureReservedWidth(axes, context);
 
         return new DecorationMetrics(
@@ -475,6 +648,25 @@ public sealed class FigureRenderer
             xTickHeight,
             yLabelHeight,
             xLabelHeight);
+    }
+
+    /// <summary>
+    /// How much room a text run takes along one device direction once it is rotated — the bounding box
+    /// of the turned rectangle, which is what the margin has to reserve.
+    /// </summary>
+    private static double RotatedExtent(Size2D size, double angleDegrees, bool horizontal)
+    {
+        if (angleDegrees == 0)
+        {
+            return horizontal ? size.Width : size.Height;
+        }
+
+        double radians = angleDegrees * System.Math.PI / 180;
+        double cos = System.Math.Abs(System.Math.Cos(radians));
+        double sin = System.Math.Abs(System.Math.Sin(radians));
+        return horizontal
+            ? (size.Width * cos) + (size.Height * sin)
+            : (size.Width * sin) + (size.Height * cos);
     }
 
     private static void DrawGrid(
@@ -598,12 +790,16 @@ public sealed class FigureRenderer
 
             if (xAxis.ShowTickLabels)
             {
+                // A rotated label hangs off one end instead of straddling the tick, so the end nearest
+                // the axis is the one pinned to it — otherwise the text swings across the plot.
+                double angle = xAxis.TickLabelAngle;
                 context.DrawText(
                     tick.Label,
                     new Point2D(px, plotArea.Bottom + TickLength + LabelPadding),
                     xAxis.TickLabelStyle,
-                    HorizontalAlignment.Center,
-                    VerticalAlignment.Top);
+                    angle == 0 ? HorizontalAlignment.Center : angle > 0 ? HorizontalAlignment.Right : HorizontalAlignment.Left,
+                    angle == 0 ? VerticalAlignment.Top : VerticalAlignment.Middle,
+                    angle);
             }
         }
     }
@@ -614,14 +810,15 @@ public sealed class FigureRenderer
         Rect2D plotArea,
         AxisTransform transform,
         TickSet yTicks,
-        ITheme theme)
+        ITheme theme,
+        Color? tint)
     {
         if (!yAxis.ShowMajorTicks && !yAxis.ShowTickLabels)
         {
             return;
         }
 
-        var tickStyle = new LineStyle(theme.AxisLine, 1);
+        var tickStyle = new LineStyle(tint ?? theme.AxisLine, 1);
         foreach (Tick tick in yTicks.MajorTicks)
         {
             double py = transform.DataToPixelY(tick.Value);
@@ -635,9 +832,10 @@ public sealed class FigureRenderer
                 context.DrawText(
                     tick.Label,
                     new Point2D(plotArea.Left - TickLength - LabelPadding, py),
-                    yAxis.TickLabelStyle,
+                    Tinted(yAxis.TickLabelStyle, tint),
                     HorizontalAlignment.Right,
-                    VerticalAlignment.Middle);
+                    VerticalAlignment.Middle,
+                    yAxis.TickLabelAngle);
             }
         }
     }
@@ -648,7 +846,8 @@ public sealed class FigureRenderer
         AxisModel xAxis,
         AxisModel yAxis,
         Rect2D plotArea,
-        DecorationMetrics metrics)
+        DecorationMetrics metrics,
+        Color? yTint)
     {
         if (!string.IsNullOrEmpty(xAxis.Label))
         {
@@ -669,17 +868,40 @@ public sealed class FigureRenderer
             context.DrawText(
                 yAxis.Label,
                 new Point2D(x, plotArea.CenterY),
-                yAxis.LabelStyle,
+                Tinted(yAxis.LabelStyle, yTint),
                 HorizontalAlignment.Center,
                 VerticalAlignment.Bottom,
                 rotationDegrees: -90);
+        }
+
+        DrawTitleBlock(context, axes, plotArea);
+    }
+
+    /// <summary>
+    /// The stack above the plot area: the subtitle immediately over it, the title over that. Drawing
+    /// upward from the plot area means an axes with only one of the two has no gap where the other
+    /// would have been, and the band <see cref="MeasureDecorations"/> reserved is the band used.
+    /// </summary>
+    private static void DrawTitleBlock(IRenderContext context, AxesModel axes, Rect2D plotArea)
+    {
+        double bottom = plotArea.Top - LabelPadding;
+
+        if (!string.IsNullOrEmpty(axes.Subtitle))
+        {
+            context.DrawText(
+                axes.Subtitle,
+                new Point2D(plotArea.CenterX, bottom),
+                axes.SubtitleStyle,
+                HorizontalAlignment.Center,
+                VerticalAlignment.Bottom);
+            bottom -= context.MeasureText(axes.Subtitle, axes.SubtitleStyle).Height + LabelPadding;
         }
 
         if (!string.IsNullOrEmpty(axes.Title))
         {
             context.DrawText(
                 axes.Title,
-                new Point2D(plotArea.CenterX, plotArea.Top - LabelPadding),
+                new Point2D(plotArea.CenterX, bottom),
                 axes.TitleStyle,
                 HorizontalAlignment.Center,
                 VerticalAlignment.Bottom);

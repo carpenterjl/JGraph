@@ -53,7 +53,11 @@ internal sealed class RecordingRenderContext : IRenderContext
     {
         LineCount++;
         LineColors.Add(style.Color);
+        Lines.Add((a, b, style));
     }
+
+    /// <summary>Every straight line drawn, endpoints and all — how a span across the axes is checked.</summary>
+    public List<(Point2D From, Point2D To, LineStyle Style)> Lines { get; } = new();
 
     /// <summary>The stroke color of every line drawn — lets tests check legend swatch colors.</summary>
     public List<Color> LineColors { get; } = new();

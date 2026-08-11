@@ -74,6 +74,7 @@ public sealed class SurfacePlot : PlotObject, I3DDrawable, IHasZData, ILegendIte
     private SurfaceShading _shading = SurfaceShading.Flat;
     private bool _showContourBelow;
     private Color? _edgeColor;
+    private Color? _faceColor;
     private double _edgeWidth = 0.75;
     private bool _autoScaleColor = true;
     private double _colorMin;
@@ -325,6 +326,18 @@ public sealed class SurfacePlot : PlotObject, I3DDrawable, IHasZData, ILegendIte
     {
         get => _contourLevels;
         set => SetProperty(ref _contourLevels, System.Math.Clamp(value, 1, 64), InvalidationKind.Render);
+    }
+
+    /// <summary>
+    /// One colour for every face, instead of the colormap. Null is the normal surface, coloured by
+    /// height; setting it is what makes a mesh opaque — <c>hidden on</c> paints the faces the axes'
+    /// own background so the lines behind them are covered.
+    /// </summary>
+    [Category("Appearance"), DisplayName("Face color")]
+    public Color? FaceColor
+    {
+        get => _faceColor;
+        set => SetProperty(ref _faceColor, value, InvalidationKind.Render);
     }
 
     /// <summary>The wireframe/edge color; null colors edges through the colormap (wireframe) or dark gray (filled).</summary>
@@ -777,15 +790,19 @@ public sealed class SurfacePlot : PlotObject, I3DDrawable, IHasZData, ILegendIte
         Point2D[] verts = RenderScratch.Rent(ref _faceVerts, capacity, exclusive);
         uint[] colors = RenderScratch.Rent(ref _faceColors, capacity, exclusive);
 
+        // A single face colour overrides the palette outright, so interpolation has nothing left to
+        // interpolate between — which is exactly the opaque sheet a hidden-line mesh wants.
+        uint? solid = _faceColor?.ToArgb();
+
         int v = 0;
         for (int i = begin; i < end; i++)
         {
             int i00 = order[i];
             int i10 = i00 + cols;
 
-            uint a = palette[i00];
+            uint a = solid ?? palette[i00];
             uint b = a, d = a, e = a;
-            if (interp)
+            if (interp && solid is null)
             {
                 b = palette[i00 + 1];
                 d = palette[i10 + 1];

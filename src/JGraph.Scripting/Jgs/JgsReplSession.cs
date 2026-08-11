@@ -190,7 +190,7 @@ internal sealed class JgsReplSession : IScriptSession
     private bool InvokeLegendItemHit(AxesModel axes, PlotObject plot)
     {
         if (_disposed || !JgsHandleRegistry.TryGet(
-                JgsHandleRegistry.For(JgsHandleKind.Legend, axes.Legend), out JgsHandleEntry? legend)
+                JgsHandleRegistry.For(axes.Legend), out JgsHandleEntry? legend)
             || legend.ItemHitFcn is not { } callback)
         {
             return false;
@@ -204,12 +204,16 @@ internal sealed class JgsReplSession : IScriptSession
             return true;
         }
 
-        JgsValue source = JgsHandleRegistry.For(JgsHandleKind.Legend, axes.Legend);
-        JgsValue peer = JgsHandleRegistry.For(JgsHandleKind.Line, plot);
+        JgsValue source = JgsHandleRegistry.For(axes.Legend);
+        JgsValue peer = JgsHandleRegistry.For(plot);
         var eventFields = new Dictionary<string, JgsValue>(StringComparer.Ordinal) { ["Peer"] = peer };
 
         _globals.BeginRun(null, null);
         _interpreter.BeginStatement(CancellationToken.None);
+
+        // While this runs, gcbo is the legend and gcbf its figure; gco becomes the clicked series
+        // and stays that way afterwards, the way a figure's current object does.
+        using IDisposable scope = JgsGraphicsCallbackState.Enter(axes.Legend, plot);
         try
         {
             callback.AsCallable.Call([source, JgsValue.Struct(eventFields)], 0, 0);

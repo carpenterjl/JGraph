@@ -35,6 +35,36 @@ public class SerializationTests
         Assert.Contains($"\"formatVersion\": {GraphFormat.CurrentVersion}", json);
     }
 
+    [Fact]
+    public void Axis_RoundTripsManualTicksAndTheirAngle()
+    {
+        var figure = new FigureModel();
+        AxisModel axis = figure.AddAxes().PrimaryXAxis;
+        axis.TickPositions = new[] { 0.0, 2.5, 5.0 };
+        axis.TickLabelOverrides = new[] { "low", "mid", "high" };
+        axis.TickLabelAngle = 30;
+
+        AxisModel loaded = RoundTrip(figure).Axes[0].PrimaryXAxis;
+
+        Assert.Equal(new[] { 0.0, 2.5, 5.0 }, loaded.TickPositions);
+        Assert.Equal(new[] { "low", "mid", "high" }, loaded.TickLabelOverrides);
+        Assert.Equal(30, loaded.TickLabelAngle);
+    }
+
+    [Fact]
+    public void Axis_AnAutomaticRulerSaysSoRatherThanSavingAnEmptyList()
+    {
+        // Null and empty mean different things — no ticks named versus no ticks wanted — so a figure
+        // written before these fields existed has to come back automatic, not blank.
+        var figure = new FigureModel();
+        figure.AddAxes();
+
+        AxisModel loaded = RoundTrip(figure).Axes[0].PrimaryXAxis;
+
+        Assert.Null(loaded.TickPositions);
+        Assert.Null(loaded.TickLabelOverrides);
+    }
+
     // ---- Plot round-trips ----
 
     [Fact]
@@ -87,6 +117,86 @@ public class SerializationTests
         var loaded = (StemPlot)RoundTrip(WithAxes(stem)).Axes[0].Plots[0];
         Assert.Equal(-1, loaded.Baseline);
         Assert.Equal(2, loaded.Data.Count);
+    }
+
+    [Fact]
+    public void ConstantLine_RoundTripsWhereItIsAndWhatItSays()
+    {
+        var xline = new ConstantLinePlot(ConstantLineDirection.Vertical, 7.5)
+        {
+            Label = "limit",
+            Dash = DashStyle.Dot,
+            LineWidth = 2,
+            LabelHorizontalAlignment = HorizontalAlignment.Left,
+            LabelVerticalAlignment = VerticalAlignment.Bottom,
+        };
+
+        var loaded = (ConstantLinePlot)RoundTrip(WithAxes(xline)).Axes[0].Plots[0];
+
+        Assert.Equal(ConstantLineDirection.Vertical, loaded.Direction);
+        Assert.Equal(7.5, loaded.Value);
+        Assert.Equal("limit", loaded.Label);
+        Assert.Equal(DashStyle.Dot, loaded.Dash);
+        Assert.Equal(2, loaded.LineWidth);
+        Assert.Equal(HorizontalAlignment.Left, loaded.LabelHorizontalAlignment);
+        Assert.Equal(VerticalAlignment.Bottom, loaded.LabelVerticalAlignment);
+    }
+
+    [Fact]
+    public void ContourLabelling_RoundTrips()
+    {
+        var contour = new ContourPlot(
+            [0, 1], [0, 1], new double[,] { { 0, 1 }, { 2, 3 } })
+        {
+            ShowText = true,
+            LabelLevels = [1, 2],
+        };
+
+        var loaded = (ContourPlot)RoundTrip(WithAxes(contour)).Axes[0].Plots[0];
+
+        Assert.True(loaded.ShowText);
+        Assert.Equal(new double[] { 1, 2 }, loaded.LabelLevels);
+    }
+
+    [Fact]
+    public void Subtitle_RoundTripsWithItsOwnStyle()
+    {
+        var figure = new FigureModel();
+        AxesModel axes = figure.AddAxes();
+        axes.Title = "over";
+        axes.Subtitle = "under";
+        axes.SubtitleStyle = axes.SubtitleStyle.WithSize(7);
+
+        AxesModel loaded = RoundTrip(figure).Axes[0];
+
+        Assert.Equal("over", loaded.Title);
+        Assert.Equal("under", loaded.Subtitle);
+        Assert.Equal(7, loaded.SubtitleStyle.FontSize);
+    }
+
+    [Fact]
+    public void CameraRoll_RoundTrips()
+    {
+        var figure = new FigureModel();
+        AxesModel axes = figure.AddAxes();
+        axes.Is3D = true;
+        axes.Roll = 22.5;
+
+        Assert.Equal(22.5, RoundTrip(figure).Axes[0].Roll, 12);
+    }
+
+    [Fact]
+    public void ASolidFaceColor_RoundTripsWithTheSurface()
+    {
+        var surface = new SurfacePlot(
+            new double[] { 0, 1 }, new double[] { 0, 1 }, new double[,] { { 0, 1 }, { 1, 2 } })
+        {
+            Style = SurfaceStyle.FilledWithWireframe,
+            FaceColor = Color.FromRgb(0x11, 0x22, 0x33),
+        };
+
+        var loaded = (SurfacePlot)RoundTrip(WithAxes(surface)).Axes[0].Plots[0];
+        Assert.Equal(Color.FromRgb(0x11, 0x22, 0x33), loaded.FaceColor);
     }
 
     [Fact]

@@ -721,7 +721,7 @@ internal static partial class JgsBuiltins
         DefineImagingWaveB(define, dialect);
         DefineFilteringBuiltins(define, dialect);
         DefineGeometryBuiltins(define, dialect);
-        DefineColorBuiltins(define, dialect);
+        DefineColorBuiltins(define, random, dialect);
         DefineEnhancementBuiltins(define, dialect);
         DefineMorphologyBuiltins(define, dialect);
         DefineRegionBuiltins(define, random, dialect);

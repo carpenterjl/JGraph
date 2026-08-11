@@ -1009,7 +1009,7 @@ internal static partial class JgsBuiltins
             for (int c = 0; c < columns; c++)
             {
                 AxesModel cell = JG.Subplot(otherColumns, columns, (r * columns) + c + 1);
-                axes.Add(JgsHandleRegistry.For(JgsHandleKind.Axes, cell).AsNumber);
+                axes.Add(JgsHandleRegistry.For(cell).AsNumber);
 
                 double[] x = Column(left, rows, c);
                 double[] y = Column(right, rows, r);
@@ -1058,7 +1058,7 @@ internal static partial class JgsBuiltins
             axes.Count == 1
                 ? JgsValue.Number(axes[0])
                 : JgsMatrix.FromColumnMajor([.. axes], otherColumns, columns),
-            JgsHandleRegistry.For(JgsHandleKind.Axes, JG.Gca()));
+            JgsHandleRegistry.For(JG.Gca()));
     }
 
     /// <summary><c>scatterhist(x, y)</c>: a scatter with the two marginal histograms beside it.</summary>
@@ -1088,9 +1088,9 @@ internal static partial class JgsBuiltins
 
         JG.MakeCurrent(main);
         var handles = new double[3];
-        handles[0] = JgsHandleRegistry.For(JgsHandleKind.Axes, main).AsNumber;
-        handles[1] = JgsHandleRegistry.For(JgsHandleKind.Axes, top).AsNumber;
-        handles[2] = JgsHandleRegistry.For(JgsHandleKind.Axes, side).AsNumber;
+        handles[0] = JgsHandleRegistry.For(main).AsNumber;
+        handles[1] = JgsHandleRegistry.For(top).AsNumber;
+        handles[2] = JgsHandleRegistry.For(side).AsNumber;
         return Outputs(wanted, JgsMatrix.FromColumnMajor(handles, 1, 3));
     }
 
@@ -2550,7 +2550,7 @@ internal static partial class JgsBuiltins
 
     /// <summary>A handle to one line.</summary>
     private static JgsValue LineHandle(LinePlot plot) =>
-        JgsHandleRegistry.For(JgsHandleKind.Line, plot);
+        JgsHandleRegistry.For(plot);
 
     /// <summary>
     /// The handles a plot verb answers with: a column, the shape MATLAB gives back. A line gets a line
@@ -2579,6 +2579,6 @@ internal static partial class JgsBuiltins
 
     private static JgsValue HandleFor(PlotObject plot) =>
         plot is LinePlot series
-            ? JgsHandleRegistry.For(JgsHandleKind.Line, series)
-            : JgsHandleRegistry.For(JgsHandleKind.Plot, plot);
+            ? JgsHandleRegistry.For(series)
+            : JgsHandleRegistry.For(plot);
 }

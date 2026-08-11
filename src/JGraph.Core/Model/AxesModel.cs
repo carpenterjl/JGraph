@@ -13,6 +13,8 @@ public sealed class AxesModel : GraphObject
 {
     private string _title = string.Empty;
     private TextStyle _titleStyle = new(Colors.Black, 15, bold: true);
+    private string _subtitle = string.Empty;
+    private TextStyle _subtitleStyle = new(Colors.Black, 12);
     private Color _background = Colors.White;
     private Rect2D _normalizedBounds = new(0, 0, 1, 1);
     private double _autoScalePadding = 0.05;
@@ -21,8 +23,10 @@ public sealed class AxesModel : GraphObject
     private bool _is3D;
     private double _azimuth = -37.5;
     private double _elevation = 30;
+    private double _roll;
     private IReadOnlyList<Color>? _colorOrder;
     private Vector3D _plotBoxAspect = new(1, 1, 1);
+    private int _activeYAxisIndex;
 
     public AxesModel()
     {
@@ -45,6 +49,27 @@ public sealed class AxesModel : GraphObject
 
         XAxes.Add(new AxisModel(AxisOrientation.Horizontal, AxisPosition.Bottom));
         YAxes.Add(new AxisModel(AxisOrientation.Vertical, AxisPosition.Left));
+
+        // Which side new plots land on is a property of the axes, not of each plotting verb: MATLAB's
+        // yyaxis says "from here on, draw against this ruler" and every verb obeys without being told.
+        // Binding here is what makes that true for all sixty of them at once.
+        Plots.CollectionChanged += (_, e) =>
+        {
+            if (_activeYAxisIndex == 0 || e.NewItems is null)
+            {
+                return;
+            }
+
+            foreach (PlotObject plot in e.NewItems.OfType<PlotObject>())
+            {
+                // A plot that already names a ruler keeps it, so loading a file or copying an object
+                // reproduces what was saved rather than what the axes happens to be pointing at.
+                if (plot.YAxisIndex == 0)
+                {
+                    plot.YAxisIndex = _activeYAxisIndex;
+                }
+            }
+        };
     }
 
     /// <summary>The X axes. The first entry is the primary (bottom) axis.</summary>
@@ -103,6 +128,23 @@ public sealed class AxesModel : GraphObject
     /// <summary>The primary (first) Y axis.</summary>
     public AxisModel PrimaryYAxis => YAxes[0];
 
+    /// <summary>
+    /// Which Y ruler the y-facing verbs read and write, and which new plots bind to (MATLAB
+    /// <c>yyaxis left</c> / <c>yyaxis right</c>). Like <see cref="Hold"/> this is an editing mode
+    /// rather than part of the figure's appearance, so it is neither saved nor shown in the inspector:
+    /// a reloaded two-ruler figure comes back with the left side active, which is where MATLAB starts.
+    /// </summary>
+    [Browsable(false)]
+    public int ActiveYAxisIndex
+    {
+        get => _activeYAxisIndex;
+        set => _activeYAxisIndex = System.Math.Clamp(value, 0, YAxes.Count - 1);
+    }
+
+    /// <summary>The Y ruler <see cref="ActiveYAxisIndex"/> names, falling back to the primary one.</summary>
+    public AxisModel ActiveYAxis =>
+        _activeYAxisIndex > 0 && _activeYAxisIndex < YAxes.Count ? YAxes[_activeYAxisIndex] : PrimaryYAxis;
+
     [Category("General")]
     public string Title
     {
@@ -116,6 +158,25 @@ public sealed class AxesModel : GraphObject
     {
         get => _titleStyle;
         set => SetProperty(ref _titleStyle, value, InvalidationKind.Layout);
+    }
+
+    /// <summary>
+    /// A second line under the title (MATLAB <c>subtitle</c>), for the qualification a title should
+    /// not have to carry — the conditions a run was made under, the units, the date.
+    /// </summary>
+    [Category("General")]
+    public string Subtitle
+    {
+        get => _subtitle;
+        set => SetProperty(ref _subtitle, value ?? string.Empty, InvalidationKind.Layout);
+    }
+
+    /// <summary>How the subtitle is drawn. Smaller and lighter than the title, so it reads as second.</summary>
+    [Category("General"), DisplayName("Subtitle style")]
+    public TextStyle SubtitleStyle
+    {
+        get => _subtitleStyle;
+        set => SetProperty(ref _subtitleStyle, value, InvalidationKind.Layout);
     }
 
     [Category("Appearance")]
@@ -205,6 +266,18 @@ public sealed class AxesModel : GraphObject
     }
 
     /// <summary>
+    /// The camera roll in degrees: how far it is turned about the direction it is already looking
+    /// (MATLAB <c>camroll</c>). Positive rolls the camera anticlockwise, so the scene inside the plot
+    /// area appears to turn clockwise.
+    /// </summary>
+    [Category("3D View")]
+    public double Roll
+    {
+        get => _roll;
+        set => SetProperty(ref _roll, value, InvalidationKind.Render);
+    }
+
+    /// <summary>
     /// The relative side lengths of the 3D plot box (MATLAB <c>pbaspect</c>). The default cube is what
     /// every 3D axes had before M45; only the ratios matter, since the box is scaled to fit the plot
     /// area either way.
@@ -230,6 +303,24 @@ public sealed class AxesModel : GraphObject
         var axis = new AxisModel(AxisOrientation.Vertical, position);
         YAxes.Add(axis);
         return axis;
+    }
+
+    /// <summary>
+    /// Makes the Y ruler at <paramref name="index"/> the active one, adding rulers on the right until
+    /// it exists. Asking twice for the same side is not an error and does not add a second ruler, which
+    /// is what lets a script say <c>yyaxis right</c> before each of several plots.
+    /// </summary>
+    public AxisModel UseYAxis(int index)
+    {
+        ArgumentOutOfRangeException.ThrowIfNegative(index);
+
+        while (YAxes.Count <= index)
+        {
+            AddYAxis();
+        }
+
+        ActiveYAxisIndex = index;
+        return YAxes[index];
     }
 
     /// <summary>Returns the X axis a plot object is bound to, falling back to the primary axis.</summary>

@@ -13,7 +13,7 @@ public sealed class Projection3D
 {
     // Rotation rows of MATLAB's viewmtx(az, el): screen-right (u), screen-up (v), and depth toward
     // the viewer (larger = closer). view(0, 90) reduces to u = x, v = y, depth = z (top-down 2D).
-    private readonly double _ux, _uy;             // u row (z coefficient is 0)
+    private readonly double _ux, _uy, _uz;        // u row (z coefficient is 0 until the camera rolls)
     private readonly double _vx, _vy, _vz;        // v row
     private readonly double _dx, _dy, _dz;        // depth row
 
@@ -40,7 +40,8 @@ public sealed class Projection3D
         double azimuthDegrees,
         double elevationDegrees,
         Rect2D plotArea,
-        Vector3D? boxAspect = null)
+        Vector3D? boxAspect = null,
+        double rollDegrees = 0)
     {
         double az = azimuthDegrees * System.Math.PI / 180.0;
         double el = elevationDegrees * System.Math.PI / 180.0;
@@ -49,11 +50,28 @@ public sealed class Projection3D
         double sinEl = System.Math.Sin(el);
         double cosEl = System.Math.Cos(el);
 
-        _ux = cosAz;
-        _uy = sinAz;
-        _vx = -sinEl * sinAz;
-        _vy = sinEl * cosAz;
-        _vz = cosEl;
+        double ux = cosAz, uy = sinAz, uz = 0;
+        double vx = -sinEl * sinAz, vy = sinEl * cosAz, vz = cosEl;
+
+        // Roll turns the camera about the direction it is already looking, so it mixes screen-right
+        // and screen-up with each other and leaves the depth row alone. Doing it here means the fit
+        // below measures the rolled box, which is what keeps a rolled axes inside its plot area.
+        if (rollDegrees != 0)
+        {
+            double roll = rollDegrees * System.Math.PI / 180.0;
+            double sinRoll = System.Math.Sin(roll);
+            double cosRoll = System.Math.Cos(roll);
+            (ux, vx) = ((cosRoll * ux) + (sinRoll * vx), (cosRoll * vx) - (sinRoll * ux));
+            (uy, vy) = ((cosRoll * uy) + (sinRoll * vy), (cosRoll * vy) - (sinRoll * uy));
+            (uz, vz) = ((cosRoll * uz) + (sinRoll * vz), (cosRoll * vz) - (sinRoll * uz));
+        }
+
+        _ux = ux;
+        _uy = uy;
+        _uz = uz;
+        _vx = vx;
+        _vy = vy;
+        _vz = vz;
         _dx = cosEl * sinAz;
         _dy = -cosEl * cosAz;
         _dz = sinEl;
@@ -75,7 +93,7 @@ public sealed class Projection3D
             double x = ((corner & 1) == 0 ? -0.5 : 0.5) * _ax;
             double y = ((corner & 2) == 0 ? -0.5 : 0.5) * _ay;
             double z = ((corner & 4) == 0 ? -0.5 : 0.5) * _az;
-            double u = (_ux * x) + (_uy * y);
+            double u = (_ux * x) + (_uy * y) + (_uz * z);
             double v = (_vx * x) + (_vy * y) + (_vz * z);
             minU = System.Math.Min(minU, u);
             maxU = System.Math.Max(maxU, u);
@@ -102,7 +120,7 @@ public sealed class Projection3D
         double ny = (((y - _yMin) / _ySpan) - 0.5) * _ay;
         double nz = (((z - _zMin) / _zSpan) - 0.5) * _az;
 
-        double u = (_ux * nx) + (_uy * ny);
+        double u = (_ux * nx) + (_uy * ny) + (_uz * nz);
         double v = (_vx * nx) + (_vy * ny) + (_vz * nz);
         double depth = (_dx * nx) + (_dy * ny) + (_dz * nz);
 
@@ -124,7 +142,7 @@ public sealed class Projection3D
     public Vector3D ScreenUp => new(_vx, _vy, _vz);
 
     /// <summary>The unit direction that appears as "right" on screen, in normalized cube space.</summary>
-    public Vector3D ScreenRight => new(_ux, _uy, 0);
+    public Vector3D ScreenRight => new(_ux, _uy, _uz);
 
     /// <summary>
     /// Maps a data-space point into the plot box the camera works in: each axis' visible range becomes

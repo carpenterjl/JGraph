@@ -38,7 +38,7 @@ internal static partial class JgsBuiltins
         "imcolordiff", [], ["Standard", "isInputLab", "kL", "K1", "K2"]);
 
     private static void DefineColorBuiltins(
-        Action<string, Func<IReadOnlyList<JgsValue>, int, int, JgsValue>> define, JgsDialect dialect)
+        Action<string, Func<IReadOnlyList<JgsValue>, int, int, JgsValue>> define, Random random, JgsDialect dialect)
     {
         // --- Hue, saturation, value ------------------------------------------------------------
         define("rgb2hsv", (args, line, col) =>
@@ -321,6 +321,11 @@ internal static partial class JgsBuiltins
         define("rgb2ind", (args, line, col) => RgbToIndOutputs(args, 1, line, col, dialect)[0]);
         define("imapprox", (args, line, col) => ImApproxOutputs(args, 1, line, col, dialect)[0]);
         define("imsplit", (args, line, col) => ImSplitOutputs(args, 1, line, col)[0]);
+
+        // M54 wave F: the three the base install lists beside imapprox, which arrived with it.
+        define("cmpermute", (args, line, col) => CmPermuteOutputs(args, 1, line, col, random, dialect)[0]);
+        define("cmunique", (args, line, col) => CmUniqueOutputs(args, 1, line, col, dialect)[0]);
+        define("dither", (args, line, col) => Dither(args, line, col, dialect));
 
         define("ind2rgb", (args, line, col) =>
         {
@@ -855,6 +860,203 @@ internal static partial class JgsBuiltins
         bool dither = DitherOption("imapprox", args, line, col);
         double[,] reduced = PaletteFor("imapprox", args[2], rgb, line, col);
         return Indexed(rgb, height, width, reduced, dither, wanted, dialect);
+    }
+
+    /// <summary>
+    /// <c>[Y, newmap] = cmpermute(X, map)</c>: the same picture over a shuffled palette. With no
+    /// order given the shuffle is random, which is what makes it useful for telling apart two
+    /// regions that happened to land on neighbouring colours.
+    /// </summary>
+    private static JgsValue[] CmPermuteOutputs(
+        IReadOnlyList<JgsValue> args, int wanted, int line, int col, Random random, JgsDialect dialect)
+    {
+        ArityRange("cmpermute", args, 2, 3, line, col);
+        (double[] indices, int height, int width, _) = IndexPlane("cmpermute", args, 0, line, col, dialect);
+        double[,] map = ColormapRows("cmpermute", args, 1, line, col);
+        int rows = map.GetLength(0);
+
+        int[] order;
+        if (args.Count == 3)
+        {
+            double[] given = ToDoubles("cmpermute: the order", args[2], line, col);
+            if (given.Length != rows)
+            {
+                throw new JgsRuntimeException(line, col,
+                    $"cmpermute: the order has one entry per colormap row, so {rows}, but got {given.Length}.");
+            }
+
+            order = new int[rows];
+            for (int i = 0; i < rows; i++)
+            {
+                int one = (int)Math.Round(given[i]);
+                if (one < 1 || one > rows)
+                {
+                    throw new JgsRuntimeException(line, col,
+                        $"cmpermute: the order holds colormap rows 1 to {rows}, but one of them is {one}.");
+                }
+
+                order[i] = one - 1;
+            }
+        }
+        else
+        {
+            // Off the session's own generator, so rng(seed) makes the shuffle repeatable.
+            order = [.. Enumerable.Range(0, rows)];
+            for (int i = rows - 1; i > 0; i--)
+            {
+                int j = random.Next(i + 1);
+                (order[i], order[j]) = (order[j], order[i]);
+            }
+        }
+
+        // order[newRow] is the old row that moved there, so the index map has to be inverted before
+        // the picture can be rewritten — every pixel names an old row and wants its new one.
+        var moved = new int[rows];
+        for (int i = 0; i < rows; i++)
+        {
+            moved[order[i]] = i;
+        }
+
+        var permuted = new double[rows, 3];
+        for (int i = 0; i < rows; i++)
+        {
+            for (int c = 0; c < 3; c++)
+            {
+                permuted[i, c] = map[order[i], c];
+            }
+        }
+
+        var reindexed = new double[indices.Length];
+        for (int i = 0; i < indices.Length; i++)
+        {
+            int old = (int)Math.Round(indices[i]) - dialect.IndexBase;
+            reindexed[i] = (old >= 0 && old < rows ? moved[old] : 0) + dialect.IndexBase;
+        }
+
+        JgsValue plane = IndexValue(reindexed, height, width);
+        return wanted < 2 ? [plane] : [plane, MatrixToRows(permuted)];
+    }
+
+    /// <summary>
+    /// <c>[Y, newmap] = cmunique(…)</c>: the same picture over a palette with no colour twice. Takes
+    /// an indexed picture and its map, a truecolour picture, or a greyscale one.
+    /// </summary>
+    private static JgsValue[] CmUniqueOutputs(
+        IReadOnlyList<JgsValue> args, int wanted, int line, int col, JgsDialect dialect)
+    {
+        ArityRange("cmunique", args, 1, 2, line, col);
+
+        double[,] rgb;
+        int height, width;
+        if (args.Count == 2)
+        {
+            (double[] indices, int h, int w, _) = IndexPlane("cmunique", args, 0, line, col, dialect);
+            double[,] map = ColormapRows("cmunique", args, 1, line, col);
+            rgb = IndexedImages.Expand(indices, map);
+            (height, width) = (h, w);
+        }
+        else
+        {
+            ColorArg source = Triples("cmunique", args, 0, line, col);
+            if (source.Shape == ColorShape.Colormap)
+            {
+                throw new JgsRuntimeException(line, col, "cmunique expects a picture, not a colormap.");
+            }
+
+            rgb = source.Triples;
+            (height, width) = (source.Height, source.Width);
+        }
+
+        // First appearance decides the order, so the palette reads the way the picture scans and the
+        // answer does not depend on how the colours were spelled.
+        var seen = new Dictionary<(double R, double G, double B), int>();
+        var palette = new List<(double R, double G, double B)>();
+        var plane = new double[rgb.GetLength(0)];
+        for (int i = 0; i < plane.Length; i++)
+        {
+            (double, double, double) key = (rgb[i, 0], rgb[i, 1], rgb[i, 2]);
+            if (!seen.TryGetValue(key, out int row))
+            {
+                row = palette.Count;
+                seen[key] = row;
+                palette.Add(key);
+            }
+
+            plane[i] = row + dialect.IndexBase;
+        }
+
+        var unique = new double[palette.Count, 3];
+        for (int i = 0; i < palette.Count; i++)
+        {
+            (unique[i, 0], unique[i, 1], unique[i, 2]) = palette[i];
+        }
+
+        JgsValue indexed = IndexValue(plane, height, width);
+        return wanted < 2 ? [indexed] : [indexed, MatrixToRows(unique)];
+    }
+
+    /// <summary>
+    /// <c>dither</c>: trade resolution for depth. Given a colormap it quantizes a colour picture
+    /// against it with error diffusion; given a greyscale picture alone it dithers to black and
+    /// white, which is the form a printer wanted.
+    /// </summary>
+    private static JgsValue Dither(IReadOnlyList<JgsValue> args, int line, int col, JgsDialect dialect)
+    {
+        ArityRange("dither", args, 1, 2, line, col);
+
+        // dither(I) is the greyscale form and takes a one-channel picture, which the colour reader
+        // will not accept; only the two-argument form is about triples.
+        if (args.Count == 1)
+        {
+            using ImgArg grey = ImgLike("dither", args, 0, line, col);
+            ImageBuffer plane = grey.Buffer;
+            if (plane.Channels != 1)
+            {
+                throw new JgsRuntimeException(line, col,
+                    "dither: a colour picture needs a colormap to be dithered against — dither(RGB, map).");
+            }
+
+            var triples = new double[plane.Height * plane.Width, 3];
+            for (int r = 0; r < plane.Height; r++)
+            {
+                for (int c = 0; c < plane.Width; c++)
+                {
+                    int i = (r * plane.Width) + c;
+                    triples[i, 0] = triples[i, 1] = triples[i, 2] = plane[r, c, 0];
+                }
+            }
+
+            double[] levels = IndexedImages.Quantize(
+                triples, plane.Height, plane.Width, IndexedImages.GrayColormap(2), dither: true);
+
+            // Two grey levels are black and white, so the answer is a mask rather than an index
+            // plane — which is what every caller of the one-argument form goes on to use it as.
+            var mask = new ImageBuffer(plane.Height, plane.Width, 1);
+            for (int r = 0; r < plane.Height; r++)
+            {
+                for (int c = 0; c < plane.Width; c++)
+                {
+                    mask[r, c, 0] = levels[(r * plane.Width) + c] > 1.5 ? 1 : 0;
+                }
+            }
+
+            return ImgOut(mask, ImageClass.Logical);
+        }
+
+        ColorArg source = Triples("dither", args, 0, line, col);
+        if (source.Shape == ColorShape.Colormap)
+        {
+            throw new JgsRuntimeException(line, col, "dither expects a picture, not a colormap.");
+        }
+
+        double[,] map = ColormapRows("dither", args, 1, line, col);
+        double[] indices = IndexedImages.Quantize(source.Triples, source.Height, source.Width, map, dither: true);
+        for (int i = 0; i < indices.Length; i++)
+        {
+            indices[i] += dialect.IndexBase - 1;
+        }
+
+        return IndexValue(indices, source.Height, source.Width);
     }
 
     /// <summary><c>[R, G, B] = imsplit(RGB)</c>: the three channels as separate grayscale images.</summary>

@@ -69,6 +69,8 @@ internal static class FigureMapper
             Name = axes.Name,
             Title = axes.Title,
             TitleStyle = DtoConvert.ToDto(axes.TitleStyle),
+            Subtitle = axes.Subtitle,
+            SubtitleStyle = DtoConvert.ToDto(axes.SubtitleStyle),
             Background = axes.Background,
             NormalizedBounds = DtoConvert.ToDto(axes.NormalizedBounds),
             AutoScalePadding = axes.AutoScalePadding,
@@ -78,6 +80,7 @@ internal static class FigureMapper
             Is3D = axes.Is3D,
             Azimuth = axes.Azimuth,
             Elevation = axes.Elevation,
+            Roll = axes.Roll,
             ZAxis = ToDto(axes.ZAxis),
             Colorbar = ToDto(axes.Colorbar),
             Grid = ToDto(axes.Grid),
@@ -121,6 +124,7 @@ internal static class FigureMapper
         {
             Name = dto.Name,
             Title = dto.Title,
+            Subtitle = dto.Subtitle,
             Background = dto.Background,
             NormalizedBounds = DtoConvert.ToRect(dto.NormalizedBounds),
             AutoScalePadding = dto.AutoScalePadding,
@@ -130,6 +134,7 @@ internal static class FigureMapper
             Is3D = dto.Is3D,
             Azimuth = dto.Azimuth,
             Elevation = dto.Elevation,
+            Roll = dto.Roll,
         };
 
         // The Z axis instance is owned by the AxesModel; apply the serialized state onto it.
@@ -152,6 +157,11 @@ internal static class FigureMapper
         if (dto.TitleStyle is not null)
         {
             axes.TitleStyle = DtoConvert.ToTextStyle(dto.TitleStyle);
+        }
+
+        if (dto.SubtitleStyle is not null)
+        {
+            axes.SubtitleStyle = DtoConvert.ToTextStyle(dto.SubtitleStyle);
         }
 
         // Replace the axes created by the AxesModel constructor with the serialized ones (guarding
@@ -236,6 +246,9 @@ internal static class FigureMapper
         TargetMajorTickCount = axis.TargetMajorTickCount,
         TickLabelFormat = axis.TickLabelFormat,
         Categories = axis.Categories?.ToArray(),
+        TickPositions = axis.TickPositions?.ToArray(),
+        TickLabelOverrides = axis.TickLabelOverrides?.ToArray(),
+        TickLabelAngle = axis.TickLabelAngle,
         LabelStyle = DtoConvert.ToDto(axis.LabelStyle),
         TickLabelStyle = DtoConvert.ToDto(axis.TickLabelStyle),
     };
@@ -265,6 +278,12 @@ internal static class FigureMapper
         {
             axis.Categories = dto.Categories;
         }
+
+        // Null means automatic, which is also what a document written before these fields existed
+        // says by omitting them — so a v5 figure loads with the ticks it always had.
+        axis.TickPositions = dto.TickPositions;
+        axis.TickLabelOverrides = dto.TickLabelOverrides;
+        axis.TickLabelAngle = dto.TickLabelAngle;
 
         if (dto.LabelStyle is not null)
         {

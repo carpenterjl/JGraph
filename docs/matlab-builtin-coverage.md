@@ -7,16 +7,33 @@ so long. The live tracker is `matlab-r2021b-documented.html` in the demo workspa
 `tools/matlab-checklist/build-checklist.py`; this file is the standing summary, so the shape of what
 is left does not have to be re-derived each time.
 
-**372 of 514 builtins implemented**, unchanged since M45 (364 after M43, 363 after M39, 326 after
-M38, 185 after M37, 109 after M36) — M46 through M52 all added names MATLAB documents as *functions*,
+**382 of 514 builtins implemented** (372 from M45 to M53, 364 after M43, 363 after M39, 326 after
+M38, 185 after M37, 109 after M36) — M46 through M53 all added names MATLAB documents as *functions*,
 which this table does not hold. M45's eight are the drawing primitives the "handle graphics" section
 below used to list as missing and call the most useful thing left: `plot3`, `line`, `text`, `fill`,
-`fill3`, `patch`, `surface`, `light`.
+`fill3`, `patch`, `surface`, `light`. **M54 is the first milestone since M45 to move this table**, by
+the ten handle-graphics builtins it implemented: `get` `set` `findobj` `isgraphics` `ishandle`
+`ishghandle` `gco` `gcbo` `ancestor` `copyobj`.
 
-**78 of the 263 documented graphics functions** — the second table below, new in M45.
+**133 of the 264 documented graphics functions** — the second table below, new in M45, and M54 moved
+it by 52. The denominator changed too, and the correction is worth stating rather than quietly
+overwriting: this file has said 263 since M45, which was one short *and* two names wrong in both
+directions. `slice` was counted in the implemented table and listed again among the missing volume
+names; `close` (M35) and `linkaxes` (M51) were graphics functions the file never put in either list.
+264 is the real count of documented functions under `graph2d`, `graph3d`, `specgraph` and `graphics`,
+and 133 = the 78 of M45 + M54's 52 + `close` + `linkaxes` + `imapprox`, which M46 implemented while it
+sat in the missing list below.
 
-Across every callable kind — builtin, function, operator, keyword, script — the count is **633 of
-2,027** as of M52 (619 after M51, up from 560, and not from the 556 this file used to claim: the checklist tool
+A fresh run of `build-checklist.py` reports **142**, not 133, and the nine-name gap is deliberate: M54
+registers the polar-axes ruler verbs (`rticks` `rticklabels` `rtickangle` `rtickformat` `rlim`
+`thetaticks` `thetaticklabels` `thetatickformat` `thetalim`) as names that refuse with a reason rather
+than as "undefined function", and a registered name is a catalogued name, which is all the checklist
+tool can see. They are counted as **not** implemented here, because they draw nothing. M56 makes them
+real. `opengl` *is* counted, because an accepted no-op is an answer — the same reading that counted
+`shading`, `lighting` and `camlight` in M43.
+
+Across every callable kind — builtin, function, operator, keyword, script — the count is **697 of
+2,027** as of M54 (633 after M52, 619 after M51, up from 560, and not from the 556 this file used to claim: the checklist tool
 read the implemented set with a regular expression that only matched a name literal directly inside
 `Add(`, so it missed the sixteen colormap generators, which are registered from a loop, and reported
 `parula` as unimplemented the whole time it was working. Both shapes are read now).
@@ -85,7 +102,24 @@ dimension 1 instead of taking a weight, `unique` had no `'stable'`, `'rows'` or 
 signatures behind the names, which is the same point M48's paragraph makes about one name and this one
 makes about the whole surface.
 
-The remaining 142 builtins divide into six families that each need machinery JGraph does not have,
+M54 moved the builtin table by **ten** and the graphics table by **52**, and it is the milestone that
+overturned this file's oldest recorded non-goal. The "handle graphics and app building" section below
+used to say a script does not get handles on figure objects; M51 gave it handles, and M54 gave those
+handles the name-driven property interface MATLAB actually has — `get`, `set` and `findobj` over every
+object kind, reading and writing the same properties the inspector shows, because the table behind them
+is built by reflection over the model's own `[Browsable]` properties rather than hand-listed. The
+consequence is worth stating for the milestones that follow: every chart type M55 onward adds joins
+that surface for free, and a guardrail test fails if one does not.
+
+M54's own stress script then found three documented forms that errored, none of which the milestone's
+twelve new unit suites had reason to try, and all three are fixed in it: **`findobj` could not match a
+colour** (it compared arrays by identity, which is right for handles and useless for a 1×3 row),
+**`delete(h)` said a handle was not a path** (MATLAB spells the file verb and the graphics verb with
+one name, and only the file one was here), and **`contour(Z)` errored** — the shortest form of the verb
+— because it insisted on x and y. `tempdir` and `tempname` were missing too, and were added. The
+pattern is the M46 one exactly: a suite tests the verb it is about, in the spelling that verb prefers.
+
+The remaining 132 builtins divide into six families that each need machinery JGraph does not have,
 plus a short list of eleven odds and ends. Every one of them is accounted for below.
 
 ## Implemented
@@ -114,6 +148,7 @@ plus a short list of eleven odds and ends. Every one of them is accounted for be
 | Stress-test numerics and sparse | M42 | `sparse` `sprand` `eigs` `spy` `hilb` `polyval` `peaks` `cond` `sqrtm` `logm` `ode45` `int8`…`uint64` (with `.empty` statics) — plus complex `det`/`inv`/`trace`/`eig`/`svd`/`exp`/`log`/`sqrt` and the parallel dense product |
 | Stress-test data types and verbs | M43 | `table` `timetable` `seconds` `categorical` `summary` `string` `cellstr` `compose` `missing` `ismissing` `tiledlayout` `nexttile` `axis` `shading` `lighting` `camlight` `rotate3d` — plus sprintf format cycling, element-wise `~`, and `colormap turbo` |
 | Drawing primitives | M45 | `plot3` `line` `text` `fill` `fill3` `patch` `surface` `light` |
+| Handle graphics | M54 | `get` `set` `findobj` `isgraphics` `ishandle` `ishghandle` `gco` `gcbo` `ancestor` `copyobj` |
 | Data analysis, sets and formatting | M52 | `rng` `var` `gradient` `trapz` `cumtrapz` `interp1` `polyfit` `histcounts` `corrcoef` `cov` `rms` `bounds` `sortrows` `union` `intersect` `setdiff` `setxor` `mat2str` `int2str` `deal` — all documented as *functions*, so only the fourteen the dump flags as documented move the across-every-kind total |
 
 ## Graphics commands MATLAB documents as functions
@@ -144,48 +179,79 @@ count in the first table instead.
 | Camera and aspect | M45 | `campos` `camtarget` `camup` `camva` `camorbit` `camzoom` `daspect` `pbaspect` |
 | 3-D primitives | M45 | `scatter3` |
 | Surface variants and shape generators | M45 | `surfc` `meshz` `waterfall` `ribbon` `contour3` `quiver` `quiver3` `trisurf` `trimesh` `sphere` `cylinder` `ellipsoid` |
+| Never counted before M54 | M35–M46 | `close` `linkaxes` `imapprox` — implemented in their own milestones, in neither list here until the count was reconciled |
+| Handle graphics | M54 | `cla` `findall` `gcbf` `gobjects` `ishold` `newplot` `shg` (the other ten of the family are builtins, in the first table) |
+| Tick and ruler verbs | M54 | `xticks` `yticks` `zticks` `xticklabels` `yticklabels` `zticklabels` `xtickangle` `ytickangle` `ztickangle` `xtickformat` `ytickformat` `ztickformat` `num2ruler` `ruler2num` |
+| The second y ruler | M54 | `yyaxis` — a gap neither table here ever recorded, because it is documented under `graphics/axis` and nothing enumerated that folder |
+| Decorations | M54 | `box` `sgtitle` `subtitle` `clabel` `texlabel` `xline` `yline` |
+| Camera extras | M54 | `viewmtx` `makehgtform` `camroll` `camdolly` `campan` `camlookat` `camproj` |
+| Legacy colormap and appearance | M54 | `colorcube` `flag` `prism` `rgbplot` `validatecolor` `diffuse` `specular` `contrast` `hidden` `orient` `whitebg` `colordef` `opengl` `cmpermute` `cmunique` `dither` |
 
-### What the remaining 185 are
+### What the remaining 131 are
 
-Five families, and they add to exactly 185 — only the first two are missing *plots*.
+Five families, and they add to exactly 131 — only the first two are missing *plots*. This section read
+185 from M45 until M54 emptied two of the five families and most of a third; the milestone each family
+is now waiting on is named beside it.
 
 **Chart types with no plot object — 33.** `area` `barh` `bar3` `bar3h` `stairs` `stem3` `pie` `pie3`
 `compass` `feather` `rose` `polar` `polarplot` `polarscatter` `polarhistogram` `polarbubblechart`
 `plotmatrix` `plotyy` `heatmap` `boxchart` `binscatter` `bubblechart` `bubblechart3` `swarmchart`
 `swarmchart3` `parallelplot` `stackedplot` `scatterhistogram` `wordcloud` `pareto` `voronoi`
 `triplot` `tetramesh`. Each is a plot object, a renderer branch, `.graph` serialization and inspector
-support — the same slice `plot3` and `patch` were in M45, and the largest honest remainder.
+support — the same slice `plot3` and `patch` were in M45, and the largest honest remainder. M54 made
+each one cheaper than it was: a new plot object joins `get`/`set`/`findobj` by being written, because
+the property table is reflection over the model's own browsable properties. M55 takes the everyday
+eleven, M56 the polar family, M57 the rest.
 
 **Function plotters — 16.** `fplot` `fplot3` `fsurf` `fmesh` `fcontour` `fimplicit` `fimplicit3` and
 the nine `ez*` forms. They take a *function handle* and choose their own sample points adaptively.
 JGS has function values, so nothing blocks these; the adaptive sampler is the work, not the drawing.
+M58.
 
-**Volume visualization — 23.** `isosurface` `isocaps` `isonormals` `isocolors` `contourslice`
+**Volume visualization — 22.** `isosurface` `isocaps` `isonormals` `isocolors` `contourslice`
 `coneplot` `streamline` `stream2` `stream3` `streamribbon` `streamtube` `streamslice`
 `streamparticles` `curl` `divergence` `smooth3` `subvolume` `reducevolume` `reducepatch`
-`interpstreamspeed` `volumebounds` `shrinkfaces` `surf2patch`. A 3-D scalar or vector field is a
-value type the model does not have. **`slice` cannot take its own name at all**: it has been the JGS
-array builtin since M18, and shadowing a working builtin to add a volume verb JGraph could not draw
-anyway would be a straight loss.
+`interpstreamspeed` `volumebounds` `shrinkfaces` `surf2patch`. A 3-D scalar or vector field turned out
+not to need a value type at all — since M41 it is a plain 3-D shaped array — so M59 is drawing work
+rather than model work, and `fimplicit3` builds the marching cubes for it in M58. **`slice` cannot take
+its own name at all**: it has been the JGS array builtin since M18, and shadowing a working builtin to
+add a volume verb JGraph could not draw anyway would be a straight loss. It is counted implemented in
+the table above and no longer listed here as well, which is where one of this section's two
+double-counted names came from.
 
-**Handle graphics and figure tooling — 42.** `alim` `alpha` `alphamap` `annotation` `cla` `gobjects`
-`findall` `gcbf` `getframe` `getappdata` `isappdata` `newplot` `ishold` `linkprop`
-`openfig` `savefig` `hgload` `hgsave` `plotedit` `plottools` `plotbrowser` `propertyeditor`
-`figurepalette` `datacursormode` `pan` `rotate` `rbbox` `refresh` `refreshdata` `printdlg`
-`printpreview` `pagesetupdlg` `exportsetupdlg` `axtoolbar` `axtoolbarbtn` `cameratoolbar`
-`showplottool` `uiaxes` `geoaxes` and the three interactivity toggles. Most of these address an
-editing surface JGraph already has in the plot browser and inspector. **`linkaxes` left this list in
-M51**, which gave a script real axes handles to hand it.
+**Handle graphics and figure tooling — 36.** `alim` `alpha` `alphamap` `annotation` `getframe`
+`getappdata` `isappdata` `linkprop` `openfig` `savefig` `hgload` `hgsave` `plotedit` `plottools`
+`plotbrowser` `propertyeditor` `figurepalette` `datacursormode` `pan` `rotate` `rbbox` `refresh`
+`refreshdata` `printdlg` `printpreview` `pagesetupdlg` `exportsetupdlg` `axtoolbar` `axtoolbarbtn`
+`cameratoolbar` `showplottool` `uiaxes` `geoaxes` and the three interactivity toggles. Most of these
+address an editing surface JGraph already has in the plot browser and inspector; M60 takes the rest.
+**`linkaxes` left this list in M51**, which gave a script real axes handles to hand it, and **M54 took
+six more** — `cla` `findall` `gcbf` `gobjects` `ishold` `newplot`, which are the parts of the family
+that only ever needed handles and a property table.
 
-**Properties, rulers, and legacy appearance — 70.** Small, mostly independent, mostly one property
-each: the 23 tick/ruler commands (`xticks` `xticklabels` `xtickangle` `xtickformat` and their y, z,
-r and theta counterparts, plus `rlim` `thetalim` `num2ruler` `ruler2num`); 8 decorations (`box`
-`sgtitle` `subtitle` `clabel` `texlabel` `gtext` `xline` `yline`); 7 camera extras beyond M45's
-(`camdolly` `campan` `camroll` `camlookat` `camproj` `viewmtx` `makehgtform`); 7 geographic axes;
-`bubblecloud` and `bubblelegend`; `comet` and `comet3`; and 21 legacy colormap and appearance verbs
-(`cmpermute` `cmunique` `colorcube` `colordef` `contrast` `dither` `flag` `graymon` `hidden`
-`im2java` `imapprox` `opengl` `orient` `prism` `rgbplot` `shg` `spinmap` `whitebg` `validatecolor`
-`diffuse` `specular`).
+**Properties, rulers, and legacy appearance — 24 of 70.** This was the whole point of M54 and it is
+the family the milestone emptied: 46 of the 70 are implemented, and every one of the 24 left is left
+for a stated reason rather than for want of time.
+
+- **9 polar rulers — M56.** `rticks` `rticklabels` `rtickangle` `rtickformat` `rlim` `thetaticks`
+  `thetaticklabels` `thetatickformat` `thetalim`. The tick machinery M54 built is per-`AxisModel`, so
+  these need only the polar axes to point it at; all nine are registered now and refuse by saying so.
+- **`gtext` — M60**, which is where the click seam that M51 built for legend rows gets generalized.
+- **7 geographic verbs — excluded.** `geoaxes` `geobasemap` `geobubble` `geodensityplot` `geolimits`
+  `geoplot` `geoscatter` `geotickformat` need a basemap tile service, which is a product, not a
+  feature.
+- **`bubblecloud` `bubblelegend` — M55**, beside `bubblechart`; **`comet` `comet3` — M60**, behind the
+  one animation seam.
+- **3 legacy names — excluded.** `graymon` sets a monochrome monitor's defaults, `im2java` returns a
+  Java image, `spinmap` animates a colormap rotation. The first two describe machines JGraph does not
+  run on; the third is an animation the figure model has no loop for.
+
+The 46 done: 12 Cartesian tick verbs (`xticks` and its y and z, ticklabels, tickangle, tickformat
+counterparts) plus `num2ruler` and `ruler2num`; 7 decorations (`box` `sgtitle` `subtitle` `clabel`
+`texlabel` `xline` `yline`); 7 camera extras beyond M45's (`camdolly` `campan` `camroll` `camlookat`
+`camproj` `viewmtx` `makehgtform`); and 18 of the 21 legacy colormap and appearance verbs
+(`cmpermute` `cmunique` `colorcube` `colordef` `contrast` `dither` `flag` `hidden` `imapprox`
+`opengl` `orient` `prism` `rgbplot` `shg` `whitebg` `validatecolor` `diffuse` `specular`).
 
 ### Recorded divergences
 
@@ -222,6 +288,41 @@ Deliberate, and each one a consequence of a design decision made elsewhere:
 
 `gradient` also turned up missing while writing M45's smoke script, but it is a numeric command
 rather than a graphics one, so it is recorded under known differences below.
+
+M54's own, from the property surface outward (ADR 0054 carries the reasoning):
+
+- **`findobj` matches on properties, `'flat'` and `'-depth'`, and nothing else.** The logical operator
+  words (`'-and'`, `'-regexp'`, `'-function'`) are refused by name rather than ignored.
+- **`gobjects` fills with handle 0**, which the registry never mints, so a blank compares unequal to
+  every real object — MATLAB's `GraphicsPlaceholder` by a cheaper route.
+- **`ax.YAxis` answers the active ruler**, not a 2×1 array of both, and the active side is not
+  serialized: a reloaded figure starts on the left. Gridlines follow the left ruler, and the side
+  rulers are suppressed on a 3-D axes, where MATLAB has no second y ruler either.
+- **`xtickformat` queries answer in the format spelling this build uses**, which is .NET's rather than
+  MATLAB's `%g` family; a `%`-format handed to it still works.
+- **Tick label angles are 2-D only.** A 3-D axes draws its labels along the projected ruler and ignores
+  `xtickangle`.
+- **A single-output `contour(…)` returns the handle**, where MATLAB returns the contour matrix; the
+  matrix is the first of two outputs. Contour labels are 2-D only, and `clabel(…, 'manual')` is refused
+  because it wants a click.
+- **A cell-array title is joined into one line** rather than stacked, and `title`/`subtitle`/`sgtitle`
+  return nothing rather than a text handle.
+- **`texlabel` covers the documented subset** — Greek names, subscripts, superscripts, the common
+  operators — and passes anything else through unchanged.
+- **`camproj` always reports `'orthographic'`.** `'perspective'` is accepted and ignored, which follows
+  from ADR 0022's camera; `viewmtx` still builds the documented perspective matrix, because that one is
+  arithmetic a script may want for its own use.
+- **`camdolly`'s `'fixtarget'` and `'pixels'`, and `campan`'s direction argument, are refused with the
+  reason.** An auto-fitting orthographic camera has no target to fix and no pixel space to move in.
+- **`orient` always answers `'portrait'`**, and `'landscape'`/`'tall'` change nothing: the page shape
+  belongs to the export dialog, not the figure.
+- **`hidden` defaults off**, where MATLAB defaults it on. A JGraph mesh has drawn no faces since M20b,
+  so there was never anything to hide; `hidden on` now paints them the axes background, which is the
+  effect, and `SurfacePlot.FaceColor` is the property it sets.
+- **`colorcube`'s rows are our construction** to the documented description — a cube of regularly
+  spaced colours, then grey and primary ramps, then black — not a copy of MATLAB's unpublished split.
+- **`cmpermute`'s random order comes off the session generator**, so `rng(seed)` makes it repeatable,
+  which MATLAB's does not promise.
 
 ## Answers that follow from JGraph's value model
 
@@ -354,27 +455,38 @@ M52 left these behind, each named rather than silent (the full table is in
 - **`interp2`, `'native'` output classes, `histogram` object options and `'SamplePoints'`** were
   scoped out of M52 deliberately.
 
-## Not implemented — 142
+## Not implemented — 132
 
-### Handle graphics and app building — 36
+### Handle graphics and app building — 26
 
-`addpoints` `ancestor` `animatedline` `axes` `clearpoints` `copyobj` `findobj` `frame2im` `gcbo`
-`gco` `get` `getpoints` `groot` `hggroup` `hgsetget` `hgtransform` `im2frame` `isgraphics`
-`ishandle` `ishghandle` `polaraxes` `rectangle` `reset` `rmappdata` `selectmoveresize` `set`
-`setappdata` `uicontextmenu` `uicontrol` `uimenu` `uipanel` `uipushtool` `uitoggletool` `uitoolbar`
-`waitfor` `waitforbuttonpress`
+`addpoints` `animatedline` `axes` `clearpoints` `frame2im` `getpoints` `groot` `hggroup` `hgsetget`
+`hgtransform` `im2frame` `polaraxes` `rectangle` `reset` `rmappdata` `selectmoveresize` `setappdata`
+`uicontextmenu` `uicontrol` `uimenu` `uipanel` `uipushtool` `uitoggletool` `uitoolbar` `waitfor`
+`waitforbuttonpress`
 
-**M51 overturned the non-goal this section used to record.** A script *does* get handles on figure
-objects now (ADR 0051): `subplot` and `plot` hand them back, `plot(ax, …)` and `title(ax, …)` aim a
-verb at a named axes, `p.Color` and `p.Visible = 'off'` read and write properties, `legend(ax, h,
-'Location', …)` returns a legend handle, and `lgd.ItemHitFcn` runs when a legend row is clicked in
-the window. A handle is an ordinary number keyed into a runtime registry — pre-HG2 MATLAB's own
-model — which is what lets handles live in arrays, compare by identity, and gather out of struct
-arrays with no new machinery.
+**M51 overturned the non-goal this section used to record, and M54 finished the job.** A script gets
+handles on figure objects (ADR 0051): `subplot` and `plot` hand them back, `plot(ax, …)` and
+`title(ax, …)` aim a verb at a named axes, `p.Color` and `p.Visible = 'off'` read and write
+properties, `legend(ax, h, 'Location', …)` returns a legend handle, and `lgd.ItemHitFcn` runs when a
+legend row is clicked in the window. A handle is an ordinary number keyed into a runtime registry —
+pre-HG2 MATLAB's own model — which is what lets handles live in arrays, compare by identity, and
+gather out of struct arrays with no new machinery.
 
-What is left here is the rest of the family. `get`/`set`/`findobj` are a name-driven property
-interface over every object kind, where M51 gave the dot a fixed set per kind; they are a natural
-next step rather than a barrier. The `ui*` family is app building and stays out.
+**M54 added the name-driven interface over that model** (ADR 0054), which is what this section used to
+call the natural next step: `get` `set` `findobj` `isgraphics` `ishandle` `ishghandle` `gco` `gcbo`
+`ancestor` `copyobj` left this list, along with `cla` `findall` `gcbf` `gobjects` `ishold` `newplot`
+`shg` from the graphics-function table. The property table is reflection over the model's own
+`[Browsable]` properties plus a curated alias layer (`'XLim'`, `'XData'`, `'Parent'`, colours as 1×3
+rows, booleans as `'on'`/`'off'`), so it is the same metadata the inspector shows and cannot drift from
+it — a guardrail test fails if a browsable property is unreachable through `get`.
+
+`copyobj` clones through a `.graph` DTO round trip rather than through clone code of its own, so a copy
+cannot diverge from what a save would have written. `gobjects` fills with handle 0, which is never
+minted — a recorded divergence from MATLAB's `GraphicsPlaceholder`.
+
+What is left here is app building and the object kinds JGraph has no model for: the `ui*` family,
+`animatedline` and its point verbs, `hggroup`/`hgtransform`, `groot`, `rectangle`, `axes` and
+`polaraxes` as constructors (M56 brings the polar axes itself). The appdata trio rides in M60.
 
 The eight this section used to also list — `fill`, `fill3`, `patch`, `plot3`, `line`, `text`,
 `surface` and `light` — were never about handles. They were drawing primitives the figure model did
@@ -447,6 +559,13 @@ those sixteen are registered from a loop and a catalog-only regex silently misse
 so re-running it after any milestone that adds builtins refreshes the tracker without editing
 anything by hand. **A name registered from a loop is invisible to this tool**; if a future milestone
 adds one, teach `catalog_names` about it or the count will quietly understate itself again.
+
+It can also *overstate*, which M54 is the first milestone to make it do. The tool equates "catalogued"
+with "implemented", and M54 catalogues nine polar-axes ruler verbs that exist only to refuse with a
+reason. A name that refuses is worth registering — "rlim requires polar axes, which this build does not
+draw yet" is a better answer than "undefined function", and it reserves the name for M56 — but it is
+not coverage, so the headline above subtracts those nine by hand. Any future milestone that registers a
+placeholder owes the same subtraction and a line saying so.
 
 ```
 python tools/matlab-checklist/build-checklist.py <workspace>/matlab-r2021b-commands.html <workspace>/matlab-r2021b-documented.html

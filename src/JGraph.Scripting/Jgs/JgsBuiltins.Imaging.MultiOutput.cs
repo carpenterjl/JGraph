@@ -106,6 +106,8 @@ internal static partial class JgsBuiltins
         Wrap("rgb2ind", (args, wanted, line, col) => RgbToIndOutputs(args, wanted, line, col, dialect));
         Wrap("imapprox", (args, wanted, line, col) => ImApproxOutputs(args, wanted, line, col, dialect));
         Wrap("imsplit", ImSplitOutputs);
+        Wrap("cmpermute", (args, wanted, line, col) => CmPermuteOutputs(args, wanted, line, col, random, dialect));
+        Wrap("cmunique", (args, wanted, line, col) => CmUniqueOutputs(args, wanted, line, col, dialect));
 
         // M46 wave E. Each hands back the thing it measured alongside the picture it produced — the
         // mapping histeq built, the histogram it was matched to, the transmission map the haze

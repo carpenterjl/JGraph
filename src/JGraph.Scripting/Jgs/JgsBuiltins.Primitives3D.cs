@@ -41,8 +41,10 @@ internal static partial class JgsBuiltins
     /// </summary>
     private static void RegisterPrimitive3DBuiltins(JgsEnvironment env)
     {
+        // These hand back a handle but stay quiet as a bare statement, exactly as the 2-D verbs do.
         void Define(string name, Func<IReadOnlyList<JgsValue>, int, int, JgsValue> body) =>
-            env.Declare(name, JgsValue.Function(new BuiltinFunction(name, body)));
+            env.Declare(name, JgsValue.Function(
+                new BuiltinFunction(name, body) { BindsAnsAsStatement = false }));
 
         Define("plot3", (args, line, col) => Plot3(args, line, col));
         Define("scatter3", (args, line, col) => Scatter3(args, line, col));
@@ -57,7 +59,7 @@ internal static partial class JgsBuiltins
         // MATLAB's low-level `surface` is `surf` without the axes reset. It shares the dispatcher, so
         // the meshgrid collapse and the parametric path behave identically.
         Define("surface", (args, line, col) => Surface3D("surface", args, line, col,
-            (x, y, z) => JG.Surf(x, y, z), z => JG.Surf(z), (x, y, z) => JG.Surf(x, y, z)));
+            (x, y, z) => JG.Surf(x, y, z), JG.Surf, (x, y, z) => JG.Surf(x, y, z)));
     }
 
     /// <summary>Which coordinate forms a fill/patch verb accepts.</summary>
@@ -141,7 +143,7 @@ internal static partial class JgsBuiltins
             }
         }
 
-        return JgsValue.Null;
+        return HandlesFor(created);
     }
 
     // --- scatter3 -----------------------------------------------------------------------------
@@ -229,7 +231,7 @@ internal static partial class JgsBuiltins
             }
         }
 
-        return JgsValue.Null;
+        return Handle(plot);
     }
 
     private static void ApplySizeData(Scatter3DPlot plot, JgsValue value, int line, int col)
@@ -292,7 +294,7 @@ internal static partial class JgsBuiltins
             : FromCoordinates(verb, data, line, col, dimensions);
 
         ApplyPatchOptions(verb, patch, options, line, col);
-        return JgsValue.Null;
+        return Handle(patch);
     }
 
     /// <summary>
@@ -542,6 +544,8 @@ internal static partial class JgsBuiltins
                 {
                     ApplyLineOption("line", plot, name, value, line, col);
                 }
+
+                return Handle(plot);
             }
             else
             {
@@ -550,14 +554,14 @@ internal static partial class JgsBuiltins
                 {
                     ApplyLineOption("line", plot, name, value, line, col);
                 }
+
+                return Handle(plot);
             }
         }
         catch (ArgumentException ex)
         {
             throw new JgsRuntimeException(line, col, ex.Message);
         }
-
-        return JgsValue.Null;
     }
 
     /// <summary><c>text(x, y, str)</c> or <c>text(x, y, z, str)</c>, plus 'Name', value options.</summary>
@@ -622,7 +626,9 @@ internal static partial class JgsBuiltins
             }
         }
 
-        return JgsValue.Null;
+        // A text is an annotation rather than a series, so it does not go through Handle — but a
+        // handle is a handle, and set(t, 'String', …) has to reach it like anything else.
+        return JgsHandleRegistry.For(annotation);
     }
 
     private static void ApplyLineOption(

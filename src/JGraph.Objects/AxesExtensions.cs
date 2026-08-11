@@ -106,6 +106,27 @@ public static class AxesExtensions
         return plot;
     }
 
+    /// <summary>
+    /// Adds a reference line across the whole axes at one X (MATLAB <c>xline</c>). It does not enter
+    /// the auto-scale, so marking a threshold never moves the view.
+    /// </summary>
+    public static ConstantLinePlot AddXLine(this AxesModel axes, double x)
+    {
+        ArgumentNullException.ThrowIfNull(axes);
+        var plot = new ConstantLinePlot(ConstantLineDirection.Vertical, x);
+        axes.Plots.Add(plot);
+        return plot;
+    }
+
+    /// <summary>Adds a reference line across the whole axes at one Y (MATLAB <c>yline</c>).</summary>
+    public static ConstantLinePlot AddYLine(this AxesModel axes, double y)
+    {
+        ArgumentNullException.ThrowIfNull(axes);
+        var plot = new ConstantLinePlot(ConstantLineDirection.Horizontal, y);
+        axes.Plots.Add(plot);
+        return plot;
+    }
+
     /// <summary>Adds a histogram over the given raw sample values and returns it.</summary>
     public static HistogramPlot AddHistogram(this AxesModel axes, double[] values, int binCount = 10)
     {

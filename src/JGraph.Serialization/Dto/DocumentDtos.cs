@@ -40,6 +40,10 @@ public sealed class AxesDto
 
     public TextStyleDto? TitleStyle { get; set; }
 
+    public string Subtitle { get; set; } = string.Empty;
+
+    public TextStyleDto? SubtitleStyle { get; set; }
+
     public Color Background { get; set; }
 
     public RectDto NormalizedBounds { get; set; } = new(0, 0, 1, 1);
@@ -57,6 +61,9 @@ public sealed class AxesDto
     public double Azimuth { get; set; } = -37.5;
 
     public double Elevation { get; set; } = 30;
+
+    /// <summary>The camera roll in degrees. Zero on every figure written before M54.</summary>
+    public double Roll { get; set; }
 
     /// <summary>
     /// The 3D plot box's relative side lengths (MATLAB <c>pbaspect</c>). The default cube is what
@@ -123,6 +130,14 @@ public sealed class AxisDto
     public string? TickLabelFormat { get; set; }
 
     public string[]? Categories { get; set; }
+
+    /// <summary>Manual tick placement, or null for automatic. Defaulted, so v5 documents still load.</summary>
+    public double[]? TickPositions { get; set; }
+
+    /// <summary>Manual tick label text, or null to label each tick with its value.</summary>
+    public string[]? TickLabelOverrides { get; set; }
+
+    public double TickLabelAngle { get; set; }
 
     public TextStyleDto? LabelStyle { get; set; }
 

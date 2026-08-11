@@ -20,6 +20,7 @@ namespace JGraph.Serialization.Dto;
 [JsonDerivedType(typeof(RgbImagePlotDto), "rgbimage")]
 [JsonDerivedType(typeof(SurfacePlotDto), "surface")]
 [JsonDerivedType(typeof(ContourPlotDto), "contour")]
+[JsonDerivedType(typeof(ConstantLinePlotDto), "constantline")]
 [JsonDerivedType(typeof(Line3DPlotDto), "line3d")]
 [JsonDerivedType(typeof(Scatter3DPlotDto), "scatter3d")]
 [JsonDerivedType(typeof(PatchPlotDto), "patch")]
@@ -214,6 +215,9 @@ public sealed class SurfacePlotDto : PlotDto
 
     public int ContourLevels { get; set; } = 8;
 
+    /// <summary>One colour for every face instead of the colormap; null on every figure before M54.</summary>
+    public Color? FaceColor { get; set; }
+
     public Color? EdgeColor { get; set; }
 
     public double EdgeWidth { get; set; } = 0.75;
@@ -264,6 +268,34 @@ public sealed class ContourPlotDto : PlotDto
     public double ColorMin { get; set; }
 
     public double ColorMax { get; set; } = 1;
+
+    public bool ShowText { get; set; }
+
+    public double[]? LabelLevels { get; set; }
+
+    public TextStyleDto? LabelStyle { get; set; }
+}
+
+/// <summary>The serialized form of a <see cref="ConstantLinePlot"/> — an xline or a yline.</summary>
+public sealed class ConstantLinePlotDto : PlotDto
+{
+    public ConstantLineDirection Direction { get; set; }
+
+    public double Value { get; set; }
+
+    public Color? Color { get; set; }
+
+    public double LineWidth { get; set; } = 1;
+
+    public DashStyle Dash { get; set; } = DashStyle.Dash;
+
+    public string Label { get; set; } = string.Empty;
+
+    public TextStyleDto? LabelStyle { get; set; }
+
+    public HorizontalAlignment LabelHorizontalAlignment { get; set; } = HorizontalAlignment.Right;
+
+    public VerticalAlignment LabelVerticalAlignment { get; set; } = VerticalAlignment.Top;
 }
 
 /// <summary>The serialized form of a <see cref="Line3DPlot"/>.</summary>

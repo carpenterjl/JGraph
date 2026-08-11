@@ -1355,7 +1355,7 @@ internal static partial class JgsBuiltins
                 Count("subplot", args, 0, line, col),
                 Count("subplot", args, 1, line, col),
                 Count("subplot", args, 2, line, col));
-            return JgsHandleRegistry.For(JgsHandleKind.Axes, axes);
+            return JgsHandleRegistry.For(axes);
         });
 
         // --- Tiled layouts (M43): tiledlayout(r, c) + nexttile ride on the subplot grid ------
@@ -1619,13 +1619,23 @@ internal static partial class JgsBuiltins
 
         Define("close", (args, line, col) =>
         {
+            JgsValue answer = CloseFigures(host, args, line, col);
+
+            // Closing retires a figure, so every handle into it now names nothing. Letting go of them
+            // here is what stops a long console session from holding on to every figure it ever drew.
+            JgsHandleRegistry.DropUnreachable();
+            return answer;
+        });
+
+        JgsValue CloseFigures(JGraphScriptGlobals graphicsHost, IReadOnlyList<JgsValue> args, int line, int col)
+        {
             ArityRange("close", args, 0, 1, line, col);
             if (args.Count == 0)
             {
                 // MATLAB closes the current figure; with none open there is nothing to do.
                 if (JG.FigureNumbers.Count > 0)
                 {
-                    host.CloseFigure(JG.CurrentFigureNumber);
+                    graphicsHost.CloseFigure(JG.CurrentFigureNumber);
                 }
 
                 return JgsValue.Null;
@@ -1641,20 +1651,20 @@ internal static partial class JgsBuiltins
 
                 foreach (int number in JG.FigureNumbers)
                 {
-                    host.CloseFigure(number);
+                    graphicsHost.CloseFigure(number);
                 }
 
                 return JgsValue.Null;
             }
 
             int target = Count("close", args, 0, line, col);
-            if (!host.CloseFigure(target))
+            if (!graphicsHost.CloseFigure(target))
             {
                 throw new JgsRuntimeException(line, col, $"There is no figure {target} to close.");
             }
 
             return JgsValue.Null;
-        });
+        }
 
         Define("clf", (args, line, col) =>
         {
@@ -1675,11 +1685,14 @@ internal static partial class JgsBuiltins
             return JgsValue.Null;
         });
 
-        Define("gcf", (args, line, col) =>
+        // Like gca below, the bare name has to be the answer: findobj(gcf, …) must be handed the
+        // figure, not the function that would find it.
+        env.Declare("gcf", JgsValue.Function(new BuiltinFunction("gcf", (args, line, col) =>
         {
             Arity("gcf", args, 0, line, col);
             return JgsValue.Number(JG.CurrentFigureNumber);
-        });
+        })
+        { AutoCallsBare = true }));
 
         // gca creates the figure and axes MATLAB would and hands back a handle on them, so both
         // `gca; xlabel('t')` and `ax = gca; xlabel(ax, 't')` behave the same way. Auto-calling on
@@ -1687,18 +1700,22 @@ internal static partial class JgsBuiltins
         env.Declare("gca", JgsValue.Function(new BuiltinFunction("gca", (args, line, col) =>
         {
             Arity("gca", args, 0, line, col);
-            return JgsHandleRegistry.For(JgsHandleKind.Axes, JG.Gca());
+            return JgsHandleRegistry.For(JG.Gca());
         })
         { AutoCallsBare = true, BindsAnsAsStatement = false }));
 
-        Define("plot", (args, line, col) => Plot(args, line, col));
-        Define("scatter", (args, line, col) => XyOrTable("scatter", args, line, col,
+        // Every drawing verb hands back a handle and prints nothing as a bare statement, which is
+        // MATLAB's rule: `plot(x, y)` on its own draws, and only `h = plot(x, y)` keeps the handle.
+        // Registering them with Define instead would echo `ans = 1000000.5` at every unsuppressed
+        // call — which is what `plot` did before M54, the one verb that already returned a handle.
+        DefineSilent("plot", (args, line, col) => Plot(args, line, col));
+        DefineSilent("scatter", (args, line, col) => XyOrTable("scatter", args, line, col,
             (x, y) => JG.Scatter(x, y), (t, xc, yc) => JG.Scatter(t, xc, yc)));
-        Define("bar", (args, line, col) => XyOrTable("bar", args, line, col,
-            (x, y) => JG.Bar(x, y), (t, xc, yc) => JG.Bar(t, xc, yc)));
-        Define("stem", (args, line, col) => Stem(args, line, col));
-        Define("histogram", (args, line, col) => Histogram(args, line, col));
-        Define("errorbar", (args, line, col) => ErrorBar(args, line, col));
+        DefineSilent("bar", (args, line, col) => XyOrTable("bar", args, line, col,
+            (x, y) => JG.Bar(x, y), (t, xc, yc) => JG.Bar(t, xc, yc), valuesAlone: true));
+        DefineSilent("stem", (args, line, col) => Stem(args, line, col));
+        DefineSilent("histogram", (args, line, col) => Histogram(args, line, col));
+        DefineSilent("errorbar", (args, line, col) => ErrorBar(args, line, col));
 
         // --- 3D surfaces, contours, and images -----------------------------------------------
         Define("meshgrid", (args, line, col) =>
@@ -1713,41 +1730,54 @@ internal static partial class JgsBuiltins
             ]);
         });
 
-        Define("surf", (args, line, col) => Surface3D("surf", args, line, col,
+        DefineSilent("surf", (args, line, col) => Surface3D("surf", args, line, col,
             (x, y, z) => JG.Surf(x, y, z), z => JG.Surf(z), (x, y, z) => JG.Surf(x, y, z)));
-        Define("mesh", (args, line, col) => Surface3D("mesh", args, line, col,
+        DefineSilent("mesh", (args, line, col) => Surface3D("mesh", args, line, col,
             (x, y, z) => JG.Mesh(x, y, z), z => JG.Mesh(z), (x, y, z) => JG.Mesh(x, y, z)));
-        Define("meshc", (args, line, col) => Surface3D("meshc", args, line, col,
-            (x, y, z) => JG.MeshC(x, y, z), z => { JG.Mesh(z).ShowContourBelow = true; },
+        DefineSilent("meshc", (args, line, col) => Surface3D("meshc", args, line, col,
+            (x, y, z) => JG.MeshC(x, y, z),
+            z =>
+            {
+                SurfacePlot surface = JG.Mesh(z);
+                surface.ShowContourBelow = true;
+                return surface;
+            },
             (x, y, z) => JG.MeshC(x, y, z)));
 
-        Define("contour", (args, line, col) => Contour("contour", args, line, col, filled: false));
-        Define("contourf", (args, line, col) => Contour("contourf", args, line, col, filled: true));
+        DefineSilent("contour", (args, line, col) => Contour("contour", args, line, col, filled: false));
+        DefineSilent("contourf", (args, line, col) => Contour("contourf", args, line, col, filled: true));
 
-        Define("imagesc", (args, line, col) =>
+        DefineSilent("imagesc", (args, line, col) =>
         {
             Arity("imagesc", args, 1, line, col);
-            JG.Image(Matrix("imagesc", args, 0, line, col));
-            return JgsValue.Null;
+            return Handle(JG.Image(Matrix("imagesc", args, 0, line, col)));
         });
 
-        Define("pcolor", (args, line, col) =>
+        DefineSilent("pcolor", (args, line, col) =>
         {
             Arity("pcolor", args, 3, line, col);
-            JG.Pcolor(
+            return Handle(JG.Pcolor(
                 DoubleArray("pcolor", args, 0, line, col),
                 DoubleArray("pcolor", args, 1, line, col),
-                Matrix("pcolor", args, 2, line, col));
-            return JgsValue.Null;
+                Matrix("pcolor", args, 2, line, col)));
         });
 
         Define("zlabel", (args, line, col) => { Arity("zlabel", args, 1, line, col); JG.ZLabel(Str("zlabel", args, 0, line, col)); return JgsValue.Null; });
-        Define("zlim", (args, line, col) => { Arity("zlim", args, 2, line, col); JG.ZLim(Num("zlim", args, 0, line, col), Num("zlim", args, 1, line, col)); return JgsValue.Null; });
         env.Declare("view", JgsValue.Function(new BuiltinFunction("view", View) { AutoCallsBare = true }));
 
-        Define("colormap", (args, line, col) =>
+        // Bare `m = colormap` is the read, the way `x = eps` is a number (M37's AutoCallsBare);
+        // the callee position stays exempt, so colormap(jet) still calls.
+        env.Declare("colormap", JgsValue.Function(new BuiltinFunction("colormap", (args, line, col) =>
         {
-            Arity("colormap", args, 1, line, col);
+            ArityRange("colormap", args, 0, 1, line, col);
+
+            // No argument reads the map back, which is what makes rgbplot(colormap) and
+            // colormap(flipud(colormap)) mean anything.
+            if (args.Count == 0)
+            {
+                return ColormapTable(JG.CurrentColormap().Resample(DefaultColormapRows));
+            }
+
             try
             {
                 if (args[0].Type == JgsType.String)
@@ -1767,7 +1797,8 @@ internal static partial class JgsBuiltins
             }
 
             return JgsValue.Null;
-        });
+        })
+        { AutoCallsBare = true }));
 
         Define("colorbar", (args, line, col) =>
         {
@@ -1776,9 +1807,9 @@ internal static partial class JgsBuiltins
             return JgsValue.Null;
         });
 
-        Define("semilogy", (args, line, col) => Semilog("semilogy", args, line, col, (x, y, s) => JG.SemilogY(x, y, s)));
-        Define("semilogx", (args, line, col) => Semilog("semilogx", args, line, col, (x, y, s) => JG.SemilogX(x, y, s)));
-        Define("loglog", (args, line, col) => Semilog("loglog", args, line, col, (x, y, s) => JG.LogLog(x, y, s)));
+        DefineSilent("semilogy", (args, line, col) => Semilog("semilogy", args, line, col, (x, y, s) => JG.SemilogY(x, y, s)));
+        DefineSilent("semilogx", (args, line, col) => Semilog("semilogx", args, line, col, (x, y, s) => JG.SemilogX(x, y, s)));
+        DefineSilent("loglog", (args, line, col) => Semilog("loglog", args, line, col, (x, y, s) => JG.LogLog(x, y, s)));
 
         // Every axes-facing verb accepts a leading axes handle, MATLAB's title(ax, '…') form. The
         // named axes is made current only for the call, so gca does not move (M51).
@@ -1792,8 +1823,20 @@ internal static partial class JgsBuiltins
         DefineOnAxes("title", (args, line, col) => { Arity("title", args, 1, line, col); JG.Title(Str("title", args, 0, line, col)); return JgsValue.Null; });
         DefineOnAxes("xlabel", (args, line, col) => { Arity("xlabel", args, 1, line, col); JG.XLabel(Str("xlabel", args, 0, line, col)); return JgsValue.Null; });
         DefineOnAxes("ylabel", (args, line, col) => { Arity("ylabel", args, 1, line, col); JG.YLabel(Str("ylabel", args, 0, line, col)); return JgsValue.Null; });
-        DefineOnAxes("xlim", (args, line, col) => { (double lo, double hi) = LimitPair("xlim", args, line, col); JG.XLim(lo, hi); return JgsValue.Null; });
-        DefineOnAxes("ylim", (args, line, col) => { (double lo, double hi) = LimitPair("ylim", args, line, col); JG.YLim(lo, hi); return JgsValue.Null; });
+
+        DefineOnAxes("yyaxis", (args, line, col) =>
+        {
+            Arity("yyaxis", args, 1, line, col);
+            string side = Str("yyaxis", args, 0, line, col);
+            bool right = side.Equals("right", StringComparison.OrdinalIgnoreCase);
+            if (!right && !side.Equals("left", StringComparison.OrdinalIgnoreCase))
+            {
+                throw new JgsRuntimeException(line, col, $"yyaxis expects 'left' or 'right', but got '{side}'.");
+            }
+
+            JG.YyAxis(right);
+            return JgsValue.Null;
+        });
 
         DefineOnAxes("grid", (args, line, col) =>
         {
@@ -1914,7 +1957,17 @@ internal static partial class JgsBuiltins
         RegisterColorControlBuiltins(env, dialect);
         RegisterCameraBuiltins(env);
         RegisterPrimitive3DBuiltins(env);
+        RegisterHandleGraphicsBuiltins(env, host);
+        RegisterRulerBuiltins(env);
         RegisterSurfaceVariantBuiltins(env, dialect);
+
+        // After the plotting verbs it re-declares: the titling family gains its text options here,
+        // and contour learns to answer with its matrix as well as its handle.
+        RegisterDecorationBuiltins(env, dialect);
+
+        // The camera verbs M45 left out, and the appearance commands that predate figure properties.
+        RegisterCameraExtraBuiltins(env);
+        RegisterLegacyAppearanceBuiltins(env, dialect);
 
         // After every other define, because three of these replace a name declared above; and before
         // the reductions, so rms is wrapped for a dimension the same way mean is.
@@ -2032,7 +2085,7 @@ internal static partial class JgsBuiltins
             legend.Position = position;
         }
 
-        return JgsHandleRegistry.For(JgsHandleKind.Legend, legend);
+        return JgsHandleRegistry.For(legend);
     }
 
     private static JgsValue Plot(IReadOnlyList<JgsValue> args, int line, int col)
@@ -2115,7 +2168,8 @@ internal static partial class JgsBuiltins
     /// The handles for the series a plot call made: one on its own, several as a column, which is
     /// the shape MATLAB gives back and the shape <c>h(i) = plot(…)</c> expects.
     /// </summary>
-    private static JgsValue HandlesFor(List<LinePlot> created)
+    private static JgsValue HandlesFor<T>(IReadOnlyList<T> created)
+        where T : PlotObject
     {
         if (created.Count == 0)
         {
@@ -2124,17 +2178,24 @@ internal static partial class JgsBuiltins
 
         if (created.Count == 1)
         {
-            return JgsHandleRegistry.For(JgsHandleKind.Line, created[0]);
+            return JgsHandleRegistry.For(created[0]);
         }
 
         var handles = new double[created.Count];
         for (int i = 0; i < created.Count; i++)
         {
-            handles[i] = JgsHandleRegistry.For(JgsHandleKind.Line, created[i]).AsNumber;
+            handles[i] = JgsHandleRegistry.For(created[i]).AsNumber;
         }
 
         return JgsMatrix.FromColumnMajor(handles, created.Count, 1);
     }
+
+    /// <summary>
+    /// The handle for the one series a drawing verb made. Every verb that draws hands one back, the
+    /// way MATLAB's do: without it a script can reach a bar or a surface only by searching for it, and
+    /// <c>set(h, …)</c> — the point of the whole milestone — would work on lines alone.
+    /// </summary>
+    private static JgsValue Handle(PlotObject plot) => JgsHandleRegistry.For(plot);
 
     /// <summary>
     /// One plot group. A matrix <paramref name="y"/> plots each column as its own series (MATLAB's
@@ -2253,7 +2314,7 @@ internal static partial class JgsBuiltins
                         break;
                     case "handlevisibility":
                         JgsHandleEntry entry = JgsHandleRegistry.Require(
-                            JgsHandleRegistry.For(JgsHandleKind.Line, plot), line, col);
+                            JgsHandleRegistry.For(plot), line, col);
                         entry.HandleVisible = !StrOf("plot: HandleVisibility", value, line, col)
                             .Equals("off", StringComparison.OrdinalIgnoreCase);
                         break;
@@ -2344,7 +2405,7 @@ internal static partial class JgsBuiltins
     }
 
     /// <summary>A plot option color: a spec letter, a common color name, or an [r g b] triplet in [0, 1].</summary>
-    private static JGraph.Core.Drawing.Color OptionColor(JgsValue value, int line, int col, string what = "plot")
+    internal static JGraph.Core.Drawing.Color OptionColor(JgsValue value, int line, int col, string what = "plot")
     {
         if (value.Type == JgsType.String)
         {
@@ -2360,6 +2421,11 @@ internal static partial class JgsBuiltins
                 return named;
             }
 
+            if (HexColor(text) is { } hex)
+            {
+                return hex;
+            }
+
             throw new JgsRuntimeException(line, col, $"{what}: unknown color '{text}'.");
         }
 
@@ -2373,7 +2439,39 @@ internal static partial class JgsBuiltins
         return JGraph.Core.Drawing.Color.FromRgb(Level(triplet[0]), Level(triplet[1]), Level(triplet[2]));
     }
 
-    private static double NumOf(string name, JgsValue value, int line, int col)
+    /// <summary>
+    /// A <c>#RRGGBB</c> or <c>#RGB</c> string as a colour, or null if it is not one. MATLAB accepts
+    /// hex wherever it accepts a colour name, and so does every Color option here.
+    /// </summary>
+    private static JGraph.Core.Drawing.Color? HexColor(string text)
+    {
+        if (text.Length is not (4 or 7) || text[0] != '#')
+        {
+            return null;
+        }
+
+        string digits = text[1..];
+        foreach (char c in digits)
+        {
+            if (!Uri.IsHexDigit(c))
+            {
+                return null;
+            }
+        }
+
+        // #RGB is the short form, each digit doubled, so #0F8 and #00FF88 are the same colour.
+        int step = digits.Length / 3;
+        byte Channel(int i)
+        {
+            string part = digits.Substring(i * step, step);
+            int value = Convert.ToInt32(part, 16);
+            return (byte)(step == 1 ? (value * 17) : value);
+        }
+
+        return JGraph.Core.Drawing.Color.FromRgb(Channel(0), Channel(1), Channel(2));
+    }
+
+    internal static double NumOf(string name, JgsValue value, int line, int col)
     {
         if (value.Type is not (JgsType.Number or JgsType.Bool))
         {
@@ -2383,7 +2481,7 @@ internal static partial class JgsBuiltins
         return value.AsNumber;
     }
 
-    private static string StrOf(string name, JgsValue value, int line, int col)
+    internal static string StrOf(string name, JgsValue value, int line, int col)
     {
         if (value.Type != JgsType.String)
         {
@@ -2394,33 +2492,40 @@ internal static partial class JgsBuiltins
     }
 
     private static JgsValue XyOrTable(string name, IReadOnlyList<JgsValue> args, int line, int col,
-        Action<double[], double[]> arrays, Action<Table, string, string> table)
+        Func<double[], double[], PlotObject> arrays, Func<Table, string, string, PlotObject> table,
+        bool valuesAlone = false)
     {
         if (args.Count > 0 && args[0].Type == JgsType.Table)
         {
             Arity(name, args, 3, line, col);
-            table(Tbl(name, args, 0, line, col), Str(name, args, 1, line, col), Str(name, args, 2, line, col));
-            return JgsValue.Null;
+            return Handle(table(
+                Tbl(name, args, 0, line, col), Str(name, args, 1, line, col), Str(name, args, 2, line, col)));
+        }
+
+        // bar(y) stands the values at 1, 2, 3, …, which is how a bar chart is most often written.
+        if (valuesAlone && args.Count == 1)
+        {
+            double[] values = DoubleArray(name, args, 0, line, col);
+            var positions = new double[values.Length];
+            for (int i = 0; i < values.Length; i++)
+            {
+                positions[i] = i + 1;
+            }
+
+            return Handle(arrays(positions, values));
         }
 
         Arity(name, args, 2, line, col);
-        arrays(DoubleArray(name, args, 0, line, col), DoubleArray(name, args, 1, line, col));
-        return JgsValue.Null;
+        return Handle(arrays(
+            DoubleArray(name, args, 0, line, col), DoubleArray(name, args, 1, line, col)));
     }
 
     private static JgsValue Stem(IReadOnlyList<JgsValue> args, int line, int col)
     {
         ArityRange("stem", args, 1, 2, line, col);
-        if (args.Count == 1)
-        {
-            JG.Stem(DoubleArray("stem", args, 0, line, col));
-        }
-        else
-        {
-            JG.Stem(DoubleArray("stem", args, 0, line, col), DoubleArray("stem", args, 1, line, col));
-        }
-
-        return JgsValue.Null;
+        return Handle(args.Count == 1
+            ? JG.Stem(DoubleArray("stem", args, 0, line, col))
+            : JG.Stem(DoubleArray("stem", args, 0, line, col), DoubleArray("stem", args, 1, line, col)));
     }
 
     private static JgsValue Histogram(IReadOnlyList<JgsValue> args, int line, int col)
@@ -2429,14 +2534,13 @@ internal static partial class JgsBuiltins
         {
             ArityRange("histogram", args, 2, 3, line, col);
             int tableBins = args.Count == 3 ? Count("histogram", args, 2, line, col) : 10;
-            JG.Histogram(Tbl("histogram", args, 0, line, col), Str("histogram", args, 1, line, col), tableBins);
-            return JgsValue.Null;
+            return Handle(JG.Histogram(
+                Tbl("histogram", args, 0, line, col), Str("histogram", args, 1, line, col), tableBins));
         }
 
         ArityRange("histogram", args, 1, 2, line, col);
         int bins = args.Count == 2 ? Count("histogram", args, 1, line, col) : 10;
-        JG.Histogram(DoubleArray("histogram", args, 0, line, col), bins);
-        return JgsValue.Null;
+        return Handle(JG.Histogram(DoubleArray("histogram", args, 0, line, col), bins));
     }
 
     private static JgsValue ErrorBar(IReadOnlyList<JgsValue> args, int line, int col)
@@ -2444,13 +2548,11 @@ internal static partial class JgsBuiltins
         if (args.Count > 0 && args[0].Type == JgsType.Table)
         {
             Arity("errorbar", args, 4, line, col);
-            JG.ErrorBar(Tbl("errorbar", args, 0, line, col), Str("errorbar", args, 1, line, col), Str("errorbar", args, 2, line, col), Str("errorbar", args, 3, line, col));
-            return JgsValue.Null;
+            return Handle(JG.ErrorBar(Tbl("errorbar", args, 0, line, col), Str("errorbar", args, 1, line, col), Str("errorbar", args, 2, line, col), Str("errorbar", args, 3, line, col)));
         }
 
         Arity("errorbar", args, 3, line, col);
-        JG.ErrorBar(DoubleArray("errorbar", args, 0, line, col), DoubleArray("errorbar", args, 1, line, col), DoubleArray("errorbar", args, 2, line, col));
-        return JgsValue.Null;
+        return Handle(JG.ErrorBar(DoubleArray("errorbar", args, 0, line, col), DoubleArray("errorbar", args, 1, line, col), DoubleArray("errorbar", args, 2, line, col)));
     }
 
     /// <summary>
@@ -2458,14 +2560,13 @@ internal static partial class JgsBuiltins
     /// meshgrid pair, or a genuinely parametric pair.
     /// </summary>
     private static JgsValue Surface3D(string name, IReadOnlyList<JgsValue> args, int line, int col,
-        Action<double[], double[], double[,]> full,
-        Action<double[,]> zOnly,
-        Action<double[,], double[,], double[,]> parametric)
+        Func<double[], double[], double[,], PlotObject> full,
+        Func<double[,], PlotObject> zOnly,
+        Func<double[,], double[,], double[,], PlotObject> parametric)
     {
         if (args.Count == 1)
         {
-            zOnly(Matrix(name, args, 0, line, col));
-            return JgsValue.Null;
+            return Handle(zOnly(Matrix(name, args, 0, line, col)));
         }
 
         Arity(name, args, 3, line, col);
@@ -2482,22 +2583,19 @@ internal static partial class JgsBuiltins
                 double[,] yGrid = Matrix(name, args, 1, line, col);
                 if (!IsRectilinearGrid(xGrid, yGrid))
                 {
-                    parametric(xGrid, yGrid, z);
-                    return JgsValue.Null;
+                    return Handle(parametric(xGrid, yGrid, z));
                 }
             }
 
-            full(
+            return Handle(full(
                 GridVector(name, args, 0, firstRow: true, line, col),
                 GridVector(name, args, 1, firstRow: false, line, col),
-                z);
+                z));
         }
         catch (ArgumentException ex)
         {
             throw new JgsRuntimeException(line, col, ex.Message);
         }
-
-        return JgsValue.Null;
     }
 
     /// <summary>Whether a grid argument arrived as a full matrix rather than a generating vector.</summary>
@@ -2563,16 +2661,26 @@ internal static partial class JgsBuiltins
     private static JgsValue Contour(
         string name, IReadOnlyList<JgsValue> args, int line, int col, bool filled, bool elevated = false)
     {
-        ArityRange(name, args, 3, 4, line, col);
-        double[] x = GridVector(name, args, 0, firstRow: true, line, col);
-        double[] y = GridVector(name, args, 1, firstRow: false, line, col);
-        double[,] z = Matrix(name, args, 2, line, col);
-        double[]? levels = args.Count switch
-        {
-            4 when args[3].Type is JgsType.Number or JgsType.Bool => [args[3].AsNumber],
-            4 => ToDoubles(name, args[3], line, col),
-            _ => null,
-        };
+        ArityRange(name, args, 1, 4, line, col);
+
+        // contour(Z) and contour(Z, levels) index the grid by row and column, the way surf(Z) does.
+        // Two arguments cannot be an x and a y, so which form was meant is never in doubt.
+        bool gridded = args.Count >= 3;
+        int levelSlot = gridded ? 3 : 1;
+
+        double[,] z = Matrix(name, args, gridded ? 2 : 0, line, col);
+        double[] x = gridded
+            ? GridVector(name, args, 0, firstRow: true, line, col)
+            : Counting(z.GetLength(1));
+        double[] y = gridded
+            ? GridVector(name, args, 1, firstRow: false, line, col)
+            : Counting(z.GetLength(0));
+
+        double[]? levels = args.Count > levelSlot
+            ? args[levelSlot].Type is JgsType.Number or JgsType.Bool
+                ? [args[levelSlot].AsNumber]
+                : ToDoubles(name, args[levelSlot], line, col)
+            : null;
 
         // A scalar fourth argument is a level COUNT: n evenly spaced levels across z's range.
         if (levels is { Length: 1 } && levels[0] >= 2 && levels[0] == System.Math.Floor(levels[0]))
@@ -2596,33 +2704,36 @@ internal static partial class JgsBuiltins
         }
         try
         {
-            if (elevated)
-            {
-                JG.Contour3(x, y, z, levels);
-            }
-            else if (filled)
-            {
-                JG.ContourF(x, y, z, levels);
-            }
-            else
-            {
-                JG.Contour(x, y, z, levels);
-            }
+            return Handle(elevated ? JG.Contour3(x, y, z, levels)
+                : filled ? JG.ContourF(x, y, z, levels)
+                : JG.Contour(x, y, z, levels));
         }
         catch (ArgumentException ex)
         {
             throw new JgsRuntimeException(line, col, ex.Message);
         }
-
-        return JgsValue.Null;
     }
 
-    private static JgsValue Semilog(string name, IReadOnlyList<JgsValue> args, int line, int col, Action<double[], double[], string?> apply)
+    /// <summary>1, 2, … n — the coordinates a grid has when a verb was given heights and nothing else.</summary>
+    private static double[] Counting(int n)
+    {
+        var values = new double[n];
+        for (int i = 0; i < n; i++)
+        {
+            values[i] = i + 1;
+        }
+
+        return values;
+    }
+
+    private static JgsValue Semilog(
+        string name, IReadOnlyList<JgsValue> args, int line, int col,
+        Func<double[], double[], string?, PlotObject> apply)
     {
         ArityRange(name, args, 2, 3, line, col);
         string? spec = args.Count == 3 ? Str(name, args, 2, line, col) : null;
-        apply(DoubleArray(name, args, 0, line, col), DoubleArray(name, args, 1, line, col), spec);
-        return JgsValue.Null;
+        return Handle(apply(
+            DoubleArray(name, args, 0, line, col), DoubleArray(name, args, 1, line, col), spec));
     }
 
     // --- RF network table glue -------------------------------------------------------------------
@@ -4051,7 +4162,7 @@ internal static partial class JgsBuiltins
     }
 
     /// <summary>Numeric unpack of a whole array value: packed buffers bulk-copy, boxed arrays convert per element.</summary>
-    private static double[] ToDoubles(string name, JgsValue array, int line, int col)
+    internal static double[] ToDoubles(string name, JgsValue array, int line, int col)
     {
         if (array.IsPacked)
         {

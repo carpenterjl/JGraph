@@ -26,6 +26,9 @@ public sealed class AxisModel : GraphObject
     private TextStyle _labelStyle = new(Colors.Black, 13);
     private TextStyle _tickLabelStyle = new(Colors.DarkGray, 11);
     private IReadOnlyList<string>? _categories;
+    private IReadOnlyList<double>? _tickPositions;
+    private IReadOnlyList<string>? _tickLabelOverrides;
+    private double _tickLabelAngle;
 
     public AxisModel(AxisOrientation orientation, AxisPosition position)
     {
@@ -153,6 +156,38 @@ public sealed class AxisModel : GraphObject
     {
         get => _categories;
         set => SetProperty(ref _categories, value, InvalidationKind.Layout);
+    }
+
+    /// <summary>
+    /// The tick values to place, overriding the generator's choice, or null to let the axis pick them.
+    /// Values outside <see cref="Range"/> are kept but not drawn, so zooming back out brings a tick
+    /// back rather than losing it.
+    /// </summary>
+    [Browsable(false)]
+    public IReadOnlyList<double>? TickPositions
+    {
+        get => _tickPositions;
+        set => SetProperty(ref _tickPositions, value, InvalidationKind.Layout);
+    }
+
+    /// <summary>
+    /// The tick label text, overriding whatever the values would have been formatted to, or null to
+    /// label each tick with its value. Fewer labels than ticks are cycled through, which is MATLAB's
+    /// rule and the reason a two-word list can stripe a whole axis; an empty list blanks every label.
+    /// </summary>
+    [Browsable(false)]
+    public IReadOnlyList<string>? TickLabelOverrides
+    {
+        get => _tickLabelOverrides;
+        set => SetProperty(ref _tickLabelOverrides, value, InvalidationKind.Layout);
+    }
+
+    /// <summary>How far the tick labels are rotated, in degrees counter-clockwise.</summary>
+    [Category("Ticks"), DisplayName("Tick label angle")]
+    public double TickLabelAngle
+    {
+        get => _tickLabelAngle;
+        set => SetProperty(ref _tickLabelAngle, value, InvalidationKind.Layout);
     }
 
     /// <summary>True when this axis maps data along the horizontal device direction.</summary>

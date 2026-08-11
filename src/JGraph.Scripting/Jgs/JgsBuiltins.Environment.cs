@@ -110,6 +110,14 @@ internal static partial class JgsBuiltins
         {
             for (int i = 0; i < args.Count; i++)
             {
+                // MATLAB spells two verbs with one name: deleting a file and deleting a figure
+                // object. A handle is a number, a path is a string, so which one is meant is never
+                // in doubt — and a number that names nothing still complains about not being a path.
+                if (args[i].Type != JgsType.String && TryDeleteGraphics(args[i], host))
+                {
+                    continue;
+                }
+
                 File.Delete(host.Resolve(Str("delete", args, i, line, col)));
             }
 
@@ -170,6 +178,21 @@ internal static partial class JgsBuiltins
         {
             ArityRange("filesep", args, 0, 0, line, col);
             return JgsValue.Str(Path.DirectorySeparatorChar.ToString());
+        });
+
+        // The system's scratch folder, and a name in it nothing else is using. A script that wants to
+        // write something it does not intend to keep has nowhere else to put it that is not the user's
+        // own working folder.
+        Query("tempdir", (args, line, col) =>
+        {
+            ArityRange("tempdir", args, 0, 0, line, col);
+            return JgsValue.Str(Path.GetTempPath());
+        });
+
+        Query("tempname", (args, line, col) =>
+        {
+            ArityRange("tempname", args, 0, 0, line, col);
+            return JgsValue.Str(Path.Combine(Path.GetTempPath(), "jg_" + Guid.NewGuid().ToString("N")));
         });
 
         Query("filemarker", (args, line, col) =>

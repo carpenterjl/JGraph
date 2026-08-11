@@ -31,6 +31,8 @@ internal static partial class JgsBuiltins
         ("jet", () => Colormap.Jet),
         ("lines", () => Colormap.Lines),
         ("viridis", () => Colormap.Viridis),
+        ("flag", () => Colormap.Flag),
+        ("prism", () => Colormap.Prism),
     ];
 
     /// <summary>
