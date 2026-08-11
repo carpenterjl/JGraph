@@ -83,6 +83,10 @@ internal static class FigureMapper
             Roll = axes.Roll,
             ZAxis = ToDto(axes.ZAxis),
             Colorbar = ToDto(axes.Colorbar),
+            BubbleLegend = ToDto(axes.BubbleLegend),
+            BubbleSizeMin = axes.BubbleSizeRange.Min,
+            BubbleSizeMax = axes.BubbleSizeRange.Max,
+            BubbleSizeLimits = axes.BubbleSizeLimits is { } limits ? [limits.Min, limits.Max] : null,
             Grid = ToDto(axes.Grid),
             Legend = ToLegendDto(axes),
         };
@@ -151,6 +155,29 @@ internal static class FigureMapper
             if (dto.Colorbar.TickLabelStyle is not null)
             {
                 axes.Colorbar.TickLabelStyle = DtoConvert.ToTextStyle(dto.Colorbar.TickLabelStyle);
+            }
+        }
+
+        axes.BubbleSizeRange = new DataRange(dto.BubbleSizeMin, dto.BubbleSizeMax);
+        axes.BubbleSizeLimits = dto.BubbleSizeLimits is { Length: 2 } bubbleLimits
+            ? new DataRange(bubbleLimits[0], bubbleLimits[1])
+            : null;
+
+        if (dto.BubbleLegend is { } bubbleLegend)
+        {
+            axes.BubbleLegend.Visible = bubbleLegend.Visible;
+            axes.BubbleLegend.Position = bubbleLegend.Position;
+            axes.BubbleLegend.Location = new Point2D(bubbleLegend.LocationX, bubbleLegend.LocationY);
+            axes.BubbleLegend.Style = bubbleLegend.Style;
+            axes.BubbleLegend.NumBubbles = bubbleLegend.NumBubbles;
+            axes.BubbleLegend.LimitLabels = bubbleLegend.LimitLabels;
+            axes.BubbleLegend.Background = bubbleLegend.Background;
+            axes.BubbleLegend.BorderColor = bubbleLegend.BorderColor;
+            axes.BubbleLegend.ShowBorder = bubbleLegend.ShowBorder;
+            axes.BubbleLegend.Title = bubbleLegend.Title;
+            if (bubbleLegend.TextStyle is not null)
+            {
+                axes.BubbleLegend.TextStyle = DtoConvert.ToTextStyle(bubbleLegend.TextStyle);
             }
         }
 
@@ -302,6 +329,22 @@ internal static class FigureMapper
         Width = colorbar.Width,
         Label = colorbar.Label,
         TickLabelStyle = DtoConvert.ToDto(colorbar.TickLabelStyle),
+    };
+
+    private static BubbleLegendDto ToDto(BubbleLegendModel legend) => new()
+    {
+        Visible = legend.Visible,
+        Position = legend.Position,
+        Style = legend.Style,
+        NumBubbles = legend.NumBubbles,
+        LimitLabels = legend.LimitLabels,
+        Background = legend.Background,
+        BorderColor = legend.BorderColor,
+        ShowBorder = legend.ShowBorder,
+        TextStyle = DtoConvert.ToDto(legend.TextStyle),
+        Title = legend.Title,
+        LocationX = legend.Location.X,
+        LocationY = legend.Location.Y,
     };
 
     private static GridDto ToDto(GridModel grid) => new()

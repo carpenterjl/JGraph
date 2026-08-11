@@ -21,8 +21,16 @@ public static class GraphFormat
     /// <summary>The current schema version. Documents with a newer version are rejected.</summary>
     /// <remarks>Version history: 1 = initial (M8); 2 = 3D axes, surface/contour plots, colorbar (M20);
     /// 3 = data-tip annotations (M21); 4 = packed base64 storage for large series (M22);
-    /// 5 = true-colour RGB image plot (M24).</remarks>
-    public const int CurrentVersion = 5;
+    /// 5 = true-colour RGB image plot (M24); 6 = the chart types of M55 onward.
+    /// <para>
+    /// Version 6 is bumped once for the whole M55–M60 arc rather than once per chart type. Every
+    /// milestone in that arc adds plot kinds, and a reader that does not know a kind cannot draw it
+    /// whichever version it claims — so the honest signal is "this document may contain charts your
+    /// build has never heard of", and that is one signal, not six. Adding a defaulted field to a DTO
+    /// still needs no bump at all (ADR 0048); adding a new discriminator is what this marks.
+    /// </para>
+    /// Older documents load unchanged: nothing in v6 removes or renames anything v5 wrote.</remarks>
+    public const int CurrentVersion = 6;
 
     /// <summary>The conventional file extension for JGraph documents.</summary>
     public const string FileExtension = ".graph";

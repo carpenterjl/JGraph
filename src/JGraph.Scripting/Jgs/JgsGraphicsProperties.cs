@@ -68,11 +68,19 @@ internal static class JgsGraphicsProperties
         AxisModel => "numericruler",
         LegendModel => "legend",
         ColorbarModel => "colorbar",
+        BubbleLegendModel => "bubblelegend",
         GridModel => "grid",
         LightModel => "light",
+        // A stairstep is a line with one property set, and MATLAB still names it separately — which
+        // is the one place a type name here depends on the object rather than only on its class.
+        LinePlot { Steps: not StepMode.None } => "stair",
         LinePlot or Line3DPlot => "line",
         ScatterPlot or Scatter3DPlot => "scatter",
         BarPlot => "bar",
+        AreaPlot => "area",
+        PiePlot => "pie",
+        HeatmapPlot => "heatmap",
+        BoxChartPlot => "boxchart",
         StemPlot => "stem",
         HistogramPlot => "histogram",
         ErrorBarPlot => "errorbar",
@@ -133,6 +141,11 @@ internal static class JgsGraphicsProperties
                     children.Add(axes.Colorbar);
                 }
 
+                if (axes.BubbleLegend.Visible)
+                {
+                    children.Add(axes.BubbleLegend);
+                }
+
                 break;
         }
 
@@ -162,6 +175,11 @@ internal static class JgsGraphicsProperties
             if (!axes.Colorbar.Visible)
             {
                 all.Add(axes.Colorbar);
+            }
+
+            if (!axes.BubbleLegend.Visible)
+            {
+                all.Add(axes.BubbleLegend);
             }
         }
 
@@ -357,6 +375,92 @@ internal static class JgsGraphicsProperties
                 entry => ColorRow(((ScatterPlot)entry.Target).Color ?? JgsBuiltins.PaletteColorFor((PlotObject)entry.Target)),
                 (entry, value, line, col) =>
                     ((ScatterPlot)entry.Target).Color = JgsBuiltins.OptionColor(value, line, col, "scatter"));
+
+            // The per-point channels are plain arrays, which reflection does not carry, and the five
+            // names MATLAB spells differently than the model does. A bubble chart is a scatter with
+            // sizes here exactly as it is in MATLAB, so it answers to all of them.
+            Put(table, "SizeData",
+                entry => Row([.. ((ScatterPlot)entry.Target).SizeData ?? []]),
+                (entry, value, line, col) => ((ScatterPlot)entry.Target).SizeData =
+                    JgsBuiltins.ToDoubles("SizeData", value, line, col));
+            Put(table, "ColorData",
+                entry => Row([.. ((ScatterPlot)entry.Target).ColorData ?? []]),
+                (entry, value, line, col) => ((ScatterPlot)entry.Target).ColorData =
+                    JgsBuiltins.ToDoubles("ColorData", value, line, col));
+            Put(table, "Marker",
+                entry => JgsValue.Str(JgsBuiltins.MarkerWord(((ScatterPlot)entry.Target).Marker)),
+                (entry, value, line, col) =>
+                {
+                    var plot = (ScatterPlot)entry.Target;
+                    plot.Marker = JgsBuiltins.ParseMarkerWord(
+                        JgsBuiltins.StrOf("Marker", value, line, col), plot.Marker);
+                });
+            Put(table, "MarkerFaceColor",
+                entry => ColorRow(((ScatterPlot)entry.Target).Fill
+                    ?? JgsBuiltins.PaletteColorFor((PlotObject)entry.Target)),
+                (entry, value, line, col) =>
+                {
+                    var plot = (ScatterPlot)entry.Target;
+                    plot.Fill = JgsBuiltins.WithAlpha(
+                        JgsBuiltins.OptionColor(value, line, col, "scatter"), (plot.Fill?.A ?? 255) / 255.0);
+                });
+            Put(table, "MarkerEdgeColor",
+                entry => ColorRow(((ScatterPlot)entry.Target).Color
+                    ?? JgsBuiltins.PaletteColorFor((PlotObject)entry.Target)),
+                (entry, value, line, col) =>
+                {
+                    var plot = (ScatterPlot)entry.Target;
+                    plot.Color = JgsBuiltins.WithAlpha(
+                        JgsBuiltins.OptionColor(value, line, col, "scatter"), (plot.Color?.A ?? 255) / 255.0);
+                });
+
+            // MATLAB keeps the transparency in its own property; here it is the colour's own alpha,
+            // so the two names read and write the same byte from opposite directions.
+            AddAlpha(table, "MarkerFaceAlpha",
+                entry => ((ScatterPlot)entry.Target).Fill,
+                (entry, color) => ((ScatterPlot)entry.Target).Fill = color);
+            AddAlpha(table, "MarkerEdgeAlpha",
+                entry => ((ScatterPlot)entry.Target).Color,
+                (entry, color) => ((ScatterPlot)entry.Target).Color = color);
+
+            Put(table, "LineWidth",
+                entry => JgsValue.Number(((ScatterPlot)entry.Target).EdgeWidth),
+                (entry, value, line, col) => ((ScatterPlot)entry.Target).EdgeWidth =
+                    JgsBuiltins.NumOf("LineWidth", value, line, col));
+
+            // The diameters the chart actually drew, which is what a script wants to check and cannot
+            // work out from SizeData without repeating the scale by hand.
+            Put(table, "BubbleDiameters", entry => Row(
+                [.. Enumerable.Range(0, ((ScatterPlot)entry.Target).SizeData?.Count ?? 0)
+                    .Select(((ScatterPlot)entry.Target).DiameterAt)]));
+        }
+
+        if (typeof(BubbleLegendModel).IsAssignableFrom(type))
+        {
+            // Location is MATLAB's name for which corner it sits in; the fractional placement behind
+            // it is reached the same way the legend's is, which is to say by dragging or by Position.
+            Put(table, "Location",
+                entry => JgsValue.Str(JgsBuiltins.LegendLocationWord(((BubbleLegendModel)entry.Target).Position)),
+                (entry, value, line, col) => ((BubbleLegendModel)entry.Target).Position =
+                    JgsBuiltins.ParseLegendLocation(JgsBuiltins.StrOf("Location", value, line, col), line, col));
+            Put(table, "Box",
+                entry => OnOff(((BubbleLegendModel)entry.Target).ShowBorder),
+                (entry, value, line, col) => ((BubbleLegendModel)entry.Target).ShowBorder =
+                    ToOnOff("Box", value, line, col));
+            Put(table, "FontSize",
+                entry => JgsValue.Number(((BubbleLegendModel)entry.Target).TextStyle.FontSize),
+                (entry, value, line, col) =>
+                {
+                    var model = (BubbleLegendModel)entry.Target;
+                    model.TextStyle = model.TextStyle.WithSize(JgsBuiltins.NumOf("FontSize", value, line, col));
+                });
+
+            // What the legend says it is showing — the values under its bubbles, at the scale of the
+            // axes it belongs to.
+            Put(table, "BubbleValues", entry => Row(
+                [.. ((BubbleLegendModel)entry.Target).ValuesFor(
+                    (entry.Target.Parent as AxesModel)?.BubbleScale
+                        ?? new BubbleScale(DataRange.Unit, BubbleScale.DefaultSizeRange))]));
         }
 
         if (typeof(BarPlot).IsAssignableFrom(type))
@@ -365,6 +469,197 @@ internal static class JgsGraphicsProperties
                 entry => ((BarPlot)entry.Target).FillColor ?? JgsBuiltins.PaletteColorFor((PlotObject)entry.Target),
                 (entry, color) => ((BarPlot)entry.Target).FillColor = color,
                 "bar");
+
+            // The four bar properties this build spells differently than MATLAB does. Everything
+            // else — FaceAlpha, Horizontal, EdgeColor — already reads under MATLAB's own name.
+            Put(table, "LineWidth",
+                entry => JgsValue.Number(((BarPlot)entry.Target).EdgeWidth),
+                (entry, value, line, col) => ((BarPlot)entry.Target).EdgeWidth =
+                    JgsBuiltins.NumOf("LineWidth", value, line, col));
+            Put(table, "BarWidth",
+                entry => JgsValue.Number(((BarPlot)entry.Target).BarWidthFraction),
+                (entry, value, line, col) => ((BarPlot)entry.Target).BarWidthFraction =
+                    JgsBuiltins.NumOf("BarWidth", value, line, col));
+            Put(table, "BaseValue",
+                entry => JgsValue.Number(((BarPlot)entry.Target).Baseline),
+                (entry, value, line, col) => ((BarPlot)entry.Target).Baseline =
+                    JgsBuiltins.NumOf("BaseValue", value, line, col));
+            Put(table, "LineStyle",
+                entry => JgsValue.Str(JgsBuiltins.DashWord(((BarPlot)entry.Target).Dash)),
+                (entry, value, line, col) =>
+                {
+                    var plot = (BarPlot)entry.Target;
+                    plot.Dash = JgsBuiltins.ParseDashWord(
+                        JgsBuiltins.StrOf("LineStyle", value, line, col), plot.Dash);
+                });
+        }
+
+        if (typeof(AreaPlot).IsAssignableFrom(type))
+        {
+            // Everything else an area has — FaceColor, FaceAlpha, BaseValue, ShowBaseLine — is
+            // already reachable by reflection under the name MATLAB uses. Only the dash pattern is
+            // spelled differently here than there.
+            Put(table, "LineStyle",
+                entry => JgsValue.Str(JgsBuiltins.DashWord(((AreaPlot)entry.Target).Dash)),
+                (entry, value, line, col) =>
+                {
+                    var plot = (AreaPlot)entry.Target;
+                    plot.Dash = JgsBuiltins.ParseDashWord(
+                        JgsBuiltins.StrOf("LineStyle", value, line, col), plot.Dash);
+                });
+        }
+
+        if (typeof(PiePlot).IsAssignableFrom(type))
+        {
+            // A pie has no X and no Y, so the four things a script asks it about are the values it
+            // was given, how far each wedge is pushed out, what is written beside them, and the
+            // colours they came from. None of the four is a type reflection can carry.
+            Put(table, "Values",
+                entry => Row(((PiePlot)entry.Target).Values),
+                (entry, value, line, col) => ((PiePlot)entry.Target).Values =
+                    JgsBuiltins.ToDoubles("Values", value, line, col));
+            Put(table, "Explode",
+                entry => Row(((PiePlot)entry.Target).Explode ?? []),
+                (entry, value, line, col) => ((PiePlot)entry.Target).Explode =
+                    JgsBuiltins.ToDoubles("Explode", value, line, col));
+            Put(table, "Labels",
+                entry => JgsValue.Cell(Array.ConvertAll(WrittenLabels((PiePlot)entry.Target), JgsValue.Str)),
+                (entry, value, line, col) => ((PiePlot)entry.Target).Labels =
+                    TextRows("Labels", value, line, col));
+            Put(table, "Colormap",
+                entry => ValueBridge.ToValue(((PiePlot)entry.Target).Colormap),
+                (entry, value, line, col) => ((PiePlot)entry.Target).Colormap =
+                    (Colormap)ValueBridge.FromValue(typeof(Colormap), "Colormap", value, line, col)!);
+        }
+
+        if (typeof(HeatmapPlot).IsAssignableFrom(type))
+        {
+            Put(table, "ColorData",
+                entry => Grid(((HeatmapPlot)entry.Target).ColorData),
+                (entry, value, line, col) =>
+                {
+                    var plot = (HeatmapPlot)entry.Target;
+                    plot.ColorData = JgsBuiltins.HeatmapGrid(value, line, col);
+
+                    // The rulers name one cell each, so a grid of a different size renames them.
+                    plot.Axes?.LabelCells(plot);
+                });
+            Put(table, "XData",
+                entry => JgsValue.Cell(((HeatmapPlot)entry.Target).ColumnLabels().Select(JgsValue.Str).ToArray()),
+                (entry, value, line, col) => Rename(entry, value, line, col, x: true));
+            Put(table, "YData",
+                entry => JgsValue.Cell(((HeatmapPlot)entry.Target).RowLabels().Select(JgsValue.Str).ToArray()),
+                (entry, value, line, col) => Rename(entry, value, line, col, x: false));
+            Put(table, "Colormap",
+                entry => ValueBridge.ToValue(((HeatmapPlot)entry.Target).Colormap),
+                (entry, value, line, col) => ((HeatmapPlot)entry.Target).Colormap =
+                    (Colormap)ValueBridge.FromValue(typeof(Colormap), "Colormap", value, line, col)!);
+
+            // MATLAB always answers with limits, so the automatic ones are worked out rather than
+            // reported as absent — and setting them is what makes them stop moving with the data.
+            Put(table, "ColorLimits",
+                entry => Row(((HeatmapPlot)entry.Target).EffectiveLimits().Min,
+                    ((HeatmapPlot)entry.Target).EffectiveLimits().Max),
+                (entry, value, line, col) =>
+                {
+                    double[] pair = JgsBuiltins.ToDoubles("ColorLimits", value, line, col);
+                    ((HeatmapPlot)entry.Target).ColorLimits = pair.Length == 2 && pair[0] < pair[1]
+                        ? new DataRange(pair[0], pair[1])
+                        : throw new JgsRuntimeException(line, col,
+                            "ColorLimits is two increasing numbers, such as [0 10].");
+                });
+            // MATLAB says all three of "off", "work it out" and a colour in this one property, so
+            // the two words have to be read here rather than left to the colour bridge.
+            Put(table, "CellLabelColor",
+                entry => ((HeatmapPlot)entry.Target) switch
+                {
+                    { ShowCellLabels: false } => JgsValue.Str("none"),
+                    { CellLabelColor: null } => JgsValue.Str("auto"),
+                    var plot => ColorRow(plot.CellLabelColor!.Value),
+                },
+                (entry, value, line, col) =>
+                    JgsBuiltins.SetCellLabelColor((HeatmapPlot)entry.Target, value, line, col));
+            Put(table, "CellLabelFormat",
+                entry => JgsValue.Str(((HeatmapPlot)entry.Target).CellLabelFormat ?? "auto"),
+                (entry, value, line, col) => ((HeatmapPlot)entry.Target).CellLabelFormat =
+                    JgsRulerTicks.ToNetFormat(
+                        "CellLabelFormat", JgsBuiltins.StrOf("CellLabelFormat", value, line, col), line, col));
+            Put(table, "FontSize",
+                entry => JgsValue.Number(((HeatmapPlot)entry.Target).CellLabelStyle.FontSize),
+                (entry, value, line, col) =>
+                {
+                    var plot = (HeatmapPlot)entry.Target;
+                    plot.CellLabelStyle = plot.CellLabelStyle.WithSize(
+                        JgsBuiltins.NumOf("FontSize", value, line, col));
+                });
+            Put(table, "FontColor",
+                entry => ColorRow(((HeatmapPlot)entry.Target).CellLabelStyle.Color),
+                (entry, value, line, col) =>
+                {
+                    var plot = (HeatmapPlot)entry.Target;
+                    plot.CellLabelStyle = plot.CellLabelStyle.WithColor(
+                        JgsBuiltins.OptionColor(value, line, col, "heatmap"));
+                });
+
+            // A heatmap is a plot on ordinary axes here rather than MATLAB's chart container, so the
+            // four properties that belong to the container answer for the axes it is drawn on.
+            Put(table, "Title",
+                entry => JgsValue.Str(Owner(entry)?.Title ?? string.Empty),
+                (entry, value, line, col) => Owning(entry, line, col).Title =
+                    JgsBuiltins.StrOf("Title", value, line, col));
+            Put(table, "XLabel",
+                entry => JgsValue.Str(Owner(entry)?.PrimaryXAxis.Label ?? string.Empty),
+                (entry, value, line, col) => Owning(entry, line, col).PrimaryXAxis.Label =
+                    JgsBuiltins.StrOf("XLabel", value, line, col));
+            Put(table, "YLabel",
+                entry => JgsValue.Str(Owner(entry)?.PrimaryYAxis.Label ?? string.Empty),
+                (entry, value, line, col) => Owning(entry, line, col).PrimaryYAxis.Label =
+                    JgsBuiltins.StrOf("YLabel", value, line, col));
+            Put(table, "ColorbarVisible",
+                entry => OnOff(Owner(entry)?.Colorbar.Visible ?? false),
+                (entry, value, line, col) => Owning(entry, line, col).Colorbar.Visible =
+                    ToOnOff("ColorbarVisible", value, line, col));
+        }
+
+        if (typeof(BoxChartPlot).IsAssignableFrom(type))
+        {
+            // The observations and their grouping are plain arrays, which reflection does not carry,
+            // and the three words MATLAB spells differently than the model does.
+            Put(table, "XData",
+                entry => Row(((BoxChartPlot)entry.Target).XData ?? []),
+                (entry, value, line, col) => ((BoxChartPlot)entry.Target).XData =
+                    JgsBuiltins.ToDoubles("XData", value, line, col));
+            Put(table, "YData",
+                entry => Row(((BoxChartPlot)entry.Target).YData),
+                (entry, value, line, col) => ((BoxChartPlot)entry.Target).YData =
+                    JgsBuiltins.ToDoubles("YData", value, line, col));
+            Put(table, "MarkerStyle",
+                entry => JgsValue.Str(JgsBuiltins.MarkerWord(((BoxChartPlot)entry.Target).MarkerStyle)),
+                (entry, value, line, col) =>
+                {
+                    var plot = (BoxChartPlot)entry.Target;
+                    plot.MarkerStyle = JgsBuiltins.ParseMarkerWord(
+                        JgsBuiltins.StrOf("MarkerStyle", value, line, col), plot.MarkerStyle);
+                });
+            Put(table, "WhiskerLineStyle",
+                entry => JgsValue.Str(JgsBuiltins.DashWord(((BoxChartPlot)entry.Target).WhiskerLineStyle)),
+                (entry, value, line, col) =>
+                {
+                    var plot = (BoxChartPlot)entry.Target;
+                    plot.WhiskerLineStyle = JgsBuiltins.ParseDashWord(
+                        JgsBuiltins.StrOf("WhiskerLineStyle", value, line, col), plot.WhiskerLineStyle);
+                });
+            Put(table, "Orientation",
+                entry => JgsValue.Str(((BoxChartPlot)entry.Target).Horizontal ? "horizontal" : "vertical"),
+                (entry, value, line, col) => ((BoxChartPlot)entry.Target).Horizontal =
+                    JgsBuiltins.BoxOrientationWord(value, line, col));
+
+            // The summary the chart actually drew, which is the thing a script wants to check and
+            // cannot work out from YData without repeating the quartile convention by hand.
+            Put(table, "MedianValues",
+                entry => Row([.. ((BoxChartPlot)entry.Target).Groups().Select(g => g.Summary.Median)]));
+            Put(table, "BoxPositions",
+                entry => Row([.. ((BoxChartPlot)entry.Target).Groups().Select(g => g.Position)]));
         }
 
         if (typeof(PatchPlot).IsAssignableFrom(type))
@@ -500,6 +795,19 @@ internal static class JgsGraphicsProperties
         Put(table, "ZAxis", entry => JgsHandleRegistry.For(Axes(entry).ZAxis));
         Put(table, "Legend", entry => JgsHandleRegistry.For(Axes(entry).Legend));
 
+        // MATLAB always answers with limits, so the automatic ones are worked out rather than reported
+        // as absent — and setting them is what makes them stop moving with the data.
+        Put(table, "BubbleSizeLimits",
+            entry => Row(Axes(entry).ResolveBubbleLimits().Min, Axes(entry).ResolveBubbleLimits().Max),
+            (entry, value, line, col) =>
+            {
+                double[] pair = Numbers("BubbleSizeLimits", value, 2, line, col);
+                Axes(entry).BubbleSizeLimits = pair[1] > pair[0]
+                    ? new DataRange(pair[0], pair[1])
+                    : throw new JgsRuntimeException(line, col,
+                        "BubbleSizeLimits is two increasing numbers, such as [0 100].");
+            });
+
         Put(table, "Color",
             entry => ColorRow(Axes(entry).Background),
             (entry, value, line, col) => Axes(entry).Background =
@@ -606,6 +914,54 @@ internal static class JgsGraphicsProperties
                 ruler.TickLabelStyle = ruler.TickLabelStyle.WithColor(color);
                 ruler.LabelStyle = ruler.LabelStyle.WithColor(color);
             });
+
+        Put(table, "Label",
+            entry => JgsValue.Str(Ruler(entry).Label),
+            (entry, value, line, col) => Ruler(entry).Label = JgsBuiltins.StrOf("Label", value, line, col));
+
+        // A ruler handle is the only handle a script has for one side of a two-sided axes — plotyy
+        // answers with two of them — so the axes-shaped spellings answer here too, on the ruler whose
+        // direction they name and nowhere else.
+        AddDirected(table, "XLim", AxisOrientation.Horizontal, "Limits");
+        AddDirected(table, "YLim", AxisOrientation.Vertical, "Limits");
+        AddDirected(table, "XColor", AxisOrientation.Horizontal, "Color");
+        AddDirected(table, "YColor", AxisOrientation.Vertical, "Color");
+        AddDirected(table, "XLabel", AxisOrientation.Horizontal, "Label");
+        AddDirected(table, "YLabel", AxisOrientation.Vertical, "Label");
+        AddDirected(table, "XScale", AxisOrientation.Horizontal, "Scale");
+        AddDirected(table, "YScale", AxisOrientation.Vertical, "Scale");
+    }
+
+    /// <summary>
+    /// Adds a letter-shaped spelling of a ruler property, which answers only on a ruler pointing the
+    /// way the letter says. Reading <c>YLim</c> off an x ruler is a mistake worth naming rather than
+    /// an alias worth honouring.
+    /// </summary>
+    private static void AddDirected(
+        IDictionary<string, GraphicsProperty> table, string name, AxisOrientation direction, string underlying)
+    {
+        GraphicsProperty target = table[underlying];
+        string spelling = name;
+
+        JgsHandleEntry Checked(JgsHandleEntry entry, int line, int col)
+        {
+            if (Ruler(entry).Orientation != direction)
+            {
+                throw new JgsRuntimeException(line, col,
+                    $"{spelling} names a {(direction == AxisOrientation.Horizontal ? "horizontal" : "vertical")} "
+                    + $"ruler, and this handle is the other one. Its own limits and label answer to "
+                    + $"Limits and Label.");
+            }
+
+            return entry;
+        }
+
+        table[spelling] = new GraphicsProperty(
+            spelling,
+            entry => target.Read(Checked(entry, 0, 0)),
+            target.Write is null
+                ? null
+                : (entry, value, line, col) => target.Write(Checked(entry, line, col), value, line, col));
     }
 
     // --- Alias plumbing -------------------------------------------------------------------------
@@ -636,6 +992,30 @@ internal static class JgsGraphicsProperties
                 entry => ColorRow(read(entry)),
                 (entry, value, line, col) => write(entry, JgsBuiltins.OptionColor(value, line, col, what)));
         }
+    }
+
+    /// <summary>
+    /// The transparency of one colour, under the name MATLAB gives it. A colour that has not been
+    /// chosen yet is fully opaque, which is what MATLAB answers too.
+    /// </summary>
+    private static void AddAlpha(
+        IDictionary<string, GraphicsProperty> table,
+        string name,
+        Func<JgsHandleEntry, Color?> read,
+        Action<JgsHandleEntry, Color> write)
+    {
+        Put(table, name,
+            entry => JgsValue.Number((read(entry)?.A ?? 255) / 255.0),
+            (entry, value, line, col) =>
+            {
+                double alpha = JgsBuiltins.NumOf(name, value, line, col);
+                if (alpha is < 0 or > 1)
+                {
+                    throw new JgsRuntimeException(line, col, $"{name} is between 0 and 1, but got {alpha:G6}.");
+                }
+
+                write(entry, JgsBuiltins.WithAlpha(read(entry) ?? Colors.Black, alpha));
+            });
     }
 
     /// <summary>
@@ -782,6 +1162,87 @@ internal static class JgsGraphicsProperties
         }
 
         return JgsMatrix.FromColumnMajor(handles, 1, handles.Length);
+    }
+
+    /// <summary>
+    /// What a pie actually writes beside its wedges — the labels it was given, or the percentages it
+    /// worked out. Reading back what is drawn rather than what was set is the useful answer here,
+    /// and it is the same rule the contour's LevelList already follows.
+    /// </summary>
+    private static string[] WrittenLabels(PiePlot pie)
+    {
+        IReadOnlyList<PieSlice> slices = pie.Slices();
+        var labels = new string[slices.Count];
+        for (int i = 0; i < slices.Count; i++)
+        {
+            labels[i] = pie.LabelOf(slices[i].Index, slices[i].Fraction);
+        }
+
+        return labels;
+    }
+
+    /// <summary>A rows-by-columns grid of numbers, as the matrix a script would have written.</summary>
+    private static JgsValue Grid(double[,] values) =>
+        JgsMatrix.Build(values.GetLength(0), values.GetLength(1), (r, c) => values[r, c]);
+
+    /// <summary>
+    /// Renames a heatmap's columns or rows, and points the ruler at the new names — a name that is
+    /// not on the ruler is not on the chart, however faithfully the plot remembers it.
+    /// </summary>
+    private static void Rename(JgsHandleEntry entry, JgsValue value, int line, int col, bool x)
+    {
+        var plot = (HeatmapPlot)entry.Target;
+        string[] names = TextRows(x ? "XData" : "YData", value, line, col);
+        int expected = x ? plot.Columns : plot.Rows;
+        if (names.Length != expected)
+        {
+            throw new JgsRuntimeException(line, col,
+                $"{(x ? "XData" : "YData")}: there are {names.Length} names but {expected} are needed.");
+        }
+
+        if (x)
+        {
+            plot.XData = names;
+        }
+        else
+        {
+            plot.YData = names;
+        }
+
+        plot.Axes?.LabelCells(plot);
+    }
+
+    /// <summary>The axes a chart is drawn on, when it is drawn on one.</summary>
+    private static AxesModel? Owner(JgsHandleEntry entry) => (entry.Target as PlotObject)?.Axes;
+
+    private static AxesModel Owning(JgsHandleEntry entry, int line, int col) =>
+        Owner(entry) ?? throw new JgsRuntimeException(line, col,
+            "this property belongs to the axes, and the chart is not on one.");
+
+    /// <summary>A cell of char rows or an array of strings, as plain text.</summary>
+    private static string[] TextRows(string what, JgsValue value, int line, int col)
+    {
+        JgsValue[] elements = value.Type switch
+        {
+            JgsType.Cell => value.AsCell,
+            JgsType.Array when !value.IsPacked && !value.IsPackedComplex => value.BoxedElements(),
+            JgsType.String => [value],
+            _ => throw new JgsRuntimeException(line, col,
+                $"{what} is a cell of char rows or an array of strings."),
+        };
+
+        var words = new string[elements.Length];
+        for (int i = 0; i < elements.Length; i++)
+        {
+            if (elements[i].Type != JgsType.String)
+            {
+                throw new JgsRuntimeException(line, col, $"{what}: element {i + 1} is not text.");
+            }
+
+            words[i] = elements[i].AsString;
+        }
+
+        return words;
     }
 
     private static JgsValue SeriesRow(XYPlot plot, bool x)

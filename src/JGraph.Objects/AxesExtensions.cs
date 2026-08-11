@@ -1,4 +1,5 @@
 using JGraph.Core.Data;
+using JGraph.Core.Drawing;
 using JGraph.Core.Model;
 using JGraph.Core.Primitives;
 
@@ -59,6 +60,67 @@ public static class AxesExtensions
         return plot;
     }
 
+    /// <summary>
+    /// Adds a scatter whose marker sizes are read against the axes' bubble scale (MATLAB
+    /// <c>bubblechart</c>) and returns it.
+    /// </summary>
+    public static ScatterPlot AddBubbleChart(this AxesModel axes, double[] xs, double[] ys, double[] sizes)
+    {
+        ArgumentNullException.ThrowIfNull(axes);
+        ArgumentNullException.ThrowIfNull(sizes);
+
+        var plot = new ScatterPlot(xs, ys) { BubbleSizing = true };
+        plot.SizeData = sizes;
+        axes.Plots.Add(plot);
+        return plot;
+    }
+
+    /// <summary>Adds a filled area band for the given X/Y data and returns it.</summary>
+    public static AreaPlot AddArea(this AxesModel axes, double[] xs, double[] ys)
+    {
+        ArgumentNullException.ThrowIfNull(axes);
+        var plot = new AreaPlot(xs, ys);
+        axes.Plots.Add(plot);
+        return plot;
+    }
+
+    /// <summary>
+    /// Adds one band per column of <paramref name="columns"/>, each stacked on the ones before it,
+    /// and returns them in column order. Stacking is the whole reason the plural form exists: the
+    /// floor of a band is the running total beneath it, which only the caller who has every column
+    /// can work out.
+    /// </summary>
+    public static IReadOnlyList<AreaPlot> AddStackedArea(
+        this AxesModel axes, double[] xs, IReadOnlyList<double[]> columns)
+    {
+        ArgumentNullException.ThrowIfNull(axes);
+        ArgumentNullException.ThrowIfNull(xs);
+        ArgumentNullException.ThrowIfNull(columns);
+
+        var running = new double[xs.Length];
+        var created = new List<AreaPlot>(columns.Count);
+        foreach (double[] column in columns)
+        {
+            AreaPlot plot = axes.AddArea(xs, column);
+            if (created.Count > 0)
+            {
+                plot.LowerEdge = (double[])running.Clone();
+            }
+
+            for (int i = 0; i < running.Length && i < column.Length; i++)
+            {
+                if (double.IsFinite(column[i]))
+                {
+                    running[i] += column[i];
+                }
+            }
+
+            created.Add(plot);
+        }
+
+        return created;
+    }
+
     /// <summary>Adds a bar plot for the given positions/values and returns it.</summary>
     public static BarPlot AddBar(this AxesModel axes, double[] positions, double[] values)
     {
@@ -86,6 +148,94 @@ public static class AxesExtensions
         BarPlot plot = axes.AddBar(positions, values);
         axes.PrimaryXAxis.UseCategories(categories);
         return plot;
+    }
+
+    /// <summary>
+    /// Adds one bar series per column of <paramref name="columns"/> and returns them in column
+    /// order. The series share the slot at each position when <paramref name="stacked"/> is false,
+    /// standing side by side inside it; when it is true they stand on one another instead. Both
+    /// arrangements are decided here, for the same reason the stacked area is: only the caller
+    /// holding every column knows what the running total under each series is.
+    /// </summary>
+    public static IReadOnlyList<BarPlot> AddBar(
+        this AxesModel axes, double[] positions, IReadOnlyList<double[]> columns, bool stacked)
+    {
+        ArgumentNullException.ThrowIfNull(axes);
+        ArgumentNullException.ThrowIfNull(positions);
+        ArgumentNullException.ThrowIfNull(columns);
+
+        var running = new double[positions.Length];
+        var created = new List<BarPlot>(columns.Count);
+        foreach (double[] column in columns)
+        {
+            BarPlot plot = axes.AddBar(positions, column);
+            if (stacked)
+            {
+                if (created.Count > 0)
+                {
+                    plot.LowerEdge = (double[])running.Clone();
+                }
+
+                for (int i = 0; i < running.Length && i < column.Length; i++)
+                {
+                    if (double.IsFinite(column[i]))
+                    {
+                        running[i] += column[i];
+                    }
+                }
+            }
+            else
+            {
+                plot.GroupIndex = created.Count;
+                plot.GroupCount = columns.Count;
+            }
+
+            created.Add(plot);
+        }
+
+        return created;
+    }
+
+    /// <summary>Adds a stairstep line for the given X/Y data and returns it.</summary>
+    public static LinePlot AddStairs(this AxesModel axes, double[] xs, double[] ys)
+    {
+        ArgumentNullException.ThrowIfNull(axes);
+        LinePlot plot = axes.AddLine(xs, ys);
+        plot.Steps = StepMode.Post;
+        plot.Name = "Stairs";
+        return plot;
+    }
+
+    /// <summary>
+    /// Adds a pie chart of <paramref name="values"/> and returns it, turning the axes into the kind
+    /// of axes a pie needs: equal-aspect, so the circle is round, and without a frame or rulers,
+    /// which have nothing to measure on a pie. That is done here rather than left to the caller
+    /// because a pie drawn on ordinary axes is an ellipse in a box, which nobody wants.
+    /// </summary>
+    public static PiePlot AddPie(this AxesModel axes, double[] values)
+    {
+        ArgumentNullException.ThrowIfNull(axes);
+        var plot = new PiePlot(values);
+        axes.Plots.Add(plot);
+        axes.MakeCircular();
+        return plot;
+    }
+
+    /// <summary>
+    /// Turns the axes into a round, frameless canvas: equal aspect, no frame, and no ticks or tick
+    /// labels on either ruler. This is what a pie — and later a polar chart — is drawn on.
+    /// </summary>
+    public static void MakeCircular(this AxesModel axes)
+    {
+        ArgumentNullException.ThrowIfNull(axes);
+        axes.EqualAspect = true;
+        axes.FrameVisible = false;
+        foreach (AxisModel ruler in axes.XAxes.Concat(axes.YAxes))
+        {
+            ruler.ShowMajorTicks = false;
+            ruler.ShowMinorTicks = false;
+            ruler.ShowTickLabels = false;
+        }
     }
 
     /// <summary>Adds a stem plot for the given X/Y data and returns it.</summary>
@@ -259,6 +409,56 @@ public static class AxesExtensions
     {
         ArgumentNullException.ThrowIfNull(axes);
         var plot = new PatchPlot(x, y, z);
+        axes.Plots.Add(plot);
+        return plot;
+    }
+
+    /// <summary>
+    /// Adds a heatmap of <paramref name="colorData"/> and turns the axes into the labelled grid one
+    /// belongs on: category rulers naming the columns and rows, no frame, no minor ticks, and the Y
+    /// ruler inverted so that row zero is at the top the way a table reads.
+    /// </summary>
+    public static HeatmapPlot AddHeatmap(
+        this AxesModel axes, double[,] colorData, string[]? xLabels = null, string[]? yLabels = null)
+    {
+        ArgumentNullException.ThrowIfNull(axes);
+        var plot = new HeatmapPlot(colorData) { XData = xLabels, YData = yLabels };
+        axes.Plots.Add(plot);
+        axes.LabelCells(plot);
+        return plot;
+    }
+
+    /// <summary>
+    /// Points the axes' rulers at the cells of <paramref name="plot"/>. Kept separate from
+    /// <see cref="AddHeatmap"/> because relabelling has to happen again whenever the data or the
+    /// names change, and the caller that changed them is the one that knows.
+    /// </summary>
+    public static void LabelCells(this AxesModel axes, HeatmapPlot plot)
+    {
+        ArgumentNullException.ThrowIfNull(axes);
+        ArgumentNullException.ThrowIfNull(plot);
+
+        axes.FrameVisible = false;
+        axes.PrimaryXAxis.UseCategories(plot.ColumnLabels());
+        axes.PrimaryYAxis.UseCategories(plot.RowLabels());
+        axes.PrimaryYAxis.Inverted = true;
+        axes.PrimaryXAxis.ShowMinorTicks = false;
+        axes.PrimaryYAxis.ShowMinorTicks = false;
+
+        // The chart draws the lines between its own cells, and axes gridlines would run through the
+        // middle of them rather than between them.
+        axes.Grid.ShowMajor = false;
+        axes.Grid.ShowMinor = false;
+    }
+
+    /// <summary>
+    /// Adds a box chart of <paramref name="yData"/>, cut into one box per distinct value of
+    /// <paramref name="xData"/> when that is given and drawn as a single box when it is not.
+    /// </summary>
+    public static BoxChartPlot AddBoxChart(this AxesModel axes, double[]? xData, double[] yData)
+    {
+        ArgumentNullException.ThrowIfNull(axes);
+        var plot = new BoxChartPlot(xData, yData);
         axes.Plots.Add(plot);
         return plot;
     }

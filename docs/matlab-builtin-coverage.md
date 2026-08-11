@@ -15,16 +15,18 @@ below used to list as missing and call the most useful thing left: `plot3`, `lin
 the ten handle-graphics builtins it implemented: `get` `set` `findobj` `isgraphics` `ishandle`
 `ishghandle` `gco` `gcbo` `ancestor` `copyobj`.
 
-**133 of the 264 documented graphics functions** — the second table below, new in M45, and M54 moved
-it by 52. The denominator changed too, and the correction is worth stating rather than quietly
-overwriting: this file has said 263 since M45, which was one short *and* two names wrong in both
-directions. `slice` was counted in the implemented table and listed again among the missing volume
-names; `close` (M35) and `linkaxes` (M51) were graphics functions the file never put in either list.
-264 is the real count of documented functions under `graph2d`, `graph3d`, `specgraph` and `graphics`,
-and 133 = the 78 of M45 + M54's 52 + `close` + `linkaxes` + `imapprox`, which M46 implemented while it
-sat in the missing list below.
+**146 of the 266 documented graphics functions** — the second table below, new in M45, moved by 52 in
+M54 and by 13 in M55. The denominator has now been corrected twice, and both corrections are worth
+stating rather than quietly overwriting. M54's: this file said 263 from M45, which was one short *and*
+two names wrong in both directions — `slice` was counted in the implemented table and listed again
+among the missing volume names, while `close` (M35) and `linkaxes` (M51) were graphics functions the
+file never put in either list. M55's: `bubblesize` and `bubblelim` are documented graphics functions
+that appeared in neither list either, found because implementing them moved the checklist tool by two
+names this file could not account for. **That is the third time the same kind of gap has surfaced, and
+always the same way — a name is absent from a list rather than marked missing in it.** 266 is the count
+under `graph2d`, `graph3d`, `specgraph` and `graphics` as this file now enumerates them.
 
-A fresh run of `build-checklist.py` reports **142**, not 133, and the nine-name gap is deliberate: M54
+A fresh run of `build-checklist.py` reports **155**, not 146, and the nine-name gap is deliberate: M54
 registers the polar-axes ruler verbs (`rticks` `rticklabels` `rtickangle` `rtickformat` `rlim`
 `thetaticks` `thetaticklabels` `thetatickformat` `thetalim`) as names that refuse with a reason rather
 than as "undefined function", and a registered name is a catalogued name, which is all the checklist
@@ -32,8 +34,8 @@ tool can see. They are counted as **not** implemented here, because they draw no
 real. `opengl` *is* counted, because an accepted no-op is an answer — the same reading that counted
 `shading`, `lighting` and `camlight` in M43.
 
-Across every callable kind — builtin, function, operator, keyword, script — the count is **697 of
-2,027** as of M54 (633 after M52, 619 after M51, up from 560, and not from the 556 this file used to claim: the checklist tool
+Across every callable kind — builtin, function, operator, keyword, script — the count is **710 of
+2,027** as of M55 (697 after M54, 633 after M52, 619 after M51, up from 560, and not from the 556 this file used to claim: the checklist tool
 read the implemented set with a regular expression that only matched a name literal directly inside
 `Add(`, so it missed the sixteen colormap generators, which are registered from a loop, and reported
 `parula` as unimplemented the whole time it was working. Both shapes are read now).
@@ -186,22 +188,24 @@ count in the first table instead.
 | Decorations | M54 | `box` `sgtitle` `subtitle` `clabel` `texlabel` `xline` `yline` |
 | Camera extras | M54 | `viewmtx` `makehgtform` `camroll` `camdolly` `campan` `camlookat` `camproj` |
 | Legacy colormap and appearance | M54 | `colorcube` `flag` `prism` `rgbplot` `validatecolor` `diffuse` `specular` `contrast` `hidden` `orient` `whitebg` `colordef` `opengl` `cmpermute` `cmunique` `dither` |
+| The everyday 2-D charts | M55 | `area` `barh` `stairs` `pie` `heatmap` `boxchart` `bubblechart` `bubblesize` `bubblelim` `bubblelegend` `pareto` `plotmatrix` `plotyy` — five new plot objects, three properties on objects that already existed, and three compositions that draw nothing of their own |
 
-### What the remaining 131 are
+### What the remaining 120 are
 
-Five families, and they add to exactly 131 — only the first two are missing *plots*. This section read
-185 from M45 until M54 emptied two of the five families and most of a third; the milestone each family
-is now waiting on is named beside it.
+Five families, and they add to exactly 120 — only the first two are missing *plots*. This section read
+185 from M45 until M54 emptied two of the five families and most of a third, and 131 until M55 took
+ten of the chart types; the milestone each family is now waiting on is named beside it.
 
-**Chart types with no plot object — 33.** `area` `barh` `bar3` `bar3h` `stairs` `stem3` `pie` `pie3`
-`compass` `feather` `rose` `polar` `polarplot` `polarscatter` `polarhistogram` `polarbubblechart`
-`plotmatrix` `plotyy` `heatmap` `boxchart` `binscatter` `bubblechart` `bubblechart3` `swarmchart`
-`swarmchart3` `parallelplot` `stackedplot` `scatterhistogram` `wordcloud` `pareto` `voronoi`
+**Chart types with no plot object — 23.** `bar3` `bar3h` `stem3` `pie3` `compass` `feather` `rose`
+`polar` `polarplot` `polarscatter` `polarhistogram` `polarbubblechart` `binscatter` `bubblechart3`
+`swarmchart` `swarmchart3` `parallelplot` `stackedplot` `scatterhistogram` `wordcloud` `voronoi`
 `triplot` `tetramesh`. Each is a plot object, a renderer branch, `.graph` serialization and inspector
 support — the same slice `plot3` and `patch` were in M45, and the largest honest remainder. M54 made
 each one cheaper than it was: a new plot object joins `get`/`set`/`findobj` by being written, because
-the property table is reflection over the model's own browsable properties. M55 takes the everyday
-eleven, M56 the polar family, M57 the rest.
+the property table is reflection over the model's own browsable properties. **M55 took the everyday
+ten** — `area` `barh` `stairs` `pie` `heatmap` `boxchart` `bubblechart` `pareto` `plotmatrix`
+`plotyy` — and confirmed the claim: none of them wrote a line of property, inspector or `findobj`
+code. M56 takes the polar family, M57 the rest.
 
 **Function plotters — 16.** `fplot` `fplot3` `fsurf` `fmesh` `fcontour` `fimplicit` `fimplicit3` and
 the nine `ez*` forms. They take a *function handle* and choose their own sample points adaptively.
@@ -229,9 +233,9 @@ address an editing surface JGraph already has in the plot browser and inspector;
 six more** — `cla` `findall` `gcbf` `gobjects` `ishold` `newplot`, which are the parts of the family
 that only ever needed handles and a property table.
 
-**Properties, rulers, and legacy appearance — 24 of 70.** This was the whole point of M54 and it is
-the family the milestone emptied: 46 of the 70 are implemented, and every one of the 24 left is left
-for a stated reason rather than for want of time.
+**Properties, rulers, and legacy appearance — 23 of 70.** This was the whole point of M54 and it is
+the family the milestone emptied: 47 of the 70 are implemented — 46 in M54 and `bubblelegend` in M55 —
+and every one of the 23 left is left for a stated reason rather than for want of time.
 
 - **9 polar rulers — M56.** `rticks` `rticklabels` `rtickangle` `rtickformat` `rlim` `thetaticks`
   `thetaticklabels` `thetatickformat` `thetalim`. The tick machinery M54 built is per-`AxisModel`, so
@@ -240,8 +244,15 @@ for a stated reason rather than for want of time.
 - **7 geographic verbs — excluded.** `geoaxes` `geobasemap` `geobubble` `geodensityplot` `geolimits`
   `geoplot` `geoscatter` `geotickformat` need a basemap tile service, which is a product, not a
   feature.
-- **`bubblecloud` `bubblelegend` — M55**, beside `bubblechart`; **`comet` `comet3` — M60**, behind the
+- **`bubblelegend` — done in M55**, beside `bubblechart`; **`comet` `comet3` — M60**, behind the
   one animation seam.
+- **`bubblecloud` — excluded.** This file pledged it to M55 beside the other two bubble names, and
+  M55 did not build it, so the pledge is settled here rather than quietly carried forward. It is not
+  a bubble chart with a different legend: it packs labelled circles against each other with no axes,
+  no scales and no coordinates, which puts it with `wordcloud` and `parallelplot` — chart containers
+  whose whole content is a layout algorithm, and which say nothing an engineering figure needs to
+  say. `bubblechart` against a categorical x, or a `pie`, carries the same comparison on axes a
+  reader can measure.
 - **3 legacy names — excluded.** `graymon` sets a monochrome monitor's defaults, `im2java` returns a
   Java image, `spinmap` animates a colormap rotation. The first two describe machines JGraph does not
   run on; the third is an animation the figure model has no loop for.
@@ -251,11 +262,32 @@ counterparts) plus `num2ruler` and `ruler2num`; 7 decorations (`box` `sgtitle` `
 `texlabel` `xline` `yline`); 7 camera extras beyond M45's (`camdolly` `campan` `camroll` `camlookat`
 `camproj` `viewmtx` `makehgtform`); and 18 of the 21 legacy colormap and appearance verbs
 (`cmpermute` `cmunique` `colorcube` `colordef` `contrast` `dither` `flag` `hidden` `imapprox`
-`opengl` `orient` `prism` `rgbplot` `shg` `whitebg` `validatecolor` `diffuse` `specular`).
+`opengl` `orient` `prism` `rgbplot` `shg` `whitebg` `validatecolor` `diffuse` `specular`), and
+`bubblelegend` in M55.
 
 ### Recorded divergences
 
 Deliberate, and each one a consequence of a design decision made elsewhere:
+
+- **A chart built out of another chart answers as what it is made of.** `barh` is a `bar` with
+  `Horizontal` on and `bubblechart` is a `scatter` that was given a size for each point, so
+  `get(h, 'Type')` reads `'bar'` and `'scatter'`, and `findobj(gcf, 'Type', 'bubblechart')` finds
+  nothing. MATLAB mints a distinct object for each. The property surface is the reason: making them
+  separate types would mean two objects with the same properties and the same drawing, differing
+  only in a name that a script can already read off `Horizontal` or `SizeData`.
+- **`plotyy` hands back two rulers, not two axes.** MATLAB overlays a second axes; this build draws
+  two y scales on one (M54's `yyaxis`), so `AX` holds the two ruler handles. Every axes verb accepts
+  a ruler where it accepts an axes, which is what keeps `ylabel(AX(2), …)`, `ylim(AX(1), …)` and
+  `set(AX(1), 'YColor', …)` saying what they say in MATLAB. The letter-shaped spellings answer only
+  on a ruler pointing the way their letter names, and say so on the other one.
+- **`plotmatrix` answers `BigAx` with handle 0**, and cannot be aimed at an axes. MATLAB's `BigAx`
+  is an invisible axes that exists only to hang a title on; an invisible axes here draws nothing at
+  all, its title included, so minting one would silently swallow whatever a script hung on it.
+  `sgtitle` writes over the grid. The verb also clears the figure, the way drawing any chart into it
+  does, because it lays out its own subplots.
+- **A `heatmap` here is an axes with a plot on it**, not MATLAB's standalone chart container, so it
+  sits in a `subplot` and answers the ordinary axes verbs. Its own title and axis labels are
+  properties on the plot, which is where MATLAB's chart keeps them too.
 
 - **There is no depth buffer.** Painter's algorithm sorts faces within a plot, so two 3-D plots in
   one axes interleave by draw order rather than by geometry. A surface and a `plot3` line through it

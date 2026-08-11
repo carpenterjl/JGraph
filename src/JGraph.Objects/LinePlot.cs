@@ -17,6 +17,7 @@ public sealed class LinePlot : XYPlot, IDrawable, ILegendItem
     private Color? _color;
     private double _lineWidth = 1.5;
     private DashStyle _dashStyle = DashStyle.Solid;
+    private StepMode _steps = StepMode.None;
     private MarkerType _marker = MarkerType.None;
     private double _markerSize = 6;
     private Color? _markerFill;
@@ -57,6 +58,17 @@ public sealed class LinePlot : XYPlot, IDrawable, ILegendItem
         set => SetProperty(ref _dashStyle, value, InvalidationKind.Render);
     }
 
+    /// <summary>
+    /// Whether the samples are joined straight or as a stairstep (MATLAB <c>stairs</c>). Only the
+    /// path between samples changes: markers still sit on the samples, and so do the data bounds.
+    /// </summary>
+    [Category("Appearance"), DisplayName("Step mode")]
+    public StepMode Steps
+    {
+        get => _steps;
+        set => SetProperty(ref _steps, value, InvalidationKind.Render);
+    }
+
     [Category("Appearance")]
     public MarkerType Marker
     {
@@ -87,7 +99,17 @@ public sealed class LinePlot : XYPlot, IDrawable, ILegendItem
     {
         Color color = _color ?? state.SeriesColor;
         var line = new LineStyle(color.WithOpacity(Opacity), _lineWidth, _dashStyle);
-        SeriesRenderer.DrawLine(context, state, Data, line, ref _dataBuffer, ref _pixelBuffer);
+
+        // A stepped line draws an expanded path but keeps its samples: the markers below, the hit
+        // test, and the bounds all still read Data, so only the ink between samples moves.
+        IDataSeries path = Data;
+        if (_steps != StepMode.None && Data.Count > 0)
+        {
+            (double[] stepX, double[] stepY) = StairSteps.Build(Data, _steps);
+            path = new ArrayDataSeries(stepX, stepY);
+        }
+
+        SeriesRenderer.DrawLine(context, state, path, line, ref _dataBuffer, ref _pixelBuffer);
 
         if (_marker != MarkerType.None && Data.Count <= SeriesRenderer.MaxMarkerCount)
         {

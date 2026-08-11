@@ -27,6 +27,8 @@ public sealed class AxesModel : GraphObject
     private IReadOnlyList<Color>? _colorOrder;
     private Vector3D _plotBoxAspect = new(1, 1, 1);
     private int _activeYAxisIndex;
+    private DataRange _bubbleSizeRange = BubbleScale.DefaultSizeRange;
+    private DataRange? _bubbleSizeLimits;
 
     public AxesModel()
     {
@@ -43,6 +45,8 @@ public sealed class AxesModel : GraphObject
         Legend.SetParent(this);
         Colorbar = new ColorbarModel();
         Colorbar.SetParent(this);
+        BubbleLegend = new BubbleLegendModel();
+        BubbleLegend.SetParent(this);
 
         ZAxis = new AxisModel(AxisOrientation.Vertical, AxisPosition.Left) { Name = "ZAxis" };
         ZAxis.SetParent(this);
@@ -115,6 +119,81 @@ public sealed class AxesModel : GraphObject
 
     /// <summary>The colorbar (hidden until enabled). Legends the first color-mapped plot's colormap.</summary>
     public ColorbarModel Colorbar { get; }
+
+    /// <summary>The bubble legend (hidden until enabled). Legends <see cref="BubbleScale"/>.</summary>
+    public BubbleLegendModel BubbleLegend { get; }
+
+    /// <summary>
+    /// The smallest and largest bubble diameter in points (MATLAB <c>bubblesize</c>). It belongs to
+    /// the axes rather than to a chart because two bubble charts drawn together must be read against
+    /// one scale, or the reader cannot compare them.
+    /// </summary>
+    [Category("Appearance"), DisplayName("Bubble size range")]
+    public DataRange BubbleSizeRange
+    {
+        get => _bubbleSizeRange;
+        set => SetProperty(ref _bubbleSizeRange, Sane(value), InvalidationKind.Render);
+    }
+
+    /// <summary>
+    /// The data values mapped onto the ends of <see cref="BubbleSizeRange"/> (MATLAB
+    /// <c>bubblelim</c>), or null to take them from the data. Null is not a range a script can read,
+    /// so <c>get</c> answers with the effective limits instead — see <see cref="BubbleScale"/>.
+    /// </summary>
+    [Browsable(false)]
+    public DataRange? BubbleSizeLimits
+    {
+        get => _bubbleSizeLimits;
+        set => SetProperty(ref _bubbleSizeLimits, value is { } range ? Sane(range) : null, InvalidationKind.Render);
+    }
+
+    /// <summary>
+    /// How this axes turns a bubble chart's size value into a diameter: the size range as set, and the
+    /// value limits either as set or as taken from every bubble chart drawn here. Reading the limits
+    /// off the siblings is what makes two charts share one scale without either being told about the
+    /// other.
+    /// </summary>
+    [Browsable(false)]
+    public BubbleScale BubbleScale => new(ResolveBubbleLimits(), _bubbleSizeRange);
+
+    /// <summary>The bubble value limits in force, worked out from the data when none were set.</summary>
+    public DataRange ResolveBubbleLimits()
+    {
+        if (_bubbleSizeLimits is { } fixedLimits)
+        {
+            return fixedLimits;
+        }
+
+        DataRange limits = DataRange.Empty;
+        foreach (PlotObject plot in Plots)
+        {
+            if (!plot.Visible || plot is not IBubbleData { BubbleSizing: true, SizeData: { } sizes })
+            {
+                continue;
+            }
+
+            foreach (double size in sizes)
+            {
+                if (double.IsFinite(size))
+                {
+                    limits = limits.Include(size);
+                }
+            }
+        }
+
+        return limits.IsEmpty ? DataRange.Unit : limits;
+    }
+
+    /// <summary>Orders a pair and refuses the non-finite, so a bad pair cannot make bubbles vanish.</summary>
+    private static DataRange Sane(DataRange range)
+    {
+        if (!double.IsFinite(range.Min) || !double.IsFinite(range.Max))
+        {
+            return DataRange.Unit;
+        }
+
+        return range.Min <= range.Max ? range : new DataRange(range.Max, range.Min);
+    }
 
     /// <summary>
     /// The Z axis. Always constructed so its label/range/tick configuration persists, but only

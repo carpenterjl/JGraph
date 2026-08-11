@@ -40,30 +40,57 @@ internal static partial class JgsBuiltins
     /// <summary>
     /// Splits a leading axes handle off an argument list. Every drawing verb takes one — MATLAB's
     /// <c>plot(ax, x, y)</c>, <c>title(ax, '…')</c>, <c>hold(ax, 'off')</c> — and it always sits first.
+    /// <para>
+    /// A ruler handle names its axes too, because on a two-sided axes that is the only handle a script
+    /// has for one side: <c>plotyy</c> answers with the two rulers, and <c>title(AX(1), …)</c> has to
+    /// mean the axes they belong to.
+    /// </para>
     /// </summary>
     internal static (AxesModel? Axes, IReadOnlyList<JgsValue> Remaining) PeelAxes(IReadOnlyList<JgsValue> args)
     {
-        if (args.Count > 0
-            && JgsHandleRegistry.TryGet(args[0], out JgsHandleEntry? entry)
-            && entry.Target is AxesModel axes)
-        {
-            var rest = new JgsValue[args.Count - 1];
-            for (int i = 1; i < args.Count; i++)
-            {
-                rest[i - 1] = args[i];
-            }
+        (AxesModel? axes, _, IReadOnlyList<JgsValue> rest) = PeelRuler(args);
+        return (axes, rest);
+    }
 
-            return (axes, rest);
+    /// <summary>
+    /// The same split, keeping the ruler when the handle named one. The verbs that speak about a
+    /// single ruler — <c>ylim</c>, <c>yticks</c>, <c>ylabel</c> — use this, so that naming a ruler
+    /// aims at that side rather than at whichever side <c>yyaxis</c> last made active.
+    /// </summary>
+    internal static (AxesModel? Axes, AxisModel? Ruler, IReadOnlyList<JgsValue> Remaining) PeelRuler(
+        IReadOnlyList<JgsValue> args)
+    {
+        if (args.Count == 0 || !JgsHandleRegistry.TryGet(args[0], out JgsHandleEntry? entry))
+        {
+            return (null, null, args);
         }
 
-        return (null, args);
+        (AxesModel? axes, AxisModel? ruler) = entry.Target switch
+        {
+            AxesModel named => (named, (AxisModel?)null),
+            AxisModel named => (named.Parent as AxesModel, named),
+            _ => (null, null),
+        };
+
+        if (axes is null)
+        {
+            return (null, null, args);
+        }
+
+        var rest = new JgsValue[args.Count - 1];
+        for (int i = 1; i < args.Count; i++)
+        {
+            rest[i - 1] = args[i];
+        }
+
+        return (axes, ruler, rest);
     }
 
     /// <summary>
     /// Runs a verb against <paramref name="axes"/> and puts the previous current axes back, because
     /// naming an axes in a call does not make it the one an unqualified verb would find next.
     /// </summary>
-    internal static JgsValue OnAxes(AxesModel? axes, Func<JgsValue> body)
+    internal static T OnAxes<T>(AxesModel? axes, Func<T> body)
     {
         if (axes is null)
         {

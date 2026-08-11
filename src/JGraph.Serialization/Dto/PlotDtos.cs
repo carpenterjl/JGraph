@@ -13,6 +13,10 @@ namespace JGraph.Serialization.Dto;
 [JsonDerivedType(typeof(LinePlotDto), "line")]
 [JsonDerivedType(typeof(ScatterPlotDto), "scatter")]
 [JsonDerivedType(typeof(BarPlotDto), "bar")]
+[JsonDerivedType(typeof(AreaPlotDto), "area")]
+[JsonDerivedType(typeof(PiePlotDto), "pie")]
+[JsonDerivedType(typeof(HeatmapPlotDto), "heatmap")]
+[JsonDerivedType(typeof(BoxChartPlotDto), "boxchart")]
 [JsonDerivedType(typeof(StemPlotDto), "stem")]
 [JsonDerivedType(typeof(HistogramPlotDto), "histogram")]
 [JsonDerivedType(typeof(ErrorBarPlotDto), "errorbar")]
@@ -57,6 +61,9 @@ public sealed class LinePlotDto : PlotDto
 
     public DashStyle DashStyle { get; set; }
 
+    /// <summary>Straight, or a stairstep — how <c>stairs</c> survives a save.</summary>
+    public StepMode Steps { get; set; }
+
     public MarkerType Marker { get; set; }
 
     public double MarkerSize { get; set; } = 6;
@@ -77,6 +84,26 @@ public sealed class ScatterPlotDto : PlotDto
     public Color? Fill { get; set; }
 
     public double EdgeWidth { get; set; } = 1.0;
+
+    /// <summary>Per-point sizes, or null for a uniform <see cref="MarkerSize"/>.</summary>
+    public double[]? SizeData { get; set; }
+
+    /// <summary>Per-point colormapped values, or null for a single-colored cloud.</summary>
+    public double[]? ColorData { get; set; }
+
+    /// <summary>
+    /// Whether <see cref="SizeData"/> is read as bubble values rather than as marker areas — the one
+    /// thing telling a saved <c>bubblechart</c> from a saved <c>scatter</c> carrying sizes.
+    /// </summary>
+    public bool BubbleSizing { get; set; }
+
+    public ColormapDto Colormap { get; set; } = new("Parula", Array.Empty<Color>());
+
+    public bool AutoScaleColor { get; set; } = true;
+
+    public double ColorMin { get; set; }
+
+    public double ColorMax { get; set; } = 1;
 }
 
 public sealed class BarPlotDto : PlotDto
@@ -89,9 +116,150 @@ public sealed class BarPlotDto : PlotDto
 
     public double EdgeWidth { get; set; } = 1.0;
 
+    public double FaceAlpha { get; set; } = 1.0;
+
+    public DashStyle Dash { get; set; }
+
     public double BarWidthFraction { get; set; } = 0.8;
 
     public double Baseline { get; set; }
+
+    public bool Horizontal { get; set; }
+
+    /// <summary>Which series of a grouped chart this is, and how many share the slot.</summary>
+    public int GroupIndex { get; set; }
+
+    public int GroupCount { get; set; } = 1;
+
+    /// <summary>How far the slot is shifted, as a fraction of its width (histc's half shift).</summary>
+    public double PositionOffset { get; set; }
+
+    /// <summary>The stacking floor, or null for a series standing on its own baseline.</summary>
+    public double[]? LowerEdge { get; set; }
+}
+
+public sealed class AreaPlotDto : PlotDto
+{
+    public SeriesDto Series { get; set; } = new(Array.Empty<double>(), Array.Empty<double>());
+
+    public Color? FaceColor { get; set; }
+
+    public Color? EdgeColor { get; set; }
+
+    public double FaceAlpha { get; set; } = 1.0;
+
+    public double LineWidth { get; set; } = 1.0;
+
+    public DashStyle Dash { get; set; }
+
+    public double BaseValue { get; set; }
+
+    public bool ShowBaseLine { get; set; } = true;
+
+    /// <summary>The stacking floor, or null for a band standing on its own base value.</summary>
+    public double[]? LowerEdge { get; set; }
+}
+
+/// <summary>The serialized form of a <see cref="PiePlot"/>.</summary>
+public sealed class PiePlotDto : PlotDto
+{
+    public double[] Values { get; set; } = Array.Empty<double>();
+
+    /// <summary>How far each wedge is pushed out, or null when none is.</summary>
+    public double[]? Explode { get; set; }
+
+    /// <summary>What is written beside each wedge, or null for the automatic percentages.</summary>
+    public string[]? Labels { get; set; }
+
+    public ColormapDto Colormap { get; set; } = new("Parula", Array.Empty<Color>());
+
+    public Color? EdgeColor { get; set; }
+
+    public double LineWidth { get; set; } = 1.0;
+
+    public double FaceAlpha { get; set; } = 1.0;
+
+    public double StartAngle { get; set; } = 90;
+
+    public bool Clockwise { get; set; }
+
+    public bool ShowLabels { get; set; } = true;
+
+    public double LabelRadius { get; set; } = 1.2;
+
+    public TextStyleDto? LabelStyle { get; set; }
+}
+
+/// <summary>The serialized form of a <see cref="HeatmapPlot"/>.</summary>
+public sealed class HeatmapPlotDto : PlotDto
+{
+    public double[][] ColorData { get; set; } = Array.Empty<double[]>();
+
+    /// <summary>The column names, or null when they are the numbers one upward.</summary>
+    public string[]? XData { get; set; }
+
+    /// <summary>The row names, or null when they are the numbers one upward.</summary>
+    public string[]? YData { get; set; }
+
+    public ColormapDto Colormap { get; set; } = new("Parula", Array.Empty<Color>());
+
+    /// <summary>The colour limits that were set, or null when they come from the data.</summary>
+    public RangeDto? ColorLimits { get; set; }
+
+    public HeatmapScaling ColorScaling { get; set; } = HeatmapScaling.Scaled;
+
+    public bool ShowCellLabels { get; set; } = true;
+
+    /// <summary>The cell label colour, or null when each cell picks one against its own fill.</summary>
+    public Color? CellLabelColor { get; set; }
+
+    public string? CellLabelFormat { get; set; }
+
+    public TextStyleDto? CellLabelStyle { get; set; }
+
+    public bool GridVisible { get; set; } = true;
+
+    public Color GridColor { get; set; } = Colors.White;
+
+    public Color MissingDataColor { get; set; } = Color.FromScRgb(0.15, 0.15, 0.15);
+
+    public string MissingDataLabel { get; set; } = "NaN";
+}
+
+/// <summary>The serialized form of a <see cref="BoxChartPlot"/>.</summary>
+public sealed class BoxChartPlotDto : PlotDto
+{
+    /// <summary>Which group each observation falls in, or null when they are all in one.</summary>
+    public double[]? XData { get; set; }
+
+    /// <summary>Every observation — the boxes are worked out again on load rather than stored.</summary>
+    public double[] YData { get; set; } = Array.Empty<double>();
+
+    public Color? BoxFaceColor { get; set; }
+
+    public double BoxFaceAlpha { get; set; } = 0.5;
+
+    public Color BoxEdgeColor { get; set; } = Color.FromScRgb(0.15, 0.15, 0.15);
+
+    public Color BoxMedianLineColor { get; set; } = Color.FromScRgb(0.15, 0.15, 0.15);
+
+    public double BoxWidth { get; set; } = 0.5;
+
+    public double LineWidth { get; set; } = 1.0;
+
+    public Color WhiskerLineColor { get; set; } = Color.FromScRgb(0.15, 0.15, 0.15);
+
+    public DashStyle WhiskerLineStyle { get; set; }
+
+    public MarkerType MarkerStyle { get; set; } = MarkerType.Circle;
+
+    public double MarkerSize { get; set; } = 6;
+
+    public Color? MarkerColor { get; set; }
+
+    public bool Notch { get; set; }
+
+    public bool JitterOutliers { get; set; }
 
     public bool Horizontal { get; set; }
 }

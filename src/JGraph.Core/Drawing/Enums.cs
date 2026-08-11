@@ -28,6 +28,26 @@ public enum MarkerType
     Point,
 }
 
+/// <summary>
+/// How a line joins its samples: straight across, or as a stairstep whose tread sits after, before,
+/// or centered on each sample. Stepping changes only the path drawn between samples — the samples
+/// themselves, and so the markers and the data bounds, are unmoved.
+/// </summary>
+public enum StepMode
+{
+    /// <summary>Straight segments from sample to sample.</summary>
+    None,
+
+    /// <summary>The value is held forward, changing at the next sample (MATLAB <c>stairs</c>).</summary>
+    Post,
+
+    /// <summary>The value is held back, changing at this sample.</summary>
+    Pre,
+
+    /// <summary>The value changes halfway between neighbouring samples.</summary>
+    Mid,
+}
+
 /// <summary>Line cap style for stroke endpoints.</summary>
 public enum LineCap
 {

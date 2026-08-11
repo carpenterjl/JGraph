@@ -88,11 +88,11 @@ internal static partial class JgsBuiltins
         Func<AxisModel, JgsValue> read,
         Action<string, AxisModel, JgsValue, int, int> write)
     {
-        (AxesModel? named, IReadOnlyList<JgsValue> rest) = PeelAxes(args);
+        (AxesModel? named, AxisModel? aimed, IReadOnlyList<JgsValue> rest) = PeelRuler(args);
         ArityRange(verb, rest, 0, 1, line, col);
 
         AxesModel axes = named ?? JG.Gca();
-        AxisModel ruler = RulerOf(axes, side);
+        AxisModel ruler = aimed ?? RulerOf(axes, side);
 
         if (rest.Count == 0)
         {
@@ -110,11 +110,11 @@ internal static partial class JgsBuiltins
     /// </summary>
     private static JgsValue Limits(string verb, RulerSide side, IReadOnlyList<JgsValue> args, int line, int col)
     {
-        (AxesModel? named, IReadOnlyList<JgsValue> rest) = PeelAxes(args);
+        (AxesModel? named, AxisModel? aimed, IReadOnlyList<JgsValue> rest) = PeelRuler(args);
         ArityRange(verb, rest, 0, 2, line, col);
 
         AxesModel axes = named ?? JG.Gca();
-        AxisModel ruler = RulerOf(axes, side);
+        AxisModel ruler = aimed ?? RulerOf(axes, side);
 
         if (rest.Count == 0)
         {

@@ -269,11 +269,85 @@ public static class JG
         return axes.AddScatter(xs, ys);
     }
 
+    /// <summary>
+    /// Plots bubbles whose sizes come from a third variable (MATLAB <c>bubblechart</c>). The sizes are
+    /// data values read against the axes' bubble scale, not marker areas — see <c>BubbleScale</c>.
+    /// </summary>
+    public static ScatterPlot BubbleChart(double[] xs, double[] ys, double[] sizes)
+    {
+        ArgumentNullException.ThrowIfNull(sizes);
+
+        AxesModel axes = PrepareAxes();
+        return axes.AddBubbleChart(xs, ys, sizes);
+    }
+
+    /// <summary>Shows (default) or hides the current axes' bubble legend (MATLAB <c>bubblelegend</c>).</summary>
+    public static BubbleLegendModel BubbleLegend(bool on = true)
+    {
+        BubbleLegendModel legend = Gca().BubbleLegend;
+        legend.Visible = on;
+        return legend;
+    }
+
+    /// <summary>Plots a filled area band (MATLAB <c>area</c>).</summary>
+    public static AreaPlot Area(double[] xs, double[] ys)
+    {
+        AxesModel axes = PrepareAxes();
+        return axes.AddArea(xs, ys);
+    }
+
+    /// <summary>Plots one area band per column, each stacked on the ones before it.</summary>
+    public static IReadOnlyList<AreaPlot> Area(double[] xs, IReadOnlyList<double[]> columns)
+    {
+        AxesModel axes = PrepareAxes();
+        return axes.AddStackedArea(xs, columns);
+    }
+
+    /// <summary>Plots a pie chart on a round, frameless axes (MATLAB <c>pie</c>).</summary>
+    public static PiePlot Pie(double[] values)
+    {
+        AxesModel axes = PrepareAxes();
+        return axes.AddPie(values);
+    }
+
+    /// <summary>
+    /// Plots a heatmap on category rulers naming its columns and rows (MATLAB <c>heatmap</c>).
+    /// </summary>
+    public static HeatmapPlot Heatmap(double[,] colorData, string[]? xLabels = null, string[]? yLabels = null)
+    {
+        AxesModel axes = PrepareAxes();
+        return axes.AddHeatmap(colorData, xLabels, yLabels);
+    }
+
+    /// <summary>
+    /// Plots a box and whiskers per group of observations (MATLAB <c>boxchart</c>).
+    /// </summary>
+    public static BoxChartPlot BoxChart(double[]? xData, double[] yData)
+    {
+        AxesModel axes = PrepareAxes();
+        return axes.AddBoxChart(xData, yData);
+    }
+
     /// <summary>Plots a bar series.</summary>
     public static BarPlot Bar(double[] positions, double[] values)
     {
         AxesModel axes = PrepareAxes();
         return axes.AddBar(positions, values);
+    }
+
+    /// <summary>Plots one bar series per column, grouped side by side or stacked.</summary>
+    public static IReadOnlyList<BarPlot> Bar(
+        double[] positions, IReadOnlyList<double[]> columns, bool stacked)
+    {
+        AxesModel axes = PrepareAxes();
+        return axes.AddBar(positions, columns, stacked);
+    }
+
+    /// <summary>Plots a stairstep line (MATLAB <c>stairs</c>).</summary>
+    public static LinePlot Stairs(double[] xs, double[] ys)
+    {
+        AxesModel axes = PrepareAxes();
+        return axes.AddStairs(xs, ys);
     }
 
     /// <summary>Plots a bar series with a category X axis.</summary>

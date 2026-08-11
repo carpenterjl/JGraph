@@ -35,6 +35,314 @@ public class SerializationTests
         Assert.Contains($"\"formatVersion\": {GraphFormat.CurrentVersion}", json);
     }
 
+    /// <summary>
+    /// M55 bumped the format to 6 for the chart types of the M55–M60 arc. The bump only ever says
+    /// "there may be plot kinds in here you have not met"; it removes and renames nothing, so a
+    /// document written by the previous build still loads with everything in it.
+    /// </summary>
+    [Fact]
+    public void AVersionFiveDocumentStillLoadsUnderVersionSix()
+    {
+        const string v5 = """
+            {
+              "format": "jgraph",
+              "formatVersion": 5,
+              "figure": {
+                "title": "Measured",
+                "axes": [
+                  {
+                    "title": "Run 1",
+                    "plots": [
+                      { "type": "line", "displayName": "signal", "lineWidth": 2.5,
+                        "series": { "xs": [1, 2, 3], "ys": [4, 5, 6] } }
+                    ]
+                  }
+                ]
+              }
+            }
+            """;
+
+        FigureModel figure = GraphFormat.Deserialize(v5);
+
+        Assert.Equal("Measured", figure.Title);
+        AxesModel axes = Assert.Single(figure.Axes);
+        Assert.Equal("Run 1", axes.Title);
+        var line = Assert.IsType<LinePlot>(Assert.Single(axes.Plots));
+        Assert.Equal("signal", line.DisplayName);
+        Assert.Equal(2.5, line.LineWidth);
+        Assert.Equal(3, line.Data.Count);
+    }
+
+    [Fact]
+    public void Area_RoundTripsItsFillItsFloorAndItsStack()
+    {
+        var band = new AreaPlot(new[] { 1.0, 2, 3 }, new[] { 4.0, 5, 6 })
+        {
+            FaceColor = Colors.Red,
+            EdgeColor = Colors.Black,
+            FaceAlpha = 0.4,
+            LineWidth = 3,
+            Dash = DashStyle.Dot,
+            BaseValue = -1,
+            ShowBaseLine = false,
+            LowerEdge = new[] { 0.5, 1.0, 1.5 },
+        };
+
+        var restored = (AreaPlot)RoundTrip(WithAxes(band)).Axes[0].Plots[0];
+
+        Assert.Equal(Colors.Red, restored.FaceColor);
+        Assert.Equal(Colors.Black, restored.EdgeColor);
+        Assert.Equal(0.4, restored.FaceAlpha);
+        Assert.Equal(3, restored.LineWidth);
+        Assert.Equal(DashStyle.Dot, restored.Dash);
+        Assert.Equal(-1, restored.BaseValue);
+        Assert.False(restored.ShowBaseLine);
+        Assert.Equal(new[] { 0.5, 1.0, 1.5 }, restored.LowerEdge);
+        Assert.Equal(6, restored.Data.GetY(2));
+    }
+
+    [Fact]
+    public void Bar_RoundTripsItsArrangementAsWellAsItsAppearance()
+    {
+        var bar = new BarPlot(new[] { 1.0, 2, 3 }, new[] { 4.0, 5, 6 })
+        {
+            FillColor = Colors.Red,
+            EdgeColor = Colors.Black,
+            EdgeWidth = 3,
+            FaceAlpha = 0.4,
+            Dash = DashStyle.Dot,
+            BarWidthFraction = 0.5,
+            Baseline = -1,
+            Horizontal = true,
+            GroupIndex = 1,
+            GroupCount = 3,
+            PositionOffset = 0.5,
+            LowerEdge = new[] { 0.5, 1.0, 1.5 },
+        };
+
+        var restored = (BarPlot)RoundTrip(WithAxes(bar)).Axes[0].Plots[0];
+
+        Assert.Equal(Colors.Red, restored.FillColor);
+        Assert.Equal(0.4, restored.FaceAlpha);
+        Assert.Equal(DashStyle.Dot, restored.Dash);
+        Assert.Equal(0.5, restored.BarWidthFraction);
+        Assert.Equal(-1, restored.Baseline);
+        Assert.True(restored.Horizontal);
+        Assert.Equal(1, restored.GroupIndex);
+        Assert.Equal(3, restored.GroupCount);
+        Assert.Equal(0.5, restored.PositionOffset);
+        Assert.Equal(new[] { 0.5, 1.0, 1.5 }, restored.LowerEdge);
+    }
+
+    [Fact]
+    public void Line_RoundTripsTheStepThatMakesItAStaircase()
+    {
+        var stairs = new LinePlot(new[] { 1.0, 2, 3 }, new[] { 4.0, 5, 6 }) { Steps = StepMode.Post };
+
+        var restored = (LinePlot)RoundTrip(WithAxes(stairs)).Axes[0].Plots[0];
+
+        Assert.Equal(StepMode.Post, restored.Steps);
+    }
+
+    [Fact]
+    public void Pie_RoundTripsItsWedgesTheirLabelsAndTheColoursTheyCameFrom()
+    {
+        var pie = new PiePlot(new[] { 1.0, 2, 3 })
+        {
+            Explode = new[] { 0.0, 0.1, 0 },
+            Labels = new[] { "one", "two", "three" },
+            Colormap = Colormap.Jet,
+            EdgeColor = Colors.Black,
+            LineWidth = 2,
+            FaceAlpha = 0.6,
+            StartAngle = 30,
+            Clockwise = true,
+            ShowLabels = false,
+            LabelRadius = 1.4,
+            LabelStyle = new TextStyle(Colors.Red, 14),
+        };
+
+        var restored = (PiePlot)RoundTrip(WithAxes(pie)).Axes[0].Plots[0];
+
+        Assert.Equal(new[] { 1.0, 2, 3 }, restored.Values);
+        Assert.Equal(new[] { 0.0, 0.1, 0 }, restored.Explode);
+        Assert.Equal(new[] { "one", "two", "three" }, restored.Labels);
+        Assert.Equal(Colormap.Jet.Stops, restored.Colormap.Stops);
+        Assert.Equal(Colors.Black, restored.EdgeColor);
+        Assert.Equal(2, restored.LineWidth);
+        Assert.Equal(0.6, restored.FaceAlpha);
+        Assert.Equal(30, restored.StartAngle);
+        Assert.True(restored.Clockwise);
+        Assert.False(restored.ShowLabels);
+        Assert.Equal(1.4, restored.LabelRadius);
+        Assert.Equal(14, restored.LabelStyle?.FontSize);
+    }
+
+    [Fact]
+    public void Heatmap_RoundTripsItsCellsTheirNamesAndEverythingAboutTheirColour()
+    {
+        var heatmap = new HeatmapPlot(new double[,] { { 1, 2, 3 }, { 4, 5, double.NaN } })
+        {
+            XData = ["a", "b", "c"],
+            YData = ["top", "bottom"],
+            Colormap = Colormap.Jet,
+            ColorLimits = new DataRange(0, 10),
+            ColorScaling = HeatmapScaling.ScaledRows,
+            ShowCellLabels = false,
+            CellLabelColor = Colors.Red,
+            CellLabelFormat = "0.00",
+            CellLabelStyle = new TextStyle(Colors.Blue, 14),
+            GridVisible = false,
+            GridColor = Colors.Black,
+            MissingDataColor = Colors.Gray,
+            MissingDataLabel = "gone",
+        };
+
+        var restored = (HeatmapPlot)RoundTrip(WithAxes(heatmap)).Axes[0].Plots[0];
+
+        Assert.Equal(2, restored.Rows);
+        Assert.Equal(3, restored.Columns);
+        Assert.Equal(5, restored.ColorData[1, 1]);
+        Assert.True(double.IsNaN(restored.ColorData[1, 2]));
+        Assert.Equal(new[] { "a", "b", "c" }, restored.XData);
+        Assert.Equal(new[] { "top", "bottom" }, restored.YData);
+        Assert.Equal(Colormap.Jet.Stops, restored.Colormap.Stops);
+        Assert.Equal(new DataRange(0, 10), restored.ColorLimits);
+        Assert.Equal(HeatmapScaling.ScaledRows, restored.ColorScaling);
+        Assert.False(restored.ShowCellLabels);
+        Assert.Equal(Colors.Red, restored.CellLabelColor);
+        Assert.Equal("0.00", restored.CellLabelFormat);
+        Assert.Equal(14, restored.CellLabelStyle.FontSize);
+        Assert.False(restored.GridVisible);
+        Assert.Equal(Colors.Black, restored.GridColor);
+        Assert.Equal(Colors.Gray, restored.MissingDataColor);
+        Assert.Equal("gone", restored.MissingDataLabel);
+    }
+
+    [Fact]
+    public void BoxChart_RoundTripsItsObservationsTheirGroupingAndHowTheBoxesAreDrawn()
+    {
+        var chart = new BoxChartPlot([1, 1, 2, 2], [1, 3, 10, 100])
+        {
+            BoxFaceColor = Colors.Red,
+            BoxFaceAlpha = 0.25,
+            BoxEdgeColor = Colors.Blue,
+            BoxMedianLineColor = Colors.Green,
+            BoxWidth = 0.8,
+            LineWidth = 2.5,
+            WhiskerLineColor = Colors.Magenta,
+            WhiskerLineStyle = DashStyle.Dash,
+            MarkerStyle = MarkerType.Plus,
+            MarkerSize = 12,
+            MarkerColor = Colors.Black,
+            Notch = true,
+            JitterOutliers = true,
+            Horizontal = true,
+        };
+
+        var restored = (BoxChartPlot)RoundTrip(WithAxes(chart)).Axes[0].Plots[0];
+
+        Assert.Equal(new[] { 1.0, 1, 2, 2 }, restored.XData);
+        Assert.Equal(new[] { 1.0, 3, 10, 100 }, restored.YData);
+        Assert.Equal(Colors.Red, restored.BoxFaceColor);
+        Assert.Equal(0.25, restored.BoxFaceAlpha);
+        Assert.Equal(Colors.Blue, restored.BoxEdgeColor);
+        Assert.Equal(Colors.Green, restored.BoxMedianLineColor);
+        Assert.Equal(0.8, restored.BoxWidth);
+        Assert.Equal(2.5, restored.LineWidth);
+        Assert.Equal(Colors.Magenta, restored.WhiskerLineColor);
+        Assert.Equal(DashStyle.Dash, restored.WhiskerLineStyle);
+        Assert.Equal(MarkerType.Plus, restored.MarkerStyle);
+        Assert.Equal(12, restored.MarkerSize);
+        Assert.Equal(Colors.Black, restored.MarkerColor);
+        Assert.True(restored.Notch);
+        Assert.True(restored.JitterOutliers);
+        Assert.True(restored.Horizontal);
+
+        // The boxes are summarized again from the observations rather than stored, so a loaded
+        // chart says the same thing about them as the one that was saved.
+        Assert.Equal([2, 55], restored.Groups().Select(g => g.Summary.Median));
+    }
+
+    [Fact]
+    public void BubbleChart_RoundTripsItsSizesTheScaleTheyAreReadAgainstAndTheLegend()
+    {
+        var chart = new ScatterPlot([1, 2, 3], [10, 20, 30])
+        {
+            BubbleSizing = true,
+            Marker = MarkerType.Square,
+            EdgeWidth = 2,
+        };
+        chart.SizeData = [0, 50, 100];
+        chart.ColorData = [1, 2, 3];
+
+        FigureModel figure = WithAxes(chart);
+        AxesModel axes = figure.Axes[0];
+        axes.BubbleSizeRange = new DataRange(10, 30);
+        axes.BubbleSizeLimits = new DataRange(0, 200);
+        axes.BubbleLegend.Visible = true;
+        axes.BubbleLegend.Title = "Population";
+        axes.BubbleLegend.Style = BubbleLegendStyle.Telescopic;
+        axes.BubbleLegend.NumBubbles = 5;
+        axes.BubbleLegend.LimitLabels = true;
+        axes.BubbleLegend.Position = LegendPosition.BottomLeft;
+
+        FigureModel loaded = RoundTrip(figure);
+        AxesModel restoredAxes = loaded.Axes[0];
+        var restored = (ScatterPlot)restoredAxes.Plots[0];
+
+        Assert.True(restored.BubbleSizing);
+        Assert.Equal([0.0, 50, 100], restored.SizeData);
+        Assert.Equal([1.0, 2, 3], restored.ColorData);
+        Assert.Equal(MarkerType.Square, restored.Marker);
+        Assert.Equal(2, restored.EdgeWidth);
+
+        Assert.Equal(new DataRange(10, 30), restoredAxes.BubbleSizeRange);
+        Assert.Equal(new DataRange(0, 200), restoredAxes.BubbleSizeLimits);
+        Assert.True(restoredAxes.BubbleLegend.Visible);
+        Assert.Equal("Population", restoredAxes.BubbleLegend.Title);
+        Assert.Equal(BubbleLegendStyle.Telescopic, restoredAxes.BubbleLegend.Style);
+        Assert.Equal(5, restoredAxes.BubbleLegend.NumBubbles);
+        Assert.True(restoredAxes.BubbleLegend.LimitLabels);
+        Assert.Equal(LegendPosition.BottomLeft, restoredAxes.BubbleLegend.Position);
+
+        // The diameters are worked out again from the sizes and the scale rather than stored, so a
+        // loaded chart draws the bubbles the saved one drew.
+        Assert.Equal(chart.DiameterAt(1), restored.DiameterAt(1), 12);
+    }
+
+    [Fact]
+    public void Axes_RoundTripsWhichYRulerEachSeriesIsMeasuredAgainst()
+    {
+        // What pareto and plotyy draw is two series against two scales, and which series belongs to
+        // which ruler is the one thing about that arrangement a saved figure could lose.
+        var figure = new FigureModel();
+        AxesModel axes = figure.AddAxes();
+        axes.UseYAxis(0);
+        LinePlot left = axes.AddLine([1, 2, 3], [10, 20, 30]);
+        axes.PrimaryYAxis.AutoScale = false;
+        axes.PrimaryYAxis.Range = new DataRange(0, 60);
+
+        axes.UseYAxis(1);
+        LinePlot right = axes.AddLine([1, 2, 3], [55, 85, 95]);
+        axes.ActiveYAxis.AutoScale = false;
+        axes.ActiveYAxis.Range = new DataRange(0, 100);
+        axes.ActiveYAxis.Label = "percent";
+
+        Assert.Equal(0, left.YAxisIndex);
+        Assert.Equal(1, right.YAxisIndex);
+
+        AxesModel loaded = RoundTrip(figure).Axes[0];
+
+        Assert.Equal(2, loaded.YAxes.Count);
+        Assert.Equal(0, loaded.Plots[0].YAxisIndex);
+        Assert.Equal(1, loaded.Plots[1].YAxisIndex);
+        Assert.Equal(new DataRange(0, 60), loaded.YAxes[0].Range);
+        Assert.Equal(new DataRange(0, 100), loaded.YAxes[1].Range);
+        Assert.Equal("percent", loaded.YAxes[1].Label);
+        Assert.False(loaded.YAxes[1].AutoScale);
+    }
+
     [Fact]
     public void Axis_RoundTripsManualTicksAndTheirAngle()
     {

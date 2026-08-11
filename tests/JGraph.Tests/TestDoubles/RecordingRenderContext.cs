@@ -86,7 +86,11 @@ internal sealed class RecordingRenderContext : IRenderContext
         }
 
         PolygonMeanY.Add(points.Length == 0 ? 0 : sum / points.Length);
+        PolygonSizes.Add(points.Length);
     }
+
+    /// <summary>How many corners each polygon had, in draw order — a notched box has more than a plain one.</summary>
+    public List<int> PolygonSizes { get; } = new();
 
     /// <summary>The fill of every polygon drawn, in draw order — lets tests assert painter ordering.</summary>
     public List<Color?> PolygonFills { get; } = new();

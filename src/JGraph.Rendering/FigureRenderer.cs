@@ -137,6 +137,11 @@ public sealed class FigureRenderer
                 ColorbarRenderer.Draw(context, axes, plotArea, theme);
             }
 
+            if (axes.BubbleLegend.Visible)
+            {
+                BubbleLegendRenderer.Draw(context, axes, plotArea, theme);
+            }
+
             return new AxesRenderInfo(axes, plotArea, transform, legendBox);
         }
 
@@ -177,6 +182,13 @@ public sealed class FigureRenderer
         if (axes.Colorbar.Visible)
         {
             ColorbarRenderer.Draw(context, axes, plotArea, theme);
+        }
+
+        // The bubble legend floats inside the plot area like the legend does, rather than reserving a
+        // margin like the colorbar: it explains the data, so it belongs over it.
+        if (axes.BubbleLegend.Visible)
+        {
+            BubbleLegendRenderer.Draw(context, axes, plotArea, theme);
         }
 
         return new AxesRenderInfo(axes, plotArea, transform, legendBounds);

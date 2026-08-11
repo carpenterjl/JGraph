@@ -214,10 +214,13 @@ public class MatlabRulerTickTests : IDisposable
     [Fact]
     public async Task AHandleWhereTickValuesBelongIsRefusedRatherThanPlotted()
     {
+        // A handle to something that is neither an axes nor a ruler would quietly put a tick at a
+        // million and a half, since a handle is an ordinary number. A ruler handle, on the other hand,
+        // names the very thing the verb is about, and since M55 wave G it aims at that ruler.
         Assert.Contains("aims at an axes", await RunExpectingFailure("""
             figure(1);
-            plot(1:10, 1:10);
-            xticks(gca.XAxis);
+            h = plot(1:10, 1:10);
+            xticks(h);
             """), StringComparison.Ordinal);
 
         Assert.Contains("ruler", await RunExpectingFailure("""
@@ -225,6 +228,21 @@ public class MatlabRulerTickTests : IDisposable
             plot(1:10, 1:10);
             num2ruler(1, gca);
             """), StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public async Task ARulerHandleAimsATickVerbAtThatRuler()
+    {
+        await RunAsserting("""
+            figure(1);
+            plot(1:10, 1:10);
+            xticks([0 5 10]);
+            yticks(gca.YAxis, [2 4]);
+            disp(xticks(gca.XAxis));
+            disp(yticks);
+            """);
+
+        Assert.Equal(new[] { "[0, 5, 10]", "[2, 4]" }, _output.NormalLines);
     }
 
     [Fact]

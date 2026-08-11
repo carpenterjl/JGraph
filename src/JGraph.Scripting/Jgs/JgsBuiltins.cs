@@ -1,4 +1,4 @@
-using System.Globalization;
+﻿using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Numerics;
@@ -1708,12 +1708,10 @@ internal static partial class JgsBuiltins
         // MATLAB's rule: `plot(x, y)` on its own draws, and only `h = plot(x, y)` keeps the handle.
         // Registering them with Define instead would echo `ans = 1000000.5` at every unsuppressed
         // call — which is what `plot` did before M54, the one verb that already returned a handle.
-        DefineSilent("plot", (args, line, col) => Plot(args, line, col));
+        DefineSilent("plot", (args, line, col) => Plot(args, dialect, line, col));
         DefineSilent("scatter", (args, line, col) => XyOrTable("scatter", args, line, col,
             (x, y) => JG.Scatter(x, y), (t, xc, yc) => JG.Scatter(t, xc, yc)));
-        DefineSilent("bar", (args, line, col) => XyOrTable("bar", args, line, col,
-            (x, y) => JG.Bar(x, y), (t, xc, yc) => JG.Bar(t, xc, yc), valuesAlone: true));
-        DefineSilent("stem", (args, line, col) => Stem(args, line, col));
+        DefineSilent("stem", (args, line, col) => Stem(args, dialect, line, col));
         DefineSilent("histogram", (args, line, col) => Histogram(args, line, col));
         DefineSilent("errorbar", (args, line, col) => ErrorBar(args, line, col));
 
@@ -1960,6 +1958,8 @@ internal static partial class JgsBuiltins
         RegisterHandleGraphicsBuiltins(env, host);
         RegisterRulerBuiltins(env);
         RegisterSurfaceVariantBuiltins(env, dialect);
+        RegisterGraphics2DBuiltins(env, dialect);
+        RegisterCompositionBuiltins(env);
 
         // After the plotting verbs it re-declares: the titling family gains its text options here,
         // and contour learns to answer with its matrix as well as its handle.
@@ -2088,13 +2088,13 @@ internal static partial class JgsBuiltins
         return JgsHandleRegistry.For(legend);
     }
 
-    private static JgsValue Plot(IReadOnlyList<JgsValue> args, int line, int col)
+    private static JgsValue Plot(IReadOnlyList<JgsValue> args, JgsDialect dialect, int line, int col)
     {
         (AxesModel? target, args) = PeelAxes(args);
-        return OnAxes(target, () => PlotCore(args, line, col));
+        return OnAxes(target, () => PlotCore(args, dialect, line, col));
     }
 
-    private static JgsValue PlotCore(IReadOnlyList<JgsValue> args, int line, int col)
+    private static JgsValue PlotCore(IReadOnlyList<JgsValue> args, JgsDialect dialect, int line, int col)
     {
         (args, List<(string Name, JgsValue Value)> options) = SplitPlotOptions(args, line, col);
         var created = new List<LinePlot>();
@@ -2117,16 +2117,16 @@ internal static partial class JgsBuiltins
             switch (args.Count)
             {
                 case 1:
-                    PlotColumns(created, x: null, args[0], spec: null, line, col);
+                    PlotColumns(created, x: null, args[0], spec: null, dialect, line, col);
                     break;
                 case 2 when args[1].Type == JgsType.String:
-                    PlotColumns(created, x: null, args[0], Str("plot", args, 1, line, col), line, col);
+                    PlotColumns(created, x: null, args[0], Str("plot", args, 1, line, col), dialect, line, col);
                     break;
                 case 2:
-                    PlotColumns(created, args[0], args[1], spec: null, line, col);
+                    PlotColumns(created, args[0], args[1], spec: null, dialect, line, col);
                     break;
                 case 3:
-                    PlotColumns(created, args[0], args[1], Str("plot", args, 2, line, col), line, col);
+                    PlotColumns(created, args[0], args[1], Str("plot", args, 2, line, col), dialect, line, col);
                     break;
                 default:
                     // Repeated (x, y[, spec]) groups — plot(t, a, 'b', t, b, 'r--').
@@ -2149,7 +2149,7 @@ internal static partial class JgsBuiltins
                             i++;
                         }
 
-                        PlotColumns(created, x, y, groupSpec, line, col);
+                        PlotColumns(created, x, y, groupSpec, dialect, line, col);
                     }
 
                     break;
@@ -2203,7 +2203,7 @@ internal static partial class JgsBuiltins
     /// the axes; a vector is one series.
     /// </summary>
     private static void PlotColumns(
-        List<LinePlot> created, JgsValue? x, JgsValue y, string? spec, int line, int col)
+        List<LinePlot> created, JgsValue? x, JgsValue y, string? spec, JgsDialect dialect, int line, int col)
     {
         double[]? xs = x is null ? null : DoubleArray("plot", [x], 0, line, col);
 
@@ -2228,7 +2228,7 @@ internal static partial class JgsBuiltins
                     series[r] = element.AsNumber;
                 }
 
-                created.Add(xs is null ? JG.Plot(series, spec) : JG.Plot(xs, series, spec));
+                created.Add(JG.Plot(xs ?? ImplicitX(dialect, rows), series, spec));
                 JG.Hold(true);
             }
 
@@ -2236,7 +2236,7 @@ internal static partial class JgsBuiltins
         }
 
         double[] ys = DoubleArray("plot", [y], 0, line, col);
-        created.Add(xs is null ? JG.Plot(ys, spec) : JG.Plot(xs, ys, spec));
+        created.Add(JG.Plot(xs ?? ImplicitX(dialect, ys.Length), ys, spec));
         JG.Hold(true);
     }
 
@@ -2520,12 +2520,14 @@ internal static partial class JgsBuiltins
             DoubleArray(name, args, 0, line, col), DoubleArray(name, args, 1, line, col)));
     }
 
-    private static JgsValue Stem(IReadOnlyList<JgsValue> args, int line, int col)
+    private static JgsValue Stem(IReadOnlyList<JgsValue> args, JgsDialect dialect, int line, int col)
     {
         ArityRange("stem", args, 1, 2, line, col);
-        return Handle(args.Count == 1
-            ? JG.Stem(DoubleArray("stem", args, 0, line, col))
-            : JG.Stem(DoubleArray("stem", args, 0, line, col), DoubleArray("stem", args, 1, line, col)));
+        double[] heights = DoubleArray("stem", args, args.Count - 1, line, col);
+        double[] positions = args.Count == 2
+            ? DoubleArray("stem", args, 0, line, col)
+            : ImplicitX(dialect, heights.Length);
+        return Handle(JG.Stem(positions, heights));
     }
 
     private static JgsValue Histogram(IReadOnlyList<JgsValue> args, int line, int col)
@@ -2721,6 +2723,34 @@ internal static partial class JgsBuiltins
         for (int i = 0; i < n; i++)
         {
             values[i] = i + 1;
+        }
+
+        return values;
+    }
+
+    /// <summary>
+    /// The coordinates a drawing verb given heights alone plots them against: MATLAB counts its
+    /// samples from 1, and JGS numbers everything from 0.
+    /// </summary>
+    /// <remarks>
+    /// The <see cref="JG"/> facade cannot know which script asked, so its own implicit x has always
+    /// been 0-based — which is right for a JGS script and one place to the left for a <c>.m</c> file.
+    /// The caller that does know the dialect says so here. <c>bar</c> and <c>area</c> never had the
+    /// problem because they build their own coordinates; <c>plot</c>, <c>stem</c> and <c>stairs</c>
+    /// let the facade choose, and so drew <c>plot(y)</c> from 0 while <c>bar(y)</c> drew from 1 in
+    /// the same figure.
+    /// </remarks>
+    private static double[] ImplicitX(JgsDialect dialect, int n)
+    {
+        if (dialect.IsMatlab)
+        {
+            return Counting(n);
+        }
+
+        var values = new double[n];
+        for (int i = 0; i < n; i++)
+        {
+            values[i] = i;
         }
 
         return values;
@@ -3972,7 +4002,7 @@ internal static partial class JgsBuiltins
     /// Converts a JGS matrix — an array of equal-length numeric row arrays, e.g. the output of
     /// <c>meshgrid</c> or <c>zeros(r, c)</c> — to a <c>double[rows, cols]</c>. Ragged rows error.
     /// </summary>
-    private static double[,] Matrix(string name, IReadOnlyList<JgsValue> args, int index, int line, int col)
+    internal static double[,] Matrix(string name, IReadOnlyList<JgsValue> args, int index, int line, int col)
     {
         JgsValue value = args[index];
         if (value.Type != JgsType.Array)

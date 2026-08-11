@@ -73,23 +73,26 @@ internal static partial class JgsBuiltins
                 style => figure.TitleStyle = style);
         });
 
-        DefineOnAxes("xlabel", (args, line, col) => Titled(
-            "xlabel", args, line, col,
-            text => JG.XLabel(text),
-            () => JG.Gca().PrimaryXAxis.LabelStyle,
-            style => JG.Gca().PrimaryXAxis.LabelStyle = style));
+        // A label names one ruler, so a handle on a ruler labels that one rather than whichever side
+        // yyaxis last made active — which is how the two sides of a plotyy get their own labels.
+        void DefineLabel(string name, Func<AxesModel, AxisModel> otherwise) =>
+            Define(name, (args, line, col) =>
+            {
+                (AxesModel? axes, AxisModel? aimed, IReadOnlyList<JgsValue> rest) = PeelRuler(args);
+                return OnAxes(axes, () =>
+                {
+                    AxisModel ruler = aimed ?? otherwise(JG.Gca());
+                    return Titled(
+                        name, rest, line, col,
+                        text => ruler.Label = text,
+                        () => ruler.LabelStyle,
+                        style => ruler.LabelStyle = style);
+                });
+            });
 
-        DefineOnAxes("ylabel", (args, line, col) => Titled(
-            "ylabel", args, line, col,
-            text => JG.YLabel(text),
-            () => JG.Gca().ActiveYAxis.LabelStyle,
-            style => JG.Gca().ActiveYAxis.LabelStyle = style));
-
-        DefineOnAxes("zlabel", (args, line, col) => Titled(
-            "zlabel", args, line, col,
-            text => JG.ZLabel(text),
-            () => JG.Gca().ZAxis.LabelStyle,
-            style => JG.Gca().ZAxis.LabelStyle = style));
+        DefineLabel("xlabel", axes => axes.PrimaryXAxis);
+        DefineLabel("ylabel", axes => axes.ActiveYAxis);
+        DefineLabel("zlabel", axes => axes.ZAxis);
 
         // --- The frame -------------------------------------------------------------------------
         DefineOnAxes("box", (args, line, col) =>

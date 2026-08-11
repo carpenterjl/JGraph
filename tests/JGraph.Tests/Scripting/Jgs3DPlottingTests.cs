@@ -1,4 +1,4 @@
-using JGraph.Api;
+﻿using JGraph.Api;
 using JGraph.Core.Drawing;
 using JGraph.Core.Model;
 using JGraph.Core.Primitives;
@@ -485,5 +485,25 @@ public class Jgs3DPlottingTests : IDisposable
 
         // The polar sweep reaches -2 in X, which a first-row collapse would never have seen.
         Assert.InRange(surface.GetXDataBounds().Min, -2.001, -1.999);
+    }
+
+    /// <summary>
+    /// The other half of M55's implicit-x fix: MATLAB counts a plot's samples from 1, and JGS
+    /// numbers everything from 0 (ADR 0028). The verbs that draw heights alone now ask the dialect
+    /// rather than the facade, and this is the test that says the JGS side did not move.
+    /// </summary>
+    [Fact]
+    public async Task HeightsAloneAreStillNumberedFromZeroHere()
+    {
+        ScriptRunResult result = await Run("""
+            figure(1)
+            print(get(plot([3, 5, 2, 6]), "XData"))
+            print(get(stem([3, 5, 2, 6]), "XData"))
+            print(get(stairs([3, 5, 2, 6]), "XData"))
+            """);
+
+        Assert.True(result.Success, result.Message);
+        Assert.Equal(3, _output.NormalLines.Count);
+        Assert.All(_output.NormalLines, written => Assert.Equal("[0, 1, 2, 3]", written));
     }
 }

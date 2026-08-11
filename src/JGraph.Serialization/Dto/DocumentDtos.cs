@@ -77,6 +77,23 @@ public sealed class AxesDto
     /// <summary>The colorbar; null in documents written before format version 2.</summary>
     public ColorbarDto? Colorbar { get; set; }
 
+    /// <summary>The bubble legend; null in every document written before format version 6.</summary>
+    public BubbleLegendDto? BubbleLegend { get; set; }
+
+    /// <summary>
+    /// The smallest and largest bubble diameter in points (MATLAB <c>bubblesize</c>). Written as a
+    /// pair so a document saved before bubbles existed reads back as the default range.
+    /// </summary>
+    public double BubbleSizeMin { get; set; } = 6;
+
+    public double BubbleSizeMax { get; set; } = 40;
+
+    /// <summary>
+    /// The fixed bubble value limits (MATLAB <c>bubblelim</c>), or null — the usual case — to take
+    /// them from the data on load, which is what keeps a reloaded chart scaled as it was drawn.
+    /// </summary>
+    public double[]? BubbleSizeLimits { get; set; }
+
     /// <summary>
     /// The lights on this axes. Empty in every document written before lighting existed, which reads
     /// back as the unlit surface those documents were saved with.
@@ -168,6 +185,35 @@ public sealed class ColorbarDto
     public string? Label { get; set; }
 
     public TextStyleDto? TickLabelStyle { get; set; }
+}
+
+/// <summary>The serialized form of a <see cref="BubbleLegendModel"/>.</summary>
+public sealed class BubbleLegendDto
+{
+    public bool Visible { get; set; }
+
+    public LegendPosition Position { get; set; }
+
+    public BubbleLegendStyle Style { get; set; }
+
+    public int NumBubbles { get; set; } = 3;
+
+    public bool LimitLabels { get; set; }
+
+    public Color Background { get; set; }
+
+    public Color BorderColor { get; set; }
+
+    public bool ShowBorder { get; set; } = true;
+
+    public TextStyleDto? TextStyle { get; set; }
+
+    public string? Title { get; set; }
+
+    /// <summary>The custom placement, as a fraction of the plot area. Used only when <see cref="Position"/> is Custom.</summary>
+    public double LocationX { get; set; } = 0.75;
+
+    public double LocationY { get; set; } = 0.05;
 }
 
 /// <summary>The serialized form of a <see cref="LightModel"/>.</summary>

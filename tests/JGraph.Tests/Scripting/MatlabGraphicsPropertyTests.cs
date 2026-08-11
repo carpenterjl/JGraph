@@ -30,6 +30,7 @@ public sealed class MatlabGraphicsPropertyTests
         ["AxesModel.Grid"] = "reached as XGrid/YGrid; the grid is not separately addressable",
         ["AxesModel.Legend"] = "aliased to a handle by the Legend property",
         ["AxesModel.Colorbar"] = "reached as Children when shown",
+        ["AxesModel.BubbleLegend"] = "reached as Children when shown, as the colorbar is",
         ["AxesModel.ZAxis"] = "aliased to a handle by the ZAxis property",
         ["FigureModel.Axes"] = "reached as Children",
         ["FigureModel.Annotations"] = "reached as Children",
