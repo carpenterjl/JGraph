@@ -1709,8 +1709,7 @@ internal static partial class JgsBuiltins
         // Registering them with Define instead would echo `ans = 1000000.5` at every unsuppressed
         // call — which is what `plot` did before M54, the one verb that already returned a handle.
         DefineSilent("plot", (args, line, col) => Plot(args, dialect, line, col));
-        DefineSilent("scatter", (args, line, col) => XyOrTable("scatter", args, line, col,
-            (x, y) => JG.Scatter(x, y), (t, xc, yc) => JG.Scatter(t, xc, yc)));
+        DefineSilent("scatter", (args, line, col) => Scatter(args, line, col));
         DefineSilent("stem", (args, line, col) => Stem(args, dialect, line, col));
         DefineSilent("histogram", (args, line, col) => Histogram(args, line, col));
         DefineSilent("errorbar", (args, line, col) => ErrorBar(args, line, col));
@@ -1959,6 +1958,7 @@ internal static partial class JgsBuiltins
         RegisterRulerBuiltins(env);
         RegisterSurfaceVariantBuiltins(env, dialect);
         RegisterGraphics2DBuiltins(env, dialect);
+        RegisterPolarBuiltins(env, dialect);
         RegisterCompositionBuiltins(env);
 
         // After the plotting verbs it re-declares: the titling family gains its text options here,
@@ -2094,20 +2094,32 @@ internal static partial class JgsBuiltins
         return OnAxes(target, () => PlotCore(args, dialect, line, col));
     }
 
-    private static JgsValue PlotCore(IReadOnlyList<JgsValue> args, JgsDialect dialect, int line, int col)
+    /// <summary>
+    /// The body every line-drawing verb shares. <paramref name="verb"/> only names the caller in its
+    /// error messages; <paramref name="implicitX"/> is what the verb puts on the other axis when the
+    /// call gave values alone, which is the one place <c>plot</c> and <c>polarplot</c> differ — sample
+    /// numbers on square paper, angles round a circle.
+    /// </summary>
+    private static JgsValue PlotCore(
+        IReadOnlyList<JgsValue> args,
+        JgsDialect dialect,
+        int line,
+        int col,
+        string verb = "plot",
+        Func<int, double[]>? implicitX = null)
     {
-        (args, List<(string Name, JgsValue Value)> options) = SplitPlotOptions(args, line, col);
+        (args, List<(string Name, JgsValue Value)> options) = SplitPlotOptions(verb, args, line, col);
         var created = new List<LinePlot>();
 
         if (args.Count > 0 && args[0].Type == JgsType.Table)
         {
-            ArityRange("plot", args, 3, 4, line, col);
-            Table table = Tbl("plot", args, 0, line, col);
-            string xColumn = Str("plot", args, 1, line, col);
-            string yColumn = Str("plot", args, 2, line, col);
-            string? spec = args.Count == 4 ? Str("plot", args, 3, line, col) : null;
+            ArityRange(verb, args, 3, 4, line, col);
+            Table table = Tbl(verb, args, 0, line, col);
+            string xColumn = Str(verb, args, 1, line, col);
+            string yColumn = Str(verb, args, 2, line, col);
+            string? spec = args.Count == 4 ? Str(verb, args, 3, line, col) : null;
             created.Add(JG.Plot(table, xColumn, yColumn, spec));
-            ApplyPlotOptions(created, options, line, col);
+            ApplyPlotOptions(verb, created, options, line, col);
             return HandlesFor(created);
         }
 
@@ -2117,26 +2129,41 @@ internal static partial class JgsBuiltins
             switch (args.Count)
             {
                 case 1:
-                    PlotColumns(created, x: null, args[0], spec: null, dialect, line, col);
+                    PlotColumns(created, x: null, args[0], spec: null, dialect, verb, implicitX, line, col);
                     break;
                 case 2 when args[1].Type == JgsType.String:
-                    PlotColumns(created, x: null, args[0], Str("plot", args, 1, line, col), dialect, line, col);
+                    PlotColumns(
+                        created, x: null, args[0], Str(verb, args, 1, line, col),
+                        dialect, verb, implicitX, line, col);
                     break;
                 case 2:
-                    PlotColumns(created, args[0], args[1], spec: null, dialect, line, col);
+                    PlotColumns(created, args[0], args[1], spec: null, dialect, verb, implicitX, line, col);
                     break;
                 case 3:
-                    PlotColumns(created, args[0], args[1], Str("plot", args, 2, line, col), dialect, line, col);
+                    PlotColumns(
+                        created, args[0], args[1], Str(verb, args, 2, line, col),
+                        dialect, verb, implicitX, line, col);
                     break;
                 default:
                     // Repeated (x, y[, spec]) groups — plot(t, a, 'b', t, b, 'r--').
                     int i = 0;
                     while (i < args.Count)
                     {
+                        // A word where the next group's x should be is a misspelled option, near enough
+                        // always: the split above only recognizes the names it knows, so a typo falls
+                        // through to here, and saying "expects groups" would send the reader nowhere.
+                        if (args[i].Type == JgsType.String)
+                        {
+                            throw new JgsRuntimeException(line, col,
+                                $"{verb}: unknown option '{args[i].AsString}'. Use "
+                                + $"{string.Join(", ", PlotOptionNames)}.");
+                        }
+
                         if (i + 1 >= args.Count || args[i].Type != JgsType.Array || args[i + 1].Type != JgsType.Array)
                         {
                             throw new JgsRuntimeException(line, col,
-                                "plot expects (y), (x, y[, spec]) groups, or (table, xColumn, yColumn[, spec]).");
+                                $"{verb} expects (y), (x, y[, spec]) groups, "
+                                + "or (table, xColumn, yColumn[, spec]).");
                         }
 
                         JgsValue x = args[i];
@@ -2145,11 +2172,22 @@ internal static partial class JgsBuiltins
                         i += 2;
                         if (i < args.Count && args[i].Type == JgsType.String)
                         {
-                            groupSpec = Str("plot", args, i, line, col);
+                            groupSpec = Str(verb, args, i, line, col);
+                            if (!IsLineSpecWord(groupSpec))
+                            {
+                                // The split above only recognizes the option names it knows, so a
+                                // misspelling falls through to here and would otherwise be read as a
+                                // line spec — which ignores the letters it does not understand, and
+                                // draws the chart as though nothing were wrong.
+                                throw new JgsRuntimeException(line, col,
+                                    $"{verb}: unknown option '{groupSpec}'. Use "
+                                    + $"{string.Join(", ", PlotOptionNames)}.");
+                            }
+
                             i++;
                         }
 
-                        PlotColumns(created, x, y, groupSpec, dialect, line, col);
+                        PlotColumns(created, x, y, groupSpec, dialect, verb, implicitX, line, col);
                     }
 
                     break;
@@ -2160,7 +2198,7 @@ internal static partial class JgsBuiltins
             JG.Hold(wasHolding);
         }
 
-        ApplyPlotOptions(created, options, line, col);
+        ApplyPlotOptions(verb, created, options, line, col);
         return HandlesFor(created);
     }
 
@@ -2203,9 +2241,18 @@ internal static partial class JgsBuiltins
     /// the axes; a vector is one series.
     /// </summary>
     private static void PlotColumns(
-        List<LinePlot> created, JgsValue? x, JgsValue y, string? spec, JgsDialect dialect, int line, int col)
+        List<LinePlot> created,
+        JgsValue? x,
+        JgsValue y,
+        string? spec,
+        JgsDialect dialect,
+        string verb,
+        Func<int, double[]>? implicitX,
+        int line,
+        int col)
     {
-        double[]? xs = x is null ? null : DoubleArray("plot", [x], 0, line, col);
+        double[] Implicit(int n) => implicitX is null ? ImplicitX(dialect, n) : implicitX(n);
+        double[]? xs = x is null ? null : DoubleArray(verb, [x], 0, line, col);
 
         bool matrixY = y.Type == JgsType.Array
             && JgsMatrix.RowCount(y) > 1 && JgsMatrix.ColCount(y) > 1;
@@ -2222,21 +2269,21 @@ internal static partial class JgsBuiltins
                     if (element.Type is not (JgsType.Number or JgsType.Bool))
                     {
                         throw new JgsRuntimeException(line, col,
-                            $"plot needs numbers, but element ({r}, {c}) was a {element.TypeName}.");
+                            $"{verb} needs numbers, but element ({r}, {c}) was a {element.TypeName}.");
                     }
 
                     series[r] = element.AsNumber;
                 }
 
-                created.Add(JG.Plot(xs ?? ImplicitX(dialect, rows), series, spec));
+                created.Add(JG.Plot(xs ?? Implicit(rows), series, spec));
                 JG.Hold(true);
             }
 
             return;
         }
 
-        double[] ys = DoubleArray("plot", [y], 0, line, col);
-        created.Add(JG.Plot(xs ?? ImplicitX(dialect, ys.Length), ys, spec));
+        double[] ys = DoubleArray(verb, [y], 0, line, col);
+        created.Add(JG.Plot(xs ?? Implicit(ys.Length), ys, spec));
         JG.Hold(true);
     }
 
@@ -2245,7 +2292,7 @@ internal static partial class JgsBuiltins
     /// string matching a recognized option name; everything before it is data and spec strings.
     /// </summary>
     private static (IReadOnlyList<JgsValue> Data, List<(string Name, JgsValue Value)> Options) SplitPlotOptions(
-        IReadOnlyList<JgsValue> args, int line, int col)
+        string verb, IReadOnlyList<JgsValue> args, int line, int col)
     {
         int start = args.Count;
         for (int i = 0; i + 1 < args.Count; i++)
@@ -2273,7 +2320,8 @@ internal static partial class JgsBuiltins
         {
             if (args[i].Type != JgsType.String || i + 1 >= args.Count)
             {
-                throw new JgsRuntimeException(line, col, "plot options come in name-value pairs, like plot(x, y, 'LineWidth', 2).");
+                throw new JgsRuntimeException(line, col,
+                    $"{verb} options come in name-value pairs, like {verb}(x, y, 'LineWidth', 2).");
             }
 
             options.Add((args[i].AsString, args[i + 1]));
@@ -2288,7 +2336,7 @@ internal static partial class JgsBuiltins
     /// characters cannot drift apart; unrecognized option names were filtered out before this.
     /// </summary>
     private static void ApplyPlotOptions(
-        List<LinePlot> created, List<(string Name, JgsValue Value)> options, int line, int col)
+        string verb, List<LinePlot> created, List<(string Name, JgsValue Value)> options, int line, int col)
     {
         // Every series gets the colour it will be drawn in written down now, so a script can read it
         // back off the handle and match a second series to it.
@@ -2304,31 +2352,31 @@ internal static partial class JgsBuiltins
                 switch (name.ToLowerInvariant())
                 {
                     case "linewidth":
-                        plot.LineWidth = NumOf("plot: LineWidth", value, line, col);
+                        plot.LineWidth = NumOf($"{verb}: LineWidth", value, line, col);
                         break;
                     case "markersize":
-                        plot.MarkerSize = NumOf("plot: MarkerSize", value, line, col);
+                        plot.MarkerSize = NumOf($"{verb}: MarkerSize", value, line, col);
                         break;
                     case "displayname":
-                        SetDisplayName(plot, StrOf("plot: DisplayName", value, line, col));
+                        SetDisplayName(plot, StrOf($"{verb}: DisplayName", value, line, col));
                         break;
                     case "handlevisibility":
                         JgsHandleEntry entry = JgsHandleRegistry.Require(
                             JgsHandleRegistry.For(plot), line, col);
-                        entry.HandleVisible = !StrOf("plot: HandleVisibility", value, line, col)
+                        entry.HandleVisible = !StrOf($"{verb}: HandleVisibility", value, line, col)
                             .Equals("off", StringComparison.OrdinalIgnoreCase);
                         break;
                     case "color":
-                        plot.Color = OptionColor(value, line, col);
+                        plot.Color = OptionColor(value, line, col, verb);
                         break;
                     case "linestyle":
-                        string style = StrOf("plot: LineStyle", value, line, col);
+                        string style = StrOf($"{verb}: LineStyle", value, line, col);
                         plot.DashStyle = style.Equals("none", StringComparison.OrdinalIgnoreCase)
                             ? plot.DashStyle
                             : LineSpec.Parse(style).Dash ?? plot.DashStyle;
                         break;
                     case "marker":
-                        string marker = StrOf("plot: Marker", value, line, col);
+                        string marker = StrOf($"{verb}: Marker", value, line, col);
                         plot.Marker = marker.Equals("none", StringComparison.OrdinalIgnoreCase)
                             ? JGraph.Core.Drawing.MarkerType.None
                             : LineSpec.Parse(marker).Marker ?? plot.Marker;
@@ -2337,7 +2385,7 @@ internal static partial class JgsBuiltins
                         // Unreachable through SplitPlotOptions, which only collects known names —
                         // but a silent drop here is how a misspelling would go unnoticed.
                         throw new JgsRuntimeException(line, col,
-                            $"plot: unknown option '{name}'. Use {string.Join(", ", PlotOptionNames)}.");
+                            $"{verb}: unknown option '{name}'. Use {string.Join(", ", PlotOptionNames)}.");
                 }
             }
         }
@@ -2518,6 +2566,29 @@ internal static partial class JgsBuiltins
         Arity(name, args, 2, line, col);
         return Handle(arrays(
             DoubleArray(name, args, 0, line, col), DoubleArray(name, args, 1, line, col)));
+    }
+
+    /// <summary>
+    /// <c>scatter(x, y)</c> and everything MATLAB lets follow it — sizes, colours, <c>'filled'</c>, a
+    /// marker spec and name/value pairs — on a named axes or the current one. The table form stays as
+    /// it was: two column names are the positions, and there is nowhere for the rest to go.
+    /// </summary>
+    private static JgsValue Scatter(IReadOnlyList<JgsValue> args, int line, int col)
+    {
+        (AxesModel? named, IReadOnlyList<JgsValue> rest) = PeelAxes(args);
+        return OnAxes(named, () =>
+        {
+            if (rest.Count > 0 && rest[0].Type == JgsType.Table)
+            {
+                Arity("scatter", rest, 3, line, col);
+                return Handle(JG.Scatter(
+                    Tbl("scatter", rest, 0, line, col),
+                    Str("scatter", rest, 1, line, col),
+                    Str("scatter", rest, 2, line, col)));
+            }
+
+            return Handle(ScatterSeries("scatter", rest, line, col));
+        });
     }
 
     private static JgsValue Stem(IReadOnlyList<JgsValue> args, JgsDialect dialect, int line, int col)

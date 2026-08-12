@@ -1,5 +1,6 @@
 using JGraph.Api;
 using JGraph.Core.Model;
+using JGraph.Maths.Ticks;
 
 namespace JGraph.Scripting.Jgs;
 
@@ -15,12 +16,14 @@ namespace JGraph.Scripting.Jgs;
 /// </summary>
 internal static partial class JgsBuiltins
 {
-    /// <summary>Which of an axes' three rulers a verb is aimed at.</summary>
+    /// <summary>Which of an axes' rulers a verb is aimed at.</summary>
     private enum RulerSide
     {
         X,
         Y,
         Z,
+        R,
+        Theta,
     }
 
     private static void RegisterRulerBuiltins(JgsEnvironment env)
@@ -59,19 +62,39 @@ internal static partial class JgsBuiltins
         env.Declare("ruler2num", JgsValue.Function(new BuiltinFunction("ruler2num",
             (args, line, col) => SameValue("ruler2num", args, line, col))));
 
-        // The angular rulers are the same machinery pointed at an axes that does not exist yet. Saying
-        // so is more use than "undefined function", and the name is taken by the thing that will fill it.
-        foreach (string name in new[]
+        // The angular rulers. r is an ordinary scale, so its verbs are the Cartesian machinery pointed
+        // at RAxis; θ is stored in degrees whatever unit the axes speaks, so its verbs convert at the
+        // boundary and answer through the same spoke arithmetic the renderer draws with.
+        Define("rticks", (args, line, col) => OneRuler(
+            "rticks", RulerSide.R, args, line, col, JgsRulerTicks.ReadValues, JgsRulerTicks.WriteValues));
+        Define("rticklabels", (args, line, col) => OneRuler(
+            "rticklabels", RulerSide.R, args, line, col, JgsRulerTicks.ReadLabels, JgsRulerTicks.WriteLabels));
+        Define("rtickformat", (args, line, col) => OneRuler(
+            "rtickformat", RulerSide.R, args, line, col, JgsRulerTicks.ReadFormat, JgsRulerTicks.WriteFormat));
+        Define("rtickangle", (args, line, col) => OneRuler(
+            "rtickangle", RulerSide.R, args, line, col, JgsRulerTicks.ReadAngle, JgsRulerTicks.WriteAngle));
+        Define("rlim", (args, line, col) => Limits("rlim", RulerSide.R, args, line, col));
+
+        Define("thetaticks", (args, line, col) => OneRuler(
+            "thetaticks", RulerSide.Theta, args, line, col, ReadThetaTicks, WriteThetaTicks));
+        Define("thetaticklabels", (args, line, col) => OneRuler(
+            "thetaticklabels", RulerSide.Theta, args, line, col, ReadThetaLabels, WriteThetaLabels));
+        Define("thetatickformat", (args, line, col) => OneRuler(
+            "thetatickformat", RulerSide.Theta, args, line, col, JgsRulerTicks.ReadFormat, JgsRulerTicks.WriteFormat));
+        Define("thetalim", ThetaLimits);
+    }
+
+    /// <summary>
+    /// The angular verbs speak about rings and spokes, so an axes that has neither is refused by name
+    /// rather than silently configuring rulers no Cartesian chart will draw.
+    /// </summary>
+    private static void DemandPolar(string verb, AxesModel axes, int line, int col)
+    {
+        if (!axes.IsPolar)
         {
-            "rticks", "thetaticks", "rticklabels", "thetaticklabels",
-            "rtickformat", "thetatickformat", "rtickangle", "rlim", "thetalim",
-        })
-        {
-            string angular = name;
-            env.Declare(angular, JgsValue.Function(new BuiltinFunction(angular, (_, line, col) =>
-                throw new JgsRuntimeException(line, col,
-                    $"{angular} requires polar axes, which this build does not draw yet. "
-                    + "Use xticks/yticks on a Cartesian axes."))));
+            throw new JgsRuntimeException(line, col,
+                $"{verb} aims at a polar axes, but this axes is Cartesian. "
+                + "Make one with polaraxes, or draw with a verb such as polarplot first.");
         }
     }
 
@@ -92,6 +115,11 @@ internal static partial class JgsBuiltins
         ArityRange(verb, rest, 0, 1, line, col);
 
         AxesModel axes = named ?? JG.Gca();
+        if (side is RulerSide.R or RulerSide.Theta)
+        {
+            DemandPolar(verb, axes, line, col);
+        }
+
         AxisModel ruler = aimed ?? RulerOf(axes, side);
 
         if (rest.Count == 0)
@@ -114,6 +142,11 @@ internal static partial class JgsBuiltins
         ArityRange(verb, rest, 0, 2, line, col);
 
         AxesModel axes = named ?? JG.Gca();
+        if (side is RulerSide.R or RulerSide.Theta)
+        {
+            DemandPolar(verb, axes, line, col);
+        }
+
         AxisModel ruler = aimed ?? RulerOf(axes, side);
 
         if (rest.Count == 0)
@@ -169,8 +202,151 @@ internal static partial class JgsBuiltins
     {
         RulerSide.X => axes.PrimaryXAxis,
         RulerSide.Y => axes.ActiveYAxis,
+        RulerSide.R => axes.RAxis,
+        RulerSide.Theta => axes.ThetaAxis,
         _ => axes.ZAxis,
     };
+
+    // --- The θ ruler ------------------------------------------------------------------------------
+    //
+    // The ruler always holds degrees — a ruler that changed units under its own ticks could not be
+    // compared with itself — so the unit the axes speaks is applied here, at the boundary, and the
+    // spokes come from the same arithmetic the renderer draws with.
+
+    /// <summary>The unit the θ ruler speaks in: its axes' choice, degrees when it has no axes yet.</summary>
+    private static AngleUnits UnitsOf(AxisModel ruler) =>
+        ruler.Parent is AxesModel axes ? axes.ThetaAxisUnits : AngleUnits.Degrees;
+
+    private static double FromDegrees(AngleUnits units, double degrees) =>
+        units == AngleUnits.Radians ? degrees * System.Math.PI / 180 : degrees;
+
+    private static double ToDegrees(AngleUnits units, double value) =>
+        units == AngleUnits.Radians ? value * 180 / System.Math.PI : value;
+
+    private static JgsValue ReadThetaTicks(AxisModel ruler)
+    {
+        AngleUnits units = UnitsOf(ruler);
+        IReadOnlyList<double> degrees = ruler.TickPositions ?? PolarSpokes.Degrees(ruler);
+        return JgsGraphicsProperties.Row([.. degrees.Select(d => FromDegrees(units, d))]);
+    }
+
+    private static void WriteThetaTicks(string what, AxisModel ruler, JgsValue value, int line, int col)
+    {
+        if (JgsRulerTicks.ModeWord(what, value, line, col) is { } word)
+        {
+            ruler.TickPositions = word == "auto"
+                ? null
+                : [.. PolarSpokes.Degrees(ruler)];
+            return;
+        }
+
+        JgsRulerTicks.RefuseHandle(what, value, line, col);
+        AngleUnits units = UnitsOf(ruler);
+        double[] values = ToDoubles(what, value, line, col);
+        var degrees = new double[values.Length];
+        for (int i = 0; i < values.Length; i++)
+        {
+            degrees[i] = ToDegrees(units, values[i]);
+            if (i > 0 && degrees[i] <= degrees[i - 1])
+            {
+                throw new JgsRuntimeException(line, col,
+                    $"{what}: tick values increase, but {values[i - 1]:G6} is followed by {values[i]:G6}.");
+            }
+        }
+
+        ruler.TickPositions = degrees;
+    }
+
+    private static JgsValue ReadThetaLabels(AxisModel ruler)
+    {
+        AngleUnits units = UnitsOf(ruler);
+        IReadOnlyList<double> degrees = PolarSpokes.Degrees(ruler);
+        var labels = new JgsValue[degrees.Count];
+        for (int i = 0; i < degrees.Count; i++)
+        {
+            labels[i] = JgsValue.Str(PolarSpokes.Label(ruler, units, degrees[i], i));
+        }
+
+        return JgsValue.Cell(labels);
+    }
+
+    private static void WriteThetaLabels(string what, AxisModel ruler, JgsValue value, int line, int col)
+    {
+        if (JgsRulerTicks.ModeWord(what, value, line, col) is { } word)
+        {
+            if (word == "auto")
+            {
+                ruler.TickLabelOverrides = null;
+                return;
+            }
+
+            AngleUnits units = UnitsOf(ruler);
+            ruler.TickLabelOverrides = [.. PolarSpokes.Degrees(ruler)
+                .Select((d, i) => PolarSpokes.Label(ruler, units, d, i))];
+            return;
+        }
+
+        ruler.TickLabelOverrides = JgsRulerTicks.LabelWords(what, value, line, col);
+    }
+
+    /// <summary>
+    /// The visible turn: <c>thetalim</c> reads it, <c>thetalim([0 180])</c> cuts the circle to a wedge,
+    /// and <c>'auto'</c> is the whole circle back — θ is never fitted to the data, because the circle
+    /// is the chart. A turn asked for beyond 360° is trimmed to one: the chart cannot show an angle
+    /// twice, and drawing the circle and a half literally would wind the frame over itself.
+    /// </summary>
+    private static JgsValue ThetaLimits(IReadOnlyList<JgsValue> args, int line, int col)
+    {
+        const string verb = "thetalim";
+        (AxesModel? named, AxisModel? aimed, IReadOnlyList<JgsValue> rest) = PeelRuler(args);
+        ArityRange(verb, rest, 0, 2, line, col);
+
+        AxesModel axes = named ?? JG.Gca();
+        DemandPolar(verb, axes, line, col);
+        AxisModel ruler = aimed ?? axes.ThetaAxis;
+        AngleUnits units = UnitsOf(ruler);
+
+        if (rest.Count == 0)
+        {
+            return JgsGraphicsProperties.Row(
+                FromDegrees(units, ruler.Range.Min), FromDegrees(units, ruler.Range.Max));
+        }
+
+        if (rest.Count == 1 && rest[0].Type == JgsType.String)
+        {
+            string word = rest[0].AsString;
+            if (word.Equals("auto", StringComparison.OrdinalIgnoreCase))
+            {
+                ruler.Range = new Core.Primitives.DataRange(0, 360);
+                return JgsValue.Null;
+            }
+
+            if (!word.Equals("manual", StringComparison.OrdinalIgnoreCase))
+            {
+                throw new JgsRuntimeException(line, col, $"{verb} expects 'auto' or 'manual', but got '{word}'.");
+            }
+
+            // The θ ruler never autoscales, so what is showing is already frozen.
+            return JgsValue.Null;
+        }
+
+        (double low, double high) = LimitPair(verb, rest, line, col);
+        double lowDegrees = ToDegrees(units, low);
+        double highDegrees = ToDegrees(units, high);
+        if (!(highDegrees > lowDegrees))
+        {
+            throw new JgsRuntimeException(line, col,
+                $"{verb}: the second limit must exceed the first, but got [{low:G6} {high:G6}].");
+        }
+
+        if (highDegrees - lowDegrees > 360)
+        {
+            highDegrees = lowDegrees + 360;
+        }
+
+        ruler.Range = new Core.Primitives.DataRange(lowDegrees, highDegrees);
+        return JgsValue.Null;
+    }
 
     /// <summary>The <c>num2ruler</c>/<c>ruler2num</c> body: the value back, once the ruler checks out.</summary>
     private static JgsValue SameValue(string verb, IReadOnlyList<JgsValue> args, int line, int col)

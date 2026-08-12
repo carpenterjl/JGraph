@@ -145,6 +145,51 @@ public class SerializationTests
     }
 
     [Fact]
+    public void PolarHistogram_RoundTripsItsBinsItsCountsAndTheAnglesBehindThem()
+    {
+        var histogram = new PolarHistogramPlot([0.5, 0.5, 2.0], [0, 1, 2, 3])
+        {
+            Normalization = HistogramNormalization.CountDensity,
+            DisplayStyle = PolarHistogramDisplayStyle.Stairs,
+            FaceColor = Colors.Red,
+            EdgeColor = Colors.Black,
+            FaceAlpha = 0.4,
+            EdgeAlpha = 0.8,
+            LineWidth = 2,
+            LineStyle = DashStyle.Dash,
+        };
+
+        var restored = (PolarHistogramPlot)RoundTrip(WithAxes(histogram)).Axes[0].Plots[0];
+
+        Assert.Equal(new[] { 0.5, 0.5, 2.0 }, restored.Data);
+        Assert.Equal(new[] { 0.0, 1, 2, 3 }, restored.BinEdges);
+        Assert.Equal(new[] { 2.0, 0, 1 }, restored.BinCounts);
+        Assert.Equal(HistogramNormalization.CountDensity, restored.Normalization);
+        Assert.Equal(PolarHistogramDisplayStyle.Stairs, restored.DisplayStyle);
+        Assert.Equal(Colors.Red, restored.FaceColor);
+        Assert.Equal(Colors.Black, restored.EdgeColor);
+        Assert.Equal(0.4, restored.FaceAlpha);
+        Assert.Equal(0.8, restored.EdgeAlpha);
+        Assert.Equal(2, restored.LineWidth);
+        Assert.Equal(DashStyle.Dash, restored.LineStyle);
+    }
+
+    /// <summary>
+    /// The counts-only form has no data to count again, so the file has to carry the heights
+    /// themselves — which is why the counts are saved even when there is data behind them.
+    /// </summary>
+    [Fact]
+    public void PolarHistogram_KeepsCountsThatWereNeverCountedFromData()
+    {
+        PolarHistogramPlot histogram = PolarHistogramPlot.FromCounts([0, 1, 2], [3, 7]);
+
+        var restored = (PolarHistogramPlot)RoundTrip(WithAxes(histogram)).Axes[0].Plots[0];
+
+        Assert.Empty(restored.Data);
+        Assert.Equal(new[] { 3.0, 7 }, restored.BinCounts);
+    }
+
+    [Fact]
     public void Pie_RoundTripsItsWedgesTheirLabelsAndTheColoursTheyCameFrom()
     {
         var pie = new PiePlot(new[] { 1.0, 2, 3 })
@@ -341,6 +386,80 @@ public class SerializationTests
         Assert.Equal(new DataRange(0, 100), loaded.YAxes[1].Range);
         Assert.Equal("percent", loaded.YAxes[1].Label);
         Assert.False(loaded.YAxes[1].AutoScale);
+    }
+
+    /// <summary>
+    /// M56: a polar axes is a mode plus two rulers, all of them defaulted fields, so a v6 document
+    /// carries it with no discriminator and no bump. What a file could lose here is the turn — an
+    /// axes reloaded pointing the other way is a chart whose every bearing is wrong.
+    /// </summary>
+    [Fact]
+    public void PolarAxes_RoundTripsItsModeItsTurnAndBothRulers()
+    {
+        var figure = new FigureModel();
+        AxesModel axes = figure.AddAxes();
+        axes.MakePolar();
+        axes.ThetaZeroLocation = ThetaZeroLocation.Top;
+        axes.ThetaDirection = ThetaDirection.Clockwise;
+        axes.ThetaAxisUnits = AngleUnits.Radians;
+        axes.RAxisLocation = 45;
+        axes.RAxis.AutoScale = false;
+        axes.RAxis.Range = new DataRange(0, 12);
+        axes.RAxis.Label = "gain";
+        axes.ThetaAxis.Range = new DataRange(0, 180);
+        axes.ThetaAxis.TickPositions = new[] { 0.0, 90.0, 180.0 };
+        axes.AddLine([0, 1, 2], [3, 6, 9]);
+
+        AxesModel loaded = RoundTrip(figure).Axes[0];
+
+        Assert.True(loaded.IsPolar);
+        Assert.Equal(ThetaZeroLocation.Top, loaded.ThetaZeroLocation);
+        Assert.Equal(ThetaDirection.Clockwise, loaded.ThetaDirection);
+        Assert.Equal(AngleUnits.Radians, loaded.ThetaAxisUnits);
+        Assert.Equal(45, loaded.RAxisLocation);
+        Assert.False(loaded.RAxis.AutoScale);
+        Assert.Equal(new DataRange(0, 12), loaded.RAxis.Range);
+        Assert.Equal("gain", loaded.RAxis.Label);
+        Assert.Equal(new DataRange(0, 180), loaded.ThetaAxis.Range);
+        Assert.Equal(new[] { 0.0, 90.0, 180.0 }, loaded.ThetaAxis.TickPositions);
+    }
+
+    /// <summary>A document written before polar existed reads back as ordinary square paper.</summary>
+    [Fact]
+    public void PolarAxes_AnOrdinaryAxesStaysOrdinaryAcrossTheRoundTrip()
+    {
+        var figure = new FigureModel();
+        figure.AddAxes().AddLine([1, 2], [3, 4]);
+
+        AxesModel loaded = RoundTrip(figure).Axes[0];
+
+        Assert.False(loaded.IsPolar);
+        Assert.Equal(ThetaZeroLocation.Right, loaded.ThetaZeroLocation);
+        Assert.Equal(new DataRange(0, 360), loaded.ThetaAxis.Range);
+    }
+
+    /// <summary>
+    /// A compass is an arrow field with its automatic scaling switched off, and that switch is the
+    /// part worth pinning: a saved chart that came back scaling itself would draw arrows of a length
+    /// its own numbers do not have.
+    /// </summary>
+    [Fact]
+    public void Compass_KeepsItsArrowsUnscaledOnAPolarAxes()
+    {
+        var figure = new FigureModel();
+        AxesModel axes = figure.AddAxes();
+        axes.MakePolar();
+        QuiverPlot arrows = axes.AddQuiver([0, System.Math.PI / 2], [0, 0], [0, 0], [1, 2]);
+        arrows.AutoScale = false;
+        arrows.Scale = 1;
+
+        AxesModel loaded = RoundTrip(figure).Axes[0];
+        var restored = (QuiverPlot)loaded.Plots[0];
+
+        Assert.True(loaded.IsPolar);
+        Assert.False(restored.AutoScale);
+        Assert.Equal(1, restored.EffectiveScale);
+        Assert.Equal(new[] { 1.0, 2 }, restored.V);
     }
 
     [Fact]

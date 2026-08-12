@@ -64,6 +64,11 @@ internal static class JgsGraphicsProperties
     public static string TypeNameOf(GraphObject target) => target switch
     {
         FigureModel => "figure",
+
+        // A circle is a different class in MATLAB, and findobj(gcf, 'Type', 'polaraxes') is how a
+        // script finds one. Here it is a mode, so the mode is what the name is read off — the same
+        // shape of decision as a stairstep line below.
+        AxesModel { IsPolar: true } => "polaraxes",
         AxesModel => "axes",
         AxisModel => "numericruler",
         LegendModel => "legend",
@@ -83,6 +88,7 @@ internal static class JgsGraphicsProperties
         BoxChartPlot => "boxchart",
         StemPlot => "stem",
         HistogramPlot => "histogram",
+        PolarHistogramPlot => "histogram",
         ErrorBarPlot => "errorbar",
         SurfacePlot => "surface",
         ContourPlot => "contour",
@@ -166,6 +172,8 @@ internal static class JgsGraphicsProperties
             all.AddRange(axes.XAxes);
             all.AddRange(axes.YAxes);
             all.Add(axes.ZAxis);
+            all.Add(axes.RAxis);
+            all.Add(axes.ThetaAxis);
             all.Add(axes.Grid);
             if (!axes.Legend.Visible)
             {
@@ -387,6 +395,14 @@ internal static class JgsGraphicsProperties
                 entry => Row([.. ((ScatterPlot)entry.Target).ColorData ?? []]),
                 (entry, value, line, col) => ((ScatterPlot)entry.Target).ColorData =
                     JgsBuiltins.ToDoubles("ColorData", value, line, col));
+
+            // CData is what MATLAB calls the same channel, and what scatter's own fourth argument
+            // writes — a value a call can set but a handle cannot read back is the gap M54 exists to
+            // close, so the name the verb takes is the name the handle answers to.
+            Put(table, "CData",
+                entry => Row([.. ((ScatterPlot)entry.Target).ColorData ?? []]),
+                (entry, value, line, col) => ((ScatterPlot)entry.Target).ColorData =
+                    JgsBuiltins.ToDoubles("CData", value, line, col));
             Put(table, "Marker",
                 entry => JgsValue.Str(JgsBuiltins.MarkerWord(((ScatterPlot)entry.Target).Marker)),
                 (entry, value, line, col) =>
@@ -530,6 +546,47 @@ internal static class JgsGraphicsProperties
                 entry => ValueBridge.ToValue(((PiePlot)entry.Target).Colormap),
                 (entry, value, line, col) => ((PiePlot)entry.Target).Colormap =
                     (Colormap)ValueBridge.FromValue(typeof(Colormap), "Colormap", value, line, col)!);
+        }
+
+        if (typeof(PolarHistogramPlot).IsAssignableFrom(type))
+        {
+            // The three arrays a polar histogram is made of. Writing any one of them re-counts or
+            // re-cuts the others, which is the model's business — all this layer does is make sure
+            // the names a call accepts are names a handle answers to.
+            Put(table, "Data",
+                entry => Row(((PolarHistogramPlot)entry.Target).Data),
+                (entry, value, line, col) => ((PolarHistogramPlot)entry.Target).Data =
+                    JgsBuiltins.ToDoubles("Data", value, line, col));
+            Put(table, "BinEdges",
+                entry => Row(((PolarHistogramPlot)entry.Target).BinEdges),
+                (entry, value, line, col) => ((PolarHistogramPlot)entry.Target).BinEdges =
+                    JgsBuiltins.ToDoubles("BinEdges", value, line, col));
+            Put(table, "BinCounts",
+                entry => Row(((PolarHistogramPlot)entry.Target).BinCounts),
+                (entry, value, line, col) => ((PolarHistogramPlot)entry.Target).BinCounts =
+                    JgsBuiltins.ToDoubles("BinCounts", value, line, col));
+            Put(table, "BinLimits",
+                entry => Row(((PolarHistogramPlot)entry.Target).BinLimits),
+                (entry, value, line, col) => ((PolarHistogramPlot)entry.Target).BinLimits =
+                    JgsBuiltins.ToDoubles("BinLimits", value, line, col));
+
+            // What is drawn, as opposed to what was counted: the same numbers only while the
+            // normalization is 'count'.
+            Put(table, "Values", entry => Row(((PolarHistogramPlot)entry.Target).BinHeights));
+        }
+
+        if (typeof(QuiverPlot).IsAssignableFrom(type))
+        {
+            // The six arrays an arrow field is made of. The model hides them from the inspector — a
+            // column of numbers is not a property row — so reflection cannot find them, and a script
+            // that drew a compass or a feather has nothing else to ask about what it drew.
+            for (int slot = 0; slot < ArrowFieldNames.Length; slot++)
+            {
+                int which = slot;
+                Put(table, ArrowFieldNames[which],
+                    entry => Row(ArrowField((QuiverPlot)entry.Target, which)),
+                    (entry, value, line, col) => SetArrowField(entry, value, line, col, which));
+            }
         }
 
         if (typeof(HeatmapPlot).IsAssignableFrom(type))
@@ -790,9 +847,36 @@ internal static class JgsGraphicsProperties
         AddTicks(table, "Y", axes => axes.ActiveYAxis);
         AddTicks(table, "Z", axes => axes.ZAxis);
 
+        // The angular rulers answer to the same spellings, which is what makes M54's tick and limit
+        // machinery work on a circle without a second copy of any of it.
+        AddLimit(table, "RLim", axes => axes.RAxis);
+        AddLimit(table, "ThetaLim", axes => axes.ThetaAxis);
+        AddLabel(table, "RLabel", axes => axes.RAxis);
+        AddScale(table, "RScale", axes => axes.RAxis);
+        AddDirection(table, "RDir", axes => axes.RAxis);
+        AddTicks(table, "R", axes => axes.RAxis);
+        AddTicks(table, "Theta", axes => axes.ThetaAxis);
+
+        // MATLAB's polar axes spells the turn ThetaDir; the model calls it ThetaDirection, and both
+        // are the same enum, so one is written in terms of the other rather than beside it.
+        Put(table, "ThetaDir",
+            entry => JgsValue.Str(Axes(entry).ThetaDirection == Core.Model.ThetaDirection.Clockwise
+                ? "clockwise"
+                : "counterclockwise"),
+            (entry, value, line, col) => Axes(entry).ThetaDirection =
+                JgsBuiltins.StrOf("ThetaDir", value, line, col).ToLowerInvariant() switch
+                {
+                    "clockwise" => Core.Model.ThetaDirection.Clockwise,
+                    "counterclockwise" => Core.Model.ThetaDirection.CounterClockwise,
+                    var word => throw new JgsRuntimeException(line, col,
+                        $"ThetaDir is clockwise or counterclockwise, but got '{word}'."),
+                });
+
         Put(table, "XAxis", entry => JgsHandleRegistry.For(Axes(entry).PrimaryXAxis));
         Put(table, "YAxis", entry => JgsHandleRegistry.For(Axes(entry).ActiveYAxis));
         Put(table, "ZAxis", entry => JgsHandleRegistry.For(Axes(entry).ZAxis));
+        Put(table, "RAxis", entry => JgsHandleRegistry.For(Axes(entry).RAxis));
+        Put(table, "ThetaAxis", entry => JgsHandleRegistry.For(Axes(entry).ThetaAxis));
         Put(table, "Legend", entry => JgsHandleRegistry.For(Axes(entry).Legend));
 
         // MATLAB always answers with limits, so the automatic ones are worked out rather than reported
@@ -1184,6 +1268,45 @@ internal static class JgsGraphicsProperties
     /// <summary>A rows-by-columns grid of numbers, as the matrix a script would have written.</summary>
     private static JgsValue Grid(double[,] values) =>
         JgsMatrix.Build(values.GetLength(0), values.GetLength(1), (r, c) => values[r, c]);
+
+    /// <summary>The six arrays of an arrow field, in the order the model takes them.</summary>
+    private static readonly string[] ArrowFieldNames =
+        ["XData", "YData", "ZData", "UData", "VData", "WData"];
+
+    private static double[] ArrowField(QuiverPlot plot, int slot) => [.. slot switch
+    {
+        0 => plot.X,
+        1 => plot.Y,
+        2 => plot.Z,
+        3 => plot.U,
+        4 => plot.V,
+        _ => plot.W,
+    }];
+
+    /// <summary>
+    /// Replaces one of an arrow field's six arrays. They only mean anything together — an arrow needs
+    /// a tail and a direction — so the whole set goes back at once, and a replacement of the wrong
+    /// length is refused rather than leaving a field half rewritten.
+    /// </summary>
+    private static void SetArrowField(
+        JgsHandleEntry entry, JgsValue value, int line, int col, int slot)
+    {
+        var plot = (QuiverPlot)entry.Target;
+        double[][] fields =
+            [.. Enumerable.Range(0, ArrowFieldNames.Length).Select(i => ArrowField(plot, i))];
+        fields[slot] = JgsBuiltins.ToDoubles(ArrowFieldNames[slot], value, line, col);
+
+        try
+        {
+            plot.SetData(fields[0], fields[1], fields[2], fields[3], fields[4], fields[5]);
+        }
+        catch (ArgumentException)
+        {
+            throw new JgsRuntimeException(line, col,
+                $"{ArrowFieldNames[slot]}: an arrow field holds one value per arrow, so this needs "
+                + $"{plot.X.Count} values rather than {fields[slot].Length}.");
+        }
+    }
 
     /// <summary>
     /// Renames a heatmap's columns or rows, and points the ruler at the new names — a name that is

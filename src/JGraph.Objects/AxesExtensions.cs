@@ -238,6 +238,31 @@ public static class AxesExtensions
         }
     }
 
+    /// <summary>
+    /// Switches the axes into the polar mode (MATLAB <c>polaraxes</c>): its plots' first coordinate
+    /// becomes an angle in radians and their second a radius, the rings and spokes of the r and θ
+    /// rulers stand in for the rectangular grid, and the Cartesian frame and rulers are put away.
+    /// </summary>
+    /// <remarks>
+    /// The x and y rulers keep their state rather than being deleted, so a script that turns the mode
+    /// back off finds the axes it had. That is the same bargain <see cref="AxesModel.Is3D"/> struck
+    /// with the Z ruler, and it is what lets the mode be a property rather than a different object.
+    /// </remarks>
+    public static void MakePolar(this AxesModel axes)
+    {
+        ArgumentNullException.ThrowIfNull(axes);
+        axes.IsPolar = true;
+        axes.FrameVisible = false;
+        axes.Grid.Visible = true;
+        axes.Grid.ShowMajor = true;
+        foreach (AxisModel ruler in axes.XAxes.Concat(axes.YAxes))
+        {
+            ruler.ShowMajorTicks = false;
+            ruler.ShowMinorTicks = false;
+            ruler.ShowTickLabels = false;
+        }
+    }
+
     /// <summary>Adds a stem plot for the given X/Y data and returns it.</summary>
     public static StemPlot AddStem(this AxesModel axes, double[] xs, double[] ys)
     {
@@ -282,6 +307,30 @@ public static class AxesExtensions
     {
         ArgumentNullException.ThrowIfNull(axes);
         var plot = new HistogramPlot(values) { BinCount = binCount };
+        axes.Plots.Add(plot);
+        return plot;
+    }
+
+    /// <summary>
+    /// Adds a histogram of angles — in radians — over the given bin edges, and returns it. The axes
+    /// is left alone: what makes the wedges come out round is the polar mode, and turning that on is
+    /// the caller's decision, not a side effect of adding a plot.
+    /// </summary>
+    public static PolarHistogramPlot AddPolarHistogram(
+        this AxesModel axes, double[] data, double[] binEdges)
+    {
+        ArgumentNullException.ThrowIfNull(axes);
+        var plot = new PolarHistogramPlot(data, binEdges);
+        axes.Plots.Add(plot);
+        return plot;
+    }
+
+    /// <summary>Adds a histogram of angles from counts already taken, and returns it.</summary>
+    public static PolarHistogramPlot AddPolarHistogramOfCounts(
+        this AxesModel axes, double[] binEdges, double[] binCounts)
+    {
+        ArgumentNullException.ThrowIfNull(axes);
+        PolarHistogramPlot plot = PolarHistogramPlot.FromCounts(binEdges, binCounts);
         axes.Plots.Add(plot);
         return plot;
     }

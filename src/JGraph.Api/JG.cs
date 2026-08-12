@@ -1066,6 +1066,38 @@ public static class JG
         return axes.AddErrorBar(table, xColumn, yColumn, errorColumn);
     }
 
+    /// <summary>
+    /// Clears the current axes and makes it a polar one (MATLAB <c>polaraxes</c>), returning it. Like
+    /// every other verb that draws afresh it obeys <c>hold</c>, so holding a polar axes and asking for
+    /// one again keeps what is already drawn.
+    /// </summary>
+    public static AxesModel PolarAxes()
+    {
+        AxesModel axes = PrepareAxes();
+        axes.MakePolar();
+        return axes;
+    }
+
+    /// <summary>
+    /// Plots a histogram of angles in radians on a polar axes (MATLAB <c>polarhistogram</c>). The bin
+    /// edges are given rather than chosen: picking them is the caller's business, because the rule
+    /// that picks them is the one <c>histcounts</c> uses.
+    /// </summary>
+    public static PolarHistogramPlot PolarHistogram(double[] thetaRadians, double[] binEdges)
+    {
+        AxesModel axes = PrepareAxes();
+        axes.MakePolar();
+        return axes.AddPolarHistogram(thetaRadians, binEdges);
+    }
+
+    /// <summary>Plots a histogram of angles from counts already taken (MATLAB's <c>'BinCounts'</c> form).</summary>
+    public static PolarHistogramPlot PolarHistogramOfCounts(double[] binEdges, double[] binCounts)
+    {
+        AxesModel axes = PrepareAxes();
+        axes.MakePolar();
+        return axes.AddPolarHistogramOfCounts(binEdges, binCounts);
+    }
+
     /// <summary>Plots angle/radius data on a polar chart (MATLAB <c>polarplot</c>); θ is in radians.</summary>
     public static LinePlot Polar(double[] thetaRadians, double[] r)
     {
@@ -1518,6 +1550,10 @@ public static class JG
         ResetAxis(axes.PrimaryXAxis);
         ResetAxis(axes.PrimaryYAxis);
         ResetAxis(axes.ZAxis);
+        ResetAxis(axes.RAxis);
+        ResetAxis(axes.ThetaAxis);
+        axes.ThetaAxis.AutoScale = false;
+        axes.ThetaAxis.Range = new DataRange(0, 360);
 
         axes.Grid.ShowMajor = false;
         axes.Grid.ShowMinor = false;
@@ -1528,6 +1564,14 @@ public static class JG
         axes.Is3D = false;
         axes.Azimuth = -37.5;
         axes.Elevation = 30;
+
+        // Polar is a mode like 3-D, so replacing what is drawn puts the axes back on square paper.
+        // A script that means to keep the circle says polaraxes, or draws with an angular verb.
+        axes.IsPolar = false;
+        axes.ThetaZeroLocation = ThetaZeroLocation.Right;
+        axes.ThetaDirection = ThetaDirection.CounterClockwise;
+        axes.ThetaAxisUnits = AngleUnits.Degrees;
+        axes.RAxisLocation = 80;
     }
 
     private static void ResetAxis(AxisModel axis)

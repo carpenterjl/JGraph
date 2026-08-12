@@ -1251,11 +1251,157 @@ internal static partial class JgsBuiltins
         return pairs;
     }
 
-    /// <summary>The properties <c>bubblechart</c> accepts after its data, in MATLAB's spellings.</summary>
-    private static readonly string[] BubbleChartOptionNames =
+    /// <summary>
+    /// The body <c>scatter</c> and <c>polarscatter</c> share: the two position arrays, an optional size
+    /// and colour, MATLAB's <c>'filled'</c> word and a marker spec in either order after them, and then
+    /// the ordinary name/value tail. What the positions <em>mean</em> is the axes' business — x and y on
+    /// square paper, θ and r on a circle — so nothing here knows which verb called it.
+    /// <para>
+    /// The sizes are marker areas in points squared, which is the whole difference between this and
+    /// <c>bubblechart</c>: the same array, read the other way.
+    /// </para>
+    /// </summary>
+    private static ScatterPlot ScatterSeries(
+        string verb, IReadOnlyList<JgsValue> args, int line, int col)
+    {
+        if (args.Count < 2)
+        {
+            throw new JgsRuntimeException(line, col, $"{verb} needs both positions: {verb}(x, y).");
+        }
+
+        double[] xs = ToDoubles(verb, args[0], line, col);
+        double[] ys = ToDoubles(verb, args[1], line, col);
+        if (xs.Length != ys.Length)
+        {
+            throw new JgsRuntimeException(line, col,
+                $"{verb}: the first has {xs.Length} values but the second has {ys.Length}.");
+        }
+
+        // The numeric positionals come first and in order: sizes, then colours. A string ends them,
+        // because every remaining form — 'filled', a marker spec, an option name — is a word.
+        int i = 2;
+        double[]? sizes = null;
+        JgsValue? colorArg = null;
+        if (i < args.Count && args[i].Type != JgsType.String)
+        {
+            sizes = ToDoubles($"{verb}: sz", args[i], line, col);
+            i++;
+        }
+
+        if (i < args.Count && args[i].Type != JgsType.String)
+        {
+            colorArg = args[i];
+            i++;
+        }
+
+        bool filled = false;
+        var specs = new List<string>();
+        while (i < args.Count
+            && args[i].Type == JgsType.String
+            && !MarkerChartOptionNames.Contains(args[i].AsString, StringComparer.OrdinalIgnoreCase))
+        {
+            string word = StrOf(verb, args[i], line, col);
+            if (word.Equals("filled", StringComparison.OrdinalIgnoreCase))
+            {
+                filled = true;
+            }
+            else
+            {
+                specs.Add(word);
+            }
+
+            i++;
+        }
+
+        ScatterPlot plot = JG.Scatter(xs, ys);
+        plot.Color = PaletteColorFor(plot);
+
+        if (sizes is not null)
+        {
+            // One size for every point is a legal call and says "these are all the same".
+            plot.SizeData = sizes.Length == 1 && xs.Length != 1
+                ? [.. Enumerable.Repeat(sizes[0], xs.Length)]
+                : sizes;
+        }
+
+        foreach (string word in specs)
+        {
+            ApplyMarkerSpec(verb, plot, word, line, col);
+        }
+
+        if (colorArg is { } c)
+        {
+            MarkerColors(verb, plot, c, line, col);
+        }
+
+        if (filled)
+        {
+            plot.Fill = plot.Color;
+        }
+
+        MarkerChartOptions(verb, plot, Pairs(verb, args, i, line, col), line, col);
+        return plot;
+    }
+
+    /// <summary>
+    /// A bare word between a marker chart's data and its options: a colour name, or a spec string whose
+    /// letters say the colour and the marker. Anything else is a misspelling, and saying so here is the
+    /// difference between a chart drawn wrong and a script that stops.
+    /// </summary>
+    private static void ApplyMarkerSpec(string verb, ScatterPlot plot, string word, int line, int col)
+    {
+        if (!IsLineSpecWord(word))
+        {
+            throw new JgsRuntimeException(line, col,
+                $"{verb}: '{word}' is not a colour, a marker, or an option. Options are "
+                + $"{string.Join(", ", MarkerChartOptionNames)}.");
+        }
+
+        if (ColorWords.Contains(word, StringComparer.OrdinalIgnoreCase))
+        {
+            plot.Color = OptionColor(JgsValue.Str(word), line, col, verb);
+            return;
+        }
+
+        LineSpec spec = LineSpec.Parse(word);
+        if (spec.Color is { } color)
+        {
+            plot.Color = color;
+        }
+
+        if (spec.Marker is { } marker)
+        {
+            plot.Marker = marker;
+        }
+    }
+
+    /// <summary>
+    /// Whether a bare word is a line spec: spec characters the whole way through, or a colour named in
+    /// full. The point is the negative answer — <see cref="LineSpec.Parse"/> ignores the characters it
+    /// does not know, so a misspelled option name reads as a perfectly good spec unless something asks
+    /// this first.
+    /// </summary>
+    internal static bool IsLineSpecWord(string word) =>
+        ColorWords.Contains(word, StringComparer.OrdinalIgnoreCase)
+        || (word.Length > 0 && word.All(IsLineSpecChar));
+
+    private static bool IsLineSpecChar(char c) =>
+        c is '-' or ':' or '.' or 'b' or 'g' or 'r' or 'c' or 'm' or 'y' or 'k' or 'w'
+            or 'o' or 'x' or '+' or '*' or 's' or 'd' or '^' or 'v' or 'p' or 'h';
+
+    /// <summary>The colour names spelled out in full, which a spec string cannot read letter by letter.</summary>
+    private static readonly string[] ColorWords =
+        ["red", "green", "blue", "cyan", "magenta", "yellow", "black", "white"];
+
+    /// <summary>
+    /// The properties the marker charts accept after their data, in MATLAB's spellings. One list for
+    /// <c>scatter</c>, <c>polarscatter</c> and <c>bubblechart</c> alike: they draw the same object, and
+    /// a property one of them understood and another did not would be a difference with no cause.
+    /// </summary>
+    private static readonly string[] MarkerChartOptionNames =
     [
         "MarkerFaceColor", "MarkerEdgeColor", "MarkerFaceAlpha", "MarkerEdgeAlpha",
-        "LineWidth", "Marker", "SizeData", "DisplayName",
+        "LineWidth", "Marker", "SizeData", "CData", "DisplayName", "HandleVisibility",
     ];
 
     /// <summary>
@@ -1271,122 +1417,134 @@ internal static partial class JgsBuiltins
     private static JgsValue BubbleChart(IReadOnlyList<JgsValue> args, int line, int col)
     {
         (AxesModel? named, IReadOnlyList<JgsValue> rest) = PeelAxes(args);
-        return OnAxes(named, () =>
-        {
-            int dataEnd = 0;
-            while (dataEnd < rest.Count && rest[dataEnd].Type != JgsType.String)
-            {
-                dataEnd++;
-            }
-
-            if (dataEnd < 3)
-            {
-                throw new JgsRuntimeException(line, col,
-                    "bubblechart expects the positions and their sizes: bubblechart(x, y, sz).");
-            }
-
-            if (dataEnd > 4)
-            {
-                throw new JgsRuntimeException(line, col,
-                    "bubblechart takes bubblechart(x, y, sz) and bubblechart(x, y, sz, c).");
-            }
-
-            // A colour can be written as a word, so the fourth argument being a string does not make it
-            // an option name. Options arrive in pairs, so an odd count after the sizes can only mean the
-            // extra one is c — the same reading bubblelegend gives its title.
-            int optionStart = dataEnd;
-            JgsValue? colorArg = null;
-            if (dataEnd == 4)
-            {
-                colorArg = rest[3];
-            }
-            else if (rest.Count > 3 && (rest.Count - 3) % 2 == 1)
-            {
-                colorArg = rest[3];
-                optionStart = 4;
-            }
-
-            double[] xs = ToDoubles("bubblechart", rest[0], line, col);
-            double[] ys = ToDoubles("bubblechart", rest[1], line, col);
-            double[] sizes = ToDoubles("bubblechart", rest[2], line, col);
-
-            if (ys.Length != xs.Length)
-            {
-                throw new JgsRuntimeException(line, col,
-                    $"bubblechart: x has {xs.Length} values but y has {ys.Length}.");
-            }
-
-            if (sizes.Length == 1 && xs.Length != 1)
-            {
-                // One size for every bubble is a legal call and says "these are all the same".
-                sizes = [.. Enumerable.Repeat(sizes[0], xs.Length)];
-            }
-
-            if (sizes.Length != xs.Length)
-            {
-                throw new JgsRuntimeException(line, col,
-                    $"bubblechart: sz has {sizes.Length} values but x has {xs.Length}.");
-            }
-
-            ScatterPlot plot = JG.BubbleChart(xs, ys, sizes);
-            Color seriesColor = PaletteColorFor(plot);
-            plot.Color = seriesColor;
-
-            // MATLAB draws bubbles part-transparent by default, and it is not a decoration: overlapping
-            // bubbles are the normal case, and opaque ones would hide each other.
-            plot.Fill = WithAlpha(seriesColor, 0.6);
-
-            if (colorArg is { } c)
-            {
-                BubbleColors(plot, c, line, col);
-            }
-
-            BubbleChartOptions(plot, Pairs("bubblechart", rest, optionStart, line, col), line, col);
-            return JgsHandleRegistry.For(plot);
-        });
+        return OnAxes(named, () => Handle(BubbleSeries("bubblechart", rest, line, col)));
     }
 
     /// <summary>
-    /// The fourth argument of <c>bubblechart</c>: either one colour for the whole chart or a value per
-    /// bubble taken through the colormap.
+    /// The body <c>bubblechart</c> and <c>polarbubblechart</c> share. As with the marker charts, what
+    /// the two position arrays <em>mean</em> is the axes' business and nothing here knows which verb
+    /// called it — the sizes are read against the axes' bubble scale either way.
+    /// </summary>
+    private static ScatterPlot BubbleSeries(
+        string verb, IReadOnlyList<JgsValue> rest, int line, int col)
+    {
+        int dataEnd = 0;
+        while (dataEnd < rest.Count && rest[dataEnd].Type != JgsType.String)
+        {
+            dataEnd++;
+        }
+
+        if (dataEnd < 3)
+        {
+            throw new JgsRuntimeException(line, col,
+                $"{verb} expects the positions and their sizes: {verb}(x, y, sz).");
+        }
+
+        if (dataEnd > 4)
+        {
+            throw new JgsRuntimeException(line, col,
+                $"{verb} takes {verb}(x, y, sz) and {verb}(x, y, sz, c).");
+        }
+
+        // A colour can be written as a word, so the fourth argument being a string does not make it
+        // an option name. Options arrive in pairs, so an odd count after the sizes can only mean the
+        // extra one is c — the same reading bubblelegend gives its title.
+        int optionStart = dataEnd;
+        JgsValue? colorArg = null;
+        if (dataEnd == 4)
+        {
+            colorArg = rest[3];
+        }
+        else if (rest.Count > 3 && (rest.Count - 3) % 2 == 1)
+        {
+            colorArg = rest[3];
+            optionStart = 4;
+        }
+
+        double[] xs = ToDoubles(verb, rest[0], line, col);
+        double[] ys = ToDoubles(verb, rest[1], line, col);
+        double[] sizes = ToDoubles(verb, rest[2], line, col);
+
+        if (ys.Length != xs.Length)
+        {
+            throw new JgsRuntimeException(line, col,
+                $"{verb}: x has {xs.Length} values but y has {ys.Length}.");
+        }
+
+        if (sizes.Length == 1 && xs.Length != 1)
+        {
+            // One size for every bubble is a legal call and says "these are all the same".
+            sizes = [.. Enumerable.Repeat(sizes[0], xs.Length)];
+        }
+
+        if (sizes.Length != xs.Length)
+        {
+            throw new JgsRuntimeException(line, col,
+                $"{verb}: sz has {sizes.Length} values but x has {xs.Length}.");
+        }
+
+        ScatterPlot plot = JG.BubbleChart(xs, ys, sizes);
+        Color seriesColor = PaletteColorFor(plot);
+        plot.Color = seriesColor;
+
+        // MATLAB draws bubbles part-transparent by default, and it is not a decoration: overlapping
+        // bubbles are the normal case, and opaque ones would hide each other.
+        plot.Fill = WithAlpha(seriesColor, 0.6);
+
+        if (colorArg is { } c)
+        {
+            MarkerColors(verb, plot, c, line, col);
+        }
+
+        MarkerChartOptions(verb, plot, Pairs(verb, rest, optionStart, line, col), line, col);
+        return plot;
+    }
+
+    /// <summary>
+    /// The colour argument of a marker chart: either one colour for the whole chart or a value per
+    /// point taken through the colormap.
     /// <para>
     /// Three numbers are read as red, green and blue — MATLAB's reading, and the common one — except on
     /// a chart of exactly three bubbles whose numbers are outside [0, 1], where a colour is the one
     /// thing they cannot be.
     /// </para>
     /// </summary>
-    private static void BubbleColors(ScatterPlot plot, JgsValue value, int line, int col)
+    private static void MarkerColors(string verb, ScatterPlot plot, JgsValue value, int line, int col)
     {
         int count = plot.Data.Count;
         if (value.Type == JgsType.String)
         {
-            Color named = OptionColor(value, line, col, "bubblechart");
+            Color named = OptionColor(value, line, col, verb);
             plot.Color = named;
-            plot.Fill = WithAlpha(named, (plot.Fill?.A ?? 153) / 255.0);
+            plot.Fill = plot.Fill is null ? null : WithAlpha(named, plot.Fill.Value.A / 255.0);
             return;
         }
 
-        double[] numbers = ToDoubles("bubblechart", value, line, col);
+        double[] numbers = ToDoubles(verb, value, line, col);
         bool couldBeColor = numbers.Length == 3 && Array.TrueForAll(numbers, v => v is >= 0 and <= 1);
         if (numbers.Length == 3 && (count != 3 || couldBeColor))
         {
-            Color rgb = OptionColor(value, line, col, "bubblechart");
+            Color rgb = OptionColor(value, line, col, verb);
             plot.Color = rgb;
-            plot.Fill = WithAlpha(rgb, (plot.Fill?.A ?? 153) / 255.0);
+            plot.Fill = plot.Fill is null ? null : WithAlpha(rgb, plot.Fill.Value.A / 255.0);
             return;
         }
 
         if (numbers.Length != count)
         {
             throw new JgsRuntimeException(line, col,
-                $"bubblechart: c is one colour, or one value per bubble ({count}), but got {numbers.Length}.");
+                $"{verb}: c is one colour, or one value per point ({count}), but got {numbers.Length}.");
         }
 
         plot.ColorData = numbers;
     }
 
-    private static void BubbleChartOptions(
-        ScatterPlot plot, IReadOnlyList<(string Name, JgsValue Value)> options, int line, int col)
+    private static void MarkerChartOptions(
+        string verb,
+        ScatterPlot plot,
+        IReadOnlyList<(string Name, JgsValue Value)> options,
+        int line,
+        int col)
     {
         foreach ((string name, JgsValue value) in options)
         {
@@ -1394,39 +1552,47 @@ internal static partial class JgsBuiltins
             {
                 case "markerfacecolor":
                     plot.Fill = WithAlpha(
-                        OptionColor(value, line, col, "bubblechart"), (plot.Fill?.A ?? 255) / 255.0);
+                        OptionColor(value, line, col, verb), (plot.Fill?.A ?? 255) / 255.0);
                     break;
                 case "markeredgecolor":
                     plot.Color = WithAlpha(
-                        OptionColor(value, line, col, "bubblechart"), (plot.Color?.A ?? 255) / 255.0);
+                        OptionColor(value, line, col, verb), (plot.Color?.A ?? 255) / 255.0);
                     break;
                 case "markerfacealpha":
                     plot.Fill = WithAlpha(
                         plot.Fill ?? plot.Color ?? PaletteColorFor(plot),
-                        Fraction("bubblechart: MarkerFaceAlpha", value, line, col));
+                        Fraction($"{verb}: MarkerFaceAlpha", value, line, col));
                     break;
                 case "markeredgealpha":
                     plot.Color = WithAlpha(
                         plot.Color ?? PaletteColorFor(plot),
-                        Fraction("bubblechart: MarkerEdgeAlpha", value, line, col));
+                        Fraction($"{verb}: MarkerEdgeAlpha", value, line, col));
                     break;
                 case "linewidth":
-                    plot.EdgeWidth = NumOf("bubblechart: LineWidth", value, line, col);
+                    plot.EdgeWidth = NumOf($"{verb}: LineWidth", value, line, col);
                     break;
                 case "marker":
                     plot.Marker = ParseMarkerWord(
-                        StrOf("bubblechart: Marker", value, line, col), plot.Marker);
+                        StrOf($"{verb}: Marker", value, line, col), plot.Marker);
                     break;
                 case "sizedata":
-                    plot.SizeData = ToDoubles("bubblechart: SizeData", value, line, col);
+                    plot.SizeData = ToDoubles($"{verb}: SizeData", value, line, col);
+                    break;
+                case "cdata":
+                    MarkerColors(verb, plot, value, line, col);
                     break;
                 case "displayname":
-                    SetDisplayName(plot, StrOf("bubblechart: DisplayName", value, line, col));
+                    SetDisplayName(plot, StrOf($"{verb}: DisplayName", value, line, col));
+                    break;
+                case "handlevisibility":
+                    JgsHandleRegistry.Require(JgsHandleRegistry.For(plot), line, col).HandleVisible =
+                        !StrOf($"{verb}: HandleVisibility", value, line, col)
+                            .Equals("off", StringComparison.OrdinalIgnoreCase);
                     break;
                 default:
                     throw new JgsRuntimeException(line, col,
-                        $"bubblechart has no option '{name}'. It takes "
-                        + $"{string.Join(", ", BubbleChartOptionNames)}.");
+                        $"{verb} has no option '{name}'. It takes "
+                        + $"{string.Join(", ", MarkerChartOptionNames)}.");
             }
         }
     }

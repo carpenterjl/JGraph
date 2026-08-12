@@ -7,16 +7,18 @@ so long. The live tracker is `matlab-r2021b-documented.html` in the demo workspa
 `tools/matlab-checklist/build-checklist.py`; this file is the standing summary, so the shape of what
 is left does not have to be re-derived each time.
 
-**382 of 514 builtins implemented** (372 from M45 to M53, 364 after M43, 363 after M39, 326 after
-M38, 185 after M37, 109 after M36) — M46 through M53 all added names MATLAB documents as *functions*,
-which this table does not hold. M45's eight are the drawing primitives the "handle graphics" section
-below used to list as missing and call the most useful thing left: `plot3`, `line`, `text`, `fill`,
-`fill3`, `patch`, `surface`, `light`. **M54 is the first milestone since M45 to move this table**, by
-the ten handle-graphics builtins it implemented: `get` `set` `findobj` `isgraphics` `ishandle`
-`ishghandle` `gco` `gcbo` `ancestor` `copyobj`.
+**383 of 514 builtins implemented** (382 after M54, 372 from M45 to M53, 364 after M43, 363 after
+M39, 326 after M38, 185 after M37, 109 after M36) — M46 through M53 all added names MATLAB documents
+as *functions*, which this table does not hold. M45's eight are the drawing primitives the "handle
+graphics" section below used to list as missing and call the most useful thing left: `plot3`, `line`,
+`text`, `fill`, `fill3`, `patch`, `surface`, `light`. **M54 moved this table** by the ten
+handle-graphics builtins it implemented: `get` `set` `findobj` `isgraphics` `ishandle` `ishghandle`
+`gco` `gcbo` `ancestor` `copyobj`. **M56 moved it by one**: `polaraxes` is the only name in the
+angular family MATLAB documents as kind *builtin* — every verb that draws on the axes it makes is a
+*function*, counted in the second table.
 
-**146 of the 266 documented graphics functions** — the second table below, new in M45, moved by 52 in
-M54 and by 13 in M55. The denominator has now been corrected twice, and both corrections are worth
+**163 of the 266 documented graphics functions** — the second table below, new in M45, moved by 52 in
+M54, by 13 in M55 and by 17 in M56 (the eight angular chart verbs and the nine polar rulers). The denominator has now been corrected twice, and both corrections are worth
 stating rather than quietly overwriting. M54's: this file said 263 from M45, which was one short *and*
 two names wrong in both directions — `slice` was counted in the implemented table and listed again
 among the missing volume names, while `close` (M35) and `linkaxes` (M51) were graphics functions the
@@ -26,16 +28,18 @@ names this file could not account for. **That is the third time the same kind of
 always the same way — a name is absent from a list rather than marked missing in it.** 266 is the count
 under `graph2d`, `graph3d`, `specgraph` and `graphics` as this file now enumerates them.
 
-A fresh run of `build-checklist.py` reports **155**, not 146, and the nine-name gap is deliberate: M54
-registers the polar-axes ruler verbs (`rticks` `rticklabels` `rtickangle` `rtickformat` `rlim`
-`thetaticks` `thetaticklabels` `thetatickformat` `thetalim`) as names that refuse with a reason rather
-than as "undefined function", and a registered name is a catalogued name, which is all the checklist
-tool can see. They are counted as **not** implemented here, because they draw nothing. M56 makes them
-real. `opengl` *is* counted, because an accepted no-op is an answer — the same reading that counted
-`shading`, `lighting` and `camlight` in M43.
+The nine-name gap this paragraph used to record is closed. From M54 to M56 a fresh run of
+`build-checklist.py` reported nine more graphics names than this file counted, because M54 registered
+the polar ruler verbs (`rticks` `rticklabels` `rtickangle` `rtickformat` `rlim` `thetaticks`
+`thetaticklabels` `thetatickformat` `thetalim`) as names that refuse with a reason rather than as
+"undefined function", and a registered name is a catalogued name, which is all the checklist tool can
+see. This file refused to count them while they drew nothing; **M56 made them real**, so the tool's
+number and this one agree again. `opengl` *is* counted, because an accepted no-op is an answer — the
+same reading that counted `shading`, `lighting` and `camlight` in M43.
 
-Across every callable kind — builtin, function, operator, keyword, script — the count is **710 of
-2,027** as of M55 (697 after M54, 633 after M52, 619 after M51, up from 560, and not from the 556 this file used to claim: the checklist tool
+Across every callable kind — builtin, function, operator, keyword, script — the count is **728 of
+2,027** as of M56 (710 after M55 by this file's nine-short reading above, 697 after M54, 633 after
+M52, 619 after M51, up from 560, and not from the 556 this file used to claim: the checklist tool
 read the implemented set with a regular expression that only matched a name literal directly inside
 `Add(`, so it missed the sixteen colormap generators, which are registered from a loop, and reported
 `parula` as unimplemented the whole time it was working. Both shapes are read now).
@@ -152,6 +156,7 @@ plus a short list of eleven odds and ends. Every one of them is accounted for be
 | Drawing primitives | M45 | `plot3` `line` `text` `fill` `fill3` `patch` `surface` `light` |
 | Handle graphics | M54 | `get` `set` `findobj` `isgraphics` `ishandle` `ishghandle` `gco` `gcbo` `ancestor` `copyobj` |
 | Data analysis, sets and formatting | M52 | `rng` `var` `gradient` `trapz` `cumtrapz` `interp1` `polyfit` `histcounts` `corrcoef` `cov` `rms` `bounds` `sortrows` `union` `intersect` `setdiff` `setxor` `mat2str` `int2str` `deal` — all documented as *functions*, so only the fourteen the dump flags as documented move the across-every-kind total |
+| The polar axes | M56 | `polaraxes` — the one angular name documented as kind *builtin*; the verbs that draw on it are in the second table |
 
 ## Graphics commands MATLAB documents as functions
 
@@ -189,23 +194,27 @@ count in the first table instead.
 | Camera extras | M54 | `viewmtx` `makehgtform` `camroll` `camdolly` `campan` `camlookat` `camproj` |
 | Legacy colormap and appearance | M54 | `colorcube` `flag` `prism` `rgbplot` `validatecolor` `diffuse` `specular` `contrast` `hidden` `orient` `whitebg` `colordef` `opengl` `cmpermute` `cmunique` `dither` |
 | The everyday 2-D charts | M55 | `area` `barh` `stairs` `pie` `heatmap` `boxchart` `bubblechart` `bubblesize` `bubblelim` `bubblelegend` `pareto` `plotmatrix` `plotyy` — five new plot objects, three properties on objects that already existed, and three compositions that draw nothing of their own |
+| The angular family | M56 | `polarplot` `polarscatter` `polarhistogram` `polarbubblechart` `compass` `feather` `rose` `polar` — one new plot object (`PolarHistogramPlot`); every other verb is an ordinary plot handed the polar mapper |
+| The polar rulers | M56 | `rticks` `rticklabels` `rtickangle` `rtickformat` `rlim` `thetaticks` `thetaticklabels` `thetatickformat` `thetalim` — registered as refusals in M54, real now; r is the Cartesian tick machinery pointed at `RAxis`, θ converts units at the boundary and answers through the spoke arithmetic the renderer draws with |
 
-### What the remaining 120 are
+### What the remaining 103 are
 
-Five families, and they add to exactly 120 — only the first two are missing *plots*. This section read
-185 from M45 until M54 emptied two of the five families and most of a third, and 131 until M55 took
-ten of the chart types; the milestone each family is now waiting on is named beside it.
+Five families, and they add to exactly 103 — only the first two are missing *plots*. This section read
+185 from M45 until M54 emptied two of the five families and most of a third, 131 until M55 took ten of
+the chart types, and 120 until M56 took the angular family; the milestone each family is now waiting
+on is named beside it.
 
-**Chart types with no plot object — 23.** `bar3` `bar3h` `stem3` `pie3` `compass` `feather` `rose`
-`polar` `polarplot` `polarscatter` `polarhistogram` `polarbubblechart` `binscatter` `bubblechart3`
+**Chart types with no plot object — 15.** `bar3` `bar3h` `stem3` `pie3` `binscatter` `bubblechart3`
 `swarmchart` `swarmchart3` `parallelplot` `stackedplot` `scatterhistogram` `wordcloud` `voronoi`
 `triplot` `tetramesh`. Each is a plot object, a renderer branch, `.graph` serialization and inspector
 support — the same slice `plot3` and `patch` were in M45, and the largest honest remainder. M54 made
 each one cheaper than it was: a new plot object joins `get`/`set`/`findobj` by being written, because
 the property table is reflection over the model's own browsable properties. **M55 took the everyday
-ten** — `area` `barh` `stairs` `pie` `heatmap` `boxchart` `bubblechart` `pareto` `plotmatrix`
-`plotyy` — and confirmed the claim: none of them wrote a line of property, inspector or `findobj`
-code. M56 takes the polar family, M57 the rest.
+ten** and confirmed the claim: none of them wrote a line of property, inspector or `findobj` code.
+**M56 took the eight angular verbs** and sharpened it: only `polarhistogram` is a new plot object at
+all, because a polar axes hands its plots a mapper that reads x as an angle, so `polarplot`,
+`polarscatter`, `polarbubblechart`, `compass`, `rose` and `polar` draw with objects that already
+existed. M57 takes the rest.
 
 **Function plotters — 16.** `fplot` `fplot3` `fsurf` `fmesh` `fcontour` `fimplicit` `fimplicit3` and
 the nine `ez*` forms. They take a *function handle* and choose their own sample points adaptively.
@@ -233,13 +242,12 @@ address an editing surface JGraph already has in the plot browser and inspector;
 six more** — `cla` `findall` `gcbf` `gobjects` `ishold` `newplot`, which are the parts of the family
 that only ever needed handles and a property table.
 
-**Properties, rulers, and legacy appearance — 23 of 70.** This was the whole point of M54 and it is
-the family the milestone emptied: 47 of the 70 are implemented — 46 in M54 and `bubblelegend` in M55 —
-and every one of the 23 left is left for a stated reason rather than for want of time.
+**Properties, rulers, and legacy appearance — 14 of 70.** This was the whole point of M54 and it is
+the family the milestone emptied: 56 of the 70 are implemented — 46 in M54, `bubblelegend` in M55,
+and the 9 polar rulers in M56, exactly as promised when M54's per-`AxisModel` tick machinery left
+them registered but refusing. Every one of the 14 left is left for a stated reason rather than for
+want of time.
 
-- **9 polar rulers — M56.** `rticks` `rticklabels` `rtickangle` `rtickformat` `rlim` `thetaticks`
-  `thetaticklabels` `thetatickformat` `thetalim`. The tick machinery M54 built is per-`AxisModel`, so
-  these need only the polar axes to point it at; all nine are registered now and refuse by saying so.
 - **`gtext` — M60**, which is where the click seam that M51 built for legend rows gets generalized.
 - **7 geographic verbs — excluded.** `geoaxes` `geobasemap` `geobubble` `geodensityplot` `geolimits`
   `geoplot` `geoscatter` `geotickformat` need a basemap tile service, which is a product, not a
@@ -257,13 +265,13 @@ and every one of the 23 left is left for a stated reason rather than for want of
   Java image, `spinmap` animates a colormap rotation. The first two describe machines JGraph does not
   run on; the third is an animation the figure model has no loop for.
 
-The 46 done: 12 Cartesian tick verbs (`xticks` and its y and z, ticklabels, tickangle, tickformat
-counterparts) plus `num2ruler` and `ruler2num`; 7 decorations (`box` `sgtitle` `subtitle` `clabel`
-`texlabel` `xline` `yline`); 7 camera extras beyond M45's (`camdolly` `campan` `camroll` `camlookat`
-`camproj` `viewmtx` `makehgtform`); and 18 of the 21 legacy colormap and appearance verbs
-(`cmpermute` `cmunique` `colorcube` `colordef` `contrast` `dither` `flag` `hidden` `imapprox`
-`opengl` `orient` `prism` `rgbplot` `shg` `whitebg` `validatecolor` `diffuse` `specular`), and
-`bubblelegend` in M55.
+The 56 done: 12 Cartesian tick verbs (`xticks` and its y and z, ticklabels, tickangle, tickformat
+counterparts) plus `num2ruler` and `ruler2num`; the 9 polar rulers (M56); 7 decorations (`box`
+`sgtitle` `subtitle` `clabel` `texlabel` `xline` `yline`); 7 camera extras beyond M45's (`camdolly`
+`campan` `camroll` `camlookat` `camproj` `viewmtx` `makehgtform`); and 18 of the 21 legacy colormap
+and appearance verbs (`cmpermute` `cmunique` `colorcube` `colordef` `contrast` `dither` `flag`
+`hidden` `imapprox` `opengl` `orient` `prism` `rgbplot` `shg` `whitebg` `validatecolor` `diffuse`
+`specular`), and `bubblelegend` in M55.
 
 ### Recorded divergences
 
@@ -288,6 +296,23 @@ Deliberate, and each one a consequence of a design decision made elsewhere:
 - **A `heatmap` here is an axes with a plot on it**, not MATLAB's standalone chart container, so it
   sits in a `subplot` and answers the ordinary axes verbs. Its own title and axis labels are
   properties on the plot, which is where MATLAB's chart keeps them too.
+
+M56's, from the polar mode outward (ADR 0056 carries the reasoning):
+
+- **`get(h, 'Type')` on a `compass` or `feather` answers `'quiver'`** — the M55 rule again: a chart
+  built out of another chart answers as what it is made of, and these are honest, unscaled quiver
+  arrows.
+- **`polar` draws on a polar axes.** MATLAB's legacy `polar` paints its own grid onto a hidden
+  Cartesian axes, which is why its rulers cannot be spoken to there; here it is `polarplot` under the
+  old name, so `rlim` and `thetaticks` work on its chart.
+- **`rtickformat` and `thetatickformat` queries answer the .NET format spelling**, the divergence
+  `xtickformat` has carried since M54, for the same reason.
+- **Wheel zoom and pan do not speak polar yet.** They move the Cartesian ranges, which the polar
+  mapping ignores, so they are inert on a circle rather than wrong; `rlim` is the scripted zoom, and
+  teaching the wheel to scale it is recorded follow-up work.
+- **`LineSpec`'s `'g'` is `[0, 0.502, 0]`** where MATLAB's is `[0 1 0]`. Found writing the compass
+  tests, but it has been so since M2 and is project-wide, so it is recorded here rather than changed
+  as a side effect of an angular milestone.
 
 - **There is no depth buffer.** Painter's algorithm sorts faces within a plot, so two 3-D plots in
   one axes interleave by draw order rather than by geometry. A surface and a `plot3` line through it
@@ -487,12 +512,12 @@ M52 left these behind, each named rather than silent (the full table is in
 - **`interp2`, `'native'` output classes, `histogram` object options and `'SamplePoints'`** were
   scoped out of M52 deliberately.
 
-## Not implemented — 132
+## Not implemented — 131
 
-### Handle graphics and app building — 26
+### Handle graphics and app building — 25
 
 `addpoints` `animatedline` `axes` `clearpoints` `frame2im` `getpoints` `groot` `hggroup` `hgsetget`
-`hgtransform` `im2frame` `polaraxes` `rectangle` `reset` `rmappdata` `selectmoveresize` `setappdata`
+`hgtransform` `im2frame` `rectangle` `reset` `rmappdata` `selectmoveresize` `setappdata`
 `uicontextmenu` `uicontrol` `uimenu` `uipanel` `uipushtool` `uitoggletool` `uitoolbar` `waitfor`
 `waitforbuttonpress`
 
@@ -517,8 +542,9 @@ cannot diverge from what a save would have written. `gobjects` fills with handle
 minted — a recorded divergence from MATLAB's `GraphicsPlaceholder`.
 
 What is left here is app building and the object kinds JGraph has no model for: the `ui*` family,
-`animatedline` and its point verbs, `hggroup`/`hgtransform`, `groot`, `rectangle`, `axes` and
-`polaraxes` as constructors (M56 brings the polar axes itself). The appdata trio rides in M60.
+`animatedline` and its point verbs, `hggroup`/`hgtransform`, `groot`, `rectangle`, and `axes` as a
+constructor. **`polaraxes` left this list in M56**, which built the polar axes itself. The appdata
+trio rides in M60.
 
 The eight this section used to also list — `fill`, `fill3`, `patch`, `plot3`, `line`, `text`,
 `surface` and `light` — were never about handles. They were drawing primitives the figure model did

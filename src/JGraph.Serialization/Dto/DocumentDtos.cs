@@ -74,6 +74,30 @@ public sealed class AxesDto
     /// <summary>The Z axis of a 3D axes; null in documents written before format version 2.</summary>
     public AxisDto? ZAxis { get; set; }
 
+    /// <summary>
+    /// Whether this axes is a circle. False in every document written before M56, which is what makes
+    /// the whole polar block below safe to add without a version bump.
+    /// </summary>
+    public bool IsPolar { get; set; }
+
+    /// <summary>Where θ = 0 sits, named rather than numbered so the file stays readable.</summary>
+    public string ThetaZeroLocation { get; set; } = "Right";
+
+    /// <summary>Which way θ grows.</summary>
+    public string ThetaDirection { get; set; } = "CounterClockwise";
+
+    /// <summary>The unit angles cross the script boundary in.</summary>
+    public string ThetaAxisUnits { get; set; } = "Degrees";
+
+    /// <summary>The angle in degrees the r tick labels are written along.</summary>
+    public double RAxisLocation { get; set; } = 80;
+
+    /// <summary>The radial ruler; null in documents written before M56.</summary>
+    public AxisDto? RAxis { get; set; }
+
+    /// <summary>The angular ruler, in degrees; null in documents written before M56.</summary>
+    public AxisDto? ThetaAxis { get; set; }
+
     /// <summary>The colorbar; null in documents written before format version 2.</summary>
     public ColorbarDto? Colorbar { get; set; }
 

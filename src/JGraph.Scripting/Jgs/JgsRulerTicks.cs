@@ -203,7 +203,7 @@ internal static class JgsRulerTicks
     }
 
     /// <summary>'auto' or 'manual' if that is what was said, null if a value was given instead.</summary>
-    private static string? ModeWord(string what, JgsValue value, int line, int col)
+    internal static string? ModeWord(string what, JgsValue value, int line, int col)
     {
         if (value.Type != JgsType.String)
         {
@@ -221,7 +221,7 @@ internal static class JgsRulerTicks
     }
 
     /// <summary>The text in a cell, a string array, or nothing at all.</summary>
-    private static string[] LabelWords(string what, JgsValue value, int line, int col)
+    internal static string[] LabelWords(string what, JgsValue value, int line, int col)
     {
         JgsValue[] elements = value.Type switch
         {
@@ -250,7 +250,7 @@ internal static class JgsRulerTicks
     /// A handle is an ordinary number, so a ruler handle passed where tick values belong would quietly
     /// put a tick at a million and a half rather than say what went wrong.
     /// </summary>
-    private static void RefuseHandle(string what, JgsValue value, int line, int col)
+    internal static void RefuseHandle(string what, JgsValue value, int line, int col)
     {
         if (value.Type == JgsType.Number && JgsHandleRegistry.TryGet(value, out JgsHandleEntry? entry))
         {

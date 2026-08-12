@@ -82,6 +82,13 @@ internal static class FigureMapper
             Elevation = axes.Elevation,
             Roll = axes.Roll,
             ZAxis = ToDto(axes.ZAxis),
+            IsPolar = axes.IsPolar,
+            ThetaZeroLocation = axes.ThetaZeroLocation.ToString(),
+            ThetaDirection = axes.ThetaDirection.ToString(),
+            ThetaAxisUnits = axes.ThetaAxisUnits.ToString(),
+            RAxisLocation = axes.RAxisLocation,
+            RAxis = ToDto(axes.RAxis),
+            ThetaAxis = ToDto(axes.ThetaAxis),
             Colorbar = ToDto(axes.Colorbar),
             BubbleLegend = ToDto(axes.BubbleLegend),
             BubbleSizeMin = axes.BubbleSizeRange.Min,
@@ -145,6 +152,35 @@ internal static class FigureMapper
         if (dto.ZAxis is not null)
         {
             ApplyAxis(axes.ZAxis, dto.ZAxis);
+        }
+
+        // The angular rulers are owned the same way. An unreadable name falls back to the default
+        // rather than throwing: a figure with a strange θ origin is still a figure worth opening.
+        axes.IsPolar = dto.IsPolar;
+        axes.RAxisLocation = dto.RAxisLocation;
+        if (Enum.TryParse(dto.ThetaZeroLocation, out ThetaZeroLocation zero))
+        {
+            axes.ThetaZeroLocation = zero;
+        }
+
+        if (Enum.TryParse(dto.ThetaDirection, out ThetaDirection direction))
+        {
+            axes.ThetaDirection = direction;
+        }
+
+        if (Enum.TryParse(dto.ThetaAxisUnits, out AngleUnits units))
+        {
+            axes.ThetaAxisUnits = units;
+        }
+
+        if (dto.RAxis is not null)
+        {
+            ApplyAxis(axes.RAxis, dto.RAxis);
+        }
+
+        if (dto.ThetaAxis is not null)
+        {
+            ApplyAxis(axes.ThetaAxis, dto.ThetaAxis);
         }
 
         if (dto.Colorbar is not null)

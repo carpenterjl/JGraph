@@ -145,6 +145,32 @@ public sealed class FigureRenderer
             return new AxesRenderInfo(axes, plotArea, transform, legendBox);
         }
 
+        // A polar axes is the other mode, and takes the same shape of detour: rings and spokes instead
+        // of the rectangular grid, and every plot mapped through the angular transform rather than the
+        // Cartesian one. It claims the largest circle the plot area holds and draws no frame.
+        if (axes.IsPolar)
+        {
+            RenderPolarContent(axes, context, theme, plotArea);
+
+            DrawTitleBlock(context, axes, plotArea);
+
+            LegendLayout? polarLegend = axes.Legend.Visible
+                ? LegendRenderer.Draw(context, axes, plotArea, theme)
+                : null;
+
+            if (axes.Colorbar.Visible)
+            {
+                ColorbarRenderer.Draw(context, axes, plotArea, theme);
+            }
+
+            if (axes.BubbleLegend.Visible)
+            {
+                BubbleLegendRenderer.Draw(context, axes, plotArea, theme);
+            }
+
+            return new AxesRenderInfo(axes, plotArea, transform, polarLegend);
+        }
+
         // Grid (below data).
         DrawGrid(context, axes.Grid, plotArea, transform, xTicks, yTicks);
 
@@ -378,6 +404,138 @@ public sealed class FigureRenderer
         }
     }
 
+    /// <summary>
+    /// Renders a polar axes: the rings of the r ruler, the spokes of the θ ruler, their labels, and
+    /// every plot mapped through the angular transform. Nothing here is a new kind of plot — a line
+    /// drawn on a polar axes is the same <see cref="IDrawable"/> handed a different mapper, which is
+    /// what makes the whole angular family cost one rendering branch between them.
+    /// </summary>
+    private static void RenderPolarContent(AxesModel axes, IRenderContext context, ITheme theme, Rect2D plotArea)
+    {
+        AxisModel rAxis = axes.RAxis;
+        AxisModel thetaAxis = axes.ThetaAxis;
+        var polar = PolarTransform.Create(axes, plotArea);
+
+        const double ToRadians = System.Math.PI / 180;
+        TickSet rTicks = TickGenerators.For(rAxis)
+            .Generate(rAxis.Range, rAxis.TargetMajorTickCount, rAxis.TickLabelFormat);
+        IReadOnlyList<double> spokes = PolarSpokes.Degrees(thetaAxis);
+
+        DataRange turn = thetaAxis.Range;
+        double startRadians = turn.Min * System.Math.PI / 180;
+        double endRadians = turn.Max * System.Math.PI / 180;
+
+        var frameStyle = new LineStyle(theme.AxisLine, 1);
+        LineStyle gridStyle = axes.Grid.MajorLineStyle;
+
+        context.PushClip(plotArea);
+
+        // Rings at the r ticks, drawn as arcs over whatever slice of the turn the θ limits allow. The
+        // outermost one is the chart's frame and is drawn in the frame ink whether the grid is on.
+        if (axes.Grid.Visible && axes.Grid.ShowMajor)
+        {
+            foreach (Tick tick in rTicks.MajorTicks)
+            {
+                double radius = polar.RadiusToPixels(tick.Value);
+                if (radius > 0.5 && radius < polar.PixelRadius - 0.5)
+                {
+                    DrawArc(context, polar, radius, startRadians, endRadians, gridStyle);
+                }
+            }
+
+            foreach (double angle in spokes)
+            {
+                context.DrawLine(polar.Center, polar.Rim(angle * ToRadians, polar.PixelRadius), gridStyle);
+            }
+        }
+
+        DrawArc(context, polar, polar.PixelRadius, startRadians, endRadians, frameStyle);
+
+        // A partial turn is a wedge, so its two straight edges belong to the frame as much as the arc.
+        if (System.Math.Abs(turn.Max - turn.Min) < 359.999)
+        {
+            context.DrawLine(polar.Center, polar.Rim(startRadians, polar.PixelRadius), frameStyle);
+            context.DrawLine(polar.Center, polar.Rim(endRadians, polar.PixelRadius), frameStyle);
+        }
+
+        // Plot content, mapped through the angular transform. Every plot on the axes is drawn this way:
+        // an axes is polar or it is not, and a chart cannot be half in one coordinate system.
+        IReadOnlyList<Color> palette = axes.ColorOrder ?? theme.SeriesPalette;
+        int colorIndex = 0;
+        foreach (PlotObject plot in axes.Plots.InDrawOrder())
+        {
+            Color seriesColor = palette.Count > 0 ? palette[colorIndex % palette.Count] : Colors.Black;
+            colorIndex++;
+
+            if (plot.Visible && plot is IDrawable drawable)
+            {
+                drawable.Render(context, new RenderState(polar, plotArea, seriesColor));
+            }
+        }
+
+        DrawAnnotations(axes.Annotations, context, polar, plotArea, theme);
+
+        context.PopClip();
+
+        // Labels last and unclipped: the angle labels stand outside the rim by design.
+        if (thetaAxis.ShowTickLabels)
+        {
+            for (int i = 0; i < spokes.Count; i++)
+            {
+                Point2D at = polar.Rim(spokes[i] * ToRadians, polar.PixelRadius * 1.06);
+                context.DrawText(
+                    PolarSpokes.Label(thetaAxis, axes.ThetaAxisUnits, spokes[i], i),
+                    at,
+                    thetaAxis.TickLabelStyle,
+                    HorizontalAlignment.Center,
+                    VerticalAlignment.Middle);
+            }
+        }
+
+        // The r labels run along one spoke rather than around the rim, so they read as one scale.
+        if (rAxis.ShowTickLabels)
+        {
+            double along = axes.RAxisLocation * System.Math.PI / 180;
+            foreach (Tick tick in rTicks.MajorTicks)
+            {
+                double radius = polar.RadiusToPixels(tick.Value);
+                if (radius <= 0.5 || radius > polar.PixelRadius + 0.5)
+                {
+                    continue;
+                }
+
+                Point2D at = polar.Rim(along, radius);
+                context.DrawText(
+                    tick.Label,
+                    new Point2D(at.X, at.Y - 2),
+                    rAxis.TickLabelStyle,
+                    HorizontalAlignment.Center,
+                    VerticalAlignment.Bottom,
+                    rAxis.TickLabelAngle);
+            }
+        }
+    }
+
+    /// <summary>Strokes a circle, or the arc of one, as a polyline fine enough to read as round.</summary>
+    private static void DrawArc(
+        IRenderContext context,
+        PolarTransform polar,
+        double pixelRadius,
+        double startRadians,
+        double endRadians,
+        LineStyle style)
+    {
+        double sweep = endRadians - startRadians;
+        int steps = System.Math.Max(12, (int)System.Math.Ceiling(System.Math.Abs(sweep) / (System.Math.PI / 90)));
+        var points = new Point2D[steps + 1];
+        for (int i = 0; i <= steps; i++)
+        {
+            points[i] = polar.Rim(startRadians + (sweep * i / steps), pixelRadius);
+        }
+
+        context.DrawPolyline(points, style);
+    }
+
     /// <summary>Picks the vertical box edge that projects leftmost on screen, for the Z scale.</summary>
     private static (double X, double Y) LeftmostVerticalEdge(Projection3D projection, DataRange xr, DataRange yr, double zMid)
     {
@@ -439,7 +597,7 @@ public sealed class FigureRenderer
     /// </summary>
     private static IReadOnlyList<SideRuler> MeasureSideRulers(AxesModel axes, IRenderContext context, ITheme theme)
     {
-        if (axes.YAxes.Count < 2 || axes.Is3D)
+        if (axes.YAxes.Count < 2 || axes.Is3D || axes.IsPolar)
         {
             return Array.Empty<SideRuler>();
         }
@@ -583,6 +741,24 @@ public sealed class FigureRenderer
         double bottom = EdgePadding;
         double top = EdgePadding;
         double right = EdgePadding + 4;
+
+        // A polar axes has no Cartesian rulers to make room for; the circle keeps its own margin for
+        // the angle labels. Reserving space here would push the chart off-centre for nothing.
+        if (axes.IsPolar)
+        {
+            if (!string.IsNullOrEmpty(axes.Title))
+            {
+                top += context.MeasureText(axes.Title, axes.TitleStyle).Height + LabelPadding;
+            }
+
+            if (!string.IsNullOrEmpty(axes.Subtitle))
+            {
+                top += context.MeasureText(axes.Subtitle, axes.SubtitleStyle).Height + LabelPadding;
+            }
+
+            right += ColorbarRenderer.MeasureReservedWidth(axes, context);
+            return new DecorationMetrics(new Thickness(left, top, right, bottom), 0, 0, 0, 0);
+        }
 
         double yTickWidth = 0;
         if (yAxis.ShowTickLabels)

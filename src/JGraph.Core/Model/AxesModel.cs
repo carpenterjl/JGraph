@@ -21,6 +21,11 @@ public sealed class AxesModel : GraphObject
     private bool _equalAspect;
     private bool _frameVisible = true;
     private bool _is3D;
+    private bool _isPolar;
+    private ThetaZeroLocation _thetaZeroLocation = ThetaZeroLocation.Right;
+    private ThetaDirection _thetaDirection = ThetaDirection.CounterClockwise;
+    private AngleUnits _thetaAxisUnits = AngleUnits.Degrees;
+    private double _rAxisLocation = 80;
     private double _azimuth = -37.5;
     private double _elevation = 30;
     private double _roll;
@@ -50,6 +55,20 @@ public sealed class AxesModel : GraphObject
 
         ZAxis = new AxisModel(AxisOrientation.Vertical, AxisPosition.Left) { Name = "ZAxis" };
         ZAxis.SetParent(this);
+
+        // The angular rulers are built for every axes, as the Z ruler is, so that a script can set
+        // their ticks or limits before anything is drawn and a saved figure keeps them. A full turn is
+        // not something to be fitted to the data — the circle is the whole point — so the theta ruler
+        // starts pinned, while r fits like an ordinary scale.
+        RAxis = new AxisModel(AxisOrientation.Vertical, AxisPosition.Left) { Name = "RAxis" };
+        RAxis.SetParent(this);
+        ThetaAxis = new AxisModel(AxisOrientation.Horizontal, AxisPosition.Bottom)
+        {
+            Name = "ThetaAxis",
+            AutoScale = false,
+            Range = new DataRange(0, 360),
+        };
+        ThetaAxis.SetParent(this);
 
         XAxes.Add(new AxisModel(AxisOrientation.Horizontal, AxisPosition.Bottom));
         YAxes.Add(new AxisModel(AxisOrientation.Vertical, AxisPosition.Left));
@@ -201,6 +220,15 @@ public sealed class AxesModel : GraphObject
     /// </summary>
     public AxisModel ZAxis { get; }
 
+    /// <summary>
+    /// The radial ruler of a polar axes. Always constructed, like <see cref="ZAxis"/>, but only
+    /// consulted when <see cref="IsPolar"/> is true.
+    /// </summary>
+    public AxisModel RAxis { get; }
+
+    /// <summary>The angular ruler of a polar axes. Its range and ticks are in degrees.</summary>
+    public AxisModel ThetaAxis { get; }
+
     /// <summary>The primary (first) X axis.</summary>
     public AxisModel PrimaryXAxis => XAxes[0];
 
@@ -328,6 +356,59 @@ public sealed class AxesModel : GraphObject
         set => SetProperty(ref _is3D, value, InvalidationKind.Layout);
     }
 
+    /// <summary>
+    /// When true, this axes renders as a circle: every plot's first coordinate is read as an angle and
+    /// its second as a radius, the rings and spokes of <see cref="RAxis"/> and <see cref="ThetaAxis"/>
+    /// stand in for the rectangular grid, and no Cartesian frame, ticks or labels are drawn. Set by
+    /// <c>polaraxes</c> and by the angular plotting verbs, the same way the surface verbs set
+    /// <see cref="Is3D"/>.
+    /// </summary>
+    [Category("Polar"), DisplayName("Polar")]
+    public bool IsPolar
+    {
+        get => _isPolar;
+        set => SetProperty(ref _isPolar, value, InvalidationKind.Layout);
+    }
+
+    /// <summary>Which compass point θ = 0 sits at (MATLAB <c>ThetaZeroLocation</c>).</summary>
+    [Category("Polar"), DisplayName("Theta zero location")]
+    public ThetaZeroLocation ThetaZeroLocation
+    {
+        get => _thetaZeroLocation;
+        set => SetProperty(ref _thetaZeroLocation, value, InvalidationKind.Render);
+    }
+
+    /// <summary>Which way θ increases (MATLAB <c>ThetaDirection</c>).</summary>
+    [Category("Polar"), DisplayName("Theta direction")]
+    public ThetaDirection ThetaDirection
+    {
+        get => _thetaDirection;
+        set => SetProperty(ref _thetaDirection, value, InvalidationKind.Render);
+    }
+
+    /// <summary>
+    /// The unit angles are read and written in (MATLAB <c>ThetaAxisUnits</c>). It governs the numbers
+    /// crossing the boundary, not the drawing: <see cref="ThetaAxis"/> always holds degrees, because a
+    /// ruler that changed units under its own ticks could not be compared with itself.
+    /// </summary>
+    [Category("Polar"), DisplayName("Theta axis units")]
+    public AngleUnits ThetaAxisUnits
+    {
+        get => _thetaAxisUnits;
+        set => SetProperty(ref _thetaAxisUnits, value, InvalidationKind.Render);
+    }
+
+    /// <summary>
+    /// The angle in degrees along which the r tick labels are written (MATLAB <c>RAxisLocation</c>).
+    /// The default 80° keeps them off the horizontal spoke, where a data curve most often runs.
+    /// </summary>
+    [Category("Polar"), DisplayName("R axis location")]
+    public double RAxisLocation
+    {
+        get => _rAxisLocation;
+        set => SetProperty(ref _rAxisLocation, value, InvalidationKind.Render);
+    }
+
     /// <summary>The camera azimuth in degrees (rotation about the vertical axis; MATLAB view() convention).</summary>
     [Category("3D View")]
     public double Azimuth
@@ -420,6 +501,55 @@ public sealed class AxesModel : GraphObject
         UpdateAxisBounds(XAxes, isX: true);
         UpdateAxisBounds(YAxes, isX: false);
         UpdateZAxisBounds();
+        UpdatePolarBounds();
+    }
+
+    /// <summary>
+    /// Fits the angular rulers to the data. A polar plot keeps θ where an ordinary plot keeps x and r
+    /// where it keeps y, so the extents the pass above already found are the ones needed here.
+    /// </summary>
+    /// <remarks>
+    /// The r ruler is fitted without <see cref="AutoScalePadding"/> and always reaches the origin when
+    /// the data is positive: a ring drawn a little outside the largest sample is what a reader measures
+    /// against, and a circle whose middle is not zero is a chart that lies about proportion.
+    /// </remarks>
+    private void UpdatePolarBounds()
+    {
+        if (!_isPolar)
+        {
+            return;
+        }
+
+        DataRange rBounds = DataRange.Empty;
+        DataRange thetaBounds = DataRange.Empty;
+        foreach (PlotObject plot in Plots)
+        {
+            if (!plot.Visible)
+            {
+                continue;
+            }
+
+            DataRange r = plot.GetYDataBounds();
+            if (!r.IsEmpty)
+            {
+                rBounds = rBounds.Union(r);
+            }
+
+            DataRange theta = plot.GetXDataBounds();
+            if (!theta.IsEmpty)
+            {
+                thetaBounds = thetaBounds.Union(theta);
+            }
+        }
+
+        RAxis.DataBounds = rBounds;
+        ThetaAxis.DataBounds = thetaBounds;
+
+        if (RAxis.AutoScale)
+        {
+            DataRange fitted = rBounds.IsEmpty ? DataRange.Unit : rBounds.EnsureValid();
+            RAxis.Range = new DataRange(System.Math.Min(0, fitted.Min), fitted.Max);
+        }
     }
 
     /// <summary>Unions the Z extents of visible 3D plots into <see cref="ZAxis"/> (all 3D plots share it).</summary>

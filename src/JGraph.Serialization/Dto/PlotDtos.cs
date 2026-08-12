@@ -19,6 +19,7 @@ namespace JGraph.Serialization.Dto;
 [JsonDerivedType(typeof(BoxChartPlotDto), "boxchart")]
 [JsonDerivedType(typeof(StemPlotDto), "stem")]
 [JsonDerivedType(typeof(HistogramPlotDto), "histogram")]
+[JsonDerivedType(typeof(PolarHistogramPlotDto), "polarhistogram")]
 [JsonDerivedType(typeof(ErrorBarPlotDto), "errorbar")]
 [JsonDerivedType(typeof(ImagePlotDto), "image")]
 [JsonDerivedType(typeof(RgbImagePlotDto), "rgbimage")]
@@ -294,6 +295,37 @@ public sealed class HistogramPlotDto : PlotDto
     public Color? EdgeColor { get; set; }
 
     public double EdgeWidth { get; set; } = 1.0;
+}
+
+/// <summary>The serialized form of a <see cref="PolarHistogramPlot"/>.</summary>
+public sealed class PolarHistogramPlotDto : PlotDto
+{
+    /// <summary>The angles behind the counts, in radians, or empty for the counts-only form.</summary>
+    public double[] Data { get; set; } = Array.Empty<double>();
+
+    public double[] BinEdges { get; set; } = [0, System.Math.Tau];
+
+    /// <summary>
+    /// The counts, saved even when there is data behind them: reading them back is cheaper than
+    /// counting again, and a file that says what it drew cannot drift from what it drew.
+    /// </summary>
+    public double[] BinCounts { get; set; } = Array.Empty<double>();
+
+    public HistogramNormalization Normalization { get; set; }
+
+    public PolarHistogramDisplayStyle DisplayStyle { get; set; }
+
+    public Color? FaceColor { get; set; }
+
+    public Color? EdgeColor { get; set; }
+
+    public double FaceAlpha { get; set; } = 1.0;
+
+    public double EdgeAlpha { get; set; } = 1.0;
+
+    public double LineWidth { get; set; } = 0.5;
+
+    public DashStyle LineStyle { get; set; }
 }
 
 public sealed class ErrorBarPlotDto : PlotDto

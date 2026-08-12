@@ -138,6 +138,20 @@ internal static class PlotMapper
                 EdgeColor = p.EdgeColor,
                 EdgeWidth = p.EdgeWidth,
             },
+            PolarHistogramPlot p => new PolarHistogramPlotDto
+            {
+                Data = p.Data,
+                BinEdges = p.BinEdges,
+                BinCounts = p.BinCounts,
+                Normalization = p.Normalization,
+                DisplayStyle = p.DisplayStyle,
+                FaceColor = p.FaceColor,
+                EdgeColor = p.EdgeColor,
+                FaceAlpha = p.FaceAlpha,
+                EdgeAlpha = p.EdgeAlpha,
+                LineWidth = p.LineWidth,
+                LineStyle = p.LineStyle,
+            },
             ErrorBarPlot p => new ErrorBarPlotDto
             {
                 Series = DtoConvert.ToDto(p.Data),
@@ -440,6 +454,7 @@ internal static class PlotMapper
                 EdgeColor = d.EdgeColor,
                 EdgeWidth = d.EdgeWidth,
             },
+            PolarHistogramPlotDto d => ToPolarHistogram(d),
             ErrorBarPlotDto d => new ErrorBarPlot(DtoConvert.ToSeries(d.Series), d.ErrorNeg, d.ErrorPos)
             {
                 Color = d.Color,
@@ -635,6 +650,28 @@ internal static class PlotMapper
         surface.SpecularExponent = d.SpecularExponent;
         surface.SpecularColorReflectance = d.SpecularColorReflectance;
         return surface;
+    }
+
+    /// <summary>
+    /// A polar histogram from its saved form. The counts are read back rather than counted again when
+    /// there is no data behind them, which is the whole of the difference between the two ways one can
+    /// be made — a histogram given its counts has nothing left to count.
+    /// </summary>
+    private static PolarHistogramPlot ToPolarHistogram(PolarHistogramPlotDto d)
+    {
+        PolarHistogramPlot plot = d.Data.Length > 0
+            ? new PolarHistogramPlot(d.Data, d.BinEdges)
+            : PolarHistogramPlot.FromCounts(d.BinEdges, d.BinCounts);
+
+        plot.Normalization = d.Normalization;
+        plot.DisplayStyle = d.DisplayStyle;
+        plot.FaceColor = d.FaceColor;
+        plot.EdgeColor = d.EdgeColor;
+        plot.FaceAlpha = d.FaceAlpha;
+        plot.EdgeAlpha = d.EdgeAlpha;
+        plot.LineWidth = d.LineWidth;
+        plot.LineStyle = d.LineStyle;
+        return plot;
     }
 
     private static double[][] ToJagged(double[,] values)

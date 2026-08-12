@@ -20,6 +20,61 @@ public enum HistogramNormalization
 
     /// <summary>Bar height is the running sample count up to and including the bin.</summary>
     Cumulative,
+
+    /// <summary>Bar height is count / bin width, so a bin twice as wide does not look twice as full.</summary>
+    CountDensity,
+
+    /// <summary>Bar height is the running fraction of samples up to and including the bin (a CDF).</summary>
+    CumulativeProbability,
+}
+
+/// <summary>
+/// What a bin's height means once the counting is done. The six readings are MATLAB's six
+/// <c>Normalization</c> words, and they live apart from any one chart because a histogram drawn as
+/// bars and one drawn as wedges round a circle have to agree about what <c>'pdf'</c> is.
+/// </summary>
+public static class HistogramHeights
+{
+    /// <summary>
+    /// The bin heights for <paramref name="counts"/> under <paramref name="normalization"/>.
+    /// <paramref name="total"/> is the sample size the fractions are of, which is not the sum of the
+    /// counts when some readings fell outside every bin.
+    /// </summary>
+    public static double[] Scale(
+        IReadOnlyList<double> counts,
+        IReadOnlyList<double> edges,
+        HistogramNormalization normalization,
+        double total)
+    {
+        ArgumentNullException.ThrowIfNull(counts);
+        ArgumentNullException.ThrowIfNull(edges);
+
+        var heights = new double[counts.Count];
+        double running = 0;
+        for (int i = 0; i < counts.Count; i++)
+        {
+            // A degenerate bin would divide a density by zero. Treating it as unit width keeps the
+            // count itself readable, which is more use than an infinity nobody can plot.
+            double width = i + 1 < edges.Count ? edges[i + 1] - edges[i] : 0;
+            if (!(width > 0) || !double.IsFinite(width))
+            {
+                width = 1;
+            }
+
+            running += counts[i];
+            heights[i] = normalization switch
+            {
+                HistogramNormalization.CountDensity => counts[i] / width,
+                HistogramNormalization.Cumulative => running,
+                HistogramNormalization.Probability => total > 0 ? counts[i] / total : 0,
+                HistogramNormalization.Density => total > 0 ? counts[i] / (total * width) : 0,
+                HistogramNormalization.CumulativeProbability => total > 0 ? running / total : 0,
+                _ => counts[i],
+            };
+        }
+
+        return heights;
+    }
 }
 
 /// <summary>
@@ -263,48 +318,7 @@ public sealed class HistogramPlot : PlotObject, IDrawable, ILegendItem
         }
 
         _binEdges = edges;
-        _binHeights = Normalize(counts, total, width);
-    }
-
-    private double[] Normalize(double[] counts, int total, double binWidth)
-    {
-        var heights = new double[counts.Length];
-        double safeTotal = total > 0 ? total : 1;
-        switch (_normalization)
-        {
-            case HistogramNormalization.Probability:
-                for (int i = 0; i < counts.Length; i++)
-                {
-                    heights[i] = counts[i] / safeTotal;
-                }
-
-                break;
-
-            case HistogramNormalization.Density:
-                double denom = safeTotal * (binWidth == 0 ? 1 : binWidth);
-                for (int i = 0; i < counts.Length; i++)
-                {
-                    heights[i] = counts[i] / denom;
-                }
-
-                break;
-
-            case HistogramNormalization.Cumulative:
-                double running = 0;
-                for (int i = 0; i < counts.Length; i++)
-                {
-                    running += counts[i];
-                    heights[i] = running;
-                }
-
-                break;
-
-            default: // Count
-                Array.Copy(counts, heights, counts.Length);
-                break;
-        }
-
-        return heights;
+        _binHeights = HistogramHeights.Scale(counts, edges, _normalization, total);
     }
 
     /// <summary>Discards the cached bins so they are recomputed on next use.</summary>
