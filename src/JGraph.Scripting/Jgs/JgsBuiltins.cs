@@ -1966,6 +1966,9 @@ internal static partial class JgsBuiltins
         RegisterCompositionBuiltins(env);
         RegisterPanelCompositionBuiltins(env);
 
+        // The function plotters draw with the verbs above, so they are declared after all of them.
+        RegisterFunctionPlotBuiltins(env);
+
         // After the plotting verbs it re-declares: the titling family gains its text options here,
         // and contour learns to answer with its matrix as well as its handle.
         RegisterDecorationBuiltins(env, dialect);

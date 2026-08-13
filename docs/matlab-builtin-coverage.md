@@ -17,9 +17,10 @@ handle-graphics builtins it implemented: `get` `set` `findobj` `isgraphics` `ish
 angular family MATLAB documents as kind *builtin* — every verb that draws on the axes it makes is a
 *function*, counted in the second table.
 
-**176 of the 266 documented graphics functions** — the second table below, new in M45, moved by 52 in
-M54, by 13 in M55, by 17 in M56 (the eight angular chart verbs and the nine polar rulers) and by 13
-in M57, which empties the chart-type family below but for two names excluded with reasons. The
+**192 of the 266 documented graphics functions** — the second table below, new in M45, moved by 52 in
+M54, by 13 in M55, by 17 in M56 (the eight angular chart verbs and the nine polar rulers), by 13
+in M57, which empties the chart-type family below but for two names excluded with reasons, and by 16
+in M58, which empties the function-plotter family outright. The
 denominator has now been corrected twice, and both corrections are worth
 stating rather than quietly overwriting. M54's: this file said 263 from M45, which was one short *and*
 two names wrong in both directions — `slice` was counted in the implemented table and listed again
@@ -39,8 +40,8 @@ see. This file refused to count them while they drew nothing; **M56 made them re
 number and this one agree again. `opengl` *is* counted, because an accepted no-op is an answer — the
 same reading that counted `shading`, `lighting` and `camlight` in M43.
 
-Across every callable kind — builtin, function, operator, keyword, script — the count is **742 of
-2,027** as of M57 (728 after M56, 710 after M55 by this file's nine-short reading above, 697 after M54, 633 after
+Across every callable kind — builtin, function, operator, keyword, script — the count is **758 of
+2,027** as of M58 (742 after M57, 728 after M56, 710 after M55 by this file's nine-short reading above, 697 after M54, 633 after
 M52, 619 after M51, up from 560, and not from the 556 this file used to claim: the checklist tool
 read the implemented set with a regular expression that only matched a name literal directly inside
 `Add(`, so it missed the sixteen colormap generators, which are registered from a loop, and reported
@@ -53,7 +54,9 @@ numbers were written — it now also matches a `Constant(` entry and a name that
 its `Add(` — and the older totals were never recomputed. M51 added one counted name (`linkaxes`); M52
 added fourteen. M57 added fourteen too, and only thirteen of them move a table here: `voronoin` is
 documented under `matlab/polyfun` rather than under any graphics folder, so it belongs to neither the
-builtin table nor the graphics one and shows up only in this total.
+builtin table nor the graphics one and shows up only in this total. M58 added sixteen, and all sixteen
+move the graphics table with it: the seven `f*` verbs are documented under `matlab/graphics` and the
+nine `ez*` ones under `matlab/specgraph`, and not one of the sixteen is documented as kind *builtin*.
 
 M46 moved that total by **nine and moved neither table above**, which is worth stating plainly. The
 Image Processing Toolbox is tracked separately in `matlab-ipt-coverage.md` because the R2021b dump
@@ -200,14 +203,16 @@ count in the first table instead.
 | The everyday 2-D charts | M55 | `area` `barh` `stairs` `pie` `heatmap` `boxchart` `bubblechart` `bubblesize` `bubblelim` `bubblelegend` `pareto` `plotmatrix` `plotyy` — five new plot objects, three properties on objects that already existed, and three compositions that draw nothing of their own |
 | The angular family | M56 | `polarplot` `polarscatter` `polarhistogram` `polarbubblechart` `compass` `feather` `rose` `polar` — one new plot object (`PolarHistogramPlot`); every other verb is an ordinary plot handed the polar mapper |
 | The tier-two charts | M57 | `bar3` `bar3h` `stem3` `pie3` `binscatter` `swarmchart` `swarmchart3` `bubblechart3` `voronoi` `triplot` `tetramesh` `stackedplot` `scatterhistogram` — four new plot objects out of thirteen verbs: the swarms and the 3-D bubbles are jitter properties on the two scatters, the diagram and the triangulations are lines and a patch over a new Delaunay kernel, and the last two are compositions that draw nothing of their own |
+| The function plotters | M58 | `fplot` `fplot3` `fsurf` `fmesh` `fcontour` `fimplicit` `fimplicit3` and the nine `ez*` spellings — no new plot object at all: each verb decides where to read its function and hands the readings to a line, a surface, a contour or a patch that already existed, so a saved figure holds the drawing and not the function |
 | The polar rulers | M56 | `rticks` `rticklabels` `rtickangle` `rtickformat` `rlim` `thetaticks` `thetaticklabels` `thetatickformat` `thetalim` — registered as refusals in M54, real now; r is the Cartesian tick machinery pointed at `RAxis`, θ converts units at the boundary and answers through the spoke arithmetic the renderer draws with |
 
-### What the remaining 90 are
+### What the remaining 74 are
 
-Five families, and they add to exactly 90 — and after M57 **not one of them is a missing plot**. This
-section read 185 from M45 until M54 emptied two of the five families and most of a third, 131 until
-M55 took ten of the chart types, 120 until M56 took the angular family, and 103 until M57 took the
-thirteen left; the milestone each family is now waiting on is named beside it.
+Four families and two excluded names, and they add to exactly 74 — and after M57 **not one of them is
+a missing plot**. This section read 185 from M45 until M54 emptied two of the five families and most
+of a third, 131 until M55 took ten of the chart types, 120 until M56 took the angular family, 103
+until M57 took the thirteen left, and 90 until M58 took all sixteen function plotters; the milestone
+each family is now waiting on is named beside it.
 
 **Chart types with no plot object — 2, both excluded.** `wordcloud` and `parallelplot`. Each of the
 other thirteen was a plot object, a renderer branch, `.graph` serialization and inspector support —
@@ -228,10 +233,12 @@ can measure against — the same reading that excluded `bubblecloud` in M55. A w
 frequency, which a `bar` of the same counts says more precisely; a parallel-coordinates plot of
 engineering data is `plotmatrix`, or a `stackedplot` whose panels are already linked.
 
-**Function plotters — 16.** `fplot` `fplot3` `fsurf` `fmesh` `fcontour` `fimplicit` `fimplicit3` and
-the nine `ez*` forms. They take a *function handle* and choose their own sample points adaptively.
-JGS has function values, so nothing blocks these; the adaptive sampler is the work, not the drawing.
-M58.
+**Function plotters — 0. M58 took all sixteen.** The reading this file had of them was right: the
+sampler was the work and the drawing was not, and none of the seven `f*` verbs or the nine `ez*` ones
+needed a plot object of its own. What it did not anticipate is that a *surface* plotter has nothing to
+sample adaptively — a surface here is a grid, so there is nowhere to put a reading that belongs to one
+part of the picture and not to the rest of its row, and density is the whole of the control. Only the
+curve plotters refine.
 
 **Volume visualization — 22.** `isosurface` `isocaps` `isonormals` `isocolors` `contourslice`
 `coneplot` `streamline` `stream2` `stream3` `streamribbon` `streamtube` `streamslice`
@@ -349,6 +356,41 @@ M57's, from the tier-two charts (ADR 0057 carries the reasoning):
   container — the `heatmap` divergence again. Each is real axes holding real plots, so every axes verb
   works on them and `set(s, 'LineWidth', 2)` over the returned handles is the one-line form. The
   panels and the marginals are *linked*, not merely given equal limits.
+
+M58's, from the function plotters (ADR 0058 carries the reasoning):
+
+- **Only the curve plotters sample adaptively.** `fplot`, `fplot3` and `ezpolar` choose where to read
+  by refining until a straight line between two readings is a fair drawing of the curve. `fsurf`,
+  `fmesh`, `fcontour`, `fimplicit` and `fimplicit3` read an even grid, because a surface here *is* a
+  grid: there is nowhere to put an extra reading that belongs to one part of the picture and not to
+  the rest of its row. `MeshDensity` is therefore the whole of the control on those five, which is
+  also what MATLAB calls it.
+- **A curve that runs away is drawn as a break, and the readings that ran away are dropped.** MATLAB
+  chooses limits that leave the pole off the picture; here the readings themselves become gaps, which
+  is the same picture arrived at from the data rather than from the axes, and it survives a save.
+  `'ShowPoles', 'off'` keeps every reading, which is the option's documented meaning read literally.
+- **`fimplicit` hands back a line**, where MATLAB hands back an implicit-function line object of its
+  own kind. It is marching squares at one level, and the branches of a curve that comes apart are
+  joined by a gap so that one object holds all of it — so `get(h, 'XData')` reads the curve.
+- **`fimplicit3`'s surface is cut with tetrahedra rather than cubes.** Each grid cell is split along a
+  fixed diagonal into six tetrahedra, none of which has an ambiguous case, so there is no table to
+  choose from and no crack between neighbouring cells. The cost is more triangles for the same
+  surface; face winding is not made consistent, because nothing here lights a face from one side only.
+- **A surface's `LineStyle` is `'none'` or `'-'`.** Its edges are drawn as a mesh with a width rather
+  than as a line with a dash pattern, so the dashed spellings are refused by name instead of accepted
+  and ignored.
+- **`fcontour` has no `LineColor`.** Contours here are coloured by level through the colormap, which
+  is what makes a contour plot readable without a legend; a single colour for all levels has nowhere
+  to live on the object.
+- **The `ez*` verbs read the six standard letters as variables even when the workspace has one.**
+  MATLAB reads a name the workspace answers to as that value, so `x = 1:10` earlier in a script
+  quietly changes what `ezplot('x^2')` means. `x y z t u v` are always variables of the expression
+  here. `ezplot3`'s `'animate'` is accepted and the whole curve drawn: there is no animation seam in
+  this build until M60.
+- **`ezplot`'s implicit form is reached through text.** A text expression naming two variables draws
+  where it is zero; a function handle is always read as a function of one variable, because a handle
+  carries no count of its own arguments here. `fimplicit` is the same drawing under the name that
+  says so.
 
 - **There is no depth buffer.** Painter's algorithm sorts faces within a plot, so two 3-D plots in
   one axes interleave by draw order rather than by geometry. A surface and a `plot3` line through it
@@ -515,6 +557,16 @@ one handle and `h(1)` — the spelling that works the moment it draws several �
 Number or Bool reached by a subscript is now wrapped as a one-element array, stamped with the class it
 was in, and handed to the ordinary indexing path, so `x(1)`, `x(1,1)`, `x([1 1])`, `x(:)` and the JGS
 `x(0)`/`x[0]` all read it and reaching past the one element is still out of bounds.
+
+M58 found the same shape of gap in the property table and closed it: **a line in space, a surface, a
+contour and a patch all kept their readings unreachable**, so `get(h, 'ZData')` on a `plot3` handle
+named a property the object did not answer to while the same call on a `plot` handle did. Reflection
+does not carry those coordinates because they are plain arrays behind a setter that takes all of them
+at once, and M54's alias layer had written the pair for `XYPlot` and for `Scatter3DPlot` and stopped
+there. The four are aliased now — writing one coordinate of a 3-D line keeps the other two, and a
+patch answers with its faces counting from one, the way a script wrote them. It surfaced writing
+`fplot3`, but the gap belongs to `plot3`, `surf`, `contour` and `patch`, all of which have had it
+since M54.
 
 M51 found four more while making a real user script run, and closed all four. A table answered only
 to `T.Var`, so `data{:,1}` and `data(1:5, :)` both threw where MATLAB reads a variable's contents and

@@ -1588,6 +1588,27 @@ public static class JgsBuiltinCatalog
         Add("swarmchart", "A scatter whose crowded points are spread sideways so all of them show: swarmchart(x, y), swarmchart(x, y, sz, c).", P("x"), P("y"), Opt("sz"), Opt("c"));
         Add("swarmchart3", "The same spread in space: swarmchart3(x, y, z), swarmchart3(x, y, z, sz, c).", P("x"), P("y"), P("z"), Opt("sz"), Opt("c"));
         Add("bubblechart3", "Bubbles in space sized by a fourth variable: bubblechart3(x, y, z, sz), bubblechart3(x, y, z, sz, c).", P("x"), P("y"), P("z"), P("sz"), Opt("c"));
+        // --- the function plotters -------------------------------------------------------------
+        Add("fplot", "A function of x sampled where it bends: fplot(f), fplot(f, [a b]), the parametric fplot(fx, fy), a line spec, then 'MeshDensity' and 'ShowPoles'.", P("f"), Opt("interval"), Opt("spec"));
+        Add("fplot3", "A curve in space from three functions of one parameter: fplot3(fx, fy, fz, [t0 t1], spec).", P("fx"), P("fy"), P("fz"), Opt("interval"), Opt("spec"));
+        Add("fsurf", "A function of x and y as a filled surface: fsurf(f), fsurf(f, [xmin xmax ymin ymax]), or fsurf(fx, fy, fz) for a parametric one.", P("f"), Opt("domain"));
+        Add("fmesh", "The same surface drawn as a wireframe: fmesh(f), fmesh(f, domain), fmesh(fx, fy, fz).", P("f"), Opt("domain"));
+        Add("fcontour", "The iso-lines of a function of x and y: fcontour(f), fcontour(f, domain), then 'LevelList', 'LevelStep' or 'Fill'.", P("f"), Opt("domain"));
+        Add("fimplicit", "The curve where a function of x and y is zero: fimplicit(f), fimplicit(f, domain).", P("f"), Opt("domain"));
+        Add("fimplicit3", "The surface where a function of x, y and z is zero: fimplicit3(f), fimplicit3(f, box).", P("f"), Opt("box"));
+
+        // The legacy spellings: the same drawings over a turn of the circle, and the function may be
+        // written as text.
+        Add("ezplot", "fplot over [-2*pi 2*pi], from a handle or an expression: ezplot('x*sin(x)'). A two-variable expression draws where it is zero.", P("f"), Opt("domain"));
+        Add("ezplot3", "fplot3 over [0 2*pi]: ezplot3(fx, fy, fz), with an optional 'animate'.", P("fx"), P("fy"), P("fz"), Opt("domain"));
+        Add("ezpolar", "A function of the angle drawn round the circle over [0 2*pi]: ezpolar(f).", P("f"), Opt("domain"));
+        Add("ezsurf", "fsurf over [-2*pi 2*pi]: ezsurf(f) or ezsurf(fx, fy, fz).", P("f"), Opt("domain"));
+        Add("ezmesh", "fmesh over [-2*pi 2*pi]: ezmesh(f) or ezmesh(fx, fy, fz).", P("f"), Opt("domain"));
+        Add("ezsurfc", "The same surface with contour lines projected on the floor.", P("f"), Opt("domain"));
+        Add("ezmeshc", "The same wireframe with contour lines projected on the floor.", P("f"), Opt("domain"));
+        Add("ezcontour", "fcontour over [-2*pi 2*pi]: ezcontour(f).", P("f"), Opt("domain"));
+        Add("ezcontourf", "The same contours, filled.", P("f"), Opt("domain"));
+
         Add("sphere", "The unit sphere: [X, Y, Z] = sphere(n), or sphere(n) to draw one.", Opt("n"));
         Add("cylinder", "A surface of revolution: [X, Y, Z] = cylinder(r, n), or cylinder(r) to draw one.", Opt("r"), Opt("n"));
         Add("ellipsoid", "An ellipsoid grid: [X, Y, Z] = ellipsoid(xc, yc, zc, xr, yr, zr, n).", P("xc"), P("yc"), P("zc"), P("xr"), P("yr"), P("zr"), Opt("n"));

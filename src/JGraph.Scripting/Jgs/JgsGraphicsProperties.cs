@@ -462,6 +462,56 @@ internal static class JgsGraphicsProperties
             Put(table, "YJitterOffsets", entry => Row([.. ((ScatterPlot)entry.Target).YOffsets]));
         }
 
+        if (typeof(PatchPlot).IsAssignableFrom(type))
+        {
+            // M58: a patch's vertices were unreachable, which fimplicit3 makes worth having — the
+            // surface it draws is the whole answer, and a script can only check it by reading the
+            // vertices back. Faces are answered the way a script wrote them, counting from one.
+            Put(table, "XData", entry => Row([.. ((PatchPlot)entry.Target).X]));
+            Put(table, "YData", entry => Row([.. ((PatchPlot)entry.Target).Y]));
+            Put(table, "ZData", entry => Row([.. ((PatchPlot)entry.Target).Z]));
+            Put(table, "Faces", entry => FaceTable((PatchPlot)entry.Target));
+        }
+
+        if (typeof(SurfacePlot).IsAssignableFrom(type))
+        {
+            // M58: a surface's readings were unreachable, which a function plotter makes worth having
+            // — the only way to check where fsurf looked is to ask the surface it drew. A surface over
+            // a rectangular grid answers with its two vectors; a parametric one with its two grids,
+            // which is what MATLAB always answers with.
+            Put(table, "XData", entry => ((SurfacePlot)entry.Target).XGrid is { } grid
+                ? Grid(grid)
+                : Row(((SurfacePlot)entry.Target).X));
+            Put(table, "YData", entry => ((SurfacePlot)entry.Target).YGrid is { } grid
+                ? Grid(grid)
+                : Row(((SurfacePlot)entry.Target).Y));
+            Put(table, "ZData", entry => Grid(((SurfacePlot)entry.Target).Z));
+        }
+
+        if (typeof(ContourPlot).IsAssignableFrom(type))
+        {
+            Put(table, "XData", entry => Row(((ContourPlot)entry.Target).X));
+            Put(table, "YData", entry => Row(((ContourPlot)entry.Target).Y));
+            Put(table, "ZData", entry => Grid(((ContourPlot)entry.Target).Z));
+        }
+
+        if (typeof(Line3DPlot).IsAssignableFrom(type))
+        {
+            // M58: a line in space kept its three coordinates unreachable, so `get(h, 'ZData')` on a
+            // plot3 handle named a property the object did not answer to while the same call on a
+            // plot handle did. Reflection does not carry them because they are plain arrays behind
+            // a SetData that takes all three at once; writing one keeps the other two.
+            Put(table, "XData",
+                entry => Row([.. ((Line3DPlot)entry.Target).X]),
+                (entry, value, line, col) => SetLine3Data(entry, value, 0, line, col));
+            Put(table, "YData",
+                entry => Row([.. ((Line3DPlot)entry.Target).Y]),
+                (entry, value, line, col) => SetLine3Data(entry, value, 1, line, col));
+            Put(table, "ZData",
+                entry => Row([.. ((Line3DPlot)entry.Target).Z]),
+                (entry, value, line, col) => SetLine3Data(entry, value, 2, line, col));
+        }
+
         if (typeof(Scatter3DPlot).IsAssignableFrom(type))
         {
             // A marker chart in space keeps its three coordinates as plain arrays, which reflection
@@ -1400,6 +1450,52 @@ internal static class JgsGraphicsProperties
     /// all three at once because a point needs all three to exist, so the two that were not written
     /// are handed straight back — and a length that does not match them is the model's own error.
     /// </summary>
+    /// <summary>
+    /// A patch's faces as a table, one row per face, counting the vertices from one — which is how a
+    /// script wrote them and how MATLAB answers. A face with fewer corners than the widest one is
+    /// padded with gaps, since a rectangular answer is the only kind a matrix can be.
+    /// </summary>
+    private static JgsValue FaceTable(PatchPlot patch)
+    {
+        IReadOnlyList<int[]> faces = patch.Faces;
+        int widest = 0;
+        foreach (int[] face in faces)
+        {
+            widest = System.Math.Max(widest, face.Length);
+        }
+
+        var table = new double[faces.Count, widest];
+        for (int r = 0; r < faces.Count; r++)
+        {
+            for (int c = 0; c < widest; c++)
+            {
+                table[r, c] = c < faces[r].Length ? faces[r][c] + 1 : double.NaN;
+            }
+        }
+
+        return Grid(table);
+    }
+
+    private static void SetLine3Data(
+        JgsHandleEntry entry, JgsValue value, int which, int line, int col)
+    {
+        var plot = (Line3DPlot)entry.Target;
+        double[] written = JgsBuiltins.ToDoubles(
+            which switch { 0 => "XData", 1 => "YData", _ => "ZData" }, value, line, col);
+
+        try
+        {
+            plot.SetData(
+                which == 0 ? written : [.. plot.X],
+                which == 1 ? written : [.. plot.Y],
+                which == 2 ? written : [.. plot.Z]);
+        }
+        catch (ArgumentException ex)
+        {
+            throw new JgsRuntimeException(line, col, ex.Message);
+        }
+    }
+
     private static void SetScatter3Data(
         JgsHandleEntry entry, JgsValue value, int which, int line, int col)
     {

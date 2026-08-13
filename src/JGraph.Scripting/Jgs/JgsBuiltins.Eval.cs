@@ -19,6 +19,11 @@ internal static partial class JgsBuiltins
         "exist", "who", "which", "narginchk", "nargoutchk", "nargchk",
         "lasterr", "lasterror", "lastwarn", "rethrow",
         "func2str", "functions", "mfilename", "inputname",
+
+        // M58: the legacy function plotters take their function as text, which needs the interpreter
+        // to turn into a handle — the same reason eval itself is declared here.
+        "ezplot", "ezplot3", "ezpolar", "ezsurf", "ezmesh", "ezsurfc", "ezmeshc",
+        "ezcontour", "ezcontourf",
     ];
 
     /// <summary>Declares the interpreter-backed builtins into <paramref name="env"/>.</summary>
@@ -35,6 +40,7 @@ internal static partial class JgsBuiltins
         RegisterWorkspaceQuestions(Define, env, interpreter, host);
         RegisterErrorHistory(Define, env, interpreter);
         RegisterIntrospection(Define, DefineBare, interpreter, host);
+        RegisterLegacyFunctionPlotBuiltins(env, interpreter);
         _ = dialect;
     }
 
