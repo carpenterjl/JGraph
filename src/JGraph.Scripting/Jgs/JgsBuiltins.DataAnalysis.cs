@@ -181,18 +181,18 @@ internal static partial class JgsBuiltins
     // --- Differentiation and integration of sampled data ------------------------------------------
 
     /// <summary>
-    /// <c>[FX, FY] = gradient(F, hx, hy)</c>: central differences inside, one-sided at the ends. A
-    /// vector has one gradient, taken along itself whichever way round it is written; a matrix has
-    /// one across its columns and one down its rows.
+    /// <c>[FX, FY, FZ, …] = gradient(F, hx, hy, hz, …)</c>: central differences inside, one-sided at
+    /// the ends. A vector has one gradient, taken along itself whichever way round it is written; a
+    /// matrix has one across its columns and one down its rows; and an array of more dimensions has
+    /// one along each, in MATLAB's order — across, down, then page by page.
     /// </summary>
     private static JgsValue[] SlopeFields(IReadOnlyList<JgsValue> args, int wanted, int line, int col)
     {
-        ArityRange("gradient", args, 1, 3, line, col);
         int[] dims = SizeDims(args[0]);
+        ArityRange("gradient", args, 1, System.Math.Max(3, dims.Length + 1), line, col);
         if (dims.Length > 2)
         {
-            throw new JgsRuntimeException(line, col,
-                "gradient here takes a vector or a matrix, not an array with more than two dimensions.");
+            return VolumeSlopeFields(args, dims, wanted, line, col);
         }
 
         double[] flat = FlattenColumnMajor("gradient", args[0], line, col);
@@ -246,6 +246,98 @@ internal static partial class JgsBuiltins
         }
 
         return [horizontal, JgsMatrix.FromColumnMajorDims(down, dims)];
+    }
+
+    /// <summary>
+    /// The gradient of an array of three or more dimensions: one field per dimension, each the same
+    /// central-difference walk the matrix case does, taken along one direction at a time.
+    /// </summary>
+    /// <remarks>
+    /// The outputs come in MATLAB's order, which is not the order of the dimensions: the first is
+    /// along the columns (dimension 2), the second down the rows (dimension 1), and the rest follow
+    /// the dimensions from the third onward. That swap is why the walk is written against a dimension
+    /// number rather than against rows and columns — <c>curl</c> and <c>divergence</c> ask for the
+    /// slope along a named direction, and getting the first two the wrong way round would turn a
+    /// field inside out with nothing to show for it.
+    /// </remarks>
+    private static JgsValue[] VolumeSlopeFields(
+        IReadOnlyList<JgsValue> args, int[] dims, int wanted, int line, int col)
+    {
+        double[] flat = FlattenColumnMajor("gradient", args[0], line, col);
+        int[] order = MatlabDimensionOrder(dims.Length);
+        int answers = System.Math.Clamp(wanted, 1, dims.Length);
+
+        var fields = new JgsValue[answers];
+        for (int i = 0; i < answers; i++)
+        {
+            int dimension = order[i];
+            double[] at = args.Count > i + 1
+                ? Positions("gradient", args[i + 1], dims[dimension], line, col)
+                : Steps(dims[dimension]);
+            fields[i] = JgsMatrix.FromColumnMajorDims(SlopesAlong(flat, dims, dimension, at), dims);
+        }
+
+        return fields;
+    }
+
+    /// <summary>
+    /// The order MATLAB reports gradients in: columns first, then rows, then every later dimension in
+    /// its own order.
+    /// </summary>
+    private static int[] MatlabDimensionOrder(int count)
+    {
+        var order = new int[count];
+        order[0] = 1;
+        order[1] = 0;
+        for (int i = 2; i < count; i++)
+        {
+            order[i] = i;
+        }
+
+        return order;
+    }
+
+    /// <summary>
+    /// The slope along one dimension of a column-major array, by pulling out each line that runs
+    /// along that dimension, differencing it, and putting it back.
+    /// </summary>
+    private static double[] SlopesAlong(double[] flat, int[] dims, int dimension, double[] at)
+    {
+        int length = dims[dimension];
+        var slopes = new double[flat.Length];
+
+        // How far apart two neighbours along this dimension sit in the flat array, and how many such
+        // lines there are.
+        int stride = 1;
+        for (int i = 0; i < dimension; i++)
+        {
+            stride *= dims[i];
+        }
+
+        int lines = flat.Length / System.Math.Max(1, length);
+        int inner = stride;
+        int outer = lines / System.Math.Max(1, inner);
+
+        var line1 = new double[length];
+        for (int o = 0; o < outer; o++)
+        {
+            for (int i = 0; i < inner; i++)
+            {
+                int start = (o * stride * length) + i;
+                for (int k = 0; k < length; k++)
+                {
+                    line1[k] = flat[start + (k * stride)];
+                }
+
+                double[] slope = Slopes(line1, at);
+                for (int k = 0; k < length; k++)
+                {
+                    slopes[start + (k * stride)] = slope[k];
+                }
+            }
+        }
+
+        return slopes;
     }
 
     /// <summary>Central differences over the two-step span, one-sided at each end.</summary>

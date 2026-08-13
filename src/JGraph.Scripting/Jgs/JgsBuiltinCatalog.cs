@@ -1609,6 +1609,34 @@ public static class JgsBuiltinCatalog
         Add("ezcontour", "fcontour over [-2*pi 2*pi]: ezcontour(f).", P("f"), Opt("domain"));
         Add("ezcontourf", "The same contours, filled.", P("f"), Opt("domain"));
 
+        // --- volume visualization ----------------------------------------------------------------
+        // Every one of these reads the grid X, Y, Z before its readings, or leaves it out and takes
+        // the readings to be on the whole numbers.
+        Add("isosurface", "The surface where a volume reaches a level: fv = isosurface(X, Y, Z, V, level), or isosurface(...) on its own to draw it.", P("V"), Opt("level"), Opt("colors"));
+        Add("isocaps", "The lids that close an isosurface at the sides of its box: fv = isocaps(X, Y, Z, V, level, 'above'|'below').", P("V"), Opt("level"), Opt("side"));
+        Add("isonormals", "Which way each vertex of a surface faces, from the volume's own slope: n = isonormals(X, Y, Z, V, vertices) or isonormals(..., patch).", P("V"), P("vertices"));
+        Add("isocolors", "The reading of a colour volume at each vertex of a surface: c = isocolors(X, Y, Z, C, vertices) or isocolors(..., patch) to paint it.", P("C"), P("vertices"));
+        Add("smooth3", "A volume with each reading averaged over the block around it: smooth3(V), smooth3(V, 'gaussian'|'box', size, sd).", P("V"), Opt("filter"), Opt("size"), Opt("sd"));
+        Add("subvolume", "The part of a volume inside a box: [NX, NY, NZ, NV] = subvolume(X, Y, Z, V, [xmin xmax ymin ymax zmin zmax]); NaN leaves a side alone.", P("V"), P("limits"));
+        Add("reducevolume", "Every n-th reading of a volume: [NX, NY, NZ, NV] = reducevolume(X, Y, Z, V, [Rx Ry Rz]).", P("V"), P("factors"));
+        Add("volumebounds", "The box a grid covers, and the range of its readings: [xmin xmax ymin ymax zmin zmax cmin cmax] = volumebounds(X, Y, Z, V).", P("V"));
+        Add("reducepatch", "A surface with about the given share of its faces: [f, v] = reducepatch(fv, 0.2), or reducepatch(p, 0.2) to shrink a drawn one.", P("patch"), Opt("keep"));
+        Add("shrinkfaces", "Every face pulled in towards its own centre so the faces come apart: shrinkfaces(p, 0.3).", P("patch"), Opt("factor"));
+        Add("surf2patch", "A surface grid as faces and vertices: fv = surf2patch(X, Y, Z), or surf2patch(h), with 'triangles' to cut the quadrilaterals up.", P("X"), Opt("Y"), Opt("Z"), Opt("triangles"));
+        Add("curl", "How much a vector field turns: [cx, cy, cz, cav] = curl(X, Y, Z, U, V, W), or curl(X, Y, U, V) for a plane.", P("U"), P("V"), Opt("W"));
+        Add("divergence", "How much a vector field spreads out at each point: divergence(X, Y, Z, U, V, W), or divergence(X, Y, U, V).", P("U"), P("V"), Opt("W"));
+        Add("interp3", "A volume read at points that need not be on its grid: interp3(X, Y, Z, V, xq, yq, zq).", P("V"), P("xq"), P("yq"), P("zq"));
+        Add("stream2", "The traced points of streamlines through a plane field: verts = stream2(X, Y, U, V, sx, sy, [step maxverts]).", P("U"), P("V"), P("sx"), P("sy"));
+        Add("stream3", "The traced points of streamlines through a field in space: verts = stream3(X, Y, Z, U, V, W, sx, sy, sz, [step maxverts]).", P("U"), P("V"), P("W"), P("sx"), P("sy"), P("sz"));
+        Add("streamline", "Streamlines drawn: streamline(verts) from traced points, or streamline(X, Y, Z, U, V, W, sx, sy, sz) to trace them first.", P("verts"));
+        Add("streamslice", "Streamlines started on a lattice over a plane field, so no starting points need choosing: streamslice(X, Y, U, V, density).", P("U"), P("V"), Opt("density"));
+        Add("streamribbon", "A band along each streamline, turning the way the field turns: streamribbon(X, Y, Z, U, V, W, sx, sy, sz, width).", P("U"), P("V"), P("W"), P("sx"), P("sy"), P("sz"));
+        Add("streamtube", "A round tube along each streamline, widening where the field spreads: streamtube(X, Y, Z, U, V, W, sx, sy, sz, scale).", P("U"), P("V"), P("W"), P("sx"), P("sy"), P("sz"));
+        Add("coneplot", "An arrowhead at each given place, pointing the way the field points: coneplot(X, Y, Z, U, V, W, Cx, Cy, Cz, scale, 'quiver').", P("U"), P("V"), P("W"), P("Cx"), P("Cy"), P("Cz"));
+        Add("contourslice", "Contours on planes cut through a volume, drawn where the planes are: contourslice(X, Y, Z, V, Sx, Sy, Sz, levels).", P("V"), P("Sx"), P("Sy"), P("Sz"));
+
+        Add("ndgrid", "Coordinate arrays over the given vectors, the first running down the first dimension: [X, Y, Z] = ndgrid(x, y, z). meshgrid swaps the first two.", P("x"), Opt("y"), Opt("z"));
+
         Add("sphere", "The unit sphere: [X, Y, Z] = sphere(n), or sphere(n) to draw one.", Opt("n"));
         Add("cylinder", "A surface of revolution: [X, Y, Z] = cylinder(r, n), or cylinder(r) to draw one.", Opt("r"), Opt("n"));
         Add("ellipsoid", "An ellipsoid grid: [X, Y, Z] = ellipsoid(xc, yc, zc, xr, yr, zr, n).", P("xc"), P("yc"), P("zc"), P("xr"), P("yr"), P("zr"), Opt("n"));

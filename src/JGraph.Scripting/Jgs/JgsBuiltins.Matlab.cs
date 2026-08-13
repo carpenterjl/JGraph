@@ -590,21 +590,36 @@ internal static partial class JgsBuiltins
             return [pair.ElementAt(0), pair.ElementAt(1)];
         });
 
-        // meshgrid computes its [X, Y] pair as one array value; the wrapped form peels the pair
-        // apart for MATLAB's [X, Y] = meshgrid(x, y). The one-output form is X alone in MATLAB,
-        // while JGS keeps the pair — that is what 'let [X, Y] = meshgrid(x, y)' destructures.
-        if (env.TryGet("meshgrid", out JgsValue mesh) && mesh.Type == JgsType.Function)
+        // meshgrid and ndgrid compute their whole set of grids as one array value; the wrapped form
+        // peels that set apart for MATLAB's [X, Y, Z] = meshgrid(x, y, z). The one-output form is X
+        // alone in MATLAB, while JGS keeps the set — that is what 'let [X, Y] = meshgrid(x, y)'
+        // destructures. M59 made both names N-dimensional, so the peeling counts the grids rather
+        // than assuming there are two of them.
+        foreach (string name in (string[])["meshgrid", "ndgrid"])
         {
-            IJgsCallable pairForm = mesh.AsCallable;
-            Func<IReadOnlyList<JgsValue>, int, int, JgsValue> single = dialect.IsMatlab
-                ? (args, line, col) => pairForm.Call(args, line, col).ElementAt(0)
-                : pairForm.Call;
-            env.Declare("meshgrid", JgsValue.Function(new BuiltinFunction("meshgrid", single)
+            if (!env.TryGet(name, out JgsValue grid) || grid.Type != JgsType.Function)
             {
-                MultiOutput = (args, _, line, col) =>
+                continue;
+            }
+
+            IJgsCallable setForm = grid.AsCallable;
+            Func<IReadOnlyList<JgsValue>, int, int, JgsValue> single = dialect.IsMatlab
+                ? (args, line, col) => setForm.Call(args, line, col).ElementAt(0)
+                : setForm.Call;
+            env.Declare(name, JgsValue.Function(new BuiltinFunction(name, single)
+            {
+                MultiOutput = (args, wanted, line, col) =>
                 {
-                    JgsValue pair = pairForm.Call(args, line, col);
-                    return [pair.ElementAt(0), pair.ElementAt(1)];
+                    JgsValue set = setForm.Call(args, line, col);
+                    int available = set.ArrayLength;
+                    int answers = System.Math.Clamp(wanted, 1, available);
+                    var grids = new JgsValue[answers];
+                    for (int i = 0; i < answers; i++)
+                    {
+                        grids[i] = set.ElementAt(i);
+                    }
+
+                    return grids;
                 },
             }));
         }

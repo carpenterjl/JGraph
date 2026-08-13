@@ -1715,17 +1715,8 @@ internal static partial class JgsBuiltins
         DefineSilent("errorbar", (args, line, col) => ErrorBar(args, line, col));
 
         // --- 3D surfaces, contours, and images -----------------------------------------------
-        Define("meshgrid", (args, line, col) =>
-        {
-            ArityRange("meshgrid", args, 1, 2, line, col);
-            double[] x = DoubleArray("meshgrid", args, 0, line, col);
-            double[] y = args.Count == 2 ? DoubleArray("meshgrid", args, 1, line, col) : x; // meshgrid(x) = meshgrid(x, x)
-
-            return JgsValue.Array([
-                JgsMatrix.Build(y.Length, x.Length, (r, c) => x[c]),
-                JgsMatrix.Build(y.Length, x.Length, (r, c) => y[r]),
-            ]);
-        });
+        Define("meshgrid", (args, line, col) => Grids("meshgrid", args, line, col));
+        Define("ndgrid", (args, line, col) => Grids("ndgrid", args, line, col));
 
         DefineSilent("surf", (args, line, col) => Surface3D("surf", args, line, col,
             (x, y, z) => JG.Surf(x, y, z), z => JG.Surf(z), (x, y, z) => JG.Surf(x, y, z)));
@@ -1968,6 +1959,9 @@ internal static partial class JgsBuiltins
 
         // The function plotters draw with the verbs above, so they are declared after all of them.
         RegisterFunctionPlotBuiltins(env);
+
+        // The volume verbs draw with those too, and several of them hand a shape to `patch`.
+        RegisterVolumeBuiltins(env);
 
         // After the plotting verbs it re-declares: the titling family gains its text options here,
         // and contour learns to answer with its matrix as well as its handle.

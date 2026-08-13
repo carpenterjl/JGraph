@@ -471,6 +471,11 @@ internal static class JgsGraphicsProperties
             Put(table, "YData", entry => Row([.. ((PatchPlot)entry.Target).Y]));
             Put(table, "ZData", entry => Row([.. ((PatchPlot)entry.Target).Z]));
             Put(table, "Faces", entry => FaceTable((PatchPlot)entry.Target));
+
+            // M59: 'Vertices' is the other half of the pair a script writes a patch with, and it was
+            // missing while 'Faces' answered — so `patch('Faces', F, 'Vertices', V)` could be read
+            // back only halfway. It is the same n-by-3 table the verb was handed.
+            Put(table, "Vertices", entry => VertexTable((PatchPlot)entry.Target));
         }
 
         if (typeof(SurfacePlot).IsAssignableFrom(type))
@@ -1471,6 +1476,21 @@ internal static class JgsGraphicsProperties
             {
                 table[r, c] = c < faces[r].Length ? faces[r][c] + 1 : double.NaN;
             }
+        }
+
+        return Grid(table);
+    }
+
+    /// <summary>A patch's vertices as the n-by-3 table a script writes them in.</summary>
+    private static JgsValue VertexTable(PatchPlot patch)
+    {
+        int count = patch.X.Count;
+        var table = new double[count, 3];
+        for (int r = 0; r < count; r++)
+        {
+            table[r, 0] = patch.X[r];
+            table[r, 1] = patch.Y[r];
+            table[r, 2] = patch.Z[r];
         }
 
         return Grid(table);

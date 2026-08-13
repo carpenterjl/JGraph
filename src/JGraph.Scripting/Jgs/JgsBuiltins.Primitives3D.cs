@@ -354,12 +354,63 @@ internal static partial class JgsBuiltins
         (IReadOnlyList<JgsValue> data, List<(string Name, JgsValue Value)> options) =
             SplitTrailingOptions(args, PatchOptionNames);
 
+        // patch(fv) — a struct holding faces and vertices, which is what every verb in the M59 volume
+        // family hands back when a script asks for the shape instead of the drawing. Reading it here
+        // is what closes the loop between 'fv = isosurface(…)' and 'patch(fv)'.
+        if (data.Count == 1 && data[0].Type == JgsType.Struct)
+        {
+            foreach ((string name, JgsValue value) in FaceVertexFields(verb, data[0], line, col))
+            {
+                options.Insert(0, (name, value));
+            }
+
+            data = [];
+        }
+
         PatchPlot patch = data.Count == 0
             ? FromFacesAndVertices(verb, options, line, col)
             : FromCoordinates(verb, data, line, col, dimensions);
 
         ApplyPatchOptions(verb, patch, options, line, col);
         return Handle(patch);
+    }
+
+    /// <summary>
+    /// The faces, vertices and per-vertex colours of a <c>patch(fv)</c> struct, as the name/value
+    /// pairs the <c>'Faces'</c>/<c>'Vertices'</c> form already reads.
+    /// </summary>
+    /// <remarks>
+    /// The field names are matched without regard to case because MATLAB writes them lower-case in a
+    /// struct and capitalised as properties, and a script that built its own struct by hand may have
+    /// used either. A struct without both is refused by name rather than treated as coordinates,
+    /// because the mistake is almost always a misspelt field.
+    /// </remarks>
+    private static List<(string Name, JgsValue Value)> FaceVertexFields(
+        string verb, JgsValue value, int line, int col)
+    {
+        Dictionary<string, JgsValue> fields = value.AsStruct;
+        var found = new List<(string, JgsValue)>();
+
+        foreach (string wanted in (string[])["Faces", "Vertices", "FaceVertexCData"])
+        {
+            foreach ((string name, JgsValue field) in fields)
+            {
+                if (name.Equals(wanted, StringComparison.OrdinalIgnoreCase))
+                {
+                    found.Add((wanted, field));
+                    break;
+                }
+            }
+        }
+
+        if (found.Count < 2 || found[0].Item1 != "Faces" || found[1].Item1 != "Vertices")
+        {
+            throw new JgsRuntimeException(line, col,
+                $"{verb}: a struct has to hold both 'faces' and 'vertices'; this one holds "
+                + $"{(fields.Count == 0 ? "nothing" : string.Join(", ", fields.Keys))}.");
+        }
+
+        return found;
     }
 
     /// <summary>

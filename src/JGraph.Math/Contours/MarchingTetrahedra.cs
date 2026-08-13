@@ -3,7 +3,8 @@ namespace JGraph.Maths.Contours;
 /// <summary>A triangulated surface: a list of vertices and the triangles that index into it.</summary>
 public sealed class IsoMesh
 {
-    internal IsoMesh(double[] x, double[] y, double[] z, int[][] faces)
+    /// <summary>Builds a mesh from its vertices and the triangles indexing into them.</summary>
+    public IsoMesh(double[] x, double[] y, double[] z, int[][] faces)
     {
         X = x;
         Y = y;

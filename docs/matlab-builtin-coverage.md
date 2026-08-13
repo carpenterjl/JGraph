@@ -17,18 +17,23 @@ handle-graphics builtins it implemented: `get` `set` `findobj` `isgraphics` `ish
 angular family MATLAB documents as kind *builtin* — every verb that draws on the axes it makes is a
 *function*, counted in the second table.
 
-**192 of the 266 documented graphics functions** — the second table below, new in M45, moved by 52 in
+**213 of the 267 documented graphics functions** — the second table below, new in M45, moved by 52 in
 M54, by 13 in M55, by 17 in M56 (the eight angular chart verbs and the nine polar rulers), by 13
-in M57, which empties the chart-type family below but for two names excluded with reasons, and by 16
-in M58, which empties the function-plotter family outright. The
-denominator has now been corrected twice, and both corrections are worth
+in M57, which empties the chart-type family below but for two names excluded with reasons, by 16
+in M58, which empties the function-plotter family outright, and by 21 in M59, which empties the
+volume family but for two names excluded with reasons. The
+denominator has now been corrected three times, and all three corrections are worth
 stating rather than quietly overwriting. M54's: this file said 263 from M45, which was one short *and*
 two names wrong in both directions — `slice` was counted in the implemented table and listed again
 among the missing volume names, while `close` (M35) and `linkaxes` (M51) were graphics functions the
 file never put in either list. M55's: `bubblesize` and `bubblelim` are documented graphics functions
 that appeared in neither list either, found because implementing them moved the checklist tool by two
-names this file could not account for. **That is the third time the same kind of gap has surfaced, and
-always the same way — a name is absent from a list rather than marked missing in it.** 266 is the count
+names this file could not account for. **M59's is the plainest of the three: the volume family below
+listed twenty-three names under a heading that said twenty-two**, so the remainder read 74 where it
+was 75 and the denominator read 266 where it is 267. **That is the fourth time the same kind of gap
+has surfaced, and always the same way — a name is present in a list but absent from its count.** The
+check that catches it is to count the names in a list rather than to trust the number at its head, and
+it is worth running on every family this file still carries. 267 is the count
 under `graph2d`, `graph3d`, `specgraph` and `graphics` as this file now enumerates them.
 
 The nine-name gap this paragraph used to record is closed. From M54 to M56 a fresh run of
@@ -40,8 +45,8 @@ see. This file refused to count them while they drew nothing; **M56 made them re
 number and this one agree again. `opengl` *is* counted, because an accepted no-op is an answer — the
 same reading that counted `shading`, `lighting` and `camlight` in M43.
 
-Across every callable kind — builtin, function, operator, keyword, script — the count is **758 of
-2,027** as of M58 (742 after M57, 728 after M56, 710 after M55 by this file's nine-short reading above, 697 after M54, 633 after
+Across every callable kind — builtin, function, operator, keyword, script — the count is **781 of
+2,027** as of M59 (758 after M58, 742 after M57, 728 after M56, 710 after M55 by this file's nine-short reading above, 697 after M54, 633 after
 M52, 619 after M51, up from 560, and not from the 556 this file used to claim: the checklist tool
 read the implemented set with a regular expression that only matched a name literal directly inside
 `Add(`, so it missed the sixteen colormap generators, which are registered from a loop, and reported
@@ -57,6 +62,11 @@ documented under `matlab/polyfun` rather than under any graphics folder, so it b
 builtin table nor the graphics one and shows up only in this total. M58 added sixteen, and all sixteen
 move the graphics table with it: the seven `f*` verbs are documented under `matlab/graphics` and the
 nine `ez*` ones under `matlab/specgraph`, and not one of the sixteen is documented as kind *builtin*.
+M59 added twenty-three, of which twenty-one move the graphics table — every volume name but
+`surf2patch` is documented under `matlab/specgraph`, and that one under `matlab/graphics`. The other
+two are the base names the family could not be called without: `ndgrid` under `matlab/elmat` and
+`interp3` under `matlab/polyfun`, so they belong to neither table above and show up only in this
+total.
 
 M46 moved that total by **nine and moved neither table above**, which is worth stating plainly. The
 Image Processing Toolbox is tracked separately in `matlab-ipt-coverage.md` because the R2021b dump
@@ -204,15 +214,17 @@ count in the first table instead.
 | The angular family | M56 | `polarplot` `polarscatter` `polarhistogram` `polarbubblechart` `compass` `feather` `rose` `polar` — one new plot object (`PolarHistogramPlot`); every other verb is an ordinary plot handed the polar mapper |
 | The tier-two charts | M57 | `bar3` `bar3h` `stem3` `pie3` `binscatter` `swarmchart` `swarmchart3` `bubblechart3` `voronoi` `triplot` `tetramesh` `stackedplot` `scatterhistogram` — four new plot objects out of thirteen verbs: the swarms and the 3-D bubbles are jitter properties on the two scatters, the diagram and the triangulations are lines and a patch over a new Delaunay kernel, and the last two are compositions that draw nothing of their own |
 | The function plotters | M58 | `fplot` `fplot3` `fsurf` `fmesh` `fcontour` `fimplicit` `fimplicit3` and the nine `ez*` spellings — no new plot object at all: each verb decides where to read its function and hands the readings to a line, a surface, a contour or a patch that already existed, so a saved figure holds the drawing and not the function |
+| Volume visualization | M59 | `isosurface` `isocaps` `isonormals` `isocolors` `contourslice` `coneplot` `streamline` `stream2` `stream3` `streamribbon` `streamtube` `streamslice` `curl` `divergence` `smooth3` `subvolume` `reducevolume` `reducepatch` `volumebounds` `shrinkfaces` `surf2patch` — twenty-one verbs and no new plot object: the isosurface family draws with `patch`, the stream family with `plot3` and `surf`, and a field is a plain three-dimensional array, so the whole milestone is arithmetic followed by an existing drawing |
 | The polar rulers | M56 | `rticks` `rticklabels` `rtickangle` `rtickformat` `rlim` `thetaticks` `thetaticklabels` `thetatickformat` `thetalim` — registered as refusals in M54, real now; r is the Cartesian tick machinery pointed at `RAxis`, θ converts units at the boundary and answers through the spoke arithmetic the renderer draws with |
 
-### What the remaining 74 are
+### What the remaining 54 are
 
-Four families and two excluded names, and they add to exactly 74 — and after M57 **not one of them is
-a missing plot**. This section read 185 from M45 until M54 emptied two of the five families and most
-of a third, 131 until M55 took ten of the chart types, 120 until M56 took the angular family, 103
-until M57 took the thirteen left, and 90 until M58 took all sixteen function plotters; the milestone
-each family is now waiting on is named beside it.
+Four families and four excluded names, and they add to exactly 54 — and after M57 **not one of them
+is a missing plot**. This section read 185 from M45 until M54 emptied two of the five families and
+most of a third, 131 until M55 took ten of the chart types, 120 until M56 took the angular family,
+103 until M57 took the thirteen left, 90 until M58 took all sixteen function plotters, and 75 until
+M59 took twenty-one of the twenty-three volume names; the milestone each family is now waiting on is
+named beside it. **After M60 there is nothing left here that draws.**
 
 **Chart types with no plot object — 2, both excluded.** `wordcloud` and `parallelplot`. Each of the
 other thirteen was a plot object, a renderer branch, `.graph` serialization and inspector support —
@@ -240,16 +252,25 @@ sample adaptively — a surface here is a grid, so there is nowhere to put a rea
 part of the picture and not to the rest of its row, and density is the whole of the control. Only the
 curve plotters refine.
 
-**Volume visualization — 22.** `isosurface` `isocaps` `isonormals` `isocolors` `contourslice`
-`coneplot` `streamline` `stream2` `stream3` `streamribbon` `streamtube` `streamslice`
-`streamparticles` `curl` `divergence` `smooth3` `subvolume` `reducevolume` `reducepatch`
-`interpstreamspeed` `volumebounds` `shrinkfaces` `surf2patch`. A 3-D scalar or vector field turned out
-not to need a value type at all — since M41 it is a plain 3-D shaped array — so M59 is drawing work
-rather than model work, and `fimplicit3` builds the marching cubes for it in M58. **`slice` cannot take
-its own name at all**: it has been the JGS array builtin since M18, and shadowing a working builtin to
-add a volume verb JGraph could not draw anyway would be a straight loss. It is counted implemented in
-the table above and no longer listed here as well, which is where one of this section's two
-double-counted names came from.
+**Volume visualization — 2, both excluded. M59 took the other twenty-one.** The reading this file had
+of the family was right on both counts it had committed to: a 3-D scalar or vector field needs no
+value type at all — since M41 it is a plain 3-D shaped array — and `fimplicit3`'s surface finder,
+built in M58 deliberately ahead of here, was the piece that made `isosurface` a day's work rather than
+a milestone's. What it did not anticipate is that almost none of the family could be *called* yet:
+a field is written `[X, Y, Z] = meshgrid(x, y, z)` and `meshgrid` took two vectors, so M59's first
+work was three dimensions for `meshgrid`, `ndgrid` beside it, `gradient` over any number of
+dimensions, `interp3`, and `patch(fv)` — which the roadmap had assumed existed since M45 and did not.
+
+The two left are animation rather than drawing. **`streamparticles`** moves markers along a
+streamline over time and **`interpstreamspeed`** exists to feed it by respacing a line so that even
+steps take even times; both need a loop the figure model does not have, which is what M60's animation
+seam is for. If that seam lands they are a short follow-on rather than a milestone of their own.
+
+**`slice` cannot take its own name at all**: it has been the JGS array builtin since M18, and
+shadowing a working builtin to add a volume verb would be a straight loss. It is counted implemented
+in the table above and no longer listed here as well, which is where one of this section's
+double-counted names came from — the other was this family's own heading, which said twenty-two while
+listing twenty-three, and is corrected at the top of this file.
 
 **Handle graphics and figure tooling — 36.** `alim` `alpha` `alphamap` `annotation` `getframe`
 `getappdata` `isappdata` `linkprop` `openfig` `savefig` `hgload` `hgsave` `plotedit` `plottools`
@@ -391,6 +412,31 @@ M58's, from the function plotters (ADR 0058 carries the reasoning):
   where it is zero; a function handle is always read as a function of one variable, because a handle
   carries no count of its own arguments here. `fimplicit` is the same drawing under the name that
   says so.
+
+M59's, from the volume verbs (ADR 0059 carries the reasoning):
+
+- **`isonormals` reads the field, not the mesh.** A vertex normal is the negated slope of the volume
+  at that vertex rather than the average of the triangles meeting there. It has to be: the surface
+  finder does not make its winding consistent, so triangle directions cancel at a shared vertex. This
+  is also what MATLAB does, so the fix and the fidelity are the same change.
+- **`reducepatch` clusters vertices where MATLAB collapses edges.** Every vertex moves to the centre
+  of a lattice cell and the collapsed triangles go, which is cruder and *moves* vertices where
+  MATLAB's keeps a subset of the originals. The lattice is found by search — double until the target
+  is reached, then narrow — so the answer is the closest lattice at or above the share asked for,
+  never fewer faces than were asked for.
+- **A `streamtube`'s width is clamped** to between a quarter and four times its base. The width says
+  how much the field spreads out, and a field can spread arbitrarily fast; without the clamp one
+  outlier flattens everything else in the picture.
+- **`coneplot` draws all of a call's cones as one patch**, so a script gets one handle rather than a
+  cloud of them, and `'quiver'` gives honest `quiver3` arrows — the M55 rule again, that a chart built
+  out of another chart answers as what it is made of.
+- **`contourslice` gives one line per level per plane**, with the pieces of a contour that comes apart
+  joined by a break, which is the arrangement `fimplicit` already uses. MATLAB returns one object per
+  contour piece.
+- **`interp3` is linear only.** A volume is read by straight lines along each direction; the spline
+  and cubic methods are refused by name with that reason rather than accepted and approximated.
+- **`isosurface`'s `'noshare'` and `'verbose'` are accepted and change nothing.** Vertices are always
+  shared here, which is what makes the surface watertight, and there is nothing to report.
 
 - **There is no depth buffer.** Painter's algorithm sorts faces within a plot, so two 3-D plots in
   one axes interleave by draw order rather than by geometry. A surface and a `plot3` line through it
