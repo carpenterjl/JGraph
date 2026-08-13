@@ -64,6 +64,57 @@ public static class Binning
     }
 
     /// <summary>
+    /// How many of the <c>(x, y)</c> pairs fall in each cell of the grid the two sets of edges
+    /// describe, indexed <c>[x bin, y bin]</c>.
+    /// <para>
+    /// That way round is MATLAB's: <c>binscatter</c>'s <c>Values</c> is as many rows as there are
+    /// bins across, so a column of the answer is a column of the picture. A pair with either
+    /// coordinate outside its own edges is outside the grid, which is the one-dimensional rule
+    /// applied twice rather than a new one.
+    /// </para>
+    /// </summary>
+    public static double[,] Counts2D(
+        IReadOnlyList<double> xs,
+        IReadOnlyList<double> ys,
+        IReadOnlyList<double> xEdges,
+        IReadOnlyList<double> yEdges)
+    {
+        ArgumentNullException.ThrowIfNull(xs);
+        ArgumentNullException.ThrowIfNull(ys);
+        ArgumentNullException.ThrowIfNull(xEdges);
+        ArgumentNullException.ThrowIfNull(yEdges);
+
+        var counts = new double[
+            System.Math.Max(0, xEdges.Count - 1),
+            System.Math.Max(0, yEdges.Count - 1)];
+
+        int pairs = System.Math.Min(xs.Count, ys.Count);
+        for (int i = 0; i < pairs; i++)
+        {
+            int column = BinOf(xs[i], xEdges);
+            int row = BinOf(ys[i], yEdges);
+            if (column >= 0 && row >= 0)
+            {
+                counts[column, row]++;
+            }
+        }
+
+        return counts;
+    }
+
+    /// <summary>
+    /// How many bins to use per side for <paramref name="count"/> readings when nobody said: the
+    /// square-root choice, held to at least one and at most <paramref name="most"/>.
+    /// <para>
+    /// MATLAB does not document how <c>binscatter</c> picks its own default, so this is a recorded
+    /// divergence rather than an imitation. The square root is the same rule a histogram uses, and
+    /// the cap is what keeps a million readings from asking for a thousand bins a side.
+    /// </para>
+    /// </summary>
+    public static int SquareRootChoice(int count, int most = 100) =>
+        System.Math.Clamp((int)System.Math.Ceiling(System.Math.Sqrt(System.Math.Max(0, count))), 1, most);
+
+    /// <summary>
     /// <paramref name="count"/> bins of equal width filling the span from <paramref name="low"/> to
     /// <paramref name="high"/>. The last edge is set rather than accumulated, so a chart asked for
     /// bins covering a full turn ends exactly on it and not a rounding error short.

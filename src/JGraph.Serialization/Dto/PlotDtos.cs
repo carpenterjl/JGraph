@@ -16,6 +16,7 @@ namespace JGraph.Serialization.Dto;
 [JsonDerivedType(typeof(AreaPlotDto), "area")]
 [JsonDerivedType(typeof(PiePlotDto), "pie")]
 [JsonDerivedType(typeof(HeatmapPlotDto), "heatmap")]
+[JsonDerivedType(typeof(BinScatterPlotDto), "binscatter")]
 [JsonDerivedType(typeof(BoxChartPlotDto), "boxchart")]
 [JsonDerivedType(typeof(StemPlotDto), "stem")]
 [JsonDerivedType(typeof(HistogramPlotDto), "histogram")]
@@ -28,6 +29,9 @@ namespace JGraph.Serialization.Dto;
 [JsonDerivedType(typeof(ConstantLinePlotDto), "constantline")]
 [JsonDerivedType(typeof(Line3DPlotDto), "line3d")]
 [JsonDerivedType(typeof(Scatter3DPlotDto), "scatter3d")]
+[JsonDerivedType(typeof(Stem3DPlotDto), "stem3d")]
+[JsonDerivedType(typeof(Bar3DPlotDto), "bar3d")]
+[JsonDerivedType(typeof(Pie3DPlotDto), "pie3d")]
 [JsonDerivedType(typeof(PatchPlotDto), "patch")]
 [JsonDerivedType(typeof(QuiverPlotDto), "quiver")]
 [JsonDerivedType(typeof(PolarGridDto), "polarGrid")]
@@ -97,6 +101,19 @@ public sealed class ScatterPlotDto : PlotDto
     /// thing telling a saved <c>bubblechart</c> from a saved <c>scatter</c> carrying sizes.
     /// </summary>
     public bool BubbleSizing { get; set; }
+
+    /// <summary>How points sharing an x are spread sideways — what tells a swarm chart from a scatter.</summary>
+    public JitterStyle XJitter { get; set; }
+
+    public JitterStyle YJitter { get; set; }
+
+    /// <summary>
+    /// The spread widths that were set, zero for the ones left to follow the data — the widths in
+    /// force are worked out again on load rather than frozen into the file.
+    /// </summary>
+    public double XJitterWidth { get; set; }
+
+    public double YJitterWidth { get; set; }
 
     public ColormapDto Colormap { get; set; } = new("Parula", Array.Empty<Color>());
 
@@ -225,6 +242,36 @@ public sealed class HeatmapPlotDto : PlotDto
     public Color MissingDataColor { get; set; } = Color.FromScRgb(0.15, 0.15, 0.15);
 
     public string MissingDataLabel { get; set; } = "NaN";
+}
+
+/// <summary>
+/// The serialized form of a <see cref="BinScatterPlot"/>. The readings are stored and the bins are
+/// counted again on load, the same way a histogram keeps its samples rather than its bars — it is
+/// the smaller of the two for the sample sizes this chart is for, and it is the only form that lets
+/// the bin count be changed after the fact.
+/// </summary>
+public sealed class BinScatterPlotDto : PlotDto
+{
+    public double[] XData { get; set; } = Array.Empty<double>();
+
+    public double[] YData { get; set; } = Array.Empty<double>();
+
+    public int NumBinsX { get; set; } = 1;
+
+    public int NumBinsY { get; set; } = 1;
+
+    /// <summary>The span the bins cover across, or null when it comes from the readings.</summary>
+    public RangeDto? XLimits { get; set; }
+
+    /// <summary>The span the bins cover up, or null when it comes from the readings.</summary>
+    public RangeDto? YLimits { get; set; }
+
+    public bool ShowEmptyBins { get; set; }
+
+    public ColormapDto Colormap { get; set; } = new("Parula", Array.Empty<Color>());
+
+    /// <summary>The colour limits that were set, or null when they come from the counts.</summary>
+    public RangeDto? ColorLimits { get; set; }
 }
 
 /// <summary>The serialized form of a <see cref="BoxChartPlot"/>.</summary>
@@ -545,6 +592,23 @@ public sealed class Scatter3DPlotDto : PlotDto
 
     public double EdgeWidth { get; set; } = 1.0;
 
+    /// <summary>Whether the sizes are bubble values rather than marker areas (<c>bubblechart3</c>).</summary>
+    public bool BubbleSizing { get; set; }
+
+    /// <summary>How points sharing a coordinate are spread along it (<c>swarmchart3</c>).</summary>
+    public JitterStyle XJitter { get; set; }
+
+    public JitterStyle YJitter { get; set; }
+
+    public JitterStyle ZJitter { get; set; }
+
+    /// <summary>The spread widths that were set, zero for the ones still following the data.</summary>
+    public double XJitterWidth { get; set; }
+
+    public double YJitterWidth { get; set; }
+
+    public double ZJitterWidth { get; set; }
+
     public ColormapDto Colormap { get; set; } = new("Parula", Array.Empty<Color>());
 
     public bool AutoScaleColor { get; set; } = true;
@@ -552,6 +616,97 @@ public sealed class Scatter3DPlotDto : PlotDto
     public double ColorMin { get; set; }
 
     public double ColorMax { get; set; } = 1;
+}
+
+/// <summary>The serialized form of a <see cref="Stem3DPlot"/>.</summary>
+public sealed class Stem3DPlotDto : PlotDto
+{
+    public double[] X { get; set; } = Array.Empty<double>();
+
+    public double[] Y { get; set; } = Array.Empty<double>();
+
+    public double[] Z { get; set; } = Array.Empty<double>();
+
+    public Color? Color { get; set; }
+
+    public double LineWidth { get; set; } = 1.5;
+
+    public DashStyle Dash { get; set; }
+
+    public double Baseline { get; set; }
+
+    public MarkerType Marker { get; set; } = MarkerType.Circle;
+
+    public double MarkerSize { get; set; } = 6;
+
+    public Color? MarkerFill { get; set; }
+}
+
+/// <summary>The serialized form of a <see cref="Bar3DPlot"/>.</summary>
+public sealed class Bar3DPlotDto : PlotDto
+{
+    public double[][] ZData { get; set; } = Array.Empty<double[]>();
+
+    /// <summary>Where each row sits, or null when the rows are the counting numbers.</summary>
+    public double[]? RowPositions { get; set; }
+
+    public Bar3DStyle Style { get; set; }
+
+    public bool Horizontal { get; set; }
+
+    public double BarWidth { get; set; } = 0.8;
+
+    public double Baseline { get; set; }
+
+    public Color? FaceColor { get; set; }
+
+    /// <summary>The edge colour; null reads as the default black, as it does for a patch.</summary>
+    public Color? EdgeColor { get; set; }
+
+    /// <summary>Whether the boxes are outlined at all, which is what records an edge turned off.</summary>
+    public bool EdgeVisible { get; set; } = true;
+
+    public double LineWidth { get; set; } = 0.5;
+
+    public double FaceAlpha { get; set; } = 1.0;
+
+    public ColormapDto Colormap { get; set; } = new("Parula", Array.Empty<Color>());
+}
+
+/// <summary>The serialized form of a <see cref="Pie3DPlot"/>.</summary>
+public sealed class Pie3DPlotDto : PlotDto
+{
+    public double[] Values { get; set; } = Array.Empty<double>();
+
+    /// <summary>How far each wedge is pushed out, or null when none is.</summary>
+    public double[]? Explode { get; set; }
+
+    /// <summary>What is written beside each wedge, or null for the automatic percentages.</summary>
+    public string[]? Labels { get; set; }
+
+    public ColormapDto Colormap { get; set; } = new("Parula", Array.Empty<Color>());
+
+    /// <summary>The edge colour; null reads as the white outline a pie carries by default.</summary>
+    public Color? EdgeColor { get; set; }
+
+    /// <summary>Whether the faces are outlined at all, which is what records an edge turned off.</summary>
+    public bool EdgeVisible { get; set; } = true;
+
+    public double LineWidth { get; set; } = 1.0;
+
+    public double FaceAlpha { get; set; } = 1.0;
+
+    public double StartAngle { get; set; } = 90;
+
+    public bool Clockwise { get; set; }
+
+    public double Height { get; set; } = 0.3;
+
+    public bool ShowLabels { get; set; } = true;
+
+    public double LabelRadius { get; set; } = 1.2;
+
+    public TextStyleDto? LabelStyle { get; set; }
 }
 
 /// <summary>The serialized form of a <see cref="PatchPlot"/>.</summary>

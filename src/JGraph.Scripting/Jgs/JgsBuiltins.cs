@@ -1959,7 +1959,12 @@ internal static partial class JgsBuiltins
         RegisterSurfaceVariantBuiltins(env, dialect);
         RegisterGraphics2DBuiltins(env, dialect);
         RegisterPolarBuiltins(env, dialect);
+        RegisterMeshPlotBuiltins(env);
+        RegisterChart3DBuiltins(env);
+        RegisterDensityBuiltins(env);
+        RegisterSwarmBuiltins(env);
         RegisterCompositionBuiltins(env);
+        RegisterPanelCompositionBuiltins(env);
 
         // After the plotting verbs it re-declares: the titling family gains its text options here,
         // and contour learns to answer with its matrix as well as its handle.

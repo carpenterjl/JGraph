@@ -349,6 +349,7 @@ public static class JgsBuiltinCatalog
         Add("cholupdate", "The Cholesky factor of r'*r + x*x', or of r'*r - x*x' with '-'.", P("r"), P("x"), Opt("sign"));
         Add("qrupdate", "The QR factors of a + u*v', from the factors of a.", P("q"), P("r"), P("u"), P("v"));
         Add("delaunay", "The Delaunay triangulation of a set of points, as triangle vertex indices.", P("x"), Opt("y"));
+        Add("voronoin", "The Voronoi diagram of the rows of X: [V, C] with the vertices and one cell of vertex numbers per point, row 1 of V being the point at infinity.", P("X"));
         Add("contourc", "The contour matrix of z at the given levels, without drawing anything.", P("z"), Opt("a"), Opt("b"), Opt("levels"));
 
         // --- Special functions ---------------------------------------------------------------------
@@ -1498,6 +1499,8 @@ public static class JgsBuiltinCatalog
         Add("pareto", "Contributions ranked largest first, with the running share on a second ruler: pareto(y), pareto(y, names), pareto(y, 0.8).", P("y"), Opt("names"), Opt("threshold"));
         Add("plotmatrix", "A grid of scatter plots, one per pair of columns: plotmatrix(x), plotmatrix(x, y), [h, ax] = plotmatrix(x).", P("x"), Opt("y"), Opt("spec"));
         Add("plotyy", "Two series against two y scales on one axes: plotyy(x1, y1, x2, y2), plotyy(x1, y1, x2, y2, 'bar').", P("x1"), P("y1"), P("x2"), P("y2"), Opt("verb"), Opt("verb2"));
+        Add("stackedplot", "One panel per variable, stacked over a shared x: stackedplot(tbl), stackedplot(tbl, vars), stackedplot(X, Y), 'XVariable', 'DisplayLabels'.", P("tbl"), Opt("vars"), Opt("option"), Opt("value"));
+        Add("scatterhistogram", "Points with each coordinate's distribution drawn beside them: scatterhistogram(x, y), scatterhistogram(tbl, xvar, yvar), 'GroupVariable', 'NumBins'.", P("x"), P("y"), Opt("yvar"), Opt("option"), Opt("value"));
         Add("stem", "Stem plot: stem(y) or stem(x, y).", P("x"), Opt("y"));
         Add("histogram", "Histogram with bins bars (default 10): histogram(values, bins?) or histogram(table, column, bins?).", P("values"), Opt("bins"));
         Add("errorbar", "Line plot with symmetric error bars: errorbar(x, y, error) or errorbar(table, xColumn, yColumn, errorColumn).", P("x"), P("y"), P("error"));
@@ -1574,6 +1577,17 @@ public static class JgsBuiltinCatalog
         Add("quiver3", "Arrows in space: quiver3(x, y, z, u, v, w), with an optional scale.", P("x"), P("y"), P("z"), P("u"), P("v"), P("w"));
         Add("trisurf", "A triangulated surface over a vertex list: trisurf(tri, x, y, z).", P("tri"), P("x"), P("y"), P("z"), Opt("c"));
         Add("trimesh", "The same triangulation drawn as colored edges only.", P("tri"), P("x"), P("y"), P("z"), Opt("c"));
+        Add("voronoi", "The Voronoi diagram of a point set, drawn: voronoi(x, y), or [vx, vy] = voronoi(...) for the edges instead.", P("x"), P("y"), Opt("tri"), Opt("spec"));
+        Add("triplot", "The edges of a triangulation: triplot(tri, x, y), or [xd, yd] = triplot(...) for the path instead.", P("tri"), P("x"), P("y"), Opt("spec"));
+        Add("tetramesh", "The faces of a tetrahedral mesh: tetramesh(T, X), with an optional colour per tetrahedron.", P("T"), P("X"), Opt("c"));
+        Add("stem3", "Stems rising to points in space: stem3(z), stem3(x, y, z), then 'filled', a line spec and options.", P("x"), Opt("y"), Opt("z"));
+        Add("bar3", "A matrix as a field of bars: bar3(z), bar3(y, z), then a width, a layout word ('detached', 'grouped', 'stacked') and options.", P("y"), Opt("z"), Opt("width"));
+        Add("bar3h", "The same chart with the bars laid along x instead of standing up.", P("y"), Opt("z"), Opt("width"));
+        Add("pie3", "A raised pie chart: pie3(x), pie3(x, explode), pie3(x, labels).", P("x"), Opt("explode"), Opt("labels"));
+        Add("binscatter", "The readings counted into a grid of bins and coloured by how many fell in each: binscatter(x, y), binscatter(x, y, nbins).", P("x"), P("y"), Opt("nbins"));
+        Add("swarmchart", "A scatter whose crowded points are spread sideways so all of them show: swarmchart(x, y), swarmchart(x, y, sz, c).", P("x"), P("y"), Opt("sz"), Opt("c"));
+        Add("swarmchart3", "The same spread in space: swarmchart3(x, y, z), swarmchart3(x, y, z, sz, c).", P("x"), P("y"), P("z"), Opt("sz"), Opt("c"));
+        Add("bubblechart3", "Bubbles in space sized by a fourth variable: bubblechart3(x, y, z, sz), bubblechart3(x, y, z, sz, c).", P("x"), P("y"), P("z"), P("sz"), Opt("c"));
         Add("sphere", "The unit sphere: [X, Y, Z] = sphere(n), or sphere(n) to draw one.", Opt("n"));
         Add("cylinder", "A surface of revolution: [X, Y, Z] = cylinder(r, n), or cylinder(r) to draw one.", Opt("r"), Opt("n"));
         Add("ellipsoid", "An ellipsoid grid: [X, Y, Z] = ellipsoid(xc, yc, zc, xr, yr, zr, n).", P("xc"), P("yc"), P("zc"), P("xr"), P("yr"), P("zr"), Opt("n"));

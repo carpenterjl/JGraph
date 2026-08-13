@@ -122,4 +122,48 @@ public class MatlabScalarArgumentTests : IDisposable
         h = gca;
         assert(~isempty(h));
         """);
+
+    /// <summary>
+    /// M57 wave G: subscripting a scalar. A single number is a one-by-one array, so <c>x(1)</c> reads
+    /// it back — found writing M57's stress script, where a chart verb that drew one thing handed back
+    /// one handle and <c>h(1)</c>, the spelling that works when it drew several, could not read it.
+    /// </summary>
+    [Fact]
+    public Task ASingleNumberIsAOneByOneArray() => RunAsserting("""
+        x = 7;
+        assert(x(1) == 7);
+        assert(x(1, 1) == 7);
+        assert(isequal(x([1 1]), [7 7]));
+        assert(isequal(x(:), 7));
+        assert(numel(x(1)) == 1);
+
+        % A logical is one too, and the class of the reading is the class of the value.
+        b = true;
+        assert(b(1) == true);
+        assert(strcmp(class(x(1)), 'double'));
+        y = uint8(200);
+        assert(strcmp(class(y(1)), 'uint8'));
+
+        % Reaching past the one element is still out of bounds.
+        ok = 0;
+        try
+            x(2);
+        catch err
+            ok = 1;
+        end
+        assert(ok == 1);
+        """);
+
+    /// <summary>
+    /// The same reading through a handle, which is what found it: one plot, one handle, and the two
+    /// spellings agreeing.
+    /// </summary>
+    [Fact]
+    public Task ALoneHandleCanBeSubscripted() => RunAsserting("""
+        figure(1);
+        h = plot([1 2 3]);
+        assert(numel(h) == 1);
+        assert(strcmp(get(h(1), 'Type'), 'line'));
+        assert(h(1) == h);
+        """);
 }

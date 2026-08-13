@@ -17,8 +17,10 @@ handle-graphics builtins it implemented: `get` `set` `findobj` `isgraphics` `ish
 angular family MATLAB documents as kind *builtin* — every verb that draws on the axes it makes is a
 *function*, counted in the second table.
 
-**163 of the 266 documented graphics functions** — the second table below, new in M45, moved by 52 in
-M54, by 13 in M55 and by 17 in M56 (the eight angular chart verbs and the nine polar rulers). The denominator has now been corrected twice, and both corrections are worth
+**176 of the 266 documented graphics functions** — the second table below, new in M45, moved by 52 in
+M54, by 13 in M55, by 17 in M56 (the eight angular chart verbs and the nine polar rulers) and by 13
+in M57, which empties the chart-type family below but for two names excluded with reasons. The
+denominator has now been corrected twice, and both corrections are worth
 stating rather than quietly overwriting. M54's: this file said 263 from M45, which was one short *and*
 two names wrong in both directions — `slice` was counted in the implemented table and listed again
 among the missing volume names, while `close` (M35) and `linkaxes` (M51) were graphics functions the
@@ -37,8 +39,8 @@ see. This file refused to count them while they drew nothing; **M56 made them re
 number and this one agree again. `opengl` *is* counted, because an accepted no-op is an answer — the
 same reading that counted `shading`, `lighting` and `camlight` in M43.
 
-Across every callable kind — builtin, function, operator, keyword, script — the count is **728 of
-2,027** as of M56 (710 after M55 by this file's nine-short reading above, 697 after M54, 633 after
+Across every callable kind — builtin, function, operator, keyword, script — the count is **742 of
+2,027** as of M57 (728 after M56, 710 after M55 by this file's nine-short reading above, 697 after M54, 633 after
 M52, 619 after M51, up from 560, and not from the 556 this file used to claim: the checklist tool
 read the implemented set with a regular expression that only matched a name literal directly inside
 `Add(`, so it missed the sixteen colormap generators, which are registered from a loop, and reported
@@ -49,7 +51,9 @@ correction is worth recording rather than quietly overwriting: re-running today'
 and M47 catalogs reports 616 and 618. The pattern that reads the catalog was widened after those
 numbers were written — it now also matches a `Constant(` entry and a name that wraps to the line below
 its `Add(` — and the older totals were never recomputed. M51 added one counted name (`linkaxes`); M52
-added fourteen.
+added fourteen. M57 added fourteen too, and only thirteen of them move a table here: `voronoin` is
+documented under `matlab/polyfun` rather than under any graphics folder, so it belongs to neither the
+builtin table nor the graphics one and shows up only in this total.
 
 M46 moved that total by **nine and moved neither table above**, which is worth stating plainly. The
 Image Processing Toolbox is tracked separately in `matlab-ipt-coverage.md` because the R2021b dump
@@ -195,26 +199,34 @@ count in the first table instead.
 | Legacy colormap and appearance | M54 | `colorcube` `flag` `prism` `rgbplot` `validatecolor` `diffuse` `specular` `contrast` `hidden` `orient` `whitebg` `colordef` `opengl` `cmpermute` `cmunique` `dither` |
 | The everyday 2-D charts | M55 | `area` `barh` `stairs` `pie` `heatmap` `boxchart` `bubblechart` `bubblesize` `bubblelim` `bubblelegend` `pareto` `plotmatrix` `plotyy` — five new plot objects, three properties on objects that already existed, and three compositions that draw nothing of their own |
 | The angular family | M56 | `polarplot` `polarscatter` `polarhistogram` `polarbubblechart` `compass` `feather` `rose` `polar` — one new plot object (`PolarHistogramPlot`); every other verb is an ordinary plot handed the polar mapper |
+| The tier-two charts | M57 | `bar3` `bar3h` `stem3` `pie3` `binscatter` `swarmchart` `swarmchart3` `bubblechart3` `voronoi` `triplot` `tetramesh` `stackedplot` `scatterhistogram` — four new plot objects out of thirteen verbs: the swarms and the 3-D bubbles are jitter properties on the two scatters, the diagram and the triangulations are lines and a patch over a new Delaunay kernel, and the last two are compositions that draw nothing of their own |
 | The polar rulers | M56 | `rticks` `rticklabels` `rtickangle` `rtickformat` `rlim` `thetaticks` `thetaticklabels` `thetatickformat` `thetalim` — registered as refusals in M54, real now; r is the Cartesian tick machinery pointed at `RAxis`, θ converts units at the boundary and answers through the spoke arithmetic the renderer draws with |
 
-### What the remaining 103 are
+### What the remaining 90 are
 
-Five families, and they add to exactly 103 — only the first two are missing *plots*. This section read
-185 from M45 until M54 emptied two of the five families and most of a third, 131 until M55 took ten of
-the chart types, and 120 until M56 took the angular family; the milestone each family is now waiting
-on is named beside it.
+Five families, and they add to exactly 90 — and after M57 **not one of them is a missing plot**. This
+section read 185 from M45 until M54 emptied two of the five families and most of a third, 131 until
+M55 took ten of the chart types, 120 until M56 took the angular family, and 103 until M57 took the
+thirteen left; the milestone each family is now waiting on is named beside it.
 
-**Chart types with no plot object — 15.** `bar3` `bar3h` `stem3` `pie3` `binscatter` `bubblechart3`
-`swarmchart` `swarmchart3` `parallelplot` `stackedplot` `scatterhistogram` `wordcloud` `voronoi`
-`triplot` `tetramesh`. Each is a plot object, a renderer branch, `.graph` serialization and inspector
-support — the same slice `plot3` and `patch` were in M45, and the largest honest remainder. M54 made
-each one cheaper than it was: a new plot object joins `get`/`set`/`findobj` by being written, because
+**Chart types with no plot object — 2, both excluded.** `wordcloud` and `parallelplot`. Each of the
+other thirteen was a plot object, a renderer branch, `.graph` serialization and inspector support —
+the same slice `plot3` and `patch` were in M45, and the largest honest remainder. M54 made every one
+of them cheaper than it was: a new plot object joins `get`/`set`/`findobj` by being written, because
 the property table is reflection over the model's own browsable properties. **M55 took the everyday
 ten** and confirmed the claim: none of them wrote a line of property, inspector or `findobj` code.
 **M56 took the eight angular verbs** and sharpened it: only `polarhistogram` is a new plot object at
 all, because a polar axes hands its plots a mapper that reads x as an angle, so `polarplot`,
 `polarscatter`, `polarbubblechart`, `compass`, `rose` and `polar` draw with objects that already
-existed. M57 takes the rest.
+existed. **M57 took the last thirteen** and sharpened it again — four new objects out of thirteen
+verbs, because a swarm is a jitter property on a scatter, a Voronoi diagram and a triangulation are
+line segments and a patch over a new Delaunay kernel, and the last two are compositions of ordinary
+axes.
+
+The two left are chart containers whose whole content is a layout algorithm, with no axes a reader
+can measure against — the same reading that excluded `bubblecloud` in M55. A word cloud sizes text by
+frequency, which a `bar` of the same counts says more precisely; a parallel-coordinates plot of
+engineering data is `plotmatrix`, or a `stackedplot` whose panels are already linked.
 
 **Function plotters — 16.** `fplot` `fplot3` `fsurf` `fmesh` `fcontour` `fimplicit` `fimplicit3` and
 the nine `ez*` forms. They take a *function handle* and choose their own sample points adaptively.
@@ -313,6 +325,30 @@ M56's, from the polar mode outward (ADR 0056 carries the reasoning):
 - **`LineSpec`'s `'g'` is `[0, 0.502, 0]`** where MATLAB's is `[0 1 0]`. Found writing the compass
   tests, but it has been so since M2 and is project-wide, so it is recorded here rather than changed
   as a side effect of an angular milestone.
+
+M57's, from the tier-two charts (ADR 0057 carries the reasoning):
+
+- **A swarm chart is a scatter and answers as one.** `swarmchart`, `swarmchart3` and `bubblechart3`
+  set properties on `ScatterPlot`/`Scatter3DPlot`, so `get(h, 'Type')` reads `'scatter'` — the M55
+  rule again — and `scatter(x, y, 'XJitter', 'density')` draws the same chart. The spread is a
+  drawing offset only: `XData` still answers the x that was given.
+- **`binscatter` bins once and keeps its bins**, where MATLAB rebins as the axes are zoomed. That is
+  what makes `XBinEdges` answerable at any moment and a saved figure identical to the one saved. An
+  unasked-for bin count is the square-root choice, since MATLAB does not document its own.
+- **`pie3` is one object and one handle**, where MATLAB hands back a surface, two patches and a text
+  per wedge: the faces are painted back to front and a depth sort is only right when it can see the
+  whole chart. Its sides are shaded by a fixed step from the lid rather than lit, because this
+  pipeline has no light model and a flat-coloured solid reads as a flat shape. `bar3` sorts its
+  cuboids the same way.
+- **The Voronoi diagram is the dual of a Delaunay triangulation, not Qhull.** Coincident circumcentres
+  of cocircular points are merged with a tolerance that scales with the point set's span, because the
+  duplicate is an artefact of which diagonal the triangulation picked. The shape of the answer agrees
+  with MATLAB's; vertex order and exact ties on degenerate input may not. `voronoin` is plane-only and
+  says so.
+- **`stackedplot` and `scatterhistogram` hand back their parts**, where MATLAB returns one chart
+  container — the `heatmap` divergence again. Each is real axes holding real plots, so every axes verb
+  works on them and `set(s, 'LineWidth', 2)` over the returned handles is the one-line form. The
+  panels and the marginals are *linked*, not merely given equal limits.
 
 - **There is no depth buffer.** Painter's algorithm sorts faces within a plot, so two 3-D plots in
   one axes interleave by draw order rather than by geometry. A surface and a `plot3` line through it
@@ -470,6 +506,15 @@ the elementwise `max(a, b)`, the image reductions, the scalar constructors — b
 before it reaches those helpers. `isequal` learned the same reading, and a one-element array now
 compares equal to the bare number it holds; `size` and `==` had always agreed, and only `isequal`
 disagreed.
+
+M57 found the same defect one level down and closed it: **a scalar could not be subscripted**. M52
+taught the argument helpers to promote a bare number; the *interpreter* still refused, so `x(1)` on a
+number answered "Cannot call a number; it is not a function" where MATLAB reads the one element of a
+one-by-one array. It surfaced writing `stess_29.m`, where a chart verb that drew one thing handed back
+one handle and `h(1)` — the spelling that works the moment it draws several — could not read it. A
+Number or Bool reached by a subscript is now wrapped as a one-element array, stamped with the class it
+was in, and handed to the ordinary indexing path, so `x(1)`, `x(1,1)`, `x([1 1])`, `x(:)` and the JGS
+`x(0)`/`x[0]` all read it and reaching past the one element is still out of bounds.
 
 M51 found four more while making a real user script run, and closed all four. A table answered only
 to `T.Var`, so `data{:,1}` and `data(1:5, :)` both threw where MATLAB reads a variable's contents and

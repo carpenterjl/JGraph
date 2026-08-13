@@ -48,6 +48,29 @@ public enum StepMode
     Mid,
 }
 
+/// <summary>
+/// How a marker chart spreads points that would otherwise sit on top of one another (MATLAB's
+/// <c>XJitter</c>/<c>YJitter</c>). The spread is a drawing offset only: the data a point carries, and
+/// so what a script reads back out of it, is the position it was given.
+/// </summary>
+public enum JitterStyle
+{
+    /// <summary>No spread — every point is drawn where its data puts it.</summary>
+    None,
+
+    /// <summary>
+    /// Spread by how many neighbours share the value, so a crowd fans out into a shape whose width
+    /// is its own histogram (MATLAB <c>swarmchart</c>'s default).
+    /// </summary>
+    Density,
+
+    /// <summary>Spread evenly at random across the jitter width.</summary>
+    Rand,
+
+    /// <summary>Spread at random about the centre, thinning out toward the edges of the width.</summary>
+    Randn,
+}
+
 /// <summary>Line cap style for stroke endpoints.</summary>
 public enum LineCap
 {

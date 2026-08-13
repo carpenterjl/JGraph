@@ -2,6 +2,7 @@ using System.ComponentModel;
 using JGraph.Core.Drawing;
 using JGraph.Core.Model;
 using JGraph.Core.Primitives;
+using JGraph.Objects.Internal;
 using JGraph.Rendering;
 
 namespace JGraph.Objects;
@@ -169,51 +170,11 @@ public sealed class PiePlot : PlotObject, IDrawable, ILegendItem
     /// The wedges, in the order the values were given. A value that is not a positive finite number
     /// takes no angle, which is how a zero entry ends up drawing nothing at all.
     /// </summary>
-    public IReadOnlyList<PieSlice> Slices()
-    {
-        double total = 0;
-        foreach (double value in _values)
-        {
-            if (double.IsFinite(value) && value > 0)
-            {
-                total += value;
-            }
-        }
-
-        // MATLAB's rule, and the whole of it: a total over one is normalized, and one at or below it
-        // is already the shares — which is the only way to ask for a pie with a piece missing.
-        double scale = total > 1 ? 1 / total : 1;
-        double direction = _clockwise ? -1 : 1;
-        double angle = _startAngle * System.Math.PI / 180;
-
-        var slices = new List<PieSlice>(_values.Length);
-        for (int i = 0; i < _values.Length; i++)
-        {
-            double value = _values[i];
-            double fraction = double.IsFinite(value) && value > 0 ? value * scale : 0;
-            double sweep = fraction * 2 * System.Math.PI * direction;
-            slices.Add(new PieSlice(i, angle, sweep, fraction, OffsetOf(i)));
-            angle += sweep;
-        }
-
-        return slices;
-    }
+    public IReadOnlyList<PieSlice> Slices() =>
+        PieGeometry.Slices(_values, _explode, _startAngle, _clockwise);
 
     /// <summary>What is written beside wedge <paramref name="i"/>: its label, or its share.</summary>
-    public string LabelOf(int i, double fraction)
-    {
-        if (_labels is { } labels && i < labels.Length)
-        {
-            return labels[i] ?? string.Empty;
-        }
-
-        // MATLAB rounds to whole percent and says "< 1%" rather than "0%" for a sliver, because a
-        // wedge that is drawn should not be labelled as though it were not there.
-        double percent = fraction * 100;
-        return percent > 0 && percent < 0.5
-            ? "< 1%"
-            : $"{System.Math.Round(percent, MidpointRounding.AwayFromZero):0}%";
-    }
+    public string LabelOf(int i, double fraction) => PieGeometry.LabelOf(_labels, i, fraction);
 
     public override DataRange GetXDataBounds() => Reach();
 
@@ -247,7 +208,7 @@ public sealed class PiePlot : PlotObject, IDrawable, ILegendItem
                 vertices.Add(mapper.DataToPixel(cx, cy));
             }
 
-            int steps = System.Math.Max(2, (int)System.Math.Ceiling(System.Math.Abs(slice.Sweep) / (System.Math.PI / 90)));
+            int steps = PieGeometry.StepsFor(slice.Sweep);
             for (int step = 0; step <= steps; step++)
             {
                 double angle = slice.Start + (slice.Sweep * step / steps);
@@ -341,13 +302,9 @@ public sealed class PiePlot : PlotObject, IDrawable, ILegendItem
     }
 
     /// <summary>Where the tip of a wedge sits once it has been pushed out of the middle.</summary>
-    private (double X, double Y) CenterOf(PieSlice slice) =>
-        slice.Offset == 0
-            ? (0, 0)
-            : (slice.Offset * System.Math.Cos(slice.Middle), slice.Offset * System.Math.Sin(slice.Middle));
+    private static (double X, double Y) CenterOf(PieSlice slice) => PieGeometry.CenterOf(slice);
 
-    private double OffsetOf(int i) =>
-        _explode is { } explode && i < explode.Length && double.IsFinite(explode[i]) ? explode[i] : 0;
+    private double OffsetOf(int i) => PieGeometry.OffsetOf(_explode, i);
 
     /// <summary>
     /// How far the chart reaches from the origin — the radius, plus the furthest a wedge is pushed

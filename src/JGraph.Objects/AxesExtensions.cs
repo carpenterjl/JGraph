@@ -441,6 +441,52 @@ public static class AxesExtensions
     }
 
     /// <summary>
+    /// Adds a stem per sample in space (MATLAB <c>stem3</c>) and switches the axes into 3D mode.
+    /// </summary>
+    public static Stem3DPlot AddStem3D(this AxesModel axes, double[] x, double[] y, double[] z)
+    {
+        ArgumentNullException.ThrowIfNull(axes);
+        var plot = new Stem3DPlot(x, y, z);
+        axes.Plots.Add(plot);
+        axes.Is3D = true;
+        return plot;
+    }
+
+    /// <summary>
+    /// Adds a field of bars standing on the floor (MATLAB <c>bar3</c>) and switches the axes into 3D
+    /// mode. The horizontal form is the same chart with the bars laid along X, which is a property of
+    /// the plot rather than a kind of its own.
+    /// </summary>
+    public static Bar3DPlot AddBar3D(this AxesModel axes, double[,] z, double[]? rowPositions = null)
+    {
+        ArgumentNullException.ThrowIfNull(axes);
+        var plot = new Bar3DPlot(z) { RowPositions = rowPositions };
+        axes.Plots.Add(plot);
+        axes.Is3D = true;
+        return plot;
+    }
+
+    /// <summary>
+    /// Adds a raised pie chart (MATLAB <c>pie3</c>) and turns the axes into the round, frameless one
+    /// a pie belongs on, seen from above and to the side.
+    /// </summary>
+    public static Pie3DPlot AddPie3D(this AxesModel axes, double[] values)
+    {
+        ArgumentNullException.ThrowIfNull(axes);
+        var plot = new Pie3DPlot(values);
+        axes.Plots.Add(plot);
+        axes.Is3D = true;
+
+        // A pie has nothing to say about position, so the rulers say nothing either — the same
+        // frameless round canvas the flat pie is drawn on, with the height ruler quietened too.
+        axes.MakeCircular();
+        axes.ZAxis.ShowMajorTicks = false;
+        axes.ZAxis.ShowMinorTicks = false;
+        axes.ZAxis.ShowTickLabels = false;
+        return plot;
+    }
+
+    /// <summary>
     /// Adds filled polygons over a shared vertex list (MATLAB <c>patch</c>). The axes is left in
     /// whatever mode it is already in — a patch draws in both — so <c>fill</c> and <c>fill3</c> differ
     /// only in whether the caller sets <see cref="AxesModel.Is3D"/> afterwards.
@@ -498,6 +544,19 @@ public static class AxesExtensions
         // middle of them rather than between them.
         axes.Grid.ShowMajor = false;
         axes.Grid.ShowMinor = false;
+    }
+
+    /// <summary>
+    /// Adds a binned scatter of the readings (MATLAB <c>binscatter</c>) and shows the colorbar, since
+    /// the colours are the only thing on the chart that says how many readings a bin holds.
+    /// </summary>
+    public static BinScatterPlot AddBinScatter(this AxesModel axes, double[] x, double[] y)
+    {
+        ArgumentNullException.ThrowIfNull(axes);
+        var plot = new BinScatterPlot(x, y);
+        axes.Plots.Add(plot);
+        axes.Colorbar.Visible = true;
+        return plot;
     }
 
     /// <summary>

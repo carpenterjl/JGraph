@@ -22,6 +22,7 @@ internal static partial class JgsBuiltins
         RegisterTwoDimensionalTransforms(Define);
         RegisterHulls(Define);
         RegisterTriangulation(Define);
+        RegisterVoronoiDiagram(env);
         RegisterContourMatrix(Define);
     }
 
@@ -77,6 +78,83 @@ internal static partial class JgsBuiltins
             // list of vertex numbers rather than an index into anything JGraph subscripts.
             return JgsMatrix.Build(triangles.GetLength(0), 3, (t, v) => triangles[t, v] + 1.0);
         });
+    }
+
+    // --- Voronoi diagram --------------------------------------------------------------------------
+
+    private static void RegisterVoronoiDiagram(JgsEnvironment env)
+    {
+        // [V, C] = voronoin(X): the vertices, led by the point at infinity as row one, and one cell
+        // per input point listing its vertex numbers counter-clockwise. Only the plane is supported —
+        // MATLAB's N-D form runs through Qhull, and a 2-D dual of the Delaunay triangulation is what
+        // this build has.
+        JgsValue[] Outputs(IReadOnlyList<JgsValue> args, int wanted, int line, int col)
+        {
+            Arity("voronoin", args, 1, line, col);
+            double[,] points = RectOf("voronoin", args[0], line, col);
+            if (points.GetLength(1) != 2)
+            {
+                throw new JgsRuntimeException(line, col,
+                    "voronoin: only 2-D point sets are supported — X must be an n-by-2 matrix.");
+            }
+
+            int n = points.GetLength(0);
+            if (n < 3)
+            {
+                throw new JgsRuntimeException(line, col, "voronoin needs at least 3 points.");
+            }
+
+            var xs = new double[n];
+            var ys = new double[n];
+            for (int i = 0; i < n; i++)
+            {
+                xs[i] = points[i, 0];
+                ys[i] = points[i, 1];
+            }
+
+            VoronoiDiagram diagram;
+            try
+            {
+                diagram = Voronoi.FromPoints(xs, ys);
+            }
+            catch (ArgumentException failure)
+            {
+                throw new JgsRuntimeException(line, col, $"voronoin: {Reason(failure)}");
+            }
+
+            // Row 1 is the point at infinity, so a finite kernel vertex v lands on row v + 2 and the
+            // kernel's −1 marker for an unbounded cell lands on row 1, exactly as MATLAB numbers them.
+            JgsValue vertices = JgsMatrix.Build(diagram.Vertices.Count + 1, 2, (r, c) =>
+                r == 0
+                    ? double.PositiveInfinity
+                    : c == 0 ? diagram.Vertices[r - 1].X : diagram.Vertices[r - 1].Y);
+
+            if (wanted < 2)
+            {
+                return [vertices];
+            }
+
+            var cells = new JgsValue[diagram.Cells.Count];
+            for (int i = 0; i < cells.Length; i++)
+            {
+                int[] cell = diagram.Cells[i];
+                var indices = new double[cell.Length];
+                for (int v = 0; v < cell.Length; v++)
+                {
+                    indices[v] = cell[v] < 0 ? 1 : cell[v] + 2;
+                }
+
+                cells[i] = Numbers(indices);
+            }
+
+            return [vertices, JgsValue.Cell(cells)];
+        }
+
+        env.Declare("voronoin", JgsValue.Function(
+            new BuiltinFunction("voronoin", (args, line, col) => Outputs(args, 1, line, col)[0])
+            {
+                MultiOutput = Outputs,
+            }));
     }
 
     // --- Contour matrix ---------------------------------------------------------------------------

@@ -17,7 +17,7 @@ namespace JGraph.Objects;
 /// points squared (so a marker is drawn at diameter sqrt(s), matching how <c>scatter3(x, y, z, s)</c>
 /// scales), and <see cref="ColorData"/> is a value per point mapped through <see cref="Colormap"/>.
 /// </summary>
-public sealed class Scatter3DPlot : PlotObject, I3DDrawable, IHasZData, ILegendItem, IColorMapped
+public sealed class Scatter3DPlot : PlotObject, I3DDrawable, IHasZData, ILegendItem, IColorMapped, IBubbleData
 {
     private double[] _x;
     private double[] _y;
@@ -35,6 +35,14 @@ public sealed class Scatter3DPlot : PlotObject, I3DDrawable, IHasZData, ILegendI
     private bool _autoScaleColor = true;
     private double _colorMin;
     private double _colorMax = 1;
+
+    private bool _bubbleSizing;
+    private readonly JitterChannel _xJitter = new();
+    private readonly JitterChannel _yJitter = new();
+    private readonly JitterChannel _zJitter = new();
+    private double[]? _drawnX;
+    private double[]? _drawnY;
+    private double[]? _drawnZ;
 
     private Point2D[] _pixels = new Point2D[16];
     private Point2D[] _sorted = new Point2D[16];
@@ -69,6 +77,7 @@ public sealed class Scatter3DPlot : PlotObject, I3DDrawable, IHasZData, ILegendI
         _x = x;
         _y = y;
         _z = z;
+        DiscardSpread();
         Invalidate(InvalidationKind.Layout);
     }
 
@@ -139,6 +148,123 @@ public sealed class Scatter3DPlot : PlotObject, I3DDrawable, IHasZData, ILegendI
         set => SetProperty(ref _edgeWidth, System.Math.Max(0, value), InvalidationKind.Render);
     }
 
+    /// <summary>
+    /// Whether <see cref="SizeData"/> means bubble values read against the axes' scale rather than
+    /// MATLAB <c>scatter3</c>'s marker areas in points squared. Set by <c>bubblechart3</c> and by
+    /// nothing else — the same array, read the other way.
+    /// </summary>
+    [Category("Appearance"), DisplayName("Bubble sizing")]
+    public bool BubbleSizing
+    {
+        get => _bubbleSizing;
+        set => SetProperty(ref _bubbleSizing, value, InvalidationKind.Render);
+    }
+
+    /// <summary>
+    /// The scale this plot's bubbles are drawn against: the axes' when it is in one, and one read off
+    /// its own sizes when it is not, so a chart measured before it is added still answers sensibly.
+    /// </summary>
+    [Browsable(false)]
+    public BubbleScale BubbleScale => Axes?.BubbleScale ?? Core.Model.BubbleScale.ForValues(_sizeData);
+
+    /// <summary>
+    /// How points sharing an x are spread along it so that all of them can be seen — MATLAB's
+    /// <c>XJitter</c>, and what <c>swarmchart3</c> turns on. As in the flat chart, the spread moves
+    /// the markers and leaves the data alone.
+    /// </summary>
+    [Category("Appearance"), DisplayName("X jitter")]
+    public JitterStyle XJitter
+    {
+        get => _xJitter.Style;
+        set
+        {
+            if (_xJitter.Style != value)
+            {
+                _xJitter.Style = value;
+                DiscardSpread();
+            }
+        }
+    }
+
+    /// <summary>How points sharing a y are spread along it (MATLAB's <c>YJitter</c>).</summary>
+    [Category("Appearance"), DisplayName("Y jitter")]
+    public JitterStyle YJitter
+    {
+        get => _yJitter.Style;
+        set
+        {
+            if (_yJitter.Style != value)
+            {
+                _yJitter.Style = value;
+                DiscardSpread();
+            }
+        }
+    }
+
+    /// <summary>How points sharing a z are spread along it (MATLAB's <c>ZJitter</c>).</summary>
+    [Category("Appearance"), DisplayName("Z jitter")]
+    public JitterStyle ZJitter
+    {
+        get => _zJitter.Style;
+        set
+        {
+            if (_zJitter.Style != value)
+            {
+                _zJitter.Style = value;
+                DiscardSpread();
+            }
+        }
+    }
+
+    /// <summary>
+    /// How wide the spread along x is allowed to be. Reading it gives the width in force — the one
+    /// that was set, or nine tenths of the gap between the two closest distinct x values; writing zero
+    /// puts it back to being worked out that way.
+    /// </summary>
+    [Category("Appearance"), DisplayName("X jitter width")]
+    public double XJitterWidth
+    {
+        get => _xJitter.WidthFor(_x);
+        set
+        {
+            if (_xJitter.Width != value)
+            {
+                _xJitter.Width = value;
+                DiscardSpread();
+            }
+        }
+    }
+
+    /// <summary>How wide the spread along y is allowed to be, read and written as x's is.</summary>
+    [Category("Appearance"), DisplayName("Y jitter width")]
+    public double YJitterWidth
+    {
+        get => _yJitter.WidthFor(_y);
+        set
+        {
+            if (_yJitter.Width != value)
+            {
+                _yJitter.Width = value;
+                DiscardSpread();
+            }
+        }
+    }
+
+    /// <summary>How wide the spread along z is allowed to be, read and written as x's is.</summary>
+    [Category("Appearance"), DisplayName("Z jitter width")]
+    public double ZJitterWidth
+    {
+        get => _zJitter.WidthFor(_z);
+        set
+        {
+            if (_zJitter.Width != value)
+            {
+                _zJitter.Width = value;
+                DiscardSpread();
+            }
+        }
+    }
+
     /// <summary>The colormap <see cref="ColorData"/> is sampled through.</summary>
     [Category("Appearance")]
     public Colormap Colormap
@@ -179,13 +305,41 @@ public sealed class Scatter3DPlot : PlotObject, I3DDrawable, IHasZData, ILegendI
     public (double Min, double Max) ColorRange => ResolveColorRange();
 
     /// <inheritdoc />
-    public override DataRange GetXDataBounds() => Vertices3D.Bounds(_x);
+    Color? IBubbleData.BubbleFaceColor => _filled ? _color : null;
 
     /// <inheritdoc />
-    public override DataRange GetYDataBounds() => Vertices3D.Bounds(_y);
+    public override DataRange GetXDataBounds()
+    {
+        EnsureSpread();
+        return Vertices3D.Bounds(_drawnX!);
+    }
 
     /// <inheritdoc />
-    public DataRange GetZDataBounds() => Vertices3D.Bounds(_z);
+    public override DataRange GetYDataBounds()
+    {
+        EnsureSpread();
+        return Vertices3D.Bounds(_drawnY!);
+    }
+
+    /// <inheritdoc />
+    public DataRange GetZDataBounds()
+    {
+        EnsureSpread();
+        return Vertices3D.Bounds(_drawnZ!);
+    }
+
+    /// <summary>The diameter a point is drawn at, in points — a bubble value or a marker area.</summary>
+    public double DiameterAt(int index)
+    {
+        if (_sizeData is not { } sizes || index < 0 || index >= sizes.Length)
+        {
+            return _markerSize;
+        }
+
+        return _bubbleSizing
+            ? BubbleScale.DiameterFor(sizes[index])
+            : System.Math.Sqrt(System.Math.Max(0, sizes[index]));
+    }
 
     /// <inheritdoc />
     public void Render3D(IRenderContext context, Projection3D projection, RenderState state)
@@ -208,10 +362,11 @@ public sealed class Scatter3DPlot : PlotObject, I3DDrawable, IHasZData, ILegendI
             _order = new int[count];
         }
 
+        EnsureSpread();
         int visible = 0;
         for (int i = 0; i < count; i++)
         {
-            double x = _x[i], y = _y[i], z = _z[i];
+            double x = _drawnX![i], y = _drawnY![i], z = _drawnZ![i];
             if (!double.IsFinite(x) || !double.IsFinite(y) || !double.IsFinite(z))
             {
                 continue;
@@ -253,9 +408,7 @@ public sealed class Scatter3DPlot : PlotObject, I3DDrawable, IHasZData, ILegendI
             Color point = _colorData is { } values
                 ? _colormap.Sample(values[source], min, max).WithOpacity(Opacity)
                 : color;
-            double size = _sizeData is { } sizes
-                ? System.Math.Sqrt(System.Math.Max(0, sizes[source]))
-                : _markerSize;
+            double size = DiameterAt(source);
             context.DrawMarkers(_sorted.AsSpan(i, 1), StyleFor(point, size), point);
         }
     }
@@ -268,6 +421,121 @@ public sealed class Scatter3DPlot : PlotObject, I3DDrawable, IHasZData, ILegendI
             line: null,
             StyleFor(color, System.Math.Min(_markerSize, 8)),
             swatch: null);
+    }
+
+    /// <summary>
+    /// The x spread width that was <em>set</em>, or zero when none was — which is what a saved figure
+    /// has to keep, so that a width following the data goes on following it after a load.
+    /// </summary>
+    [Browsable(false)]
+    public double XJitterWidthOverride
+    {
+        get => _xJitter.Width;
+        set => XJitterWidth = value;
+    }
+
+    /// <summary>The y spread width that was set, or zero when none was.</summary>
+    [Browsable(false)]
+    public double YJitterWidthOverride
+    {
+        get => _yJitter.Width;
+        set => YJitterWidth = value;
+    }
+
+    /// <summary>The z spread width that was set, or zero when none was.</summary>
+    [Browsable(false)]
+    public double ZJitterWidthOverride
+    {
+        get => _zJitter.Width;
+        set => ZJitterWidth = value;
+    }
+
+    /// <summary>How far along x each point is drawn from where its data puts it.</summary>
+    [Browsable(false)]
+    public IReadOnlyList<double> XOffsets => _xJitter.Offsets(_x, _z);
+
+    /// <summary>How far along y each point is drawn from where its data puts it.</summary>
+    [Browsable(false)]
+    public IReadOnlyList<double> YOffsets => _yJitter.Offsets(_y, _z);
+
+    /// <summary>How far along z each point is drawn from where its data puts it.</summary>
+    [Browsable(false)]
+    public IReadOnlyList<double> ZOffsets => _zJitter.Offsets(_z, _y);
+
+    /// <summary>Where each point is drawn along x, which is where its data puts it plus its spread.</summary>
+    [Browsable(false)]
+    public IReadOnlyList<double> DrawnX
+    {
+        get
+        {
+            EnsureSpread();
+            return _drawnX!;
+        }
+    }
+
+    /// <summary>Where each point is drawn along y.</summary>
+    [Browsable(false)]
+    public IReadOnlyList<double> DrawnY
+    {
+        get
+        {
+            EnsureSpread();
+            return _drawnY!;
+        }
+    }
+
+    /// <summary>Where each point is drawn along z.</summary>
+    [Browsable(false)]
+    public IReadOnlyList<double> DrawnZ
+    {
+        get
+        {
+            EnsureSpread();
+            return _drawnZ!;
+        }
+    }
+
+    /// <summary>
+    /// Works out where the markers go. The spread along x and along y both read their crowding off z,
+    /// which is the height a swarm in space is a swarm <em>of</em>; the spread along z, the odd one
+    /// out, reads y. Nothing is worked out at all when no axis is spreading, and then the drawn
+    /// positions are the given ones.
+    /// </summary>
+    private void EnsureSpread()
+    {
+        if (_drawnX is not null)
+        {
+            return;
+        }
+
+        _drawnX = Spread(_x, _xJitter, _z);
+        _drawnY = Spread(_y, _yJitter, _z);
+        _drawnZ = Spread(_z, _zJitter, _y);
+    }
+
+    private static double[] Spread(double[] values, JitterChannel channel, double[] crowded)
+    {
+        if (!channel.Spreads)
+        {
+            return values;
+        }
+
+        double[] offsets = channel.Offsets(values, crowded);
+        var drawn = new double[values.Length];
+        for (int i = 0; i < drawn.Length; i++)
+        {
+            drawn[i] = values[i] + offsets[i];
+        }
+
+        return drawn;
+    }
+
+    private void DiscardSpread()
+    {
+        _drawnX = null;
+        _drawnY = null;
+        _drawnZ = null;
+        Invalidate(InvalidationKind.Data);
     }
 
     private MarkerStyle StyleFor(Color color) => StyleFor(color, _markerSize);

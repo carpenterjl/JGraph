@@ -20,22 +20,41 @@ internal static partial class JgsBuiltins
 {
     private static void RegisterCompositionBuiltins(JgsEnvironment env)
     {
-        // Each of the three answers with more than one thing, so each is registered through the
-        // multi-output seam and hands back as much of its answer as the call asked for.
-        void DefineComposition(string name, Func<IReadOnlyList<JgsValue>, int, int, JgsValue[]> body) =>
-            env.Declare(name, JgsValue.Function(new BuiltinFunction(name, (args, line, col) => body(args, line, col)[0])
-            {
-                BindsAnsAsStatement = false,
-                MultiOutput = (args, wanted, line, col) =>
-                {
-                    JgsValue[] all = body(args, line, col);
-                    return wanted >= all.Length ? all : all[..System.Math.Max(1, wanted)];
-                },
-            }));
+        DefineComposition(env, "pareto", Pareto);
+        DefineComposition(env, "plotmatrix", PlotMatrix);
+        DefineComposition(env, "plotyy", PlotYy);
+    }
 
-        DefineComposition("pareto", Pareto);
-        DefineComposition("plotmatrix", PlotMatrix);
-        DefineComposition("plotyy", PlotYy);
+    /// <summary>
+    /// Registers a composition. Every one of them answers with more than one thing — the parts it
+    /// arranged, and the axes it arranged them on — so each goes in through the multi-output seam and
+    /// hands back as much of its answer as the call asked for.
+    /// </summary>
+    private static void DefineComposition(
+        JgsEnvironment env, string name, Func<IReadOnlyList<JgsValue>, int, int, JgsValue[]> body) =>
+        env.Declare(name, JgsValue.Function(new BuiltinFunction(name, (args, line, col) => body(args, line, col)[0])
+        {
+            BindsAnsAsStatement = false,
+            MultiOutput = (args, wanted, line, col) =>
+            {
+                JgsValue[] all = body(args, line, col);
+                return wanted >= all.Length ? all : all[..System.Math.Max(1, wanted)];
+            },
+        }));
+
+    /// <summary>
+    /// Refuses a composition that was aimed at one axes. A verb that lays out a grid of its own has
+    /// nowhere to put a named one, and silently ignoring the aim would draw the chart somewhere the
+    /// call did not ask for.
+    /// </summary>
+    private static void RefuseAimedAxes(string verb, string layout, IReadOnlyList<JgsValue> args, int line, int col)
+    {
+        if (args.Count > 0 && JgsHandleRegistry.TryGet(args[0], out JgsHandleEntry? aimed) && aimed.Target is AxesModel)
+        {
+            throw new JgsRuntimeException(line, col,
+                $"{verb} lays out its own {layout}, so it cannot be aimed at one axes. "
+                + "Draw it into a figure of its own.");
+        }
     }
 
     // --- pareto ---------------------------------------------------------------------------------
@@ -199,13 +218,7 @@ internal static partial class JgsBuiltins
     /// </summary>
     private static JgsValue[] PlotMatrix(IReadOnlyList<JgsValue> args, int line, int col)
     {
-        if (args.Count > 0 && JgsHandleRegistry.TryGet(args[0], out JgsHandleEntry? aimed) && aimed.Target is AxesModel)
-        {
-            throw new JgsRuntimeException(line, col,
-                "plotmatrix lays out its own grid of axes, so it cannot be aimed at one. "
-                + "Draw it into a figure of its own.");
-        }
-
+        RefuseAimedAxes("plotmatrix", "grid of axes", args, line, col);
         ArityRange("plotmatrix", args, 1, 3, line, col);
 
         string? spec = null;

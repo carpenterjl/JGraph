@@ -141,13 +141,23 @@ public class JgsIndexingTests : IDisposable
             _output.NormalText.Trim().Replace("\r", string.Empty));
     }
 
+    /// <summary>
+    /// M57 wave G moved the line this test guards. A number is now subscriptable — it is a one-by-one
+    /// array — so <c>n(1)</c> is a read past the end rather than a call, and what still cannot be
+    /// called is a value with no elements to read.
+    /// </summary>
     [Fact]
     public async Task CallingANonIndexableValue_StillErrors()
     {
         ScriptRunResult result = await Run("let n = 5\nprint(n(1))");
 
         Assert.False(result.Success);
-        Assert.Contains("Cannot call a number", Assert.Single(result.Diagnostics).Message);
+        Assert.Contains("out of range", Assert.Single(result.Diagnostics).Message);
+
+        ScriptRunResult structResult = await Run("let s = struct()\nprint(s(0))");
+
+        Assert.False(structResult.Success);
+        Assert.Contains("struct", Assert.Single(structResult.Diagnostics).Message);
     }
 
     [Fact]
@@ -247,6 +257,25 @@ public class JgsIndexingTests : IDisposable
 
         Assert.True(result.Success, result.Message);
         Assert.Equal("5\n5\n0\n0", _output.NormalText.Trim().Replace("\r", string.Empty));
+    }
+
+    /// <summary>
+    /// M57 wave G: a lone number is a one-element array here too, and JGS counts from zero, so the
+    /// element is the one at index 0 and the bracket form says the same thing.
+    /// </summary>
+    [Fact]
+    public async Task Scalar_IsAOneElementArray()
+    {
+        ScriptRunResult result = await Run("""
+            let x = 7;
+            print(x(0));
+            print(x[0]);
+            print(x(0:0));
+            """);
+
+        Assert.True(result.Success, result.Message);
+        // The range gather answers an array of one, the way a range gather always does.
+        Assert.Equal("7\n7\n[7]", _output.NormalText.Trim().Replace("\r", string.Empty));
     }
 
     [Fact]

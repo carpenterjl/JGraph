@@ -359,11 +359,11 @@ internal static partial class JgsBuiltins
                 JgsValue next = rest[optionStart];
                 if (IsTextList(next))
                 {
-                    labels = LabelWords(next, values.Length, line, col);
+                    labels = LabelWords("pie", next, values.Length, line, col);
                 }
                 else if (explode is null && labels is null)
                 {
-                    explode = Exploded(ToDoubles("pie", next, line, col), values.Length, line, col);
+                    explode = Exploded("pie", ToDoubles("pie", next, line, col), values.Length, line, col);
                 }
                 else
                 {
@@ -431,12 +431,12 @@ internal static partial class JgsBuiltins
     }
 
     /// <summary>MATLAB's explode flags as the distances the model pushes each wedge out by.</summary>
-    private static double[] Exploded(double[] flags, int slices, int line, int col)
+    private static double[] Exploded(string verb, double[] flags, int slices, int line, int col)
     {
         if (flags.Length != slices)
         {
             throw new JgsRuntimeException(line, col,
-                $"pie: the explode vector has {flags.Length} entries but there are {slices} values.");
+                $"{verb}: the explode vector has {flags.Length} entries but there are {slices} values.");
         }
 
         var offsets = new double[flags.Length];
@@ -467,13 +467,13 @@ internal static partial class JgsBuiltins
         return elements.Length > 0 && Array.TrueForAll(elements, e => e.Type == JgsType.String);
     }
 
-    private static string[] LabelWords(JgsValue value, int slices, int line, int col)
+    private static string[] LabelWords(string verb, JgsValue value, int slices, int line, int col)
     {
         JgsValue[] elements = value.Type == JgsType.Cell ? value.AsCell : value.BoxedElements();
         if (elements.Length != slices)
         {
             throw new JgsRuntimeException(line, col,
-                $"pie: there are {elements.Length} labels but {slices} values.");
+                $"{verb}: there are {elements.Length} labels but {slices} values.");
         }
 
         var words = new string[elements.Length];
@@ -482,7 +482,7 @@ internal static partial class JgsBuiltins
             if (elements[i].Type != JgsType.String)
             {
                 throw new JgsRuntimeException(line, col,
-                    $"pie: label {i + 1} is not text — labels come as a cell of char rows or a string array.");
+                    $"{verb}: label {i + 1} is not text — labels come as a cell of char rows or a string array.");
             }
 
             words[i] = elements[i].AsString;
@@ -1262,7 +1262,8 @@ internal static partial class JgsBuiltins
     /// </para>
     /// </summary>
     private static ScatterPlot ScatterSeries(
-        string verb, IReadOnlyList<JgsValue> args, int line, int col)
+        string verb, IReadOnlyList<JgsValue> args, int line, int col,
+        JitterStyle jitter = JitterStyle.None)
     {
         if (args.Count < 2)
         {
@@ -1315,6 +1316,10 @@ internal static partial class JgsBuiltins
 
         ScatterPlot plot = JG.Scatter(xs, ys);
         plot.Color = PaletteColorFor(plot);
+
+        // The spread the verb starts with, set before the options so that a call naming XJitter has
+        // the last word over the verb that implied one.
+        plot.XJitter = jitter;
 
         if (sizes is not null)
         {
@@ -1402,6 +1407,10 @@ internal static partial class JgsBuiltins
     [
         "MarkerFaceColor", "MarkerEdgeColor", "MarkerFaceAlpha", "MarkerEdgeAlpha",
         "LineWidth", "Marker", "SizeData", "CData", "DisplayName", "HandleVisibility",
+
+        // The jitter properties belong to every marker chart in MATLAB, not only to swarmchart —
+        // that verb is a scatter that switches one of them on, and the rest can switch it on too.
+        "XJitter", "YJitter", "XJitterWidth", "YJitterWidth",
     ];
 
     /// <summary>
@@ -1580,6 +1589,18 @@ internal static partial class JgsBuiltins
                     break;
                 case "cdata":
                     MarkerColors(verb, plot, value, line, col);
+                    break;
+                case "xjitter":
+                    plot.XJitter = ParseJitter($"{verb}: XJitter", value, line, col);
+                    break;
+                case "yjitter":
+                    plot.YJitter = ParseJitter($"{verb}: YJitter", value, line, col);
+                    break;
+                case "xjitterwidth":
+                    plot.XJitterWidth = JitterWidth($"{verb}: XJitterWidth", value, line, col);
+                    break;
+                case "yjitterwidth":
+                    plot.YJitterWidth = JitterWidth($"{verb}: YJitterWidth", value, line, col);
                     break;
                 case "displayname":
                     SetDisplayName(plot, StrOf($"{verb}: DisplayName", value, line, col));

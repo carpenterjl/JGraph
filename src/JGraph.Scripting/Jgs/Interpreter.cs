@@ -2576,7 +2576,11 @@ internal sealed partial class Interpreter
             return IndexTableParen(target, indexExpr.Indices, indexExpr, env);
         }
 
-        if (target.Type is not (JgsType.Array or JgsType.String or JgsType.Image))
+        if (target.Type is JgsType.Number or JgsType.Bool)
+        {
+            target = OneElementArray(target);
+        }
+        else if (target.Type is not (JgsType.Array or JgsType.String or JgsType.Image))
         {
             throw new JgsRuntimeException(indexExpr.Line, indexExpr.Column,
                 target.Type == JgsType.Function
@@ -2630,6 +2634,15 @@ internal sealed partial class Interpreter
             return JgsValue.Cell([elements[ToIndex(index, elements.Length, call.Line, call.Column)]]);
         }
 
+        // A single number is a one-by-one array, so subscripting one is a read out of it: h(1) on a
+        // lone handle, x(1) on a scalar reading. Found writing M57's stress script, where a chart verb
+        // that drew one thing handed back one handle and h(1) — the spelling that works when it drew
+        // several — could not read it back.
+        if (callee.Type is JgsType.Number or JgsType.Bool && call.Arguments.Count > 0)
+        {
+            return IndexInto(OneElementArray(callee), call.Arguments, call, env);
+        }
+
         if (callee.Type != JgsType.Function)
         {
             throw new JgsRuntimeException(call.Line, call.Column, $"Cannot call a {callee.TypeName}; it is not a function.");
@@ -2653,6 +2666,13 @@ internal sealed partial class Interpreter
     /// (column-major over a matrix, ADR 0043), two name a row and a column. An image takes two or
     /// three. A string takes one.
     /// </summary>
+    /// <summary>
+    /// The one-by-one array a scalar is, kept in whatever numeric class the scalar was in so that
+    /// <c>class(x(1))</c> answers what <c>class(x)</c> does.
+    /// </summary>
+    private static JgsValue OneElementArray(JgsValue scalar) =>
+        JgsNumericClasses.Stamp(JgsValue.Array([scalar]), scalar.NumericClass);
+
     private JgsValue IndexInto(JgsValue target, IReadOnlyList<Expr> subscripts, Node at, JgsEnvironment env)
     {
         // A selection out of a uint8 array is still uint8 (M47). The samples are already inside the

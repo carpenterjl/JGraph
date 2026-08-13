@@ -320,6 +320,16 @@ public static class JG
     }
 
     /// <summary>
+    /// Plots the readings as a grid of bins coloured by how many fell in each (MATLAB
+    /// <c>binscatter</c>).
+    /// </summary>
+    public static BinScatterPlot BinScatter(double[] x, double[] y)
+    {
+        AxesModel axes = PrepareAxes();
+        return axes.AddBinScatter(x, y);
+    }
+
+    /// <summary>
     /// Plots a box and whiskers per group of observations (MATLAB <c>boxchart</c>).
     /// </summary>
     public static BoxChartPlot BoxChart(double[]? xData, double[] yData)
@@ -485,6 +495,27 @@ public static class JG
     {
         AxesModel axes = PrepareAxes();
         return axes.AddScatter3D(x, y, z);
+    }
+
+    /// <summary>Plots a stem per sample in space (MATLAB <c>stem3</c>) and switches to 3D.</summary>
+    public static Stem3DPlot Stem3(double[] x, double[] y, double[] z)
+    {
+        AxesModel axes = PrepareAxes();
+        return axes.AddStem3D(x, y, z);
+    }
+
+    /// <summary>Plots a matrix as a field of bars on the floor (MATLAB <c>bar3</c>).</summary>
+    public static Bar3DPlot Bar3(double[,] z, double[]? rowPositions = null)
+    {
+        AxesModel axes = PrepareAxes();
+        return axes.AddBar3D(z, rowPositions);
+    }
+
+    /// <summary>Plots a raised pie chart on round, frameless axes (MATLAB <c>pie3</c>).</summary>
+    public static Pie3DPlot Pie3(double[] values)
+    {
+        AxesModel axes = PrepareAxes();
+        return axes.AddPie3D(values);
     }
 
     /// <summary>
@@ -1185,6 +1216,31 @@ public static class JG
         }
 
         AxesModel axes = figure.AddSubplot(rows, cols, index);
+        _currentAxes = axes;
+        Touch(_currentNumber);
+        return axes;
+    }
+
+    /// <summary>
+    /// Selects (creating if needed) the axes spanning cells <paramref name="firstIndex"/>..
+    /// <paramref name="lastIndex"/> of a <paramref name="rows"/> × <paramref name="cols"/> grid and
+    /// makes it current (MATLAB <c>subplot(m, n, [p1 p2])</c>). The cells must form a rectangle.
+    /// </summary>
+    public static AxesModel Subplot(int rows, int cols, int firstIndex, int lastIndex)
+    {
+        FigureModel figure = CurrentFigure;
+        Rect2D bounds = FigureModel.SubplotBounds(rows, cols, firstIndex, lastIndex);
+        foreach (AxesModel existing in figure.Axes)
+        {
+            if (BoundsClose(existing.NormalizedBounds, bounds))
+            {
+                _currentAxes = existing;
+                Touch(_currentNumber);
+                return existing;
+            }
+        }
+
+        AxesModel axes = figure.AddSubplot(rows, cols, firstIndex, lastIndex);
         _currentAxes = axes;
         Touch(_currentNumber);
         return axes;

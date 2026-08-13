@@ -22,6 +22,9 @@ internal static partial class JgsBuiltins
     private static readonly HashSet<string> Scatter3OptionNames = new(StringComparer.OrdinalIgnoreCase)
     {
         "Marker", "MarkerFaceColor", "MarkerEdgeColor", "SizeData", "CData", "DisplayName", "LineWidth",
+
+        // The spread properties belong to every marker chart in space, not only to swarmchart3.
+        "XJitter", "YJitter", "ZJitter", "XJitterWidth", "YJitterWidth", "ZJitterWidth",
     };
 
     private static readonly HashSet<string> LineOptionNames = new(StringComparer.OrdinalIgnoreCase)
@@ -153,7 +156,16 @@ internal static partial class JgsBuiltins
     /// area, scalar or per point; <c>c</c> is either one color for the whole cloud (a spec letter, a
     /// name, or an [r g b] triplet) or one colormapped value per point.
     /// </summary>
-    private static JgsValue Scatter3(IReadOnlyList<JgsValue> args, int line, int col)
+    private static JgsValue Scatter3(IReadOnlyList<JgsValue> args, int line, int col) =>
+        Scatter3Series("scatter3", args, line, col, bubbles: false);
+
+    /// <summary>
+    /// The body <c>scatter3</c>, <c>swarmchart3</c> and <c>bubblechart3</c> share. The three read the
+    /// same arguments and draw the same object; what a verb decides is whether the points are spread
+    /// where they crowd and whether the sizes are values or areas.
+    /// </summary>
+    private static JgsValue Scatter3Series(
+        string verb, IReadOnlyList<JgsValue> args, int line, int col, bool bubbles)
     {
         (IReadOnlyList<JgsValue> data, List<(string Name, JgsValue Value)> options) =
             SplitTrailingOptions(args, Scatter3OptionNames);
@@ -174,12 +186,12 @@ internal static partial class JgsBuiltins
         if (positional.Count is < 3 or > 5)
         {
             throw new JgsRuntimeException(line, col,
-                "scatter3 expects (x, y, z), optionally followed by sizes and colors.");
+                $"{verb} expects (x, y, z), optionally followed by sizes and colors.");
         }
 
-        double[] x = DoubleArray("scatter3", positional, 0, line, col);
-        double[] y = DoubleArray("scatter3", positional, 1, line, col);
-        double[] z = DoubleArray("scatter3", positional, 2, line, col);
+        double[] x = DoubleArray(verb, positional, 0, line, col);
+        double[] y = DoubleArray(verb, positional, 1, line, col);
+        double[] z = DoubleArray(verb, positional, 2, line, col);
 
         Scatter3DPlot plot;
         try
@@ -192,14 +204,23 @@ internal static partial class JgsBuiltins
         }
 
         plot.Filled = filled;
+        plot.BubbleSizing = bubbles;
+        if (verb == "swarmchart3")
+        {
+            // A swarm in space spreads both of the coordinates that are not the height, which is what
+            // gives the cloud a footprint instead of a line. Options said in the call still win.
+            plot.XJitter = JitterStyle.Density;
+            plot.YJitter = JitterStyle.Density;
+        }
+
         if (positional.Count >= 4)
         {
-            ApplySizeData(plot, positional[3], line, col);
+            ApplySizeData(verb, plot, positional[3], line, col);
         }
 
         if (positional.Count == 5)
         {
-            ApplyScatterColor(plot, positional[4], line, col);
+            ApplyScatterColor(verb, plot, positional[4], line, col);
         }
 
         foreach ((string name, JgsValue value) in options)
@@ -207,26 +228,44 @@ internal static partial class JgsBuiltins
             switch (name.ToLowerInvariant())
             {
                 case "marker":
-                    plot.Marker = ParseMarker("scatter3", value, line, col);
+                    plot.Marker = ParseMarker(verb, value, line, col);
                     break;
                 case "markerfacecolor":
                     plot.Filled = true;
-                    plot.Color = OptionColor(value, line, col, "scatter3");
+                    plot.Color = OptionColor(value, line, col, verb);
                     break;
                 case "markeredgecolor":
-                    plot.Color = OptionColor(value, line, col, "scatter3");
+                    plot.Color = OptionColor(value, line, col, verb);
                     break;
                 case "sizedata":
-                    ApplySizeData(plot, value, line, col);
+                    ApplySizeData(verb, plot, value, line, col);
                     break;
                 case "cdata":
-                    ApplyScatterColor(plot, value, line, col);
+                    ApplyScatterColor(verb, plot, value, line, col);
                     break;
                 case "linewidth":
-                    plot.EdgeWidth = NumOf("scatter3: LineWidth", value, line, col);
+                    plot.EdgeWidth = NumOf($"{verb}: LineWidth", value, line, col);
+                    break;
+                case "xjitter":
+                    plot.XJitter = ParseJitter($"{verb}: XJitter", value, line, col);
+                    break;
+                case "yjitter":
+                    plot.YJitter = ParseJitter($"{verb}: YJitter", value, line, col);
+                    break;
+                case "zjitter":
+                    plot.ZJitter = ParseJitter($"{verb}: ZJitter", value, line, col);
+                    break;
+                case "xjitterwidth":
+                    plot.XJitterWidth = JitterWidth($"{verb}: XJitterWidth", value, line, col);
+                    break;
+                case "yjitterwidth":
+                    plot.YJitterWidth = JitterWidth($"{verb}: YJitterWidth", value, line, col);
+                    break;
+                case "zjitterwidth":
+                    plot.ZJitterWidth = JitterWidth($"{verb}: ZJitterWidth", value, line, col);
                     break;
                 case "displayname":
-                    plot.DisplayName = StrOf("scatter3: DisplayName", value, line, col);
+                    plot.DisplayName = StrOf($"{verb}: DisplayName", value, line, col);
                     break;
             }
         }
@@ -234,9 +273,34 @@ internal static partial class JgsBuiltins
         return Handle(plot);
     }
 
-    private static void ApplySizeData(Scatter3DPlot plot, JgsValue value, int line, int col)
+    /// <summary>
+    /// The sizes of a marker chart in space. A bubble chart's are data values and go through as they
+    /// are; everyone else's are areas in points squared, so the diameter is their square root — and a
+    /// single one of either is the whole cloud's.
+    /// </summary>
+    private static void ApplySizeData(string verb, Scatter3DPlot plot, JgsValue value, int line, int col)
     {
-        double[] sizes = Numbers("scatter3: sizes", value, line, col);
+        double[] sizes = Numbers($"{verb}: sizes", value, line, col);
+        if (plot.BubbleSizing)
+        {
+            // A bubble's size is a reading, so one of them is a reading every bubble shares rather
+            // than a marker size for the whole cloud — the scale still has to see it as data.
+            double[] values = sizes.Length == 1 && plot.X.Count != 1
+                ? [.. Enumerable.Repeat(sizes[0], plot.X.Count)]
+                : sizes;
+
+            try
+            {
+                plot.SizeData = values;
+            }
+            catch (ArgumentException ex)
+            {
+                throw new JgsRuntimeException(line, col, ex.Message);
+            }
+
+            return;
+        }
+
         if (sizes.Length == 1)
         {
             // MATLAB's s is an area in points squared; the model draws a marker of that diameter, so
@@ -255,15 +319,16 @@ internal static partial class JgsBuiltins
         }
     }
 
-    private static void ApplyScatterColor(Scatter3DPlot plot, JgsValue value, int line, int col)
+    private static void ApplyScatterColor(
+        string verb, Scatter3DPlot plot, JgsValue value, int line, int col)
     {
         if (IsSingleColor(value, plot.X.Count))
         {
-            plot.Color = OptionColor(value, line, col, "scatter3");
+            plot.Color = OptionColor(value, line, col, verb);
             return;
         }
 
-        double[] values = Numbers("scatter3: colors", value, line, col);
+        double[] values = Numbers($"{verb}: colors", value, line, col);
         if (values.Length == 1 && plot.X.Count != 1)
         {
             // A scalar c is one colormap index for the whole cloud, which the model expresses as the

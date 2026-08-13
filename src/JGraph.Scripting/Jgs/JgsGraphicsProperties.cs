@@ -86,7 +86,12 @@ internal static class JgsGraphicsProperties
         PiePlot => "pie",
         HeatmapPlot => "heatmap",
         BoxChartPlot => "boxchart",
-        StemPlot => "stem",
+        StemPlot or Stem3DPlot => "stem",
+
+        // MATLAB builds bar3 out of one surface per column and pie3 out of a surface per wedge, and
+        // a script that looks for either goes looking for surfaces. Each of these is one object
+        // rather than that handful, but the name it answers to is still the one MATLAB uses.
+        Bar3DPlot or Pie3DPlot => "surface",
         HistogramPlot => "histogram",
         PolarHistogramPlot => "histogram",
         ErrorBarPlot => "errorbar",
@@ -449,6 +454,43 @@ internal static class JgsGraphicsProperties
             Put(table, "BubbleDiameters", entry => Row(
                 [.. Enumerable.Range(0, ((ScatterPlot)entry.Target).SizeData?.Count ?? 0)
                     .Select(((ScatterPlot)entry.Target).DiameterAt)]));
+
+            // How far the spread moved each marker. MATLAB has no name for this — it says only how
+            // wide the spread may be — but the offsets are the one part of a swarm chart a script
+            // cannot work out for itself, and reading them is how it checks the chart it asked for.
+            Put(table, "XJitterOffsets", entry => Row([.. ((ScatterPlot)entry.Target).XOffsets]));
+            Put(table, "YJitterOffsets", entry => Row([.. ((ScatterPlot)entry.Target).YOffsets]));
+        }
+
+        if (typeof(Scatter3DPlot).IsAssignableFrom(type))
+        {
+            // A marker chart in space keeps its three coordinates as plain arrays, which reflection
+            // does not carry; writing one of them redraws the cloud against the other two.
+            Put(table, "XData",
+                entry => Row([.. ((Scatter3DPlot)entry.Target).X]),
+                (entry, value, line, col) => SetScatter3Data(entry, value, 0, line, col));
+            Put(table, "YData",
+                entry => Row([.. ((Scatter3DPlot)entry.Target).Y]),
+                (entry, value, line, col) => SetScatter3Data(entry, value, 1, line, col));
+            Put(table, "ZData",
+                entry => Row([.. ((Scatter3DPlot)entry.Target).Z]),
+                (entry, value, line, col) => SetScatter3Data(entry, value, 2, line, col));
+
+            Put(table, "SizeData",
+                entry => Row([.. ((Scatter3DPlot)entry.Target).SizeData ?? []]),
+                (entry, value, line, col) => ((Scatter3DPlot)entry.Target).SizeData =
+                    JgsBuiltins.ToDoubles("SizeData", value, line, col));
+            Put(table, "CData",
+                entry => Row([.. ((Scatter3DPlot)entry.Target).ColorData ?? []]),
+                (entry, value, line, col) => ((Scatter3DPlot)entry.Target).ColorData =
+                    JgsBuiltins.ToDoubles("CData", value, line, col));
+            Put(table, "BubbleDiameters", entry => Row(
+                [.. Enumerable.Range(0, ((Scatter3DPlot)entry.Target).SizeData?.Count ?? 0)
+                    .Select(((Scatter3DPlot)entry.Target).DiameterAt)]));
+
+            Put(table, "XJitterOffsets", entry => Row([.. ((Scatter3DPlot)entry.Target).XOffsets]));
+            Put(table, "YJitterOffsets", entry => Row([.. ((Scatter3DPlot)entry.Target).YOffsets]));
+            Put(table, "ZJitterOffsets", entry => Row([.. ((Scatter3DPlot)entry.Target).ZOffsets]));
         }
 
         if (typeof(BubbleLegendModel).IsAssignableFrom(type))
@@ -545,6 +587,82 @@ internal static class JgsGraphicsProperties
             Put(table, "Colormap",
                 entry => ValueBridge.ToValue(((PiePlot)entry.Target).Colormap),
                 (entry, value, line, col) => ((PiePlot)entry.Target).Colormap =
+                    (Colormap)ValueBridge.FromValue(typeof(Colormap), "Colormap", value, line, col)!);
+        }
+
+        if (typeof(Pie3DPlot).IsAssignableFrom(type))
+        {
+            // The same four a flat pie answers with — none of them a type reflection can carry — and
+            // the labels read back as what is written rather than as what was set, so an unlabelled
+            // pie answers with its percentages.
+            Put(table, "Values",
+                entry => Row(((Pie3DPlot)entry.Target).Values),
+                (entry, value, line, col) => ((Pie3DPlot)entry.Target).Values =
+                    JgsBuiltins.ToDoubles("Values", value, line, col));
+            Put(table, "Explode",
+                entry => Row(((Pie3DPlot)entry.Target).Explode ?? []),
+                (entry, value, line, col) => ((Pie3DPlot)entry.Target).Explode =
+                    JgsBuiltins.ToDoubles("Explode", value, line, col));
+            Put(table, "Labels",
+                entry => JgsValue.Cell(Array.ConvertAll(
+                    WrittenLabels((Pie3DPlot)entry.Target), JgsValue.Str)),
+                (entry, value, line, col) => ((Pie3DPlot)entry.Target).Labels =
+                    TextRows("Labels", value, line, col));
+            Put(table, "Colormap",
+                entry => ValueBridge.ToValue(((Pie3DPlot)entry.Target).Colormap),
+                (entry, value, line, col) => ((Pie3DPlot)entry.Target).Colormap =
+                    (Colormap)ValueBridge.FromValue(typeof(Colormap), "Colormap", value, line, col)!);
+        }
+
+        if (typeof(StemPlot).IsAssignableFrom(type))
+        {
+            // MATLAB's stem calls the floor BaseValue and the model calls it Baseline. Both names
+            // answer, rather than one of them being a near miss a script has to discover.
+            Put(table, "BaseValue",
+                entry => JgsValue.Number(((StemPlot)entry.Target).Baseline),
+                (entry, value, line, col) => ((StemPlot)entry.Target).Baseline =
+                    JgsBuiltins.NumOf("BaseValue", value, line, col));
+        }
+
+        if (typeof(Stem3DPlot).IsAssignableFrom(type))
+        {
+            Put(table, "BaseValue",
+                entry => JgsValue.Number(((Stem3DPlot)entry.Target).Baseline),
+                (entry, value, line, col) => ((Stem3DPlot)entry.Target).Baseline =
+                    JgsBuiltins.NumOf("BaseValue", value, line, col));
+
+            // A spatial stem carries its three coordinate arrays rather than a series, so the three
+            // names a script reads them by have to be spelled out — and the dash pattern, which the
+            // model calls a DashStyle and MATLAB calls a LineStyle.
+            Put(table, "XData", entry => Row([.. ((Stem3DPlot)entry.Target).X]));
+            Put(table, "YData", entry => Row([.. ((Stem3DPlot)entry.Target).Y]));
+            Put(table, "ZData", entry => Row([.. ((Stem3DPlot)entry.Target).Z]));
+            Put(table, "LineStyle",
+                entry => JgsValue.Str(JgsBuiltins.DashWord(((Stem3DPlot)entry.Target).DashStyle)),
+                (entry, value, line, col) =>
+                {
+                    var plot = (Stem3DPlot)entry.Target;
+                    plot.DashStyle = JgsBuiltins.ParseDashWord(
+                        JgsBuiltins.StrOf("LineStyle", value, line, col), plot.DashStyle);
+                });
+        }
+
+        if (typeof(Bar3DPlot).IsAssignableFrom(type))
+        {
+            // The heights are a matrix, which is the one shape reflection cannot carry, and the row
+            // positions answer with the counting numbers a bare bar3 stood the rows on rather than
+            // with nothing — the same "say what was drawn" rule the contour's LevelList follows.
+            Put(table, "ZData",
+                entry => Grid(((Bar3DPlot)entry.Target).ZData),
+                (entry, value, line, col) => ((Bar3DPlot)entry.Target).ZData =
+                    JgsBuiltins.Matrix("ZData", [value], 0, line, col));
+            Put(table, "YData",
+                entry => Row(RowPositionsOf((Bar3DPlot)entry.Target)),
+                (entry, value, line, col) => ((Bar3DPlot)entry.Target).RowPositions =
+                    JgsBuiltins.ToDoubles("YData", value, line, col));
+            Put(table, "Colormap",
+                entry => ValueBridge.ToValue(((Bar3DPlot)entry.Target).Colormap),
+                (entry, value, line, col) => ((Bar3DPlot)entry.Target).Colormap =
                     (Colormap)ValueBridge.FromValue(typeof(Colormap), "Colormap", value, line, col)!);
         }
 
@@ -676,6 +794,48 @@ internal static class JgsGraphicsProperties
                 entry => OnOff(Owner(entry)?.Colorbar.Visible ?? false),
                 (entry, value, line, col) => Owning(entry, line, col).Colorbar.Visible =
                     ToOnOff("ColorbarVisible", value, line, col));
+        }
+
+        if (typeof(BinScatterPlot).IsAssignableFrom(type))
+        {
+            // The readings, the edges and the counts are all read-only: the grid is worked out from
+            // the readings, so a new set of them is a new chart rather than an edit to this one, and
+            // the counts are the answer the chart exists to give.
+            Put(table, "XData", entry => Row([.. ((BinScatterPlot)entry.Target).X]));
+            Put(table, "YData", entry => Row([.. ((BinScatterPlot)entry.Target).Y]));
+            Put(table, "XBinEdges", entry => Row([.. ((BinScatterPlot)entry.Target).XBinEdges]));
+            Put(table, "YBinEdges", entry => Row([.. ((BinScatterPlot)entry.Target).YBinEdges]));
+            Put(table, "Values", entry => Grid(((BinScatterPlot)entry.Target).Values));
+
+            Put(table, "NumBins",
+                entry => Row(((BinScatterPlot)entry.Target).NumBinsX, ((BinScatterPlot)entry.Target).NumBinsY),
+                (entry, value, line, col) =>
+                {
+                    (int across, int up) = JgsBuiltins.BinCounts("NumBins", value, line, col);
+                    var plot = (BinScatterPlot)entry.Target;
+                    plot.NumBinsX = across;
+                    plot.NumBinsY = up;
+                });
+
+            // MATLAB always answers with limits, so the ones taken from the readings are reported
+            // rather than left absent — they are the ends of the edges either way.
+            Put(table, "XLimits",
+                entry => Ends(((BinScatterPlot)entry.Target).XBinEdges),
+                (entry, value, line, col) => ((BinScatterPlot)entry.Target).XLimits =
+                    JgsBuiltins.SpanOption("XLimits", value, line, col));
+            Put(table, "YLimits",
+                entry => Ends(((BinScatterPlot)entry.Target).YBinEdges),
+                (entry, value, line, col) => ((BinScatterPlot)entry.Target).YLimits =
+                    JgsBuiltins.SpanOption("YLimits", value, line, col));
+
+            Put(table, "ShowEmptyBins",
+                entry => OnOff(((BinScatterPlot)entry.Target).ShowEmptyBins),
+                (entry, value, line, col) => ((BinScatterPlot)entry.Target).ShowEmptyBins =
+                    ToOnOff("ShowEmptyBins", value, line, col));
+            Put(table, "Colormap",
+                entry => ValueBridge.ToValue(((BinScatterPlot)entry.Target).Colormap),
+                (entry, value, line, col) => ((BinScatterPlot)entry.Target).Colormap =
+                    (Colormap)ValueBridge.FromValue(typeof(Colormap), "Colormap", value, line, col)!);
         }
 
         if (typeof(BoxChartPlot).IsAssignableFrom(type))
@@ -1235,6 +1395,36 @@ internal static class JgsGraphicsProperties
 
     private static JgsValue RectRow(Rect2D rect) => Row(rect.X, rect.Y, rect.Width, rect.Height);
 
+    /// <summary>
+    /// Writes one of a 3-D scatter's three coordinate arrays, keeping the other two. The model takes
+    /// all three at once because a point needs all three to exist, so the two that were not written
+    /// are handed straight back — and a length that does not match them is the model's own error.
+    /// </summary>
+    private static void SetScatter3Data(
+        JgsHandleEntry entry, JgsValue value, int which, int line, int col)
+    {
+        var plot = (Scatter3DPlot)entry.Target;
+        double[] written = JgsBuiltins.ToDoubles(
+            which switch { 0 => "XData", 1 => "YData", _ => "ZData" }, value, line, col);
+
+        double[] x = which == 0 ? written : [.. plot.X];
+        double[] y = which == 1 ? written : [.. plot.Y];
+        double[] z = which == 2 ? written : [.. plot.Z];
+
+        try
+        {
+            plot.SetData(x, y, z);
+        }
+        catch (ArgumentException ex)
+        {
+            throw new JgsRuntimeException(line, col, ex.Message);
+        }
+    }
+
+    /// <summary>The two ends of a run of bin edges, which is the span the bins fill.</summary>
+    private static JgsValue Ends(IReadOnlyList<double> edges) =>
+        edges.Count == 0 ? Row() : Row(edges[0], edges[^1]);
+
     internal static JgsValue HandleRow(IReadOnlyList<GraphObject> objects)
     {
         // MATLAB lists children most-recently-added first, and scripts index Children(1) expecting
@@ -1253,16 +1443,43 @@ internal static class JgsGraphicsProperties
     /// worked out. Reading back what is drawn rather than what was set is the useful answer here,
     /// and it is the same rule the contour's LevelList already follows.
     /// </summary>
-    private static string[] WrittenLabels(PiePlot pie)
+    private static string[] WrittenLabels(PiePlot pie) =>
+        WrittenLabels(pie.Slices(), pie.LabelOf);
+
+    /// <summary>The same, for the raised pie, which divides the circle by the same arithmetic.</summary>
+    private static string[] WrittenLabels(Pie3DPlot pie) =>
+        WrittenLabels(pie.Slices(), pie.LabelOf);
+
+    private static string[] WrittenLabels(
+        IReadOnlyList<PieSlice> slices, Func<int, double, string> labelOf)
     {
-        IReadOnlyList<PieSlice> slices = pie.Slices();
         var labels = new string[slices.Count];
         for (int i = 0; i < slices.Count; i++)
         {
-            labels[i] = pie.LabelOf(slices[i].Index, slices[i].Fraction);
+            labels[i] = labelOf(slices[i].Index, slices[i].Fraction);
         }
 
         return labels;
+    }
+
+    /// <summary>
+    /// Where a 3-D bar chart's rows actually stand — the positions it was given, or the counting
+    /// numbers it stood them on when it was given none.
+    /// </summary>
+    private static double[] RowPositionsOf(Bar3DPlot bars)
+    {
+        if (bars.RowPositions is { } given)
+        {
+            return given;
+        }
+
+        var counting = new double[bars.ZData.GetLength(0)];
+        for (int r = 0; r < counting.Length; r++)
+        {
+            counting[r] = r + 1;
+        }
+
+        return counting;
     }
 
     /// <summary>A rows-by-columns grid of numbers, as the matrix a script would have written.</summary>
