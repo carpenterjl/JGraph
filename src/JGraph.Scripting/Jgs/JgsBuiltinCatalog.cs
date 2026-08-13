@@ -1637,6 +1637,51 @@ public static class JgsBuiltinCatalog
 
         Add("ndgrid", "Coordinate arrays over the given vectors, the first running down the first dimension: [X, Y, Z] = ndgrid(x, y, z). meshgrid swaps the first two.", P("x"), Opt("y"), Opt("z"));
 
+        // --- figure tooling ------------------------------------------------------------------------
+        Add("annotation", "Draws on the figure rather than on any axes, in coordinates normalized to it: annotation('arrow', [0.2 0.5], [0.3 0.7]) or annotation('textbox', [x y w h], 'String', 'note'). The kinds are rectangle, ellipse, textbox, line, arrow, doublearrow, and textarrow.", P("kind"), Opt("position"), Opt("name"), Opt("value"));
+
+        // Figures as files. The extension written is .fig and what lands in it is this build's own
+        // .graph document, which openfig and hgload read back.
+        Add("savefig", "Saves a figure to a file: savefig('name') or savefig(h, 'name.fig').", Opt("h"), P("filename"), Opt("compact"));
+        Add("hgsave", "Saves a figure to a file; the older spelling of savefig.", Opt("h"), P("filename"));
+        Add("openfig", "Reads a saved figure back and returns a handle to it: h = openfig('name.fig').", P("filename"), Opt("mode"));
+        Add("hgload", "Reads a saved figure back; the older spelling of openfig.", P("filename"));
+        Add("exportgraphics", "Writes a figure to an image or document, format by extension: exportgraphics(gcf, 'plot.pdf', 'ContentType', 'vector').", Opt("h"), P("filename"), Opt("name"), Opt("value"));
+        Add("hgexport", "Writes a figure to a file; the older spelling of exportgraphics.", Opt("h"), P("filename"));
+        Add("copygraphics", "Puts a figure on the clipboard as an image: copygraphics(gcf, 'Resolution', 300).", Opt("h"), Opt("name"), Opt("value"));
+        Add("getframe", "Renders a figure to pixels and returns a frame struct holding cdata and colormap: f = getframe or f = getframe(h).", Opt("h"));
+
+        // What a script hangs on an object, and what it keeps in step.
+        Add("setappdata", "Stores a value on a figure object under a name of your own: setappdata(gcf, 'state', s).", P("h"), P("name"), P("value"));
+        Add("getappdata", "Reads a value stored with setappdata, or the whole lot as a struct: getappdata(gcf, 'state') or getappdata(gcf).", P("h"), Opt("name"));
+        Add("isappdata", "Whether anything is stored under a name: isappdata(gcf, 'state').", P("h"), P("name"));
+        Add("rmappdata", "Removes a value stored with setappdata.", P("h"), P("name"));
+        Add("linkprop", "Keeps a property the same across several objects: linkprop([ax1 ax2], 'XLim') or linkprop(h, {'Color', 'LineWidth'}).", P("handles"), P("properties"));
+        Add("refresh", "Redraws a figure now.", Opt("h"));
+        Add("alpha", "Sets how transparent the filled plots in the current axes are: alpha(0.5), alpha('opaque'), alpha('clear').", P("value"));
+        Add("alim", "The opacity range. This build has a transparency per object rather than a mapping, so this reads [0 1] and setting it changes nothing.", Opt("limits"));
+        Add("alphamap", "The opacity ramp. As alim, this build has no mapping, so this reads the default ramp and setting it changes nothing.", Opt("map"));
+        Add("rendererinfo", "What drew the figure, as a struct: r = rendererinfo or rendererinfo(h).", Opt("h"));
+
+        // Motion. Each of these draws its finished picture and then, if a window can show it, replays
+        // how it got there — so a run with no window still gets the drawing.
+        Add("comet", "Draws a curve and, in a window, travels along it: comet(y), comet(x, y), or comet(x, y, p) for the tail length.", P("x"), Opt("y"), Opt("p"));
+        Add("comet3", "As comet, in space: comet3(x, y, z) or comet3(x, y, z, p).", P("x"), P("y"), P("z"), Opt("p"));
+        Add("movie", "Plays frames captured with getframe: movie(F), movie(F, n), or movie(F, n, fps).", P("frames"), Opt("times"), Opt("fps"));
+        Add("streamparticles", "Draws markers spread along traced streamlines: streamparticles(verts, n).", P("verts"), Opt("n"), Opt("name"), Opt("value"));
+        Add("interpstreamspeed", "Respaces traced streamlines so even steps cover even distance: interpstreamspeed(verts, factor).", P("verts"), Opt("factor"));
+
+        // The verbs that would wait for a mouse.
+        Add("pan", "Turns panning on or off, or reads which it is: pan on, pan off, pan(gcf).", Opt("h"), Opt("state"));
+        Add("datacursormode", "Turns data tips on or off, or reads which it is: datacursormode on, datacursormode(gcf).", Opt("h"), Opt("state"));
+        Add("gtext", "Places a label where you click. This needs a figure window; use text or annotation to say where instead.", P("text"));
+        Add("rotate", "Turns a plot's own data about a direction through an angle in degrees: rotate(h, [0 90], 45) or rotate(h, [x y z], 45, origin).", P("h"), P("direction"), P("angle"), Opt("origin"));
+        Add("disableDefaultInteractivity", "Accepted and changes nothing: this build's figures are always interactive.", Opt("ax"));
+        Add("enableDefaultInteractivity", "Accepted and changes nothing: this build's figures are always interactive.", Opt("ax"));
+        Add("enableLegacyExplorationModes", "Accepted and changes nothing: there is no legacy exploration mode to restore.", Opt("fig"));
+        Add("addToolbarExplorationButtons", "Accepted and changes nothing: the figure window has its own toolbar.", Opt("fig"));
+        Add("removeToolbarExplorationButtons", "Accepted and changes nothing: the figure window has its own toolbar.", Opt("fig"));
+
         Add("sphere", "The unit sphere: [X, Y, Z] = sphere(n), or sphere(n) to draw one.", Opt("n"));
         Add("cylinder", "A surface of revolution: [X, Y, Z] = cylinder(r, n), or cylinder(r) to draw one.", Opt("r"), Opt("n"));
         Add("ellipsoid", "An ellipsoid grid: [X, Y, Z] = ellipsoid(xc, yc, zc, xr, yr, zr, n).", P("xc"), P("yc"), P("zc"), P("xr"), P("yr"), P("zr"), Opt("n"));

@@ -1963,6 +1963,11 @@ internal static partial class JgsBuiltins
         // The volume verbs draw with those too, and several of them hand a shape to `patch`.
         RegisterVolumeBuiltins(env);
 
+        // The figure-tooling verbs work on what the verbs above drew rather than drawing themselves.
+        RegisterFigureToolBuiltins(env, host);
+        RegisterFigureStateBuiltins(env);
+        RegisterMotionBuiltins(env);
+
         // After the plotting verbs it re-declares: the titling family gains its text options here,
         // and contour learns to answer with its matrix as well as its handle.
         RegisterDecorationBuiltins(env, dialect);

@@ -33,6 +33,14 @@ internal sealed class JgsHandleEntry
 
     /// <summary>A legend's <c>ItemHitFcn</c>, if a script gave it one.</summary>
     public JgsValue? ItemHitFcn { get; set; }
+
+    /// <summary>
+    /// Whatever a script has hung on this object with <c>setappdata</c>. It lives on the entry rather
+    /// than on the model because it is the script's own bookkeeping and has no business being drawn,
+    /// inspected or saved — and because the entry is already what a closed figure lets go of, so
+    /// application data cannot outlive the object it was attached to.
+    /// </summary>
+    public Dictionary<string, JgsValue> AppData { get; } = new(StringComparer.Ordinal);
 }
 
 /// <summary>

@@ -7,7 +7,7 @@ so long. The live tracker is `matlab-r2021b-documented.html` in the demo workspa
 `tools/matlab-checklist/build-checklist.py`; this file is the standing summary, so the shape of what
 is left does not have to be re-derived each time.
 
-**383 of 514 builtins implemented** (382 after M54, 372 from M45 to M53, 364 after M43, 363 after
+**385 of 514 builtins implemented** (383 after M59, 382 after M54, 372 from M45 to M53, 364 after M43, 363 after
 M39, 326 after M38, 185 after M37, 109 after M36) — M46 through M53 all added names MATLAB documents
 as *functions*, which this table does not hold. M45's eight are the drawing primitives the "handle
 graphics" section below used to list as missing and call the most useful thing left: `plot3`, `line`,
@@ -15,26 +15,38 @@ graphics" section below used to list as missing and call the most useful thing l
 handle-graphics builtins it implemented: `get` `set` `findobj` `isgraphics` `ishandle` `ishghandle`
 `gco` `gcbo` `ancestor` `copyobj`. **M56 moved it by one**: `polaraxes` is the only name in the
 angular family MATLAB documents as kind *builtin* — every verb that draws on the axes it makes is a
-*function*, counted in the second table.
+*function*, counted in the second table. **M60 moved it by two**: `setappdata` and `rmappdata` are
+documented as builtins where their two companions `getappdata` and `isappdata` are functions, which
+is the sort of split that makes counting by kind rather than by family necessary.
 
-**213 of the 267 documented graphics functions** — the second table below, new in M45, moved by 52 in
+**246 of the 277 documented graphics functions** — the second table below, new in M45, moved by 52 in
 M54, by 13 in M55, by 17 in M56 (the eight angular chart verbs and the nine polar rulers), by 13
 in M57, which empties the chart-type family below but for two names excluded with reasons, by 16
-in M58, which empties the function-plotter family outright, and by 21 in M59, which empties the
-volume family but for two names excluded with reasons. The
-denominator has now been corrected three times, and all three corrections are worth
-stating rather than quietly overwriting. M54's: this file said 263 from M45, which was one short *and*
-two names wrong in both directions — `slice` was counted in the implemented table and listed again
-among the missing volume names, while `close` (M35) and `linkaxes` (M51) were graphics functions the
-file never put in either list. M55's: `bubblesize` and `bubblelim` are documented graphics functions
-that appeared in neither list either, found because implementing them moved the checklist tool by two
-names this file could not account for. **M59's is the plainest of the three: the volume family below
-listed twenty-three names under a heading that said twenty-two**, so the remainder read 74 where it
-was 75 and the denominator read 266 where it is 267. **That is the fourth time the same kind of gap
-has surfaced, and always the same way — a name is present in a list but absent from its count.** The
-check that catches it is to count the names in a list rather than to trust the number at its head, and
-it is worth running on every family this file still carries. 267 is the count
-under `graph2d`, `graph3d`, `specgraph` and `graphics` as this file now enumerates them.
+in M58, which empties the function-plotter family outright, by 21 in M59, which empties the
+volume family but for two names excluded with reasons, and by 31 in M60, which empties what was left.
+
+**The denominator has been corrected five times, and M60's correction is different in kind from the
+first four, which is why it is worth the space.** The first four were arithmetic: M54's, that this
+file said 263 from M45 while `slice` was counted twice and `close` and `linkaxes` were in neither
+list; M55's, that `bubblesize` and `bubblelim` appeared in neither list either; M59's, that the
+volume family listed twenty-three names under a heading saying twenty-two. Each was a name present in
+a list but absent from its count, and the check that catches that is to count the names in a list
+rather than trust the number at its head.
+
+**M60's is not an arithmetic slip but a wrong statement of what was being counted.** This file said
+its denominator was the graphics functions under `graph2d`, `graph3d`, `specgraph` and `graphics`.
+Asked directly, the R2021b dump says those four folders hold **264** documented functions — not 267.
+The lists here were never wrong; the sentence describing them was. They have always also counted
+`legend`, `colorbar`, `bubblelegend` and `annotation`, which MATLAB documents under `matlab/scribe`,
+and the eight plot-tool verbs (`plotedit` `plottools` `plotbrowser` `propertyeditor` `figurepalette`
+`showplottool` `axtoolbar` `axtoolbarbtn`), which it documents under `matlab/plottools`. Six folders,
+not four: **264 + 4 + 9 = 277**, of which 246 are implemented and 31 are excluded with stated reasons.
+
+The lesson is the one the other four taught, one level up: **check the denominator against the source
+rather than against the last time it was written down.** Counting names in a list catches a slip in
+the count; only re-deriving the set from the dump catches a slip in what the list is *of*. The query
+that does it is four lines against the data island in `matlab-r2021b-commands.html` — filter the
+documented rows, keep kind `function`, keep the six folders, and take the distinct names.
 
 The nine-name gap this paragraph used to record is closed. From M54 to M56 a fresh run of
 `build-checklist.py` reported nine more graphics names than this file counted, because M54 registered
@@ -45,8 +57,8 @@ see. This file refused to count them while they drew nothing; **M56 made them re
 number and this one agree again. `opengl` *is* counted, because an accepted no-op is an answer — the
 same reading that counted `shading`, `lighting` and `camlight` in M43.
 
-Across every callable kind — builtin, function, operator, keyword, script — the count is **781 of
-2,027** as of M59 (758 after M58, 742 after M57, 728 after M56, 710 after M55 by this file's nine-short reading above, 697 after M54, 633 after
+Across every callable kind — builtin, function, operator, keyword, script — the count is **814 of
+2,027** as of M60 (781 after M59, 758 after M58, 742 after M57, 728 after M56, 710 after M55 by this file's nine-short reading above, 697 after M54, 633 after
 M52, 619 after M51, up from 560, and not from the 556 this file used to claim: the checklist tool
 read the implemented set with a regular expression that only matched a name literal directly inside
 `Add(`, so it missed the sixteen colormap generators, which are registered from a loop, and reported
@@ -216,15 +228,37 @@ count in the first table instead.
 | The function plotters | M58 | `fplot` `fplot3` `fsurf` `fmesh` `fcontour` `fimplicit` `fimplicit3` and the nine `ez*` spellings — no new plot object at all: each verb decides where to read its function and hands the readings to a line, a surface, a contour or a patch that already existed, so a saved figure holds the drawing and not the function |
 | Volume visualization | M59 | `isosurface` `isocaps` `isonormals` `isocolors` `contourslice` `coneplot` `streamline` `stream2` `stream3` `streamribbon` `streamtube` `streamslice` `curl` `divergence` `smooth3` `subvolume` `reducevolume` `reducepatch` `volumebounds` `shrinkfaces` `surf2patch` — twenty-one verbs and no new plot object: the isosurface family draws with `patch`, the stream family with `plot3` and `surf`, and a field is a plain three-dimensional array, so the whole milestone is arithmetic followed by an existing drawing |
 | The polar rulers | M56 | `rticks` `rticklabels` `rtickangle` `rtickformat` `rlim` `thetaticks` `thetaticklabels` `thetatickformat` `thetalim` — registered as refusals in M54, real now; r is the Cartesian tick machinery pointed at `RAxis`, θ converts units at the boundary and answers through the spoke arithmetic the renderer draws with |
+| Figure tooling, files and motion | M60 | `annotation` `savefig` `openfig` `hgsave` `hgload` `exportgraphics` `hgexport` `copygraphics` `getframe` `getappdata` `setappdata` `isappdata` `rmappdata` `linkprop` `refresh` `alpha` `alim` `alphamap` `rendererinfo` `comet` `comet3` `movie` `streamparticles` `interpstreamspeed` `pan` `datacursormode` `gtext` `rotate` and the five interactivity toggles — almost none of them draw: they work on what the other verbs drew, and each one that wants a window, a clipboard or a click has a defined answer without one |
 
-### What the remaining 54 are
+### What the remaining 31 are
 
-Four families and four excluded names, and they add to exactly 54 — and after M57 **not one of them
-is a missing plot**. This section read 185 from M45 until M54 emptied two of the five families and
-most of a third, 131 until M55 took ten of the chart types, 120 until M56 took the angular family,
-103 until M57 took the thirteen left, 90 until M58 took all sixteen function plotters, and 75 until
-M59 took twenty-one of the twenty-three volume names; the milestone each family is now waiting on is
-named beside it. **After M60 there is nothing left here that draws.**
+**Every one of the 31 is excluded with a stated reason. Nothing here is waiting on a milestone, and
+nothing here draws.** That is the end of the arc: this section read 185 from M45 until M54 emptied
+two of the five families and most of a third, 131 until M55 took ten of the chart types, 120 until
+M56 took the angular family, 103 until M57 took the thirteen left, 90 until M58 took all sixteen
+function plotters, 75 until M59 took twenty-one of the twenty-three volume names, and 54 — read
+against the wrong denominator, as the correction at the top of this file records — until M60 took the
+thirty-one that were left.
+
+The 31 fall into five groups, and the reasons are of four kinds. **Eight are the plot-tool verbs**
+(`plotedit` `plottools` `plotbrowser` `propertyeditor` `figurepalette` `showplottool` `axtoolbar`
+`axtoolbarbtn`) plus `cameratoolbar` — nine in all — and they are excluded because JGraph's dockable
+plot browser and property inspector *are* these tools: a verb that opens one would have to open
+something that is already open. **Eight are geographic** (`geoaxes` `geobasemap` `geobubble`
+`geodensityplot` `geolimits` `geoplot` `geoscatter` `geotickformat`) and need a basemap tile service,
+which is a product rather than a feature. **Six are print and export dialogs** (`printdlg`
+`printpreview` `pagesetupdlg` `exportsetupdlg` `exportapp`) and `uiaxes`, which are app building —
+the same non-goal as the `ui*` family in the handle-graphics section. **Four are chart containers
+whose whole content is a layout algorithm** (`wordcloud` `parallelplot` `bubblecloud`) or a machine
+JGraph does not run on (`graymon` `im2java` `spinmap` — three legacy names). **And four are verbs
+that need something this build does not have**: `rbbox` and `refreshdata` need a rubber-band drag and
+an `XDataSource` respectively, and both describe a way of working the plot browser already offers.
+
+The four names that used to be listed here as *waiting* are all done. **`gtext` is registered** and
+refuses by naming `text` and `annotation`, which is the honest answer for a verb whose whole meaning
+is where you click. **`comet` and `comet3` are real**, and draw their finished curve when nothing can
+show them travelling. **`streamparticles` and `interpstreamspeed` came with them**, which is what
+ADR 0059 said would happen if the animation seam landed.
 
 **Chart types with no plot object — 2, both excluded.** `wordcloud` and `parallelplot`. Each of the
 other thirteen was a plot object, a renderer branch, `.graph` serialization and inspector support —

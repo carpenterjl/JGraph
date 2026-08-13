@@ -122,6 +122,36 @@ public sealed class ImageBuffer : IDisposable
         return ((r * Width) + c) * Channels + ch;
     }
 
+    /// <summary>
+    /// An RGB image from row-major, four-bytes-per-pixel RGBA samples. The alpha channel is dropped
+    /// rather than composited: this reads what a renderer drew, and a figure's own background is
+    /// already part of that drawing.
+    /// </summary>
+    public static ImageBuffer FromRgba(ReadOnlySpan<byte> rgba, int width, int height)
+    {
+        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(width);
+        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(height);
+        long expected = (long)width * height * 4;
+        if (rgba.Length < expected)
+        {
+            throw new ArgumentException(
+                $"{width}x{height} RGBA needs {expected} bytes, not {rgba.Length}.", nameof(rgba));
+        }
+
+        var image = new ImageBuffer(height, width, 3);
+        Span<double> pixels = image.Pixels;
+        for (int i = 0, source = 0, target = 0; i < width * height; i++, source += 4, target += 3)
+        {
+            pixels[target] = rgba[source] / 255.0;
+            pixels[target + 1] = rgba[source + 1] / 255.0;
+            pixels[target + 2] = rgba[source + 2] / 255.0;
+        }
+
+        image.Class = ImageClass.UInt8;
+        GC.KeepAlive(image);
+        return image;
+    }
+
     /// <summary>Creates an independent copy with its own backing buffer.</summary>
     public ImageBuffer Clone()
     {

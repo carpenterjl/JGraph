@@ -57,6 +57,9 @@ public sealed class TextAnnotationDto : AnnotationDto
     public HorizontalAlignment HorizontalAlignment { get; set; } = HorizontalAlignment.Left;
 
     public VerticalAlignment VerticalAlignment { get; set; } = VerticalAlignment.Bottom;
+
+    /// <summary>An explicit box, or null to size the box to the text — the default and what every label written before M60 carries.</summary>
+    public RectDto? Box { get; set; }
 }
 
 public sealed class DataTipAnnotationDto : AnnotationDto
@@ -94,9 +97,17 @@ public sealed class ArrowAnnotationDto : AnnotationDto
 
     public bool ShowHead { get; set; } = true;
 
+    public bool ShowTailHead { get; set; }
+
     public double HeadLength { get; set; } = 12;
 
     public double HeadWidth { get; set; } = 9;
+
+    public string Text { get; set; } = string.Empty;
+
+    public double FontSize { get; set; } = 10;
+
+    public string FontFamily { get; set; } = "Segoe UI";
 }
 
 /// <summary>The shared shape (rectangle/ellipse) two-corner annotation body.</summary>

@@ -1,4 +1,5 @@
 using JGraph.Core.Model;
+using JGraph.Imaging;
 
 namespace JGraph.Scripting;
 
@@ -19,4 +20,18 @@ public interface IScriptFigureFiles
 
     /// <summary>Exports a figure as an image; the format follows the extension (png/jpg/bmp/tiff/svg/pdf).</summary>
     void Export(FigureModel figure, string path);
+
+    /// <summary>
+    /// Renders a figure into pixels without a window and without a file — what <c>getframe</c>
+    /// answers with, and the only way a headless script can look at what it drew. The caller owns
+    /// the returned buffer. <paramref name="scale"/> is pixels per device-independent unit.
+    /// </summary>
+    ImageBuffer Capture(FigureModel figure, double scale);
+
+    /// <summary>
+    /// Puts a figure on the system clipboard as an image, answering false when this host has no
+    /// clipboard to put it on — which is what a batch run is, and why <c>copygraphics</c> is an
+    /// accepted no-op there rather than an error.
+    /// </summary>
+    bool CopyToClipboard(FigureModel figure, double scale);
 }

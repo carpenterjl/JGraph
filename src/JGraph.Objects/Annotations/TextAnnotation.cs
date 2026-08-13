@@ -32,6 +32,7 @@ public sealed class TextAnnotation : AnnotationObject, IDrawable, I3DDrawable
     private double _padding = 4;
     private HorizontalAlignment _horizontalAlignment = HorizontalAlignment.Left;
     private VerticalAlignment _verticalAlignment = VerticalAlignment.Bottom;
+    private Rect2D? _box;
 
     public TextAnnotation()
     {
@@ -148,6 +149,18 @@ public sealed class TextAnnotation : AnnotationObject, IDrawable, I3DDrawable
         set => SetProperty(ref _verticalAlignment, value, InvalidationKind.Render);
     }
 
+    /// <summary>
+    /// An explicit box in this annotation's coordinate space, or null to size the box to the text.
+    /// A label placed by hand fits what it says; a box a script asked for by size keeps that size,
+    /// which is what <c>annotation('textbox', [x y w h])</c> means.
+    /// </summary>
+    [Browsable(false)]
+    public Rect2D? Box
+    {
+        get => _box;
+        set => SetProperty(ref _box, value, InvalidationKind.Render);
+    }
+
     /// <inheritdoc />
     public override IReadOnlyList<Point2D> GetAnchorPoints() => new[] { _position };
 
@@ -160,28 +173,49 @@ public sealed class TextAnnotation : AnnotationObject, IDrawable, I3DDrawable
             throw new ArgumentException("TextAnnotation has exactly one anchor point.", nameof(anchors));
         }
 
-        Position = anchors[0];
+        Point2D moved = anchors[0];
+        if (_box is { } current)
+        {
+            Box = new Rect2D(
+                current.X + (moved.X - _position.X),
+                current.Y + (moved.Y - _position.Y),
+                current.Width,
+                current.Height);
+        }
+
+        Position = moved;
     }
 
     /// <inheritdoc />
     public void Render(IRenderContext context, RenderState state)
     {
         ArgumentNullException.ThrowIfNull(state);
-        DrawAt(context, state, () => state.Mapper.DataToPixel(_position.X, _position.Y));
+        DrawAt(
+            context,
+            state,
+            () => state.Mapper.DataToPixel(_position.X, _position.Y),
+            () => _box is { } box
+                ? Rect2D.FromCorners(
+                    state.Mapper.DataToPixel(box.Left, box.Top),
+                    state.Mapper.DataToPixel(box.Right, box.Bottom))
+                : null);
     }
 
     /// <inheritdoc />
     public void Render3D(IRenderContext context, Projection3D projection, RenderState state)
     {
+        // A given box is a figure-space rectangle and has no meaning in a projected axes, so a 3-D
+        // label always sizes itself to what it says.
         ArgumentNullException.ThrowIfNull(projection);
-        DrawAt(context, state, () => projection.ProjectPoint(_position.X, _position.Y, _z));
+        DrawAt(context, state, () => projection.ProjectPoint(_position.X, _position.Y, _z), () => null);
     }
 
-    private void DrawAt(IRenderContext context, RenderState state, Func<Point2D> anchorAt)
+    private void DrawAt(IRenderContext context, RenderState state, Func<Point2D> anchorAt, Func<Rect2D?> boxAt)
     {
         ArgumentNullException.ThrowIfNull(context);
         ArgumentNullException.ThrowIfNull(state);
-        if (string.IsNullOrEmpty(_text))
+        Rect2D? given = boxAt();
+        if (string.IsNullOrEmpty(_text) && given is null)
         {
             SetRenderedBounds(Rect2D.Empty);
             return;
@@ -191,36 +225,48 @@ public sealed class TextAnnotation : AnnotationObject, IDrawable, I3DDrawable
         var style = new TextStyle(ink, _fontSize, _fontFamily, _bold, _italic);
         Size2D textSize = context.MeasureText(_text, style);
 
-        Point2D anchor = anchorAt();
-        double boxWidth = textSize.Width + (_padding * 2);
-        double boxHeight = textSize.Height + (_padding * 2);
-
-        double left = _horizontalAlignment switch
+        Rect2D box;
+        if (given is { } fixedBox)
         {
-            HorizontalAlignment.Center => anchor.X - (boxWidth / 2),
-            HorizontalAlignment.Right => anchor.X - boxWidth,
-            _ => anchor.X,
-        };
-        double top = _verticalAlignment switch
+            box = fixedBox;
+        }
+        else
         {
-            VerticalAlignment.Middle => anchor.Y - (boxHeight / 2),
-            VerticalAlignment.Bottom or VerticalAlignment.Baseline => anchor.Y - boxHeight,
-            _ => anchor.Y,
-        };
+            Point2D anchor = anchorAt();
+            double boxWidth = textSize.Width + (_padding * 2);
+            double boxHeight = textSize.Height + (_padding * 2);
 
-        var box = new Rect2D(left, top, boxWidth, boxHeight);
+            double left = _horizontalAlignment switch
+            {
+                HorizontalAlignment.Center => anchor.X - (boxWidth / 2),
+                HorizontalAlignment.Right => anchor.X - boxWidth,
+                _ => anchor.X,
+            };
+            double top = _verticalAlignment switch
+            {
+                VerticalAlignment.Middle => anchor.Y - (boxHeight / 2),
+                VerticalAlignment.Bottom or VerticalAlignment.Baseline => anchor.Y - boxHeight,
+                _ => anchor.Y,
+            };
+
+            box = new Rect2D(left, top, boxWidth, boxHeight);
+        }
+
         if (_background is not null || _borderColor is not null)
         {
             LineStyle? border = _borderColor is { } bc ? new LineStyle(bc.WithOpacity(Opacity), 1) : null;
             context.DrawRectangle(box, border, _background?.WithOpacity(Opacity));
         }
 
-        context.DrawText(
-            _text,
-            new Point2D(left + _padding, top + _padding),
-            style.WithColor(ink.WithOpacity(Opacity)),
-            HorizontalAlignment.Left,
-            VerticalAlignment.Top);
+        if (_text.Length > 0)
+        {
+            context.DrawText(
+                _text,
+                new Point2D(box.Left + _padding, box.Top + _padding),
+                style.WithColor(ink.WithOpacity(Opacity)),
+                HorizontalAlignment.Left,
+                VerticalAlignment.Top);
+        }
 
         SetRenderedBounds(box);
     }

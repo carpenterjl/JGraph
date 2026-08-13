@@ -100,8 +100,19 @@ internal static class JgsGraphicsProperties
         PatchPlot => "patch",
         QuiverPlot => "quiver",
         ImagePlot or RgbImagePlot => "image",
+        // A label sized to what it says is a text object; one given a box of its own is a textbox,
+        // which is the same reading as the arrows below and as the stairstep line above.
+        TextAnnotation { Box: not null } => "textbox",
         TextAnnotation => "text",
+
+        // MATLAB mints a distinct object for each shape of arrow, and a script looking for one asks
+        // by that name. Here they are one object whose properties say which shape it is — the same
+        // decision as the stairstep line above, and read the same way.
+        ArrowAnnotation { Text.Length: > 0 } => "textarrow",
+        ArrowAnnotation { ShowTailHead: true } => "doublearrow",
+        ArrowAnnotation { ShowHead: false } => "line",
         ArrowAnnotation => "arrow",
+        EllipseAnnotation => "ellipse",
         ShapeAnnotation => "rectangle",
         DataTipAnnotation => "datatip",
         _ => FallbackTypeName(target.GetType()),
@@ -354,8 +365,16 @@ internal static class JgsGraphicsProperties
 
         if (typeof(XYPlot).IsAssignableFrom(type))
         {
-            Put(table, "XData", entry => SeriesRow((XYPlot)entry.Target, x: true));
-            Put(table, "YData", entry => SeriesRow((XYPlot)entry.Target, x: false));
+            // M60: these could be read and not written, which is the sixth time this file has
+            // carried half of a property — and the one that costs most, because moving a series by
+            // writing its data is the ordinary way to redraw one without drawing it again. Writing
+            // either coordinate keeps the other, since a series is set as a pair.
+            Put(table, "XData",
+                entry => SeriesRow((XYPlot)entry.Target, x: true),
+                (entry, value, line, col) => SetSeriesData(entry, value, x: true, line, col));
+            Put(table, "YData",
+                entry => SeriesRow((XYPlot)entry.Target, x: false),
+                (entry, value, line, col) => SetSeriesData(entry, value, x: false, line, col));
         }
 
         if (typeof(LinePlot).IsAssignableFrom(type))
@@ -1036,7 +1055,171 @@ internal static class JgsGraphicsProperties
             Put(table, "String", entry => JgsValue.Cell(
                 ((LegendModel)entry.Target).Entries.Select(e => JgsValue.Str(e.Label ?? string.Empty)).ToArray()));
         }
+
+        if (typeof(AnnotationObject).IsAssignableFrom(type))
+        {
+            AddAnnotationAliases(type, table);
+        }
     }
+
+    /// <summary>
+    /// The spellings an annotation answers to. MATLAB gives every annotation a <c>Position</c> in
+    /// normalized figure units, and this is the one place that unit flip lives: MATLAB measures y up
+    /// from the bottom of the figure and this model measures it down from the top, so a box written
+    /// at y is read back at y and stored in between at <c>1 - y - height</c>.
+    /// </summary>
+    private static void AddAnnotationAliases(Type type, IDictionary<string, GraphicsProperty> table)
+    {
+        if (typeof(TextAnnotation).IsAssignableFrom(type))
+        {
+            Put(table, "String",
+                entry => JgsValue.Str(((TextAnnotation)entry.Target).Text),
+                (entry, value, line, col) => ((TextAnnotation)entry.Target).Text =
+                    JgsBuiltins.AnnotationString("String", value, line, col));
+            Put(table, "FontName",
+                entry => JgsValue.Str(((TextAnnotation)entry.Target).FontFamily),
+                (entry, value, line, col) => ((TextAnnotation)entry.Target).FontFamily =
+                    JgsBuiltins.StrOf("FontName", value, line, col));
+            Put(table, "BackgroundColor",
+                entry => OptionalColorRow(((TextAnnotation)entry.Target).Background),
+                (entry, value, line, col) => ((TextAnnotation)entry.Target).Background =
+                    NoneOrColor(value, line, col, "textbox"));
+            Put(table, "EdgeColor",
+                entry => OptionalColorRow(((TextAnnotation)entry.Target).BorderColor),
+                (entry, value, line, col) => ((TextAnnotation)entry.Target).BorderColor =
+                    NoneOrColor(value, line, col, "textbox"));
+            AddAnnotationPosition(
+                table,
+                entry =>
+                {
+                    var text = (TextAnnotation)entry.Target;
+                    return text.Box is { } box
+                        ? (new Point2D(box.Left, box.Top), new Point2D(box.Right, box.Bottom))
+                        : (text.Position, text.Position);
+                },
+                (entry, a, b) =>
+                {
+                    var text = (TextAnnotation)entry.Target;
+                    text.Position = a;
+                    text.Box = Rect2D.FromCorners(a, b);
+                });
+        }
+
+        if (typeof(ArrowAnnotation).IsAssignableFrom(type))
+        {
+            Put(table, "String",
+                entry => JgsValue.Str(((ArrowAnnotation)entry.Target).Text),
+                (entry, value, line, col) => ((ArrowAnnotation)entry.Target).Text =
+                    JgsBuiltins.AnnotationString("String", value, line, col));
+            Put(table, "FontName",
+                entry => JgsValue.Str(((ArrowAnnotation)entry.Target).FontFamily),
+                (entry, value, line, col) => ((ArrowAnnotation)entry.Target).FontFamily =
+                    JgsBuiltins.StrOf("FontName", value, line, col));
+
+            // An arrow is measured by its two ends rather than by a box, which is how MATLAB spells
+            // it too: X and Y are each a pair, tail first.
+            Put(table, "X",
+                entry => Row(((ArrowAnnotation)entry.Target).Start.X, ((ArrowAnnotation)entry.Target).End.X),
+                (entry, value, line, col) =>
+                {
+                    var arrow = (ArrowAnnotation)entry.Target;
+                    double[] pair = Numbers("X", value, 2, line, col);
+                    arrow.Start = new Point2D(pair[0], arrow.Start.Y);
+                    arrow.End = new Point2D(pair[1], arrow.End.Y);
+                });
+            Put(table, "Y",
+                entry => Row(Up(((ArrowAnnotation)entry.Target).Start.Y), Up(((ArrowAnnotation)entry.Target).End.Y)),
+                (entry, value, line, col) =>
+                {
+                    var arrow = (ArrowAnnotation)entry.Target;
+                    double[] pair = Numbers("Y", value, 2, line, col);
+                    arrow.Start = new Point2D(arrow.Start.X, Up(pair[0]));
+                    arrow.End = new Point2D(arrow.End.X, Up(pair[1]));
+                });
+            AddAnnotationPosition(
+                table,
+                entry => Corners(((ArrowAnnotation)entry.Target).Start, ((ArrowAnnotation)entry.Target).End),
+                (entry, a, b) =>
+                {
+                    var arrow = (ArrowAnnotation)entry.Target;
+                    arrow.Start = a;
+                    arrow.End = b;
+                });
+        }
+
+        if (typeof(ShapeAnnotation).IsAssignableFrom(type))
+        {
+            Put(table, "FaceColor",
+                entry => OptionalColorRow(((ShapeAnnotation)entry.Target).Fill),
+                (entry, value, line, col) => ((ShapeAnnotation)entry.Target).Fill =
+                    NoneOrColor(value, line, col, "shape"));
+            Put(table, "Color",
+                entry => OptionalColorRow(((ShapeAnnotation)entry.Target).Stroke),
+                (entry, value, line, col) => ((ShapeAnnotation)entry.Target).Stroke =
+                    NoneOrColor(value, line, col, "shape"));
+            Put(table, "EdgeColor",
+                entry => OptionalColorRow(((ShapeAnnotation)entry.Target).Stroke),
+                (entry, value, line, col) => ((ShapeAnnotation)entry.Target).Stroke =
+                    NoneOrColor(value, line, col, "shape"));
+            AddAnnotationPosition(
+                table,
+                entry => Corners(((ShapeAnnotation)entry.Target).Corner1, ((ShapeAnnotation)entry.Target).Corner2),
+                (entry, a, b) =>
+                {
+                    var shape = (ShapeAnnotation)entry.Target;
+                    shape.Corner1 = a;
+                    shape.Corner2 = b;
+                });
+        }
+    }
+
+    /// <summary>
+    /// The <c>[x y w h]</c> reading of an annotation's two governing points, in MATLAB's units. The
+    /// pair of callbacks is what differs per annotation kind; the flip and the box arithmetic do not.
+    /// </summary>
+    private static void AddAnnotationPosition(
+        IDictionary<string, GraphicsProperty> table,
+        Func<JgsHandleEntry, (Point2D A, Point2D B)> read,
+        Action<JgsHandleEntry, Point2D, Point2D> write)
+    {
+        Put(table, "Position",
+            entry =>
+            {
+                (Point2D a, Point2D b) = read(entry);
+                double left = System.Math.Min(a.X, b.X);
+                double width = System.Math.Abs(b.X - a.X);
+                double height = System.Math.Abs(b.Y - a.Y);
+                double bottom = Up(System.Math.Max(a.Y, b.Y));
+                return Row(left, bottom, width, height);
+            },
+            (entry, value, line, col) =>
+            {
+                double[] box = Numbers("Position", value, 4, line, col);
+                write(
+                    entry,
+                    new Point2D(box[0], Up(box[1] + box[3])),
+                    new Point2D(box[0] + box[2], Up(box[1])));
+            });
+    }
+
+    /// <summary>
+    /// Flips one normalized y between MATLAB's origin and this model's. It is its own inverse, which
+    /// is why reading and writing a position both call it and neither needs a second spelling.
+    /// </summary>
+    internal static double Up(double y) => 1 - y;
+
+    private static (Point2D A, Point2D B) Corners(Point2D a, Point2D b) => (a, b);
+
+    private static Point2D Anchor(Point2D a, Point2D b) => new(a.X, System.Math.Max(a.Y, b.Y));
+
+    private static JgsValue OptionalColorRow(Color? color) =>
+        color is { } present ? ColorRow(present) : JgsValue.Str("none");
+
+    /// <summary>A colour or the word 'none', which is how MATLAB turns a fill or an edge off.</summary>
+    private static Color? NoneOrColor(JgsValue value, int line, int col, string verb) =>
+        value.Type == JgsType.String && value.AsString.Equals("none", StringComparison.OrdinalIgnoreCase)
+            ? null
+            : JgsBuiltins.OptionColor(value, line, col, verb);
 
     private static void AddAxesAliases(IDictionary<string, GraphicsProperty> table)
     {
@@ -1494,6 +1677,39 @@ internal static class JgsGraphicsProperties
         }
 
         return Grid(table);
+    }
+
+    /// <summary>
+    /// Writes one coordinate of a flat series, keeping the other. A series is held as a pair, so
+    /// the untouched half is read back out and handed in again — the same shape as the three-
+    /// coordinate writer below.
+    /// </summary>
+    private static void SetSeriesData(
+        JgsHandleEntry entry, JgsValue value, bool x, int line, int col)
+    {
+        var plot = (XYPlot)entry.Target;
+        double[] written = JgsBuiltins.ToDoubles(x ? "XData" : "YData", value, line, col);
+        double[] kept = Coordinates(plot, x: !x);
+        if (written.Length != kept.Length)
+        {
+            throw new JgsRuntimeException(line, col,
+                $"{(x ? "XData" : "YData")} has {written.Length} values where the series has {kept.Length}. "
+                + "Both coordinates are written together — set them in one call, or draw the series again.");
+        }
+
+        plot.SetData(x ? written : kept, x ? kept : written);
+    }
+
+    /// <summary>One coordinate of a series as a plain array.</summary>
+    private static double[] Coordinates(XYPlot plot, bool x)
+    {
+        var values = new double[plot.Data.Count];
+        for (int i = 0; i < values.Length; i++)
+        {
+            values[i] = x ? plot.Data.GetX(i) : plot.Data.GetY(i);
+        }
+
+        return values;
     }
 
     private static void SetLine3Data(

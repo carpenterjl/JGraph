@@ -155,5 +155,10 @@ public class BatchRunnerTests : IDisposable
         public FigureModel Load(string path) => new();
 
         public void Export(FigureModel figure, string path) => Exported = path;
+
+        public JGraph.Imaging.ImageBuffer Capture(FigureModel figure, double scale) =>
+            new(1, 1, 3);
+
+        public bool CopyToClipboard(FigureModel figure, double scale) => false;
     }
 }

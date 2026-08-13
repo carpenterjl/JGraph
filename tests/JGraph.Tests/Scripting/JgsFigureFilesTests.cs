@@ -16,6 +16,16 @@ internal sealed class TestFigureFiles : IScriptFigureFiles
     public FigureModel Load(string path) => GraphFormat.Load(path);
 
     public void Export(FigureModel figure, string path) => FigureExporter.Export(figure, path, new ExportOptions());
+
+    public JGraph.Imaging.ImageBuffer Capture(FigureModel figure, double scale)
+    {
+        (int width, int height, byte[] rgba) =
+            FigureExporter.RenderRgba(figure, new ExportOptions { Scale = scale });
+        return JGraph.Imaging.ImageBuffer.FromRgba(rgba, width, height);
+    }
+
+    /// <summary>A test host has no clipboard, which is what a headless run reports too.</summary>
+    public bool CopyToClipboard(FigureModel figure, double scale) => false;
 }
 
 /// <summary>M19: savefigure / loadfigure / exportfigure builtins end to end on disk.</summary>

@@ -1,5 +1,6 @@
 using JGraph.Core.Model;
 using JGraph.Export;
+using JGraph.Imaging;
 using JGraph.Scripting;
 using JGraph.Serialization;
 
@@ -22,4 +23,16 @@ public sealed class AppScriptFigureFiles : IScriptFigureFiles
     /// <inheritdoc />
     public void Export(FigureModel figure, string path) =>
         FigureExporter.Export(figure, path, new ExportOptions());
+
+    /// <inheritdoc />
+    public ImageBuffer Capture(FigureModel figure, double scale)
+    {
+        (int width, int height, byte[] rgba) =
+            FigureExporter.RenderRgba(figure, new ExportOptions { Scale = scale });
+        return ImageBuffer.FromRgba(rgba, width, height);
+    }
+
+    /// <inheritdoc />
+    public bool CopyToClipboard(FigureModel figure, double scale) =>
+        JGraph.Controls.FigureClipboard.CopyImage(figure, new ExportOptions { Scale = scale });
 }

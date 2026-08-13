@@ -26,6 +26,7 @@ internal static class AnnotationMapper
                 Padding = a.Padding,
                 HorizontalAlignment = a.HorizontalAlignment,
                 VerticalAlignment = a.VerticalAlignment,
+                Box = a.Box is { } box ? DtoConvert.ToDto(box) : null,
             },
             ArrowAnnotation a => new ArrowAnnotationDto
             {
@@ -35,8 +36,12 @@ internal static class AnnotationMapper
                 LineWidth = a.LineWidth,
                 DashStyle = a.DashStyle,
                 ShowHead = a.ShowHead,
+                ShowTailHead = a.ShowTailHead,
                 HeadLength = a.HeadLength,
                 HeadWidth = a.HeadWidth,
+                Text = a.Text,
+                FontSize = a.FontSize,
+                FontFamily = a.FontFamily,
             },
             RectangleAnnotation a => FillShape(new RectangleAnnotationDto(), a),
             EllipseAnnotation a => FillShape(new EllipseAnnotationDto(), a),
@@ -78,6 +83,7 @@ internal static class AnnotationMapper
                 Padding = d.Padding,
                 HorizontalAlignment = d.HorizontalAlignment,
                 VerticalAlignment = d.VerticalAlignment,
+                Box = d.Box is { } box ? DtoConvert.ToRect(box) : null,
             },
             ArrowAnnotationDto d => new ArrowAnnotation
             {
@@ -87,8 +93,12 @@ internal static class AnnotationMapper
                 LineWidth = d.LineWidth,
                 DashStyle = d.DashStyle,
                 ShowHead = d.ShowHead,
+                ShowTailHead = d.ShowTailHead,
                 HeadLength = d.HeadLength,
                 HeadWidth = d.HeadWidth,
+                Text = d.Text,
+                FontSize = d.FontSize,
+                FontFamily = d.FontFamily,
             },
             RectangleAnnotationDto d => FillShape(new RectangleAnnotation(), d),
             EllipseAnnotationDto d => FillShape(new EllipseAnnotation(), d),

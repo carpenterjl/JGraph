@@ -1,5 +1,6 @@
 using JGraph.Core.Model;
 using JGraph.Export;
+using JGraph.Imaging;
 using JGraph.Scripting;
 using JGraph.Serialization;
 
@@ -22,4 +23,15 @@ internal sealed class CliFigureFiles : IScriptFigureFiles
     /// <inheritdoc />
     public void Export(FigureModel figure, string path) =>
         FigureExporter.Export(figure, path, new ExportOptions());
+
+    /// <inheritdoc />
+    public ImageBuffer Capture(FigureModel figure, double scale)
+    {
+        (int width, int height, byte[] rgba) =
+            FigureExporter.RenderRgba(figure, new ExportOptions { Scale = scale });
+        return ImageBuffer.FromRgba(rgba, width, height);
+    }
+
+    /// <summary>A launcher run has no clipboard, which is the whole point of running it headless.</summary>
+    public bool CopyToClipboard(FigureModel figure, double scale) => false;
 }

@@ -92,6 +92,33 @@ public static class FigureExporter
         return stream.ToArray();
     }
 
+    /// <summary>
+    /// Renders a figure straight to pixels — non-premultiplied RGBA, row-major, four bytes each —
+    /// with no file and no encoder in the way. This is what <c>getframe</c> is: the same renderer the
+    /// screen and every export use, so a script comparing two captures is comparing what it drew.
+    /// </summary>
+    public static (int Width, int Height, byte[] Rgba) RenderRgba(
+        FigureModel figure, ExportOptions? options = null)
+    {
+        ArgumentNullException.ThrowIfNull(figure);
+        options ??= new ExportOptions();
+
+        Size2D size = options.Size ?? figure.Size;
+        if (size.Width <= 0 || size.Height <= 0)
+        {
+            throw new ArgumentException("The capture size must be positive.", nameof(options));
+        }
+
+        // Unpremultiplied, because the caller wants the colours that were drawn rather than colours
+        // already folded into their own opacity.
+        using SKBitmap bitmap = RenderBitmap(
+            figure, size, options.Scale, options.Theme ?? Theme.Light, SKColorType.Rgba8888);
+        using SKBitmap straight = new(new SKImageInfo(
+            bitmap.Width, bitmap.Height, SKColorType.Rgba8888, SKAlphaType.Unpremul));
+        bitmap.CopyTo(straight, SKColorType.Rgba8888);
+        return (straight.Width, straight.Height, straight.Bytes);
+    }
+
     private static void EncodeBitmap(
         FigureModel figure,
         Size2D size,
