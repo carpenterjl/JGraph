@@ -404,6 +404,35 @@ internal sealed class PersistentStmt(IReadOnlyList<string> names) : Stmt
     public IReadOnlyList<string> Names { get; } = names;
 }
 
+/// <summary>
+/// One line of an <c>arguments</c> block: <c>name (dims) Class {validators} = default</c>, of which
+/// only the name is required.
+/// </summary>
+/// <param name="Name">The parameter this line is about.</param>
+/// <param name="Dims">The declared size, one entry per dimension with null for <c>:</c>, or null when
+/// the line declared no size.</param>
+/// <param name="ClassName">The declared class, or null.</param>
+/// <param name="Validators">The <c>mustBe…</c> calls to run, written exactly as the script wrote them:
+/// a bare name is called with the value, and a call is evaluated as-is in the function's own frame.</param>
+/// <param name="Default">The value to use when the caller passed nothing, or null when the argument
+/// is required.</param>
+internal sealed record ArgumentSpec(
+    string Name,
+    IReadOnlyList<Expr?>? Dims,
+    string? ClassName,
+    IReadOnlyList<Expr> Validators,
+    Expr? Default);
+
+/// <summary>
+/// A MATLAB <c>arguments … end</c> block: the declared shape of a function's inputs, checked (and
+/// defaulted) on entry. It may only be the first statement of a function body, which is what lets the
+/// word <c>arguments</c> stay an ordinary name everywhere else.
+/// </summary>
+internal sealed class ArgumentsStmt(IReadOnlyList<ArgumentSpec> arguments) : Stmt
+{
+    public IReadOnlyList<ArgumentSpec> Arguments { get; } = arguments;
+}
+
 /// <summary>A <c>return</c> statement; <see cref="Value"/> is null for a bare <c>return</c>.</summary>
 internal sealed class ReturnStmt(Expr? value) : Stmt
 {

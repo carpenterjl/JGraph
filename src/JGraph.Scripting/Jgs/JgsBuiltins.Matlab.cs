@@ -27,8 +27,6 @@ internal static partial class JgsBuiltins
         ["uicontrol"] = "app building",
         ["parfeval"] = "parallel execution",
         ["gpuArray"] = "GPU arrays",
-        ["addpath"] = "a search path — files resolve against the script's folder and the workspace root",
-        ["rmpath"] = "a search path — files resolve against the script's folder and the workspace root",
     };
 
     /// <summary>Whether <paramref name="name"/> is a MATLAB function JGraph deliberately does not have.</summary>
@@ -41,6 +39,10 @@ internal static partial class JgsBuiltins
     {
         void Define(string name, Func<IReadOnlyList<JgsValue>, int, int, JgsValue> body) =>
             env.Declare(name, JgsValue.Function(new BuiltinFunction(name, body)));
+
+        // The mustBe… family (M62). They are validators inside an arguments block and ordinary
+        // builtins outside one, which is how MATLAB's are, so they register with everything else.
+        RegisterValidators(Define);
 
         // --- Numeric ----------------------------------------------------------------------------
         Define("rem", (args, line, col) =>
@@ -201,22 +203,9 @@ internal static partial class JgsBuiltins
         });
 
         // --- Errors -----------------------------------------------------------------------------
-        Define("error", (args, line, col) =>
-        {
-            if (args.Count == 0)
-            {
-                throw new JgsRuntimeException(line, col, "error");
-            }
-
-            // error('id:sub', 'message', ...) — an identifier is a first argument with a colon and no
-            // spaces, which is how MATLAB itself tells the two forms apart.
-            string first = Str("error", args, 0, line, col);
-            bool hasIdentifier = args.Count > 1 && first.Contains(':', StringComparison.Ordinal)
-                && !first.Contains(' ', StringComparison.Ordinal) && !first.Contains('%', StringComparison.Ordinal);
-            int start = hasIdentifier ? 1 : 0;
-            throw new JgsRuntimeException(line, col, FormatMessage("error", args, start, line, col));
-        });
-
+        // error itself lives in JgsBuiltins.Errors.cs (M62), where the identifier and the MException
+        // form are defined together. It is declared there rather than here because it is re-declared
+        // over this registration, and two implementations of one name is one too many.
         Define("warning", (args, line, col) =>
         {
             if (args.Count == 0)

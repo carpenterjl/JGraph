@@ -33,19 +33,47 @@ internal static partial class JgsBuiltins
                 return JgsValue.Bool(args[0].AsString == MissingSentinel);
             }
 
+            // A string array answers elementwise (M63), which is what makes ismissing useful on one:
+            // the whole point of a missing string is that it sits among strings that are not.
+            if (args[0].IsStringArray)
+            {
+                JgsValue[] texts = args[0].BoxedElements();
+                var flags = new JgsValue[texts.Length];
+                for (int i = 0; i < texts.Length; i++)
+                {
+                    flags[i] = JgsValue.Bool(texts[i].AsString == MissingSentinel);
+                }
+
+                JgsValue answer = flags.Length == 1 ? flags[0] : JgsValue.Array(flags);
+                if (flags.Length > 1)
+                {
+                    answer.TakeShapeOf(args[0]);
+                }
+
+                return answer;
+            }
+
             return MapToBool("ismissing", args[0], double.IsNaN, line, col);
         });
 
+        // string(x) is the string-array constructor (M63), and the only way to get one out of a value
+        // that was not written with double quotes. A char row becomes one string, not one per
+        // character: that a piece of text is a single element is the whole point of the type.
         Define("string", (args, line, col) =>
         {
             Arity("string", args, 1, line, col);
             JgsValue input = args[0];
+            if (input.IsStringArray)
+            {
+                return input;
+            }
+
             return input.Type switch
             {
-                JgsType.String => input,
-                JgsType.Cell => ShapedLike(input, Array.ConvertAll(input.AsCell, StringOf)),
-                JgsType.Array => ShapedLike(input, Array.ConvertAll(input.BoxedElements(), StringOf)),
-                _ => JgsValue.Str(input.Display()),
+                JgsType.String => JgsValue.StringScalar(input.AsString),
+                JgsType.Cell => ShapedLike(input, Array.ConvertAll(input.AsCell, StringOf)).MarkStringArray(),
+                JgsType.Array => ShapedLike(input, Array.ConvertAll(input.BoxedElements(), StringOf)).MarkStringArray(),
+                _ => JgsValue.StringScalar(input.Display()),
             };
         });
 
@@ -70,12 +98,18 @@ internal static partial class JgsBuiltins
             JgsValue[] elements = args[1].Type == JgsType.Array
                 ? args[1].BoxedElements()
                 : [args[1]];
-            var formatted = new JgsValue[elements.Length];
+
+            // A format with several specifiers takes several values per answer, so the values are
+            // handed out in groups of that size — compose('%d-%d', [1 2]) is one string, not two.
+            int perAnswer = Math.Max(1, JgsSprintf.SpecifierCount(format));
+            int answers = perAnswer == 1 ? elements.Length : elements.Length / perAnswer;
+            var formatted = new JgsValue[Math.Max(answers, 0)];
             try
             {
-                for (int i = 0; i < elements.Length; i++)
+                for (int i = 0; i < formatted.Length; i++)
                 {
-                    formatted[i] = JgsValue.Str(JgsSprintf.Format(format, [elements[i]]));
+                    formatted[i] = JgsValue.Str(JgsSprintf.Format(
+                        format, elements[(i * perAnswer)..((i + 1) * perAnswer)]));
                 }
             }
             catch (FormatException ex)
@@ -83,7 +117,9 @@ internal static partial class JgsBuiltins
                 throw new JgsRuntimeException(line, col, ex.Message);
             }
 
-            return ShapedLike(args[1], formatted);
+            return perAnswer == 1
+                ? ShapedLike(args[1], formatted)
+                : JgsValue.Array(formatted);
         });
 
         // A categorical is its cell of category names; class() will say cell, and summary counts.

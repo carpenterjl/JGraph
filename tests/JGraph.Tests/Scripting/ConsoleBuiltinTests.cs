@@ -126,13 +126,27 @@ public class ConsoleBuiltinTests : IDisposable
         Assert.Equal(_folder, Assert.Single(result.Variables, v => v.Name == "p").RawValue);
     }
 
+    /// <summary>
+    /// M62 turned this one around. The old test pinned the refusal — there was no search path, and
+    /// saying so beat "not recognized" — and it was right for as long as that was true. Now the
+    /// folder joins the path and the refusal is reserved for a folder that is not there, which is the
+    /// only thing addpath has left to complain about.
+    /// </summary>
     [Fact]
-    public async Task Addpath_ExplainsThereIsNoSearchPath()
+    public async Task Addpath_AddsAFolder_AndRefusesOneThatIsNotThere()
     {
-        ScriptRunResult result = await RunMatlab("addpath('somewhere')");
+        ScriptRunResult result = await RunMatlab("""
+            addpath(pwd());
+            listed = double(contains(path(), pwd()));
+            """);
 
-        Assert.False(result.Success);
-        Assert.Contains("addpath", result.Message, StringComparison.Ordinal);
-        Assert.Contains("search path", result.Message, StringComparison.Ordinal);
+        Assert.True(result.Success, result.Message + _output.ErrorText);
+        Assert.Equal(1.0, Number(result, "listed"));
+
+        ScriptRunResult missing = await RunMatlab("addpath('no-such-folder-anywhere')");
+
+        Assert.False(missing.Success);
+        Assert.Contains("addpath", missing.Message, StringComparison.Ordinal);
+        Assert.Contains("no-such-folder-anywhere", missing.Message, StringComparison.Ordinal);
     }
 }

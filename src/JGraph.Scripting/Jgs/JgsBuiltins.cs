@@ -1027,6 +1027,17 @@ internal static partial class JgsBuiltins
         Define("reverse", (args, line, col) =>
         {
             Arity("reverse", args, 1, line, col);
+
+            // MATLAB's reverse is a text function — reverse('abc') is 'cba' — and flip is the one
+            // for arrays. JGS had only the array form, so text is the addition (M63) and the array
+            // form is kept because JGS's surface is frozen and scripts already call it.
+            if (args[0].Type == JgsType.String)
+            {
+                char[] letters = args[0].AsString.ToCharArray();
+                System.Array.Reverse(letters);
+                return JgsValue.Str(new string(letters));
+            }
+
             var reversed = (JgsValue[])Arr("reverse", args, 0, line, col).Clone();
             System.Array.Reverse(reversed);
             return JgsValue.Array(reversed);
@@ -1998,6 +2009,13 @@ internal static partial class JgsBuiltins
         // object check would sit under that wrapping rather than in front of it.
         RegisterDistributionObjectForms(env, random);
 
+        // Last of all, after every define and every re-declaration. The editing family comes first
+        // because its wrappers are what the marking pass must then find: both passes reach into the
+        // finished environment, and a mark on a wrapper that was replaced afterwards is a mark on
+        // nothing.
+        RegisterStringEditingBuiltins(env);
+        RegisterStringArrayBuiltins(env);
+
         return env;
     }
 
@@ -2069,6 +2087,16 @@ internal static partial class JgsBuiltins
             if (args[i].Type == JgsType.String)
             {
                 names.Add(args[i].AsString);
+                continue;
+            }
+
+            // A cell of char or a string array is a list of names, not a list of handles (M63).
+            // Without this, legend({'a', 'b'}) — MATLAB's most common spelling — reached PlotsOf and
+            // failed complaining about a figure handle, which is a message about the wrong thing
+            // entirely. The string-array half is what a script written since R2016b passes.
+            if (TextElementsOf(args[i]) is { Length: > 0 } labels)
+            {
+                names.AddRange(labels);
                 continue;
             }
 
@@ -3967,6 +3995,11 @@ internal static partial class JgsBuiltins
         JgsType.Image when value.AsImage.Channels > 1 =>
             [value.AsImage.Height, value.AsImage.Width, value.AsImage.Channels],
         JgsType.Image => [value.AsImage.Height, value.AsImage.Width],
+
+        // A string array reads its own shape and never the shape of what it holds (M63). Without
+        // this, size("abc") answered 1-by-3 — the nested-array reading, which took the one string
+        // inside for a row of three things — while numel and length both said 1.
+        _ when value.IsStringArray => [value.Rows, value.Cols],
         JgsType.Array => JgsMatrix.DimsOf(value),
         JgsType.String => [1, value.AsString.Length],
         JgsType.Cell => [value.Rows, value.Cols],

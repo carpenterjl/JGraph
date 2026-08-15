@@ -91,6 +91,16 @@ internal sealed class JgsValue
     // sees one. Mutable ONLY by SetNumericClass, at mint time, exactly like Reshape.
     private JgsNumericClass _numericClass;
 
+    // The class name a struct answers to (M62). Null for every ordinary struct; set only where a
+    // builtin mints something that is an object in MATLAB and a struct here — today that is
+    // MException alone. M68 replaces this with a real object type, and the field names do not move.
+    private string? _className;
+
+    // Whether this array is a MATLAB string array (M63). False for every other array, which is why
+    // nothing that ignores the tag ever sees one. Mutable ONLY by MarkStringArray, at mint time,
+    // exactly like SetNumericClass.
+    private bool _isStringArray;
+
     // N-D shape (M41, ADR 0044): null for every 2-D value. When set (always length >= 3, trailing
     // singletons trimmed), it is the true size of the array, and _rows/_cols hold MATLAB's own 2-D
     // view of it — dims[0] rows by prod(dims[1..]) columns — so every two-subscript reader sees
@@ -468,6 +478,50 @@ internal sealed class JgsValue
     /// </summary>
     public void SetNumericClass(JgsNumericClass numericClass) => _numericClass = numericClass;
 
+    /// <summary>
+    /// The class a struct answers to when it stands in for a MATLAB object, or null for the ordinary
+    /// case. Only <c>class</c> and <c>isa</c> read it; everything else treats the value as the struct
+    /// it is, which is exactly why <c>ME.message</c> needed no special case to work.
+    /// </summary>
+    public string? ClassName => _className;
+
+    /// <summary>Records the class name of a freshly-minted struct. Mint-time only, like <see cref="SetNumericClass"/>.</summary>
+    public void SetClassName(string? className) => _className = className;
+
+    /// <summary>
+    /// Whether this value is a MATLAB string array (M63): an <see cref="JgsType.Array"/> of
+    /// <see cref="JgsType.String"/> elements that remembers being written with double quotes. A string
+    /// <em>scalar</em> is the 1-by-1 case, which is MATLAB's own model rather than a convenience —
+    /// <c>numel("abc")</c> is 1 because the string is one element, where <c>numel('abc')</c> is 3
+    /// because the char row is three of them.
+    /// </summary>
+    public bool IsStringArray => _isStringArray;
+
+    /// <summary>
+    /// Marks a freshly-minted array as a string array and hands it back, so a mint site reads as one
+    /// expression. Mint-time only, like <see cref="SetNumericClass"/>: a value already bound to a name
+    /// must never change class under it.
+    /// </summary>
+    public JgsValue MarkStringArray()
+    {
+        _isStringArray = true;
+        return this;
+    }
+
+    /// <summary>
+    /// A string scalar: the 1-by-1 string array a double-quoted literal means. Every call site that
+    /// wants MATLAB's <c>string("x")</c> goes through here rather than building the array by hand, so
+    /// the shape and the tag can never disagree.
+    /// </summary>
+    public static JgsValue StringScalar(string text) => Array([Str(text)]).MarkStringArray();
+
+    /// <summary>A string array over <paramref name="elements"/> (each of which must be a string).</summary>
+    public static JgsValue StringArray(JgsValue[] elements) => Array(elements).MarkStringArray();
+
+    /// <summary>A string array laid out column-major as <paramref name="rows"/>-by-<paramref name="cols"/>.</summary>
+    public static JgsValue StringArray(JgsValue[] elements, int rows, int cols) =>
+        Shaped(elements, rows, cols).MarkStringArray();
+
     /// <summary>Gives this array the shape (2-D or N-D) of <paramref name="source"/>.</summary>
     internal void TakeShapeOf(JgsValue source)
     {
@@ -703,7 +757,7 @@ internal sealed class JgsValue
         JgsType.Complex => "complex",
         JgsType.Bool => "bool",
         JgsType.String => "string",
-        JgsType.Array => "array",
+        JgsType.Array => _isStringArray ? "string array" : "array",
         JgsType.Table => "table",
         JgsType.Image => "image",
         JgsType.Function => "function",
@@ -721,7 +775,7 @@ internal sealed class JgsValue
         JgsType.Complex => FormatComplex(AsComplex),
         JgsType.Bool => _number != 0 ? "true" : "false",
         JgsType.String => AsString,
-        JgsType.Array => FormatArray(this),
+        JgsType.Array => _isStringArray ? FormatStringArray(this) : FormatArray(this),
         JgsType.Table => $"table[{AsTable.RowCount}x{AsTable.ColumnCount}]",
         JgsType.Image => FormatImage(AsImage),
         JgsType.Function => $"fn {AsCallable.Name}",
@@ -853,6 +907,41 @@ internal sealed class JgsValue
     /// A matrix prints the way it was written — rows separated by semicolons — because a column-major
     /// element run would be unreadable for the one value whose whole point is its layout.
     /// </summary>
+    /// <summary>
+    /// Formats a string array (M63). A string <em>scalar</em> formats as its bare text, which is what
+    /// keeps <c>disp</c>, <c>sprintf</c>, and every builtin that reaches for <see cref="Display"/> as
+    /// its last resort working the moment <c>"..."</c> stops being a char. Anything larger shows its
+    /// elements quoted, because the quotes are the only thing on the page that says string rather
+    /// than cell.
+    /// </summary>
+    private static string FormatStringArray(JgsValue array)
+    {
+        int count = array.ArrayLength;
+        if (count == 1)
+        {
+            return array.ElementAt(0).Display();
+        }
+
+        int shown = count <= DisplayMaxElements ? count : DisplayPrefixElements;
+        var sb = new StringBuilder("[");
+        for (int i = 0; i < shown; i++)
+        {
+            if (i > 0)
+            {
+                sb.Append(", ");
+            }
+
+            sb.Append('"').Append(array.ElementAt(i).Display()).Append('"');
+        }
+
+        if (shown < count)
+        {
+            sb.Append(", ... (").Append(count - shown).Append(" more)");
+        }
+
+        return sb.Append(']').ToString();
+    }
+
     private static string FormatMatrix(JgsValue matrix)
     {
         int rows = matrix.Rows;

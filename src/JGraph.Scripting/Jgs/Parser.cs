@@ -430,6 +430,103 @@ internal sealed class Parser
     /// <c>function name(x)</c>. The body runs to a matching <c>end</c>, or — in the classic function-file
     /// style, where no function is closed — to the next <c>function</c> or the end of the file.
     /// </summary>
+    /// <summary>
+    /// Parses an <c>arguments … end</c> block if one opens the function body, or answers null. The
+    /// word is recognised only here and only when a separator follows it, so <c>arguments = 3</c> and
+    /// <c>arguments(2)</c> still mean what they always did — the block is new syntax that takes no
+    /// spelling away from anyone.
+    /// </summary>
+    private ArgumentsStmt? TryParseArgumentsBlock()
+    {
+        if (!_matlab)
+        {
+            return null;
+        }
+
+        int mark = _pos;
+        SkipSeparators();
+        if (!Check(TokenType.Identifier) || Current.Text != "arguments"
+            || _tokens[_pos + 1].Type is not (TokenType.Newline or TokenType.Semicolon or TokenType.Comma))
+        {
+            _pos = mark;
+            return null;
+        }
+
+        Token start = Advance();
+        var specs = new List<ArgumentSpec>();
+        SkipSeparators();
+        while (!Check(TokenType.End) && !IsAtEnd)
+        {
+            specs.Add(ParseArgumentSpec());
+            SkipSeparators();
+        }
+
+        Expect(TokenType.End, "'end' to close the arguments block");
+        return new ArgumentsStmt(specs) { Line = start.Line, Column = start.Column };
+    }
+
+    /// <summary>Parses one <c>name (dims) Class {validators} = default</c> line.</summary>
+    private ArgumentSpec ParseArgumentSpec()
+    {
+        Token name = Expect(TokenType.Identifier, "an argument name");
+
+        // A name-value argument is written 'options.Name'. Refusing it by name beats letting the dot
+        // parse as something else and failing three lines later with a message about a field.
+        if (Check(TokenType.Dot))
+        {
+            throw new JgsSyntaxException(name.Line, name.Column,
+                $"'{name.Text}.…' declares a name-value argument, which JGraph does not support yet; "
+                + "take the pairs through varargin instead.");
+        }
+
+        List<Expr?>? dims = null;
+        if (Match(TokenType.LParen))
+        {
+            dims = [];
+            do
+            {
+                // ':' in a size means "any length along this dimension".
+                dims.Add(Check(TokenType.Colon) && _tokens[_pos + 1].Type is TokenType.Comma or TokenType.RParen
+                    ? PassColon()
+                    : ParseExpression());
+            }
+            while (Match(TokenType.Comma));
+
+            Expect(TokenType.RParen, "')' to close the argument's size");
+        }
+
+        string? className = null;
+        if (Check(TokenType.Identifier))
+        {
+            className = Advance().Text;
+        }
+
+        var validators = new List<Expr>();
+        if (Match(TokenType.LBrace))
+        {
+            if (!Check(TokenType.RBrace))
+            {
+                do
+                {
+                    validators.Add(ParseExpression());
+                }
+                while (Match(TokenType.Comma));
+            }
+
+            Expect(TokenType.RBrace, "'}' to close the argument's validators");
+        }
+
+        Expr? fallback = Match(TokenType.Assign) ? ParseExpression() : null;
+        return new ArgumentSpec(name.Text, dims, className, validators, fallback);
+    }
+
+    /// <summary>Consumes a <c>:</c> that stands for "any length" in a declared size.</summary>
+    private Expr? PassColon()
+    {
+        Advance();
+        return null;
+    }
+
     private Stmt ParseMatlabFunction(Token start)
     {
         Advance(); // 'function'
@@ -482,7 +579,12 @@ internal sealed class Parser
         IReadOnlyList<Stmt> body;
         try
         {
-            body = ParseMatlabBody();
+            // An 'arguments' block may only open a function body, and that restriction is what keeps
+            // the word an ordinary identifier anywhere else — including as a variable in this very
+            // function, one line further down.
+            ArgumentsStmt? arguments = TryParseArgumentsBlock();
+            IReadOnlyList<Stmt> rest = ParseMatlabBody();
+            body = arguments is null ? rest : [arguments, .. rest];
         }
         finally
         {

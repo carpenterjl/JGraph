@@ -11,6 +11,37 @@ namespace JGraph.Scripting.Jgs;
 /// </summary>
 internal static class JgsSprintf
 {
+    /// <summary>
+    /// How many values one pass over <paramref name="format"/> consumes. <c>compose</c> needs it to
+    /// hand out its values in groups: a format with two specifiers makes one answer from two values,
+    /// not two answers from one each.
+    /// </summary>
+    public static int SpecifierCount(string format)
+    {
+        int count = 0;
+        for (int i = 0; i < format.Length; i++)
+        {
+            if (format[i] != '%')
+            {
+                continue;
+            }
+
+            if (i + 1 < format.Length && format[i + 1] == '%')
+            {
+                i++; // an escaped percent is a character, not a slot
+                continue;
+            }
+
+            count++;
+            while (i + 1 < format.Length && !char.IsAsciiLetter(format[i + 1]))
+            {
+                i++;
+            }
+        }
+
+        return count;
+    }
+
     /// <summary>Formats <paramref name="format"/> with <paramref name="args"/>; throws <see cref="FormatException"/> with a user-facing message on any misuse.</summary>
     public static string Format(string format, IReadOnlyList<JgsValue> args)
     {
@@ -101,22 +132,46 @@ internal static class JgsSprintf
                 i++;
             }
 
+            // A '*' takes the width from the argument list rather than the format, which is what lets
+            // a script compute a column width instead of hard-coding one (M63).
             int width = 0;
-            while (i < format.Length && char.IsAsciiDigit(format[i]))
+            if (i < format.Length && format[i] == '*')
             {
-                width = (width * 10) + (format[i] - '0');
+                width = TakeStarValue(format, args, ref argIndex, i);
+                if (width < 0)
+                {
+                    leftAlign = true;
+                    width = -width;
+                }
+
                 i++;
+            }
+            else
+            {
+                while (i < format.Length && char.IsAsciiDigit(format[i]))
+                {
+                    width = (width * 10) + (format[i] - '0');
+                    i++;
+                }
             }
 
             int precision = -1;
             if (i < format.Length && format[i] == '.')
             {
                 i++;
-                precision = 0;
-                while (i < format.Length && char.IsAsciiDigit(format[i]))
+                if (i < format.Length && format[i] == '*')
                 {
-                    precision = (precision * 10) + (format[i] - '0');
+                    precision = Math.Max(0, TakeStarValue(format, args, ref argIndex, i));
                     i++;
+                }
+                else
+                {
+                    precision = 0;
+                    while (i < format.Length && char.IsAsciiDigit(format[i]))
+                    {
+                        precision = (precision * 10) + (format[i] - '0');
+                        i++;
+                    }
                 }
             }
 
@@ -126,9 +181,11 @@ internal static class JgsSprintf
             }
 
             char verb = format[i];
-            if (verb is not ('d' or 'i' or 'f' or 'e' or 'g' or 's' or 'x' or 'o'))
+            if (verb is not ('d' or 'i' or 'f' or 'e' or 'g' or 's' or 'x' or 'o'
+                or 'c' or 'u' or 'X' or 'E' or 'G'))
             {
-                throw new FormatException($"sprintf does not support the specifier \"%{verb}\" (supported: %d %i %f %e %g %s %x %o %%).");
+                throw new FormatException(
+                    $"sprintf does not support the specifier \"%{verb}\" (supported: %c %d %i %e %E %f %g %G %o %s %u %x %X %%).");
             }
 
             if (argIndex >= args.Count)
@@ -160,11 +217,41 @@ internal static class JgsSprintf
         }
     }
 
+    /// <summary>
+    /// Reads the value a <c>*</c> stands in for, from the argument list rather than the format. A
+    /// negative width means left-aligned, which is C's rule and the reason this hands the sign back
+    /// rather than dropping it.
+    /// </summary>
+    private static int TakeStarValue(string format, IReadOnlyList<JgsValue> args, ref int argIndex, int at)
+    {
+        if (argIndex >= args.Count)
+        {
+            throw new FormatException($"sprintf format needs a width for the '*' at position {at + 1}.");
+        }
+
+        JgsValue given = args[argIndex++];
+        if (given.Type is not (JgsType.Number or JgsType.Bool))
+        {
+            throw new FormatException($"sprintf '*' needs a number for the width, but got a {given.TypeName}.");
+        }
+
+        return (int)given.AsNumber;
+    }
+
     private static string FormatOne(char verb, int precision, JgsValue arg)
     {
         if (verb == 's')
         {
             return arg.Display();
+        }
+
+        // %c is a single character: from a number it is the code point, and from text it is the text
+        // itself, which is how MATLAB lets sprintf('%c', 'abc') print all three.
+        if (verb == 'c')
+        {
+            return arg.Type == JgsType.String ? arg.AsString
+                : arg.Type is JgsType.Number or JgsType.Bool ? ((char)(int)arg.AsNumber).ToString()
+                : arg.Display();
         }
 
         if (arg.Type is not (JgsType.Number or JgsType.Bool))
@@ -185,10 +272,17 @@ internal static class JgsSprintf
         return verb switch
         {
             'd' or 'i' => ((long)Math.Round(value, MidpointRounding.AwayFromZero)).ToString(CultureInfo.InvariantCulture),
+
+            // %u is unsigned, so a negative value is an error in C and simply the magnitude here —
+            // MATLAB prints the number rather than a wrapped one, and so does this.
+            'u' => ((ulong)Math.Abs(Math.Round(value, MidpointRounding.AwayFromZero))).ToString(CultureInfo.InvariantCulture),
             'f' => value.ToString("F" + (precision < 0 ? 6 : precision), CultureInfo.InvariantCulture),
             'e' => value.ToString("0." + new string('0', precision < 0 ? 6 : precision) + "e+00", CultureInfo.InvariantCulture),
+            'E' => value.ToString("0." + new string('0', precision < 0 ? 6 : precision) + "E+00", CultureInfo.InvariantCulture),
             'g' => FormatGeneral(value, precision),
+            'G' => FormatGeneral(value, precision).ToUpperInvariant(),
             'x' => ((long)Math.Round(value, MidpointRounding.AwayFromZero)).ToString("x", CultureInfo.InvariantCulture),
+            'X' => ((long)Math.Round(value, MidpointRounding.AwayFromZero)).ToString("X", CultureInfo.InvariantCulture),
             'o' => Convert.ToString((long)Math.Round(value, MidpointRounding.AwayFromZero), 8),
             _ => throw new FormatException($"sprintf does not support the specifier \"%{verb}\"."),
         };

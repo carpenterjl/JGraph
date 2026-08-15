@@ -177,16 +177,24 @@ public class MatlabSetOperationTests : IDisposable
         """);
 
     [Fact]
-    public Task ACellsColonIsRefusedRatherThanCrashing() => RunAsserting("""
-        % c{:} is a comma-separated list, which is not a value. Saying so is the fix: the colon used
-        % to reach the index conversion as nothing at all and come back out as a crash.
+    public Task ACellsColonSpreadsWhereAListFitsAndIsRefusedWhereOneDoesNot() => RunAsserting("""
+        % c{:} is a comma-separated list. M61 gives it the three places one fits — an argument list,
+        % a bracket, and a multiple assignment — and keeps refusing it where a single value is
+        % wanted, which is what this test used to assert of every position.
+        c = {1, 2, 3};
+        assert(isequal([c{:}], [1 2 3]));
+        assert(numel({c{:}}) == 3);
+        assert(plus(c{1:2}) == 3);           % spreads into an argument list
+
+        [a, b] = c{1:2};
+        assert(a == 1 && b == 2);
+
         caught = '';
         try
-            c = {1, 2};
             d = c{:};
         catch err
             caught = err.message;
         end
-        assert(contains(caught, 'one element at a time'));
+        assert(contains(caught, 'where one value is wanted'));
         """);
 }

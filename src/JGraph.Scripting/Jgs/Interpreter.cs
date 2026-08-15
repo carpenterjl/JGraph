@@ -112,8 +112,41 @@ internal sealed partial class Interpreter
         }
     }
 
+    /// <summary>
+    /// The MATLAB search path, or null when this run has none (JGS, and hosts that never built one).
+    /// It is consulted only after the workspace, the script's own functions, and the built-ins have
+    /// all failed a name — see <see cref="JgsFunctionPath"/> for why that order is deliberate.
+    /// </summary>
+    internal JgsFunctionPath? FunctionPath { get; set; }
+
     /// <summary>The message of the last error a <c>try</c> caught — what <c>lasterr</c> reports.</summary>
     internal string LastError { get; set; } = string.Empty;
+
+    /// <summary>The identifier of the last error a <c>try</c> caught, for <c>lasterror</c>.</summary>
+    internal string LastErrorIdentifier { get; set; } = string.Empty;
+
+    /// <summary>
+    /// The frames an error unwound through, as the cell of structs <c>ME.stack</c> is. An error raised
+    /// at the top level unwound through nothing and gets an empty stack, which is MATLAB's answer too.
+    /// </summary>
+    private static JgsValue StackOf(JgsRuntimeException error)
+    {
+        var frames = new JgsValue[error.Frames.Count];
+        for (int i = 0; i < frames.Length; i++)
+        {
+            (string name, string file, int line) = error.Frames[i];
+            frames[i] = JgsValue.Struct(new Dictionary<string, JgsValue>(StringComparer.Ordinal)
+            {
+                ["file"] = JgsValue.Str(file),
+                ["name"] = JgsValue.Str(name),
+                ["line"] = JgsValue.Number(line),
+            });
+        }
+
+        JgsValue stack = JgsValue.Cell(frames);
+        stack.Reshape(frames.Length, frames.Length == 0 ? 0 : 1); // a column, the shape MATLAB's is
+        return stack;
+    }
 
     /// <summary>The message of the last warning raised — what <c>lastwarn</c> reports.</summary>
     internal string LastWarning { get; set; } = string.Empty;
@@ -239,6 +272,30 @@ internal sealed partial class Interpreter
         // A top-level 'return' simply ends the script.
     }
 
+    /// <summary>
+    /// Runs a script file's statements in <paramref name="scope"/> — how a script named on the search
+    /// path runs. MATLAB's rule is that a script shares the workspace of whatever called it, so this
+    /// takes the caller's frame rather than making one, and the file's own functions are hoisted into
+    /// that frame the way the top level's are.
+    /// </summary>
+    internal void RunScriptFile(IReadOnlyList<Stmt> program, JgsEnvironment scope)
+    {
+        foreach (Stmt statement in program)
+        {
+            if (statement is FnStmt fn)
+            {
+                scope.Declare(fn.Name, JgsValue.Function(new UserFunction(fn, scope, this)));
+            }
+        }
+
+        Completion completion = ExecuteBlock(program, scope);
+        if (completion.Kind is CompletionKind.Break or CompletionKind.Continue)
+        {
+            throw new JgsRuntimeException(completion.Line, completion.Column,
+                $"'{(completion.Kind == CompletionKind.Break ? "break" : "continue")}' can only appear inside a loop.");
+        }
+    }
+
     /// <summary>Runs a user function's body in <paramref name="local"/> and returns its result (or null).</summary>
     /// <param name="declaration">The function being invoked (carries its name, body, and source).</param>
     /// <param name="local">The call's local environment with parameters already bound.</param>
@@ -289,6 +346,15 @@ internal sealed partial class Interpreter
                 _ => JgsValue.Null,
             };
         }
+        catch (JgsRuntimeException error)
+        {
+            // The stack ME reports is built as the error unwinds, because by the time a catch sees it
+            // every frame it passed through has already been torn down by the finally below. Each
+            // frame records the line that was running in it: this one's own failing line for the
+            // innermost, and the call it was waiting on for everything outside.
+            error.PushFrame(declaration.Name, declaration.SourceId, callLine);
+            throw;
+        }
         finally
         {
             SavePersistents(declaration, local);
@@ -297,6 +363,53 @@ internal sealed partial class Interpreter
             _currentFunction = callerFunction;
             _callDepth--;
             _hook?.ExitFunction();
+        }
+    }
+
+    /// <summary>
+    /// Applies an <c>arguments</c> block to the frame the call has already bound: fills in defaults
+    /// for what the caller left out, checks the declared size and class, and runs each validator.
+    /// </summary>
+    /// <remarks>
+    /// It runs as an ordinary statement rather than as part of the call, which is what makes a
+    /// default expression able to mention an earlier argument (<c>b = a * 2</c>) — by the time this
+    /// line reaches b, a is bound. MATLAB defines it the same way and for the same reason.
+    /// </remarks>
+    private void ExecuteArguments(ArgumentsStmt statement, JgsEnvironment env)
+    {
+        foreach (ArgumentSpec spec in statement.Arguments)
+        {
+            if (!env.TryGet(spec.Name, out JgsValue value))
+            {
+                if (spec.Default is null)
+                {
+                    throw new JgsRuntimeException(statement.Line, statement.Column,
+                        $"Not enough input arguments: '{spec.Name}' has no default and none was passed.");
+                }
+
+                value = Evaluate(spec.Default, env);
+                env.Declare(spec.Name, value);
+            }
+
+            JgsValue checked_ = JgsBuiltins.CheckArgument(
+                spec, value, statement.Line, statement.Column, _globals);
+            if (!ReferenceEquals(checked_, value))
+            {
+                env.Declare(spec.Name, checked_); // a declared class the value did not have yet
+            }
+
+            foreach (Expr validator in spec.Validators)
+            {
+                // A bare name is the call MATLAB writes it as shorthand for; anything else is already
+                // a call and is evaluated exactly as written, so mustBeMember(x, {'a','b'}) reads its
+                // own argument out of the frame.
+                _ = validator is VariableExpr bare
+                    ? EvaluateCall(
+                        new CallExpr(bare, [new PreEvaluated(checked_)])
+                            { Line = validator.Line, Column = validator.Column },
+                        env)
+                    : Evaluate(validator, env);
+            }
         }
     }
 
@@ -501,6 +614,10 @@ internal sealed partial class Interpreter
                 ExecutePersistent(persistentStmt, env);
                 return Completion.Normal;
 
+            case ArgumentsStmt arguments:
+                ExecuteArguments(arguments, env);
+                return Completion.Normal;
+
             case MultiAssignStmt multi:
                 ExecuteMultiAssign(multi, env);
                 return Completion.Normal;
@@ -577,10 +694,41 @@ internal sealed partial class Interpreter
     /// taken as-is: an auto-calling constant such as <c>eps</c> must stay a function here, so
     /// <c>eps(x)</c> reaches the builtin instead of trying to subscript the number it evaluates to.
     /// </summary>
-    private JgsValue EvaluateCallee(Expr callee, JgsEnvironment env) =>
-        callee is VariableExpr name && LookUp(name.Name, env, out JgsValue resolved)
-            ? resolved
-            : Evaluate(callee, env);
+    private JgsValue EvaluateCallee(Expr callee, JgsEnvironment env)
+    {
+        if (callee is VariableExpr name)
+        {
+            if (LookUp(name.Name, env, out JgsValue resolved))
+            {
+                return resolved;
+            }
+
+            // The path is consulted here as well as at the bare-name site, and it has to be: falling
+            // through to Evaluate would find the same file and then *call* it, so f(3) would run f
+            // with no arguments and subscript the answer.
+            if (TryResolveOnPath(name.Name, out JgsValue fromFile))
+            {
+                return fromFile;
+            }
+        }
+
+        return Evaluate(callee, env);
+    }
+
+    /// <summary>
+    /// Looks <paramref name="name"/> up on the MATLAB search path — the last thing tried before a name
+    /// is declared undefined.
+    /// </summary>
+    private bool TryResolveOnPath(string name, out JgsValue value)
+    {
+        if (Dialect.IsMatlab && FunctionPath is { } path)
+        {
+            return path.TryResolve(name, out value);
+        }
+
+        value = JgsValue.Null;
+        return false;
+    }
 
     /// <summary>The callable a call expression resolved to, when it is a plain name that is in scope.</summary>
     private static JgsValue CalleeValue(CallExpr call, JgsEnvironment env) =>
@@ -741,15 +889,13 @@ internal sealed partial class Interpreter
             // catching happens — recording it anywhere else would miss the runtime's own errors.
             LastError = error.Message;
 
+            LastErrorIdentifier = error.Identifier;
+
             JgsEnvironment handler = BlockScope(env);
             if (statement.ErrorVariable is { } name)
             {
-                var fields = new Dictionary<string, JgsValue>(StringComparer.Ordinal)
-                {
-                    ["message"] = JgsValue.Str(error.Message),
-                    ["identifier"] = JgsValue.Str(string.Empty),
-                };
-                handler.Declare(name, JgsValue.Struct(fields));
+                handler.Declare(name, JgsBuiltins.MakeException(
+                    error.Identifier, error.Message, StackOf(error)));
             }
 
             return ExecuteBlock(statement.Handler, handler);
@@ -762,10 +908,15 @@ internal sealed partial class Interpreter
     /// </summary>
     private void ExecuteMultiAssign(MultiAssignStmt statement, JgsEnvironment env)
     {
-        JgsValue[] outputs = EvaluateForOutputs(statement.Call, statement.Targets.Count, env);
-        for (int i = 0; i < statement.Targets.Count; i++)
+        // One target can stand for several outputs: [varargout{1:nargout}] = f(...) asks for as many
+        // as the range names, which is how a relay hands on exactly what it was asked for. Resolving
+        // that has to happen before the call, because it is what the call's output count is.
+        List<Expr?> targets = ExpandAssignmentTargets(statement, env);
+
+        JgsValue[] outputs = EvaluateForOutputs(statement.Call, targets.Count, env);
+        for (int i = 0; i < targets.Count; i++)
         {
-            if (statement.Targets[i] is not { } target)
+            if (targets[i] is not { } target)
             {
                 continue; // '~': the output was computed, and is deliberately dropped
             }
@@ -773,7 +924,7 @@ internal sealed partial class Interpreter
             if (i >= outputs.Length)
             {
                 throw new JgsRuntimeException(statement.Line, statement.Column,
-                    $"This call returns {outputs.Length} value(s), but {statement.Targets.Count} were asked for.");
+                    $"This call returns {outputs.Length} value(s), but {targets.Count} were asked for.");
             }
 
             var assignment = new AssignExpr(target, TokenType.Assign, new PreEvaluated(outputs[i]))
@@ -786,6 +937,48 @@ internal sealed partial class Interpreter
     }
 
     /// <summary>
+    /// The assignment targets one for one with the outputs they take. Every target stands for itself
+    /// except a brace index naming several slots, which becomes one single-slot target per slot.
+    /// </summary>
+    private List<Expr?> ExpandAssignmentTargets(MultiAssignStmt statement, JgsEnvironment env)
+    {
+        var expanded = new List<Expr?>(statement.Targets.Count);
+        foreach (Expr? target in statement.Targets)
+        {
+            if (target is not BraceIndexExpr { Indices.Count: 1 } brace)
+            {
+                expanded.Add(target);
+                continue;
+            }
+
+            // The cell need not exist yet — varargout rarely does when the relay line runs — so the
+            // subscript is measured against what is there, and writing past the end grows it.
+            int length = brace.Target is VariableExpr named && LookUp(named.Name, env, out JgsValue held)
+                && held.Type == JgsType.Cell ? held.AsCell.Length : 0;
+
+            JgsValue? index = EvaluateIndexArgument(brace.Indices[0], length, env);
+            if (index is null || index.Type != JgsType.Array)
+            {
+                expanded.Add(target); // one slot, or a ':' that the assignment itself will judge
+                continue;
+            }
+
+            foreach (int slot in ComputePicks(index, Math.Max(length, index.ArrayLength), "cell", brace.Line, brace.Column))
+            {
+                expanded.Add(new BraceIndexExpr(
+                    brace.Target,
+                    [new PreEvaluated(JgsValue.Number(slot + Dialect.IndexBase))])
+                {
+                    Line = brace.Line,
+                    Column = brace.Column,
+                });
+            }
+        }
+
+        return expanded;
+    }
+
+    /// <summary>
     /// Evaluates a call that is expected to produce <paramref name="wanted"/> outputs. User functions
     /// hand back their named outputs; a builtin that knows how to produce several does so; anything
     /// else produces its single value.
@@ -794,11 +987,7 @@ internal sealed partial class Interpreter
     {
         if (call is CallExpr invocation && EvaluateCallee(invocation.Callee, env) is { Type: JgsType.Function } callee)
         {
-            var arguments = new JgsValue[invocation.Arguments.Count];
-            for (int i = 0; i < arguments.Length; i++)
-            {
-                arguments[i] = Evaluate(invocation.Arguments[i], env);
-            }
+            JgsValue[] arguments = EvaluateAll(invocation.Arguments, env);
 
             if (callee.AsCallable is IJgsMultiCallable multi)
             {
@@ -818,6 +1007,13 @@ internal sealed partial class Interpreter
             && named.AsCallable is BuiltinFunction { AutoCallsBare: true } and IJgsMultiCallable zeroArgument)
         {
             return zeroArgument.CallMultiple(System.Array.Empty<JgsValue>(), wanted, bare.Line, bare.Column);
+        }
+
+        // [a, b] = c{1:2} distributes a comma-separated list across the targets. It is not a call at
+        // all, which is why it reaches this far: the list is the several values, already in order.
+        if (call is BraceIndexExpr or MemberExpr)
+        {
+            return EvaluateSpread(call, env);
         }
 
         return [Evaluate(call, env)];
@@ -957,8 +1153,12 @@ internal sealed partial class Interpreter
             case ComplexLiteral imaginary:
                 return JgsValue.ComplexNum(new Complex(0, imaginary.Imaginary));
 
+            // A double-quoted literal is a string scalar in MATLAB and a plain string in JGS, whose
+            // surface is frozen and which has never had a string type to mean anything else (M63).
             case StringLiteral str:
-                return JgsValue.Str(str.Value);
+                return str.IsChar || !Dialect.HasStringArrays
+                    ? JgsValue.Str(str.Value)
+                    : JgsValue.StringScalar(str.Value);
 
             case BoolLiteral boolean:
                 return JgsValue.Bool(boolean.Value);
@@ -999,6 +1199,15 @@ internal sealed partial class Interpreter
                         && value.AsCallable is BuiltinFunction { AutoCallsBare: true } constant
                             ? constant.Call(System.Array.Empty<JgsValue>(), variable.Line, variable.Column)
                             : value;
+                }
+
+                // A file on the path answers a bare name by running, which is MATLAB's rule for any
+                // name that is not a variable: 'setup' runs setup.m, and @setup is how you ask for
+                // the handle instead. Only path files behave this way — a built-in mentioned bare is
+                // still its own value unless it opted into AutoCallsBare above.
+                if (TryResolveOnPath(variable.Name, out JgsValue onPath))
+                {
+                    return onPath.AsCallable.Call(System.Array.Empty<JgsValue>(), variable.Line, variable.Column);
                 }
 
                 throw new JgsRuntimeException(variable.Line, variable.Column, Undefined(variable.Name));
@@ -1046,6 +1255,13 @@ internal sealed partial class Interpreter
                 if (env.TryGet(handle.Name, out JgsValue referenced) && referenced.Type == JgsType.Function)
                 {
                     return referenced;
+                }
+
+                // @helper has to reach a file the same way helper(x) does, or a path function could
+                // be called but never passed to cellfun.
+                if (TryResolveOnPath(handle.Name, out JgsValue handleFromFile))
+                {
+                    return handleFromFile;
                 }
 
                 throw new JgsRuntimeException(handle.Line, handle.Column,
@@ -1132,13 +1348,7 @@ internal sealed partial class Interpreter
         var rows = new List<JgsValue[]>(matrix.Rows.Count);
         foreach (IReadOnlyList<Expr> row in matrix.Rows)
         {
-            var evaluated = new JgsValue[row.Count];
-            for (int i = 0; i < evaluated.Length; i++)
-            {
-                evaluated[i] = Evaluate(row[i], env);
-            }
-
-            rows.Add(evaluated);
+            rows.Add(EvaluateAll(row, env));
         }
 
         var shapes = new List<(int Height, int Width)[]>(rows.Count);
@@ -1192,24 +1402,35 @@ internal sealed partial class Interpreter
     /// </summary>
     private JgsValue EvaluateArrayLiteral(ArrayLiteral array, JgsEnvironment env)
     {
-        var elements = new JgsValue[array.Elements.Count];
+        JgsValue[] elements = EvaluateAll(array.Elements, env);
         bool concatenating = false;
-        for (int i = 0; i < elements.Length; i++)
+        foreach (JgsValue element in elements)
         {
-            elements[i] = Evaluate(array.Elements[i], env);
-            concatenating |= elements[i].Type == JgsType.Array;
+            concatenating |= element.Type == JgsType.Array;
         }
 
         // In JGS a bracket literal is a list, so [[1, 2], [3, 4]] is a matrix by nesting — the
         // spelling its own scripts and guide have always used. Only MATLAB concatenates here.
         concatenating &= Dialect.ConcatenatesBrackets;
 
-        // Char rows join into one longer char row: ['SN:' id] is how a MATLAB script builds a label.
-        // Double-quoted strings are a different thing and stay side by side, so a single-quoted piece
-        // has to be present for this to be char concatenation at all.
+        // A bracket holding any string array is a string array (M63): ["a" "b"] is 1-by-2, and
+        // ["a" 'b'] is too, because a char row joining a string becomes one of its elements rather
+        // than being spliced character by character. This is MATLAB's rule and the reason a script
+        // can build a list of labels without a cell. It is asked first, because the char-row join
+        // below would otherwise swallow the mixed case.
         if (Dialect.ConcatenatesBrackets && elements.Length > 0
-            && Array.TrueForAll(elements, static e => e.Type == JgsType.String)
-            && array.Elements.Any(static e => e is StringLiteral { IsChar: true }))
+            && Array.Exists(elements, static e => e.IsStringArray))
+        {
+            return JoinStringArrays(elements);
+        }
+
+        // Char rows join into one longer char row: ['SN:' id] is how a MATLAB script builds a label.
+        // The test is on the values, not on how they were written: it used to require a single-quoted
+        // literal among them, which was the only way to tell a char row from a double-quoted one
+        // before strings had a type of their own — and which meant [a b], with both chars held in
+        // variables, never joined at all.
+        if (Dialect.ConcatenatesBrackets && elements.Length > 0
+            && Array.TrueForAll(elements, static e => e.Type == JgsType.String))
         {
             var text = new StringBuilder();
             foreach (JgsValue piece in elements)
@@ -1239,6 +1460,43 @@ internal sealed partial class Interpreter
         return height == 0 || width == 0
             ? JgsValue.Array([])
             : StampLiteral(AssembleLiteral(rows, shapes, height, width), rows, array);
+    }
+
+    /// <summary>
+    /// Joins the pieces of a bracket literal that holds at least one string array into a single row
+    /// of strings (M63). A char row or a number joining them contributes one element, not one per
+    /// character or one per number: <c>["a" 'bc' 3]</c> is 1-by-3, and the last two are the strings
+    /// <c>"bc"</c> and <c>"3"</c>, which is MATLAB's rule and the reason this cannot reuse the
+    /// numeric concatenation machinery below.
+    /// </summary>
+    private static JgsValue JoinStringArrays(JgsValue[] elements)
+    {
+        var joined = new List<JgsValue>();
+        foreach (JgsValue piece in elements)
+        {
+            if (piece.IsStringArray)
+            {
+                joined.AddRange(piece.BoxedElements());
+            }
+            else if (piece.Type == JgsType.String)
+            {
+                joined.Add(piece);
+            }
+            else if (piece.Type == JgsType.Array)
+            {
+                // A numeric array spreads, one string per number, the way string(x) would make it.
+                for (int i = 0; i < piece.ArrayLength; i++)
+                {
+                    joined.Add(JgsValue.Str(piece.ElementAt(i).Display()));
+                }
+            }
+            else
+            {
+                joined.Add(JgsValue.Str(piece.Display()));
+            }
+        }
+
+        return JgsValue.StringArray([.. joined]);
     }
 
     /// <summary>The block a value contributes to a literal; an empty array contributes nothing.</summary>
@@ -1576,6 +1834,15 @@ internal sealed partial class Interpreter
             }
         }
 
+        // String concatenation resolves before implicit expansion, and has to (M63): a string array
+        // is an array underneath, so "p" + ["1" "2"] would otherwise be expanded pair by pair, each
+        // pair joined as char, and the answer reassembled as a plain array — the right text with the
+        // wrong type. ConcatenateStrings does its own spreading, which is the same rule applied once.
+        if (op == TokenType.Plus && JgsBuiltins.ConcatenatesWithPlus(left, right))
+        {
+            return JgsBuiltins.ConcatenateStrings(left, right, at.Line, at.Column);
+        }
+
         // MATLAB implicit expansion: two arrays of different shapes combine by expanding singleton
         // dimensions (a column plus a row is their outer sum; a 1x1 array behaves as a scalar).
         // The matrix operators resolved above, so everything reaching here is elementwise; nested
@@ -1598,7 +1865,9 @@ internal sealed partial class Interpreter
         // comparisons check complex operands first so the boxed error still fires.
         if ((left.IsPacked || right.IsPacked)
             && left.Type != JgsType.Complex && right.Type != JgsType.Complex
-            && !(op == TokenType.Plus && (left.Type == JgsType.String || right.Type == JgsType.String)))
+            && !(op == TokenType.Plus
+                 && (left.Type == JgsType.String || right.Type == JgsType.String
+                     || JgsBuiltins.ConcatenatesWithPlus(left, right))))
         {
             if (PackedOps.MapArithmetic(op) is PackedMath.BinaryOp arithmetic
                 && PackedOps.TryArithmetic(arithmetic, OperatorSymbol(op), left, right, _cancelCheck, at.Line, at.Column, out JgsValue fast))
@@ -1697,7 +1966,9 @@ internal sealed partial class Interpreter
                 fields[name] = CopyForBinding(field);
             }
 
-            return JgsValue.Struct(fields);
+            JgsValue copiedStruct = JgsValue.Struct(fields);
+            copiedStruct.SetClassName(value.ClassName); // an MException stays one when it is passed on
+            return copiedStruct;
         }
 
         if (value.IsPacked)
@@ -1747,6 +2018,15 @@ internal sealed partial class Interpreter
         }
 
         copy.SetNumericClass(source.NumericClass);
+
+        // A string array copied on assignment is still one (M63). This is the same trap the MException
+        // class name fell into in M62: a tag that lives on the wrapper is lost by every copy that does
+        // not carry it, and MATLAB's value semantics copy on every single binding.
+        if (source.IsStringArray)
+        {
+            copy.MarkStringArray();
+        }
+
         return copy;
     }
 
@@ -2648,11 +2928,7 @@ internal sealed partial class Interpreter
             throw new JgsRuntimeException(call.Line, call.Column, $"Cannot call a {callee.TypeName}; it is not a function.");
         }
 
-        var arguments = new JgsValue[call.Arguments.Count];
-        for (int i = 0; i < arguments.Length; i++)
-        {
-            arguments[i] = Evaluate(call.Arguments[i], env);
-        }
+        JgsValue[] arguments = EvaluateAll(call.Arguments, env);
 
         // inputname reports the caller's variable name for an argument, so the call expression has
         // to reach the frame the call creates. Handing over the node itself costs one field write —
@@ -2680,6 +2956,17 @@ internal sealed partial class Interpreter
         if (target.NumericClass != JgsNumericClass.Double)
         {
             return JgsNumericClasses.Stamp(IndexIntoCore(target, subscripts, at, env), target.NumericClass);
+        }
+
+        // A selection out of a string array is a string array (M63), for the same reason: s(2) is
+        // MATLAB's 1-by-1 string, not the char row inside it. Without this, indexing would quietly
+        // demote every element the first time a script reached for one.
+        if (target.IsStringArray)
+        {
+            JgsValue picked = IndexIntoCore(target, subscripts, at, env);
+            return picked.Type == JgsType.String ? JgsValue.StringScalar(picked.AsString)
+                : picked.Type == JgsType.Array && !picked.IsStringArray ? picked.MarkStringArray()
+                : picked;
         }
 
         return IndexIntoCore(target, subscripts, at, env);
@@ -3485,14 +3772,23 @@ internal sealed partial class Interpreter
     private JgsValue EvaluateCellLiteral(CellLiteral literal, JgsEnvironment env)
     {
         int rows = literal.Rows.Count;
-        int cols = rows == 0 ? 0 : literal.Rows[0].Count;
+
+        // Each row is evaluated before its width is known, because a comma-separated list inside one
+        // ({c{:}}) contributes as many entries as it names rather than the one it is written as.
+        var built = new List<JgsValue[]>(rows);
+        foreach (IReadOnlyList<Expr> row in literal.Rows)
+        {
+            built.Add(EvaluateAll(row, env));
+        }
+
+        int cols = rows == 0 ? 0 : built[0].Length;
         for (int r = 1; r < rows; r++)
         {
-            if (literal.Rows[r].Count != cols)
+            if (built[r].Length != cols)
             {
                 throw new JgsRuntimeException(literal.Line, literal.Column,
                     $"Every row of a cell literal needs the same number of entries; row {r + 1} has " +
-                    $"{literal.Rows[r].Count} where the first has {cols}.");
+                    $"{built[r].Length} where the first has {cols}.");
             }
         }
 
@@ -3501,7 +3797,7 @@ internal sealed partial class Interpreter
         {
             for (int c = 0; c < cols; c++)
             {
-                elements[r + (c * rows)] = Evaluate(literal.Rows[r][c], env);
+                elements[r + (c * rows)] = built[r][c];
             }
         }
 
@@ -3519,6 +3815,14 @@ internal sealed partial class Interpreter
             return IndexTableBrace(target, brace.Indices, brace, env);
         }
 
+        // s{i} on a string array is the char row inside, where s(i) is the 1-by-1 string around it
+        // (M63) — the same distinction braces draw on a cell, which is why MATLAB spells it the same.
+        if (target.IsStringArray)
+        {
+            JgsValue inside = IndexInto(target, brace.Indices, brace, env);
+            return inside.IsStringArray && inside.ArrayLength == 1 ? inside.ElementAt(0) : inside;
+        }
+
         if (target.Type != JgsType.Cell)
         {
             throw new JgsRuntimeException(brace.Line, brace.Column,
@@ -3526,15 +3830,119 @@ internal sealed partial class Interpreter
         }
 
         JgsValue[] elements = target.AsCell;
-        return elements[BraceSlot(target, brace.Indices, brace, env)];
+        int[] slots = BraceSlots(target, brace.Indices, brace, env);
+
+        // One value is wanted here and the subscripts must name one. A brace that names several is a
+        // comma-separated list, which is a thing only an argument list, a bracket, or a multiple
+        // assignment has room for — saying which of those is missing is more use than "bad index".
+        if (slots.Length != 1)
+        {
+            throw new JgsRuntimeException(brace.Line, brace.Column,
+                $"This brace index names {slots.Length} elements where one value is wanted. A list of " +
+                "several only fits an argument list, a bracket, or a multiple assignment.");
+        }
+
+        return elements[slots[0]];
+    }
+
+    // --- Comma-separated lists (M61) --------------------------------------------------------------
+
+    /// <summary>
+    /// The values an expression contributes to an argument list, a bracket, or a cell literal.
+    /// Almost every expression contributes exactly one; <c>c{:}</c> and a struct array's field
+    /// contribute as many as they name, which is what MATLAB calls a comma-separated list.
+    /// </summary>
+    /// <remarks>
+    /// The list is deliberately not a <see cref="JgsValue"/>: it cannot be stored in a variable, and
+    /// it lives only as long as it takes the caller to spread it. That is also MATLAB's rule, and
+    /// keeping it out of the value model is what stops every one of the builtins having to learn
+    /// about a kind of value that is never handed to one.
+    /// </remarks>
+    private JgsValue[] EvaluateSpread(Expr expr, JgsEnvironment env)
+    {
+        if (expr is BraceIndexExpr brace)
+        {
+            JgsValue target = Evaluate(brace.Target, env);
+            if (target.Type == JgsType.Cell)
+            {
+                JgsValue[] elements = target.AsCell;
+                int[] slots = BraceSlots(target, brace.Indices, brace, env);
+                var spread = new JgsValue[slots.Length];
+                for (int i = 0; i < slots.Length; i++)
+                {
+                    spread[i] = elements[slots[i]];
+                }
+
+                return spread;
+            }
+        }
+
+        // A struct array's field is a list of that field across the elements. Reading the target is
+        // restricted to a plain name so that asking the question cannot run a call twice; s.field is
+        // the form scripts write. MATLAB dialect only: JGS has answered this with the collected row
+        // since M41 and that surface is frozen.
+        if (Dialect.IsMatlab && expr is MemberExpr { Target: VariableExpr name } member
+            && LookUp(name.Name, env, out JgsValue array)
+            && array.Type == JgsType.Cell && IsStructArray(array))
+        {
+            return StructArrayFieldValues(array, FieldName(member, env), member);
+        }
+
+        return [Evaluate(expr, env)];
     }
 
     /// <summary>
-    /// The storage slot a brace subscript list names: one linear subscript, or a row and a column
-    /// over the cell's shape (column-major, like arrays). Braces yield exactly one element, so every
-    /// subscript must be a scalar.
+    /// Evaluates a whole argument or element list, spreading any comma-separated list inside it.
     /// </summary>
-    private int BraceSlot(JgsValue cell, IReadOnlyList<Expr> subscripts, Node at, JgsEnvironment env)
+    private JgsValue[] EvaluateAll(IReadOnlyList<Expr> exprs, JgsEnvironment env)
+    {
+        // Nothing in the list can spread, which is the overwhelmingly common case: evaluate straight
+        // into the array the caller wanted rather than through a list that would be copied out again.
+        if (!MightSpread(exprs))
+        {
+            var plain = new JgsValue[exprs.Count];
+            for (int i = 0; i < plain.Length; i++)
+            {
+                plain[i] = Evaluate(exprs[i], env);
+            }
+
+            return plain;
+        }
+
+        var spread = new List<JgsValue>(exprs.Count);
+        foreach (Expr expr in exprs)
+        {
+            spread.AddRange(EvaluateSpread(expr, env));
+        }
+
+        return [.. spread];
+    }
+
+    /// <summary>
+    /// Whether any expression in a list is shaped like one that could spread. This is a syntactic
+    /// test, so it costs nothing to ask and is allowed to say yes to a brace that turns out to name
+    /// exactly one element.
+    /// </summary>
+    private bool MightSpread(IReadOnlyList<Expr> exprs)
+    {
+        for (int i = 0; i < exprs.Count; i++)
+        {
+            if (exprs[i] is BraceIndexExpr
+                || (Dialect.IsMatlab && exprs[i] is MemberExpr { Target: VariableExpr }))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /// <summary>
+    /// The storage slots a brace subscript list names: one linear subscript, or a row and a column
+    /// over the cell's shape (column-major, like arrays). A subscript that names several — ':', a
+    /// range, an index array, or a mask — names several slots, which is a comma-separated list.
+    /// </summary>
+    private int[] BraceSlots(JgsValue cell, IReadOnlyList<Expr> subscripts, Node at, JgsEnvironment env)
     {
         JgsValue[] elements = cell.AsCell;
         if (subscripts.Count == 2)
@@ -3542,30 +3950,56 @@ internal sealed partial class Interpreter
             int rows = cell.Rows;
             int cols = cell.Cols;
             int[] extents = [rows, cols];
-            JgsValue? rowIndex = EvaluateIndexArgument(subscripts[0], extents, 0, env);
-            JgsValue? colIndex = EvaluateIndexArgument(subscripts[1], extents, 1, env);
-            if (rowIndex is not { Type: not JgsType.Array } || colIndex is not { Type: not JgsType.Array })
+            int[] rowPicks = BracePicks(
+                EvaluateIndexArgument(subscripts[0], extents, 0, env), rows, "cell row", at);
+            int[] colPicks = BracePicks(
+                EvaluateIndexArgument(subscripts[1], extents, 1, env), cols, "cell column", at);
+
+            // Column-major, so a two-subscript list runs down each column in turn — the same order
+            // c(:) reads in, which is what makes c{:, 1} and c{:} agree on a single-column cell.
+            var grid = new int[rowPicks.Length * colPicks.Length];
+            int next = 0;
+            foreach (int column in colPicks)
             {
-                throw new JgsRuntimeException(at.Line, at.Column,
-                    "A brace index selects one cell element, so both subscripts must be scalars.");
+                foreach (int row in rowPicks)
+                {
+                    grid[next++] = row + (column * rows);
+                }
             }
 
-            int row = ToIndex(rowIndex, rows, at.Line, at.Column);
-            int column = ToIndex(colIndex, cols, at.Line, at.Column);
-            return row + (column * rows);
+            return grid;
         }
 
-        JgsValue? index = EvaluateIndexArgument(Single(subscripts, at, "A cell index"), elements.Length, env);
+        return BracePicks(
+            EvaluateIndexArgument(Single(subscripts, at, "A cell index"), elements.Length, env),
+            elements.Length,
+            "cell",
+            at);
+    }
+
+    /// <summary>
+    /// The slots one brace subscript names along an extent: null is ':' (all of them), an array
+    /// gathers or masks, and anything else is the single element it names.
+    /// </summary>
+    private int[] BracePicks(JgsValue? index, int extent, string targetName, Node at)
+    {
         if (index is null)
         {
-            // c{:} is MATLAB's comma-separated list, which is not a value and has no place to go
-            // here. Saying so is the point: without this the colon reached ToIndex as a null and
-            // came back out of the interpreter as a NullReferenceException (M52).
-            throw new JgsRuntimeException(at.Line, at.Column,
-                "A brace index selects one cell element, so ':' does not name one — index the cell one element at a time.");
+            var all = new int[extent];
+            for (int i = 0; i < extent; i++)
+            {
+                all[i] = i;
+            }
+
+            return all;
         }
 
-        return ToIndex(index, elements.Length, at.Line, at.Column);
+        if (index.Type == JgsType.Array)
+        {
+            return ComputePicks(index, extent, targetName, at.Line, at.Column);
+        }
+
+        return [ToIndex(index, extent, at.Line, at.Column)];
     }
 
     /// <summary>Reads <c>s.field</c> (or the dynamic <c>s.('field')</c>).</summary>
@@ -3643,21 +4077,19 @@ internal sealed partial class Interpreter
     }
 
     /// <summary>
-    /// One field read across every element of a struct array — <c>stats.Area</c>.
+    /// One field across every element of a struct array, in order — the comma-separated list
+    /// <c>stats.Area</c> names.
     /// </summary>
     /// <remarks>
-    /// MATLAB calls this a comma-separated list, a thing that exists only in argument and bracket
-    /// positions and which JGraph has no value for. The nearest honest answer is the collection
-    /// itself: a row array when every field is a number, a cell otherwise. That makes
-    /// <c>[stats.Area]</c> — the form scripts actually write, and the one MATLAB needs the brackets
-    /// for — come out right, and <c>stats.Area</c> alone yields the row rather than printing each
-    /// value in turn.
+    /// This is the whole of what the representation knows about how a struct array is stored, which
+    /// is why it is its own method: M41 keeps one as a cell of structs, and when that becomes a type
+    /// of its own only this reads differently. Every caller — the spread, the collected value below —
+    /// asks for the list and is left alone.
     /// </remarks>
-    private JgsValue StructArrayField(JgsValue array, string field, Node member)
+    private JgsValue[] StructArrayFieldValues(JgsValue array, string field, Node member)
     {
         JgsValue[] elements = array.AsCell;
         var gathered = new JgsValue[elements.Length];
-        bool allNumbers = true;
         for (int i = 0; i < elements.Length; i++)
         {
             if (!elements[i].AsStruct.TryGetValue(field, out JgsValue? value))
@@ -3667,6 +4099,26 @@ internal sealed partial class Interpreter
             }
 
             gathered[i] = value;
+        }
+
+        return gathered;
+    }
+
+    /// <summary>
+    /// One field read across every element of a struct array, as a single value — <c>stats.Area</c>
+    /// where one value is wanted rather than a list.
+    /// </summary>
+    /// <remarks>
+    /// A row array when every field is a number, a cell otherwise. In an argument list or a bracket
+    /// the field spreads instead (M61); this is what the same expression means where a list has no
+    /// room to go, so <c>x = stats.Area</c> yields the row rather than the first element.
+    /// </remarks>
+    private JgsValue StructArrayField(JgsValue array, string field, Node member)
+    {
+        JgsValue[] gathered = StructArrayFieldValues(array, field, member);
+        bool allNumbers = true;
+        foreach (JgsValue value in gathered)
+        {
             allNumbers &= value.Type is JgsType.Number or JgsType.Bool;
         }
 
@@ -3946,7 +4398,15 @@ internal sealed partial class Interpreter
         // C{r, c} writes through the cell's shape, in range only — growth is the linear form's.
         if (brace.Indices.Count == 2)
         {
-            elements[BraceSlot(target, brace.Indices, brace, env)] = value;
+            int[] slots = BraceSlots(target, brace.Indices, brace, env);
+            if (slots.Length != 1)
+            {
+                throw new JgsRuntimeException(brace.Line, brace.Column,
+                    $"This brace index names {slots.Length} elements, and a brace assignment writes one. " +
+                    "Assign to a paren index to write several at once.");
+            }
+
+            elements[slots[0]] = value;
             return value;
         }
 

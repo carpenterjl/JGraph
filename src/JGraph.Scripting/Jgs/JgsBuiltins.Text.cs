@@ -121,6 +121,22 @@ internal static partial class JgsBuiltins
             return f(value.AsString);
         }
 
+        // A string array maps the same way a cell of char does, and keeps its shape (M63) — which is
+        // what makes strlength(["a" "bb"]) answer [1 2] rather than one number for the whole thing.
+        if (value.IsStringArray)
+        {
+            JgsValue[] texts = value.BoxedElements();
+            var mapped = new JgsValue[texts.Length];
+            for (int i = 0; i < texts.Length; i++)
+            {
+                mapped[i] = f(texts[i].AsString);
+            }
+
+            JgsValue answer = JgsValue.Array(mapped);
+            answer.TakeShapeOf(value);
+            return answer;
+        }
+
         if (value.Type != JgsType.Cell)
         {
             throw new JgsRuntimeException(line, col, $"{name} expects a string or a cell of strings, but got a {value.TypeName}.");

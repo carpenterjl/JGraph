@@ -15,7 +15,7 @@ internal static partial class JgsBuiltins
         void Define(string name, Func<IReadOnlyList<JgsValue>, int, int, JgsValue> body) =>
             env.Declare(name, JgsValue.Function(new BuiltinFunction(name, body)));
 
-        RegisterApplication(Define);
+        RegisterApplication(env, Define);
         RegisterRunningStatistics(Define);
         RegisterSelectionAndSets(env, dialect);
         RegisterRandomDraws(Define, random);
@@ -26,56 +26,133 @@ internal static partial class JgsBuiltins
 
     // --- Applying a function ----------------------------------------------------------------------
 
-    private static void RegisterApplication(Action<string, Func<IReadOnlyList<JgsValue>, int, int, JgsValue>> Define)
+    private static readonly OptionSpec ArrayOptions = new(
+        "arrayfun", Flags: [], Names: ["UniformOutput", "ErrorHandler"]);
+
+    /// <summary>
+    /// <c>arrayfun</c> over any number of arrays, producing any number of outputs — <c>cellfun</c>'s
+    /// loop, over elements rather than cells.
+    /// </summary>
+    /// <remarks>
+    /// M52 recorded that this verb read <c>'UniformOutput'</c> by scanning for the word and ignored
+    /// everything else in the tail, so a misspelling was accepted in silence and
+    /// <c>'ErrorHandler'</c> did nothing. Sharing the option table is what closes both at once, and
+    /// asking each element for several answers is what M61's multiple-output work makes possible.
+    /// </remarks>
+    private static JgsValue[] ApplyOverArrays(IReadOnlyList<JgsValue> args, int wanted, int line, int col)
     {
-        Define("arrayfun", (args, line, col) =>
+        if (args.Count < 2 || args[0].Type != JgsType.Function)
         {
-            if (args.Count < 2 || args[0].Type != JgsType.Function)
-            {
-                throw new JgsRuntimeException(line, col, "arrayfun(f, a) applies a function handle to each element.");
-            }
+            throw new JgsRuntimeException(line, col, "arrayfun(f, a) applies a function handle to each element.");
+        }
 
-            bool uniform = UniformOutputWanted(args, 2);
-            var inputs = new List<JgsValue[]>();
-            for (int i = 1; i < args.Count && args[i].Type != JgsType.String; i++)
-            {
-                inputs.Add(ElementsOf("arrayfun", args[i]));
-            }
+        var inputs = new List<JgsValue[]>();
+        int i = 1;
+        while (i < args.Count && args[i].Type != JgsType.String)
+        {
+            inputs.Add(ElementsOf("arrayfun", args[i]));
+            i++;
+        }
 
-            int length = inputs[0].Length;
-            foreach (JgsValue[] input in inputs)
-            {
-                if (input.Length != length)
-                {
-                    throw new JgsRuntimeException(line, col, "arrayfun needs every array to be the same length.");
-                }
-            }
+        if (inputs.Count == 0)
+        {
+            throw new JgsRuntimeException(line, col,
+                $"arrayfun expects an array to walk, but got a {args[1].TypeName}.");
+        }
 
-            var results = new JgsValue[length];
+        var tail = new List<JgsValue>();
+        for (int t = i; t < args.Count; t++)
+        {
+            tail.Add(args[t]);
+        }
+
+        ParsedArgs parsed = ArrayOptions.Parse(tail, 0, line, col);
+        bool uniform = parsed.Flag("UniformOutput", true);
+        JgsValue? handler = parsed.Named("ErrorHandler");
+        if (handler is { Type: not JgsType.Function })
+        {
+            throw new JgsRuntimeException(line, col, "arrayfun: 'ErrorHandler' takes a function handle.");
+        }
+
+        int length = inputs[0].Length;
+        foreach (JgsValue[] input in inputs)
+        {
+            if (input.Length != length)
+            {
+                throw new JgsRuntimeException(line, col, "arrayfun needs every array to be the same length.");
+            }
+        }
+
+        int produced = Math.Max(wanted, 1);
+        var collected = new JgsValue[produced][];
+        for (int o = 0; o < produced; o++)
+        {
+            collected[o] = new JgsValue[length];
+        }
+
+        for (int k = 0; k < length; k++)
+        {
             var call = new JgsValue[inputs.Count];
-            for (int i = 0; i < length; i++)
+            for (int c = 0; c < inputs.Count; c++)
             {
-                for (int k = 0; k < inputs.Count; k++)
-                {
-                    call[k] = inputs[k][i];
-                }
+                call[c] = inputs[c][k];
+            }
 
-                results[i] = args[0].AsCallable.Call(call, line, col);
-                if (uniform && results[i].Type is not (JgsType.Number or JgsType.Bool))
+            JgsValue[] answers;
+            try
+            {
+                answers = CallForOutputs(args[0].AsCallable, call, produced, line, col);
+            }
+            catch (JgsRuntimeException failure) when (handler is { } catcher)
+            {
+                var handed = new JgsValue[call.Length + 1];
+                handed[0] = FailureRecord(failure, k);
+                call.CopyTo(handed, 1);
+                answers = CallForOutputs(catcher.AsCallable, handed, produced, line, col);
+            }
+
+            if (answers.Length < produced)
+            {
+                throw new JgsRuntimeException(line, col,
+                    $"arrayfun: element {k + 1} produced {answers.Length} output(s), but {produced} were asked for.");
+            }
+
+            for (int o = 0; o < produced; o++)
+            {
+                if (uniform && answers[o].Type is not (JgsType.Number or JgsType.Bool))
                 {
                     throw new JgsRuntimeException(line, col,
                         "arrayfun: the function returned something that is not a number — pass 'UniformOutput', false.");
                 }
-            }
 
-            if (!uniform)
-            {
-                return JgsValue.Cell(results);
+                collected[o][k] = answers[o];
             }
+        }
 
+        var outputs = new JgsValue[produced];
+        for (int o = 0; o < produced; o++)
+        {
             // The uniform result takes the first array's shape — 2-D or N-D — the way MATLAB's does.
-            return JgsMatrix.Like(args[1], JgsMatrix.FromElements(results, 1, results.Length));
-        });
+            outputs[o] = uniform
+                ? JgsMatrix.Like(args[1], JgsMatrix.FromElements(collected[o], 1, length))
+                : JgsMatrix.Like(args[1], JgsValue.Cell(collected[o]));
+        }
+
+        return outputs;
+    }
+
+    private static void RegisterApplication(
+        JgsEnvironment env, Action<string, Func<IReadOnlyList<JgsValue>, int, int, JgsValue>> Define)
+    {
+        // Declared with its several-output form rather than wrapped later: this registrar runs after
+        // the MATLAB one, and that wrapper takes an already-registered name and silently does nothing
+        // when there is none. The multi-output form went missing exactly that quietly (M61).
+        env.Declare("arrayfun", JgsValue.Function(new BuiltinFunction(
+            "arrayfun",
+            (args, line, col) => ApplyOverArrays(args, 1, line, col)[0])
+        {
+            MultiOutput = ApplyOverArrays,
+        }));
 
         Define("bsxfun", (args, line, col) =>
         {

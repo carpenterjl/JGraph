@@ -191,6 +191,7 @@ public static class JgsBuiltinCatalog
         Add("evalin", "Runs a string as code in the 'base' or 'caller' workspace.", P("workspace"), P("code"));
         Add("assignin", "Creates a variable in the 'base' or 'caller' workspace.", P("workspace"), P("name"), P("value"));
         Add("str2func", "A function handle from its name, or from an @(x) … expression.", P("text"));
+        Add("str2num", "Text evaluated as an expression: '[1 2 3]' is a vector. Empty when it does not evaluate.", P("text"));
         Add("exist", "What a name is: 1 a variable, 2 a file, 5 a builtin, 7 a folder, 0 nothing.", P("name"), Opt("kind"));
         Add("who", "The names of the variables in scope, as a cell array.", Opt("pattern"));
         Add("which", "Where a name comes from — a builtin, or the file it resolves to.", P("name"));
@@ -217,7 +218,7 @@ public static class JgsBuiltinCatalog
         Add("beep", "Sounds the console bell, or turns it on or off.", Opt("state"));
         Add("pack", "Asks the runtime to collect and compact memory now.", Opt("target"));
         Add("recycle", "Reports whether delete recycles rather than removes; JGraph always removes.", Opt("state"));
-        Add("rehash", "A no-op: JGraph looks for files when it needs them rather than caching them.", Opt("scope"));
+        Add("rehash", "A no-op: a function file is re-read whenever its timestamp has moved, so there is no stale cache to drop.", Opt("scope"));
         Add("display", "Prints a value the way the console would.", P("value"));
 
         // --- The installation -----------------------------------------------------------------------
@@ -472,7 +473,17 @@ public static class JgsBuiltinCatalog
         Add("seconds", "A duration of x seconds (stored as its number, so it transposes and plots).", P("x"));
         Add("categorical", "Category labels from a cell or array (represented as the cell of names).", P("x"));
         Add("summary", "Per-variable statistics of a table, or category counts of a categorical, as a struct.", P("x"));
-        Add("string", "The value as strings: cells and arrays convert per element.", P("x"));
+        Add("string", "The value as a string array: a char row becomes one string, a cell or array one per element.", P("x"));
+        Add("strings", "An array of empty strings: strings(n) is n-by-n, strings(r, c) is r-by-c.", P("rows?"), P("cols?"));
+        Add("char", "Text as a char row: a string, a cell, or code points; several arguments stack into a char matrix.", P("x"), P("more?"));
+        Add("strip", "Whitespace removed from a string: strip(s), or strip(s, 'left'|'right'|'both').", P("s"), P("side?"));
+        Add("pad", "A string padded to a width: pad(s, width) or pad(s, width, 'left'|'right'|'both').", P("s"), P("width?"), P("side?"));
+        Add("erase", "The string with every occurrence of a piece of text taken out.", P("s"), P("what"));
+        Add("insertAfter", "Text inserted after a marker or a position.", P("s"), P("marker"), P("what"));
+        Add("insertBefore", "Text inserted before a marker or a position.", P("s"), P("marker"), P("what"));
+        Add("extractAfter", "What follows a marker or a position, as a string.", P("s"), P("marker"));
+        Add("extractBefore", "What precedes a marker or a position, as a string.", P("s"), P("marker"));
+        Add("extractBetween", "What lies between two markers, or between two positions.", P("s"), P("from"), P("to"));
         Add("cellstr", "A string array as a cell of character rows.", P("x"));
         Add("compose", "Formats each element through the format string, one output string per element.", P("format"), P("values"));
         Add("missing", "The missing value: a string slot with nothing in it (displays as <missing>).");
@@ -1359,7 +1370,7 @@ public static class JgsBuiltinCatalog
         Add("isrow", "True for a vector; JGraph vectors have no orientation and read as rows.", P("x"));
         Add("iscolumn", "True only for a single value, since vectors read as rows.", P("x"));
         Add("isstr", "True for a string (the pre-R2016 spelling of ischar).", P("x"));
-        Add("isstring", "Always false — JGraph has char text, not MATLAB string arrays.", P("x"));
+        Add("isstring", "True for a string array — text written with double quotes, not single ones.", P("x"));
         Add("iscellstr", "True for a cell array whose every element is a string.", P("x"));
         Add("isletter", "Whether each character is a letter, as a mask.", P("text"));
         Add("isspace", "Whether each character is whitespace, as a mask.", P("text"));
@@ -1421,7 +1432,41 @@ public static class JgsBuiltinCatalog
         Add("help", "Shows a builtin's signature and summary; help alone lists every function.", Opt("name"));
         Add("format", "Sets numeric display precision: short, long, shortE, longE (bare format resets).", Opt("mode"));
         Add("dir", "The files and folders in the working directory (or matching pattern) as a cell array of names; folders end with the path separator.", Opt("pattern"));
-        Add("path", "The folder that bare file names resolve against (the workspace root, or the batch start folder).");
+        Add("path", "The search path as one string; path(folders) replaces the added folders.", Opt("folders..."));
+        Add("addpath", "Adds folders to the search path, so their .m files answer bare names; '-end' appends instead.", P("folder"), Opt("more..."));
+        Add("rmpath", "Removes folders from the search path.", P("folder"), Opt("more..."));
+        Add("genpath", "A folder and all of its sub-folders, joined by the path separator, ready for addpath.", P("folder"));
+        Add("pathsep", "The character that separates folders in a path string.");
+
+        // --- Errors and argument validation (M62) --------------------------------------------------
+        Add("MException", "Builds an error object: an identifier, a message, and the stack it carries.", P("identifier"), P("message"), Opt("args..."));
+        Add("throw", "Raises an MException.", P("exception"));
+        Add("throwAsCaller", "Raises an MException, reported against the caller.", P("exception"));
+        Add("mustBePositive", "Errors unless every element is greater than zero.", P("value"));
+        Add("mustBeNonnegative", "Errors unless every element is zero or greater.", P("value"));
+        Add("mustBeNegative", "Errors unless every element is less than zero.", P("value"));
+        Add("mustBeNonpositive", "Errors unless every element is zero or less.", P("value"));
+        Add("mustBeNonzero", "Errors unless every element is nonzero.", P("value"));
+        Add("mustBeFinite", "Errors unless every element is finite.", P("value"));
+        Add("mustBeNonNan", "Errors if any element is NaN.", P("value"));
+        Add("mustBeInteger", "Errors unless every element is a whole number.", P("value"));
+        Add("mustBeReal", "Errors if the value is complex.", P("value"));
+        Add("mustBeNumeric", "Errors unless the value is numeric.", P("value"));
+        Add("mustBeNumericOrLogical", "Errors unless the value is numeric or a mask.", P("value"));
+        Add("mustBeFloat", "Errors unless the value is floating-point.", P("value"));
+        Add("mustBeNonempty", "Errors if the value has no elements.", P("value"));
+        Add("mustBeScalarOrEmpty", "Errors unless the value is one element or none.", P("value"));
+        Add("mustBeVector", "Errors unless the value is a nonempty row or column.", P("value"));
+        Add("mustBeText", "Errors unless the value is text, or a cell of text.", P("value"));
+        Add("mustBeTextScalar", "Errors unless the value is one piece of text.", P("value"));
+        Add("mustBeMember", "Errors unless every element is one of the allowed values.", P("value"), P("allowed"));
+        Add("mustBeA", "Errors unless the value's class is one of those named.", P("value"), P("classes"));
+        Add("mustBeGreaterThan", "Errors unless every element is greater than the bound.", P("value"), P("bound"));
+        Add("mustBeLessThan", "Errors unless every element is less than the bound.", P("value"), P("bound"));
+        Add("mustBeGreaterThanOrEqual", "Errors unless every element is at least the bound.", P("value"), P("bound"));
+        Add("mustBeLessThanOrEqual", "Errors unless every element is at most the bound.", P("value"), P("bound"));
+        Add("mustBeInRange", "Errors unless every element lies between the bounds; 'exclude-lower'/'exclude-upper' open an end.", P("value"), P("low"), P("high"), Opt("bounds..."));
+        Add("validateattributes", "Errors unless the value has one of the named classes and all of the named attributes.", P("value"), P("classes"), P("attributes"), Opt("name"));
 
         // --- Figure setup and plotting -------------------------------------------------------------
         Add("figure", "Starts a new figure (or selects figure n) and returns its handle (a figure number, so it starts at 1).", Opt("n"));

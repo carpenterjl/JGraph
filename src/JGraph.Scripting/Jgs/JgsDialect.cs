@@ -74,6 +74,12 @@ internal sealed record JgsDialect(
     public bool IsMatlab => PercentComment;
 
     /// <summary>
+    /// Whether a double-quoted literal is a string scalar rather than a char row (M63). MATLAB's
+    /// alone: JGS's surface is frozen, and it has never had a string type for the quotes to mean.
+    /// </summary>
+    public bool HasStringArrays => IsMatlab;
+
+    /// <summary>
     /// JGS with the user's language preferences applied. Only the two options a user may change are
     /// taken from <paramref name="options"/>; everything else stays JGS.
     /// </summary>

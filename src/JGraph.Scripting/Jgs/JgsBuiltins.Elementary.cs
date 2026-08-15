@@ -197,7 +197,7 @@ internal static partial class JgsBuiltins
         Predicate("iscolumn", IsColumnShape);
 
         Predicate("isstr", static v => v.Type == JgsType.String); // the pre-R2016 spelling of ischar
-        Predicate("isstring", static _ => false);                 // no string-array type to be one of
+        Predicate("isstring", static v => v.IsStringArray);       // M63: true only for double-quoted text
         Predicate("iscellstr", static v =>
             v.Type == JgsType.Cell && Array.TrueForAll(v.AsCell, static e => e.Type == JgsType.String));
 
@@ -396,17 +396,23 @@ internal static partial class JgsBuiltins
     /// </para>
     /// </remarks>
     private static string ClassOf(JgsValue value, JgsDialect dialect) =>
+        // A string array is asked about first of all, because it is an array of strings underneath
+        // and every question below would answer for the array rather than for what it holds (M63).
+        value.IsStringArray ? "string"
         // A mask has to be asked about before the numeric class is, because logical is not one of
         // them: masks are structural (a Bool element, or a packed buffer of them), and adding a
         // Logical to JgsNumericClass would put a second, contradictory answer in the value.
-        IsLogicalValue(value) ? "logical" : value.Type switch
+        : IsLogicalValue(value) ? "logical" : value.Type switch
     {
         JgsType.Number or JgsType.Complex or JgsType.Array => value.NumericClass.MatlabName(),
         JgsType.String => "char",
         JgsType.Cell => "cell",
         // A transform or spatial reference is a struct carrying the name of the MATLAB class it
         // stands in for, so class(tform) answers 'affine2d' rather than the mechanism underneath.
-        JgsType.Struct => TaggedClassOf(value) ?? "struct",
+        // The class name a struct carries (M62's MException) comes first: it is a property of the
+        // value rather than a field inside it, so it cannot be spelled by accident the way a 'Type'
+        // field can.
+        JgsType.Struct => value.ClassName ?? TaggedClassOf(value) ?? "struct",
         JgsType.Function => "function_handle",
         JgsType.Table => "table",
         JgsType.Image => dialect.IsMatlab ? value.AsImage.Class.MatlabName() : "image",
@@ -415,7 +421,10 @@ internal static partial class JgsBuiltins
     };
 
     private static bool IsNumericValue(JgsValue value) =>
-        value.Type is JgsType.Number or JgsType.Complex or JgsType.Bool or JgsType.Array or JgsType.Sparse;
+        // A string array is an array of strings underneath, so it has to be excluded by name (M63) —
+        // otherwise isnumeric(["a" "b"]) would answer for the container rather than what it holds.
+        !value.IsStringArray
+        && value.Type is JgsType.Number or JgsType.Complex or JgsType.Bool or JgsType.Array or JgsType.Sparse;
 
     /// <summary>
     /// Whether a value is a mask: a single true/false, an array of them, or an image an imaging

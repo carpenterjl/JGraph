@@ -7,7 +7,7 @@ so long. The live tracker is `matlab-r2021b-documented.html` in the demo workspa
 `tools/matlab-checklist/build-checklist.py`; this file is the standing summary, so the shape of what
 is left does not have to be re-derived each time.
 
-**385 of 514 builtins implemented** (383 after M59, 382 after M54, 372 from M45 to M53, 364 after M43, 363 after
+**386 of 514 builtins implemented** (385 from M60 to M62, 383 after M59, 382 after M54, 372 from M45 to M53, 364 after M43, 363 after
 M39, 326 after M38, 185 after M37, 109 after M36) — M46 through M53 all added names MATLAB documents
 as *functions*, which this table does not hold. M45's eight are the drawing primitives the "handle
 graphics" section below used to list as missing and call the most useful thing left: `plot3`, `line`,
@@ -229,6 +229,7 @@ count in the first table instead.
 | Volume visualization | M59 | `isosurface` `isocaps` `isonormals` `isocolors` `contourslice` `coneplot` `streamline` `stream2` `stream3` `streamribbon` `streamtube` `streamslice` `curl` `divergence` `smooth3` `subvolume` `reducevolume` `reducepatch` `volumebounds` `shrinkfaces` `surf2patch` — twenty-one verbs and no new plot object: the isosurface family draws with `patch`, the stream family with `plot3` and `surf`, and a field is a plain three-dimensional array, so the whole milestone is arithmetic followed by an existing drawing |
 | The polar rulers | M56 | `rticks` `rticklabels` `rtickangle` `rtickformat` `rlim` `thetaticks` `thetaticklabels` `thetatickformat` `thetalim` — registered as refusals in M54, real now; r is the Cartesian tick machinery pointed at `RAxis`, θ converts units at the boundary and answers through the spoke arithmetic the renderer draws with |
 | Figure tooling, files and motion | M60 | `annotation` `savefig` `openfig` `hgsave` `hgload` `exportgraphics` `hgexport` `copygraphics` `getframe` `getappdata` `setappdata` `isappdata` `rmappdata` `linkprop` `refresh` `alpha` `alim` `alphamap` `rendererinfo` `comet` `comet3` `movie` `streamparticles` `interpstreamspeed` `pan` `datacursormode` `gtext` `rotate` and the five interactivity toggles — almost none of them draw: they work on what the other verbs drew, and each one that wants a window, a clipboard or a click has a defined answer without one |
+| String arrays | M63 | `strings` — the only *builtin* the M61–M68 language arc has added; the rest of M63 (`char` `strip` `pad` `erase` `insertAfter` `insertBefore` `extractAfter` `extractBefore` `extractBetween` `str2num`) is documented as *function* |
 
 ### What the remaining 31 are
 
@@ -248,11 +249,17 @@ something that is already open. **Eight are geographic** (`geoaxes` `geobasemap`
 `geodensityplot` `geolimits` `geoplot` `geoscatter` `geotickformat`) and need a basemap tile service,
 which is a product rather than a feature. **Six are print and export dialogs** (`printdlg`
 `printpreview` `pagesetupdlg` `exportsetupdlg` `exportapp`) and `uiaxes`, which are app building —
-the same non-goal as the `ui*` family in the handle-graphics section. **Four are chart containers
-whose whole content is a layout algorithm** (`wordcloud` `parallelplot` `bubblecloud`) or a machine
-JGraph does not run on (`graymon` `im2java` `spinmap` — three legacy names). **And four are verbs
-that need something this build does not have**: `rbbox` and `refreshdata` need a rubber-band drag and
-an `XDataSource` respectively, and both describe a way of working the plot browser already offers.
+the same non-goal as the `ui*` family in the handle-graphics section. **Six are a chart container
+whose whole content is a layout algorithm** (`wordcloud` `parallelplot` `bubblecloud` — three) or a
+machine JGraph does not run on (`graymon` `im2java` `spinmap` — three legacy names). **And two are
+verbs that need something this build does not have**: `rbbox` and `refreshdata` need a rubber-band
+drag and an `XDataSource` respectively, and both describe a way of working the plot browser already
+offers. Nine plus eight plus six plus six plus two is 31.
+
+The two counts in that paragraph read "four" and "four" over lists of six and two until M61 corrected
+them. The totals were right and the labels were wrong, which is the same slip in miniature that the
+denominator correction above records: a number written beside a list is not checked by anything, and
+only reading the list back catches it.
 
 The four names that used to be listed here as *waiting* are all done. **`gtext` is registered** and
 refuses by naming `text` and `annotation`, which is the honest answer for a verb whose whole meaning
@@ -306,15 +313,19 @@ in the table above and no longer listed here as well, which is where one of this
 double-counted names came from — the other was this family's own heading, which said twenty-two while
 listing twenty-three, and is corrected at the top of this file.
 
-**Handle graphics and figure tooling — 36.** `alim` `alpha` `alphamap` `annotation` `getframe`
-`getappdata` `isappdata` `linkprop` `openfig` `savefig` `hgload` `hgsave` `plotedit` `plottools`
-`plotbrowser` `propertyeditor` `figurepalette` `datacursormode` `pan` `rotate` `rbbox` `refresh`
-`refreshdata` `printdlg` `printpreview` `pagesetupdlg` `exportsetupdlg` `axtoolbar` `axtoolbarbtn`
-`cameratoolbar` `showplottool` `uiaxes` `geoaxes` and the three interactivity toggles. Most of these
-address an editing surface JGraph already has in the plot browser and inspector; M60 takes the rest.
-**`linkaxes` left this list in M51**, which gave a script real axes handles to hand it, and **M54 took
-six more** — `cla` `findall` `gcbf` `gobjects` `ishold` `newplot`, which are the parts of the family
-that only ever needed handles and a property table.
+**Handle graphics and figure tooling — 13 of 36 left.** M60 took twenty-three of this family and the
+list here is now only what remains: `plotedit` `plottools` `plotbrowser` `propertyeditor`
+`figurepalette` `showplottool` `axtoolbar` `axtoolbarbtn` `cameratoolbar` `uiaxes` `geoaxes` `rbbox`
+`refreshdata` — every one of them excluded with a reason in the 31 above, and most of them addressing
+an editing surface JGraph already has in the plot browser and inspector.
+
+The seventeen names this paragraph went on listing after M60 registered them — `alim` `alpha`
+`alphamap` `annotation` `getframe` `getappdata` `isappdata` `linkprop` `openfig` `savefig` `hgload`
+`hgsave` `datacursormode` `pan` `rotate` `refresh` and the print dialogs' company — were stale prose
+beside correct arithmetic: the M60 row in the table above counts them implemented, so no total was
+ever wrong. M61 removed them. **`linkaxes` left this list in M51**, which gave a script real axes
+handles to hand it, and **M54 took six more** — `cla` `findall` `gcbf` `gobjects` `ishold` `newplot`,
+which are the parts of the family that only ever needed handles and a property table.
 
 **Properties, rulers, and legacy appearance — 14 of 70.** This was the whole point of M54 and it is
 the family the milestone emptied: 56 of the 70 are implemented — 46 in M54, `bubblelegend` in M55,
@@ -546,8 +557,12 @@ These are deliberate, not oversights, and are documented in the scripting guide:
 - Every number is stored as a double, but since M47 a value remembers the class it was asked for, so
   `class(uint8(7))` is `'uint8'` and `isinteger` answers for it. `intmax` still reports its limit as
   a double, and a reduction (`sum`, `max`) still answers `double` where MATLAB would answer natively.
-- There is no string-array type: text is `char`, so `isstring` is always false and the three
-  `convert*Strings*` functions hand the value straight back.
+- Since M63 a string array is a real type (ADR 0063): `"..."` is a string, `'...'` is a char row,
+  `class`/`isstring`/`ischar` tell them apart, and `numel("abc")` is 1 where `numel('abc')` is 3. It
+  is stored as an array of char rows carrying a tag rather than as a new value kind, because the
+  storage was already there and only the identity was missing. A builtin that has not been taught
+  about the tag is handed the char row a string scalar stands for, which is what let the flip land
+  without touching the other ~2,500 names.
 - A vector written as a literal is a row, so `isrow([1 2 3])` is true; orientation appears where
   MATLAB produces it — `A(:)`, `A(:, j)`, transpose, `find` on a matrix — and `iscolumn` reads it.
   One leniency remains: stacking vectors where any of them is a column reads them all as columns, so
@@ -671,12 +686,63 @@ documented as kind *function*, so neither this file nor the tracker ever counted
 surfaced only because M45's smoke script reached for it. Seven years of that same blind spot is what
 M52's audit went looking for on purpose.
 
+M61 closed the largest gap this file never had a column for: **the language itself**. A
+comma-separated list — `f(args{:})`, `[c{:}]`, `varargin{:}` forwarding, and a struct array's field
+in an argument position — was a hard error, and `varargout` did not exist, so a function could not
+produce a variable number of outputs and a wrapper could not forward what it was handed. Both are
+among the most common things real MATLAB code does, and neither is a *name*, which is why nine
+milestones of name coverage went by without either showing up as missing here.
+
+The shape of that blind spot is worth stating plainly, because the arc that follows is built on it:
+**this file counts names, and a script that fails to run rarely fails for want of one.** The
+remaining language gaps — no string-array type, `datetime` a placeholder, no `containers.Map`,
+struct arrays stored as cells, no MAT v7.3 read and no `writematrix` — are tracked in the M61–M68
+roadmap rather than in any table here, and
+[ADR 0061](adr/0061-comma-separated-lists-and-variadic-outputs.md) records the first of them.
+
+M62 took three more off that list, and **moved no number in this file at all** — every name it added
+(`addpath` `rmpath` `genpath` `pathsep` `MException` `throw` `throwAsCaller` `validateattributes` and
+the twenty-four `mustBe…` validators) is documented by MATLAB as kind *function*, so the builtin
+table stays at 385 of 514 and the graphics table is untouched. That is the blind spot above stated as
+arithmetic rather than as prose.
+
+What it closed: **a project of several files could not run**, because an unknown name went straight
+to "not recognized" and `addpath` was on the interpreter's deliberately-unsupported list with the
+reason "files resolve
+against the script's folder and the workspace root" — true, and beside the point, since files
+resolving is not functions resolving. **An error's identifier was parsed and then discarded**, so
+every `catch ME` saw an empty `identifier` and code branching on one silently took the wrong arm; a
+test that checks only *that* an error was raised cannot see this, which is how it survived five
+milestones of error handling. And **`arguments` was a syntax error**, so a function could not state
+what its inputs must look like. [ADR 0062](adr/0062-functions-files-and-errors.md) records the
+resolution order (built-ins beat path files here, where MATLAB has it the other way round) and the
+rest of the divergences.
+
+M63 is the first milestone of the arc to **move this table**, and by exactly one: `strings`, which
+was in the remaining list below with the reason "there is no string-array type". Now there is one.
+Everything else it added — `char` `strip` `pad` `erase` `insertAfter` `insertBefore` `extractAfter`
+`extractBefore` `extractBetween` `str2num` — MATLAB documents as kind *function*, so the one name is
+the whole movement, and the arithmetic is 386 implemented plus 128 not implemented against 514.
+
+What it closed is not countable that way. `isstring` was hardwired false and `class("abc")` answered
+`'char'`, so a script branching on the difference took the wrong arm every time; `["a" "b"]` built
+the right storage under the wrong name; and the string-editing family did not exist. The sweep that
+preceded the work found the representation already in place and only the identity missing, which is
+why the type cost one boolean on the value rather than a member on the type enum.
+[ADR 0063](adr/0063-string-arrays.md) records the demotion boundary that let ~2,500 builtins go
+unedited, the two pre-existing defects the new type surfaced (`legend({'a','b'})` read as handles,
+and `[a b]` never joining two char rows held in variables), and the divergences that remain.
+
 M52 left these behind, each named rather than silent (the full table is in
 [ADR 0052](adr/0052-the-documented-argument-surface.md)):
 
-- **`arrayfun` still swallows its option tail.** `'ErrorHandler'` is ignored, and so is a misspelling,
-  because the scan reads one word and drops the rest — the defect class M52 closed for `cellfun`. It
-  also has no multi-output form. Both close by sharing `cellfun`'s loop.
+- ~~**`arrayfun` still swallows its option tail.**~~ **Closed in M61**, exactly as this entry said it
+  would be: by sharing `cellfun`'s loop. That gave it a real `'ErrorHandler'`, a multi-output form,
+  and — the actual defect — a misspelt option word that errors instead of being accepted in silence.
+  Finding out *why* the multi-output form had gone missing is recorded in
+  [ADR 0061](adr/0061-comma-separated-lists-and-variadic-outputs.md): the helper that adds one to an
+  already-registered builtin returns silently when the name is not registered yet, and this
+  registrar runs after the one holding the helper.
 - **The elementwise string verbs do not map over a cell.** `strtrim`, `strrep`, `strcat`,
   `str2double`, `contains` and `join` each want one string where MATLAB takes a cell of them; one
   shared wrapper covers all six.
@@ -689,14 +755,25 @@ M52 left these behind, each named rather than silent (the full table is in
 - **`interp2`, `'native'` output classes, `histogram` object options and `'SamplePoints'`** were
   scoped out of M52 deliberately.
 
-## Not implemented — 131
+## Not implemented — 129
 
-### Handle graphics and app building — 25
+### Handle graphics and app building — 23
 
 `addpoints` `animatedline` `axes` `clearpoints` `frame2im` `getpoints` `groot` `hggroup` `hgsetget`
-`hgtransform` `im2frame` `rectangle` `reset` `rmappdata` `selectmoveresize` `setappdata`
-`uicontextmenu` `uicontrol` `uimenu` `uipanel` `uipushtool` `uitoggletool` `uitoolbar` `waitfor`
-`waitforbuttonpress`
+`hgtransform` `im2frame` `rectangle` `reset` `selectmoveresize` `uicontextmenu` `uicontrol` `uimenu`
+`uipanel` `uipushtool` `uitoggletool` `uitoolbar` `waitfor` `waitforbuttonpress`
+
+**`setappdata` and `rmappdata` were still listed here after M60 registered them**, which made this
+section read 25 and the heading above it 131 where both were two too many. The M60 paragraph in this
+file says in so many words that the appdata quartet rides in M60, so the prose contradicted itself
+across two screens. M61 corrected it.
+
+**The partition is the check that was available and unused.** 385 implemented plus 131 not
+implemented is 516, and there were 514 documented builtins; 385 plus 129 is 514 exactly. The wrong
+number was arithmetically impossible against a total printed at the top of this same file, and it
+survived because nobody added the two. That is a cheaper check than re-deriving the set from the
+dump and it catches this whole class of slip — the fifth in this file, and the fourth of the kind
+where a name outlives its count.
 
 **M51 overturned the non-goal this section used to record, and M54 finished the job.** A script gets
 handles on figure objects (ADR 0051): `subplot` and `plot` hand them back, `plot(ax, …)` and
@@ -774,14 +851,13 @@ seam.
 JGraph debugs through the editor: breakpoints in the margin, step buttons, a Workspace pane. A
 parallel console debugger would be a second, worse interface to the same thing.
 
-### The remaining eleven
+### The remaining ten
 
 | Name | Why |
 |---|---|
 | `qz` `ordqz` | The generalized Schur decomposition. The real QZ iteration is its own piece of work to write and validate to the standard the rest of the linear algebra holds itself to, and a QZ that fails to converge on some pencils, under a name used for descriptor systems, would be worse than none. Planned. |
 | `balance` | Diagonal scaling before an eigenvalue computation. Small and genuinely implementable; it improves accuracy on badly scaled matrices rather than adding a capability. Planned. |
 | `pagemtimes` `pagesvd` | Operate on pages of an N-D array, which the value model does not have. |
-| `strings` | Constructs a string array; there is no string-array type. |
 | `system` | Runs an arbitrary shell command. JGraph deliberately does not give a script arbitrary process execution. |
 | `batchStartupOptionUsed` | Reports whether MATLAB was started with `-batch`. JGraph's own `-batch` is a different launcher with different semantics, so the answer would be about something else. |
 | `matlab.io.saveVariablesToScript` `matlab.settings.*` (2) | Namespaced entry points into MATLAB's own settings store. |

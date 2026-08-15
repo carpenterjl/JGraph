@@ -15,10 +15,16 @@ internal static partial class JgsBuiltins
     /// </summary>
     internal static IReadOnlyList<string> EvalBuiltinNames { get; } =
     [
-        "eval", "evalc", "evalin", "assignin", "str2func",
+        "eval", "evalc", "evalin", "assignin", "str2func", "str2num",
         "exist", "who", "which", "narginchk", "nargoutchk", "nargchk",
-        "lasterr", "lasterror", "lastwarn", "rethrow",
+        "lasterr", "lasterror", "lastwarn",
+
+        // M62: the error objects — error is re-declared over its plain form, the rest are new.
+        "error", "MException", "throw", "rethrow", "throwAsCaller",
         "func2str", "functions", "mfilename", "inputname",
+
+        // M62: the search path is interpreter state, so the builtins that manage it are declared here.
+        "addpath", "rmpath", "genpath", "pathsep",
 
         // M58: the legacy function plotters take their function as text, which needs the interpreter
         // to turn into a handle — the same reason eval itself is declared here.
@@ -36,9 +42,11 @@ internal static partial class JgsBuiltins
         void DefineBare(string name, Func<IReadOnlyList<JgsValue>, int, int, JgsValue> body) =>
             env.Declare(name, JgsValue.Function(new BuiltinFunction(name, body) { AutoCallsBare = true }));
 
+        RegisterPathBuiltins(env, interpreter, host);
         RegisterEvaluation(Define, env, interpreter, host);
         RegisterWorkspaceQuestions(Define, env, interpreter, host);
         RegisterErrorHistory(Define, env, interpreter);
+        RegisterErrorObjects(Define, interpreter);
         RegisterIntrospection(Define, DefineBare, interpreter, host);
         RegisterLegacyFunctionPlotBuiltins(env, interpreter);
         _ = dialect;
@@ -165,6 +173,29 @@ internal static partial class JgsBuiltins
             return interpreter.EvaluateSource(Str("eval", args, 0, line, col), interpreter.CurrentFrame, line, col);
         });
 
+        // str2num evaluates its text as an expression, which is exactly what separates it from
+        // str2double: '[1 2 3]' is a vector and '1+1' is 2. Text that does not evaluate answers
+        // empty rather than failing, which is MATLAB's behaviour and the reason callers who only
+        // ever have a number are steered to str2double instead.
+        Define("str2num", (args, line, col) =>
+        {
+            Arity("str2num", args, 1, line, col);
+            string text = Str("str2num", args, 0, line, col).Trim();
+            if (text.Length == 0)
+            {
+                return JgsValue.Array([]);
+            }
+
+            try
+            {
+                return interpreter.EvaluateSource(text, interpreter.CurrentFrame, line, col);
+            }
+            catch (JgsRuntimeException)
+            {
+                return JgsValue.Array([]);
+            }
+        });
+
         Define("evalc", (args, line, col) =>
         {
             ArityRange("evalc", args, 1, 2, line, col);
@@ -215,8 +246,13 @@ internal static partial class JgsBuiltins
                 return interpreter.EvaluateSource(text, interpreter.CurrentFrame, line, col);
             }
 
-            return env.TryGet(text, out JgsValue found) && found.Type == JgsType.Function
-                ? found
+            if (env.TryGet(text, out JgsValue found) && found.Type == JgsType.Function)
+            {
+                return found;
+            }
+
+            return interpreter.FunctionPath is { } search && search.TryResolve(text, out JgsValue onPath)
+                ? onPath
                 : throw new JgsRuntimeException(line, col, $"str2func: '{text}' is not a function.");
         });
 
@@ -278,6 +314,13 @@ internal static partial class JgsBuiltins
                 return JgsValue.Number(5);
             }
 
+            // A file on the search path is MATLAB's category 2 — a file — even though calling it is
+            // what a script actually does with it.
+            if (kind is null or "file" && interpreter.FunctionPath?.Find(name) is not null)
+            {
+                return JgsValue.Number(2);
+            }
+
             return JgsValue.Number(0);
         });
 
@@ -305,6 +348,13 @@ internal static partial class JgsBuiltins
             if (env.TryGet(name, out JgsValue value) && value.Type == JgsType.Function)
             {
                 return JgsValue.Str($"{name} is a built-in function.");
+            }
+
+            // The search path is asked before the plain file probe, because 'which helper' means the
+            // file that would answer the name — not a file that happens to be called that.
+            if (interpreter.FunctionPath?.Find(name) is { } onPath)
+            {
+                return JgsValue.Str(onPath);
             }
 
             string resolved = host.Resolve(name);
@@ -359,16 +409,6 @@ internal static partial class JgsBuiltins
             return JgsValue.Str(previous);
         });
 
-        Define("lasterror", (args, line, col) =>
-        {
-            ArityRange("lasterror", args, 0, 1, line, col);
-            return JgsValue.Struct(new Dictionary<string, JgsValue>(StringComparer.Ordinal)
-            {
-                ["message"] = JgsValue.Str(interpreter.LastError),
-                ["identifier"] = JgsValue.Str(string.Empty),
-            });
-        });
-
         Define("lastwarn", (args, line, col) =>
         {
             ArityRange("lastwarn", args, 0, 1, line, col);
@@ -379,24 +419,6 @@ internal static partial class JgsBuiltins
             }
 
             return JgsValue.Str(previous);
-        });
-
-        Define("rethrow", (args, line, col) =>
-        {
-            Arity("rethrow", args, 1, line, col);
-            if (args[0].Type != JgsType.Struct)
-            {
-                throw new JgsRuntimeException(line, col, "rethrow takes the error struct a catch block was given.");
-            }
-
-            Dictionary<string, JgsValue> error = args[0].AsStruct;
-            if (!error.ContainsKey("message"))
-            {
-                throw new JgsRuntimeException(line, col, "rethrow: the error struct has no message field.");
-            }
-
-            JgsValue message = error["message"];
-            throw new JgsRuntimeException(line, col, message.Type == JgsType.String ? message.AsString : message.Display());
         });
 
         // warning already exists; wrapping it here is what lets lastwarn report the message without

@@ -36,6 +36,13 @@ internal sealed class BuiltinFunction : IJgsCallable, IJgsMultiCallable
     {
         Name = name;
         _implementation = implementation;
+
+        // Decided from the name at mint time rather than stamped onto the environment afterwards
+        // (M63). Several builtins are declared twice — an inner one that does the work and an outer
+        // wrapper that adds a second output — and only the wrapper is reachable from the environment.
+        // Marking by name reaches both; marking the environment reached the wrapper alone, which is
+        // how size("abc") came back 1-by-3 while numel("abc") correctly came back 1.
+        KeepsStringArguments = JgsBuiltins.StringAwareBuiltins.Contains(name);
     }
 
     /// <inheritdoc />
@@ -75,15 +82,70 @@ internal sealed class BuiltinFunction : IJgsCallable, IJgsMultiCallable
     /// </remarks>
     public bool KnowsWhenDiscarded { get; init; }
 
+    /// <summary>
+    /// Whether this builtin wants its string arguments as they were written (M63). False for nearly
+    /// everything, and that is the point: a string scalar arriving at an ordinary builtin is demoted
+    /// to the char row it stands for, so <c>title("Speed")</c> and <c>plot(x, y, "LineWidth", 2)</c>
+    /// went on working the day <c>"..."</c> stopped being a char, without any of the ~2,500 builtins
+    /// being touched.
+    /// </summary>
+    /// <remarks>
+    /// Set it on the names for which the difference between a string and a char <em>is</em> the
+    /// answer — <c>class</c>, <c>isstring</c>, <c>ischar</c>, <c>strlength</c>, <c>string</c>,
+    /// <c>char</c>, <c>numel</c> and the rest of the size family — and nowhere else. Only a string
+    /// <em>scalar</em> is ever demoted; a string array of any other size is not a char row and is
+    /// handed over as it is.
+    /// </remarks>
+    public bool KeepsStringArguments { get; set; }
+
     /// <inheritdoc />
     public JgsValue Call(IReadOnlyList<JgsValue> arguments, int line, int column) =>
-        _implementation(arguments, line, column);
+        _implementation(DemoteStringScalars(arguments), line, column);
 
     /// <inheritdoc />
     public JgsValue[] CallMultiple(IReadOnlyList<JgsValue> arguments, int wanted, int line, int column) =>
         MultiOutput is { } multi && wanted > 1
-            ? multi(arguments, wanted, line, column)
+            ? multi(DemoteStringScalars(arguments), wanted, line, column)
             : [Call(arguments, line, column)];
+
+    /// <summary>
+    /// Replaces every string scalar in <paramref name="arguments"/> with its char row, allocating a
+    /// new list only when there is one to replace — which is almost never, so the check costs a walk
+    /// over a handful of already-hot values and nothing else.
+    /// </summary>
+    private IReadOnlyList<JgsValue> DemoteStringScalars(IReadOnlyList<JgsValue> arguments)
+    {
+        if (KeepsStringArguments)
+        {
+            return arguments;
+        }
+
+        int first = -1;
+        for (int i = 0; i < arguments.Count; i++)
+        {
+            if (IsStringScalar(arguments[i]))
+            {
+                first = i;
+                break;
+            }
+        }
+
+        if (first < 0)
+        {
+            return arguments;
+        }
+
+        var demoted = new JgsValue[arguments.Count];
+        for (int i = 0; i < arguments.Count; i++)
+        {
+            demoted[i] = IsStringScalar(arguments[i]) ? arguments[i].ElementAt(0) : arguments[i];
+        }
+
+        return demoted;
+    }
+
+    /// <summary>Whether <paramref name="value"/> is a 1-by-1 string array — the string scalar.</summary>
+    internal static bool IsStringScalar(JgsValue value) => value.IsStringArray && value.ArrayLength == 1;
 }
 
 /// <summary>A user-defined function: its parameters, body, and captured defining environment (a closure).</summary>
@@ -169,21 +231,45 @@ internal sealed class UserFunction : IJgsCallable, IJgsMultiCallable
             return returned.Type == JgsType.Null ? System.Array.Empty<JgsValue>() : [returned];
         }
 
-        int produced = Math.Min(Math.Max(wanted, 1), _declaration.Outputs.Count);
-        var results = new JgsValue[produced];
-        for (int i = 0; i < produced; i++)
+        // A trailing 'varargout' is a cell holding as many outputs as the function chose to make, so
+        // the count it can answer is not known from the header the way the named outputs are.
+        IReadOnlyList<string> outputs = _declaration.Outputs;
+        bool variadicOut = outputs[^1] == "varargout";
+        int namedCount = variadicOut ? outputs.Count - 1 : outputs.Count;
+        int produced = Math.Max(wanted, 1);
+        if (!variadicOut)
         {
-            string output = _declaration.Outputs[i];
+            produced = Math.Min(produced, outputs.Count);
+        }
+
+        var results = new List<JgsValue>(produced);
+        for (int i = 0; i < namedCount && results.Count < produced; i++)
+        {
+            string output = outputs[i];
             if (!local.TryGet(output, out JgsValue value))
             {
                 throw new JgsRuntimeException(line, column,
                     $"Function '{Name}' finished without assigning its output '{output}'.");
             }
 
-            results[i] = value;
+            results.Add(value);
         }
 
-        return results;
+        if (variadicOut && results.Count < produced)
+        {
+            // An unassigned varargout is an empty list, not a fault: a function that was asked for
+            // only its named outputs never had reason to fill one.
+            JgsValue[] rest = local.TryGet("varargout", out JgsValue packed) && packed.Type == JgsType.Cell
+                ? packed.AsCell
+                : System.Array.Empty<JgsValue>();
+
+            for (int i = 0; i < rest.Length && results.Count < produced; i++)
+            {
+                results.Add(rest[i]);
+            }
+        }
+
+        return [.. results];
     }
 }
 
