@@ -470,7 +470,6 @@ public static class JgsBuiltinCatalog
         // --- Data types and conversions (M43) ---------------------------------------------------
         Add("table", "Builds a table from column variables; a trailing 'VariableNames', {…} names them (default Var1…VarN).", P("var1"), Opt("var2"));
         Add("timetable", "A table whose first variable is the row times: timetable(rowTimes, var1, …).", P("rowTimes"), P("var1"));
-        Add("seconds", "A duration of x seconds (stored as its number, so it transposes and plots).", P("x"));
         Add("categorical", "Category labels from a cell or array (represented as the cell of names).", P("x"));
         Add("summary", "Per-variable statistics of a table, or category counts of a categorical, as a struct.", P("x"));
         Add("string", "The value as a string array: a char row becomes one string, a cell or array one per element.", P("x"));
@@ -561,10 +560,69 @@ public static class JgsBuiltinCatalog
         Add("clock", "The current local time as a [year, month, day, hour, minute, seconds] vector.");
         Add("now", "The current local date and time as a serial date number (days since year 0).");
         Add("datenum", "Serial date number from year, month, day (optionally hour, minute, second), or a 3-/6-element vector.", P("year"), P("month"), P("day"), Opt("hour"), Opt("minute"), Opt("second"));
-        Add("datestr", "Formats a serial date number (default: now) as text; format uses .NET date tokens.", Opt("serial"), Opt("format"));
-        Add("datetime", "The current local date and time as a 'dd-MMM-yyyy HH:mm:ss' string.");
+        Add("datestr", "Formats a datetime or a serial date number (default: now) as text.", Opt("when"), Opt("format"));
         Add("date", "The current local date as a 'dd-MMM-yyyy' string.");
         Add("time", "The current time as Unix epoch seconds (UTC), including a fractional part.");
+
+        // --- The datetime and duration types (M64) ------------------------------------------------
+        Add("datetime", "A point in time: no arguments for now, text to parse, or year/month/day (optionally hour/minute/second). Options: 'InputFormat', 'Format', 'TimeZone', 'ConvertFrom'.", Opt("year"), Opt("month"), Opt("day"), Opt("hour"), Opt("minute"), Opt("second"));
+        Add("duration", "A length of time from hours, minutes and seconds (optionally milliseconds), a matrix of those rows, or text written hh:mm:ss.", P("hours"), Opt("minutes"), Opt("seconds"), Opt("milliseconds"));
+        Add("NaT", "The missing datetime; NaT(m, n) makes an m-by-n array of them.", Opt("rows"), Opt("cols"));
+        Add("seconds", "A duration of x seconds, or — handed a duration — how many seconds it is.", P("x"));
+        Add("minutes", "A duration of x minutes, or how many minutes a duration is.", P("x"));
+        Add("hours", "A duration of x hours, or how many hours a duration is.", P("x"));
+        Add("days", "A duration of x days, or how many days a duration is.", P("x"));
+        Add("years", "A duration of x average years (365.2425 days), or how many a duration is.", P("x"));
+        Add("milliseconds", "A duration of x milliseconds, or how many milliseconds a duration is.", P("x"));
+        Add("caldays", "A duration of x days — a calendar day and a day are the same length here.", P("x"));
+        Add("calweeks", "A duration of x weeks.", P("x"));
+        Add("calmonths", "Refuses: a month is not a fixed length, so JGraph has no calendarDuration.", P("x"));
+        Add("calyears", "Refuses: a year is not a fixed length, so JGraph has no calendarDuration.", P("x"));
+        Add("calquarters", "Refuses: a quarter is not a fixed length, so JGraph has no calendarDuration.", P("x"));
+        Add("calendarDuration", "Refuses: JGraph has no calendarDuration; use days, hours or dateshift.", P("x"));
+        Add("isdatetime", "True for a datetime.", P("value"));
+        Add("isduration", "True for a duration.", P("value"));
+        Add("iscalendarduration", "Always false — JGraph has no calendarDuration type.", P("value"));
+        Add("isnat", "True for each element of a datetime that is NaT.", P("t"));
+
+        // The field accessors, conversions and boundary moves (M64).
+        Add("year", "The year of each moment of a datetime.", P("t"));
+        Add("month", "The month (1-12) of each moment of a datetime.", P("t"));
+        Add("day", "The day of the month of each moment of a datetime.", P("t"));
+        Add("hour", "The hour (0-23) of each moment of a datetime.", P("t"));
+        Add("minute", "The minute (0-59) of each moment of a datetime.", P("t"));
+        Add("second", "The second of each moment, carrying its fractional part.", P("t"));
+        Add("week", "The ISO week number of each moment of a datetime.", P("t"));
+        Add("quarter", "The quarter (1-4) of each moment of a datetime.", P("t"));
+        Add("weekday", "The day of the week, Sunday = 1, of each moment of a datetime.", P("t"));
+        Add("ymd", "The year, month and day of a datetime: [y, m, d] = ymd(t).", P("t"));
+        Add("hms", "The hour, minute and second of a datetime: [h, m, s] = hms(t).", P("t"));
+        Add("datevec", "A datetime or serial date number as one [y m d h mi s] row per moment.", P("when"));
+        Add("timeofday", "The duration since midnight of each moment of a datetime.", P("t"));
+        Add("dateshift", "Moves each moment to the start or end of a unit: dateshift(t, 'start', 'month', offset?).", P("t"), P("where"), P("unit"), Opt("offset"));
+        Add("isbetween", "True for each moment that falls within the two bounds, inclusive.", P("t"), P("lower"), P("upper"));
+        Add("between", "Refuses: it answers with a calendarDuration; subtract the datetimes instead.", P("a"), P("b"));
+        Add("posixtime", "Seconds since 1970-01-01 UTC for each moment of a datetime.", P("t"));
+        Add("exceltime", "The Excel serial date number for each moment of a datetime.", P("t"));
+        Add("juliandate", "The Julian date for each moment of a datetime.", P("t"));
+        Add("yyyymmdd", "Each moment of a datetime as the number yyyymmdd.", P("t"));
+        Add("etime", "Seconds between two six-element clock vectors: etime(later, earlier).", P("later"), P("earlier"));
+        Add("addtodate", "Adds a quantity of a named unit to a serial date number.", P("serial"), P("quantity"), P("unit"));
+        Add("eomday", "The number of days in the given month of the given year.", P("year"), P("month"));
+        Add("calendar", "A 6-by-7 grid of the month's day numbers, Sunday first, zero outside the month.", Opt("year"), Opt("month"));
+
+        // --- The keyed collections (M64) ----------------------------------------------------------
+        Add("containers", "The namespace holding containers.Map — a keyed collection with handle semantics, read and written as m(key).");
+        Add("dictionary", "A keyed collection with value semantics: dictionary(keys, values), read and written as d(key).", Opt("keys"), Opt("values"));
+        Add("isKey", "True for each key the collection holds.", P("collection"), P("key"));
+        Add("keys", "The collection's keys — a cell for a containers.Map, an array for a dictionary.", P("collection"));
+        Add("values", "The collection's values as a cell, or just the ones named by the second argument.", P("collection"), Opt("keys"));
+        Add("remove", "Removes the named keys from a collection and hands it back.", P("collection"), P("keys"));
+        Add("numEntries", "How many entries a collection holds.", P("collection"));
+        Add("isConfigured", "True once a dictionary has entries, so its key and value types are known.", P("collection"));
+        Add("lookup", "Reads keys from a collection, with an optional 'FallbackValue' for the missing ones.", P("collection"), P("keys"), Opt("'FallbackValue'"), Opt("fallback"));
+        Add("insert", "Adds or replaces entries in a collection and hands it back.", P("collection"), P("keys"), P("values"));
+        Add("entries", "The collection's entries as a cell of structs with Key and Value fields.", P("collection"));
 
         Add("mod", "Modulo x - floor(x/m)*m, element-wise over arrays (result takes m's sign).", P("x"), P("m"));
         Add("size", "The [rows, cols] of a matrix ([rows, cols, 3] for an RGB image); size(value, dim) returns one dimension.", P("value"), Opt("dim"));

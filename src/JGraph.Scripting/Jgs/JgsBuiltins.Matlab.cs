@@ -135,8 +135,12 @@ internal static partial class JgsBuiltins
         Define("isnumeric", (args, line, col) =>
         {
             Arity("isnumeric", args, 1, line, col);
-            return JgsValue.Bool(args[0].Type is JgsType.Number or JgsType.Complex
-                || (args[0].Type == JgsType.Array && AllOfType(args[0], JgsType.Number)));
+
+            // Through the shared helper rather than a test of its own (M64). The two had drifted:
+            // this one asked whether the elements were numbers, which a datetime's milliseconds are,
+            // so isnumeric(datetime) answered true where class(datetime) said 'datetime'. That is the
+            // same disagreement islogical and class were made to share a helper over.
+            return JgsValue.Bool(IsNumericValue(args[0]));
         });
 
         Define("ischar", (args, line, col) =>

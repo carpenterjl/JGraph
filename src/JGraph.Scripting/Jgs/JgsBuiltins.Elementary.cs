@@ -399,6 +399,9 @@ internal static partial class JgsBuiltins
         // A string array is asked about first of all, because it is an array of strings underneath
         // and every question below would answer for the array rather than for what it holds (M63).
         value.IsStringArray ? "string"
+        // A time is asked about next, and for exactly the same reason: it is an array of milliseconds
+        // underneath, so every question below would answer 'double' for it (M64).
+        : value.IsTime ? TimeClassName(value)
         // A mask has to be asked about before the numeric class is, because logical is not one of
         // them: masks are structural (a Bool element, or a packed buffer of them), and adding a
         // Logical to JgsNumericClass would put a second, contradictory answer in the value.
@@ -424,6 +427,9 @@ internal static partial class JgsBuiltins
         // A string array is an array of strings underneath, so it has to be excluded by name (M63) —
         // otherwise isnumeric(["a" "b"]) would answer for the container rather than what it holds.
         !value.IsStringArray
+        // And a time is excluded for the same reason (M64): isnumeric(datetime) is false in MATLAB,
+        // because the milliseconds underneath are storage rather than the value's meaning.
+        && !value.IsTime
         && value.Type is JgsType.Number or JgsType.Complex or JgsType.Bool or JgsType.Array or JgsType.Sparse;
 
     /// <summary>

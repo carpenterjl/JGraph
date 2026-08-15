@@ -712,6 +712,14 @@ internal sealed partial class Interpreter
             }
         }
 
+        // A dotted name in callee position is resolved without the auto-call a bare mention gets, for
+        // the same reason the name branch above skips the path: `containers.Map(k, v)` must hand the
+        // arguments to the constructor, not build an empty collection and then subscript it (M64).
+        if (callee is MemberExpr dotted)
+        {
+            return EvaluateMember(dotted, env, autoCall: false);
+        }
+
         return Evaluate(callee, env);
     }
 
@@ -1783,6 +1791,17 @@ internal sealed partial class Interpreter
             return JgsBuiltins.SparseBinary(op, left, right, at);
         }
 
+        // Time arithmetic resolves before every numeric reading of the operands (M64), which has to
+        // include the matrix forms below and not only the implicit expansion further down. A scalar
+        // datetime is a 1-by-1 array of milliseconds, so `duration * duration` went to matrix
+        // multiplication and answered with a number instead of being refused — the same shape of
+        // mistake M63 made by putting string concatenation below expansion, one branch higher up.
+        if (JgsBuiltins.IsTimeArithmetic(op, left, right))
+        {
+            return JgsBuiltins.TimeBinary(op, left, right, at.Line, at.Column,
+                (o, a, b) => ApplyBinaryCore(o, a, b, at));
+        }
+
         // MATLAB's '*', '/', '\' and '^' are matrix operations; only the dotted spellings are
         // elementwise. Everything below this point is elementwise, so the matrix forms resolve first.
         if (Dialect.IsMatlab)
@@ -1842,6 +1861,7 @@ internal sealed partial class Interpreter
         {
             return JgsBuiltins.ConcatenateStrings(left, right, at.Line, at.Column);
         }
+
 
         // MATLAB implicit expansion: two arrays of different shapes combine by expanding singleton
         // dimensions (a column plus a row is their outer sum; a 1x1 array behaves as a scalar).
@@ -1936,6 +1956,15 @@ internal sealed partial class Interpreter
             return value; // scalars, strings and functions are immutable — nothing to copy
         }
 
+        // A handle-class value is a reference, so binding a second name to it must not clone it:
+        // two names for one containers.Map are one collection, which is the whole difference between
+        // it and a dictionary (M64). This is also the rule M68's `classdef … < handle` needs, which
+        // is why it is a named rule rather than a check for one class.
+        if (JgsBuiltins.IsHandleClass(value))
+        {
+            return value;
+        }
+
         return CopyContainer(value);
     }
 
@@ -2017,14 +2046,32 @@ internal sealed partial class Interpreter
             copy.TakeShapeOf(source);
         }
 
+        return CarryValueTags(source, copy);
+    }
+
+    /// <summary>
+    /// Gives a freshly built value the three tags that say what it <em>is</em> — its numeric class,
+    /// whether it is a string array, and what kind of time it holds — without touching its shape.
+    /// </summary>
+    /// <remarks>
+    /// This is the same trap M62's MException class name fell into and M63's string array fell into
+    /// again: a tag that lives on the wrapper is lost by every path that mints a new one, and MATLAB's
+    /// value semantics mint a new one constantly. Keeping the three together in one helper is what
+    /// stops the next path from carrying two of them. Transpose is separate from
+    /// <see cref="KeepShape"/> precisely because its shape is deliberately <em>not</em> the source's.
+    /// </remarks>
+    private static JgsValue CarryValueTags(JgsValue source, JgsValue copy)
+    {
         copy.SetNumericClass(source.NumericClass);
 
-        // A string array copied on assignment is still one (M63). This is the same trap the MException
-        // class name fell into in M62: a tag that lives on the wrapper is lost by every copy that does
-        // not carry it, and MATLAB's value semantics copy on every single binding.
         if (source.IsStringArray)
         {
             copy.MarkStringArray();
+        }
+
+        if (source.TimeTag is JgsTimeTag time)
+        {
+            copy.MarkTime(time);
         }
 
         return copy;
@@ -2488,6 +2535,22 @@ internal sealed partial class Interpreter
         Expr target, IReadOnlyList<Expr> subscripts, TokenType op, JgsValue rhs, Node at, JgsEnvironment env)
     {
         JgsValue callee = Evaluate(target, env);
+
+        // m(key) = value on a keyed collection writes the entry rather than an element (M64). It
+        // writes in place, which is right for both: a Map is shared by every name bound to it, and a
+        // dictionary was copied when this name was bound.
+        if (JgsBuiltins.IsKeyedCollection(callee))
+        {
+            if (subscripts.Count != 1 || op != TokenType.Assign)
+            {
+                throw new JgsRuntimeException(at.Line, at.Column,
+                    "A keyed collection is written one key at a time, as m(key) = value.");
+            }
+
+            JgsBuiltins.Put(callee, Evaluate(subscripts[0], env), rhs, at.Line, at.Column);
+            return rhs;
+        }
+
         if (callee.Type != JgsType.Array)
         {
             throw new JgsRuntimeException(at.Line, at.Column,
@@ -2923,6 +2986,14 @@ internal sealed partial class Interpreter
             return IndexInto(OneElementArray(callee), call.Arguments, call, env);
         }
 
+        // m('key') on a keyed collection is a lookup (M64). It arrives here rather than at IndexInto
+        // because a name followed by parentheses parses as a call until something says otherwise,
+        // and for a Map nothing did: it read as a struct being called.
+        if (JgsBuiltins.IsKeyedCollection(callee) && call.Arguments.Count == 1)
+        {
+            return JgsBuiltins.Lookup(callee, Evaluate(call.Arguments[0], env), call.Line, call.Column);
+        }
+
         if (callee.Type != JgsType.Function)
         {
             throw new JgsRuntimeException(call.Line, call.Column, $"Cannot call a {callee.TypeName}; it is not a function.");
@@ -2969,8 +3040,35 @@ internal sealed partial class Interpreter
                 : picked;
         }
 
+        // A subscript into a keyed collection is a key, not a position (M64), so it resolves before
+        // every positional reading below.
+        if (IsKeyedRead(target))
+        {
+            if (subscripts.Count != 1)
+            {
+                throw new JgsRuntimeException(at.Line, at.Column,
+                    "A keyed collection takes one subscript: the key.");
+            }
+
+            return JgsBuiltins.Lookup(target, Evaluate(subscripts[0], env), at.Line, at.Column);
+        }
+
+        // A selection out of a datetime is a datetime (M64). The milliseconds the read picked out are
+        // already right; what a plain read loses is only that they are a time, which is the one thing
+        // the value was for.
+        if (target.TimeTag is JgsTimeTag time)
+        {
+            return JgsBuiltins.WrapTime(IndexIntoCore(target, subscripts, at, env), time);
+        }
+
         return IndexIntoCore(target, subscripts, at, env);
     }
+
+    /// <summary>
+    /// Whether a subscript into <paramref name="target"/> is a keyed lookup rather than a position
+    /// (M64). A collection's subscript is its key, which is why the two cannot both be tried.
+    /// </summary>
+    private static bool IsKeyedRead(JgsValue target) => JgsBuiltins.IsKeyedCollection(target);
 
     private JgsValue IndexIntoCore(JgsValue target, IReadOnlyList<Expr> subscripts, Node at, JgsEnvironment env)
     {
@@ -4003,7 +4101,15 @@ internal sealed partial class Interpreter
     }
 
     /// <summary>Reads <c>s.field</c> (or the dynamic <c>s.('field')</c>).</summary>
-    private JgsValue EvaluateMember(MemberExpr member, JgsEnvironment env)
+    /// <summary>Reads <c>target.field</c>.</summary>
+    /// <param name="member">The dotted expression.</param>
+    /// <param name="env">The scope to read in.</param>
+    /// <param name="autoCall">
+    /// Whether a field holding a self-calling builtin should be called on mention. True everywhere a
+    /// dotted name stands for a value, and false in callee position, where the parentheses that
+    /// follow are the call.
+    /// </param>
+    private JgsValue EvaluateMember(MemberExpr member, JgsEnvironment env, bool autoCall = true)
     {
         JgsValue target = Evaluate(member.Target, env);
         string field = FieldName(member, env);
@@ -4050,6 +4156,16 @@ internal sealed partial class Interpreter
 
         if (target.AsStruct.TryGetValue(field, out JgsValue? value))
         {
+            // A dotted name that stands for a value rather than a function calls itself on mention,
+            // exactly as a bare name does (M37's AutoCallsBare). Without this `m = containers.Map;`
+            // bound the constructor, and every later mention of m called it afresh — so m('x') = 10
+            // wrote into a collection nobody kept, and the writes vanished without a word.
+            if (autoCall && value.Type == JgsType.Function
+                && value.AsCallable is BuiltinFunction { AutoCallsBare: true } constructor)
+            {
+                return constructor.Call([], member.Line, member.Column);
+            }
+
             return value;
         }
 
@@ -4484,7 +4600,11 @@ internal sealed partial class Interpreter
             }
         }
 
-        return ShapedFrom(transposed, columns, rows);
+        // A transposed value is the same kind of thing stood on its side: uint8 stays uint8, a string
+        // array stays a string array, and a duration stays a duration. Transpose rebuilt the wrapper
+        // and carried none of that until M64 found it — `timetable(seconds(1:3)', …)` stored raw
+        // milliseconds, because the tag came off at the apostrophe rather than anywhere near the call.
+        return CarryValueTags(value, ShapedFrom(transposed, columns, rows));
     }
 
     /// <summary>Packs freshly built elements if they are homogeneous, then applies the shape.</summary>

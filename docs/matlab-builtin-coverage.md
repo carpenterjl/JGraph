@@ -57,8 +57,8 @@ see. This file refused to count them while they drew nothing; **M56 made them re
 number and this one agree again. `opengl` *is* counted, because an accepted no-op is an answer — the
 same reading that counted `shading`, `lighting` and `camlight` in M43.
 
-Across every callable kind — builtin, function, operator, keyword, script — the count is **814 of
-2,027** as of M60 (781 after M59, 758 after M58, 742 after M57, 728 after M56, 710 after M55 by this file's nine-short reading above, 697 after M54, 633 after
+Across every callable kind — builtin, function, operator, keyword, script — the count is **867 of
+2,027** as of M64 (814 after M60, 781 after M59, 758 after M58, 742 after M57, 728 after M56, 710 after M55 by this file's nine-short reading above, 697 after M54, 633 after
 M52, 619 after M51, up from 560, and not from the 556 this file used to claim: the checklist tool
 read the implemented set with a regular expression that only matched a name literal directly inside
 `Add(`, so it missed the sixteen colormap generators, which are registered from a loop, and reported
@@ -184,6 +184,7 @@ plus a short list of eleven odds and ends. Every one of them is accounted for be
 | Stress-test data types and verbs | M43 | `table` `timetable` `seconds` `categorical` `summary` `string` `cellstr` `compose` `missing` `ismissing` `tiledlayout` `nexttile` `axis` `shading` `lighting` `camlight` `rotate3d` — plus sprintf format cycling, element-wise `~`, and `colormap turbo` |
 | Drawing primitives | M45 | `plot3` `line` `text` `fill` `fill3` `patch` `surface` `light` |
 | Handle graphics | M54 | `get` `set` `findobj` `isgraphics` `ishandle` `ishghandle` `gco` `gcbo` `ancestor` `copyobj` |
+| Time and keyed collections | M64 | `datetime` `duration` `NaT` `seconds` `minutes` `hours` `days` `years` `milliseconds` `caldays` `calweeks` `isdatetime` `isduration` `isnat` `year` `month` `day` `hour` `minute` `second` `week` `quarter` `weekday` `ymd` `hms` `datevec` `timeofday` `dateshift` `isbetween` `posixtime` `exceltime` `juliandate` `yyyymmdd` `etime` `addtodate` `eomday` `calendar` `containers.Map` `dictionary` `isKey` `keys` `values` `remove` `numEntries` `isConfigured` `lookup` `insert` `entries` — all documented as *functions* or classes, so none of them moves the builtin table |
 | Data analysis, sets and formatting | M52 | `rng` `var` `gradient` `trapz` `cumtrapz` `interp1` `polyfit` `histcounts` `corrcoef` `cov` `rms` `bounds` `sortrows` `union` `intersect` `setdiff` `setxor` `mat2str` `int2str` `deal` — all documented as *functions*, so only the fourteen the dump flags as documented move the across-every-kind total |
 | The polar axes | M56 | `polaraxes` — the one angular name documented as kind *builtin*; the verbs that draw on it are in the second table |
 
@@ -571,9 +572,13 @@ These are deliberate, not oversights, and are documented in the scripting guide:
   and `issparse`/`full`/`nnz` answer for whichever storage a value has. Sparse indexing, `find`,
   `\`, and transpose are not implemented yet — each errors by name with `full()` as the escape
   hatch. `class(sparse(...))` is `double`, as in MATLAB.
-- Since M43, `table(...)` and `timetable(...)` construct real tables; a *categorical* is its cell
-  of category names, a *duration* is its number of seconds, and *missing* is a sentinel string —
-  untyped stand-ins that carry the shapes scripts consume, without the class names.
+- Since M43, `table(...)` and `timetable(...)` construct real tables, and *missing* is a sentinel
+  string; a *categorical* is still its cell of category names, an untyped stand-in that carries the
+  shape scripts consume without the class name. **A duration is no longer one of those**: since M64
+  it is a real type, and so is `datetime` — both a numeric array of milliseconds wearing a tag, with
+  their own arithmetic, display and conversions (ADR 0064). A timetable's row times are still plain
+  numbers, because a `Table` column holds doubles: a duration column is stored as its count of
+  seconds and a datetime one as its serial date number.
 - The integer classes `int8`…`uint64` are MATLAB conversions (round half away from zero, saturate,
   NaN to 0) on double storage, with `.empty(m, n)` statics. Since M47 the class is carried on the
   value, so arithmetic saturates inside it and mixing two integer classes is refused as MATLAB
@@ -695,10 +700,18 @@ milestones of name coverage went by without either showing up as missing here.
 
 The shape of that blind spot is worth stating plainly, because the arc that follows is built on it:
 **this file counts names, and a script that fails to run rarely fails for want of one.** The
-remaining language gaps — no string-array type, `datetime` a placeholder, no `containers.Map`,
-struct arrays stored as cells, no MAT v7.3 read and no `writematrix` — are tracked in the M61–M68
-roadmap rather than in any table here, and
+remaining language gaps — struct arrays stored as cells, no MAT v7.3 read and no `writematrix` — are
+tracked in the M61–M68 roadmap rather than in any table here, and
 [ADR 0061](adr/0061-comma-separated-lists-and-variadic-outputs.md) records the first of them.
+
+Three of the gaps that sentence used to list are closed. M63 gave double quotes a string type
+([ADR 0063](adr/0063-string-arrays.md)); M64 made `datetime` and `duration` real and added
+`containers.Map` and `dictionary` ([ADR 0064](adr/0064-time-types-and-keyed-collections.md)). **M64
+moves the across-every-kind total by fifty-three and this file's builtin table not at all**, which is
+the same arithmetic M62 produced and the same reason: MATLAB documents `datetime`, `duration`,
+`containers.Map` and the forty-odd names around them as *functions* and classes rather than as kind
+**builtin**, so a milestone can be one of the largest in the arc and leave the 514-name table
+untouched. The blind spot this file records above is not a historical note.
 
 M62 took three more off that list, and **moved no number in this file at all** — every name it added
 (`addpath` `rmpath` `genpath` `pathsep` `MException` `throw` `throwAsCaller` `validateattributes` and

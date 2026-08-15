@@ -49,6 +49,20 @@ internal static partial class JgsBuiltins
             }
 
             JgsValue only = args[0];
+
+            // A time is its display text, not its code points (M64) — asked before the numeric arm
+            // below, which would otherwise read a datetime's milliseconds as characters.
+            if (only.IsTime)
+            {
+                var moments = new string[only.ArrayLength];
+                for (int i = 0; i < moments.Length; i++)
+                {
+                    moments[i] = TimeText(only, i);
+                }
+
+                return moments.Length == 1 ? JgsValue.Str(moments[0]) : PadIntoCharMatrix(moments);
+            }
+
             if (only.IsStringArray)
             {
                 string[] texts = Array.ConvertAll(only.BoxedElements(), static e => e.AsString);

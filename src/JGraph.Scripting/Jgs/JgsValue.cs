@@ -101,6 +101,11 @@ internal sealed class JgsValue
     // exactly like SetNumericClass.
     private bool _isStringArray;
 
+    // What kind of time this array is holding, and how it displays (M64). Null for every array that
+    // is not a datetime or a duration — which is nearly all of them, and is why the numeric storage
+    // underneath goes on behaving exactly as it did. Mutable ONLY by MarkTime, at mint time.
+    private JgsTimeTag? _time;
+
     // N-D shape (M41, ADR 0044): null for every 2-D value. When set (always length >= 3, trailing
     // singletons trimmed), it is the true size of the array, and _rows/_cols hold MATLAB's own 2-D
     // view of it — dims[0] rows by prod(dims[1..]) columns — so every two-subscript reader sees
@@ -522,6 +527,33 @@ internal sealed class JgsValue
     public static JgsValue StringArray(JgsValue[] elements, int rows, int cols) =>
         Shaped(elements, rows, cols).MarkStringArray();
 
+    /// <summary>
+    /// What kind of time this value holds, or null when it is not a time at all (M64). A datetime and
+    /// a duration are both an ordinary numeric array of milliseconds underneath — every one of
+    /// indexing, growth, reshaping, masks and concatenation is the array machinery that was already
+    /// there — so this tag is the whole of what makes one a time.
+    /// </summary>
+    public JgsTimeTag? TimeTag => _time;
+
+    /// <summary>Whether this value is a datetime or a duration.</summary>
+    public bool IsTime => _time is not null;
+
+    /// <summary>Whether this value is a <c>datetime</c>.</summary>
+    public bool IsDatetime => _time is { Kind: JgsTimeKind.Datetime };
+
+    /// <summary>Whether this value is a <c>duration</c>.</summary>
+    public bool IsDuration => _time is { Kind: JgsTimeKind.Duration };
+
+    /// <summary>
+    /// Marks a freshly-minted array as a time and hands it back. Mint-time only, like
+    /// <see cref="MarkStringArray"/> and <see cref="SetNumericClass"/>.
+    /// </summary>
+    public JgsValue MarkTime(JgsTimeTag tag)
+    {
+        _time = tag;
+        return this;
+    }
+
     /// <summary>Gives this array the shape (2-D or N-D) of <paramref name="source"/>.</summary>
     internal void TakeShapeOf(JgsValue source)
     {
@@ -757,6 +789,8 @@ internal sealed class JgsValue
         JgsType.Complex => "complex",
         JgsType.Bool => "bool",
         JgsType.String => "string",
+        JgsType.Array when _time is { Kind: JgsTimeKind.Datetime } => "datetime",
+        JgsType.Array when _time is not null => "duration",
         JgsType.Array => _isStringArray ? "string array" : "array",
         JgsType.Table => "table",
         JgsType.Image => "image",
@@ -775,6 +809,7 @@ internal sealed class JgsValue
         JgsType.Complex => FormatComplex(AsComplex),
         JgsType.Bool => _number != 0 ? "true" : "false",
         JgsType.String => AsString,
+        JgsType.Array when _time is not null => FormatTime(this),
         JgsType.Array => _isStringArray ? FormatStringArray(this) : FormatArray(this),
         JgsType.Table => $"table[{AsTable.RowCount}x{AsTable.ColumnCount}]",
         JgsType.Image => FormatImage(AsImage),
@@ -932,6 +967,41 @@ internal sealed class JgsValue
             }
 
             sb.Append('"').Append(array.ElementAt(i).Display()).Append('"');
+        }
+
+        if (shown < count)
+        {
+            sb.Append(", ... (").Append(count - shown).Append(" more)");
+        }
+
+        return sb.Append(']').ToString();
+    }
+
+    /// <summary>
+    /// Formats a datetime or a duration (M64) through its own <see cref="JgsTimeTag.Format"/>. A
+    /// scalar formats bare, for the same reason a string scalar does: everything that falls back on
+    /// <see cref="Display"/> — <c>disp</c>, <c>sprintf</c>'s <c>%s</c>, a title — wants the text and
+    /// not a one-element list containing it.
+    /// </summary>
+    private static string FormatTime(JgsValue value)
+    {
+        JgsTimeTag tag = value._time!;
+        int count = value.ArrayLength;
+        if (count == 1)
+        {
+            return JgsTime.Format(value.ElementAt(0).AsNumber, tag);
+        }
+
+        int shown = count <= DisplayMaxElements ? count : DisplayPrefixElements;
+        var sb = new StringBuilder("[");
+        for (int i = 0; i < shown; i++)
+        {
+            if (i > 0)
+            {
+                sb.Append(", ");
+            }
+
+            sb.Append(JgsTime.Format(value.ElementAt(i).AsNumber, tag));
         }
 
         if (shown < count)

@@ -390,7 +390,14 @@ internal static partial class JgsBuiltins
         })
         { AutoCallsBare = true }));
 
-        Define("clock", (args, line, col) =>
+        // The four zero-argument clock readings auto-call on their bare names, like tic and toc above
+        // and like every constant since M37. Without it `x = now` bound the *function* rather than the
+        // time, so `datestr(now)` — the commonest date line anyone writes — failed complaining that it
+        // had been handed a function. M64 found that by probing the surface it was about to build on.
+        void DefineClock(string name, Func<IReadOnlyList<JgsValue>, int, int, JgsValue> body) =>
+            env.Declare(name, JgsValue.Function(new BuiltinFunction(name, body) { AutoCallsBare = true }));
+
+        DefineClock("clock", (args, line, col) =>
         {
             Arity("clock", args, 0, line, col);
             DateTime moment = DateTime.Now;
@@ -405,7 +412,7 @@ internal static partial class JgsBuiltins
             ]);
         });
 
-        Define("now", (args, line, col) =>
+        DefineClock("now", (args, line, col) =>
         {
             Arity("now", args, 0, line, col);
             return JgsValue.Number(DateTime.Now.ToOADate() + matlabDatenumOffset);
@@ -414,6 +421,15 @@ internal static partial class JgsBuiltins
         Define("datenum", (args, line, col) =>
         {
             ArityRange("datenum", args, 1, 6, line, col);
+
+            // A datetime is the shortest road to a serial date number, and the one a script that
+            // mixes the new type with the old surface actually writes (M64).
+            if (args.Count == 1 && args[0].IsDatetime)
+            {
+                double[] serials = System.Array.ConvertAll(TimeMs(args[0]), JgsTime.ToDatenum);
+                return serials.Length == 1 ? JgsValue.Number(serials[0]) : Numbers(serials);
+            }
+
             double[] components;
             if (args.Count == 1 && args[0].Type == JgsType.Array)
             {
@@ -447,6 +463,22 @@ internal static partial class JgsBuiltins
         Define("datestr", (args, line, col) =>
         {
             ArityRange("datestr", args, 0, 2, line, col);
+
+            // A datetime formats through its own machinery (M64), so datestr(t) and disp(t) cannot
+            // disagree about what a moment looks like.
+            if (args.Count >= 1 && args[0].IsDatetime)
+            {
+                string shape = args.Count >= 2 ? Str("datestr", args, 1, line, col) : JgsTime.DefaultDatetimeFormat;
+                var tag = new JgsTimeTag(JgsTimeKind.Datetime, shape);
+                double[] moments = TimeMs(args[0]);
+                if (moments.Length == 1)
+                {
+                    return JgsValue.Str(JgsTime.Format(moments[0], tag));
+                }
+
+                return PadIntoCharMatrix(System.Array.ConvertAll(moments, ms => JgsTime.Format(ms, tag)));
+            }
+
             double serial = args.Count >= 1
                 ? Num("datestr", args, 0, line, col)
                 : DateTime.Now.ToOADate() + matlabDatenumOffset;
@@ -458,7 +490,13 @@ internal static partial class JgsBuiltins
             }
 
             DateTime moment = DateTime.FromOADate(oaDate);
-            string format = args.Count >= 2 ? Str("datestr", args, 1, line, col) : "dd-MMM-yyyy HH:mm:ss";
+            // Through the same token translation the datetime branch above uses (M64). Without it the
+            // one name read a format two ways: 'uuuu-MM-dd' was a year for a datetime and the four
+            // literal letters "uuuu" for a serial number. The translation leaves the .NET tokens this
+            // has always accepted alone, so nothing that worked stops working.
+            string format = args.Count >= 2
+                ? JgsTime.ToNetFormat(Str("datestr", args, 1, line, col))
+                : "dd-MMM-yyyy HH:mm:ss";
             try
             {
                 return JgsValue.Str(moment.ToString(format, CultureInfo.InvariantCulture));
@@ -469,19 +507,15 @@ internal static partial class JgsBuiltins
             }
         });
 
-        Define("datetime", (args, line, col) =>
-        {
-            Arity("datetime", args, 0, line, col);
-            return JgsValue.Str(DateTime.Now.ToString("dd-MMM-yyyy HH:mm:ss", CultureInfo.InvariantCulture));
-        });
-
-        Define("date", (args, line, col) =>
+        // datetime itself is registered by RegisterTimeBuiltins (M64), which replaced the placeholder
+        // that used to live here and answer with a char row of the current time.
+        DefineClock("date", (args, line, col) =>
         {
             Arity("date", args, 0, line, col);
             return JgsValue.Str(DateTime.Now.ToString("dd-MMM-yyyy", CultureInfo.InvariantCulture));
         });
 
-        Define("time", (args, line, col) =>
+        DefineClock("time", (args, line, col) =>
         {
             Arity("time", args, 0, line, col);
             return JgsValue.Number(DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() / 1000.0);
@@ -2013,6 +2047,34 @@ internal static partial class JgsBuiltins
         // because its wrappers are what the marking pass must then find: both passes reach into the
         // finished environment, and a mark on a wrapper that was replaced afterwards is a mark on
         // nothing.
+        // The time types and the keyed collections (M64) go in after every ordinary define, because
+        // they replace placeholders declared above. Both dialects get them: every name here is new
+        // but two, so for JGS this is a pure addition — which is what its freeze allows.
+        RegisterTimeBuiltins(env);
+        RegisterTimePartBuiltins(env);
+        RegisterKeyedCollectionBuiltins(env);
+        TimeAwareReductions(env);
+
+        // The two that are NOT new are put back as they were for JGS. `seconds` answered with its own
+        // argument (M43's stand-in: a duration was its count of seconds) and `datetime` answered with
+        // a char row of the current moment. A JGS script that called either got that, and the freeze
+        // says it must go on getting it — so the gate is on the two names whose meaning moved, not on
+        // the milestone.
+        if (!dialect.IsMatlab)
+        {
+            env.Declare("seconds", JgsValue.Function(new BuiltinFunction("seconds", (args, line, col) =>
+            {
+                Arity("seconds", args, 1, line, col);
+                return MapNumeric("seconds", args[0], static x => x, line, col);
+            })));
+
+            env.Declare("datetime", JgsValue.Function(new BuiltinFunction("datetime", (args, line, col) =>
+            {
+                Arity("datetime", args, 0, line, col);
+                return JgsValue.Str(DateTime.Now.ToString("dd-MMM-yyyy HH:mm:ss", CultureInfo.InvariantCulture));
+            })));
+        }
+
         RegisterStringEditingBuiltins(env);
         RegisterStringArrayBuiltins(env);
 
@@ -2144,6 +2206,13 @@ internal static partial class JgsBuiltins
         Func<int, double[]>? implicitX = null)
     {
         (args, List<(string Name, JgsValue Value)> options) = SplitPlotOptions(verb, args, line, col);
+
+        // A time reaching a chart is turned into the number the axis speaks before anything below
+        // sees it (M64), and the ruler is told afterwards what those numbers mean. The two halves
+        // have to be separate: the drawing pipeline works in doubles from end to end, so the type
+        // cannot travel through it — only the axis remembers.
+        (args, bool datesAlongX, bool datesAlongY) = ConvertTimesForPlot(args);
+
         var created = new List<LinePlot>();
 
         if (args.Count > 0 && args[0].Type == JgsType.Table)
@@ -2234,7 +2303,88 @@ internal static partial class JgsBuiltins
         }
 
         ApplyPlotOptions(verb, created, options, line, col);
+
+        if ((datesAlongX || datesAlongY) && created.Count > 0)
+        {
+            AxesModel? axes = created[0].Axes;
+            if (datesAlongX)
+            {
+                axes?.PrimaryXAxis.UseDateTime();
+            }
+
+            if (datesAlongY)
+            {
+                axes?.ActiveYAxis.UseDateTime();
+            }
+        }
+
         return HandlesFor(created);
+    }
+
+    /// <summary>
+    /// Replaces every time argument with the numbers the axis works in, and says which of the two
+    /// rulers should be told it is showing dates.
+    /// </summary>
+    /// <remarks>
+    /// A datetime becomes an OLE automation date — the convention
+    /// <see cref="JGraph.Core.Model.DateTimeAxis"/> has used since M6, which is exactly why the
+    /// storage counts milliseconds from that same epoch: the conversion is one divide and the two
+    /// halves of the build cannot drift apart. A duration becomes its number of days, which is the
+    /// same divide, so a span plots against a date on the same scale.
+    /// <para>
+    /// Only the first two positions are read for the ruler, so the repeated-group form
+    /// <c>plot(t1, a, t2, b)</c> takes its axis kind from the first group. Every group's numbers are
+    /// still converted; it is only the label that comes from the first.
+    /// </para>
+    /// </remarks>
+    private static (IReadOnlyList<JgsValue> Args, bool AlongX, bool AlongY) ConvertTimesForPlot(
+        IReadOnlyList<JgsValue> args)
+    {
+        bool anyTime = false;
+        foreach (JgsValue arg in args)
+        {
+            if (arg.IsTime)
+            {
+                anyTime = true;
+                break;
+            }
+        }
+
+        if (!anyTime)
+        {
+            return (args, false, false);
+        }
+
+        var converted = new JgsValue[args.Count];
+        for (int i = 0; i < args.Count; i++)
+        {
+            converted[i] = args[i].IsTime ? AxisNumbersFor(args[i]) : args[i];
+        }
+
+        // With one argument the values are y and the sample numbers are x; with two or more the
+        // first is x. That is the same reading PlotColumns makes of the same arguments.
+        bool alongX = args.Count >= 2 && args[0].IsDatetime;
+        bool alongY = args.Count == 1 ? args[0].IsDatetime : args.Count >= 2 && args[1].IsDatetime;
+        return (converted, alongX, alongY);
+    }
+
+    /// <summary>A time as the plain numbers an axis plots: days, from the same epoch.</summary>
+    private static JgsValue AxisNumbersFor(JgsValue time)
+    {
+        double[] source = TimeMs(time);
+        var values = new double[source.Length];
+        for (int i = 0; i < values.Length; i++)
+        {
+            values[i] = source[i] / JgsTime.MsPerDay;
+        }
+
+        JgsValue built = Numbers(values);
+        if (time.ArrayLength > 1 || time.IsShaped || time.IsNd)
+        {
+            built.TakeShapeOf(time);
+        }
+
+        return built;
     }
 
     /// <summary>

@@ -68,6 +68,20 @@ internal static partial class JgsBuiltins
                 return input;
             }
 
+            // A time answers with how it displays, not with its milliseconds (M64). Asked first,
+            // because a datetime is an array underneath and the Array arm below would otherwise turn
+            // each moment into the number it is stored as.
+            if (input.IsTime)
+            {
+                var texts = new JgsValue[input.ArrayLength];
+                for (int i = 0; i < texts.Length; i++)
+                {
+                    texts[i] = JgsValue.Str(TimeText(input, i));
+                }
+
+                return ShapedLike(input, texts).MarkStringArray();
+            }
+
             return input.Type switch
             {
                 JgsType.String => JgsValue.StringScalar(input.AsString),
@@ -180,13 +194,8 @@ internal static partial class JgsBuiltins
 
         Define("table", (args, line, col) => BuildTable("table", args, timeColumn: null, line, col));
 
-        // A duration is its count of seconds — transposable, plottable, storable in a timetable.
-        Define("seconds", (args, line, col) =>
-        {
-            Arity("seconds", args, 1, line, col);
-            return MapNumeric("seconds", args[0], static x => x, line, col);
-        });
-
+        // seconds used to live here, answering with its own argument because a duration was its count
+        // of seconds and nothing more. M64 gives it a real type, and RegisterTimeBuiltins declares it.
         Define("timetable", (args, line, col) =>
         {
             if (args.Count < 2)
@@ -194,7 +203,16 @@ internal static partial class JgsBuiltins
                 throw new JgsRuntimeException(line, col, "timetable expects row times and at least one variable.");
             }
 
-            double[] times = ToDoubles("timetable", args[0], line, col);
+            // A duration row-time column is stored as its count of seconds, and a datetime one as its
+            // serial date number (M64). A Table column holds doubles, so the row times have to be
+            // some number; these are the two a script goes on to plot or compare against, and they
+            // are the readings timetable's row times had before the types existed.
+            double[] times = args[0].IsDuration
+                ? System.Array.ConvertAll(TimeMs(args[0]), static ms => ms / JgsTime.MsPerSecond)
+                : args[0].IsDatetime
+                    ? System.Array.ConvertAll(TimeMs(args[0]), JgsTime.ToDatenum)
+                    : ToDoubles("timetable", args[0], line, col);
+
             return BuildTable("timetable", args.Skip(1).ToArray(), new NumberColumn("Time", times), line, col);
         });
     }
