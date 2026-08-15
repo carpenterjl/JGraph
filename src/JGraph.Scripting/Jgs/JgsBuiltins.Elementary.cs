@@ -180,9 +180,12 @@ internal static partial class JgsBuiltins
         Predicate("isfloat", static v => IsNumericValue(v) && !v.NumericClass.IsInteger());
         Predicate("isinteger", static v => v.NumericClass.IsInteger());
         Predicate("isreal", static v => !HasComplexPart(v));
+        // A struct is asked by extent like a cell, because since M65 it has one: a struct array is a
+        // struct value that is not a 1-by-1, and answering isscalar for it would be the old lie in a
+        // new place.
         Predicate("isscalar", static v =>
             v.Type == JgsType.Array ? !v.IsNd && Extent(v) == 1
-            : v.Type != JgsType.Cell || Extent(v) == 1);
+            : v.Type is not (JgsType.Cell or JgsType.Struct) || Extent(v) == 1);
         Predicate("isvector", IsVectorShape);
         Predicate("ismatrix", static v => v.Type switch
         {
@@ -479,12 +482,18 @@ internal static partial class JgsBuiltins
     {
         JgsType.Array => value.ArrayLength,
         JgsType.Cell => value.AsCell.Length,
+        JgsType.Struct => value.AsStructArray.Length,
         _ => 1,
     };
 
     /// <summary>Whether a value is a vector: a scalar, or a 2-D array with a singleton dimension.</summary>
     private static bool IsVectorShape(JgsValue value)
     {
+        if (value.Type == JgsType.Struct)
+        {
+            return value.Rows == 1 || value.Cols == 1;
+        }
+
         if (value.Type is not (JgsType.Array or JgsType.Cell))
         {
             return true;
@@ -501,12 +510,15 @@ internal static partial class JgsBuiltins
 
     /// <summary>Whether a value is a single row — a scalar, or a 2-D array whose row count is one.</summary>
     private static bool IsRowShape(JgsValue value) =>
-        value.Type is not (JgsType.Array or JgsType.Cell) || value.Type == JgsType.Cell
+        value.Type == JgsType.Struct ? value.Rows == 1
+        : value.Type is not (JgsType.Array or JgsType.Cell) || value.Type == JgsType.Cell
         || (!value.IsNd && JgsMatrix.RowCount(value) == 1);
 
     /// <summary>Whether a value is a single column.</summary>
     private static bool IsColumnShape(JgsValue value) =>
-        value.Type is not (JgsType.Array or JgsType.Cell)
+        value.Type == JgsType.Struct
+            ? value.Cols == 1
+            : value.Type is not (JgsType.Array or JgsType.Cell)
             ? true
             : value.Type == JgsType.Cell
                 ? Extent(value) == 1

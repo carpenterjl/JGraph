@@ -269,8 +269,25 @@ internal static partial class JgsBuiltins
     {
         JgsType.Array => value.BoxedElements(),
         JgsType.Cell => value.AsCell,
+
+        // A struct array walks element by element (M65), so arrayfun(@(s) s.a, stats) works — the
+        // idiom for pulling one measurement out of a regionprops result.
+        JgsType.Struct => StructElementValues(value),
         _ => [value],
     };
+
+    /// <summary>Each element of a struct array as a 1-by-1 struct value of its own.</summary>
+    private static JgsValue[] StructElementValues(JgsValue value)
+    {
+        JgsStructArray payload = value.AsStructArray;
+        var elements = new JgsValue[payload.Length];
+        for (int i = 0; i < elements.Length; i++)
+        {
+            elements[i] = JgsValue.Struct(payload.Elements[i]);
+        }
+
+        return elements;
+    }
 
     // --- Running statistics -----------------------------------------------------------------------
 

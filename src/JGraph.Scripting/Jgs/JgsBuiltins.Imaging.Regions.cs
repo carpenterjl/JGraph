@@ -1186,11 +1186,11 @@ internal static partial class JgsBuiltins
         return resolved;
     }
 
-    /// <summary>The struct array MATLAB returns: a cell of structs, one per region.</summary>
+    /// <summary>The struct array MATLAB returns: one element per region, as a column.</summary>
     private static JgsValue RegionStructArray(
         RegionMeasurement[] measured, List<string> properties, int height, int width, JgsDialect dialect)
     {
-        var elements = new JgsValue[measured.Length];
+        var elements = new Dictionary<string, JgsValue>[measured.Length];
         for (int i = 0; i < measured.Length; i++)
         {
             var fields = new Dictionary<string, JgsValue>(StringComparer.Ordinal);
@@ -1199,10 +1199,13 @@ internal static partial class JgsBuiltins
                 fields[property] = RegionField(property, measured[i], height, width, dialect);
             }
 
-            elements[i] = JgsValue.Struct(fields);
+            elements[i] = fields;
         }
 
-        return JgsValue.Cell(elements);
+        // MATLAB hands back a column, one row per region, which is what stats(k) then reads down.
+        return JgsValue.StructArray(
+            new JgsStructArray(elements, [.. properties]),
+            elements.Length, elements.Length == 0 ? 0 : 1);
     }
 
     /// <summary>

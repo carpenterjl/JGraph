@@ -126,26 +126,28 @@ internal sealed partial class Interpreter
     internal string LastErrorIdentifier { get; set; } = string.Empty;
 
     /// <summary>
-    /// The frames an error unwound through, as the cell of structs <c>ME.stack</c> is. An error raised
-    /// at the top level unwound through nothing and gets an empty stack, which is MATLAB's answer too.
+    /// The frames an error unwound through, as the struct array <c>ME.stack</c> is (a real one since
+    /// M65). An error raised at the top level unwound through nothing and gets an empty stack, which
+    /// is MATLAB's answer too.
     /// </summary>
     private static JgsValue StackOf(JgsRuntimeException error)
     {
-        var frames = new JgsValue[error.Frames.Count];
+        var frames = new Dictionary<string, JgsValue>[error.Frames.Count];
         for (int i = 0; i < frames.Length; i++)
         {
             (string name, string file, int line) = error.Frames[i];
-            frames[i] = JgsValue.Struct(new Dictionary<string, JgsValue>(StringComparer.Ordinal)
+            frames[i] = new Dictionary<string, JgsValue>(StringComparer.Ordinal)
             {
                 ["file"] = JgsValue.Str(file),
                 ["name"] = JgsValue.Str(name),
                 ["line"] = JgsValue.Number(line),
-            });
+            };
         }
 
-        JgsValue stack = JgsValue.Cell(frames);
-        stack.Reshape(frames.Length, frames.Length == 0 ? 0 : 1); // a column, the shape MATLAB's is
-        return stack;
+        // A column, the shape MATLAB's is.
+        return JgsValue.StructArray(
+            new JgsStructArray(frames, ["file", "name", "line"]),
+            frames.Length, frames.Length == 0 ? 0 : 1);
     }
 
     /// <summary>The message of the last warning raised — what <c>lastwarn</c> reports.</summary>
@@ -1072,6 +1074,13 @@ internal sealed partial class Interpreter
             return ExecuteForOverCell(statement, iterable, env);
         }
 
+        // A struct array iterates element by element, each pass binding a 1-by-1 struct (M65) — so
+        // `for s = stats` reads s.Area in the body, the way a MATLAB script writes it.
+        if (iterable.Type == JgsType.Struct)
+        {
+            return ExecuteForOverStructs(statement, iterable, env);
+        }
+
         if (iterable.Type != JgsType.Array)
         {
             throw new JgsRuntimeException(statement.Line, statement.Column,
@@ -1359,6 +1368,13 @@ internal sealed partial class Interpreter
             rows.Add(EvaluateAll(row, env));
         }
 
+        // Structs concatenate into a struct array (M65) rather than through the numeric block
+        // machinery, which read them as one element apiece and answered with a double.
+        if (AnyStruct(rows))
+        {
+            return ConcatenateStructs(rows, matrix);
+        }
+
         var shapes = new List<(int Height, int Width)[]>(rows.Count);
         foreach (JgsValue[] row in rows)
         {
@@ -1420,6 +1436,15 @@ internal sealed partial class Interpreter
         // In JGS a bracket literal is a list, so [[1, 2], [3, 4]] is a matrix by nesting — the
         // spelling its own scripts and guide have always used. Only MATLAB concatenates here.
         concatenating &= Dialect.ConcatenatesBrackets;
+
+        // A bracket holding any struct concatenates into a struct array (M65). Asked before the
+        // string and numeric joins for the same reason they are asked before each other: the type of
+        // the pieces decides what the bracket means.
+        if (Dialect.ConcatenatesBrackets && elements.Length > 0
+            && Array.Exists(elements, static e => e.Type == JgsType.Struct))
+        {
+            return ConcatenateStructs([elements], array);
+        }
 
         // A bracket holding any string array is a string array (M63): ["a" "b"] is 1-by-2, and
         // ["a" 'b'] is too, because a char row joining a string becomes one of its elements rather
@@ -1989,13 +2014,21 @@ internal sealed partial class Interpreter
 
         if (value.Type == JgsType.Struct)
         {
-            var fields = new Dictionary<string, JgsValue>(StringComparer.Ordinal);
-            foreach ((string name, JgsValue field) in value.AsStruct)
+            JgsStructArray source = value.AsStructArray;
+            var copiedElements = new Dictionary<string, JgsValue>[source.Length];
+            for (int i = 0; i < copiedElements.Length; i++)
             {
-                fields[name] = CopyForBinding(field);
+                var fields = new Dictionary<string, JgsValue>(StringComparer.Ordinal);
+                foreach ((string name, JgsValue field) in source.Elements[i])
+                {
+                    fields[name] = CopyForBinding(field);
+                }
+
+                copiedElements[i] = fields;
             }
 
-            JgsValue copiedStruct = JgsValue.Struct(fields);
+            JgsValue copiedStruct = JgsValue.StructArray(
+                new JgsStructArray(copiedElements, source.EmptyFields), value.Rows, value.Cols);
             copiedStruct.SetClassName(value.ClassName); // an MException stays one when it is passed on
             return copiedStruct;
         }
@@ -2551,6 +2584,13 @@ internal sealed partial class Interpreter
             return rhs;
         }
 
+        // S(k) = [] deletes elements from a struct array (M65); S(k) = otherStruct replaces them.
+        // Both need a plain name to rebind, since the element list is rebuilt either way.
+        if (callee.Type == JgsType.Struct && op == TokenType.Assign)
+        {
+            return AssignIntoStruct(target, callee, subscripts, rhs, at, env);
+        }
+
         if (callee.Type != JgsType.Array)
         {
             throw new JgsRuntimeException(at.Line, at.Column,
@@ -2994,6 +3034,15 @@ internal sealed partial class Interpreter
             return JgsBuiltins.Lookup(callee, Evaluate(call.Arguments[0], env), call.Line, call.Column);
         }
 
+        // S(k) on a struct is a subscript, not a call (M65) — it arrives here for the same reason a
+        // Map lookup does: a name followed by parentheses parses as a call until something says
+        // otherwise. Before M65 nothing did, so S(2).a on a struct array reported it was not a
+        // function.
+        if (callee.Type == JgsType.Struct && call.Arguments.Count > 0)
+        {
+            return IndexStruct(callee, call.Arguments, call, env);
+        }
+
         if (callee.Type != JgsType.Function)
         {
             throw new JgsRuntimeException(call.Line, call.Column, $"Cannot call a {callee.TypeName}; it is not a function.");
@@ -3075,6 +3124,13 @@ internal sealed partial class Interpreter
         if (target.Type == JgsType.Image)
         {
             return IndexImage(target, subscripts, at, env);
+        }
+
+        // S(k) picks elements out of a struct array (M65) — and out of a scalar struct, which is the
+        // 1-by-1 case, so S(1) works on one the way MATLAB says it does.
+        if (target.Type == JgsType.Struct)
+        {
+            return IndexStruct(target, subscripts, at, env);
         }
 
         if (subscripts.Count == 2 && target.Type == JgsType.Array)
@@ -3981,13 +4037,42 @@ internal sealed partial class Interpreter
         // since M41 and that surface is frozen.
         if (Dialect.IsMatlab && expr is MemberExpr { Target: VariableExpr name } member
             && LookUp(name.Name, env, out JgsValue array)
-            && array.Type == JgsType.Cell && IsStructArray(array))
+            && array.IsStructArray)
         {
             return StructArrayFieldValues(array, FieldName(member, env), member);
         }
 
+        // S(2:3).field names the same list over a slice. The target is evaluated once and only when
+        // the name it indexes already holds a struct, which is what keeps the restriction above —
+        // asking the question must not run anything twice — while letting the commoner half of the
+        // idiom through.
+        // The subscript reaches here as either shape, because MATLAB spells indexing and calling the
+        // same way and the parser cannot know which S is until it runs.
+        if (Dialect.IsMatlab
+            && expr is MemberExpr picked
+            && SubscriptedName(picked.Target) is { } indexed
+            && LookUp(indexed, env, out JgsValue whole)
+            && whole.Type == JgsType.Struct
+            && Evaluate(picked.Target, env) is { } chosen
+            && chosen.IsStructArray)
+        {
+            return StructArrayFieldValues(chosen, FieldName(picked, env), picked);
+        }
+
         return [Evaluate(expr, env)];
     }
+
+    /// <summary>
+    /// The plain name a subscript expression is over, or null when it is over anything else. Both
+    /// shapes are checked because MATLAB spells indexing and calling alike, so which one the parser
+    /// built says nothing about which one it turns out to be.
+    /// </summary>
+    private static string? SubscriptedName(Expr expr) => expr switch
+    {
+        IndexExpr { Target: VariableExpr name } => name.Name,
+        CallExpr { Callee: VariableExpr callee } => callee.Name,
+        _ => null,
+    };
 
     /// <summary>
     /// Evaluates a whole argument or element list, spreading any comma-separated list inside it.
@@ -4136,14 +4221,9 @@ internal sealed partial class Interpreter
             return staticMember;
         }
 
-        // A struct array is a cell of structs here (M41), and S(k) hands back a one-element
-        // sub-cell — unwrap it so S(k).field reads the element's field, MATLAB-style.
-        if (target.Type == JgsType.Cell && target.AsCell.Length == 1
-            && target.AsCell[0].Type == JgsType.Struct)
-        {
-            target = target.AsCell[0];
-        }
-        else if (target.Type == JgsType.Cell && IsStructArray(target))
+        // S.field on an array reads that field across every element (M65). A 1-by-1 falls through to
+        // the ordinary field read below, which is the same expression meaning the same thing.
+        if (target.IsStructArray)
         {
             return StructArrayField(target, field, member);
         }
@@ -4170,86 +4250,6 @@ internal sealed partial class Interpreter
         }
 
         throw new JgsRuntimeException(member.Line, member.Column, $"This struct has no field '{field}'.");
-    }
-
-    /// <summary>Whether a cell holds nothing but structs, which is what M41 calls a struct array.</summary>
-    private static bool IsStructArray(JgsValue value)
-    {
-        JgsValue[] elements = value.AsCell;
-        if (elements.Length == 0)
-        {
-            return false;
-        }
-
-        foreach (JgsValue element in elements)
-        {
-            if (element.Type != JgsType.Struct)
-            {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    /// <summary>
-    /// One field across every element of a struct array, in order — the comma-separated list
-    /// <c>stats.Area</c> names.
-    /// </summary>
-    /// <remarks>
-    /// This is the whole of what the representation knows about how a struct array is stored, which
-    /// is why it is its own method: M41 keeps one as a cell of structs, and when that becomes a type
-    /// of its own only this reads differently. Every caller — the spread, the collected value below —
-    /// asks for the list and is left alone.
-    /// </remarks>
-    private JgsValue[] StructArrayFieldValues(JgsValue array, string field, Node member)
-    {
-        JgsValue[] elements = array.AsCell;
-        var gathered = new JgsValue[elements.Length];
-        for (int i = 0; i < elements.Length; i++)
-        {
-            if (!elements[i].AsStruct.TryGetValue(field, out JgsValue? value))
-            {
-                throw new JgsRuntimeException(member.Line, member.Column,
-                    $"Element {i + Dialect.IndexBase} of this struct array has no field '{field}'.");
-            }
-
-            gathered[i] = value;
-        }
-
-        return gathered;
-    }
-
-    /// <summary>
-    /// One field read across every element of a struct array, as a single value — <c>stats.Area</c>
-    /// where one value is wanted rather than a list.
-    /// </summary>
-    /// <remarks>
-    /// A row array when every field is a number, a cell otherwise. In an argument list or a bracket
-    /// the field spreads instead (M61); this is what the same expression means where a list has no
-    /// room to go, so <c>x = stats.Area</c> yields the row rather than the first element.
-    /// </remarks>
-    private JgsValue StructArrayField(JgsValue array, string field, Node member)
-    {
-        JgsValue[] gathered = StructArrayFieldValues(array, field, member);
-        bool allNumbers = true;
-        foreach (JgsValue value in gathered)
-        {
-            allNumbers &= value.Type is JgsType.Number or JgsType.Bool;
-        }
-
-        if (!allNumbers)
-        {
-            return JgsValue.Cell(gathered);
-        }
-
-        var numbers = new double[gathered.Length];
-        for (int i = 0; i < gathered.Length; i++)
-        {
-            numbers[i] = gathered[i].AsNumber;
-        }
-
-        return NumbersOf(numbers);
     }
 
     private string FieldName(MemberExpr member, JgsEnvironment env)
@@ -4294,8 +4294,14 @@ internal sealed partial class Interpreter
             return value;
         }
 
-        JgsValue container = ResolveStructForWrite(member.Target, env);
-        container.AsStruct[FieldName(member, env)] = value;
+        JgsValue container = ResolveStructForWrite(member.Target, env, out JgsStructArray? owner);
+        string field = FieldName(member, env);
+        container.AsStruct[field] = value;
+
+        // Every element of a struct array has every field (M65), so writing S(2).b gives element one
+        // a b as well, holding []. The old cell-of-structs could not hold that invariant, which is
+        // why S(5).a = 9 used to leave four elements with no fields at all.
+        owner?.EnsureField(field);
         return value;
     }
 
@@ -4331,8 +4337,19 @@ internal sealed partial class Interpreter
         && value.ArrayLength > 0
         && JgsHandleRegistry.TryGet(value.ElementAt(0), out _);
 
-    private JgsValue ResolveStructForWrite(Expr expr, JgsEnvironment env)
+    /// <summary>
+    /// The struct a dotted write lands in.
+    /// </summary>
+    /// <param name="expr">The write's target expression — a name, a nested dot, or a subscript.</param>
+    /// <param name="env">The scope to resolve in.</param>
+    /// <param name="owner">
+    /// The struct array the returned element belongs to, or null when the write is into a struct
+    /// that stands alone. The caller needs it to give every sibling the field being written (M65):
+    /// a struct array where one element has a field the others lack is not a value the type allows.
+    /// </param>
+    private JgsValue ResolveStructForWrite(Expr expr, JgsEnvironment env, out JgsStructArray? owner)
     {
+        owner = null;
         switch (expr)
         {
             case VariableExpr variable:
@@ -4344,6 +4361,12 @@ internal sealed partial class Interpreter
                             $"Cannot set a field on '{variable.Name}': it is a {existing.TypeName}, not a struct.");
                     }
 
+                    if (existing.IsStructArray)
+                    {
+                        throw new JgsRuntimeException(variable.Line, variable.Column,
+                            $"'{variable.Name}' is a struct array, so a field write must name an element, like {variable.Name}(1).field = v.");
+                    }
+
                     return existing;
                 }
 
@@ -4352,7 +4375,7 @@ internal sealed partial class Interpreter
                 return created;
 
             case MemberExpr nested:
-                JgsValue parent = ResolveStructForWrite(nested.Target, env);
+                JgsValue parent = ResolveStructForWrite(nested.Target, env, out _);
                 string field = FieldName(nested, env);
                 if (!parent.AsStruct.TryGetValue(field, out JgsValue? child) || child.Type != JgsType.Struct)
                 {
@@ -4362,29 +4385,25 @@ internal sealed partial class Interpreter
 
                 return child;
 
-            // S(k).field = v: the element of a struct array (a cell of structs here, M41). The
-            // array is created or grown on sight — S(100).A = [] preallocates a 100-element one —
-            // which is MATLAB's own idiom for building struct arrays.
+            // S(k).field = v: one element of a struct array. The array is created or grown on sight —
+            // S(100).A = [] preallocates a 100-element one — which is MATLAB's own idiom for
+            // building struct arrays.
             case CallExpr { Arguments.Count: 1 } call when call.Callee is VariableExpr:
-                return ResolveStructElementForWrite((VariableExpr)call.Callee, call.Arguments[0], call, env);
+                return ResolveStructElementForWrite((VariableExpr)call.Callee, call.Arguments[0], call, env, out owner);
             case IndexExpr { Indices.Count: 1 } indexed when indexed.Target is VariableExpr:
-                return ResolveStructElementForWrite((VariableExpr)indexed.Target, indexed.Indices[0], indexed, env);
+                return ResolveStructElementForWrite((VariableExpr)indexed.Target, indexed.Indices[0], indexed, env, out owner);
 
             default:
                 JgsValue evaluated = Evaluate(expr, env);
-                if (evaluated.Type == JgsType.Cell && evaluated.AsCell.Length == 1
-                    && evaluated.AsCell[0].Type == JgsType.Struct)
+                if (evaluated.Type == JgsType.Struct && !evaluated.IsStructArray)
                 {
-                    return evaluated.AsCell[0]; // a one-element sub-cell of a struct array
+                    return evaluated;
                 }
 
-                if (evaluated.Type != JgsType.Struct)
-                {
-                    throw new JgsRuntimeException(expr.Line, expr.Column,
-                        $"Cannot set a field on a {evaluated.TypeName}.");
-                }
-
-                return evaluated;
+                throw new JgsRuntimeException(expr.Line, expr.Column,
+                    evaluated.Type == JgsType.Struct
+                        ? "Cannot set one field across a whole struct array — name an element first, like S(1).field = v."
+                        : $"Cannot set a field on a {evaluated.TypeName}.");
         }
     }
 
@@ -4394,9 +4413,19 @@ internal sealed partial class Interpreter
     /// placeholder element with a fresh struct. The element is returned by reference, so the caller's
     /// field write lands inside the array.
     /// </summary>
-    private JgsValue ResolveStructElementForWrite(VariableExpr variable, Expr subscript, Node at, JgsEnvironment env)
+    private JgsValue ResolveStructElementForWrite(
+        VariableExpr variable, Expr subscript, Node at, JgsEnvironment env, out JgsStructArray? owner)
     {
-        JgsValue index = Evaluate(subscript, env);
+        bool defined = env.TryGet(variable.Name, out JgsValue existing);
+        bool isStruct = defined && existing.Type == JgsType.Struct;
+
+        // `end` inside the subscript counts the elements already there, so S(end+1).f = v appends —
+        // the accumulation idiom that used to be refused because nothing told `end` what it was in.
+        JgsValue index = EvaluateIndexArgument(
+            subscript, isStruct ? existing.AsStructArray.Length : 0, env)
+            ?? throw new JgsRuntimeException(at.Line, at.Column,
+                "A struct-array element is named by one whole-number subscript, not ':'.");
+
         if (index.Type != JgsType.Number || index.AsNumber != System.Math.Floor(index.AsNumber))
         {
             throw new JgsRuntimeException(at.Line, at.Column,
@@ -4410,71 +4439,58 @@ internal sealed partial class Interpreter
                 $"Index {(int)index.AsNumber} is out of range (indexing is {Dialect.IndexBase}-based).");
         }
 
-        bool defined = env.TryGet(variable.Name, out JgsValue existing);
-
-        // S(1).x = v on a plain scalar struct writes the struct itself.
-        if (defined && existing.Type == JgsType.Struct && slot == 0)
-        {
-            return existing;
-        }
-
-        JgsValue[] elements;
         if (!defined || (existing.Type == JgsType.Array && existing.ArrayLength == 0))
         {
-            elements = new JgsValue[slot + 1];
+            existing = JgsValue.StructArray(new JgsStructArray([]), 0, 0);
+            isStruct = true;
         }
-        else if (existing.Type == JgsType.Cell)
-        {
-            JgsValue[] current = existing.AsCell;
-            if (slot < current.Length)
-            {
-                elements = current;
-            }
-            else
-            {
-                elements = new JgsValue[slot + 1];
-                System.Array.Copy(current, elements, current.Length);
-            }
-        }
-        else if (existing.Type == JgsType.Struct)
-        {
-            // A lone struct is a one-element struct array, so writing past it grows one — which is
-            // how `s = struct('a', []);` followed by `s(i).a = v` in a loop builds the array.
-            elements = new JgsValue[slot + 1];
-            elements[0] = existing;
-        }
-        else
+        else if (!isStruct)
         {
             throw new JgsRuntimeException(at.Line, at.Column,
                 $"Cannot index into '{variable.Name}' with a subscript and a field: it is a {existing.TypeName}.");
         }
 
-        for (int i = 0; i < elements.Length; i++)
+        JgsStructArray payload = existing.AsStructArray;
+        JgsValue array = existing;
+        if (slot >= payload.Length)
         {
-            if (elements[i] is null || elements[i].Type == JgsType.Array && elements[i].ArrayLength == 0)
+            // Growing fills the gap with elements carrying the array's fields, each holding [] —
+            // MATLAB's rule that every element has every field, applied at the moment the gap appears.
+            var grown = new Dictionary<string, JgsValue>[slot + 1];
+            System.Array.Copy(payload.Elements, grown, payload.Length);
+
+            // The fields come from what is already there, read before the gap exists: a half-filled
+            // array has no element zero to ask.
+            string[] fields = payload.FieldNames;
+            for (int i = payload.Length; i < grown.Length; i++)
             {
-                elements[i] = JgsValue.EmptyStruct();
+                var filler = new Dictionary<string, JgsValue>(StringComparer.Ordinal);
+                foreach (string field in fields)
+                {
+                    filler[field] = JgsValue.Array([]);
+                }
+
+                grown[i] = filler;
             }
-        }
 
-        if (elements[slot].Type != JgsType.Struct)
-        {
-            throw new JgsRuntimeException(at.Line, at.Column,
-                $"Element {slot + Dialect.IndexBase} of '{variable.Name}' is a {elements[slot].TypeName}, not a struct.");
-        }
+            payload = new JgsStructArray(grown, fields);
 
-        JgsValue array = defined && existing.Type == JgsType.Cell && ReferenceEquals(existing.AsCell, elements)
-            ? existing
-            : JgsValue.Cell(elements);
-        if (!ReferenceEquals(array, existing))
-        {
+            // A column grows down its column; everything else grows along a row.
+            bool column = existing.Cols == 1 && existing.Rows > 1;
+            array = JgsValue.StructArray(payload,
+                column ? grown.Length : 1, column ? 1 : grown.Length);
+            array.SetClassName(existing.ClassName);
             if (!env.TryAssign(variable.Name, array))
             {
                 env.Declare(variable.Name, array);
             }
         }
 
-        return elements[slot];
+        owner = payload;
+
+        // A JgsValue over the element's own dictionary: the caller's field write lands in the array
+        // because both hold the same dictionary reference.
+        return JgsValue.Struct(payload.Elements[slot]);
     }
 
     /// <summary>

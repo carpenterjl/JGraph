@@ -271,13 +271,7 @@ internal static partial class JgsBuiltins
                 throw new JgsRuntimeException(line, col, "struct takes name/value pairs.");
             }
 
-            var fields = new Dictionary<string, JgsValue>(StringComparer.Ordinal);
-            for (int i = 0; i < args.Count; i += 2)
-            {
-                fields[Str("struct", args, i, line, col)] = args[i + 1];
-            }
-
-            return JgsValue.Struct(fields);
+            return BuildStruct(args, line, col);
         });
 
         Define("fieldnames", (args, line, col) =>
@@ -289,21 +283,101 @@ internal static partial class JgsBuiltins
         Define("isfield", (args, line, col) =>
         {
             Arity("isfield", args, 2, line, col);
-            return JgsValue.Bool(args[0].Type == JgsType.Struct
-                && args[0].AsStruct.ContainsKey(Str("isfield", args, 1, line, col)));
+            if (args[0].Type != JgsType.Struct)
+            {
+                return JgsValue.Bool(false);
+            }
+
+            // A cell of names asks about each in turn, and the answer is a logical of the same shape.
+            Dictionary<string, JgsValue> fields = args[0].AsStruct;
+            if (args[1].Type == JgsType.Cell)
+            {
+                JgsValue[] names = args[1].AsCell;
+                var flags = new JgsValue[names.Length];
+                for (int i = 0; i < names.Length; i++)
+                {
+                    flags[i] = JgsValue.Bool(names[i].Type == JgsType.String && fields.ContainsKey(names[i].AsString));
+                }
+
+                return JgsValue.Shaped(flags, args[1].Rows, args[1].Cols);
+            }
+
+            return JgsValue.Bool(fields.ContainsKey(Str("isfield", args, 1, line, col)));
         });
 
         Define("rmfield", (args, line, col) =>
         {
             Arity("rmfield", args, 2, line, col);
-            var fields = new Dictionary<string, JgsValue>(StructOf("rmfield", args[0], line, col), StringComparer.Ordinal);
-            string name = Str("rmfield", args, 1, line, col);
-            if (!fields.Remove(name))
+            string[] doomed = FieldNameList("rmfield", args[1], line, col);
+            return MapStructElements("rmfield", args[0], line, col, element =>
             {
-                throw new JgsRuntimeException(line, col, $"rmfield: this struct has no field '{name}'.");
-            }
+                var fields = new Dictionary<string, JgsValue>(element, StringComparer.Ordinal);
+                foreach (string name in doomed)
+                {
+                    if (!fields.Remove(name))
+                    {
+                        throw new JgsRuntimeException(line, col, $"rmfield: this struct has no field '{name}'.");
+                    }
+                }
 
-            return JgsValue.Struct(fields);
+                return fields;
+            });
+        });
+
+        Define("orderfields", (args, line, col) =>
+        {
+            ArityRange("orderfields", args, 1, 2, line, col);
+
+            // With no order given the fields sort by name, which is the whole point of the verb:
+            // two structs built in different orders compare and display alike afterwards.
+            string[] order = args.Count > 1
+                ? FieldNameList("orderfields", args[1], line, col)
+                : [.. StructOf("orderfields", args[0], line, col).Keys.OrderBy(n => n, StringComparer.Ordinal)];
+
+            return MapStructElements("orderfields", args[0], line, col, element =>
+            {
+                var ordered = new Dictionary<string, JgsValue>(StringComparer.Ordinal);
+                foreach (string name in order)
+                {
+                    if (!element.TryGetValue(name, out JgsValue? held))
+                    {
+                        throw new JgsRuntimeException(line, col,
+                            $"orderfields: this struct has no field '{name}'.");
+                    }
+
+                    ordered[name] = held;
+                }
+
+                if (ordered.Count != element.Count)
+                {
+                    throw new JgsRuntimeException(line, col,
+                        "orderfields: the order must name every field exactly once.");
+                }
+
+                return ordered;
+            });
+        });
+
+        Define("getfield", (args, line, col) =>
+        {
+            ArityRange("getfield", args, 2, 2, line, col);
+            Dictionary<string, JgsValue> fields = StructOf("getfield", args[0], line, col);
+            string name = Str("getfield", args, 1, line, col);
+            return fields.TryGetValue(name, out JgsValue? held)
+                ? held
+                : throw new JgsRuntimeException(line, col, $"getfield: this struct has no field '{name}'.");
+        });
+
+        Define("setfield", (args, line, col) =>
+        {
+            Arity("setfield", args, 3, line, col);
+            string name = Str("setfield", args, 1, line, col);
+            JgsValue held = args[2];
+
+            // setfield answers with a changed copy and leaves its argument alone, which is what
+            // makes it usable in an expression: s = setfield(s, 'a', 1).
+            return MapStructElements("setfield", args[0], line, col, element =>
+                new Dictionary<string, JgsValue>(element, StringComparer.Ordinal) { [name] = held });
         });
 
         Define("num2cell", (args, line, col) =>
@@ -751,19 +825,117 @@ internal static partial class JgsBuiltins
         return elements;
     }
 
+    /// <summary>
+    /// <c>struct(...)</c>: name/value pairs, where a cell value spreads across the elements of a
+    /// struct array (M65). <c>struct('a', {1, 2, 3})</c> is three elements, and <c>struct('a', {})</c>
+    /// is an empty struct array that still has the field — the two forms a script uses to preallocate.
+    /// </summary>
+    private static JgsValue BuildStruct(IReadOnlyList<JgsValue> args, int line, int col)
+    {
+        var names = new string[args.Count / 2];
+        for (int i = 0; i < names.Length; i++)
+        {
+            names[i] = Str("struct", args, i * 2, line, col);
+        }
+
+        // The element count is the size of the cell values, which must agree; a non-cell value is
+        // the same in every element, and all-scalar arguments make a 1-by-1.
+        int count = 1;
+        int rows = 1;
+        int cols = 1;
+        for (int i = 0; i < names.Length; i++)
+        {
+            if (args[(i * 2) + 1].Type != JgsType.Cell)
+            {
+                continue;
+            }
+
+            JgsValue cell = args[(i * 2) + 1];
+            if (count != 1 && cell.AsCell.Length != count)
+            {
+                throw new JgsRuntimeException(line, col,
+                    $"struct: '{names[i]}' has {cell.AsCell.Length} values but another field has {count}.");
+            }
+
+            count = cell.AsCell.Length;
+            rows = cell.Rows;
+            cols = cell.Cols;
+        }
+
+        var elements = new Dictionary<string, JgsValue>[count];
+        for (int e = 0; e < count; e++)
+        {
+            var fields = new Dictionary<string, JgsValue>(StringComparer.Ordinal);
+            for (int i = 0; i < names.Length; i++)
+            {
+                JgsValue given = args[(i * 2) + 1];
+                fields[names[i]] = given.Type == JgsType.Cell ? given.AsCell[e] : given;
+            }
+
+            elements[e] = fields;
+        }
+
+        return JgsValue.StructArray(new JgsStructArray(elements, names), count == 0 ? 0 : rows, count == 0 ? 0 : cols);
+    }
+
+    /// <summary>One field name, or a cell of them — the shape <c>rmfield</c> and friends accept.</summary>
+    private static string[] FieldNameList(string name, JgsValue value, int line, int col)
+    {
+        if (value.Type == JgsType.Cell)
+        {
+            var names = new string[value.AsCell.Length];
+            for (int i = 0; i < names.Length; i++)
+            {
+                names[i] = value.AsCell[i].Type == JgsType.String
+                    ? value.AsCell[i].AsString
+                    : throw new JgsRuntimeException(line, col, $"{name} expects field names as text.");
+            }
+
+            return names;
+        }
+
+        return value.Type == JgsType.String
+            ? [value.AsString]
+            : throw new JgsRuntimeException(line, col, $"{name} expects a field name, but got a {value.TypeName}.");
+    }
+
+    /// <summary>
+    /// Rebuilds a struct value element by element, keeping its shape. This is what makes the
+    /// field-editing verbs array-aware in one place: before M65 they read the first element and
+    /// answered with a lone struct, so <c>rmfield</c> on a struct array silently dropped every
+    /// element but one.
+    /// </summary>
+    private static JgsValue MapStructElements(
+        string name,
+        JgsValue value,
+        int line,
+        int col,
+        Func<Dictionary<string, JgsValue>, Dictionary<string, JgsValue>> edit)
+    {
+        if (value.Type != JgsType.Struct)
+        {
+            throw new JgsRuntimeException(line, col, $"{name} expects a struct, but got a {value.TypeName}.");
+        }
+
+        JgsStructArray payload = value.AsStructArray;
+        var edited = new Dictionary<string, JgsValue>[payload.Length];
+        for (int i = 0; i < edited.Length; i++)
+        {
+            edited[i] = edit(payload.Elements[i]);
+        }
+
+        string[] fields = edited.Length > 0 ? [.. edited[0].Keys] : payload.EmptyFields;
+        return JgsValue.StructArray(new JgsStructArray(edited, fields), value.Rows, value.Cols);
+    }
+
     private static Dictionary<string, JgsValue> StructOf(string name, JgsValue value, int line, int col)
     {
+        // Every element of a struct array carries the same fields (M65), so fieldnames and isfield
+        // answer for the array as readily as for one element — which is what MATLAB does and what a
+        // script asking about a regionprops result needs.
         if (value.Type == JgsType.Struct)
         {
             return value.AsStruct;
-        }
-
-        // A struct array is a cell of structs (M41), and every element carries the same fields — so
-        // fieldnames and isfield answer for the array as readily as for one element, which is what
-        // MATLAB does and what a script asking about a regionprops result needs.
-        if (value.Type == JgsType.Cell && value.AsCell is [{ Type: JgsType.Struct } first, ..])
-        {
-            return first.AsStruct;
         }
 
         throw new JgsRuntimeException(line, col, $"{name} expects a struct, but got a {value.TypeName}.");

@@ -569,7 +569,9 @@ internal static partial class JgsBuiltins
                 JgsType.Null => true,
                 JgsType.Array => args[0].ArrayLength == 0,
                 JgsType.Cell => args[0].AsCell.Length == 0,
-                JgsType.Struct => args[0].AsStruct.Count == 0,
+                // A struct with no fields is still one element, so it is not empty; a 0-by-0 struct
+                // array is (M65). Before the type had a size there was nothing else to ask.
+                JgsType.Struct => args[0].AsStructArray.Length == 0,
                 JgsType.String => args[0].AsString.Length == 0,
                 JgsType.Table => args[0].AsTable.RowCount == 0,
                 JgsType.Sparse => args[0].AsSparse.Rows == 0 || args[0].AsSparse.Cols == 0,
@@ -826,6 +828,8 @@ internal static partial class JgsBuiltins
                 JgsType.Array => JgsValue.Number(JgsMatrix.DimsOf(args[0]).Max()),
                 JgsType.Cell => JgsValue.Number(args[0].AsCell.Length),
                 JgsType.String => JgsValue.Number(args[0].AsString.Length),
+                // A struct is a 1-by-1 struct array (M65), so it has a length like anything else.
+                JgsType.Struct => JgsValue.Number(System.Math.Max(args[0].Rows, args[0].Cols)),
                 // A scalar is 1-by-1, so its longest dimension is 1 — the same answer size(7) gives.
                 JgsType.Number or JgsType.Bool or JgsType.Complex => JgsValue.Number(1),
                 _ => throw new JgsRuntimeException(line, col, $"length expects an array, cell, or string, but got a {args[0].TypeName}."),
@@ -870,6 +874,7 @@ internal static partial class JgsBuiltins
                 JgsType.String => JgsValue.Number(args[0].AsString.Length),
                 JgsType.Image => JgsValue.Number(args[0].AsImage.SampleCount),
                 JgsType.Sparse => JgsValue.Number((double)args[0].AsSparse.Rows * args[0].AsSparse.Cols),
+                JgsType.Struct => JgsValue.Number(args[0].AsStructArray.Length), // a struct is 1-by-1 (M65)
                 JgsType.Number or JgsType.Bool or JgsType.Complex => JgsValue.Number(1), // a scalar is one element
                 _ => throw new JgsRuntimeException(line, col, $"numel expects an array, cell, or string, but got a {args[0].TypeName}."),
             };
@@ -2050,6 +2055,7 @@ internal static partial class JgsBuiltins
         // The time types and the keyed collections (M64) go in after every ordinary define, because
         // they replace placeholders declared above. Both dialects get them: every name here is new
         // but two, so for JGS this is a pure addition — which is what its freeze allows.
+        RegisterDataOutBuiltins(Define, host);
         RegisterTimeBuiltins(env);
         RegisterTimePartBuiltins(env);
         RegisterKeyedCollectionBuiltins(env);
@@ -4153,6 +4159,7 @@ internal static partial class JgsBuiltins
         JgsType.Array => JgsMatrix.DimsOf(value),
         JgsType.String => [1, value.AsString.Length],
         JgsType.Cell => [value.Rows, value.Cols],
+        JgsType.Struct => [value.Rows, value.Cols], // a struct is 1-by-1 and a struct array is its shape (M65)
         JgsType.Sparse => [value.AsSparse.Rows, value.AsSparse.Cols],
         JgsType.Table => [value.AsTable.RowCount, value.AsTable.ColumnCount],
         _ => [1, 1],

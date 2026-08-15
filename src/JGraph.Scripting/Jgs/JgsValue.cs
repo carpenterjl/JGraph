@@ -143,6 +143,7 @@ internal sealed class JgsValue
         NumericBuffer buffer => buffer.Length,
         JgsPackedComplex complex => complex.Length,
         JgsValue[] elements => elements.Length,
+        JgsStructArray structs => structs.Length,
         _ => 0,
     };
 
@@ -230,16 +231,57 @@ internal sealed class JgsValue
     public static JgsValue Cell(JgsValue[] elements) => new(JgsType.Cell, 0, elements);
 
     /// <summary>Wraps a struct's fields (the dictionary is used directly, not copied).</summary>
-    public static JgsValue Struct(Dictionary<string, JgsValue> fields) => new(JgsType.Struct, 0, fields);
+    public static JgsValue Struct(Dictionary<string, JgsValue> fields) =>
+        new(JgsType.Struct, new JgsStructArray([fields]), JgsPackedKind.Number, 1, 1);
 
     /// <summary>An empty struct, ready for fields to be assigned.</summary>
     public static JgsValue EmptyStruct() => Struct(new Dictionary<string, JgsValue>(StringComparer.Ordinal));
 
+    /// <summary>
+    /// Wraps a struct array as a <paramref name="rows"/>-by-<paramref name="cols"/> value (M65). The
+    /// payload is used directly, so a caller holding it can write an element's field and the value
+    /// sees the write — the reference semantics <c>S(k).f = v</c> depends on.
+    /// </summary>
+    public static JgsValue StructArray(JgsStructArray elements, int rows, int cols) =>
+        new(JgsType.Struct, elements, JgsPackedKind.Number, rows, cols);
+
+    /// <summary>A struct array of the given elements, as a row.</summary>
+    public static JgsValue StructArray(Dictionary<string, JgsValue>[] elements) =>
+        StructArray(new JgsStructArray(elements), elements.Length == 0 ? 0 : 1, elements.Length);
+
     /// <summary>The cell array's elements (valid only for <see cref="JgsType.Cell"/>).</summary>
     public JgsValue[] AsCell => (JgsValue[])_reference!;
 
-    /// <summary>The struct's fields, in insertion order (valid only for <see cref="JgsType.Struct"/>).</summary>
-    public Dictionary<string, JgsValue> AsStruct => (Dictionary<string, JgsValue>)_reference!;
+    /// <summary>The struct payload (valid only for <see cref="JgsType.Struct"/>).</summary>
+    public JgsStructArray AsStructArray => (JgsStructArray)_reference!;
+
+    /// <summary>
+    /// The struct's fields, in insertion order — element one's for a struct array.
+    /// </summary>
+    /// <remarks>
+    /// Reading the first element is what the ~60 call sites that predate M65 already did, because a
+    /// struct array was a cell and they asked its first entry; every one of them is testing whether
+    /// an options bag or a tagged struct carries a field, and every element carries the same fields.
+    /// The places where the difference between one struct and many genuinely matters — the field
+    /// write, the field read, <c>class</c>, <c>numel</c>, display — check
+    /// <see cref="IsStructArray"/> first and never arrive here.
+    /// <para>
+    /// An empty struct array answers with a fresh dictionary carrying its field names, so a reader
+    /// sees the shape an element would have had. Writes into that dictionary go nowhere, which is
+    /// why nothing writes through this: the write paths hold the payload itself.
+    /// </para>
+    /// </remarks>
+    public Dictionary<string, JgsValue> AsStruct
+    {
+        get
+        {
+            JgsStructArray payload = AsStructArray;
+            return payload.Length > 0 ? payload.Elements[0] : payload.NewElement();
+        }
+    }
+
+    /// <summary>Whether this is a struct value that is not a 1-by-1 (M65).</summary>
+    public bool IsStructArray => Type == JgsType.Struct && AsStructArray.Length != 1;
 
     /// <summary>The numeric value (valid for <see cref="JgsType.Number"/> and <see cref="JgsType.Bool"/>).</summary>
     public double AsNumber => _number;
@@ -815,7 +857,7 @@ internal sealed class JgsValue
         JgsType.Image => FormatImage(AsImage),
         JgsType.Function => $"fn {AsCallable.Name}",
         JgsType.Cell => FormatCell(AsCell),
-        JgsType.Struct => FormatStruct(AsStruct),
+        JgsType.Struct => FormatStructValue(this),
         JgsType.Sparse => FormatSparse(AsSparse),
         _ => "value",
     };
@@ -866,6 +908,26 @@ internal sealed class JgsValue
         }
 
         return sb.Append('}').ToString();
+    }
+
+    /// <summary>
+    /// A scalar struct writes its fields; anything else writes its size and field names, the way
+    /// MATLAB does — dumping every element of a thousand-region <c>regionprops</c> result is not a
+    /// display, it is a wall.
+    /// </summary>
+    private static string FormatStructValue(JgsValue value)
+    {
+        JgsStructArray payload = value.AsStructArray;
+        if (payload.Length == 1)
+        {
+            return FormatStruct(payload.Elements[0]);
+        }
+
+        string size = string.Join('x', value.Dims);
+        string[] fields = payload.FieldNames;
+        return fields.Length == 0
+            ? $"{size} struct array with no fields"
+            : $"{size} struct array with fields: {string.Join(", ", fields)}";
     }
 
     private static string FormatStruct(Dictionary<string, JgsValue> fields)

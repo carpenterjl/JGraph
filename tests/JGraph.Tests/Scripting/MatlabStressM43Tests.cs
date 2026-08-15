@@ -172,11 +172,17 @@ public class MatlabStressM43Tests : IDisposable
         Assert.True(result.Success, result.Message + _output.ErrorText);
     }
 
+    /// <summary>
+    /// The braces around <c>cell(2, 2)</c> are MATLAB's own spelling and became load-bearing in M65:
+    /// a bare cell argument to <c>struct</c> spreads across the elements of a struct array, so the
+    /// unbraced form now builds a 2-by-2 struct array whose field is empty rather than one struct
+    /// holding a 2-by-2 cell.
+    /// </summary>
     [Fact]
     public void BraceAssignmentThroughADotChain()
     {
         string output = RunAndRead("""
-            s = struct('inner', struct('cells', cell(2, 2)));
+            s = struct('inner', struct('cells', {cell(2, 2)}));
             s.inner.cells{2, 1} = 42;
             fprintf('%d\n', s.inner.cells{2, 1});
             """);

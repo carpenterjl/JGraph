@@ -1006,20 +1006,23 @@ internal static partial class JgsBuiltins
                     return JgsValue.Table(LineSegmentsToTable(segments));
                 }
 
-                var elements = new JgsValue[segments.Length];
+                var elements = new Dictionary<string, JgsValue>[segments.Length];
                 for (int i = 0; i < segments.Length; i++)
                 {
                     HoughTransform.LineSegment segment = segments[i];
-                    elements[i] = JgsValue.Struct(new Dictionary<string, JgsValue>(StringComparer.Ordinal)
+                    elements[i] = new Dictionary<string, JgsValue>(StringComparer.Ordinal)
                     {
                         ["point1"] = Numbers([segment.Point1X + 1, segment.Point1Y + 1]),
                         ["point2"] = Numbers([segment.Point2X + 1, segment.Point2Y + 1]),
                         ["theta"] = JgsValue.Number(segment.Theta),
                         ["rho"] = JgsValue.Number(segment.Rho),
-                    });
+                    };
                 }
 
-                return JgsValue.Cell(elements);
+                return JgsValue.StructArray(
+                    new JgsStructArray(elements, ["point1", "point2", "theta", "rho"]),
+                    elements.Length == 0 ? 0 : 1,
+                    elements.Length);
             }
             catch (ArgumentOutOfRangeException ex)
             {

@@ -43,6 +43,7 @@ internal static class JgsWorkspaceIo
     {
         string? path = null;
         bool ascii = false;
+        bool append = false;
         var names = new List<string>();
         foreach (JgsValue arg in args)
         {
@@ -55,6 +56,19 @@ internal static class JgsWorkspaceIo
             if (word.Equals("-ascii", StringComparison.OrdinalIgnoreCase))
             {
                 ascii = true;
+            }
+            else if (word.Equals("-append", StringComparison.OrdinalIgnoreCase))
+            {
+                append = true;
+            }
+            else if (word.Equals("-v7.3", StringComparison.OrdinalIgnoreCase))
+            {
+                throw new JgsRuntimeException(line, col,
+                    "save writes version 5 MAT-files only; version 7.3 is an HDF5 format that can be read but not written.");
+            }
+            else if (word is "-v6" or "-v7" or "-V6" or "-V7" || word.Equals("-mat", StringComparison.OrdinalIgnoreCase))
+            {
+                // Version 5 is what every one of these asks for or is happy with; nothing to change.
             }
             else if (word.StartsWith('-'))
             {
@@ -107,24 +121,33 @@ internal static class JgsWorkspaceIo
         {
             if (ascii)
             {
-                SaveAscii(target, selected, line, col);
+                SaveAscii(target, selected, append, line, col);
             }
             else
             {
                 foreach ((string name, JgsValue value) in selected)
                 {
-                    if (!MatFileWriter.CanWrite(value))
+                    if (MatFileWriter.WhyNotWritable(value) is string why)
                     {
-                        throw new JgsRuntimeException(line, col,
-                            $"save: '{name}' is a {value.TypeName}, which cannot be written to a MAT-file.");
+                        throw new JgsRuntimeException(line, col, $"save: '{name}' is {why}.");
                     }
                 }
 
-                MatFileWriter.Write(target, selected);
+                if (append)
+                {
+                    MatFileWriter.Append(target, selected);
+                }
+                else
+                {
+                    MatFileWriter.Write(target, selected);
+                }
             }
         }
-        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or NotSupportedException)
+        catch (Exception ex) when (
+            ex is IOException or UnauthorizedAccessException or NotSupportedException or InvalidDataException)
         {
+            // InvalidDataException reaches here only from -append, which has to read the file it is
+            // about to rewrite; saying so plainly beats "save: ..." with no hint that a read failed.
             throw new JgsRuntimeException(line, col, $"save: {ex.Message}");
         }
 
@@ -132,9 +155,10 @@ internal static class JgsWorkspaceIo
     }
 
     /// <summary>MATLAB's -ascii layout: each variable's rows as lines of %.8g values.</summary>
-    private static void SaveAscii(string path, List<(string Name, JgsValue Value)> variables, int line, int col)
+    private static void SaveAscii(
+        string path, List<(string Name, JgsValue Value)> variables, bool append, int line, int col)
     {
-        using var writer = new StreamWriter(path);
+        using var writer = new StreamWriter(path, append);
         foreach ((string name, JgsValue value) in variables)
         {
             foreach (double[] row in NumericRows(name, value, line, col))
@@ -211,13 +235,8 @@ internal static class JgsWorkspaceIo
             }
 
             var loaded = new Dictionary<string, JgsValue>(StringComparer.Ordinal);
-            foreach ((string name, JgsValue value) in MatFileReader.Read(source))
+            foreach ((string name, JgsValue value) in MatFileReader.Read(source, wanted.Count > 0 ? wanted : null))
             {
-                if (wanted.Count > 0 && !wanted.Contains(name))
-                {
-                    continue;
-                }
-
                 environment.Declare(name, value);
                 loaded[name] = value;
             }

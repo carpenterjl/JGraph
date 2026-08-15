@@ -21,7 +21,9 @@ internal static class MatConstants
     // Array classes (the first byte of the array-flags word).
     public const int MxCell = 1;
     public const int MxStruct = 2;
+    public const int MxObject = 3;
     public const int MxChar = 4;
+    public const int MxSparse = 5;
     public const int MxDouble = 6;
     public const int MxSingle = 7;
     public const int MxInt8 = 8;
@@ -35,6 +37,7 @@ internal static class MatConstants
 
     // Array-flag bits.
     public const int FlagComplex = 0x0800;
+    public const int FlagGlobal = 0x0400;
     public const int FlagLogical = 0x0200;
 
     /// <summary>Struct field names are stored in fixed 32-byte slots (31 chars + terminator).</summary>

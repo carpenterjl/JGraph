@@ -154,10 +154,13 @@ public class JgsIndexingTests : IDisposable
         Assert.False(result.Success);
         Assert.Contains("out of range", Assert.Single(result.Diagnostics).Message);
 
-        ScriptRunResult structResult = await Run("let s = struct()\nprint(s(0))");
+        // A struct is a 1-by-1 struct array since M65, so s(0) is its one element rather than an
+        // error — a JGS change the freeze allows because it turns a refusal into an answer. Reaching
+        // past the end is still out of range, which is what this half of the test now pins.
+        ScriptRunResult structResult = await Run("let s = struct()\nprint(s(1))");
 
         Assert.False(structResult.Success);
-        Assert.Contains("struct", Assert.Single(structResult.Diagnostics).Message);
+        Assert.Contains("out of range", Assert.Single(structResult.Diagnostics).Message);
     }
 
     [Fact]

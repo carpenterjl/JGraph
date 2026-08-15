@@ -57,8 +57,8 @@ see. This file refused to count them while they drew nothing; **M56 made them re
 number and this one agree again. `opengl` *is* counted, because an accepted no-op is an answer — the
 same reading that counted `shading`, `lighting` and `camlight` in M43.
 
-Across every callable kind — builtin, function, operator, keyword, script — the count is **867 of
-2,027** as of M64 (814 after M60, 781 after M59, 758 after M58, 742 after M57, 728 after M56, 710 after M55 by this file's nine-short reading above, 697 after M54, 633 after
+Across every callable kind — builtin, function, operator, keyword, script — the count is **880 of
+2,027** as of M65 (867 after M64, 814 after M60, 781 after M59, 758 after M58, 742 after M57, 728 after M56, 710 after M55 by this file's nine-short reading above, 697 after M54, 633 after
 M52, 619 after M51, up from 560, and not from the 556 this file used to claim: the checklist tool
 read the implemented set with a regular expression that only matched a name literal directly inside
 `Add(`, so it missed the sixteen colormap generators, which are registered from a loop, and reported
@@ -745,6 +745,31 @@ why the type cost one boolean on the value rather than a member on the type enum
 [ADR 0063](adr/0063-string-arrays.md) records the demotion boundary that let ~2,500 builtins go
 unedited, the two pre-existing defects the new type surfaced (`legend({'a','b'})` read as handles,
 and `[a b]` never joining two char rows held in variables), and the divergences that remain.
+
+M65 moved this table by **none** and the across-every-kind total by **thirteen**, and the split is
+the milestone in miniature. The thirteen are `writematrix` `writecell` `writetable` `readmatrix`
+`readcell` `readlines` `csvwrite` `dlmwrite` `struct2table` `table2struct` `orderfields` `getfield`
+`setfield`, every one documented as kind *function*; `writelines` is a fourteenth name implemented
+here that is not in this install's documented set at all, so no arithmetic over these tables can see
+it. `struct` itself MATLAB documents as a *class*, which is why the milestone that made struct arrays
+real cannot move the builtin table by so much as one.
+
+What it closed is again not countable that way. `class(S)` answered `'cell'` for a struct array,
+because that is what one was — a cell whose elements happened all to be structs, recognised by
+scanning it. That representation could hold a state the type forbids (elements with different field
+sets) and could not tell itself apart from a cell a script had built by hand, so `iscell(regionprops(
+...))` was true and a script branching on it took the wrong arm silently. And until this milestone
+nothing here could *write* a data file at all: reading has been possible since M10, which made the
+environment a one-way door.
+
+[ADR 0065](adr/0065-struct-arrays-and-data-out.md) records why this type earned storage of its own
+where M63's and M64's did not, the three deliberate test flips (including the one-line edit to a
+frozen stress script), the version 5 completion, and the read-only version 7.3 parser — with its
+recorded limits, and with the reason its fixtures are written by a real HDF5 library rather than by
+hand: a hand-rolled writer agreeing with a hand-rolled reader proves only that the two share an
+opinion. Two divergences older than the milestone are recorded there rather than fixed in it:
+`fieldnames` answers a row where MATLAB answers a column, and a char matrix is a column of char rows
+rather than a matrix of characters, which is also why `class` calls one `'double'`.
 
 M52 left these behind, each named rather than silent (the full table is in
 [ADR 0052](adr/0052-the-documented-argument-surface.md)):
