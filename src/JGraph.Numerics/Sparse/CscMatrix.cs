@@ -120,6 +120,28 @@ public sealed class CscMatrix
         return flat;
     }
 
+    /// <summary>
+    /// One entry, without expanding anything. A stored zero and an absent entry are the same number,
+    /// which is why a lookup that finds nothing is an answer rather than a miss.
+    /// </summary>
+    public double At(int row, int col)
+    {
+        if (row < 0 || row >= Rows || col < 0 || col >= Cols)
+        {
+            throw new ArgumentOutOfRangeException(nameof(row), "Subscript is outside the matrix.");
+        }
+
+        for (int i = ColumnStarts[col]; i < ColumnStarts[col + 1]; i++)
+        {
+            if (RowIndices[i] == row)
+            {
+                return Values[i];
+            }
+        }
+
+        return 0;
+    }
+
     public CscMatrix Transpose()
     {
         var triplets = new List<(int, int, double)>(NonZeroCount);
@@ -254,9 +276,116 @@ public sealed class CscMatrix
     /// </summary>
     public (CscMatrix Lower, CscMatrix Upper) LowerUpper()
     {
+        Factorization factored = Factorize("lu");
+        int size = Rows;
+        var lowerTriplets = new List<(int, int, double)>();
+
+        // With original-row storage the permutation is already folded into L (MATLAB's
+        // [L, U] = lu(A) form): column k's unit diagonal sits on the row that supplied pivot k.
+        for (int k = 0; k < size; k++)
+        {
+            lowerTriplets.Add((factored.Permutation[k], k, 1));
+            foreach ((int row, double value) in factored.LowerColumns[k]!)
+            {
+                lowerTriplets.Add((row, k, value));
+            }
+        }
+
+        var upperTriplets = new List<(int, int, double)>();
+        for (int k = 0; k < size; k++)
+        {
+            foreach ((int row, double value) in factored.UpperColumns[k]!)
+            {
+                upperTriplets.Add((row, k, value));
+            }
+        }
+
+        return (FromTriplets(size, size, lowerTriplets), FromTriplets(size, size, upperTriplets));
+    }
+
+    /// <summary>
+    /// Solves <c>A·x = b</c> through the same factorization, in pivot order. Going through
+    /// <see cref="LowerUpper"/> and substituting afterwards would mean recovering the permutation from
+    /// L's pattern; keeping it here means the substitutions know it.
+    /// </summary>
+    public double[] Solve(double[] b)
+    {
+        if (b.Length != Rows)
+        {
+            throw new ArgumentException($"A {Rows}x{Cols} matrix cannot be solved against {b.Length} values.");
+        }
+
+        Factorization factored = Factorize("\\");
+        int n = Rows;
+
+        // Forward substitution against unit lower triangular L, in pivot order.
+        var y = new double[n];
+        for (int k = 0; k < n; k++)
+        {
+            y[k] = b[factored.Permutation[k]];
+        }
+
+        for (int k = 0; k < n; k++)
+        {
+            double value = y[k];
+            if (value == 0)
+            {
+                continue;
+            }
+
+            foreach ((int row, double multiplier) in factored.LowerColumns[k]!)
+            {
+                y[factored.WhereIs[row]] -= multiplier * value;
+            }
+        }
+
+        // Back substitution against U, column by column rather than row by row: U is stored by
+        // column, and a row-oriented sweep would have to transpose it first — the same substitution
+        // read the other way round.
+        var x = new double[n];
+        for (int k = n - 1; k >= 0; k--)
+        {
+            double diagonal = 0;
+            foreach ((int row, double value) in factored.UpperColumns[k]!)
+            {
+                if (row == k)
+                {
+                    diagonal = value;
+                }
+            }
+
+            if (diagonal == 0)
+            {
+                throw new InvalidOperationException("The matrix is singular: the system has no single solution.");
+            }
+
+            x[k] = y[k] / diagonal;
+            foreach ((int row, double value) in factored.UpperColumns[k]!)
+            {
+                if (row != k)
+                {
+                    y[row] -= value * x[k];
+                }
+            }
+        }
+
+        // x is indexed by column, which is the order the answer is asked in: only the rows were
+        // permuted, and the forward solve above already undid that.
+        return x;
+    }
+
+    /// <summary>What one Gilbert–Peierls pass leaves behind: the pivot order and the two factors by column.</summary>
+    private readonly record struct Factorization(
+        int[] Permutation,
+        int[] WhereIs,
+        List<(int Row, double Value)>?[] LowerColumns,
+        List<(int Row, double Value)>?[] UpperColumns);
+
+    private Factorization Factorize(string name)
+    {
         if (Rows != Cols)
         {
-            throw new ArgumentException("lu needs a square matrix.");
+            throw new ArgumentException($"{name} needs a square matrix.");
         }
 
         int n = Rows;
@@ -268,17 +397,17 @@ public sealed class CscMatrix
             whereIs[i] = i;
         }
 
-        var lowerTriplets = new List<(int, int, double)>();
-        var upperTriplets = new List<(int, int, double)>();
         var column = new double[n]; // dense working column, indexed by ORIGINAL row
 
         // L's columns store ORIGINAL row indices: a multiplier belongs to its row forever, and the
         // delayed pivot swaps then need no fix-up — a position-indexed store would silently hand a
         // multiplier to whichever row a later swap moved into that position.
         var lowerColumns = new List<(int Row, double Value)>[n];
+        var upperColumns = new List<(int Row, double Value)>[n];
 
         for (int k = 0; k < n; k++)
         {
+            upperColumns[k] = [];
             for (int i = ColumnStarts[k]; i < ColumnStarts[k + 1]; i++)
             {
                 column[RowIndices[i]] = Values[i];
@@ -294,7 +423,7 @@ public sealed class CscMatrix
                     continue;
                 }
 
-                upperTriplets.Add((j, k, pivotValue));
+                upperColumns[k]!.Add((j, pivotValue));
                 foreach ((int row, double value) in lowerColumns[j]!)
                 {
                     column[row] -= pivotValue * value;
@@ -333,7 +462,7 @@ public sealed class CscMatrix
             }
 
             double pivot = column[permutation[k]];
-            upperTriplets.Add((k, k, pivot));
+            upperColumns[k]!.Add((k, pivot));
             var lowerColumn = new List<(int Row, double Value)>();
             for (int p = k + 1; p < n; p++)
             {
@@ -350,18 +479,7 @@ public sealed class CscMatrix
             lowerColumns[k] = lowerColumn;
         }
 
-        // With original-row storage the permutation is already folded into L (MATLAB's
-        // [L, U] = lu(A) form): column k's unit diagonal sits on the row that supplied pivot k.
-        for (int k = 0; k < n; k++)
-        {
-            lowerTriplets.Add((permutation[k], k, 1));
-            foreach ((int row, double value) in lowerColumns[k]!)
-            {
-                lowerTriplets.Add((row, k, value));
-            }
-        }
-
-        return (FromTriplets(n, n, lowerTriplets), FromTriplets(n, n, upperTriplets));
+        return new Factorization(permutation, whereIs, lowerColumns, upperColumns);
     }
 
     /// <summary>

@@ -179,6 +179,120 @@ internal static partial class JgsBuiltins
             (args, _, line, col) => Eigenpairs(args, line, col));
     }
 
+    /// <summary>How many elements a sparse subscript may materialize before it is refused by name.</summary>
+    /// <remarks>
+    /// A scalar subscript never materializes anything. Anything else goes through the dense value, and
+    /// a sparse matrix is exactly the shape that has no business becoming dense: a 10⁶-by-10⁶ pattern
+    /// is a few megabytes sparse and a petabyte dense. The limit is where an accident stops being
+    /// affordable, and the message names <c>find</c>, which answers the same question without it.
+    /// </remarks>
+    private const long SparseSubscriptLimit = 4_000_000;
+
+    /// <summary>
+    /// Whether a subscripted name is a sparse matrix being indexed rather than a function being
+    /// called — the same question a struct array and a keyed collection each had to answer, for the
+    /// same reason: a name followed by parentheses parses as a call until something says otherwise.
+    /// </summary>
+    internal static bool IsSparseSubscript(JgsValue callee) => callee.Type == JgsType.Sparse;
+
+    /// <summary>
+    /// One reading out of a sparse matrix. A pair of scalar subscripts is answered from the stored
+    /// columns; anything wider goes through the dense value and comes back sparse, so
+    /// <c>issparse</c> still says what it should.
+    /// </summary>
+    internal static JgsValue SparseSubscript(
+        JgsValue value, IReadOnlyList<JgsValue> subscripts, JgsDialect dialect, int line, int col)
+    {
+        CscMatrix matrix = value.AsSparse;
+        if (subscripts.Count == 2 && IsScalarSubscript(subscripts[0]) && IsScalarSubscript(subscripts[1]))
+        {
+            int r = (int)subscripts[0].AsNumber - dialect.IndexBase;
+            int c = (int)subscripts[1].AsNumber - dialect.IndexBase;
+            if (r < 0 || r >= matrix.Rows || c < 0 || c >= matrix.Cols)
+            {
+                throw new JgsRuntimeException(line, col,
+                    $"Subscript ({subscripts[0].AsNumber}, {subscripts[1].AsNumber}) is outside a " +
+                    $"{matrix.Rows}x{matrix.Cols} matrix.");
+            }
+
+            return JgsValue.Number(matrix.At(r, c));
+        }
+
+        if (subscripts.Count == 1 && IsScalarSubscript(subscripts[0]))
+        {
+            long index = (long)subscripts[0].AsNumber - dialect.IndexBase;
+            long total = (long)matrix.Rows * matrix.Cols;
+            if (index < 0 || index >= total)
+            {
+                throw new JgsRuntimeException(line, col,
+                    $"Index {subscripts[0].AsNumber} is outside a {matrix.Rows}x{matrix.Cols} matrix.");
+            }
+
+            return JgsValue.Number(matrix.At((int)(index % matrix.Rows), (int)(index / matrix.Rows)));
+        }
+
+        if ((long)matrix.Rows * matrix.Cols > SparseSubscriptLimit)
+        {
+            throw new JgsRuntimeException(line, col,
+                $"A subscript wider than one element reads a {matrix.Rows}x{matrix.Cols} sparse matrix as a " +
+                "dense one, which is too large to hold; use find() to reach its entries.");
+        }
+
+        return JgsValue.Sparse(CscFromDense("subscript", SparseAsDense(matrix), line, col));
+    }
+
+    private static bool IsScalarSubscript(JgsValue value) =>
+        value.Type is JgsType.Number or JgsType.Bool;
+
+    /// <summary>The dense value a sparse matrix stands for — what <c>full</c> hands back.</summary>
+    internal static JgsValue SparseAsDense(CscMatrix matrix) =>
+        JgsMatrix.FromColumnMajorDims(matrix.ToColumnMajor(), [matrix.Rows, matrix.Cols]);
+
+    /// <summary>
+    /// <c>[i, j, v] = find(S)</c> over stored entries, without expanding anything. This is the answer
+    /// a sparse matrix is shaped to give: the entries it holds, in the order it holds them.
+    /// </summary>
+    internal static JgsValue[] SparseFind(
+        CscMatrix matrix, int wanted, JgsDialect dialect, int line, int col)
+    {
+        var rows = new List<double>(matrix.NonZeroCount);
+        var cols = new List<double>(matrix.NonZeroCount);
+        var values = new List<double>(matrix.NonZeroCount);
+        var linear = new List<double>(matrix.NonZeroCount);
+
+        for (int c = 0; c < matrix.Cols; c++)
+        {
+            for (int i = matrix.ColumnStarts[c]; i < matrix.ColumnStarts[c + 1]; i++)
+            {
+                if (matrix.Values[i] == 0)
+                {
+                    continue; // a stored zero is still a zero, and find reports what is nonzero
+                }
+
+                rows.Add(matrix.RowIndices[i] + dialect.IndexBase);
+                cols.Add(c + dialect.IndexBase);
+                values.Add(matrix.Values[i]);
+                linear.Add(((long)c * matrix.Rows) + matrix.RowIndices[i] + dialect.IndexBase);
+            }
+        }
+
+        // MATLAB answers find with columns, whatever shape the input had.
+        JgsValue Column(List<double> from)
+        {
+            JgsValue built = Numbers([.. from]);
+            built.Reshape(from.Count, from.Count == 0 ? 0 : 1);
+            return built;
+        }
+
+        _ = line;
+        _ = col;
+        return wanted <= 1
+            ? [Column(linear)]
+            : wanted == 2
+                ? [Column(rows), Column(cols)]
+                : [Column(rows), Column(cols), Column(values)];
+    }
+
     /// <summary>Converts a dense numeric value to CSC storage, dropping exact zeros.</summary>
     private static CscMatrix CscFromDense(string name, JgsValue value, int line, int col)
     {
@@ -247,6 +361,68 @@ internal static partial class JgsBuiltins
             }
 
             return JgsValue.Sparse(matrix.Scale(scalar));
+        }
+
+        // A\b: the sparse factorization solves it in place of densifying the matrix, which is the
+        // whole reason a script chose sparse storage in the first place.
+        if (op == TokenType.Backslash && left.Type == JgsType.Sparse)
+        {
+            CscMatrix a = left.AsSparse;
+            double[,] rhs = right.Type == JgsType.Sparse
+                ? RectOf("\\", SparseAsDense(right.AsSparse), line, col)
+                : RectOf("\\", right, line, col);
+
+            // A column vector arrives as a row when it was written as one, and a right-hand side is
+            // a column by definition.
+            if (rhs.GetLength(0) == 1 && rhs.GetLength(1) == a.Rows && a.Rows != 1)
+            {
+                var turned = new double[a.Rows, 1];
+                for (int r = 0; r < a.Rows; r++)
+                {
+                    turned[r, 0] = rhs[0, r];
+                }
+
+                rhs = turned;
+            }
+
+            if (rhs.GetLength(0) != a.Rows)
+            {
+                throw new JgsRuntimeException(line, col,
+                    $"Matrix dimensions do not agree for the division: a {a.Rows}x{a.Cols} matrix needs " +
+                    $"{a.Rows} rows on the right, but got {rhs.GetLength(0)}.");
+            }
+
+            int columns = rhs.GetLength(1);
+            var solution = new double[a.Rows, columns];
+            var b = new double[a.Rows];
+            for (int c = 0; c < columns; c++)
+            {
+                for (int r = 0; r < a.Rows; r++)
+                {
+                    b[r] = rhs[r, c];
+                }
+
+                double[] x;
+                try
+                {
+                    x = a.Solve(b);
+                }
+                catch (ArgumentException ex)
+                {
+                    throw new JgsRuntimeException(line, col, ex.Message);
+                }
+                catch (InvalidOperationException ex)
+                {
+                    throw new JgsRuntimeException(line, col, ex.Message);
+                }
+
+                for (int r = 0; r < a.Rows; r++)
+                {
+                    solution[r, c] = x[r];
+                }
+            }
+
+            return FromRect(solution);
         }
 
         // Sparse times a dense matrix or vector: dense result, one matvec per column.

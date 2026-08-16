@@ -57,8 +57,8 @@ see. This file refused to count them while they drew nothing; **M56 made them re
 number and this one agree again. `opengl` *is* counted, because an accepted no-op is an answer — the
 same reading that counted `shading`, `lighting` and `camlight` in M43.
 
-Across every callable kind — builtin, function, operator, keyword, script — the count is **880 of
-2,027** as of M65 (867 after M64, 814 after M60, 781 after M59, 758 after M58, 742 after M57, 728 after M56, 710 after M55 by this file's nine-short reading above, 697 after M54, 633 after
+Across every callable kind — builtin, function, operator, keyword, script — the count is **905 of
+2,027** as of M66 (880 after M65, 867 after M64, 814 after M60, 781 after M59, 758 after M58, 742 after M57, 728 after M56, 710 after M55 by this file's nine-short reading above, 697 after M54, 633 after
 M52, 619 after M51, up from 560, and not from the 556 this file used to claim: the checklist tool
 read the implemented set with a regular expression that only matched a name literal directly inside
 `Add(`, so it missed the sixteen colormap generators, which are registered from a loop, and reported
@@ -771,6 +771,24 @@ opinion. Two divergences older than the milestone are recorded there rather than
 `fieldnames` answers a row where MATLAB answers a column, and a char matrix is a column of char rows
 rather than a matrix of characters, which is also why `class` calls one `'double'`.
 
+M66 moved this table by **none** and the across-every-kind total by **twenty-five**, from
+twenty-eight new names. Every one of the twenty-eight is documented as kind *function*, so the
+builtin table above cannot move; three of them — `normalize`, `discretize` and `groupsummary` — appear
+in this install's index only in class-qualified form (`double.normalize`, `datetime.discretize`,
+`table.groupsummary`) and have no bare row to check, which is the same shape of uncountability
+`writelines` had in M65. The twenty-five that count are `rescale` `fillmissing` `rmmissing`
+`islocalmax` `islocalmin` `smoothdata` `kron` `perms` `factor` `idivide` `interp2` `speye` `nzmax`
+`symrcm` `amd` `symamd` `dissect` `dmperm` `etree` `symbfact` `ichol` `ilu` `balance` `qz` `ordqz`.
+
+Two of the milestone's changes are not names at all and so appear in no count here. `'SamplePoints'`
+went from a refusal to a working option on the nine `mov*` statistics: with it the window is a
+distance along the places the readings were taken rather than a count of elements, which is a
+different answer, not a better-spelled one. And the relational operators stopped refusing complex
+operands: MATLAB orders complex numbers by their real parts and discards the imaginary ones, so
+`(1+9i) < (1-9i)` is false and so is the other way round, while `sort` — which goes by magnitude —
+puts the same two in a definite order. Both were flips of existing tests, enumerated in
+[ADR 0066](adr/0066-numeric-and-sparse-remainders.md).
+
 M52 left these behind, each named rather than silent (the full table is in
 [ADR 0052](adr/0052-the-documented-argument-surface.md)):
 
@@ -784,14 +802,19 @@ M52 left these behind, each named rather than silent (the full table is in
 - **The elementwise string verbs do not map over a cell.** `strtrim`, `strrep`, `strcat`,
   `str2double`, `contains` and `join` each want one string where MATLAB takes a cell of them; one
   shared wrapper covers all six.
-- **`zeros(n, 'uint8')` and `size(A, [1 2])`** are argument-shape gaps, not capability gaps — the
-  class tag has existed since M47.
-- **The data-preprocessing family** (`normalize` `rescale` `discretize` `fillmissing` `rmmissing`
-  `islocalmax` `islocalmin` `smoothdata` `groupsummary`) and **the string-editing family** (`pad`
-  `erase` `insertAfter` `insertBefore` `extractBefore` `extractAfter` `extractBetween`) are each a
-  wave of their own. So are `kron`, `perms`, `factor` and `idivide`, which are trivial each.
-- **`interp2`, `'native'` output classes, `histogram` object options and `'SamplePoints'`** were
-  scoped out of M52 deliberately.
+- ~~**`zeros(n, 'uint8')` and `size(A, [1 2])`** are argument-shape gaps, not capability gaps — the
+  class tag has existed since M47.~~ **Closed in M66**, and the entry was right about both: the class
+  is read off the end of the constructor's arguments and applied to whatever the existing shape logic
+  built, so `'like'` came free, and `size` now takes a dimension vector or several dimensions with no
+  new machinery underneath.
+- ~~**The data-preprocessing family** (`normalize` `rescale` `discretize` `fillmissing` `rmmissing`
+  `islocalmax` `islocalmin` `smoothdata` `groupsummary`)~~ **closed in M66 as its own wave**, as this
+  entry expected — and **the string-editing family** (`pad` `erase` `insertAfter` `insertBefore`
+  `extractBefore` `extractAfter` `extractBetween`) closed in M63. ~~So are `kron`, `perms`, `factor`
+  and `idivide`, which are trivial each.~~ Those four closed in M66 too, and were indeed trivial each.
+- ~~**`interp2`, `'native'` output classes, `histogram` object options and `'SamplePoints'`** were
+  scoped out of M52 deliberately.~~ **`interp2` and `'SamplePoints'` closed in M66**; `'native'`
+  output classes and the `histogram` object options are still out.
 
 ## Not implemented — 129
 

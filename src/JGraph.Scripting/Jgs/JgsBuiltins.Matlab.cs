@@ -585,6 +585,19 @@ internal static partial class JgsBuiltins
                 return [result];
             }
 
+            if (args.Count > 1)
+            {
+                // The call already said which dimensions it wants, so each output is one of them
+                // rather than a share of every dimension there is — no folding, no padding.
+                var picked = new JgsValue[System.Math.Max(1, wanted)];
+                for (int i = 0; i < picked.Length; i++)
+                {
+                    picked[i] = i < result.ArrayLength ? result.ElementAt(i) : JgsValue.Number(1);
+                }
+
+                return picked;
+            }
+
             var dimensions = new double[result.ArrayLength];
             for (int i = 0; i < dimensions.Length; i++)
             {
@@ -701,6 +714,15 @@ internal static partial class JgsBuiltins
         IReadOnlyList<JgsValue> args, JgsDialect dialect, int outputs, int line, int col)
     {
         ArityRange("find", args, 1, dialect.IsMatlab ? 3 : 2, line, col);
+
+        // A sparse matrix answers find from what it stores rather than from what it stands for, which
+        // is the reason it is stored that way: a pattern with a thousand entries in a matrix of a
+        // billion places should cost a thousand.
+        if (args.Count > 0 && args[0].Type == JgsType.Sparse)
+        {
+            return SparseFind(args[0].AsSparse, outputs, dialect, line, col);
+        }
+
         (int origin, int? wanted, bool fromEnd) = FindLimit("find", args, dialect, line, col);
 
         var rows = new List<JgsValue>();

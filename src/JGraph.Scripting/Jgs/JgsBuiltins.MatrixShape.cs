@@ -370,6 +370,54 @@ internal static partial class JgsBuiltins
     private static JgsValue NdConstructorValue(
         string name, IReadOnlyList<JgsValue> args, int line, int col, Func<double> next)
     {
+        (args, JgsNumericClass? asked) = ClassSuffix(name, args, line, col);
+        JgsValue built = NdConstructorOfDoubles(name, args, line, col, next);
+        return asked is { } numericClass
+            ? ToNumericClass(name, numericClass, built, line, col)
+            : built;
+    }
+
+    /// <summary>
+    /// The trailing class of a constructor call: <c>zeros(2, 'uint8')</c> and
+    /// <c>zeros(2, 'like', x)</c>. Both are read off the end and removed, so the shape logic below
+    /// never learns that a class exists — the class is applied to whatever it built.
+    /// </summary>
+    /// <remarks>
+    /// <c>'like'</c> takes the class from a prototype value rather than from a word, which is how a
+    /// function writes "same kind of array as the one I was handed" without knowing what kind that is.
+    /// </remarks>
+    private static (IReadOnlyList<JgsValue> Shape, JgsNumericClass? Class) ClassSuffix(
+        string name, IReadOnlyList<JgsValue> args, int line, int col)
+    {
+        if (args.Count >= 2 && IsTextScalar(args[^2]) && string.Equals(TextOf(args[^2]), "like", StringComparison.OrdinalIgnoreCase))
+        {
+            JgsNumericClass? prototype = JgsNumericClasses.Parse(ClassOf(args[^1], JgsDialect.Matlab));
+            if (prototype is null)
+            {
+                throw new JgsRuntimeException(line, col,
+                    $"{name}: 'like' copies a numeric class, and a {args[^1].TypeName} has none.");
+            }
+
+            return (args.Take(args.Count - 2).ToList(), prototype);
+        }
+
+        if (args.Count >= 1 && IsTextScalar(args[^1]))
+        {
+            string word = TextOf(args[^1]);
+            if (JgsNumericClasses.Parse(word) is { } named)
+            {
+                return (args.Take(args.Count - 1).ToList(), named);
+            }
+
+            throw new JgsRuntimeException(line, col, $"{name}: JGraph has no '{word}' class.");
+        }
+
+        return (args, null);
+    }
+
+    private static JgsValue NdConstructorOfDoubles(
+        string name, IReadOnlyList<JgsValue> args, int line, int col, Func<double> next)
+    {
         int[] dims = SquareDims(name, args, line, col);
         bool scalar = true;
         long count = 1;

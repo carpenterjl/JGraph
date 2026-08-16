@@ -150,17 +150,23 @@ public class MatlabMovingWindowTests : IDisposable
         """);
 
     /// <summary>
-    /// <c>'SamplePoints'</c> weights the window by where each reading was taken rather than by how many
-    /// elements are in it. Refusing it by name is the point: a script that passes it is asking for
-    /// something else, and quietly counting elements instead would answer the wrong question.
+    /// <c>'SamplePoints'</c> places the readings where they were taken, so the window is a distance
+    /// along those places rather than a count of elements. M66 built it; before that it was refused
+    /// by name, because quietly counting elements would have answered a different question.
     /// </summary>
     [Fact]
-    public Task SamplePointsIsRefusedByNameRatherThanIgnored() => RunAsserting("""
+    public Task SamplePointsMakeTheWindowADistance() => RunAsserting("""
+        % The last reading sits far from the rest, so nothing else falls inside its window.
+        spread = movmean([1 2 3], 3, 'SamplePoints', [1 2 20]);
+        assert(abs(spread(3) - 3) < 1e-12);
+        assert(abs(spread(1) - 1.5) < 1e-12);
+
+        % Padding needs places outside the data, and sample points say there are none.
         ok = 0;
         try
-            movmean([1 2 3], 3, 'SamplePoints', [1 2 4]);
+            movmean([1 2 3], 3, 'SamplePoints', [1 2 4], 'Endpoints', 0);
         catch err
-            ok = ~isempty(strfind(err.message, 'SamplePoints'));
+            ok = ~isempty(strfind(err.message, 'nowhere to pad'));
         end
         assert(ok == 1);
         """);

@@ -69,15 +69,19 @@ public class JgsComplexTests : IDisposable
         Assert.Equal("[5, 13]", await Eval("abs([3 + 4i, 5 + 12i])"));
     }
 
+    /// <summary>
+    /// Ordering compares real parts, which M66 changed from an error. Two purely imaginary numbers
+    /// therefore compare equal under <c>&lt;</c> — MATLAB's rule, and the reason this used to refuse
+    /// rather than answer.
+    /// </summary>
     [Fact]
-    public async Task Equality_Works_ButOrderingErrors()
+    public async Task Equality_Works_AndOrderingReadsTheRealPart()
     {
         Assert.Equal("true", await Eval("(1 + 2i) == (1 + 2i)"));
         Assert.Equal("true", await Eval("(1 + 2i) ~= (1 + 3i)"));
 
-        ScriptRunResult result = await Run("print(1i < 2i)");
-        Assert.False(result.Success);
-        Assert.Contains("not defined for complex numbers", Assert.Single(result.Diagnostics).Message);
+        Assert.Equal("false", await Eval("1i < 2i"));
+        Assert.Equal("true", await Eval("(1 + 9i) < (3 - 9i)"));
     }
 
     [Fact]

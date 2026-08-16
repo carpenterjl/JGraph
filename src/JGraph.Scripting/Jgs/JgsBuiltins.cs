@@ -531,17 +531,38 @@ internal static partial class JgsBuiltins
 
         Define("size", (args, line, col) =>
         {
-            ArityRange("size", args, 1, 2, line, col);
-            int[] dims = SizeDims(args[0]);
-
-            if (args.Count == 2)
+            if (args.Count == 0)
             {
-                int dim = Count("size", args, 1, line, col);
-                // Dimensions past the value's rank are 1, exactly as in MATLAB.
-                return JgsValue.Number(dim >= 1 && dim <= dims.Length ? dims[dim - 1] : 1);
+                throw new JgsRuntimeException(line, col, "size needs a value to measure.");
             }
 
-            return JgsValue.Array(Array.ConvertAll(dims, static d => JgsValue.Number(d)));
+            int[] dims = SizeDims(args[0]);
+
+            // Dimensions past the value's rank are 1, exactly as in MATLAB.
+            double Extent(double dim) => dim >= 1 && dim <= dims.Length ? dims[(int)dim - 1] : 1;
+
+            if (args.Count == 1)
+            {
+                return JgsValue.Array(Array.ConvertAll(dims, static d => JgsValue.Number(d)));
+            }
+
+            // size(A, dim), size(A, [d1 d2]) and size(A, d1, d2) are three spellings of one question,
+            // and the answer's shape follows the question's: one number in, one number out.
+            var asked = new List<double>();
+            for (int i = 1; i < args.Count; i++)
+            {
+                // A dimension outside the value's rank answers 1 rather than refusing, which is what
+                // MATLAB does past the rank and what JGS callers have always got at the low end. The
+                // leniency is deliberate: JGS is frozen, so a call that worked must keep working.
+                foreach (double dim in NumericVector("size", args[i], line, col))
+                {
+                    asked.Add(dim);
+                }
+            }
+
+            return asked.Count == 1
+                ? JgsValue.Number(Extent(asked[0]))
+                : Numbers([.. asked.Select(Extent)]);
         });
 
         // height and width are how a MATLAB script asks a table how big it is, and since R2020b
@@ -934,6 +955,11 @@ internal static partial class JgsBuiltins
         Define("find", (args, line, col) =>
         {
             ArityRange("find", args, 1, dialect.IsMatlab ? 3 : 2, line, col);
+            if (args[0].Type == JgsType.Sparse)
+            {
+                return SparseFind(args[0].AsSparse, 1, dialect, line, col)[0];
+            }
+
             (int origin, int? wanted, bool fromEnd) = FindLimit("find", args, dialect, line, col);
 
             if (args[0].Type == JgsType.Array && args[0].IsPacked)
@@ -1981,6 +2007,8 @@ internal static partial class JgsBuiltins
         RegisterLinearAlgebraBuiltins(env, dialect);
         RegisterMatrixFunctionBuiltins(env);
         RegisterSparseBuiltins(env, random);
+        RegisterSparseOrderingBuiltins(env, dialect);
+        RegisterGeneralizedBuiltins(env);
         RegisterDataTypeBuiltins(env);
         RegisterFileIoBuiltins(env, host);
         RegisterElementaryBuiltins(env, dialect);
@@ -2030,6 +2058,11 @@ internal static partial class JgsBuiltins
         // the reductions, so rms is wrapped for a dimension the same way mean is.
         RegisterDataAnalysisBuiltins(env, dialect);
         RegisterSetOperations(env, dialect);
+
+        // The preprocessing family (M66) after the data analysis it shares a binning rule with, so
+        // discretize and histcounts cannot be given two different opinions about where a bin starts.
+        RegisterPreprocessingBuiltins(env, dialect);
+        RegisterNumericExtraBuiltins(env);
 
         // The Statistics Toolbox (M53), after the base names it replaces or leans on and before the
         // reductions, so a statistic that reduces columns is wrapped for a dimension exactly once.

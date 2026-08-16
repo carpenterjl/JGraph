@@ -381,8 +381,12 @@ internal sealed partial class Interpreter
     {
         foreach (ArgumentSpec spec in statement.Arguments)
         {
-            if (!env.TryGet(spec.Name, out JgsValue value))
+            // The frame's own bindings, not the whole chain: a parameter named after a builtin was
+            // otherwise found in the global scope and took the builtin's function value instead of
+            // its declared default.
+            if (!env.DeclaresLocally(spec.Name) || !env.TryGet(spec.Name, out JgsValue value))
             {
+                value = JgsValue.Null;
                 if (spec.Default is null)
                 {
                     throw new JgsRuntimeException(statement.Line, statement.Column,
@@ -3043,6 +3047,15 @@ internal sealed partial class Interpreter
             return IndexStruct(callee, call.Arguments, call, env);
         }
 
+        // S(i, j) on a sparse matrix is a subscript, arriving here for the same reason a struct array
+        // and a keyed collection do: parentheses after a name read as a call until something says
+        // otherwise, and until M66 nothing said so for sparse.
+        if (JgsBuiltins.IsSparseSubscript(callee) && call.Arguments.Count > 0)
+        {
+            return JgsBuiltins.SparseSubscript(
+                callee, EvaluateAll(call.Arguments, env), Dialect, call.Line, call.Column);
+        }
+
         if (callee.Type != JgsType.Function)
         {
             throw new JgsRuntimeException(call.Line, call.Column, $"Cannot call a {callee.TypeName}; it is not a function.");
@@ -4594,6 +4607,13 @@ internal sealed partial class Interpreter
             return transpose.Conjugate ? JgsValue.ComplexNum(Complex.Conjugate(value.AsComplex)) : value;
         }
 
+        // A transposed sparse matrix is a sparse matrix. It used to come back dense, which meant the
+        // storage a script chose on purpose was silently discarded by a single quote.
+        if (value.Type == JgsType.Sparse)
+        {
+            return JgsValue.Sparse(value.AsSparse.Transpose());
+        }
+
         if (value.Type != JgsType.Array)
         {
             return value;
@@ -4737,10 +4757,13 @@ internal sealed partial class Interpreter
 
     private JgsValue Compare(JgsValue left, JgsValue right, TokenType opToken, Node at, Func<double, double, bool> op)
     {
+        // MATLAB orders complex numbers by their real parts alone, and discards the imaginary ones
+        // without comment. That is a strange rule — 1+9i and 1-9i compare equal under it — but it is
+        // the rule, and throwing instead meant a ported script stopped at a line MATLAB runs. The
+        // orderings that do use the whole number are sort, max and min, which go by magnitude.
         if (left.Type == JgsType.Complex || right.Type == JgsType.Complex)
         {
-            throw new JgsRuntimeException(at.Line, at.Column,
-                $"Operator '{TokenText(opToken)}' is not defined for complex numbers — compare abs(), real(), or imag() instead.");
+            (left, right) = (RealPartOf(left), RealPartOf(right));
         }
 
         if (IsNumericScalar(left) && IsNumericScalar(right))
@@ -4753,12 +4776,49 @@ internal sealed partial class Interpreter
         {
             string symbol = TokenText(opToken);
             return ShapeLike(
-                JgsValue.Array(Broadcast(left, right, (a, b) => JgsValue.Bool(op(a, b)), symbol, at.Line, at.Column)),
+                JgsValue.Array(Broadcast(
+                    left, right, (a, b) => JgsValue.Bool(op(a, b)), symbol, at.Line, at.Column, byRealPart: true)),
                 left, right);
         }
 
         throw new JgsRuntimeException(at.Line, at.Column,
             $"Operator '{TokenText(opToken)}' needs two numbers, but got {left.TypeName} and {right.TypeName}.");
+    }
+
+    /// <summary>
+    /// A value with its imaginary parts dropped, for the relational operators. An array is walked so
+    /// that a mixed array — real numbers beside complex ones — compares element by element rather
+    /// than refusing on the first complex entry it meets.
+    /// </summary>
+    private static JgsValue RealPartOf(JgsValue value)
+    {
+        if (value.Type == JgsType.Complex)
+        {
+            return JgsValue.Number(value.AsComplex.Real);
+        }
+
+        if (value.Type != JgsType.Array)
+        {
+            return value;
+        }
+
+        JgsValue[] source = value.BoxedElements();
+        var parts = new JgsValue[source.Length];
+        bool anyComplex = false;
+        for (int i = 0; i < source.Length; i++)
+        {
+            anyComplex |= source[i].Type is JgsType.Complex or JgsType.Array;
+            parts[i] = RealPartOf(source[i]);
+        }
+
+        if (!anyComplex)
+        {
+            return value;
+        }
+
+        var stripped = JgsValue.Array(parts);
+        stripped.TakeShapeOf(value);
+        return stripped;
     }
 
     /// <summary>
@@ -4857,13 +4917,21 @@ internal sealed partial class Interpreter
     /// array and a scalar (broadcast). Elements must be numbers or bools (which read as 0/1) — or
     /// complex, when the operator supplies a <paramref name="complexOp"/>.
     /// </summary>
-    private static JgsValue[] Broadcast(JgsValue left, JgsValue right, Func<double, double, JgsValue> combine, string symbol, int line, int column, Func<Complex, Complex, Complex>? complexOp = null)
+    private static JgsValue[] Broadcast(JgsValue left, JgsValue right, Func<double, double, JgsValue> combine, string symbol, int line, int column, Func<Complex, Complex, Complex>? complexOp = null, bool byRealPart = false)
     {
         // Nested arrays recurse, so matrices (arrays of row arrays) broadcast elementwise too:
         // M + M pairs rows, M + scalar spreads the scalar across every row.
         JgsValue Element(JgsValue a, JgsValue b) =>
             a.Type == JgsType.Array || b.Type == JgsType.Array
-                ? JgsValue.Array(Broadcast(a, b, combine, symbol, line, column, complexOp))
+                ? JgsValue.Array(Broadcast(a, b, combine, symbol, line, column, complexOp, byRealPart))
+
+                // The relational operators order complex numbers by their real parts, which is what
+                // byRealPart says: a complex element here is not an error but a number with an
+                // imaginary part that this particular operator has no use for.
+                : byRealPart && (a.Type == JgsType.Complex || b.Type == JgsType.Complex)
+                    ? combine(
+                        RequireComplex(a, symbol, line, column).Real,
+                        RequireComplex(b, symbol, line, column).Real)
                 : a.Type == JgsType.Complex || b.Type == JgsType.Complex
                     ? JgsValue.ComplexNum(RequireComplexOp(complexOp, symbol, line, column)(
                         RequireComplex(a, symbol, line, column), RequireComplex(b, symbol, line, column)))

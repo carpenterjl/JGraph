@@ -70,6 +70,17 @@ internal sealed class JgsEnvironment
     public bool Contains(string name) =>
         _values.ContainsKey(name) || (_parent?.Contains(name) ?? false);
 
+    /// <summary>
+    /// Whether <paramref name="name"/> was declared in this scope itself, without looking outward.
+    /// </summary>
+    /// <remarks>
+    /// The question a call frame asks about its own parameters. Looking outward answers it wrongly:
+    /// every builtin is declared in the outermost scope, so a parameter named after one — <c>factor</c>,
+    /// <c>size</c>, <c>mode</c> — looked bound even when the caller left it out, and its default was
+    /// skipped in favour of the builtin's function value.
+    /// </remarks>
+    public bool DeclaresLocally(string name) => _values.ContainsKey(name);
+
     /// <summary>Looks up <paramref name="name"/>, walking outward. Returns false when it is not defined.</summary>
     public bool TryGet(string name, out JgsValue value)
     {

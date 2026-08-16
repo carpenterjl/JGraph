@@ -946,13 +946,24 @@ internal static partial class JgsBuiltins
                     throw new JgsRuntimeException(line, col, $"{name}(x, k) needs an array and a window width.");
                 }
 
-                if (parsed.Named("SamplePoints") is not null)
+                double[]? points = parsed.Vector("SamplePoints");
+                if (points is not null && parsed.Named("Endpoints") is { Type: JgsType.Number or JgsType.Bool })
                 {
+                    // Padding means putting values at places outside the data, and sample points say
+                    // that those places do not exist. The other three endpoint rules still mean what
+                    // they meant, because each of them only ever asks whether a window was complete.
                     throw new JgsRuntimeException(line, col,
-                        $"{name}: 'SamplePoints' weights the window by where each value was sampled, which JGraph does not do — the window here counts elements.");
+                        $"{name}: 'SamplePoints' places the values where they were sampled, so there is nowhere " +
+                        "to pad; use 'shrink', 'discard' or 'fill'.");
                 }
 
-                (int behind, int ahead) = ReachOf(name, parsed.Positional[1], line, col);
+                (int behind, int ahead) = points is null
+                    ? ReachOf(name, parsed.Positional[1], line, col)
+                    : (0, 0);
+                (double reachBehind, double reachAhead) = points is null
+                    ? (behind, ahead)
+                    : SpanOf(name, parsed.Positional[1], line, col);
+
                 bool omitNan = parsed.OneOf("includenan", "includenan", "omitnan") == "omitnan";
                 (string endpoints, double pad) = EndpointsOf(name, parsed, line, col);
 
@@ -962,7 +973,16 @@ internal static partial class JgsBuiltins
                 var windowed = new double[slices.Length][];
                 for (int s = 0; s < slices.Length; s++)
                 {
-                    windowed[s] = Slide(slices[s], behind, ahead, endpoints, pad, omitNan, identity, statistic);
+                    if (points is not null && points.Length != slices[s].Length)
+                    {
+                        throw new JgsRuntimeException(line, col,
+                            $"{name}: 'SamplePoints' has {points.Length} places for {slices[s].Length} values.");
+                    }
+
+                    windowed[s] = points is null
+                        ? Slide(slices[s], behind, ahead, endpoints, pad, omitNan, identity, statistic)
+                        : SlideOverPoints(
+                            slices[s], points, reachBehind, reachAhead, endpoints, omitNan, identity, statistic);
                 }
 
                 (double[] joined, int[] shape) = JgsMatrix.JoinAlong(windowed, dims, dim);
@@ -1024,6 +1044,87 @@ internal static partial class JgsBuiltins
         // MATLAB centres an odd window on the point; an even one covers the current element and the
         // k/2 before it, so the extra element is behind.
         return (window / 2, (window - 1) / 2);
+    }
+
+    /// <summary>
+    /// How far the window reaches when the values sit at named places rather than at 1, 2, 3. The
+    /// width is then a distance along the sample points, not a count of elements: <c>movmean(x, 3,
+    /// 'SamplePoints', t)</c> averages everything within 1.5 of each reading's own time, whether that
+    /// is two readings or twenty.
+    /// </summary>
+    private static (double Behind, double Ahead) SpanOf(string name, JgsValue width, int line, int col)
+    {
+        double[] size = NumericVector(name, width, line, col);
+        if (size.Length == 2)
+        {
+            if (size[0] < 0 || size[1] < 0)
+            {
+                throw new JgsRuntimeException(line, col,
+                    $"{name}: a [before after] window reaches zero or more each way.");
+            }
+
+            return (size[0], size[1]);
+        }
+
+        if (size.Length != 1)
+        {
+            throw new JgsRuntimeException(line, col,
+                $"{name}: the window is one width or a [before after] pair, but got {size.Length} numbers.");
+        }
+
+        if (!(size[0] > 0))
+        {
+            throw new JgsRuntimeException(line, col, $"{name}: the window must span more than nothing.");
+        }
+
+        return (size[0] / 2, size[0] / 2);
+    }
+
+    /// <summary>
+    /// One slice window by window, where the window is a distance rather than a count. The endpoint
+    /// rules mean what they always meant — a window is incomplete when it would reach past the first
+    /// or last sample point — which is why 'shrink', 'discard' and 'fill' need no special case here.
+    /// </summary>
+    private static double[] SlideOverPoints(
+        double[] values, double[] points, double behind, double ahead, string endpoints,
+        bool omitNan, double identity, Func<double[], double> statistic)
+    {
+        var answers = new List<double>(values.Length);
+
+        for (int i = 0; i < values.Length; i++)
+        {
+            bool complete = points[i] - behind >= points[0] && points[i] + ahead <= points[^1];
+            if (!complete && endpoints == "discard")
+            {
+                continue;
+            }
+
+            if (!complete && endpoints == "fill")
+            {
+                answers.Add(double.NaN);
+                continue;
+            }
+
+            var window = new List<double>();
+            for (int j = 0; j < values.Length; j++)
+            {
+                if (points[j] < points[i] - behind || points[j] > points[i] + ahead)
+                {
+                    continue;
+                }
+
+                if (omitNan && double.IsNaN(values[j]))
+                {
+                    continue;
+                }
+
+                window.Add(values[j]);
+            }
+
+            answers.Add(window.Count == 0 ? identity : statistic([.. window]));
+        }
+
+        return [.. answers];
     }
 
     private static int WholeCount(string name, double value, string what, int line, int col) =>
