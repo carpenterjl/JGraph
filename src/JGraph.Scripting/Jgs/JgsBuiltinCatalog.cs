@@ -883,6 +883,11 @@ public static class JgsBuiltinCatalog
         Add("dctmtx", "The n-by-n orthonormal DCT matrix, so that dct2(A) is D*A*D'.", P("n"));
         Add("radon", "Projects an image at each angle: [sinogram, xp]; the angles default to 0:179.", P("image"), Opt("theta"));
         Add("iradon", "Filtered backprojection: [image, filterResponse]. Words choose the interpolation ('nearest', 'linear') and the filter ('Ram-Lak', 'Shepp-Logan', 'Cosine', 'Hamming', 'Hann', 'none'); a number at most 1 is the frequency scaling and a larger one the output size.", P("sinogram"), P("theta"), Opt("options"));
+        Add("fanbeam", "Fan-beam projections of a picture: [F, sensorPositions, rotationAngles] = fanbeam(I, D). D is the vertex-to-centre distance in pixels.", P("image"), P("D"), Opt("name"), Opt("value"));
+        Add("ifanbeam", "Reconstructs a picture from fan-beam projections: I = ifanbeam(F, D). Takes iradon's Filter, Interpolation, FrequencyScaling and OutputSize as well.", P("F"), P("D"), Opt("name"), Opt("value"));
+        Add("fan2para", "Rebins fan-beam projections as parallel-beam ones: [P, positions, angles] = fan2para(F, D).", P("F"), P("D"), Opt("name"), Opt("value"));
+        Add("para2fan", "Rebins parallel-beam projections as fan-beam ones: [F, positions, angles] = para2fan(P, D).", P("P"), P("D"), Opt("name"), Opt("value"));
+        Add("warp", "Draws a picture on a surface: warp(I), warp(Z, I), or warp(X, Y, Z, I).", Opt("x"), Opt("y"), Opt("z"), P("image"));
         Add("phantom", "The Shepp-Logan head phantom: [picture, ellipses]. Takes a name ('Shepp-Logan', 'Modified Shepp-Logan'), or your own six-column ellipse table.", Opt("definition"), Opt("n"));
         Add("qtdecomp", "Quadtree decomposition as a sparse map of block sizes; splits while a block's spread exceeds the threshold, or while your own test says so.", P("image"), Opt("thresholdOrFun"), Opt("sizeLimits"));
         Add("qtgetblk", "The blocks of a given size a quadtree found: [values, r, c], the values stacked as pages.", P("image"), P("sizes"), P("dim"));
@@ -1649,9 +1654,9 @@ public static class JgsBuiltinCatalog
         Add("stem", "Stem plot: stem(y) or stem(x, y).", P("x"), Opt("y"));
         Add("histogram", "Histogram with bins bars (default 10): histogram(values, bins?) or histogram(table, column, bins?).", P("values"), Opt("bins"));
         Add("errorbar", "Line plot with symmetric error bars: errorbar(x, y, error) or errorbar(table, xColumn, yColumn, errorColumn).", P("x"), P("y"), P("error"));
-        Add("semilogx", "Line plot with a logarithmic x axis.", P("x"), P("y"), Opt("spec"));
-        Add("semilogy", "Line plot with a logarithmic y axis.", P("x"), P("y"), Opt("spec"));
-        Add("loglog", "Line plot with logarithmic x and y axes.", P("x"), P("y"), Opt("spec"));
+        Add("semilogx", "Line plot with a logarithmic x axis: semilogx(x, y) or semilogx(y).", Opt("x"), P("y"), Opt("spec"));
+        Add("semilogy", "Line plot with a logarithmic y axis: semilogy(x, y) or semilogy(y).", Opt("x"), P("y"), Opt("spec"));
+        Add("loglog", "Line plot with logarithmic x and y axes: loglog(x, y) or loglog(y).", Opt("x"), P("y"), Opt("spec"));
         Add("title", "Sets the current axes title, with optional text properties: title('t', 'Color', 'r', 'FontSize', 14).", P("text"), Opt("name"), Opt("value"));
         Add("subtitle", "Sets a second line under the axes title, with the same text properties title takes.", P("text"), Opt("name"), Opt("value"));
         Add("sgtitle", "Sets a title over the whole figure, above every subplot in it.", P("text"), Opt("name"), Opt("value"));
@@ -1795,6 +1800,21 @@ public static class JgsBuiltinCatalog
         Add("hgexport", "Writes a figure to a file; the older spelling of exportgraphics.", Opt("h"), P("filename"));
         Add("copygraphics", "Puts a figure on the clipboard as an image: copygraphics(gcf, 'Resolution', 300).", Opt("h"), Opt("name"), Opt("value"));
         Add("getframe", "Renders a figure to pixels and returns a frame struct holding cdata and colormap: f = getframe or f = getframe(h).", Opt("h"));
+        Add("frame2im", "The picture inside a frame: im = frame2im(f).", P("frame"));
+        Add("im2frame", "Turns a picture into a frame movie can play: f = im2frame(im) or im2frame(indices, map).", P("image"), Opt("map"));
+
+        // M67: the objects a living figure is built from.
+        Add("animatedline", "Creates a line points are added to as a script runs: h = animatedline or animatedline(x, y[, z], 'MaximumNumPoints', n).", Opt("x"), Opt("y"), Opt("z"), Opt("name"), Opt("value"));
+        Add("addpoints", "Adds points to an animated line: addpoints(h, x, y) or addpoints(h, x, y, z).", P("h"), P("x"), P("y"), Opt("z"));
+        Add("getpoints", "The points an animated line holds: [x, y] = getpoints(h).", P("h"));
+        Add("clearpoints", "Empties an animated line without removing it: clearpoints(h).", P("h"));
+        Add("rectangle", "Draws a rectangle in the data's own coordinates: rectangle('Position', [x y w h], 'Curvature', [a b]).", Opt("name"), Opt("value"));
+        Add("axes", "Creates an axes in the current figure and makes it current, or selects an existing one: ax = axes or axes(ax).", Opt("ax"), Opt("name"), Opt("value"));
+        Add("groot", "The root every figure hangs from: get(groot, 'ScreenSize').");
+        Add("reset", "Puts a figure or axes back to its default settings and clears what was drawn: reset(gca).", P("h"));
+        Add("waitfor", "Waits for something a person does to change an object; a script run has nobody in it, so this returns at once.", P("h"), Opt("property"), Opt("value"));
+        Add("hggroup", "Groups drawn objects so they can be shown, hidden and found together: g = hggroup; set(h, 'Parent', g).", Opt("name"), Opt("value"));
+        Add("hgtransform", "A group whose Matrix moves its members: t = hgtransform; set(t, 'Matrix', makehgtform('translate', [1 0 0])).", Opt("name"), Opt("value"));
 
         // What a script hangs on an object, and what it keeps in step.
         Add("setappdata", "Stores a value on a figure object under a name of your own: setappdata(gcf, 'state', s).", P("h"), P("name"), P("value"));

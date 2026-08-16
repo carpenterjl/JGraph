@@ -726,6 +726,7 @@ internal static partial class JgsBuiltins
         DefineMorphologyBuiltins(define, dialect);
         DefineRegionBuiltins(define, random, dialect);
         DefineTransformBuiltins(define, dialect);
+        RegisterFanBeamBuiltins(define);
         DefineDesignBuiltins(define);
         DefineMetricBuiltins(define, dialect);
         DefineVolumeBuiltins(define, dialect);
@@ -1573,7 +1574,7 @@ internal static partial class JgsBuiltins
         };
 
     /// <summary>Builds a shaped matrix value from a scalar field.</summary>
-    private static JgsValue MatrixToRows(double[,] values)
+    internal static JgsValue MatrixToRows(double[,] values)
     {
         int rows = values.GetLength(0);
         int cols = values.GetLength(1);

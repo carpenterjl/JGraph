@@ -1,6 +1,8 @@
 # MATLAB Image Processing Toolbox coverage
 
-**266 of 409 documented** Image Processing Toolbox names are implemented, as of M46 (complete).
+**270 of 409 documented** Image Processing Toolbox names are implemented, as of M67. M46 finished the
+surface; M67 closed the two entries it had recorded as blocked — `warp`, which was waiting on a
+texture-mapped surface, and the fan-beam trio, which was waiting on nothing but the work.
 
 ## Where this list comes from
 
@@ -32,7 +34,7 @@ counted here too.
 
 JGraph-only names — `mat2im`, `im2mat`, `imcentroid` — are in neither MATLAB nor these counts.
 
-## Implemented — 266
+## Implemented — 270
 `activecontour`, `adapthisteq`, `adaptthresh`, `affine2d`, `affineOutputView`, `applylut`
 `bestblk`, `bfscore`, `blockproc`, `boundarymask`, `bwarea`, `bwareafilt`
 `bwareaopen`, `bwboundaries`, `bwconncomp`, `bwconvhull`, `bwdist`, `bwdistgeodesic`
@@ -78,13 +80,14 @@ JGraph-only names — `mat2im`, `im2mat`, `imcentroid` — are in neither MATLAB
 `superpixels`, `superpixels3`, `transformPointsForward`, `transformPointsInverse`, `visboundaries`, `viscircles`
 `watershed`, `whitepoint`, `wiener2`, `xyz2double`, `xyz2lab`, `xyz2rgb`
 `xyz2uint16`, `ycbcr2rgb`
+`fan2para`, `fanbeam`, `ifanbeam`, `warp`
 
 ## Not implemented — 0
 
 Every documented name outside the exclusions below is implemented. What remains is recorded in
 Excluded, with the reason.
 
-## Excluded — 143 names and 8 families
+## Excluded — 139 names and 8 families
 
 Recorded rather than pending: each needs a subsystem JGraph deliberately does not have, or would
 shadow something that already works.
@@ -98,8 +101,7 @@ shadow something that already works.
 - **`raw`** — Camera RAW: needs a libraw-class decoder per sensor.
 - **`specializedformats`** — Analyze / DPX / Interfile / NIfTI / NITF / multi-frame TIFF: format stacks Skia does not decode.
 
-### Individually excluded — 143
-
+### Individually excluded — 139
 `AssistedFreehand`, `Circle`, `Crosshair`, `Cuboid`, `Ellipse`, `Freehand`
 `Line`, `LocalWeightedMeanTransformation2D`, `MattesMutualInformation`, `MeanSquares`, `OnePlusOneEvolutionary`, `PiecewiseLinearTransformation2D`
 `Point`, `Polygon`, `Polyline`, `PolynomialTransformation2D`, `Rectangle`, `RegularStepGradientDescent`
@@ -108,22 +110,22 @@ shadow something that already works.
 `colorcloud`, `cpcorr`, `cpselect`, `cpstruct2pairs`, `createMask`, `displayChart`
 `displayColorPatch`, `draw`, `drawassisted`, `drawcircle`, `drawcrosshair`, `drawcuboid`
 `drawellipse`, `drawfreehand`, `drawline`, `drawpoint`, `drawpolygon`, `drawpolyline`
-`drawrectangle`, `esfrChart`, `fan2para`, `fanbeam`, `findbounds`, `fitbrisque`
-`fitniqe`, `fliptform`, `geometricTransform2d`, `geometricTransform3d`, `getimage`, `getimagemodel`
-`grabcut`, `iccfind`, `iccread`, `iccroot`, `iccwrite`, `ifanbeam`
-`imageinfo`, `imagemodel`, `imattributes`, `imcolormaptool`, `imcontrast`, `imdisplayrange`
-`imdistline`, `imgca`, `imgcf`, `imgetfile`, `imhandles`, `immagbox`
-`immovie`, `imoverview`, `imoverviewpanel`, `impixelinfo`, `impixelinfoval`, `impixelregion`
-`impixelregionpanel`, `imputfile`, `imref3d`, `imregconfig`, `imregdemons`, `imregister`
-`imregmtb`, `imregtform`, `imsave`, `imscrollpanel`, `imseggeodesic`, `inROI`
-`inpaintCoherent`, `inpaintExemplar`, `iptGetPointerBehavior`, `iptPointerManager`, `iptSetPointerBehavior`, `iptaddcallback`
-`iptcheckhandle`, `iptcheckmap`, `iptgetapi`, `ipticondir`, `iptprefs`, `iptremovecallback`
-`iptwindowalign`, `isicc`, `lazysnapping`, `localcontrast`, `locallapfilt`, `localtonemap`
-`makeConstrainToRectFcn`, `makecform`, `makeresampler`, `maketform`, `measureChromaticAberration`, `measureColor`
-`measureIlluminant`, `measureNoise`, `measureSharpness`, `niqe`, `niqeModel`, `orthosliceViewer`
-`piqe`, `plotChromaticity`, `plotSFR`, `reduce`, `rgbwide2xyz`, `rgbwide2ycbcr`
-`rigid3d`, `sliceViewer`, `tformarray`, `tformfwd`, `tforminv`, `truesize`
-`volshow`, `wait`, `warp`, `xyz2rgbwide`, `ycbcr2rgbwide`
+`drawrectangle`, `esfrChart`, `findbounds`, `fitbrisque`, `fitniqe`, `fliptform`
+`geometricTransform2d`, `geometricTransform3d`, `getimage`, `getimagemodel`, `grabcut`, `iccfind`
+`iccread`, `iccroot`, `iccwrite`, `imageinfo`, `imagemodel`, `imattributes`
+`imcolormaptool`, `imcontrast`, `imdisplayrange`, `imdistline`, `imgca`, `imgcf`
+`imgetfile`, `imhandles`, `immagbox`, `immovie`, `imoverview`, `imoverviewpanel`
+`impixelinfo`, `impixelinfoval`, `impixelregion`, `impixelregionpanel`, `imputfile`, `imref3d`
+`imregconfig`, `imregdemons`, `imregister`, `imregmtb`, `imregtform`, `imsave`
+`imscrollpanel`, `imseggeodesic`, `inROI`, `inpaintCoherent`, `inpaintExemplar`, `iptGetPointerBehavior`
+`iptPointerManager`, `iptSetPointerBehavior`, `iptaddcallback`, `iptcheckhandle`, `iptcheckmap`, `iptgetapi`
+`ipticondir`, `iptprefs`, `iptremovecallback`, `iptwindowalign`, `isicc`, `lazysnapping`
+`localcontrast`, `locallapfilt`, `localtonemap`, `makeConstrainToRectFcn`, `makecform`, `makeresampler`
+`maketform`, `measureChromaticAberration`, `measureColor`, `measureIlluminant`, `measureNoise`, `measureSharpness`
+`niqe`, `niqeModel`, `orthosliceViewer`, `piqe`, `plotChromaticity`, `plotSFR`
+`reduce`, `rgbwide2xyz`, `rgbwide2ycbcr`, `rigid3d`, `sliceViewer`, `tformarray`
+`tformfwd`, `tforminv`, `truesize`, `volshow`, `wait`, `xyz2rgbwide`
+`ycbcr2rgbwide`
 
 By reason:
 
@@ -143,8 +145,7 @@ By reason:
 - **Interactive tools, viewers and ROI objects** — the whole image-tool ecosystem, the `draw*` family
   and its ROI classes, `volshow`, `sliceViewer`, `orthosliceViewer`, `colorcloud` and `iptprefs`.
   JGraph edits figures through its own inspector, and JGS has no graphics-handle value. `immovie`
-  has no movie type to build. `warp` needs a texture-mapped surface the renderer cannot yet draw,
-  and is deferred rather than refused.
+  has no movie type to build.
 - **Research-grade algorithms where a partial mirror would mislead** — `locallapfilt`,
   `localcontrast` and `localtonemap` (fast local Laplacian pyramids); `grabcut`, `lazysnapping` and
   `imseggeodesic` (interactive graph-cut segmentation); `inpaintCoherent` and `inpaintExemplar`;
@@ -152,8 +153,6 @@ By reason:
 - **Learned, no-reference image quality** — `brisque`, `niqe` and `piqe` with their model classes are
   pretrained models JGraph will not ship; the test-chart metrology family is a physical-chart
   workflow built around `esfrChart` and `colorChecker`.
-- **Fan-beam CT** — `fanbeam`, `ifanbeam` and `fan2para` are geometry rebinning on top of the
-  parallel-beam transform, which is planned.
 - **Bit-packed binary images** — `bwpack` and `bwunpack` exist in MATLAB for memory and speed.
   JGraph's buffers already tier their storage, and a packed value no other builtin accepts would be
   a trap.

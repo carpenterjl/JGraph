@@ -63,6 +63,9 @@ internal static class JgsGraphicsProperties
     /// </summary>
     public static string TypeNameOf(GraphObject target) => target switch
     {
+        JgsGraphicsRoot => "root",
+        JgsGraphicsGroup { Transforms: true } => "hgtransform",
+        JgsGraphicsGroup => "hggroup",
         FigureModel => "figure",
 
         // A circle is a different class in MATLAB, and findobj(gcf, 'Type', 'polaraxes') is how a
@@ -140,11 +143,87 @@ internal static class JgsGraphicsProperties
     /// children are the things drawn in it, not its rulers — a ruler is reached through
     /// <c>ax.XAxis</c>, which is where MATLAB puts it too.
     /// </summary>
+    /// <summary>
+    /// Every group a script has made, so that an object can be asked which one owns it. Groups sit
+    /// beside the render tree (see <see cref="JgsGraphicsGroup"/>), so there is nowhere in the model
+    /// to hang this — and a live figure holds only its own objects, which is the point.
+    /// </summary>
+    private static readonly List<JgsGraphicsGroup> Groups = new();
+
+    /// <summary>Records a group so that <c>Parent</c> can find it from one of its members.</summary>
+    public static void Remember(JgsGraphicsGroup group)
+    {
+        lock (Groups)
+        {
+            Groups.Add(group);
+        }
+    }
+
+    /// <summary>Forgets every group — what a fresh run means.</summary>
+    public static void ForgetGroups()
+    {
+        lock (Groups)
+        {
+            Groups.Clear();
+        }
+    }
+
+    /// <summary>The group holding <paramref name="target"/>, or null when nothing does.</summary>
+    private static JgsGraphicsGroup? GroupOwning(GraphObject target)
+    {
+        lock (Groups)
+        {
+            foreach (JgsGraphicsGroup group in Groups)
+            {
+                if (target is PlotObject plot && group.Members.Contains(plot))
+                {
+                    return group;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    /// <summary>
+    /// Moves an object to a new owner: into a group, or from one axes to another. Anything else is
+    /// refused by name rather than silently ignored, because a script that reparents and gets no
+    /// error will believe it happened.
+    /// </summary>
+    private static void Reparent(JgsHandleEntry entry, JgsValue value, int line, int col)
+    {
+        JgsHandleEntry owner = JgsHandleRegistry.Require(value, line, col);
+        if (entry.Target is not PlotObject plot)
+        {
+            throw new JgsRuntimeException(line, col,
+                $"Only a drawn object can be given a new parent, and this handle names a {entry.TypeName}.");
+        }
+
+        switch (owner.Target)
+        {
+            case JgsGraphicsGroup group:
+                group.Adopt(plot);
+                return;
+            case AxesModel axes when !ReferenceEquals(plot.Parent, axes):
+                (plot.Parent as AxesModel)?.Plots.Remove(plot);
+                axes.Plots.Add(plot);
+                return;
+            case AxesModel:
+                return;
+            default:
+                throw new JgsRuntimeException(line, col,
+                    $"A drawn object belongs to an axes or a group, not to a {owner.TypeName}.");
+        }
+    }
+
     public static IReadOnlyList<GraphObject> ChildrenOf(GraphObject target)
     {
         var children = new List<GraphObject>();
         switch (target)
         {
+            case JgsGraphicsGroup group:
+                children.AddRange(group.Members);
+                break;
             case FigureModel figure:
                 children.AddRange(figure.Axes);
                 children.AddRange(figure.Annotations);
@@ -348,10 +427,55 @@ internal static class JgsGraphicsProperties
         Put(table, "HandleVisibility",
             entry => OnOff(entry.HandleVisible),
             (entry, value, line, col) => entry.HandleVisible = ToOnOff("HandleVisibility", value, line, col));
-        Put(table, "Parent", entry => entry.Target.Parent is { } parent
-            ? JgsHandleRegistry.For(parent)
-            : JgsValue.Array([]));
+        // Writable, which is how an object joins a group: MATLAB says it at construction —
+        // plot(x, y, 'Parent', g) — and this build says it afterwards, because a 'Parent' the
+        // property table understands works for every drawn object at once, where a construction
+        // option would have to be taught to each of the drawing verbs one at a time.
+        Put(table, "Parent",
+            entry => entry.Target.Parent is { } parent
+                ? JgsHandleRegistry.For(parent)
+                : GroupOwning(entry.Target) is { } group
+                    ? JgsHandleRegistry.For(group)
+                    : JgsValue.Array([]),
+            (entry, value, line, col) => Reparent(entry, value, line, col));
         Put(table, "Children", entry => HandleRow(ChildrenOf(entry.Target)));
+
+        if (typeof(JgsGraphicsGroup).IsAssignableFrom(type))
+        {
+            Put(table, "Matrix",
+                entry => JgsBuiltins.MatrixToRows(((JgsGraphicsGroup)entry.Target).Matrix),
+                (entry, value, line, col) =>
+                {
+                    var group = (JgsGraphicsGroup)entry.Target;
+                    if (!group.Transforms)
+                    {
+                        throw new JgsRuntimeException(line, col,
+                            "A plain group has no matrix; use hgtransform for one that moves its members.");
+                    }
+
+                    group.SetMatrix(JgsBuiltins.TransformMatrix("hgtransform", value, line, col));
+                });
+
+            // Hiding a group hides what is in it, which is most of what a group is for. The members
+            // are ordinary objects in the axes, so this reaches through to each of them.
+            Put(table, "Visible",
+                entry => OnOff(entry.Target.Visible),
+                (entry, value, line, col) => ((JgsGraphicsGroup)entry.Target).ShowMembers(
+                    ToOnOff("Visible", value, line, col)));
+        }
+
+        if (typeof(JgsGraphicsRoot).IsAssignableFrom(type))
+        {
+            // A rectangle of four numbers is not something the reflection bridge carries, and the
+            // root has nothing but rectangles — so its whole surface is curated.
+            Put(table, "ScreenSize",
+                entry => Row(((JgsGraphicsRoot)entry.Target).ScreenSize));
+            Put(table, "MonitorPositions",
+                entry => Row(((JgsGraphicsRoot)entry.Target).ScreenSize));
+            Put(table, "CurrentFigure", _ => JG.CurrentFigureNumber > 0
+                ? JgsValue.Number(JG.CurrentFigureNumber)
+                : JgsValue.Array([]));
+        }
 
         if (typeof(PlotObject).IsAssignableFrom(type))
         {

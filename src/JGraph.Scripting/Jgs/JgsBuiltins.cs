@@ -1997,6 +1997,11 @@ internal static partial class JgsBuiltins
         // --- Image processing (M24) — defined in JgsBuiltins.Imaging.cs ----------------------
         DefineImagingBuiltins(Define, host, random, dialect);
 
+        // The living-graphics objects (M67) before the MATLAB names, because getpoints answers one
+        // coordinate per output and the wrapper that gives it several is declared over there — and a
+        // wrapper silently does nothing to a name that is not there yet.
+        RegisterLivingGraphicsBuiltins(env);
+
         // --- MATLAB names (M28) — defined in JgsBuiltins.Matlab.cs ---------------------------
         // Registered last: the multiple-output forms wrap builtins declared above.
         RegisterMatlabBuiltins(env, host, random, dialect);
@@ -3055,10 +3060,30 @@ internal static partial class JgsBuiltins
         string name, IReadOnlyList<JgsValue> args, int line, int col,
         Func<double[], double[], string?, PlotObject> apply)
     {
-        ArityRange(name, args, 2, 3, line, col);
-        string? spec = args.Count == 3 ? Str(name, args, 2, line, col) : null;
-        return Handle(apply(
-            DoubleArray(name, args, 0, line, col), DoubleArray(name, args, 1, line, col), spec));
+        ArityRange(name, args, 1, 3, line, col);
+
+        // semilogy(y) counts along the whole numbers, exactly as plot(y) does — the one form of
+        // these three that a script most often reaches for, and the one that used to be refused.
+        // A trailing line spec still names the style, so semilogy(y, 'r--') is told from
+        // semilogx(x, y) by whether the second argument is a word.
+        double[] first = DoubleArray(name, args, 0, line, col);
+        bool implicitX = args.Count == 1 || (args.Count == 2 && args[1].Type == JgsType.String);
+        string? spec = implicitX
+            ? args.Count == 2 ? Str(name, args, 1, line, col) : null
+            : args.Count == 3 ? Str(name, args, 2, line, col) : null;
+
+        if (implicitX)
+        {
+            var counted = new double[first.Length];
+            for (int i = 0; i < counted.Length; i++)
+            {
+                counted[i] = i + 1;
+            }
+
+            return Handle(apply(counted, first, spec));
+        }
+
+        return Handle(apply(first, DoubleArray(name, args, 1, line, col), spec));
     }
 
     // --- RF network table glue -------------------------------------------------------------------

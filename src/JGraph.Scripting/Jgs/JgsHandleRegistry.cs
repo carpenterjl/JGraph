@@ -162,6 +162,7 @@ internal static class JgsHandleRegistry
             FigureEntries.Clear();
             _next = FirstHandle;
             JgsGraphicsCallbackState.Clear();
+            JgsGraphicsProperties.ForgetGroups();
         }
     }
 

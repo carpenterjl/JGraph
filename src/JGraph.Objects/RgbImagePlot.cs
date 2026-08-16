@@ -56,6 +56,27 @@ public sealed class RgbImagePlot : PlotObject, IDrawable
     [Browsable(false)]
     public uint[] Pixels => _pixels;
 
+    /// <summary>
+    /// Replaces every pixel, keeping the size and the data-space rectangle. This is what lets one
+    /// image plot show a sequence of pictures — a played movie, a live camera — without a new object
+    /// per picture: the axes keep the same child, so nothing has to be removed and re-added, and the
+    /// limits do not move under the frames.
+    /// </summary>
+    /// <exception cref="ArgumentException">The replacement is not the same size as the image.</exception>
+    public void SetPixels(ReadOnlySpan<uint> pixelsArgb)
+    {
+        if (pixelsArgb.Length < (long)Width * Height)
+        {
+            throw new ArgumentException(
+                $"pixel buffer has {pixelsArgb.Length} entries, need {(long)Width * Height} for {Width}x{Height}.",
+                nameof(pixelsArgb));
+        }
+
+        pixelsArgb[..((int)((long)Width * Height))].CopyTo(_pixels);
+        _tile = null; // The alpha-scaled cache belongs to the pixels that have just gone.
+        Invalidate(InvalidationKind.Render);
+    }
+
     /// <summary>The data-space X range the image spans (left to right).</summary>
     [Category("Appearance"), DisplayName("X extent")]
     public DataRange XExtent

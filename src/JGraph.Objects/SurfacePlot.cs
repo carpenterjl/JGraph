@@ -70,6 +70,7 @@ public sealed class SurfacePlot : PlotObject, I3DDrawable, IHasZData, ILegendIte
     private double[,]? _xGrid;
     private double[,]? _yGrid;
     private Colormap _colormap = Colormap.Parula;
+    private uint[]? _texture;
     private SurfaceStyle _style = SurfaceStyle.FilledWithWireframe;
     private SurfaceShading _shading = SurfaceShading.Flat;
     private bool _showContourBelow;
@@ -293,6 +294,33 @@ public sealed class SurfacePlot : PlotObject, I3DDrawable, IHasZData, ILegendIte
                 _colormap = value;
                 Invalidate(InvalidationKind.Render);
             }
+        }
+    }
+
+    /// <summary>
+    /// A colour for every grid vertex, row-major and 0xAARRGGBB, or null to take colours from the
+    /// height through the colormap. This is what makes a surface carry a picture: the renderer already
+    /// asks for one colour per vertex or per cell, so a texture is a different answer to a question it
+    /// was asking anyway, rather than a second way of drawing.
+    /// </summary>
+    /// <exception cref="ArgumentException">The array is not one colour per grid vertex.</exception>
+    [Browsable(false)]
+    public uint[]? TextureData
+    {
+        get => _texture;
+        set
+        {
+            int vertices = _z.GetLength(0) * _z.GetLength(1);
+            if (value is not null && value.Length != vertices)
+            {
+                throw new ArgumentException(
+                    $"a surface texture needs one colour per grid vertex: {value.Length} given, {vertices} wanted.",
+                    nameof(value));
+            }
+
+            _texture = value;
+            _palette = null; // The cached colours belong to the mapping that has just been replaced.
+            Invalidate(InvalidationKind.Render);
         }
     }
 
@@ -1013,6 +1041,22 @@ public sealed class SurfacePlot : PlotObject, I3DDrawable, IHasZData, ILegendIte
         }
 
         var built = new uint[rows * cols];
+        if (_texture is { } texture && texture.Length == rows * cols)
+        {
+            // A textured surface takes its colours from the picture rather than from the height. The
+            // per-cell case reads the cell's own corner rather than averaging four texels, because a
+            // texture is meant to be seen as it is and averaging would blur every edge in it.
+            for (int i = 0; i < built.Length; i++)
+            {
+                uint argb = texture[i];
+                uint alpha = (uint)Math.Round(((argb >> 24) & 0xFF) * opacity);
+                built[i] = (alpha << 24) | (argb & 0x00FFFFFF);
+            }
+
+            Volatile.Write(ref _palette, new PaletteCache(built, _colormap, colorMin, colorMax, opacity, perVertex));
+            return built;
+        }
+
         if (perVertex)
         {
             for (int r = 0; r < rows; r++)

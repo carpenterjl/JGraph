@@ -94,6 +94,15 @@ public partial class ScriptWorkspaceWindow : Window
         BuildViewMenu();
         UpdateCommandStates();
 
+        // What makes comet, movie and streamparticles move rather than merely finish. The seam is a
+        // process-wide static, and this window is the application's only shell, so installing it here
+        // covers every interactive run and leaves -batch — which never builds this window — with no
+        // player and the unchanged behaviour of drawing the finished picture.
+        ScriptAnimation.SetPlayer(
+            new FigureAnimationPlayer(
+                Dispatcher, figureWindows, () => _cts?.IsCancellationRequested ?? false).Play);
+        Closed += (_, _) => ScriptAnimation.SetPlayer(null);
+
         // The previous session is restored by RestoreSession(), not here: construction must stay
         // cheap because the container builds this window, and the restore is what the splash reports.
     }

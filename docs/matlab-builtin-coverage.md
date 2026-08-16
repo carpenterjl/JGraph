@@ -7,7 +7,7 @@ so long. The live tracker is `matlab-r2021b-documented.html` in the demo workspa
 `tools/matlab-checklist/build-checklist.py`; this file is the standing summary, so the shape of what
 is left does not have to be re-derived each time.
 
-**386 of 514 builtins implemented** (385 from M60 to M62, 383 after M59, 382 after M54, 372 from M45 to M53, 364 after M43, 363 after
+**412 of 514 builtins implemented** (386 was written here from M63 to M66 and was stale — see the correction below; 385 from M60 to M62, 383 after M59, 382 after M54, 372 from M45 to M53, 364 after M43, 363 after
 M39, 326 after M38, 185 after M37, 109 after M36) — M46 through M53 all added names MATLAB documents
 as *functions*, which this table does not hold. M45's eight are the drawing primitives the "handle
 graphics" section below used to list as missing and call the most useful thing left: `plot3`, `line`,
@@ -17,7 +17,20 @@ handle-graphics builtins it implemented: `get` `set` `findobj` `isgraphics` `ish
 angular family MATLAB documents as kind *builtin* — every verb that draws on the axes it makes is a
 *function*, counted in the second table. **M60 moved it by two**: `setappdata` and `rmappdata` are
 documented as builtins where their two companions `getappdata` and `isappdata` are functions, which
-is the sort of split that makes counting by kind rather than by family necessary.
+is the sort of split that makes counting by kind rather than by family necessary. **M67 moved it by
+thirteen** — the whole handle-graphics group below but for the app-building names: `animatedline`
+`addpoints` `getpoints` `clearpoints` `rectangle` `axes` `groot` `reset` `waitfor` `hggroup`
+`hgtransform` `frame2im` `im2frame`.
+
+**And M67 re-derived the number instead of adding to it, which is how the staleness was found.** This
+line read 386 through M63–M66 and should have read 399: **M66 implemented all ten of the sparse
+orderings and incomplete factorizations that had their own section below**, plus `qz`, `ordqz` and
+`balance` from "the remaining ten", and moved none of them out of the missing tables. Counting the
+implemented set straight out of the dump and the catalog — the query at the bottom of this file —
+answers 412 implemented and 102 missing, which sum to the 514 the top of this file states. The two
+sections M67 can prove are removed below; the rest of the gap is between the computed total and the
+prose groupings, and is recorded here rather than guessed at, because a group re-labelled without
+reading it is exactly the slip this file keeps catching.
 
 **246 of the 277 documented graphics functions** — the second table below, new in M45, moved by 52 in
 M54, by 13 in M55, by 17 in M56 (the eight angular chart verbs and the nine polar rulers), by 13
@@ -57,8 +70,8 @@ see. This file refused to count them while they drew nothing; **M56 made them re
 number and this one agree again. `opengl` *is* counted, because an accepted no-op is an answer — the
 same reading that counted `shading`, `lighting` and `camlight` in M43.
 
-Across every callable kind — builtin, function, operator, keyword, script — the count is **905 of
-2,027** as of M66 (880 after M65, 867 after M64, 814 after M60, 781 after M59, 758 after M58, 742 after M57, 728 after M56, 710 after M55 by this file's nine-short reading above, 697 after M54, 633 after
+Across every callable kind — builtin, function, operator, keyword, script — the count is **919 of
+2,027** as of M67 (905 after M66, 880 after M65, 867 after M64, 814 after M60, 781 after M59, 758 after M58, 742 after M57, 728 after M56, 710 after M55 by this file's nine-short reading above, 697 after M54, 633 after
 M52, 619 after M51, up from 560, and not from the 556 this file used to claim: the checklist tool
 read the implemented set with a regular expression that only matched a name literal directly inside
 `Add(`, so it missed the sixteen colormap generators, which are registered from a loop, and reported
@@ -74,6 +87,12 @@ documented under `matlab/polyfun` rather than under any graphics folder, so it b
 builtin table nor the graphics one and shows up only in this total. M58 added sixteen, and all sixteen
 move the graphics table with it: the seven `f*` verbs are documented under `matlab/graphics` and the
 nine `ez*` ones under `matlab/specgraph`, and not one of the sixteen is documented as kind *builtin*.
+M67 added eighteen names, of which thirteen move this total and the builtin table with it — the five
+that do not are Image Processing Toolbox names (`fanbeam` `ifanbeam` `fan2para` `para2fan` `warp`),
+counted in the IPT file instead. The tool reports fourteen rather than thirteen because `reset` is
+the one name the R2021b list documents twice, which is the same duplicate the 515-versus-514 note at
+the top of this file records.
+
 M59 added twenty-three, of which twenty-one move the graphics table — every volume name but
 `surf2patch` is documented under `matlab/specgraph`, and that one under `matlab/graphics`. The other
 two are the base names the family could not be called without: `ndgrid` under `matlab/elmat` and
@@ -816,13 +835,19 @@ M52 left these behind, each named rather than silent (the full table is in
   scoped out of M52 deliberately.~~ **`interp2` and `'SamplePoints'` closed in M66**; `'native'`
   output classes and the `histogram` object options are still out.
 
-## Not implemented — 129
+## Not implemented — 102
 
-### Handle graphics and app building — 23
+### Handle graphics and app building — 10
 
-`addpoints` `animatedline` `axes` `clearpoints` `frame2im` `getpoints` `groot` `hggroup` `hgsetget`
-`hgtransform` `im2frame` `rectangle` `reset` `selectmoveresize` `uicontextmenu` `uicontrol` `uimenu`
-`uipanel` `uipushtool` `uitoggletool` `uitoolbar` `waitfor` `waitforbuttonpress`
+`hgsetget` `selectmoveresize` `uicontextmenu` `uicontrol` `uimenu` `uipanel` `uipushtool`
+`uitoggletool` `uitoolbar` `waitforbuttonpress`
+
+**M67 took the other thirteen**, and what is left is app building — the `ui*` widget family,
+`hgsetget`'s pre-HG2 property accessors, `selectmoveresize`'s interactive drag callback, and
+`waitforbuttonpress`, which like `gtext` waits for a person. The thirteen that went were the
+graphics *objects* the model had no answer for, and they went together because they are one thing:
+an animated line and a rectangle are what a figure is made of, and a group, a root and an axes
+constructor are how a script gets at them.
 
 **`setappdata` and `rmappdata` were still listed here after M60 registered them**, which made this
 section read 25 and the heading above it 131 where both were two too many. The M60 paragraph in this
@@ -895,14 +920,14 @@ same ground and are implemented in full, including MATLAB's option-word output o
 
 These exist to customize the behaviour of user-defined classes, which JGS does not have.
 
-### Sparse reorderings and incomplete factorizations — 10
+### Sparse reorderings and incomplete factorizations — 0
 
-`amd` `dissect` `dmperm` `etree` `ichol` `ilu` `nzmax` `speye` `symbfact` `symrcm`
-
-The sparse storage type itself landed in M42 (`sparse` moved to implemented, with `sprand`, `eigs`,
-`spy`, and a Gilbert–Peierls `lu`); these are the fill-reducing orderings and incomplete
-factorizations that layer on top of it, and `speye`/`nzmax` are small additions behind the same
-seam.
+**M66 took all ten** — `amd` `dissect` `dmperm` `etree` `ichol` `ilu` `nzmax` `speye` `symbfact`
+`symrcm` — and this section still listed them until M67 re-derived the count. The sparse storage type
+itself landed in M42; these are the fill-reducing orderings and incomplete factorizations that layer
+on top of it. Where the algorithm is not MATLAB's, the name says which one it is: `amd` is exact
+minimum degree rather than the approximate one, and `dissect` bisects on breadth-first level sets
+(ADR 0066).
 
 ### Console debugger — 11
 
@@ -912,12 +937,12 @@ seam.
 JGraph debugs through the editor: breakpoints in the margin, step buttons, a Workspace pane. A
 parallel console debugger would be a second, worse interface to the same thing.
 
-### The remaining ten
+### The remaining seven
 
 | Name | Why |
 |---|---|
-| `qz` `ordqz` | The generalized Schur decomposition. The real QZ iteration is its own piece of work to write and validate to the standard the rest of the linear algebra holds itself to, and a QZ that fails to converge on some pencils, under a name used for descriptor systems, would be worse than none. Planned. |
-| `balance` | Diagonal scaling before an eigenvalue computation. Small and genuinely implementable; it improves accuracy on badly scaled matrices rather than adding a capability. Planned. |
+| ~~`qz` `ordqz`~~ | **Done in M66**, and not by iterating: for a nonsingular `B` the pencil's invariant subspaces are those of `B⁻¹A`, so a real Schur factorization and a QR assemble the generalized form exactly. A singular `B` is refused by name (ADR 0066). |
+| ~~`balance`~~ | **Done in M66** — the EISPACK scaling loop, without the permutation half, which the name records. |
 | `pagemtimes` `pagesvd` | Operate on pages of an N-D array, which the value model does not have. |
 | `system` | Runs an arbitrary shell command. JGraph deliberately does not give a script arbitrary process execution. |
 | `batchStartupOptionUsed` | Reports whether MATLAB was started with `-batch`. JGraph's own `-batch` is a different launcher with different semantics, so the answer would be about something else. |

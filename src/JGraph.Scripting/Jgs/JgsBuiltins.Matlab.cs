@@ -577,6 +577,17 @@ internal static partial class JgsBuiltins
             MultiOutput = Dealt,
         }));
 
+        // An animated line's points come back one coordinate per output, and how many there are is
+        // fixed by the line rather than by the call — so a flat line asked for three says so.
+        Wrap("getpoints", (args, wanted, line, col) =>
+        {
+            JgsValue[] coordinates = GetPoints(args, line, col);
+            return wanted <= coordinates.Length
+                ? coordinates
+                : throw new JgsRuntimeException(line, col,
+                    $"getpoints: this line has {coordinates.Length} coordinates, not {wanted}.");
+        });
+
         Wrap("size", (args, wanted, line, col) =>
         {
             JgsValue result = SingleOf(env, "size", args, line, col);

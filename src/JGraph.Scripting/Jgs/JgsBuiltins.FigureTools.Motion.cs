@@ -176,9 +176,9 @@ internal static partial class JgsBuiltins
                 "movie expects the frames to play, as getframe returns them.");
         }
 
-        // The frames are read for their shape whether or not anything will play them, so a script
-        // that hands movie the wrong thing hears about it in batch rather than only in a window.
-        int frames = FrameCount("movie", rest[0], line, col);
+        // The frames are decoded whether or not anything will play them, so a script that hands
+        // movie the wrong thing hears about it in batch rather than only in a window.
+        (List<uint[]> frames, int width, int height) = FramePixels("movie", rest[0], line, col);
         int repeats = rest.Count > 1 ? (int)ScalarOf("movie", rest[1], line, col) : 1;
         double rate = rest.Count > 2 ? ScalarOf("movie", rest[2], line, col) : 12;
         if (rate <= 0)
@@ -186,56 +186,134 @@ internal static partial class JgsBuiltins
             throw new JgsRuntimeException(line, col, "movie: the frame rate has to be a positive number.");
         }
 
-        // Playing a movie means showing pictures that have already been taken, and there is nothing
-        // in the figure to change while it happens — so with no player there is genuinely nothing to
-        // do, and this is the one verb here whose batch behaviour is to do nothing at all.
-        if (ScriptAnimation.HasPlayer && frames > 0)
+        // The same order every animated verb here uses: draw the finished picture, then replay how
+        // it got there. A movie's finished picture is its last frame, which is what MATLAB leaves
+        // behind too — so a batch run gets a real answer from movie rather than an empty figure.
+        int number = JG.GetFigureNumber(figure);
+        if (number >= 1)
+        {
+            JG.Figure(number);
+        }
+
+        JG.Clf();
+        RgbImagePlot screen = JG.RgbImage(frames[^1], width, height);
+        StyleImageAxes(JG.Gca());
+
+        if (ScriptAnimation.HasPlayer && frames.Count > 1)
         {
             var steps = new List<Action>();
             for (int repeat = 0; repeat < System.Math.Max(1, System.Math.Abs(repeats)); repeat++)
             {
-                for (int i = 0; i < frames; i++)
+                foreach (uint[] frame in frames)
                 {
-                    steps.Add(() => { });
+                    steps.Add(() => screen.SetPixels(frame));
                 }
             }
 
             ScriptAnimation.Play(figure, steps, 1.0 / rate);
+
+            // Whatever the replay did — including being cut short — the last frame is what stays.
+            screen.SetPixels(frames[^1]);
         }
 
         return JgsValue.Null;
     }
 
-    /// <summary>How many frames a value holds, refusing anything that is not a frame or a row of them.</summary>
-    private static int FrameCount(string verb, JgsValue value, int line, int col)
+    /// <summary>
+    /// The pictures a value holds, as row-major ARGB, refusing anything that is not a frame or a row
+    /// of them. Every frame has to be the same size, because they share one image plot and a script
+    /// that captured two different figures did not mean to make a movie of them.
+    /// </summary>
+    private static (List<uint[]> Frames, int Width, int Height) FramePixels(
+        string verb, JgsValue value, int line, int col)
     {
+        var structs = new List<JgsValue>();
         if (value.Type == JgsType.Struct)
         {
-            return HasField(value, "cdata")
-                ? 1
-                : throw new JgsRuntimeException(line, col,
-                    $"{verb}: a frame is what getframe answers with — a struct holding cdata.");
+            // [f g] is one struct array of two frames, not two values — so the frames of a movie
+            // arrive under a single Struct and have to be walked. Before struct arrays were real this
+            // read as one frame and quietly played the first of them.
+            foreach (Dictionary<string, JgsValue> element in value.AsStructArray.Elements)
+            {
+                structs.Add(JgsValue.Struct(element));
+            }
         }
-
-        if (value.Type is JgsType.Array or JgsType.Cell)
+        else if (value.Type is JgsType.Array or JgsType.Cell)
         {
-            int frames = 0;
             for (int i = 0; i < value.ArrayLength; i++)
             {
                 if (value.ElementAt(i).Type == JgsType.Struct)
                 {
-                    frames++;
+                    structs.Add(value.ElementAt(i));
                 }
-            }
-
-            if (frames > 0)
-            {
-                return frames;
             }
         }
 
-        throw new JgsRuntimeException(line, col,
-            $"{verb}: a frame is what getframe answers with — a struct holding cdata.");
+        if (structs.Count == 0 || structs.Any(s => !HasField(s, "cdata")))
+        {
+            throw new JgsRuntimeException(line, col,
+                $"{verb}: a frame is what getframe answers with — a struct holding cdata.");
+        }
+
+        var frames = new List<uint[]>(structs.Count);
+        int width = 0;
+        int height = 0;
+        foreach (JgsValue frame in structs)
+        {
+            (uint[] pixels, int w, int h) = FrameArgb(verb, frame.AsStruct["cdata"], line, col);
+            if (frames.Count == 0)
+            {
+                (width, height) = (w, h);
+            }
+            else if (w != width || h != height)
+            {
+                throw new JgsRuntimeException(line, col,
+                    $"{verb}: frame {frames.Count + 1} is {h}-by-{w} and the first is {height}-by-{width}; "
+                    + "every frame of one movie has to be the same size.");
+            }
+
+            frames.Add(pixels);
+        }
+
+        return (frames, width, height);
+    }
+
+    /// <summary>
+    /// One frame's <c>cdata</c> — a height-by-width-by-3 array of bytes, column-major — as the
+    /// row-major ARGB an image plot draws. This is the transpose <c>getframe</c> did on the way out,
+    /// undone.
+    /// </summary>
+    private static (uint[] Pixels, int Width, int Height) FrameArgb(
+        string verb, JgsValue cdata, int line, int col)
+    {
+        IReadOnlyList<int> dims = JgsMatrix.DimsOf(cdata);
+        if (dims.Count != 3 || dims[2] != 3 || dims[0] < 1 || dims[1] < 1)
+        {
+            throw new JgsRuntimeException(line, col,
+                $"{verb}: a frame's cdata is a height-by-width-by-3 array of colours.");
+        }
+
+        int height = dims[0];
+        int width = dims[1];
+        double[] flat = ToDoubles(verb, cdata, line, col);
+        int plane = height * width;
+        var pixels = new uint[plane];
+        for (int r = 0; r < height; r++)
+        {
+            for (int c = 0; c < width; c++)
+            {
+                int at = (c * height) + r;
+                pixels[(r * width) + c] = 0xFF000000u
+                    | (Level(flat[at]) << 16)
+                    | (Level(flat[at + plane]) << 8)
+                    | Level(flat[at + (2 * plane)]);
+            }
+        }
+
+        return (pixels, width, height);
+
+        static uint Level(double value) =>
+            (uint)System.Math.Clamp((int)System.Math.Round(value), 0, 255);
     }
 
     private static bool HasField(JgsValue value, string name) =>
@@ -266,9 +344,10 @@ internal static partial class JgsBuiltins
         double density = options.NumericFlag is { } given ? ScalarOf("streamparticles", given, line, col) : 0.2;
         density = density > 1 ? 1.0 / density : System.Math.Clamp(density, 1e-3, 1);
 
-        var xs = new List<double>();
-        var ys = new List<double>();
-        var zs = new List<double>();
+        // Which point of its own line each particle sits on, as a fraction of the way along. The
+        // animation slides every particle by the same fraction, so the whole cloud drifts downstream
+        // together rather than each particle running its own line at its own rate.
+        var seats = new List<(List<(double X, double Y, double Z)> Line, double At)>();
         foreach (List<(double X, double Y, double Z)> points in lines)
         {
             if (points.Count == 0)
@@ -282,27 +361,100 @@ internal static partial class JgsBuiltins
             int wanted = System.Math.Max(1, (int)System.Math.Round(points.Count * density));
             for (int i = 0; i < wanted; i++)
             {
-                int at = wanted == 1 ? 0 : (int)System.Math.Round((double)i * (points.Count - 1) / (wanted - 1));
-                xs.Add(points[at].X);
-                ys.Add(points[at].Y);
-                zs.Add(points[at].Z);
+                seats.Add((points, wanted == 1 ? 0 : (double)i / (wanted - 1)));
             }
         }
 
-        if (xs.Count == 0)
+        if (seats.Count == 0)
         {
             return JgsValue.Null;
         }
 
+        (double[] xs, double[] ys, double[] zs) = ParticlesAt(seats, 0);
+
         // Every particle is one marker set, so a script gets one handle rather than a cloud of them
         // — the same decision coneplot made in M59.
-        Scatter3DPlot markers = JG.Scatter3([.. xs], [.. ys], [.. zs]);
+        Scatter3DPlot markers = JG.Scatter3(xs, ys, zs);
         if (options.Scalar("MarkerSize", double.NaN) is var size && !double.IsNaN(size))
         {
             markers.MarkerSize = System.Math.Max(1, size);
         }
 
+        Drift(markers, seats, options, line, col);
         return JgsHandleRegistry.For(markers);
+    }
+
+    /// <summary>How many places along a line one pass of the animation stops at.</summary>
+    private const int DriftSteps = 60;
+
+    /// <summary>
+    /// Slides the particles downstream, if anything can show it. <c>'Animate'</c> is how many passes
+    /// to make, and its default is none: MATLAB draws a still cloud unless a script asks for motion,
+    /// and so a script that never asks runs at the same speed here as it did before there was a
+    /// player at all. Whatever the passes did, the still cloud is what stays behind.
+    /// </summary>
+    private static void Drift(
+        Scatter3DPlot markers,
+        List<(List<(double X, double Y, double Z)> Line, double At)> seats,
+        ParsedArgs options,
+        int line,
+        int col)
+    {
+        double passes = options.Scalar("Animate", 0);
+        if (!ScriptAnimation.HasPlayer || !(passes >= 1))
+        {
+            return;
+        }
+
+        double rate = options.Scalar("FrameRate", 12);
+        if (!(rate > 0))
+        {
+            throw new JgsRuntimeException(line, col,
+                "streamparticles: 'FrameRate' has to be a positive number of frames a second.");
+        }
+
+        var steps = new List<Action>();
+        for (int pass = 0; pass < (int)passes; pass++)
+        {
+            for (int step = 0; step < DriftSteps; step++)
+            {
+                double shift = (double)step / DriftSteps;
+                steps.Add(() =>
+                {
+                    (double[] x, double[] y, double[] z) = ParticlesAt(seats, shift);
+                    markers.SetData(x, y, z);
+                });
+            }
+        }
+
+        steps.Add(() =>
+        {
+            (double[] x, double[] y, double[] z) = ParticlesAt(seats, 0);
+            markers.SetData(x, y, z);
+        });
+
+        ScriptAnimation.Play(JG.CurrentFigure, steps, 1.0 / rate);
+    }
+
+    /// <summary>Where every particle is when the whole cloud has slid <paramref name="shift"/> of a line along.</summary>
+    private static (double[] X, double[] Y, double[] Z) ParticlesAt(
+        List<(List<(double X, double Y, double Z)> Line, double At)> seats, double shift)
+    {
+        var xs = new double[seats.Count];
+        var ys = new double[seats.Count];
+        var zs = new double[seats.Count];
+        for (int i = 0; i < seats.Count; i++)
+        {
+            (List<(double X, double Y, double Z)> points, double at) = seats[i];
+
+            // Past the end of its line a particle comes round to the start, which is what keeps the
+            // cloud the same size for every frame instead of draining away downstream.
+            double along = (at + shift) % 1.0;
+            int index = (int)System.Math.Round(along * (points.Count - 1));
+            (xs[i], ys[i], zs[i]) = points[System.Math.Clamp(index, 0, points.Count - 1)];
+        }
+
+        return (xs, ys, zs);
     }
 
     private static JgsValue InterpStreamSpeed(IReadOnlyList<JgsValue> args, int line, int col)

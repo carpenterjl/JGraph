@@ -141,6 +141,13 @@ internal static partial class JgsBuiltins
         Wrap("radon", RadonOutputs);
         Wrap("iradon", IradonOutputs);
         Wrap("phantom", PhantomOutputs);
+
+        // The fan verbs each answer with their data and the two coordinate vectors it is indexed by,
+        // which is the only way a script can plot one without working the geometry out again.
+        Wrap("fanbeam", FanBeamOutputs);
+        Wrap("ifanbeam", IFanBeamOutputs);
+        Wrap("fan2para", Fan2ParaOutputs);
+        Wrap("para2fan", Para2FanOutputs);
         Wrap("qtgetblk", (args, wanted, line, col) => QtGetBlkOutputs(args, wanted, line, col, dialect));
         Wrap("imregcorr", ImRegCorrOutputs);
 
