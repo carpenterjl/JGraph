@@ -34,6 +34,11 @@ EXTRA_IMPLEMENTED = {
     "run", "clear", "whos", "save", "load",
     "if", "else", "elseif", "end", "for", "while", "switch", "case", "otherwise",
     "try", "catch", "function", "return", "break", "continue", "global",
+    # Keywords that are not lexer keywords here — they are recognised only where they can appear, so
+    # the words stay ordinary names everywhere else and the catalog never sees them. M68 added
+    # 'classdef' and, checking the list while it was there, found 'persistent' (M41) and 'arguments'
+    # (M62) had been implemented and uncounted since they landed.
+    "classdef", "persistent", "arguments",
     "+", "-", "*", "/", "\\", "^", ".*", "./", ".\\", ".^", "'", ".'",
     "==", "~=", "<", "<=", ">", ">=", "&", "|", "&&", "||", "~", ":",
 }

@@ -398,7 +398,7 @@ internal static partial class JgsBuiltins
     /// what carries the answer.
     /// </para>
     /// </remarks>
-    private static string ClassOf(JgsValue value, JgsDialect dialect) =>
+    internal static string ClassOf(JgsValue value, JgsDialect dialect) =>
         // A string array is asked about first of all, because it is an array of strings underneath
         // and every question below would answer for the array rather than for what it holds (M63).
         value.IsStringArray ? "string"
@@ -423,6 +423,9 @@ internal static partial class JgsBuiltins
         JgsType.Table => "table",
         JgsType.Image => dialect.IsMatlab ? value.AsImage.Class.MatlabName() : "image",
         JgsType.Sparse => "double", // MATLAB: sparsity is an attribute, not a class
+        // An instance of a user class answers with its own class name (M68). It reads the same
+        // property a tagged struct does, which is why this line is the whole of the change.
+        JgsType.Object => value.ClassName ?? "object",
         _ => "double",
     };
 

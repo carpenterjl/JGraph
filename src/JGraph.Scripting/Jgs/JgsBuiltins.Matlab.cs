@@ -168,7 +168,7 @@ internal static partial class JgsBuiltins
         Define("isstruct", (args, line, col) =>
         {
             Arity("isstruct", args, 1, line, col);
-            return JgsValue.Bool(args[0].Type == JgsType.Struct);
+            return JgsValue.Bool(IsStructValue(args[0]));
         });
 
         // --- Strings ----------------------------------------------------------------------------

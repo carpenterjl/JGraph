@@ -404,18 +404,28 @@ internal sealed partial class Interpreter
                 env.Declare(spec.Name, checked_); // a declared class the value did not have yet
             }
 
-            foreach (Expr validator in spec.Validators)
-            {
-                // A bare name is the call MATLAB writes it as shorthand for; anything else is already
-                // a call and is evaluated exactly as written, so mustBeMember(x, {'a','b'}) reads its
-                // own argument out of the frame.
-                _ = validator is VariableExpr bare
-                    ? EvaluateCall(
-                        new CallExpr(bare, [new PreEvaluated(checked_)])
-                            { Line = validator.Line, Column = validator.Column },
-                        env)
-                    : Evaluate(validator, env);
-            }
+            RunValidators(spec.Validators, checked_, env);
+        }
+    }
+
+    /// <summary>
+    /// Runs one declaration's <c>mustBe…</c> validators over <paramref name="value"/> in
+    /// <paramref name="env"/>. Shared by the <c>arguments</c> block and by class properties (M68),
+    /// because MATLAB writes the two declarations with the same grammar and means the same by them.
+    /// </summary>
+    internal void RunValidators(IReadOnlyList<Expr> validators, JgsValue value, JgsEnvironment env)
+    {
+        foreach (Expr validator in validators)
+        {
+            // A bare name is the call MATLAB writes it as shorthand for; anything else is already
+            // a call and is evaluated exactly as written, so mustBeMember(x, {'a','b'}) reads its
+            // own argument out of the frame.
+            _ = validator is VariableExpr bare
+                ? EvaluateCall(
+                    new CallExpr(bare, [new PreEvaluated(value)])
+                        { Line = validator.Line, Column = validator.Column },
+                    env)
+                : Evaluate(validator, env);
         }
     }
 
@@ -624,6 +634,15 @@ internal sealed partial class Interpreter
                 ExecuteArguments(arguments, env);
                 return Completion.Normal;
 
+            // A classdef defines the class and binds its name to the constructor (M68). Running the
+            // class file itself is therefore how a class is defined, and a classdef written inside an
+            // ordinary script works for the same reason — one statement, one meaning, no second path.
+            case ClassdefStmt classdef:
+                env.Declare(
+                    classdef.Name,
+                    DefineClass(classdef, new JgsEnvironment(_globals)).ConstructorValue);
+                return Completion.Normal;
+
             case MultiAssignStmt multi:
                 ExecuteMultiAssign(multi, env);
                 return Completion.Normal;
@@ -794,10 +813,21 @@ internal sealed partial class Interpreter
 
     private void EchoBinding(Stmt statement, string name, JgsValue value)
     {
-        if (_echo is not null && !statement.Suppressed)
+        if (_echo is null || statement.Suppressed)
         {
-            _echo($"{name} = {EchoDisplay(value)}");
+            return;
         }
+
+        // A class that defines disp says how its instances look, and the echo of a bare name has to
+        // ask it too — otherwise `obj` and `disp(obj)` show different things (M68).
+        if (AnyClasses && value.Type == JgsType.Object && value.AsObject.Class.TryMethod("disp", out _))
+        {
+            _echo($"{name} =");
+            TryObjectDisplay(value, statement.Line, statement.Column);
+            return;
+        }
+
+        _echo($"{name} = {EchoDisplay(value)}");
     }
 
     /// <summary>
@@ -999,6 +1029,21 @@ internal sealed partial class Interpreter
     /// </summary>
     private JgsValue[] EvaluateForOutputs(Expr call, int wanted, JgsEnvironment env)
     {
+        // [a, b] = f(obj, …) dispatches on the object exactly as the single-output form does (M68);
+        // asking here as well is what keeps a method with two outputs reachable.
+        if (call is CallExpr dispatched && CouldDispatchOnClass(dispatched, env))
+        {
+            JgsValue[] given = EvaluateAll(dispatched.Arguments, env);
+            if (TryMethodDispatch(((VariableExpr)dispatched.Callee).Name, given, out IJgsCallable? method))
+            {
+                return method is IJgsMultiCallable several
+                    ? several.CallMultiple(given, wanted, dispatched.Line, dispatched.Column)
+                    : [method.Call(given, dispatched.Line, dispatched.Column)];
+            }
+
+            return InvokeWithArguments(dispatched, given, wanted, env);
+        }
+
         if (call is CallExpr invocation && EvaluateCallee(invocation.Callee, env) is { Type: JgsType.Function } callee)
         {
             JgsValue[] arguments = EvaluateAll(invocation.Arguments, env);
@@ -1379,6 +1424,14 @@ internal sealed partial class Interpreter
             return ConcatenateStructs(rows, matrix);
         }
 
+        // A cell joins as a container too, and for the same reason (M68): the block measurement below
+        // reads a cell as one element whatever its size, so [{}, {x}] came back with a phantom
+        // element. Asked after structs because a bracket cannot sensibly hold both.
+        if (Dialect.ConcatenatesBrackets && AnyCell(rows))
+        {
+            return ConcatenateCells(rows, matrix);
+        }
+
         var shapes = new List<(int Height, int Width)[]>(rows.Count);
         foreach (JgsValue[] row in rows)
         {
@@ -1448,6 +1501,14 @@ internal sealed partial class Interpreter
             && Array.Exists(elements, static e => e.Type == JgsType.Struct))
         {
             return ConcatenateStructs([elements], array);
+        }
+
+        // A bracket holding any cell joins the cells (M68), which the block machinery below cannot do:
+        // it measures a cell as a single element, so an empty one left a phantom behind.
+        if (Dialect.ConcatenatesBrackets && elements.Length > 0
+            && Array.Exists(elements, static e => e.Type == JgsType.Cell))
+        {
+            return ConcatenateCells([elements], array);
         }
 
         // A bracket holding any string array is a string array (M63): ["a" "b"] is 1-by-2, and
@@ -1741,6 +1802,11 @@ internal sealed partial class Interpreter
     private JgsValue EvaluateUnary(UnaryExpr unary, JgsEnvironment env)
     {
         JgsValue operand = Evaluate(unary.Operand, env);
+        if (AnyClasses && TryUnaryOverload(unary.Op, operand, unary, out JgsValue overloaded))
+        {
+            return overloaded;
+        }
+
         if (unary.Op == TokenType.Bang)
         {
             // MATLAB's ~ is element-wise over arrays (~mask negates the mask, M43); JGS keeps
@@ -1814,6 +1880,14 @@ internal sealed partial class Interpreter
 
     private JgsValue ApplyBinaryCore(TokenType op, JgsValue left, JgsValue right, Node at)
     {
+        // An operand that is an instance of a user class decides what the operator means (M68), and
+        // has to decide before any numeric reading of the operands below — the same lesson M63 and
+        // M64 each learnt one branch lower down.
+        if (AnyClasses && TryOperatorOverload(op, left, right, at, out JgsValue overloaded))
+        {
+            return overloaded;
+        }
+
         // Sparse operands route through their own kernels (M42) before any dense machinery sees them.
         if (left.Type == JgsType.Sparse || right.Type == JgsType.Sparse)
         {
@@ -1980,9 +2054,19 @@ internal sealed partial class Interpreter
     /// </summary>
     public JgsValue CopyForBinding(JgsValue value)
     {
-        if (!Dialect.CopyOnAssign || value.Type is not (JgsType.Array or JgsType.Cell or JgsType.Struct))
+        if (!Dialect.CopyOnAssign
+            || value.Type is not (JgsType.Array or JgsType.Cell or JgsType.Struct or JgsType.Object))
         {
             return value; // scalars, strings and functions are immutable — nothing to copy
+        }
+
+        // An instance of a class written `classdef Name < handle` is a reference, so a second name for
+        // it is the same object; an instance of an ordinary class is a value and is copied. That one
+        // line is the whole of the difference, which is why the object model below knows nothing about
+        // it (M68).
+        if (value.Type == JgsType.Object)
+        {
+            return value.AsObject.Class.IsHandle ? value : JgsValue.Object(value.AsObject.Copy(this));
         }
 
         // A handle-class value is a reference, so binding a second name to it must not clone it:
@@ -2980,6 +3064,21 @@ internal sealed partial class Interpreter
 
     private JgsValue EvaluateCall(CallExpr call, JgsEnvironment env)
     {
+        // A call is dispatched on the class of its first argument before the name is looked up at all
+        // (M68), because a class method must beat a builtin of the same name. The guard is three cheap
+        // checks that a script defining no classes fails on the first of them.
+        if (CouldDispatchOnClass(call, env))
+        {
+            JgsValue[] given = EvaluateAll(call.Arguments, env);
+            if (TryMethodDispatch(((VariableExpr)call.Callee).Name, given, out IJgsCallable? method))
+            {
+                _pendingCall = call;
+                return method.Call(given, call.Line, call.Column);
+            }
+
+            return InvokeWithArguments(call, given, env);
+        }
+
         JgsValue callee = EvaluateCallee(call.Callee, env);
 
         // "Calling" an array, string, or image with subscripts is indexing, identical to the bracket
@@ -4209,6 +4308,15 @@ internal sealed partial class Interpreter
     /// </param>
     private JgsValue EvaluateMember(MemberExpr member, JgsEnvironment env, bool autoCall = true)
     {
+        // `Circle.unit()` and `Circle.Sides` name the class, not an instance of it — and that has to
+        // be settled before the target is evaluated, because evaluating a class name *builds* one
+        // (the constructor auto-calls bare, which is what makes `c = Circle;` a default instance).
+        // A variable of the same name holding data still wins, exactly as it does for a call.
+        if (TryClassInFront(member, env, autoCall, out JgsValue onClass))
+        {
+            return onClass;
+        }
+
         JgsValue target = Evaluate(member.Target, env);
         string field = FieldName(member, env);
 
@@ -4217,6 +4325,14 @@ internal sealed partial class Interpreter
         if (target.Type == JgsType.Table)
         {
             return JgsBuiltins.TableColumnValue(target.AsTable, field, member.Line, member.Column);
+        }
+
+        // obj.something on an instance of a user class is a property or a method (M68). A method
+        // comes back with the object already in its hand, which is what makes obj.area() and
+        // area(obj) the same call written two ways — and what lets the bare obj.area run it.
+        if (target.Type == JgsType.Object)
+        {
+            return ObjectMember(target, field, member, autoCall);
         }
 
         // A handle on a figure object is a number (M51), so a dot on one reads that object's
@@ -4304,6 +4420,13 @@ internal sealed partial class Interpreter
         if (TryResolveHandleTarget(member.Target, env) is { } handle)
         {
             JgsBuiltins.SetHandleProperty(handle, FieldName(member, env), value, member.Line, member.Column);
+            return value;
+        }
+
+        // A dotted write onto an instance of a user class sets a declared property, checked against
+        // its declaration (M68). Asked before the struct path for the same reason the handle write is.
+        if (TryAssignToObject(member, value, env))
+        {
             return value;
         }
 

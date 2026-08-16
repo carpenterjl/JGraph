@@ -20,7 +20,6 @@ internal sealed class Parser
     /// </summary>
     private static readonly IReadOnlyDictionary<string, string> UnsupportedWords = new Dictionary<string, string>(StringComparer.Ordinal)
     {
-        ["classdef"] = "class definitions are not supported",
         ["parfor"] = "parallel loops are not supported — use a plain 'for'",
         ["spmd"] = "parallel blocks are not supported",
     };
@@ -244,6 +243,11 @@ internal sealed class Parser
             // Before command syntax, which 'persistent count' would otherwise match.
             TokenType.Identifier when _matlab && start.Text == "persistent" && NextType == TokenType.Identifier =>
                 ParsePersistent(start),
+            // Likewise 'classdef Widget'. The word stays an ordinary identifier everywhere else, which
+            // is what lets 'properties' and 'methods' — recognised only inside the block below — go on
+            // being the names of the two builtins that ask an object what it has.
+            TokenType.Identifier when _matlab && start.Text == "classdef" && NextType == TokenType.Identifier =>
+                ParseClassdef(start),
             TokenType.LBracket when _matlab && LooksLikeMultiAssign() => ParseMultiAssign(start),
             TokenType.Identifier when _matlab && LooksLikeCommandSyntax() => ParseCommandSyntax(start),
             _ => ParseAssignmentOrExpression(start),
@@ -525,6 +529,141 @@ internal sealed class Parser
     {
         Advance();
         return null;
+    }
+
+    /// <summary>
+    /// Parses <c>classdef Name … end</c>, optionally <c>classdef Name &lt; handle</c>. The blocks it may
+    /// hold are <c>properties</c> and <c>methods</c>; every other word MATLAB allows there is refused by
+    /// name, because a class whose <c>events</c> block was quietly skipped is a class that looks like it
+    /// works and does not.
+    /// </summary>
+    private Stmt ParseClassdef(Token start)
+    {
+        Advance(); // 'classdef'
+        Token name = Expect(TokenType.Identifier, "a class name");
+        bool isHandle = false;
+        if (Match(TokenType.Less))
+        {
+            Token super = Expect(TokenType.Identifier, "a superclass name");
+            if (!string.Equals(super.Text, "handle", StringComparison.Ordinal))
+            {
+                throw Error(super,
+                    $"'{name.Text} < {super.Text}': a class may only inherit from 'handle' here, "
+                    + "so that two names for one object mean one object; user superclasses are not supported.");
+            }
+
+            isHandle = true;
+            if (Check(TokenType.Amp) || Check(TokenType.AmpAmp))
+            {
+                throw Error(Current, $"'{name.Text}' may inherit from 'handle' alone, not from several classes at once.");
+            }
+        }
+
+        var properties = new List<ClassProperty>();
+        var methods = new List<ClassMethod>();
+        SkipSeparators();
+        while (!Check(TokenType.End) && !IsAtEnd)
+        {
+            Token block = Expect(TokenType.Identifier, "'properties' or 'methods'");
+            switch (block.Text)
+            {
+                case "properties":
+                    ParsePropertiesBlock(name.Text, block, properties);
+                    break;
+                case "methods":
+                    ParseMethodsBlock(name.Text, block, methods);
+                    break;
+                default:
+                    throw Error(block,
+                        $"'{block.Text}' is not something a class definition can hold in JGraph — "
+                        + "a class is made of 'properties' and 'methods' blocks.");
+            }
+
+            SkipSeparators();
+        }
+
+        Expect(TokenType.End, "'end' to close the class definition");
+        return new ClassdefStmt(name.Text, isHandle, properties, methods) { Line = start.Line, Column = start.Column };
+    }
+
+    /// <summary>
+    /// Parses one <c>properties … end</c> block into <paramref name="into"/>. A property line is an
+    /// <see cref="ArgumentSpec"/>: MATLAB writes it with the same grammar an <c>arguments</c> line uses
+    /// and means the same thing by it, so the two share a parser and, later, a checker.
+    /// </summary>
+    private void ParsePropertiesBlock(string className, Token block, List<ClassProperty> into)
+    {
+        bool constant = ReadBlockAttributes(className, block, "Constant");
+        SkipSeparators();
+        while (!Check(TokenType.End) && !IsAtEnd)
+        {
+            into.Add(new ClassProperty(ParseArgumentSpec(), constant));
+            SkipSeparators();
+        }
+
+        Expect(TokenType.End, "'end' to close the properties block");
+    }
+
+    /// <summary>Parses one <c>methods … end</c> block into <paramref name="into"/>.</summary>
+    private void ParseMethodsBlock(string className, Token block, List<ClassMethod> into)
+    {
+        bool isStatic = ReadBlockAttributes(className, block, "Static");
+        SkipSeparators();
+        while (!Check(TokenType.End) && !IsAtEnd)
+        {
+            Token header = Current;
+            if (!Check(TokenType.Function))
+            {
+                throw Error(header, "A 'methods' block holds functions and nothing else.");
+            }
+
+            into.Add(new ClassMethod((FnStmt)ParseMatlabFunction(header), isStatic));
+            SkipSeparators();
+        }
+
+        Expect(TokenType.End, "'end' to close the methods block");
+    }
+
+    /// <summary>
+    /// Reads the optional <c>(…)</c> attribute list after <c>properties</c> or <c>methods</c>, and
+    /// answers whether the one attribute this build understands — <paramref name="wanted"/> — was on it.
+    /// <c>Access = public</c> is accepted because it is what a block without it already means; every
+    /// other attribute is refused by name rather than ignored.
+    /// </summary>
+    private bool ReadBlockAttributes(string className, Token block, string wanted)
+    {
+        if (!Match(TokenType.LParen))
+        {
+            return false;
+        }
+
+        bool found = false;
+        do
+        {
+            Token attribute = Expect(TokenType.Identifier, "an attribute name");
+            string? setting = Match(TokenType.Assign)
+                ? Expect(TokenType.Identifier, "an attribute value").Text
+                : null;
+
+            if (attribute.Text == wanted && setting is null or "true")
+            {
+                found = true;
+            }
+            else if (attribute.Text is "Access" or "GetAccess" or "SetAccess" && setting == "public")
+            {
+                // Saying out loud what leaving the attribute off already means.
+            }
+            else
+            {
+                throw Error(attribute,
+                    $"'{className}': the '{block.Text}' attribute '{attribute.Text}' is not supported — "
+                    + $"this build understands '{wanted}' and public access only.");
+            }
+        }
+        while (Match(TokenType.Comma));
+
+        Expect(TokenType.RParen, "')' to close the attribute list");
+        return found;
     }
 
     private Stmt ParseMatlabFunction(Token start)

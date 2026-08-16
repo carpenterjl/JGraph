@@ -270,9 +270,11 @@ public class MatlabParserTests
     [Fact]
     public void UnsupportedConstructs_AreNamedInTheError()
     {
+        // 'classdef' left this list in M68 — a class definition now parses, so the word is no longer
+        // named as unsupported. Its own parsing is covered by MatlabClassdefTests.
         JgsSyntaxException error = Assert.Throws<JgsSyntaxException>(
-            static () => Parse("classdef Widget\nend"));
-        Assert.Contains("classdef", error.Message, StringComparison.Ordinal);
+            static () => Parse("spmd\nend"));
+        Assert.Contains("spmd", error.Message, StringComparison.Ordinal);
         Assert.Contains("not supported", error.Message, StringComparison.Ordinal);
 
         Assert.Contains("parfor", Assert.Throws<JgsSyntaxException>(

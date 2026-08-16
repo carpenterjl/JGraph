@@ -7,7 +7,7 @@ so long. The live tracker is `matlab-r2021b-documented.html` in the demo workspa
 `tools/matlab-checklist/build-checklist.py`; this file is the standing summary, so the shape of what
 is left does not have to be re-derived each time.
 
-**412 of 514 builtins implemented** (386 was written here from M63 to M66 and was stale — see the correction below; 385 from M60 to M62, 383 after M59, 382 after M54, 372 from M45 to M53, 364 after M43, 363 after
+**413 of 514 builtins implemented** (386 was written here from M63 to M66 and was stale — see the correction below; 385 from M60 to M62, 383 after M59, 382 after M54, 372 from M45 to M53, 364 after M43, 363 after
 M39, 326 after M38, 185 after M37, 109 after M36) — M46 through M53 all added names MATLAB documents
 as *functions*, which this table does not hold. M45's eight are the drawing primitives the "handle
 graphics" section below used to list as missing and call the most useful thing left: `plot3`, `line`,
@@ -20,14 +20,17 @@ documented as builtins where their two companions `getappdata` and `isappdata` a
 is the sort of split that makes counting by kind rather than by family necessary. **M67 moved it by
 thirteen** — the whole handle-graphics group below but for the app-building names: `animatedline`
 `addpoints` `getpoints` `clearpoints` `rectangle` `axes` `groot` `reset` `waitfor` `hggroup`
-`hgtransform` `frame2im` `im2frame`.
+`hgtransform` `frame2im` `im2frame`. **M68 moved it by one**: of the five names it added,
+`metaclass` is the only one MATLAB documents as kind *builtin* — `isobject` is a *function*,
+`properties` and `methods` are *keywords*, and `addCause` is a method of MException rather than a
+documented top-level command, so the other four are counted in the totals below and not here.
 
 **And M67 re-derived the number instead of adding to it, which is how the staleness was found.** This
 line read 386 through M63–M66 and should have read 399: **M66 implemented all ten of the sparse
 orderings and incomplete factorizations that had their own section below**, plus `qz`, `ordqz` and
 `balance` from "the remaining ten", and moved none of them out of the missing tables. Counting the
 implemented set straight out of the dump and the catalog — the query at the bottom of this file —
-answers 412 implemented and 102 missing, which sum to the 514 the top of this file states. The two
+answered 412 implemented and 102 missing at M67, and 413 and 101 at M68, each pair summing to the 514 the top of this file states. The two
 sections M67 can prove are removed below; the rest of the gap is between the computed total and the
 prose groupings, and is recorded here rather than guessed at, because a group re-labelled without
 reading it is exactly the slip this file keeps catching.
@@ -70,8 +73,8 @@ see. This file refused to count them while they drew nothing; **M56 made them re
 number and this one agree again. `opengl` *is* counted, because an accepted no-op is an answer — the
 same reading that counted `shading`, `lighting` and `camlight` in M43.
 
-Across every callable kind — builtin, function, operator, keyword, script — the count is **919 of
-2,027** as of M67 (905 after M66, 880 after M65, 867 after M64, 814 after M60, 781 after M59, 758 after M58, 742 after M57, 728 after M56, 710 after M55 by this file's nine-short reading above, 697 after M54, 633 after
+Across every callable kind — builtin, function, operator, keyword, script — the count is **926 of
+2,027** as of M68 (919 after M67, 905 after M66, 880 after M65, 867 after M64, 814 after M60, 781 after M59, 758 after M58, 742 after M57, 728 after M56, 710 after M55 by this file's nine-short reading above, 697 after M54, 633 after
 M52, 619 after M51, up from 560, and not from the 556 this file used to claim: the checklist tool
 read the implemented set with a regular expression that only matched a name literal directly inside
 `Add(`, so it missed the sixteen colormap generators, which are registered from a loop, and reported
@@ -835,7 +838,7 @@ M52 left these behind, each named rather than silent (the full table is in
   scoped out of M52 deliberately.~~ **`interp2` and `'SamplePoints'` closed in M66**; `'native'`
   output classes and the `histogram` object options are still out.
 
-## Not implemented — 102
+## Not implemented — 101
 
 ### Handle graphics and app building — 10
 
@@ -912,13 +915,24 @@ script in that language — which is a different thing from calling into them mi
 The R2020b pattern API is a composable value type of its own. Plain regular expressions cover the
 same ground and are implemented in full, including MATLAB's option-word output ordering.
 
-### OOP and metaclass plumbing — 19
+### OOP and metaclass plumbing — 18
 
-`builtin` `empty` `event.hasListener` `inmem` `listLength` `loadobj` `localfunctions` `metaclass`
+`builtin` `empty` `event.hasListener` `inmem` `listLength` `loadobj` `localfunctions`
 `mislocked` `mlock` `munlock` `namedargs2cell` `numArgumentsFromSubscript` `saveobj` `subsasgn`
 `subsindex` `subsref` `superclasses` `underlyingType`
 
-These exist to customize the behaviour of user-defined classes, which JGS does not have.
+The sentence that used to close this section — "these exist to customize the behaviour of
+user-defined classes, which JGS does not have" — stopped being true in **M68**, which gave the
+MATLAB dialect `classdef`. ~~`metaclass`~~ left this list with it, and `isobject`, `properties` and
+`methods` left the *function* and *keyword* tables beside it.
+
+What remains is the part of the object model M68 deliberately excluded, and the exclusions are the
+reasons: `subsref`/`subsasgn`/`subsindex`/`numArgumentsFromSubscript` would let a class take over
+indexing, and the interpreter's indexing pipeline stays authoritative (ADR 0068); `event.hasListener`
+belongs to events, which are excluded; `superclasses` would answer about a hierarchy that cannot
+exist while `handle` is the only permitted superclass; `loadobj`/`saveobj` belong to a saved-object
+format there is none of; and `mlock`/`munlock`/`mislocked`/`inmem` are about MATLAB's own function
+cache.
 
 ### Sparse reorderings and incomplete factorizations — 0
 

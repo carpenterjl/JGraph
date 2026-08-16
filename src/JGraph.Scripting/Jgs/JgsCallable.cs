@@ -198,7 +198,15 @@ internal sealed class UserFunction : IJgsCallable, IJgsMultiCallable
                 $"Function '{Name}' expects {parameters.Count} argument(s) but got {arguments.Count}.");
         }
 
-        var local = new JgsEnvironment(_closure);
+        // A frame opened outside every other frame is a MATLAB function's own workspace, and an
+        // assignment inside it may not write out to whatever called it; a frame opened inside one
+        // belongs to a nested function, which shares its parent's variables by design. JGS is a
+        // lexically-scoped language whose closures deliberately write to what they captured, and its
+        // surface is frozen — so the boundary is MATLAB's alone.
+        var local = new JgsEnvironment(_closure)
+        {
+            IsCallBoundary = _interpreter.Dialect.MatlabFunctions && !_closure.IsCallBoundary,
+        };
         for (int i = 0; i < fixedCount && i < arguments.Count; i++)
         {
             // Arguments are values in MATLAB: writing to a parameter must not reach the caller's array.

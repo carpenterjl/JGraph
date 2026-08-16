@@ -30,6 +30,10 @@ internal static partial class JgsBuiltins
         // to turn into a handle — the same reason eval itself is declared here.
         "ezplot", "ezplot3", "ezpolar", "ezsurf", "ezmesh", "ezsurfc", "ezmeshc",
         "ezcontour", "ezcontourf",
+
+        // M68: the class questions need the interpreter, because what classes exist is interpreter
+        // state — a class is defined by loading a file, exactly as a function is.
+        "addCause", "isobject", "properties", "methods", "metaclass",
     ];
 
     /// <summary>Declares the interpreter-backed builtins into <paramref name="env"/>.</summary>
@@ -49,6 +53,7 @@ internal static partial class JgsBuiltins
         RegisterErrorObjects(Define, interpreter);
         RegisterIntrospection(Define, DefineBare, interpreter, host);
         RegisterLegacyFunctionPlotBuiltins(env, interpreter);
+        RegisterClassBuiltins(env, interpreter);
         _ = dialect;
     }
 

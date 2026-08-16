@@ -18,6 +18,26 @@ internal sealed class JgsEnvironment
     /// <summary>The enclosing scope, or null for the global scope.</summary>
     public JgsEnvironment? Parent => _parent;
 
+    /// <summary>
+    /// Whether this scope is a call's own workspace, which an assignment may not write out of.
+    /// </summary>
+    /// <remarks>
+    /// A MATLAB function has a workspace of its own: writing <c>x</c> inside it makes the function's
+    /// <c>x</c>, whatever the caller happens to be holding under that name. Without this the walk
+    /// below found the caller's binding and wrote into it, so a helper with a local named <c>n</c>
+    /// silently changed the script's <c>n</c> — invisible until the two happened to collide. Found in
+    /// M68, where a method's locals are ordinary short words and collisions stop being rare.
+    /// <para>
+    /// A <em>nested</em> function is the deliberate exception: it shares its parent's variables, which
+    /// is the whole point of nesting. It is told apart by where it was defined — a frame opened inside
+    /// another frame is nested, and only a frame opened outside every frame is a boundary.
+    /// </para>
+    /// Block scopes (an <c>if</c> or <c>for</c> body) are never boundaries, so a script assigning
+    /// inside a loop still writes the script's own variable. Neither is a JGS <c>fn</c>: JGS is
+    /// lexically scoped and its closures write to what they captured on purpose.
+    /// </remarks>
+    public bool IsCallBoundary { get; init; }
+
     /// <summary>Declares (or redeclares) <paramref name="name"/> in this scope with <paramref name="value"/>.</summary>
     public void Declare(string name, JgsValue value) => _values[name] = value;
 
@@ -109,6 +129,11 @@ internal sealed class JgsEnvironment
             {
                 scope._values[name] = value;
                 return true;
+            }
+
+            if (scope.IsCallBoundary)
+            {
+                return false; // a call's workspace ends here; see IsCallBoundary
             }
         }
 

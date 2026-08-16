@@ -433,6 +433,45 @@ internal sealed class ArgumentsStmt(IReadOnlyList<ArgumentSpec> arguments) : Stm
     public IReadOnlyList<ArgumentSpec> Arguments { get; } = arguments;
 }
 
+/// <summary>
+/// One declared property of a class. It is an <see cref="ArgumentSpec"/> because MATLAB writes a
+/// property line and an <c>arguments</c> line with the same grammar — <c>name (dims) Class
+/// {validators} = default</c> — and means the same thing by both: a value that must satisfy this
+/// before it is stored.
+/// </summary>
+/// <param name="Spec">The name, declared size, class, validators and default.</param>
+/// <param name="Constant">Whether the block said <c>(Constant)</c>: the value belongs to the class
+/// rather than to an instance, and cannot be assigned to.</param>
+internal sealed record ClassProperty(ArgumentSpec Spec, bool Constant);
+
+/// <summary>One method of a class: the function itself, and whether its block said <c>(Static)</c>.</summary>
+/// <param name="Function">The method body, parsed exactly as any other <c>function</c> is.</param>
+/// <param name="Static">Whether the method is called on the class rather than on an instance, so its
+/// first parameter is an ordinary argument and not the object.</param>
+internal sealed record ClassMethod(FnStmt Function, bool Static);
+
+/// <summary>
+/// A MATLAB <c>classdef … end</c>: the whole content of a class file. The blocks are flattened here —
+/// a class has properties and methods, and which block a given one was written in matters only for the
+/// two attributes that change meaning (<c>Constant</c> and <c>Static</c>), which ride on the members
+/// themselves.
+/// </summary>
+internal sealed class ClassdefStmt(
+    string name,
+    bool isHandle,
+    IReadOnlyList<ClassProperty> properties,
+    IReadOnlyList<ClassMethod> methods) : Stmt
+{
+    public string Name { get; } = name;
+
+    /// <summary>Whether the header read <c>&lt; handle</c>: two names for one object, not two objects.</summary>
+    public bool IsHandle { get; } = isHandle;
+
+    public IReadOnlyList<ClassProperty> Properties { get; } = properties;
+
+    public IReadOnlyList<ClassMethod> Methods { get; } = methods;
+}
+
 /// <summary>A <c>return</c> statement; <see cref="Value"/> is null for a bare <c>return</c>.</summary>
 internal sealed class ReturnStmt(Expr? value) : Stmt
 {

@@ -153,6 +153,22 @@ internal sealed class JgsFunctionPath
         }
 
         IReadOnlyList<Stmt> program = Parser.Parse(source, path, JgsDialect.Matlab);
+
+        // A class file holds one classdef and nothing else, and the name it answers to is the file's.
+        // What the path hands back for it is the constructor, which is what makes `Circle(2)` an
+        // ordinary call: the interpreter never learns a new kind of callee (M68).
+        if (program is [ClassdefStmt classFile])
+        {
+            if (!string.Equals(classFile.Name, name, StringComparison.Ordinal))
+            {
+                throw new JgsRuntimeException(classFile.Line, classFile.Column,
+                    $"'{Path.GetFileName(path)}' defines class '{classFile.Name}', so it answers to "
+                    + $"'{classFile.Name}' and not to '{name}' — a class file is named after its class.");
+            }
+
+            return _interpreter.DefineClass(classFile, new JgsEnvironment(_interpreter.Globals)).ConstructorValue;
+        }
+
         if (!JgsRunner.IsFunctionFile(program))
         {
             return JgsValue.Function(new BuiltinFunction(name, (args, line, column) =>

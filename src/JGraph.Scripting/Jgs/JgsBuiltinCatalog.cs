@@ -1546,6 +1546,13 @@ public static class JgsBuiltinCatalog
         // --- Errors and argument validation (M62) --------------------------------------------------
         Add("MException", "Builds an error object: an identifier, a message, and the stack it carries.", P("identifier"), P("message"), Opt("args..."));
         Add("throw", "Raises an MException.", P("exception"));
+        Add("addCause", "A copy of an MException carrying one more underlying cause.", P("exception"), P("cause"));
+
+        // --- User classes (M68) --------------------------------------------------------------------
+        Add("isobject", "True for an instance of a class, including the built-in ones a value stands in for.", P("x"));
+        Add("properties", "The property names of an object, or of a class named by its name, as a cell column.", P("x"));
+        Add("methods", "The method names of an object, or of a class named by its name, as a cell column.", P("x"));
+        Add("metaclass", "A description of a value's class: its name, its properties, and its methods.", P("x"));
         Add("throwAsCaller", "Raises an MException, reported against the caller.", P("exception"));
         Add("mustBePositive", "Errors unless every element is greater than zero.", P("value"));
         Add("mustBeNonnegative", "Errors unless every element is zero or greater.", P("value"));

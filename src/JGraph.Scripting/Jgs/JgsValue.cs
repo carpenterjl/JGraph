@@ -28,6 +28,9 @@ internal enum JgsType
 
     /// <summary>A sparse matrix (M42): compressed sparse column storage, built by <c>sparse</c>/<c>sprand</c>.</summary>
     Sparse,
+
+    /// <summary>An instance of a user class (M68), defined by a <c>classdef</c> file.</summary>
+    Object,
 }
 
 /// <summary>The element kind of a packed array: MATLAB doubles or a MATLAB-style logical mask.</summary>
@@ -236,6 +239,12 @@ internal sealed class JgsValue
 
     /// <summary>An empty struct, ready for fields to be assigned.</summary>
     public static JgsValue EmptyStruct() => Struct(new Dictionary<string, JgsValue>(StringComparer.Ordinal));
+
+    /// <summary>Wraps an instance of a user class (M68). The instance is held, not copied.</summary>
+    public static JgsValue Object(JgsObject instance) => new(JgsType.Object, 0, instance);
+
+    /// <summary>The object payload (valid only for <see cref="JgsType.Object"/>).</summary>
+    public JgsObject AsObject => (JgsObject)_reference!;
 
     /// <summary>
     /// Wraps a struct array as a <paramref name="rows"/>-by-<paramref name="cols"/> value (M65). The
@@ -530,7 +539,12 @@ internal sealed class JgsValue
     /// case. Only <c>class</c> and <c>isa</c> read it; everything else treats the value as the struct
     /// it is, which is exactly why <c>ME.message</c> needed no special case to work.
     /// </summary>
-    public string? ClassName => _className;
+    /// <remarks>
+    /// An object answers with its own class rather than with the tag, so that every reader of this
+    /// property — <c>class</c>, <c>isa</c>, the handle-class rule, the error messages — learnt about
+    /// user classes the moment the type existed, without any of them being edited (M68).
+    /// </remarks>
+    public string? ClassName => _reference is JgsObject instance ? instance.Class.Name : _className;
 
     /// <summary>Records the class name of a freshly-minted struct. Mint-time only, like <see cref="SetNumericClass"/>.</summary>
     public void SetClassName(string? className) => _className = className;
@@ -840,6 +854,7 @@ internal sealed class JgsValue
         JgsType.Cell => "cell",
         JgsType.Struct => "struct",
         JgsType.Sparse => "sparse",
+        JgsType.Object => AsObject.Class.Name,
         _ => "value",
     };
 
@@ -859,8 +874,38 @@ internal sealed class JgsValue
         JgsType.Cell => FormatCell(AsCell),
         JgsType.Struct => FormatStructValue(this),
         JgsType.Sparse => FormatSparse(AsSparse),
+        JgsType.Object => FormatObject(AsObject),
         _ => "value",
     };
+
+    /// <summary>
+    /// Formats an object as its class name followed by its properties, which is what MATLAB shows for
+    /// a class that does not define its own <c>disp</c>. A class that does define one is displayed by
+    /// that method instead, and the interpreter asks it before it ever reaches here.
+    /// </summary>
+    private static string FormatObject(JgsObject instance)
+    {
+        var sb = new StringBuilder(instance.Class.Name);
+        sb.Append(" with properties:");
+        foreach (ClassProperty property in instance.Class.Properties)
+        {
+            if (!instance.Fields.TryGetValue(property.Spec.Name, out JgsValue? held))
+            {
+                continue;
+            }
+
+            sb.Append("\n    ").Append(property.Spec.Name).Append(": ").Append(Truncate(held.Display()));
+        }
+
+        return sb.ToString();
+    }
+
+    /// <summary>One line of a property's value, shortened when it is longer than a display wants.</summary>
+    private static string Truncate(string text)
+    {
+        string line = text.ReplaceLineEndings(" ");
+        return line.Length <= 60 ? line : string.Concat(line.AsSpan(0, 57), "...");
+    }
 
     /// <summary>Formats a sparse matrix the way MATLAB does: one <c>(r,c)  v</c> line per nonzero.</summary>
     private static string FormatSparse(JGraph.Numerics.Sparse.CscMatrix matrix)
