@@ -1,5 +1,12 @@
 # MATLAB builtin coverage
 
+> **This file counts names. Since M69 there is a second file that counts *forms*.**
+> `docs/matlab-form-coverage.md` runs each of MATLAB's 2,422 documented syntax forms for these
+> commands and records what came back: **949 are confirmed working**, 154 commands accept every form
+> they document, and **157 accept some and not others**. A name in the table below means the name
+> resolves — it has never meant that every way MATLAB documents calling it works. Read the two
+> together, and see ADR 0069.
+
 Where JGraph stands against the 515 commands the R2021b documentation lists with kind **builtin**
 (514 distinct names; one appears twice), and — since M45 — against the graphics commands it lists
 with kind **function**, which this file did not track and which is why that gap stayed invisible for
@@ -73,12 +80,30 @@ see. This file refused to count them while they drew nothing; **M56 made them re
 number and this one agree again. `opengl` *is* counted, because an accepted no-op is an answer — the
 same reading that counted `shading`, `lighting` and `camlight` in M43.
 
-Across every callable kind — builtin, function, operator, keyword, script — the count is **926 of
-2,027** as of M68 (919 after M67, 905 after M66, 880 after M65, 867 after M64, 814 after M60, 781 after M59, 758 after M58, 742 after M57, 728 after M56, 710 after M55 by this file's nine-short reading above, 697 after M54, 633 after
+Across every callable kind — builtin, function, operator, keyword, script — the count is **910 of
+2,024** as of M69 (926 of 2,027 was written here from M68 and counted two different populations —
+see the correction below; 919 after M67, 905 after M66, 880 after M65, 867 after M64, 814 after M60, 781 after M59, 758 after M58, 742 after M57, 728 after M56, 710 after M55 by this file's nine-short reading above, 697 after M54, 633 after
 M52, 619 after M51, up from 560, and not from the 556 this file used to claim: the checklist tool
 read the implemented set with a regular expression that only matched a name literal directly inside
 `Add(`, so it missed the sixteen colormap generators, which are registered from a loop, and reported
 `parula` as unimplemented the whole time it was working. Both shapes are read now).
+
+**M69's correction is the sixth, and it is M60's kind rather than an arithmetic slip: the numerator
+and the denominator were counting different populations.** The 926 came from the checklist tool's
+pre-checked set, which is computed over **every documented row** — all 11,063 of them, properties
+and methods and classes included — while the 2,027 beside it counts only the callable ones. A
+property named `Color` matching a builtin named `color` was being added to a numerator whose
+denominator had no room for it. Counting implemented names *within* the callable set gives **910**,
+and the denominator becomes **2,024** rather than 2,027 because three names appear on two rows each
+and this file has always counted distinct names elsewhere — it says so at the top, where 515 builtin
+rows are 514 distinct names. The two conventions are now the same one.
+
+**This is the first of these six a machine will catch.** `tools/matlab-checklist/verify-builtin-coverage.py`
+recomputes all three headline counts from the checked-in form list and the live catalog, checks that
+implemented plus not-implemented equals the documented total, counts the names under each
+not-implemented heading against the number in the heading, and — the check that would have caught
+the sparse orderings sitting in a missing table for two milestones after M66 wrote them — refuses
+any name listed as missing that the catalog actually registers.
 
 The 605-after-M46 and 607-after-M47 figures this paragraph used to carry were understated, and the
 correction is worth recording rather than quietly overwriting: re-running today's tool against the M46

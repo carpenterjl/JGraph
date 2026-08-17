@@ -251,4 +251,39 @@ public class MatlabEvalBuiltinTests : IDisposable
         nested = jsondecode('{"a":{"b":7}}');
         assert(nested.a.b == 7);
         """);
+
+    /// <summary>
+    /// Both halves of this were missing until M69's syntax-form probe ran the documented forms
+    /// rather than the documented name. The name form is the one MATLAB documents first, and the
+    /// multi-output form used to answer one value in silence — a wrong answer, not an error.
+    /// </summary>
+    [Fact]
+    public Task Feval_TakesAName_AndAnswersEveryOutputAskedFor() => RunAsserting("""
+        assert(feval('sin', 0) == 0);
+        assert(feval(@sin, 0) == 0);
+        assert(feval('max', [3 9 4]) == 9);
+
+        [rows, columns] = feval(@size, ones(2, 3));
+        assert(rows == 2 && columns == 3);
+
+        [value, where] = feval('max', [3 9 4]);
+        assert(value == 9 && where == 2);
+
+        % A name that is not a function, and a target that is not callable at all, each say which.
+        caught = '';
+        try
+            feval('no_such_function_anywhere', 1);
+        catch ME
+            caught = ME.message;
+        end
+        assert(contains(caught, 'no_such_function_anywhere'));
+
+        caught = '';
+        try
+            feval(42);
+        catch ME
+            caught = ME.message;
+        end
+        assert(contains(caught, 'function handle or a function name'));
+        """);
 }

@@ -117,8 +117,16 @@ def main() -> int:
     )
 
     args.output.write_text(html, encoding="utf-8")
+
+    # Say which population each number counts. The pre-checked set spans *every* documented row —
+    # properties and methods included, because a tick in the tracker is per row — while the callable
+    # figure beside it counts only rows a script can call. Reading the first against the second is
+    # how docs/matlab-builtin-coverage.md came to claim "926 of 2,027", its sixth correction and the
+    # only one that was not arithmetic. The coverage document's own number is computed by
+    # verify-builtin-coverage.py, over callables alone; this line is for the tracker, not for it.
     print(f"{args.output}: {len(rows)} documented rows ({callable_rows} callable), "
-          f"{len(preset)} pre-checked as implemented")
+          f"{len(preset)} pre-checked as implemented across all rows "
+          f"(not the callable-only coverage figure — see verify-builtin-coverage.py)")
     return 0
 
 
