@@ -1426,7 +1426,22 @@ internal static partial class JgsBuiltins
         });
         DefineSilent("subplot", (args, line, col) =>
         {
-            Arity("subplot", args, 3, line, col);
+            ArityRange("subplot", args, 3, 4, line, col);
+            if (args.Count == 4)
+            {
+                // 'replace' and 'align' name how the panel is made, and this build makes every panel
+                // the same way — a fresh axes on an aligned grid. Accepting the two words lets a
+                // ported script through; any other word still refuses by name, which is the house
+                // style rather than a silent shrug.
+                string how = Str("subplot", args, 3, line, col);
+                if (!how.Equals("replace", StringComparison.OrdinalIgnoreCase)
+                    && !how.Equals("align", StringComparison.OrdinalIgnoreCase))
+                {
+                    throw new JgsRuntimeException(line, col,
+                        $"subplot takes 'replace' or 'align', but got '{how}'.");
+                }
+            }
+
             AxesModel axes = JG.Subplot(
                 Count("subplot", args, 0, line, col),
                 Count("subplot", args, 1, line, col),
@@ -1436,9 +1451,37 @@ internal static partial class JgsBuiltins
 
         // --- Tiled layouts (M43): tiledlayout(r, c) + nexttile ride on the subplot grid ------
         int tiledRows = 1, tiledCols = 1, tiledCursor = 0;
+        bool tiledFlow = false;
+
+        // The tiles a flowing layout has handed out, in the order it handed them out. A fixed grid
+        // needs no such list — its cells never move — but a flowing one decides its grid as it goes,
+        // and every tile already placed has to move when the grid grows under it.
+        var tiledTiles = new List<AxesModel>();
         DefineSilent("tiledlayout", (args, line, col) =>
         {
-            Arity("tiledlayout", args, 2, line, col);
+            ArityRange("tiledlayout", args, 1, 2, line, col);
+            if (args.Count == 1)
+            {
+                // tiledlayout('flow') lets the layout choose its own grid as tiles are asked for. A
+                // fixed grid has to be chosen up front here, so 'flow' starts at one tile and
+                // nexttile grows it — the same tiles in the same order, laid out once more often.
+                string word = Str("tiledlayout", args, 0, line, col);
+                if (!word.Equals("flow", StringComparison.OrdinalIgnoreCase))
+                {
+                    throw new JgsRuntimeException(line, col,
+                        $"tiledlayout takes a row and column count, or 'flow', but got '{word}'.");
+                }
+
+                tiledRows = 1;
+                tiledCols = 1;
+                tiledFlow = true;
+                tiledCursor = 0;
+                tiledTiles.Clear();
+                return JgsValue.Null;
+            }
+
+            tiledFlow = false;
+            tiledTiles.Clear();
             tiledRows = Count("tiledlayout", args, 0, line, col);
             tiledCols = Count("tiledlayout", args, 1, line, col);
             tiledCursor = 0;
@@ -1447,10 +1490,54 @@ internal static partial class JgsBuiltins
         DefineSilent("nexttile", (args, line, col) =>
         {
             ArityRange("nexttile", args, 0, 1, line, col);
-            tiledCursor = args.Count == 1
-                ? Count("nexttile", args, 0, line, col)
-                : (tiledCursor % (tiledRows * tiledCols)) + 1;
-            JG.Subplot(tiledRows, tiledCols, tiledCursor);
+            if (args.Count == 1)
+            {
+                tiledCursor = Count("nexttile", args, 0, line, col);
+            }
+            else if (tiledFlow)
+            {
+                // A flowing layout never wraps: it grows until it holds the tile just asked for. The
+                // fixed grid's wrap would pin the cursor at 1 while a 1-by-1 grid stayed 1-by-1, so
+                // four tiles would be one tile asked for four times.
+                tiledCursor++;
+                while (tiledCursor > tiledRows * tiledCols)
+                {
+                    // A column at a time and then a row, which keeps the tiles as square as MATLAB's
+                    // does without needing the count in advance.
+                    if (tiledCols <= tiledRows)
+                    {
+                        tiledCols++;
+                    }
+                    else
+                    {
+                        tiledRows++;
+                    }
+                }
+            }
+            else
+            {
+                tiledCursor = (tiledCursor % (tiledRows * tiledCols)) + 1;
+            }
+
+            if (tiledFlow)
+            {
+                // Every tile handed out so far belongs to the grid as it is now, not as it was when
+                // that tile was made. Moving them is what makes the layout flow rather than pile up:
+                // JG.Subplot finds an existing axes by its bounds, so a tile left on the old grid
+                // would be missed and a second one made on top of it.
+                for (int tile = 0; tile < tiledTiles.Count; tile++)
+                {
+                    tiledTiles[tile].NormalizedBounds =
+                        FigureModel.SubplotBounds(tiledRows, tiledCols, tile + 1, tile + 1);
+                }
+            }
+
+            AxesModel placed = JG.Subplot(tiledRows, tiledCols, tiledCursor);
+            if (tiledFlow && !tiledTiles.Contains(placed))
+            {
+                tiledTiles.Add(placed);
+            }
+
             return JgsValue.Null;
         });
 
@@ -1594,13 +1681,13 @@ internal static partial class JgsBuiltins
             return JgsValue.Null;
         });
 
-        DefineSilent("light", (args, line, col) =>
+        DefineSilent("light", OnNamedAxes((args, line, col) =>
         {
             var light = new LightModel();
             ApplyLightOptions("light", light, args, 0, line, col);
             JG.Gca().Lights.Add(light);
             return JgsHandleRegistry.For(light);
-        });
+        }));
 
         // lightangle(az, el) places a light on the same spherical convention view() uses, so the two
         // read the same way: azimuth about the vertical axis, elevation toward the viewer.
@@ -1786,19 +1873,19 @@ internal static partial class JgsBuiltins
         // call — which is what `plot` did before M54, the one verb that already returned a handle.
         DefineSilent("plot", (args, line, col) => Plot(args, dialect, line, col));
         DefineSilent("scatter", (args, line, col) => Scatter(args, line, col));
-        DefineSilent("stem", (args, line, col) => Stem(args, dialect, line, col));
+        DefineSilent("stem", OnNamedAxes((args, line, col) => Stem(args, dialect, line, col)));
         DefineSilent("histogram", (args, line, col) => Histogram(args, line, col));
-        DefineSilent("errorbar", (args, line, col) => ErrorBar(args, line, col));
+        DefineSilent("errorbar", OnNamedAxes((args, line, col) => ErrorBar(args, line, col)));
 
         // --- 3D surfaces, contours, and images -----------------------------------------------
         Define("meshgrid", (args, line, col) => Grids("meshgrid", args, line, col));
         Define("ndgrid", (args, line, col) => Grids("ndgrid", args, line, col));
 
-        DefineSilent("surf", (args, line, col) => Surface3D("surf", args, line, col,
-            (x, y, z) => JG.Surf(x, y, z), z => JG.Surf(z), (x, y, z) => JG.Surf(x, y, z)));
-        DefineSilent("mesh", (args, line, col) => Surface3D("mesh", args, line, col,
-            (x, y, z) => JG.Mesh(x, y, z), z => JG.Mesh(z), (x, y, z) => JG.Mesh(x, y, z)));
-        DefineSilent("meshc", (args, line, col) => Surface3D("meshc", args, line, col,
+        DefineSilent("surf", OnNamedAxes((args, line, col) => Surface3D("surf", args, line, col,
+            (x, y, z) => JG.Surf(x, y, z), z => JG.Surf(z), (x, y, z) => JG.Surf(x, y, z))));
+        DefineSilent("mesh", OnNamedAxes((args, line, col) => Surface3D("mesh", args, line, col,
+            (x, y, z) => JG.Mesh(x, y, z), z => JG.Mesh(z), (x, y, z) => JG.Mesh(x, y, z))));
+        DefineSilent("meshc", OnNamedAxes((args, line, col) => Surface3D("meshc", args, line, col,
             (x, y, z) => JG.MeshC(x, y, z),
             z =>
             {
@@ -1806,28 +1893,37 @@ internal static partial class JgsBuiltins
                 surface.ShowContourBelow = true;
                 return surface;
             },
-            (x, y, z) => JG.MeshC(x, y, z)));
+            (x, y, z) => JG.MeshC(x, y, z))));
 
-        DefineSilent("contour", (args, line, col) => Contour("contour", args, line, col, filled: false));
-        DefineSilent("contourf", (args, line, col) => Contour("contourf", args, line, col, filled: true));
+        // contour, contourf and contour3 are registered by RegisterDecorationBuiltins, which runs
+        // later and wins. The pair that stood here was shadowed and never ran — found by M70 when
+        // the target-form verifier reported a failure whose message came from the other body.
 
-        DefineSilent("imagesc", (args, line, col) =>
+        DefineSilent("imagesc", OnNamedAxes(
+            (args, line, col) => DrawImage("imagesc", args, scaled: true, line, col)));
+
+        DefineSilent("pcolor", OnNamedAxes((args, line, col) =>
         {
-            Arity("imagesc", args, 1, line, col);
-            return Handle(JG.Image(Matrix("imagesc", args, 0, line, col)));
-        });
+            ArityRange("pcolor", args, 1, 3, line, col);
+            if (args.Count == 1)
+            {
+                // pcolor(C) lays the cells out on their own column and row numbers, which is the
+                // grid meshgrid would have made. MATLAB documents it; this refused it until M70.
+                double[,] cells = Matrix("pcolor", args, 0, line, col);
+                return Handle(JG.Pcolor(
+                    Ramp1(cells.GetLength(1)), Ramp1(cells.GetLength(0)), cells));
+            }
 
-        DefineSilent("pcolor", (args, line, col) =>
-        {
             Arity("pcolor", args, 3, line, col);
             return Handle(JG.Pcolor(
                 DoubleArray("pcolor", args, 0, line, col),
                 DoubleArray("pcolor", args, 1, line, col),
                 Matrix("pcolor", args, 2, line, col)));
-        });
+        }));
 
         Define("zlabel", (args, line, col) => { Arity("zlabel", args, 1, line, col); JG.ZLabel(Str("zlabel", args, 0, line, col)); return JgsValue.Null; });
-        env.Declare("view", JgsValue.Function(new BuiltinFunction("view", View) { AutoCallsBare = true }));
+        env.Declare("view", JgsValue.Function(
+            new BuiltinFunction("view", OnNamedAxes(View)) { AutoCallsBare = true }));
 
         // Bare `m = colormap` is the read, the way `x = eps` is a number (M37's AutoCallsBare);
         // the callee position stays exempt, so colormap(jet) still calls.
@@ -1878,9 +1974,9 @@ internal static partial class JgsBuiltins
             BindsAnsAsStatement = false,
         }));
 
-        DefineSilent("semilogy", (args, line, col) => Semilog("semilogy", args, line, col, (x, y, s) => JG.SemilogY(x, y, s)));
-        DefineSilent("semilogx", (args, line, col) => Semilog("semilogx", args, line, col, (x, y, s) => JG.SemilogX(x, y, s)));
-        DefineSilent("loglog", (args, line, col) => Semilog("loglog", args, line, col, (x, y, s) => JG.LogLog(x, y, s)));
+        DefineSilent("semilogy", OnNamedAxes((args, line, col) => Semilog("semilogy", args, line, col, (x, y, s) => JG.SemilogY(x, y, s))));
+        DefineSilent("semilogx", OnNamedAxes((args, line, col) => Semilog("semilogx", args, line, col, (x, y, s) => JG.SemilogX(x, y, s))));
+        DefineSilent("loglog", OnNamedAxes((args, line, col) => Semilog("loglog", args, line, col, (x, y, s) => JG.LogLog(x, y, s))));
 
         // Every axes-facing verb accepts a leading axes handle, MATLAB's title(ax, '…') form. The
         // named axes is made current only for the call, so gca does not move (M51).
@@ -2852,6 +2948,16 @@ internal static partial class JgsBuiltins
         return Handle(JG.Histogram(DoubleArray("histogram", args, 0, line, col), bins));
     }
 
+    /// <summary>
+    /// <c>errorbar(y, err)</c>, <c>errorbar(x, y, err)</c>, <c>errorbar(x, y, neg, pos)</c>, each with
+    /// an optional trailing <c>LineSpec</c>, and the table form.
+    /// <para>
+    /// Until M70 only the three-argument spelling ran; the other three refused by arity, which M69's
+    /// form probe recorded. The asymmetric case needed nothing new below this: <c>ErrorBarPlot</c> has
+    /// held a separate low and high array since M6 and the symmetric constructor passes the same one
+    /// twice. The horizontal forms are a different matter and are refused by name — see below.
+    /// </para>
+    /// </summary>
     private static JgsValue ErrorBar(IReadOnlyList<JgsValue> args, int line, int col)
     {
         if (args.Count > 0 && args[0].Type == JgsType.Table)
@@ -2860,8 +2966,113 @@ internal static partial class JgsBuiltins
             return Handle(JG.ErrorBar(Tbl("errorbar", args, 0, line, col), Str("errorbar", args, 1, line, col), Str("errorbar", args, 2, line, col), Str("errorbar", args, 3, line, col)));
         }
 
-        Arity("errorbar", args, 3, line, col);
-        return Handle(JG.ErrorBar(DoubleArray("errorbar", args, 0, line, col), DoubleArray("errorbar", args, 1, line, col), DoubleArray("errorbar", args, 2, line, col)));
+        // The trailing LineSpec, taken off before the positional arguments are counted so that
+        // errorbar(y, err, 'r--') and errorbar(x, y, neg, pos, 'o') are the same shape underneath.
+        string? spec = null;
+        var rest = new List<JgsValue>(args);
+        if (rest.Count > 1 && rest[^1].Type == JgsType.String)
+        {
+            spec = rest[^1].AsString;
+
+            // A word that names a direction is not a LineSpec, and drawing it as one would silently
+            // ignore what the script asked for. This renderer draws the whisker along y only.
+            if (spec.Equals("horizontal", StringComparison.OrdinalIgnoreCase)
+                || spec.Equals("both", StringComparison.OrdinalIgnoreCase))
+            {
+                throw new JgsRuntimeException(line, col,
+                    $"errorbar draws the whisker along y; '{spec}' asks for one along x, which this build has no model for. Use 'vertical', or swap the axes.");
+            }
+
+            if (spec.Equals("vertical", StringComparison.OrdinalIgnoreCase))
+            {
+                spec = null; // the only direction drawn, so naming it changes nothing
+            }
+
+            rest.RemoveAt(rest.Count - 1);
+        }
+
+        ArityRange("errorbar", rest, 2, 4, line, col);
+        double[] first = DoubleArray("errorbar", rest, 0, line, col);
+        double[] second = DoubleArray("errorbar", rest, 1, line, col);
+
+        // errorbar(y, err) puts the samples at 1, 2, 3, ... — MATLAB's implicit x, and the same one
+        // plot(y) uses. The dialect's index base does not enter into it: these are coordinates.
+        (double[] xs, double[] ys, double[] neg, double[] pos) = rest.Count switch
+        {
+            2 => (Ramp1(first.Length), first, second, second),
+            3 => (first, second, DoubleArray("errorbar", rest, 2, line, col),
+                  DoubleArray("errorbar", rest, 2, line, col)),
+            _ => (first, second, DoubleArray("errorbar", rest, 2, line, col),
+                  DoubleArray("errorbar", rest, 3, line, col)),
+        };
+
+        ErrorBarPlot plot = JG.ErrorBar(xs, ys, neg, pos);
+        if (spec is not null)
+        {
+            LineSpec parsed = LineSpec.Parse(spec);
+            if (parsed.Color is { } color)
+            {
+                plot.Color = color;
+            }
+
+            if (parsed.Marker is { } marker)
+            {
+                plot.Marker = marker;
+            }
+
+            // 'o' alone is markers with no line, the same rule plot follows.
+            if (parsed.Dash is null && parsed.Marker is not null)
+            {
+                plot.ShowLine = false;
+            }
+        }
+
+        return Handle(plot);
+    }
+
+    /// <summary>
+    /// Grows a colour grid to cover a surface that came back larger than the data it was built
+    /// from, by repeating the border outwards.
+    /// <para>
+    /// <c>meshz</c> is the reason this exists: it hangs a skirt off the edge of the surface, so the
+    /// grid it draws is two rows and two columns bigger than the <c>Z</c> it was handed, and
+    /// <c>meshz(Z, C)</c> would otherwise refuse a colour array of exactly the documented size. The
+    /// skirt takes the colour of the edge it hangs from, which is what MATLAB shows and the only
+    /// reading that does not invent a value. A grid that is the right size already passes straight
+    /// through, so every other verb is untouched.
+    /// </para>
+    /// </summary>
+    private static double[,] SkirtColors(double[,] cData, double[,] z)
+    {
+        int rows = z.GetLength(0);
+        int cols = z.GetLength(1);
+        int haveRows = cData.GetLength(0);
+        int haveCols = cData.GetLength(1);
+        if (haveRows == rows && haveCols == cols)
+        {
+            return cData;
+        }
+
+        // Only a symmetric skirt is understood. Anything else is a size mismatch the model should
+        // refuse by name rather than have papered over here.
+        int padRows = (rows - haveRows) / 2;
+        int padCols = (cols - haveCols) / 2;
+        if (padRows < 0 || padCols < 0 || haveRows + (2 * padRows) != rows || haveCols + (2 * padCols) != cols)
+        {
+            return cData;
+        }
+
+        var grown = new double[rows, cols];
+        for (int r = 0; r < rows; r++)
+        {
+            int sr = System.Math.Clamp(r - padRows, 0, haveRows - 1);
+            for (int c = 0; c < cols; c++)
+            {
+                grown[r, c] = cData[sr, System.Math.Clamp(c - padCols, 0, haveCols - 1)];
+            }
+        }
+
+        return grown;
     }
 
     /// <summary>
@@ -2871,11 +3082,43 @@ internal static partial class JgsBuiltins
     private static JgsValue Surface3D(string name, IReadOnlyList<JgsValue> args, int line, int col,
         Func<double[], double[], double[,], PlotObject> full,
         Func<double[,], PlotObject> zOnly,
-        Func<double[,], double[,], double[,], PlotObject> parametric)
+        Func<double[,], double[,], double[,], PlotObject> parametric,
+        bool takesColorData = true)
     {
+        // MATLAB's surf(Z, C) and surf(X, Y, Z, C) colour the surface by an array of their own
+        // rather than by height. The trailing C is peeled here, once, because most verbs built on
+        // this dispatcher document it and none of them read it before M70.
+        //
+        // surfl is the exception, and takesColorData is why it is spelled out rather than assumed:
+        // its second argument is the light source's direction, so reading it as colour would take a
+        // documented argument and quietly mean something else by it.
+        double[,]? cData = null;
+        if (takesColorData && args.Count is 2 or 4)
+        {
+            cData = Matrix(name, args, args.Count - 1, line, col);
+            args = [.. args.Take(args.Count - 1)];
+        }
+
+        JgsValue Coloured(PlotObject drawn)
+        {
+            if (cData is not null && drawn is SurfacePlot surface)
+            {
+                try
+                {
+                    surface.CData = SkirtColors(cData, surface.Z);
+                }
+                catch (ArgumentException ex)
+                {
+                    throw new JgsRuntimeException(line, col, $"{name}: {ex.Message}");
+                }
+            }
+
+            return Handle(drawn);
+        }
+
         if (args.Count == 1)
         {
-            return Handle(zOnly(Matrix(name, args, 0, line, col)));
+            return Coloured(zOnly(Matrix(name, args, 0, line, col)));
         }
 
         Arity(name, args, 3, line, col);
@@ -2892,11 +3135,11 @@ internal static partial class JgsBuiltins
                 double[,] yGrid = Matrix(name, args, 1, line, col);
                 if (!IsRectilinearGrid(xGrid, yGrid))
                 {
-                    return Handle(parametric(xGrid, yGrid, z));
+                    return Coloured(parametric(xGrid, yGrid, z));
                 }
             }
 
-            return Handle(full(
+            return Coloured(full(
                 GridVector(name, args, 0, firstRow: true, line, col),
                 GridVector(name, args, 1, firstRow: false, line, col),
                 z));

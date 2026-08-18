@@ -395,6 +395,17 @@ public static class JG
         return axes.AddErrorBar(xs, ys, error);
     }
 
+    /// <summary>
+    /// Plots samples whose error reaches a different distance below and above each one — MATLAB's
+    /// <c>errorbar(x, y, neg, pos)</c>. The model has carried the two arrays separately since M6;
+    /// until M70 no verb handed it two.
+    /// </summary>
+    public static ErrorBarPlot ErrorBar(double[] xs, double[] ys, double[] errorNeg, double[] errorPos)
+    {
+        AxesModel axes = PrepareAxes();
+        return axes.AddErrorBar(xs, ys, errorNeg, errorPos);
+    }
+
     /// <summary>Displays a scalar field as a colormapped image/heatmap (MATLAB <c>imagesc</c>).</summary>
     public static ImagePlot Image(double[,] values)
     {

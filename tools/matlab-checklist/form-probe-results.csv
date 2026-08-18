@@ -40,7 +40,7 @@ alim,function,4,"alim(ax,...)",unprobed,no sample for this form's arguments
 all,builtin,0,B = all(A),accepted,
 all,builtin,1,"B = all(A,'all')",accepted,
 all,builtin,2,"B = all(A,dim)",accepted,
-all,builtin,3,"B = all(A,vecdim)",error,"all expects 1 argument(s), but got 2."
+all,builtin,3,"B = all(A,vecdim)",accepted,
 alpha,function,0,alpha value,unprobed,no sample for this form's arguments
 alpha,function,1,alpha alphadata,unprobed,no sample for this form's arguments
 alpha,function,2,alpha facealpha,unprobed,no sample for this form's arguments
@@ -78,7 +78,7 @@ annotation,function,6,an = annotation(___),unprobed,no sample for this form's ar
 any,builtin,0,B = any(A),accepted,
 any,builtin,1,"B = any(A,'all')",accepted,
 any,builtin,2,"B = any(A,dim)",accepted,
-any,builtin,3,"B = any(A,vecdim)",error,"any expects 1 argument(s), but got 2."
+any,builtin,3,"B = any(A,vecdim)",accepted,
 area,function,0,"area(X,Y)",accepted,
 area,function,1,area(Y),accepted,
 area,function,2,"area(___,basevalue)",accepted,
@@ -306,7 +306,7 @@ cast,builtin,1,"B = cast(A,'like',p)",error,"cast expects 2 argument(s), but got
 caxis,function,0,caxis(limits),error,"caxis: expected two limits, got 3."
 caxis,function,1,caxis('auto'),accepted,
 caxis,function,2,caxis('manual'),accepted,
-caxis,function,3,"caxis(target,___)",error,"caxis expects argument 2 to be a number, but got a array."
+caxis,function,3,"caxis(target,___)",error,"caxis: expected two limits, got 3."
 caxis,function,4,cl = caxis,accepted,
 cd,builtin,0,cd,accepted,
 cd,builtin,1,cd newFolder,unprobed,no sample for this form's arguments
@@ -433,7 +433,7 @@ contour,function,1,"contour(X,Y,Z)",accepted,
 contour,function,2,"contour(___,levels)",accepted,
 contour,function,3,"contour(___,LineSpec)",error,"contour expects an array of numbers, but got a string."
 contour,function,4,"contour(___,Name,Value)",unprobed,"Name,Value form; the dump lists no pair names"
-contour,function,5,"contour(ax,___)",error,"contour expects argument 1 to be a matrix (an array of row arrays), but got a number."
+contour,function,5,"contour(ax,___)",accepted,
 contour,function,6,M = contour(___),accepted,
 contour,function,7,"[M,c] = contour(___)",accepted,
 contour3,function,0,contour3(Z),accepted,
@@ -441,7 +441,7 @@ contour3,function,1,"contour3(X,Y,Z)",accepted,
 contour3,function,2,"contour3(___,levels)",accepted,
 contour3,function,3,"contour3(___,LineSpec)",error,"contour3 expects an array of numbers, but got a string."
 contour3,function,4,"contour3(___,Name,Value)",unprobed,"Name,Value form; the dump lists no pair names"
-contour3,function,5,"contour3(ax,___)",error,"contour3 expects argument 1 to be a matrix (an array of row arrays), but got a number."
+contour3,function,5,"contour3(ax,___)",accepted,
 contour3,function,6,M = contour3(___),accepted,
 contour3,function,7,"[M,c] = contour3(___)",accepted,
 contourc,builtin,0,C = contourc(Z),unprobed,no sample for this form's arguments
@@ -455,7 +455,7 @@ contourf,function,1,"contourf(X,Y,Z)",accepted,
 contourf,function,2,"contourf(___,levels)",accepted,
 contourf,function,3,"contourf(___,LineSpec)",error,"contourf expects an array of numbers, but got a string."
 contourf,function,4,"contourf(___,Name,Value)",unprobed,"Name,Value form; the dump lists no pair names"
-contourf,function,5,"contourf(ax,___)",error,"contourf expects argument 1 to be a matrix (an array of row arrays), but got a number."
+contourf,function,5,"contourf(ax,___)",accepted,
 contourf,function,6,M = contourf(___),accepted,
 contourf,function,7,"[M,c] = contourf(___)",accepted,
 contourslice,function,0,"contourslice(X,Y,Z,V,xslice,yslice,zslice)",error,"contourslice: the grid does not match the volume — it wants 1 positions along y, but was given 3."
@@ -503,11 +503,11 @@ cputime,builtin,0,t = cputime,accepted,
 ctranspose,builtin,0,B = A',unprobed,no sample for this form's arguments
 ctranspose,builtin,1,B = ctranspose(A),accepted,
 cummax,builtin,0,M = cummax(A),accepted,
-cummax,builtin,1,"M = cummax(A,dim)",error,"cummax expects 1 argument(s), but got 2."
+cummax,builtin,1,"M = cummax(A,dim)",accepted,
 cummax,builtin,2,"M = cummax(___,direction)",unprobed,no sample for this form's arguments
 cummax,builtin,3,"M = cummax(___,nanflag)",unprobed,no sample for this form's arguments
 cummin,builtin,0,M = cummin(A),accepted,
-cummin,builtin,1,"M = cummin(A,dim)",error,"cummin expects 1 argument(s), but got 2."
+cummin,builtin,1,"M = cummin(A,dim)",accepted,
 cummin,builtin,2,"M = cummin(___,direction)",unprobed,no sample for this form's arguments
 cummin,builtin,3,"M = cummin(___,nanflag)",unprobed,no sample for this form's arguments
 cumprod,builtin,0,B = cumprod(A),accepted,
@@ -533,7 +533,7 @@ daspect,function,1,d = daspect,accepted,
 daspect,function,2,daspect auto,unprobed,no sample for this form's arguments
 daspect,function,3,daspect manual,unprobed,no sample for this form's arguments
 daspect,function,4,m = daspect('mode'),error,"daspect: expected 'auto' or 'manual', got 'mode'."
-daspect,function,5,"___ = daspect(ax,___)",error,"daspect expects between 0 and 1 argument(s), but got 2."
+daspect,function,5,"___ = daspect(ax,___)",accepted,
 datacursormode,function,0,datacursormode on,unprobed,no sample for this form's arguments
 datacursormode,function,1,datacursormode off,unprobed,no sample for this form's arguments
 datacursormode,function,2,datacursormode,accepted,
@@ -623,15 +623,15 @@ error,builtin,1,"error(msg,A1,...,An)",unprobed,no sample for this form's argume
 error,builtin,2,"error(errID,___)",error,took the process down
 error,builtin,3,error(errorStruct),error,"error expects argument 1 to be a string, but got a number."
 error,builtin,4,"error(correction,___)",unprobed,no sample for this form's arguments
-errorbar,function,0,"errorbar(y,err)",error,"errorbar expects 3 argument(s), but got 2."
+errorbar,function,0,"errorbar(y,err)",accepted,
 errorbar,function,1,"errorbar(x,y,err)",accepted,
-errorbar,function,2,"errorbar(x,y,neg,pos)",error,"errorbar expects 3 argument(s), but got 4."
+errorbar,function,2,"errorbar(x,y,neg,pos)",accepted,
 errorbar,function,3,"errorbar(___,ornt)",unprobed,no sample for this form's arguments
-errorbar,function,4,"errorbar(x,y,yneg,ypos,xneg,xpos)",error,"errorbar expects 3 argument(s), but got 6."
-errorbar,function,5,"errorbar(___,LineSpec)",error,"errorbar expects argument 3 to be an array, but got a string."
+errorbar,function,4,"errorbar(x,y,yneg,ypos,xneg,xpos)",error,"errorbar expects between 2 and 4 argument(s), but got 6."
+errorbar,function,5,"errorbar(___,LineSpec)",accepted,
 errorbar,function,6,"errorbar(___,Name,Value)",unprobed,"Name,Value form; the dump lists no pair names"
-errorbar,function,7,"errorbar(ax,___)",error,took the process down
-errorbar,function,8,e = errorbar(___),error,"errorbar expects 3 argument(s), but got 2."
+errorbar,function,7,"errorbar(ax,___)",accepted,
+errorbar,function,8,e = errorbar(___),accepted,
 etree,builtin,0,p = etree(A),unprobed,no sample for this form's arguments
 etree,builtin,1,"p = etree(A,'col')",unprobed,no sample for this form's arguments
 etree,builtin,2,"p = etree(A,'sym')",unprobed,no sample for this form's arguments
@@ -659,12 +659,12 @@ eye,builtin,5,"I = eye(___,'like',p)",unprobed,no sample for this form's argumen
 ezcontour,function,0,ezcontour(f),accepted,
 ezcontour,function,1,"ezcontour(f,xyinterval)",error,"ezcontour: a domain is [min max], or one pair for each direction, all finite."
 ezcontour,function,2,"ezcontour(___,n)",error,"ezcontour: a domain is [min max], or one pair for each direction, all finite."
-ezcontour,function,3,"ezcontour(ax,___)",error,"ezcontour takes 1 function, written as a handle or as text."
+ezcontour,function,3,"ezcontour(ax,___)",accepted,
 ezcontour,function,4,c = ezcontour(___),accepted,
 ezcontourf,function,0,ezcontourf(f),accepted,
 ezcontourf,function,1,"ezcontourf(f,xyinterval)",error,"ezcontourf: a domain is [min max], or one pair for each direction, all finite."
 ezcontourf,function,2,"ezcontourf(___,n)",error,"ezcontourf: a domain is [min max], or one pair for each direction, all finite."
-ezcontourf,function,3,"ezcontourf(ax,___)",error,"ezcontourf takes 1 function, written as a handle or as text."
+ezcontourf,function,3,"ezcontourf(ax,___)",accepted,
 ezcontourf,function,4,c = ezcontourf(___),accepted,
 ezmesh,function,0,ezmesh(f),accepted,
 ezmesh,function,1,"ezmesh(f,xyinterval)",error,"ezmesh: a domain is [min max], or one pair for each direction, all finite."
@@ -672,7 +672,7 @@ ezmesh,function,2,"ezmesh(funx,funy,funz)",accepted,
 ezmesh,function,3,"ezmesh(funx,funy,funz,uvinterval)",error,"ezmesh: a domain is [min max], or one pair for each direction, all finite."
 ezmesh,function,4,"ezmesh(___,n)",error,"ezmesh: a domain is [min max], or one pair for each direction, all finite."
 ezmesh,function,5,"ezmesh(___,'circ')",error,"ezmesh(f) takes one function of x and y, or three functions of two parameters."
-ezmesh,function,6,"ezmesh(ax,___)",error,"ezmesh takes 1 function, written as a handle or as text."
+ezmesh,function,6,"ezmesh(ax,___)",accepted,
 ezmesh,function,7,s = ezmesh(___),accepted,
 ezmeshc,function,0,ezmeshc(f),accepted,
 ezmeshc,function,1,"ezmeshc(f,xyinterval)",error,"ezmeshc: a domain is [min max], or one pair for each direction, all finite."
@@ -680,7 +680,7 @@ ezmeshc,function,2,"ezmeshc(funx,funy,funz)",accepted,
 ezmeshc,function,3,"ezmeshc(funx,funy,funz,uvinterval)",error,"ezmeshc: a domain is [min max], or one pair for each direction, all finite."
 ezmeshc,function,4,"ezmeshc(___,n)",error,"ezmeshc: a domain is [min max], or one pair for each direction, all finite."
 ezmeshc,function,5,"ezmeshc(___,'circ')",error,"ezmeshc(f) takes one function of x and y, or three functions of two parameters."
-ezmeshc,function,6,"ezmeshc(ax,___)",error,"ezmeshc takes 1 function, written as a handle or as text."
+ezmeshc,function,6,"ezmeshc(ax,___)",accepted,
 ezmeshc,function,7,sc = ezmeshc(___),accepted,
 ezplot,function,0,ezplot(f),accepted,
 ezplot,function,1,"ezplot(f,xinterval)",error,"ezplot: a domain is [min max], or one pair for each direction, all finite."
@@ -689,12 +689,12 @@ ezplot,function,3,"ezplot(f2,xyinterval)",error,"ezplot: a domain is [min max], 
 ezplot,function,4,"ezplot(funx,funy)",accepted,
 ezplot,function,5,"ezplot(funx,funy,uinterval)",error,"ezplot: a domain is [min max], or one pair for each direction, all finite."
 ezplot,function,6,"ezplot(___,fig)",unprobed,no sample for this form's arguments
-ezplot,function,7,"ezplot(ax,___)",error,"ezplot takes 1 function, written as a handle or as text."
+ezplot,function,7,"ezplot(ax,___)",accepted,
 ezplot,function,8,h = ezplot(___),accepted,
 ezplot3,function,0,"ezplot3(funx,funy,funz)",accepted,
 ezplot3,function,1,"ezplot3(funx,funy,funz,uinterval)",error,"ezplot3: a domain is [min max], or one pair for each direction, all finite."
 ezplot3,function,2,"ezplot3(___,'animate')",accepted,
-ezplot3,function,3,"ezplot3(ax,___)",error,"ezplot3 takes 3 functions, written as a handle or as text."
+ezplot3,function,3,"ezplot3(ax,___)",accepted,
 ezplot3,function,4,h = ezplot3(___),accepted,
 ezpolar,function,0,ezpolar(fun),unprobed,no sample for this form's arguments
 ezpolar,function,1,"ezpolar(fun,[a,b])",unprobed,no sample for this form's arguments
@@ -706,7 +706,7 @@ ezsurf,function,2,"ezsurf(funx,funy,funz)",accepted,
 ezsurf,function,3,"ezsurf(funx,funy,funz,uvinterval)",error,"ezsurf: a domain is [min max], or one pair for each direction, all finite."
 ezsurf,function,4,"ezsurf(___,n)",error,"ezsurf: a domain is [min max], or one pair for each direction, all finite."
 ezsurf,function,5,"ezsurf(___,'circ')",error,"ezsurf(f) takes one function of x and y, or three functions of two parameters."
-ezsurf,function,6,"ezsurf(ax,___)",error,"ezsurf takes 1 function, written as a handle or as text."
+ezsurf,function,6,"ezsurf(ax,___)",accepted,
 ezsurf,function,7,s = ezsurf(___),accepted,
 ezsurfc,function,0,ezsurfc(f),accepted,
 ezsurfc,function,1,"ezsurfc(f,xyinterval)",error,"ezsurfc: a domain is [min max], or one pair for each direction, all finite."
@@ -714,7 +714,7 @@ ezsurfc,function,2,"ezsurfc(funx,funy,funz)",accepted,
 ezsurfc,function,3,"ezsurfc(funx,funy,funz,uvinterval)",error,"ezsurfc: a domain is [min max], or one pair for each direction, all finite."
 ezsurfc,function,4,"ezsurfc(___,n)",error,"ezsurfc: a domain is [min max], or one pair for each direction, all finite."
 ezsurfc,function,5,"ezsurfc(___,'circ')",error,"ezsurfc(f) takes one function of x and y, or three functions of two parameters."
-ezsurfc,function,6,"ezsurfc(ax,___)",error,"ezsurfc takes 1 function, written as a handle or as text."
+ezsurfc,function,6,"ezsurfc(ax,___)",accepted,
 ezsurfc,function,7,sc = ezsurfc(___),accepted,
 false,builtin,0,false,accepted,
 false,builtin,1,F = false(n),accepted,
@@ -1005,19 +1005,19 @@ im2frame,builtin,1,"F = im2frame(X,map)",accepted,
 im2frame,builtin,2,F = im2frame(X),error,im2frame: a frame's picture is a height-by-width-by-3 array of colours.
 imag,builtin,0,Y = imag(Z),accepted,
 image,builtin,0,image(C),error,"image expects argument 1 to be a matrix; build one with meshgrid, zeros(r, c), or a semicolon-rowed literal."
-image,builtin,1,"image(x,y,C)",error,"image expects 1 argument(s), but got 3."
-image,builtin,2,"image('CData',C)",error,"image expects 1 argument(s), but got 2."
-image,builtin,3,"image('XData',x,'YData',y,'CData',C)",error,"image expects 1 argument(s), but got 6."
+image,builtin,1,"image(x,y,C)",error,"image expects argument 3 to be a matrix; build one with meshgrid, zeros(r, c), or a semicolon-rowed literal."
+image,builtin,2,"image('CData',C)",error,"image expects argument 2 to be a matrix; build one with meshgrid, zeros(r, c), or a semicolon-rowed literal."
+image,builtin,3,"image('XData',x,'YData',y,'CData',C)",error,"image expects argument 6 to be a matrix; build one with meshgrid, zeros(r, c), or a semicolon-rowed literal."
 image,builtin,4,"image(___,Name,Value)",unprobed,"Name,Value form; the dump lists no pair names"
-image,builtin,5,"image(ax,___)",error,"image expects 1 argument(s), but got 2."
+image,builtin,5,"image(ax,___)",error,"image expects argument 1 to be a matrix; build one with meshgrid, zeros(r, c), or a semicolon-rowed literal."
 image,builtin,6,im = image(___),error,"image expects argument 1 to be a matrix; build one with meshgrid, zeros(r, c), or a semicolon-rowed literal."
 imagesc,function,0,imagesc(C),error,"imagesc expects argument 1 to be a matrix; build one with meshgrid, zeros(r, c), or a semicolon-rowed literal."
-imagesc,function,1,"imagesc(x,y,C)",error,"imagesc expects 1 argument(s), but got 3."
-imagesc,function,2,"imagesc('CData',C)",error,"imagesc expects 1 argument(s), but got 2."
-imagesc,function,3,"imagesc('XData',x,'YData',y,'CData',C)",error,"imagesc expects 1 argument(s), but got 6."
+imagesc,function,1,"imagesc(x,y,C)",error,"imagesc expects argument 3 to be a matrix; build one with meshgrid, zeros(r, c), or a semicolon-rowed literal."
+imagesc,function,2,"imagesc('CData',C)",error,"imagesc expects argument 2 to be a matrix; build one with meshgrid, zeros(r, c), or a semicolon-rowed literal."
+imagesc,function,3,"imagesc('XData',x,'YData',y,'CData',C)",error,"imagesc expects argument 6 to be a matrix; build one with meshgrid, zeros(r, c), or a semicolon-rowed literal."
 imagesc,function,4,"imagesc(___,Name,Value)",unprobed,"Name,Value form; the dump lists no pair names"
-imagesc,function,5,"imagesc(___,clims)",error,"imagesc expects 1 argument(s), but got 2."
-imagesc,function,6,"imagesc(ax,___)",error,"imagesc expects 1 argument(s), but got 2."
+imagesc,function,5,"imagesc(___,clims)",error,"imagesc expects argument 1 to be a matrix; build one with meshgrid, zeros(r, c), or a semicolon-rowed literal."
+imagesc,function,6,"imagesc(ax,___)",error,"imagesc expects argument 1 to be a matrix; build one with meshgrid, zeros(r, c), or a semicolon-rowed literal."
 imagesc,function,7,im = imagesc(___),error,"imagesc expects argument 1 to be a matrix; build one with meshgrid, zeros(r, c), or a semicolon-rowed literal."
 imapprox,function,0,"[Y,newmap] = imapprox(X,map,Q)",accepted,
 imapprox,function,1,"[Y,newmap] = imapprox(X,map,tol)",accepted,
@@ -1114,10 +1114,10 @@ isreal,builtin,0,tf = isreal(A),accepted,
 isrow,builtin,0,isrow(V),unprobed,no sample for this form's arguments
 isscalar,builtin,0,TF = isscalar(A),accepted,
 issorted,builtin,0,TF = issorted(A),accepted,
-issorted,builtin,1,"TF = issorted(A,dim)",error,"issorted expects 1 argument(s), but got 2."
+issorted,builtin,1,"TF = issorted(A,dim)",accepted,
 issorted,builtin,2,"TF = issorted(___,direction)",unprobed,no sample for this form's arguments
 issorted,builtin,3,"TF = issorted(___,Name,Value)",unprobed,"Name,Value form; the dump lists no pair names"
-issorted,builtin,4,"TF = issorted(A,'rows')",error,"issorted expects 1 argument(s), but got 2."
+issorted,builtin,4,"TF = issorted(A,'rows')",error,"issorted expects argument 2 to be a number, but got a string."
 issortedrows,builtin,0,TF = issortedrows(A),accepted,
 issortedrows,builtin,1,"TF = issortedrows(A,column)",error,"issortedrows expects 1 argument(s), but got 2."
 issortedrows,builtin,2,"TF = issortedrows(___,direction)",error,"issortedrows expects 1 argument(s), but got 2."
@@ -1207,7 +1207,7 @@ line,builtin,0,"line(x,y)",accepted,
 line,builtin,1,"line(x,y,z)",accepted,
 line,builtin,2,line,error,"line expects (x, y) or (x, y, z), then 'Name', value options."
 line,builtin,3,"line(___,Name,Value)",unprobed,"Name,Value form; the dump lists no pair names"
-line,builtin,4,"line(ax,___)",error,"A 3D line needs x, y and z of the same length, but got 1, 3 and 3. (Parameter 'x')"
+line,builtin,4,"line(ax,___)",accepted,
 line,builtin,5,pl = line(___),accepted,
 lines,function,0,c = lines,accepted,
 lines,function,1,c = lines(m),accepted,
@@ -1238,7 +1238,7 @@ loglog,builtin,3,"loglog(X1,Y1,LineSpec1,...,Xn,Yn,LineSpecn)",unprobed,no sampl
 loglog,builtin,4,loglog(Y),accepted,
 loglog,builtin,5,"loglog(Y,LineSpec)",accepted,
 loglog,builtin,6,"loglog(___,Name,Value)",unprobed,"Name,Value form; the dump lists no pair names"
-loglog,builtin,7,"loglog(ax,___)",error,"loglog expects argument 3 to be a string, but got a number."
+loglog,builtin,7,"loglog(ax,___)",accepted,
 loglog,builtin,8,lineobj = loglog(___),accepted,
 lookfor,builtin,0,lookfor keyword,unprobed,no sample for this form's arguments
 lookfor,builtin,1,lookfor keyword -all,unprobed,no sample for this form's arguments
@@ -1297,23 +1297,23 @@ memory,builtin,0,memory,accepted,
 memory,builtin,1,"[userview,systemview] = memory",error,"This call returns 1 value(s), but 2 were asked for."
 mesh,function,0,"mesh(X,Y,Z)",accepted,
 mesh,function,1,mesh(Z),accepted,
-mesh,function,2,"mesh(Z,C)",error,"mesh expects 3 argument(s), but got 2."
-mesh,function,3,"mesh(___,C)",error,"mesh expects 3 argument(s), but got 4."
-mesh,function,4,"mesh(ax,___)",error,"mesh expects 3 argument(s), but got 4."
+mesh,function,2,"mesh(Z,C)",accepted,
+mesh,function,3,"mesh(___,C)",accepted,
+mesh,function,4,"mesh(ax,___)",accepted,
 mesh,function,5,"mesh(___,Name,Value)",unprobed,"Name,Value form; the dump lists no pair names"
 mesh,function,6,s = mesh(___),accepted,
 meshc,function,0,"meshc(X,Y,Z)",accepted,
 meshc,function,1,meshc(Z),accepted,
-meshc,function,2,"meshc(___,C)",error,"meshc expects 3 argument(s), but got 4."
+meshc,function,2,"meshc(___,C)",accepted,
 meshc,function,3,"meshc(___,Name,Value)",unprobed,"Name,Value form; the dump lists no pair names"
-meshc,function,4,"meshc(ax,___)",error,"meshc expects 3 argument(s), but got 4."
+meshc,function,4,"meshc(ax,___)",accepted,
 meshc,function,5,sc = meshc(___),accepted,
 meshz,function,0,"meshz(X,Y,Z)",accepted,
-meshz,function,1,"meshz(X,Y,Z,C)",error,"meshz expects 3 argument(s), but got 4."
+meshz,function,1,"meshz(X,Y,Z,C)",accepted,
 meshz,function,2,meshz(Z),accepted,
-meshz,function,3,"meshz(Z,C)",error,"meshz expects 3 argument(s), but got 2."
+meshz,function,3,"meshz(Z,C)",accepted,
 meshz,function,4,"meshz(___,Name,Value)",unprobed,"Name,Value form; the dump lists no pair names"
-meshz,function,5,"meshz(ax,___)",error,"meshz expects 3 argument(s), but got 4."
+meshz,function,5,"meshz(ax,___)",accepted,
 meshz,function,6,s = meshz(___),accepted,
 metaclass,builtin,0,mc = metaclass(object),unprobed,no sample for this form's arguments
 metaclass,builtin,1,mc = ?ClassName,unprobed,no sample for this form's arguments
@@ -1452,10 +1452,10 @@ ones,builtin,2,"X = ones(sz1,...,szN)",unprobed,no sample for this form's argume
 ones,builtin,3,X = ones(sz),accepted,
 ones,builtin,4,"X = ones(___,typename)",accepted,
 ones,builtin,5,"X = ones(___,'like',p)",unprobed,no sample for this form's arguments
-openfig,function,0,openfig(filename),error,Could not find file 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-forms-791ky5v7\a.fig'.
+openfig,function,0,openfig(filename),error,Could not find file 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-forms-8h4lpnau\a.fig'.
 openfig,function,1,"openfig(filename,copies)",unprobed,no sample for this form's arguments
 openfig,function,2,"openfig(___,visibility)",unprobed,no sample for this form's arguments
-openfig,function,3,fig = openfig(___),error,Could not find file 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-forms-791ky5v7\a.fig'.
+openfig,function,3,fig = openfig(___),error,Could not find file 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-forms-8h4lpnau\a.fig'.
 opengl,function,0,opengl info,unprobed,no sample for this form's arguments
 opengl,function,1,d = opengl('data'),accepted,
 opengl,function,2,opengl software,unprobed,no sample for this form's arguments
@@ -1500,7 +1500,7 @@ patch,builtin,3,"patch('XData',X,'YData',Y,'ZData',Z)",error,"patch expects (x, 
 patch,builtin,4,"patch('Faces',F,'Vertices',V)",error,"patch expects argument 1 to be a matrix; build one with meshgrid, zeros(r, c), or a semicolon-rowed literal."
 patch,builtin,5,patch(S),unprobed,no sample for this form's arguments
 patch,builtin,6,"patch(___,Name,Value)",unprobed,"Name,Value form; the dump lists no pair names"
-patch,builtin,7,"patch(ax,___)",error,"patch: polygon 1 has 1, 3 and 3 coordinates; they must match."
+patch,builtin,7,"patch(ax,___)",accepted,
 patch,builtin,8,p = patch(___),accepted,
 pause,builtin,0,pause,unprobed,waits for a person or ends the process
 pause,builtin,1,pause(n),unprobed,waits for a person or ends the process
@@ -1511,11 +1511,11 @@ pbaspect,function,1,pb = pbaspect,accepted,
 pbaspect,function,2,pbaspect auto,unprobed,no sample for this form's arguments
 pbaspect,function,3,pbaspect manual,unprobed,no sample for this form's arguments
 pbaspect,function,4,m = pbaspect('mode'),error,"pbaspect: expected 'auto' or 'manual', got 'mode'."
-pbaspect,function,5,"___ = pbaspect(ax,___)",error,"pbaspect expects between 0 and 1 argument(s), but got 2."
-pcolor,function,0,pcolor(C),error,"pcolor expects 3 argument(s), but got 1."
+pbaspect,function,5,"___ = pbaspect(ax,___)",accepted,
+pcolor,function,0,pcolor(C),accepted,
 pcolor,function,1,"pcolor(X,Y,C)",accepted,
-pcolor,function,2,"pcolor(ax,___)",error,"pcolor expects 3 argument(s), but got 2."
-pcolor,function,3,s = pcolor(___),error,"pcolor expects 3 argument(s), but got 1."
+pcolor,function,2,"pcolor(ax,___)",accepted,
+pcolor,function,3,s = pcolor(___),accepted,
 peaks,function,0,Z = peaks,accepted,
 peaks,function,1,Z = peaks(n),accepted,
 peaks,function,2,"Z = peaks(Xm,Ym)",error,"peaks expects between 0 and 1 argument(s), but got 2."
@@ -1550,7 +1550,7 @@ plot3,builtin,1,"plot3(X,Y,Z,LineSpec)",accepted,
 plot3,builtin,2,"plot3(X1,Y1,Z1,...,Xn,Yn,Zn)",unprobed,no sample for this form's arguments
 plot3,builtin,3,"plot3(X1,Y1,Z1,LineSpec1,...,Xn,Yn,Zn,LineSpecn)",unprobed,no sample for this form's arguments
 plot3,builtin,4,"plot3(___,Name,Value)",unprobed,"Name,Value form; the dump lists no pair names"
-plot3,builtin,5,"plot3(ax,___)",error,"plot3 expects (x, y, z) groups, each with an optional spec."
+plot3,builtin,5,"plot3(ax,___)",accepted,
 plot3,builtin,6,p = plot3(___),accepted,
 plotmatrix,function,0,"plotmatrix(X,Y)",accepted,
 plotmatrix,function,1,plotmatrix(X),accepted,
@@ -1630,7 +1630,7 @@ prism,function,1,c = prism(m),accepted,
 prod,builtin,0,B = prod(A),accepted,
 prod,builtin,1,"B = prod(A,'all')",accepted,
 prod,builtin,2,"B = prod(A,dim)",accepted,
-prod,builtin,3,"B = prod(A,vecdim)",error,"prod expects 1 argument(s), but got 2."
+prod,builtin,3,"B = prod(A,vecdim)",accepted,
 prod,builtin,4,"B = prod(___,outtype)",unprobed,no sample for this form's arguments
 prod,builtin,5,"B = prod(___,nanflag)",unprobed,no sample for this form's arguments
 psi,builtin,0,Y = psi(X),accepted,
@@ -1841,7 +1841,7 @@ scatter3,function,3,"scatter3(___,'filled')",accepted,
 scatter3,function,4,"scatter3(___,markertype)",unprobed,no sample for this form's arguments
 scatter3,function,5,"scatter3(tbl,xvar,yvar,zvar)",error,"scatter3 expects argument 1 to be an array, but got a table."
 scatter3,function,6,"scatter3(tbl,xvar,yvar,zvar,'filled')",error,"scatter3 expects argument 1 to be an array, but got a table."
-scatter3,function,7,"scatter3(ax,___)",error,"A 3D scatter needs x, y and z of the same length, but got 1, 3 and 3. (Parameter 'x')"
+scatter3,function,7,"scatter3(ax,___)",accepted,
 scatter3,function,8,"scatter3(___,Name,Value)",unprobed,"Name,Value form; the dump lists no pair names"
 scatter3,function,9,h = scatter3(___),accepted,
 scatterhistogram,function,0,"scatterhistogram(tbl,xvar,yvar)",error,"scatterhistogram: the table has no variable 'a'. It has Var1, Var2."
@@ -1858,7 +1858,7 @@ semilogx,builtin,3,"semilogx(X1,Y1,LineSpec1,...,Xn,Yn,LineSpecn)",unprobed,no s
 semilogx,builtin,4,semilogx(Y),accepted,
 semilogx,builtin,5,"semilogx(Y,LineSpec)",accepted,
 semilogx,builtin,6,"semilogx(___,Name,Value)",unprobed,"Name,Value form; the dump lists no pair names"
-semilogx,builtin,7,"semilogx(ax,___)",error,"semilogx expects argument 3 to be a string, but got a number."
+semilogx,builtin,7,"semilogx(ax,___)",accepted,
 semilogx,builtin,8,lineobj = semilogx(___),accepted,
 semilogy,builtin,0,"semilogy(X,Y)",accepted,
 semilogy,builtin,1,"semilogy(X,Y,LineSpec)",accepted,
@@ -1867,7 +1867,7 @@ semilogy,builtin,3,"semilogy(X1,Y1,LineSpec1,...,Xn,Yn,LineSpecn)",unprobed,no s
 semilogy,builtin,4,semilogy(Y),accepted,
 semilogy,builtin,5,"semilogy(Y,LineSpec)",accepted,
 semilogy,builtin,6,"semilogy(___,Name,Value)",unprobed,"Name,Value form; the dump lists no pair names"
-semilogy,builtin,7,"semilogy(ax,___)",error,"semilogy expects argument 3 to be a string, but got a number."
+semilogy,builtin,7,"semilogy(ax,___)",accepted,
 semilogy,builtin,8,lineobj = semilogy(___),accepted,
 set,builtin,0,"set(H,Name,Value)",unprobed,"Name,Value form; the dump lists no pair names"
 set,builtin,1,"set(H,NameArray,ValueArray)",unprobed,no sample for this form's arguments
@@ -1924,7 +1924,7 @@ speye,builtin,3,S = speye(sz),error,"speye expects argument 1 to be a number, bu
 sphere,function,0,"[X,Y,Z] = sphere",accepted,
 sphere,function,1,"[X,Y,Z] = sphere(n)",accepted,
 sphere,function,2,sphere(___),accepted,
-sphere,function,3,"sphere(ax,___)",error,sphere expects argument 1 to be a whole number.
+sphere,function,3,"sphere(ax,___)",accepted,
 spring,function,0,c = spring,accepted,
 spring,function,1,c = spring(m),accepted,
 sprintf,builtin,0,"str = sprintf(formatSpec,A1,...,An)",unprobed,no sample for this form's arguments
@@ -1959,7 +1959,7 @@ stem,function,1,"stem(X,Y)",accepted,
 stem,function,2,"stem(___,'filled')",error,"stem expects argument 2 to be an array, but got a string."
 stem,function,3,"stem(___,LineSpec)",error,"stem expects argument 2 to be an array, but got a string."
 stem,function,4,"stem(___,Name,Value)",unprobed,"Name,Value form; the dump lists no pair names"
-stem,function,5,"stem(ax,___)",error,took the process down
+stem,function,5,"stem(ax,___)",accepted,
 stem,function,6,h = stem(___),accepted,
 stem3,function,0,stem3(Z),accepted,
 stem3,function,1,"stem3(X,Y,Z)",accepted,
@@ -1983,7 +1983,7 @@ streamline,function,2,"streamline(X,Y,U,V,startx,starty)",error,"streamline: the
 streamline,function,3,"streamline(U,V,startx,starty)",error,"streamline needs starting points: streamline(X, Y, Z, U, V, W, sx, sy, sz)."
 streamline,function,4,streamline(verts),accepted,
 streamline,function,5,"streamline(___,options)",error,"streamline: the grid does not match the volume — it wants 1 positions along y, but was given 3."
-streamline,function,6,"streamline(ax,___)",error,"streamline: the grid does not match the volume — it wants 3 positions along x, but was given 1."
+streamline,function,6,"streamline(ax,___)",error,"streamline: the grid does not match the volume — it wants 1 positions along y, but was given 3."
 streamline,function,7,lineobj = streamline(___),error,"streamline: the grid does not match the volume — it wants 1 positions along y, but was given 3."
 streamparticles,function,0,streamparticles(vertices),unprobed,no sample for this form's arguments
 streamparticles,function,1,"streamparticles(vertices,n)",unprobed,no sample for this form's arguments
@@ -2034,13 +2034,13 @@ structfun,builtin,0,"A = structfun(func,S)",error,"structfun(f, s) applies a fun
 structfun,builtin,1,"A = structfun(func,S,Name,Value)",unprobed,"Name,Value form; the dump lists no pair names"
 structfun,builtin,2,"[A1,...,Am] = structfun(___)",error,"structfun(f, s) applies a function handle to each field."
 subplot,function,0,"subplot(m,n,p)",accepted,
-subplot,function,1,"subplot(m,n,p,'replace')",error,"subplot expects 3 argument(s), but got 4."
-subplot,function,2,"subplot(m,n,p,'align')",error,"subplot expects 3 argument(s), but got 4."
-subplot,function,3,"subplot(m,n,p,ax)",error,"subplot expects 3 argument(s), but got 4."
-subplot,function,4,"subplot('Position',pos)",error,"subplot expects 3 argument(s), but got 2."
+subplot,function,1,"subplot(m,n,p,'replace')",accepted,
+subplot,function,2,"subplot(m,n,p,'align')",accepted,
+subplot,function,3,"subplot(m,n,p,ax)",error,"subplot expects argument 4 to be a string, but got a number."
+subplot,function,4,"subplot('Position',pos)",error,"subplot expects between 3 and 4 argument(s), but got 2."
 subplot,function,5,"subplot(___,Name,Value)",unprobed,"Name,Value form; the dump lists no pair names"
 subplot,function,6,ax = subplot(___),accepted,
-subplot,function,7,subplot(ax),error,"subplot expects 3 argument(s), but got 1."
+subplot,function,7,subplot(ax),error,"subplot expects between 3 and 4 argument(s), but got 1."
 subtitle,function,0,subtitle(txt),accepted,
 subtitle,function,1,"subtitle(___,Name,Value)",unprobed,"Name,Value form; the dump lists no pair names"
 subtitle,function,2,"subtitle(target,___)",error,"subtitle expects a string, but got a array."
@@ -2051,16 +2051,16 @@ subvolume,function,2,Nv = subvolume(...),unprobed,no sample for this form's argu
 sum,builtin,0,S = sum(A),accepted,
 sum,builtin,1,"S = sum(A,'all')",accepted,
 sum,builtin,2,"S = sum(A,dim)",accepted,
-sum,builtin,3,"S = sum(A,vecdim)",error,"sum expects 1 argument(s), but got 2."
+sum,builtin,3,"S = sum(A,vecdim)",accepted,
 sum,builtin,4,"S = sum(___,outtype)",unprobed,no sample for this form's arguments
 sum,builtin,5,"S = sum(___,nanflag)",unprobed,no sample for this form's arguments
 summer,function,0,c = summer,accepted,
 summer,function,1,c = summer(m),accepted,
 surf,function,0,"surf(X,Y,Z)",accepted,
-surf,function,1,"surf(X,Y,Z,C)",error,"surf expects 3 argument(s), but got 4."
+surf,function,1,"surf(X,Y,Z,C)",accepted,
 surf,function,2,surf(Z),accepted,
-surf,function,3,"surf(Z,C)",error,"surf expects 3 argument(s), but got 2."
-surf,function,4,"surf(ax,___)",error,"surf expects 3 argument(s), but got 4."
+surf,function,3,"surf(Z,C)",accepted,
+surf,function,4,"surf(ax,___)",accepted,
 surf,function,5,"surf(___,Name,Value)",unprobed,"Name,Value form; the dump lists no pair names"
 surf,function,6,s = surf(___),accepted,
 surf2patch,function,0,fvc = surf2patch(h),unprobed,no sample for this form's arguments
@@ -2071,17 +2071,17 @@ surf2patch,function,4,"fvc = surf2patch(X,Y,Z,C)",unprobed,no sample for this fo
 surf2patch,function,5,"fvc = surf2patch(...,'triangles')",unprobed,no sample for this form's arguments
 surf2patch,function,6,"[f,v,c] = surf2patch(...)",unprobed,no sample for this form's arguments
 surface,builtin,0,"surface(X,Y,Z)",accepted,
-surface,builtin,1,"surface(X,Y,Z,C)",error,"surface expects 3 argument(s), but got 4."
+surface,builtin,1,"surface(X,Y,Z,C)",accepted,
 surface,builtin,2,surface(Z),accepted,
-surface,builtin,3,"surface(Z,C)",error,"surface expects 3 argument(s), but got 2."
-surface,builtin,4,"surface(ax,___)",error,"surface expects 3 argument(s), but got 4."
+surface,builtin,3,"surface(Z,C)",accepted,
+surface,builtin,4,"surface(ax,___)",accepted,
 surface,builtin,5,"surface(___,Name,Value)",unprobed,"Name,Value form; the dump lists no pair names"
 surface,builtin,6,s = surface(___),accepted,
 surfc,function,0,"surfc(X,Y,Z)",accepted,
-surfc,function,1,"surfc(X,Y,Z,C)",error,"surfc expects 3 argument(s), but got 4."
+surfc,function,1,"surfc(X,Y,Z,C)",accepted,
 surfc,function,2,surfc(Z),accepted,
-surfc,function,3,"surfc(Z,C)",error,"surfc expects 3 argument(s), but got 2."
-surfc,function,4,"surfc(ax,___)",error,"surfc expects 3 argument(s), but got 4."
+surfc,function,3,"surfc(Z,C)",accepted,
+surfc,function,4,"surfc(ax,___)",accepted,
 surfc,function,5,"surfc(___,Name,Value)",unprobed,"Name,Value form; the dump lists no pair names"
 surfc,function,6,sc = surfc(___),accepted,
 surfl,function,0,"surfl(X,Y,Z)",accepted,
@@ -2089,11 +2089,11 @@ surfl,function,1,surfl(Z),accepted,
 surfl,function,2,"surfl(___,'light')",error,"surfl expects 3 argument(s), but got 4."
 surfl,function,3,"surfl(___,s)",error,"surfl expects 3 argument(s), but got 4."
 surfl,function,4,"surfl(X,Y,Z,s,k)",error,"surfl expects 3 argument(s), but got 5."
-surfl,function,5,"surfl(ax,___)",error,"surfl expects 3 argument(s), but got 4."
+surfl,function,5,"surfl(ax,___)",accepted,
 surfl,function,6,s = surfl(___),accepted,
 surfnorm,function,0,"surfnorm(X,Y,Z)",accepted,
 surfnorm,function,1,surfnorm(Z),accepted,
-surfnorm,function,2,"surfnorm(ax,___)",error,"surfnorm expects 3 argument(s), but got 4."
+surfnorm,function,2,"surfnorm(ax,___)",accepted,
 surfnorm,function,3,"surfnorm(___,Name,Value)",unprobed,"Name,Value form; the dump lists no pair names"
 surfnorm,function,4,"[Nx,Ny,Nz] = surfnorm(___)",accepted,
 swarmchart,function,0,"swarmchart(x,y)",accepted,
@@ -2170,9 +2170,9 @@ thetaticks,function,5,"___ = thetaticks(pax,___)",error,"thetaticks expects betw
 tic,builtin,0,tic,accepted,
 tic,builtin,1,timerVal = tic,accepted,
 tiledlayout,function,0,"tiledlayout(m,n)",accepted,
-tiledlayout,function,1,tiledlayout('flow'),error,"tiledlayout expects 2 argument(s), but got 1."
+tiledlayout,function,1,tiledlayout('flow'),accepted,
 tiledlayout,function,2,"tiledlayout(___,Name,Value)",unprobed,"Name,Value form; the dump lists no pair names"
-tiledlayout,function,3,"tiledlayout(parent,___)",error,"tiledlayout expects 2 argument(s), but got 3."
+tiledlayout,function,3,"tiledlayout(parent,___)",error,"tiledlayout expects between 1 and 2 argument(s), but got 3."
 tiledlayout,function,4,t = tiledlayout(___),accepted,
 times,builtin,0,C = A.*B,unprobed,no sample for this form's arguments
 times,builtin,1,"C = times(A,B)",accepted,
@@ -2233,7 +2233,7 @@ validatecolor,function,0,RGB = validatecolor(colors),error,"validatecolor: compo
 validatecolor,function,1,"RGB = validatecolor(colors,sz)",unprobed,no sample for this form's arguments
 vecnorm,builtin,0,N = vecnorm(A),accepted,
 vecnorm,builtin,1,"N = vecnorm(A,p)",accepted,
-vecnorm,builtin,2,"N = vecnorm(A,p,dim)",error,"vecnorm expects between 1 and 2 argument(s), but got 3."
+vecnorm,builtin,2,"N = vecnorm(A,p,dim)",accepted,
 version,builtin,0,version,accepted,
 version,builtin,1,v = version('-versionOption'),error,version does not recognize the option '-versionOption'.
 version,builtin,2,[v d] = version,accepted,
@@ -2242,7 +2242,7 @@ vertcat,builtin,1,"C = vertcat(A1,A2,…,An)",unprobed,no sample for this form's
 view,function,0,"view(az,el)",accepted,
 view,function,1,view(v),unprobed,no sample for this form's arguments
 view,function,2,view(dim),unprobed,no sample for this form's arguments
-view,function,3,"view(ax,___)",error,"view expects between 0 and 2 argument(s), but got 3."
+view,function,3,"view(ax,___)",accepted,
 view,function,4,"[caz,cel] = view(___)",error,"This call returns 1 value(s), but 2 were asked for."
 viewmtx,function,0,viewmtx,error,"viewmtx expects between 2 and 4 argument(s), but got 0."
 viewmtx,function,1,"T = viewmtx(az,el)",unprobed,no sample for this form's arguments
@@ -2274,7 +2274,7 @@ waterfall,function,0,"waterfall(X,Y,Z)",accepted,
 waterfall,function,1,"waterfall(X,Y,Z,C)",error,"waterfall expects 3 argument(s), but got 4."
 waterfall,function,2,waterfall(Z),accepted,
 waterfall,function,3,"waterfall(Z,C)",error,"waterfall expects 3 argument(s), but got 2."
-waterfall,function,4,"waterfall(ax,___)",error,"waterfall expects 3 argument(s), but got 4."
+waterfall,function,4,"waterfall(ax,___)",accepted,
 waterfall,function,5,p = waterfall(___),accepted,
 what,builtin,0,what,accepted,
 what,builtin,1,what folderName,unprobed,no sample for this form's arguments

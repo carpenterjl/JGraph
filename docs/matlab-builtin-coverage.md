@@ -2,16 +2,18 @@
 
 > **This file counts names. Since M69 there is a second file that counts *forms*.**
 > `docs/matlab-form-coverage.md` runs each of MATLAB's 2,422 documented syntax forms for these
-> commands and records what came back: **949 are confirmed working**, 154 commands accept every form
-> they document, and **157 accept some and not others**. A name in the table below means the name
-> resolves — it has never meant that every way MATLAB documents calling it works. Read the two
-> together, and see ADR 0069.
+> commands and records what came back: **1,011 are confirmed working**, 159 commands accept every
+> form they document, and **137 accept some and not others**. A name in the table below means the
+> name resolves — it has never meant that every way MATLAB documents calling it works. Read the two
+> together, and see ADR 0069 for how the forms are measured and ADR 0070 for the 62 that M70 closed.
 >
 > **And a third that counts properties.** `docs/matlab-property-coverage.md` builds each graphics
 > object and asks it: **436 of 1,361 documented properties** are answered across the 26 object kinds
-> it can construct. It also asks the question underneath that one — whether a drawing verb hands back
-> a handle at all — because a property table nothing can reach is not coverage. Four verbs did not,
-> and were fixed in M69.
+> it can construct. That number did not move in M70, and the reason is worth knowing: M70 made five
+> more verbs hand back a handle, but they draw object kinds two other verbs already reached, and this
+> count is per kind. It also asks the question underneath — whether a drawing verb hands back a
+> handle at all — because a property table nothing can reach is not coverage. **All 73 verbs swept
+> now do**; four were fixed in M69 and five in M70.
 >
 > **`docs/matlab-divergences.md`** indexes the deliberate differences from MATLAB the ADRs record,
 > and `stess_41.m` asserts a subset of them against the running interpreter.

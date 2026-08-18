@@ -207,6 +207,7 @@ internal static class PlotMapper
                 X = p.X.ToArray(),
                 Y = p.Y.ToArray(),
                 Z = ToJagged(p.Z),
+                CData = p.CData is { } cd ? ToJagged(cd) : null,
                 XGrid = p.XGrid is { } xg ? ToJagged(xg) : null,
                 YGrid = p.YGrid is { } yg ? ToJagged(yg) : null,
                 Colormap = DtoConvert.ToDto(p.Colormap),
@@ -759,6 +760,7 @@ internal static class PlotMapper
             ? new SurfacePlot(To2D(d.XGrid), To2D(d.YGrid), To2D(d.Z))
             : new SurfacePlot(d.X, d.Y, To2D(d.Z));
 
+        surface.CData = d.CData is null ? null : To2D(d.CData);
         surface.Colormap = DtoConvert.ToColormap(d.Colormap);
         surface.Style = d.Style;
         surface.Shading = d.Shading;

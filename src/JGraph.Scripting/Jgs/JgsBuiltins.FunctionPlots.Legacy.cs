@@ -50,23 +50,23 @@ internal static partial class JgsBuiltins
             env.Declare(name, JgsValue.Function(
                 new BuiltinFunction(name, body) { BindsAnsAsStatement = false }));
 
-        DefineSilent("ezplot", (args, line, col) => EzPlot(args, env, interpreter, line, col));
-        DefineSilent("ezplot3", (args, line, col) => EzPlot3(args, env, interpreter, line, col));
-        DefineSilent("ezpolar", (args, line, col) => EzPolar(args, env, interpreter, line, col));
+        DefineSilent("ezplot", OnNamedAxes((args, line, col) => EzPlot(args, env, interpreter, line, col)));
+        DefineSilent("ezplot3", OnNamedAxes((args, line, col) => EzPlot3(args, env, interpreter, line, col)));
+        DefineSilent("ezpolar", OnNamedAxes((args, line, col) => EzPolar(args, env, interpreter, line, col)));
 
-        DefineSilent("ezsurf", (args, line, col) =>
-            EzSurface("ezsurf", wireframe: false, contours: false, args, env, interpreter, line, col));
-        DefineSilent("ezmesh", (args, line, col) =>
-            EzSurface("ezmesh", wireframe: true, contours: false, args, env, interpreter, line, col));
-        DefineSilent("ezsurfc", (args, line, col) =>
-            EzSurface("ezsurfc", wireframe: false, contours: true, args, env, interpreter, line, col));
-        DefineSilent("ezmeshc", (args, line, col) =>
-            EzSurface("ezmeshc", wireframe: true, contours: true, args, env, interpreter, line, col));
+        DefineSilent("ezsurf", OnNamedAxes((args, line, col) =>
+            EzSurface("ezsurf", wireframe: false, contours: false, args, env, interpreter, line, col)));
+        DefineSilent("ezmesh", OnNamedAxes((args, line, col) =>
+            EzSurface("ezmesh", wireframe: true, contours: false, args, env, interpreter, line, col)));
+        DefineSilent("ezsurfc", OnNamedAxes((args, line, col) =>
+            EzSurface("ezsurfc", wireframe: false, contours: true, args, env, interpreter, line, col)));
+        DefineSilent("ezmeshc", OnNamedAxes((args, line, col) =>
+            EzSurface("ezmeshc", wireframe: true, contours: true, args, env, interpreter, line, col)));
 
-        DefineSilent("ezcontour", (args, line, col) =>
-            EzContour("ezcontour", filled: false, args, env, interpreter, line, col));
-        DefineSilent("ezcontourf", (args, line, col) =>
-            EzContour("ezcontourf", filled: true, args, env, interpreter, line, col));
+        DefineSilent("ezcontour", OnNamedAxes((args, line, col) =>
+            EzContour("ezcontour", filled: false, args, env, interpreter, line, col)));
+        DefineSilent("ezcontourf", OnNamedAxes((args, line, col) =>
+            EzContour("ezcontourf", filled: true, args, env, interpreter, line, col)));
     }
 
     /// <summary>

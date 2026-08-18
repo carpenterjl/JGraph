@@ -118,8 +118,11 @@ internal static partial class JgsBuiltins
         // where a lone output is the matrix.
         void DefineContour(string name, bool silent, bool filled, bool elevated)
         {
-            JgsValue Single(IReadOnlyList<JgsValue> args, int line, int col) =>
-                Contour(name, args, line, col, filled, elevated);
+            // The peel is here rather than around Single so both the one-output and the
+            // [C, h] = contour(ax, Z) paths see the same argument list.
+            var body = OnNamedAxes((args, line, col) => Contour(name, args, line, col, filled, elevated));
+
+            JgsValue Single(IReadOnlyList<JgsValue> args, int line, int col) => body(args, line, col);
 
             env.Declare(name, JgsValue.Function(new BuiltinFunction(name, Single)
             {

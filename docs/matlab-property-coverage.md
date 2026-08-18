@@ -44,21 +44,22 @@ for six times.
 ## Does the verb hand back what it drew?
 
 A property table is only reachable through a handle, so this is the question underneath the
-one above. Of **45 drawing verbs** probed, **39 return a usable
-handle** and **6 do not** — for those, every property of the object they drew
-is out of reach at once, whatever the model carries.
+one above. Of **73 drawing verbs** probed, **73 return a usable
+handle** and **0 do not**. A verb that draws and hands back nothing puts every
+property of the object it drew out of reach at once, whatever the model carries.
 
-This list is hand-written and is **not** every graphics verb; it covers the families the four
-verbs fixed in M69 were found in. A verb absent from it is unmeasured, not passing.
+This list is hand-written and is **not** every graphics verb. M69 wrote 45 rows, covering the
+families the four verbs it fixed turned up in; M70 added 28 more, each run at the CLI before
+it was written down. A verb absent from it is unmeasured, not passing.
 
-| Verb | What `h = verb(…)` gives |
-|---|---|
-| `surfl` | no-handle |
-| `waterfall` | no-handle |
-| `ribbon` | no-handle |
-| `trisurf` | no-handle |
-| `trimesh` | no-handle |
-| `pcolor` | error pcolor expects 3 argument(s), but got 1. |
+It is hand-written for a reason worth stating, because the obvious alternative is wrong. The
+R2021b dump records which argument of a command is a target axes, and driving this sweep off
+that role looks like a way to grow it by measurement instead of by memory. It is not: the
+dump describes *arguments*, and taking a target axes is a different question from returning
+an object. Built that way the sweep collected `axis`, `daspect`, `rlim` and 28 other query
+verbs, and would have reported all 31 as handing back no handle.
+
+Every verb probed hands back a handle.
 
 ## What the missing column is, and is not
 

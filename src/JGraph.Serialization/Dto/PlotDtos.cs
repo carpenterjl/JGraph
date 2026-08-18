@@ -444,6 +444,14 @@ public sealed class SurfacePlotDto : PlotDto
     public double[][] Z { get; set; } = Array.Empty<double[]>();
 
     /// <summary>
+    /// The explicit colour grid, when the surface has one. Null — the common case, and every
+    /// document written before M70 — means the colour comes from Z, which is what those documents
+    /// meant. Adding it needs no format bump for that reason: an absent key reads as the old
+    /// behaviour rather than as a missing one.
+    /// </summary>
+    public double[][]? CData { get; set; }
+
+    /// <summary>
     /// A position per vertex for a parametric surface (a sphere, a cylinder). Null on the rectilinear
     /// surfaces every document written before M45 holds, which is what <see cref="X"/>/<see cref="Y"/>
     /// describe on their own.

@@ -112,6 +112,26 @@ internal static partial class JgsBuiltins
         }
     }
 
+    /// <summary>
+    /// Wraps a verb's body so a leading axes handle is peeled off before the body reads its own
+    /// arguments, and the verb draws into that axes without making it current.
+    /// <para>
+    /// M51 gave <c>plot</c> and the titling family this, one verb at a time. M69's form probe then
+    /// measured what "one verb at a time" had reached: <c>surf(ax, Z)</c>, <c>mesh(ax, Z)</c>,
+    /// <c>stem(ax, x, y)</c> and about a hundred others still read the handle as *data*, which is why
+    /// <c>line(ax, x, y)</c> complained that its three coordinates had lengths 1, 3 and 3. The
+    /// argument list is the same for every one of them, so the split belongs here rather than in each
+    /// verb, and a verb opts in by wrapping rather than by remembering to call two helpers in order.
+    /// </para>
+    /// </summary>
+    internal static Func<IReadOnlyList<JgsValue>, int, int, JgsValue> OnNamedAxes(
+        Func<IReadOnlyList<JgsValue>, int, int, JgsValue> body) =>
+        (args, line, col) =>
+        {
+            (AxesModel? axes, IReadOnlyList<JgsValue> rest) = PeelAxes(args);
+            return OnAxes(axes, () => body(rest, line, col));
+        };
+
     /// <summary>The plot objects a handle or an array of handles names, in the order given.</summary>
     internal static List<PlotObject> PlotsOf(string verb, JgsValue value, int line, int col)
     {

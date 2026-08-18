@@ -1,5 +1,8 @@
 using System.IO;
 using JGraph.Api;
+using JGraph.Core.Drawing;
+using JGraph.Core.Primitives;
+using JGraph.Objects;
 
 namespace JGraph.Scripting.Jgs;
 
@@ -140,22 +143,124 @@ internal static partial class JgsBuiltins
         });
 
         // image draws, so its handle does not echo as `ans` — the rule plot has always had.
-        env.Declare("image", JgsValue.Function(new BuiltinFunction("image", (args, line, col) =>
-        {
-            Arity("image", args, 1, line, col);
-            if (args[0].Type == JgsType.Image)
+        env.Declare("image", JgsValue.Function(new BuiltinFunction(
+            "image", OnNamedAxes((args, line, col) =>
             {
-                // An image value displays exactly as imshow shows it.
-                env.TryGet("imshow", out JgsValue imshow);
-                return imshow.AsCallable.Call(args, line, col);
+                if (args.Count == 1 && args[0].Type == JgsType.Image)
+                {
+                    // An image value displays exactly as imshow shows it.
+                    env.TryGet("imshow", out JgsValue imshow);
+                    return imshow.AsCallable.Call(args, line, col);
+                }
+
+                return DrawImage("image", args, scaled: false, line, col);
+            }))
+        { BindsAnsAsStatement = false }));
+    }
+
+    /// <summary>
+    /// The shared body of <c>image</c> and <c>imagesc</c>: <c>(C)</c>, <c>(x, y, C)</c>, the
+    /// <c>'CData'</c>/<c>'XData'</c>/<c>'YData'</c> pairs, and <c>imagesc</c>'s trailing <c>clims</c>.
+    /// <para>
+    /// Until M70 both verbs took one argument and refused the rest, which is thirteen documented
+    /// forms between them. <c>x</c> and <c>y</c> give the two ends of the span the raster covers —
+    /// MATLAB reads only the first and last element of each, whatever length they are — so the whole
+    /// family lands on <see cref="ImagePlot.XExtent"/> and <see cref="ImagePlot.YExtent"/>, which
+    /// have been on the model since M6.
+    /// </para>
+    /// </summary>
+    private static JgsValue DrawImage(
+        string verb, IReadOnlyList<JgsValue> args, bool scaled, int line, int col)
+    {
+        double[]? x = null, y = null, limits = null;
+        double[,]? c = null;
+
+        // The name-value spelling, image('XData', x, 'YData', y, 'CData', C), is a different shape
+        // from the positional one rather than a tail on it, so it is read first and separately.
+        if (args.Count >= 2 && args.Count % 2 == 0 && args[0].Type == JgsType.String)
+        {
+            for (int i = 0; i + 1 < args.Count; i += 2)
+            {
+                string key = Str(verb, args, i, line, col);
+                if (key.Equals("CData", StringComparison.OrdinalIgnoreCase))
+                {
+                    c = Matrix(verb, args, i + 1, line, col);
+                }
+                else if (key.Equals("XData", StringComparison.OrdinalIgnoreCase))
+                {
+                    x = DoubleArray(verb, args, i + 1, line, col);
+                }
+                else if (key.Equals("YData", StringComparison.OrdinalIgnoreCase))
+                {
+                    y = DoubleArray(verb, args, i + 1, line, col);
+                }
+                else
+                {
+                    throw new JgsRuntimeException(line, col,
+                        $"{verb} takes 'CData', 'XData' and 'YData', but got '{key}'.");
+                }
             }
 
-            // A plain matrix displays over its cell indices, colormapped — the imagesc path. The
-            // handle is what MATLAB's image(...) answers with, and what a following set(h, 'CData', …)
-            // needs; it returned nothing until M69's property probe went looking for the object.
-            return JgsHandleRegistry.For(JG.Image(Matrix("image", args, 0, line, col)));
-        })
-        { BindsAnsAsStatement = false }));
+            if (c is null)
+            {
+                throw new JgsRuntimeException(line, col, $"{verb} needs a 'CData' array to draw.");
+            }
+        }
+        else
+        {
+            ArityRange(verb, args, 1, scaled ? 4 : 3, line, col);
+            if (args.Count >= 3)
+            {
+                x = DoubleArray(verb, args, 0, line, col);
+                y = DoubleArray(verb, args, 1, line, col);
+                c = Matrix(verb, args, 2, line, col);
+                if (args.Count == 4)
+                {
+                    limits = ClimsOf(verb, args, 3, line, col);
+                }
+            }
+            else
+            {
+                c = Matrix(verb, args, 0, line, col);
+                if (args.Count == 2)
+                {
+                    limits = ClimsOf(verb, args, 1, line, col);
+                }
+            }
+        }
+
+        ImagePlot plot = JG.Image(c);
+        if (x is { Length: > 0 })
+        {
+            plot.XExtent = new DataRange(x[0], x[^1]);
+        }
+
+        if (y is { Length: > 0 })
+        {
+            plot.YExtent = new DataRange(y[0], y[^1]);
+        }
+
+        if (limits is not null)
+        {
+            plot.AutoScaleColor = false;
+            plot.ColorMin = limits[0];
+            plot.ColorMax = limits[1];
+        }
+
+        return JgsHandleRegistry.For(plot);
+    }
+
+    /// <summary>The <c>[cmin cmax]</c> pair <c>imagesc</c>'s trailing argument names.</summary>
+    private static double[] ClimsOf(string verb, IReadOnlyList<JgsValue> args, int at, int line, int col)
+    {
+        double[] pair = DoubleArray(verb, args, at, line, col);
+        if (pair.Length != 2)
+        {
+            throw new JgsRuntimeException(line, col,
+                $"{verb}: clims is [cmin cmax], but got {pair.Length} value(s).");
+        }
+
+        return pair;
     }
 
     private static FileStream OpenStream(

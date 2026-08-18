@@ -204,24 +204,54 @@ internal static partial class JgsBuiltins
         Predicate("iscellstr", static v =>
             v.Type == JgsType.Cell && Array.TrueForAll(v.AsCell, static e => e.Type == JgsType.String));
 
+        // issorted(A) and issorted(A, dim). The answer is one logical whatever the shape — MATLAB
+        // asks "is this array in order along that dimension", not "which of its slices are" — so this
+        // cannot go through the column-wise reduction wrapper, which would hand back one answer per
+        // slice. The dimension arrives as a whole number and defaults to the first non-singleton one,
+        // which for a matrix is down the columns.
         Define("issorted", (args, line, col) =>
         {
-            Arity("issorted", args, 1, line, col);
+            ArityRange("issorted", args, 1, 2, line, col);
             if (args[0].Type != JgsType.Array)
             {
                 return JgsValue.Bool(true); // a single value is trivially in order
             }
 
-            double[] values = ToDoubles("issorted", args[0], line, col);
-            for (int k = 1; k < values.Length; k++)
+            static bool Ordered(double[] values)
             {
-                if (values[k] < values[k - 1])
+                for (int k = 1; k < values.Length; k++)
                 {
-                    return JgsValue.Bool(false);
+                    if (values[k] < values[k - 1])
+                    {
+                        return false;
+                    }
+                }
+
+                return true;
+            }
+
+            if (args.Count == 1)
+            {
+                int[] shape = JgsMatrix.DimsOf(args[0]);
+                if (shape.Length <= 1 || JgsMatrix.RowCount(args[0]) == 1 || JgsMatrix.ColCount(args[0]) == 1)
+                {
+                    return JgsValue.Bool(Ordered(ToDoubles("issorted", args[0], line, col)));
                 }
             }
 
-            return JgsValue.Bool(true);
+            int[] dims = JgsMatrix.DimsOf(args[0]);
+            int dim = args.Count == 2
+                ? Count("issorted", args, 1, line, col)
+                : JgsMatrix.DefaultDim(dims);
+            if (dim < 1)
+            {
+                throw new JgsRuntimeException(line, col,
+                    $"issorted: the dimension must be a positive whole number, but was {dim}.");
+            }
+
+            double[] flat = FlattenColumnMajor("issorted", args[0], line, col);
+            (double[][] slices, _) = JgsMatrix.SlicesAlong(flat, dims, dim);
+            return JgsValue.Bool(Array.TrueForAll(slices, Ordered));
         });
 
         // isequal treats NaN as unequal to itself; these two are the variants that do not. The second

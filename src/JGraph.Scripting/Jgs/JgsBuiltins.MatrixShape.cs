@@ -640,8 +640,10 @@ internal static partial class JgsBuiltins
         // than in the wrapper's body. Before M52 the only such difference was a bool for diff, and
         // std(x, 1) paid for it: the weight landed in the slot the wrapper reads as the dimension, so
         // asking for the population standard deviation silently reduced along dimension 1 instead.
-        WrapColumnwise(env, "sum", new(Words: TailWords.Nan | TailWords.Outtype, Identity: 0));
-        WrapColumnwise(env, "prod", new(Words: TailWords.Nan | TailWords.Outtype, Identity: 1));
+        WrapColumnwise(env, "sum",
+            new(Words: TailWords.Nan | TailWords.Outtype, Identity: 0, Vecdim: true));
+        WrapColumnwise(env, "prod",
+            new(Words: TailWords.Nan | TailWords.Outtype, Identity: 1, Vecdim: true));
         WrapColumnwise(env, "mean", new(Words: TailWords.Nan | TailWords.Outtype));
         WrapColumnwise(env, "median", new(Words: TailWords.Nan));
         WrapColumnwise(env, "mode", new());
@@ -655,12 +657,29 @@ internal static partial class JgsBuiltins
         }
 
         // any and all take no 'omitnan': MATLAB counts NaN as nonzero, so there is nothing to omit.
-        WrapColumnwise(env, "any", new());
-        WrapColumnwise(env, "all", new());
+        WrapColumnwise(env, "any", new(Vecdim: true));
+        WrapColumnwise(env, "all", new(Vecdim: true));
 
         WrapColumnwise(env, "cumsum", new(KeepShape: true, Words: TailWords.Nan | TailWords.Reverse, Identity: 0));
         WrapColumnwise(env, "cumprod", new(KeepShape: true, Words: TailWords.Nan | TailWords.Reverse, Identity: 1));
         WrapColumnwise(env, "sort", new(KeepShape: true));
+
+        // cummax and cummin are cumulative reductions like the two above them, and until M70 they
+        // were neither: the body underneath flattens whatever it is handed, so cummax of a matrix
+        // ran one sequence through the whole of it rather than one down each column. Wrapping gives
+        // them the column, the dimension argument and 'reverse' in a single row. The identity is
+        // what a NaN is replaced by while the running value passes over it, which is the losing end
+        // of the comparison; MATLAB ignores NaN here by default, unlike cumsum.
+        WrapColumnwise(env, "cummax", new(
+            KeepShape: true, Words: TailWords.Nan | TailWords.Reverse,
+            Identity: double.NegativeInfinity, OmitsNanByDefault: true));
+        WrapColumnwise(env, "cummin", new(
+            KeepShape: true, Words: TailWords.Nan | TailWords.Reverse,
+            Identity: double.PositiveInfinity, OmitsNanByDefault: true));
+
+        // vecnorm(A, p, dim): p sits where the dimension does for everything else, so the dimension
+        // moves along one — the same shape std and var have, and the same reason.
+        WrapColumnwise(env, "vecnorm", new(LeadingArgs: 1));
 
         // diff(X, n, dim): n is how many times to difference, not the dimension.
         WrapColumnwise(env, "diff", new(KeepShape: true, LeadingArgs: 1, RepeatsInner: true));
@@ -707,6 +726,17 @@ internal static partial class JgsBuiltins
     /// differencing n times along a dimension is the base builtin applied n times to each slice.
     /// </param>
     /// <param name="Words">The option words this name answers itself.</param>
+    /// <param name="Vecdim">
+    /// Whether a vector of dimensions may stand where the dimension does — MATLAB's <c>vecdim</c>,
+    /// as in <c>sum(A, [1 2])</c>. Only a reduction that gives the same answer applied one dimension
+    /// at a time earns this: the sum of the column sums is the whole sum, but the median of the
+    /// medians is not the median, which is why <c>median</c> and <c>mode</c> are absent below.
+    /// </param>
+    /// <param name="OmitsNanByDefault">
+    /// Whether this name steps over NaN unless told otherwise. MATLAB splits the cumulative
+    /// reductions down the middle here — <c>cumsum</c> keeps NaN, <c>cummax</c> ignores it — so the
+    /// default belongs to the name rather than to the family.
+    /// </param>
     /// <param name="Identity">
     /// What a slice reduces to once <c>'omitnan'</c> has emptied it — 0 for a sum, 1 for a product,
     /// NaN for a mean, which has nothing left to average. The cumulative reductions put it in the
@@ -717,7 +747,9 @@ internal static partial class JgsBuiltins
         int LeadingArgs = 0,
         bool RepeatsInner = false,
         TailWords Words = TailWords.None,
-        double Identity = double.NaN);
+        double Identity = double.NaN,
+        bool Vecdim = false,
+        bool OmitsNanByDefault = false);
 
     private static void WrapColumnwise(JgsEnvironment env, string name, ReductionSpec spec)
     {
@@ -738,7 +770,7 @@ internal static partial class JgsBuiltins
         (bool OmitNan, bool Reverse, JgsValue[] Remaining) TakeWords(
             IReadOnlyList<JgsValue> args, int line, int col)
         {
-            bool omitNan = false;
+            bool omitNan = spec.OmitsNanByDefault;
             bool reverse = false;
             var rest = new List<JgsValue> { args[0] };
             for (int i = 1; i < args.Count; i++)
@@ -778,8 +810,8 @@ internal static partial class JgsBuiltins
         // What is left after the words: the array, then this name's leading arguments, then the
         // dimension. A numeric argument in the dimension's slot is the dimension; anything else
         // ('descend', a bin count) is the inner builtin's own business and rides along per slice.
-        (JgsValue Subject, int? Dim, JgsValue[] Extra, bool All, int Order, bool OmitNan, bool Reverse) Split(
-            IReadOnlyList<JgsValue> args, int line, int col)
+        (JgsValue Subject, int? Dim, int[]? Vecdim, JgsValue[] Extra, bool All, int Order,
+            bool OmitNan, bool Reverse) Split(IReadOnlyList<JgsValue> args, int line, int col)
         {
             if (args.Count == 0)
             {
@@ -810,6 +842,7 @@ internal static partial class JgsBuiltins
             bool all = next < rest.Length && rest[next].Type == JgsType.String
                 && rest[next].AsString.Equals("all", StringComparison.OrdinalIgnoreCase);
             int? dim = null;
+            int[]? vecdim = null;
             if (all)
             {
                 next++;
@@ -817,6 +850,12 @@ internal static partial class JgsBuiltins
             else if (next < rest.Length && rest[next].Type == JgsType.Number)
             {
                 dim = (int)rest[next].AsNumber;
+                next++;
+            }
+            else if (spec.Vecdim && next < rest.Length
+                && IsNumericArray(rest[next]) && rest[next].ArrayLength > 0)
+            {
+                vecdim = ReadVecdim(name, rest[next], line, col);
                 next++;
             }
 
@@ -830,7 +869,7 @@ internal static partial class JgsBuiltins
                     $"{name} takes at most three arguments (the array, how many times to difference, and the dimension), but got {args.Count}.");
             }
 
-            return (rest[0], dim, extra.ToArray(), all, order, omitNan, reverse);
+            return (rest[0], dim, vecdim, extra.ToArray(), all, order, omitNan, reverse);
         }
 
         int Whole(JgsValue value, string what, int line, int col)
@@ -994,22 +1033,14 @@ internal static partial class JgsBuiltins
                 : JgsMatrix.FromColumnMajorDims(joined, shape);
         }
 
-        JgsValue Single(IReadOnlyList<JgsValue> args, int line, int col)
+        // The reduction along one dimension, lifted out of Single so a vector of dimensions can walk
+        // it once per dimension. Each pass leaves the dimension it reduced a singleton rather than
+        // dropping it, so the next dimension still names what it named in the original array — which
+        // is what makes the order of a vecdim not matter, in this build as in MATLAB.
+        JgsValue Along(
+            JgsValue subject, int? dim, JgsValue[] extra, int order, bool omitNan, bool reverse,
+            int line, int col)
         {
-            (JgsValue subject, int? dim, JgsValue[] extra, bool all, int order, bool omitNan, bool reverse) =
-                Split(args, line, col);
-            if (order == 0)
-            {
-                // diff(X, 0) is MATLAB's "difference it no times", which is X itself.
-                return subject;
-            }
-
-            if (all)
-            {
-                return ReduceSlice(
-                    FlattenColumnMajor(name, subject, line, col), extra, order, omitNan, reverse, line, col);
-            }
-
             if (!Reduces(subject))
             {
                 return Defer(subject, dim, extra, order, line, col);
@@ -1025,6 +1056,36 @@ internal static partial class JgsBuiltins
             return Assemble(results, reduced, dims, along, line, col);
         }
 
+        JgsValue Single(IReadOnlyList<JgsValue> args, int line, int col)
+        {
+            (JgsValue subject, int? dim, int[]? vecdim, JgsValue[] extra, bool all, int order,
+                bool omitNan, bool reverse) = Split(args, line, col);
+            if (order == 0)
+            {
+                // diff(X, 0) is MATLAB's "difference it no times", which is X itself.
+                return subject;
+            }
+
+            if (all)
+            {
+                return ReduceSlice(
+                    FlattenColumnMajor(name, subject, line, col), extra, order, omitNan, reverse, line, col);
+            }
+
+            if (vecdim is not null)
+            {
+                JgsValue running = subject;
+                foreach (int one in vecdim)
+                {
+                    running = Along(running, one, extra, order, omitNan, reverse, line, col);
+                }
+
+                return running;
+            }
+
+            return Along(subject, dim, extra, order, omitNan, reverse, line, col);
+        }
+
         JgsValue[] Multi(IReadOnlyList<JgsValue> args, int wanted, int line, int col)
         {
             // diff has no second output, and its repeated form is a chain of single-output calls, so
@@ -1037,8 +1098,17 @@ internal static partial class JgsBuiltins
             // The words are discarded rather than applied: the only name here with a second output is
             // sort, which claims none of them. A name that gained both would have to say what its
             // index output means once values have been dropped, and none does yet.
-            (JgsValue subject, int? dim, JgsValue[] extra, bool all, int _, bool _, bool _) =
-                Split(args, line, col);
+            (JgsValue subject, int? dim, int[]? vecdim, JgsValue[] extra, bool all, int _, bool _,
+                bool _) = Split(args, line, col);
+
+            // MATLAB refuses a second output for a vector of dimensions, and for a good reason: a
+            // position within a slice means nothing once several dimensions have been collapsed one
+            // after another. The value output is still well defined, so it is the one answered here.
+            if (vecdim is not null)
+            {
+                return [Single(args, line, col)];
+            }
+
             if (all || !Reduces(subject))
             {
                 if (all || dim is not null)
@@ -1081,6 +1151,39 @@ internal static partial class JgsBuiltins
         }
 
         env.Declare(name, JgsValue.Function(new BuiltinFunction(name, Single) { MultiOutput = Multi }));
+    }
+
+    /// <summary>
+    /// The dimensions a <c>vecdim</c> names, checked and put in order. Reducing along a dimension
+    /// twice is not the same as reducing along it once — the second pass would collapse a singleton
+    /// and lose nothing, but MATLAB refuses the call rather than quietly doing nothing, so this does
+    /// too. The order is ascending because the answer does not depend on it, and a fixed order is
+    /// one less thing for a reader to hold.
+    /// </summary>
+    private static int[] ReadVecdim(string name, JgsValue value, int line, int col)
+    {
+        var dims = new List<int>();
+        for (int i = 0; i < value.ArrayLength; i++)
+        {
+            JgsValue element = value.ElementAt(i);
+            double raw = element.Type == JgsType.Bool ? (element.IsTruthy ? 1 : 0) : element.AsNumber;
+            if (raw != System.Math.Floor(raw) || raw < 1)
+            {
+                throw new JgsRuntimeException(line, col,
+                    $"{name}: every dimension must be a positive whole number, but one was {raw}.");
+            }
+
+            if (dims.Contains((int)raw))
+            {
+                throw new JgsRuntimeException(line, col,
+                    $"{name}: dimension {(int)raw} is named twice, and a dimension can only be reduced once.");
+            }
+
+            dims.Add((int)raw);
+        }
+
+        dims.Sort();
+        return [.. dims];
     }
 
     /// <summary>
@@ -1275,6 +1378,26 @@ internal static partial class JgsBuiltins
             return [JgsValue.Number(best), JgsValue.Number(at + dialect.IndexBase)];
         }
 
+        // A vector of dimensions, collapsed one at a time. Each pass leaves the dimension it
+        // reduced a singleton, so the next one still names what it named to begin with. There is no
+        // second output: a position inside a slice has no meaning once several dimensions have been
+        // collapsed in turn, which is why MATLAB refuses one here too.
+        JgsValue[] ReduceVecdim(JgsValue subject, int[] dims, bool omitNan, int line, int col)
+        {
+            JgsValue running = subject;
+            foreach (int one in dims)
+            {
+                if (running.Type != JgsType.Array)
+                {
+                    break; // already down to one value; the remaining dimensions are singletons
+                }
+
+                running = ReduceAlong(running, one, omitNan, linear: false, line, col)[0];
+            }
+
+            return [running];
+        }
+
         JgsValue[] Both(IReadOnlyList<JgsValue> args, bool omitNan, bool linear, int line, int col)
         {
             if (!IsDimForm(args) || args.Count == 2)
@@ -1282,9 +1405,17 @@ internal static partial class JgsBuiltins
                 return ReduceAlong(args[0], null, omitNan, linear, line, col);
             }
 
-            return IsAll(args[2])
-                ? ReduceAll(args[0], omitNan, line, col)
-                : ReduceAlong(args[0], Count(name, args, 2, line, col), omitNan, linear, line, col);
+            if (IsAll(args[2]))
+            {
+                return ReduceAll(args[0], omitNan, line, col);
+            }
+
+            if (args[2].Type == JgsType.Array && IsNumericArray(args[2]) && args[2].ArrayLength > 0)
+            {
+                return ReduceVecdim(args[0], ReadVecdim(name, args[2], line, col), omitNan, line, col);
+            }
+
+            return ReduceAlong(args[0], Count(name, args, 2, line, col), omitNan, linear, line, col);
         }
 
         // Only a numeric array reduces here. An image, a scalar, the elementwise two-argument form and

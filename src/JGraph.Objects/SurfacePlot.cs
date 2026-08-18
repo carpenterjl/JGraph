@@ -71,6 +71,7 @@ public sealed class SurfacePlot : PlotObject, I3DDrawable, IHasZData, ILegendIte
     private double[,]? _yGrid;
     private Colormap _colormap = Colormap.Parula;
     private uint[]? _texture;
+    private double[,]? _cData;
     private SurfaceStyle _style = SurfaceStyle.FilledWithWireframe;
     private SurfaceShading _shading = SurfaceShading.Flat;
     private bool _showContourBelow;
@@ -294,6 +295,36 @@ public sealed class SurfacePlot : PlotObject, I3DDrawable, IHasZData, ILegendIte
                 _colormap = value;
                 Invalidate(InvalidationKind.Render);
             }
+        }
+    }
+
+    /// <summary>
+    /// An explicit value per vertex to take the colour from, in place of the height — MATLAB's
+    /// <c>C</c> in <c>surf(X, Y, Z, C)</c>. Null is the default and means colour by <c>Z</c>.
+    /// <para>
+    /// It must be the same shape as <c>Z</c>, because it is one reading per vertex of the same grid.
+    /// A texture (<see cref="TextureData"/>) still wins over it: a picture laid on a surface is a
+    /// colour already, with nothing left for a colormap to decide.
+    /// </para>
+    /// </summary>
+    /// <exception cref="ArgumentException">The array is not the same size as Z.</exception>
+    [Browsable(false)]
+    public double[,]? CData
+    {
+        get => _cData;
+        set
+        {
+            if (value is not null
+                && (value.GetLength(0) != _z.GetLength(0) || value.GetLength(1) != _z.GetLength(1)))
+            {
+                throw new ArgumentException(
+                    $"colour data needs one value per grid vertex: {value.GetLength(0)}-by-{value.GetLength(1)} given, "
+                    + $"{_z.GetLength(0)}-by-{_z.GetLength(1)} wanted.");
+            }
+
+            _cData = value;
+            _palette = null; // The cached colours belong to the mapping that has just been replaced.
+            Invalidate(InvalidationKind.Render);
         }
     }
 
@@ -1041,6 +1072,10 @@ public sealed class SurfacePlot : PlotObject, I3DDrawable, IHasZData, ILegendIte
         }
 
         var built = new uint[rows * cols];
+
+        // What the colormap is sampled at. Height is only the default: MATLAB's surf(X, Y, Z, C)
+        // colours by C instead, which is how a surface shows a quantity that is not its own shape.
+        double[,] source = _cData ?? _z;
         if (_texture is { } texture && texture.Length == rows * cols)
         {
             // A textured surface takes its colours from the picture rather than from the height. The
@@ -1063,7 +1098,7 @@ public sealed class SurfacePlot : PlotObject, I3DDrawable, IHasZData, ILegendIte
             {
                 for (int c = 0; c < cols; c++)
                 {
-                    built[(r * cols) + c] = _colormap.Sample(_z[r, c], colorMin, colorMax).WithOpacity(opacity).ToArgb();
+                    built[(r * cols) + c] = _colormap.Sample(source[r, c], colorMin, colorMax).WithOpacity(opacity).ToArgb();
                 }
             }
         }
@@ -1073,8 +1108,8 @@ public sealed class SurfacePlot : PlotObject, I3DDrawable, IHasZData, ILegendIte
             {
                 for (int c = 0; c < cols - 1; c++)
                 {
-                    double meanZ = (_z[r, c] + _z[r, c + 1] + _z[r + 1, c] + _z[r + 1, c + 1]) / 4;
-                    built[(r * cols) + c] = _colormap.Sample(meanZ, colorMin, colorMax).WithOpacity(opacity).ToArgb();
+                    double mean = (source[r, c] + source[r, c + 1] + source[r + 1, c] + source[r + 1, c + 1]) / 4;
+                    built[(r * cols) + c] = _colormap.Sample(mean, colorMin, colorMax).WithOpacity(opacity).ToArgb();
                 }
             }
         }
@@ -1585,7 +1620,9 @@ public sealed class SurfacePlot : PlotObject, I3DDrawable, IHasZData, ILegendIte
             return _colorMin < _colorMax ? (_colorMin, _colorMax) : (_colorMin, _colorMin + 1);
         }
 
-        DataRange bounds = GetZDataBounds().EnsureValid();
+        // Autoscaling spans what the colour is read from, which is C when there is one. Spanning Z
+        // instead would map every value of C onto whatever part of the map Z happened to occupy.
+        DataRange bounds = (_cData is null ? GetZDataBounds() : MatrixBounds(_cData)).EnsureValid();
         return (bounds.Min, bounds.Max);
     }
 

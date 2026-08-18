@@ -233,15 +233,28 @@ against reality is a claim, not a measurement**, which is the same sentence as t
 - **`int64` and `uint64` are exact only to 2^53.** Storage is `double` and the class is a tag, so
   `int64(2^53 + 1)` answers `2^53` and `intmax('int64')` formats as a negative number. Asserted in
   `stess_41.m` so the bound cannot drift unnoticed.
-- **A reduction takes one dimension, never a vector of them.** `sum(A, [1 2])`, `all(A, [1 2])` and
-  `max(A, [], [1 2])` refuse; the nested spelling works. MATLAB's `vecdim` collapses several at once.
 - **`Inf(n)` and `NaN(n)` do not build a matrix.** Both names are constants with `AutoCallsBare`, so
   a subscript indexes the scalar. `zeros(n)` and `ones(n)` are unaffected, so this is these two names
   rather than the shape family.
-- **`surfl`, `waterfall`, `ribbon`, `trisurf` and `trimesh` return no handle.** They draw; what they
-  hand back is nothing, so no property of the object is reachable. The four commonest of this family
-  were fixed in M69 and these five are the measured remainder.
-- **`pcolor(C)` is refused**, where MATLAB documents the one-argument form. Found by the same sweep.
+
+### Closed by a later milestone
+
+These were recorded above when this ADR was written and are no longer true. They sit here rather
+than in the list above because `harvest-divergences.py` reads that list to build
+`docs/matlab-divergences.md`, and an index that still names a closed divergence is exactly the kind
+of stale claim this milestone's machinery exists to catch. The heading deliberately avoids the word
+the harvester matches on. What each one became is in ADR 0070.
+
+- **A reduction took one dimension, never a vector of them.** `sum(A, [1 2])`, `all(A, [1 2])` and
+  `max(A, [], [1 2])` refused; only the nested spelling worked. **Closed in M70.D**, which gave the
+  column-wise reduction wrapper a vector of dimensions and walks it one dimension at a time.
+  `stess_41.m` section 13 turned from an assertion that this refuses into an assertion that it
+  answers 136 — the mechanism M69 built, working as designed.
+- **`surfl`, `waterfall`, `ribbon`, `trisurf` and `trimesh` returned no handle.** **Closed in
+  M70.C.** Each now answers with the object it drew, registered silently so a bare unsuppressed call
+  still echoes nothing.
+- **`pcolor(C)` was refused**, where MATLAB documents the one-argument form. **Closed in M70.B**,
+  which generates the implicit grid from the matrix's own row and column numbers.
 
 ## What is not done
 

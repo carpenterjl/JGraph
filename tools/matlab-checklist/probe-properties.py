@@ -86,8 +86,17 @@ KINDS: list[tuple[str, str, str]] = [
 # Drawing verbs MATLAB documents as returning an object. A verb that draws and returns nothing is
 # not a missing property — it is every property of that object out of reach at once — so it is
 # measured separately from the table above. The list is hand-written because there is no way to
-# derive a runnable call from a documented signature; it covers the families the four fixed in M69
-# were found in, not every graphics verb, and the report says so rather than implying completeness.
+# derive a runnable call from a documented signature, and it is not every graphics verb — a verb
+# absent from it is unmeasured, not passing.
+#
+# M69 wrote 45 rows, covering the families the four verbs it fixed turned up in. M70 added 28 more
+# and the choice of *how* is worth recording, because the obvious way is wrong. The R2021b dump
+# names, per command, which argument is a target axes, and driving the sweep off that role looks
+# like a way to grow this list by measurement rather than by memory. It is not: the dump describes
+# *arguments*, and "takes a target axes" is a different question from "returns an object". Built
+# that way the sweep picked up `axis`, `daspect`, `rlim` and 28 other query verbs and would have
+# reported every one of them as handing back no handle — 31 verbs libelled by a filter that was
+# measuring the wrong thing. The rows below were each run at the CLI first instead.
 RETURNS: list[tuple[str, str]] = [
     ("plot", "h = plot([1 2 3]);"),
     ("plot3", "h = plot3([1 2], [1 2], [1 2]);"),
@@ -136,6 +145,45 @@ RETURNS: list[tuple[str, str]] = [
     ("pie", "h = pie([1 2 3]);"),
     ("fplot", "h = fplot(@sin);"),
     ("fsurf", "h = fsurf(@(x, y) x + y);"),
+
+    # M70 additions. Each was run at the CLI before being written here, per the standing rule, and
+    # the two whose first snippet failed failed because the snippet was wrong — tetramesh wants an
+    # m-by-3 matrix of vertices, not a list — which is the prober measuring itself if left in.
+    ("semilogx", "h = semilogx([1 10 100], [1 2 3]);"),
+    ("semilogy", "h = semilogy([1 2 3], [1 10 100]);"),
+    ("loglog", "h = loglog([1 10 100], [1 10 100]);"),
+    ("fill3", "h = fill3([0 1 1], [0 0 1], [0 0 0], 'r');"),
+    ("surface", "h = surface(peaks(8));"),
+    ("ribbon", "h = ribbon(peaks(8));"),
+    ("polarscatter", "polaraxes; h = polarscatter([0 1], [1 2]);"),
+    ("polarhistogram", "polaraxes; h = polarhistogram([0 1 2]);"),
+    ("compass", "h = compass([1 2], [1 2]);"),
+    ("feather", "h = feather([1 2], [1 2]);"),
+    ("bar3", "h = bar3(magic(4));"),
+    ("pie3", "h = pie3([1 2 3]);"),
+    ("swarmchart", "h = swarmchart([1 2 3], [1 2 3]);"),
+    ("bubblechart", "h = bubblechart([1 2], [1 2], [10 20]);"),
+    ("bubblechart3", "h = bubblechart3([1 2], [1 2], [1 2], [10 20]);"),
+    ("binscatter", "h = binscatter([1 2 3], [1 2 3]);"),
+    ("triplot", "h = triplot([1 2 3; 2 3 4], [0 1 0 1], [0 0 1 1]);"),
+    ("tetramesh", "h = tetramesh([1 2 3 4], [0 0 0; 1 0 0; 0 1 0; 0 0 1]);"),
+    ("fmesh", "h = fmesh(@(x, y) x + y);"),
+    ("fcontour", "h = fcontour(@(x, y) x + y);"),
+    ("fimplicit", "h = fimplicit(@(x, y) x.^2 + y.^2 - 1);"),
+    ("fplot3", "h = fplot3(@sin, @cos, @(t) t);"),
+    ("stem3", "h = stem3([1 2], [1 2], [1 2]);"),
+    ("ezplot", "h = ezplot(@sin);"),
+    ("ezsurf", "h = ezsurf(@(x, y) x + y);"),
+    ("annotation", "h = annotation('arrow', [.2 .4], [.2 .4]);"),
+    ("yyaxis", "yyaxis left; h = plot([1 2 3]);"),
+    ("waterfall", "h = waterfall(peaks(8));"),
+
+    # Deliberately absent, each for a reason rather than an oversight:
+    #   * sphere and cylinder answer coordinates, not a handle, so "did it return a handle" is the
+    #     wrong question for them. (They answer an empty value here where MATLAB answers the X grid,
+    #     which is a real divergence and a different one — recorded in ADR 0070.)
+    #   * streamline's documented 2-D form, streamline(X, Y, U, V, sx, sy), is refused by this build:
+    #     it reads the grids as volumes. Also ADR 0070, also not a handle question.
 ]
 
 RETURNS_TEMPLATE = """\
@@ -322,11 +370,19 @@ def main() -> int:
         "",
         "A property table is only reachable through a handle, so this is the question underneath the",
         f"one above. Of **{len(returns)} drawing verbs** probed, **{len(handed_back)} return a usable",
-        f"handle** and **{len(withheld)} do not** — for those, every property of the object they drew",
-        "is out of reach at once, whatever the model carries.",
+        f"handle** and **{len(withheld)} do not**. A verb that draws and hands back nothing puts every",
+        "property of the object it drew out of reach at once, whatever the model carries.",
         "",
-        "This list is hand-written and is **not** every graphics verb; it covers the families the four",
-        "verbs fixed in M69 were found in. A verb absent from it is unmeasured, not passing.",
+        "This list is hand-written and is **not** every graphics verb. M69 wrote 45 rows, covering the",
+        "families the four verbs it fixed turned up in; M70 added 28 more, each run at the CLI before",
+        "it was written down. A verb absent from it is unmeasured, not passing.",
+        "",
+        "It is hand-written for a reason worth stating, because the obvious alternative is wrong. The",
+        "R2021b dump records which argument of a command is a target axes, and driving this sweep off",
+        "that role looks like a way to grow it by measurement instead of by memory. It is not: the",
+        "dump describes *arguments*, and taking a target axes is a different question from returning",
+        "an object. Built that way the sweep collected `axis`, `daspect`, `rlim` and 28 other query",
+        "verbs, and would have reported all 31 as handing back no handle.",
         "",
     ]
     if withheld:

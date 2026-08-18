@@ -1,5 +1,6 @@
 using JGraph.Api;
 using JGraph.Core.Drawing;
+using JGraph.Core.Model;
 using JGraph.Maths.Geometry;
 using JGraph.Objects;
 
@@ -30,24 +31,25 @@ internal static partial class JgsBuiltins
             env.Declare(name, JgsValue.Function(
                 new BuiltinFunction(name, body) { BindsAnsAsStatement = false }));
 
-        Define("surfc", (args, line, col) => Surface3D("surfc", args, line, col,
-            (x, y, z) => JG.SurfC(x, y, z), z => JG.SurfC(z), (x, y, z) => JG.SurfC(x, y, z)));
+        Define("surfc", OnNamedAxes((args, line, col) => Surface3D("surfc", args, line, col,
+            (x, y, z) => JG.SurfC(x, y, z), z => JG.SurfC(z), (x, y, z) => JG.SurfC(x, y, z))));
 
-        Define("meshz", (args, line, col) => Surface3D("meshz", args, line, col,
-            (x, y, z) => JG.MeshZ(x, y, z), z => JG.MeshZ(z), (x, y, z) => JG.MeshZ(x, y, z)));
+        Define("meshz", OnNamedAxes((args, line, col) => Surface3D("meshz", args, line, col,
+            (x, y, z) => JG.MeshZ(x, y, z), z => JG.MeshZ(z), (x, y, z) => JG.MeshZ(x, y, z))));
 
         // A waterfall needs a row coordinate per curve and a column coordinate along it, so a
         // parametric grid has nowhere to put its second position -- it collapses to the generating
         // vectors, which is also what a meshgrid pair means.
-        Define("waterfall", (args, line, col) => Waterfall(args, line, col));
-        Define("ribbon", (args, line, col) => Ribbon(args, line, col));
-        Define("contour3", (args, line, col) => Contour("contour3", args, line, col, filled: false, elevated: true));
+        DefineSilent("waterfall", OnNamedAxes((args, line, col) => Waterfall(args, line, col)));
+        DefineSilent("ribbon", OnNamedAxes((args, line, col) => Ribbon(args, line, col)));
+        // contour3 lives with contour and contourf in RegisterDecorationBuiltins, which runs later
+        // and wins. The registration that stood here was shadowed and never ran.
 
-        DefineSilent("quiver", (args, line, col) => Quiver("quiver", args, line, col, three: false));
-        DefineSilent("quiver3", (args, line, col) => Quiver("quiver3", args, line, col, three: true));
+        DefineSilent("quiver", OnNamedAxes((args, line, col) => Quiver("quiver", args, line, col, three: false)));
+        DefineSilent("quiver3", OnNamedAxes((args, line, col) => Quiver("quiver3", args, line, col, three: true)));
 
-        Define("trisurf", (args, line, col) => Triangulated("trisurf", args, line, col, wireframe: false));
-        Define("trimesh", (args, line, col) => Triangulated("trimesh", args, line, col, wireframe: true));
+        DefineSilent("trisurf", OnNamedAxes((args, line, col) => Triangulated("trisurf", args, line, col, wireframe: false)));
+        DefineSilent("trimesh", OnNamedAxes((args, line, col) => Triangulated("trimesh", args, line, col, wireframe: true)));
 
         DefineShape(env, dialect, "sphere", (args, line, col) =>
         {
@@ -89,7 +91,15 @@ internal static partial class JgsBuiltins
         string name,
         Func<IReadOnlyList<JgsValue>, int, int, (double[,] X, double[,] Y, double[,] Z)> build)
     {
-        JgsValue Single(IReadOnlyList<JgsValue> args, int line, int col)
+        // sphere, cylinder and ellipsoid all document a leading axes, and all three come through
+        // here, so the peel belongs in the shared helper rather than three times over.
+        JgsValue Single(IReadOnlyList<JgsValue> rawArgs, int line, int col)
+        {
+            (AxesModel? target, IReadOnlyList<JgsValue> args) = PeelAxes(rawArgs);
+            return OnAxes(target, () => Drawn(args, line, col));
+        }
+
+        JgsValue Drawn(IReadOnlyList<JgsValue> args, int line, int col)
         {
             (double[,] x, double[,] y, double[,] z) = Build(args, line, col);
             if (!dialect.IsMatlab)
@@ -101,8 +111,9 @@ internal static partial class JgsBuiltins
             return JgsValue.Null;
         }
 
-        JgsValue[] Multi(IReadOnlyList<JgsValue> args, int wanted, int line, int col)
+        JgsValue[] Multi(IReadOnlyList<JgsValue> rawArgs, int wanted, int line, int col)
         {
+            (AxesModel? _, IReadOnlyList<JgsValue> args) = PeelAxes(rawArgs);
             (double[,] x, double[,] y, double[,] z) = Build(args, line, col);
             return [Grid(x), Grid(y), Grid(z)];
         }
@@ -150,22 +161,19 @@ internal static partial class JgsBuiltins
         {
             if (args.Count == 1)
             {
-                JG.Waterfall(Matrix("waterfall", args, 0, line, col));
-                return JgsValue.Null;
+                return JgsHandleRegistry.For(JG.Waterfall(Matrix("waterfall", args, 0, line, col)));
             }
 
             Arity("waterfall", args, 3, line, col);
-            JG.Waterfall(
+            return JgsHandleRegistry.For(JG.Waterfall(
                 GridVector("waterfall", args, 0, firstRow: true, line, col),
                 GridVector("waterfall", args, 1, firstRow: false, line, col),
-                Matrix("waterfall", args, 2, line, col));
+                Matrix("waterfall", args, 2, line, col)));
         }
         catch (ArgumentException ex)
         {
             throw new JgsRuntimeException(line, col, ex.Message);
         }
-
-        return JgsValue.Null;
     }
 
     /// <summary>
@@ -183,14 +191,14 @@ internal static partial class JgsBuiltins
 
         try
         {
-            JG.Ribbon(rowPositions, z, width);
+            // One strip per column, so the answer is a row of handles rather than one — which is
+            // also what MATLAB hands back, and what `set(h, 'FaceAlpha', 0.5)` then walks.
+            return JgsGraphicsProperties.HandleRow([.. JG.Ribbon(rowPositions, z, width)]);
         }
         catch (ArgumentException ex)
         {
             throw new JgsRuntimeException(line, col, ex.Message);
         }
-
-        return JgsValue.Null;
     }
 
     /// <summary>
@@ -236,21 +244,14 @@ internal static partial class JgsBuiltins
 
         try
         {
-            if (wireframe)
-            {
-                JG.TriMesh(faces, x, y, z, c);
-            }
-            else
-            {
-                JG.TriSurf(faces, x, y, z, c);
-            }
+            return JgsHandleRegistry.For(wireframe
+                ? JG.TriMesh(faces, x, y, z, c)
+                : JG.TriSurf(faces, x, y, z, c));
         }
         catch (ArgumentException ex)
         {
             throw new JgsRuntimeException(line, col, ex.Message);
         }
-
-        return JgsValue.Null;
     }
 
     /// <summary>

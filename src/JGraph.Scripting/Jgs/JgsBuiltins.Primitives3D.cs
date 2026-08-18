@@ -49,20 +49,20 @@ internal static partial class JgsBuiltins
             env.Declare(name, JgsValue.Function(
                 new BuiltinFunction(name, body) { BindsAnsAsStatement = false }));
 
-        Define("plot3", (args, line, col) => Plot3(args, line, col));
-        Define("scatter3", (args, line, col) => Scatter3(args, line, col));
+        Define("plot3", OnNamedAxes((args, line, col) => Plot3(args, line, col)));
+        Define("scatter3", OnNamedAxes((args, line, col) => Scatter3(args, line, col)));
 
-        Define("fill", (args, line, col) => FillPatch("fill", args, line, col, Dimensions.Two));
-        Define("fill3", (args, line, col) => FillPatch("fill3", args, line, col, Dimensions.Three));
-        Define("patch", (args, line, col) => FillPatch("patch", args, line, col, Dimensions.Either));
+        Define("fill", OnNamedAxes((args, line, col) => FillPatch("fill", args, line, col, Dimensions.Two)));
+        Define("fill3", OnNamedAxes((args, line, col) => FillPatch("fill3", args, line, col, Dimensions.Three)));
+        Define("patch", OnNamedAxes((args, line, col) => FillPatch("patch", args, line, col, Dimensions.Either)));
 
-        Define("line", (args, line, col) => LinePrimitive(args, line, col));
-        Define("text", (args, line, col) => TextPrimitive(args, line, col));
+        Define("line", OnNamedAxes((args, line, col) => LinePrimitive(args, line, col)));
+        Define("text", OnNamedAxes((args, line, col) => TextPrimitive(args, line, col)));
 
         // MATLAB's low-level `surface` is `surf` without the axes reset. It shares the dispatcher, so
         // the meshgrid collapse and the parametric path behave identically.
-        Define("surface", (args, line, col) => Surface3D("surface", args, line, col,
-            (x, y, z) => JG.Surf(x, y, z), JG.Surf, (x, y, z) => JG.Surf(x, y, z)));
+        Define("surface", OnNamedAxes((args, line, col) => Surface3D("surface", args, line, col,
+            (x, y, z) => JG.Surf(x, y, z), JG.Surf, (x, y, z) => JG.Surf(x, y, z))));
     }
 
     /// <summary>Which coordinate forms a fill/patch verb accepts.</summary>

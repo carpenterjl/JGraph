@@ -36,7 +36,7 @@ internal static partial class JgsBuiltins
         env.Declare("stream3", JgsValue.Function(new BuiltinFunction("stream3",
             (args, line, col) => Stream("stream3", args, line, col))));
 
-        DefineSilent("streamline", (args, line, col) => Streamline(args, line, col));
+        DefineSilent("streamline", OnNamedAxes((args, line, col) => Streamline(args, line, col)));
         DefineSilent("streamslice", (args, line, col) => StreamSlice(args, line, col));
         DefineSilent("streamribbon", (args, line, col) => StreamRibbon(args, line, col));
         DefineSilent("streamtube", (args, line, col) => StreamTube(args, line, col));

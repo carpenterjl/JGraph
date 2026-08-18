@@ -75,7 +75,7 @@ internal static partial class JgsBuiltins
         }
 
         env.Declare("caxis", JgsValue.Function(new BuiltinFunction(
-            "caxis", (args, line, col) => ColorLimits("caxis", args, line, col))
+            "caxis", OnNamedAxes((args, line, col) => ColorLimits("caxis", args, line, col)))
         { AutoCallsBare = true }));
         env.Declare("clim", JgsValue.Function(new BuiltinFunction(
             "clim", (args, line, col) => ColorLimits("clim", args, line, col))
@@ -89,10 +89,15 @@ internal static partial class JgsBuiltins
         });
 
         env.Declare("colororder", JgsValue.Function(new BuiltinFunction(
-            "colororder", (args, line, col) => ColorOrder(args, line, col))
+            "colororder", OnNamedAxes((args, line, col) => ColorOrder(args, line, col)))
         { AutoCallsBare = true }));
 
-        Define("surfl", (args, line, col) => Surfl(args, line, col));
+        // surfl draws, so its handle is kept only when a script asks for it — the DefineSilent rule the
+        // other drawing verbs have. Registering it with Define would echo `ans = 1000000.5` at every
+        // unsuppressed call, which is the mistake M69 caught in quiver before it shipped.
+        env.Declare("surfl", JgsValue.Function(new BuiltinFunction(
+            "surfl", OnNamedAxes((args, line, col) => Surfl(args, line, col)))
+        { BindsAnsAsStatement = false }));
 
         // The two dialects read one output differently, the way meshgrid already does: MATLAB's
         // `nx = surfnorm(...)` is the first component, while JGS hands back all three so that
@@ -100,9 +105,9 @@ internal static partial class JgsBuiltins
         Define(
             "surfnorm",
             dialect.IsMatlab
-                ? (args, line, col) => SurfaceNormals("surfnorm", args, line, col)[0]
-                : (args, line, col) => JgsValue.Array(SurfaceNormals("surfnorm", args, line, col)),
-            (args, _, line, col) => SurfaceNormals("surfnorm", args, line, col));
+                ? OnNamedAxes((args, line, col) => SurfaceNormals("surfnorm", args, line, col)[0])
+                : OnNamedAxes((args, line, col) => JgsValue.Array(SurfaceNormals("surfnorm", args, line, col))),
+            (args, _, line, col) => SurfaceNormals("surfnorm", PeelAxes(args).Remaining, line, col));
     }
 
     /// <summary>
@@ -158,8 +163,8 @@ internal static partial class JgsBuiltins
             return JgsValue.Null;
         });
 
-        Define("pbaspect", (args, line, col) => BoxAspect(args, line, col));
-        Define("daspect", (args, line, col) => DataAspect(args, line, col));
+        Define("pbaspect", OnNamedAxes((args, line, col) => BoxAspect(args, line, col)));
+        Define("daspect", OnNamedAxes((args, line, col) => DataAspect(args, line, col)));
     }
 
     /// <summary>MATLAB's default camera view angle in degrees, which is the framing an axes starts with.</summary>
@@ -622,8 +627,9 @@ internal static partial class JgsBuiltins
     /// </remarks>
     private static JgsValue Surfl(IReadOnlyList<JgsValue> args, int line, int col)
     {
-        Surface3D("surfl", args, line, col,
-            (x, y, z) => JG.Surf(x, y, z), z => JG.Surf(z), (x, y, z) => JG.Surf(x, y, z));
+        JgsValue drawn = Surface3D("surfl", args, line, col,
+            (x, y, z) => JG.Surf(x, y, z), z => JG.Surf(z), (x, y, z) => JG.Surf(x, y, z),
+            takesColorData: false);
 
         AxesModel axes = JG.Gca();
         foreach (PlotObject plot in axes.Plots)
@@ -641,7 +647,9 @@ internal static partial class JgsBuiltins
             Position = CameraLightPosition(-45, 0),
         });
 
-        return JgsValue.Null;
+        // The surface Surface3D drew, rather than nothing. Until M70 this answered null, so
+        // `h = surfl(Z); h.FaceAlpha = 0.5` — the documented spelling — had no object to write to.
+        return drawn;
     }
 
     /// <summary>

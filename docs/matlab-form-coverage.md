@@ -11,27 +11,27 @@ and five documented syntax forms.
 
 ## Where it stands
 
-**949 of 2422 documented syntax forms are accepted** across
+**1011 of 2422 documented syntax forms are accepted** across
 657 implemented commands (the base builtins and the graphics functions; the Image
 Processing and Statistics surfaces are a later pass).
 
 | Verdict | Forms | What it means |
 |---|---:|---|
-| accepted | 949 | the call returned without error |
+| accepted | 1011 | the call returned without error |
 | refused | 26 | refused deliberately, with a message naming what is missing |
 | undefined | 4 | the name did not resolve at all |
-| error | 526 | failed some other way — **may be the prober's sample, not the build** |
+| error | 464 | failed some other way — **may be the prober's sample, not the build** |
 | unprobed | 917 | no call could be built; see below |
 | **total** | **2422** | |
 
-**154 commands accept every form they document. 157 accept some and not others** — the
+**159 commands accept every form they document. 137 accept some and not others** — the
 number the name count could never show, and the one worth working from.
 
 ## What this sweep does and does not establish
 
 **`accepted` is the trustworthy column.** A form that ran without error ran; there is nothing to
-second-guess. 949 of 2422 documented forms are confirmed working by execution
-rather than by assumption, which is 949 more than were confirmed before M69.
+second-guess. 1011 of 2422 documented forms are confirmed working by execution
+rather than by assumption, which is 1011 more than were confirmed before M69.
 
 **Every other column is a worklist, not a finding, and the spot-check is why that sentence is here.**
 Twenty forms were re-run by hand against their verdicts. The `accepted` ones held. The `refused` and

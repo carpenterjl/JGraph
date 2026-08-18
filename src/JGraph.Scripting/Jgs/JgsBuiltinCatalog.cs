@@ -275,8 +275,8 @@ public static class JgsBuiltinCatalog
         Add("struct2cell", "A struct's field values as a cell array.", P("s"));
         Add("cell2struct", "A struct built from a cell of values and a cell of field names.", P("values"), P("names"), Opt("dim"));
         Add("accumarray", "Sums values into bins their subscripts name; a function handle reduces differently.", P("subs"), P("values"), Opt("size"), Opt("f"), Opt("fill"));
-        Add("cummax", "The running maximum so far at each position.", P("x"));
-        Add("cummin", "The running minimum so far at each position.", P("x"));
+        Add("cummax", "The running maximum so far at each position, down each column or along a named dimension.", P("x"), Opt("dim"));
+        Add("cummin", "The running minimum so far at each position, down each column or along a named dimension.", P("x"), Opt("dim"));
         Add("maxk", "The k largest values of each slice, largest first: [b, i] = maxk(x, k, dim).", P("x"), P("k"), Opt("dim"));
         Add("mink", "The k smallest values of each slice, smallest first: [b, i] = mink(x, k, dim).", P("x"), P("k"), Opt("dim"));
         Add("histc", "How many values fall in each bin the edges define, per slice along dim.", P("x"), P("edges"), Opt("dim"));
@@ -343,7 +343,7 @@ public static class JgsBuiltinCatalog
         Add("orth", "An orthonormal basis for the range of a.", P("a"));
         Add("pinv", "The Moore-Penrose pseudoinverse of a.", P("a"));
         Add("cross", "The cross product of two 3-element vectors.", P("a"), P("b"));
-        Add("vecnorm", "The p-norm of a vector, or of each column of a matrix (p = 2 by default).", P("a"), Opt("p"));
+        Add("vecnorm", "The p-norm of a vector, or of each slice along a dimension (p = 2 by default).", P("a"), Opt("p"), Opt("dim"));
         Add("schur", "The real Schur form T, or [U, T] with U orthogonal and U*T*U' equal to a.", P("a"), Opt("kind"));
         Add("ordeig", "The eigenvalues of a quasi-triangular matrix, in the order its blocks appear.", P("t"));
         Add("ordschur", "Reorders a Schur form so the selected eigenvalues come first.", P("u"), P("t"), P("select"));
@@ -444,7 +444,7 @@ public static class JgsBuiltinCatalog
         Add("permute", "Rearranges dimensions: [1 2] leaves x alone, [2 1] transposes it.", P("x"), P("order"));
         Add("transpose", "The non-conjugate transpose, x.' as a function.", P("x"));
         Add("ctranspose", "The complex-conjugate transpose, x' as a function.", P("x"));
-        Add("prod", "The product of a numeric array (column-wise over matrices in MATLAB).", P("array"));
+        Add("prod", "The product of a numeric array, over one dimension, several, or 'all'.", P("array"), Opt("dim"));
         Add("ismember", "Whether each element of x is in the set: [tf, loc] = ismember(x, set, 'rows') also says where.", P("x"), P("set"), Opt("option"));
         Add("union", "Every value in either set, once: [c, ia, ib] = union(a, b, 'rows', 'stable').", P("a"), P("b"), Opt("option"));
         Add("intersect", "The values in both sets: [c, ia, ib] = intersect(a, b, 'rows', 'stable').", P("a"), P("b"), Opt("option"));
@@ -969,7 +969,7 @@ public static class JgsBuiltinCatalog
 
         // --- Reductions and inspection ----------------------------------------------------------
         Add("length", "The number of elements in an array, or characters in a string.", P("value"));
-        Add("sum", "The sum of a numeric array, or of every sample in an image.", P("array"));
+        Add("sum", "The sum of a numeric array, over one dimension, several, or 'all'.", P("array"), Opt("dim"));
         Add("mean", "The arithmetic mean of a non-empty numeric array, or of every sample in an image.", P("array"));
         Add("min", "The smallest value: min(array), min(image), or min(a, b, ...).", P("values"));
         Add("max", "The largest value: max(array), max(image), or max(a, b, ...).", P("values"));
@@ -1443,8 +1443,8 @@ public static class JgsBuiltinCatalog
         Add("sort", "A sorted copy of a numeric or string array; order \"ascend\" (default) or \"descend\", with 'MissingPlacement' and 'ComparisonMethod' for where NaN lands and how complex numbers order.", P("array"), Opt("order"), Opt("option"), Opt("value"));
         Add("unique", "The distinct values of a numeric or string array: [c, ia, ic] = unique(x, 'rows', 'stable', 'last'), where c = x(ia) and x = c(ic).", P("array"), Opt("option"), Opt("more"));
         Add("find", "Indices of the truthy elements: volt(find(temp > 85)) gathers the matches. In a .m file find(x, k) keeps the first k ('last' for the other end); in JGS the second argument is the index base, 0 by default.", P("mask"), Opt("k"), Opt("direction"));
-        Add("any", "Whether at least one element is truthy.", P("array"));
-        Add("all", "Whether every element is truthy.", P("array"));
+        Add("any", "Whether at least one element is truthy, over one dimension, several, or 'all'.", P("array"), Opt("dim"));
+        Add("all", "Whether every element is truthy, over one dimension, several, or 'all'.", P("array"), Opt("dim"));
         Add("concat", "One array from arrays and scalars, in order: concat(a, b), concat(a, 5).", P("first"), P("second"));
         Add("slice", "Elements [start, stop) by 0-based index; stop defaults to the array length.", P("array"), P("start"), Opt("stop"));
         Add("indexof", "0-based index of the first element equal to value, or -1.", P("array"), P("value"));
@@ -1468,7 +1468,7 @@ public static class JgsBuiltinCatalog
         Add("iscellstr", "True for a cell array whose every element is a string.", P("x"));
         Add("isletter", "Whether each character is a letter, as a mask.", P("text"));
         Add("isspace", "Whether each character is whitespace, as a mask.", P("text"));
-        Add("issorted", "Whether the values are in non-decreasing order.", P("x"));
+        Add("issorted", "Whether the values are in non-decreasing order along a dimension.", P("x"), Opt("dim"));
         Add("class", "The class name of a value: double, logical, char, cell, struct, function_handle.", P("x"));
         Add("isa", "Whether a value has the named class, or is 'numeric'/'float'/'integer'.", P("x"), P("type"));
         Add("logical", "The value converted to a logical (true where non-zero).", P("x"));
