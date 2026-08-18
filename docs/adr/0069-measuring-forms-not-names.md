@@ -2,8 +2,10 @@
 
 ## Status
 
-Accepted (M69). An audit milestone: it adds measurement, not MATLAB features. Partially delivered —
-see "What is not done" at the end, which is part of the decision rather than an apology for it.
+Accepted (M69). An audit milestone: it adds measurement, not MATLAB features. Delivered in two
+sittings — the first covered forms and two defects; the second added the property axis, the
+divergence index, `stess_41.m`, and the rest of the defects. "What is not done" at the end is
+current as of the second.
 
 ## Context
 
@@ -34,10 +36,12 @@ value types. Only the names were being read.
 2. **Object properties.** MATLAB documents 5,758 — 147 on `Axes`, 74 on `Scatter`, 66 on `Figure`.
    `JgsGraphicsProperties` builds its table by reflection over the model's CLR types plus about 430
    hand-written aliases, so coverage is whatever the model happens to expose and is knowable only at
-   runtime. **Not measured in M69.**
-3. **Composition.** Features that work alone and fail together. About sixty are recorded by hand
-   across ADRs 0005–0068 with no index; the survey found more recorded nowhere. **Not indexed in M69**,
-   though six were confirmed and one fixed.
+   runtime — which is why `probe-properties.py` **builds each object and asks it** rather than reading
+   the source. **436 of 1,361 documented properties** are answered across the 26 object kinds it can
+   construct. See "The question underneath the property table" below.
+3. **Composition.** Features that work alone and fail together. `harvest-divergences.py` now collects
+   what the ADRs recorded into `docs/matlab-divergences.md`, and `stess_41.m` asserts a chosen subset
+   of it against the running interpreter.
 
 ### The form data is versioned, and the base document finally has a verifier
 
@@ -106,6 +110,43 @@ build, and the document next door has been corrected six times for exactly that.
 | `regexp`/`regexpi` do not take `'forceCellOutput'` | Refused by name, listing what they do take — the house style working. |
 | `axis('state')` is not read | The legacy three-output query form. |
 
+### The question underneath the property table
+
+A property is only reachable through a handle, so before counting properties the prober had to ask
+whether the verb hands one back. Four did not: **`colorbar`, `quiver`, `image` and `light` drew and
+returned nothing**, so `h = colorbar; h.Label.String = 'Depth'` — ordinary MATLAB — had no object to
+write to, and every property those four objects carry was out of reach at once. `colorbar` had a
+second half to it: without `AutoCallsBare` the bare name bound the *builtin*, so `h` was a function.
+
+All four now return a handle, and a sweep of **45 drawing verbs** says **39 do and 5 do not**
+(`surfl`, `waterfall`, `ribbon`, `trisurf`, `trimesh`). The sweep is hand-written and covers the
+families the four were found in; a verb absent from it is unmeasured, not passing, and the report
+says so. The same sweep found `pcolor` refusing `pcolor(C)`, a form MATLAB documents.
+
+This is why the axis was worth measuring by execution. Reading `JgsGraphicsProperties` would have
+shown a well-populated table for every one of those four objects and said nothing about the fact
+that no script could reach it.
+
+### The divergence index is a harvest, and says so
+
+`harvest-divergences.py` reads the ADRs and lifts each recorded divergence into
+`docs/matlab-divergences.md`. It collects **40 across 8 ADRs**, of which 35 predate this one — not
+the sixty the plan estimated. The
+gap is not missing divergences so much as missing *format*: three ADR generations wrote them three
+ways (a heading, a bolded lead-in paragraph, plain bullets), the harvester reads all three, and
+anything recorded in ordinary prose or in a code comment is not collected at all. The index says
+this about itself in its own first section.
+
+**A harvest is not a verification**, which is what `stess_41.m` is for. Fourteen sections: six
+asserting the defects M69 fixed have stayed fixed, five asserting a recorded divergence is still
+exactly that divergence, three asserting a recorded limit still has the shape it was recorded with.
+A divergence that is silently closed now fails the stress gate, which is the point — the ADR and the
+index have to move with the behaviour.
+
+One divergence could not be asserted, and the reason is the divergence: an `arguments` block
+declaring a name-value argument is refused when the file is **parsed**, so a script cannot contain
+one and go on to test that it was refused. That is written where the check would have been.
+
 ### Two defects fixed, four recorded
 
 `feval` was two wrong answers in one entry. It refused `feval('sin', x)` — the form MATLAB documents
@@ -117,21 +158,52 @@ multi-output body forwards `wanted` to any `IJgsMultiCallable`.
 settled it: the registration wins, the table entry was unreachable, and it is removed. Checking the
 other ten entries the same way found no further staleness.
 
-Four remain recorded and unfixed, three of them silent:
+### The two silent ones, now fixed
 
-- **`global` is interpreter-wide, not per-workspace** (`Interpreter.cs:54`, `:620`, `:870`, `:2219`).
-  `_globalNames` is one `HashSet<string>` with no scope key, so once *any* function runs `global x`
-  the name resolves to the global slot in every scope for the rest of the session. No comment, no
-  test, no ADR before this one. Deferred because it touches name resolution for every script and
-  wants the care M68's call boundary got.
-- **`evalin('caller', …)` reads the wrong workspace** (`JgsBuiltins.Eval.cs:276`) — it resolves to
-  the current frame. Commented at the site, recorded in no ADR until now. It needs one frame of call
-  history the interpreter does not keep.
-- **`[a,b] = handles{1}(x)` and `[a,b] = s.fn(x)` take one output** — `EvaluateForOutputs` does not
-  special-case a handle reached through a brace or a field.
-- **`int64`/`uint64` lose precision above 2^53.** This one is a design consequence, not a slip:
-  storage is always `double` and the class is a tag (`JgsNumericClass`). Recorded rather than fixed,
-  with the bound stated, because a script author is better served knowing it than not.
+**`global` was interpreter-wide rather than per-workspace.** One `HashSet<string>` held every
+declared name with no scope key, so the first function to write `global counter` rewired that name in
+every other scope for the rest of the session. A helper's `global counter = 100` overwrote a script's
+own `counter`, silently, and nothing tested it.
+
+The declaration now belongs to the workspace that made it: `JgsEnvironment.DeclareGlobal` records it
+on the frame, and `IsGlobal` walks outward and stops where an assignment's walk stops — at a call
+boundary. That is one rule, reused, rather than a second rule about globals.
+
+It also needed a second, less obvious change. Globals lived in the *base* environment, and in MATLAB
+the global workspace and the base workspace are two different places. With them sharing one
+dictionary, a top-level `counter` and a `global counter` were the same variable, so the per-frame fix
+alone left the top-level case wrong. `_globalWorkspace` is now a scope with no parent, unreachable
+except through a declaration.
+
+JGS is gated by where the declaration is recorded rather than by a branch in the lookup: JGS has no
+call boundary at all, so recording on the frame would make the declaration die with the block that
+wrote it. It records on the globals, and the run-wide meaning JGS has always had is unchanged.
+
+**`evalin('caller', …)` and `assignin('caller', …)` read the current frame.** The interpreter kept no
+call history, so `'caller'` resolved to the workspace of the function asking rather than of whoever
+called it. `ExecuteFunctionBody` already held the caller's frame in a local to restore it on the way
+out; `CallerFrame` now keeps it for the duration of the body. One frame is the whole of what MATLAB's
+workspace words can name, so a stack would be machinery for nothing. At the top level there is no
+caller and the answer is the base workspace, which is MATLAB's answer too.
+
+### The one that did not reproduce
+
+The plan recorded **`[a,b] = handles{1}(x)` and `[a,b] = s.fn(x)` take one output**, read out of
+`EvaluateForOutputs` without a probe. It is not true. Both work, and so do `h{i}(v)` with a variable
+subscript, `s.inner.fn(v)`, `t(1).fn(v)`, and all of them wrapped in an anonymous handle. The code
+read missed that `EvaluateCallee` falls through to `Evaluate` for a callee it does not special-case,
+which resolves a brace or field handle perfectly well.
+
+Recorded here rather than quietly dropped, because it is the milestone's own lesson pointed the other
+way: a defect that has never been reproduced is a claim, not a defect.
+
+### The one deliberately left
+
+**`int64`/`uint64` lose precision above 2^53.** A design consequence, not a slip: storage is always
+`double` and the class is a tag (`JgsNumericClass`). Probing it found the bound is sharper than
+recorded — `intmax('int64')` prints *negative*, because 9223372036854775807 rounds up to 2^63 as a
+double and wraps when formatted as an integer. Recorded rather than fixed, with the bound stated and
+asserted in `stess_41.m`, because a script author is better served knowing it than not.
 
 ## Consequences
 
@@ -156,16 +228,37 @@ an `ME` an earlier form's catch block had left lying about. All three are fixed 
 site. The lesson is the milestone's, not the tool's: **a measurement that has never been checked
 against reality is a claim, not a measurement**, which is the same sentence as the one about names.
 
+### Recorded divergences
+
+- **`int64` and `uint64` are exact only to 2^53.** Storage is `double` and the class is a tag, so
+  `int64(2^53 + 1)` answers `2^53` and `intmax('int64')` formats as a negative number. Asserted in
+  `stess_41.m` so the bound cannot drift unnoticed.
+- **A reduction takes one dimension, never a vector of them.** `sum(A, [1 2])`, `all(A, [1 2])` and
+  `max(A, [], [1 2])` refuse; the nested spelling works. MATLAB's `vecdim` collapses several at once.
+- **`Inf(n)` and `NaN(n)` do not build a matrix.** Both names are constants with `AutoCallsBare`, so
+  a subscript indexes the scalar. `zeros(n)` and `ones(n)` are unaffected, so this is these two names
+  rather than the shape family.
+- **`surfl`, `waterfall`, `ribbon`, `trisurf` and `trimesh` return no handle.** They draw; what they
+  hand back is nothing, so no property of the object is reachable. The four commonest of this family
+  were fixed in M69 and these five are the measured remainder.
+- **`pcolor(C)` is refused**, where MATLAB documents the one-argument form. Found by the same sweep.
+
 ## What is not done
 
-M69 was planned as six waves and delivers three and a half. Stated plainly so the next milestone
-starts from the truth:
+The six planned waves are delivered. What the milestone did **not** do, so the next one starts from
+the truth rather than from the table of contents:
 
-- **Wave C, the property prober** — not built. Axis 2 remains unmeasured.
-- **Wave D, the composition index and `stess_41.m`** — not built. The sixty scattered limits are
-  still scattered, and nothing yet regression-tests a recorded divergence.
-- **Wave E** — two of six defects fixed (`readmatrix`, `feval`). The `global` and `evalin` fixes and
-  multi-output through a brace or field handle are not done.
+- **The form probe covers base and graphics only.** IPT and stats were a deliberate second pass and
+  remain one: 2,940 forms across all 869 implemented callables, of which 2,422 were probed.
+- **1,361 of 5,758 documented properties are in scope**, because 26 object kinds are what the prober
+  can build. The other 434 documented classes are largely App Designer and hardware objects this
+  build has no model for, but that is a judgement and not a measurement.
+- **The divergence index harvests 40 of an unknown total.** Anything an ADR wrote in ordinary prose,
+  or a code comment recorded, or nobody wrote down, is not in it. M69's own probes found gaps in all
+  three categories.
+- **`stess_41.m` asserts 14 rows, not 35.** The rest of the index is still prose.
+- **The 526 `error` and 917 `unprobed` forms are untouched.** They are the worklist the next
+  milestone should be chosen from, and choosing from them means re-running them by hand first.
 
-The gate is green as it stands: 0 warnings, **4,676 tests**, 40/40 stress scripts, all three coverage
+The gate is green: 0 warnings, **4,678 tests**, **41/41 stress scripts**, all three coverage
 verifiers OK.

@@ -37,6 +37,17 @@ internal sealed partial class Interpreter
     internal HashSet<string> ScriptFunctionNames { get; } = new(StringComparer.Ordinal);
 
     private readonly JgsEnvironment _globals;
+
+    /// <summary>
+    /// Where variables a <c>global</c> statement declared actually live.
+    /// </summary>
+    /// <remarks>
+    /// MATLAB's global workspace is not its base workspace. A script's own <c>counter</c> and a
+    /// <c>global counter</c> are two different variables, and storing globals in the base environment
+    /// made them one — so a helper's <c>global counter</c> overwrote the script's local of that name.
+    /// This scope has no parent, which is what keeps it unreachable except through a declaration.
+    /// </remarks>
+    private readonly JgsEnvironment _globalWorkspace = new();
     private CancellationToken _cancellationToken;
     private readonly IJgsDebugHook? _hook;
     private readonly Action<string>? _echo;
@@ -44,14 +55,6 @@ internal sealed partial class Interpreter
     // subscript slot is being evaluated. Two entries make A(end, end) mean the last row and the last
     // column rather than the last element twice.
     private readonly List<(int[] Extents, int Slot)> _indexContext = new();
-
-    /// <summary>
-    /// Names a MATLAB <c>global</c> declaration has bound to the global scope. Reads and writes of
-    /// these names go straight to the globals wherever they appear, which is how a function and the
-    /// script that calls it share one variable. (MATLAB scopes the declaration per function; treating
-    /// it as run-wide differs only for a script that also uses the name as an ordinary local.)
-    /// </summary>
-    private readonly HashSet<string> _globalNames = new(StringComparer.Ordinal);
 
     private readonly Action _cancelCheck; // per-chunk poll inside packed operations
     private long _steps;
@@ -159,6 +162,14 @@ internal sealed partial class Interpreter
     /// which is why it tracks function frames rather than every block.
     /// </summary>
     internal JgsEnvironment CurrentFrame { get; private set; } = null!;
+
+    /// <summary>
+    /// The frame that called the innermost running function, or null when nothing has been called and
+    /// the script itself is running. This is the workspace <c>evalin('caller', …)</c> and
+    /// <c>assignin('caller', …)</c> mean, and it is one frame of history rather than a full stack
+    /// because one frame is the whole of what MATLAB's workspace words can name.
+    /// </summary>
+    internal JgsEnvironment? CallerFrame { get; private set; }
 
     /// <summary>
     /// The call expression that created the innermost function frame, or null at the top level.
@@ -316,9 +327,11 @@ internal sealed partial class Interpreter
         // way, so the pending node moves into the frame here and is cleared so a later frame with no
         // call expression behind it cannot inherit this one's.
         JgsEnvironment callerFrame = CurrentFrame;
+        JgsEnvironment? callersCaller = CallerFrame;
         CallExpr? callerCall = CurrentCall;
         FnStmt? callerFunction = _currentFunction;
         CurrentFrame = local;
+        CallerFrame = callerFrame;
         CurrentCall = _pendingCall;
         _pendingCall = null;
         _currentFunction = declaration;
@@ -361,6 +374,7 @@ internal sealed partial class Interpreter
         {
             SavePersistents(declaration, local);
             CurrentFrame = callerFrame;
+            CallerFrame = callersCaller;
             CurrentCall = callerCall;
             _currentFunction = callerFunction;
             _callDepth--;
@@ -615,16 +629,25 @@ internal sealed partial class Interpreter
                 return ExecuteTry(tryStmt, env);
 
             case GlobalStmt globalStmt:
+            {
+                // The declaration belongs to the workspace that made it, which in MATLAB is the
+                // function's own frame — 'global x' in one function leaves every other function's x
+                // alone. JGS has no call boundary at all (see JgsEnvironment.IsCallBoundary), so
+                // recording there would make the declaration die with the block that wrote it;
+                // recording on the globals keeps the run-wide meaning JGS has always had.
+                JgsEnvironment declaring = Dialect.MatlabFunctions ? env : _globals;
                 foreach (string name in globalStmt.Names)
                 {
-                    _globalNames.Add(name);
-                    if (!_globals.Contains(name))
+                    declaring.DeclareGlobal(name);
+                    if (!_globalWorkspace.Contains(name))
                     {
-                        _globals.Declare(name, JgsValue.Array(System.Array.Empty<JgsValue>()));
+                        // MATLAB's answer for a global nobody has assigned yet is [], not an error.
+                        _globalWorkspace.Declare(name, JgsValue.Array(System.Array.Empty<JgsValue>()));
                     }
                 }
 
                 return Completion.Normal;
+            }
 
             case PersistentStmt persistentStmt:
                 ExecutePersistent(persistentStmt, env);
@@ -867,7 +890,7 @@ internal sealed partial class Interpreter
     /// <summary>Reads a name, honouring any <c>global</c> declaration that redirects it.</summary>
     private bool LookUp(string name, JgsEnvironment env, out JgsValue value)
     {
-        if (_globalNames.Contains(name) && _globals.TryGet(name, out value))
+        if (env.IsGlobal(name) && _globalWorkspace.TryGet(name, out value))
         {
             return true;
         }
@@ -2215,8 +2238,9 @@ internal sealed partial class Interpreter
 
         if (assign.Target is VariableExpr variable)
         {
-            // A name declared 'global' is written where every scope can see it.
-            JgsEnvironment scope = _globalNames.Contains(variable.Name) ? _globals : env;
+            // A name this workspace declared 'global' is written where every scope that declared it
+            // can see it.
+            JgsEnvironment scope = env.IsGlobal(variable.Name) ? _globalWorkspace : env;
             JgsValue stored = rhs;
             if (assign.Op != TokenType.Assign)
             {

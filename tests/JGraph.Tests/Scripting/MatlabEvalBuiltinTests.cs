@@ -286,4 +286,76 @@ public class MatlabEvalBuiltinTests : IDisposable
         end
         assert(contains(caught, 'function handle or a function name'));
         """);
+
+    /// <summary>
+    /// A <c>global</c> declaration belongs to the workspace that wrote it. Until M69 one run-wide set
+    /// held every declared name, so the first function to say <c>global counter</c> rewired that name
+    /// in every other scope for the rest of the session — silently, and with no test to notice.
+    /// </summary>
+    [Fact]
+    public Task Global_BindsOnlyTheWorkspaceThatDeclaredIt() => RunAsserting("""
+        counter = 1;
+        bump();
+        assert(counter == 1);      % the local is untouched by the helper's declaration
+        assert(readGlobal() == 100);
+
+        % The declaring script shares the same variable, and shares it both ways.
+        global shared
+        shared = 5;
+        assert(readShared() == 5);
+        writeShared(9);
+        assert(shared == 9);
+
+        % A global nobody has assigned reads as [], which is MATLAB's answer too.
+        assert(isempty(readUnset()));
+
+        function bump()
+            global counter
+            counter = 100;
+        end
+
+        function v = readGlobal()
+            global counter
+            v = counter;
+        end
+
+        function v = readShared()
+            global shared
+            v = shared;
+        end
+
+        function writeShared(v)
+            global shared
+            shared = v;
+        end
+
+        function v = readUnset()
+            global never_assigned_anywhere
+            v = never_assigned_anywhere;
+        end
+        """);
+
+    /// <summary>
+    /// <c>evalin</c> and <c>assignin</c> with <c>'caller'</c> reach the workspace that called the
+    /// function asking, which needs one frame of call history the interpreter did not keep before M69.
+    /// It used to resolve to the current frame, so a function read and wrote its own variables while
+    /// appearing to read and write its caller's.
+    /// </summary>
+    [Fact]
+    public Task EvalinAndAssignin_ReachTheCallersWorkspace() => RunAsserting("""
+        secret = 42;
+        helper();
+        assert(planted == 7);
+
+        % At the top level nothing called us, so 'caller' is the base workspace.
+        assert(evalin('caller', 'secret') == 42);
+
+        function helper()
+            secret = 999;                              % the helper's own, deliberately different
+            assert(evalin('caller', 'secret') == 42);
+            assert(evalin('base', 'secret') == 42);
+            assignin('caller', 'planted', 7);
+            assert(secret == 999);                     % assignin did not touch this frame
+        end
+        """);
 }

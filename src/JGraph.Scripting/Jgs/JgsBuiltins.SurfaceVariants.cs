@@ -24,6 +24,12 @@ internal static partial class JgsBuiltins
         void Define(string name, Func<IReadOnlyList<JgsValue>, int, int, JgsValue> body) =>
             env.Declare(name, JgsValue.Function(new BuiltinFunction(name, body)));
 
+        // For a verb that hands back a handle: drawing is what the statement is for, so the handle
+        // does not echo as `ans` the way an ordinary value would. Same rule `plot` has always had.
+        void DefineSilent(string name, Func<IReadOnlyList<JgsValue>, int, int, JgsValue> body) =>
+            env.Declare(name, JgsValue.Function(
+                new BuiltinFunction(name, body) { BindsAnsAsStatement = false }));
+
         Define("surfc", (args, line, col) => Surface3D("surfc", args, line, col,
             (x, y, z) => JG.SurfC(x, y, z), z => JG.SurfC(z), (x, y, z) => JG.SurfC(x, y, z)));
 
@@ -37,8 +43,8 @@ internal static partial class JgsBuiltins
         Define("ribbon", (args, line, col) => Ribbon(args, line, col));
         Define("contour3", (args, line, col) => Contour("contour3", args, line, col, filled: false, elevated: true));
 
-        Define("quiver", (args, line, col) => Quiver("quiver", args, line, col, three: false));
-        Define("quiver3", (args, line, col) => Quiver("quiver3", args, line, col, three: true));
+        DefineSilent("quiver", (args, line, col) => Quiver("quiver", args, line, col, three: false));
+        DefineSilent("quiver3", (args, line, col) => Quiver("quiver3", args, line, col, three: true));
 
         Define("trisurf", (args, line, col) => Triangulated("trisurf", args, line, col, wireframe: false));
         Define("trimesh", (args, line, col) => Triangulated("trimesh", args, line, col, wireframe: true));
@@ -391,7 +397,11 @@ internal static partial class JgsBuiltins
         }
 
         ApplyQuiverOptions(verb, plot, options, line, col);
-        return JgsValue.Null;
+
+        // The arrows are a graphics object like any other, so hand back a handle to them. Until M69's
+        // property probe asked, this returned nothing and `h = quiver(...); h.LineWidth = 2` — which
+        // is how MATLAB documents the verb — had no object to write to.
+        return JgsHandleRegistry.For(plot);
     }
 
     private static void ApplyQuiverOptions(

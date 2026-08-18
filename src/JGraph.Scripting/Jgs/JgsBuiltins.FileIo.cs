@@ -139,7 +139,8 @@ internal static partial class JgsBuiltins
             return JgsValue.Str(sb.ToString());
         });
 
-        Define("image", (args, line, col) =>
+        // image draws, so its handle does not echo as `ans` — the rule plot has always had.
+        env.Declare("image", JgsValue.Function(new BuiltinFunction("image", (args, line, col) =>
         {
             Arity("image", args, 1, line, col);
             if (args[0].Type == JgsType.Image)
@@ -149,10 +150,12 @@ internal static partial class JgsBuiltins
                 return imshow.AsCallable.Call(args, line, col);
             }
 
-            // A plain matrix displays over its cell indices, colormapped — the imagesc path.
-            JG.Image(Matrix("image", args, 0, line, col));
-            return JgsValue.Null;
-        });
+            // A plain matrix displays over its cell indices, colormapped — the imagesc path. The
+            // handle is what MATLAB's image(...) answers with, and what a following set(h, 'CData', …)
+            // needs; it returned nothing until M69's property probe went looking for the object.
+            return JgsHandleRegistry.For(JG.Image(Matrix("image", args, 0, line, col)));
+        })
+        { BindsAnsAsStatement = false }));
     }
 
     private static FileStream OpenStream(

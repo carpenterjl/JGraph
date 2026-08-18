@@ -9,6 +9,11 @@ internal sealed class JgsEnvironment
     private readonly Dictionary<string, JgsValue> _values = new(StringComparer.Ordinal);
     private readonly JgsEnvironment? _parent;
 
+    // Names a 'global' statement in this scope bound to the global workspace. Null until one does,
+    // which is almost always: allocating a set per call frame for a statement most functions never
+    // write would cost every call for the few that do.
+    private HashSet<string>? _globalNames;
+
     /// <summary>Creates a scope nested inside <paramref name="parent"/> (null for the global scope).</summary>
     public JgsEnvironment(JgsEnvironment? parent = null) => _parent = parent;
 
@@ -40,6 +45,43 @@ internal sealed class JgsEnvironment
 
     /// <summary>Declares (or redeclares) <paramref name="name"/> in this scope with <paramref name="value"/>.</summary>
     public void Declare(string name, JgsValue value) => _values[name] = value;
+
+    /// <summary>
+    /// Records that a <c>global</c> statement in this scope binds <paramref name="name"/> to the
+    /// global workspace, so reads and writes of it here reach the shared variable.
+    /// </summary>
+    public void DeclareGlobal(string name) =>
+        (_globalNames ??= new HashSet<string>(StringComparer.Ordinal)).Add(name);
+
+    /// <summary>
+    /// Whether a <c>global</c> declaration reaching this scope binds <paramref name="name"/>.
+    /// </summary>
+    /// <remarks>
+    /// The declaration belongs to the workspace that made it, so the walk stops where an assignment's
+    /// does — at a call boundary. A function that never wrote <c>global x</c> keeps its own <c>x</c>
+    /// however many other functions declared one, which is what MATLAB means by the statement and the
+    /// reason it can be written at all. Until M69 the interpreter held one run-wide set instead, so the
+    /// first function to declare a name silently rewired it for every scope for the rest of the session.
+    /// A nested function is the same exception it is for assignment: it shares its parent's workspace,
+    /// declarations included.
+    /// </remarks>
+    public bool IsGlobal(string name)
+    {
+        for (JgsEnvironment? scope = this; scope is not null; scope = scope._parent)
+        {
+            if (scope._globalNames is not null && scope._globalNames.Contains(name))
+            {
+                return true;
+            }
+
+            if (scope.IsCallBoundary)
+            {
+                return false;
+            }
+        }
+
+        return false;
+    }
 
     /// <summary>
     /// Removes every binding in this scope except those still holding the exact value recorded in

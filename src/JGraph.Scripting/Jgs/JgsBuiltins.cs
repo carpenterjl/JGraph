@@ -1599,7 +1599,7 @@ internal static partial class JgsBuiltins
             var light = new LightModel();
             ApplyLightOptions("light", light, args, 0, line, col);
             JG.Gca().Lights.Add(light);
-            return JgsValue.Null;
+            return JgsHandleRegistry.For(light);
         });
 
         // lightangle(az, el) places a light on the same spherical convention view() uses, so the two
@@ -1864,12 +1864,19 @@ internal static partial class JgsBuiltins
         })
         { AutoCallsBare = true }));
 
-        Define("colorbar", (args, line, col) =>
+        // AutoCallsBare because 'h = colorbar;' — no parentheses, and the handle kept — is how MATLAB
+        // documents it and how a script reaches the bar to label it. Without it the bare name bound
+        // the builtin itself, so h was a function and every later property write refused.
+        env.Declare("colorbar", JgsValue.Function(new BuiltinFunction("colorbar", (args, line, col) =>
         {
             ArityRange("colorbar", args, 0, 1, line, col);
             JG.Colorbar(OnOff("colorbar", args, line, col, dialect, () => JG.Gca().Colorbar.Visible));
-            return JgsValue.Null;
-        });
+            return JgsHandleRegistry.For(JG.Gca().Colorbar);
+        })
+        {
+            AutoCallsBare = true,
+            BindsAnsAsStatement = false,
+        }));
 
         DefineSilent("semilogy", (args, line, col) => Semilog("semilogy", args, line, col, (x, y, s) => JG.SemilogY(x, y, s)));
         DefineSilent("semilogx", (args, line, col) => Semilog("semilogx", args, line, col, (x, y, s) => JG.SemilogX(x, y, s)));

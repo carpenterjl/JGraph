@@ -271,9 +271,9 @@ internal static partial class JgsBuiltins
         {
             "base" => interpreter.Globals,
 
-            // JGraph has one call frame's worth of history, so 'caller' means the scope that called
-            // the builtin — which, from inside a function, is that function's own frame.
-            "caller" => interpreter.CurrentFrame,
+            // The workspace of whoever called the function that is asking. At the top level nothing
+            // called it, and MATLAB's answer there is the base workspace.
+            "caller" => interpreter.CallerFrame ?? interpreter.Globals,
             var other => throw new JgsRuntimeException(line, col, $"{name}: '{other}' is not 'base' or 'caller'."),
         };
 

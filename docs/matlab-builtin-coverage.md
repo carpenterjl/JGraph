@@ -6,6 +6,15 @@
 > they document, and **157 accept some and not others**. A name in the table below means the name
 > resolves — it has never meant that every way MATLAB documents calling it works. Read the two
 > together, and see ADR 0069.
+>
+> **And a third that counts properties.** `docs/matlab-property-coverage.md` builds each graphics
+> object and asks it: **436 of 1,361 documented properties** are answered across the 26 object kinds
+> it can construct. It also asks the question underneath that one — whether a drawing verb hands back
+> a handle at all — because a property table nothing can reach is not coverage. Four verbs did not,
+> and were fixed in M69.
+>
+> **`docs/matlab-divergences.md`** indexes the deliberate differences from MATLAB the ADRs record,
+> and `stess_41.m` asserts a subset of them against the running interpreter.
 
 Where JGraph stands against the 515 commands the R2021b documentation lists with kind **builtin**
 (514 distinct names; one appears twice), and — since M45 — against the graphics commands it lists
