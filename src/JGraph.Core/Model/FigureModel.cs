@@ -21,10 +21,15 @@ public sealed class FigureModel : GraphObject
         Name = "Figure";
         Axes = new GraphObjectCollection<AxesModel>(this);
         Annotations = new GraphObjectCollection<AnnotationObject>(this);
+        ContextMenus = new GraphObjectCollection<ContextMenuModel>(this);
     }
 
     /// <summary>The axes (coordinate regions) contained in this figure.</summary>
     public GraphObjectCollection<AxesModel> Axes { get; }
+
+    /// <summary>Script-defined right-click menus owned by this figure (MATLAB <c>uicontextmenu</c>).
+    /// Nothing here draws; objects point at an entry through their <c>ContextMenu</c> property.</summary>
+    public GraphObjectCollection<ContextMenuModel> ContextMenus { get; }
 
     /// <summary>
     /// Annotations drawn on top of the whole figure in normalized [0, 1] figure coordinates

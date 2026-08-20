@@ -25,7 +25,7 @@ so long. The live tracker is `matlab-r2021b-documented.html` in the demo workspa
 `tools/matlab-checklist/build-checklist.py`; this file is the standing summary, so the shape of what
 is left does not have to be re-derived each time.
 
-**413 of 514 builtins implemented** (386 was written here from M63 to M66 and was stale — see the correction below; 385 from M60 to M62, 383 after M59, 382 after M54, 372 from M45 to M53, 364 after M43, 363 after
+**415 of 514 builtins implemented** (413 from M68 to M70; 386 was written here from M63 to M66 and was stale — see the correction below; 385 from M60 to M62, 383 after M59, 382 after M54, 372 from M45 to M53, 364 after M43, 363 after
 M39, 326 after M38, 185 after M37, 109 after M36) — M46 through M53 all added names MATLAB documents
 as *functions*, which this table does not hold. M45's eight are the drawing primitives the "handle
 graphics" section below used to list as missing and call the most useful thing left: `plot3`, `line`,
@@ -42,13 +42,16 @@ thirteen** — the whole handle-graphics group below but for the app-building na
 `metaclass` is the only one MATLAB documents as kind *builtin* — `isobject` is a *function*,
 `properties` and `methods` are *keywords*, and `addCause` is a method of MException rather than a
 documented top-level command, so the other four are counted in the totals below and not here.
+**M71 moved it by two**: `uicontextmenu` and `uimenu` are the first of the app-building names to
+become real objects — a script-defined right-click menu and its entries, wired to the M71 event
+loop rather than stored inertly. The rest of the `ui*` widget family stays below.
 
 **And M67 re-derived the number instead of adding to it, which is how the staleness was found.** This
 line read 386 through M63–M66 and should have read 399: **M66 implemented all ten of the sparse
 orderings and incomplete factorizations that had their own section below**, plus `qz`, `ordqz` and
 `balance` from "the remaining ten", and moved none of them out of the missing tables. Counting the
 implemented set straight out of the dump and the catalog — the query at the bottom of this file —
-answered 412 implemented and 102 missing at M67, and 413 and 101 at M68, each pair summing to the 514 the top of this file states. The two
+answered 412 implemented and 102 missing at M67, 413 and 101 at M68, and 415 and 99 at M71, each pair summing to the 514 the top of this file states. The two
 sections M67 can prove are removed below; the rest of the gap is between the computed total and the
 prose groupings, and is recorded here rather than guessed at, because a group re-labelled without
 reading it is exactly the slip this file keeps catching.
@@ -91,8 +94,8 @@ see. This file refused to count them while they drew nothing; **M56 made them re
 number and this one agree again. `opengl` *is* counted, because an accepted no-op is an answer — the
 same reading that counted `shading`, `lighting` and `camlight` in M43.
 
-Across every callable kind — builtin, function, operator, keyword, script — the count is **910 of
-2,024** as of M69 (926 of 2,027 was written here from M68 and counted two different populations —
+Across every callable kind — builtin, function, operator, keyword, script — the count is **912 of
+2,024** as of M71 (910 after M69; 926 of 2,027 was written here from M68 and counted two different populations —
 see the correction below; 919 after M67, 905 after M66, 880 after M65, 867 after M64, 814 after M60, 781 after M59, 758 after M58, 742 after M57, 728 after M56, 710 after M55 by this file's nine-short reading above, 697 after M54, 633 after
 M52, 619 after M51, up from 560, and not from the 556 this file used to claim: the checklist tool
 read the implemented set with a regular expression that only matched a name literal directly inside
@@ -874,16 +877,17 @@ M52 left these behind, each named rather than silent (the full table is in
   scoped out of M52 deliberately.~~ **`interp2` and `'SamplePoints'` closed in M66**; `'native'`
   output classes and the `histogram` object options are still out.
 
-## Not implemented — 101
+## Not implemented — 99
 
-### Handle graphics and app building — 10
+### Handle graphics and app building — 8
 
-`hgsetget` `selectmoveresize` `uicontextmenu` `uicontrol` `uimenu` `uipanel` `uipushtool`
+`hgsetget` `selectmoveresize` `uicontrol` `uipanel` `uipushtool`
 `uitoggletool` `uitoolbar` `waitforbuttonpress`
 
-**M67 took the other thirteen**, and what is left is app building — the `ui*` widget family,
-`hgsetget`'s pre-HG2 property accessors, `selectmoveresize`'s interactive drag callback, and
-`waitforbuttonpress`, which like `gtext` waits for a person. The thirteen that went were the
+**M67 took thirteen and M71 took two more** — `uicontextmenu` and `uimenu` became real objects when
+the event loop gave their callbacks somewhere to run — and what is left is app building proper: the
+`ui*` widget family, `hgsetget`'s pre-HG2 property accessors, `selectmoveresize`'s interactive drag
+callback, and `waitforbuttonpress`, which like `gtext` waits for a person. The thirteen that went were the
 graphics *objects* the model had no answer for, and they went together because they are one thing:
 an animated line and a rectangle are what a figure is made of, and a group, a root and an axes
 constructor are how a script gets at them.

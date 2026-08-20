@@ -42,8 +42,36 @@ public class FigureControl : SKElement, IInteractionSurface, IFigureNavigator
         _controller = new InteractionController(this);
         _controller.StateChanged += (_, _) => UpdateCursor();
         UndoStack.StateChanged += (_, _) => NavigationStateChanged?.Invoke(this, EventArgs.Empty);
+        SizeChanged += OnViewportSizeChanged;
         UpdateCursor();
     }
+
+    /// <summary>
+    /// Writes the drawable viewport's size back to the model, so <c>get(fig, 'Position')</c>
+    /// answers what the window actually shows, and reports the change — MATLAB's
+    /// <c>SizeChangedFcn</c>. Value-compared, because the model write invalidates a repaint and a
+    /// repaint must not read as another resize.
+    /// </summary>
+    private void OnViewportSizeChanged(object sender, System.Windows.SizeChangedEventArgs e)
+    {
+        if (Figure is not { } figure || e.NewSize.Width <= 0 || e.NewSize.Height <= 0)
+        {
+            return;
+        }
+
+        var size = new Size2D(e.NewSize.Width, e.NewSize.Height);
+        if (figure.Size.Width == size.Width && figure.Size.Height == size.Height)
+        {
+            return;
+        }
+
+        figure.Size = size;
+        ViewportSizeChanged?.Invoke(this, EventArgs.Empty);
+    }
+
+    /// <summary>Raised after a real viewport resize has been written to the model. The host decides
+    /// what a resize means; in the app it queues the figure's <c>SizeChangedFcn</c>.</summary>
+    public event EventHandler? ViewportSizeChanged;
 
     /// <summary>Raised as the pointer moves, with the data-space position under it (null when outside any axes).</summary>
     public event EventHandler<Point2D?>? CursorDataPositionChanged;
@@ -214,6 +242,21 @@ public class FigureControl : SKElement, IInteractionSurface, IFigureNavigator
     public void OnLegendRowClicked(AxesModel axes, PlotObject plot) =>
         LegendRowClicked?.Invoke(this, new LegendRowClickedEventArgs(axes, plot));
 
+    /// <summary>
+    /// Raised on every press over the figure, naming what it landed on — null for bare canvas. The
+    /// host decides what a click means; in the app it queues the object's <c>ButtonDownFcn</c>.
+    /// </summary>
+    public event EventHandler<ObjectClickedEventArgs>? ObjectClicked;
+
+    /// <inheritdoc />
+    public void OnObjectClicked(FigureHit hit, PointerButton button)
+    {
+        if (Figure is { } figure)
+        {
+            ObjectClicked?.Invoke(this, new ObjectClickedEventArgs(figure, hit, button));
+        }
+    }
+
     /// <inheritdoc />
     public void RequestRender() => InvalidateVisual();
 
@@ -298,20 +341,36 @@ public class FigureControl : SKElement, IInteractionSurface, IFigureNavigator
         }
     }
 
+    /// <summary>
+    /// Asked, on right-click, for a script-defined menu for the object under the pixel. Answering a
+    /// list substitutes it for the built-in menu — MATLAB's rule: an object given a uicontextmenu
+    /// shows that and nothing else. Null falls back to the built-ins.
+    /// </summary>
+    public Func<FigureHit, Point2D, IReadOnlyList<ContextMenuItem>?>? ScriptContextMenuProvider { get; set; }
+
     private void OpenContextMenu(Point2D position)
     {
-        IReadOnlyList<ContextMenuItem> items = _controller.BuildContextMenu(position);
+        FigureHit hit = FigureHitTesting.Resolve(this, position);
+        IReadOnlyList<ContextMenuItem>? items = ScriptContextMenuProvider?.Invoke(hit, position);
+        items ??= _controller.BuildContextMenu(position);
         if (items.Count == 0)
         {
             return;
         }
 
         var menu = new System.Windows.Controls.ContextMenu { PlacementTarget = this };
+        AddMenuItems(menu.Items, items);
+        menu.IsOpen = true;
+    }
+
+    private static void AddMenuItems(
+        System.Windows.Controls.ItemCollection into, IReadOnlyList<ContextMenuItem> items)
+    {
         foreach (ContextMenuItem item in items)
         {
             if (item.IsSeparator)
             {
-                menu.Items.Add(new System.Windows.Controls.Separator());
+                into.Add(new System.Windows.Controls.Separator());
                 continue;
             }
 
@@ -319,16 +378,20 @@ public class FigureControl : SKElement, IInteractionSurface, IFigureNavigator
             {
                 Header = item.Header,
                 IsChecked = item.IsChecked,
+                IsEnabled = item.IsEnabled,
             };
             if (item.Invoke is { } invoke)
             {
                 entry.Click += (_, _) => invoke();
             }
 
-            menu.Items.Add(entry);
-        }
+            if (item.Children is { Count: > 0 } children)
+            {
+                AddMenuItems(entry.Items, children);
+            }
 
-        menu.IsOpen = true;
+            into.Add(entry);
+        }
     }
 
     protected override void OnMouseWheel(MouseWheelEventArgs e)

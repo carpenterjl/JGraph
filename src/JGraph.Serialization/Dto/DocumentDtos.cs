@@ -29,6 +29,41 @@ public sealed class FigureDto
     public List<AxesDto> Axes { get; set; } = new();
 
     public List<AnnotationDto> Annotations { get; set; } = new();
+
+    /// <summary>
+    /// Script-defined right-click menus (MATLAB <c>uicontextmenu</c>). Empty in every document
+    /// written before M71, which is what makes this safe to add without a version bump. The menu
+    /// structure is saved; the callbacks are script-side state and are not.
+    /// </summary>
+    public List<ContextMenuDto> ContextMenus { get; set; } = new();
+}
+
+/// <summary>The serialized form of a <see cref="ContextMenuModel"/>.</summary>
+public sealed class ContextMenuDto
+{
+    public string Name { get; set; } = string.Empty;
+
+    public List<MenuItemDto> Items { get; set; } = new();
+}
+
+/// <summary>The serialized form of a <see cref="MenuItemModel"/>.</summary>
+public sealed class MenuItemDto
+{
+    public string Text { get; set; } = string.Empty;
+
+    public bool Checked { get; set; }
+
+    public bool Enable { get; set; } = true;
+
+    public bool Separator { get; set; }
+
+    public string Accelerator { get; set; } = string.Empty;
+
+    public string Tooltip { get; set; } = string.Empty;
+
+    public Color ForegroundColor { get; set; }
+
+    public List<MenuItemDto> Items { get; set; } = new();
 }
 
 /// <summary>The serialized form of an <see cref="AxesModel"/>.</summary>

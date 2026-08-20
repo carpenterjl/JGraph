@@ -26,6 +26,106 @@ public partial class ScriptWorkspaceWindow
     /// <summary>One live session per language, created on first use and kept until the window closes.</summary>
     private readonly Dictionary<string, IScriptSession> _sessions = new(StringComparer.Ordinal);
 
+    /// <summary>The idle event-pump run in flight, if one is — how a queued click gets its callback
+    /// run while nobody is typing. Null whenever no pump run is active.</summary>
+    private Task? _pumpTask;
+
+    /// <summary>Set when the user's own work should go first; the pump checks it between events and
+    /// steps aside, leaving the rest queued. Read on the script thread, written on the UI thread.</summary>
+    private volatile bool _pumpYield;
+
+    /// <summary>
+    /// Starts an event-pump run when events are waiting and nothing else runs. Called on the UI
+    /// thread: when an event is queued, and again whenever a run finishes — so an event that arrived
+    /// mid-statement is delivered right after it, and one that arrived mid-pump gets the next pump.
+    /// </summary>
+    private void PumpGraphicsEventsWhenIdle()
+    {
+        if (ScriptEventQueue.Count == 0 || _session.State != ScriptSessionState.Idle)
+        {
+            return;
+        }
+
+        foreach ((string language, IScriptSession candidate) in _sessions)
+        {
+            if (candidate is IGraphicsEventSession pump)
+            {
+                _pumpTask = RunEventPumpAsync(language, pump);
+                return;
+            }
+        }
+    }
+
+    private async Task RunEventPumpAsync(string language, IGraphicsEventSession pump)
+    {
+        if (!_session.TryBeginRun(language))
+        {
+            _pumpTask = null;
+            return;
+        }
+
+        _cts = new System.Threading.CancellationTokenSource();
+        try
+        {
+            await pump.DrainGraphicsEventsAsync(() => _pumpYield, _cts.Token).ConfigureAwait(true);
+        }
+        catch (Exception ex) when (ex is InvalidOperationException or IOException)
+        {
+            // A callback's own errors were already reported through the console; only the pump
+            // machinery itself can land here, and it must not take the shell down.
+        }
+        finally
+        {
+            _cts.Dispose();
+            _cts = null;
+            _pumpTask = null;
+            _session.EndRun();
+            if (!_pumpYield)
+            {
+                PumpGraphicsEventsWhenIdle();
+            }
+        }
+    }
+
+    /// <summary>
+    /// Stop means stop: the statement's token is cancelled and the events it never got to are let
+    /// go — a cancelled run must not leave a click waiting to fire into the next statement. A close
+    /// request in the pile is the exception in spirit: the person asked for a window to go away, and
+    /// discarding that would make Stop un-close a window. Its answer is the window's own close path,
+    /// which the queued request was standing in for.
+    /// </summary>
+    private void StopRun()
+    {
+        _cts?.Cancel();
+        foreach (GraphicsEvent abandoned in ScriptEventQueue.Flush())
+        {
+            // A close request in the pile is a person asking for a window to go away; Stop must
+            // not un-ask it. The rest of the cancelled run's events are simply let go.
+            if (abandoned is { Kind: GraphicsEventKind.CloseRequest, Target: JGraph.Core.Model.FigureModel figure })
+            {
+                int number = JGraph.Api.JG.GetFigureNumber(figure);
+                if (number > 0)
+                {
+                    _figureWindows.CloseScriptFigure(number);
+                }
+            }
+        }
+    }
+
+    /// <summary>
+    /// Waits out a pump run that holds the interpreter, asking it to step aside first. The user's
+    /// statement goes next; whatever events the pump left queued run after that statement ends.
+    /// </summary>
+    private async Task YieldPumpAsync()
+    {
+        if (_pumpTask is { } pumping)
+        {
+            _pumpYield = true;
+            await pumping.ConfigureAwait(true);
+            _pumpYield = false;
+        }
+    }
+
     private readonly List<string> _promptHistory = new();
 
     /// <summary>Where Up/Down is in the history; equal to the count when the user is on a fresh line.</summary>
@@ -133,7 +233,7 @@ public partial class ScriptWorkspaceWindow
             return;
         }
 
-        if (_session.State != ScriptSessionState.Idle)
+        if (_session.State != ScriptSessionState.Idle && _pumpTask is null)
         {
             SetStatus("Busy — stop the current run first.");
             return;
@@ -171,6 +271,7 @@ public partial class ScriptWorkspaceWindow
             return;
         }
 
+        await YieldPumpAsync().ConfigureAwait(true);
         if (!_session.TryBeginRun(language))
         {
             return;
@@ -199,6 +300,7 @@ public partial class ScriptWorkspaceWindow
 
         ShowRunResult(result, announceSuccess: false);
         ConsolePrompt.Focus();
+        PumpGraphicsEventsWhenIdle();
     }
 
     /// <summary>

@@ -67,6 +67,8 @@ internal static class JgsGraphicsProperties
         JgsGraphicsGroup { Transforms: true } => "hgtransform",
         JgsGraphicsGroup => "hggroup",
         FigureModel => "figure",
+        ContextMenuModel => "uicontextmenu",
+        MenuItemModel => "uimenu",
 
         // A circle is a different class in MATLAB, and findobj(gcf, 'Type', 'polaraxes') is how a
         // script finds one. Here it is a mode, so the mode is what the name is read off — the same
@@ -193,6 +195,39 @@ internal static class JgsGraphicsProperties
     private static void Reparent(JgsHandleEntry entry, JgsValue value, int line, int col)
     {
         JgsHandleEntry owner = JgsHandleRegistry.Require(value, line, col);
+
+        // Menus move between figures, context menus, and one another; every such move is a move.
+        switch (entry.Target, owner.Target)
+        {
+            case (ContextMenuModel movingMenu, FigureModel figureOwner):
+                using (GraphObjectLifecycle.SuppressNotifications())
+                {
+                    (movingMenu.Parent as FigureModel)?.ContextMenus.Remove(movingMenu);
+                    figureOwner.ContextMenus.Add(movingMenu);
+                }
+
+                return;
+            case (MenuItemModel movingItem, ContextMenuModel menuOwner):
+                using (GraphObjectLifecycle.SuppressNotifications())
+                {
+                    RemoveMenuItem(movingItem);
+                    menuOwner.Items.Add(movingItem);
+                }
+
+                return;
+            case (MenuItemModel movingItem, MenuItemModel itemOwner):
+                using (GraphObjectLifecycle.SuppressNotifications())
+                {
+                    RemoveMenuItem(movingItem);
+                    itemOwner.Items.Add(movingItem);
+                }
+
+                return;
+            case (ContextMenuModel or MenuItemModel, _):
+                throw new JgsRuntimeException(line, col,
+                    $"A menu belongs to a figure, a context menu or another menu, not to a {owner.TypeName}.");
+        }
+
         if (entry.Target is not PlotObject plot)
         {
             throw new JgsRuntimeException(line, col,
@@ -205,14 +240,33 @@ internal static class JgsGraphicsProperties
                 group.Adopt(plot);
                 return;
             case AxesModel axes when !ReferenceEquals(plot.Parent, axes):
-                (plot.Parent as AxesModel)?.Plots.Remove(plot);
-                axes.Plots.Add(plot);
+                // A move, not a deletion: the removal half must not run the plot's DeleteFcn.
+                using (GraphObjectLifecycle.SuppressNotifications())
+                {
+                    (plot.Parent as AxesModel)?.Plots.Remove(plot);
+                    axes.Plots.Add(plot);
+                }
+
                 return;
             case AxesModel:
                 return;
             default:
                 throw new JgsRuntimeException(line, col,
                     $"A drawn object belongs to an axes or a group, not to a {owner.TypeName}.");
+        }
+    }
+
+    /// <summary>Takes a menu item out of whichever items collection holds it.</summary>
+    private static void RemoveMenuItem(MenuItemModel item)
+    {
+        switch (item.Parent)
+        {
+            case ContextMenuModel menu:
+                menu.Items.Remove(item);
+                break;
+            case MenuItemModel owner:
+                owner.Items.Remove(item);
+                break;
         }
     }
 
@@ -227,6 +281,13 @@ internal static class JgsGraphicsProperties
             case FigureModel figure:
                 children.AddRange(figure.Axes);
                 children.AddRange(figure.Annotations);
+                children.AddRange(figure.ContextMenus);
+                break;
+            case ContextMenuModel menu:
+                children.AddRange(menu.Items);
+                break;
+            case MenuItemModel item:
+                children.AddRange(item.Items);
                 break;
             case AxesModel axes:
                 children.AddRange(axes.Plots);
@@ -439,6 +500,116 @@ internal static class JgsGraphicsProperties
                     : JgsValue.Array([]),
             (entry, value, line, col) => Reparent(entry, value, line, col));
         Put(table, "Children", entry => HandleRow(ChildrenOf(entry.Target)));
+
+        // The common callback and interaction block, on every object at once (M71). The callbacks
+        // live on the handle entry — script-side state, gone when the object is — and the scalars
+        // map onto what the model already tracks for its own interaction layer.
+        AddCallbackSlot(table, "ButtonDownFcn",
+            static entry => entry.ButtonDownFcn, static (entry, value) => entry.ButtonDownFcn = value);
+        AddCallbackSlot(table, "CreateFcn",
+            static entry => entry.CreateFcn, static (entry, value) => entry.CreateFcn = value);
+        AddCallbackSlot(table, "DeleteFcn",
+            static entry => entry.DeleteFcn, static (entry, value) => entry.DeleteFcn = value);
+        Put(table, "Interruptible",
+            entry => OnOff(entry.Interruptible),
+            (entry, value, line, col) => entry.Interruptible = ToOnOff("Interruptible", value, line, col));
+        Put(table, "BusyAction",
+            entry => JgsValue.Str(entry.BusyActionQueues ? "queue" : "cancel"),
+            (entry, value, line, col) => entry.BusyActionQueues =
+                JgsBuiltins.StrOf("BusyAction", value, line, col).ToLowerInvariant() switch
+                {
+                    "queue" => true,
+                    "cancel" => false,
+                    var word => throw new JgsRuntimeException(line, col,
+                        $"BusyAction is 'queue' or 'cancel', not '{word}'."),
+                });
+        Put(table, "Selected",
+            entry => OnOff(entry.Target.IsSelected),
+            (entry, value, line, col) => entry.Target.IsSelected = ToOnOff("Selected", value, line, col));
+        Put(table, "SelectionHighlight",
+            entry => OnOff(entry.Target.SelectionHighlight),
+            (entry, value, line, col) =>
+                entry.Target.SelectionHighlight = ToOnOff("SelectionHighlight", value, line, col));
+        // HitTest is the model's Selectable: both mean "may a click land on this object", read by
+        // the same shared hit test the figure window uses.
+        Put(table, "HitTest",
+            entry => OnOff(entry.Target.Selectable),
+            (entry, value, line, col) => entry.Target.Selectable = ToOnOff("HitTest", value, line, col));
+        Put(table, "PickableParts",
+            entry => JgsValue.Str(entry.PickableParts),
+            (entry, value, line, col) => entry.PickableParts =
+                JgsBuiltins.StrOf("PickableParts", value, line, col).ToLowerInvariant() switch
+                {
+                    "visible" => "visible",
+                    "all" => "all",
+                    "none" => "none",
+                    var word => throw new JgsRuntimeException(line, col,
+                        $"PickableParts is 'visible', 'all' or 'none', not '{word}'."),
+                });
+        Put(table, "BeingDeleted", entry => OnOff(entry.Target.BeingDeleted));
+
+        // The right-click menu an object shows, as a handle to a uicontextmenu. 'UIContextMenu' is
+        // the spelling MATLAB used before R2020a; scripts still write it, so both name one slot.
+        void PutContextMenu(string spelling) => Put(table, spelling,
+            entry => entry.ContextMenu is { } menu ? JgsHandleRegistry.For(menu) : JgsValue.Array([]),
+            (entry, value, line, col) =>
+            {
+                if (value.Type == JgsType.Array && value.ArrayLength == 0)
+                {
+                    entry.ContextMenu = null;
+                    return;
+                }
+
+                JgsHandleEntry menu = JgsHandleRegistry.Require(value, line, col);
+                if (menu.Target is not ContextMenuModel)
+                {
+                    throw new JgsRuntimeException(line, col,
+                        $"{spelling} takes a uicontextmenu handle, and this handle names a {menu.TypeName}.");
+                }
+
+                entry.ContextMenu = menu.Target;
+            });
+        PutContextMenu("ContextMenu");
+        PutContextMenu("UIContextMenu");
+
+        if (typeof(ContextMenuModel).IsAssignableFrom(type))
+        {
+            AddCallbackSlot(table, "ContextMenuOpeningFcn",
+                static entry => entry.ContextMenuOpeningFcn,
+                static (entry, value) => entry.ContextMenuOpeningFcn = value);
+        }
+
+        if (typeof(MenuItemModel).IsAssignableFrom(type))
+        {
+            AddCallbackSlot(table, "MenuSelectedFcn",
+                static entry => entry.MenuSelectedFcn,
+                static (entry, value) => entry.MenuSelectedFcn = value);
+
+            // MATLAB's Separator, Checked and Enable are on/off words over what reflection would
+            // otherwise expose as bools.
+            Put(table, "Checked",
+                entry => OnOff(((MenuItemModel)entry.Target).Checked),
+                (entry, value, line, col) =>
+                    ((MenuItemModel)entry.Target).Checked = ToOnOff("Checked", value, line, col));
+            Put(table, "Enable",
+                entry => OnOff(((MenuItemModel)entry.Target).Enable),
+                (entry, value, line, col) =>
+                    ((MenuItemModel)entry.Target).Enable = ToOnOff("Enable", value, line, col));
+            Put(table, "Separator",
+                entry => OnOff(((MenuItemModel)entry.Target).Separator),
+                (entry, value, line, col) =>
+                    ((MenuItemModel)entry.Target).Separator = ToOnOff("Separator", value, line, col));
+
+            // The spellings MATLAB used before R2017b, still written everywhere: 'Label' is Text,
+            // 'Callback' is MenuSelectedFcn. Same slots, older names.
+            Put(table, "Label",
+                entry => JgsValue.Str(((MenuItemModel)entry.Target).Text),
+                (entry, value, line, col) =>
+                    ((MenuItemModel)entry.Target).Text = JgsBuiltins.StrOf("Label", value, line, col));
+            AddCallbackSlot(table, "Callback",
+                static entry => entry.MenuSelectedFcn,
+                static (entry, value) => entry.MenuSelectedFcn = value);
+        }
 
         if (typeof(JgsGraphicsGroup).IsAssignableFrom(type))
         {
@@ -1156,6 +1327,10 @@ internal static class JgsGraphicsProperties
             Put(table, "CurrentAxes", entry => ((FigureModel)entry.Target).Axes.Count > 0
                 ? JgsHandleRegistry.For(JG.CurrentAxesOrNull ?? ((FigureModel)entry.Target).Axes[0])
                 : JgsValue.Array([]));
+            AddCallbackSlot(table, "CloseRequestFcn",
+                static entry => entry.CloseRequestFcn, static (entry, value) => entry.CloseRequestFcn = value);
+            AddCallbackSlot(table, "SizeChangedFcn",
+                static entry => entry.SizeChangedFcn, static (entry, value) => entry.SizeChangedFcn = value);
         }
 
         if (typeof(LegendModel).IsAssignableFrom(type))
@@ -1582,6 +1757,36 @@ internal static class JgsGraphicsProperties
         Func<JgsHandleEntry, JgsValue> read,
         Action<JgsHandleEntry, JgsValue, int, int>? write = null) =>
         table[name] = new GraphicsProperty(name, read, write);
+
+    /// <summary>
+    /// A callback property over an entry slot. Unset reads as empty, the way MATLAB answers a
+    /// callback nobody assigned; a write takes a function handle or, to clear, an empty array —
+    /// anything else is refused by name. Writing never runs the callback: <c>CreateFcn</c> only
+    /// fires at creation, and the others only when their event happens.
+    /// </summary>
+    private static void AddCallbackSlot(
+        IDictionary<string, GraphicsProperty> table,
+        string name,
+        Func<JgsHandleEntry, JgsValue?> read,
+        Action<JgsHandleEntry, JgsValue?> write) =>
+        Put(table, name,
+            entry => read(entry) ?? JgsValue.Array([]),
+            (entry, value, line, col) =>
+            {
+                if (value.Type == JgsType.Function)
+                {
+                    write(entry, value);
+                }
+                else if (value.Type == JgsType.Array && value.ArrayLength == 0)
+                {
+                    write(entry, null);
+                }
+                else
+                {
+                    throw new JgsRuntimeException(line, col,
+                        $"{name} is a function handle, such as @(src, event) myCallback(src, event), or [] to clear it.");
+                }
+            });
 
     /// <summary>Two spellings of one colour — MATLAB's <c>Color</c> and <c>FaceColor</c> on filled shapes.</summary>
     private static void AddSameColor(

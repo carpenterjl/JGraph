@@ -31,7 +31,48 @@ internal static class FigureMapper
             dto.Annotations.Add(AnnotationMapper.ToDto(annotation));
         }
 
+        foreach (ContextMenuModel menu in figure.ContextMenus)
+        {
+            dto.ContextMenus.Add(new ContextMenuDto
+            {
+                Name = menu.Name,
+                Items = menu.Items.Select(ToDto).ToList(),
+            });
+        }
+
         return dto;
+    }
+
+    private static MenuItemDto ToDto(MenuItemModel item) => new()
+    {
+        Text = item.Text,
+        Checked = item.Checked,
+        Enable = item.Enable,
+        Separator = item.Separator,
+        Accelerator = item.Accelerator,
+        Tooltip = item.Tooltip,
+        ForegroundColor = item.ForegroundColor,
+        Items = item.Items.Select(ToDto).ToList(),
+    };
+
+    private static MenuItemModel ToModel(MenuItemDto dto)
+    {
+        var item = new MenuItemModel
+        {
+            Text = dto.Text,
+            Checked = dto.Checked,
+            Enable = dto.Enable,
+            Separator = dto.Separator,
+            Accelerator = dto.Accelerator,
+            Tooltip = dto.Tooltip,
+            ForegroundColor = dto.ForegroundColor,
+        };
+        foreach (MenuItemDto child in dto.Items)
+        {
+            item.Items.Add(ToModel(child));
+        }
+
+        return item;
     }
 
     public static FigureModel ToModel(FigureDto dto)
@@ -57,6 +98,17 @@ internal static class FigureMapper
         foreach (AnnotationDto annotationDto in dto.Annotations)
         {
             figure.Annotations.Add(AnnotationMapper.ToModel(annotationDto));
+        }
+
+        foreach (ContextMenuDto menuDto in dto.ContextMenus)
+        {
+            var menu = new ContextMenuModel { Name = menuDto.Name };
+            foreach (MenuItemDto itemDto in menuDto.Items)
+            {
+                menu.Items.Add(ToModel(itemDto));
+            }
+
+            figure.ContextMenus.Add(menu);
         }
 
         return figure;

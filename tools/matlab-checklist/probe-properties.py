@@ -81,6 +81,12 @@ KINDS: list[tuple[str, str, str]] = [
     # MATLAB has no Pie class: pie makes Patch objects. JGraph models the whole chart as one object,
     # so this row is measured against Patch — the properties a script would reach for on a slice.
     ("pie", "matlab.graphics.primitive.Patch", "h = pie([1 2 3]);"),
+
+    # M71 built the callback seam and, with it, the first two ui objects. Their documented rows were
+    # already in the properties CSV; these join keys simply reach them now that the verbs exist.
+    ("uicontextmenu", "matlab.ui.container.ContextMenu", "figure; h = uicontextmenu;"),
+    ("uimenu", "matlab.ui.container.Menu",
+     "figure; cm = uicontextmenu; h = uimenu(cm, 'Text', 'Copy');"),
 ]
 
 # Drawing verbs MATLAB documents as returning an object. A verb that draws and returns nothing is
@@ -177,6 +183,10 @@ RETURNS: list[tuple[str, str]] = [
     ("annotation", "h = annotation('arrow', [.2 .4], [.2 .4]);"),
     ("yyaxis", "yyaxis left; h = plot([1 2 3]);"),
     ("waterfall", "h = waterfall(peaks(8));"),
+
+    # M71 additions, run at the CLI first per the standing rule.
+    ("uicontextmenu", "figure; h = uicontextmenu;"),
+    ("uimenu", "figure; cm = uicontextmenu; h = uimenu(cm, 'Text', 'Copy');"),
 
     # Deliberately absent, each for a reason rather than an oversight:
     #   * sphere and cylinder answer coordinates, not a handle, so "did it return a handle" is the
@@ -374,8 +384,8 @@ def main() -> int:
         "property of the object it drew out of reach at once, whatever the model carries.",
         "",
         "This list is hand-written and is **not** every graphics verb. M69 wrote 45 rows, covering the",
-        "families the four verbs it fixed turned up in; M70 added 28 more, each run at the CLI before",
-        "it was written down. A verb absent from it is unmeasured, not passing.",
+        "families the four verbs it fixed turned up in; M70 added 28 more and M71 the two menu verbs,",
+        "each run at the CLI before it was written down. A verb absent from it is unmeasured, not passing.",
         "",
         "It is hand-written for a reason worth stating, because the obvious alternative is wrong. The",
         "R2021b dump records which argument of a command is a target axes, and driving this sweep off",
@@ -396,10 +406,12 @@ def main() -> int:
         "## What the missing column is, and is not",
         "",
         "A name in `property-probe-results.csv`'s missing column is a property MATLAB documents for",
-        "that class and this object did not answer to. It is a worklist. Some entries are properties",
-        "of a MATLAB feature JGraph does not have at all (`UIContextMenu`, `PickableParts`), and a few",
-        "are the join being approximate — JGraph's `pie` is one object where MATLAB has a patch per",
-        "slice, so it is measured against `Patch` and inherits every patch property it does not carry.",
+        "that class and this object did not answer to. It is a worklist. A few entries are the join",
+        "being approximate — JGraph's `pie` is one object where MATLAB has a patch per slice, so it",
+        "is measured against `Patch` and inherits every patch property it does not carry. And a name",
+        "answering `get` says nothing about behaviour: M71 wired the callback block for real",
+        "(ButtonDownFcn fires on a click, DeleteFcn on a deletion), but that is proven by tests and",
+        "stress scripts, not by this table — the table only sees that the name is served.",
         "The `Answered` column is the measured one.",
         "",
     ]

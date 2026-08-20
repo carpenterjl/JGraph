@@ -15,7 +15,7 @@ namespace JGraph.Scripting.Jgs;
 /// <c>figure(1)</c> at the prompt must keep meaning the window it already opened), releasing packed
 /// buffers (live variables still point at them), and rebuilding the built-in scope. See ADR 0035.
 /// </remarks>
-internal sealed class JgsReplSession : IScriptSession
+internal sealed class JgsReplSession : IScriptSession, IGraphicsEventSession
 {
     private readonly ScriptContext _context;
     private readonly JgsDialect _dialect;
@@ -23,10 +23,12 @@ internal sealed class JgsReplSession : IScriptSession
     private JGraphScriptGlobals _globals = null!;
     private JgsEnvironment _environment = null!;
     private Interpreter _interpreter = null!;
+    private JgsCallbackDispatcher _dispatcher = null!;
     private Dictionary<string, JgsValue> _pristine = null!;
     private bool _disposed;
 
-    /// <summary>1 while a statement or a callback owns the interpreter (the two must not overlap).</summary>
+    /// <summary>1 while a statement or an event-pump run owns the interpreter (the two must not
+    /// overlap — callbacks themselves run nested inside whichever of the two holds this).</summary>
     private int _busy;
 
     /// <summary>Creates a session and its first workspace. Resets the figure registry: a new session
@@ -92,22 +94,71 @@ internal sealed class JgsReplSession : IScriptSession
         if (!_disposed)
         {
             _disposed = true;
-            ScriptGraphicsCallbacks.SetLegendItemHitInvoker(null);
+            JgsCallbackDispatcher.Install(null);
             ReleaseWorkspace();
         }
 
         return ValueTask.CompletedTask;
     }
 
+    /// <inheritdoc />
+    public Task DrainGraphicsEventsAsync(Func<bool>? yieldRequested, CancellationToken cancellationToken)
+    {
+        ObjectDisposedException.ThrowIf(_disposed, this);
+        return ScriptThread.Run(() => DrainGraphicsEvents(yieldRequested, cancellationToken));
+    }
+
+    /// <summary>
+    /// An idle pump run: the same ceremony as a statement, wrapped around delivering queued events
+    /// instead of parsing code. Losing the race to a real statement is fine — the events stay
+    /// queued, and the host tries again when that statement finishes.
+    /// </summary>
+    private ScriptRunResult DrainGraphicsEvents(Func<bool>? yieldRequested, CancellationToken cancellationToken)
+    {
+        if (Interlocked.CompareExchange(ref _busy, 1, 0) != 0)
+        {
+            return ScriptRunResult.Ok(0, Array.Empty<ScriptVariable>());
+        }
+
+        _dispatcher.StatementThreadId = Environment.CurrentManagedThreadId;
+        try
+        {
+            _globals.BeginRun(null, null);
+            _interpreter.BeginStatement(cancellationToken);
+            _dispatcher.StatementToken = cancellationToken;
+            try
+            {
+                _dispatcher.Drain(yieldRequested);
+            }
+            catch (OperationCanceledException)
+            {
+                return ScriptRunResult.Failed("Statement was cancelled.");
+            }
+            finally
+            {
+                _globals.ShowTouchedFigures();
+            }
+
+            return ScriptRunResult.Ok(_globals.FiguresShown, GetVariables());
+        }
+        finally
+        {
+            _dispatcher.StatementThreadId = null;
+            Interlocked.Exchange(ref _busy, 0);
+        }
+    }
+
     private ScriptRunResult Execute(string code, string sourceId, CancellationToken cancellationToken, bool asFile = false)
     {
         Interlocked.Exchange(ref _busy, 1);
+        _dispatcher.StatementThreadId = Environment.CurrentManagedThreadId;
         try
         {
             return ExecuteCore(code, sourceId, cancellationToken, asFile);
         }
         finally
         {
+            _dispatcher.StatementThreadId = null;
             Interlocked.Exchange(ref _busy, 0);
         }
     }
@@ -116,6 +167,7 @@ internal sealed class JgsReplSession : IScriptSession
     {
         _globals.BeginRun(asFile ? ScriptDirectoryOf(sourceId) : null, asFile ? sourceId : null);
         _interpreter.BeginStatement(cancellationToken);
+        _dispatcher.StatementToken = cancellationToken;
         try
         {
             IReadOnlyList<Stmt> program = Parser.Parse(code, sourceId, _dialect);
@@ -178,57 +230,12 @@ internal sealed class JgsReplSession : IScriptSession
         _pristine = _environment.Locals.ToDictionary(
             static p => p.Key, static p => p.Value, StringComparer.Ordinal);
 
-        // A figure window outlives the run that drew it, so its clicks come back to this session.
-        ScriptGraphicsCallbacks.SetLegendItemHitInvoker(InvokeLegendItemHit);
-    }
-
-    /// <summary>
-    /// Runs a legend's <c>ItemHitFcn</c> for a clicked series, with MATLAB's two arguments: the
-    /// legend itself, and an event whose <c>Peer</c> is the line that was clicked. Returns false when
-    /// that legend has no callback, so the caller can leave the click alone.
-    /// </summary>
-    private bool InvokeLegendItemHit(AxesModel axes, PlotObject plot)
-    {
-        if (_disposed || !JgsHandleRegistry.TryGet(
-                JgsHandleRegistry.For(axes.Legend), out JgsHandleEntry? legend)
-            || legend.ItemHitFcn is not { } callback)
-        {
-            return false;
-        }
-
-        // The interpreter is not re-entrant, and a click arrives on the window's thread. A statement
-        // already running owns it; say so and let the click go rather than corrupt the workspace.
-        if (Interlocked.CompareExchange(ref _busy, 1, 0) != 0)
-        {
-            _context.Output.WriteLine("The workspace is busy; the legend click was ignored.");
-            return true;
-        }
-
-        JgsValue source = JgsHandleRegistry.For(axes.Legend);
-        JgsValue peer = JgsHandleRegistry.For(plot);
-        var eventFields = new Dictionary<string, JgsValue>(StringComparer.Ordinal) { ["Peer"] = peer };
-
-        _globals.BeginRun(null, null);
-        _interpreter.BeginStatement(CancellationToken.None);
-
-        // While this runs, gcbo is the legend and gcbf its figure; gco becomes the clicked series
-        // and stays that way afterwards, the way a figure's current object does.
-        using IDisposable scope = JgsGraphicsCallbackState.Enter(axes.Legend, plot);
-        try
-        {
-            callback.AsCallable.Call([source, JgsValue.Struct(eventFields)], 0, 0);
-        }
-        catch (JgsException ex)
-        {
-            _context.Output.WriteError(new ScriptDiagnostic(ex.Line, ex.Column, ex.Message, IsError: true).ToString());
-        }
-        finally
-        {
-            _globals.ShowTouchedFigures();
-            Interlocked.Exchange(ref _busy, 0);
-        }
-
-        return true;
+        // A figure window outlives the run that drew it, so its clicks come back to this session —
+        // queued, and delivered on the script thread. Nothing runs the interpreter on a window's
+        // thread: a click during a running statement waits at the next drain point instead of being
+        // dropped, and the callback gets the 16 MB script stack it was written for.
+        _dispatcher = new JgsCallbackDispatcher(_globals, _context);
+        JgsCallbackDispatcher.Install(_dispatcher);
     }
 
     /// <summary>The user-created (or rebound) names and their values, the set <c>whos</c> lists.</summary>

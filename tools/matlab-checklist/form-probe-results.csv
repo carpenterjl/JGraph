@@ -41,12 +41,12 @@ all,builtin,0,B = all(A),accepted,
 all,builtin,1,"B = all(A,'all')",accepted,
 all,builtin,2,"B = all(A,dim)",accepted,
 all,builtin,3,"B = all(A,vecdim)",accepted,
-alpha,function,0,alpha value,unprobed,no sample for this form's arguments
-alpha,function,1,alpha alphadata,unprobed,no sample for this form's arguments
-alpha,function,2,alpha facealpha,unprobed,no sample for this form's arguments
-alpha,function,3,alpha alphadatamapping,unprobed,no sample for this form's arguments
-alpha,function,4,"alpha(obj,___)",unprobed,no sample for this form's arguments
-alpha,function,5,"alpha(ax,___)",unprobed,no sample for this form's arguments
+alpha,function,0,alpha value,refused,"alpha: 'value' is not one of opaque, clear."
+alpha,function,1,alpha alphadata,refused,"alpha: 'alphadata' is not one of opaque, clear."
+alpha,function,2,alpha facealpha,refused,"alpha: 'facealpha' is not one of opaque, clear."
+alpha,function,3,alpha alphadatamapping,refused,"alpha: 'alphadatamapping' is not one of opaque, clear."
+alpha,function,4,"alpha(obj,___)",error,"alpha takes one number between 0 and 1, or the word 'opaque' or 'clear'."
+alpha,function,5,"alpha(ax,___)",refused,"alpha: 'value' is not one of opaque, clear."
 alphamap,function,0,alphamap(alpha_map),unprobed,no sample for this form's arguments
 alphamap,function,1,alphamap('parameter'),accepted,
 alphamap,function,2,"alphamap('parameter',length)",unprobed,no sample for this form's arguments
@@ -114,13 +114,13 @@ axes,builtin,2,"axes(parent,Name,Value)",unprobed,"Name,Value form; the dump lis
 axes,builtin,3,ax = axes(___),accepted,
 axes,builtin,4,axes(cax),accepted,
 axis,function,0,axis(limits),error,axis expects [xmin xmax ymin ymax].
-axis,function,1,axis style,unprobed,no sample for this form's arguments
-axis,function,2,axis mode,unprobed,no sample for this form's arguments
-axis,function,3,axis ydirection,unprobed,no sample for this form's arguments
-axis,function,4,axis visibility,unprobed,no sample for this form's arguments
+axis,function,1,axis style,refused,axis: unknown option 'style'.
+axis,function,2,axis mode,refused,axis: unknown option 'mode'.
+axis,function,3,axis ydirection,refused,axis: unknown option 'ydirection'.
+axis,function,4,axis visibility,refused,axis: unknown option 'visibility'.
 axis,function,5,lim = axis,accepted,
 axis,function,6,"[m,v,d] = axis('state')",refused,axis: unknown option 'state'.
-axis,function,7,"___ = axis(ax,___)",unprobed,no sample for this form's arguments
+axis,function,7,"___ = axis(ax,___)",error,"axis expects between 0 and 1 argument(s), but got 2."
 balance,builtin,0,"[T,B] = balance(A)",unprobed,no sample for this form's arguments
 balance,builtin,1,"[S,P,B] = balance(A)",unprobed,no sample for this form's arguments
 balance,builtin,2,B = balance(A),unprobed,no sample for this form's arguments
@@ -158,8 +158,8 @@ barh,function,5,"barh(___,Name,Value)",unprobed,"Name,Value form; the dump lists
 barh,function,6,"barh(ax,___)",accepted,
 barh,function,7,b = barh(___),accepted,
 beep,builtin,0,beep,error,took the process down
-beep,builtin,1,beep on,unprobed,no sample for this form's arguments
-beep,builtin,2,beep off,unprobed,no sample for this form's arguments
+beep,builtin,1,beep on,accepted,
+beep,builtin,2,beep off,accepted,
 beep,builtin,3,status = beep,accepted,
 besselh,builtin,0,"H = besselh(nu,Z)",accepted,
 besselh,builtin,1,"H = besselh(nu,K,Z)",unprobed,no sample for this form's arguments
@@ -203,8 +203,8 @@ bitxor,builtin,1,"C = bitxor(A,B,assumedtype)",unprobed,no sample for this form'
 bitxor,builtin,2,"objout = bitxor(netobj1,netobj2)",unprobed,no sample for this form's arguments
 bone,function,0,c = bone,accepted,
 bone,function,1,c = bone(m),accepted,
-box,function,0,box on,unprobed,no sample for this form's arguments
-box,function,1,box off,unprobed,no sample for this form's arguments
+box,function,0,box on,accepted,
+box,function,1,box off,accepted,
 box,function,2,box,accepted,
 box,function,3,"box(ax,___)",accepted,
 boxchart,function,0,boxchart(ydata),accepted,
@@ -261,7 +261,7 @@ camlight,function,7,"camlight(ax,...)",unprobed,no sample for this form's argume
 camlight,function,8,lgt = camlight(...),unprobed,no sample for this form's arguments
 camlookat,function,0,camlookat(object_handles),unprobed,no sample for this form's arguments
 camlookat,function,1,camlookat(axes_handle),unprobed,no sample for this form's arguments
-camlookat,function,2,camlookat,accepted,
+camlookat,function,2,camlookat,error,camlookat: there is nothing in the axes to look at.
 camorbit,function,0,"camorbit(dtheta,dphi)",unprobed,no sample for this form's arguments
 camorbit,function,1,"camorbit(dtheta,dphi,'coordsys')",unprobed,no sample for this form's arguments
 camorbit,function,2,"camorbit(dtheta,dphi,'coordsys','direction')",unprobed,no sample for this form's arguments
@@ -309,7 +309,7 @@ caxis,function,2,caxis('manual'),accepted,
 caxis,function,3,"caxis(target,___)",error,"caxis: expected two limits, got 3."
 caxis,function,4,cl = caxis,accepted,
 cd,builtin,0,cd,accepted,
-cd,builtin,1,cd newFolder,unprobed,no sample for this form's arguments
+cd,builtin,1,cd newFolder,error,cd: There is no folder 'newFolder'.
 cd,builtin,2,oldFolder = cd(newFolder),error,cd: There is no folder 'a'.
 ceil,builtin,0,Y = ceil(X),accepted,
 ceil,builtin,1,Y = ceil(t),accepted,
@@ -330,7 +330,7 @@ cholupdate,builtin,2,"R1 = cholupdate(R,x,'-')",unprobed,no sample for this form
 cholupdate,builtin,3,"[R1,p] = cholupdate(R,x,'-')",unprobed,no sample for this form's arguments
 cla,function,0,cla,accepted,
 cla,function,1,cla(ax),accepted,
-cla,function,2,cla reset,unprobed,no sample for this form's arguments
+cla,function,2,cla reset,accepted,
 cla,function,3,"cla(ax,'reset')",accepted,
 clabel,function,0,"clabel(C,h)",unprobed,no sample for this form's arguments
 clabel,function,1,"clabel(C,h,v)",unprobed,no sample for this form's arguments
@@ -346,7 +346,7 @@ clc,builtin,0,clc,accepted,
 clear,builtin,0,clear,accepted,
 clear,builtin,1,clear name1 ... nameN,unprobed,no sample for this form's arguments
 clear,builtin,2,clear -regexp expr1 ... exprN,unprobed,no sample for this form's arguments
-clear,builtin,3,clear ItemType,unprobed,no sample for this form's arguments
+clear,builtin,3,clear ItemType,accepted,
 clearpoints,builtin,0,clearpoints(an),unprobed,no sample for this form's arguments
 clf,function,0,clf,accepted,
 clf,function,1,clf(fig),accepted,
@@ -357,9 +357,9 @@ clock,builtin,0,c = clock,accepted,
 clock,builtin,1,[c tf] = clock,accepted,
 close,function,0,close,accepted,
 close,function,1,close(fig),accepted,
-close,function,2,close all,unprobed,no sample for this form's arguments
-close,function,3,close all hidden,unprobed,no sample for this form's arguments
-close,function,4,close all force,unprobed,no sample for this form's arguments
+close,function,2,close all,accepted,
+close,function,3,close all hidden,accepted,
+close,function,4,close all force,accepted,
 close,function,5,status = close(___),accepted,
 cmpermute,function,0,"[Y,newmap] = cmpermute(X,map)",accepted,
 cmpermute,function,1,"[Y,newmap] = cmpermute(X,map,index)",error,"cmpermute: the order has one entry per colormap row, so 2, but got 3."
@@ -383,12 +383,12 @@ colorbar,function,5,colorbar('off'),accepted,
 colorbar,function,6,"colorbar(target,'off')",error,"colorbar expects between 0 and 1 argument(s), but got 2."
 colorcube,function,0,c = colorcube,accepted,
 colorcube,function,1,c = colorcube(m),accepted,
-colordef,function,0,colordef white,unprobed,no sample for this form's arguments
-colordef,function,1,colordef black,unprobed,no sample for this form's arguments
-colordef,function,2,colordef none,unprobed,no sample for this form's arguments
+colordef,function,0,colordef white,accepted,
+colordef,function,1,colordef black,accepted,
+colordef,function,2,colordef none,accepted,
 colordef,function,3,"colordef(fig,color_option)",unprobed,no sample for this form's arguments
 colordef,function,4,"h = colordef('new',color_option)",unprobed,no sample for this form's arguments
-colormap,function,0,colormap map,unprobed,no sample for this form's arguments
+colormap,function,0,colormap map,error,"Unknown colormap 'map'. Known colormaps: parula, viridis, turbo, jet, hot, cool, gray, hsv, bone, copper, pink, spring, summer, autumn, winter, lines, flag, prism."
 colormap,function,1,colormap(map),accepted,
 colormap,function,2,"colormap(target,map)",error,"colormap expects between 0 and 1 argument(s), but got 2."
 colormap,function,3,cmap = colormap,accepted,
@@ -485,12 +485,12 @@ cool,function,0,c = cool,accepted,
 cool,function,1,c = cool(m),accepted,
 copper,function,0,c = copper,accepted,
 copper,function,1,c = copper(m),accepted,
-copyfile,builtin,0,copyfile source,unprobed,no sample for this form's arguments
-copyfile,builtin,1,copyfile source destination,unprobed,no sample for this form's arguments
-copyfile,builtin,2,copyfile source destination f,unprobed,no sample for this form's arguments
-copyfile,builtin,3,status = copyfile(___),unprobed,no sample for this form's arguments
-copyfile,builtin,4,"[status,msg] = copyfile(___)",unprobed,no sample for this form's arguments
-copyfile,builtin,5,"[status,msg,msgID] = copyfile(___)",unprobed,no sample for this form's arguments
+copyfile,builtin,0,copyfile source,error,"copyfile expects between 2 and 3 argument(s), but got 1."
+copyfile,builtin,1,copyfile source destination,error,copyfile: Could not find file 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-forms-kcnzfnty\source'.
+copyfile,builtin,2,copyfile source destination f,error,copyfile: Could not find file 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-forms-kcnzfnty\source'.
+copyfile,builtin,3,status = copyfile(___),error,"copyfile expects between 2 and 3 argument(s), but got 1."
+copyfile,builtin,4,"[status,msg] = copyfile(___)",error,"copyfile expects between 2 and 3 argument(s), but got 1."
+copyfile,builtin,5,"[status,msg,msgID] = copyfile(___)",error,"copyfile expects between 2 and 3 argument(s), but got 1."
 copygraphics,function,0,copygraphics(obj),accepted,
 copygraphics,function,1,"copygraphics(obj,Name,Value)",unprobed,"Name,Value form; the dump lists no pair names"
 copyobj,builtin,0,"new_handle = copyobj(h,p)",unprobed,no sample for this form's arguments
@@ -530,12 +530,12 @@ cylinder,function,3,cylinder(___),accepted,
 cylinder,function,4,"cylinder(ax,___)",accepted,
 daspect,function,0,daspect(ratio),accepted,
 daspect,function,1,d = daspect,accepted,
-daspect,function,2,daspect auto,unprobed,no sample for this form's arguments
-daspect,function,3,daspect manual,unprobed,no sample for this form's arguments
+daspect,function,2,daspect auto,accepted,
+daspect,function,3,daspect manual,accepted,
 daspect,function,4,m = daspect('mode'),error,"daspect: expected 'auto' or 'manual', got 'mode'."
 daspect,function,5,"___ = daspect(ax,___)",accepted,
-datacursormode,function,0,datacursormode on,unprobed,no sample for this form's arguments
-datacursormode,function,1,datacursormode off,unprobed,no sample for this form's arguments
+datacursormode,function,0,datacursormode on,accepted,
+datacursormode,function,1,datacursormode off,accepted,
 datacursormode,function,2,datacursormode,accepted,
 datacursormode,function,3,"datacursormode(fig,___)",accepted,
 datacursormode,function,4,dcm = datacursormode,accepted,
@@ -544,7 +544,7 @@ deblank,builtin,0,newStr = deblank(str),accepted,
 delaunay,builtin,0,DT = delaunay(P),error,delaunay: a single argument must be an n-by-2 matrix of points.
 delaunay,builtin,1,"DT = delaunay(x,y)",accepted,
 delaunay,builtin,2,"DT = delaunay(x,y,z)",error,"delaunay expects between 1 and 2 argument(s), but got 3."
-delete,builtin,0,delete filename,unprobed,no sample for this form's arguments
+delete,builtin,0,delete filename,accepted,
 delete,builtin,1,delete filename1 ... filenamen,unprobed,no sample for this form's arguments
 delete,builtin,2,delete(obj),error,"delete expects argument 1 to be a string, but got a array."
 det,builtin,0,d = det(A),error,"det needs a square matrix, but got 2x3."
@@ -553,15 +553,15 @@ diag,builtin,1,"D = diag(v,k)",accepted,
 diag,builtin,2,x = diag(A),accepted,
 diag,builtin,3,"x = diag(A,k)",accepted,
 diary,builtin,0,diary,accepted,
-diary,builtin,1,diary filename,unprobed,no sample for this form's arguments
-diary,builtin,2,diary off,unprobed,no sample for this form's arguments
-diary,builtin,3,diary on,unprobed,no sample for this form's arguments
+diary,builtin,1,diary filename,accepted,
+diary,builtin,2,diary off,accepted,
+diary,builtin,3,diary on,accepted,
 diff,builtin,0,Y = diff(X),accepted,
 diff,builtin,1,"Y = diff(X,n)",accepted,
 diff,builtin,2,"Y = diff(X,n,dim)",accepted,
 diffuse,function,0,"R = diffuse(Nx,Ny,Nz,S)",unprobed,no sample for this form's arguments
 dir,builtin,0,dir,accepted,
-dir,builtin,1,dir name,unprobed,no sample for this form's arguments
+dir,builtin,1,dir name,accepted,
 dir,builtin,2,listing = dir(name),accepted,
 disableDefaultInteractivity,function,0,disableDefaultInteractivity(ax),accepted,
 disp,builtin,0,disp(X),accepted,
@@ -578,19 +578,19 @@ divergence,function,3,"div = divergence(Fx,Fy)",error,"divergence expects argume
 dmperm,builtin,0,p = dmperm(A),unprobed,no sample for this form's arguments
 dmperm,builtin,1,"[p,q,r,s,cc,rr] = dmperm(A)",unprobed,no sample for this form's arguments
 drawnow,builtin,0,drawnow,accepted,
-drawnow,builtin,1,drawnow limitrate,unprobed,no sample for this form's arguments
-drawnow,builtin,2,drawnow nocallbacks,unprobed,no sample for this form's arguments
-drawnow,builtin,3,drawnow limitrate nocallbacks,unprobed,no sample for this form's arguments
-drawnow,builtin,4,drawnow update,unprobed,no sample for this form's arguments
-drawnow,builtin,5,drawnow expose,unprobed,no sample for this form's arguments
-echo,builtin,0,echo on,unprobed,no sample for this form's arguments
-echo,builtin,1,echo off,unprobed,no sample for this form's arguments
+drawnow,builtin,1,drawnow limitrate,accepted,
+drawnow,builtin,2,drawnow nocallbacks,accepted,
+drawnow,builtin,3,drawnow limitrate nocallbacks,accepted,
+drawnow,builtin,4,drawnow update,accepted,
+drawnow,builtin,5,drawnow expose,accepted,
+echo,builtin,0,echo on,accepted,
+echo,builtin,1,echo off,accepted,
 echo,builtin,2,echo,accepted,
-echo,builtin,3,echo filename on,unprobed,no sample for this form's arguments
-echo,builtin,4,echo filename off,unprobed,no sample for this form's arguments
-echo,builtin,5,echo filename,unprobed,no sample for this form's arguments
-echo,builtin,6,echo on all,unprobed,no sample for this form's arguments
-echo,builtin,7,echo off all,unprobed,no sample for this form's arguments
+echo,builtin,3,echo filename on,accepted,
+echo,builtin,4,echo filename off,accepted,
+echo,builtin,5,echo filename,error,"echo: expected 'on' or 'off', not 'filename'."
+echo,builtin,6,echo on all,error,"echo: expected 'on' or 'off', not 'all'."
+echo,builtin,7,echo off all,error,"echo: expected 'on' or 'off', not 'all'."
 eig,builtin,0,e = eig(A),error,"eig needs a square matrix, but got 2x3."
 eig,builtin,1,"[V,D] = eig(A)",error,"eig needs a square matrix, but got 2x3."
 eig,builtin,2,"[V,D,W] = eig(A)",error,"eig needs a square matrix, but got 2x3."
@@ -642,9 +642,9 @@ evalc,builtin,0,results = evalc(expression),undefined,'a' is not recognized as a
 evalc,builtin,1,"[results,output1,...,outputN] = evalc(expression)",undefined,'a' is not recognized as a variable or a function.
 evalin,builtin,0,"evalin(workspace,expression)",unprobed,no sample for this form's arguments
 evalin,builtin,1,"[output1,...,outputN] = evalin(workspace,expression)",unprobed,no sample for this form's arguments
-exist,builtin,0,exist name,unprobed,no sample for this form's arguments
-exist,builtin,1,exist name searchType,unprobed,no sample for this form's arguments
-exist,builtin,2,A = exist(___),unprobed,no sample for this form's arguments
+exist,builtin,0,exist name,accepted,
+exist,builtin,1,exist name searchType,accepted,
+exist,builtin,2,A = exist(___),accepted,
 exit,builtin,0,exit,unprobed,waits for a person or ends the process
 exp,builtin,0,Y = exp(X),accepted,
 expm1,builtin,0,y = expm1(x),unprobed,no sample for this form's arguments
@@ -760,10 +760,10 @@ figure,builtin,2,f = figure(___),accepted,
 figure,builtin,3,figure(f),accepted,
 figure,builtin,4,figure(n),accepted,
 fileattrib,builtin,0,fileattrib,error,"fileattrib expects 1 argument(s), but got 0."
-fileattrib,builtin,1,fileattrib filename,unprobed,no sample for this form's arguments
-fileattrib,builtin,2,fileattrib filename attribs,unprobed,no sample for this form's arguments
-fileattrib,builtin,3,fileattrib filename attribs users,unprobed,no sample for this form's arguments
-fileattrib,builtin,4,fileattrib filename attribs users s,unprobed,no sample for this form's arguments
+fileattrib,builtin,1,fileattrib filename,accepted,
+fileattrib,builtin,2,fileattrib filename attribs,error,"fileattrib expects 1 argument(s), but got 2."
+fileattrib,builtin,3,fileattrib filename attribs users,error,"fileattrib expects 1 argument(s), but got 3."
+fileattrib,builtin,4,fileattrib filename attribs users s,error,"fileattrib expects 1 argument(s), but got 4."
 fileattrib,builtin,5,"[status,values] = fileattrib(filename)",error,"This call returns 1 value(s), but 2 were asked for."
 fileattrib,builtin,6,"[status,msg,msgID] = fileattrib(filename,attribs,___)",error,"fileattrib expects 1 argument(s), but got 2."
 filemarker,builtin,0,m = filemarker,accepted,
@@ -928,10 +928,10 @@ gobjects,function,3,H = gobjects,accepted,
 gobjects,function,4,H = gobjects(0),accepted,
 gray,function,0,c = gray,accepted,
 gray,function,1,c = gray(m),accepted,
-grid,function,0,grid on,unprobed,no sample for this form's arguments
-grid,function,1,grid off,unprobed,no sample for this form's arguments
+grid,function,0,grid on,accepted,
+grid,function,1,grid off,accepted,
 grid,function,2,grid,accepted,
-grid,function,3,grid minor,unprobed,no sample for this form's arguments
+grid,function,3,grid minor,error,"grid expects 'on' or 'off', but got 'minor'."
 grid,function,4,"grid(target,___)",accepted,
 groot,builtin,0,groot,accepted,
 groot,builtin,1,r = groot,accepted,
@@ -965,16 +965,16 @@ hgsave,function,3,"hgsave(...,'-v7.3')",unprobed,no sample for this form's argum
 hgtransform,builtin,0,h = hgtransform,accepted,
 hgtransform,builtin,1,"h = hgtransform('PropertyName',propertyvalue,...)",unprobed,no sample for this form's arguments
 hgtransform,builtin,2,"h = hgtransform(ax,...)",unprobed,no sample for this form's arguments
-hidden,function,0,hidden on,unprobed,no sample for this form's arguments
-hidden,function,1,hidden off,unprobed,no sample for this form's arguments
+hidden,function,0,hidden on,accepted,
+hidden,function,1,hidden off,accepted,
 hidden,function,2,hidden,accepted,
 hidden,function,3,"hidden(ax,...)",unprobed,no sample for this form's arguments
 histc,builtin,0,"bincounts = histc(x,binranges)",accepted,
 histc,builtin,1,"bincounts = histc(x,binranges,dim)",accepted,
 histc,builtin,2,"[bincounts,ind]= histc(___)",error,"This call returns 1 value(s), but 2 were asked for."
-hold,function,0,hold on,unprobed,no sample for this form's arguments
-hold,function,1,hold off,unprobed,no sample for this form's arguments
-hold,function,2,hold all,unprobed,no sample for this form's arguments
+hold,function,0,hold on,accepted,
+hold,function,1,hold off,accepted,
+hold,function,2,hold all,error,"hold expects 'on' or 'off', but got 'all'."
 hold,function,3,hold,accepted,
 hold,function,4,"hold(ax,___)",accepted,
 home,builtin,0,home,accepted,
@@ -1199,9 +1199,9 @@ lightangle,function,1,"lightangle(ax,az,el)",unprobed,no sample for this form's 
 lightangle,function,2,lgt = lightangle(...),unprobed,no sample for this form's arguments
 lightangle,function,3,"lightangle(lgt,az,el)",unprobed,no sample for this form's arguments
 lightangle,function,4,"[az,el] = lightangle(lgt)",unprobed,no sample for this form's arguments
-lighting,function,0,lighting flat,unprobed,no sample for this form's arguments
-lighting,function,1,lighting gouraud,unprobed,no sample for this form's arguments
-lighting,function,2,lighting none,unprobed,no sample for this form's arguments
+lighting,function,0,lighting flat,accepted,
+lighting,function,1,lighting gouraud,accepted,
+lighting,function,2,lighting none,accepted,
 lighting,function,3,"lighting(ax,...)",unprobed,no sample for this form's arguments
 line,builtin,0,"line(x,y)",accepted,
 line,builtin,1,"line(x,y,z)",accepted,
@@ -1224,7 +1224,7 @@ load,builtin,2,"load(filename,'-ascii')",error,load: 'a.mat' was not found.
 load,builtin,3,"load(filename,'-mat')",error,load: 'a.mat' was not found.
 load,builtin,4,"load(filename,'-mat',variables)",error,load: 'a.mat' was not found.
 load,builtin,5,S = load(___),error,load: 'a.mat' was not found.
-load,builtin,6,load filename,unprobed,no sample for this form's arguments
+load,builtin,6,load filename,error,load: 'filename.mat' was not found.
 log,builtin,0,Y = log(X),accepted,
 log10,builtin,0,Y = log10(X),accepted,
 log1p,builtin,0,y = log1p(x),unprobed,no sample for this form's arguments
@@ -1240,7 +1240,7 @@ loglog,builtin,5,"loglog(Y,LineSpec)",accepted,
 loglog,builtin,6,"loglog(___,Name,Value)",unprobed,"Name,Value form; the dump lists no pair names"
 loglog,builtin,7,"loglog(ax,___)",accepted,
 loglog,builtin,8,lineobj = loglog(___),accepted,
-lookfor,builtin,0,lookfor keyword,unprobed,no sample for this form's arguments
+lookfor,builtin,0,lookfor keyword,accepted,
 lookfor,builtin,1,lookfor keyword -all,unprobed,no sample for this form's arguments
 lower,builtin,0,newStr = lower(str),accepted,
 lt,builtin,0,A < B,unprobed,no sample for this form's arguments
@@ -1262,13 +1262,13 @@ makehgtform,function,6,"M = makehgtform('zrotate',t)",unprobed,no sample for thi
 makehgtform,function,7,"M = makehgtform('axisrotate',[ax,ay,az],t)",unprobed,no sample for this form's arguments
 matches,builtin,0,"TF = matches(str,pat)",accepted,
 matches,builtin,1,"TF = matches(str,pat,'IgnoreCase',true)",unprobed,no sample for this form's arguments
-material,function,0,material shiny,unprobed,no sample for this form's arguments
-material,function,1,material dull,unprobed,no sample for this form's arguments
-material,function,2,material metal,unprobed,no sample for this form's arguments
+material,function,0,material shiny,accepted,
+material,function,1,material dull,accepted,
+material,function,2,material metal,accepted,
 material,function,3,material([ka kd ks]),accepted,
 material,function,4,material([ka kd ks n]),accepted,
 material,function,5,material([ka kd ks n sc]),accepted,
-material,function,6,material default,unprobed,no sample for this form's arguments
+material,function,6,material default,accepted,
 material,function,7,"material(obj,...)",unprobed,no sample for this form's arguments
 matlabdrive,builtin,0,M = matlabdrive,accepted,
 matlabroot,builtin,0,mr = matlabroot,accepted,
@@ -1340,24 +1340,24 @@ mink,builtin,2,"B = mink(___,'ComparisonMethod',c)",unprobed,no sample for this 
 mink,builtin,3,"[B,I] = mink(___)",accepted,
 minus,builtin,0,C = A - B,unprobed,no sample for this form's arguments
 minus,builtin,1,"C = minus(A,B)",accepted,
-mkdir,builtin,0,mkdir folderName,unprobed,no sample for this form's arguments
-mkdir,builtin,1,mkdir parentFolder folderName,unprobed,no sample for this form's arguments
-mkdir,builtin,2,status = mkdir(___),unprobed,no sample for this form's arguments
-mkdir,builtin,3,"[status,msg] = mkdir(___)",unprobed,no sample for this form's arguments
-mkdir,builtin,4,"[status,msg,msgID] = mkdir(___)",unprobed,no sample for this form's arguments
+mkdir,builtin,0,mkdir folderName,accepted,
+mkdir,builtin,1,mkdir parentFolder folderName,accepted,
+mkdir,builtin,2,status = mkdir(___),accepted,
+mkdir,builtin,3,"[status,msg] = mkdir(___)",error,"This call returns 1 value(s), but 2 were asked for."
+mkdir,builtin,4,"[status,msg,msgID] = mkdir(___)",error,"This call returns 1 value(s), but 3 were asked for."
 mldivide,builtin,0,x = A\B,unprobed,no sample for this form's arguments
 mldivide,builtin,1,"x = mldivide(A,B)",accepted,
 mod,builtin,0,"b = mod(a,m)",accepted,
-more,builtin,0,more on,unprobed,no sample for this form's arguments
-more,builtin,1,more off,unprobed,no sample for this form's arguments
+more,builtin,0,more on,accepted,
+more,builtin,1,more off,accepted,
 more,builtin,2,more(n),accepted,
 more,builtin,3,A = more(___),accepted,
-movefile,builtin,0,movefile source,unprobed,no sample for this form's arguments
-movefile,builtin,1,movefile source destination,unprobed,no sample for this form's arguments
-movefile,builtin,2,movefile source destination f,unprobed,no sample for this form's arguments
-movefile,builtin,3,status = movefile(___),unprobed,no sample for this form's arguments
-movefile,builtin,4,"[status,msg] = movefile(___)",unprobed,no sample for this form's arguments
-movefile,builtin,5,"[status,msg,msgID] = movefile(___)",unprobed,no sample for this form's arguments
+movefile,builtin,0,movefile source,error,"movefile expects between 2 and 3 argument(s), but got 1."
+movefile,builtin,1,movefile source destination,error,movefile: Could not find file 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-forms-kcnzfnty\source'.
+movefile,builtin,2,movefile source destination f,error,movefile: Could not find file 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-forms-kcnzfnty\source'.
+movefile,builtin,3,status = movefile(___),error,"movefile expects between 2 and 3 argument(s), but got 1."
+movefile,builtin,4,"[status,msg] = movefile(___)",error,"movefile expects between 2 and 3 argument(s), but got 1."
+movefile,builtin,5,"[status,msg,msgID] = movefile(___)",error,"movefile expects between 2 and 3 argument(s), but got 1."
 movie,function,0,movie(M),error,movie: a frame is what getframe answers with — a struct holding cdata.
 movie,function,1,"movie(M,n)",error,movie: a frame is what getframe answers with — a struct holding cdata.
 movie,function,2,"movie(M,n,fps)",error,movie: a frame is what getframe answers with — a struct holding cdata.
@@ -1452,15 +1452,15 @@ ones,builtin,2,"X = ones(sz1,...,szN)",unprobed,no sample for this form's argume
 ones,builtin,3,X = ones(sz),accepted,
 ones,builtin,4,"X = ones(___,typename)",accepted,
 ones,builtin,5,"X = ones(___,'like',p)",unprobed,no sample for this form's arguments
-openfig,function,0,openfig(filename),error,Could not find file 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-forms-8h4lpnau\a.fig'.
+openfig,function,0,openfig(filename),error,Could not find file 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-forms-kcnzfnty\a.fig'.
 openfig,function,1,"openfig(filename,copies)",unprobed,no sample for this form's arguments
 openfig,function,2,"openfig(___,visibility)",unprobed,no sample for this form's arguments
-openfig,function,3,fig = openfig(___),error,Could not find file 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-forms-8h4lpnau\a.fig'.
-opengl,function,0,opengl info,unprobed,no sample for this form's arguments
+openfig,function,3,fig = openfig(___),error,Could not find file 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-forms-kcnzfnty\a.fig'.
+opengl,function,0,opengl info,accepted,
 opengl,function,1,d = opengl('data'),accepted,
-opengl,function,2,opengl software,unprobed,no sample for this form's arguments
-opengl,function,3,opengl hardware,unprobed,no sample for this form's arguments
-opengl,function,4,opengl hardwarebasic,unprobed,no sample for this form's arguments
+opengl,function,2,opengl software,accepted,
+opengl,function,3,opengl hardware,accepted,
+opengl,function,4,opengl hardwarebasic,accepted,
 opengl,function,5,"opengl('save',pref)",unprobed,no sample for this form's arguments
 or,builtin,0,A | B,unprobed,no sample for this form's arguments
 or,builtin,1,"or(A,B)",accepted,
@@ -1472,16 +1472,16 @@ ordqz,builtin,2,"[AAS,BBS,QS,ZS] = ordqz(AA,BB,Q,Z,clusters)",unprobed,no sample
 ordschur,builtin,0,"[US,TS] = ordschur(U,T,select)",error,"ordschur needs a square matrix, but got 2x3."
 ordschur,builtin,1,"[US,TS] = ordschur(U,T,keyword)",unprobed,no sample for this form's arguments
 ordschur,builtin,2,"[US,TS] = ordschur(U,T,clusters)",error,"ordschur needs a square matrix, but got 2x3."
-orient,function,0,orient ornt,unprobed,no sample for this form's arguments
+orient,function,0,orient ornt,error,"orient: the orientation is 'portrait', 'landscape' or 'tall', but got 'ornt'."
 orient,function,1,"orient(fig,ornt)",unprobed,no sample for this form's arguments
 orient,function,2,or = orient,accepted,
 orient,function,3,or = orient(fig),error,"orient expects argument 1 to be a string, but got a number."
 pack,builtin,0,pack,accepted,
-pack,builtin,1,pack filename,unprobed,no sample for this form's arguments
-pan,function,0,pan on,unprobed,no sample for this form's arguments
-pan,function,1,pan xon,unprobed,no sample for this form's arguments
-pan,function,2,pan yon,unprobed,no sample for this form's arguments
-pan,function,3,pan off,unprobed,no sample for this form's arguments
+pack,builtin,1,pack filename,accepted,
+pan,function,0,pan on,accepted,
+pan,function,1,pan xon,refused,"pan: 'xon' is not one of on, off, toggle."
+pan,function,2,pan yon,refused,"pan: 'yon' is not one of on, off, toggle."
+pan,function,3,pan off,accepted,
 pan,function,4,pan,accepted,
 pan,function,5,"pan(fig,...)",unprobed,no sample for this form's arguments
 pan,function,6,h = pan(fig),unprobed,no sample for this form's arguments
@@ -1508,8 +1508,8 @@ pause,builtin,2,pause(state),unprobed,waits for a person or ends the process
 pause,builtin,3,oldState = pause(state),unprobed,waits for a person or ends the process
 pbaspect,function,0,pbaspect(ratio),accepted,
 pbaspect,function,1,pb = pbaspect,accepted,
-pbaspect,function,2,pbaspect auto,unprobed,no sample for this form's arguments
-pbaspect,function,3,pbaspect manual,unprobed,no sample for this form's arguments
+pbaspect,function,2,pbaspect auto,accepted,
+pbaspect,function,3,pbaspect manual,accepted,
 pbaspect,function,4,m = pbaspect('mode'),error,"pbaspect: expected 'auto' or 'manual', got 'mode'."
 pbaspect,function,5,"___ = pbaspect(ax,___)",accepted,
 pcolor,function,0,pcolor(C),accepted,
@@ -1745,12 +1745,12 @@ regexprep,builtin,0,"newStr = regexprep(str,expression,replace)",accepted,
 regexprep,builtin,1,"newStr = regexprep(str,expression,replace,option1,...optionM)",unprobed,no sample for this form's arguments
 regexptranslate,builtin,0,"newStr = regexptranslate(op,str)",unprobed,no sample for this form's arguments
 rehash,builtin,0,rehash,accepted,
-rehash,builtin,1,rehash path,unprobed,no sample for this form's arguments
-rehash,builtin,2,rehash toolbox,unprobed,no sample for this form's arguments
-rehash,builtin,3,rehash toolboxcache,unprobed,no sample for this form's arguments
+rehash,builtin,1,rehash path,accepted,
+rehash,builtin,2,rehash toolbox,accepted,
+rehash,builtin,3,rehash toolboxcache,accepted,
 rem,builtin,0,"r = rem(a,b)",accepted,
 removeToolbarExplorationButtons,function,0,removeToolbarExplorationButtons(fig),accepted,
-rendererinfo,function,0,info = rendererinfo(target),error,rendererinfo takes a figure or axes handle and nothing else.
+rendererinfo,function,0,info = rendererinfo(target),accepted,
 reset,builtin,0,reset(h),unprobed,no sample for this form's arguments
 reshape,builtin,0,"B = reshape(A,sz)",error,reshape must keep the element count: 3 element(s) do not fill 1x2x3.
 reshape,builtin,1,"B = reshape(A,sz1,...,szN)",unprobed,no sample for this form's arguments
@@ -1766,13 +1766,13 @@ rlim,function,1,rlim('auto'),accepted,
 rlim,function,2,rlim('manual'),accepted,
 rlim,function,3,rl = rlim,accepted,
 rlim,function,4,m = rlim('mode'),error,"rlim expects 'auto' or 'manual', but got 'mode'."
-rlim,function,5,"___ = rlim(pax,___)",error,"rlim expects argument 1 to be a number, but got a array."
+rlim,function,5,"___ = rlim(pax,___)",error,"rlim expects a two-element [min, max] array."
 rmappdata,builtin,0,"rmappdata(obj,name)",error,rmappdata: nothing is stored under 'a' on this object.
-rmdir,builtin,0,rmdir folderName,unprobed,no sample for this form's arguments
-rmdir,builtin,1,rmdir folderName s,unprobed,no sample for this form's arguments
-rmdir,builtin,2,status = rmdir(___),unprobed,no sample for this form's arguments
-rmdir,builtin,3,"[status,msg] = rmdir(___)",unprobed,no sample for this form's arguments
-rmdir,builtin,4,"[status,msg,msgID] = rmdir(___)",unprobed,no sample for this form's arguments
+rmdir,builtin,0,rmdir folderName,accepted,
+rmdir,builtin,1,rmdir folderName s,error,rmdir: Could not find a part of the path 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-forms-kcnzfnty\folderName'.
+rmdir,builtin,2,status = rmdir(___),error,rmdir: Could not find a part of the path 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-forms-kcnzfnty\folderName'.
+rmdir,builtin,3,"[status,msg] = rmdir(___)",error,rmdir: Could not find a part of the path 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-forms-kcnzfnty\folderName'.
+rmdir,builtin,4,"[status,msg,msgID] = rmdir(___)",error,rmdir: Could not find a part of the path 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-forms-kcnzfnty\folderName'.
 rose,function,0,rose(theta),unprobed,no sample for this form's arguments
 rose,function,1,"rose(theta,x)",unprobed,no sample for this form's arguments
 rose,function,2,"rose(theta,nbins)",unprobed,no sample for this form's arguments
@@ -1781,8 +1781,8 @@ rose,function,4,h = rose(...),unprobed,no sample for this form's arguments
 rose,function,5,"[tout,rout] = rose(...)",unprobed,no sample for this form's arguments
 rotate,function,0,"rotate(h,direction,alpha)",unprobed,no sample for this form's arguments
 rotate,function,1,"rotate(...,origin)",unprobed,no sample for this form's arguments
-rotate3d,function,0,rotate3d on,unprobed,no sample for this form's arguments
-rotate3d,function,1,rotate3d off,unprobed,no sample for this form's arguments
+rotate3d,function,0,rotate3d on,accepted,
+rotate3d,function,1,rotate3d off,accepted,
 rotate3d,function,2,rotate3d,accepted,
 rotate3d,function,3,"rotate3d(figure_handle,...)",unprobed,no sample for this form's arguments
 rotate3d,function,4,"rotate3d(axes_handle,...)",unprobed,no sample for this form's arguments
@@ -1793,25 +1793,25 @@ round,builtin,2,"Y = round(X,N,type)",unprobed,no sample for this form's argumen
 round,builtin,3,Y = round(t),accepted,
 round,builtin,4,"Y = round(t,unit)",unprobed,no sample for this form's arguments
 rtickangle,function,0,rtickangle(angle),accepted,
-rtickangle,function,1,"rtickangle(pax,angle)",error,"rtickangle expects between 0 and 1 argument(s), but got 2."
+rtickangle,function,1,"rtickangle(pax,angle)",accepted,
 rtickangle,function,2,ang = rtickangle,accepted,
-rtickangle,function,3,ang = rtickangle(pax),error,"rtickangle expects a number, but got a array."
+rtickangle,function,3,ang = rtickangle(pax),accepted,
 rtickformat,function,0,rtickformat(fmt),refused,"rtickformat: 'a' is not a tick format. Use a printf spec such as '%.2f', or one of auto, usd, eur, gbp, jpy, degrees, percentage."
-rtickformat,function,1,"rtickformat(pax,___)",error,"rtickformat expects between 0 and 1 argument(s), but got 2."
+rtickformat,function,1,"rtickformat(pax,___)",refused,"rtickformat: 'a' is not a tick format. Use a printf spec such as '%.2f', or one of auto, usd, eur, gbp, jpy, degrees, percentage."
 rtickformat,function,2,rfmt = rtickformat,accepted,
-rtickformat,function,3,rfmt = rtickformat(pax),error,"rtickformat expects a string, but got a array."
+rtickformat,function,3,rfmt = rtickformat(pax),accepted,
 rticklabels,function,0,rticklabels(labels),accepted,
 rticklabels,function,1,rl = rticklabels,accepted,
 rticklabels,function,2,rticklabels('auto'),accepted,
 rticklabels,function,3,rticklabels('manual'),accepted,
 rticklabels,function,4,m = rticklabels('mode'),error,"rticklabels: 'mode' is neither 'auto' nor 'manual'. Labels come in a cell, such as {'low', 'high'}."
-rticklabels,function,5,"___ = rticklabels(pax,___)",error,"rticklabels expects between 0 and 1 argument(s), but got 2."
+rticklabels,function,5,"___ = rticklabels(pax,___)",accepted,
 rticks,function,0,rticks(ticks),accepted,
 rticks,function,1,rt = rticks,accepted,
 rticks,function,2,rticks('auto'),accepted,
 rticks,function,3,rticks('manual'),accepted,
 rticks,function,4,m = rticks('mode'),error,"rticks: 'mode' is neither 'auto' nor 'manual'. Labels come in a cell, such as {'low', 'high'}."
-rticks,function,5,"___ = rticks(pax,___)",error,"rticks expects between 0 and 1 argument(s), but got 2."
+rticks,function,5,"___ = rticks(pax,___)",accepted,
 ruler2num,function,0,"num = ruler2num(data,ruler)",unprobed,no sample for this form's arguments
 save,builtin,0,save(filename),error,save: there are no variables to save.
 save,builtin,1,"save(filename,variables)",error,save: variable 'a' does not exist.
@@ -1820,7 +1820,7 @@ save,builtin,3,"save(filename,variables,version)",unprobed,no sample for this fo
 save,builtin,4,"save(filename,variables,version,'-nocompression')",unprobed,no sample for this form's arguments
 save,builtin,5,"save(filename,variables,'-append')",error,save: variable 'a' does not exist.
 save,builtin,6,"save(filename,variables,'-append','-nocompression')",error,save does not support the option '-nocompression'.
-save,builtin,7,save filename,unprobed,no sample for this form's arguments
+save,builtin,7,save filename,error,save: there are no variables to save.
 savefig,function,0,savefig(filename),accepted,
 savefig,function,1,"savefig(H,filename)",accepted,
 savefig,function,2,"savefig(H,filename,'compact')",accepted,
@@ -1881,9 +1881,9 @@ sgtitle,function,0,sgtitle(txt),accepted,
 sgtitle,function,1,"sgtitle(target,txt)",accepted,
 sgtitle,function,2,"sgtitle(___,Name,Value)",unprobed,"Name,Value form; the dump lists no pair names"
 sgtitle,function,3,sgt = sgtitle(___),accepted,
-shading,function,0,shading flat,unprobed,no sample for this form's arguments
-shading,function,1,shading faceted,unprobed,no sample for this form's arguments
-shading,function,2,shading interp,unprobed,no sample for this form's arguments
+shading,function,0,shading flat,accepted,
+shading,function,1,shading faceted,accepted,
+shading,function,2,shading interp,accepted,
 shading,function,3,"shading(axes_handle,...)",unprobed,no sample for this form's arguments
 shg,function,0,shg,accepted,
 shrinkfaces,function,0,"shrinkfaces(p,sf)",unprobed,no sample for this form's arguments
@@ -2043,7 +2043,7 @@ subplot,function,6,ax = subplot(___),accepted,
 subplot,function,7,subplot(ax),error,"subplot expects between 3 and 4 argument(s), but got 1."
 subtitle,function,0,subtitle(txt),accepted,
 subtitle,function,1,"subtitle(___,Name,Value)",unprobed,"Name,Value form; the dump lists no pair names"
-subtitle,function,2,"subtitle(target,___)",error,"subtitle expects a string, but got a array."
+subtitle,function,2,"subtitle(target,___)",accepted,
 subtitle,function,3,t = subtitle(___),accepted,
 subvolume,function,0,"[Nx,Ny,Nz,Nv] = subvolume(X,Y,Z,V,limits)",unprobed,no sample for this form's arguments
 subvolume,function,1,"[Nx,Ny,Nz,Nv] = subvolume(V,limits)",unprobed,no sample for this form's arguments
@@ -2150,23 +2150,23 @@ thetalim,function,1,thetalim('auto'),accepted,
 thetalim,function,2,thetalim('manual'),accepted,
 thetalim,function,3,tl = thetalim,accepted,
 thetalim,function,4,m = thetalim('mode'),error,"thetalim expects 'auto' or 'manual', but got 'mode'."
-thetalim,function,5,"___ = thetalim(pax,___)",error,"thetalim expects argument 1 to be a number, but got a array."
+thetalim,function,5,"___ = thetalim(pax,___)",error,"thetalim expects a two-element [min, max] array."
 thetatickformat,function,0,thetatickformat(fmt),refused,"thetatickformat: 'a' is not a tick format. Use a printf spec such as '%.2f', or one of auto, usd, eur, gbp, jpy, degrees, percentage."
-thetatickformat,function,1,"thetatickformat(pax,___)",error,"thetatickformat expects between 0 and 1 argument(s), but got 2."
+thetatickformat,function,1,"thetatickformat(pax,___)",refused,"thetatickformat: 'a' is not a tick format. Use a printf spec such as '%.2f', or one of auto, usd, eur, gbp, jpy, degrees, percentage."
 thetatickformat,function,2,tfmt = thetatickformat,accepted,
-thetatickformat,function,3,tfmt = thetatickformat(pax),error,"thetatickformat expects a string, but got a array."
+thetatickformat,function,3,tfmt = thetatickformat(pax),accepted,
 thetaticklabels,function,0,thetaticklabels(labels),accepted,
 thetaticklabels,function,1,tl = thetaticklabels,accepted,
 thetaticklabels,function,2,thetaticklabels('auto'),accepted,
 thetaticklabels,function,3,thetaticklabels('manual'),accepted,
 thetaticklabels,function,4,m = thetaticklabels('mode'),error,"thetaticklabels: 'mode' is neither 'auto' nor 'manual'. Labels come in a cell, such as {'low', 'high'}."
-thetaticklabels,function,5,"___ = thetaticklabels(pax,___)",error,"thetaticklabels expects between 0 and 1 argument(s), but got 2."
+thetaticklabels,function,5,"___ = thetaticklabels(pax,___)",accepted,
 thetaticks,function,0,thetaticks(ticks),accepted,
 thetaticks,function,1,tv = thetaticks,accepted,
 thetaticks,function,2,thetaticks('auto'),accepted,
 thetaticks,function,3,thetaticks('manual'),accepted,
 thetaticks,function,4,m = thetaticks('mode'),error,"thetaticks: 'mode' is neither 'auto' nor 'manual'. Labels come in a cell, such as {'low', 'high'}."
-thetaticks,function,5,"___ = thetaticks(pax,___)",error,"thetaticks expects between 0 and 1 argument(s), but got 2."
+thetaticks,function,5,"___ = thetaticks(pax,___)",accepted,
 tic,builtin,0,tic,accepted,
 tic,builtin,1,timerVal = tic,accepted,
 tiledlayout,function,0,"tiledlayout(m,n)",accepted,
@@ -2179,7 +2179,7 @@ times,builtin,1,"C = times(A,B)",accepted,
 title,function,0,title(titletext),accepted,
 title,function,1,"title(titletext,subtitletext)",error,"title: text options come in 'Name', value pairs."
 title,function,2,"title(___,Name,Value)",unprobed,"Name,Value form; the dump lists no pair names"
-title,function,3,"title(target,___)",error,"title expects a string, but got a array."
+title,function,3,"title(target,___)",accepted,
 title,function,4,t = title(___),accepted,
 title,function,5,"[t,s] = title(___)",error,"This call returns 1 value(s), but 2 were asked for."
 toc,builtin,0,toc,accepted,
@@ -2201,7 +2201,7 @@ triplot,function,1,"triplot(T,x,y,LineSpec)",error,triplot: vertex number 4 is o
 triplot,function,2,triplot(TO),unprobed,no sample for this form's arguments
 triplot,function,3,"triplot(___,Name,Value)",unprobed,"Name,Value form; the dump lists no pair names"
 triplot,function,4,h = triplot(___),error,triplot: vertex number 4 is outside the 3 points given.
-trisurf,function,0,"trisurf(T,x,y,z)",error,"A patch face refers to vertex 3, but there are only 3. (Parameter 'faces')"
+trisurf,function,0,"trisurf(T,x,y,z)",accepted,
 trisurf,function,1,trisurf(TO),unprobed,no sample for this form's arguments
 trisurf,function,2,"trisurf(___,c)",error,"A patch face refers to vertex 3, but there are only 3. (Parameter 'faces')"
 trisurf,function,3,"trisurf(___,Name,Value)",unprobed,"Name,Value form; the dump lists no pair names"
@@ -2215,8 +2215,15 @@ true,builtin,3,"T = true(sz1,...,szN)",unprobed,no sample for this form's argume
 true,builtin,4,"T = true(___,'like',p)",error,"true expects argument 1 to be a number, but got a string."
 turbo,function,0,c = turbo,accepted,
 turbo,function,1,c = turbo(m),accepted,
-type,builtin,0,type filename,unprobed,no sample for this form's arguments
+type,builtin,0,type filename,accepted,
 typecast,builtin,0,"Y = typecast(X,type)",unprobed,no sample for this form's arguments
+uicontextmenu,builtin,0,cm = uicontextmenu,accepted,
+uicontextmenu,builtin,1,cm = uicontextmenu(parent),accepted,
+uicontextmenu,builtin,2,"cm = uicontextmenu(___,Name,Value)",unprobed,"Name,Value form; the dump lists no pair names"
+uimenu,builtin,0,m = uimenu,refused,uimenu needs a uicontextmenu or uimenu parent — a figure's menu bar is not supported.
+uimenu,builtin,1,"m = uimenu(Name,Value)",unprobed,"Name,Value form; the dump lists no pair names"
+uimenu,builtin,2,m = uimenu(parent),refused,"uimenu: the parent is a uicontextmenu or a uimenu, and this handle names a figure — a figure's menu bar is not supported."
+uimenu,builtin,3,"m = uimenu(parent,Name,Value)",unprobed,"Name,Value form; the dump lists no pair names"
 uminus,builtin,0,C = -A,unprobed,no sample for this form's arguments
 uminus,builtin,1,C = uminus(A),accepted,
 unicode2native,builtin,0,bytes = unicode2native(unicodestr),unprobed,no sample for this form's arguments
@@ -2257,9 +2264,9 @@ voronoi,function,1,"voronoi(x,y,T)",error,voronoi: vertex number 4 is outside th
 voronoi,function,2,voronoi(TO),unprobed,no sample for this form's arguments
 voronoi,function,3,"[vx,vy] = voronoi(___)",error,voronoi: The points are collinear; their Voronoi diagram has no vertices.
 voronoi,function,4,h = voronoi(___),error,voronoi: The points are collinear; their Voronoi diagram has no vertices.
-waitfor,builtin,0,waitfor(obj),unprobed,waits for a person or ends the process
-waitfor,builtin,1,"waitfor(obj,propname)",unprobed,waits for a person or ends the process
-waitfor,builtin,2,"waitfor(obj,propname,propvalue)",unprobed,waits for a person or ends the process
+waitfor,builtin,0,waitfor(obj),unprobed,no sample for this form's arguments
+waitfor,builtin,1,"waitfor(obj,propname)",unprobed,no sample for this form's arguments
+waitfor,builtin,2,"waitfor(obj,propname,propvalue)",unprobed,no sample for this form's arguments
 warning,builtin,0,warning(msg),accepted,
 warning,builtin,1,"warning(msg,A1,...,An)",unprobed,no sample for this form's arguments
 warning,builtin,2,"warning(warnID,___)",error,took the process down
@@ -2277,10 +2284,10 @@ waterfall,function,3,"waterfall(Z,C)",error,"waterfall expects 3 argument(s), bu
 waterfall,function,4,"waterfall(ax,___)",accepted,
 waterfall,function,5,p = waterfall(___),accepted,
 what,builtin,0,what,accepted,
-what,builtin,1,what folderName,unprobed,no sample for this form's arguments
+what,builtin,1,what folderName,refused,what: 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-forms-kcnzfnty\folderName' is not a folder.
 what,builtin,2,s = what(___),accepted,
-which,builtin,0,which item,unprobed,no sample for this form's arguments
-which,builtin,1,which fun1 in fun2,unprobed,no sample for this form's arguments
+which,builtin,0,which item,accepted,
+which,builtin,1,which fun1 in fun2,error,"which expects 1 argument(s), but got 3."
 which,builtin,2,which ___ -all,unprobed,no sample for this form's arguments
 which,builtin,3,str = which(item),accepted,
 which,builtin,4,"str = which(fun1,'in',fun2)",error,"which expects 1 argument(s), but got 3."
@@ -2291,13 +2298,13 @@ whitebg,function,2,whitebg(c),unprobed,no sample for this form's arguments
 whitebg,function,3,"whitebg(fig,c)",unprobed,no sample for this form's arguments
 who,builtin,0,who,accepted,
 who,builtin,1,who -file filename,unprobed,no sample for this form's arguments
-who,builtin,2,who global,unprobed,no sample for this form's arguments
+who,builtin,2,who global,accepted,
 who,builtin,3,who ___ var1 ... varN,unprobed,no sample for this form's arguments
 who,builtin,4,who ___ -regexp expr1 ... exprN,unprobed,no sample for this form's arguments
 who,builtin,5,C = who(___),accepted,
 whos,builtin,0,whos,accepted,
 whos,builtin,1,whos -file filename,unprobed,no sample for this form's arguments
-whos,builtin,2,whos global,unprobed,no sample for this form's arguments
+whos,builtin,2,whos global,error,whos takes no arguments.
 whos,builtin,3,whos ___ var1 ... varN,unprobed,no sample for this form's arguments
 whos,builtin,4,whos ___ -regexp expr1 ... exprN,unprobed,no sample for this form's arguments
 whos,builtin,5,S = whos(___),accepted,
@@ -2380,9 +2387,9 @@ yticks,function,2,yticks('auto'),accepted,
 yticks,function,3,yticks('manual'),accepted,
 yticks,function,4,m = yticks('mode'),error,"yticks: 'mode' is neither 'auto' nor 'manual'. Labels come in a cell, such as {'low', 'high'}."
 yticks,function,5,"___ = yticks(ax,___)",accepted,
-yyaxis,function,0,yyaxis left,unprobed,no sample for this form's arguments
-yyaxis,function,1,yyaxis right,unprobed,no sample for this form's arguments
-yyaxis,function,2,"yyaxis(ax,___)",unprobed,no sample for this form's arguments
+yyaxis,function,0,yyaxis left,accepted,
+yyaxis,function,1,yyaxis right,accepted,
+yyaxis,function,2,"yyaxis(ax,___)",accepted,
 zeros,builtin,0,X = zeros,accepted,
 zeros,builtin,1,X = zeros(n),accepted,
 zeros,builtin,2,"X = zeros(sz1,...,szN)",unprobed,no sample for this form's arguments

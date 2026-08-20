@@ -328,9 +328,7 @@ internal static partial class JgsBuiltins
             double seconds = Num("pause", args, 0, line, col);
             if (seconds > 0 && !double.IsNaN(seconds))
             {
-                // Interruptible: waking on the run's cancellation token keeps Stop responsive.
-                cancellationToken.WaitHandle.WaitOne(TimeSpan.FromSeconds(System.Math.Min(seconds, 3600)));
-                cancellationToken.ThrowIfCancellationRequested();
+                PumpWait(TimeSpan.FromSeconds(System.Math.Min(seconds, 3600)), cancellationToken);
             }
 
             return JgsValue.Null;
@@ -1792,13 +1790,40 @@ internal static partial class JgsBuiltins
 
         JgsValue CloseFigures(JGraphScriptGlobals graphicsHost, IReadOnlyList<JgsValue> args, int line, int col)
         {
-            ArityRange("close", args, 0, 1, line, col);
+            ArityRange("close", args, 0, 2, line, col);
+
+            // A trailing 'force' skips the figure's CloseRequestFcn — close(fig, 'force'),
+            // close all force. Without it, a figure that was given one is asked, not closed: the
+            // callback closes (closereq, delete) or, by returning without either, keeps the window.
+            bool force = false;
+            if (args.Count > 0 && args[^1].Type == JgsType.String
+                && args[^1].AsString.Equals("force", StringComparison.OrdinalIgnoreCase))
+            {
+                force = true;
+                args = [.. args.Take(args.Count - 1)];
+            }
+
+            void CloseOne(int number)
+            {
+                if (!force
+                    && JG.TryGetFigure(number, out FigureModel figure)
+                    && JgsHandleRegistry.TryGetEntry(figure, out JgsHandleEntry? entry)
+                    && entry.CloseRequestFcn is { Type: JgsType.Function }
+                    && JgsCallbackDispatcher.Current is { } dispatcher)
+                {
+                    dispatcher.FireCloseRequest(figure);
+                    return;
+                }
+
+                graphicsHost.CloseFigure(number);
+            }
+
             if (args.Count == 0)
             {
                 // MATLAB closes the current figure; with none open there is nothing to do.
                 if (JG.FigureNumbers.Count > 0)
                 {
-                    graphicsHost.CloseFigure(JG.CurrentFigureNumber);
+                    CloseOne(JG.CurrentFigureNumber);
                 }
 
                 return JgsValue.Null;
@@ -1809,25 +1834,48 @@ internal static partial class JgsBuiltins
                 string what = Str("close", args, 0, line, col);
                 if (!what.Equals("all", StringComparison.OrdinalIgnoreCase))
                 {
-                    throw new JgsRuntimeException(line, col, $"close does not understand '{what}' — use close, close(n), or close all.");
+                    throw new JgsRuntimeException(line, col,
+                        $"close does not understand '{what}' — use close, close(n), close all, or close all force.");
                 }
 
                 foreach (int number in JG.FigureNumbers)
                 {
-                    graphicsHost.CloseFigure(number);
+                    CloseOne(number);
                 }
 
                 return JgsValue.Null;
             }
 
+            Arity("close", args, 1, line, col);
             int target = Count("close", args, 0, line, col);
-            if (!graphicsHost.CloseFigure(target))
+            if (!JG.TryGetFigure(target, out _))
             {
                 throw new JgsRuntimeException(line, col, $"There is no figure {target} to close.");
             }
 
+            CloseOne(target);
             return JgsValue.Null;
         }
+
+        // The default close a CloseRequestFcn opts back into: deletes the figure whose callback is
+        // running, or the current figure when called outside one — never asking CloseRequestFcn
+        // again, or a callback whose body is closereq would ask itself forever. AutoCallsBare,
+        // because its natural spelling is the bare word — @(src, event) closereq — and a bare name
+        // in expression position is otherwise the function rather than a call of it.
+        env.Declare("closereq", JgsValue.Function(new BuiltinFunction("closereq", (args, line, col) =>
+        {
+            Arity("closereq", args, 0, line, col);
+            FigureModel? figure = FigureOf(JgsGraphicsCallbackState.CallbackObject);
+            int number = figure is not null ? JG.GetFigureNumber(figure) : JG.CurrentFigureNumber;
+            if (number > 0)
+            {
+                host.CloseFigure(number);
+                JgsHandleRegistry.DropUnreachable();
+            }
+
+            return JgsValue.Null;
+        })
+        { AutoCallsBare = true, BindsAnsAsStatement = false }));
 
         Define("clf", (args, line, col) =>
         {
@@ -2264,10 +2312,14 @@ internal static partial class JgsBuiltins
 
     // --- Plotting dispatch -----------------------------------------------------------------------
 
-    /// <summary>Option names <c>plot</c> recognizes as trailing name-value pairs (M42).</summary>
+    /// <summary>Option names <c>plot</c> recognizes as trailing name-value pairs (M42). The second
+    /// row is the common callback and interaction block (M71), served by the property table rather
+    /// than by cases here — one definition of each, however it is spelled into the object.</summary>
     private static readonly HashSet<string> PlotOptionNames = new(StringComparer.OrdinalIgnoreCase)
     {
         "LineWidth", "Color", "LineStyle", "Marker", "MarkerSize", "DisplayName", "HandleVisibility",
+        "ButtonDownFcn", "CreateFcn", "DeleteFcn", "Interruptible", "BusyAction",
+        "Selected", "SelectionHighlight", "HitTest", "PickableParts",
     };
 
     /// <summary>
@@ -2713,12 +2765,31 @@ internal static partial class JgsBuiltins
                             ? JGraph.Core.Drawing.MarkerType.None
                             : LineSpec.Parse(marker).Marker ?? plot.Marker;
                         break;
+                    case "buttondownfcn" or "createfcn" or "deletefcn" or "interruptible"
+                        or "busyaction" or "selected" or "selectionhighlight" or "hittest"
+                        or "pickableparts":
+                        // The common block goes through the property table, so the option spelling
+                        // and set(h, ...) cannot drift apart.
+                        JgsGraphicsProperties.Set(
+                            JgsHandleRegistry.Require(JgsHandleRegistry.For(plot), line, col),
+                            name, value, line, col);
+                        break;
                     default:
                         // Unreachable through SplitPlotOptions, which only collects known names —
                         // but a silent drop here is how a misspelling would go unnoticed.
                         throw new JgsRuntimeException(line, col,
                             $"{verb}: unknown option '{name}'. Use {string.Join(", ", PlotOptionNames)}.");
                 }
+            }
+        }
+
+        // MATLAB's one moment for CreateFcn: given in the creating call, it runs now, after every
+        // option is applied, with the new object as gcbo. set(h, 'CreateFcn', f) later only stores.
+        if (options.Any(static option => option.Name.Equals("CreateFcn", StringComparison.OrdinalIgnoreCase)))
+        {
+            foreach (LinePlot plot in created)
+            {
+                JgsCallbackDispatcher.Current?.FireCreateFcn(plot);
             }
         }
     }

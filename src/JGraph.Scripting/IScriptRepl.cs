@@ -69,3 +69,20 @@ public interface IScriptSession : IAsyncDisposable
     /// </summary>
     void Clear();
 }
+
+/// <summary>
+/// A session that can deliver queued graphics events (<see cref="ScriptEventQueue"/>) to script
+/// callbacks while it is otherwise idle. A capability, not part of <see cref="IScriptSession"/> —
+/// hosts feature-detect with <c>is IGraphicsEventSession</c>, the way they do for
+/// <see cref="IScriptRepl"/> — because an engine with no graphics callbacks has nothing to pump.
+/// </summary>
+public interface IGraphicsEventSession
+{
+    /// <summary>
+    /// Runs the queued events' callbacks on the session's script thread, with the same ceremony as a
+    /// statement. Safe to call when a statement is running — the pump simply yields and the events
+    /// stay queued. <paramref name="yieldRequested"/> is asked between events; answering true ends
+    /// the run early so the user's own statement goes first.
+    /// </summary>
+    Task DrainGraphicsEventsAsync(Func<bool>? yieldRequested, CancellationToken cancellationToken);
+}

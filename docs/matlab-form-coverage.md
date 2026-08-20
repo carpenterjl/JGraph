@@ -11,27 +11,27 @@ and five documented syntax forms.
 
 ## Where it stands
 
-**1011 of 2422 documented syntax forms are accepted** across
-657 implemented commands (the base builtins and the graphics functions; the Image
+**1101 of 2429 documented syntax forms are accepted** across
+659 implemented commands (the base builtins and the graphics functions; the Image
 Processing and Statistics surfaces are a later pass).
 
 | Verdict | Forms | What it means |
 |---|---:|---|
-| accepted | 1011 | the call returned without error |
-| refused | 26 | refused deliberately, with a message naming what is missing |
+| accepted | 1101 | the call returned without error |
+| refused | 42 | refused deliberately, with a message naming what is missing |
 | undefined | 4 | the name did not resolve at all |
-| error | 464 | failed some other way — **may be the prober's sample, not the build** |
-| unprobed | 917 | no call could be built; see below |
-| **total** | **2422** | |
+| error | 486 | failed some other way — **may be the prober's sample, not the build** |
+| unprobed | 796 | no call could be built; see below |
+| **total** | **2429** | |
 
-**159 commands accept every form they document. 137 accept some and not others** — the
+**174 commands accept every form they document. 146 accept some and not others** — the
 number the name count could never show, and the one worth working from.
 
 ## What this sweep does and does not establish
 
 **`accepted` is the trustworthy column.** A form that ran without error ran; there is nothing to
-second-guess. 1011 of 2422 documented forms are confirmed working by execution
-rather than by assumption, which is 1011 more than were confirmed before M69.
+second-guess. 1101 of 2429 documented forms are confirmed working by execution
+rather than by assumption, which is 1101 more than were confirmed before M69.
 
 **Every other column is a worklist, not a finding, and the spot-check is why that sentence is here.**
 Twenty forms were re-run by hand against their verdicts. The `accepted` ones held. The `refused` and
@@ -62,7 +62,7 @@ them is quoted from a bucket.
 `error` is a lead, not a finding, for the reason the spot-check showed. Each one needs a person
 before it becomes a gap.
 
-`unprobed` is counted and never hidden — 917 forms, 37% of the total. Three things land
+`unprobed` is counted and never hidden — 796 forms, 32% of the total. Three things land
 there: a **Name,Value** form, because the dump records *that* a command takes pairs but not *which*
 pairs; a form whose arguments have no sample in the prober's table; and the handful of commands that
 wait for a person or end the process. Folding these into either success or failure would flatter or

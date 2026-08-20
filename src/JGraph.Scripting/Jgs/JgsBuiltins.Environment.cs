@@ -419,14 +419,51 @@ internal static partial class JgsBuiltins
 
         Define("drawnow", (args, line, col) =>
         {
-            ArityRange("drawnow", args, 0, 1, line, col);
+            ArityRange("drawnow", args, 0, 2, line, col);
 
-            // JGraph renders a figure when it is shown rather than queuing draw requests, so there
-            // is nothing pending for drawnow to flush. It exists so animation loops written for
-            // MATLAB run unchanged.
+            // MATLAB grew this vocabulary in two generations; the old words are spellings of the
+            // new ones. 'update' is 'limitrate nocallbacks', 'expose' is 'nocallbacks'.
+            bool limitRate = false;
+            bool noCallbacks = false;
+            for (int i = 0; i < args.Count; i++)
+            {
+                switch (Str("drawnow", args, i, line, col).ToLowerInvariant())
+                {
+                    case "limitrate": limitRate = true; break;
+                    case "nocallbacks": noCallbacks = true; break;
+                    case "update": limitRate = true; noCallbacks = true; break;
+                    case "expose": noCallbacks = true; break;
+                    default:
+                        throw new JgsRuntimeException(line, col,
+                            "drawnow takes 'limitrate', 'nocallbacks', 'update' or 'expose'.");
+                }
+            }
+
+            // A figure touched mid-statement appears now rather than at the statement's end — this
+            // is what makes an animation loop animate. Then queued callbacks get their turn (this
+            // is one of MATLAB's interruption points), and finally the host's display catches up.
+            host.ShowTouchedFigures();
+            if (!noCallbacks)
+            {
+                PumpEvents();
+            }
+
+            if (!limitRate || Environment.TickCount64 - _lastRenderFlush >= RenderFlushInterval)
+            {
+                _lastRenderFlush = Environment.TickCount64;
+                ScriptRenderPump.Flush();
+            }
+
             return JgsValue.Null;
         });
     }
+
+    /// <summary>When <c>drawnow limitrate</c> last flushed, and how long it waits before flushing
+    /// again — MATLAB caps the update rate at roughly 20 per second, and caps only the rendering:
+    /// callbacks are still delivered on every call.</summary>
+    private static long _lastRenderFlush;
+
+    private const long RenderFlushInterval = 50;
 
     // --- JSON -------------------------------------------------------------------------------------
 

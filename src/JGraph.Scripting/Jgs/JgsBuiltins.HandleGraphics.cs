@@ -22,13 +22,31 @@ internal static class JgsGraphicsCallbackState
     /// <summary>The object the user last clicked.</summary>
     public static GraphObject? CurrentObject { get; private set; }
 
-    /// <summary>Marks a callback as running against <paramref name="source"/> for the returned scope.</summary>
-    public static IDisposable Enter(GraphObject source, GraphObject clicked)
+    /// <summary>Marks a callback as running against <paramref name="source"/> for the returned scope.
+    /// A callback interrupted at a drain point can be interrupted by another, so the scope restores
+    /// the caller it displaced rather than clearing — gcbo inside nested callbacks answers the
+    /// innermost one, and the outer one again when the inner returns.</summary>
+    /// <param name="source">The object whose callback is about to run.</param>
+    /// <param name="clicked">The object the user hit, when the event was a click; null leaves the
+    /// click history alone (a resize or a close request is not a click).</param>
+    public static IDisposable Enter(GraphObject source, GraphObject? clicked)
     {
+        GraphObject? displaced = CallbackObject;
         CallbackObject = source;
-        CurrentObject = clicked;
-        return new Scope();
+        if (clicked is not null)
+        {
+            CurrentObject = clicked;
+        }
+
+        return new Scope(displaced);
     }
+
+    /// <summary>
+    /// Records what the user just clicked — MATLAB updates the current object on every click,
+    /// callbacks or no callbacks, and clicking the figure background clears it. Written from the
+    /// window's thread; a plain reference write, racing nothing that matters.
+    /// </summary>
+    public static void RecordClick(GraphObject? clicked) => CurrentObject = clicked;
 
     /// <summary>Forgets everything — a cleared workspace has no click history.</summary>
     public static void Clear()
@@ -37,11 +55,11 @@ internal static class JgsGraphicsCallbackState
         CurrentObject = null;
     }
 
-    private sealed class Scope : IDisposable
+    private sealed class Scope(GraphObject? displaced) : IDisposable
     {
         // Only the callback question is unwound: the clicked object stays, because that is the
         // whole point of gco — it answers after the click, not only during it.
-        public void Dispose() => CallbackObject = null;
+        public void Dispose() => CallbackObject = displaced;
     }
 }
 
@@ -57,6 +75,43 @@ internal static class JgsGraphicsCallbackState
 /// </summary>
 internal static partial class JgsBuiltins
 {
+    /// <summary>How long a pumping wait sleeps between looking around — short enough that a click
+    /// feels answered, long enough that an idle wait costs nothing.</summary>
+    private static readonly TimeSpan PumpSlice = TimeSpan.FromMilliseconds(25);
+
+    /// <summary>Delivers queued graphics events, when a session is running one. This is what makes
+    /// a builtin a drain point; where no session exists (a one-shot or batch run) it is a no-op.</summary>
+    internal static void PumpEvents() => JgsCallbackDispatcher.Current?.Drain();
+
+    /// <summary>
+    /// Waits out <paramref name="duration"/> in slices, delivering queued graphics events between
+    /// them — <c>pause</c> is one of MATLAB's interruption points, and a click during a pause is
+    /// answered during the pause, not after it. Wakes early only for cancellation, which throws.
+    /// </summary>
+    /// <param name="duration">How long to wait in total.</param>
+    /// <param name="fallbackToken">The token to wake on when no session dispatcher is installed —
+    /// a one-shot run's own token, captured when its globals were built.</param>
+    internal static void PumpWait(TimeSpan duration, CancellationToken fallbackToken)
+    {
+        JgsCallbackDispatcher? dispatcher = JgsCallbackDispatcher.Current;
+        CancellationToken token = dispatcher?.StatementToken ?? fallbackToken;
+
+        long deadline = Environment.TickCount64 + (long)duration.TotalMilliseconds;
+        while (true)
+        {
+            long remaining = deadline - Environment.TickCount64;
+            if (remaining <= 0)
+            {
+                return;
+            }
+
+            token.WaitHandle.WaitOne(TimeSpan.FromMilliseconds(
+                System.Math.Min(remaining, PumpSlice.TotalMilliseconds)));
+            token.ThrowIfCancellationRequested();
+            dispatcher?.Drain();
+        }
+    }
+
     private static void RegisterHandleGraphicsBuiltins(JgsEnvironment env, JGraphScriptGlobals host)
     {
         void Define(string name, Func<IReadOnlyList<JgsValue>, int, int, JgsValue> body) =>
@@ -115,6 +170,84 @@ internal static partial class JgsBuiltins
         { AutoCallsBare = true, BindsAnsAsStatement = false }));
 
         DefineSilent("cla", Cla);
+
+        // --- uicontextmenu / uimenu (M71) --------------------------------------------------------
+
+        // AutoCallsBare, because the documented spelling is the bare name on an assignment's right
+        // side — cm = uicontextmenu — and a bare name in expression position is otherwise the
+        // function rather than a call of it.
+        void DefineMenuVerb(string name, Func<IReadOnlyList<JgsValue>, int, int, JgsValue> body) =>
+            env.Declare(name, JgsValue.Function(
+                new BuiltinFunction(name, body) { AutoCallsBare = true, BindsAnsAsStatement = false }));
+
+        DefineMenuVerb("uicontextmenu", (args, line, col) =>
+        {
+            // cm = uicontextmenu | uicontextmenu(parent) | uicontextmenu(___, Name, Value)
+            int start = 0;
+            FigureModel? figure = null;
+            if (args.Count > 0 && args[0].Type == JgsType.Number)
+            {
+                JgsHandleEntry owner = JgsHandleRegistry.Require(args[0], line, col);
+                if (owner.Target is not FigureModel named)
+                {
+                    throw new JgsRuntimeException(line, col,
+                        $"uicontextmenu: the parent is a figure, and this handle names a {owner.TypeName}.");
+                }
+
+                figure = named;
+                start = 1;
+            }
+
+            figure ??= JG.CurrentFigureNumber > 0 && JG.TryGetFigure(JG.CurrentFigureNumber, out FigureModel current)
+                ? current
+                : JG.Figure();
+
+            var menu = new ContextMenuModel();
+            figure.ContextMenus.Add(menu);
+            ApplyMenuOptions("uicontextmenu", menu, args, start, line, col);
+            return JgsHandleRegistry.For(menu);
+        });
+
+        DefineMenuVerb("uimenu", (args, line, col) =>
+        {
+            // m = uimenu(parent) | uimenu(parent, Name, Value) — the parent is a uicontextmenu or
+            // another uimenu. MATLAB's no-parent form adds to the current figure's menu bar, which
+            // this build does not have; that spelling is refused by name rather than half-honoured.
+            int start = 0;
+            GraphObject? parent = null;
+            if (args.Count > 0 && args[0].Type == JgsType.Number)
+            {
+                JgsHandleEntry owner = JgsHandleRegistry.Require(args[0], line, col);
+                if (owner.Target is not (ContextMenuModel or MenuItemModel))
+                {
+                    throw new JgsRuntimeException(line, col,
+                        $"uimenu: the parent is a uicontextmenu or a uimenu, and this handle names a {owner.TypeName} — a figure's menu bar is not supported.");
+                }
+
+                parent = owner.Target;
+                start = 1;
+            }
+
+            if (parent is null)
+            {
+                throw new JgsRuntimeException(line, col,
+                    "uimenu needs a uicontextmenu or uimenu parent — a figure's menu bar is not supported.");
+            }
+
+            var item = new MenuItemModel();
+            switch (parent)
+            {
+                case ContextMenuModel menu:
+                    menu.Items.Add(item);
+                    break;
+                case MenuItemModel above:
+                    above.Items.Add(item);
+                    break;
+            }
+
+            ApplyMenuOptions("uimenu", item, args, start, line, col);
+            return JgsHandleRegistry.For(item);
+        });
 
         env.Declare("ishold", JgsValue.Function(new BuiltinFunction("ishold", (args, line, col) =>
         {
@@ -713,12 +846,41 @@ internal static partial class JgsBuiltins
         return true;
     }
 
+    /// <summary>
+    /// Applies a menu verb's trailing name-value pairs through the property table — one definition
+    /// of each name, however it is spelled into the object — then fires <c>CreateFcn</c> if the
+    /// call carried one, which is MATLAB's one moment for it.
+    /// </summary>
+    private static void ApplyMenuOptions(
+        string verb, GraphObject created, IReadOnlyList<JgsValue> args, int start, int line, int col)
+    {
+        if ((args.Count - start) % 2 != 0)
+        {
+            throw new JgsRuntimeException(line, col, $"{verb}: options come in 'Name', value pairs.");
+        }
+
+        JgsHandleEntry entry = JgsHandleRegistry.Require(JgsHandleRegistry.For(created), line, col);
+        bool fireCreate = false;
+        for (int i = start; i < args.Count; i += 2)
+        {
+            string name = StrOf($"{verb} option name", args[i], line, col);
+            JgsGraphicsProperties.Set(entry, name, args[i + 1], line, col);
+            fireCreate |= name.Equals("CreateFcn", StringComparison.OrdinalIgnoreCase);
+        }
+
+        if (fireCreate)
+        {
+            JgsCallbackDispatcher.Current?.FireCreateFcn(created);
+        }
+    }
+
     private static void Remove(GraphObject target, JGraphScriptGlobals host)
     {
         switch (target)
         {
             case FigureModel figure:
-                // Deleting a figure is closing it, which is the one removal the host has to hear about.
+                // Deleting a figure is closing it, which is the one removal the host has to hear
+                // about. delete(fig) never consults CloseRequestFcn — that is close(fig)'s manner.
                 int number = JG.GetFigureNumber(figure);
                 if (number > 0)
                 {
@@ -731,9 +893,22 @@ internal static partial class JgsBuiltins
                 owner.Axes.Remove(axes);
                 return;
 
+            // A legend, colorbar or bubble legend belongs to its axes for the axes' whole life, so
+            // deleting one is hiding it — but the deletion is real to the script, so it is announced
+            // as one. An ordinary set(h, 'Visible', 'off') never comes through here and fires nothing.
             case LegendModel legend:
-                // A legend belongs to its axes for the axes' whole life, so deleting it is hiding it.
+                GraphObjectLifecycle.NotifyDeleting(legend);
                 legend.Visible = false;
+                return;
+
+            case ColorbarModel colorbar:
+                GraphObjectLifecycle.NotifyDeleting(colorbar);
+                colorbar.Visible = false;
+                return;
+
+            case BubbleLegendModel bubbles:
+                GraphObjectLifecycle.NotifyDeleting(bubbles);
+                bubbles.Visible = false;
                 return;
 
             // The legend reconciles its own rows against the plots before each layout, so taking the
@@ -746,8 +921,24 @@ internal static partial class JgsBuiltins
                 owning.Annotations.Remove(annotation);
                 return;
 
+            case AnnotationObject banner when banner.Parent is FigureModel figure:
+                figure.Annotations.Remove(banner);
+                return;
+
             case LightModel light when light.Parent is AxesModel lit:
                 lit.Lights.Remove(light);
+                return;
+
+            case ContextMenuModel menu when menu.Parent is FigureModel owner:
+                owner.ContextMenus.Remove(menu);
+                return;
+
+            case MenuItemModel item when item.Parent is ContextMenuModel menu:
+                menu.Items.Remove(item);
+                return;
+
+            case MenuItemModel item when item.Parent is MenuItemModel parent:
+                parent.Items.Remove(item);
                 return;
         }
     }

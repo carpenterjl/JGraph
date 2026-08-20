@@ -84,5 +84,10 @@ internal sealed class FakeInteractionSurface : IInteractionSurface
 
     public void OnLegendRowClicked(AxesModel axes, PlotObject plot) => LegendRowClicks.Add((axes, plot));
 
+    /// <summary>Every press the controller announced, in order.</summary>
+    public List<(FigureHit Hit, PointerButton Button)> ObjectClicks { get; } = new();
+
+    public void OnObjectClicked(FigureHit hit, PointerButton button) => ObjectClicks.Add((hit, button));
+
     public void RequestRender() => RenderRequests++;
 }

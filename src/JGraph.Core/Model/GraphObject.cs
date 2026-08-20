@@ -18,6 +18,7 @@ public abstract class GraphObject : INotifyPropertyChanged
     private int _zOrder;
     private bool _selectable = true;
     private bool _isSelected;
+    private bool _selectionHighlight = true;
 
     /// <summary>A stable identity for this object, useful for serialization and selection tracking.</summary>
     [Browsable(false)]
@@ -82,6 +83,23 @@ public abstract class GraphObject : INotifyPropertyChanged
         get => _isSelected;
         set => SetProperty(ref _isSelected, value, InvalidationKind.Render);
     }
+
+    /// <summary>Whether selection is shown with handles around the object. Selection itself is not
+    /// gated by this — only its adornment, which is all MATLAB's property of the same name gates.</summary>
+    [Browsable(false)]
+    public bool SelectionHighlight
+    {
+        get => _selectionHighlight;
+        set => SetProperty(ref _selectionHighlight, value, InvalidationKind.Render);
+    }
+
+    /// <summary>
+    /// True from the moment this object's deletion begins, and forever after — a deleted object never
+    /// comes back. Doubles as the fired-once guard for <c>DeleteFcn</c>: whoever flips this first
+    /// runs the callback, and a deletion that finds it already set does nothing more.
+    /// </summary>
+    [Browsable(false)]
+    public bool BeingDeleted { get; internal set; }
 
     /// <inheritdoc />
     public event PropertyChangedEventHandler? PropertyChanged;

@@ -34,6 +34,43 @@ internal sealed class JgsHandleEntry
     /// <summary>A legend's <c>ItemHitFcn</c>, if a script gave it one.</summary>
     public JgsValue? ItemHitFcn { get; set; }
 
+    /// <summary>The object's <c>ButtonDownFcn</c>, if a script gave it one.</summary>
+    public JgsValue? ButtonDownFcn { get; set; }
+
+    /// <summary>The object's <c>CreateFcn</c>. Stored for <c>get</c> to answer; it only ever fires
+    /// when it arrives as a name-value pair in the call that creates the object.</summary>
+    public JgsValue? CreateFcn { get; set; }
+
+    /// <summary>The object's <c>DeleteFcn</c>, run as the object is deleted, while it still exists.</summary>
+    public JgsValue? DeleteFcn { get; set; }
+
+    /// <summary>A figure's <c>CloseRequestFcn</c> — what runs instead of the close when set.</summary>
+    public JgsValue? CloseRequestFcn { get; set; }
+
+    /// <summary>A figure's <c>SizeChangedFcn</c>, if a script gave it one.</summary>
+    public JgsValue? SizeChangedFcn { get; set; }
+
+    /// <summary>A menu item's <c>MenuSelectedFcn</c>, if a script gave it one.</summary>
+    public JgsValue? MenuSelectedFcn { get; set; }
+
+    /// <summary>A context menu's <c>ContextMenuOpeningFcn</c>, if a script gave it one.</summary>
+    public JgsValue? ContextMenuOpeningFcn { get; set; }
+
+    /// <summary>The <c>uicontextmenu</c> shown when this object is right-clicked, if any.</summary>
+    public GraphObject? ContextMenu { get; set; }
+
+    /// <summary>Whether a callback running on this object lets queued events in at a drain point.
+    /// MATLAB's default is on.</summary>
+    public bool Interruptible { get; set; } = true;
+
+    /// <summary>Whether this object's events wait for a non-interruptible callback (<c>'queue'</c>,
+    /// the default, true) or are discarded when they cannot run at once (<c>'cancel'</c>, false).</summary>
+    public bool BusyActionQueues { get; set; } = true;
+
+    /// <summary>MATLAB's <c>PickableParts</c> word: <c>'visible'</c> (default), <c>'all'</c>, or
+    /// <c>'none'</c> — whether clicks can land on this object at all.</summary>
+    public string PickableParts { get; set; } = "visible";
+
     /// <summary>
     /// Whatever a script has hung on this object with <c>setappdata</c>. It lives on the entry rather
     /// than on the model because it is the script's own bookkeeping and has no business being drawn,
@@ -108,6 +145,34 @@ internal static class JgsHandleRegistry
         return TryGet(handle, out JgsHandleEntry? entry)
             ? entry
             : new JgsHandleEntry(target);
+    }
+
+    /// <summary>
+    /// The entry an object already has, without minting one. This is the dispatch-time question —
+    /// "does this object still have script-side state?" — and minting would answer yes for an object
+    /// that was deleted between the event and its delivery.
+    /// </summary>
+    public static bool TryGetEntry(GraphObject target, [NotNullWhen(true)] out JgsHandleEntry? entry)
+    {
+        ArgumentNullException.ThrowIfNull(target);
+        entry = null;
+
+        // A live figure gets its entry on demand — being open is what being alive means for it.
+        if (target is FigureModel figure)
+        {
+            if (JG.GetFigureNumber(figure) > 0)
+            {
+                entry = FigureEntry(figure);
+                return true;
+            }
+
+            return false;
+        }
+
+        lock (Gate)
+        {
+            return Handles.TryGetValue(target, out double handle) && Entries.TryGetValue(handle, out entry);
+        }
     }
 
     /// <summary>The entry a value names, when the value is a number this registry knows.</summary>
@@ -209,7 +274,13 @@ internal static class JgsHandleRegistry
         }
     }
 
-    /// <summary>Every object a figure owns, itself included, in no particular order.</summary>
+    /// <summary>
+    /// Every object a figure owns, itself included, in no particular order. This walks the
+    /// <em>descendant</em> relation, not the visible-children one: a hidden legend or a ruler is
+    /// still owned by its axes, and reaping its entry — with whatever callbacks and application
+    /// data a script hung on it — just because it is not currently showing would lose state the
+    /// object never let go of. <c>findall</c> makes the same choice for the same reason.
+    /// </summary>
     internal static void Collect(GraphObject root, HashSet<GraphObject> into)
     {
         if (!into.Add(root))
@@ -217,9 +288,9 @@ internal static class JgsHandleRegistry
             return;
         }
 
-        foreach (GraphObject child in JgsGraphicsProperties.ChildrenOf(root))
+        foreach (GraphObject descendant in JgsGraphicsProperties.DescendantsOf(root))
         {
-            Collect(child, into);
+            Collect(descendant, into);
         }
     }
 

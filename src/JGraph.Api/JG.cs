@@ -1458,6 +1458,14 @@ public static class JG
     /// </summary>
     public static bool CloseFigure(int number)
     {
+        // Announced before the removal, while the figure and everything in it still stand — a
+        // figure's DeleteFcn runs against a figure that still exists, as MATLAB's does. Outside the
+        // registry lock, because the announcement may run script code that comes straight back here.
+        if (TryGetFigure(number, out FigureModel closing))
+        {
+            GraphObjectLifecycle.NotifyDeleting(closing);
+        }
+
         lock (Registry)
         {
             if (!Figures.Remove(number))

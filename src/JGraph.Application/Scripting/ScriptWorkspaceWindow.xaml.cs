@@ -101,7 +101,21 @@ public partial class ScriptWorkspaceWindow : Window
         ScriptAnimation.SetPlayer(
             new FigureAnimationPlayer(
                 Dispatcher, figureWindows, () => _cts?.IsCancellationRequested ?? false).Play);
-        Closed += (_, _) => ScriptAnimation.SetPlayer(null);
+
+        // The two halves of the graphics event loop. The pump starts an idle drain when an event is
+        // queued and nothing is running; the flusher is what makes drawnow a real render barrier —
+        // an empty dispatcher call at render priority returns only after the display has caught up.
+        // Both are process-wide statics installed by the application's only shell, exactly like the
+        // animation player above, and -batch (which never builds this window) installs neither.
+        ScriptEventQueue.InstallPump(() => Dispatcher.BeginInvoke(new Action(PumpGraphicsEventsWhenIdle)));
+        ScriptRenderPump.SetFlusher(() => Dispatcher.Invoke(
+            static () => { }, System.Windows.Threading.DispatcherPriority.Render));
+        Closed += (_, _) =>
+        {
+            ScriptAnimation.SetPlayer(null);
+            ScriptEventQueue.InstallPump(null);
+            ScriptRenderPump.SetFlusher(null);
+        };
 
         // The previous session is restored by RestoreSession(), not here: construction must stay
         // cheap because the container builds this window, and the restore is what the splash reports.

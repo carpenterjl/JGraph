@@ -50,9 +50,16 @@ public interface IInteractionSurface
 
     /// <summary>
     /// Reports that a legend row was clicked rather than dragged. The host decides what that means —
-    /// in the app it runs the legend's <c>ItemHitFcn</c> in the live script session.
+    /// in the app it queues the legend's <c>ItemHitFcn</c> for the live script session.
     /// </summary>
     void OnLegendRowClicked(AxesModel axes, PlotObject plot);
+
+    /// <summary>
+    /// Reports every press over the figure and what it landed on, before the active mode acts on
+    /// it — MATLAB's <c>ButtonDownFcn</c> fires whatever tool is selected, so this cannot belong to
+    /// any one mode. The host decides what a click means; the modes never see this.
+    /// </summary>
+    void OnObjectClicked(FigureHit hit, PointerButton button);
 
     /// <summary>
     /// The mapper from normalized [0, 1] figure coordinates to device space from the most recent

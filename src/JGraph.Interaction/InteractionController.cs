@@ -92,7 +92,13 @@ public sealed class InteractionController
     /// </summary>
     internal void NotifyCursorChanged() => RaiseStateChanged();
 
-    public void PointerDown(PointerEventArgs e) => _current.OnPointerDown(this, e);
+    public void PointerDown(PointerEventArgs e)
+    {
+        // What the press landed on is announced before any mode acts, in every mode — a script's
+        // ButtonDownFcn hears about the click whichever tool the window has selected.
+        Surface.OnObjectClicked(FigureHitTesting.Resolve(Surface, e.Position), e.Button);
+        _current.OnPointerDown(this, e);
+    }
 
     public void PointerMove(PointerEventArgs e) => _current.OnPointerMove(this, e);
 

@@ -27,7 +27,7 @@ public partial class ScriptWorkspaceWindow
         Bind(WorkspaceCommands.Exit, (_, _) => Close());
 
         Bind(WorkspaceCommands.RunOrContinue, (_, _) => RunOrContinue(), CanRun);
-        Bind(WorkspaceCommands.Stop, (_, _) => _cts?.Cancel(), (_, e) => e.CanExecute = _session.CanStop);
+        Bind(WorkspaceCommands.Stop, (_, _) => StopRun(), (_, e) => e.CanExecute = _session.CanStop);
         Bind(WorkspaceCommands.Pause, (_, _) => _debugSession?.Pause(),
             (_, e) => e.CanExecute = _session.CanPause && _debugSession is not null);
         Bind(WorkspaceCommands.StepOver, (_, _) => StepCommand(static s => s.StepOver()), CanStep);

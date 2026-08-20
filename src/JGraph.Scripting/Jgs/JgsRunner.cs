@@ -46,6 +46,17 @@ internal static class JgsRunner
             globals.BeginRun(Path.GetDirectoryName(sourceId), sourceId);
         }
 
+        // A one-shot run gets a dispatcher too — not for interface events, which have nowhere to
+        // come from, but because DeleteFcn and CreateFcn fire from the script's own doings (a clf,
+        // a delete(h)) and must fire under -batch exactly as they do at the prompt.
+        var dispatcher = new JgsCallbackDispatcher(globals, context)
+        {
+            StatementToken = cancellationToken,
+            StatementThreadId = Environment.CurrentManagedThreadId,
+        };
+        JgsCallbackDispatcher? displaced = JgsCallbackDispatcher.Current;
+        JgsCallbackDispatcher.Install(dispatcher);
+
         try
         {
             IReadOnlyList<Stmt> program = Parser.Parse(code, sourceId, dialect);
@@ -95,6 +106,9 @@ internal static class JgsRunner
         }
         finally
         {
+            // Restore whatever was installed before, so a one-shot run inside a live session (a
+            // debug run) hands the session its dispatcher back rather than leaving none.
+            JgsCallbackDispatcher.Install(displaced);
             globals.CloseAllFiles(); // whatever fopen left open dies with the run
         }
     }

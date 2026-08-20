@@ -66,6 +66,9 @@ SAMPLES: list[tuple[str, str]] = [
     ("table", "table([1;2], [3;4])"),
     ("axes object", "gca"),
     ("polaraxes", "gca"),
+    # Bare "axes" — the dump writes hold's target as "axes, array of axes", and without this row
+    # "array" won at position six and handed hold a vector where it documents a handle.
+    ("axes", "gca"),
     ("figure", "gcf"),
     ("graphics object", "gca"),
     ("rgb triplet", "[0 0 1]"),
@@ -89,8 +92,10 @@ SAMPLES: list[tuple[str, str]] = [
 # Names whose forms are probed but whose calls must not be allowed to open a window or block. The
 # graphics verbs draw into the batch figure, which is suppressed, so they are safe; these are the
 # ones that wait for a person or end the process.
+# waitfor left this set in M71: with no event pump installed — and a batch has none — it returns
+# at once by contract, so probing it can no longer hang the run.
 SKIP_NAMES = {"input", "keyboard", "pause", "exit", "quit", "waitforbuttonpress", "ginput",
-              "waitfor", "uiwait", "gtext", "menu", "questdlg", "inputdlg", "msgbox"}
+              "uiwait", "gtext", "menu", "questdlg", "inputdlg", "msgbox"}
 
 
 def catalog_names() -> set[str]:
@@ -166,6 +171,14 @@ def parse_syntax(syntax: str, name: str) -> tuple[int, list[str]] | None:
     if not call:
         if text == name:
             return outputs, []
+
+        # Command syntax: `drawnow limitrate`, `close all force`, `hold on`. Each word is the
+        # string argument MATLAB's command-function duality makes it, so these forms are probed as
+        # the calls they stand for rather than left unprobed as prose.
+        words = re.fullmatch(rf"{re.escape(name)}((?:\s+[A-Za-z]\w*)+)", text)
+        if words and outputs == 0:
+            return 0, [f"'{word}'" for word in words.group(1).split()]
+
         return None  # an operator spelling, or a form written as prose
     return outputs, split_arguments(call.group(1))
 

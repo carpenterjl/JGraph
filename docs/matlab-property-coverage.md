@@ -5,8 +5,8 @@ building the object in `jgraph.exe` and asking it, not from reading the source: 
 table is built by reflection over the model's CLR types, so what an object answers to is a
 runtime fact.
 
-**436 of 1361 documented properties** are answered across the
-26 object kinds that could be built and asked. The other
+**736 of 1394 documented properties** are answered across the
+28 object kinds that could be built and asked. The other
 0 kinds are counted separately below rather than scored as zero —
 an object that cannot be reached is not the same measurement as one missing properties, and
 folding the two together is the mistake `docs/matlab-builtin-coverage.md` has been corrected
@@ -14,43 +14,45 @@ for six times.
 
 | Kind | MATLAB class | Answered | Documented | Extra |
 |---|---|---:|---:|---:|
-| `axes` | `Axes` | 42 | 147 | 36 |
-| `polaraxes` | `PolarAxes` | 28 | 107 | 50 |
-| `scatter` | `Scatter` | 22 | 74 | 23 |
-| `bubblechart` | `BubbleChart` | 21 | 73 | 24 |
-| `figure` | `Figure` | 12 | 66 | 6 |
-| `surface` | `Surface` | 19 | 60 | 17 |
-| `patch` | `Patch` | 15 | 56 | 18 |
-| `pie` | `Patch` | 11 | 56 | 17 |
-| `line` | `Line` | 15 | 52 | 11 |
-| `errorbar` | `ErrorBar` | 15 | 52 | 10 |
-| `quiver` | `Quiver` | 20 | 52 | 9 |
-| `histogram` | `Histogram` | 10 | 46 | 11 |
-| `contour` | `Contour` | 14 | 46 | 14 |
-| `bar` | `Bar` | 18 | 44 | 14 |
-| `stem` | `Stem` | 15 | 43 | 10 |
-| `colorbar` | `ColorBar` | 8 | 42 | 5 |
-| `text` | `Text` | 16 | 41 | 13 |
-| `legend` | `Legend` | 12 | 39 | 7 |
-| `area` | `Area` | 17 | 39 | 9 |
-| `heatmap` | `HeatmapChart` | 20 | 39 | 15 |
-| `stair` | `Stair` | 15 | 38 | 11 |
-| `bubblelegend` | `BubbleLegend` | 15 | 37 | 8 |
-| `constantline` | `ConstantLine` | 17 | 35 | 12 |
-| `boxchart` | `BoxChart` | 22 | 29 | 13 |
-| `image` | `Image` | 7 | 27 | 15 |
-| `light` | `Light` | 10 | 21 | 4 |
+| `axes` | `Axes` | 53 | 147 | 37 |
+| `polaraxes` | `PolarAxes` | 39 | 107 | 51 |
+| `scatter` | `Scatter` | 33 | 74 | 24 |
+| `bubblechart` | `BubbleChart` | 32 | 73 | 25 |
+| `figure` | `Figure` | 24 | 66 | 8 |
+| `surface` | `Surface` | 30 | 60 | 18 |
+| `patch` | `Patch` | 26 | 56 | 19 |
+| `pie` | `Patch` | 22 | 56 | 18 |
+| `line` | `Line` | 26 | 52 | 12 |
+| `errorbar` | `ErrorBar` | 26 | 52 | 11 |
+| `quiver` | `Quiver` | 31 | 52 | 10 |
+| `histogram` | `Histogram` | 21 | 46 | 12 |
+| `contour` | `Contour` | 25 | 46 | 15 |
+| `bar` | `Bar` | 29 | 44 | 15 |
+| `stem` | `Stem` | 26 | 43 | 11 |
+| `colorbar` | `ColorBar` | 19 | 42 | 6 |
+| `text` | `Text` | 27 | 41 | 14 |
+| `legend` | `Legend` | 23 | 39 | 8 |
+| `area` | `Area` | 28 | 39 | 10 |
+| `heatmap` | `HeatmapChart` | 20 | 39 | 27 |
+| `stair` | `Stair` | 26 | 38 | 12 |
+| `bubblelegend` | `BubbleLegend` | 26 | 37 | 9 |
+| `constantline` | `ConstantLine` | 28 | 35 | 13 |
+| `boxchart` | `BoxChart` | 24 | 29 | 23 |
+| `image` | `Image` | 18 | 27 | 16 |
+| `light` | `Light` | 21 | 21 | 5 |
+| `uimenu` | `Menu` | 21 | 21 | 11 |
+| `uicontextmenu` | `ContextMenu` | 12 | 12 | 11 |
 
 ## Does the verb hand back what it drew?
 
 A property table is only reachable through a handle, so this is the question underneath the
-one above. Of **73 drawing verbs** probed, **73 return a usable
+one above. Of **75 drawing verbs** probed, **75 return a usable
 handle** and **0 do not**. A verb that draws and hands back nothing puts every
 property of the object it drew out of reach at once, whatever the model carries.
 
 This list is hand-written and is **not** every graphics verb. M69 wrote 45 rows, covering the
-families the four verbs it fixed turned up in; M70 added 28 more, each run at the CLI before
-it was written down. A verb absent from it is unmeasured, not passing.
+families the four verbs it fixed turned up in; M70 added 28 more and M71 the two menu verbs,
+each run at the CLI before it was written down. A verb absent from it is unmeasured, not passing.
 
 It is hand-written for a reason worth stating, because the obvious alternative is wrong. The
 R2021b dump records which argument of a command is a target axes, and driving this sweep off
@@ -64,9 +66,11 @@ Every verb probed hands back a handle.
 ## What the missing column is, and is not
 
 A name in `property-probe-results.csv`'s missing column is a property MATLAB documents for
-that class and this object did not answer to. It is a worklist. Some entries are properties
-of a MATLAB feature JGraph does not have at all (`UIContextMenu`, `PickableParts`), and a few
-are the join being approximate — JGraph's `pie` is one object where MATLAB has a patch per
-slice, so it is measured against `Patch` and inherits every patch property it does not carry.
+that class and this object did not answer to. It is a worklist. A few entries are the join
+being approximate — JGraph's `pie` is one object where MATLAB has a patch per slice, so it
+is measured against `Patch` and inherits every patch property it does not carry. And a name
+answering `get` says nothing about behaviour: M71 wired the callback block for real
+(ButtonDownFcn fires on a click, DeleteFcn on a deletion), but that is proven by tests and
+stress scripts, not by this table — the table only sees that the name is served.
 The `Answered` column is the measured one.
 

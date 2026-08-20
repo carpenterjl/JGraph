@@ -147,6 +147,12 @@ public partial class App : System.Windows.Application
         IFigureWindowService figureWindows,
         TeeScriptOutput? tee)
     {
+        // This mode has a real dispatcher, so drawnow can be a real render barrier here too. There
+        // is no live session to pump events through — a one-shot run's callbacks queue and never
+        // fire, the documented degradation — so only the flusher is installed.
+        ScriptRenderPump.SetFlusher(() => Dispatcher.Invoke(
+            static () => { }, System.Windows.Threading.DispatcherPriority.Render));
+
         int code;
         try
         {

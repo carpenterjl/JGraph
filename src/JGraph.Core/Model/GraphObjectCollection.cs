@@ -22,6 +22,10 @@ public sealed class GraphObjectCollection<T> : ObservableCollection<T>
     protected override void InsertItem(int index, T item)
     {
         ArgumentNullException.ThrowIfNull(item);
+
+        // The one road back from deletion: an undo re-inserting an object makes it a live object
+        // again, whose DeleteFcn may fire again the next time it is really deleted.
+        GraphObjectLifecycle.Revive(item);
         item.SetParent(_owner);
         base.InsertItem(index, item);
         _owner.Invalidate(InvalidationKind.Structure);
@@ -30,7 +34,9 @@ public sealed class GraphObjectCollection<T> : ObservableCollection<T>
     protected override void SetItem(int index, T item)
     {
         ArgumentNullException.ThrowIfNull(item);
+        GraphObjectLifecycle.NotifyDeleting(this[index]);
         this[index].SetParent(null);
+        GraphObjectLifecycle.Revive(item);
         item.SetParent(_owner);
         base.SetItem(index, item);
         _owner.Invalidate(InvalidationKind.Structure);
@@ -38,6 +44,7 @@ public sealed class GraphObjectCollection<T> : ObservableCollection<T>
 
     protected override void RemoveItem(int index)
     {
+        GraphObjectLifecycle.NotifyDeleting(this[index]);
         this[index].SetParent(null);
         base.RemoveItem(index);
         _owner.Invalidate(InvalidationKind.Structure);
@@ -45,6 +52,13 @@ public sealed class GraphObjectCollection<T> : ObservableCollection<T>
 
     protected override void ClearItems()
     {
+        // Announce over a snapshot: a DeleteFcn is free to mutate this same collection, and the
+        // announcement must name what was here when the clearing began, exactly once each.
+        foreach (T item in this.ToArray())
+        {
+            GraphObjectLifecycle.NotifyDeleting(item);
+        }
+
         foreach (T item in this)
         {
             item.SetParent(null);

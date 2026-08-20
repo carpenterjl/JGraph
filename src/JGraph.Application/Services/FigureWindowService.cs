@@ -67,6 +67,9 @@ public sealed class FigureWindowService : IFigureWindowService
     {
         if (_windows.TryGetValue(number, out FigureWindow? window))
         {
+            // A close reaching here was already decided script-side (closereq, delete, close after
+            // its CloseRequestFcn ran) — the window must not ask the callback a second time.
+            window.CloseApproved = true;
             window.Close(); // The Closed handler evicts it from the map.
         }
     }
@@ -76,6 +79,7 @@ public sealed class FigureWindowService : IFigureWindowService
     {
         foreach (FigureWindow window in _windows.Values.ToArray())
         {
+            window.CloseApproved = true;
             window.Close(); // The Closed handler evicts it from the map.
         }
     }

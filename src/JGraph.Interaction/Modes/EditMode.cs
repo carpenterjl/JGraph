@@ -12,9 +12,6 @@ namespace JGraph.Interaction.Modes;
 /// </summary>
 public sealed class EditMode : InteractionModeBase
 {
-    private const double PlotPickTolerancePixels = 8;
-    private const double AnnotationPickTolerancePixels = 4;
-
     private AnnotationObject? _dragTarget;
     private ICoordinateMapper? _dragMapper;
     private Point2D _dragStartPixel;
@@ -185,78 +182,10 @@ public sealed class EditMode : InteractionModeBase
         controller.Surface.UndoStack.Push(new RemoveAnnotationAction(collection, annotation, index));
     }
 
-    /// <summary>
-    /// Finds the topmost selectable object under a pixel: figure annotations (drawn last, so checked
-    /// first), then the annotations and plots of the axes under the pixel, then the axes itself.
-    /// </summary>
-    private static GraphObject? HitTest(InteractionController controller, Point2D pixel)
-    {
-        IInteractionSurface surface = controller.Surface;
-
-        if (surface.DefaultAxes?.Parent is FigureModel figure)
-        {
-            AnnotationObject? figureHit = HitTestAnnotations(figure.Annotations, pixel);
-            if (figureHit is not null)
-            {
-                return figureHit;
-            }
-        }
-
-        // The legend is drawn over everything and can hang outside the plot area, so it is picked
-        // first, by its own box.
-        if (surface.TryGetLegendAt(pixel, out AxesModel legendAxes, out _)
-            && legendAxes.Legend.Selectable)
-        {
-            return legendAxes.Legend;
-        }
-
-        if (!surface.TryGetAxesAt(pixel, out AxesModel axes, out ICoordinateMapper mapper, out _))
-        {
-            return null;
-        }
-
-        AnnotationObject? annotationHit = HitTestAnnotations(axes.Annotations, pixel);
-        if (annotationHit is not null)
-        {
-            return annotationHit;
-        }
-
-        PlotHitResult? best = null;
-        foreach (PlotObject plot in axes.Plots)
-        {
-            if (!plot.Visible || !plot.Selectable)
-            {
-                continue;
-            }
-
-            PlotHitResult? hit = plot.HitTest(pixel, mapper, PlotPickTolerancePixels);
-            if (hit is not null && (best is null || hit.DistancePixels < best.DistancePixels))
-            {
-                best = hit;
-            }
-        }
-
-        if (best is not null)
-        {
-            return best.Target;
-        }
-
-        return axes.Selectable ? axes : null;
-    }
-
-    private static AnnotationObject? HitTestAnnotations(GraphObjectCollection<AnnotationObject> annotations, Point2D pixel)
-    {
-        // Topmost first: reverse draw order.
-        foreach (AnnotationObject annotation in annotations.InDrawOrder().Reverse())
-        {
-            if (annotation.Visible && annotation.Selectable && annotation.HitTest(pixel, AnnotationPickTolerancePixels))
-            {
-                return annotation;
-            }
-        }
-
-        return null;
-    }
+    /// <summary>The shared pixel-to-object resolution — one answer for selection and for a script's
+    /// ButtonDownFcn alike (<see cref="FigureHitTesting"/>).</summary>
+    private static GraphObject? HitTest(InteractionController controller, Point2D pixel) =>
+        FigureHitTesting.Resolve(controller.Surface, pixel).Target;
 
     /// <summary>Returns the mapper matching an annotation's coordinate space, from the last paint.</summary>
     private static ICoordinateMapper? MapperFor(IInteractionSurface surface, AnnotationObject annotation)

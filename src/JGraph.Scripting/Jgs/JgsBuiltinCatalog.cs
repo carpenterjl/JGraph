@@ -264,7 +264,7 @@ public static class JgsBuiltinCatalog
         Add("ismac", "Whether this machine runs macOS.");
         Add("namelengthmax", "The longest name a variable may have.");
         Add("cputime", "Seconds of processor time used, for timing a long computation.");
-        Add("drawnow", "Flushes pending graphics — nothing to do in JGraph, which draws as it goes.", Opt("mode"));
+        Add("drawnow", "Shows touched figures, runs queued callbacks and flushes rendering; 'limitrate' caps the rendering, 'nocallbacks' skips the queue.", Opt("mode"), Opt("mode2"));
         Add("jsonencode", "A value written as JSON text.", P("x"), Opt("option"), Opt("value"));
         Add("jsondecode", "JSON text read back as numbers, cells, and structs.", P("text"));
 
@@ -1583,7 +1583,10 @@ public static class JgsBuiltinCatalog
         // --- Figure setup and plotting -------------------------------------------------------------
         Add("figure", "Starts a new figure (or selects figure n) and returns its handle (a figure number, so it starts at 1).", Opt("n"));
         Add("subplot", "Selects cell index of a rows-by-cols axes grid (a grid cell number, so 1-based, row-major) and returns a handle on it.", P("rows"), P("cols"), P("index"));
-        Add("close", "Closes the current figure, figure n, or every figure with close all.", Opt("n"));
+        Add("close", "Closes the current figure, figure n, or every figure with close all; a trailing 'force' skips CloseRequestFcn.", Opt("n"), Opt("force"));
+        Add("closereq", "The default close a CloseRequestFcn opts back into: deletes the callback's figure without asking again.");
+        Add("uicontextmenu", "A right-click menu for a figure's objects: cm = uicontextmenu; set(h, 'ContextMenu', cm).", Opt("parent"), Opt("name"), Opt("value"));
+        Add("uimenu", "One entry of a context menu: m = uimenu(cm, 'Text', 'Copy', 'MenuSelectedFcn', @onCopy).", Opt("parent"), Opt("name"), Opt("value"));
         Add("clf", "Clears the current figure (or figure n), keeping its window open.", Opt("n"));
         Add("gcf", "The current figure's number.");
         Add("gca", "Selects the current axes, creating a figure and axes if there are none.");
@@ -1819,7 +1822,7 @@ public static class JgsBuiltinCatalog
         Add("axes", "Creates an axes in the current figure and makes it current, or selects an existing one: ax = axes or axes(ax).", Opt("ax"), Opt("name"), Opt("value"));
         Add("groot", "The root every figure hangs from: get(groot, 'ScreenSize').");
         Add("reset", "Puts a figure or axes back to its default settings and clears what was drawn: reset(gca).", P("h"));
-        Add("waitfor", "Waits for something a person does to change an object; a script run has nobody in it, so this returns at once.", P("h"), Opt("property"), Opt("value"));
+        Add("waitfor", "Waits until an object is deleted, or a property changes or takes a value, running callbacks meanwhile; with nobody to wait on (a batch), returns at once.", P("h"), Opt("property"), Opt("value"));
         Add("hggroup", "Groups drawn objects so they can be shown, hidden and found together: g = hggroup; set(h, 'Parent', g).", Opt("name"), Opt("value"));
         Add("hgtransform", "A group whose Matrix moves its members: t = hgtransform; set(t, 'Matrix', makehgtform('translate', [1 0 0])).", Opt("name"), Opt("value"));
 

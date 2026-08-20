@@ -574,14 +574,18 @@ internal static partial class JgsBuiltins
     // --- waitfor ------------------------------------------------------------------------------------
 
     /// <summary>
-    /// <c>waitfor</c> stops until something a person does changes the thing it was given. A script run
-    /// has no person in it: nothing between here and the end of the run can change a property, so the
-    /// wait is already over the moment it starts, and this returns.
+    /// <c>waitfor</c> stops until something a person does changes the thing it was given: until the
+    /// object is deleted, until a named property changes, or until it takes a given value. While it
+    /// waits it delivers queued callbacks — a wait with no way to answer the click that would end it
+    /// would never end — and it wakes at once for Stop.
     /// <para>
-    /// Returning rather than refusing is the point. A script that opens a figure and waits for it is
-    /// asking to stay alive until the window closes, and under <c>-batch</c> the answer to that is
-    /// that the run ends — which returning gives it. Refusing would fail a script that is doing
-    /// nothing wrong, and hanging would fail the run itself.
+    /// All of that presumes somewhere a person's events can come from. Where no event pump is
+    /// installed — a headless <c>-batch</c>, a one-shot run — nothing between here and the end of
+    /// the run can change a property, so the wait is already over the moment it starts, and this
+    /// returns. Returning rather than refusing is the point: a script that opens a figure and waits
+    /// for it is asking to stay alive until the window closes, and under <c>-batch</c> the answer to
+    /// that is that the run ends. Refusing would fail a script that is doing nothing wrong, and
+    /// hanging would fail the run itself.
     /// </para>
     /// </summary>
     private static JgsValue WaitFor(IReadOnlyList<JgsValue> args, int line, int col)
@@ -594,9 +598,10 @@ internal static partial class JgsBuiltins
 
         // The handle is still checked, so waitfor on something that is not an object says so.
         JgsHandleEntry entry = JgsHandleRegistry.Require(args[0], line, col);
+        string? property = null;
         if (args.Count > 1)
         {
-            string property = StrOf("waitfor", args[1], line, col);
+            property = StrOf("waitfor", args[1], line, col);
             if (!JgsGraphicsProperties.TryFind(entry.Target, property, out _))
             {
                 throw new JgsRuntimeException(line, col,
@@ -604,7 +609,39 @@ internal static partial class JgsBuiltins
             }
         }
 
-        return JgsValue.Null;
+        if (!ScriptEventQueue.PumpInstalled || JgsCallbackDispatcher.Current is not { } dispatcher)
+        {
+            return JgsValue.Null;
+        }
+
+        // waitfor(h, prop) returns on any change from the value it saw at entry; the three-argument
+        // form returns on equality with the value asked for — at once if it already holds.
+        JgsValue? watched = property is null ? null : JgsGraphicsProperties.Get(entry, property, line, col);
+        while (true)
+        {
+            if (!JgsHandleRegistry.TryGet(args[0], out JgsHandleEntry? alive)
+                || !ReferenceEquals(alive.Target, entry.Target))
+            {
+                return JgsValue.Null;
+            }
+
+            if (property is not null)
+            {
+                JgsValue current = JgsGraphicsProperties.Get(entry, property, line, col);
+                bool satisfied = args.Count == 3
+                    ? JgsStdlib.DeepEquals(current, args[2], nanEqual: true)
+                    : !JgsStdlib.DeepEquals(current, watched!, nanEqual: true);
+                if (satisfied)
+                {
+                    return JgsValue.Null;
+                }
+            }
+
+            CancellationToken token = dispatcher.StatementToken;
+            token.WaitHandle.WaitOne(TimeSpan.FromMilliseconds(25));
+            token.ThrowIfCancellationRequested();
+            dispatcher.Drain();
+        }
     }
 }
 

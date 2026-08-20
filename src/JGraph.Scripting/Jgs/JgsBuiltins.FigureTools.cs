@@ -212,6 +212,10 @@ internal static partial class JgsBuiltins
     private static JgsValue GetFrame(
         JGraphScriptGlobals host, IReadOnlyList<JgsValue> args, int line, int col)
     {
+        // getframe is one of MATLAB's interruption points: an animation loop capturing frames is
+        // exactly the loop a person is most likely to click during.
+        PumpEvents();
+
         (FigureModel figure, IReadOnlyList<JgsValue> rest) = PeelFigure(args);
         if (rest.Count > 0)
         {

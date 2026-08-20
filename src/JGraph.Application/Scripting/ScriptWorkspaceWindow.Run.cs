@@ -54,6 +54,7 @@ public partial class ScriptWorkspaceWindow
             return;
         }
 
+        await YieldPumpAsync().ConfigureAwait(true);
         if (!_session.TryBeginRun(language))
         {
             return;
@@ -128,7 +129,10 @@ public partial class ScriptWorkspaceWindow
             _restartRequested = false;
             AppendConsole("--- Restarting with the edited code ---");
             _ = RunActiveAsync(entry);
+            return;
         }
+
+        PumpGraphicsEventsWhenIdle();
     }
 
     /// <summary>
