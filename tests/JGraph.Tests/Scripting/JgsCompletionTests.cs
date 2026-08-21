@@ -28,7 +28,8 @@ public sealed class JgsCompletionTests
         JgsBuiltinInfo? plot = JgsBuiltinCatalog.Find("plot");
         Assert.NotNull(plot);
         Assert.Equal("plot(x, y, spec?)", plot!.Signature);
-        Assert.Equal("figure(n?)", JgsBuiltinCatalog.Find("figure")!.Signature); // M19: figure(n) selects/creates.
+        // M19: figure(n) selects or creates. M72: and any figure property may follow it.
+        Assert.Equal("figure(n?, options?)", JgsBuiltinCatalog.Find("figure")!.Signature);
         Assert.Null(JgsBuiltinCatalog.Find("nosuch"));
     }
 

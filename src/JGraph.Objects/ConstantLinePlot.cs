@@ -211,11 +211,23 @@ public sealed class ConstantLinePlot : PlotObject, IDrawable, ILegendItem
 
             // ...and "vertical alignment" chooses which side of the stroke, rotated with the text.
             bool leftSide = _labelVerticalAlignment is VerticalAlignment.Bottom;
+
+            // Rotated a quarter turn anticlockwise, a run of text grows upward from where it starts.
+            // A label placed at the top of the line therefore has to end there instead of starting
+            // there, or it climbs straight out of the axes -- which is what clipped every default
+            // xline label in a tight layout, since the top is where the default puts it.
+            HorizontalAlignment along = _labelHorizontalAlignment switch
+            {
+                HorizontalAlignment.Left => HorizontalAlignment.Left,
+                HorizontalAlignment.Center => HorizontalAlignment.Center,
+                _ => HorizontalAlignment.Right,
+            };
+
             context.DrawText(
                 _label,
                 new Point2D(from.X + (leftSide ? -Gap : Gap), y),
                 style,
-                HorizontalAlignment.Left,
+                along,
                 leftSide ? VerticalAlignment.Bottom : VerticalAlignment.Top,
                 rotationDegrees: -90);
             return;

@@ -62,7 +62,7 @@ public enum SurfaceLighting
 /// cylinder, or anything else that folds back over itself in X or Y. Parametric grids are painted by
 /// the depth-sorted fallback, since the sweep is only valid for a height field.
 /// </remarks>
-public sealed class SurfacePlot : PlotObject, I3DDrawable, IHasZData, ILegendItem, IColorMapped
+public sealed class SurfacePlot : PlotObject, I3DDrawable, IHasZData, ILegendItem, IColorMapped, ILitObject
 {
     private double[,] _z;
     private double[] _x;
@@ -77,6 +77,8 @@ public sealed class SurfacePlot : PlotObject, I3DDrawable, IHasZData, ILegendIte
     private bool _showContourBelow;
     private Color? _edgeColor;
     private Color? _faceColor;
+    private double _faceAlpha = 1;
+    private double _edgeAlpha = 1;
     private double _edgeWidth = 0.75;
     private bool _autoScaleColor = true;
     private double _colorMin;
@@ -399,6 +401,26 @@ public sealed class SurfacePlot : PlotObject, I3DDrawable, IHasZData, ILegendIte
         set => SetProperty(ref _faceColor, value, InvalidationKind.Render);
     }
 
+    /// <summary>
+    /// MATLAB <c>FaceAlpha</c>: how opaque the surface is, 0 through 1. It multiplies the object's own
+    /// <see cref="PlotObject.Opacity"/> rather than replacing it, so <c>alpha(0.5)</c> — which works
+    /// the whole object — and a per-surface setting compose instead of fighting.
+    /// </summary>
+    [Category("Appearance"), DisplayName("Face alpha")]
+    public double FaceAlpha
+    {
+        get => _faceAlpha;
+        set => SetProperty(ref _faceAlpha, System.Math.Clamp(value, 0, 1), InvalidationKind.Render);
+    }
+
+    /// <summary>MATLAB <c>EdgeAlpha</c>: how opaque the wireframe is, on the same terms as <see cref="FaceAlpha"/>.</summary>
+    [Category("Appearance"), DisplayName("Edge alpha")]
+    public double EdgeAlpha
+    {
+        get => _edgeAlpha;
+        set => SetProperty(ref _edgeAlpha, System.Math.Clamp(value, 0, 1), InvalidationKind.Render);
+    }
+
     /// <summary>The wireframe/edge color; null colors edges through the colormap (wireframe) or dark gray (filled).</summary>
     [Category("Appearance"), DisplayName("Edge color")]
     public Color? EdgeColor
@@ -565,7 +587,12 @@ public sealed class SurfacePlot : PlotObject, I3DDrawable, IHasZData, ILegendIte
         }
 
         (double colorMin, double colorMax) = ResolveColorRange();
-        double opacity = Opacity;
+
+        // FaceAlpha and EdgeAlpha multiply the object's own opacity rather than replacing it, so
+        // alpha(0.5) over a surface already set to FaceAlpha 0.5 is a quarter — which is what MATLAB
+        // does, and what keeps the whole-object knob and the two per-part ones from fighting.
+        double opacity = Opacity * _faceAlpha;
+        double edgeOpacity = Opacity * _edgeAlpha;
         bool sweep = GridIsMonotone();
 
         // Scratch geometry normally lives on the instance so a rotate drag allocates nothing. A
@@ -647,8 +674,11 @@ public sealed class SurfacePlot : PlotObject, I3DDrawable, IHasZData, ILegendIte
             bool colForward = projection.Project(Xat(0, cols - 1), Yat(0, cols - 1), 0).Depth >= origin;
             bool rowForward = projection.Project(Xat(rows - 1, 0), Yat(rows - 1, 0), 0).Depth >= origin;
 
-            bool drawFaces = _style != SurfaceStyle.Wireframe;
-            bool drawEdges = _style != SurfaceStyle.Filled;
+            bool drawFaces = _style != SurfaceStyle.Wireframe && _faceAlpha > 0;
+
+            // EdgeAlpha 0 is how MATLAB hides a wireframe without losing the colour it would take if
+            // it came back, which is why it turns the edges off here rather than being multiplied in.
+            bool drawEdges = _style != SurfaceStyle.Filled && _edgeAlpha > 0;
 
             // Faces and edges have to alternate group by group: an edge must land on top of its own
             // cell but underneath every cell nearer than it. With only one of the two to draw there
@@ -664,7 +694,7 @@ public sealed class SurfacePlot : PlotObject, I3DDrawable, IHasZData, ILegendIte
 
             EmitCells(
                 context, points, palette, drawable, order, groups, groupCount, cols,
-                opacity, colForward, rowForward, drawFaces, drawEdges, perVertex, exclusive);
+                opacity, edgeOpacity, colForward, rowForward, drawFaces, drawEdges, perVertex, exclusive);
         }
         finally
         {
@@ -799,6 +829,7 @@ public sealed class SurfacePlot : PlotObject, I3DDrawable, IHasZData, ILegendIte
         int groupCount,
         int cols,
         double opacity,
+        double edgeOpacity,
         bool colForward,
         bool rowForward,
         bool drawFaces,
@@ -826,7 +857,7 @@ public sealed class SurfacePlot : PlotObject, I3DDrawable, IHasZData, ILegendIte
                 if (drawEdges || outline)
                 {
                     EmitEdges(
-                        context, points, palette, drawable, order, begin, stop, cols, opacity,
+                        context, points, palette, drawable, order, begin, stop, cols, edgeOpacity,
                         colForward, rowForward, outline, perVertex, exclusive);
                 }
             }
@@ -851,7 +882,7 @@ public sealed class SurfacePlot : PlotObject, I3DDrawable, IHasZData, ILegendIte
 
         // A single face colour overrides the palette outright, so interpolation has nothing left to
         // interpolate between — which is exactly the opaque sheet a hidden-line mesh wants.
-        uint? solid = _faceColor?.ToArgb();
+        uint? solid = _faceColor?.WithOpacity(Opacity * _faceAlpha).ToArgb();
 
         int v = 0;
         for (int i = begin; i < end; i++)
@@ -912,7 +943,9 @@ public sealed class SurfacePlot : PlotObject, I3DDrawable, IHasZData, ILegendIte
 
         if (!perCell)
         {
-            Color edge = _edgeColor ?? Color.FromRgb(0x30, 0x30, 0x30).WithOpacity(opacity * 0.8);
+            Color edge = _edgeColor is { } chosen
+                ? chosen.WithOpacity(opacity)
+                : Color.FromRgb(0x30, 0x30, 0x30).WithOpacity(opacity * 0.8);
             var style = new LineStyle(edge, _edgeWidth);
             int v = 0;
             int s = 0;
@@ -1153,38 +1186,8 @@ public sealed class SurfacePlot : PlotObject, I3DDrawable, IHasZData, ILegendIte
     /// camera has its position read in camera axes (right, up, toward the viewer) and converted here,
     /// which is the one place per frame that has to happen.
     /// </summary>
-    private LightSource[]? ResolveLights(Projection3D projection, bool exclusive, out int count)
-    {
-        count = 0;
-        if (_faceLighting == SurfaceLighting.None || Parent is not AxesModel axes || axes.Lights.Count == 0)
-        {
-            return null;
-        }
-
-        LightSource[] resolved = RenderScratch.Rent(ref _lightScratch, axes.Lights.Count, exclusive);
-        Vector3D right = projection.ScreenRight;
-        Vector3D up = projection.ScreenUp;
-        Vector3D view = projection.ViewDirection;
-
-        foreach (LightModel light in axes.Lights)
-        {
-            if (!light.Visible)
-            {
-                continue;
-            }
-
-            Vector3D p = light.Position;
-            Vector3D v = light.FollowsCamera ? (right * p.X) + (up * p.Y) + (view * p.Z) : p;
-            if (v == Vector3D.Zero)
-            {
-                continue;
-            }
-
-            resolved[count++] = new LightSource(v, light.Color, light.Style == LightStyle.Local);
-        }
-
-        return count > 0 ? resolved : null;
-    }
+    private LightSource[]? ResolveLights(Projection3D projection, bool exclusive, out int count) =>
+        SceneLights.Resolve(this, _faceLighting, projection, ref _lightScratch, exclusive, out count);
 
     /// <summary>
     /// Shades every palette entry against the lights, at whatever granularity the palette already

@@ -123,6 +123,46 @@ def sample_for(value_types: str) -> str | None:
     return best[1] if best else None
 
 
+# The field family: verbs whose arguments are a grid and readings on it. The generic samples above
+# read "3-D array" as a matrix and every grid placeholder as a vector, which handed `slice` an X of
+# three positions and a V of two rows and got back a size complaint — the prober standing in the
+# wrong room, exactly as it once stood in a Cartesian one to probe `rlim`. M72 fixed the forms
+# themselves; these samples are what let the measurement see it. A form naming Z or W is read in
+# space and everything else in a plane, which is how the two families of form differ.
+FIELD_VERBS = {
+    "slice", "streamline", "streamslice", "stream2", "stream3", "coneplot", "streamtube",
+    "streamribbon", "streamparticles", "curl", "divergence", "isosurface", "isonormals",
+    "isocaps", "isocolors", "smooth3", "subvolume", "reducevolume", "volumebounds", "interp3",
+}
+
+# Both readings are laid out by every field-verb probe, under names that cannot collide. The ___
+# forms reuse the first form's argument text, and the first form of a verb like `slice` is the
+# spatial one, so a plane-only prelude would leave those arguments naming variables that do not
+# exist — which is a fault in the probe and would be recorded as one in the build.
+FIELD_PRELUDE = (
+    "[vX, vY, vZ] = meshgrid(1:3); vU = ones(3, 3, 3); vV = vU; vW = vU; "
+    "[pX, pY] = meshgrid(1:3); pU = ones(3, 3); pV = pU;"
+)
+
+SPATIAL_FIELD = {
+    "X": "vX", "Y": "vY", "Z": "vZ", "V": "vV", "U": "vU", "W": "vW",
+    "startx": "2", "starty": "2", "startz": "2",
+    "xslice": "2", "yslice": "2", "zslice": "2", "isovalue": "2",
+}
+
+PLANE_FIELD = {
+    "X": "pX", "Y": "pY", "V": "pV", "U": "pU",
+    "startx": "2", "starty": "2", "xslice": "2", "yslice": "2", "isovalue": "2",
+}
+
+
+def field_samples(tokens: list[str]) -> tuple[str, dict[str, str]]:
+    """Which of the two readings a field verb's form is in, by whether it names a third direction."""
+    bare = {t.strip() for t in tokens}
+    spatial = "Z" in bare or "W" in bare or "startz" in bare or "zslice" in bare
+    return FIELD_PRELUDE, SPATIAL_FIELD if spatial else PLANE_FIELD
+
+
 # Verbs that only mean anything on polar axes. Probing them on the Cartesian axes `gca` makes by
 # default produced thirty "aims at a polar axes" errors that were the prober standing in the wrong
 # room, not the build refusing anything.
@@ -191,9 +231,16 @@ def build_call(name: str, syntax: str, arg_types: dict[str, str],
         return None
     outputs, tokens = parsed
 
+    prelude, named = ("", {})
+    if name in FIELD_VERBS:
+        prelude, named = field_samples(tokens)
+
     values: list[str] = []
     for token in tokens:
         bare = token.strip()
+        if bare in named:
+            values.append(named[bare])
+            continue
         if bare in ("Name,Value", "Name=Value", "Name", "Value"):
             return None  # the dump does not carry which pairs a command takes
         if bare == "___":
@@ -227,10 +274,11 @@ def build_call(name: str, syntax: str, arg_types: dict[str, str],
         values.append(sample)
 
     inner = f"{name}({', '.join(values)})" if values else name
+    lead = f"{prelude} " if prelude else ""
     if outputs >= 2:
         targets = ", ".join(f"o{i}" for i in range(outputs))
-        return f"[{targets}] = {inner};", outputs
-    return f"o = {inner};" if outputs else f"{inner};", outputs
+        return f"{lead}[{targets}] = {inner};", outputs
+    return f"{lead}o = {inner};" if outputs else f"{lead}{inner};", outputs
 
 
 def classify(message: str) -> str:
@@ -278,9 +326,11 @@ def main() -> int:
         if parsed and not any(t.strip() in ("___", "Name,Value") for t in parsed[1]):
             built = build_call(row["name"], row["syntax"], arg_types.get(row["name"], {}), None)
             if built:
+                # A field verb's call carries a prelude of assignments in front of it; the ___
+                # forms want the arguments alone, so the last statement on the line is the call.
+                call = built[0].strip().rstrip(";").split("; ")[-1]
                 first_form[row["name"]] = split_arguments(
-                    re.sub(r"^\[?[^=]*\]?\s*=\s*", "", built[0]).strip().rstrip(";")
-                    [len(row["name"]) + 1:-1])
+                    re.sub(r"^\[?[^=]*\]?\s*=\s*", "", call).strip()[len(row["name"]) + 1:-1])
 
     probes: list[dict] = []
     for row in in_scope:

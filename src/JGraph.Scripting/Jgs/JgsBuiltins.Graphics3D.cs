@@ -192,6 +192,7 @@ internal static partial class JgsBuiltins
         if (args.Count == 2)
         {
             JG.View(Num("view", args, 0, line, col), Num("view", args, 1, line, col));
+            axes.Is3D = true;
             return JgsValue.Null;
         }
 
@@ -201,16 +202,23 @@ internal static partial class JgsBuiltins
             : ToDoubles("view", args[0], line, col);
         switch (values.Length)
         {
+            // Both shorthands name which of the two an axes is, not merely where the camera stands:
+            // that is the whole content of view(2) and view(3), and setting angles without setting
+            // the mode is what made view(3) a silent no-op on an axes that had never been told it
+            // was three-dimensional.
             case 1 when values[0] == 2:
                 JG.View(0, 90);
+                axes.Is3D = false;
                 return JgsValue.Null;
             case 1 when values[0] == 3:
                 JG.View(DefaultAzimuth, DefaultElevation);
+                axes.Is3D = true;
                 return JgsValue.Null;
             case 1:
                 throw new JgsRuntimeException(line, col, "view: the only shorthands are view(2) and view(3).");
             case 2:
                 JG.View(values[0], values[1]);
+                axes.Is3D = true;
                 return JgsValue.Null;
             default:
                 throw new JgsRuntimeException(line, col, $"view: expected [az el], got {values.Length} values.");

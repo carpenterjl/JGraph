@@ -384,6 +384,11 @@ public sealed class SkiaRenderContext : IRenderContext, IDisposable
             return;
         }
 
+        // Every text in a figure arrives here, which is why the markup is read here: a title, a tick
+        // label, a legend entry and a text object are one call each, and one call each is what the
+        // interpreter has to reach for a label written with \sigma to read as one wherever it sits.
+        text = TexMarkup.Render(text, style.Interpreter);
+
         ConfigureFont(style);
         _text.Color = ToSk(style.Color);
 
@@ -427,6 +432,10 @@ public sealed class SkiaRenderContext : IRenderContext, IDisposable
         {
             return Size2D.Empty;
         }
+
+        // Measured as it will be drawn, or every layout that reserves room for a label would reserve
+        // room for the markup instead of for the symbols.
+        text = TexMarkup.Render(text, style.Interpreter);
 
         ConfigureFont(style);
         float width = _text.MeasureText(text);

@@ -68,6 +68,18 @@ internal static partial class JgsBuiltins
 
         define("imwrite", (args, line, col) =>
         {
+            // imwrite(X, map, filename, ...) is the indexed form, and the colour map has to come out
+            // of the argument list before the options are read: it sits between two things the option
+            // reader can recognise and is itself a plain matrix, so left in place it made the filename
+            // after it look like the name of an option. That is what made every indexed call fail.
+            double[,]? map = null;
+            if (args.Count >= 3 && args[1].Type != JgsType.String && args[2].Type == JgsType.String
+                && IsColorMap(args[1]))
+            {
+                map = Matrix("imwrite", args, 1, line, col);
+                args = [args[0], .. args.Skip(2)];
+            }
+
             ParsedArgs parsed = WriteSpec.Parse(args, positionalMax: 3, line, col);
             if (parsed.Positional.Count < 2)
             {
@@ -77,6 +89,67 @@ internal static partial class JgsBuiltins
             using ImgArg source = ImgLike("imwrite", parsed.Positional, 0, line, col);
             ImageBuffer image = source.Buffer;
             string path = host.ResolveForWrite(Str("imwrite", parsed.Positional, 1, line, col));
+
+            // GIF is written here rather than by the shared codec because Skia decodes it and does not
+            // encode it. Its three options are the ones an animation needs and mean nothing to the
+            // other formats, so a call that names them for a PNG is refused rather than ignored.
+            bool gif = Path.GetExtension(path).Equals(".gif", StringComparison.OrdinalIgnoreCase);
+            string mode = parsed.Named("WriteMode") is { } modeValue
+                ? StrOf("imwrite: WriteMode", modeValue, line, col)
+                : "overwrite";
+            if (!mode.Equals("overwrite", StringComparison.OrdinalIgnoreCase)
+                && !mode.Equals("append", StringComparison.OrdinalIgnoreCase))
+            {
+                throw new JgsRuntimeException(
+                    line, col, $"imwrite: WriteMode is 'overwrite' or 'append', but got '{mode}'.");
+            }
+
+            if (gif)
+            {
+                double delay = parsed.Scalar("DelayTime", 0.5);
+                double loops = parsed.Named("LoopCount") is { } loopValue
+                    ? NumOf("imwrite: LoopCount", loopValue, line, col)
+                    : 0;
+                bool append = mode.Equals("append", StringComparison.OrdinalIgnoreCase)
+                    && File.Exists(path);
+                try
+                {
+                    if (append)
+                    {
+                        GifEncoder.Append(path, image, map, delay);
+                    }
+                    else
+                    {
+                        GifEncoder.Write(
+                            path,
+                            image,
+                            map,
+                            delay,
+                            double.IsInfinity(loops) ? 0 : (int)Math.Clamp(Math.Round(loops), 0, 65535));
+                    }
+                }
+                catch (Exception ex) when (ex is IOException or UnauthorizedAccessException
+                    or ArgumentException or InvalidDataException)
+                {
+                    throw new JgsRuntimeException(line, col, $"imwrite: cannot write '{path}': {ex.Message}");
+                }
+
+                return JgsValue.Null;
+            }
+
+            if (mode.Equals("append", StringComparison.OrdinalIgnoreCase))
+            {
+                throw new JgsRuntimeException(line, col,
+                    "imwrite: only a GIF holds more than one frame, so 'append' needs a .gif path.");
+            }
+
+            if (map is not null)
+            {
+                // Outside a GIF a map is applied rather than stored, because none of the other formats
+                // written here is an indexed one: the picture is painted through the map and saved as
+                // the colours it then has, which is the same picture.
+                image = ThroughColorMap(image, map);
+            }
 
             // The pre-M46 positional third argument was the JPEG quality; 'Quality' is MATLAB's spelling
             // and both work, because JGS scripts in the wild use the short form.
@@ -210,7 +283,13 @@ internal static partial class JgsBuiltins
         define("mat2gray", (args, line, col) =>
         {
             ArityRange("mat2gray", args, 1, 2, line, col);
-            double[,] values = Matrix("mat2gray", args, 0, line, col);
+
+            // mat2gray normalizes readings, and a picture is readings — so mat2gray(mat2gray(X)) has
+            // to work, which it did not while the argument had to be a matrix and the answer was an
+            // image. Every other verb in this family already reads either through ImgLike.
+            double[,] values = TryNumbersOf(args[0], dialect, out JgsValue asNumbers)
+                ? Matrix("mat2gray", [asNumbers], 0, line, col)
+                : Matrix("mat2gray", args, 0, line, col);
             if (args.Count == 1)
             {
                 return ImgOut(PointOps.Normalize(values), ImageClass.Double);
@@ -1385,6 +1464,61 @@ internal static partial class JgsBuiltins
     }
 
     /// <summary>
+    /// A picture as plain numbers, in the units the dialect quotes, or false when the value is not a
+    /// picture at all.
+    /// </summary>
+    /// <remarks>
+    /// MATLAB has no image type: <c>imread</c> hands back a matrix, and every arithmetic expression a
+    /// script writes over it is ordinary matrix arithmetic. Here a picture is its own kind of value —
+    /// which is what lets a buffer of a hundred megapixels stay out of the boxed element model — so
+    /// the two readings have to be joined somewhere, and this is that place. A grey picture reads as
+    /// a matrix and a colour one as the height-by-width-by-channels array MATLAB would have had.
+    /// </remarks>
+    internal static bool TryNumbersOf(JgsValue value, JgsDialect dialect, out JgsValue numbers)
+    {
+        numbers = JgsValue.Null;
+        if (value.Type != JgsType.Image)
+        {
+            return false;
+        }
+
+        ImageBuffer image = value.AsImage;
+
+        // The boxed model holds one value per sample, so a full-size photograph would cost more to
+        // convert than any expression could be worth. im2mat draws the same line and says so; here
+        // the answer is 'not numbers', which leaves the operator to refuse by name as it did before.
+        const long BoxingLimit = 4_000_000;
+        if (image.SampleCount > BoxingLimit)
+        {
+            return false;
+        }
+
+        if (image.Channels == 1)
+        {
+            numbers = MatrixToRows(ScaleForDialect(PointOps.ToMatrix(image, 0), image.Class, dialect));
+            return true;
+        }
+
+        int height = image.Height;
+        int width = image.Width;
+        var flat = new double[height * width * image.Channels];
+        for (int ch = 0; ch < image.Channels; ch++)
+        {
+            double[,] plane = ScaleForDialect(PointOps.ToMatrix(image, ch), image.Class, dialect);
+            for (int c = 0; c < width; c++)
+            {
+                for (int r = 0; r < height; r++)
+                {
+                    flat[(ch * height * width) + (c * height) + r] = plane[r, c];
+                }
+            }
+        }
+
+        numbers = JgsMatrix.FromColumnMajorDims(flat, [height, width, image.Channels]);
+        return true;
+    }
+
+    /// <summary>
     /// Rescales a channel matrix to the values a script should see. MATLAB has no separate image type,
     /// so a <c>uint8</c> picture's pixels are 0–255 there; JGS documents images as [0, 1] samples and
     /// its shipped scripts rely on that, so the scale — unlike the class tag itself — is per dialect.
@@ -1436,9 +1570,45 @@ internal static partial class JgsBuiltins
         _ => 256,
     };
 
+    /// <summary>Whether a value is shaped like a colour map: an n-by-3 matrix of at most 256 rows.</summary>
+    private static bool IsColorMap(JgsValue value) =>
+        value.Type == JgsType.Array && value.Cols == 3 && value.Rows is > 0 and <= 256;
+
+    /// <summary>
+    /// An indexed picture painted through its map, for the formats that store colours rather than
+    /// indices. A single-channel picture holds indices; anything else already has its colours.
+    /// </summary>
+    private static ImageBuffer ThroughColorMap(ImageBuffer image, double[,] map)
+    {
+        if (image.Channels != 1)
+        {
+            return image;
+        }
+
+        int entries = map.GetLength(0);
+        int count = image.Width * image.Height;
+        var painted = new ImageBuffer(image.Height, image.Width, 3) { Class = ImageClass.Double };
+        ReadOnlySpan<double> samples = image.Pixels;
+        Span<double> target = painted.Pixels;
+        double scale = image.Class == ImageClass.Double ? entries - 1 : image.Class.Scale();
+        for (int i = 0; i < count; i++)
+        {
+            int at = (int)Math.Clamp(Math.Round(samples[i] * scale), 0, entries - 1);
+            for (int c = 0; c < 3; c++)
+            {
+                target[(c * count) + i] = Math.Clamp(map[at, c], 0, 1);
+            }
+        }
+
+        return painted;
+    }
+
     // --- Option specs --------------------------------------------------------------------------
     private static readonly OptionSpec WriteSpec = new(
-        "imwrite", Flags: [], Names: ["Quality", "BitDepth", "Alpha"], StringPositionals: 2);
+        "imwrite",
+        Flags: [],
+        Names: ["Quality", "BitDepth", "Alpha", "WriteMode", "DelayTime", "LoopCount"],
+        StringPositionals: 2);
 
     private static readonly OptionSpec ShowSpec = new(
         "imshow",

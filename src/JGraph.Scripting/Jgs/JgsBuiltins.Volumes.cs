@@ -74,12 +74,20 @@ internal static partial class JgsBuiltins
     /// <param name="fields">How many reading arrays follow the grid (one, or three for a vector field).</param>
     /// <param name="line">Source line.</param>
     /// <param name="col">Source column.</param>
+    /// <param name="hasGrid">
+    /// Whether a grid precedes the readings, when the caller already knows; null leaves it to the
+    /// shape test below.
+    /// </param>
     private static (ScalarField[] Fields, int Next) ReadFields(
-        string verb, IReadOnlyList<JgsValue> args, int fields, int line, int col)
+        string verb, IReadOnlyList<JgsValue> args, int fields, int line, int col, bool? hasGrid = null)
     {
         // The grid is present when there are at least three more arrays than the verb needs readings
-        // for, and the first of them is the right size to be a grid rather than a reading.
-        bool gridded = args.Count >= fields + 3 && LooksLikeGrid(args, fields);
+        // for, and the first of them is the right size to be a grid rather than a reading. A caller
+        // that has already worked it out from its own argument count says so instead: streamline's
+        // six-argument form is a volume with no grid, which this test cannot tell from a plane with
+        // one because both are six arrays of the right shapes.
+        bool gridded = hasGrid
+            ?? (args.Count >= fields + 3 && LooksLikeGrid(args, fields));
         int at = gridded ? 3 : 0;
 
         if (args.Count < at + fields)
@@ -138,9 +146,9 @@ internal static partial class JgsBuiltins
 
     /// <summary>One vector field and where the arguments after it start.</summary>
     private static (VectorField Field, int Next) ReadVectorField(
-        string verb, IReadOnlyList<JgsValue> args, int line, int col)
+        string verb, IReadOnlyList<JgsValue> args, int line, int col, bool? hasGrid = null)
     {
-        (ScalarField[] fields, int next) = ReadFields(verb, args, 3, line, col);
+        (ScalarField[] fields, int next) = ReadFields(verb, args, 3, line, col, hasGrid);
         return (new VectorField(fields[0], fields[1], fields[2]), next);
     }
 

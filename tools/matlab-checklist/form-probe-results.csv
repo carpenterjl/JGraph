@@ -321,9 +321,9 @@ cellfun,builtin,2,"A = cellfun(___,Name,Value)",unprobed,"Name,Value form; the d
 cellfun,builtin,3,"[A1,...,Am] = cellfun(___)",error,"cellfun: element 1 produced 1 output(s), but 2 were asked for."
 chol,builtin,0,R = chol(A),error,"chol needs a square matrix, but got 2x3."
 chol,builtin,1,"R = chol(A,triangle)",unprobed,no sample for this form's arguments
-chol,builtin,2,"[R,flag] = chol(___)",error,"chol needs a square matrix, but got 2x3."
+chol,builtin,2,"[R,flag] = chol(___)",error,took the process down
 chol,builtin,3,"[R,flag,P] = chol(S)",error,"chol needs a square matrix, but got 2x3."
-chol,builtin,4,"[R,flag,P] = chol(___,outputForm)",error,"chol needs a square matrix, but got 2x3."
+chol,builtin,4,"[R,flag,P] = chol(___,outputForm)",error,took the process down
 cholupdate,builtin,0,"R1 = cholupdate(R,x)",unprobed,no sample for this form's arguments
 cholupdate,builtin,1,"R1 = cholupdate(R,x,'+')",unprobed,no sample for this form's arguments
 cholupdate,builtin,2,"R1 = cholupdate(R,x,'-')",unprobed,no sample for this form's arguments
@@ -339,7 +339,7 @@ clabel,function,3,"t = clabel(C,h,'manual')",unprobed,no sample for this form's 
 clabel,function,4,clabel(C),error,"clabel wants the handle a contour returned, as in [C, h] = contour(X, Y, Z); clabel(C, h)."
 clabel,function,5,"clabel(C,v)",error,"clabel wants the handle a contour returned, as in [C, h] = contour(X, Y, Z); clabel(C, h)."
 clabel,function,6,"clabel(C,'manual')",error,"clabel wants the handle a contour returned, as in [C, h] = contour(X, Y, Z); clabel(C, h)."
-clabel,function,7,tl = clabel(___),error,"clabel wants the handle a contour returned, as in [C, h] = contour(X, Y, Z); clabel(C, h)."
+clabel,function,7,tl = clabel(___),accepted,
 clabel,function,8,"clabel(___,Name,Value)",unprobed,"Name,Value form; the dump lists no pair names"
 class,builtin,0,className = class(obj),unprobed,no sample for this form's arguments
 clc,builtin,0,clc,accepted,
@@ -422,7 +422,7 @@ coneplot,function,2,"coneplot(...,s)",unprobed,no sample for this form's argumen
 coneplot,function,3,"coneplot(...,color)",unprobed,no sample for this form's arguments
 coneplot,function,4,"coneplot(...,'quiver')",unprobed,no sample for this form's arguments
 coneplot,function,5,"coneplot(...,'method')",unprobed,no sample for this form's arguments
-coneplot,function,6,"coneplot(X,Y,Z,U,V,W,'nointerp')",unprobed,no sample for this form's arguments
+coneplot,function,6,"coneplot(X,Y,Z,U,V,W,'nointerp')",error,"coneplot needs the places to put its cones: coneplot(X, Y, Z, U, V, W, Cx, Cy, Cz)."
 coneplot,function,7,"coneplot(axes_handle,...)",unprobed,no sample for this form's arguments
 coneplot,function,8,h = coneplot(...),unprobed,no sample for this form's arguments
 conj,builtin,0,Zc = conj(Z),accepted,
@@ -430,20 +430,20 @@ contains,builtin,0,"TF = contains(str,pat)",accepted,
 contains,builtin,1,"TF = contains(str,pat,'IgnoreCase',true)",unprobed,no sample for this form's arguments
 contour,function,0,contour(Z),accepted,
 contour,function,1,"contour(X,Y,Z)",accepted,
-contour,function,2,"contour(___,levels)",accepted,
-contour,function,3,"contour(___,LineSpec)",error,"contour expects an array of numbers, but got a string."
+contour,function,2,"contour(___,levels)",error,"contour expects argument 1 to be a matrix (an array of row arrays), but got a number."
+contour,function,3,"contour(___,LineSpec)",error,"contour expects argument 1 to be a matrix (an array of row arrays), but got a string."
 contour,function,4,"contour(___,Name,Value)",unprobed,"Name,Value form; the dump lists no pair names"
-contour,function,5,"contour(ax,___)",accepted,
+contour,function,5,"contour(ax,___)",error,"contour expects between 1 and 4 argument(s), but got 0."
 contour,function,6,M = contour(___),accepted,
-contour,function,7,"[M,c] = contour(___)",accepted,
+contour,function,7,"[M,c] = contour(___)",error,"This call returns 1 value(s), but 2 were asked for."
 contour3,function,0,contour3(Z),accepted,
 contour3,function,1,"contour3(X,Y,Z)",accepted,
-contour3,function,2,"contour3(___,levels)",accepted,
-contour3,function,3,"contour3(___,LineSpec)",error,"contour3 expects an array of numbers, but got a string."
+contour3,function,2,"contour3(___,levels)",error,"contour3 expects argument 1 to be a matrix (an array of row arrays), but got a number."
+contour3,function,3,"contour3(___,LineSpec)",error,"contour3 expects argument 1 to be a matrix (an array of row arrays), but got a string."
 contour3,function,4,"contour3(___,Name,Value)",unprobed,"Name,Value form; the dump lists no pair names"
-contour3,function,5,"contour3(ax,___)",accepted,
+contour3,function,5,"contour3(ax,___)",error,"contour3 expects between 1 and 4 argument(s), but got 0."
 contour3,function,6,M = contour3(___),accepted,
-contour3,function,7,"[M,c] = contour3(___)",accepted,
+contour3,function,7,"[M,c] = contour3(___)",error,"This call returns 1 value(s), but 2 were asked for."
 contourc,builtin,0,C = contourc(Z),unprobed,no sample for this form's arguments
 contourc,builtin,1,"C = contourc(Z,n)",unprobed,no sample for this form's arguments
 contourc,builtin,2,"C = contourc(Z,v)",unprobed,no sample for this form's arguments
@@ -452,12 +452,12 @@ contourc,builtin,4,"C = contourc(x,y,Z,n)",unprobed,no sample for this form's ar
 contourc,builtin,5,"C = contourc(x,y,Z,v)",unprobed,no sample for this form's arguments
 contourf,function,0,contourf(Z),accepted,
 contourf,function,1,"contourf(X,Y,Z)",accepted,
-contourf,function,2,"contourf(___,levels)",accepted,
-contourf,function,3,"contourf(___,LineSpec)",error,"contourf expects an array of numbers, but got a string."
+contourf,function,2,"contourf(___,levels)",error,"contourf expects argument 1 to be a matrix (an array of row arrays), but got a number."
+contourf,function,3,"contourf(___,LineSpec)",error,"contourf expects argument 1 to be a matrix (an array of row arrays), but got a string."
 contourf,function,4,"contourf(___,Name,Value)",unprobed,"Name,Value form; the dump lists no pair names"
-contourf,function,5,"contourf(ax,___)",accepted,
+contourf,function,5,"contourf(ax,___)",error,"contourf expects between 1 and 4 argument(s), but got 0."
 contourf,function,6,M = contourf(___),accepted,
-contourf,function,7,"[M,c] = contourf(___)",accepted,
+contourf,function,7,"[M,c] = contourf(___)",error,"This call returns 1 value(s), but 2 were asked for."
 contourslice,function,0,"contourslice(X,Y,Z,V,xslice,yslice,zslice)",error,"contourslice: the grid does not match the volume — it wants 1 positions along y, but was given 3."
 contourslice,function,1,"contourslice(V,xslice,yslice,zslice)",error,"contourslice: the grid does not match the volume — it wants 0 positions along x, but was given 3."
 contourslice,function,2,"contourslice(___,num)",error,"contourslice: the grid does not match the volume — it wants 1 positions along y, but was given 3."
@@ -480,14 +480,14 @@ convhull,builtin,0,k = convhull(P),error,"convhull expects 2 argument(s), but go
 convhull,builtin,1,"k = convhull(x,y)",accepted,
 convhull,builtin,2,"k = convhull(x,y,z)",error,"convhull expects 2 argument(s), but got 3."
 convhull,builtin,3,"k = convhull(___,'Simplify',tf)",unprobed,no sample for this form's arguments
-convhull,builtin,4,"[k,av] = convhull(___)",error,"convhull expects 2 argument(s), but got 1."
+convhull,builtin,4,"[k,av] = convhull(___)",error,"This call returns 1 value(s), but 2 were asked for."
 cool,function,0,c = cool,accepted,
 cool,function,1,c = cool(m),accepted,
 copper,function,0,c = copper,accepted,
 copper,function,1,c = copper(m),accepted,
 copyfile,builtin,0,copyfile source,error,"copyfile expects between 2 and 3 argument(s), but got 1."
-copyfile,builtin,1,copyfile source destination,error,copyfile: Could not find file 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-forms-kcnzfnty\source'.
-copyfile,builtin,2,copyfile source destination f,error,copyfile: Could not find file 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-forms-kcnzfnty\source'.
+copyfile,builtin,1,copyfile source destination,error,copyfile: Could not find file 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-forms-lp40gt8u\source'.
+copyfile,builtin,2,copyfile source destination f,error,copyfile: Could not find file 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-forms-lp40gt8u\source'.
 copyfile,builtin,3,status = copyfile(___),error,"copyfile expects between 2 and 3 argument(s), but got 1."
 copyfile,builtin,4,"[status,msg] = copyfile(___)",error,"copyfile expects between 2 and 3 argument(s), but got 1."
 copyfile,builtin,5,"[status,msg,msgID] = copyfile(___)",error,"copyfile expects between 2 and 3 argument(s), but got 1."
@@ -518,11 +518,11 @@ cumsum,builtin,0,B = cumsum(A),accepted,
 cumsum,builtin,1,"B = cumsum(A,dim)",accepted,
 cumsum,builtin,2,"B = cumsum(___,direction)",unprobed,no sample for this form's arguments
 cumsum,builtin,3,"B = cumsum(___,nanflag)",unprobed,no sample for this form's arguments
-curl,function,0,"[curlx,curly,curlz,cav] = curl(X,Y,Z,Fx,Fy,Fz)",error,"curl: the grid does not match the volume — it wants 1 positions along y, but was given 3."
+curl,function,0,"[curlx,curly,curlz,cav] = curl(X,Y,Z,Fx,Fy,Fz)",error,"curl: the grid does not match the volume — it wants 1 positions along y, but was given 27."
 curl,function,1,"[curlx,curly,curlz,cav] = curl(Fx,Fy,Fz)",accepted,
 curl,function,2,"[curlz,cav] = curl(X,Y,Fx,Fy)",error,"curl expects argument 3 to be a matrix; build one with meshgrid, zeros(r, c), or a semicolon-rowed literal."
 curl,function,3,"[curlz,cav] = curl(Fx,Fy)",error,"curl expects argument 1 to be a matrix; build one with meshgrid, zeros(r, c), or a semicolon-rowed literal."
-curl,function,4,cav = curl(___),error,"curl: the grid does not match the volume — it wants 1 positions along y, but was given 3."
+curl,function,4,cav = curl(___),error,"curl: the grid does not match the volume — it wants 1 positions along y, but was given 27."
 cylinder,function,0,"[X,Y,Z] = cylinder",accepted,
 cylinder,function,1,"[X,Y,Z] = cylinder(r)",accepted,
 cylinder,function,2,"[X,Y,Z] = cylinder(r,n)",accepted,
@@ -571,7 +571,7 @@ dissect,builtin,1,"p = dissect(A,Name,Value)",unprobed,"Name,Value form; the dum
 dither,function,0,"X = dither(RGB,map)",error,"dither expects a picture, not a colormap."
 dither,function,1,"X = dither(RGB,map,Qm,Qe)",error,"dither expects between 1 and 2 argument(s), but got 4."
 dither,function,2,BW = dither(I),accepted,
-divergence,function,0,"div = divergence(X,Y,Z,Fx,Fy,Fz)",error,"divergence: the grid does not match the volume — it wants 1 positions along y, but was given 3."
+divergence,function,0,"div = divergence(X,Y,Z,Fx,Fy,Fz)",error,"divergence: the grid does not match the volume — it wants 1 positions along y, but was given 27."
 divergence,function,1,"div = divergence(Fx,Fy,Fz)",accepted,
 divergence,function,2,"div = divergence(X,Y,Fx,Fy)",error,"divergence expects argument 3 to be a matrix; build one with meshgrid, zeros(r, c), or a semicolon-rowed literal."
 divergence,function,3,"div = divergence(Fx,Fy)",error,"divergence expects argument 1 to be a matrix; build one with meshgrid, zeros(r, c), or a semicolon-rowed literal."
@@ -599,7 +599,7 @@ eig,builtin,4,"[V,D] = eig(A,B)",error,"eig expects 1 argument(s), but got 2."
 eig,builtin,5,"[V,D,W] = eig(A,B)",error,"eig expects 1 argument(s), but got 2."
 eig,builtin,6,"[___] = eig(A,balanceOption)",unprobed,no sample for this form's arguments
 eig,builtin,7,"[___] = eig(A,B,algorithm)",unprobed,no sample for this form's arguments
-eig,builtin,8,"[___] = eig(___,outputForm)",error,"eig expects 1 argument(s), but got 2."
+eig,builtin,8,"[___] = eig(___,outputForm)",error,took the process down
 ellipsoid,function,0,"[X,Y,Z] = ellipsoid(xc,yc,zc,xr,yr,zr)",unprobed,no sample for this form's arguments
 ellipsoid,function,1,"[X,Y,Z] = ellipsoid(xc,yc,zc,xr,yr,zr,n)",unprobed,no sample for this form's arguments
 ellipsoid,function,2,ellipsoid(___),unprobed,no sample for this form's arguments
@@ -931,7 +931,7 @@ gray,function,1,c = gray(m),accepted,
 grid,function,0,grid on,accepted,
 grid,function,1,grid off,accepted,
 grid,function,2,grid,accepted,
-grid,function,3,grid minor,error,"grid expects 'on' or 'off', but got 'minor'."
+grid,function,3,grid minor,accepted,
 grid,function,4,"grid(target,___)",accepted,
 groot,builtin,0,groot,accepted,
 groot,builtin,1,r = groot,accepted,
@@ -1080,8 +1080,8 @@ ismembertol,builtin,2,"[LIA,LocB] = ismembertol(___)",accepted,
 ismembertol,builtin,3,"[___] = ismembertol(___,Name,Value)",unprobed,"Name,Value form; the dump lists no pair names"
 isnan,builtin,0,TF = isnan(A),accepted,
 isnumeric,builtin,0,TF = isnumeric(A),accepted,
-isocaps,function,0,"fvc = isocaps(X,Y,Z,V,isovalue)",unprobed,no sample for this form's arguments
-isocaps,function,1,"fvc = isocaps(V,isovalue)",unprobed,no sample for this form's arguments
+isocaps,function,0,"fvc = isocaps(X,Y,Z,V,isovalue)",accepted,
+isocaps,function,1,"fvc = isocaps(V,isovalue)",accepted,
 isocaps,function,2,"fvc = isocaps(...,'enclose')",unprobed,no sample for this form's arguments
 isocaps,function,3,"fvc = isocaps(...,'whichplane')",unprobed,no sample for this form's arguments
 isocaps,function,4,"[f,v,c] = isocaps(...)",unprobed,no sample for this form's arguments
@@ -1099,16 +1099,16 @@ isonormals,function,3,"n = isonormals(X,Y,Z,V,p)",unprobed,no sample for this fo
 isonormals,function,4,"n = isonormals(...,'negate')",unprobed,no sample for this form's arguments
 isonormals,function,5,"isonormals(V,p)",unprobed,no sample for this form's arguments
 isonormals,function,6,"isonormals(X,Y,Z,V,p)",unprobed,no sample for this form's arguments
-isosurface,function,0,"isosurface(X,Y,Z,V,isovalue)",error,"isosurface: the grid does not match the volume — it wants 1 positions along y, but was given 3."
-isosurface,function,1,"s = isosurface(X,Y,Z,V,isovalue)",error,"isosurface: the grid does not match the volume — it wants 1 positions along y, but was given 3."
-isosurface,function,2,"s = isosurface(X,Y,Z,V)",error,"isosurface: the grid does not match the volume — it wants 1 positions along y, but was given 3."
+isosurface,function,0,"isosurface(X,Y,Z,V,isovalue)",accepted,
+isosurface,function,1,"s = isosurface(X,Y,Z,V,isovalue)",accepted,
+isosurface,function,2,"s = isosurface(X,Y,Z,V)",accepted,
 isosurface,function,3,"s = isosurface(V,isovalue)",accepted,
 isosurface,function,4,s = isosurface(V),accepted,
-isosurface,function,5,"s = isosurface(___,colors)",error,"isosurface: the grid does not match the volume — it wants 1 positions along y, but was given 3."
-isosurface,function,6,"s = isosurface(___,'verbose')",error,"isosurface: the grid does not match the volume — it wants 1 positions along y, but was given 3."
-isosurface,function,7,"s = isosurface(___,'noshare')",error,"isosurface: the grid does not match the volume — it wants 1 positions along y, but was given 3."
-isosurface,function,8,"[faces,verts] = isosurface(___)",error,"isosurface: the grid does not match the volume — it wants 1 positions along y, but was given 3."
-isosurface,function,9,"[faces,verts,colors] = isosurface(___)",error,"isosurface: the grid does not match the volume — it wants 1 positions along y, but was given 3."
+isosurface,function,5,"s = isosurface(___,colors)",error,took the process down
+isosurface,function,6,"s = isosurface(___,'verbose')",accepted,
+isosurface,function,7,"s = isosurface(___,'noshare')",accepted,
+isosurface,function,8,"[faces,verts] = isosurface(___)",accepted,
+isosurface,function,9,"[faces,verts,colors] = isosurface(___)",error,"This call returns 2 value(s), but 3 were asked for."
 ispc,builtin,0,tf = ispc,accepted,
 isreal,builtin,0,tf = isreal(A),accepted,
 isrow,builtin,0,isrow(V),unprobed,no sample for this form's arguments
@@ -1120,7 +1120,7 @@ issorted,builtin,3,"TF = issorted(___,Name,Value)",unprobed,"Name,Value form; th
 issorted,builtin,4,"TF = issorted(A,'rows')",error,"issorted expects argument 2 to be a number, but got a string."
 issortedrows,builtin,0,TF = issortedrows(A),accepted,
 issortedrows,builtin,1,"TF = issortedrows(A,column)",error,"issortedrows expects 1 argument(s), but got 2."
-issortedrows,builtin,2,"TF = issortedrows(___,direction)",error,"issortedrows expects 1 argument(s), but got 2."
+issortedrows,builtin,2,"TF = issortedrows(___,direction)",error,"issortedrows expects an array of numbers, but got a string."
 issortedrows,builtin,3,"TF = issortedrows(___,Name,Value)",unprobed,"Name,Value form; the dump lists no pair names"
 issortedrows,builtin,4,TF = issortedrows(tblA),error,"issortedrows expects an array of numbers, but got a table."
 issortedrows,builtin,5,"TF = issortedrows(tblA,'RowNames')",error,"issortedrows expects 1 argument(s), but got 2."
@@ -1211,7 +1211,7 @@ line,builtin,4,"line(ax,___)",accepted,
 line,builtin,5,pl = line(___),accepted,
 lines,function,0,c = lines,accepted,
 lines,function,1,c = lines(m),accepted,
-linkaxes,function,0,linkaxes(ax),error,"linkaxes wants handles to axes, such as the ones subplot hands back."
+linkaxes,function,0,linkaxes(ax),refused,This is not a handle to a figure object; it may belong to a figure that has since been cleared.
 linkaxes,function,1,"linkaxes(ax,dimension)",unprobed,no sample for this form's arguments
 linkprop,function,0,"hlink = linkprop(obj_handles,'PropertyName')",unprobed,no sample for this form's arguments
 linkprop,function,1,"hlink = linkprop(obj_handles,{'PropertyName1','PropertyName2',...})",unprobed,no sample for this form's arguments
@@ -1251,7 +1251,7 @@ lu,builtin,2,"[L,U,P] = lu(A,outputForm)",error,"lu expects 1 argument(s), but g
 lu,builtin,3,"[L,U,P,Q] = lu(S)",error,"lu needs a square matrix, but got 2x3."
 lu,builtin,4,"[L,U,P,Q,D] = lu(S)",error,"lu needs a square matrix, but got 2x3."
 lu,builtin,5,"[___] = lu(S,thresh)",error,"lu expects 1 argument(s), but got 2."
-lu,builtin,6,"[___] = lu(___,outputForm)",error,"lu expects 1 argument(s), but got 2."
+lu,builtin,6,"[___] = lu(___,outputForm)",error,took the process down
 makehgtform,function,0,M = makehgtform,accepted,
 makehgtform,function,1,"M = makehgtform('translate',[tx ty tz])",accepted,
 makehgtform,function,2,"M = makehgtform('scale',s)",unprobed,no sample for this form's arguments
@@ -1298,22 +1298,22 @@ memory,builtin,1,"[userview,systemview] = memory",error,"This call returns 1 val
 mesh,function,0,"mesh(X,Y,Z)",accepted,
 mesh,function,1,mesh(Z),accepted,
 mesh,function,2,"mesh(Z,C)",accepted,
-mesh,function,3,"mesh(___,C)",accepted,
-mesh,function,4,"mesh(ax,___)",accepted,
+mesh,function,3,"mesh(___,C)",error,took the process down
+mesh,function,4,"mesh(ax,___)",error,took the process down
 mesh,function,5,"mesh(___,Name,Value)",unprobed,"Name,Value form; the dump lists no pair names"
-mesh,function,6,s = mesh(___),accepted,
+mesh,function,6,s = mesh(___),error,took the process down
 meshc,function,0,"meshc(X,Y,Z)",accepted,
 meshc,function,1,meshc(Z),accepted,
 meshc,function,2,"meshc(___,C)",accepted,
 meshc,function,3,"meshc(___,Name,Value)",unprobed,"Name,Value form; the dump lists no pair names"
-meshc,function,4,"meshc(ax,___)",accepted,
+meshc,function,4,"meshc(ax,___)",error,"meshc expects 3 argument(s), but got 0."
 meshc,function,5,sc = meshc(___),accepted,
 meshz,function,0,"meshz(X,Y,Z)",accepted,
 meshz,function,1,"meshz(X,Y,Z,C)",accepted,
 meshz,function,2,meshz(Z),accepted,
 meshz,function,3,"meshz(Z,C)",accepted,
 meshz,function,4,"meshz(___,Name,Value)",unprobed,"Name,Value form; the dump lists no pair names"
-meshz,function,5,"meshz(ax,___)",accepted,
+meshz,function,5,"meshz(ax,___)",error,"meshz expects 3 argument(s), but got 0."
 meshz,function,6,s = meshz(___),accepted,
 metaclass,builtin,0,mc = metaclass(object),unprobed,no sample for this form's arguments
 metaclass,builtin,1,mc = ?ClassName,unprobed,no sample for this form's arguments
@@ -1353,8 +1353,8 @@ more,builtin,1,more off,accepted,
 more,builtin,2,more(n),accepted,
 more,builtin,3,A = more(___),accepted,
 movefile,builtin,0,movefile source,error,"movefile expects between 2 and 3 argument(s), but got 1."
-movefile,builtin,1,movefile source destination,error,movefile: Could not find file 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-forms-kcnzfnty\source'.
-movefile,builtin,2,movefile source destination f,error,movefile: Could not find file 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-forms-kcnzfnty\source'.
+movefile,builtin,1,movefile source destination,error,movefile: Could not find file 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-forms-lp40gt8u\source'.
+movefile,builtin,2,movefile source destination f,error,movefile: Could not find file 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-forms-lp40gt8u\source'.
 movefile,builtin,3,status = movefile(___),error,"movefile expects between 2 and 3 argument(s), but got 1."
 movefile,builtin,4,"[status,msg] = movefile(___)",error,"movefile expects between 2 and 3 argument(s), but got 1."
 movefile,builtin,5,"[status,msg,msgID] = movefile(___)",error,"movefile expects between 2 and 3 argument(s), but got 1."
@@ -1452,10 +1452,10 @@ ones,builtin,2,"X = ones(sz1,...,szN)",unprobed,no sample for this form's argume
 ones,builtin,3,X = ones(sz),accepted,
 ones,builtin,4,"X = ones(___,typename)",accepted,
 ones,builtin,5,"X = ones(___,'like',p)",unprobed,no sample for this form's arguments
-openfig,function,0,openfig(filename),error,Could not find file 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-forms-kcnzfnty\a.fig'.
+openfig,function,0,openfig(filename),error,Could not find file 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-forms-lp40gt8u\a.fig'.
 openfig,function,1,"openfig(filename,copies)",unprobed,no sample for this form's arguments
 openfig,function,2,"openfig(___,visibility)",unprobed,no sample for this form's arguments
-openfig,function,3,fig = openfig(___),error,Could not find file 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-forms-kcnzfnty\a.fig'.
+openfig,function,3,fig = openfig(___),error,Could not find file 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-forms-lp40gt8u\a.fig'.
 opengl,function,0,opengl info,accepted,
 opengl,function,1,d = opengl('data'),accepted,
 opengl,function,2,opengl software,accepted,
@@ -1514,7 +1514,7 @@ pbaspect,function,4,m = pbaspect('mode'),error,"pbaspect: expected 'auto' or 'ma
 pbaspect,function,5,"___ = pbaspect(ax,___)",accepted,
 pcolor,function,0,pcolor(C),accepted,
 pcolor,function,1,"pcolor(X,Y,C)",accepted,
-pcolor,function,2,"pcolor(ax,___)",accepted,
+pcolor,function,2,"pcolor(ax,___)",error,"pcolor expects between 1 and 3 argument(s), but got 0."
 pcolor,function,3,s = pcolor(___),accepted,
 peaks,function,0,Z = peaks,accepted,
 peaks,function,1,Z = peaks(n),accepted,
@@ -1554,9 +1554,9 @@ plot3,builtin,5,"plot3(ax,___)",accepted,
 plot3,builtin,6,p = plot3(___),accepted,
 plotmatrix,function,0,"plotmatrix(X,Y)",accepted,
 plotmatrix,function,1,plotmatrix(X),accepted,
-plotmatrix,function,2,"plotmatrix(___,LineSpec)",accepted,
+plotmatrix,function,2,"plotmatrix(___,LineSpec)",error,"plotmatrix takes plotmatrix(x), plotmatrix(x, y), and either one followed by a line spec."
 plotmatrix,function,3,"plotmatrix(ax,___)",refused,"plotmatrix lays out its own grid of axes, so it cannot be aimed at one axes. Draw it into a figure of its own."
-plotmatrix,function,4,"[S,AX,BigAx,H,HAx] = plotmatrix(___)",accepted,
+plotmatrix,function,4,"[S,AX,BigAx,H,HAx] = plotmatrix(___)",error,"This call returns 1 value(s), but 5 were asked for."
 plotyy,function,0,"plotyy(X1,Y1,X2,Y2)",unprobed,no sample for this form's arguments
 plotyy,function,1,"plotyy(X1,Y1,X2,Y2,function)",unprobed,no sample for this form's arguments
 plotyy,function,2,"plotyy(X1,Y1,X2,Y2,'function1','function2')",unprobed,no sample for this form's arguments
@@ -1724,8 +1724,8 @@ reducepatch,function,5,"reducepatch(...,'fast')",unprobed,no sample for this for
 reducepatch,function,6,"reducepatch(...,'verbose')",unprobed,no sample for this form's arguments
 reducepatch,function,7,"nfv = reducepatch(f,v,r)",unprobed,no sample for this form's arguments
 reducepatch,function,8,"[nf,nv] = reducepatch(...)",unprobed,no sample for this form's arguments
-reducevolume,function,0,"[nx,ny,nz,nv] = reducevolume(X,Y,Z,V,[Rx,Ry,Rz])",unprobed,no sample for this form's arguments
-reducevolume,function,1,"[nx,ny,nz,nv] = reducevolume(V,[Rx,Ry,Rz])",unprobed,no sample for this form's arguments
+reducevolume,function,0,"[nx,ny,nz,nv] = reducevolume(X,Y,Z,V,[Rx,Ry,Rz])",accepted,
+reducevolume,function,1,"[nx,ny,nz,nv] = reducevolume(V,[Rx,Ry,Rz])",accepted,
 reducevolume,function,2,nv = reducevolume(...),unprobed,no sample for this form's arguments
 refresh,function,0,refresh,accepted,
 refresh,function,1,refresh(h),unprobed,no sample for this form's arguments
@@ -1769,10 +1769,10 @@ rlim,function,4,m = rlim('mode'),error,"rlim expects 'auto' or 'manual', but got
 rlim,function,5,"___ = rlim(pax,___)",error,"rlim expects a two-element [min, max] array."
 rmappdata,builtin,0,"rmappdata(obj,name)",error,rmappdata: nothing is stored under 'a' on this object.
 rmdir,builtin,0,rmdir folderName,accepted,
-rmdir,builtin,1,rmdir folderName s,error,rmdir: Could not find a part of the path 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-forms-kcnzfnty\folderName'.
-rmdir,builtin,2,status = rmdir(___),error,rmdir: Could not find a part of the path 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-forms-kcnzfnty\folderName'.
-rmdir,builtin,3,"[status,msg] = rmdir(___)",error,rmdir: Could not find a part of the path 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-forms-kcnzfnty\folderName'.
-rmdir,builtin,4,"[status,msg,msgID] = rmdir(___)",error,rmdir: Could not find a part of the path 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-forms-kcnzfnty\folderName'.
+rmdir,builtin,1,rmdir folderName s,error,rmdir: Could not find a part of the path 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-forms-lp40gt8u\folderName'.
+rmdir,builtin,2,status = rmdir(___),error,rmdir: Could not find a part of the path 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-forms-lp40gt8u\folderName'.
+rmdir,builtin,3,"[status,msg] = rmdir(___)",error,rmdir: Could not find a part of the path 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-forms-lp40gt8u\folderName'.
+rmdir,builtin,4,"[status,msg,msgID] = rmdir(___)",error,rmdir: Could not find a part of the path 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-forms-lp40gt8u\folderName'.
 rose,function,0,rose(theta),unprobed,no sample for this form's arguments
 rose,function,1,"rose(theta,x)",unprobed,no sample for this form's arguments
 rose,function,2,"rose(theta,nbins)",unprobed,no sample for this form's arguments
@@ -1900,11 +1900,11 @@ size,builtin,0,sz = size(A),accepted,
 size,builtin,1,"szdim = size(A,dim)",accepted,
 size,builtin,2,"szdim = size(A,dim1,dim2,…,dimN)",unprobed,no sample for this form's arguments
 size,builtin,3,"[sz1,...,szN] = size(___)",accepted,
-slice,function,0,"slice(X,Y,Z,V,xslice,yslice,zslice)",error,"slice expects between 2 and 3 argument(s), but got 7."
-slice,function,1,"slice(V,xslice,yslice,zslice)",error,"slice expects between 2 and 3 argument(s), but got 4."
+slice,function,0,"slice(X,Y,Z,V,xslice,yslice,zslice)",accepted,
+slice,function,1,"slice(V,xslice,yslice,zslice)",accepted,
 slice,function,2,"slice(___,method)",unprobed,no sample for this form's arguments
-slice,function,3,"slice(ax,___)",error,"slice expects between 2 and 3 argument(s), but got 8."
-slice,function,4,s = slice(___),error,"slice expects between 2 and 3 argument(s), but got 7."
+slice,function,3,"slice(ax,___)",accepted,
+slice,function,4,s = slice(___),accepted,
 smooth3,function,0,"ret = smooth3(data, filt, sz, arg)",unprobed,no sample for this form's arguments
 sort,builtin,0,B = sort(A),accepted,
 sort,builtin,1,"B = sort(A,dim)",accepted,
@@ -1974,25 +1974,25 @@ strcmpi,builtin,0,"tf = strcmpi(s1,s2)",unprobed,no sample for this form's argum
 stream2,function,0,"XY = stream2(x,y,u,v,startx,starty)",unprobed,no sample for this form's arguments
 stream2,function,1,"XY = stream2(u,v,startx,starty)",unprobed,no sample for this form's arguments
 stream2,function,2,"XY = stream2(...,options)",unprobed,no sample for this form's arguments
-stream3,function,0,"XYZ = stream3(X,Y,Z,U,V,W,startx,starty,startz)",unprobed,no sample for this form's arguments
-stream3,function,1,"XYZ = stream3(U,V,W,startx,starty,startz)",unprobed,no sample for this form's arguments
+stream3,function,0,"XYZ = stream3(X,Y,Z,U,V,W,startx,starty,startz)",accepted,
+stream3,function,1,"XYZ = stream3(U,V,W,startx,starty,startz)",error,"stream3: the grid does not match the volume — it wants 0 positions along x, but was given 27."
 stream3,function,2,"XYZ = stream3(...,options)",unprobed,no sample for this form's arguments
-streamline,function,0,"streamline(X,Y,Z,U,V,W,startx,starty,startz)",error,"streamline: the grid does not match the volume — it wants 1 positions along y, but was given 3."
-streamline,function,1,"streamline(U,V,W,startx,starty,startz)",error,"streamline: the grid does not match the volume — it wants 1 positions along y, but was given 3."
-streamline,function,2,"streamline(X,Y,U,V,startx,starty)",error,"streamline: the grid does not match the volume — it wants 1 positions along y, but was given 3."
-streamline,function,3,"streamline(U,V,startx,starty)",error,"streamline needs starting points: streamline(X, Y, Z, U, V, W, sx, sy, sz)."
+streamline,function,0,"streamline(X,Y,Z,U,V,W,startx,starty,startz)",accepted,
+streamline,function,1,"streamline(U,V,W,startx,starty,startz)",accepted,
+streamline,function,2,"streamline(X,Y,U,V,startx,starty)",accepted,
+streamline,function,3,"streamline(U,V,startx,starty)",accepted,
 streamline,function,4,streamline(verts),accepted,
-streamline,function,5,"streamline(___,options)",error,"streamline: the grid does not match the volume — it wants 1 positions along y, but was given 3."
-streamline,function,6,"streamline(ax,___)",error,"streamline: the grid does not match the volume — it wants 1 positions along y, but was given 3."
-streamline,function,7,lineobj = streamline(___),error,"streamline: the grid does not match the volume — it wants 1 positions along y, but was given 3."
+streamline,function,5,"streamline(___,options)",error,streamline: the tracing options are [stepsize] or [stepsize maxverts].
+streamline,function,6,"streamline(ax,___)",accepted,
+streamline,function,7,lineobj = streamline(___),accepted,
 streamparticles,function,0,streamparticles(vertices),unprobed,no sample for this form's arguments
 streamparticles,function,1,"streamparticles(vertices,n)",unprobed,no sample for this form's arguments
 streamparticles,function,2,"streamparticles(...,'PropertyName',PropertyValue,...)",unprobed,no sample for this form's arguments
 streamparticles,function,3,"streamparticles(ax,...)",unprobed,no sample for this form's arguments
 streamparticles,function,4,"streamparticles(line_handle,...)",unprobed,no sample for this form's arguments
 streamparticles,function,5,h = streamparticles(...),unprobed,no sample for this form's arguments
-streamribbon,function,0,"streamribbon(X,Y,Z,U,V,W,startx,starty,startz)",unprobed,no sample for this form's arguments
-streamribbon,function,1,"streamribbon(U,V,W,startx,starty,startz)",unprobed,no sample for this form's arguments
+streamribbon,function,0,"streamribbon(X,Y,Z,U,V,W,startx,starty,startz)",accepted,
+streamribbon,function,1,"streamribbon(U,V,W,startx,starty,startz)",error,"streamribbon: the grid does not match the volume — it wants 0 positions along x, but was given 27."
 streamribbon,function,2,"streamribbon(vertices,X,Y,Z,cav,speed)",unprobed,no sample for this form's arguments
 streamribbon,function,3,"streamribbon(vertices,cav,speed)",unprobed,no sample for this form's arguments
 streamribbon,function,4,"streamribbon(vertices,twistangle)",unprobed,no sample for this form's arguments
@@ -2000,17 +2000,17 @@ streamribbon,function,5,"streamribbon(...,width)",unprobed,no sample for this fo
 streamribbon,function,6,"streamribbon(axes_handle,...)",unprobed,no sample for this form's arguments
 streamribbon,function,7,h = streamribbon(...),unprobed,no sample for this form's arguments
 streamslice,function,0,"streamslice(X,Y,Z,U,V,W,xslice,yslice,zslice)",error,"streamslice expects between 2 and 8 argument(s), but got 9."
-streamslice,function,1,"streamslice(U,V,W,xslice,yslice,zslice)",error,"streamslice expects argument 3 to be a matrix; build one with meshgrid, zeros(r, c), or a semicolon-rowed literal."
-streamslice,function,2,"streamslice(X,Y,U,V)",error,"streamslice expects argument 3 to be a matrix; build one with meshgrid, zeros(r, c), or a semicolon-rowed literal."
-streamslice,function,3,"streamslice(U,V)",error,"streamslice expects argument 1 to be a matrix; build one with meshgrid, zeros(r, c), or a semicolon-rowed literal."
+streamslice,function,1,"streamslice(U,V,W,xslice,yslice,zslice)",error,"streamslice expects argument 4 to be a matrix (an array of row arrays), but got a number."
+streamslice,function,2,"streamslice(X,Y,U,V)",accepted,
+streamslice,function,3,"streamslice(U,V)",accepted,
 streamslice,function,4,"streamslice(___,arrowsmode)",unprobed,no sample for this form's arguments
 streamslice,function,5,"streamslice(___,density)",error,"streamslice expects between 2 and 8 argument(s), but got 10."
 streamslice,function,6,"streamslice(___,method)",unprobed,no sample for this form's arguments
-streamslice,function,7,"streamslice(ax,___)",error,"streamslice expects between 2 and 8 argument(s), but got 10."
+streamslice,function,7,"streamslice(ax,___)",error,"streamslice expects between 2 and 8 argument(s), but got 9."
 streamslice,function,8,lineobj = streamslice(___),error,"streamslice expects between 2 and 8 argument(s), but got 9."
 streamslice,function,9,"[verts,averts] = streamslice(___)",error,"streamslice expects between 2 and 8 argument(s), but got 9."
-streamtube,function,0,"streamtube(X,Y,Z,U,V,W,startx,starty,startz)",unprobed,no sample for this form's arguments
-streamtube,function,1,"streamtube(U,V,W,startx,starty,startz)",unprobed,no sample for this form's arguments
+streamtube,function,0,"streamtube(X,Y,Z,U,V,W,startx,starty,startz)",accepted,
+streamtube,function,1,"streamtube(U,V,W,startx,starty,startz)",error,"streamtube: the grid does not match the volume — it wants 0 positions along x, but was given 27."
 streamtube,function,2,"streamtube(vertices,X,Y,Z,divergence)",unprobed,no sample for this form's arguments
 streamtube,function,3,"streamtube(vertices,divergence)",unprobed,no sample for this form's arguments
 streamtube,function,4,"streamtube(vertices,width)",unprobed,no sample for this form's arguments
@@ -2060,9 +2060,9 @@ surf,function,0,"surf(X,Y,Z)",accepted,
 surf,function,1,"surf(X,Y,Z,C)",accepted,
 surf,function,2,surf(Z),accepted,
 surf,function,3,"surf(Z,C)",accepted,
-surf,function,4,"surf(ax,___)",accepted,
+surf,function,4,"surf(ax,___)",error,took the process down
 surf,function,5,"surf(___,Name,Value)",unprobed,"Name,Value form; the dump lists no pair names"
-surf,function,6,s = surf(___),accepted,
+surf,function,6,s = surf(___),error,took the process down
 surf2patch,function,0,fvc = surf2patch(h),unprobed,no sample for this form's arguments
 surf2patch,function,1,fvc = surf2patch(Z),unprobed,no sample for this form's arguments
 surf2patch,function,2,"fvc = surf2patch(Z,C)",unprobed,no sample for this form's arguments
@@ -2074,28 +2074,28 @@ surface,builtin,0,"surface(X,Y,Z)",accepted,
 surface,builtin,1,"surface(X,Y,Z,C)",accepted,
 surface,builtin,2,surface(Z),accepted,
 surface,builtin,3,"surface(Z,C)",accepted,
-surface,builtin,4,"surface(ax,___)",accepted,
+surface,builtin,4,"surface(ax,___)",error,"surface expects 3 argument(s), but got 0."
 surface,builtin,5,"surface(___,Name,Value)",unprobed,"Name,Value form; the dump lists no pair names"
 surface,builtin,6,s = surface(___),accepted,
 surfc,function,0,"surfc(X,Y,Z)",accepted,
 surfc,function,1,"surfc(X,Y,Z,C)",accepted,
 surfc,function,2,surfc(Z),accepted,
 surfc,function,3,"surfc(Z,C)",accepted,
-surfc,function,4,"surfc(ax,___)",accepted,
+surfc,function,4,"surfc(ax,___)",error,"surfc expects 3 argument(s), but got 0."
 surfc,function,5,"surfc(___,Name,Value)",unprobed,"Name,Value form; the dump lists no pair names"
 surfc,function,6,sc = surfc(___),accepted,
 surfl,function,0,"surfl(X,Y,Z)",accepted,
 surfl,function,1,surfl(Z),accepted,
-surfl,function,2,"surfl(___,'light')",error,"surfl expects 3 argument(s), but got 4."
-surfl,function,3,"surfl(___,s)",error,"surfl expects 3 argument(s), but got 4."
+surfl,function,2,"surfl(___,'light')",error,"surfl expects argument 1 to be a matrix (an array of row arrays), but got a string."
+surfl,function,3,"surfl(___,s)",error,"surfl expects argument 1 to be a matrix; build one with meshgrid, zeros(r, c), or a semicolon-rowed literal."
 surfl,function,4,"surfl(X,Y,Z,s,k)",error,"surfl expects 3 argument(s), but got 5."
-surfl,function,5,"surfl(ax,___)",accepted,
+surfl,function,5,"surfl(ax,___)",error,"surfl expects 3 argument(s), but got 0."
 surfl,function,6,s = surfl(___),accepted,
 surfnorm,function,0,"surfnorm(X,Y,Z)",accepted,
 surfnorm,function,1,surfnorm(Z),accepted,
-surfnorm,function,2,"surfnorm(ax,___)",accepted,
+surfnorm,function,2,"surfnorm(ax,___)",error,"surfnorm expects 3 argument(s), but got 0."
 surfnorm,function,3,"surfnorm(___,Name,Value)",unprobed,"Name,Value form; the dump lists no pair names"
-surfnorm,function,4,"[Nx,Ny,Nz] = surfnorm(___)",accepted,
+surfnorm,function,4,"[Nx,Ny,Nz] = surfnorm(___)",error,"This call returns 1 value(s), but 3 were asked for."
 swarmchart,function,0,"swarmchart(x,y)",accepted,
 swarmchart,function,1,"swarmchart(x,y,sz)",accepted,
 swarmchart,function,2,"swarmchart(x,y,sz,c)",accepted,
@@ -2129,9 +2129,9 @@ tand,builtin,0,Y = tand(X),accepted,
 tanh,builtin,0,Y = tanh(X),accepted,
 tetramesh,function,0,"tetramesh(T,X)",error,"tetramesh: the connectivity list needs 4 columns, but has 3."
 tetramesh,function,1,tetramesh(TR),unprobed,no sample for this form's arguments
-tetramesh,function,2,"tetramesh(___,c)",error,"tetramesh: the connectivity list needs 4 columns, but has 3."
+tetramesh,function,2,"tetramesh(___,c)",error,"tetramesh expects (T, X) or (T, X, C), then 'Name', value options."
 tetramesh,function,3,"tetramesh(___,Name,Value)",unprobed,"Name,Value form; the dump lists no pair names"
-tetramesh,function,4,h = tetramesh(___),error,"tetramesh: the connectivity list needs 4 columns, but has 3."
+tetramesh,function,4,h = tetramesh(___),accepted,
 texlabel,function,0,txt = texlabel(f),accepted,
 texlabel,function,1,"txt = texlabel(f,'literal')",accepted,
 text,builtin,0,"text(x,y,txt)",accepted,
@@ -2182,9 +2182,9 @@ title,function,2,"title(___,Name,Value)",unprobed,"Name,Value form; the dump lis
 title,function,3,"title(target,___)",accepted,
 title,function,4,t = title(___),accepted,
 title,function,5,"[t,s] = title(___)",error,"This call returns 1 value(s), but 2 were asked for."
-toc,builtin,0,toc,accepted,
+toc,builtin,0,toc,error,toc: start a timer with tic first.
 toc,builtin,1,toc(timerVal),accepted,
-toc,builtin,2,elapsedTime = toc,accepted,
+toc,builtin,2,elapsedTime = toc,error,toc: start a timer with tic first.
 toc,builtin,3,elapsedTime = toc(timerVal),accepted,
 transpose,builtin,0,B = A.',unprobed,no sample for this form's arguments
 transpose,builtin,1,B = transpose(A),accepted,
@@ -2195,17 +2195,17 @@ trimesh,function,1,"trimesh(T,x,y,z)",error,"A patch face refers to vertex 3, bu
 trimesh,function,2,"trimesh(x,y,z,c)",error,"trimesh: the triangle table needs at least three columns, but has 1."
 trimesh,function,3,trimesh(TO),unprobed,no sample for this form's arguments
 trimesh,function,4,"trimesh(___,Name,Value)",unprobed,"Name,Value form; the dump lists no pair names"
-trimesh,function,5,h = trimesh(___),error,"trimesh expects between 4 and 5 argument(s), but got 3."
+trimesh,function,5,h = trimesh(___),accepted,
 triplot,function,0,"triplot(T,x,y)",error,triplot: vertex number 4 is outside the 3 points given.
 triplot,function,1,"triplot(T,x,y,LineSpec)",error,triplot: vertex number 4 is outside the 3 points given.
 triplot,function,2,triplot(TO),unprobed,no sample for this form's arguments
 triplot,function,3,"triplot(___,Name,Value)",unprobed,"Name,Value form; the dump lists no pair names"
-triplot,function,4,h = triplot(___),error,triplot: vertex number 4 is outside the 3 points given.
-trisurf,function,0,"trisurf(T,x,y,z)",accepted,
+triplot,function,4,h = triplot(___),accepted,
+trisurf,function,0,"trisurf(T,x,y,z)",error,"A patch face refers to vertex 3, but there are only 3. (Parameter 'faces')"
 trisurf,function,1,trisurf(TO),unprobed,no sample for this form's arguments
-trisurf,function,2,"trisurf(___,c)",error,"A patch face refers to vertex 3, but there are only 3. (Parameter 'faces')"
+trisurf,function,2,"trisurf(___,c)",error,"trisurf expects between 4 and 5 argument(s), but got 1."
 trisurf,function,3,"trisurf(___,Name,Value)",unprobed,"Name,Value form; the dump lists no pair names"
-trisurf,function,4,h = trisurf(___),error,"A patch face refers to vertex 3, but there are only 3. (Parameter 'faces')"
+trisurf,function,4,h = trisurf(___),accepted,
 triu,builtin,0,U = triu(A),accepted,
 triu,builtin,1,"U = triu(A,k)",accepted,
 true,builtin,0,true,accepted,
@@ -2255,15 +2255,15 @@ viewmtx,function,0,viewmtx,error,"viewmtx expects between 2 and 4 argument(s), b
 viewmtx,function,1,"T = viewmtx(az,el)",unprobed,no sample for this form's arguments
 viewmtx,function,2,"T = viewmtx(az,el,phi)",unprobed,no sample for this form's arguments
 viewmtx,function,3,"T = viewmtx(az,el,phi,xc)",unprobed,no sample for this form's arguments
-volumebounds,function,0,"lims = volumebounds(X,Y,Z,V)",unprobed,no sample for this form's arguments
-volumebounds,function,1,"lims = volumebounds(X,Y,Z,U,V,W)",unprobed,no sample for this form's arguments
-volumebounds,function,2,lims = volumebounds(V),unprobed,no sample for this form's arguments
-volumebounds,function,3,"lims = volumebounds(U,V,W)",unprobed,no sample for this form's arguments
+volumebounds,function,0,"lims = volumebounds(X,Y,Z,V)",accepted,
+volumebounds,function,1,"lims = volumebounds(X,Y,Z,U,V,W)",accepted,
+volumebounds,function,2,lims = volumebounds(V),accepted,
+volumebounds,function,3,"lims = volumebounds(U,V,W)",accepted,
 voronoi,function,0,"voronoi(x,y)",error,voronoi: The points are collinear; their Voronoi diagram has no vertices.
 voronoi,function,1,"voronoi(x,y,T)",error,voronoi: vertex number 4 is outside the 3 points given.
 voronoi,function,2,voronoi(TO),unprobed,no sample for this form's arguments
-voronoi,function,3,"[vx,vy] = voronoi(___)",error,voronoi: The points are collinear; their Voronoi diagram has no vertices.
-voronoi,function,4,h = voronoi(___),error,voronoi: The points are collinear; their Voronoi diagram has no vertices.
+voronoi,function,3,"[vx,vy] = voronoi(___)",error,"This call returns 1 value(s), but 2 were asked for."
+voronoi,function,4,h = voronoi(___),accepted,
 waitfor,builtin,0,waitfor(obj),unprobed,no sample for this form's arguments
 waitfor,builtin,1,"waitfor(obj,propname)",unprobed,no sample for this form's arguments
 waitfor,builtin,2,"waitfor(obj,propname,propvalue)",unprobed,no sample for this form's arguments
@@ -2281,10 +2281,10 @@ waterfall,function,0,"waterfall(X,Y,Z)",accepted,
 waterfall,function,1,"waterfall(X,Y,Z,C)",error,"waterfall expects 3 argument(s), but got 4."
 waterfall,function,2,waterfall(Z),accepted,
 waterfall,function,3,"waterfall(Z,C)",error,"waterfall expects 3 argument(s), but got 2."
-waterfall,function,4,"waterfall(ax,___)",accepted,
+waterfall,function,4,"waterfall(ax,___)",error,"waterfall expects 3 argument(s), but got 0."
 waterfall,function,5,p = waterfall(___),accepted,
 what,builtin,0,what,accepted,
-what,builtin,1,what folderName,refused,what: 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-forms-kcnzfnty\folderName' is not a folder.
+what,builtin,1,what folderName,refused,what: 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-forms-lp40gt8u\folderName' is not a folder.
 what,builtin,2,s = what(___),accepted,
 which,builtin,0,which item,accepted,
 which,builtin,1,which fun1 in fun2,error,"which expects 1 argument(s), but got 3."

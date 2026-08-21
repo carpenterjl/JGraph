@@ -1404,20 +1404,45 @@ internal static partial class JgsBuiltins
         // --- Figure setup and plotting -------------------------------------------------------
         DefineSilent("figure", (args, line, col) =>
         {
-            ArityRange("figure", args, 0, 1, line, col);
-            if (args.Count == 1)
+            // figure(n) selects or makes figure n; a leading number is the only positional argument,
+            // and everything after it is name/value. MATLAB writes the whole figure surface this way
+            // — figure('Position', [...], 'Name', 'x') — so the pairs are handed to the same property
+            // table set() writes through rather than to a hand-kept list of accepted names, which is
+            // what makes every property the figure already answers to settable at construction.
+            int first = 0;
+            int? requested = null;
+            if (args.Count > 0 && args[0].Type != JgsType.String)
             {
-                int number = Count("figure", args, 0, line, col);
-                if (number < 1)
+                requested = Count("figure", args, 0, line, col);
+                if (requested < 1)
                 {
                     throw new JgsRuntimeException(line, col, "Figure numbers start at 1.");
                 }
 
-                JG.Figure(number);
-                return JgsValue.Number(number);
+                first = 1;
             }
 
-            JG.Figure();
+            if ((args.Count - first) % 2 != 0)
+            {
+                throw new JgsRuntimeException(
+                    line, col, "figure: every property after the figure number needs a value.");
+            }
+
+            if (requested is { } number)
+            {
+                JG.Figure(number);
+            }
+            else
+            {
+                JG.Figure();
+            }
+
+            JgsHandleEntry entry = JgsHandleRegistry.EntryFor(JG.CurrentFigure);
+            for (int i = first; i < args.Count; i += 2)
+            {
+                JgsGraphicsProperties.Set(entry, Str("figure", args, i, line, col), args[i + 1], line, col);
+            }
+
             return JgsValue.Number(JG.CurrentFigureNumber);
         });
         DefineSilent("subplot", (args, line, col) =>
@@ -1627,9 +1652,12 @@ internal static partial class JgsBuiltins
                 _ => throw new JgsRuntimeException(line, col, $"lighting: unknown mode '{mode}'."),
             };
 
-            foreach (SurfacePlot surface in JG.Gca().Plots.OfType<SurfacePlot>())
+            // Every lit object in the axes, not every surface: M72 gave patches the same shading, and
+            // a verb that reached only one of the two classes is how an isosurface stayed flat while
+            // the surf beside it lit up.
+            foreach (ILitObject lit in JG.Gca().Plots.OfType<ILitObject>())
             {
-                surface.FaceLighting = lighting;
+                lit.FaceLighting = lighting;
             }
 
             return JgsValue.Null;
@@ -1669,9 +1697,9 @@ internal static partial class JgsBuiltins
                     v.Length > 4 ? v[4] : fallback.SpecularColorReflectance);
             }
 
-            foreach (SurfacePlot surface in JG.Gca().Plots.OfType<SurfacePlot>())
+            foreach (ILitObject lit in JG.Gca().Plots.OfType<ILitObject>())
             {
-                surface.Material = material;
+                lit.Material = material;
             }
 
             return JgsValue.Null;
@@ -2054,6 +2082,19 @@ internal static partial class JgsBuiltins
         DefineOnAxes("grid", (args, line, col) =>
         {
             ArityRange("grid", args, 0, 1, line, col);
+
+            // 'grid minor' works the minor lines rather than the major ones, and toggles them the way
+            // a bare 'grid' toggles the majors — the grid model has carried ShowMinor since it was
+            // written, so the word was the only thing missing. MATLAB spells the explicit forms
+            // 'minor on' / 'minor off' as two words, which a script writes as grid('minor', 'on').
+            if (args.Count == 1 && args[0].Type == JgsType.String
+                && args[0].AsString.Equals("minor", StringComparison.OrdinalIgnoreCase))
+            {
+                GridModel minor = JG.Gca().Grid;
+                minor.ShowMinor = !minor.ShowMinor;
+                return JgsValue.Null;
+            }
+
             JG.Grid(OnOff("grid", args, line, col, dialect, () => JG.Gca().Grid.ShowMajor));
             return JgsValue.Null;
         });
@@ -2228,6 +2269,11 @@ internal static partial class JgsBuiltins
         {
             RegisterMatlabReductions(env, dialect);
             RegisterGraphicsNamespace(env);
+
+            // MATLAB's slice cuts a volume; JGS's slice takes a piece of a list. Both keep their own
+            // name, which they can only do by the volume one being declared here, over the other, and
+            // only for the dialect that means it.
+            RegisterVolumeSlice(env);
         }
 
         // Last of all: the distribution objects put a check in front of nine names declared above,
@@ -3161,6 +3207,31 @@ internal static partial class JgsBuiltins
         // surfl is the exception, and takesColorData is why it is spelled out rather than assumed:
         // its second argument is the light source's direction, so reading it as colour would take a
         // documented argument and quietly mean something else by it.
+        // Every one of these verbs documents a trailing run of name/value pairs — surf(X, Y, Z,
+        // 'FaceAlpha', 0.4, 'EdgeColor', 'none') is how a MATLAB script makes a surface translucent,
+        // and this dispatcher took no options at all before M72. The names are handed to the same
+        // property table set() writes through, so whatever the surface answers to is settable at
+        // construction and an unknown name refuses by name. The data arguments are never strings, so
+        // the first string is where the pairs begin.
+        IReadOnlyList<JgsValue> options = [];
+        for (int i = 1; i < args.Count; i++)
+        {
+            if (args[i].Type != JgsType.String)
+            {
+                continue;
+            }
+
+            if ((args.Count - i) % 2 != 0)
+            {
+                throw new JgsRuntimeException(
+                    line, col, $"{name}: every property after the data needs a value.");
+            }
+
+            options = [.. args.Skip(i)];
+            args = [.. args.Take(i)];
+            break;
+        }
+
         double[,]? cData = null;
         if (takesColorData && args.Count is 2 or 4)
         {
@@ -3182,7 +3253,18 @@ internal static partial class JgsBuiltins
                 }
             }
 
-            return Handle(drawn);
+            JgsValue handle = Handle(drawn);
+            if (options.Count > 0)
+            {
+                JgsHandleEntry entry = JgsHandleRegistry.EntryFor(drawn);
+                for (int i = 0; i < options.Count; i += 2)
+                {
+                    JgsGraphicsProperties.Set(
+                        entry, StrOf(name, options[i], line, col), options[i + 1], line, col);
+                }
+            }
+
+            return handle;
         }
 
         if (args.Count == 1)

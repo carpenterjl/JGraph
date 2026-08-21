@@ -64,8 +64,12 @@ numbers (`fft` results).
 
 - Arrays keep reference semantics: `X2 = X1; X2(1:k) = 0` also mutates `X1` (MATLAB copies on
   write). Harmless in the acceptance scripts; noted in the scripting guide.
-- Array literals require commas — `[0 20 30]` is not accepted (MATLAB's whitespace rules are
-  ambiguous); the demo's two literals gained commas.
+- ~~Array literals require commas~~ — **lifted; see
+  [0072](0072-the-parity-wave-the-gallery-asked-for.md).** `[0 20 30]` and `[3 2 1 0; 4 5 6 7]`
+  are read in the MATLAB dialect, spacing and all. The rule that resolves the ambiguity is the one
+  MATLAB itself uses — `[1 -2]` is two elements and `[1 - 2]` is one subtraction — and it lives in
+  the parser as `StartsANewElement`. What survived until M72 was the *echo*, which walked a matrix
+  in column-major order and showed `[3 2 1 0; 4 5 6 7]` back as eight numbers in a row.
 - `%` remains the modulo operator, not a comment (user decision); comments stay `//` and `#`.
   `mod(a, b)` covers MATLAB code.
 - `let` remains required for first bindings (user decision) — the typo safety net stays.

@@ -5,7 +5,7 @@ building the object in `jgraph.exe` and asking it, not from reading the source: 
 table is built by reflection over the model's CLR types, so what an object answers to is a
 runtime fact.
 
-**736 of 1394 documented properties** are answered across the
+**747 of 1394 documented properties** are answered across the
 28 object kinds that could be built and asked. The other
 0 kinds are counted separately below rather than scored as zero —
 an object that cannot be reached is not the same measurement as one missing properties, and
@@ -19,8 +19,8 @@ for six times.
 | `scatter` | `Scatter` | 33 | 74 | 24 |
 | `bubblechart` | `BubbleChart` | 32 | 73 | 25 |
 | `figure` | `Figure` | 24 | 66 | 8 |
-| `surface` | `Surface` | 30 | 60 | 18 |
-| `patch` | `Patch` | 26 | 56 | 19 |
+| `surface` | `Surface` | 32 | 60 | 18 |
+| `patch` | `Patch` | 34 | 56 | 19 |
 | `pie` | `Patch` | 22 | 56 | 18 |
 | `line` | `Line` | 26 | 52 | 12 |
 | `errorbar` | `ErrorBar` | 26 | 52 | 11 |
@@ -30,7 +30,7 @@ for six times.
 | `bar` | `Bar` | 29 | 44 | 15 |
 | `stem` | `Stem` | 26 | 43 | 11 |
 | `colorbar` | `ColorBar` | 19 | 42 | 6 |
-| `text` | `Text` | 27 | 41 | 14 |
+| `text` | `Text` | 28 | 41 | 14 |
 | `legend` | `Legend` | 23 | 39 | 8 |
 | `area` | `Area` | 28 | 39 | 10 |
 | `heatmap` | `HeatmapChart` | 20 | 39 | 27 |

@@ -742,6 +742,18 @@ internal static partial class JgsBuiltins
             {
                 MultiOutput = (args, wanted, line, col) =>
                 {
+                    // One vector means the same vector once per output, which is how MATLAB reads
+                    // [X, Y, Z] = meshgrid(v): the count of outputs is what says how many dimensions
+                    // the box has, and there is nothing else in the call that could say it. Given two
+                    // vectors or more the arguments say it themselves and asking for a third grid is
+                    // the error it already was.
+                    if (args.Count == 1 && wanted > 1)
+                    {
+                        var repeated = new JgsValue[wanted];
+                        Array.Fill(repeated, args[0]);
+                        args = repeated;
+                    }
+
                     JgsValue set = setForm.Call(args, line, col);
                     int available = set.ArrayLength;
                     int answers = System.Math.Clamp(wanted, 1, available);

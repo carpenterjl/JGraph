@@ -37,7 +37,9 @@ internal static partial class JgsBuiltins
             (args, line, col) => Stream("stream3", args, line, col))));
 
         DefineSilent("streamline", OnNamedAxes((args, line, col) => Streamline(args, line, col)));
-        DefineSilent("streamslice", (args, line, col) => StreamSlice(args, line, col));
+        // Wrapped the way streamline beside it is: streamslice(ax, ...) is a documented form, and
+        // without the peel the axes handle was read as the first component of the field.
+        DefineSilent("streamslice", OnNamedAxes((args, line, col) => StreamSlice(args, line, col)));
         DefineSilent("streamribbon", (args, line, col) => StreamRibbon(args, line, col));
         DefineSilent("streamtube", (args, line, col) => StreamTube(args, line, col));
         DefineSilent("coneplot", (args, line, col) => ConePlot(args, line, col));
@@ -91,15 +93,26 @@ internal static partial class JgsBuiltins
     /// is the same reading with the third direction left out.
     /// </summary>
     private static (VectorField Field, List<(double X, double Y, double Z)> Starts, StreamlineOptions Options)
-        ReadStreamRequest(string verb, IReadOnlyList<JgsValue> args, int line, int col)
+        ReadStreamRequest(
+            string verb, IReadOnlyList<JgsValue> args, int line, int col, bool? plane = null)
     {
-        bool spatial = !verb.EndsWith('2') && !verb.Equals("streamslice2", StringComparison.Ordinal);
+        // Most verbs in this family say which world they are in by their own name -- stream2 against
+        // stream3. streamline is the one that does not: MATLAB spells both its plane form and its
+        // space form with the same word and lets the argument list decide, so the caller works that
+        // out and says so here.
+        bool spatial = plane is { } flat
+            ? !flat
+            : !verb.EndsWith('2') && !verb.Equals("streamslice2", StringComparison.Ordinal);
         VectorField field;
         int next;
 
         if (spatial)
         {
-            (field, next) = ReadVectorField(verb, args, line, col);
+            // A caller that knew which form it had also knows whether a grid came with it: nine
+            // arguments is grid-and-field, six is field alone. Left to the general test both look
+            // alike, and the six-argument one was read as a grid it does not have.
+            bool? hasGrid = plane is null ? null : args.Count >= 9;
+            (field, next) = ReadVectorField(verb, args, line, col, hasGrid);
         }
         else
         {
@@ -179,17 +192,51 @@ internal static partial class JgsBuiltins
         ArityRange("streamline", args, 1, 11, line, col);
         List<List<(double X, double Y, double Z)>> lines = args[0].Type == JgsType.Cell
             ? ReadTracedLines("streamline", args[0], line, col)
-            : TraceFor("streamline", args, line, col);
+            : TraceFor("streamline", args, line, col, PlaneForm(args));
 
         return DrawLines(lines);
     }
 
+    /// <summary>
+    /// Whether a <c>streamline</c> call is the plane form. MATLAB gives both forms the same name and
+    /// separates them by counting: four or six arguments is a plane, nine is space. Six is the one
+    /// place both readings fit -- <c>streamline(X, Y, U, V, sx, sy)</c> against
+    /// <c>streamline(U, V, W, sx, sy, sz)</c> -- and there the field settles it, because a volume has
+    /// pages and a plane does not.
+    /// </summary>
+    /// <remarks>
+    /// Every one of these forms errored before M72: the reading was fixed at three components, so a
+    /// plane call handed its two arrays and its two starting arrays to a volume reader, which
+    /// measured them against each other and refused.
+    /// </remarks>
+    private static bool? PlaneForm(IReadOnlyList<JgsValue> args)
+    {
+        // A trailing options vector is not part of the count.
+        int count = args.Count;
+        if (count is 5 or 7 or 10)
+        {
+            count--;
+        }
+
+        return count switch
+        {
+            4 => true,
+            6 => !LooksVolumetric(args[0]),
+            9 => false,
+            _ => null,
+        };
+    }
+
+    /// <summary>Whether a field argument has pages, which is what makes it a volume rather than a plane.</summary>
+    private static bool LooksVolumetric(JgsValue value) =>
+        value.Type == JgsType.Array && value.Dims is { Length: >= 3 } dims && dims[2] > 1;
+
     /// <summary>The lines a drawing verb was handed or, when it was handed a field, traced itself.</summary>
     private static List<List<(double X, double Y, double Z)>> TraceFor(
-        string verb, IReadOnlyList<JgsValue> args, int line, int col)
+        string verb, IReadOnlyList<JgsValue> args, int line, int col, bool? plane = null)
     {
         (VectorField field, IReadOnlyList<(double X, double Y, double Z)> starts, StreamlineOptions options) =
-            ReadStreamRequest(verb, args, line, col);
+            ReadStreamRequest(verb, args, line, col, plane);
 
         var lines = new List<List<(double X, double Y, double Z)>>();
         foreach ((double x, double y, double z) in starts)
@@ -233,7 +280,8 @@ internal static partial class JgsBuiltins
     /// The lines drawn, as one line object each — which is what makes <c>set(h, 'Color', 'r')</c> over
     /// the returned handles colour the whole family at once.
     /// </summary>
-    private static JgsValue DrawLines(List<List<(double X, double Y, double Z)>> lines)
+    private static JgsValue DrawLines(
+        List<List<(double X, double Y, double Z)>> lines, bool uniform = false)
     {
         var drawn = new List<Line3DPlot>();
         foreach (List<(double X, double Y, double Z)> points in lines)
@@ -247,6 +295,20 @@ internal static partial class JgsBuiltins
                 [.. points.Select(p => p.X)],
                 [.. points.Select(p => p.Y)],
                 [.. points.Select(p => p.Z)]));
+        }
+
+        // A slice's streamlines are one drawing rather than dozens of series, and MATLAB colours them
+        // all alike. Left to the palette each takes the next colour in the order, which turned a
+        // twenty-line slice into a plaid of twenty hues and used up the axes' colour order besides.
+        // The colour taken is the one the first line would have had, so a slice still sits in the
+        // sequence of whatever was plotted before it.
+        if (uniform && drawn.Count > 0)
+        {
+            JGraph.Core.Drawing.Color shared = PaletteColorFor(drawn[0]);
+            foreach (Line3DPlot streamline in drawn)
+            {
+                streamline.Color = shared;
+            }
         }
 
         return HandlesFor<Line3DPlot>(drawn);
@@ -298,7 +360,7 @@ internal static partial class JgsBuiltins
             }
         }
 
-        return DrawLines(lines);
+        return DrawLines(lines, uniform: true);
     }
 
     private static double Between(double[] positions, int index, int count)

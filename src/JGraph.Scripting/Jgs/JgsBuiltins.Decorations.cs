@@ -21,7 +21,7 @@ internal static partial class JgsBuiltins
     /// <summary>The text properties every titling verb accepts, in the spellings MATLAB documents.</summary>
     private static readonly string[] TitleOptionNames =
     [
-        "Color", "FontSize", "FontName", "FontWeight", "FontAngle",
+        "Color", "FontSize", "FontName", "FontWeight", "FontAngle", "Interpreter",
     ];
 
     private static void RegisterDecorationBuiltins(JgsEnvironment env, JgsDialect dialect)
@@ -232,7 +232,11 @@ internal static partial class JgsBuiltins
                 case "fontname":
                     style = new TextStyle(
                         style.Color, style.FontSize, StrOf($"{verb}: FontName", value, line, col),
-                        style.Bold, style.Italic);
+                        style.Bold, style.Italic, style.Interpreter);
+                    break;
+                case "interpreter":
+                    style = style.WithInterpreter(
+                        ParseInterpreter(verb, StrOf($"{verb}: Interpreter", value, line, col), line, col));
                     break;
                 case "fontweight":
                     style = style.WithBold(Weight(verb, "FontWeight", value, "bold", "normal", line, col));
@@ -240,7 +244,8 @@ internal static partial class JgsBuiltins
                 case "fontangle":
                     style = new TextStyle(
                         style.Color, style.FontSize, style.FontFamily, style.Bold,
-                        Weight(verb, "FontAngle", value, "italic", "normal", line, col));
+                        Weight(verb, "FontAngle", value, "italic", "normal", line, col),
+                        style.Interpreter);
                     break;
                 default:
                     throw new JgsRuntimeException(line, col,
@@ -250,6 +255,26 @@ internal static partial class JgsBuiltins
 
         return style;
     }
+
+    /// <summary>One of MATLAB's three interpreter words, or a refusal naming all three.</summary>
+    internal static TextInterpreter ParseInterpreter(string verb, string word, int line, int col) =>
+        word.ToLowerInvariant() switch
+        {
+            "tex" => TextInterpreter.Tex,
+            "none" => TextInterpreter.None,
+            "latex" => TextInterpreter.Latex,
+            _ => throw new JgsRuntimeException(
+                line, col, $"{verb}: Interpreter is 'tex', 'latex' or 'none', but got '{word}'."),
+        };
+
+    /// <summary>The word for an interpreter, which is what <c>get</c> answers with.</summary>
+    internal static string InterpreterWord(TextInterpreter interpreter) =>
+        interpreter switch
+        {
+            TextInterpreter.None => "none",
+            TextInterpreter.Latex => "latex",
+            _ => "tex",
+        };
 
     /// <summary>A two-word switch such as bold/normal, read as the boolean the style actually stores.</summary>
     private static bool Weight(

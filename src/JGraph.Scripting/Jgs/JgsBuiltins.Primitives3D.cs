@@ -372,6 +372,17 @@ internal static partial class JgsBuiltins
             : FromCoordinates(verb, data, line, col, dimensions);
 
         ApplyPatchOptions(verb, patch, options, line, col);
+
+        // A patch that carries heights is a three-dimensional object, and an axes holding one has to
+        // say so: until M72 only the surface verbs set the flag, so an axes whose only child was
+        // patch(isosurface(...)) stayed flat -- view(3) wrote angles nothing then read, and the
+        // camera never moved. Zero heights are how a two-dimensional patch spells 'no z', so they
+        // leave a plain fill alone.
+        if (patch.Z.Any(z => double.IsFinite(z) && z != 0))
+        {
+            JG.Gca().Is3D = true;
+        }
+
         return Handle(patch);
     }
 

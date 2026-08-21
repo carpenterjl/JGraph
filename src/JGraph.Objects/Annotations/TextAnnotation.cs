@@ -26,6 +26,7 @@ public sealed class TextAnnotation : AnnotationObject, IDrawable, I3DDrawable
     private string _fontFamily = "Segoe UI";
     private bool _bold;
     private bool _italic;
+    private TextInterpreter _interpreter = TextInterpreter.Tex;
     private Color? _color;
     private Color? _background;
     private Color? _borderColor;
@@ -63,6 +64,17 @@ public sealed class TextAnnotation : AnnotationObject, IDrawable, I3DDrawable
     {
         get => _z;
         set => SetProperty(ref _z, value, InvalidationKind.Render);
+    }
+
+    /// <summary>
+    /// Which markup <see cref="Text"/> is written in (MATLAB <c>Interpreter</c>). TeX is the default,
+    /// so a label saying \sigma shows one; 'none' shows the backslash and the word.
+    /// </summary>
+    [Category("Appearance")]
+    public TextInterpreter Interpreter
+    {
+        get => _interpreter;
+        set => SetProperty(ref _interpreter, value, InvalidationKind.Render);
     }
 
     /// <summary>The text to display.</summary>
@@ -222,7 +234,7 @@ public sealed class TextAnnotation : AnnotationObject, IDrawable, I3DDrawable
         }
 
         Color ink = _color ?? state.SeriesColor;
-        var style = new TextStyle(ink, _fontSize, _fontFamily, _bold, _italic);
+        var style = new TextStyle(ink, _fontSize, _fontFamily, _bold, _italic, _interpreter);
         Size2D textSize = context.MeasureText(_text, style);
 
         Rect2D box;

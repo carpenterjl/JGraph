@@ -460,6 +460,26 @@ internal static class JgsGraphicsProperties
 
             PropertyInfo captured = info;
             bool writable = captured.SetMethod is { IsPublic: true };
+
+            // A colour that is allowed to be absent is MATLAB's 'none', and every object that has one
+            // spells it that way: EdgeColor, FaceColor, a marker's fill. Reflection reached these
+            // already but read them through the plain colour bridge, so 'none' came back as [] and
+            // could not be written at all — set(p, 'EdgeColor', 'none') is one of the two or three
+            // most-typed lines in MATLAB graphics. Naming the nullable case here fixes every such
+            // property on every kind at once, and a colour that is *not* nullable still refuses the
+            // word, because on those there is nothing for it to mean.
+            if (Nullable.GetUnderlyingType(captured.PropertyType) == typeof(Color))
+            {
+                table[captured.Name] = new GraphicsProperty(
+                    captured.Name,
+                    entry => OptionalColorRow((Color?)captured.GetValue(entry.Target)),
+                    writable
+                        ? (entry, value, line, col) => captured.SetValue(
+                            entry.Target, NoneOrColor(value, line, col, captured.Name))
+                        : null);
+                continue;
+            }
+
             table[captured.Name] = new GraphicsProperty(
                 captured.Name,
                 entry => ValueBridge.ToValue(captured.GetValue(entry.Target)),
@@ -805,6 +825,22 @@ internal static class JgsGraphicsProperties
                 ? Grid(grid)
                 : Row(((SurfacePlot)entry.Target).Y));
             Put(table, "ZData", entry => Grid(((SurfacePlot)entry.Target).Z));
+
+            // A surface's two colours are the one place where an absent colour does not mean 'none':
+            // null there means 'take it from the colormap', which MATLAB spells 'flat'. Whether the
+            // faces or the edges are drawn at all is the style, so that is what 'none' writes and
+            // what it is read back from — set(s, 'FaceColor', 'none') on a surf turns it into a mesh
+            // and set(s, 'EdgeColor', 'none') turns a surf into a filled sheet, which is exactly the
+            // pair of things those two lines mean in MATLAB. Giving either one a real colour brings
+            // its half back, so the round trip closes.
+            AddSurfaceColor(table, "FaceColor",
+                surface => surface.FaceColor,
+                (surface, colour) => surface.FaceColor = colour,
+                SurfaceStyle.Wireframe);
+            AddSurfaceColor(table, "EdgeColor",
+                surface => surface.EdgeColor,
+                (surface, colour) => surface.EdgeColor = colour,
+                SurfaceStyle.Filled);
         }
 
         if (typeof(ContourPlot).IsAssignableFrom(type))
@@ -1253,7 +1289,9 @@ internal static class JgsGraphicsProperties
             AddSameColor(table, "Color", "FaceColor",
                 entry => ((PatchPlot)entry.Target).FaceColor ?? JgsBuiltins.PaletteColorFor((PlotObject)entry.Target),
                 (entry, color) => ((PatchPlot)entry.Target).FaceColor = color,
-                "patch");
+                "patch",
+                entry => ((PatchPlot)entry.Target).FaceVisible,
+                (entry, on) => ((PatchPlot)entry.Target).FaceVisible = on);
         }
 
         if (typeof(ContourPlot).IsAssignableFrom(type))
@@ -1379,6 +1417,16 @@ internal static class JgsGraphicsProperties
                 entry => JgsValue.Str(((TextAnnotation)entry.Target).FontFamily),
                 (entry, value, line, col) => ((TextAnnotation)entry.Target).FontFamily =
                     JgsBuiltins.StrOf("FontName", value, line, col));
+
+            // Reflection would reach the enum under its own name and answer 'tex' either way, but
+            // MATLAB's three words are the property's whole vocabulary and a wrong one should say so
+            // by name rather than by listing the members of a C# type.
+            Put(table, "Interpreter",
+                entry => JgsValue.Str(
+                    JgsBuiltins.InterpreterWord(((TextAnnotation)entry.Target).Interpreter)),
+                (entry, value, line, col) => ((TextAnnotation)entry.Target).Interpreter =
+                    JgsBuiltins.ParseInterpreter(
+                        "text", JgsBuiltins.StrOf("Interpreter", value, line, col), line, col));
             Put(table, "BackgroundColor",
                 entry => OptionalColorRow(((TextAnnotation)entry.Target).Background),
                 (entry, value, line, col) => ((TextAnnotation)entry.Target).Background =
@@ -1510,6 +1558,67 @@ internal static class JgsGraphicsProperties
     private static (Point2D A, Point2D B) Corners(Point2D a, Point2D b) => (a, b);
 
     private static Point2D Anchor(Point2D a, Point2D b) => new(a.X, System.Math.Max(a.Y, b.Y));
+
+    /// <summary>
+    /// One half of a surface — its faces or its edges — under MATLAB's reading of the two colour
+    /// properties. <paramref name="without"/> is the style that drops that half, which is what the
+    /// word 'none' writes; 'flat' and 'interp' hand the colouring back to the colormap, and a real
+    /// colour brings the half back if it had been dropped.
+    /// </summary>
+    private static void AddSurfaceColor(
+        IDictionary<string, GraphicsProperty> table,
+        string name,
+        Func<SurfacePlot, Color?> read,
+        Action<SurfacePlot, Color?> write,
+        SurfaceStyle without)
+    {
+        Put(table, name,
+            // Reading answers the colour or nothing, which is what a surface here has always said and
+            // what the shipped scripts test against: an unset colour means 'take it from the
+            // colormap'. MATLAB would say 'flat' for that and 'none' for a half that is not drawn,
+            // and this is the one corner of M72 where the older spelling was kept rather than
+            // replaced -- see the divergence note. Writing takes MATLAB's words either way, which is
+            // the half that was reported and the half a script actually needs.
+            entry => read((SurfacePlot)entry.Target) is { } chosen ? ColorRow(chosen) : JgsValue.Array([]),
+            (entry, value, line, col) =>
+            {
+                var surface = (SurfacePlot)entry.Target;
+                if (value.Type == JgsType.String)
+                {
+                    string word = value.AsString;
+                    if (word.Equals("none", StringComparison.OrdinalIgnoreCase))
+                    {
+                        surface.Style = without;
+                        return;
+                    }
+
+                    // 'flat' and 'interp' both hand the colouring back to the colormap; they differ
+                    // only in whether a cell's corners are blended, which is the shading.
+                    if (word.Equals("flat", StringComparison.OrdinalIgnoreCase)
+                        || word.Equals("interp", StringComparison.OrdinalIgnoreCase))
+                    {
+                        write(surface, null);
+                        surface.Shading = word.Equals("interp", StringComparison.OrdinalIgnoreCase)
+                            ? SurfaceShading.Interp
+                            : SurfaceShading.Flat;
+                        Restore(surface, without);
+                        return;
+                    }
+                }
+
+                write(surface, JgsBuiltins.OptionColor(value, line, col, name));
+                Restore(surface, without);
+            });
+
+        // Naming a colour for a half that is not being drawn asks for it back.
+        static void Restore(SurfacePlot surface, SurfaceStyle without)
+        {
+            if (surface.Style == without)
+            {
+                surface.Style = SurfaceStyle.FilledWithWireframe;
+            }
+        }
+    }
 
     private static JgsValue OptionalColorRow(Color? color) =>
         color is { } present ? ColorRow(present) : JgsValue.Str("none");
@@ -1789,19 +1898,39 @@ internal static class JgsGraphicsProperties
             });
 
     /// <summary>Two spellings of one colour — MATLAB's <c>Color</c> and <c>FaceColor</c> on filled shapes.</summary>
+    /// <summary>
+    /// One colour under two spellings. <paramref name="shown"/> and <paramref name="show"/> are the
+    /// fill's on/off switch where the object has one: MATLAB's <c>'none'</c> is not a colour but the
+    /// absence of a fill, and an object that can be unfilled says so through that flag rather than by
+    /// forgetting which colour it would use. Where they are not given the word still refuses, because
+    /// on such an object there is nothing for it to mean.
+    /// </summary>
     private static void AddSameColor(
         IDictionary<string, GraphicsProperty> table,
         string first,
         string second,
         Func<JgsHandleEntry, Color> read,
         Action<JgsHandleEntry, Color> write,
-        string what)
+        string what,
+        Func<JgsHandleEntry, bool>? shown = null,
+        Action<JgsHandleEntry, bool>? show = null)
     {
         foreach (string name in new[] { first, second })
         {
             Put(table, name,
-                entry => ColorRow(read(entry)),
-                (entry, value, line, col) => write(entry, JgsBuiltins.OptionColor(value, line, col, what)));
+                entry => shown is not null && !shown(entry) ? JgsValue.Str("none") : ColorRow(read(entry)),
+                (entry, value, line, col) =>
+                {
+                    if (show is not null && value.Type == JgsType.String
+                        && value.AsString.Equals("none", StringComparison.OrdinalIgnoreCase))
+                    {
+                        show(entry, false);
+                        return;
+                    }
+
+                    write(entry, JgsBuiltins.OptionColor(value, line, col, what));
+                    show?.Invoke(entry, true);
+                });
         }
     }
 

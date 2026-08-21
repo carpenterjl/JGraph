@@ -660,7 +660,7 @@ public static class JgsBuiltinCatalog
         // --- Image processing -------------------------------------------------------------------
         Add("imread", "Reads an image file (PNG/JPEG/BMP/GIF/ICO/WEBP) into an image value; a second argument picks a frame.", P("path"), Opt("frame"));
         Add("imfinfo", "File facts about an image without loading it for use: Filename, FileSize, Format, Width, Height, BitDepth, ColorType.", P("path"));
-        Add("imwrite", "Writes an image to a file; the extension (.png/.jpg/.bmp/.webp) selects the format. Options: 'Quality', 'BitDepth', 'Alpha'.", P("image"), P("path"), Opt("options"));
+        Add("imwrite", "Writes an image to a file; the extension (.png/.jpg/.bmp/.webp/.gif) selects the format. imwrite(X, map, path) writes an indexed picture. Options: 'Quality', 'BitDepth', 'Alpha', and for GIF 'WriteMode' ('overwrite'/'append'), 'DelayTime', 'LoopCount'.", P("image"), P("path"), Opt("options"));
         Add("imshow", "Displays an image with equal aspect and no axes decoration; a [low high] range (or []) sets the display window.", P("image"), Opt("range"));
         Add("im2double", "Converts an image to the double class, or scales a matrix into [0, 1].", P("image"));
         Add("im2single", "Converts an image to the single class.", P("image"));
@@ -1446,7 +1446,7 @@ public static class JgsBuiltinCatalog
         Add("any", "Whether at least one element is truthy, over one dimension, several, or 'all'.", P("array"), Opt("dim"));
         Add("all", "Whether every element is truthy, over one dimension, several, or 'all'.", P("array"), Opt("dim"));
         Add("concat", "One array from arrays and scalars, in order: concat(a, b), concat(a, 5).", P("first"), P("second"));
-        Add("slice", "Elements [start, stop) by 0-based index; stop defaults to the array length.", P("array"), P("start"), Opt("stop"));
+        Add("slice", "In JGS, elements [start, stop) by 0-based index; stop defaults to the array length. In MATLAB, coloured planes cut through a volume: slice(V, sx, sy, sz) or slice(X, Y, Z, V, sx, sy, sz), any list [] for none.", P("array"), P("start"), Opt("stop"));
         Add("indexof", "0-based index of the first element equal to value, or -1.", P("array"), P("value"));
         Add("reverse", "A reversed copy of an array.", P("array"));
         Add("isnan", "Whether x is NaN, element-wise over arrays.", P("x"));
@@ -1581,7 +1581,7 @@ public static class JgsBuiltinCatalog
         Add("validateattributes", "Errors unless the value has one of the named classes and all of the named attributes.", P("value"), P("classes"), P("attributes"), Opt("name"));
 
         // --- Figure setup and plotting -------------------------------------------------------------
-        Add("figure", "Starts a new figure (or selects figure n) and returns its handle (a figure number, so it starts at 1).", Opt("n"));
+        Add("figure", "Starts a new figure (or selects figure n) and returns its handle (a figure number, so it starts at 1). Any figure property may be set at construction: figure('Position', [x y w h], 'Name', 'title').", Opt("n"), Opt("options"));
         Add("subplot", "Selects cell index of a rows-by-cols axes grid (a grid cell number, so 1-based, row-major) and returns a handle on it.", P("rows"), P("cols"), P("index"));
         Add("close", "Closes the current figure, figure n, or every figure with close all; a trailing 'force' skips CloseRequestFcn.", Opt("n"), Opt("force"));
         Add("closereq", "The default close a CloseRequestFcn opts back into: deletes the callback's figure without asking again.");
@@ -1680,15 +1680,15 @@ public static class JgsBuiltinCatalog
         Add("xlim", "The x-axis range: xlim([0 10]), xlim(0, 10), xlim('auto'), xlim('manual'), or xlim to read it back.", Opt("ax"), Opt("limits"), Opt("max"));
         Add("ylim", "The range of the active y ruler: ylim([0 10]), ylim(0, 10), ylim('auto'), ylim('manual'), or ylim to read it back.", Opt("ax"), Opt("limits"), Opt("max"));
         Add("yyaxis", "Makes one side's y ruler active, so the label, limits, ticks, and the plots drawn next belong to it: yyaxis left or yyaxis right.", P("side"));
-        Add("grid", "Turns grid lines on (default) or off.", Opt("on"));
+        Add("grid", "Turns grid lines on (default) or off; 'minor' toggles the minor lines instead.", Opt("on"));
         Add("hold", "Keeps existing series when plotting more (default on).", Opt("on"));
         Add("legend", "Shows the legend, named by a list of series names or built from a vector of line handles, with an optional 'Location'.", P("names"), Opt("location"));
         Add("linkaxes", "Links a vector of axes handles so they pan and zoom together along 'x', 'y', or 'xy'.", P("axes"), Opt("which"));
         Add("show", "Shows the current figure (or figure fig) in its own window.", Opt("fig"));
 
         // --- 3D surfaces, contours, and images -------------------------------------------------
-        Add("meshgrid", "Returns [X, Y] coordinate matrices over the x and y vectors: let [X, Y] = meshgrid(x, y).", P("x"), P("y"));
-        Add("surf", "Colormap-filled 3D surface of matrix z: surf(z) or surf(x, y, z). Drag to rotate.", P("x"), P("y"), P("z"));
+        Add("meshgrid", "Returns [X, Y] coordinate matrices over the x and y vectors: let [X, Y] = meshgrid(x, y). One vector means the same one per output asked for, so [X, Y, Z] = meshgrid(v) is a cube.", P("x"), Opt("y"), Opt("z"));
+        Add("surf", "Colormap-filled 3D surface of matrix z: surf(z) or surf(x, y, z), then any surface properties as name/value pairs — 'FaceAlpha', 'EdgeColor', 'FaceColor'. Drag to rotate.", P("x"), P("y"), P("z"), Opt("options"));
         Add("mesh", "Wireframe 3D surface of matrix z: mesh(z) or mesh(x, y, z).", P("x"), P("y"), P("z"));
         Add("meshc", "Wireframe 3D surface with contour lines projected on the floor.", P("x"), P("y"), P("z"));
         Add("contour", "Iso-line contours at auto (or explicit) levels: contour(z), contour(z, levels), or contour(x, y, z, levels).", P("x"), P("y"), P("z"), Opt("levels"));
@@ -1788,7 +1788,7 @@ public static class JgsBuiltinCatalog
         Add("interp3", "A volume read at points that need not be on its grid: interp3(X, Y, Z, V, xq, yq, zq).", P("V"), P("xq"), P("yq"), P("zq"));
         Add("stream2", "The traced points of streamlines through a plane field: verts = stream2(X, Y, U, V, sx, sy, [step maxverts]).", P("U"), P("V"), P("sx"), P("sy"));
         Add("stream3", "The traced points of streamlines through a field in space: verts = stream3(X, Y, Z, U, V, W, sx, sy, sz, [step maxverts]).", P("U"), P("V"), P("W"), P("sx"), P("sy"), P("sz"));
-        Add("streamline", "Streamlines drawn: streamline(verts) from traced points, or streamline(X, Y, Z, U, V, W, sx, sy, sz) to trace them first.", P("verts"));
+        Add("streamline", "Streamlines drawn: streamline(verts) from traced points, or a field to trace first — streamline(X, Y, U, V, sx, sy) in a plane, streamline(X, Y, Z, U, V, W, sx, sy, sz) in space, either with the grid left out.", P("verts"));
         Add("streamslice", "Streamlines started on a lattice over a plane field, so no starting points need choosing: streamslice(X, Y, U, V, density).", P("U"), P("V"), Opt("density"));
         Add("streamribbon", "A band along each streamline, turning the way the field turns: streamribbon(X, Y, Z, U, V, W, sx, sy, sz, width).", P("U"), P("V"), P("W"), P("sx"), P("sy"), P("sz"));
         Add("streamtube", "A round tube along each streamline, widening where the field spreads: streamtube(X, Y, Z, U, V, W, sx, sy, sz, scale).", P("U"), P("V"), P("W"), P("sx"), P("sy"), P("sz"));

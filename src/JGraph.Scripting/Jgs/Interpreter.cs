@@ -864,6 +864,16 @@ internal sealed partial class Interpreter
             return value.Display();
         }
 
+        // A matrix is echoed by the same formatter disp uses, because its rows are the whole point of
+        // it: the budgeted run below walks elements in column-major order and would show
+        // [3 2 1 0; 4 5 6 7] as [3, 4, 2, 5, 1, 6, 0, 7], which is not the thing that was typed.
+        // That formatter caps itself at a thousand elements and answers '[RxC matrix]' past it, so
+        // echoing a large one stays bounded the same way this does.
+        if (value.IsShaped)
+        {
+            return value.Display();
+        }
+
         const int Budget = 100;
         int count = value.ArrayLength;
         var sb = new StringBuilder("[");
@@ -5059,6 +5069,22 @@ internal sealed partial class Interpreter
 
     private JgsValue NumericBinary(JgsValue left, JgsValue right, Func<double, double, double> op, string symbol, int line, int column, Func<Complex, Complex, Complex>? complexOp = null)
     {
+        // A picture is a matrix of readings, and MATLAB has no other kind: 1 - I after a mat2gray is
+        // ordinary arithmetic there and refused here until M72, so chaining an image-processing
+        // result into plain maths needed a cast MATLAB never asks for. Reading it as numbers at the
+        // operator rather than at every verb is what makes the whole family compose. A picture too
+        // large to box declines and the refusal below still names the types, which is the honest
+        // answer for an expression that would otherwise allocate a hundred million boxes.
+        if (left.Type == JgsType.Image && JgsBuiltins.TryNumbersOf(left, Dialect, out JgsValue leftNumbers))
+        {
+            left = leftNumbers;
+        }
+
+        if (right.Type == JgsType.Image && JgsBuiltins.TryNumbersOf(right, Dialect, out JgsValue rightNumbers))
+        {
+            right = rightNumbers;
+        }
+
         if (IsNumericScalar(left) && IsNumericScalar(right))
         {
             return JgsValue.Number(op(left.AsNumber, right.AsNumber));
