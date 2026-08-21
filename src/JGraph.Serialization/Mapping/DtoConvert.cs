@@ -1,4 +1,4 @@
-using JGraph.Core.Data;
+﻿using JGraph.Core.Data;
 using JGraph.Core.Drawing;
 using JGraph.Core.Primitives;
 using JGraph.Serialization.Dto;
@@ -28,9 +28,11 @@ internal static class DtoConvert
 
     public static LineStyle ToLineStyle(LineStyleDto d) => new(d.Color, d.Width, d.Dash, d.Cap, d.Join);
 
-    public static TextStyleDto ToDto(TextStyle s) => new(s.Color, s.FontSize, s.FontFamily, s.Bold, s.Italic);
+    public static TextStyleDto ToDto(TextStyle s) =>
+        new(s.Color, s.FontSize, s.FontFamily, s.Bold, s.Italic, s.Antialias);
 
-    public static TextStyle ToTextStyle(TextStyleDto d) => new(d.Color, d.FontSize, d.FontFamily, d.Bold, d.Italic);
+    public static TextStyle ToTextStyle(TextStyleDto d) =>
+        new(d.Color, d.FontSize, d.FontFamily, d.Bold, d.Italic, antialias: d.Antialias);
 
     /// <summary>Series above this point count persist as packed base64 doubles (format v4+).</summary>
     internal const int PackedSeriesThreshold = 10_000;

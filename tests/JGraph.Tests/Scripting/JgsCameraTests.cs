@@ -1,4 +1,4 @@
-using JGraph.Api;
+﻿using JGraph.Api;
 using JGraph.Core.Model;
 using JGraph.Core.Primitives;
 using JGraph.Maths.Transforms;
@@ -219,11 +219,12 @@ public class JgsCameraTests : IDisposable
     }
 
     /// <summary>
-    /// <c>daspect([1 1 1])</c> is the 3D reading of "axis equal": the box sides come out proportional
-    /// to the data spans, so one unit is the same length on every axis.
+    /// <c>daspect([1 1 1])</c> is the 3D reading of "axis equal". Since M73 the ratio is stored on
+    /// the axes and the renderer shapes the box from the spans every frame, so the equal-units
+    /// promise survives a later limit change instead of freezing the box it happened to make.
     /// </summary>
     [Fact]
-    public async Task Daspect_MakesTheBoxProportionalToTheData()
+    public async Task Daspect_StoresTheRatioAndReadsItBack()
     {
         await Succeeds("""
             surf([0, 10], [0, 5], [[0, 0], [0, 1]])
@@ -231,11 +232,14 @@ public class JgsCameraTests : IDisposable
             ylim(0, 5)
             zlim(0, 1)
             daspect([1, 1, 1])
+            disp(daspect())
             """);
 
-        Vector3D box = JG.Gca().PlotBoxAspect;
-        Assert.Equal(2, box.X / box.Y, 6);
-        Assert.Equal(10, box.X / box.Z, 6);
+        Assert.Equal(new Vector3D(1, 1, 1), JG.Gca().DataAspectRatio);
+
+        // The box itself is untouched — pbaspect still answers its own cube — because the two
+        // aspects clear each other and the last writer here was daspect.
+        Assert.Equal(new Vector3D(1, 1, 1), JG.Gca().PlotBoxAspect);
     }
 
     [Fact]

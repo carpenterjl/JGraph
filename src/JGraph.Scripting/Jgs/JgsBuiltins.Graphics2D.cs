@@ -1,4 +1,4 @@
-using JGraph.Api;
+﻿using JGraph.Api;
 using JGraph.Core.Drawing;
 using JGraph.Core.Model;
 using JGraph.Core.Primitives;
@@ -117,7 +117,10 @@ internal static partial class JgsBuiltins
             IReadOnlyList<AreaPlot> created = JG.Area(xs, columns);
             foreach (AreaPlot plot in created)
             {
-                plot.FaceColor ??= PaletteColorFor(plot);
+                if (plot.FaceColor is null)
+                {
+                    SeatSeries(plot);
+                }
                 if (baseValue is { } floor)
                 {
                     plot.BaseValue = floor;
@@ -233,7 +236,15 @@ internal static partial class JgsBuiltins
             IReadOnlyList<BarPlot> created = JG.Bar(xs, columns, stacked: style == "stacked");
             foreach (BarPlot plot in created)
             {
-                plot.FillColor = color ?? PaletteColorFor(plot);
+                if (color is { } named)
+                {
+                    plot.FillColor = named;
+                }
+                else
+                {
+                    SeatSeries(plot);
+                }
+
                 plot.Horizontal = horizontal;
                 if (width is { } fraction)
                 {
@@ -1315,7 +1326,7 @@ internal static partial class JgsBuiltins
         }
 
         ScatterPlot plot = JG.Scatter(xs, ys);
-        plot.Color = PaletteColorFor(plot);
+        SeatSeries(plot);
 
         // The spread the verb starts with, set before the options so that a call naming XJitter has
         // the last word over the verb that implied one.
@@ -1493,7 +1504,7 @@ internal static partial class JgsBuiltins
         }
 
         ScatterPlot plot = JG.BubbleChart(xs, ys, sizes);
-        Color seriesColor = PaletteColorFor(plot);
+        Color seriesColor = SeatSeries(plot).Color;
         plot.Color = seriesColor;
 
         // MATLAB draws bubbles part-transparent by default, and it is not a decoration: overlapping

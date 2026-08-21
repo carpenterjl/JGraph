@@ -1,3 +1,4 @@
+﻿using JGraph.Core.Drawing;
 using JGraph.Core.Model;
 using JGraph.Core.Primitives;
 using JGraph.Serialization.Dto;
@@ -178,6 +179,24 @@ internal static class FigureMapper
         dto.ColorOrder = axes.ColorOrder is { } order ? [.. order] : null;
         dto.PlotBoxAspect = new Point3Dto(
             axes.PlotBoxAspect.X, axes.PlotBoxAspect.Y, axes.PlotBoxAspect.Z);
+        dto.Layer = axes.Layer == AxesLayer.Bottom ? null : axes.Layer.ToString();
+        dto.LineWidth = axes.LineWidth;
+        dto.BoxStyle = axes.BoxStyle == Box3DStyle.Back ? null : axes.BoxStyle.ToString();
+        dto.AmbientLightColor = axes.AmbientLightColor == Colors.White ? null : axes.AmbientLightColor;
+        dto.TitleFontSizeMultiplier = axes.TitleFontSizeMultiplier;
+        dto.LabelFontSizeMultiplier = axes.LabelFontSizeMultiplier;
+        dto.TitleHorizontalAlignment = axes.TitleHorizontalAlignment == TitleHorizontalAlignment.Center
+            ? null
+            : axes.TitleHorizontalAlignment.ToString();
+        dto.ColorScale = axes.ColorScale == ColorScaleType.Linear ? null : axes.ColorScale.ToString();
+        dto.Colormap = axes.Colormap is { } map ? DtoConvert.ToDto(map) : null;
+        dto.ColorLimits = axes.ColorLimits is { } colorLimits ? [colorLimits.Min, colorLimits.Max] : null;
+        dto.DataAspectRatio = axes.DataAspectRatio is { } aspect
+            ? new Point3Dto(aspect.X, aspect.Y, aspect.Z)
+            : null;
+        dto.LineStyleOrder = axes.LineStyleOrder is { } styles
+            ? styles.Select(static entry => new SeriesLineStyleDto(entry.Dash, entry.Marker)).ToList()
+            : null;
         return dto;
     }
 
@@ -323,6 +342,57 @@ internal static class FigureMapper
         axes.ColorOrder = dto.ColorOrder is { Count: > 0 } order ? [.. order] : null;
         axes.PlotBoxAspect = new Vector3D(
             dto.PlotBoxAspect.X, dto.PlotBoxAspect.Y, dto.PlotBoxAspect.Z);
+
+        if (Enum.TryParse(dto.Layer, out AxesLayer layer))
+        {
+            axes.Layer = layer;
+        }
+
+        axes.LineWidth = dto.LineWidth;
+        if (Enum.TryParse(dto.BoxStyle, out Box3DStyle boxStyle))
+        {
+            axes.BoxStyle = boxStyle;
+        }
+
+        if (dto.AmbientLightColor is { } ambient)
+        {
+            axes.AmbientLightColor = ambient;
+        }
+
+        axes.TitleFontSizeMultiplier = dto.TitleFontSizeMultiplier;
+        axes.LabelFontSizeMultiplier = dto.LabelFontSizeMultiplier;
+        if (Enum.TryParse(dto.TitleHorizontalAlignment, out TitleHorizontalAlignment titleAlignment))
+        {
+            axes.TitleHorizontalAlignment = titleAlignment;
+        }
+
+        if (Enum.TryParse(dto.ColorScale, out ColorScaleType colorScale))
+        {
+            axes.ColorScale = colorScale;
+        }
+
+        axes.Colormap = dto.Colormap is { } mapDto ? DtoConvert.ToColormap(mapDto) : null;
+        axes.ColorLimits = dto.ColorLimits is { Length: 2 } colorLimits
+            ? new DataRange(colorLimits[0], colorLimits[1])
+            : null;
+        if (dto.DataAspectRatio is { } aspectDto)
+        {
+            axes.DataAspectRatio = new Vector3D(aspectDto.X, aspectDto.Y, aspectDto.Z);
+        }
+
+        axes.LineStyleOrder = dto.LineStyleOrder is { Count: > 0 } styleDtos
+            ? styleDtos.Select(static entry => new SeriesLineStyle(entry.Dash, entry.Marker)).ToArray()
+            : null;
+
+        // A held figure keeps cycling from where it stopped: the next seat is one past the highest
+        // seat any reloaded plot holds, and at least the plot count for documents without seats.
+        int nextSeat = axes.Plots.Count;
+        foreach (PlotObject plot in axes.Plots)
+        {
+            nextSeat = System.Math.Max(nextSeat, plot.SeriesIndex + 1);
+        }
+
+        axes.NextSeriesIndex = nextSeat;
         return axes;
     }
 
@@ -366,6 +436,10 @@ internal static class FigureMapper
         TickLabelAngle = axis.TickLabelAngle,
         LabelStyle = DtoConvert.ToDto(axis.LabelStyle),
         TickLabelStyle = DtoConvert.ToDto(axis.TickLabelStyle),
+        TickDirection = axis.TickDirection?.ToString(),
+        TickLength = axis.TickLength is { } tickLength ? [tickLength.X, tickLength.Y] : null,
+        RulerColor = axis.RulerColor,
+        LimitMethod = axis.LimitMethod == LimitMethod.Padded ? null : axis.LimitMethod.ToString(),
     };
 
     private static AxisModel ToModel(AxisDto dto)
@@ -409,6 +483,18 @@ internal static class FigureMapper
         {
             axis.TickLabelStyle = DtoConvert.ToTextStyle(dto.TickLabelStyle);
         }
+
+        // Null means automatic for all four, which is also what an older document says by omission.
+        axis.TickDirection = Enum.TryParse(dto.TickDirection, out TickDirection tickDirection)
+            ? tickDirection
+            : null;
+        axis.TickLength = dto.TickLength is { Length: 2 } tickLength
+            ? new Vector2D(tickLength[0], tickLength[1])
+            : null;
+        axis.RulerColor = dto.RulerColor;
+        axis.LimitMethod = Enum.TryParse(dto.LimitMethod, out LimitMethod limitMethod)
+            ? limitMethod
+            : LimitMethod.Padded;
     }
 
     private static ColorbarDto ToDto(ColorbarModel colorbar) => new()
@@ -440,6 +526,16 @@ internal static class FigureMapper
         Visible = grid.Visible,
         ShowMajor = grid.ShowMajor,
         ShowMinor = grid.ShowMinor,
+        ShowMajorX = grid.ShowMajorX,
+        ShowMajorY = grid.ShowMajorY,
+        ShowMajorZ = grid.ShowMajorZ,
+        ShowMinorX = grid.ShowMinorX,
+        ShowMinorY = grid.ShowMinorY,
+        ShowMinorZ = grid.ShowMinorZ,
+        MajorColorManual = grid.MajorColorManual,
+        MinorColorManual = grid.MinorColorManual,
+        MajorAlphaManual = grid.MajorAlphaManual,
+        MinorAlphaManual = grid.MinorAlphaManual,
         MajorLineStyle = DtoConvert.ToDto(grid.MajorLineStyle),
         MinorLineStyle = DtoConvert.ToDto(grid.MinorLineStyle),
     };
@@ -447,8 +543,18 @@ internal static class FigureMapper
     private static void ApplyGrid(GridModel grid, GridDto dto)
     {
         grid.Visible = dto.Visible;
-        grid.ShowMajor = dto.ShowMajor;
-        grid.ShowMinor = dto.ShowMinor;
+
+        // A document from before the per-direction flags speaks only through the aggregates.
+        grid.ShowMajorX = dto.ShowMajorX ?? dto.ShowMajor;
+        grid.ShowMajorY = dto.ShowMajorY ?? dto.ShowMajor;
+        grid.ShowMajorZ = dto.ShowMajorZ ?? dto.ShowMajor;
+        grid.ShowMinorX = dto.ShowMinorX ?? dto.ShowMinor;
+        grid.ShowMinorY = dto.ShowMinorY ?? dto.ShowMinor;
+        grid.ShowMinorZ = dto.ShowMinorZ ?? dto.ShowMinor;
+        grid.MajorColorManual = dto.MajorColorManual;
+        grid.MinorColorManual = dto.MinorColorManual;
+        grid.MajorAlphaManual = dto.MajorAlphaManual;
+        grid.MinorAlphaManual = dto.MinorAlphaManual;
         if (dto.MajorLineStyle is not null)
         {
             grid.MajorLineStyle = DtoConvert.ToLineStyle(dto.MajorLineStyle);

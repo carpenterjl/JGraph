@@ -5,7 +5,7 @@ building the object in `jgraph.exe` and asking it, not from reading the source: 
 table is built by reflection over the model's CLR types, so what an object answers to is a
 runtime fact.
 
-**747 of 1394 documented properties** are answered across the
+**852 of 1394 documented properties** are answered across the
 28 object kinds that could be built and asked. The other
 0 kinds are counted separately below rather than scored as zero —
 an object that cannot be reached is not the same measurement as one missing properties, and
@@ -14,8 +14,8 @@ for six times.
 
 | Kind | MATLAB class | Answered | Documented | Extra |
 |---|---|---:|---:|---:|
-| `axes` | `Axes` | 53 | 147 | 37 |
-| `polaraxes` | `PolarAxes` | 39 | 107 | 51 |
+| `axes` | `Axes` | 122 | 147 | 37 |
+| `polaraxes` | `PolarAxes` | 75 | 107 | 84 |
 | `scatter` | `Scatter` | 33 | 74 | 24 |
 | `bubblechart` | `BubbleChart` | 32 | 73 | 25 |
 | `figure` | `Figure` | 24 | 66 | 8 |

@@ -1576,7 +1576,15 @@ internal static partial class JgsBuiltins
                     case "normal":
                         JG.Gca().EqualAspect = false;
                         break;
-                    case "tight" or "auto" or "on" or "off" or "ij" or "xy" or "manual" or "padded":
+                    // tight and padded are the limit-fitting policies M73 made real; they land on
+                    // every ruler so the whole box tightens at once, as MATLAB's word does.
+                    case "tight":
+                        SetLimitMethod(JG.Gca(), Core.Model.LimitMethod.Tight);
+                        break;
+                    case "padded":
+                        SetLimitMethod(JG.Gca(), Core.Model.LimitMethod.Padded);
+                        break;
+                    case "auto" or "on" or "off" or "ij" or "xy" or "manual":
                         break; // accepted; auto limits and visible frames are already the defaults
 
                     // vis3d stops MATLAB's box from being refitted as the camera turns. This
@@ -2766,11 +2774,25 @@ internal static partial class JgsBuiltins
     private static void ApplyPlotOptions(
         string verb, List<LinePlot> created, List<(string Name, JgsValue Value)> options, int line, int col)
     {
-        // Every series gets the colour it will be drawn in written down now, so a script can read it
-        // back off the handle and match a second series to it.
+        // Every auto-coloured series takes a seat in the axes' cycle instead of having its colour
+        // written down: the renderer resolves the seat at draw time, so a later colororder retints
+        // it, while reading Color off the handle still answers the seat's colour. A non-default
+        // LineStyleOrder styles the seat's lap of the palette, but never overrides a linespec.
         foreach (LinePlot plot in created)
         {
-            plot.Color ??= PaletteColorFor(plot);
+            if (plot.Color is not null)
+            {
+                continue;
+            }
+
+            SeriesSlot seat = SeatSeries(plot);
+            if (plot.Axes?.LineStyleOrder is not null
+                && plot.DashStyle == DashStyle.Solid
+                && plot.Marker == MarkerType.None)
+            {
+                plot.DashStyle = seat.Style.Dash;
+                plot.Marker = seat.Style.Marker;
+            }
         }
 
         foreach ((string name, JgsValue value) in options)
@@ -4981,5 +5003,23 @@ internal static partial class JgsBuiltins
         }
 
         return result;
+    }
+
+    /// <summary>Points every ruler of an axes at one limit-fitting policy and refits at once.</summary>
+    private static void SetLimitMethod(Core.Model.AxesModel axes, Core.Model.LimitMethod method)
+    {
+        foreach (Core.Model.AxisModel ruler in axes.XAxes)
+        {
+            ruler.LimitMethod = method;
+        }
+
+        foreach (Core.Model.AxisModel ruler in axes.YAxes)
+        {
+            ruler.LimitMethod = method;
+        }
+
+        axes.ZAxis.LimitMethod = method;
+        axes.RAxis.LimitMethod = method;
+        axes.RecomputeDataBounds();
     }
 }

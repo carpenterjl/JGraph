@@ -68,3 +68,60 @@ public enum AxisScaleType
     /// <summary>Reserved: maps discrete categories to evenly spaced positions. Not yet implemented.</summary>
     Category,
 }
+
+/// <summary>
+/// Whether the grid (and, with it, the tick marks) is drawn under or over the plotted content
+/// (MATLAB <c>Layer</c>). Under is the default everywhere; over is what keeps a grid readable
+/// across a filled surface or image.
+/// </summary>
+public enum AxesLayer
+{
+    Bottom,
+    Top,
+}
+
+/// <summary>
+/// How much of the 3D coordinate box is outlined (MATLAB <c>BoxStyle</c>): only the three far
+/// faces' edges, or the full twelve-edge box.
+/// </summary>
+public enum Box3DStyle
+{
+    Back,
+    Full,
+}
+
+/// <summary>Which side of the axis line the tick marks grow from (MATLAB <c>TickDir</c>).</summary>
+public enum TickDirection
+{
+    In,
+    Out,
+    Both,
+}
+
+/// <summary>How colormap values are spread over the color limits (MATLAB <c>ColorScale</c>).</summary>
+public enum ColorScaleType
+{
+    Linear,
+    Log,
+}
+
+/// <summary>Where the axes title sits over the plot area (MATLAB <c>TitleHorizontalAlignment</c>).</summary>
+public enum TitleHorizontalAlignment
+{
+    Center,
+    Left,
+    Right,
+}
+
+/// <summary>
+/// How an auto-scaling ruler turns its data extent into limits (MATLAB <c>XLimitMethod</c>).
+/// Padded — the JGraph default, which every existing figure was fitted under — leaves a margin of
+/// <see cref="AxesModel.AutoScalePadding"/> around the data; Tight puts the limits exactly at the
+/// data; Tickaligned pushes them outward to round numbers a tick would land on.
+/// </summary>
+public enum LimitMethod
+{
+    Padded,
+    Tight,
+    Tickaligned,
+}

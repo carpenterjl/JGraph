@@ -1,4 +1,4 @@
-using JGraph.Core.Drawing;
+﻿using JGraph.Core.Drawing;
 using JGraph.Core.Model;
 using JGraph.Objects;
 using JGraph.Objects.Engineering;
@@ -736,6 +736,7 @@ internal static class PlotMapper
         dto.HitTestVisible = plot.HitTestVisible;
         dto.XAxisIndex = plot.XAxisIndex;
         dto.YAxisIndex = plot.YAxisIndex;
+        dto.SeriesIndex = plot.SeriesIndex;
     }
 
     private static void ApplyCommon(PlotDto dto, PlotObject plot)
@@ -748,6 +749,7 @@ internal static class PlotMapper
         plot.HitTestVisible = dto.HitTestVisible;
         plot.XAxisIndex = dto.XAxisIndex;
         plot.YAxisIndex = dto.YAxisIndex;
+        plot.SeriesIndex = dto.SeriesIndex;
     }
 
     /// <summary>

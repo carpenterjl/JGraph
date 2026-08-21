@@ -1,4 +1,4 @@
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using JGraph.Core.Drawing;
 using JGraph.Core.Model;
 using JGraph.Core.Primitives;
@@ -26,6 +26,7 @@ public sealed class ImagePlot : PlotObject, IDrawable
 
     private uint[]? _pixels;
     private double _builtOpacity = 1;
+    private bool _builtLogColor;
 
     /// <summary>Creates an image plot over a [rows, cols] scalar field. The array is used directly.</summary>
     public ImagePlot(double[,] values)
@@ -157,6 +158,22 @@ public sealed class ImagePlot : PlotObject, IDrawable
     }
 
     /// <inheritdoc />
+    /// <inheritdoc />
+    public override void AdoptAxesDefaults(AxesModel axes)
+    {
+        if (axes.Colormap is { } map)
+        {
+            Colormap = map;
+        }
+
+        if (axes.ColorLimits is { } limits)
+        {
+            AutoScaleColor = false;
+            ColorMin = limits.Min;
+            ColorMax = limits.Max;
+        }
+    }
+
     public override DataRange GetXDataBounds() => _xExtent;
 
     /// <inheritdoc />
@@ -172,7 +189,7 @@ public sealed class ImagePlot : PlotObject, IDrawable
             return;
         }
 
-        if (_pixels is null || _builtOpacity != Opacity)
+        if (_pixels is null || _builtOpacity != Opacity || _builtLogColor != this.LogColorScale())
         {
             BuildTile();
         }
@@ -194,6 +211,11 @@ public sealed class ImagePlot : PlotObject, IDrawable
         (double min, double max) = ResolveColorRange();
         double opacity = Opacity;
 
+        // Part of the tile's validity key: an axes switching its ColorScale must rebuild the tile,
+        // or the cached pixels silently keep the old spread.
+        bool logColor = this.LogColorScale();
+        _builtLogColor = logColor;
+
         for (int r = 0; r < rows; r++)
         {
             int srcRow = _rowZeroAtTop ? r : rows - 1 - r;
@@ -207,7 +229,7 @@ public sealed class ImagePlot : PlotObject, IDrawable
                     continue;
                 }
 
-                Color color = _colormap.Sample(v, min, max);
+                Color color = _colormap.Sample(v, min, max, logColor);
                 pixels[rowOffset + c] = color.WithOpacity(opacity).ToArgb();
             }
         }

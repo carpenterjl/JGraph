@@ -1,4 +1,4 @@
-using System.Text.Json.Serialization;
+﻿using System.Text.Json.Serialization;
 using JGraph.Core.Drawing;
 using JGraph.Objects;
 
@@ -54,6 +54,9 @@ public abstract class PlotDto
     public int XAxisIndex { get; set; }
 
     public int YAxisIndex { get; set; }
+
+    /// <summary>The seat this plot took in the series cycle, or -1 (the pre-M73 default) for none.</summary>
+    public int SeriesIndex { get; set; } = -1;
 }
 
 public sealed class LinePlotDto : PlotDto

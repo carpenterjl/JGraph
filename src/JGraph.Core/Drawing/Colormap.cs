@@ -1,4 +1,4 @@
-namespace JGraph.Core.Drawing;
+﻿namespace JGraph.Core.Drawing;
 
 /// <summary>
 /// A named, continuous mapping from a normalized scalar in [0, 1] to a <see cref="Color"/>, used by
@@ -89,6 +89,27 @@ public sealed class Colormap
     {
         double span = max - min;
         double t = System.Math.Abs(span) < double.Epsilon ? 0.5 : (value - min) / span;
+        return Sample(t);
+    }
+
+    /// <summary>
+    /// The same mapping with the axes' color scale applied (MATLAB <c>ColorScale</c>): logarithmic
+    /// spreads the decades evenly instead of the values. Limits that cannot be logged — zero or
+    /// negative — fall back to the linear spread, and a non-positive value lands on the low end.
+    /// </summary>
+    public Color Sample(double value, double min, double max, bool logScale)
+    {
+        if (!logScale || min <= 0 || max <= 0)
+        {
+            return Sample(value, min, max);
+        }
+
+        double low = System.Math.Log10(min);
+        double high = System.Math.Log10(max);
+        double span = high - low;
+        double t = value <= 0 ? 0
+            : System.Math.Abs(span) < double.Epsilon ? 0.5
+            : (System.Math.Log10(value) - low) / span;
         return Sample(t);
     }
 

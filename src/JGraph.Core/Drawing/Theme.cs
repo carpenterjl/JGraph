@@ -1,4 +1,4 @@
-using JGraph.Core.Model;
+﻿using JGraph.Core.Model;
 
 namespace JGraph.Core.Drawing;
 
@@ -162,8 +162,23 @@ public sealed class Theme : ITheme
         {
             axes.Background = AxesBackground;
             axes.TitleStyle = Restyle(axes.TitleStyle, Title, AxesTitleFontSize, BoldTitles);
-            axes.Grid.MajorLineStyle = axes.Grid.MajorLineStyle.WithColor(MajorGrid);
-            axes.Grid.MinorLineStyle = axes.Grid.MinorLineStyle.WithColor(MinorGrid);
+            // A grid color a script chose is manual and survives the theme; an automatic one
+            // follows it — which is the whole observable meaning of GridColorMode.
+            if (!axes.Grid.MajorColorManual)
+            {
+                Color major = axes.Grid.MajorAlphaManual
+                    ? MajorGrid.WithOpacity(axes.Grid.MajorLineStyle.Color.A / 255.0)
+                    : MajorGrid;
+                axes.Grid.MajorLineStyle = axes.Grid.MajorLineStyle.WithColor(major);
+            }
+
+            if (!axes.Grid.MinorColorManual)
+            {
+                Color minor = axes.Grid.MinorAlphaManual
+                    ? MinorGrid.WithOpacity(axes.Grid.MinorLineStyle.Color.A / 255.0)
+                    : MinorGrid;
+                axes.Grid.MinorLineStyle = axes.Grid.MinorLineStyle.WithColor(minor);
+            }
 
             foreach (AxisModel axis in axes.XAxes)
             {
@@ -185,5 +200,5 @@ public sealed class Theme : ITheme
 
     /// <summary>Rebuilds a text style with this theme's color, size, family, and weight (keeping italics).</summary>
     private TextStyle Restyle(TextStyle style, Color color, double fontSize, bool bold) =>
-        new(color, fontSize, FontFamily, bold, style.Italic);
+        new(color, fontSize, FontFamily, bold, style.Italic, style.Interpreter, style.Antialias);
 }

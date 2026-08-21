@@ -32,14 +32,14 @@ internal static class LegendRenderer
     /// </summary>
     public static LegendLayout? Draw(IRenderContext context, AxesModel axes, Rect2D plotArea, ITheme theme)
     {
-        IReadOnlyList<Color> palette = axes.ColorOrder ?? theme.SeriesPalette;
+        IReadOnlyList<Color> palette = SeriesPalette.Of(axes, theme);
 
         // Palette index follows draw order, never row order (see the type comment).
         var colors = new Dictionary<PlotObject, Color>();
         int colorIndex = 0;
         foreach (PlotObject plot in axes.Plots.InDrawOrder())
         {
-            colors[plot] = palette.Count > 0 ? palette[colorIndex % palette.Count] : Colors.Black;
+            colors[plot] = SeriesPalette.Resolve(palette, plot, colorIndex);
             colorIndex++;
         }
 

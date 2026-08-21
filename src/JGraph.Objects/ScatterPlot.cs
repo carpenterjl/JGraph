@@ -1,4 +1,4 @@
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using JGraph.Core.Data;
 using JGraph.Core.Drawing;
 using JGraph.Core.Model;
@@ -322,6 +322,22 @@ public sealed class ScatterPlot : XYPlot, IDrawable, ILegendItem, IColorMapped, 
     }
 
     /// <inheritdoc />
+    /// <inheritdoc />
+    public override void AdoptAxesDefaults(AxesModel axes)
+    {
+        if (axes.Colormap is { } map)
+        {
+            Colormap = map;
+        }
+
+        if (axes.ColorLimits is { } limits)
+        {
+            AutoScaleColor = false;
+            ColorMin = limits.Min;
+            ColorMax = limits.Max;
+        }
+    }
+
     public override DataRange GetXDataBounds() => Displayed.XBounds;
 
     /// <inheritdoc />
@@ -359,6 +375,7 @@ public sealed class ScatterPlot : XYPlot, IDrawable, ILegendItem, IColorMapped, 
 
         ICoordinateMapper mapper = state.Mapper;
         (double min, double max) = ResolveColorRange();
+        bool logColor = this.LogColorScale();
         Span<Point2D> one = stackalloc Point2D[1];
         for (int i = 0; i < drawn.Count; i++)
         {
@@ -369,7 +386,7 @@ public sealed class ScatterPlot : XYPlot, IDrawable, ILegendItem, IColorMapped, 
                 continue;
             }
 
-            Color point = _colorData is { } values ? _colormap.Sample(values[i], min, max) : color;
+            Color point = _colorData is { } values ? _colormap.Sample(values[i], min, max, logColor) : color;
             Color fill = _colorData is null ? _fill ?? color : point;
             one[0] = mapper.DataToPixel(x, y);
             context.DrawMarkers(one, new MarkerStyle(_marker, DiameterAt(i), fill, point, _edgeWidth), point);

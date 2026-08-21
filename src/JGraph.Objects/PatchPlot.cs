@@ -1,4 +1,4 @@
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using JGraph.Core.Drawing;
 using JGraph.Core.Model;
 using JGraph.Core.Primitives;
@@ -321,6 +321,22 @@ public sealed class PatchPlot : PlotObject, IDrawable, I3DDrawable, IHasZData, I
     public (double Min, double Max) ColorRange => ResolveColorRange();
 
     /// <inheritdoc />
+    /// <inheritdoc />
+    public override void AdoptAxesDefaults(AxesModel axes)
+    {
+        if (axes.Colormap is { } map)
+        {
+            Colormap = map;
+        }
+
+        if (axes.ColorLimits is { } limits)
+        {
+            AutoScaleColor = false;
+            ColorMin = limits.Min;
+            ColorMax = limits.Max;
+        }
+    }
+
     public override DataRange GetXDataBounds() => Vertices3D.Bounds(_x);
 
     /// <inheritdoc />
@@ -455,7 +471,14 @@ public sealed class PatchPlot : PlotObject, IDrawable, I3DDrawable, IHasZData, I
         }
 
         return new Shading3D(
-            Material, lights.AsMemory(0, count), projection.ViewDirection, normals, centroids, cube, perVertex);
+            Material,
+            lights.AsMemory(0, count),
+            projection.ViewDirection,
+            Axes?.AmbientLightColor ?? Colors.White,
+            normals,
+            centroids,
+            cube,
+            perVertex);
     }
 
     /// <summary>
@@ -487,6 +510,7 @@ public sealed class PatchPlot : PlotObject, IDrawable, I3DDrawable, IHasZData, I
         LightingModel Material,
         ReadOnlyMemory<LightSource> Lights,
         Vector3D View,
+        Color Ambient,
         Vector3D[] Normals,
         Vector3D[] Centroids,
         Vector3D[] Cube,
@@ -494,7 +518,7 @@ public sealed class PatchPlot : PlotObject, IDrawable, I3DDrawable, IHasZData, I
     {
         /// <summary>Shades a whole face by its own normal (MATLAB <c>lighting flat</c>).</summary>
         public Color Face(Color baseColor, int face) =>
-            Material.Shade(baseColor, Centroids[face], Normals[face], View, Lights.Span);
+            Material.Shade(baseColor, Centroids[face], Normals[face], View, Lights.Span, Ambient);
 
         /// <summary>
         /// Shades one vertex by the averaged normal of the faces meeting there (<c>lighting gouraud</c>),
@@ -502,7 +526,7 @@ public sealed class PatchPlot : PlotObject, IDrawable, I3DDrawable, IHasZData, I
         /// </summary>
         public Color Vertex(Color baseColor, int vertex, int face) =>
             VertexNormals is { } averaged
-                ? Material.Shade(baseColor, Cube[vertex], averaged[vertex], View, Lights.Span)
+                ? Material.Shade(baseColor, Cube[vertex], averaged[vertex], View, Lights.Span, Ambient)
                 : Face(baseColor, face);
     }
 
@@ -572,7 +596,8 @@ public sealed class PatchPlot : PlotObject, IDrawable, I3DDrawable, IHasZData, I
                 ? _colormap.Sample(
                     perVertex ? MeanOf(values, face) : values[at],
                     min,
-                    max).WithOpacity(faceOpacity)
+                    max,
+                    this.LogColorScale()).WithOpacity(faceOpacity)
                 : fallback;
 
             // Lighting shades the fill, never the outline: an edge is a line rather than a piece of
@@ -611,11 +636,13 @@ public sealed class PatchPlot : PlotObject, IDrawable, I3DDrawable, IHasZData, I
         double[] values = _colorData!;
         double faceOpacity = Opacity * _faceAlpha;
 
+        bool logColor = this.LogColorScale();
+
         Color Corner(int slot) =>
             shading is null
-                ? _colormap.Sample(values[face[slot]], min, max).WithOpacity(faceOpacity)
+                ? _colormap.Sample(values[face[slot]], min, max, logColor).WithOpacity(faceOpacity)
                 : shading.Vertex(
-                    _colormap.Sample(values[face[slot]], min, max).WithOpacity(faceOpacity), face[slot], at);
+                    _colormap.Sample(values[face[slot]], min, max, logColor).WithOpacity(faceOpacity), face[slot], at);
 
         uint pivot = Corner(0).ToArgb();
         for (int t = 0; t < triangles; t++)

@@ -1,4 +1,4 @@
-using JGraph.Core.Drawing;
+﻿using JGraph.Core.Drawing;
 
 namespace JGraph.Serialization.Dto;
 
@@ -21,7 +21,14 @@ public sealed record SizeDto(double Width, double Height);
 public sealed record LineStyleDto(Color Color, double Width, DashStyle Dash, LineCap Cap, LineJoin Join);
 
 /// <summary>A text style.</summary>
-public sealed record TextStyleDto(Color Color, double FontSize, string FontFamily, bool Bold, bool Italic);
+public sealed record TextStyleDto(
+    Color Color, double FontSize, string FontFamily, bool Bold, bool Italic, bool Antialias = true);
+
+/// <summary>
+/// One entry of an axes' line-style order (MATLAB <c>LineStyleOrder</c>). Optional everywhere it
+/// appears, so a document written before it existed reads back with the default solid cycle.
+/// </summary>
+public sealed record SeriesLineStyleDto(DashStyle Dash, MarkerType Marker);
 
 /// <summary>
 /// A 2D data series. Small series store parallel X/Y arrays as readable JSON numbers; large series

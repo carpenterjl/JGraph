@@ -1,4 +1,4 @@
-using JGraph.Core.Drawing;
+﻿using JGraph.Core.Drawing;
 using JGraph.Core.Model;
 using JGraph.Core.Primitives;
 using JGraph.Objects;
@@ -28,15 +28,36 @@ public class EqualAspectTests
     }
 
     [Fact]
-    public void FrameVisibleFalse_DrawsOneFewerRectangle()
+    public void FrameVisibleFalse_KeepsTheRulerEdgesAndDropsTheFarOnes()
     {
+        // MATLAB's box off keeps the two edges the rulers sit on; Box adds the far pair. The frame
+        // stopped being one rectangle in M73 so that each ruler's color can reach its own line.
+        FigureModel framedFigure = BuildFigure(frameVisible: true);
+        framedFigure.Axes[0].Grid.ShowMajor = false;
         var withFrame = new RecordingRenderContext(new Size2D(400, 300));
-        new FigureRenderer().Render(BuildFigure(frameVisible: true), withFrame, Theme.Light);
+        FigureRenderResult framed = new FigureRenderer().Render(framedFigure, withFrame, Theme.Light);
 
+        FigureModel openFigure = BuildFigure(frameVisible: false);
+        openFigure.Axes[0].Grid.ShowMajor = false;
         var withoutFrame = new RecordingRenderContext(new Size2D(400, 300));
-        new FigureRenderer().Render(BuildFigure(frameVisible: false), withoutFrame, Theme.Light);
+        FigureRenderResult open = new FigureRenderer().Render(openFigure, withoutFrame, Theme.Light);
 
-        Assert.Equal(withFrame.RectangleCount - 1, withoutFrame.RectangleCount);
+        static bool AtEdge(double value, double a, double b) =>
+            System.Math.Abs(value - a) < 0.001 || System.Math.Abs(value - b) < 0.001;
+
+        static int EdgeLines(RecordingRenderContext context, Rect2D area) =>
+            context.Lines.Count(l =>
+                (System.Math.Abs(l.From.Y - l.To.Y) < 0.001
+                    && AtEdge(l.From.Y, area.Top, area.Bottom)
+                    && System.Math.Abs(l.From.X - area.Left) < 0.001
+                    && System.Math.Abs(l.To.X - area.Right) < 0.001)
+                || (System.Math.Abs(l.From.X - l.To.X) < 0.001
+                    && AtEdge(l.From.X, area.Left, area.Right)
+                    && System.Math.Abs(l.From.Y - area.Top) < 0.001
+                    && System.Math.Abs(l.To.Y - area.Bottom) < 0.001));
+
+        Assert.Equal(4, EdgeLines(withFrame, framed.Axes[0].PlotArea));
+        Assert.Equal(2, EdgeLines(withoutFrame, open.Axes[0].PlotArea));
     }
 
     private static FigureModel BuildFigure(bool frameVisible)

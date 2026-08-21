@@ -99,7 +99,7 @@ public sealed class FigureRenderer
         // the one before it, and they are measured before the layout so the plot area makes room.
         IReadOnlyList<SideRuler> sideRulers = MeasureSideRulers(axes, context, theme);
 
-        DecorationMetrics metrics = MeasureDecorations(axes, context, xAxis, yAxis, xTicks, yTicks, sideRulers);
+        DecorationMetrics metrics = MeasureDecorations(axes, context, xAxis, yAxis, xTicks, yTicks, sideRulers, outer);
         AxesLayout layout = LayoutEngine.Compute(axes, outer, metrics.Margins);
         Rect2D plotArea = layout.PlotArea;
         if (plotArea.IsEmpty)
@@ -108,8 +108,14 @@ public sealed class FigureRenderer
         }
 
         // Equal aspect (polar/Smith/Nyquist): shrink to a centered square-per-unit rectangle so that
-        // circles render round. Everything below then uses the adjusted plot area consistently.
-        if (axes.EqualAspect)
+        // circles render round. Everything below then uses the adjusted plot area consistently. A
+        // stored DataAspectRatio is the same shrink with the unit lengths in its ratio — axis equal
+        // said with numbers — and wins over the flag when both are set.
+        if (axes.DataAspectRatio is { } dar && dar.X > 0 && dar.Y > 0)
+        {
+            plotArea = SquareForEqualAspect(plotArea, xAxis, yAxis, dar.X, dar.Y);
+        }
+        else if (axes.EqualAspect)
         {
             plotArea = SquareForEqualAspect(plotArea, xAxis, yAxis);
         }
@@ -171,29 +177,63 @@ public sealed class FigureRenderer
             return new AxesRenderInfo(axes, plotArea, transform, polarLegend);
         }
 
-        // Grid (below data).
-        DrawGrid(context, axes.Grid, plotArea, transform, xTicks, yTicks);
+        // Grid under or over the data as Layer says (MATLAB 'bottom'/'top').
+        if (axes.Layer == AxesLayer.Bottom)
+        {
+            DrawGrid(context, axes.Grid, plotArea, transform, xTicks, yTicks);
+        }
 
         // Plot content, clipped to the plot area.
         DrawPlots(axes, context, plotArea, theme);
+
+        if (axes.Layer == AxesLayer.Top)
+        {
+            DrawGrid(context, axes.Grid, plotArea, transform, xTicks, yTicks);
+        }
 
         // Data-space annotations sit above the plots, clipped like them.
         context.PushClip(plotArea);
         DrawAnnotations(axes.Annotations, context, transform, plotArea, theme);
         context.PopClip();
 
-        // Axis frame (suppressed by polar/Smith charts, which draw their own circular grid).
-        if (axes.FrameVisible)
+        // Axis frame, edge by edge so each ruler's color reaches its own line. The two edges the
+        // rulers sit on are drawn whenever those rulers show ticks or labels — MATLAB's box off
+        // keeps the ruler lines — and Box adds the far pair. Charts that put their rulers away
+        // entirely (pie, Smith, imshow) still draw nothing here.
         {
-            var frameStyle = new LineStyle(theme.AxisLine, 1);
-            context.DrawRectangle(plotArea, frameStyle, fill: null);
+            var xPen = new LineStyle(xAxis.RulerColor ?? theme.AxisLine, axes.LineWidth);
+            var yPen = new LineStyle(yAxis.RulerColor ?? theme.AxisLine, axes.LineWidth);
+            bool xShown = xAxis.ShowMajorTicks || xAxis.ShowTickLabels;
+            bool yShown = yAxis.ShowMajorTicks || yAxis.ShowTickLabels;
+            bool xOnTop = xAxis.Position == AxisPosition.Top;
+            bool yOnRight = yAxis.Position == AxisPosition.Right;
+            double xEdge = xOnTop ? plotArea.Top : plotArea.Bottom;
+            double xFarEdge = xOnTop ? plotArea.Bottom : plotArea.Top;
+            double yEdge = yOnRight ? plotArea.Right : plotArea.Left;
+            double yFarEdge = yOnRight ? plotArea.Left : plotArea.Right;
+
+            if (axes.FrameVisible || xShown)
+            {
+                context.DrawLine(new Point2D(plotArea.Left, xEdge), new Point2D(plotArea.Right, xEdge), xPen);
+            }
+
+            if (axes.FrameVisible || yShown)
+            {
+                context.DrawLine(new Point2D(yEdge, plotArea.Top), new Point2D(yEdge, plotArea.Bottom), yPen);
+            }
+
+            if (axes.FrameVisible)
+            {
+                context.DrawLine(new Point2D(plotArea.Left, xFarEdge), new Point2D(plotArea.Right, xFarEdge), xPen);
+                context.DrawLine(new Point2D(yFarEdge, plotArea.Top), new Point2D(yFarEdge, plotArea.Bottom), yPen);
+            }
         }
 
         // Ticks and tick labels. On a two-sided axes each ruler is tinted like the data it measures,
         // which is the only thing telling a reader which curve belongs to which scale.
         Color? leftTint = TintFor(axes, theme, 0);
-        DrawXTicks(context, xAxis, plotArea, transform, xTicks, theme);
-        DrawYTicks(context, yAxis, plotArea, transform, yTicks, theme, leftTint);
+        DrawXTicks(context, axes, xAxis, plotArea, transform, xTicks, theme);
+        DrawYTicks(context, axes, yAxis, plotArea, transform, yTicks, theme, leftTint);
         DrawSideRulers(context, sideRulers, xAxis, plotArea, theme);
 
         // Axis labels and title.
@@ -232,8 +272,17 @@ public sealed class FigureRenderer
         AxisModel zAxis = axes.ZAxis;
         DataRange xr = xAxis.Range, yr = yAxis.Range, zr = zAxis.Range;
 
+        // A stored data aspect shapes the box from the spans (daspect); otherwise the box keeps
+        // the aspect pbaspect chose. The two writes clear each other, so exactly one is in charge.
+        Vector3D boxAspect = axes.DataAspectRatio is { X: > 0, Y: > 0, Z: > 0 } dar
+            ? new Vector3D(
+                (xr.Max - xr.Min) / dar.X,
+                (yr.Max - yr.Min) / dar.Y,
+                (zr.Max - zr.Min) / dar.Z)
+            : axes.PlotBoxAspect;
+
         var projection = new Projection3D(
-            xr, yr, zr, axes.Azimuth, axes.Elevation, plotArea, axes.PlotBoxAspect, axes.Roll);
+            xr, yr, zr, axes.Azimuth, axes.Elevation, plotArea, boxAspect, axes.Roll);
 
         TickSet xTicks = TickGenerators.For(xAxis).Generate(xr, xAxis.TargetMajorTickCount, xAxis.TickLabelFormat);
         TickSet yTicks = TickGenerators.For(yAxis).Generate(yr, yAxis.TargetMajorTickCount, yAxis.TickLabelFormat);
@@ -251,61 +300,98 @@ public sealed class FigureRenderer
 
         context.PushClip(plotArea);
 
-        var frameStyle = new LineStyle(theme.AxisLine, 1);
-        var gridStyle = new LineStyle(theme.AxisLine.WithOpacity(0.25), 1);
+        LineStyle FramePen(AxisModel ruler) =>
+            new(ruler.RulerColor ?? theme.AxisLine, axes.LineWidth);
+
+        LineStyle xFrame = FramePen(xAxis), yFrame = FramePen(yAxis), zFrame = FramePen(zAxis);
+        LineStyle gridStyle = axes.Grid.MajorLineStyle;
+        GridModel grid = axes.Grid;
+        bool gridOn = grid.Visible;
 
         void Line3D(double x1, double y1, double z1, double x2, double y2, double z2, LineStyle style) =>
             context.DrawLine(projection.ProjectPoint(x1, y1, z1), projection.ProjectPoint(x2, y2, z2), style);
 
-        // Floor (z = zFar): grid at x and y ticks.
-        foreach (Tick t in xTicks.MajorTicks)
+        // Floor (z = zFar): grid at x and y ticks, each family under its own direction's switch —
+        // the same XGrid/YGrid/ZGrid that gate the 2D grid, which is what finally makes `grid off`
+        // mean something in 3D.
+        if (gridOn && grid.ShowMajorX)
         {
-            Line3D(t.Value, yr.Min, zFar, t.Value, yr.Max, zFar, gridStyle);
+            foreach (Tick t in xTicks.MajorTicks)
+            {
+                Line3D(t.Value, yr.Min, zFar, t.Value, yr.Max, zFar, gridStyle);
+            }
         }
 
-        foreach (Tick t in yTicks.MajorTicks)
+        if (gridOn && grid.ShowMajorY)
         {
-            Line3D(xr.Min, t.Value, zFar, xr.Max, t.Value, zFar, gridStyle);
+            foreach (Tick t in yTicks.MajorTicks)
+            {
+                Line3D(xr.Min, t.Value, zFar, xr.Max, t.Value, zFar, gridStyle);
+            }
         }
 
         // Back face at x = xFar (spans y and z).
-        foreach (Tick t in yTicks.MajorTicks)
+        if (gridOn && grid.ShowMajorY)
         {
-            Line3D(xFar, t.Value, zr.Min, xFar, t.Value, zr.Max, gridStyle);
+            foreach (Tick t in yTicks.MajorTicks)
+            {
+                Line3D(xFar, t.Value, zr.Min, xFar, t.Value, zr.Max, gridStyle);
+            }
         }
 
-        foreach (Tick t in zTicks.MajorTicks)
+        if (gridOn && grid.ShowMajorZ)
         {
-            Line3D(xFar, yr.Min, t.Value, xFar, yr.Max, t.Value, gridStyle);
+            foreach (Tick t in zTicks.MajorTicks)
+            {
+                Line3D(xFar, yr.Min, t.Value, xFar, yr.Max, t.Value, gridStyle);
+            }
         }
 
         // Back face at y = yFar (spans x and z).
-        foreach (Tick t in xTicks.MajorTicks)
+        if (gridOn && grid.ShowMajorX)
         {
-            Line3D(t.Value, yFar, zr.Min, t.Value, yFar, zr.Max, gridStyle);
+            foreach (Tick t in xTicks.MajorTicks)
+            {
+                Line3D(t.Value, yFar, zr.Min, t.Value, yFar, zr.Max, gridStyle);
+            }
         }
 
-        foreach (Tick t in zTicks.MajorTicks)
+        if (gridOn && grid.ShowMajorZ)
         {
-            Line3D(xr.Min, yFar, t.Value, xr.Max, yFar, t.Value, gridStyle);
+            foreach (Tick t in zTicks.MajorTicks)
+            {
+                Line3D(xr.Min, yFar, t.Value, xr.Max, yFar, t.Value, gridStyle);
+            }
         }
 
         // Outlines of the three far faces.
-        Line3D(xr.Min, yr.Min, zFar, xr.Max, yr.Min, zFar, frameStyle);
-        Line3D(xr.Min, yr.Max, zFar, xr.Max, yr.Max, zFar, frameStyle);
-        Line3D(xr.Min, yr.Min, zFar, xr.Min, yr.Max, zFar, frameStyle);
-        Line3D(xr.Max, yr.Min, zFar, xr.Max, yr.Max, zFar, frameStyle);
-        Line3D(xFar, yr.Min, zr.Min, xFar, yr.Min, zr.Max, frameStyle);
-        Line3D(xFar, yr.Max, zr.Min, xFar, yr.Max, zr.Max, frameStyle);
-        Line3D(xr.Min, yFar, zr.Min, xr.Min, yFar, zr.Max, frameStyle);
-        Line3D(xr.Max, yFar, zr.Min, xr.Max, yFar, zr.Max, frameStyle);
+        Line3D(xr.Min, yr.Min, zFar, xr.Max, yr.Min, zFar, xFrame);
+        Line3D(xr.Min, yr.Max, zFar, xr.Max, yr.Max, zFar, xFrame);
+        Line3D(xr.Min, yr.Min, zFar, xr.Min, yr.Max, zFar, yFrame);
+        Line3D(xr.Max, yr.Min, zFar, xr.Max, yr.Max, zFar, yFrame);
+        Line3D(xFar, yr.Min, zr.Min, xFar, yr.Min, zr.Max, zFrame);
+        Line3D(xFar, yr.Max, zr.Min, xFar, yr.Max, zr.Max, zFrame);
+        Line3D(xr.Min, yFar, zr.Min, xr.Min, yFar, zr.Max, zFrame);
+        Line3D(xr.Max, yFar, zr.Min, xr.Max, yFar, zr.Max, zFrame);
+
+        // BoxStyle 'full' closes the box: the near face at z = zNear and the one vertical edge the
+        // far faces do not reach. 'back' — the default — is exactly the eight edges above.
+        if (axes.BoxStyle == Box3DStyle.Full)
+        {
+            double zNear = zFar == zr.Min ? zr.Max : zr.Min;
+            Line3D(xr.Min, yr.Min, zNear, xr.Max, yr.Min, zNear, xFrame);
+            Line3D(xr.Min, yr.Max, zNear, xr.Max, yr.Max, zNear, xFrame);
+            Line3D(xr.Min, yr.Min, zNear, xr.Min, yr.Max, zNear, yFrame);
+            Line3D(xr.Max, yr.Min, zNear, xr.Max, yr.Max, zNear, yFrame);
+            Line3D(xNear, yNear, zr.Min, xNear, yNear, zr.Max, zFrame);
+        }
 
         // Plot content.
-        IReadOnlyList<Color> palette = axes.ColorOrder ?? theme.SeriesPalette;
+        IReadOnlyList<Color> palette = SeriesPalette.Of(axes, theme);
         int colorIndex = 0;
         foreach (PlotObject plot in axes.Plots.InDrawOrder())
         {
-            Color seriesColor = palette.Count > 0 ? palette[colorIndex % palette.Count] : Colors.Black;
+            Color seriesColor = SeriesPalette.Resolve(palette, plot, colorIndex);
             colorIndex++;
             if (plot.Visible && plot is I3DDrawable drawable)
             {
@@ -460,11 +546,11 @@ public sealed class FigureRenderer
 
         // Plot content, mapped through the angular transform. Every plot on the axes is drawn this way:
         // an axes is polar or it is not, and a chart cannot be half in one coordinate system.
-        IReadOnlyList<Color> palette = axes.ColorOrder ?? theme.SeriesPalette;
+        IReadOnlyList<Color> palette = SeriesPalette.Of(axes, theme);
         int colorIndex = 0;
         foreach (PlotObject plot in axes.Plots.InDrawOrder())
         {
-            Color seriesColor = palette.Count > 0 ? palette[colorIndex % palette.Count] : Colors.Black;
+            Color seriesColor = SeriesPalette.Resolve(palette, plot, colorIndex);
             colorIndex++;
 
             if (plot.Visible && plot is IDrawable drawable)
@@ -559,12 +645,13 @@ public sealed class FigureRenderer
     /// axes, so that a data circle maps to a pixel circle. Spans are taken in scale-forward space so
     /// the result is correct for linear axes (the intended use); a degenerate span leaves it unchanged.
     /// </summary>
-    private static Rect2D SquareForEqualAspect(Rect2D plotArea, AxisModel xAxis, AxisModel yAxis)
+    private static Rect2D SquareForEqualAspect(
+        Rect2D plotArea, AxisModel xAxis, AxisModel yAxis, double unitX = 1, double unitY = 1)
     {
         IScaleTransform xScale = ScaleTransforms.For(xAxis.Scale);
         IScaleTransform yScale = ScaleTransforms.For(yAxis.Scale);
-        double xLen = System.Math.Abs(xScale.Forward(xAxis.Range.Max) - xScale.Forward(xAxis.Range.Min));
-        double yLen = System.Math.Abs(yScale.Forward(yAxis.Range.Max) - yScale.Forward(yAxis.Range.Min));
+        double xLen = System.Math.Abs(xScale.Forward(xAxis.Range.Max) - xScale.Forward(xAxis.Range.Min)) / unitX;
+        double yLen = System.Math.Abs(yScale.Forward(yAxis.Range.Max) - yScale.Forward(yAxis.Range.Min)) / unitY;
         if (!(xLen > 0) || !(yLen > 0) || plotArea.Width <= 0 || plotArea.Height <= 0)
         {
             return plotArea;
@@ -647,7 +734,7 @@ public sealed class FigureRenderer
             return null;
         }
 
-        IReadOnlyList<Color> palette = axes.ColorOrder ?? theme.SeriesPalette;
+        IReadOnlyList<Color> palette = SeriesPalette.Of(axes, theme);
         if (palette.Count == 0)
         {
             return null;
@@ -658,7 +745,7 @@ public sealed class FigureRenderer
         {
             if (axes.GetYAxisFor(plot) == axes.YAxes[yAxisIndex])
             {
-                return palette[colorIndex % palette.Count];
+                return SeriesPalette.Resolve(palette, plot, colorIndex);
             }
 
             colorIndex++;
@@ -726,7 +813,9 @@ public sealed class FigureRenderer
         double YTickWidth,
         double XTickHeight,
         double YLabelHeight,
-        double XLabelHeight);
+        double XLabelHeight,
+        double XTickOutward,
+        double YTickOutward);
 
     private static DecorationMetrics MeasureDecorations(
         AxesModel axes,
@@ -735,7 +824,8 @@ public sealed class FigureRenderer
         AxisModel yAxis,
         TickSet xTicks,
         TickSet yTicks,
-        IReadOnlyList<SideRuler> sideRulers)
+        IReadOnlyList<SideRuler> sideRulers,
+        Rect2D outer)
     {
         double left = EdgePadding;
         double bottom = EdgePadding;
@@ -757,8 +847,18 @@ public sealed class FigureRenderer
             }
 
             right += ColorbarRenderer.MeasureReservedWidth(axes, context);
-            return new DecorationMetrics(new Thickness(left, top, right, bottom), 0, 0, 0, 0);
+            return new DecorationMetrics(new Thickness(left, top, right, bottom), 0, 0, 0, 0, 0, 0);
         }
+
+        // The margins a ruler's ticks and text claim land on whichever edge the ruler sits on —
+        // XAxisLocation 'top' moves the whole x band up, YAxisLocation 'right' moves the y band
+        // over. The tick reservation is only the outward reach: inward ticks cost no margin. The
+        // fraction-based tick length is resolved against the outer rectangle because the plot area
+        // does not exist yet; the few pixels of overshoot are accepted.
+        double xTickOutward = TickExtents(xAxis, ResolveTickLength(xAxis, outer)).Outward;
+        double yTickOutward = TickExtents(yAxis, ResolveTickLength(yAxis, outer)).Outward;
+        bool xOnTop = xAxis.Position == AxisPosition.Top;
+        bool yOnRight = yAxis.Position == AxisPosition.Right;
 
         double yTickWidth = 0;
         if (yAxis.ShowTickLabels)
@@ -769,14 +869,28 @@ public sealed class FigureRenderer
                 yTickWidth = System.Math.Max(yTickWidth, RotatedExtent(size, yAxis.TickLabelAngle, horizontal: true));
             }
 
-            left += yTickWidth + TickLength + LabelPadding;
+            if (yOnRight)
+            {
+                right += yTickWidth + yTickOutward + LabelPadding;
+            }
+            else
+            {
+                left += yTickWidth + yTickOutward + LabelPadding;
+            }
         }
 
         double yLabelHeight = 0;
         if (!string.IsNullOrEmpty(yAxis.Label))
         {
             yLabelHeight = context.MeasureText(yAxis.Label, yAxis.LabelStyle).Height;
-            left += yLabelHeight + LabelPadding;
+            if (yOnRight)
+            {
+                right += yLabelHeight + LabelPadding;
+            }
+            else
+            {
+                left += yLabelHeight + LabelPadding;
+            }
         }
 
         double xTickHeight = 0;
@@ -797,14 +911,28 @@ public sealed class FigureRenderer
                 }
             }
 
-            bottom += xTickHeight + TickLength + LabelPadding;
+            if (xOnTop)
+            {
+                top += xTickHeight + xTickOutward + LabelPadding;
+            }
+            else
+            {
+                bottom += xTickHeight + xTickOutward + LabelPadding;
+            }
         }
 
         double xLabelHeight = 0;
         if (!string.IsNullOrEmpty(xAxis.Label))
         {
             xLabelHeight = context.MeasureText(xAxis.Label, xAxis.LabelStyle).Height;
-            bottom += xLabelHeight + LabelPadding;
+            if (xOnTop)
+            {
+                top += xLabelHeight + LabelPadding;
+            }
+            else
+            {
+                bottom += xLabelHeight + LabelPadding;
+            }
         }
 
         if (!string.IsNullOrEmpty(axes.Title))
@@ -835,8 +963,29 @@ public sealed class FigureRenderer
             yTickWidth,
             xTickHeight,
             yLabelHeight,
-            xLabelHeight);
+            xLabelHeight,
+            xTickOutward,
+            yTickOutward);
     }
+
+    /// <summary>
+    /// The pixel length of one ruler's tick marks: the fixed five pixels every figure has always
+    /// had when the ruler never chose one, or MATLAB's fraction of the longest side of the given
+    /// reference rectangle when it did.
+    /// </summary>
+    private static double ResolveTickLength(AxisModel axis, Rect2D reference) =>
+        axis.TickLength is { } chosen
+            ? System.Math.Max(reference.Width, reference.Height) * System.Math.Max(0, chosen.X)
+            : TickLength;
+
+    /// <summary>How far a ruler's ticks reach outward and inward from its axis line (MATLAB TickDir).</summary>
+    private static (double Outward, double Inward) TickExtents(AxisModel axis, double length) =>
+        axis.TickDirection switch
+        {
+            Core.Model.TickDirection.In => (0, length),
+            Core.Model.TickDirection.Both => (length, length),
+            _ => (length, 0),
+        };
 
     /// <summary>
     /// How much room a text run takes along one device direction once it is rotated — the bounding box
@@ -872,14 +1021,17 @@ public sealed class FigureRenderer
 
         context.PushClip(plotArea);
 
-        if (grid.ShowMinor)
+        if (grid.ShowMinorX)
         {
             foreach (double v in xTicks.MinorTicks)
             {
                 double px = transform.DataToPixelX(v);
                 context.DrawLine(new Point2D(px, plotArea.Top), new Point2D(px, plotArea.Bottom), grid.MinorLineStyle);
             }
+        }
 
+        if (grid.ShowMinorY)
+        {
             foreach (double v in yTicks.MinorTicks)
             {
                 double py = transform.DataToPixelY(v);
@@ -887,14 +1039,17 @@ public sealed class FigureRenderer
             }
         }
 
-        if (grid.ShowMajor)
+        if (grid.ShowMajorX)
         {
             foreach (Tick tick in xTicks.MajorTicks)
             {
                 double px = transform.DataToPixelX(tick.Value);
                 context.DrawLine(new Point2D(px, plotArea.Top), new Point2D(px, plotArea.Bottom), grid.MajorLineStyle);
             }
+        }
 
+        if (grid.ShowMajorY)
+        {
             foreach (Tick tick in yTicks.MajorTicks)
             {
                 double py = transform.DataToPixelY(tick.Value);
@@ -907,13 +1062,13 @@ public sealed class FigureRenderer
 
     private static void DrawPlots(AxesModel axes, IRenderContext context, Rect2D plotArea, ITheme theme)
     {
-        IReadOnlyList<Color> palette = axes.ColorOrder ?? theme.SeriesPalette;
+        IReadOnlyList<Color> palette = SeriesPalette.Of(axes, theme);
         int colorIndex = 0;
 
         context.PushClip(plotArea);
         foreach (PlotObject plot in axes.Plots.InDrawOrder())
         {
-            Color seriesColor = palette.Count > 0 ? palette[colorIndex % palette.Count] : Colors.Black;
+            Color seriesColor = SeriesPalette.Resolve(palette, plot, colorIndex);
             colorIndex++;
 
             if (!plot.Visible || plot is not IDrawable drawable)
@@ -956,6 +1111,7 @@ public sealed class FigureRenderer
 
     private static void DrawXTicks(
         IRenderContext context,
+        AxesModel axes,
         AxisModel xAxis,
         Rect2D plotArea,
         AxisTransform transform,
@@ -967,13 +1123,21 @@ public sealed class FigureRenderer
             return;
         }
 
-        var tickStyle = new LineStyle(theme.AxisLine, 1);
+        bool onTop = xAxis.Position == AxisPosition.Top;
+        double edge = onTop ? plotArea.Top : plotArea.Bottom;
+        double sign = onTop ? -1 : 1;
+        (double outward, double inward) = TickExtents(xAxis, ResolveTickLength(xAxis, plotArea));
+        var tickStyle = new LineStyle(xAxis.RulerColor ?? theme.AxisLine, axes.LineWidth);
+        TextStyle labelStyle = Tinted(xAxis.TickLabelStyle, xAxis.RulerColor);
         foreach (Tick tick in xTicks.MajorTicks)
         {
             double px = transform.DataToPixelX(tick.Value);
             if (xAxis.ShowMajorTicks)
             {
-                context.DrawLine(new Point2D(px, plotArea.Bottom), new Point2D(px, plotArea.Bottom + TickLength), tickStyle);
+                context.DrawLine(
+                    new Point2D(px, edge - (sign * inward)),
+                    new Point2D(px, edge + (sign * outward)),
+                    tickStyle);
             }
 
             if (xAxis.ShowTickLabels)
@@ -983,10 +1147,10 @@ public sealed class FigureRenderer
                 double angle = xAxis.TickLabelAngle;
                 context.DrawText(
                     tick.Label,
-                    new Point2D(px, plotArea.Bottom + TickLength + LabelPadding),
-                    xAxis.TickLabelStyle,
+                    new Point2D(px, edge + (sign * (outward + LabelPadding))),
+                    labelStyle,
                     angle == 0 ? HorizontalAlignment.Center : angle > 0 ? HorizontalAlignment.Right : HorizontalAlignment.Left,
-                    angle == 0 ? VerticalAlignment.Top : VerticalAlignment.Middle,
+                    angle != 0 ? VerticalAlignment.Middle : onTop ? VerticalAlignment.Bottom : VerticalAlignment.Top,
                     angle);
             }
         }
@@ -994,6 +1158,7 @@ public sealed class FigureRenderer
 
     private static void DrawYTicks(
         IRenderContext context,
+        AxesModel axes,
         AxisModel yAxis,
         Rect2D plotArea,
         AxisTransform transform,
@@ -1006,22 +1171,31 @@ public sealed class FigureRenderer
             return;
         }
 
-        var tickStyle = new LineStyle(tint ?? theme.AxisLine, 1);
+        // A ruler color a script chose outranks the yyaxis series tint: the script spoke last.
+        Color? ink = yAxis.RulerColor ?? tint;
+        bool onRight = yAxis.Position == AxisPosition.Right;
+        double edge = onRight ? plotArea.Right : plotArea.Left;
+        double sign = onRight ? 1 : -1;
+        (double outward, double inward) = TickExtents(yAxis, ResolveTickLength(yAxis, plotArea));
+        var tickStyle = new LineStyle(ink ?? theme.AxisLine, axes.LineWidth);
         foreach (Tick tick in yTicks.MajorTicks)
         {
             double py = transform.DataToPixelY(tick.Value);
             if (yAxis.ShowMajorTicks)
             {
-                context.DrawLine(new Point2D(plotArea.Left - TickLength, py), new Point2D(plotArea.Left, py), tickStyle);
+                context.DrawLine(
+                    new Point2D(edge + (sign * outward), py),
+                    new Point2D(edge - (sign * inward), py),
+                    tickStyle);
             }
 
             if (yAxis.ShowTickLabels)
             {
                 context.DrawText(
                     tick.Label,
-                    new Point2D(plotArea.Left - TickLength - LabelPadding, py),
-                    Tinted(yAxis.TickLabelStyle, tint),
-                    HorizontalAlignment.Right,
+                    new Point2D(edge + (sign * (outward + LabelPadding)), py),
+                    Tinted(yAxis.TickLabelStyle, ink),
+                    onRight ? HorizontalAlignment.Left : HorizontalAlignment.Right,
                     VerticalAlignment.Middle,
                     yAxis.TickLabelAngle);
             }
@@ -1039,27 +1213,29 @@ public sealed class FigureRenderer
     {
         if (!string.IsNullOrEmpty(xAxis.Label))
         {
-            double y = plotArea.Bottom + TickLength + LabelPadding + metrics.XTickHeight + LabelPadding;
+            bool onTop = xAxis.Position == AxisPosition.Top;
+            double offset = metrics.XTickOutward + LabelPadding + metrics.XTickHeight + LabelPadding;
             context.DrawText(
                 xAxis.Label,
-                new Point2D(plotArea.CenterX, y),
-                xAxis.LabelStyle,
+                new Point2D(plotArea.CenterX, onTop ? plotArea.Top - offset : plotArea.Bottom + offset),
+                Tinted(xAxis.LabelStyle, xAxis.RulerColor),
                 HorizontalAlignment.Center,
-                VerticalAlignment.Top);
+                onTop ? VerticalAlignment.Bottom : VerticalAlignment.Top);
         }
 
         if (!string.IsNullOrEmpty(yAxis.Label))
         {
-            // For the -90 degree rotated label, VerticalAlignment.Bottom places the glyph cell to the
-            // left of this x, clear of the tick labels to its right.
-            double x = plotArea.Left - (TickLength + LabelPadding + metrics.YTickWidth + LabelPadding);
+            // For the rotated label, VerticalAlignment.Bottom places the glyph cell on the far side
+            // of this x, clear of the tick labels between it and the plot.
+            bool onRight = yAxis.Position == AxisPosition.Right;
+            double offset = metrics.YTickOutward + LabelPadding + metrics.YTickWidth + LabelPadding;
             context.DrawText(
                 yAxis.Label,
-                new Point2D(x, plotArea.CenterY),
-                Tinted(yAxis.LabelStyle, yTint),
+                new Point2D(onRight ? plotArea.Right + offset : plotArea.Left - offset, plotArea.CenterY),
+                Tinted(yAxis.LabelStyle, yAxis.RulerColor ?? yTint),
                 HorizontalAlignment.Center,
                 VerticalAlignment.Bottom,
-                rotationDegrees: -90);
+                rotationDegrees: onRight ? 90 : -90);
         }
 
         DrawTitleBlock(context, axes, plotArea);
@@ -1074,13 +1250,21 @@ public sealed class FigureRenderer
     {
         double bottom = plotArea.Top - LabelPadding;
 
+        // The title and subtitle stand together at whichever end TitleHorizontalAlignment says.
+        (double x, HorizontalAlignment alignment) = axes.TitleHorizontalAlignment switch
+        {
+            Core.Model.TitleHorizontalAlignment.Left => (plotArea.Left, HorizontalAlignment.Left),
+            Core.Model.TitleHorizontalAlignment.Right => (plotArea.Right, HorizontalAlignment.Right),
+            _ => (plotArea.CenterX, HorizontalAlignment.Center),
+        };
+
         if (!string.IsNullOrEmpty(axes.Subtitle))
         {
             context.DrawText(
                 axes.Subtitle,
-                new Point2D(plotArea.CenterX, bottom),
+                new Point2D(x, bottom),
                 axes.SubtitleStyle,
-                HorizontalAlignment.Center,
+                alignment,
                 VerticalAlignment.Bottom);
             bottom -= context.MeasureText(axes.Subtitle, axes.SubtitleStyle).Height + LabelPadding;
         }
@@ -1089,9 +1273,9 @@ public sealed class FigureRenderer
         {
             context.DrawText(
                 axes.Title,
-                new Point2D(plotArea.CenterX, bottom),
+                new Point2D(x, bottom),
                 axes.TitleStyle,
-                HorizontalAlignment.Center,
+                alignment,
                 VerticalAlignment.Bottom);
         }
     }

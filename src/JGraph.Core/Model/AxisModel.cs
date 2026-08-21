@@ -29,19 +29,78 @@ public sealed class AxisModel : GraphObject
     private IReadOnlyList<double>? _tickPositions;
     private IReadOnlyList<string>? _tickLabelOverrides;
     private double _tickLabelAngle;
+    private AxisPosition _position;
+    private TickDirection? _tickDirection;
+    private Vector2D? _tickLength;
+    private Color? _rulerColor;
+    private LimitMethod _limitMethod = LimitMethod.Padded;
 
     public AxisModel(AxisOrientation orientation, AxisPosition position)
     {
         Orientation = orientation;
-        Position = position;
+        _position = position;
         Name = orientation == AxisOrientation.Horizontal ? "XAxis" : "YAxis";
     }
 
     /// <summary>Whether this axis maps to the horizontal or vertical device direction.</summary>
     public AxisOrientation Orientation { get; }
 
-    /// <summary>Which plot edge this axis is anchored to.</summary>
-    public AxisPosition Position { get; }
+    /// <summary>
+    /// Which plot edge this axis is anchored to (MATLAB <c>XAxisLocation</c>/<c>YAxisLocation</c>).
+    /// Settable, so a script can move the x ruler to the top or the y ruler to the right; the
+    /// orientation never changes, only the edge.
+    /// </summary>
+    [Category("General")]
+    public AxisPosition Position
+    {
+        get => _position;
+        set => SetProperty(ref _position, value, InvalidationKind.Layout);
+    }
+
+    /// <summary>
+    /// Which side of the axis line the tick marks grow from (MATLAB <c>TickDir</c>), or null for the
+    /// automatic choice — outward, which is where every JGraph figure has always drawn them. MATLAB's
+    /// automatic 2D choice is inward; keeping ours is a recorded divergence, because flipping the
+    /// default would move pixels in every existing figure.
+    /// </summary>
+    [Browsable(false)]
+    public TickDirection? TickDirection
+    {
+        get => _tickDirection;
+        set => SetProperty(ref _tickDirection, value, InvalidationKind.Layout);
+    }
+
+    /// <summary>
+    /// The tick mark length as MATLAB speaks it — a fraction of the longest plot-area side, one
+    /// number for 2D and one for 3D — or null for the automatic length (a fixed five pixels, which
+    /// is what every figure was drawn with before this was a property).
+    /// </summary>
+    [Browsable(false)]
+    public Vector2D? TickLength
+    {
+        get => _tickLength;
+        set => SetProperty(ref _tickLength, value, InvalidationKind.Layout);
+    }
+
+    /// <summary>
+    /// The color of this ruler — its axis line, tick marks, tick labels, and label — or null to let
+    /// the theme ink it (MATLAB <c>XColor</c>/<c>YColor</c>/<c>ZColor</c>, whose modes are exactly
+    /// this null test).
+    /// </summary>
+    [Browsable(false)]
+    public Color? RulerColor
+    {
+        get => _rulerColor;
+        set => SetProperty(ref _rulerColor, value, InvalidationKind.Render);
+    }
+
+    /// <summary>How auto-scaling turns this ruler's data extent into limits (MATLAB <c>XLimitMethod</c>).</summary>
+    [Category("General"), DisplayName("Limit method")]
+    public LimitMethod LimitMethod
+    {
+        get => _limitMethod;
+        set => SetProperty(ref _limitMethod, value, InvalidationKind.Layout);
+    }
 
     /// <summary>The data-to-linear scale applied to values on this axis.</summary>
     [Category("General")]

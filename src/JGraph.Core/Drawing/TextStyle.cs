@@ -9,7 +9,8 @@ public readonly struct TextStyle
         string fontFamily = "Segoe UI",
         bool bold = false,
         bool italic = false,
-        TextInterpreter interpreter = TextInterpreter.Tex)
+        TextInterpreter interpreter = TextInterpreter.Tex,
+        bool antialias = true)
     {
         Color = color;
         FontSize = fontSize;
@@ -17,6 +18,7 @@ public readonly struct TextStyle
         Bold = bold;
         Italic = italic;
         Interpreter = interpreter;
+        Antialias = antialias;
     }
 
     public Color Color { get; }
@@ -35,18 +37,36 @@ public readonly struct TextStyle
     /// </summary>
     public TextInterpreter Interpreter { get; }
 
+    /// <summary>
+    /// Whether the glyphs are drawn with antialiased edges (MATLAB's <c>FontSmoothing</c>). On is the
+    /// default everywhere; off is for the pixel-exact exports a screenshot comparison wants.
+    /// </summary>
+    public bool Antialias { get; }
+
     public static TextStyle Default => new(Colors.Black);
 
     public TextStyle WithColor(Color color) =>
-        new(color, FontSize, FontFamily, Bold, Italic, Interpreter);
+        new(color, FontSize, FontFamily, Bold, Italic, Interpreter, Antialias);
 
     public TextStyle WithSize(double fontSize) =>
-        new(Color, fontSize, FontFamily, Bold, Italic, Interpreter);
+        new(Color, fontSize, FontFamily, Bold, Italic, Interpreter, Antialias);
 
     public TextStyle WithBold(bool bold) =>
-        new(Color, FontSize, FontFamily, bold, Italic, Interpreter);
+        new(Color, FontSize, FontFamily, bold, Italic, Interpreter, Antialias);
 
     /// <summary>The same style reading its text as <paramref name="interpreter"/> says.</summary>
     public TextStyle WithInterpreter(TextInterpreter interpreter) =>
-        new(Color, FontSize, FontFamily, Bold, Italic, interpreter);
+        new(Color, FontSize, FontFamily, Bold, Italic, interpreter, Antialias);
+
+    /// <summary>The same style with the given font family.</summary>
+    public TextStyle WithFamily(string fontFamily) =>
+        new(Color, FontSize, fontFamily, Bold, Italic, Interpreter, Antialias);
+
+    /// <summary>The same style with italics turned on or off.</summary>
+    public TextStyle WithItalic(bool italic) =>
+        new(Color, FontSize, FontFamily, Bold, italic, Interpreter, Antialias);
+
+    /// <summary>The same style with glyph smoothing turned on or off.</summary>
+    public TextStyle WithAntialias(bool antialias) =>
+        new(Color, FontSize, FontFamily, Bold, Italic, Interpreter, antialias);
 }

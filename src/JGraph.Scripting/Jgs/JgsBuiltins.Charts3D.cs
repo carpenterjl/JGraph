@@ -1,4 +1,4 @@
-using JGraph.Api;
+﻿using JGraph.Api;
 using JGraph.Core.Drawing;
 using JGraph.Core.Model;
 using JGraph.Objects;
@@ -101,7 +101,10 @@ internal static partial class JgsBuiltins
             }
 
             Stem3DPlot plot = JG.Stem3(x, y, z);
-            plot.Color ??= PaletteColorFor(plot);
+            if (plot.Color is null)
+            {
+                SeatSeries(plot);
+            }
             if (spec is not null)
             {
                 ApplyStemSpec(plot, LineSpec.Parse(spec));

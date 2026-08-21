@@ -1,4 +1,4 @@
-using System.Collections.Concurrent;
+﻿using System.Collections.Concurrent;
 using System.ComponentModel;
 using System.Reflection;
 using JGraph.Api;
@@ -49,7 +49,7 @@ internal sealed class GraphicsProperty
 /// statistics verbs drew. This replaces all of them: the switch was a list that had to be extended by
 /// hand every time the model grew, which is exactly the thing that goes stale.
 /// </summary>
-internal static class JgsGraphicsProperties
+internal static partial class JgsGraphicsProperties
 {
     private static readonly ConcurrentDictionary<Type, IReadOnlyDictionary<string, GraphicsProperty>> Tables = new();
 
@@ -1738,16 +1738,20 @@ internal static class JgsGraphicsProperties
                 };
             });
 
-        // The grid is one thing here, not one per direction, so XGrid and YGrid are two names for it.
-        // Turning either on turns the whole grid on, which is what `grid on` has always done; a
-        // per-direction grid would be a model change, and it is recorded as a divergence instead.
-        foreach (string name in new[] { "XGrid", "YGrid", "ZGrid" })
-        {
-            string which = name;
-            Put(table, which,
-                entry => OnOff(Axes(entry).Grid.ShowMajor),
-                (entry, value, line, col) => Axes(entry).Grid.ShowMajor = ToOnOff(which, value, line, col));
-        }
+        // Each direction has its own grid switch since M73, as MATLAB's XGrid/YGrid/ZGrid do; the
+        // old one-grid divergence is closed. `grid on` still speaks for all three at once through
+        // the aggregate.
+        Put(table, "XGrid",
+            entry => OnOff(Axes(entry).Grid.ShowMajorX),
+            (entry, value, line, col) => Axes(entry).Grid.ShowMajorX = ToOnOff("XGrid", value, line, col));
+        Put(table, "YGrid",
+            entry => OnOff(Axes(entry).Grid.ShowMajorY),
+            (entry, value, line, col) => Axes(entry).Grid.ShowMajorY = ToOnOff("YGrid", value, line, col));
+        Put(table, "ZGrid",
+            entry => OnOff(Axes(entry).Grid.ShowMajorZ),
+            (entry, value, line, col) => Axes(entry).Grid.ShowMajorZ = ToOnOff("ZGrid", value, line, col));
+
+        AddAxesWave(table);
     }
 
     private static void AddRulerAliases(IDictionary<string, GraphicsProperty> table)

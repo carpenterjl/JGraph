@@ -1,4 +1,4 @@
-using JGraph.Core.Model;
+﻿using JGraph.Core.Model;
 using JGraph.Core.Primitives;
 using JGraph.Data;
 using JGraph.Data.Import;
@@ -935,27 +935,31 @@ public static class JG
     public static void Colormap(Core.Drawing.Colormap map)
     {
         ArgumentNullException.ThrowIfNull(map);
-        foreach (PlotObject plot in Gca().Plots)
+
+        // The axes remembers the choice and every color-mapped plot re-adopts it — the same seam a
+        // newly added plot is seeded through, which is what makes `colormap jet; surf(...)` mean
+        // the same as the other order.
+        AxesModel axes = Gca();
+        axes.Colormap = map;
+        foreach (PlotObject plot in axes.Plots)
         {
-            switch (plot)
-            {
-                case ImagePlot image:
-                    image.Colormap = map;
-                    break;
-                case SurfacePlot surface:
-                    surface.Colormap = map;
-                    break;
-                case ContourPlot contour:
-                    contour.Colormap = map;
-                    break;
-            }
+            plot.AdoptAxesDefaults(axes);
         }
     }
 
-    /// <summary>The colormap of the first color-mapped plot in the current axes, or parula if there is none.</summary>
+    /// <summary>
+    /// The colormap in force: the axes' own choice when one was made, else the first color-mapped
+    /// plot's, else parula.
+    /// </summary>
     public static Core.Drawing.Colormap CurrentColormap()
     {
-        foreach (PlotObject plot in Gca().Plots)
+        AxesModel axes = Gca();
+        if (axes.Colormap is { } chosen)
+        {
+            return chosen;
+        }
+
+        foreach (PlotObject plot in axes.Plots)
         {
             if (plot is IColorMapped mapped)
             {
@@ -977,33 +981,20 @@ public static class JG
             throw new ArgumentException($"Color limits must be finite and increasing, but were [{min}, {max}].");
         }
 
-        foreach (PlotObject plot in Gca().Plots)
+        AxesModel axes = Gca();
+        axes.ColorLimits = new Core.Primitives.DataRange(min, max);
+        foreach (PlotObject plot in axes.Plots)
         {
-            switch (plot)
-            {
-                case ImagePlot image:
-                    image.AutoScaleColor = false;
-                    image.ColorMin = min;
-                    image.ColorMax = max;
-                    break;
-                case SurfacePlot surface:
-                    surface.AutoScaleColor = false;
-                    surface.ColorMin = min;
-                    surface.ColorMax = max;
-                    break;
-                case ContourPlot contour:
-                    contour.AutoScaleColor = false;
-                    contour.ColorMin = min;
-                    contour.ColorMax = max;
-                    break;
-            }
+            plot.AdoptAxesDefaults(axes);
         }
     }
 
     /// <summary>Returns the color limits to each plot's own data range (MATLAB <c>caxis auto</c>).</summary>
     public static void CLimAuto()
     {
-        foreach (PlotObject plot in Gca().Plots)
+        AxesModel axes = Gca();
+        axes.ColorLimits = null;
+        foreach (PlotObject plot in axes.Plots)
         {
             switch (plot)
             {
@@ -1016,17 +1007,32 @@ public static class JG
                 case ContourPlot contour:
                     contour.AutoScaleColor = true;
                     break;
+                case PatchPlot patch:
+                    patch.AutoScaleColor = true;
+                    break;
+                case ScatterPlot scatter:
+                    scatter.AutoScaleColor = true;
+                    break;
+                case Scatter3DPlot scatter3D:
+                    scatter3D.AutoScaleColor = true;
+                    break;
             }
         }
     }
 
     /// <summary>
-    /// The color limits currently in force — the first color-mapped plot's, which is the one the
-    /// colorbar is drawn from. <c>[0, 1]</c> when the axes has nothing color-mapped in it.
+    /// The color limits currently in force: the axes' own when pinned, else the first color-mapped
+    /// plot's — the one the colorbar is drawn from — else <c>[0, 1]</c>.
     /// </summary>
     public static (double Min, double Max) GetCLim()
     {
-        foreach (PlotObject plot in Gca().Plots)
+        AxesModel axes = Gca();
+        if (axes.ColorLimits is { } pinned)
+        {
+            return (pinned.Min, pinned.Max);
+        }
+
+        foreach (PlotObject plot in axes.Plots)
         {
             if (plot is IColorMapped mapped)
             {

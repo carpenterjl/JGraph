@@ -1,4 +1,4 @@
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using JGraph.Core.Drawing;
 using JGraph.Core.Model;
 using JGraph.Core.Primitives;
@@ -308,6 +308,22 @@ public sealed class Scatter3DPlot : PlotObject, I3DDrawable, IHasZData, ILegendI
     Color? IBubbleData.BubbleFaceColor => _filled ? _color : null;
 
     /// <inheritdoc />
+    /// <inheritdoc />
+    public override void AdoptAxesDefaults(AxesModel axes)
+    {
+        if (axes.Colormap is { } map)
+        {
+            Colormap = map;
+        }
+
+        if (axes.ColorLimits is { } limits)
+        {
+            AutoScaleColor = false;
+            ColorMin = limits.Min;
+            ColorMax = limits.Max;
+        }
+    }
+
     public override DataRange GetXDataBounds()
     {
         EnsureSpread();
@@ -402,11 +418,12 @@ public sealed class Scatter3DPlot : PlotObject, I3DDrawable, IHasZData, ILegendI
         }
 
         (double min, double max) = ResolveColorRange();
+        bool logColor = this.LogColorScale();
         for (int i = 0; i < visible; i++)
         {
             int source = _order[i];
             Color point = _colorData is { } values
-                ? _colormap.Sample(values[source], min, max).WithOpacity(Opacity)
+                ? _colormap.Sample(values[source], min, max, logColor).WithOpacity(Opacity)
                 : color;
             double size = DiameterAt(source);
             context.DrawMarkers(_sorted.AsSpan(i, 1), StyleFor(point, size), point);

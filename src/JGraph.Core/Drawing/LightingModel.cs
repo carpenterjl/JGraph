@@ -1,4 +1,4 @@
-using JGraph.Core.Primitives;
+﻿using JGraph.Core.Primitives;
 
 namespace JGraph.Core.Drawing;
 
@@ -87,12 +87,17 @@ public readonly record struct LightingModel(
     /// <param name="normal">The surface normal there, in normalized cube space; need not be unit length.</param>
     /// <param name="view">The unit direction toward the viewer, in normalized cube space.</param>
     /// <param name="lights">The lights illuminating the surface.</param>
+    /// <param name="ambientLight">
+    /// The axes' one ambient light color (MATLAB <c>AmbientLightColor</c>), multiplied into the
+    /// ambient term per channel. Null means white, which multiplies nothing away.
+    /// </param>
     public Color Shade(
         Color baseColor,
         Vector3D point,
         Vector3D normal,
         Vector3D view,
-        ReadOnlySpan<LightSource> lights)
+        ReadOnlySpan<LightSource> lights,
+        Color? ambientLight = null)
     {
         if (lights.IsEmpty)
         {
@@ -117,9 +122,10 @@ public readonly record struct LightingModel(
         double bg = baseColor.G / 255.0;
         double bb = baseColor.B / 255.0;
 
-        double r = br * Ambient;
-        double g = bg * Ambient;
-        double b = bb * Ambient;
+        Color ambient = ambientLight ?? Colors.White;
+        double r = br * Ambient * (ambient.R / 255.0);
+        double g = bg * Ambient * (ambient.G / 255.0);
+        double b = bb * Ambient * (ambient.B / 255.0);
 
         foreach (LightSource light in lights)
         {

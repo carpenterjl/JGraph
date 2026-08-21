@@ -1,4 +1,4 @@
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using JGraph.Core.Primitives;
 
 namespace JGraph.Core.Model;
@@ -16,6 +16,7 @@ public abstract class PlotObject : GraphObject
     private bool _hitTestVisible = true;
     private int _xAxisIndex;
     private int _yAxisIndex;
+    private int _seriesIndex = -1;
 
     /// <summary>The name shown for this object in a legend (MATLAB "DisplayName").</summary>
     [Category("General"), DisplayName("Display name")]
@@ -57,9 +58,33 @@ public abstract class PlotObject : GraphObject
         set => SetProperty(ref _yAxisIndex, System.Math.Max(0, value), InvalidationKind.Layout);
     }
 
+    /// <summary>
+    /// The seat this plot took in its axes' series cycle, or -1 when it never took one (a plot
+    /// built through the raw API). The renderer resolves the palette color from this at draw time,
+    /// which is what lets a later <c>colororder</c> retint an auto-colored line, and why deleting a
+    /// neighbor no longer recolors the survivors.
+    /// </summary>
+    [Browsable(false)]
+    public int SeriesIndex
+    {
+        get => _seriesIndex;
+        set => SetProperty(ref _seriesIndex, value, InvalidationKind.Render);
+    }
+
     /// <summary>The owning axes, or null if this object is not attached to a figure tree.</summary>
     [Browsable(false)]
     public AxesModel? Axes => Parent as AxesModel;
+
+    /// <summary>
+    /// Called when this plot joins an axes, and again when the axes' shared color state changes:
+    /// a color-mapped plot copies the axes' <see cref="AxesModel.Colormap"/> and
+    /// <see cref="AxesModel.ColorLimits"/> here, which is what makes <c>colormap</c> and
+    /// <c>clim</c> act whichever side of the plotting verb they are called on. Plots that do not
+    /// map data ignore it.
+    /// </summary>
+    public virtual void AdoptAxesDefaults(AxesModel axes)
+    {
+    }
 
     /// <summary>The extent of this object's data along the X direction, or empty if it has no data.</summary>
     public abstract DataRange GetXDataBounds();

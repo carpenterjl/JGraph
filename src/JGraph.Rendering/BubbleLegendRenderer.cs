@@ -173,14 +173,13 @@ internal static class BubbleLegendRenderer
     /// </summary>
     private static Color BubbleColor(AxesModel axes, ITheme theme)
     {
-        IReadOnlyList<Color> palette = axes.ColorOrder ?? theme.SeriesPalette;
+        IReadOnlyList<Color> palette = SeriesPalette.Of(axes, theme);
         int index = 0;
         foreach (PlotObject plot in axes.Plots.InDrawOrder())
         {
             if (plot is IBubbleData { BubbleSizing: true } bubbles)
             {
-                Color color = bubbles.BubbleFaceColor
-                    ?? (palette.Count > 0 ? palette[index % palette.Count] : Colors.Black);
+                Color color = bubbles.BubbleFaceColor ?? SeriesPalette.Resolve(palette, plot, index);
                 return color.WithOpacity(0.6);
             }
 

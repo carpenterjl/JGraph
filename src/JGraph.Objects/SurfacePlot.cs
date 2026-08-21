@@ -1,4 +1,4 @@
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using JGraph.Core.Drawing;
 using JGraph.Core.Model;
 using JGraph.Core.Primitives;
@@ -542,6 +542,22 @@ public sealed class SurfacePlot : PlotObject, I3DDrawable, IHasZData, ILegendIte
     public (double Min, double Max) ColorRange => ResolveColorRange();
 
     /// <inheritdoc />
+    /// <inheritdoc />
+    public override void AdoptAxesDefaults(AxesModel axes)
+    {
+        if (axes.Colormap is { } map)
+        {
+            Colormap = map;
+        }
+
+        if (axes.ColorLimits is { } limits)
+        {
+            AutoScaleColor = false;
+            ColorMin = limits.Min;
+            ColorMax = limits.Max;
+        }
+    }
+
     public override DataRange GetXDataBounds() => _xGrid is { } grid ? MatrixBounds(grid) : VectorBounds(_x);
 
     /// <inheritdoc />
@@ -1098,8 +1114,9 @@ public sealed class SurfacePlot : PlotObject, I3DDrawable, IHasZData, ILegendIte
     /// </summary>
     private uint[] Palette(int rows, int cols, double colorMin, double colorMax, double opacity, bool perVertex)
     {
+        bool logColor = this.LogColorScale();
         PaletteCache? cached = _palette;
-        if (cached is not null && cached.Matches(_colormap, colorMin, colorMax, opacity, perVertex))
+        if (cached is not null && cached.Matches(_colormap, colorMin, colorMax, opacity, perVertex, logColor))
         {
             return cached.Colors;
         }
@@ -1121,7 +1138,7 @@ public sealed class SurfacePlot : PlotObject, I3DDrawable, IHasZData, ILegendIte
                 built[i] = (alpha << 24) | (argb & 0x00FFFFFF);
             }
 
-            Volatile.Write(ref _palette, new PaletteCache(built, _colormap, colorMin, colorMax, opacity, perVertex));
+            Volatile.Write(ref _palette, new PaletteCache(built, _colormap, colorMin, colorMax, opacity, perVertex, logColor));
             return built;
         }
 
@@ -1131,7 +1148,7 @@ public sealed class SurfacePlot : PlotObject, I3DDrawable, IHasZData, ILegendIte
             {
                 for (int c = 0; c < cols; c++)
                 {
-                    built[(r * cols) + c] = _colormap.Sample(source[r, c], colorMin, colorMax).WithOpacity(opacity).ToArgb();
+                    built[(r * cols) + c] = _colormap.Sample(source[r, c], colorMin, colorMax, logColor).WithOpacity(opacity).ToArgb();
                 }
             }
         }
@@ -1142,12 +1159,12 @@ public sealed class SurfacePlot : PlotObject, I3DDrawable, IHasZData, ILegendIte
                 for (int c = 0; c < cols - 1; c++)
                 {
                     double mean = (source[r, c] + source[r, c + 1] + source[r + 1, c] + source[r + 1, c + 1]) / 4;
-                    built[(r * cols) + c] = _colormap.Sample(mean, colorMin, colorMax).WithOpacity(opacity).ToArgb();
+                    built[(r * cols) + c] = _colormap.Sample(mean, colorMin, colorMax, logColor).WithOpacity(opacity).ToArgb();
                 }
             }
         }
 
-        Volatile.Write(ref _palette, new PaletteCache(built, _colormap, colorMin, colorMax, opacity, perVertex));
+        Volatile.Write(ref _palette, new PaletteCache(built, _colormap, colorMin, colorMax, opacity, perVertex, logColor));
         return built;
     }
 
@@ -1162,8 +1179,9 @@ public sealed class SurfacePlot : PlotObject, I3DDrawable, IHasZData, ILegendIte
         private readonly double _max;
         private readonly double _opacity;
         private readonly bool _perVertex;
+        private readonly bool _log;
 
-        public PaletteCache(uint[] colors, Colormap map, double min, double max, double opacity, bool perVertex)
+        public PaletteCache(uint[] colors, Colormap map, double min, double max, double opacity, bool perVertex, bool log)
         {
             Colors = colors;
             _map = map;
@@ -1171,13 +1189,14 @@ public sealed class SurfacePlot : PlotObject, I3DDrawable, IHasZData, ILegendIte
             _max = max;
             _opacity = opacity;
             _perVertex = perVertex;
+            _log = log;
         }
 
         public uint[] Colors { get; }
 
-        public bool Matches(Colormap map, double min, double max, double opacity, bool perVertex) =>
+        public bool Matches(Colormap map, double min, double max, double opacity, bool perVertex, bool log) =>
             ReferenceEquals(_map, map) && _min.Equals(min) && _max.Equals(max)
-            && _opacity.Equals(opacity) && _perVertex == perVertex;
+            && _opacity.Equals(opacity) && _perVertex == perVertex && _log == log;
     }
 
     /// <summary>
@@ -1216,6 +1235,7 @@ public sealed class SurfacePlot : PlotObject, I3DDrawable, IHasZData, ILegendIte
         }
 
         LightingModel material = Material;
+        Color ambient = Axes?.AmbientLightColor ?? Colors.White;
         Vector3D view = projection.ViewDirection;
 
         uint[] lit = RenderScratch.Rent(ref _litColors, rows * cols, exclusive);
@@ -1265,7 +1285,7 @@ public sealed class SurfacePlot : PlotObject, I3DDrawable, IHasZData, ILegendIte
                         new Vector3D(nx[c], ny[r], z),
                         VertexNormal(nx, ny, nz, rows, cols, r, c),
                         view,
-                        lights).ToArgb();
+                        lights, ambient).ToArgb();
                 }
             }
 
@@ -1296,7 +1316,7 @@ public sealed class SurfacePlot : PlotObject, I3DDrawable, IHasZData, ILegendIte
                     (a + b + d + e) / 4,
                     Vector3D.Cross(b - d, e - a),
                     view,
-                    lights).ToArgb();
+                    lights, ambient).ToArgb();
             }
         }
 
@@ -1325,6 +1345,7 @@ public sealed class SurfacePlot : PlotObject, I3DDrawable, IHasZData, ILegendIte
         bool exclusive)
     {
         LightingModel material = Material;
+        Color ambient = Axes?.AmbientLightColor ?? Colors.White;
         Vector3D view = projection.ViewDirection;
         double[,] xg = _xGrid!;
         double[,] yg = _yGrid!;
@@ -1364,7 +1385,7 @@ public sealed class SurfacePlot : PlotObject, I3DDrawable, IHasZData, ILegendIte
                         new Vector3D(px[vi], py[vi], pz[vi]),
                         ParametricNormal(px, py, pz, rows, cols, r, c),
                         view,
-                        lights).ToArgb();
+                        lights, ambient).ToArgb();
                 }
             }
 
@@ -1393,7 +1414,7 @@ public sealed class SurfacePlot : PlotObject, I3DDrawable, IHasZData, ILegendIte
                     (a + b + d + e) / 4,
                     Vector3D.Cross(b - d, e - a),
                     view,
-                    lights).ToArgb();
+                    lights, ambient).ToArgb();
             }
         }
 
@@ -1587,7 +1608,7 @@ public sealed class SurfacePlot : PlotObject, I3DDrawable, IHasZData, ILegendIte
                 }
             }
 
-            Color color = _colormap.Sample(lines.Levels[level], colorMin, colorMax).WithOpacity(opacity);
+            Color color = _colormap.Sample(lines.Levels[level], colorMin, colorMax, this.LogColorScale()).WithOpacity(opacity);
             context.DrawPaths(
                 verts.AsSpan(0, v), starts.AsSpan(0, paths), closed: false, new LineStyle(color, 1), null);
         }

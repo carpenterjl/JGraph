@@ -1,4 +1,4 @@
-using JGraph.Core.Drawing;
+﻿using JGraph.Core.Drawing;
 using JGraph.Core.Model;
 using JGraph.Core.Primitives;
 using JGraph.Objects;
@@ -86,13 +86,15 @@ public class DecorationRenderTests
         FigureRenderResult result = new FigureRenderer().Render(figure, context, Theme.Light);
         Rect2D area = result.Axes[0].PlotArea;
 
+        // The frame is drawn edge by edge since M73, so its verticals also run the full height;
+        // the constant line is the one dashed vertical among them.
         (Point2D From, Point2D To, LineStyle Style) span = Assert.Single(
             context.Lines,
             l => System.Math.Abs(l.From.X - l.To.X) < 0.001
-                && System.Math.Abs(l.From.Y - area.Top) < 0.001);
+                && System.Math.Abs(l.From.Y - area.Top) < 0.001
+                && l.Style.Dash == DashStyle.Dash);
 
         Assert.Equal(area.Bottom, span.To.Y, 3);
-        Assert.Equal(DashStyle.Dash, span.Style.Dash);
     }
 
     [Fact]

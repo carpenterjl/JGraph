@@ -1,4 +1,4 @@
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Globalization;
 using JGraph.Core.Drawing;
 using JGraph.Core.Model;
@@ -230,6 +230,22 @@ public sealed class ContourPlot : PlotObject, IDrawable, I3DDrawable, IHasZData,
     }
 
     /// <inheritdoc />
+    /// <inheritdoc />
+    public override void AdoptAxesDefaults(AxesModel axes)
+    {
+        if (axes.Colormap is { } map)
+        {
+            Colormap = map;
+        }
+
+        if (axes.ColorLimits is { } limits)
+        {
+            AutoScaleColor = false;
+            ColorMin = limits.Min;
+            ColorMax = limits.Max;
+        }
+    }
+
     public override DataRange GetXDataBounds() => VectorBounds(_x);
 
     /// <inheritdoc />
@@ -378,7 +394,7 @@ public sealed class ContourPlot : PlotObject, IDrawable, I3DDrawable, IHasZData,
             }
 
             Color fill = _colormap
-                .Sample((boundaries[b] + boundaries[b + 1]) / 2, colorMin, colorMax)
+                .Sample((boundaries[b] + boundaries[b + 1]) / 2, colorMin, colorMax, this.LogColorScale())
                 .WithOpacity(opacity);
 
             // Bands tile internally now, but each one is still its own path, so the edge one band
@@ -449,7 +465,7 @@ public sealed class ContourPlot : PlotObject, IDrawable, I3DDrawable, IHasZData,
                 }
             }
 
-            Color color = _colormap.Sample(levels[level], colorMin, colorMax).WithOpacity(opacity);
+            Color color = _colormap.Sample(levels[level], colorMin, colorMax, this.LogColorScale()).WithOpacity(opacity);
             LevelLabel? text = labelled >= 0
                 ? OpenGap(context, pixels, starts, ref v, ref paths, labelled, labelFrom, labelTo, levels[level], color)
                 : null;

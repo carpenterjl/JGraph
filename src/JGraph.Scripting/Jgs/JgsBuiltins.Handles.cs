@@ -1,4 +1,4 @@
-using JGraph.Api;
+﻿using JGraph.Api;
 using JGraph.Core.Drawing;
 using JGraph.Core.Model;
 using JGraph.Objects;
@@ -164,47 +164,36 @@ internal static partial class JgsBuiltins
     // --- Shared vocabulary ----------------------------------------------------------------------
 
     /// <summary>
-    /// A line's colour is only decided at draw time when the script never named one, so reading it
-    /// resolves the colour the palette would give this series and writes it down. Answering with a
-    /// definite colour is what lets a second series be drawn to match the first.
+    /// The colour a line reads back: its own when the script named one, else the palette entry its
+    /// seat resolves to today. Nothing is written down — an auto-coloured line stays auto, so a
+    /// later <c>colororder</c> can retint it — but the answer is definite either way, which is what
+    /// lets a second series be drawn to match the first.
     /// </summary>
-    internal static Color ResolveSeriesColor(LinePlot plot)
+    internal static Color ResolveSeriesColor(LinePlot plot) => plot.Color ?? PaletteColorFor(plot);
+
+    /// <summary>
+    /// The palette entry a plot resolves to today: by the seat it took in its axes' series cycle,
+    /// or by its place in draw order when it never took one. A peek — nothing advances.
+    /// </summary>
+    internal static Color PaletteColorFor(PlotObject plot) =>
+        plot.Axes is { } axes ? axes.PeekSeriesColor(plot) : Colors.DefaultSeriesOrder[0];
+
+    /// <summary>
+    /// Seats an auto-styled plot in its axes' series cycle and answers the seat. The plot's colour
+    /// is left for draw time — the renderer resolves it from the seat, which is what lets
+    /// <c>colororder</c> retint a live figure — unless the caller needs the colour now, in which
+    /// case the seat carries it.
+    /// </summary>
+    internal static SeriesSlot SeatSeries(PlotObject plot)
     {
-        if (plot.Color is { } explicitColor)
+        if (plot.Axes is not { } axes)
         {
-            return explicitColor;
+            return new SeriesSlot(0, Colors.DefaultSeriesOrder[0], SeriesLineStyle.Solid);
         }
 
-        Color resolved = PaletteColorFor(plot);
-        plot.Color = resolved;
-        return resolved;
-    }
-
-    /// <summary>The palette entry a plot's place in its axes' draw order earns it.</summary>
-    internal static Color PaletteColorFor(PlotObject plot)
-    {
-        AxesModel? axes = plot.Axes;
-        IReadOnlyList<Color> palette = axes?.ColorOrder ?? Colors.DefaultSeriesOrder;
-        if (palette.Count == 0)
-        {
-            return Colors.Black;
-        }
-
-        int index = 0;
-        if (axes is not null)
-        {
-            foreach (PlotObject candidate in axes.Plots.InDrawOrder())
-            {
-                if (ReferenceEquals(candidate, plot))
-                {
-                    break;
-                }
-
-                index++;
-            }
-        }
-
-        return palette[index % palette.Count];
+        SeriesSlot slot = axes.TakeSeriesSlot();
+        plot.SeriesIndex = slot.Index;
+        return slot;
     }
 
     /// <summary>

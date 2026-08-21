@@ -34,6 +34,19 @@ public sealed class AxesModel : GraphObject
     private int _activeYAxisIndex;
     private DataRange _bubbleSizeRange = BubbleScale.DefaultSizeRange;
     private DataRange? _bubbleSizeLimits;
+    private AxesLayer _layer = AxesLayer.Bottom;
+    private double _lineWidth = 1.0;
+    private Box3DStyle _boxStyle = Box3DStyle.Back;
+    private Color _ambientLightColor = Colors.White;
+    private double _titleFontSizeMultiplier = 1.1;
+    private double _labelFontSizeMultiplier = 1.1;
+    private TitleHorizontalAlignment _titleHorizontalAlignment = TitleHorizontalAlignment.Center;
+    private ColorScaleType _colorScale = ColorScaleType.Linear;
+    private Colormap? _colormap;
+    private DataRange? _colorLimits;
+    private Vector3D? _dataAspectRatio;
+    private IReadOnlyList<SeriesLineStyle>? _lineStyleOrder;
+    private int _nextSeriesIndex;
 
     public AxesModel()
     {
@@ -78,6 +91,22 @@ public sealed class AxesModel : GraphObject
         // Binding here is what makes that true for all sixty of them at once.
         Plots.CollectionChanged += (_, e) =>
         {
+            // An emptied axes starts its color cycle over, which is what makes cla, hold off, and a
+            // replacing plot verb all behave like MATLAB's newplot without any of them knowing a
+            // counter exists. Removing one plot leaves the counter alone: survivors keep their colors.
+            if (Plots.Count == 0)
+            {
+                _nextSeriesIndex = 0;
+            }
+
+            if (e.NewItems is not null)
+            {
+                foreach (PlotObject plot in e.NewItems.OfType<PlotObject>())
+                {
+                    plot.AdoptAxesDefaults(this);
+                }
+            }
+
             if (_activeYAxisIndex == 0 || e.NewItems is null)
             {
                 return;
@@ -130,8 +159,195 @@ public sealed class AxesModel : GraphObject
         set => SetProperty(ref _colorOrder, value, InvalidationKind.Render);
     }
 
+    /// <summary>
+    /// The dash-and-marker cycle auto-styled series step through after the color order wraps
+    /// (MATLAB <c>LineStyleOrder</c>), or null for the default single solid entry.
+    /// </summary>
+    [Browsable(false)]
+    public IReadOnlyList<SeriesLineStyle>? LineStyleOrder
+    {
+        get => _lineStyleOrder;
+        set => SetProperty(ref _lineStyleOrder, value, InvalidationKind.Render);
+    }
+
+    /// <summary>
+    /// How many series slots this axes has handed out since it was last empty — the 0-based seat of
+    /// the next auto-styled plot in the color cycle (MATLAB's <c>ColorOrderIndex</c> and
+    /// <c>NextSeriesIndex</c> are this number spoken 1-based). Writable so a script can rewind or
+    /// skip the cycle.
+    /// </summary>
+    [Browsable(false)]
+    public int NextSeriesIndex
+    {
+        get => _nextSeriesIndex;
+        set => _nextSeriesIndex = System.Math.Max(0, value);
+    }
+
+    /// <summary>
+    /// Hands out the next series slot: which palette seat the plot occupies and which line-style
+    /// entry goes with it. Colors advance first and the line style steps once per full lap of the
+    /// palette, which is MATLAB's law for the two cycles.
+    /// </summary>
+    public SeriesSlot TakeSeriesSlot()
+    {
+        int index = _nextSeriesIndex++;
+        IReadOnlyList<Color> palette = _colorOrder is { Count: > 0 } chosen ? chosen : Colors.DefaultSeriesOrder;
+        SeriesLineStyle style = _lineStyleOrder is { Count: > 0 } order
+            ? order[index / palette.Count % order.Count]
+            : SeriesLineStyle.Solid;
+        return new SeriesSlot(index, palette[index % palette.Count], style);
+    }
+
+    /// <summary>
+    /// The palette color a plot's slot resolves to today, without advancing anything. A plot that
+    /// never took a slot (built through the API rather than a script) answers by its position, which
+    /// is how those plots have always been colored.
+    /// </summary>
+    public Color PeekSeriesColor(PlotObject plot)
+    {
+        IReadOnlyList<Color> palette = _colorOrder is { Count: > 0 } chosen ? chosen : Colors.DefaultSeriesOrder;
+        int index = plot.SeriesIndex;
+        if (index < 0)
+        {
+            index = 0;
+            foreach (PlotObject candidate in Plots.InDrawOrder())
+            {
+                if (ReferenceEquals(candidate, plot))
+                {
+                    break;
+                }
+
+                index++;
+            }
+        }
+
+        return palette[index % palette.Count];
+    }
+
     /// <summary>The grid lines.</summary>
     public GridModel Grid { get; }
+
+    /// <summary>Whether the grid and ticks are drawn under or over the data (MATLAB <c>Layer</c>).</summary>
+    [Category("Appearance")]
+    public AxesLayer Layer
+    {
+        get => _layer;
+        set => SetProperty(ref _layer, value, InvalidationKind.Render);
+    }
+
+    /// <summary>
+    /// The width in pixels of the axis lines, box, and tick marks (MATLAB <c>LineWidth</c> — which
+    /// there defaults to half a point; the JGraph default of 1 is what every figure was drawn with,
+    /// recorded as a divergence).
+    /// </summary>
+    [Category("Appearance"), DisplayName("Line width")]
+    public double LineWidth
+    {
+        get => _lineWidth;
+        set => SetProperty(ref _lineWidth, System.Math.Max(0.1, value), InvalidationKind.Render);
+    }
+
+    /// <summary>How much of the 3D coordinate box is outlined (MATLAB <c>BoxStyle</c>).</summary>
+    [Category("3D View"), DisplayName("Box style")]
+    public Box3DStyle BoxStyle
+    {
+        get => _boxStyle;
+        set => SetProperty(ref _boxStyle, value, InvalidationKind.Render);
+    }
+
+    /// <summary>
+    /// The color of the one ambient light every lit object here sees (MATLAB
+    /// <c>AmbientLightColor</c>). White — the default — multiplies nothing away, and like MATLAB it
+    /// only shows while a light object exists.
+    /// </summary>
+    [Category("3D View"), DisplayName("Ambient light color")]
+    public Color AmbientLightColor
+    {
+        get => _ambientLightColor;
+        set => SetProperty(ref _ambientLightColor, value, InvalidationKind.Render);
+    }
+
+    /// <summary>How much larger than the axes font the title is drawn (MATLAB <c>TitleFontSizeMultiplier</c>).</summary>
+    [Category("General"), DisplayName("Title size multiplier")]
+    public double TitleFontSizeMultiplier
+    {
+        get => _titleFontSizeMultiplier;
+        set => SetProperty(ref _titleFontSizeMultiplier, System.Math.Max(0.1, value), InvalidationKind.Layout);
+    }
+
+    /// <summary>How much larger than the axes font the axis labels are drawn (MATLAB <c>LabelFontSizeMultiplier</c>).</summary>
+    [Category("General"), DisplayName("Label size multiplier")]
+    public double LabelFontSizeMultiplier
+    {
+        get => _labelFontSizeMultiplier;
+        set => SetProperty(ref _labelFontSizeMultiplier, System.Math.Max(0.1, value), InvalidationKind.Layout);
+    }
+
+    /// <summary>Where the title sits over the plot area (MATLAB <c>TitleHorizontalAlignment</c>).</summary>
+    [Category("General"), DisplayName("Title alignment")]
+    public TitleHorizontalAlignment TitleHorizontalAlignment
+    {
+        get => _titleHorizontalAlignment;
+        set => SetProperty(ref _titleHorizontalAlignment, value, InvalidationKind.Layout);
+    }
+
+    /// <summary>
+    /// True once a script has chosen the axes font size (MATLAB <c>FontSizeMode</c> 'manual').
+    /// Setting the mode back to automatic restores the built-in sizes.
+    /// </summary>
+    [Browsable(false)]
+    public bool FontSizeManual { get; set; }
+
+    /// <summary>
+    /// True once a script has chosen the plot box aspect (MATLAB <c>PlotBoxAspectRatioMode</c>
+    /// 'manual'); automatic is the default cube.
+    /// </summary>
+    [Browsable(false)]
+    public bool PlotBoxAspectManual { get; set; }
+
+    /// <summary>How values are spread over the color limits (MATLAB <c>ColorScale</c>).</summary>
+    [Category("Appearance"), DisplayName("Color scale")]
+    public ColorScaleType ColorScale
+    {
+        get => _colorScale;
+        set => SetProperty(ref _colorScale, value, InvalidationKind.Render);
+    }
+
+    /// <summary>
+    /// The colormap this axes hands to its color-mapped plots (MATLAB <c>Colormap</c>), or null for
+    /// the automatic one. The color-mapped plots keep their own copies — this is what new plots are
+    /// seeded from and what a script reads back, so <c>colormap</c> works whichever side of the
+    /// plotting verb it is called on.
+    /// </summary>
+    [Browsable(false)]
+    public Colormap? Colormap
+    {
+        get => _colormap;
+        set => SetProperty(ref _colormap, value, InvalidationKind.Render);
+    }
+
+    /// <summary>
+    /// The color limits this axes pins its color-mapped plots to (MATLAB <c>CLim</c>), or null when
+    /// each plot scales to its own data. Like <see cref="Colormap"/>, plots carry their own working
+    /// values seeded from this.
+    /// </summary>
+    [Browsable(false)]
+    public DataRange? ColorLimits
+    {
+        get => _colorLimits;
+        set => SetProperty(ref _colorLimits, value, InvalidationKind.Render);
+    }
+
+    /// <summary>
+    /// The relative lengths one data unit takes along x, y, and z (MATLAB <c>daspect</c>), or null
+    /// to fit the data freely. (1, 1, 1) is <c>axis equal</c> said with numbers.
+    /// </summary>
+    [Browsable(false)]
+    public Vector3D? DataAspectRatio
+    {
+        get => _dataAspectRatio;
+        set => SetProperty(ref _dataAspectRatio, value, InvalidationKind.Layout);
+    }
 
     /// <summary>The legend (hidden until enabled).</summary>
     public LegendModel Legend { get; }
@@ -353,7 +569,18 @@ public sealed class AxesModel : GraphObject
     public bool Is3D
     {
         get => _is3D;
-        set => SetProperty(ref _is3D, value, InvalidationKind.Layout);
+        set
+        {
+            // Entering three dimensions turns the wall grid on, which is the figure every 3D verb
+            // has always produced (the old renderer drew it unconditionally) and what MATLAB's own
+            // surf and plot3 show. Leaving changes nothing: 2D axes keep whatever grid they chose.
+            if (value && !_is3D)
+            {
+                Grid.ShowMajor = true;
+            }
+
+            SetProperty(ref _is3D, value, InvalidationKind.Layout);
+        }
     }
 
     /// <summary>
@@ -446,7 +673,13 @@ public sealed class AxesModel : GraphObject
     public Vector3D PlotBoxAspect
     {
         get => _plotBoxAspect;
-        set => SetProperty(ref _plotBoxAspect, value, InvalidationKind.Render);
+        set
+        {
+            // pbaspect and daspect both shape the same box, so the one written last is the one in
+            // charge; a stored data aspect would silently override this write every frame.
+            _dataAspectRatio = null;
+            SetProperty(ref _plotBoxAspect, value, InvalidationKind.Render);
+        }
     }
 
     /// <summary>Adds a secondary X axis at the given position and returns it.</summary>
@@ -572,13 +805,7 @@ public sealed class AxesModel : GraphObject
 
         if (ZAxis.AutoScale)
         {
-            DataRange fitted = bounds.IsEmpty ? DataRange.Unit : bounds.EnsureValid();
-            if (_autoScalePadding > 0 && fitted.IsValid)
-            {
-                fitted = ExpandForScale(fitted, ZAxis.Scale, _autoScalePadding);
-            }
-
-            ZAxis.Range = fitted;
+            FitRange(ZAxis, bounds);
         }
     }
 
@@ -613,15 +840,68 @@ public sealed class AxesModel : GraphObject
 
             if (axis.AutoScale)
             {
-                DataRange fitted = bounds.IsEmpty ? DataRange.Unit : bounds.EnsureValid();
+                FitRange(axis, bounds);
+            }
+        }
+    }
+
+    /// <summary>
+    /// Turns a ruler's data extent into its visible limits under its <see cref="LimitMethod"/>:
+    /// padded by <see cref="AutoScalePadding"/> (the default every existing figure was fitted
+    /// under), exactly tight, or pushed outward to tick-friendly round numbers.
+    /// </summary>
+    private void FitRange(AxisModel axis, DataRange bounds)
+    {
+        DataRange fitted = bounds.IsEmpty ? DataRange.Unit : bounds.EnsureValid();
+        switch (axis.LimitMethod)
+        {
+            case LimitMethod.Tight:
+                break;
+            case LimitMethod.Tickaligned:
+                if (fitted.IsValid)
+                {
+                    fitted = AlignToTicks(fitted, axis.Scale);
+                }
+
+                break;
+            default:
                 if (_autoScalePadding > 0 && fitted.IsValid)
                 {
                     fitted = ExpandForScale(fitted, axis.Scale, _autoScalePadding);
                 }
 
-                axis.Range = fitted;
-            }
+                break;
         }
+
+        axis.Range = fitted;
+    }
+
+    /// <summary>
+    /// Pushes a fitted range outward to the nearest multiples of a nice tick step. The 1-2-5 ladder
+    /// is re-said here because Core cannot reach the tick generators in JGraph.Maths; the arithmetic
+    /// in TickGenerators is this method's twin. A log ruler snaps to whole decades instead.
+    /// </summary>
+    private static DataRange AlignToTicks(DataRange range, AxisScaleType scale)
+    {
+        if (scale == AxisScaleType.Logarithmic && range.Min > 0 && range.Max > 0)
+        {
+            return new DataRange(
+                System.Math.Pow(10, System.Math.Floor(System.Math.Log10(range.Min))),
+                System.Math.Pow(10, System.Math.Ceiling(System.Math.Log10(range.Max))));
+        }
+
+        double span = range.Max - range.Min;
+        if (span <= 0 || !double.IsFinite(span))
+        {
+            return range;
+        }
+
+        double raw = span / 5;
+        double magnitude = System.Math.Pow(10, System.Math.Floor(System.Math.Log10(raw)));
+        double step = magnitude * (raw / magnitude) switch { <= 1 => 1, <= 2 => 2, <= 5 => 5, _ => 10 };
+        double min = System.Math.Floor(range.Min / step) * step;
+        double max = System.Math.Ceiling(range.Max / step) * step;
+        return min == max ? new DataRange(min - step, max + step) : new DataRange(min, max);
     }
 
     /// <summary>
@@ -642,3 +922,9 @@ public sealed class AxesModel : GraphObject
         return range.Expand(fraction);
     }
 }
+
+/// <summary>
+/// One handed-out seat in an axes' series cycle: the 0-based index, the palette color it resolves
+/// to under the default palette, and the line-style entry that goes with it.
+/// </summary>
+public readonly record struct SeriesSlot(int Index, Color Color, SeriesLineStyle Style);

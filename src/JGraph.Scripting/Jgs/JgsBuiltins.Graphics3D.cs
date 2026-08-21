@@ -1,4 +1,4 @@
-using JGraph.Api;
+﻿using JGraph.Api;
 using JGraph.Core.Drawing;
 using JGraph.Core.Model;
 using JGraph.Core.Primitives;
@@ -326,7 +326,16 @@ internal static partial class JgsBuiltins
 
             if (word == "auto")
             {
+                // Back to the default cube, keeping a stored data aspect: the box write clears it
+                // deliberately for scripts, so it is saved and put back.
+                Vector3D? kept = axes.DataAspectRatio;
                 axes.PlotBoxAspect = new Vector3D(1, 1, 1);
+                axes.DataAspectRatio = kept;
+                axes.PlotBoxAspectManual = false;
+            }
+            else
+            {
+                axes.PlotBoxAspectManual = true;
             }
 
             return JgsValue.Null;
@@ -334,6 +343,7 @@ internal static partial class JgsBuiltins
 
         double[] aspect = AspectTriplet("pbaspect", args[0], line, col);
         axes.PlotBoxAspect = new Vector3D(aspect[0], aspect[1], aspect[2]);
+        axes.PlotBoxAspectManual = true;
         return JgsValue.Null;
     }
 
@@ -350,6 +360,11 @@ internal static partial class JgsBuiltins
         ArityRange("daspect", args, 0, 1, line, col);
         if (args.Count == 0)
         {
+            if (axes.DataAspectRatio is { } stored)
+            {
+                return Numbers([stored.X, stored.Y, stored.Z]);
+            }
+
             Vector3D box = axes.PlotBoxAspect;
             double[] ratio = [xSpan / box.X, ySpan / box.Y, zSpan / box.Z];
             double smallest = System.Math.Min(ratio[0], System.Math.Min(ratio[1], ratio[2]));
@@ -366,14 +381,17 @@ internal static partial class JgsBuiltins
 
             if (word == "auto")
             {
+                axes.DataAspectRatio = null;
                 axes.PlotBoxAspect = new Vector3D(1, 1, 1);
             }
 
             return JgsValue.Null;
         }
 
+        // Stored rather than baked into the box: a stored ratio re-reads the spans every frame, so
+        // daspect([1 1 1]) keeps its equal-units promise when the limits later change.
         double[] aspect = AspectTriplet("daspect", args[0], line, col);
-        axes.PlotBoxAspect = new Vector3D(xSpan / aspect[0], ySpan / aspect[1], zSpan / aspect[2]);
+        axes.DataAspectRatio = new Vector3D(aspect[0], aspect[1], aspect[2]);
         return JgsValue.Null;
     }
 

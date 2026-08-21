@@ -1,4 +1,4 @@
-using JGraph.Core.Drawing;
+﻿using JGraph.Core.Drawing;
 using JGraph.Core.Primitives;
 using SkiaSharp;
 
@@ -391,6 +391,7 @@ public sealed class SkiaRenderContext : IRenderContext, IDisposable
 
         ConfigureFont(style);
         _text.Color = ToSk(style.Color);
+        _text.IsAntialias = style.Antialias;
 
         float width = _text.MeasureText(text);
         SKFontMetrics metrics = _text.FontMetrics;

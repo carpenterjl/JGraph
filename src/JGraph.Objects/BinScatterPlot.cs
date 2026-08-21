@@ -1,4 +1,4 @@
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using JGraph.Core.Drawing;
 using JGraph.Core.Model;
 using JGraph.Core.Primitives;
@@ -265,6 +265,15 @@ public sealed class BinScatterPlot : PlotObject, IDrawable, IColorMapped
     }
 
     /// <inheritdoc />
+    /// <inheritdoc />
+    public override void AdoptAxesDefaults(AxesModel axes)
+    {
+        if (axes.Colormap is { } map)
+        {
+            Colormap = map;
+        }
+    }
+
     public override DataRange GetXDataBounds()
     {
         EnsureBins();
