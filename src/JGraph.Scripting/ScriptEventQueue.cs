@@ -1,4 +1,4 @@
-using JGraph.Core.Model;
+﻿using JGraph.Core.Model;
 
 namespace JGraph.Scripting;
 
@@ -26,6 +26,32 @@ public enum GraphicsEventKind
     /// <summary>Something in the interface deleted an object — its <c>DeleteFcn</c>, delivered rather
     /// than run in place, because the deletion happened on a thread the interpreter must not run on.</summary>
     ObjectDeleted,
+
+    /// <summary>A key went down over a figure — the figure's <c>KeyPressFcn</c>.</summary>
+    KeyPress,
+
+    /// <summary>A key came back up — the figure's <c>KeyReleaseFcn</c>.</summary>
+    KeyRelease,
+
+    /// <summary>The same press, told to the window rather than the figure — <c>WindowKeyPressFcn</c>.
+    /// With no uicontrols in this build the two always fire together, in MATLAB's order.</summary>
+    WindowKeyPress,
+
+    /// <summary>The same release, told to the window — <c>WindowKeyReleaseFcn</c>.</summary>
+    WindowKeyRelease,
+
+    /// <summary>A mouse button went down anywhere in a figure — <c>WindowButtonDownFcn</c>.</summary>
+    WindowButtonDown,
+
+    /// <summary>A mouse button came back up — <c>WindowButtonUpFcn</c>.</summary>
+    WindowButtonUp,
+
+    /// <summary>The pointer moved over a figure — <c>WindowButtonMotionFcn</c>, coalesced, because a
+    /// drag across the window is one question about where the pointer is now.</summary>
+    WindowButtonMotion,
+
+    /// <summary>The wheel turned over a figure — <c>WindowScrollWheelFcn</c>.</summary>
+    WindowScrollWheel,
 }
 
 /// <summary>
@@ -42,7 +68,14 @@ public enum GraphicsEventKind
 /// <param name="IntersectionPoint">Where a click landed in data coordinates, when that is known;
 /// null stands for MATLAB's NaN row (a click with no data-space meaning, like the figure background).</param>
 /// <param name="ContextObject">For a context-menu opening: the object that was right-clicked.</param>
-/// <param name="Location">For a context-menu opening: where, in figure pixels.</param>
+/// <param name="Location">For a context-menu opening, or a window mouse event: where, in figure pixels.</param>
+/// <param name="Character">For a key event: the character the key produced, or empty for a key that
+/// produces none (an arrow, a function key).</param>
+/// <param name="KeyName">For a key event: MATLAB's lowercase name for the key itself.</param>
+/// <param name="Modifiers">For a key event: which of shift, control and alt were held, in that
+/// order, lowercase, as MATLAB's cell of words.</param>
+/// <param name="ScrollCount">For a wheel event: how many notches, negative for a turn away from the
+/// user, in MATLAB's sign convention.</param>
 public sealed record GraphicsEvent(
     GraphicsEventKind Kind,
     GraphObject Target,
@@ -50,7 +83,11 @@ public sealed record GraphicsEvent(
     int Button = 0,
     IReadOnlyList<double>? IntersectionPoint = null,
     GraphObject? ContextObject = null,
-    (double X, double Y)? Location = null);
+    (double X, double Y)? Location = null,
+    string Character = "",
+    string KeyName = "",
+    IReadOnlyList<string>? Modifiers = null,
+    int ScrollCount = 0);
 
 /// <summary>
 /// The queue between the interface and the interpreter. Interface threads only ever put events in;

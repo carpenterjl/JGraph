@@ -1,4 +1,4 @@
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Globalization;
 using System.Windows;
 using JGraph.Application.Mvvm;
@@ -17,6 +17,7 @@ namespace JGraph.Application;
 public partial class FigureWindow : Window
 {
     private readonly FigureViewModel _viewModel;
+    private readonly Services.FigureWindowBinding _binding;
 
     /// <summary>The window's view model, for hosts that swap figures in (script figure windows).</summary>
     internal FigureViewModel ViewModel => _viewModel;
@@ -33,6 +34,14 @@ public partial class FigureWindow : Window
         _viewModel = viewModel;
         InitializeComponent();
         DataContext = viewModel;
+
+        // Built here rather than on load, because a script's placement has to be captured before
+        // the window lays out — the figure's size is the size the script asked for only until the
+        // control writes the viewport's own back into it.
+        _binding = new Services.FigureWindowBinding(this, FigureView);
+        _binding.TitleChanged += ApplyTitle;
+        _binding.ToolBarVisibilityChanged += shown =>
+            FigureToolBar.Visibility = shown ? Visibility.Visible : Visibility.Collapsed;
         Loaded += OnLoaded;
     }
 
@@ -41,6 +50,37 @@ public partial class FigureWindow : Window
         _viewModel.AttachNavigator(FigureView);
         _viewModel.PropertyChanged += OnViewModelPropertyChanged;
         FigureView.CursorDataPositionChanged += OnCursorMoved;
+
+        // The window half of the figure's own properties: where it sits, how it is displayed,
+        // whether it can be resized, which pointer it shows, whether the toolbar is there. The
+        // binding was made in the constructor; now there is a laid-out window to apply it to.
+        _binding.Bind(_viewModel.Figure);
+        _binding.OnWindowLoaded();
+        ApplyTitle();
+
+        // Every press, release, move and wheel turn over the figure, whatever it landed on —
+        // MATLAB's WindowButton… family, and the CurrentPoint and SelectionType a callback reads.
+        FigureView.PointerActivity += (_, pointer) =>
+        {
+            switch (pointer.Action)
+            {
+                case Controls.PointerAction.Moved:
+                    ScriptGraphicsCallbacks.NotifyWindowMotion(
+                        pointer.Figure, (pointer.Pixel.X, pointer.Pixel.Y));
+                    break;
+
+                default:
+                    ScriptGraphicsCallbacks.NotifyWindowButton(
+                        pointer.Figure,
+                        pointer.Action == Controls.PointerAction.Pressed,
+                        pointer.Selection,
+                        (pointer.Pixel.X, pointer.Pixel.Y));
+                    break;
+            }
+        };
+
+        FigureView.WheelTurned += (_, wheel) =>
+            ScriptGraphicsCallbacks.NotifyScrollWheel(wheel.Figure, wheel.Notches);
 
         // Share the figure control's selection and undo stack with the side panels, so the edit
         // mode, plot browser, and property inspector all act on the same state.
@@ -152,10 +192,140 @@ public partial class FigureWindow : Window
         ScriptEventQueue.Enqueue(new GraphicsEvent(GraphicsEventKind.CloseRequest, figure));
     }
 
+    /// <summary>
+    /// The window title MATLAB would give this figure: the number unless <c>NumberTitle</c> is off,
+    /// then the <c>Name</c> if it has one. The number itself belongs to the service that opened the
+    /// window, so it is kept here rather than asked for again.
+    /// </summary>
+    internal int FigureNumber { get; set; }
+
+    internal void ApplyTitle()
+    {
+        FigureModel? figure = _viewModel.Figure;
+        string number = FigureNumber > 0 ? $"Figure {FigureNumber}" : "JGraph";
+        bool numbered = figure is null || figure.NumberTitle;
+        string name = figure?.Name is { Length: > 0 } given && given != "Figure" ? given : string.Empty;
+
+        Title = (numbered, name.Length > 0) switch
+        {
+            (true, true) => $"{number}: {name}",
+            (true, false) => number,
+            (false, true) => name,
+            _ => string.Empty,
+        };
+    }
+
+    /// <summary>Rebinds the window's own properties after the view model was given another figure.</summary>
+    internal void RebindFigure()
+    {
+        _binding.Bind(_viewModel.Figure);
+        ApplyTitle();
+    }
+
+    /// <summary>The window's bounds on screen, chrome included, for the figure's OuterPosition.</summary>
+    internal Rect2D? OuterBoundsOf(FigureModel figure) => _binding.OuterBounds(figure);
+
+    /// <summary>
+    /// Keys reach the script before the control's own shortcuts, and are never marked handled, so
+    /// Escape, Delete and Ctrl+Z keep working while a KeyPressFcn also hears them.
+    /// </summary>
+    protected override void OnPreviewKeyDown(System.Windows.Input.KeyEventArgs e)
+    {
+        base.OnPreviewKeyDown(e);
+        ReportKey(e, pressed: true);
+    }
+
+    /// <inheritdoc />
+    protected override void OnPreviewKeyUp(System.Windows.Input.KeyEventArgs e)
+    {
+        base.OnPreviewKeyUp(e);
+        ReportKey(e, pressed: false);
+    }
+
+    private void ReportKey(System.Windows.Input.KeyEventArgs e, bool pressed)
+    {
+        if (_viewModel.Figure is not { } figure)
+        {
+            return;
+        }
+
+        var modifiers = new List<string>(3);
+        System.Windows.Input.ModifierKeys held = System.Windows.Input.Keyboard.Modifiers;
+        if (held.HasFlag(System.Windows.Input.ModifierKeys.Shift))
+        {
+            modifiers.Add("shift");
+        }
+
+        if (held.HasFlag(System.Windows.Input.ModifierKeys.Control))
+        {
+            modifiers.Add("control");
+        }
+
+        if (held.HasFlag(System.Windows.Input.ModifierKeys.Alt))
+        {
+            modifiers.Add("alt");
+        }
+
+        ScriptGraphicsCallbacks.NotifyKey(figure, pressed, CharacterOf(e.Key), KeyNameOf(e.Key), modifiers);
+    }
+
+    /// <summary>The character a key produces, or empty for one that produces none.</summary>
+    private static string CharacterOf(System.Windows.Input.Key key)
+    {
+        bool shift = System.Windows.Input.Keyboard.Modifiers.HasFlag(
+            System.Windows.Input.ModifierKeys.Shift);
+        if (key is >= System.Windows.Input.Key.A and <= System.Windows.Input.Key.Z)
+        {
+            char letter = (char)('a' + (key - System.Windows.Input.Key.A));
+            return (shift ? char.ToUpperInvariant(letter) : letter).ToString();
+        }
+
+        if (key is >= System.Windows.Input.Key.D0 and <= System.Windows.Input.Key.D9 && !shift)
+        {
+            return ((char)('0' + (key - System.Windows.Input.Key.D0))).ToString();
+        }
+
+        if (key is >= System.Windows.Input.Key.NumPad0 and <= System.Windows.Input.Key.NumPad9)
+        {
+            return ((char)('0' + (key - System.Windows.Input.Key.NumPad0))).ToString();
+        }
+
+        return key switch
+        {
+            System.Windows.Input.Key.Space => " ",
+            System.Windows.Input.Key.Return => "\r",
+            System.Windows.Input.Key.Tab => "\t",
+            _ => string.Empty,
+        };
+    }
+
+    /// <summary>MATLAB's lowercase name for a key, which is its own spelling of what was pressed.</summary>
+    private static string KeyNameOf(System.Windows.Input.Key key) => key switch
+    {
+        System.Windows.Input.Key.Return => "return",
+        System.Windows.Input.Key.Escape => "escape",
+        System.Windows.Input.Key.Back => "backspace",
+        System.Windows.Input.Key.Delete => "delete",
+        System.Windows.Input.Key.Left => "leftarrow",
+        System.Windows.Input.Key.Right => "rightarrow",
+        System.Windows.Input.Key.Up => "uparrow",
+        System.Windows.Input.Key.Down => "downarrow",
+        System.Windows.Input.Key.PageUp => "pageup",
+        System.Windows.Input.Key.PageDown => "pagedown",
+        System.Windows.Input.Key.Home => "home",
+        System.Windows.Input.Key.End => "end",
+        System.Windows.Input.Key.Space => "space",
+        System.Windows.Input.Key.Tab => "tab",
+        _ => key.ToString().ToLowerInvariant(),
+    };
+
     private void OnViewModelPropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
         switch (e.PropertyName)
         {
+            case nameof(FigureViewModel.Figure):
+                RebindFigure();
+                break;
             case nameof(FigureViewModel.ActiveMode):
                 FigureView.ActiveMode = _viewModel.ActiveMode;
                 UpdateStatus(null);

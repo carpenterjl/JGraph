@@ -1,4 +1,4 @@
-using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics.CodeAnalysis;
 using JGraph.Api;
 using JGraph.Core.Model;
 
@@ -55,6 +55,30 @@ internal sealed class JgsHandleEntry
 
     /// <summary>A context menu's <c>ContextMenuOpeningFcn</c>, if a script gave it one.</summary>
     public JgsValue? ContextMenuOpeningFcn { get; set; }
+
+    /// <summary>A figure's <c>KeyPressFcn</c>, if a script gave it one.</summary>
+    public JgsValue? KeyPressFcn { get; set; }
+
+    /// <summary>A figure's <c>KeyReleaseFcn</c>, if a script gave it one.</summary>
+    public JgsValue? KeyReleaseFcn { get; set; }
+
+    /// <summary>A figure's <c>WindowKeyPressFcn</c>, if a script gave it one.</summary>
+    public JgsValue? WindowKeyPressFcn { get; set; }
+
+    /// <summary>A figure's <c>WindowKeyReleaseFcn</c>, if a script gave it one.</summary>
+    public JgsValue? WindowKeyReleaseFcn { get; set; }
+
+    /// <summary>A figure's <c>WindowButtonDownFcn</c>, if a script gave it one.</summary>
+    public JgsValue? WindowButtonDownFcn { get; set; }
+
+    /// <summary>A figure's <c>WindowButtonUpFcn</c>, if a script gave it one.</summary>
+    public JgsValue? WindowButtonUpFcn { get; set; }
+
+    /// <summary>A figure's <c>WindowButtonMotionFcn</c>, if a script gave it one.</summary>
+    public JgsValue? WindowButtonMotionFcn { get; set; }
+
+    /// <summary>A figure's <c>WindowScrollWheelFcn</c>, if a script gave it one.</summary>
+    public JgsValue? WindowScrollWheelFcn { get; set; }
 
     /// <summary>The <c>uicontextmenu</c> shown when this object is right-clicked, if any.</summary>
     public GraphObject? ContextMenu { get; set; }

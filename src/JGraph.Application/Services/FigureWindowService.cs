@@ -1,4 +1,4 @@
-using JGraph.Core.Model;
+﻿using JGraph.Core.Model;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace JGraph.Application.Services;
@@ -15,8 +15,27 @@ public sealed class FigureWindowService : IFigureWindowService
     private readonly Dictionary<int, FigureWindow> _windows = new();
 
     /// <summary>Creates the service over the DI container that mints figure windows.</summary>
-    public FigureWindowService(IServiceProvider services) =>
+    public FigureWindowService(IServiceProvider services)
+    {
         _services = services ?? throw new ArgumentNullException(nameof(services));
+
+        // A figure's OuterPosition is a question only the window it is in can answer, and this is
+        // the one object that knows which window that is.
+        JGraph.Scripting.ScriptGraphicsCallbacks.WindowBoundsProvider = OuterBoundsOf;
+    }
+
+    private JGraph.Core.Primitives.Rect2D? OuterBoundsOf(FigureModel figure)
+    {
+        foreach (FigureWindow window in _windows.Values)
+        {
+            if (window.OuterBoundsOf(figure) is { } bounds)
+            {
+                return bounds;
+            }
+        }
+
+        return null;
+    }
 
     /// <inheritdoc />
     public void ShowScriptFigure(int number, FigureModel figure)
@@ -26,7 +45,9 @@ public sealed class FigureWindowService : IFigureWindowService
 
         if (_windows.TryGetValue(number, out FigureWindow? window))
         {
+            window.FigureNumber = number;
             window.ViewModel.DisplayFigure(figure, status);
+            window.RebindFigure();
             if (window.WindowState == System.Windows.WindowState.Minimized)
             {
                 window.WindowState = System.Windows.WindowState.Normal;
@@ -37,8 +58,12 @@ public sealed class FigureWindowService : IFigureWindowService
         }
 
         window = _services.GetRequiredService<FigureWindow>();
-        window.Title = $"Figure {number}";
+        window.FigureNumber = number;
         window.ViewModel.DisplayFigure(figure, status);
+        window.RebindFigure();
+
+        // A figure's OuterPosition is a question only the window it is in can answer, so the window
+        // answers it: the property surface asks through here rather than guessing at the chrome.
 
         // Closing the window retires the figure itself, so the engine stops handing scripts a model
         // nothing can display — the next figure(n) builds a new one and opens a new window.

@@ -36,6 +36,47 @@ public sealed class FigureDto
     /// structure is saved; the callbacks are script-side state and are not.
     /// </summary>
     public List<ContextMenuDto> ContextMenus { get; set; } = new();
+
+    /// <summary>Everything below is null or defaulted in documents written before M75.</summary>
+    public ColormapDto? Colormap { get; set; }
+
+    public double[]? Alphamap { get; set; }
+
+    /// <summary>Null means 'add', which is what every figure written before M75 was.</summary>
+    public string? NextPlot { get; set; }
+
+    public bool NumberTitle { get; set; } = true;
+
+    public string FileName { get; set; } = string.Empty;
+
+    public bool InvertHardcopy { get; set; }
+
+    public bool GraphicsSmoothing { get; set; } = true;
+
+    public string? Pointer { get; set; }
+
+    public bool Resizable { get; set; } = true;
+
+    public string? ToolBar { get; set; }
+
+    public string? WindowState { get; set; }
+
+    /// <summary>Where the window was placed, or null while nothing has placed it.</summary>
+    public PointDto? Position { get; set; }
+
+    public string? PaperUnits { get; set; }
+
+    public string PaperType { get; set; } = "usletter";
+
+    /// <summary>The portrait page size in inches when one was set directly, else null.</summary>
+    public SizeDto? PaperSize { get; set; }
+
+    public string? PaperOrientation { get; set; }
+
+    /// <summary>The print rectangle in inches. Only consulted while the mode is manual.</summary>
+    public RectDto PaperPosition { get; set; } = new(0.25, 2.5, 8, 6);
+
+    public bool PaperPositionAuto { get; set; } = true;
 }
 
 /// <summary>The serialized form of a <see cref="ContextMenuModel"/>.</summary>
@@ -224,6 +265,15 @@ public sealed class AxesDto
     public double[]? Alphamap { get; set; }
 
     public string? AlphaScale { get; set; }
+
+    /// <summary>
+    /// The plot box a script pinned, in the same downward-Y fractions as the bounds, or null while
+    /// the cell is what was asked for. Null in every document written before M75.
+    /// </summary>
+    public RectDto? InnerTarget { get; set; }
+
+    /// <summary>Null means the outer rectangle is what a placement fixes, as it always was.</summary>
+    public string? PositionConstraint { get; set; }
 
     public LegendDto Legend { get; set; } = new();
 

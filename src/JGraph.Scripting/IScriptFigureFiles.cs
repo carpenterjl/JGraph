@@ -1,4 +1,5 @@
-using JGraph.Core.Model;
+﻿using JGraph.Core.Model;
+using JGraph.Core.Primitives;
 using JGraph.Imaging;
 
 namespace JGraph.Scripting;
@@ -19,7 +20,18 @@ public interface IScriptFigureFiles
     FigureModel Load(string path);
 
     /// <summary>Exports a figure as an image; the format follows the extension (png/jpg/bmp/tiff/svg/pdf).</summary>
-    void Export(FigureModel figure, string path);
+    /// <param name="figure">The figure to write.</param>
+    /// <param name="path">Where to write it; the extension chooses the format.</param>
+    /// <param name="scale">
+    /// Pixels per device-independent unit, which is what a resolution in dots per inch comes to
+    /// once it is divided by the ninety-six a device-independent unit is worth. One is the screen.
+    /// </param>
+    /// <param name="size">
+    /// The size to draw at, in device-independent units, or null for the figure's own. This is how
+    /// a page size reaches the exporter: printing at a stated paper position is drawing the figure
+    /// at the size that position asks for.
+    /// </param>
+    void Export(FigureModel figure, string path, double scale = 1.0, Size2D? size = null);
 
     /// <summary>
     /// Renders a figure into pixels without a window and without a file — what <c>getframe</c>

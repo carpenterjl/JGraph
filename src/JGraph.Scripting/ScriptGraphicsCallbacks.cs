@@ -1,4 +1,5 @@
-using JGraph.Core.Model;
+﻿using JGraph.Core.Model;
+using JGraph.Core.Primitives;
 using JGraph.Scripting.Jgs;
 
 namespace JGraph.Scripting;
@@ -96,6 +97,105 @@ public static class ScriptGraphicsCallbacks
         }
     }
 
+    /// <summary>
+    /// Reports a key going down or coming back up over a figure. The character the key produced is
+    /// recorded on the figure first, because MATLAB's <c>CurrentCharacter</c> is what the callback
+    /// reads when it runs, and both the figure's callback and the window's are queued — with no
+    /// uicontrols in this build a figure has the focus whenever its window does, so the two are the
+    /// same event told twice, in MATLAB's order.
+    /// </summary>
+    /// <param name="figure">The figure the key went to.</param>
+    /// <param name="pressed">True for a press, false for a release.</param>
+    /// <param name="character">The character produced, or empty for a key that produces none.</param>
+    /// <param name="keyName">MATLAB's lowercase name for the key itself.</param>
+    /// <param name="modifiers">Which of shift, control and alt were held.</param>
+    public static void NotifyKey(
+        FigureModel figure, bool pressed, string character, string keyName, IReadOnlyList<string> modifiers)
+    {
+        ArgumentNullException.ThrowIfNull(figure);
+        if (pressed && !string.IsNullOrEmpty(character))
+        {
+            figure.CurrentCharacter = character;
+        }
+
+        GraphicsEventKind own = pressed ? GraphicsEventKind.KeyPress : GraphicsEventKind.KeyRelease;
+        GraphicsEventKind window = pressed ? GraphicsEventKind.WindowKeyPress : GraphicsEventKind.WindowKeyRelease;
+        foreach (GraphicsEventKind kind in (ReadOnlySpan<GraphicsEventKind>)[own, window])
+        {
+            if (HasCallback(figure, kind))
+            {
+                ScriptEventQueue.Enqueue(new GraphicsEvent(
+                    kind, figure, Character: character, KeyName: keyName,
+                    Modifiers: modifiers ?? []));
+            }
+        }
+    }
+
+    /// <summary>
+    /// Reports a mouse button going down or up anywhere over a figure, whatever it landed on. This
+    /// is the window's own account of the click, which runs beside — not instead of — the
+    /// <c>ButtonDownFcn</c> of whatever was hit.
+    /// </summary>
+    public static void NotifyWindowButton(
+        FigureModel figure, bool pressed, SelectionKind selection, (double X, double Y) pixel)
+    {
+        ArgumentNullException.ThrowIfNull(figure);
+        figure.CurrentPointPx = new Point2D(pixel.X, pixel.Y);
+        if (pressed)
+        {
+            figure.SelectionType = selection;
+        }
+
+        GraphicsEventKind kind = pressed
+            ? GraphicsEventKind.WindowButtonDown
+            : GraphicsEventKind.WindowButtonUp;
+        if (HasCallback(figure, kind))
+        {
+            ScriptEventQueue.Enqueue(new GraphicsEvent(kind, figure, Location: pixel));
+        }
+    }
+
+    /// <summary>
+    /// Reports the pointer moving over a figure. The position is recorded whether or not anyone is
+    /// listening, because <c>CurrentPoint</c> is a question a script may ask at any time; only the
+    /// callback is conditional, and it coalesces, because a drag is one question about where the
+    /// pointer is now rather than a hundred about where it has been.
+    /// </summary>
+    public static void NotifyWindowMotion(FigureModel figure, (double X, double Y) pixel)
+    {
+        ArgumentNullException.ThrowIfNull(figure);
+        figure.CurrentPointPx = new Point2D(pixel.X, pixel.Y);
+        if (HasCallback(figure, GraphicsEventKind.WindowButtonMotion))
+        {
+            ScriptEventQueue.Enqueue(
+                new GraphicsEvent(GraphicsEventKind.WindowButtonMotion, figure, Location: pixel),
+                coalesce: true);
+        }
+    }
+
+    /// <summary>Reports the wheel turning over a figure — the figure's <c>WindowScrollWheelFcn</c>.</summary>
+    /// <param name="figure">The figure the pointer was over.</param>
+    /// <param name="notches">
+    /// How far it turned: positive toward the user, which is MATLAB's sign for a scroll down.
+    /// </param>
+    public static void NotifyScrollWheel(FigureModel figure, int notches)
+    {
+        ArgumentNullException.ThrowIfNull(figure);
+        if (HasCallback(figure, GraphicsEventKind.WindowScrollWheel))
+        {
+            ScriptEventQueue.Enqueue(new GraphicsEvent(
+                GraphicsEventKind.WindowScrollWheel, figure, ScrollCount: notches));
+        }
+    }
+
+    /// <summary>
+    /// Where a host says what a figure's window really occupies on screen, chrome included — the
+    /// only thing a figure's <c>OuterPosition</c> can honestly be. The WPF application installs one
+    /// as it opens windows; a batch run leaves it null, and the outer bounds are then the drawable
+    /// area, because headless there is no border to add.
+    /// </summary>
+    public static Func<FigureModel, Rect2D?>? WindowBoundsProvider { get; set; }
+
     /// <summary>The <c>uicontextmenu</c> assigned to this object, or null — what a right-click on
     /// it should show in place of the built-in menu.</summary>
     public static ContextMenuModel? ResolveContextMenu(GraphObject target)
@@ -149,6 +249,14 @@ public static class ScriptGraphicsCallbacks
             GraphicsEventKind.MenuSelected => entry.MenuSelectedFcn is not null,
             GraphicsEventKind.ContextMenuOpening => entry.ContextMenuOpeningFcn is not null,
             GraphicsEventKind.ObjectDeleted => entry.DeleteFcn is not null,
+            GraphicsEventKind.KeyPress => entry.KeyPressFcn is not null,
+            GraphicsEventKind.KeyRelease => entry.KeyReleaseFcn is not null,
+            GraphicsEventKind.WindowKeyPress => entry.WindowKeyPressFcn is not null,
+            GraphicsEventKind.WindowKeyRelease => entry.WindowKeyReleaseFcn is not null,
+            GraphicsEventKind.WindowButtonDown => entry.WindowButtonDownFcn is not null,
+            GraphicsEventKind.WindowButtonUp => entry.WindowButtonUpFcn is not null,
+            GraphicsEventKind.WindowButtonMotion => entry.WindowButtonMotionFcn is not null,
+            GraphicsEventKind.WindowScrollWheel => entry.WindowScrollWheelFcn is not null,
             _ => false,
         };
     }

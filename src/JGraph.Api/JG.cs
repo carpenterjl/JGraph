@@ -1575,6 +1575,7 @@ public static class JG
     /// <summary>Returns the current axes, resetting it first when not holding.</summary>
     private static AxesModel PrepareAxes()
     {
+        ApplyFigureNextPlot();
         AxesModel axes = Gca();
         if (!IsHolding)
         {
@@ -1582,6 +1583,51 @@ public static class JG
         }
 
         return axes;
+    }
+
+    /// <summary>
+    /// Does what the current figure's <c>NextPlot</c> says before a plot goes into it: nothing at all
+    /// while it is <c>'add'</c>, which is what every figure starts as and so what nothing here has
+    /// ever done differently.
+    /// </summary>
+    /// <remarks>
+    /// Holding wins over the figure's word. MATLAB reaches the same place by having <c>hold on</c>
+    /// set the figure's NextPlot to <c>'add'</c> as well — but its <c>hold off</c> then sets the
+    /// figure to <c>'replace'</c>, which here would turn the commonest line in any script into an
+    /// instruction to wipe the figure. Reading hold as the override it plainly is gets the behaviour
+    /// without the trap; it is a recorded divergence.
+    /// </remarks>
+    private static void ApplyFigureNextPlot()
+    {
+        if (IsHolding || _currentFigure is not { } figure)
+        {
+            return;
+        }
+
+        switch (figure.NextPlot)
+        {
+            case FigureNextPlot.New:
+                Figure();
+                break;
+
+            case FigureNextPlot.Replace:
+                Clf();
+
+                // 'replace' takes the figure's own properties with it, which is the whole of what
+                // separates it from 'replacechildren'.
+                figure.Background = Core.Drawing.Colors.White;
+                figure.Title = string.Empty;
+                figure.Colormap = null;
+                figure.Alphamap = null;
+                break;
+
+            case FigureNextPlot.ReplaceChildren:
+                Clf();
+                break;
+
+            default:
+                break;
+        }
     }
 
     /// <summary>

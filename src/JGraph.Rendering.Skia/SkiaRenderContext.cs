@@ -17,6 +17,7 @@ public sealed class SkiaRenderContext : IRenderContext, IDisposable
     private readonly SKPaint _fill;
     private readonly SKPaint _text;
     private readonly SKPaint _mesh;
+    private readonly bool _smoothing;
     private readonly bool _flattenDashes;
     private readonly bool _supportsMeshes;
     private readonly Dictionary<(string Family, bool Bold, bool Italic), SKTypeface> _typefaces = new();
@@ -44,6 +45,10 @@ public sealed class SkiaRenderContext : IRenderContext, IDisposable
     /// Skia's SVG backend drops dash path effects (drawing them solid), so the SVG exporter enables
     /// this; raster and PDF targets keep the faster path effect.
     /// </param>
+    /// <param name="smoothing">
+    /// Whether edges are drawn smoothed (MATLAB's figure <c>GraphicsSmoothing</c>). Off gives the
+    /// hard staircase of unaliased geometry, which is exactly what turning it off is asking for.
+    /// </param>
     /// <param name="supportsMeshes">
     /// Whether the canvas can rasterize <see cref="DrawTriangles"/> as a vertex mesh. Skia's SVG and
     /// PDF backends drop <c>DrawVertices</c> silently — the geometry simply never appears in the
@@ -54,17 +59,19 @@ public sealed class SkiaRenderContext : IRenderContext, IDisposable
         Size2D size,
         double devicePixelRatio = 1.0,
         bool flattenDashes = false,
-        bool supportsMeshes = true)
+        bool supportsMeshes = true,
+        bool smoothing = true)
     {
         _canvas = canvas;
         Size = size;
         DevicePixelRatio = devicePixelRatio;
         _flattenDashes = flattenDashes;
         _supportsMeshes = supportsMeshes;
+        _smoothing = smoothing;
 
-        _stroke = new SKPaint { IsAntialias = true, Style = SKPaintStyle.Stroke };
-        _fill = new SKPaint { IsAntialias = true, Style = SKPaintStyle.Fill };
-        _text = new SKPaint { IsAntialias = true, Style = SKPaintStyle.Fill, SubpixelText = true };
+        _stroke = new SKPaint { IsAntialias = smoothing, Style = SKPaintStyle.Stroke };
+        _fill = new SKPaint { IsAntialias = smoothing, Style = SKPaintStyle.Fill };
+        _text = new SKPaint { IsAntialias = smoothing, Style = SKPaintStyle.Fill, SubpixelText = true };
 
         // Its own paint, not _fill: DrawRectangle/DrawPolygon/DrawMarkers overwrite that one's color
         // and path effect, and a mesh draw must not inherit either.
@@ -391,7 +398,7 @@ public sealed class SkiaRenderContext : IRenderContext, IDisposable
 
         ConfigureFont(style);
         _text.Color = ToSk(style.Color);
-        _text.IsAntialias = style.Antialias;
+        _text.IsAntialias = style.Antialias && _smoothing;
 
         float width = _text.MeasureText(text);
         SKFontMetrics metrics = _text.FontMetrics;

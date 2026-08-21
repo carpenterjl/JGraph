@@ -166,7 +166,7 @@ public sealed class ImagePlot : PlotObject, IDrawable
     /// <inheritdoc />
     public override void AdoptAxesDefaults(AxesModel axes)
     {
-        if (axes.Colormap is { } map)
+        if (axes.ResolveColormap() is { } map)
         {
             Colormap = map;
         }
@@ -286,14 +286,14 @@ public sealed class ImagePlot : PlotObject, IDrawable
     private bool AlphaStampStale() =>
         _alphaData is not null
         && (_builtAlphaLimits != Axes?.AlphaLimits
-            || !ReferenceEquals(_builtAlphamap, Axes?.Alphamap)
+            || !ReferenceEquals(_builtAlphamap, Axes?.ResolveAlphamap())
             || _builtAlphaScale != (Axes?.AlphaScale ?? ColorScaleType.Linear));
 
     private void StampAlpha()
     {
         _builtAlphaData = _alphaData;
         _builtAlphaLimits = Axes?.AlphaLimits;
-        _builtAlphamap = Axes?.Alphamap;
+        _builtAlphamap = Axes?.ResolveAlphamap();
         _builtAlphaScale = Axes?.AlphaScale ?? ColorScaleType.Linear;
     }
 

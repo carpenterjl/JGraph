@@ -233,7 +233,7 @@ public sealed class ContourPlot : PlotObject, IDrawable, I3DDrawable, IHasZData,
     /// <inheritdoc />
     public override void AdoptAxesDefaults(AxesModel axes)
     {
-        if (axes.Colormap is { } map)
+        if (axes.ResolveColormap() is { } map)
         {
             Colormap = map;
         }

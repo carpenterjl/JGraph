@@ -1,5 +1,6 @@
-using JGraph.Api;
+﻿using JGraph.Api;
 using JGraph.Core.Model;
+using JGraph.Core.Primitives;
 using JGraph.Scripting;
 using JGraph.Scripting.Jgs;
 using JGraph.Scripting.Startup;
@@ -154,7 +155,8 @@ public class BatchRunnerTests : IDisposable
 
         public FigureModel Load(string path) => new();
 
-        public void Export(FigureModel figure, string path) => Exported = path;
+        public void Export(FigureModel figure, string path, double scale = 1.0, Size2D? size = null) =>
+            Exported = path;
 
         public JGraph.Imaging.ImageBuffer Capture(FigureModel figure, double scale) =>
             new(1, 1, 3);

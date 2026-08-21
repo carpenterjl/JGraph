@@ -147,3 +147,14 @@ public enum SortMethodType
     Depth,
     ChildOrder,
 }
+
+/// <summary>
+/// Which rectangle a script's <c>Position</c> write fixes (MATLAB <c>PositionConstraint</c>).
+/// OuterPosition pins the cell including its margins and lets the plot box shrink to make room for
+/// labels; InnerPosition pins the plot box and lets the margins push outward.
+/// </summary>
+public enum PositionConstraintType
+{
+    OuterPosition,
+    InnerPosition,
+}

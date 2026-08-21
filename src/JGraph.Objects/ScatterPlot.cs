@@ -325,7 +325,7 @@ public sealed class ScatterPlot : XYPlot, IDrawable, ILegendItem, IColorMapped, 
     /// <inheritdoc />
     public override void AdoptAxesDefaults(AxesModel axes)
     {
-        if (axes.Colormap is { } map)
+        if (axes.ResolveColormap() is { } map)
         {
             Colormap = map;
         }

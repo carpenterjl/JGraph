@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.IO;
 using System.Linq;
 using JGraph.Core.Drawing;
@@ -979,6 +979,93 @@ public class SerializationTests
         Assert.Equal(new DataRange(0.25, 0.75), restored.AlphaLimits);
         Assert.Equal(new double[] { 0, 0.5, 1 }, restored.Alphamap);
         Assert.Equal(ColorScaleType.Log, restored.AlphaScale);
+    }
+
+    [Fact]
+    public void AFigureRoundTripsItsWindowItsPageAndTheMapsItsAxesFallBackOn()
+    {
+        var figure = new FigureModel
+        {
+            Colormap = Colormap.Hot,
+            Alphamap = [0, 0.25, 1],
+            NextPlot = FigureNextPlot.ReplaceChildren,
+            NumberTitle = false,
+            FileName = "somewhere.fig",
+            InvertHardcopy = true,
+            GraphicsSmoothing = false,
+            Pointer = PointerShape.Watch,
+            Resizable = false,
+            ToolBar = FigureToolBarMode.None,
+            WindowState = FigureWindowState.Maximized,
+            Position = new Point2D(120, 240),
+            PaperUnits = PaperUnitType.Centimeters,
+            PaperOrientation = PaperOrientationType.Landscape,
+            PaperPosition = new Rect2D(1, 2, 4, 3),
+            PaperPositionAuto = false,
+        };
+        figure.PaperSize = new Size2D(5, 7);
+
+        FigureModel restored = RoundTrip(figure);
+
+        Assert.Equal(Colormap.Hot.Stops.Count, restored.Colormap!.Stops.Count);
+        Assert.Equal(new double[] { 0, 0.25, 1 }, restored.Alphamap);
+        Assert.Equal(FigureNextPlot.ReplaceChildren, restored.NextPlot);
+        Assert.False(restored.NumberTitle);
+        Assert.Equal("somewhere.fig", restored.FileName);
+        Assert.True(restored.InvertHardcopy);
+        Assert.False(restored.GraphicsSmoothing);
+        Assert.Equal(PointerShape.Watch, restored.Pointer);
+        Assert.False(restored.Resizable);
+        Assert.Equal(FigureToolBarMode.None, restored.ToolBar);
+        Assert.Equal(FigureWindowState.Maximized, restored.WindowState);
+        Assert.True(restored.PositionSpecified);
+        Assert.Equal(new Point2D(120, 240), restored.Position);
+        Assert.Equal(PaperUnitType.Centimeters, restored.PaperUnits);
+        Assert.Equal(PaperSizes.CustomName, restored.PaperType);
+        Assert.Equal(new Size2D(5, 7), restored.PaperSize);
+        Assert.Equal(PaperOrientationType.Landscape, restored.PaperOrientation);
+        Assert.Equal(new Rect2D(1, 2, 4, 3), restored.PaperPosition);
+        Assert.False(restored.PaperPositionAuto);
+    }
+
+    [Fact]
+    public void AFigureNobodyTouchedRoundTripsAsTheFigureItAlwaysWas()
+    {
+        // Every M75 field is absent from a document written before it, and absent has to mean the
+        // figure that document described: unplaced, numbered, resizable, on letter paper.
+        FigureModel restored = RoundTrip(new FigureModel());
+
+        Assert.Null(restored.Colormap);
+        Assert.Null(restored.Alphamap);
+        Assert.Equal(FigureNextPlot.Add, restored.NextPlot);
+        Assert.True(restored.NumberTitle);
+        Assert.False(restored.PositionSpecified);
+        Assert.True(restored.Resizable);
+        Assert.True(restored.GraphicsSmoothing);
+        Assert.False(restored.InvertHardcopy);
+        Assert.Equal("usletter", restored.PaperType);
+        Assert.True(restored.PaperPositionAuto);
+    }
+
+    [Fact]
+    public void AnAxesRoundTripsThePlotBoxItWasPinnedTo()
+    {
+        var figure = new FigureModel();
+        AxesModel axes = figure.AddAxes();
+        axes.InnerTarget = new Rect2D(0.2, 0.25, 0.5, 0.5);
+        axes.PositionConstraint = PositionConstraintType.InnerPosition;
+
+        AxesModel restored = RoundTrip(figure).Axes[0];
+
+        Assert.Equal(new Rect2D(0.2, 0.25, 0.5, 0.5), restored.InnerTarget);
+        Assert.Equal(PositionConstraintType.InnerPosition, restored.PositionConstraint);
+
+        // And an axes nobody pinned comes back placed by its cell, as every axes was before M75.
+        var plain = new FigureModel();
+        plain.AddAxes();
+        AxesModel untouched = RoundTrip(plain).Axes[0];
+        Assert.Null(untouched.InnerTarget);
+        Assert.Equal(PositionConstraintType.OuterPosition, untouched.PositionConstraint);
     }
 
     [Fact]

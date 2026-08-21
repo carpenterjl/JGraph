@@ -20,6 +20,26 @@ internal static class FigureMapper
             Size = DtoConvert.ToDto(figure.Size),
             Title = figure.Title,
             TitleStyle = DtoConvert.ToDto(figure.TitleStyle),
+            Colormap = figure.Colormap is { } map ? DtoConvert.ToDto(map) : null,
+            Alphamap = figure.Alphamap?.ToArray(),
+            NextPlot = figure.NextPlot.ToString(),
+            NumberTitle = figure.NumberTitle,
+            FileName = figure.FileName,
+            InvertHardcopy = figure.InvertHardcopy,
+            GraphicsSmoothing = figure.GraphicsSmoothing,
+            Pointer = figure.Pointer.ToString(),
+            Resizable = figure.Resizable,
+            ToolBar = figure.ToolBar.ToString(),
+            WindowState = figure.WindowState.ToString(),
+            Position = figure.PositionSpecified
+                ? new PointDto(figure.Position.X, figure.Position.Y)
+                : null,
+            PaperUnits = figure.PaperUnits.ToString(),
+            PaperType = figure.PaperType,
+            PaperSize = figure.PaperSize is { } page ? DtoConvert.ToDto(page) : null,
+            PaperOrientation = figure.PaperOrientation.ToString(),
+            PaperPosition = DtoConvert.ToDto(figure.PaperPosition),
+            PaperPositionAuto = figure.PaperPositionAuto,
         };
 
         foreach (AxesModel axes in figure.Axes)
@@ -76,6 +96,15 @@ internal static class FigureMapper
         return item;
     }
 
+    /// <summary>
+    /// A word from a document read back as its enum, or the fallback when the word is absent (an
+    /// older document) or unknown (a newer one, read by an older build). Never an error: a document
+    /// that names something this build has no word for still opens, minus that one choice.
+    /// </summary>
+    private static TEnum ParseOr<TEnum>(string? word, TEnum fallback)
+        where TEnum : struct, Enum =>
+        Enum.TryParse(word, ignoreCase: true, out TEnum parsed) ? parsed : fallback;
+
     public static FigureModel ToModel(FigureDto dto)
     {
         var figure = new FigureModel
@@ -89,6 +118,32 @@ internal static class FigureMapper
         if (dto.TitleStyle is not null)
         {
             figure.TitleStyle = DtoConvert.ToTextStyle(dto.TitleStyle);
+        }
+
+        // Every one of these is absent from a document written before M75, and every one of them
+        // falls back to what a figure was then, so an old file loads as the figure it was saved as.
+        figure.Colormap = dto.Colormap is { } mapDto ? DtoConvert.ToColormap(mapDto) : null;
+        figure.Alphamap = dto.Alphamap;
+        figure.NextPlot = ParseOr(dto.NextPlot, FigureNextPlot.Add);
+        figure.NumberTitle = dto.NumberTitle;
+        figure.FileName = dto.FileName;
+        figure.InvertHardcopy = dto.InvertHardcopy;
+        figure.GraphicsSmoothing = dto.GraphicsSmoothing;
+        figure.Pointer = ParseOr(dto.Pointer, PointerShape.Arrow);
+        figure.Resizable = dto.Resizable;
+        figure.ToolBar = ParseOr(dto.ToolBar, FigureToolBarMode.Auto);
+        figure.WindowState = ParseOr(dto.WindowState, FigureWindowState.Normal);
+        figure.PaperUnits = ParseOr(dto.PaperUnits, PaperUnitType.Inches);
+        figure.PaperType = string.IsNullOrEmpty(dto.PaperType) ? "usletter" : dto.PaperType;
+        figure.PaperSize = dto.PaperSize is { } paper ? DtoConvert.ToSize(paper) : null;
+        figure.PaperOrientation = ParseOr(dto.PaperOrientation, PaperOrientationType.Portrait);
+        figure.PaperPosition = DtoConvert.ToRect(dto.PaperPosition);
+        figure.PaperPositionAuto = dto.PaperPositionAuto;
+
+        // Position last, because writing it is what says a figure has been placed at all.
+        if (dto.Position is { } placed)
+        {
+            figure.Position = new Point2D(placed.X, placed.Y);
         }
 
         foreach (AxesDto axesDto in dto.Axes)
@@ -214,6 +269,10 @@ internal static class FigureMapper
         dto.AlphaLimits = axes.AlphaLimits is { } alphaLimits ? [alphaLimits.Min, alphaLimits.Max] : null;
         dto.Alphamap = axes.Alphamap is { } alphamap ? [.. alphamap] : null;
         dto.AlphaScale = axes.AlphaScale == ColorScaleType.Linear ? null : axes.AlphaScale.ToString();
+        dto.InnerTarget = axes.InnerTarget is { } inner ? DtoConvert.ToDto(inner) : null;
+        dto.PositionConstraint = axes.PositionConstraint == PositionConstraintType.OuterPosition
+            ? null
+            : axes.PositionConstraint.ToString();
         dto.LineStyleOrder = axes.LineStyleOrder is { } styles
             ? styles.Select(static entry => new SeriesLineStyleDto(entry.Dash, entry.Marker)).ToList()
             : null;
@@ -426,6 +485,9 @@ internal static class FigureMapper
             ? new DataRange(alphaLimits[0], alphaLimits[1])
             : null;
         axes.Alphamap = dto.Alphamap is { Length: > 0 } alphamap ? alphamap : null;
+
+        axes.InnerTarget = dto.InnerTarget is { } inner ? DtoConvert.ToRect(inner) : null;
+        axes.PositionConstraint = ParseOr(dto.PositionConstraint, PositionConstraintType.OuterPosition);
 
         if (Enum.TryParse(dto.AlphaScale, out ColorScaleType alphaScale))
         {

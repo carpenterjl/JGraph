@@ -1,4 +1,4 @@
-using JGraph.Api;
+﻿using JGraph.Api;
 using JGraph.Core.Drawing;
 using JGraph.Core.Model;
 using JGraph.Core.Primitives;
@@ -791,7 +791,7 @@ internal static partial class JgsGraphicsProperties
             entry =>
             {
                 AxesModel axes = Axes(entry);
-                Colormap map = axes.Colormap ?? FirstMappedColormap(axes) ?? Colormap.Parula;
+                Colormap map = axes.ResolveColormap() ?? FirstMappedColormap(axes) ?? Colormap.Parula;
                 return ColorTable(map.Stops);
             },
             (entry, value, line, col) =>

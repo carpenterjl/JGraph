@@ -1,4 +1,4 @@
-using JGraph.Core.Drawing;
+﻿using JGraph.Core.Drawing;
 using JGraph.Core.Model;
 using JGraph.Core.Primitives;
 
@@ -48,7 +48,7 @@ internal static class AlphaResolver
             (min, max) = (0, 1);
         }
 
-        return new AlphaLookup(axes?.Alphamap, min, max, axes is { AlphaScale: ColorScaleType.Log });
+        return new AlphaLookup(axes?.ResolveAlphamap(), min, max, axes is { AlphaScale: ColorScaleType.Log });
     }
 
     /// <summary>The extent of a grid of alpha data, ignoring the values that are not numbers.</summary>

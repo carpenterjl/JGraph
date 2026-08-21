@@ -268,7 +268,7 @@ public sealed class BinScatterPlot : PlotObject, IDrawable, IColorMapped
     /// <inheritdoc />
     public override void AdoptAxesDefaults(AxesModel axes)
     {
-        if (axes.Colormap is { } map)
+        if (axes.ResolveColormap() is { } map)
         {
             Colormap = map;
         }

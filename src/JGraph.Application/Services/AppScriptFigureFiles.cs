@@ -1,4 +1,5 @@
-using JGraph.Core.Model;
+﻿using JGraph.Core.Model;
+using JGraph.Core.Primitives;
 using JGraph.Export;
 using JGraph.Imaging;
 using JGraph.Scripting;
@@ -21,8 +22,8 @@ public sealed class AppScriptFigureFiles : IScriptFigureFiles
     public FigureModel Load(string path) => GraphFormat.Load(path);
 
     /// <inheritdoc />
-    public void Export(FigureModel figure, string path) =>
-        FigureExporter.Export(figure, path, new ExportOptions());
+    public void Export(FigureModel figure, string path, double scale = 1.0, Size2D? size = null) =>
+        FigureExporter.Export(figure, path, new ExportOptions { Scale = scale, Size = size });
 
     /// <inheritdoc />
     public ImageBuffer Capture(FigureModel figure, double scale)

@@ -311,7 +311,7 @@ public sealed class Scatter3DPlot : PlotObject, I3DDrawable, IHasZData, ILegendI
     /// <inheritdoc />
     public override void AdoptAxesDefaults(AxesModel axes)
     {
-        if (axes.Colormap is { } map)
+        if (axes.ResolveColormap() is { } map)
         {
             Colormap = map;
         }

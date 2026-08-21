@@ -1,4 +1,4 @@
-<Window x:Class="JGraph.Application.FigureWindow"
+﻿<Window x:Class="JGraph.Application.FigureWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:jg="clr-namespace:JGraph.Controls;assembly=JGraph.Controls"
@@ -9,7 +9,7 @@
         <BooleanToVisibilityConverter x:Key="BoolToVisibility" />
     </Window.Resources>
     <DockPanel>
-        <ToolBar DockPanel.Dock="Top">
+        <ToolBar x:Name="FigureToolBar" DockPanel.Dock="Top">
             <Button Content="Open…" Command="{Binding OpenCommand}" Margin="2,0"
                     ToolTip="Open a JGraph (.graph) figure" />
             <Button Content="Save…" Command="{Binding SaveCommand}" Margin="2,0"

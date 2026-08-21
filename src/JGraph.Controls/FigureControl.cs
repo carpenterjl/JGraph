@@ -1,4 +1,4 @@
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Input;
 using JGraph.Core.Drawing;
 using JGraph.Core.Model;
@@ -257,6 +257,47 @@ public class FigureControl : SKElement, IInteractionSurface, IFigureNavigator
         }
     }
 
+    /// <summary>
+    /// Raised for every press, release and move over the figure, whatever it landed on. The host
+    /// decides what that means; in the app it feeds the figure's <c>WindowButton…Fcn</c> family and
+    /// the <c>CurrentPoint</c> and <c>SelectionType</c> a callback reads.
+    /// </summary>
+    public event EventHandler<FigurePointerEventArgs>? PointerActivity;
+
+    /// <summary>Raised when the wheel turns over the figure — the figure's <c>WindowScrollWheelFcn</c>.</summary>
+    public event EventHandler<FigureWheelEventArgs>? WheelTurned;
+
+    private void RaisePointerActivity(Point2D pixel, PointerAction action, SelectionKind selection)
+    {
+        if (Figure is { } figure)
+        {
+            PointerActivity?.Invoke(this, new FigurePointerEventArgs(figure, pixel, action, selection));
+        }
+    }
+
+    /// <summary>
+    /// MATLAB's four words for a gesture, from the button and the modifiers: a plain left click is
+    /// 'normal', shift makes it 'extend', a right click or ctrl makes it 'alt', and two clicks in
+    /// quick succession make it 'open'.
+    /// </summary>
+    private static SelectionKind SelectionOf(MouseButtonEventArgs e)
+    {
+        if (e.ClickCount > 1)
+        {
+            return SelectionKind.Open;
+        }
+
+        if (e.ChangedButton == MouseButton.Right
+            || Keyboard.Modifiers.HasFlag(System.Windows.Input.ModifierKeys.Control))
+        {
+            return SelectionKind.Alt;
+        }
+
+        return Keyboard.Modifiers.HasFlag(System.Windows.Input.ModifierKeys.Shift)
+            ? SelectionKind.Extend
+            : SelectionKind.Normal;
+    }
+
     /// <inheritdoc />
     public void RequestRender() => InvalidateVisual();
 
@@ -286,7 +327,8 @@ public class FigureControl : SKElement, IInteractionSurface, IFigureNavigator
         _isRendering = true;
         try
         {
-            using var context = new SkiaRenderContext(canvas, new Size2D(width, height), dpiScale);
+            using var context = new SkiaRenderContext(
+                canvas, new Size2D(width, height), dpiScale, smoothing: figure.GraphicsSmoothing);
             _lastResult = _renderer.Render(figure, context, _theme);
             OverlayRenderer.Draw(context, _controller, _theme);
         }
@@ -307,6 +349,7 @@ public class FigureControl : SKElement, IInteractionSurface, IFigureNavigator
             _rightDown = ToPoint(e);
         }
 
+        RaisePointerActivity(ToPoint(e), PointerAction.Pressed, SelectionOf(e));
         _controller.PointerDown(ToPointerArgs(e, ButtonOf(e)));
     }
 
@@ -314,6 +357,7 @@ public class FigureControl : SKElement, IInteractionSurface, IFigureNavigator
     {
         base.OnMouseMove(e);
         Point2D position = ToPoint(e);
+        RaisePointerActivity(position, PointerAction.Moved, SelectionKind.Normal);
         _controller.PointerMove(ToPointerArgs(e, PointerButton.None, position));
 
         Point2D? data = null;
@@ -338,6 +382,7 @@ public class FigureControl : SKElement, IInteractionSurface, IFigureNavigator
     protected override void OnMouseUp(MouseButtonEventArgs e)
     {
         base.OnMouseUp(e);
+        RaisePointerActivity(ToPoint(e), PointerAction.Released, SelectionOf(e));
         _controller.PointerUp(ToPointerArgs(e, ButtonOf(e)));
         ReleaseMouseCapture();
 
@@ -410,6 +455,15 @@ public class FigureControl : SKElement, IInteractionSurface, IFigureNavigator
     protected override void OnMouseWheel(MouseWheelEventArgs e)
     {
         base.OnMouseWheel(e);
+
+        // A notch is a hundred and twenty units, and MATLAB counts a scroll toward the user as
+        // positive where WPF's delta is negative there. The wheel keeps zooming as well: the
+        // callback hears about the turn, it does not take the turn over.
+        if (Figure is { } figure)
+        {
+            WheelTurned?.Invoke(this, new FigureWheelEventArgs(figure, -e.Delta / 120));
+        }
+
         _controller.Wheel(new WheelEventArgs(ToPoint(e), e.Delta, CurrentModifiers()));
         e.Handled = true;
     }

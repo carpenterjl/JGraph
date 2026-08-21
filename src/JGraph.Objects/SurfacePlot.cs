@@ -587,7 +587,7 @@ public sealed class SurfacePlot : PlotObject, I3DDrawable, IHasZData, ILegendIte
     /// <inheritdoc />
     public override void AdoptAxesDefaults(AxesModel axes)
     {
-        if (axes.Colormap is { } map)
+        if (axes.ResolveColormap() is { } map)
         {
             Colormap = map;
         }
@@ -1171,7 +1171,9 @@ public sealed class SurfacePlot : PlotObject, I3DDrawable, IHasZData, ILegendIte
         AlphaLookup alphaLookup = alphaData is null
             ? default
             : this.ResolveAlpha(AlphaResolver.BoundsOf(alphaData));
-        var stamp = new AlphaStamp(alphaData, Axes?.AlphaLimits, Axes?.Alphamap, Axes?.AlphaScale);
+        // The resolved map, not the axes' own: a figure-level alphamap is what an axes that never
+        // chose one hands out, and a stamp that could not see it would keep the old palette.
+        var stamp = new AlphaStamp(alphaData, Axes?.AlphaLimits, Axes?.ResolveAlphamap(), Axes?.AlphaScale);
 
         PaletteCache? cached = _palette;
         if (cached is not null

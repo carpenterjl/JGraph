@@ -2011,26 +2011,69 @@ internal static partial class JgsBuiltins
         // the callee position stays exempt, so colormap(jet) still calls.
         env.Declare("colormap", JgsValue.Function(new BuiltinFunction("colormap", (args, line, col) =>
         {
-            ArityRange("colormap", args, 0, 1, line, col);
+            ArityRange("colormap", args, 0, 2, line, col);
 
-            // No argument reads the map back, which is what makes rgbplot(colormap) and
-            // colormap(flipud(colormap)) mean anything.
-            if (args.Count == 0)
+            // A leading handle names what the map belongs to: an axes, or the figure whose axes fall
+            // back on it. Without one it is the current axes, which is what it has always been.
+            GraphObject? target = null;
+            IReadOnlyList<JgsValue> rest = args;
+            if (args.Count > 0 && args[0].Type != JgsType.String
+                && JgsHandleRegistry.TryGet(args[0], out JgsHandleEntry? entry)
+                && entry.Target is FigureModel or AxesModel)
             {
-                return ColormapTable(JG.CurrentColormap().Resample(DefaultColormapRows));
+                target = entry.Target;
+                rest = args.Skip(1).ToList();
+            }
+            else if (args.Count == 2)
+            {
+                throw new JgsRuntimeException(line, col,
+                    "colormap(target, map) expects a figure or axes handle as its first argument.");
+            }
+
+            // No map reads one back, which is what makes rgbplot(colormap) and
+            // colormap(flipud(colormap)) mean anything.
+            if (rest.Count == 0)
+            {
+                Colormap current = target switch
+                {
+                    FigureModel figure => figure.Colormap ?? Colormap.Parula,
+                    AxesModel axes => axes.ResolveColormap() ?? Colormap.Parula,
+                    _ => JG.CurrentColormap(),
+                };
+                return ColormapTable(current.Resample(DefaultColormapRows));
             }
 
             try
             {
-                if (args[0].Type == JgsType.String)
-                {
-                    JG.Colormap(Str("colormap", args, 0, line, col));
-                }
-                else
-                {
+                Colormap chosen = rest[0].Type == JgsType.String
+                    ? NamedColormap(Str("colormap", rest, 0, line, col), line, col)
+
                     // An m-by-3 table of components in [0, 1], which is what every generator returns
                     // and so what `colormap(parula(64))` and `colormap(flipud(gray))` hand over.
-                    JG.Colormap(Colormap.FromRows("custom", Matrix("colormap", args, 0, line, col)));
+                    : Colormap.FromRows("custom", Matrix("colormap", rest, 0, line, col));
+
+                switch (target)
+                {
+                    case FigureModel figure:
+                        figure.Colormap = chosen;
+                        foreach (AxesModel axes in figure.Axes)
+                        {
+                            if (axes.Colormap is null)
+                            {
+                                ReseedPlots(axes);
+                            }
+                        }
+
+                        break;
+
+                    case AxesModel axes:
+                        axes.Colormap = chosen;
+                        ReseedPlots(axes);
+                        break;
+
+                    default:
+                        JG.Colormap(chosen);
+                        break;
                 }
             }
             catch (ArgumentException ex)
@@ -2248,6 +2291,10 @@ internal static partial class JgsBuiltins
         RegisterFigureToolBuiltins(env, host);
         RegisterFigureStateBuiltins(env);
         RegisterMotionBuiltins(env);
+
+        // The paper verbs come after them because print takes the name over from the console verb
+        // declared far above, and the last declaration of a name is the one a script reaches.
+        RegisterPrinting(env, host, dialect);
 
         // After the plotting verbs it re-declares: the titling family gains its text options here,
         // and contour learns to answer with its matrix as well as its handle.

@@ -94,8 +94,9 @@ see. This file refused to count them while they drew nothing; **M56 made them re
 number and this one agree again. `opengl` *is* counted, because an accepted no-op is an answer — the
 same reading that counted `shading`, `lighting` and `camlight` in M43.
 
-Across every callable kind — builtin, function, operator, keyword, script — the count is **912 of
-2,024** as of M71 (910 after M69; 926 of 2,027 was written here from M68 and counted two different populations —
+Across every callable kind — builtin, function, operator, keyword, script — the count is **913 of
+2,024** as of M75, which added `saveas` and gave the MATLAB dialect's `print` its paper meaning
+(912 after M71; 910 after M69; 926 of 2,027 was written here from M68 and counted two different populations —
 see the correction below; 919 after M67, 905 after M66, 880 after M65, 867 after M64, 814 after M60, 781 after M59, 758 after M58, 742 after M57, 728 after M56, 710 after M55 by this file's nine-short reading above, 697 after M54, 633 after
 M52, 619 after M51, up from 560, and not from the 556 this file used to claim: the checklist tool
 read the implemented set with a regular expression that only matched a name literal directly inside
@@ -290,7 +291,7 @@ count in the first table instead.
 | The function plotters | M58 | `fplot` `fplot3` `fsurf` `fmesh` `fcontour` `fimplicit` `fimplicit3` and the nine `ez*` spellings — no new plot object at all: each verb decides where to read its function and hands the readings to a line, a surface, a contour or a patch that already existed, so a saved figure holds the drawing and not the function |
 | Volume visualization | M59 | `isosurface` `isocaps` `isonormals` `isocolors` `contourslice` `coneplot` `streamline` `stream2` `stream3` `streamribbon` `streamtube` `streamslice` `curl` `divergence` `smooth3` `subvolume` `reducevolume` `reducepatch` `volumebounds` `shrinkfaces` `surf2patch` — twenty-one verbs and no new plot object: the isosurface family draws with `patch`, the stream family with `plot3` and `surf`, and a field is a plain three-dimensional array, so the whole milestone is arithmetic followed by an existing drawing |
 | The polar rulers | M56 | `rticks` `rticklabels` `rtickangle` `rtickformat` `rlim` `thetaticks` `thetaticklabels` `thetatickformat` `thetalim` — registered as refusals in M54, real now; r is the Cartesian tick machinery pointed at `RAxis`, θ converts units at the boundary and answers through the spoke arithmetic the renderer draws with |
-| Figure tooling, files and motion | M60 | `annotation` `savefig` `openfig` `hgsave` `hgload` `exportgraphics` `hgexport` `copygraphics` `getframe` `getappdata` `setappdata` `isappdata` `rmappdata` `linkprop` `refresh` `alpha` `alim` `alphamap` `rendererinfo` `comet` `comet3` `movie` `streamparticles` `interpstreamspeed` `pan` `datacursormode` `gtext` `rotate` and the five interactivity toggles — almost none of them draw: they work on what the other verbs drew, and each one that wants a window, a clipboard or a click has a defined answer without one |
+| Figure tooling, files and motion | M60, M75 | `annotation` `savefig` `saveas` `openfig` `hgsave` `hgload` `exportgraphics` `hgexport` `copygraphics` `getframe` `getappdata` `setappdata` `isappdata` `rmappdata` `linkprop` `refresh` `alpha` `alim` `alphamap` `rendererinfo` `comet` `comet3` `movie` `streamparticles` `interpstreamspeed` `pan` `datacursormode` `gtext` `rotate` and the five interactivity toggles — almost none of them draw: they work on what the other verbs drew, and each one that wants a window, a clipboard or a click has a defined answer without one |
 | String arrays | M63 | `strings` — the only *builtin* the M61–M68 language arc has added; the rest of M63 (`char` `strip` `pad` `erase` `insertAfter` `insertBefore` `extractAfter` `extractBefore` `extractBetween` `str2num`) is documented as *function* |
 
 ### What the remaining 31 are

@@ -1523,7 +1523,7 @@ public static class JgsBuiltinCatalog
         Add("run", "Runs another JGS script into the current global scope (an include).", P("path"));
         Add("clear", "Clears the workspace (or just the named variables) and reverts any rebound built-in. Figures stay open.", Opt("names"));
         Add("clearvars", "Clears the user's variables (all, or just the named ones). Built-ins are untouched.", Opt("names"));
-        Add("print", "Writes the values to the console, space-separated.", P("values"));
+        Add("print", "In JGS, writes the values to the console, space-separated. In the MATLAB dialect the paper verb instead: print('plot.png'), print(gcf, 'plot', '-dpdf'), with '-dpng'/'-djpeg'/'-dpdf'/'-dsvg' for the format and '-r300' for the resolution.", P("values"));
         Add("clc", "Clears the console display. Variables and figures are untouched.");
         Add("whos", "Lists the workspace's variables with their size and class.");
         Add("save", "Writes workspace variables to a version 5 MAT-file (or text with '-ascii'); '-append' adds to one that exists.", Opt("path"), Opt("names..."));
@@ -1806,6 +1806,7 @@ public static class JgsBuiltinCatalog
         Add("hgsave", "Saves a figure to a file; the older spelling of savefig.", Opt("h"), P("filename"));
         Add("openfig", "Reads a saved figure back and returns a handle to it: h = openfig('name.fig').", P("filename"), Opt("mode"));
         Add("hgload", "Reads a saved figure back; the older spelling of openfig.", P("filename"));
+        Add("saveas", "Writes a figure to a file, format by extension or by name: saveas(gcf, 'plot.png') or saveas(gcf, 'plot', 'pdf'). A .fig writes the document rather than a picture.", Opt("h"), P("filename"), Opt("format"));
         Add("exportgraphics", "Writes a figure to an image or document, format by extension: exportgraphics(gcf, 'plot.pdf', 'ContentType', 'vector').", Opt("h"), P("filename"), Opt("name"), Opt("value"));
         Add("hgexport", "Writes a figure to a file; the older spelling of exportgraphics.", Opt("h"), P("filename"));
         Add("copygraphics", "Puts a figure on the clipboard as an image: copygraphics(gcf, 'Resolution', 300).", Opt("h"), Opt("name"), Opt("value"));

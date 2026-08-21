@@ -1362,13 +1362,6 @@ internal static partial class JgsGraphicsProperties
                 entry => ColorRow(((FigureModel)entry.Target).Background),
                 (entry, value, line, col) =>
                     ((FigureModel)entry.Target).Background = JgsBuiltins.OptionColor(value, line, col, "figure"));
-            Put(table, "Position",
-                entry => Row(0, 0, ((FigureModel)entry.Target).Size.Width, ((FigureModel)entry.Target).Size.Height),
-                (entry, value, line, col) =>
-                {
-                    double[] box = Numbers("Position", value, 4, line, col);
-                    ((FigureModel)entry.Target).Size = new Size2D(box[2], box[3]);
-                });
             Put(table, "CurrentAxes", entry => ((FigureModel)entry.Target).Axes.Count > 0
                 ? JgsHandleRegistry.For(JG.CurrentAxesOrNull ?? ((FigureModel)entry.Target).Axes[0])
                 : JgsValue.Array([]));
@@ -1376,6 +1369,7 @@ internal static partial class JgsGraphicsProperties
                 static entry => entry.CloseRequestFcn, static (entry, value) => entry.CloseRequestFcn = value);
             AddCallbackSlot(table, "SizeChangedFcn",
                 static entry => entry.SizeChangedFcn, static (entry, value) => entry.SizeChangedFcn = value);
+            AddFigureBlock(table);
         }
 
         if (typeof(LegendModel).IsAssignableFrom(type))
@@ -1710,14 +1704,6 @@ internal static partial class JgsGraphicsProperties
             (entry, value, line, col) => Axes(entry).Background =
                 JgsBuiltins.OptionColor(value, line, col, "axes"));
 
-        Put(table, "Position",
-            entry => RectRow(Axes(entry).NormalizedBounds),
-            (entry, value, line, col) =>
-            {
-                double[] box = Numbers("Position", value, 4, line, col);
-                Axes(entry).NormalizedBounds = new Rect2D(box[0], box[1], box[2], box[3]);
-            });
-
         Put(table, "Box",
             entry => OnOff(Axes(entry).FrameVisible),
             (entry, value, line, col) => Axes(entry).FrameVisible = ToOnOff("Box", value, line, col));
@@ -1759,6 +1745,7 @@ internal static partial class JgsGraphicsProperties
 
         AddAxesWave(table);
         AddAxesWaveTwo(table);
+        AddAxesLayout(table);
     }
 
     private static void AddRulerAliases(IDictionary<string, GraphicsProperty> table)

@@ -59,6 +59,8 @@ public sealed class AxesModel : GraphObject
     private ColorScaleType _alphaScale = ColorScaleType.Linear;
     private Vector3D _currentPointFront;
     private Vector3D _currentPointBack;
+    private Rect2D? _innerTarget;
+    private PositionConstraintType _positionConstraint = PositionConstraintType.OuterPosition;
 
     public AxesModel()
     {
@@ -824,6 +826,45 @@ public sealed class AxesModel : GraphObject
         _currentPointFront = front;
         _currentPointBack = back;
     }
+
+    /// <summary>
+    /// The plot box this axes was asked to occupy, in the same fractions and the same downward Y as
+    /// <see cref="NormalizedBounds"/>, or null while the cell is what was asked for. Setting it makes
+    /// the renderer derive the cell each frame by inflating this rectangle by the margins it measured,
+    /// which is what MATLAB's <c>PositionConstraint</c> of <c>'innerposition'</c> means.
+    /// </summary>
+    [Browsable(false)]
+    public Rect2D? InnerTarget
+    {
+        get => _innerTarget;
+        set => SetProperty(ref _innerTarget, value, InvalidationKind.Layout);
+    }
+
+    /// <summary>Which rectangle a placement fixes (MATLAB <c>PositionConstraint</c>).</summary>
+    [Browsable(false)]
+    public PositionConstraintType PositionConstraint
+    {
+        get => _positionConstraint;
+        set => SetProperty(ref _positionConstraint, value, InvalidationKind.Layout);
+    }
+
+    /// <summary>
+    /// What the renderer measured for this axes on the last frame, or null before the first one.
+    /// Written by the renderer and read by the layout properties; deliberately silent and never
+    /// serialized, since it describes a drawing rather than a document.
+    /// </summary>
+    [Browsable(false)]
+    public AxesLayoutSnapshot? LastLayout { get; set; }
+
+    /// <summary>
+    /// The colormap this axes actually hands out: its own if it has chosen one, otherwise the
+    /// figure's, otherwise none at all. MATLAB's colormap lives on the figure and an axes overrides
+    /// it, so a figure-level map has to be visible from here or setting one would reach nothing.
+    /// </summary>
+    public Colormap? ResolveColormap() => _colormap ?? (Parent as FigureModel)?.Colormap;
+
+    /// <summary>The transparencies this axes looks alpha data up in, read through to the figure.</summary>
+    public IReadOnlyList<double>? ResolveAlphamap() => _alphamap ?? (Parent as FigureModel)?.Alphamap;
 
     /// <summary>The view angle an axes uses when it has not been told one (MATLAB's own default).</summary>
     public const double DefaultCameraViewAngle = 6.6086;

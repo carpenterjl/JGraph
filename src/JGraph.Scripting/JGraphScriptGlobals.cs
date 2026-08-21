@@ -1,9 +1,10 @@
-using System.Globalization;
+﻿using System.Globalization;
 using System.IO;
 using System.Text;
 using System.Threading;
 using JGraph.Api;
 using JGraph.Core.Model;
+using JGraph.Core.Primitives;
 using JGraph.Data;
 using JGraph.Data.Import;
 
@@ -330,10 +331,10 @@ public sealed class JGraphScriptGlobals
     public void exportfigure(string path) => exportfigure(path, JG.CurrentFigure);
 
     /// <summary>Exports a specific figure as an image.</summary>
-    public void exportfigure(string path, FigureModel figure)
+    public void exportfigure(string path, FigureModel figure, double scale = 1.0, Size2D? size = null)
     {
         ArgumentNullException.ThrowIfNull(figure);
-        RequireFigureFiles("exportfigure").Export(figure, ResolveForWrite(path));
+        RequireFigureFiles("exportfigure").Export(figure, ResolveForWrite(path), scale, size);
     }
 
     // --- Ending the session -----------------------------------------------------------------------

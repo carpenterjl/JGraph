@@ -1,4 +1,4 @@
-using JGraph.Api;
+﻿using JGraph.Api;
 using JGraph.Core.Model;
 using JGraph.Core.Primitives;
 using JGraph.Imaging;
@@ -140,7 +140,13 @@ internal static partial class JgsBuiltins
             OneOfWord(verb, rest[i], ["compact", "compactv7.3", "-v7.3", "-v7"], line, col);
         }
 
-        return Attempt(() => host.savefigure(path, figure), line, col);
+        // A saved figure knows where it was saved: MATLAB's FileName is set by this and read back
+        // by a script that wants to save again over the same file.
+        return Attempt(() =>
+        {
+            host.savefigure(path, figure);
+            figure.FileName = path;
+        }, line, col);
     }
 
     private static JgsValue OpenFigure(
@@ -171,6 +177,7 @@ internal static partial class JgsBuiltins
             throw new JgsRuntimeException(line, col, ex.Message);
         }
 
+        figure.FileName = path;
         return JgsHandleRegistry.For(figure);
     }
 
@@ -192,7 +199,16 @@ internal static partial class JgsBuiltins
         options.Word("ContentType", "auto", "auto", "vector", "image");
         options.Word("Colorspace", "rgb", "rgb", "gray");
 
-        return Attempt(() => host.exportfigure(path, figure), line, col);
+        // Read since M52 for its spelling; acted on since M75. A resolution is dots per inch, and a
+        // device-independent unit is a ninety-sixth of one, so the ratio is the scale to draw at.
+        double resolution = options.Scalar("Resolution", 96);
+        if (!double.IsFinite(resolution) || resolution <= 0)
+        {
+            throw new JgsRuntimeException(line, col,
+                $"{verb}: Resolution is a positive number of dots per inch, but got {resolution}.");
+        }
+
+        return Attempt(() => host.exportfigure(path, figure, resolution / 96.0), line, col);
     }
 
     private static JgsValue CopyGraphics(

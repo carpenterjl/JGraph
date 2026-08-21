@@ -1,4 +1,4 @@
-using JGraph.Core.Model;
+﻿using JGraph.Core.Model;
 using JGraph.Core.Primitives;
 
 namespace JGraph.Rendering.Layout;
@@ -42,19 +42,6 @@ public static class LayoutEngine
     /// Produces a reasonable decoration-margin estimate based on which labels/titles are present.
     /// Used as a starting point and by tests; the Skia renderer measures text for exact margins.
     /// </summary>
-    public static Thickness EstimateDecorations(AxesModel axes)
-    {
-        bool hasTitle = !string.IsNullOrEmpty(axes.Title);
-        bool xLabels = axes.PrimaryXAxis.ShowTickLabels;
-        bool xTitle = !string.IsNullOrEmpty(axes.PrimaryXAxis.Label);
-        bool yLabels = axes.PrimaryYAxis.ShowTickLabels;
-        bool yTitle = !string.IsNullOrEmpty(axes.PrimaryYAxis.Label);
-
-        double left = 12 + (yLabels ? 34 : 0) + (yTitle ? 18 : 0);
-        double bottom = 10 + (xLabels ? 20 : 0) + (xTitle ? 18 : 0);
-        double top = 10 + (hasTitle ? 24 : 0);
-        double right = 12;
-
-        return new Thickness(left, top, right, bottom);
-    }
+    public static Thickness EstimateDecorations(AxesModel axes) =>
+        AxesLayoutSnapshot.EstimateInset(axes);
 }

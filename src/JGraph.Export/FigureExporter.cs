@@ -1,4 +1,4 @@
-using JGraph.Core.Drawing;
+﻿using JGraph.Core.Drawing;
 using JGraph.Core.Model;
 using JGraph.Core.Primitives;
 using JGraph.Export.Writers;
@@ -46,6 +46,32 @@ public static class FigureExporter
 
         ITheme theme = options.Theme ?? Theme.Light;
 
+        // MATLAB's InvertHardcopy: a figure that is dark on screen is saved on white, so a printed
+        // page does not come out of the printer black. The swap is undone before this returns, so
+        // nothing outside this call ever sees the figure wearing a colour it did not choose.
+        Color onScreen = figure.Background;
+        bool inverted = figure.InvertHardcopy && onScreen != Colors.White;
+        if (inverted)
+        {
+            figure.Background = Colors.White;
+        }
+
+        try
+        {
+            ExportCore(figure, stream, format, options, size, theme);
+        }
+        finally
+        {
+            if (inverted)
+            {
+                figure.Background = onScreen;
+            }
+        }
+    }
+
+    private static void ExportCore(
+        FigureModel figure, Stream stream, ExportFormat format, ExportOptions options, Size2D size, ITheme theme)
+    {
         switch (format)
         {
             case ExportFormat.Png:
@@ -173,7 +199,8 @@ public static class FigureExporter
         // strokes are flattened into explicit segments for this format, and it drops vertex meshes
         // outright (a surface would simply be absent from the file), so those become paths.
         using SKCanvas canvas = SKSvgCanvas.Create(bounds, stream);
-        using var context = new SkiaRenderContext(canvas, size, 1.0, flattenDashes: true, supportsMeshes: false);
+        using var context = new SkiaRenderContext(
+            canvas, size, 1.0, flattenDashes: true, supportsMeshes: false, smoothing: figure.GraphicsSmoothing);
         new FigureRenderer().Render(figure, context, theme);
     }
 
@@ -210,7 +237,8 @@ public static class FigureExporter
         double pixelRatio = 1.0,
         bool supportsMeshes = true)
     {
-        using var context = new SkiaRenderContext(canvas, size, pixelRatio, supportsMeshes: supportsMeshes);
+        using var context = new SkiaRenderContext(
+            canvas, size, pixelRatio, supportsMeshes: supportsMeshes, smoothing: figure.GraphicsSmoothing);
         new FigureRenderer().Render(figure, context, theme);
     }
 }

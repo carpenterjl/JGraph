@@ -1,4 +1,4 @@
-using JGraph.Core.Drawing;
+﻿using JGraph.Core.Drawing;
 using JGraph.Core.Model;
 using JGraph.Core.Primitives;
 using JGraph.Maths.Ticks;
@@ -81,11 +81,11 @@ public sealed class FigureRenderer
 
     private AxesRenderInfo? RenderAxes(AxesModel axes, IRenderContext context, ITheme theme, Rect2D content)
     {
-        Rect2D outer = new(
-            content.X + (axes.NormalizedBounds.X * content.Width),
-            content.Y + (axes.NormalizedBounds.Y * content.Height),
-            axes.NormalizedBounds.Width * content.Width,
-            axes.NormalizedBounds.Height * content.Height);
+        // A pinned plot box is measured against itself and then inflated, because the margins are
+        // what stands between the two rectangles and neither is known before the other. Measuring
+        // against the inner rectangle costs a few pixels on the tick lengths a ruler states as a
+        // fraction, and buys a plot box that lands exactly where it was asked for.
+        Rect2D outer = DeviceRect(content, axes.InnerTarget ?? axes.NormalizedBounds);
 
         AxisModel xAxis = axes.PrimaryXAxis;
         AxisModel yAxis = axes.PrimaryYAxis;
@@ -100,8 +100,19 @@ public sealed class FigureRenderer
         IReadOnlyList<SideRuler> sideRulers = MeasureSideRulers(axes, context, theme);
 
         DecorationMetrics metrics = MeasureDecorations(axes, context, xAxis, yAxis, xTicks, yTicks, sideRulers, outer);
+        if (axes.InnerTarget is not null)
+        {
+            outer = Inflate(outer, metrics.Margins);
+        }
+
         AxesLayout layout = LayoutEngine.Compute(axes, outer, metrics.Margins);
         Rect2D plotArea = layout.PlotArea;
+
+        // The report the layout properties read: what was asked for, what it came to, and what the
+        // text between them cost. Recorded before the equal-aspect shrink, because that shrink is a
+        // drawing decision inside the plot box rather than a change to the box itself.
+        axes.LastLayout = new AxesLayoutSnapshot(outer, plotArea, metrics.TightInset, content);
+
         if (plotArea.IsEmpty)
         {
             return null;
@@ -817,6 +828,20 @@ public sealed class FigureRenderer
         }
     }
 
+    /// <summary>Maps normalized figure fractions onto a device rectangle within the content area.</summary>
+    private static Rect2D DeviceRect(Rect2D content, Rect2D normalized) => new(
+        content.X + (normalized.X * content.Width),
+        content.Y + (normalized.Y * content.Height),
+        normalized.Width * content.Width,
+        normalized.Height * content.Height);
+
+    /// <summary>Grows a rectangle by a margin on each side — the inverse of <c>Deflate</c>.</summary>
+    private static Rect2D Inflate(Rect2D rect, Thickness margins) => new(
+        rect.X - margins.Left,
+        rect.Y - margins.Top,
+        rect.Width + margins.Horizontal,
+        rect.Height + margins.Vertical);
+
     /// <summary>The same text style in another colour, or unchanged when there is no tint.</summary>
     private static TextStyle Tinted(TextStyle style, Color? tint) =>
         tint is { } color ? style.WithColor(color) : style;
@@ -829,7 +854,18 @@ public sealed class FigureRenderer
         double YLabelHeight,
         double XLabelHeight,
         double XTickOutward,
-        double YTickOutward);
+        double YTickOutward,
+        double ExtrasRight = 0)
+    {
+        /// <summary>
+        /// The part of the margins that text claimed, which is what MATLAB's <c>TightInset</c>
+        /// reports. A colorbar and the rulers <c>yyaxis</c> stands outside the right edge also push
+        /// the plot area in, but they are objects rather than the axes' own decoration, so MATLAB
+        /// leaves them out and so does this.
+        /// </summary>
+        public Thickness TightInset => new(
+            Margins.Left, Margins.Top, System.Math.Max(0, Margins.Right - ExtrasRight), Margins.Bottom);
+    }
 
     private static DecorationMetrics MeasureDecorations(
         AxesModel axes,
@@ -860,8 +896,9 @@ public sealed class FigureRenderer
                 top += context.MeasureText(axes.Subtitle, axes.SubtitleStyle).Height + LabelPadding;
             }
 
-            right += ColorbarRenderer.MeasureReservedWidth(axes, context);
-            return new DecorationMetrics(new Thickness(left, top, right, bottom), 0, 0, 0, 0, 0, 0);
+            double polarBar = ColorbarRenderer.MeasureReservedWidth(axes, context);
+            right += polarBar;
+            return new DecorationMetrics(new Thickness(left, top, right, bottom), 0, 0, 0, 0, 0, 0, polarBar);
         }
 
         // The margins a ruler's ticks and text claim land on whichever edge the ruler sits on —
@@ -963,14 +1000,16 @@ public sealed class FigureRenderer
 
         // The rulers yyaxis put outside the right edge were measured already; their stacked width is
         // what the plot area has to give up so the outermost one's label still fits on the page.
+        double extrasRight = 0;
         if (sideRulers.Count > 0)
         {
             SideRuler last = sideRulers[^1];
-            right += last.Offset + TickLength + LabelPadding + last.TickWidth
+            extrasRight += last.Offset + TickLength + LabelPadding + last.TickWidth
                 + (last.LabelHeight > 0 ? LabelPadding + last.LabelHeight : 0);
         }
 
-        right += ColorbarRenderer.MeasureReservedWidth(axes, context);
+        extrasRight += ColorbarRenderer.MeasureReservedWidth(axes, context);
+        right += extrasRight;
 
         return new DecorationMetrics(
             new Thickness(left, top, right, bottom),
@@ -979,7 +1018,8 @@ public sealed class FigureRenderer
             yLabelHeight,
             xLabelHeight,
             xTickOutward,
-            yTickOutward);
+            yTickOutward,
+            extrasRight);
     }
 
     /// <summary>

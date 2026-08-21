@@ -1,4 +1,4 @@
-using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics.CodeAnalysis;
 using JGraph.Api;
 using JGraph.Core.Model;
 
@@ -268,6 +268,14 @@ internal sealed class JgsCallbackDispatcher
             GraphicsEventKind.MenuSelected => entry.MenuSelectedFcn,
             GraphicsEventKind.ContextMenuOpening => entry.ContextMenuOpeningFcn,
             GraphicsEventKind.ObjectDeleted => entry.DeleteFcn,
+            GraphicsEventKind.KeyPress => entry.KeyPressFcn,
+            GraphicsEventKind.KeyRelease => entry.KeyReleaseFcn,
+            GraphicsEventKind.WindowKeyPress => entry.WindowKeyPressFcn,
+            GraphicsEventKind.WindowKeyRelease => entry.WindowKeyReleaseFcn,
+            GraphicsEventKind.WindowButtonDown => entry.WindowButtonDownFcn,
+            GraphicsEventKind.WindowButtonUp => entry.WindowButtonUpFcn,
+            GraphicsEventKind.WindowButtonMotion => entry.WindowButtonMotionFcn,
+            GraphicsEventKind.WindowScrollWheel => entry.WindowScrollWheelFcn,
             _ => null,
         };
 
@@ -337,8 +345,35 @@ internal sealed class JgsCallbackDispatcher
                 });
             }
 
+            case GraphicsEventKind.KeyPress:
+            case GraphicsEventKind.KeyRelease:
+            case GraphicsEventKind.WindowKeyPress:
+            case GraphicsEventKind.WindowKeyRelease:
+                return JgsValue.Struct(new Dictionary<string, JgsValue>(StringComparer.Ordinal)
+                {
+                    ["Source"] = source,
+                    ["EventName"] = JgsValue.Str(
+                        graphicsEvent.Kind is GraphicsEventKind.KeyPress or GraphicsEventKind.WindowKeyPress
+                            ? "KeyPress"
+                            : "KeyRelease"),
+                    ["Character"] = JgsValue.Str(graphicsEvent.Character),
+                    ["Key"] = JgsValue.Str(graphicsEvent.KeyName),
+                    ["Modifier"] = JgsValue.Cell(
+                        (graphicsEvent.Modifiers ?? []).Select(JgsValue.Str).ToArray()),
+                });
+
+            case GraphicsEventKind.WindowScrollWheel:
+                return JgsValue.Struct(new Dictionary<string, JgsValue>(StringComparer.Ordinal)
+                {
+                    ["Source"] = source,
+                    ["EventName"] = JgsValue.Str("WindowScrollWheel"),
+                    ["VerticalScrollCount"] = JgsValue.Number(graphicsEvent.ScrollCount),
+                    ["VerticalScrollAmount"] = JgsValue.Number(3),
+                });
+
             default:
-                // CloseRequest, SizeChanged and ObjectDeleted carry no event data in MATLAB.
+                // CloseRequest, SizeChanged, ObjectDeleted and the window button events carry no
+                // event data in MATLAB — the callback reads CurrentPoint and SelectionType instead.
                 return JgsValue.Array([]);
         }
     }
@@ -352,6 +387,14 @@ internal sealed class JgsCallbackDispatcher
         GraphicsEventKind.MenuSelected => "MenuSelectedFcn",
         GraphicsEventKind.ContextMenuOpening => "ContextMenuOpeningFcn",
         GraphicsEventKind.ObjectDeleted => "DeleteFcn",
+        GraphicsEventKind.KeyPress => "KeyPressFcn",
+        GraphicsEventKind.KeyRelease => "KeyReleaseFcn",
+        GraphicsEventKind.WindowKeyPress => "WindowKeyPressFcn",
+        GraphicsEventKind.WindowKeyRelease => "WindowKeyReleaseFcn",
+        GraphicsEventKind.WindowButtonDown => "WindowButtonDownFcn",
+        GraphicsEventKind.WindowButtonUp => "WindowButtonUpFcn",
+        GraphicsEventKind.WindowButtonMotion => "WindowButtonMotionFcn",
+        GraphicsEventKind.WindowScrollWheel => "WindowScrollWheelFcn",
         _ => "callback",
     };
 }
