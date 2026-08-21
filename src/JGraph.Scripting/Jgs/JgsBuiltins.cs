@@ -692,11 +692,9 @@ internal static partial class JgsBuiltins
             return ListDirectory(host, args.Count == 1 ? Str("dir", args, 0, line, col) : string.Empty, line, col);
         });
 
-        Define("path", (args, line, col) =>
-        {
-            Arity("path", args, 0, line, col);
-            return JgsValue.Str(host.WorkingDirectory ?? string.Empty);
-        });
+        // path itself is declared with the search-path builtins in RegisterPathBuiltins — the search
+        // path is interpreter state, and the plain working-directory answer that used to live here
+        // was shadowed by that declaration in every real session.
 
         // --- RF networks and transmission lines ----------------------------------------------
         // S-parameter networks are carried as tables (freq column, per-pair re/im columns, a

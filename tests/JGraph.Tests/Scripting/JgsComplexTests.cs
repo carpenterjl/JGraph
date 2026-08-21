@@ -109,7 +109,7 @@ public class JgsComplexTests : IDisposable
 
         Assert.True(result.Success, result.Message);
         ScriptVariable z = Assert.Single(result.Variables, v => v.Name == "z");
-        Assert.Equal("complex", z.Type);
+        Assert.Equal("double", z.Type);
         Assert.Equal("1+2i", z.DisplayValue);
     }
 }

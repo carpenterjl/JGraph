@@ -136,19 +136,19 @@ public class JgsWorkspaceRunTests : IDisposable
         Assert.True(result.Success, result.Message);
 
         ScriptVariable x = Assert.Single(result.Variables, v => v.Name == "x");
-        Assert.Equal("number", x.Type);
+        Assert.Equal("double", x.Type);
         Assert.Equal(5.0, Assert.IsType<double>(x.RawValue));
 
         ScriptVariable name = Assert.Single(result.Variables, v => v.Name == "name");
-        Assert.Equal("string", name.Type);
+        Assert.Equal("char", name.Type);
         Assert.Equal("hi", name.DisplayValue);
 
         ScriptVariable a = Assert.Single(result.Variables, v => v.Name == "a");
-        Assert.Equal("array", a.Type);
+        Assert.Equal("double", a.Type);
         Assert.Equal(new[] { 1.0, 2.0, 3.0 }, Assert.IsType<double[]>(a.RawValue));
 
         ScriptVariable f = Assert.Single(result.Variables, v => v.Name == "f");
-        Assert.Equal("function", f.Type);
+        Assert.Equal("function_handle", f.Type);
         Assert.Null(f.RawValue);
 
         // Untouched builtins stay out of the snapshot.
@@ -163,6 +163,6 @@ public class JgsWorkspaceRunTests : IDisposable
 
         Assert.True(result.Success, result.Message);
         ScriptVariable sin = Assert.Single(result.Variables, v => v.Name == "sin");
-        Assert.Equal("number", sin.Type);
+        Assert.Equal("double", sin.Type);
     }
 }

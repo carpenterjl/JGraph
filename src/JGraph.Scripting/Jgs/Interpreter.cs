@@ -2232,6 +2232,9 @@ internal sealed partial class Interpreter
         _ => TokenType.Assign,
     };
 
+    /// <summary>An empty pristine table, for a <see cref="JgsEnvironment.Forget"/> that reverts to nothing.</summary>
+    private static readonly Dictionary<string, JgsValue> EmptyPristine = new();
+
     private JgsValue EvaluateAssign(AssignExpr assign, JgsEnvironment env)
     {
         JgsValue rhs = Evaluate(assign.Value, env);
@@ -2301,12 +2304,38 @@ internal sealed partial class Interpreter
             _ => (((IndexExpr)assign.Target).Target, ((IndexExpr)assign.Target).Indices),
         };
 
-        return subscripts.Count switch
+        // MATLAB conjures the variable an index write names: x(5) = 1 with no x makes [0 0 0 0 1],
+        // the same grow-and-zero-fill an existing array gets. The write starts from [] and the growth
+        // below does the rest; a write that then fails takes the conjured variable with it, so a bad
+        // subscript does not leave an empty x behind. Where a first assignment must say 'let', it
+        // still must — the typo net a bare plain assignment respects is not defeated by adding a
+        // subscript — and a compound op reads before it writes, so x(5) += 1 on no x stays an error.
+        JgsEnvironment? conjuredScope = null;
+        string? conjuredName = null;
+        if (assign.Op == TokenType.Assign
+            && !Dialect.RequireLet
+            && container is VariableExpr fresh
+            && !LookUp(fresh.Name, env, out _))
         {
-            2 => AssignTwoSubscripts(container, subscripts, assign.Op, rhs, assign, env),
-            > 2 => AssignNSubscripts(container, subscripts, assign.Op, rhs, assign, env),
-            _ => AssignThroughIndex(container, subscripts, assign.Op, rhs, assign, env),
-        };
+            conjuredScope = env.IsGlobal(fresh.Name) ? _globalWorkspace : env;
+            conjuredName = fresh.Name;
+            conjuredScope.Declare(conjuredName, JgsValue.Array(System.Array.Empty<JgsValue>()));
+        }
+
+        try
+        {
+            return subscripts.Count switch
+            {
+                2 => AssignTwoSubscripts(container, subscripts, assign.Op, rhs, assign, env),
+                > 2 => AssignNSubscripts(container, subscripts, assign.Op, rhs, assign, env),
+                _ => AssignThroughIndex(container, subscripts, assign.Op, rhs, assign, env),
+            };
+        }
+        catch when (conjuredScope is not null)
+        {
+            conjuredScope.Forget(conjuredName!, EmptyPristine);
+            throw;
+        }
     }
 
     /// <summary>

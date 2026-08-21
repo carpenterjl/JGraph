@@ -146,9 +146,10 @@ internal static class JgsRunner
     public static ScriptVariable ToScriptVariable(string name, JgsValue value) =>
         new(
             name,
-            // The panel names JGS types — "number", "string" — but an image's numeric class is the
-            // interesting fact about it, and it is what whos reports too.
-            value.Type == JgsType.Image ? KindOf(value) : value.TypeName,
+            // The panel says what whos and class() say — 'double', 'char', 'logical' — because it
+            // used to name JGS types ('number', 'string') instead, and a panel that disagrees with
+            // class(x) reads as a defect in one of them.
+            KindOf(value),
             ScriptVariable.Truncate(value.Display()),
             ToRawValue(value));
 
@@ -336,24 +337,20 @@ internal static class JgsRunner
     /// <summary>The class column of <c>whos</c> and the Workspace pane.</summary>
     internal static string KindOf(JgsValue value) => value.Type switch
     {
-        // A number or array reports the class it was asked for (M47) — uint8 after a conversion,
-        // double otherwise — which is what MATLAB's own whos column says.
-        JgsType.Number or JgsType.Array => value.NumericClass.MatlabName(),
-        JgsType.Complex => "complex",
-        JgsType.Bool => "logical",
-        JgsType.String => "char",
-        JgsType.Cell => "cell",
-        JgsType.Struct => "struct",
-        JgsType.Table => "table",
         // A picture read from a file reports the class it carries — uint8, logical after a threshold —
         // which is the useful answer and matches MATLAB's own whos. A computed [0, 1] image has no
         // more specific class to give, so it stays the plain label it has always had.
         JgsType.Image => value.AsImage.Class == JGraph.Imaging.ImageClass.Double
             ? "image"
             : $"{value.AsImage.Class.MatlabName()} image",
+        // Sparsity is an attribute rather than a class, and the column is where it fits.
         JgsType.Sparse => "double (sparse)",
-        JgsType.Function => "function_handle",
-        _ => value.TypeName,
+        JgsType.Null => value.TypeName,
+        // Everything else answers exactly what class() answers. The two columns drifted — a string
+        // scalar and a logical mask both said 'double' here while class() said 'string' and
+        // 'logical' — and the guards class() carries (string arrays, times, masks) are the fix, so
+        // this reads them from the same place instead of restating them.
+        _ => JgsBuiltins.ClassOf(value, JgsDialect.Matlab),
     };
 
     /// <summary>

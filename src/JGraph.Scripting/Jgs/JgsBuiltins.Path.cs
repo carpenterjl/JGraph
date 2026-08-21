@@ -24,6 +24,12 @@ internal static partial class JgsBuiltins
         void Define(string name, Func<IReadOnlyList<JgsValue>, int, int, JgsValue> body) =>
             env.Declare(name, JgsValue.Function(new BuiltinFunction(name, body) { BindsAnsAsStatement = false }));
 
+        // path and pathsep answer their bare names, the way pwd and filesep already do — MATLAB's
+        // `path` on its own is how the search path is looked at, and handing back the function value
+        // instead showed the user nothing at all. Callee position is exempt, so path(p) still sets.
+        void Query(string name, Func<IReadOnlyList<JgsValue>, int, int, JgsValue> body) =>
+            env.Declare(name, JgsValue.Function(new BuiltinFunction(name, body) { AutoCallsBare = true }));
+
         // A relative folder means one beside the running script, not one beside whatever directory the
         // process happens to have been launched from. Every other file a script names already resolves
         // that way; addpath has to as well, or `addpath('lib')` works when you run the script from its
@@ -39,7 +45,7 @@ internal static partial class JgsBuiltins
             Path.PathSeparator,
             new[] { host.CurrentDirectory }.Concat(search.Folders).Distinct(StringComparer.OrdinalIgnoreCase));
 
-        Define("path", (args, line, col) =>
+        Query("path", (args, line, col) =>
         {
             // path(p) and path(p1, p2) replace the added folders wholesale, which is how a startup
             // file sets a path up in one line.
@@ -155,7 +161,7 @@ internal static partial class JgsBuiltins
             return JgsValue.Str(string.Join(Path.PathSeparator, found));
         });
 
-        Define("pathsep", (args, line, col) =>
+        Query("pathsep", (args, line, col) =>
         {
             Arity("pathsep", args, 0, line, col);
             return JgsValue.Str(Path.PathSeparator.ToString());

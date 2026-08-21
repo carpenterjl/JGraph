@@ -24,7 +24,7 @@ internal static partial class JgsBuiltins
         "func2str", "functions", "mfilename", "inputname",
 
         // M62: the search path is interpreter state, so the builtins that manage it are declared here.
-        "addpath", "rmpath", "genpath", "pathsep",
+        "path", "addpath", "rmpath", "genpath", "pathsep",
 
         // M58: the legacy function plotters take their function as text, which needs the interpreter
         // to turn into a handle — the same reason eval itself is declared here.

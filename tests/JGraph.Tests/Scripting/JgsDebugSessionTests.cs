@@ -310,7 +310,7 @@ public class JgsDebugSessionTests : IDisposable
         // The script frame sees the global x (and f, a user function).
         IReadOnlyList<ScriptVariable> scriptScope = session.GetVariables(1);
         Assert.Equal(1.0, Assert.Single(scriptScope, v => v.Name == "x").RawValue);
-        Assert.Equal("function", Assert.Single(scriptScope, v => v.Name == "f").Type);
+        Assert.Equal("function_handle", Assert.Single(scriptScope, v => v.Name == "f").Type);
 
         // Untouched builtins stay hidden in both frames.
         Assert.DoesNotContain(scriptScope, v => v.Name is "sin" or "plot" or "run");
