@@ -98,6 +98,8 @@ public sealed class SurfacePlot : PlotObject, I3DDrawable, IHasZData, ILegendIte
     private bool? _gridIsMonotone;
     private bool[]? _drawableCells;
     private PaletteCache? _palette;
+    private double[,]? _alphaData;
+    private bool _faceAlphaFlat;
     private ContourLineSet? _floorContours;
     private double[]? _floorLevels;
 
@@ -402,6 +404,46 @@ public sealed class SurfacePlot : PlotObject, I3DDrawable, IHasZData, ILegendIte
     }
 
     /// <summary>
+    /// A transparency for every point of the grid, looked up through the axes' alphamap (MATLAB
+    /// <c>AlphaData</c>), or null while the surface is uniformly transparent. It is drawn only while
+    /// <see cref="FaceAlphaFlat"/> is set, which is MATLAB's flat face alpha.
+    /// </summary>
+    public double[,]? AlphaData
+    {
+        get => _alphaData;
+        set
+        {
+            if (value is not null
+                && (value.GetLength(0) != _z.GetLength(0) || value.GetLength(1) != _z.GetLength(1)))
+            {
+                throw new ArgumentException(
+                    $"AlphaData must match the surface: expected {_z.GetLength(0)} by {_z.GetLength(1)}, "
+                    + $"got {value.GetLength(0)} by {value.GetLength(1)}.",
+                    nameof(value));
+            }
+
+            _alphaData = value;
+            _palette = null;
+            Invalidate(InvalidationKind.Render);
+        }
+    }
+
+    /// <summary>
+    /// Whether the faces take their transparency from <see cref="AlphaData"/> rather than from the
+    /// single <see cref="FaceAlpha"/> number (MATLAB's flat face alpha).
+    /// </summary>
+    public bool FaceAlphaFlat
+    {
+        get => _faceAlphaFlat;
+        set
+        {
+            _faceAlphaFlat = value;
+            _palette = null;
+            Invalidate(InvalidationKind.Render);
+        }
+    }
+
+    /// <summary>
     /// MATLAB <c>FaceAlpha</c>: how opaque the surface is, 0 through 1. It multiplies the object's own
     /// <see cref="PlotObject.Opacity"/> rather than replacing it, so <c>alpha(0.5)</c> — which works
     /// the whole object — and a per-surface setting compose instead of fighting.
@@ -611,6 +653,11 @@ public sealed class SurfacePlot : PlotObject, I3DDrawable, IHasZData, ILegendIte
         double edgeOpacity = Opacity * _edgeAlpha;
         bool sweep = GridIsMonotone();
 
+        // SortMethod 'childorder' says paint the cells in the order they are held rather than back to
+        // front. The wavefront walk already visits them in a fixed order, so asking it not to reverse
+        // either direction is exactly that, and it costs no sort at all.
+        bool depthSort = state.DepthSort;
+
         // Scratch geometry normally lives on the instance so a rotate drag allocates nothing. A
         // second concurrent render of the same plot (a screen paint racing an export) takes local
         // arrays instead of sharing the fields.
@@ -687,8 +734,10 @@ public sealed class SurfacePlot : PlotObject, I3DDrawable, IHasZData, ILegendIte
             // the viewer, so the axis end with the smaller depth is the one to start from. Z
             // cancels out of the occlusion test, so any height works for the probes.
             double origin = projection.Project(Xat(0, 0), Yat(0, 0), 0).Depth;
-            bool colForward = projection.Project(Xat(0, cols - 1), Yat(0, cols - 1), 0).Depth >= origin;
-            bool rowForward = projection.Project(Xat(rows - 1, 0), Yat(rows - 1, 0), 0).Depth >= origin;
+            bool colForward = !depthSort
+                || projection.Project(Xat(0, cols - 1), Yat(0, cols - 1), 0).Depth >= origin;
+            bool rowForward = !depthSort
+                || projection.Project(Xat(rows - 1, 0), Yat(rows - 1, 0), 0).Depth >= origin;
 
             bool drawFaces = _style != SurfaceStyle.Wireframe && _faceAlpha > 0;
 
@@ -704,7 +753,7 @@ public sealed class SurfacePlot : PlotObject, I3DDrawable, IHasZData, ILegendIte
             int cellCount = (rows - 1) * (cols - 1);
             int[] order = RenderScratch.Rent(ref _order, cellCount, exclusive);
             int[] groups = RenderScratch.Rent(ref _groups, cellCount + 1, exclusive);
-            int groupCount = sweep
+            int groupCount = sweep || !depthSort
                 ? BuildWavefrontOrder(rows, cols, colForward, rowForward, interleave, drawable, order, groups)
                 : BuildDepthOrder(depths!, rows, cols, interleave, exclusive, drawable, order, groups);
 
@@ -1115,13 +1164,28 @@ public sealed class SurfacePlot : PlotObject, I3DDrawable, IHasZData, ILegendIte
     private uint[] Palette(int rows, int cols, double colorMin, double colorMax, double opacity, bool perVertex)
     {
         bool logColor = this.LogColorScale();
+
+        // Flat alpha is looked up in the axes' map, so everything that map depends on joins the
+        // cache key: a palette kept across a change of ALim would draw the old transparencies.
+        double[,]? alphaData = _faceAlphaFlat ? _alphaData : null;
+        AlphaLookup alphaLookup = alphaData is null
+            ? default
+            : this.ResolveAlpha(AlphaResolver.BoundsOf(alphaData));
+        var stamp = new AlphaStamp(alphaData, Axes?.AlphaLimits, Axes?.Alphamap, Axes?.AlphaScale);
+
         PaletteCache? cached = _palette;
-        if (cached is not null && cached.Matches(_colormap, colorMin, colorMax, opacity, perVertex, logColor))
+        if (cached is not null
+            && cached.Matches(_colormap, colorMin, colorMax, opacity, perVertex, logColor, stamp))
         {
             return cached.Colors;
         }
 
         var built = new uint[rows * cols];
+
+        // The transparency one grid point contributes: its own when alpha data is being drawn,
+        // otherwise the surface's single number, which is already folded into opacity.
+        double Alpha(int r, int c) =>
+            alphaData is null ? opacity : opacity * alphaLookup.Sample(alphaData[r, c]);
 
         // What the colormap is sampled at. Height is only the default: MATLAB's surf(X, Y, Z, C)
         // colours by C instead, which is how a surface shows a quantity that is not its own shape.
@@ -1138,7 +1202,9 @@ public sealed class SurfacePlot : PlotObject, I3DDrawable, IHasZData, ILegendIte
                 built[i] = (alpha << 24) | (argb & 0x00FFFFFF);
             }
 
-            Volatile.Write(ref _palette, new PaletteCache(built, _colormap, colorMin, colorMax, opacity, perVertex, logColor));
+            Volatile.Write(
+                ref _palette,
+                new PaletteCache(built, _colormap, colorMin, colorMax, opacity, perVertex, logColor, stamp));
             return built;
         }
 
@@ -1148,7 +1214,10 @@ public sealed class SurfacePlot : PlotObject, I3DDrawable, IHasZData, ILegendIte
             {
                 for (int c = 0; c < cols; c++)
                 {
-                    built[(r * cols) + c] = _colormap.Sample(source[r, c], colorMin, colorMax, logColor).WithOpacity(opacity).ToArgb();
+                    built[(r * cols) + c] = _colormap
+                        .Sample(source[r, c], colorMin, colorMax, logColor)
+                        .WithOpacity(Alpha(r, c))
+                        .ToArgb();
                 }
             }
         }
@@ -1159,12 +1228,17 @@ public sealed class SurfacePlot : PlotObject, I3DDrawable, IHasZData, ILegendIte
                 for (int c = 0; c < cols - 1; c++)
                 {
                     double mean = (source[r, c] + source[r, c + 1] + source[r + 1, c] + source[r + 1, c + 1]) / 4;
-                    built[(r * cols) + c] = _colormap.Sample(mean, colorMin, colorMax, logColor).WithOpacity(opacity).ToArgb();
+                    built[(r * cols) + c] = _colormap
+                        .Sample(mean, colorMin, colorMax, logColor)
+                        .WithOpacity(Alpha(r, c))
+                        .ToArgb();
                 }
             }
         }
 
-        Volatile.Write(ref _palette, new PaletteCache(built, _colormap, colorMin, colorMax, opacity, perVertex, logColor));
+        Volatile.Write(
+            ref _palette,
+            new PaletteCache(built, _colormap, colorMin, colorMax, opacity, perVertex, logColor, stamp));
         return built;
     }
 
@@ -1180,8 +1254,11 @@ public sealed class SurfacePlot : PlotObject, I3DDrawable, IHasZData, ILegendIte
         private readonly double _opacity;
         private readonly bool _perVertex;
         private readonly bool _log;
+        private readonly AlphaStamp _alpha;
 
-        public PaletteCache(uint[] colors, Colormap map, double min, double max, double opacity, bool perVertex, bool log)
+        public PaletteCache(
+            uint[] colors, Colormap map, double min, double max, double opacity, bool perVertex, bool log,
+            AlphaStamp alpha)
         {
             Colors = colors;
             _map = map;
@@ -1190,13 +1267,29 @@ public sealed class SurfacePlot : PlotObject, I3DDrawable, IHasZData, ILegendIte
             _opacity = opacity;
             _perVertex = perVertex;
             _log = log;
+            _alpha = alpha;
         }
 
         public uint[] Colors { get; }
 
-        public bool Matches(Colormap map, double min, double max, double opacity, bool perVertex, bool log) =>
+        public bool Matches(
+            Colormap map, double min, double max, double opacity, bool perVertex, bool log, AlphaStamp alpha) =>
             ReferenceEquals(_map, map) && _min.Equals(min) && _max.Equals(max)
-            && _opacity.Equals(opacity) && _perVertex == perVertex && _log == log;
+            && _opacity.Equals(opacity) && _perVertex == perVertex && _log == log && _alpha.Equals(alpha);
+    }
+
+    /// <summary>
+    /// Everything outside this plot that decides what its alpha data is drawn as. The two tables are
+    /// compared by reference, because replacing one is how a script changes it.
+    /// </summary>
+    private readonly record struct AlphaStamp(
+        double[,]? Data, DataRange? Limits, IReadOnlyList<double>? Map, ColorScaleType? Scale)
+    {
+        public bool Equals(AlphaStamp other) =>
+            ReferenceEquals(Data, other.Data) && Limits == other.Limits
+            && ReferenceEquals(Map, other.Map) && Scale == other.Scale;
+
+        public override int GetHashCode() => HashCode.Combine(Data, Limits, Map, Scale);
     }
 
     /// <summary>

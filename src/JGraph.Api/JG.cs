@@ -904,13 +904,12 @@ public static class JG
         axis.Range = new DataRange(min, max);
     }
 
-    /// <summary>Sets the current axes' 3D camera angles in degrees (MATLAB <c>view(az, el)</c>).</summary>
-    public static void View(double azimuth, double elevation)
-    {
-        AxesModel axes = Gca();
-        axes.Azimuth = azimuth;
-        axes.Elevation = elevation;
-    }
+    /// <summary>
+    /// Sets the current axes' 3D camera angles in degrees (MATLAB <c>view(az, el)</c>). Naming angles
+    /// hands the camera back to them: any position, target, up vector or view angle set by hand is
+    /// released, which is what MATLAB's own view does.
+    /// </summary>
+    public static void View(double azimuth, double elevation) => Gca().SetViewAngles(azimuth, elevation);
 
     /// <summary>
     /// Applies a built-in colormap ("parula", "viridis", "turbo", "jet", "hot", "cool", "gray",

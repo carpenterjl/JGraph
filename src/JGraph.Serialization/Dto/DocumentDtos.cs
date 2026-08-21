@@ -200,6 +200,31 @@ public sealed class AxesDto
     /// <summary>The line-style cycle, or null for the default single solid entry.</summary>
     public List<SeriesLineStyleDto>? LineStyleOrder { get; set; }
 
+    /// <summary>Everything below is null or defaulted in documents written before M74.</summary>
+    public Point3Dto? CameraPosition { get; set; }
+
+    public Point3Dto? CameraTarget { get; set; }
+
+    public Point3Dto? CameraUpVector { get; set; }
+
+    public double? CameraViewAngle { get; set; }
+
+    /// <summary>Null means orthographic, the projection every 3D axes drew with before M74.</summary>
+    public string? Projection { get; set; }
+
+    /// <summary>Null means depth, which is how every 3D object has always ordered its faces.</summary>
+    public string? SortMethod { get; set; }
+
+    public bool Clipping { get; set; } = true;
+
+    /// <summary>The alpha limits as a pair, or null while each plot spreads its own alpha data.</summary>
+    public double[]? AlphaLimits { get; set; }
+
+    /// <summary>The alphamap, or null for the even ramp from clear to opaque.</summary>
+    public double[]? Alphamap { get; set; }
+
+    public string? AlphaScale { get; set; }
+
     public LegendDto Legend { get; set; } = new();
 
     public List<PlotDto> Plots { get; set; } = new();

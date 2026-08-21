@@ -194,6 +194,26 @@ internal static class FigureMapper
         dto.DataAspectRatio = axes.DataAspectRatio is { } aspect
             ? new Point3Dto(aspect.X, aspect.Y, aspect.Z)
             : null;
+
+        // M74: the camera the picture is drawn from, and what turns data into transparency. Every
+        // one of these is null when the axes has not been told otherwise, so a document written
+        // before this wave loads as the axes it described.
+        dto.CameraPosition = axes.CameraPosition is { } eye
+            ? new Point3Dto(eye.X, eye.Y, eye.Z)
+            : null;
+        dto.CameraTarget = axes.CameraTarget is { } aim
+            ? new Point3Dto(aim.X, aim.Y, aim.Z)
+            : null;
+        dto.CameraUpVector = axes.CameraUpVector is { } up
+            ? new Point3Dto(up.X, up.Y, up.Z)
+            : null;
+        dto.CameraViewAngle = axes.CameraViewAngle;
+        dto.Projection = axes.Projection == ProjectionType.Orthographic ? null : axes.Projection.ToString();
+        dto.SortMethod = axes.SortMethod == SortMethodType.Depth ? null : axes.SortMethod.ToString();
+        dto.Clipping = axes.Clipping;
+        dto.AlphaLimits = axes.AlphaLimits is { } alphaLimits ? [alphaLimits.Min, alphaLimits.Max] : null;
+        dto.Alphamap = axes.Alphamap is { } alphamap ? [.. alphamap] : null;
+        dto.AlphaScale = axes.AlphaScale == ColorScaleType.Linear ? null : axes.AlphaScale.ToString();
         dto.LineStyleOrder = axes.LineStyleOrder is { } styles
             ? styles.Select(static entry => new SeriesLineStyleDto(entry.Dash, entry.Marker)).ToList()
             : null;
@@ -378,6 +398,38 @@ internal static class FigureMapper
         if (dto.DataAspectRatio is { } aspectDto)
         {
             axes.DataAspectRatio = new Vector3D(aspectDto.X, aspectDto.Y, aspectDto.Z);
+        }
+
+        axes.CameraPosition = dto.CameraPosition is { } eyeDto
+            ? new Vector3D(eyeDto.X, eyeDto.Y, eyeDto.Z)
+            : null;
+        axes.CameraTarget = dto.CameraTarget is { } aimDto
+            ? new Vector3D(aimDto.X, aimDto.Y, aimDto.Z)
+            : null;
+        axes.CameraUpVector = dto.CameraUpVector is { } upDto
+            ? new Vector3D(upDto.X, upDto.Y, upDto.Z)
+            : null;
+        axes.CameraViewAngle = dto.CameraViewAngle;
+
+        if (Enum.TryParse(dto.Projection, out ProjectionType projection))
+        {
+            axes.Projection = projection;
+        }
+
+        if (Enum.TryParse(dto.SortMethod, out SortMethodType sortMethod))
+        {
+            axes.SortMethod = sortMethod;
+        }
+
+        axes.Clipping = dto.Clipping;
+        axes.AlphaLimits = dto.AlphaLimits is { Length: 2 } alphaLimits
+            ? new DataRange(alphaLimits[0], alphaLimits[1])
+            : null;
+        axes.Alphamap = dto.Alphamap is { Length: > 0 } alphamap ? alphamap : null;
+
+        if (Enum.TryParse(dto.AlphaScale, out ColorScaleType alphaScale))
+        {
+            axes.AlphaScale = alphaScale;
         }
 
         axes.LineStyleOrder = dto.LineStyleOrder is { Count: > 0 } styleDtos

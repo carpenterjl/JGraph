@@ -1,5 +1,6 @@
 using JGraph.Core.Model;
 using JGraph.Core.Primitives;
+using JGraph.Maths.Transforms;
 
 namespace JGraph.Interaction;
 
@@ -51,12 +52,14 @@ public static class FigureHitTesting
             return new FigureHit(legendAxes.Legend, legendAxes, null);
         }
 
-        if (!surface.TryGetAxesAt(pixel, out AxesModel axes, out ICoordinateMapper mapper, out _))
+        if (!surface.TryGetAxesAt(pixel, out AxesModel axes, out ICoordinateMapper mapper, out Rect2D plotArea))
         {
             return new FigureHit(null, null, null);
         }
 
         Point2D place = mapper.PixelToData(pixel.X, pixel.Y);
+        RecordCurrentPoint(axes, pixel, place, plotArea);
+
         AnnotationObject? annotationHit = HitTestAnnotations(axes.Annotations, pixel);
         if (annotationHit is not null)
         {
@@ -100,5 +103,47 @@ public static class FigureHitTesting
         }
 
         return null;
+    }
+
+    /// <summary>
+    /// Records where the pointer crossed an axes, whatever it went on to hit: MATLAB's
+    /// <c>CurrentPoint</c> is where the pointer is, not what it managed to pick. In two dimensions a
+    /// pixel names one point; in three it names a line of sight, so the box is asked where that line
+    /// enters and leaves it.
+    /// </summary>
+    private static void RecordCurrentPoint(AxesModel axes, Point2D pixel, Point2D place, Rect2D plotArea)
+    {
+        if (!axes.Is3D)
+        {
+            var flat = new Vector3D(place.X, place.Y, 0);
+            axes.SetCurrentPoint(flat, flat);
+            return;
+        }
+
+        Projection3D projection = ProjectionFor(axes, plotArea);
+        (Vector3D front, Vector3D back) = projection.Unproject(pixel.X, pixel.Y);
+        axes.SetCurrentPoint(front, back);
+    }
+
+    /// <summary>
+    /// The camera the axes was last drawn through, rebuilt from the same state the renderer reads.
+    /// Reading a pixel back is exactly the inverse of drawing one, so it has to be the same camera.
+    /// </summary>
+    private static Projection3D ProjectionFor(AxesModel axes, Rect2D plotArea)
+    {
+        DataRange xr = axes.PrimaryXAxis.Range, yr = axes.ActiveYAxis.Range, zr = axes.ZAxis.Range;
+        Vector3D boxAspect = axes.DataAspectRatio is { X: > 0, Y: > 0, Z: > 0 } dar
+            ? new Vector3D(
+                (xr.Max - xr.Min) / dar.X,
+                (yr.Max - yr.Min) / dar.Y,
+                (zr.Max - zr.Min) / dar.Z)
+            : axes.PlotBoxAspect;
+
+        return axes.HasAutomaticCamera
+            ? new Projection3D(xr, yr, zr, axes.Azimuth, axes.Elevation, plotArea, boxAspect, axes.Roll)
+            : new Projection3D(
+                xr, yr, zr, plotArea, boxAspect, axes.Roll,
+                axes.EffectiveCameraPosition(), axes.EffectiveCameraTarget(), axes.EffectiveCameraUpVector(),
+                axes.CameraViewAngle, axes.Projection == ProjectionType.Perspective);
     }
 }

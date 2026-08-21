@@ -59,8 +59,11 @@ internal sealed class PanDragGesture
         {
             double dx = position.X - _startPixel.X;
             double dy = position.Y - _startPixel.Y;
-            _axes.Azimuth = _startAzimuth - (dx * RotateSpeed);
-            _axes.Elevation = System.Math.Clamp(_startElevation + (dy * RotateSpeed), -90, 90);
+            // Dragging is an angle move, so it releases a camera that was placed by hand: the drag
+            // would otherwise turn angles nothing is drawn from.
+            _axes.SetViewAngles(
+                _startAzimuth - (dx * RotateSpeed),
+                System.Math.Clamp(_startElevation + (dy * RotateSpeed), -90, 90));
             controller.Surface.RequestRender();
             return;
         }

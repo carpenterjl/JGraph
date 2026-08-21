@@ -5,7 +5,7 @@ building the object in `jgraph.exe` and asking it, not from reading the source: 
 table is built by reflection over the model's CLR types, so what an object answers to is a
 runtime fact.
 
-**852 of 1394 documented properties** are answered across the
+**878 of 1394 documented properties** are answered across the
 28 object kinds that could be built and asked. The other
 0 kinds are counted separately below rather than scored as zero —
 an object that cannot be reached is not the same measurement as one missing properties, and
@@ -14,12 +14,12 @@ for six times.
 
 | Kind | MATLAB class | Answered | Documented | Extra |
 |---|---|---:|---:|---:|
-| `axes` | `Axes` | 122 | 147 | 37 |
-| `polaraxes` | `PolarAxes` | 75 | 107 | 84 |
+| `axes` | `Axes` | 139 | 147 | 38 |
+| `polaraxes` | `PolarAxes` | 82 | 107 | 95 |
 | `scatter` | `Scatter` | 33 | 74 | 24 |
 | `bubblechart` | `BubbleChart` | 32 | 73 | 25 |
 | `figure` | `Figure` | 24 | 66 | 8 |
-| `surface` | `Surface` | 32 | 60 | 18 |
+| `surface` | `Surface` | 33 | 60 | 19 |
 | `patch` | `Patch` | 34 | 56 | 19 |
 | `pie` | `Patch` | 22 | 56 | 18 |
 | `line` | `Line` | 26 | 52 | 12 |
@@ -38,7 +38,7 @@ for six times.
 | `bubblelegend` | `BubbleLegend` | 26 | 37 | 9 |
 | `constantline` | `ConstantLine` | 28 | 35 | 13 |
 | `boxchart` | `BoxChart` | 24 | 29 | 23 |
-| `image` | `Image` | 18 | 27 | 16 |
+| `image` | `Image` | 19 | 27 | 16 |
 | `light` | `Light` | 21 | 21 | 5 |
 | `uimenu` | `Menu` | 21 | 21 | 11 |
 | `uicontextmenu` | `ContextMenu` | 12 | 12 | 11 |

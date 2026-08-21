@@ -1,6 +1,9 @@
 using System.ComponentModel;
 using JGraph.Api;
+using JGraph.Core.Drawing;
 using JGraph.Core.Model;
+using JGraph.Core.Primitives;
+using JGraph.Objects;
 
 namespace JGraph.Scripting.Jgs;
 
@@ -42,8 +45,8 @@ internal static partial class JgsBuiltins
         void DefineBare(string name, Func<IReadOnlyList<JgsValue>, int, int, JgsValue> body) =>
             env.Declare(name, JgsValue.Function(new BuiltinFunction(name, body) { AutoCallsBare = true }));
 
-        DefineBare("alim", (args, line, col) => AlphaRange("alim", args, line, col));
-        DefineBare("alphamap", (args, line, col) => AlphaRange("alphamap", args, line, col));
+        DefineBare("alim", AlphaLimits);
+        DefineBare("alphamap", AlphaMap);
 
         // --- What is drawing ----------------------------------------------------------------------
         env.Declare("rendererinfo", JgsValue.Function(
@@ -321,7 +324,44 @@ internal static partial class JgsBuiltins
             if (rest.Count != 1)
             {
                 throw new JgsRuntimeException(line, col,
-                    "alpha takes one number between 0 and 1, or the word 'opaque' or 'clear'.");
+                    "alpha takes one number between 0 and 1, a matrix of them, or the word "
+                    + "'opaque' or 'clear'.");
+            }
+
+            // A matrix is alpha data: one transparency per point, looked up through the axes'
+            // alphamap rather than applied as a single number. Only the plots with a grid to hang it
+            // on take it, which is the same rule the scalar form follows for faces.
+            if (rest[0].Type == JgsType.Array && JgsMatrix.IsMatrix(rest[0]))
+            {
+                double[,] grid = Matrix("alpha", rest, 0, line, col);
+                bool taken = false;
+                foreach (PlotObject plot in JG.Gca().Plots)
+                {
+                    switch (plot)
+                    {
+                        case SurfacePlot surface
+                            when grid.GetLength(0) == surface.Z.GetLength(0)
+                                && grid.GetLength(1) == surface.Z.GetLength(1):
+                            surface.AlphaData = grid;
+                            surface.FaceAlphaFlat = true;
+                            taken = true;
+                            break;
+                        case ImagePlot image
+                            when grid.GetLength(0) == image.Rows && grid.GetLength(1) == image.Columns:
+                            image.AlphaData = grid;
+                            taken = true;
+                            break;
+                    }
+                }
+
+                if (!taken)
+                {
+                    throw new JgsRuntimeException(line, col,
+                        "alpha: no surface or image in this axes has a grid that size to hang the "
+                        + "alpha data on.");
+                }
+
+                return JgsValue.Null;
             }
 
             double value = rest[0].Type == JgsType.String
@@ -352,22 +392,148 @@ internal static partial class JgsBuiltins
     }
 
     /// <summary>
-    /// <c>alim</c> and <c>alphamap</c> both describe a mapping from a value to an opacity, and this
-    /// build has no such mapping: transparency is a number on an object. Both answer with what they
-    /// would be if it existed — the full range, and the ramp <c>alphamap</c> defaults to — and
-    /// setting either is accepted and changes nothing. That is a recorded divergence and the reason
-    /// it is one is that the alternative, refusing, would break a script that only sets a default.
+    /// <c>alim</c>: the alpha-data limits this axes spreads its alphamap over. Reading answers the
+    /// limits in force — the ones pinned, or the extent of the alpha data being drawn — and writing
+    /// pins them. The two mode words release the limits or freeze what is showing, exactly as
+    /// <c>caxis</c> does for colour.
     /// </summary>
-    private static JgsValue AlphaRange(string verb, IReadOnlyList<JgsValue> args, int line, int col)
+    private static JgsValue AlphaLimits(IReadOnlyList<JgsValue> args, int line, int col)
     {
-        if (args.Count > 0)
+        (AxesModel? named, IReadOnlyList<JgsValue> rest) = PeelAxes(args);
+        AxesModel axes = named ?? JG.Gca();
+
+        if (rest.Count == 0)
         {
+            DataRange current = CurrentAlphaRange(axes);
+            return JgsMatrix.FromColumnMajor([current.Min, current.Max], 1, 2);
+        }
+
+        if (rest[0].Type == JgsType.String)
+        {
+            string word = StrOf("alim", rest[0], line, col).Trim().ToLowerInvariant();
+            axes.AlphaLimits = word switch
+            {
+                "auto" => null,
+                "manual" => CurrentAlphaRange(axes),
+                _ => throw new JgsRuntimeException(
+                    line, col, $"alim: expected 'auto' or 'manual', got '{word}'."),
+            };
             return JgsValue.Null;
         }
 
-        return verb == "alim"
-            ? JgsMatrix.FromColumnMajor([0, 1], 1, 2)
-            : JgsMatrix.FromColumnMajor([.. Enumerable.Range(0, 64).Select(i => i / 63.0)], 1, 64);
+        double[] limits = ToDoubles("alim", rest[0], line, col);
+        if (limits.Length != 2)
+        {
+            throw new JgsRuntimeException(line, col, "alim: expected [amin amax].");
+        }
+
+        if (!double.IsFinite(limits[0]) || !double.IsFinite(limits[1]) || limits[1] <= limits[0])
+        {
+            throw new JgsRuntimeException(line, col,
+                $"alim: the limits must be finite and increasing, but got [{limits[0]} {limits[1]}].");
+        }
+
+        axes.AlphaLimits = new DataRange(limits[0], limits[1]);
+        return JgsValue.Null;
+    }
+
+    /// <summary>
+    /// <c>alphamap</c>: the transparencies alpha data is looked up in. Reading answers the map in
+    /// force as a row, writing takes a vector of them, and the named forms are the ramps MATLAB
+    /// builds for you.
+    /// </summary>
+    private static JgsValue AlphaMap(IReadOnlyList<JgsValue> args, int line, int col)
+    {
+        (AxesModel? named, IReadOnlyList<JgsValue> rest) = PeelAxes(args);
+        AxesModel axes = named ?? JG.Gca();
+
+        if (rest.Count == 0)
+        {
+            IReadOnlyList<double> map = axes.Alphamap ?? AlphaSampler.DefaultMap;
+            return JgsMatrix.FromColumnMajor([.. map], 1, map.Count);
+        }
+
+        if (rest[0].Type == JgsType.String)
+        {
+            string word = StrOf("alphamap", rest[0], line, col).Trim().ToLowerInvariant();
+            axes.Alphamap = word switch
+            {
+                "default" or "rampup" => null,
+                "rampdown" => [.. AlphaSampler.DefaultMap.Reverse()],
+                "increase" or "decrease" or "spin" or "vup" or "vdown" => throw new JgsRuntimeException(
+                    line, col,
+                    $"alphamap: '{word}' modifies the map it is given rather than naming one, "
+                    + "which is not implemented; pass the vector you want instead."),
+                _ => throw new JgsRuntimeException(
+                    line, col, $"alphamap: '{word}' is not one of default, rampup, rampdown."),
+            };
+            return JgsValue.Null;
+        }
+
+        double[] requested = ToDoubles("alphamap", rest[0], line, col);
+        if (requested.Length == 0)
+        {
+            throw new JgsRuntimeException(line, col, "alphamap: expected at least one transparency.");
+        }
+
+        foreach (double entry in requested)
+        {
+            if (!double.IsFinite(entry) || entry < 0 || entry > 1)
+            {
+                throw new JgsRuntimeException(line, col,
+                    $"alphamap: every transparency must be between 0 and 1, but got {entry}.");
+            }
+        }
+
+        axes.Alphamap = requested;
+        return JgsValue.Null;
+    }
+
+    /// <summary>
+    /// The alpha limits in force: the ones pinned, else the extent of the first alpha data being
+    /// drawn, else the whole unit range — the same shape of answer <c>CLim</c> gives for colour.
+    /// </summary>
+    private static DataRange CurrentAlphaRange(AxesModel axes)
+    {
+        if (axes.AlphaLimits is { } pinned)
+        {
+            return pinned;
+        }
+
+        foreach (PlotObject plot in axes.Plots)
+        {
+            double[,]? data = plot switch
+            {
+                SurfacePlot surface => surface.AlphaData,
+                ImagePlot image => image.AlphaData,
+                _ => null,
+            };
+
+            if (data is not null)
+            {
+                return AlphaBoundsOf(data);
+            }
+        }
+
+        return new DataRange(0, 1);
+    }
+
+    /// <summary>The extent of a grid of alpha data, ignoring the values that are not numbers.</summary>
+    private static DataRange AlphaBoundsOf(double[,] data)
+    {
+        double min = double.PositiveInfinity, max = double.NegativeInfinity;
+        foreach (double value in data)
+        {
+            if (double.IsFinite(value))
+            {
+                min = System.Math.Min(min, value);
+                max = System.Math.Max(max, value);
+            }
+        }
+
+        return double.IsFinite(min) && double.IsFinite(max) && max > min
+            ? new DataRange(min, max)
+            : new DataRange(0, 1);
     }
 
     private static JgsValue RendererInfo(IReadOnlyList<JgsValue> args, int line, int col)

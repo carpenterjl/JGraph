@@ -210,6 +210,8 @@ internal static class PlotMapper
                 CData = p.CData is { } cd ? ToJagged(cd) : null,
                 XGrid = p.XGrid is { } xg ? ToJagged(xg) : null,
                 YGrid = p.YGrid is { } yg ? ToJagged(yg) : null,
+                AlphaData = p.AlphaData is { } ad ? ToJagged(ad) : null,
+                FaceAlphaFlat = p.FaceAlphaFlat,
                 Colormap = DtoConvert.ToDto(p.Colormap),
                 Style = p.Style,
                 Shading = p.Shading,
@@ -780,6 +782,10 @@ internal static class PlotMapper
         surface.SpecularStrength = d.SpecularStrength;
         surface.SpecularExponent = d.SpecularExponent;
         surface.SpecularColorReflectance = d.SpecularColorReflectance;
+
+        // The alpha data has to land after Z, since the surface checks it against the grid it is for.
+        surface.AlphaData = d.AlphaData is null ? null : To2D(d.AlphaData);
+        surface.FaceAlphaFlat = d.FaceAlphaFlat;
         return surface;
     }
 

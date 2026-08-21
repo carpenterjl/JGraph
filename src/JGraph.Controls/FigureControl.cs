@@ -316,9 +316,22 @@ public class FigureControl : SKElement, IInteractionSurface, IFigureNavigator
         Point2D position = ToPoint(e);
         _controller.PointerMove(ToPointerArgs(e, PointerButton.None, position));
 
-        Point2D? data = TryGetAxesAt(position, out _, out ICoordinateMapper mapper, out _)
-            ? mapper.PixelToData(position.X, position.Y)
-            : null;
+        Point2D? data = null;
+        if (TryGetAxesAt(position, out AxesModel hovered, out ICoordinateMapper mapper, out _))
+        {
+            data = mapper.PixelToData(position.X, position.Y);
+
+            // CurrentPoint is where the pointer is, so it follows the pointer rather than waiting
+            // for a click. Nothing is drawn from it, so recording it never provokes a repaint. A 3D
+            // axes is left alone here: this mapper is the flat one, and the sight line a 3D pixel
+            // really names is worked out by the hit test, which has the camera to do it with.
+            if (!hovered.Is3D)
+            {
+                var here = new Vector3D(data.Value.X, data.Value.Y, 0);
+                hovered.SetCurrentPoint(here, here);
+            }
+        }
+
         CursorDataPositionChanged?.Invoke(this, data);
     }
 

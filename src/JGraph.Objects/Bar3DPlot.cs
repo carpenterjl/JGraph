@@ -320,7 +320,13 @@ public sealed class Bar3DPlot : PlotObject, I3DDrawable, IHasZData, ILegendItem
             _faceOrder[f] = f;
         }
 
-        Array.Sort(_faceDepths, _faceOrder, 0, faces);
+        // SortMethod 'childorder' paints the faces in the order they are held, so the sort is what
+        // is skipped: the arrays already carry that order.
+        if (state.DepthSort)
+        {
+            Array.Sort(_faceDepths, _faceOrder, 0, faces);
+        }
+
 
         for (int i = 0; i < faces; i++)
         {

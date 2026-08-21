@@ -67,11 +67,12 @@ is a lit colormapped surface.
 `Projection3D` is orthographic with an automatic fit (ADR 0022). `view`, `camorbit` and `camzoom`
 land exactly. The rest land approximately and are documented rather than faked:
 
-- **`campos` reads only the direction** from the box centre — an orthographic camera has no distance.
-- **`camtarget` is always the centre of the data box; `camup` is always +z.** Both are accepted, both
-  report the fixed answer, neither can be set to something else.
-- **`camva` is applied as a zoom** about the default framing, so it always reports 6.6086° back —
-  MATLAB's default view angle, which is the only angle an orthographic fit can be said to have.
+- ~~`campos` reads only the direction from the box centre.~~ **Retired by M74** (ADR 0074): the
+  camera can be placed, and the distance it stands at is the one its view angle asks for.
+- ~~`camtarget` is always the centre of the data box; `camup` is always +z.~~ **Retired by M74**:
+  both are nullable slots on the axes now, derived when nobody has set them.
+- ~~`camva` is applied as a zoom about the default framing.~~ **Retired by M74**: the view angle is
+  the cone the camera sees through, and `camzoom` narrows it rather than moving the limits.
 - **`axis vis3d` is an accepted no-op**, because nothing here rescales during a rotate; the thing it
   exists to freeze never moved.
 

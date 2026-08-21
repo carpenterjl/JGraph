@@ -200,7 +200,13 @@ public sealed class Pie3DPlot : PlotObject, I3DDrawable, IHasZData, ILegendItem
             order[f] = f;
         }
 
-        Array.Sort(depths, order);
+        // SortMethod 'childorder' paints the faces in the order they are held, so the sort is what
+        // is skipped: the arrays already carry that order.
+        if (state.DepthSort)
+        {
+            Array.Sort(depths, order);
+        }
+
 
         foreach (int f in order)
         {

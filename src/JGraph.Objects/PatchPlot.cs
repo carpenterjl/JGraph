@@ -416,7 +416,13 @@ public sealed class PatchPlot : PlotObject, IDrawable, I3DDrawable, IHasZData, I
             _faceOrder[f] = f;
         }
 
-        Array.Sort(_faceDepths, _faceOrder, 0, _faces.Length);
+        // SortMethod 'childorder' paints the faces in the order they are held, so the sort is what
+        // is skipped: the arrays already carry that order.
+        if (state.DepthSort)
+        {
+            Array.Sort(_faceDepths, _faceOrder, 0, _faces.Length);
+        }
+
         DrawFaces(context, state, _faceOrder, ResolveShading(projection));
     }
 

@@ -841,6 +841,13 @@ internal static partial class JgsGraphicsProperties
                 surface => surface.EdgeColor,
                 (surface, colour) => surface.EdgeColor = colour,
                 SurfaceStyle.Filled);
+
+            AddSurfaceAlphaData(table);
+        }
+
+        if (typeof(ImagePlot).IsAssignableFrom(type))
+        {
+            AddImageAlphaData(table);
         }
 
         if (typeof(ContourPlot).IsAssignableFrom(type))
@@ -1720,8 +1727,7 @@ internal static partial class JgsGraphicsProperties
             (entry, value, line, col) =>
             {
                 double[] angles = Numbers("View", value, 2, line, col);
-                Axes(entry).Azimuth = angles[0];
-                Axes(entry).Elevation = angles[1];
+                Axes(entry).SetViewAngles(angles[0], angles[1]);
             });
 
         Put(table, "NextPlot",
@@ -1752,6 +1758,7 @@ internal static partial class JgsGraphicsProperties
             (entry, value, line, col) => Axes(entry).Grid.ShowMajorZ = ToOnOff("ZGrid", value, line, col));
 
         AddAxesWave(table);
+        AddAxesWaveTwo(table);
     }
 
     private static void AddRulerAliases(IDictionary<string, GraphicsProperty> table)

@@ -403,7 +403,13 @@ public sealed class Scatter3DPlot : PlotObject, I3DDrawable, IHasZData, ILegendI
         // Painter's order: depth grows toward the viewer, so ascending draws the far markers first.
         // The depths are the sort keys and the source indices ride along, which is what lets the
         // per-point size and color channels stay indexed by the point they belong to.
-        Array.Sort(_depths, _order, 0, visible);
+        // SortMethod 'childorder' paints the points in the order they are held, so the sort is what
+        // is skipped: the arrays already carry that order.
+        if (state.DepthSort)
+        {
+            Array.Sort(_depths, _order, 0, visible);
+        }
+
         for (int i = 0; i < visible; i++)
         {
             _sorted[i] = _pixels[_order[i]];

@@ -463,6 +463,15 @@ public sealed class SurfacePlotDto : PlotDto
 
     public double[][]? YGrid { get; set; }
 
+    /// <summary>
+    /// A transparency per grid point, looked up in the axes' alphamap. Null — every document written
+    /// before M74 — means the surface is uniformly transparent, which is what those documents meant.
+    /// </summary>
+    public double[][]? AlphaData { get; set; }
+
+    /// <summary>Whether the faces take their alpha from that grid rather than from FaceAlpha.</summary>
+    public bool FaceAlphaFlat { get; set; }
+
     public ColormapDto Colormap { get; set; } = new("Parula", Array.Empty<Color>());
 
     public SurfaceStyle Style { get; set; } = SurfaceStyle.FilledWithWireframe;

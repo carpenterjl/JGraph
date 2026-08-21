@@ -66,9 +66,16 @@ public static class ScriptGraphicsCallbacks
             return;
         }
 
-        IReadOnlyList<double>? intersection = target is not null && dataPoint is { } point
-            ? [point.X, point.Y, 0]
-            : null;
+        // A flat axes names one point per pixel, and the caller has it. A 3D one names a line of
+        // sight, which the hit test already worked out against the camera, so the click reports where
+        // that line meets the plot box instead of a placeholder zero.
+        IReadOnlyList<double>? intersection = null;
+        if (target is not null && dataPoint is { } point)
+        {
+            intersection = axes is { Is3D: true }
+                ? [axes.CurrentPoint.Front.X, axes.CurrentPoint.Front.Y, axes.CurrentPoint.Front.Z]
+                : [point.X, point.Y, 0];
+        }
         ScriptEventQueue.Enqueue(new GraphicsEvent(
             GraphicsEventKind.ButtonDown, owner, Clicked: target, Button: button,
             IntersectionPoint: intersection));

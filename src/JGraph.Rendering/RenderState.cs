@@ -11,12 +11,18 @@ namespace JGraph.Rendering;
 /// </summary>
 public sealed class RenderState
 {
-    public RenderState(ICoordinateMapper mapper, Rect2D plotArea, Color seriesColor, double devicePixelRatio = 1.0)
+    public RenderState(
+        ICoordinateMapper mapper,
+        Rect2D plotArea,
+        Color seriesColor,
+        double devicePixelRatio = 1.0,
+        bool depthSort = true)
     {
         Mapper = mapper;
         PlotArea = plotArea;
         SeriesColor = seriesColor;
         DevicePixelRatio = devicePixelRatio;
+        DepthSort = depthSort;
     }
 
     /// <summary>Maps between data space and device space for the owning axes.</summary>
@@ -30,4 +36,11 @@ public sealed class RenderState
 
     /// <summary>Physical pixels per device-independent unit (1.0 at 96 DPI).</summary>
     public double DevicePixelRatio { get; }
+
+    /// <summary>
+    /// Whether a 3D object should sort its own faces back to front (MATLAB <c>SortMethod</c>
+    /// <c>'depth'</c>) or paint them in the order it holds them (<c>'childorder'</c>). Depth is what
+    /// every 3D plot has always done, so an object that ignores this draws as it always did.
+    /// </summary>
+    public bool DepthSort { get; }
 }

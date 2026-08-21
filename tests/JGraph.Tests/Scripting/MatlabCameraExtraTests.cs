@@ -166,7 +166,7 @@ public class MatlabCameraExtraTests : IDisposable
     }
 
     [Fact]
-    public async Task CamprojAlwaysReportsOrthographicAndSaysWhatElseItTakes()
+    public async Task CamprojChoosesTheProjectionAndSaysWhatElseItTakes()
     {
         await RunAsserting("""
             figure(1);
@@ -174,9 +174,13 @@ public class MatlabCameraExtraTests : IDisposable
             disp(camproj);
             camproj('perspective');
             disp(camproj);
+            camproj('orthographic');
+            disp(camproj);
             """);
 
-        Assert.Equal(new[] { "orthographic", "orthographic" }, _output.NormalLines);
+        // Since M74 the word is real: perspective is a projection the renderer draws, not a request
+        // it accepts and forgets.
+        Assert.Equal(new[] { "orthographic", "perspective", "orthographic" }, _output.NormalLines);
 
         Assert.Contains("orthographic", await RunExpectingFailure("""
             figure(1);

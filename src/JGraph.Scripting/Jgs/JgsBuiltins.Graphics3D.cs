@@ -121,54 +121,79 @@ internal static partial class JgsBuiltins
             env.Declare(name, JgsValue.Function(new BuiltinFunction(name, body) { AutoCallsBare = true }));
 
         Define("campos", (args, line, col) => CameraPosition(args, line, col));
-        Define("camtarget", (args, line, col) => FixedCameraVector(
-            "camtarget", args, line, col, AxesCenter(), "the camera always looks at the centre of the data box"));
-        Define("camup", (args, line, col) => FixedCameraVector(
-            "camup", args, line, col, [0, 0, 1], "screen up is always the +Z axis"));
+        Define("camtarget", (args, line, col) => CameraVector(
+            "camtarget", args, line, col,
+            axes => axes.EffectiveCameraTarget(),
+            (axes, value) => axes.CameraTarget = value));
+        Define("camup", (args, line, col) => CameraVector(
+            "camup", args, line, col,
+            axes => axes.EffectiveCameraUpVector(),
+            (axes, value) => axes.CameraUpVector = value));
 
         Define("camorbit", (args, line, col) =>
         {
             ArityRange("camorbit", args, 2, 2, line, col);
             AxesModel axes = JG.Gca();
-            axes.Azimuth += Num("camorbit", args, 0, line, col);
-            axes.Elevation += Num("camorbit", args, 1, line, col);
+
+            // Orbiting is an angle move, so it puts the camera back in the angles' hands the way a
+            // rotate drag does; a camera placed by hand is not orbited around its own stale position.
+            axes.SetViewAngles(
+                axes.Azimuth + Num("camorbit", args, 0, line, col),
+                axes.Elevation + Num("camorbit", args, 1, line, col));
             return JgsValue.Null;
         });
 
         Define("camzoom", (args, line, col) =>
         {
             Arity("camzoom", args, 1, line, col);
-            Zoom("camzoom", Num("camzoom", args, 0, line, col), line, col);
+            double factor = Num("camzoom", args, 0, line, col);
+            if (!(factor > 0) || !double.IsFinite(factor))
+            {
+                throw new JgsRuntimeException(line, col, "camzoom: the zoom factor must be a positive number.");
+            }
+
+            // Zooming narrows the cone rather than moving the limits, which is what makes it undoable
+            // by zooming back out and what keeps the data the axes shows unchanged.
+            AxesModel axes = JG.Gca();
+            axes.CameraViewAngle = ClampViewAngle(axes.EffectiveCameraViewAngle() / factor);
             return JgsValue.Null;
         });
 
         Define("camva", (args, line, col) =>
         {
             ArityRange("camva", args, 0, 1, line, col);
+            AxesModel axes = JG.Gca();
             if (args.Count == 0)
             {
-                return JgsValue.Number(DefaultViewAngle);
+                return JgsValue.Number(axes.EffectiveCameraViewAngle());
             }
 
-            // An orthographic camera has no view angle, so this is read as a zoom against MATLAB's
-            // default: halving the angle doubles the size of what fills the box.
+            if (args[0].Type == JgsType.String)
+            {
+                string word = Str("camva", args, 0, line, col).Trim().ToLowerInvariant();
+                axes.CameraViewAngle = word switch
+                {
+                    "auto" => null,
+                    "manual" => axes.EffectiveCameraViewAngle(),
+                    _ => throw new JgsRuntimeException(
+                        line, col, $"camva: expected 'auto' or 'manual', got '{word}'."),
+                };
+                return JgsValue.Null;
+            }
+
             double angle = Num("camva", args, 0, line, col);
             if (!(angle > 0 && angle < 180))
             {
                 throw new JgsRuntimeException(line, col, "camva: the view angle must be between 0 and 180 degrees.");
             }
 
-            double half = System.Math.PI / 360;
-            Zoom("camva", System.Math.Tan(DefaultViewAngle * half) / System.Math.Tan(angle * half), line, col);
+            axes.CameraViewAngle = angle;
             return JgsValue.Null;
         });
 
         Define("pbaspect", OnNamedAxes((args, line, col) => BoxAspect(args, line, col)));
         Define("daspect", OnNamedAxes((args, line, col) => DataAspect(args, line, col)));
     }
-
-    /// <summary>MATLAB's default camera view angle in degrees, which is the framing an axes starts with.</summary>
-    private const double DefaultViewAngle = 6.6086;
 
     /// <summary>MATLAB's default 3D camera, which is also what a fresh axes carries.</summary>
     private const double DefaultAzimuth = -37.5;
@@ -226,31 +251,36 @@ internal static partial class JgsBuiltins
     }
 
     /// <summary>
-    /// <c>campos</c>: where the camera sits, in data coordinates. Reading builds the position from the
-    /// azimuth and elevation at a distance of two box diagonals; writing reads the direction back off
-    /// the vector from the box centre.
+    /// <c>campos</c>: where the camera sits, in data coordinates. Reading answers where it stands —
+    /// the place it was put, or the place the azimuth and elevation imply. Writing puts it there and
+    /// reads the angles back off the direction, so <c>view</c> keeps describing the same picture.
     /// </summary>
-    /// <remarks>
-    /// Divergence: the distance is ignored on write, because an orthographic camera's framing comes
-    /// from the axis limits rather than from how far away it is. Use <c>camzoom</c> or the limits.
-    /// </remarks>
     private static JgsValue CameraPosition(IReadOnlyList<JgsValue> args, int line, int col)
     {
         ArityRange("campos", args, 0, 1, line, col);
         AxesModel axes = JG.Gca();
-        double[] center = AxesCenter();
-        (double xSpan, double ySpan, double zSpan) = AxesSpans();
 
         if (args.Count == 0)
         {
-            double az = axes.Azimuth * System.Math.PI / 180;
-            double el = axes.Elevation * System.Math.PI / 180;
-            const double Distance = 2;
-            return Numbers([
-                center[0] + (Distance * xSpan * System.Math.Sin(az) * System.Math.Cos(el)),
-                center[1] - (Distance * ySpan * System.Math.Cos(az) * System.Math.Cos(el)),
-                center[2] + (Distance * zSpan * System.Math.Sin(el)),
-            ]);
+            Vector3D standing = axes.EffectiveCameraPosition();
+            return Numbers([standing.X, standing.Y, standing.Z]);
+        }
+
+        if (args[0].Type == JgsType.String)
+        {
+            string word = Str("campos", args, 0, line, col).Trim().ToLowerInvariant();
+            switch (word)
+            {
+                case "auto":
+                    axes.CameraPosition = null;
+                    return JgsValue.Null;
+                case "manual":
+                    axes.CameraPosition = axes.EffectiveCameraPosition();
+                    return JgsValue.Null;
+                default:
+                    throw new JgsRuntimeException(
+                        line, col, $"campos: expected 'auto' or 'manual', got '{word}'.");
+            }
         }
 
         double[] position = ToDoubles("campos", args[0], line, col);
@@ -259,33 +289,65 @@ internal static partial class JgsBuiltins
             throw new JgsRuntimeException(line, col, "campos: expected a three-element position.");
         }
 
+        Vector3D target = axes.EffectiveCameraTarget();
+        (double xSpan, double ySpan, double zSpan) = AxesSpans();
+
         // Undo the per-axis scaling before reading the angles, so a tall Z axis does not tip the
         // camera on its own -- this is the same normalized box the projection works in.
-        double dx = (position[0] - center[0]) / xSpan;
-        double dy = (position[1] - center[1]) / ySpan;
-        double dz = (position[2] - center[2]) / zSpan;
+        double dx = (position[0] - target.X) / xSpan;
+        double dy = (position[1] - target.Y) / ySpan;
+        double dz = (position[2] - target.Z) / zSpan;
         double horizontal = System.Math.Sqrt((dx * dx) + (dy * dy));
         if (horizontal < 1e-12 && System.Math.Abs(dz) < 1e-12)
         {
-            throw new JgsRuntimeException(line, col, "campos: the camera cannot sit at the centre of the data box.");
+            throw new JgsRuntimeException(line, col, "campos: the camera cannot sit at the point it is looking at.");
         }
 
+        axes.CameraPosition = new Vector3D(position[0], position[1], position[2]);
+
+        // The angles are kept in step with the placement rather than cleared, so view() still reports
+        // where the camera is looking from after campos has moved it.
         axes.Azimuth = System.Math.Atan2(dx, -dy) * 180 / System.Math.PI;
         axes.Elevation = System.Math.Atan2(dz, horizontal) * 180 / System.Math.PI;
         return JgsValue.Null;
     }
 
     /// <summary>
-    /// A camera vector this projection fixes: readable, and settable only to the value it already has.
-    /// Accepting and ignoring anything else would be the quiet kind of wrong.
+    /// One of the camera vectors the axes stores as a nullable slot: reading answers where it is,
+    /// writing puts it there, and the two mode words release it or freeze what is showing.
     /// </summary>
-    private static JgsValue FixedCameraVector(
-        string name, IReadOnlyList<JgsValue> args, int line, int col, double[] value, string why)
+    private static JgsValue CameraVector(
+        string name,
+        IReadOnlyList<JgsValue> args,
+        int line,
+        int col,
+        Func<AxesModel, Vector3D> read,
+        Action<AxesModel, Vector3D?> write)
     {
         ArityRange(name, args, 0, 1, line, col);
+        AxesModel axes = JG.Gca();
+
         if (args.Count == 0)
         {
-            return Numbers(value);
+            Vector3D current = read(axes);
+            return Numbers([current.X, current.Y, current.Z]);
+        }
+
+        if (args[0].Type == JgsType.String)
+        {
+            string word = Str(name, args, 0, line, col).Trim().ToLowerInvariant();
+            switch (word)
+            {
+                case "auto":
+                    write(axes, null);
+                    return JgsValue.Null;
+                case "manual":
+                    write(axes, read(axes));
+                    return JgsValue.Null;
+                default:
+                    throw new JgsRuntimeException(
+                        line, col, $"{name}: expected 'auto' or 'manual', got '{word}'.");
+            }
         }
 
         double[] requested = ToDoubles(name, args[0], line, col);
@@ -294,16 +356,13 @@ internal static partial class JgsBuiltins
             throw new JgsRuntimeException(line, col, $"{name}: expected a three-element vector.");
         }
 
-        for (int i = 0; i < 3; i++)
-        {
-            if (System.Math.Abs(requested[i] - value[i]) > 1e-9 * System.Math.Max(1, System.Math.Abs(value[i])))
-            {
-                throw new JgsRuntimeException(line, col, $"{name} cannot be changed: {why}.");
-            }
-        }
-
+        write(axes, new Vector3D(requested[0], requested[1], requested[2]));
         return JgsValue.Null;
     }
+
+    /// <summary>Holds a view angle inside the open interval a camera can actually see through.</summary>
+    private static double ClampViewAngle(double angle) =>
+        System.Math.Clamp(angle, 1e-6, 180 - 1e-6);
 
     /// <summary><c>pbaspect</c>: the relative side lengths of the 3D plot box.</summary>
     private static JgsValue BoxAspect(IReadOnlyList<JgsValue> args, int line, int col)
@@ -414,28 +473,6 @@ internal static partial class JgsBuiltins
         return aspect;
     }
 
-    /// <summary>Scales the three axis limits about their centres, which is the only zoom an orthographic fit has.</summary>
-    private static void Zoom(string name, double factor, int line, int col)
-    {
-        if (!double.IsFinite(factor) || factor <= 0)
-        {
-            throw new JgsRuntimeException(line, col, $"{name}: the zoom factor must be finite and positive.");
-        }
-
-        AxesModel axes = JG.Gca();
-        ScaleRange(axes.XAxes[0], VisibleX(axes), factor);
-        ScaleRange(axes.YAxes[0], VisibleY(axes), factor);
-        ScaleRange(axes.ZAxis, VisibleZ(axes), factor);
-    }
-
-    private static void ScaleRange(AxisModel axis, DataRange range, double factor)
-    {
-        double center = (range.Min + range.Max) / 2;
-        double half = (range.Max - range.Min) / (2 * factor);
-        axis.AutoScale = false;
-        axis.Range = new DataRange(center - half, center + half);
-    }
-
     /// <summary>
     /// What an axis is currently showing. A script asks about the camera the moment after it plots,
     /// which is before any render — so an auto-scaled axis still has its empty default range, and
@@ -476,14 +513,6 @@ internal static partial class JgsBuiltins
     private static DataRange VisibleZ(AxesModel axes) =>
         VisibleRange(axes, axes.ZAxis, static plot =>
             plot is IHasZData zData ? zData.GetZDataBounds() : DataRange.Empty);
-
-    private static double[] AxesCenter()
-    {
-        AxesModel axes = JG.Gca();
-        return [Center(VisibleX(axes)), Center(VisibleY(axes)), Center(VisibleZ(axes))];
-
-        static double Center(DataRange range) => (range.Min + range.Max) / 2;
-    }
 
     private static (double X, double Y, double Z) AxesSpans()
     {

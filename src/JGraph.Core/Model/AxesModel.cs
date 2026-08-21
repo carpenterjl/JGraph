@@ -47,6 +47,18 @@ public sealed class AxesModel : GraphObject
     private Vector3D? _dataAspectRatio;
     private IReadOnlyList<SeriesLineStyle>? _lineStyleOrder;
     private int _nextSeriesIndex;
+    private Vector3D? _cameraPosition;
+    private Vector3D? _cameraTarget;
+    private Vector3D? _cameraUpVector;
+    private double? _cameraViewAngle;
+    private ProjectionType _projection = ProjectionType.Orthographic;
+    private SortMethodType _sortMethod = SortMethodType.Depth;
+    private bool _clipping = true;
+    private DataRange? _alphaLimits;
+    private IReadOnlyList<double>? _alphamap;
+    private ColorScaleType _alphaScale = ColorScaleType.Linear;
+    private Vector3D _currentPointFront;
+    private Vector3D _currentPointBack;
 
     public AxesModel()
     {
@@ -680,6 +692,239 @@ public sealed class AxesModel : GraphObject
             _dataAspectRatio = null;
             SetProperty(ref _plotBoxAspect, value, InvalidationKind.Render);
         }
+    }
+
+    /// <summary>
+    /// Where the camera stands, in data coordinates (MATLAB <c>CameraPosition</c>), or null to
+    /// stand where <see cref="Azimuth"/> and <see cref="Elevation"/> put it. Null is what every
+    /// figure drew before M74, so an untouched axes projects exactly as it always did.
+    /// </summary>
+    [Browsable(false)]
+    public Vector3D? CameraPosition
+    {
+        get => _cameraPosition;
+        set => SetProperty(ref _cameraPosition, value, InvalidationKind.Render);
+    }
+
+    /// <summary>
+    /// The point the camera looks at, in data coordinates (MATLAB <c>CameraTarget</c>), or null for
+    /// the center of the plot box. A manual target is what the plot area centers on.
+    /// </summary>
+    [Browsable(false)]
+    public Vector3D? CameraTarget
+    {
+        get => _cameraTarget;
+        set => SetProperty(ref _cameraTarget, value, InvalidationKind.Render);
+    }
+
+    /// <summary>
+    /// Which data direction points up the screen (MATLAB <c>CameraUpVector</c>), or null for +z,
+    /// the up every 3D axes has used. <see cref="Roll"/> turns the camera about its own axis after
+    /// this vector has chosen the frame.
+    /// </summary>
+    [Browsable(false)]
+    public Vector3D? CameraUpVector
+    {
+        get => _cameraUpVector;
+        set => SetProperty(ref _cameraUpVector, value, InvalidationKind.Render);
+    }
+
+    /// <summary>
+    /// How wide a cone the camera sees, in degrees (MATLAB <c>CameraViewAngle</c>), or null to fit
+    /// the plot box to the plot area — which is what MATLAB's own automatic view angle means.
+    /// </summary>
+    [Browsable(false)]
+    public double? CameraViewAngle
+    {
+        get => _cameraViewAngle;
+        set
+        {
+            if (value is { } angle && (double.IsNaN(angle) || angle <= 0 || angle >= 180))
+            {
+                throw new ArgumentOutOfRangeException(
+                    nameof(value), angle, "The camera view angle is an angle strictly between 0 and 180 degrees.");
+            }
+
+            SetProperty(ref _cameraViewAngle, value, InvalidationKind.Render);
+        }
+    }
+
+    /// <summary>Parallel rays or a viewpoint (MATLAB <c>Projection</c>). Consulted only in 3D.</summary>
+    [Browsable(false)]
+    public ProjectionType Projection
+    {
+        get => _projection;
+        set => SetProperty(ref _projection, value, InvalidationKind.Render);
+    }
+
+    /// <summary>How the faces of each 3D object are ordered (MATLAB <c>SortMethod</c>).</summary>
+    [Browsable(false)]
+    public SortMethodType SortMethod
+    {
+        get => _sortMethod;
+        set => SetProperty(ref _sortMethod, value, InvalidationKind.Render);
+    }
+
+    /// <summary>
+    /// Whether plotted content is confined to the plot area (MATLAB <c>Clipping</c>). Off lets a
+    /// curve run out into the margins, which is how MATLAB shows data that leaves the limits.
+    /// </summary>
+    [Browsable(false)]
+    public bool Clipping
+    {
+        get => _clipping;
+        set => SetProperty(ref _clipping, value, InvalidationKind.Render);
+    }
+
+    /// <summary>
+    /// The alpha-data limits this axes maps transparency over (MATLAB <c>ALim</c>), or null while
+    /// each plot spreads its own alpha data over the whole map.
+    /// </summary>
+    [Browsable(false)]
+    public DataRange? AlphaLimits
+    {
+        get => _alphaLimits;
+        set => SetProperty(ref _alphaLimits, value, InvalidationKind.Render);
+    }
+
+    /// <summary>
+    /// The transparencies alpha data is looked up in (MATLAB <c>Alphamap</c>), or null for the
+    /// even ramp from clear to opaque. Unlike a colormap this is a plain list of numbers, because
+    /// that is what MATLAB's alphamap is.
+    /// </summary>
+    [Browsable(false)]
+    public IReadOnlyList<double>? Alphamap
+    {
+        get => _alphamap;
+        set => SetProperty(ref _alphamap, value, InvalidationKind.Render);
+    }
+
+    /// <summary>How alpha data is spread over <see cref="AlphaLimits"/> (MATLAB <c>AlphaScale</c>).</summary>
+    [Browsable(false)]
+    public ColorScaleType AlphaScale
+    {
+        get => _alphaScale;
+        set => SetProperty(ref _alphaScale, value, InvalidationKind.Render);
+    }
+
+    /// <summary>
+    /// Where the pointer last crossed this axes, as the two ends of the line of sight through it
+    /// (MATLAB <c>CurrentPoint</c>). Interaction state, not document state: it is never serialized,
+    /// and a figure that has never been pointed at answers zeros.
+    /// </summary>
+    [Browsable(false)]
+    public (Vector3D Front, Vector3D Back) CurrentPoint => (_currentPointFront, _currentPointBack);
+
+    /// <summary>
+    /// Records where the pointer is. Deliberately silent — a redraw provoked by moving the mouse
+    /// would chase its own tail, and nothing is drawn from this.
+    /// </summary>
+    public void SetCurrentPoint(Vector3D front, Vector3D back)
+    {
+        _currentPointFront = front;
+        _currentPointBack = back;
+    }
+
+    /// <summary>The view angle an axes uses when it has not been told one (MATLAB's own default).</summary>
+    public const double DefaultCameraViewAngle = 6.6086;
+
+    /// <summary>
+    /// Points the camera at the given angles, releasing every manual camera slot. MATLAB's
+    /// <c>view</c> does exactly this: it is the verb that says "let the angles decide again".
+    /// </summary>
+    public void SetViewAngles(double azimuth, double elevation)
+    {
+        _cameraPosition = null;
+        _cameraTarget = null;
+        _cameraUpVector = null;
+        _cameraViewAngle = null;
+        Azimuth = azimuth;
+        Elevation = elevation;
+    }
+
+    /// <summary>True while the camera is entirely the angles' to decide and the rays are parallel.</summary>
+    public bool HasAutomaticCamera =>
+        _cameraPosition is null && _cameraTarget is null && _cameraUpVector is null
+        && _cameraViewAngle is null && _projection == ProjectionType.Orthographic;
+
+    /// <summary>The point the camera looks at, chosen or derived.</summary>
+    public Vector3D EffectiveCameraTarget()
+    {
+        if (_cameraTarget is { } chosen)
+        {
+            return chosen;
+        }
+
+        RecomputeDataBounds();
+        return new Vector3D(
+            (PrimaryXAxis.Range.Min + PrimaryXAxis.Range.Max) / 2,
+            (ActiveYAxis.Range.Min + ActiveYAxis.Range.Max) / 2,
+            (ZAxis.Range.Min + ZAxis.Range.Max) / 2);
+    }
+
+    /// <summary>
+    /// Which way is up the screen, chosen or derived. The derived answer is +z for every view that
+    /// looks at the box from the side, but a camera looking straight down cannot use +z as its up —
+    /// it is looking along it — so a top-down view answers the azimuth's own north instead. MATLAB
+    /// does the same: <c>view(2); camup</c> is [0 1 0], not [0 0 1].
+    /// </summary>
+    public Vector3D EffectiveCameraUpVector()
+    {
+        if (_cameraUpVector is { } chosen)
+        {
+            return chosen;
+        }
+
+        if (System.Math.Abs(System.Math.Abs(_elevation) - 90) > 1e-6)
+        {
+            return new Vector3D(0, 0, 1);
+        }
+
+        double azimuth = _azimuth * System.Math.PI / 180.0;
+        double facing = _elevation >= 0 ? 1 : -1;
+        return new Vector3D(-System.Math.Sin(azimuth) * facing, System.Math.Cos(azimuth) * facing, 0);
+    }
+
+    /// <summary>The view angle, chosen or MATLAB's default.</summary>
+    public double EffectiveCameraViewAngle() => _cameraViewAngle ?? DefaultCameraViewAngle;
+
+    /// <summary>
+    /// Where the camera stands, chosen or derived from the angles. The derived stand-off is the one
+    /// the view angle implies, so reading the position, the angle and the projection back together
+    /// describes a camera that would draw the picture on screen.
+    /// </summary>
+    public Vector3D EffectiveCameraPosition()
+    {
+        if (_cameraPosition is { } chosen)
+        {
+            return chosen;
+        }
+
+        Vector3D target = EffectiveCameraTarget();
+        double azimuth = _azimuth * System.Math.PI / 180.0;
+        double elevation = _elevation * System.Math.PI / 180.0;
+
+        // The same direction Projection3D looks along, so campos and the picture agree.
+        double dx = System.Math.Sin(azimuth) * System.Math.Cos(elevation);
+        double dy = -System.Math.Cos(azimuth) * System.Math.Cos(elevation);
+        double dz = System.Math.Sin(elevation);
+
+        double xSpan = System.Math.Abs(PrimaryXAxis.Range.Max - PrimaryXAxis.Range.Min);
+        double ySpan = System.Math.Abs(ActiveYAxis.Range.Max - ActiveYAxis.Range.Min);
+        double zSpan = System.Math.Abs(ZAxis.Range.Max - ZAxis.Range.Min);
+        double diagonal = System.Math.Sqrt((xSpan * xSpan) + (ySpan * ySpan) + (zSpan * zSpan));
+        if (diagonal <= 0 || double.IsNaN(diagonal))
+        {
+            diagonal = 1;
+        }
+
+        double half = EffectiveCameraViewAngle() * System.Math.PI / 360.0;
+        double distance = diagonal / 2 / System.Math.Tan(half);
+
+        return new Vector3D(
+            target.X + (dx * distance * (xSpan > 0 ? xSpan / diagonal : 1)),
+            target.Y + (dy * distance * (ySpan > 0 ? ySpan / diagonal : 1)),
+            target.Z + (dz * distance * (zSpan > 0 ? zSpan / diagonal : 1)));
     }
 
     /// <summary>Adds a secondary X axis at the given position and returns it.</summary>

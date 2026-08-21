@@ -27,6 +27,11 @@ public sealed class ImagePlot : PlotObject, IDrawable
     private uint[]? _pixels;
     private double _builtOpacity = 1;
     private bool _builtLogColor;
+    private double[,]? _alphaData;
+    private double[,]? _builtAlphaData;
+    private DataRange? _builtAlphaLimits;
+    private IReadOnlyList<double>? _builtAlphamap;
+    private ColorScaleType _builtAlphaScale;
 
     /// <summary>Creates an image plot over a [rows, cols] scalar field. The array is used directly.</summary>
     public ImagePlot(double[,] values)
@@ -179,6 +184,30 @@ public sealed class ImagePlot : PlotObject, IDrawable
     /// <inheritdoc />
     public override DataRange GetYDataBounds() => _yExtent;
 
+    /// <summary>
+    /// A transparency for every pixel, looked up through the axes' alphamap (MATLAB
+    /// <c>AlphaData</c>), or null for a uniformly opaque image. The grid must match the image's own,
+    /// because each number stands for the pixel beside it.
+    /// </summary>
+    public double[,]? AlphaData
+    {
+        get => _alphaData;
+        set
+        {
+            if (value is not null && (value.GetLength(0) != Rows || value.GetLength(1) != Columns))
+            {
+                throw new ArgumentException(
+                    $"AlphaData must match the image: expected {Rows} by {Columns}, "
+                    + $"got {value.GetLength(0)} by {value.GetLength(1)}.",
+                    nameof(value));
+            }
+
+            _alphaData = value;
+            _pixels = null;
+            Invalidate(InvalidationKind.Render);
+        }
+    }
+
     /// <inheritdoc />
     public void Render(IRenderContext context, RenderState state)
     {
@@ -189,7 +218,8 @@ public sealed class ImagePlot : PlotObject, IDrawable
             return;
         }
 
-        if (_pixels is null || _builtOpacity != Opacity || _builtLogColor != this.LogColorScale())
+        if (_pixels is null || _builtOpacity != Opacity || _builtLogColor != this.LogColorScale()
+            || !ReferenceEquals(_builtAlphaData, _alphaData) || AlphaStampStale())
         {
             BuildTile();
         }
@@ -211,6 +241,14 @@ public sealed class ImagePlot : PlotObject, IDrawable
         (double min, double max) = ResolveColorRange();
         double opacity = Opacity;
 
+        // The alphamap and its limits belong to the axes, so they join the validity key beside the
+        // color scale: a tile cached without them keeps the transparencies it was built with.
+        double[,]? alphaData = _alphaData;
+        AlphaLookup alpha = alphaData is null
+            ? default
+            : this.ResolveAlpha(AlphaResolver.BoundsOf(alphaData));
+        StampAlpha();
+
         // Part of the tile's validity key: an axes switching its ColorScale must rebuild the tile,
         // or the cached pixels silently keep the old spread.
         bool logColor = this.LogColorScale();
@@ -230,12 +268,33 @@ public sealed class ImagePlot : PlotObject, IDrawable
                 }
 
                 Color color = _colormap.Sample(v, min, max, logColor);
-                pixels[rowOffset + c] = color.WithOpacity(opacity).ToArgb();
+
+                // Per-pixel alpha multiplies the whole image's own opacity rather than replacing it,
+                // the same way a surface's FaceAlpha does, so the two knobs compose.
+                double pixelOpacity = alphaData is null
+                    ? opacity
+                    : opacity * alpha.Sample(alphaData[srcRow, c]);
+                pixels[rowOffset + c] = color.WithOpacity(pixelOpacity).ToArgb();
             }
         }
 
         _pixels = pixels;
         _builtOpacity = opacity;
+    }
+
+    /// <summary>True when the axes has changed what the stored alpha data would be drawn as.</summary>
+    private bool AlphaStampStale() =>
+        _alphaData is not null
+        && (_builtAlphaLimits != Axes?.AlphaLimits
+            || !ReferenceEquals(_builtAlphamap, Axes?.Alphamap)
+            || _builtAlphaScale != (Axes?.AlphaScale ?? ColorScaleType.Linear));
+
+    private void StampAlpha()
+    {
+        _builtAlphaData = _alphaData;
+        _builtAlphaLimits = Axes?.AlphaLimits;
+        _builtAlphamap = Axes?.Alphamap;
+        _builtAlphaScale = Axes?.AlphaScale ?? ColorScaleType.Linear;
     }
 
     private (double Min, double Max) ResolveColorRange()

@@ -170,14 +170,12 @@ this milestone's own code and the fourth was a gap it exposed.
 - **`exportgraphics(ax, …)` exports the whole figure** rather than cropping to the axes. The option
   words are all read and checked for spelling; only `Resolution` changes anything, and only for a
   raster format.
-- **`alim` and `alphamap` describe a mapping from a value to an opacity, and this build has none** —
-  transparency is a number on an object. Both answer what they would be if the mapping existed and
-  accept a setting that changes nothing, because refusing would break a script that only sets a
-  default.
 - **Application data does not survive a save.** It is the script's own bookkeeping and has no business
   being drawn or serialized, which is also what lets it hold a handle.
 - **`linkprop` answers a number rather than a listener object.** The link is alive because it exists.
   Storing the answer in appdata is still the right habit for a script meant to work in both.
+
+**Retired since:** the `alim`/`alphamap` divergence this ADR recorded — that transparency is a number on an object and the mapping does not exist — was closed by M74 (ADR 0074), which built the mapping and drew surfaces and images through it.
 
 ## Live checks for the user
 

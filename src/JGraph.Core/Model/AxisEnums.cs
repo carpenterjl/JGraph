@@ -125,3 +125,25 @@ public enum LimitMethod
     Tight,
     Tickaligned,
 }
+
+/// <summary>
+/// Whether the 3D camera projects along parallel rays or through a viewpoint (MATLAB
+/// <c>Projection</c>). Orthographic is what every 3D axes drew before M74; perspective divides by
+/// the distance from the camera, so near faces grow and parallel edges converge.
+/// </summary>
+public enum ProjectionType
+{
+    Orthographic,
+    Perspective,
+}
+
+/// <summary>
+/// How a 3D axes orders the faces it paints (MATLAB <c>SortMethod</c>). Depth sorts each object's
+/// own faces back to front, which is what JGraph has always done; ChildOrder paints them in the
+/// order they were created, which is faster and lets a script decide the order itself.
+/// </summary>
+public enum SortMethodType
+{
+    Depth,
+    ChildOrder,
+}

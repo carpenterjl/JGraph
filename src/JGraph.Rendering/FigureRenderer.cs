@@ -191,10 +191,12 @@ public sealed class FigureRenderer
             DrawGrid(context, axes.Grid, plotArea, transform, xTicks, yTicks);
         }
 
-        // Data-space annotations sit above the plots, clipped like them.
-        context.PushClip(plotArea);
+        // Data-space annotations sit above the plots, clipped like them — unless the axes has been
+        // told not to clip, which is how MATLAB shows content that runs past the limits.
+        bool clip2D = axes.Clipping;
+        if (clip2D) { context.PushClip(plotArea); }
         DrawAnnotations(axes.Annotations, context, transform, plotArea, theme);
-        context.PopClip();
+        if (clip2D) { context.PopClip(); }
 
         // Axis frame, edge by edge so each ruler's color reaches its own line. The two edges the
         // rulers sit on are drawn whenever those rulers show ticks or labels — MATLAB's box off
@@ -281,8 +283,15 @@ public sealed class FigureRenderer
                 (zr.Max - zr.Min) / dar.Z)
             : axes.PlotBoxAspect;
 
-        var projection = new Projection3D(
-            xr, yr, zr, axes.Azimuth, axes.Elevation, plotArea, boxAspect, axes.Roll);
+        // An axes whose camera is still the angles' to decide projects through the constructor it
+        // always did, so an untouched 3D figure is drawn to the same pixel it was before M74. Placing
+        // the camera, or asking for perspective, moves it onto the one that takes a camera.
+        Projection3D projection = axes.HasAutomaticCamera
+            ? new Projection3D(xr, yr, zr, axes.Azimuth, axes.Elevation, plotArea, boxAspect, axes.Roll)
+            : new Projection3D(
+                xr, yr, zr, plotArea, boxAspect, axes.Roll,
+                axes.EffectiveCameraPosition(), axes.EffectiveCameraTarget(), axes.EffectiveCameraUpVector(),
+                axes.CameraViewAngle, axes.Projection == ProjectionType.Perspective);
 
         TickSet xTicks = TickGenerators.For(xAxis).Generate(xr, xAxis.TargetMajorTickCount, xAxis.TickLabelFormat);
         TickSet yTicks = TickGenerators.For(yAxis).Generate(yr, yAxis.TargetMajorTickCount, yAxis.TickLabelFormat);
@@ -298,7 +307,8 @@ public sealed class FigureRenderer
         double xNear = xFar == xr.Min ? xr.Max : xr.Min;
         double yNear = yFar == yr.Min ? yr.Max : yr.Min;
 
-        context.PushClip(plotArea);
+        bool clip3D = axes.Clipping;
+        if (clip3D) { context.PushClip(plotArea); }
 
         LineStyle FramePen(AxisModel ruler) =>
             new(ruler.RulerColor ?? theme.AxisLine, axes.LineWidth);
@@ -395,7 +405,9 @@ public sealed class FigureRenderer
             colorIndex++;
             if (plot.Visible && plot is I3DDrawable drawable)
             {
-                var state = new RenderState(new NormalizedCoordinateMapper(plotArea), plotArea, seriesColor);
+                var state = new RenderState(
+                    new NormalizedCoordinateMapper(plotArea), plotArea, seriesColor,
+                    depthSort: axes.SortMethod == SortMethodType.Depth);
                 drawable.Render3D(context, projection, state);
             }
         }
@@ -404,7 +416,8 @@ public sealed class FigureRenderer
         // is what lets a `text` label follow the point it names as the box rotates. An annotation that
         // has no 3D form is skipped rather than drawn at a meaningless 2D position.
         var annotationState = new RenderState(
-            new NormalizedCoordinateMapper(plotArea), plotArea, theme.AxisLabel);
+            new NormalizedCoordinateMapper(plotArea), plotArea, theme.AxisLabel,
+            depthSort: axes.SortMethod == SortMethodType.Depth);
         foreach (AnnotationObject annotation in axes.Annotations.InDrawOrder())
         {
             if (annotation.Visible && annotation is I3DDrawable projected)
@@ -413,7 +426,7 @@ public sealed class FigureRenderer
             }
         }
 
-        context.PopClip();
+        if (clip3D) { context.PopClip(); }
 
         // Tick labels along the front-bottom edges (drawn unclipped so they may sit in the margins).
         Point2D floorCenter = projection.ProjectPoint(xMid, yMid, zFar);
@@ -514,7 +527,8 @@ public sealed class FigureRenderer
         var frameStyle = new LineStyle(theme.AxisLine, 1);
         LineStyle gridStyle = axes.Grid.MajorLineStyle;
 
-        context.PushClip(plotArea);
+        bool clipPolar = axes.Clipping;
+        if (clipPolar) { context.PushClip(plotArea); }
 
         // Rings at the r ticks, drawn as arcs over whatever slice of the turn the θ limits allow. The
         // outermost one is the chart's frame and is drawn in the frame ink whether the grid is on.
@@ -561,7 +575,7 @@ public sealed class FigureRenderer
 
         DrawAnnotations(axes.Annotations, context, polar, plotArea, theme);
 
-        context.PopClip();
+        if (clipPolar) { context.PopClip(); }
 
         // Labels last and unclipped: the angle labels stand outside the rim by design.
         if (thetaAxis.ShowTickLabels)
@@ -1065,7 +1079,8 @@ public sealed class FigureRenderer
         IReadOnlyList<Color> palette = SeriesPalette.Of(axes, theme);
         int colorIndex = 0;
 
-        context.PushClip(plotArea);
+        bool clipPlots = axes.Clipping;
+        if (clipPlots) { context.PushClip(plotArea); }
         foreach (PlotObject plot in axes.Plots.InDrawOrder())
         {
             Color seriesColor = SeriesPalette.Resolve(palette, plot, colorIndex);
@@ -1083,7 +1098,7 @@ public sealed class FigureRenderer
             drawable.Render(context, state);
         }
 
-        context.PopClip();
+        if (clipPlots) { context.PopClip(); }
     }
 
     private static void DrawAnnotations(

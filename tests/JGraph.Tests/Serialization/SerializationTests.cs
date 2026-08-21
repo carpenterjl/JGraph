@@ -950,6 +950,74 @@ public class SerializationTests
     public void Deserialize_RejectsMalformedJson() =>
         Assert.Throws<GraphFormatException>(() => GraphFormat.Deserialize("{ this is not json"));
 
+    [Fact]
+    public void AnAxesRoundTripsItsCameraItsAlphaMappingAndHowItClipsAndSorts()
+    {
+        var figure = new FigureModel();
+        AxesModel axes = figure.AddAxes();
+        axes.Is3D = true;
+        axes.CameraPosition = new Vector3D(1, 2, 3);
+        axes.CameraTarget = new Vector3D(4, 5, 6);
+        axes.CameraUpVector = new Vector3D(0, 1, 0);
+        axes.CameraViewAngle = 20;
+        axes.Projection = ProjectionType.Perspective;
+        axes.SortMethod = SortMethodType.ChildOrder;
+        axes.Clipping = false;
+        axes.AlphaLimits = new DataRange(0.25, 0.75);
+        axes.Alphamap = [0, 0.5, 1];
+        axes.AlphaScale = ColorScaleType.Log;
+
+        AxesModel restored = RoundTrip(figure).Axes[0];
+
+        Assert.Equal(new Vector3D(1, 2, 3), restored.CameraPosition);
+        Assert.Equal(new Vector3D(4, 5, 6), restored.CameraTarget);
+        Assert.Equal(new Vector3D(0, 1, 0), restored.CameraUpVector);
+        Assert.Equal(20, restored.CameraViewAngle);
+        Assert.Equal(ProjectionType.Perspective, restored.Projection);
+        Assert.Equal(SortMethodType.ChildOrder, restored.SortMethod);
+        Assert.False(restored.Clipping);
+        Assert.Equal(new DataRange(0.25, 0.75), restored.AlphaLimits);
+        Assert.Equal(new double[] { 0, 0.5, 1 }, restored.Alphamap);
+        Assert.Equal(ColorScaleType.Log, restored.AlphaScale);
+    }
+
+    [Fact]
+    public void AnAxesThatWasNeverToldAboutItsCameraRoundTripsAsAutomatic()
+    {
+        // Everything the M74 wave added is absent from a document written before it, and absent has
+        // to mean the axes it described: the automatic camera, no alpha mapping, clipped and sorted.
+        var figure = new FigureModel();
+        figure.AddAxes();
+
+        AxesModel restored = RoundTrip(figure).Axes[0];
+
+        Assert.True(restored.HasAutomaticCamera);
+        Assert.Null(restored.CameraPosition);
+        Assert.Null(restored.CameraViewAngle);
+        Assert.Null(restored.AlphaLimits);
+        Assert.Null(restored.Alphamap);
+        Assert.Equal(ColorScaleType.Linear, restored.AlphaScale);
+        Assert.Equal(SortMethodType.Depth, restored.SortMethod);
+        Assert.True(restored.Clipping);
+    }
+
+    [Fact]
+    public void ASurfaceRoundTripsItsAlphaDataAndTheFlatModeThatDrawsIt()
+    {
+        var surface = new SurfacePlot(new double[,] { { 1, 2 }, { 3, 4 } })
+        {
+            AlphaData = new double[,] { { 0, 0.25 }, { 0.5, 1 } },
+            FaceAlphaFlat = true,
+        };
+
+        var restored = (SurfacePlot)RoundTrip(WithAxes(surface)).Axes[0].Plots[0];
+
+        Assert.NotNull(restored.AlphaData);
+        Assert.Equal(0.25, restored.AlphaData![0, 1]);
+        Assert.Equal(1, restored.AlphaData[1, 1]);
+        Assert.True(restored.FaceAlphaFlat);
+    }
+
     private static FigureModel WithAxes(PlotObject plot)
     {
         AxesModel axes = SingleAxes(plot);

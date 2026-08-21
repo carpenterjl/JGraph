@@ -103,15 +103,15 @@ public class JgsCameraTests : IDisposable
             """);
 
         Assert.False(result.Success);
-        Assert.Contains("centre of the data box", result.Message);
+        Assert.Contains("the point it is looking at", result.Message);
     }
 
     /// <summary>
-    /// <c>camtarget</c> and <c>camup</c> are readable but fixed. Accepting a different value and
-    /// quietly ignoring it is the failure mode ADR 0046 §5 recorded, so they say so instead.
+    /// <c>camtarget</c> and <c>camup</c> answer where the camera looks and which way is up, and since
+    /// M74 they are places the script can move rather than facts about the projection.
     /// </summary>
     [Fact]
-    public async Task CamtargetAndCamup_AreReadableAndFixed()
+    public async Task CamtargetAndCamup_AreReadableAndSettable()
     {
         await Succeeds("""
             surf([0, 2], [0, 2], [[0, 0], [4, 4]])
@@ -122,22 +122,33 @@ public class JgsCameraTests : IDisposable
         Assert.Contains("[1, 1, 2]", _output.NormalText);
         Assert.Contains("[0, 0, 1]", _output.NormalText);
 
-        ScriptRunResult tilted = await Run("""
+        await Succeeds("""
             surf([0, 2], [0, 2], [[0, 0], [0, 0]])
             camup([0, 1, 0])
+            camtarget([1, 1, 0])
             """);
-        Assert.False(tilted.Success);
-        Assert.Contains("+Z axis", tilted.Message);
+
+        Assert.Equal(new Vector3D(0, 1, 0), JG.Gca().CameraUpVector);
+        Assert.Equal(new Vector3D(1, 1, 0), JG.Gca().CameraTarget);
     }
 
-    /// <summary>Setting a fixed vector to the value it already has is a no-op, not an error.</summary>
+    /// <summary>Naming angles hands the camera back to them, which is what MATLAB's view does.</summary>
     [Fact]
-    public async Task Camup_AcceptsTheValueItAlreadyHas()
+    public async Task View_ReleasesACameraPlacedByHand()
     {
         await Succeeds("""
             surf([[1, 2], [3, 4]])
-            camup([0, 0, 1])
+            camup([0, 1, 0])
+            camtarget([1, 1, 0])
+            camva(20)
+            view(45, 20)
             """);
+
+        AxesModel axes = JG.Gca();
+        Assert.Null(axes.CameraUpVector);
+        Assert.Null(axes.CameraTarget);
+        Assert.Null(axes.CameraViewAngle);
+        Assert.Equal(45, axes.Azimuth, 6);
     }
 
     // --- camorbit, camzoom, camva ---------------------------------------------------------------
@@ -157,7 +168,7 @@ public class JgsCameraTests : IDisposable
 
     /// <summary>Zooming in halves the span the limits admit, about their own centre.</summary>
     [Fact]
-    public async Task Camzoom_ScalesTheLimitsAboutTheirCentre()
+    public async Task Camzoom_NarrowsTheViewAngleAndLeavesTheLimitsAlone()
     {
         await Succeeds("""
             surf([0, 10], [0, 10], [[0, 0], [0, 0]])
@@ -165,30 +176,40 @@ public class JgsCameraTests : IDisposable
             camzoom(2)
             """);
 
-        AxisModel x = JG.Gca().XAxes[0];
-        Assert.False(x.AutoScale);
-        Assert.Equal(2.5, x.Range.Min, 6);
-        Assert.Equal(7.5, x.Range.Max, 6);
+        AxesModel axes = JG.Gca();
+
+        // Zooming is the camera's business, so the data the axes shows is untouched: the limits are
+        // still the ten the script asked for, and it is the cone that halved.
+        AxisModel x = axes.XAxes[0];
+        Assert.Equal(0, x.Range.Min, 6);
+        Assert.Equal(10, x.Range.Max, 6);
+        Assert.Equal(AxesModel.DefaultCameraViewAngle / 2, axes.EffectiveCameraViewAngle(), 6);
     }
 
     /// <summary>
-    /// An orthographic camera has no true view angle, so <c>camva</c> is read as a zoom against
-    /// MATLAB's default: half the angle shows half the span.
+    /// <c>camva</c> is the cone the camera sees through: it starts at MATLAB's own default, and a
+    /// chosen angle is stored as the angle it is rather than converted into a zoom on the limits.
     /// </summary>
     [Fact]
-    public async Task Camva_ReadsAsAZoomAgainstTheDefaultFraming()
+    public async Task Camva_ReadsAndSetsTheViewAngle()
     {
         await Succeeds("""
             surf([0, 10], [0, 10], [[0, 0], [0, 0]])
             xlim(0, 10)
             print(round(camva * 10000) / 10000)
             camva(3.3043)
+            print(round(camva * 10000) / 10000)
             """);
 
         Assert.Contains("6.6086", _output.NormalText);
+        Assert.Contains("3.3043", _output.NormalText);
 
-        AxisModel x = JG.Gca().XAxes[0];
-        Assert.Equal(5, x.Range.Max - x.Range.Min, 2);
+        AxesModel axes = JG.Gca();
+        Assert.Equal(3.3043, axes.CameraViewAngle!.Value, 6);
+
+        // The limits are the camera's business to look at, not to change.
+        AxisModel x = axes.XAxes[0];
+        Assert.Equal(10, x.Range.Max - x.Range.Min, 6);
     }
 
     [Fact]

@@ -5,9 +5,10 @@ using JGraph.Core.Undo;
 namespace JGraph.Interaction;
 
 /// <summary>
-/// A snapshot of an axes' view: the range and auto-scale flag of every X and Y axis, plus the Z axis
-/// and camera angles for 3D axes. Capturing before and after a navigation gesture lets the whole
-/// change (pan, zoom, rotate, dolly, or reset) be undone/redone atomically.
+/// A snapshot of an axes' view: the range and auto-scale flag of every X and Y axis, plus the Z axis,
+/// the camera angles, and whatever the camera has been placed at by hand. Capturing before and after a
+/// navigation gesture lets the whole change (pan, zoom, rotate, dolly, or reset) be undone/redone
+/// atomically — including the release of a hand-placed camera that rotating performs.
 /// </summary>
 public sealed class AxesViewState
 {
@@ -16,19 +17,31 @@ public sealed class AxesViewState
     private readonly (DataRange Range, bool AutoScale) _z;
     private readonly double _azimuth;
     private readonly double _elevation;
+    private readonly Vector3D? _cameraPosition;
+    private readonly Vector3D? _cameraTarget;
+    private readonly Vector3D? _cameraUpVector;
+    private readonly double? _cameraViewAngle;
 
     private AxesViewState(
         (DataRange, bool)[] x,
         (DataRange, bool)[] y,
         (DataRange, bool) z,
         double azimuth,
-        double elevation)
+        double elevation,
+        Vector3D? cameraPosition,
+        Vector3D? cameraTarget,
+        Vector3D? cameraUpVector,
+        double? cameraViewAngle)
     {
         _x = x;
         _y = y;
         _z = z;
         _azimuth = azimuth;
         _elevation = elevation;
+        _cameraPosition = cameraPosition;
+        _cameraTarget = cameraTarget;
+        _cameraUpVector = cameraUpVector;
+        _cameraViewAngle = cameraViewAngle;
     }
 
     /// <summary>Captures the current view state of an axes.</summary>
@@ -51,7 +64,11 @@ public sealed class AxesViewState
             y,
             (axes.ZAxis.Range, axes.ZAxis.AutoScale),
             axes.Azimuth,
-            axes.Elevation);
+            axes.Elevation,
+            axes.CameraPosition,
+            axes.CameraTarget,
+            axes.CameraUpVector,
+            axes.CameraViewAngle);
     }
 
     /// <summary>Restores this captured state onto the axes.</summary>
@@ -73,6 +90,10 @@ public sealed class AxesViewState
         axes.ZAxis.Range = _z.Range;
         axes.Azimuth = _azimuth;
         axes.Elevation = _elevation;
+        axes.CameraPosition = _cameraPosition;
+        axes.CameraTarget = _cameraTarget;
+        axes.CameraUpVector = _cameraUpVector;
+        axes.CameraViewAngle = _cameraViewAngle;
     }
 
     /// <summary>True when this state differs from another (used to skip no-op undo entries).</summary>
@@ -84,6 +105,12 @@ public sealed class AxesViewState
         }
 
         if (_z != other._z || _azimuth != other._azimuth || _elevation != other._elevation)
+        {
+            return true;
+        }
+
+        if (_cameraPosition != other._cameraPosition || _cameraTarget != other._cameraTarget
+            || _cameraUpVector != other._cameraUpVector || _cameraViewAngle != other._cameraViewAngle)
         {
             return true;
         }

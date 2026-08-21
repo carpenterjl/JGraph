@@ -380,25 +380,28 @@ internal static partial class JgsBuiltins
     }
 
     /// <summary>
-    /// <c>camproj</c>: reads back <c>'orthographic'</c>, always. Asking for perspective is accepted
-    /// and changes nothing — the projection is orthographic by design (ADR 0022), and refusing the
-    /// word would break scripts that set it out of habit.
+    /// <c>camproj</c>: whether the camera draws with parallel rays or through a viewpoint. Since M74
+    /// the word is real — perspective divides by the distance from the camera, so near faces grow and
+    /// the box's parallel edges converge.
     /// </summary>
     private static JgsValue CamProjection(IReadOnlyList<JgsValue> args, int line, int col)
     {
-        (AxesModel? _, IReadOnlyList<JgsValue> rest) = PeelAxes(args);
+        (AxesModel? named, IReadOnlyList<JgsValue> rest) = PeelAxes(args);
         ArityRange("camproj", rest, 0, 1, line, col);
+        AxesModel axes = named ?? JG.Gca();
         if (rest.Count == 0)
         {
-            return JgsValue.Str("orthographic");
+            return JgsValue.Str(axes.Projection == ProjectionType.Perspective ? "perspective" : "orthographic");
         }
 
         string word = Str("camproj", rest, 0, line, col).ToLowerInvariant();
-        if (word is not ("orthographic" or "perspective"))
+        axes.Projection = word switch
         {
-            throw new JgsRuntimeException(line, col,
-                $"camproj: the projection is 'orthographic' or 'perspective', but got '{word}'.");
-        }
+            "orthographic" => ProjectionType.Orthographic,
+            "perspective" => ProjectionType.Perspective,
+            _ => throw new JgsRuntimeException(line, col,
+                $"camproj: the projection is 'orthographic' or 'perspective', but got '{word}'."),
+        };
 
         return JgsValue.Null;
     }
