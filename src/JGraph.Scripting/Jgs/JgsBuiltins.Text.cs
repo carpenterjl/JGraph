@@ -594,7 +594,20 @@ internal static partial class JgsBuiltins
     /// Reads values out of <paramref name="text"/> under a scanf format, cycling the format until the
     /// text runs out — which is what makes <c>sscanf(s, '%f')</c> read every number in the string.
     /// </summary>
-    private static JgsValue Scan(string text, string format, int limit, int line, int col)
+    private static JgsValue Scan(string text, string format, int limit, int line, int col) =>
+        Scan(text, format, limit, line, col, "sscanf", out _, out _);
+
+    /// <summary>
+    /// The same scan, also reporting how much of the text it used and how many values it produced.
+    /// </summary>
+    /// <remarks>
+    /// Those two numbers are what let a file reader put its stream back where the scan stopped
+    /// instead of at the end. Before M76 every file scan read the whole remainder of the file
+    /// whatever the format matched, so a bounded <c>fscanf</c> left the position wrong and a
+    /// following <c>fgetl</c> read nothing.
+    /// </remarks>
+    private static JgsValue Scan(string text, string format, int limit, int line, int col,
+        string name, out int consumed, out int count)
     {
         var values = new List<double>();
         var characters = new StringBuilder();
@@ -692,7 +705,8 @@ internal static partial class JgsBuiltins
                         break;
 
                     default:
-                        throw new JgsRuntimeException(line, col, $"sscanf does not support the conversion '%{format[f]}'.");
+                        throw new JgsRuntimeException(line, col,
+                            $"{name} does not support the conversion '%{format[f]}'.");
                 }
             }
 
@@ -702,6 +716,8 @@ internal static partial class JgsBuiltins
             }
         }
 
+        consumed = at;
+        count = values.Count + characters.Length;
         return textual ? JgsValue.Str(characters.ToString()) : Numbers(values.ToArray());
     }
 

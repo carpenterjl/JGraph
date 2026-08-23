@@ -310,7 +310,30 @@ internal static partial class JgsBuiltins
 
         Define("cast", (args, line, col) =>
         {
-            Arity("cast", args, 2, line, col);
+            ArityRange("cast", args, 2, 3, line, col);
+
+            // cast(A, 'like', p) names a class by showing one rather than spelling it, which is how
+            // a script stays in whatever class the data it is about to join already uses.
+            if (args.Count == 3)
+            {
+                string like = Str("cast", args, 1, line, col);
+                if (!string.Equals(like, "like", StringComparison.OrdinalIgnoreCase))
+                {
+                    throw new JgsRuntimeException(line, col,
+                        $"cast: a third argument follows 'like', not '{like}'.");
+                }
+
+                JgsValue prototype = args[2];
+                if (IsLogicalValue(prototype))
+                {
+                    return MapToBool("cast", args[0], static x => x != 0, line, col);
+                }
+
+                return prototype.Type == JgsType.String
+                    ? JgsValue.Str(args[0].Type == JgsType.String ? args[0].AsString : args[0].Display())
+                    : ToNumericClass("cast", prototype.NumericClass, args[0], line, col);
+            }
+
             string target = Str("cast", args, 1, line, col);
             if (JgsNumericClasses.Parse(target) is JgsNumericClass numericClass)
             {

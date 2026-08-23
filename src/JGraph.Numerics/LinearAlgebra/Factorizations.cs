@@ -5,10 +5,11 @@ namespace JGraph.Numerics.LinearAlgebra;
 /// </summary>
 public sealed class Cholesky
 {
-    private Cholesky(double[,] lower, bool positiveDefinite)
+    private Cholesky(double[,] lower, bool positiveDefinite, int failedAt)
     {
         Lower = lower;
         IsPositiveDefinite = positiveDefinite;
+        FailedAt = failedAt;
     }
 
     /// <summary>The lower triangular factor L, with L·Lᵀ = A.</summary>
@@ -19,6 +20,18 @@ public sealed class Cholesky
     /// non-positive pivot, which is exactly the standard test for definiteness.
     /// </summary>
     public bool IsPositiveDefinite { get; }
+
+    /// <summary>
+    /// The 1-based order at which a non-positive pivot was met, or 0 when the matrix is positive
+    /// definite — MATLAB's <c>flag</c> from <c>[R, flag] = chol(A)</c>.
+    /// </summary>
+    /// <remarks>
+    /// The factorization walks the leading minors in turn, so failing at order q says the leading
+    /// (q−1)-by-(q−1) block *is* positive definite and its factor is already computed. That partial
+    /// factor was always returned in <see cref="Lower"/>; until M76 nothing said how much of it was
+    /// meaningful, which is the whole content of the second output.
+    /// </remarks>
+    public int FailedAt { get; }
 
     /// <summary>Factors a square matrix, reading only its lower triangle as MATLAB's <c>chol</c> does.</summary>
     public static Cholesky Factor(double[,] matrix)
@@ -40,7 +53,7 @@ public sealed class Cholesky
                 {
                     if (sum <= 0)
                     {
-                        return new Cholesky(lower, positiveDefinite: false);
+                        return new Cholesky(lower, positiveDefinite: false, failedAt: i + 1);
                     }
 
                     lower[i, j] = Math.Sqrt(sum);
@@ -52,7 +65,7 @@ public sealed class Cholesky
             }
         }
 
-        return new Cholesky(lower, positiveDefinite: true);
+        return new Cholesky(lower, positiveDefinite: true, failedAt: 0);
     }
 }
 

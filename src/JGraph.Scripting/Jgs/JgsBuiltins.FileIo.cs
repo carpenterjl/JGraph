@@ -13,18 +13,34 @@ namespace JGraph.Scripting.Jgs;
 /// </summary>
 internal static partial class JgsBuiltins
 {
+    /// <summary>
+    /// The width in bytes of each precision word <c>fread</c> and <c>fwrite</c> take. M76 widened
+    /// this from eleven names to the whole documented set except the bit-width ones, which need a
+    /// bit-level cursor this reader has not got and are refused by name rather than rounded up.
+    /// </summary>
     private static readonly IReadOnlyDictionary<string, int> PrecisionWidths =
         new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase)
         {
             ["uint8"] = 1,
             ["int8"] = 1,
             ["char"] = 1,
+            ["uchar"] = 1,
+            ["schar"] = 1,
             ["uint16"] = 2,
             ["int16"] = 2,
+            ["short"] = 2,
+            ["ushort"] = 2,
             ["uint32"] = 4,
             ["int32"] = 4,
+            ["int"] = 4,
+            ["uint"] = 4,
+            ["long"] = 4,
+            ["ulong"] = 4,
             ["single"] = 4,
+            ["float"] = 4,
             ["float32"] = 4,
+            ["int64"] = 8,
+            ["uint64"] = 8,
             ["double"] = 8,
             ["float64"] = 8,
         };
@@ -35,20 +51,12 @@ internal static partial class JgsBuiltins
         void Define(string name, Func<IReadOnlyList<JgsValue>, int, int, JgsValue> body) =>
             env.Declare(name, JgsValue.Function(new BuiltinFunction(name, body)));
 
-        Define("fopen", (args, line, col) =>
-        {
-            ArityRange("fopen", args, 1, 2, line, col);
-            string path = Str("fopen", args, 0, line, col);
-            string mode = args.Count == 2 ? Str("fopen", args, 1, line, col) : "r";
-            try
-            {
-                return JgsValue.Number(host.OpenFile(path, mode));
-            }
-            catch (ArgumentException ex)
-            {
-                throw new JgsRuntimeException(line, col, ex.Message);
-            }
-        });
+        void DefineMany(string name, Func<IReadOnlyList<JgsValue>, int, int, int, JgsValue[]> body) =>
+            env.Declare(name, JgsValue.Function(new BuiltinFunction(name,
+                (args, line, col) => body(args, 1, line, col)[0])
+            { MultiOutput = body }));
+
+        DefineMany("fopen", (args, wanted, line, col) => Open(host, args, wanted, line, col));
 
         Define("fclose", (args, line, col) =>
         {
@@ -64,83 +72,22 @@ internal static partial class JgsBuiltins
             return JgsValue.Number(host.CloseFile(Count("fclose", args, 0, line, col)) ? 0 : -1);
         });
 
-        Define("fwrite", (args, line, col) =>
+        Define("frewind", (args, line, col) =>
         {
-            ArityRange("fwrite", args, 2, 3, line, col);
-            FileStream stream = OpenStream(host, "fwrite", args, line, col);
-            string precision = args.Count == 3 ? Str("fwrite", args, 2, line, col) : "uint8";
-            int width = WidthOf("fwrite", precision, line, col);
-
-            double[] values = args[1].Type is JgsType.Number or JgsType.Bool
-                ? [args[1].AsNumber]
-                : ToDoubles("fwrite", args[1], line, col);
-            foreach (double value in values)
-            {
-                stream.Write(EncodeValue(value, precision, width));
-            }
-
-            return JgsValue.Number(values.Length);
+            Arity("frewind", args, 1, line, col);
+            StreamOf(host, "frewind", args, line, col).Position = 0;
+            return JgsValue.Null;
         });
 
-        Define("fread", (args, line, col) =>
-        {
-            ArityRange("fread", args, 1, 3, line, col);
-            FileStream stream = OpenStream(host, "fread", args, line, col);
-            string precision = "uint8";
-            int wanted = int.MaxValue;
-            if (args.Count >= 2 && args[1].Type == JgsType.String)
-            {
-                precision = args[1].AsString;
-            }
-            else if (args.Count >= 2)
-            {
-                wanted = Count("fread", args, 1, line, col);
-                if (args.Count == 3)
-                {
-                    precision = Str("fread", args, 2, line, col);
-                }
-            }
+        Define("fwrite", (args, line, col) => Write(host, args, line, col));
 
-            int width = WidthOf("fread", precision, line, col);
-            var values = new List<double>();
-            var element = new byte[width];
-            while (values.Count < wanted)
-            {
-                int got = stream.Read(element, 0, width);
-                if (got < width)
-                {
-                    break;
-                }
+        DefineMany("fread", (args, wanted, line, col) => Read(host, args, wanted, line, col));
 
-                values.Add(DecodeValue(element, precision));
-            }
+        DefineMany("fgetl", (args, wanted, line, col) =>
+            ReadLine(host, "fgetl", args, wanted, keepTerminator: false, line, col));
 
-            return Numbers(values.ToArray());
-        });
-
-        Define("fgetl", (args, line, col) =>
-        {
-            Arity("fgetl", args, 1, line, col);
-            FileStream stream = OpenStream(host, "fgetl", args, line, col);
-
-            // MATLAB returns -1 (a number) at end of file, which scripts test with ischar.
-            if (stream.Position >= stream.Length)
-            {
-                return JgsValue.Number(-1);
-            }
-
-            var sb = new System.Text.StringBuilder();
-            int b;
-            while ((b = stream.ReadByte()) >= 0 && b != '\n')
-            {
-                if (b != '\r')
-                {
-                    sb.Append((char)b);
-                }
-            }
-
-            return JgsValue.Str(sb.ToString());
-        });
+        DefineMany("fgets", (args, wanted, line, col) =>
+            ReadLine(host, "fgets", args, wanted, keepTerminator: true, line, col));
 
         // image draws, so its handle does not echo as `ans` — the rule plot has always had.
         env.Declare("image", JgsValue.Function(new BuiltinFunction(

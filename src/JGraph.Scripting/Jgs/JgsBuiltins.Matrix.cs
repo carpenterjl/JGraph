@@ -170,19 +170,9 @@ internal static partial class JgsBuiltins
         Action<string, Func<IReadOnlyList<JgsValue>, int, int, JgsValue>,
             Func<IReadOnlyList<JgsValue>, int, int, int, JgsValue[]>?> Define)
     {
-        Define("chol", (args, line, col) =>
-        {
-            ArityRange("chol", args, 1, 2, line, col);
-            Cholesky factored = Cholesky.Factor(SquareRect("chol", args[0], line, col));
-            if (!factored.IsPositiveDefinite)
-            {
-                throw new JgsRuntimeException(line, col, "chol: the matrix is not positive definite.");
-            }
-
-            // MATLAB's chol is upper triangular by default (R'R = A); 'lower' asks for L instead.
-            bool lower = args.Count == 2 && Str("chol", args, 1, line, col) == "lower";
-            return FromRect(lower ? factored.Lower : Linear.Transpose(factored.Lower));
-        }, null);
+        Define("chol",
+            (args, line, col) => CholeskyAnswer(args, 1, line, col)[0],
+            CholeskyAnswer);
 
         Define("ldl",
             (args, line, col) => FromRect(FactorLdl(args, line, col).Lower),
@@ -224,11 +214,9 @@ internal static partial class JgsBuiltins
             return FromRect(MatrixFunctions.Exponential(SquareRect("expm", args[0], line, col)));
         }, null);
 
-        Define("linsolve", (args, line, col) =>
-        {
-            Arity("linsolve", args, 2, line, col);
-            return FromRect(Linear.Solve(RectOf("linsolve", args[0], line, col), ColumnsOf("linsolve", args[1], line, col)));
-        }, null);
+        Define("linsolve",
+            (args, line, col) => LinearSolveAnswer(args, 1, line, col)[0],
+            LinearSolveAnswer);
 
         Define("rcond", (args, line, col) =>
         {

@@ -31,7 +31,7 @@ internal static partial class JgsBuiltins
 
         RegisterDirectoryBuiltins(Command, Query, host);
         RegisterPathBuiltins(Define, Query, host);
-        RegisterStreamBuiltins(Define, host);
+        RegisterStreamBuiltins(Define, env, host);
         RegisterMachineBuiltins(Define, Query, host);
         RegisterJsonBuiltins(Define);
     }
@@ -246,7 +246,8 @@ internal static partial class JgsBuiltins
     // --- Streams ----------------------------------------------------------------------------------
 
     private static void RegisterStreamBuiltins(
-        Action<string, Func<IReadOnlyList<JgsValue>, int, int, JgsValue>> Define, JGraphScriptGlobals host)
+        Action<string, Func<IReadOnlyList<JgsValue>, int, int, JgsValue>> Define,
+        JgsEnvironment env, JGraphScriptGlobals host)
     {
         FileStream Stream(string name, IReadOnlyList<JgsValue> args, int line, int col)
         {
@@ -261,15 +262,9 @@ internal static partial class JgsBuiltins
             return JgsValue.Bool(stream.Position >= stream.Length);
         });
 
-        Define("ferror", (args, line, col) =>
-        {
-            ArityRange("ferror", args, 1, 2, line, col);
-            _ = Stream("ferror", args, line, col);
-
-            // Every failure here is already an exception, so a stream that is still open has, by
-            // construction, nothing to report.
-            return JgsValue.Str(string.Empty);
-        });
+        env.Declare("ferror", JgsValue.Function(new BuiltinFunction("ferror",
+            (args, line, col) => Failure(host, args, 1, line, col)[0])
+        { MultiOutput = (args, wanted, line, col) => Failure(host, args, wanted, line, col) }));
 
         Define("ftell", (args, line, col) =>
         {
@@ -307,49 +302,30 @@ internal static partial class JgsBuiltins
             }
         });
 
-        Define("fgets", (args, line, col) =>
-        {
-            Arity("fgets", args, 1, line, col);
+        // fgets moved to the file wave in M76, beside fgetl: the two differ only in whether the
+        // terminator comes back, and both now report how long it was.
+        env.Declare("fscanf", JgsValue.Function(new BuiltinFunction("fscanf",
+            (args, line, col) => ScanFile(host, args, 1, line, col)[0])
+        { MultiOutput = (args, wanted, line, col) => ScanFile(host, args, wanted, line, col) }));
 
-            // fgets keeps the line terminator where fgetl strips it; that is the only difference.
-            string? read = ReadLineFrom(Stream("fgets", args, line, col), keepTerminator: true);
-            return read is null ? JgsValue.Number(-1) : JgsValue.Str(read);
-        });
-
-        Define("fscanf", (args, line, col) =>
-        {
-            ArityRange("fscanf", args, 2, 3, line, col);
-            FileStream stream = Stream("fscanf", args, line, col);
-            string format = Str("fscanf", args, 1, line, col);
-            int limit = args.Count == 3 ? Count("fscanf", args, 2, line, col) : int.MaxValue;
-
-            var rest = new byte[stream.Length - stream.Position];
-            int read = stream.Read(rest, 0, rest.Length);
-            return Scan(Encoding.UTF8.GetString(rest, 0, read), format, limit, line, col);
-        });
-
-        Define("textscan", (args, line, col) =>
-        {
-            ArityRange("textscan", args, 2, 2, line, col);
-            FileStream stream = Stream("textscan", args, line, col);
-            string format = Str("textscan", args, 1, line, col);
-
-            // textscan hands back one cell per conversion in the format; with JGraph's flat scan
-            // that is one cell holding everything the format read.
-            var rest = new byte[stream.Length - stream.Position];
-            int read = stream.Read(rest, 0, rest.Length);
-            return JgsValue.Cell([Scan(Encoding.UTF8.GetString(rest, 0, read), format, int.MaxValue, line, col)]);
-        });
+        env.Declare("textscan", JgsValue.Function(new BuiltinFunction("textscan",
+            (args, line, col) => ScanColumns(host, args, 1, line, col)[0])
+        { MultiOutput = (args, wanted, line, col) => ScanColumns(host, args, wanted, line, col) }));
     }
 
-    /// <summary>Reads one line of UTF-8 text from a stream, byte by byte so the position stays exact.</summary>
-    private static string? ReadLineFrom(FileStream stream, bool keepTerminator)
+    /// <summary>
+    /// Reads one line from a stream, byte by byte so the position stays exact, in the encoding the
+    /// file was opened with and stopping after <paramref name="limit"/> characters.
+    /// </summary>
+    private static string? ReadLineFrom(FileStream stream, bool keepTerminator,
+        Encoding? encoding = null, int limit = int.MaxValue)
     {
-        if (stream.Position >= stream.Length)
+        if (stream.Position >= stream.Length || limit <= 0)
         {
             return null;
         }
 
+        Encoding reader = encoding ?? Encoding.UTF8;
         var bytes = new List<byte>();
         int next;
         while ((next = stream.ReadByte()) >= 0)
@@ -359,9 +335,22 @@ internal static partial class JgsBuiltins
             {
                 break;
             }
+
+            // A character limit is counted in characters, so the bytes so far have to be decoded to
+            // know how many there are — which is the only honest way to count them in an encoding
+            // where a character is not a byte.
+            if (limit != int.MaxValue && reader.GetString([.. bytes]).Length >= limit)
+            {
+                break;
+            }
         }
 
-        string text = Encoding.UTF8.GetString(bytes.ToArray());
+        string text = reader.GetString([.. bytes]);
+        if (limit != int.MaxValue && text.Length > limit)
+        {
+            text = text[..limit];
+        }
+
         return keepTerminator ? text : text.TrimEnd('\n').TrimEnd('\r');
     }
 

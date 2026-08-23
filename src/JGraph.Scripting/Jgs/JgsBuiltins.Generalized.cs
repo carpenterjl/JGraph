@@ -218,64 +218,31 @@ internal static partial class JgsBuiltins
     // --- qz -----------------------------------------------------------------------------------
 
     /// <summary>
-    /// The generalized Schur form of a pencil with a nonsingular <c>B</c>, optionally with chosen
-    /// eigenvalues moved to the front. Everything here follows from one identity: if <c>Z</c> is the
-    /// Schur basis of <c>B⁻¹A</c> then <c>A·Z = B·Z·T</c>, so orthogonalizing <c>B·Z</c> makes both
-    /// products triangular at once.
+    /// The generalized Schur form of a pencil, optionally with chosen eigenvalues moved to the
+    /// front. The work is the QZ iteration in <see cref="GeneralizedSchur"/>; what is left here is
+    /// the empty case and the shape the callers want their answer in.
     /// </summary>
+    /// <remarks>
+    /// Until M76 this was assembled from the ordinary Schur form of <c>B⁻¹A</c>, which is exact and
+    /// cheap and cannot be done at all when <c>B</c> is singular — the case it refused by name. A
+    /// real iteration answers for that pencil too, and the refusal is gone with it.
+    /// </remarks>
     private static (double[,] AA, double[,] BB, double[,] Q, double[,] Z) Qz(
         double[,] a, double[,] b, bool[]? select, int line, int col)
     {
-        int n = a.GetLength(0);
-        if (n == 0)
+        _ = line;
+        _ = col;
+        if (a.GetLength(0) == 0)
         {
             return (new double[0, 0], new double[0, 0], new double[0, 0], new double[0, 0]);
         }
 
-        double[,] m;
-        try
-        {
-            m = Linear.Solve(b, a);
-        }
-        catch (InvalidOperationException)
-        {
-            throw new JgsRuntimeException(line, col,
-                "qz: the second matrix is singular, so the pencil has infinite eigenvalues and needs the QZ " +
-                "iteration this does not have; use eig on the pair instead.");
-        }
-
-        Schur schur = Schur.Factor(m);
-        double[,] z = schur.U;
+        GeneralizedSchur qz = GeneralizedSchur.Factor(a, b);
         if (select is not null)
         {
-            z = Schur.Reorder(schur.T, schur.U, select).U;
+            qz = qz.Reordered(select);
         }
 
-        // B·Z orthogonalized: Q is its transposed orthogonal factor, so Q·B·Z is upper triangular.
-        QrDecomposition qr = QrDecomposition.Factor(Linear.Multiply(b, z));
-        double[,] q = Linear.Transpose(qr.FullQ);
-
-        double[,] aa = Linear.Multiply(q, Linear.Multiply(a, z));
-        double[,] bb = Linear.Multiply(q, Linear.Multiply(b, z));
-
-        // The relations hold to rounding; the structural zeros below the diagonal are exact and are
-        // written back so a caller can read the blocks without filtering dust.
-        for (int i = 1; i < n; i++)
-        {
-            for (int j = 0; j < i; j++)
-            {
-                bb[i, j] = 0;
-            }
-        }
-
-        for (int i = 2; i < n; i++)
-        {
-            for (int j = 0; j < i - 1; j++)
-            {
-                aa[i, j] = 0;
-            }
-        }
-
-        return (aa, bb, q, z);
+        return (qz.AA, qz.BB, qz.Q, qz.Z);
     }
 }

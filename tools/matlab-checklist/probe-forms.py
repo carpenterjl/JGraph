@@ -106,6 +106,63 @@ def catalog_names() -> set[str]:
     return names
 
 
+# Samples for one argument of one command, where the generic phrase is true and useless (M76). The
+# decompositions document A as a "matrix" and then need a square one; `chol` needs a positive
+# definite one; the hull and triangulation verbs need points that are not all in a line. Probing
+# them with the generic matrix measured the prober's own sample and recorded the refusal as a gap.
+SQUARE = "[1 2 3; 4 5 6; 7 8 10]"
+PENCIL = "[2 0 1; 0 3 0; 1 0 4]"
+DEFINITE = "[4 2 1; 2 3 1; 1 1 5]"
+COLUMN = "[1; 2; 3]"
+
+NAME_ARG_SAMPLES: dict[tuple[str, str], str] = {
+    ("eig", "A"): SQUARE, ("eig", "B"): PENCIL,
+    ("lu", "A"): SQUARE, ("lu", "S"): SQUARE,
+    ("chol", "A"): DEFINITE, ("chol", "S"): DEFINITE,
+    ("qr", "S"): SQUARE, ("qr", "B"): COLUMN,
+    ("linsolve", "A"): SQUARE, ("linsolve", "B"): COLUMN,
+    ("qz", "A"): SQUARE, ("qz", "B"): PENCIL,
+    ("hess", "A"): SQUARE, ("hess", "B"): PENCIL,
+    ("balance", "A"): SQUARE,
+    ("svd", "A"): SQUARE,
+    ("expm", "A"): SQUARE, ("logm", "A"): SQUARE, ("sqrtm", "A"): SQUARE,
+    ("rcond", "A"): SQUARE, ("schur", "A"): SQUARE, ("ldl", "A"): DEFINITE,
+    # Eight corners of a cube: a hull and a triangulation in the plane and in space alike.
+    ("convhull", "x"): "[0 1 0 1 0 1 0 1]",
+    ("convhull", "y"): "[0 0 1 1 0 0 1 1]",
+    ("convhull", "z"): "[0 0 0 0 1 1 1 1]",
+    ("convhull", "P"): "[0 0; 1 0; 1 1; 0 1]",
+    ("delaunay", "x"): "[0 1 0 1 0 1 0 1]",
+    ("delaunay", "y"): "[0 0 1 1 0 0 1 1]",
+    ("delaunay", "z"): "[0 0 0 0 1 1 1 1]",
+    ("delaunay", "P"): "[0 0; 1 0; 1 1; 0 1]",
+}
+
+# Placeholders the documented type phrase cannot describe well enough to sample, whatever command
+# they belong to. `thresh` is documented "scalar" and refused unless it is in [0, 1]; `sz` is
+# documented "two-element row vector" while the generic vector sample has three.
+NAMED_SAMPLES: dict[str, str] = {
+    "thresh": "0.5",
+    "sz": "[2 3]",
+    # "character vector" is true of a format and useless as one: sampled as 'a' it asks a scanner to
+    # match a literal letter against digits, which measures nothing about the conversions.
+    "formatSpec": "'%f'",
+}
+
+
+def literal_choice(value_types: str) -> str | None:
+    """The first documented literal in a phrase that lists them — `'matrix', 'vector'` (M76).
+
+    An enumerated argument's types column *is* its list of legal words, so the sample can be read
+    straight off it instead of being guessed from a keyword. Reading it as prose was actively
+    wrong: `outputForm` is documented `'matrix', 'vector'`, the keyword table saw the word "matrix"
+    and handed `chol` a 2-by-3 matrix where it wanted the word, and the resulting complaint was
+    recorded as the build refusing a form it in fact never saw.
+    """
+    literals = re.findall(r"'([^']*)'", value_types or "")
+    return f"'{literals[0]}'" if literals else None
+
+
 def sample_for(value_types: str) -> str | None:
     """A runnable sample for a documented value-type phrase, or None when there is no honest one.
 
@@ -154,6 +211,20 @@ PLANE_FIELD = {
     "X": "pX", "Y": "pY", "V": "pV", "U": "pU",
     "startx": "2", "starty": "2", "xslice": "2", "yslice": "2", "isovalue": "2",
 }
+
+
+# The file family. Their first argument is an open file id, and the prober had none to give: it
+# sampled `fileID` from the phrase "integer" as 2, and every read verb answered "2 is not an open
+# file" — sixteen forms recorded as errors that only ever measured the prober's own empty hand
+# (M76). A real file is written, closed and reopened for update, so that a form which reads, one
+# which writes and one which asks the id its own name all have something true to answer about.
+FILE_VERBS = {"fopen", "fclose", "fread", "fwrite", "fgetl", "fgets", "fscanf", "fprintf",
+              "feof", "ferror", "ftell", "fseek", "frewind", "textscan"}
+
+FILE_PRELUDE = ("fpName = [tempname '.txt']; fpTmp = fopen(fpName, 'w'); "
+                "fprintf(fpTmp, '1 2 3\\n4 5 6\\n'); fclose(fpTmp); fpTmp = fopen(fpName, 'r+');")
+
+FILE_NAMES = {"fileID": "fpTmp", "fid": "fpTmp", "filename": "fpName"}
 
 
 def field_samples(tokens: list[str]) -> tuple[str, dict[str, str]]:
@@ -224,8 +295,18 @@ def parse_syntax(syntax: str, name: str) -> tuple[int, list[str]] | None:
 
 
 def build_call(name: str, syntax: str, arg_types: dict[str, str],
-               first_args: list[str] | None) -> tuple[str, int] | None:
-    """A runnable MATLAB statement for one documented form, or None when it cannot be built."""
+               first_args: list[str] | None) -> tuple[str, int, list[str]] | None:
+    """A runnable MATLAB statement for one documented form, or None when it cannot be built.
+
+    Answers the statement, its output count, and **the argument texts it was built from**. That
+    third item is what the `___` forms reuse, and it is returned rather than recovered from the
+    statement because recovering it was this script's own bug (M76): the old reader took the last
+    piece of `built[0].split("; ")`, which is a sound way to drop a field verb's prelude and a
+    catastrophic one the moment an argument is a matrix literal. `chol([1 2 3; 4 5 6])` was cut at
+    the semicolon inside its own brackets, leaving `chol(])` — a parse error that failed the whole
+    probe file, which the runner then reported as the *builtin* taking the process down. Four
+    forms across `chol`, `eig`, `lu` and `linsolve` were recorded as crashes that never happened.
+    """
     parsed = parse_syntax(syntax, name)
     if parsed is None:
         return None
@@ -234,6 +315,8 @@ def build_call(name: str, syntax: str, arg_types: dict[str, str],
     prelude, named = ("", {})
     if name in FIELD_VERBS:
         prelude, named = field_samples(tokens)
+    elif name in FILE_VERBS:
+        prelude, named = FILE_PRELUDE, FILE_NAMES
 
     values: list[str] = []
     for token in tokens:
@@ -268,7 +351,12 @@ def build_call(name: str, syntax: str, arg_types: dict[str, str],
             values.append(bare)
             continue
         key = re.sub(r"[^A-Za-z0-9_]", "", bare)
-        sample = sample_for(arg_types.get(bare) or arg_types.get(key) or "")
+        types = arg_types.get(bare) or arg_types.get(key) or ""
+        sample = (NAME_ARG_SAMPLES.get((name, bare))
+                  or NAME_ARG_SAMPLES.get((name, key))
+                  or NAMED_SAMPLES.get(bare)
+                  or literal_choice(types)
+                  or sample_for(types))
         if sample is None:
             return None
         values.append(sample)
@@ -277,8 +365,8 @@ def build_call(name: str, syntax: str, arg_types: dict[str, str],
     lead = f"{prelude} " if prelude else ""
     if outputs >= 2:
         targets = ", ".join(f"o{i}" for i in range(outputs))
-        return f"{lead}[{targets}] = {inner};", outputs
-    return f"{lead}o = {inner};" if outputs else f"{lead}{inner};", outputs
+        return f"{lead}[{targets}] = {inner};", outputs, values
+    return (f"{lead}o = {inner};" if outputs else f"{lead}{inner};"), outputs, values
 
 
 def classify(message: str) -> str:
@@ -326,11 +414,10 @@ def main() -> int:
         if parsed and not any(t.strip() in ("___", "Name,Value") for t in parsed[1]):
             built = build_call(row["name"], row["syntax"], arg_types.get(row["name"], {}), None)
             if built:
-                # A field verb's call carries a prelude of assignments in front of it; the ___
-                # forms want the arguments alone, so the last statement on the line is the call.
-                call = built[0].strip().rstrip(";").split("; ")[-1]
-                first_form[row["name"]] = split_arguments(
-                    re.sub(r"^\[?[^=]*\]?\s*=\s*", "", call).strip()[len(row["name"]) + 1:-1])
+                # The arguments as they were built. A field verb's call carries a prelude of
+                # assignments in front of it and an argument may be a matrix literal with a
+                # semicolon in it; neither can disturb this, because nothing is re-parsed.
+                first_form[row["name"]] = built[2]
 
     probes: list[dict] = []
     for row in in_scope:

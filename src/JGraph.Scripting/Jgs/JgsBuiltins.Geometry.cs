@@ -20,7 +20,7 @@ internal static partial class JgsBuiltins
 
         RegisterLogicalConstructors(Define);
         RegisterTwoDimensionalTransforms(Define);
-        RegisterHulls(Define);
+        RegisterHulls(env);
         RegisterTriangulation(Define);
         RegisterVoronoiDiagram(env);
         RegisterContourMatrix(Define);
@@ -28,57 +28,8 @@ internal static partial class JgsBuiltins
 
     // --- Triangulation ----------------------------------------------------------------------------
 
-    private static void RegisterTriangulation(Action<string, Func<IReadOnlyList<JgsValue>, int, int, JgsValue>> Define)
-    {
-        Define("delaunay", (args, line, col) =>
-        {
-            ArityRange("delaunay", args, 1, 2, line, col);
-
-            double[] xs;
-            double[] ys;
-
-            if (args.Count == 1)
-            {
-                // delaunay(P) takes the points as an n-by-2 matrix.
-                double[,] points = RectOf("delaunay", args[0], line, col);
-                if (points.GetLength(1) != 2)
-                {
-                    throw new JgsRuntimeException(line, col,
-                        "delaunay: a single argument must be an n-by-2 matrix of points.");
-                }
-
-                int n = points.GetLength(0);
-                xs = new double[n];
-                ys = new double[n];
-                for (int i = 0; i < n; i++)
-                {
-                    xs[i] = points[i, 0];
-                    ys[i] = points[i, 1];
-                }
-            }
-            else
-            {
-                xs = ToDoubles("delaunay", args[0], line, col);
-                ys = ToDoubles("delaunay", args[1], line, col);
-            }
-
-            if (xs.Length != ys.Length)
-            {
-                throw new JgsRuntimeException(line, col, "delaunay needs the same number of x and y coordinates.");
-            }
-
-            if (xs.Length < 3)
-            {
-                throw new JgsRuntimeException(line, col, "delaunay needs at least 3 points.");
-            }
-
-            int[,] triangles = Delaunay.Triangulate(xs, ys);
-
-            // The kernel counts from zero; MATLAB's connectivity list counts from one, and this is a
-            // list of vertex numbers rather than an index into anything JGraph subscripts.
-            return JgsMatrix.Build(triangles.GetLength(0), 3, (t, v) => triangles[t, v] + 1.0);
-        });
-    }
+    private static void RegisterTriangulation(Action<string, Func<IReadOnlyList<JgsValue>, int, int, JgsValue>> Define) =>
+        Define("delaunay", DelaunayAnswer);
 
     // --- Voronoi diagram --------------------------------------------------------------------------
 
@@ -323,45 +274,18 @@ internal static partial class JgsBuiltins
 
     private static void RegisterTwoDimensionalTransforms(Action<string, Func<IReadOnlyList<JgsValue>, int, int, JgsValue>> Define)
     {
-        // A separable transform: run the 1-D transform along every row, then along every column.
-        // fftn is the same thing — JGraph's arrays have at most the two dimensions a matrix has.
-        void Transform2D(string name, bool inverse) =>
+        // A separable transform: the one-dimensional one run along each dimension in turn. M76 moved
+        // the work into TransformAlong, which reaches every dimension a value has rather than the
+        // two a matrix has — so fftn is no longer an alias of fft2 — and reads a complex input,
+        // which is what ifft2(fft2(A)) needs and never had.
+        void Transform(string name, bool inverse, bool planar) =>
             Define(name, (args, line, col) =>
-            {
-                Arity(name, args, 1, line, col);
-                Complex[][] rows = ComplexRows(name, args[0], line, col);
-                int height = rows.Length;
-                int width = rows[0].Length;
+                ManyDimensionalTransform(name, args, inverse, planar, line, col));
 
-                for (int r = 0; r < height; r++)
-                {
-                    rows[r] = inverse ? JGraph.Signal.Fft.Inverse(rows[r]) : JGraph.Signal.Fft.Forward(rows[r]);
-                }
-
-                var column = new Complex[height];
-                for (int c = 0; c < width; c++)
-                {
-                    for (int r = 0; r < height; r++)
-                    {
-                        column[r] = rows[r][c];
-                    }
-
-                    Complex[] transformed = inverse
-                        ? JGraph.Signal.Fft.Inverse(column)
-                        : JGraph.Signal.Fft.Forward(column);
-                    for (int r = 0; r < height; r++)
-                    {
-                        rows[r][c] = transformed[r];
-                    }
-                }
-
-                return JgsMatrix.BuildValues(height, width, (r, c) => ComplexValue(rows[r][c]));
-            });
-
-        Transform2D("fft2", inverse: false);
-        Transform2D("ifft2", inverse: true);
-        Transform2D("fftn", inverse: false);
-        Transform2D("ifftn", inverse: true);
+        Transform("fft2", inverse: false, planar: true);
+        Transform("ifft2", inverse: true, planar: true);
+        Transform("fftn", inverse: false, planar: false);
+        Transform("ifftn", inverse: true, planar: false);
     }
 
     /// <summary>A matrix (or a vector, as one row) as jagged complex rows the transform can work on.</summary>
@@ -397,33 +321,12 @@ internal static partial class JgsBuiltins
 
     // --- Convex hull ------------------------------------------------------------------------------
 
-    private static void RegisterHulls(Action<string, Func<IReadOnlyList<JgsValue>, int, int, JgsValue>> Define)
-    {
-        Define("convhull", (args, line, col) =>
-        {
-            Arity("convhull", args, 2, line, col);
-            double[] xs = ToDoubles("convhull", args[0], line, col);
-            double[] ys = ToDoubles("convhull", args[1], line, col);
-            if (xs.Length != ys.Length)
-            {
-                throw new JgsRuntimeException(line, col, "convhull needs the same number of x and y coordinates.");
-            }
+    private static void RegisterHulls(JgsEnvironment env) =>
+        env.Declare("convhull", JgsValue.Function(new BuiltinFunction("convhull",
+            (args, line, col) => ConvexHullAnswer(args, 1, line, col)[0])
+        { MultiOutput = ConvexHullAnswer }));
 
-            if (xs.Length < 3)
-            {
-                throw new JgsRuntimeException(line, col, "convhull needs at least 3 points.");
-            }
-
-            return Numbers(ConvexHull(xs, ys));
-        });
-    }
-
-    /// <summary>
-    /// The indices of the convex hull, counter-clockwise and closed (the first index repeats at the
-    /// end) as MATLAB returns them, by Andrew's monotone chain: sort by x, sweep the lower boundary
-    /// and then the upper, discarding any point that makes a clockwise turn.
-    /// </summary>
-    private static double[] ConvexHull(double[] xs, double[] ys)
+    private static double[] ConvexHull(double[] xs, double[] ys, bool simplify = true)
     {
         int n = xs.Length;
         var order = new int[n];
@@ -443,7 +346,12 @@ internal static partial class JgsBuiltins
             int start = hull.Count;
             foreach (int point in pass == 0 ? order : order.Reverse())
             {
-                while (hull.Count >= start + 2 && Cross(hull[^2], hull[^1], point) <= 0)
+                // A zero cross product is a point lying along the edge just walked. Dropping it
+                // simplifies the hull to its corners; keeping it is what MATLAB does unless asked
+                // otherwise, and is the difference the 'Simplify' pair names.
+                while (hull.Count >= start + 2
+                    && (simplify ? Cross(hull[^2], hull[^1], point) <= 0
+                                 : Cross(hull[^2], hull[^1], point) < 0))
                 {
                     hull.RemoveAt(hull.Count - 1);
                 }

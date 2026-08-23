@@ -179,11 +179,11 @@ public static class JgsBuiltinCatalog
         // --- Logical constructors, 2-D transforms, geometry ------------------------------------------
         Add("true", "A logical array of the given size, all true; bare true is still the literal.", Opt("rows"), Opt("cols"));
         Add("false", "A logical array of the given size, all false; bare false is still the literal.", Opt("rows"), Opt("cols"));
-        Add("fft2", "The two-dimensional discrete Fourier transform of a matrix.", P("a"));
-        Add("ifft2", "The inverse two-dimensional discrete Fourier transform.", P("a"));
-        Add("fftn", "The Fourier transform along every dimension — fft2 for a matrix.", P("a"));
-        Add("ifftn", "The inverse transform along every dimension.", P("a"));
-        Add("convhull", "The indices of the points on the convex hull, closed and counter-clockwise.", P("x"), P("y"));
+        Add("fft2", "The two-dimensional discrete Fourier transform of a matrix; optional sizes pad or truncate.", P("a"), Opt("m"), Opt("n"));
+        Add("ifft2", "The inverse two-dimensional discrete Fourier transform.", P("a"), Opt("m"), Opt("n"), Opt("symflag"));
+        Add("fftn", "The Fourier transform along every dimension; an optional size vector pads or truncates each.", P("a"), Opt("sz"));
+        Add("ifftn", "The inverse transform along every dimension.", P("a"), Opt("sz"), Opt("symflag"));
+        Add("convhull", "The convex hull of a set of points: closed counter-clockwise indices in the plane, triangles in space, with the area or volume as a second output.", P("x"), Opt("y"), Opt("z"), Opt("Simplify"));
 
         // --- Evaluating text and asking about the workspace -----------------------------------------
         Add("eval", "Runs a string as code in the current scope; a second string runs if the first fails.", P("code"), Opt("onError"));
@@ -253,9 +253,9 @@ public static class JgsBuiltinCatalog
         Add("ferror", "The last error on an open file — empty, since failures are raised instead.", P("fid"), Opt("clear"));
         Add("ftell", "The current byte position in an open file.", P("fid"));
         Add("fseek", "Moves the position in an open file; 0 on success, -1 on failure.", P("fid"), P("offset"), Opt("origin"));
-        Add("fgets", "The next line of an open file, keeping its newline; -1 at the end.", P("fid"));
-        Add("fscanf", "Numbers or text read from an open file under a scanf format.", P("fid"), P("format"), Opt("count"));
-        Add("textscan", "The rest of an open file read under a format, wrapped in a cell.", P("fid"), P("format"));
+        Add("fgets", "The next line of an open file, keeping its newline and stopping after a given number of characters; -1 at the end.", P("fid"), Opt("nchar"));
+        Add("fscanf", "Numbers or text read from an open file under a scanf format, bounded by a count or an [m n] shape, leaving the file where the reading stopped.", P("fid"), P("format"), Opt("size"));
+        Add("textscan", "A file or a piece of text read under a format as a table: one cell per conversion, optionally a set number of times, with Delimiter, HeaderLines, Whitespace, EmptyValue and CollectOutput.", P("source"), P("format"), Opt("N"));
         Add("type", "Prints a file's contents to the console.", P("path"));
         Add("getenv", "The value of an environment variable, or '' when it is not set.", P("name"));
         Add("setenv", "Sets an environment variable for this process.", P("name"), Opt("value"));
@@ -349,7 +349,7 @@ public static class JgsBuiltinCatalog
         Add("ordschur", "Reorders a Schur form so the selected eigenvalues come first.", P("u"), P("t"), P("select"));
         Add("cholupdate", "The Cholesky factor of r'*r + x*x', or of r'*r - x*x' with '-'.", P("r"), P("x"), Opt("sign"));
         Add("qrupdate", "The QR factors of a + u*v', from the factors of a.", P("q"), P("r"), P("u"), P("v"));
-        Add("delaunay", "The Delaunay triangulation of a set of points, as triangle vertex indices.", P("x"), Opt("y"));
+        Add("delaunay", "The Delaunay triangulation of a set of points: triangles in the plane, tetrahedra in space.", P("x"), Opt("y"), Opt("z"));
         Add("voronoin", "The Voronoi diagram of the rows of X: [V, C] with the vertices and one cell of vertex numbers per point, row 1 of V being the point at infinity.", P("X"));
         Add("contourc", "The contour matrix of z at the given levels, without drawing anything.", P("z"), Opt("a"), Opt("b"), Opt("levels"));
 
@@ -394,7 +394,7 @@ public static class JgsBuiltinCatalog
 
         // --- Dense storage answers (JGraph has no sparse type) --------------------------------------
         Add("issparse", "Always false: JGraph stores every matrix densely.", P("x"));
-        Add("full", "x itself — dense storage is the only storage there is.", P("x"));
+        Add("full", "A sparse matrix in dense storage; anything already dense is itself.", P("x"));
         Add("nnz", "How many elements are not zero.", P("x"));
         Add("nonzeros", "The non-zero elements, as a vector.", P("x"));
 
@@ -462,7 +462,7 @@ public static class JgsBuiltinCatalog
         Add("sqrtm", "The principal matrix square root, by the Denman-Beavers iteration.", P("A"));
         Add("logm", "The principal matrix logarithm, by inverse scaling and squaring over sqrtm.", P("A"));
         Add("ode45", "Solves dy/dt = f(t, y): [t, y] = ode45(f, tspan, y0), Dormand-Prince with adaptive steps.", P("f"), P("tspan"), P("y0"));
-        Add("sparse", "Converts to sparse storage: sparse(A), sparse(m, n), or sparse(i, j, v, m, n).", P("A"));
+        Add("sparse", "Converts to sparse storage: sparse(A), sparse(m, n), sparse(i, j, v), or sparse(i, j, v, m, n).", P("A"), Opt("j"), Opt("v"), Opt("m"), Opt("n"));
         Add("sprand", "A sparse random matrix with roughly m*n*density uniform nonzeros.", P("m"), P("n"), P("density"));
         Add("eigs", "The k eigenvalues of largest magnitude (Arnoldi); [V, D] = eigs(A, k) adds Ritz vectors.", P("A"), P("k"));
         Add("spy", "Plots the nonzero pattern of a matrix, row 1 at the top.", P("A"));
@@ -504,11 +504,11 @@ public static class JgsBuiltinCatalog
         Add("svd", "Singular values of a matrix; [U, S, V] = svd(A) adds the singular vectors (economy-size).", P("A"));
 
         // --- DSP and audio ----------------------------------------------------------------------
-        Add("fft", "Discrete Fourier transform of a (real or complex) signal; optional length pads or truncates.", P("x"), Opt("n"));
-        Add("ifft", "Inverse discrete Fourier transform; optional length pads or truncates.", P("x"), Opt("n"));
-        Add("fftshift", "Rotates a spectrum so DC sits at the center.", P("x"));
-        Add("ifftshift", "Undoes fftshift, restoring DC-first order.", P("x"));
-        Add("filter", "Applies the digital filter b/a to signal x (zero initial state).", P("b"), P("a"), P("x"));
+        Add("fft", "Discrete Fourier transform, down each column by default; optional length pads or truncates, and a dimension picks the direction.", P("x"), Opt("n"), Opt("dim"));
+        Add("ifft", "Inverse discrete Fourier transform; optional length pads or truncates, a dimension picks the direction, and 'symmetric' promises a real answer.", P("x"), Opt("n"), Opt("dim"), Opt("symflag"));
+        Add("fftshift", "Rotates a spectrum so DC sits at the center, along one dimension or all of them.", P("x"), Opt("dim"));
+        Add("ifftshift", "Undoes fftshift, restoring DC-first order.", P("x"), Opt("dim"));
+        Add("filter", "Applies the digital filter b/a down each column of x, from rest or from given initial conditions; [y, zf] hands the final ones back.", P("b"), P("a"), P("x"), Opt("zi"), Opt("dim"));
         Add("freqz", "Frequency response of b/a: [H, f] with complex H at count points (fs defaults to 2 = normalized).", P("b"), P("a"), Opt("count"), Opt("fs"));
         Add("butter", "Butterworth design: [b, a] for order n and normalized cutoff(s) Wn; type \"low\"/\"high\"/\"bandpass\"/\"stop\".", P("n"), P("Wn"), Opt("type"));
         Add("firpm", "Parks-McClellan equiripple FIR: order n, normalized band edges f, band amplitudes a.", P("n"), P("f"), P("a"));
@@ -990,7 +990,8 @@ public static class JgsBuiltinCatalog
         Add("balance", "Rows and columns scaled by powers of two so neither dominates: [T, B] = balance(A), where B is T \\ A * T.", P("A"), Opt("option"));
         Add("qz", "The generalized Schur form of a pencil: [AA, BB, Q, Z] = qz(A, B), with Q * A * Z = AA and Q * B * Z = BB.", P("A"), P("B"), Opt("form"));
         Add("ordqz", "A generalized Schur form reordered so the selected eigenvalues come first: ordqz(AA, BB, Q, Z, select).", P("AA"), P("BB"), P("Q"), P("Z"), P("select"));
-        Add("speye", "A sparse identity: speye(n) or speye(m, n).", P("n"), Opt("cols"));
+        Add("spalloc", "An all-zero sparse matrix: spalloc(m, n) with an optional room-to-grow hint.", P("m"), P("n"), Opt("nz"));
+        Add("speye", "A sparse identity: speye(n), speye(m, n), or speye([m n]).", P("n"), Opt("cols"));
         Add("nzmax", "How much room the stored entries take; here always the nonzero count itself.", P("S"));
         Add("symrcm", "The reverse Cuthill-McKee ordering, which gathers the nonzeros towards the diagonal.", P("S"));
         Add("amd", "A minimum-degree ordering, which keeps elimination fill small.", P("S"));
@@ -1472,7 +1473,7 @@ public static class JgsBuiltinCatalog
         Add("class", "The class name of a value: double, logical, char, cell, struct, function_handle.", P("x"));
         Add("isa", "Whether a value has the named class, or is 'numeric'/'float'/'integer'.", P("x"), P("type"));
         Add("logical", "The value converted to a logical (true where non-zero).", P("x"));
-        Add("cast", "The value converted to the named class.", P("x"), P("type"));
+        Add("cast", "The value converted to the named class, or to the class of a prototype with cast(x, 'like', p).", P("x"), P("type"), Opt("prototype"));
         Add("double", "x as a number: a logical becomes 0 or 1, and text becomes its character codes.", P("x"));
         Add("single", "x rounded to single precision (still stored as a double).", P("x"));
         foreach (string integerClass in new[] { "int8", "int16", "int32", "int64", "uint8", "uint16", "uint32", "uint64" })
@@ -1486,7 +1487,7 @@ public static class JgsBuiltinCatalog
 
         // --- Strings ------------------------------------------------------------------------------
         Add("sprintf", "Formats values C-style: %d %i %f %e %g %s %x %% with width/precision (%.2f, %8d).", P("format"), P("values"));
-        Add("fprintf", "Writes a sprintf-formatted string to the console with no added newline (use \\n in the format).", P("format"), P("values"));
+        Add("fprintf", "Writes a sprintf-formatted string to the console or to an open file with no added newline; answers how many bytes went out.", P("format"), P("values"));
         Add("str", "Any value formatted as a string.", P("value"));
         Add("num", "A string parsed as a number; NaN when it does not parse (filter with isnan).", P("text"));
         Add("upper", "The string in upper case.", P("text"));
@@ -1528,10 +1529,11 @@ public static class JgsBuiltinCatalog
         Add("whos", "Lists the workspace's variables with their size and class.");
         Add("save", "Writes workspace variables to a version 5 MAT-file (or text with '-ascii'); '-append' adds to one that exists.", Opt("path"), Opt("names..."));
         Add("load", "Reads variables from a version 5 or 7.3 MAT-file (or a numeric text file) into the workspace.", Opt("path"), Opt("names..."));
-        Add("fopen", "Opens a file and returns its id (-1 on failure); modes r (default), w, a, r+.", P("path"), Opt("mode"));
+        Add("fopen", "Opens a file and returns its id (-1 on failure), or tells you about one already open: modes r (default), w, a, r+, w+, a+, A, W, with an optional byte order and encoding.", P("path"), Opt("mode"), Opt("machinefmt"), Opt("encoding"));
         Add("fclose", "Closes a file id, or every open file with fclose('all').", P("fid"));
-        Add("fread", "Reads binary values from a file: fread(fid, count?, precision?) — uint8 by default.", P("fid"), Opt("count"), Opt("precision"));
-        Add("fwrite", "Writes values to a file in binary: fwrite(fid, data, precision?) — uint8 by default.", P("fid"), P("data"), Opt("precision"));
+        Add("fread", "Reads binary values from a file: a count or an [m n] shape, a precision that may name the class read and the class kept, bytes to skip between elements, and a byte order.", P("fid"), Opt("size"), Opt("precision"), Opt("skip"), Opt("machinefmt"));
+        Add("fwrite", "Writes values to a file in binary: a precision, bytes to skip between elements, and a byte order; answers how many elements went out.", P("fid"), P("data"), Opt("precision"), Opt("skip"), Opt("machinefmt"));
+        Add("frewind", "Moves an open file back to its beginning.", P("fid"));
         Add("fgetl", "The next text line of a file, without its newline; -1 (a number) at end of file.", P("fid"));
         Add("image", "Displays a matrix as a colormapped image over its cell indices (an image value shows as-is).", P("z"));
         Add("help", "Shows a builtin's signature and summary; help alone lists every function.", Opt("name"));

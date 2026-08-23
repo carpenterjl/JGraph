@@ -201,6 +201,16 @@ internal sealed class JgsReplSession : IScriptSession, IGraphicsEventSession
             _globals.ShowTouchedFigures();
             return ScriptRunResult.Failed("Statement was cancelled.");
         }
+        catch (Exception ex)
+        {
+            // A defect in this build, not in the statement (M76). A prompt above all must survive
+            // one: the workspace stands, the session goes on, and the statement is reported failed.
+            var diagnostic = new ScriptDiagnostic(0, 0,
+                $"Internal error: {ex.GetType().Name}: {ex.Message}", IsError: true);
+            _context.Output.WriteError(diagnostic.ToString());
+            _globals.ShowTouchedFigures();
+            return ScriptRunResult.Failed(diagnostic.Message, new[] { diagnostic });
+        }
     }
 
     /// <summary>

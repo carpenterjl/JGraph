@@ -121,11 +121,33 @@ public class MatlabGeneralizedTests : IDisposable
     }
 
     [Fact]
-    public void ASingularSecondMatrixIsRefusedRatherThanApproximated()
+    public void ASingularSecondMatrixIsFactoredRatherThanRefused()
     {
-        // A singular B gives the pencil infinite eigenvalues, which the construction here cannot
-        // represent — and a factorization of a nearby pencil is worse than none.
-        Assert.Contains("infinite eigenvalues", Error("qz([1 2; 3 4], [1 1; 1 1]);"));
+        // Until M76 this was a refusal: the pencil has an eigenvalue at infinity, and the old
+        // construction — the Schur form of B⁻¹A — could not be formed at all. The QZ iteration can,
+        // and the same four relations hold for it as for any other pencil.
+        Assert.Equal("1 1 1 1 1\n", RunAndRead("""
+            A = [1 2; 3 4];
+            B = [1 1; 1 1];
+            [AA, BB, Q, Z] = qz(A, B);
+            fprintf('%d %d %d %d %d\n', ...
+                max(max(abs(Q * A * Z - AA))) < 1e-9, ...
+                max(max(abs(Q * B * Z - BB))) < 1e-9, ...
+                max(max(abs(Q * Q' - eye(2)))) < 1e-9, ...
+                max(max(abs(Z * Z' - eye(2)))) < 1e-9, ...
+                abs(BB(2,1)) < 1e-12);
+            """));
+    }
+
+    [Fact]
+    public void ASingularSecondMatrixPutsAZeroOnTheOtherDiagonal()
+    {
+        // Which is how an infinite eigenvalue is said: the ratio's denominator is exactly zero,
+        // rather than a small number standing in for one.
+        Assert.Equal("1\n", RunAndRead("""
+            [~, BB] = qz([1 2; 3 4], [1 1; 1 1]);
+            fprintf('%d\n', min(abs(diag(BB))) == 0);
+            """));
     }
 
     [Fact]

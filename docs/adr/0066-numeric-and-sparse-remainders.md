@@ -216,7 +216,7 @@ no regression to notice — the routine was new and wrong at once. Comparing aga
 
 - `size(A, 0)` is 1 here, an error in MATLAB. JGS relies on the leniency.
 - `balance` scales but does not permute.
-- `qz` produces the real form; MATLAB's default is complex. A singular `B` is refused.
+- `qz` produces the real form; MATLAB's default is complex.
 - `amd` is exact minimum degree, `dissect` bisects on level sets, `dmperm` is the single-output form.
 - `ichol` and `ilu` are the zero-fill variants only; no drop tolerance, no `'nofill'`/`'crout'`
   options.
@@ -239,3 +239,16 @@ things are still worth looking at in the running application:
 2. `stess_38.m` section 21 draws its cleaned trace. Run it from the Script Workspace with F5 and look
    at the figure: the raw series has a spike at sample 5 and gaps at 3 and 8, and the smoothed series
    drawn over it should have neither.
+
+### Closed by a later milestone
+
+Recorded above when this ADR was written and no longer true. It sits under a heading
+`harvest-divergences.py` does not match, because an index that still names a closed divergence is
+the stale claim that machinery exists to catch.
+
+- **A singular `B` was refused by `qz`.** The construction here took the ordinary Schur form of
+  `B⁻¹A`, which cannot be formed at all when `B` is singular, so the pencils with an eigenvalue at
+  infinity — the ones a QZ iteration exists for — were refused by name. **Closed in M76**, which
+  wrote the real iteration and routed `qz`, `ordqz` and the new `eig(A, B)` through it. Frozen
+  `stess_38` section 20 turned from an assertion that this refuses into an assertion that it
+  factors, which is the second authorized amendment to a frozen script. ADR 0076 has the reasoning.

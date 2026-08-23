@@ -183,49 +183,26 @@ internal static partial class JgsBuiltins
 
         // --- DSP and audio -------------------------------------------------------------------
         Define("fft", (args, line, col) =>
-        {
-            ArityRange("fft", args, 1, 2, line, col);
-            Complex[] input = ComplexArray("fft", args, 0, line, col);
-            if (args.Count == 2)
-            {
-                input = PadOrTruncate(input, Count("fft", args, 1, line, col), "fft", line, col);
-            }
-
-            return FromComplexArray(JGraph.Signal.Fft.Forward(input));
-        });
+            OneDimensionalTransform("fft", args, inverse: false, line, col));
 
         Define("ifft", (args, line, col) =>
-        {
-            ArityRange("ifft", args, 1, 2, line, col);
-            Complex[] input = ComplexArray("ifft", args, 0, line, col);
-            if (args.Count == 2)
-            {
-                input = PadOrTruncate(input, Count("ifft", args, 1, line, col), "ifft", line, col);
-            }
-
-            return FromComplexArray(JGraph.Signal.Fft.Inverse(input));
-        });
+            OneDimensionalTransform("ifft", args, inverse: true, line, col));
 
         Define("fftshift", (args, line, col) =>
         {
-            Arity("fftshift", args, 1, line, col);
-            return JgsValue.Array(Rotate(Arr("fftshift", args, 0, line, col), forward: true));
+            ArityRange("fftshift", args, 1, 2, line, col);
+            return Rotated("fftshift", args, forward: true, line, col);
         });
 
         Define("ifftshift", (args, line, col) =>
         {
-            Arity("ifftshift", args, 1, line, col);
-            return JgsValue.Array(Rotate(Arr("ifftshift", args, 0, line, col), forward: false));
+            ArityRange("ifftshift", args, 1, 2, line, col);
+            return Rotated("ifftshift", args, forward: false, line, col);
         });
 
-        Define("filter", (args, line, col) =>
-        {
-            Arity("filter", args, 3, line, col);
-            return Numbers(DigitalFilter.Filter(
-                NumericVector("filter", args, 0, line, col),
-                NumericVector("filter", args, 1, line, col),
-                DoubleArray("filter", args, 2, line, col)));
-        });
+        env.Declare("filter", JgsValue.Function(new BuiltinFunction("filter",
+            (args, line, col) => FilterAnswer(args, 1, line, col)[0])
+        { MultiOutput = FilterAnswer }));
 
         Define("freqz", (args, line, col) =>
         {
@@ -1159,7 +1136,7 @@ internal static partial class JgsBuiltins
             }
         });
 
-        Define("fprintf", (args, line, col) =>
+        DefineSilent("fprintf", (args, line, col) =>
         {
             if (args.Count < 1)
             {
@@ -1195,23 +1172,29 @@ internal static partial class JgsBuiltins
                 throw new JgsRuntimeException(line, col, ex.Message);
             }
 
+            int written;
             switch (fid)
             {
                 case 1:
                     host.WriteOut(text);
+                    written = System.Text.Encoding.UTF8.GetByteCount(text);
                     break;
                 case 2:
                     host.WriteErr(text);
+                    written = System.Text.Encoding.UTF8.GetByteCount(text);
                     break;
                 default:
-                    System.IO.FileStream stream = host.FileFor(fid)
-                        ?? throw new JgsRuntimeException(line, col, $"fprintf: file id {fid} is not open.");
-                    byte[] bytes = System.Text.Encoding.UTF8.GetBytes(text);
-                    stream.Write(bytes, 0, bytes.Length);
+                    JGraphScriptGlobals.FileEntry entry = host.OpenFileFor(fid)
+                        ?? throw new JgsRuntimeException(line, col, $"fprintf: {fid} is not an open file.");
+                    byte[] bytes = entry.Encoding.GetBytes(text);
+                    entry.Stream.Write(bytes, 0, bytes.Length);
+                    written = bytes.Length;
                     break;
             }
 
-            return JgsValue.Null;
+            // nbytes = fprintf(...) is a documented form; a bare fprintf still prints nothing extra,
+            // which is what BindsAnsAsStatement being false is for.
+            return JgsValue.Number(written);
         });
 
         Define("str", (args, line, col) => { Arity("str", args, 1, line, col); return JgsValue.Str(args[0].Display()); });

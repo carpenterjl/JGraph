@@ -35,13 +35,27 @@ internal static partial class JgsBuiltins
         Define("speye", (args, line, col) =>
         {
             ArityRange("speye", args, 0, 2, line, col);
-            int rows = args.Count == 0 ? 1 : Count("speye", args, 0, line, col);
-            int cols = args.Count switch
+
+            // speye(sz) states both sizes in one two-element vector, the same spelling zeros and
+            // ones take. One number still means a square matrix of that order.
+            int rows;
+            int cols;
+            if (args.Count == 1 && args[0].Type == JgsType.Array && args[0].ArrayLength == 2)
             {
-                0 => 1,
-                1 => rows,
-                _ => Count("speye", args, 1, line, col),
-            };
+                double[] size = FlattenColumnMajor("speye", args[0], line, col);
+                rows = (int)size[0];
+                cols = (int)size[1];
+            }
+            else
+            {
+                rows = args.Count == 0 ? 1 : Count("speye", args, 0, line, col);
+                cols = args.Count switch
+                {
+                    0 => 1,
+                    1 => rows,
+                    _ => Count("speye", args, 1, line, col),
+                };
+            }
 
             var triplets = new List<(int, int, double)>(Math.Min(rows, cols));
             for (int i = 0; i < Math.Min(rows, cols); i++)
@@ -50,6 +64,23 @@ internal static partial class JgsBuiltins
             }
 
             return JgsValue.Sparse(CscMatrix.FromTriplets(Math.Max(rows, 0), Math.Max(cols, 0), triplets));
+        });
+
+        Define("spalloc", (args, line, col) =>
+        {
+            // MATLAB's spalloc reserves room in a matrix that is still all zeros. Nothing here edits
+            // a sparse matrix in place — every operation builds a new one exactly as large as it
+            // needs to be — so the reservation is read, checked, and has nothing to do.
+            ArityRange("spalloc", args, 2, 3, line, col);
+            int rows = Count("spalloc", args, 0, line, col);
+            int cols = Count("spalloc", args, 1, line, col);
+            if (args.Count == 3)
+            {
+                Count("spalloc", args, 2, line, col);
+            }
+
+            return JgsValue.Sparse(CscMatrix.FromTriplets(
+                Math.Max(rows, 0), Math.Max(cols, 0), []));
         });
 
         Define("nzmax", (args, line, col) =>

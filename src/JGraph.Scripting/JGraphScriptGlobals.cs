@@ -396,17 +396,41 @@ public sealed class JGraphScriptGlobals
 
     // --- File handles (fopen/fclose and friends) --------------------------------------------------
 
-    private readonly Dictionary<int, FileStream> _openFiles = new();
+    /// <summary>
+    /// One open file: the stream, and the four things <c>fopen(fid)</c> is documented to answer
+    /// about it. Before M76 only the stream was kept, so a script could open a file and then not
+    /// ask this build what it had opened.
+    /// </summary>
+    internal sealed record FileEntry(
+        FileStream Stream, string Path, string Permission, string MachineFormat, Encoding Encoding);
+
+    private readonly Dictionary<int, FileEntry> _openFiles = new();
     private int _nextFileId = 3; // MATLAB reserves 0-2 for stdin/stdout/stderr
 
     /// <summary>
     /// Opens a file for the <c>fopen</c> builtin and returns its id, or -1 when it cannot be opened —
-    /// MATLAB's convention, so scripts can test <c>fid == -1</c>. Modes: r, w, a, r+ (a trailing
-    /// 'b'/'t' is accepted and ignored; everything here is binary-exact).
+    /// MATLAB's convention, so scripts can test <c>fid == -1</c>. A trailing 'b'/'t' is accepted and
+    /// ignored, because everything here is binary-exact either way.
     /// </summary>
-    internal int OpenFile(string path, string mode)
+    internal (int Id, string Error) OpenFile(string path, string mode, string machineFormat, string encoding)
     {
-        string trimmed = mode.TrimEnd('b', 't');
+        // MATLAB writes the letters in either order — "rb+" and "r+b" are the same request — so the
+        // text flag is removed wherever it sits rather than trimmed off the end.
+        string trimmed = mode.Replace("b", string.Empty, StringComparison.OrdinalIgnoreCase)
+            .Replace("t", string.Empty, StringComparison.OrdinalIgnoreCase);
+
+        Encoding chosen;
+        try
+        {
+            chosen = EncodingNamed(encoding);
+        }
+        catch (ArgumentException ex)
+        {
+            throw new ArgumentException(ex.Message);
+        }
+
+        string format = MachineFormatNamed(machineFormat);
+
         try
         {
             FileStream stream = trimmed switch
@@ -415,44 +439,99 @@ public sealed class JGraphScriptGlobals
                 "w" => new FileStream(ResolveForWrite(path), FileMode.Create, FileAccess.Write),
                 "a" => new FileStream(ResolveForWrite(path), FileMode.Append, FileAccess.Write),
                 "r+" => new FileStream(Resolve(path), FileMode.Open, FileAccess.ReadWrite),
-                _ => throw new ArgumentException($"fopen does not support the mode '{mode}'."),
+                "w+" => new FileStream(ResolveForWrite(path), FileMode.Create, FileAccess.ReadWrite),
+                "a+" => new FileStream(ResolveForWrite(path), FileMode.Append, FileAccess.Write),
+                "A" => new FileStream(ResolveForWrite(path), FileMode.Append, FileAccess.Write),
+                "W" => new FileStream(ResolveForWrite(path), FileMode.Create, FileAccess.Write),
+                _ => throw new ArgumentException($"the mode '{mode}' is not one it opens."),
             };
 
             int id = _nextFileId++;
-            _openFiles[id] = stream;
-            return id;
+            _openFiles[id] = new FileEntry(stream, Resolve(path), mode, format, chosen);
+            return (id, string.Empty);
         }
-        catch (IOException)
+        catch (IOException ex)
         {
-            return -1;
+            return (-1, ex.Message);
         }
-        catch (UnauthorizedAccessException)
+        catch (UnauthorizedAccessException ex)
         {
-            return -1;
+            return (-1, ex.Message);
         }
     }
 
+    /// <summary>The .NET encoding one of MATLAB's encoding names stands for.</summary>
+    internal static Encoding EncodingNamed(string name)
+    {
+        if (name.Length == 0)
+        {
+            return new UTF8Encoding(encoderShouldEmitUTF8Identifier: false);
+        }
+
+        return name.Replace("-", string.Empty, StringComparison.Ordinal).ToLowerInvariant() switch
+        {
+            "utf8" => new UTF8Encoding(encoderShouldEmitUTF8Identifier: false),
+            "latin1" or "iso88591" or "windows1252" => Encoding.Latin1,
+            "usascii" or "ascii" => Encoding.ASCII,
+            "utf16le" or "unicode" => Encoding.Unicode,
+            "utf16be" => Encoding.BigEndianUnicode,
+            _ => throw new ArgumentException(
+                $"there is no encoding called '{name}' here. It reads UTF-8, ISO-8859-1, " +
+                "windows-1252, US-ASCII, UTF-16LE and UTF-16BE."),
+        };
+    }
+
+    /// <summary>
+    /// The byte order one of MATLAB's machine-format words names, as the word <c>fopen(fid)</c>
+    /// answers with. The 64-bit spellings mean the same order and are accepted for that reason.
+    /// </summary>
+    internal static string MachineFormatNamed(string name) =>
+        name.ToLowerInvariant() switch
+        {
+            "" or "n" or "native" => "ieee-le",
+            "l" or "ieee-le" or "s" or "ieee-le.l64" => "ieee-le",
+            "b" or "ieee-be" or "a" or "ieee-be.l64" => "ieee-be",
+            _ => throw new ArgumentException(
+                $"there is no machine format called '{name}'. It takes n, l (ieee-le) and b (ieee-be)."),
+        };
+
     /// <summary>The stream behind a file id, or null when the id is not open.</summary>
-    internal FileStream? FileFor(int id) => _openFiles.TryGetValue(id, out FileStream? stream) ? stream : null;
+    internal FileStream? FileFor(int id) =>
+        _openFiles.TryGetValue(id, out FileEntry? file) ? file.Stream : null;
+
+    /// <summary>Everything known about one open id, or null when it is not open.</summary>
+    internal FileEntry? OpenFileFor(int id) =>
+        _openFiles.TryGetValue(id, out FileEntry? file) ? file : null;
+
+    /// <summary>The ids currently open, in the order they were opened — <c>fopen('all')</c>.</summary>
+    internal IReadOnlyList<int> OpenFileIds
+    {
+        get
+        {
+            var ids = new List<int>(_openFiles.Keys);
+            ids.Sort();
+            return ids;
+        }
+    }
 
     /// <summary>Closes one file id; false when it was not open.</summary>
     internal bool CloseFile(int id)
     {
-        if (!_openFiles.Remove(id, out FileStream? stream))
+        if (!_openFiles.Remove(id, out FileEntry? file))
         {
             return false;
         }
 
-        stream.Dispose();
+        file.Stream.Dispose();
         return true;
     }
 
     /// <summary>Closes every open file — <c>fclose('all')</c>, and the session's own teardown.</summary>
     internal void CloseAllFiles()
     {
-        foreach (FileStream stream in _openFiles.Values)
+        foreach (FileEntry file in _openFiles.Values)
         {
-            stream.Dispose();
+            file.Stream.Dispose();
         }
 
         _openFiles.Clear();

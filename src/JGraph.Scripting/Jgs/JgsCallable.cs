@@ -100,13 +100,57 @@ internal sealed class BuiltinFunction : IJgsCallable, IJgsMultiCallable
 
     /// <inheritdoc />
     public JgsValue Call(IReadOnlyList<JgsValue> arguments, int line, int column) =>
-        _implementation(DemoteStringScalars(arguments), line, column);
+        Guarded(() => _implementation(DemoteStringScalars(arguments), line, column), line, column);
 
     /// <inheritdoc />
     public JgsValue[] CallMultiple(IReadOnlyList<JgsValue> arguments, int wanted, int line, int column) =>
         MultiOutput is { } multi && wanted > 1
-            ? multi(DemoteStringScalars(arguments), wanted, line, column)
+            ? Guarded(() => multi(DemoteStringScalars(arguments), wanted, line, column), line, column)
             : [Call(arguments, line, column)];
+
+    /// <summary>
+    /// Runs a builtin's body and turns the argument-shaped exceptions the layers underneath throw
+    /// into script errors a script can catch.
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    /// The numeric routines report a bad shape by throwing <see cref="ArgumentException"/> — "QR
+    /// factorization here needs at least as many rows as columns" is a sentence written for a person
+    /// to read. Nothing between here and <c>Main</c> caught it: the interpreter's <c>try</c> catches
+    /// <see cref="JgsRuntimeException"/> alone and the runner catches <see cref="JgsException"/>
+    /// alone, so <c>qr</c> of a wide matrix ended the process. A script must not be able to do that,
+    /// whatever it passes.
+    /// </para>
+    /// <para>
+    /// Only the four kinds that mean "these arguments are wrong" are translated. A
+    /// <see cref="JgsException"/> is already a script error and passes through with the line it was
+    /// raised at; a cancellation and a script's own <c>exit</c> are control flow and must reach the
+    /// runner that is listening for them; anything else is a defect in this build rather than in the
+    /// script, and is left to the runner's own last resort so that it is reported as one.
+    /// </para>
+    /// </remarks>
+    private T Guarded<T>(Func<T> body, int line, int column)
+    {
+        try
+        {
+            return body();
+        }
+        catch (Exception ex) when (ex is ArgumentException or InvalidOperationException
+            or ArithmeticException or IndexOutOfRangeException or KeyNotFoundException
+            or FormatException)
+        {
+            throw new JgsRuntimeException(line, column, $"{Name}: {MessageOf(ex)}");
+        }
+    }
+
+    /// <summary>
+    /// An exception's message without the parameter name .NET appends to it — "needs a square
+    /// matrix. (Parameter 'matrix')" reads as an internal detail to someone writing a script.
+    /// </summary>
+    private static string MessageOf(Exception ex) =>
+        ex is ArgumentException { ParamName: { Length: > 0 } name }
+            ? ex.Message.Replace($" (Parameter '{name}')", string.Empty, StringComparison.Ordinal)
+            : ex.Message;
 
     /// <summary>
     /// Replaces every string scalar in <paramref name="arguments"/> with its char row, allocating a

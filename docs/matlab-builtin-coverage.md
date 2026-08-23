@@ -94,9 +94,10 @@ see. This file refused to count them while they drew nothing; **M56 made them re
 number and this one agree again. `opengl` *is* counted, because an accepted no-op is an answer — the
 same reading that counted `shading`, `lighting` and `camlight` in M43.
 
-Across every callable kind — builtin, function, operator, keyword, script — the count is **913 of
-2,024** as of M75, which added `saveas` and gave the MATLAB dialect's `print` its paper meaning
-(912 after M71; 910 after M69; 926 of 2,027 was written here from M68 and counted two different populations —
+Across every callable kind — builtin, function, operator, keyword, script — the count is **915 of
+2,024** as of M76, which added `spalloc` and `frewind` — the two names the numeric and file form
+wave found missing outright rather than merely short of forms
+(913 after M75, which added `saveas` and gave the MATLAB dialect's `print` its paper meaning; 912 after M71; 910 after M69; 926 of 2,027 was written here from M68 and counted two different populations —
 see the correction below; 919 after M67, 905 after M66, 880 after M65, 867 after M64, 814 after M60, 781 after M59, 758 after M58, 742 after M57, 728 after M56, 710 after M55 by this file's nine-short reading above, 697 after M54, 633 after
 M52, 619 after M51, up from 560, and not from the 556 this file used to claim: the checklist tool
 read the implemented set with a regular expression that only matched a name literal directly inside

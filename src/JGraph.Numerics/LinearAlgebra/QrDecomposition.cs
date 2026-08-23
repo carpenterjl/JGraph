@@ -1,40 +1,66 @@
 namespace JGraph.Numerics.LinearAlgebra;
 
 /// <summary>
-/// Householder QR factorization A = Q·R for an m-by-n matrix with m ≥ n, and the least-squares
-/// solver built on it — the tall/overdetermined case of the <c>\</c> operator.
+/// Householder QR factorization A = Q·R of an m-by-n matrix of any shape, optionally with column
+/// pivoting (A·P = Q·R), and the least-squares solver built on it — the tall/overdetermined case of
+/// the <c>\</c> operator.
 /// </summary>
+/// <remarks>
+/// The factorization runs over the first min(m, n) columns, which is what makes a wide matrix an
+/// ordinary case rather than a refused one: there are only m reflectors to be had, and applying
+/// them leaves R m-by-n upper trapezoidal. Before M76 a wide matrix was refused outright, and
+/// because the refusal was an <see cref="ArgumentException"/> nothing caught, <c>qr</c> of one
+/// ended the process.
+/// </remarks>
 public sealed class QrDecomposition
 {
     private readonly double[,] _qr;      // Householder vectors below the diagonal, R on and above
     private readonly double[] _rDiag;    // R's diagonal, kept separately
+    private readonly int[] _pivot;       // factored column j was column _pivot[j] of the input
     private readonly int _m;
     private readonly int _n;
+    private readonly int _p;             // min(m, n) — the number of reflectors
 
-    private QrDecomposition(double[,] qr, double[] rDiag)
+    private QrDecomposition(double[,] qr, double[] rDiag, int[] pivot)
     {
         _qr = qr;
         _rDiag = rDiag;
+        _pivot = pivot;
         _m = qr.GetLength(0);
         _n = qr.GetLength(1);
+        _p = Math.Min(_m, _n);
     }
 
-    /// <summary>Factors <paramref name="matrix"/> (m ≥ n); the input is not modified.</summary>
-    /// <exception cref="ArgumentException">The matrix has more columns than rows.</exception>
-    public static QrDecomposition Factor(double[,] matrix)
+    /// <summary>Factors <paramref name="matrix"/> without pivoting; the input is not modified.</summary>
+    public static QrDecomposition Factor(double[,] matrix) => Factor(matrix, pivot: false);
+
+    /// <summary>
+    /// Factors <paramref name="matrix"/>, optionally choosing at each step the remaining column of
+    /// largest norm — which orders R's diagonal by decreasing magnitude and is what makes the
+    /// factorization tell the truth about a rank-deficient matrix.
+    /// </summary>
+    public static QrDecomposition Factor(double[,] matrix, bool pivot)
     {
+        ArgumentNullException.ThrowIfNull(matrix);
         int m = matrix.GetLength(0);
         int n = matrix.GetLength(1);
-        if (m < n)
-        {
-            throw new ArgumentException("QR factorization here needs at least as many rows as columns.", nameof(matrix));
-        }
+        int p = Math.Min(m, n);
 
         var qr = (double[,])matrix.Clone();
-        var rDiag = new double[n];
-
-        for (int k = 0; k < n; k++)
+        var rDiag = new double[p];
+        var order = new int[n];
+        for (int j = 0; j < n; j++)
         {
+            order[j] = j;
+        }
+
+        for (int k = 0; k < p; k++)
+        {
+            if (pivot)
+            {
+                SwapInLargestColumn(qr, order, k, m, n);
+            }
+
             // Householder reflection that zeroes column k below the diagonal.
             double norm = 0;
             for (int r = k; r < m; r++)
@@ -78,7 +104,66 @@ public sealed class QrDecomposition
             rDiag[k] = -norm;
         }
 
-        return new QrDecomposition(qr, rDiag);
+        return new QrDecomposition(qr, rDiag, order);
+    }
+
+    /// <summary>
+    /// Moves the largest remaining column into position <paramref name="k"/>, measuring each by the
+    /// part of it the reflections still have to reach — rows k downward. Recomputed rather than
+    /// updated downdate-style: n is small here, and a downdated norm loses the accuracy that is the
+    /// entire reason for pivoting.
+    /// </summary>
+    private static void SwapInLargestColumn(double[,] qr, int[] order, int k, int m, int n)
+    {
+        int best = k;
+        double largest = -1;
+        for (int c = k; c < n; c++)
+        {
+            double sum = 0;
+            for (int r = k; r < m; r++)
+            {
+                sum += qr[r, c] * qr[r, c];
+            }
+
+            if (sum > largest)
+            {
+                largest = sum;
+                best = c;
+            }
+        }
+
+        if (best == k)
+        {
+            return;
+        }
+
+        for (int r = 0; r < m; r++)
+        {
+            (qr[r, k], qr[r, best]) = (qr[r, best], qr[r, k]);
+        }
+
+        (order[k], order[best]) = (order[best], order[k]);
+    }
+
+    /// <summary>
+    /// The column order the factorization used: factored column j was column <c>PivotVector[j]</c>
+    /// of the input, 0-based. The identity when the factorization did not pivot.
+    /// </summary>
+    public int[] PivotVector => (int[])_pivot.Clone();
+
+    /// <summary>The pivoting as a permutation matrix P, so that A·P = Q·R.</summary>
+    public double[,] Permutation
+    {
+        get
+        {
+            var p = new double[_n, _n];
+            for (int j = 0; j < _n; j++)
+            {
+                p[_pivot[j], j] = 1;
+            }
+
+            return p;
+        }
     }
 
     /// <summary>Whether every diagonal of R is nonzero — A has full column rank.</summary>
@@ -86,6 +171,11 @@ public sealed class QrDecomposition
     {
         get
         {
+            if (_n > _m)
+            {
+                return false; // more columns than rows: they cannot all be independent
+            }
+
             foreach (double d in _rDiag)
             {
                 if (d == 0)
@@ -98,13 +188,17 @@ public sealed class QrDecomposition
         }
     }
 
-    /// <summary>The economy-size orthogonal factor Q (m-by-n, orthonormal columns).</summary>
+    /// <summary>
+    /// The economy-size orthogonal factor Q: m-by-min(m, n), with orthonormal columns. For a tall
+    /// matrix that is m-by-n as before; for a wide one it is the full m-by-m, because a wide matrix
+    /// has no columns to economize away — which is also what MATLAB's <c>qr(A, 0)</c> answers.
+    /// </summary>
     public double[,] Q
     {
         get
         {
-            var q = new double[_m, _n];
-            for (int k = _n - 1; k >= 0; k--)
+            var q = new double[_m, _p];
+            for (int k = _p - 1; k >= 0; k--)
             {
                 for (int r = 0; r < _m; r++)
                 {
@@ -112,7 +206,7 @@ public sealed class QrDecomposition
                 }
 
                 q[k, k] = 1;
-                for (int c = k; c < _n; c++)
+                for (int c = k; c < _p; c++)
                 {
                     if (_qr[k, k] == 0)
                     {
@@ -137,13 +231,16 @@ public sealed class QrDecomposition
         }
     }
 
-    /// <summary>The upper-triangular factor R (n-by-n).</summary>
+    /// <summary>
+    /// The economy-size upper-triangular factor R: min(m, n)-by-n, the partner of <see cref="Q"/>.
+    /// n-by-n for a tall matrix as before, and m-by-n upper trapezoidal for a wide one.
+    /// </summary>
     public double[,] R
     {
         get
         {
-            var r = new double[_n, _n];
-            for (int i = 0; i < _n; i++)
+            var r = new double[_p, _n];
+            for (int i = 0; i < _p; i++)
             {
                 r[i, i] = _rDiag[i];
                 for (int j = i + 1; j < _n; j++)
@@ -227,6 +324,14 @@ public sealed class QrDecomposition
         if (b.GetLength(0) != _m)
         {
             throw new ArgumentException("The right-hand side's row count must match the matrix's.", nameof(b));
+        }
+
+        if (_n > _m)
+        {
+            // An underdetermined system has no least-squares solution of its own; the minimum-norm
+            // one comes from the QR of the transpose, which is what Linear.Solve does with it.
+            throw new InvalidOperationException(
+                "A least-squares solve needs at least as many rows as columns.");
         }
 
         if (!IsFullRank)

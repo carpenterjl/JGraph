@@ -126,7 +126,7 @@ def main() -> int:
             built = probe.build_call(name, syntax, types.get(name, {}), first_args=None)
             if built is None:
                 continue
-            call, _ = built
+            call = built[0]   # (statement, outputs, arguments) since M76
             # The sample for an axes-typed argument is `gca`, so a form whose accepted call already
             # carries one would be re-issued with *two* targets and refuse for that reason. The
             # first run of this verifier reported `cla`, `bubblesize` and the tickformat trio as

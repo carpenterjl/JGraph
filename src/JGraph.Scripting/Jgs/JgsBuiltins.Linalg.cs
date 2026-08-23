@@ -85,145 +85,16 @@ internal static partial class JgsBuiltins
         Define("norm", (args, line, col) => Norm(args, line, col));
 
         Define("eig",
-            (args, line, col) =>
-            {
-                Arity("eig", args, 1, line, col);
-                if (HasComplexElements(args[0]))
-                {
-                    // Complex input takes the complex QR path (values only, like MATLAB's e = eig(A)).
-                    Complex[] complexValues = ComplexEigen.Values(ComplexSquareOf("eig", args[0], line, col));
-                    var boxed = new JgsValue[complexValues.Length];
-                    for (int i = 0; i < boxed.Length; i++)
-                    {
-                        boxed[i] = ComplexValue(complexValues[i]);
-                    }
-
-                    JgsValue column = JgsValue.Array(boxed);
-                    if (boxed.Length > 1)
-                    {
-                        column.Reshape(boxed.Length, 1);
-                    }
-
-                    return column;
-                }
-
-                Eigen eigen = Eigen.Factor(SquareRect("eig", args[0], line, col));
-                var values = new JgsValue[eigen.Values.Length];
-                for (int i = 0; i < values.Length; i++)
-                {
-                    values[i] = ComplexValue(eigen.Values[i]);
-                }
-
-                return JgsValue.Array(values);
-            },
-            (args, _, line, col) =>
-            {
-                Arity("eig", args, 1, line, col);
-                if (HasComplexElements(args[0]))
-                {
-                    throw new JgsRuntimeException(line, col,
-                        "[V, D] = eig(A) is not supported for a complex A; e = eig(A) computes the eigenvalues.");
-                }
-
-                Eigen eigen = Eigen.Factor(SquareRect("eig", args[0], line, col));
-                int n = eigen.Values.Length;
-                var d = new Complex[n, n];
-                for (int i = 0; i < n; i++)
-                {
-                    d[i, i] = eigen.Values[i];
-                }
-
-                return [FromComplexRect(eigen.Vectors), FromComplexRect(d)];
-            });
+            (args, line, col) => EigenAnswer(args, 1, line, col)[0],
+            EigenAnswer);
 
         Define("lu",
-            (args, line, col) =>
-            {
-                Arity("lu", args, 1, line, col);
-                if (args[0].Type == JgsType.Sparse)
-                {
-                    throw new JgsRuntimeException(line, col,
-                        "lu of a sparse matrix returns its factors: use [L, U] = lu(A).");
-                }
-
-                LuDecomposition lu = LuDecomposition.Factor(SquareRect("lu", args[0], line, col));
-
-                // MATLAB's one-output lu is the two factors in one matrix: L below the (unit)
-                // diagonal and U on and above it, in pivoted row order.
-                double[,] permutedLower = Linear.Multiply(Linear.Transpose(lu.Permutation), lu.Lower);
-                double[,] upper = lu.Upper;
-                int n = upper.GetLength(0);
-                var combined = new double[n, n];
-                for (int r = 0; r < n; r++)
-                {
-                    for (int c = 0; c < n; c++)
-                    {
-                        combined[r, c] = permutedLower[r, c] + upper[r, c] - (r == c ? 1 : 0);
-                    }
-                }
-
-                return FromRect(combined);
-            },
-            (args, wanted, line, col) =>
-            {
-                Arity("lu", args, 1, line, col);
-                if (args[0].Type == JgsType.Sparse)
-                {
-                    if (wanted >= 3)
-                    {
-                        throw new JgsRuntimeException(line, col,
-                            "lu of a sparse matrix supports the two-output form [L, U] = lu(A).");
-                    }
-
-                    // Gilbert–Peierls, permutation folded into L (the same contract as dense [L, U]).
-                    try
-                    {
-                        (JGraph.Numerics.Sparse.CscMatrix lower, JGraph.Numerics.Sparse.CscMatrix upper) =
-                            args[0].AsSparse.LowerUpper();
-                        return [JgsValue.Sparse(lower), JgsValue.Sparse(upper)];
-                    }
-                    catch (ArgumentException ex)
-                    {
-                        throw new JgsRuntimeException(line, col, ex.Message);
-                    }
-                }
-
-                LuDecomposition lu = LuDecomposition.Factor(SquareRect("lu", args[0], line, col));
-                if (wanted >= 3)
-                {
-                    return [FromRect(lu.Lower), FromRect(lu.Upper), FromRect(lu.Permutation)];
-                }
-
-                // [L, U] folds the permutation into L, so L*U still reassembles A.
-                return
-                [
-                    FromRect(Linear.Multiply(Linear.Transpose(lu.Permutation), lu.Lower)),
-                    FromRect(lu.Upper),
-                ];
-            });
-
-        // MATLAB's qr(A) is the full factorization — Q is m-by-m — and qr(A, 0) is the economy one.
-        // The difference matters to anything that treats Q as an orthogonal basis for the whole
-        // space rather than just A's range, qrupdate above all.
-        static bool Economy(IReadOnlyList<JgsValue> args, string name, int line, int col)
-        {
-            ArityRange(name, args, 1, 2, line, col);
-            return args.Count == 2 && Num(name, args, 1, line, col) == 0;
-        }
+            (args, line, col) => LowerUpperAnswer(args, 1, line, col)[0],
+            LowerUpperAnswer);
 
         Define("qr",
-            (args, line, col) =>
-            {
-                QrDecomposition qr = QrDecomposition.Factor(RectOf("qr", args[0], line, col));
-                return FromRect(Economy(args, "qr", line, col) ? qr.R : qr.FullR);
-            },
-            (args, _, line, col) =>
-            {
-                QrDecomposition qr = QrDecomposition.Factor(RectOf("qr", args[0], line, col));
-                return Economy(args, "qr", line, col)
-                    ? [FromRect(qr.Q), FromRect(qr.R)]
-                    : [FromRect(qr.FullQ), FromRect(qr.FullR)];
-            });
+            (args, line, col) => QrAnswer(args, 1, line, col)[0],
+            QrAnswer);
 
         Define("svd",
             (args, line, col) =>

@@ -130,7 +130,10 @@ public class MatlabFileIoTests : IDisposable
             fid = fopen('samples.bin', 'r');
             v = fread(fid, 'double');
             fclose(fid);
-            assert(isequal(v, [1.5 -2.5 3.25]));
+
+            % A column, as MATLAB answers (M76). It was a row here until then, which is the shape
+            % correction that wave was authorized to make.
+            assert(isequal(v, [1.5; -2.5; 3.25]));
             """);
     }
 
@@ -147,8 +150,8 @@ public class MatlabFileIoTests : IDisposable
             first = fread(fid, 2);
             rest = fread(fid);
             fclose(fid);
-            assert(isequal(first, [65 66]));
-            assert(isequal(rest, [67 68]));
+            assert(isequal(first, [65; 66]));
+            assert(isequal(rest, [67; 68]));
             """);
     }
 

@@ -4,7 +4,7 @@ using System.Numerics;
 namespace JGraph.Signal;
 
 /// <summary>
-/// Digital-filter application and analysis in MATLAB's conventions: <see cref="Filter"/> is
+/// Digital-filter application and analysis in MATLAB's conventions: <c>Filter</c> is
 /// <c>filter(b, a, x)</c> (Direct Form II transposed), <see cref="Freqz"/> is
 /// <c>freqz(b, a, n, fs)</c> (the complex frequency response on a one-sided grid). Coefficients are
 /// z-domain polynomials <c>b</c> (numerator) and <c>a</c> (denominator), normalized by <c>a[0]</c>.
@@ -15,7 +15,21 @@ public static class DigitalFilter
     /// Applies the filter to <paramref name="x"/> (zero initial state) and returns an output of the
     /// same length. Direct Form II transposed: y = b0·x + z0; z_j = b_{j+1}·x + z_{j+1} − a_{j+1}·y.
     /// </summary>
-    public static double[] Filter(ReadOnlySpan<double> b, ReadOnlySpan<double> a, ReadOnlySpan<double> x)
+    public static double[] Filter(ReadOnlySpan<double> b, ReadOnlySpan<double> a, ReadOnlySpan<double> x) =>
+        Filter(b, a, x, []);
+
+    /// <summary>
+    /// The same filter started from <paramref name="state"/> rather than from rest, and leaving its
+    /// own final delays there — MATLAB's <c>zi</c> and <c>zf</c>.
+    /// </summary>
+    /// <remarks>
+    /// The recurrence already carries exactly the vector MATLAB calls the filter's state, so this
+    /// seeds the delay line instead of clearing it and copies it back out instead of discarding it.
+    /// Filtering a signal in pieces and filtering it whole then give the same answer, which is what
+    /// the conditions are for.
+    /// </remarks>
+    public static double[] Filter(ReadOnlySpan<double> b, ReadOnlySpan<double> a,
+        ReadOnlySpan<double> x, Span<double> state)
     {
         if (b.Length == 0 || a.Length == 0)
         {
@@ -37,12 +51,19 @@ public static class DigitalFilter
         var pool = ArrayPool<double>.Shared;
         double[] bn = pool.Rent(order);
         double[] an = pool.Rent(order);
-        double[] state = pool.Rent(System.Math.Max(stateLength, 1));
+        double[] delays = pool.Rent(System.Math.Max(stateLength, 1));
         try
         {
             Array.Clear(bn, 0, order);
             Array.Clear(an, 0, order);
-            Array.Clear(state, 0, System.Math.Max(stateLength, 1));
+            Array.Clear(delays, 0, System.Math.Max(stateLength, 1));
+
+            // Whatever the caller carried in; an empty span is the ordinary start from rest.
+            for (int i = 0; i < stateLength && i < state.Length; i++)
+            {
+                delays[i] = state[i];
+            }
+
             for (int i = 0; i < b.Length; i++)
             {
                 bn[i] = b[i] / a0;
@@ -57,14 +78,20 @@ public static class DigitalFilter
             for (int i = 0; i < x.Length; i++)
             {
                 double input = x[i];
-                double output = (bn[0] * input) + (stateLength > 0 ? state[0] : 0);
+                double output = (bn[0] * input) + (stateLength > 0 ? delays[0] : 0);
                 for (int j = 0; j < stateLength; j++)
                 {
-                    double next = j + 1 < stateLength ? state[j + 1] : 0;
-                    state[j] = (bn[j + 1] * input) + next - (an[j + 1] * output);
+                    double next = j + 1 < stateLength ? delays[j + 1] : 0;
+                    delays[j] = (bn[j + 1] * input) + next - (an[j + 1] * output);
                 }
 
                 y[i] = output;
+            }
+
+            // What the filter would resume from, handed back for a caller that means to.
+            for (int i = 0; i < stateLength && i < state.Length; i++)
+            {
+                state[i] = delays[i];
             }
 
             return y;
@@ -73,7 +100,7 @@ public static class DigitalFilter
         {
             pool.Return(bn);
             pool.Return(an);
-            pool.Return(state);
+            pool.Return(delays);
         }
     }
 

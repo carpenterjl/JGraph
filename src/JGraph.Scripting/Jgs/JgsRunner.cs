@@ -104,6 +104,18 @@ internal static class JgsRunner
         {
             return ScriptRunResult.Failed("Script run was cancelled.");
         }
+        catch (Exception ex)
+        {
+            // The last resort. Everything above is a way a run is meant to end; reaching here means a
+            // defect in this build rather than in the script, and before M76 it meant the process
+            // simply died — an unguarded ArgumentException out of the numeric layer took `qr` of a
+            // wide matrix, the whole batch, and the exit code with it. A defect is reported as one,
+            // named by its type so it can be found, and the run ends as a failure like any other.
+            var diagnostic = new ScriptDiagnostic(0, 0,
+                $"Internal error: {ex.GetType().Name}: {ex.Message}", IsError: true);
+            context.Output.WriteError(diagnostic.ToString());
+            return ScriptRunResult.Failed(diagnostic.Message, new[] { diagnostic });
+        }
         finally
         {
             // Restore whatever was installed before, so a one-shot run inside a live session (a
