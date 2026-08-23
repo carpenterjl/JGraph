@@ -1,4 +1,4 @@
-﻿using JGraph.Core.Model;
+using JGraph.Core.Model;
 using JGraph.Core.Primitives;
 using JGraph.Scripting.Jgs;
 
@@ -225,6 +225,21 @@ public static class ScriptGraphicsCallbacks
         }
     }
 
+    /// <summary>
+    /// Reports that a button on an axes toolbar was pressed — the toolbar's
+    /// <c>SelectionChangedFcn</c>. Which button it was rides along, because that is the whole of
+    /// what the callback is told.
+    /// </summary>
+    public static void NotifyToolbarSelection(AxesToolbarModel toolbar, GraphObject button)
+    {
+        ArgumentNullException.ThrowIfNull(toolbar);
+        if (HasCallback(toolbar, GraphicsEventKind.ToolbarSelectionChanged))
+        {
+            ScriptEventQueue.Enqueue(new GraphicsEvent(
+                GraphicsEventKind.ToolbarSelectionChanged, toolbar, Clicked: button));
+        }
+    }
+
     /// <summary>Reports that a menu entry was picked — the entry's <c>MenuSelectedFcn</c>.</summary>
     public static void NotifyMenuSelected(MenuItemModel item)
     {
@@ -247,6 +262,7 @@ public static class ScriptGraphicsCallbacks
             GraphicsEventKind.CloseRequest => entry.CloseRequestFcn is not null,
             GraphicsEventKind.SizeChanged => entry.SizeChangedFcn is not null,
             GraphicsEventKind.MenuSelected => entry.MenuSelectedFcn is not null,
+            GraphicsEventKind.ToolbarSelectionChanged => entry.SelectionChangedFcn is not null,
             GraphicsEventKind.ContextMenuOpening => entry.ContextMenuOpeningFcn is not null,
             GraphicsEventKind.ObjectDeleted => entry.DeleteFcn is not null,
             GraphicsEventKind.KeyPress => entry.KeyPressFcn is not null,

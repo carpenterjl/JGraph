@@ -95,6 +95,26 @@ public partial class FigureWindow : Window
         FigureView.LegendRowClicked += (_, clicked) =>
             ScriptGraphicsCallbacks.NotifyLegendItemHit(clicked.Axes, clicked.Plot);
 
+        // A press on the hovering axes toolbar queues that toolbar's SelectionChangedFcn, the same
+        // way a legend row queues its ItemHitFcn (M80).
+        FigureView.ToolbarButtonPressed += (_, button) =>
+        {
+            if (button.Parent is AxesToolbarModel toolbar)
+            {
+                ScriptGraphicsCallbacks.NotifyToolbarSelection(toolbar, button);
+            }
+        };
+
+        // Its export button asks the window to do what the Export… button does, because exporting is
+        // the window's business and the toolbar is only another way to reach it.
+        FigureView.ExportRequested += (_, _) =>
+        {
+            if (_viewModel.ExportCommand.CanExecute(null))
+            {
+                _viewModel.ExportCommand.Execute(null);
+            }
+        };
+
         // A real viewport resize was already written to the model; the figure's SizeChangedFcn, if
         // any, hears about it once per settled size.
         FigureView.ViewportSizeChanged += (_, _) =>

@@ -98,6 +98,7 @@ internal static class PlotMapper
                 ShowLabels = p.ShowLabels,
                 LabelRadius = p.LabelRadius,
                 LabelStyle = p.LabelStyle is { } pieLabel ? DtoConvert.ToDto(pieLabel) : null,
+                Wedges = ToDto(p.Patch),
             },
             HeatmapPlot p => new HeatmapPlotDto
             {
@@ -314,6 +315,7 @@ internal static class PlotMapper
                 LabelStyle = p.LabelStyle is { } lineLabel ? DtoConvert.ToDto(lineLabel) : null,
                 LabelHorizontalAlignment = p.LabelHorizontalAlignment,
                 LabelVerticalAlignment = p.LabelVerticalAlignment,
+                LabelOrientation = p.LabelOrientation,
             },
             Line3DPlot p => new Line3DPlotDto
             {
@@ -536,7 +538,7 @@ internal static class PlotMapper
                 ShowLabels = d.ShowLabels,
                 LabelRadius = d.LabelRadius,
                 LabelStyle = d.LabelStyle is { } pieLabel ? DtoConvert.ToTextStyle(pieLabel) : null,
-            },
+            }.WithWedges(d.Wedges),
             HeatmapPlotDto d => new HeatmapPlot(To2D(d.ColorData))
             {
                 XData = d.XData,
@@ -652,6 +654,7 @@ internal static class PlotMapper
                 LabelStyle = d.LabelStyle is { } lineLabel ? DtoConvert.ToTextStyle(lineLabel) : null,
                 LabelHorizontalAlignment = d.LabelHorizontalAlignment,
                 LabelVerticalAlignment = d.LabelVerticalAlignment,
+                LabelOrientation = d.LabelOrientation,
             },
             Line3DPlotDto d => new Line3DPlot(d.X, d.Y, d.Z)
             {
@@ -1083,6 +1086,73 @@ internal static class PlotMapper
         }
 
         return values;
+    }
+
+    /// <summary>
+    /// A pie's wedges as they are styled, with nothing of their shape: the geometry is worked out
+    /// from the values every time, so storing it would be storing an answer twice.
+    /// </summary>
+    private static PieWedgeDto ToDto(PatchPlot wedges) => new()
+    {
+        FaceColor = wedges.FaceColor,
+        FaceVisible = wedges.FaceVisible,
+        EdgeAlpha = wedges.EdgeAlpha,
+        EdgeDash = wedges.EdgeDash,
+        LineJoin = wedges.LineJoin,
+        Marker = wedges.Marker,
+        MarkerSize = wedges.MarkerSize,
+        MarkerEdge = wedges.MarkerEdge,
+        MarkerFill = wedges.MarkerFill,
+        ColorData = wedges.ColorData?.ToArray(),
+        VertexAlpha = wedges.VertexAlpha,
+        AlphaDataMapping = wedges.AlphaDataMapping,
+        CDataMapping = wedges.CDataMapping,
+        FaceLighting = wedges.FaceLighting,
+        EdgeLighting = wedges.EdgeLighting,
+        BackFaceLighting = wedges.BackFaceLighting,
+        AmbientStrength = wedges.AmbientStrength,
+        DiffuseStrength = wedges.DiffuseStrength,
+        SpecularStrength = wedges.SpecularStrength,
+        SpecularExponent = wedges.SpecularExponent,
+        SpecularColorReflectance = wedges.SpecularColorReflectance,
+        AlignVertexCenters = wedges.AlignVertexCenters,
+    };
+
+    /// <summary>
+    /// Puts a stored styling back on a loaded pie's wedges. A document written before M79 carries
+    /// none, and the pie keeps the defaults it was drawn with.
+    /// </summary>
+    private static PiePlot WithWedges(this PiePlot pie, PieWedgeDto? stored)
+    {
+        if (stored is null)
+        {
+            return pie;
+        }
+
+        PatchPlot wedges = pie.Patch;
+        wedges.FaceColor = stored.FaceColor;
+        wedges.FaceVisible = stored.FaceVisible;
+        wedges.EdgeAlpha = stored.EdgeAlpha;
+        wedges.EdgeDash = stored.EdgeDash;
+        wedges.LineJoin = stored.LineJoin;
+        wedges.Marker = stored.Marker;
+        wedges.MarkerSize = stored.MarkerSize;
+        wedges.MarkerEdge = stored.MarkerEdge;
+        wedges.MarkerFill = stored.MarkerFill;
+        wedges.ColorData = stored.ColorData;
+        wedges.VertexAlpha = stored.VertexAlpha;
+        wedges.AlphaDataMapping = stored.AlphaDataMapping;
+        wedges.CDataMapping = stored.CDataMapping;
+        wedges.FaceLighting = stored.FaceLighting;
+        wedges.EdgeLighting = stored.EdgeLighting;
+        wedges.BackFaceLighting = stored.BackFaceLighting;
+        wedges.AmbientStrength = stored.AmbientStrength;
+        wedges.DiffuseStrength = stored.DiffuseStrength;
+        wedges.SpecularStrength = stored.SpecularStrength;
+        wedges.SpecularExponent = stored.SpecularExponent;
+        wedges.SpecularColorReflectance = stored.SpecularColorReflectance;
+        wedges.AlignVertexCenters = stored.AlignVertexCenters;
+        return pie;
     }
 
     private static string PixelsToBase64(uint[] pixels)

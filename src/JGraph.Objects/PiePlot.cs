@@ -2,6 +2,7 @@ using System.ComponentModel;
 using JGraph.Core.Drawing;
 using JGraph.Core.Model;
 using JGraph.Core.Primitives;
+using JGraph.Maths.Transforms;
 using JGraph.Objects.Internal;
 using JGraph.Rendering;
 
@@ -39,26 +40,55 @@ public readonly record struct PieSlice(int Index, double Start, double Sweep, do
 /// object rather than a patch and a text object per wedge, and a zero-valued entry keeps its place
 /// in the colour order rather than being dropped from the chart.
 /// </para>
+/// <para>
+/// The wedges themselves are a real <see cref="PatchPlot"/> (M79), rebuilt from the values whenever
+/// they change and drawn by the patch renderer. That is what makes MATLAB's patch properties — the
+/// mesh, its colours, its markers, its lighting — mean something on a pie rather than merely answer:
+/// a pie <em>is</em> a patch in MATLAB, and now it is one here too. The geometry is derived, so it is
+/// read and never written: the shape of a pie comes from its values.
+/// </para>
 /// </summary>
-public sealed class PiePlot : PlotObject, IDrawable, ILegendItem
+public sealed class PiePlot : PlotObject, IDrawable, I3DDrawable, ILegendItem
 {
+    private readonly PatchPlot _patch = new([0], [0], [0], [[0]]);
+
     private double[] _values;
     private double[]? _explode;
     private string[]? _labels;
     private Colormap _colormap = Colormap.Parula;
-    private Color? _edgeColor = Colors.White;
-    private double _lineWidth = 1.0;
-    private double _faceAlpha = 1.0;
     private double _startAngle = 90;
     private bool _clockwise;
     private bool _showLabels = true;
     private double _labelRadius = 1.2;
     private TextStyle? _labelStyle;
+    private bool _wedgesStale = true;
 
     public PiePlot(double[] values)
     {
         _values = values ?? throw new ArgumentNullException(nameof(values));
         Name = "Pie";
+
+        // The patch is the pie's own, not the axes' — it never joins the figure tree, so it is told
+        // which chart to find the lights and the colour scale through.
+        _patch.Host = this;
+        _patch.EdgeColor = Colors.White;
+        _patch.EdgeWidth = 1.0;
+        Adopt(_patch);
+    }
+
+    /// <summary>
+    /// The wedges as the patch they are drawn as. Everything MATLAB documents on a pie's patch is
+    /// read and written here; the vertices and faces are worked out from the values, so replacing
+    /// them is refused and setting a value redraws them.
+    /// </summary>
+    [Browsable(false)]
+    public PatchPlot Patch
+    {
+        get
+        {
+            EnsureWedges();
+            return _patch;
+        }
     }
 
     /// <summary>The value behind each wedge, exactly as the caller gave them.</summary>
@@ -66,7 +96,11 @@ public sealed class PiePlot : PlotObject, IDrawable, ILegendItem
     public double[] Values
     {
         get => _values;
-        set => SetProperty(ref _values, value ?? [], InvalidationKind.Layout);
+        set
+        {
+            SetProperty(ref _values, value ?? [], InvalidationKind.Layout);
+            _wedgesStale = true;
+        }
     }
 
     /// <summary>
@@ -78,7 +112,11 @@ public sealed class PiePlot : PlotObject, IDrawable, ILegendItem
     public double[]? Explode
     {
         get => _explode;
-        set => SetProperty(ref _explode, value, InvalidationKind.Layout);
+        set
+        {
+            SetProperty(ref _explode, value, InvalidationKind.Layout);
+            _wedgesStale = true;
+        }
     }
 
     /// <summary>
@@ -97,30 +135,39 @@ public sealed class PiePlot : PlotObject, IDrawable, ILegendItem
     public Colormap Colormap
     {
         get => _colormap;
-        set => SetProperty(ref _colormap, value ?? Colormap.Parula, InvalidationKind.Render);
+        set
+        {
+            SetProperty(ref _colormap, value ?? Colormap.Parula, InvalidationKind.Render);
+            _wedgesStale = true;
+        }
     }
 
-    /// <summary>The colour the wedges are outlined in, or null for no outline.</summary>
+    /// <summary>
+    /// The colour the wedges are outlined in, or null for no outline. One number with two spellings:
+    /// this is the patch's own <see cref="PatchPlot.EdgeColor"/>, so a script that reaches it through
+    /// either name is setting the same thing.
+    /// </summary>
     [Category("Appearance"), DisplayName("Edge color")]
     public Color? EdgeColor
     {
-        get => _edgeColor;
-        set => SetProperty(ref _edgeColor, value, InvalidationKind.Render);
+        get => _patch.EdgeColor;
+        set => _patch.EdgeColor = value;
     }
 
+    /// <inheritdoc cref="PatchPlot.EdgeWidth" />
     [Category("Appearance"), DisplayName("Line width")]
     public double LineWidth
     {
-        get => _lineWidth;
-        set => SetProperty(ref _lineWidth, System.Math.Max(0, value), InvalidationKind.Render);
+        get => _patch.EdgeWidth;
+        set => _patch.EdgeWidth = value;
     }
 
     /// <summary>How opaque the wedge faces are, in [0, 1]. The outlines are unaffected.</summary>
     [Category("Appearance"), DisplayName("Face alpha")]
     public double FaceAlpha
     {
-        get => _faceAlpha;
-        set => SetProperty(ref _faceAlpha, System.Math.Clamp(value, 0, 1), InvalidationKind.Render);
+        get => _patch.FaceAlpha;
+        set => _patch.FaceAlpha = value;
     }
 
     /// <summary>Where the first wedge begins, in degrees counter-clockwise from due east.</summary>
@@ -128,7 +175,11 @@ public sealed class PiePlot : PlotObject, IDrawable, ILegendItem
     public double StartAngle
     {
         get => _startAngle;
-        set => SetProperty(ref _startAngle, value, InvalidationKind.Layout);
+        set
+        {
+            SetProperty(ref _startAngle, value, InvalidationKind.Layout);
+            _wedgesStale = true;
+        }
     }
 
     /// <summary>Whether the wedges run clockwise instead of counter-clockwise.</summary>
@@ -136,7 +187,11 @@ public sealed class PiePlot : PlotObject, IDrawable, ILegendItem
     public bool Clockwise
     {
         get => _clockwise;
-        set => SetProperty(ref _clockwise, value, InvalidationKind.Layout);
+        set
+        {
+            SetProperty(ref _clockwise, value, InvalidationKind.Layout);
+            _wedgesStale = true;
+        }
     }
 
     /// <summary>Whether the wedge labels are drawn at all.</summary>
@@ -180,52 +235,106 @@ public sealed class PiePlot : PlotObject, IDrawable, ILegendItem
 
     public override DataRange GetYDataBounds() => Reach();
 
+    /// <summary>Flat: a pie lies in the plane its axes is drawn on, whatever the view.</summary>
+    public DataRange GetZDataBounds() => new(0, 0);
+
     /// <inheritdoc />
     public void Render(IRenderContext context, RenderState state)
     {
+        ArgumentNullException.ThrowIfNull(state);
+
+        Wedges().Render(context, state);
+        if (_showLabels)
+        {
+            DrawLabels(context, state.Mapper, Slices());
+        }
+    }
+
+    /// <summary>
+    /// The same wedges under a camera. A pie is flat, so turning the view is the only thing this
+    /// changes — and it is also what puts the wedges in front of the axes' lights, which is where a
+    /// patch is shaded.
+    /// </summary>
+    public void Render3D(IRenderContext context, Projection3D projection, RenderState state)
+    {
+        ArgumentNullException.ThrowIfNull(projection);
+        Wedges().Render3D(context, projection, state);
+    }
+
+    /// <summary>The patch, rebuilt if the values moved and told the pie's own transparency.</summary>
+    private PatchPlot Wedges()
+    {
+        EnsureWedges();
+        _patch.Opacity = Opacity;
+        return _patch;
+    }
+
+    /// <summary>
+    /// Cuts the values into wedges and writes them onto the patch: one face per value, a fan of
+    /// vertices per wedge, and the colour the value's place in the order gives it.
+    /// <para>
+    /// A wedge with no share of the circle still takes its face, holding a single vertex — nothing is
+    /// drawn from it, and every face stays at the index of the value behind it, which is what lets
+    /// <c>CData</c> and the alpha data be written one entry per value.
+    /// </para>
+    /// </summary>
+    private void EnsureWedges()
+    {
+        if (!_wedgesStale)
+        {
+            return;
+        }
+
+        _wedgesStale = false;
         IReadOnlyList<PieSlice> slices = Slices();
         Color[] colors = _colormap.Resample(System.Math.Max(slices.Count, 1));
-        LineStyle? stroke = _edgeColor is { } edge && _lineWidth > 0
-            ? new LineStyle(edge.WithOpacity(Opacity), _lineWidth)
-            : null;
-        ICoordinateMapper mapper = state.Mapper;
-        var vertices = new List<Point2D>();
 
-        foreach (PieSlice slice in slices)
+        var xs = new List<double>();
+        var ys = new List<double>();
+        var faces = new int[slices.Count][];
+        var faceColors = new Color[slices.Count];
+
+        for (int i = 0; i < slices.Count; i++)
         {
+            PieSlice slice = slices[i];
+            (double cx, double cy) = CenterOf(slice);
+            faceColors[i] = colors[slice.Index % colors.Length];
+
             if (slice.Fraction <= 0)
             {
+                faces[i] = [xs.Count];
+                xs.Add(cx);
+                ys.Add(cy);
                 continue;
             }
 
-            vertices.Clear();
-            (double cx, double cy) = CenterOf(slice);
+            var face = new List<int>();
 
             // A whole circle has no point in the middle to close through; anything less is a wedge,
             // and the middle is its first vertex.
             if (slice.Fraction < 1)
             {
-                vertices.Add(mapper.DataToPixel(cx, cy));
+                face.Add(xs.Count);
+                xs.Add(cx);
+                ys.Add(cy);
             }
 
             int steps = PieGeometry.StepsFor(slice.Sweep);
             for (int step = 0; step <= steps; step++)
             {
                 double angle = slice.Start + (slice.Sweep * step / steps);
-                vertices.Add(mapper.DataToPixel(
-                    cx + System.Math.Cos(angle), cy + System.Math.Sin(angle)));
+                face.Add(xs.Count);
+                xs.Add(cx + System.Math.Cos(angle));
+                ys.Add(cy + System.Math.Sin(angle));
             }
 
-            context.DrawPolygon(
-                System.Runtime.InteropServices.CollectionsMarshal.AsSpan(vertices),
-                stroke,
-                colors[slice.Index % colors.Length].WithOpacity(Opacity * _faceAlpha));
+            faces[i] = [.. face];
         }
 
-        if (_showLabels)
-        {
-            DrawLabels(context, mapper, slices);
-        }
+        // The colours are set after the geometry: a per-face list has to match the face count, and
+        // the patch checks that when it is handed one.
+        _patch.SetData([.. xs], [.. ys], new double[xs.Count], faces);
+        _patch.FaceColors = faceColors;
     }
 
     /// <inheritdoc />

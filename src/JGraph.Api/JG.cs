@@ -1288,6 +1288,19 @@ public static class JG
         return axes;
     }
 
+    /// <summary>
+    /// Adds a fresh axes to the current figure and makes it current, without placing it anywhere.
+    /// A tiled layout decides where its tiles sit, so unlike <see cref="Subplot(int, int, int)"/>
+    /// this neither computes bounds nor looks for an axes that already occupies them.
+    /// </summary>
+    public static AxesModel NewAxes()
+    {
+        AxesModel axes = CurrentFigure.AddAxes();
+        _currentAxes = axes;
+        Touch(_currentNumber);
+        return axes;
+    }
+
     /// <summary>Links the ranges of several axes so they pan/zoom together (MATLAB <c>linkaxes</c>).</summary>
     public static AxisLinkGroup LinkAxes(AxisLinkMode mode, params AxesModel[] axes) =>
         AxisLinkGroup.Link(mode, axes);

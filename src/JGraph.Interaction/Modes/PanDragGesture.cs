@@ -22,14 +22,36 @@ internal sealed class PanDragGesture
     private double _startAzimuth;
     private double _startElevation;
     private AxesViewState? _before;
+    private InteractionDimensions _dimensions = InteractionDimensions.XY;
 
     /// <summary>Whether a drag is in progress.</summary>
     public bool Active { get; private set; }
 
-    /// <summary>Starts a drag at <paramref name="position"/>; false when no axes sits under it.</summary>
+    /// <summary>
+    /// Starts a drag at <paramref name="position"/>; false when no axes sits under it, and false as
+    /// well when the axes there does not answer to the gesture this drag would be (M80) — a pan on
+    /// flat paper, a rotate in space. Refusing here rather than part-way through is what lets the
+    /// pointer fall back to its other reading of a press.
+    /// </summary>
     public bool Begin(InteractionController controller, Point2D position)
     {
         if (!controller.Surface.TryGetAxesAt(position, out AxesModel axes, out ICoordinateMapper mapper, out _))
+        {
+            return false;
+        }
+
+        if (axes.Is3D)
+        {
+            if (axes.InteractionOf<RotateInteractionModel>() is null)
+            {
+                return false;
+            }
+        }
+        else if (axes.InteractionOf<PanInteractionModel>() is { } pan)
+        {
+            _dimensions = pan.Dimensions;
+        }
+        else
         {
             return false;
         }
@@ -68,7 +90,7 @@ internal sealed class PanDragGesture
             return;
         }
 
-        Navigation.Pan(_axes, _startMapper, _startX, _startY, _startPixel, position);
+        Navigation.Pan(_axes, _startMapper, _startX, _startY, _startPixel, position, _dimensions);
         controller.Surface.RequestRender();
     }
 

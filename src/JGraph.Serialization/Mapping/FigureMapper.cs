@@ -1,4 +1,4 @@
-﻿using JGraph.Core.Drawing;
+using JGraph.Core.Drawing;
 using JGraph.Core.Model;
 using JGraph.Core.Primitives;
 using JGraph.Serialization.Dto;
@@ -45,6 +45,11 @@ internal static class FigureMapper
         foreach (AxesModel axes in figure.Axes)
         {
             dto.Axes.Add(ToDto(axes));
+        }
+
+        if (figure.TiledLayout is { } layout)
+        {
+            dto.TiledLayout = ToDto(layout);
         }
 
         foreach (AnnotationObject annotation in figure.Annotations)
@@ -151,6 +156,23 @@ internal static class FigureMapper
             figure.Axes.Add(ToModel(axesDto));
         }
 
+        // The layout comes after its tiles, because taking them in is what it does with them — and
+        // laying them out again is what turns the stored cells back into stored rectangles.
+        if (dto.TiledLayout is { } layoutDto)
+        {
+            TiledLayoutModel layout = ToModel(layoutDto);
+            foreach (AxesModel axes in figure.Axes)
+            {
+                if (axes.LayoutTile is not null)
+                {
+                    layout.Adopt(axes);
+                }
+            }
+
+            figure.TiledLayout = layout;
+            layout.Arrange();
+        }
+
         foreach (AnnotationDto annotationDto in dto.Annotations)
         {
             figure.Annotations.Add(AnnotationMapper.ToModel(annotationDto));
@@ -170,6 +192,72 @@ internal static class FigureMapper
         return figure;
     }
 
+    /// <summary>
+    /// A tiled layout as a document carries it: the grid, the words written over it, and where in the
+    /// figure it sits. Its tiles are the figure's own axes, each holding the cell it was handed, so
+    /// none of the placements are stored — they are worked out from the two halves when it is loaded.
+    /// </summary>
+    private static TiledLayoutDto ToDto(TiledLayoutModel layout) => new()
+    {
+        Rows = layout.Rows,
+        Columns = layout.Columns,
+        Flow = layout.Flow,
+        TileSpacing = layout.TileSpacing,
+        Padding = layout.Padding,
+        TileIndexing = layout.TileIndexing,
+        Title = layout.Title,
+        Subtitle = layout.Subtitle,
+        XLabel = layout.XLabel,
+        YLabel = layout.YLabel,
+        TitleStyle = DtoConvert.ToDto(layout.TitleStyle),
+        SubtitleStyle = DtoConvert.ToDto(layout.SubtitleStyle),
+        XLabelStyle = DtoConvert.ToDto(layout.XLabelStyle),
+        YLabelStyle = DtoConvert.ToDto(layout.YLabelStyle),
+        Bounds = DtoConvert.ToDto(layout.Bounds),
+        Visible = layout.Visible,
+    };
+
+    private static TiledLayoutModel ToModel(TiledLayoutDto dto)
+    {
+        var layout = new TiledLayoutModel
+        {
+            Rows = dto.Rows,
+            Columns = dto.Columns,
+            Flow = dto.Flow,
+            TileSpacing = dto.TileSpacing,
+            Padding = dto.Padding,
+            TileIndexing = dto.TileIndexing,
+            Title = dto.Title,
+            Subtitle = dto.Subtitle,
+            XLabel = dto.XLabel,
+            YLabel = dto.YLabel,
+            Bounds = DtoConvert.ToRect(dto.Bounds),
+            Visible = dto.Visible,
+        };
+
+        if (dto.TitleStyle is not null)
+        {
+            layout.TitleStyle = DtoConvert.ToTextStyle(dto.TitleStyle);
+        }
+
+        if (dto.SubtitleStyle is not null)
+        {
+            layout.SubtitleStyle = DtoConvert.ToTextStyle(dto.SubtitleStyle);
+        }
+
+        if (dto.XLabelStyle is not null)
+        {
+            layout.XLabelStyle = DtoConvert.ToTextStyle(dto.XLabelStyle);
+        }
+
+        if (dto.YLabelStyle is not null)
+        {
+            layout.YLabelStyle = DtoConvert.ToTextStyle(dto.YLabelStyle);
+        }
+
+        return layout;
+    }
+
     private static AxesDto ToDto(AxesModel axes)
     {
         var dto = new AxesDto
@@ -181,6 +269,10 @@ internal static class FigureMapper
             SubtitleStyle = DtoConvert.ToDto(axes.SubtitleStyle),
             Background = axes.Background,
             NormalizedBounds = DtoConvert.ToDto(axes.NormalizedBounds),
+            LayoutTile = axes.LayoutTile,
+            LayoutRowSpan = axes.LayoutRowSpan,
+            LayoutColumnSpan = axes.LayoutColumnSpan,
+            ToolbarVisible = axes.Toolbar.Visible,
             AutoScalePadding = axes.AutoScalePadding,
             EqualAspect = axes.EqualAspect,
             FrameVisible = axes.FrameVisible,
@@ -289,6 +381,9 @@ internal static class FigureMapper
             Subtitle = dto.Subtitle,
             Background = dto.Background,
             NormalizedBounds = DtoConvert.ToRect(dto.NormalizedBounds),
+            LayoutTile = dto.LayoutTile,
+            LayoutRowSpan = dto.LayoutRowSpan,
+            LayoutColumnSpan = dto.LayoutColumnSpan,
             AutoScalePadding = dto.AutoScalePadding,
             EqualAspect = dto.EqualAspect,
             FrameVisible = dto.FrameVisible,
@@ -431,6 +526,8 @@ internal static class FigureMapper
 
         // After the plots, so each row's plot index resolves.
         ApplyLegendEntries(axes, dto.Legend);
+
+        axes.Toolbar.Visible = dto.ToolbarVisible;
 
         foreach (AnnotationDto annotationDto in dto.Annotations)
         {

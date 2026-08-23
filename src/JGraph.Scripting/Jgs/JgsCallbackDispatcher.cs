@@ -1,4 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics.CodeAnalysis;
 using JGraph.Api;
 using JGraph.Core.Model;
 
@@ -266,6 +266,7 @@ internal sealed class JgsCallbackDispatcher
             GraphicsEventKind.CloseRequest => entry.CloseRequestFcn,
             GraphicsEventKind.SizeChanged => entry.SizeChangedFcn,
             GraphicsEventKind.MenuSelected => entry.MenuSelectedFcn,
+            GraphicsEventKind.ToolbarSelectionChanged => entry.SelectionChangedFcn,
             GraphicsEventKind.ContextMenuOpening => entry.ContextMenuOpeningFcn,
             GraphicsEventKind.ObjectDeleted => entry.DeleteFcn,
             GraphicsEventKind.KeyPress => entry.KeyPressFcn,
@@ -331,6 +332,19 @@ internal sealed class JgsCallbackDispatcher
                     ["EventName"] = JgsValue.Str("Action"),
                 });
 
+            case GraphicsEventKind.ToolbarSelectionChanged:
+                return JgsValue.Struct(new Dictionary<string, JgsValue>(StringComparer.Ordinal)
+                {
+                    ["Source"] = source,
+                    ["EventName"] = JgsValue.Str("SelectionChanged"),
+
+                    // Which button was pressed. MATLAB names the previous selection as well; a
+                    // toolbar here has no selection to have had, so what is reported is the press.
+                    ["Selection"] = graphicsEvent.Clicked is { } pressed
+                        ? JgsHandleRegistry.For(pressed)
+                        : JgsValue.Array([]),
+                });
+
             case GraphicsEventKind.ContextMenuOpening:
             {
                 (double x, double y) = graphicsEvent.Location ?? (double.NaN, double.NaN);
@@ -385,6 +399,7 @@ internal sealed class JgsCallbackDispatcher
         GraphicsEventKind.CloseRequest => "CloseRequestFcn",
         GraphicsEventKind.SizeChanged => "SizeChangedFcn",
         GraphicsEventKind.MenuSelected => "MenuSelectedFcn",
+        GraphicsEventKind.ToolbarSelectionChanged => "SelectionChangedFcn",
         GraphicsEventKind.ContextMenuOpening => "ContextMenuOpeningFcn",
         GraphicsEventKind.ObjectDeleted => "DeleteFcn",
         GraphicsEventKind.KeyPress => "KeyPressFcn",

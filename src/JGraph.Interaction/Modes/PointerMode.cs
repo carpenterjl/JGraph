@@ -192,8 +192,11 @@ public sealed class PointerMode : InteractionModeBase
 
         _armed = false;
 
-        // A genuine click: place a persistent data tip on the nearest point, undoably.
-        if (DataTipPlacement.FindPoint(controller, e.Position) is not { } found)
+        // A genuine click: place a persistent data tip on the nearest point, undoably — on an axes
+        // that answers to that gesture (M80). One that does not still clears the selection, because
+        // turning the tip off is not the same as making a click mean nothing at all.
+        if (DataTipPlacement.FindPoint(controller, e.Position) is not { } found
+            || found.Axes.InteractionOf<DataTipInteractionModel>() is null)
         {
             controller.Selection.Clear();
             return;

@@ -17,10 +17,15 @@ namespace JGraph.Scripting.Jgs;
 /// </summary>
 internal static partial class JgsBuiltins
 {
-    /// <summary>The five words MATLAB documents for turning its own exploration modes on and off.</summary>
+    /// <summary>
+    /// The three of MATLAB's five interactivity words that name machinery this build does not have:
+    /// a legacy exploration mode to restore, and a toolbar button to add or take away. The other two
+    /// — <c>disableDefaultInteractivity</c> and its opposite — became real in M80, when an axes got a
+    /// list of gestures for them to turn off.
+    /// </summary>
     private static readonly string[] InteractivityToggles =
     [
-        "disableDefaultInteractivity", "enableDefaultInteractivity", "enableLegacyExplorationModes",
+        "enableLegacyExplorationModes",
         "addToolbarExplorationButtons", "removeToolbarExplorationButtons",
     ];
 
@@ -46,13 +51,23 @@ internal static partial class JgsBuiltins
         DefineSilent("gtext", GText);
         DefineSilent("rotate", Rotate);
 
-        // Accepted and recorded: JGraph's window is always interactive and has no legacy mode to
-        // restore, so these five change nothing. Answering rather than refusing is the point — a
-        // script that begins by turning an exploration mode off should still run.
+        // Accepted and recorded: JGraph's window has no legacy exploration mode to restore and no
+        // toolbar button to add, so these three change nothing. Answering rather than refusing is the
+        // point — a script that begins by turning an exploration mode off should still run.
         foreach (string toggle in InteractivityToggles)
         {
             DefineSilent(toggle, (_, _, _) => JgsValue.Null);
         }
+
+        // These two do change something since M80: an axes keeps the list of gestures it answers to,
+        // and these are the switch over the whole of it.
+        DefineSilent("disableDefaultInteractivity",
+            (args, line, col) => DefaultInteractivity(args, line, col, on: false));
+        DefineSilent("enableDefaultInteractivity",
+            (args, line, col) => DefaultInteractivity(args, line, col, on: true));
+
+        RegisterInteractionBuiltins(env);
+        RegisterToolbarBuiltins(env);
     }
 
     // --- comet and comet3 --------------------------------------------------------------------------

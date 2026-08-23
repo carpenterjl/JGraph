@@ -82,6 +82,12 @@ KINDS: list[tuple[str, str, str]] = [
     # so this row is measured against Patch — the properties a script would reach for on a slice.
     ("pie", "matlab.graphics.primitive.Patch", "h = pie([1 2 3]);"),
 
+    # M80 made two more objects real, and both of them were previously a name an axes could not
+    # answer with rather than a kind: a tiled layout (which was three integers in a closure) and the
+    # toolbar that hovers over an axes. Their documented rows were already in the properties CSV.
+    ("tiledlayout", "matlab.graphics.layout.TiledChartLayout", "h = tiledlayout(2, 2);"),
+    ("axestoolbar", "matlab.graphics.controls.AxesToolbar", "plot([1 2 3]); h = axtoolbar;"),
+
     # M71 built the callback seam and, with it, the first two ui objects. Their documented rows were
     # already in the properties CSV; these join keys simply reach them now that the verbs exist.
     ("uicontextmenu", "matlab.ui.container.ContextMenu", "figure; h = uicontextmenu;"),

@@ -121,6 +121,15 @@ axis,function,4,axis visibility,refused,axis: unknown option 'visibility'.
 axis,function,5,lim = axis,accepted,
 axis,function,6,"[m,v,d] = axis('state')",refused,axis: unknown option 'state'.
 axis,function,7,"___ = axis(ax,___)",error,"axis expects between 0 and 1 argument(s), but got 2."
+axtoolbar,function,0,tb = axtoolbar(buttons),accepted,
+axtoolbar,function,1,"tb = axtoolbar(ax,buttons)",accepted,
+axtoolbar,function,2,tb = axtoolbar,accepted,
+axtoolbar,function,3,tb = axtoolbar(ax),accepted,
+axtoolbar,function,4,"tb = axtoolbar(___,Name,Value)",unprobed,"Name,Value form; the dump lists no pair names"
+axtoolbar,function,5,"[tb,btns] = axtoolbar(___)",accepted,
+axtoolbarbtn,function,0,btn = axtoolbarbtn(tb),accepted,
+axtoolbarbtn,function,1,"btn = axtoolbarbtn(tb,style)",accepted,
+axtoolbarbtn,function,2,"btn = axtoolbarbtn(tb,style,Name,Value)",unprobed,"Name,Value form; the dump lists no pair names"
 balance,builtin,0,"[T,B] = balance(A)",accepted,
 balance,builtin,1,"[S,P,B] = balance(A)",error,"This call returns 2 value(s), but 3 were asked for."
 balance,builtin,2,B = balance(A),accepted,
@@ -220,15 +229,15 @@ brighten,function,3,"brighten(f,beta)",error,"brighten expects 1 argument(s), bu
 bsxfun,builtin,0,"C = bsxfun(fun,A,B)",unprobed,no sample for this form's arguments
 bubblechart,function,0,"bubblechart(x,y,sz)",error,bubblechart: sz has 2 values but x has 1.
 bubblechart,function,1,"bubblechart(x,y,sz,c)",error,bubblechart: sz has 2 values but x has 1.
-bubblechart,function,2,"bubblechart(tbl,xvar,yvar,sizevar)",error,"bubblechart expects an array of numbers, but got a table."
-bubblechart,function,3,"bubblechart(tbl,xvar,yvar,sizevar,cvar)",error,"bubblechart takes bubblechart(x, y, sz) and bubblechart(x, y, sz, c)."
+bubblechart,function,2,"bubblechart(tbl,xvar,yvar,sizevar)",accepted,
+bubblechart,function,3,"bubblechart(tbl,xvar,yvar,sizevar,cvar)",accepted,
 bubblechart,function,4,"bubblechart(ax,___)",error,bubblechart: sz has 2 values but x has 1.
 bubblechart,function,5,"bubblechart(___,Name,Value)",unprobed,"Name,Value form; the dump lists no pair names"
 bubblechart,function,6,bc = bubblechart(___),error,bubblechart: sz has 2 values but x has 1.
 bubblechart3,function,0,"bubblechart3(x,y,z,sz)",error,"SizeData needs one entry per point (1), but got 2. (Parameter 'values')"
 bubblechart3,function,1,"bubblechart3(x,y,z,sz,c)",error,"SizeData needs one entry per point (1), but got 2. (Parameter 'values')"
-bubblechart3,function,2,"bubblechart3(tbl,xvar,yvar,zvar,sizevar)",error,"bubblechart3 expects argument 1 to be an array, but got a table."
-bubblechart3,function,3,"bubblechart3(tbl,xvar,yvar,zvar,sizevar,cvar)",error,"bubblechart3 expects (x, y, z), optionally followed by sizes and colors."
+bubblechart3,function,2,"bubblechart3(tbl,xvar,yvar,zvar,sizevar)",accepted,
+bubblechart3,function,3,"bubblechart3(tbl,xvar,yvar,zvar,sizevar,cvar)",accepted,
 bubblechart3,function,4,"bubblechart3(ax,___)",error,"SizeData needs one entry per point (1), but got 2. (Parameter 'values')"
 bubblechart3,function,5,"bubblechart3(___,Name,Value)",unprobed,"Name,Value form; the dump lists no pair names"
 bubblechart3,function,6,bc = bubblechart3(___),error,"SizeData needs one entry per point (1), but got 2. (Parameter 'values')"
@@ -486,8 +495,8 @@ cool,function,1,c = cool(m),accepted,
 copper,function,0,c = copper,accepted,
 copper,function,1,c = copper(m),accepted,
 copyfile,builtin,0,copyfile source,error,"copyfile expects between 2 and 3 argument(s), but got 1."
-copyfile,builtin,1,copyfile source destination,error,copyfile: Could not find file 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-forms-07iwa5yu\source'.
-copyfile,builtin,2,copyfile source destination f,error,copyfile: Could not find file 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-forms-07iwa5yu\source'.
+copyfile,builtin,1,copyfile source destination,error,copyfile: Could not find file 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-forms-uebifs4h\source'.
+copyfile,builtin,2,copyfile source destination f,error,copyfile: Could not find file 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-forms-uebifs4h\source'.
 copyfile,builtin,3,status = copyfile(___),error,"copyfile expects between 2 and 3 argument(s), but got 1."
 copyfile,builtin,4,"[status,msg] = copyfile(___)",error,"copyfile expects between 2 and 3 argument(s), but got 1."
 copyfile,builtin,5,"[status,msg,msgID] = copyfile(___)",error,"copyfile expects between 2 and 3 argument(s), but got 1."
@@ -940,13 +949,13 @@ gt,builtin,1,"gt(A,B)",accepted,
 gtext,function,0,gtext(str),unprobed,waits for a person or ends the process
 gtext,function,1,"gtext(str,Name,Value)",unprobed,waits for a person or ends the process
 gtext,function,2,t = gtext(___),unprobed,waits for a person or ends the process
-heatmap,function,0,"heatmap(tbl,xvar,yvar)",error,"heatmap: the table has no variable 'a'. It has Var1, Var2."
-heatmap,function,1,"heatmap(tbl,xvar,yvar,'ColorVariable',cvar)",error,"heatmap: the table has no variable 'a'. It has Var1, Var2."
+heatmap,function,0,"heatmap(tbl,xvar,yvar)",accepted,
+heatmap,function,1,"heatmap(tbl,xvar,yvar,'ColorVariable',cvar)",accepted,
 heatmap,function,2,heatmap(cdata),accepted,
 heatmap,function,3,"heatmap(xvalues,yvalues,cdata)",error,"heatmap expects a string, but got a array."
 heatmap,function,4,"heatmap(___,Name,Value)",unprobed,"Name,Value form; the dump lists no pair names"
 heatmap,function,5,"heatmap(parent,___)",error,"heatmap: options come in 'Name', value pairs."
-heatmap,function,6,h = heatmap(___),error,"heatmap: the table has no variable 'a'. It has Var1, Var2."
+heatmap,function,6,h = heatmap(___),accepted,
 hess,builtin,0,H = hess(A),accepted,
 hess,builtin,1,"[P,H] = hess(A)",accepted,
 hess,builtin,2,"[AA,BB,Q,Z] = hess(A,B)",error,"hess expects 1 argument(s), but got 2."
@@ -1353,8 +1362,8 @@ more,builtin,1,more off,accepted,
 more,builtin,2,more(n),accepted,
 more,builtin,3,A = more(___),accepted,
 movefile,builtin,0,movefile source,error,"movefile expects between 2 and 3 argument(s), but got 1."
-movefile,builtin,1,movefile source destination,error,movefile: Could not find file 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-forms-07iwa5yu\source'.
-movefile,builtin,2,movefile source destination f,error,movefile: Could not find file 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-forms-07iwa5yu\source'.
+movefile,builtin,1,movefile source destination,error,movefile: Could not find file 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-forms-uebifs4h\source'.
+movefile,builtin,2,movefile source destination f,error,movefile: Could not find file 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-forms-uebifs4h\source'.
 movefile,builtin,3,status = movefile(___),error,"movefile expects between 2 and 3 argument(s), but got 1."
 movefile,builtin,4,"[status,msg] = movefile(___)",error,"movefile expects between 2 and 3 argument(s), but got 1."
 movefile,builtin,5,"[status,msg,msgID] = movefile(___)",error,"movefile expects between 2 and 3 argument(s), but got 1."
@@ -1431,7 +1440,7 @@ newplot,function,1,h = newplot,accepted,
 newplot,function,2,h = newplot(target),unprobed,no sample for this form's arguments
 nexttile,function,0,nexttile,accepted,
 nexttile,function,1,nexttile(span),unprobed,no sample for this form's arguments
-nexttile,function,2,nexttile(tilelocation),error,"nexttile expects argument 1 to be a number, but got a string."
+nexttile,function,2,nexttile(tilelocation),error,"nexttile expects an array of numbers, but got a string."
 nexttile,function,3,"nexttile(tilelocation,span)",unprobed,no sample for this form's arguments
 nexttile,function,4,"nexttile(t,___)",unprobed,no sample for this form's arguments
 nexttile,function,5,ax = nexttile(___),accepted,
@@ -1452,10 +1461,10 @@ ones,builtin,2,"X = ones(sz1,...,szN)",unprobed,no sample for this form's argume
 ones,builtin,3,X = ones(sz),accepted,
 ones,builtin,4,"X = ones(___,typename)",accepted,
 ones,builtin,5,"X = ones(___,'like',p)",unprobed,no sample for this form's arguments
-openfig,function,0,openfig(filename),error,Could not find file 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-forms-07iwa5yu\a.fig'.
-openfig,function,1,"openfig(filename,copies)",error,Could not find file 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-forms-07iwa5yu\a.fig'.
-openfig,function,2,"openfig(___,visibility)",error,Could not find file 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-forms-07iwa5yu\a.fig'.
-openfig,function,3,fig = openfig(___),error,Could not find file 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-forms-07iwa5yu\a.fig'.
+openfig,function,0,openfig(filename),error,Could not find file 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-forms-uebifs4h\a.fig'.
+openfig,function,1,"openfig(filename,copies)",error,Could not find file 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-forms-uebifs4h\a.fig'.
+openfig,function,2,"openfig(___,visibility)",error,Could not find file 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-forms-uebifs4h\a.fig'.
+openfig,function,3,fig = openfig(___),error,Could not find file 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-forms-uebifs4h\a.fig'.
 opengl,function,0,opengl info,accepted,
 opengl,function,1,d = opengl('data'),accepted,
 opengl,function,2,opengl software,accepted,
@@ -1575,8 +1584,8 @@ polaraxes,builtin,3,pax = polaraxes(___),accepted,
 polaraxes,builtin,4,polaraxes(pax_in),accepted,
 polarbubblechart,function,0,"polarbubblechart(theta,rho,sz)",error,polarbubblechart: sz has 2 values but x has 1.
 polarbubblechart,function,1,"polarbubblechart(theta,rho,sz,c)",error,polarbubblechart: sz has 2 values but x has 1.
-polarbubblechart,function,2,"polarbubblechart(tbl,thetavar,rhovar,sizevar)",error,"polarbubblechart expects an array of numbers, but got a table."
-polarbubblechart,function,3,"polarbubblechart(tbl,thetavar,rhovar,sizevar,cvar)",error,"polarbubblechart takes polarbubblechart(x, y, sz) and polarbubblechart(x, y, sz, c)."
+polarbubblechart,function,2,"polarbubblechart(tbl,thetavar,rhovar,sizevar)",accepted,
+polarbubblechart,function,3,"polarbubblechart(tbl,thetavar,rhovar,sizevar,cvar)",accepted,
 polarbubblechart,function,4,"polarbubblechart(pax,___)",error,polarbubblechart: sz has 2 values but x has 1.
 polarbubblechart,function,5,"polarbubblechart(___,Name,Value)",unprobed,"Name,Value form; the dump lists no pair names"
 polarbubblechart,function,6,bc = polarbubblechart(___),error,polarbubblechart: sz has 2 values but x has 1.
@@ -1603,8 +1612,8 @@ polarscatter,function,1,"polarscatter(theta,rho,sz)",error,"polarscatter: SizeDa
 polarscatter,function,2,"polarscatter(theta,rho,sz,c)",error,"polarscatter: SizeData needs one entry per point (1), but got 2."
 polarscatter,function,3,"polarscatter(___,mkr)",accepted,
 polarscatter,function,4,"polarscatter(___,'filled')",accepted,
-polarscatter,function,5,"polarscatter(tbl,thetavar,rhovar)",error,"polarscatter expects an array of numbers, but got a table."
-polarscatter,function,6,"polarscatter(tbl,thetavar,rhovar,'filled')",error,"polarscatter expects an array of numbers, but got a table."
+polarscatter,function,5,"polarscatter(tbl,thetavar,rhovar)",accepted,
+polarscatter,function,6,"polarscatter(tbl,thetavar,rhovar,'filled')",accepted,
 polarscatter,function,7,"polarscatter(pax,___)",accepted,
 polarscatter,function,8,"polarscatter(___,Name,Value)",unprobed,"Name,Value form; the dump lists no pair names"
 polarscatter,function,9,ps = polarscatter(___),accepted,
@@ -1772,10 +1781,10 @@ rlim,function,4,m = rlim('mode'),error,"rlim expects 'auto' or 'manual', but got
 rlim,function,5,"___ = rlim(pax,___)",error,"rlim expects a two-element [min, max] array."
 rmappdata,builtin,0,"rmappdata(obj,name)",error,rmappdata: nothing is stored under 'a' on this object.
 rmdir,builtin,0,rmdir folderName,accepted,
-rmdir,builtin,1,rmdir folderName s,error,rmdir: Could not find a part of the path 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-forms-07iwa5yu\folderName'.
-rmdir,builtin,2,status = rmdir(___),error,rmdir: Could not find a part of the path 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-forms-07iwa5yu\folderName'.
-rmdir,builtin,3,"[status,msg] = rmdir(___)",error,rmdir: Could not find a part of the path 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-forms-07iwa5yu\folderName'.
-rmdir,builtin,4,"[status,msg,msgID] = rmdir(___)",error,rmdir: Could not find a part of the path 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-forms-07iwa5yu\folderName'.
+rmdir,builtin,1,rmdir folderName s,error,rmdir: Could not find a part of the path 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-forms-uebifs4h\folderName'.
+rmdir,builtin,2,status = rmdir(___),error,rmdir: Could not find a part of the path 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-forms-uebifs4h\folderName'.
+rmdir,builtin,3,"[status,msg] = rmdir(___)",error,rmdir: Could not find a part of the path 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-forms-uebifs4h\folderName'.
+rmdir,builtin,4,"[status,msg,msgID] = rmdir(___)",error,rmdir: Could not find a part of the path 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-forms-uebifs4h\folderName'.
 rose,function,0,rose(theta),unprobed,no sample for this form's arguments
 rose,function,1,"rose(theta,x)",unprobed,no sample for this form's arguments
 rose,function,2,"rose(theta,nbins)",unprobed,no sample for this form's arguments
@@ -1832,8 +1841,8 @@ scatter,function,1,"scatter(x,y,sz)",error,"scatter: SizeData needs one entry pe
 scatter,function,2,"scatter(x,y,sz,c)",error,"scatter: SizeData needs one entry per point (1), but got 2."
 scatter,function,3,"scatter(___,'filled')",accepted,
 scatter,function,4,"scatter(___,mkr)",accepted,
-scatter,function,5,"scatter(tbl,xvar,yvar)",error,"scatter expects argument 2 to be a string, but got a table."
-scatter,function,6,"scatter(tbl,xvar,yvar,'filled')",error,"scatter expects 3 argument(s), but got 4."
+scatter,function,5,"scatter(tbl,xvar,yvar)",accepted,
+scatter,function,6,"scatter(tbl,xvar,yvar,'filled')",accepted,
 scatter,function,7,"scatter(ax,___)",accepted,
 scatter,function,8,"scatter(___,Name,Value)",unprobed,"Name,Value form; the dump lists no pair names"
 scatter,function,9,s = scatter(___),accepted,
@@ -1842,18 +1851,18 @@ scatter3,function,1,"scatter3(X,Y,Z,S)",accepted,
 scatter3,function,2,"scatter3(X,Y,Z,S,C)",accepted,
 scatter3,function,3,"scatter3(___,'filled')",accepted,
 scatter3,function,4,"scatter3(___,markertype)",error,"scatter3: sizes expects an array of numbers, but got a string."
-scatter3,function,5,"scatter3(tbl,xvar,yvar,zvar)",error,"scatter3 expects argument 1 to be an array, but got a table."
-scatter3,function,6,"scatter3(tbl,xvar,yvar,zvar,'filled')",error,"scatter3 expects argument 1 to be an array, but got a table."
+scatter3,function,5,"scatter3(tbl,xvar,yvar,zvar)",accepted,
+scatter3,function,6,"scatter3(tbl,xvar,yvar,zvar,'filled')",accepted,
 scatter3,function,7,"scatter3(ax,___)",accepted,
 scatter3,function,8,"scatter3(___,Name,Value)",unprobed,"Name,Value form; the dump lists no pair names"
 scatter3,function,9,h = scatter3(___),accepted,
-scatterhistogram,function,0,"scatterhistogram(tbl,xvar,yvar)",error,"scatterhistogram: the table has no variable 'a'. It has Var1, Var2."
-scatterhistogram,function,1,"scatterhistogram(tbl,xvar,yvar,'GroupVariable',grpvar)",error,"scatterhistogram: the table has no variable 'a'. It has Var1, Var2."
+scatterhistogram,function,0,"scatterhistogram(tbl,xvar,yvar)",accepted,
+scatterhistogram,function,1,"scatterhistogram(tbl,xvar,yvar,'GroupVariable',grpvar)",accepted,
 scatterhistogram,function,2,"scatterhistogram(xvalues,yvalues)",accepted,
 scatterhistogram,function,3,"scatterhistogram(xvalues,yvalues,'GroupData',grpvalues)",accepted,
 scatterhistogram,function,4,"scatterhistogram(___,Name,Value)",unprobed,"Name,Value form; the dump lists no pair names"
-scatterhistogram,function,5,"scatterhistogram(parent,___)",error,"scatterhistogram has no 'a' option. It knows GroupVariable, GroupData, NumBins, Color, HistogramDisplayStyle, ScatterPlotLocation, MarkerStyle, MarkerSize, MarkerAlpha, LineStyle, LineWidth, Title, XLabel, YLabel, XLimits, YLimits, LegendVisible."
-scatterhistogram,function,6,s = scatterhistogram(___),error,"scatterhistogram: the table has no variable 'a'. It has Var1, Var2."
+scatterhistogram,function,5,"scatterhistogram(parent,___)",error,"scatterhistogram has no 'Var1' option. It knows GroupVariable, GroupData, NumBins, Color, HistogramDisplayStyle, ScatterPlotLocation, MarkerStyle, MarkerSize, MarkerAlpha, LineStyle, LineWidth, Title, XLabel, YLabel, XLimits, YLimits, LegendVisible."
+scatterhistogram,function,6,s = scatterhistogram(___),accepted,
 semilogx,builtin,0,"semilogx(X,Y)",accepted,
 semilogx,builtin,1,"semilogx(X,Y,LineSpec)",accepted,
 semilogx,builtin,2,"semilogx(X1,Y1,...,Xn,Yn)",unprobed,no sample for this form's arguments
@@ -1941,7 +1950,7 @@ sscanf,builtin,3,"[A,n,errmsg] = sscanf(___)",error,"sscanf expects argument 1 t
 sscanf,builtin,4,"[A,n,errmsg,nextindex] = sscanf(___)",error,"sscanf expects argument 1 to be a string, but got a array."
 stackedplot,function,0,stackedplot(tbl),accepted,
 stackedplot,function,1,"stackedplot(tbl,vars)",error,"stackedplot: options come in 'Name', value pairs."
-stackedplot,function,2,"stackedplot(___,'XVariable',xvar)",error,"stackedplot: the table has no variable 'a'. It has Var1, Var2."
+stackedplot,function,2,"stackedplot(___,'XVariable',xvar)",accepted,
 stackedplot,function,3,"stackedplot(X,Y)",accepted,
 stackedplot,function,4,stackedplot(Y),accepted,
 stackedplot,function,5,"stackedplot(___,LineSpec)",error,"stackedplot: options come in 'Name', value pairs."
@@ -2104,8 +2113,8 @@ swarmchart,function,1,"swarmchart(x,y,sz)",error,"swarmchart: SizeData needs one
 swarmchart,function,2,"swarmchart(x,y,sz,c)",error,"swarmchart: SizeData needs one entry per point (1), but got 2."
 swarmchart,function,3,"swarmchart(___,mkr)",accepted,
 swarmchart,function,4,"swarmchart(___,'filled')",accepted,
-swarmchart,function,5,"swarmchart(tbl,xvar,yvar)",error,"swarmchart expects an array of numbers, but got a table."
-swarmchart,function,6,"swarmchart(tbl,xvar,yvar,'filled')",error,"swarmchart expects an array of numbers, but got a table."
+swarmchart,function,5,"swarmchart(tbl,xvar,yvar)",accepted,
+swarmchart,function,6,"swarmchart(tbl,xvar,yvar,'filled')",accepted,
 swarmchart,function,7,"swarmchart(ax,___)",accepted,
 swarmchart,function,8,"swarmchart(___,Name,Value)",unprobed,"Name,Value form; the dump lists no pair names"
 swarmchart,function,9,s = swarmchart(___),accepted,
@@ -2114,8 +2123,8 @@ swarmchart3,function,1,"swarmchart3(x,y,z,sz)",error,"SizeData needs one entry p
 swarmchart3,function,2,"swarmchart3(x,y,z,sz,c)",error,"SizeData needs one entry per point (1), but got 2. (Parameter 'values')"
 swarmchart3,function,3,"swarmchart3(___,mkr)",error,"swarmchart3: sizes expects an array of numbers, but got a string."
 swarmchart3,function,4,"swarmchart3(___,'filled')",accepted,
-swarmchart3,function,5,"swarmchart3(tbl,xvar,yvar,zvar)",error,"swarmchart3 expects argument 1 to be an array, but got a table."
-swarmchart3,function,6,"swarmchart3(tbl,xvar,yvar,zvar,'filled')",error,"swarmchart3 expects argument 1 to be an array, but got a table."
+swarmchart3,function,5,"swarmchart3(tbl,xvar,yvar,zvar)",accepted,
+swarmchart3,function,6,"swarmchart3(tbl,xvar,yvar,zvar,'filled')",accepted,
 swarmchart3,function,7,"swarmchart3(ax,___)",accepted,
 swarmchart3,function,8,"swarmchart3(___,Name,Value)",unprobed,"Name,Value form; the dump lists no pair names"
 swarmchart3,function,9,s = swarmchart3(___),accepted,
@@ -2175,7 +2184,7 @@ tic,builtin,1,timerVal = tic,accepted,
 tiledlayout,function,0,"tiledlayout(m,n)",accepted,
 tiledlayout,function,1,tiledlayout('flow'),accepted,
 tiledlayout,function,2,"tiledlayout(___,Name,Value)",unprobed,"Name,Value form; the dump lists no pair names"
-tiledlayout,function,3,"tiledlayout(parent,___)",error,"tiledlayout expects between 1 and 2 argument(s), but got 3."
+tiledlayout,function,3,"tiledlayout(parent,___)",accepted,
 tiledlayout,function,4,t = tiledlayout(___),accepted,
 times,builtin,0,C = A.*B,unprobed,no sample for this form's arguments
 times,builtin,1,"C = times(A,B)",accepted,
@@ -2185,9 +2194,9 @@ title,function,2,"title(___,Name,Value)",unprobed,"Name,Value form; the dump lis
 title,function,3,"title(target,___)",accepted,
 title,function,4,t = title(___),accepted,
 title,function,5,"[t,s] = title(___)",error,"This call returns 1 value(s), but 2 were asked for."
-toc,builtin,0,toc,error,toc: start a timer with tic first.
+toc,builtin,0,toc,accepted,
 toc,builtin,1,toc(timerVal),accepted,
-toc,builtin,2,elapsedTime = toc,error,toc: start a timer with tic first.
+toc,builtin,2,elapsedTime = toc,accepted,
 toc,builtin,3,elapsedTime = toc(timerVal),accepted,
 transpose,builtin,0,B = A.',unprobed,no sample for this form's arguments
 transpose,builtin,1,B = transpose(A),accepted,
@@ -2287,7 +2296,7 @@ waterfall,function,3,"waterfall(Z,C)",error,"waterfall expects 3 argument(s), bu
 waterfall,function,4,"waterfall(ax,___)",accepted,
 waterfall,function,5,p = waterfall(___),accepted,
 what,builtin,0,what,accepted,
-what,builtin,1,what folderName,refused,what: 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-forms-07iwa5yu\folderName' is not a folder.
+what,builtin,1,what folderName,refused,what: 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-forms-uebifs4h\folderName' is not a folder.
 what,builtin,2,s = what(___),accepted,
 which,builtin,0,which item,accepted,
 which,builtin,1,which fun1 in fun2,error,"which expects 1 argument(s), but got 3."

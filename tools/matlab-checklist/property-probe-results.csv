@@ -1,14 +1,14 @@
 label,class,verdict,documented,implemented,missing
 figure,matlab.ui.Figure,ok,66,66,
-axes,matlab.graphics.axis.Axes,ok,147,144,Interactions Layout Toolbar
-polaraxes,matlab.graphics.axis.PolarAxes,ok,107,104,Interactions Layout Toolbar
+axes,matlab.graphics.axis.Axes,ok,147,147,
+polaraxes,matlab.graphics.axis.PolarAxes,ok,107,107,
 line,matlab.graphics.chart.primitive.Line,ok,52,48,LatitudeData LatitudeDataSource LongitudeData LongitudeDataSource
-scatter,matlab.graphics.chart.primitive.Scatter,ok,74,59,AlphaVariable ColorVariable LatitudeData LatitudeDataSource LatitudeVariable LongitudeData LongitudeDataSource LongitudeVariable RVariable SizeVariable SourceTable ThetaVariable XVariable YVariable ZVariable
+scatter,matlab.graphics.chart.primitive.Scatter,ok,74,68,LatitudeData LatitudeDataSource LatitudeVariable LongitudeData LongitudeDataSource LongitudeVariable
 surface,matlab.graphics.chart.primitive.Surface,ok,60,60,
 patch,matlab.graphics.primitive.Patch,ok,56,56,
-text,matlab.graphics.primitive.Text,ok,41,40,Interactions
-legend,matlab.graphics.illustration.Legend,ok,39,38,Layout
-colorbar,matlab.graphics.illustration.ColorBar,ok,42,41,Layout
+text,matlab.graphics.primitive.Text,ok,41,41,
+legend,matlab.graphics.illustration.Legend,ok,39,39,
+colorbar,matlab.graphics.illustration.ColorBar,ok,42,42,
 bar,matlab.graphics.chart.primitive.Bar,ok,44,44,
 histogram,matlab.graphics.chart.primitive.Histogram,ok,46,46,
 area,matlab.graphics.chart.primitive.Area,ok,39,39,
@@ -18,12 +18,14 @@ errorbar,matlab.graphics.chart.primitive.ErrorBar,ok,52,52,
 contour,matlab.graphics.chart.primitive.Contour,ok,46,46,
 quiver,matlab.graphics.chart.primitive.Quiver,ok,52,52,
 image,matlab.graphics.primitive.Image,ok,27,27,
-constantline,matlab.graphics.chart.decoration.ConstantLine,ok,35,29,FontAngle FontName FontSize FontWeight Interpreter LabelOrientation
-boxchart,matlab.graphics.chart.primitive.BoxChart,ok,29,27,BoxFaceColorMode MarkerColorMode
-heatmap,matlab.graphics.chart.HeatmapChart,ok,39,38,Layout
-bubblechart,matlab.graphics.chart.primitive.BubbleChart,ok,73,58,AlphaVariable ColorVariable LatitudeData LatitudeDataSource LatitudeVariable LongitudeData LongitudeDataSource LongitudeVariable RVariable SizeVariable SourceTable ThetaVariable XVariable YVariable ZVariable
+constantline,matlab.graphics.chart.decoration.ConstantLine,ok,35,35,
+boxchart,matlab.graphics.chart.primitive.BoxChart,ok,29,29,
+heatmap,matlab.graphics.chart.HeatmapChart,ok,39,39,
+bubblechart,matlab.graphics.chart.primitive.BubbleChart,ok,73,67,LatitudeData LatitudeDataSource LatitudeVariable LongitudeData LongitudeDataSource LongitudeVariable
 light,matlab.graphics.primitive.Light,ok,21,21,
-bubblelegend,matlab.graphics.illustration.BubbleLegend,ok,37,36,Layout
-pie,matlab.graphics.primitive.Patch,ok,56,25,AlignVertexCenters AlphaDataMapping AmbientStrength BackFaceLighting CData CDataMapping DiffuseStrength EdgeAlpha EdgeLighting FaceColor FaceLighting FaceNormals FaceNormalsMode FaceVertexAlphaData FaceVertexCData Faces LineJoin LineStyle Marker MarkerEdgeColor MarkerFaceColor MarkerSize SpecularColorReflectance SpecularExponent SpecularStrength VertexNormals VertexNormalsMode Vertices XData YData ZData
+bubblelegend,matlab.graphics.illustration.BubbleLegend,ok,37,37,
+pie,matlab.graphics.primitive.Patch,ok,56,56,
+tiledlayout,matlab.graphics.layout.TiledChartLayout,ok,28,28,
+axestoolbar,matlab.graphics.controls.AxesToolbar,ok,15,15,
 uicontextmenu,matlab.ui.container.ContextMenu,ok,12,12,
 uimenu,matlab.ui.container.Menu,ok,21,21,

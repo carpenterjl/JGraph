@@ -167,8 +167,13 @@ internal static partial class JgsBuiltins
     private static JgsValue Scatter3Series(
         string verb, IReadOnlyList<JgsValue> args, int line, int col, bool bubbles)
     {
+        // The table form names three channels where the array form passes three arrays; everything
+        // after them is read exactly as it is below, which is why the peel comes first.
+        (IReadOnlyList<JgsValue> named, ScatterSource? source) =
+            PeelScatterTable(verb, args, spatial: true, sized: bubbles, line, col);
+
         (IReadOnlyList<JgsValue> data, List<(string Name, JgsValue Value)> options) =
-            SplitTrailingOptions(args, Scatter3OptionNames);
+            SplitTrailingOptions(named, Scatter3OptionNames);
 
         bool filled = false;
         var positional = new List<JgsValue>();
@@ -270,7 +275,7 @@ internal static partial class JgsBuiltins
             }
         }
 
-        return Handle(plot);
+        return Sourced(plot, source);
     }
 
     /// <summary>

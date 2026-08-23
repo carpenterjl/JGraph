@@ -61,6 +61,13 @@ public sealed class AxesModel : GraphObject
     private Vector3D _currentPointBack;
     private Rect2D? _innerTarget;
     private PositionConstraintType _positionConstraint = PositionConstraintType.OuterPosition;
+    private int? _layoutTile;
+    private int _layoutRowSpan = 1;
+    private int _layoutColumnSpan = 1;
+    private TiledLayoutOptionsModel? _layoutOptions;
+    private List<InteractionModel>? _interactions;
+    private bool _interactionsDisabled;
+    private AxesToolbarModel? _toolbar;
 
     public AxesModel()
     {
@@ -850,6 +857,127 @@ public sealed class AxesModel : GraphObject
     {
         get => _innerTarget;
         set => SetProperty(ref _innerTarget, value, InvalidationKind.Layout);
+    }
+
+    /// <summary>
+    /// Which cell of the figure's tiled layout this axes was handed, counting from one, or null when
+    /// it is not in one. MATLAB reaches this through <c>ax.Layout.Tile</c>, which is what it is for:
+    /// an axes in a layout can be moved to another cell by naming the cell.
+    /// </summary>
+    [Browsable(false)]
+    public int? LayoutTile
+    {
+        get => _layoutTile;
+        set => SetProperty(ref _layoutTile, value, InvalidationKind.Layout);
+    }
+
+    /// <summary>
+    /// The gestures this axes answers to without a tool being chosen first (MATLAB
+    /// <c>Interactions</c>). Made on first use with what a fresh axes has always done — pan, zoom and
+    /// a click that pins a data tip, plus rotate once there is a third direction to turn.
+    /// <para>
+    /// Deliberately not serialized: it says how a window behaves, not what a figure is. A saved
+    /// figure opened again is as interactive as a fresh one, which is what a reader expects.
+    /// </para>
+    /// </summary>
+    [Browsable(false)]
+    public IList<InteractionModel> Interactions
+    {
+        get
+        {
+            if (_interactions is null)
+            {
+                _interactions = [new PanInteractionModel(), new ZoomInteractionModel(),
+                    new DataTipInteractionModel()];
+                if (_is3D)
+                {
+                    _interactions.Add(new RotateInteractionModel());
+                }
+
+                foreach (InteractionModel interaction in _interactions)
+                {
+                    Adopt(interaction);
+                }
+            }
+
+            return _interactions;
+        }
+    }
+
+    /// <summary>
+    /// The toolbar shown over this axes when the pointer is inside it, made on first use with
+    /// MATLAB's own default buttons. It is window chrome: the renderer never draws it, so an export
+    /// never carries it, and only whether it is shown is worth keeping in a saved figure.
+    /// </summary>
+    [Browsable(false)]
+    public AxesToolbarModel Toolbar
+    {
+        get
+        {
+            if (_toolbar is null)
+            {
+                _toolbar = new AxesToolbarModel();
+                Adopt(_toolbar);
+            }
+
+            return _toolbar;
+        }
+        set
+        {
+            _toolbar = value;
+            Adopt(value);
+        }
+    }
+
+    /// <summary>Whether this axes answers to a given gesture, and with what setting.</summary>
+    public T? InteractionOf<T>()
+        where T : InteractionModel =>
+        _interactionsDisabled ? null : Interactions.OfType<T>().FirstOrDefault();
+
+    /// <summary>
+    /// Turns every default gesture off, or back on (MATLAB <c>disableDefaultInteractivity</c>). The
+    /// list itself is kept, so enabling gives back whatever a script had chosen rather than the
+    /// defaults — which is what makes the pair a switch rather than a reset.
+    /// </summary>
+    public bool InteractionsDisabled
+    {
+        get => _interactionsDisabled;
+        set => SetProperty(ref _interactionsDisabled, value, InvalidationKind.None);
+    }
+
+    /// <summary>
+    /// The small object MATLAB reaches this axes' place in a tiled layout through, made on first
+    /// use. It is a view of the three properties above rather than a second copy of them.
+    /// </summary>
+    [Browsable(false)]
+    public TiledLayoutOptionsModel LayoutOptions
+    {
+        get
+        {
+            if (_layoutOptions is null)
+            {
+                _layoutOptions = new TiledLayoutOptionsModel(this);
+                Adopt(_layoutOptions);
+            }
+
+            return _layoutOptions;
+        }
+    }
+
+    /// <summary>How many rows of the grid the tile covers (MATLAB <c>ax.Layout.TileSpan</c>).</summary>
+    [Browsable(false)]
+    public int LayoutRowSpan
+    {
+        get => _layoutRowSpan;
+        set => SetProperty(ref _layoutRowSpan, System.Math.Max(1, value), InvalidationKind.Layout);
+    }
+
+    /// <inheritdoc cref="LayoutRowSpan" />
+    [Browsable(false)]
+    public int LayoutColumnSpan
+    {
+        get => _layoutColumnSpan;
+        set => SetProperty(ref _layoutColumnSpan, System.Math.Max(1, value), InvalidationKind.Layout);
     }
 
     /// <summary>Which rectangle a placement fixes (MATLAB <c>PositionConstraint</c>).</summary>

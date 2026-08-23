@@ -1438,6 +1438,209 @@ internal static partial class JgsBuiltins
         return plot;
     }
 
+    // --- The table form of a marker chart ---------------------------------------------------------
+
+    /// <summary>
+    /// Reads the table form of a marker chart — <c>scatter(tbl, xvar, yvar)</c> and its relatives —
+    /// into the array form, so every verb below keeps one way of reading its arguments and the table
+    /// is a way of naming the numbers rather than a second chart.
+    /// <para>
+    /// What comes back beside the rewritten arguments is the record of where they came from, which
+    /// the caller hangs on the finished chart's handle. That is what makes <c>SizeVariable</c> and
+    /// the rest of the <c>*Variable</c> family act: naming a different variable re-reads this table.
+    /// </para>
+    /// <para>
+    /// The bubble verbs take an optional colour variable after the required names, and a word there
+    /// is read as one unless it is an option name — so a table whose variable is called
+    /// <c>'LineWidth'</c> has to be reached through the property rather than through the call.
+    /// </para>
+    /// </summary>
+    private static (IReadOnlyList<JgsValue> Args, ScatterSource? Source) PeelScatterTable(
+        string verb, IReadOnlyList<JgsValue> rest, bool spatial, bool sized, int line, int col)
+    {
+        if (rest.Count == 0 || rest[0].Type != JgsType.Table)
+        {
+            return (rest, null);
+        }
+
+        Table table = Tbl(verb, rest, 0, line, col);
+        int wanted = 2 + (spatial ? 1 : 0) + (sized ? 1 : 0);
+        if (rest.Count < wanted + 1)
+        {
+            throw new JgsRuntimeException(line, col,
+                $"{verb} of a table names the variable behind each channel: "
+                + $"{verb}(tbl, {(spatial ? "xvar, yvar, zvar" : "xvar, yvar")}"
+                + $"{(sized ? ", sizevar" : string.Empty)}).");
+        }
+
+        var names = new string[wanted];
+        for (int i = 0; i < wanted; i++)
+        {
+            names[i] = SourceVariable(verb, table, Str(verb, rest, i + 1, line, col), line, col);
+        }
+
+        int next = wanted + 1;
+        string colorVariable = string.Empty;
+        if (sized && next < rest.Count && rest[next].Type == JgsType.String
+            && !MarkerChartOptionNames.Contains(rest[next].AsString, StringComparer.OrdinalIgnoreCase))
+        {
+            colorVariable = SourceVariable(verb, table, rest[next].AsString, line, col);
+            next++;
+        }
+
+        var source = new ScatterSource
+        {
+            Table = rest[0],
+            XVariable = names[0],
+            YVariable = names[1],
+            ColorVariable = colorVariable,
+        };
+
+        int at = 2;
+        if (spatial)
+        {
+            source.ZVariable = names[at++];
+        }
+
+        if (sized)
+        {
+            source.SizeVariable = names[at];
+        }
+
+        var rewritten = new List<JgsValue>();
+        foreach (string name in names)
+        {
+            rewritten.Add(JgsValue.Array([.. TableSeries.GetNumbers(table, name).Select(JgsValue.Number)]));
+        }
+
+        if (colorVariable.Length > 0)
+        {
+            rewritten.Add(JgsValue.Array(
+                [.. TableSeries.GetNumbers(table, colorVariable).Select(JgsValue.Number)]));
+        }
+
+        for (; next < rest.Count; next++)
+        {
+            rewritten.Add(rest[next]);
+        }
+
+        return (rewritten, source);
+    }
+
+    /// <summary>
+    /// A variable name checked against the table it is meant to name, so a misspelling is caught
+    /// where it was written rather than at the next read.
+    /// </summary>
+    private static string SourceVariable(string what, Table table, string name, int line, int col)
+    {
+        if (!table.TryGetColumn(name, out _))
+        {
+            throw new JgsRuntimeException(line, col,
+                $"{what}: the table has no variable '{name}'. It has {string.Join(", ", table.ColumnNames)}.");
+        }
+
+        return name;
+    }
+
+    /// <summary>
+    /// Re-reads a marker chart's table and rewrites every channel it feeds. Called whenever the
+    /// source or one of the variable names changes, which is what makes those properties act.
+    /// <para>
+    /// The two positions are written together through <see cref="XYPlot.SetData"/>: writing them one
+    /// at a time is refused whenever the lengths differ, and swapping to a shorter table is exactly
+    /// that case.
+    /// </para>
+    /// </summary>
+    internal static void ReplotFromSource(JgsHandleEntry entry, int line, int col)
+    {
+        if (entry.ScatterSource is not { } source)
+        {
+            return;
+        }
+
+        Table table = source.Table.AsTable;
+        double[] xs = SourceNumbers(table, source.XVariable, "XVariable", line, col);
+        double[] ys = SourceNumbers(table, source.YVariable, "YVariable", line, col);
+        if (xs.Length != ys.Length)
+        {
+            throw new JgsRuntimeException(line, col,
+                $"'{source.XVariable}' has {xs.Length} values but '{source.YVariable}' has {ys.Length}.");
+        }
+
+        switch (entry.Target)
+        {
+            case Scatter3DPlot spatial:
+            {
+                double[] zs = source.ZVariable.Length == 0
+                    ? new double[xs.Length]
+                    : SourceNumbers(table, source.ZVariable, "ZVariable", line, col);
+                if (zs.Length != xs.Length)
+                {
+                    throw new JgsRuntimeException(line, col,
+                        $"'{source.ZVariable}' has {zs.Length} values where the chart has "
+                        + $"{xs.Length} points.");
+                }
+
+                spatial.SetData(xs, ys, zs);
+                spatial.SizeData = Channel(table, source.SizeVariable, "SizeVariable", xs.Length, line, col);
+                spatial.ColorData = Channel(table, source.ColorVariable, "ColorVariable", xs.Length, line, col);
+                break;
+            }
+
+            case ScatterPlot plot:
+                plot.SetData(xs, ys);
+                plot.SizeData = Channel(table, source.SizeVariable, "SizeVariable", xs.Length, line, col);
+                plot.ColorData = Channel(table, source.ColorVariable, "ColorVariable", xs.Length, line, col);
+                plot.AlphaData = Channel(table, source.AlphaVariable, "AlphaVariable", xs.Length, line, col);
+                break;
+        }
+    }
+
+    /// <summary>
+    /// Hangs the record of a table form on the chart it drew, so the <c>*Variable</c> family has
+    /// something to act on. A chart drawn from arrays is given none and answers so.
+    /// </summary>
+    private static JgsValue Sourced(PlotObject plot, ScatterSource? source)
+    {
+        if (source is not null)
+        {
+            JgsHandleRegistry.EntryFor(plot).ScatterSource = source;
+        }
+
+        return Handle(plot);
+    }
+
+    /// <summary>One of the chart's optional channels, or null when it names no variable.</summary>
+    private static double[]? Channel(
+        Table table, string variable, string what, int points, int line, int col)
+    {
+        if (variable.Length == 0)
+        {
+            return null;
+        }
+
+        double[] values = SourceNumbers(table, variable, what, line, col);
+        if (values.Length != points)
+        {
+            throw new JgsRuntimeException(line, col,
+                $"{what} '{variable}' has {values.Length} values where the chart has {points} points.");
+        }
+
+        return values;
+    }
+
+    private static double[] SourceNumbers(Table table, string variable, string what, int line, int col)
+    {
+        if (!table.TryGetColumn(variable, out _))
+        {
+            throw new JgsRuntimeException(line, col,
+                $"{what} names '{variable}', which the table does not have. "
+                + $"It has {string.Join(", ", table.ColumnNames)}.");
+        }
+
+        return TableSeries.GetNumbers(table, variable);
+    }
+
     /// <summary>
     /// A bare word between a marker chart's data and its options: a colour name, or a spec string whose
     /// letters say the colour and the marker. Anything else is a misspelling, and saying so here is the
@@ -1516,7 +1719,12 @@ internal static partial class JgsBuiltins
     private static JgsValue BubbleChart(IReadOnlyList<JgsValue> args, int line, int col)
     {
         (AxesModel? named, IReadOnlyList<JgsValue> rest) = PeelAxes(args);
-        return OnAxes(named, () => Handle(BubbleSeries("bubblechart", rest, line, col)));
+        return OnAxes(named, () =>
+        {
+            (IReadOnlyList<JgsValue> data, ScatterSource? source) =
+                PeelScatterTable("bubblechart", rest, spatial: false, sized: true, line, col);
+            return Sourced(BubbleSeries("bubblechart", data, line, col), source);
+        });
     }
 
     /// <summary>

@@ -122,6 +122,14 @@ public sealed class InteractionController
             return;
         }
 
+        // The wheel is one of the gestures an axes answers to by default, so it is one a script can
+        // turn off or aim at a single direction (M80). A tool the user chose is a different question:
+        // this is the default behaviour, and it is the default behaviour Interactions describes.
+        if (axes.InteractionOf<ZoomInteractionModel>() is not { } zoom)
+        {
+            return;
+        }
+
         double factor = e.Delta > 0 ? 1.0 / WheelZoomStep : WheelZoomStep;
         AxesViewState before = AxesViewState.Capture(axes);
 
@@ -135,7 +143,7 @@ public sealed class InteractionController
             return;
         }
 
-        Navigation.ZoomAboutPixel(axes, mapper, e.Position, factor);
+        Navigation.ZoomAboutPixel(axes, mapper, e.Position, factor, zoom.Dimensions);
         CommitViewChange(axes, before, "Zoom");
     }
 

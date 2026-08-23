@@ -23,6 +23,9 @@ public enum GraphicsEventKind
     /// <summary>A context menu is about to open — the menu's <c>ContextMenuOpeningFcn</c>.</summary>
     ContextMenuOpening,
 
+    /// <summary>A button on an axes toolbar was pressed — the toolbar's <c>SelectionChangedFcn</c>.</summary>
+    ToolbarSelectionChanged,
+
     /// <summary>Something in the interface deleted an object — its <c>DeleteFcn</c>, delivered rather
     /// than run in place, because the deletion happened on a thread the interpreter must not run on.</summary>
     ObjectDeleted,

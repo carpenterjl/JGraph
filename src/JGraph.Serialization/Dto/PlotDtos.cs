@@ -261,6 +261,62 @@ public sealed class PiePlotDto : PlotDto
     public double LabelRadius { get; set; } = 1.2;
 
     public TextStyleDto? LabelStyle { get; set; }
+
+    /// <summary>
+    /// How the wedges are drawn as the patch they are (M79). The geometry is not stored — a pie works
+    /// it out from its values every time — so what a document has to carry is only what a script chose
+    /// about it. Every one of these is additive, so a figure written before M79 loads with the
+    /// defaults, which is what it was drawn with.
+    /// </summary>
+    public PieWedgeDto? Wedges { get; set; }
+}
+
+/// <summary>The patch styling of a pie's wedges: everything a script can choose, and no geometry.</summary>
+public sealed class PieWedgeDto
+{
+    public Color? FaceColor { get; set; }
+
+    public bool FaceVisible { get; set; } = true;
+
+    public double EdgeAlpha { get; set; } = 1;
+
+    public DashStyle EdgeDash { get; set; } = DashStyle.Solid;
+
+    public LineJoin LineJoin { get; set; } = LineJoin.Miter;
+
+    public MarkerType Marker { get; set; } = MarkerType.None;
+
+    public double MarkerSize { get; set; } = 6;
+
+    public Color? MarkerEdge { get; set; }
+
+    public Color? MarkerFill { get; set; }
+
+    public double[]? ColorData { get; set; }
+
+    public double[]? VertexAlpha { get; set; }
+
+    public AlphaMapping AlphaDataMapping { get; set; } = AlphaMapping.Scaled;
+
+    public ColorMapping CDataMapping { get; set; } = ColorMapping.Scaled;
+
+    public SurfaceLighting FaceLighting { get; set; } = SurfaceLighting.Flat;
+
+    public SurfaceLighting EdgeLighting { get; set; } = SurfaceLighting.None;
+
+    public BackFaceLighting BackFaceLighting { get; set; } = BackFaceLighting.ReverseLit;
+
+    public double AmbientStrength { get; set; } = 0.3;
+
+    public double DiffuseStrength { get; set; } = 0.6;
+
+    public double SpecularStrength { get; set; } = 0.9;
+
+    public double SpecularExponent { get; set; } = 10;
+
+    public double SpecularColorReflectance { get; set; } = 1;
+
+    public bool AlignVertexCenters { get; set; }
 }
 
 /// <summary>The serialized form of a <see cref="HeatmapPlot"/>.</summary>
@@ -718,6 +774,9 @@ public sealed class ConstantLinePlotDto : PlotDto
     public HorizontalAlignment LabelHorizontalAlignment { get; set; } = HorizontalAlignment.Right;
 
     public VerticalAlignment LabelVerticalAlignment { get; set; } = VerticalAlignment.Top;
+
+    /// <summary>Which way the label reads (M79). Additive: an older document has none and reads aligned.</summary>
+    public ConstantLineLabelOrientation LabelOrientation { get; set; } = ConstantLineLabelOrientation.Aligned;
 }
 
 /// <summary>The serialized form of a <see cref="Line3DPlot"/>.</summary>

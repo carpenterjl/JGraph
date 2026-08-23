@@ -76,6 +76,13 @@ internal static partial class JgsGraphicsProperties
         AxesModel { IsPolar: true } => "polaraxes",
         AxesModel => "axes",
         AxisModel => "numericruler",
+        TiledLayoutModel => "tiledlayout",
+        TiledLayoutOptionsModel => "tiledlayoutoptions",
+        InteractionModel interaction => interaction.Kind,
+        AxesToolbarModel => "axestoolbar",
+        AxesToolbarButtonModel button => button.Style == ToolbarButtonStyle.State
+            ? "toolbarstatebutton"
+            : "toolbarpushbutton",
         LegendModel => "legend",
         ColorbarModel => "colorbar",
         BubbleLegendModel => "bubblelegend",
@@ -810,15 +817,15 @@ internal static partial class JgsGraphicsProperties
             // M58: a patch's vertices were unreachable, which fimplicit3 makes worth having — the
             // surface it draws is the whole answer, and a script can only check it by reading the
             // vertices back. Faces are answered the way a script wrote them, counting from one.
-            Put(table, "XData", entry => Row([.. ((PatchPlot)entry.Target).X]));
-            Put(table, "YData", entry => Row([.. ((PatchPlot)entry.Target).Y]));
-            Put(table, "ZData", entry => Row([.. ((PatchPlot)entry.Target).Z]));
-            Put(table, "Faces", entry => FaceTable((PatchPlot)entry.Target));
+            Put(table, "XData", entry => Row([.. PatchOf(entry).X]));
+            Put(table, "YData", entry => Row([.. PatchOf(entry).Y]));
+            Put(table, "ZData", entry => Row([.. PatchOf(entry).Z]));
+            Put(table, "Faces", entry => FaceTable(PatchOf(entry)));
 
             // M59: 'Vertices' is the other half of the pair a script writes a patch with, and it was
             // missing while 'Faces' answered — so `patch('Faces', F, 'Vertices', V)` could be read
             // back only halfway. It is the same n-by-3 table the verb was handed.
-            Put(table, "Vertices", entry => VertexTable((PatchPlot)entry.Target));
+            Put(table, "Vertices", entry => VertexTable(PatchOf(entry)));
         }
 
         if (typeof(SurfacePlot).IsAssignableFrom(type))
@@ -1022,6 +1029,10 @@ internal static partial class JgsGraphicsProperties
                 entry => ValueBridge.ToValue(((PiePlot)entry.Target).Colormap),
                 (entry, value, line, col) => ((PiePlot)entry.Target).Colormap =
                     (Colormap)ValueBridge.FromValue(typeof(Colormap), "Colormap", value, line, col)!);
+
+            // MATLAB has no pie class: a pie is patches, and a script reaches a wedge through the
+            // patch properties. Since M79 the wedges are one, so the whole block serves them.
+            AddPieShapeBlock(table);
         }
 
         if (typeof(Pie3DPlot).IsAssignableFrom(type))
@@ -1314,6 +1325,39 @@ internal static partial class JgsGraphicsProperties
                 entry => Row([.. ((BoxChartPlot)entry.Target).Groups().Select(g => g.Summary.Median)]));
             Put(table, "BoxPositions",
                 entry => Row([.. ((BoxChartPlot)entry.Target).Groups().Select(g => g.Position)]));
+
+            // Both of these answered 'none' on a chart that plainly draws a fill, because the slot
+            // behind them is empty until somebody chooses a colour and an empty colour slot reads as
+            // no colour everywhere else. On a box chart empty means "the seat's", so that is what
+            // they answer — the M78 lesson about a name answering the wrong thing, found the same
+            // way, by running the form rather than counting it.
+            Put(table, "BoxFaceColor",
+                entry => ColorRow(((BoxChartPlot)entry.Target).BoxFaceColor
+                    ?? JgsBuiltins.PaletteColorFor((PlotObject)entry.Target)),
+                (entry, value, line, col) => ((BoxChartPlot)entry.Target).BoxFaceColor =
+                    JgsBuiltins.OptionColor(value, line, col, "boxchart"));
+            Put(table, "MarkerColor",
+                entry => ColorRow(((BoxChartPlot)entry.Target).MarkerColor
+                    ?? ((BoxChartPlot)entry.Target).BoxFaceColor
+                    ?? JgsBuiltins.PaletteColorFor((PlotObject)entry.Target)),
+                (entry, value, line, col) => ((BoxChartPlot)entry.Target).MarkerColor =
+                    JgsBuiltins.OptionColor(value, line, col, "boxchart"));
+
+            // The two colours a box chart takes from its seat until a script chooses one, read the
+            // way M73 reads every other such pair: the mode is the state, not a second copy of it.
+            AddNullableMode(table, "BoxFaceColorMode",
+                entry => ((BoxChartPlot)entry.Target).BoxFaceColor is not null,
+                entry => ((BoxChartPlot)entry.Target).BoxFaceColor =
+                    ((BoxChartPlot)entry.Target).BoxFaceColor
+                    ?? JgsBuiltins.PaletteColorFor((PlotObject)entry.Target),
+                entry => ((BoxChartPlot)entry.Target).BoxFaceColor = null);
+            AddNullableMode(table, "MarkerColorMode",
+                entry => ((BoxChartPlot)entry.Target).MarkerColor is not null,
+                entry => ((BoxChartPlot)entry.Target).MarkerColor =
+                    ((BoxChartPlot)entry.Target).MarkerColor
+                    ?? ((BoxChartPlot)entry.Target).BoxFaceColor
+                    ?? JgsBuiltins.PaletteColorFor((PlotObject)entry.Target),
+                entry => ((BoxChartPlot)entry.Target).MarkerColor = null);
         }
 
         if (typeof(PatchPlot).IsAssignableFrom(type))
@@ -1369,11 +1413,72 @@ internal static partial class JgsGraphicsProperties
                 entry => JgsValue.Number(((ConstantLinePlot)entry.Target).Opacity),
                 (entry, value, line, col) => ((ConstantLinePlot)entry.Target).Opacity =
                     JgsBuiltins.NumOf("Alpha", value, line, col));
+
+            // M79: the label's own font. It had none of its own until now — a line's label was drawn
+            // at ten point in the line's colour and nothing could say otherwise — so the block goes
+            // over the style slot, filling it from that default the first time a script writes to it.
+            AddTextStyleBlock(table,
+                entry => LabelStyleOf((ConstantLinePlot)entry.Target),
+                (entry, style) => ((ConstantLinePlot)entry.Target).LabelStyle = style);
+
+            AddWordProperty(table, "LabelOrientation",
+                entry => ((ConstantLinePlot)entry.Target).LabelOrientation
+                    == ConstantLineLabelOrientation.Horizontal ? "horizontal" : "aligned",
+                (entry, word, line, col) => ((ConstantLinePlot)entry.Target).LabelOrientation = word switch
+                {
+                    "aligned" => ConstantLineLabelOrientation.Aligned,
+                    "horizontal" => ConstantLineLabelOrientation.Horizontal,
+                    _ => throw new JgsRuntimeException(
+                        line, col, $"LabelOrientation is 'aligned' or 'horizontal', but got '{word}'."),
+                });
         }
 
         if (typeof(AxesModel).IsAssignableFrom(type))
         {
             AddAxesAliases(table);
+            AddLayoutHandle(table, static entry => (AxesModel)entry.Target);
+            AddInteractionsBlock(table);
+
+            // The strip of buttons over the axes. Writing it takes another axes' toolbar, which is
+            // the one thing MATLAB lets a script do with the property besides read it.
+            Put(table, "Toolbar",
+                entry => JgsHandleRegistry.For(((AxesModel)entry.Target).Toolbar),
+                (entry, value, line, col) =>
+                {
+                    JgsHandleEntry given = JgsHandleRegistry.Require(value, line, col);
+                    if (given.Target is not AxesToolbarModel toolbar)
+                    {
+                        throw new JgsRuntimeException(line, col,
+                            "Toolbar is an axes toolbar — the object axtoolbar answers with.");
+                    }
+
+                    ((AxesModel)entry.Target).Toolbar = toolbar;
+                });
+        }
+
+        if (typeof(TiledLayoutModel).IsAssignableFrom(type))
+        {
+            AddTiledLayoutBlock(table);
+        }
+
+        if (typeof(InteractionModel).IsAssignableFrom(type))
+        {
+            AddInteractionBlock(type, table);
+        }
+
+        if (typeof(AxesToolbarModel).IsAssignableFrom(type))
+        {
+            AddToolbarBlock(table);
+        }
+
+        if (typeof(AxesToolbarButtonModel).IsAssignableFrom(type))
+        {
+            AddToolbarButtonBlock(table);
+        }
+
+        if (typeof(TiledLayoutOptionsModel).IsAssignableFrom(type))
+        {
+            AddTilePlaceBlock(table);
         }
 
         if (typeof(AxisModel).IsAssignableFrom(type))
@@ -2262,6 +2367,22 @@ internal static partial class JgsGraphicsProperties
         for (int i = 0; i < objects.Count; i++)
         {
             handles[i] = JgsHandleRegistry.For(objects[objects.Count - 1 - i]).AsNumber;
+        }
+
+        return JgsMatrix.FromColumnMajor(handles, 1, handles.Length);
+    }
+
+    /// <summary>
+    /// The same row in the order the objects are held rather than reversed. Children are listed
+    /// newest-first because that is what a script indexing <c>Children(1)</c> means; a list a script
+    /// itself wrote — an axes' interactions — has to come back the way it went in.
+    /// </summary>
+    internal static JgsValue HandleList(IReadOnlyList<GraphObject> objects)
+    {
+        var handles = new double[objects.Count];
+        for (int i = 0; i < objects.Count; i++)
+        {
+            handles[i] = JgsHandleRegistry.For(objects[i]).AsNumber;
         }
 
         return JgsMatrix.FromColumnMajor(handles, 1, handles.Length);

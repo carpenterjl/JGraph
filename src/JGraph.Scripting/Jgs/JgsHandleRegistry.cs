@@ -1,4 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics.CodeAnalysis;
 using JGraph.Api;
 using JGraph.Core.Model;
 
@@ -33,6 +33,34 @@ internal sealed class HeatmapSource
 
     /// <summary>One of count, mean, median, sum or none.</summary>
     public string ColorMethod { get; set; } = "count";
+}
+
+/// <summary>
+/// The table a marker chart was drawn from and which of its variables feed each channel — MATLAB's
+/// <c>SourceTable</c> and the <c>*Variable</c> family. Held here rather than on the chart for the
+/// reason <see cref="HeatmapSource"/> is: once drawn, a scatter is a list of numbers, and the table
+/// they were read out of means nothing to the drawing.
+/// <para>
+/// A channel whose variable is empty is one the chart does not take from the table — which is how a
+/// script clears the sizes or the colours by naming nothing.
+/// </para>
+/// </summary>
+internal sealed class ScatterSource
+{
+    public required JgsValue Table { get; set; }
+
+    public required string XVariable { get; set; }
+
+    public required string YVariable { get; set; }
+
+    /// <summary>The height variable, on a chart drawn by <c>scatter3</c> and its relatives.</summary>
+    public string ZVariable { get; set; } = string.Empty;
+
+    public string SizeVariable { get; set; } = string.Empty;
+
+    public string ColorVariable { get; set; } = string.Empty;
+
+    public string AlphaVariable { get; set; } = string.Empty;
 }
 
 internal sealed class JgsHandleEntry
@@ -71,6 +99,9 @@ internal sealed class JgsHandleEntry
 
     /// <summary>A menu item's <c>MenuSelectedFcn</c>, if a script gave it one.</summary>
     public JgsValue? MenuSelectedFcn { get; set; }
+
+    /// <summary>An axes toolbar's <c>SelectionChangedFcn</c>, if a script gave it one.</summary>
+    public JgsValue? SelectionChangedFcn { get; set; }
 
     /// <summary>A context menu's <c>ContextMenuOpeningFcn</c>, if a script gave it one.</summary>
     public JgsValue? ContextMenuOpeningFcn { get; set; }
@@ -131,6 +162,13 @@ internal sealed class JgsHandleEntry
     /// itself, which is the whole point of the table form.
     /// </summary>
     public HeatmapSource? HeatmapSource { get; set; }
+
+    /// <summary>
+    /// The table a marker chart was drawn from, and the variable feeding each of its channels. Kept
+    /// beside the heatmap's for the same reason and read by the same kind of property: naming a
+    /// different variable re-reads the table and redraws the chart from it.
+    /// </summary>
+    public ScatterSource? ScatterSource { get; set; }
 
     /// <summary>
     /// Whatever a script has hung on this object with <c>setappdata</c>. It lives on the entry rather

@@ -12,11 +12,34 @@ namespace JGraph.Interaction;
 public static class Navigation
 {
     /// <summary>Zooms both primary axes about a focus pixel by <paramref name="factor"/> (&lt;1 zooms in).</summary>
-    public static void ZoomAboutPixel(AxesModel axes, ICoordinateMapper mapper, Point2D focusPixel, double factor)
+    public static void ZoomAboutPixel(AxesModel axes, ICoordinateMapper mapper, Point2D focusPixel, double factor) =>
+        ZoomAboutPixel(axes, mapper, focusPixel, factor, InteractionDimensions.XY);
+
+    /// <summary>
+    /// The same zoom, held to one direction when the axes' zoom interaction names one (M80). The
+    /// direction it does not move keeps its range and its auto-scale untouched, which is what makes
+    /// <c>Dimensions</c> a setting rather than a label.
+    /// </summary>
+    public static void ZoomAboutPixel(
+        AxesModel axes,
+        ICoordinateMapper mapper,
+        Point2D focusPixel,
+        double factor,
+        InteractionDimensions dimensions)
     {
+        ArgumentNullException.ThrowIfNull(axes);
+        ArgumentNullException.ThrowIfNull(mapper);
+
         Point2D focusData = mapper.PixelToData(focusPixel.X, focusPixel.Y);
-        ZoomAxis(axes.PrimaryXAxis, focusData.X, factor);
-        ZoomAxis(axes.PrimaryYAxis, focusData.Y, factor);
+        if (dimensions != InteractionDimensions.Y)
+        {
+            ZoomAxis(axes.PrimaryXAxis, focusData.X, factor);
+        }
+
+        if (dimensions != InteractionDimensions.X)
+        {
+            ZoomAxis(axes.PrimaryYAxis, focusData.Y, factor);
+        }
     }
 
     /// <summary>Zooms a single axis about a data focus value by <paramref name="factor"/>.</summary>
@@ -45,10 +68,33 @@ public static class Navigation
         DataRange startX,
         DataRange startY,
         Point2D startPixel,
-        Point2D currentPixel)
+        Point2D currentPixel) =>
+        Pan(axes, startMapper, startX, startY, startPixel, currentPixel, InteractionDimensions.XY);
+
+    /// <summary>
+    /// The same pan, held to one direction when the axes' pan interaction names one (M80). A drag
+    /// across a chart whose pan is aimed along X slides it sideways and leaves the other range alone.
+    /// </summary>
+    public static void Pan(
+        AxesModel axes,
+        ICoordinateMapper startMapper,
+        DataRange startX,
+        DataRange startY,
+        Point2D startPixel,
+        Point2D currentPixel,
+        InteractionDimensions dimensions)
     {
-        PanAxis(axes.PrimaryXAxis, startX, ForwardShift(axes.PrimaryXAxis, startMapper, startPixel, currentPixel, horizontal: true));
-        PanAxis(axes.PrimaryYAxis, startY, ForwardShift(axes.PrimaryYAxis, startMapper, startPixel, currentPixel, horizontal: false));
+        ArgumentNullException.ThrowIfNull(axes);
+
+        if (dimensions != InteractionDimensions.Y)
+        {
+            PanAxis(axes.PrimaryXAxis, startX, ForwardShift(axes.PrimaryXAxis, startMapper, startPixel, currentPixel, horizontal: true));
+        }
+
+        if (dimensions != InteractionDimensions.X)
+        {
+            PanAxis(axes.PrimaryYAxis, startY, ForwardShift(axes.PrimaryYAxis, startMapper, startPixel, currentPixel, horizontal: false));
+        }
     }
 
     /// <summary>Sets both primary axes' ranges to the data bounds of a device-space rectangle.</summary>

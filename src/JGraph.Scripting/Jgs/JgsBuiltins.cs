@@ -1,4 +1,4 @@
-﻿using System.Globalization;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Numerics;
@@ -1454,97 +1454,125 @@ internal static partial class JgsBuiltins
             return JgsHandleRegistry.For(axes);
         });
 
-        // --- Tiled layouts (M43): tiledlayout(r, c) + nexttile ride on the subplot grid ------
-        int tiledRows = 1, tiledCols = 1, tiledCursor = 0;
-        bool tiledFlow = false;
-
-        // The tiles a flowing layout has handed out, in the order it handed them out. A fixed grid
-        // needs no such list — its cells never move — but a flowing one decides its grid as it goes,
-        // and every tile already placed has to move when the grid grows under it.
-        var tiledTiles = new List<AxesModel>();
+        // --- Tiled layouts (M43, made an object in M80) --------------------------------------------
+        //
+        // Until M80 this was three integers and a flag in this closure, which is why a script could
+        // not name the layout: t.TileSpacing, nexttile(span) and tiledlayout(parent, …) all need a t.
+        // The state now lives on the figure, and these two verbs are the doors to it.
+        int tiledCursor = 0;
         DefineSilent("tiledlayout", (args, line, col) =>
         {
-            ArityRange("tiledlayout", args, 1, 2, line, col);
-            if (args.Count == 1)
+            (FigureModel figure, IReadOnlyList<JgsValue> rest) = PeelLayoutParent(args);
+            var layout = new TiledLayoutModel();
+
+            int given = 0;
+            if (rest.Count > 0 && rest[0].Type == JgsType.String
+                && !TiledLayoutOptionNames.Contains(rest[0].AsString, StringComparer.OrdinalIgnoreCase))
             {
                 // tiledlayout('flow') lets the layout choose its own grid as tiles are asked for. A
                 // fixed grid has to be chosen up front here, so 'flow' starts at one tile and
                 // nexttile grows it — the same tiles in the same order, laid out once more often.
-                string word = Str("tiledlayout", args, 0, line, col);
+                string word = Str("tiledlayout", rest, 0, line, col);
                 if (!word.Equals("flow", StringComparison.OrdinalIgnoreCase))
                 {
                     throw new JgsRuntimeException(line, col,
                         $"tiledlayout takes a row and column count, or 'flow', but got '{word}'.");
                 }
 
-                tiledRows = 1;
-                tiledCols = 1;
-                tiledFlow = true;
-                tiledCursor = 0;
-                tiledTiles.Clear();
-                return JgsValue.Null;
+                layout.Flow = true;
+                given = 1;
+            }
+            else if (rest.Count >= 2 && rest[0].Type != JgsType.String)
+            {
+                layout.Rows = Count("tiledlayout", rest, 0, line, col);
+                layout.Columns = Count("tiledlayout", rest, 1, line, col);
+                given = 2;
+            }
+            else if (rest.Count == 1)
+            {
+                throw new JgsRuntimeException(line, col,
+                    "tiledlayout takes a row and column count, or 'flow'.");
             }
 
-            tiledFlow = false;
-            tiledTiles.Clear();
-            tiledRows = Count("tiledlayout", args, 0, line, col);
-            tiledCols = Count("tiledlayout", args, 1, line, col);
-            tiledCursor = 0;
-            return JgsValue.Null;
-        });
-        DefineSilent("nexttile", (args, line, col) =>
-        {
-            ArityRange("nexttile", args, 0, 1, line, col);
-            if (args.Count == 1)
+            JgsHandleEntry entry = JgsHandleRegistry.EntryFor(layout);
+            foreach ((string name, JgsValue value) in Pairs("tiledlayout", rest, given, line, col))
             {
-                tiledCursor = Count("nexttile", args, 0, line, col);
+                JgsGraphicsProperties.Set(entry, name, value, line, col);
             }
-            else if (tiledFlow)
+
+            figure.TiledLayout = layout;
+            tiledCursor = 0;
+            return JgsHandleRegistry.For(layout);
+        });
+        // `ax = nexttile` with no brackets is the ordinary way to write it, so a bare name has to be
+        // the tile it hands out rather than the function itself — the rule bubblesize follows, and
+        // the one this verb did not need until M80 gave it something to hand back.
+        env.Declare("nexttile", JgsValue.Function(new BuiltinFunction("nexttile", (args, line, col) =>
+        {
+            (TiledLayoutModel? named, IReadOnlyList<JgsValue> rest) = PeelLayout(args);
+            TiledLayoutModel layout = named ?? CurrentLayout();
+            if (named is not null && !ReferenceEquals(named, JG.CurrentFigure.TiledLayout))
+            {
+                throw new JgsRuntimeException(line, col,
+                    "nexttile(t, …) names a layout that is not the current figure's.");
+            }
+
+            ArityRange("nexttile", rest, 0, 2, line, col);
+
+            // A span is a pair; a location is one number. Two arguments are always a location and a
+            // span, which is the only reading that tells nexttile(2) from nexttile([1 2]).
+            int rowSpan = 1;
+            int columnSpan = 1;
+            int? location = null;
+            for (int i = 0; i < rest.Count; i++)
+            {
+                double[] given = ToDoubles("nexttile", rest[i], line, col);
+                if (given.Length == 2 && (i > 0 || rest.Count == 1))
+                {
+                    rowSpan = WholeNumber("nexttile: span", given[0], line, col);
+                    columnSpan = WholeNumber("nexttile: span", given[1], line, col);
+                }
+                else if (given.Length == 1)
+                {
+                    location = WholeNumber("nexttile: tilelocation", given[0], line, col);
+                }
+                else
+                {
+                    throw new JgsRuntimeException(line, col,
+                        "nexttile takes a tile number, a [rows cols] span, or both.");
+                }
+            }
+
+            if (location is { } asked)
+            {
+                tiledCursor = asked;
+            }
+            else if (layout.Flow)
             {
                 // A flowing layout never wraps: it grows until it holds the tile just asked for. The
                 // fixed grid's wrap would pin the cursor at 1 while a 1-by-1 grid stayed 1-by-1, so
                 // four tiles would be one tile asked for four times.
                 tiledCursor++;
-                while (tiledCursor > tiledRows * tiledCols)
-                {
-                    // A column at a time and then a row, which keeps the tiles as square as MATLAB's
-                    // does without needing the count in advance.
-                    if (tiledCols <= tiledRows)
-                    {
-                        tiledCols++;
-                    }
-                    else
-                    {
-                        tiledRows++;
-                    }
-                }
+                layout.GrowToHold(tiledCursor + ((rowSpan * columnSpan) - 1));
             }
             else
             {
-                tiledCursor = (tiledCursor % (tiledRows * tiledCols)) + 1;
+                tiledCursor = (tiledCursor % layout.TileCount) + 1;
             }
 
-            if (tiledFlow)
-            {
-                // Every tile handed out so far belongs to the grid as it is now, not as it was when
-                // that tile was made. Moving them is what makes the layout flow rather than pile up:
-                // JG.Subplot finds an existing axes by its bounds, so a tile left on the old grid
-                // would be missed and a second one made on top of it.
-                for (int tile = 0; tile < tiledTiles.Count; tile++)
-                {
-                    tiledTiles[tile].NormalizedBounds =
-                        FigureModel.SubplotBounds(tiledRows, tiledCols, tile + 1, tile + 1);
-                }
-            }
+            AxesModel placed = JG.NewAxes();
+            placed.LayoutTile = tiledCursor;
+            placed.LayoutRowSpan = rowSpan;
+            placed.LayoutColumnSpan = columnSpan;
+            layout.Adopt(placed);
 
-            AxesModel placed = JG.Subplot(tiledRows, tiledCols, tiledCursor);
-            if (tiledFlow && !tiledTiles.Contains(placed))
-            {
-                tiledTiles.Add(placed);
-            }
-
-            return JgsValue.Null;
-        });
+            // Every tile already handed out belongs to the grid as it is now rather than as it was
+            // when that tile was made. Laying them all out again is what makes a flowing layout flow
+            // instead of pile up, and costs nothing on a fixed one.
+            layout.Arrange();
+            return JgsHandleRegistry.For(placed);
+        })
+        { BindsAnsAsStatement = false, AutoCallsBare = true }));
 
         // axis: the aspect/limits words plus the [xmin xmax ymin ymax] vector form.
         Define("axis", (args, line, col) =>
@@ -3104,24 +3132,18 @@ internal static partial class JgsBuiltins
 
     /// <summary>
     /// <c>scatter(x, y)</c> and everything MATLAB lets follow it — sizes, colours, <c>'filled'</c>, a
-    /// marker spec and name/value pairs — on a named axes or the current one. The table form stays as
-    /// it was: two column names are the positions, and there is nowhere for the rest to go.
+    /// marker spec and name/value pairs — on a named axes or the current one. The table form names
+    /// the same two channels with variables instead of arrays and then reads exactly alike, which is
+    /// what lets <c>scatter(tbl, 'a', 'b', 'filled')</c> mean what it says.
     /// </summary>
     private static JgsValue Scatter(IReadOnlyList<JgsValue> args, int line, int col)
     {
         (AxesModel? named, IReadOnlyList<JgsValue> rest) = PeelAxes(args);
         return OnAxes(named, () =>
         {
-            if (rest.Count > 0 && rest[0].Type == JgsType.Table)
-            {
-                Arity("scatter", rest, 3, line, col);
-                return Handle(JG.Scatter(
-                    Tbl("scatter", rest, 0, line, col),
-                    Str("scatter", rest, 1, line, col),
-                    Str("scatter", rest, 2, line, col)));
-            }
-
-            return Handle(ScatterSeries("scatter", rest, line, col));
+            (IReadOnlyList<JgsValue> data, ScatterSource? source) =
+                PeelScatterTable("scatter", rest, spatial: false, sized: false, line, col);
+            return Sourced(ScatterSeries("scatter", data, line, col), source);
         });
     }
 

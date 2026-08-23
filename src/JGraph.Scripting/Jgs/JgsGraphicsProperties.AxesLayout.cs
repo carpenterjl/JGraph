@@ -27,6 +27,9 @@ internal static partial class JgsGraphicsProperties
         var host = new Dictionary<string, GraphicsProperty>(StringComparer.OrdinalIgnoreCase);
         AddAxesLayout(host);
 
+        // A chart that fills its axes sits where its axes sits, tile included.
+        AddLayoutHandle(table, Owner);
+
         foreach ((string name, GraphicsProperty property) in host)
         {
             string spelling = name;

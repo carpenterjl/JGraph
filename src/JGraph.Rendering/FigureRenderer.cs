@@ -57,6 +57,14 @@ public sealed class FigureRenderer
             content = new Rect2D(0, stripHeight, size.Width, size.Height - stripHeight);
         }
 
+        // A tiled layout writes over the whole grid rather than over any one tile. The bands it takes
+        // were reserved by the layout when it placed the tiles, so this fills exactly the room that
+        // was already left for it — one arithmetic, used twice.
+        if (figure.TiledLayout is { Visible: true } layout)
+        {
+            DrawLayoutText(layout, context, content);
+        }
+
         var infos = new List<AxesRenderInfo>();
         foreach (AxesModel axes in figure.Axes.InDrawOrder())
         {
@@ -78,6 +86,68 @@ public sealed class FigureRenderer
 
         return new FigureRenderResult(infos, figureMapper);
     }
+
+    /// <summary>
+    /// The four pieces of text a tiled layout carries over its whole grid: a title and a subtitle at
+    /// the top, and one shared label under and one beside it. Each is drawn in the middle of the band
+    /// <see cref="TiledLayoutModel"/> reserved for it, so nothing here decides how much room it takes.
+    /// </summary>
+    private static void DrawLayoutText(TiledLayoutModel layout, IRenderContext context, Rect2D content)
+    {
+        Rect2D area = Place(layout.Bounds, content);
+
+        if (layout.Title.Length > 0)
+        {
+            Rect2D band = Place(layout.TitleBox, content);
+            context.DrawText(
+                layout.Title,
+                new Point2D(band.Left + (band.Width / 2), band.Top + (band.Height / 2)),
+                layout.TitleStyle,
+                HorizontalAlignment.Center,
+                VerticalAlignment.Middle);
+        }
+
+        if (layout.Subtitle.Length > 0)
+        {
+            Rect2D band = Place(layout.SubtitleBox, content);
+            context.DrawText(
+                layout.Subtitle,
+                new Point2D(band.Left + (band.Width / 2), band.Top + (band.Height / 2)),
+                layout.SubtitleStyle,
+                HorizontalAlignment.Center,
+                VerticalAlignment.Middle);
+        }
+
+        if (layout.XLabel.Length > 0)
+        {
+            double band = layout.BottomBand * area.Height;
+            context.DrawText(
+                layout.XLabel,
+                new Point2D(area.Left + (area.Width / 2), area.Bottom - (band / 2)),
+                layout.XLabelStyle,
+                HorizontalAlignment.Center,
+                VerticalAlignment.Middle);
+        }
+
+        if (layout.YLabel.Length > 0)
+        {
+            double band = layout.LeftBand * area.Width;
+            context.DrawText(
+                layout.YLabel,
+                new Point2D(area.Left + (band / 2), area.Top + (area.Height / 2)),
+                layout.YLabelStyle,
+                HorizontalAlignment.Center,
+                VerticalAlignment.Middle,
+                rotationDegrees: -90);
+        }
+    }
+
+    /// <summary>A rectangle in figure fractions, as pixels of the area the figure's own title left.</summary>
+    private static Rect2D Place(Rect2D fraction, Rect2D content) => new(
+        content.Left + (fraction.X * content.Width),
+        content.Top + (fraction.Y * content.Height),
+        fraction.Width * content.Width,
+        fraction.Height * content.Height);
 
     private AxesRenderInfo? RenderAxes(AxesModel axes, IRenderContext context, ITheme theme, Rect2D content)
     {

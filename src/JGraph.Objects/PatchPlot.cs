@@ -70,6 +70,7 @@ public sealed class PatchPlot : PlotObject, IDrawable, I3DDrawable, IHasZData, I
     private double _markerSize = 6;
     private Color? _markerEdge;
     private Color? _markerFill;
+    private Color[]? _faceColors;
     private double[]? _vertexAlpha;
     private AlphaMapping _alphaDataMapping = AlphaMapping.Scaled;
     private ColorMapping _cDataMapping = ColorMapping.Scaled;
@@ -263,6 +264,31 @@ public sealed class PatchPlot : PlotObject, IDrawable, I3DDrawable, IHasZData, I
             Invalidate(InvalidationKind.Render);
         }
     }
+
+    /// <summary>
+    /// A colour chosen for each face rather than mapped to one — MATLAB's <c>FaceVertexCData</c>
+    /// written as a table of colours instead of a column of readings. A chart that decides its own
+    /// wedge colours hands them over this way, and <see cref="ColorData"/> and an explicit
+    /// <see cref="FaceColor"/> both still outrank it, so a script that sets either gets what it asked
+    /// for. Null leaves every face on the fallback colour.
+    /// </summary>
+    [Browsable(false)]
+    public IReadOnlyList<Color>? FaceColors
+    {
+        get => _faceColors;
+        set
+        {
+            _faceColors = value?.ToArray();
+            Invalidate(InvalidationKind.Render);
+        }
+    }
+
+    /// <summary>
+    /// The chart this patch is drawn on behalf of, when it is not in the figure tree itself. A pie is
+    /// one object to a script and a patch to the renderer, so its wedges have to find the axes' lights
+    /// and colour scale through the chart that owns them rather than through a parent they do not have.
+    /// </summary>
+    internal PlotObject? Host { get; set; }
 
     /// <summary>One color for every face, or null to take it from <see cref="ColorData"/>.</summary>
     [Category("Appearance"), DisplayName("Face color")]
@@ -547,7 +573,8 @@ public sealed class PatchPlot : PlotObject, IDrawable, I3DDrawable, IHasZData, I
     private Shading3D? ResolveShading(Projection3D projection)
     {
         LightSource[]? lights = SceneLights.Resolve(
-            this, _faceLighting, projection, ref _lightScratch, exclusive: true, out int count);
+            Host ?? (PlotObject)this, _faceLighting, projection, ref _lightScratch, exclusive: true,
+            out int count);
         if (lights is null)
         {
             return null;
@@ -724,7 +751,9 @@ public sealed class PatchPlot : PlotObject, IDrawable, I3DDrawable, IHasZData, I
             Color color = _colorData is { } values
                 ? Mapped(perVertex ? MeanOf(values, face) : values[at], min, max)
                     .WithOpacity(faceOpacity * VertexOpacity(face))
-                : fallback;
+                : _faceColor is null && _faceColors is { Length: > 0 } chosen
+                    ? chosen[at % chosen.Length].WithOpacity(faceOpacity * VertexOpacity(face))
+                    : fallback;
 
             // Lighting shades the fill, never the outline: an edge is a line rather than a piece of
             // surface, and MATLAB leaves EdgeColor alone whatever the lights do.
@@ -751,7 +780,7 @@ public sealed class PatchPlot : PlotObject, IDrawable, I3DDrawable, IHasZData, I
     {
         if (_cDataMapping == ColorMapping.Scaled)
         {
-            return _colormap.Sample(value, min, max, this.LogColorScale());
+            return _colormap.Sample(value, min, max, (Host ?? (PlotObject)this).LogColorScale());
         }
 
         int count = System.Math.Max(1, _colormap.Stops.Count);
@@ -872,7 +901,7 @@ public sealed class PatchPlot : PlotObject, IDrawable, I3DDrawable, IHasZData, I
         double[] values = _colorData!;
         double faceOpacity = Opacity * _faceAlpha;
 
-        bool logColor = this.LogColorScale();
+        bool logColor = (Host ?? (PlotObject)this).LogColorScale();
 
         Color Corner(int slot) =>
             shading is null

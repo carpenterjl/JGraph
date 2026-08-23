@@ -487,8 +487,8 @@ public static class JgsBuiltinCatalog
         Add("compose", "Formats each element through the format string, one output string per element.", P("format"), P("values"));
         Add("missing", "The missing value: a string slot with nothing in it (displays as <missing>).");
         Add("ismissing", "Whether each element is missing (the missing string, or NaN).", P("x"));
-        Add("tiledlayout", "Starts an r-by-c tile grid on the current figure; nexttile advances through it.", P("rows"), P("cols"));
-        Add("nexttile", "Moves to the next tile of the tiledlayout grid (or tile n).", Opt("n"));
+        Add("tiledlayout", "Starts an r-by-c tile grid (or 'flow') and answers the layout object.", P("rows"), P("cols"), Opt("name"), Opt("value"));
+        Add("nexttile", "Takes the next tile of the grid (or tile n, spanning [r c]) and answers its axes.", Opt("n"), Opt("span"));
         Add("axis", "Aspect and limit control: axis equal/image/square/tight/off, or axis([xmin xmax ymin ymax]).", Opt("option"));
         Add("shading", "Surface face shading: faceted (flat faces with grid lines), flat (no lines), or interp.", Opt("mode"));
         Add("lighting", "How surfaces respond to lights: none, flat (one normal per facet), or gouraud.", Opt("mode"));
@@ -1855,8 +1855,20 @@ public static class JgsBuiltinCatalog
         Add("datacursormode", "Turns data tips on or off, or reads which it is: datacursormode on, datacursormode(gcf).", Opt("h"), Opt("state"));
         Add("gtext", "Places a label where you click. This needs a figure window; use text or annotation to say where instead.", P("text"));
         Add("rotate", "Turns a plot's own data about a direction through an angle in degrees: rotate(h, [0 90], 45) or rotate(h, [x y z], 45, origin).", P("h"), P("direction"), P("angle"), Opt("origin"));
-        Add("disableDefaultInteractivity", "Accepted and changes nothing: this build's figures are always interactive.", Opt("ax"));
-        Add("enableDefaultInteractivity", "Accepted and changes nothing: this build's figures are always interactive.", Opt("ax"));
+        Add("disableDefaultInteractivity", "Turns off the gestures an axes answers to without a tool being chosen.", Opt("ax"));
+        Add("enableDefaultInteractivity", "Turns them back on, giving back whatever the axes was set to.", Opt("ax"));
+
+        // The gestures themselves, as objects a script hands to an axes through ax.Interactions.
+        Add("panInteraction", "A pan gesture, optionally held to one direction.", Opt("name"), Opt("value"));
+        Add("zoomInteraction", "A wheel-zoom gesture, optionally held to one direction.", Opt("name"), Opt("value"));
+        Add("rulerPanInteraction", "A pan by dragging a ruler.", Opt("name"), Opt("value"));
+        Add("regionZoomInteraction", "A zoom by dragging out a region.", Opt("name"), Opt("value"));
+        Add("rotateInteraction", "A rotate gesture for a three-dimensional axes.");
+        Add("dataTipInteraction", "A click that pins a data tip.", Opt("name"), Opt("value"));
+
+        // The two plot-tool verbs that describe a strip of buttons rather than open a window.
+        Add("axtoolbar", "The hovering toolbar over an axes, optionally with the buttons it should have.", Opt("ax"), Opt("buttons"), Opt("name"), Opt("value"));
+        Add("axtoolbarbtn", "Adds a button to an axes toolbar and answers it.", P("tb"), Opt("style"), Opt("name"), Opt("value"));
         Add("enableLegacyExplorationModes", "Accepted and changes nothing: there is no legacy exploration mode to restore.", Opt("fig"));
         Add("addToolbarExplorationButtons", "Accepted and changes nothing: the figure window has its own toolbar.", Opt("fig"));
         Add("removeToolbarExplorationButtons", "Accepted and changes nothing: the figure window has its own toolbar.", Opt("fig"));

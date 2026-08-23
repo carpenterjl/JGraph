@@ -44,8 +44,9 @@ internal static partial class JgsBuiltins
         (AxesModel? named, IReadOnlyList<JgsValue> rest) = PeelAxes(args);
         return OnAxes(named, () =>
         {
-            ScatterPlot plot = ScatterSeries("swarmchart", rest, line, col, JitterStyle.Density);
-            return Handle(plot);
+            (IReadOnlyList<JgsValue> data, ScatterSource? source) =
+                PeelScatterTable("swarmchart", rest, spatial: false, sized: false, line, col);
+            return Sourced(ScatterSeries("swarmchart", data, line, col, JitterStyle.Density), source);
         });
     }
 
@@ -60,7 +61,11 @@ internal static partial class JgsBuiltins
         (AxesModel? named, IReadOnlyList<JgsValue> rest) = PeelAxes(args);
         return OnAxes(named, () =>
         {
-            if (bubbles && rest.Count(static value => value.Type != JgsType.String) < 4)
+            // A table form names its channels rather than passing them, so counting arrays here would
+            // read every one of them as missing. The peel inside the series builder does the counting
+            // for that shape, and says the same thing when a name is short.
+            bool named = rest.Count > 0 && rest[0].Type == JgsType.Table;
+            if (bubbles && !named && rest.Count(static value => value.Type != JgsType.String) < 4)
             {
                 throw new JgsRuntimeException(line, col,
                     "bubblechart3 needs the sizes as well as the positions: bubblechart3(x, y, z, sz).");

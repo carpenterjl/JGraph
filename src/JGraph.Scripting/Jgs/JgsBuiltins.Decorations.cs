@@ -192,7 +192,7 @@ internal static partial class JgsBuiltins
     /// draws one line, so the rows are joined with a space and the divergence is recorded rather than
     /// the call refused — losing the line break is better than losing the title.
     /// </summary>
-    private static string TitleText(string verb, JgsValue value, int line, int col)
+    internal static string TitleText(string verb, JgsValue value, int line, int col)
     {
         if (value.Type != JgsType.Cell)
         {
@@ -400,8 +400,30 @@ internal static partial class JgsBuiltins
                     plot.Opacity = NumOf($"{verb}: Alpha", value, line, col);
                     break;
                 case "fontsize":
-                    plot.LabelStyle = (plot.LabelStyle ?? new TextStyle(plot.Color ?? Colors.Black, 10))
-                        .WithSize(NumOf($"{verb}: FontSize", value, line, col));
+                    plot.LabelStyle = LabelFont(plot).WithSize(NumOf($"{verb}: FontSize", value, line, col));
+                    break;
+                case "fontname":
+                    plot.LabelStyle = LabelFont(plot)
+                        .WithFamily(StrOf($"{verb}: FontName", value, line, col));
+                    break;
+                case "fontweight":
+                    plot.LabelStyle = LabelFont(plot).WithBold(
+                        Word($"{verb}: FontWeight", value, line, col, "normal", "bold") == "bold");
+                    break;
+                case "fontangle":
+                    plot.LabelStyle = LabelFont(plot).WithItalic(
+                        Word($"{verb}: FontAngle", value, line, col, "normal", "italic") == "italic");
+                    break;
+                case "interpreter":
+                    plot.LabelStyle = LabelFont(plot).WithInterpreter(ParseInterpreter(
+                        verb, StrOf($"{verb}: Interpreter", value, line, col), line, col));
+                    break;
+                case "labelorientation":
+                    plot.LabelOrientation =
+                        Word($"{verb}: LabelOrientation", value, line, col, "aligned", "horizontal")
+                            == "horizontal"
+                            ? ConstantLineLabelOrientation.Horizontal
+                            : ConstantLineLabelOrientation.Aligned;
                     break;
                 case "labelhorizontalalignment":
                     plot.LabelHorizontalAlignment = StrOf($"{verb}: LabelHorizontalAlignment", value, line, col)
@@ -428,9 +450,27 @@ internal static partial class JgsBuiltins
                 default:
                     throw new JgsRuntimeException(line, col,
                         $"{verb}: unknown option '{name}'. Use Color, LineWidth, LineStyle, Label, "
-                        + "DisplayName, Alpha, FontSize, LabelHorizontalAlignment, LabelVerticalAlignment.");
+                        + "DisplayName, Alpha, FontName, FontSize, FontWeight, FontAngle, Interpreter, "
+                        + "LabelOrientation, LabelHorizontalAlignment, LabelVerticalAlignment.");
             }
         }
+    }
+
+    /// <summary>
+    /// The label's style, filled in from what would be drawn if it had none — ten-point text in the
+    /// line's own colour — so one named font property does not throw the others away.
+    /// </summary>
+    private static TextStyle LabelFont(ConstantLinePlot plot) =>
+        plot.LabelStyle ?? new TextStyle(plot.Color ?? Colors.Black, 10);
+
+    /// <summary>One of a short list of words, refused by name with the list when it is not one.</summary>
+    private static string Word(string what, JgsValue value, int line, int col, params string[] allowed)
+    {
+        string word = StrOf(what, value, line, col).ToLowerInvariant();
+        return Array.IndexOf(allowed, word) >= 0
+            ? word
+            : throw new JgsRuntimeException(line, col,
+                $"{what} is {string.Join(" or ", allowed.Select(w => $"'{w}'"))}, but got '{word}'.");
     }
 
     /// <summary>

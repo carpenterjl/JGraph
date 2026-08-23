@@ -1,4 +1,4 @@
-﻿using JGraph.Core.Drawing;
+using JGraph.Core.Drawing;
 using JGraph.Core.Model;
 
 namespace JGraph.Serialization.Dto;
@@ -29,6 +29,12 @@ public sealed class FigureDto
     public List<AxesDto> Axes { get; set; } = new();
 
     public List<AnnotationDto> Annotations { get; set; } = new();
+
+    /// <summary>
+    /// The tiled layout this figure's tiles are laid in, or null when it has none (M80). Additive:
+    /// a document written before M80 has no layout and loads as the plain figure it was.
+    /// </summary>
+    public TiledLayoutDto? TiledLayout { get; set; }
 
     /// <summary>
     /// Script-defined right-click menus (MATLAB <c>uicontextmenu</c>). Empty in every document
@@ -107,6 +113,46 @@ public sealed class MenuItemDto
     public List<MenuItemDto> Items { get; set; } = new();
 }
 
+/// <summary>
+/// The serialized form of a <see cref="TiledLayoutModel"/> (M80). The tiles
+/// themselves are the figure's axes, each carrying the cell it holds, so what is stored here is the
+/// grid and the words written over it — never the placements, which are worked out from both.
+/// </summary>
+public sealed class TiledLayoutDto
+{
+    public int Rows { get; set; } = 1;
+
+    public int Columns { get; set; } = 1;
+
+    public bool Flow { get; set; }
+
+    public TileSpacingMode TileSpacing { get; set; } = TileSpacingMode.Loose;
+
+    public TilePaddingMode Padding { get; set; } = TilePaddingMode.Loose;
+
+    public TileIndexingMode TileIndexing { get; set; } = TileIndexingMode.RowMajor;
+
+    public string Title { get; set; } = string.Empty;
+
+    public string Subtitle { get; set; } = string.Empty;
+
+    public string XLabel { get; set; } = string.Empty;
+
+    public string YLabel { get; set; } = string.Empty;
+
+    public TextStyleDto? TitleStyle { get; set; }
+
+    public TextStyleDto? SubtitleStyle { get; set; }
+
+    public TextStyleDto? XLabelStyle { get; set; }
+
+    public TextStyleDto? YLabelStyle { get; set; }
+
+    public RectDto Bounds { get; set; } = new(0, 0, 1, 1);
+
+    public bool Visible { get; set; } = true;
+}
+
 /// <summary>The serialized form of an <see cref="AxesModel"/>.</summary>
 public sealed class AxesDto
 {
@@ -123,6 +169,22 @@ public sealed class AxesDto
     public Color Background { get; set; }
 
     public RectDto NormalizedBounds { get; set; } = new(0, 0, 1, 1);
+
+    /// <summary>Which cell of the figure's tiled layout this axes holds, or null when it is in none.</summary>
+    public int? LayoutTile { get; set; }
+
+    /// <summary>How many rows of that grid the tile covers.</summary>
+    public int LayoutRowSpan { get; set; } = 1;
+
+    /// <inheritdoc cref="LayoutRowSpan" />
+    public int LayoutColumnSpan { get; set; } = 1;
+
+    /// <summary>
+    /// Whether the hovering toolbar is shown over this axes (M80). Only the switch is stored: the
+    /// buttons are the default set unless a script asked for others, and the callbacks a script
+    /// gave them are never serialized — no callback in this build ever is.
+    /// </summary>
+    public bool ToolbarVisible { get; set; } = true;
 
     public double AutoScalePadding { get; set; }
 

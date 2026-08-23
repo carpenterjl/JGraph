@@ -493,16 +493,21 @@ public class MatlabM77PlotPropertyTests : IDisposable
         Refuses(code, fragment);
 
     /// <summary>
-    /// The geographic and table-sourced families are not answered at all, by decision — there is no
-    /// geographic axes and no table-backed chart to hang them on. This is the ceiling stated in
-    /// ADR 0077, and it is pinned so that closing it later is a deliberate act.
+    /// The geographic family is not answered at all, by decision — there is no geographic axes to
+    /// hang it on. This is half of the ceiling stated in ADR 0077, and it is pinned so that closing
+    /// it later is a deliberate act.
+    /// <para>
+    /// The other half was the table-sourced family, and M79 closed it: <c>scatter(tbl, xvar, yvar)</c>
+    /// exists here, so <c>SourceTable</c> and the <c>*Variable</c> names have a table to name and a
+    /// chart to redraw. That was the deliberate act this test was written to require.
+    /// </para>
     /// </summary>
     [Theory]
     [InlineData("LatitudeData")]
     [InlineData("LongitudeData")]
-    [InlineData("SourceTable")]
-    [InlineData("XVariable")]
-    public Task TheGeographicAndTableFamiliesAreNotAnswered(string name) =>
+    [InlineData("LatitudeVariable")]
+    [InlineData("LongitudeVariable")]
+    public Task TheGeographicFamilyIsNotAnswered(string name) =>
         Refuses($"s = scatter([1 2], [1 2]); get(s, '{name}');", "no property");
 
     // --- The whole table ------------------------------------------------------------------------

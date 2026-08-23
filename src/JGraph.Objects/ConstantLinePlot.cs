@@ -17,6 +17,16 @@ public enum ConstantLineDirection
     Horizontal,
 }
 
+/// <summary>Which way a <see cref="ConstantLinePlot"/>'s label reads (MATLAB <c>LabelOrientation</c>).</summary>
+public enum ConstantLineLabelOrientation
+{
+    /// <summary>Along the line, so a vertical line's label reads upward. MATLAB's default.</summary>
+    Aligned,
+
+    /// <summary>Left to right, whichever way the line runs.</summary>
+    Horizontal,
+}
+
 /// <summary>
 /// A reference line across the whole axes at one value (MATLAB <c>xline</c>/<c>yline</c>): a limit, a
 /// threshold, a mean, the moment something happened.
@@ -38,6 +48,7 @@ public sealed class ConstantLinePlot : PlotObject, IDrawable, ILegendItem
     private TextStyle? _labelStyle;
     private HorizontalAlignment _labelHorizontalAlignment = HorizontalAlignment.Right;
     private VerticalAlignment _labelVerticalAlignment = VerticalAlignment.Top;
+    private ConstantLineLabelOrientation _labelOrientation = ConstantLineLabelOrientation.Aligned;
 
     public ConstantLinePlot(ConstantLineDirection direction, double value)
     {
@@ -115,6 +126,18 @@ public sealed class ConstantLinePlot : PlotObject, IDrawable, ILegendItem
     {
         get => _labelVerticalAlignment;
         set => SetProperty(ref _labelVerticalAlignment, value, InvalidationKind.Render);
+    }
+
+    /// <summary>
+    /// Whether the label reads along the line or straight across the page. It says nothing about a
+    /// horizontal line, whose label reads left to right either way — which is why MATLAB's own
+    /// default is the aligned one and why only a vertical line looks different for it.
+    /// </summary>
+    [Category("General"), DisplayName("Label orientation")]
+    public ConstantLineLabelOrientation LabelOrientation
+    {
+        get => _labelOrientation;
+        set => SetProperty(ref _labelOrientation, value, InvalidationKind.Render);
     }
 
     /// <inheritdoc />
@@ -198,6 +221,30 @@ public sealed class ConstantLinePlot : PlotObject, IDrawable, ILegendItem
     {
         const double Gap = 4;
         TextStyle style = _labelStyle ?? new TextStyle(color, 10);
+
+        if (_direction == ConstantLineDirection.Vertical
+            && _labelOrientation == ConstantLineLabelOrientation.Horizontal)
+        {
+            // Read across the page instead of up the line. The end the label sits at is chosen the
+            // same way; only the quarter turn and the alignments that went with it are dropped.
+            double at = _labelHorizontalAlignment switch
+            {
+                HorizontalAlignment.Left => System.Math.Max(from.Y, to.Y) - Gap,
+                HorizontalAlignment.Center => (from.Y + to.Y) / 2,
+                _ => System.Math.Min(from.Y, to.Y) + Gap,
+            };
+
+            bool leftOfLine = _labelVerticalAlignment is VerticalAlignment.Bottom;
+            context.DrawText(
+                _label,
+                new Point2D(from.X + (leftOfLine ? -Gap : Gap), at),
+                style,
+                leftOfLine ? HorizontalAlignment.Right : HorizontalAlignment.Left,
+                _labelHorizontalAlignment == HorizontalAlignment.Left
+                    ? VerticalAlignment.Bottom
+                    : VerticalAlignment.Top);
+            return;
+        }
 
         if (_direction == ConstantLineDirection.Vertical)
         {

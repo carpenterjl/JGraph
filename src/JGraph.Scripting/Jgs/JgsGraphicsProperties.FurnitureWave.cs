@@ -591,7 +591,9 @@ internal static partial class JgsGraphicsProperties
     /// </summary>
     private static void AddPatchBlock(IDictionary<string, GraphicsProperty> table)
     {
-        static PatchPlot Shape(JgsHandleEntry entry) => (PatchPlot)entry.Target;
+        // A pie is drawn as a patch since M79, so the block reaches the wedges through the same door
+        // every other patch property does rather than through a second copy of itself.
+        static PatchPlot Shape(JgsHandleEntry entry) => PatchOf(entry);
 
         Put(table, "CData",
             entry => Row([.. Shape(entry).ColorData ?? []]),
@@ -1669,6 +1671,15 @@ internal static partial class JgsGraphicsProperties
     /// </summary>
     private static void AddTextBlock(IDictionary<string, GraphicsProperty> table)
     {
+        // A label answers no gestures of its own: it is dragged by the pointer tool and edited in the
+        // plot browser, neither of which is a thing MATLAB's list has a word for. The empty list is
+        // the honest answer, and a write is refused rather than remembered (M80).
+        Put(table, "Interactions",
+            static _ => JgsValue.Array([]),
+            static (_, _, line, col) => throw new JgsRuntimeException(line, col,
+                "A text object answers no interactions of its own here — it is moved with the pointer "
+                + "and edited in the plot browser, and neither is a gesture a script can name."));
+
         static TextAnnotation Label(JgsHandleEntry entry) => (TextAnnotation)entry.Target;
 
         // The label keeps its font in loose pieces rather than a TextStyle, so one is assembled for
@@ -1925,5 +1936,9 @@ internal static partial class JgsGraphicsProperties
                         + "is not a unit it measures in.");
                 }
             });
+
+        // Which tile of the figure's grid the furniture's axes sits in. It is the axes' answer
+        // because the furniture has no place of its own in a layout — it moves with what it explains.
+        AddLayoutHandle(table, owner);
     }
 }

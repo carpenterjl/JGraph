@@ -153,6 +153,27 @@ NAMED_SAMPLES: dict[str, str] = {
     "LineSpec": "'r--o'",
     "lineSpec": "'r--o'",
     "linespec": "'r--o'",
+
+    # A table variable is documented "one or more table variable indices", whose first matching
+    # keyword is `table` — so every table form was probed by passing the table itself where its
+    # variable's *name* belongs, and every one of them was recorded as a refusal the build had
+    # earned. It had not: the sample was wrong the way M77's LineSpec sample was. The names below
+    # are the columns of the `tbl` sample above, `table([1;2], [3;4])`, so a variable named here is
+    # a variable the sampled table has. A form wanting three distinct variables is still probed
+    # with two, which is the sample's limit and not the build's.
+    # An axes toolbar is documented as "AxesToolbar object", which no generic phrase can build. The
+    # verb that answers one takes no arguments, so naming it here is the sample — and it is the
+    # honest one, because it is what a script writes.
+    "tb": "axtoolbar",
+
+    "xvar": "'Var1'",
+    "thetavar": "'Var1'",
+    "yvar": "'Var2'",
+    "zvar": "'Var2'",
+    "rhovar": "'Var2'",
+    "sizevar": "'Var2'",
+    "cvar": "'Var2'",
+    "grpvar": "'Var2'",
 }
 
 

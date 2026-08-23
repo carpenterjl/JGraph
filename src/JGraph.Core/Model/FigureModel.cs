@@ -34,6 +34,7 @@ public sealed class FigureModel : GraphObject
     private PaperOrientationType _paperOrientation = PaperOrientationType.Portrait;
     private Rect2D _paperPosition = new(0.25, 2.5, 8, 6);
     private bool _paperPositionAuto = true;
+    private TiledLayoutModel? _tiledLayout;
 
     public FigureModel()
     {
@@ -314,6 +315,22 @@ public sealed class FigureModel : GraphObject
 
     /// <summary>The fraction of each subplot cell reserved as a gutter, split across its sides.</summary>
     private const double SubplotGutter = 0.12;
+
+    /// <summary>
+    /// The tiled layout this figure's tiles are laid in, or null until <c>tiledlayout</c> makes one.
+    /// A figure has at most one: MATLAB nests them and this build does not, which is recorded.
+    /// </summary>
+    [Browsable(false)]
+    public TiledLayoutModel? TiledLayout
+    {
+        get => _tiledLayout;
+        set
+        {
+            _tiledLayout = value;
+            Adopt(value);
+            Invalidate(InvalidationKind.Layout);
+        }
+    }
 
     /// <summary>Creates a new axes, adds it to the figure, and returns it.</summary>
     public AxesModel AddAxes()

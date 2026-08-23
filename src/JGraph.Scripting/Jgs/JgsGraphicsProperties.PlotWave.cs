@@ -43,6 +43,14 @@ internal static partial class JgsGraphicsProperties
             AddDataSources(table, "CDataSource", "SizeDataSource", "AlphaDataSource", "ZDataSource");
             AddPolarChannels(table);
             AddScatterAlphaBlock(table);
+            AddScatterSourceBlock(table, spatial: false);
+        }
+
+        // A marker chart in space is its own class rather than a scatter with a height, so it takes
+        // the source block by name — the table form is the same call with one more variable in it.
+        if (typeof(Scatter3DPlot).IsAssignableFrom(type))
+        {
+            AddScatterSourceBlock(table, spatial: true);
         }
 
         if (typeof(StemPlot).IsAssignableFrom(type))

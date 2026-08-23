@@ -1,4 +1,4 @@
-﻿using System.Windows;
+using System.Windows;
 using System.Windows.Input;
 using JGraph.Core.Drawing;
 using JGraph.Core.Model;
@@ -33,6 +33,11 @@ public class FigureControl : SKElement, IInteractionSurface, IFigureNavigator
     private ITheme _theme = Core.Drawing.Theme.Light;
     private FigureRenderResult _lastResult = FigureRenderResult.Empty;
     private bool _isRendering;
+
+    // Which axes the pointer is over, and where its plot rectangle was: the axes toolbar is shown
+    // over that one alone, which is what makes it a hovering strip rather than permanent chrome.
+    private AxesModel? _hoveredAxes;
+    private Rect2D _hoveredPlotArea;
 
     public FigureControl()
     {
@@ -331,6 +336,14 @@ public class FigureControl : SKElement, IInteractionSurface, IFigureNavigator
                 canvas, new Size2D(width, height), dpiScale, smoothing: figure.GraphicsSmoothing);
             _lastResult = _renderer.Render(figure, context, _theme);
             OverlayRenderer.Draw(context, _controller, _theme);
+
+            // The axes toolbar is drawn last and only here: it is window chrome, so an export or a
+            // saved document must never carry it (M80).
+            if (_hoveredAxes is not null)
+            {
+                AxesToolbarOverlay.Draw(
+                    context, _hoveredAxes, _hoveredPlotArea, _theme, _controller.CurrentMode.Kind);
+            }
         }
         finally
         {
@@ -349,7 +362,18 @@ public class FigureControl : SKElement, IInteractionSurface, IFigureNavigator
             _rightDown = ToPoint(e);
         }
 
-        RaisePointerActivity(ToPoint(e), PointerAction.Pressed, SelectionOf(e));
+        Point2D pressed = ToPoint(e);
+        RaisePointerActivity(pressed, PointerAction.Pressed, SelectionOf(e));
+
+        // A press on the toolbar is the toolbar's, and never reaches the tool underneath: the strip
+        // sits over the plot area, and a click on a button must not also pan the chart behind it.
+        if (e.ChangedButton == MouseButton.Left && _hoveredAxes is { } over
+            && AxesToolbarOverlay.Hit(over, _hoveredPlotArea, pressed) is { } button)
+        {
+            PressToolbarButton(over, button, pressed);
+            return;
+        }
+
         _controller.PointerDown(ToPointerArgs(e, ButtonOf(e)));
     }
 
@@ -358,6 +382,7 @@ public class FigureControl : SKElement, IInteractionSurface, IFigureNavigator
         base.OnMouseMove(e);
         Point2D position = ToPoint(e);
         RaisePointerActivity(position, PointerAction.Moved, SelectionKind.Normal);
+        UpdateHoveredAxes(position);
         _controller.PointerMove(ToPointerArgs(e, PointerButton.None, position));
 
         Point2D? data = null;
@@ -378,6 +403,81 @@ public class FigureControl : SKElement, IInteractionSurface, IFigureNavigator
 
         CursorDataPositionChanged?.Invoke(this, data);
     }
+
+    /// <summary>
+    /// Remembers which axes the pointer is over, so the toolbar is drawn on that one. A change is
+    /// what asks for a repaint; moving within one axes costs nothing.
+    /// </summary>
+    private void UpdateHoveredAxes(Point2D position)
+    {
+        AxesModel? over = TryGetAxesAt(position, out AxesModel found, out _, out Rect2D plotArea)
+            ? found
+            : null;
+
+        if (ReferenceEquals(over, _hoveredAxes))
+        {
+            return;
+        }
+
+        _hoveredAxes = over;
+        _hoveredPlotArea = plotArea;
+        InvalidateVisual();
+    }
+
+    /// <summary>
+    /// What a toolbar button does. Every one of them is an action this control already had — the
+    /// buttons are a second way to reach the tools, not a new set of behaviours.
+    /// </summary>
+    private void PressToolbarButton(AxesModel axes, AxesToolbarButtonModel button, Point2D at)
+    {
+        switch (button.Icon)
+        {
+            case "restoreview":
+                _controller.ResetView(at);
+                break;
+            case "pan":
+            case "rotate":
+                ActiveMode = InteractionModeKind.Pan;
+                break;
+            case "datacursor":
+                ActiveMode = InteractionModeKind.DataTips;
+                break;
+            case "zoomin":
+                _controller.Wheel(new WheelEventArgs(Centre(axes, at), 120, Interaction.ModifierKeys.None));
+                break;
+            case "zoomout":
+                _controller.Wheel(new WheelEventArgs(Centre(axes, at), -120, Interaction.ModifierKeys.None));
+                break;
+            case "export":
+                ExportRequested?.Invoke(this, EventArgs.Empty);
+                break;
+        }
+
+        if (button.Style == ToolbarButtonStyle.State)
+        {
+            button.Value = !button.Value;
+        }
+
+        ToolbarButtonPressed?.Invoke(this, button);
+        InvalidateVisual();
+    }
+
+    /// <summary>The middle of the axes a button belongs to, which is what a zoom button zooms about.</summary>
+    private Point2D Centre(AxesModel axes, Point2D fallback) =>
+        _lastResult.Axes.FirstOrDefault(info => ReferenceEquals(info.Axes, axes)) is { } found
+            ? new Point2D(
+                found.PlotArea.Left + (found.PlotArea.Width / 2),
+                found.PlotArea.Top + (found.PlotArea.Height / 2))
+            : fallback;
+
+    /// <summary>Raised when the toolbar's export button is pressed; the window does the exporting.</summary>
+    public event EventHandler? ExportRequested;
+
+    /// <summary>
+    /// Raised for every toolbar button press, which is what carries a script's
+    /// <c>SelectionChangedFcn</c> and a button's own callbacks to the session that owns them.
+    /// </summary>
+    public event EventHandler<AxesToolbarButtonModel>? ToolbarButtonPressed;
 
     protected override void OnMouseUp(MouseButtonEventArgs e)
     {

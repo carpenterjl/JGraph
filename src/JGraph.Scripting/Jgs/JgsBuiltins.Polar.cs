@@ -83,8 +83,16 @@ internal static partial class JgsBuiltins
     private static JgsValue PolarScatter(IReadOnlyList<JgsValue> args, int line, int col)
     {
         (AxesModel? named, IReadOnlyList<JgsValue> rest) = PeelAxes(args);
-        return OnAxes(named, () => OnPolarAxes(() => Handle(ScatterSeries(
-            "polarscatter", SplitComplexAngles("polarscatter", rest, line, col), line, col))));
+        return OnAxes(named, () => OnPolarAxes(() =>
+        {
+            // The table form names theta and rho where the array form passes them, and a circle
+            // reads the same two channels as square paper does — so the peel is the shared one.
+            (IReadOnlyList<JgsValue> data, ScatterSource? source) =
+                PeelScatterTable("polarscatter", rest, spatial: false, sized: false, line, col);
+            return Sourced(
+                ScatterSeries("polarscatter", SplitComplexAngles("polarscatter", data, line, col), line, col),
+                source);
+        }));
     }
 
     /// <summary>
@@ -97,7 +105,11 @@ internal static partial class JgsBuiltins
     {
         (AxesModel? named, IReadOnlyList<JgsValue> rest) = PeelAxes(args);
         return OnAxes(named, () => OnPolarAxes(() =>
-            Handle(BubbleSeries("polarbubblechart", rest, line, col))));
+        {
+            (IReadOnlyList<JgsValue> data, ScatterSource? source) =
+                PeelScatterTable("polarbubblechart", rest, spatial: false, sized: true, line, col);
+            return Sourced(BubbleSeries("polarbubblechart", data, line, col), source);
+        }));
     }
 
     /// <summary>
