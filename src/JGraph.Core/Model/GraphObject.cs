@@ -114,6 +114,13 @@ public abstract class GraphObject : INotifyPropertyChanged
     internal void SetParent(GraphObject? parent) => Parent = parent;
 
     /// <summary>
+    /// Takes ownership of a small object this one keeps for itself — a baseline, a legend switch, a
+    /// data tip template. It is how a type outside this assembly attaches such a thing, since the
+    /// parent link is otherwise the container collections' business alone.
+    /// </summary>
+    protected void Adopt(GraphObject? child) => child?.SetParent(this);
+
+    /// <summary>
     /// Raises <see cref="Invalidated"/> for this object and propagates it toward the root, preserving
     /// the original <paramref name="kind"/> and source.
     /// </summary>

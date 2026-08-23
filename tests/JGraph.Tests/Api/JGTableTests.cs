@@ -51,6 +51,6 @@ public class JGTableTests : IDisposable
         JG.Figure();
         HistogramPlot plot = JG.Histogram(table, "v", 4);
         Assert.Same(plot, JG.Gca().Plots[0]);
-        Assert.Equal(4, plot.BinCount);
+        Assert.Equal(4, plot.NumBins);
     }
 }

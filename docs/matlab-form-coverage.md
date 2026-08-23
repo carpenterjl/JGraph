@@ -11,27 +11,27 @@ and five documented syntax forms.
 
 ## Where it stands
 
-**1289 of 2429 documented syntax forms are accepted** across
-659 implemented commands (the base builtins and the graphics functions; the Image
+**1300 of 2432 documented syntax forms are accepted** across
+660 implemented commands (the base builtins and the graphics functions; the Image
 Processing and Statistics surfaces are a later pass).
 
 | Verdict | Forms | What it means |
 |---|---:|---|
-| accepted | 1289 | the call returned without error |
-| refused | 33 | refused deliberately, with a message naming what is missing |
+| accepted | 1300 | the call returned without error |
+| refused | 30 | refused deliberately, with a message naming what is missing |
 | undefined | 6 | the name did not resolve at all |
-| error | 480 | failed some other way — **may be the prober's sample, not the build** |
+| error | 475 | failed some other way — **may be the prober's sample, not the build** |
 | unprobed | 621 | no call could be built; see below |
-| **total** | **2429** | |
+| **total** | **2432** | |
 
-**221 commands accept every form they document. 155 accept some and not others** — the
+**222 commands accept every form they document. 150 accept some and not others** — the
 number the name count could never show, and the one worth working from.
 
 ## What this sweep does and does not establish
 
 **`accepted` is the trustworthy column.** A form that ran without error ran; there is nothing to
-second-guess. 1289 of 2429 documented forms are confirmed working by execution
-rather than by assumption, which is 1289 more than were confirmed before M69.
+second-guess. 1300 of 2432 documented forms are confirmed working by execution
+rather than by assumption, which is 1300 more than were confirmed before M69.
 
 **Every other column is a worklist, not a finding, and the spot-check is why that sentence is here.**
 Twenty forms were re-run by hand against their verdicts. The `accepted` ones held. The `refused` and

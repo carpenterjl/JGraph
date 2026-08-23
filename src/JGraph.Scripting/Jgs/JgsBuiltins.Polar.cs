@@ -361,7 +361,7 @@ internal static partial class JgsBuiltins
                 "polarhistogram: bin edges already say where every bin is, so a count, width or limits cannot be given too.");
         }
 
-        double[] edges = givenEdges ?? ChooseEdges(data!, requested, width, limits, rule);
+        double[] edges = givenEdges ?? Binning.EdgesFor(data!, requested, width, limits, rule);
 
         return OnAxes(named, () => OnPolarAxes(() =>
         {

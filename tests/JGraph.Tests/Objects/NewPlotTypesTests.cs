@@ -29,7 +29,9 @@ public class NewPlotTypesTests
         var ctx = new RecordingRenderContext(new Size2D(100, 100));
         ((IDrawable)stem).Render(ctx, State());
 
-        Assert.Equal(3, ctx.LineCount);        // one stem per point
+        // Three stems and the line they stand on, which M77 gave every stem chart — MATLAB draws
+        // one under all of them and this build carried the number without drawing it.
+        Assert.Equal(4, ctx.LineCount);
         Assert.Equal(3, ctx.MarkerBatchCount); // one marker per point
     }
 
@@ -38,9 +40,9 @@ public class NewPlotTypesTests
     [Fact]
     public void Histogram_CountsSamplesPerBin()
     {
-        var hist = new HistogramPlot(new double[] { 1, 2, 2, 3, 3, 3 }) { BinCount = 3 };
+        var hist = new HistogramPlot(new double[] { 1, 2, 2, 3, 3, 3 }) { NumBins = 3 };
         Assert.Equal(new double[] { 1, 2, 3 }, hist.BinHeights.ToArray());
-        Assert.Equal(4, hist.BinEdges.Count);
+        Assert.Equal(4, hist.BinEdges.Length);
         Assert.Equal(1, hist.BinEdges[0], 6);
         Assert.Equal(3, hist.BinEdges[^1], 6);
     }
@@ -50,7 +52,7 @@ public class NewPlotTypesTests
     {
         var hist = new HistogramPlot(new double[] { 1, 2, 2, 3, 3, 3 })
         {
-            BinCount = 3,
+            NumBins = 3,
             Normalization = HistogramNormalization.Probability,
         };
         Assert.Equal(1.0, hist.BinHeights.Sum(), 9);
@@ -61,7 +63,7 @@ public class NewPlotTypesTests
     {
         var hist = new HistogramPlot(new double[] { 1, 2, 2, 3, 3, 3 })
         {
-            BinCount = 3,
+            NumBins = 3,
             Normalization = HistogramNormalization.Density,
         };
         double binWidth = hist.BinEdges[1] - hist.BinEdges[0];
@@ -74,7 +76,7 @@ public class NewPlotTypesTests
     {
         var hist = new HistogramPlot(new double[] { 1, 2, 2, 3, 3, 3 })
         {
-            BinCount = 3,
+            NumBins = 3,
             Normalization = HistogramNormalization.Cumulative,
         };
         Assert.Equal(6, hist.BinHeights[^1]);
@@ -83,7 +85,7 @@ public class NewPlotTypesTests
     [Fact]
     public void Histogram_YBoundsStartAtZero()
     {
-        var hist = new HistogramPlot(new double[] { 1, 2, 2, 3, 3, 3 }) { BinCount = 3 };
+        var hist = new HistogramPlot(new double[] { 1, 2, 2, 3, 3, 3 }) { NumBins = 3 };
         Assert.Equal(0, hist.GetYDataBounds().Min);
         Assert.Equal(3, hist.GetYDataBounds().Max);
     }
@@ -91,10 +93,10 @@ public class NewPlotTypesTests
     [Fact]
     public void Histogram_RecomputesWhenBinCountChanges()
     {
-        var hist = new HistogramPlot(new double[] { 1, 2, 3, 4 }) { BinCount = 2 };
-        Assert.Equal(2, hist.BinHeights.Count);
-        hist.BinCount = 4;
-        Assert.Equal(4, hist.BinHeights.Count);
+        var hist = new HistogramPlot(new double[] { 1, 2, 3, 4 }) { NumBins = 2 };
+        Assert.Equal(2, hist.BinHeights.Length);
+        hist.NumBins = 4;
+        Assert.Equal(4, hist.BinHeights.Length);
     }
 
     // ---- ErrorBarPlot ----

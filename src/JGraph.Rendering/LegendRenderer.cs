@@ -23,7 +23,8 @@ internal static class LegendRenderer
     /// which plots those are needs <see cref="ILegendItem"/>, which the model layer cannot see.
     /// </summary>
     public static bool SyncEntries(AxesModel axes) =>
-        axes.Legend.SyncEntries(axes.Plots.Where(static p => p is ILegendItem));
+        axes.Legend.SyncEntries(
+            axes.Plots.Where(static p => p is ILegendItem && p.ShowsInLegend));
 
     /// <summary>
     /// Draws the legend and returns where it landed, or null when nothing was drawn. Each row's own
@@ -133,14 +134,15 @@ internal static class LegendRenderer
                 (marker.Edge ?? Colors.Black).WithOpacity(DimOpacity),
                 marker.EdgeWidth)
             : null,
-        key.Swatch?.WithOpacity(DimOpacity));
+        key.Swatch?.WithOpacity(DimOpacity),
+        key.Outline is { } outline ? outline.WithColor(outline.Color.WithOpacity(DimOpacity)) : null);
 
     private static void DrawSwatch(IRenderContext context, LegendKey key, double left, double centerY)
     {
         if (key.Swatch is { } swatch)
         {
             var rect = new Rect2D(left, centerY - 5, SwatchWidth, 10);
-            context.DrawRectangle(rect, stroke: null, fill: swatch);
+            context.DrawRectangle(rect, key.Outline, fill: swatch);
         }
 
         if (key.Line is { } line)

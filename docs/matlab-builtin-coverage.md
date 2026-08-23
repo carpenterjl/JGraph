@@ -56,7 +56,7 @@ sections M67 can prove are removed below; the rest of the gap is between the com
 prose groupings, and is recorded here rather than guessed at, because a group re-labelled without
 reading it is exactly the slip this file keeps catching.
 
-**246 of the 277 documented graphics functions** — the second table below, new in M45, moved by 52 in
+**247 of the 277 documented graphics functions** — the second table below, new in M45, moved by 52 in
 M54, by 13 in M55, by 17 in M56 (the eight angular chart verbs and the nine polar rulers), by 13
 in M57, which empties the chart-type family below but for two names excluded with reasons, by 16
 in M58, which empties the function-plotter family outright, by 21 in M59, which empties the
@@ -77,7 +77,7 @@ The lists here were never wrong; the sentence describing them was. They have alw
 `legend`, `colorbar`, `bubblelegend` and `annotation`, which MATLAB documents under `matlab/scribe`,
 and the eight plot-tool verbs (`plotedit` `plottools` `plotbrowser` `propertyeditor` `figurepalette`
 `showplottool` `axtoolbar` `axtoolbarbtn`), which it documents under `matlab/plottools`. Six folders,
-not four: **264 + 4 + 9 = 277**, of which 246 are implemented and 31 are excluded with stated reasons.
+not four: **264 + 4 + 9 = 277**, of which 247 are implemented and 30 are excluded with stated reasons.
 
 The lesson is the one the other four taught, one level up: **check the denominator against the source
 rather than against the last time it was written down.** Counting names in a list catches a slip in
@@ -94,9 +94,11 @@ see. This file refused to count them while they drew nothing; **M56 made them re
 number and this one agree again. `opengl` *is* counted, because an accepted no-op is an answer — the
 same reading that counted `shading`, `lighting` and `camlight` in M43.
 
-Across every callable kind — builtin, function, operator, keyword, script — the count is **915 of
-2,024** as of M76, which added `spalloc` and `frewind` — the two names the numeric and file form
-wave found missing outright rather than merely short of forms
+Across every callable kind — builtin, function, operator, keyword, script — the count is **916 of
+2,024** as of M77, which added `refreshdata` — the one name the chart-primitive property wave took
+off the exclusion list, because the `XDataSource` family it needs arrived with that wave
+(915 after M76, which added `spalloc` and `frewind` — the two names the numeric and file form
+wave found missing outright rather than merely short of forms)
 (913 after M75, which added `saveas` and gave the MATLAB dialect's `print` its paper meaning; 912 after M71; 910 after M69; 926 of 2,027 was written here from M68 and counted two different populations —
 see the correction below; 919 after M67, 905 after M66, 880 after M65, 867 after M64, 814 after M60, 781 after M59, 758 after M58, 742 after M57, 728 after M56, 710 after M55 by this file's nine-short reading above, 697 after M54, 633 after
 M52, 619 after M51, up from 560, and not from the 556 this file used to claim: the checklist tool
@@ -315,10 +317,15 @@ which is a product rather than a feature. **Six are print and export dialogs** (
 `printpreview` `pagesetupdlg` `exportsetupdlg` `exportapp`) and `uiaxes`, which are app building —
 the same non-goal as the `ui*` family in the handle-graphics section. **Six are a chart container
 whose whole content is a layout algorithm** (`wordcloud` `parallelplot` `bubblecloud` — three) or a
-machine JGraph does not run on (`graymon` `im2java` `spinmap` — three legacy names). **And two are
-verbs that need something this build does not have**: `rbbox` and `refreshdata` need a rubber-band
-drag and an `XDataSource` respectively, and both describe a way of working the plot browser already
-offers. Nine plus eight plus six plus six plus two is 31.
+machine JGraph does not run on (`graymon` `im2java` `spinmap` — three legacy names). **And one is a
+verb that needs something this build does not have**: `rbbox` needs a rubber-band drag, and describes
+a way of working the plot browser already offers. Nine plus eight plus six plus six plus one is 30.
+
+`refreshdata` stood beside it here until M77 for want of an `XDataSource`, which was the honest
+reason at the time and stopped being one the moment that family was implemented. It is the first name
+this file has taken *off* the exclusion list rather than out of the unimplemented one, and it is
+worth saying why the distinction matters: an exclusion is a decision, and a decision whose grounds
+have gone is not a decision any more.
 
 The two counts in that paragraph read "four" and "four" over lists of six and two until M61 corrected
 them. The totals were right and the labels were wrong, which is the same slip in miniature that the
@@ -377,11 +384,11 @@ in the table above and no longer listed here as well, which is where one of this
 double-counted names came from — the other was this family's own heading, which said twenty-two while
 listing twenty-three, and is corrected at the top of this file.
 
-**Handle graphics and figure tooling — 13 of 36 left.** M60 took twenty-three of this family and the
+**Handle graphics and figure tooling — 12 of 36 left.** M60 took twenty-three of this family and the
 list here is now only what remains: `plotedit` `plottools` `plotbrowser` `propertyeditor`
 `figurepalette` `showplottool` `axtoolbar` `axtoolbarbtn` `cameratoolbar` `uiaxes` `geoaxes` `rbbox`
-`refreshdata` — every one of them excluded with a reason in the 31 above, and most of them addressing
-an editing surface JGraph already has in the plot browser and inspector.
+— every one of them excluded with a reason in the 30 above, and most of them addressing an editing
+surface JGraph already has in the plot browser and inspector. `refreshdata` left this list in M77.
 
 The seventeen names this paragraph went on listing after M60 registered them — `alim` `alpha`
 `alphamap` `annotation` `getframe` `getappdata` `isappdata` `linkprop` `openfig` `savefig` `hgload`

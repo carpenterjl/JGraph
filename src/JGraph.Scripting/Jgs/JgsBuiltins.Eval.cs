@@ -17,7 +17,7 @@ internal static partial class JgsBuiltins
     [
         "eval", "evalc", "evalin", "assignin", "str2func", "str2num",
         "exist", "who", "which", "narginchk", "nargoutchk", "nargchk",
-        "lasterr", "lasterror", "lastwarn",
+        "lasterr", "lasterror", "lastwarn", "refreshdata",
 
         // M62: the error objects — error is re-declared over its plain form, the rest are new.
         "error", "MException", "throw", "rethrow", "throwAsCaller",
@@ -54,6 +54,12 @@ internal static partial class JgsBuiltins
         RegisterIntrospection(Define, DefineBare, interpreter, host);
         RegisterLegacyFunctionPlotBuiltins(env, interpreter);
         RegisterClassBuiltins(env, interpreter);
+
+        // refreshdata belongs with the handle verbs and is registered here only because it is the one
+        // of them that reads a workspace, which is a thing only the interpreter knows about.
+        env.Declare("refreshdata", JgsValue.Function(new BuiltinFunction(
+            "refreshdata", (args, line, col) => RefreshData(args, interpreter, line, col))
+        { BindsAnsAsStatement = false, AutoCallsBare = true }));
         _ = dialect;
     }
 

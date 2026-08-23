@@ -57,10 +57,42 @@ public abstract class PlotDto
 
     /// <summary>The seat this plot took in the series cycle, or -1 (the pre-M73 default) for none.</summary>
     public int SeriesIndex { get; set; } = -1;
+
+    /// <summary>Whether the object is trimmed to the plot box (M77). Documents before it clipped.</summary>
+    public bool Clipping { get; set; } = true;
+
+    /// <summary>Whether the object takes a legend row — MATLAB's Annotation.LegendInformation.</summary>
+    public bool ShowsInLegend { get; set; } = true;
+}
+
+/// <summary>
+/// The serialized form of the line a bar, stem or area stands on (JGraph.Core.Model.BaseLineModel).
+/// Its base value lives on the owning chart, which has always carried one, so only what M77 added
+/// is written here.
+/// </summary>
+public sealed class BaseLineDto
+{
+    public bool Visible { get; set; } = true;
+
+    public Color? Color { get; set; }
+
+    public double LineWidth { get; set; } = 0.5;
+
+    public DashStyle LineStyle { get; set; }
 }
 
 public sealed class LinePlotDto : PlotDto
 {
+    /// <summary>Marker outline colour, or null to draw it in the line's own (M77).</summary>
+    public Color? MarkerEdge { get; set; }
+
+    /// <summary>Which samples carry a marker, or null for all of them (M77).</summary>
+    public int[]? MarkerIndices { get; set; }
+
+    public LineJoin LineJoin { get; set; } = LineJoin.Miter;
+
+    public bool AlignVertexCenters { get; set; }
+
     public SeriesDto Series { get; set; } = new(Array.Empty<double>(), Array.Empty<double>());
 
     public Color? Color { get; set; }
@@ -81,6 +113,11 @@ public sealed class LinePlotDto : PlotDto
 
 public sealed class ScatterPlotDto : PlotDto
 {
+    /// <summary>A transparency per point, or null for one opacity across the cloud (M77).</summary>
+    public double[]? AlphaData { get; set; }
+
+    public AlphaMapping AlphaDataMapping { get; set; } = AlphaMapping.Scaled;
+
     public SeriesDto Series { get; set; } = new(Array.Empty<double>(), Array.Empty<double>());
 
     public Color? Color { get; set; }
@@ -147,6 +184,14 @@ public sealed class BarPlotDto : PlotDto
 
     public bool Horizontal { get; set; }
 
+    public double EdgeAlpha { get; set; } = 1.0;
+
+    /// <summary>One colour per bar, or null for one colour across the series.</summary>
+    public Color[]? ColorData { get; set; }
+
+    /// <summary>The line the bars stand on, or null for a document written before M77.</summary>
+    public BaseLineDto? BaseLine { get; set; }
+
     /// <summary>Which series of a grouped chart this is, and how many share the slot.</summary>
     public int GroupIndex { get; set; }
 
@@ -176,6 +221,13 @@ public sealed class AreaPlotDto : PlotDto
     public double BaseValue { get; set; }
 
     public bool ShowBaseLine { get; set; } = true;
+
+    public double EdgeAlpha { get; set; } = 1.0;
+
+    public bool AlignVertexCenters { get; set; }
+
+    /// <summary>The line the band stands on, or null for a document written before M77.</summary>
+    public BaseLineDto? BaseLine { get; set; }
 
     /// <summary>The stacking floor, or null for a band standing on its own base value.</summary>
     public double[]? LowerEdge { get; set; }
@@ -325,26 +377,66 @@ public sealed class StemPlotDto : PlotDto
 
     public double Baseline { get; set; }
 
+    public DashStyle DashStyle { get; set; }
+
     public MarkerType Marker { get; set; } = MarkerType.Circle;
 
     public double MarkerSize { get; set; } = 6;
 
     public Color? MarkerFill { get; set; }
+
+    public Color? MarkerEdge { get; set; }
+
+    /// <summary>The line the stems stand on, or null for a document written before M77.</summary>
+    public BaseLineDto? BaseLine { get; set; }
 }
 
 public sealed class HistogramPlotDto : PlotDto
 {
+    /// <summary>The readings behind the counts, or empty for the counts-only form.</summary>
     public double[] Values { get; set; } = Array.Empty<double>();
 
     public int BinCount { get; set; } = 10;
 
+    /// <summary>Where the bins fall. Absent in documents written before M77, which carried a count.</summary>
+    public double[]? BinEdges { get; set; }
+
+    /// <summary>The counts, needed only when there are no readings to take them from again.</summary>
+    public double[]? BinCounts { get; set; }
+
+    public string BinMethod { get; set; } = "auto";
+
+    /// <summary>The chosen span, or null when the bins simply cover the readings.</summary>
+    public double[]? BinLimits { get; set; }
+
+    /// <summary>The names counted, when this is a histogram of names.</summary>
+    public string[]? Categories { get; set; }
+
+    public CategoryDisplayOrder DisplayOrder { get; set; }
+
+    public int NumDisplayBins { get; set; }
+
+    public bool ShowOthers { get; set; }
+
     public HistogramNormalization Normalization { get; set; }
+
+    public HistogramDisplayStyle DisplayStyle { get; set; }
+
+    public HistogramOrientation Orientation { get; set; }
 
     public Color? FillColor { get; set; }
 
     public Color? EdgeColor { get; set; }
 
     public double EdgeWidth { get; set; } = 1.0;
+
+    public double FaceAlpha { get; set; } = 1.0;
+
+    public double EdgeAlpha { get; set; } = 1.0;
+
+    public DashStyle LineStyle { get; set; } = DashStyle.Solid;
+
+    public double BarWidth { get; set; } = 1.0;
 }
 
 /// <summary>The serialized form of a <see cref="PolarHistogramPlot"/>.</summary>
@@ -380,6 +472,15 @@ public sealed class PolarHistogramPlotDto : PlotDto
 
 public sealed class ErrorBarPlotDto : PlotDto
 {
+    /// <summary>How far each whisker reaches sideways, or null for an upright-only chart (M77).</summary>
+    public double[]? ErrorLeft { get; set; }
+
+    public double[]? ErrorRight { get; set; }
+
+    public DashStyle DashStyle { get; set; }
+
+    public Color? MarkerEdge { get; set; }
+
     public SeriesDto Series { get; set; } = new(Array.Empty<double>(), Array.Empty<double>());
 
     public double[] ErrorNeg { get; set; } = Array.Empty<double>();
@@ -655,11 +756,18 @@ public sealed class Stem3DPlotDto : PlotDto
 
     public double Baseline { get; set; }
 
+    public DashStyle DashStyle { get; set; }
+
     public MarkerType Marker { get; set; } = MarkerType.Circle;
 
     public double MarkerSize { get; set; } = 6;
 
     public Color? MarkerFill { get; set; }
+
+    public Color? MarkerEdge { get; set; }
+
+    /// <summary>The line the stems stand on, or null for a document written before M77.</summary>
+    public BaseLineDto? BaseLine { get; set; }
 }
 
 /// <summary>The serialized form of a <see cref="Bar3DPlot"/>.</summary>

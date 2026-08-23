@@ -105,3 +105,20 @@ public enum VerticalAlignment
     /// <summary>Aligns to the text baseline rather than the cell top/bottom.</summary>
     Baseline,
 }
+
+/// <summary>
+/// How per-element transparency numbers are read: MATLAB's <c>AlphaDataMapping</c>. Scaled stretches
+/// them over the axes' alpha limits and looks them up in its alphamap; direct indexes the map with
+/// them as they stand; none takes them as opacities already, between 0 and 1.
+/// </summary>
+public enum AlphaMapping
+{
+    /// <summary>The numbers are opacities in [0, 1] and nothing is looked up.</summary>
+    None,
+
+    /// <summary>Stretched over ALim and looked up in the alphamap — MATLAB's default.</summary>
+    Scaled,
+
+    /// <summary>Used as indices into the alphamap without scaling.</summary>
+    Direct,
+}

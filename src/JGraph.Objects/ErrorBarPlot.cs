@@ -15,15 +15,19 @@ namespace JGraph.Objects;
 /// </summary>
 public sealed class ErrorBarPlot : XYPlot, IDrawable, ILegendItem
 {
-    private readonly double[] _errorNeg;
-    private readonly double[] _errorPos;
+    private double[] _errorNeg;
+    private double[] _errorPos;
+    private double[]? _errorLeft;
+    private double[]? _errorRight;
     private Color? _color;
     private double _lineWidth = 1.5;
     private double _capSize = 6;
     private bool _showLine = true;
+    private DashStyle _dashStyle = DashStyle.Solid;
     private MarkerType _marker = MarkerType.Circle;
     private double _markerSize = 6;
     private Color? _markerFill;
+    private Color? _markerEdge;
 
     private Point2D[] _dataBuffer = new Point2D[16];
     private Point2D[] _pixelBuffer = new Point2D[16];
@@ -106,13 +110,94 @@ public sealed class ErrorBarPlot : XYPlot, IDrawable, ILegendItem
     /// <inheritdoc />
     public string LegendLabel => DisplayName;
 
-    /// <summary>The per-sample lower error magnitudes, exposed for serialization.</summary>
+    /// <summary>
+    /// The per-sample lower error magnitudes — MATLAB's <c>LData</c>. Writable since M77: they were
+    /// a constructor argument and nothing else, so a script could draw error bars and never change
+    /// them.
+    /// </summary>
     [Browsable(false)]
-    public IReadOnlyList<double> ErrorNeg => _errorNeg;
+    public double[] ErrorNeg
+    {
+        get => _errorNeg;
+        set => SetProperty(ref _errorNeg, Fitted(value, Data.Count), InvalidationKind.Data);
+    }
 
-    /// <summary>The per-sample upper error magnitudes, exposed for serialization.</summary>
+    /// <summary>The per-sample upper error magnitudes — MATLAB's <c>UData</c>.</summary>
     [Browsable(false)]
-    public IReadOnlyList<double> ErrorPos => _errorPos;
+    public double[] ErrorPos
+    {
+        get => _errorPos;
+        set => SetProperty(ref _errorPos, Fitted(value, Data.Count), InvalidationKind.Data);
+    }
+
+    /// <summary>How far each whisker reaches to the left, or null for none — <c>XNegativeDelta</c>.</summary>
+    [Browsable(false)]
+    public double[]? ErrorLeft
+    {
+        get => _errorLeft;
+        set => SetProperty(ref _errorLeft, value is null ? null : Fitted(value, Data.Count), InvalidationKind.Data);
+    }
+
+    /// <summary>How far each whisker reaches to the right — <c>XPositiveDelta</c>.</summary>
+    [Browsable(false)]
+    public double[]? ErrorRight
+    {
+        get => _errorRight;
+        set => SetProperty(ref _errorRight, value is null ? null : Fitted(value, Data.Count), InvalidationKind.Data);
+    }
+
+    /// <summary>How the connecting line and the whiskers are dashed.</summary>
+    [Category("Appearance"), DisplayName("Dash style")]
+    public DashStyle DashStyle
+    {
+        get => _dashStyle;
+        set
+        {
+            SetProperty(ref _dashStyle, value, InvalidationKind.Render);
+            LineStyleManual = true;
+        }
+    }
+
+    /// <summary>Marker outline color, or null to draw it in the series' own colour.</summary>
+    [Category("Appearance"), DisplayName("Marker edge")]
+    public Color? MarkerEdge
+    {
+        get => _markerEdge;
+        set => SetProperty(ref _markerEdge, value, InvalidationKind.Render);
+    }
+
+    /// <summary>Errors padded or trimmed to the samples there are, so the two cannot disagree.</summary>
+    private static double[] Fitted(double[] values, int count)
+    {
+        ArgumentNullException.ThrowIfNull(values);
+        var fitted = new double[count];
+        Array.Copy(values, fitted, System.Math.Min(values.Length, count));
+        return fitted;
+    }
+
+    /// <summary>The horizontal extent includes the sideways whiskers, when there are any.</summary>
+    public override DataRange GetXDataBounds()
+    {
+        DataRange bounds = Data.XBounds;
+        if (_errorLeft is null && _errorRight is null)
+        {
+            return bounds;
+        }
+
+        for (int i = 0; i < Data.Count; i++)
+        {
+            double x = Data.GetX(i);
+            if (!double.IsFinite(x))
+            {
+                continue;
+            }
+
+            bounds = bounds.Include(x - System.Math.Abs(_errorLeft is null ? 0 : _errorLeft[i]));
+            bounds = bounds.Include(x + System.Math.Abs(_errorRight is null ? 0 : _errorRight[i]));
+        }
+
+        return bounds;
+    }
 
     /// <summary>The vertical extent includes the whiskers, so error bars are never clipped by auto-scaling.</summary>
     public override DataRange GetYDataBounds()
@@ -137,7 +222,7 @@ public sealed class ErrorBarPlot : XYPlot, IDrawable, ILegendItem
     public void Render(IRenderContext context, RenderState state)
     {
         Color color = (_color ?? state.SeriesColor).WithOpacity(Opacity);
-        var lineStyle = new LineStyle(color, _lineWidth);
+        var lineStyle = new LineStyle(color, _lineWidth, _dashStyle);
         ICoordinateMapper mapper = state.Mapper;
 
         if (_showLine)
@@ -147,7 +232,8 @@ public sealed class ErrorBarPlot : XYPlot, IDrawable, ILegendItem
 
         double halfCap = _capSize / 2.0;
         Span<Point2D> tip = stackalloc Point2D[1];
-        var marker = new MarkerStyle(_marker, _markerSize, _markerFill, color);
+        Color markerEdge = _markerEdge is { } chosen ? chosen.WithOpacity(Opacity) : color;
+        var marker = new MarkerStyle(_marker, _markerSize, _markerFill, markerEdge);
 
         for (int i = 0; i < Data.Count; i++)
         {
@@ -173,10 +259,33 @@ public sealed class ErrorBarPlot : XYPlot, IDrawable, ILegendItem
                 context.DrawLine(new Point2D(pHi.X - halfCap, pHi.Y), new Point2D(pHi.X + halfCap, pHi.Y), lineStyle);
             }
 
+            // The sideways pair, when the call gave any. They are the same figure turned a quarter
+            // turn: a bar between two reaches, capped at each end.
+            if (_errorLeft is not null || _errorRight is not null)
+            {
+                double left = x - System.Math.Abs(_errorLeft is null ? 0 : _errorLeft[i]);
+                double right = x + System.Math.Abs(_errorRight is null ? 0 : _errorRight[i]);
+                Point2D pLeft = mapper.DataToPixel(left, y);
+                Point2D pRight = mapper.DataToPixel(right, y);
+                context.DrawLine(pLeft, pRight, lineStyle);
+
+                if (_capSize > 0)
+                {
+                    context.DrawLine(
+                        new Point2D(pLeft.X, pLeft.Y - halfCap),
+                        new Point2D(pLeft.X, pLeft.Y + halfCap),
+                        lineStyle);
+                    context.DrawLine(
+                        new Point2D(pRight.X, pRight.Y - halfCap),
+                        new Point2D(pRight.X, pRight.Y + halfCap),
+                        lineStyle);
+                }
+            }
+
             if (_marker != MarkerType.None)
             {
                 tip[0] = mapper.DataToPixel(x, y);
-                context.DrawMarkers(tip, marker, color);
+                context.DrawMarkers(tip, marker, markerEdge);
             }
         }
     }
@@ -185,9 +294,9 @@ public sealed class ErrorBarPlot : XYPlot, IDrawable, ILegendItem
     public LegendKey GetLegendKey(Color seriesColor)
     {
         Color color = _color ?? seriesColor;
-        LineStyle? line = _showLine ? new LineStyle(color, _lineWidth) : null;
+        LineStyle? line = _showLine ? new LineStyle(color, _lineWidth, _dashStyle) : null;
         MarkerStyle? marker = _marker != MarkerType.None
-            ? new MarkerStyle(_marker, System.Math.Min(_markerSize, 8), _markerFill, color)
+            ? new MarkerStyle(_marker, System.Math.Min(_markerSize, 8), _markerFill, _markerEdge ?? color)
             : null;
         return new LegendKey(line, marker, swatch: null);
     }

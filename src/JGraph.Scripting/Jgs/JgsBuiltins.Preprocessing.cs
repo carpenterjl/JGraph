@@ -1,3 +1,4 @@
+using JGraph.Maths;
 using JGraph.Data;
 
 namespace JGraph.Scripting.Jgs;
@@ -526,7 +527,7 @@ internal static partial class JgsBuiltins
                 throw new JgsRuntimeException(line, col, "discretize needs at least one bin.");
             }
 
-            edges = ChooseEdges(bare.Values, count, null, null, "auto");
+            edges = Binning.EdgesFor(bare.Values, count, null, null, "auto");
         }
         else
         {

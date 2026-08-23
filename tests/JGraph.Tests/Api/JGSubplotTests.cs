@@ -53,7 +53,7 @@ public class JGSubplotTests
         JG.Figure();
         HistogramPlot hist = JG.Histogram(new double[] { 1, 2, 3, 4, 5 }, binCount: 5);
         Assert.Same(hist, JG.Gca().Plots[0]);
-        Assert.Equal(5, hist.BinCount);
+        Assert.Equal(5, hist.NumBins);
     }
 
     [Fact]

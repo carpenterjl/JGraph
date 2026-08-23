@@ -629,9 +629,9 @@ public class SerializationTests
     [Fact]
     public void Histogram_RoundTripsSamplesAndBins()
     {
-        var hist = new HistogramPlot(new double[] { 1, 2, 2, 3, 3, 3 }) { BinCount = 3, Normalization = HistogramNormalization.Probability };
+        var hist = new HistogramPlot(new double[] { 1, 2, 2, 3, 3, 3 }) { NumBins = 3, Normalization = HistogramNormalization.Probability };
         var loaded = (HistogramPlot)RoundTrip(WithAxes(hist)).Axes[0].Plots[0];
-        Assert.Equal(3, loaded.BinCount);
+        Assert.Equal(3, loaded.NumBins);
         Assert.Equal(HistogramNormalization.Probability, loaded.Normalization);
         Assert.Equal(hist.BinHeights.ToArray(), loaded.BinHeights.ToArray());
     }

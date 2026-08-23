@@ -28,8 +28,10 @@ public sealed class BarPlot : XYPlot, IDrawable, ILegendItem
     private double _faceAlpha = 1.0;
     private DashStyle _dash = DashStyle.Solid;
     private double _barWidthFraction = 0.8;
-    private double _baseline;
+    private readonly BaseLineModel _baseLine = new();
     private bool _horizontal;
+    private double _edgeAlpha = 1.0;
+    private Color[]? _colorData;
     private int _groupIndex;
     private int _groupCount = 1;
     private double _positionOffset;
@@ -39,6 +41,7 @@ public sealed class BarPlot : XYPlot, IDrawable, ILegendItem
         : base(data)
     {
         Name = "Bar";
+        Adopt(_baseLine);
     }
 
     public BarPlot(double[] positions, double[] values)
@@ -93,12 +96,53 @@ public sealed class BarPlot : XYPlot, IDrawable, ILegendItem
         set => SetProperty(ref _barWidthFraction, System.Math.Clamp(value, 0.01, 1.0), InvalidationKind.Layout);
     }
 
-    /// <summary>The value bars rise from (usually 0).</summary>
+    /// <summary>The value bars rise from (usually 0), which is the baseline's own number.</summary>
     [Category("Appearance")]
     public double Baseline
     {
-        get => _baseline;
-        set => SetProperty(ref _baseline, value, InvalidationKind.Layout);
+        get => _baseLine.BaseValue;
+        set
+        {
+            _baseLine.BaseValue = value;
+            Invalidate(InvalidationKind.Layout);
+        }
+    }
+
+    /// <summary>The line the bars stand on, with its own colour, width and dash.</summary>
+    [Browsable(false)]
+    public BaseLineModel BaseLine => _baseLine;
+
+    /// <summary>Whether that line is drawn. MATLAB draws it by default and so does this.</summary>
+    [Category("Appearance"), DisplayName("Show base line")]
+    public bool ShowBaseLine
+    {
+        get => _baseLine.Visible;
+        set
+        {
+            _baseLine.Visible = value;
+            Invalidate(InvalidationKind.Render);
+        }
+    }
+
+    /// <summary>How opaque the bar edges are, in [0, 1]. The faces are unaffected.</summary>
+    [Category("Appearance"), DisplayName("Edge alpha")]
+    public double EdgeAlpha
+    {
+        get => _edgeAlpha;
+        set => SetProperty(ref _edgeAlpha, System.Math.Clamp(value, 0, 1), InvalidationKind.Render);
+    }
+
+    /// <summary>
+    /// A colour for each bar, or null for one colour across the series. MATLAB calls it CData and
+    /// takes either an n-by-3 table of colours or one index per bar into the colormap; both arrive
+    /// here already resolved to colours, because deciding that is the caller's business and drawing
+    /// them is this one's.
+    /// </summary>
+    [Browsable(false)]
+    public Color[]? ColorData
+    {
+        get => _colorData;
+        set => SetProperty(ref _colorData, value, InvalidationKind.Render);
     }
 
     /// <summary>When true, draws a horizontal bar chart (values extend along X).</summary>
@@ -156,7 +200,7 @@ public sealed class BarPlot : XYPlot, IDrawable, ILegendItem
 
     /// <summary>The floor under bar <paramref name="i"/>.</summary>
     public double FloorAt(int i) =>
-        _lowerEdge is { } edge && i < edge.Length && double.IsFinite(edge[i]) ? edge[i] : _baseline;
+        _lowerEdge is { } edge && i < edge.Length && double.IsFinite(edge[i]) ? edge[i] : Baseline;
 
     /// <summary>The top of bar <paramref name="i"/>: absolute alone, relative when stacked.</summary>
     public double TopAt(int i) => _lowerEdge is null ? Data.GetY(i) : FloorAt(i) + Data.GetY(i);
@@ -174,10 +218,10 @@ public sealed class BarPlot : XYPlot, IDrawable, ILegendItem
     /// <inheritdoc />
     public void Render(IRenderContext context, RenderState state)
     {
-        Color fill = (_fillColor ?? state.SeriesColor).WithOpacity(Opacity * _faceAlpha);
-        Color edge = _edgeColor ?? Color.Lerp(_fillColor ?? state.SeriesColor, Colors.Black, 0.25);
+        Color series = _fillColor ?? state.SeriesColor;
+        Color edge = _edgeColor ?? Color.Lerp(series, Colors.Black, 0.25);
         LineStyle? stroke = _edgeWidth > 0
-            ? new LineStyle(edge.WithOpacity(Opacity), _edgeWidth, _dash)
+            ? new LineStyle(edge.WithOpacity(Opacity * _edgeAlpha), _edgeWidth, _dash)
             : null;
         ICoordinateMapper mapper = state.Mapper;
 
@@ -185,14 +229,57 @@ public sealed class BarPlot : XYPlot, IDrawable, ILegendItem
         {
             if (BarRect(i, mapper) is { } rect)
             {
-                context.DrawRectangle(rect, stroke, fill);
+                Color own = _colorData is { } colors && colors.Length > 0
+                    ? colors[i % colors.Length]
+                    : series;
+                context.DrawRectangle(rect, stroke, own.WithOpacity(Opacity * _faceAlpha));
             }
         }
+
+        DrawBaseLine(context, mapper, edge);
+    }
+
+    /// <summary>
+    /// The line the bars stand on, drawn across whatever of the chart the bars cover. MATLAB draws
+    /// it under every bar chart; before M77 this one carried the number and drew nothing.
+    /// </summary>
+    private void DrawBaseLine(IRenderContext context, ICoordinateMapper mapper, Color fallback)
+    {
+        if (!_baseLine.Visible || Data.Count == 0)
+        {
+            return;
+        }
+
+        DataRange along = ExpandByHalfBar(Data.XBounds);
+        if (!along.IsValid)
+        {
+            return;
+        }
+
+        var pen = new LineStyle(
+            (_baseLine.Color ?? fallback).WithOpacity(Opacity),
+            System.Math.Max(_baseLine.LineWidth, 0.5),
+            _baseLine.LineStyle);
+        double value = Baseline;
+        (Point2D from, Point2D to) = _horizontal
+            ? (mapper.DataToPixel(value, along.Min), mapper.DataToPixel(value, along.Max))
+            : (mapper.DataToPixel(along.Min, value), mapper.DataToPixel(along.Max, value));
+        context.DrawLine(from, to, pen);
     }
 
     /// <inheritdoc />
-    public LegendKey GetLegendKey(Color seriesColor) =>
-        new(line: null, marker: null, swatch: _fillColor ?? seriesColor);
+    public LegendKey GetLegendKey(Color seriesColor)
+    {
+        Color face = _fillColor ?? seriesColor;
+        Color edge = _edgeColor ?? Color.Lerp(face, Colors.Black, 0.25);
+        return new LegendKey(
+            line: null,
+            marker: null,
+            swatch: face.WithOpacity(_faceAlpha),
+            outline: _edgeWidth > 0
+                ? new LineStyle(edge.WithOpacity(_edgeAlpha), _edgeWidth, _dash)
+                : null);
+    }
 
     /// <inheritdoc />
     public override PlotHitResult? HitTest(Point2D pixelPoint, ICoordinateMapper mapper, double tolerancePixels)
@@ -255,7 +342,7 @@ public sealed class BarPlot : XYPlot, IDrawable, ILegendItem
             range = range.Include(FloorAt(i)).Include(top);
         }
 
-        return range.IsEmpty ? DataRange.Empty : range.Include(_baseline);
+        return range.IsEmpty ? DataRange.Empty : range.Include(Baseline);
     }
 
     /// <summary>How far the slot is shifted along the category axis, in data units.</summary>

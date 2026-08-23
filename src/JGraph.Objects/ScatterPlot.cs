@@ -27,6 +27,8 @@ namespace JGraph.Objects;
 /// </summary>
 public sealed class ScatterPlot : XYPlot, IDrawable, ILegendItem, IColorMapped, IBubbleData
 {
+    private double[]? _alphaData;
+    private AlphaMapping _alphaDataMapping = AlphaMapping.Scaled;
     private Color? _color;
     private MarkerType _marker = MarkerType.Circle;
     private double _markerSize = 7;
@@ -364,7 +366,7 @@ public sealed class ScatterPlot : XYPlot, IDrawable, ILegendItem, IColorMapped, 
 
         Color color = _color ?? state.SeriesColor;
         IDataSeries drawn = Displayed;
-        if (_sizeData is null && _colorData is null)
+        if (_sizeData is null && _colorData is null && _alphaData is null)
         {
             // One uniform style: the whole cloud goes out as a single call, as it did before there
             // were per-point channels at all.
@@ -376,6 +378,7 @@ public sealed class ScatterPlot : XYPlot, IDrawable, ILegendItem, IColorMapped, 
         ICoordinateMapper mapper = state.Mapper;
         (double min, double max) = ResolveColorRange();
         bool logColor = this.LogColorScale();
+        AlphaLookup alpha = this.ResolveAlpha(AlphaBounds());
         Span<Point2D> one = stackalloc Point2D[1];
         for (int i = 0; i < drawn.Count; i++)
         {
@@ -388,9 +391,84 @@ public sealed class ScatterPlot : XYPlot, IDrawable, ILegendItem, IColorMapped, 
 
             Color point = _colorData is { } values ? _colormap.Sample(values[i], min, max, logColor) : color;
             Color fill = _colorData is null ? _fill ?? color : point;
+
+            // The per-point transparency, read the way the axes' alpha map says to read it — the
+            // same AlphaResolver a surface and an image have used since M74.
+            if (_alphaData is { } alphas && i < alphas.Length)
+            {
+                double opacity = OpacityOf(alphas[i], alpha);
+                fill = fill.WithOpacity(opacity);
+                point = point.WithOpacity(opacity);
+            }
+
             one[0] = mapper.DataToPixel(x, y);
             context.DrawMarkers(one, new MarkerStyle(_marker, DiameterAt(i), fill, point, _edgeWidth), point);
         }
+    }
+
+    /// <summary>
+    /// A transparency per point, or null for one opacity across the cloud. MATLAB reads these
+    /// through the axes' alpha map exactly as it reads CData through the colormap, which is why
+    /// <see cref="AlphaDataMapping"/> says how — and why 'none' means the numbers are opacities
+    /// already.
+    /// </summary>
+    [Browsable(false)]
+    public double[]? AlphaData
+    {
+        get => _alphaData;
+        set => SetProperty(ref _alphaData, Checked(value, nameof(AlphaData)), InvalidationKind.Render);
+    }
+
+    /// <summary>Whether AlphaData is scaled through the axes' map, taken as it stands, or ignored.</summary>
+    [Category("Appearance"), DisplayName("Alpha data mapping")]
+    public AlphaMapping AlphaDataMapping
+    {
+        get => _alphaDataMapping;
+        set => SetProperty(ref _alphaDataMapping, value, InvalidationKind.Render);
+    }
+
+    /// <summary>
+    /// One alpha reading turned into an opacity, as <see cref="AlphaDataMapping"/> says to read it:
+    /// as an opacity already, as an index into the alphamap, or stretched over the axes' alpha
+    /// limits and looked up there.
+    /// </summary>
+    private double OpacityOf(double raw, AlphaLookup scaled)
+    {
+        if (!double.IsFinite(raw))
+        {
+            return 1;
+        }
+
+        switch (_alphaDataMapping)
+        {
+            case AlphaMapping.None:
+                return System.Math.Clamp(raw, 0, 1);
+
+            case AlphaMapping.Direct:
+            {
+                IReadOnlyList<double> map = Axes?.ResolveAlphamap() ?? AlphaSampler.DefaultMap;
+                int index = System.Math.Clamp((int)System.Math.Round(raw) - 1, 0, map.Count - 1);
+                return System.Math.Clamp(map[index], 0, 1);
+            }
+
+            default:
+                return System.Math.Clamp(scaled.Sample(raw), 0, 1);
+        }
+    }
+
+    /// <summary>The spread the alpha map is stretched over, which is the readings themselves.</summary>
+    private DataRange AlphaBounds()
+    {
+        DataRange bounds = DataRange.Empty;
+        foreach (double value in _alphaData ?? [])
+        {
+            if (double.IsFinite(value))
+            {
+                bounds = bounds.Include(value);
+            }
+        }
+
+        return bounds;
     }
 
     /// <inheritdoc />

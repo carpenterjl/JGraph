@@ -120,6 +120,13 @@ internal static partial class JgsGraphicsProperties
         EllipseAnnotation => "ellipse",
         ShapeAnnotation => "rectangle",
         DataTipAnnotation => "datatip",
+
+        // The small objects a plot hangs off itself: MATLAB reaches its legend switch and its data
+        // tip rows through these two-step paths, and a script that knows the spelling knows the type.
+        PlotAnnotationModel => "annotation",
+        LegendEntryInfoModel => "legendentry",
+        DataTipTemplateModel => "datatiptemplate",
+        DataTipRowModel => "datatiptextrow",
         _ => FallbackTypeName(target.GetType()),
     };
 
@@ -676,6 +683,8 @@ internal static partial class JgsGraphicsProperties
                 entry => JgsValue.Str(((PlotObject)entry.Target).DisplayName),
                 (entry, value, line, col) => JgsBuiltins.SetDisplayName(
                     (PlotObject)entry.Target, JgsBuiltins.StrOf("DisplayName", value, line, col)));
+
+            AddPlotWave(type, table);
         }
 
         if (typeof(XYPlot).IsAssignableFrom(type))
@@ -966,9 +975,10 @@ internal static partial class JgsGraphicsProperties
 
         if (typeof(AreaPlot).IsAssignableFrom(type))
         {
-            // Everything else an area has — FaceColor, FaceAlpha, BaseValue, ShowBaseLine — is
-            // already reachable by reflection under the name MATLAB uses. Only the dash pattern is
-            // spelled differently here than there.
+            // Everything else an area has — FaceAlpha, BaseValue, ShowBaseLine — is already
+            // reachable by reflection under the name MATLAB uses. Only the dash pattern is
+            // spelled differently here than there (FaceColor is served in the M77 block, where an
+            // unchosen fill learned to answer with the colour it is drawn in rather than 'none').
             Put(table, "LineStyle",
                 entry => JgsValue.Str(JgsBuiltins.DashWord(((AreaPlot)entry.Target).Dash)),
                 (entry, value, line, col) =>
@@ -1390,14 +1400,22 @@ internal static partial class JgsGraphicsProperties
 
                     entry.ItemHitFcn = value;
                 });
+            // A row with no label of its own shows the series' DisplayName, which is what the legend
+            // draws — so reading String answered empty strings for the ordinary case where a script
+            // named its series rather than the legend.
             Put(table, "String", entry => JgsValue.Cell(
-                ((LegendModel)entry.Target).Entries.Select(e => JgsValue.Str(e.Label ?? string.Empty)).ToArray()));
+                ((LegendModel)entry.Target).Entries
+                    .Select(e => JgsValue.Str(
+                        e.Label is { Length: > 0 } written ? written : e.Plot?.DisplayName ?? string.Empty))
+                    .ToArray()));
         }
 
         if (typeof(AnnotationObject).IsAssignableFrom(type))
         {
             AddAnnotationAliases(type, table);
         }
+
+        AddPlotWaveNested(type, table);
     }
 
     /// <summary>

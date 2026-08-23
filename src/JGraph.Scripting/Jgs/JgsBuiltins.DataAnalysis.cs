@@ -1,3 +1,4 @@
+using JGraph.Maths;
 using JGraph.Numerics;
 using JGraph.Numerics.LinearAlgebra;
 
@@ -1150,7 +1151,7 @@ internal static partial class JgsBuiltins
 
     // --- Binning ----------------------------------------------------------------------------------
 
-    private static readonly OptionSpec HistogramOptions = new(
+    private static readonly OptionSpec HistCountsOptions = new(
         "histcounts",
         Flags: [],
         Names: ["BinWidth", "BinLimits", "Normalization", "BinMethod"]);
@@ -1168,7 +1169,7 @@ internal static partial class JgsBuiltins
             throw new JgsRuntimeException(line, col, "histcounts needs some data.");
         }
 
-        ParsedArgs parsed = HistogramOptions.Parse(args, 2, line, col);
+        ParsedArgs parsed = HistCountsOptions.Parse(args, 2, line, col);
         if (parsed.Positional.Count == 0)
         {
             throw new JgsRuntimeException(line, col, "histcounts needs the data before any option.");
@@ -1220,7 +1221,7 @@ internal static partial class JgsBuiltins
             throw new JgsRuntimeException(line, col, "histcounts: 'BinLimits' takes a [low high] pair.");
         }
 
-        double[] edges = given ?? ChooseEdges(data, requested, width, limits, rule);
+        double[] edges = given ?? Binning.EdgesFor(data, requested, width, limits, rule);
         var counts = new double[edges.Length - 1];
         var which = new double[data.Length];
         for (int i = 0; i < data.Length; i++)
@@ -1269,123 +1270,6 @@ internal static partial class JgsBuiltins
         }
 
         return low;
-    }
-
-    /// <summary>The bin edges when the call did not name them: a count, a width, or a binning rule.</summary>
-    private static double[] ChooseEdges(
-        double[] data, int? requested, double? width, double[]? limits, string rule)
-    {
-        double[] inside = limits is null
-            ? data
-            : [.. data.Where(v => v >= limits[0] && v <= limits[1])];
-        double[] finite = [.. inside.Where(double.IsFinite)];
-
-        double low;
-        double high;
-        if (limits is not null)
-        {
-            (low, high) = (limits[0], limits[1]);
-        }
-        else if (finite.Length == 0)
-        {
-            (low, high) = (0, 1);
-        }
-        else
-        {
-            (low, high) = (finite.Min(), finite.Max());
-        }
-
-        if (requested is { } count)
-        {
-            if (high == low)
-            {
-                (low, high) = (low - 0.5, low + 0.5);
-            }
-
-            return Spanning(low, high, count);
-        }
-
-        if (width is { } size)
-        {
-            double left = limits is not null ? low : size * Math.Floor(low / size);
-            int bins = Math.Max(1, (int)Math.Ceiling((high - left) / size));
-            return Uniform(left, size, bins, high);
-        }
-
-        if (finite.Length == 0)
-        {
-            return [low, high];
-        }
-
-        if (low == high)
-        {
-            return [low - 0.5, low + 0.5]; // one distinct reading still deserves a bin around it
-        }
-
-        bool whole = finite.All(static v => v == Math.Floor(v));
-        if (limits is null && (rule == "integers" || (rule == "auto" && whole && high - low <= 50)))
-        {
-            double step = Math.Max(1, Math.Ceiling((high - low + 1) / 100));
-            int bins = (int)Math.Ceiling((high - low + 1) / step);
-            return Uniform(low - 0.5, step, bins, high);
-        }
-
-        double raw = rule switch
-        {
-            "sturges" => (high - low) / Math.Ceiling(Math.Log2(finite.Length) + 1),
-            "sqrt" => (high - low) / Math.Ceiling(Math.Sqrt(finite.Length)),
-            "fd" => 2 * (JgsStdlib.Percentile(finite, 75) - JgsStdlib.Percentile(finite, 25))
-                / Math.Cbrt(finite.Length),
-            _ => 3.5 * Math.Sqrt(finite.Length > 1 ? JgsStdlib.Variance(finite) : 0) / Math.Cbrt(finite.Length),
-        };
-
-        // Limits given by name are exact — they say where the histogram starts and stops, so the
-        // rule only gets to choose how many bins fit between them, never where the ends go.
-        if (limits is not null)
-        {
-            double niceWidth = NiceEdges(raw, low, high) is { Length: > 1 } nice ? nice[1] - nice[0] : high - low;
-            return Spanning(low, high, Math.Max(1, (int)Math.Round((high - low) / niceWidth)));
-        }
-
-        return NiceEdges(raw, low, high);
-    }
-
-    /// <summary>
-    /// Bins on round numbers: the width is rounded to 1, 2, 3, 5 or 10 times a power of ten, and the
-    /// left edge to a multiple of that width. A histogram whose bins land on readable numbers is the
-    /// point of letting the function choose them.
-    /// </summary>
-    private static double[] NiceEdges(double raw, double low, double high)
-    {
-        if (!(raw > 0) || !double.IsFinite(raw))
-        {
-            raw = (high - low) / 10;
-        }
-
-        double powerOfTen = Math.Pow(10, Math.Floor(Math.Log10(raw)));
-        double relative = raw / powerOfTen;
-        double width = powerOfTen * (relative < 1.5 ? 1 : relative < 2.5 ? 2 : relative < 4 ? 3 : relative < 7.5 ? 5 : 10);
-
-        double left = width * Math.Floor(low / width);
-        int bins = Math.Max(1, (int)Math.Ceiling((high - left) / width));
-        return Uniform(left, width, bins, high);
-    }
-
-    /// <summary>
-    /// Bins of a fixed width. The last edge is nudged out to <paramref name="reach"/> when the
-    /// arithmetic left it a hair short, because a value falling past the final edge would otherwise
-    /// be counted as outside the histogram it defined.
-    /// </summary>
-    private static double[] Uniform(double left, double width, int bins, double reach)
-    {
-        var edges = new double[bins + 1];
-        for (int i = 0; i <= bins; i++)
-        {
-            edges[i] = left + (i * width);
-        }
-
-        edges[^1] = Math.Max(edges[^1], reach);
-        return edges;
     }
 
     /// <summary>Bins filling exactly the span from low to high, which is what named limits mean.</summary>

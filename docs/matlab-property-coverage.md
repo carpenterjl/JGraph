@@ -5,7 +5,7 @@ building the object in `jgraph.exe` and asking it, not from reading the source: 
 table is built by reflection over the model's CLR types, so what an object answers to is a
 runtime fact.
 
-**930 of 1394 documented properties** are answered across the
+**1132 of 1394 documented properties** are answered across the
 28 object kinds that could be built and asked. The other
 0 kinds are counted separately below rather than scored as zero —
 an object that cannot be reached is not the same measurement as one missing properties, and
@@ -16,29 +16,29 @@ for six times.
 |---|---|---:|---:|---:|
 | `axes` | `Axes` | 144 | 147 | 38 |
 | `polaraxes` | `PolarAxes` | 87 | 107 | 95 |
-| `scatter` | `Scatter` | 33 | 74 | 24 |
-| `bubblechart` | `BubbleChart` | 32 | 73 | 25 |
+| `scatter` | `Scatter` | 59 | 74 | 25 |
+| `bubblechart` | `BubbleChart` | 58 | 73 | 26 |
 | `figure` | `Figure` | 66 | 66 | 8 |
-| `surface` | `Surface` | 33 | 60 | 19 |
-| `patch` | `Patch` | 34 | 56 | 19 |
-| `pie` | `Patch` | 22 | 56 | 18 |
-| `line` | `Line` | 26 | 52 | 12 |
-| `errorbar` | `ErrorBar` | 26 | 52 | 11 |
-| `quiver` | `Quiver` | 31 | 52 | 10 |
-| `histogram` | `Histogram` | 21 | 46 | 12 |
-| `contour` | `Contour` | 25 | 46 | 15 |
-| `bar` | `Bar` | 29 | 44 | 15 |
-| `stem` | `Stem` | 26 | 43 | 11 |
+| `surface` | `Surface` | 36 | 60 | 20 |
+| `patch` | `Patch` | 37 | 56 | 20 |
+| `pie` | `Patch` | 25 | 56 | 19 |
+| `line` | `Line` | 48 | 52 | 15 |
+| `errorbar` | `ErrorBar` | 52 | 52 | 13 |
+| `quiver` | `Quiver` | 35 | 52 | 10 |
+| `histogram` | `Histogram` | 46 | 46 | 10 |
+| `contour` | `Contour` | 28 | 46 | 16 |
+| `bar` | `Bar` | 44 | 44 | 14 |
+| `stem` | `Stem` | 43 | 43 | 13 |
 | `colorbar` | `ColorBar` | 19 | 42 | 6 |
 | `text` | `Text` | 28 | 41 | 14 |
 | `legend` | `Legend` | 23 | 39 | 8 |
-| `area` | `Area` | 28 | 39 | 10 |
-| `heatmap` | `HeatmapChart` | 20 | 39 | 27 |
-| `stair` | `Stair` | 26 | 38 | 12 |
+| `area` | `Area` | 39 | 39 | 10 |
+| `heatmap` | `HeatmapChart` | 20 | 39 | 31 |
+| `stair` | `Stair` | 38 | 38 | 25 |
 | `bubblelegend` | `BubbleLegend` | 26 | 37 | 9 |
-| `constantline` | `ConstantLine` | 28 | 35 | 13 |
-| `boxchart` | `BoxChart` | 24 | 29 | 23 |
-| `image` | `Image` | 19 | 27 | 16 |
+| `constantline` | `ConstantLine` | 29 | 35 | 16 |
+| `boxchart` | `BoxChart` | 27 | 29 | 24 |
+| `image` | `Image` | 21 | 27 | 18 |
 | `light` | `Light` | 21 | 21 | 5 |
 | `uimenu` | `Menu` | 21 | 21 | 11 |
 | `uicontextmenu` | `ContextMenu` | 12 | 12 | 11 |

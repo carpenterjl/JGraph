@@ -388,6 +388,19 @@ public static class JG
         return axes.AddHistogram(values, binCount);
     }
 
+    /// <summary>
+    /// Puts a histogram that has already been built onto the current axes. The bins are settled
+    /// before it arrives — by edges, by counts, or by names — so there is nothing left here to
+    /// decide, which is why this takes the object rather than the numbers.
+    /// </summary>
+    public static HistogramPlot Histogram(HistogramPlot plot)
+    {
+        ArgumentNullException.ThrowIfNull(plot);
+        AxesModel axes = PrepareAxes();
+        axes.Plots.Add(plot);
+        return plot;
+    }
+
     /// <summary>Plots samples with symmetric vertical error bars (MATLAB <c>errorbar</c>).</summary>
     public static ErrorBarPlot ErrorBar(double[] xs, double[] ys, double[] error)
     {
@@ -1369,7 +1382,8 @@ public static class JG
         ArgumentNullException.ThrowIfNull(plots);
 
         LegendModel legend = axes.Legend;
-        legend.SyncEntries(axes.Plots.OfType<ILegendItem>().Cast<PlotObject>().ToList());
+        legend.SyncEntries(axes.Plots
+            .OfType<ILegendItem>().Cast<PlotObject>().Where(static p => p.ShowsInLegend).ToList());
 
         foreach (LegendEntryModel entry in legend.Entries)
         {

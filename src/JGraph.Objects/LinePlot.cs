@@ -21,6 +21,10 @@ public sealed class LinePlot : XYPlot, IDrawable, ILegendItem
     private MarkerType _marker = MarkerType.None;
     private double _markerSize = 6;
     private Color? _markerFill;
+    private Color? _markerEdge;
+    private int[]? _markerIndices;
+    private LineJoin _lineJoin = LineJoin.Miter;
+    private bool _alignVertexCenters;
 
     private Point2D[] _dataBuffer = new Point2D[16];
     private Point2D[] _pixelBuffer = new Point2D[16];
@@ -55,7 +59,11 @@ public sealed class LinePlot : XYPlot, IDrawable, ILegendItem
     public DashStyle DashStyle
     {
         get => _dashStyle;
-        set => SetProperty(ref _dashStyle, value, InvalidationKind.Render);
+        set
+        {
+            SetProperty(ref _dashStyle, value, InvalidationKind.Render);
+            LineStyleManual = true;
+        }
     }
 
     /// <summary>
@@ -73,7 +81,11 @@ public sealed class LinePlot : XYPlot, IDrawable, ILegendItem
     public MarkerType Marker
     {
         get => _marker;
-        set => SetProperty(ref _marker, value, InvalidationKind.Render);
+        set
+        {
+            SetProperty(ref _marker, value, InvalidationKind.Render);
+            MarkerManual = true;
+        }
     }
 
     [Category("Appearance"), DisplayName("Marker size")]
@@ -91,6 +103,46 @@ public sealed class LinePlot : XYPlot, IDrawable, ILegendItem
         set => SetProperty(ref _markerFill, value, InvalidationKind.Render);
     }
 
+    /// <summary>Marker outline color, or null to draw it in the line's own colour.</summary>
+    [Category("Appearance"), DisplayName("Marker edge")]
+    public Color? MarkerEdge
+    {
+        get => _markerEdge;
+        set => SetProperty(ref _markerEdge, value, InvalidationKind.Render);
+    }
+
+    /// <summary>
+    /// Which samples carry a marker, counting from zero, or null for all of them. MATLAB's
+    /// <c>MarkerIndices</c> is how a dense line is given a readable handful of markers rather than
+    /// one per point.
+    /// </summary>
+    [Browsable(false)]
+    public int[]? MarkerIndices
+    {
+        get => _markerIndices;
+        set => SetProperty(ref _markerIndices, value, InvalidationKind.Render);
+    }
+
+    /// <summary>How corners between segments are joined.</summary>
+    [Category("Appearance"), DisplayName("Line join")]
+    public LineJoin LineJoin
+    {
+        get => _lineJoin;
+        set => SetProperty(ref _lineJoin, value, InvalidationKind.Render);
+    }
+
+    /// <summary>
+    /// Whether vertices are snapped to pixel centres. A one-pixel line drawn between them is
+    /// blurred across two rows of pixels; snapping is what makes it crisp, which is the whole of
+    /// what MATLAB's property of this name does.
+    /// </summary>
+    [Category("Appearance"), DisplayName("Align vertex centers")]
+    public bool AlignVertexCenters
+    {
+        get => _alignVertexCenters;
+        set => SetProperty(ref _alignVertexCenters, value, InvalidationKind.Render);
+    }
+
     /// <inheritdoc />
     public string LegendLabel => DisplayName;
 
@@ -98,7 +150,8 @@ public sealed class LinePlot : XYPlot, IDrawable, ILegendItem
     public void Render(IRenderContext context, RenderState state)
     {
         Color color = _color ?? state.SeriesColor;
-        var line = new LineStyle(color.WithOpacity(Opacity), _lineWidth, _dashStyle);
+        var line = new LineStyle(
+            color.WithOpacity(Opacity), _lineWidth, _dashStyle, LineCap.Butt, _lineJoin);
 
         // A stepped line draws an expanded path but keeps its samples: the markers below, the hit
         // test, and the bounds all still read Data, so only the ink between samples moves.
@@ -109,12 +162,15 @@ public sealed class LinePlot : XYPlot, IDrawable, ILegendItem
             path = new ArrayDataSeries(stepX, stepY);
         }
 
-        SeriesRenderer.DrawLine(context, state, path, line, ref _dataBuffer, ref _pixelBuffer);
+        SeriesRenderer.DrawLine(
+            context, state, path, line, ref _dataBuffer, ref _pixelBuffer, _alignVertexCenters);
 
         if (_marker != MarkerType.None && Data.Count <= SeriesRenderer.MaxMarkerCount)
         {
-            var marker = new MarkerStyle(_marker, _markerSize, _markerFill, color);
-            SeriesRenderer.DrawMarkers(context, state, Data, marker, color, ref _pixelBuffer);
+            Color edge = _markerEdge ?? color;
+            var marker = new MarkerStyle(_marker, _markerSize, _markerFill, edge);
+            SeriesRenderer.DrawMarkers(
+                context, state, Data, marker, edge, ref _pixelBuffer, _markerIndices);
         }
     }
 
@@ -124,7 +180,7 @@ public sealed class LinePlot : XYPlot, IDrawable, ILegendItem
         Color color = _color ?? seriesColor;
         var line = new LineStyle(color, _lineWidth, _dashStyle);
         MarkerStyle? marker = _marker != MarkerType.None
-            ? new MarkerStyle(_marker, System.Math.Min(_markerSize, 8), _markerFill, color)
+            ? new MarkerStyle(_marker, System.Math.Min(_markerSize, 8), _markerFill, _markerEdge ?? color)
             : null;
         return new LegendKey(line, marker, swatch: null);
     }

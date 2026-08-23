@@ -486,8 +486,8 @@ cool,function,1,c = cool(m),accepted,
 copper,function,0,c = copper,accepted,
 copper,function,1,c = copper(m),accepted,
 copyfile,builtin,0,copyfile source,error,"copyfile expects between 2 and 3 argument(s), but got 1."
-copyfile,builtin,1,copyfile source destination,error,copyfile: Could not find file 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-forms-anz2amsk\source'.
-copyfile,builtin,2,copyfile source destination f,error,copyfile: Could not find file 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-forms-anz2amsk\source'.
+copyfile,builtin,1,copyfile source destination,error,copyfile: Could not find file 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-forms-07iwa5yu\source'.
+copyfile,builtin,2,copyfile source destination f,error,copyfile: Could not find file 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-forms-07iwa5yu\source'.
 copyfile,builtin,3,status = copyfile(___),error,"copyfile expects between 2 and 3 argument(s), but got 1."
 copyfile,builtin,4,"[status,msg] = copyfile(___)",error,"copyfile expects between 2 and 3 argument(s), but got 1."
 copyfile,builtin,5,"[status,msg,msgID] = copyfile(___)",error,"copyfile expects between 2 and 3 argument(s), but got 1."
@@ -627,7 +627,7 @@ errorbar,function,0,"errorbar(y,err)",accepted,
 errorbar,function,1,"errorbar(x,y,err)",accepted,
 errorbar,function,2,"errorbar(x,y,neg,pos)",accepted,
 errorbar,function,3,"errorbar(___,ornt)",accepted,
-errorbar,function,4,"errorbar(x,y,yneg,ypos,xneg,xpos)",error,"errorbar expects between 2 and 4 argument(s), but got 6."
+errorbar,function,4,"errorbar(x,y,yneg,ypos,xneg,xpos)",accepted,
 errorbar,function,5,"errorbar(___,LineSpec)",accepted,
 errorbar,function,6,"errorbar(___,Name,Value)",unprobed,"Name,Value form; the dump lists no pair names"
 errorbar,function,7,"errorbar(ax,___)",accepted,
@@ -844,14 +844,14 @@ fplot,function,0,fplot(f),accepted,
 fplot,function,1,"fplot(f,xinterval)",error,"fplot: an interval is two values, [low high]."
 fplot,function,2,"fplot(funx,funy)",accepted,
 fplot,function,3,"fplot(funx,funy,tinterval)",error,"fplot: an interval is two values, [low high]."
-fplot,function,4,"fplot(___,LineSpec)",error,"fplot: options come in 'Name', value pairs."
+fplot,function,4,"fplot(___,LineSpec)",accepted,
 fplot,function,5,"fplot(___,Name,Value)",unprobed,"Name,Value form; the dump lists no pair names"
 fplot,function,6,"fplot(ax,___)",accepted,
 fplot,function,7,fp = fplot(___),accepted,
 fplot,function,8,"[x,y] = fplot(___)",accepted,
 fplot3,function,0,"fplot3(funx,funy,funz)",accepted,
 fplot3,function,1,"fplot3(funx,funy,funz,tinterval)",error,"fplot3: an interval is two values, [low high]."
-fplot3,function,2,"fplot3(___,LineSpec)",error,"fplot3: options come in 'Name', value pairs."
+fplot3,function,2,"fplot3(___,LineSpec)",accepted,
 fplot3,function,3,"fplot3(___,Name,Value)",unprobed,"Name,Value form; the dump lists no pair names"
 fplot3,function,4,"fplot3(ax,___)",accepted,
 fplot3,function,5,fp = fplot3(___),accepted,
@@ -1353,8 +1353,8 @@ more,builtin,1,more off,accepted,
 more,builtin,2,more(n),accepted,
 more,builtin,3,A = more(___),accepted,
 movefile,builtin,0,movefile source,error,"movefile expects between 2 and 3 argument(s), but got 1."
-movefile,builtin,1,movefile source destination,error,movefile: Could not find file 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-forms-anz2amsk\source'.
-movefile,builtin,2,movefile source destination f,error,movefile: Could not find file 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-forms-anz2amsk\source'.
+movefile,builtin,1,movefile source destination,error,movefile: Could not find file 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-forms-07iwa5yu\source'.
+movefile,builtin,2,movefile source destination f,error,movefile: Could not find file 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-forms-07iwa5yu\source'.
 movefile,builtin,3,status = movefile(___),error,"movefile expects between 2 and 3 argument(s), but got 1."
 movefile,builtin,4,"[status,msg] = movefile(___)",error,"movefile expects between 2 and 3 argument(s), but got 1."
 movefile,builtin,5,"[status,msg,msgID] = movefile(___)",error,"movefile expects between 2 and 3 argument(s), but got 1."
@@ -1452,10 +1452,10 @@ ones,builtin,2,"X = ones(sz1,...,szN)",unprobed,no sample for this form's argume
 ones,builtin,3,X = ones(sz),accepted,
 ones,builtin,4,"X = ones(___,typename)",accepted,
 ones,builtin,5,"X = ones(___,'like',p)",unprobed,no sample for this form's arguments
-openfig,function,0,openfig(filename),error,Could not find file 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-forms-anz2amsk\a.fig'.
-openfig,function,1,"openfig(filename,copies)",error,Could not find file 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-forms-anz2amsk\a.fig'.
-openfig,function,2,"openfig(___,visibility)",error,Could not find file 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-forms-anz2amsk\a.fig'.
-openfig,function,3,fig = openfig(___),error,Could not find file 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-forms-anz2amsk\a.fig'.
+openfig,function,0,openfig(filename),error,Could not find file 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-forms-07iwa5yu\a.fig'.
+openfig,function,1,"openfig(filename,copies)",error,Could not find file 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-forms-07iwa5yu\a.fig'.
+openfig,function,2,"openfig(___,visibility)",error,Could not find file 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-forms-07iwa5yu\a.fig'.
+openfig,function,3,fig = openfig(___),error,Could not find file 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-forms-07iwa5yu\a.fig'.
 opengl,function,0,opengl info,accepted,
 opengl,function,1,d = opengl('data'),accepted,
 opengl,function,2,opengl software,accepted,
@@ -1729,6 +1729,9 @@ reducevolume,function,1,"[nx,ny,nz,nv] = reducevolume(V,[Rx,Ry,Rz])",accepted,
 reducevolume,function,2,nv = reducevolume(...),unprobed,no sample for this form's arguments
 refresh,function,0,refresh,accepted,
 refresh,function,1,refresh(h),unprobed,no sample for this form's arguments
+refreshdata,function,0,refreshdata,accepted,
+refreshdata,function,1,refreshdata(target),accepted,
+refreshdata,function,2,"refreshdata(target,workspace)",accepted,
 regexp,builtin,0,"startIndex = regexp(str,expression)",accepted,
 regexp,builtin,1,"[startIndex,endIndex] = regexp(str,expression)",accepted,
 regexp,builtin,2,"out = regexp(str,expression,outkey)",accepted,
@@ -1769,10 +1772,10 @@ rlim,function,4,m = rlim('mode'),error,"rlim expects 'auto' or 'manual', but got
 rlim,function,5,"___ = rlim(pax,___)",error,"rlim expects a two-element [min, max] array."
 rmappdata,builtin,0,"rmappdata(obj,name)",error,rmappdata: nothing is stored under 'a' on this object.
 rmdir,builtin,0,rmdir folderName,accepted,
-rmdir,builtin,1,rmdir folderName s,error,rmdir: Could not find a part of the path 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-forms-anz2amsk\folderName'.
-rmdir,builtin,2,status = rmdir(___),error,rmdir: Could not find a part of the path 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-forms-anz2amsk\folderName'.
-rmdir,builtin,3,"[status,msg] = rmdir(___)",error,rmdir: Could not find a part of the path 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-forms-anz2amsk\folderName'.
-rmdir,builtin,4,"[status,msg,msgID] = rmdir(___)",error,rmdir: Could not find a part of the path 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-forms-anz2amsk\folderName'.
+rmdir,builtin,1,rmdir folderName s,error,rmdir: Could not find a part of the path 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-forms-07iwa5yu\folderName'.
+rmdir,builtin,2,status = rmdir(___),error,rmdir: Could not find a part of the path 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-forms-07iwa5yu\folderName'.
+rmdir,builtin,3,"[status,msg] = rmdir(___)",error,rmdir: Could not find a part of the path 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-forms-07iwa5yu\folderName'.
+rmdir,builtin,4,"[status,msg,msgID] = rmdir(___)",error,rmdir: Could not find a part of the path 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-forms-07iwa5yu\folderName'.
 rose,function,0,rose(theta),unprobed,no sample for this form's arguments
 rose,function,1,"rose(theta,x)",unprobed,no sample for this form's arguments
 rose,function,2,"rose(theta,nbins)",unprobed,no sample for this form's arguments
@@ -1956,15 +1959,15 @@ startsWith,builtin,0,"TF = startsWith(str,pat)",accepted,
 startsWith,builtin,1,"TF = startsWith(str,pat,'IgnoreCase',true)",unprobed,no sample for this form's arguments
 stem,function,0,stem(Y),accepted,
 stem,function,1,"stem(X,Y)",accepted,
-stem,function,2,"stem(___,'filled')",error,"stem expects argument 2 to be an array, but got a string."
-stem,function,3,"stem(___,LineSpec)",error,"stem expects argument 2 to be an array, but got a string."
+stem,function,2,"stem(___,'filled')",accepted,
+stem,function,3,"stem(___,LineSpec)",accepted,
 stem,function,4,"stem(___,Name,Value)",unprobed,"Name,Value form; the dump lists no pair names"
 stem,function,5,"stem(ax,___)",accepted,
 stem,function,6,h = stem(___),accepted,
 stem3,function,0,stem3(Z),accepted,
 stem3,function,1,"stem3(X,Y,Z)",accepted,
 stem3,function,2,"stem3(___,'filled')",accepted,
-stem3,function,3,"stem3(___,LineSpec)",refused,"stem3 has no option 'a'. It takes Color, LineStyle, LineWidth, Marker, MarkerSize, MarkerFaceColor, MarkerEdgeColor, BaseValue, DisplayName."
+stem3,function,3,"stem3(___,LineSpec)",accepted,
 stem3,function,4,"stem3(___,Name,Value)",unprobed,"Name,Value form; the dump lists no pair names"
 stem3,function,5,"stem3(ax,___)",accepted,
 stem3,function,6,h = stem3(___),accepted,
@@ -2284,7 +2287,7 @@ waterfall,function,3,"waterfall(Z,C)",error,"waterfall expects 3 argument(s), bu
 waterfall,function,4,"waterfall(ax,___)",accepted,
 waterfall,function,5,p = waterfall(___),accepted,
 what,builtin,0,what,accepted,
-what,builtin,1,what folderName,refused,what: 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-forms-anz2amsk\folderName' is not a folder.
+what,builtin,1,what folderName,refused,what: 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-forms-07iwa5yu\folderName' is not a folder.
 what,builtin,2,s = what(___),accepted,
 which,builtin,0,which item,accepted,
 which,builtin,1,which fun1 in fun2,error,"which expects 1 argument(s), but got 3."
@@ -2322,7 +2325,7 @@ xlim,function,4,m = xlim('mode'),error,"xlim expects 'auto' or 'manual', but got
 xlim,function,5,"___ = xlim(target,___)",error,"xlim expects a two-element [min, max] array."
 xline,function,0,xline(x),accepted,
 xline,function,1,"xline(x,LineSpec)",accepted,
-xline,function,2,"xline(x,LineSpec,labels)",refused,"xline: unknown option 'a'. Use Color, LineWidth, LineStyle, Label, DisplayName, Alpha, FontSize, LabelHorizontalAlignment, LabelVerticalAlignment."
+xline,function,2,"xline(x,LineSpec,labels)",accepted,
 xline,function,3,"xline(___,Name,Value)",unprobed,"Name,Value form; the dump lists no pair names"
 xline,function,4,"xline(ax,___)",accepted,
 xline,function,5,xl = xline(___),accepted,
@@ -2361,7 +2364,7 @@ ylim,function,4,m = ylim('mode'),error,"ylim expects 'auto' or 'manual', but got
 ylim,function,5,"___ = ylim(target,___)",error,"ylim expects a two-element [min, max] array."
 yline,function,0,yline(y),accepted,
 yline,function,1,"yline(y,LineSpec)",accepted,
-yline,function,2,"yline(y,LineSpec,labels)",refused,"yline: unknown option 'a'. Use Color, LineWidth, LineStyle, Label, DisplayName, Alpha, FontSize, LabelHorizontalAlignment, LabelVerticalAlignment."
+yline,function,2,"yline(y,LineSpec,labels)",accepted,
 yline,function,3,"yline(___,Name,Value)",unprobed,"Name,Value form; the dump lists no pair names"
 yline,function,4,"yline(ax,___)",accepted,
 yline,function,5,yl = yline(___),accepted,

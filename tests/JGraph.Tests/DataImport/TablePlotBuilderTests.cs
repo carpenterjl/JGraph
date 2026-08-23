@@ -77,7 +77,7 @@ public class TablePlotBuilderTests
         IReadOnlyList<PlotObject> plots = TablePlotBuilder.Build(
             axes, new TablePlotSpec(NumericTable(), ImportPlotKind.Histogram, null, new[] { "y" }, HistogramBins: 5));
         var histogram = Assert.IsType<HistogramPlot>(plots[0]);
-        Assert.Equal(5, histogram.BinCount);
+        Assert.Equal(5, histogram.NumBins);
     }
 
     [Fact]

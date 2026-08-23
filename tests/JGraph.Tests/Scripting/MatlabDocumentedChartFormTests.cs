@@ -242,7 +242,7 @@ public class MatlabDocumentedChartFormTests : IDisposable
         await Run("errorbar([2 4 3], [0.1 0.2 0.3]);");
 
         ErrorBarPlot bars = Single<ErrorBarPlot>();
-        Assert.Equal(3, bars.ErrorNeg.Count);
+        Assert.Equal(3, bars.ErrorNeg.Length);
         Assert.Equal(bars.ErrorNeg, bars.ErrorPos);   // one array means symmetric
     }
 
@@ -267,15 +267,27 @@ public class MatlabDocumentedChartFormTests : IDisposable
         Assert.False(bars.ShowLine);   // a marker with no dash is markers alone, as in plot
     }
 
+    /// <summary>
+    /// The sideways whiskers, which were refused by name until M77 drew them. A horizontal chart
+    /// reads the one set of magnitudes along x and leaves y alone; 'both' reads them both ways.
+    /// </summary>
     [Fact]
-    public Task Errorbar_RefusesAHorizontalWhiskerByNameRatherThanDrawingAVerticalOne() => Run("""
-        errorbar(1:3, [2 4 3], [0.1 0.2 0.3], 'vertical');   % the direction that is drawn
-        ok = false;
-        try
-            errorbar(1:3, [2 4 3], [0.1 0.2 0.3], 'horizontal');
-        catch err
-            ok = ~isempty(strfind(err.message, 'along x'));
-        end
-        assert(ok);
+    public Task Errorbar_ReachesSidewaysWhenTheDirectionSaysTo() => Run("""
+        v = errorbar(1:3, [2 4 3], [0.1 0.2 0.3], 'vertical');
+        assert(isempty(get(v, 'XNegativeDelta')));
+        assert(isequal(get(v, 'LData'), [0.1 0.2 0.3]));
+
+        h = errorbar(1:3, [2 4 3], [0.1 0.2 0.3], 'horizontal');
+        assert(isequal(get(h, 'XNegativeDelta'), [0.1 0.2 0.3]));
+        assert(all(get(h, 'LData') == 0));
+
+        b = errorbar(1:3, [2 4 3], [0.1 0.2 0.3], 'both');
+        assert(isequal(get(b, 'XPositiveDelta'), [0.1 0.2 0.3]));
+        assert(isequal(get(b, 'UData'), [0.1 0.2 0.3]));
+
+        % And the six-vector form, which names every reach outright.
+        six = errorbar(1:3, [2 4 3], [.1 .1 .1], [.2 .2 .2], [.3 .3 .3], [.4 .4 .4]);
+        assert(isequal(get(six, 'LData'), [.1 .1 .1]));
+        assert(isequal(get(six, 'XPositiveDelta'), [.4 .4 .4]));
         """);
 }

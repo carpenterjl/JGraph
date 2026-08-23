@@ -4,6 +4,7 @@ using System.Linq;
 using System.Numerics;
 using JGraph.Api;
 using JGraph.Imaging;
+using JGraph.Maths;
 using JGraph.Numerics;
 using JGraph.Signal;
 using JGraph.Signal.Rf;
@@ -2400,6 +2401,7 @@ internal static partial class JgsBuiltins
     private static readonly HashSet<string> PlotOptionNames = new(StringComparer.OrdinalIgnoreCase)
     {
         "LineWidth", "Color", "LineStyle", "Marker", "MarkerSize", "DisplayName", "HandleVisibility",
+        "MarkerEdgeColor", "MarkerFaceColor", "MarkerIndices", "LineJoin", "AlignVertexCenters",
         "ButtonDownFcn", "CreateFcn", "DeleteFcn", "Interruptible", "BusyAction",
         "Selected", "SelectionHighlight", "HitTest", "PickableParts",
     };
@@ -2741,7 +2743,9 @@ internal static partial class JgsBuiltins
                     series[r] = element.AsNumber;
                 }
 
-                created.Add(JG.Plot(xs ?? Implicit(rows), series, spec));
+                LinePlot column = JG.Plot(xs ?? Implicit(rows), series, spec);
+                column.XImplied = xs is null;
+                created.Add(column);
                 JG.Hold(true);
             }
 
@@ -2749,7 +2753,9 @@ internal static partial class JgsBuiltins
         }
 
         double[] ys = DoubleArray(verb, [y], 0, line, col);
-        created.Add(JG.Plot(xs ?? Implicit(ys.Length), ys, spec));
+        LinePlot drawn = JG.Plot(xs ?? Implicit(ys.Length), ys, spec);
+        drawn.XImplied = xs is null;
+        created.Add(drawn);
         JG.Hold(true);
     }
 
@@ -2822,6 +2828,11 @@ internal static partial class JgsBuiltins
             {
                 plot.DashStyle = seat.Style.Dash;
                 plot.Marker = seat.Style.Marker;
+
+                // What the cycle hands out is not what a script chose, and LineStyleMode is exactly
+                // that difference — so the flags the two setters raised come down again here.
+                plot.LineStyleManual = false;
+                plot.MarkerManual = false;
             }
         }
 
@@ -2836,6 +2847,30 @@ internal static partial class JgsBuiltins
                         break;
                     case "markersize":
                         plot.MarkerSize = NumOf($"{verb}: MarkerSize", value, line, col);
+                        break;
+
+                    // The five names M77 added. MarkerFaceColor in particular is the commonest
+                    // spelling in MATLAB code and was refused by this verb until then.
+                    case "markerfacecolor":
+                        plot.MarkerFill = value.Type == JgsType.String
+                            && value.AsString.Equals("none", StringComparison.OrdinalIgnoreCase)
+                                ? null
+                                : OptionColor(value, line, col, verb);
+                        break;
+                    case "markeredgecolor":
+                        plot.MarkerEdge = OptionColor(value, line, col, verb);
+                        break;
+                    case "markerindices":
+                        JgsGraphicsProperties.Set(
+                            JgsHandleRegistry.EntryFor(plot), "MarkerIndices", value, line, col);
+                        break;
+                    case "linejoin":
+                        JgsGraphicsProperties.Set(
+                            JgsHandleRegistry.EntryFor(plot), "LineJoin", value, line, col);
+                        break;
+                    case "alignvertexcenters":
+                        JgsGraphicsProperties.Set(
+                            JgsHandleRegistry.EntryFor(plot), "AlignVertexCenters", value, line, col);
                         break;
                     case "displayname":
                         SetDisplayName(plot, StrOf($"{verb}: DisplayName", value, line, col));
@@ -3090,16 +3125,147 @@ internal static partial class JgsBuiltins
         });
     }
 
+    private static readonly OptionSpec StemOptions = new(
+        "stem",
+        Flags: ["filled"],
+        Names:
+        [
+            "Color", "LineStyle", "LineWidth", "Marker", "MarkerSize", "MarkerEdgeColor",
+            "MarkerFaceColor", "BaseValue", "ShowBaseLine", "DisplayName", "HandleVisibility",
+        ]);
+
+    /// <summary>
+    /// <c>stem(y)</c>, <c>stem(x, y)</c>, either with <c>'filled'</c>, a LineSpec, and the option
+    /// tail. Before M77 it took the two vectors and nothing else, so every appearance a script
+    /// wanted had to be set afterwards through the handle.
+    /// </summary>
     private static JgsValue Stem(IReadOnlyList<JgsValue> args, JgsDialect dialect, int line, int col)
     {
-        ArityRange("stem", args, 1, 2, line, col);
-        double[] heights = DoubleArray("stem", args, args.Count - 1, line, col);
-        double[] positions = args.Count == 2
-            ? DoubleArray("stem", args, 0, line, col)
+        // A LineSpec has to come off before the options are read: 'r--s' is not an option name, and
+        // the parser is right to say so about every word that is not one.
+        // It may sit anywhere among the words — stem(x, y, 'filled', 'r--s', 'LineWidth', 2) is
+        // ordinary MATLAB.
+        (IReadOnlyList<JgsValue> stemRest, string? spec) = PeelSpecFor(StemOptions, args);
+
+        ParsedArgs parsed = StemOptions.Parse(stemRest, 2, line, col);
+        IReadOnlyList<JgsValue> positional = parsed.Positional;
+
+        if (positional.Count is < 1 or > 2)
+        {
+            throw new JgsRuntimeException(line, col, "stem expects (y) or (x, y), with an optional spec.");
+        }
+
+        double[] heights = DoubleArray("stem", positional, positional.Count - 1, line, col);
+        double[] positions = positional.Count == 2
+            ? DoubleArray("stem", positional, 0, line, col)
             : ImplicitX(dialect, heights.Length);
-        return Handle(JG.Stem(positions, heights));
+
+        StemPlot plot = JG.Stem(positions, heights);
+        plot.XImplied = positional.Count == 1;
+        ApplyStemOptions(plot, spec, parsed, line, col);
+        return Handle(plot);
     }
 
+    /// <summary>The spec first, then the named options, so a name always wins over a shorthand.</summary>
+    private static void ApplyStemOptions(
+        StemPlot plot, string? spec, ParsedArgs parsed, int line, int col)
+    {
+        if (spec is not null)
+        {
+            LineSpec drawn = LineSpec.Parse(spec);
+            if (drawn.Color is { } color)
+            {
+                plot.Color = color;
+            }
+
+            if (drawn.Dash is { } dash)
+            {
+                plot.DashStyle = dash;
+            }
+
+            if (drawn.Marker is { } marker)
+            {
+                plot.Marker = marker;
+            }
+        }
+
+        // MATLAB's 'filled' fills the markers with the stem's own colour.
+        if (parsed.Has("filled"))
+        {
+            plot.MarkerFill = plot.Color ?? PaletteColorFor(plot);
+        }
+
+        if (parsed.Named("Color") is { } stemColor)
+        {
+            plot.Color = OptionColor(stemColor, line, col, "stem");
+        }
+
+        if (parsed.Text("LineStyle") is { } dashWord)
+        {
+            plot.DashStyle = ParseDashWord(dashWord, plot.DashStyle);
+        }
+
+        if (parsed.Text("Marker") is { } markerWord)
+        {
+            plot.Marker = ParseMarkerWord(markerWord, plot.Marker);
+        }
+
+        if (parsed.Named("MarkerFaceColor") is { } face)
+        {
+            plot.MarkerFill = face.Type == JgsType.String
+                && face.AsString.Equals("none", StringComparison.OrdinalIgnoreCase)
+                    ? null
+                    : OptionColor(face, line, col, "stem");
+        }
+
+        if (parsed.Named("MarkerEdgeColor") is { } markerEdge)
+        {
+            plot.MarkerEdge = OptionColor(markerEdge, line, col, "stem");
+        }
+
+        plot.LineWidth = parsed.Scalar("LineWidth", plot.LineWidth);
+        plot.MarkerSize = parsed.Scalar("MarkerSize", plot.MarkerSize);
+        plot.Baseline = parsed.Scalar("BaseValue", plot.Baseline);
+
+        if (parsed.Text("ShowBaseLine") is { } shown)
+        {
+            plot.ShowBaseLine = !shown.Equals("off", StringComparison.OrdinalIgnoreCase);
+        }
+
+        if (parsed.Text("DisplayName") is { } label)
+        {
+            SetDisplayName(plot, label);
+        }
+
+        if (parsed.Text("HandleVisibility") is { } visibility)
+        {
+            JgsHandleRegistry.EntryFor(plot).HandleVisible =
+                !visibility.Equals("off", StringComparison.OrdinalIgnoreCase);
+        }
+    }
+
+    private static readonly OptionSpec HistogramChartOptions = new(
+        "histogram",
+        Flags: [],
+        Names:
+        [
+            "BinEdges", "BinCounts", "BinWidth", "BinLimits", "BinMethod", "NumBins", "Normalization",
+            "DisplayStyle", "Orientation", "BarWidth", "FaceColor", "EdgeColor", "FaceAlpha",
+            "EdgeAlpha", "LineWidth", "LineStyle", "DisplayName", "HandleVisibility",
+            "DisplayOrder", "NumDisplayBins", "ShowOthers",
+        ]);
+
+    /// <summary>
+    /// <c>histogram(x)</c> and everything round it: a bin count, a set of edges, counts taken
+    /// somewhere else, a table column, a list of names, and the option tail every other chart verb
+    /// has had since M42.
+    /// <para>
+    /// The bins are chosen by <c>histcounts</c>' own rule — the model calls the same kernel, so the
+    /// bars a script draws and the numbers it checks them against are one arithmetic rather than two
+    /// that agree by inspection. Before M77 this verb took a count and nothing else, and the ten
+    /// equal bins it always cut were the only histogram this build could draw.
+    /// </para>
+    /// </summary>
     private static JgsValue Histogram(IReadOnlyList<JgsValue> args, int line, int col)
     {
         if (args.Count > 0 && args[0].Type == JgsType.Table)
@@ -3110,9 +3276,188 @@ internal static partial class JgsBuiltins
                 Tbl("histogram", args, 0, line, col), Str("histogram", args, 1, line, col), tableBins));
         }
 
-        ArityRange("histogram", args, 1, 2, line, col);
-        int bins = args.Count == 2 ? Count("histogram", args, 1, line, col) : 10;
-        return Handle(JG.Histogram(DoubleArray("histogram", args, 0, line, col), bins));
+        ParsedArgs parsed = HistogramChartOptions.Parse(args, 2, line, col);
+        double[]? givenEdges = parsed.Vector("BinEdges");
+        double[]? givenCounts = parsed.Vector("BinCounts");
+        double[]? limits = parsed.Vector("BinLimits");
+        double? width = parsed.Named("BinWidth") is null ? null : parsed.Scalar("BinWidth", 0);
+        int? requested = parsed.Named("NumBins") is null
+            ? null
+            : (int)System.Math.Round(parsed.Scalar("NumBins", 10));
+        string rule = parsed.Word(
+            "BinMethod", "auto", "auto", "scott", "sturges", "sqrt", "fd", "integers");
+
+        if (limits is { Length: not 2 })
+        {
+            throw new JgsRuntimeException(line, col, "histogram: 'BinLimits' takes a [low high] pair.");
+        }
+
+        if (width is { } step && (!(step > 0) || !double.IsFinite(step)))
+        {
+            throw new JgsRuntimeException(line, col, "histogram: 'BinWidth' must be positive.");
+        }
+
+        // A list of names is counted by name, and the bars stand on the counting numbers.
+        if (parsed.Positional.Count > 0 && parsed.Positional[0].Type is JgsType.Cell)
+        {
+            string[] names = CellOfNames("histogram", parsed.Positional[0], line, col);
+            (string[] distinct, double[] counts) = CountedByName(names);
+            return Handle(HistogramTail(
+                JG.Histogram(HistogramPlot.FromCategories(distinct, counts)), parsed, line, col));
+        }
+
+        double[]? data = null;
+        if (givenCounts is not null)
+        {
+            if (parsed.Positional.Count > 0)
+            {
+                throw new JgsRuntimeException(line, col,
+                    "histogram: 'BinCounts' is the counting already done, so there is no data to count.");
+            }
+
+            if (givenEdges is null)
+            {
+                throw new JgsRuntimeException(line, col,
+                    "histogram: 'BinCounts' needs 'BinEdges' to say where the bins are.");
+            }
+        }
+        else
+        {
+            if (parsed.Positional.Count == 0)
+            {
+                throw new JgsRuntimeException(line, col,
+                    "histogram expects the values to count: histogram(x).");
+            }
+
+            data = FlattenColumnMajor("histogram", parsed.Positional[0], line, col);
+            if (parsed.Positional.Count == 2)
+            {
+                JgsValue second = parsed.Positional[1];
+                if (second.Type is JgsType.Number or JgsType.Bool)
+                {
+                    requested = Count("histogram", parsed.Positional, 1, line, col);
+                    if (requested < 1)
+                    {
+                        throw new JgsRuntimeException(line, col, "histogram needs at least one bin.");
+                    }
+                }
+                else
+                {
+                    givenEdges = ToDoubles("histogram", second, line, col);
+                }
+            }
+        }
+
+        if (givenEdges is { Length: < 2 })
+        {
+            throw new JgsRuntimeException(line, col, "histogram: bin edges come in twos or more.");
+        }
+
+        if (givenEdges is not null && (requested is not null || width is not null || limits is not null))
+        {
+            throw new JgsRuntimeException(line, col,
+                "histogram: bin edges already say where every bin is, so a count, width or limits "
+                + "cannot be given too.");
+        }
+
+        double[] edges = givenEdges ?? Binning.EdgesFor(data!, requested, width, limits, rule);
+        HistogramPlot plot = data is null
+            ? HistogramPlot.FromCounts(edges, givenCounts!)
+            : new HistogramPlot(data, edges);
+        plot.BinMethod = rule;
+        if (limits is not null)
+        {
+            plot.BinLimits = limits;
+        }
+
+        return Handle(HistogramTail(JG.Histogram(plot), parsed, line, col));
+    }
+
+    /// <summary>How many times each name appears, in the order the names were first seen.</summary>
+    private static (string[] Names, double[] Counts) CountedByName(IReadOnlyList<string> names)
+    {
+        var order = new List<string>();
+        var counts = new Dictionary<string, double>(StringComparer.Ordinal);
+        foreach (string name in names)
+        {
+            if (!counts.ContainsKey(name))
+            {
+                order.Add(name);
+                counts[name] = 0;
+            }
+
+            counts[name]++;
+        }
+
+        return ([.. order], [.. order.Select(name => counts[name])]);
+    }
+
+    /// <summary>The appearance options, applied after the bins are settled.</summary>
+    private static HistogramPlot HistogramTail(HistogramPlot plot, ParsedArgs parsed, int line, int col)
+    {
+        plot.Normalization = parsed.Word(
+            "Normalization", "count",
+            "count", "countdensity", "cumcount", "probability", "pdf", "cdf") switch
+        {
+            "countdensity" => HistogramNormalization.CountDensity,
+            "cumcount" => HistogramNormalization.Cumulative,
+            "probability" => HistogramNormalization.Probability,
+            "pdf" => HistogramNormalization.Density,
+            "cdf" => HistogramNormalization.CumulativeProbability,
+            _ => HistogramNormalization.Count,
+        };
+
+        plot.DisplayStyle = parsed.Word("DisplayStyle", "bar", "bar", "stairs") == "stairs"
+            ? HistogramDisplayStyle.Stairs
+            : HistogramDisplayStyle.Bar;
+        plot.Orientation = parsed.Word("Orientation", "vertical", "vertical", "horizontal") == "horizontal"
+            ? HistogramOrientation.Horizontal
+            : HistogramOrientation.Vertical;
+
+        if (parsed.Named("FaceColor") is { } face)
+        {
+            plot.FaceColor = OptionColor(face, line, col, "histogram");
+        }
+
+        if (parsed.Named("EdgeColor") is { } edge)
+        {
+            plot.EdgeColor = OptionColor(edge, line, col, "histogram");
+        }
+
+        plot.FaceAlpha = parsed.Scalar("FaceAlpha", plot.FaceAlpha);
+        plot.EdgeAlpha = parsed.Scalar("EdgeAlpha", plot.EdgeAlpha);
+        plot.LineWidth = parsed.Scalar("LineWidth", plot.LineWidth);
+        plot.BarWidth = parsed.Scalar("BarWidth", plot.BarWidth);
+        plot.NumDisplayBins = (int)System.Math.Round(parsed.Scalar("NumDisplayBins", plot.NumDisplayBins));
+        plot.DisplayOrder = parsed.Word("DisplayOrder", "data", "data", "ascend", "descend") switch
+        {
+            "ascend" => CategoryDisplayOrder.Ascend,
+            "descend" => CategoryDisplayOrder.Descend,
+            _ => CategoryDisplayOrder.Data,
+        };
+
+        if (parsed.Text("ShowOthers") is { } others)
+        {
+            plot.ShowOthers = others.Equals("on", StringComparison.OrdinalIgnoreCase);
+        }
+
+        if (parsed.Text("LineStyle") is { } dash)
+        {
+            plot.LineStyle = ParseDashWord(dash, plot.LineStyle);
+        }
+
+        if (parsed.Text("DisplayName") is { } label)
+        {
+            SetDisplayName(plot, label);
+        }
+
+        if (parsed.Text("HandleVisibility") is { } visibility)
+        {
+            JgsHandleRegistry.EntryFor(plot).HandleVisible =
+                !visibility.Equals("off", StringComparison.OrdinalIgnoreCase);
+        }
+
+        return plot;
     }
 
     /// <summary>
@@ -3125,6 +3470,102 @@ internal static partial class JgsBuiltins
     /// twice. The horizontal forms are a different matter and are refused by name — see below.
     /// </para>
     /// </summary>
+    /// <summary>
+    /// Takes the LineSpec out of a call that also has an option tail. It cannot simply be the last
+    /// word, or the first word that looks like one: <c>'Marker', 's'</c> puts a perfectly good spec
+    /// in the value slot, and peeling that would leave the option without its value. So the walk
+    /// steps over each option name together with what follows it, and the spec is the first word
+    /// left that spells one.
+    /// </summary>
+    private static (IReadOnlyList<JgsValue> Remaining, string? Spec) PeelSpecFor(
+        OptionSpec spec, IReadOnlyList<JgsValue> args)
+    {
+        for (int i = 0; i < args.Count; i++)
+        {
+            if (args[i].Type != JgsType.String)
+            {
+                continue;
+            }
+
+            string word = args[i].AsString;
+            if (spec.Knows(word))
+            {
+                if (spec.KnowsName(word))
+                {
+                    i++;
+                }
+
+                continue;
+            }
+
+            if (!IsLineSpecWord(word))
+            {
+                continue;
+            }
+
+            return ([.. args.Take(i), .. args.Skip(i + 1)], word);
+        }
+
+        return (args, null);
+    }
+
+    private static readonly OptionSpec ErrorBarOptions = new(
+        "errorbar",
+        Flags: ["vertical", "horizontal", "both"],
+        Names:
+        [
+            "CapSize", "Color", "LineStyle", "LineWidth", "Marker", "MarkerSize",
+            "MarkerEdgeColor", "MarkerFaceColor", "DisplayName", "HandleVisibility",
+        ]);
+
+    /// <summary>The named options, applied after the spec so that a name always wins.</summary>
+    private static void ApplyErrorBarOptions(
+        ErrorBarPlot plot, ParsedArgs parsed, int line, int col)
+    {
+        if (parsed.Named("Color") is { } color)
+        {
+            plot.Color = OptionColor(color, line, col, "errorbar");
+        }
+
+        if (parsed.Text("LineStyle") is { } dash)
+        {
+            plot.DashStyle = ParseDashWord(dash, plot.DashStyle);
+        }
+
+        if (parsed.Text("Marker") is { } markerWord)
+        {
+            plot.Marker = ParseMarkerWord(markerWord, plot.Marker);
+        }
+
+        if (parsed.Named("MarkerFaceColor") is { } face)
+        {
+            plot.MarkerFill = face.Type == JgsType.String
+                && face.AsString.Equals("none", StringComparison.OrdinalIgnoreCase)
+                    ? null
+                    : OptionColor(face, line, col, "errorbar");
+        }
+
+        if (parsed.Named("MarkerEdgeColor") is { } edge)
+        {
+            plot.MarkerEdge = OptionColor(edge, line, col, "errorbar");
+        }
+
+        plot.CapSize = parsed.Scalar("CapSize", plot.CapSize);
+        plot.LineWidth = parsed.Scalar("LineWidth", plot.LineWidth);
+        plot.MarkerSize = parsed.Scalar("MarkerSize", plot.MarkerSize);
+
+        if (parsed.Text("DisplayName") is { } label)
+        {
+            SetDisplayName(plot, label);
+        }
+
+        if (parsed.Text("HandleVisibility") is { } visibility)
+        {
+            JgsHandleRegistry.EntryFor(plot).HandleVisible =
+                !visibility.Equals("off", StringComparison.OrdinalIgnoreCase);
+        }
+    }
+
     private static JgsValue ErrorBar(IReadOnlyList<JgsValue> args, int line, int col)
     {
         if (args.Count > 0 && args[0].Type == JgsType.Table)
@@ -3133,32 +3574,17 @@ internal static partial class JgsBuiltins
             return Handle(JG.ErrorBar(Tbl("errorbar", args, 0, line, col), Str("errorbar", args, 1, line, col), Str("errorbar", args, 2, line, col), Str("errorbar", args, 3, line, col)));
         }
 
-        // The trailing LineSpec, taken off before the positional arguments are counted so that
-        // errorbar(y, err, 'r--') and errorbar(x, y, neg, pos, 'o') are the same shape underneath.
-        string? spec = null;
-        var rest = new List<JgsValue>(args);
-        if (rest.Count > 1 && rest[^1].Type == JgsType.String)
-        {
-            spec = rest[^1].AsString;
+        // The LineSpec comes off first: it is a word and not an option name, and the parser is
+        // right to refuse every word that is neither. The direction is an option word — it was
+        // refused outright until M77, when the sideways whiskers were drawn for the first time.
+        (IReadOnlyList<JgsValue> peeled, string? spec) = PeelSpecFor(ErrorBarOptions, args);
+        ParsedArgs named = ErrorBarOptions.Parse(peeled, 6, line, col);
+        string direction = named.Has("horizontal") ? "horizontal"
+            : named.Has("both") ? "both"
+            : "vertical";
+        var rest = new List<JgsValue>(named.Positional);
 
-            // A word that names a direction is not a LineSpec, and drawing it as one would silently
-            // ignore what the script asked for. This renderer draws the whisker along y only.
-            if (spec.Equals("horizontal", StringComparison.OrdinalIgnoreCase)
-                || spec.Equals("both", StringComparison.OrdinalIgnoreCase))
-            {
-                throw new JgsRuntimeException(line, col,
-                    $"errorbar draws the whisker along y; '{spec}' asks for one along x, which this build has no model for. Use 'vertical', or swap the axes.");
-            }
-
-            if (spec.Equals("vertical", StringComparison.OrdinalIgnoreCase))
-            {
-                spec = null; // the only direction drawn, so naming it changes nothing
-            }
-
-            rest.RemoveAt(rest.Count - 1);
-        }
-
-        ArityRange("errorbar", rest, 2, 4, line, col);
+        ArityRange("errorbar", rest, 2, 6, line, col);
         double[] first = DoubleArray("errorbar", rest, 0, line, col);
         double[] second = DoubleArray("errorbar", rest, 1, line, col);
 
@@ -3173,13 +3599,47 @@ internal static partial class JgsBuiltins
                   DoubleArray("errorbar", rest, 3, line, col)),
         };
 
+        // errorbar(x, y, yneg, ypos, xneg, xpos) — the six-vector form, whose last pair reaches
+        // sideways. The three-and-four-argument forms mean the direction word instead.
+        double[]? left = rest.Count == 6 ? DoubleArray("errorbar", rest, 4, line, col) : null;
+        double[]? right = rest.Count == 6 ? DoubleArray("errorbar", rest, 5, line, col) : null;
+        if (rest.Count == 5)
+        {
+            throw new JgsRuntimeException(line, col,
+                "errorbar takes the sideways reaches in twos: errorbar(x, y, yneg, ypos, xneg, xpos).");
+        }
+
+        if (direction != "vertical" && left is null)
+        {
+            // 'horizontal' reads the one pair of magnitudes sideways instead of upright; 'both'
+            // reads them in both directions, which is what MATLAB draws for a single err vector.
+            left = neg;
+            right = pos;
+            if (direction == "horizontal")
+            {
+                (neg, pos) = (new double[xs.Length], new double[xs.Length]);
+            }
+        }
+
         ErrorBarPlot plot = JG.ErrorBar(xs, ys, neg, pos);
+        plot.XImplied = rest.Count == 2;
+        if (left is not null)
+        {
+            plot.ErrorLeft = left;
+            plot.ErrorRight = right ?? left;
+        }
+
         if (spec is not null)
         {
             LineSpec parsed = LineSpec.Parse(spec);
             if (parsed.Color is { } color)
             {
                 plot.Color = color;
+            }
+
+            if (parsed.Dash is { } dash)
+            {
+                plot.DashStyle = dash;
             }
 
             if (parsed.Marker is { } marker)
@@ -3194,6 +3654,7 @@ internal static partial class JgsBuiltins
             }
         }
 
+        ApplyErrorBarOptions(plot, named, line, col);
         return Handle(plot);
     }
 

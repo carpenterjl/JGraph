@@ -15,6 +15,10 @@ internal static class PlotMapper
         {
             LinePlot p => new LinePlotDto
             {
+                MarkerEdge = p.MarkerEdge,
+                MarkerIndices = p.MarkerIndices,
+                LineJoin = p.LineJoin,
+                AlignVertexCenters = p.AlignVertexCenters,
                 Series = DtoConvert.ToDto(p.Data),
                 Color = p.Color,
                 LineWidth = p.LineWidth,
@@ -26,6 +30,8 @@ internal static class PlotMapper
             },
             ScatterPlot p => new ScatterPlotDto
             {
+                AlphaData = p.AlphaData,
+                AlphaDataMapping = p.AlphaDataMapping,
                 Series = DtoConvert.ToDto(p.Data),
                 Color = p.Color,
                 Marker = p.Marker,
@@ -55,6 +61,9 @@ internal static class PlotMapper
                 BarWidthFraction = p.BarWidthFraction,
                 Baseline = p.Baseline,
                 Horizontal = p.Horizontal,
+                EdgeAlpha = p.EdgeAlpha,
+                ColorData = p.ColorData,
+                BaseLine = ToDto(p.BaseLine),
                 GroupIndex = p.GroupIndex,
                 GroupCount = p.GroupCount,
                 PositionOffset = p.PositionOffset,
@@ -70,6 +79,9 @@ internal static class PlotMapper
                 Dash = p.Dash,
                 BaseValue = p.BaseValue,
                 ShowBaseLine = p.ShowBaseLine,
+                EdgeAlpha = p.EdgeAlpha,
+                AlignVertexCenters = p.AlignVertexCenters,
+                BaseLine = ToDto(p.BaseLine),
                 LowerEdge = p.LowerEdge,
             },
             PiePlot p => new PiePlotDto
@@ -141,18 +153,35 @@ internal static class PlotMapper
                 Color = p.Color,
                 LineWidth = p.LineWidth,
                 Baseline = p.Baseline,
+                DashStyle = p.DashStyle,
                 Marker = p.Marker,
                 MarkerSize = p.MarkerSize,
                 MarkerFill = p.MarkerFill,
+                MarkerEdge = p.MarkerEdge,
+                BaseLine = ToDto(p.BaseLine),
             },
             HistogramPlot p => new HistogramPlotDto
             {
-                Values = p.Values.ToArray(),
-                BinCount = p.BinCount,
+                Values = p.Data,
+                BinCount = p.NumBins,
+                BinEdges = p.BinEdges,
+                BinCounts = p.BinCounts,
+                BinMethod = p.BinMethod,
+                BinLimits = p.BinLimitsChosen ? p.BinLimits : null,
+                Categories = p.Categories,
+                DisplayOrder = p.DisplayOrder,
+                NumDisplayBins = p.NumDisplayBins,
+                ShowOthers = p.ShowOthers,
                 Normalization = p.Normalization,
-                FillColor = p.FillColor,
+                DisplayStyle = p.DisplayStyle,
+                Orientation = p.Orientation,
+                FillColor = p.FaceColor,
                 EdgeColor = p.EdgeColor,
-                EdgeWidth = p.EdgeWidth,
+                EdgeWidth = p.LineWidth,
+                FaceAlpha = p.FaceAlpha,
+                EdgeAlpha = p.EdgeAlpha,
+                LineStyle = p.LineStyle,
+                BarWidth = p.BarWidth,
             },
             PolarHistogramPlot p => new PolarHistogramPlotDto
             {
@@ -170,6 +199,10 @@ internal static class PlotMapper
             },
             ErrorBarPlot p => new ErrorBarPlotDto
             {
+                ErrorLeft = p.ErrorLeft,
+                ErrorRight = p.ErrorRight,
+                DashStyle = p.DashStyle,
+                MarkerEdge = p.MarkerEdge,
                 Series = DtoConvert.ToDto(p.Data),
                 ErrorNeg = p.ErrorNeg.ToArray(),
                 ErrorPos = p.ErrorPos.ToArray(),
@@ -410,6 +443,10 @@ internal static class PlotMapper
         {
             LinePlotDto d => new LinePlot(DtoConvert.ToSeries(d.Series))
             {
+                MarkerEdge = d.MarkerEdge,
+                MarkerIndices = d.MarkerIndices,
+                LineJoin = d.LineJoin,
+                AlignVertexCenters = d.AlignVertexCenters,
                 Color = d.Color,
                 LineWidth = d.LineWidth,
                 DashStyle = d.DashStyle,
@@ -420,6 +457,8 @@ internal static class PlotMapper
             },
             ScatterPlotDto d => new ScatterPlot(DtoConvert.ToSeries(d.Series))
             {
+                AlphaData = d.AlphaData,
+                AlphaDataMapping = d.AlphaDataMapping,
                 Color = d.Color,
                 Marker = d.Marker,
                 MarkerSize = d.MarkerSize,
@@ -437,32 +476,8 @@ internal static class PlotMapper
                 ColorMin = d.ColorMin,
                 ColorMax = d.ColorMax,
             },
-            BarPlotDto d => new BarPlot(DtoConvert.ToSeries(d.Series))
-            {
-                FillColor = d.FillColor,
-                EdgeColor = d.EdgeColor,
-                EdgeWidth = d.EdgeWidth,
-                FaceAlpha = d.FaceAlpha,
-                Dash = d.Dash,
-                BarWidthFraction = d.BarWidthFraction,
-                Baseline = d.Baseline,
-                Horizontal = d.Horizontal,
-                GroupIndex = d.GroupIndex,
-                GroupCount = d.GroupCount,
-                PositionOffset = d.PositionOffset,
-                LowerEdge = d.LowerEdge,
-            },
-            AreaPlotDto d => new AreaPlot(DtoConvert.ToSeries(d.Series))
-            {
-                FaceColor = d.FaceColor,
-                EdgeColor = d.EdgeColor,
-                FaceAlpha = d.FaceAlpha,
-                LineWidth = d.LineWidth,
-                Dash = d.Dash,
-                BaseValue = d.BaseValue,
-                ShowBaseLine = d.ShowBaseLine,
-                LowerEdge = d.LowerEdge,
-            },
+            BarPlotDto d => ToBar(d),
+            AreaPlotDto d => ToArea(d),
             PiePlotDto d => new PiePlot(d.Values)
             {
                 Explode = d.Explode,
@@ -522,26 +537,15 @@ internal static class PlotMapper
                 JitterOutliers = d.JitterOutliers,
                 Horizontal = d.Horizontal,
             },
-            StemPlotDto d => new StemPlot(DtoConvert.ToSeries(d.Series))
-            {
-                Color = d.Color,
-                LineWidth = d.LineWidth,
-                Baseline = d.Baseline,
-                Marker = d.Marker,
-                MarkerSize = d.MarkerSize,
-                MarkerFill = d.MarkerFill,
-            },
-            HistogramPlotDto d => new HistogramPlot(d.Values)
-            {
-                BinCount = d.BinCount,
-                Normalization = d.Normalization,
-                FillColor = d.FillColor,
-                EdgeColor = d.EdgeColor,
-                EdgeWidth = d.EdgeWidth,
-            },
+            StemPlotDto d => ToStem(d),
+            HistogramPlotDto d => ToHistogram(d),
             PolarHistogramPlotDto d => ToPolarHistogram(d),
             ErrorBarPlotDto d => new ErrorBarPlot(DtoConvert.ToSeries(d.Series), d.ErrorNeg, d.ErrorPos)
             {
+                ErrorLeft = d.ErrorLeft,
+                ErrorRight = d.ErrorRight,
+                DashStyle = d.DashStyle,
+                MarkerEdge = d.MarkerEdge,
                 Color = d.Color,
                 LineWidth = d.LineWidth,
                 CapSize = d.CapSize,
@@ -739,6 +743,8 @@ internal static class PlotMapper
         dto.XAxisIndex = plot.XAxisIndex;
         dto.YAxisIndex = plot.YAxisIndex;
         dto.SeriesIndex = plot.SeriesIndex;
+        dto.Clipping = plot.Clipping;
+        dto.ShowsInLegend = plot.ShowsInLegend;
     }
 
     private static void ApplyCommon(PlotDto dto, PlotObject plot)
@@ -752,6 +758,140 @@ internal static class PlotMapper
         plot.XAxisIndex = dto.XAxisIndex;
         plot.YAxisIndex = dto.YAxisIndex;
         plot.SeriesIndex = dto.SeriesIndex;
+        plot.Clipping = dto.Clipping;
+        if (!dto.ShowsInLegend)
+        {
+            plot.Annotation.LegendInformation.IconDisplayStyle = LegendIconDisplay.Off;
+        }
+    }
+
+    /// <summary>
+    /// Rebuilds a bar series. The baseline is applied after the object exists rather than in an
+    /// initializer, because it is an object of its own that the chart already owns.
+    /// </summary>
+    private static BarPlot ToBar(BarPlotDto d)
+    {
+        var bar = new BarPlot(DtoConvert.ToSeries(d.Series))
+        {
+            FillColor = d.FillColor,
+            EdgeColor = d.EdgeColor,
+            EdgeWidth = d.EdgeWidth,
+            FaceAlpha = d.FaceAlpha,
+            EdgeAlpha = d.EdgeAlpha,
+            ColorData = d.ColorData,
+            Dash = d.Dash,
+            BarWidthFraction = d.BarWidthFraction,
+            Baseline = d.Baseline,
+            Horizontal = d.Horizontal,
+            GroupIndex = d.GroupIndex,
+            GroupCount = d.GroupCount,
+            PositionOffset = d.PositionOffset,
+            LowerEdge = d.LowerEdge,
+        };
+        Apply(d.BaseLine, bar.BaseLine);
+        return bar;
+    }
+
+    /// <summary>Rebuilds a filled band, with the line it stands on.</summary>
+    private static AreaPlot ToArea(AreaPlotDto d)
+    {
+        var area = new AreaPlot(DtoConvert.ToSeries(d.Series))
+        {
+            FaceColor = d.FaceColor,
+            EdgeColor = d.EdgeColor,
+            FaceAlpha = d.FaceAlpha,
+            EdgeAlpha = d.EdgeAlpha,
+            AlignVertexCenters = d.AlignVertexCenters,
+            LineWidth = d.LineWidth,
+            Dash = d.Dash,
+            BaseValue = d.BaseValue,
+            ShowBaseLine = d.ShowBaseLine,
+            LowerEdge = d.LowerEdge,
+        };
+        Apply(d.BaseLine, area.BaseLine);
+        return area;
+    }
+
+    /// <summary>Rebuilds a stem series, with the line it stands on.</summary>
+    private static StemPlot ToStem(StemPlotDto d)
+    {
+        var stem = new StemPlot(DtoConvert.ToSeries(d.Series))
+        {
+            Color = d.Color,
+            LineWidth = d.LineWidth,
+            Baseline = d.Baseline,
+            DashStyle = d.DashStyle,
+            Marker = d.Marker,
+            MarkerSize = d.MarkerSize,
+            MarkerFill = d.MarkerFill,
+            MarkerEdge = d.MarkerEdge,
+        };
+        Apply(d.BaseLine, stem.BaseLine);
+        return stem;
+    }
+
+    /// <summary>The line a bar, stem or area stands on, as a document holds it.</summary>
+    private static BaseLineDto ToDto(BaseLineModel line) => new()
+    {
+        Visible = line.Visible,
+        Color = line.Color,
+        LineWidth = line.LineWidth,
+        LineStyle = line.LineStyle,
+    };
+
+    /// <summary>Applies a stored baseline, leaving today's defaults alone when there is none.</summary>
+    private static void Apply(BaseLineDto? dto, BaseLineModel line)
+    {
+        if (dto is null)
+        {
+            return;
+        }
+
+        line.Visible = dto.Visible;
+        line.Color = dto.Color;
+        line.LineWidth = dto.LineWidth;
+        line.LineStyle = dto.LineStyle;
+    }
+
+    /// <summary>
+    /// Rebuilds a histogram. Which constructor to reach for is a question about the document: one
+    /// written before M77 carries a bin count and nothing else, and its bins are cut the way that
+    /// build cut them; a later one carries its edges, and a histogram with no readings behind it
+    /// carries its counts too, because there is nothing left to count them from.
+    /// </summary>
+    private static HistogramPlot ToHistogram(HistogramPlotDto d)
+    {
+        HistogramPlot histogram = d.Categories is { Length: > 0 } names
+            ? HistogramPlot.FromCategories(names, d.BinCounts ?? [])
+            : d.BinEdges is { Length: > 1 } edges
+                ? new HistogramPlot(d.Values, edges)
+                : new HistogramPlot(d.Values, d.BinCount);
+
+        if (d.Values.Length == 0 && d.BinCounts is { Length: > 0 } counts && d.Categories is null)
+        {
+            histogram.BinCounts = counts;
+        }
+
+        histogram.BinMethod = d.BinMethod;
+        if (d.BinLimits is { Length: 2 } limits)
+        {
+            histogram.BinLimits = limits;
+        }
+
+        histogram.DisplayOrder = d.DisplayOrder;
+        histogram.NumDisplayBins = d.NumDisplayBins;
+        histogram.ShowOthers = d.ShowOthers;
+        histogram.Normalization = d.Normalization;
+        histogram.DisplayStyle = d.DisplayStyle;
+        histogram.Orientation = d.Orientation;
+        histogram.FaceColor = d.FillColor;
+        histogram.EdgeColor = d.EdgeColor;
+        histogram.LineWidth = d.EdgeWidth;
+        histogram.FaceAlpha = d.FaceAlpha;
+        histogram.EdgeAlpha = d.EdgeAlpha;
+        histogram.LineStyle = d.LineStyle;
+        histogram.BarWidth = d.BarWidth;
+        return histogram;
     }
 
     /// <summary>

@@ -419,7 +419,13 @@ public sealed class FigureRenderer
                 var state = new RenderState(
                     new NormalizedCoordinateMapper(plotArea), plotArea, seriesColor,
                     depthSort: axes.SortMethod == SortMethodType.Depth);
+
+                // Everything in this pass shares one clip, so a plot told not to clip lifts it for
+                // its own draw and puts it back — the same meaning as the flat path's per-plot push.
+                bool unclip = clip3D && !plot.Clipping;
+                if (unclip) { context.PopClip(); }
                 drawable.Render3D(context, projection, state);
+                if (unclip) { context.PushClip(plotArea); }
             }
         }
 
@@ -580,7 +586,10 @@ public sealed class FigureRenderer
 
             if (plot.Visible && plot is IDrawable drawable)
             {
+                bool unclip = clipPolar && !plot.Clipping;
+                if (unclip) { context.PopClip(); }
                 drawable.Render(context, new RenderState(polar, plotArea, seriesColor));
+                if (unclip) { context.PushClip(plotArea); }
             }
         }
 
@@ -1119,8 +1128,10 @@ public sealed class FigureRenderer
         IReadOnlyList<Color> palette = SeriesPalette.Of(axes, theme);
         int colorIndex = 0;
 
+        // The clip is pushed per plot rather than around the loop, because MATLAB's Clipping is a
+        // property of each object: a series told not to clip draws past the plot box while its
+        // neighbours stay inside it, and the draw order between them is unchanged.
         bool clipPlots = axes.Clipping;
-        if (clipPlots) { context.PushClip(plotArea); }
         foreach (PlotObject plot in axes.Plots.InDrawOrder())
         {
             Color seriesColor = SeriesPalette.Resolve(palette, plot, colorIndex);
@@ -1135,10 +1146,12 @@ public sealed class FigureRenderer
             AxisModel yAxis = axes.GetYAxisFor(plot);
             var transform = AxisTransform.Create(plotArea, xAxis, yAxis);
             var state = new RenderState(transform, plotArea, seriesColor);
-            drawable.Render(context, state);
-        }
 
-        if (clipPlots) { context.PopClip(); }
+            bool clip = clipPlots && plot.Clipping;
+            if (clip) { context.PushClip(plotArea); }
+            drawable.Render(context, state);
+            if (clip) { context.PopClip(); }
+        }
     }
 
     private static void DrawAnnotations(

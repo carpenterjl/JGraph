@@ -164,36 +164,102 @@ public static class AxesExtensions
         ArgumentNullException.ThrowIfNull(positions);
         ArgumentNullException.ThrowIfNull(columns);
 
-        var running = new double[positions.Length];
         var created = new List<BarPlot>(columns.Count);
         foreach (double[] column in columns)
         {
-            BarPlot plot = axes.AddBar(positions, column);
-            if (stacked)
-            {
-                if (created.Count > 0)
-                {
-                    plot.LowerEdge = (double[])running.Clone();
-                }
-
-                for (int i = 0; i < running.Length && i < column.Length; i++)
-                {
-                    if (double.IsFinite(column[i]))
-                    {
-                        running[i] += column[i];
-                    }
-                }
-            }
-            else
-            {
-                plot.GroupIndex = created.Count;
-                plot.GroupCount = columns.Count;
-            }
-
-            created.Add(plot);
+            created.Add(axes.AddBar(positions, column));
         }
 
+        LayOutBars(created, stacked);
         return created;
+    }
+
+    /// <summary>
+    /// Arranges a set of bar series side by side or on top of one another. It is a separate step
+    /// from making them so that <c>h.BarLayout = 'stacked'</c> can run the same arithmetic on
+    /// series that already exist: before M77 the layout was decided once, at creation, and there
+    /// was no way back.
+    /// </summary>
+    public static void LayOutBars(IReadOnlyList<BarPlot> series, bool stacked)
+    {
+        ArgumentNullException.ThrowIfNull(series);
+        if (series.Count == 0)
+        {
+            return;
+        }
+
+        int length = 0;
+        foreach (BarPlot plot in series)
+        {
+            length = System.Math.Max(length, plot.Data.Count);
+        }
+
+        var running = new double[length];
+        for (int index = 0; index < series.Count; index++)
+        {
+            BarPlot plot = series[index];
+            if (!stacked)
+            {
+                plot.LowerEdge = null;
+                plot.GroupIndex = index;
+                plot.GroupCount = series.Count;
+                continue;
+            }
+
+            plot.GroupIndex = 0;
+            plot.GroupCount = 1;
+            plot.LowerEdge = index > 0 ? (double[])running.Clone() : null;
+            for (int i = 0; i < running.Length && i < plot.Data.Count; i++)
+            {
+                double value = plot.Data.GetY(i);
+                if (double.IsFinite(value))
+                {
+                    running[i] += value;
+                }
+            }
+        }
+    }
+
+    /// <summary>
+    /// The bar series on one axes that share a layout: those standing on the same positions. A
+    /// grouped chart and a second, separate one drawn over it are two arrangements, not one.
+    /// </summary>
+    public static IReadOnlyList<BarPlot> BarSiblingsOf(BarPlot plot)
+    {
+        ArgumentNullException.ThrowIfNull(plot);
+        if (plot.Axes is not { } axes)
+        {
+            return [plot];
+        }
+
+        var kin = new List<BarPlot>();
+        foreach (PlotObject other in axes.Plots)
+        {
+            if (other is BarPlot bar && SamePositions(bar, plot))
+            {
+                kin.Add(bar);
+            }
+        }
+
+        return kin.Count > 0 ? kin : [plot];
+    }
+
+    private static bool SamePositions(BarPlot a, BarPlot b)
+    {
+        if (a.Data.Count != b.Data.Count)
+        {
+            return false;
+        }
+
+        for (int i = 0; i < a.Data.Count; i++)
+        {
+            if (a.Data.GetX(i) != b.Data.GetX(i))
+            {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     /// <summary>Adds a stairstep line for the given X/Y data and returns it.</summary>
@@ -306,7 +372,7 @@ public static class AxesExtensions
     public static HistogramPlot AddHistogram(this AxesModel axes, double[] values, int binCount = 10)
     {
         ArgumentNullException.ThrowIfNull(axes);
-        var plot = new HistogramPlot(values) { BinCount = binCount };
+        var plot = new HistogramPlot(values, binCount);
         axes.Plots.Add(plot);
         return plot;
     }

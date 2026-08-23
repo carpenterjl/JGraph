@@ -147,6 +147,12 @@ NAMED_SAMPLES: dict[str, str] = {
     # "character vector" is true of a format and useless as one: sampled as 'a' it asks a scanner to
     # match a literal letter against digits, which measures nothing about the conversions.
     "formatSpec": "'%f'",
+    # Likewise a LineSpec: 'a' is a character vector and not a line spec, and MATLAB refuses it too.
+    # Sampled that way the probe measured whether a verb would swallow nonsense, which is the
+    # opposite of what the form documents. M77 found it by making two verbs strict enough to say no.
+    "LineSpec": "'r--o'",
+    "lineSpec": "'r--o'",
+    "linespec": "'r--o'",
 }
 
 

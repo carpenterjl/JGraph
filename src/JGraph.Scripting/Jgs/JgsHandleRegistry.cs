@@ -96,6 +96,14 @@ internal sealed class JgsHandleEntry
     public string PickableParts { get; set; } = "visible";
 
     /// <summary>
+    /// The workspace variable feeding each data channel — MATLAB's <c>XDataSource</c> family. It lives
+    /// on the entry rather than on the model for the same reason application data does: it is the
+    /// script's own bookkeeping, means nothing to a drawing or a saved figure, and <c>refreshdata</c>
+    /// is the only thing that reads it.
+    /// </summary>
+    public Dictionary<string, string> DataSources { get; } = new(StringComparer.OrdinalIgnoreCase);
+
+    /// <summary>
     /// Whatever a script has hung on this object with <c>setappdata</c>. It lives on the entry rather
     /// than on the model because it is the script's own bookkeeping and has no business being drawn,
     /// inspected or saved — and because the entry is already what a closed figure lets go of, so

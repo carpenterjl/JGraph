@@ -9,11 +9,12 @@ namespace JGraph.Rendering;
 /// </summary>
 public readonly struct LegendKey
 {
-    public LegendKey(LineStyle? line, MarkerStyle? marker, Color? swatch)
+    public LegendKey(LineStyle? line, MarkerStyle? marker, Color? swatch, LineStyle? outline = null)
     {
         Line = line;
         Marker = marker;
         Swatch = swatch;
+        Outline = outline;
     }
 
     public LineStyle? Line { get; }
@@ -22,6 +23,12 @@ public readonly struct LegendKey
 
     /// <summary>A filled swatch color (for bars/areas), or null when the line/marker sample suffices.</summary>
     public Color? Swatch { get; }
+
+    /// <summary>
+    /// The stroke round the swatch, or null for an unoutlined one. A bar's edge colour, alpha and
+    /// dash could not reach the legend at all before M77, because the key had nowhere to carry them.
+    /// </summary>
+    public LineStyle? Outline { get; }
 }
 
 /// <summary>

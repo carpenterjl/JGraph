@@ -109,6 +109,16 @@ internal static partial class JgsBuiltins
         // Case-insensitive but never partial: MATLAB tolerates unambiguous abbreviations, and copying
         // that would mean a later option could silently change what an existing script's abbreviation
         // resolves to. Spelling an option in full is a fixed target.
+        /// <summary>
+        /// Whether this spec would read the word as one of its own — an option name or a bare flag.
+        /// A verb that also takes a LineSpec asks before peeling one, so that a spec and an option
+        /// spelled alike cannot be mistaken for each other.
+        /// </summary>
+        public bool Knows(string word) => MatchName(word) is not null || MatchFlag(word) is not null;
+
+        /// <summary>Whether the word is an option name, and so takes the argument after it.</summary>
+        public bool KnowsName(string word) => MatchName(word) is not null;
+
         private string? MatchName(string word) => Find(Names, word);
 
         private string? MatchFlag(string word) => Find(Flags, word);

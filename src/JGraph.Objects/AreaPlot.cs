@@ -26,14 +26,16 @@ public sealed class AreaPlot : XYPlot, IDrawable, ILegendItem
     private double _faceAlpha = 1.0;
     private double _lineWidth = 1.0;
     private DashStyle _dash = DashStyle.Solid;
-    private double _baseValue;
-    private bool _showBaseLine = true;
+    private readonly BaseLineModel _baseLine = new();
+    private double _edgeAlpha = 1.0;
+    private bool _alignVertexCenters;
     private double[]? _lowerEdge;
 
     public AreaPlot(IDataSeries data)
         : base(data)
     {
         Name = "Area";
+        Adopt(_baseLine);
     }
 
     public AreaPlot(double[] xs, double[] ys)
@@ -83,16 +85,24 @@ public sealed class AreaPlot : XYPlot, IDrawable, ILegendItem
     [Category("Appearance"), DisplayName("Base value")]
     public double BaseValue
     {
-        get => _baseValue;
-        set => SetProperty(ref _baseValue, value, InvalidationKind.Layout);
+        get => _baseLine.BaseValue;
+        set
+        {
+            _baseLine.BaseValue = value;
+            Invalidate(InvalidationKind.Layout);
+        }
     }
 
     /// <summary>Whether the line along the floor is drawn.</summary>
     [Category("Appearance"), DisplayName("Show base line")]
     public bool ShowBaseLine
     {
-        get => _showBaseLine;
-        set => SetProperty(ref _showBaseLine, value, InvalidationKind.Render);
+        get => _baseLine.Visible;
+        set
+        {
+            _baseLine.Visible = value;
+            Invalidate(InvalidationKind.Render);
+        }
     }
 
     /// <summary>
@@ -106,12 +116,38 @@ public sealed class AreaPlot : XYPlot, IDrawable, ILegendItem
         set => SetProperty(ref _lowerEdge, value, InvalidationKind.Layout);
     }
 
+    /// <summary>
+    /// Whether the band's vertices are snapped to pixel centres, which is what keeps a thin outline
+    /// crisp rather than spread across two rows of pixels.
+    /// </summary>
+    [Category("Appearance"), DisplayName("Align vertex centers")]
+    public bool AlignVertexCenters
+    {
+        get => _alignVertexCenters;
+        set => SetProperty(ref _alignVertexCenters, value, InvalidationKind.Render);
+    }
+
+    /// <summary>How opaque the outline is, in [0, 1]. The fill has its own.</summary>
+    [Category("Appearance"), DisplayName("Edge alpha")]
+    public double EdgeAlpha
+    {
+        get => _edgeAlpha;
+        set => SetProperty(ref _edgeAlpha, System.Math.Clamp(value, 0, 1), InvalidationKind.Render);
+    }
+
+    /// <summary>
+    /// The line the band stands on. An area has drawn one since M6; what it did not have was a
+    /// handle on it, so the line could not be coloured, widened or dashed on its own.
+    /// </summary>
+    [Browsable(false)]
+    public BaseLineModel BaseLine => _baseLine;
+
     /// <inheritdoc />
     public string LegendLabel => DisplayName;
 
     /// <summary>The floor under sample <paramref name="i"/>.</summary>
     public double FloorAt(int i) =>
-        _lowerEdge is { } edge && i < edge.Length && double.IsFinite(edge[i]) ? edge[i] : _baseValue;
+        _lowerEdge is { } edge && i < edge.Length && double.IsFinite(edge[i]) ? edge[i] : BaseValue;
 
     /// <summary>The top of the band at sample <paramref name="i"/>: absolute alone, relative when stacked.</summary>
     public double TopAt(int i) => _lowerEdge is null ? Data.GetY(i) : FloorAt(i) + Data.GetY(i);
@@ -131,7 +167,7 @@ public sealed class AreaPlot : XYPlot, IDrawable, ILegendItem
         }
 
         // A band always shows its own floor even where it has no samples above it.
-        return range.IsEmpty ? DataRange.Empty : range.Include(_baseValue);
+        return range.IsEmpty ? DataRange.Empty : range.Include(BaseValue);
     }
 
     /// <inheritdoc />
@@ -139,7 +175,7 @@ public sealed class AreaPlot : XYPlot, IDrawable, ILegendItem
     {
         Color face = (_faceColor ?? state.SeriesColor).WithOpacity(Opacity * _faceAlpha);
         Color edge = _edgeColor ?? Color.Lerp(_faceColor ?? state.SeriesColor, Colors.Black, 0.25);
-        LineStyle? stroke = _lineWidth > 0 ? new LineStyle(edge.WithOpacity(Opacity), _lineWidth, _dash) : null;
+        LineStyle? stroke = _lineWidth > 0 ? new LineStyle(edge.WithOpacity(Opacity * _edgeAlpha), _lineWidth, _dash) : null;
         ICoordinateMapper mapper = state.Mapper;
 
         // A gap in the data breaks the band rather than bridging it, the way a line plot's gaps do,
@@ -174,21 +210,31 @@ public sealed class AreaPlot : XYPlot, IDrawable, ILegendItem
                 continue;
             }
 
-            polygon.Add(mapper.DataToPixel(x, top));
-            floor.Add(mapper.DataToPixel(x, bottom));
+            polygon.Add(Snapped(mapper.DataToPixel(x, top)));
+            floor.Add(Snapped(mapper.DataToPixel(x, bottom)));
         }
 
         Flush();
 
-        if (_showBaseLine && Data.Count > 0)
+        if (ShowBaseLine && Data.Count > 0)
         {
             DrawBaseLine(context, mapper, edge);
         }
     }
 
     /// <inheritdoc />
-    public LegendKey GetLegendKey(Color seriesColor) =>
-        new(line: null, marker: null, swatch: _faceColor ?? seriesColor);
+    public LegendKey GetLegendKey(Color seriesColor)
+    {
+        Color face = _faceColor ?? seriesColor;
+        Color edge = _edgeColor ?? Color.Lerp(face, Colors.Black, 0.25);
+        return new LegendKey(
+            line: null,
+            marker: null,
+            swatch: face.WithOpacity(_faceAlpha),
+            outline: _lineWidth > 0
+                ? new LineStyle(edge.WithOpacity(_edgeAlpha), _lineWidth, _dash)
+                : null);
+    }
 
     /// <inheritdoc />
     public override PlotHitResult? HitTest(Point2D pixelPoint, ICoordinateMapper mapper, double tolerancePixels)
@@ -236,6 +282,11 @@ public sealed class AreaPlot : XYPlot, IDrawable, ILegendItem
         return null;
     }
 
+    /// <summary>A vertex on a pixel centre when the band was told to align them, and as it is otherwise.</summary>
+    private Point2D Snapped(Point2D point) => _alignVertexCenters && point.IsFinite
+        ? new Point2D(System.Math.Floor(point.X) + 0.5, System.Math.Floor(point.Y) + 0.5)
+        : point;
+
     private void DrawBaseLine(IRenderContext context, ICoordinateMapper mapper, Color edge)
     {
         double left = double.PositiveInfinity;
@@ -257,9 +308,14 @@ public sealed class AreaPlot : XYPlot, IDrawable, ILegendItem
             return;
         }
 
+        // The line has its own colour, width and dash since M77; where it has none of its own it
+        // is drawn in the band's edge ink at the width it always was.
         context.DrawLine(
-            mapper.DataToPixel(left, _baseValue),
-            mapper.DataToPixel(right, _baseValue),
-            new LineStyle(edge.WithOpacity(Opacity), System.Math.Max(_lineWidth, 0.5)));
+            mapper.DataToPixel(left, BaseValue),
+            mapper.DataToPixel(right, BaseValue),
+            new LineStyle(
+                (_baseLine.Color ?? edge).WithOpacity(Opacity),
+                System.Math.Max(_baseLine.Color is null ? _lineWidth : _baseLine.LineWidth, 0.5),
+                _baseLine.LineStyle));
     }
 }

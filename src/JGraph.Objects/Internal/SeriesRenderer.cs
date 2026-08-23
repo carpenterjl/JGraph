@@ -22,7 +22,8 @@ internal static class SeriesRenderer
         IDataSeries data,
         LineStyle line,
         ref Point2D[] dataBuffer,
-        ref Point2D[] pixelBuffer)
+        ref Point2D[] pixelBuffer,
+        bool alignVertexCenters = false)
     {
         if (data.Count < 2 || !line.IsVisible)
         {
@@ -50,6 +51,7 @@ internal static class SeriesRenderer
                 pixelBuffer[i] = mapper.DataToPixel(dataBuffer[i].X, dataBuffer[i].Y);
             }
 
+            SnapToPixelCentres(pixelBuffer, n, alignVertexCenters);
             DrawWithGaps(context, pixelBuffer, n, line);
         }
         else
@@ -65,7 +67,31 @@ internal static class SeriesRenderer
                     : Point2D.NaN;
             }
 
+            SnapToPixelCentres(pixelBuffer, n, alignVertexCenters);
             DrawWithGaps(context, pixelBuffer, n, line);
+        }
+    }
+
+    /// <summary>
+    /// Puts every vertex on a pixel centre. A one-pixel line between two half-pixel positions is
+    /// spread across two rows and reads as grey; on the centres it lands in one and reads as the
+    /// line it is. This is MATLAB's <c>AlignVertexCenters</c>, and it does nothing unless asked.
+    /// </summary>
+    private static void SnapToPixelCentres(Point2D[] pixels, int count, bool snap)
+    {
+        if (!snap)
+        {
+            return;
+        }
+
+        for (int i = 0; i < count; i++)
+        {
+            if (pixels[i].IsFinite)
+            {
+                pixels[i] = new Point2D(
+                    System.Math.Floor(pixels[i].X) + 0.5,
+                    System.Math.Floor(pixels[i].Y) + 0.5);
+            }
         }
     }
 
@@ -75,7 +101,8 @@ internal static class SeriesRenderer
         IDataSeries data,
         MarkerStyle marker,
         Color seriesColor,
-        ref Point2D[] pixelBuffer)
+        ref Point2D[] pixelBuffer,
+        int[]? indices = null)
     {
         if (!marker.IsVisible || data.Count == 0)
         {
@@ -83,10 +110,20 @@ internal static class SeriesRenderer
         }
 
         ICoordinateMapper mapper = state.Mapper;
-        EnsureCapacity(ref pixelBuffer, data.Count);
+
+        // A marker per sample unless the caller named the ones it wants — MATLAB's MarkerIndices,
+        // which is how a line of ten thousand points is given a dozen readable markers.
+        int wanted = indices?.Length ?? data.Count;
+        EnsureCapacity(ref pixelBuffer, wanted);
         int m = 0;
-        for (int i = 0; i < data.Count; i++)
+        for (int k = 0; k < wanted; k++)
         {
+            int i = indices is null ? k : indices[k];
+            if (i < 0 || i >= data.Count)
+            {
+                continue;
+            }
+
             double x = data.GetX(i);
             double y = data.GetY(i);
             if (double.IsFinite(x) && double.IsFinite(y))

@@ -4525,6 +4525,26 @@ internal sealed partial class Interpreter
                 when IsHandleArray(target, env):
                 return JgsHandleRegistry.Require(Evaluate(indexed, env), indexed.Line, indexed.Column);
 
+            // ax.XAxis.Color = c, and h.Annotation.LegendInformation.IconDisplayStyle = 'off' — a
+            // chain of properties that each answer a handle, which is how MATLAB spells the settings
+            // an object keeps on a smaller object of its own. Every step is a property read, so
+            // walking the chain cannot have a side effect; a name the owner does not answer to falls
+            // through to the struct path and gets its ordinary error there.
+            case MemberExpr inner when TryResolveHandleTarget(inner.Target, env) is { } owner
+                && JgsGraphicsProperties.TryFind(owner.Target, FieldName(inner, env), out _):
+                return JgsHandleRegistry.TryGet(
+                    JgsGraphicsProperties.Get(owner, FieldName(inner, env), inner.Line, inner.Column),
+                    out JgsHandleEntry? nested)
+                    ? nested
+                    : null;
+
+            // t.DataTipRows(1).Label = 'x' — one of a row of handles a property answered with.
+            case CallExpr { Arguments.Count: 1, Callee: MemberExpr callee } nestedCall
+                when TryResolveHandleTarget(callee.Target, env) is not null:
+                return JgsHandleRegistry.TryGet(Evaluate(nestedCall, env), out JgsHandleEntry? one)
+                    ? one
+                    : null;
+
             default:
                 return null;
         }

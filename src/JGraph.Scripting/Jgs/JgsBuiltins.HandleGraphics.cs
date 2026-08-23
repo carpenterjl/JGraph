@@ -1,5 +1,6 @@
 using JGraph.Api;
 using JGraph.Core.Model;
+using JGraph.Objects;
 using JGraph.Serialization;
 
 namespace JGraph.Scripting.Jgs;
@@ -962,6 +963,124 @@ internal static partial class JgsBuiltins
         }
 
         return entries;
+    }
+
+    // --- refreshdata --------------------------------------------------------------------------
+
+    /// <summary>
+    /// <c>refreshdata</c>, which is what the <c>XDataSource</c> family is for: each source names a
+    /// workspace variable, and this reads those variables again and writes what they now hold back
+    /// into the chart. Without a handle it refreshes every chart in every figure, which is the form
+    /// a script uses after recomputing the numbers a figure was drawn from.
+    /// <para>
+    /// The two position channels are written together. A series is held as a pair here and refuses a
+    /// half-written one, and a refresh that lengthened both would otherwise fail on whichever it
+    /// happened to reach first.
+    /// </para>
+    /// </summary>
+    private static JgsValue RefreshData(
+        IReadOnlyList<JgsValue> args, Interpreter interpreter, int line, int col)
+    {
+        ArityRange("refreshdata", args, 0, 2, line, col);
+
+        JgsEnvironment workspace = interpreter.Globals;
+        int given = args.Count;
+        if (given > 0 && args[^1].Type == JgsType.String)
+        {
+            string word = StrOf("refreshdata", args[^1], line, col);
+            workspace = word.ToLowerInvariant() switch
+            {
+                "base" => interpreter.Globals,
+                "caller" => interpreter.CallerFrame ?? interpreter.Globals,
+                _ => throw new JgsRuntimeException(
+                    line, col, $"refreshdata: '{word}' is not 'base' or 'caller'."),
+            };
+            given--;
+        }
+
+        var roots = new List<GraphObject>();
+        if (given > 0)
+        {
+            roots.AddRange(HandleList("refreshdata", args[0], line, col).Select(static e => e.Target));
+        }
+        else
+        {
+            foreach (int number in JG.FigureNumbers)
+            {
+                if (JG.TryGetFigure(number, out FigureModel figure))
+                {
+                    roots.Add(figure);
+                }
+            }
+        }
+
+        foreach (GraphObject root in roots)
+        {
+            RefreshOne(root, workspace, line, col);
+            foreach (GraphObject child in JgsGraphicsProperties.DescendantsOf(root))
+            {
+                RefreshOne(child, workspace, line, col);
+            }
+        }
+
+        return JgsValue.Array([]);
+    }
+
+    /// <summary>Re-reads one object's linked variables, if it has any and has ever been handled.</summary>
+    private static void RefreshOne(GraphObject target, JgsEnvironment workspace, int line, int col)
+    {
+        if (!JgsHandleRegistry.TryGetEntry(target, out JgsHandleEntry? entry)
+            || entry.DataSources.Count == 0)
+        {
+            return;
+        }
+
+        // XData and YData go in together; everything else is written on its own.
+        bool hasX = entry.DataSources.ContainsKey("XDataSource");
+        bool hasY = entry.DataSources.ContainsKey("YDataSource");
+        if (hasX && hasY && target is XYPlot series)
+        {
+            double[] xs = SourceValues(entry, "XDataSource", workspace, line, col);
+            double[] ys = SourceValues(entry, "YDataSource", workspace, line, col);
+            if (xs.Length != ys.Length)
+            {
+                throw new JgsRuntimeException(line, col,
+                    $"refreshdata: {entry.DataSources["XDataSource"]} has {xs.Length} values and "
+                    + $"{entry.DataSources["YDataSource"]} has {ys.Length}. A series is a pair.");
+            }
+
+            series.SetData(xs, ys);
+        }
+
+        foreach ((string source, string variable) in entry.DataSources)
+        {
+            if (hasX && hasY && source is "XDataSource" or "YDataSource")
+            {
+                continue;
+            }
+
+            if (!workspace.TryGet(variable, out JgsValue value))
+            {
+                throw new JgsRuntimeException(line, col,
+                    $"refreshdata: {source} names '{variable}', which is not a variable there.");
+            }
+
+            JgsGraphicsProperties.Set(
+                entry, JgsGraphicsProperties.ChannelOf(source), value, line, col);
+        }
+    }
+
+    private static double[] SourceValues(
+        JgsHandleEntry entry, string source, JgsEnvironment workspace, int line, int col)
+    {
+        string variable = entry.DataSources[source];
+        if (!workspace.TryGet(variable, out JgsValue value))
+        {
+            throw new JgsRuntimeException(line, col,
+                $"refreshdata: {source} names '{variable}', which is not a variable there.");
+        }
+
+        return ToDoubles(source, value, line, col);
     }
 
     private static string[] CellOfNames(string verb, JgsValue value, int line, int col)

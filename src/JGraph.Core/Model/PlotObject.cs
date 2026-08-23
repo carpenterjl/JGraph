@@ -17,6 +17,9 @@ public abstract class PlotObject : GraphObject
     private int _xAxisIndex;
     private int _yAxisIndex;
     private int _seriesIndex = -1;
+    private bool _clipping = true;
+    private PlotAnnotationModel? _annotation;
+    private DataTipTemplateModel? _dataTipTemplate;
 
     /// <summary>The name shown for this object in a legend (MATLAB "DisplayName").</summary>
     [Category("General"), DisplayName("Display name")]
@@ -69,6 +72,73 @@ public abstract class PlotObject : GraphObject
     {
         get => _seriesIndex;
         set => SetProperty(ref _seriesIndex, value, InvalidationKind.Render);
+    }
+
+    /// <summary>
+    /// Whether this object is trimmed to the plot box. MATLAB clips every plot by default and lets a
+    /// script turn it off per object, which is how content that runs past the limits is shown; the
+    /// axes' own <see cref="AxesModel.Clipping"/> still has the last word, because an axes told not to
+    /// clip clips nothing.
+    /// </summary>
+    [Category("Behavior")]
+    public bool Clipping
+    {
+        get => _clipping;
+        set => SetProperty(ref _clipping, value, InvalidationKind.Render);
+    }
+
+    /// <summary>
+    /// MATLAB's little side object, whose one useful part says whether this series takes a legend
+    /// row. Built on first ask: a plot that is never asked never carries one.
+    /// </summary>
+    [Browsable(false)]
+    public PlotAnnotationModel Annotation
+    {
+        get
+        {
+            if (_annotation is null)
+            {
+                _annotation = new PlotAnnotationModel();
+                _annotation.SetParent(this);
+            }
+
+            return _annotation;
+        }
+    }
+
+    /// <summary>What a data tip on this series says, built on first ask with this kind's own rows.</summary>
+    [Browsable(false)]
+    public DataTipTemplateModel DataTipTemplate
+    {
+        get
+        {
+            if (_dataTipTemplate is null)
+            {
+                _dataTipTemplate = new DataTipTemplateModel();
+                _dataTipTemplate.SetParent(this);
+                _dataTipTemplate.SetRows(DefaultDataTipRows());
+            }
+
+            return _dataTipTemplate;
+        }
+    }
+
+    /// <summary>
+    /// Whether a legend should carry a row for this series. Reading it never builds an annotation, so
+    /// the renderer asking about every plot on an axes does not give them all one.
+    /// </summary>
+    [Browsable(false)]
+    public bool ShowsInLegend =>
+        _annotation is null || _annotation.LegendInformation.IconDisplayStyle != LegendIconDisplay.Off;
+
+    /// <summary>
+    /// The rows a data tip on this kind shows before anyone changes them. The base pair is what every
+    /// series in a plot box has; kinds with more channels than a position override this.
+    /// </summary>
+    protected virtual IEnumerable<DataTipRowModel> DefaultDataTipRows()
+    {
+        yield return new DataTipRowModel("X", "XData");
+        yield return new DataTipRowModel("Y", "YData");
     }
 
     /// <summary>The owning axes, or null if this object is not attached to a figure tree.</summary>

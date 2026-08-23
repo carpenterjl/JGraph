@@ -272,7 +272,7 @@ internal static partial class JgsBuiltins
                     // A column against itself is a straight line and says nothing, so the diagonal
                     // shows how that column is distributed instead.
                     HistogramPlot bars = cell.AddHistogram(xs[c]);
-                    bars.FillColor = style.Color ?? PaletteColorFor(bars);
+                    bars.FaceColor = style.Color ?? PaletteColorFor(bars);
                     distributions.Add(JgsHandleRegistry.For(bars).AsNumber);
                     diagonal.Add(cells[(c * rows) + r]);
                     continue;

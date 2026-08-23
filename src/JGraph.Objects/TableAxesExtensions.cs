@@ -87,9 +87,8 @@ public static class TableAxesExtensions
         ArgumentNullException.ThrowIfNull(axes);
         ArgumentNullException.ThrowIfNull(table);
 
-        var plot = new HistogramPlot(TableSeries.GetNumbers(table, valueColumn))
+        var plot = new HistogramPlot(TableSeries.GetNumbers(table, valueColumn), binCount)
         {
-            BinCount = binCount,
             DisplayName = valueColumn,
         };
         axes.Plots.Add(plot);
