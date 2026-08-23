@@ -17,6 +17,29 @@ namespace JGraph.Scripting.Jgs;
 /// </remarks>
 internal static partial class JgsGraphicsProperties
 {
+    /// <summary>
+    /// The same four rectangles for a chart that owns a whole axes in MATLAB but is a plot on one
+    /// here — a heatmap. It answers for the axes it is drawn on, which is the shape its Title and its
+    /// two labels have answered in since it was written.
+    /// </summary>
+    private static void AddChartLayout(IDictionary<string, GraphicsProperty> table)
+    {
+        var host = new Dictionary<string, GraphicsProperty>(StringComparer.OrdinalIgnoreCase);
+        AddAxesLayout(host);
+
+        foreach ((string name, GraphicsProperty property) in host)
+        {
+            string spelling = name;
+            GraphicsProperty over = property;
+            Put(table, spelling,
+                entry => over.Read(JgsHandleRegistry.EntryFor(Owning(entry, 0, 0))),
+                over.Write is null
+                    ? null
+                    : (entry, value, line, col) => over.Write(
+                        JgsHandleRegistry.EntryFor(Owning(entry, line, col)), value, line, col));
+        }
+    }
+
     private static void AddAxesLayout(IDictionary<string, GraphicsProperty> table)
     {
         // Position and InnerPosition are two names for the plot box, as they are in MATLAB. Writing

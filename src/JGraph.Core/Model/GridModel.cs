@@ -18,6 +18,10 @@ public sealed class GridModel : GraphObject
     private bool _showMinorX;
     private bool _showMinorY;
     private bool _showMinorZ;
+    private bool _showMajorR = true;
+    private bool _showMajorTheta = true;
+    private bool _showMinorR;
+    private bool _showMinorTheta;
     private LineStyle _majorLineStyle = new(Colors.LightGray, 1.0);
     private LineStyle _minorLineStyle = new(Color.FromRgb(0xEC, 0xEC, 0xEC), 0.5);
 
@@ -33,12 +37,14 @@ public sealed class GridModel : GraphObject
     [Category("Appearance"), DisplayName("Show major lines")]
     public bool ShowMajor
     {
-        get => _showMajorX || _showMajorY || _showMajorZ;
+        get => _showMajorX || _showMajorY || _showMajorZ || _showMajorR || _showMajorTheta;
         set
         {
             ShowMajorX = value;
             ShowMajorY = value;
             ShowMajorZ = value;
+            ShowMajorR = value;
+            ShowMajorTheta = value;
         }
     }
 
@@ -46,12 +52,14 @@ public sealed class GridModel : GraphObject
     [Category("Appearance"), DisplayName("Show minor lines")]
     public bool ShowMinor
     {
-        get => _showMinorX || _showMinorY || _showMinorZ;
+        get => _showMinorX || _showMinorY || _showMinorZ || _showMinorR || _showMinorTheta;
         set
         {
             ShowMinorX = value;
             ShowMinorY = value;
             ShowMinorZ = value;
+            ShowMinorR = value;
+            ShowMinorTheta = value;
         }
     }
 
@@ -101,6 +109,42 @@ public sealed class GridModel : GraphObject
     {
         get => _showMinorZ;
         set => SetProperty(ref _showMinorZ, value, InvalidationKind.Render);
+    }
+
+    /// <summary>
+    /// The rings of a polar axes, drawn at the r ticks (MATLAB <c>RGrid</c>). A polar axes has no x
+    /// or y to switch, so the rings and the spokes carry their own two flags rather than borrowing
+    /// the Cartesian ones — <c>grid on</c> still speaks for all five at once through the aggregate.
+    /// </summary>
+    [Browsable(false)]
+    public bool ShowMajorR
+    {
+        get => _showMajorR;
+        set => SetProperty(ref _showMajorR, value, InvalidationKind.Render);
+    }
+
+    /// <summary>The spokes of a polar axes, drawn at the θ ticks (MATLAB <c>ThetaGrid</c>).</summary>
+    [Browsable(false)]
+    public bool ShowMajorTheta
+    {
+        get => _showMajorTheta;
+        set => SetProperty(ref _showMajorTheta, value, InvalidationKind.Render);
+    }
+
+    /// <summary>Rings at the minor r ticks (MATLAB <c>RMinorGrid</c>).</summary>
+    [Browsable(false)]
+    public bool ShowMinorR
+    {
+        get => _showMinorR;
+        set => SetProperty(ref _showMinorR, value, InvalidationKind.Render);
+    }
+
+    /// <summary>Spokes between the θ ticks (MATLAB <c>ThetaMinorGrid</c>).</summary>
+    [Browsable(false)]
+    public bool ShowMinorTheta
+    {
+        get => _showMinorTheta;
+        set => SetProperty(ref _showMinorTheta, value, InvalidationKind.Render);
     }
 
     [Category("Appearance"), DisplayName("Major lines")]

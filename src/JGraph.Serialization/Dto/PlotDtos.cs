@@ -297,6 +297,11 @@ public sealed class HeatmapPlotDto : PlotDto
     public Color MissingDataColor { get; set; } = Color.FromScRgb(0.15, 0.15, 0.15);
 
     public string MissingDataLabel { get; set; } = "NaN";
+
+    /// <summary>The text written under the columns, when a script has separated it from their names.</summary>
+    public string[]? XDisplayLabels { get; set; }
+
+    public string[]? YDisplayLabels { get; set; }
 }
 
 /// <summary>
@@ -521,6 +526,11 @@ public sealed class ImagePlotDto : PlotDto
     public bool Interpolate { get; set; }
 
     public bool RowZeroAtTop { get; set; } = true;
+
+    public AlphaMapping AlphaDataMapping { get; set; } = AlphaMapping.Scaled;
+
+    /// <summary>Direct is an image's default: its numbers are usually colour numbers already.</summary>
+    public ColorMapping CDataMapping { get; set; } = ColorMapping.Direct;
 }
 
 public sealed class RgbImagePlotDto : PlotDto
@@ -572,6 +582,33 @@ public sealed class SurfacePlotDto : PlotDto
 
     /// <summary>Whether the faces take their alpha from that grid rather than from FaceAlpha.</summary>
     public bool FaceAlphaFlat { get; set; }
+
+    public SurfaceMeshStyle MeshStyle { get; set; } = SurfaceMeshStyle.Both;
+
+    public DashStyle EdgeDash { get; set; } = DashStyle.Solid;
+
+    public MarkerType Marker { get; set; } = MarkerType.None;
+
+    public double MarkerSize { get; set; } = 6;
+
+    public Color? MarkerEdge { get; set; }
+
+    public Color? MarkerFill { get; set; }
+
+    public AlphaMapping AlphaDataMapping { get; set; } = AlphaMapping.Scaled;
+
+    public ColorMapping CDataMapping { get; set; } = ColorMapping.Scaled;
+
+    public SurfaceLighting EdgeLighting { get; set; } = SurfaceLighting.None;
+
+    public BackFaceLighting BackFaceLighting { get; set; } = BackFaceLighting.ReverseLit;
+
+    public bool AlignVertexCenters { get; set; }
+
+    /// <summary>Whether the positions were counted out from the grid rather than given.</summary>
+    public bool XImplied { get; set; }
+
+    public bool YImplied { get; set; }
 
     public ColormapDto Colormap { get; set; } = new("Parula", Array.Empty<Color>());
 
@@ -642,6 +679,23 @@ public sealed class ContourPlotDto : PlotDto
     public double[]? LabelLevels { get; set; }
 
     public TextStyleDto? LabelStyle { get; set; }
+
+    /// <summary>One ink for every curve, or null to colour each by its own level.</summary>
+    public Color? LineColor { get; set; }
+
+    public DashStyle LineDash { get; set; } = DashStyle.Solid;
+
+    public double? LevelStep { get; set; }
+
+    public double? TextStep { get; set; }
+
+    public double LabelSpacing { get; set; } = 144;
+
+    public bool ContoursAtZero { get; set; }
+
+    public bool XImplied { get; set; }
+
+    public bool YImplied { get; set; }
 }
 
 /// <summary>The serialized form of a <see cref="ConstantLinePlot"/> — an xline or a yline.</summary>
@@ -871,6 +925,31 @@ public sealed class PatchPlotDto : PlotDto
 
     public PatchShading Shading { get; set; }
 
+    public DashStyle EdgeDash { get; set; } = DashStyle.Solid;
+
+    public LineJoin LineJoin { get; set; } = LineJoin.Miter;
+
+    public MarkerType Marker { get; set; } = MarkerType.None;
+
+    public double MarkerSize { get; set; } = 6;
+
+    public Color? MarkerEdge { get; set; }
+
+    public Color? MarkerFill { get; set; }
+
+    /// <summary>A transparency per vertex, or null for one opacity across the patch.</summary>
+    public double[]? VertexAlpha { get; set; }
+
+    public AlphaMapping AlphaDataMapping { get; set; } = AlphaMapping.Scaled;
+
+    public ColorMapping CDataMapping { get; set; } = ColorMapping.Scaled;
+
+    public SurfaceLighting EdgeLighting { get; set; } = SurfaceLighting.None;
+
+    public BackFaceLighting BackFaceLighting { get; set; } = BackFaceLighting.ReverseLit;
+
+    public bool AlignVertexCenters { get; set; }
+
     public ColormapDto Colormap { get; set; } = new("Parula", Array.Empty<Color>());
 
     public bool AutoScaleColor { get; set; } = true;
@@ -908,6 +987,26 @@ public sealed class QuiverPlotDto : PlotDto
     public bool ShowArrowHead { get; set; } = true;
 
     public double MaxHeadSize { get; set; } = 0.2;
+
+    public DashStyle LineDash { get; set; } = DashStyle.Solid;
+
+    public bool LineStyleManual { get; set; }
+
+    public MarkerType Marker { get; set; } = MarkerType.None;
+
+    public bool MarkerManual { get; set; }
+
+    public double MarkerSize { get; set; } = 6;
+
+    public Color? MarkerEdge { get; set; }
+
+    public Color? MarkerFill { get; set; }
+
+    public bool AlignVertexCenters { get; set; }
+
+    public bool XImplied { get; set; }
+
+    public bool YImplied { get; set; }
 }
 
 public sealed class PolarGridDto : PlotDto

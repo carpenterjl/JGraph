@@ -16,6 +16,7 @@ internal static class LegendRenderer
     private const double SwatchGap = 6;
     private const double Padding = 8;
     private const double RowGap = 4;
+    private const double ColumnGap = 12;
     private const double Inset = 10;
 
     /// <summary>
@@ -31,7 +32,8 @@ internal static class LegendRenderer
     /// rectangle comes back beside the box, so a click can be traced to the series it names without
     /// the interaction layer having to lay the legend out again.
     /// </summary>
-    public static LegendLayout? Draw(IRenderContext context, AxesModel axes, Rect2D plotArea, ITheme theme)
+    public static LegendLayout? Draw(
+        IRenderContext context, AxesModel axes, Rect2D plotArea, Rect2D figureArea, ITheme theme)
     {
         IReadOnlyList<Color> palette = SeriesPalette.Of(axes, theme);
 
@@ -73,48 +75,79 @@ internal static class LegendRenderer
         }
 
         double rowHeight = 0;
-        double maxLabelWidth = 0;
-        foreach ((string label, _, _, _) in entries)
+        var labelWidths = new double[entries.Count];
+        for (int i = 0; i < entries.Count; i++)
         {
-            Size2D size = context.MeasureText(label, legend.TextStyle);
+            Size2D size = context.MeasureText(entries[i].Label, legend.TextStyle);
             rowHeight = System.Math.Max(rowHeight, size.Height);
-            maxLabelWidth = System.Math.Max(maxLabelWidth, size.Width);
+            labelWidths[i] = size.Width;
         }
 
-        double boxWidth = Padding + SwatchWidth + SwatchGap + maxLabelWidth + Padding;
-        double boxHeight = Padding + (entries.Count * rowHeight) + ((entries.Count - 1) * RowGap) + Padding;
+        // Entries are dealt down each column before moving to the next, so a two-column vertical
+        // legend reads top-to-bottom then left-to-right — and a horizontal one, whose columns are one
+        // row deep, reads left to right. One law places both.
+        int columns = legend.ResolveColumns(entries.Count);
+        int perColumn = (entries.Count + columns - 1) / columns;
 
-        Rect2D box = PlaceBox(legend, plotArea, boxWidth, boxHeight);
+        var columnWidths = new double[columns];
+        for (int i = 0; i < entries.Count; i++)
+        {
+            int column = i / perColumn;
+            columnWidths[column] = System.Math.Max(
+                columnWidths[column], SwatchWidth + SwatchGap + labelWidths[i]);
+        }
 
-        LineStyle? border = legend.ShowBorder ? new LineStyle(legend.BorderColor, 1) : null;
+        double boxWidth = Padding + Padding + columnWidths.Sum() + ((columns - 1) * ColumnGap);
+        double boxHeight = Padding + (perColumn * rowHeight) + ((perColumn - 1) * RowGap) + Padding;
+
+        Rect2D box = PlaceBox(legend, plotArea, figureArea, boxWidth, boxHeight);
+        legend.LastBox = box;
+
+        LineStyle? border = legend.ShowBorder && legend.BorderWidth > 0
+            ? new LineStyle(legend.BorderColor, legend.BorderWidth)
+            : null;
         context.DrawRectangle(box, border, legend.Background);
 
-        double y = box.Top + Padding;
         var rows = new List<LegendRowBounds>(entries.Count);
-        foreach ((string label, LegendKey key, PlotObject plot, bool dimmed) in entries)
+        double columnLeft = box.Left + Padding;
+        for (int column = 0; column < columns; column++)
         {
-            double rowCenterY = y + (rowHeight / 2);
-            double swatchLeft = box.Left + Padding;
-            DrawSwatch(context, dimmed ? Dim(key) : key, swatchLeft, rowCenterY);
-
-            TextStyle text = legend.TextStyle;
-            if (dimmed)
+            double y = box.Top + Padding;
+            for (int row = 0; row < perColumn; row++)
             {
-                text = new TextStyle(
-                    text.Color.WithOpacity(DimOpacity), text.FontSize, text.FontFamily, text.Bold, text.Italic);
+                int i = (column * perColumn) + row;
+                if (i >= entries.Count)
+                {
+                    break;
+                }
+
+                (string label, LegendKey key, PlotObject plot, bool dimmed) = entries[i];
+                double rowCenterY = y + (rowHeight / 2);
+                DrawSwatch(context, dimmed ? Dim(key) : key, columnLeft, rowCenterY);
+
+                TextStyle text = legend.TextStyle;
+                if (dimmed)
+                {
+                    text = new TextStyle(
+                        text.Color.WithOpacity(DimOpacity), text.FontSize, text.FontFamily,
+                        text.Bold, text.Italic, text.Interpreter);
+                }
+
+                context.DrawText(
+                    label,
+                    new Point2D(columnLeft + SwatchWidth + SwatchGap, rowCenterY),
+                    text,
+                    HorizontalAlignment.Left,
+                    VerticalAlignment.Middle);
+
+                // The clickable row spans its own column, not just the drawn glyphs — a click just
+                // right of a short label is still a click on that row.
+                rows.Add(new LegendRowBounds(
+                    plot, new Rect2D(columnLeft, y, columnWidths[column], rowHeight)));
+                y += rowHeight + RowGap;
             }
 
-            context.DrawText(
-                label,
-                new Point2D(swatchLeft + SwatchWidth + SwatchGap, rowCenterY),
-                text,
-                HorizontalAlignment.Left,
-                VerticalAlignment.Middle);
-
-            // The clickable row spans the whole box width, not just the drawn glyphs — a click just
-            // right of a short label is still a click on that row.
-            rows.Add(new LegendRowBounds(plot, new Rect2D(box.Left, y, box.Width, rowHeight)));
-            y += rowHeight + RowGap;
+            columnLeft += columnWidths[column] + ColumnGap;
         }
 
         return new LegendLayout(box, rows);
@@ -166,8 +199,20 @@ internal static class LegendRenderer
     /// <see cref="LegendModel.Location"/> (a fraction of the plot area) when the position is
     /// <see cref="LegendPosition.Custom"/>. A custom box is clamped to stay inside the plot area.
     /// </summary>
-    internal static Rect2D PlaceBox(LegendModel legend, Rect2D plotArea, double width, double height)
+    internal static Rect2D PlaceBox(
+        LegendModel legend, Rect2D plotArea, Rect2D figureArea, double width, double height)
     {
+        // A box pinned by Position is measured against the whole figure and keeps the size it was
+        // given, which is what makes set(lgd,'Position',[...]) place a legend rather than nudge it.
+        if (legend.FigureBox is { } pinned)
+        {
+            return new Rect2D(
+                figureArea.Left + (pinned.X * figureArea.Width),
+                figureArea.Top + (pinned.Y * figureArea.Height),
+                pinned.Width * figureArea.Width,
+                pinned.Height * figureArea.Height);
+        }
+
         LegendPosition position = legend.Position;
         if (position == LegendPosition.Custom)
         {

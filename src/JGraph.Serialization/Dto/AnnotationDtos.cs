@@ -54,6 +54,18 @@ public sealed class TextAnnotationDto : AnnotationDto
 
     public double Padding { get; set; } = 4;
 
+    /// <summary>How far the label is turned, anticlockwise on the page.</summary>
+    public double Rotation { get; set; }
+
+    public double BorderWidth { get; set; } = 1;
+
+    public DashStyle BorderDash { get; set; } = DashStyle.Solid;
+
+    public bool Smoothing { get; set; } = true;
+
+    /// <summary>Off by default, as MATLAB has it: a label just outside the data should still be read.</summary>
+    public bool Clipping { get; set; }
+
     public HorizontalAlignment HorizontalAlignment { get; set; } = HorizontalAlignment.Left;
 
     public VerticalAlignment VerticalAlignment { get; set; } = VerticalAlignment.Bottom;

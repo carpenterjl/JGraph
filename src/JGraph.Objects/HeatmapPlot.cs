@@ -58,6 +58,8 @@ public sealed class HeatmapPlot : PlotObject, IDrawable, IColorMapped
     private Color _gridColor = Colors.White;
     private Color _missingDataColor = Color.FromScRgb(0.15, 0.15, 0.15);
     private string _missingDataLabel = "NaN";
+    private string[]? _xDisplayLabels;
+    private string[]? _yDisplayLabels;
 
     private uint[]? _pixels;
     private double _builtOpacity = 1;
@@ -106,6 +108,90 @@ public sealed class HeatmapPlot : PlotObject, IDrawable, IColorMapped
         get => _yData;
         set => SetProperty(ref _yData, value, InvalidationKind.Layout);
     }
+
+    /// <summary>
+    /// The text written under each column, or null to write its name. MATLAB keeps these apart from
+    /// the names so a chart can be relabelled without losing what identifies a column — which is what
+    /// makes <c>XDisplayData</c> reorderable after <c>XDisplayLabels</c> has been set.
+    /// </summary>
+    [Browsable(false)]
+    public string[]? XDisplayLabels
+    {
+        get => _xDisplayLabels;
+        set => SetProperty(ref _xDisplayLabels, value, InvalidationKind.Layout);
+    }
+
+    /// <summary>The text written beside each row, or null to write its name.</summary>
+    [Browsable(false)]
+    public string[]? YDisplayLabels
+    {
+        get => _yDisplayLabels;
+        set => SetProperty(ref _yDisplayLabels, value, InvalidationKind.Layout);
+    }
+
+    /// <summary>
+    /// Rearranges the columns into the given order, which may leave some out — a heatmap showing
+    /// three of its five categories is three columns wide, not five with two blanked. The values, the
+    /// names and any display labels move together, because they describe the same columns.
+    /// </summary>
+    public void ShowColumns(IReadOnlyList<int> columns)
+    {
+        ArgumentNullException.ThrowIfNull(columns);
+        var picked = new double[Rows, columns.Count];
+        for (int r = 0; r < Rows; r++)
+        {
+            for (int c = 0; c < columns.Count; c++)
+            {
+                picked[r, c] = _colorData[r, columns[c]];
+            }
+        }
+
+        string[] names = [.. ColumnLabels()];
+        string[]? labels = _xDisplayLabels;
+        _xData = [.. columns.Select(c => names[c])];
+        if (labels is not null)
+        {
+            _xDisplayLabels = [.. columns.Select(c => c < labels.Length ? labels[c] : names[c])];
+        }
+
+        _colorData = picked;
+        Rebuild();
+        Invalidate(InvalidationKind.Data);
+    }
+
+    /// <summary>Rearranges the rows into the given order, which may leave some out.</summary>
+    public void ShowRows(IReadOnlyList<int> rows)
+    {
+        ArgumentNullException.ThrowIfNull(rows);
+        var picked = new double[rows.Count, Columns];
+        for (int r = 0; r < rows.Count; r++)
+        {
+            for (int c = 0; c < Columns; c++)
+            {
+                picked[r, c] = _colorData[rows[r], c];
+            }
+        }
+
+        string[] names = [.. RowLabels()];
+        string[]? labels = _yDisplayLabels;
+        _yData = [.. rows.Select(r => names[r])];
+        if (labels is not null)
+        {
+            _yDisplayLabels = [.. rows.Select(r => r < labels.Length ? labels[r] : names[r])];
+        }
+
+        _colorData = picked;
+        Rebuild();
+        Invalidate(InvalidationKind.Data);
+    }
+
+    /// <summary>The text drawn under the columns: the display labels when there are any, else the names.</summary>
+    public IReadOnlyList<string> ColumnText() =>
+        _xDisplayLabels is { Length: > 0 } labels ? Names(labels, Columns) : ColumnLabels();
+
+    /// <summary>The text drawn beside the rows.</summary>
+    public IReadOnlyList<string> RowText() =>
+        _yDisplayLabels is { Length: > 0 } labels ? Names(labels, Rows) : RowLabels();
 
     /// <summary>The colormap the cells are coloured through.</summary>
     [Browsable(false)]

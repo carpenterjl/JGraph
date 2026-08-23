@@ -1,4 +1,4 @@
-﻿using JGraph.Core.Model;
+using JGraph.Core.Model;
 using JGraph.Core.Primitives;
 using JGraph.Data;
 using JGraph.Data.Import;
@@ -456,7 +456,20 @@ public static class JG
     }
 
     /// <summary>Plots a surface of <c>z[row, col]</c> with unit-spaced X/Y (MATLAB <c>surf(Z)</c>).</summary>
-    public static SurfacePlot Surf(double[,] z) => Surf(Ramp(z.GetLength(1)), Ramp(z.GetLength(0)), z);
+    public static SurfacePlot Surf(double[,] z) =>
+        Counted(Surf(Ramp(z.GetLength(1)), Ramp(z.GetLength(0)), z));
+
+    /// <summary>
+    /// Marks a surface whose positions were counted out of the grid rather than given, which is what
+    /// <c>XDataMode</c> and <c>YDataMode</c> report as 'auto'. Every one-argument form goes through
+    /// here, because every one of them counted.
+    /// </summary>
+    private static SurfacePlot Counted(SurfacePlot surface)
+    {
+        surface.XImplied = true;
+        surface.YImplied = true;
+        return surface;
+    }
 
     /// <summary>
     /// Plots a parametric surface, with a position per vertex rather than per row and column — the
@@ -483,7 +496,7 @@ public static class JG
     }
 
     /// <summary>Plots a wireframe surface with unit-spaced X/Y (MATLAB <c>mesh(Z)</c>).</summary>
-    public static SurfacePlot Mesh(double[,] z) => Mesh(Ramp(z.GetLength(1)), Ramp(z.GetLength(0)), z);
+    public static SurfacePlot Mesh(double[,] z) => Counted(Mesh(Ramp(z.GetLength(1)), Ramp(z.GetLength(0)), z));
 
     /// <summary>Plots a wireframe surface with contour lines on the floor (MATLAB <c>meshc</c>).</summary>
     public static SurfacePlot MeshC(double[] x, double[] y, double[,] z)
@@ -1711,7 +1724,11 @@ public static class JG
         axes.ThetaZeroLocation = ThetaZeroLocation.Right;
         axes.ThetaDirection = ThetaDirection.CounterClockwise;
         axes.ThetaAxisUnits = AngleUnits.Degrees;
+
+        // Back to the default angle and back to not having been chosen: a reset axes has made no
+        // choices, and RAxisLocationMode is what says so.
         axes.RAxisLocation = 80;
+        axes.RAxisLocationManual = false;
     }
 
     private static void ResetAxis(AxisModel axis)

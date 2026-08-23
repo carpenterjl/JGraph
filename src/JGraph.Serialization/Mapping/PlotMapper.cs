@@ -1,4 +1,4 @@
-﻿using JGraph.Core.Drawing;
+using JGraph.Core.Drawing;
 using JGraph.Core.Model;
 using JGraph.Objects;
 using JGraph.Objects.Engineering;
@@ -115,6 +115,8 @@ internal static class PlotMapper
                 GridColor = p.GridColor,
                 MissingDataColor = p.MissingDataColor,
                 MissingDataLabel = p.MissingDataLabel,
+                XDisplayLabels = p.XDisplayLabels,
+                YDisplayLabels = p.YDisplayLabels,
             },
             BinScatterPlot p => new BinScatterPlotDto
             {
@@ -262,6 +264,19 @@ internal static class PlotMapper
                 SpecularStrength = p.SpecularStrength,
                 SpecularExponent = p.SpecularExponent,
                 SpecularColorReflectance = p.SpecularColorReflectance,
+                MeshStyle = p.MeshStyle,
+                EdgeDash = p.EdgeDash,
+                Marker = p.Marker,
+                MarkerSize = p.MarkerSize,
+                MarkerEdge = p.MarkerEdge,
+                MarkerFill = p.MarkerFill,
+                AlphaDataMapping = p.AlphaDataMapping,
+                CDataMapping = p.CDataMapping,
+                EdgeLighting = p.EdgeLighting,
+                BackFaceLighting = p.BackFaceLighting,
+                AlignVertexCenters = p.AlignVertexCenters,
+                XImplied = p.XImplied,
+                YImplied = p.YImplied,
             },
             ContourPlot p => new ContourPlotDto
             {
@@ -279,6 +294,14 @@ internal static class PlotMapper
                 ShowText = p.ShowText,
                 LabelLevels = p.LabelLevels?.ToArray(),
                 LabelStyle = p.LabelStyle is { } contourLabel ? DtoConvert.ToDto(contourLabel) : null,
+                LineColor = p.LineColor,
+                LineDash = p.LineDash,
+                LevelStep = p.LevelStep,
+                TextStep = p.TextStep,
+                LabelSpacing = p.LabelSpacing,
+                ContoursAtZero = p.ContoursAtZero,
+                XImplied = p.XImplied,
+                YImplied = p.YImplied,
             },
             ConstantLinePlot p => new ConstantLinePlotDto
             {
@@ -390,6 +413,18 @@ internal static class PlotMapper
                 AutoScaleColor = p.AutoScaleColor,
                 ColorMin = p.ColorMin,
                 ColorMax = p.ColorMax,
+                EdgeDash = p.EdgeDash,
+                LineJoin = p.LineJoin,
+                Marker = p.Marker,
+                MarkerSize = p.MarkerSize,
+                MarkerEdge = p.MarkerEdge,
+                MarkerFill = p.MarkerFill,
+                VertexAlpha = p.VertexAlpha?.ToArray(),
+                AlphaDataMapping = p.AlphaDataMapping,
+                CDataMapping = p.CDataMapping,
+                EdgeLighting = p.EdgeLighting,
+                BackFaceLighting = p.BackFaceLighting,
+                AlignVertexCenters = p.AlignVertexCenters,
             },
             QuiverPlot p => new QuiverPlotDto
             {
@@ -406,6 +441,16 @@ internal static class PlotMapper
                 Scale = p.Scale,
                 ShowArrowHead = p.ShowArrowHead,
                 MaxHeadSize = p.MaxHeadSize,
+                LineDash = p.LineDash,
+                LineStyleManual = p.LineStyleManual,
+                Marker = p.Marker,
+                MarkerManual = p.MarkerManual,
+                MarkerSize = p.MarkerSize,
+                MarkerEdge = p.MarkerEdge,
+                MarkerFill = p.MarkerFill,
+                AlignVertexCenters = p.AlignVertexCenters,
+                XImplied = p.XImplied,
+                YImplied = p.YImplied,
             },
             PolarGrid p => new PolarGridDto
             {
@@ -509,6 +554,8 @@ internal static class PlotMapper
                 GridColor = d.GridColor,
                 MissingDataColor = d.MissingDataColor,
                 MissingDataLabel = d.MissingDataLabel,
+                XDisplayLabels = d.XDisplayLabels,
+                YDisplayLabels = d.YDisplayLabels,
             },
             BinScatterPlotDto d => new BinScatterPlot(d.XData, d.YData)
             {
@@ -564,6 +611,8 @@ internal static class PlotMapper
                 ColorMax = d.ColorMax,
                 Interpolate = d.Interpolate,
                 RowZeroAtTop = d.RowZeroAtTop,
+                AlphaDataMapping = d.AlphaDataMapping,
+                CDataMapping = d.CDataMapping,
             },
             RgbImagePlotDto d => new RgbImagePlot(PixelsFromBase64(d.PixelsBase64, d.Width, d.Height), d.Width, d.Height)
             {
@@ -585,6 +634,14 @@ internal static class PlotMapper
                 ShowText = d.ShowText,
                 LabelLevels = d.LabelLevels,
                 LabelStyle = d.LabelStyle is { } contourLabel ? DtoConvert.ToTextStyle(contourLabel) : null,
+                LineColor = d.LineColor,
+                LineDash = d.LineDash,
+                LevelStep = d.LevelStep,
+                TextStep = d.TextStep,
+                LabelSpacing = d.LabelSpacing,
+                ContoursAtZero = d.ContoursAtZero,
+                XImplied = d.XImplied,
+                YImplied = d.YImplied,
             },
             ConstantLinePlotDto d => new ConstantLinePlot(d.Direction, d.Value)
             {
@@ -676,6 +733,18 @@ internal static class PlotMapper
                 AutoScaleColor = d.AutoScaleColor,
                 ColorMin = d.ColorMin,
                 ColorMax = d.ColorMax,
+                EdgeDash = d.EdgeDash,
+                LineJoin = d.LineJoin,
+                Marker = d.Marker,
+                MarkerSize = d.MarkerSize,
+                MarkerEdge = d.MarkerEdge,
+                MarkerFill = d.MarkerFill,
+                VertexAlpha = d.VertexAlpha,
+                AlphaDataMapping = d.AlphaDataMapping,
+                CDataMapping = d.CDataMapping,
+                EdgeLighting = d.EdgeLighting,
+                BackFaceLighting = d.BackFaceLighting,
+                AlignVertexCenters = d.AlignVertexCenters,
             },
             QuiverPlotDto d => new QuiverPlot(d.X, d.Y, d.Z, d.U, d.V, d.W)
             {
@@ -686,6 +755,18 @@ internal static class PlotMapper
                 Scale = d.Scale,
                 ShowArrowHead = d.ShowArrowHead,
                 MaxHeadSize = d.MaxHeadSize,
+                LineDash = d.LineDash,
+                Marker = d.Marker,
+                MarkerSize = d.MarkerSize,
+                MarkerEdge = d.MarkerEdge,
+                MarkerFill = d.MarkerFill,
+                AlignVertexCenters = d.AlignVertexCenters,
+
+                // After the two style setters, which raise these flags as a side effect of being used.
+                LineStyleManual = d.LineStyleManual,
+                MarkerManual = d.MarkerManual,
+                XImplied = d.XImplied,
+                YImplied = d.YImplied,
             },
             PolarGridDto d => ApplyGridLabels(new PolarGrid
             {
@@ -923,9 +1004,26 @@ internal static class PlotMapper
         surface.SpecularExponent = d.SpecularExponent;
         surface.SpecularColorReflectance = d.SpecularColorReflectance;
 
+        surface.MeshStyle = d.MeshStyle;
+        surface.EdgeDash = d.EdgeDash;
+        surface.Marker = d.Marker;
+        surface.MarkerSize = d.MarkerSize;
+        surface.MarkerEdge = d.MarkerEdge;
+        surface.MarkerFill = d.MarkerFill;
+        surface.AlphaDataMapping = d.AlphaDataMapping;
+        surface.CDataMapping = d.CDataMapping;
+        surface.EdgeLighting = d.EdgeLighting;
+        surface.BackFaceLighting = d.BackFaceLighting;
+        surface.AlignVertexCenters = d.AlignVertexCenters;
+
         // The alpha data has to land after Z, since the surface checks it against the grid it is for.
         surface.AlphaData = d.AlphaData is null ? null : To2D(d.AlphaData);
         surface.FaceAlphaFlat = d.FaceAlphaFlat;
+
+        // Last, because the matrix constructor raises them and the two vector ones do not: whether
+        // the positions were counted out is what was saved, not what rebuilding happened to do.
+        surface.XImplied = d.XImplied;
+        surface.YImplied = d.YImplied;
         return surface;
     }
 

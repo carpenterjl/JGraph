@@ -38,6 +38,9 @@ public sealed class BubbleLegendModel : GraphObject
     private Color _borderColor = Colors.Gray;
     private bool _showBorder = true;
     private TextStyle _textStyle = new(Colors.Black, 11);
+    private double _borderWidth = 1;
+    private bool _descending;
+    private Rect2D? _figureBox;
     private string? _title;
 
     public BubbleLegendModel()
@@ -138,6 +141,42 @@ public sealed class BubbleLegendModel : GraphObject
             values[i] = limits.Min + (t * (limits.Max - limits.Min));
         }
 
+        if (_descending)
+        {
+            Array.Reverse(values);
+        }
+
         return values;
     }
+
+    /// <summary>How thick the box's border is drawn (MATLAB <c>LineWidth</c>).</summary>
+    [Category("Appearance"), DisplayName("Border width")]
+    public double BorderWidth
+    {
+        get => _borderWidth;
+        set => SetProperty(ref _borderWidth, System.Math.Max(0, value), InvalidationKind.Render);
+    }
+
+    /// <summary>
+    /// True when the biggest bubble is listed first (MATLAB <c>BubbleSizeOrder</c> 'descend').
+    /// Ascending is the default, which puts the smallest at the top of a vertical legend.
+    /// </summary>
+    [Category("Appearance"), DisplayName("Largest first")]
+    public bool Descending
+    {
+        get => _descending;
+        set => SetProperty(ref _descending, value, InvalidationKind.Layout);
+    }
+
+    /// <summary>An explicit box in figure fractions (Y downward), or null to place it by <see cref="Position"/>.</summary>
+    [Browsable(false)]
+    public Rect2D? FigureBox
+    {
+        get => _figureBox;
+        set => SetProperty(ref _figureBox, value, InvalidationKind.Layout);
+    }
+
+    /// <summary>Where the renderer last drew the box, in device pixels, or null before the first frame.</summary>
+    [Browsable(false)]
+    public Rect2D? LastBox { get; set; }
 }

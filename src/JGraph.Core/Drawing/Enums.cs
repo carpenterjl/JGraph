@@ -122,3 +122,46 @@ public enum AlphaMapping
     /// <summary>Used as indices into the alphamap without scaling.</summary>
     Direct,
 }
+
+/// <summary>
+/// How the numbers behind a colour-mapped chart are read: MATLAB's <c>CDataMapping</c>. Scaled
+/// stretches them over the axes' colour limits; direct indexes the colormap with them as they stand,
+/// counting from one.
+/// </summary>
+public enum ColorMapping
+{
+    /// <summary>Stretched over CLim and looked up in the colormap — MATLAB's default for a surface.</summary>
+    Scaled,
+
+    /// <summary>Used as indices into the colormap without scaling, counting from one.</summary>
+    Direct,
+}
+
+/// <summary>Which of a surface's mesh lines are drawn: MATLAB's <c>MeshStyle</c>.</summary>
+public enum SurfaceMeshStyle
+{
+    /// <summary>Both the lines along the rows and the lines down the columns.</summary>
+    Both,
+
+    /// <summary>Only the lines running along each row.</summary>
+    Row,
+
+    /// <summary>Only the lines running down each column.</summary>
+    Column,
+}
+
+/// <summary>
+/// How a face turned away from the viewer is lit: MATLAB's <c>BackFaceLighting</c>. It only shows on
+/// a surface you can see the inside of — a translucent one, or one that folds over itself.
+/// </summary>
+public enum BackFaceLighting
+{
+    /// <summary>The normal is flipped so the far face is lit as if it faced you — MATLAB's default.</summary>
+    ReverseLit,
+
+    /// <summary>The far face takes only its ambient colour.</summary>
+    Unlit,
+
+    /// <summary>The normal is used as it stands, so a far face is lit from behind and reads dark.</summary>
+    Lit,
+}

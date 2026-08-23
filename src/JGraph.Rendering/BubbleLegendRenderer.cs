@@ -18,7 +18,8 @@ internal static class BubbleLegendRenderer
     private const double RowGap = 6;
 
     /// <summary>Draws the legend and returns its box, or null when there is nothing to legend.</summary>
-    public static Rect2D? Draw(IRenderContext context, AxesModel axes, Rect2D plotArea, ITheme theme)
+    public static Rect2D? Draw(
+        IRenderContext context, AxesModel axes, Rect2D plotArea, Rect2D figureArea, ITheme theme)
     {
         BubbleLegendModel legend = axes.BubbleLegend;
         BubbleScale scale = axes.BubbleScale;
@@ -75,7 +76,7 @@ internal static class BubbleLegendRenderer
 
         // Placement is the legend's own, worked out by the same rules — the two boxes are furniture of
         // the same kind and a script that says 'northwest' means the same corner for either.
-        Rect2D box = LegendRenderer.PlaceBox(Placement(legend), plotArea, width, height);
+        Rect2D box = LegendRenderer.PlaceBox(Placement(legend), plotArea, plotArea, width, height);
         LineStyle? border = legend.ShowBorder ? new LineStyle(legend.BorderColor, 1) : null;
         context.DrawRectangle(box, border, legend.Background);
 
@@ -164,7 +165,7 @@ internal static class BubbleLegendRenderer
     /// used without a second copy of them. Only the two fields <c>PlaceBox</c> reads are set.
     /// </summary>
     private static LegendModel Placement(BubbleLegendModel legend) =>
-        new() { Position = legend.Position, Location = legend.Location };
+        new() { Position = legend.Position, Location = legend.Location, FigureBox = legend.FigureBox };
 
     /// <summary>
     /// The colour to draw the legend's bubbles in: the first bubble chart's own fill if it has one,

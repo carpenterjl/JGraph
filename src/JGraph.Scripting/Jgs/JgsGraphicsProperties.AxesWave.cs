@@ -18,6 +18,7 @@ internal static partial class JgsGraphicsProperties
         AddFontBlock(table);
         AddGridBlock(table);
         AddRulerBlock(table);
+        AddPolarRulerBlock(table);
         AddSeriesBlock(table);
         AddColorMappingBlock(table);
         AddAspectBlock(table);

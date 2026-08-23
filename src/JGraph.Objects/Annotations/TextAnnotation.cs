@@ -34,6 +34,11 @@ public sealed class TextAnnotation : AnnotationObject, IDrawable, I3DDrawable
     private HorizontalAlignment _horizontalAlignment = HorizontalAlignment.Left;
     private VerticalAlignment _verticalAlignment = VerticalAlignment.Bottom;
     private Rect2D? _box;
+    private double _rotation;
+    private double _borderWidth = 1;
+    private DashStyle _borderDash = DashStyle.Solid;
+    private bool _smoothing = true;
+    private bool _clipping;
 
     public TextAnnotation()
     {
@@ -173,6 +178,53 @@ public sealed class TextAnnotation : AnnotationObject, IDrawable, I3DDrawable
         set => SetProperty(ref _box, value, InvalidationKind.Render);
     }
 
+    /// <summary>
+    /// How far the label is turned, in degrees anticlockwise about its anchor (MATLAB
+    /// <c>Rotation</c>). The box turns with the text, so a rotated label's background stays behind it.
+    /// </summary>
+    [Category("Appearance")]
+    public double Rotation
+    {
+        get => _rotation;
+        set => SetProperty(ref _rotation, value, InvalidationKind.Render);
+    }
+
+    /// <summary>How thick the box's border is drawn (MATLAB <c>LineWidth</c>).</summary>
+    [Category("Appearance"), DisplayName("Border width")]
+    public double BorderWidth
+    {
+        get => _borderWidth;
+        set => SetProperty(ref _borderWidth, System.Math.Max(0, value), InvalidationKind.Render);
+    }
+
+    /// <summary>The dash pattern of the box's border (MATLAB <c>LineStyle</c>).</summary>
+    [Category("Appearance"), DisplayName("Border style")]
+    public DashStyle BorderDash
+    {
+        get => _borderDash;
+        set => SetProperty(ref _borderDash, value, InvalidationKind.Render);
+    }
+
+    /// <summary>Whether the glyphs are drawn antialiased (MATLAB <c>FontSmoothing</c>).</summary>
+    [Category("Appearance"), DisplayName("Font smoothing")]
+    public bool Smoothing
+    {
+        get => _smoothing;
+        set => SetProperty(ref _smoothing, value, InvalidationKind.Render);
+    }
+
+    /// <summary>
+    /// Whether the label is cut off at the edge of the plot box (MATLAB <c>Clipping</c>). Off is
+    /// MATLAB's default for text and this build's: a label placed just outside the data should still
+    /// be read, which is the whole point of putting it there.
+    /// </summary>
+    [Category("Behavior")]
+    public bool Clipping
+    {
+        get => _clipping;
+        set => SetProperty(ref _clipping, value, InvalidationKind.Render);
+    }
+
     /// <inheritdoc />
     public override IReadOnlyList<Point2D> GetAnchorPoints() => new[] { _position };
 
@@ -234,17 +286,20 @@ public sealed class TextAnnotation : AnnotationObject, IDrawable, I3DDrawable
         }
 
         Color ink = _color ?? state.SeriesColor;
-        var style = new TextStyle(ink, _fontSize, _fontFamily, _bold, _italic, _interpreter);
+        var style = new TextStyle(ink, _fontSize, _fontFamily, _bold, _italic, _interpreter, _smoothing);
         Size2D textSize = context.MeasureText(_text, style);
 
         Rect2D box;
+        Point2D pivot;
         if (given is { } fixedBox)
         {
             box = fixedBox;
+            pivot = new Point2D(fixedBox.Left, fixedBox.Top);
         }
         else
         {
             Point2D anchor = anchorAt();
+            pivot = anchor;
             double boxWidth = textSize.Width + (_padding * 2);
             double boxHeight = textSize.Height + (_padding * 2);
 
@@ -264,22 +319,72 @@ public sealed class TextAnnotation : AnnotationObject, IDrawable, I3DDrawable
             box = new Rect2D(left, top, boxWidth, boxHeight);
         }
 
+        // A turned label turns about its anchor, box and all. There is no transform stack to lean on,
+        // so the four corners are turned here and drawn as a polygon — which is also why the recorded
+        // bounds stay the upright box: a rotated label's hit area is its unturned extent, and that is
+        // what MATLAB's Extent reports too.
+        bool turned = System.Math.Abs(_rotation) > 1e-9;
+        bool clip = _clipping && !state.PlotArea.IsEmpty;
+        if (clip)
+        {
+            context.PushClip(state.PlotArea);
+        }
+
         if (_background is not null || _borderColor is not null)
         {
-            LineStyle? border = _borderColor is { } bc ? new LineStyle(bc.WithOpacity(Opacity), 1) : null;
-            context.DrawRectangle(box, border, _background?.WithOpacity(Opacity));
+            LineStyle? border = _borderColor is { } bc && _borderWidth > 0 && _borderDash != DashStyle.None
+                ? new LineStyle(bc.WithOpacity(Opacity), _borderWidth, _borderDash)
+                : null;
+
+            if (turned)
+            {
+                Span<Point2D> corners =
+                [
+                    Turn(new Point2D(box.Left, box.Top), pivot),
+                    Turn(new Point2D(box.Right, box.Top), pivot),
+                    Turn(new Point2D(box.Right, box.Bottom), pivot),
+                    Turn(new Point2D(box.Left, box.Bottom), pivot),
+                ];
+                context.DrawPolygon(corners, border, _background?.WithOpacity(Opacity));
+            }
+            else
+            {
+                context.DrawRectangle(box, border, _background?.WithOpacity(Opacity));
+            }
         }
 
         if (_text.Length > 0)
         {
+            var origin = new Point2D(box.Left + _padding, box.Top + _padding);
             context.DrawText(
                 _text,
-                new Point2D(box.Left + _padding, box.Top + _padding),
+                turned ? Turn(origin, pivot) : origin,
                 style.WithColor(ink.WithOpacity(Opacity)),
                 HorizontalAlignment.Left,
-                VerticalAlignment.Top);
+                VerticalAlignment.Top,
+                _rotation);
+        }
+
+        if (clip)
+        {
+            context.PopClip();
         }
 
         SetRenderedBounds(box);
+    }
+
+    /// <summary>Turns a point about <paramref name="pivot"/> by <see cref="Rotation"/> degrees, anticlockwise on the page.</summary>
+    private Point2D Turn(Point2D point, Point2D pivot)
+    {
+        double radians = _rotation * System.Math.PI / 180;
+        double cos = System.Math.Cos(radians);
+        double sin = System.Math.Sin(radians);
+        double dx = point.X - pivot.X;
+
+        // Device y counts downward, so a positive angle turns the other way here than it does on paper.
+        double dy = point.Y - pivot.Y;
+        return new Point2D(
+            pivot.X + (dx * cos) + (dy * sin),
+            pivot.Y - (dx * sin) + (dy * cos));
     }
 }

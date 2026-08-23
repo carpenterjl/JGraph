@@ -195,6 +195,7 @@ internal static class FigureMapper
             ThetaDirection = axes.ThetaDirection.ToString(),
             ThetaAxisUnits = axes.ThetaAxisUnits.ToString(),
             RAxisLocation = axes.RAxisLocation,
+        RAxisLocationManual = axes.RAxisLocationManual,
             RAxis = ToDto(axes.RAxis),
             ThetaAxis = ToDto(axes.ThetaAxis),
             Colorbar = ToDto(axes.Colorbar),
@@ -307,7 +308,9 @@ internal static class FigureMapper
         // The angular rulers are owned the same way. An unreadable name falls back to the default
         // rather than throwing: a figure with a strange θ origin is still a figure worth opening.
         axes.IsPolar = dto.IsPolar;
+        // The angle first, then the flag it raises: a saved figure is manual only if it was.
         axes.RAxisLocation = dto.RAxisLocation;
+        axes.RAxisLocationManual = dto.RAxisLocationManual;
         if (Enum.TryParse(dto.ThetaZeroLocation, out ThetaZeroLocation zero))
         {
             axes.ThetaZeroLocation = zero;
@@ -338,6 +341,22 @@ internal static class FigureMapper
             axes.Colorbar.Visible = dto.Colorbar.Visible;
             axes.Colorbar.Width = dto.Colorbar.Width;
             axes.Colorbar.Label = dto.Colorbar.Label;
+            axes.Colorbar.Location = dto.Colorbar.Location;
+            axes.Colorbar.FigureBox = dto.Colorbar.FigureBox is { } bar
+                ? DtoConvert.ToRect(bar)
+                : null;
+            axes.Colorbar.Limits = dto.Colorbar.Limits is { } span
+                ? DtoConvert.ToRange(span)
+                : null;
+            axes.Colorbar.TickValues = dto.Colorbar.TickValues;
+            axes.Colorbar.TickLabelOverrides = dto.Colorbar.TickLabelOverrides;
+            axes.Colorbar.TickDirection = dto.Colorbar.TickDirection;
+            axes.Colorbar.TickLength = dto.Colorbar.TickLength;
+            axes.Colorbar.Inverted = dto.Colorbar.Inverted;
+            axes.Colorbar.LabelsInside = dto.Colorbar.LabelsInside;
+            axes.Colorbar.BoxVisible = dto.Colorbar.BoxVisible;
+            axes.Colorbar.Ink = dto.Colorbar.Ink;
+            axes.Colorbar.LineWidth = dto.Colorbar.LineWidth;
             if (dto.Colorbar.TickLabelStyle is not null)
             {
                 axes.Colorbar.TickLabelStyle = DtoConvert.ToTextStyle(dto.Colorbar.TickLabelStyle);
@@ -361,6 +380,11 @@ internal static class FigureMapper
             axes.BubbleLegend.BorderColor = bubbleLegend.BorderColor;
             axes.BubbleLegend.ShowBorder = bubbleLegend.ShowBorder;
             axes.BubbleLegend.Title = bubbleLegend.Title;
+            axes.BubbleLegend.BorderWidth = bubbleLegend.BorderWidth;
+            axes.BubbleLegend.Descending = bubbleLegend.Descending;
+            axes.BubbleLegend.FigureBox = bubbleLegend.FigureBox is { } sized
+                ? DtoConvert.ToRect(sized)
+                : null;
             if (bubbleLegend.TextStyle is not null)
             {
                 axes.BubbleLegend.TextStyle = DtoConvert.ToTextStyle(bubbleLegend.TextStyle);
@@ -617,6 +641,18 @@ internal static class FigureMapper
         Width = colorbar.Width,
         Label = colorbar.Label,
         TickLabelStyle = DtoConvert.ToDto(colorbar.TickLabelStyle),
+        Location = colorbar.Location,
+        FigureBox = colorbar.FigureBox is { } bar ? DtoConvert.ToDto(bar) : null,
+        Limits = colorbar.Limits is { } span ? DtoConvert.ToDto(span) : null,
+        TickValues = colorbar.TickValues,
+        TickLabelOverrides = colorbar.TickLabelOverrides,
+        TickDirection = colorbar.TickDirection,
+        TickLength = colorbar.TickLength,
+        Inverted = colorbar.Inverted,
+        LabelsInside = colorbar.LabelsInside,
+        BoxVisible = colorbar.BoxVisible,
+        Ink = colorbar.Ink,
+        LineWidth = colorbar.LineWidth,
     };
 
     private static BubbleLegendDto ToDto(BubbleLegendModel legend) => new()
@@ -633,6 +669,9 @@ internal static class FigureMapper
         Title = legend.Title,
         LocationX = legend.Location.X,
         LocationY = legend.Location.Y,
+        BorderWidth = legend.BorderWidth,
+        Descending = legend.Descending,
+        FigureBox = legend.FigureBox is { } sized ? DtoConvert.ToDto(sized) : null,
     };
 
     private static GridDto ToDto(GridModel grid) => new()
@@ -646,6 +685,10 @@ internal static class FigureMapper
         ShowMinorX = grid.ShowMinorX,
         ShowMinorY = grid.ShowMinorY,
         ShowMinorZ = grid.ShowMinorZ,
+        ShowMajorR = grid.ShowMajorR,
+        ShowMajorTheta = grid.ShowMajorTheta,
+        ShowMinorR = grid.ShowMinorR,
+        ShowMinorTheta = grid.ShowMinorTheta,
         MajorColorManual = grid.MajorColorManual,
         MinorColorManual = grid.MinorColorManual,
         MajorAlphaManual = grid.MajorAlphaManual,
@@ -665,6 +708,13 @@ internal static class FigureMapper
         grid.ShowMinorX = dto.ShowMinorX ?? dto.ShowMinor;
         grid.ShowMinorY = dto.ShowMinorY ?? dto.ShowMinor;
         grid.ShowMinorZ = dto.ShowMinorZ ?? dto.ShowMinor;
+
+        // A document from before the rings and spokes had their own switches read as both on, which
+        // is what those documents drew: the polar renderer took one flag for the whole grid.
+        grid.ShowMajorR = dto.ShowMajorR ?? dto.ShowMajor;
+        grid.ShowMajorTheta = dto.ShowMajorTheta ?? dto.ShowMajor;
+        grid.ShowMinorR = dto.ShowMinorR ?? false;
+        grid.ShowMinorTheta = dto.ShowMinorTheta ?? false;
         grid.MajorColorManual = dto.MajorColorManual;
         grid.MinorColorManual = dto.MinorColorManual;
         grid.MajorAlphaManual = dto.MajorAlphaManual;
@@ -694,6 +744,11 @@ internal static class FigureMapper
             Title = legend.Title,
             LocationX = legend.Location.X,
             LocationY = legend.Location.Y,
+            BorderWidth = legend.BorderWidth,
+            Orientation = legend.Orientation,
+            Columns = legend.Columns,
+            AutoUpdate = legend.AutoUpdate,
+            FigureBox = legend.FigureBox is { } box ? DtoConvert.ToDto(box) : null,
         };
 
         foreach (LegendEntryModel entry in legend.Entries)
@@ -729,6 +784,11 @@ internal static class FigureMapper
 
         legend.Title = dto.Title;
         legend.Location = new Core.Primitives.Point2D(dto.LocationX, dto.LocationY);
+        legend.BorderWidth = dto.BorderWidth;
+        legend.Orientation = dto.Orientation;
+        legend.Columns = dto.Columns;
+        legend.AutoUpdate = dto.AutoUpdate;
+        legend.FigureBox = dto.FigureBox is { } box ? DtoConvert.ToRect(box) : null;
     }
 
     /// <summary>

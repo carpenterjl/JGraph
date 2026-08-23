@@ -600,8 +600,10 @@ public static class AxesExtensions
         ArgumentNullException.ThrowIfNull(plot);
 
         axes.FrameVisible = false;
-        axes.PrimaryXAxis.UseCategories(plot.ColumnLabels());
-        axes.PrimaryYAxis.UseCategories(plot.RowLabels());
+        // The rulers show the display labels when the chart has been given any, and the names it
+        // knows the cells by otherwise — the two are the same until a script separates them.
+        axes.PrimaryXAxis.UseCategories(plot.ColumnText());
+        axes.PrimaryYAxis.UseCategories(plot.RowText());
         axes.PrimaryYAxis.Inverted = true;
         axes.PrimaryXAxis.ShowMinorTicks = false;
         axes.PrimaryYAxis.ShowMinorTicks = false;

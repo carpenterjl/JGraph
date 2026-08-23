@@ -871,10 +871,40 @@ internal static partial class JgsBuiltins
             HeatmapPlot plot = JG.Heatmap(values, xLabels, yLabels);
             HeatmapOptions(plot, options, line, col);
 
+            // A chart built from a table remembers which one and how, so a script can change the
+            // grouping afterwards. A chart given a matrix remembers nothing, and says so when asked.
+            if (fromTable)
+            {
+                JgsHandleRegistry.EntryFor(plot).HeatmapSource = new HeatmapSource
+                {
+                    Table = rest[0],
+                    XVariable = Str("heatmap", rest, 1, line, col),
+                    YVariable = Str("heatmap", rest, 2, line, col),
+                    ColorVariable = Named(options, "ColorVariable", line, col) ?? string.Empty,
+                    ColorMethod = Named(options, "ColorMethod", line, col)?.ToLowerInvariant()
+                        ?? (Named(options, "ColorVariable", line, col) is null ? "count" : "mean"),
+                };
+            }
+
             // The names may have moved after the chart was made, and the rulers read them once.
             plot.Axes?.LabelCells(plot);
             return Handle(plot);
         });
+    }
+
+    /// <summary>One named option's text, or null when it was not given.</summary>
+    private static string? Named(
+        IReadOnlyList<(string Name, JgsValue Value)> options, string wanted, int line, int col)
+    {
+        foreach ((string name, JgsValue value) in options)
+        {
+            if (name.Equals(wanted, StringComparison.OrdinalIgnoreCase))
+            {
+                return StrOf($"heatmap: {wanted}", value, line, col);
+            }
+        }
+
+        return null;
     }
 
     private static void HeatmapOptions(
@@ -1078,6 +1108,25 @@ internal static partial class JgsBuiltins
             }
         }
 
+        return Summarise(table, xColumn, yColumn, colorColumn, method, line, col);
+    }
+
+    /// <summary>
+    /// Groups a table's rows by two of its variables and reduces each group to one number. Split out
+    /// of <see cref="CountedTable"/> so the chart's own <c>XVariable</c>, <c>ColorVariable</c> and
+    /// <c>ColorMethod</c> can run it again on the table the chart remembers — a heatmap that could be
+    /// asked which variable it grouped by and not told to group by another would be answering a
+    /// question it could not act on.
+    /// </summary>
+    private static (double[,] Values, string[] XLabels, string[] YLabels) Summarise(
+        Table table,
+        TableColumn xColumn,
+        TableColumn yColumn,
+        TableColumn? colorColumn,
+        string method,
+        int line,
+        int col)
+    {
         if (method != "count" && colorColumn is null)
         {
             throw new JgsRuntimeException(line, col,
@@ -1110,6 +1159,36 @@ internal static partial class JgsBuiltins
         }
 
         return (values, xLabels, yLabels);
+    }
+
+    /// <summary>
+    /// Re-runs the summary a heatmap was built by, after a script has changed one of the variables it
+    /// groups or reduces on. Everything the chart shows is replaced, because every cell of it came
+    /// out of the reduction — a re-summarised heatmap is the same chart of different numbers.
+    /// </summary>
+    internal static void ResummariseHeatmap(JgsHandleEntry entry, int line, int col)
+    {
+        if (entry.HeatmapSource is not { } source || entry.Target is not HeatmapPlot plot)
+        {
+            return;
+        }
+
+        Table table = source.Table.AsTable;
+        TableColumn xColumn = HeatmapColumn(table, source.XVariable, line, col);
+        TableColumn yColumn = HeatmapColumn(table, source.YVariable, line, col);
+        TableColumn? colorColumn = source.ColorVariable.Length == 0
+            ? null
+            : HeatmapColumn(table, source.ColorVariable, line, col);
+
+        (double[,] values, string[] xLabels, string[] yLabels) =
+            Summarise(table, xColumn, yColumn, colorColumn, source.ColorMethod, line, col);
+
+        plot.ColorData = values;
+        plot.XData = xLabels;
+        plot.YData = yLabels;
+        plot.XDisplayLabels = null;
+        plot.YDisplayLabels = null;
+        plot.Axes?.LabelCells(plot);
     }
 
     /// <summary>What one cell's worth of rows comes to. An empty cell counts zero but averages nothing.</summary>

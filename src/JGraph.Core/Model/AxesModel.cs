@@ -647,8 +647,20 @@ public sealed class AxesModel : GraphObject
     public double RAxisLocation
     {
         get => _rAxisLocation;
-        set => SetProperty(ref _rAxisLocation, value, InvalidationKind.Render);
+        set
+        {
+            RAxisLocationManual = true;
+            SetProperty(ref _rAxisLocation, value, InvalidationKind.Render);
+        }
     }
+
+    /// <summary>
+    /// True once a script has chosen the angle the r labels are written along (MATLAB
+    /// <c>RAxisLocationMode</c> 'manual'). It carries its own flag rather than reading a nullable,
+    /// because 80° is both the automatic answer and an angle a script may legitimately ask for.
+    /// </summary>
+    [Browsable(false)]
+    public bool RAxisLocationManual { get; set; }
 
     /// <summary>The camera azimuth in degrees (rotation about the vertical axis; MATLAB view() convention).</summary>
     [Category("3D View")]

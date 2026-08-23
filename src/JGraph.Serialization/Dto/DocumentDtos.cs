@@ -168,6 +168,9 @@ public sealed class AxesDto
     /// <summary>The angle in degrees the r tick labels are written along.</summary>
     public double RAxisLocation { get; set; } = 80;
 
+    /// <summary>Whether that angle was chosen rather than left at the default one.</summary>
+    public bool RAxisLocationManual { get; set; }
+
     /// <summary>The radial ruler; null in documents written before M56.</summary>
     public AxisDto? RAxis { get; set; }
 
@@ -359,6 +362,14 @@ public sealed class GridDto
 
     public bool? ShowMajorZ { get; set; }
 
+    public bool? ShowMajorR { get; set; }
+
+    public bool? ShowMajorTheta { get; set; }
+
+    public bool? ShowMinorR { get; set; }
+
+    public bool? ShowMinorTheta { get; set; }
+
     public bool? ShowMinorX { get; set; }
 
     public bool? ShowMinorY { get; set; }
@@ -385,6 +396,30 @@ public sealed class ColorbarDto
     public string? Label { get; set; }
 
     public TextStyleDto? TickLabelStyle { get; set; }
+
+    public ColorbarLocation Location { get; set; } = ColorbarLocation.EastOutside;
+
+    public RectDto? FigureBox { get; set; }
+
+    public RangeDto? Limits { get; set; }
+
+    public double[]? TickValues { get; set; }
+
+    public string[]? TickLabelOverrides { get; set; }
+
+    public TickDirection TickDirection { get; set; } = TickDirection.Out;
+
+    public double TickLength { get; set; } = 0.01;
+
+    public bool Inverted { get; set; }
+
+    public bool LabelsInside { get; set; }
+
+    public bool BoxVisible { get; set; } = true;
+
+    public Color? Ink { get; set; }
+
+    public double LineWidth { get; set; } = 0.5;
 }
 
 /// <summary>The serialized form of a <see cref="BubbleLegendModel"/>.</summary>
@@ -414,6 +449,13 @@ public sealed class BubbleLegendDto
     public double LocationX { get; set; } = 0.75;
 
     public double LocationY { get; set; } = 0.05;
+
+    public double BorderWidth { get; set; } = 1;
+
+    /// <summary>Whether the biggest bubble is listed first.</summary>
+    public bool Descending { get; set; }
+
+    public RectDto? FigureBox { get; set; }
 }
 
 /// <summary>The serialized form of a <see cref="LightModel"/>.</summary>
@@ -451,6 +493,16 @@ public sealed class LegendDto
     public string? Title { get; set; }
 
     /// <summary>The custom placement, as a fraction of the plot area. Used only when <see cref="Position"/> is Custom.</summary>
+    public double BorderWidth { get; set; } = 1;
+
+    public LegendOrientation Orientation { get; set; } = LegendOrientation.Vertical;
+
+    public int? Columns { get; set; }
+
+    public bool AutoUpdate { get; set; } = true;
+
+    public RectDto? FigureBox { get; set; }
+
     public double LocationX { get; set; } = 0.6;
 
     public double LocationY { get; set; } = 0.05;

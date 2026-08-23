@@ -20,6 +20,16 @@ public enum LegendPosition
     Custom,
 }
 
+/// <summary>Which way a legend's rows run (MATLAB <c>Orientation</c>).</summary>
+public enum LegendOrientation
+{
+    /// <summary>One entry under the next, the default.</summary>
+    Vertical,
+
+    /// <summary>Entries side by side along one row.</summary>
+    Horizontal,
+}
+
 /// <summary>
 /// The legend of an <see cref="AxesModel"/>: placement, styling, and an ordered list of
 /// <see cref="Entries"/>, one per legended series. The entries are kept in step with the plots by
@@ -36,6 +46,11 @@ public sealed class LegendModel : GraphObject
     private bool _showBorder = true;
     private TextStyle _textStyle = new(Colors.Black, 11);
     private string? _title;
+    private double _borderWidth = 1;
+    private LegendOrientation _orientation = LegendOrientation.Vertical;
+    private int? _columns;
+    private bool _autoUpdate = true;
+    private Rect2D? _figureBox;
 
     public LegendModel()
     {
@@ -101,6 +116,76 @@ public sealed class LegendModel : GraphObject
         set => SetProperty(ref _title, value, InvalidationKind.Layout);
     }
 
+    /// <summary>How thick the box's border is drawn (MATLAB <c>LineWidth</c>).</summary>
+    [Category("Appearance"), DisplayName("Border width")]
+    public double BorderWidth
+    {
+        get => _borderWidth;
+        set => SetProperty(ref _borderWidth, System.Math.Max(0, value), InvalidationKind.Render);
+    }
+
+    /// <summary>Which way the rows run.</summary>
+    [Category("Appearance")]
+    public LegendOrientation Orientation
+    {
+        get => _orientation;
+        set => SetProperty(ref _orientation, value, InvalidationKind.Layout);
+    }
+
+    /// <summary>
+    /// How many columns the entries are dealt into, or null to let the orientation decide — one for a
+    /// vertical legend, one per entry for a horizontal one. That is MATLAB's <c>NumColumnsMode</c>
+    /// read as a nullable rather than stored as a second property beside the number.
+    /// </summary>
+    [Browsable(false)]
+    public int? Columns
+    {
+        get => _columns;
+        set => SetProperty(ref _columns, value is { } n && n > 0 ? n : null, InvalidationKind.Layout);
+    }
+
+    /// <summary>The columns actually used, given the orientation and the number of entries.</summary>
+    public int ResolveColumns(int entries)
+    {
+        if (_columns is { } chosen)
+        {
+            return System.Math.Max(1, System.Math.Min(chosen, System.Math.Max(1, entries)));
+        }
+
+        return _orientation == LegendOrientation.Horizontal ? System.Math.Max(1, entries) : 1;
+    }
+
+    /// <summary>
+    /// Whether the rows follow the plots (MATLAB <c>AutoUpdate</c>). Turned off, the legend keeps the
+    /// rows it has: a series added afterwards is not legended, and one removed leaves its row behind
+    /// naming nothing, which is what a script asking for a fixed legend wants.
+    /// </summary>
+    [Category("Behavior"), DisplayName("Auto update")]
+    public bool AutoUpdate
+    {
+        get => _autoUpdate;
+        set => SetProperty(ref _autoUpdate, value, InvalidationKind.Layout);
+    }
+
+    /// <summary>
+    /// An explicit box in figure fractions (Y downward, as the rest of this model measures), or null
+    /// to place the legend by <see cref="Position"/>. This is what MATLAB's four-element
+    /// <c>Position</c> pins, and it outranks both the preset and the dragged location.
+    /// </summary>
+    [Browsable(false)]
+    public Rect2D? FigureBox
+    {
+        get => _figureBox;
+        set => SetProperty(ref _figureBox, value, InvalidationKind.Layout);
+    }
+
+    /// <summary>
+    /// Where the renderer last drew the box, in device pixels, or null before the first frame. A
+    /// script asking a legend where it is has to be told where it went, not where it was asked to go.
+    /// </summary>
+    [Browsable(false)]
+    public Rect2D? LastBox { get; set; }
+
     /// <summary>
     /// Reconciles <see cref="Entries"/> with the legendable plots: appends a row for each plot that
     /// has none, drops rows whose plot is gone, and otherwise leaves the order, labels and inclusion
@@ -116,6 +201,11 @@ public sealed class LegendModel : GraphObject
     public bool SyncEntries(IEnumerable<PlotObject> plots)
     {
         ArgumentNullException.ThrowIfNull(plots);
+
+        if (!_autoUpdate)
+        {
+            return false;
+        }
 
         var legendable = plots as IReadOnlyList<PlotObject> ?? plots.ToList();
         bool changed = false;

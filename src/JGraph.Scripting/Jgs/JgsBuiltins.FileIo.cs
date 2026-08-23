@@ -177,6 +177,11 @@ internal static partial class JgsBuiltins
         }
 
         ImagePlot plot = JG.Image(c);
+
+        // The one difference MATLAB draws between the two verbs: image reads its numbers as colour
+        // numbers, and imagesc stretches them over the limits — which is the whole of what the sc
+        // means. Everything else in this body is shared.
+        plot.CDataMapping = scaled ? ColorMapping.Scaled : ColorMapping.Direct;
         if (x is { Length: > 0 })
         {
             plot.XExtent = new DataRange(x[0], x[^1]);

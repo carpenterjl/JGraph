@@ -23,6 +23,8 @@ public sealed class ImagePlot : PlotObject, IDrawable
     private double _colorMax = 1;
     private bool _interpolate;
     private bool _rowZeroAtTop = true;
+    private AlphaMapping _alphaDataMapping = AlphaMapping.Scaled;
+    private ColorMapping _cDataMapping = ColorMapping.Scaled;
 
     private uint[]? _pixels;
     private double _builtOpacity = 1;
@@ -148,6 +150,39 @@ public sealed class ImagePlot : PlotObject, IDrawable
         set => SetProperty(ref _interpolate, value, InvalidationKind.Render);
     }
 
+    /// <summary>Whether AlphaData is scaled through the axes' map, taken as it stands, or ignored.</summary>
+    [Category("Appearance"), DisplayName("Alpha data mapping")]
+    public AlphaMapping AlphaDataMapping
+    {
+        get => _alphaDataMapping;
+        set
+        {
+            if (SetProperty(ref _alphaDataMapping, value, InvalidationKind.Render))
+            {
+                _pixels = null;
+            }
+        }
+    }
+
+    /// <summary>
+    /// Whether the values are stretched over the axes' colour limits or index the colormap as they
+    /// stand (MATLAB <c>CDataMapping</c>). Scaled is the default here because every verb that builds
+    /// an image but <c>image</c> itself means scaled — <c>imagesc</c> most of all, whose whole
+    /// purpose is the stretch. The <c>image</c> verb sets direct for itself, which is MATLAB's rule.
+    /// </summary>
+    [Category("Appearance"), DisplayName("Color data mapping")]
+    public ColorMapping CDataMapping
+    {
+        get => _cDataMapping;
+        set
+        {
+            if (SetProperty(ref _cDataMapping, value, InvalidationKind.Render))
+            {
+                _pixels = null;
+            }
+        }
+    }
+
     /// <summary>When true (default), row 0 of the field is drawn at the top (image convention); otherwise at the bottom.</summary>
     [Category("Appearance"), DisplayName("Row zero at top")]
     public bool RowZeroAtTop
@@ -232,6 +267,48 @@ public sealed class ImagePlot : PlotObject, IDrawable
         context.DrawImage(_pixels!, cols, rows, dest, _interpolate);
     }
 
+    /// <summary>
+    /// One value looked up as <see cref="CDataMapping"/> says to: as a one-based index into the
+    /// colormap, or stretched over the colour limits first. Direct is an image's default because a
+    /// picture's numbers are usually colour numbers already.
+    /// </summary>
+    private Color Mapped(double value, double min, double max, bool logColor)
+    {
+        if (_cDataMapping == ColorMapping.Scaled)
+        {
+            return _colormap.Sample(value, min, max, logColor);
+        }
+
+        int count = System.Math.Max(1, _colormap.Stops.Count);
+        int index = System.Math.Clamp((int)System.Math.Round(value) - 1, 0, count - 1);
+        return _colormap.Stops[index];
+    }
+
+    /// <summary>One alpha reading turned into an opacity, as <see cref="AlphaDataMapping"/> says.</summary>
+    private double OpacityOf(double raw, AlphaLookup scaled)
+    {
+        if (!double.IsFinite(raw))
+        {
+            return 1;
+        }
+
+        switch (_alphaDataMapping)
+        {
+            case AlphaMapping.None:
+                return System.Math.Clamp(raw, 0, 1);
+
+            case AlphaMapping.Direct:
+            {
+                IReadOnlyList<double> map = Axes?.ResolveAlphamap() ?? AlphaSampler.DefaultMap;
+                int index = System.Math.Clamp((int)System.Math.Round(raw) - 1, 0, map.Count - 1);
+                return System.Math.Clamp(map[index], 0, 1);
+            }
+
+            default:
+                return System.Math.Clamp(scaled.Sample(raw), 0, 1);
+        }
+    }
+
     private void BuildTile()
     {
         int rows = Rows;
@@ -267,13 +344,13 @@ public sealed class ImagePlot : PlotObject, IDrawable
                     continue;
                 }
 
-                Color color = _colormap.Sample(v, min, max, logColor);
+                Color color = Mapped(v, min, max, logColor);
 
                 // Per-pixel alpha multiplies the whole image's own opacity rather than replacing it,
                 // the same way a surface's FaceAlpha does, so the two knobs compose.
                 double pixelOpacity = alphaData is null
                     ? opacity
-                    : opacity * alpha.Sample(alphaData[srcRow, c]);
+                    : opacity * OpacityOf(alphaData[srcRow, c], alpha);
                 pixels[rowOffset + c] = color.WithOpacity(pixelOpacity).ToArgb();
             }
         }

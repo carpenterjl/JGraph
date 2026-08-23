@@ -1,4 +1,4 @@
-﻿using System.ComponentModel;
+using System.ComponentModel;
 using JGraph.Core.Drawing;
 using JGraph.Core.Model;
 using JGraph.Core.Primitives;
@@ -90,6 +90,19 @@ public sealed class SurfacePlot : PlotObject, I3DDrawable, IHasZData, ILegendIte
     private double _specularStrength = 0.9;
     private double _specularExponent = 10;
     private double _specularColorReflectance = 1;
+    private SurfaceMeshStyle _meshStyle = SurfaceMeshStyle.Both;
+    private DashStyle _edgeDash = DashStyle.Solid;
+    private MarkerType _marker = MarkerType.None;
+    private double _markerSize = 6;
+    private Color? _markerEdge;
+    private Color? _markerFill;
+    private AlphaMapping _alphaDataMapping = AlphaMapping.Scaled;
+    private ColorMapping _cDataMapping = ColorMapping.Scaled;
+    private SurfaceLighting _edgeLighting = SurfaceLighting.None;
+    private BackFaceLighting _backFaceLighting = BackFaceLighting.ReverseLit;
+    private bool _alignVertexCenters;
+    private bool _xImplied;
+    private bool _yImplied;
 
     // Data-derived caches, cleared by SetData. GetZDataBounds is called three times per frame
     // without drawing anything (axis autoscale, the color range, and the colorbar), and each call
@@ -140,6 +153,9 @@ public sealed class SurfacePlot : PlotObject, I3DDrawable, IHasZData, ILegendIte
     public SurfacePlot(double[,] z)
         : this(Ramp(z is null ? 0 : z.GetLength(1)), Ramp(z is null ? 0 : z.GetLength(0)), z!)
     {
+        // Counted out rather than given, which is what XDataMode and YDataMode report as 'auto'.
+        _xImplied = true;
+        _yImplied = true;
     }
 
     /// <summary>Creates a surface over <c>z[row, col]</c> sampled at <c>x[col]</c>/<c>y[row]</c>.</summary>
@@ -281,6 +297,12 @@ public sealed class SurfacePlot : PlotObject, I3DDrawable, IHasZData, ILegendIte
     }
 
     /// <summary>The X position of one grid vertex, whichever form the grid is in.</summary>
+    /// <summary>The x of one grid vertex, whichever of the two grid forms this surface carries.</summary>
+    public double XAt(int row, int column) => Xat(row, column);
+
+    /// <summary>The y of one grid vertex, whichever of the two grid forms this surface carries.</summary>
+    public double YAt(int row, int column) => Yat(row, column);
+
     private double Xat(int r, int c) => _xGrid is { } grid ? grid[r, c] : _x[c];
 
     /// <summary>The Y position of one grid vertex, whichever form the grid is in.</summary>
@@ -512,6 +534,124 @@ public sealed class SurfacePlot : PlotObject, I3DDrawable, IHasZData, ILegendIte
     {
         get => _faceLighting;
         set => SetProperty(ref _faceLighting, value, InvalidationKind.Render);
+    }
+
+    /// <summary>Which of the mesh lines are drawn (MATLAB <c>MeshStyle</c>).</summary>
+    [Category("Appearance"), DisplayName("Mesh style")]
+    public SurfaceMeshStyle MeshStyle
+    {
+        get => _meshStyle;
+        set => SetProperty(ref _meshStyle, value, InvalidationKind.Render);
+    }
+
+    /// <summary>The dash pattern of the mesh lines (MATLAB <c>LineStyle</c>).</summary>
+    [Category("Appearance"), DisplayName("Edge style")]
+    public DashStyle EdgeDash
+    {
+        get => _edgeDash;
+        set => SetProperty(ref _edgeDash, value, InvalidationKind.Render);
+    }
+
+    /// <summary>A marker drawn at every grid vertex (MATLAB <c>Marker</c>); none by default.</summary>
+    [Category("Appearance")]
+    public MarkerType Marker
+    {
+        get => _marker;
+        set => SetProperty(ref _marker, value, InvalidationKind.Render);
+    }
+
+    /// <summary>How big the vertex markers are drawn, in points.</summary>
+    [Category("Appearance"), DisplayName("Marker size")]
+    public double MarkerSize
+    {
+        get => _markerSize;
+        set => SetProperty(ref _markerSize, System.Math.Max(0, value), InvalidationKind.Render);
+    }
+
+    /// <summary>The vertex markers' outline, or null to follow the surface's edge colour.</summary>
+    [Category("Appearance"), DisplayName("Marker edge")]
+    public Color? MarkerEdge
+    {
+        get => _markerEdge;
+        set => SetProperty(ref _markerEdge, value, InvalidationKind.Render);
+    }
+
+    /// <summary>The vertex markers' fill, or null for a hollow marker.</summary>
+    [Category("Appearance"), DisplayName("Marker fill")]
+    public Color? MarkerFill
+    {
+        get => _markerFill;
+        set => SetProperty(ref _markerFill, value, InvalidationKind.Render);
+    }
+
+    /// <summary>Whether AlphaData is scaled through the axes' map, taken as it stands, or ignored.</summary>
+    [Category("Appearance"), DisplayName("Alpha data mapping")]
+    public AlphaMapping AlphaDataMapping
+    {
+        get => _alphaDataMapping;
+        set
+        {
+            _palette = null;
+            SetProperty(ref _alphaDataMapping, value, InvalidationKind.Render);
+        }
+    }
+
+    /// <summary>
+    /// Whether the colour numbers are stretched over the axes' colour limits or index the colormap
+    /// as they stand (MATLAB <c>CDataMapping</c>).
+    /// </summary>
+    [Category("Appearance"), DisplayName("Color data mapping")]
+    public ColorMapping CDataMapping
+    {
+        get => _cDataMapping;
+        set
+        {
+            _palette = null;
+            SetProperty(ref _cDataMapping, value, InvalidationKind.Render);
+        }
+    }
+
+    /// <summary>How the mesh lines respond to the lights on the axes (MATLAB <c>EdgeLighting</c>).</summary>
+    [Category("Lighting"), DisplayName("Edge lighting")]
+    public SurfaceLighting EdgeLighting
+    {
+        get => _edgeLighting;
+        set => SetProperty(ref _edgeLighting, value, InvalidationKind.Render);
+    }
+
+    /// <summary>How a face turned away from the camera is lit (MATLAB <c>BackFaceLighting</c>).</summary>
+    [Category("Lighting"), DisplayName("Back face lighting")]
+    public BackFaceLighting BackFaceLighting
+    {
+        get => _backFaceLighting;
+        set => SetProperty(ref _backFaceLighting, value, InvalidationKind.Render);
+    }
+
+    /// <summary>Whether mesh vertices are snapped to pixel centres so a thin line stays crisp.</summary>
+    [Category("Appearance"), DisplayName("Align vertex centers")]
+    public bool AlignVertexCenters
+    {
+        get => _alignVertexCenters;
+        set => SetProperty(ref _alignVertexCenters, value, InvalidationKind.Render);
+    }
+
+    /// <summary>
+    /// True when the x positions were counted out from the grid's width rather than given (MATLAB
+    /// <c>XDataMode</c> 'auto'), which is what <c>surf(z)</c> does.
+    /// </summary>
+    [Browsable(false)]
+    public bool XImplied
+    {
+        get => _xImplied;
+        set => _xImplied = value;
+    }
+
+    /// <summary>True when the y positions were counted out rather than given.</summary>
+    [Browsable(false)]
+    public bool YImplied
+    {
+        get => _yImplied;
+        set => _yImplied = value;
     }
 
     /// <summary>MATLAB <c>AmbientStrength</c>: the fraction of the surface color present with no light on it.</summary>
@@ -757,9 +897,23 @@ public sealed class SurfacePlot : PlotObject, I3DDrawable, IHasZData, ILegendIte
                 ? BuildWavefrontOrder(rows, cols, colForward, rowForward, interleave, drawable, order, groups)
                 : BuildDepthOrder(depths!, rows, cols, interleave, exclusive, drawable, order, groups);
 
+            // Snapping happens after projection and before anything is stroked, so the faces and the
+            // mesh land on the same vertices — a mesh half a pixel off its own facets is worse than
+            // no snapping at all.
+            if (_alignVertexCenters)
+            {
+                for (int i = 0; i < rows * cols; i++)
+                {
+                    points[i] = new Point2D(
+                        System.Math.Floor(points[i].X) + 0.5, System.Math.Floor(points[i].Y) + 0.5);
+                }
+            }
+
             EmitCells(
                 context, points, palette, drawable, order, groups, groupCount, cols,
                 opacity, edgeOpacity, colForward, rowForward, drawFaces, drawEdges, perVertex, exclusive);
+
+            DrawVertexMarkers(context, points, rows, cols, opacity);
         }
         finally
         {
@@ -1011,12 +1165,12 @@ public sealed class SurfacePlot : PlotObject, I3DDrawable, IHasZData, ILegendIte
             Color edge = _edgeColor is { } chosen
                 ? chosen.WithOpacity(opacity)
                 : Color.FromRgb(0x30, 0x30, 0x30).WithOpacity(opacity * 0.8);
-            var style = new LineStyle(edge, _edgeWidth);
+            var style = new LineStyle(edge, _edgeWidth, _edgeDash);
             int v = 0;
             int s = 0;
             for (int i = begin; i < end; i++)
             {
-                AppendEdges(order[i], cols, colForward, rowForward, outline, drawable, points, verts, starts, ref v, ref s);
+                AppendEdges(order[i], cols, colForward, rowForward, outline, _meshStyle, drawable, points, verts, starts, ref v, ref s);
             }
 
             if (s > 0)
@@ -1032,7 +1186,7 @@ public sealed class SurfacePlot : PlotObject, I3DDrawable, IHasZData, ILegendIte
             int vi = order[i];
             int v = 0;
             int s = 0;
-            AppendEdges(vi, cols, colForward, rowForward, outline, drawable, points, verts, starts, ref v, ref s);
+            AppendEdges(vi, cols, colForward, rowForward, outline, _meshStyle, drawable, points, verts, starts, ref v, ref s);
             if (s == 0)
             {
                 continue;
@@ -1040,7 +1194,8 @@ public sealed class SurfacePlot : PlotObject, I3DDrawable, IHasZData, ILegendIte
 
             // The outline traces the surface in its own color, so it softens the silhouette without
             // drawing a line anyone can see; a colormap wireframe is the visible line itself.
-            var style = new LineStyle(CellColor(palette, vi, cols, interp), outline ? 1 : _edgeWidth);
+            var style = new LineStyle(
+                CellColor(palette, vi, cols, interp), outline ? 1 : _edgeWidth, outline ? DashStyle.Solid : _edgeDash);
             context.DrawPaths(verts.AsSpan(0, v), starts.AsSpan(0, s), closed: false, style, null);
         }
     }
@@ -1064,6 +1219,7 @@ public sealed class SurfacePlot : PlotObject, I3DDrawable, IHasZData, ILegendIte
         bool colForward,
         bool rowForward,
         bool outline,
+        SurfaceMeshStyle mesh,
         bool[] drawable,
         Point2D[] points,
         Point2D[] verts,
@@ -1078,24 +1234,58 @@ public sealed class SurfacePlot : PlotObject, I3DDrawable, IHasZData, ILegendIte
         bool top = vi < cols || !drawable[vi - cols];
         bool bottom = !drawable[i10];
 
-        if (left || (!outline && colForward))
+        // MeshStyle picks which family of lines is drawn at all. The silhouette is not a family — it
+        // is the shape of the thing — so an outline pass keeps both sides whatever the style says.
+        bool downColumns = outline || mesh != SurfaceMeshStyle.Row;
+        bool alongRows = outline || mesh != SurfaceMeshStyle.Column;
+
+        if (downColumns && (left || (!outline && colForward)))
         {
             AddEdge(points[vi], points[i10], verts, starts, ref v, ref s);
         }
 
-        if (right || (!outline && !colForward))
+        if (downColumns && (right || (!outline && !colForward)))
         {
             AddEdge(points[vi + 1], points[i10 + 1], verts, starts, ref v, ref s);
         }
 
-        if (top || (!outline && rowForward))
+        if (alongRows && (top || (!outline && rowForward)))
         {
             AddEdge(points[vi], points[vi + 1], verts, starts, ref v, ref s);
         }
 
-        if (bottom || (!outline && !rowForward))
+        if (alongRows && (bottom || (!outline && !rowForward)))
         {
             AddEdge(points[i10], points[i10 + 1], verts, starts, ref v, ref s);
+        }
+    }
+
+    /// <summary>
+    /// Draws a marker at every grid vertex, when the surface has been given one. They go on last and
+    /// unsorted: a marker names a sample point rather than describing the shape, so a marker hidden
+    /// behind the fold it sits on would be a sample the reader cannot see.
+    /// </summary>
+    private void DrawVertexMarkers(IRenderContext context, Point2D[] points, int rows, int cols, double opacity)
+    {
+        if (_marker == MarkerType.None || _markerSize <= 0)
+        {
+            return;
+        }
+
+        Color edge = (_markerEdge ?? _edgeColor ?? Color.FromRgb(0x30, 0x30, 0x30)).WithOpacity(opacity);
+        Color? fill = _markerFill?.WithOpacity(opacity);
+        var style = new MarkerStyle(_marker, _markerSize, fill, edge, _edgeWidth);
+
+        Span<Point2D> one = stackalloc Point2D[1];
+        for (int i = 0; i < rows * cols; i++)
+        {
+            if (!double.IsFinite(points[i].X) || !double.IsFinite(points[i].Y))
+            {
+                continue;
+            }
+
+            one[0] = points[i];
+            context.DrawMarkers(one, style, edge);
         }
     }
 
@@ -1161,6 +1351,52 @@ public sealed class SurfacePlot : PlotObject, I3DDrawable, IHasZData, ILegendIte
     /// interpolated. Rebuilt when anything it was derived from changes, which is what keeps colormap
     /// sampling out of the frame loop entirely.
     /// </summary>
+    /// <summary>
+    /// One colour reading looked up as <see cref="CDataMapping"/> says to: stretched over the colour
+    /// limits, or taken as a one-based index into the colormap and clamped to its ends.
+    /// </summary>
+    private Color Mapped(double value, double colorMin, double colorMax, bool logColor)
+    {
+        if (_cDataMapping == ColorMapping.Scaled)
+        {
+            return _colormap.Sample(value, colorMin, colorMax, logColor);
+        }
+
+        int count = System.Math.Max(1, _colormap.Stops.Count);
+        int index = double.IsFinite(value)
+            ? System.Math.Clamp((int)System.Math.Round(value) - 1, 0, count - 1)
+            : 0;
+        return count == 1 ? _colormap.Stops[0] : _colormap.Stops[index];
+    }
+
+    /// <summary>
+    /// One alpha reading turned into an opacity, as <see cref="AlphaDataMapping"/> says to read it —
+    /// the same three readings a scatter's per-point transparency gets.
+    /// </summary>
+    private double OpacityOf(double raw, AlphaLookup scaled)
+    {
+        if (!double.IsFinite(raw))
+        {
+            return 1;
+        }
+
+        switch (_alphaDataMapping)
+        {
+            case AlphaMapping.None:
+                return System.Math.Clamp(raw, 0, 1);
+
+            case AlphaMapping.Direct:
+            {
+                IReadOnlyList<double> map = Axes?.ResolveAlphamap() ?? AlphaSampler.DefaultMap;
+                int index = System.Math.Clamp((int)System.Math.Round(raw) - 1, 0, map.Count - 1);
+                return System.Math.Clamp(map[index], 0, 1);
+            }
+
+            default:
+                return System.Math.Clamp(scaled.Sample(raw), 0, 1);
+        }
+    }
+
     private uint[] Palette(int rows, int cols, double colorMin, double colorMax, double opacity, bool perVertex)
     {
         bool logColor = this.LogColorScale();
@@ -1185,9 +1421,10 @@ public sealed class SurfacePlot : PlotObject, I3DDrawable, IHasZData, ILegendIte
         var built = new uint[rows * cols];
 
         // The transparency one grid point contributes: its own when alpha data is being drawn,
-        // otherwise the surface's single number, which is already folded into opacity.
+        // otherwise the surface's single number, which is already folded into opacity. How a reading
+        // becomes an opacity is AlphaDataMapping's business, the same three ways a scatter reads one.
         double Alpha(int r, int c) =>
-            alphaData is null ? opacity : opacity * alphaLookup.Sample(alphaData[r, c]);
+            alphaData is null ? opacity : opacity * OpacityOf(alphaData[r, c], alphaLookup);
 
         // What the colormap is sampled at. Height is only the default: MATLAB's surf(X, Y, Z, C)
         // colours by C instead, which is how a surface shows a quantity that is not its own shape.
@@ -1216,8 +1453,7 @@ public sealed class SurfacePlot : PlotObject, I3DDrawable, IHasZData, ILegendIte
             {
                 for (int c = 0; c < cols; c++)
                 {
-                    built[(r * cols) + c] = _colormap
-                        .Sample(source[r, c], colorMin, colorMax, logColor)
+                    built[(r * cols) + c] = Mapped(source[r, c], colorMin, colorMax, logColor)
                         .WithOpacity(Alpha(r, c))
                         .ToArgb();
                 }
@@ -1230,8 +1466,7 @@ public sealed class SurfacePlot : PlotObject, I3DDrawable, IHasZData, ILegendIte
                 for (int c = 0; c < cols - 1; c++)
                 {
                     double mean = (source[r, c] + source[r, c + 1] + source[r + 1, c] + source[r + 1, c + 1]) / 4;
-                    built[(r * cols) + c] = _colormap
-                        .Sample(mean, colorMin, colorMax, logColor)
+                    built[(r * cols) + c] = Mapped(mean, colorMin, colorMax, logColor)
                         .WithOpacity(Alpha(r, c))
                         .ToArgb();
                 }

@@ -76,6 +76,22 @@ internal static partial class JgsGraphicsProperties
             AddHistogramBlock(table);
         }
 
+        // The matrix charts feed four channels rather than two, and the same source machinery serves
+        // them: refreshdata writes whatever channel a source names, and a grid is a channel.
+        if (typeof(SurfacePlot).IsAssignableFrom(type) || typeof(ContourPlot).IsAssignableFrom(type))
+        {
+            AddDataSources(table, "XDataSource", "YDataSource", "ZDataSource", "CDataSource");
+        }
+
+        // An arrow field has six channels — a tail and a vector in each of three directions — and
+        // every one of them can be fed from a variable.
+        if (typeof(QuiverPlot).IsAssignableFrom(type))
+        {
+            AddDataSources(table,
+                "XDataSource", "YDataSource", "ZDataSource",
+                "UDataSource", "VDataSource", "WDataSource");
+        }
+
         if (typeof(AreaPlot).IsAssignableFrom(type))
         {
             AddFaceColorMode(table,

@@ -16,6 +16,25 @@ namespace JGraph.Scripting.Jgs;
 /// added in a later milestone therefore joins the handle surface by existing.
 /// </para>
 /// </summary>
+/// <summary>
+/// The table a heatmap was built from and how it was reduced to a grid. Held by the script layer,
+/// never by the chart: a heatmap that was given a matrix has none of this, and answers so.
+/// </summary>
+internal sealed class HeatmapSource
+{
+    public required JgsValue Table { get; init; }
+
+    public required string XVariable { get; set; }
+
+    public required string YVariable { get; set; }
+
+    /// <summary>The variable each group is reduced over, or empty when the groups are counted.</summary>
+    public string ColorVariable { get; set; } = string.Empty;
+
+    /// <summary>One of count, mean, median, sum or none.</summary>
+    public string ColorMethod { get; set; } = "count";
+}
+
 internal sealed class JgsHandleEntry
 {
     public JgsHandleEntry(GraphObject target)
@@ -102,6 +121,16 @@ internal sealed class JgsHandleEntry
     /// is the only thing that reads it.
     /// </summary>
     public Dictionary<string, string> DataSources { get; } = new(StringComparer.OrdinalIgnoreCase);
+
+    /// <summary>
+    /// The table a heatmap was summarised from, and the variables it was grouped and reduced by —
+    /// MATLAB's <c>SourceTable</c>, <c>XVariable</c>, <c>YVariable</c>, <c>ColorVariable</c> and
+    /// <c>ColorMethod</c>. Like the data sources above, this is the script's own bookkeeping: the
+    /// chart is a grid of numbers once it is drawn, and the table it came from means nothing to the
+    /// drawing. Keeping it here is what lets a script change one variable and have the grid recount
+    /// itself, which is the whole point of the table form.
+    /// </summary>
+    public HeatmapSource? HeatmapSource { get; set; }
 
     /// <summary>
     /// Whatever a script has hung on this object with <c>setappdata</c>. It lives on the entry rather

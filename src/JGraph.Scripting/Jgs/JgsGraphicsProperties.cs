@@ -827,13 +827,22 @@ internal static partial class JgsGraphicsProperties
             // — the only way to check where fsurf looked is to ask the surface it drew. A surface over
             // a rectangular grid answers with its two vectors; a parametric one with its two grids,
             // which is what MATLAB always answers with.
-            Put(table, "XData", entry => ((SurfacePlot)entry.Target).XGrid is { } grid
-                ? Grid(grid)
-                : Row(((SurfacePlot)entry.Target).X));
-            Put(table, "YData", entry => ((SurfacePlot)entry.Target).YGrid is { } grid
-                ? Grid(grid)
-                : Row(((SurfacePlot)entry.Target).Y));
+            // Writable since M78, because XDataMode has nothing to release without it: a surface that
+            // could report whether its positions were counted out but not be given real ones would be
+            // answering a question a script cannot act on. A parametric grid keeps its read-only
+            // answer — its positions are a pair of matrices and replacing one alone is not a move.
+            Put(table, "XData",
+                entry => ((SurfacePlot)entry.Target).XGrid is { } grid
+                    ? Grid(grid)
+                    : Row(((SurfacePlot)entry.Target).X),
+                (entry, value, line, col) => WriteSurfaceRuler(entry, value, line, col, alongX: true));
+            Put(table, "YData",
+                entry => ((SurfacePlot)entry.Target).YGrid is { } grid
+                    ? Grid(grid)
+                    : Row(((SurfacePlot)entry.Target).Y),
+                (entry, value, line, col) => WriteSurfaceRuler(entry, value, line, col, alongX: false));
             Put(table, "ZData", entry => Grid(((SurfacePlot)entry.Target).Z));
+            AddSurfaceBlock(table);
 
             // A surface's two colours are the one place where an absent colour does not mean 'none':
             // null there means 'take it from the colormap', which MATLAB spells 'flat'. Whether the
@@ -857,6 +866,7 @@ internal static partial class JgsGraphicsProperties
         if (typeof(ImagePlot).IsAssignableFrom(type))
         {
             AddImageAlphaData(table);
+            AddImageBlock(table);
         }
 
         if (typeof(ContourPlot).IsAssignableFrom(type))
@@ -864,6 +874,7 @@ internal static partial class JgsGraphicsProperties
             Put(table, "XData", entry => Row(((ContourPlot)entry.Target).X));
             Put(table, "YData", entry => Row(((ContourPlot)entry.Target).Y));
             Put(table, "ZData", entry => Grid(((ContourPlot)entry.Target).Z));
+            AddContourBlock(table);
         }
 
         if (typeof(Line3DPlot).IsAssignableFrom(type))
@@ -940,6 +951,7 @@ internal static partial class JgsGraphicsProperties
                 [.. ((BubbleLegendModel)entry.Target).ValuesFor(
                     (entry.Target.Parent as AxesModel)?.BubbleScale
                         ?? new BubbleScale(DataRange.Unit, BubbleScale.DefaultSizeRange))]));
+            AddBubbleLegendBlock(table);
         }
 
         if (typeof(BarPlot).IsAssignableFrom(type))
@@ -1127,6 +1139,8 @@ internal static partial class JgsGraphicsProperties
                     entry => Row(ArrowField((QuiverPlot)entry.Target, which)),
                     (entry, value, line, col) => SetArrowField(entry, value, line, col, which));
             }
+
+            AddQuiverBlock(table);
         }
 
         if (typeof(HeatmapPlot).IsAssignableFrom(type))
@@ -1216,6 +1230,7 @@ internal static partial class JgsGraphicsProperties
                 entry => OnOff(Owner(entry)?.Colorbar.Visible ?? false),
                 (entry, value, line, col) => Owning(entry, line, col).Colorbar.Visible =
                     ToOnOff("ColorbarVisible", value, line, col));
+            AddHeatmapBlock(table);
         }
 
         if (typeof(BinScatterPlot).IsAssignableFrom(type))
@@ -1309,6 +1324,7 @@ internal static partial class JgsGraphicsProperties
                 "patch",
                 entry => ((PatchPlot)entry.Target).FaceVisible,
                 (entry, on) => ((PatchPlot)entry.Target).FaceVisible = on);
+            AddPatchBlock(table);
         }
 
         if (typeof(ContourPlot).IsAssignableFrom(type))
@@ -1408,6 +1424,12 @@ internal static partial class JgsGraphicsProperties
                     .Select(e => JgsValue.Str(
                         e.Label is { Length: > 0 } written ? written : e.Plot?.DisplayName ?? string.Empty))
                     .ToArray()));
+            AddLegendBlock(table);
+        }
+
+        if (typeof(ColorbarModel).IsAssignableFrom(type))
+        {
+            AddColorbarBlock(table);
         }
 
         if (typeof(AnnotationObject).IsAssignableFrom(type))
@@ -1469,6 +1491,7 @@ internal static partial class JgsGraphicsProperties
                     text.Position = a;
                     text.Box = Rect2D.FromCorners(a, b);
                 });
+            AddTextBlock(table);
         }
 
         if (typeof(ArrowAnnotation).IsAssignableFrom(type))

@@ -37,6 +37,14 @@ public sealed class ContourPlot : PlotObject, IDrawable, I3DDrawable, IHasZData,
     private TextStyle? _labelStyle;
     private double _colorMin;
     private double _colorMax = 1;
+    private Color? _lineColor;
+    private DashStyle _lineDash = DashStyle.Solid;
+    private double? _levelStep;
+    private double? _textStep;
+    private double _labelSpacing = 144;
+    private bool _contoursAtZero;
+    private bool _xImplied;
+    private bool _yImplied;
 
     // Data-derived caches. The geometry lives in data space, so panning or zooming the axes only
     // re-maps it -- it is re-extracted only when the data or the levels change.
@@ -164,6 +172,97 @@ public sealed class ContourPlot : PlotObject, IDrawable, I3DDrawable, IHasZData,
     {
         get => _filled;
         set => SetProperty(ref _filled, value, InvalidationKind.Render);
+    }
+
+    /// <summary>
+    /// One colour for every curve, or null to colour each by its own level through the colormap —
+    /// which is what MATLAB spells <c>LineColor</c> 'flat' and makes the default.
+    /// </summary>
+    [Category("Appearance"), DisplayName("Line color")]
+    public Color? LineColor
+    {
+        get => _lineColor;
+        set => SetProperty(ref _lineColor, value, InvalidationKind.Render);
+    }
+
+    /// <summary>The dash pattern of the curves (MATLAB <c>LineStyle</c>).</summary>
+    [Category("Appearance"), DisplayName("Line style")]
+    public DashStyle LineDash
+    {
+        get => _lineDash;
+        set => SetProperty(ref _lineDash, value, InvalidationKind.Render);
+    }
+
+    /// <summary>
+    /// The spacing between automatic levels, or null to fit <see cref="LevelCount"/> of them across
+    /// the data. Given a step, the levels are the multiples of it that fall inside the data — which
+    /// is what makes <c>LevelStep</c> a rounder answer than a count.
+    /// </summary>
+    [Browsable(false)]
+    public double? LevelStep
+    {
+        get => _levelStep;
+        set
+        {
+            _levelStep = value is { } step && step > 0 && double.IsFinite(step) ? step : null;
+            _lines = null;
+            _bands = null;
+            Invalidate(InvalidationKind.Render);
+        }
+    }
+
+    /// <summary>
+    /// The spacing between labelled levels, or null to label whichever levels
+    /// <see cref="LabelLevels"/> names. Given a step, every level that is a multiple of it is labelled.
+    /// </summary>
+    [Browsable(false)]
+    public double? TextStep
+    {
+        get => _textStep;
+        set
+        {
+            _textStep = value is { } step && step > 0 && double.IsFinite(step) ? step : null;
+            Invalidate(InvalidationKind.Render);
+        }
+    }
+
+    /// <summary>
+    /// How far apart labels are placed along the curves, in points. A curve shorter than this carries
+    /// none, so a wider spacing labels fewer curves.
+    /// </summary>
+    [Category("Appearance"), DisplayName("Label spacing")]
+    public double LabelSpacing
+    {
+        get => _labelSpacing;
+        set => SetProperty(ref _labelSpacing, System.Math.Max(0, value), InvalidationKind.Render);
+    }
+
+    /// <summary>
+    /// True when the curves lie on the floor of a 3-D axes rather than each at its own height
+    /// (MATLAB <c>ZLocation</c> 'zero'). Only consulted in a 3-D axes; a flat contour is flat either
+    /// way.
+    /// </summary>
+    [Category("Appearance"), DisplayName("Contours at zero")]
+    public bool ContoursAtZero
+    {
+        get => _contoursAtZero;
+        set => SetProperty(ref _contoursAtZero, value, InvalidationKind.Render);
+    }
+
+    /// <summary>True when the x positions were counted out from the grid rather than given.</summary>
+    [Browsable(false)]
+    public bool XImplied
+    {
+        get => _xImplied;
+        set => _xImplied = value;
+    }
+
+    /// <summary>True when the y positions were counted out from the grid rather than given.</summary>
+    [Browsable(false)]
+    public bool YImplied
+    {
+        get => _yImplied;
+        set => _yImplied = value;
     }
 
     /// <summary>The colormap levels are colored through.</summary>
@@ -321,8 +420,11 @@ public sealed class ContourPlot : PlotObject, IDrawable, I3DDrawable, IHasZData,
             // makes this contour3 rather than a contour drawn on the floor. Levels go out in
             // ascending order; the curves are hairlines with nothing to occlude, so no depth sort
             // buys anything.
+            // ZLocation 'zero' lays the whole set on the floor of the box instead, which is how a
+            // contour drawn under a surface is read against it.
+            bool onFloor = _contoursAtZero;
             DrawLines(
-                context, (x, y, level) => projection.ProjectPoint(x, y, level),
+                context, (x, y, level) => projection.ProjectPoint(x, y, onFloor ? 0 : level),
                 ResolveLevels(zBounds, exclusive), colorMin, colorMax, Opacity, exclusive);
         }
         finally
@@ -440,8 +542,13 @@ public sealed class ContourPlot : PlotObject, IDrawable, I3DDrawable, IHasZData,
                 continue;
             }
 
-            // The longest curve at this level is the one with room for the text.
+            // The longest curve at this level is the one with room for the text — and only if it is
+            // long enough for the spacing asked for.
             int labelled = label && IsLabelled(levels[level]) ? LongestPath(lines, level, paths) : -1;
+            if (labelled >= 0 && !LongEnoughToLabel(lines, level, labelled))
+            {
+                labelled = -1;
+            }
             int labelFrom = 0;
             int labelTo = 0;
 
@@ -465,13 +572,21 @@ public sealed class ContourPlot : PlotObject, IDrawable, I3DDrawable, IHasZData,
                 }
             }
 
-            Color color = _colormap.Sample(levels[level], colorMin, colorMax, this.LogColorScale()).WithOpacity(opacity);
+            // 'flat' — a colour per level out of the map — unless the chart has been given one ink
+            // for every curve, which is what LineColor means when it is not the word.
+            Color color = (_lineColor
+                    ?? _colormap.Sample(levels[level], colorMin, colorMax, this.LogColorScale()))
+                .WithOpacity(opacity);
             LevelLabel? text = labelled >= 0
                 ? OpenGap(context, pixels, starts, ref v, ref paths, labelled, labelFrom, labelTo, levels[level], color)
                 : null;
 
             context.DrawPaths(
-                pixels.AsSpan(0, v), starts.AsSpan(0, paths), closed: false, new LineStyle(color, _lineWidth), null);
+                pixels.AsSpan(0, v),
+                starts.AsSpan(0, paths),
+                closed: false,
+                new LineStyle(color, _lineWidth, _lineDash),
+                null);
 
             if (text is { } drawn)
             {
@@ -492,6 +607,14 @@ public sealed class ContourPlot : PlotObject, IDrawable, I3DDrawable, IHasZData,
     /// <summary>Whether a level is one of the ones asked for, nearest-match as MATLAB's clabel is.</summary>
     private bool IsLabelled(double level)
     {
+        // A step says which levels carry text without naming them one at a time: every level that is
+        // a multiple of it. It outranks the list, the same way LevelStep outranks a level count.
+        if (_textStep is { } step && step > 0)
+        {
+            double nearest = System.Math.Round(level / step) * step;
+            return System.Math.Abs(nearest - level) <= 1e-9 * System.Math.Max(1, System.Math.Abs(level));
+        }
+
         if (_labelLevels is not { Length: > 0 } wanted)
         {
             return true;
@@ -524,6 +647,37 @@ public sealed class ContourPlot : PlotObject, IDrawable, I3DDrawable, IHasZData,
 
         return best;
     }
+
+    /// <summary>
+    /// Whether the chosen curve is long enough to be worth labelling at the spacing asked for. The
+    /// curve is measured in the coordinates it was traced in, so the threshold is scaled by the data
+    /// range: a spacing in points is a length on the page, and this is the same judgement made where
+    /// the page size is not known.
+    /// </summary>
+    private bool LongEnoughToLabel(ContourLineSet lines, int level, int path)
+    {
+        if (_labelSpacing <= 0 || path < 0)
+        {
+            return path >= 0;
+        }
+
+        ReadOnlySpan<Point2D> curve = lines.Path(level, path);
+        double length = 0;
+        for (int i = 1; i < curve.Length; i++)
+        {
+            double dx = curve[i].X - curve[i - 1].X;
+            double dy = curve[i].Y - curve[i - 1].Y;
+            length += System.Math.Sqrt((dx * dx) + (dy * dy));
+        }
+
+        // 144 points is MATLAB's default and this build's, and at the default a curve spanning a
+        // twentieth of the grid still carries its value; a wider spacing asks for longer curves.
+        double span = System.Math.Max(1e-12, Span(_x) + Span(_y));
+        return length >= span * (_labelSpacing / 144) / 20;
+    }
+
+    private static double Span(double[] values) =>
+        values.Length < 2 ? 0 : System.Math.Abs(values[^1] - values[0]);
 
     /// <summary>
     /// Cuts the text's own width out of the curve so the label sits in the line rather than on top of
@@ -644,6 +798,27 @@ public sealed class ContourPlot : PlotObject, IDrawable, I3DDrawable, IHasZData,
         if (_levels is { Length: > 0 })
         {
             return _levels;
+        }
+
+        // A chosen step outranks a chosen count: it says where the levels are rather than how many,
+        // so the answer is the multiples of it that fall strictly inside the data. Scratch is not
+        // reused here because the count depends on the data range rather than on a fixed field.
+        if (_levelStep is { } step && step > 0)
+        {
+            var stepped = new List<double>();
+            double first = System.Math.Ceiling(zBounds.Min / step) * step;
+            for (double level = first; level < zBounds.Max; level += step)
+            {
+                if (level > zBounds.Min)
+                {
+                    stepped.Add(level);
+                }
+            }
+
+            if (stepped.Count > 0)
+            {
+                return [.. stepped];
+            }
         }
 
         // Evenly spaced interior levels, excluding the exact extremes (which produce no geometry).

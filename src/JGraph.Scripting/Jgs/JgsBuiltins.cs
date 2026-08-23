@@ -3920,9 +3920,15 @@ internal static partial class JgsBuiltins
         }
         try
         {
-            return Handle(elevated ? JG.Contour3(x, y, z, levels)
+            ContourPlot drawn = elevated ? JG.Contour3(x, y, z, levels)
                 : filled ? JG.ContourF(x, y, z, levels)
-                : JG.Contour(x, y, z, levels));
+                : JG.Contour(x, y, z, levels);
+
+            // Whether the positions were counted out of the grid is what XDataMode reports, and the
+            // one-matrix form is exactly the case where they were.
+            drawn.XImplied = !gridded;
+            drawn.YImplied = !gridded;
+            return Handle(drawn);
         }
         catch (ArgumentException ex)
         {

@@ -1,29 +1,29 @@
 label,class,verdict,documented,implemented,missing
 figure,matlab.ui.Figure,ok,66,66,
 axes,matlab.graphics.axis.Axes,ok,147,144,Interactions Layout Toolbar
-polaraxes,matlab.graphics.axis.PolarAxes,ok,107,87,Interactions Layout RAxisLocationMode RColor RColorMode RGrid RLimMode RMinorGrid RMinorTick RTickLabelMode RTickMode ThetaColor ThetaColorMode ThetaGrid ThetaLimMode ThetaMinorGrid ThetaMinorTick ThetaTickLabelMode ThetaTickMode Toolbar
+polaraxes,matlab.graphics.axis.PolarAxes,ok,107,104,Interactions Layout Toolbar
 line,matlab.graphics.chart.primitive.Line,ok,52,48,LatitudeData LatitudeDataSource LongitudeData LongitudeDataSource
 scatter,matlab.graphics.chart.primitive.Scatter,ok,74,59,AlphaVariable ColorVariable LatitudeData LatitudeDataSource LatitudeVariable LongitudeData LongitudeDataSource LongitudeVariable RVariable SizeVariable SourceTable ThetaVariable XVariable YVariable ZVariable
-surface,matlab.graphics.chart.primitive.Surface,ok,60,36,AlignVertexCenters AlphaDataMapping BackFaceLighting CData CDataMapping CDataMode CDataSource EdgeLighting FaceNormals FaceNormalsMode LineStyle LineWidth Marker MarkerEdgeColor MarkerFaceColor MarkerSize MeshStyle VertexNormals VertexNormalsMode XDataMode XDataSource YDataMode YDataSource ZDataSource
-patch,matlab.graphics.primitive.Patch,ok,56,37,AlignVertexCenters AlphaDataMapping BackFaceLighting CData CDataMapping EdgeLighting FaceNormals FaceNormalsMode FaceVertexAlphaData FaceVertexCData LineJoin LineStyle LineWidth Marker MarkerEdgeColor MarkerFaceColor MarkerSize VertexNormals VertexNormalsMode
-text,matlab.graphics.primitive.Text,ok,41,28,Clipping Editing Extent FontAngle FontSmoothing FontUnits FontWeight Interactions LineStyle LineWidth Margin Rotation Units
-legend,matlab.graphics.illustration.Legend,ok,39,23,AutoUpdate Box Color EdgeColor FontAngle FontName FontSize FontWeight Interpreter Layout LineWidth NumColumns NumColumnsMode Orientation TextColor Units
-colorbar,matlab.graphics.illustration.ColorBar,ok,42,19,AxisLocation AxisLocationMode Box Color Direction FontAngle FontName FontSize FontWeight Layout Limits LimitsMode LineWidth Location Position TickDirection TickLabelInterpreter TickLabels TickLabelsMode TickLength Ticks TicksMode Units
+surface,matlab.graphics.chart.primitive.Surface,ok,60,60,
+patch,matlab.graphics.primitive.Patch,ok,56,56,
+text,matlab.graphics.primitive.Text,ok,41,40,Interactions
+legend,matlab.graphics.illustration.Legend,ok,39,38,Layout
+colorbar,matlab.graphics.illustration.ColorBar,ok,42,41,Layout
 bar,matlab.graphics.chart.primitive.Bar,ok,44,44,
 histogram,matlab.graphics.chart.primitive.Histogram,ok,46,46,
 area,matlab.graphics.chart.primitive.Area,ok,39,39,
 stair,matlab.graphics.chart.primitive.Stair,ok,38,38,
 stem,matlab.graphics.chart.primitive.Stem,ok,43,43,
 errorbar,matlab.graphics.chart.primitive.ErrorBar,ok,52,52,
-contour,matlab.graphics.chart.primitive.Contour,ok,46,28,ContourMatrix Fill LabelSpacing LevelListMode LevelStep LevelStepMode LineColor LineStyle TextList TextListMode TextStep TextStepMode XDataMode XDataSource YDataMode YDataSource ZDataSource ZLocation
-quiver,matlab.graphics.chart.primitive.Quiver,ok,52,35,AlignVertexCenters ColorMode LineStyle LineStyleMode Marker MarkerEdgeColor MarkerFaceColor MarkerMode MarkerSize UDataSource VDataSource WDataSource XDataMode XDataSource YDataMode YDataSource ZDataSource
-image,matlab.graphics.primitive.Image,ok,27,21,AlphaDataMapping CData CDataMapping Interpolation XData YData
+contour,matlab.graphics.chart.primitive.Contour,ok,46,46,
+quiver,matlab.graphics.chart.primitive.Quiver,ok,52,52,
+image,matlab.graphics.primitive.Image,ok,27,27,
 constantline,matlab.graphics.chart.decoration.ConstantLine,ok,35,29,FontAngle FontName FontSize FontWeight Interpreter LabelOrientation
 boxchart,matlab.graphics.chart.primitive.BoxChart,ok,29,27,BoxFaceColorMode MarkerColorMode
-heatmap,matlab.graphics.chart.HeatmapChart,ok,39,20,ColorDisplayData ColorMethod ColorVariable FontName InnerPosition Layout OuterPosition Position PositionConstraint SourceTable Units XDisplayData XDisplayLabels XLimits XVariable YDisplayData YDisplayLabels YLimits YVariable
+heatmap,matlab.graphics.chart.HeatmapChart,ok,39,38,Layout
 bubblechart,matlab.graphics.chart.primitive.BubbleChart,ok,73,58,AlphaVariable ColorVariable LatitudeData LatitudeDataSource LatitudeVariable LongitudeData LongitudeDataSource LongitudeVariable RVariable SizeVariable SourceTable ThetaVariable XVariable YVariable ZVariable
 light,matlab.graphics.primitive.Light,ok,21,21,
-bubblelegend,matlab.graphics.illustration.BubbleLegend,ok,37,26,BubbleSizeOrder Color EdgeColor FontAngle FontName FontWeight Interpreter Layout LineWidth TextColor Units
+bubblelegend,matlab.graphics.illustration.BubbleLegend,ok,37,36,Layout
 pie,matlab.graphics.primitive.Patch,ok,56,25,AlignVertexCenters AlphaDataMapping AmbientStrength BackFaceLighting CData CDataMapping DiffuseStrength EdgeAlpha EdgeLighting FaceColor FaceLighting FaceNormals FaceNormalsMode FaceVertexAlphaData FaceVertexCData Faces LineJoin LineStyle Marker MarkerEdgeColor MarkerFaceColor MarkerSize SpecularColorReflectance SpecularExponent SpecularStrength VertexNormals VertexNormalsMode Vertices XData YData ZData
 uicontextmenu,matlab.ui.container.ContextMenu,ok,12,12,
 uimenu,matlab.ui.container.Menu,ok,21,21,

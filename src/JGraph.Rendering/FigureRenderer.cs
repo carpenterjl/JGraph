@@ -1,4 +1,4 @@
-﻿using JGraph.Core.Drawing;
+using JGraph.Core.Drawing;
 using JGraph.Core.Model;
 using JGraph.Core.Primitives;
 using JGraph.Maths.Ticks;
@@ -146,17 +146,17 @@ public sealed class FigureRenderer
             DrawTitleBlock(context, axes, plotArea);
 
             LegendLayout? legendBox = axes.Legend.Visible
-                ? LegendRenderer.Draw(context, axes, plotArea, theme)
+                ? LegendRenderer.Draw(context, axes, plotArea, content, theme)
                 : null;
 
             if (axes.Colorbar.Visible)
             {
-                ColorbarRenderer.Draw(context, axes, plotArea, theme);
+                ColorbarRenderer.Draw(context, axes, plotArea, content, theme);
             }
 
             if (axes.BubbleLegend.Visible)
             {
-                BubbleLegendRenderer.Draw(context, axes, plotArea, theme);
+                BubbleLegendRenderer.Draw(context, axes, plotArea, content, theme);
             }
 
             return new AxesRenderInfo(axes, plotArea, transform, legendBox);
@@ -172,17 +172,17 @@ public sealed class FigureRenderer
             DrawTitleBlock(context, axes, plotArea);
 
             LegendLayout? polarLegend = axes.Legend.Visible
-                ? LegendRenderer.Draw(context, axes, plotArea, theme)
+                ? LegendRenderer.Draw(context, axes, plotArea, content, theme)
                 : null;
 
             if (axes.Colorbar.Visible)
             {
-                ColorbarRenderer.Draw(context, axes, plotArea, theme);
+                ColorbarRenderer.Draw(context, axes, plotArea, content, theme);
             }
 
             if (axes.BubbleLegend.Visible)
             {
-                BubbleLegendRenderer.Draw(context, axes, plotArea, theme);
+                BubbleLegendRenderer.Draw(context, axes, plotArea, content, theme);
             }
 
             return new AxesRenderInfo(axes, plotArea, transform, polarLegend);
@@ -254,20 +254,20 @@ public sealed class FigureRenderer
 
         // Legend.
         LegendLayout? legendBounds = axes.Legend.Visible
-            ? LegendRenderer.Draw(context, axes, plotArea, theme)
+            ? LegendRenderer.Draw(context, axes, plotArea, content, theme)
             : null;
 
         // Colorbar (its width was reserved by MeasureDecorations).
         if (axes.Colorbar.Visible)
         {
-            ColorbarRenderer.Draw(context, axes, plotArea, theme);
+            ColorbarRenderer.Draw(context, axes, plotArea, content, theme);
         }
 
         // The bubble legend floats inside the plot area like the legend does, rather than reserving a
         // margin like the colorbar: it explains the data, so it belongs over it.
         if (axes.BubbleLegend.Visible)
         {
-            BubbleLegendRenderer.Draw(context, axes, plotArea, theme);
+            BubbleLegendRenderer.Draw(context, axes, plotArea, content, theme);
         }
 
         return new AxesRenderInfo(axes, plotArea, transform, legendBounds);
@@ -549,20 +549,52 @@ public sealed class FigureRenderer
 
         // Rings at the r ticks, drawn as arcs over whatever slice of the turn the θ limits allow. The
         // outermost one is the chart's frame and is drawn in the frame ink whether the grid is on.
-        if (axes.Grid.Visible && axes.Grid.ShowMajor)
+        // The rings answer to RGrid and the spokes to ThetaGrid: a polar axes has two rulers and two
+        // switches, and neither one draws the other's lines.
+        LineStyle minorStyle = axes.Grid.MinorLineStyle;
+        if (axes.Grid.Visible)
         {
-            foreach (Tick tick in rTicks.MajorTicks)
+            if (axes.Grid.ShowMinorR)
             {
-                double radius = polar.RadiusToPixels(tick.Value);
-                if (radius > 0.5 && radius < polar.PixelRadius - 0.5)
+                foreach (double value in rTicks.MinorTicks)
                 {
-                    DrawArc(context, polar, radius, startRadians, endRadians, gridStyle);
+                    double radius = polar.RadiusToPixels(value);
+                    if (radius > 0.5 && radius < polar.PixelRadius - 0.5)
+                    {
+                        DrawArc(context, polar, radius, startRadians, endRadians, minorStyle);
+                    }
                 }
             }
 
-            foreach (double angle in spokes)
+            // A minor spoke sits midway between each neighbouring pair of major ones, which is what a
+            // ruler with no minor tick values of its own can honestly offer on a circle.
+            if (axes.Grid.ShowMinorTheta)
             {
-                context.DrawLine(polar.Center, polar.Rim(angle * ToRadians, polar.PixelRadius), gridStyle);
+                for (int i = 0; i + 1 < spokes.Count; i++)
+                {
+                    double midway = (spokes[i] + spokes[i + 1]) / 2;
+                    context.DrawLine(polar.Center, polar.Rim(midway * ToRadians, polar.PixelRadius), minorStyle);
+                }
+            }
+
+            if (axes.Grid.ShowMajorR)
+            {
+                foreach (Tick tick in rTicks.MajorTicks)
+                {
+                    double radius = polar.RadiusToPixels(tick.Value);
+                    if (radius > 0.5 && radius < polar.PixelRadius - 0.5)
+                    {
+                        DrawArc(context, polar, radius, startRadians, endRadians, gridStyle);
+                    }
+                }
+            }
+
+            if (axes.Grid.ShowMajorTheta)
+            {
+                foreach (double angle in spokes)
+                {
+                    context.DrawLine(polar.Center, polar.Rim(angle * ToRadians, polar.PixelRadius), gridStyle);
+                }
             }
         }
 
@@ -905,9 +937,13 @@ public sealed class FigureRenderer
                 top += context.MeasureText(axes.Subtitle, axes.SubtitleStyle).Height + LabelPadding;
             }
 
-            double polarBar = ColorbarRenderer.MeasureReservedWidth(axes, context);
-            right += polarBar;
-            return new DecorationMetrics(new Thickness(left, top, right, bottom), 0, 0, 0, 0, 0, 0, polarBar);
+            Thickness polarBar = ColorbarRenderer.MeasureReserved(axes, context);
+            left += polarBar.Left;
+            top += polarBar.Top;
+            right += polarBar.Right;
+            bottom += polarBar.Bottom;
+            return new DecorationMetrics(
+                new Thickness(left, top, right, bottom), 0, 0, 0, 0, 0, 0, polarBar.Right);
         }
 
         // The margins a ruler's ticks and text claim land on whichever edge the ruler sits on —
@@ -1017,7 +1053,13 @@ public sealed class FigureRenderer
                 + (last.LabelHeight > 0 ? LabelPadding + last.LabelHeight : 0);
         }
 
-        extrasRight += ColorbarRenderer.MeasureReservedWidth(axes, context);
+        // A colorbar reserves its band on whichever side it stands, so the three other sides are
+        // added straight to the margins and only the right one joins the stack of side rulers.
+        Thickness colorbar = ColorbarRenderer.MeasureReserved(axes, context);
+        left += colorbar.Left;
+        top += colorbar.Top;
+        bottom += colorbar.Bottom;
+        extrasRight += colorbar.Right;
         right += extrasRight;
 
         return new DecorationMetrics(

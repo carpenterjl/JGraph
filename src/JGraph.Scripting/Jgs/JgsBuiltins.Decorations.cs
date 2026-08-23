@@ -613,6 +613,13 @@ internal static partial class JgsBuiltins
         ContourMatrix(plot.X, plot.Y, plot.Z, plot.ResolvedLevels);
 
     /// <summary>
+    /// The same matrix, for the chart's own <c>ContourMatrix</c> property. It is the one answer
+    /// <c>clabel</c> already gives a script, so the property hands back exactly that rather than
+    /// tracing the curves a second time under another name.
+    /// </summary>
+    internal static JgsValue ContourMatrixFor(ContourPlot plot) => ContourMatrixOf(plot);
+
+    /// <summary>
     /// Whether a string is a line spec rather than a label. Every character has to be one the spec
     /// grammar consumes, and there are at most four of them — the same ambiguity MATLAB has, resolved
     /// the same way, so a label spelled entirely out of spec characters must be named with 'Label'.

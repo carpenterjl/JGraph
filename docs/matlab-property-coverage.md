@@ -5,7 +5,7 @@ building the object in `jgraph.exe` and asking it, not from reading the source: 
 table is built by reflection over the model's CLR types, so what an object answers to is a
 runtime fact.
 
-**1132 of 1394 documented properties** are answered across the
+**1310 of 1394 documented properties** are answered across the
 28 object kinds that could be built and asked. The other
 0 kinds are counted separately below rather than scored as zero —
 an object that cannot be reached is not the same measurement as one missing properties, and
@@ -14,31 +14,31 @@ for six times.
 
 | Kind | MATLAB class | Answered | Documented | Extra |
 |---|---|---:|---:|---:|
-| `axes` | `Axes` | 144 | 147 | 38 |
-| `polaraxes` | `PolarAxes` | 87 | 107 | 95 |
+| `axes` | `Axes` | 144 | 147 | 57 |
+| `polaraxes` | `PolarAxes` | 104 | 107 | 97 |
 | `scatter` | `Scatter` | 59 | 74 | 25 |
 | `bubblechart` | `BubbleChart` | 58 | 73 | 26 |
 | `figure` | `Figure` | 66 | 66 | 8 |
-| `surface` | `Surface` | 36 | 60 | 20 |
-| `patch` | `Patch` | 37 | 56 | 20 |
+| `surface` | `Surface` | 60 | 60 | 23 |
+| `patch` | `Patch` | 56 | 56 | 23 |
 | `pie` | `Patch` | 25 | 56 | 19 |
 | `line` | `Line` | 48 | 52 | 15 |
 | `errorbar` | `ErrorBar` | 52 | 52 | 13 |
-| `quiver` | `Quiver` | 35 | 52 | 10 |
+| `quiver` | `Quiver` | 52 | 52 | 13 |
 | `histogram` | `Histogram` | 46 | 46 | 10 |
-| `contour` | `Contour` | 28 | 46 | 16 |
+| `contour` | `Contour` | 46 | 46 | 19 |
 | `bar` | `Bar` | 44 | 44 | 14 |
 | `stem` | `Stem` | 43 | 43 | 13 |
-| `colorbar` | `ColorBar` | 19 | 42 | 6 |
-| `text` | `Text` | 28 | 41 | 14 |
-| `legend` | `Legend` | 23 | 39 | 8 |
+| `colorbar` | `ColorBar` | 41 | 42 | 14 |
+| `text` | `Text` | 40 | 41 | 17 |
+| `legend` | `Legend` | 38 | 39 | 11 |
 | `area` | `Area` | 39 | 39 | 10 |
-| `heatmap` | `HeatmapChart` | 20 | 39 | 31 |
+| `heatmap` | `HeatmapChart` | 38 | 39 | 32 |
 | `stair` | `Stair` | 38 | 38 | 25 |
-| `bubblelegend` | `BubbleLegend` | 26 | 37 | 9 |
+| `bubblelegend` | `BubbleLegend` | 36 | 37 | 13 |
 | `constantline` | `ConstantLine` | 29 | 35 | 16 |
 | `boxchart` | `BoxChart` | 27 | 29 | 24 |
-| `image` | `Image` | 21 | 27 | 18 |
+| `image` | `Image` | 27 | 27 | 18 |
 | `light` | `Light` | 21 | 21 | 5 |
 | `uimenu` | `Menu` | 21 | 21 | 11 |
 | `uicontextmenu` | `ContextMenu` | 12 | 12 | 11 |

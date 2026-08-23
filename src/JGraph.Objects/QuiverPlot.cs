@@ -35,6 +35,16 @@ public sealed class QuiverPlot : PlotObject, IDrawable, I3DDrawable, IHasZData, 
     private double _maxHeadSize = 0.2;
 
     private double? _resolvedScale;
+    private DashStyle _lineDash = DashStyle.Solid;
+    private bool _lineStyleManual;
+    private MarkerType _marker = MarkerType.None;
+    private bool _markerManual;
+    private double _markerSize = 6;
+    private Color? _markerEdge;
+    private Color? _markerFill;
+    private bool _alignVertexCenters;
+    private bool _xImplied;
+    private bool _yImplied;
     private Point2D[] _verts = new Point2D[64];
     private int[] _starts = new int[16];
 
@@ -188,6 +198,94 @@ public sealed class QuiverPlot : PlotObject, IDrawable, I3DDrawable, IHasZData, 
     [Browsable(false)]
     public double EffectiveScale => _resolvedScale ??= ResolveScale();
 
+    /// <summary>The dash pattern of the shafts (MATLAB <c>LineStyle</c>).</summary>
+    [Category("Appearance"), DisplayName("Line style")]
+    public DashStyle LineDash
+    {
+        get => _lineDash;
+        set
+        {
+            _lineStyleManual = true;
+            SetProperty(ref _lineDash, value, InvalidationKind.Render);
+        }
+    }
+
+    /// <summary>True once a script has chosen the dash (MATLAB <c>LineStyleMode</c> 'manual').</summary>
+    [Browsable(false)]
+    public bool LineStyleManual
+    {
+        get => _lineStyleManual;
+        set => _lineStyleManual = value;
+    }
+
+    /// <summary>A marker drawn at the tail of every arrow (MATLAB <c>Marker</c>); none by default.</summary>
+    [Category("Appearance")]
+    public MarkerType Marker
+    {
+        get => _marker;
+        set
+        {
+            _markerManual = true;
+            SetProperty(ref _marker, value, InvalidationKind.Render);
+        }
+    }
+
+    /// <summary>True once a script has chosen the marker (MATLAB <c>MarkerMode</c> 'manual').</summary>
+    [Browsable(false)]
+    public bool MarkerManual
+    {
+        get => _markerManual;
+        set => _markerManual = value;
+    }
+
+    /// <summary>How big the tail markers are drawn, in points.</summary>
+    [Category("Appearance"), DisplayName("Marker size")]
+    public double MarkerSize
+    {
+        get => _markerSize;
+        set => SetProperty(ref _markerSize, System.Math.Max(0, value), InvalidationKind.Render);
+    }
+
+    /// <summary>The tail markers' outline, or null to follow the arrows' own colour.</summary>
+    [Category("Appearance"), DisplayName("Marker edge")]
+    public Color? MarkerEdge
+    {
+        get => _markerEdge;
+        set => SetProperty(ref _markerEdge, value, InvalidationKind.Render);
+    }
+
+    /// <summary>The tail markers' fill, or null for a hollow marker.</summary>
+    [Category("Appearance"), DisplayName("Marker fill")]
+    public Color? MarkerFill
+    {
+        get => _markerFill;
+        set => SetProperty(ref _markerFill, value, InvalidationKind.Render);
+    }
+
+    /// <summary>Whether shaft vertices are snapped to pixel centres so a thin arrow stays crisp.</summary>
+    [Category("Appearance"), DisplayName("Align vertex centers")]
+    public bool AlignVertexCenters
+    {
+        get => _alignVertexCenters;
+        set => SetProperty(ref _alignVertexCenters, value, InvalidationKind.Render);
+    }
+
+    /// <summary>True when the tail positions were counted out from the field rather than given.</summary>
+    [Browsable(false)]
+    public bool XImplied
+    {
+        get => _xImplied;
+        set => _xImplied = value;
+    }
+
+    /// <summary>True when the tail positions' y were counted out rather than given.</summary>
+    [Browsable(false)]
+    public bool YImplied
+    {
+        get => _yImplied;
+        set => _yImplied = value;
+    }
+
     /// <inheritdoc />
     public string LegendLabel => DisplayName;
 
@@ -300,8 +398,38 @@ public sealed class QuiverPlot : PlotObject, IDrawable, I3DDrawable, IHasZData, 
             return;
         }
 
-        var style = new LineStyle((_color ?? state.SeriesColor).WithOpacity(Opacity), _lineWidth);
+        Color ink = (_color ?? state.SeriesColor).WithOpacity(Opacity);
+        if (_alignVertexCenters)
+        {
+            for (int i = 0; i < v; i++)
+            {
+                _verts[i] = new Point2D(
+                    System.Math.Floor(_verts[i].X) + 0.5, System.Math.Floor(_verts[i].Y) + 0.5);
+            }
+        }
+
+        var style = new LineStyle(ink, _lineWidth, _lineDash);
         context.DrawPaths(_verts.AsSpan(0, v), _starts.AsSpan(0, s), closed: false, style, fill: null);
+
+        // A marker sits at the tail of each arrow, which is where the field was sampled — the arrow
+        // says which way it points and the marker says where it was measured.
+        if (_marker != MarkerType.None && _markerSize > 0)
+        {
+            Color edge = (_markerEdge ?? ink).WithOpacity(Opacity);
+            var marker = new MarkerStyle(_marker, _markerSize, _markerFill?.WithOpacity(Opacity), edge, _lineWidth);
+            Span<Point2D> one = stackalloc Point2D[1];
+            for (int i = 0; i < s; i++)
+            {
+                Point2D tail = _verts[_starts[i]];
+                if (!tail.IsFinite)
+                {
+                    continue;
+                }
+
+                one[0] = tail;
+                context.DrawMarkers(one, marker, edge);
+            }
+        }
     }
 
     /// <summary>

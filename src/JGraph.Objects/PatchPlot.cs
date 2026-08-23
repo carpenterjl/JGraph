@@ -1,4 +1,4 @@
-﻿using System.ComponentModel;
+using System.ComponentModel;
 using JGraph.Core.Drawing;
 using JGraph.Core.Model;
 using JGraph.Core.Primitives;
@@ -64,6 +64,19 @@ public sealed class PatchPlot : PlotObject, IDrawable, I3DDrawable, IHasZData, I
     private double _colorMin;
     private double _colorMax = 1;
 
+    private DashStyle _edgeDash = DashStyle.Solid;
+    private LineJoin _lineJoin = LineJoin.Miter;
+    private MarkerType _marker = MarkerType.None;
+    private double _markerSize = 6;
+    private Color? _markerEdge;
+    private Color? _markerFill;
+    private double[]? _vertexAlpha;
+    private AlphaMapping _alphaDataMapping = AlphaMapping.Scaled;
+    private ColorMapping _cDataMapping = ColorMapping.Scaled;
+    private SurfaceLighting _edgeLighting = SurfaceLighting.None;
+    private BackFaceLighting _backFaceLighting = BackFaceLighting.ReverseLit;
+    private bool _alignVertexCenters;
+
     private Point2D[] _pixels = new Point2D[16];
     private double[] _faceDepths = Array.Empty<double>();
     private int[] _faceOrder = Array.Empty<int>();
@@ -99,6 +112,105 @@ public sealed class PatchPlot : PlotObject, IDrawable, I3DDrawable, IHasZData, I
     public PatchPlot(double[] x, double[] y, double[] z)
         : this(x, y, z, [Ramp(x?.Length ?? 0)])
     {
+    }
+
+    /// <summary>The dash pattern of the face outlines (MATLAB <c>LineStyle</c>).</summary>
+    [Category("Appearance"), DisplayName("Edge style")]
+    public DashStyle EdgeDash
+    {
+        get => _edgeDash;
+        set => SetProperty(ref _edgeDash, value, InvalidationKind.Render);
+    }
+
+    /// <summary>How the corners of a face outline are joined (MATLAB <c>LineJoin</c>).</summary>
+    [Category("Appearance"), DisplayName("Line join")]
+    public LineJoin LineJoin
+    {
+        get => _lineJoin;
+        set => SetProperty(ref _lineJoin, value, InvalidationKind.Render);
+    }
+
+    /// <summary>A marker drawn at every vertex (MATLAB <c>Marker</c>); none by default.</summary>
+    [Category("Appearance")]
+    public MarkerType Marker
+    {
+        get => _marker;
+        set => SetProperty(ref _marker, value, InvalidationKind.Render);
+    }
+
+    /// <summary>How big the vertex markers are drawn, in points.</summary>
+    [Category("Appearance"), DisplayName("Marker size")]
+    public double MarkerSize
+    {
+        get => _markerSize;
+        set => SetProperty(ref _markerSize, System.Math.Max(0, value), InvalidationKind.Render);
+    }
+
+    /// <summary>The vertex markers' outline, or null to follow the patch's edge colour.</summary>
+    [Category("Appearance"), DisplayName("Marker edge")]
+    public Color? MarkerEdge
+    {
+        get => _markerEdge;
+        set => SetProperty(ref _markerEdge, value, InvalidationKind.Render);
+    }
+
+    /// <summary>The vertex markers' fill, or null for a hollow marker.</summary>
+    [Category("Appearance"), DisplayName("Marker fill")]
+    public Color? MarkerFill
+    {
+        get => _markerFill;
+        set => SetProperty(ref _markerFill, value, InvalidationKind.Render);
+    }
+
+    /// <summary>
+    /// A transparency per vertex (MATLAB <c>FaceVertexAlphaData</c>), or null for one opacity across
+    /// the patch. Read through <see cref="AlphaDataMapping"/> the same three ways a scatter's is.
+    /// </summary>
+    [Browsable(false)]
+    public double[]? VertexAlpha
+    {
+        get => _vertexAlpha;
+        set => SetProperty(ref _vertexAlpha, value, InvalidationKind.Render);
+    }
+
+    /// <summary>Whether the vertex alphas are scaled through the axes' map, taken as they stand, or ignored.</summary>
+    [Category("Appearance"), DisplayName("Alpha data mapping")]
+    public AlphaMapping AlphaDataMapping
+    {
+        get => _alphaDataMapping;
+        set => SetProperty(ref _alphaDataMapping, value, InvalidationKind.Render);
+    }
+
+    /// <summary>Whether the colour numbers are stretched over the axes' limits or index the colormap.</summary>
+    [Category("Appearance"), DisplayName("Color data mapping")]
+    public ColorMapping CDataMapping
+    {
+        get => _cDataMapping;
+        set => SetProperty(ref _cDataMapping, value, InvalidationKind.Render);
+    }
+
+    /// <summary>How the face outlines respond to the lights on the axes (MATLAB <c>EdgeLighting</c>).</summary>
+    [Category("Lighting"), DisplayName("Edge lighting")]
+    public SurfaceLighting EdgeLighting
+    {
+        get => _edgeLighting;
+        set => SetProperty(ref _edgeLighting, value, InvalidationKind.Render);
+    }
+
+    /// <summary>How a face turned away from the camera is lit (MATLAB <c>BackFaceLighting</c>).</summary>
+    [Category("Lighting"), DisplayName("Back face lighting")]
+    public BackFaceLighting BackFaceLighting
+    {
+        get => _backFaceLighting;
+        set => SetProperty(ref _backFaceLighting, value, InvalidationKind.Render);
+    }
+
+    /// <summary>Whether vertices are snapped to pixel centres so a thin outline stays crisp.</summary>
+    [Category("Appearance"), DisplayName("Align vertex centers")]
+    public bool AlignVertexCenters
+    {
+        get => _alignVertexCenters;
+        set => SetProperty(ref _alignVertexCenters, value, InvalidationKind.Render);
     }
 
     /// <summary>The X coordinate of each vertex.</summary>
@@ -551,10 +663,21 @@ public sealed class PatchPlot : PlotObject, IDrawable, I3DDrawable, IHasZData, I
         double edgeOpacity = Opacity * _edgeAlpha;
         Color fallback = (_faceColor ?? state.SeriesColor).WithOpacity(faceOpacity);
         LineStyle? stroke = _edgeColor is { } edge && _edgeWidth > 0 && _edgeAlpha > 0
-            ? new LineStyle(edge.WithOpacity(edgeOpacity), _edgeWidth)
+            ? new LineStyle(edge.WithOpacity(edgeOpacity), _edgeWidth, _edgeDash, LineCap.Butt, _lineJoin)
             : null;
         bool perVertex = _colorData is not null && _colorData.Length == _x.Length;
         bool interpolate = _faceVisible && perVertex && _shading == PatchShading.Interp;
+
+        // Snapping happens once, on the shared vertex list, so two faces meeting along an edge still
+        // meet after it — snapping per face would tear every shared edge open by half a pixel.
+        if (_alignVertexCenters)
+        {
+            for (int i = 0; i < _pixels.Length; i++)
+            {
+                _pixels[i] = new Point2D(
+                    System.Math.Floor(_pixels[i].X) + 0.5, System.Math.Floor(_pixels[i].Y) + 0.5);
+            }
+        }
 
         // With the fill off there is nothing left to carry the color, so the outline takes it. That
         // is the whole difference between a triangulated surface and a triangulated mesh, and it is
@@ -599,11 +722,8 @@ public sealed class PatchPlot : PlotObject, IDrawable, I3DDrawable, IHasZData, I
 
             int at = order is null ? i : order[i];
             Color color = _colorData is { } values
-                ? _colormap.Sample(
-                    perVertex ? MeanOf(values, face) : values[at],
-                    min,
-                    max,
-                    this.LogColorScale()).WithOpacity(faceOpacity)
+                ? Mapped(perVertex ? MeanOf(values, face) : values[at], min, max)
+                    .WithOpacity(faceOpacity * VertexOpacity(face))
                 : fallback;
 
             // Lighting shades the fill, never the outline: an edge is a line rather than a piece of
@@ -614,8 +734,118 @@ public sealed class PatchPlot : PlotObject, IDrawable, I3DDrawable, IHasZData, I
             }
             context.DrawPolygon(
                 _face.AsSpan(0, face.Length),
-                colorTheEdge ? new LineStyle(color.WithOpacity(edgeOpacity), _edgeWidth) : stroke,
+                colorTheEdge
+                    ? new LineStyle(color.WithOpacity(edgeOpacity), _edgeWidth, _edgeDash, LineCap.Butt, _lineJoin)
+                    : stroke,
                 _faceVisible ? color : null);
+        }
+
+        DrawVertexMarkers(context, edgeOpacity);
+    }
+
+    /// <summary>
+    /// One colour reading looked up as <see cref="CDataMapping"/> says to: stretched over the colour
+    /// limits, or taken as a one-based index into the colormap.
+    /// </summary>
+    private Color Mapped(double value, double min, double max)
+    {
+        if (_cDataMapping == ColorMapping.Scaled)
+        {
+            return _colormap.Sample(value, min, max, this.LogColorScale());
+        }
+
+        int count = System.Math.Max(1, _colormap.Stops.Count);
+        int index = double.IsFinite(value)
+            ? System.Math.Clamp((int)System.Math.Round(value) - 1, 0, count - 1)
+            : 0;
+        return _colormap.Stops[index];
+    }
+
+    /// <summary>
+    /// A face's own transparency, averaged over its vertices when the patch carries one per vertex.
+    /// MATLAB interpolates it across the face; one value per face is as far as a polygon fill with a
+    /// single colour can honestly take it, and it is recorded as such.
+    /// </summary>
+    private double VertexOpacity(int[] face)
+    {
+        if (_vertexAlpha is not { Length: > 0 } alphas)
+        {
+            return 1;
+        }
+
+        double total = 0;
+        int counted = 0;
+        foreach (int v in face)
+        {
+            if (v < alphas.Length && double.IsFinite(alphas[v]))
+            {
+                total += ReadAlpha(alphas[v]);
+                counted++;
+            }
+        }
+
+        return counted == 0 ? 1 : total / counted;
+    }
+
+    /// <summary>One alpha reading turned into an opacity, as <see cref="AlphaDataMapping"/> says.</summary>
+    private double ReadAlpha(double raw)
+    {
+        switch (_alphaDataMapping)
+        {
+            case AlphaMapping.None:
+                return System.Math.Clamp(raw, 0, 1);
+
+            case AlphaMapping.Direct:
+            {
+                IReadOnlyList<double> map = Axes?.ResolveAlphamap() ?? AlphaSampler.DefaultMap;
+                int index = System.Math.Clamp((int)System.Math.Round(raw) - 1, 0, map.Count - 1);
+                return System.Math.Clamp(map[index], 0, 1);
+            }
+
+            default:
+            {
+                AlphaLookup lookup = this.ResolveAlpha(AlphaSpread());
+                return System.Math.Clamp(lookup.Sample(raw), 0, 1);
+            }
+        }
+    }
+
+    /// <summary>The spread the alpha map is stretched over, which is the readings themselves.</summary>
+    private DataRange AlphaSpread()
+    {
+        DataRange bounds = DataRange.Empty;
+        foreach (double value in _vertexAlpha ?? [])
+        {
+            if (double.IsFinite(value))
+            {
+                bounds = bounds.Include(value);
+            }
+        }
+
+        return bounds;
+    }
+
+    /// <summary>Draws a marker at every vertex, when the patch has been given one.</summary>
+    private void DrawVertexMarkers(IRenderContext context, double opacity)
+    {
+        if (_marker == MarkerType.None || _markerSize <= 0)
+        {
+            return;
+        }
+
+        Color edge = (_markerEdge ?? _edgeColor ?? Colors.Black).WithOpacity(opacity);
+        var style = new MarkerStyle(_marker, _markerSize, _markerFill?.WithOpacity(opacity), edge, _edgeWidth);
+
+        Span<Point2D> one = stackalloc Point2D[1];
+        for (int i = 0; i < _x.Length && i < _pixels.Length; i++)
+        {
+            if (!_pixels[i].IsFinite)
+            {
+                continue;
+            }
+
+            one[0] = _pixels[i];
+            context.DrawMarkers(one, style, edge);
         }
     }
 
