@@ -72,6 +72,44 @@ public static class Linear
         }
 
         var product = new double[m, n];
+
+        // Worthwhile products go through the provider (native gemm when loaded). The row-major
+        // rectangles this layer works in cost two O(n²) transposing copies against the O(n³)
+        // multiply; below the threshold the naive loop wins on overhead.
+        if (LinalgProvider.Current.IsNative && 2L * m * inner * n >= 1_000_000)
+        {
+            var flatA = new double[(long)m * inner];
+            for (int r = 0; r < m; r++)
+            {
+                for (int k = 0; k < inner; k++)
+                {
+                    flatA[(k * m) + r] = a[r, k];
+                }
+            }
+
+            var flatB = new double[(long)inner * n];
+            for (int k = 0; k < inner; k++)
+            {
+                for (int c = 0; c < n; c++)
+                {
+                    flatB[(c * inner) + k] = b[k, c];
+                }
+            }
+
+            var flat = new double[(long)m * n];
+            LinalgProvider.Current.Gemm(transA: false, transB: false, m, n, inner, flatA, m, flatB, inner, flat, m);
+            for (int c = 0; c < n; c++)
+            {
+                int origin = c * m;
+                for (int r = 0; r < m; r++)
+                {
+                    product[r, c] = flat[origin + r];
+                }
+            }
+
+            return product;
+        }
+
         for (int r = 0; r < m; r++)
         {
             for (int c = 0; c < n; c++)

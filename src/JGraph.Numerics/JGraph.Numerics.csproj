@@ -11,4 +11,12 @@
     <PackageReference Include="System.Numerics.Tensors" Version="9.0.5" />
   </ItemGroup>
 
+  <ItemGroup>
+    <!-- The bundled OpenBLAS (see native\win-x64\SOURCE.md). CopyToOutputDirectory items flow
+         transitively through project references, so every host - jgraph.exe, the app, the tests,
+         the benchmarks - gets native\libopenblas.dll without wiring of its own. -->
+    <None Include="..\..\native\win-x64\*.dll" Link="native\%(Filename)%(Extension)"
+          CopyToOutputDirectory="PreserveNewest" Visible="false" />
+  </ItemGroup>
+
 </Project>

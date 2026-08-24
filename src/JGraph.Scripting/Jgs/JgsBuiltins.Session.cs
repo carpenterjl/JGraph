@@ -319,8 +319,8 @@ internal static partial class JgsBuiltins
                 "-date" => JgsValue.Str(
                     File.GetLastWriteTime(typeof(JGraphScriptGlobals).Assembly.Location).ToString("MMMM d, yyyy",
                         System.Globalization.CultureInfo.InvariantCulture)),
-                "-java" or "-blas" or "-lapack" => JgsValue.Str(
-                    "JGraph computes its own linear algebra; there is no external library to report."),
+                "-java" => JgsValue.Str("JGraph runs on .NET; there is no Java virtual machine to report."),
+                "-blas" or "-lapack" => JgsValue.Str(JGraph.Numerics.LinearAlgebra.LinalgProvider.StatusReport),
                 _ => throw new JgsRuntimeException(line, col, $"version does not recognize the option '{option}'."),
             };
         });

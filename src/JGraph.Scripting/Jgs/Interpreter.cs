@@ -3975,6 +3975,36 @@ internal sealed partial class Interpreter
             return MatrixSolve(coefficients, rhs, transposeResult: true, at);
         }
 
+        // A'*A and A*A' are recognized syntactically — the way MATLAB recognizes its syrk
+        // patterns — and computed one-triangle-then-mirrored, so the result is exactly symmetric
+        // even under a blocked native kernel (a plain gemm's two triangles differ in their last
+        // ulps, and ldl(A'*A) would refuse its own input). Reading an identifier twice is pure,
+        // so the value evaluated for the transposed side is safely ignored.
+        if (at is BinaryExpr syrk && syrk.Op == TokenType.Star)
+        {
+            if (syrk.Left is TransposeExpr { Operand: VariableExpr fromLeft } && syrk.Right is VariableExpr baseRight
+                && fromLeft.Name == baseRight.Name
+                && JgsLinalg.TrySymmetricProduct(right, transposeFirst: true, out JgsValue gram))
+            {
+                return gram;
+            }
+
+            if (syrk.Right is TransposeExpr { Operand: VariableExpr fromRight } && syrk.Left is VariableExpr baseLeft
+                && baseLeft.Name == fromRight.Name
+                && JgsLinalg.TrySymmetricProduct(left, transposeFirst: false, out JgsValue outer))
+            {
+                return outer;
+            }
+        }
+
+        // Two packed real operands go to the provider in place — no rows, no copies (M88). The
+        // bridge mirrors this method's shape rules exactly, so a script sees the same answers and
+        // the same errors whichever path runs.
+        if (JgsLinalg.TryMatrixProduct(left, right, at, out JgsValue fast))
+        {
+            return fast;
+        }
+
         // Complex operands take the boxed complex product; the real fast path below is untouched.
         if (JgsBuiltins.HasComplexElements(left) || JgsBuiltins.HasComplexElements(right))
         {
@@ -4888,6 +4918,14 @@ internal sealed partial class Interpreter
         if (value.Type != JgsType.Array)
         {
             return value;
+        }
+
+        // A packed real matrix flips with a blocked span copy (M88) — the per-element rebuild
+        // below allocates one wrapper per element, which at 2000² costs more than the multiply
+        // the transpose usually feeds. Conjugation is moot for reals; tags still carry.
+        if (JgsLinalg.TryTranspose(value, out JgsValue flipped))
+        {
+            return CarryValueTags(value, flipped);
         }
 
         int rows = JgsMatrix.RowCount(value);

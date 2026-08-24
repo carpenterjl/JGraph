@@ -14,6 +14,14 @@ namespace JGraph.Scripting;
 /// </summary>
 public static class PythonLocator
 {
+    /// <summary>
+    /// The CPython minor versions pythonnet 3.0.5 can embed (its binding tables stop at 3.13).
+    /// A newer interpreter is rejected here so a machine whose default Python is too new degrades
+    /// to a versioned launcher probe — or to no Python — instead of failing runtime init.
+    /// </summary>
+    private const int MinSupportedMinor = 7;
+    private const int MaxSupportedMinor = 13;
+
     /// <summary>Finds an installed CPython runtime, or null if none is available.</summary>
     public static PythonRuntimeInfo? Find()
     {
@@ -57,14 +65,23 @@ public static class PythonLocator
         {
             // "python" first: it is what the user's PATH (and an activated venv) selects, so its
             // installed packages are the ones the user expects scripts to import. "py -3" may pick a
-            // different install entirely.
+            // different install entirely. When the default interpreter is newer than pythonnet
+            // supports, the versioned launchers find a supported install living beside it.
             yield return ("python", null);
             yield return ("py", "-3");
+            for (int minor = MaxSupportedMinor; minor >= 9; minor--)
+            {
+                yield return ("py", $"-3.{minor}");
+            }
         }
         else
         {
             yield return ("python3", null);
             yield return ("python", null);
+            for (int minor = MaxSupportedMinor; minor >= 9; minor--)
+            {
+                yield return ($"python3.{minor}", null);
+            }
         }
     }
 
@@ -117,6 +134,13 @@ public static class PythonLocator
             if (lines.Length < 5
                 || !int.TryParse(lines[0], out int major)
                 || !int.TryParse(lines[1], out int minor))
+            {
+                return false;
+            }
+
+            // An interpreter pythonnet cannot embed is "not found", so the next launcher — or
+            // graceful degradation — wins instead of a runtime-init failure.
+            if (major != 3 || minor < MinSupportedMinor || minor > MaxSupportedMinor)
             {
                 return false;
             }
