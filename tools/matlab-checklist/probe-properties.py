@@ -88,6 +88,12 @@ KINDS: list[tuple[str, str, str]] = [
     ("tiledlayout", "matlab.graphics.layout.TiledChartLayout", "h = tiledlayout(2, 2);"),
     ("axestoolbar", "matlab.graphics.controls.AxesToolbar", "plot([1 2 3]); h = axtoolbar;"),
 
+    # M84 took the print-and-export-dialog group off the exclusion list, and uiaxes with it. MATLAB
+    # documents it as its own class, differing from Axes by exactly one property — BackgroundColor,
+    # the fill behind the whole cell where Color fills the plot box. It is measured separately
+    # because the documented table lists it separately, not because the object is a different one.
+    ("uiaxes", "matlab.ui.control.UIAxes", "h = uiaxes;"),
+
     # M71 built the callback seam and, with it, the first two ui objects. Their documented rows were
     # already in the properties CSV; these join keys simply reach them now that the verbs exist.
     ("uicontextmenu", "matlab.ui.container.ContextMenu", "figure; h = uicontextmenu;"),

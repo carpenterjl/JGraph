@@ -221,6 +221,13 @@ public sealed class AxesDto
     /// <summary>Where θ = 0 sits, named rather than numbered so the file stays readable.</summary>
     public string ThetaZeroLocation { get; set; } = "Right";
 
+    /// <summary>
+    /// A further rotation of the whole chart in degrees (M83), zero in every document written before
+    /// it — which is what makes this safe to add without a version bump, exactly as the polar block
+    /// around it was.
+    /// </summary>
+    public double ThetaZeroOffset { get; set; }
+
     /// <summary>Which way θ grows.</summary>
     public string ThetaDirection { get; set; } = "CounterClockwise";
 

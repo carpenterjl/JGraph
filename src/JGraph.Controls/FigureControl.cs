@@ -162,7 +162,10 @@ public class FigureControl : SKElement, IInteractionSurface, IFigureNavigator
         if (info is not null)
         {
             axes = info.Axes;
-            mapper = info.Transform;
+
+            // The mapper this axes was drawn through, which for a polar one is the polar transform
+            // rather than the Cartesian pair its θ and r are stored on (M83).
+            mapper = info.Mapper;
             plotArea = info.PlotArea;
             return true;
         }
@@ -180,7 +183,7 @@ public class FigureControl : SKElement, IInteractionSurface, IFigureNavigator
         {
             if (ReferenceEquals(info.Axes, axes))
             {
-                return info.Transform;
+                return info.Mapper;
             }
         }
 

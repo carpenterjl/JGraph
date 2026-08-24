@@ -1,5 +1,6 @@
 using JGraph.Core.Model;
 using JGraph.Core.Primitives;
+using JGraph.Maths.Transforms;
 
 namespace JGraph.Interaction.Modes;
 
@@ -18,6 +19,8 @@ internal sealed class PanDragGesture
     private ICoordinateMapper? _startMapper;
     private DataRange _startX;
     private DataRange _startY;
+    private DataRange _startR;
+    private double _startOffset;
     private Point2D _startPixel;
     private double _startAzimuth;
     private double _startElevation;
@@ -60,6 +63,12 @@ internal sealed class PanDragGesture
         _startMapper = mapper;
         _startX = axes.PrimaryXAxis.Range;
         _startY = axes.PrimaryYAxis.Range;
+
+        // A polar drag moves the radial range and the rotation, and both have to be captured at the
+        // start for the same reason the Cartesian pair is: a drag reads from where it began, so many
+        // move events add up to one movement rather than compounding (M83).
+        _startR = axes.RAxis.Range;
+        _startOffset = axes.ThetaZeroOffset;
         _startPixel = position;
         _rotating = axes.Is3D;
         _startAzimuth = axes.Azimuth;
@@ -86,6 +95,16 @@ internal sealed class PanDragGesture
             _axes.SetViewAngles(
                 _startAzimuth - (dx * RotateSpeed),
                 System.Math.Clamp(_startElevation + (dy * RotateSpeed), -90, 90));
+            controller.Surface.RequestRender();
+            return;
+        }
+
+        // A drag on a polar chart is decomposed once against the centre: the radial part slides the
+        // visible radii and the tangential part turns the chart, both at once and with no mode to
+        // choose (M83). The chart follows the pointer.
+        if (_axes.IsPolar && _startMapper is PolarTransform polar)
+        {
+            Navigation.PanPolar(_axes, polar, _startR, _startOffset, _startPixel, position, _dimensions);
             controller.Surface.RequestRender();
             return;
         }

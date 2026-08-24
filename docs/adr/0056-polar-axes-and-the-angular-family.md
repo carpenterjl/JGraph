@@ -127,9 +127,16 @@ nine-name gap the registered-but-refusing rulers opened is closed, because they 
   ruler verbs work on its chart — strictly an improvement, but an observable one.
 - **`rtickformat`/`thetatickformat` queries answer the .NET format spelling**, the same divergence
   `xtickformat` has carried since M54, for the same reason.
-- **Wheel zoom and pan do not speak polar yet.** The interaction layer moves the Cartesian ranges,
-  which a polar mapping ignores, so they are inert on a circle rather than wrong; `rlim` is the
-  scripted zoom. Teaching the wheel to scale `rlim` is recorded follow-up work, not silently absent.
+**Retired in M83 — wheel zoom and pan do not speak polar yet.** Deleted from the list above rather
+than struck through, because the harvest lifts every bullet under this heading whole and a
+struck-through one still counts (the lesson M74 recorded).
+
+The bullet described the symptom correctly and named the wrong cause: the interaction layer moved the
+Cartesian ranges not because it chose to but because the renderer handed it the Cartesian mapper, and
+a polar axes stores θ as its plots' X data and r as their Y. The wheel now scales `RLim`, a drag
+slides the radii and turns the chart, and both are one undoable change — which needed
+`AxesViewState` to learn the polar rulers, without which the gesture works and the undo stack stays
+empty. See [0083](0083-the-polar-gesture.md).
 
 **Found on the way and left where it was:** `LineSpec`'s `'g'` maps to `Colors.Green`
 (`[0, 0.502, 0]`) where MATLAB's `'g'` is `[0 1 0]`. It has been so since M2 and is project-wide —

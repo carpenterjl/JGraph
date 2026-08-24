@@ -94,9 +94,14 @@ internal static partial class JgsBuiltins
     private static JgsValue RoundValues(IReadOnlyList<JgsValue> args, int line, int col)
     {
         ArityRange("round", args, 1, 3, line, col);
+
+        // This declaration wins over the one-argument round registered beside floor and ceil, so the
+        // complex arm has to be here too or a complex number reaches only the version that refuses it
+        // (M81). Both places round both parts, which is MATLAB's answer.
         if (args.Count == 1)
         {
-            return MapNumeric("round", args[0], static x => Math.Round(x, MidpointRounding.AwayFromZero), line, col);
+            return MapComplexProducing("round", args[0], RoundAwayFromZero, Always,
+                static z => JgsValue.ComplexNum(Componentwise(z, RoundAwayFromZero)), line, col);
         }
 
         int digits = Count("round", args, 1, line, col);
@@ -107,7 +112,8 @@ internal static partial class JgsBuiltins
             throw new JgsRuntimeException(line, col, "round: 'significant' needs at least one digit.");
         }
 
-        return MapNumeric("round", args[0], x => RoundTo(x, digits, significant), line, col);
+        return MapComplexProducing("round", args[0], x => RoundTo(x, digits, significant), Always,
+            z => JgsValue.ComplexNum(Componentwise(z, x => RoundTo(x, digits, significant))), line, col);
     }
 
     /// <summary>One value rounded to a number of decimal places, or of significant digits.</summary>

@@ -31,6 +31,17 @@ public static class Navigation
         ArgumentNullException.ThrowIfNull(mapper);
 
         Point2D focusData = mapper.PixelToData(focusPixel.X, focusPixel.Y);
+
+        // A polar axes navigates the rulers it is drawn through (M83). Its θ and r are stored as the
+        // plots' X and Y data, so moving the primary pair below would be perfectly well-formed
+        // arithmetic on ranges nothing draws from — which is exactly what a wheel over a polar chart
+        // used to do, silently and to no visible effect.
+        if (axes.IsPolar && mapper is PolarTransform)
+        {
+            ZoomPolar(axes, focusData, factor, dimensions);
+            return;
+        }
+
         if (dimensions != InteractionDimensions.Y)
         {
             ZoomAxis(axes.PrimaryXAxis, focusData.X, factor);
@@ -39,6 +50,66 @@ public static class Navigation
         if (dimensions != InteractionDimensions.X)
         {
             ZoomAxis(axes.PrimaryYAxis, focusData.Y, factor);
+        }
+    }
+
+    /// <summary>
+    /// Zooms a polar axes about the radius and angle under the pointer.
+    /// </summary>
+    /// <remarks>
+    /// <c>Dimensions</c> maps onto the two rulers a polar axes has: <c>X</c> is θ and <c>Y</c> is r.
+    /// <c>XY</c> — the default — scales r alone rather than both, because zooming a polar chart means
+    /// changing how much of the radius is shown, and a default wheel that also narrowed the wedge
+    /// would be a surprise nobody asked for. Recorded as a divergence: MATLAB does not define
+    /// <c>Dimensions</c> for a polar axes at all.
+    /// </remarks>
+    private static void ZoomPolar(
+        AxesModel axes, Point2D focusData, double factor, InteractionDimensions dimensions)
+    {
+        if (dimensions == InteractionDimensions.X)
+        {
+            double focusDegrees = focusData.X * 180 / System.Math.PI;
+            ZoomAxis(axes.ThetaAxis, focusDegrees, factor);
+            return;
+        }
+
+        ZoomAxis(axes.RAxis, focusData.Y, factor);
+    }
+
+    /// <summary>
+    /// Drags a polar axes: the radial part of the movement slides the visible radii, and the
+    /// tangential part turns the chart (M83).
+    /// </summary>
+    /// <remarks>
+    /// One gesture with two components rather than two modes, so a drag simply takes the chart with
+    /// it. The turn is a change of <see cref="AxesModel.ThetaZeroOffset"/> and not of
+    /// <c>ThetaLim</c>: the visible turn decides which angles are drawn, and shifting it rotates
+    /// nothing at all.
+    /// </remarks>
+    public static void PanPolar(
+        AxesModel axes,
+        PolarTransform mapper,
+        DataRange startR,
+        double startOffsetDegrees,
+        Point2D startPixel,
+        Point2D currentPixel,
+        InteractionDimensions dimensions)
+    {
+        ArgumentNullException.ThrowIfNull(axes);
+        ArgumentNullException.ThrowIfNull(mapper);
+
+        if (dimensions != InteractionDimensions.X)
+        {
+            IScaleTransform scale = ScaleTransforms.For(axes.RAxis.Scale);
+            double rStart = mapper.PixelToData(startPixel.X, startPixel.Y).Y;
+            double rNow = mapper.PixelToData(currentPixel.X, currentPixel.Y).Y;
+            PanAxis(axes.RAxis, startR, scale.Forward(rStart) - scale.Forward(rNow));
+        }
+
+        if (dimensions != InteractionDimensions.Y)
+        {
+            double degrees = mapper.AngleDeltaBetween(startPixel, currentPixel) * 180 / System.Math.PI;
+            axes.ThetaZeroOffset = startOffsetDegrees + degrees;
         }
     }
 
@@ -124,6 +195,16 @@ public static class Navigation
     {
         axes.PrimaryXAxis.AutoScale = true;
         axes.PrimaryYAxis.AutoScale = true;
+
+        // A polar axes has two more rulers and a rotation, and none of them is reached by resetting
+        // the Cartesian pair (M83). Restoring the view has to restore what the gesture moved.
+        if (axes.IsPolar)
+        {
+            axes.RAxis.AutoScale = true;
+            axes.ThetaAxis.Range = new DataRange(0, 360);
+            axes.ThetaZeroOffset = 0;
+        }
+
         axes.RecomputeDataBounds();
     }
 

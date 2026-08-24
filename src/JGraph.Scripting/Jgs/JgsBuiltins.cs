@@ -53,9 +53,6 @@ internal static partial class JgsBuiltins
             env.Declare(name, JgsValue.Function(
                 new BuiltinFunction(name, body) { BindsAnsAsStatement = false }));
 
-        void Math1(string name, Func<double, double> f) =>
-            Define(name, (args, line, col) => { Arity(name, args, 1, line, col); return MapNumeric(name, args[0], f, line, col); });
-
         // --- Constants -----------------------------------------------------------------------
         env.Declare("pi", JgsValue.Number(System.Math.PI));
         env.Declare("e", JgsValue.Number(System.Math.E));
@@ -63,17 +60,22 @@ internal static partial class JgsBuiltins
         env.Declare("nan", JgsValue.Number(double.NaN));
 
         // --- Element-wise math ---------------------------------------------------------------
-        Math1("sin", System.Math.Sin);
-        Math1("cos", System.Math.Cos);
-        Math1("tan", System.Math.Tan);
-        Math1("asin", System.Math.Asin);
-        Math1("acos", System.Math.Acos);
-        Math1("atan", System.Math.Atan);
-        Math1("log10", System.Math.Log10);
-        Math1("floor", System.Math.Floor);
-        Math1("ceil", System.Math.Ceiling);
-        Math1("round", x => System.Math.Round(x, MidpointRounding.AwayFromZero));
-        Math1("sign", x => System.Math.Sign(x));
+        //
+        // Every one of these goes through MathX rather than Math1 (M81): the first three never leave
+        // the reals for a real argument and carry a complex definition only so a complex argument has
+        // somewhere to go, while asin, acos and log10 promote the moment an argument leaves their
+        // domain. The rounding four apply their rule to both parts, which is MATLAB's answer.
+        MathX(Define, "sin", System.Math.Sin, Always, Complex.Sin);
+        MathX(Define, "cos", System.Math.Cos, Always, Complex.Cos);
+        MathX(Define, "tan", System.Math.Tan, Always, Complex.Tan);
+        MathX(Define, "asin", System.Math.Asin, InsideUnit, ComplexAsin);
+        MathX(Define, "acos", System.Math.Acos, InsideUnit, ComplexAcos);
+        MathX(Define, "atan", System.Math.Atan, Always, Complex.Atan);
+        MathX(Define, "log10", System.Math.Log10, NonNegative, Complex.Log10);
+        MathX(Define, "floor", System.Math.Floor, Always, static z => Componentwise(z, System.Math.Floor));
+        MathX(Define, "ceil", System.Math.Ceiling, Always, static z => Componentwise(z, System.Math.Ceiling));
+        MathX(Define, "round", RoundAwayFromZero, Always, static z => Componentwise(z, RoundAwayFromZero));
+        MathX(Define, "sign", static x => System.Math.Sign(x), Always, ComplexSign);
 
         // Complex-aware elementwise functions: real input behaves exactly as before, and complex
         // input takes the complex definition (abs = magnitude, angle = phase, conj = conjugate).
@@ -88,18 +90,13 @@ internal static partial class JgsBuiltins
 
         // Complex-producing elementwise functions (M42): real input stays on the flat real fast
         // path as long as the answer is real; sqrt(-4) and log(-1) hand back MATLAB's complex
-        // results, and complex input takes the complex definition throughout.
-        void MathX(string name, Func<double, double> fastReal, Func<double, bool> staysReal,
-            Func<Complex, JgsValue> complexResult) =>
-            Define(name, (args, line, col) =>
-            {
-                Arity(name, args, 1, line, col);
-                return MapComplexProducing(name, args[0], fastReal, staysReal, complexResult, line, col);
-            });
-
-        MathX("exp", System.Math.Exp, static _ => true, static c => JgsValue.ComplexNum(Complex.Exp(c)));
-        MathX("log", System.Math.Log, static x => x >= 0, static c => JgsValue.ComplexNum(Complex.Log(c)));
-        MathX("sqrt", System.Math.Sqrt, static x => x >= 0, static c => JgsValue.ComplexNum(Complex.Sqrt(c)));
+        // results, and complex input takes the complex definition throughout. M81 moved the
+        // registration helper itself into JgsBuiltins.ComplexDomain.cs so the other three files that
+        // declare a Math1 of their own could reach it, and widened the family to everything else that
+        // leaves the reals.
+        MathX(Define, "exp", System.Math.Exp, Always, Complex.Exp);
+        MathX(Define, "log", System.Math.Log, NonNegative, Complex.Log);
+        MathX(Define, "sqrt", System.Math.Sqrt, NonNegative, Complex.Sqrt);
 
         Define("pow", (args, line, col) =>
         {
@@ -1215,6 +1212,16 @@ internal static partial class JgsBuiltins
         Define("split", (args, line, col) =>
         {
             ArityRange("split", args, 1, 2, line, col);
+
+            // MATLAB spells two different verbs the same way, and the first argument says which: text
+            // splits on a separator, a calendarDuration breaks into its calendar units (M82). Asking
+            // here rather than registering a second `split` is the difference between the two
+            // meanings sharing a name and one of them quietly replacing the other.
+            if (args.Count == 2 && IsCalendarDuration(args[0]))
+            {
+                return SplitCalendar(args[0], args[1], line, col);
+            }
+
             string[] parts;
             if (args.Count == 1)
             {

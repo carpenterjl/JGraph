@@ -1810,6 +1810,29 @@ internal static partial class JgsGraphicsProperties
         AddTicks(table, "R", axes => axes.RAxis);
         AddTicks(table, "Theta", axes => axes.ThetaAxis);
 
+        // A UIAxes documents exactly one property a plain axes does not: the fill behind the whole
+        // cell, where Color fills the plot box (M84).
+        //
+        // It is served on every axes rather than only on a handle uiaxes made, because that is what
+        // this table has always done — a plain axes already answers RLim, ThetaLim and ThetaDir, and
+        // gating one name by the verb that built the object would be a rule with a single member.
+        // What uiaxes gives it is a *default*: a plain axes leaves the fill unset and draws exactly as
+        // it always has, while a uiaxes starts with the figure's own colour in it.
+        Put(table, "BackgroundColor",
+            entry => ColorRow(Axes(entry).BackgroundColor ?? Axes(entry).Background),
+            (entry, value, line, col) =>
+                Axes(entry).BackgroundColor = JgsBuiltins.OptionColor(value, line, col, "uiaxes"));
+
+        // A name MATLAB does not document (M83), and the reason is that MATLAB's polar axes does not
+        // turn: ThetaZeroLocation holds four compass points and a drag moves the chart by whatever
+        // angle the pointer moved. It is here rather than left as window state so the rotation a
+        // gesture makes can be read, set and saved — a view a script cannot describe is one a saved
+        // figure cannot keep. Recorded as a divergence in ADR 0083.
+        Put(table, "ThetaZeroOffset",
+            entry => JgsValue.Number(Axes(entry).ThetaZeroOffset),
+            (entry, value, line, col) =>
+                Axes(entry).ThetaZeroOffset = JgsBuiltins.NumOf("ThetaZeroOffset", value, line, col));
+
         // MATLAB's polar axes spells the turn ThetaDir; the model calls it ThetaDirection, and both
         // are the same enum, so one is written in terms of the other rather than beside it.
         Put(table, "ThetaDir",

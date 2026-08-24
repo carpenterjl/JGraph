@@ -125,8 +125,12 @@ save and a load.
 - **`Layout` is unanswered on legend, colorbar, heatmap and bubblelegend**, as it is on axes. It
   names a cell in a tiled layout, and this build has no tiled layout.
 
-- **`Interactions` stays unanswered on polar axes and on text, and `Toolbar` on polar axes** — the
-  same ceiling the axes wave took, for the same reason.
+> **Retired in M80 — `Interactions` stays unanswered on polar axes and on text, and `Toolbar` on
+> polar axes.** M80 built the machinery all three names describe and closed polaraxes at 107/107 and
+> text at 41/41, and this bullet went on being harvested into `docs/matlab-divergences.md` for three
+> milestones afterwards because nobody came back to the list it was in. Deleted rather than struck
+> through, because the harvest lifts every bullet under this heading whole. Found while reading the
+> polar divergences for M83; see [0083](0083-the-polar-gesture.md).
 
 - **A text label's `Extent` is a measurement of a drawing.** A label that has never been drawn has no
   measured size and answers the empty box at its own anchor, where MATLAB measures the font without

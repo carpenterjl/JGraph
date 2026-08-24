@@ -1,4 +1,4 @@
-﻿using JGraph.Api;
+using JGraph.Api;
 using JGraph.Core.Model;
 using JGraph.Core.Primitives;
 using JGraph.Imaging;
@@ -60,6 +60,9 @@ internal static partial class JgsBuiltins
         env.Declare("getframe", JgsValue.Function(
             new BuiltinFunction("getframe", (args, line, col) => GetFrame(host, args, line, col))
             { AutoCallsBare = true }));
+
+        // --- The dialogs, the window capture and uiaxes (M84) -------------------------------------
+        RegisterDialogBuiltins(env, host);
     }
 
     /// <summary>The host's figure file services, or an error naming the verb that wanted them.</summary>
@@ -201,14 +204,42 @@ internal static partial class JgsBuiltins
 
         // Read since M52 for its spelling; acted on since M75. A resolution is dots per inch, and a
         // device-independent unit is a ninety-sixth of one, so the ratio is the scale to draw at.
-        double resolution = options.Scalar("Resolution", 96);
+        //
+        // The figure's export preset stands in only where the caller said nothing (M84). A preset
+        // that overrode an explicit argument would be action at a distance — a script's own
+        // 'Resolution' quietly losing to a dialog someone opened once — and that is invisible in the
+        // script that suffers it, which is why the default is read from the preset rather than the
+        // preset applied over the answer.
+        double resolution = options.Scalar("Resolution", figure.ExportSetup.Resolution ?? 96);
         if (!double.IsFinite(resolution) || resolution <= 0)
         {
             throw new JgsRuntimeException(line, col,
                 $"{verb}: Resolution is a positive number of dots per inch, but got {resolution}.");
         }
 
-        return Attempt(() => host.exportfigure(path, figure, resolution / 96.0), line, col);
+        JGraph.Core.Drawing.Color? restore = null;
+        if (options.Named("BackgroundColor") is { } asked)
+        {
+            restore = figure.Background;
+            figure.Background = OptionColor(asked, line, col, verb);
+        }
+        else if (figure.ExportSetup.Background is { } preset)
+        {
+            restore = figure.Background;
+            figure.Background = preset;
+        }
+
+        try
+        {
+            return Attempt(() => host.exportfigure(path, figure, resolution / 96.0), line, col);
+        }
+        finally
+        {
+            if (restore is { } original)
+            {
+                figure.Background = original;
+            }
+        }
     }
 
     private static JgsValue CopyGraphics(

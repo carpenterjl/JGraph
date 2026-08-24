@@ -319,12 +319,17 @@ internal static partial class JgsBuiltins
         // hypot, log1p, and expm1 exist because the obvious formula is inaccurate near the interesting
         // values: sqrt(x²+y²) overflows, and log(1+x) loses every significant digit for tiny x.
         Math2("hypot", double.Hypot);
-        Math1("log2", Math.Log2);
-        Math1("log1p", Log1P);
-        Math1("expm1", ExpM1);
 
-        Math1("deg2rad", static x => x * (Math.PI / 180.0));
-        Math1("rad2deg", static x => x * (180.0 / Math.PI));
+        // M81: log2 and log1p leave the reals below their domain and now say so in complex, and the
+        // other three carry a complex definition so a complex argument is not simply refused. Log1P
+        // and ExpM1 keep their careful real forms — the complex arms are the plain identities, because
+        // an argument small enough to need the refinement is not one that has gone complex.
+        MathX(Define, "log2", Math.Log2, NonNegative, ComplexLog2);
+        MathX(Define, "log1p", Log1P, AtLeastMinusOne, ComplexLog1P);
+        MathX(Define, "expm1", ExpM1, Always, ComplexExpM1);
+
+        MathX(Define, "deg2rad", static x => x * RadiansPerDegree, Always, static z => z * RadiansPerDegree);
+        MathX(Define, "rad2deg", static x => x * DegreesPerRadian, Always, static z => z * DegreesPerRadian);
 
         Define("pow2", (args, line, col) =>
         {

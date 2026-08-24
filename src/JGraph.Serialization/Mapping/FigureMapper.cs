@@ -284,6 +284,7 @@ internal static class FigureMapper
             ZAxis = ToDto(axes.ZAxis),
             IsPolar = axes.IsPolar,
             ThetaZeroLocation = axes.ThetaZeroLocation.ToString(),
+            ThetaZeroOffset = axes.ThetaZeroOffset,
             ThetaDirection = axes.ThetaDirection.ToString(),
             ThetaAxisUnits = axes.ThetaAxisUnits.ToString(),
             RAxisLocation = axes.RAxisLocation,
@@ -406,6 +407,7 @@ internal static class FigureMapper
         // The angle first, then the flag it raises: a saved figure is manual only if it was.
         axes.RAxisLocation = dto.RAxisLocation;
         axes.RAxisLocationManual = dto.RAxisLocationManual;
+        axes.ThetaZeroOffset = dto.ThetaZeroOffset;
         if (Enum.TryParse(dto.ThetaZeroLocation, out ThetaZeroLocation zero))
         {
             axes.ThetaZeroLocation = zero;

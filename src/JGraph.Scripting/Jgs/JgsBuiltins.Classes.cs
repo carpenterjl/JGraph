@@ -108,10 +108,13 @@ internal static partial class JgsBuiltins
     /// <summary>
     /// Whether a value is a plain struct. A struct carrying a class name is not one: it is the
     /// representation an object is kept in, and <c>isstruct</c> saying otherwise is what let
-    /// <c>isstruct(MException('a:b', 'x'))</c> answer true (M68).
+    /// <c>isstruct(MException('a:b', 'x'))</c> answer true (M68). A struct carrying a time tag is not
+    /// one either, for the same reason: a <c>calendarDuration</c> keeps its three components in a
+    /// struct array because that storage already knows how to be an array, and the tag is what says
+    /// the storage is not the type (M82).
     /// </summary>
     internal static bool IsStructValue(JgsValue value) =>
-        value.Type == JgsType.Struct && value.ClassName is null;
+        value.Type == JgsType.Struct && value.ClassName is null && value.TimeTag is null;
 
     /// <summary>The property names of whatever <paramref name="value"/> is, in declaration order.</summary>
     private static IEnumerable<string> PropertyNames(

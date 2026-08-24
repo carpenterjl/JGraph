@@ -104,20 +104,13 @@ internal static partial class JgsBuiltins
         DefineUnit(env, "years", JgsTime.MsPerDay * 365.2425, "y");
         DefineUnit(env, "milliseconds", 1.0, "s");
 
-        // A calendar day is exactly a day here, because an unzoned datetime has no daylight saving to
-        // be shortened by. calweeks likewise. The three that genuinely need calendar arithmetic are
-        // refused by name below rather than quietly answering with an average month.
-        DefineUnit(env, "caldays", JgsTime.MsPerDay, "d");
-        DefineUnit(env, "calweeks", JgsTime.MsPerDay * 7, "d");
+        // The storage was always finer than the readers were (M82): a millisecond is the unit, not the
+        // resolution, so a fractional count of them is an ordinary value and these two units are what
+        // make it reachable from a script.
+        DefineUnit(env, "microseconds", 1.0 / 1000.0, "s");
+        DefineUnit(env, "nanoseconds", 1.0 / 1_000_000.0, "s");
 
-        foreach (string name in new[] { "calmonths", "calyears", "calquarters", "calendarDuration" })
-        {
-            string refused = name;
-            Define(refused, (args, line, col) => throw new JgsRuntimeException(line, col,
-                $"{refused} builds a calendarDuration, which JGraph does not have: a month and a year are " +
-                "not fixed lengths, so they cannot be a count of milliseconds. Use calweeks, caldays or " +
-                "days for a fixed span, or dateshift to move to a month boundary."));
-        }
+        RegisterCalendarDurationBuiltins(env);
 
         // --- Predicates -------------------------------------------------------------------------
         Define("isdatetime", (args, line, col) =>
@@ -135,7 +128,7 @@ internal static partial class JgsBuiltins
         Define("iscalendarduration", (args, line, col) =>
         {
             Arity("iscalendarduration", args, 1, line, col);
-            return JgsValue.False;   // JGraph has no calendarDuration, so nothing is one.
+            return JgsValue.Bool(IsCalendarDuration(args[0]));
         });
 
         Define("isnat", (args, line, col) =>
@@ -161,6 +154,85 @@ internal static partial class JgsBuiltins
 
             return answer;
         });
+
+        RegisterZoneBuiltins(env, Define);
+    }
+
+    /// <summary>
+    /// The three verbs a zone makes answerable (M82): what a value's offset from UTC is, whether that
+    /// offset is a daylight-saving one, and what zone names this machine will accept.
+    /// </summary>
+    private static void RegisterZoneBuiltins(
+        JgsEnvironment env, Action<string, Func<IReadOnlyList<JgsValue>, int, int, JgsValue>> Define)
+    {
+        // tzoffset answers a duration, because an offset is a length of time and MATLAB's answers one
+        // too. An unzoned datetime has no offset, which is a missing value rather than zero: zero is
+        // what UTC answers, and the two must not read alike.
+        Define("tzoffset", (args, line, col) =>
+        {
+            Arity("tzoffset", args, 1, line, col);
+            JgsValue moment = RequireDatetime("tzoffset", args[0], line, col);
+            TimeZoneInfo? zone = JgsTime.ZoneOf(moment.TimeTag);
+            double[] source = TimeMs(moment);
+            var values = new double[source.Length];
+            for (int i = 0; i < values.Length; i++)
+            {
+                values[i] = zone is null || double.IsNaN(source[i])
+                    ? double.NaN
+                    : JgsTime.OffsetAt(source[i], zone).TotalMilliseconds;
+            }
+
+            return TimeLike(moment, values, JgsTime.DurationTag("hh:mm:ss"));
+        });
+
+        Define("isdst", (args, line, col) =>
+        {
+            Arity("isdst", args, 1, line, col);
+            JgsValue moment = RequireDatetime("isdst", args[0], line, col);
+            TimeZoneInfo? zone = JgsTime.ZoneOf(moment.TimeTag);
+            double[] source = TimeMs(moment);
+            var flags = new JgsValue[source.Length];
+            for (int i = 0; i < flags.Length; i++)
+            {
+                flags[i] = JgsValue.Bool(zone is not null && !double.IsNaN(source[i])
+                    && zone.IsDaylightSavingTime(
+                        DateTime.SpecifyKind(JgsTime.ToDateTime(source[i]), DateTimeKind.Utc)));
+            }
+
+            JgsValue answer = flags.Length == 1 ? flags[0] : JgsValue.Array(flags);
+            if (flags.Length > 1)
+            {
+                answer.TakeShapeOf(moment);
+            }
+
+            return answer;
+        });
+
+        // timezones answers the names this machine will accept, as a cell of strings. MATLAB's is a
+        // table with three columns; a cell is the honest shape here, because the UTC offset a zone has
+        // is a question about a moment rather than about the zone, and a table column would have to
+        // pick one moment and not say which.
+        env.Declare("timezones", JgsValue.Function(new BuiltinFunction("timezones", (args, line, col) =>
+        {
+            ArityRange("timezones", args, 0, 1, line, col);
+            string? area = args.Count == 1 ? TextOfArgument("timezones", args[0], line, col) : null;
+            // A substring rather than a prefix, because this machine's zone ids may be Windows ones —
+            // the zone a script calls 'Europe/Berlin' is spelled 'W. Europe Standard Time' here, and a
+            // prefix filter would answer with nothing for every area a person would think to ask about.
+            var names = new List<JgsValue>();
+            foreach (TimeZoneInfo zone in TimeZoneInfo.GetSystemTimeZones())
+            {
+                if (area is null || zone.Id.Contains(area, StringComparison.OrdinalIgnoreCase)
+                    || zone.DisplayName.Contains(area, StringComparison.OrdinalIgnoreCase))
+                {
+                    names.Add(JgsValue.Str(zone.Id));
+                }
+            }
+
+            names.Sort(static (a, b) => string.CompareOrdinal(a.AsString, b.AsString));
+            return JgsValue.Cell(names.ToArray());
+        })
+        { AutoCallsBare = true }));
     }
 
     /// <summary>
@@ -274,6 +346,34 @@ internal static partial class JgsBuiltins
         {
             throw new JgsRuntimeException(line, col,
                 "datetime expects text, a date vector, year/month/day (optionally hour/minute/second), or no arguments at all.");
+        }
+
+        // A zone turns the numbers just built from a wall-clock reading into the instant they name
+        // (M82). Everything above produced wall clock — components, parsed text, 'now' — so the whole
+        // conversion happens here, once, and every path gets it. The one exception is a datetime
+        // rebuilt from another datetime, which is already an instant in its own zone: re-reading its
+        // storage as wall clock would shift it by the offset every time it were copied.
+        if (timeZone is { Length: > 0 })
+        {
+            if (!JgsTime.TryResolveZone(timeZone, out TimeZoneInfo zone))
+            {
+                throw new JgsRuntimeException(line, col,
+                    $"datetime: '{timeZone}' is not a time zone this machine knows. Use 'UTC', 'local', "
+                    + "a fixed offset like '+05:30', or a zone name like 'America/New_York'.");
+            }
+
+            bool alreadyAnInstant = positional.Count == 1 && positional[0].IsDatetime
+                && positional[0].TimeTag?.TimeZone is { Length: > 0 };
+            if (!alreadyAnInstant)
+            {
+                for (int i = 0; i < values.Length; i++)
+                {
+                    if (!double.IsNaN(values[i]))
+                    {
+                        values[i] = JgsTime.ToUtc(values[i], zone);
+                    }
+                }
+            }
         }
 
         JgsTimeTag tag = JgsTime.DatetimeTag(values, timeZone);
@@ -517,11 +617,159 @@ internal static partial class JgsBuiltins
         throw new JgsRuntimeException(line, col, $"{name}: that option's value must be text.");
     }
 
+    // --- The properties a time value answers to (M82) ---------------------------------------------
+    //
+    // MATLAB writes t.TimeZone, t.Format and the calendar fields as properties rather than as calls,
+    // and until M82 a dot on a time value was refused outright: a time is a tagged array, not a
+    // struct. TimeZone is the name the whole zone wave exists to make answerable, so the machinery
+    // arrives with it and the other names ride along.
+
+    /// <summary>Reads one property off a time value.</summary>
+    internal static JgsValue GetTimeProperty(JgsValue value, string field, int line, int col)
+    {
+        JgsTimeTag tag = value.TimeTag!;
+        switch (field)
+        {
+            case "Format":
+                return JgsValue.Str(tag.Format);
+
+            case "TimeZone" when value.IsDatetime:
+                // The empty char row rather than [] — MATLAB's answer for an unzoned datetime, and the
+                // one a script can compare with '' without knowing which it got.
+                return JgsValue.Str(tag.TimeZone ?? string.Empty);
+
+            case "TimeZone":
+                throw new JgsRuntimeException(line, col,
+                    $"A {TimeClassName(value)} has no time zone; only a datetime is a point in time that one applies to.");
+
+            case "SystemTimeZone":
+                return JgsValue.Str(TimeZoneInfo.Local.Id);
+        }
+
+        // The calendar fields are the accessor functions written the other way round, which is how
+        // MATLAB spells them too. Reading them through the same builtins is what keeps t.Year and
+        // year(t) from ever disagreeing.
+        string? accessor = field switch
+        {
+            "Year" => "year",
+            "Month" => "month",
+            "Day" => "day",
+            "Hour" => "hour",
+            "Minute" => "minute",
+            "Second" => "second",
+            _ => null,
+        };
+
+        if (accessor is not null && value.IsDatetime)
+        {
+            return TimeFieldOf(accessor, value, line, col);
+        }
+
+        throw new JgsRuntimeException(line, col,
+            $"'.{field}' is not a property of a {TimeClassName(value)}; it has Format"
+            + (value.IsDatetime ? ", TimeZone, and Year through Second." : "."));
+    }
+
+    /// <summary>Writes one property, handing back the value the variable should now hold.</summary>
+    /// <remarks>
+    /// <c>TimeZone</c> does two different things and MATLAB means both: setting it on an unzoned
+    /// datetime <em>attaches</em> a zone, reading the stored wall clock as a reading in that zone;
+    /// setting it on a zoned one <em>converts</em>, keeping the instant and changing the lens. Setting
+    /// it to the empty text strips the zone and keeps the wall clock, which is the inverse of
+    /// attaching.
+    /// </remarks>
+    internal static JgsValue SetTimeProperty(JgsValue value, string field, JgsValue written, int line, int col)
+    {
+        JgsTimeTag tag = value.TimeTag!;
+        if (field == "Format")
+        {
+            return value.MarkTime(tag with { Format = TextOfArgument("Format", written, line, col) });
+        }
+
+        if (field != "TimeZone")
+        {
+            throw new JgsRuntimeException(line, col,
+                $"'.{field}' cannot be set on a {TimeClassName(value)}; Format can be, and on a datetime so can TimeZone.");
+        }
+
+        if (!value.IsDatetime)
+        {
+            throw new JgsRuntimeException(line, col,
+                $"A {TimeClassName(value)} has no time zone; only a datetime is a point in time that one applies to.");
+        }
+
+        string wanted = TextOfArgument("TimeZone", written, line, col).Trim();
+        bool wasZoned = tag.TimeZone is { Length: > 0 };
+        double[] source = TimeMs(value);
+        var values = new double[source.Length];
+
+        if (wanted.Length == 0)
+        {
+            // Stripping keeps the reading and drops the lens, so the wall clock the value showed is
+            // the wall clock it goes on showing.
+            for (int i = 0; i < values.Length; i++)
+            {
+                values[i] = double.IsNaN(source[i]) ? source[i] : JgsTime.FromDateTime(JgsTime.WallClock(source[i], tag));
+            }
+
+            return TimeLike(value, values, tag with { TimeZone = null });
+        }
+
+        if (!JgsTime.TryResolveZone(wanted, out TimeZoneInfo zone))
+        {
+            throw new JgsRuntimeException(line, col,
+                $"'{wanted}' is not a time zone this machine knows. Use 'UTC', 'local', a fixed offset "
+                + "like '+05:30', or a zone name like 'America/New_York'.");
+        }
+
+        if (wasZoned)
+        {
+            // Already an instant: the lens changes and the storage does not.
+            return TimeLike(value, source, tag with { TimeZone = wanted });
+        }
+
+        for (int i = 0; i < values.Length; i++)
+        {
+            values[i] = double.IsNaN(source[i]) ? source[i] : JgsTime.ToUtc(source[i], zone);
+        }
+
+        return TimeLike(value, values, tag with { TimeZone = wanted });
+    }
+
+    /// <summary>Calls one of the field accessors by name, for the dotted spelling of it.</summary>
+    private static JgsValue TimeFieldOf(string accessor, JgsValue value, int line, int col)
+    {
+        if (TimeFieldReaders.TryGetValue(accessor, out Func<JgsValue, int, int, JgsValue>? read))
+        {
+            return read(value, line, col);
+        }
+
+        throw new JgsRuntimeException(line, col, $"{accessor} is not available.");
+    }
+
+    /// <summary>
+    /// The field accessors, by name, filled in as they are registered so the dotted spelling and the
+    /// call reach exactly the same code.
+    /// </summary>
+    internal static readonly Dictionary<string, Func<JgsValue, int, int, JgsValue>> TimeFieldReaders = new(StringComparer.Ordinal);
+
     /// <summary>Formats one time value for a caller that wants its text (<c>char</c>, <c>string</c>).</summary>
-    internal static string TimeText(JgsValue value, int index) =>
-        JgsTime.Format(value.ElementAt(index).AsNumber, value.TimeTag!);
+    internal static string TimeText(JgsValue value, int index)
+    {
+        if (IsCalendarDuration(value))
+        {
+            (double months, double days, double millis) = ReadCalendar(value.AsStructArray, index);
+            return FormatCalendar(months, days, millis);
+        }
+
+        return JgsTime.Format(value.ElementAt(index).AsNumber, value.TimeTag!);
+    }
 
     /// <summary>The name <c>class</c> gives a time value.</summary>
-    internal static string TimeClassName(JgsValue value) =>
-        value.IsDatetime ? "datetime" : "duration";
+    internal static string TimeClassName(JgsValue value) => value.TimeTag!.Kind switch
+    {
+        JgsTimeKind.Datetime => "datetime",
+        JgsTimeKind.CalendarDuration => "calendarDuration",
+        _ => "duration",
+    };
 }

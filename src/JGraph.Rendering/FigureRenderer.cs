@@ -178,6 +178,15 @@ public sealed class FigureRenderer
         AxesLayout layout = LayoutEngine.Compute(axes, outer, metrics.Margins);
         Rect2D plotArea = layout.PlotArea;
 
+        // The component background a uiaxes has and a plain axes does not (M84): the whole cell, drawn
+        // under the ticks and labels as well as under the plot box, which is the difference between it
+        // and Background — MATLAB's Color — that fills only the box. Null for every axes that was not
+        // made by uiaxes, so nothing already drawn changes.
+        if (axes.BackgroundColor is { } cell)
+        {
+            context.DrawRectangle(outer, stroke: null, fill: cell);
+        }
+
         // The report the layout properties read: what was asked for, what it came to, and what the
         // text between them cost. Recorded before the equal-aspect shrink, because that shrink is a
         // drawing decision inside the plot box rather than a change to the box itself.
@@ -255,7 +264,11 @@ public sealed class FigureRenderer
                 BubbleLegendRenderer.Draw(context, axes, plotArea, content, theme);
             }
 
-            return new AxesRenderInfo(axes, plotArea, transform, polarLegend);
+            // The polar mapper travels with the report (M83), so the interaction layer navigates the
+            // rulers this axes was actually drawn through rather than the invisible Cartesian pair its
+            // θ and r happen to be stored on.
+            return new AxesRenderInfo(
+                axes, plotArea, transform, polarLegend, PolarTransform.Create(axes, plotArea));
         }
 
         // Grid under or over the data as Layer says (MATLAB 'bottom'/'top').

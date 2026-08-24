@@ -116,11 +116,9 @@ internal static partial class JgsBuiltins
             return Numbers(samples);
         });
 
-        Define("fix", (args, line, col) =>
-        {
-            Arity("fix", args, 1, line, col);
-            return MapNumeric("fix", args[0], Math.Truncate, line, col);
-        });
+        // Truncation towards zero, applied to both parts of a complex number as MATLAB's is (M81) —
+        // the same widening floor, ceil and round took.
+        MathX(Define, "fix", Math.Truncate, Always, static z => Componentwise(z, Math.Truncate));
 
         // repmat tiles in two dimensions: repmat(A, m, n) is m copies down by n across, and
         // repmat(A, m) is m by m. It predates shaped arrays (M40) and used to read only the last

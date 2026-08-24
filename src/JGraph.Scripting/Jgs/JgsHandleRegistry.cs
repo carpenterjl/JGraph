@@ -170,6 +170,7 @@ internal sealed class JgsHandleEntry
     /// </summary>
     public ScatterSource? ScatterSource { get; set; }
 
+
     /// <summary>
     /// Whatever a script has hung on this object with <c>setappdata</c>. It lives on the entry rather
     /// than on the model because it is the script's own bookkeeping and has no business being drawn,

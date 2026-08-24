@@ -16,6 +16,7 @@ public sealed class AxesModel : GraphObject
     private string _subtitle = string.Empty;
     private TextStyle _subtitleStyle = new(Colors.Black, 12);
     private Color _background = Colors.White;
+    private Color? _backgroundColor;
     private Rect2D _normalizedBounds = new(0, 0, 1, 1);
     private double _autoScalePadding = 0.05;
     private bool _equalAspect;
@@ -23,6 +24,7 @@ public sealed class AxesModel : GraphObject
     private bool _is3D;
     private bool _isPolar;
     private ThetaZeroLocation _thetaZeroLocation = ThetaZeroLocation.Right;
+    private double _thetaZeroOffset;
     private ThetaDirection _thetaDirection = ThetaDirection.CounterClockwise;
     private AngleUnits _thetaAxisUnits = AngleUnits.Degrees;
     private double _rAxisLocation = 80;
@@ -531,6 +533,22 @@ public sealed class AxesModel : GraphObject
     }
 
     /// <summary>
+    /// The fill behind this axes' whole cell, or null to let the figure show through (M84).
+    /// </summary>
+    /// <remarks>
+    /// <see cref="Background"/> — MATLAB's <c>Color</c> — fills the plot box. This fills the cell the
+    /// box sits in, ticks, labels and all, which is what MATLAB's <c>UIAxes.BackgroundColor</c> means
+    /// and the one property a <c>uiaxes</c> documents that a plain <c>axes</c> does not. Null by
+    /// default, so an axes nobody made through <c>uiaxes</c> draws exactly as it always has.
+    /// </remarks>
+    [Category("Appearance"), DisplayName("Background colour")]
+    public Color? BackgroundColor
+    {
+        get => _backgroundColor;
+        set => SetProperty(ref _backgroundColor, value, InvalidationKind.Render);
+    }
+
+    /// <summary>
     /// This axes' placement within the figure expressed as fractions in [0, 1] of the figure size
     /// (X and Y measured from the top-left). Defaults to the whole figure.
     /// </summary>
@@ -624,6 +642,24 @@ public sealed class AxesModel : GraphObject
     {
         get => _thetaZeroLocation;
         set => SetProperty(ref _thetaZeroLocation, value, InvalidationKind.Render);
+    }
+
+    /// <summary>
+    /// A further rotation of the whole chart, in degrees, on top of <see cref="ThetaZeroLocation"/>
+    /// (M83).
+    /// </summary>
+    /// <remarks>
+    /// MATLAB has no such property, and this build needs one for a reason its four-word cousin cannot
+    /// meet: a drag that turns the chart moves it by whatever angle the pointer moved, and
+    /// <see cref="ThetaZeroLocation"/> holds four compass points. Shifting <c>ThetaLim</c> was the
+    /// other candidate and does not rotate anything — the visible turn decides which angles are drawn,
+    /// not where a drawn one lands. Recorded as a divergence in ADR 0083.
+    /// </remarks>
+    [Category("Polar"), DisplayName("Theta zero offset")]
+    public double ThetaZeroOffset
+    {
+        get => _thetaZeroOffset;
+        set => SetProperty(ref _thetaZeroOffset, value, InvalidationKind.Render);
     }
 
     /// <summary>Which way θ increases (MATLAB <c>ThetaDirection</c>).</summary>

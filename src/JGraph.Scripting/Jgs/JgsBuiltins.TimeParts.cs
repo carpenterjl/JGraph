@@ -34,20 +34,25 @@ internal static partial class JgsBuiltins
 
         // second carries the fraction, unlike every other field: MATLAB's second(t) is 30.25 for a
         // moment a quarter of a second past the half minute, where its minute(t) is a whole number.
+        // It used to read the whole-number Millisecond, so a moment half a millisecond past the
+        // second answered as though it were on it; JgsTime.SecondsOf reads the tick remainder (M82).
+        JgsValue Seconds(JgsValue argument, int line, int col)
+        {
+            JgsValue moment = RequireDatetime("second", argument, line, col);
+            JgsTimeTag? tag = moment.TimeTag;
+            return MapMs(moment, ms => JgsTime.SecondsOf(JgsTime.WallClock(ms, tag)));
+        }
+
+        TimeFieldReaders["second"] = Seconds;
         env.Declare("second", JgsValue.Function(new BuiltinFunction("second", (args, line, col) =>
         {
             Arity("second", args, 1, line, col);
-            JgsValue moment = RequireDatetime("second", args[0], line, col);
-            return MapMs(moment, static ms =>
-            {
-                DateTime at = JgsTime.ToDateTime(ms);
-                return at.Second + (at.Millisecond / 1000.0);
-            });
+            return Seconds(args[0], line, col);
         })));
 
         // --- The grouped accessors, which answer with several numbers at once ---------------------
         Parts(env, "ymd", static m => [m.Year, m.Month, m.Day]);
-        Parts(env, "hms", static m => [m.Hour, m.Minute, m.Second + (m.Millisecond / 1000.0)]);
+        Parts(env, "hms", static m => [m.Hour, m.Minute, JgsTime.SecondsOf(m)]);
 
         // --- Conversions out ----------------------------------------------------------------------
         Define("datevec", (args, line, col) =>
@@ -59,11 +64,12 @@ internal static partial class JgsBuiltins
 
             // One row per moment, six columns — the shape datetime() reads back, which is what makes
             // datetime(datevec(t)) a round trip rather than a coincidence.
+            JgsTimeTag? zone = args[0].IsDatetime ? args[0].TimeTag : null;
             var values = new double[source.Length * 6];
             for (int r = 0; r < source.Length; r++)
             {
-                DateTime at = JgsTime.ToDateTime(source[r]);
-                double[] row = [at.Year, at.Month, at.Day, at.Hour, at.Minute, at.Second + (at.Millisecond / 1000.0)];
+                DateTime at = JgsTime.WallClock(source[r], zone);
+                double[] row = [at.Year, at.Month, at.Day, at.Hour, at.Minute, JgsTime.SecondsOf(at)];
                 for (int c = 0; c < 6; c++)
                 {
                     values[(c * source.Length) + r] = row[c];   // column-major
@@ -100,9 +106,11 @@ internal static partial class JgsBuiltins
         Define("yyyymmdd", (args, line, col) =>
         {
             Arity("yyyymmdd", args, 1, line, col);
-            return MapMs(RequireDatetime("yyyymmdd", args[0], line, col), static ms =>
+            JgsValue moment = RequireDatetime("yyyymmdd", args[0], line, col);
+            JgsTimeTag? tag = moment.TimeTag;
+            return MapMs(moment, ms =>
             {
-                DateTime at = JgsTime.ToDateTime(ms);
+                DateTime at = JgsTime.WallClock(ms, tag);
                 return (at.Year * 10000) + (at.Month * 100) + at.Day;
             });
         });
@@ -112,13 +120,16 @@ internal static partial class JgsBuiltins
         {
             Arity("timeofday", args, 1, line, col);
             JgsValue moment = RequireDatetime("timeofday", args[0], line, col);
+            JgsTimeTag? tag = moment.TimeTag;
             double[] source = TimeMs(moment);
             var values = new double[source.Length];
             for (int i = 0; i < values.Length; i++)
             {
-                // Modulo a day, taken the positive way round so a date before the epoch does not
-                // answer with a negative time of day.
-                double remainder = source[i] % JgsTime.MsPerDay;
+                // The time of day is what a clock in the value's own zone reads (M82), so the modulo
+                // is taken over the wall clock rather than over the stored instant. Taken the positive
+                // way round so a date before the epoch does not answer with a negative time of day.
+                double wall = double.IsNaN(source[i]) ? source[i] : JgsTime.FromDateTime(JgsTime.WallClock(source[i], tag));
+                double remainder = wall % JgsTime.MsPerDay;
                 values[i] = remainder < 0 ? remainder + JgsTime.MsPerDay : remainder;
             }
 
@@ -146,13 +157,14 @@ internal static partial class JgsBuiltins
             }
 
             double[] source = TimeMs(moment);
+            JgsTimeTag tag = moment.TimeTag!;
             var values = new double[source.Length];
             for (int i = 0; i < values.Length; i++)
             {
-                values[i] = ShiftToBoundary(source[i], unit, where == "end", offset, line, col);
+                values[i] = ShiftToBoundary(source[i], unit, where == "end", offset, line, col, tag);
             }
 
-            return TimeLike(moment, values, moment.TimeTag!);
+            return TimeLike(moment, values, tag);
         });
 
         Define("isbetween", (args, line, col) =>
@@ -180,9 +192,9 @@ internal static partial class JgsBuiltins
             return answer;
         });
 
-        Define("between", (args, line, col) => throw new JgsRuntimeException(line, col,
-            "between answers with a calendarDuration, which JGraph does not have. Subtract the two " +
-            "datetimes instead, which gives the duration between them."));
+        // between and caldiff are declared with the calendar-duration family they answer with (M82);
+        // the refusal that stood here until then is gone rather than shadowed, because this file is
+        // registered after that one and a stale declaration here would win silently.
 
         // --- The older serial-date surface, taught about the new type ------------------------------
         Define("etime", (args, line, col) =>
@@ -266,12 +278,27 @@ internal static partial class JgsBuiltins
     }
 
     /// <summary>Declares one accessor that reads a single field off each moment.</summary>
-    private static void Field(JgsEnvironment env, string name, Func<DateTime, int> read) =>
+    private static void Field(JgsEnvironment env, string name, Func<DateTime, int> read)
+    {
+        JgsValue Body(JgsValue argument, int line, int col)
+        {
+            JgsValue moment = RequireDatetime(name, argument, line, col);
+
+            // Through the zone lens (M82): a calendar field is a property of the wall clock, and a
+            // zoned datetime stores the instant. An unzoned one is its own wall clock, so nothing
+            // that never mentions a zone reads differently.
+            JgsTimeTag? tag = moment.TimeTag;
+            return MapMs(moment, ms => read(JgsTime.WallClock(ms, tag)));
+        }
+
+        // The dotted spelling t.Year reaches this same body (M82) rather than a second copy of it.
+        TimeFieldReaders[name] = Body;
         env.Declare(name, JgsValue.Function(new BuiltinFunction(name, (args, line, col) =>
         {
             Arity(name, args, 1, line, col);
-            return MapMs(RequireDatetime(name, args[0], line, col), ms => read(JgsTime.ToDateTime(ms)));
+            return Body(args[0], line, col);
         })));
+    }
 
     /// <summary>
     /// Declares one of the grouped accessors, which hands back its parts as several outputs —
@@ -292,9 +319,10 @@ internal static partial class JgsBuiltins
                 columns[f] = new double[source.Length];
             }
 
+            JgsTimeTag? tag = moment.TimeTag;
             for (int i = 0; i < source.Length; i++)
             {
-                double[] parts = read(JgsTime.ToDateTime(source[i]));
+                double[] parts = read(JgsTime.WallClock(source[i], tag));
                 for (int f = 0; f < fields; f++)
                 {
                     columns[f][i] = parts[f];
@@ -363,14 +391,20 @@ internal static partial class JgsBuiltins
     }
 
     /// <summary>Moves one moment to the start or the end of the unit it falls in.</summary>
-    private static double ShiftToBoundary(double ms, string unit, bool toEnd, double offset, int line, int col)
+    /// <remarks>
+    /// The whole calculation runs on the wall clock and converts back at the end (M82), which is what
+    /// makes a day across a spring-forward twenty-three hours long: the boundaries are the ones a
+    /// clock in the zone shows, and the instants between them are however many the zone says.
+    /// </remarks>
+    private static double ShiftToBoundary(double ms, string unit, bool toEnd, double offset, int line, int col,
+        JgsTimeTag? tag = null)
     {
         if (double.IsNaN(ms))
         {
             return ms;
         }
 
-        DateTime at = JgsTime.ToDateTime(ms);
+        DateTime at = JgsTime.WallClock(ms, tag);
         DateTime start = unit switch
         {
             "year" => new DateTime(at.Year, 1, 1),
@@ -401,11 +435,15 @@ internal static partial class JgsBuiltins
 
         if (!toEnd)
         {
-            return JgsTime.FromDateTime(start);
+            return JgsTime.FromWallClock(start, tag);
         }
 
-        // The end of a unit is the last instant inside it: the start of the next one, less a
-        // millisecond, which is the finest thing this storage can tell apart.
+        // The end of a unit is the last instant inside it: the start of the next one, less the
+        // smallest step the storage can take there. It was one whole millisecond, which was true of
+        // the readers rather than of the storage; a fixed tick is wrong the other way, because a
+        // double's spacing at a datetime's magnitude is about nine tenths of a microsecond and
+        // subtracting a tenth of one changes nothing at all — dateshift(t, 'end', 'month') answered
+        // with the first of the next month (M82).
         DateTime next = unit switch
         {
             "year" => start.AddYears(1),
@@ -418,6 +456,6 @@ internal static partial class JgsBuiltins
             _ => start.AddSeconds(1),
         };
 
-        return JgsTime.FromDateTime(next) - 1;
+        return Math.BitDecrement(JgsTime.FromWallClock(next, tag));
     }
 }

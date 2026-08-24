@@ -121,20 +121,33 @@ the sake of two.
 
 ### Recorded divergences
 
-- **No `calendarDuration`.** `calmonths`, `calyears`, `calquarters` and `calendarDuration` refuse by
-  name and say why: a month is not a fixed length, so it cannot be a count of milliseconds.
-  `caldays` and `calweeks` *are* implemented, because an unzoned datetime has no daylight saving to
-  shorten a day. `between` refuses for the same reason.
-- **Time zones are not carried.** The tag has a slot for one and `datetime(…, 'TimeZone', …)` records
-  it, but no arithmetic consults it. An unzoned datetime is what a measurement log holds.
 - **A timetable's row times are numbers.** A `Table` column holds doubles, so a duration row-time
   column is stored as its count of seconds and a datetime one as its serial date number — the two
   readings those row times had before the types existed.
 - **`dateshift(…, 'dayofweek', …)` refuses**, naming the two-step spelling that works.
 - **A tag a builtin does not know about is lost**, as in M63. The failure is visible — `class` says
   `double` — rather than silent.
-- **Sub-millisecond precision is not kept.** A round trip through a serial date number is exact to
-  about a hundredth of a millisecond, which is the precision a double has left at that magnitude.
+
+**Three of these were retired in M82** and are deleted from the list above rather than struck
+through, because the harvest lifts every bullet under this heading whole and a struck-through one
+still counts (the lesson M74 recorded). They were:
+
+- *No `calendarDuration`.* The reason given — a month is not a fixed length, so it cannot be a count
+  of milliseconds — was right, and the conclusion did not follow from it. This ADR's own rule says a
+  type here is a meaning attached to storage that already knows how to be an array, and M65 made
+  struct arrays real: three numbers per element, in storage that indexes, grows and concatenates
+  itself. `calmonths`, `calyears`, `calquarters`, `calendarDuration`, `caldiff` and `between` are all
+  real, and `caldays`/`calweeks` moved from plain durations to calendar units.
+- *Time zones are not carried.* A zoned datetime now stores the instant in UTC and reads as the clock
+  its zone shows, so two moments in different zones subtract, compare and sort correctly — where
+  before they did all three as though both were wall-clock readings, silently, which is the failure
+  §8 of `stess_36.m` exists to prevent.
+- *Sub-millisecond precision is not kept.* This one was never true of the storage: `ToDateTime`
+  rounds to whole ticks and always did. Four readers threw the fraction away afterwards. The limit
+  that remains is a double's spacing at this epoch, about a tenth of a microsecond, and it is
+  recorded in ADR 0082 as the narrower thing it always was.
+
+See [0082](0082-time-told-exactly.md).
 
 ### The coverage table does not move
 

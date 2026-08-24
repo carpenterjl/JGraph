@@ -1514,9 +1514,35 @@ internal sealed partial class Interpreter
     /// through the same block machinery a semicolon-rowed literal uses, so <c>[A, B]</c> joins two
     /// matrices side by side rather than nesting them.
     /// </summary>
+    /// <summary>
+    /// Builds a bracket literal, and gives the answer back its time tag when the pieces were times.
+    /// </summary>
+    /// <remarks>
+    /// Concatenation mints a fresh value, and until M82 that dropped the tag: <c>[t1 t2]</c> came back
+    /// as two plain millisecond counts and <c>class</c> said <c>double</c>. It is the same failure M64
+    /// recorded as "a tag a builtin does not know about is lost" and M64 itself fixed for transpose —
+    /// found again because <c>caldiff</c> and <c>between</c> take a datetime <em>array</em>, and
+    /// <c>[t1 t2]</c> is how a script writes one.
+    /// </remarks>
     private JgsValue EvaluateArrayLiteral(ArrayLiteral array, JgsEnvironment env)
     {
         JgsValue[] elements = EvaluateAll(array.Elements, env);
+        JgsValue built = BuildArrayLiteral(array, elements, env);
+
+        if (Dialect.ConcatenatesBrackets && elements.Length > 0 && !built.IsTime)
+        {
+            JgsTimeTag? first = elements[0].TimeTag;
+            if (first is not null && Array.TrueForAll(elements, e => e.TimeTag?.Kind == first.Kind))
+            {
+                built = built.MarkTime(first);
+            }
+        }
+
+        return built;
+    }
+
+    private JgsValue BuildArrayLiteral(ArrayLiteral array, JgsValue[] elements, JgsEnvironment env)
+    {
         bool concatenating = false;
         foreach (JgsValue element in elements)
         {
@@ -2063,7 +2089,10 @@ internal sealed partial class Interpreter
             case TokenType.Percent:
                 return NumericBinary(left, right, (a, b) => a % b, "%", at.Line, at.Column);
             case TokenType.Caret:
-                return NumericBinary(left, right, Math.Pow, "^", at.Line, at.Column, Complex.Pow);
+                // The one operator with a domain (M81): a negative base and a fractional exponent
+                // leave the reals, and Math.Pow answers NaN where MATLAB answers a complex number.
+                return NumericBinary(left, right, Math.Pow, "^", at.Line, at.Column, Complex.Pow,
+                    JgsBuiltins.PowerStaysReal);
             case TokenType.Less:
                 return Compare(left, right, op, at, (a, b) => a < b);
             case TokenType.LessEqual:
@@ -2151,6 +2180,16 @@ internal sealed partial class Interpreter
             JgsValue copiedStruct = JgsValue.StructArray(
                 new JgsStructArray(copiedElements, source.EmptyFields), value.Rows, value.Cols);
             copiedStruct.SetClassName(value.ClassName); // an MException stays one when it is passed on
+
+            // And a calendarDuration stays one (M82), for exactly the same reason: the tag is what
+            // says this struct array is not a struct array, and a copy that drops it hands back the
+            // storage instead of the type. It went unnoticed until a struct wore a time tag, because
+            // a class name was the only tag a struct had ever carried.
+            if (value.TimeTag is JgsTimeTag time)
+            {
+                copiedStruct.MarkTime(time);
+            }
+
             return copiedStruct;
         }
 
@@ -4413,6 +4452,16 @@ internal sealed partial class Interpreter
             return staticMember;
         }
 
+        // t.TimeZone, t.Format, t.Year (M82). A time value is a tagged array rather than a struct, so
+        // it had no answer to a dot at all — and TimeZone is the name MATLAB writes for the one
+        // question this milestone exists to make answerable. The check comes before the struct-array
+        // one because a calendarDuration is a struct array underneath and its dotted names are its
+        // own, not its storage's.
+        if (target.IsTime)
+        {
+            return JgsBuiltins.GetTimeProperty(target, field, member.Line, member.Column);
+        }
+
         // S.field on an array reads that field across every element (M65). A 1-by-1 falls through to
         // the ordinary field read below, which is the same expression meaning the same thing.
         if (target.IsStructArray)
@@ -4490,6 +4539,22 @@ internal sealed partial class Interpreter
         // its declaration (M68). Asked before the struct path for the same reason the handle write is.
         if (TryAssignToObject(member, value, env))
         {
+            return value;
+        }
+
+        // t.TimeZone = 'America/New_York' and t.Format = 'uuuu-MM-dd' (M82). A time value's tag is
+        // mint-time only, so the write builds a new value and rebinds — which is also why it has to
+        // name a variable rather than a nested expression, and says so when it does not.
+        if (member.Target is VariableExpr timeTarget
+            && env.TryGet(timeTarget.Name, out JgsValue held) && held.IsTime)
+        {
+            JgsValue rebuilt = JgsBuiltins.SetTimeProperty(
+                held, FieldName(member, env), value, member.Line, member.Column);
+            if (!env.TryAssign(timeTarget.Name, rebuilt))
+            {
+                env.Declare(timeTarget.Name, rebuilt);
+            }
+
             return value;
         }
 
@@ -4963,6 +5028,17 @@ internal sealed partial class Interpreter
 
     private JgsValue Compare(JgsValue left, JgsValue right, TokenType opToken, Node at, Func<double, double, bool> op)
     {
+        // Two calendar durations have no order (M82). Is a month longer than thirty days? Only once
+        // you say which month, and there is no reference date in a comparison — so this is refused by
+        // name rather than answered from the struct storage underneath, which would compare whatever
+        // field happened to come first.
+        if (JgsBuiltins.IsCalendarDuration(left) || JgsBuiltins.IsCalendarDuration(right))
+        {
+            throw new JgsRuntimeException(at.Line, at.Column,
+                $"'{OperatorSymbol(opToken)}' cannot order two calendarDurations: a month is longer or shorter "
+                + "than thirty days depending on which month it is. Add each to a datetime and compare those.");
+        }
+
         // MATLAB orders complex numbers by their real parts alone, and discards the imaginary ones
         // without comment. That is a strange rule — 1+9i and 1-9i compare equal under it — but it is
         // the rule, and throwing instead meant a ported script stopped at a line MATLAB runs. The
@@ -5087,7 +5163,16 @@ internal sealed partial class Interpreter
 
     private static bool AreEqual(JgsValue left, JgsValue right) => JgsValue.AreEqual(left, right);
 
-    private JgsValue NumericBinary(JgsValue left, JgsValue right, Func<double, double, double> op, string symbol, int line, int column, Func<Complex, Complex, Complex>? complexOp = null)
+    /// <summary>
+    /// Applies an arithmetic operator to two numbers, arrays or complex values.
+    /// </summary>
+    /// <remarks>
+    /// <c>staysReal</c>, when supplied, names the pairs whose answer is a real number (M81); a pair
+    /// outside it promotes to <c>complexOp</c>, which is what makes <c>(-8)^0.5</c> answer
+    /// <c>2·sqrt(2)·i</c> rather than NaN. Only <c>^</c> supplies one — every other operator passes
+    /// null and keeps the path it had.
+    /// </remarks>
+    private JgsValue NumericBinary(JgsValue left, JgsValue right, Func<double, double, double> op, string symbol, int line, int column, Func<Complex, Complex, Complex>? complexOp = null, Func<double, double, bool>? staysReal = null)
     {
         // A picture is a matrix of readings, and MATLAB has no other kind: 1 - I after a mat2gray is
         // ordinary arithmetic there and refused here until M72, so chaining an image-processing
@@ -5105,12 +5190,14 @@ internal sealed partial class Interpreter
             right = rightNumbers;
         }
 
-        if (IsNumericScalar(left) && IsNumericScalar(right))
+        if (IsNumericScalar(left) && IsNumericScalar(right)
+            && (staysReal is null || staysReal(left.AsNumber, right.AsNumber)))
         {
             return JgsValue.Number(op(left.AsNumber, right.AsNumber));
         }
 
-        // Either side complex (and neither an array): promote and apply the complex form.
+        // Either side complex, or a real pair whose answer is not (and neither an array): promote and
+        // apply the complex form.
         if (IsComplexOrNumeric(left) && IsComplexOrNumeric(right))
         {
             return JgsValue.ComplexNum(RequireComplexOp(complexOp, symbol, line, column)(left.AsComplex, right.AsComplex));
@@ -5119,7 +5206,7 @@ internal sealed partial class Interpreter
         if (left.Type == JgsType.Array || right.Type == JgsType.Array)
         {
             return ShapeLike(
-                JgsValue.Array(Broadcast(left, right, (a, b) => JgsValue.Number(op(a, b)), symbol, line, column, complexOp)),
+                JgsValue.Array(Broadcast(left, right, (a, b) => JgsValue.Number(op(a, b)), symbol, line, column, complexOp, staysReal: staysReal)),
                 left, right);
         }
 
@@ -5137,15 +5224,21 @@ internal sealed partial class Interpreter
     /// <summary>
     /// Applies <paramref name="combine"/> pairwise over two arrays (equal lengths required) or an
     /// array and a scalar (broadcast). Elements must be numbers or bools (which read as 0/1) — or
-    /// complex, when the operator supplies a <paramref name="complexOp"/>.
+    /// complex, when the operator supplies a <c>complexOp</c>.
     /// </summary>
-    private static JgsValue[] Broadcast(JgsValue left, JgsValue right, Func<double, double, JgsValue> combine, string symbol, int line, int column, Func<Complex, Complex, Complex>? complexOp = null, bool byRealPart = false)
+    /// <remarks>
+    /// <c>staysReal</c> names the pairs whose answer is real (M81). A real pair outside it takes the
+    /// complex arm, so one negative base with a fractional exponent promotes its own element rather
+    /// than the whole array — unlike the unary family, where the whole array promotes, because there
+    /// every element takes the same function and here each pair is its own question.
+    /// </remarks>
+    private static JgsValue[] Broadcast(JgsValue left, JgsValue right, Func<double, double, JgsValue> combine, string symbol, int line, int column, Func<Complex, Complex, Complex>? complexOp = null, bool byRealPart = false, Func<double, double, bool>? staysReal = null)
     {
         // Nested arrays recurse, so matrices (arrays of row arrays) broadcast elementwise too:
         // M + M pairs rows, M + scalar spreads the scalar across every row.
         JgsValue Element(JgsValue a, JgsValue b) =>
             a.Type == JgsType.Array || b.Type == JgsType.Array
-                ? JgsValue.Array(Broadcast(a, b, combine, symbol, line, column, complexOp, byRealPart))
+                ? JgsValue.Array(Broadcast(a, b, combine, symbol, line, column, complexOp, byRealPart, staysReal))
 
                 // The relational operators order complex numbers by their real parts, which is what
                 // byRealPart says: a complex element here is not an error but a number with an
@@ -5155,6 +5248,8 @@ internal sealed partial class Interpreter
                         RequireComplex(a, symbol, line, column).Real,
                         RequireComplex(b, symbol, line, column).Real)
                 : a.Type == JgsType.Complex || b.Type == JgsType.Complex
+                    || (staysReal is not null && !staysReal(
+                            RequireNumber(a, symbol, line, column), RequireNumber(b, symbol, line, column)))
                     ? JgsValue.ComplexNum(RequireComplexOp(complexOp, symbol, line, column)(
                         RequireComplex(a, symbol, line, column), RequireComplex(b, symbol, line, column)))
                     : combine(RequireNumber(a, symbol, line, column), RequireNumber(b, symbol, line, column));

@@ -32,6 +32,15 @@ internal static class PackedOps
     public static bool TryArithmetic(PackedMath.BinaryOp op, string symbol, JgsValue left, JgsValue right,
                                      Action? cancelCheck, int line, int column, out JgsValue result)
     {
+        // A negative base raised to a fractional power leaves the reals, and this kernel writes
+        // doubles (M81). Declining the fast path is exactly what the class contract is for: the boxed
+        // path below promotes the pair to complex, and the answer does not depend on which ran.
+        if (op == PackedMath.BinaryOp.Power && PowerWouldGoComplex(left, right))
+        {
+            result = JgsValue.Null;
+            return false;
+        }
+
         if (IsPackedArray(left) && IsPackedArray(right))
         {
             RequireSameLengths(symbol, left.ArrayLength, right.ArrayLength, line, column);
@@ -386,6 +395,59 @@ internal static class PackedOps
         }
 
         return i;
+    }
+
+    /// <summary>
+    /// Whether any pair in <paramref name="left"/> raised to <paramref name="right"/> leaves the
+    /// reals. One scan of the flat buffers, ahead of a kernel that would otherwise write NaN — the
+    /// same shape of pre-scan <c>MapComplexProducing</c> makes for the unary family, and cheap beside
+    /// the <c>Math.Pow</c> it precedes. Shapes outside the three fast-path arrangements answer false
+    /// and let the caller's own arms decline.
+    /// </summary>
+    private static bool PowerWouldGoComplex(JgsValue left, JgsValue right)
+    {
+        if (IsPackedArray(left) && IsPackedArray(right) && left.ArrayLength == right.ArrayLength)
+        {
+            ReadOnlySpan<double> bases = left.AsBuffer.AsSpan();
+            ReadOnlySpan<double> powers = right.AsBuffer.AsSpan();
+            for (int i = 0; i < bases.Length; i++)
+            {
+                if (!JgsBuiltins.PowerStaysReal(bases[i], powers[i]))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        if (IsPackedArray(left) && IsNumericScalar(right))
+        {
+            double power = right.AsNumber;
+            foreach (double value in left.AsBuffer.AsSpan())
+            {
+                if (!JgsBuiltins.PowerStaysReal(value, power))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        if (IsPackedArray(right) && IsNumericScalar(left))
+        {
+            double bottom = left.AsNumber;
+            foreach (double power in right.AsBuffer.AsSpan())
+            {
+                if (!JgsBuiltins.PowerStaysReal(bottom, power))
+                {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 
     private static bool IsPackedArray(JgsValue value) => value.Type == JgsType.Array && value.IsPacked;

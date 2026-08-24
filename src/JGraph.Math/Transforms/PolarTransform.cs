@@ -37,12 +37,24 @@ public sealed class PolarTransform : ICoordinateMapper
     private readonly double _thetaMin;
     private readonly double _thetaSpan;
 
+    /// <param name="plotArea">The device rectangle the disc is inscribed in.</param>
+    /// <param name="rRange">The radii the innermost and outermost rings stand for.</param>
+    /// <param name="zeroLocation">Which compass point θ = 0 sits at.</param>
+    /// <param name="direction">Which way θ increases.</param>
+    /// <param name="thetaDegrees">The visible turn, or null for the whole circle.</param>
+    /// <param name="zeroOffsetDegrees">
+    /// A further rotation of the whole chart on top of <paramref name="zeroLocation"/> (M83), which is
+    /// what a drag that turns the chart moves. It is added to the zero angle rather than to the visible
+    /// turn, because the turn decides which angles are drawn and the zero angle decides where a drawn
+    /// one lands.
+    /// </param>
     public PolarTransform(
         Rect2D plotArea,
         DataRange rRange,
         ThetaZeroLocation zeroLocation,
         ThetaDirection direction,
-        DataRange? thetaDegrees = null)
+        DataRange? thetaDegrees = null,
+        double zeroOffsetDegrees = 0)
     {
         PlotArea = plotArea;
         _centerX = plotArea.CenterX;
@@ -63,6 +75,10 @@ public sealed class PolarTransform : ICoordinateMapper
             _ => 0,
         };
         _direction = direction == ThetaDirection.Clockwise ? 1 : -1;
+
+        // The continuous rotation rides on the zero angle, in device terms: a positive offset turns the
+        // chart the way θ increases, whichever way that is.
+        _zeroAngle += _direction * zeroOffsetDegrees * System.Math.PI / 180;
 
         // The visible turn, in radians. The default is the whole circle, which every angle folds into,
         // so the wedge test below only ever removes something once thetalim has said less.
@@ -91,7 +107,8 @@ public sealed class PolarTransform : ICoordinateMapper
         var disc = new Rect2D(
             plotArea.CenterX - (side / 2), plotArea.CenterY - (side / 2), side, side);
         return new PolarTransform(
-            disc, axes.RAxis.Range, axes.ThetaZeroLocation, axes.ThetaDirection, axes.ThetaAxis.Range);
+            disc, axes.RAxis.Range, axes.ThetaZeroLocation, axes.ThetaDirection, axes.ThetaAxis.Range,
+            axes.ThetaZeroOffset);
     }
 
     /// <inheritdoc />
@@ -146,6 +163,25 @@ public sealed class PolarTransform : ICoordinateMapper
 
     /// <summary>The device radius a data radius stands at, unclamped.</summary>
     public double RadiusToPixels(double r) => (r - _rMin) / _rSpan * _pixelRadius;
+
+    /// <summary>
+    /// The change in data angle, in radians, between two device points seen from the centre — the
+    /// tangential half of a drag (M83).
+    /// </summary>
+    /// <remarks>
+    /// Unwrapped to the half turn either side of nothing, so a drag that crosses the seam of the atan2
+    /// branch reports a small step rather than a whole turn back. Taken from the raw device angles
+    /// rather than from two <see cref="PixelToData"/> readings, which fold into the visible turn and
+    /// would report the same jump for the same reason.
+    /// </remarks>
+    public double AngleDeltaBetween(Point2D from, Point2D to)
+    {
+        double before = System.Math.Atan2(from.Y - _centerY, from.X - _centerX);
+        double after = System.Math.Atan2(to.Y - _centerY, to.X - _centerX);
+        double delta = (after - before) / _direction;
+        delta -= System.Math.Tau * System.Math.Round(delta / System.Math.Tau);
+        return delta;
+    }
 
     /// <inheritdoc />
     public Point2D PixelToData(double px, double py)

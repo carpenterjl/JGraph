@@ -6,15 +6,24 @@ namespace JGraph.Interaction;
 
 /// <summary>
 /// A snapshot of an axes' view: the range and auto-scale flag of every X and Y axis, plus the Z axis,
-/// the camera angles, and whatever the camera has been placed at by hand. Capturing before and after a
-/// navigation gesture lets the whole change (pan, zoom, rotate, dolly, or reset) be undone/redone
-/// atomically — including the release of a hand-placed camera that rotating performs.
+/// the two polar rulers and the chart's rotation, the camera angles, and whatever the camera has been
+/// placed at by hand. Capturing before and after a navigation gesture lets the whole change (pan,
+/// zoom, rotate, dolly, or reset) be undone/redone atomically — including the release of a
+/// hand-placed camera that rotating performs.
 /// </summary>
+/// <remarks>
+/// The polar three arrived with M83 and are the silent half of that milestone: without them a polar
+/// gesture works perfectly and <c>CommitViewChange</c> compares the before and after as equal, so
+/// nothing is pushed and nothing can be undone.
+/// </remarks>
 public sealed class AxesViewState
 {
     private readonly (DataRange Range, bool AutoScale)[] _x;
     private readonly (DataRange Range, bool AutoScale)[] _y;
     private readonly (DataRange Range, bool AutoScale) _z;
+    private readonly (DataRange Range, bool AutoScale) _r;
+    private readonly DataRange _theta;
+    private readonly double _thetaZeroOffset;
     private readonly double _azimuth;
     private readonly double _elevation;
     private readonly Vector3D? _cameraPosition;
@@ -26,6 +35,9 @@ public sealed class AxesViewState
         (DataRange, bool)[] x,
         (DataRange, bool)[] y,
         (DataRange, bool) z,
+        (DataRange, bool) r,
+        DataRange theta,
+        double thetaZeroOffset,
         double azimuth,
         double elevation,
         Vector3D? cameraPosition,
@@ -36,6 +48,9 @@ public sealed class AxesViewState
         _x = x;
         _y = y;
         _z = z;
+        _r = r;
+        _theta = theta;
+        _thetaZeroOffset = thetaZeroOffset;
         _azimuth = azimuth;
         _elevation = elevation;
         _cameraPosition = cameraPosition;
@@ -63,6 +78,9 @@ public sealed class AxesViewState
             x,
             y,
             (axes.ZAxis.Range, axes.ZAxis.AutoScale),
+            (axes.RAxis.Range, axes.RAxis.AutoScale),
+            axes.ThetaAxis.Range,
+            axes.ThetaZeroOffset,
             axes.Azimuth,
             axes.Elevation,
             axes.CameraPosition,
@@ -88,6 +106,10 @@ public sealed class AxesViewState
 
         axes.ZAxis.AutoScale = _z.AutoScale;
         axes.ZAxis.Range = _z.Range;
+        axes.RAxis.AutoScale = _r.AutoScale;
+        axes.RAxis.Range = _r.Range;
+        axes.ThetaAxis.Range = _theta;
+        axes.ThetaZeroOffset = _thetaZeroOffset;
         axes.Azimuth = _azimuth;
         axes.Elevation = _elevation;
         axes.CameraPosition = _cameraPosition;
@@ -105,6 +127,11 @@ public sealed class AxesViewState
         }
 
         if (_z != other._z || _azimuth != other._azimuth || _elevation != other._elevation)
+        {
+            return true;
+        }
+
+        if (_r != other._r || _theta != other._theta || _thetaZeroOffset != other._thetaZeroOffset)
         {
             return true;
         }

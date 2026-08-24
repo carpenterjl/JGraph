@@ -584,45 +584,53 @@ internal static partial class JgsBuiltins
 
     private static void RegisterTrigonometry(Action<string, Func<IReadOnlyList<JgsValue>, int, int, JgsValue>> Define)
     {
-        void Math1(string name, Func<double, double> f) =>
-            Define(name, (args, line, col) => { Arity(name, args, 1, line, col); return MapNumeric(name, args[0], f, line, col); });
+        // Every one of these goes through MathX rather than Math1 (M81). The real expression is
+        // untouched and still runs on the flat packed path whenever the whole array stays real; what
+        // is added is a complex definition, reached either because a real argument left the function's
+        // domain (asec of a half, acosh of nought) or because the argument was complex to begin with.
+        //
+        // The inverse reciprocals are written as the reciprocal of the inverse they are named after —
+        // asec(z) is acos(1/z) — which is MATLAB's own definition and keeps one branch cut per family
+        // rather than one per name.
 
         // Reciprocal trigonometry, radians.
-        Math1("sec", static x => 1.0 / Math.Cos(x));
-        Math1("csc", static x => 1.0 / Math.Sin(x));
-        Math1("cot", static x => 1.0 / Math.Tan(x));
-        Math1("asec", static x => Math.Acos(1.0 / x));
-        Math1("acsc", static x => Math.Asin(1.0 / x));
-        Math1("acot", static x => Math.Atan(1.0 / x));
+        MathX(Define, "sec", static x => 1.0 / Math.Cos(x), Always, static z => Invert(Complex.Cos(z)));
+        MathX(Define, "csc", static x => 1.0 / Math.Sin(x), Always, static z => Invert(Complex.Sin(z)));
+        MathX(Define, "cot", static x => 1.0 / Math.Tan(x), Always, static z => Invert(Complex.Tan(z)));
+        MathX(Define, "asec", static x => Math.Acos(1.0 / x), OutsideUnitOrZero, static z => ComplexAcos(Invert(z)));
+        MathX(Define, "acsc", static x => Math.Asin(1.0 / x), OutsideUnitOrZero, static z => ComplexAsin(Invert(z)));
+        MathX(Define, "acot", static x => Math.Atan(1.0 / x), Always, static z => Complex.Atan(Invert(z)));
 
         // Hyperbolics and their inverses.
-        Math1("sinh", Math.Sinh);
-        Math1("cosh", Math.Cosh);
-        Math1("tanh", Math.Tanh);
-        Math1("asinh", Math.Asinh);
-        Math1("acosh", Math.Acosh);
-        Math1("atanh", Math.Atanh);
-        Math1("sech", static x => 1.0 / Math.Cosh(x));
-        Math1("csch", static x => 1.0 / Math.Sinh(x));
-        Math1("coth", static x => 1.0 / Math.Tanh(x));
-        Math1("asech", static x => Math.Acosh(1.0 / x));
-        Math1("acsch", static x => Math.Asinh(1.0 / x));
-        Math1("acoth", static x => Math.Atanh(1.0 / x));
+        MathX(Define, "sinh", Math.Sinh, Always, Complex.Sinh);
+        MathX(Define, "cosh", Math.Cosh, Always, Complex.Cosh);
+        MathX(Define, "tanh", Math.Tanh, Always, Complex.Tanh);
+        MathX(Define, "asinh", Math.Asinh, Always, ComplexAsinh);
+        MathX(Define, "acosh", Math.Acosh, AtLeastOne, ComplexAcosh);
+        MathX(Define, "atanh", Math.Atanh, InsideUnit, ComplexAtanh);
+        MathX(Define, "sech", static x => 1.0 / Math.Cosh(x), Always, static z => Invert(Complex.Cosh(z)));
+        MathX(Define, "csch", static x => 1.0 / Math.Sinh(x), Always, static z => Invert(Complex.Sinh(z)));
+        MathX(Define, "coth", static x => 1.0 / Math.Tanh(x), Always, static z => Invert(Complex.Tanh(z)));
+        MathX(Define, "asech", static x => Math.Acosh(1.0 / x), InsideUnitAndNonNegative, static z => ComplexAcosh(Invert(z)));
+        MathX(Define, "acsch", static x => Math.Asinh(1.0 / x), Always, static z => ComplexAsinh(Invert(z)));
+        MathX(Define, "acoth", static x => Math.Atanh(1.0 / x), OutsideUnitOrZero, static z => ComplexAtanh(Invert(z)));
 
         // Degree forms. Going through DegreeSine/DegreeCosine rather than multiplying by pi/180 is
-        // what makes sind(180) exactly 0 and cosd(90) exactly 0, as MATLAB documents.
-        Math1("sind", DegreeSine);
-        Math1("cosd", DegreeCosine);
-        Math1("tand", static x => DegreeSine(x) / DegreeCosine(x));
-        Math1("secd", static x => 1.0 / DegreeCosine(x));
-        Math1("cscd", static x => 1.0 / DegreeSine(x));
-        Math1("cotd", static x => DegreeCosine(x) / DegreeSine(x));
-        Math1("asind", static x => Math.Asin(x) * (180.0 / Math.PI));
-        Math1("acosd", static x => Math.Acos(x) * (180.0 / Math.PI));
-        Math1("atand", static x => Math.Atan(x) * (180.0 / Math.PI));
-        Math1("asecd", static x => Math.Acos(1.0 / x) * (180.0 / Math.PI));
-        Math1("acscd", static x => Math.Asin(1.0 / x) * (180.0 / Math.PI));
-        Math1("acotd", static x => Math.Atan(1.0 / x) * (180.0 / Math.PI));
+        // what makes sind(180) exactly 0 and cosd(90) exactly 0, as MATLAB documents. A complex
+        // argument has no such exact quarter-turns to preserve, so the complex arm converts and
+        // defers to the radian definition.
+        MathX(Define, "sind", DegreeSine, Always, static z => Complex.Sin(z * RadiansPerDegree));
+        MathX(Define, "cosd", DegreeCosine, Always, static z => Complex.Cos(z * RadiansPerDegree));
+        MathX(Define, "tand", static x => DegreeSine(x) / DegreeCosine(x), Always, static z => Complex.Tan(z * RadiansPerDegree));
+        MathX(Define, "secd", static x => 1.0 / DegreeCosine(x), Always, static z => Invert(Complex.Cos(z * RadiansPerDegree)));
+        MathX(Define, "cscd", static x => 1.0 / DegreeSine(x), Always, static z => Invert(Complex.Sin(z * RadiansPerDegree)));
+        MathX(Define, "cotd", static x => DegreeCosine(x) / DegreeSine(x), Always, static z => Invert(Complex.Tan(z * RadiansPerDegree)));
+        MathX(Define, "asind", static x => Math.Asin(x) * DegreesPerRadian, InsideUnit, static z => ComplexAsin(z) * DegreesPerRadian);
+        MathX(Define, "acosd", static x => Math.Acos(x) * DegreesPerRadian, InsideUnit, static z => ComplexAcos(z) * DegreesPerRadian);
+        MathX(Define, "atand", static x => Math.Atan(x) * DegreesPerRadian, Always, static z => Complex.Atan(z) * DegreesPerRadian);
+        MathX(Define, "asecd", static x => Math.Acos(1.0 / x) * DegreesPerRadian, OutsideUnitOrZero, static z => ComplexAcos(Invert(z)) * DegreesPerRadian);
+        MathX(Define, "acscd", static x => Math.Asin(1.0 / x) * DegreesPerRadian, OutsideUnitOrZero, static z => ComplexAsin(Invert(z)) * DegreesPerRadian);
+        MathX(Define, "acotd", static x => Math.Atan(1.0 / x) * DegreesPerRadian, Always, static z => Complex.Atan(Invert(z)) * DegreesPerRadian);
 
         Define("atan2d", (args, line, col) =>
         {

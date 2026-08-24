@@ -865,6 +865,15 @@ internal static partial class JgsBuiltins
             return JgsValue.Str("\"" + subject.AsString + "\"");
         }
 
+        // A complex value has to be written as one (M81). Before this, mat2str reached JgsMatrix.ToRows,
+        // which reads only reals: a complex scalar came back as the bare text '[]' and a complex array
+        // threw — so the one function whose whole contract is "text eval reads back as this value"
+        // silently failed to hold it.
+        if (subject.Type == JgsType.Complex || HasComplexElements(subject))
+        {
+            return JgsValue.Str(ComplexMatrixText(subject, precision, line, col));
+        }
+
         bool logical = IsLogicalValue(subject);
         double[][] rows = subject.Type is JgsType.Number or JgsType.Bool
             ? [[subject.AsNumber]]
@@ -886,6 +895,55 @@ internal static partial class JgsBuiltins
         }
 
         return JgsValue.Str("[" + string.Join(";", written) + "]");
+    }
+
+    /// <summary>
+    /// <c>mat2str</c> of a value with an imaginary part anywhere in it.
+    /// </summary>
+    /// <remarks>
+    /// Every element is written <c>re+imi</c>, including the ones that happen to be real, because that
+    /// is what makes the text read back as the same value: <c>[1+0i 0+2i]</c> is a complex array where
+    /// <c>[1 0+2i]</c> would be one too, but only by accident of the second element. MATLAB writes it
+    /// the same way and for the same reason.
+    /// </remarks>
+    private static string ComplexMatrixText(JgsValue subject, int precision, int line, int col)
+    {
+        string One(System.Numerics.Complex z)
+        {
+            string real = OneNumber(z.Real, precision);
+            string imaginary = OneNumber(Math.Abs(z.Imaginary), precision);
+            return real + (z.Imaginary < 0 ? "-" : "+") + imaginary + "i";
+        }
+
+        if (subject.Type is JgsType.Complex or JgsType.Number or JgsType.Bool)
+        {
+            return One(subject.AsComplex);
+        }
+
+        int rows = JgsMatrix.RowCount(subject);
+        int cols = JgsMatrix.ColCount(subject);
+        var written = new List<string>(rows);
+        for (int r = 0; r < rows; r++)
+        {
+            var cells = new List<string>(cols);
+            for (int c = 0; c < cols; c++)
+            {
+                JgsValue element = JgsMatrix.IsNested(subject)
+                    ? subject.ElementAt(r).ElementAt(c)
+                    : subject.ElementAt((c * rows) + r);
+                if (element.Type is not (JgsType.Number or JgsType.Bool or JgsType.Complex))
+                {
+                    throw new JgsRuntimeException(line, col,
+                        $"mat2str needs numbers, but element ({r}, {c}) was a {element.TypeName}.");
+                }
+
+                cells.Add(One(element.AsComplex));
+            }
+
+            written.Add(string.Join(" ", cells));
+        }
+
+        return rows == 1 && cols == 1 ? written[0] : "[" + string.Join(";", written) + "]";
     }
 
     /// <summary>

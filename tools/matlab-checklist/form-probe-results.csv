@@ -495,8 +495,8 @@ cool,function,1,c = cool(m),accepted,
 copper,function,0,c = copper,accepted,
 copper,function,1,c = copper(m),accepted,
 copyfile,builtin,0,copyfile source,error,"copyfile expects between 2 and 3 argument(s), but got 1."
-copyfile,builtin,1,copyfile source destination,error,copyfile: Could not find file 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-forms-uebifs4h\source'.
-copyfile,builtin,2,copyfile source destination f,error,copyfile: Could not find file 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-forms-uebifs4h\source'.
+copyfile,builtin,1,copyfile source destination,error,copyfile: Could not find file 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-forms-_azljwtu\source'.
+copyfile,builtin,2,copyfile source destination f,error,copyfile: Could not find file 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-forms-_azljwtu\source'.
 copyfile,builtin,3,status = copyfile(___),error,"copyfile expects between 2 and 3 argument(s), but got 1."
 copyfile,builtin,4,"[status,msg] = copyfile(___)",error,"copyfile expects between 2 and 3 argument(s), but got 1."
 copyfile,builtin,5,"[status,msg,msgID] = copyfile(___)",error,"copyfile expects between 2 and 3 argument(s), but got 1."
@@ -657,8 +657,11 @@ exist,builtin,2,A = exist(___),accepted,
 exit,builtin,0,exit,unprobed,waits for a person or ends the process
 exp,builtin,0,Y = exp(X),accepted,
 expm1,builtin,0,y = expm1(x),unprobed,no sample for this form's arguments
+exportapp,function,0,"exportapp(fig,filename)",error,"exportapp opens a window, and this host has none — exportgraphics writes the figure itself, without the window around it."
 exportgraphics,function,0,"exportgraphics(obj,filename)",accepted,
 exportgraphics,function,1,"exportgraphics(obj,filename,Name,Value)",unprobed,"Name,Value form; the dump lists no pair names"
+exportsetupdlg,function,0,exportsetupdlg(f),error,"exportsetupdlg opens a window, and this host has none — exportgraphics takes Resolution and BackgroundColor as arguments."
+exportsetupdlg,function,1,exportsetupdlg,error,"exportsetupdlg opens a window, and this host has none — exportgraphics takes Resolution and BackgroundColor as arguments."
 eye,builtin,0,I = eye,accepted,
 eye,builtin,1,I = eye(n),accepted,
 eye,builtin,2,"I = eye(n,m)",accepted,
@@ -1362,8 +1365,8 @@ more,builtin,1,more off,accepted,
 more,builtin,2,more(n),accepted,
 more,builtin,3,A = more(___),accepted,
 movefile,builtin,0,movefile source,error,"movefile expects between 2 and 3 argument(s), but got 1."
-movefile,builtin,1,movefile source destination,error,movefile: Could not find file 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-forms-uebifs4h\source'.
-movefile,builtin,2,movefile source destination f,error,movefile: Could not find file 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-forms-uebifs4h\source'.
+movefile,builtin,1,movefile source destination,error,movefile: Could not find file 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-forms-_azljwtu\source'.
+movefile,builtin,2,movefile source destination f,error,movefile: Could not find file 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-forms-_azljwtu\source'.
 movefile,builtin,3,status = movefile(___),error,"movefile expects between 2 and 3 argument(s), but got 1."
 movefile,builtin,4,"[status,msg] = movefile(___)",error,"movefile expects between 2 and 3 argument(s), but got 1."
 movefile,builtin,5,"[status,msg,msgID] = movefile(___)",error,"movefile expects between 2 and 3 argument(s), but got 1."
@@ -1461,10 +1464,10 @@ ones,builtin,2,"X = ones(sz1,...,szN)",unprobed,no sample for this form's argume
 ones,builtin,3,X = ones(sz),accepted,
 ones,builtin,4,"X = ones(___,typename)",accepted,
 ones,builtin,5,"X = ones(___,'like',p)",unprobed,no sample for this form's arguments
-openfig,function,0,openfig(filename),error,Could not find file 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-forms-uebifs4h\a.fig'.
-openfig,function,1,"openfig(filename,copies)",error,Could not find file 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-forms-uebifs4h\a.fig'.
-openfig,function,2,"openfig(___,visibility)",error,Could not find file 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-forms-uebifs4h\a.fig'.
-openfig,function,3,fig = openfig(___),error,Could not find file 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-forms-uebifs4h\a.fig'.
+openfig,function,0,openfig(filename),error,Could not find file 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-forms-_azljwtu\a.fig'.
+openfig,function,1,"openfig(filename,copies)",error,Could not find file 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-forms-_azljwtu\a.fig'.
+openfig,function,2,"openfig(___,visibility)",error,Could not find file 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-forms-_azljwtu\a.fig'.
+openfig,function,3,fig = openfig(___),error,Could not find file 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-forms-_azljwtu\a.fig'.
 opengl,function,0,opengl info,accepted,
 opengl,function,1,d = opengl('data'),accepted,
 opengl,function,2,opengl software,accepted,
@@ -1487,6 +1490,7 @@ orient,function,2,or = orient,accepted,
 orient,function,3,or = orient(fig),error,"orient expects argument 1 to be a string, but got a number."
 pack,builtin,0,pack,accepted,
 pack,builtin,1,pack filename,accepted,
+pagesetupdlg,function,0,dlg = pagesetupdlg(fig),unprobed,no sample for this form's arguments
 pan,function,0,pan on,accepted,
 pan,function,1,pan xon,refused,"pan: 'xon' is not one of on, off, toggle."
 pan,function,2,pan yon,refused,"pan: 'yon' is not one of on, off, toggle."
@@ -1634,6 +1638,10 @@ print,function,9,"print(renderer,___)",error,print does not understand the switc
 print,function,10,"print('-noui',___)",error,print does not understand the switch '-noui'. It takes a device such as -dpng and a resolution such as -r300.
 print,function,11,"print(fig,___)",accepted,
 print,function,12,cdata = print('-RGBImage');,unprobed,no sample for this form's arguments
+printdlg,function,0,printdlg,error,"printdlg opens a window, and this host has none — print(fig, file, '-dpng') writes the same page without one."
+printdlg,function,1,printdlg(fig),unprobed,no sample for this form's arguments
+printpreview,function,0,printpreview,error,"printpreview opens a window, and this host has none — exportgraphics or print writes the page a preview would have shown."
+printpreview,function,1,printpreview(f),unprobed,no sample for this form's arguments
 prism,function,0,c = prism,accepted,
 prism,function,1,c = prism(m),accepted,
 prod,builtin,0,B = prod(A),accepted,
@@ -1781,10 +1789,10 @@ rlim,function,4,m = rlim('mode'),error,"rlim expects 'auto' or 'manual', but got
 rlim,function,5,"___ = rlim(pax,___)",error,"rlim expects a two-element [min, max] array."
 rmappdata,builtin,0,"rmappdata(obj,name)",error,rmappdata: nothing is stored under 'a' on this object.
 rmdir,builtin,0,rmdir folderName,accepted,
-rmdir,builtin,1,rmdir folderName s,error,rmdir: Could not find a part of the path 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-forms-uebifs4h\folderName'.
-rmdir,builtin,2,status = rmdir(___),error,rmdir: Could not find a part of the path 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-forms-uebifs4h\folderName'.
-rmdir,builtin,3,"[status,msg] = rmdir(___)",error,rmdir: Could not find a part of the path 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-forms-uebifs4h\folderName'.
-rmdir,builtin,4,"[status,msg,msgID] = rmdir(___)",error,rmdir: Could not find a part of the path 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-forms-uebifs4h\folderName'.
+rmdir,builtin,1,rmdir folderName s,error,rmdir: Could not find a part of the path 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-forms-_azljwtu\folderName'.
+rmdir,builtin,2,status = rmdir(___),error,rmdir: Could not find a part of the path 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-forms-_azljwtu\folderName'.
+rmdir,builtin,3,"[status,msg] = rmdir(___)",error,rmdir: Could not find a part of the path 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-forms-_azljwtu\folderName'.
+rmdir,builtin,4,"[status,msg,msgID] = rmdir(___)",error,rmdir: Could not find a part of the path 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-forms-_azljwtu\folderName'.
 rose,function,0,rose(theta),unprobed,no sample for this form's arguments
 rose,function,1,"rose(theta,x)",unprobed,no sample for this form's arguments
 rose,function,2,"rose(theta,nbins)",unprobed,no sample for this form's arguments
@@ -2177,7 +2185,7 @@ thetaticks,function,0,thetaticks(ticks),accepted,
 thetaticks,function,1,tv = thetaticks,accepted,
 thetaticks,function,2,thetaticks('auto'),accepted,
 thetaticks,function,3,thetaticks('manual'),accepted,
-thetaticks,function,4,m = thetaticks('mode'),error,"thetaticks: 'mode' is neither 'auto' nor 'manual'. Labels come in a cell, such as {'low', 'high'}."
+thetaticks,function,4,m = thetaticks('mode'),accepted,
 thetaticks,function,5,"___ = thetaticks(pax,___)",accepted,
 tic,builtin,0,tic,accepted,
 tic,builtin,1,timerVal = tic,accepted,
@@ -2229,6 +2237,10 @@ turbo,function,0,c = turbo,accepted,
 turbo,function,1,c = turbo(m),accepted,
 type,builtin,0,type filename,accepted,
 typecast,builtin,0,"Y = typecast(X,type)",accepted,
+uiaxes,function,0,ax = uiaxes,accepted,
+uiaxes,function,1,"ax = uiaxes(Name,Value)",unprobed,"Name,Value form; the dump lists no pair names"
+uiaxes,function,2,ax = uiaxes(parent),accepted,
+uiaxes,function,3,"ax = uiaxes(parent,Name,Value)",unprobed,"Name,Value form; the dump lists no pair names"
 uicontextmenu,builtin,0,cm = uicontextmenu,accepted,
 uicontextmenu,builtin,1,cm = uicontextmenu(parent),accepted,
 uicontextmenu,builtin,2,"cm = uicontextmenu(___,Name,Value)",unprobed,"Name,Value form; the dump lists no pair names"
@@ -2296,7 +2308,7 @@ waterfall,function,3,"waterfall(Z,C)",error,"waterfall expects 3 argument(s), bu
 waterfall,function,4,"waterfall(ax,___)",accepted,
 waterfall,function,5,p = waterfall(___),accepted,
 what,builtin,0,what,accepted,
-what,builtin,1,what folderName,refused,what: 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-forms-uebifs4h\folderName' is not a folder.
+what,builtin,1,what folderName,refused,what: 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-forms-_azljwtu\folderName' is not a folder.
 what,builtin,2,s = what(___),accepted,
 which,builtin,0,which item,accepted,
 which,builtin,1,which fun1 in fun2,error,"which expects 1 argument(s), but got 3."

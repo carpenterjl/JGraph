@@ -36,7 +36,7 @@ internal sealed class FakeInteractionSurface : IInteractionSurface
         if (_plotArea.Contains(pixel))
         {
             axes = _axes;
-            mapper = AxisTransform.Create(_plotArea, _axes.PrimaryXAxis, _axes.PrimaryYAxis);
+            mapper = MapperFor(_axes);
             plotArea = _plotArea;
             return true;
         }
@@ -47,8 +47,15 @@ internal sealed class FakeInteractionSurface : IInteractionSurface
         return false;
     }
 
-    public ICoordinateMapper? GetMapper(AxesModel axes) =>
-        AxisTransform.Create(_plotArea, _axes.PrimaryXAxis, _axes.PrimaryYAxis);
+    public ICoordinateMapper? GetMapper(AxesModel axes) => MapperFor(_axes);
+
+    /// <summary>
+    /// The mapper this axes would have been drawn through — polar when it is one, as the real control
+    /// reports since M83.
+    /// </summary>
+    private ICoordinateMapper MapperFor(AxesModel axes) => axes.IsPolar
+        ? PolarTransform.Create(axes, _plotArea)
+        : AxisTransform.Create(_plotArea, axes.PrimaryXAxis, axes.PrimaryYAxis);
 
     /// <summary>Settable so tests can place a legend box without running a real paint.</summary>
     public Rect2D? LegendBounds { get; set; }

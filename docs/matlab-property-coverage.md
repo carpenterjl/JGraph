@@ -5,8 +5,8 @@ building the object in `jgraph.exe` and asking it, not from reading the source: 
 table is built by reflection over the model's CLR types, so what an object answers to is a
 runtime fact.
 
-**1421 of 1437 documented properties** are answered across the
-30 object kinds that could be built and asked. The other
+**1569 of 1585 documented properties** are answered across the
+31 object kinds that could be built and asked. The other
 0 kinds are counted separately below rather than scored as zero —
 an object that cannot be reached is not the same measurement as one missing properties, and
 folding the two together is the mistake `docs/matlab-builtin-coverage.md` has been corrected
@@ -14,8 +14,9 @@ for six times.
 
 | Kind | MATLAB class | Answered | Documented | Extra |
 |---|---|---:|---:|---:|
-| `axes` | `Axes` | 147 | 147 | 58 |
-| `polaraxes` | `PolarAxes` | 107 | 107 | 98 |
+| `uiaxes` | `UIAxes` | 148 | 148 | 59 |
+| `axes` | `Axes` | 147 | 147 | 60 |
+| `polaraxes` | `PolarAxes` | 107 | 107 | 100 |
 | `scatter` | `Scatter` | 68 | 74 | 25 |
 | `bubblechart` | `BubbleChart` | 67 | 73 | 26 |
 | `figure` | `Figure` | 66 | 66 | 8 |

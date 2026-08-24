@@ -287,6 +287,13 @@ public sealed class FigureModel : GraphObject
         set => SetProperty(ref _paperPositionAuto, value, InvalidationKind.None);
     }
 
+    /// <summary>
+    /// The export settings <c>exportsetupdlg</c> edits, consulted by the picture verbs only where the
+    /// caller did not say otherwise (M84).
+    /// </summary>
+    [Browsable(false)]
+    public FigureExportPreset ExportSetup { get; } = new();
+
     /// <summary>The page size in inches, the way round the orientation puts it.</summary>
     public Size2D EffectivePaperSize()
     {

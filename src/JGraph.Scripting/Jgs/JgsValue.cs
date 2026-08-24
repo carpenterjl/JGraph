@@ -447,6 +447,11 @@ internal sealed class JgsValue
     {
         NumericBuffer buffer => _strideRows > 0 ? _rows * _cols : buffer.Length,
         JgsPackedComplex complex => complex.Length,
+
+        // A struct array counts its elements too (M82). It reached the cast below and threw, which
+        // nothing noticed while every caller was asking about a numeric array — and stopped being
+        // true the moment a calendarDuration wore a time tag over struct storage.
+        JgsStructArray structs => structs.Length,
         _ => AsArray.Length,
     };
 
@@ -872,6 +877,10 @@ internal sealed class JgsValue
         JgsType.Image => FormatImage(AsImage),
         JgsType.Function => $"fn {AsCallable.Name}",
         JgsType.Cell => FormatCell(AsCell),
+
+        // A calendarDuration is a struct array wearing a time tag (M82), and it shows itself as the
+        // length of time it is rather than as the three numbers it keeps that length in.
+        JgsType.Struct when _time is not null => FormatTime(this),
         JgsType.Struct => FormatStructValue(this),
         JgsType.Sparse => FormatSparse(AsSparse),
         JgsType.Object => FormatObject(AsObject),
@@ -1093,10 +1102,23 @@ internal sealed class JgsValue
     private static string FormatTime(JgsValue value)
     {
         JgsTimeTag tag = value._time!;
-        int count = value.ArrayLength;
+
+        // A calendarDuration keeps three numbers per element in a struct array rather than one
+        // millisecond count, so its length and its elements are read from there (M82).
+        bool calendar = tag.Kind == JgsTimeKind.CalendarDuration;
+        int count = calendar ? value.AsStructArray.Length : value.ArrayLength;
+        string One(int index) => calendar
+            ? JgsBuiltins.TimeText(value, index)
+            : JgsTime.Format(value.ElementAt(index).AsNumber, tag);
+
         if (count == 1)
         {
-            return JgsTime.Format(value.ElementAt(0).AsNumber, tag);
+            return One(0);
+        }
+
+        if (count == 0)
+        {
+            return "[]";
         }
 
         int shown = count <= DisplayMaxElements ? count : DisplayPrefixElements;
@@ -1108,7 +1130,7 @@ internal sealed class JgsValue
                 sb.Append(", ");
             }
 
-            sb.Append(JgsTime.Format(value.ElementAt(i).AsNumber, tag));
+            sb.Append(One(i));
         }
 
         if (shown < count)

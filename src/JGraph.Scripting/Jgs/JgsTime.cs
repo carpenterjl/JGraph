@@ -2,7 +2,7 @@ using System.Globalization;
 
 namespace JGraph.Scripting.Jgs;
 
-/// <summary>Which of MATLAB's two time types an array is carrying (M64).</summary>
+/// <summary>Which of MATLAB's time types an array is carrying (M64, widened in M82).</summary>
 internal enum JgsTimeKind : byte
 {
     /// <summary>A point in time: <c>datetime</c>.</summary>
@@ -10,6 +10,13 @@ internal enum JgsTimeKind : byte
 
     /// <summary>A signed length of time: <c>duration</c>.</summary>
     Duration,
+
+    /// <summary>
+    /// A length of time counted in calendar units: <c>calendarDuration</c> (M82). Unlike the other
+    /// two this is not a count of milliseconds — a month has no fixed length — so it is the one kind
+    /// whose storage is a struct array rather than a numeric one.
+    /// </summary>
+    CalendarDuration,
 }
 
 /// <summary>
@@ -84,12 +91,193 @@ internal static class JgsTime
     // --- Conversion --------------------------------------------------------------------------
 
     /// <summary>The instant <paramref name="ms"/> stands for.</summary>
+    /// <remarks>
+    /// The rounding is to whole <em>ticks</em>, not to whole milliseconds: a hundred nanoseconds is
+    /// the finest thing a <see cref="DateTime"/> can hold, and the storage carries the fraction to
+    /// meet it. What used to lose sub-millisecond precision was never this conversion but the readers
+    /// past it, which asked a <see cref="DateTime"/> for its whole-number <c>Millisecond</c> (M82).
+    /// </remarks>
     public static DateTime ToDateTime(double ms) =>
         Epoch.AddTicks((long)System.Math.Round(ms * TimeSpan.TicksPerMillisecond));
 
     /// <summary>The storage value for <paramref name="moment"/>.</summary>
     public static double FromDateTime(DateTime moment) =>
         (moment - Epoch).Ticks / (double)TimeSpan.TicksPerMillisecond;
+
+    /// <summary>
+    /// The seconds-and-fraction a moment is at, to the finest resolution it holds.
+    /// </summary>
+    /// <remarks>
+    /// <c>at.Second + at.Millisecond / 1000.0</c> is what <c>second</c>, <c>hms</c> and
+    /// <c>datevec</c> used to compute, and <c>Millisecond</c> is a whole number — so a moment a
+    /// half-millisecond past the second answered as though it were on it. Reading the tick remainder
+    /// instead keeps everything the storage has (M82).
+    /// </remarks>
+    public static double SecondsOf(DateTime moment) =>
+        (moment.Ticks % TimeSpan.TicksPerMinute) / (double)TimeSpan.TicksPerSecond;
+
+    // --- Time zones (M82) ------------------------------------------------------------------------
+    //
+    // A zoned datetime stores milliseconds since the epoch **in UTC**, and the zone is a lens applied
+    // on the way out. That is the only representation in which subtraction, comparison and sorting are
+    // right without every operator learning about zones — the same one-choke-point move as M63's
+    // string demotion and M64's PrepStrip. An unzoned datetime stores wall-clock, exactly as before,
+    // so nothing that never mentions a zone changes at all.
+
+    /// <summary>Resolved zones, by the name a script wrote. Lookup is not cheap and names repeat.</summary>
+    private static readonly Dictionary<string, TimeZoneInfo> ResolvedZones = new(StringComparer.OrdinalIgnoreCase);
+
+    /// <summary>
+    /// The zone <paramref name="name"/> names, or false when nothing does.
+    /// </summary>
+    /// <remarks>
+    /// Four spellings are accepted: <c>'UTC'</c>, <c>'local'</c>, a fixed offset such as
+    /// <c>'+05:30'</c>, and an IANA or Windows zone id — .NET 8 resolves both on Windows. An
+    /// unrecognised name is refused by the caller rather than accepted and ignored, which is what it
+    /// was until M82 and is the worse of the two failures: a script asking for a zone this build
+    /// cannot find should be told so, not quietly given wall-clock arithmetic.
+    /// </remarks>
+    public static bool TryResolveZone(string name, out TimeZoneInfo zone)
+    {
+        string trimmed = name.Trim();
+        lock (ResolvedZones)
+        {
+            if (ResolvedZones.TryGetValue(trimmed, out TimeZoneInfo? cached))
+            {
+                zone = cached;
+                return true;
+            }
+        }
+
+        TimeZoneInfo? found = null;
+        if (string.Equals(trimmed, "UTC", StringComparison.OrdinalIgnoreCase)
+            || string.Equals(trimmed, "Z", StringComparison.OrdinalIgnoreCase))
+        {
+            found = TimeZoneInfo.Utc;
+        }
+        else if (string.Equals(trimmed, "local", StringComparison.OrdinalIgnoreCase))
+        {
+            found = TimeZoneInfo.Local;
+        }
+        else if (TryReadFixedOffset(trimmed, out TimeSpan offset))
+        {
+            // A fixed offset has no daylight saving by construction, which is the whole reason a
+            // script reaches for one.
+            found = TimeZoneInfo.CreateCustomTimeZone(trimmed, offset, trimmed, trimmed);
+        }
+        else
+        {
+            try
+            {
+                found = TimeZoneInfo.FindSystemTimeZoneById(trimmed);
+            }
+            catch (Exception e) when (e is TimeZoneNotFoundException or InvalidTimeZoneException)
+            {
+                found = null;
+            }
+        }
+
+        if (found is null)
+        {
+            zone = TimeZoneInfo.Utc;
+            return false;
+        }
+
+        lock (ResolvedZones)
+        {
+            ResolvedZones[trimmed] = found;
+        }
+
+        zone = found;
+        return true;
+    }
+
+    /// <summary>Reads <c>+HH:mm</c>, <c>-HH:mm</c>, <c>+HH</c> or <c>-HH</c> as an offset.</summary>
+    private static bool TryReadFixedOffset(string text, out TimeSpan offset)
+    {
+        offset = TimeSpan.Zero;
+        if (text.Length < 2 || (text[0] != '+' && text[0] != '-'))
+        {
+            return false;
+        }
+
+        string body = text[1..];
+        string[] parts = body.Split(':');
+        if (parts.Length > 2
+            || !int.TryParse(parts[0], NumberStyles.Integer, CultureInfo.InvariantCulture, out int hours))
+        {
+            return false;
+        }
+
+        int minutes = 0;
+        if (parts.Length == 2
+            && !int.TryParse(parts[1], NumberStyles.Integer, CultureInfo.InvariantCulture, out minutes))
+        {
+            return false;
+        }
+
+        if (hours is < 0 or > 14 || minutes is < 0 or > 59)
+        {
+            return false;
+        }
+
+        offset = new TimeSpan(hours, minutes, 0);
+        if (text[0] == '-')
+        {
+            offset = -offset;
+        }
+
+        return true;
+    }
+
+    /// <summary>The zone a tag names, or null for an unzoned value.</summary>
+    public static TimeZoneInfo? ZoneOf(JgsTimeTag? tag) =>
+        tag?.TimeZone is { Length: > 0 } name && TryResolveZone(name, out TimeZoneInfo zone) ? zone : null;
+
+    /// <summary>The offset from UTC at a stored instant, for a zoned value.</summary>
+    public static TimeSpan OffsetAt(double ms, TimeZoneInfo zone) =>
+        zone.GetUtcOffset(DateTime.SpecifyKind(ToDateTime(ms), DateTimeKind.Utc));
+
+    /// <summary>
+    /// The wall-clock moment a stored value reads as in its own zone — the lens every calendar
+    /// reader looks through.
+    /// </summary>
+    /// <remarks>
+    /// An unzoned value is its own wall clock and takes the same path it always did, which is what
+    /// makes this safe to put in front of every accessor.
+    /// </remarks>
+    public static DateTime WallClock(double ms, JgsTimeTag? tag)
+    {
+        if (ZoneOf(tag) is not { } zone)
+        {
+            return ToDateTime(ms);
+        }
+
+        return ToDateTime(ms) + OffsetAt(ms, zone);
+    }
+
+    /// <summary>The storage value for a wall-clock moment read in <paramref name="tag"/>'s zone.</summary>
+    /// <remarks>
+    /// The inverse of <see cref="WallClock"/>, and the asymmetry is real: the offset that applies is
+    /// the one for the <em>local</em> reading, which is what <see cref="TimeZoneInfo.GetUtcOffset(DateTime)"/>
+    /// answers for a moment of unspecified kind. An hour that a spring-forward skipped has no reading,
+    /// and .NET resolves it the way MATLAB does — to the moment the clock jumped to.
+    /// </remarks>
+    public static double FromWallClock(DateTime wall, JgsTimeTag? tag)
+    {
+        if (ZoneOf(tag) is not { } zone)
+        {
+            return FromDateTime(wall);
+        }
+
+        DateTime unspecified = DateTime.SpecifyKind(wall, DateTimeKind.Unspecified);
+        return FromDateTime(wall) - zone.GetUtcOffset(unspecified).TotalMilliseconds;
+    }
+
+    /// <summary>The storage a wall-clock reading in <paramref name="zone"/> stands for.</summary>
+    public static double ToUtc(double wallMs, TimeZoneInfo zone) =>
+        wallMs - zone.GetUtcOffset(DateTime.SpecifyKind(ToDateTime(wallMs), DateTimeKind.Unspecified))
+            .TotalMilliseconds;
 
     /// <summary>The storage value for a year/month/day and an optional time of day.</summary>
     /// <remarks>
@@ -127,24 +315,73 @@ internal static class JgsTime
 
     /// <summary>Renders one storage value through its tag's own format.</summary>
     public static string Format(double ms, JgsTimeTag tag) =>
-        tag.Kind == JgsTimeKind.Datetime ? FormatDatetime(ms, tag.Format) : FormatDuration(ms, tag.Format);
+        tag.Kind == JgsTimeKind.Datetime ? FormatDatetime(ms, tag) : FormatDuration(ms, tag.Format);
 
-    private static string FormatDatetime(double ms, string format)
+    private static string FormatDatetime(double ms, JgsTimeTag tag)
     {
         if (double.IsNaN(ms))
         {
             return "NaT";
         }
 
-        DateTime moment = ToDateTime(ms);
+        // The wall clock in the value's own zone, which for an unzoned value is the stored moment
+        // itself. Only the reading moves; the storage stays the instant (M82).
+        DateTime moment = WallClock(ms, tag);
+        string net = ToNetFormat(WithZoneTokens(tag.Format, ms, tag));
         try
         {
-            return moment.ToString(ToNetFormat(format), CultureInfo.InvariantCulture);
+            return moment.ToString(net, CultureInfo.InvariantCulture);
         }
         catch (FormatException)
         {
             return moment.ToString(ToNetFormat(DefaultDatetimeFormat), CultureInfo.InvariantCulture);
         }
+    }
+
+    /// <summary>
+    /// Replaces MATLAB's zone tokens with the literal text they stand for, before .NET sees the format.
+    /// </summary>
+    /// <remarks>
+    /// <c>Z</c> is the offset and <c>z</c> the zone's name. They cannot be handed to .NET as its own
+    /// <c>zzz</c>, because the moment being formatted is a wall clock of unspecified kind and .NET
+    /// would answer with the offset of the machine rather than of the zone the value carries. An
+    /// unzoned value has no offset to print, so both tokens vanish.
+    /// </remarks>
+    private static string WithZoneTokens(string format, double ms, JgsTimeTag tag)
+    {
+        if (!format.Contains('Z') && !format.Contains('z'))
+        {
+            return format;
+        }
+
+        TimeZoneInfo? zone = ZoneOf(tag);
+        string offset = string.Empty;
+        if (zone is not null)
+        {
+            TimeSpan at = OffsetAt(ms, zone);
+            offset = string.Create(CultureInfo.InvariantCulture,
+                $"{(at < TimeSpan.Zero ? '-' : '+')}{System.Math.Abs(at.Hours):00}:{System.Math.Abs(at.Minutes):00}");
+        }
+
+        string name = zone is null ? string.Empty : tag.TimeZone ?? string.Empty;
+        var built = new System.Text.StringBuilder(format.Length + 8);
+        foreach (char c in format)
+        {
+            switch (c)
+            {
+                case 'Z':
+                    built.Append('\'').Append(offset).Append('\'');
+                    break;
+                case 'z':
+                    built.Append('\'').Append(name).Append('\'');
+                    break;
+                default:
+                    built.Append(c);
+                    break;
+            }
+        }
+
+        return built.ToString();
     }
 
     /// <summary>
@@ -229,8 +466,13 @@ internal static class JgsTime
         long minutes = totalMinutes % 60;
         long totalHours = totalMinutes / 60;
 
+        // Nine places rather than three (M82). A duration's storage carries the fraction exactly —
+        // seconds(1.0005) round-trips — and it was only the display that stopped at milliseconds and
+        // made the value look as though it had been rounded. The trailing-zero suppression of '#'
+        // means nothing changes for a duration whose fraction fits in three places, which is every
+        // one the frozen scripts print.
         string secondText = fraction > 0
-            ? (seconds + fraction).ToString("00.###", CultureInfo.InvariantCulture)
+            ? (seconds + fraction).ToString("00.#########", CultureInfo.InvariantCulture)
             : seconds.ToString("00", CultureInfo.InvariantCulture);
 
         return format switch
@@ -245,8 +487,13 @@ internal static class JgsTime
         };
     }
 
+    /// <summary>
+    /// A single-unit duration's number. Ten places rather than four (M82): <c>seconds(1.0005)</c> is
+    /// stored exactly and used to print as <c>1.0005 sec</c> only by luck of fitting in four, while
+    /// <c>seconds(1.000001)</c> printed as <c>1 sec</c>.
+    /// </summary>
     private static string Trimmed(double value) =>
-        value.ToString("0.####", CultureInfo.InvariantCulture);
+        value.ToString("0.##########", CultureInfo.InvariantCulture);
 
     // --- Parsing -----------------------------------------------------------------------------
 
@@ -353,11 +600,15 @@ internal static class JgsTime
     /// </summary>
     public static JgsTimeTag DatetimeTag(ReadOnlySpan<double> values, string? timeZone = null)
     {
+        var zoned = new JgsTimeTag(JgsTimeKind.Datetime, DefaultDatetimeFormat, timeZone);
         foreach (double ms in values)
         {
-            if (!double.IsNaN(ms) && System.Math.Abs(ms % MsPerDay) > 0)
+            // Midnight is a property of the wall clock, not of the stored instant: a zoned datetime
+            // sitting on midnight in its own zone stores an offset instant, and testing the storage
+            // would make every zoned date print a time of day it does not have (M82).
+            if (!double.IsNaN(ms) && WallClock(ms, zoned).TimeOfDay != TimeSpan.Zero)
             {
-                return new JgsTimeTag(JgsTimeKind.Datetime, DefaultDatetimeFormat, timeZone);
+                return zoned;
             }
         }
 

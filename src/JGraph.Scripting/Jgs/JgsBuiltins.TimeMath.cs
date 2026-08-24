@@ -44,6 +44,14 @@ internal static partial class JgsBuiltins
         bool leftIsTime = left.IsTime;
         bool rightIsTime = right.IsTime;
 
+        // A calendar duration is not a count of milliseconds, so it resolves before the table below
+        // and never reaches the numeric kernel (M82). Its three components are applied in order, and
+        // that order is the whole point of the type: a month then a day is not a day then a month.
+        if (IsCalendarDuration(left) || IsCalendarDuration(right))
+        {
+            return CalendarBinary(op, symbol, left, right, line, col);
+        }
+
         // --- Two times ------------------------------------------------------------------------
         if (leftIsTime && rightIsTime)
         {

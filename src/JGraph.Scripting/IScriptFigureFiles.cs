@@ -46,4 +46,43 @@ public interface IScriptFigureFiles
     /// accepted no-op there rather than an error.
     /// </summary>
     bool CopyToClipboard(FigureModel figure, double scale);
+
+    // --- The dialogs, and the one export that carries chrome (M84) --------------------------------
+    //
+    // Five verbs that want a window, behind five host calls that answer false when there is none. The
+    // default implementations are that answer, so a host written before M84 goes on compiling and a
+    // batch run gets the right behaviour without being taught it — and the verbs turn the false into
+    // a refusal that names the non-interactive verb which does the job. That is M60's fourth answer
+    // for a verb wanting a window, and it is what keeps `jgraph.exe -batch` and the stress gate free
+    // of a modal dialog nobody can dismiss.
+
+    /// <summary>
+    /// Shows the host's print dialog and, if the person accepts, prints the figure on the page its
+    /// <c>Paper*</c> properties describe. False when this host has no dialog to show.
+    /// </summary>
+    bool PrintInteractive(FigureModel figure) => false;
+
+    /// <summary>Shows the page the figure would print on, with a button to print it.</summary>
+    bool PreviewPage(FigureModel figure) => false;
+
+    /// <summary>
+    /// Shows the page-setup dialog, writing the figure's <c>Paper*</c> properties when accepted.
+    /// </summary>
+    bool PageSetup(FigureModel figure) => false;
+
+    /// <summary>
+    /// Shows the export-setup dialog, writing the figure's <see cref="FigureModel.ExportSetup"/>.
+    /// </summary>
+    bool ExportSetup(FigureModel figure) => false;
+
+    /// <summary>
+    /// Writes the hosted window — chrome and all — to a file.
+    /// </summary>
+    /// <remarks>
+    /// The one export that must <em>not</em> go through the renderer. M80 put the axes toolbar in
+    /// JGraph.Controls precisely so an export could not carry it; <c>exportapp</c> is the verb whose
+    /// whole point is a picture of the application, so it is the one that goes through the control.
+    /// A host with no window answers false, and there is no non-interactive spelling of this one.
+    /// </remarks>
+    bool CaptureWindow(FigureModel figure, string path) => false;
 }

@@ -40,12 +40,14 @@ public sealed class LegendLayout
 public sealed class AxesRenderInfo
 {
     public AxesRenderInfo(
-        AxesModel axes, Rect2D plotArea, AxisTransform transform, LegendLayout? legend = null)
+        AxesModel axes, Rect2D plotArea, AxisTransform transform, LegendLayout? legend = null,
+        PolarTransform? polar = null)
     {
         Axes = axes;
         PlotArea = plotArea;
         Transform = transform;
         Legend = legend;
+        Polar = polar;
     }
 
     public AxesModel Axes { get; }
@@ -55,6 +57,22 @@ public sealed class AxesRenderInfo
 
     /// <summary>The data↔device mapper for this axes' primary axes.</summary>
     public AxisTransform Transform { get; }
+
+    /// <summary>
+    /// The mapper a polar axes was actually drawn through, or null for a Cartesian one (M83).
+    /// </summary>
+    /// <remarks>
+    /// A polar axes stores θ as its plots' X data and r as their Y, so <see cref="Transform"/> is a
+    /// perfectly well-formed Cartesian mapper over radians and radii — and it is what the interaction
+    /// layer was handed, which is why a wheel over a polar chart moved <c>XLim</c> and <c>YLim</c> and
+    /// changed nothing a reader could see. Published beside the Cartesian one rather than replacing it,
+    /// because hit-testing, data tips and annotations all read <see cref="Transform"/> and none of them
+    /// needs to move.
+    /// </remarks>
+    public PolarTransform? Polar { get; }
+
+    /// <summary>The mapper this axes was drawn through — polar when it is one, Cartesian otherwise.</summary>
+    public ICoordinateMapper Mapper => Polar ?? (ICoordinateMapper)Transform;
 
     /// <summary>
     /// Where the legend was drawn, or null when it is hidden or empty. Published so the interaction

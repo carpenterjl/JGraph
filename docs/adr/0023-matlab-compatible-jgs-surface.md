@@ -73,7 +73,20 @@ numbers (`fft` results).
 - `%` remains the modulo operator, not a comment (user decision); comments stay `//` and `#`.
   `mod(a, b)` covers MATLAB code.
 - `let` remains required for first bindings (user decision) — the typo safety net stays.
-- `sqrt`/`log` stay real-domain and error on complex input.
+
+**Retired in M81 — `sqrt`/`log` stay real-domain and error on complex input.** The bullet is deleted
+from the list above rather than struck through, because the harvest lifts every bullet under this
+heading whole and a struck-through one still counts (the lesson M74 recorded).
+
+It was true when it was written and stopped being true in M42, which gave `exp`, `log`
+and `sqrt` a real fast path that promotes to a complex answer the moment an argument leaves the real
+domain. `sqrt(-1)` has answered `1i` and `log(-1)` has answered `pi*i` since then. Nothing noticed for
+seventeen milestones because nothing ever asserted it: `JgsComplexTests.cs` had no `sqrt` or `log`
+case, and this line was copied forward into the harvested divergence index and from there into the
+capability report, where a reader would have taken it for a live limitation. M81 struck it, made the
+assertion it was about, and widened the same seam to the rest of the family. See
+[0081](0081-the-complex-domain.md) — and note that this is the fourth time in the arc that re-reading
+a recorded block found it expired, after `warp` in M67, `MException` in M68 and `Interactions` in M80.
 
 ## Consequences
 

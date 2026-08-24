@@ -56,7 +56,7 @@ sections M67 can prove are removed below; the rest of the gap is between the com
 prose groupings, and is recorded here rather than guessed at, because a group re-labelled without
 reading it is exactly the slip this file keeps catching.
 
-**249 of the 277 documented graphics functions** — the second table below, new in M45, moved by 52 in
+**255 of the 277 documented graphics functions** — the second table below, new in M45, moved by 52 in
 M54, by 13 in M55, by 17 in M56 (the eight angular chart verbs and the nine polar rulers), by 13
 in M57, which empties the chart-type family below but for two names excluded with reasons, by 16
 in M58, which empties the function-plotter family outright, by 21 in M59, which empties the
@@ -77,7 +77,7 @@ The lists here were never wrong; the sentence describing them was. They have alw
 `legend`, `colorbar`, `bubblelegend` and `annotation`, which MATLAB documents under `matlab/scribe`,
 and the eight plot-tool verbs (`plotedit` `plottools` `plotbrowser` `propertyeditor` `figurepalette`
 `showplottool` `axtoolbar` `axtoolbarbtn`), which it documents under `matlab/plottools`. Six folders,
-not four: **264 + 4 + 9 = 277**, of which 249 are implemented and 28 are excluded with stated reasons.
+not four: **264 + 4 + 9 = 277**, of which 255 are implemented and 22 are excluded with stated reasons.
 
 The lesson is the one the other four taught, one level up: **check the denominator against the source
 rather than against the last time it was written down.** Counting names in a list catches a slip in
@@ -94,10 +94,16 @@ see. This file refused to count them while they drew nothing; **M56 made them re
 number and this one agree again. `opengl` *is* counted, because an accepted no-op is an answer — the
 same reading that counted `shading`, `lighting` and `camlight` in M43.
 
-Across every callable kind — builtin, function, operator, keyword, script — the count is **918 of
-2,024** as of M80, which added `axtoolbar` and `axtoolbarbtn` — the two names the machinery wave took
-off the plot-tool exclusion list, because an axes gained the strip of buttons they describe
-(916 after M77, which added `refreshdata` — the one name the chart-primitive property wave took
+Across every callable kind — builtin, function, operator, keyword, script — the count is **925 of
+2,024** as of M84, which took the whole print-and-export-dialog group off the exclusion list — `printdlg` `printpreview` `pagesetupdlg` `exportsetupdlg` `exportapp` and `uiaxes`, six names excluded as app building until the figure they describe turned out to be this one
+(919 after M82, which added `timezones` — the only name of the time wave that MATLAB documents at
+all. `tzoffset`, `isdst`, `caldiff`, `microseconds` and `nanoseconds` arrived with it and move
+nothing, because they are documented as methods of the datetime and duration classes rather than as
+callables in their own right, which is the same reason ADR 0064 recorded for the forty-odd names of
+that family
+(918 after M80, which added `axtoolbar` and `axtoolbarbtn` — the two names the machinery wave took
+off the plot-tool exclusion list, because an axes gained the strip of buttons they describe;
+916 after M77, which added `refreshdata` — the one name the chart-primitive property wave took
 off the exclusion list, because the `XDataSource` family it needs arrived with that wave;
 915 after M76, which added `spalloc` and `frewind` — the two names the numeric and file form
 wave found missing outright rather than merely short of forms)
@@ -251,7 +257,7 @@ plus a short list of eleven odds and ends. Every one of them is accounted for be
 | Stress-test data types and verbs | M43 | `table` `timetable` `seconds` `categorical` `summary` `string` `cellstr` `compose` `missing` `ismissing` `tiledlayout` `nexttile` `axis` `shading` `lighting` `camlight` `rotate3d` — plus sprintf format cycling, element-wise `~`, and `colormap turbo` |
 | Drawing primitives | M45 | `plot3` `line` `text` `fill` `fill3` `patch` `surface` `light` |
 | Handle graphics | M54 | `get` `set` `findobj` `isgraphics` `ishandle` `ishghandle` `gco` `gcbo` `ancestor` `copyobj` |
-| Time and keyed collections | M64 | `datetime` `duration` `NaT` `seconds` `minutes` `hours` `days` `years` `milliseconds` `caldays` `calweeks` `isdatetime` `isduration` `isnat` `year` `month` `day` `hour` `minute` `second` `week` `quarter` `weekday` `ymd` `hms` `datevec` `timeofday` `dateshift` `isbetween` `posixtime` `exceltime` `juliandate` `yyyymmdd` `etime` `addtodate` `eomday` `calendar` `containers.Map` `dictionary` `isKey` `keys` `values` `remove` `numEntries` `isConfigured` `lookup` `insert` `entries` — all documented as *functions* or classes, so none of them moves the builtin table |
+| Time and keyed collections | M64, M82 | `datetime` `duration` `NaT` `seconds` `minutes` `hours` `days` `years` `milliseconds` `caldays` `calweeks` `isdatetime` `isduration` `isnat` `year` `month` `day` `hour` `minute` `second` `week` `quarter` `weekday` `ymd` `hms` `datevec` `timeofday` `dateshift` `isbetween` `posixtime` `exceltime` `juliandate` `yyyymmdd` `etime` `addtodate` `eomday` `calendar` `containers.Map` `dictionary` `isKey` `keys` `values` `remove` `numEntries` `isConfigured` `lookup` `insert` `entries` — all documented as *functions* or classes, so none of them moves the builtin table. M82 added `tzoffset` `isdst` `timezones` `caldiff` `between` `calendarDuration` `calmonths` `calyears` `calquarters` `microseconds` `nanoseconds` and moved `caldays`/`calweeks` onto the calendar type; of those only `timezones` is a documented callable, so the table moves by exactly one |
 | Data analysis, sets and formatting | M52 | `rng` `var` `gradient` `trapz` `cumtrapz` `interp1` `polyfit` `histcounts` `corrcoef` `cov` `rms` `bounds` `sortrows` `union` `intersect` `setdiff` `setxor` `mat2str` `int2str` `deal` — all documented as *functions*, so only the fourteen the dump flags as documented move the across-every-kind total |
 | The polar axes | M56 | `polaraxes` — the one angular name documented as kind *builtin*; the verbs that draw on it are in the second table |
 
@@ -299,9 +305,9 @@ count in the first table instead.
 | Figure tooling, files and motion | M60, M75 | `annotation` `savefig` `saveas` `openfig` `hgsave` `hgload` `exportgraphics` `hgexport` `copygraphics` `getframe` `getappdata` `setappdata` `isappdata` `rmappdata` `linkprop` `refresh` `alpha` `alim` `alphamap` `rendererinfo` `comet` `comet3` `movie` `streamparticles` `interpstreamspeed` `pan` `datacursormode` `gtext` `rotate` and the five interactivity toggles — almost none of them draw: they work on what the other verbs drew, and each one that wants a window, a clipboard or a click has a defined answer without one |
 | String arrays | M63 | `strings` — the only *builtin* the M61–M68 language arc has added; the rest of M63 (`char` `strip` `pad` `erase` `insertAfter` `insertBefore` `extractAfter` `extractBefore` `extractBetween` `str2num`) is documented as *function* |
 
-### What the remaining 28 are
+### What the remaining 22 are
 
-**Every one of the 28 is excluded with a stated reason. Nothing here is waiting on a milestone, and
+**Every one of the 22 is excluded with a stated reason. Nothing here is waiting on a milestone, and
 nothing here draws.** That is the end of the arc: this section read 185 from M45 until M54 emptied
 two of the five families and most of a third, 131 until M55 took ten of the chart types, 120 until
 M56 took the angular family, 103 until M57 took the thirteen left, 90 until M58 took all sixteen
@@ -309,19 +315,22 @@ function plotters, 75 until M59 took twenty-one of the twenty-three volume names
 against the wrong denominator, as the correction at the top of this file records — until M60 took the
 thirty-one that were left.
 
-The 28 fall into five groups, and the reasons are of four kinds. **Six are the plot-tool verbs**
+The 22 fall into four groups, and the reasons are of three kinds. **Seven are the plot-tool verbs**
 (`plotedit` `plottools` `plotbrowser` `propertyeditor` `figurepalette` `showplottool`) plus
-`cameratoolbar` — seven in all — and they are excluded because JGraph's dockable plot browser and
+`cameratoolbar` — and they are excluded because JGraph's dockable plot browser and
 property inspector *are* these tools: a verb that opens one would have to open something that is
 already open. **Eight are geographic** (`geoaxes` `geobasemap` `geobubble`
 `geodensityplot` `geolimits` `geoplot` `geoscatter` `geotickformat`) and need a basemap tile service,
-which is a product rather than a feature. **Six are print and export dialogs** (`printdlg`
-`printpreview` `pagesetupdlg` `exportsetupdlg` `exportapp`) and `uiaxes`, which are app building —
-the same non-goal as the `ui*` family in the handle-graphics section. **Six are a chart container
+which is a product rather than a feature. **Six are a chart container
 whose whole content is a layout algorithm** (`wordcloud` `parallelplot` `bubblecloud` — three) or a
 machine JGraph does not run on (`graymon` `im2java` `spinmap` — three legacy names). **And one is a
 verb that needs something this build does not have**: `rbbox` needs a rubber-band drag, and describes
-a way of working the plot browser already offers. Seven plus eight plus six plus six plus one is 28.
+a way of working the plot browser already offers. Seven plus eight plus six plus one is 22.
+
+The group that used to stand between the geographic eight and the layout six was **the print and
+export dialogs plus `uiaxes`** — `printdlg` `printpreview` `pagesetupdlg` `exportsetupdlg`
+`exportapp` `uiaxes`, excluded as app building, the same non-goal as the `ui*` family. **M84 took all
+six**, and the paragraph below says why the grounds had gone.
 
 `refreshdata` stood beside them here until M77 for want of an `XDataSource`, which was the honest
 reason at the time and stopped being one the moment that family was implemented. It is the first name
@@ -334,6 +343,19 @@ The plot-tool exclusion is about verbs that *open a window* this build already h
 two do not open anything: they describe a strip of buttons over one axes. Once an axes had such a
 strip they had something to describe, and the grounds for excluding them had gone — so the plot-tool
 group is six verbs and a `cameratoolbar` rather than eight and one.
+
+**M84 took a whole group off rather than a name.** The print and export dialogs plus `uiaxes` were
+excluded as app building, and by M84 that had stopped being what they were. M71 built `uicontextmenu`
+and `uimenu` for the callback seam. M75 made every `Paper*` property real and wrote in its own header
+that they had waited for `print` and `saveas` rather than describing a page nothing ever printed on —
+and then nothing printed. M80 put a strip of buttons over an axes. So these six describe a figure this
+build already has: a page it can lay out, a window it can show, and an axes with one more colour on
+it than a plain one. `printdlg` opens the print dialog and prints; `printpreview` shows the page;
+`pagesetupdlg` and `exportsetupdlg` write the properties the picture verbs read; `exportapp` writes
+the window itself, chrome and all, which is the one export that goes through the control rather than
+the renderer and is therefore the one that can carry the toolbar M80 kept out of every other one.
+Five of the six want a window, and each refuses by name without one, saying which verb does the same
+job — which is what keeps a batch run free of a modal dialog. See ADR 0084.
 
 The two counts in that paragraph read "four" and "four" over lists of six and two until M61 corrected
 them. The totals were right and the labels were wrong, which is the same slip in miniature that the
@@ -392,12 +414,12 @@ in the table above and no longer listed here as well, which is where one of this
 double-counted names came from — the other was this family's own heading, which said twenty-two while
 listing twenty-three, and is corrected at the top of this file.
 
-**Handle graphics and figure tooling — 10 of 36 left.** M60 took twenty-three of this family and the
+**Handle graphics and figure tooling — 9 of 36 left.** M60 took twenty-three of this family and the
 list here is now only what remains: `plotedit` `plottools` `plotbrowser` `propertyeditor`
-`figurepalette` `showplottool` `cameratoolbar` `uiaxes` `geoaxes` `rbbox`
-— every one of them excluded with a reason in the 28 above, and most of them addressing an editing
+`figurepalette` `showplottool` `cameratoolbar` `geoaxes` `rbbox`
+— every one of them excluded with a reason in the 22 above, and most of them addressing an editing
 surface JGraph already has in the plot browser and inspector. `refreshdata` left this list in M77,
-and `axtoolbar` and `axtoolbarbtn` in M80.
+`axtoolbar` and `axtoolbarbtn` in M80, and `uiaxes` in M84.
 
 The seventeen names this paragraph went on listing after M60 registered them — `alim` `alpha`
 `alphamap` `annotation` `getframe` `getappdata` `isappdata` `linkprop` `openfig` `savefig` `hgload`

@@ -234,6 +234,9 @@ public partial class App : System.Windows.Application
         services.AddSingleton<IFigureDocumentService, FigureDocumentService>();
         services.AddSingleton<IDataImportService, DataImportService>();
 
+        // The print and page dialogs (M84), beside the export and document services they sit with.
+        services.AddSingleton<IFigurePrintService, Printing.FigurePrintService>();
+
         // Scripting engines: C#, JGS and MATLAB are always available; Python is available when a
         // CPython runtime is found. JGS reads the user's language options on each run.
         services.AddSingleton<IScriptEngine, CSharpScriptEngine>();

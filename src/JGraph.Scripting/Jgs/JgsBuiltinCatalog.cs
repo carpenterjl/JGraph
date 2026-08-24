@@ -1,4 +1,4 @@
-﻿using System.Text;
+using System.Text;
 
 namespace JGraph.Scripting.Jgs;
 
@@ -577,16 +577,30 @@ public static class JgsBuiltinCatalog
         Add("days", "A duration of x days, or how many days a duration is.", P("x"));
         Add("years", "A duration of x average years (365.2425 days), or how many a duration is.", P("x"));
         Add("milliseconds", "A duration of x milliseconds, or how many milliseconds a duration is.", P("x"));
-        Add("caldays", "A duration of x days — a calendar day and a day are the same length here.", P("x"));
-        Add("calweeks", "A duration of x weeks.", P("x"));
-        Add("calmonths", "Refuses: a month is not a fixed length, so JGraph has no calendarDuration.", P("x"));
-        Add("calyears", "Refuses: a year is not a fixed length, so JGraph has no calendarDuration.", P("x"));
-        Add("calquarters", "Refuses: a quarter is not a fixed length, so JGraph has no calendarDuration.", P("x"));
-        Add("calendarDuration", "Refuses: JGraph has no calendarDuration; use days, hours or dateshift.", P("x"));
+        Add("microseconds", "A duration of x microseconds, or how many microseconds a duration is.", P("x"));
+        Add("nanoseconds", "A duration of x nanoseconds, or how many nanoseconds a duration is.", P("x"));
+
+        // The calendar units (M82). A month is not a count of milliseconds, so these answer with a
+        // calendarDuration — three components that stay apart, because adding a month then a day is
+        // not the same moment as adding a day then a month.
+        Add("caldays", "A calendarDuration of x days.", P("x"));
+        Add("calweeks", "A calendarDuration of x weeks.", P("x"));
+        Add("calmonths", "A calendarDuration of x months — a month, whatever length that month is.", P("x"));
+        Add("calyears", "A calendarDuration of x years.", P("x"));
+        Add("calquarters", "A calendarDuration of x quarters.", P("x"));
+        Add("calendarDuration", "A calendar length from years, months and days (optionally hours, minutes, seconds).", P("years"), P("months"), P("days"), Opt("hours"), Opt("minutes"), Opt("seconds"));
+        Add("caldiff", "The calendar differences between successive moments of a datetime.", P("t"), Opt("components"));
+        Add("between", "The calendar duration between two datetimes, in the components asked for.", P("from"), P("to"), Opt("components"));
         Add("isdatetime", "True for a datetime.", P("value"));
         Add("isduration", "True for a duration.", P("value"));
-        Add("iscalendarduration", "Always false — JGraph has no calendarDuration type.", P("value"));
+        Add("iscalendarduration", "True for a calendarDuration.", P("value"));
         Add("isnat", "True for each element of a datetime that is NaT.", P("t"));
+
+        // Time zones (M82). A zoned datetime stores the instant and reads as the wall clock its zone
+        // shows, so these three are what a script asks about the lens rather than about the moment.
+        Add("tzoffset", "The offset from UTC of each moment of a zoned datetime, as a duration.", P("t"));
+        Add("isdst", "True for each moment of a zoned datetime that falls in daylight saving time.", P("t"));
+        Add("timezones", "The time zone names this machine accepts, optionally filtered by a substring.", Opt("area"));
 
         // The field accessors, conversions and boundary moves (M64).
         Add("year", "The year of each moment of a datetime.", P("t"));
@@ -604,7 +618,6 @@ public static class JgsBuiltinCatalog
         Add("timeofday", "The duration since midnight of each moment of a datetime.", P("t"));
         Add("dateshift", "Moves each moment to the start or end of a unit: dateshift(t, 'start', 'month', offset?).", P("t"), P("where"), P("unit"), Opt("offset"));
         Add("isbetween", "True for each moment that falls within the two bounds, inclusive.", P("t"), P("lower"), P("upper"));
-        Add("between", "Refuses: it answers with a calendarDuration; subtract the datetimes instead.", P("a"), P("b"));
         Add("posixtime", "Seconds since 1970-01-01 UTC for each moment of a datetime.", P("t"));
         Add("exceltime", "The Excel serial date number for each moment of a datetime.", P("t"));
         Add("juliandate", "The Julian date for each moment of a datetime.", P("t"));
@@ -1809,7 +1822,16 @@ public static class JgsBuiltinCatalog
         Add("hgsave", "Saves a figure to a file; the older spelling of savefig.", Opt("h"), P("filename"));
         Add("openfig", "Reads a saved figure back and returns a handle to it: h = openfig('name.fig').", P("filename"), Opt("mode"));
         Add("hgload", "Reads a saved figure back; the older spelling of openfig.", P("filename"));
-        Add("saveas", "Writes a figure to a file, format by extension or by name: saveas(gcf, 'plot.png') or saveas(gcf, 'plot', 'pdf'). A .fig writes the document rather than a picture.", Opt("h"), P("filename"), Opt("format"));
+        // The print and export dialogs, and uiaxes (M84) — the six names that stood on the graphics
+        // exclusion list as "app building" until the figure they describe turned out to be this one.
+        Add("printdlg", "Opens the print dialog and prints the figure; printdlg('-setup', fig) opens page setup.", Opt("fig"));
+        Add("printpreview", "Shows the page the figure would print on, with a button to print it.", Opt("fig"));
+        Add("pagesetupdlg", "Opens the page-setup dialog, writing the figure's Paper* properties.", Opt("fig"));
+        Add("exportsetupdlg", "Opens the export-setup dialog, writing the settings the picture verbs fall back on.", Opt("fig"));
+        Add("exportapp", "Writes the window — chrome and all — to an image file.", P("fig"), P("file"));
+        Add("uiaxes", "An axes with the app-building defaults: a visible toolbar and a BackgroundColor of its own.", Opt("parent"), Opt("name"), Opt("value"));
+
+        Add("saveas","Writes a figure to a file, format by extension or by name: saveas(gcf, 'plot.png') or saveas(gcf, 'plot', 'pdf'). A .fig writes the document rather than a picture.", Opt("h"), P("filename"), Opt("format"));
         Add("exportgraphics", "Writes a figure to an image or document, format by extension: exportgraphics(gcf, 'plot.pdf', 'ContentType', 'vector').", Opt("h"), P("filename"), Opt("name"), Opt("value"));
         Add("hgexport", "Writes a figure to a file; the older spelling of exportgraphics.", Opt("h"), P("filename"));
         Add("copygraphics", "Puts a figure on the clipboard as an image: copygraphics(gcf, 'Resolution', 300).", Opt("h"), Opt("name"), Opt("value"));
