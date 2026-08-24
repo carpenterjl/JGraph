@@ -15,7 +15,7 @@ internal static class PlotMapper
         {
             LinePlot p => new LinePlotDto
             {
-                MarkerEdge = p.MarkerEdge,
+                MarkerEdgeColor = p.MarkerEdgeColor,
                 MarkerIndices = p.MarkerIndices,
                 LineJoin = p.LineJoin,
                 AlignVertexCenters = p.AlignVertexCenters,
@@ -26,7 +26,7 @@ internal static class PlotMapper
                 Steps = p.Steps,
                 Marker = p.Marker,
                 MarkerSize = p.MarkerSize,
-                MarkerFill = p.MarkerFill,
+                MarkerFaceColor = p.MarkerFaceColor,
             },
             ScatterPlot p => new ScatterPlotDto
             {
@@ -159,8 +159,8 @@ internal static class PlotMapper
                 DashStyle = p.DashStyle,
                 Marker = p.Marker,
                 MarkerSize = p.MarkerSize,
-                MarkerFill = p.MarkerFill,
-                MarkerEdge = p.MarkerEdge,
+                MarkerFaceColor = p.MarkerFaceColor,
+                MarkerEdgeColor = p.MarkerEdgeColor,
                 BaseLine = ToDto(p.BaseLine),
             },
             HistogramPlot p => new HistogramPlotDto
@@ -205,7 +205,7 @@ internal static class PlotMapper
                 ErrorLeft = p.ErrorLeft,
                 ErrorRight = p.ErrorRight,
                 DashStyle = p.DashStyle,
-                MarkerEdge = p.MarkerEdge,
+                MarkerEdgeColor = p.MarkerEdgeColor,
                 Series = DtoConvert.ToDto(p.Data),
                 ErrorNeg = p.ErrorNeg.ToArray(),
                 ErrorPos = p.ErrorPos.ToArray(),
@@ -215,7 +215,7 @@ internal static class PlotMapper
                 ShowLine = p.ShowLine,
                 Marker = p.Marker,
                 MarkerSize = p.MarkerSize,
-                MarkerFill = p.MarkerFill,
+                MarkerFaceColor = p.MarkerFaceColor,
             },
             ImagePlot p => new ImagePlotDto
             {
@@ -269,8 +269,8 @@ internal static class PlotMapper
                 EdgeDash = p.EdgeDash,
                 Marker = p.Marker,
                 MarkerSize = p.MarkerSize,
-                MarkerEdge = p.MarkerEdge,
-                MarkerFill = p.MarkerFill,
+                MarkerEdgeColor = p.MarkerEdgeColor,
+                MarkerFaceColor = p.MarkerFaceColor,
                 AlphaDataMapping = p.AlphaDataMapping,
                 CDataMapping = p.CDataMapping,
                 EdgeLighting = p.EdgeLighting,
@@ -327,7 +327,8 @@ internal static class PlotMapper
                 DashStyle = p.DashStyle,
                 Marker = p.Marker,
                 MarkerSize = p.MarkerSize,
-                MarkerFill = p.MarkerFill,
+                MarkerFaceColor = p.MarkerFaceColor,
+                MarkerEdgeColor = p.MarkerEdgeColor,
             },
             Scatter3DPlot p => new Scatter3DPlotDto
             {
@@ -364,7 +365,8 @@ internal static class PlotMapper
                 Baseline = p.Baseline,
                 Marker = p.Marker,
                 MarkerSize = p.MarkerSize,
-                MarkerFill = p.MarkerFill,
+                MarkerFaceColor = p.MarkerFaceColor,
+                MarkerEdgeColor = p.MarkerEdgeColor,
             },
             Bar3DPlot p => new Bar3DPlotDto
             {
@@ -419,8 +421,8 @@ internal static class PlotMapper
                 LineJoin = p.LineJoin,
                 Marker = p.Marker,
                 MarkerSize = p.MarkerSize,
-                MarkerEdge = p.MarkerEdge,
-                MarkerFill = p.MarkerFill,
+                MarkerEdgeColor = p.MarkerEdgeColor,
+                MarkerFaceColor = p.MarkerFaceColor,
                 VertexAlpha = p.VertexAlpha?.ToArray(),
                 AlphaDataMapping = p.AlphaDataMapping,
                 CDataMapping = p.CDataMapping,
@@ -448,8 +450,8 @@ internal static class PlotMapper
                 Marker = p.Marker,
                 MarkerManual = p.MarkerManual,
                 MarkerSize = p.MarkerSize,
-                MarkerEdge = p.MarkerEdge,
-                MarkerFill = p.MarkerFill,
+                MarkerEdgeColor = p.MarkerEdgeColor,
+                MarkerFaceColor = p.MarkerFaceColor,
                 AlignVertexCenters = p.AlignVertexCenters,
                 XImplied = p.XImplied,
                 YImplied = p.YImplied,
@@ -490,7 +492,7 @@ internal static class PlotMapper
         {
             LinePlotDto d => new LinePlot(DtoConvert.ToSeries(d.Series))
             {
-                MarkerEdge = d.MarkerEdge,
+                MarkerEdgeColor = d.MarkerEdgeColor,
                 MarkerIndices = d.MarkerIndices,
                 LineJoin = d.LineJoin,
                 AlignVertexCenters = d.AlignVertexCenters,
@@ -500,7 +502,7 @@ internal static class PlotMapper
                 Steps = d.Steps,
                 Marker = d.Marker,
                 MarkerSize = d.MarkerSize,
-                MarkerFill = d.MarkerFill,
+                MarkerFaceColor = d.MarkerFaceColor,
             },
             ScatterPlotDto d => new ScatterPlot(DtoConvert.ToSeries(d.Series))
             {
@@ -594,14 +596,14 @@ internal static class PlotMapper
                 ErrorLeft = d.ErrorLeft,
                 ErrorRight = d.ErrorRight,
                 DashStyle = d.DashStyle,
-                MarkerEdge = d.MarkerEdge,
+                MarkerEdgeColor = d.MarkerEdgeColor,
                 Color = d.Color,
                 LineWidth = d.LineWidth,
                 CapSize = d.CapSize,
                 ShowLine = d.ShowLine,
                 Marker = d.Marker,
                 MarkerSize = d.MarkerSize,
-                MarkerFill = d.MarkerFill,
+                MarkerFaceColor = d.MarkerFaceColor,
             },
             ImagePlotDto d => new ImagePlot(To2D(d.Values))
             {
@@ -663,7 +665,8 @@ internal static class PlotMapper
                 DashStyle = d.DashStyle,
                 Marker = d.Marker,
                 MarkerSize = d.MarkerSize,
-                MarkerFill = d.MarkerFill,
+                MarkerFaceColor = d.MarkerFaceColor,
+                MarkerEdgeColor = d.MarkerEdgeColor,
             },
             Scatter3DPlotDto d => new Scatter3DPlot(d.X, d.Y, d.Z)
             {
@@ -694,7 +697,8 @@ internal static class PlotMapper
                 Baseline = d.Baseline,
                 Marker = d.Marker,
                 MarkerSize = d.MarkerSize,
-                MarkerFill = d.MarkerFill,
+                MarkerFaceColor = d.MarkerFaceColor,
+                MarkerEdgeColor = d.MarkerEdgeColor,
             },
             Bar3DPlotDto d => new Bar3DPlot(To2D(d.ZData))
             {
@@ -740,8 +744,8 @@ internal static class PlotMapper
                 LineJoin = d.LineJoin,
                 Marker = d.Marker,
                 MarkerSize = d.MarkerSize,
-                MarkerEdge = d.MarkerEdge,
-                MarkerFill = d.MarkerFill,
+                MarkerEdgeColor = d.MarkerEdgeColor,
+                MarkerFaceColor = d.MarkerFaceColor,
                 VertexAlpha = d.VertexAlpha,
                 AlphaDataMapping = d.AlphaDataMapping,
                 CDataMapping = d.CDataMapping,
@@ -761,8 +765,8 @@ internal static class PlotMapper
                 LineDash = d.LineDash,
                 Marker = d.Marker,
                 MarkerSize = d.MarkerSize,
-                MarkerEdge = d.MarkerEdge,
-                MarkerFill = d.MarkerFill,
+                MarkerEdgeColor = d.MarkerEdgeColor,
+                MarkerFaceColor = d.MarkerFaceColor,
                 AlignVertexCenters = d.AlignVertexCenters,
 
                 // After the two style setters, which raise these flags as a side effect of being used.
@@ -907,8 +911,8 @@ internal static class PlotMapper
             DashStyle = d.DashStyle,
             Marker = d.Marker,
             MarkerSize = d.MarkerSize,
-            MarkerFill = d.MarkerFill,
-            MarkerEdge = d.MarkerEdge,
+            MarkerFaceColor = d.MarkerFaceColor,
+            MarkerEdgeColor = d.MarkerEdgeColor,
         };
         Apply(d.BaseLine, stem.BaseLine);
         return stem;
@@ -1011,8 +1015,8 @@ internal static class PlotMapper
         surface.EdgeDash = d.EdgeDash;
         surface.Marker = d.Marker;
         surface.MarkerSize = d.MarkerSize;
-        surface.MarkerEdge = d.MarkerEdge;
-        surface.MarkerFill = d.MarkerFill;
+        surface.MarkerEdgeColor = d.MarkerEdgeColor;
+        surface.MarkerFaceColor = d.MarkerFaceColor;
         surface.AlphaDataMapping = d.AlphaDataMapping;
         surface.CDataMapping = d.CDataMapping;
         surface.EdgeLighting = d.EdgeLighting;
@@ -1101,8 +1105,8 @@ internal static class PlotMapper
         LineJoin = wedges.LineJoin,
         Marker = wedges.Marker,
         MarkerSize = wedges.MarkerSize,
-        MarkerEdge = wedges.MarkerEdge,
-        MarkerFill = wedges.MarkerFill,
+        MarkerEdgeColor = wedges.MarkerEdgeColor,
+        MarkerFaceColor = wedges.MarkerFaceColor,
         ColorData = wedges.ColorData?.ToArray(),
         VertexAlpha = wedges.VertexAlpha,
         AlphaDataMapping = wedges.AlphaDataMapping,
@@ -1137,8 +1141,8 @@ internal static class PlotMapper
         wedges.LineJoin = stored.LineJoin;
         wedges.Marker = stored.Marker;
         wedges.MarkerSize = stored.MarkerSize;
-        wedges.MarkerEdge = stored.MarkerEdge;
-        wedges.MarkerFill = stored.MarkerFill;
+        wedges.MarkerEdgeColor = stored.MarkerEdgeColor;
+        wedges.MarkerFaceColor = stored.MarkerFaceColor;
         wedges.ColorData = stored.ColorData;
         wedges.VertexAlpha = stored.VertexAlpha;
         wedges.AlphaDataMapping = stored.AlphaDataMapping;

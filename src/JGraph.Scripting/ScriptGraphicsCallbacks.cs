@@ -118,6 +118,19 @@ public static class ScriptGraphicsCallbacks
             figure.CurrentCharacter = character;
         }
 
+        // Told whether or not anybody is listening, because the verbs that wait for a key have to
+        // hear it without a KeyPressFcn being present — which is exactly what the callback queue
+        // below will not carry, since it only ever holds events something has a callback for.
+        if (pressed)
+        {
+            ScriptInputWatch.Record(new ScriptInput(
+                ScriptInputKind.Key,
+                character,
+                0,
+                figure.CurrentPointPx?.X ?? 0,
+                figure.CurrentPointPx?.Y ?? 0));
+        }
+
         GraphicsEventKind own = pressed ? GraphicsEventKind.KeyPress : GraphicsEventKind.KeyRelease;
         GraphicsEventKind window = pressed ? GraphicsEventKind.WindowKeyPress : GraphicsEventKind.WindowKeyRelease;
         foreach (GraphicsEventKind kind in (ReadOnlySpan<GraphicsEventKind>)[own, window])
@@ -144,6 +157,10 @@ public static class ScriptGraphicsCallbacks
         if (pressed)
         {
             figure.SelectionType = selection;
+
+            // As for a key: heard whether or not anything has a callback for it.
+            ScriptInputWatch.Record(new ScriptInput(
+                ScriptInputKind.Button, string.Empty, ButtonNumber(selection), pixel.X, pixel.Y));
         }
 
         GraphicsEventKind kind = pressed
@@ -154,6 +171,18 @@ public static class ScriptGraphicsCallbacks
             ScriptEventQueue.Enqueue(new GraphicsEvent(kind, figure, Location: pixel));
         }
     }
+
+    /// <summary>
+    /// Which button <c>ginput</c> reports for a gesture. MATLAB numbers them 1, 2, 3 for left,
+    /// middle and right; a shift-click is the middle button's gesture and a ctrl-click the right's,
+    /// which is the same mapping <c>SelectionType</c> already describes in words.
+    /// </summary>
+    private static int ButtonNumber(SelectionKind selection) => selection switch
+    {
+        SelectionKind.Extend => 2,
+        SelectionKind.Alt => 3,
+        _ => 1,
+    };
 
     /// <summary>
     /// Reports the pointer moving over a figure. The position is recorded whether or not anyone is

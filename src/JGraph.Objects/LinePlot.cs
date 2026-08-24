@@ -97,7 +97,7 @@ public sealed class LinePlot : XYPlot, IDrawable, ILegendItem
 
     /// <summary>Marker interior color, or null for open (unfilled) markers.</summary>
     [Category("Appearance"), DisplayName("Marker fill")]
-    public Color? MarkerFill
+    public Color? MarkerFaceColor
     {
         get => _markerFill;
         set => SetProperty(ref _markerFill, value, InvalidationKind.Render);
@@ -105,7 +105,7 @@ public sealed class LinePlot : XYPlot, IDrawable, ILegendItem
 
     /// <summary>Marker outline color, or null to draw it in the line's own colour.</summary>
     [Category("Appearance"), DisplayName("Marker edge")]
-    public Color? MarkerEdge
+    public Color? MarkerEdgeColor
     {
         get => _markerEdge;
         set => SetProperty(ref _markerEdge, value, InvalidationKind.Render);

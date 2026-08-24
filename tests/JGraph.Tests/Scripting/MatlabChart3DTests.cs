@@ -60,7 +60,7 @@ public class MatlabChart3DTests : IDisposable
             disp(get(h, 'BaseValue'));
 
             % 'filled' means the marker takes the stem's colour inside, whatever the spec made it.
-            disp(get(h, 'MarkerFill'));
+            disp(get(h, 'MarkerFaceColor'));
             """);
 
         Assert.Equal(

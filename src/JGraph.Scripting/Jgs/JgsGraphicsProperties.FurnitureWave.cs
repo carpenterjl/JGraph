@@ -335,10 +335,10 @@ internal static partial class JgsGraphicsProperties
             (entry, marker) => Sheet(entry).Marker = marker,
             entry => Sheet(entry).MarkerSize,
             (entry, size) => Sheet(entry).MarkerSize = size,
-            entry => Sheet(entry).MarkerEdge,
-            (entry, ink) => Sheet(entry).MarkerEdge = ink,
-            entry => Sheet(entry).MarkerFill,
-            (entry, ink) => Sheet(entry).MarkerFill = ink);
+            entry => Sheet(entry).MarkerEdgeColor,
+            (entry, ink) => Sheet(entry).MarkerEdgeColor = ink,
+            entry => Sheet(entry).MarkerFaceColor,
+            (entry, ink) => Sheet(entry).MarkerFaceColor = ink);
 
         AddWordProperty(table, "EdgeLighting",
             entry => LightingWord(Sheet(entry).EdgeLighting),
@@ -455,10 +455,10 @@ internal static partial class JgsGraphicsProperties
             (entry, marker) => Field(entry).Marker = marker,
             entry => Field(entry).MarkerSize,
             (entry, size) => Field(entry).MarkerSize = size,
-            entry => Field(entry).MarkerEdge,
-            (entry, ink) => Field(entry).MarkerEdge = ink,
-            entry => Field(entry).MarkerFill,
-            (entry, ink) => Field(entry).MarkerFill = ink);
+            entry => Field(entry).MarkerEdgeColor,
+            (entry, ink) => Field(entry).MarkerEdgeColor = ink,
+            entry => Field(entry).MarkerFaceColor,
+            (entry, ink) => Field(entry).MarkerFaceColor = ink);
 
         Put(table, "AlignVertexCenters",
             entry => OnOff(Field(entry).AlignVertexCenters),
@@ -684,10 +684,10 @@ internal static partial class JgsGraphicsProperties
             (entry, marker) => Shape(entry).Marker = marker,
             entry => Shape(entry).MarkerSize,
             (entry, size) => Shape(entry).MarkerSize = size,
-            entry => Shape(entry).MarkerEdge,
-            (entry, ink) => Shape(entry).MarkerEdge = ink,
-            entry => Shape(entry).MarkerFill,
-            (entry, ink) => Shape(entry).MarkerFill = ink);
+            entry => Shape(entry).MarkerEdgeColor,
+            (entry, ink) => Shape(entry).MarkerEdgeColor = ink,
+            entry => Shape(entry).MarkerFaceColor,
+            (entry, ink) => Shape(entry).MarkerFaceColor = ink);
 
         AddWordProperty(table, "EdgeLighting",
             entry => LightingWord(Shape(entry).EdgeLighting),

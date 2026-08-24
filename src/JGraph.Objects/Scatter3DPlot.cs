@@ -437,6 +437,26 @@ public sealed class Scatter3DPlot : PlotObject, I3DDrawable, IHasZData, ILegendI
     }
 
     /// <inheritdoc />
+    /// <remarks>
+    /// M87. Picked at the drawn positions, jitter included — a swarm chart moves its points on
+    /// purpose, and a click has to land where the point is rather than where its data says it would
+    /// have been.
+    /// </remarks>
+    public override PlotHitResult? HitTest3D(
+        Point2D pixelPoint, ISpatialMapper projector, double tolerancePixels)
+    {
+        ArgumentNullException.ThrowIfNull(projector);
+        if (SpatialPicking.NearestPoint(
+                pixelPoint, projector, DrawnX, DrawnY, DrawnZ, tolerancePixels)
+            is not var (index, distance, depth))
+        {
+            return null;
+        }
+
+        return new PlotHitResult(this, new Point2D(_x[index], _y[index]), distance, index, depth);
+    }
+
+    /// <inheritdoc />
     public LegendKey GetLegendKey(Color seriesColor)
     {
         Color color = _color ?? seriesColor;

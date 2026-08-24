@@ -142,9 +142,8 @@ pass, and a script building a hundred-frame animation never holds more than one 
   Unicode has no raised form for it.
 - **`'latex'` is read as the TeX subset with the maths delimiters dropped.** It covers the symbol and
   script markup the two languages share, which is what almost every axis label uses it for.
-- **`slice` draws axis-aligned planes only.** MATLAB's slicing-*surface* form —
-  `slice(X, Y, Z, V, XI, YI, ZI)` with three matrices — is not drawn, and the trailing
-  interpolation-method word is checked and then read linearly whichever of the three it names.
+- **`slice`'s trailing interpolation-method word is checked and then read linearly** whichever of the
+  three it names.
 - **There is no `VideoWriter`.** GIF is now the way a script saves an animation; a real video
   container needs a codec this build does not carry.
 - **An appended GIF frame must match the first frame's size.** The size a viewer shows is fixed by
@@ -154,15 +153,27 @@ pass, and a script building a hundred-frame animation never holds more than one 
   None of the other formats written here is an indexed one, so the picture is saved as the colours it
   then has — the same picture.
 
+**Retired by M85, and deleted from the list above rather than struck through** (the harvest lifts a
+struck-through bullet whole): *"`slice` draws axis-aligned planes only"*. ADR 0085 built the slicing
+surface, and found on the way that the form did not refuse — handed three matrices it read them as
+seventy-two scalar plane positions and drew a hundred and eight patches, under a probe verdict of
+`accepted`.
+
 ## What is not done
 
 - **3-D picking.** A click on a `surf` still resolves to the axes; carried from ADR 0071 and still
-  the natural core of an interaction wave.
-- **Window-level mouse and key callbacks.** Also carried from 0071.
+  the natural core of an interaction wave. *(Done in M87; see ADR 0087.)*
+- **Window-level mouse and key callbacks.** Also carried from 0071. *(M75 built the whole family —
+  this line was already false when it was written, and ADR 0087 records how long it stood.)*
 - **The axes property families** — camera, rulers, layout — remain the largest single block in the
   property table, 94 names on the axes alone.
 - **`MarkerFaceColor`/`MarkerEdgeColor`** are spelled `MarkerFill` here; found while probing `'none'`
   across the kinds, and left because it is a naming pass rather than this milestone's subject.
+  *(Done in M86 — which found that the two JGraph spellings were being served as properties in their
+  own right, and that the charts in space answered neither MATLAB name at all; see ADR 0086.)*
+- **`streamslice`'s three spatial forms** error on the verb's own arity — nine arguments handed to
+  something that accepts eight. *(Done in M85, which took the verb to 10 of its 10 documented forms;
+  see ADR 0085.)*
 - **The ~55 numeric/file form leftovers** (`fft(X, n, dim)`, `eig(A, B)`, `lu` output forms,
   `textscan`), carried from ADR 0070 and still a clean standalone wave.
 

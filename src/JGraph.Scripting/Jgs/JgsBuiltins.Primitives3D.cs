@@ -30,6 +30,10 @@ internal static partial class JgsBuiltins
     private static readonly HashSet<string> LineOptionNames = new(StringComparer.OrdinalIgnoreCase)
     {
         "Color", "LineWidth", "LineStyle", "Marker", "MarkerSize", "DisplayName",
+
+        // M86. plot3 and line make Line objects, and MATLAB documents both marker colours for a
+        // Line — so a call that named either of them was refused by a verb that draws markers.
+        "MarkerFaceColor", "MarkerEdgeColor",
     };
 
     private static readonly HashSet<string> TextOptionNames = new(StringComparer.OrdinalIgnoreCase)
@@ -783,6 +787,12 @@ internal static partial class JgsBuiltins
             case "markersize":
                 plot.MarkerSize = NumOf($"{verb}: MarkerSize", value, line, col);
                 break;
+            case "markerfacecolor":
+                plot.MarkerFaceColor = NoneOrOptionColor(value, line, col, verb);
+                break;
+            case "markeredgecolor":
+                plot.MarkerEdgeColor = OptionColor(value, line, col, verb);
+                break;
             case "displayname":
                 plot.DisplayName = StrOf($"{verb}: DisplayName", value, line, col);
                 break;
@@ -809,11 +819,27 @@ internal static partial class JgsBuiltins
             case "markersize":
                 plot.MarkerSize = NumOf($"{verb}: MarkerSize", value, line, col);
                 break;
+            case "markerfacecolor":
+                plot.MarkerFaceColor = NoneOrOptionColor(value, line, col, verb);
+                break;
+            case "markeredgecolor":
+                plot.MarkerEdgeColor = OptionColor(value, line, col, verb);
+                break;
             case "displayname":
                 plot.DisplayName = StrOf($"{verb}: DisplayName", value, line, col);
                 break;
         }
     }
+
+    /// <summary>
+    /// A marker fill, where <c>'none'</c> is an unfilled marker rather than a colour — the same
+    /// reading the property table gives the name, so a verb and a <c>set</c> agree.
+    /// </summary>
+    private static Color? NoneOrOptionColor(JgsValue value, int line, int col, string verb) =>
+        value.Type == JgsType.String
+        && value.AsString.Equals("none", StringComparison.OrdinalIgnoreCase)
+            ? null
+            : OptionColor(value, line, col, verb);
 
     // --- shared argument reading --------------------------------------------------------------
 

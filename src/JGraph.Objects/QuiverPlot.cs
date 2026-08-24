@@ -248,7 +248,7 @@ public sealed class QuiverPlot : PlotObject, IDrawable, I3DDrawable, IHasZData, 
 
     /// <summary>The tail markers' outline, or null to follow the arrows' own colour.</summary>
     [Category("Appearance"), DisplayName("Marker edge")]
-    public Color? MarkerEdge
+    public Color? MarkerEdgeColor
     {
         get => _markerEdge;
         set => SetProperty(ref _markerEdge, value, InvalidationKind.Render);
@@ -256,7 +256,7 @@ public sealed class QuiverPlot : PlotObject, IDrawable, I3DDrawable, IHasZData, 
 
     /// <summary>The tail markers' fill, or null for a hollow marker.</summary>
     [Category("Appearance"), DisplayName("Marker fill")]
-    public Color? MarkerFill
+    public Color? MarkerFaceColor
     {
         get => _markerFill;
         set => SetProperty(ref _markerFill, value, InvalidationKind.Render);

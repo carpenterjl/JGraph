@@ -53,6 +53,32 @@ internal static partial class JgsGraphicsProperties
             AddScatterSourceBlock(table, spatial: true);
         }
 
+        // M86: plot3 and stem3 make the same MATLAB classes plot and stem make — Line and Stem — so
+        // the two marker colours belong on them for the same reason and behave the same way,
+        // 'none' included. Reflection alone would serve the names now that the model spells them
+        // MATLAB's way, but not the word, and a colour property that refuses 'none' is the half-fix.
+        if (typeof(Line3DPlot).IsAssignableFrom(type))
+        {
+            AddSpatialMarkerColours(table,
+                entry => (Line3DPlot)entry.Target,
+                static plot => plot.MarkerFaceColor,
+                static (plot, ink) => plot.MarkerFaceColor = ink,
+                static plot => plot.MarkerEdgeColor ?? plot.Color,
+                static (plot, ink) => plot.MarkerEdgeColor = ink,
+                "line");
+        }
+
+        if (typeof(Stem3DPlot).IsAssignableFrom(type))
+        {
+            AddSpatialMarkerColours(table,
+                entry => (Stem3DPlot)entry.Target,
+                static plot => plot.MarkerFaceColor,
+                static (plot, ink) => plot.MarkerFaceColor = ink,
+                static plot => plot.MarkerEdgeColor ?? plot.Color,
+                static (plot, ink) => plot.MarkerEdgeColor = ink,
+                "stem");
+        }
+
         if (typeof(StemPlot).IsAssignableFrom(type))
         {
             AddColorMode(table,
@@ -244,6 +270,33 @@ internal static partial class JgsGraphicsProperties
     // --- Lines, stairs and error bars -----------------------------------------------------------
 
     /// <summary>
+    /// The two marker colours on a chart in space, reading and writing exactly as their flat
+    /// counterparts do — <c>'none'</c> is an unfilled marker, and an unset edge falls back to the
+    /// series' own colour rather than answering nothing.
+    /// </summary>
+    private static void AddSpatialMarkerColours<T>(
+        IDictionary<string, GraphicsProperty> table,
+        Func<JgsHandleEntry, T> target,
+        Func<T, Color?> readFill,
+        Action<T, Color?> writeFill,
+        Func<T, Color?> readEdge,
+        Action<T, Color?> writeEdge,
+        string what)
+        where T : PlotObject
+    {
+        Put(table, "MarkerFaceColor",
+            entry => readFill(target(entry)) is { } fill ? ColorRow(fill) : JgsValue.Str("none"),
+            (entry, value, line, col) =>
+                writeFill(target(entry), NoneOrColor(value, line, col, what)));
+
+        Put(table, "MarkerEdgeColor",
+            entry => ColorRow(readEdge(target(entry))
+                ?? JgsBuiltins.PaletteColorFor(target(entry))),
+            (entry, value, line, col) =>
+                writeEdge(target(entry), JgsBuiltins.OptionColor(value, line, col, what)));
+    }
+
+    /// <summary>
     /// The line properties MATLAB names that this build either spelled differently or drew without
     /// letting anyone choose. Two of them were already modelled and rendered and simply had no name
     /// a script could reach them by: the marker's own edge colour, and the corner join.
@@ -252,15 +305,16 @@ internal static partial class JgsGraphicsProperties
     {
         static LinePlot Line(JgsHandleEntry entry) => (LinePlot)entry.Target;
 
-        // MarkerFill is what the model has always called it; the MATLAB name answers to the same
-        // slot, and 'none' is an unfilled marker rather than a colour.
+        // The model calls these what MATLAB calls them since M86; what this entry still adds over the
+        // reflected one is the word — 'none' is an unfilled marker rather than a colour, and no
+        // reflected colour property knows that.
         Put(table, "MarkerFaceColor",
-            entry => Line(entry).MarkerFill is { } fill ? ColorRow(fill) : JgsValue.Str("none"),
-            (entry, value, line, col) => Line(entry).MarkerFill = NoneOrColor(value, line, col, "line"));
+            entry => Line(entry).MarkerFaceColor is { } fill ? ColorRow(fill) : JgsValue.Str("none"),
+            (entry, value, line, col) => Line(entry).MarkerFaceColor = NoneOrColor(value, line, col, "line"));
         Put(table, "MarkerEdgeColor",
-            entry => ColorRow(Line(entry).MarkerEdge ?? Line(entry).Color
+            entry => ColorRow(Line(entry).MarkerEdgeColor ?? Line(entry).Color
                 ?? JgsBuiltins.PaletteColorFor(Line(entry))),
-            (entry, value, line, col) => Line(entry).MarkerEdge =
+            (entry, value, line, col) => Line(entry).MarkerEdgeColor =
                 JgsBuiltins.OptionColor(value, line, col, "line"));
 
         // Counted from one at the surface and from zero underneath, like every other index here.
@@ -374,13 +428,13 @@ internal static partial class JgsGraphicsProperties
             });
 
         Put(table, "MarkerFaceColor",
-            entry => Bars(entry).MarkerFill is { } fill ? ColorRow(fill) : JgsValue.Str("none"),
-            (entry, value, line, col) => Bars(entry).MarkerFill =
+            entry => Bars(entry).MarkerFaceColor is { } fill ? ColorRow(fill) : JgsValue.Str("none"),
+            (entry, value, line, col) => Bars(entry).MarkerFaceColor =
                 NoneOrColor(value, line, col, "errorbar"));
         Put(table, "MarkerEdgeColor",
-            entry => ColorRow(Bars(entry).MarkerEdge ?? Bars(entry).Color
+            entry => ColorRow(Bars(entry).MarkerEdgeColor ?? Bars(entry).Color
                 ?? JgsBuiltins.PaletteColorFor(Bars(entry))),
-            (entry, value, line, col) => Bars(entry).MarkerEdge =
+            (entry, value, line, col) => Bars(entry).MarkerEdgeColor =
                 JgsBuiltins.OptionColor(value, line, col, "errorbar"));
 
         AddNullableMode(table, "LineStyleMode",
@@ -587,16 +641,16 @@ internal static partial class JgsGraphicsProperties
             });
 
         Put(table, "MarkerFaceColor",
-            entry => Stem(entry).MarkerFill is { } fill ? ColorRow(fill) : JgsValue.Str("none"),
-            (entry, value, line, col) => Stem(entry).MarkerFill =
+            entry => Stem(entry).MarkerFaceColor is { } fill ? ColorRow(fill) : JgsValue.Str("none"),
+            (entry, value, line, col) => Stem(entry).MarkerFaceColor =
                 value.Type == JgsType.String
                 && value.AsString.Equals("none", StringComparison.OrdinalIgnoreCase)
                     ? null
                     : JgsBuiltins.OptionColor(value, line, col, "stem"));
         Put(table, "MarkerEdgeColor",
-            entry => ColorRow(Stem(entry).MarkerEdge ?? Stem(entry).Color
+            entry => ColorRow(Stem(entry).MarkerEdgeColor ?? Stem(entry).Color
                 ?? JgsBuiltins.PaletteColorFor(Stem(entry))),
-            (entry, value, line, col) => Stem(entry).MarkerEdge =
+            (entry, value, line, col) => Stem(entry).MarkerEdgeColor =
                 JgsBuiltins.OptionColor(value, line, col, "stem"));
 
         // The same two flags a line carries: solid and none are both defaults and choices, so

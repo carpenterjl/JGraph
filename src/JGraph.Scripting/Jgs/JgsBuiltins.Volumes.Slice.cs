@@ -22,9 +22,9 @@ namespace JGraph.Scripting.Jgs;
 /// picture MATLAB draws.
 /// </para>
 /// <para>
-/// Divergence: MATLAB also accepts a slicing <em>surface</em> — <c>slice(X, Y, Z, V, XI, YI, ZI)</c>
-/// with three matrices — and rotated planes through <c>surf</c> geometry. Only the axis-aligned plane
-/// form is drawn here; the trailing interpolation-method word is accepted and read linearly.
+/// M85 added the slicing <em>surface</em> — <c>slice(X, Y, Z, V, XI, YI, ZI)</c> with three matrices
+/// — which is the same patch built over a lattice somebody else chose rather than over one of the
+/// three the box has. The trailing interpolation-method word is accepted and read linearly.
 /// </para>
 /// </remarks>
 internal static partial class JgsBuiltins
@@ -83,6 +83,23 @@ internal static partial class JgsBuiltins
                 volume);
 
         int next = at + 1;
+
+        // Three matrices of one size are a surface to cut along rather than three lists of planes.
+        // Told apart by shape, because that is the only thing that tells them apart: a plane list is
+        // a scalar, a vector or an empty, and a surface is none of those.
+        if (IsSlicingSurface(args, next))
+        {
+            PatchPlot cut = CutSurface(
+                field,
+                Matrix("slice", args, next, line, col),
+                Matrix("slice", args, next + 1, line, col),
+                Matrix("slice", args, next + 2, line, col),
+                line,
+                col);
+            JG.Gca().Is3D = true;
+            return JgsValue.Array([Handle(cut)]);
+        }
+
         double[] sx = PlaneList("slice", args, next, line, col);
         double[] sy = PlaneList("slice", args, next + 1, line, col);
         double[] sz = PlaneList("slice", args, next + 2, line, col);
@@ -135,7 +152,6 @@ internal static partial class JgsBuiltins
         var x = new double[wide * tall];
         var y = new double[wide * tall];
         var z = new double[wide * tall];
-        var colours = new double[wide * tall];
 
         for (int r = 0; r < tall; r++)
         {
@@ -148,9 +164,62 @@ internal static partial class JgsBuiltins
                     Axis.Y => (across[c], at, down[r]),
                     _ => (across[c], down[r], at),
                 };
-
-                colours[v] = field.Sample(x[v], y[v], z[v]);
             }
+        }
+
+        return SampledPatch(field, x, y, z, wide, tall);
+    }
+
+    /// <summary>
+    /// <c>slice(X, Y, Z, V, XI, YI, ZI)</c>: the volume read along a surface a script drew itself,
+    /// which is how a cut that is not flat — or is flat but not square to the box — gets made.
+    /// </summary>
+    /// <remarks>
+    /// This is the same patch <see cref="CutPlane"/> builds, over a lattice of points somebody else
+    /// chose. The volume is read at each of them exactly as it is read on a plane, so a surface that
+    /// happens to lie in a plane draws the same picture the plane form draws.
+    /// </remarks>
+    private static PatchPlot CutSurface(
+        ScalarField field, double[,] xi, double[,] yi, double[,] zi, int line, int col)
+    {
+        int tall = xi.GetLength(0), wide = xi.GetLength(1);
+        if (yi.GetLength(0) != tall || yi.GetLength(1) != wide
+            || zi.GetLength(0) != tall || zi.GetLength(1) != wide)
+        {
+            throw new JgsRuntimeException(line, col,
+                "slice: a slicing surface is three matrices of one size — XI, YI and ZI give the "
+                + "three coordinates of the same lattice of points.");
+        }
+
+        var x = new double[wide * tall];
+        var y = new double[wide * tall];
+        var z = new double[wide * tall];
+        for (int r = 0; r < tall; r++)
+        {
+            for (int c = 0; c < wide; c++)
+            {
+                int v = (r * wide) + c;
+                x[v] = xi[r, c];
+                y[v] = yi[r, c];
+                z[v] = zi[r, c];
+            }
+        }
+
+        return SampledPatch(field, x, y, z, wide, tall);
+    }
+
+    /// <summary>
+    /// A lattice of points, coloured by what the volume reads at each of them. Sampling on a grid
+    /// rather than on one of our own is what makes the picture agree with the volume everywhere the
+    /// volume was measured.
+    /// </summary>
+    private static PatchPlot SampledPatch(
+        ScalarField field, double[] x, double[] y, double[] z, int wide, int tall)
+    {
+        var colours = new double[x.Length];
+        for (int v = 0; v < x.Length; v++)
+        {
+            colours[v] = field.Sample(x[v], y[v], z[v]);
         }
 
         var faces = new int[(wide - 1) * (tall - 1)][];
@@ -173,6 +242,30 @@ internal static partial class JgsBuiltins
         patch.EdgeColor = null;
         patch.Name = "Slice";
         return patch;
+    }
+
+    /// <summary>
+    /// Whether the three arguments naming where to cut are a surface rather than three plane lists.
+    /// A plane list is a scalar, a vector or an empty; a surface is three matrices with more than one
+    /// row and more than one column each, which no plane list ever is.
+    /// </summary>
+    private static bool IsSlicingSurface(IReadOnlyList<JgsValue> args, int at)
+    {
+        for (int i = at; i < at + 3; i++)
+        {
+            if (i >= args.Count)
+            {
+                return false;
+            }
+
+            int[] dims = JgsMatrix.DimsOf(args[i]);
+            if (dims.Length != 2 || dims[0] < 2 || dims[1] < 2)
+            {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     /// <summary>

@@ -132,6 +132,20 @@ internal static partial class JgsBuiltins
             return OnAxes(axes, () => body(rest, line, col));
         };
 
+    /// <summary>
+    /// <see cref="OnNamedAxes"/> for a verb that also answers several outputs. A verb needs both
+    /// wrappers or neither: the single-output body and the several-output one are two doors into the
+    /// same verb, and an axes handle peeled at one door and not the other would make
+    /// <c>streamslice(ax, …)</c> mean one thing and <c>[v, a] = streamslice(ax, …)</c> another.
+    /// </summary>
+    internal static Func<IReadOnlyList<JgsValue>, int, int, int, JgsValue[]> OnNamedAxesOutputs(
+        Func<IReadOnlyList<JgsValue>, int, int, int, JgsValue[]> body) =>
+        (args, wanted, line, col) =>
+        {
+            (AxesModel? axes, IReadOnlyList<JgsValue> rest) = PeelAxes(args);
+            return OnAxes(axes, () => body(rest, wanted, line, col));
+        };
+
     /// <summary>The plot objects a handle or an array of handles names, in the order given.</summary>
     internal static List<PlotObject> PlotsOf(string verb, JgsValue value, int line, int col)
     {

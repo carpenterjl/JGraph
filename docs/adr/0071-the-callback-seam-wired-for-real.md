@@ -210,19 +210,12 @@ recorded below rather than rediscovered.
   position or when the builtin opts in (`gco`, `gcf`, `gca`, `closereq`, `uicontextmenu`,
   `uimenu`). `f = figure` binds the function; write `f = gcf` after a bare `figure`, or
   parenthesize.
-- **3D plots are unpickable.** No 3D plot type implements a hit test, so a click on a `surf`
-  resolves to the axes and a `ButtonDownFcn` on the surface itself never fires; the axes' does.
 - **Callbacks do not serialize.** A `.graph` document saves a context menu's structure but not
   `MenuSelectedFcn` or any other callback; MATLAB's `.fig` saves them. Callbacks live on the
   script-side handle entry and die with the session.
 - **`ContextMenuOpeningFcn` runs after the menu shows, not before.** The opening callback rides
   the queue like every other event, because running it first would mean the window's thread
   waiting on the interpreter; a callback that adjusts entries is in time for the next open.
-- **The window-level callbacks are absent.** `WindowButtonDownFcn`, `WindowButtonMotionFcn`,
-  `WindowButtonUpFcn`, `KeyPressFcn`, `KeyReleaseFcn` and `WindowScrollWheelFcn` are not
-  implemented; they need continuous event routing and a key-data model, deferred deliberately.
-- **Bare `pause` is unsupported.** MATLAB's no-argument form waits for a key press; this build has
-  no key routing to the interpreter and refuses the form. `pause(seconds)` is fully supported.
 - **`uimenu` cannot reach a menu bar.** The no-parent and figure-parent forms are refused by name:
   figures here have no menu bar. A `uimenu` parents to a `uicontextmenu` or another `uimenu`.
 - **`PickableParts 'all'` behaves as `'visible'`.** The shared hit test never sees invisible
@@ -234,10 +227,22 @@ recorded below rather than rediscovered.
   build answers "there is nothing in the axes to look at". Found when probe isolation stopped an
   earlier batch-mate from drawing into the axes first.
 
-## What is not done
+**Three bullets have been deleted from the list above rather than struck through**, because the
+harvest lifts a struck-through bullet whole and a retired divergence must leave the index:
 
-- The window-level mouse and key callbacks (above) — the natural core of an M72 interaction wave,
-  together with 3D picking.
+- *"The window-level callbacks are absent"* — **false since M75**, which built all six named there
+  plus `WindowKeyPressFcn` and `WindowKeyReleaseFcn`, and tested every one of them in
+  `WindowEventCallbackTests.cs`. The sentence stood for twelve milestones, and the capability
+  report's gaps page quoted it as current for all of them. That is the **fifth** expired block this
+  arc has found by re-reading one, after `warp` in M67, `MException` in M68, `Interactions` in M80
+  and `sqrt`/`log` in M81 — the pattern is not a coincidence, and a recorded limitation with no test
+  on either side of it is the shape to look for.
+- *"3D plots are unpickable"* — retired by M87, which is the half of that sentence that was still
+  true.
+- *"Bare `pause` is unsupported"* — its stated reason, *this build has no key routing to the
+  interpreter*, stopped being true in M75 as well; M87 wrote the verb the reason had been blocking.
+
+## What is not done
 - The ~55 numeric and file leftovers from ADR 0070 (`fft(X,n,dim)`, `eig(A,B)`, `lu` output forms,
   `textscan`, …), unchanged and still a clean standalone wave.
 - The IPT/statistics form pass: 2,940 documented forms across 869 callables, of which 2,422 were

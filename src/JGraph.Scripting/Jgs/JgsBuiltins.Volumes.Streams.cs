@@ -1,4 +1,5 @@
 using JGraph.Api;
+using JGraph.Core.Model;
 using JGraph.Maths.Contours;
 using JGraph.Maths.Volumes;
 using JGraph.Objects;
@@ -37,9 +38,16 @@ internal static partial class JgsBuiltins
             (args, line, col) => Stream("stream3", args, line, col))));
 
         DefineSilent("streamline", OnNamedAxes((args, line, col) => Streamline(args, line, col)));
+
         // Wrapped the way streamline beside it is: streamslice(ax, ...) is a documented form, and
-        // without the peel the axes handle was read as the first component of the field.
-        DefineSilent("streamslice", OnNamedAxes((args, line, col) => StreamSlice(args, line, col)));
+        // without the peel the axes handle was read as the first component of the field. Both doors
+        // are wrapped, because M85 gave the verb a second one.
+        env.Declare("streamslice", JgsValue.Function(new BuiltinFunction("streamslice",
+            OnNamedAxes((args, line, col) => StreamSliceOutputs(args, 1, line, col)[0]))
+        {
+            BindsAnsAsStatement = false,
+            MultiOutput = OnNamedAxesOutputs(StreamSliceOutputs),
+        }));
         DefineSilent("streamribbon", (args, line, col) => StreamRibbon(args, line, col));
         DefineSilent("streamtube", (args, line, col) => StreamTube(args, line, col));
         DefineSilent("coneplot", (args, line, col) => ConePlot(args, line, col));
@@ -284,6 +292,7 @@ internal static partial class JgsBuiltins
         List<List<(double X, double Y, double Z)>> lines, bool uniform = false)
     {
         var drawn = new List<Line3DPlot>();
+        AxesModel? into = null;
         foreach (List<(double X, double Y, double Z)> points in lines)
         {
             if (points.Count < 2)
@@ -291,7 +300,8 @@ internal static partial class JgsBuiltins
                 continue;
             }
 
-            drawn.Add(JG.Plot3(
+            drawn.Add(AddLineOf(
+                ref into,
                 [.. points.Select(p => p.X)],
                 [.. points.Select(p => p.Y)],
                 [.. points.Select(p => p.Z)]));
@@ -315,22 +325,92 @@ internal static partial class JgsBuiltins
     }
 
     /// <summary>
-    /// <c>streamslice(X, Y, U, V)</c>: streamlines started on a lattice over the field, so a plane can
-    /// be looked at without choosing starting points by hand.
+    /// One piece of a drawing that is made of several — one streamline of a slice, one contour of a
+    /// plane, one ribbon of a bundle.
     /// </summary>
-    private static JgsValue StreamSlice(IReadOnlyList<JgsValue> args, int line, int col)
+    /// <remarks>
+    /// <para>
+    /// The first piece goes through the facade, which honours <c>hold</c> and the figure's
+    /// <c>NextPlot</c> exactly once; every piece after it joins the axes that one landed in. Sending
+    /// all of them through the facade is what these verbs used to do, and it does not work: a verb
+    /// that draws with <c>hold</c> off clears the axes first, so a twenty-line slice cleared itself
+    /// nineteen times and left one line behind. The handles all came back, and every one of them was
+    /// live, which is why nothing noticed — <c>numel(h)</c> was right and the picture was not.
+    /// </para>
+    /// <para>
+    /// This is the same arrangement the composite charts use, where one verb draws bars and a curve
+    /// into one axes: ask the facade once, then add.
+    /// </para>
+    /// </remarks>
+    private static Line3DPlot AddLineOf(
+        ref AxesModel? into, double[] x, double[] y, double[] z)
     {
-        ArityRange("streamslice", args, 2, 8, line, col);
-
-        // streamslice needs no starting points, so four arguments is a grid and a field while two
-        // is the field alone.
-        bool gridded = args.Count >= 4;
-        VectorField field = ReadFlowField("streamslice", PlanePrefix(args, gridded), line, col);
-        double density = 1;
-        int at = gridded ? 4 : 2;
-        if (at < args.Count)
+        if (into is not null)
         {
-            density = Num("streamslice", args, at, line, col);
+            return into.AddLine3D(x, y, z);
+        }
+
+        Line3DPlot first = JG.Plot3(x, y, z);
+        into = JG.Gca();
+        return first;
+    }
+
+    /// <summary><see cref="AddLineOf"/> for the verbs whose pieces are surfaces.</summary>
+    private static SurfacePlot AddSurfaceOf(
+        ref AxesModel? into, double[,] x, double[,] y, double[,] z)
+    {
+        if (into is not null)
+        {
+            return into.AddSurface(x, y, z);
+        }
+
+        SurfacePlot first = JG.Surf(x, y, z);
+        into = JG.Gca();
+        return first;
+    }
+
+    /// <summary>
+    /// <c>streamslice(X, Y, U, V)</c> over a plane and
+    /// <c>streamslice(X, Y, Z, U, V, W, sx, sy, sz)</c> through a volume: streamlines started on a
+    /// lattice over the field, so a field can be looked at without choosing starting points by hand.
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    /// The volume form's trailing triple names *planes*, not starting points — the same three lists
+    /// <c>slice</c> takes, any of which may be <c>[]</c> for none. That is what makes this verb a
+    /// slicer rather than another spelling of <c>streamline</c>, and it is why the seeding below
+    /// happens inside a plane rather than in space: a streamline traced through a volume would leave
+    /// the plane it was drawn on immediately, and the picture would stop being a slice.
+    /// </para>
+    /// <para>
+    /// The form is settled by counting, because every argument here can be a matrix and none of them
+    /// can be told apart by looking: two or four arguments is a plane, six or nine is a volume, and
+    /// the odd counts between are those same forms with a density after them.
+    /// </para>
+    /// </remarks>
+    private static JgsValue[] StreamSliceOutputs(
+        IReadOnlyList<JgsValue> args, int wanted, int line, int col)
+    {
+        ArityRange("streamslice", args, 2, 12, line, col);
+
+        (IReadOnlyList<JgsValue> given, bool arrows) = ReadSliceWords(args, line, col);
+        (bool spatial, bool gridded) = given.Count switch
+        {
+            2 or 3 => (false, false),
+            4 or 5 => (false, true),
+            6 or 7 => (true, false),
+            9 or 10 => (true, true),
+            _ => throw new JgsRuntimeException(line, col,
+                "streamslice takes U, V — or X, Y, U, V — over a plane, and U, V, W with three plane "
+                + "lists — or X, Y, Z before them — through a volume, each with an optional density "
+                + "after it."),
+        };
+
+        int at = spatial ? (gridded ? 9 : 6) : (gridded ? 4 : 2);
+        double density = 1;
+        if (at < given.Count)
+        {
+            density = NumOf("streamslice: density", given[at], line, col);
             if (!(density > 0))
             {
                 throw new JgsRuntimeException(line, col,
@@ -338,8 +418,179 @@ internal static partial class JgsBuiltins
             }
         }
 
-        // The starting lattice is what makes this verb different from streamline: MATLAB spaces the
-        // seeds by the density and this does the same, at about one seed per few grid cells.
+        var lines = new List<List<(double X, double Y, double Z)>>();
+        var arrowheads = new List<List<(double X, double Y, double Z)>>();
+        double size;
+
+        if (spatial)
+        {
+            (VectorField volume, int next) = ReadVectorField("streamslice", given, line, col, gridded);
+            size = StreamlineIntegrator.TypicalCellOf(volume) * 0.6;
+            double[] sx = PlaneList("streamslice", given, next, line, col);
+            double[] sy = PlaneList("streamslice", given, next + 1, line, col);
+            double[] sz = PlaneList("streamslice", given, next + 2, line, col);
+            if (sx.Length + sy.Length + sz.Length == 0)
+            {
+                throw new JgsRuntimeException(line, col,
+                    "streamslice: every plane list is empty, so there is nothing to slice.");
+            }
+
+            foreach ((Axis normal, double[] positions) in
+                new[] { (Axis.X, sx), (Axis.Y, sy), (Axis.Z, sz) })
+            {
+                foreach (double where in positions)
+                {
+                    AddPlaneSlice(volume, normal, where, density, size, arrows, lines, arrowheads);
+                }
+            }
+        }
+        else
+        {
+            VectorField field = ReadFlowField("streamslice", PlanePrefix(given, gridded), line, col);
+            size = StreamlineIntegrator.TypicalCellOf(field) * 0.6;
+            foreach (List<(double X, double Y, double Z)> traced in SeedOverField(field, density))
+            {
+                lines.Add(traced);
+                AddArrow(traced, Axis.Z, size, arrows, arrowheads);
+            }
+        }
+
+        // Asked for the vertices, MATLAB hands them over and draws nothing — which is the same
+        // arrangement stream2 and stream3 have beside streamline, one verb further along.
+        if (wanted >= 2)
+        {
+            return
+            [
+                JgsValue.Cell([.. lines.Select(points => VertexList(points, spatial))]),
+                JgsValue.Cell([.. arrowheads.Select(points => VertexList(points, spatial))]),
+            ];
+        }
+
+        var drawn = new List<List<(double X, double Y, double Z)>>(lines);
+        drawn.AddRange(arrowheads);
+        return [DrawLines(drawn, uniform: true)];
+    }
+
+    /// <summary>
+    /// The trailing words a slice may carry — the arrow mode and the interpolation method — and the
+    /// arguments left once they are taken off. Only trailing strings are read this way, because
+    /// nothing else in this verb's argument list is ever a string, and a word in the middle is a
+    /// mistake worth reporting rather than a setting worth honouring.
+    /// </summary>
+    private static (IReadOnlyList<JgsValue> Given, bool Arrows) ReadSliceWords(
+        IReadOnlyList<JgsValue> args, int line, int col)
+    {
+        bool arrows = true;
+        int end = args.Count;
+        while (end > 0 && args[end - 1].Type == JgsType.String)
+        {
+            string word = args[end - 1].AsString;
+            if (word.Equals("arrows", StringComparison.OrdinalIgnoreCase))
+            {
+                arrows = true;
+            }
+            else if (word.Equals("noarrows", StringComparison.OrdinalIgnoreCase))
+            {
+                arrows = false;
+            }
+            else if (!word.Equals("linear", StringComparison.OrdinalIgnoreCase)
+                && !word.Equals("nearest", StringComparison.OrdinalIgnoreCase)
+                && !word.Equals("cubic", StringComparison.OrdinalIgnoreCase))
+            {
+                // Every reading here is straight-line, so the method word is checked and then does
+                // nothing rather than being ignored silently — the stance slice beside it takes.
+                throw new JgsRuntimeException(line, col,
+                    $"streamslice: '{word}' is not a word here; it is 'arrows', 'noarrows', or an "
+                    + "interpolation method — linear, nearest, or cubic.");
+            }
+
+            end--;
+        }
+
+        return (end == args.Count ? args : [.. args.Take(end)], arrows);
+    }
+
+    /// <summary>
+    /// One axis-aligned plane's worth of streamlines, traced *in* the plane and then placed at it.
+    /// </summary>
+    /// <remarks>
+    /// The plane is sampled on the volume's own grid in the two directions it spans, and the two
+    /// components of the field that lie in it become a flat field of their own — at which point the
+    /// plane form's seeding does the rest. Discarding the third component is the whole point: it is
+    /// the part that would take a line off the plane.
+    /// </remarks>
+    private static void AddPlaneSlice(
+        VectorField volume,
+        Axis normal,
+        double at,
+        double density,
+        double size,
+        bool arrows,
+        List<List<(double X, double Y, double Z)>> lines,
+        List<List<(double X, double Y, double Z)>> arrowheads)
+    {
+        (double[] across, double[] down) = normal switch
+        {
+            Axis.X => (volume.U.Z, volume.U.Y),
+            Axis.Y => (volume.U.X, volume.U.Z),
+            _ => (volume.U.X, volume.U.Y),
+        };
+
+        int wide = across.Length, tall = down.Length;
+        var inPlaneAcross = new double[tall, wide, 1];
+        var inPlaneDown = new double[tall, wide, 1];
+        var unused = new double[tall, wide, 1];
+
+        for (int r = 0; r < tall; r++)
+        {
+            for (int c = 0; c < wide; c++)
+            {
+                (double x, double y, double z) = PointOnPlane(normal, at, across[c], down[r]);
+                (double u, double v, double w) = volume.Sample(x, y, z);
+                (inPlaneAcross[r, c, 0], inPlaneDown[r, c, 0]) = normal switch
+                {
+                    Axis.X => (w, v),
+                    Axis.Y => (u, w),
+                    _ => (u, v),
+                };
+            }
+        }
+
+        double[] page = [1];
+        var flat = new VectorField(
+            new ScalarField(across, down, page, inPlaneAcross),
+            new ScalarField(across, down, page, inPlaneDown),
+            new ScalarField(across, down, page, unused));
+
+        foreach (List<(double X, double Y, double Z)> traced in SeedOverField(flat, density))
+        {
+            List<(double X, double Y, double Z)> placed =
+                [.. traced.Select(p => PointOnPlane(normal, at, p.X, p.Y))];
+            lines.Add(placed);
+            AddArrow(placed, normal, size, arrows, arrowheads);
+        }
+    }
+
+    /// <summary>
+    /// Where a point of an axis-aligned plane sits in space. The two in-plane directions are named
+    /// the way <see cref="AddSliceContours"/> names them, so a slice of streamlines and a slice of
+    /// contours put their pictures in the same place.
+    /// </summary>
+    private static (double X, double Y, double Z) PointOnPlane(
+        Axis normal, double at, double across, double down) => normal switch
+        {
+            Axis.X => (at, down, across),
+            Axis.Y => (across, at, down),
+            _ => (across, down, at),
+        };
+
+    /// <summary>
+    /// The starting lattice, which is what makes this verb different from <c>streamline</c>: MATLAB
+    /// spaces the seeds by the density and this does the same, at about one seed per few grid cells.
+    /// </summary>
+    private static List<List<(double X, double Y, double Z)>> SeedOverField(
+        VectorField field, double density)
+    {
         int alongX = System.Math.Max(2, (int)System.Math.Round(field.U.Columns * density / 4));
         int alongY = System.Math.Max(2, (int)System.Math.Round(field.U.Rows * density / 4));
 
@@ -360,7 +611,75 @@ internal static partial class JgsBuiltins
             }
         }
 
-        return DrawLines(lines, uniform: true);
+        return lines;
+    }
+
+    /// <summary>
+    /// One arrowhead halfway along a streamline, saying which way it runs — which is what a slice is
+    /// usually asked for and what a bare tangle of lines cannot say.
+    /// </summary>
+    /// <remarks>
+    /// The head is a three-point V lying in the slice's own plane: the barbs are found by turning the
+    /// line's direction a quarter turn about the plane's normal, so the head is flat against the
+    /// slice however the slice is oriented, and a head on a line that goes nowhere is not drawn at
+    /// all rather than drawn as a spike in an arbitrary direction.
+    /// </remarks>
+    private static void AddArrow(
+        List<(double X, double Y, double Z)> points,
+        Axis normal,
+        double size,
+        bool wanted,
+        List<List<(double X, double Y, double Z)>> into)
+    {
+        if (!wanted || points.Count < 2)
+        {
+            return;
+        }
+
+        int tip = points.Count / 2;
+        (double X, double Y, double Z) head = points[tip];
+        (double X, double Y, double Z) behind = points[tip - 1];
+
+        double dx = head.X - behind.X, dy = head.Y - behind.Y, dz = head.Z - behind.Z;
+        double along = System.Math.Sqrt((dx * dx) + (dy * dy) + (dz * dz));
+        if (!(along > 0))
+        {
+            return;
+        }
+
+        dx /= along;
+        dy /= along;
+        dz /= along;
+
+        (double nx, double ny, double nz) = normal switch
+        {
+            Axis.X => (1.0, 0.0, 0.0),
+            Axis.Y => (0.0, 1.0, 0.0),
+            _ => (0.0, 0.0, 1.0),
+        };
+
+        double px = (ny * dz) - (nz * dy);
+        double py = (nz * dx) - (nx * dz);
+        double pz = (nx * dy) - (ny * dx);
+        double sideways = System.Math.Sqrt((px * px) + (py * py) + (pz * pz));
+        if (!(sideways > 0))
+        {
+            return;
+        }
+
+        px = px / sideways * size * 0.4;
+        py = py / sideways * size * 0.4;
+        pz = pz / sideways * size * 0.4;
+
+        (double X, double Y, double Z) root =
+            (head.X - (dx * size), head.Y - (dy * size), head.Z - (dz * size));
+
+        into.Add(
+        [
+            (root.X + px, root.Y + py, root.Z + pz),
+            head,
+            (root.X - px, root.Y - py, root.Z - pz),
+        ]);
     }
 
     private static double Between(double[] positions, int index, int count)
@@ -381,6 +700,7 @@ internal static partial class JgsBuiltins
             ReadSweptRequest("streamribbon", args, line, col);
 
         var drawn = new List<SurfacePlot>();
+        AxesModel? into = null;
         foreach (List<(double X, double Y, double Z)> points in lines)
         {
             if (points.Count < 2)
@@ -389,7 +709,7 @@ internal static partial class JgsBuiltins
             }
 
             (double[,] x, double[,] y, double[,] z) = StreamGeometry.Ribbon(points, field, width);
-            drawn.Add(JG.Surf(x, y, z));
+            drawn.Add(AddSurfaceOf(ref into, x, y, z));
         }
 
         return HandlesFor<SurfacePlot>(drawn);
@@ -412,6 +732,7 @@ internal static partial class JgsBuiltins
         double baseRadius = scale * StreamlineIntegrator.TypicalCellOf(field) / 2;
 
         var drawn = new List<SurfacePlot>();
+        AxesModel? into = null;
         foreach (List<(double X, double Y, double Z)> points in lines)
         {
             if (points.Count < 2)
@@ -430,7 +751,7 @@ internal static partial class JgsBuiltins
             }
 
             (double[,] tx, double[,] ty, double[,] tz) = StreamGeometry.Tube(points, radii, 12);
-            drawn.Add(JG.Surf(tx, ty, tz));
+            drawn.Add(AddSurfaceOf(ref into, tx, ty, tz));
         }
 
         return HandlesFor<SurfacePlot>(drawn);
@@ -615,19 +936,20 @@ internal static partial class JgsBuiltins
             : EvenLevels(field, 5);
 
         var drawn = new List<Line3DPlot>();
+        AxesModel? into = null;
         foreach (double x in atX)
         {
-            AddSliceContours(field, levels, 0, x, drawn);
+            AddSliceContours(field, levels, 0, x, drawn, ref into);
         }
 
         foreach (double y in atY)
         {
-            AddSliceContours(field, levels, 1, y, drawn);
+            AddSliceContours(field, levels, 1, y, drawn, ref into);
         }
 
         foreach (double z in atZ)
         {
-            AddSliceContours(field, levels, 2, z, drawn);
+            AddSliceContours(field, levels, 2, z, drawn, ref into);
         }
 
         return HandlesFor<Line3DPlot>(drawn);
@@ -638,7 +960,12 @@ internal static partial class JgsBuiltins
     /// from — which is the same trick <c>contour3</c> uses to put a flat drawing in a box.
     /// </summary>
     private static void AddSliceContours(
-        ScalarField field, double[] levels, int normal, double at, List<Line3DPlot> into)
+        ScalarField field,
+        double[] levels,
+        int normal,
+        double at,
+        List<Line3DPlot> drawn,
+        ref AxesModel? into)
     {
         // The plane is sampled on the two directions it spans, at the grid's own spacing.
         (double[] across, double[] down) = normal switch
@@ -703,7 +1030,7 @@ internal static partial class JgsBuiltins
 
             if (px.Count >= 2)
             {
-                into.Add(JG.Plot3([.. px], [.. py], [.. pz]));
+                drawn.Add(AddLineOf(ref into, [.. px], [.. py], [.. pz]));
             }
         }
     }

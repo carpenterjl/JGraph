@@ -237,6 +237,92 @@ public sealed class SurfacePlot : PlotObject, I3DDrawable, IHasZData, ILegendIte
         set => SetData(_x, _y, value ?? throw new ArgumentNullException(nameof(value)));
     }
 
+    /// <inheritdoc />
+    /// <remarks>
+    /// M87. A surface is a lattice of quads, and it is picked the way a patch is: a click inside a
+    /// cell hits the surface, and among cells the pixel is inside, the one nearest the camera wins —
+    /// which for a folded surface is the fold a person can actually see.
+    /// </remarks>
+    public override PlotHitResult? HitTest3D(
+        Point2D pixelPoint, ISpatialMapper projector, double tolerancePixels)
+    {
+        ArgumentNullException.ThrowIfNull(projector);
+
+        int rows = _z.GetLength(0), columns = _z.GetLength(1);
+        if (rows < 1 || columns < 1)
+        {
+            return null;
+        }
+
+        double bestDistance = double.PositiveInfinity;
+        double bestDepth = double.NegativeInfinity;
+        int bestRow = -1, bestColumn = -1;
+        Span<Point2D> cell = stackalloc Point2D[4];
+
+        for (int r = 0; r < rows - 1; r++)
+        {
+            for (int c = 0; c < columns - 1; c++)
+            {
+                double depth = double.NegativeInfinity;
+                bool whole = true;
+                for (int corner = 0; corner < 4 && whole; corner++)
+                {
+                    int cr = r + (corner is 2 or 3 ? 1 : 0);
+                    int cc = c + (corner is 1 or 2 ? 1 : 0);
+                    (double vx, double vy, double vz) = VertexAt(cr, cc);
+                    if (!SpatialPicking.IsDrawable(vx, vy, vz))
+                    {
+                        whole = false;
+                        break;
+                    }
+
+                    (cell[corner], double at) = projector.Project(vx, vy, vz);
+                    depth = System.Math.Max(depth, at);
+                }
+
+                if (!whole)
+                {
+                    continue;
+                }
+
+                double distance = SpatialPicking.Inside(pixelPoint, cell)
+                    ? 0
+                    : SpatialPicking.DistanceToOutline(pixelPoint, cell);
+                if (distance > tolerancePixels)
+                {
+                    continue;
+                }
+
+                if (distance < bestDistance || (distance == bestDistance && depth > bestDepth))
+                {
+                    bestDistance = distance;
+                    bestDepth = depth;
+                    bestRow = r;
+                    bestColumn = c;
+                }
+            }
+        }
+
+        if (bestRow < 0)
+        {
+            return null;
+        }
+
+        (double hx, double hy, _) = VertexAt(bestRow, bestColumn);
+        return new PlotHitResult(
+            this, new Point2D(hx, hy), bestDistance, (bestRow * columns) + bestColumn, bestDepth);
+    }
+
+    /// <summary>
+    /// Where one grid node sits in space. A parametric surface carries a position per vertex; a
+    /// rectilinear one gets its x from the column and its y from the row, which is the same reading
+    /// the renderer does.
+    /// </summary>
+    private (double X, double Y, double Z) VertexAt(int row, int column) =>
+        _xGrid is not null && _yGrid is not null
+            ? (_xGrid[row, column], _yGrid[row, column], _z[row, column])
+            : (_x[column], _y[row], _z[row, column]);
+
     /// <summary>Replaces the grid data as one consistent set.</summary>
     public void SetData(double[] x, double[] y, double[,] z)
     {
@@ -570,7 +656,7 @@ public sealed class SurfacePlot : PlotObject, I3DDrawable, IHasZData, ILegendIte
 
     /// <summary>The vertex markers' outline, or null to follow the surface's edge colour.</summary>
     [Category("Appearance"), DisplayName("Marker edge")]
-    public Color? MarkerEdge
+    public Color? MarkerEdgeColor
     {
         get => _markerEdge;
         set => SetProperty(ref _markerEdge, value, InvalidationKind.Render);
@@ -578,7 +664,7 @@ public sealed class SurfacePlot : PlotObject, I3DDrawable, IHasZData, ILegendIte
 
     /// <summary>The vertex markers' fill, or null for a hollow marker.</summary>
     [Category("Appearance"), DisplayName("Marker fill")]
-    public Color? MarkerFill
+    public Color? MarkerFaceColor
     {
         get => _markerFill;
         set => SetProperty(ref _markerFill, value, InvalidationKind.Render);

@@ -514,7 +514,7 @@ public static class JgsBuiltinCatalog
         Add("firpm", "Parks-McClellan equiripple FIR: order n, normalized band edges f, band amplitudes a.", P("n"), P("f"), P("a"));
         Add("audioread", "Reads a .wav file: [samples, fs] with samples normalized to [-1, 1] (stereo averaged to mono).", P("path"));
         Add("sound", "Plays samples through the host's audio output without blocking (fs defaults to 8192).", P("y"), Opt("fs"));
-        Add("pause", "Waits the given number of seconds (interruptible by Stop).", P("seconds"));
+        Add("pause", "Waits: pause(seconds) for a fixed wait (interruptible by Stop), bare pause for a key press, and pause('on'|'off'|'query') to turn every pause in a script on or off, answering the state as it was.", Opt("seconds"));
         Add("exit", "Ends the script and closes the application, with an optional process exit code.", Opt("code"));
         Add("quit", "An alias for exit.", Opt("code"));
 
@@ -1460,7 +1460,7 @@ public static class JgsBuiltinCatalog
         Add("any", "Whether at least one element is truthy, over one dimension, several, or 'all'.", P("array"), Opt("dim"));
         Add("all", "Whether every element is truthy, over one dimension, several, or 'all'.", P("array"), Opt("dim"));
         Add("concat", "One array from arrays and scalars, in order: concat(a, b), concat(a, 5).", P("first"), P("second"));
-        Add("slice", "In JGS, elements [start, stop) by 0-based index; stop defaults to the array length. In MATLAB, coloured planes cut through a volume: slice(V, sx, sy, sz) or slice(X, Y, Z, V, sx, sy, sz), any list [] for none.", P("array"), P("start"), Opt("stop"));
+        Add("slice", "In JGS, elements [start, stop) by 0-based index; stop defaults to the array length. In MATLAB, the volume shown where something cuts it: slice(V, sx, sy, sz) or slice(X, Y, Z, V, sx, sy, sz) for axis-aligned planes, any list [] for none, or three same-sized matrices for a slicing surface.", P("array"), P("start"), Opt("stop"));
         Add("indexof", "0-based index of the first element equal to value, or -1.", P("array"), P("value"));
         Add("reverse", "A reversed copy of an array.", P("array"));
         Add("isnan", "Whether x is NaN, element-wise over arrays.", P("x"));
@@ -1805,7 +1805,7 @@ public static class JgsBuiltinCatalog
         Add("stream2", "The traced points of streamlines through a plane field: verts = stream2(X, Y, U, V, sx, sy, [step maxverts]).", P("U"), P("V"), P("sx"), P("sy"));
         Add("stream3", "The traced points of streamlines through a field in space: verts = stream3(X, Y, Z, U, V, W, sx, sy, sz, [step maxverts]).", P("U"), P("V"), P("W"), P("sx"), P("sy"), P("sz"));
         Add("streamline", "Streamlines drawn: streamline(verts) from traced points, or a field to trace first — streamline(X, Y, U, V, sx, sy) in a plane, streamline(X, Y, Z, U, V, W, sx, sy, sz) in space, either with the grid left out.", P("verts"));
-        Add("streamslice", "Streamlines started on a lattice over a plane field, so no starting points need choosing: streamslice(X, Y, U, V, density).", P("U"), P("V"), Opt("density"));
+        Add("streamslice", "Streamlines started on a lattice, so no starting points need choosing: streamslice(X, Y, U, V, density) over a plane, or streamslice(X, Y, Z, U, V, W, sx, sy, sz) on axis-aligned planes through a volume, with 'arrows'/'noarrows', an interpolation method, and [verts, averts] for the vertices instead of a drawing.", P("U"), P("V"), Opt("density"));
         Add("streamribbon", "A band along each streamline, turning the way the field turns: streamribbon(X, Y, Z, U, V, W, sx, sy, sz, width).", P("U"), P("V"), P("W"), P("sx"), P("sy"), P("sz"));
         Add("streamtube", "A round tube along each streamline, widening where the field spreads: streamtube(X, Y, Z, U, V, W, sx, sy, sz, scale).", P("U"), P("V"), P("W"), P("sx"), P("sy"), P("sz"));
         Add("coneplot", "An arrowhead at each given place, pointing the way the field points: coneplot(X, Y, Z, U, V, W, Cx, Cy, Cz, scale, 'quiver').", P("U"), P("V"), P("W"), P("Cx"), P("Cy"), P("Cz"));
@@ -1876,6 +1876,8 @@ public static class JgsBuiltinCatalog
         Add("pan", "Turns panning on or off, or reads which it is: pan on, pan off, pan(gcf).", Opt("h"), Opt("state"));
         Add("datacursormode", "Turns data tips on or off, or reads which it is: datacursormode on, datacursormode(gcf).", Opt("h"), Opt("state"));
         Add("gtext", "Places a label where you click. This needs a figure window; use text or annotation to say where instead.", P("text"));
+        Add("waitforbuttonpress", "Waits for the next key or mouse button and says which it was: 1 for a key, 0 for a button. This needs a figure window.");
+        Add("ginput", "Reads points off a chart by clicking them: [x, y] = ginput(n) for a fixed number, bare ginput until a key is pressed, and [x, y, button] for which button each was. This needs a figure window.", Opt("n"));
         Add("rotate", "Turns a plot's own data about a direction through an angle in degrees: rotate(h, [0 90], 45) or rotate(h, [x y z], 45, origin).", P("h"), P("direction"), P("angle"), Opt("origin"));
         Add("disableDefaultInteractivity", "Turns off the gestures an axes answers to without a tool being chosen.", Opt("ax"));
         Add("enableDefaultInteractivity", "Turns them back on, giving back whatever the axes was set to.", Opt("ax"));

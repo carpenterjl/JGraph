@@ -25,7 +25,7 @@ so long. The live tracker is `matlab-r2021b-documented.html` in the demo workspa
 `tools/matlab-checklist/build-checklist.py`; this file is the standing summary, so the shape of what
 is left does not have to be re-derived each time.
 
-**415 of 514 builtins implemented** (413 from M68 to M70; 386 was written here from M63 to M66 and was stale — see the correction below; 385 from M60 to M62, 383 after M59, 382 after M54, 372 from M45 to M53, 364 after M43, 363 after
+**416 of 514 builtins implemented** (415 from M71 to M86; 413 from M68 to M70; 386 was written here from M63 to M66 and was stale — see the correction below; 385 from M60 to M62, 383 after M59, 382 after M54, 372 from M45 to M53, 364 after M43, 363 after
 M39, 326 after M38, 185 after M37, 109 after M36) — M46 through M53 all added names MATLAB documents
 as *functions*, which this table does not hold. M45's eight are the drawing primitives the "handle
 graphics" section below used to list as missing and call the most useful thing left: `plot3`, `line`,
@@ -51,7 +51,7 @@ line read 386 through M63–M66 and should have read 399: **M66 implemented all 
 orderings and incomplete factorizations that had their own section below**, plus `qz`, `ordqz` and
 `balance` from "the remaining ten", and moved none of them out of the missing tables. Counting the
 implemented set straight out of the dump and the catalog — the query at the bottom of this file —
-answered 412 implemented and 102 missing at M67, 413 and 101 at M68, and 415 and 99 at M71, each pair summing to the 514 the top of this file states. The two
+answered 412 implemented and 102 missing at M67, 413 and 101 at M68, 415 and 99 at M71, and 416 and 98 at M87, each pair summing to the 514 the top of this file states. The two
 sections M67 can prove are removed below; the rest of the gap is between the computed total and the
 prose groupings, and is recorded here rather than guessed at, because a group re-labelled without
 reading it is exactly the slip this file keeps catching.
@@ -94,8 +94,12 @@ see. This file refused to count them while they drew nothing; **M56 made them re
 number and this one agree again. `opengl` *is* counted, because an accepted no-op is an answer — the
 same reading that counted `shading`, `lighting` and `camlight` in M43.
 
-Across every callable kind — builtin, function, operator, keyword, script — the count is **925 of
-2,024** as of M84, which took the whole print-and-export-dialog group off the exclusion list — `printdlg` `printpreview` `pagesetupdlg` `exportsetupdlg` `exportapp` and `uiaxes`, six names excluded as app building until the figure they describe turned out to be this one
+Across every callable kind — builtin, function, operator, keyword, script — the count is **927 of
+2,024** as of M87, which built the two verbs that wait for a person — `waitforbuttonpress` and
+`ginput` — once it found that the ground for excluding them, *no key routing to the interpreter*, had
+stopped being true in M75 and nobody had come back to the sentence. Both need a window and both
+refuse by name where there is none.
+925 after M84, which took the whole print-and-export-dialog group off the exclusion list — `printdlg` `printpreview` `pagesetupdlg` `exportsetupdlg` `exportapp` and `uiaxes`, six names excluded as app building until the figure they describe turned out to be this one
 (919 after M82, which added `timezones` — the only name of the time wave that MATLAB documents at
 all. `tzoffset`, `isdst`, `caldiff`, `microseconds` and `nanoseconds` arrived with it and move
 nothing, because they are documented as methods of the datetime and duration classes rather than as
@@ -917,20 +921,28 @@ M52 left these behind, each named rather than silent (the full table is in
   scoped out of M52 deliberately.~~ **`interp2` and `'SamplePoints'` closed in M66**; `'native'`
   output classes and the `histogram` object options are still out.
 
-## Not implemented — 99
+## Not implemented — 98
 
-### Handle graphics and app building — 8
+### Handle graphics and app building — 7
 
 `hgsetget` `selectmoveresize` `uicontrol` `uipanel` `uipushtool`
-`uitoggletool` `uitoolbar` `waitforbuttonpress`
+`uitoggletool` `uitoolbar`
 
-**M67 took thirteen and M71 took two more** — `uicontextmenu` and `uimenu` became real objects when
-the event loop gave their callbacks somewhere to run — and what is left is app building proper: the
-`ui*` widget family, `hgsetget`'s pre-HG2 property accessors, `selectmoveresize`'s interactive drag
-callback, and `waitforbuttonpress`, which like `gtext` waits for a person. The thirteen that went were the
-graphics *objects* the model had no answer for, and they went together because they are one thing:
-an animated line and a rectangle are what a figure is made of, and a group, a root and an axes
-constructor are how a script gets at them.
+**M67 took thirteen, M71 took two more, and M87 took one** — `uicontextmenu` and `uimenu` became real
+objects when the event loop gave their callbacks somewhere to run, and `waitforbuttonpress` became
+real when M87 found that the reason it was excluded had expired. It was listed beside `gtext` as a
+verb that *waits for a person*, which was the same ground ADR 0071 gave for refusing bare `pause`:
+no key routing to the interpreter. M75 built that routing and neither sentence was revisited. What is
+left is app building proper: the `ui*` widget family, `hgsetget`'s pre-HG2 property accessors, and
+`selectmoveresize`'s interactive drag callback. The thirteen that went in M67 were the graphics
+*objects* the model had no answer for, and they went together because they are one thing: an animated
+line and a rectangle are what a figure is made of, and a group, a root and an axes constructor are
+how a script gets at them.
+
+`gtext` stays refused and stays counted as implemented, which is not a contradiction: it is
+registered, it reads its arguments, and it names `text` as the way to say where instead. A verb that
+answers is implemented even when its answer is a refusal — the distinction this table has always
+drawn, and the reason `waitforbuttonpress` moved out of it only once it could really wait.
 
 **`setappdata` and `rmappdata` were still listed here after M60 registered them**, which made this
 section read 25 and the heading above it 131 where both were two too many. The M60 paragraph in this

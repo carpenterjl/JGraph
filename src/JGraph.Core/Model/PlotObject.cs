@@ -171,4 +171,30 @@ public abstract class PlotObject : GraphObject
     /// <param name="tolerancePixels">The pick radius in device pixels.</param>
     /// <returns>A hit result, or null if the point does not hit this object.</returns>
     public virtual PlotHitResult? HitTest(Point2D pixelPoint, ICoordinateMapper mapper, double tolerancePixels) => null;
+
+    /// <summary>
+    /// Tests whether the given device-space point hits this object as it was drawn through a camera.
+    /// The default returns no hit; the plot types that live in space override it.
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    /// Separate from <see cref="HitTest(Point2D, ICoordinateMapper, double)"/> because a camera is
+    /// not a flat mapper and cannot pretend to be one: it answers where a point was drawn but not
+    /// what a pixel means, since a pixel names a line of sight rather than a point. Picking is
+    /// therefore forward — project each candidate to where the renderer put it and measure on screen
+    /// — which is also the only way to get it right, because what a click lands on is decided by the
+    /// picture and not by the data.
+    /// </para>
+    /// <para>
+    /// M87. Before it, no plot type in space implemented any hit test at all, so a click on a
+    /// <c>surf</c> fell through to the axes and a <c>ButtonDownFcn</c> on the surface never fired —
+    /// recorded in ADR 0071 and carried forward through ADR 0072.
+    /// </para>
+    /// </remarks>
+    /// <param name="pixelPoint">The device-space point to test.</param>
+    /// <param name="projector">Says where a data point was drawn, and how near the camera.</param>
+    /// <param name="tolerancePixels">The pick radius in device pixels.</param>
+    /// <returns>A hit result, or null if the point does not hit this object.</returns>
+    public virtual PlotHitResult? HitTest3D(
+        Point2D pixelPoint, ISpatialMapper projector, double tolerancePixels) => null;
 }

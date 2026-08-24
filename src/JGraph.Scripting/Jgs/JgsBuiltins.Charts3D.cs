@@ -1,4 +1,4 @@
-﻿using JGraph.Api;
+using JGraph.Api;
 using JGraph.Core.Drawing;
 using JGraph.Core.Model;
 using JGraph.Objects;
@@ -114,7 +114,7 @@ internal static partial class JgsBuiltins
             // the line spec has had its say about what that colour is.
             if (filled)
             {
-                plot.MarkerFill = plot.Color;
+                plot.MarkerFaceColor = plot.Color;
             }
 
             Stem3Options(plot, rest, optionStart, line, col);
@@ -172,10 +172,12 @@ internal static partial class JgsBuiltins
                     plot.MarkerSize = NumOf("stem3: MarkerSize", value, line, col);
                     break;
                 case "markerfacecolor":
-                    plot.MarkerFill = OptionColor(value, line, col, "stem3");
+                    plot.MarkerFaceColor = OptionColor(value, line, col, "stem3");
                     break;
                 case "markeredgecolor":
-                    plot.Color = OptionColor(value, line, col, "stem3");
+                    // Until M86 this repainted the whole stem, because the marker had no edge of its
+                    // own to put a colour on. Asking to outline the markers moved the stalks.
+                    plot.MarkerEdgeColor = OptionColor(value, line, col, "stem3");
                     break;
                 case "basevalue":
                     plot.Baseline = NumOf("stem3: BaseValue", value, line, col);

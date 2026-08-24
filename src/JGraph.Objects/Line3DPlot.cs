@@ -30,6 +30,7 @@ public sealed class Line3DPlot : PlotObject, I3DDrawable, IHasZData, ILegendItem
     private MarkerType _marker = MarkerType.None;
     private double _markerSize = 6;
     private Color? _markerFill;
+    private Color? _markerEdge;
 
     private Point2D[] _pixels = new Point2D[16];
 
@@ -102,10 +103,23 @@ public sealed class Line3DPlot : PlotObject, I3DDrawable, IHasZData, ILegendItem
 
     /// <summary>Marker interior color, or null for open (unfilled) markers.</summary>
     [Category("Appearance"), DisplayName("Marker fill")]
-    public Color? MarkerFill
+    public Color? MarkerFaceColor
     {
         get => _markerFill;
         set => SetProperty(ref _markerFill, value, InvalidationKind.Render);
+    }
+
+    /// <summary>Marker outline color, or null to draw it in the line's own colour.</summary>
+    /// <remarks>
+    /// M86. <c>plot3</c> makes a <c>Line</c> in MATLAB, the same class <c>plot</c> makes, so this had
+    /// been missing rather than deliberately absent: a marker in space could be filled but not
+    /// outlined, and the name a script would reach for did not resolve at all.
+    /// </remarks>
+    [Category("Appearance"), DisplayName("Marker edge")]
+    public Color? MarkerEdgeColor
+    {
+        get => _markerEdge;
+        set => SetProperty(ref _markerEdge, value, InvalidationKind.Render);
     }
 
     /// <inheritdoc />
@@ -162,10 +176,30 @@ public sealed class Line3DPlot : PlotObject, I3DDrawable, IHasZData, ILegendItem
                 }
             }
 
+            Color edge = (_markerEdge ?? color).WithOpacity(Opacity);
             var marker = new MarkerStyle(
-                _marker, _markerSize, _markerFill?.WithOpacity(Opacity), color.WithOpacity(Opacity));
-            context.DrawMarkers(_pixels.AsSpan(0, m), marker, color.WithOpacity(Opacity));
+                _marker, _markerSize, _markerFill?.WithOpacity(Opacity), edge);
+            context.DrawMarkers(_pixels.AsSpan(0, m), marker, edge);
         }
+    }
+
+    /// <inheritdoc />
+    /// <remarks>
+    /// M87. Picked against the segments rather than the vertices, so the middle of a long straight
+    /// run is as clickable as its ends — the same rule the flat line uses, applied to the polyline
+    /// the camera actually drew.
+    /// </remarks>
+    public override PlotHitResult? HitTest3D(
+        Point2D pixelPoint, ISpatialMapper projector, double tolerancePixels)
+    {
+        ArgumentNullException.ThrowIfNull(projector);
+        if (SpatialPicking.NearestSegment(pixelPoint, projector, X, Y, Z, tolerancePixels)
+            is not var (index, distance, depth))
+        {
+            return null;
+        }
+
+        return new PlotHitResult(this, new Point2D(X[index], Y[index]), distance, index, depth);
     }
 
     /// <inheritdoc />
@@ -176,7 +210,7 @@ public sealed class Line3DPlot : PlotObject, I3DDrawable, IHasZData, ILegendItem
             ? new LineStyle(color, _lineWidth, _dashStyle)
             : null;
         MarkerStyle? marker = _marker != MarkerType.None
-            ? new MarkerStyle(_marker, System.Math.Min(_markerSize, 8), _markerFill, color)
+            ? new MarkerStyle(_marker, System.Math.Min(_markerSize, 8), _markerFill, _markerEdge ?? color)
             : null;
         return new LegendKey(line, marker, swatch: null);
     }

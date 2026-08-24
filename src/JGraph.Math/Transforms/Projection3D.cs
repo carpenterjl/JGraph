@@ -9,7 +9,7 @@ namespace JGraph.Maths.Transforms;
 /// then scale-fit so the rotated cube's screen bounding box fills the plot area. Pure math, no
 /// rendering dependencies — built per frame by the 3D axes renderer and shared with interaction.
 /// </summary>
-public sealed class Projection3D
+public sealed class Projection3D : ISpatialMapper
 {
     // Rotation rows of MATLAB's viewmtx(az, el): screen-right (u), screen-up (v), and depth toward
     // the viewer (larger = closer). view(0, 90) reduces to u = x, v = y, depth = z (top-down 2D).

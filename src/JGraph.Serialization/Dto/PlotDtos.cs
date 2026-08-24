@@ -1,4 +1,4 @@
-﻿using System.Text.Json.Serialization;
+using System.Text.Json.Serialization;
 using JGraph.Core.Drawing;
 using JGraph.Objects;
 
@@ -9,6 +9,16 @@ namespace JGraph.Serialization.Dto;
 /// common properties live here and per-type data on the derived DTOs. Adding a plot type is a new
 /// <see cref="JsonDerivedTypeAttribute"/> line plus a mapper arm.
 /// </summary>
+/// <remarks>
+/// <b>The marker colours are named for MATLAB and written under their old keys.</b> M86 renamed the
+/// model's <c>MarkerFill</c> and <c>MarkerEdge</c> to the names MATLAB documents, and every one of
+/// these carries a <see cref="JsonPropertyNameAttribute"/> putting <c>markerFill</c> and
+/// <c>markerEdge</c> back on the wire. A saved figure is a file somebody already has: renaming a
+/// property in this assembly must not turn a document written yesterday into one that loads with its
+/// markers blank, and the format version is not bumped because nothing about the format changed. The
+/// pin is tested rather than trusted — a later tidy-up that "corrects" these keys would be a silent
+/// data loss with no error anywhere.
+/// </remarks>
 [JsonPolymorphic(TypeDiscriminatorPropertyName = "type")]
 [JsonDerivedType(typeof(LinePlotDto), "line")]
 [JsonDerivedType(typeof(ScatterPlotDto), "scatter")]
@@ -84,7 +94,8 @@ public sealed class BaseLineDto
 public sealed class LinePlotDto : PlotDto
 {
     /// <summary>Marker outline colour, or null to draw it in the line's own (M77).</summary>
-    public Color? MarkerEdge { get; set; }
+    [JsonPropertyName("markerEdge")]
+    public Color? MarkerEdgeColor { get; set; }
 
     /// <summary>Which samples carry a marker, or null for all of them (M77).</summary>
     public int[]? MarkerIndices { get; set; }
@@ -108,7 +119,8 @@ public sealed class LinePlotDto : PlotDto
 
     public double MarkerSize { get; set; } = 6;
 
-    public Color? MarkerFill { get; set; }
+    [JsonPropertyName("markerFill")]
+    public Color? MarkerFaceColor { get; set; }
 }
 
 public sealed class ScatterPlotDto : PlotDto
@@ -288,9 +300,11 @@ public sealed class PieWedgeDto
 
     public double MarkerSize { get; set; } = 6;
 
-    public Color? MarkerEdge { get; set; }
+    [JsonPropertyName("markerEdge")]
+    public Color? MarkerEdgeColor { get; set; }
 
-    public Color? MarkerFill { get; set; }
+    [JsonPropertyName("markerFill")]
+    public Color? MarkerFaceColor { get; set; }
 
     public double[]? ColorData { get; set; }
 
@@ -444,9 +458,11 @@ public sealed class StemPlotDto : PlotDto
 
     public double MarkerSize { get; set; } = 6;
 
-    public Color? MarkerFill { get; set; }
+    [JsonPropertyName("markerFill")]
+    public Color? MarkerFaceColor { get; set; }
 
-    public Color? MarkerEdge { get; set; }
+    [JsonPropertyName("markerEdge")]
+    public Color? MarkerEdgeColor { get; set; }
 
     /// <summary>The line the stems stand on, or null for a document written before M77.</summary>
     public BaseLineDto? BaseLine { get; set; }
@@ -540,7 +556,8 @@ public sealed class ErrorBarPlotDto : PlotDto
 
     public DashStyle DashStyle { get; set; }
 
-    public Color? MarkerEdge { get; set; }
+    [JsonPropertyName("markerEdge")]
+    public Color? MarkerEdgeColor { get; set; }
 
     public SeriesDto Series { get; set; } = new(Array.Empty<double>(), Array.Empty<double>());
 
@@ -560,7 +577,8 @@ public sealed class ErrorBarPlotDto : PlotDto
 
     public double MarkerSize { get; set; } = 6;
 
-    public Color? MarkerFill { get; set; }
+    [JsonPropertyName("markerFill")]
+    public Color? MarkerFaceColor { get; set; }
 }
 
 public sealed class ImagePlotDto : PlotDto
@@ -647,9 +665,11 @@ public sealed class SurfacePlotDto : PlotDto
 
     public double MarkerSize { get; set; } = 6;
 
-    public Color? MarkerEdge { get; set; }
+    [JsonPropertyName("markerEdge")]
+    public Color? MarkerEdgeColor { get; set; }
 
-    public Color? MarkerFill { get; set; }
+    [JsonPropertyName("markerFill")]
+    public Color? MarkerFaceColor { get; set; }
 
     public AlphaMapping AlphaDataMapping { get; set; } = AlphaMapping.Scaled;
 
@@ -798,7 +818,12 @@ public sealed class Line3DPlotDto : PlotDto
 
     public double MarkerSize { get; set; } = 6;
 
-    public Color? MarkerFill { get; set; }
+    [JsonPropertyName("markerFill")]
+    public Color? MarkerFaceColor { get; set; }
+
+    /// <summary>Marker outline colour, or null to draw it in the line's own (M86).</summary>
+    [JsonPropertyName("markerEdge")]
+    public Color? MarkerEdgeColor { get; set; }
 }
 
 /// <summary>The serialized form of a <see cref="Scatter3DPlot"/>.</summary>
@@ -875,9 +900,11 @@ public sealed class Stem3DPlotDto : PlotDto
 
     public double MarkerSize { get; set; } = 6;
 
-    public Color? MarkerFill { get; set; }
+    [JsonPropertyName("markerFill")]
+    public Color? MarkerFaceColor { get; set; }
 
-    public Color? MarkerEdge { get; set; }
+    [JsonPropertyName("markerEdge")]
+    public Color? MarkerEdgeColor { get; set; }
 
     /// <summary>The line the stems stand on, or null for a document written before M77.</summary>
     public BaseLineDto? BaseLine { get; set; }
@@ -992,9 +1019,11 @@ public sealed class PatchPlotDto : PlotDto
 
     public double MarkerSize { get; set; } = 6;
 
-    public Color? MarkerEdge { get; set; }
+    [JsonPropertyName("markerEdge")]
+    public Color? MarkerEdgeColor { get; set; }
 
-    public Color? MarkerFill { get; set; }
+    [JsonPropertyName("markerFill")]
+    public Color? MarkerFaceColor { get; set; }
 
     /// <summary>A transparency per vertex, or null for one opacity across the patch.</summary>
     public double[]? VertexAlpha { get; set; }
@@ -1057,9 +1086,11 @@ public sealed class QuiverPlotDto : PlotDto
 
     public double MarkerSize { get; set; } = 6;
 
-    public Color? MarkerEdge { get; set; }
+    [JsonPropertyName("markerEdge")]
+    public Color? MarkerEdgeColor { get; set; }
 
-    public Color? MarkerFill { get; set; }
+    [JsonPropertyName("markerFill")]
+    public Color? MarkerFaceColor { get; set; }
 
     public bool AlignVertexCenters { get; set; }
 

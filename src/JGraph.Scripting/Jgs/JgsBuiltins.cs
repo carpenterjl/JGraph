@@ -297,17 +297,10 @@ internal static partial class JgsBuiltins
         Define("exit", (args, line, col) => Exit("exit", args, line, col));
         Define("quit", (args, line, col) => Exit("quit", args, line, col));
 
-        Define("pause", (args, line, col) =>
-        {
-            Arity("pause", args, 1, line, col);
-            double seconds = Num("pause", args, 0, line, col);
-            if (seconds > 0 && !double.IsNaN(seconds))
-            {
-                PumpWait(TimeSpan.FromSeconds(System.Math.Min(seconds, 3600)), cancellationToken);
-            }
-
-            return JgsValue.Null;
-        });
+        // Four spellings since M87: a number of seconds, a bare wait for a key, and the on/off/query
+        // switch. Only the bare one needs a window.
+        Define("pause", (args, line, col) => Pause(args, cancellationToken, line, col));
+        RegisterWaitingBuiltins(env, cancellationToken);
 
         // --- Time & date ---------------------------------------------------------------------
         // A stopwatch handle is the high-resolution tick count taken relative to when these globals were
@@ -2887,13 +2880,13 @@ internal static partial class JgsBuiltins
                     // The five names M77 added. MarkerFaceColor in particular is the commonest
                     // spelling in MATLAB code and was refused by this verb until then.
                     case "markerfacecolor":
-                        plot.MarkerFill = value.Type == JgsType.String
+                        plot.MarkerFaceColor = value.Type == JgsType.String
                             && value.AsString.Equals("none", StringComparison.OrdinalIgnoreCase)
                                 ? null
                                 : OptionColor(value, line, col, verb);
                         break;
                     case "markeredgecolor":
-                        plot.MarkerEdge = OptionColor(value, line, col, verb);
+                        plot.MarkerEdgeColor = OptionColor(value, line, col, verb);
                         break;
                     case "markerindices":
                         JgsGraphicsProperties.Set(
@@ -3221,7 +3214,7 @@ internal static partial class JgsBuiltins
         // MATLAB's 'filled' fills the markers with the stem's own colour.
         if (parsed.Has("filled"))
         {
-            plot.MarkerFill = plot.Color ?? PaletteColorFor(plot);
+            plot.MarkerFaceColor = plot.Color ?? PaletteColorFor(plot);
         }
 
         if (parsed.Named("Color") is { } stemColor)
@@ -3241,7 +3234,7 @@ internal static partial class JgsBuiltins
 
         if (parsed.Named("MarkerFaceColor") is { } face)
         {
-            plot.MarkerFill = face.Type == JgsType.String
+            plot.MarkerFaceColor = face.Type == JgsType.String
                 && face.AsString.Equals("none", StringComparison.OrdinalIgnoreCase)
                     ? null
                     : OptionColor(face, line, col, "stem");
@@ -3249,7 +3242,7 @@ internal static partial class JgsBuiltins
 
         if (parsed.Named("MarkerEdgeColor") is { } markerEdge)
         {
-            plot.MarkerEdge = OptionColor(markerEdge, line, col, "stem");
+            plot.MarkerEdgeColor = OptionColor(markerEdge, line, col, "stem");
         }
 
         plot.LineWidth = parsed.Scalar("LineWidth", plot.LineWidth);
@@ -3568,7 +3561,7 @@ internal static partial class JgsBuiltins
 
         if (parsed.Named("MarkerFaceColor") is { } face)
         {
-            plot.MarkerFill = face.Type == JgsType.String
+            plot.MarkerFaceColor = face.Type == JgsType.String
                 && face.AsString.Equals("none", StringComparison.OrdinalIgnoreCase)
                     ? null
                     : OptionColor(face, line, col, "errorbar");
@@ -3576,7 +3569,7 @@ internal static partial class JgsBuiltins
 
         if (parsed.Named("MarkerEdgeColor") is { } edge)
         {
-            plot.MarkerEdge = OptionColor(edge, line, col, "errorbar");
+            plot.MarkerEdgeColor = OptionColor(edge, line, col, "errorbar");
         }
 
         plot.CapSize = parsed.Scalar("CapSize", plot.CapSize);

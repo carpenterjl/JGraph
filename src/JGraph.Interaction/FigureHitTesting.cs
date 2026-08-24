@@ -57,8 +57,14 @@ public static class FigureHitTesting
             return new FigureHit(null, null, null);
         }
 
+        // A 3-D axes is picked through the camera it was drawn with — the same camera CurrentPoint
+        // was already asking, built once and used for both. Before M87 there was no such branch and
+        // no plot type in space implemented a hit test, so every click there fell through to the
+        // axes below.
+        Projection3D? camera = axes.Is3D ? ProjectionFor(axes, plotArea) : null;
+
         Point2D place = mapper.PixelToData(pixel.X, pixel.Y);
-        RecordCurrentPoint(axes, pixel, place, plotArea);
+        RecordCurrentPoint(axes, pixel, place, camera);
 
         AnnotationObject? annotationHit = HitTestAnnotations(axes.Annotations, pixel);
         if (annotationHit is not null)
@@ -74,8 +80,10 @@ public static class FigureHitTesting
                 continue;
             }
 
-            PlotHitResult? hit = plot.HitTest(pixel, mapper, PlotPickTolerancePixels);
-            if (hit is not null && (best is null || hit.DistancePixels < best.DistancePixels))
+            PlotHitResult? hit = camera is not null
+                ? plot.HitTest3D(pixel, camera, PlotPickTolerancePixels)
+                : plot.HitTest(pixel, mapper, PlotPickTolerancePixels);
+            if (hit is not null && (best is null || Beats(hit, best)))
             {
                 best = hit;
             }
@@ -88,6 +96,41 @@ public static class FigureHitTesting
 
         return new FigureHit(axes.Selectable ? axes : null, axes, place);
     }
+
+    /// <summary>
+    /// Whether one hit should be preferred to another. Nearer the pointer wins; among hits the
+    /// pointer is equally near — which in space is the common case, since a click inside two
+    /// overlapping faces is dead centre of both — the one nearer the camera wins, because that is
+    /// the one drawn on top and the one a person was looking at.
+    /// </summary>
+    /// <remarks>
+    /// The camera depth is NaN on a flat hit, and every comparison against NaN is false, so a flat
+    /// axes falls through to the first-found rule it has always had. That is deliberate: two flat
+    /// objects under one pixel have no "in front", and inventing an order for them would change
+    /// behaviour this milestone has no business changing.
+    /// </remarks>
+    private static bool Beats(PlotHitResult candidate, PlotHitResult best)
+    {
+        if (candidate.DistancePixels < best.DistancePixels - DepthTieTolerance)
+        {
+            return true;
+        }
+
+        if (candidate.DistancePixels > best.DistancePixels + DepthTieTolerance)
+        {
+            return false;
+        }
+
+        return candidate.CameraDepth > best.CameraDepth;
+    }
+
+    /// <summary>
+    /// How close two hits' pixel distances must be before the camera decides between them. A click
+    /// inside two faces reads zero for both; a click near the shared edge of two reads two distances
+    /// that differ by a rounding, and calling those a tie is what stops the answer flickering
+    /// between the front face and the one behind it as the pointer moves a fraction.
+    /// </summary>
+    private const double DepthTieTolerance = 1.0;
 
     private static AnnotationObject? HitTestAnnotations(
         GraphObjectCollection<AnnotationObject> annotations, Point2D pixel)
@@ -111,17 +154,17 @@ public static class FigureHitTesting
     /// pixel names one point; in three it names a line of sight, so the box is asked where that line
     /// enters and leaves it.
     /// </summary>
-    private static void RecordCurrentPoint(AxesModel axes, Point2D pixel, Point2D place, Rect2D plotArea)
+    private static void RecordCurrentPoint(
+        AxesModel axes, Point2D pixel, Point2D place, Projection3D? camera)
     {
-        if (!axes.Is3D)
+        if (camera is null)
         {
             var flat = new Vector3D(place.X, place.Y, 0);
             axes.SetCurrentPoint(flat, flat);
             return;
         }
 
-        Projection3D projection = ProjectionFor(axes, plotArea);
-        (Vector3D front, Vector3D back) = projection.Unproject(pixel.X, pixel.Y);
+        (Vector3D front, Vector3D back) = camera.Unproject(pixel.X, pixel.Y);
         axes.SetCurrentPoint(front, back);
     }
 

@@ -149,7 +149,7 @@ public sealed class PatchPlot : PlotObject, IDrawable, I3DDrawable, IHasZData, I
 
     /// <summary>The vertex markers' outline, or null to follow the patch's edge colour.</summary>
     [Category("Appearance"), DisplayName("Marker edge")]
-    public Color? MarkerEdge
+    public Color? MarkerEdgeColor
     {
         get => _markerEdge;
         set => SetProperty(ref _markerEdge, value, InvalidationKind.Render);
@@ -157,7 +157,7 @@ public sealed class PatchPlot : PlotObject, IDrawable, I3DDrawable, IHasZData, I
 
     /// <summary>The vertex markers' fill, or null for a hollow marker.</summary>
     [Category("Appearance"), DisplayName("Marker fill")]
-    public Color? MarkerFill
+    public Color? MarkerFaceColor
     {
         get => _markerFill;
         set => SetProperty(ref _markerFill, value, InvalidationKind.Render);
@@ -229,6 +229,81 @@ public sealed class PatchPlot : PlotObject, IDrawable, I3DDrawable, IHasZData, I
     /// <summary>The vertex indices of each face.</summary>
     [Browsable(false)]
     public IReadOnlyList<int[]> Faces => _faces;
+
+    /// <inheritdoc />
+    /// <remarks>
+    /// M87. A patch is faces, and a click inside one is a click on the patch — so each face is tested
+    /// for containment first and for nearness to its outline second. A face the pixel is inside beats
+    /// any face it merely lies near, and among faces it is inside, the one nearest the camera wins,
+    /// because that is the one drawn on top of the others.
+    /// </remarks>
+    public override PlotHitResult? HitTest3D(
+        Point2D pixelPoint, ISpatialMapper projector, double tolerancePixels)
+    {
+        ArgumentNullException.ThrowIfNull(projector);
+
+        var drawn = new Point2D[_x.Length];
+        var depths = new double[_x.Length];
+        var visible = new bool[_x.Length];
+        for (int v = 0; v < _x.Length; v++)
+        {
+            visible[v] = SpatialPicking.IsDrawable(_x[v], _y[v], _z[v]);
+            if (visible[v])
+            {
+                (drawn[v], depths[v]) = projector.Project(_x[v], _y[v], _z[v]);
+            }
+        }
+
+        int bestVertex = -1;
+        double bestDistance = double.PositiveInfinity;
+        double bestDepth = double.NegativeInfinity;
+        var corners = new List<Point2D>(8);
+
+        foreach (int[] face in _faces)
+        {
+            corners.Clear();
+            double depth = double.NegativeInfinity;
+            int anchor = -1;
+            foreach (int v in face)
+            {
+                if (v < 0 || v >= _x.Length || !visible[v])
+                {
+                    continue;
+                }
+
+                corners.Add(drawn[v]);
+                depth = System.Math.Max(depth, depths[v]);
+                anchor = anchor < 0 ? v : anchor;
+            }
+
+            if (corners.Count == 0)
+            {
+                continue;
+            }
+
+            ReadOnlySpan<Point2D> outline = System.Runtime.InteropServices.CollectionsMarshal
+                .AsSpan(corners);
+            double distance = SpatialPicking.Inside(pixelPoint, outline)
+                ? 0
+                : SpatialPicking.DistanceToOutline(pixelPoint, outline);
+            if (distance > tolerancePixels)
+            {
+                continue;
+            }
+
+            if (distance < bestDistance || (distance == bestDistance && depth > bestDepth))
+            {
+                bestVertex = anchor;
+                bestDistance = distance;
+                bestDepth = depth;
+            }
+        }
+
+        return bestVertex >= 0
+            ? new PlotHitResult(
+                this, new Point2D(_x[bestVertex], _y[bestVertex]), bestDistance, bestVertex, bestDepth)
+            : null;
+    }
 
     /// <summary>Replaces the vertex list and the faces over it.</summary>
     public void SetData(double[] x, double[] y, double[] z, int[][] faces)

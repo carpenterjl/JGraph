@@ -32,6 +32,7 @@ public sealed class Stem3DPlot : PlotObject, I3DDrawable, IHasZData, ILegendItem
     private MarkerType _marker = MarkerType.Circle;
     private double _markerSize = 6;
     private Color? _markerFill;
+    private Color? _markerEdge;
 
     private Point2D[] _tips = new Point2D[16];
 
@@ -112,10 +113,19 @@ public sealed class Stem3DPlot : PlotObject, I3DDrawable, IHasZData, ILegendItem
 
     /// <summary>Marker interior color, or null for open (unfilled) markers.</summary>
     [Category("Appearance"), DisplayName("Marker fill")]
-    public Color? MarkerFill
+    public Color? MarkerFaceColor
     {
         get => _markerFill;
         set => SetProperty(ref _markerFill, value, InvalidationKind.Render);
+    }
+
+    /// <summary>Marker outline color, or null to draw it in the stem's own colour.</summary>
+    /// <remarks>M86, for the reason recorded on <see cref="Line3DPlot.MarkerEdgeColor"/>.</remarks>
+    [Category("Appearance"), DisplayName("Marker edge")]
+    public Color? MarkerEdgeColor
+    {
+        get => _markerEdge;
+        set => SetProperty(ref _markerEdge, value, InvalidationKind.Render);
     }
 
     /// <inheritdoc />
@@ -162,10 +172,57 @@ public sealed class Stem3DPlot : PlotObject, I3DDrawable, IHasZData, ILegendItem
 
         if (_marker != MarkerType.None && tips > 0)
         {
+            Color edge = _markerEdge ?? color;
             var marker = new MarkerStyle(
-                _marker, _markerSize, _markerFill?.WithOpacity(Opacity), color);
-            context.DrawMarkers(_tips.AsSpan(0, tips), marker, color);
+                _marker, _markerSize, _markerFill?.WithOpacity(Opacity), edge);
+            context.DrawMarkers(_tips.AsSpan(0, tips), marker, edge);
         }
+    }
+
+    /// <inheritdoc />
+    /// <remarks>
+    /// M87. A stem is its head and its stalk, and a click on either is a click on the stem — so each
+    /// sample is tested twice, once at the marker and once along the line down to the baseline.
+    /// </remarks>
+    public override PlotHitResult? HitTest3D(
+        Point2D pixelPoint, ISpatialMapper projector, double tolerancePixels)
+    {
+        ArgumentNullException.ThrowIfNull(projector);
+
+        int best = -1;
+        double bestDistance = double.PositiveInfinity;
+        double bestDepth = double.NegativeInfinity;
+
+        if (SpatialPicking.NearestPoint(pixelPoint, projector, X, Y, Z, tolerancePixels)
+            is var (head, headDistance, headDepth))
+        {
+            best = head;
+            bestDistance = headDistance;
+            bestDepth = headDepth;
+        }
+
+        for (int i = 0; i < System.Math.Min(X.Count, System.Math.Min(Y.Count, Z.Count)); i++)
+        {
+            if (!SpatialPicking.IsDrawable(X[i], Y[i], Z[i]))
+            {
+                continue;
+            }
+
+            double[] xs = [X[i], X[i]];
+            double[] ys = [Y[i], Y[i]];
+            double[] zs = [_baseline, Z[i]];
+            if (SpatialPicking.NearestSegment(pixelPoint, projector, xs, ys, zs, tolerancePixels)
+                is var (_, distance, depth) && distance < bestDistance)
+            {
+                best = i;
+                bestDistance = distance;
+                bestDepth = depth;
+            }
+        }
+
+        return best >= 0
+            ? new PlotHitResult(this, new Point2D(X[best], Y[best]), bestDistance, best, bestDepth)
+            : null;
     }
 
     /// <inheritdoc />
@@ -176,7 +233,7 @@ public sealed class Stem3DPlot : PlotObject, I3DDrawable, IHasZData, ILegendItem
             ? new LineStyle(color, _lineWidth, _dashStyle)
             : null;
         MarkerStyle? marker = _marker != MarkerType.None
-            ? new MarkerStyle(_marker, System.Math.Min(_markerSize, 8), _markerFill, color)
+            ? new MarkerStyle(_marker, System.Math.Min(_markerSize, 8), _markerFill, _markerEdge ?? color)
             : null;
         return new LegendKey(line, marker, swatch: null);
     }

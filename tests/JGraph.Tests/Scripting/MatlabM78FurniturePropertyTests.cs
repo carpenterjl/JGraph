@@ -899,17 +899,26 @@ public class MatlabM78FurniturePropertyTests : IDisposable
     /// the milestone claims, pinned so that a later wave cannot quietly lose one: a property surface
     /// that shrinks without anyone noticing is the failure this whole table exists to prevent.
     /// </summary>
+    /// <remarks>
+    /// Three of these dropped by two in M86, and the drop is the milestone working. The table is
+    /// built by reflection over the model's own property names, so while the model spelled the marker
+    /// colours <c>MarkerFill</c> and <c>MarkerEdge</c> those two were *served as properties* beside
+    /// the MATLAB names the curated layer added — two names MATLAB has never had, on every kind that
+    /// draws a marker. Renaming the model took them away. Nothing documented was lost: neither
+    /// spelling appears anywhere in <c>matlab-r2021b-properties.csv</c>, so the coverage numbers this
+    /// floor exists to protect did not move at all.
+    /// </remarks>
     [Theory]
     [InlineData("polaraxes;", 201)]
     [InlineData("plot([1 2 3]); h = legend('a');", 49)]
     [InlineData("plot([1 2 3]); h = text(0.5, 0.5, 'label');", 57)]
-    [InlineData("h = surf(peaks(8));", 83)]
+    [InlineData("h = surf(peaks(8));", 81)]
     [InlineData("h = contour(peaks(8));", 65)]
     [InlineData("h = heatmap(magic(4));", 70)]
     [InlineData("surf(peaks(8)); h = colorbar;", 55)]
-    [InlineData("h = patch([0 1 1], [0 0 1], 'r');", 79)]
+    [InlineData("h = patch([0 1 1], [0 0 1], 'r');", 77)]
     [InlineData("h = image(magic(4));", 45)]
-    [InlineData("h = quiver([0 1], [0 1], [1 1], [1 1]);", 65)]
+    [InlineData("h = quiver([0 1], [0 1], [1 1], [1 1]);", 63)]
     [InlineData("bubblechart([1 2], [1 2], [10 20]); h = bubblelegend();", 49)]
     public async Task EachKindAnswersAtLeastTheNamesThisMilestoneClaims(string build, int wanted)
     {

@@ -26,7 +26,7 @@ public class Chart3DSerializationTests
         plot.Baseline = -1;
         plot.Marker = MarkerType.Square;
         plot.MarkerSize = 9;
-        plot.MarkerFill = Colors.Blue;
+        plot.MarkerFaceColor = Colors.Blue;
 
         var loaded = (Stem3DPlot)RoundTrip(figure).Axes[0].Plots[0];
 
@@ -38,7 +38,7 @@ public class Chart3DSerializationTests
         Assert.Equal(DashStyle.Dot, loaded.DashStyle);
         Assert.Equal(-1, loaded.Baseline);
         Assert.Equal(MarkerType.Square, loaded.Marker);
-        Assert.Equal(Colors.Blue, loaded.MarkerFill);
+        Assert.Equal(Colors.Blue, loaded.MarkerFaceColor);
     }
 
     [Fact]
