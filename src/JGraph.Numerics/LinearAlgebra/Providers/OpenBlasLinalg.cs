@@ -197,4 +197,170 @@ public sealed class OpenBlasLinalg : DenseLinalg
                 m, n, nrhs, pa, lda, pb, ldb);
         }
     }
+
+    /// <inheritdoc />
+    public override unsafe int Geqrf(int m, int n, Span<double> a, int lda, Span<double> tau)
+    {
+        if (m == 0 || n == 0)
+        {
+            return 0;
+        }
+
+        fixed (double* pa = a)
+        fixed (double* pt = tau)
+        {
+            return OpenBlasNative.Dgeqrf(OpenBlasNative.LapackColMajor, m, n, pa, lda, pt);
+        }
+    }
+
+    /// <inheritdoc />
+    public override unsafe int Orgqr(int m, int n, int k, Span<double> a, int lda, ReadOnlySpan<double> tau)
+    {
+        if (m == 0 || n == 0)
+        {
+            return 0;
+        }
+
+        fixed (double* pa = a)
+        fixed (double* pt = tau)
+        {
+            return OpenBlasNative.Dorgqr(OpenBlasNative.LapackColMajor, m, n, k, pa, lda, pt);
+        }
+    }
+
+    /// <inheritdoc />
+    public override unsafe int Ormqr(bool leftSide, bool transpose, int m, int n, int k,
+        ReadOnlySpan<double> a, int lda, ReadOnlySpan<double> tau, Span<double> c, int ldc)
+    {
+        if (m == 0 || n == 0 || k == 0)
+        {
+            return 0;
+        }
+
+        fixed (double* pa = a)
+        fixed (double* pt = tau)
+        fixed (double* pc = c)
+        {
+            return OpenBlasNative.Dormqr(OpenBlasNative.LapackColMajor,
+                leftSide ? OpenBlasNative.CharLeft : OpenBlasNative.CharRight,
+                transpose ? OpenBlasNative.CharTrans : OpenBlasNative.CharNoTrans,
+                m, n, k, pa, lda, pt, pc, ldc);
+        }
+    }
+
+    /// <inheritdoc />
+    public override unsafe int Geqp3(int m, int n, Span<double> a, int lda, Span<int> jpvt, Span<double> tau)
+    {
+        if (m == 0 || n == 0)
+        {
+            return 0;
+        }
+
+        // Every entry must be zero on the way in; a nonzero one would pin that column to the front.
+        jpvt.Clear();
+        fixed (double* pa = a)
+        fixed (int* pj = jpvt)
+        fixed (double* pt = tau)
+        {
+            return OpenBlasNative.Dgeqp3(OpenBlasNative.LapackColMajor, m, n, pa, lda, pj, pt);
+        }
+    }
+
+    /// <inheritdoc />
+    public override unsafe int Gesdd(SvdVectors job, int m, int n, Span<double> a, int lda,
+        Span<double> s, Span<double> u, int ldu, Span<double> vt, int ldvt)
+    {
+        if (m == 0 || n == 0)
+        {
+            return 0;
+        }
+
+        // LAPACK never reads U or Vᵀ for a values-only job, but it is handed a real address all the
+        // same: a null one is outside the Fortran contract even where it is never dereferenced.
+        Span<double> uOut = u.IsEmpty ? stackalloc double[1] : u;
+        Span<double> vtOut = vt.IsEmpty ? stackalloc double[1] : vt;
+        fixed (double* pa = a)
+        fixed (double* ps = s)
+        fixed (double* pu = uOut)
+        fixed (double* pvt = vtOut)
+        {
+            return OpenBlasNative.Dgesdd(OpenBlasNative.LapackColMajor, JobCharacter(job), m, n,
+                pa, lda, ps, pu, Math.Max(ldu, 1), pvt, Math.Max(ldvt, 1));
+        }
+    }
+
+    /// <inheritdoc />
+    public override unsafe int Gesvd(SvdVectors job, int m, int n, Span<double> a, int lda,
+        Span<double> s, Span<double> u, int ldu, Span<double> vt, int ldvt)
+    {
+        if (m == 0 || n == 0)
+        {
+            return 0;
+        }
+
+        Span<double> uOut = u.IsEmpty ? stackalloc double[1] : u;
+        Span<double> vtOut = vt.IsEmpty ? stackalloc double[1] : vt;
+
+        // The unconverged superdiagonal LAPACK would report through; nothing here reads it back,
+        // but the array has to exist because a failing call writes to it.
+        var superb = new double[Math.Max(Math.Min(m, n) - 1, 1)];
+        byte character = JobCharacter(job);
+        fixed (double* pa = a)
+        fixed (double* ps = s)
+        fixed (double* pu = uOut)
+        fixed (double* pvt = vtOut)
+        fixed (double* pb = superb)
+        {
+            return OpenBlasNative.Dgesvd(OpenBlasNative.LapackColMajor, character, character, m, n,
+                pa, lda, ps, pu, Math.Max(ldu, 1), pvt, Math.Max(ldvt, 1), pb);
+        }
+    }
+
+    /// <inheritdoc />
+    public override unsafe int Syevd(bool vectors, bool lower, int n, Span<double> a, int lda, Span<double> w)
+    {
+        if (n == 0)
+        {
+            return 0;
+        }
+
+        fixed (double* pa = a)
+        fixed (double* pw = w)
+        {
+            return OpenBlasNative.Dsyevd(OpenBlasNative.LapackColMajor,
+                vectors ? OpenBlasNative.CharVectors : OpenBlasNative.CharNone,
+                lower ? OpenBlasNative.CharLower : OpenBlasNative.CharUpper, n, pa, lda, pw);
+        }
+    }
+
+    /// <inheritdoc />
+    public override unsafe int Geev(bool vectors, int n, Span<double> a, int lda,
+        Span<double> wr, Span<double> wi, Span<double> vr, int ldvr)
+    {
+        if (n == 0)
+        {
+            return 0;
+        }
+
+        double left = 0;
+        Span<double> vrOut = vr.IsEmpty ? stackalloc double[1] : vr;
+        fixed (double* pa = a)
+        fixed (double* pwr = wr)
+        fixed (double* pwi = wi)
+        fixed (double* pvr = vrOut)
+        {
+            return OpenBlasNative.Dgeev(OpenBlasNative.LapackColMajor,
+                OpenBlasNative.CharNone,
+                vectors ? OpenBlasNative.CharVectors : OpenBlasNative.CharNone,
+                n, pa, lda, pwr, pwi, &left, 1, pvr, Math.Max(ldvr, 1));
+        }
+    }
+
+    /// <summary>The LAPACK <c>jobz</c> character for how much of the SVD's factors were asked for.</summary>
+    private static byte JobCharacter(SvdVectors job) => job switch
+    {
+        SvdVectors.None => OpenBlasNative.CharNone,
+        SvdVectors.Economy => OpenBlasNative.CharSome,
+        _ => OpenBlasNative.CharAll,
+    };
 }

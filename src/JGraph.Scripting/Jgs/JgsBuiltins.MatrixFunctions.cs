@@ -122,31 +122,45 @@ internal static partial class JgsBuiltins
         Define("cond", (args, line, col) =>
         {
             ArityRange("cond", args, 1, 2, line, col);
-            double[,] a = SquareRect("cond", args[0], line, col);
+            double[] a = SquareColumnMajorOf("cond", args[0], out int n, line, col);
             string p = args.Count == 2
-                ? args[1].Type == JgsType.String ? args[1].AsString : Num("cond", args, 1, line, col).ToString("R")
+                ? args[1].Type == JgsType.String ? args[1].AsString : NormName(Num("cond", args, 1, line, col))
                 : "2";
 
             if (p == "2")
             {
-                Svd svd = Svd.Factor(a);
-                double largest = svd.Values.Max();
-                double smallest = svd.Values.Min();
+                // Only the values, never a singular vector: the 2-norm condition number is the ratio
+                // of the largest to the smallest, and asking for the factors would be most of the work
+                // for none of the answer.
+                double[] sigma = Svd.SingularValues(a, n, n);
+                if (sigma.Length == 0)
+                {
+                    return JgsValue.Number(double.PositiveInfinity);
+                }
+
+                double largest = sigma.Max();
+                double smallest = sigma.Min();
                 return JgsValue.Number(smallest == 0 ? double.PositiveInfinity : largest / smallest);
             }
 
-            LuDecomposition lu = LuDecomposition.Factor(a);
+            // Measured before the factorization, which overwrites the matrix it is handed. All three
+            // are O(n²) against its O(n³), so taking them all costs less than deciding not to.
+            double one = DenseLinalg.OneNorm(n, n, a, n);
+            double infinity = RowSumNorm(a, n);
+            double frobenius = EuclideanNorm(a);
+
+            LuDecomposition lu = LuDecomposition.FactorAdopting(a, n);
             if (lu.IsSingular)
             {
                 return JgsValue.Number(double.PositiveInfinity);
             }
 
-            double[,] inverse = lu.Inverse();
+            double[] inverse = lu.InverseColumnMajor();
             return JgsValue.Number(p switch
             {
-                "1" => OneNorm(a) * OneNorm(inverse),
-                "Inf" or "inf" => InfinityNorm(a) * InfinityNorm(inverse),
-                "fro" => FrobeniusNorm(a) * FrobeniusNorm(inverse),
+                "1" => one * DenseLinalg.OneNorm(n, n, inverse, n),
+                "Inf" or "inf" => infinity * RowSumNorm(inverse, n),
+                "fro" => frobenius * EuclideanNorm(inverse),
                 _ => throw new JgsRuntimeException(line, col, "cond supports p = 1, 2, Inf, or 'fro'."),
             });
         });
@@ -296,34 +310,6 @@ internal static partial class JgsBuiltins
         }
 
         return product;
-    }
-
-    private static double InfinityNorm(double[,] a)
-    {
-        double largest = 0;
-        for (int r = 0; r < a.GetLength(0); r++)
-        {
-            double sum = 0;
-            for (int c = 0; c < a.GetLength(1); c++)
-            {
-                sum += System.Math.Abs(a[r, c]);
-            }
-
-            largest = System.Math.Max(largest, sum);
-        }
-
-        return largest;
-    }
-
-    private static double FrobeniusNorm(double[,] a)
-    {
-        double sum = 0;
-        foreach (double v in a)
-        {
-            sum += v * v;
-        }
-
-        return System.Math.Sqrt(sum);
     }
 
     // --- Complex square matrices (det/inv/trace) -----------------------------------------------
@@ -651,5 +637,43 @@ internal static partial class JgsBuiltins
         }
 
         return n == 1 ? elements[0] : JgsValue.Shaped(elements, n, n);
+    }
+
+    /// <summary>
+    /// The name <c>cond</c> knows a numeric <c>p</c> by. Infinity needs spelling out: its round-trip
+    /// text is "Infinity", which matches none of the words, so <c>cond(A, inf)</c> used to be
+    /// refused while <c>cond(A, 'inf')</c> and <c>norm(A, inf)</c> were both accepted.
+    /// </summary>
+    private static string NormName(double p) =>
+        double.IsPositiveInfinity(p) ? "inf" : p.ToString("R");
+
+    /// <summary>The ∞-norm of an n-by-n column-major matrix: the largest absolute row sum.</summary>
+    private static double RowSumNorm(ReadOnlySpan<double> a, int n)
+    {
+        double best = 0;
+        for (int r = 0; r < n; r++)
+        {
+            double sum = 0;
+            for (int c = 0; c < n; c++)
+            {
+                sum += Math.Abs(a[(c * n) + r]);
+            }
+
+            best = Math.Max(best, sum);
+        }
+
+        return best;
+    }
+
+    /// <summary>The Frobenius norm — the layout does not matter, only that every entry is counted.</summary>
+    private static double EuclideanNorm(ReadOnlySpan<double> a)
+    {
+        double sum = 0;
+        foreach (double x in a)
+        {
+            sum += x * x;
+        }
+
+        return Math.Sqrt(sum);
     }
 }

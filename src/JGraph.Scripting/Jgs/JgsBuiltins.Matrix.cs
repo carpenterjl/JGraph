@@ -297,49 +297,58 @@ internal static partial class JgsBuiltins
         Define("null", (args, line, col) =>
         {
             Arity("null", args, 1, line, col);
-            double[,] a = RectOf("null", args[0], line, col);
-            Svd svd = Svd.Factor(a);
+            double[] a = ColumnMajorOf("null", args[0], out int rows, out int cols, line, col);
 
             // The null space is spanned by the right singular vectors of the negligible singular
-            // values, which is why this needs the V factor rather than a row reduction.
-            return FromRect(SelectColumns(svd.V, svd.Values, Tolerance(a, svd.Values), keepAbove: false));
+            // values, which is why this needs the V factor rather than a row reduction. A wide
+            // matrix needs the full one — its null space is wider than the economy V has columns —
+            // and a tall matrix must not be given it: the economy V is already n-by-n there, and
+            // asking for the full decomposition would build an m-by-m U to go unread, which for a
+            // long thin matrix is the whole of the memory.
+            Svd svd = rows < cols ? Svd.FactorFull(a, rows, cols) : Svd.Factor(a, rows, cols);
+            return FromRect(SelectColumns(svd.V, svd.Values, Tolerance(rows, cols, svd.Values), keepAbove: false));
         }, null);
 
         Define("orth", (args, line, col) =>
         {
             Arity("orth", args, 1, line, col);
-            double[,] a = RectOf("orth", args[0], line, col);
-            Svd svd = Svd.Factor(a);
-            return FromRect(SelectColumns(svd.U, svd.Values, Tolerance(a, svd.Values), keepAbove: true));
+            double[] a = ColumnMajorOf("orth", args[0], out int rows, out int cols, line, col);
+
+            // The range needs no completing: it can be no wider than the rank, and the economy U
+            // already carries every column a nonzero singular value could claim.
+            Svd svd = Svd.Factor(a, rows, cols);
+            return FromRect(SelectColumns(svd.U, svd.Values, Tolerance(rows, cols, svd.Values), keepAbove: true));
         }, null);
 
         Define("pinv", (args, line, col) =>
         {
             Arity("pinv", args, 1, line, col);
-            double[,] a = RectOf("pinv", args[0], line, col);
-            Svd svd = Svd.Factor(a);
-            double tolerance = Tolerance(a, svd.Values);
-            int rows = a.GetLength(0);
-            int cols = a.GetLength(1);
-            var inverse = new double[cols, rows];
-            for (int k = 0; k < svd.Values.Length; k++)
+            double[] a = ColumnMajorOf("pinv", args[0], out int rows, out int cols, line, col);
+            Svd svd = Svd.Factor(a, rows, cols);
+            double tolerance = Tolerance(rows, cols, svd.Values);
+            double[] values = svd.Values;
+            double[] u = svd.UColumnMajor;
+            double[] v = svd.VColumnMajor;
+            return BuildColumnMajor(cols, rows, destination =>
             {
-                if (svd.Values[k] <= tolerance)
+                for (int k = 0; k < values.Length; k++)
                 {
-                    continue;
-                }
-
-                double reciprocal = 1.0 / svd.Values[k];
-                for (int r = 0; r < cols; r++)
-                {
-                    for (int c = 0; c < rows; c++)
+                    if (values[k] <= tolerance)
                     {
-                        inverse[r, c] += reciprocal * svd.V[r, k] * svd.U[c, k];
+                        continue;
+                    }
+
+                    double reciprocal = 1.0 / values[k];
+                    for (int r = 0; r < cols; r++)
+                    {
+                        for (int c = 0; c < rows; c++)
+                        {
+                            destination[(c * cols) + r] +=
+                                reciprocal * v[(k * cols) + r] * u[(k * rows) + c];
+                        }
                     }
                 }
-            }
-
-            return FromRect(inverse);
+            });
         }, null);
 
         Define("cross", (args, line, col) =>
@@ -391,8 +400,8 @@ internal static partial class JgsBuiltins
     }
 
     /// <summary>The singular value below which a value counts as zero — MATLAB's rank tolerance.</summary>
-    private static double Tolerance(double[,] a, double[] singular) =>
-        Math.Max(a.GetLength(0), a.GetLength(1)) * (singular.Length == 0 ? 0 : singular[0]) * 2.220446049250313e-16;
+    private static double Tolerance(int rows, int cols, double[] singular) =>
+        Math.Max(rows, cols) * (singular.Length == 0 ? 0 : singular[0]) * 2.220446049250313e-16;
 
     /// <summary>The columns of <paramref name="matrix"/> whose singular value is above or below a threshold.</summary>
     private static double[,] SelectColumns(double[,] matrix, double[] singular, double tolerance, bool keepAbove)

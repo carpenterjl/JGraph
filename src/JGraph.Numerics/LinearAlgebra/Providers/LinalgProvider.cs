@@ -93,5 +93,33 @@ public static class LinalgProvider
 
         public override int Gels(int m, int n, int nrhs, Span<double> a, int lda, Span<double> b, int ldb) =>
             throw new InvalidOperationException(reason);
+
+        public override int Geqrf(int m, int n, Span<double> a, int lda, Span<double> tau) =>
+            throw new InvalidOperationException(reason);
+
+        public override int Geqp3(int m, int n, Span<double> a, int lda, Span<int> jpvt, Span<double> tau) =>
+            throw new InvalidOperationException(reason);
+
+        public override int Orgqr(int m, int n, int k, Span<double> a, int lda, ReadOnlySpan<double> tau) =>
+            throw new InvalidOperationException(reason);
+
+        public override int Ormqr(bool leftSide, bool transpose, int m, int n, int k,
+            ReadOnlySpan<double> a, int lda, ReadOnlySpan<double> tau, Span<double> c, int ldc) =>
+            throw new InvalidOperationException(reason);
+
+        public override int Gesdd(SvdVectors job, int m, int n, Span<double> a, int lda,
+            Span<double> s, Span<double> u, int ldu, Span<double> vt, int ldvt) =>
+            throw new InvalidOperationException(reason);
+
+        public override int Gesvd(SvdVectors job, int m, int n, Span<double> a, int lda,
+            Span<double> s, Span<double> u, int ldu, Span<double> vt, int ldvt) =>
+            throw new InvalidOperationException(reason);
+
+        public override int Syevd(bool vectors, bool lower, int n, Span<double> a, int lda, Span<double> w) =>
+            throw new InvalidOperationException(reason);
+
+        public override int Geev(bool vectors, int n, Span<double> a, int lda,
+            Span<double> wr, Span<double> wi, Span<double> vr, int ldvr) =>
+            throw new InvalidOperationException(reason);
     }
 }

@@ -47,6 +47,24 @@ internal static unsafe partial class OpenBlasNative
     /// <summary>LAPACK's <c>norm</c> character selecting the 1-norm.</summary>
     internal const byte CharOneNorm = (byte)'1';
 
+    /// <summary>LAPACK's <c>jobz</c>/<c>jobu</c> character asking for every column of the factor.</summary>
+    internal const byte CharAll = (byte)'A';
+
+    /// <summary>LAPACK's <c>jobz</c> character asking for the economy-size factors only.</summary>
+    internal const byte CharSome = (byte)'S';
+
+    /// <summary>LAPACK's <c>job</c> character declining a factor — values only.</summary>
+    internal const byte CharNone = (byte)'N';
+
+    /// <summary>LAPACK's <c>job</c> character asking for the vectors as well as the values.</summary>
+    internal const byte CharVectors = (byte)'V';
+
+    /// <summary>LAPACK's <c>side</c> character: the operator multiplies from the left.</summary>
+    internal const byte CharLeft = (byte)'L';
+
+    /// <summary>LAPACK's <c>side</c> character: the operator multiplies from the right.</summary>
+    internal const byte CharRight = (byte)'R';
+
     [LibraryImport(Library, EntryPoint = "cblas_dgemm")]
     [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvCdecl) })]
     internal static partial void Dgemm(int order, int transA, int transB,
@@ -96,6 +114,53 @@ internal static unsafe partial class OpenBlasNative
     [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvCdecl) })]
     internal static partial int Dgels(int layout, byte trans, int m, int n, int nrhs,
         double* a, int lda, double* b, int ldb);
+
+    /// <summary>A = Q·R in place: R on and above the diagonal, the reflector vectors below.</summary>
+    [LibraryImport(Library, EntryPoint = "LAPACKE_dgeqrf")]
+    [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvCdecl) })]
+    internal static partial int Dgeqrf(int layout, int m, int n, double* a, int lda, double* tau);
+
+    /// <summary>Expands the reflectors of a <see cref="Dgeqrf"/> factorization into Q's first n columns.</summary>
+    [LibraryImport(Library, EntryPoint = "LAPACKE_dorgqr")]
+    [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvCdecl) })]
+    internal static partial int Dorgqr(int layout, int m, int n, int k, double* a, int lda, double* tau);
+
+    /// <summary>Multiplies C by Q (or Qᵀ) without ever forming Q — the least-squares workhorse.</summary>
+    [LibraryImport(Library, EntryPoint = "LAPACKE_dormqr")]
+    [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvCdecl) })]
+    internal static partial int Dormqr(int layout, byte side, byte trans, int m, int n, int k,
+        double* a, int lda, double* tau, double* c, int ldc);
+
+    /// <summary>QR with column pivoting, A·P = Q·R; <c>jpvt</c> must arrive zeroed to leave every column free.</summary>
+    [LibraryImport(Library, EntryPoint = "LAPACKE_dgeqp3")]
+    [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvCdecl) })]
+    internal static partial int Dgeqp3(int layout, int m, int n, double* a, int lda, int* jpvt, double* tau);
+
+    /// <summary>The divide-and-conquer SVD, A = U·Σ·Vᵀ. A is overwritten whatever the job.</summary>
+    [LibraryImport(Library, EntryPoint = "LAPACKE_dgesdd")]
+    [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvCdecl) })]
+    internal static partial int Dgesdd(int layout, byte jobz, int m, int n, double* a, int lda,
+        double* s, double* u, int ldu, double* vt, int ldvt);
+
+    /// <summary>The QR-iteration SVD — slower than <see cref="Dgesdd"/>, and the fallback when it fails to converge.</summary>
+    [LibraryImport(Library, EntryPoint = "LAPACKE_dgesvd")]
+    [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvCdecl) })]
+    internal static partial int Dgesvd(int layout, byte jobu, byte jobvt, int m, int n, double* a, int lda,
+        double* s, double* u, int ldu, double* vt, int ldvt, double* superb);
+
+    /// <summary>The symmetric divide-and-conquer eigensolver: ascending values, orthonormal vectors over A.</summary>
+    [LibraryImport(Library, EntryPoint = "LAPACKE_dsyevd")]
+    [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvCdecl) })]
+    internal static partial int Dsyevd(int layout, byte jobz, byte uplo, int n, double* a, int lda, double* w);
+
+    /// <summary>
+    /// The general eigensolver. A conjugate pair occupies two consecutive columns of <c>vr</c> —
+    /// real part then imaginary part — which is LAPACK's packing, not two complex columns.
+    /// </summary>
+    [LibraryImport(Library, EntryPoint = "LAPACKE_dgeev")]
+    [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvCdecl) })]
+    internal static partial int Dgeev(int layout, byte jobvl, byte jobvr, int n, double* a, int lda,
+        double* wr, double* wi, double* vl, int ldvl, double* vr, int ldvr);
 
     [LibraryImport(Library, EntryPoint = "openblas_set_num_threads")]
     [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvCdecl) })]

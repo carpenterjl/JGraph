@@ -126,7 +126,10 @@ win. Output: `matlab-r2021b-documented.html` in the demo workspace, 7.6 MB inste
 - MAT interop is real but bounded: the supported-type list above, verified by a live round-trip
   against the user's MATLAB machine (pending).
 - Known gaps, tracked and deliberate: `rng(seed)`; complex input to the decompositions; N-D arrays;
-  struct arrays and objects in MAT-files; `qr`/`svd` return economy-size factors.
+  struct arrays and objects in MAT-files; `qr`/`svd` return economy-size factors. **The last of
+  these was closed in M90** — see [ADR 0090](0090-the-orthogonal-backend.md): `[U, S, V] = svd(A)`
+  is full-sized with `'econ'` and `0` for the economy forms, and `qr` had already grown its full
+  factors by M76.
 
 ## Testing
 

@@ -1,3 +1,5 @@
+using System.Numerics;
+
 namespace JGraph.Numerics.LinearAlgebra;
 
 /// <summary>
@@ -97,6 +99,72 @@ public abstract class DenseLinalg
     public abstract int Gels(int m, int n, int nrhs, Span<double> a, int lda, Span<double> b, int ldb);
 
     /// <summary>
+    /// The Householder QR factorization A = Q·R in place over the m×n column-major
+    /// <paramref name="a"/>: R on and above the diagonal, and below it the reflector vectors, whose
+    /// implied leading 1 is what leaves room for R. <paramref name="tau"/> takes the min(m,n)
+    /// scalars that finish them. Q is never formed — <see cref="Orgqr"/> or <see cref="Ormqr"/>
+    /// does that, and for a solve neither one has to.
+    /// </summary>
+    public abstract int Geqrf(int m, int n, Span<double> a, int lda, Span<double> tau);
+
+    /// <summary>
+    /// Expands the first <paramref name="k"/> reflectors of a <see cref="Geqrf"/> factorization into
+    /// the first <paramref name="n"/> columns of Q, overwriting them where the reflectors were.
+    /// </summary>
+    public abstract int Orgqr(int m, int n, int k, Span<double> a, int lda, ReadOnlySpan<double> tau);
+
+    /// <summary>
+    /// Multiplies the m×n <paramref name="c"/> by Q — or by Qᵀ, and from either side — without ever
+    /// forming Q. This is what makes a least-squares solve cost one factorization rather than a
+    /// factorization plus an m×m expansion.
+    /// </summary>
+    public abstract int Ormqr(bool leftSide, bool transpose, int m, int n, int k,
+        ReadOnlySpan<double> a, int lda, ReadOnlySpan<double> tau, Span<double> c, int ldc);
+
+    /// <summary>
+    /// QR with column pivoting, A·P = Q·R, ordering R's diagonal by decreasing magnitude — which is
+    /// what makes the factorization tell the truth about a rank-deficient matrix.
+    /// <paramref name="jpvt"/> must arrive zeroed (every column free) and leaves holding LAPACK's
+    /// 1-based record: factored column j was input column <c>jpvt[j]</c>.
+    /// </summary>
+    public abstract int Geqp3(int m, int n, Span<double> a, int lda, Span<int> jpvt, Span<double> tau);
+
+    /// <summary>
+    /// The singular value decomposition A = U·Σ·Vᵀ. <paramref name="a"/> is overwritten whatever the
+    /// job; <paramref name="s"/> takes min(m,n) values in descending order. Note the second factor
+    /// arrives <em>transposed</em> — <paramref name="vt"/> holds Vᵀ, so V's columns are its rows.
+    /// </summary>
+    public abstract int Gesdd(SvdVectors job, int m, int n, Span<double> a, int lda,
+        Span<double> s, Span<double> u, int ldu, Span<double> vt, int ldvt);
+
+    /// <summary>
+    /// The same decomposition by QR iteration rather than divide and conquer. It exists for one
+    /// reason: the divide-and-conquer driver is the faster of the two but can report a failure to
+    /// converge, and this one is the more reliable retry. A caller that keeps a pristine copy of A
+    /// — <see cref="Gesdd"/> overwrites it — can fall back without telling its own caller anything.
+    /// </summary>
+    public abstract int Gesvd(SvdVectors job, int m, int n, Span<double> a, int lda,
+        Span<double> s, Span<double> u, int ldu, Span<double> vt, int ldvt);
+
+    /// <summary>
+    /// The symmetric eigensolver: <paramref name="w"/> takes the n eigenvalues in ascending order —
+    /// which is MATLAB's symmetric order too — and when <paramref name="vectors"/> is set the
+    /// orthonormal eigenvectors overwrite <paramref name="a"/>, one per column, in the same order.
+    /// Only the named triangle of A is read.
+    /// </summary>
+    public abstract int Syevd(bool vectors, bool lower, int n, Span<double> a, int lda, Span<double> w);
+
+    /// <summary>
+    /// The general (nonsymmetric) eigensolver. <paramref name="a"/> is overwritten; the eigenvalues
+    /// arrive split across <paramref name="wr"/> and <paramref name="wi"/>, a conjugate pair always
+    /// adjacent with the positive imaginary part first. The right eigenvectors are packed the same
+    /// way — a pair occupies two consecutive real columns, real part then imaginary part, not two
+    /// complex ones. <see cref="ComplexVectorsOf"/> unpacks them.
+    /// </summary>
+    public abstract int Geev(bool vectors, int n, Span<double> a, int lda,
+        Span<double> wr, Span<double> wi, Span<double> vr, int ldvr);
+
+    /// <summary>
     /// The matrix 1-norm: the largest absolute column sum. Deliberately not a provider member —
     /// it is exact, O(n²), and identical however the rest of the arithmetic is done, so binding
     /// <c>dlange</c> would buy nothing and cost a divergence between the two backends.
@@ -144,6 +212,41 @@ public abstract class DenseLinalg
         return order;
     }
 
+    /// <summary>
+    /// LAPACK's packed real eigenvectors as complex columns: where <paramref name="wi"/> marks a
+    /// conjugate pair, columns j and j+1 of <paramref name="vr"/> are one vector's real and
+    /// imaginary parts, and the pair's second eigenvector is that vector conjugated.
+    /// </summary>
+    public static Complex[,] ComplexVectorsOf(ReadOnlySpan<double> vr, ReadOnlySpan<double> wi, int n, int ldvr)
+    {
+        var vectors = new Complex[n, n];
+        for (int j = 0; j < n;)
+        {
+            if (j + 1 < n && wi[j] > 0 && wi[j + 1] < 0)
+            {
+                for (int r = 0; r < n; r++)
+                {
+                    var entry = new Complex(vr[(j * ldvr) + r], vr[((j + 1) * ldvr) + r]);
+                    vectors[r, j] = entry;
+                    vectors[r, j + 1] = Complex.Conjugate(entry);
+                }
+
+                j += 2;
+            }
+            else
+            {
+                for (int r = 0; r < n; r++)
+                {
+                    vectors[r, j] = vr[(j * ldvr) + r];
+                }
+
+                j++;
+            }
+        }
+
+        return vectors;
+    }
+
     /// <summary>Mirrors the computed lower triangle of an n×n column-major C onto its upper.</summary>
     private protected static void MirrorLowerTriangle(Span<double> c, int n, int ldc)
     {
@@ -155,6 +258,19 @@ public abstract class DenseLinalg
             }
         }
     }
+}
+
+/// <summary>How much of U and Vᵀ a <see cref="DenseLinalg.Gesdd"/> call wants back.</summary>
+public enum SvdVectors
+{
+    /// <summary>Singular values only; neither factor is written.</summary>
+    None,
+
+    /// <summary>The economy factors: U is m×min(m,n) and Vᵀ is min(m,n)×n.</summary>
+    Economy,
+
+    /// <summary>The full square factors: U is m×m and Vᵀ is n×n.</summary>
+    All,
 }
 
 /// <summary>The selectable <see cref="DenseLinalg"/> backends.</summary>

@@ -82,17 +82,27 @@ internal static partial class JgsBuiltins
             return [EigenvalueList(ComplexEigen.Values(ComplexSquareOf("eig", value, line, col)), asColumn: true)];
         }
 
-        double[,] a = SquareRect("eig", value, line, col);
-        Eigen eigen = Eigen.Factor(a);
+        double[] a = SquareColumnMajorOf("eig", value, out int n, line, col);
         if (wanted <= 1)
         {
-            return [asVector ? EigenvalueList(eigen.Values, asColumn: false) : FromComplexRect(Diagonal(eigen.Values))];
+            // No vectors asked for and none computed: recovering them is most of what a general
+            // eigensolver does, and this form of the verb never looks at one.
+            Complex[] spectrum = Eigen.Spectrum(a, n);
+            return [asVector ? EigenvalueList(spectrum, asColumn: false) : FromComplexRect(Diagonal(spectrum))];
         }
 
+        if (wanted <= 2)
+        {
+            Eigen pair = Eigen.FactorAdopting(a, n);
+            JgsValue values = asVector
+                ? EigenvalueList(pair.Values, asColumn: false)
+                : FromComplexRect(Diagonal(pair.Values));
+            return [FromComplexRect(pair.Vectors), values];
+        }
+
+        Eigen eigen = Eigen.Factor(a, n);
         JgsValue d = asVector ? EigenvalueList(eigen.Values, asColumn: false) : FromComplexRect(Diagonal(eigen.Values));
-        return wanted <= 2
-            ? [FromComplexRect(eigen.Vectors), d]
-            : [FromComplexRect(eigen.Vectors), d, FromComplexRect(LeftEigenvectors(a, eigen.Values))];
+        return [FromComplexRect(eigen.Vectors), d, FromComplexRect(LeftEigenvectors(a, n, eigen.Values))];
     }
 
     /// <summary>The eigenvalues of a pencil — <c>A·v = λ·B·v</c>.</summary>
@@ -151,12 +161,26 @@ internal static partial class JgsBuiltins
 
         // With B nonsingular the pencil's eigenvectors are those of B\\A exactly, and that path is
         // the one already measured against MATLAB.
-        Eigen eigen = Eigen.Factor(Linear.Solve(b, a));
+        double[,] reduced = Linear.Solve(b, a);
+        Eigen eigen = Eigen.Factor(reduced);
         JgsValue d = asVector ? EigenvalueList(eigen.Values, asColumn: false) : FromComplexRect(Diagonal(eigen.Values));
-        return wanted <= 2
-            ? [FromComplexRect(eigen.Vectors), d]
-            : [FromComplexRect(eigen.Vectors), d,
-                FromComplexRect(LeftEigenvectors(Linear.Solve(b, a), eigen.Values))];
+        if (wanted <= 2)
+        {
+            return [FromComplexRect(eigen.Vectors), d];
+        }
+
+        int size = reduced.GetLength(0);
+        var flat = new double[(long)size * size];
+        for (int c = 0; c < size; c++)
+        {
+            for (int r = 0; r < size; r++)
+            {
+                flat[(c * size) + r] = reduced[r, c];
+            }
+        }
+
+        return [FromComplexRect(eigen.Vectors), d,
+            FromComplexRect(LeftEigenvectors(flat, size, eigen.Values))];
     }
 
     /// <summary>
@@ -209,10 +233,18 @@ internal static partial class JgsBuiltins
     /// eigenvectors of the transpose, taken for the conjugate eigenvalue — which is why the two
     /// factorizations have to be matched up by value rather than trusted to arrive in step.
     /// </summary>
-    private static Complex[,] LeftEigenvectors(double[,] a, Complex[] values)
+    private static Complex[,] LeftEigenvectors(ReadOnlySpan<double> a, int n, Complex[] values)
     {
-        int n = values.Length;
-        Eigen transposed = Eigen.Factor(Linear.Transpose(a));
+        var flipped = new double[(long)n * n];
+        for (int c = 0; c < n; c++)
+        {
+            for (int r = 0; r < n; r++)
+            {
+                flipped[(c * n) + r] = a[(r * n) + c];
+            }
+        }
+
+        Eigen transposed = Eigen.FactorAdopting(flipped, n);
         var taken = new bool[n];
         var w = new Complex[n, n];
 
@@ -263,11 +295,12 @@ internal static partial class JgsBuiltins
     private static JgsValue[] QrAnswer(IReadOnlyList<JgsValue> args, int wanted, int line, int col)
     {
         ArityRange("qr", args, 1, 3, line, col);
-        double[,] a = DenseOf("qr", args[0], line, col);
+        double[] a = DenseColumnMajorOf("qr", args[0], out int rows, out int cols, line, col);
 
         bool economy = false;
         string form = string.Empty;
-        double[,]? rhs = null;
+        double[]? rhs = null;
+        int rhsColumns = 0;
 
         for (int at = 1; at < args.Count; at++)
         {
@@ -296,8 +329,8 @@ internal static partial class JgsBuiltins
             // right-hand side of the pair form.
             if (at == 1 && !(argument.Type == JgsType.Number && argument.AsNumber == 0))
             {
-                rhs = DenseOf("qr", argument, line, col);
-                if (rhs.GetLength(0) != a.GetLength(0))
+                rhs = DenseColumnMajorOf("qr", argument, out int rhsRows, out rhsColumns, line, col);
+                if (rhsRows != rows)
                 {
                     throw new JgsRuntimeException(line, col,
                         "qr: the right-hand side must have as many rows as the matrix.");
@@ -309,45 +342,66 @@ internal static partial class JgsBuiltins
             economy = true;
         }
 
-        bool pivoting = rhs is null ? wanted >= 3 : wanted >= 3;
-        QrDecomposition qr = QrDecomposition.Factor(a, pivoting);
+        QrDecomposition qr = QrDecomposition.FactorAdopting(a, rows, cols, pivot: wanted >= 3);
+        int reflectors = Math.Min(rows, cols);
+        int qColumns = economy ? reflectors : rows;
 
         if (rhs is not null)
         {
             // [C, R] = qr(S, B): C is Qᵀ·B, which is all a least-squares solve needs, and R\C is
-            // the solution. Q itself is never asked for and never formed.
-            double[,] c = Linear.Multiply(Linear.Transpose(economy ? qr.Q : qr.FullQ), rhs);
-            double[,] r = economy ? qr.R : qr.FullR;
-            return wanted >= 3
-                ? [FromRect(c), FromRect(r), Permutation(qr, form)]
-                : [FromRect(c), FromRect(r)];
+            // the solution. Q itself is never asked for and — since the reflectors can be walked
+            // over B directly — never formed either.
+            qr.ApplyTransposeInPlace(rhs, rhsColumns);
+            JgsValue c = FromColumnMajorRect(Leading(rhs, rows, qColumns, rhsColumns), qColumns, rhsColumns);
+            JgsValue r = FromColumnMajorRect(qr.RColumnMajor(!economy), qColumns, cols);
+            return wanted >= 3 ? [c, r, Permutation(qr, cols, form)] : [c, r];
         }
 
         if (wanted <= 1)
         {
-            return [FromRect(economy ? qr.R : qr.FullR)];
+            return [FromColumnMajorRect(qr.RColumnMajor(!economy), qColumns, cols)];
         }
 
-        return wanted <= 2
-            ? [FromRect(economy ? qr.Q : qr.FullQ), FromRect(economy ? qr.R : qr.FullR)]
-            : [FromRect(economy ? qr.Q : qr.FullQ), FromRect(economy ? qr.R : qr.FullR),
-                Permutation(qr, form)];
+        JgsValue[] factors =
+        [
+            FromColumnMajorRect(qr.QColumnMajor(!economy), rows, qColumns),
+            FromColumnMajorRect(qr.RColumnMajor(!economy), qColumns, cols),
+        ];
+
+        return wanted <= 2 ? factors : [factors[0], factors[1], Permutation(qr, cols, form)];
+    }
+
+    /// <summary>The first <paramref name="keep"/> rows of a column-major block, compacted.</summary>
+    private static double[] Leading(double[] block, int rows, int keep, int columns)
+    {
+        if (keep == rows)
+        {
+            return block;
+        }
+
+        var trimmed = new double[(long)keep * columns];
+        for (int c = 0; c < columns; c++)
+        {
+            Array.Copy(block, (long)c * rows, trimmed, (long)c * keep, keep);
+        }
+
+        return trimmed;
     }
 
     /// <summary>The pivoting as MATLAB's <c>outputForm</c> asked for it: a matrix, or the row of
     /// column numbers that stands for it.</summary>
-    private static JgsValue Permutation(QrDecomposition qr, string form)
+    private static JgsValue Permutation(QrDecomposition qr, int order, string form)
     {
         if (form != "vector")
         {
-            return FromRect(qr.Permutation);
+            return FromColumnMajorRect(qr.PermutationColumnMajor(), order, order);
         }
 
-        int[] order = qr.PivotVector;
-        var numbers = new double[order.Length];
-        for (int i = 0; i < order.Length; i++)
+        int[] columns = qr.PivotVector;
+        var numbers = new double[columns.Length];
+        for (int i = 0; i < columns.Length; i++)
         {
-            numbers[i] = order[i] + 1;
+            numbers[i] = columns[i] + 1;
         }
 
         return Numbers(numbers);
@@ -798,7 +852,16 @@ internal static partial class JgsBuiltins
         int n = a.GetLength(1);
         if (m != n)
         {
-            double[] singular = Svd.Factor(a).Values;
+            var flat = new double[(long)m * n];
+            for (int c = 0; c < n; c++)
+            {
+                for (int r = 0; r < m; r++)
+                {
+                    flat[(c * m) + r] = a[r, c];
+                }
+            }
+
+            double[] singular = Svd.SingularValues(flat, m, n);
             double largest = singular.Length == 0 ? 0 : singular[0];
             foreach (double value in singular)
             {
@@ -870,9 +933,13 @@ internal static partial class JgsBuiltins
         return x;
     }
 
-    /// <summary>A matrix as a dense rectangle, filling in a sparse one on the way.</summary>
-    private static double[,] DenseOf(string name, JgsValue value, int line, int col) =>
-        RectOf(name, DenseValue(value), line, col);
+    /// <summary>
+    /// A matrix as flat column-major doubles, filling in a sparse one on the way. The boxed
+    /// rectangle this replaced had no callers left once <c>qr</c> stopped asking for one.
+    /// </summary>
+    private static double[] DenseColumnMajorOf(
+        string name, JgsValue value, out int rows, out int cols, int line, int col) =>
+        ColumnMajorOf(name, DenseValue(value), out rows, out cols, line, col);
 
     /// <summary>
     /// A sparse value as the dense one it stands for. The decompositions here are dense, so a sparse

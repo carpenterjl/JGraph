@@ -6,7 +6,7 @@ namespace JGraph.Numerics.LinearAlgebra;
 /// behavior exactly — k-ascending accumulation and the skip of zero factors — so switching a
 /// script between representations or falling back from native never changes managed results.
 /// </summary>
-public sealed class ManagedLinalg : DenseLinalg
+public sealed partial class ManagedLinalg : DenseLinalg
 {
     /// <summary>Below this many flops the column loop runs serially; above, in parallel.</summary>
     private const long ParallelFlopThreshold = 1_000_000;

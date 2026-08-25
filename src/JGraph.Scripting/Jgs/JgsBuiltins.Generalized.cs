@@ -132,10 +132,8 @@ internal static partial class JgsBuiltins
     // --- balance ------------------------------------------------------------------------------
 
     /// <summary>
-    /// Parlett–Reinsch balancing: scale each row and its matching column by the same power of two
-    /// until neither dominates. Powers of two are exact in floating point, so the similarity
-    /// <c>T⁻¹·A·T</c> introduces no rounding of its own — which is the whole reason a balancing
-    /// factor is a power of the radix rather than the square root that would balance perfectly.
+    /// Parlett–Reinsch balancing, through the same routine the general eigensolver balances with —
+    /// one implementation, so <c>balance(A)</c> shows exactly the scaling <c>eig(A)</c> applies.
     /// </summary>
     /// <remarks>
     /// Only the scaling half is done. MATLAB's <c>balance</c> also permutes rows and columns to push
@@ -147,68 +145,22 @@ internal static partial class JgsBuiltins
     {
         _ = permute;
         int n = a.GetLength(0);
-        var b = (double[,])a.Clone();
-        var scale = new double[n];
-        Array.Fill(scale, 1.0);
-
-        const double Radix = 2.0;
-        const double Squared = Radix * Radix;
-
-        bool changed = true;
-        int guard = 0;
-        while (changed && guard++ < 100)
+        var flat = new double[(long)n * n];
+        for (int c = 0; c < n; c++)
         {
-            changed = false;
-            for (int i = 0; i < n; i++)
+            for (int r = 0; r < n; r++)
             {
-                double row = 0;
-                double column = 0;
-                for (int j = 0; j < n; j++)
-                {
-                    if (j == i)
-                    {
-                        continue;
-                    }
+                flat[(c * n) + r] = a[r, c];
+            }
+        }
 
-                    row += Math.Abs(b[i, j]);
-                    column += Math.Abs(b[j, i]);
-                }
-
-                if (row == 0 || column == 0)
-                {
-                    continue;
-                }
-
-                double factor = 1;
-                double scaled = column;
-                double before = column + row;
-
-                while (scaled < row / Radix)
-                {
-                    factor *= Radix;
-                    scaled *= Squared;
-                }
-
-                while (scaled >= row * Radix)
-                {
-                    factor /= Radix;
-                    scaled /= Squared;
-                }
-
-                // Accept only a scaling that genuinely shrinks the pair of norms. Without the margin
-                // the loop can trade one imbalance for an equal one and never settle.
-                if ((scaled + (row / factor)) >= 0.95 * before)
-                {
-                    continue;
-                }
-
-                changed = true;
-                scale[i] *= factor;
-                for (int j = 0; j < n; j++)
-                {
-                    b[i, j] /= factor;
-                    b[j, i] *= factor;
-                }
+        double[] scale = Balancing.InPlace(flat, n);
+        var b = new double[n, n];
+        for (int c = 0; c < n; c++)
+        {
+            for (int r = 0; r < n; r++)
+            {
+                b[r, c] = flat[(c * n) + r];
             }
         }
 

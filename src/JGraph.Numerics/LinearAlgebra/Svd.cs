@@ -1,34 +1,74 @@
 namespace JGraph.Numerics.LinearAlgebra;
 
 /// <summary>
-/// Singular value decomposition A = U·S·Vᵀ by one-sided Jacobi rotations — a compact algorithm
-/// whose singular values converge to full working precision. Backs <c>svd</c>, <c>rank</c>, and the
-/// matrix 2-norm.
+/// Singular value decomposition A = U·S·Vᵀ. Backs <c>svd</c>, <c>rank</c>, <c>null</c>, <c>orth</c>,
+/// <c>pinv</c>, <c>cond</c> and the matrix 2-norm.
 /// </summary>
+/// <remarks>
+/// The factors are held flat and column-major. Note that the backend hands back the second factor
+/// <em>transposed</em> — LAPACK's Vᵀ — and this class turns it the right way round once, at
+/// construction, so that <see cref="V"/> means what its name says everywhere it is read.
+/// </remarks>
 public sealed class Svd
 {
-    private Svd(double[] values, double[,] u, double[,] v)
+    private readonly double[] _u;
+    private readonly double[] _v;
+    private readonly int _rows;
+    private readonly int _cols;
+    private readonly int _uColumns;
+    private readonly int _vColumns;
+    private double[,]? _uRect;
+    private double[,]? _vRect;
+
+    private Svd(double[] values, double[] u, double[] v, int rows, int cols, int uColumns, int vColumns)
     {
         Values = values;
-        U = u;
-        V = v;
+        _u = u;
+        _v = v;
+        _rows = rows;
+        _cols = cols;
+        _uColumns = uColumns;
+        _vColumns = vColumns;
     }
 
     /// <summary>The singular values, in descending order.</summary>
     public double[] Values { get; }
 
     /// <summary>The left singular vectors (economy size: m-by-min(m,n), orthonormal columns).</summary>
-    public double[,] U { get; }
+    /// <remarks>
+    /// Materialized once and kept. The factors live flat and column-major, so this shape has to be
+    /// built rather than merely handed over — and callers index it inside loops, where rebuilding
+    /// it per read would turn an O(n³) pinv into an O(n⁵) one.
+    /// </remarks>
+    public double[,] U => _uRect ??= Rect(_u, _rows, _uColumns);
 
     /// <summary>The right singular vectors (n-by-min(m,n), orthonormal columns).</summary>
-    public double[,] V { get; }
+    public double[,] V => _vRect ??= Rect(_v, _cols, _vColumns);
+
+    /// <summary>The left factor as a flat column-major array, m-by-<see cref="UColumnCount"/>.</summary>
+    public double[] UColumnMajor => _u;
+
+    /// <summary>The right factor as a flat column-major array, n-by-<see cref="VColumnCount"/>.</summary>
+    public double[] VColumnMajor => _v;
+
+    /// <summary>How many columns <see cref="U"/> has: min(m,n) economy size, or m for the full factor.</summary>
+    public int UColumnCount => _uColumns;
+
+    /// <summary>How many columns <see cref="V"/> has: min(m,n) economy size, or n for the full factor.</summary>
+    public int VColumnCount => _vColumns;
 
     /// <summary>The numeric rank: singular values above max(m,n)·eps·σ₁, MATLAB's default tolerance.</summary>
-    public int Rank(int rows, int cols)
+    public int Rank(int rows, int cols) => RankOf(Values, rows, cols);
+
+    /// <summary>
+    /// The same rank from singular values alone — which is all <c>rank</c> and <c>linsolve</c>'s
+    /// second output ever needed, and neither has to pay for a singular vector to get it.
+    /// </summary>
+    public static int RankOf(ReadOnlySpan<double> values, int rows, int cols)
     {
-        double tolerance = Math.Max(rows, cols) * 2.220446049250313e-16 * (Values.Length > 0 ? Values[0] : 0);
+        double tolerance = Math.Max(rows, cols) * 2.220446049250313e-16 * (values.Length > 0 ? values[0] : 0);
         int rank = 0;
-        foreach (double s in Values)
+        foreach (double s in values)
         {
             if (s > tolerance)
             {
@@ -39,212 +79,116 @@ public sealed class Svd
         return rank;
     }
 
-    /// <summary>Factors <paramref name="matrix"/>; the input is not modified.</summary>
+    /// <summary>Factors <paramref name="matrix"/> to economy size; the input is not modified.</summary>
     public static Svd Factor(double[,] matrix)
     {
+        ArgumentNullException.ThrowIfNull(matrix);
         int m = matrix.GetLength(0);
         int n = matrix.GetLength(1);
-
-        // One-sided Jacobi wants at least as many rows as columns; a wide matrix factors as Aᵀ
-        // with U and V swapped.
-        if (m < n)
-        {
-            Svd wide = Factor(Transpose(matrix));
-            return new Svd(wide.Values, wide.V, wide.U);
-        }
-
-        var b = (double[,])matrix.Clone();
-        var v = new double[n, n];
-        for (int i = 0; i < n; i++)
-        {
-            v[i, i] = 1;
-        }
-
-        // Sweep column pairs, rotating each pair orthogonal, until every pair already is.
-        const double Eps = 2.220446049250313e-16;
-        for (int sweep = 0; sweep < 60; sweep++)
-        {
-            bool rotated = false;
-            for (int p = 0; p < n - 1; p++)
-            {
-                for (int q = p + 1; q < n; q++)
-                {
-                    double alpha = 0, beta = 0, gamma = 0;
-                    for (int r = 0; r < m; r++)
-                    {
-                        alpha += b[r, p] * b[r, p];
-                        beta += b[r, q] * b[r, q];
-                        gamma += b[r, p] * b[r, q];
-                    }
-
-                    if (Math.Abs(gamma) <= Eps * Math.Sqrt(alpha * beta) || gamma == 0)
-                    {
-                        continue;
-                    }
-
-                    rotated = true;
-                    double zeta = (beta - alpha) / (2 * gamma);
-
-                    // A ζ of exactly zero means the two columns have the same norm, and the rotation
-                    // that makes them orthogonal is exactly 45°. Math.Sign answers 0 there, which asks
-                    // for no rotation at all — so a matrix whose equal-norm columns are parallel, like
-                    // a matrix of ones, would never converge and would come out looking full rank.
-                    double direction = zeta >= 0 ? 1 : -1;
-                    double t = direction / (Math.Abs(zeta) + Math.Sqrt(1 + (zeta * zeta)));
-                    double c = 1 / Math.Sqrt(1 + (t * t));
-                    double s = c * t;
-
-                    for (int r = 0; r < m; r++)
-                    {
-                        double bp = b[r, p];
-                        b[r, p] = (c * bp) - (s * b[r, q]);
-                        b[r, q] = (s * bp) + (c * b[r, q]);
-                    }
-
-                    for (int r = 0; r < n; r++)
-                    {
-                        double vp = v[r, p];
-                        v[r, p] = (c * vp) - (s * v[r, q]);
-                        v[r, q] = (s * vp) + (c * v[r, q]);
-                    }
-                }
-            }
-
-            if (!rotated)
-            {
-                break;
-            }
-        }
-
-        // Singular values are the rotated columns' norms; U their normalized directions.
-        var sigma = new double[n];
-        var u = new double[m, n];
-        for (int c = 0; c < n; c++)
-        {
-            double norm = 0;
-            for (int r = 0; r < m; r++)
-            {
-                norm += b[r, c] * b[r, c];
-            }
-
-            sigma[c] = Math.Sqrt(norm);
-            if (sigma[c] > 0)
-            {
-                for (int r = 0; r < m; r++)
-                {
-                    u[r, c] = b[r, c] / sigma[c];
-                }
-            }
-        }
-
-        SortDescending(sigma, u, v);
-        CompleteZeroColumns(sigma, u);
-        return new Svd(sigma, u, v);
+        return Factor(ColumnMajorOf(matrix, m, n), m, n);
     }
 
-    private static void SortDescending(double[] sigma, double[,] u, double[,] v)
-    {
-        int n = sigma.Length;
-        for (int i = 0; i < n - 1; i++)
-        {
-            int biggest = i;
-            for (int j = i + 1; j < n; j++)
-            {
-                if (sigma[j] > sigma[biggest])
-                {
-                    biggest = j;
-                }
-            }
-
-            if (biggest != i)
-            {
-                (sigma[i], sigma[biggest]) = (sigma[biggest], sigma[i]);
-                SwapColumns(u, i, biggest);
-                SwapColumns(v, i, biggest);
-            }
-        }
-    }
+    /// <summary>Factors an m-by-n column-major matrix to economy size; the input is not modified.</summary>
+    public static Svd Factor(ReadOnlySpan<double> columnMajor, int m, int n) =>
+        Decompose(columnMajor, m, n, SvdVectors.Economy);
 
     /// <summary>
-    /// A zero singular value leaves its U column zero; replace it with a unit vector orthogonal to
-    /// the others (Gram–Schmidt over basis vectors) so U keeps orthonormal columns.
+    /// Factors to MATLAB's full shapes: U is m-by-m and V is n-by-n, so that <c>U·S·Vᵀ</c>
+    /// reassembles A with an m-by-n S rather than a square one.
     /// </summary>
-    private static void CompleteZeroColumns(double[] sigma, double[,] u)
+    public static Svd FactorFull(ReadOnlySpan<double> columnMajor, int m, int n) =>
+        Decompose(columnMajor, m, n, SvdVectors.All);
+
+    /// <summary>
+    /// The singular values alone, without either factor — which is most of the work saved for
+    /// <c>rank</c>, <c>cond</c> and the matrix 2-norm, none of which look at a singular vector.
+    /// </summary>
+    public static double[] SingularValues(ReadOnlySpan<double> columnMajor, int m, int n) =>
+        Decompose(columnMajor, m, n, SvdVectors.None).Values;
+
+    private static Svd Decompose(ReadOnlySpan<double> a, int m, int n, SvdVectors job)
     {
-        int m = u.GetLength(0);
-        int n = u.GetLength(1);
+        int k = Math.Min(m, n);
+        int uColumns = job switch
+        {
+            SvdVectors.None => 0,
+            SvdVectors.All => m,
+            _ => k,
+        };
+        int vColumns = job switch
+        {
+            SvdVectors.None => 0,
+            SvdVectors.All => n,
+            _ => k,
+        };
+
+        var values = new double[k];
+        var u = new double[(long)m * uColumns];
+        var vt = new double[(long)vColumns * n];
+        var work = new double[(long)m * n];
+        int lda = Math.Max(m, 1);
+        int ldvt = Math.Max(vColumns, 1);
+
+        DenseLinalg backend = LinalgProvider.Current;
+        a[..(m * n)].CopyTo(work);
+        int info = backend.Gesdd(job, m, n, work, lda, values, u, lda, vt, ldvt);
+
+        if (info != 0)
+        {
+            // The divide-and-conquer driver failed to converge. It destroyed its copy on the way,
+            // which is exactly why this class holds the caller's matrix at arm's length: the QR
+            // iteration gets a pristine one and the caller never learns any of it happened.
+            a[..(m * n)].CopyTo(work);
+            Array.Clear(values);
+            Array.Clear(u);
+            Array.Clear(vt);
+            info = backend.Gesvd(job, m, n, work, lda, values, u, lda, vt, ldvt);
+            if (info != 0)
+            {
+                throw new InvalidOperationException(
+                    "The singular value decomposition did not converge.");
+            }
+        }
+
+        // Vᵀ arrives with V's columns as its rows; turning it here is what lets every reader
+        // downstream take the name at face value.
+        var v = new double[(long)n * vColumns];
+        for (int c = 0; c < vColumns; c++)
+        {
+            for (int r = 0; r < n; r++)
+            {
+                v[(c * n) + r] = vt[(r * ldvt) + c];
+            }
+        }
+
+        return new Svd(values, u, v, m, n, uColumns, vColumns);
+    }
+
+    private static double[] ColumnMajorOf(double[,] matrix, int m, int n)
+    {
+        var flat = new double[(long)m * n];
         for (int c = 0; c < n; c++)
         {
-            if (sigma[c] > 0)
+            for (int r = 0; r < m; r++)
             {
-                continue;
-            }
-
-            for (int basis = 0; basis < m; basis++)
-            {
-                var candidate = new double[m];
-                candidate[basis] = 1;
-                for (int other = 0; other < n; other++)
-                {
-                    if (other == c)
-                    {
-                        continue;
-                    }
-
-                    double projection = 0;
-                    for (int r = 0; r < m; r++)
-                    {
-                        projection += candidate[r] * u[r, other];
-                    }
-
-                    for (int r = 0; r < m; r++)
-                    {
-                        candidate[r] -= projection * u[r, other];
-                    }
-                }
-
-                double norm = 0;
-                for (int r = 0; r < m; r++)
-                {
-                    norm += candidate[r] * candidate[r];
-                }
-
-                if (norm > 0.5)
-                {
-                    norm = Math.Sqrt(norm);
-                    for (int r = 0; r < m; r++)
-                    {
-                        u[r, c] = candidate[r] / norm;
-                    }
-
-                    break;
-                }
+                flat[(c * m) + r] = matrix[r, c];
             }
         }
+
+        return flat;
     }
 
-    private static void SwapColumns(double[,] matrix, int a, int b)
+    private static double[,] Rect(double[] columnMajor, int rows, int cols)
     {
-        int rows = matrix.GetLength(0);
-        for (int r = 0; r < rows; r++)
+        var rect = new double[rows, cols];
+        for (int c = 0; c < cols; c++)
         {
-            (matrix[r, a], matrix[r, b]) = (matrix[r, b], matrix[r, a]);
-        }
-    }
-
-    private static double[,] Transpose(double[,] matrix)
-    {
-        int m = matrix.GetLength(0);
-        int n = matrix.GetLength(1);
-        var t = new double[n, m];
-        for (int r = 0; r < m; r++)
-        {
-            for (int c = 0; c < n; c++)
+            for (int r = 0; r < rows; r++)
             {
-                t[c, r] = matrix[r, c];
+                rect[r, c] = columnMajor[(c * rows) + r];
             }
         }
 
-        return t;
+        return rect;
     }
 }

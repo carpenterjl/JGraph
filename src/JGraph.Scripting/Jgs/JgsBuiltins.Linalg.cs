@@ -52,15 +52,15 @@ internal static partial class JgsBuiltins
         Define("rank", (args, line, col) =>
         {
             ArityRange("rank", args, 1, 2, line, col);
-            double[,] a = RectOf("rank", args[0], line, col);
-            Svd svd = Svd.Factor(a);
+            double[] a = ColumnMajorOf("rank", args[0], out int rows, out int cols, line, col);
+            double[] sigma = Svd.SingularValues(a, rows, cols);
             if (args.Count == 2)
             {
                 double tolerance = Num("rank", args, 1, line, col);
-                return JgsValue.Number(svd.Values.Count(s => s > tolerance));
+                return JgsValue.Number(sigma.Count(s => s > tolerance));
             }
 
-            return JgsValue.Number(svd.Rank(a.GetLength(0), a.GetLength(1)));
+            return JgsValue.Number(Svd.RankOf(sigma, rows, cols));
         });
 
         Define("trace", (args, line, col) =>
@@ -97,43 +97,109 @@ internal static partial class JgsBuiltins
             (args, line, col) => QrAnswer(args, 1, line, col)[0],
             QrAnswer);
 
-        Define("svd",
-            (args, line, col) =>
+        Define("svd", SingularValueList, SingularValueFactors);
+    }
+
+    /// <summary>s = svd(A) — the singular values, as MATLAB's column.</summary>
+    private static JgsValue SingularValueList(IReadOnlyList<JgsValue> args, int line, int col)
+    {
+        ArityRange("svd", args, 1, 2, line, col);
+        if (HasComplexElements(args[0]))
+        {
+            // The option is read for its refusals even here, where it cannot change the answer:
+            // economizing trims the factors and this form has none. Skipping the check would let
+            // svd(z, 'thin') through on a complex matrix and refuse it on a real one.
+            _ = EconomySizedSvd(args, 0, 0, line, col);
+            double[] sigma = ComplexEigen.SingularValues(ComplexRectOf("svd", args[0], line, col));
+            JgsValue column = Numbers(sigma);
+            if (sigma.Length > 1)
             {
-                Arity("svd", args, 1, line, col);
-                if (HasComplexElements(args[0]))
-                {
-                    double[] sigma = ComplexEigen.SingularValues(ComplexRectOf("svd", args[0], line, col));
-                    JgsValue column = Numbers(sigma);
-                    if (sigma.Length > 1)
-                    {
-                        column.Reshape(sigma.Length, 1);
-                    }
+                column.Reshape(sigma.Length, 1);
+            }
 
-                    return column;
-                }
+            return column;
+        }
 
-                return Numbers(Svd.Factor(RectOf("svd", args[0], line, col)).Values);
-            },
-            (args, _, line, col) =>
+        double[] a = ColumnMajorOf("svd", args[0], out int rows, out int cols, line, col);
+        _ = EconomySizedSvd(args, rows, cols, line, col);
+        double[] values = Svd.SingularValues(a, rows, cols);
+        JgsValue result = Numbers(values);
+        if (values.Length > 1)
+        {
+            result.Reshape(values.Length, 1);
+        }
+
+        return result;
+    }
+
+    /// <summary>
+    /// [U, S, V] = svd(A) — MATLAB's shapes, so that <c>U·S·V'</c> is A: U is m-by-m, S is m-by-n
+    /// and V is n-by-n, and the economy forms cut all three back to min(m, n).
+    /// </summary>
+    private static JgsValue[] SingularValueFactors(IReadOnlyList<JgsValue> args, int wanted, int line, int col)
+    {
+        if (wanted <= 1)
+        {
+            // MATLAB reads this off nargout, not off the brackets: [s] = svd(A) is s = svd(A) and
+            // answers the values, never the first factor.
+            return [SingularValueList(args, line, col)];
+        }
+
+        ArityRange("svd", args, 1, 2, line, col);
+        if (HasComplexElements(args[0]))
+        {
+            throw new JgsRuntimeException(line, col,
+                "[U, S, V] = svd(A) is not supported for a complex A; s = svd(A) computes the singular values.");
+        }
+
+        double[] a = ColumnMajorOf("svd", args[0], out int rows, out int cols, line, col);
+        bool economy = EconomySizedSvd(args, rows, cols, line, col);
+        Svd svd = economy ? Svd.Factor(a, rows, cols) : Svd.FactorFull(a, rows, cols);
+
+        int k = System.Math.Min(rows, cols);
+        int diagonalRows = economy ? k : rows;
+        int diagonalCols = economy ? k : cols;
+        double[] values = svd.Values;
+        JgsValue s = BuildColumnMajor(diagonalRows, diagonalCols, destination =>
+        {
+            for (int i = 0; i < k; i++)
             {
-                Arity("svd", args, 1, line, col);
-                if (HasComplexElements(args[0]))
-                {
-                    throw new JgsRuntimeException(line, col,
-                        "[U, S, V] = svd(A) is not supported for a complex A; s = svd(A) computes the singular values.");
-                }
+                destination[(i * diagonalRows) + i] = values[i];
+            }
+        });
 
-                Svd svd = Svd.Factor(RectOf("svd", args[0], line, col));
-                int k = svd.Values.Length;
-                var s = new double[k, k];
-                for (int i = 0; i < k; i++)
-                {
-                    s[i, i] = svd.Values[i];
-                }
+        return wanted <= 2
+            ? [FromColumnMajorRect(svd.UColumnMajor, rows, svd.UColumnCount), s]
+            : [FromColumnMajorRect(svd.UColumnMajor, rows, svd.UColumnCount), s,
+                FromColumnMajorRect(svd.VColumnMajor, cols, svd.VColumnCount)];
+    }
 
-                return [FromRect(svd.U), FromRect(s), FromRect(svd.V)];
-            });
+    /// <summary>
+    /// Whether <c>svd</c>'s second argument asked for the economy factors. The word <c>'econ'</c>
+    /// always does; a literal <c>0</c> — MATLAB's older spelling — economizes a tall matrix and
+    /// means the full decomposition for any other shape.
+    /// </summary>
+    private static bool EconomySizedSvd(IReadOnlyList<JgsValue> args, int rows, int cols, int line, int col)
+    {
+        if (args.Count < 2)
+        {
+            return false;
+        }
+
+        if (IsTextScalar(args[1]))
+        {
+            string word = Str("svd", args, 1, line, col).ToLowerInvariant();
+            return word == "econ"
+                ? true
+                : throw new JgsRuntimeException(line, col, $"svd: '{word}' is not 'econ'.");
+        }
+
+        if (Num("svd", args, 1, line, col) != 0)
+        {
+            throw new JgsRuntimeException(line, col, "svd's second argument is 'econ' or 0.");
+        }
+
+        return rows > cols;
     }
 
     /// <summary>norm(x), norm(x, p), norm(A, 1|2|inf|'fro') — vector and matrix norms.</summary>
@@ -185,9 +251,7 @@ internal static partial class JgsBuiltins
             return JgsValue.Number(System.Math.Pow(sum, 1 / p));
         }
 
-        double[,] a = RectOf("norm", args[0], line, col);
-        int rows = a.GetLength(0);
-        int cols = a.GetLength(1);
+        double[] a = ColumnMajorOf("norm", args[0], out int rows, out int cols, line, col);
         if (word == "fro")
         {
             double sumSquares = 0;
@@ -201,19 +265,7 @@ internal static partial class JgsBuiltins
 
         if (p == 1)
         {
-            double best = 0;
-            for (int c = 0; c < cols; c++)
-            {
-                double sum = 0;
-                for (int r = 0; r < rows; r++)
-                {
-                    sum += System.Math.Abs(a[r, c]);
-                }
-
-                best = System.Math.Max(best, sum);
-            }
-
-            return JgsValue.Number(best);
+            return JgsValue.Number(DenseLinalg.OneNorm(rows, cols, a, rows));
         }
 
         if (double.IsPositiveInfinity(p))
@@ -224,7 +276,7 @@ internal static partial class JgsBuiltins
                 double sum = 0;
                 for (int c = 0; c < cols; c++)
                 {
-                    sum += System.Math.Abs(a[r, c]);
+                    sum += System.Math.Abs(a[(c * rows) + r]);
                 }
 
                 best = System.Math.Max(best, sum);
@@ -235,7 +287,9 @@ internal static partial class JgsBuiltins
 
         if (p == 2)
         {
-            double[] sigma = Svd.Factor(a).Values;
+            // The largest singular value, and nothing else asked for: the vectors would cost as much
+            // again as the values and this answer never looks at one.
+            double[] sigma = Svd.SingularValues(a, rows, cols);
             return JgsValue.Number(sigma.Length == 0 ? 0 : sigma[0]);
         }
 

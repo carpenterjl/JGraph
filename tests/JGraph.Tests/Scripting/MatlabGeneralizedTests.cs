@@ -59,15 +59,18 @@ public class MatlabGeneralizedTests : IDisposable
     [Fact]
     public void BalancingRecoversAccuracyTheScalingHadCostThem()
     {
-        // The point of the whole routine. The unbalanced matrix loses five digits of its eigenvalues
-        // to its own scaling; the balanced one gets them back, and 1 ± sqrt(2) come out exactly.
+        // The point of the whole routine. This matrix's own scaling is worth five digits of its
+        // eigenvalues, and balancing is what buys them back: 1 ± sqrt(2) come out exactly, both from
+        // the balanced matrix and from the scaled one it came from — because since M90 eig balances
+        // before it iterates, exactly as LAPACK's own driver does. Before that it did not, and this
+        // test asserted the deficiency: that eig(A) came out five digits worse than eig(B).
         Assert.Equal("1 1\n", RunAndRead("""
             A = [1 1e6 0; 1e-6 1 1e-6; 0 1e6 1];
             [~, B] = balance(A);
             exact = sort([1 - sqrt(2), 1, 1 + sqrt(2)]);
-            before = max(abs(sort(real(eig(A))) - exact));
-            after = max(abs(sort(real(eig(B))) - exact));
-            fprintf('%d %d\n', before > 1e-6, after < 1e-9);
+            scaled = max(abs(sort(real(eig(A))) - exact));
+            balanced = max(abs(sort(real(eig(B))) - exact));
+            fprintf('%d %d\n', scaled < 1e-9, balanced < 1e-9);
             """));
     }
 
