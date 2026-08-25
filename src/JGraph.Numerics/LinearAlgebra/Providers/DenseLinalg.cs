@@ -165,6 +165,95 @@ public abstract class DenseLinalg
         Span<double> wr, Span<double> wi, Span<double> vr, int ldvr);
 
     /// <summary>
+    /// The real generalized eigensolver for the pencil A − λ·B. Both matrices are overwritten. The
+    /// eigenvalues come back as ratios: eigenvalue i is (<paramref name="alphar"/>[i] +
+    /// <paramref name="alphai"/>[i]·i) / <paramref name="beta"/>[i], with a zero β marking an
+    /// eigenvalue at infinity — the case a plain B⁻¹·A can never report. The right eigenvectors,
+    /// when asked, are packed exactly as <see cref="Geev"/> packs them.
+    /// </summary>
+    public abstract int Ggev(bool vectors, int n, Span<double> a, int lda, Span<double> b, int ldb,
+        Span<double> alphar, Span<double> alphai, Span<double> beta, Span<double> vr, int ldvr);
+
+    /// <summary>
+    /// The symmetric-definite generalized eigensolver: A·z = λ·B·z with both matrices symmetric and
+    /// B positive definite. Values ascend in <paramref name="w"/>; with <paramref name="vectors"/>
+    /// the vectors overwrite <paramref name="a"/>, scaled so Zᵀ·B·Z is the identity — MATLAB's own
+    /// normalization for this pencil. B is overwritten with its Cholesky factor. Returns 0, or an
+    /// n-offset code when B stopped being positive definite.
+    /// </summary>
+    public abstract int Sygvd(bool vectors, bool lower, int n, Span<double> a, int lda,
+        Span<double> b, int ldb, Span<double> w);
+
+    /// <summary>
+    /// The real Schur form: <paramref name="a"/> is overwritten with the quasi-upper-triangular T,
+    /// standardized 2×2 blocks and all, and <paramref name="vs"/> takes the orthogonal Z with
+    /// A = Z·T·Zᵀ when <paramref name="vectors"/> is set. The eigenvalues land split across
+    /// <paramref name="wr"/>/<paramref name="wi"/> in the order their blocks appear on T.
+    /// </summary>
+    public abstract int Gees(bool vectors, int n, Span<double> a, int lda,
+        Span<double> wr, Span<double> wi, Span<double> vs, int ldvs);
+
+    /// <summary>
+    /// The generalized Schur (QZ) factorization: <paramref name="a"/> and <paramref name="b"/> are
+    /// overwritten with the quasi-triangular and triangular factors, <paramref name="vsl"/> and
+    /// <paramref name="vsr"/> take the orthogonal left and right factors with A = VSL·AA·VSRᵀ, and
+    /// the eigenvalues arrive as the same α/β ratios <see cref="Ggev"/> reports.
+    /// </summary>
+    public abstract int Gges(bool vectors, int n, Span<double> a, int lda, Span<double> b, int ldb,
+        Span<double> alphar, Span<double> alphai, Span<double> beta,
+        Span<double> vsl, int ldvsl, Span<double> vsr, int ldvsr);
+
+    /// <summary>
+    /// Reorders a real Schur form in place so the eigenvalues flagged in <paramref name="select"/>
+    /// come first, updating <paramref name="q"/> alongside so Q·T·Qᵀ is unchanged. Both halves of a
+    /// conjugate pair must carry the same flag. <paramref name="wr"/>/<paramref name="wi"/> take
+    /// the reordered eigenvalues.
+    /// </summary>
+    public abstract int Trsen(ReadOnlySpan<bool> select, int n, Span<double> t, int ldt,
+        Span<double> q, int ldq, Span<double> wr, Span<double> wi);
+
+    /// <summary>
+    /// C := A·B over interleaved complex storage — <see cref="Complex"/>'s own layout. No transpose
+    /// options: the callers conjugate and flip for themselves, and an untestable option is worse
+    /// than a missing one. Inputs are not modified.
+    /// </summary>
+    public abstract void Zgemm(int m, int n, int k, ReadOnlySpan<Complex> a, int lda,
+        ReadOnlySpan<Complex> b, int ldb, Span<Complex> c, int ldc);
+
+    /// <summary>
+    /// The complex LU factorization with partial pivoting, in place over the m×n column-major
+    /// <paramref name="a"/> — <see cref="Getrf"/> over complex doubles, interchange record and all.
+    /// </summary>
+    public abstract int Zgetrf(int m, int n, Span<Complex> a, int lda, Span<int> ipiv);
+
+    /// <summary>
+    /// Solves complex A·X = B from a <see cref="Zgetrf"/> factorization, overwriting the n×nrhs
+    /// <paramref name="b"/> with X.
+    /// </summary>
+    public abstract void Zgetrs(int n, int nrhs, ReadOnlySpan<Complex> a, int lda,
+        ReadOnlySpan<int> ipiv, Span<Complex> b, int ldb);
+
+    /// <summary>Overwrites a <see cref="Zgetrf"/> factorization with A⁻¹; 0, or the 1-based zero pivot.</summary>
+    public abstract int Zgetri(int n, Span<Complex> a, int lda, ReadOnlySpan<int> ipiv);
+
+    /// <summary>
+    /// The complex general eigensolver. <paramref name="a"/> is overwritten; the eigenvalues land
+    /// in <paramref name="w"/> and, when asked, the right eigenvectors in <paramref name="vr"/> —
+    /// plain complex columns, no conjugate-pair packing to undo.
+    /// </summary>
+    public abstract int Zgeev(bool vectors, int n, Span<Complex> a, int lda,
+        Span<Complex> w, Span<Complex> vr, int ldvr);
+
+    /// <summary>
+    /// The complex SVD, A = U·Σ·Vᴴ, with the same shape contract as <see cref="Gesdd"/>: the
+    /// singular values — real, descending — in <paramref name="s"/>, U and Vᴴ sized by
+    /// <paramref name="job"/>. Note the second factor is Vᴴ, conjugate-transposed, exactly as
+    /// LAPACK hands it over. <paramref name="a"/> is overwritten whatever the job.
+    /// </summary>
+    public abstract int Zgesdd(SvdVectors job, int m, int n, Span<Complex> a, int lda,
+        Span<double> s, Span<Complex> u, int ldu, Span<Complex> vt, int ldvt);
+
+    /// <summary>
     /// The matrix 1-norm: the largest absolute column sum. Deliberately not a provider member —
     /// it is exact, O(n²), and identical however the rest of the arithmetic is done, so binding
     /// <c>dlange</c> would buy nothing and cost a divergence between the two backends.

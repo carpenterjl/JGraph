@@ -1,5 +1,7 @@
 using JGraph.Numerics.LinearAlgebra.Native;
 
+using System.Numerics;
+
 namespace JGraph.Numerics.LinearAlgebra;
 
 /// <summary>
@@ -120,6 +122,49 @@ public static class LinalgProvider
 
         public override int Geev(bool vectors, int n, Span<double> a, int lda,
             Span<double> wr, Span<double> wi, Span<double> vr, int ldvr) =>
+            throw new InvalidOperationException(reason);
+
+        public override int Ggev(bool vectors, int n, Span<double> a, int lda, Span<double> b, int ldb,
+            Span<double> alphar, Span<double> alphai, Span<double> beta, Span<double> vr, int ldvr) =>
+            throw new InvalidOperationException(reason);
+
+        public override int Sygvd(bool vectors, bool lower, int n, Span<double> a, int lda,
+            Span<double> b, int ldb, Span<double> w) =>
+            throw new InvalidOperationException(reason);
+
+        public override int Gees(bool vectors, int n, Span<double> a, int lda,
+            Span<double> wr, Span<double> wi, Span<double> vs, int ldvs) =>
+            throw new InvalidOperationException(reason);
+
+        public override int Gges(bool vectors, int n, Span<double> a, int lda, Span<double> b, int ldb,
+            Span<double> alphar, Span<double> alphai, Span<double> beta,
+            Span<double> vsl, int ldvsl, Span<double> vsr, int ldvsr) =>
+            throw new InvalidOperationException(reason);
+
+        public override int Trsen(ReadOnlySpan<bool> select, int n, Span<double> t, int ldt,
+            Span<double> q, int ldq, Span<double> wr, Span<double> wi) =>
+            throw new InvalidOperationException(reason);
+
+        public override void Zgemm(int m, int n, int k, ReadOnlySpan<Complex> a, int lda,
+            ReadOnlySpan<Complex> b, int ldb, Span<Complex> c, int ldc) =>
+            throw new InvalidOperationException(reason);
+
+        public override int Zgetrf(int m, int n, Span<Complex> a, int lda, Span<int> ipiv) =>
+            throw new InvalidOperationException(reason);
+
+        public override void Zgetrs(int n, int nrhs, ReadOnlySpan<Complex> a, int lda,
+            ReadOnlySpan<int> ipiv, Span<Complex> b, int ldb) =>
+            throw new InvalidOperationException(reason);
+
+        public override int Zgetri(int n, Span<Complex> a, int lda, ReadOnlySpan<int> ipiv) =>
+            throw new InvalidOperationException(reason);
+
+        public override int Zgeev(bool vectors, int n, Span<Complex> a, int lda,
+            Span<Complex> w, Span<Complex> vr, int ldvr) =>
+            throw new InvalidOperationException(reason);
+
+        public override int Zgesdd(SvdVectors job, int m, int n, Span<Complex> a, int lda,
+            Span<double> s, Span<Complex> u, int ldu, Span<Complex> vt, int ldvt) =>
             throw new InvalidOperationException(reason);
     }
 }

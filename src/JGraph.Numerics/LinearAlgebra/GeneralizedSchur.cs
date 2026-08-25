@@ -106,6 +106,63 @@ public sealed class GeneralizedSchur
                 new double[0, 0], [], []);
         }
 
+        double[] aa = Flatten(a, n);
+        double[] bb = Flatten(b, n);
+        var vsl = new double[(long)n * n];
+        var vsr = new double[(long)n * n];
+        var alphar = new double[n];
+        var alphai = new double[n];
+        var beta = new double[n];
+        if (LinalgProvider.Current.Gges(vectors: true, n, aa, n, bb, n,
+                alphar, alphai, beta, vsl, n, vsr, n) != 0)
+        {
+            throw new ArgumentException(
+                "This pencil is singular — every number is an eigenvalue of it — so it has no " +
+                "generalized Schur form to compute.");
+        }
+
+        // The blocked iteration leaves rounding where the managed kernel promises an exact zero: a
+        // singular B's eigenvalue at infinity must have beta exactly 0, not 1e-17 - arriving at
+        // 1e-17 would make the answer say the pencil is finite, which is the one thing it is not.
+        // The snap rule is the managed kernel's own, applied to the same numbers.
+        double largest = 0;
+        foreach (double entry in bb)
+        {
+            largest = Math.Max(largest, Math.Abs(entry));
+        }
+
+        double tolerance = 1e-12 * (1 + largest);
+        for (int i = 0; i < n; i++)
+        {
+            if (Math.Abs(beta[i]) <= tolerance)
+            {
+                beta[i] = 0;
+            }
+
+            if (Math.Abs(bb[(i * n) + i]) <= tolerance)
+            {
+                bb[(i * n) + i] = 0;
+            }
+        }
+
+        var alpha = new Complex[n];
+        for (int i = 0; i < n; i++)
+        {
+            alpha[i] = new Complex(alphar[i], alphai[i]);
+        }
+
+        // The kernel convention here is Q·A·Z = AA; the provider hands back A = VSL·AA·VSRᵀ, so
+        // the left factor comes across transposed and the right one comes across as it stands.
+        return new GeneralizedSchur(Rebuild(aa, n), Rebuild(bb, n),
+            RebuildTransposed(vsl, n), Rebuild(vsr, n), alpha, beta);
+    }
+
+    /// <summary>
+    /// The managed QZ behind <see cref="Factor"/> — the iteration when B cooperates, the
+    /// reciprocal pencil when it is singular. <see cref="ManagedLinalg"/> reaches it directly.
+    /// </summary>
+    internal static GeneralizedSchur FactorManaged(double[,] a, double[,] b)
+    {
         try
         {
             return Iterated(a, b);
@@ -114,6 +171,48 @@ public sealed class GeneralizedSchur
         {
             return ThroughTheReciprocal(a, b);
         }
+    }
+
+    private static double[] Flatten(double[,] source, int n)
+    {
+        var flat = new double[(long)n * n];
+        for (int c = 0; c < n; c++)
+        {
+            for (int r = 0; r < n; r++)
+            {
+                flat[(c * n) + r] = source[r, c];
+            }
+        }
+
+        return flat;
+    }
+
+    private static double[,] Rebuild(double[] flat, int n)
+    {
+        var rect = new double[n, n];
+        for (int c = 0; c < n; c++)
+        {
+            for (int r = 0; r < n; r++)
+            {
+                rect[r, c] = flat[(c * n) + r];
+            }
+        }
+
+        return rect;
+    }
+
+    private static double[,] RebuildTransposed(double[] flat, int n)
+    {
+        var rect = new double[n, n];
+        for (int c = 0; c < n; c++)
+        {
+            for (int r = 0; r < n; r++)
+            {
+                rect[c, r] = flat[(c * n) + r];
+            }
+        }
+
+        return rect;
     }
 
     /// <summary>

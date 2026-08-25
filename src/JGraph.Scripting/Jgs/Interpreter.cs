@@ -3956,7 +3956,12 @@ internal sealed partial class Interpreter
 
         if (op == TokenType.Backslash)
         {
-            // A\B: the solution of A·X = B.
+            // A\B: the solution of A·X = B. Complex operands take the boxed z-routine solve.
+            if (JgsBuiltins.HasComplexElements(left) || JgsBuiltins.HasComplexElements(right))
+            {
+                return JgsBuiltins.ComplexMatrixSolve(left, right, divide: false, at.Line, at.Column);
+            }
+
             double[] coefficients = ColumnMajorOf(left, out int rowsA, out int colsA, at);
             double[] rhs = ColumnMajorOf(right, out int rowsB, out int colsB, at);
             if (!IsMatrix(right) && rowsA != 1)
@@ -3972,6 +3977,11 @@ internal sealed partial class Interpreter
         if (op == TokenType.Slash)
         {
             // A/B: the solution of X·B = A, computed as (Bᵀ \ Aᵀ)ᵀ.
+            if (JgsBuiltins.HasComplexElements(left) || JgsBuiltins.HasComplexElements(right))
+            {
+                return JgsBuiltins.ComplexMatrixSolve(right, left, divide: true, at.Line, at.Column);
+            }
+
             double[] coefficients = TransposedColumnMajorOf(right, out int rowsA, out int colsA, at);
             double[] rhs = TransposedColumnMajorOf(left, out int rowsB, out int colsB, at);
             return MatrixSolve(coefficients, rowsA, colsA, rhs, rowsB, colsB, transposeResult: true, at);

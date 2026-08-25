@@ -130,6 +130,108 @@ public sealed class Eigen
         return values;
     }
 
+    /// <summary>
+    /// The eigenvalues of the pencil A − λ·B, infinite where B is singular in that direction.
+    /// Both arrays are n×n column-major and are overwritten — the call takes ownership.
+    /// </summary>
+    /// <exception cref="ArgumentException">The pencil is singular — every number an eigenvalue.</exception>
+    public static Complex[] PencilSpectrum(double[] a, double[] b, int n)
+    {
+        var alphar = new double[n];
+        var alphai = new double[n];
+        var beta = new double[n];
+        double scale = LargestOf(b, n);
+        if (LinalgProvider.Current.Ggev(vectors: false, n, a, n, b, n,
+                alphar, alphai, beta, Span<double>.Empty, 1) != 0)
+        {
+            throw new ArgumentException(
+                "This pencil is singular — every number is an eigenvalue of it — so it has no " +
+                "spectrum to compute.");
+        }
+
+        return Ratios(alphar, alphai, beta, n, scale);
+    }
+
+    /// <summary>
+    /// The eigenvalues of a finite pencil with its right eigenvectors — <c>[V, D] = eig(A, B)</c>
+    /// with B nonsingular. Each vector carries LAPACK <c>dggev</c>'s scaling: the largest
+    /// component's |re| + |im| is 1, which is the convention MATLAB hands back for this form.
+    /// Overwrites both arrays.
+    /// </summary>
+    /// <exception cref="InvalidOperationException">B is singular, so the vector route has no answer.</exception>
+    public static (Complex[] Values, Complex[,] Vectors) PencilFactor(double[] a, double[] b, int n)
+    {
+        var alphar = new double[n];
+        var alphai = new double[n];
+        var beta = new double[n];
+        var vr = new double[(long)n * n];
+        double scale = LargestOf(b, n);
+        if (LinalgProvider.Current.Ggev(vectors: true, n, a, n, b, n,
+                alphar, alphai, beta, vr, n) != 0)
+        {
+            throw new InvalidOperationException(
+                "The pencil's eigenvectors need a nonsingular B, and this B is singular.");
+        }
+
+        return (Ratios(alphar, alphai, beta, n, scale), DenseLinalg.ComplexVectorsOf(vr, alphai, n, n));
+    }
+
+    /// <summary>
+    /// The symmetric-definite pencil, A·z = λ·B·z with B positive definite: real ascending values
+    /// and, when asked, vectors scaled so Zᵀ·B·Z is the identity. Overwrites both arrays; the
+    /// vectors come back in <paramref name="a"/>'s storage, one column each.
+    /// </summary>
+    /// <exception cref="ArgumentException">B stopped being positive definite.</exception>
+    /// <exception cref="InvalidOperationException">The symmetric eigensolver failed to converge.</exception>
+    public static (double[] Values, double[] VectorsColumnMajor) SymmetricPencil(
+        double[] a, double[] b, int n, bool vectors)
+    {
+        var w = new double[n];
+        int info = LinalgProvider.Current.Sygvd(vectors, lower: true, n, a, n, b, n, w);
+        if (info > n)
+        {
+            throw new ArgumentException("eig(A, B) took the Cholesky route, but B is not positive definite.");
+        }
+
+        if (info != 0)
+        {
+            throw new InvalidOperationException("The symmetric-definite eigensolver did not converge.");
+        }
+
+        return (w, a);
+    }
+
+    /// <summary>
+    /// α/β as eigenvalues. A β at rounding scale is snapped to the infinity it stands for — the
+    /// managed QZ's own rule, applied here so a blocked native iteration keeps the same promise:
+    /// a singular B answers Inf, not 1e16.
+    /// </summary>
+    private static Complex[] Ratios(double[] alphar, double[] alphai, double[] beta, int n, double scale)
+    {
+        double tolerance = 1e-12 * (1 + scale);
+        var values = new Complex[n];
+        for (int i = 0; i < n; i++)
+        {
+            values[i] = Math.Abs(beta[i]) <= tolerance
+                ? new Complex(double.PositiveInfinity, 0)
+                : new Complex(alphar[i], alphai[i]) / beta[i];
+        }
+
+        return values;
+    }
+
+    /// <summary>The largest magnitude in an n×n column-major matrix — the snap rule's yardstick.</summary>
+    private static double LargestOf(ReadOnlySpan<double> a, int n)
+    {
+        double largest = 0;
+        for (int i = 0; i < n * n; i++)
+        {
+            largest = Math.Max(largest, Math.Abs(a[i]));
+        }
+
+        return largest;
+    }
+
     private static bool IsSymmetric(ReadOnlySpan<double> a, int n)
     {
         double scale = 0;

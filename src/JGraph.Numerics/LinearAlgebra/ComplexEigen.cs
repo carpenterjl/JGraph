@@ -11,11 +11,67 @@ namespace JGraph.Numerics.LinearAlgebra;
 public static class ComplexEigen
 {
     /// <summary>
-    /// The eigenvalues of square complex <paramref name="matrix"/>, in deflation order.
+    /// The eigenvalues of square complex <paramref name="matrix"/>, through the active backend.
     /// Values-only: eigenvectors are not computed.
     /// </summary>
-    /// <exception cref="InvalidOperationException">When the QR iteration fails to converge.</exception>
+    /// <exception cref="InvalidOperationException">When the eigensolver fails to converge.</exception>
     public static Complex[] Values(Complex[,] matrix)
+    {
+        int n = matrix.GetLength(0);
+        if (n == 0)
+        {
+            return [];
+        }
+
+        Complex[] work = FlattenRect(matrix, n, n);
+        var values = new Complex[n];
+        if (LinalgProvider.Current.Zgeev(vectors: false, n, work, n, values, [], 1) != 0)
+        {
+            throw new InvalidOperationException("Complex eigenvalue iteration did not converge.");
+        }
+
+        return values;
+    }
+
+    /// <summary>
+    /// The eigenvalues with their right eigenvectors — <c>[V, D] = eig(A)</c> for a complex A.
+    /// Each vector has unit length with its largest component's phase fixed, which is both
+    /// backends' convention.
+    /// </summary>
+    /// <exception cref="InvalidOperationException">When the eigensolver fails to converge.</exception>
+    public static (Complex[] Values, Complex[,] Vectors) Factor(Complex[,] matrix)
+    {
+        int n = matrix.GetLength(0);
+        if (n == 0)
+        {
+            return ([], new Complex[0, 0]);
+        }
+
+        Complex[] work = FlattenRect(matrix, n, n);
+        var values = new Complex[n];
+        var flat = new Complex[(long)n * n];
+        if (LinalgProvider.Current.Zgeev(vectors: true, n, work, n, values, flat, n) != 0)
+        {
+            throw new InvalidOperationException("Complex eigenvalue iteration did not converge.");
+        }
+
+        var vectors = new Complex[n, n];
+        for (int c = 0; c < n; c++)
+        {
+            for (int r = 0; r < n; r++)
+            {
+                vectors[r, c] = flat[(c * n) + r];
+            }
+        }
+
+        return (values, vectors);
+    }
+
+    /// <summary>
+    /// The managed single-shift QR iteration behind <see cref="Values"/>, reached directly by
+    /// <see cref="ManagedLinalg"/>. Overwrites the matrix it is handed.
+    /// </summary>
+    internal static Complex[] ValuesManaged(Complex[,] matrix)
     {
         int n = matrix.GetLength(0);
         if (n == 0)
@@ -251,49 +307,84 @@ public static class ComplexEigen
     }
 
     /// <summary>
-    /// The singular values of a general complex matrix, descending. Computed from the Hermitian
-    /// Gram matrix AᴴA through its real symmetric 2n embedding [Re −Im; Im Re], whose spectrum is
-    /// each eigenvalue of AᴴA twice — unambiguous for the Hermitian case, unlike the general one.
+    /// The singular values of a general complex matrix, descending, through the active backend.
+    /// Until M91 these came from the eigenvalues of the Gram matrix AᴴA — squaring the condition
+    /// number on the way — and now they come from a genuine complex SVD on both backends.
     /// </summary>
     public static double[] SingularValues(Complex[,] matrix)
     {
         int rows = matrix.GetLength(0);
         int cols = matrix.GetLength(1);
-        var gram = new Complex[cols, cols];
-        for (int r = 0; r < cols; r++)
+        if (rows == 0 || cols == 0)
         {
-            for (int c = 0; c < cols; c++)
-            {
-                Complex sum = Complex.Zero;
-                for (int k = 0; k < rows; k++)
-                {
-                    sum += Complex.Conjugate(matrix[k, r]) * matrix[k, c];
-                }
+            return [];
+        }
 
-                gram[r, c] = sum;
+        Complex[] work = FlattenRect(matrix, rows, cols);
+        var values = new double[Math.Min(rows, cols)];
+        if (LinalgProvider.Current.Zgesdd(SvdVectors.None, rows, cols, work, rows, values, [], 1, [], 1) != 0)
+        {
+            throw new InvalidOperationException("The complex singular value decomposition did not converge.");
+        }
+
+        return values;
+    }
+
+    /// <summary>
+    /// The complex SVD's factors, A = U·Σ·Vᴴ — <c>[U, S, V] = svd(A)</c> for a complex A, in
+    /// MATLAB's shapes: full m×m and n×n factors, or both cut to min(m, n) columns for the
+    /// economy forms. V is handed back as V itself, not the Vᴴ LAPACK stores.
+    /// </summary>
+    public static (Complex[,] U, double[] S, Complex[,] V) Svd(Complex[,] matrix, bool economy)
+    {
+        int rows = matrix.GetLength(0);
+        int cols = matrix.GetLength(1);
+        int k = Math.Min(rows, cols);
+        SvdVectors job = economy ? SvdVectors.Economy : SvdVectors.All;
+        int uColumns = economy ? k : rows;
+        int vtRows = economy ? k : cols;
+
+        Complex[] work = FlattenRect(matrix, rows, cols);
+        var values = new double[k];
+        var u = new Complex[(long)rows * uColumns];
+        var vt = new Complex[(long)vtRows * cols];
+        if (LinalgProvider.Current.Zgesdd(job, rows, cols, work, rows, values, u, rows, vt, vtRows) != 0)
+        {
+            throw new InvalidOperationException("The complex singular value decomposition did not converge.");
+        }
+
+        var left = new Complex[rows, uColumns];
+        for (int c = 0; c < uColumns; c++)
+        {
+            for (int r = 0; r < rows; r++)
+            {
+                left[r, c] = u[(c * (long)rows) + r];
             }
         }
 
-        var embedded = new double[2 * cols, 2 * cols];
-        for (int r = 0; r < cols; r++)
+        var right = new Complex[cols, vtRows];
+        for (int c = 0; c < vtRows; c++)
         {
-            for (int c = 0; c < cols; c++)
+            for (int r = 0; r < cols; r++)
             {
-                embedded[r, c] = gram[r, c].Real;
-                embedded[r, c + cols] = -gram[r, c].Imaginary;
-                embedded[r + cols, c] = gram[r, c].Imaginary;
-                embedded[r + cols, c + cols] = gram[r, c].Real;
+                right[r, c] = Complex.Conjugate(vt[(r * (long)vtRows) + c]);
             }
         }
 
-        Eigen eigen = Eigen.Factor(embedded);
-        double[] doubled = eigen.Values.Select(static v => v.Real).OrderByDescending(static v => v).ToArray();
-        var singular = new double[cols];
-        for (int i = 0; i < cols; i++)
+        return (left, values, right);
+    }
+
+    private static Complex[] FlattenRect(Complex[,] matrix, int rows, int cols)
+    {
+        var work = new Complex[(long)rows * cols];
+        for (int c = 0; c < cols; c++)
         {
-            singular[i] = Math.Sqrt(Math.Max(0, doubled[2 * i]));
+            for (int r = 0; r < rows; r++)
+            {
+                work[(c * (long)rows) + r] = matrix[r, c];
+            }
         }
 
-        return singular;
+        return work;
     }
 }

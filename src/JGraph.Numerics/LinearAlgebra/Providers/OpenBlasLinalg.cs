@@ -1,3 +1,4 @@
+using System.Numerics;
 using JGraph.Numerics.LinearAlgebra.Native;
 
 namespace JGraph.Numerics.LinearAlgebra;
@@ -353,6 +354,254 @@ public sealed class OpenBlasLinalg : DenseLinalg
                 OpenBlasNative.CharNone,
                 vectors ? OpenBlasNative.CharVectors : OpenBlasNative.CharNone,
                 n, pa, lda, pwr, pwi, &left, 1, pvr, Math.Max(ldvr, 1));
+        }
+    }
+
+    /// <inheritdoc />
+    public override unsafe int Ggev(bool vectors, int n, Span<double> a, int lda, Span<double> b, int ldb,
+        Span<double> alphar, Span<double> alphai, Span<double> beta, Span<double> vr, int ldvr)
+    {
+        if (n == 0)
+        {
+            return 0;
+        }
+
+        double left = 0;
+        Span<double> vrOut = vr.IsEmpty ? stackalloc double[1] : vr;
+        fixed (double* pa = a)
+        fixed (double* pb = b)
+        fixed (double* par = alphar)
+        fixed (double* pai = alphai)
+        fixed (double* pbe = beta)
+        fixed (double* pvr = vrOut)
+        {
+            return OpenBlasNative.Dggev(OpenBlasNative.LapackColMajor,
+                OpenBlasNative.CharNone,
+                vectors ? OpenBlasNative.CharVectors : OpenBlasNative.CharNone,
+                n, pa, lda, pb, ldb, par, pai, pbe, &left, 1, pvr, Math.Max(ldvr, 1));
+        }
+    }
+
+    /// <inheritdoc />
+    public override unsafe int Sygvd(bool vectors, bool lower, int n, Span<double> a, int lda,
+        Span<double> b, int ldb, Span<double> w)
+    {
+        if (n == 0)
+        {
+            return 0;
+        }
+
+        fixed (double* pa = a)
+        fixed (double* pb = b)
+        fixed (double* pw = w)
+        {
+            return OpenBlasNative.Dsygvd(OpenBlasNative.LapackColMajor, 1,
+                vectors ? OpenBlasNative.CharVectors : OpenBlasNative.CharNone,
+                lower ? OpenBlasNative.CharLower : OpenBlasNative.CharUpper,
+                n, pa, lda, pb, ldb, pw);
+        }
+    }
+
+    /// <inheritdoc />
+    public override unsafe int Gees(bool vectors, int n, Span<double> a, int lda,
+        Span<double> wr, Span<double> wi, Span<double> vs, int ldvs)
+    {
+        if (n == 0)
+        {
+            return 0;
+        }
+
+        int sorted = 0;
+        Span<double> vsOut = vs.IsEmpty ? stackalloc double[1] : vs;
+        fixed (double* pa = a)
+        fixed (double* pwr = wr)
+        fixed (double* pwi = wi)
+        fixed (double* pvs = vsOut)
+        {
+            return OpenBlasNative.Dgees(OpenBlasNative.LapackColMajor,
+                vectors ? OpenBlasNative.CharVectors : OpenBlasNative.CharNone,
+                OpenBlasNative.CharNone, 0, n, pa, lda, &sorted, pwr, pwi, pvs, Math.Max(ldvs, 1));
+        }
+    }
+
+    /// <inheritdoc />
+    public override unsafe int Gges(bool vectors, int n, Span<double> a, int lda, Span<double> b, int ldb,
+        Span<double> alphar, Span<double> alphai, Span<double> beta,
+        Span<double> vsl, int ldvsl, Span<double> vsr, int ldvsr)
+    {
+        if (n == 0)
+        {
+            return 0;
+        }
+
+        int sorted = 0;
+        Span<double> vslOut = vsl.IsEmpty ? stackalloc double[1] : vsl;
+        Span<double> vsrOut = vsr.IsEmpty ? stackalloc double[1] : vsr;
+        byte job = vectors ? OpenBlasNative.CharVectors : OpenBlasNative.CharNone;
+        fixed (double* pa = a)
+        fixed (double* pb = b)
+        fixed (double* par = alphar)
+        fixed (double* pai = alphai)
+        fixed (double* pbe = beta)
+        fixed (double* pl = vslOut)
+        fixed (double* pr = vsrOut)
+        {
+            return OpenBlasNative.Dgges(OpenBlasNative.LapackColMajor, job, job,
+                OpenBlasNative.CharNone, 0, n, pa, lda, pb, ldb, &sorted,
+                par, pai, pbe, pl, Math.Max(ldvsl, 1), pr, Math.Max(ldvsr, 1));
+        }
+    }
+
+    /// <inheritdoc />
+    public override unsafe int Trsen(ReadOnlySpan<bool> select, int n, Span<double> t, int ldt,
+        Span<double> q, int ldq, Span<double> wr, Span<double> wi)
+    {
+        if (n == 0)
+        {
+            return 0;
+        }
+
+        // LAPACK's logical is a 32-bit int per entry, not a byte.
+        var flags = new int[n];
+        for (int i = 0; i < n; i++)
+        {
+            flags[i] = select[i] ? 1 : 0;
+        }
+
+        int kept = 0;
+        double condition = 0;
+        double separation = 0;
+        fixed (double* pt = t)
+        fixed (double* pq = q)
+        fixed (double* pwr = wr)
+        fixed (double* pwi = wi)
+        fixed (int* pf = flags)
+        {
+            return OpenBlasNative.Dtrsen(OpenBlasNative.LapackColMajor,
+                OpenBlasNative.CharNone, OpenBlasNative.CharVectors, pf, n,
+                pt, ldt, pq, ldq, pwr, pwi, &kept, &condition, &separation);
+        }
+    }
+
+    /// <inheritdoc />
+    public override unsafe void Zgemm(int m, int n, int k, ReadOnlySpan<Complex> a, int lda,
+        ReadOnlySpan<Complex> b, int ldb, Span<Complex> c, int ldc)
+    {
+        if (m == 0 || n == 0)
+        {
+            return;
+        }
+
+        if (k == 0)
+        {
+            for (int col = 0; col < n; col++)
+            {
+                c.Slice(col * ldc, m).Clear();
+            }
+
+            return;
+        }
+
+        Complex one = Complex.One;
+        Complex zero = Complex.Zero;
+        fixed (Complex* pa = a)
+        fixed (Complex* pb = b)
+        fixed (Complex* pc = c)
+        {
+            OpenBlasNative.Zgemm(OpenBlasNative.CblasColMajor,
+                OpenBlasNative.CblasNoTrans, OpenBlasNative.CblasNoTrans,
+                m, n, k, &one, pa, lda, pb, ldb, &zero, pc, ldc);
+        }
+    }
+
+    /// <inheritdoc />
+    public override unsafe int Zgetrf(int m, int n, Span<Complex> a, int lda, Span<int> ipiv)
+    {
+        if (m == 0 || n == 0)
+        {
+            return 0;
+        }
+
+        fixed (Complex* pa = a)
+        fixed (int* pivots = ipiv)
+        {
+            return OpenBlasNative.Zgetrf(OpenBlasNative.LapackColMajor, m, n, pa, lda, pivots);
+        }
+    }
+
+    /// <inheritdoc />
+    public override unsafe void Zgetrs(int n, int nrhs, ReadOnlySpan<Complex> a, int lda,
+        ReadOnlySpan<int> ipiv, Span<Complex> b, int ldb)
+    {
+        if (n == 0 || nrhs == 0)
+        {
+            return;
+        }
+
+        fixed (Complex* pa = a)
+        fixed (int* pivots = ipiv)
+        fixed (Complex* pb = b)
+        {
+            _ = OpenBlasNative.Zgetrs(OpenBlasNative.LapackColMajor, OpenBlasNative.CharNoTrans,
+                n, nrhs, pa, lda, pivots, pb, ldb);
+        }
+    }
+
+    /// <inheritdoc />
+    public override unsafe int Zgetri(int n, Span<Complex> a, int lda, ReadOnlySpan<int> ipiv)
+    {
+        if (n == 0)
+        {
+            return 0;
+        }
+
+        fixed (Complex* pa = a)
+        fixed (int* pivots = ipiv)
+        {
+            return OpenBlasNative.Zgetri(OpenBlasNative.LapackColMajor, n, pa, lda, pivots);
+        }
+    }
+
+    /// <inheritdoc />
+    public override unsafe int Zgeev(bool vectors, int n, Span<Complex> a, int lda,
+        Span<Complex> w, Span<Complex> vr, int ldvr)
+    {
+        if (n == 0)
+        {
+            return 0;
+        }
+
+        Complex left = Complex.Zero;
+        Span<Complex> vrOut = vr.IsEmpty ? stackalloc Complex[1] : vr;
+        fixed (Complex* pa = a)
+        fixed (Complex* pw = w)
+        fixed (Complex* pvr = vrOut)
+        {
+            return OpenBlasNative.Zgeev(OpenBlasNative.LapackColMajor,
+                OpenBlasNative.CharNone,
+                vectors ? OpenBlasNative.CharVectors : OpenBlasNative.CharNone,
+                n, pa, lda, pw, &left, 1, pvr, Math.Max(ldvr, 1));
+        }
+    }
+
+    /// <inheritdoc />
+    public override unsafe int Zgesdd(SvdVectors job, int m, int n, Span<Complex> a, int lda,
+        Span<double> s, Span<Complex> u, int ldu, Span<Complex> vt, int ldvt)
+    {
+        if (m == 0 || n == 0)
+        {
+            return 0;
+        }
+
+        Span<Complex> uOut = u.IsEmpty ? stackalloc Complex[1] : u;
+        Span<Complex> vtOut = vt.IsEmpty ? stackalloc Complex[1] : vt;
+        fixed (Complex* pa = a)
+        fixed (double* ps = s)
+        fixed (Complex* pu = uOut)
+        fixed (Complex* pvt = vtOut)
+        {
+            return OpenBlasNative.Zgesdd(OpenBlasNative.LapackColMajor, JobCharacter(job), m, n,
+                pa, lda, ps, pu, Math.Max(ldu, 1), pvt, Math.Max(ldvt, 1));
         }
     }
 

@@ -148,8 +148,26 @@ internal static partial class JgsBuiltins
         ArityRange("svd", args, 1, 2, line, col);
         if (HasComplexElements(args[0]))
         {
-            throw new JgsRuntimeException(line, col,
-                "[U, S, V] = svd(A) is not supported for a complex A; s = svd(A) computes the singular values.");
+            Complex[,] z = ComplexRectOf("svd", args[0], line, col);
+            int zRows = z.GetLength(0);
+            int zCols = z.GetLength(1);
+            bool zEconomy = EconomySizedSvd(args, zRows, zCols, line, col);
+            (Complex[,] left, double[] sigma, Complex[,] right) = ComplexEigen.Svd(z, zEconomy);
+
+            int zOrder = System.Math.Min(zRows, zCols);
+            int sigmaRows = zEconomy ? zOrder : zRows;
+            int sigmaCols = zEconomy ? zOrder : zCols;
+            JgsValue middle = BuildColumnMajor(sigmaRows, sigmaCols, destination =>
+            {
+                for (int i = 0; i < zOrder; i++)
+                {
+                    destination[(i * sigmaRows) + i] = sigma[i];
+                }
+            });
+
+            return wanted <= 2
+                ? [FromComplexRect(left), middle]
+                : [FromComplexRect(left), middle, FromComplexRect(right)];
         }
 
         double[] a = ColumnMajorOf("svd", args[0], out int rows, out int cols, line, col);

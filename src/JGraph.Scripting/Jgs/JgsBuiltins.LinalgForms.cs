@@ -73,13 +73,23 @@ internal static partial class JgsBuiltins
     {
         if (HasComplexElements(value))
         {
-            if (wanted > 1)
+            Complex[,] z = ComplexSquareOf("eig", value, line, col);
+            if (wanted <= 1)
             {
-                throw new JgsRuntimeException(line, col,
-                    "[V, D] = eig(A) is not supported for a complex A; e = eig(A) computes the eigenvalues.");
+                return [EigenvalueList(ComplexEigen.Values(z), asColumn: true)];
             }
 
-            return [EigenvalueList(ComplexEigen.Values(ComplexSquareOf("eig", value, line, col)), asColumn: true)];
+            (Complex[] zValues, Complex[,] zVectors) = ComplexEigen.Factor(z);
+            JgsValue zDiagonal = asVector
+                ? EigenvalueList(zValues, asColumn: false)
+                : FromComplexRect(Diagonal(zValues));
+            if (wanted <= 2)
+            {
+                return [FromComplexRect(zVectors), zDiagonal];
+            }
+
+            return [FromComplexRect(zVectors), zDiagonal,
+                FromComplexRect(ComplexLeftEigenvectors(z, zValues))];
         }
 
         double[] a = SquareColumnMajorOf("eig", value, out int n, line, col);
@@ -131,7 +141,7 @@ internal static partial class JgsBuiltins
             Cholesky cholesky = Cholesky.Factor(b);
             if (cholesky.IsPositiveDefinite)
             {
-                return DefinitePencil(a, cholesky.Lower, wanted, asVector);
+                return DefinitePencil(a, b, wanted, asVector);
             }
 
             if (algorithm == "chol")
@@ -146,86 +156,143 @@ internal static partial class JgsBuiltins
                 "eig(A, B, 'chol') needs both matrices symmetric; these are not, so use 'qz'.");
         }
 
-        GeneralizedSchur qz = GeneralizedSchur.Factor(a, b);
+        int order = a.GetLength(0);
         if (wanted <= 1)
         {
-            return [asVector ? EigenvalueList(qz.Eigenvalues, asColumn: false) : FromComplexRect(Diagonal(qz.Eigenvalues))];
+            Complex[] spectrum = Eigen.PencilSpectrum(FlattenSquare(a), FlattenSquare(b), order);
+            return [asVector ? EigenvalueList(spectrum, asColumn: false) : FromComplexRect(Diagonal(spectrum))];
         }
 
-        if (!qz.IsFinite)
+        Complex[] values;
+        Complex[,] vectors;
+        try
+        {
+            (values, vectors) = Eigen.PencilFactor(FlattenSquare(a), FlattenSquare(b), order);
+        }
+        catch (InvalidOperationException)
+        {
+            values = [new Complex(double.PositiveInfinity, 0)];
+            vectors = new Complex[0, 0];
+        }
+
+        if (Array.Exists(values, static v => double.IsInfinity(v.Real) || double.IsInfinity(v.Imaginary)))
         {
             throw new JgsRuntimeException(line, col,
                 "[V, D] = eig(A, B) needs a nonsingular B: this pencil has an eigenvalue at infinity, " +
                 "which has no eigenvector to report. e = eig(A, B) gives the eigenvalues themselves.");
         }
 
-        // With B nonsingular the pencil's eigenvectors are those of B\\A exactly, and that path is
-        // the one already measured against MATLAB.
-        double[,] reduced = Linear.Solve(b, a);
-        Eigen eigen = Eigen.Factor(reduced);
-        JgsValue d = asVector ? EigenvalueList(eigen.Values, asColumn: false) : FromComplexRect(Diagonal(eigen.Values));
+        JgsValue d = asVector ? EigenvalueList(values, asColumn: false) : FromComplexRect(Diagonal(values));
         if (wanted <= 2)
         {
-            return [FromComplexRect(eigen.Vectors), d];
+            return [FromComplexRect(vectors), d];
         }
 
-        int size = reduced.GetLength(0);
-        var flat = new double[(long)size * size];
-        for (int c = 0; c < size; c++)
+        // The left eigenvectors keep coming from B\\A's transpose, matched by conjugate value —
+        // the route this form has always taken.
+        double[,] reduced = Linear.Solve(b, a);
+        var flat = new double[(long)order * order];
+        for (int c = 0; c < order; c++)
         {
-            for (int r = 0; r < size; r++)
+            for (int r = 0; r < order; r++)
             {
-                flat[(c * size) + r] = reduced[r, c];
+                flat[(c * order) + r] = reduced[r, c];
             }
         }
 
-        return [FromComplexRect(eigen.Vectors), d,
-            FromComplexRect(LeftEigenvectors(flat, size, eigen.Values))];
+        return [FromComplexRect(vectors), d,
+            FromComplexRect(LeftEigenvectors(flat, order, values))];
     }
 
     /// <summary>
-    /// The symmetric-definite pencil through its Cholesky factor: <c>L⁻¹·A·L⁻ᵀ</c> is symmetric and
-    /// has the pencil's eigenvalues, and its eigenvectors carried back through <c>L⁻ᵀ</c> are the
-    /// pencil's — already scaled so that <c>Vᵀ·B·V</c> is the identity.
+    /// The symmetric-definite pencil through the provider's Cholesky-reduction eigensolver: real
+    /// ascending eigenvalues, and vectors already scaled so that <c>Vᵀ·B·V</c> is the identity —
+    /// which is what MATLAB's <c>eig(A, B)</c> hands back for this pencil.
     /// </summary>
-    private static JgsValue[] DefinitePencil(double[,] a, double[,] lower, int wanted, bool asVector)
+    private static JgsValue[] DefinitePencil(double[,] a, double[,] b, int wanted, bool asVector)
     {
-        double[,] reduced = Linear.Transpose(
-            Linear.Solve(lower, Linear.Transpose(Linear.Solve(lower, a))));
+        int n = a.GetLength(0);
+        (double[] real, double[] columns) =
+            Eigen.SymmetricPencil(FlattenSquare(a), FlattenSquare(b), n, wanted > 1);
 
-        // Symmetry is exact in theory and to rounding in practice; averaging with the transpose
-        // keeps the symmetric eigenvalue path from being sent down the general one by dust.
-        int n = reduced.GetLength(0);
+        var values = new Complex[n];
         for (int i = 0; i < n; i++)
         {
-            for (int j = i + 1; j < n; j++)
-            {
-                double mean = (reduced[i, j] + reduced[j, i]) / 2;
-                reduced[i, j] = mean;
-                reduced[j, i] = mean;
-            }
+            values[i] = new Complex(real[i], 0);
         }
 
-        Eigen eigen = Eigen.Factor(reduced);
-        JgsValue d = asVector ? EigenvalueList(eigen.Values, asColumn: false) : FromComplexRect(Diagonal(eigen.Values));
+        JgsValue d = asVector ? EigenvalueList(values, asColumn: false) : FromComplexRect(Diagonal(values));
         if (wanted <= 1)
         {
             return [d];
         }
 
-        var real = new double[n, n];
-        for (int i = 0; i < n; i++)
+        JgsValue vectors = FromColumnMajorRect(columns, n, n);
+        return wanted <= 2 ? [vectors, d] : [vectors, d, vectors];
+    }
+
+    /// <summary>A square rectangle as the flat column-major array the provider fronts adopt.</summary>
+    private static double[] FlattenSquare(double[,] source)
+    {
+        int n = source.GetLength(0);
+        var flat = new double[(long)n * n];
+        for (int c = 0; c < n; c++)
         {
-            for (int j = 0; j < n; j++)
+            for (int r = 0; r < n; r++)
             {
-                real[i, j] = eigen.Vectors[i, j].Real;
+                flat[(c * n) + r] = source[r, c];
             }
         }
 
-        double[,] vectors = Linear.Solve(Linear.Transpose(lower), real);
-        return wanted <= 2
-            ? [FromRect(vectors), d]
-            : [FromRect(vectors), d, FromRect(vectors)];
+        return flat;
+    }
+
+    /// <summary>
+    /// The left eigenvectors of a complex matrix: the right eigenvectors of Aᴴ for the conjugate
+    /// eigenvalues, matched by value exactly as the real form matches its transpose.
+    /// </summary>
+    private static Complex[,] ComplexLeftEigenvectors(Complex[,] a, Complex[] values)
+    {
+        int n = a.GetLength(0);
+        var hermitian = new Complex[n, n];
+        for (int r = 0; r < n; r++)
+        {
+            for (int c = 0; c < n; c++)
+            {
+                hermitian[r, c] = Complex.Conjugate(a[c, r]);
+            }
+        }
+
+        (Complex[] flipped, Complex[,] vectors) = ComplexEigen.Factor(hermitian);
+        var taken = new bool[n];
+        var w = new Complex[n, n];
+        for (int k = 0; k < n; k++)
+        {
+            int best = -1;
+            double nearest = double.MaxValue;
+            for (int j = 0; j < n; j++)
+            {
+                if (taken[j])
+                {
+                    continue;
+                }
+
+                double distance = (flipped[j] - Complex.Conjugate(values[k])).Magnitude;
+                if (distance < nearest)
+                {
+                    nearest = distance;
+                    best = j;
+                }
+            }
+
+            taken[best] = true;
+            for (int r = 0; r < n; r++)
+            {
+                w[r, k] = vectors[r, best];
+            }
+        }
+
+        return w;
     }
 
     /// <summary>

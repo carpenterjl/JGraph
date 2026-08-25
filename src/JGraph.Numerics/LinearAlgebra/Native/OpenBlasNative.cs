@@ -1,3 +1,4 @@
+using System.Numerics;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
@@ -161,6 +162,104 @@ internal static unsafe partial class OpenBlasNative
     [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvCdecl) })]
     internal static partial int Dgeev(int layout, byte jobvl, byte jobvr, int n, double* a, int lda,
         double* wr, double* wi, double* vl, int ldvl, double* vr, int ldvr);
+
+    /// <summary>
+    /// The real generalized eigensolver for the pencil A − λ·B: eigenvalues as α/β pairs, and
+    /// the right eigenvectors when asked, packed the way <c>dgeev</c> packs a conjugate pair.
+    /// </summary>
+    [LibraryImport(Library, EntryPoint = "LAPACKE_dggev")]
+    [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvCdecl) })]
+    internal static partial int Dggev(int layout, byte jobvl, byte jobvr, int n, double* a, int lda,
+        double* b, int ldb, double* alphar, double* alphai, double* beta,
+        double* vl, int ldvl, double* vr, int ldvr);
+
+    /// <summary>
+    /// The symmetric-definite generalized eigensolver, itype 1: A·z = λ·B·z with B positive
+    /// definite, values ascending and the vectors scaled so that Zᵀ·B·Z is the identity.
+    /// </summary>
+    [LibraryImport(Library, EntryPoint = "LAPACKE_dsygvd")]
+    [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvCdecl) })]
+    internal static partial int Dsygvd(int layout, int itype, byte jobz, byte uplo, int n,
+        double* a, int lda, double* b, int ldb, double* w);
+
+    /// <summary>
+    /// The real Schur form A = Z·T·Zᵀ in place. <c>select</c> is a sorting callback this
+    /// codebase never uses — always pass zero with <c>sort = 'N'</c>; reordering is
+    /// <see cref="Dtrsen"/>'s job.
+    /// </summary>
+    [LibraryImport(Library, EntryPoint = "LAPACKE_dgees")]
+    [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvCdecl) })]
+    internal static partial int Dgees(int layout, byte jobvs, byte sort, nint select, int n,
+        double* a, int lda, int* sdim, double* wr, double* wi, double* vs, int ldvs);
+
+    /// <summary>
+    /// The generalized Schur (QZ) factorization in place: A and B become the quasi-triangular
+    /// and triangular factors, with the orthogonal Q and Z alongside. <c>selctg</c> is the
+    /// unused sorting callback — always zero, with <c>sort = 'N'</c>.
+    /// </summary>
+    [LibraryImport(Library, EntryPoint = "LAPACKE_dgges")]
+    [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvCdecl) })]
+    internal static partial int Dgges(int layout, byte jobvsl, byte jobvsr, byte sort, nint selctg,
+        int n, double* a, int lda, double* b, int ldb, int* sdim,
+        double* alphar, double* alphai, double* beta,
+        double* vsl, int ldvsl, double* vsr, int ldvsr);
+
+    /// <summary>
+    /// Reorders a real Schur form so the selected eigenvalues lead. <c>select</c> is LAPACK's
+    /// logical array — int32 per entry, nonzero for chosen — and both halves of a conjugate
+    /// pair must carry the same flag.
+    /// </summary>
+    [LibraryImport(Library, EntryPoint = "LAPACKE_dtrsen")]
+    [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvCdecl) })]
+    internal static partial int Dtrsen(int layout, byte job, byte compq, int* select, int n,
+        double* t, int ldt, double* q, int ldq, double* wr, double* wi, int* m, double* s, double* sep);
+
+    /// <summary>
+    /// C := α·A·B + β·C over interleaved complex doubles —
+    /// <see cref="System.Numerics.Complex"/>'s own layout, so a pinned span goes straight
+    /// through. α and β arrive by pointer, in the CBLAS complex convention.
+    /// </summary>
+    [LibraryImport(Library, EntryPoint = "cblas_zgemm")]
+    [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvCdecl) })]
+    internal static partial void Zgemm(int order, int transA, int transB, int m, int n, int k,
+        Complex* alpha, Complex* a, int lda, Complex* b, int ldb, Complex* beta, Complex* c, int ldc);
+
+    /// <summary>Solves complex A·X = B from a <see cref="Zgetrf"/> factorization, overwriting B with X.</summary>
+    [LibraryImport(Library, EntryPoint = "LAPACKE_zgetrs")]
+    [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvCdecl) })]
+    internal static partial int Zgetrs(int layout, byte trans, int n, int nrhs, Complex* a, int lda,
+        int* ipiv, Complex* b, int ldb);
+
+    /// <summary>The complex LU factorization in place — <see cref="Dgetrf"/> over complex doubles.</summary>
+    [LibraryImport(Library, EntryPoint = "LAPACKE_zgetrf")]
+    [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvCdecl) })]
+    internal static partial int Zgetrf(int layout, int m, int n, Complex* a, int lda, int* ipiv);
+
+    /// <summary>Overwrites a <see cref="Zgetrf"/> factorization with the inverse.</summary>
+    [LibraryImport(Library, EntryPoint = "LAPACKE_zgetri")]
+    [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvCdecl) })]
+    internal static partial int Zgetri(int layout, int n, Complex* a, int lda, int* ipiv);
+
+    /// <summary>
+    /// The complex general eigensolver. Unlike <see cref="Dgeev"/> there is no packing to undo:
+    /// every eigenvector is simply a complex column.
+    /// </summary>
+    [LibraryImport(Library, EntryPoint = "LAPACKE_zgeev")]
+    [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvCdecl) })]
+    internal static partial int Zgeev(int layout, byte jobvl, byte jobvr, int n, Complex* a, int lda,
+        Complex* w, Complex* vl, int ldvl, Complex* vr, int ldvr);
+
+    /// <summary>The complex divide-and-conquer SVD; the singular values themselves stay real.</summary>
+    [LibraryImport(Library, EntryPoint = "LAPACKE_zgesdd")]
+    [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvCdecl) })]
+    internal static partial int Zgesdd(int layout, byte jobz, int m, int n, Complex* a, int lda,
+        double* s, Complex* u, int ldu, Complex* vt, int ldvt);
+
+    /// <summary>The complex QR-iteration SVD — the fallback when <see cref="Zgesdd"/> fails to converge.</summary>
+    [LibraryImport(Library, EntryPoint = "LAPACKE_zgesvd")]
+    [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvCdecl) })]
+    internal static partial int Zgesvd(int layout, byte jobu, byte jobvt, int m, int n, Complex* a, int lda,
+        double* s, Complex* u, int ldu, Complex* vt, int ldvt, double* superb);
 
     [LibraryImport(Library, EntryPoint = "openblas_set_num_threads")]
     [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvCdecl) })]

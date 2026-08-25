@@ -43,7 +43,7 @@ public sealed class Schur
     /// <summary>The eigenvalues, read off the diagonal blocks in the order they appear.</summary>
     public Complex[] Eigenvalues => EigenvaluesOf(T);
 
-    /// <summary>Factors a square matrix into its real Schur form.</summary>
+    /// <summary>Factors a square matrix into its real Schur form, through the active backend.</summary>
     public static Schur Factor(double[,] matrix)
     {
         ArgumentNullException.ThrowIfNull(matrix);
@@ -53,6 +53,32 @@ public sealed class Schur
             throw new ArgumentException("The Schur decomposition needs a square matrix.", nameof(matrix));
         }
 
+        if (n == 0)
+        {
+            return new Schur(new double[0, 0], new double[0, 0]);
+        }
+
+        double[] work = Flatten(matrix, n);
+        var u = new double[(long)n * n];
+
+        var real = new double[n];
+        var imaginary = new double[n];
+        if (LinalgProvider.Current.Gees(vectors: true, n, work, n, real, imaginary, u, n) != 0)
+        {
+            throw new InvalidOperationException("The Schur iteration did not converge.");
+        }
+
+        return new Schur(Rebuild(work, n), Rebuild(u, n));
+    }
+
+    /// <summary>
+    /// The managed kernel behind <see cref="Factor"/>: Hessenberg reduction and the Francis
+    /// double-shift iteration. <see cref="ManagedLinalg"/> reaches it directly — the public door
+    /// routes through the provider, and this one is what the provider's managed lane answers with.
+    /// </summary>
+    internal static Schur FactorManaged(double[,] matrix)
+    {
+        int n = matrix.GetLength(0);
         if (n == 0)
         {
             return new Schur(new double[0, 0], new double[0, 0]);
@@ -149,6 +175,27 @@ public sealed class Schur
             throw new ArgumentException($"The selection needs one entry per eigenvalue ({n}).", nameof(select));
         }
 
+        if (n == 0)
+        {
+            return new Schur(new double[0, 0], new double[0, 0]);
+        }
+
+        double[] tFlat = Flatten(t, n);
+        double[] uFlat = Flatten(u, n);
+        var real = new double[n];
+        var imaginary = new double[n];
+        if (LinalgProvider.Current.Trsen(select, n, tFlat, n, uFlat, n, real, imaginary) != 0)
+        {
+            throw new InvalidOperationException("Reordering the Schur form failed.");
+        }
+
+        return new Schur(Rebuild(tFlat, n), Rebuild(uFlat, n));
+    }
+
+    /// <summary>The managed block-exchange reorder behind <see cref="Reorder"/>, one swap at a time.</summary>
+    internal static Schur ReorderManaged(double[,] t, double[,] u, bool[] select)
+    {
+        int n = t.GetLength(0);
         double[,] tt = (double[,])t.Clone();
         double[,] uu = (double[,])u.Clone();
 
@@ -179,6 +226,34 @@ public sealed class Schur
         }
 
         return new Schur(tt, uu);
+    }
+
+    private static double[] Flatten(double[,] source, int n)
+    {
+        var flat = new double[(long)n * n];
+        for (int c = 0; c < n; c++)
+        {
+            for (int r = 0; r < n; r++)
+            {
+                flat[(c * n) + r] = source[r, c];
+            }
+        }
+
+        return flat;
+    }
+
+    private static double[,] Rebuild(double[] flat, int n)
+    {
+        var rect = new double[n, n];
+        for (int c = 0; c < n; c++)
+        {
+            for (int r = 0; r < n; r++)
+            {
+                rect[r, c] = flat[(c * n) + r];
+            }
+        }
+
+        return rect;
     }
 
     // --- The Francis iteration ------------------------------------------------------------------------

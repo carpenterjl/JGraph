@@ -201,7 +201,7 @@ internal static partial class JgsBuiltins
                     }
                 }
 
-                power = MatMul(power, x);
+                power = Linear.Multiply(power, x);
             }
 
             double scale = System.Math.Pow(2, roots);
@@ -284,32 +284,6 @@ internal static partial class JgsBuiltins
         }
 
         return result;
-    }
-
-    private static double[,] MatMul(double[,] a, double[,] b)
-    {
-        int n = a.GetLength(0);
-        int inner = a.GetLength(1);
-        int m = b.GetLength(1);
-        var product = new double[n, m];
-        for (int r = 0; r < n; r++)
-        {
-            for (int k = 0; k < inner; k++)
-            {
-                double left = a[r, k];
-                if (left == 0)
-                {
-                    continue;
-                }
-
-                for (int c = 0; c < m; c++)
-                {
-                    product[r, c] += left * b[k, c];
-                }
-            }
-        }
-
-        return product;
     }
 
     // --- Complex square matrices (det/inv/trace) -----------------------------------------------
@@ -400,23 +374,79 @@ internal static partial class JgsBuiltins
 
         int rows = a.GetLength(0);
         int cols = b.GetLength(1);
-        int inner = a.GetLength(1);
+        Complex[,] product = ComplexLinear.Multiply(a, b);
+
+        // Every element boxes as a complex, real-valued sums included — the convention this
+        // product has always had, as distinct from FromComplexRect's demotion to plain numbers.
         var elements = new JgsValue[rows * cols];
         for (int c = 0; c < cols; c++)
         {
             for (int r = 0; r < rows; r++)
             {
-                Complex sum = Complex.Zero;
-                for (int k = 0; k < inner; k++)
-                {
-                    sum += a[r, k] * b[k, c];
-                }
-
-                elements[(c * rows) + r] = JgsValue.ComplexNum(sum);
+                elements[(c * rows) + r] = JgsValue.ComplexNum(product[r, c]);
             }
         }
 
         return rows == 1 && cols == 1 ? elements[0] : JgsValue.Shaped(elements, rows, cols);
+    }
+
+    /// <summary>
+    /// The matrix division when either operand holds complex elements — MATLAB's <c>A\B</c> (and
+    /// <c>A/B</c>, which arrives as the transposed problem). Square systems only: a complex
+    /// least-squares solve is machinery JGraph does not have, and saying so beats guessing.
+    /// </summary>
+    internal static JgsValue ComplexMatrixSolve(JgsValue coefficients, JgsValue rhs, bool divide, int line, int col)
+    {
+        string name = divide ? "'/'" : "'\\'";
+        Complex[,] a = ComplexRectOf(name, coefficients, line, col);
+        Complex[,] b = ComplexRectOf(name, rhs, line, col);
+
+        if (divide)
+        {
+            // X·B = A is Bᵀ·Xᵀ = Aᵀ — the plain transpose, not the conjugate one.
+            a = TransposePlain(a);
+            b = TransposePlain(b);
+        }
+        else if (b.GetLength(0) == 1 && a.GetLength(0) > 1 && !IsMatrixValue(rhs))
+        {
+            // A vector right-hand side is a column, exactly as the real path reads one.
+            b = TransposePlain(b);
+        }
+
+        int n = a.GetLength(0);
+        if (a.GetLength(1) != n)
+        {
+            throw new JgsRuntimeException(line, col,
+                $"{name} of a complex system needs a square matrix here ({n}x{a.GetLength(1)} given): " +
+                "the complex least-squares solve is not supported.");
+        }
+
+        if (b.GetLength(0) != n)
+        {
+            throw new JgsRuntimeException(line, col,
+                "Matrix dimensions do not agree for the division: the right-hand side must have as many rows as the matrix.");
+        }
+
+        if (!ComplexLinear.TrySolve(a, b, out Complex[,] solution))
+        {
+            throw new JgsRuntimeException(line, col, "The matrix is singular to working precision.");
+        }
+
+        return FromComplexRect(divide ? TransposePlain(solution) : solution);
+    }
+
+    private static Complex[,] TransposePlain(Complex[,] m)
+    {
+        var t = new Complex[m.GetLength(1), m.GetLength(0)];
+        for (int r = 0; r < m.GetLength(0); r++)
+        {
+            for (int c = 0; c < m.GetLength(1); c++)
+            {
+                t[c, r] = m[r, c];
+            }
+        }
+
+        return t;
     }
 
     /// <summary>A rectangular complex matrix read through <see cref="JgsMatrix"/> (numbers read as re+0i).</summary>
@@ -516,123 +546,32 @@ internal static partial class JgsBuiltins
         return a;
     }
 
-    /// <summary>Complex LU with partial pivoting by magnitude, in place over a copy.</summary>
-    private static (Complex[,] Factors, int[] Pivots, int Sign, bool Singular) ComplexLuFactor(Complex[,] source)
-    {
-        int n = source.GetLength(0);
-        var lu = (Complex[,])source.Clone();
-        var pivots = new int[n];
-        int sign = 1;
-        bool singular = false;
-        for (int k = 0; k < n; k++)
-        {
-            int best = k;
-            double bestMagnitude = lu[k, k].Magnitude;
-            for (int r = k + 1; r < n; r++)
-            {
-                if (lu[r, k].Magnitude > bestMagnitude)
-                {
-                    best = r;
-                    bestMagnitude = lu[r, k].Magnitude;
-                }
-            }
-
-            pivots[k] = best;
-            if (best != k)
-            {
-                for (int c = 0; c < n; c++)
-                {
-                    (lu[k, c], lu[best, c]) = (lu[best, c], lu[k, c]);
-                }
-
-                sign = -sign;
-            }
-
-            if (lu[k, k] == Complex.Zero)
-            {
-                singular = true;
-                continue;
-            }
-
-            for (int r = k + 1; r < n; r++)
-            {
-                Complex factor = lu[r, k] / lu[k, k];
-                lu[r, k] = factor;
-                for (int c = k + 1; c < n; c++)
-                {
-                    lu[r, c] -= factor * lu[k, c];
-                }
-            }
-        }
-
-        return (lu, pivots, sign, singular);
-    }
-
     /// <summary>det of a complex square matrix: the pivot product, signed by the row swaps.</summary>
     private static JgsValue ComplexDeterminant(string name, JgsValue value, int line, int col)
     {
         Complex[,] a = ComplexSquareOf(name, value, line, col);
-        (Complex[,] lu, _, int sign, bool singular) = ComplexLuFactor(a);
-        if (singular)
-        {
-            return JgsValue.Number(0);
-        }
-
-        Complex determinant = sign;
-        for (int i = 0; i < a.GetLength(0); i++)
-        {
-            determinant *= lu[i, i];
-        }
-
-        return JgsValue.ComplexNum(determinant);
+        Complex determinant = ComplexLinear.Determinant(a);
+        return determinant == Complex.Zero
+            ? JgsValue.Number(0)
+            : JgsValue.ComplexNum(determinant);
     }
 
-    /// <summary>inv of a complex square matrix: forward/back substitution against the identity.</summary>
+    /// <summary>inv of a complex square matrix, through the active backend's z-routines.</summary>
     private static JgsValue ComplexInverse(string name, JgsValue value, int line, int col)
     {
         Complex[,] a = ComplexSquareOf(name, value, line, col);
-        (Complex[,] lu, int[] pivots, _, bool singular) = ComplexLuFactor(a);
-        if (singular)
+        if (!ComplexLinear.TryInvert(a, out Complex[,] inverse))
         {
             throw new JgsRuntimeException(line, col, $"{name}: the matrix is singular to working precision.");
         }
 
         int n = a.GetLength(0);
         var elements = new JgsValue[n * n];
-        var column = new Complex[n];
-        for (int rhs = 0; rhs < n; rhs++)
+        for (int c = 0; c < n; c++)
         {
-            for (int i = 0; i < n; i++)
+            for (int r = 0; r < n; r++)
             {
-                column[i] = i == rhs ? Complex.One : Complex.Zero;
-            }
-
-            for (int i = 0; i < n; i++)
-            {
-                if (pivots[i] != i)
-                {
-                    (column[i], column[pivots[i]]) = (column[pivots[i]], column[i]);
-                }
-
-                for (int k = 0; k < i; k++)
-                {
-                    column[i] -= lu[i, k] * column[k];
-                }
-            }
-
-            for (int i = n - 1; i >= 0; i--)
-            {
-                for (int k = i + 1; k < n; k++)
-                {
-                    column[i] -= lu[i, k] * column[k];
-                }
-
-                column[i] /= lu[i, i];
-            }
-
-            for (int i = 0; i < n; i++)
-            {
-                elements[(rhs * n) + i] = JgsValue.ComplexNum(column[i]);
+                elements[(c * n) + r] = JgsValue.ComplexNum(inverse[r, c]);
             }
         }
 

@@ -151,6 +151,7 @@ found the form prober passing a table where a variable name belongs, and M81 fou
   one.
 - **`svd` and `eig` still refuse their multi-output forms for a complex matrix**, and a complex pencil
   is still refused by `qz` — ADR 0076's divergences, untouched here, because they are about
-  factorizations rather than about the elementwise family.
+  factorizations rather than about the elementwise family. (The multi-output refusals were
+  closed in M91, ADR 0091; the complex pencil stands.)
 - **`atan2`, `hypot` and the special functions stay real.** MATLAB refuses `atan2` of a complex too;
   `gamma` and the error functions of a complex argument are a numerics milestone, not a seam widening.
