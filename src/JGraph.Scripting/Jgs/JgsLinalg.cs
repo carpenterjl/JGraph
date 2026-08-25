@@ -151,7 +151,7 @@ internal static class JgsLinalg
     }
 
     /// <summary>Tiled out-of-place transpose: source is rows×cols column-major, dest cols×rows.</summary>
-    private static void TransposeBlocked(ReadOnlySpan<double> source, Span<double> dest, int rows, int cols)
+    public static void TransposeBlocked(ReadOnlySpan<double> source, Span<double> dest, int rows, int cols)
     {
         const int Tile = 64; // 64×64 doubles = two 32 KB panels, comfortably inside L1+L2
         for (int c0 = 0; c0 < cols; c0 += Tile)
@@ -177,7 +177,7 @@ internal static class JgsLinalg
     /// no time tag. Everything else — boxed, nested rows, complex, N-D, datetime — keeps the
     /// boxed path, whose kernels answer through the same provider.
     /// </summary>
-    private static bool IsPlainPackedReal(JgsValue value) =>
+    public static bool IsPlainPackedReal(JgsValue value) =>
         value.Type == JgsType.Array && value.IsPacked && !value.IsNd
         && value.TimeTag is null && !value.IsStringArray;
 

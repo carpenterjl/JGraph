@@ -391,12 +391,22 @@ internal static partial class JgsBuiltins
             return SparseLowerUpper(args[0], form, wanted, line, col);
         }
 
-        LuDecomposition lu = LuDecomposition.Factor(SquareRect("lu", args[0], line, col));
-        int n = lu.Upper.GetLength(0);
+        double[] input = SquareColumnMajorOf("lu", args[0], out int n, line, col);
+        LuDecomposition lu = LuDecomposition.FactorAdopting(input, n);
+
+        // Row r of A became row `factored[r]` of the factorization, so folding the permutation back
+        // into L is a row move rather than the multiply by a permutation matrix it used to be —
+        // 2·n³ flops at n = 2000 to shuffle rows, which is the same answer the long way round.
+        ReadOnlySpan<int> order = lu.RowPermutation;
+        var factored = new int[n];
+        for (int i = 0; i < n; i++)
+        {
+            factored[order[i]] = i;
+        }
 
         if (wanted <= 1)
         {
-            return [FromRect(Combined(lu))];
+            return [BuildColumnMajor(n, n, span => FillCombined(lu, factored, n, span))];
         }
 
         if (wanted == 2)
@@ -404,16 +414,16 @@ internal static partial class JgsBuiltins
             // [L, U] folds the permutation into L, so L*U still reassembles A.
             return
             [
-                FromRect(Linear.Multiply(Linear.Transpose(lu.Permutation), lu.Lower)),
-                FromRect(lu.Upper),
+                BuildColumnMajor(n, n, span => FillLower(lu, factored, n, span)),
+                BuildColumnMajor(n, n, span => FillUpper(lu, n, span)),
             ];
         }
 
         var outputs = new List<JgsValue>
         {
-            FromRect(lu.Lower),
-            FromRect(lu.Upper),
-            PermutationOf(lu.Permutation, form, byRow: true),
+            BuildColumnMajor(n, n, span => FillLower(lu, rows: null, n, span)),
+            BuildColumnMajor(n, n, span => FillUpper(lu, n, span)),
+            PermutationValue(order.ToArray(), form, n),
         };
 
         // MATLAB keeps the four- and five-output forms for sparse matrices, where a column ordering
@@ -421,33 +431,114 @@ internal static partial class JgsBuiltins
         // identity — which is a true answer to P·A·Q = L·U·D rather than a refusal.
         if (wanted >= 4)
         {
-            outputs.Add(PermutationOf(Linear.Identity(n), form, byRow: false));
+            outputs.Add(PermutationValue(Ascending(n), form, n));
         }
 
         if (wanted >= 5)
         {
-            outputs.Add(FromRect(Linear.Identity(n)));
+            outputs.Add(FromColumnMajorRect(IdentityColumnMajor(n), n, n));
         }
 
         return [.. outputs];
     }
 
-    /// <summary>MATLAB's one-output <c>lu</c>: the two factors in one matrix.</summary>
-    private static double[,] Combined(LuDecomposition lu)
+    /// <summary>MATLAB's one-output <c>lu</c>: the two factors in one matrix, PᵀL + U − I.</summary>
+    private static void FillCombined(LuDecomposition lu, int[] rows, int n, Span<double> combined)
     {
-        double[,] permutedLower = Linear.Multiply(Linear.Transpose(lu.Permutation), lu.Lower);
-        double[,] upper = lu.Upper;
-        int n = upper.GetLength(0);
-        var combined = new double[n, n];
-        for (int r = 0; r < n; r++)
+        ReadOnlySpan<double> factors = lu.Factors;
+        for (int c = 0; c < n; c++)
         {
-            for (int c = 0; c < n; c++)
+            int origin = c * n;
+            for (int r = 0; r < n; r++)
             {
-                combined[r, c] = permutedLower[r, c] + upper[r, c] - (r == c ? 1 : 0);
+                int source = rows[r];
+                double lower = c < source ? factors[origin + source] : (c == source ? 1 : 0);
+                double upper = c >= r ? factors[origin + r] : 0;
+                combined[origin + r] = lower + upper - (r == c ? 1 : 0);
             }
         }
+    }
 
-        return combined;
+    /// <summary>
+    /// The unit-lower-triangular L, optionally with its rows moved back to the order A had them in
+    /// — which is what the two-output form's PᵀL is. The destination arrives zeroed.
+    /// </summary>
+    private static void FillLower(LuDecomposition lu, int[]? rows, int n, Span<double> lower)
+    {
+        ReadOnlySpan<double> factors = lu.Factors;
+        for (int c = 0; c < n; c++)
+        {
+            int origin = c * n;
+            if (rows is null)
+            {
+                // Column c of L is a one on the diagonal and the factored column below it; above it
+                // the zeros the destination came with are already the answer.
+                lower[origin + c] = 1;
+                factors.Slice(origin + c + 1, n - c - 1).CopyTo(lower[(origin + c + 1)..]);
+                continue;
+            }
+
+            for (int r = 0; r < n; r++)
+            {
+                int source = rows[r];
+                if (c < source)
+                {
+                    lower[origin + r] = factors[origin + source];
+                }
+                else if (c == source)
+                {
+                    lower[origin + r] = 1;
+                }
+            }
+        }
+    }
+
+    /// <summary>The upper-triangular U; the destination arrives zeroed.</summary>
+    private static void FillUpper(LuDecomposition lu, int n, Span<double> upper)
+    {
+        ReadOnlySpan<double> factors = lu.Factors;
+        for (int c = 0; c < n; c++)
+        {
+            int origin = c * n;
+            factors.Slice(origin, c + 1).CopyTo(upper[origin..]);
+        }
+    }
+
+    /// <summary>A row permutation as the matrix or the index vector the <c>form</c> word asks for.</summary>
+    private static JgsValue PermutationValue(int[] order, string form, int n)
+    {
+        if (form == "vector")
+        {
+            var indices = new double[n];
+            for (int i = 0; i < n; i++)
+            {
+                indices[i] = order[i] + 1;
+            }
+
+            return Numbers(indices);
+        }
+
+        // n ones in n² of storage: the one result where not having to write the zeros is the whole
+        // cost of the operation.
+        return BuildColumnMajor(n, n, span =>
+        {
+            for (int i = 0; i < n; i++)
+            {
+                span[(order[i] * n) + i] = 1;
+            }
+        });
+    }
+
+    /// <summary>The identity permutation 0, 1, … n−1.</summary>
+    private static int[] Ascending(int n)
+    {
+        var order = new int[n];
+        for (int i = 0; i < n; i++)
+        {
+            order[i] = i;
+        }
+
+        return order;
     }
 
     private static JgsValue[] SparseLowerUpper(JgsValue value, string form, int wanted, int line, int col)
@@ -554,8 +645,13 @@ internal static partial class JgsBuiltins
             }
         }
 
-        double[,] a = SquareRect("chol", DenseValue(args[0]), line, col);
-        Cholesky cholesky = Cholesky.Factor(a);
+        double[] a = SquareColumnMajorOf("chol", DenseValue(args[0]), out int n, line, col);
+
+        // The triangle asked for is the triangle read and the triangle written, which is MATLAB's
+        // own reading of 'upper' and 'lower' — and what lets the factor come back without a
+        // transposing pass over it. For a symmetric matrix the two directions answer the same
+        // question, so which one runs is a matter of which factor was asked for.
+        Cholesky cholesky = Cholesky.FactorAdopting(a, n, lower);
 
         if (!cholesky.IsPositiveDefinite && wanted <= 1)
         {
@@ -566,9 +662,8 @@ internal static partial class JgsBuiltins
 
         // A failure at order q means the leading q−1 block is definite and its factor is what there
         // is to hand back — which is exactly what MATLAB returns beside a nonzero flag.
-        int order = cholesky.IsPositiveDefinite ? a.GetLength(0) : cholesky.FailedAt - 1;
-        double[,] factor = Leading(cholesky.Lower, order);
-        JgsValue r = FromRect(lower ? factor : Linear.Transpose(factor));
+        int order = cholesky.IsPositiveDefinite ? n : cholesky.FailedAt - 1;
+        JgsValue r = FromColumnMajorRect(Leading(cholesky.ColumnMajor, n, order), order, order);
 
         if (wanted <= 1)
         {
@@ -585,26 +680,28 @@ internal static partial class JgsBuiltins
         {
             // The reordering that makes a sparse factor sparse. Nothing here reorders, so the
             // permutation is the identity and the relation Pᵀ·A·P = Rᵀ·R holds as it stands.
-            outputs.Add(PermutationOf(Linear.Identity(a.GetLength(0)), form, byRow: true));
+            outputs.Add(PermutationValue(Ascending(n), form, n));
         }
 
         return [.. outputs];
     }
 
-    private static double[,] Leading(double[,] m, int order)
+    /// <summary>
+    /// The leading order-by-order block of an n-by-n column-major matrix. The whole factor is handed
+    /// over as it stands when nothing is being cut away — the common case, and 32 MB of copying
+    /// avoided at n = 2000.
+    /// </summary>
+    private static double[] Leading(double[] columnMajor, int n, int order)
     {
-        if (order == m.GetLength(0))
+        if (order == n)
         {
-            return m;
+            return columnMajor;
         }
 
-        var leading = new double[order, order];
-        for (int i = 0; i < order; i++)
+        var leading = new double[(long)order * order];
+        for (int c = 0; c < order; c++)
         {
-            for (int j = 0; j < order; j++)
-            {
-                leading[i, j] = m[i, j];
-            }
+            columnMajor.AsSpan(c * n, order).CopyTo(leading.AsSpan(c * order, order));
         }
 
         return leading;
@@ -721,14 +818,9 @@ internal static partial class JgsBuiltins
             return rank;
         }
 
-        LuDecomposition lu = LuDecomposition.Factor(a);
-        if (lu.IsSingular)
-        {
-            return 0;
-        }
-
-        double product = OneNorm(a) * OneNorm(lu.Inverse());
-        return product == 0 ? 0 : 1 / product;
+        // The same estimate rcond reports, from the same call — linsolve's second output is
+        // documented to be rcond(A), and a script that subtracts the two expects a zero.
+        return LuDecomposition.Factor(a).ReciprocalCondition(OneNorm(a));
     }
 
     /// <summary>Forward or back substitution, reading only the triangle the caller promised.</summary>
@@ -742,35 +834,36 @@ internal static partial class JgsBuiltins
         }
 
         int columns = b.GetLength(1);
-        var x = new double[n, columns];
-        for (int c = 0; c < columns; c++)
+        var triangle = new double[(long)n * n];
+        for (int r = 0; r < n; r++)
         {
-            for (int step = 0; step < n; step++)
+            for (int c = 0; c < n; c++)
             {
-                int i = lower ? step : n - 1 - step;
-                double sum = b[i, c];
-                if (lower)
-                {
-                    for (int j = 0; j < i; j++)
-                    {
-                        sum -= a[i, j] * x[j, c];
-                    }
-                }
-                else
-                {
-                    for (int j = i + 1; j < n; j++)
-                    {
-                        sum -= a[i, j] * x[j, c];
-                    }
-                }
+                triangle[(c * n) + r] = a[r, c];
+            }
+        }
 
-                if (a[i, i] == 0)
-                {
-                    throw new JgsRuntimeException(line, col,
-                        "linsolve: the triangular matrix has a zero on its diagonal and is singular.");
-                }
+        var rhs = new double[(long)n * columns];
+        for (int r = 0; r < n; r++)
+        {
+            for (int c = 0; c < columns; c++)
+            {
+                rhs[(c * n) + r] = b[r, c];
+            }
+        }
 
-                x[i, c] = sum / a[i, i];
+        if (LinalgProvider.Current.Trtrs(lower, transpose: false, n, columns, triangle, n, rhs, n) != 0)
+        {
+            throw new JgsRuntimeException(line, col,
+                "linsolve: the triangular matrix has a zero on its diagonal and is singular.");
+        }
+
+        var x = new double[n, columns];
+        for (int r = 0; r < n; r++)
+        {
+            for (int c = 0; c < columns; c++)
+            {
+                x[r, c] = rhs[(c * n) + r];
             }
         }
 

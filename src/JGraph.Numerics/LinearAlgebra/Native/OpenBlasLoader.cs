@@ -40,7 +40,7 @@ internal static class OpenBlasLoader
 
             NativeLibrary.SetDllImportResolver(typeof(OpenBlasLoader).Assembly, Resolve);
 
-            int threads = ThreadCountFromEnvironment() ?? Math.Min(Environment.ProcessorCount, 16);
+            int threads = ThreadCountFromEnvironment() ?? DefaultThreadCount();
             OpenBlasNative.SetNumThreads(threads);
             return new LoadStatus(true, $"{ConfigSummary()} (native, {OpenBlasNative.GetNumThreads()} threads)");
         }
@@ -61,6 +61,15 @@ internal static class OpenBlasLoader
         string[] tokens = config.Split(' ', StringSplitOptions.RemoveEmptyEntries);
         return tokens.Length >= 2 && tokens[0] == "OpenBLAS" ? $"{tokens[0]} {tokens[1]}" : "OpenBLAS";
     }
+
+    /// <summary>
+    /// One thread per physical core, capped at 16. Hyperthread siblings share the multiply-add
+    /// units a blocked factorization spends all its time in, so counting logical processors makes
+    /// <c>dgetrf</c> and <c>dgetri</c> measurably slower rather than faster — see
+    /// <see cref="ProcessorTopology"/> for the numbers.
+    /// </summary>
+    private static int DefaultThreadCount() =>
+        Math.Clamp(ProcessorTopology.PhysicalCoreCount() ?? Environment.ProcessorCount, 1, 16);
 
     private static int? ThreadCountFromEnvironment() =>
         int.TryParse(Environment.GetEnvironmentVariable("JGRAPH_BLAS_THREADS"), out int count) && count > 0

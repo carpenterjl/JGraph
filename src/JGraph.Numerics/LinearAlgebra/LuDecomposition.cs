@@ -4,19 +4,24 @@ namespace JGraph.Numerics.LinearAlgebra;
 /// LU factorization with partial pivoting: P·A = L·U for a square matrix A. The workhorse behind
 /// <c>det</c>, <c>inv</c>, and the square case of the <c>\</c> solver.
 /// </summary>
+/// <remarks>
+/// The factors live in one flat column-major array — LAPACK's own layout, and the script's — so the
+/// factorization, every solve against it, and the inverse are single calls into
+/// <see cref="LinalgProvider.Current"/> with nothing to transpose in between. The row-major
+/// <c>double[,]</c> shapes the older callers hand in and read back are converted at the edges.
+/// </remarks>
 public sealed class LuDecomposition
 {
-    private readonly double[,] _lu;      // L below the diagonal (unit diagonal implied), U on and above
-    private readonly int[] _pivot;       // row i of the factored matrix came from row _pivot[i] of A
-    private readonly int _sign;          // +1/-1 with the number of row swaps, for the determinant
+    private readonly double[] _lu;       // column-major: L below the diagonal (unit diagonal implied), U on and above
+    private readonly int[] _ipiv;        // LAPACK's interchange record: at step i, row i was swapped with row _ipiv[i] (1-based)
     private readonly int _n;
+    private int[]? _order;               // the interchanges as a permutation, built when something asks for one
 
-    private LuDecomposition(double[,] lu, int[] pivot, int sign)
+    private LuDecomposition(double[] lu, int[] ipiv, int n)
     {
         _lu = lu;
-        _pivot = pivot;
-        _sign = sign;
-        _n = pivot.Length;
+        _ipiv = ipiv;
+        _n = n;
     }
 
     /// <summary>Factors square <paramref name="matrix"/>; the input is not modified.</summary>
@@ -29,58 +34,58 @@ public sealed class LuDecomposition
             throw new ArgumentException("LU factorization needs a square matrix.", nameof(matrix));
         }
 
-        var lu = (double[,])matrix.Clone();
-        var pivot = new int[n];
-        for (int i = 0; i < n; i++)
+        var lu = new double[(long)n * n];
+        for (int r = 0; r < n; r++)
         {
-            pivot[i] = i;
-        }
-
-        int sign = 1;
-        for (int k = 0; k < n; k++)
-        {
-            // Partial pivoting: bring the largest remaining entry of column k to the diagonal.
-            int best = k;
-            double bestAbs = Math.Abs(lu[k, k]);
-            for (int r = k + 1; r < n; r++)
+            for (int c = 0; c < n; c++)
             {
-                double candidate = Math.Abs(lu[r, k]);
-                if (candidate > bestAbs)
-                {
-                    best = r;
-                    bestAbs = candidate;
-                }
-            }
-
-            if (best != k)
-            {
-                for (int c = 0; c < n; c++)
-                {
-                    (lu[k, c], lu[best, c]) = (lu[best, c], lu[k, c]);
-                }
-
-                (pivot[k], pivot[best]) = (pivot[best], pivot[k]);
-                sign = -sign;
-            }
-
-            double diagonal = lu[k, k];
-            if (diagonal == 0)
-            {
-                continue; // singular: the zero stays on U's diagonal and the determinant reports it
-            }
-
-            for (int r = k + 1; r < n; r++)
-            {
-                double factor = lu[r, k] / diagonal;
-                lu[r, k] = factor;
-                for (int c = k + 1; c < n; c++)
-                {
-                    lu[r, c] -= factor * lu[k, c];
-                }
+                lu[((long)c * n) + r] = matrix[r, c];
             }
         }
 
-        return new LuDecomposition(lu, pivot, sign);
+        return FactorInPlace(lu, n);
+    }
+
+    /// <summary>
+    /// Factors an n-by-n matrix already laid out column-major — the layout packed script storage
+    /// uses, so this is the entry point that costs one copy and no transpose.
+    /// </summary>
+    /// <exception cref="ArgumentException">The span is shorter than n².</exception>
+    public static LuDecomposition Factor(ReadOnlySpan<double> columnMajor, int n)
+    {
+        if (columnMajor.Length < (long)n * n)
+        {
+            throw new ArgumentException("The span must hold n² elements.", nameof(columnMajor));
+        }
+
+        double[] lu = GC.AllocateUninitializedArray<double>(n * n);
+        columnMajor[..(n * n)].CopyTo(lu);
+        return FactorInPlace(lu, n);
+    }
+
+    /// <summary>
+    /// Factors an n-by-n column-major array <em>in place</em>, taking ownership of it: the caller
+    /// must not read <paramref name="columnMajor"/> afterwards, because it now holds the factors.
+    /// This is the form a caller that just built a private copy wants — at n = 2000 the copy this
+    /// saves is 32 MB.
+    /// </summary>
+    /// <exception cref="ArgumentException">The array is shorter than n².</exception>
+    public static LuDecomposition FactorAdopting(double[] columnMajor, int n)
+    {
+        ArgumentNullException.ThrowIfNull(columnMajor);
+        if (columnMajor.LongLength < (long)n * n)
+        {
+            throw new ArgumentException("The array must hold n² elements.", nameof(columnMajor));
+        }
+
+        return FactorInPlace(columnMajor, n);
+    }
+
+    private static LuDecomposition FactorInPlace(double[] lu, int n)
+    {
+        var ipiv = new int[n];
+        LinalgProvider.Current.Getrf(n, n, lu, n, ipiv);
+        return new LuDecomposition(lu, ipiv, n);
     }
 
     /// <summary>The matrix order n.</summary>
@@ -91,10 +96,15 @@ public sealed class LuDecomposition
     {
         get
         {
-            double product = _sign;
+            double product = 1;
             for (int i = 0; i < _n; i++)
             {
-                product *= _lu[i, i];
+                if (_ipiv[i] != i + 1)
+                {
+                    product = -product;
+                }
+
+                product *= _lu[((long)i * _n) + i];
             }
 
             return product;
@@ -108,7 +118,7 @@ public sealed class LuDecomposition
         {
             for (int i = 0; i < _n; i++)
             {
-                if (_lu[i, i] == 0)
+                if (_lu[((long)i * _n) + i] == 0)
                 {
                     return true;
                 }
@@ -129,7 +139,7 @@ public sealed class LuDecomposition
                 l[r, r] = 1;
                 for (int c = 0; c < r; c++)
                 {
-                    l[r, c] = _lu[r, c];
+                    l[r, c] = _lu[((long)c * _n) + r];
                 }
             }
 
@@ -147,7 +157,7 @@ public sealed class LuDecomposition
             {
                 for (int c = r; c < _n; c++)
                 {
-                    u[r, c] = _lu[r, c];
+                    u[r, c] = _lu[((long)c * _n) + r];
                 }
             }
 
@@ -160,15 +170,27 @@ public sealed class LuDecomposition
     {
         get
         {
+            int[] order = RowOrder;
             var p = new double[_n, _n];
             for (int r = 0; r < _n; r++)
             {
-                p[r, _pivot[r]] = 1;
+                p[r, order[r]] = 1;
             }
 
             return p;
         }
     }
+
+    /// <summary>Row i of the factored matrix came from row <c>RowPermutation[i]</c> of A.</summary>
+    public ReadOnlySpan<int> RowPermutation => RowOrder;
+
+    /// <summary>
+    /// The factors as they are stored: one column-major n-by-n array holding L strictly below the
+    /// diagonal with its unit diagonal implied, and U on and above it.
+    /// </summary>
+    public ReadOnlySpan<double> Factors => _lu;
+
+    private int[] RowOrder => _order ??= DenseLinalg.PermutationOf(_ipiv, _n);
 
     /// <summary>Solves A·x = b.</summary>
     /// <exception cref="InvalidOperationException">A is singular.</exception>
@@ -180,13 +202,9 @@ public sealed class LuDecomposition
             throw new ArgumentException("The right-hand side's length must match the matrix order.", nameof(b));
         }
 
-        double[,] solved = SolveColumns(ToColumn(b));
         var x = new double[_n];
-        for (int i = 0; i < _n; i++)
-        {
-            x[i] = solved[i, 0];
-        }
-
+        b.CopyTo(x, 0);
+        SolveInPlace(x, nrhs: 1, ldb: _n);
         return x;
     }
 
@@ -200,74 +218,82 @@ public sealed class LuDecomposition
             throw new ArgumentException("The right-hand side's row count must match the matrix order.", nameof(b));
         }
 
-        if (IsSingular)
-        {
-            throw new InvalidOperationException("The matrix is singular to working precision.");
-        }
-
         int columns = b.GetLength(1);
-        var x = new double[_n, columns];
-
-        // Apply the row permutation, then forward-substitute L and back-substitute U.
+        var flat = new double[(long)_n * columns];
         for (int r = 0; r < _n; r++)
         {
             for (int c = 0; c < columns; c++)
             {
-                x[r, c] = b[_pivot[r], c];
+                flat[((long)c * _n) + r] = b[r, c];
             }
         }
 
-        for (int k = 0; k < _n; k++)
-        {
-            for (int r = k + 1; r < _n; r++)
-            {
-                for (int c = 0; c < columns; c++)
-                {
-                    x[r, c] -= _lu[r, k] * x[k, c];
-                }
-            }
-        }
+        SolveInPlace(flat, columns, _n);
 
-        for (int k = _n - 1; k >= 0; k--)
+        var x = new double[_n, columns];
+        for (int c = 0; c < columns; c++)
         {
-            for (int c = 0; c < columns; c++)
+            for (int r = 0; r < _n; r++)
             {
-                x[k, c] /= _lu[k, k];
-            }
-
-            for (int r = 0; r < k; r++)
-            {
-                for (int c = 0; c < columns; c++)
-                {
-                    x[r, c] -= _lu[r, k] * x[k, c];
-                }
+                x[r, c] = flat[((long)c * _n) + r];
             }
         }
 
         return x;
     }
 
+    /// <summary>
+    /// Solves A·X = B in place over a column-major right-hand side — the zero-copy form the packed
+    /// script path uses, with the same singularity refusal the boxed one gets.
+    /// </summary>
+    /// <exception cref="InvalidOperationException">A is singular.</exception>
+    public void SolveInPlace(Span<double> b, int nrhs, int ldb)
+    {
+        if (IsSingular)
+        {
+            throw new InvalidOperationException("The matrix is singular to working precision.");
+        }
+
+        LinalgProvider.Current.Getrs(transpose: false, _n, nrhs, _lu, _n, _ipiv, b, ldb);
+    }
+
     /// <summary>The inverse of A.</summary>
     /// <exception cref="InvalidOperationException">A is singular.</exception>
     public double[,] Inverse()
     {
-        var identity = new double[_n, _n];
-        for (int i = 0; i < _n; i++)
+        double[] flat = InverseColumnMajor();
+        var inverse = new double[_n, _n];
+        for (int c = 0; c < _n; c++)
         {
-            identity[i, i] = 1;
+            for (int r = 0; r < _n; r++)
+            {
+                inverse[r, c] = flat[((long)c * _n) + r];
+            }
         }
 
-        return SolveColumns(identity);
+        return inverse;
     }
 
-    private double[,] ToColumn(double[] values)
+    /// <summary>The inverse of A as a fresh column-major array.</summary>
+    /// <exception cref="InvalidOperationException">A is singular.</exception>
+    public double[] InverseColumnMajor()
     {
-        var column = new double[_n, 1];
-        for (int i = 0; i < _n; i++)
+        if (IsSingular)
         {
-            column[i, 0] = values[i];
+            throw new InvalidOperationException("The matrix is singular to working precision.");
         }
 
-        return column;
+        double[] inverse = GC.AllocateUninitializedArray<double>(_n * _n);
+        _lu.CopyTo(inverse, 0);
+        LinalgProvider.Current.Getri(_n, inverse, _n, _ipiv);
+        return inverse;
     }
+
+    /// <summary>
+    /// The reciprocal condition number in the 1-norm, given <paramref name="anorm"/> = ‖A‖₁. Zero
+    /// for a singular factorization. The native backend estimates this the way LAPACK — and so
+    /// MATLAB — does; the managed one computes the exact reciprocal (ADR 0089).
+    /// </summary>
+    public double ReciprocalCondition(double anorm) =>
+        IsSingular ? 0 : LinalgProvider.Current.Gecon(_n, _lu, _n, anorm);
 }

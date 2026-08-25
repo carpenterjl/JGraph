@@ -221,17 +221,11 @@ internal static partial class JgsBuiltins
         Define("rcond", (args, line, col) =>
         {
             Arity("rcond", args, 1, line, col);
-            double[,] a = SquareRect("rcond", args[0], line, col);
-            LuDecomposition lu = LuDecomposition.Factor(a);
-            if (lu.IsSingular)
-            {
-                return JgsValue.Number(0);
-            }
+            double[] a = SquareColumnMajorOf("rcond", args[0], out int n, line, col);
 
-            // LAPACK estimates this; computing the inverse outright is affordable at the sizes a
-            // script works with and gives the exact reciprocal condition number instead.
-            double product = OneNorm(a) * OneNorm(lu.Inverse());
-            return JgsValue.Number(product == 0 ? 0 : 1.0 / product);
+            // ‖A‖₁ first: the factorization overwrites the matrix it is handed.
+            double anorm = DenseLinalg.OneNorm(n, n, a, n);
+            return JgsValue.Number(LuDecomposition.FactorAdopting(a, n).ReciprocalCondition(anorm));
         }, null);
     }
 

@@ -27,14 +27,14 @@ internal static partial class JgsBuiltins
                 return ComplexInverse("inv", args[0], line, col);
             }
 
-            double[,] a = SquareRect("inv", args[0], line, col);
-            LuDecomposition lu = LuDecomposition.Factor(a);
+            double[] a = SquareColumnMajorOf("inv", args[0], out int n, line, col);
+            LuDecomposition lu = LuDecomposition.FactorAdopting(a, n);
             if (lu.IsSingular)
             {
                 throw new JgsRuntimeException(line, col, "inv: the matrix is singular to working precision.");
             }
 
-            return FromRect(lu.Inverse());
+            return FromColumnMajorRect(lu.InverseColumnMajor(), n, n);
         });
 
         Define("det", (args, line, col) =>
@@ -45,7 +45,8 @@ internal static partial class JgsBuiltins
                 return ComplexDeterminant("det", args[0], line, col);
             }
 
-            return JgsValue.Number(LuDecomposition.Factor(SquareRect("det", args[0], line, col)).Determinant);
+            double[] a = SquareColumnMajorOf("det", args[0], out int n, line, col);
+            return JgsValue.Number(LuDecomposition.FactorAdopting(a, n).Determinant);
         });
 
         Define("rank", (args, line, col) =>

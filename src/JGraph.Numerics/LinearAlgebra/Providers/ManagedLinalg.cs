@@ -124,6 +124,322 @@ public sealed class ManagedLinalg : DenseLinalg
         MirrorLowerTriangle(c, n, ldc);
     }
 
+    /// <inheritdoc />
+    public override int Getrf(int m, int n, Span<double> a, int lda, Span<int> ipiv)
+    {
+        // The right-looking partial-pivot loop the LU factorization has always run, moved from
+        // row-major rectangles onto column-major spans. Same pivots (the first of any tied maxima),
+        // same k-ascending elimination, same choice to leave a zero pivot's column alone — so the
+        // managed backend answers today what it answered before the seam existed.
+        int steps = Math.Min(m, n);
+        int firstSingular = 0;
+        for (int k = 0; k < steps; k++)
+        {
+            int best = k;
+            double bestAbs = Math.Abs(a[(k * lda) + k]);
+            for (int r = k + 1; r < m; r++)
+            {
+                double candidate = Math.Abs(a[(k * lda) + r]);
+                if (candidate > bestAbs)
+                {
+                    best = r;
+                    bestAbs = candidate;
+                }
+            }
+
+            ipiv[k] = best + 1;
+            if (best != k)
+            {
+                for (int c = 0; c < n; c++)
+                {
+                    int origin = c * lda;
+                    (a[origin + k], a[origin + best]) = (a[origin + best], a[origin + k]);
+                }
+            }
+
+            double diagonal = a[(k * lda) + k];
+            if (diagonal == 0)
+            {
+                // Singular: the zero stays on U's diagonal and the caller's IsSingular reports it.
+                firstSingular = firstSingular == 0 ? k + 1 : firstSingular;
+                continue;
+            }
+
+            Span<double> pivotColumn = a.Slice(k * lda, m);
+            for (int r = k + 1; r < m; r++)
+            {
+                pivotColumn[r] /= diagonal;
+            }
+
+            for (int c = k + 1; c < n; c++)
+            {
+                double top = a[(c * lda) + k];
+                if (top == 0)
+                {
+                    continue;
+                }
+
+                Span<double> column = a.Slice(c * lda, m);
+                for (int r = k + 1; r < m; r++)
+                {
+                    column[r] -= pivotColumn[r] * top;
+                }
+            }
+        }
+
+        return firstSingular;
+    }
+
+    /// <inheritdoc />
+    public override void Getrs(bool transpose, int n, int nrhs,
+        ReadOnlySpan<double> a, int lda, ReadOnlySpan<int> ipiv, Span<double> b, int ldb)
+    {
+        if (transpose)
+        {
+            SolveTransposed(n, nrhs, a, lda, ipiv, b, ldb);
+            return;
+        }
+
+        ApplyInterchanges(ipiv, n, nrhs, b, ldb, forward: true);
+        for (int c = 0; c < nrhs; c++)
+        {
+            Span<double> x = b.Slice(c * ldb, n);
+            for (int k = 0; k < n; k++)
+            {
+                double above = x[k];
+                if (above == 0)
+                {
+                    continue;
+                }
+
+                for (int r = k + 1; r < n; r++)
+                {
+                    x[r] -= a[(k * lda) + r] * above;
+                }
+            }
+
+            for (int k = n - 1; k >= 0; k--)
+            {
+                x[k] /= a[(k * lda) + k];
+                double above = x[k];
+                if (above == 0)
+                {
+                    continue;
+                }
+
+                for (int r = 0; r < k; r++)
+                {
+                    x[r] -= a[(k * lda) + r] * above;
+                }
+            }
+        }
+    }
+
+    /// <summary>The transposed solve from the same factors: Uᵀ forward, Lᵀ back, interchanges undone.</summary>
+    private static void SolveTransposed(int n, int nrhs,
+        ReadOnlySpan<double> a, int lda, ReadOnlySpan<int> ipiv, Span<double> b, int ldb)
+    {
+        for (int c = 0; c < nrhs; c++)
+        {
+            Span<double> x = b.Slice(c * ldb, n);
+            for (int k = 0; k < n; k++)
+            {
+                ReadOnlySpan<double> column = a.Slice(k * lda, n);
+                double sum = x[k];
+                for (int j = 0; j < k; j++)
+                {
+                    sum -= column[j] * x[j];
+                }
+
+                x[k] = sum / column[k];
+            }
+
+            for (int k = n - 1; k >= 0; k--)
+            {
+                double sum = x[k];
+                for (int j = k + 1; j < n; j++)
+                {
+                    sum -= a[(k * lda) + j] * x[j];
+                }
+
+                x[k] = sum;
+            }
+        }
+
+        ApplyInterchanges(ipiv, n, nrhs, b, ldb, forward: false);
+    }
+
+    /// <summary>
+    /// LAPACK's row interchanges over a column-major right-hand side — pure movement and no
+    /// arithmetic, so a permuted row is the same bits whichever backend recorded the pivots.
+    /// </summary>
+    private static void ApplyInterchanges(ReadOnlySpan<int> ipiv, int n, int nrhs, Span<double> b, int ldb, bool forward)
+    {
+        int steps = Math.Min(ipiv.Length, n);
+        for (int step = 0; step < steps; step++)
+        {
+            int i = forward ? step : steps - 1 - step;
+            int other = ipiv[i] - 1;
+            if (other == i || other < 0 || other >= n)
+            {
+                continue;
+            }
+
+            for (int c = 0; c < nrhs; c++)
+            {
+                int origin = c * ldb;
+                (b[origin + i], b[origin + other]) = (b[origin + other], b[origin + i]);
+            }
+        }
+    }
+
+    /// <inheritdoc />
+    public override int Getri(int n, Span<double> a, int lda, ReadOnlySpan<int> ipiv)
+    {
+        // Solving against the identity — 2·n³ where LAPACK's dgetri is 4/3·n³, and exactly what the
+        // inverse has always cost here. The fallback keeps its numbers; the native path is where
+        // the arithmetic gets cheaper.
+        var inverse = new double[(long)n * n];
+        for (int i = 0; i < n; i++)
+        {
+            inverse[((long)i * n) + i] = 1;
+        }
+
+        Getrs(transpose: false, n, n, a, lda, ipiv, inverse, n);
+        for (int c = 0; c < n; c++)
+        {
+            inverse.AsSpan(c * n, n).CopyTo(a.Slice(c * lda, n));
+        }
+
+        return 0;
+    }
+
+    /// <inheritdoc />
+    public override double Gecon(int n, ReadOnlySpan<double> a, int lda, double anorm)
+    {
+        // The exact reciprocal condition number rather than LAPACK's estimate: inverting outright is
+        // affordable at the sizes a managed fallback runs, and it is what rcond answered before the
+        // seam existed. The native backend estimates instead — the recorded divergence in ADR 0089.
+        for (int i = 0; i < n; i++)
+        {
+            if (a[(i * lda) + i] == 0)
+            {
+                return 0;
+            }
+        }
+
+        var factors = new double[(long)n * n];
+        for (int c = 0; c < n; c++)
+        {
+            a.Slice(c * lda, n).CopyTo(factors.AsSpan(c * n, n));
+        }
+
+        // U⁻¹·L⁻¹ rather than A⁻¹ itself: the pivoting permutation reorders the inverse's columns
+        // and leaves every column sum where it was, so the 1-norm — and the answer — is the same.
+        var unpermuted = new int[n];
+        for (int i = 0; i < n; i++)
+        {
+            unpermuted[i] = i + 1;
+        }
+
+        Getri(n, factors, n, unpermuted);
+        double product = anorm * OneNorm(n, n, factors, n);
+        return product == 0 ? 0 : 1.0 / product;
+    }
+
+    /// <inheritdoc />
+    public override int Potrf(bool lower, int n, Span<double> a, int lda)
+    {
+        // The dot-product form, in place. The two triangles are mirror images: for a symmetric input
+        // the upper factorization sums exactly the products the lower one sums, in the same order,
+        // so here — unlike under a blocked native kernel — the two factors transpose into one
+        // another to the bit.
+        for (int outer = 0; outer < n; outer++)
+        {
+            for (int inner = 0; inner <= outer; inner++)
+            {
+                // Lower walks row `outer` of L; upper walks column `outer` of R.
+                int i = lower ? outer : inner;
+                int j = lower ? inner : outer;
+                double sum = a[(j * lda) + i];
+                for (int k = 0; k < inner; k++)
+                {
+                    sum -= lower
+                        ? a[(k * lda) + i] * a[(k * lda) + j]
+                        : a[(i * lda) + k] * a[(j * lda) + k];
+                }
+
+                if (inner == outer)
+                {
+                    if (sum <= 0)
+                    {
+                        return outer + 1;
+                    }
+
+                    a[(j * lda) + i] = Math.Sqrt(sum);
+                }
+                else
+                {
+                    a[(j * lda) + i] = sum / a[(inner * lda) + inner];
+                }
+            }
+        }
+
+        return 0;
+    }
+
+    /// <inheritdoc />
+    public override int Trtrs(bool lower, bool transpose, int n, int nrhs,
+        ReadOnlySpan<double> a, int lda, Span<double> b, int ldb)
+    {
+        // LAPACK checks the whole diagonal before solving anything, so a singular triangle is
+        // reported rather than half-answered; matching that keeps the two backends' failures alike.
+        for (int i = 0; i < n; i++)
+        {
+            if (a[(i * lda) + i] == 0)
+            {
+                return i + 1;
+            }
+        }
+
+        bool forward = lower ^ transpose;
+        for (int c = 0; c < nrhs; c++)
+        {
+            Span<double> x = b.Slice(c * ldb, n);
+            for (int step = 0; step < n; step++)
+            {
+                int i = forward ? step : n - 1 - step;
+                double sum = x[i];
+                if (forward)
+                {
+                    for (int j = 0; j < i; j++)
+                    {
+                        sum -= Entry(a, lda, transpose, i, j) * x[j];
+                    }
+                }
+                else
+                {
+                    for (int j = i + 1; j < n; j++)
+                    {
+                        sum -= Entry(a, lda, transpose, i, j) * x[j];
+                    }
+                }
+
+                x[i] = sum / Entry(a, lda, transpose, i, i);
+            }
+        }
+
+        return 0;
+    }
+
+    /// <inheritdoc />
+    public override int Gels(int m, int n, int nrhs, Span<double> a, int lda, Span<double> b, int ldb) =>
+        Linear.LeastSquaresManaged(m, n, nrhs, a, lda, b, ldb);
+
+    /// <summary>Entry (row, column) of A, or of Aᵀ when the solve is against the transpose.</summary>
+    private static double Entry(ReadOnlySpan<double> a, int lda, bool transpose, int row, int column) =>
+        transpose ? a[(row * lda) + column] : a[(column * lda) + row];
+
     /// <summary>
     /// The transposed variants, serial: the script paths never pass a transpose flag to the managed
     /// backend (a materialized transpose reaches here as a plain operand), so these exist for the

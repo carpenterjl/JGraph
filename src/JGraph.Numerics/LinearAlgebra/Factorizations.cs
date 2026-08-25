@@ -1,19 +1,47 @@
 namespace JGraph.Numerics.LinearAlgebra;
 
 /// <summary>
-/// The Cholesky factorization A = LLᵀ of a symmetric positive definite matrix.
+/// The Cholesky factorization of a symmetric positive definite matrix: A = L·Lᵀ over the lower
+/// triangle, or A = Rᵀ·R over the upper. The factor is held column-major — LAPACK's layout, and the
+/// script's — and the triangle a caller asks for is the triangle that is read and the one that is
+/// written, which is what MATLAB's <c>chol</c> does with its <c>'upper'</c> and <c>'lower'</c> words.
 /// </summary>
+/// <remarks>
+/// The two directions are mirror images: for a symmetric input, factoring the upper triangle asks
+/// the same question of the same numbers as factoring the lower one, so <c>chol(A)</c> and
+/// <c>chol(A, 'lower')'</c> are the same matrix and nothing has to be transposed to get from one to
+/// the other. The managed kernel sums those products in the same order either way and so agrees to
+/// the bit; a blocked native factorization reorders within its last ulps, as it does everywhere.
+/// </remarks>
 public sealed class Cholesky
 {
-    private Cholesky(double[,] lower, bool positiveDefinite, int failedAt)
+    private readonly double[] _factor;   // column-major n×n: the computed triangle, the other one zeroed
+    private readonly int _n;
+
+    private Cholesky(double[] factor, int n, bool lower, bool positiveDefinite, int failedAt)
     {
-        Lower = lower;
+        _factor = factor;
+        _n = n;
+        IsLower = lower;
         IsPositiveDefinite = positiveDefinite;
         FailedAt = failedAt;
     }
 
+    /// <summary>Whether the factor computed is the lower triangle L rather than the upper R.</summary>
+    public bool IsLower { get; }
+
     /// <summary>The lower triangular factor L, with L·Lᵀ = A.</summary>
-    public double[,] Lower { get; }
+    public double[,] Lower => Rect(transposed: !IsLower);
+
+    /// <summary>The triangle that was asked for — L or R as <see cref="IsLower"/> says.</summary>
+    public double[,] Triangle => Rect(transposed: false);
+
+    /// <summary>
+    /// The factor's own storage: column-major, with the other triangle zeroed. Handed over rather
+    /// than copied, so a caller that wants to keep it must not also expect this object to stay
+    /// meaningful — which is the same bargain <see cref="FactorAdopting"/> makes going in.
+    /// </summary>
+    public double[] ColumnMajor => _factor;
 
     /// <summary>
     /// Whether the factorization succeeded. A matrix that is not positive definite runs into a
@@ -33,39 +61,126 @@ public sealed class Cholesky
     /// </remarks>
     public int FailedAt { get; }
 
-    /// <summary>Factors a square matrix, reading only its lower triangle as MATLAB's <c>chol</c> does.</summary>
-    public static Cholesky Factor(double[,] matrix)
+    /// <summary>Factors a square matrix, reading only its lower triangle.</summary>
+    public static Cholesky Factor(double[,] matrix) => Factor(matrix, lower: true);
+
+    /// <summary>Factors a square matrix, reading the triangle it is asked for and producing that factor.</summary>
+    public static Cholesky Factor(double[,] matrix, bool lower)
     {
         ArgumentNullException.ThrowIfNull(matrix);
         int n = matrix.GetLength(0);
-        var lower = new double[n, n];
-        for (int i = 0; i < n; i++)
+        var work = new double[(long)n * n];
+        for (int r = 0; r < n; r++)
         {
-            for (int j = 0; j <= i; j++)
+            for (int c = 0; c < n; c++)
             {
-                double sum = matrix[i, j];
-                for (int k = 0; k < j; k++)
-                {
-                    sum -= lower[i, k] * lower[j, k];
-                }
+                work[((long)c * n) + r] = matrix[r, c];
+            }
+        }
 
-                if (i == j)
-                {
-                    if (sum <= 0)
-                    {
-                        return new Cholesky(lower, positiveDefinite: false, failedAt: i + 1);
-                    }
+        return FactorInPlace(work, n, lower);
+    }
 
-                    lower[i, j] = Math.Sqrt(sum);
-                }
-                else
+    /// <summary>
+    /// Factors an n-by-n matrix already laid out column-major — the layout packed script storage
+    /// uses, so this is the entry point that costs one copy and no transpose.
+    /// </summary>
+    /// <exception cref="ArgumentException">The span is shorter than n².</exception>
+    public static Cholesky Factor(ReadOnlySpan<double> columnMajor, int n, bool lower)
+    {
+        if (columnMajor.Length < (long)n * n)
+        {
+            throw new ArgumentException("The span must hold n² elements.", nameof(columnMajor));
+        }
+
+        double[] work = GC.AllocateUninitializedArray<double>(n * n);
+        columnMajor[..(n * n)].CopyTo(work);
+        return FactorInPlace(work, n, lower);
+    }
+
+    /// <summary>
+    /// Factors an n-by-n column-major array <em>in place</em>, taking ownership of it: the caller
+    /// must not read <paramref name="columnMajor"/> afterwards, because it now holds the factor.
+    /// </summary>
+    /// <exception cref="ArgumentException">The array is shorter than n².</exception>
+    public static Cholesky FactorAdopting(double[] columnMajor, int n, bool lower)
+    {
+        ArgumentNullException.ThrowIfNull(columnMajor);
+        if (columnMajor.LongLength < (long)n * n)
+        {
+            throw new ArgumentException("The array must hold n² elements.", nameof(columnMajor));
+        }
+
+        return FactorInPlace(columnMajor, n, lower);
+    }
+
+    private static Cholesky FactorInPlace(double[] work, int n, bool lower)
+    {
+        int info = LinalgProvider.Current.Potrf(lower, n, work, n);
+
+        // The factorization only ever writes its own triangle, so the other one still holds the
+        // input. Clearing it is what turns the working array into the triangular factor itself.
+        for (int c = 0; c < n; c++)
+        {
+            long origin = (long)c * n;
+            if (lower)
+            {
+                for (int r = 0; r < c; r++)
                 {
-                    lower[i, j] = sum / lower[j, j];
+                    work[origin + r] = 0;
+                }
+            }
+            else
+            {
+                for (int r = c + 1; r < n; r++)
+                {
+                    work[origin + r] = 0;
                 }
             }
         }
 
-        return new Cholesky(lower, positiveDefinite: true, failedAt: 0);
+        // A failure at order q leaves everything past the leading (q−1) block untouched — which is
+        // to say holding the input, not a factor. Clearing it keeps the promise that what comes
+        // back is a triangular factor of *something*, with FailedAt saying how much of it is one.
+        if (info != 0)
+        {
+            int kept = info - 1;
+            for (int c = 0; c < n; c++)
+            {
+                long origin = (long)c * n;
+                for (int r = 0; r < n; r++)
+                {
+                    if (r >= kept || c >= kept)
+                    {
+                        work[origin + r] = 0;
+                    }
+                }
+            }
+        }
+
+        return new Cholesky(work, n, lower, info == 0, info);
+    }
+
+    private double[,] Rect(bool transposed)
+    {
+        var rect = new double[_n, _n];
+        for (int c = 0; c < _n; c++)
+        {
+            long origin = (long)c * _n;
+            for (int r = 0; r < _n; r++)
+            {
+                if (transposed)
+                {
+                    rect[c, r] = _factor[origin + r];
+                }
+                else
+                {
+                    rect[r, c] = _factor[origin + r];
+                }
+            }
+        }
+
+        return rect;
     }
 }
 

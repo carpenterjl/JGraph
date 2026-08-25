@@ -22,41 +22,162 @@ public static class Linear
             throw new ArgumentException("The right-hand side's row count must match the matrix's.", nameof(b));
         }
 
+        int nrhs = b.GetLength(1);
+        var work = new double[(long)m * n];
+        for (int r = 0; r < m; r++)
+        {
+            for (int c = 0; c < n; c++)
+            {
+                work[(c * m) + r] = a[r, c];
+            }
+        }
+
+        var rhs = new double[(long)m * nrhs];
+        for (int r = 0; r < m; r++)
+        {
+            for (int c = 0; c < nrhs; c++)
+            {
+                rhs[(c * m) + r] = b[r, c];
+            }
+        }
+
+        double[] solution = Solve(work, m, n, rhs, nrhs);
+        var x = new double[n, nrhs];
+        for (int r = 0; r < n; r++)
+        {
+            for (int c = 0; c < nrhs; c++)
+            {
+                x[r, c] = solution[(c * n) + r];
+            }
+        }
+
+        return x;
+    }
+
+    /// <summary>
+    /// The same solve over flat column-major arrays — the layout packed script storage already uses,
+    /// so the operator path reaches the kernels without a rectangle in between. A is m-by-n and B is
+    /// m-by-nrhs; <em>both are overwritten</em>, and the n-by-nrhs solution comes back as an array
+    /// that may be <paramref name="b"/> itself.
+    /// </summary>
+    /// <exception cref="InvalidOperationException">A is singular or rank deficient.</exception>
+    public static double[] Solve(double[] a, int m, int n, double[] b, int nrhs)
+    {
         if (m == n)
         {
-            return LuDecomposition.Factor(a).SolveColumns(b);
+            LuDecomposition lu = LuDecomposition.FactorAdopting(a, n);
+            lu.SolveInPlace(b, nrhs, n);
+            return b;
         }
 
-        if (m > n)
+        // Over- and under-determined systems go to the provider's least-squares/minimum-norm solve,
+        // which is one blocked QR natively and the hand-rolled Householder factorization on the
+        // managed fallback. Both want the right-hand side padded to max(m, n) rows, so an
+        // under-determined system's wider solution has somewhere to land.
+        int height = Math.Max(m, n);
+        double[] rhs = b;
+        if (height != m)
         {
-            return QrDecomposition.Factor(a).SolveColumns(b);
+            rhs = new double[(long)height * nrhs];
+            for (int c = 0; c < nrhs; c++)
+            {
+                b.AsSpan(c * m, m).CopyTo(rhs.AsSpan(c * height, m));
+            }
         }
 
-        // Wide: factor Aᵀ = Q·R, forward-solve Rᵀ·y = B, then X = Q·y — the minimum-norm solution.
-        QrDecomposition qr = QrDecomposition.Factor(Transpose(a));
-        if (!qr.IsFullRank)
+        if (LinalgProvider.Current.Gels(m, n, nrhs, a, m, rhs, height) != 0)
         {
             throw new InvalidOperationException("The matrix is rank deficient to working precision.");
         }
 
-        double[,] r = qr.R;
-        int columns = b.GetLength(1);
-        var y = new double[m, columns];
-        for (int k = 0; k < m; k++)
+        if (height == n)
         {
-            for (int c = 0; c < columns; c++)
-            {
-                double s = b[k, c];
-                for (int j = 0; j < k; j++)
-                {
-                    s -= r[j, k] * y[j, c];
-                }
+            return rhs;
+        }
 
-                y[k, c] = s / r[k, k];
+        var solution = new double[(long)n * nrhs];
+        for (int c = 0; c < nrhs; c++)
+        {
+            rhs.AsSpan(c * height, n).CopyTo(solution.AsSpan(c * n, n));
+        }
+
+        return solution;
+    }
+
+    /// <summary>
+    /// The managed backend's least-squares solve, in LAPACK's <c>dgels</c> shape: the Householder QR
+    /// of A for a tall system, and the QR of Aᵀ with a forward solve for a wide one — the two
+    /// branches the <c>\</c> operator has always taken, now reached through the provider so the
+    /// fallback answers exactly what it answered before.
+    /// </summary>
+    internal static int LeastSquaresManaged(int m, int n, int nrhs, Span<double> a, int lda, Span<double> b, int ldb)
+    {
+        var rect = new double[m, n];
+        for (int r = 0; r < m; r++)
+        {
+            for (int c = 0; c < n; c++)
+            {
+                rect[r, c] = a[(c * lda) + r];
             }
         }
 
-        return Multiply(qr.Q, y);
+        var rhs = new double[m, nrhs];
+        for (int r = 0; r < m; r++)
+        {
+            for (int c = 0; c < nrhs; c++)
+            {
+                rhs[r, c] = b[(c * ldb) + r];
+            }
+        }
+
+        double[,] x;
+        if (m > n)
+        {
+            QrDecomposition tall = QrDecomposition.Factor(rect);
+            if (!tall.IsFullRank)
+            {
+                return 1;
+            }
+
+            x = tall.SolveColumns(rhs);
+        }
+        else
+        {
+            // Wide: factor Aᵀ = Q·R, forward-solve Rᵀ·y = B, then X = Q·y — the minimum-norm solution.
+            QrDecomposition qr = QrDecomposition.Factor(Transpose(rect));
+            if (!qr.IsFullRank)
+            {
+                return 1;
+            }
+
+            double[,] r = qr.R;
+            var y = new double[m, nrhs];
+            for (int k = 0; k < m; k++)
+            {
+                for (int c = 0; c < nrhs; c++)
+                {
+                    double s = rhs[k, c];
+                    for (int j = 0; j < k; j++)
+                    {
+                        s -= r[j, k] * y[j, c];
+                    }
+
+                    y[k, c] = s / r[k, k];
+                }
+            }
+
+            x = Multiply(qr.Q, y);
+        }
+
+        for (int r = 0; r < n; r++)
+        {
+            for (int c = 0; c < nrhs; c++)
+            {
+                b[(c * ldb) + r] = x[r, c];
+            }
+        }
+
+        return 0;
     }
 
     /// <summary>The matrix product A·B.</summary>

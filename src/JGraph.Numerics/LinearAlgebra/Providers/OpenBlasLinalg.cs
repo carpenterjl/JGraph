@@ -78,4 +78,123 @@ public sealed class OpenBlasLinalg : DenseLinalg
 
         MirrorLowerTriangle(c, n, ldc);
     }
+
+    /// <inheritdoc />
+    public override unsafe int Getrf(int m, int n, Span<double> a, int lda, Span<int> ipiv)
+    {
+        if (m == 0 || n == 0)
+        {
+            return 0;
+        }
+
+        fixed (double* pa = a)
+        fixed (int* pivots = ipiv)
+        {
+            return OpenBlasNative.Dgetrf(OpenBlasNative.LapackColMajor, m, n, pa, lda, pivots);
+        }
+    }
+
+    /// <inheritdoc />
+    public override unsafe void Getrs(bool transpose, int n, int nrhs,
+        ReadOnlySpan<double> a, int lda, ReadOnlySpan<int> ipiv, Span<double> b, int ldb)
+    {
+        if (n == 0 || nrhs == 0)
+        {
+            return;
+        }
+
+        fixed (double* pa = a)
+        fixed (int* pivots = ipiv)
+        fixed (double* pb = b)
+        {
+            OpenBlasNative.Dgetrs(OpenBlasNative.LapackColMajor,
+                transpose ? OpenBlasNative.CharTrans : OpenBlasNative.CharNoTrans,
+                n, nrhs, pa, lda, pivots, pb, ldb);
+        }
+    }
+
+    /// <inheritdoc />
+    public override unsafe int Getri(int n, Span<double> a, int lda, ReadOnlySpan<int> ipiv)
+    {
+        if (n == 0)
+        {
+            return 0;
+        }
+
+        fixed (double* pa = a)
+        fixed (int* pivots = ipiv)
+        {
+            return OpenBlasNative.Dgetri(OpenBlasNative.LapackColMajor, n, pa, lda, pivots);
+        }
+    }
+
+    /// <inheritdoc />
+    public override unsafe double Gecon(int n, ReadOnlySpan<double> a, int lda, double anorm)
+    {
+        if (n == 0)
+        {
+            return 0;
+        }
+
+        double rcond = 0;
+        fixed (double* pa = a)
+        {
+            // LAPACK's estimator, which is what MATLAB's rcond reports — a lower bound on the true
+            // reciprocal condition number, never the exact 1/κ the managed backend computes.
+            OpenBlasNative.Dgecon(OpenBlasNative.LapackColMajor, OpenBlasNative.CharOneNorm,
+                n, pa, lda, anorm, &rcond);
+        }
+
+        return rcond;
+    }
+
+    /// <inheritdoc />
+    public override unsafe int Potrf(bool lower, int n, Span<double> a, int lda)
+    {
+        if (n == 0)
+        {
+            return 0;
+        }
+
+        fixed (double* pa = a)
+        {
+            return OpenBlasNative.Dpotrf(OpenBlasNative.LapackColMajor,
+                lower ? OpenBlasNative.CharLower : OpenBlasNative.CharUpper, n, pa, lda);
+        }
+    }
+
+    /// <inheritdoc />
+    public override unsafe int Trtrs(bool lower, bool transpose, int n, int nrhs,
+        ReadOnlySpan<double> a, int lda, Span<double> b, int ldb)
+    {
+        if (n == 0 || nrhs == 0)
+        {
+            return 0;
+        }
+
+        fixed (double* pa = a)
+        fixed (double* pb = b)
+        {
+            return OpenBlasNative.Dtrtrs(OpenBlasNative.LapackColMajor,
+                lower ? OpenBlasNative.CharLower : OpenBlasNative.CharUpper,
+                transpose ? OpenBlasNative.CharTrans : OpenBlasNative.CharNoTrans,
+                OpenBlasNative.CharNonUnit, n, nrhs, pa, lda, pb, ldb);
+        }
+    }
+
+    /// <inheritdoc />
+    public override unsafe int Gels(int m, int n, int nrhs, Span<double> a, int lda, Span<double> b, int ldb)
+    {
+        if (m == 0 || n == 0 || nrhs == 0)
+        {
+            return 0;
+        }
+
+        fixed (double* pa = a)
+        fixed (double* pb = b)
+        {
+            return OpenBlasNative.Dgels(OpenBlasNative.LapackColMajor, OpenBlasNative.CharNoTrans,
+                m, n, nrhs, pa, lda, pb, ldb);
+        }
+    }
 }

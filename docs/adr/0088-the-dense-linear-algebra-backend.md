@@ -88,12 +88,6 @@ one, and `JGraph.Numerics` was already the designated unsafe-code island.
   | 400 | 7.87 ms | 0.66 ms | 11.9× |
   | 1000 | 99.8 ms | 10.8 ms | 9.2× |
   | 2000 | 811 ms | 64.5 ms | 12.6× |
-- Two recorded numeric divergences, both *toward* MATLAB:
-  - BLAS multiplies every element; the managed saxpy kernel skips zero factors. `0·Inf` and
-    `0·NaN` therefore contribute NaN on the native path exactly as in MATLAB, and are silently
-    dropped on the managed fallback.
-  - A blocked native kernel reorders accumulation within the last ulps; small integer-valued
-    products are still exact, and the provider parity tests hold the rest to 1e-12 relative.
 - A machine without the DLL (or a non-x64 process) degrades to the managed kernels silently,
   with the reason one `version('-blas')` away. The DLL rides `CopyToOutputDirectory` items that
   flow transitively to every host, the WiX staging included.
@@ -105,3 +99,14 @@ one, and `JGraph.Numerics` was already the designated unsafe-code island.
   M91 the complex z-routines, the generalized pencils, and schur/qz. Each extends
   `DenseLinalg`, delegates the corresponding `Factor` internals, rewires its hot builtins
   through `JgsLinalg`, and records its measured row in `DenseLinalgBenchmarks`.
+
+## Divergences
+
+Both are *toward* MATLAB, and both are between the two backends rather than between JGraph and
+MATLAB — the native one is the default wherever the library loads.
+
+- **BLAS multiplies every element, where the managed saxpy kernel skips zero factors.** `0·Inf` and
+  `0·NaN` therefore contribute NaN on the native path exactly as they do in MATLAB, and are silently
+  dropped on the managed fallback.
+- **A blocked native kernel reorders accumulation within the last ulps.** Small integer-valued
+  products are still exact, and the provider parity tests hold the rest to 1e-12 relative.

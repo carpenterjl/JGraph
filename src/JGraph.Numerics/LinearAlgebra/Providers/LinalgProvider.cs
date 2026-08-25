@@ -70,5 +70,28 @@ public static class LinalgProvider
         public override void Syrk(bool transposeFirst, int n, int k,
             ReadOnlySpan<double> a, int lda, Span<double> c, int ldc) =>
             throw new InvalidOperationException(reason);
+
+        public override int Getrf(int m, int n, Span<double> a, int lda, Span<int> ipiv) =>
+            throw new InvalidOperationException(reason);
+
+        public override void Getrs(bool transpose, int n, int nrhs,
+            ReadOnlySpan<double> a, int lda, ReadOnlySpan<int> ipiv, Span<double> b, int ldb) =>
+            throw new InvalidOperationException(reason);
+
+        public override int Getri(int n, Span<double> a, int lda, ReadOnlySpan<int> ipiv) =>
+            throw new InvalidOperationException(reason);
+
+        public override double Gecon(int n, ReadOnlySpan<double> a, int lda, double anorm) =>
+            throw new InvalidOperationException(reason);
+
+        public override int Potrf(bool lower, int n, Span<double> a, int lda) =>
+            throw new InvalidOperationException(reason);
+
+        public override int Trtrs(bool lower, bool transpose, int n, int nrhs,
+            ReadOnlySpan<double> a, int lda, Span<double> b, int ldb) =>
+            throw new InvalidOperationException(reason);
+
+        public override int Gels(int m, int n, int nrhs, Span<double> a, int lda, Span<double> b, int ldb) =>
+            throw new InvalidOperationException(reason);
     }
 }

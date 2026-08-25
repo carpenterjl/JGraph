@@ -3957,22 +3957,24 @@ internal sealed partial class Interpreter
         if (op == TokenType.Backslash)
         {
             // A\B: the solution of A·X = B.
-            double[,] coefficients = Rect(AsRows(left), at);
-            double[,] rhs = Rect(AsRows(right), at);
-            if (!IsMatrix(right) && coefficients.GetLength(0) != 1)
+            double[] coefficients = ColumnMajorOf(left, out int rowsA, out int colsA, at);
+            double[] rhs = ColumnMajorOf(right, out int rowsB, out int colsB, at);
+            if (!IsMatrix(right) && rowsA != 1)
             {
-                rhs = JGraph.Numerics.LinearAlgebra.Linear.Transpose(rhs); // a vector rhs is a column
+                // A vector rhs is a column — and a contiguous vector is the same bytes either way
+                // up, so saying so costs nothing.
+                (rowsB, colsB) = (colsB, rowsB);
             }
 
-            return MatrixSolve(coefficients, rhs, transposeResult: false, at);
+            return MatrixSolve(coefficients, rowsA, colsA, rhs, rowsB, colsB, transposeResult: false, at);
         }
 
         if (op == TokenType.Slash)
         {
             // A/B: the solution of X·B = A, computed as (Bᵀ \ Aᵀ)ᵀ.
-            double[,] coefficients = JGraph.Numerics.LinearAlgebra.Linear.Transpose(Rect(AsRows(right), at));
-            double[,] rhs = JGraph.Numerics.LinearAlgebra.Linear.Transpose(Rect(AsRows(left), at));
-            return MatrixSolve(coefficients, rhs, transposeResult: true, at);
+            double[] coefficients = TransposedColumnMajorOf(right, out int rowsA, out int colsA, at);
+            double[] rhs = TransposedColumnMajorOf(left, out int rowsB, out int colsB, at);
+            return MatrixSolve(coefficients, rowsA, colsA, rhs, rowsB, colsB, transposeResult: true, at);
         }
 
         // A'*A and A*A' are recognized syntactically — the way MATLAB recognizes its syrk
@@ -4106,13 +4108,30 @@ internal sealed partial class Interpreter
         return rect;
     }
 
-    /// <summary>Runs the dense solver, translating its shape and rank complaints into script errors.</summary>
-    private JgsValue MatrixSolve(double[,] a, double[,] b, bool transposeResult, Node at)
+    /// <summary>
+    /// Runs the dense solver over column-major operands, translating its shape and rank complaints
+    /// into script errors. Both arrays are the solver's to overwrite — they were built for it here.
+    /// </summary>
+    private JgsValue MatrixSolve(double[] a, int rowsA, int colsA, double[] b, int rowsB, int colsB,
+        bool transposeResult, Node at)
     {
+        if (rowsB != rowsA)
+        {
+            throw new JgsRuntimeException(at.Line, at.Column,
+                "Matrix dimensions do not agree for the division: the right-hand side must have as many rows as the matrix.");
+        }
+
         try
         {
-            double[,] x = JGraph.Numerics.LinearAlgebra.Linear.Solve(a, b);
-            return MatrixResult(transposeResult ? JGraph.Numerics.LinearAlgebra.Linear.Transpose(x) : x);
+            double[] x = JGraph.Numerics.LinearAlgebra.Linear.Solve(a, rowsA, colsA, b, colsB);
+            if (!transposeResult)
+            {
+                return JgsBuiltins.FromColumnMajorRect(x, colsA, colsB);
+            }
+
+            var flipped = new double[x.Length];
+            JgsLinalg.TransposeBlocked(x, flipped, colsA, colsB);
+            return JgsBuiltins.FromColumnMajorRect(flipped, colsB, colsA);
         }
         catch (ArgumentException)
         {
@@ -4123,6 +4142,60 @@ internal sealed partial class Interpreter
         {
             throw new JgsRuntimeException(at.Line, at.Column, ex.Message);
         }
+    }
+
+    /// <summary>
+    /// A value as flat column-major doubles with the shape the matrix operators read it at — a
+    /// vector is one row. A packed operand is one block copy; anything else travels the old road
+    /// through jagged rows and raises the same complaints it always did.
+    /// </summary>
+    private double[] ColumnMajorOf(JgsValue value, out int rows, out int cols, Node at)
+    {
+        if (JgsLinalg.IsPlainPackedReal(value) && (long)value.Rows * value.Cols == value.ArrayLength)
+        {
+            rows = value.Rows;
+            cols = value.Cols;
+            double[] packed = GC.AllocateUninitializedArray<double>(value.ArrayLength);
+            NumericBuffer buffer = value.AsBuffer;
+            buffer.AsSpan(0, packed.Length).CopyTo(packed);
+            GC.KeepAlive(buffer);
+            return packed;
+        }
+
+        double[][] jagged = AsRows(value);
+        rows = jagged.Length;
+        cols = rows == 0 ? 0 : jagged[0].Length;
+        var flat = new double[(long)rows * cols];
+        for (int r = 0; r < rows; r++)
+        {
+            if (jagged[r].Length != cols)
+            {
+                throw new JgsRuntimeException(at.Line, at.Column, "Matrix rows must have equal lengths.");
+            }
+
+            for (int c = 0; c < cols; c++)
+            {
+                flat[(c * rows) + r] = jagged[r][c];
+            }
+        }
+
+        return flat;
+    }
+
+    /// <summary>The same, transposed — what <c>A/B</c> needs of both its operands.</summary>
+    private double[] TransposedColumnMajorOf(JgsValue value, out int rows, out int cols, Node at)
+    {
+        double[] flat = ColumnMajorOf(value, out int sourceRows, out int sourceCols, at);
+        rows = sourceCols;
+        cols = sourceRows;
+        if (sourceRows == 1 || sourceCols == 1)
+        {
+            return flat; // a contiguous vector is the same bytes either way up
+        }
+
+        var flipped = new double[flat.Length];
+        JgsLinalg.TransposeBlocked(flat, flipped, sourceRows, sourceCols);
+        return flipped;
     }
 
     /// <summary>MATLAB's <c>A^p</c>: an integer matrix power (negative p inverts first).</summary>
