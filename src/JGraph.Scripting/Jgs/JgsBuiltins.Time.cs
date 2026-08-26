@@ -748,10 +748,18 @@ internal static partial class JgsBuiltins
     }
 
     /// <summary>
-    /// The field accessors, by name, filled in as they are registered so the dotted spelling and the
-    /// call reach exactly the same code.
+    /// The field accessors, by name, so the dotted spelling and the call reach exactly the same code.
     /// </summary>
-    internal static readonly Dictionary<string, Func<JgsValue, int, int, JgsValue>> TimeFieldReaders = new(StringComparer.Ordinal);
+    /// <remarks>
+    /// Built once, before any environment is, and never written to again. Until M94 it was filled in
+    /// as the builtins were registered — a process-wide dictionary written by every call to
+    /// <see cref="CreateGlobals"/>, so two threads building script environments at the same moment
+    /// could corrupt it mid-insert, after which every script in the process failed. Nothing in a body
+    /// here closes over an environment, so there was never anything per-environment to fill in: one
+    /// table, made before the first registration, is all any of them ever needed.
+    /// </remarks>
+    internal static readonly IReadOnlyDictionary<string, Func<JgsValue, int, int, JgsValue>> TimeFieldReaders =
+        BuildTimeFieldReaders();
 
     /// <summary>Formats one time value for a caller that wants its text (<c>char</c>, <c>string</c>).</summary>
     internal static string TimeText(JgsValue value, int index)

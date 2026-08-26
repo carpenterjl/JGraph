@@ -21,34 +21,17 @@ internal static partial class JgsBuiltins
             env.Declare(name, JgsValue.Function(new BuiltinFunction(name, body)));
 
         // --- The field accessors ------------------------------------------------------------------
-        Field(env, "year", static m => m.Year);
-        Field(env, "month", static m => m.Month);
-        Field(env, "day", static m => m.Day);
-        Field(env, "hour", static m => m.Hour);
-        Field(env, "minute", static m => m.Minute);
-        Field(env, "week", static m => ISOWeek.GetWeekOfYear(m));
-        Field(env, "quarter", static m => ((m.Month - 1) / 3) + 1);
-
-        // weekday counts from Sunday = 1, which is MATLAB's convention and not .NET's zero-based one.
-        Field(env, "weekday", static m => (int)m.DayOfWeek + 1);
-
-        // second carries the fraction, unlike every other field: MATLAB's second(t) is 30.25 for a
-        // moment a quarter of a second past the half minute, where its minute(t) is a whole number.
-        // It used to read the whole-number Millisecond, so a moment half a millisecond past the
-        // second answered as though it were on it; JgsTime.SecondsOf reads the tick remainder (M82).
-        JgsValue Seconds(JgsValue argument, int line, int col)
+        // Declared from the shared table rather than filling it in as they are declared (M94): the
+        // dotted spelling t.Year and the call year(t) still reach one delegate and cannot come
+        // apart, and no process-wide dictionary is written once per environment to arrange it.
+        foreach ((string field, Func<JgsValue, int, int, JgsValue> read) in TimeFieldReaders)
         {
-            JgsValue moment = RequireDatetime("second", argument, line, col);
-            JgsTimeTag? tag = moment.TimeTag;
-            return MapMs(moment, ms => JgsTime.SecondsOf(JgsTime.WallClock(ms, tag)));
+            env.Declare(field, JgsValue.Function(new BuiltinFunction(field, (args, line, col) =>
+            {
+                Arity(field, args, 1, line, col);
+                return read(args[0], line, col);
+            })));
         }
-
-        TimeFieldReaders["second"] = Seconds;
-        env.Declare("second", JgsValue.Function(new BuiltinFunction("second", (args, line, col) =>
-        {
-            Arity("second", args, 1, line, col);
-            return Seconds(args[0], line, col);
-        })));
 
         // --- The grouped accessors, which answer with several numbers at once ---------------------
         Parts(env, "ymd", static m => [m.Year, m.Month, m.Day]);
@@ -277,10 +260,40 @@ internal static partial class JgsBuiltins
         });
     }
 
-    /// <summary>Declares one accessor that reads a single field off each moment.</summary>
-    private static void Field(JgsEnvironment env, string name, Func<DateTime, int> read)
-    {
-        JgsValue Body(JgsValue argument, int line, int col)
+    /// <summary>
+    /// Builds the one table of field accessors — the table <see cref="TimeFieldReaders"/> holds for
+    /// the life of the process, and the one <see cref="RegisterTimePartBuiltins"/> declares a builtin
+    /// from for every environment it is asked to fill.
+    /// </summary>
+    /// <remarks>
+    /// Every body below closes over its own name and its own reader and over nothing else, which is
+    /// why one table can serve every environment and why building it during registration was never
+    /// buying anything — only a data race (M94).
+    /// </remarks>
+    private static Dictionary<string, Func<JgsValue, int, int, JgsValue>> BuildTimeFieldReaders() =>
+        new(StringComparer.Ordinal)
+        {
+            ["year"] = FieldReader("year", static m => m.Year),
+            ["month"] = FieldReader("month", static m => m.Month),
+            ["day"] = FieldReader("day", static m => m.Day),
+            ["hour"] = FieldReader("hour", static m => m.Hour),
+            ["minute"] = FieldReader("minute", static m => m.Minute),
+            ["week"] = FieldReader("week", static m => ISOWeek.GetWeekOfYear(m)),
+            ["quarter"] = FieldReader("quarter", static m => ((m.Month - 1) / 3) + 1),
+
+            // weekday counts from Sunday = 1, which is MATLAB's convention and not .NET's zero-based one.
+            ["weekday"] = FieldReader("weekday", static m => (int)m.DayOfWeek + 1),
+
+            // second carries the fraction, unlike every other field: MATLAB's second(t) is 30.25 for a
+            // moment a quarter of a second past the half minute, where its minute(t) is a whole number.
+            // It used to read the whole-number Millisecond, so a moment half a millisecond past the
+            // second answered as though it were on it; JgsTime.SecondsOf reads the tick remainder (M82).
+            ["second"] = Seconds,
+        };
+
+    /// <summary>One accessor that reads a single whole-number field off each moment.</summary>
+    private static Func<JgsValue, int, int, JgsValue> FieldReader(string name, Func<DateTime, int> read) =>
+        (argument, line, col) =>
         {
             JgsValue moment = RequireDatetime(name, argument, line, col);
 
@@ -289,15 +302,14 @@ internal static partial class JgsBuiltins
             // that never mentions a zone reads differently.
             JgsTimeTag? tag = moment.TimeTag;
             return MapMs(moment, ms => read(JgsTime.WallClock(ms, tag)));
-        }
+        };
 
-        // The dotted spelling t.Year reaches this same body (M82) rather than a second copy of it.
-        TimeFieldReaders[name] = Body;
-        env.Declare(name, JgsValue.Function(new BuiltinFunction(name, (args, line, col) =>
-        {
-            Arity(name, args, 1, line, col);
-            return Body(args[0], line, col);
-        })));
+    /// <summary>The one accessor that answers with a fraction — see the note in the table above.</summary>
+    private static JgsValue Seconds(JgsValue argument, int line, int col)
+    {
+        JgsValue moment = RequireDatetime("second", argument, line, col);
+        JgsTimeTag? tag = moment.TimeTag;
+        return MapMs(moment, ms => JgsTime.SecondsOf(JgsTime.WallClock(ms, tag)));
     }
 
     /// <summary>

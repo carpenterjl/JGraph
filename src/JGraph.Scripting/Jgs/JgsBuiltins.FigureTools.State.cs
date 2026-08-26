@@ -129,6 +129,10 @@ internal static partial class JgsBuiltins
     /// The live links a script has asked for. A link is kept here rather than only in the value the
     /// script holds, because it has to go on listening whether or not the script kept the handle —
     /// which is exactly what MATLAB's own <c>linkprop</c> object does when it is put into appdata.
+    /// <para>
+    /// Process-wide and written while scripts run, so every touch of it is under its own lock — an
+    /// unguarded <c>Add</c> from two threads at once is what tears a <see cref="List{T}"/> (M94).
+    /// </para>
     /// </summary>
     private static readonly List<PropertyLink> Links = [];
 
@@ -277,12 +281,20 @@ internal static partial class JgsBuiltins
 
         var link = new PropertyLink(targets, names);
         link.SyncFromFirst();
-        Links.Add(link);
+
+        // The count is read inside the lock so the number answered is this link's own place in the
+        // list rather than whatever another thread's Add has just made it.
+        int place;
+        lock (Links)
+        {
+            Links.Add(link);
+            place = Links.Count;
+        }
 
         // MATLAB answers with a listener object a script stores to keep the link alive. Here the
         // link is alive because it exists, so the answer is a number to store — and storing it is
         // still the right habit for a script that means to work in both.
-        return JgsValue.Number(Links.Count);
+        return JgsValue.Number(place);
     }
 
     /// <summary>

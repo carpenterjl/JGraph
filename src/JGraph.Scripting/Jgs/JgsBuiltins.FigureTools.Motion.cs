@@ -569,6 +569,11 @@ internal static partial class JgsBuiltins
     // --- The verbs that would wait for a mouse ------------------------------------------------------
 
     /// <summary>Which exploration mode each axes was last put into, by figure number and verb.</summary>
+    /// <remarks>
+    /// Process-wide and written while scripts run, so every touch of it is under its own lock: two
+    /// scripts running at once in one process — which is what the test suite is — are two threads
+    /// here, and an unguarded insert is what corrupts a <see cref="Dictionary{K, V}"/> for good (M94).
+    /// </remarks>
     private static readonly Dictionary<string, string> Modes = new(StringComparer.Ordinal);
 
     /// <summary>
@@ -581,16 +586,22 @@ internal static partial class JgsBuiltins
     {
         (FigureModel figure, IReadOnlyList<JgsValue> rest) = PeelFigure(args);
         string key = $"{verb}:{JG.GetFigureNumber(figure)}";
-        if (rest.Count == 0)
-        {
-            return JgsValue.Str(Modes.TryGetValue(key, out string? current) ? current : "off");
-        }
 
-        Modes[key] = OneOfWord(verb, rest[0], ["on", "off", "toggle"], line, col) switch
+        // One lock over the read and the write, not two: a toggle has to see the word it is turning
+        // over, and an insert has to be alone while it makes room.
+        lock (Modes)
         {
-            "toggle" => Modes.TryGetValue(key, out string? was) && was == "on" ? "off" : "on",
-            var word => word,
-        };
+            if (rest.Count == 0)
+            {
+                return JgsValue.Str(Modes.TryGetValue(key, out string? current) ? current : "off");
+            }
+
+            Modes[key] = OneOfWord(verb, rest[0], ["on", "off", "toggle"], line, col) switch
+            {
+                "toggle" => Modes.TryGetValue(key, out string? was) && was == "on" ? "off" : "on",
+                var word => word,
+            };
+        }
 
         return JgsValue.Null;
     }
