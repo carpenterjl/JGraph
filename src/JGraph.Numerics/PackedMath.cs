@@ -12,14 +12,27 @@ namespace JGraph.Numerics;
 /// identical to the boxed interpreter paths, not just close.
 /// </summary>
 /// <remarks>
-/// Every operation processes <see cref="ChunkElements"/> at a time and invokes the caller's
-/// <c>betweenChunks</c> callback between chunks, so the script interpreter can poll its
-/// cancellation token mid-operation. All public methods end with <see cref="GC.KeepAlive(object)"/>
-/// on their buffer arguments, honoring the <see cref="NumericBuffer"/> lifetime contract.
+/// <para>
+/// Every operation sweeps its buffers in fixed grains through <see cref="ParallelKernels.For"/> and
+/// invokes the caller's <c>betweenChunks</c> callback between grains, so the script interpreter can
+/// poll its cancellation token mid-operation. All public methods end with
+/// <see cref="GC.KeepAlive(object)"/> on their buffer arguments, honoring the
+/// <see cref="NumericBuffer"/> lifetime contract.
+/// </para>
+/// <para>
+/// A large enough sweep runs on several threads (M93). Every operation swept that way is
+/// per-element independent, so which thread wrote which element is not something an answer can
+/// depend on; the reductions — <see cref="Sum"/> above all — stay on the calling thread precisely
+/// because their answers <em>would</em> depend on how the work was cut.
+/// </para>
 /// </remarks>
 public static class PackedMath
 {
-    /// <summary>Elements per chunk (4M ≈ 32 MB): milliseconds of work between cancellation polls.</summary>
+    /// <summary>
+    /// Elements per chunk (4M ≈ 32 MB). The elementwise sweeps are now cut into the far smaller
+    /// <see cref="ParallelKernels.GrainElements"/>, so their cancellation poll runs oftener than it
+    /// used to; this is still the unit the serial reductions walk.
+    /// </summary>
     public const int ChunkElements = 1 << 22;
 
     /// <summary>
@@ -98,11 +111,21 @@ public static class PackedMath
 
     /// <summary>
     /// The element count at or above which an <see cref="Determinism.Approximate"/> kernel is worth
-    /// the last few ulps. M92 lands the plumbing switched off (<see cref="int.MaxValue"/>, so the
-    /// scalar loop always wins the choice); M93 lowers it once the tier policy has an ADR and the
-    /// ulp-bound tests to go with it.
+    /// the last few ulps: 32K by default, <see cref="int.MaxValue"/> — never — when
+    /// <c>JGRAPH_FAST_MATH=0</c>.
     /// </summary>
-    public static int ApproximateThreshold { get; set; } = int.MaxValue;
+    /// <remarks>
+    /// Two things meet at this number. Below it live every printed array, every parity-corpus
+    /// script and every hand-checked expected value, all of which must keep answering what
+    /// <see cref="Math"/> answers to the last bit. Above it live the arrays whose transcendentals
+    /// are the cost of the statement, where five times the speed is worth landing within a couple of
+    /// ulps of a function that was never exact anyway. ADR 0093 is where the trade is argued;
+    /// <c>JGRAPH_FAST_MATH=0</c> is how a caller who wants none of it says so.
+    /// </remarks>
+    public static int ApproximateThreshold { get; set; } = ResolveApproximateThreshold();
+
+    /// <summary>The default <see cref="ApproximateThreshold"/> when the environment does not object.</summary>
+    public const int DefaultApproximateThreshold = 1 << 15;
 
     /// <summary>Whether <paramref name="length"/> elements of <paramref name="op"/> take the vector kernel.</summary>
     public static bool Vectorizes(UnaryOp op, long length) =>
@@ -114,12 +137,8 @@ public static class PackedMath
     {
         RequireSameLength(a.Length, dest.Length);
         RequireSameLength(b.Length, dest.Length);
-        for (int start = 0; start < dest.Length; start += ChunkElements)
-        {
-            int len = Math.Min(ChunkElements, dest.Length - start);
-            BinaryChunk(op, a.AsSpan(start, len), b.AsSpan(start, len), dest.AsSpan(start, len));
-            betweenChunks?.Invoke();
-        }
+        ParallelKernels.For(dest.Length, ThresholdOf(op), betweenChunks, (start, len) =>
+            BinaryChunk(op, a.AsSpan(start, len), b.AsSpan(start, len), dest.AsSpan(start, len)));
 
         GC.KeepAlive(a);
         GC.KeepAlive(b);
@@ -131,28 +150,8 @@ public static class PackedMath
                                          Action? betweenChunks = null)
     {
         RequireSameLength(a.Length, dest.Length);
-        for (int start = 0; start < dest.Length; start += ChunkElements)
-        {
-            int len = Math.Min(ChunkElements, dest.Length - start);
-            Span<double> x = a.AsSpan(start, len);
-            Span<double> d = dest.AsSpan(start, len);
-            switch (op)
-            {
-                case BinaryOp.Add: TensorPrimitives.Add<double>(x, scalar, d); break;
-                case BinaryOp.Subtract: TensorPrimitives.Add<double>(x, -scalar, d); break;
-                case BinaryOp.Multiply: TensorPrimitives.Multiply<double>(x, scalar, d); break;
-                case BinaryOp.Divide: TensorPrimitives.Divide<double>(x, scalar, d); break;
-                case BinaryOp.Remainder:
-                    for (int i = 0; i < len; i++) { d[i] = x[i] % scalar; }
-                    break;
-                case BinaryOp.Power:
-                    for (int i = 0; i < len; i++) { d[i] = Math.Pow(x[i], scalar); }
-                    break;
-                default: throw UnknownOp(op);
-            }
-
-            betweenChunks?.Invoke();
-        }
+        ParallelKernels.For(dest.Length, ThresholdOf(op), betweenChunks, (start, len) =>
+            BinaryScalarRightChunk(op, a.AsSpan(start, len), scalar, dest.AsSpan(start, len)));
 
         GC.KeepAlive(a);
         GC.KeepAlive(dest);
@@ -163,35 +162,8 @@ public static class PackedMath
                                         Action? betweenChunks = null)
     {
         RequireSameLength(b.Length, dest.Length);
-        for (int start = 0; start < dest.Length; start += ChunkElements)
-        {
-            int len = Math.Min(ChunkElements, dest.Length - start);
-            Span<double> y = b.AsSpan(start, len);
-            Span<double> d = dest.AsSpan(start, len);
-            switch (op)
-            {
-                case BinaryOp.Add: TensorPrimitives.Add<double>(y, scalar, d); break;
-                case BinaryOp.Subtract:
-                    // scalar - y, vectorized in two passes: d = scalar; d -= y.
-                    d.Fill(scalar);
-                    TensorPrimitives.Subtract<double>(d, y, d);
-                    break;
-                case BinaryOp.Multiply: TensorPrimitives.Multiply<double>(y, scalar, d); break;
-                case BinaryOp.Divide:
-                    d.Fill(scalar);
-                    TensorPrimitives.Divide<double>(d, y, d);
-                    break;
-                case BinaryOp.Remainder:
-                    for (int i = 0; i < len; i++) { d[i] = scalar % y[i]; }
-                    break;
-                case BinaryOp.Power:
-                    for (int i = 0; i < len; i++) { d[i] = Math.Pow(scalar, y[i]); }
-                    break;
-                default: throw UnknownOp(op);
-            }
-
-            betweenChunks?.Invoke();
-        }
+        ParallelKernels.For(dest.Length, ThresholdOf(op), betweenChunks, (start, len) =>
+            BinaryScalarLeftChunk(op, scalar, b.AsSpan(start, len), dest.AsSpan(start, len)));
 
         GC.KeepAlive(b);
         GC.KeepAlive(dest);
@@ -202,12 +174,8 @@ public static class PackedMath
                              Action? betweenChunks = null)
     {
         RequireSameLength(source.Length, dest.Length);
-        for (int start = 0; start < dest.Length; start += ChunkElements)
-        {
-            int len = Math.Min(ChunkElements, dest.Length - start);
-            UnaryChunk(op, source.AsSpan(start, len), dest.AsSpan(start, len));
-            betweenChunks?.Invoke();
-        }
+        ParallelKernels.For(dest.Length, ThresholdOf(op), betweenChunks, (start, len) =>
+            UnaryChunk(op, source.AsSpan(start, len), dest.AsSpan(start, len)));
 
         GC.KeepAlive(source);
         GC.KeepAlive(dest);
@@ -227,12 +195,8 @@ public static class PackedMath
                                    Action? betweenChunks = null)
     {
         RequireSameLength(source.Length, dest.Length);
-        for (int start = 0; start < dest.Length; start += ChunkElements)
-        {
-            int len = Math.Min(ChunkElements, dest.Length - start);
-            UnaryScalarChunk(op, source.AsSpan(start, len), dest.AsSpan(start, len));
-            betweenChunks?.Invoke();
-        }
+        ParallelKernels.For(dest.Length, ThresholdOf(op), betweenChunks, (start, len) =>
+            UnaryScalarChunk(op, source.AsSpan(start, len), dest.AsSpan(start, len)));
 
         GC.KeepAlive(source);
         GC.KeepAlive(dest);
@@ -273,9 +237,19 @@ public static class PackedMath
     {
         RequireSameLength(source.Length, dest.Length);
         bool vector = Vectorizes(op, source.Length);
-        for (int start = 0; start < dest.Length; start += ChunkElements)
+
+        // One grain leaving the domain does not stop the others: they are writing a buffer the
+        // caller is about to throw away, so the only thing that matters is that the answer comes
+        // back false, and a flag any grain may set says so without the grains having to agree on
+        // an order.
+        bool outside = false;
+        ParallelKernels.For(dest.Length, ThresholdOf(op), betweenChunks, (start, len) =>
         {
-            int len = Math.Min(ChunkElements, dest.Length - start);
+            if (Volatile.Read(ref outside))
+            {
+                return; // a grain before this one already answered the question
+            }
+
             Span<double> x = source.AsSpan(start, len);
             Span<double> d = dest.AsSpan(start, len);
             for (int at = 0; at < len; at += DomainTileElements)
@@ -284,9 +258,8 @@ public static class PackedMath
                 Span<double> xt = x.Slice(at, tile);
                 if (!NoneBelow(xt, lowerBound))
                 {
-                    GC.KeepAlive(source);
-                    GC.KeepAlive(dest);
-                    return false;
+                    Volatile.Write(ref outside, true);
+                    return;
                 }
 
                 Span<double> dt = d.Slice(at, tile);
@@ -299,32 +272,33 @@ public static class PackedMath
                     UnaryScalarChunk(op, xt, dt);
                 }
             }
-
-            betweenChunks?.Invoke();
-        }
+        });
 
         GC.KeepAlive(source);
         GC.KeepAlive(dest);
-        return true;
+        return !Volatile.Read(ref outside);
     }
 
     /// <summary>dest[i] = f(source[i]) — the scalar escape hatch for operations without an enum entry.</summary>
+    /// <remarks>
+    /// <paramref name="f"/> is called from several threads at once on a large enough buffer, so it
+    /// must be a function of its argument and nothing else. Every delegate that reaches here is one
+    /// of <see cref="Math"/>'s or a numeric-class conversion; a caller with state to keep wants a
+    /// loop of its own, not this.
+    /// </remarks>
     public static void Map(NumericBuffer source, NumericBuffer dest, Func<double, double> f,
                            Action? betweenChunks = null)
     {
         RequireSameLength(source.Length, dest.Length);
-        for (int start = 0; start < dest.Length; start += ChunkElements)
+        ParallelKernels.For(dest.Length, ParallelKernels.ComputeBoundThreshold, betweenChunks, (start, len) =>
         {
-            int len = Math.Min(ChunkElements, dest.Length - start);
             Span<double> x = source.AsSpan(start, len);
             Span<double> d = dest.AsSpan(start, len);
             for (int i = 0; i < len; i++)
             {
                 d[i] = f(x[i]);
             }
-
-            betweenChunks?.Invoke();
-        }
+        });
 
         GC.KeepAlive(source);
         GC.KeepAlive(dest);
@@ -336,9 +310,8 @@ public static class PackedMath
     {
         RequireSameLength(a.Length, dest.Length);
         RequireSameLength(b.Length, dest.Length);
-        for (int start = 0; start < dest.Length; start += ChunkElements)
+        ParallelKernels.For(dest.Length, ParallelKernels.ComputeBoundThreshold, betweenChunks, (start, len) =>
         {
-            int len = Math.Min(ChunkElements, dest.Length - start);
             Span<double> x = a.AsSpan(start, len);
             Span<double> y = b.AsSpan(start, len);
             Span<double> d = dest.AsSpan(start, len);
@@ -346,9 +319,7 @@ public static class PackedMath
             {
                 d[i] = f(x[i], y[i]);
             }
-
-            betweenChunks?.Invoke();
-        }
+        });
 
         GC.KeepAlive(a);
         GC.KeepAlive(b);
@@ -364,9 +335,8 @@ public static class PackedMath
                                  Action? betweenChunks = null)
     {
         RequireSameLength(a.Length, dest.Length);
-        for (int start = 0; start < dest.Length; start += ChunkElements)
+        ParallelKernels.For(dest.Length, ParallelKernels.ComputeBoundThreshold, betweenChunks, (start, len) =>
         {
-            int len = Math.Min(ChunkElements, dest.Length - start);
             Span<double> x = a.AsSpan(start, len);
             Span<double> d = dest.AsSpan(start, len);
             if (scalarOnLeft)
@@ -377,9 +347,7 @@ public static class PackedMath
             {
                 for (int i = 0; i < len; i++) { d[i] = f(x[i], scalar); }
             }
-
-            betweenChunks?.Invoke();
-        }
+        });
 
         GC.KeepAlive(a);
         GC.KeepAlive(dest);
@@ -388,17 +356,14 @@ public static class PackedMath
     /// <summary>dest[i] = start + i * step (colon-range materialization).</summary>
     public static void Fill(NumericBuffer dest, double start, double step, Action? betweenChunks = null)
     {
-        for (int chunk = 0; chunk < dest.Length; chunk += ChunkElements)
+        ParallelKernels.For(dest.Length, ParallelKernels.MemoryBoundThreshold, betweenChunks, (at, len) =>
         {
-            int len = Math.Min(ChunkElements, dest.Length - chunk);
-            Span<double> d = dest.AsSpan(chunk, len);
+            Span<double> d = dest.AsSpan(at, len);
             for (int i = 0; i < len; i++)
             {
-                d[i] = start + (chunk + i) * step;
+                d[i] = start + (at + i) * step;
             }
-
-            betweenChunks?.Invoke();
-        }
+        });
 
         GC.KeepAlive(dest);
     }
@@ -406,12 +371,8 @@ public static class PackedMath
     /// <summary>dest[i] = value.</summary>
     public static void FillConstant(NumericBuffer dest, double value, Action? betweenChunks = null)
     {
-        for (int start = 0; start < dest.Length; start += ChunkElements)
-        {
-            int len = Math.Min(ChunkElements, dest.Length - start);
-            dest.AsSpan(start, len).Fill(value);
-            betweenChunks?.Invoke();
-        }
+        ParallelKernels.For(dest.Length, ParallelKernels.MemoryBoundThreshold, betweenChunks,
+            (start, len) => dest.AsSpan(start, len).Fill(value));
 
         GC.KeepAlive(dest);
     }
@@ -422,12 +383,8 @@ public static class PackedMath
     {
         RequireSameLength(a.Length, dest.Length);
         RequireSameLength(b.Length, dest.Length);
-        for (int start = 0; start < dest.Length; start += ChunkElements)
-        {
-            int len = Math.Min(ChunkElements, dest.Length - start);
-            CompareChunk(op, a.AsSpan(start, len), b.AsSpan(start, len), dest.AsSpan(start, len));
-            betweenChunks?.Invoke();
-        }
+        ParallelKernels.For(dest.Length, ParallelKernels.MemoryBoundThreshold, betweenChunks, (start, len) =>
+            CompareChunk(op, a.AsSpan(start, len), b.AsSpan(start, len), dest.AsSpan(start, len)));
 
         GC.KeepAlive(a);
         GC.KeepAlive(b);
@@ -444,12 +401,8 @@ public static class PackedMath
         // (both readings are false there), so one kernel serves both sides and neither has a branch
         // inside the loop.
         CompareOp effective = scalarOnLeft ? Mirror(op) : op;
-        for (int start = 0; start < dest.Length; start += ChunkElements)
-        {
-            int len = Math.Min(ChunkElements, dest.Length - start);
-            CompareScalarChunk(effective, a.AsSpan(start, len), scalar, dest.AsSpan(start, len));
-            betweenChunks?.Invoke();
-        }
+        ParallelKernels.For(dest.Length, ParallelKernels.MemoryBoundThreshold, betweenChunks, (start, len) =>
+            CompareScalarChunk(effective, a.AsSpan(start, len), scalar, dest.AsSpan(start, len)));
 
         GC.KeepAlive(a);
         GC.KeepAlive(dest);
@@ -461,41 +414,16 @@ public static class PackedMath
     /// </summary>
     public static long CountNonZero(NumericBuffer a, Action? betweenChunks = null)
     {
+        long[] tallies = new long[GrainsOf(a.Length)];
+        ParallelKernels.For(a.Length, ParallelKernels.MemoryBoundThreshold, betweenChunks,
+            (start, len) => tallies[start / ParallelKernels.GrainElements] = CountNonZeroSpan(a.AsSpan(start, len)));
+
+        // Summed in index order on this thread, which is what makes the total the same total on a
+        // machine with one core and on a machine with sixteen.
         long count = 0;
-        for (int start = 0; start < a.Length; start += ChunkElements)
+        foreach (long tally in tallies)
         {
-            int len = Math.Min(ChunkElements, a.Length - start);
-            Span<double> x = a.AsSpan(start, len);
-            int i = 0;
-            int width = Vector<double>.Count;
-            if (Vector.IsHardwareAccelerated && len >= width)
-            {
-                ref double xr = ref MemoryMarshal.GetReference(x);
-                Vector<double> zero = Vector<double>.Zero;
-
-                // Equals gives all-ones per zero lane; its complement gives -1 per non-zero lane,
-                // and subtracting that adds one. NaN is unequal to zero, so it counts — as it must.
-                Vector<long> tally = Vector<long>.Zero;
-                for (; i <= len - width; i += width)
-                {
-                    tally -= Vector.OnesComplement(Vector.Equals(Vector.LoadUnsafe(ref xr, (nuint)i), zero));
-                }
-
-                for (int lane = 0; lane < width; lane++)
-                {
-                    count += tally[lane];
-                }
-            }
-
-            for (; i < len; i++)
-            {
-                if (x[i] != 0)
-                {
-                    count++;
-                }
-            }
-
-            betweenChunks?.Invoke();
+            count += tally;
         }
 
         GC.KeepAlive(a);
@@ -580,12 +508,8 @@ public static class PackedMath
     public static void Copy(NumericBuffer source, NumericBuffer dest, Action? betweenChunks = null)
     {
         RequireSameLength(source.Length, dest.Length);
-        for (int start = 0; start < dest.Length; start += ChunkElements)
-        {
-            int len = Math.Min(ChunkElements, dest.Length - start);
-            source.AsSpan(start, len).CopyTo(dest.AsSpan(start, len));
-            betweenChunks?.Invoke();
-        }
+        ParallelKernels.For(dest.Length, ParallelKernels.MemoryBoundThreshold, betweenChunks,
+            (start, len) => source.AsSpan(start, len).CopyTo(dest.AsSpan(start, len)));
 
         GC.KeepAlive(source);
         GC.KeepAlive(dest);
@@ -600,28 +524,39 @@ public static class PackedMath
                               Action? betweenChunks = null)
     {
         RequireSameLength(mask.Length, source.Length);
-        int written = 0;
-        for (int start = 0; start < source.Length; start += ChunkElements)
+        int grains = GrainsOf(source.Length);
+        if (grains <= 1)
         {
-            int len = Math.Min(ChunkElements, source.Length - start);
-            Span<double> s = source.AsSpan(start, len);
-            Span<double> m = mask.AsSpan(start, len);
-            Span<double> d = dest.AsSpan();
-            for (int i = 0; i < len; i++)
-            {
-                if (m[i] != 0)
-                {
-                    d[written++] = s[i];
-                }
-            }
-
+            int written = CompactSpan(source.AsSpan(), mask.AsSpan(), dest.AsSpan(), 0);
             betweenChunks?.Invoke();
+            GC.KeepAlive(source);
+            GC.KeepAlive(mask);
+            GC.KeepAlive(dest);
+            return written;
         }
+
+        // Where each grain's matches begin, before any of them are moved: count first, add the
+        // counts up in index order, and every grain then knows its own stretch of the destination
+        // without having to wait for the grain before it. The result is the order a single thread
+        // would have written, which is the only order the answer is allowed to be in.
+        int[] offsets = new int[grains + 1];
+        ParallelKernels.For(source.Length, ParallelKernels.MemoryBoundThreshold, betweenChunks,
+            (start, len) => offsets[(start / ParallelKernels.GrainElements) + 1] =
+                (int)CountNonZeroSpan(mask.AsSpan(start, len)));
+
+        for (int g = 1; g <= grains; g++)
+        {
+            offsets[g] += offsets[g - 1];
+        }
+
+        ParallelKernels.For(source.Length, ParallelKernels.MemoryBoundThreshold, betweenChunks,
+            (start, len) => CompactSpan(source.AsSpan(start, len), mask.AsSpan(start, len),
+                                        dest.AsSpan(), offsets[start / ParallelKernels.GrainElements]));
 
         GC.KeepAlive(source);
         GC.KeepAlive(mask);
         GC.KeepAlive(dest);
-        return written;
+        return offsets[grains];
     }
 
     /// <summary>dest[i] = source[picks[i]] (slice/mask read).</summary>
@@ -664,6 +599,83 @@ public static class PackedMath
         }
 
         GC.KeepAlive(dest);
+    }
+
+    /// <summary><c>JGRAPH_FAST_MATH=0</c> turns the approximate tier off; anything else leaves it on.</summary>
+    private static int ResolveApproximateThreshold() =>
+        Environment.GetEnvironmentVariable("JGRAPH_FAST_MATH") == "0"
+            ? int.MaxValue
+            : DefaultApproximateThreshold;
+
+    /// <summary>How many grains <see cref="ParallelKernels.For"/> cuts this many elements into.</summary>
+    private static int GrainsOf(int length) =>
+        length <= 0 ? 0 : ((length - 1) / ParallelKernels.GrainElements) + 1;
+
+    /// <summary>
+    /// How much of an operation is worth splitting across threads: an operation whose time goes into
+    /// moving memory needs a big enough array to be worth the fork, while one whose time goes into
+    /// arithmetic has work to divide long before that.
+    /// </summary>
+    private static int ThresholdOf(BinaryOp op) =>
+        op is BinaryOp.Remainder or BinaryOp.Power
+            ? ParallelKernels.ComputeBoundThreshold
+            : ParallelKernels.MemoryBoundThreshold;
+
+    /// <inheritdoc cref="ThresholdOf(BinaryOp)"/>
+    private static int ThresholdOf(UnaryOp op) =>
+        DeterminismOf(op) == Determinism.Exact
+            ? ParallelKernels.MemoryBoundThreshold
+            : ParallelKernels.ComputeBoundThreshold;
+
+    /// <summary>How many elements of one span are not zero.</summary>
+    private static long CountNonZeroSpan(Span<double> x)
+    {
+        long count = 0;
+        int i = 0;
+        int width = Vector<double>.Count;
+        if (Vector.IsHardwareAccelerated && x.Length >= width)
+        {
+            ref double xr = ref MemoryMarshal.GetReference(x);
+            Vector<double> zero = Vector<double>.Zero;
+
+            // Equals gives all-ones per zero lane; its complement gives -1 per non-zero lane,
+            // and subtracting that adds one. NaN is unequal to zero, so it counts — as it must.
+            Vector<long> tally = Vector<long>.Zero;
+            for (; i <= x.Length - width; i += width)
+            {
+                tally -= Vector.OnesComplement(Vector.Equals(Vector.LoadUnsafe(ref xr, (nuint)i), zero));
+            }
+
+            for (int lane = 0; lane < width; lane++)
+            {
+                count += tally[lane];
+            }
+        }
+
+        for (; i < x.Length; i++)
+        {
+            if (x[i] != 0)
+            {
+                count++;
+            }
+        }
+
+        return count;
+    }
+
+    /// <summary>Copies the matching elements of one span into <paramref name="dest"/> from <paramref name="at"/>.</summary>
+    private static int CompactSpan(Span<double> source, Span<double> mask, Span<double> dest, int at)
+    {
+        int start = at;
+        for (int i = 0; i < source.Length; i++)
+        {
+            if (mask[i] != 0)
+            {
+                dest[at++] = source[i];
+            }
+        }
+
+        return at - start;
     }
 
     /// <summary>
@@ -770,6 +782,58 @@ public static class PackedMath
                 // Math.Pow semantics: a vectorized exp/log form would return NaN for negative
                 // bases with integral exponents, so this stays scalar deliberately.
                 for (int i = 0; i < d.Length; i++) { d[i] = Math.Pow(x[i], y[i]); }
+                break;
+            default: throw UnknownOp(op);
+        }
+    }
+
+    /// <summary>One span of <see cref="BinaryScalarRight"/>.</summary>
+    private static void BinaryScalarRightChunk(BinaryOp op, Span<double> x, double scalar, Span<double> d)
+    {
+        int len = d.Length;
+        switch (op)
+        {
+            case BinaryOp.Add: TensorPrimitives.Add<double>(x, scalar, d); break;
+            case BinaryOp.Subtract: TensorPrimitives.Add<double>(x, -scalar, d); break;
+            case BinaryOp.Multiply: TensorPrimitives.Multiply<double>(x, scalar, d); break;
+            case BinaryOp.Divide: TensorPrimitives.Divide<double>(x, scalar, d); break;
+            case BinaryOp.Remainder:
+                for (int i = 0; i < len; i++) { d[i] = x[i] % scalar; }
+                break;
+
+            // Not special-cased to x*x for an exponent of 2, tempting as it is: Math.Pow is not
+            // correctly rounded, and over 212 million random doubles it disagreed with the product
+            // on 52,298 of them by one ulp. The product is the better answer and the boxed
+            // interpreter does not give it, so taking it here would buy speed with parity.
+            case BinaryOp.Power:
+                for (int i = 0; i < len; i++) { d[i] = Math.Pow(x[i], scalar); }
+                break;
+            default: throw UnknownOp(op);
+        }
+    }
+
+    /// <summary>One span of <see cref="BinaryScalarLeft"/>.</summary>
+    private static void BinaryScalarLeftChunk(BinaryOp op, double scalar, Span<double> y, Span<double> d)
+    {
+        int len = d.Length;
+        switch (op)
+        {
+            case BinaryOp.Add: TensorPrimitives.Add<double>(y, scalar, d); break;
+            case BinaryOp.Subtract:
+                // scalar - y, vectorized in two passes: d = scalar; d -= y.
+                d.Fill(scalar);
+                TensorPrimitives.Subtract<double>(d, y, d);
+                break;
+            case BinaryOp.Multiply: TensorPrimitives.Multiply<double>(y, scalar, d); break;
+            case BinaryOp.Divide:
+                d.Fill(scalar);
+                TensorPrimitives.Divide<double>(d, y, d);
+                break;
+            case BinaryOp.Remainder:
+                for (int i = 0; i < len; i++) { d[i] = scalar % y[i]; }
+                break;
+            case BinaryOp.Power:
+                for (int i = 0; i < len; i++) { d[i] = Math.Pow(scalar, y[i]); }
                 break;
             default: throw UnknownOp(op);
         }

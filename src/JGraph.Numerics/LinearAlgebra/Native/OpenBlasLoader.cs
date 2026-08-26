@@ -71,8 +71,16 @@ internal static class OpenBlasLoader
     private static int DefaultThreadCount() =>
         Math.Clamp(ProcessorTopology.PhysicalCoreCount() ?? Environment.ProcessorCount, 1, 16);
 
+    /// <summary>
+    /// <c>JGRAPH_BLAS_THREADS</c> if this machine wants the native side counted differently from the
+    /// managed one; otherwise <c>JGRAPH_THREADS</c>, which is the single answer to "how much of this
+    /// machine may JGraph's arithmetic take" and is what <see cref="ParallelKernels"/> reads too.
+    /// </summary>
     private static int? ThreadCountFromEnvironment() =>
-        int.TryParse(Environment.GetEnvironmentVariable("JGRAPH_BLAS_THREADS"), out int count) && count > 0
+        Asked("JGRAPH_BLAS_THREADS") ?? Asked("JGRAPH_THREADS");
+
+    private static int? Asked(string variable) =>
+        int.TryParse(Environment.GetEnvironmentVariable(variable), out int count) && count > 0
             ? Math.Min(count, 64)
             : null;
 }

@@ -229,18 +229,21 @@ public class PackedMathTests
     [Fact]
     public void ChunkedOperations_InvokeTheCallbackBetweenChunks_AndHonorCancellation()
     {
-        // Two full chunks plus a partial third.
-        int length = PackedMath.ChunkElements * 2 + 100;
+        // One full grain plus a partial second, and short enough to stay under M93's threading
+        // threshold — so the callback count is a fixed number here rather than a race between
+        // grains. The threaded cadence has a test of its own in ParallelKernelsM93Tests.
+        int length = ParallelKernels.GrainElements + 100;
+        Assert.True(length < ParallelKernels.MemoryBoundThreshold);
         using var a = new ManagedBuffer(length);
         using var dest = new ManagedBuffer(length);
 
         int calls = 0;
         PackedMath.BinaryScalarRight(PackedMath.BinaryOp.Add, a, 1, dest, () => calls++);
-        Assert.Equal(3, calls);
+        Assert.Equal(2, calls);
         Assert.Equal(1, dest.AsSpan()[length - 1]);
 
         // A callback that throws (the interpreter's cancellation poll) stops the operation
-        // after the first chunk instead of running to completion.
+        // after the first grain instead of running to completion.
         int seen = 0;
         Assert.Throws<OperationCanceledException>(() =>
             PackedMath.BinaryScalarRight(PackedMath.BinaryOp.Add, a, 1, dest,

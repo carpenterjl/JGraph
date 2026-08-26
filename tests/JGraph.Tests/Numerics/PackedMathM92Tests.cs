@@ -79,11 +79,13 @@ public class PackedMathM92Tests
     {
         Assert.Equal(PackedMath.Determinism.Approximate, PackedMath.DeterminismOf(op));
 
-        // M92 lands the tier plumbing switched off, so every length answers the scalar kernel and a
-        // packed array cannot disagree with a boxed one. M93 lowers the threshold, with the ADR and
-        // the ulp bounds that decision needs.
+        // M92 built the switch and left it alone; M93 lowered the line it draws to 32K. Below that
+        // line the scalar kernel still answers, which is what keeps every printed array, every
+        // parity-corpus script and every hand-checked expected value exactly where they were. The
+        // flip above the line is asserted in ParallelKernelsM93Tests.
         Assert.False(PackedMath.Vectorizes(op, 1));
-        Assert.False(PackedMath.Vectorizes(op, 100_000_000));
+        Assert.False(PackedMath.Vectorizes(op, PackedMath.ApproximateThreshold - 1));
+        Assert.True(PackedMath.Vectorizes(op, PackedMath.ApproximateThreshold));
 
         double[] source = Awkward(1_000);
         using var input = From((double[])source.Clone());

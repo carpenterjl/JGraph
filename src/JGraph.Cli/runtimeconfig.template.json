@@ -1,0 +1,6 @@
+{
+  "//": "Server GC for the headless runner. A script's working set is a few very large arrays and a great many short-lived values around them; workstation GC collects those on the one thread that is also running the script, and a gen-0 sweep in the middle of a fifty-million-element statement is time the statement pays for. Server GC gives the collector a heap and a thread per core, which is what the rest of M93 assumes when it hands the arithmetic to every core the machine has.",
+  "configProperties": {
+    "System.GC.Server": true
+  }
+}
