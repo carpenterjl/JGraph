@@ -178,14 +178,6 @@ internal static class PackedOps
         return result;
     }
 
-    /// <summary>Elementwise negation of a packed array (bools negate to numbers, as when boxed).</summary>
-    public static JgsValue Negate(JgsValue packed, Action? cancelCheck)
-    {
-        NumericBuffer dest = JgsPacking.Allocate(packed.ArrayLength);
-        PackedMath.Unary(PackedMath.UnaryOp.Negate, packed.AsBuffer, dest, cancelCheck);
-        return JgsValue.Packed(dest);
-    }
-
     /// <summary>Materializes a colon range directly into a packed buffer.</summary>
     public static JgsValue CreateRange(double start, double step, long count, Action? cancelCheck)
     {
@@ -265,6 +257,33 @@ internal static class PackedOps
         return true;
     }
 
+    /// <summary>
+    /// The one indexing arrangement worth not building a list of positions for: a packed array read
+    /// through a packed logical mask of its own length (M92). Those positions would be one int per
+    /// match — over a hundred megabytes for a fifty-million-element mask, written once and read once
+    /// — where the elements they name can be copied across in the pass that finds them.
+    /// </summary>
+    /// <remarks>
+    /// Anything else answers false, including a mask whose length does not match: the caller's
+    /// ordinary road raises that as the error it is, and this one is not the place to say so.
+    /// </remarks>
+    public static bool TryMaskGather(JgsValue target, JgsValue selector, out JgsValue result)
+    {
+        if (!IsPackedArray(target) || !IsPackedArray(selector)
+            || selector.PackedKind != JgsPackedKind.Bool
+            || selector.ArrayLength != target.ArrayLength)
+        {
+            result = JgsValue.Null;
+            return false;
+        }
+
+        NumericBuffer mask = selector.AsBuffer;
+        NumericBuffer dest = JgsPacking.Allocate(PackedMath.CountNonZero(mask));
+        PackedMath.Compact(target.AsBuffer, mask, dest);
+        result = JgsValue.Packed(dest, target.PackedKind);
+        return true;
+    }
+
     /// <summary>Gathers picked elements of a packed array into a new packed array of the same kind.</summary>
     public static JgsValue Gather(JgsValue packed, int[] picks)
     {
@@ -317,7 +336,7 @@ internal static class PackedOps
             return System.Array.Empty<int>(); // an empty selector picks nothing, mask or not
         }
 
-        var picks = new List<int>();
+        int[] picks;
         if (selector.PackedKind == JgsPackedKind.Bool)
         {
             if (span.Length != targetLength)
@@ -326,24 +345,30 @@ internal static class PackedOps
                     $"A mask must match the {targetName} length (mask {span.Length}, {targetName} {targetLength}).");
             }
 
+            // Counted first, then filled (M92): a List of a few million matches spends most of its
+            // time doubling and then copies the lot once more on the way out, where the count is one
+            // vector pass over storage that is about to be read again anyway.
+            picks = new int[PackedMath.CountNonZero(buffer)];
+            int next = 0;
             for (int i = 0; i < span.Length; i++)
             {
                 if (span[i] != 0)
                 {
-                    picks.Add(i);
+                    picks[next++] = i;
                 }
             }
         }
         else
         {
+            picks = new int[span.Length];
             for (int i = 0; i < span.Length; i++)
             {
-                picks.Add(ToIndex(span[i], targetLength, indexBase, line, column));
+                picks[i] = ToIndex(span[i], targetLength, indexBase, line, column);
             }
         }
 
         GC.KeepAlive(buffer);
-        return picks.ToArray();
+        return picks;
     }
 
     /// <summary>

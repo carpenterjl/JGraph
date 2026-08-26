@@ -1,4 +1,5 @@
 using System.Numerics;
+using JGraph.Numerics;
 
 namespace JGraph.Scripting.Jgs;
 
@@ -47,19 +48,83 @@ internal static partial class JgsBuiltins
     /// A static helper taking <paramref name="define"/> rather than a local function, because
     /// <c>Math1</c> is declared separately in four files and a fifth copy of this one is how a family
     /// drifts apart. The registration sites pass their own <c>Define</c> by method group.
+    /// <para>
+    /// The trailing <c>vectorOp</c> names the kernel that computes <paramref name="fastReal"/> over a
+    /// whole buffer, where one exists (M92). Supplying it takes the flat path off a delegate call per
+    /// element and never changes an answer: <see cref="PackedMath.UnaryTiered"/> reaches for the
+    /// vector form only where that form is exact, and otherwise calls the same
+    /// <see cref="System.Math"/> function the delegate would have.
+    /// </para>
     /// </remarks>
     private static void MathX(
         Action<string, Func<IReadOnlyList<JgsValue>, int, int, JgsValue>> define,
         string name,
         Func<double, double> fastReal,
         Func<double, bool> staysReal,
-        Func<Complex, Complex> complexResult) =>
+        Func<Complex, Complex> complexResult,
+        PackedMath.UnaryOp? vectorOp = null) =>
         define(name, (args, line, col) =>
         {
             Arity(name, args, 1, line, col);
             return MapComplexProducing(name, args[0], fastReal, staysReal,
-                z => JgsValue.ComplexNum(complexResult(z)), line, col);
+                z => JgsValue.ComplexNum(complexResult(z)), line, col, vectorOp);
         });
+
+    // --- The whole-array domain check ------------------------------------------------------------
+
+    /// <summary>The two predicates below, as fields, so a caller's can be recognized as one of them.</summary>
+    private static readonly Func<double, bool> AlwaysReal = Always;
+
+    /// <summary>See <see cref="AlwaysReal"/>.</summary>
+    private static readonly Func<double, bool> NonNegativeReal = NonNegative;
+
+    /// <summary>
+    /// Runs a function's real definition over a whole packed buffer, if every element is inside its
+    /// real domain — the question <see cref="MapComplexProducing"/> has to answer before it commits
+    /// to the flat path. Answers false having written nothing the caller should keep.
+    /// </summary>
+    /// <remarks>
+    /// The predicate is the answer, and asking it fifty million times is a large part of what a
+    /// <c>sqrt</c> of fifty million elements used to cost. Two predicates cover the whole hot family
+    /// and neither needs asking element by element: <see cref="Always"/> needs no look at all, and
+    /// <see cref="NonNegative"/> is a lower bound, which
+    /// <see cref="PackedMath.TryUnaryAtLeast"/> checks in the same pass over storage as the
+    /// arithmetic. Everything else scans with the predicate, as it always did.
+    /// </remarks>
+    private static bool TryFlatRealMap(NumericBuffer source, NumericBuffer dest,
+                                       Func<double, double> fastReal, Func<double, bool> staysReal,
+                                       PackedMath.UnaryOp? vectorOp)
+    {
+        if (staysReal == AlwaysReal)
+        {
+            ApplyUnary(source, dest, fastReal, vectorOp);
+            return true;
+        }
+
+        if (staysReal == NonNegativeReal && vectorOp is { } kernel)
+        {
+            return PackedMath.TryUnaryAtLeast(kernel, 0, source, dest);
+        }
+
+        bool all = true;
+        foreach (double x in source.AsSpan())
+        {
+            if (!staysReal(x))
+            {
+                all = false;
+                break;
+            }
+        }
+
+        GC.KeepAlive(source);
+        if (!all)
+        {
+            return false;
+        }
+
+        ApplyUnary(source, dest, fastReal, vectorOp);
+        return true;
+    }
 
     // --- Domain predicates -----------------------------------------------------------------------
     //

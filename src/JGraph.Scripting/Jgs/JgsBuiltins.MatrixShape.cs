@@ -1,4 +1,5 @@
 using System.Numerics;
+using JGraph.Numerics;
 
 namespace JGraph.Scripting.Jgs;
 
@@ -304,6 +305,34 @@ internal static partial class JgsBuiltins
         Define("dot", (args, line, col) =>
         {
             Arity("dot", args, 2, line, col);
+
+            // Two packed real vectors are the overwhelming case, and boxing them into Complex[] to
+            // multiply by a zero imaginary part is most of what it used to cost (M92). Conjugating a
+            // real number is a no-op and (a,0)·(b,0) is (a·b, 0), so the running total below is the
+            // real part of the complex one, term for term — the same left fold, the same rounding.
+            if (args[0].IsPacked && args[1].IsPacked)
+            {
+                NumericBuffer left = args[0].AsBuffer;
+                NumericBuffer right = args[1].AsBuffer;
+                if (left.Length != right.Length)
+                {
+                    throw new JgsRuntimeException(line, col,
+                        $"dot needs vectors of equal length, but got {left.Length} and {right.Length}.");
+                }
+
+                double total = 0;
+                ReadOnlySpan<double> xs = left.AsSpan();
+                ReadOnlySpan<double> ys = right.AsSpan();
+                for (int i = 0; i < xs.Length; i++)
+                {
+                    total += xs[i] * ys[i];
+                }
+
+                GC.KeepAlive(left);
+                GC.KeepAlive(right);
+                return JgsValue.Number(total);
+            }
+
             Complex[] a = ComplexArray("dot", args, 0, line, col);
             Complex[] b = ComplexArray("dot", args, 1, line, col);
             if (a.Length != b.Length)

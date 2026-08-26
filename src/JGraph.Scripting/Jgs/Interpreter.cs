@@ -1881,7 +1881,8 @@ internal sealed partial class Interpreter
         // Minus: numeric negation, element-wise over arrays (complex included). Negation stays inside
         // the operand's class, so -uint8(5) saturates to 0 rather than escaping to a negative double.
         return JgsNumericClasses.Stamp(
-            MapNumeric(operand, v => -v, "-", unary.Line, unary.Column, static c => -c),
+            MapNumeric(operand, static v => -v, "-", unary.Line, unary.Column, static c => -c,
+                PackedMath.UnaryOp.Negate),
             operand.NumericClass);
     }
 
@@ -3789,6 +3790,11 @@ internal sealed partial class Interpreter
             return isString ? JgsValue.Str(target.AsString[single].ToString()) : target.ElementAt(single);
         }
 
+        if (!isString && PackedOps.TryMaskGather(target, index, out JgsValue compacted))
+        {
+            return OrientGather(compacted, target, index);
+        }
+
         int[] picks = ComputePicks(index, length, target.TypeName, line, column);
         if (isString)
         {
@@ -5407,7 +5413,8 @@ internal sealed partial class Interpreter
         return broadcast;
     }
 
-    private JgsValue MapNumeric(JgsValue value, Func<double, double> op, string symbol, int line, int column, Func<Complex, Complex>? complexOp = null)
+    private JgsValue MapNumeric(JgsValue value, Func<double, double> op, string symbol, int line, int column,
+                                Func<Complex, Complex>? complexOp = null, PackedMath.UnaryOp? vectorOp = null)
     {
         if (IsNumericScalar(value))
         {
@@ -5423,11 +5430,20 @@ internal sealed partial class Interpreter
         {
             if (value.IsPacked)
             {
-                // The same scalar delegate runs over the flat buffer — bit-identical results with
-                // no per-element boxing (bools read as 0/1, and the result kind is Number, exactly
-                // as the boxed branch produces).
+                // The same arithmetic runs over the flat buffer — bit-identical results with no
+                // per-element boxing (bools read as 0/1, and the result kind is Number, exactly as
+                // the boxed branch produces). A named kernel gets there without a delegate call per
+                // element as well (M92); the delegate is the fallback for operators without one.
                 NumericBuffer dest = JgsPacking.Allocate(value.ArrayLength);
-                PackedMath.Map(value.AsBuffer, dest, new Func<double, double>(op), _cancelCheck);
+                if (vectorOp is { } kernel)
+                {
+                    PackedMath.UnaryTiered(kernel, value.AsBuffer, dest, _cancelCheck);
+                }
+                else
+                {
+                    PackedMath.Map(value.AsBuffer, dest, op, _cancelCheck);
+                }
+
                 return KeepShape(value, JgsValue.Packed(dest));
             }
 
@@ -5436,7 +5452,7 @@ internal sealed partial class Interpreter
             for (int i = 0; i < result.Length; i++)
             {
                 // Recurse so nested arrays map elementwise as well.
-                result[i] = MapNumeric(source[i], op, symbol, line, column, complexOp);
+                result[i] = MapNumeric(source[i], op, symbol, line, column, complexOp, vectorOp);
             }
 
             return KeepShape(value, JgsValue.Array(result));

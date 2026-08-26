@@ -1,4 +1,6 @@
+using System.Numerics;
 using System.Numerics.Tensors;
+using System.Runtime.InteropServices;
 
 namespace JGraph.Numerics;
 
@@ -19,6 +21,12 @@ public static class PackedMath
 {
     /// <summary>Elements per chunk (4M ≈ 32 MB): milliseconds of work between cancellation polls.</summary>
     public const int ChunkElements = 1 << 22;
+
+    /// <summary>
+    /// Elements per tile when an operation reads its input twice (8K ≈ 64 KB): small enough that the
+    /// second read comes from cache rather than from memory.
+    /// </summary>
+    private const int DomainTileElements = 1 << 13;
 
     /// <summary>Elementwise binary operations.</summary>
     public enum BinaryOp
@@ -58,6 +66,47 @@ public static class PackedMath
         Equal,
         NotEqual,
     }
+
+    /// <summary>
+    /// Whether a vector kernel's answers are the scalar loop's answers, bit for bit.
+    /// </summary>
+    /// <remarks>
+    /// <see cref="Determinism.Exact"/> means the vector form is provably the same arithmetic: the
+    /// IEEE operations (negate, abs, sqrt, floor, ceil) compute one correctly-rounded result per
+    /// element however many of them a register holds, so wiring them changes nothing a script can
+    /// read. <see cref="Determinism.Approximate"/> means the vector form is a different polynomial
+    /// from the scalar one — <see cref="TensorPrimitives"/>' transcendentals land within a few ulps
+    /// of <see cref="Math"/>'s, not on them — so a packed array and a boxed one would print
+    /// differently at full precision. Those wait behind <see cref="ApproximateThreshold"/>.
+    /// </remarks>
+    public enum Determinism
+    {
+        /// <summary>The vector kernel and the scalar loop agree bit for bit.</summary>
+        Exact,
+
+        /// <summary>The vector kernel is within a few ulps of the scalar loop, not on it.</summary>
+        Approximate,
+    }
+
+    /// <summary>The determinism tier of <paramref name="op"/>'s vector kernel.</summary>
+    public static Determinism DeterminismOf(UnaryOp op) => op switch
+    {
+        UnaryOp.Negate or UnaryOp.Abs or UnaryOp.Sqrt or UnaryOp.Floor or UnaryOp.Ceiling
+            or UnaryOp.Round => Determinism.Exact,
+        _ => Determinism.Approximate,
+    };
+
+    /// <summary>
+    /// The element count at or above which an <see cref="Determinism.Approximate"/> kernel is worth
+    /// the last few ulps. M92 lands the plumbing switched off (<see cref="int.MaxValue"/>, so the
+    /// scalar loop always wins the choice); M93 lowers it once the tier policy has an ADR and the
+    /// ulp-bound tests to go with it.
+    /// </summary>
+    public static int ApproximateThreshold { get; set; } = int.MaxValue;
+
+    /// <summary>Whether <paramref name="length"/> elements of <paramref name="op"/> take the vector kernel.</summary>
+    public static bool Vectorizes(UnaryOp op, long length) =>
+        DeterminismOf(op) == Determinism.Exact || length >= ApproximateThreshold;
 
     /// <summary>dest[i] = a[i] op b[i]. All three buffers must share a length; dest may alias a source.</summary>
     public static void Binary(BinaryOp op, NumericBuffer a, NumericBuffer b, NumericBuffer dest,
@@ -156,27 +205,99 @@ public static class PackedMath
         for (int start = 0; start < dest.Length; start += ChunkElements)
         {
             int len = Math.Min(ChunkElements, dest.Length - start);
+            UnaryChunk(op, source.AsSpan(start, len), dest.AsSpan(start, len));
+            betweenChunks?.Invoke();
+        }
+
+        GC.KeepAlive(source);
+        GC.KeepAlive(dest);
+    }
+
+    /// <summary>
+    /// dest[i] = op(source[i]) through <see cref="Math"/>'s own scalar functions — the same
+    /// arithmetic <see cref="Map"/> would run, without a delegate call per element.
+    /// </summary>
+    /// <remarks>
+    /// This is what an <see cref="Determinism.Approximate"/> operation runs below
+    /// <see cref="ApproximateThreshold"/>: identical to the boxed interpreter's answers by
+    /// construction, because it calls the very functions the boxed interpreter calls. The switch is
+    /// outside the loop, so the call it leaves behind is a direct one.
+    /// </remarks>
+    public static void UnaryScalar(UnaryOp op, NumericBuffer source, NumericBuffer dest,
+                                   Action? betweenChunks = null)
+    {
+        RequireSameLength(source.Length, dest.Length);
+        for (int start = 0; start < dest.Length; start += ChunkElements)
+        {
+            int len = Math.Min(ChunkElements, dest.Length - start);
+            UnaryScalarChunk(op, source.AsSpan(start, len), dest.AsSpan(start, len));
+            betweenChunks?.Invoke();
+        }
+
+        GC.KeepAlive(source);
+        GC.KeepAlive(dest);
+    }
+
+    /// <summary>
+    /// dest[i] = op(source[i]) through whichever kernel this operation's determinism tier allows at
+    /// this length: the vector one when it is exact or the array is large enough to be worth a few
+    /// ulps, the scalar one otherwise. The caller does not have to know which tier an operation is in.
+    /// </summary>
+    public static void UnaryTiered(UnaryOp op, NumericBuffer source, NumericBuffer dest,
+                                   Action? betweenChunks = null)
+    {
+        if (Vectorizes(op, source.Length))
+        {
+            Unary(op, source, dest, betweenChunks);
+        }
+        else
+        {
+            UnaryScalar(op, source, dest, betweenChunks);
+        }
+    }
+
+    /// <summary>
+    /// <see cref="UnaryTiered"/>, but only where every element is at least
+    /// <paramref name="lowerBound"/> — the domain check a function with a half-line for a real
+    /// domain needs, in the same pass over storage as the arithmetic rather than a pass of its own.
+    /// NaN is admitted: it is at no distance from the bound and answers NaN either way.
+    /// </summary>
+    /// <remarks>
+    /// Answers false the moment a tile falls outside, having already written the tiles before it —
+    /// so <paramref name="dest"/> must be a buffer the caller is free to throw away, which is what a
+    /// caller about to take a promoting road has. The tile is sized to stay in cache between the
+    /// check and the arithmetic, so the second read of it is not a second read of memory.
+    /// </remarks>
+    public static bool TryUnaryAtLeast(UnaryOp op, double lowerBound, NumericBuffer source,
+                                       NumericBuffer dest, Action? betweenChunks = null)
+    {
+        RequireSameLength(source.Length, dest.Length);
+        bool vector = Vectorizes(op, source.Length);
+        for (int start = 0; start < dest.Length; start += ChunkElements)
+        {
+            int len = Math.Min(ChunkElements, dest.Length - start);
             Span<double> x = source.AsSpan(start, len);
             Span<double> d = dest.AsSpan(start, len);
-            switch (op)
+            for (int at = 0; at < len; at += DomainTileElements)
             {
-                case UnaryOp.Negate: TensorPrimitives.Negate<double>(x, d); break;
-                case UnaryOp.Abs: TensorPrimitives.Abs<double>(x, d); break;
-                case UnaryOp.Sqrt: TensorPrimitives.Sqrt<double>(x, d); break;
-                case UnaryOp.Floor: TensorPrimitives.Floor<double>(x, d); break;
-                case UnaryOp.Ceiling: TensorPrimitives.Ceiling<double>(x, d); break;
-                case UnaryOp.Round:
-                    // Match Math.Round's banker's rounding exactly; TensorPrimitives.Round agrees,
-                    // but the scalar loop keeps midpoint semantics pinned to the boxed path.
-                    for (int i = 0; i < len; i++) { d[i] = Math.Round(x[i]); }
-                    break;
-                case UnaryOp.Sin: TensorPrimitives.Sin<double>(x, d); break;
-                case UnaryOp.Cos: TensorPrimitives.Cos<double>(x, d); break;
-                case UnaryOp.Tan: TensorPrimitives.Tan<double>(x, d); break;
-                case UnaryOp.Exp: TensorPrimitives.Exp<double>(x, d); break;
-                case UnaryOp.Log: TensorPrimitives.Log<double>(x, d); break;
-                case UnaryOp.Log10: TensorPrimitives.Log10<double>(x, d); break;
-                default: throw UnknownOp(op);
+                int tile = Math.Min(DomainTileElements, len - at);
+                Span<double> xt = x.Slice(at, tile);
+                if (!NoneBelow(xt, lowerBound))
+                {
+                    GC.KeepAlive(source);
+                    GC.KeepAlive(dest);
+                    return false;
+                }
+
+                Span<double> dt = d.Slice(at, tile);
+                if (vector)
+                {
+                    UnaryChunk(op, xt, dt);
+                }
+                else
+                {
+                    UnaryScalarChunk(op, xt, dt);
+                }
             }
 
             betweenChunks?.Invoke();
@@ -184,6 +305,7 @@ public static class PackedMath
 
         GC.KeepAlive(source);
         GC.KeepAlive(dest);
+        return true;
     }
 
     /// <summary>dest[i] = f(source[i]) — the scalar escape hatch for operations without an enum entry.</summary>
@@ -205,6 +327,61 @@ public static class PackedMath
         }
 
         GC.KeepAlive(source);
+        GC.KeepAlive(dest);
+    }
+
+    /// <summary>dest[i] = f(a[i], b[i]) — <see cref="Map"/>'s two-operand form (atan2, hypot, mod).</summary>
+    public static void Zip(NumericBuffer a, NumericBuffer b, NumericBuffer dest,
+                           Func<double, double, double> f, Action? betweenChunks = null)
+    {
+        RequireSameLength(a.Length, dest.Length);
+        RequireSameLength(b.Length, dest.Length);
+        for (int start = 0; start < dest.Length; start += ChunkElements)
+        {
+            int len = Math.Min(ChunkElements, dest.Length - start);
+            Span<double> x = a.AsSpan(start, len);
+            Span<double> y = b.AsSpan(start, len);
+            Span<double> d = dest.AsSpan(start, len);
+            for (int i = 0; i < len; i++)
+            {
+                d[i] = f(x[i], y[i]);
+            }
+
+            betweenChunks?.Invoke();
+        }
+
+        GC.KeepAlive(a);
+        GC.KeepAlive(b);
+        GC.KeepAlive(dest);
+    }
+
+    /// <summary>
+    /// dest[i] = f(a[i], scalar), or f(scalar, a[i]) when <paramref name="scalarOnLeft"/> — the
+    /// mixed-arity arm of <see cref="Zip"/>.
+    /// </summary>
+    public static void ZipScalar(NumericBuffer a, double scalar, NumericBuffer dest,
+                                 Func<double, double, double> f, bool scalarOnLeft = false,
+                                 Action? betweenChunks = null)
+    {
+        RequireSameLength(a.Length, dest.Length);
+        for (int start = 0; start < dest.Length; start += ChunkElements)
+        {
+            int len = Math.Min(ChunkElements, dest.Length - start);
+            Span<double> x = a.AsSpan(start, len);
+            Span<double> d = dest.AsSpan(start, len);
+            if (scalarOnLeft)
+            {
+                for (int i = 0; i < len; i++) { d[i] = f(scalar, x[i]); }
+            }
+            else
+            {
+                for (int i = 0; i < len; i++) { d[i] = f(x[i], scalar); }
+            }
+
+            betweenChunks?.Invoke();
+        }
+
+        GC.KeepAlive(a);
         GC.KeepAlive(dest);
     }
 
@@ -248,14 +425,7 @@ public static class PackedMath
         for (int start = 0; start < dest.Length; start += ChunkElements)
         {
             int len = Math.Min(ChunkElements, dest.Length - start);
-            Span<double> x = a.AsSpan(start, len);
-            Span<double> y = b.AsSpan(start, len);
-            Span<double> d = dest.AsSpan(start, len);
-            for (int i = 0; i < len; i++)
-            {
-                d[i] = Holds(op, x[i], y[i]) ? 1.0 : 0.0;
-            }
-
+            CompareChunk(op, a.AsSpan(start, len), b.AsSpan(start, len), dest.AsSpan(start, len));
             betweenChunks?.Invoke();
         }
 
@@ -269,25 +439,67 @@ public static class PackedMath
                                      bool scalarOnLeft = false, Action? betweenChunks = null)
     {
         RequireSameLength(a.Length, dest.Length);
+
+        // `scalar op x` is `x` mirrored-op `scalar` for every pair of doubles there is, NaN included
+        // (both readings are false there), so one kernel serves both sides and neither has a branch
+        // inside the loop.
+        CompareOp effective = scalarOnLeft ? Mirror(op) : op;
         for (int start = 0; start < dest.Length; start += ChunkElements)
         {
             int len = Math.Min(ChunkElements, dest.Length - start);
+            CompareScalarChunk(effective, a.AsSpan(start, len), scalar, dest.AsSpan(start, len));
+            betweenChunks?.Invoke();
+        }
+
+        GC.KeepAlive(a);
+        GC.KeepAlive(dest);
+    }
+
+    /// <summary>
+    /// How many elements are not zero — <c>nnz</c>, and the count behind a mask. Negative zero is
+    /// zero and NaN is not, which is what <c>!= 0</c> says of both.
+    /// </summary>
+    public static long CountNonZero(NumericBuffer a, Action? betweenChunks = null)
+    {
+        long count = 0;
+        for (int start = 0; start < a.Length; start += ChunkElements)
+        {
+            int len = Math.Min(ChunkElements, a.Length - start);
             Span<double> x = a.AsSpan(start, len);
-            Span<double> d = dest.AsSpan(start, len);
-            if (scalarOnLeft)
+            int i = 0;
+            int width = Vector<double>.Count;
+            if (Vector.IsHardwareAccelerated && len >= width)
             {
-                for (int i = 0; i < len; i++) { d[i] = Holds(op, scalar, x[i]) ? 1.0 : 0.0; }
+                ref double xr = ref MemoryMarshal.GetReference(x);
+                Vector<double> zero = Vector<double>.Zero;
+
+                // Equals gives all-ones per zero lane; its complement gives -1 per non-zero lane,
+                // and subtracting that adds one. NaN is unequal to zero, so it counts — as it must.
+                Vector<long> tally = Vector<long>.Zero;
+                for (; i <= len - width; i += width)
+                {
+                    tally -= Vector.OnesComplement(Vector.Equals(Vector.LoadUnsafe(ref xr, (nuint)i), zero));
+                }
+
+                for (int lane = 0; lane < width; lane++)
+                {
+                    count += tally[lane];
+                }
             }
-            else
+
+            for (; i < len; i++)
             {
-                for (int i = 0; i < len; i++) { d[i] = Holds(op, x[i], scalar) ? 1.0 : 0.0; }
+                if (x[i] != 0)
+                {
+                    count++;
+                }
             }
 
             betweenChunks?.Invoke();
         }
 
         GC.KeepAlive(a);
-        GC.KeepAlive(dest);
+        return count;
     }
 
     /// <summary>Left-fold sum in index order — bit-identical to the boxed interpreter's accumulation.</summary>
@@ -379,6 +591,39 @@ public static class PackedMath
         GC.KeepAlive(dest);
     }
 
+    /// <summary>
+    /// dest[k++] = source[i] for every i where mask[i] is not zero — a masked read that never builds
+    /// the list of positions it would otherwise gather through. <paramref name="dest"/> must be
+    /// exactly <see cref="CountNonZero"/> of the mask long. Returns how many elements were written.
+    /// </summary>
+    public static int Compact(NumericBuffer source, NumericBuffer mask, NumericBuffer dest,
+                              Action? betweenChunks = null)
+    {
+        RequireSameLength(mask.Length, source.Length);
+        int written = 0;
+        for (int start = 0; start < source.Length; start += ChunkElements)
+        {
+            int len = Math.Min(ChunkElements, source.Length - start);
+            Span<double> s = source.AsSpan(start, len);
+            Span<double> m = mask.AsSpan(start, len);
+            Span<double> d = dest.AsSpan();
+            for (int i = 0; i < len; i++)
+            {
+                if (m[i] != 0)
+                {
+                    d[written++] = s[i];
+                }
+            }
+
+            betweenChunks?.Invoke();
+        }
+
+        GC.KeepAlive(source);
+        GC.KeepAlive(mask);
+        GC.KeepAlive(dest);
+        return written;
+    }
+
     /// <summary>dest[i] = source[picks[i]] (slice/mask read).</summary>
     public static void Gather(NumericBuffer source, ReadOnlySpan<int> picks, NumericBuffer dest)
     {
@@ -419,6 +664,94 @@ public static class PackedMath
         }
 
         GC.KeepAlive(dest);
+    }
+
+    /// <summary>
+    /// Whether no element is strictly below <paramref name="bound"/> — the domain test of a function
+    /// whose real domain is a half-line.
+    /// </summary>
+    /// <remarks>
+    /// An any-below test rather than a minimum, because a minimum propagates NaN and would then be
+    /// NaN for a tile holding a NaN <em>and</em> a negative — passing the tile and answering NaN for
+    /// the element that should have promoted to a complex number. A NaN fails every comparison
+    /// including this one, so it is admitted here on its own, without hiding anything beside it.
+    /// </remarks>
+    private static bool NoneBelow(Span<double> x, double bound)
+    {
+        int i = 0;
+        int width = Vector<double>.Count;
+        if (Vector.IsHardwareAccelerated && x.Length >= width)
+        {
+            ref double xr = ref MemoryMarshal.GetReference(x);
+            var limit = new Vector<double>(bound);
+            Vector<long> below = Vector<long>.Zero;
+            for (; i <= x.Length - width; i += width)
+            {
+                below |= Vector.LessThan(Vector.LoadUnsafe(ref xr, (nuint)i), limit);
+            }
+
+            if (below != Vector<long>.Zero)
+            {
+                return false;
+            }
+        }
+
+        for (; i < x.Length; i++)
+        {
+            if (x[i] < bound)
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /// <summary>One span of <see cref="Unary"/>: the vector kernel of every operation that has one.</summary>
+    private static void UnaryChunk(UnaryOp op, Span<double> x, Span<double> d)
+    {
+        switch (op)
+        {
+            case UnaryOp.Negate: TensorPrimitives.Negate<double>(x, d); break;
+            case UnaryOp.Abs: TensorPrimitives.Abs<double>(x, d); break;
+            case UnaryOp.Sqrt: TensorPrimitives.Sqrt<double>(x, d); break;
+            case UnaryOp.Floor: TensorPrimitives.Floor<double>(x, d); break;
+            case UnaryOp.Ceiling: TensorPrimitives.Ceiling<double>(x, d); break;
+            case UnaryOp.Round:
+                // Match Math.Round's banker's rounding exactly; TensorPrimitives.Round agrees,
+                // but the scalar loop keeps midpoint semantics pinned to the boxed path.
+                for (int i = 0; i < d.Length; i++) { d[i] = Math.Round(x[i]); }
+                break;
+            case UnaryOp.Sin: TensorPrimitives.Sin<double>(x, d); break;
+            case UnaryOp.Cos: TensorPrimitives.Cos<double>(x, d); break;
+            case UnaryOp.Tan: TensorPrimitives.Tan<double>(x, d); break;
+            case UnaryOp.Exp: TensorPrimitives.Exp<double>(x, d); break;
+            case UnaryOp.Log: TensorPrimitives.Log<double>(x, d); break;
+            case UnaryOp.Log10: TensorPrimitives.Log10<double>(x, d); break;
+            default: throw UnknownOp(op);
+        }
+    }
+
+    /// <summary>One span of <see cref="UnaryScalar"/>: <see cref="Math"/>'s own functions, called directly.</summary>
+    private static void UnaryScalarChunk(UnaryOp op, Span<double> x, Span<double> d)
+    {
+        int len = d.Length;
+        switch (op)
+        {
+            case UnaryOp.Negate: for (int i = 0; i < len; i++) { d[i] = -x[i]; } break;
+            case UnaryOp.Abs: for (int i = 0; i < len; i++) { d[i] = Math.Abs(x[i]); } break;
+            case UnaryOp.Sqrt: for (int i = 0; i < len; i++) { d[i] = Math.Sqrt(x[i]); } break;
+            case UnaryOp.Floor: for (int i = 0; i < len; i++) { d[i] = Math.Floor(x[i]); } break;
+            case UnaryOp.Ceiling: for (int i = 0; i < len; i++) { d[i] = Math.Ceiling(x[i]); } break;
+            case UnaryOp.Round: for (int i = 0; i < len; i++) { d[i] = Math.Round(x[i]); } break;
+            case UnaryOp.Sin: for (int i = 0; i < len; i++) { d[i] = Math.Sin(x[i]); } break;
+            case UnaryOp.Cos: for (int i = 0; i < len; i++) { d[i] = Math.Cos(x[i]); } break;
+            case UnaryOp.Tan: for (int i = 0; i < len; i++) { d[i] = Math.Tan(x[i]); } break;
+            case UnaryOp.Exp: for (int i = 0; i < len; i++) { d[i] = Math.Exp(x[i]); } break;
+            case UnaryOp.Log: for (int i = 0; i < len; i++) { d[i] = Math.Log(x[i]); } break;
+            case UnaryOp.Log10: for (int i = 0; i < len; i++) { d[i] = Math.Log10(x[i]); } break;
+            default: throw UnknownOp(op);
+        }
     }
 
     private static void BinaryChunk(BinaryOp op, Span<double> x, Span<double> y, Span<double> d)
@@ -468,6 +801,86 @@ public static class PackedMath
         GC.KeepAlive(a);
         return result;
     }
+
+    /// <summary>
+    /// dest[i] = x[i] op y[i] ? 1.0 : 0.0, a register at a time. The comparison instruction leaves
+    /// all-ones where it holds, so selecting between one and zero is the whole conversion — and it
+    /// is exact: a mask is 1.0 or 0.0 with no arithmetic in between, so the vector form and the
+    /// scalar form cannot disagree.
+    /// </summary>
+    private static void CompareChunk(CompareOp op, Span<double> x, Span<double> y, Span<double> d)
+    {
+        int i = 0;
+        int width = Vector<double>.Count;
+        if (Vector.IsHardwareAccelerated && d.Length >= width)
+        {
+            ref double xr = ref MemoryMarshal.GetReference(x);
+            ref double yr = ref MemoryMarshal.GetReference(y);
+            ref double dr = ref MemoryMarshal.GetReference(d);
+            var one = new Vector<double>(1.0);
+            for (; i <= d.Length - width; i += width)
+            {
+                Vector<long> mask = Mask(op, Vector.LoadUnsafe(ref xr, (nuint)i), Vector.LoadUnsafe(ref yr, (nuint)i));
+                Vector.ConditionalSelect(mask, one, Vector<double>.Zero).StoreUnsafe(ref dr, (nuint)i);
+            }
+        }
+
+        for (; i < d.Length; i++)
+        {
+            d[i] = Holds(op, x[i], y[i]) ? 1.0 : 0.0;
+        }
+    }
+
+    /// <summary>dest[i] = x[i] op scalar ? 1.0 : 0.0 — <see cref="CompareChunk"/> against a broadcast.</summary>
+    private static void CompareScalarChunk(CompareOp op, Span<double> x, double scalar, Span<double> d)
+    {
+        int i = 0;
+        int width = Vector<double>.Count;
+        if (Vector.IsHardwareAccelerated && d.Length >= width)
+        {
+            ref double xr = ref MemoryMarshal.GetReference(x);
+            ref double dr = ref MemoryMarshal.GetReference(d);
+            var one = new Vector<double>(1.0);
+            var right = new Vector<double>(scalar);
+            for (; i <= d.Length - width; i += width)
+            {
+                Vector<long> mask = Mask(op, Vector.LoadUnsafe(ref xr, (nuint)i), right);
+                Vector.ConditionalSelect(mask, one, Vector<double>.Zero).StoreUnsafe(ref dr, (nuint)i);
+            }
+        }
+
+        for (; i < d.Length; i++)
+        {
+            d[i] = Holds(op, x[i], scalar) ? 1.0 : 0.0;
+        }
+    }
+
+    /// <summary>The all-ones-where-it-holds mask of a comparison.</summary>
+    private static Vector<long> Mask(CompareOp op, Vector<double> a, Vector<double> b) => op switch
+    {
+        CompareOp.Less => Vector.LessThan(a, b),
+        CompareOp.LessEqual => Vector.LessThanOrEqual(a, b),
+        CompareOp.Greater => Vector.GreaterThan(a, b),
+        CompareOp.GreaterEqual => Vector.GreaterThanOrEqual(a, b),
+        CompareOp.Equal => Vector.Equals(a, b),
+
+        // Not "greater or less": NaN is unequal to everything including itself, and only the
+        // complement of equality says so.
+        CompareOp.NotEqual => Vector.OnesComplement(Vector.Equals(a, b)),
+        _ => throw UnknownOp(op),
+    };
+
+    /// <summary>The same comparison read from the other side, so <c>s &lt; x</c> becomes <c>x &gt; s</c>.</summary>
+    private static CompareOp Mirror(CompareOp op) => op switch
+    {
+        CompareOp.Less => CompareOp.Greater,
+        CompareOp.LessEqual => CompareOp.GreaterEqual,
+        CompareOp.Greater => CompareOp.Less,
+        CompareOp.GreaterEqual => CompareOp.LessEqual,
+        CompareOp.Equal => CompareOp.Equal,
+        CompareOp.NotEqual => CompareOp.NotEqual,
+        _ => throw UnknownOp(op),
+    };
 
     private static bool Holds(CompareOp op, double left, double right) => op switch
     {

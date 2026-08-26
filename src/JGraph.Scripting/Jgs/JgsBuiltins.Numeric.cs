@@ -1,5 +1,6 @@
 using System.Numerics;
 using System.Text;
+using JGraph.Numerics;
 
 namespace JGraph.Scripting.Jgs;
 
@@ -636,6 +637,13 @@ internal static partial class JgsBuiltins
             if (args[0].Type == JgsType.Sparse)
             {
                 return JgsValue.Number(args[0].AsSparse.NonZeroCount);
+            }
+
+            // A mask is the argument this is nearly always given, and Flatten would copy the whole
+            // of it before counting a single element (M92).
+            if (TryPackedSpan(args, out NumericBuffer packed))
+            {
+                return JgsValue.Number(PackedMath.CountNonZero(packed));
             }
 
             int count = 0;

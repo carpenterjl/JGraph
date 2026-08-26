@@ -65,24 +65,32 @@ internal static partial class JgsBuiltins
         // the reals for a real argument and carry a complex definition only so a complex argument has
         // somewhere to go, while asin, acos and log10 promote the moment an argument leaves their
         // domain. The rounding four apply their rule to both parts, which is MATLAB's answer.
-        MathX(Define, "sin", System.Math.Sin, Always, Complex.Sin);
-        MathX(Define, "cos", System.Math.Cos, Always, Complex.Cos);
-        MathX(Define, "tan", System.Math.Tan, Always, Complex.Tan);
+        //
+        // The trailing PackedMath op is the kernel that computes the real definition over a whole
+        // buffer (M92) — the same arithmetic, without a delegate call per element. `round` names none
+        // deliberately: MATLAB rounds away from zero and PackedMath.Round is the banker's rule, so
+        // the two are different functions that happen to share a name.
+        MathX(Define, "sin", System.Math.Sin, Always, Complex.Sin, PackedMath.UnaryOp.Sin);
+        MathX(Define, "cos", System.Math.Cos, Always, Complex.Cos, PackedMath.UnaryOp.Cos);
+        MathX(Define, "tan", System.Math.Tan, Always, Complex.Tan, PackedMath.UnaryOp.Tan);
         MathX(Define, "asin", System.Math.Asin, InsideUnit, ComplexAsin);
         MathX(Define, "acos", System.Math.Acos, InsideUnit, ComplexAcos);
         MathX(Define, "atan", System.Math.Atan, Always, Complex.Atan);
-        MathX(Define, "log10", System.Math.Log10, NonNegative, Complex.Log10);
-        MathX(Define, "floor", System.Math.Floor, Always, static z => Componentwise(z, System.Math.Floor));
-        MathX(Define, "ceil", System.Math.Ceiling, Always, static z => Componentwise(z, System.Math.Ceiling));
+        MathX(Define, "log10", System.Math.Log10, NonNegative, Complex.Log10, PackedMath.UnaryOp.Log10);
+        MathX(Define, "floor", System.Math.Floor, Always, static z => Componentwise(z, System.Math.Floor),
+            PackedMath.UnaryOp.Floor);
+        MathX(Define, "ceil", System.Math.Ceiling, Always, static z => Componentwise(z, System.Math.Ceiling),
+            PackedMath.UnaryOp.Ceiling);
         MathX(Define, "round", RoundAwayFromZero, Always, static z => Componentwise(z, RoundAwayFromZero));
         MathX(Define, "sign", static x => System.Math.Sign(x), Always, ComplexSign);
 
         // Complex-aware elementwise functions: real input behaves exactly as before, and complex
         // input takes the complex definition (abs = magnitude, angle = phase, conj = conjugate).
-        void MathC(string name, Func<double, double> real, Func<Complex, JgsValue> complex) =>
-            Define(name, (args, line, col) => { Arity(name, args, 1, line, col); return MapComplexAware(name, args[0], real, complex, line, col); });
+        void MathC(string name, Func<double, double> real, Func<Complex, JgsValue> complex,
+                   PackedMath.UnaryOp? vectorOp = null) =>
+            Define(name, (args, line, col) => { Arity(name, args, 1, line, col); return MapComplexAware(name, args[0], real, complex, line, col, vectorOp); });
 
-        MathC("abs", System.Math.Abs, static c => JgsValue.Number(Complex.Abs(c)));
+        MathC("abs", System.Math.Abs, static c => JgsValue.Number(Complex.Abs(c)), PackedMath.UnaryOp.Abs);
         MathC("real", static x => x, static c => JgsValue.Number(c.Real));
         MathC("imag", static _ => 0, static c => JgsValue.Number(c.Imaginary));
         MathC("angle", static x => x >= 0 ? 0 : System.Math.PI, static c => JgsValue.Number(c.Phase));
@@ -94,9 +102,9 @@ internal static partial class JgsBuiltins
         // registration helper itself into JgsBuiltins.ComplexDomain.cs so the other three files that
         // declare a Math1 of their own could reach it, and widened the family to everything else that
         // leaves the reals.
-        MathX(Define, "exp", System.Math.Exp, Always, Complex.Exp);
-        MathX(Define, "log", System.Math.Log, NonNegative, Complex.Log);
-        MathX(Define, "sqrt", System.Math.Sqrt, NonNegative, Complex.Sqrt);
+        MathX(Define, "exp", System.Math.Exp, Always, Complex.Exp, PackedMath.UnaryOp.Exp);
+        MathX(Define, "log", System.Math.Log, NonNegative, Complex.Log, PackedMath.UnaryOp.Log);
+        MathX(Define, "sqrt", System.Math.Sqrt, NonNegative, Complex.Sqrt, PackedMath.UnaryOp.Sqrt);
 
         Define("pow", (args, line, col) =>
         {
@@ -823,12 +831,24 @@ internal static partial class JgsBuiltins
 
         Define("sum", (args, line, col) => TryReduceImage("sum", args, line, col, out JgsValue imageSum)
             ? imageSum
-            : Reduce("sum", args, line, col, (acc, v) => acc + v, 0.0));
+            : TryPackedSpan(args, out NumericBuffer packedSum)
+                ? JgsValue.Number(PackedMath.Sum(packedSum))
+                : Reduce("sum", args, line, col, (acc, v) => acc + v, 0.0));
         Define("mean", (args, line, col) =>
         {
             if (TryReduceImage("mean", args, line, col, out JgsValue imageMean))
             {
                 return imageMean;
+            }
+
+            if (TryPackedSpan(args, out NumericBuffer packed))
+            {
+                if (packed.Length == 0)
+                {
+                    throw new JgsRuntimeException(line, col, "mean needs a non-empty array.");
+                }
+
+                return JgsValue.Number(PackedMath.Sum(packed) / packed.Length);
             }
 
             double[] values = ArrayOfNumbers("mean", args, line, col);
@@ -929,7 +949,29 @@ internal static partial class JgsBuiltins
             if (args[0].Type == JgsType.Array && args[0].IsPacked)
             {
                 // Nonzero is truthy for numbers and bools alike (NaN != 0 is true) — same as IsTruthy.
-                ReadOnlySpan<double> span = args[0].AsBuffer.AsSpan();
+                NumericBuffer haystack = args[0].AsBuffer;
+                ReadOnlySpan<double> span = haystack.AsSpan();
+
+                // Unlimited is the form nearly every script writes, and it is the one that can be
+                // counted first and filled once (M92): a List of a few million positions spends most
+                // of its time doubling and then hands over a copy of itself on the way out.
+                if (wanted is null)
+                {
+                    NumericBuffer positions = JgsPacking.Allocate(PackedMath.CountNonZero(haystack));
+                    Span<double> into = positions.AsSpan();
+                    int next = 0;
+                    for (int i = 0; i < span.Length; i++)
+                    {
+                        if (span[i] != 0)
+                        {
+                            into[next++] = i + origin;
+                        }
+                    }
+
+                    GC.KeepAlive(haystack);
+                    return FoundIndices(JgsValue.Packed(positions), args[0]);
+                }
+
                 var found = new List<double>();
                 for (int i = 0; i < span.Length; i++)
                 {
@@ -4384,6 +4426,19 @@ internal static partial class JgsBuiltins
             return image;
         }
 
+        if (TryPackedSpan(args, out NumericBuffer packed))
+        {
+            if (packed.Length == 0)
+            {
+                throw new JgsRuntimeException(line, col, $"{name} needs at least one value.");
+            }
+
+            // Min and Max answer with one of their inputs, so the order they are folded in cannot
+            // change the answer — including the two orderings a fold can see, NaN beating everything
+            // and negative zero beating positive zero.
+            return JgsValue.Number(takeMin ? PackedMath.Min(packed) : PackedMath.Max(packed));
+        }
+
         double[] values;
         if (args.Count == 1 && args[0].Type == JgsType.Array)
         {
@@ -4684,7 +4739,8 @@ internal static partial class JgsBuiltins
     }
 
 
-    private static JgsValue MapNumeric(string name, JgsValue value, Func<double, double> f, int line, int col)
+    private static JgsValue MapNumeric(string name, JgsValue value, Func<double, double> f, int line, int col,
+                                       PackedMath.UnaryOp? vectorOp = null)
     {
         if (value.Type is JgsType.Number or JgsType.Bool)
         {
@@ -4695,9 +4751,9 @@ internal static partial class JgsBuiltins
         {
             if (value.IsPacked)
             {
-                // Same delegate over the flat buffer: bit-identical results, no per-element boxing.
+                // Same arithmetic over the flat buffer: bit-identical results, no per-element boxing.
                 var dest = JgsPacking.Allocate(value.ArrayLength);
-                PackedMath.Map(value.AsBuffer, dest, f);
+                ApplyUnary(value.AsBuffer, dest, f, vectorOp);
                 return JgsMatrix.Like(value, JgsValue.Packed(dest));
             }
 
@@ -4706,7 +4762,7 @@ internal static partial class JgsBuiltins
             for (int i = 0; i < source.Length; i++)
             {
                 // Recurse so nested arrays map elementwise: sin(X) works on meshgrid output.
-                result[i] = MapNumeric(name, source[i], f, line, col);
+                result[i] = MapNumeric(name, source[i], f, line, col, vectorOp);
             }
 
             return JgsMatrix.Like(value, JgsValue.Array(result));
@@ -4726,52 +4782,33 @@ internal static partial class JgsBuiltins
         }
 
         // Packed fast paths: the same delegate over flat buffers (atan2 over a million samples
-        // without a million boxes). Shapes outside these fall through to the boxed recursion.
+        // without a million boxes), through the kernel rather than a loop here, so the chunking and
+        // the buffer-lifetime discipline are the ones every other packed operation gets (M92).
+        // Shapes outside these fall through to the boxed recursion.
         if (a.IsPacked && b.IsPacked)
         {
-            ReadOnlySpan<double> xs = a.AsBuffer.AsSpan();
-            ReadOnlySpan<double> ys = b.AsBuffer.AsSpan();
-            if (xs.Length != ys.Length)
+            if (a.ArrayLength != b.ArrayLength)
             {
                 throw new JgsRuntimeException(line, col,
-                    $"{name} needs arrays of equal length ({xs.Length} and {ys.Length}).");
+                    $"{name} needs arrays of equal length ({a.ArrayLength} and {b.ArrayLength}).");
             }
 
-            var dest = JgsPacking.Allocate(xs.Length);
-            Span<double> d = dest.AsSpan();
-            for (int i = 0; i < d.Length; i++)
-            {
-                d[i] = f(xs[i], ys[i]);
-            }
-
+            var dest = JgsPacking.Allocate(a.ArrayLength);
+            PackedMath.Zip(a.AsBuffer, b.AsBuffer, dest, f);
             return JgsValue.Packed(dest);
         }
 
         if (a.IsPacked && bScalar)
         {
-            ReadOnlySpan<double> xs = a.AsBuffer.AsSpan();
-            double y = b.AsNumber;
-            var dest = JgsPacking.Allocate(xs.Length);
-            Span<double> d = dest.AsSpan();
-            for (int i = 0; i < d.Length; i++)
-            {
-                d[i] = f(xs[i], y);
-            }
-
+            var dest = JgsPacking.Allocate(a.ArrayLength);
+            PackedMath.ZipScalar(a.AsBuffer, b.AsNumber, dest, f);
             return JgsValue.Packed(dest);
         }
 
         if (aScalar && b.IsPacked)
         {
-            double x = a.AsNumber;
-            ReadOnlySpan<double> ys = b.AsBuffer.AsSpan();
-            var dest = JgsPacking.Allocate(ys.Length);
-            Span<double> d = dest.AsSpan();
-            for (int i = 0; i < d.Length; i++)
-            {
-                d[i] = f(x, ys[i]);
-            }
-
+            var dest = JgsPacking.Allocate(b.ArrayLength);
+            PackedMath.ZipScalar(b.AsBuffer, a.AsNumber, dest, f, scalarOnLeft: true);
             return JgsValue.Packed(dest);
         }
 
@@ -4862,8 +4899,28 @@ internal static partial class JgsBuiltins
         return JgsValue.Packed(reOut);
     }
 
+    /// <summary>
+    /// A packed elementwise map, through the kernel that names the operation when there is one and
+    /// the caller's delegate when there is not. Both compute the same answers: an operation reaches
+    /// <see cref="PackedMath.UnaryTiered"/> only when its vector form is exact or its scalar form is
+    /// the very <see cref="System.Math"/> function the delegate calls (M92).
+    /// </summary>
+    private static void ApplyUnary(NumericBuffer source, NumericBuffer dest,
+                                   Func<double, double> f, PackedMath.UnaryOp? vectorOp)
+    {
+        if (vectorOp is { } op)
+        {
+            PackedMath.UnaryTiered(op, source, dest);
+        }
+        else
+        {
+            PackedMath.Map(source, dest, f);
+        }
+    }
+
     /// <summary>Elementwise map that takes the real path for numbers and the complex path for complex values.</summary>
-    private static JgsValue MapComplexAware(string name, JgsValue value, Func<double, double> real, Func<Complex, JgsValue> complex, int line, int col)
+    private static JgsValue MapComplexAware(string name, JgsValue value, Func<double, double> real, Func<Complex, JgsValue> complex, int line, int col,
+                                            PackedMath.UnaryOp? vectorOp = null)
     {
         if (value.Type is JgsType.Number or JgsType.Bool)
         {
@@ -4881,7 +4938,7 @@ internal static partial class JgsBuiltins
             {
                 // Every packed element is real, so only the real path applies — flat and box-free.
                 var dest = JgsPacking.Allocate(value.ArrayLength);
-                PackedMath.Map(value.AsBuffer, dest, real);
+                ApplyUnary(value.AsBuffer, dest, real, vectorOp);
                 return JgsMatrix.Like(value, JgsValue.Packed(dest));
             }
 
@@ -4895,7 +4952,7 @@ internal static partial class JgsBuiltins
             var result = new JgsValue[source.Length];
             for (int i = 0; i < source.Length; i++)
             {
-                result[i] = MapComplexAware(name, source[i], real, complex, line, col);
+                result[i] = MapComplexAware(name, source[i], real, complex, line, col, vectorOp);
             }
 
             return JgsMatrix.Like(value, JgsValue.Array(result));
@@ -4912,7 +4969,7 @@ internal static partial class JgsBuiltins
     /// </summary>
     private static JgsValue MapComplexProducing(string name, JgsValue value,
         Func<double, double> fastReal, Func<double, bool> staysReal, Func<Complex, JgsValue> complexResult,
-        int line, int col)
+        int line, int col, PackedMath.UnaryOp? vectorOp = null)
     {
         if (value.Type is JgsType.Number or JgsType.Bool)
         {
@@ -4929,29 +4986,22 @@ internal static partial class JgsBuiltins
         {
             if (value.IsPacked && value.PackedKind == JgsPackedKind.Number)
             {
-                bool allReal = true;
-                foreach (double x in value.AsBuffer.AsSpan())
+                var dest = JgsPacking.Allocate(value.ArrayLength);
+                if (TryFlatRealMap(value.AsBuffer, dest, fastReal, staysReal, vectorOp))
                 {
-                    if (!staysReal(x))
-                    {
-                        allReal = false;
-                        break;
-                    }
-                }
-
-                if (allReal)
-                {
-                    var dest = JgsPacking.Allocate(value.ArrayLength);
-                    PackedMath.Map(value.AsBuffer, dest, fastReal);
                     return JgsMatrix.Like(value, JgsValue.Packed(dest));
                 }
+
+                // One element left the reals, so the whole array promotes below and this buffer is
+                // storage nobody will read.
+                dest.Dispose();
             }
 
             JgsValue[] source = value.BoxedElements();
             var result = new JgsValue[source.Length];
             for (int i = 0; i < source.Length; i++)
             {
-                result[i] = MapComplexProducing(name, source[i], fastReal, staysReal, complexResult, line, col);
+                result[i] = MapComplexProducing(name, source[i], fastReal, staysReal, complexResult, line, col, vectorOp);
             }
 
             return JgsMatrix.Like(value, JgsValue.Array(result));
@@ -5253,6 +5303,30 @@ internal static partial class JgsBuiltins
         }
 
         return ToDoubles(name, value, line, col);
+    }
+
+    /// <summary>
+    /// The flat storage behind a one-argument reduction, when the argument already is flat storage
+    /// (M92). A packed array — numbers or logicals, both stored as doubles — hands its buffer over
+    /// to be read where <see cref="ToDoubles(string, JgsValue, int, int)"/> would have copied the
+    /// whole of it first; everything
+    /// else answers false and takes the road it always took.
+    /// </summary>
+    /// <remarks>
+    /// The reduction the caller then runs has to be the same fold the boxed path runs, not merely a
+    /// fold with the same answer in exact arithmetic: <see cref="PackedMath.Sum"/> is a left fold in
+    /// index order for this reason, and min and max are order-free.
+    /// </remarks>
+    private static bool TryPackedSpan(IReadOnlyList<JgsValue> args, out NumericBuffer buffer)
+    {
+        if (args.Count == 1 && args[0].Type == JgsType.Array && args[0].IsPacked)
+        {
+            buffer = args[0].AsBuffer;
+            return true;
+        }
+
+        buffer = null!;
+        return false;
     }
 
     private static double[] ArrayOfNumbers(string name, IReadOnlyList<JgsValue> args, int line, int col)
