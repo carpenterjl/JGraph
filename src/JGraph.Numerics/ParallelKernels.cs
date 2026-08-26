@@ -53,6 +53,13 @@ public static class ParallelKernels
     /// </summary>
     public const int ComputeBoundThreshold = 1 << 18;
 
+    /// <summary>
+    /// Total elements at or above which a dimension reduction is worth splitting (4M): a reduction
+    /// reads everything but writes almost nothing, so it is even more bandwidth-shaped than a copy,
+    /// and below this the whole answer is under a millisecond on one core.
+    /// </summary>
+    public const int ReductionThreshold = 1 << 22;
+
     private static int _maxDegree = ResolveDegree();
 
     /// <summary>
@@ -124,6 +131,46 @@ public static class ParallelKernels
                 body(start, Math.Min(GrainElements, length - start));
                 betweenGrains?.Invoke();
             });
+        }
+        catch (AggregateException bundled)
+        {
+            ExceptionDispatchInfo.Capture(Unwrap(bundled)).Throw();
+        }
+    }
+
+    /// <summary>
+    /// Runs <paramref name="body"/> once per block index in <c>[0, blocks)</c> — the shape a kernel
+    /// takes when its work does not cut into equal element grains: a reduction hands out whole
+    /// slices, and how many slices make one block is the kernel's own arithmetic. The caller also
+    /// decides <paramref name="parallel"/>, because only it knows how many elements a block touches;
+    /// a false there, one block, or one thread all run serially in block order.
+    /// </summary>
+    /// <remarks>
+    /// The determinism rule is the caller's to keep: every block must own its outputs outright, and
+    /// the block boundaries must be a function of the problem's shape alone — never of the thread
+    /// count, which this method deliberately has no way to leak.
+    /// </remarks>
+    public static void ForBlocks(int blocks, bool parallel, Action<int> body)
+    {
+        if (blocks <= 0)
+        {
+            return;
+        }
+
+        if (!parallel || blocks == 1 || MaxDegree == 1)
+        {
+            for (int b = 0; b < blocks; b++)
+            {
+                body(b);
+            }
+
+            return;
+        }
+
+        var options = new ParallelOptions { MaxDegreeOfParallelism = MaxDegree };
+        try
+        {
+            Parallel.For(0, blocks, options, body);
         }
         catch (AggregateException bundled)
         {

@@ -308,7 +308,7 @@ internal static class JgsMatrix
     }
 
     /// <summary>The given dimensions with the <paramref name="dim"/>th one set to a new length.</summary>
-    private static int[] ShapeAlong(IReadOnlyList<int> dims, int dim, int length)
+    internal static int[] ShapeAlong(IReadOnlyList<int> dims, int dim, int length)
     {
         var shape = new int[System.Math.Max(dims.Count, dim)];
         for (int i = 0; i < shape.Length; i++)

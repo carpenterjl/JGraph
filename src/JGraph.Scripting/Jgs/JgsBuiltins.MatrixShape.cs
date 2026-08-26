@@ -1095,6 +1095,15 @@ internal static partial class JgsBuiltins
                 return subject;
             }
 
+            // A packed double array with arguments the kernels understand reduces in place, without
+            // the flatten and the boxed vector per slice this wrapper otherwise pays for (M94). The
+            // kernels replicate every fold to the bit, so this is a shortcut, never a different road.
+            if (PackedReduceOps.TryColumnwise(
+                name, subject, dim, vecdim, all, extra, order, omitNan, reverse, out JgsValue direct))
+            {
+                return direct;
+            }
+
             if (all)
             {
                 return ReduceSlice(
@@ -1351,6 +1360,14 @@ internal static partial class JgsBuiltins
         // array instead of into its slice, which is what makes A(i) round-trip back to the extreme.
         JgsValue[] ReduceAlong(JgsValue subject, int? named, bool omitNan, bool linear, int line, int col)
         {
+            // A packed double array scans where it lies (M94): same extreme, same tie, same NaN
+            // rule, and the position already in the dialect's base — but no flat copy first.
+            if (PackedReduceOps.TryExtremeAlong(
+                subject, named, takeMin, omitNan, linear, dialect.IndexBase, out JgsValue[] direct))
+            {
+                return direct;
+            }
+
             double[] flat = FlattenColumnMajor(name, subject, line, col);
             int[] dims = JgsMatrix.DimsOf(subject);
             int dim = named ?? JgsMatrix.DefaultDim(dims);
@@ -1397,6 +1414,12 @@ internal static partial class JgsBuiltins
         // array — the same number A(k) would take, which is why 'linear' adds nothing here.
         JgsValue[] ReduceAll(JgsValue subject, bool omitNan, int line, int col)
         {
+            if (PackedReduceOps.TryExtremeAll(
+                subject, takeMin, omitNan, dialect.IndexBase, out JgsValue[] direct))
+            {
+                return direct;
+            }
+
             double[] flat = FlattenColumnMajor(name, subject, line, col);
             if (flat.Length == 0)
             {
