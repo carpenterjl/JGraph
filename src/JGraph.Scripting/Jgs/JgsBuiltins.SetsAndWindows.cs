@@ -326,7 +326,13 @@ internal static partial class JgsBuiltins
     private static JgsValue[]? SortElements(
         JgsValue[] elements, bool descending, string missing, string comparison, int line, int col)
     {
-        bool magnitude = string.Equals(comparison, "abs", StringComparison.OrdinalIgnoreCase);
+        // MATLAB orders a complex array by magnitude unless told otherwise: for it, the default
+        // 'auto' means 'abs' the moment there is a complex element to order, and only 'real'
+        // asks for the real-then-imaginary reading. An array of plain numbers orders the same way
+        // under either, so the test is only ever about what is in the array.
+        bool magnitude = string.Equals(comparison, "abs", StringComparison.OrdinalIgnoreCase)
+            || (string.Equals(comparison, "auto", StringComparison.OrdinalIgnoreCase)
+                && Array.Exists(elements, static v => v.Type == JgsType.Complex));
 
         if (Array.TrueForAll(elements, static v => v.Type == JgsType.String))
         {

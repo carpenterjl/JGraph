@@ -156,10 +156,15 @@ public class MatlabSetMembershipOptionTests : IDisposable
     /// magnitude, then angle. Sorting it at all is new — it used to be refused.
     /// </summary>
     [Fact]
-    public Task ComplexNumbersOrderByRealPartOrByMagnitude() => RunAsserting("""
+    public Task ComplexNumbersOrderByMagnitudeUnlessAskedForTheirRealPart() => RunAsserting("""
+        % MATLAB orders a complex array by magnitude and settles ties by phase angle, so for
+        % a complex array the default is the same answer 'abs' gives; only 'real' asks for
+        % the real-then-imaginary reading. Until M95 the default here was 'real', which is
+        % what this test used to pin (ADR 0095).
         z = [3+4i, 1, -5];
-        assert(isequal(sort(z), [-5, 1, 3+4i]));
+        assert(isequal(sort(z), [1, 3+4i, -5]));
         assert(isequal(sort(z, 'ComparisonMethod', 'abs'), [1, 3+4i, -5]));
+        assert(isequal(sort(z, 'ComparisonMethod', 'real'), [-5, 1, 3+4i]));
         """);
 
     [Fact]

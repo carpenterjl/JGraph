@@ -392,7 +392,7 @@ internal static class PackedReduceOps
 
     /// <summary>The <c>(inner, n, outer)</c> decomposition of a reduction along <paramref name="along"/>
     /// — the same arithmetic <c>JgsMatrix.SlicesAlong</c> cuts by.</summary>
-    private static ReduceKernels.Split SplitAlong(int[] dims, int along)
+    internal static ReduceKernels.Split SplitAlong(int[] dims, int along)
     {
         int inner = 1;
         for (int i = 0; i < along - 1 && i < dims.Length; i++)

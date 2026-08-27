@@ -691,7 +691,7 @@ internal static partial class JgsBuiltins
 
         WrapColumnwise(env, "cumsum", new(KeepShape: true, Words: TailWords.Nan | TailWords.Reverse, Identity: 0));
         WrapColumnwise(env, "cumprod", new(KeepShape: true, Words: TailWords.Nan | TailWords.Reverse, Identity: 1));
-        WrapColumnwise(env, "sort", new(KeepShape: true));
+        WrapColumnwise(env, "sort", new(KeepShape: true), dialect);
 
         // cummax and cummin are cumulative reductions like the two above them, and until M70 they
         // were neither: the body underneath flattens whatever it is handed, so cummax of a matrix
@@ -780,8 +780,15 @@ internal static partial class JgsBuiltins
         bool Vecdim = false,
         bool OmitsNanByDefault = false);
 
-    private static void WrapColumnwise(JgsEnvironment env, string name, ReductionSpec spec)
+    /// <remarks>
+    /// <paramref name="dialect"/> is passed by the one name here that has a second output: sort
+    /// reports the position each value came from, and a position is written in the dialect's own
+    /// index base. Every other reduction answers values alone and has no use for it.
+    /// </remarks>
+    private static void WrapColumnwise(
+        JgsEnvironment env, string name, ReductionSpec spec, JgsDialect? dialect = null)
     {
+        int indexBase = dialect?.IndexBase ?? 1;
         if (!env.TryGet(name, out JgsValue existing) || existing.Type != JgsType.Function)
         {
             return;
@@ -1104,6 +1111,13 @@ internal static partial class JgsBuiltins
                 return direct;
             }
 
+            // sort is not a fold, so the reduction kernels above pass it by; its own kernels put
+            // the storage in order where it lies rather than boxing a comparison per element (M95).
+            if (PackedSortOps.TryOrder(name, subject, dim, all, extra, 1, indexBase, out JgsValue[] put))
+            {
+                return put[0];
+            }
+
             if (all)
             {
                 return ReduceSlice(
@@ -1145,6 +1159,14 @@ internal static partial class JgsBuiltins
             if (vecdim is not null)
             {
                 return [Single(args, line, col)];
+            }
+
+            // Both of sort's outputs from one pass. The boxed second output recovered the
+            // positions afterwards, by searching the input for each sorted value in turn — which
+            // is quadratic, and was the slowest thing left in the engine (M95).
+            if (PackedSortOps.TryOrder(name, subject, dim, all, extra, wanted, indexBase, out JgsValue[] put))
+            {
+                return put;
             }
 
             if (all || !Reduces(subject))
