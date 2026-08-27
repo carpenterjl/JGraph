@@ -6,4 +6,11 @@
     <Description>Signal-processing services for JGraph (FFT, windows, spectrum, spectrogram, transfer functions) used by the engineering plot types. Pure numeric code with no rendering or model dependency.</Description>
   </PropertyGroup>
 
+  <ItemGroup>
+    <!-- The transform itself lives in JGraph.Numerics, beside the other kernels, because the
+         scripting layer has to run it over packed storage; this project holds the one boxed
+         entry point and everything built on it. One transform, one set of answers. -->
+    <ProjectReference Include="..\JGraph.Numerics\JGraph.Numerics.csproj" />
+  </ItemGroup>
+
 </Project>

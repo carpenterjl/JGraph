@@ -1,3 +1,8 @@
+using System.Numerics;
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
+using JGraph.Numerics;
+
 namespace JGraph.Imaging;
 
 /// <summary>Spatial-filtering operations: 2-D correlation/convolution and median filtering.</summary>
@@ -419,6 +424,139 @@ public static class Filters
         }
 
         return index;
+    }
+
+    /// <summary>
+    /// The separable form of <see cref="Convolve2"/>: <c>conv2(u, v, A)</c>, where the kernel is the
+    /// outer product of two vectors and never has to be built. One pass along the rows with
+    /// <paramref name="v"/> and one down the columns with <paramref name="u"/> costs
+    /// <c>|u| + |v|</c> multiplies per pixel where the built kernel cost <c>|u|·|v|</c> — for the
+    /// twenty-one-tap blur of a 2048-square image, a hundred and seventy-six million instead of one
+    /// and a half billion.
+    /// </summary>
+    /// <remarks>
+    /// Two passes of sums are not the same rounding as one pass over a materialised kernel, and this
+    /// is the milestone's one deliberate divergence in the imaging layer: the products are formed
+    /// differently, so the last bits differ. What does not differ is the shape, the anchor or the
+    /// crop, and the tests pin the answer to the built-kernel one within its own precision.
+    /// Threads take bands of output rows, so a band's inputs stay in one core's cache across all of
+    /// <paramref name="u"/>'s taps, and no band can see another's work.
+    /// </remarks>
+    public static double[,] SeparableConvolve2(
+        double[,] a, double[] u, double[] v, Conv2Shape shape = Conv2Shape.Full)
+    {
+        ArgumentNullException.ThrowIfNull(a);
+        ArgumentNullException.ThrowIfNull(u);
+        ArgumentNullException.ThrowIfNull(v);
+        int ah = a.GetLength(0);
+        int aw = a.GetLength(1);
+        int uh = u.Length;
+        int vw = v.Length;
+        if (ah == 0 || aw == 0 || uh == 0 || vw == 0)
+        {
+            return Convolve2(a, OuterProduct(u, v), shape);
+        }
+
+        int fullH = ah + uh - 1;
+        int fullW = aw + vw - 1;
+        var rows = new double[(long)ah * fullW <= int.MaxValue ? ah * fullW : 0];
+        if (rows.Length == 0)
+        {
+            return Convolve2(a, OuterProduct(u, v), shape);
+        }
+
+        bool wide = (long)ah * fullW >= ParallelKernels.MemoryBoundThreshold;
+        ParallelKernels.ForBlocks(ah, wide, i =>
+        {
+            Span<double> source = Flatten(a).Slice(i * aw, aw);
+            Span<double> line = rows.AsSpan(i * fullW, fullW);
+            for (int n = 0; n < vw; n++)
+            {
+                AddScaled(source, line.Slice(n, aw), v[n]);
+            }
+        });
+
+        var full = new double[fullH, fullW];
+
+        // Bands rather than single rows: a band's inputs are |u| + band rows of the intermediate,
+        // which stays in one core's cache while every tap reads it.
+        const int Band = 64;
+        int bands = ((fullH - 1) / Band) + 1;
+        ParallelKernels.ForBlocks(bands, wide, b =>
+        {
+            int first = b * Band;
+            int last = Math.Min(first + Band, fullH);
+            Span<double> target = Flatten(full);
+            for (int y = first; y < last; y++)
+            {
+                Span<double> line = target.Slice(y * fullW, fullW);
+                int from = Math.Max(0, y - ah + 1);
+                int to = Math.Min(uh - 1, y);
+                for (int m = from; m <= to; m++)
+                {
+                    AddScaled(rows.AsSpan((y - m) * fullW, fullW), line, u[m]);
+                }
+            }
+        });
+
+        return shape switch
+        {
+            Conv2Shape.Full => full,
+            Conv2Shape.Same => Crop(full, (uh - 1) / 2, (vw - 1) / 2, ah, aw),
+            Conv2Shape.Valid => ah >= uh && aw >= vw
+                ? Crop(full, uh - 1, vw - 1, ah - uh + 1, aw - vw + 1)
+                : new double[0, 0],
+            _ => full,
+        };
+    }
+
+    /// <summary>The kernel the separable form never builds, for the edge cases that still want it.</summary>
+    private static double[,] OuterProduct(double[] u, double[] v)
+    {
+        var outer = new double[u.Length, v.Length];
+        for (int r = 0; r < u.Length; r++)
+        {
+            for (int c = 0; c < v.Length; c++)
+            {
+                outer[r, c] = u[r] * v[c];
+            }
+        }
+
+        return outer;
+    }
+
+    /// <summary>A rectangular array's storage as one span; it is already contiguous and row-major.</summary>
+    private static Span<double> Flatten(double[,] array) =>
+        MemoryMarshal.CreateSpan(
+            ref Unsafe.As<byte, double>(ref MemoryMarshal.GetArrayDataReference(array)),
+            array.Length);
+
+    /// <summary>
+    /// <c>into[i] += scale · from[i]</c>, four at a time. The multiply and the add stay separate
+    /// operations: a fused one would round differently on the machines that have it and not on the
+    /// ones that do not, and an answer must not depend on which machine ran it.
+    /// </summary>
+    private static void AddScaled(ReadOnlySpan<double> from, Span<double> into, double scale)
+    {
+        int width = Vector<double>.Count;
+        int i = 0;
+        if (from.Length >= width)
+        {
+            ref double src = ref MemoryMarshal.GetReference(from);
+            ref double dst = ref MemoryMarshal.GetReference(into);
+            var factor = new Vector<double>(scale);
+            for (; i <= from.Length - width; i += width)
+            {
+                Vector<double> sum = Vector.LoadUnsafe(ref dst, (nuint)i)
+                    + (factor * Vector.LoadUnsafe(ref src, (nuint)i));
+                Vector.StoreUnsafe(sum, ref dst, (nuint)i);
+            }
+        }
+
+        for (; i < from.Length; i++)
+        {
+            into[i] += scale * from[i];
+        }
     }
 
     private static double[,] Crop(double[,] source, int rowOffset, int colOffset, int height, int width)

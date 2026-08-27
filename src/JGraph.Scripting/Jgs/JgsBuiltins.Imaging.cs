@@ -856,19 +856,12 @@ internal static partial class JgsBuiltins
                 return MatrixToRows(Filters.Convolve2(a, b, shape));
             }
 
+            // M96b: the outer product is never built. Two passes of taps cost |u| + |v| multiplies
+            // per pixel where the kernel cost |u|·|v|, and they thread (ADR 0096).
             double[] u = ToDoubles("conv2", args[0], line, col);
             double[] v = ToDoubles("conv2", args[1], line, col);
             double[,] data = Matrix("conv2", args, 2, line, col);
-            var outer = new double[u.Length, v.Length];
-            for (int r = 0; r < u.Length; r++)
-            {
-                for (int c = 0; c < v.Length; c++)
-                {
-                    outer[r, c] = u[r] * v[c];
-                }
-            }
-
-            return MatrixToRows(Filters.Convolve2(data, outer, shape));
+            return MatrixToRows(Filters.SeparableConvolve2(data, u, v, shape));
         });
 
         define("medfilt2", (args, line, col) =>
@@ -1748,7 +1741,23 @@ internal static partial class JgsBuiltins
     {
         int rows = values.GetLength(0);
         int cols = values.GetLength(1);
-        return JgsMatrix.Build(rows, cols, (r, c) => values[r, c]);
+        if (rows == 1 && cols == 1)
+        {
+            return JgsValue.Number(values[0, 0]);
+        }
+
+        // The same transpose the builder would do, without a delegate call per element (M96b).
+        var flat = new double[rows * cols];
+        for (int c = 0; c < cols; c++)
+        {
+            int origin = c * rows;
+            for (int r = 0; r < rows; r++)
+            {
+                flat[origin + r] = values[r, c];
+            }
+        }
+
+        return JgsMatrix.FromColumnMajor(flat, rows, cols);
     }
 
     /// <summary>Copies a single-channel image into a <c>[rows, cols]</c> scalar field for <see cref="ImagePlot"/>.</summary>

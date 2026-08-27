@@ -56,6 +56,25 @@ internal static class JgsMatrix
             result[r] = new double[cols];
         }
 
+        // A packed array is already doubles, and every one of them reads back as a number, so the
+        // type check below has nothing to find. Asking anyway cost a JgsValue per element — four
+        // million of them for a 2048-square image, which was most of what conv2 spent (M96b).
+        if (value.IsPacked && value.PackedKind is JgsPackedKind.Number or JgsPackedKind.Bool)
+        {
+            Span<double> flat = value.AsBuffer.AsSpan();
+            for (int c = 0; c < cols; c++)
+            {
+                int origin = c * rows;
+                for (int r = 0; r < rows; r++)
+                {
+                    result[r][c] = flat[origin + r];
+                }
+            }
+
+            GC.KeepAlive(value);
+            return result;
+        }
+
         for (int c = 0; c < cols; c++)
         {
             int origin = c * rows;

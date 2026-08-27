@@ -530,6 +530,22 @@ internal static partial class JgsBuiltins
             return false;
         }
 
+        // A planar complex array answers from its imaginary plane. Without this arm the question
+        // threw rather than answered, and the arrays that carry one are exactly the ones anybody
+        // would ask it about: isreal(fft(x)) has been an error since packing arrived (M96a).
+        if (value.IsPackedComplex)
+        {
+            foreach (double part in value.AsPackedComplex.Im.AsSpan())
+            {
+                if (part != 0)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
         return Array.Exists(value.AsArray, HasComplexPart);
     }
 

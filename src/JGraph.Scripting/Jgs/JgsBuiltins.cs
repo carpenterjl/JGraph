@@ -86,14 +86,19 @@ internal static partial class JgsBuiltins
 
         // Complex-aware elementwise functions: real input behaves exactly as before, and complex
         // input takes the complex definition (abs = magnitude, angle = phase, conj = conjugate).
+        // `plain` is the same answer as `complex` with the box taken off, and only the four whose
+        // complex answer is always real can supply one. It is what lets abs(F) of a spectrum stay
+        // in its planes: the boxed arm minted a JgsValue per element to discover it was a number.
         void MathC(string name, Func<double, double> real, Func<Complex, JgsValue> complex,
-                   PackedMath.UnaryOp? vectorOp = null) =>
-            Define(name, (args, line, col) => { Arity(name, args, 1, line, col); return MapComplexAware(name, args[0], real, complex, line, col, vectorOp); });
+                   PackedMath.UnaryOp? vectorOp = null, Func<Complex, double>? plain = null) =>
+            Define(name, (args, line, col) => { Arity(name, args, 1, line, col); return MapComplexAware(name, args[0], real, complex, line, col, vectorOp, plain); });
 
-        MathC("abs", System.Math.Abs, static c => JgsValue.Number(Complex.Abs(c)), PackedMath.UnaryOp.Abs);
-        MathC("real", static x => x, static c => JgsValue.Number(c.Real));
-        MathC("imag", static _ => 0, static c => JgsValue.Number(c.Imaginary));
-        MathC("angle", static x => x >= 0 ? 0 : System.Math.PI, static c => JgsValue.Number(c.Phase));
+        MathC("abs", System.Math.Abs, static c => JgsValue.Number(Complex.Abs(c)), PackedMath.UnaryOp.Abs,
+            static c => Complex.Abs(c));
+        MathC("real", static x => x, static c => JgsValue.Number(c.Real), plain: static c => c.Real);
+        MathC("imag", static _ => 0, static c => JgsValue.Number(c.Imaginary), plain: static c => c.Imaginary);
+        MathC("angle", static x => x >= 0 ? 0 : System.Math.PI, static c => JgsValue.Number(c.Phase),
+            plain: static c => c.Phase);
         MathC("conj", static x => x, static c => JgsValue.ComplexNum(Complex.Conjugate(c)));
 
         // Complex-producing elementwise functions (M42): real input stays on the flat real fast
@@ -4865,27 +4870,49 @@ internal static partial class JgsBuiltins
     /// packs as a plain number array when no imaginary parts survive (abs/real/imag/angle) or as a
     /// planar complex array otherwise (conj).
     /// </summary>
-    private static JgsValue MapPackedComplex(JgsPackedComplex source, Func<double, double> real, Func<Complex, JgsValue> complex)
+    private static JgsValue MapPackedComplex(JgsPackedComplex source, Func<double, double> real,
+        Func<Complex, JgsValue> complex, Func<Complex, double>? plain)
     {
         int count = source.Length;
         var reOut = JgsPacking.Allocate(count);
+        Span<double> fromRe = source.Re.AsSpan();
+        Span<double> fromIm = source.Im.AsSpan();
+
+        if (plain is not null)
+        {
+            // Nothing this map can answer has an imaginary part, so nothing is minted to find that
+            // out. The spectrum of four million samples used to build four million JgsValues here
+            // on its way to abs(F), and reading the planes through AsSpan() once per element was
+            // the other half of the price.
+            Span<double> into = reOut.AsSpan();
+            for (int i = 0; i < count; i++)
+            {
+                double im = fromIm[i];
+                into[i] = im == 0 ? real(fromRe[i]) : plain(new Complex(fromRe[i], im));
+            }
+
+            return JgsValue.Packed(reOut);
+        }
+
         var imOut = JgsPacking.Allocate(count);
+        Span<double> intoRe = reOut.AsSpan();
+        Span<double> intoIm = imOut.AsSpan();
         bool anyImaginary = false;
         for (int i = 0; i < count; i++)
         {
-            double re = source.Re.AsSpan()[i];
-            double im = source.Im.AsSpan()[i];
+            double re = fromRe[i];
+            double im = fromIm[i];
             JgsValue mapped = im == 0 ? JgsValue.Number(real(re)) : complex(new Complex(re, im));
             if (mapped.Type == JgsType.Number)
             {
-                reOut.AsSpan()[i] = mapped.AsNumber;
-                imOut.AsSpan()[i] = 0;
+                intoRe[i] = mapped.AsNumber;
+                intoIm[i] = 0;
             }
             else
             {
                 Complex written = mapped.AsComplex;
-                reOut.AsSpan()[i] = written.Real;
-                imOut.AsSpan()[i] = written.Imaginary;
+                intoRe[i] = written.Real;
+                intoIm[i] = written.Imaginary;
                 anyImaginary = true;
             }
         }
@@ -4920,7 +4947,7 @@ internal static partial class JgsBuiltins
 
     /// <summary>Elementwise map that takes the real path for numbers and the complex path for complex values.</summary>
     private static JgsValue MapComplexAware(string name, JgsValue value, Func<double, double> real, Func<Complex, JgsValue> complex, int line, int col,
-                                            PackedMath.UnaryOp? vectorOp = null)
+                                            PackedMath.UnaryOp? vectorOp = null, Func<Complex, double>? plain = null)
     {
         if (value.Type is JgsType.Number or JgsType.Bool)
         {
@@ -4945,14 +4972,14 @@ internal static partial class JgsBuiltins
             if (value.IsPackedComplex)
             {
                 // real(F) of a complex matrix is the same matrix's real parts — shape and all.
-                return JgsMatrix.Like(value, MapPackedComplex(value.AsPackedComplex, real, complex));
+                return JgsMatrix.Like(value, MapPackedComplex(value.AsPackedComplex, real, complex, plain));
             }
 
             JgsValue[] source = value.BoxedElements();
             var result = new JgsValue[source.Length];
             for (int i = 0; i < source.Length; i++)
             {
-                result[i] = MapComplexAware(name, source[i], real, complex, line, col, vectorOp);
+                result[i] = MapComplexAware(name, source[i], real, complex, line, col, vectorOp, plain);
             }
 
             return JgsMatrix.Like(value, JgsValue.Array(result));
@@ -5357,6 +5384,27 @@ internal static partial class JgsBuiltins
         {
             throw new JgsRuntimeException(line, col,
                 $"{name} expects argument {index + 1} to be a matrix; build one with meshgrid, zeros(r, c), or a semicolon-rowed literal.");
+        }
+
+        // Packed storage goes straight into the rectangle: one pass over the buffer instead of a
+        // jagged array built element by element and then copied again (M96b).
+        if (value.IsPacked && value.PackedKind is JgsPackedKind.Number or JgsPackedKind.Bool)
+        {
+            int height = value.Rows;
+            int width = value.Cols;
+            var packed = new double[height, width];
+            Span<double> flat = value.AsBuffer.AsSpan();
+            for (int c = 0; c < width; c++)
+            {
+                int origin = c * height;
+                for (int r = 0; r < height; r++)
+                {
+                    packed[r, c] = flat[origin + r];
+                }
+            }
+
+            GC.KeepAlive(value);
+            return packed;
         }
 
         double[][] rows = JgsMatrix.ToRows(name, value, line, col);

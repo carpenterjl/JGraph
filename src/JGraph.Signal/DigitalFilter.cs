@@ -75,6 +75,19 @@ public static class DigitalFilter
             }
 
             var y = new double[x.Length];
+
+            // A denominator with nothing past a(1) has no recurrence to walk: every output is its
+            // own sum of taps, which is both faster and vectorisable, and reproduces this loop's
+            // rounding exactly (JGraph.Numerics.FilterKernels, ADR 0096).
+            if (JGraph.Numerics.FilterKernels.IsFeedForward(a))
+            {
+                ReadOnlySpan<double> taps = bn.AsSpan(0, order);
+                ReadOnlySpan<double> carried = delays.AsSpan(0, System.Math.Max(stateLength, 1));
+                JGraph.Numerics.FilterKernels.FeedForward(taps, x, carried, y, 0, x.Length);
+                JGraph.Numerics.FilterKernels.FinalState(taps, x, carried, state);
+                return y;
+            }
+
             for (int i = 0; i < x.Length; i++)
             {
                 double input = x[i];

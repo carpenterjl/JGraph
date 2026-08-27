@@ -22,7 +22,18 @@ internal static partial class JgsBuiltins
     private static JgsValue TransformAlong(string name, JgsValue value, int? length, int dim,
         bool inverse, bool symmetric, int line, int col)
     {
-        int[] dims = JgsMatrix.DimsOf(value);
+        // M96a: a packed array of doubles is transformed where it lies, by the same butterflies in
+        // the same order (ADR 0096). Everything else — a boxed array, a logical one, a class that is
+        // not double, a length the wrapper and the storage disagree about — falls through here and
+        // takes the road below, which is the only place the family's errors are worded.
+        if (PackedTransformOps.TryTransform(
+                value, length, dim, inverse, symmetric, out JgsValue packed, out int[] packedShape))
+        {
+            Shape(packed, packedShape);
+            return packed;
+        }
+
+        int[] dims = TransformDims(value);
         Complex[] flat = ComplexArrayOf(name, value, line, col);
 
         var real = new double[flat.Length];
@@ -38,11 +49,16 @@ internal static partial class JgsBuiltins
 
         int along = dim <= dims.Length ? dims[dim - 1] : 1;
         int n = length ?? along;
-        if (n < 1)
+        if (n < 0)
         {
             throw new JgsRuntimeException(line, col,
-                $"{name}: a transform length is a positive whole number, but got {n}.");
+                $"{name}: a transform length is a whole number that is not negative, but got {n}.");
         }
+
+        // A length of zero is a legal answer, not a refusal: the transform of nothing is nothing,
+        // and MATLAB shapes it by the same rule as any other length — fft([]) is 0-by-0, fft([], 4)
+        // is 4-by-0, and fft(zeros(0, 3), 2) is a 2-by-3 of zeros because the padding is real
+        // padding. All of that falls out of the join below once the refusal is out of the way (M96a).
 
         var outRealSlices = new double[realSlices.Length][];
         var outImaginarySlices = new double[realSlices.Length][];
@@ -78,8 +94,13 @@ internal static partial class JgsBuiltins
             outImaginarySlices[s] = outImaginary;
         }
 
-        (double[] joinedReal, int[] shape) = JgsMatrix.JoinAlong(outRealSlices, dims, dim);
+        (double[] joinedReal, _) = JgsMatrix.JoinAlong(outRealSlices, dims, dim);
         (double[] joinedImaginary, _) = JgsMatrix.JoinAlong(outImaginarySlices, dims, dim);
+
+        // The shape is the transform's own, not the join's. A join reads the slice length off the
+        // first slice, and an array with no slices at all — fft(zeros(2, 0)) — has no first slice to
+        // read, so it used to come back 0-by-0 where MATLAB says 2-by-0 (M96a).
+        int[] shape = JgsMatrix.ShapeAlong(dims, dim, n);
 
         var combined = new Complex[joinedReal.Length];
         for (int i = 0; i < combined.Length; i++)
@@ -91,6 +112,15 @@ internal static partial class JgsBuiltins
         Shape(result, shape);
         return result;
     }
+
+    /// <summary>
+    /// The shape a transform reads. A value that is not an array carries no rows and columns of its
+    /// own, and asking it for them answered 0-by-0 — which made the first non-singleton dimension 1,
+    /// the length along it 0, and <c>fft(5)</c> an error about a transform length rather than the
+    /// number 5. A scalar is one element in one row (M96a).
+    /// </summary>
+    private static int[] TransformDims(JgsValue value) =>
+        value.Type == JgsType.Array ? JgsMatrix.DimsOf(value) : [1, 1];
 
     /// <summary>Forces a spectrum to be conjugate-symmetric, which is what <c>'symmetric'</c> asserts.</summary>
     private static void MakeHermitian(Complex[] spectrum)
@@ -138,7 +168,7 @@ internal static partial class JgsBuiltins
     private static JgsValue TransformAcross(string name, JgsValue value, IReadOnlyList<int>? sizes,
         bool inverse, bool symmetric, int line, int col)
     {
-        int[] dims = JgsMatrix.DimsOf(value);
+        int[] dims = TransformDims(value);
         int count = sizes?.Count ?? System.Math.Max(dims.Length, 2);
 
         JgsValue running = value;
@@ -195,7 +225,7 @@ internal static partial class JgsBuiltins
 
         int dim = count >= 3
             ? Count(name, args, 2, line, col)
-            : JgsMatrix.DefaultDim(JgsMatrix.DimsOf(args[0]));
+            : JgsMatrix.DefaultDim(TransformDims(args[0]));
 
         if (dim < 1)
         {
@@ -243,7 +273,7 @@ internal static partial class JgsBuiltins
 
         if (planar && sizes is null)
         {
-            int[] dims = JgsMatrix.DimsOf(args[0]);
+            int[] dims = TransformDims(args[0]);
             sizes = [dims.Length > 0 ? dims[0] : 1, dims.Length > 1 ? dims[1] : 1];
         }
 
@@ -361,6 +391,22 @@ internal static partial class JgsBuiltins
         int dim = args.Count >= 5
             ? Count("filter", args, 4, line, col)
             : JgsMatrix.DefaultDim(dims);
+
+        // M96b: a denominator with no feedback in it is a sum of taps per output, and a packed
+        // signal takes those kernels where it lies (ADR 0096). A recurrence, a class that is not
+        // double, a boxed array or a dimension that does not name itself falls through to the road
+        // below, which is the only place this family's errors are worded.
+        if (PackedFilterOps.TryFilter(
+                numerator, denominator, initial, signal, dims, dim, wanted,
+                out JgsValue[] packed, out int[][] packedShapes))
+        {
+            for (int i = 0; i < packed.Length; i++)
+            {
+                Shape(packed[i], packedShapes[i]);
+            }
+
+            return packed;
+        }
 
         double[] flat = FlattenColumnMajor("filter", signal, line, col);
         (double[][] slices, _) = JgsMatrix.SlicesAlong(flat, dims, dim);
