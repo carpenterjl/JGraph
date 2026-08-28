@@ -29,8 +29,15 @@ internal static class PackedOps
     /// Elementwise arithmetic when either operand is packed and the other is packed or a numeric
     /// scalar (bools read as 0/1, as in the boxed paths). Results are packed number arrays.
     /// </summary>
+    /// <remarks>
+    /// <paramref name="into"/> is the numeric class the answer is owed, applied inside the same
+    /// sweep that computed each element (M97). It is <see cref="PackedMath.Rounding.None"/> for the
+    /// ordinary double case, which is what makes this the same kernel it has always been; when it is
+    /// not, the caller must not convert the answer a second time, because it is already converted.
+    /// </remarks>
     public static bool TryArithmetic(PackedMath.BinaryOp op, string symbol, JgsValue left, JgsValue right,
-                                     Action? cancelCheck, int line, int column, out JgsValue result)
+                                     PackedMath.Rounding into, Action? cancelCheck, int line, int column,
+                                     out JgsValue result)
     {
         // A negative base raised to a fractional power leaves the reals, and this kernel writes
         // doubles (M81). Declining the fast path is exactly what the class contract is for: the boxed
@@ -45,7 +52,7 @@ internal static class PackedOps
         {
             RequireSameLengths(symbol, left.ArrayLength, right.ArrayLength, line, column);
             NumericBuffer dest = JgsPacking.Allocate(left.ArrayLength);
-            PackedMath.Binary(op, left.AsBuffer, right.AsBuffer, dest, cancelCheck);
+            PackedMath.Binary(op, left.AsBuffer, right.AsBuffer, dest, into, cancelCheck);
             result = KeepShape(JgsValue.Packed(dest), left, right);
             return true;
         }
@@ -53,7 +60,7 @@ internal static class PackedOps
         if (IsPackedArray(left) && IsNumericScalar(right))
         {
             NumericBuffer dest = JgsPacking.Allocate(left.ArrayLength);
-            PackedMath.BinaryScalarRight(op, left.AsBuffer, right.AsNumber, dest, cancelCheck);
+            PackedMath.BinaryScalarRight(op, left.AsBuffer, right.AsNumber, dest, into, cancelCheck);
             result = KeepShape(JgsValue.Packed(dest), left, right);
             return true;
         }
@@ -61,7 +68,7 @@ internal static class PackedOps
         if (IsPackedArray(right) && IsNumericScalar(left))
         {
             NumericBuffer dest = JgsPacking.Allocate(right.ArrayLength);
-            PackedMath.BinaryScalarLeft(op, left.AsNumber, right.AsBuffer, dest, cancelCheck);
+            PackedMath.BinaryScalarLeft(op, left.AsNumber, right.AsBuffer, dest, into, cancelCheck);
             result = KeepShape(JgsValue.Packed(dest), left, right);
             return true;
         }

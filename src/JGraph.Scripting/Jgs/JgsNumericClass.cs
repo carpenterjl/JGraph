@@ -104,6 +104,31 @@ internal static class JgsNumericClasses
     }
 
     /// <summary>
+    /// The class's rule as a kernel can carry it, so that an operation which is about to write an
+    /// array of this class can finish each element where it computed it.
+    /// </summary>
+    /// <remarks>
+    /// Every arm here has to answer what <see cref="Convert"/> answers for the same element, and the
+    /// M97 tests say so over the whole edge grid rather than trusting the two spellings to have been
+    /// written from the same understanding.
+    /// </remarks>
+    public static PackedMath.Rounding RoundingFor(JgsNumericClass numericClass)
+    {
+        if (numericClass == JgsNumericClass.Single)
+        {
+            return PackedMath.Rounding.ToSingle;
+        }
+
+        if (!numericClass.IsInteger())
+        {
+            return PackedMath.Rounding.None;
+        }
+
+        (double min, double max) = Range(numericClass);
+        return PackedMath.Rounding.Between(min, max);
+    }
+
+    /// <summary>
     /// Converts every sample of <paramref name="value"/> into <paramref name="numericClass"/> and
     /// tags the result with it.
     /// </summary>
@@ -134,7 +159,7 @@ internal static class JgsNumericClasses
             case JgsType.Array when value.IsPacked:
             {
                 NumericBuffer destination = JgsPacking.Allocate(value.ArrayLength);
-                PackedMath.Map(value.AsBuffer, destination, x => Convert(x, numericClass));
+                PackedMath.Round(value.AsBuffer, destination, RoundingFor(numericClass));
                 return JgsMatrix.Like(value, JgsValue.Packed(destination));
             }
 

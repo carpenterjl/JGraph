@@ -4769,7 +4769,8 @@ internal static partial class JgsBuiltins
 
 
     private static JgsValue MapNumeric(string name, JgsValue value, Func<double, double> f, int line, int col,
-                                       PackedMath.UnaryOp? vectorOp = null)
+                                       PackedMath.UnaryOp? vectorOp = null,
+                                       PackedMath.Rounding? rounding = null)
     {
         if (value.Type is JgsType.Number or JgsType.Bool)
         {
@@ -4782,7 +4783,17 @@ internal static partial class JgsBuiltins
             {
                 // Same arithmetic over the flat buffer: bit-identical results, no per-element boxing.
                 var dest = JgsPacking.Allocate(value.ArrayLength);
-                ApplyUnary(value.AsBuffer, dest, f, vectorOp);
+                if (rounding is { } rule)
+                {
+                    // A numeric class is not one of Math's functions but a rule about the element,
+                    // and the kernel that carries it needs no delegate to apply it (M97).
+                    PackedMath.Round(value.AsBuffer, dest, rule);
+                }
+                else
+                {
+                    ApplyUnary(value.AsBuffer, dest, f, vectorOp);
+                }
+
                 return JgsMatrix.Like(value, JgsValue.Packed(dest));
             }
 
@@ -4791,7 +4802,7 @@ internal static partial class JgsBuiltins
             for (int i = 0; i < source.Length; i++)
             {
                 // Recurse so nested arrays map elementwise: sin(X) works on meshgrid output.
-                result[i] = MapNumeric(name, source[i], f, line, col, vectorOp);
+                result[i] = MapNumeric(name, source[i], f, line, col, vectorOp, rounding);
             }
 
             return JgsMatrix.Like(value, JgsValue.Array(result));

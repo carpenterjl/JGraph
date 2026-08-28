@@ -279,6 +279,287 @@ public static class PackedMath
         return !Volatile.Read(ref outside);
     }
 
+    /// <summary>
+    /// What a numeric class does to an element the moment it is computed: nothing, a rounding to
+    /// <see cref="float"/> precision, or a round-half-away-from-zero into an integer range with
+    /// everything outside it saturated and NaN read as zero.
+    /// </summary>
+    /// <remarks>
+    /// This is MATLAB's integer classes turned back into arithmetic. Storage stays double whatever
+    /// the class says, so an <c>int32</c> array is doubles that have been rounded and clamped and
+    /// have to stay that way; every kernel that writes one owes it the same treatment. Carrying the
+    /// rule as a value is what lets the kernel that computed an element also finish it, instead of
+    /// handing the whole array to a second sweep that reads it back out of memory.
+    /// </remarks>
+    public readonly struct Rounding
+    {
+        private readonly double _min;
+        private readonly double _max;
+        private readonly Kind _kind;
+
+        private Rounding(Kind kind, double min, double max)
+        {
+            _kind = kind;
+            _min = min;
+            _max = max;
+        }
+
+        private enum Kind : byte
+        {
+            None,
+            Single,
+            Integer,
+        }
+
+        /// <summary>Leave the element as it was computed — what <c>double</c> asks for.</summary>
+        public static Rounding None => default;
+
+        /// <summary>Round to <see cref="float"/> precision and back, the storage staying double.</summary>
+        public static Rounding ToSingle => new(Kind.Single, 0, 0);
+
+        /// <summary>Round half away from zero, saturate into [min, max], read NaN as zero.</summary>
+        public static Rounding Between(double min, double max) => new(Kind.Integer, min, max);
+
+        /// <summary>Whether this rule can move an element at all.</summary>
+        public bool Moves => _kind != Kind.None;
+
+        /// <summary>
+        /// One element through the rule, spelled the way the interpreter's own conversion spells it.
+        /// The span kernels below owe their answers to this, element for element.
+        /// </summary>
+        public double Apply(double x) => _kind switch
+        {
+            Kind.Single => (float)x,
+            Kind.Integer => double.IsNaN(x)
+                ? 0
+                : Math.Clamp(Math.Round(x, MidpointRounding.AwayFromZero), _min, _max),
+            _ => x,
+        };
+
+        /// <summary>The rule over a span, in place — what a kernel that just wrote the span wants.</summary>
+        internal void Apply(Span<double> d) => Apply(d, d);
+
+        /// <summary>
+        /// The rule from one span into another, which may be the same span. Reading and writing in
+        /// the one pass matters: a copy followed by a rounding is two passes over the destination
+        /// where the delegate this replaced only ever made one, and on the cheapest rule — the cast
+        /// to <see cref="float"/> — that second pass costs more than the delegate did.
+        /// </summary>
+        internal void Apply(ReadOnlySpan<double> x, Span<double> d)
+        {
+            switch (_kind)
+            {
+                case Kind.Single:
+                    ToSingleChunk(x, d);
+                    break;
+
+                case Kind.Integer:
+                    RoundClampChunk(x, d, _min, _max);
+                    break;
+
+                default:
+                    if (x != d)
+                    {
+                        x.CopyTo(d);
+                    }
+
+                    break;
+            }
+        }
+    }
+
+    /// <summary>dest[i] = the rule's answer for source[i]; dest may be source.</summary>
+    public static void Round(NumericBuffer source, NumericBuffer dest, Rounding into,
+                             Action? betweenChunks = null)
+    {
+        RequireSameLength(source.Length, dest.Length);
+        ParallelKernels.For(dest.Length, ParallelKernels.MemoryBoundThreshold, betweenChunks, (start, len) =>
+            into.Apply(source.AsSpan(start, len), dest.AsSpan(start, len)));
+
+        GC.KeepAlive(source);
+        GC.KeepAlive(dest);
+    }
+
+    /// <summary>
+    /// dest[i] = the rule's answer for (a[i] op b[i]) — the arithmetic and the class in one sweep,
+    /// so the rounding reads each element out of cache instead of out of memory.
+    /// </summary>
+    /// <remarks>
+    /// The arithmetic is the kernel it would have been on its own and the rounding is the kernel it
+    /// would have been on its own; the only new thing is the tile they share. That is what makes a
+    /// fused answer the unfused answer bit for bit, and it is why these stay two loops over a tile
+    /// rather than becoming one hand-written expression per operator.
+    ///
+    /// A rule that moves nothing takes the untiled arm instead, so a <c>double</c> — which is every
+    /// operation in most scripts — pays nothing for the fact that this road can carry a class. The
+    /// tiling is not free: it cuts each grain into eight, and the per-call overhead of a
+    /// <see cref="TensorPrimitives"/> kernel is then paid eight times over.
+    /// </remarks>
+    public static void Binary(BinaryOp op, NumericBuffer a, NumericBuffer b, NumericBuffer dest,
+                              Rounding into, Action? betweenChunks = null)
+    {
+        RequireSameLength(a.Length, dest.Length);
+        RequireSameLength(b.Length, dest.Length);
+        ParallelKernels.For(dest.Length, ThresholdOf(op), betweenChunks, (start, len) =>
+        {
+            Span<double> x = a.AsSpan(start, len);
+            Span<double> y = b.AsSpan(start, len);
+            Span<double> d = dest.AsSpan(start, len);
+            if (!into.Moves)
+            {
+                BinaryChunk(op, x, y, d);
+                return;
+            }
+
+            for (int at = 0; at < len; at += DomainTileElements)
+            {
+                int tile = Math.Min(DomainTileElements, len - at);
+                Span<double> dt = d.Slice(at, tile);
+                BinaryChunk(op, x.Slice(at, tile), y.Slice(at, tile), dt);
+                into.Apply(dt);
+            }
+        });
+
+        GC.KeepAlive(a);
+        GC.KeepAlive(b);
+        GC.KeepAlive(dest);
+    }
+
+    /// <summary>dest[i] = the rule's answer for (a[i] op scalar) — the fused form of <see cref="Binary(BinaryOp, NumericBuffer, NumericBuffer, NumericBuffer, Rounding, Action)"/>.</summary>
+    public static void BinaryScalarRight(BinaryOp op, NumericBuffer a, double scalar, NumericBuffer dest,
+                                         Rounding into, Action? betweenChunks = null)
+    {
+        RequireSameLength(a.Length, dest.Length);
+        ParallelKernels.For(dest.Length, ThresholdOf(op), betweenChunks, (start, len) =>
+        {
+            Span<double> x = a.AsSpan(start, len);
+            Span<double> d = dest.AsSpan(start, len);
+            if (!into.Moves)
+            {
+                BinaryScalarRightChunk(op, x, scalar, d);
+                return;
+            }
+
+            for (int at = 0; at < len; at += DomainTileElements)
+            {
+                int tile = Math.Min(DomainTileElements, len - at);
+                Span<double> dt = d.Slice(at, tile);
+                BinaryScalarRightChunk(op, x.Slice(at, tile), scalar, dt);
+                into.Apply(dt);
+            }
+        });
+
+        GC.KeepAlive(a);
+        GC.KeepAlive(dest);
+    }
+
+    /// <summary>dest[i] = the rule's answer for (scalar op b[i]).</summary>
+    public static void BinaryScalarLeft(BinaryOp op, double scalar, NumericBuffer b, NumericBuffer dest,
+                                        Rounding into, Action? betweenChunks = null)
+    {
+        RequireSameLength(b.Length, dest.Length);
+        ParallelKernels.For(dest.Length, ThresholdOf(op), betweenChunks, (start, len) =>
+        {
+            Span<double> y = b.AsSpan(start, len);
+            Span<double> d = dest.AsSpan(start, len);
+            if (!into.Moves)
+            {
+                BinaryScalarLeftChunk(op, scalar, y, d);
+                return;
+            }
+
+            for (int at = 0; at < len; at += DomainTileElements)
+            {
+                int tile = Math.Min(DomainTileElements, len - at);
+                Span<double> dt = d.Slice(at, tile);
+                BinaryScalarLeftChunk(op, scalar, y.Slice(at, tile), dt);
+                into.Apply(dt);
+            }
+        });
+
+        GC.KeepAlive(b);
+        GC.KeepAlive(dest);
+    }
+
+    /// <summary>
+    /// Rounds every element half away from zero, saturates it into [min, max] and reads NaN as
+    /// zero — MATLAB's whole integer-class conversion, in place over one span.
+    /// </summary>
+    /// <remarks>
+    /// The fraction is compared against a half rather than added to the element, which is what keeps
+    /// the value just below a half from being carried over it: in doubles
+    /// <c>0.49999999999999994 + 0.5</c> is exactly 1, where the comparison says what it should.
+    /// Above 2^52 a double has no fraction left, so it subtracts from its own truncation to zero and
+    /// is already its own answer; an infinity subtracts to NaN, whose comparison is false, and
+    /// saturates at the clamp instead. The step away from zero is selected rather than added,
+    /// because a negative element with no fraction keeps its own signed zero and adding a positive
+    /// zero to it would not.
+    /// </remarks>
+    private static void RoundClampChunk(ReadOnlySpan<double> source, Span<double> d, double min, double max)
+    {
+        int i = 0;
+        int width = Vector<double>.Count;
+        if (Vector.IsHardwareAccelerated && d.Length >= width)
+        {
+            ref double sr = ref MemoryMarshal.GetReference(source);
+            ref double dr = ref MemoryMarshal.GetReference(d);
+            var half = new Vector<double>(0.5);
+            var one = new Vector<double>(1.0);
+            var low = new Vector<double>(min);
+            var high = new Vector<double>(max);
+            Vector<double> zero = Vector<double>.Zero;
+            for (; i <= d.Length - width; i += width)
+            {
+                Vector<double> x = Vector.LoadUnsafe(ref sr, (nuint)i);
+                x = Vector.ConditionalSelect(Vector.Equals(x, x), x, zero);
+                Vector<long> negative = Vector.LessThan(x, zero);
+                Vector<double> whole = Vector.ConditionalSelect(negative, Vector.Ceiling(x), Vector.Floor(x));
+                Vector<long> carries = Vector.GreaterThanOrEqual(Vector.Abs(x - whole), half);
+                Vector<double> away = whole + Vector.ConditionalSelect(negative, -one, one);
+                Vector<double> r = Vector.ConditionalSelect(carries, away, whole);
+                r = Vector.ConditionalSelect(Vector.LessThan(r, low), low, r);
+                r = Vector.ConditionalSelect(Vector.GreaterThan(r, high), high, r);
+                r.StoreUnsafe(ref dr, (nuint)i);
+            }
+        }
+
+        for (; i < d.Length; i++)
+        {
+            double x = source[i];
+            d[i] = double.IsNaN(x) ? 0 : Math.Clamp(Math.Round(x, MidpointRounding.AwayFromZero), min, max);
+        }
+    }
+
+    /// <summary>Rounds every element to <see cref="float"/> precision and back, in place.</summary>
+    /// <remarks>
+    /// Two double registers narrow into one float register and widen back, which is the same pair of
+    /// conversion instructions a cast writes one element at a time, under the same rounding mode.
+    /// </remarks>
+    private static void ToSingleChunk(ReadOnlySpan<double> source, Span<double> d)
+    {
+        int i = 0;
+        int pair = Vector<double>.Count * 2;
+        if (Vector.IsHardwareAccelerated && d.Length >= pair)
+        {
+            ref double sr = ref MemoryMarshal.GetReference(source);
+            ref double dr = ref MemoryMarshal.GetReference(d);
+            for (; i <= d.Length - pair; i += pair)
+            {
+                Vector<float> narrowed = Vector.Narrow(
+                    Vector.LoadUnsafe(ref sr, (nuint)i),
+                    Vector.LoadUnsafe(ref sr, (nuint)(i + Vector<double>.Count)));
+                Vector.Widen(narrowed, out Vector<double> low, out Vector<double> high);
+                low.StoreUnsafe(ref dr, (nuint)i);
+                high.StoreUnsafe(ref dr, (nuint)(i + Vector<double>.Count));
+            }
+        }
+
+        for (; i < d.Length; i++)
+        {
+            d[i] = (float)source[i];
+        }
+    }
+
     /// <summary>dest[i] = f(source[i]) — the scalar escape hatch for operations without an enum entry.</summary>
     /// <remarks>
     /// <paramref name="f"/> is called from several threads at once on a large enough buffer, so it
@@ -787,7 +1068,7 @@ public static class PackedMath
         }
     }
 
-    /// <summary>One span of <see cref="BinaryScalarRight"/>.</summary>
+    /// <summary>One span of <see cref="BinaryScalarRight(BinaryOp, NumericBuffer, double, NumericBuffer, Action)"/>.</summary>
     private static void BinaryScalarRightChunk(BinaryOp op, Span<double> x, double scalar, Span<double> d)
     {
         int len = d.Length;
@@ -812,7 +1093,7 @@ public static class PackedMath
         }
     }
 
-    /// <summary>One span of <see cref="BinaryScalarLeft"/>.</summary>
+    /// <summary>One span of <see cref="BinaryScalarLeft(BinaryOp, double, NumericBuffer, NumericBuffer, Action)"/>.</summary>
     private static void BinaryScalarLeftChunk(BinaryOp op, double scalar, Span<double> y, Span<double> d)
     {
         int len = d.Length;

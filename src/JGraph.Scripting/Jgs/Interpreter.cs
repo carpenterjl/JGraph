@@ -1994,7 +1994,17 @@ internal sealed partial class Interpreter
 
         JgsNumericClass numericClass =
             JgsNumericClasses.Combine(left, right, OperatorSymbol(op), at.Line, at.Column);
-        return JgsNumericClasses.Stamp(ApplyBinaryCore(op, left, right, at), numericClass);
+        JgsValue answer = ApplyBinaryCore(op, left, right, at, numericClass, out bool alreadyInClass);
+        if (!alreadyInClass)
+        {
+            return JgsNumericClasses.Stamp(answer, numericClass);
+        }
+
+        // The packed kernel rounded and saturated every element as it wrote it, so all that is left
+        // is the tag itself; converting again would be a second sweep over the whole array to write
+        // back exactly what is already there.
+        answer.SetNumericClass(numericClass);
+        return answer;
     }
 
     /// <summary>The operators whose result carries a numeric class; everything else answers logical.</summary>
@@ -2002,8 +2012,23 @@ internal sealed partial class Interpreter
         or TokenType.Star or TokenType.Slash or TokenType.Backslash or TokenType.Caret
         or TokenType.DotStar or TokenType.DotSlash or TokenType.DotBackslash or TokenType.DotCaret;
 
-    private JgsValue ApplyBinaryCore(TokenType op, JgsValue left, JgsValue right, Node at)
+    private JgsValue ApplyBinaryCore(TokenType op, JgsValue left, JgsValue right, Node at) =>
+        ApplyBinaryCore(op, left, right, at, JgsNumericClass.Double, out _);
+
+    /// <summary>
+    /// <see cref="ApplyBinaryCore(TokenType, JgsValue, JgsValue, Node)"/>, told which numeric class
+    /// the answer is owed so that the packed kernels can round into it as they compute (M97).
+    /// </summary>
+    /// <remarks>
+    /// <paramref name="alreadyInClass"/> comes back true only where a kernel actually applied the
+    /// class, which is the one road on which the caller may skip its own conversion. Every other
+    /// road — a boxed fallback, a matrix operation, an expansion, a promotion to complex — answers
+    /// false and is converted afterwards exactly as it always was.
+    /// </remarks>
+    private JgsValue ApplyBinaryCore(TokenType op, JgsValue left, JgsValue right, Node at,
+                                     JgsNumericClass into, out bool alreadyInClass)
     {
+        alreadyInClass = false;
         // An operand that is an instance of a user class decides what the operator means (M68), and
         // has to decide before any numeric reading of the operands below — the same lesson M63 and
         // M64 each learnt one branch lower down.
@@ -2117,8 +2142,11 @@ internal sealed partial class Interpreter
                      || JgsBuiltins.ConcatenatesWithPlus(left, right))))
         {
             if (PackedOps.MapArithmetic(op) is PackedMath.BinaryOp arithmetic
-                && PackedOps.TryArithmetic(arithmetic, OperatorSymbol(op), left, right, _cancelCheck, at.Line, at.Column, out JgsValue fast))
+                && PackedOps.TryArithmetic(arithmetic, OperatorSymbol(op), left, right,
+                                           JgsNumericClasses.RoundingFor(into), _cancelCheck,
+                                           at.Line, at.Column, out JgsValue fast))
             {
+                alreadyInClass = into != JgsNumericClass.Double;
                 return fast;
             }
 

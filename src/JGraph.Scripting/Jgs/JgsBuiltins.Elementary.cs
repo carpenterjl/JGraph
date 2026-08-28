@@ -374,7 +374,8 @@ internal static partial class JgsBuiltins
     {
         // A char array converts through its codes, which is what makes double('A') 65.
         JgsValue source = value.Type == JgsType.String ? CharactersAsCodes(value.AsString) : value;
-        JgsValue result = MapNumeric(name, source, x => JgsNumericClasses.Convert(x, numericClass), line, col);
+        JgsValue result = MapNumeric(name, source, x => JgsNumericClasses.Convert(x, numericClass), line, col,
+                                     rounding: JgsNumericClasses.RoundingFor(numericClass));
         result.SetNumericClass(numericClass);
         return result;
     }
