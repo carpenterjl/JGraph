@@ -505,7 +505,7 @@ internal static partial class JgsBuiltins
             Arity("mod", args, 2, line, col);
             double divisor = Num("mod", args, 1, line, col);
             // MATLAB mod: the result takes the divisor's sign (unlike C's %).
-            return MapNumeric("mod", args[0], x => divisor == 0 ? x : x - (System.Math.Floor(x / divisor) * divisor), line, col);
+            return MapNumeric("mod", args[0], x => ScalarMod(x, divisor), line, col);
         });
 
         Define("size", (args, line, col) =>

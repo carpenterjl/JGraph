@@ -1130,6 +1130,13 @@ internal sealed partial class Interpreter
 
     private Completion ExecuteWhile(WhileStmt statement, JgsEnvironment env)
     {
+        // A scalar-double loop compiles once and runs on registers (M98); anything the compiler or
+        // the entry check refuses walks below, which is always correct.
+        if (TryExecuteHotLoop(statement, env, out Completion compiled))
+        {
+            return compiled;
+        }
+
         while (Evaluate(statement.Condition, env).IsTruthy)
         {
             Tick();
@@ -1150,6 +1157,14 @@ internal sealed partial class Interpreter
 
     private Completion ExecuteFor(ForStmt statement, JgsEnvironment env)
     {
+        // A for over a range with a scalar-double body compiles once and runs on registers (M98),
+        // never materializing the range; the compiled road evaluates the same bounds once and
+        // throws the same range errors. Anything refused walks below.
+        if (TryExecuteHotLoop(statement, env, out Completion compiled))
+        {
+            return compiled;
+        }
+
         JgsValue iterable = Evaluate(statement.Iterable, env);
         if (iterable.Type == JgsType.Cell)
         {

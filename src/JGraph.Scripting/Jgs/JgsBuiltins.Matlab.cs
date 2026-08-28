@@ -86,8 +86,7 @@ internal static partial class JgsBuiltins
 
             // rem keeps the sign of the dividend, where mod keeps the sign of the divisor.
             double divisor = Num("rem", args, 1, line, col);
-            return MapNumeric("rem", args[0],
-                x => divisor == 0 ? double.NaN : x - (divisor * Math.Truncate(x / divisor)), line, col);
+            return MapNumeric("rem", args[0], x => ScalarRem(x, divisor), line, col);
         });
 
         Define("randn", (args, line, col) =>
