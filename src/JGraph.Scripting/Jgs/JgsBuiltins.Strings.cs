@@ -622,7 +622,7 @@ internal static partial class JgsBuiltins
         if (!uniform)
         {
             JgsValue cell = JgsValue.Cell(values);
-            if (rows > 1)
+            if (rows > 1 || values.Length == 0)
             {
                 cell.Reshape(rows, columns);
             }
@@ -630,9 +630,11 @@ internal static partial class JgsBuiltins
             return cell;
         }
 
+        // Nothing applied to nothing still keeps the shape it was drawn from (M96b), so cellfun over
+        // {} is the 0-by-0 empty rather than a bare 1-by-0 row.
         if (values.Length == 0)
         {
-            return JgsValue.Array([]);
+            return JgsEmpty.Shaped(rows, columns);
         }
 
         bool characters = true;
@@ -686,6 +688,14 @@ internal static partial class JgsBuiltins
             // A complex number's two halves have their own widths; printing it the way the console
             // prints it is the honest answer until there is a column rule that covers both.
             return JgsValue.Str(subject.Display());
+        }
+
+        // Nothing to describe, so the description is the empty char row — never a cell, which is
+        // what a 0-by-0 subject fell into once the row list below came back with no rows in it
+        // (M96b). MATLAB answers 0-by-0 char for every empty, whatever shape it wore.
+        if (JgsEmpty.IsEmptyArray(subject))
+        {
+            return JgsValue.Str(string.Empty);
         }
 
         double[][] rows = subject.Type is JgsType.Number or JgsType.Bool

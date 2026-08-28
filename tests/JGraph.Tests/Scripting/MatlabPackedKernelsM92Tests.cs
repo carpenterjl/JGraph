@@ -208,11 +208,22 @@ public class MatlabPackedKernelsM92Tests : IDisposable
             """);
     }
 
+    /// <summary>
+    /// The reduction of nothing answers the identity of its fold rather than refusing (M96b): a sum
+    /// over no terms is 0, a product over none is 1, and an average of none is NaN — which is what
+    /// MATLAB answers and what a script that filtered its data down to nothing depends on. Until
+    /// M96b <c>mean([])</c> was an error here.
+    /// </summary>
     [Fact]
-    public void AnEmptyArrayStillSumsToZeroAndRefusesAMean()
+    public void AnEmptyArrayStillSumsToZeroAndAveragesToNaN()
     {
-        RunAsserting("assert(sum([]) == 0);");
-        Assert.Contains("non-empty", RunExpectingFailure("mean([]);"));
+        RunAsserting("""
+            assert(sum([]) == 0);
+            assert(prod([]) == 1);
+            assert(isnan(mean([])));
+            assert(isnan(median([])));
+            assert(isequal(size(mean([])), [1 1]));
+            """);
     }
 
     [Fact]

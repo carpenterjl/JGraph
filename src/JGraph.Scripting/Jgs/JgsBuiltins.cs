@@ -848,9 +848,14 @@ internal static partial class JgsBuiltins
 
             if (TryPackedSpan(args, out NumericBuffer packed))
             {
+                // An average over nothing is NaN, not a refusal (M96b): mean([]) is NaN in MATLAB,
+                // and a script that filtered its data down to nothing depends on getting a number
+                // back rather than an error. Every reduction over nothing answers the same way its
+                // fold's identity does — 0 for a sum, 1 for a product, NaN where there is no
+                // sensible average.
                 if (packed.Length == 0)
                 {
-                    throw new JgsRuntimeException(line, col, "mean needs a non-empty array.");
+                    return JgsValue.Number(double.NaN);
                 }
 
                 return JgsValue.Number(PackedMath.Sum(packed) / packed.Length);
@@ -859,7 +864,7 @@ internal static partial class JgsBuiltins
             double[] values = ArrayOfNumbers("mean", args, line, col);
             if (values.Length == 0)
             {
-                throw new JgsRuntimeException(line, col, "mean needs a non-empty array.");
+                return JgsValue.Number(double.NaN);
             }
 
             double total = 0;
@@ -897,8 +902,11 @@ internal static partial class JgsBuiltins
         // var is MATLAB's spelling of variance, and it takes the same weight. Both names are here
         // rather than one aliasing the other so the reduction wrapper can find each of them by name.
         Define("var", (args, line, col) => JgsValue.Number(SampleVariance("var", args, line, col)));
-        Define("median", (args, line, col) => JgsValue.Number(JgsStdlib.Median(NonEmpty("median", args, line, col))));
-        Define("mode", (args, line, col) => JgsValue.Number(JgsStdlib.Mode(NonEmpty("mode", args, line, col))));
+        // The median and the mode of nothing are NaN, for the same reason mean([]) is (M96b).
+        Define("median", (args, line, col) => EmptyOrNumber(
+            ArrayOfNumbers("median", args, line, col), JgsStdlib.Median));
+        Define("mode", (args, line, col) => EmptyOrNumber(
+            ArrayOfNumbers("mode", args, line, col), JgsStdlib.Mode));
 
         Define("percentile", (args, line, col) =>
         {
@@ -4597,6 +4605,10 @@ internal static partial class JgsBuiltins
         return values.Select((v, i) => weights[i] * (v - weightedMean) * (v - weightedMean)).Sum() / total;
     }
 
+    /// <summary>A statistic of a list of numbers, or NaN when the list holds none (M96b).</summary>
+    private static JgsValue EmptyOrNumber(double[] values, Func<double[], double> statistic) =>
+        JgsValue.Number(values.Length == 0 ? double.NaN : statistic(values));
+
     private static double[] NonEmpty(string name, IReadOnlyList<JgsValue> args, int line, int col)
     {
         double[] values = ArrayOfNumbers(name, args, line, col);
@@ -4614,6 +4626,18 @@ internal static partial class JgsBuiltins
     /// </summary>
     private static JgsValue FoundIndices(JgsValue indices, JgsValue subject)
     {
+        // Finding nothing still answers with a shape (M96b), and the same rule decides it: a row
+        // searched answers a row, everything else a column, and the shapeless 0-by-0 answers itself.
+        // The > 1 test below never reached this, so every fruitless search came back a bare 1-by-0.
+        if (indices.ArrayLength == 0)
+        {
+            int rows = JgsMatrix.RowCount(subject);
+            int cols = JgsMatrix.ColCount(subject);
+            (int foundRows, int foundCols) = rows == 0 && cols == 0 ? (0, 0) : rows == 1 ? (1, 0) : (0, 1);
+            indices.Reshape(foundRows, foundCols);
+            return indices;
+        }
+
         if (indices.ArrayLength > 1 && (JgsMatrix.IsMatrix(subject) || subject.Cols == 1))
         {
             indices.Reshape(indices.ArrayLength, 1);
@@ -5234,7 +5258,10 @@ internal static partial class JgsBuiltins
         // inside for a row of three things — while numel and length both said 1.
         _ when value.IsStringArray => [value.Rows, value.Cols],
         JgsType.Array => JgsMatrix.DimsOf(value),
-        JgsType.String => [1, value.AsString.Length],
+        // A char row with no characters in it is 0-by-0, which is what '' means in MATLAB and what
+        // makes size('') answer [0 0] (M96b). MATLAB does keep a 1-by-0 char — blanks(0) is one —
+        // but nothing here can tell the two apart, and '' is overwhelmingly the one scripts write.
+        JgsType.String => value.AsString.Length == 0 ? [0, 0] : [1, value.AsString.Length],
         JgsType.Cell => [value.Rows, value.Cols],
         JgsType.Struct => [value.Rows, value.Cols], // a struct is 1-by-1 and a struct array is its shape (M65)
         JgsType.Sparse => [value.AsSparse.Rows, value.AsSparse.Cols],

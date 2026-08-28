@@ -12,27 +12,41 @@ internal static partial class JgsBuiltins
 {
     /// <summary>
     /// Checks one argument against its declared size and class, answering the value the frame should
-    /// hold — which is the same value unless a class conversion happened.
+    /// hold — which is the same value unless a class conversion or an empty's refitting happened.
     /// </summary>
     internal static JgsValue CheckArgument(
         ArgumentSpec spec, JgsValue value, int line, int col, JgsEnvironment env)
     {
         if (spec.Dims is { } dims)
         {
-            CheckSize(spec.Name, dims, value, line, col);
+            value = CheckSize(spec.Name, dims, value, line, col);
         }
 
         return spec.ClassName is { } className ? CoerceToClass(spec.Name, className, value, line, col, env) : value;
     }
 
     /// <summary>
-    /// Checks a value's size against a declared one. A null entry is <c>:</c> and matches anything;
-    /// everything else must match exactly, which is why <c>(1,1)</c> is the way a script says scalar.
+    /// Checks a value's size against a declared one, answering the value the frame should hold. A
+    /// null entry is <c>:</c> and matches anything; everything else must match exactly, which is why
+    /// <c>(1,1)</c> is the way a script says scalar. The one value that is refitted rather than
+    /// measured is an empty — see <see cref="TryFitEmpty"/>.
     /// </summary>
-    private static void CheckSize(
+    private static JgsValue CheckSize(
         string name, IReadOnlyList<Expr?> declared, JgsValue value, int line, int col)
     {
         int[] actual = SizeDims(value);
+
+        // An empty argument is fitted to a declared size that can hold nothing rather than refused
+        // (M96b). MATLAB reshapes it: f([]) against `x (1,:) double` sees a 1-by-0, and against
+        // `x (:,1)` it sees a 0-by-1. Only an empty with a shape it can give up does this — the
+        // shapeless 0-by-0, or a vector — so zeros(0, 3) against (1,:) is still the refusal MATLAB
+        // makes of it. Without this, [] and '' stopped passing every (1,:) declaration the moment
+        // they became 0-by-0.
+        if (TryFitEmpty(declared, value, actual, out JgsValue fitted))
+        {
+            return fitted;
+        }
+
         for (int i = 0; i < declared.Count; i++)
         {
             if (declared[i] is null)
@@ -67,6 +81,88 @@ internal static partial class JgsBuiltins
                     $"'{name}' must be {DescribeSize(declared)}, but it is {string.Join("-by-", actual)}.");
             }
         }
+
+        return value;
+    }
+
+    /// <summary>
+    /// Whether an empty argument can be refitted to its declared size, and what it becomes if so.
+    /// </summary>
+    /// <remarks>
+    /// Three things have to hold. The value must be an empty whose shape MATLAB is willing to turn
+    /// over — a 0-by-0, which carries no shape at all, or a vector, whose orientation is often
+    /// incidental. The declared size must be able to hold nothing: a <c>:</c> somewhere in it, or a
+    /// literal zero. And every fixed dimension it names must be one the value can actually take.
+    /// A char row has no shape of its own to set, so it is accepted as it stands.
+    /// </remarks>
+    private static bool TryFitEmpty(
+        IReadOnlyList<Expr?> declared, JgsValue value, int[] actual, out JgsValue fitted)
+    {
+        fitted = value;
+        bool empty = value.Type == JgsType.Array
+            ? value.ArrayLength == 0
+            : value.Type == JgsType.String && value.AsString.Length == 0;
+        if (!empty || declared.Count == 0 || actual.Length > 2)
+        {
+            return false;
+        }
+
+        int rows = actual.Length > 0 ? actual[0] : 1;
+        int cols = actual.Length > 1 ? actual[1] : 1;
+        if (!((rows == 0 && cols == 0) || rows == 1 || cols == 1))
+        {
+            return false;
+        }
+
+        var wanted = new int[declared.Count];
+        bool holdsNothing = false;
+        for (int i = 0; i < declared.Count; i++)
+        {
+            switch (declared[i])
+            {
+                case null:
+                    wanted[i] = 0;
+                    holdsNothing = true;
+                    break;
+                case NumberLiteral literal:
+                    wanted[i] = (int)System.Math.Round(literal.Value);
+                    holdsNothing |= wanted[i] == 0;
+                    break;
+                default:
+                    return false; // the ordinary path names the mistake
+            }
+        }
+
+        if (!holdsNothing)
+        {
+            return false;
+        }
+
+        // A fixed declared dimension has to be one the value can actually take. It can when the
+        // value already has that many, and when it has none along that dimension — nothing lays out
+        // any number of ways. zeros(1, 0) against (2,:) has a real 1 where 2 was asked for, and
+        // MATLAB refuses it where it accepts zeros(0, 1), whose 0 says nothing either way.
+        for (int i = 0; i < declared.Count; i++)
+        {
+            if (declared[i] is null)
+            {
+                continue;
+            }
+
+            int have = i < actual.Length ? actual[i] : 1;
+            if (have != wanted[i] && have != 0)
+            {
+                return false;
+            }
+        }
+
+        if (value.Type == JgsType.Array)
+        {
+            fitted = JgsNumericClasses.Stamp(
+                JgsMatrix.FromColumnMajorDims([], wanted), value.NumericClass);
+        }
+
+        return true;
     }
 
     private static string DescribeSize(IReadOnlyList<Expr?> declared) =>

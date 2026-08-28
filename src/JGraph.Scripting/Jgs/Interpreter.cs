@@ -1484,8 +1484,50 @@ internal sealed partial class Interpreter
 
         (int height, int width) = MeasureLiteral(rows, shapes, matrix);
         return height == 0 || width == 0
-            ? JgsValue.Array([])
+            ? StampLiteral(EmptyJoin(shapes), rows, matrix)
             : StampLiteral(AssembleLiteral(rows, shapes, height, width), rows, matrix);
+    }
+
+    /// <summary>What a bracket with nothing in it is worth (M96b).</summary>
+    /// <remarks>
+    /// In MATLAB it is the 0-by-0 empty, which is a different value from <c>zeros(1, 0)</c> — see
+    /// <see cref="JgsEmpty"/> for why the difference is observable. An array minted with no shape
+    /// asked for is a row, 1-by-0 when it holds nothing, so this has to say the shape out loud.
+    ///
+    /// JGS keeps the row. There a bracket is a list rather than a concatenation, and an empty list
+    /// has been 1-by-0 since the language shipped.
+    /// </remarks>
+    private JgsValue EmptyBracket() =>
+        Dialect.ConcatenatesBrackets ? JgsEmpty.Zero() : JgsValue.Array([]);
+
+    /// <summary>
+    /// The pieces of a bracket that actually join, which is every one of them that is not an empty
+    /// array. When they are all empty nothing is dropped: the list would be gone, and the block
+    /// machinery still has a shape to settle (see <see cref="EmptyJoin"/>).
+    /// </summary>
+    private static JgsValue[] WithoutEmpties(JgsValue[] elements)
+    {
+        IReadOnlyList<JgsValue> kept = JgsEmpty.WithoutEmpties(elements);
+        return ReferenceEquals(kept, elements) ? elements : [.. kept];
+    }
+
+    /// <summary>
+    /// The shape a bracket settles on when every block in it was empty: each row of blocks joins
+    /// side by side, and the rows then stack (M96b). <see cref="JgsEmpty"/> owns both rules.
+    /// </summary>
+    private static JgsValue EmptyJoin(List<(int Height, int Width)[]> shapes)
+    {
+        var joined = new List<(int Rows, int Cols)>(shapes.Count);
+        foreach ((int Height, int Width)[] row in shapes)
+        {
+            if (row.Length > 0)
+            {
+                joined.Add(JgsEmpty.JoinAcross(Array.ConvertAll(row, static b => (b.Height, b.Width))));
+            }
+        }
+
+        (int rows, int cols) = JgsEmpty.JoinDown(joined);
+        return JgsEmpty.Shaped(rows, cols);
     }
 
     /// <summary>Gives an assembled literal the numeric class its pieces agree on (M47).</summary>
@@ -1549,6 +1591,13 @@ internal sealed partial class Interpreter
             concatenating |= element.Type == JgsType.Array;
         }
 
+        // An empty array is omitted from a MATLAB concatenation, and it is omitted before the kind
+        // of the join is decided as well as before its size is: ['SN:' []] is the char row 'SN:',
+        // not a numeric block that happens to hold text (M96b). The empty still has its say about
+        // the numeric class, which StampLiteral reads from `elements` further down — [int8([]) 3]
+        // is an int8 — so only the type dispatch below reads the shortened list.
+        JgsValue[] joinable = Dialect.ConcatenatesBrackets ? WithoutEmpties(elements) : elements;
+
         // In JGS a bracket literal is a list, so [[1, 2], [3, 4]] is a matrix by nesting — the
         // spelling its own scripts and guide have always used. Only MATLAB concatenates here.
         concatenating &= Dialect.ConcatenatesBrackets;
@@ -1556,18 +1605,18 @@ internal sealed partial class Interpreter
         // A bracket holding any struct concatenates into a struct array (M65). Asked before the
         // string and numeric joins for the same reason they are asked before each other: the type of
         // the pieces decides what the bracket means.
-        if (Dialect.ConcatenatesBrackets && elements.Length > 0
-            && Array.Exists(elements, static e => e.Type == JgsType.Struct))
+        if (Dialect.ConcatenatesBrackets && joinable.Length > 0
+            && Array.Exists(joinable, static e => e.Type == JgsType.Struct))
         {
-            return ConcatenateStructs([elements], array);
+            return ConcatenateStructs([joinable], array);
         }
 
         // A bracket holding any cell joins the cells (M68), which the block machinery below cannot do:
         // it measures a cell as a single element, so an empty one left a phantom behind.
-        if (Dialect.ConcatenatesBrackets && elements.Length > 0
-            && Array.Exists(elements, static e => e.Type == JgsType.Cell))
+        if (Dialect.ConcatenatesBrackets && joinable.Length > 0
+            && Array.Exists(joinable, static e => e.Type == JgsType.Cell))
         {
-            return ConcatenateCells([elements], array);
+            return ConcatenateCells([joinable], array);
         }
 
         // A bracket holding any string array is a string array (M63): ["a" "b"] is 1-by-2, and
@@ -1575,10 +1624,10 @@ internal sealed partial class Interpreter
         // than being spliced character by character. This is MATLAB's rule and the reason a script
         // can build a list of labels without a cell. It is asked first, because the char-row join
         // below would otherwise swallow the mixed case.
-        if (Dialect.ConcatenatesBrackets && elements.Length > 0
-            && Array.Exists(elements, static e => e.IsStringArray))
+        if (Dialect.ConcatenatesBrackets && joinable.Length > 0
+            && Array.Exists(joinable, static e => e.IsStringArray))
         {
-            return JoinStringArrays(elements);
+            return JoinStringArrays(joinable);
         }
 
         // Char rows join into one longer char row: ['SN:' id] is how a MATLAB script builds a label.
@@ -1586,16 +1635,24 @@ internal sealed partial class Interpreter
         // literal among them, which was the only way to tell a char row from a double-quoted one
         // before strings had a type of their own — and which meant [a b], with both chars held in
         // variables, never joined at all.
-        if (Dialect.ConcatenatesBrackets && elements.Length > 0
-            && Array.TrueForAll(elements, static e => e.Type == JgsType.String))
+        if (Dialect.ConcatenatesBrackets && joinable.Length > 0
+            && Array.TrueForAll(joinable, static e => e.Type == JgsType.String))
         {
             var text = new StringBuilder();
-            foreach (JgsValue piece in elements)
+            foreach (JgsValue piece in joinable)
             {
                 text.Append(piece.AsString);
             }
 
             return JgsValue.Str(text.ToString());
+        }
+
+        // [] itself lands here — nothing to concatenate, nothing to pack — and in MATLAB it is the
+        // 0-by-0 empty rather than the 1-by-0 row an unshaped array would otherwise be. JGS's empty
+        // list goes on down the ordinary road, so its storage is packed or boxed as it always was.
+        if (elements.Length == 0 && Dialect.ConcatenatesBrackets)
+        {
+            return EmptyBracket();
         }
 
         var rows = new List<JgsValue[]> { elements };
@@ -1615,7 +1672,7 @@ internal sealed partial class Interpreter
 
         (int height, int width) = MeasureLiteral(rows, shapes, array.Line, array.Column);
         return height == 0 || width == 0
-            ? JgsValue.Array([])
+            ? StampLiteral(EmptyJoin(shapes), rows, array)
             : StampLiteral(AssembleLiteral(rows, shapes, height, width), rows, array);
     }
 
@@ -1656,10 +1713,17 @@ internal sealed partial class Interpreter
         return JgsValue.StringArray([.. joined]);
     }
 
-    /// <summary>The block a value contributes to a literal; an empty array contributes nothing.</summary>
-    private static (int Height, int Width) BlockShape(JgsValue value) => value.Type != JgsType.Array
-        ? (1, 1)
-        : value.ArrayLength == 0 ? (0, 0) : (JgsMatrix.RowCount(value), JgsMatrix.ColCount(value));
+    /// <summary>
+    /// The block a value contributes to a literal. An empty array contributes no elements, but it
+    /// keeps its own shape here rather than being flattened to 0-by-0: when every block is empty
+    /// that shape is the only thing left to answer with, and <c>[zeros(0, 0), zeros(1, 0)]</c> is
+    /// 1-by-0 in MATLAB where <c>[zeros(0, 0), zeros(0, 0)]</c> is 0-by-0 (M96b).
+    /// </summary>
+    private static (int Height, int Width) BlockShape(JgsValue value) =>
+        value.Type != JgsType.Array ? (1, 1) : (JgsMatrix.RowCount(value), JgsMatrix.ColCount(value));
+
+    /// <summary>Whether a block holds no elements, whatever shape it wears.</summary>
+    private static bool IsEmptyBlock((int Height, int Width) shape) => shape.Height == 0 || shape.Width == 0;
 
     /// <summary>
     /// Applies the orientation-free-vector leniency described on <see cref="EvaluateMatrix"/>: turns
@@ -1673,7 +1737,7 @@ internal sealed partial class Interpreter
         {
             foreach ((int height, int width) in row)
             {
-                if (height == 0)
+                if (IsEmptyBlock((height, width)))
                 {
                     continue;
                 }
@@ -1717,7 +1781,7 @@ internal sealed partial class Interpreter
             for (int i = 0; i < shapes[r].Length; i++)
             {
                 (int blockHeight, int blockWidth) = shapes[r][i];
-                if (blockHeight == 0)
+                if (IsEmptyBlock((blockHeight, blockWidth)))
                 {
                     continue; // [] contributes nothing, exactly as in MATLAB
                 }
@@ -1802,7 +1866,7 @@ internal sealed partial class Interpreter
             for (int i = 0; i < rows[r].Length; i++)
             {
                 (int blockHeight, int blockWidth) = shapes[r][i];
-                if (blockHeight == 0)
+                if (IsEmptyBlock((blockHeight, blockWidth)))
                 {
                     continue;
                 }
@@ -2414,8 +2478,17 @@ internal sealed partial class Interpreter
             return DeleteSlice(target, callee, rowIndex, colIndex, rows, cols, at, env);
         }
 
-        int[] rowPicks = WritePicks(rowIndex, rows, at);
-        int[] colPicks = WritePicks(colIndex, cols, at);
+        // A(:, j) = v on the shapeless 0-by-0 empty (M96b). ':' normally means "every one there is",
+        // and there are none — but MATLAB grows here rather than writing nothing, taking the extent
+        // from the right-hand side: out = []; out(:, 1) = [1; 2] is a 2-by-1. Only 0-by-0 does this.
+        // zeros(0, 3) has a shape already, and A(:, 1) = 5 on it writes into no rows and stays 0-by-3.
+        bool shapeless = rows == 0 && cols == 0;
+        int[] rowPicks = shapeless && rowIndex is null
+            ? AllPicks(rhs.Type == JgsType.Array ? JgsMatrix.RowCount(rhs) : 1)
+            : WritePicks(rowIndex, rows, at);
+        int[] colPicks = shapeless && colIndex is null
+            ? AllPicks(rhs.Type == JgsType.Array ? JgsMatrix.ColCount(rhs) : 1)
+            : WritePicks(colIndex, cols, at);
 
         int neededRows = Math.Max(rows, Highest(rowPicks) + 1);
         int neededCols = Math.Max(cols, Highest(colPicks) + 1);
@@ -2617,6 +2690,23 @@ internal sealed partial class Interpreter
     }
 
     /// <summary>
+    /// Whether <c>A(k) = v</c> past the end may grow the array rather than refuse.
+    /// </summary>
+    /// <remarks>
+    /// MATLAB refuses only where the answer would be ambiguous: a matrix with more than one row and
+    /// more than one column has no obvious direction to grow in, and says so. Everything else grows
+    /// — a row, a column, and every empty, including the shapeless 0-by-0 that <c>[]</c> is. That
+    /// last one is why <c>out = []; out(3) = 7</c> works, which is how a great many MATLAB scripts
+    /// fill a result they did not size in advance (M96b).
+    ///
+    /// The pre-shape nested form is refused whatever its size: it stores one array per row, so
+    /// <see cref="GrowVector"/>'s element-by-element copy would read rows where it means elements.
+    /// </remarks>
+    private static bool GrowsByLinearIndex(JgsValue value) =>
+        !JgsMatrix.IsNested(value)
+        && (JgsMatrix.RowCount(value) <= 1 || JgsMatrix.ColCount(value) <= 1);
+
+    /// <summary>
     /// Extends a vector to <paramref name="needed"/> elements, zero-filling, and rebinds the name —
     /// the <c>x(end + 1) = v</c> idiom. The vector keeps whichever orientation it already had.
     /// </summary>
@@ -2629,7 +2719,9 @@ internal sealed partial class Interpreter
                 + "which needs a plain variable on the left.");
         }
 
-        bool growsAsColumn = current.Cols == 1 && current.Rows > 1;
+        // Cols == 1 && Rows != 1 rather than Rows > 1: an empty column, zeros(0, 1), is a column
+        // and grows downwards, where a 1-by-1 is not one and grows across (M96b).
+        bool growsAsColumn = current.Cols == 1 && current.Rows != 1;
         if (Dialect.CopyOnAssign
             && current.TryGrowInPlace(growsAsColumn ? needed : 1, growsAsColumn ? 1 : needed))
         {
@@ -2643,14 +2735,34 @@ internal sealed partial class Interpreter
             elements[i] = current.ElementAt(i);
         }
 
-        bool wasColumn = current.Cols == 1 && current.Rows > 1;
-        JgsValue grown = JgsMatrix.FromElements(elements, wasColumn ? needed : 1, wasColumn ? 1 : needed);
+        JgsValue grown = JgsMatrix.FromElements(
+            elements, growsAsColumn ? needed : 1, growsAsColumn ? 1 : needed);
         if (!env.TryAssign(variable.Name, grown))
         {
             env.Declare(variable.Name, grown);
         }
 
         return grown;
+    }
+
+    /// <summary>
+    /// <c>x(:) = []</c>: removes every element there is and rebinds (M96b). What is left is the
+    /// shapeless empty whatever <c>x</c> was — a row, a column and a matrix all answer 0-by-0.
+    /// </summary>
+    private JgsValue DeleteEverything(Expr target, Node at, JgsEnvironment env)
+    {
+        if (target is not VariableExpr variable)
+        {
+            throw new JgsRuntimeException(at.Line, at.Column, "Deleting elements needs a plain variable on the left.");
+        }
+
+        JgsValue emptied = EmptyBracket();
+        if (!env.TryAssign(variable.Name, emptied))
+        {
+            env.Declare(variable.Name, emptied);
+        }
+
+        return emptied;
     }
 
     /// <summary>
@@ -2662,6 +2774,13 @@ internal sealed partial class Interpreter
         if (target is not VariableExpr variable)
         {
             throw new JgsRuntimeException(at.Line, at.Column, "Deleting elements needs a plain variable on the left.");
+        }
+
+        // Nothing to remove from something that is already empty, and rebuilding it would cost it
+        // its shape: zeros(0, 3) would come back 1-by-0 and [] would stop being 0-by-0 (M96b).
+        if (current.ArrayLength == 0)
+        {
+            return current;
         }
 
         if (current.Rows > 1 && current.Cols > 1)
@@ -2678,7 +2797,7 @@ internal sealed partial class Interpreter
             elements[i] = current.ElementAt(kept[i]);
         }
 
-        bool wasColumn = current.Cols == 1 && current.Rows > 1;
+        bool wasColumn = current.Cols == 1 && current.Rows != 1;
         JgsValue trimmed = JgsMatrix.FromElements(
             elements, wasColumn ? elements.Length : 1, wasColumn ? 1 : elements.Length);
         if (!env.TryAssign(variable.Name, trimmed))
@@ -2798,9 +2917,15 @@ internal sealed partial class Interpreter
 
         // x(idx) = [] removes those elements; x(n) = v past the end grows and zero-fills. Both
         // replace the value rather than writing into it, so both need a plain variable to rebind.
-        if (op == TokenType.Assign && index is not null && rhs.Type == JgsType.Array && rhs.ArrayLength == 0)
+        if (op == TokenType.Assign && rhs.Type == JgsType.Array && rhs.ArrayLength == 0)
         {
-            return DeleteElements(target, callee, index, at, env);
+            // x(:) = [] removes every element there is, and what is left is the shapeless empty
+            // whatever x was — 0-by-0 for a row, a column and a matrix alike (M96b). ':' arrives here
+            // as a null index, which is why this used to fall through to the write path and refuse
+            // to "assign 0 values into 3 selected elements".
+            return index is null
+                ? DeleteEverything(target, at, env)
+                : DeleteElements(target, callee, index, at, env);
         }
 
         if (index is not null)
@@ -2809,11 +2934,11 @@ internal sealed partial class Interpreter
             int needed = Highest(wanted) + 1;
             if (needed > callee.ArrayLength)
             {
-                callee = JgsMatrix.IsMatrix(callee)
-                    ? throw new JgsRuntimeException(at.Line, at.Column,
+                callee = GrowsByLinearIndex(callee)
+                    ? GrowVector(target, callee, needed, at, env)
+                    : throw new JgsRuntimeException(at.Line, at.Column,
                         $"Index {needed - 1 + Dialect.IndexBase} is past the end of a "
-                        + $"{JgsMatrix.RowCount(callee)}x{JgsMatrix.ColCount(callee)} matrix; grow it with two subscripts, like A({needed}, 1).")
-                    : GrowVector(target, callee, needed, at, env);
+                        + $"{JgsMatrix.RowCount(callee)}x{JgsMatrix.ColCount(callee)} matrix; grow it with two subscripts, like A({needed}, 1).");
             }
         }
 
@@ -3205,7 +3330,15 @@ internal sealed partial class Interpreter
                 Single(call.Arguments, call, "Indexing a cell"), elements.Length, env);
             if (index is null)
             {
-                return JgsValue.Cell((JgsValue[])elements.Clone()); // c(:) is the whole cell
+                // c(:) is the whole cell, as a column — the same flatten A(:) does for an array,
+                // which this had never followed (M96b).
+                JgsValue whole = JgsValue.Cell((JgsValue[])elements.Clone());
+                if (whole.ArrayLength != 1)
+                {
+                    whole.Reshape(whole.ArrayLength, 1);
+                }
+
+                return whole;
             }
 
             if (index.Type == JgsType.Array)
@@ -3217,7 +3350,9 @@ internal sealed partial class Interpreter
                     selected[i] = elements[picks[i]];
                 }
 
-                return JgsValue.Cell(selected);
+                // Same shape rule as any other gather (M96b), so c([]) is a 0-by-0 cell rather than
+                // the 1-by-0 row the fresh cell is minted as.
+                return OrientGather(JgsValue.Cell(selected), callee, index);
             }
 
             return JgsValue.Cell([elements[ToIndex(index, elements.Length, call.Line, call.Column)]]);
@@ -3378,7 +3513,10 @@ internal sealed partial class Interpreter
             JgsValue all = target.IsPacked ? PackedOps.Clone(target, _cancelCheck)
                 : target.IsPackedComplex ? PackedOps.CloneComplex(target, _cancelCheck)
                 : JgsValue.Array((JgsValue[])target.AsArray.Clone());
-            if (all.ArrayLength > 1)
+
+            // != 1 rather than > 1: an empty flattens to a column too, so [](:) is 0-by-1 and not the
+            // 1-by-0 row the clone came out as (M96b). A single element is already 1-by-1.
+            if (all.ArrayLength != 1)
             {
                 all.Reshape(all.ArrayLength, 1);
             }
@@ -3834,7 +3972,10 @@ internal sealed partial class Interpreter
     /// </summary>
     private static JgsValue OrientGather(JgsValue result, JgsValue target, JgsValue index)
     {
-        if (result.ArrayLength <= 1)
+        // == 1 rather than <= 1: an empty gather obeys the same rule as any other, which is what
+        // makes v([]) a 0-by-0 (the index's shape) where v(zeros(1, 0)) is a 1-by-0 (the vector's
+        // orientation). Skipping it minted a plain 1-by-0 row for both (M96b).
+        if (result.ArrayLength == 1)
         {
             return result;
         }
@@ -4029,6 +4170,15 @@ internal sealed partial class Interpreter
             return JgsBuiltins.ComplexMatrixProduct(left, right, at.Line, at.Column);
         }
 
+        // An empty operand has no first row for the jagged reader below to index, and [] * [] walked
+        // off the end of the array outright (M96b). MATLAB still answers with a shape here: the inner
+        // dimensions have to agree, and the product is rows(left)-by-cols(right) — which is not
+        // always empty, since zeros(2, 0) * zeros(0, 3) is a 2-by-3 of zeros summed over nothing.
+        if (left.ArrayLength == 0 || right.ArrayLength == 0)
+        {
+            return EmptyProduct(left, right, at);
+        }
+
         double[][] a = JgsMatrix.ToRows("'*'", left, at.Line, at.Column);
         double[][] b = JgsMatrix.ToRows("'*'", right, at.Line, at.Column);
         bool leftIsVector = IsVector(left);
@@ -4101,6 +4251,33 @@ internal sealed partial class Interpreter
         return m == 1 && columns == 1
             ? JgsValue.Number(product[0]) // an inner product is a scalar, exactly as Build returned
             : JgsMatrix.FromColumnMajor(product, m, columns);
+    }
+
+    /// <summary>
+    /// <c>A * B</c> where one of them holds nothing (M96b). The shape is the ordinary one —
+    /// rows(A)-by-cols(B), with the inner dimensions still having to agree — and it is only empty
+    /// when one of those two is zero: <c>zeros(2, 0) * zeros(0, 3)</c> is a 2-by-3 of zeros, each
+    /// element a sum over no terms.
+    /// </summary>
+    private static JgsValue EmptyProduct(JgsValue left, JgsValue right, Node at)
+    {
+        int leftRows = JgsMatrix.RowCount(left);
+        int leftCols = JgsMatrix.ColCount(left);
+        int rightRows = JgsMatrix.RowCount(right);
+        int rightCols = JgsMatrix.ColCount(right);
+
+        if (leftCols != rightRows)
+        {
+            throw new JgsRuntimeException(at.Line, at.Column,
+                $"Matrix dimensions do not agree for '*': the left has {leftCols} columns and the right has {rightRows} rows.");
+        }
+
+        if (leftRows == 0 || rightCols == 0)
+        {
+            return JgsEmpty.Shaped(leftRows, rightCols);
+        }
+
+        return JgsMatrix.FromColumnMajor(new double[(long)leftRows * rightCols], leftRows, rightCols);
     }
 
     /// <summary>Jagged rows as a rectangular matrix, validating equal row lengths.</summary>
@@ -4176,6 +4353,16 @@ internal sealed partial class Interpreter
             buffer.AsSpan(0, packed.Length).CopyTo(packed);
             GC.KeepAlive(buffer);
             return packed;
+        }
+
+        // A list of rows cannot say how wide a matrix with no rows in it is, so an empty operand
+        // reads its shape off the value instead (M96b). Without this the boxed road answered 0-by-0
+        // for zeros(0, 3) where the packed one answered 0-by-3, and the two lanes disagreed.
+        if (value.Type == JgsType.Array && value.ArrayLength == 0)
+        {
+            rows = JgsMatrix.RowCount(value);
+            cols = JgsMatrix.ColCount(value);
+            return [];
         }
 
         double[][] jagged = AsRows(value);
@@ -4289,6 +4476,15 @@ internal sealed partial class Interpreter
         }
 
         JgsValue cell = JgsValue.Cell(elements);
+
+        // {} is the 0-by-0 empty cell, the same shape [] is (M96b). The parser always hands over one
+        // row, so an empty literal arrives as 1-by-0 unless it is collapsed here; cell(0, 3) still
+        // has its own shape, because that is the builtin's to give and not a literal's.
+        if (elements.Length == 0)
+        {
+            (rows, cols) = (0, 0);
+        }
+
         cell.Reshape(rows, cols);
         return cell;
     }

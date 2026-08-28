@@ -251,7 +251,14 @@ internal static partial class JgsBuiltins
 
         // MATLAB answers a column unless the input was a row — and a cell of text always answers a
         // column, which is the shape a script then walks with parts{i,1}.
-        if (picked.Length > 1 && (cells || JgsMatrix.RowCount(subject) > 1))
+        if (picked.Length == 0)
+        {
+            // The same rule when there is nothing distinct to answer with (M96b): unique([]) is
+            // 0-by-1, and only a row searched keeps the row. The test below skipped this entirely.
+            bool row = !cells && JgsMatrix.RowCount(subject) == 1;
+            values.Reshape(row ? 1 : 0, row ? 0 : 1);
+        }
+        else if (picked.Length > 1 && (cells || JgsMatrix.RowCount(subject) > 1))
         {
             values.Reshape(picked.Length, 1);
         }

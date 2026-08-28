@@ -173,17 +173,20 @@ with a second delegate that returns a `double`; the planar arm uses it and boxes
 about the answers changes: the delegate is the boxed one with the box taken off, written at the same
 call site.
 
-## Divergence found here, and left standing
+## Divergence found here — since closed
 
-- **An empty matrix literal is 1-by-0, where MATLAB's is 0-by-0.** `zeros(0, 0)` is right; the bare
-  `[]` is not. It matters beyond display, because every builtin that walks "the first non-singleton
-  dimension" picks the second dimension for a 1-by-0 and the first for a 0-by-0 — so `fft([])`
-  answers a 1-by-0 where MATLAB answers 0-by-0, and `fft([], 4)` answers a 1-by-4 of zeros where
-  MATLAB answers a 4-by-0 empty. Handed the same shapes by name — `fft(zeros(1, 0), 4)`,
-  `fft(zeros(0, 3), 2)` — the two engines agree exactly, which is how the literal was isolated as
-  the one carrying the difference. Found in M96a while checking the transform against real MATLAB,
-  and left where it was found: the literal reaches into concatenation, deletion, `isempty` and every
-  reduction's default dimension, and changing it is its own piece of work.
+The empty matrix literal was 1-by-0 here where MATLAB's is 0-by-0. `zeros(0, 0)` was right; the bare
+`[]` was not. It mattered beyond display, because every builtin that walks "the first non-singleton
+dimension" picks the second dimension for a 1-by-0 and the first for a 0-by-0 — so `fft([])` answered
+a 1-by-0 where MATLAB answers 0-by-0, and `fft([], 4)` answered a 1-by-4 of zeros where MATLAB
+answers a 4-by-0 empty. Handed the same shapes by name — `fft(zeros(1, 0), 4)`,
+`fft(zeros(0, 3), 2)` — the two engines agreed exactly even then, which is how the literal was
+isolated as the one carrying the difference.
+
+It was found here and left here, because the literal reaches into concatenation, deletion,
+`isempty` and every reduction's default dimension, and changing it was its own piece of work.
+**That work is M96b — see [ADR 0097](0097-there-is-more-than-one-empty.md).** The row is retired
+rather than struck through, so the divergence index no longer carries it.
 
 ## Consequences
 

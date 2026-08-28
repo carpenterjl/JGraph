@@ -381,6 +381,16 @@ internal static class JgsMatrix
     /// <summary>Adopts an already-column-major buffer as a rows-by-cols matrix value.</summary>
     public static JgsValue FromColumnMajor(double[] flat, int rows, int cols)
     {
+        // An empty result keeps the shape it was computed at (M96b). It used to fall in with the
+        // vectors below and come back a bare 1-by-0 row, which made zeros(0, 0) \ zeros(0, 1) a
+        // 1-by-0 where MATLAB says 0-by-1, and inv([]) a row where MATLAB says 0-by-0.
+        if (flat.Length == 0 && (long)rows * cols == 0)
+        {
+            JgsValue empty = Adopt(flat);
+            empty.Reshape(rows, cols);
+            return empty;
+        }
+
         if (rows == 1 || cols == 1 || flat.Length == 0)
         {
             // A vector needs no shape beyond the one an array already has, except that a column

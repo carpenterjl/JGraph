@@ -167,11 +167,13 @@ public class MatlabPackedFftM96Tests : IDisposable
     /// length gives a real array of zeros, so <c>fft(zeros(1, 0), 4)</c> really is four of them.
     /// </summary>
     /// <remarks>
-    /// The two rows that are not MATLAB's are not this family's doing: MATLAB's <c>[]</c> literal is
-    /// 0-by-0 and this build's is 1-by-0, so the first non-singleton dimension of a bare <c>[]</c> is
-    /// the second here and the first there. Handed the same shape by name — <c>zeros(0, 3)</c>,
-    /// <c>zeros(1, 0)</c> — the two transforms agree exactly, which is how the literal was found to
-    /// be the one carrying the difference.
+    /// Two of these rows are the reason M96b exists. <c>[]</c> was minted 1-by-0 here where MATLAB
+    /// mints it 0-by-0, so the first non-singleton dimension of a bare <c>[]</c> was the second one
+    /// rather than the first, and <c>fft([], 4)</c> came back a 1-by-4 of zeros where MATLAB answers
+    /// a 4-by-0 empty. Handed the same shapes by name — <c>fft(zeros(1, 0), 4)</c>,
+    /// <c>fft(zeros(0, 3), 2)</c> — the two agreed exactly even then, which is how the literal was
+    /// found to be the one carrying the difference. The literal is 0-by-0 now, and the whole row
+    /// below is MATLAB's; the named forms at the end are kept as the control they were.
     /// </remarks>
     [Fact]
     public void AnEmptySubjectAnswersTheEmptyArrayMatlabAnswers()
@@ -187,7 +189,8 @@ public class MatlabPackedFftM96Tests : IDisposable
             function p(v)
                 fprintf('%dx%d n=%d\n', size(v, 1), size(v, 2), numel(v));
             end
-            p(fft([])); p(fft([], 4)); p(fft(zeros(0, 3))); p(fft(zeros(3, 0), [], 2));
+            p(fft([])); p(ifft([])); p(fft2([]));
+            p(fft([], 4)); p(fft(zeros(0, 3))); p(fft(zeros(3, 0), [], 2));
             p(fft(zeros(0, 3), 2)); p(fft(zeros(2, 0))); p(fft([1 2 3], 0));
             p(filter([1 1], 1, []));
             """);
@@ -195,10 +198,12 @@ public class MatlabPackedFftM96Tests : IDisposable
         Assert.True(ok, message);
         Assert.Equal(
             [
-                "1x0 n=0",  // MATLAB says 0x0, because its [] is 0x0 and this build's is 1x0
-                "1x4 n=4",  // MATLAB says 4x0 for the same reason; for zeros(1, 0) it says 1x4 too
+                "0x0 n=0",  // fft([]) — the shapeless empty in, the shapeless empty out
+                "0x0 n=0",  // ifft of the same
+                "0x0 n=0",  // fft2 of the same
+                "4x0 n=0",  // fft([], 4): four points asked of no columns at all
                 "0x3 n=0", "3x0 n=0", "2x3 n=6", "2x0 n=0", "1x0 n=0",
-                "1x0 n=0",  // filter of the same literal, so 1-by-0 again where MATLAB says 0-by-0
+                "0x0 n=0",  // filter of the same literal
             ],
             Array.ConvertAll(output, static line => line.Trim()));
 

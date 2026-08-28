@@ -35,6 +35,18 @@ internal static partial class JgsBuiltins
             ArityRange("diag", args, 1, 2, line, col);
             int offset = args.Count == 2 ? Count("diag", args, 1, line, col) : 0;
 
+            // Neither reading of an empty has anything to answer, and the matrix reading below walks
+            // off the end of a matrix with no rows in it (M96b). A vector builds a square of its own
+            // length — 0-by-0 — and so does the shapeless empty; extracting a diagonal from a real
+            // but empty matrix answers the column it would have filled, which is 0-by-1.
+            if (JgsEmpty.IsEmptyArray(args[0]))
+            {
+                int diagRows = JgsMatrix.RowCount(args[0]);
+                int diagCols = JgsMatrix.ColCount(args[0]);
+                bool vector = diagRows == 1 || diagCols == 1 || (diagRows == 0 && diagCols == 0);
+                return JgsEmpty.Shaped(0, vector ? 0 : 1);
+            }
+
             if (IsMatrixValue(args[0]))
             {
                 // Matrix in: extract the k-th diagonal as a vector.
@@ -148,6 +160,14 @@ internal static partial class JgsBuiltins
         {
             ArityRange("flip", args, 1, 2, line, col);
             int? dim = args.Count == 2 ? Count("flip", args, 1, line, col) : null;
+
+            // Reversing nothing leaves it as it was, shape and all: flip(zeros(0, 3)) is 0-by-3,
+            // where the paths below would have rebuilt it as a bare 1-by-0 row (M96b).
+            if (JgsEmpty.IsEmptyArray(args[0]))
+            {
+                return args[0];
+            }
+
             if (IsMatrixValue(args[0]))
             {
                 // The default dimension is the first non-singleton one: rows, for a matrix.
@@ -163,6 +183,11 @@ internal static partial class JgsBuiltins
         Define("fliplr", (args, line, col) =>
         {
             Arity("fliplr", args, 1, line, col);
+            if (JgsEmpty.IsEmptyArray(args[0]))
+            {
+                return args[0]; // see flip: an empty reversed is the same empty
+            }
+
             return IsMatrixValue(args[0])
                 ? FlipColumns("fliplr", args[0], line, col)
                 : ReversedVector("fliplr", args[0], line, col);
@@ -171,6 +196,10 @@ internal static partial class JgsBuiltins
         Define("flipud", (args, line, col) =>
         {
             Arity("flipud", args, 1, line, col);
+            if (JgsEmpty.IsEmptyArray(args[0]))
+            {
+                return args[0]; // see flip: an empty reversed is the same empty
+            }
 
             // A vector is a row, and flipping a single row upside down changes nothing.
             return IsMatrixValue(args[0]) ? FlipRows("flipud", args[0], line, col) : args[0];
@@ -989,10 +1018,12 @@ internal static partial class JgsBuiltins
             return back.Length == 1 ? JgsValue.Number(back[0]) : Numbers(back);
         }
 
-        // Only a non-empty numeric array is sliced here. A string array, a complex array, an image, a
-        // scalar and sum([]) all keep the answer the builtin already gave them.
-        static bool Reduces(JgsValue subject) =>
-            IsNumericArray(subject) && subject.ArrayLength > 0;
+        // Only a numeric array is sliced here; a string array, a complex array, an image and a
+        // scalar keep the answer the builtin already gave them. An empty one is sliced too (M96b):
+        // the shape a reduction of nothing takes is decided by the dimension it ran along, so
+        // sum(zeros(0, 3)) is a 1-by-3 of zeros and sum(zeros(3, 0)) is a 1-by-0 — neither of which
+        // the builtin underneath, which sees a flat list with nothing in it, could have known.
+        static bool Reduces(JgsValue subject) => IsNumericArray(subject);
 
         // Everything else, exactly as before: reducing along a vector's singleton dimension changes
         // nothing, and a column carries its orientation through the shape-keeping reductions.
@@ -1038,7 +1069,8 @@ internal static partial class JgsBuiltins
         // One value per slice lands in the reduced shape; a whole vector per slice is scattered back
         // along the dimension it came from, which is what keeps cumsum and sort the size of the input.
         JgsValue Assemble(
-            JgsValue[] results, int[] reduced, int[] dims, int dim, int line, int col)
+            JgsValue[] results, int[] reduced, int[] dims, int dim,
+            JgsValue[] extra, int order, bool omitNan, bool reverse, int line, int col)
         {
             if (!keepShape)
             {
@@ -1056,10 +1088,24 @@ internal static partial class JgsBuiltins
                 }
             }
 
+            if (results.Length == 0)
+            {
+                // There was no slice to reduce, so the join has none to measure either — and the
+                // reduced dimension's length is exactly what a slice's answer would have been. Ask
+                // for one (M96b): sort and cumsum answer as long as they were asked and diff one
+                // shorter, which is why zeros(3, 0) sorted down its columns is 3-by-0 where the
+                // empty join on its own would have said 0-by-0.
+                int span = dim - 1 < dims.Length ? dims[dim - 1] : 1;
+                double[] measured = ToDoubles(
+                    name, ReduceSlice(new double[span], extra, order, omitNan, reverse, line, col),
+                    line, col);
+                return JgsMatrix.FromColumnMajorDims([], JgsMatrix.ShapeAlong(dims, dim, measured.Length));
+            }
+
             (double[] joined, int[] shape) = JgsMatrix.JoinAlong(vectors, dims, dim);
             if (joined.Length == 0)
             {
-                return JgsValue.Array([]);
+                return JgsMatrix.FromColumnMajorDims(joined, shape);
             }
 
             // One value left is a number rather than a one-element array — the same rule the
@@ -1082,6 +1128,18 @@ internal static partial class JgsBuiltins
                 return Defer(subject, dim, extra, order, line, col);
             }
 
+            // sum([]) is 0, prod([]) is 1, mean([]) is NaN. MATLAB does not pick a dimension for the
+            // shapeless 0-by-0 — it reduces the whole of it, which is one empty slice, and answers a
+            // scalar (M96b). Only 0-by-0 does this and only when no dimension was named: zeros(0, 3)
+            // reduces down its columns like any other array, and sum([], 1) is the 1-by-0 that
+            // reducing no rows of no columns makes. A shape-keeping reduction has no scalar to
+            // answer with and stays out of it: sort([]) is [].
+            if (dim is null && !keepShape && subject.ArrayLength == 0
+                && JgsMatrix.RowCount(subject) == 0 && JgsMatrix.ColCount(subject) == 0)
+            {
+                return ReduceSlice([], extra, order, omitNan, reverse, line, col);
+            }
+
             (double[][] slices, int[] reduced, int[] dims, int along) = Cut(subject, dim, line, col);
             var results = new JgsValue[slices.Length];
             for (int i = 0; i < slices.Length; i++)
@@ -1089,7 +1147,7 @@ internal static partial class JgsBuiltins
                 results[i] = ReduceSlice(slices[i], extra, order, omitNan, reverse, line, col);
             }
 
-            return Assemble(results, reduced, dims, along, line, col);
+            return Assemble(results, reduced, dims, along, extra, order, omitNan, reverse, line, col);
         }
 
         JgsValue Single(IReadOnlyList<JgsValue> args, int line, int col)
@@ -1150,7 +1208,7 @@ internal static partial class JgsBuiltins
             // The words are discarded rather than applied: the only name here with a second output is
             // sort, which claims none of them. A name that gained both would have to say what its
             // index output means once values have been dropped, and none does yet.
-            (JgsValue subject, int? dim, int[]? vecdim, JgsValue[] extra, bool all, int _, bool _,
+            (JgsValue subject, int? dim, int[]? vecdim, JgsValue[] extra, bool all, int order, bool _,
                 bool _) = Split(args, line, col);
 
             // MATLAB refuses a second output for a vector of dimensions, and for a good reason: a
@@ -1204,7 +1262,12 @@ internal static partial class JgsBuiltins
                     perOutput[i] = perSlice[i][o];
                 }
 
-                outputs[o] = Assemble(perOutput, reduced, dims, along, line, col);
+                // omitNan and reverse stay discarded here for the reason above; they reach Assemble
+                // only as the settings a measuring slice would be reduced under, and sort claims
+                // neither word.
+                outputs[o] = Assemble(
+                    perOutput, reduced, dims, along, extra, order,
+                    omitNan: false, reverse: false, line, col);
             }
 
             return outputs;
@@ -1377,6 +1440,18 @@ internal static partial class JgsBuiltins
         static JgsValue Shaped(double[] values, IReadOnlyList<int> dims) =>
             values.Length == 1 ? JgsValue.Number(values[0]) : JgsMatrix.FromColumnMajorDims(values, dims);
 
+        // The extreme of nothing is nothing, and MATLAB gives that nothing a shape (M96b). A slice
+        // with no elements answers no value, which leaves the reduced dimension zero long; where
+        // there was no slice at all to reduce, the dimension collapses to one the way any
+        // reduction's does. So max(zeros(0, 3)) is 0-by-3 — reducing down columns that each hold
+        // nothing — and max(zeros(3, 0)) is 1-by-0, there being no column to reduce. The shape is
+        // empty either way, because the zero that made the input empty is still in it.
+        static int[] ExtremeEmptyShape(int[] dims, int dim) =>
+            JgsMatrix.ShapeAlong(dims, dim, dim - 1 < dims.Length && dims[dim - 1] == 0 ? 0 : 1);
+
+        static JgsValue[] ExtremeEmpty(int[] shape) =>
+            [JgsMatrix.FromColumnMajorDims([], shape), JgsMatrix.FromColumnMajorDims([], shape)];
+
         // The extreme of every slice along one dimension, paired with the position it came from. Ties
         // go to the first, as MATLAB's do. 'linear' asks for that position as an index into the whole
         // array instead of into its slice, which is what makes A(i) round-trip back to the extreme.
@@ -1401,7 +1476,7 @@ internal static partial class JgsBuiltins
 
             if (flat.Length == 0)
             {
-                return [JgsValue.Array([]), JgsValue.Array([])];
+                return ExtremeEmpty(ExtremeEmptyShape(dims, dim));
             }
 
             (double[][] slices, int[] reduced) = JgsMatrix.SlicesAlong(flat, dims, dim);
@@ -1445,7 +1520,15 @@ internal static partial class JgsBuiltins
             double[] flat = FlattenColumnMajor(name, subject, line, col);
             if (flat.Length == 0)
             {
-                return [JgsValue.Array([]), JgsValue.Array([])];
+                // 'all' is every dimension in turn, and over an empty each pass leaves a shape for
+                // the next one to reduce: max(zeros(0, 3), [], 'all') is 0-by-3 collapsed to 0-by-1.
+                int[] shape = JgsMatrix.DimsOf(subject);
+                for (int d = 1; d <= shape.Length; d++)
+                {
+                    shape = ExtremeEmptyShape(shape, d);
+                }
+
+                return ExtremeEmpty(shape);
             }
 
             (double best, int at) = ExtremeOf(name, flat, takeMin, omitNan, line, col);
@@ -1573,6 +1656,12 @@ internal static partial class JgsBuiltins
     {
         JgsValue Map(JgsValue shaped, Func<double, double> f)
         {
+            // Nothing to map, and the shape is the answer: max(zeros(0, 3), 5) is 0-by-3 (M96b).
+            if (JgsEmpty.IsEmptyArray(shaped))
+            {
+                return shaped;
+            }
+
             if (IsMatrixValue(shaped))
             {
                 double[][] rows = RowsOfMatrix(name, shaped, line, col);
@@ -1594,6 +1683,11 @@ internal static partial class JgsBuiltins
         {
             double scalar = right.AsNumber;
             return Map(left, v => pick(v, scalar));
+        }
+
+        if (JgsEmpty.IsEmptyArray(left) && JgsEmpty.IsEmptyArray(right))
+        {
+            return left; // two empties of one shape pick between no elements at all
         }
 
         if (IsMatrixValue(left) != IsMatrixValue(right))
@@ -1686,10 +1780,14 @@ internal static partial class JgsBuiltins
             return ToDoubles(name, value, line, col);
         }
 
+        // A matrix with no rows has no first row to measure, and reading one walked off the end of
+        // the list outright (M96b) — which is what filter, vecnorm and every other caller of this
+        // did the moment [] started arriving as a 0-by-0 rather than a 1-by-0 row.
         double[][] rows = RowsOfMatrix(name, value, line, col);
-        var flat = new double[rows.Length * rows[0].Length];
+        int width = rows.Length == 0 ? 0 : rows[0].Length;
+        var flat = new double[rows.Length * width];
         int at = 0;
-        for (int c = 0; c < rows[0].Length; c++)
+        for (int c = 0; c < width; c++)
         {
             for (int r = 0; r < rows.Length; r++)
             {
@@ -1769,10 +1867,14 @@ internal static partial class JgsBuiltins
     /// </remarks>
     private static JgsValue ConcatAlongDimension(string name, int dim, JgsValue[] parts, int line, int col)
     {
-        if (parts.Length == 0)
+        // An empty is omitted from a join past the second dimension too, and cat(3, [], []) is the
+        // 0-by-0 empty rather than anything with a third dimension to it (M96b).
+        if (TryJoinEmpties(parts, across: true, out JgsValue empty, out IReadOnlyList<JgsValue> joinable))
         {
-            return JgsValue.Array([]);
+            return empty;
         }
+
+        parts = [.. joinable];
 
         var flats = new double[parts.Length][];
         var sizes = new int[parts.Length][];
@@ -1859,10 +1961,12 @@ internal static partial class JgsBuiltins
 
     private static JgsValue ConcatHorizontal(string name, IReadOnlyList<JgsValue> parts, int line, int col)
     {
-        if (parts.Count == 0)
+        if (TryJoinEmpties(parts, across: true, out JgsValue empty, out IReadOnlyList<JgsValue> joinable))
         {
-            return JgsValue.Array([]);
+            return empty;
         }
+
+        parts = joinable;
 
         if (parts.All(static p => p.Type == JgsType.String))
         {
@@ -1906,10 +2010,12 @@ internal static partial class JgsBuiltins
 
     private static JgsValue ConcatVertical(string name, IReadOnlyList<JgsValue> parts, int line, int col)
     {
-        if (parts.Count == 0)
+        if (TryJoinEmpties(parts, across: false, out JgsValue empty, out IReadOnlyList<JgsValue> joinable))
         {
-            return JgsValue.Array([]);
+            return empty;
         }
+
+        parts = joinable;
 
         double[][][] blocks = parts.Select(p => AsJaggedRows(name, p, line, col)).ToArray();
         int width = blocks[0][0].Length;
@@ -1920,6 +2026,38 @@ internal static partial class JgsBuiltins
 
         double[][] stacked = blocks.SelectMany(static b => b).ToArray();
         return MatrixFromRows(stacked);
+    }
+
+    /// <summary>
+    /// Applies MATLAB's rule that an empty array is omitted from a concatenation (M96b), which is
+    /// what makes <c>vertcat([], [1 2])</c> a 1-by-2 rather than a shape error and what a script
+    /// growing a result from <c>out = []</c> depends on. Answers true — with the whole result in
+    /// <paramref name="empty"/> — when there was nothing but empties to join and the shape is
+    /// therefore <see cref="JgsEmpty"/>'s to settle; otherwise hands back the pieces that remain.
+    /// </summary>
+    private static bool TryJoinEmpties(
+        IReadOnlyList<JgsValue> parts,
+        bool across,
+        out JgsValue empty,
+        out IReadOnlyList<JgsValue> joinable)
+    {
+        joinable = JgsEmpty.WithoutEmpties(parts);
+        bool allEmpty = true;
+        foreach (JgsValue part in joinable)
+        {
+            allEmpty &= JgsEmpty.IsEmptyArray(part);
+        }
+
+        if (!allEmpty)
+        {
+            empty = JgsValue.Null;
+            return false;
+        }
+
+        List<(int Rows, int Cols)> shapes = JgsEmpty.ShapesOf(joinable);
+        (int rows, int cols) = across ? JgsEmpty.JoinAcross(shapes) : JgsEmpty.JoinDown(shapes);
+        empty = JgsEmpty.Shaped(rows, cols);
+        return true;
     }
 
     /// <summary>A scalar, vector, or matrix as jagged rows (scalar and vector become one row).</summary>
