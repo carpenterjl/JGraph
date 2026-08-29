@@ -365,6 +365,14 @@ def build_call(name: str, syntax: str, arg_types: dict[str, str],
             values.append(bare)
             continue
         if bare.startswith("["):
+            # An empty bracket is a literal, not a placeholder: `max(A,[],dim)` and
+            # `unwrap(P,[],dim)` mean "pass an empty here", and it is what selects the form.
+            # Turning it into a one-element array asked a different question and scored the
+            # answer as a failure - 24 forms across 8 names were measured that way until M100.
+            if not bare.strip("[] "):
+                values.append("[]")
+                continue
+
             # A bracket in a documented syntax is usually a shape or a limit pair written with
             # placeholder names — `alim([amin amax])`. Passing it through verbatim asks the build
             # to resolve variables that do not exist, which is the prober's error, not a gap.

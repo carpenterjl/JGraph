@@ -103,9 +103,12 @@ see. This file refused to count them while they drew nothing; **M56 made them re
 number and this one agree again. `opengl` *is* counted, because an accepted no-op is an answer — the
 same reading that counted `shading`, `lighting` and `camlight` in M43.
 
-Across every callable kind — builtin, function, operator, keyword, script — the count is **933 of
-2,024** as of M99, which opened the optimfun folder: `fminsearch` `fminbnd` `fzero` `lsqnonneg`
-`optimset` `optimget`. Those are the first six names counted here that MATLAB documents as
+Across every callable kind — builtin, function, operator, keyword, script — the count is **947 of
+2,024** as of M100, which took the polynomial and 1-D signal names: `roots` `poly` `polyder`
+`polyint` `polyvalm` `conv` `deconv` `convn` `nextpow2` `unwrap` `cplxpair` `polyarea` `rectint`
+`inpolygon`. Those fourteen finish MATLAB's `elfun` folder and take `polyfun` from 6 of 34 to 14.
+933 after M99, which opened the optimfun folder: `fminsearch` `fminbnd` `fzero` `lsqnonneg`
+`optimset` `optimget`. Those were the first six names counted here that MATLAB documents as
 *functions* and does not draw with — the population `docs/matlab-toolbox-coverage.md` was added to
 measure, because none of them can ever appear in the tables below.
 927 after M87, which built the two verbs that wait for a person — `waitforbuttonpress` and

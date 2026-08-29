@@ -2385,6 +2385,7 @@ internal static partial class JgsBuiltins
         // reductions, so a statistic that reduces columns is wrapped for a dimension exactly once.
         RegisterStatisticsBuiltins(env, host, random, dialect);
         RegisterOptimizeBuiltins(env, host);
+        RegisterPolynomialBuiltins(env);
 
         // After every imaging define, since these wrap builtins declared above.
         RegisterImagingMultiOutputForms(env, host, random, dialect);

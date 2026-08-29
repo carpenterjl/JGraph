@@ -1338,6 +1338,22 @@ public static class JgsBuiltinCatalog
         Add("optimplotx", "A solver's PlotFcns entry that draws the current point, one bar per unknown.", P("x"), P("optimValues"), P("state"));
         Add("optimplotfunccount", "A solver's PlotFcns entry that draws how many evaluations have been spent.", P("x"), P("optimValues"), P("state"));
 
+        // M100: polyfun, and the 1-D signal names from datafun and elfun that go with it.
+        Add("roots", "The roots of a polynomial given by its coefficients, highest power first, as a column: r = roots([1 -6 11 -6]).", P("p"));
+        Add("poly", "The polynomial with the given roots, or a square matrix's characteristic polynomial, as a row: p = poly([1 2 3]).", P("rOrA"));
+        Add("polyder", "The derivative of a polynomial, of a product polyder(a, b), or of a ratio [q, d] = polyder(b, a).", P("p"), Opt("b"));
+        Add("polyint", "The antiderivative of a polynomial, with an optional constant of integration: q = polyint(p, k).", P("p"), Opt("k"));
+        Add("polyvalm", "A polynomial evaluated at a square matrix, every power a matrix power: Y = polyvalm(p, X).", P("p"), P("X"));
+        Add("conv", "The convolution of two vectors, which is also the product of two polynomials; shape 'full' (default), 'same', or 'valid'.", P("u"), P("v"), Opt("shape"));
+        Add("deconv", "Long division of one vector by another: [q, r] = deconv(u, v), so that u is conv(v, q) + r.", P("u"), P("v"));
+        Add("convn", "Convolution over every dimension at once; shape 'full' (default), 'same', or 'valid'.", P("A"), P("B"), Opt("shape"));
+        Add("nextpow2", "The exponent of the next power of two at or above each element's magnitude.", P("A"));
+        Add("unwrap", "Removes the wrap from a phase record by adding whole turns: unwrap(P), unwrap(P, tol, dim).", P("P"), Opt("tol"), Opt("dim"));
+        Add("cplxpair", "Orders values so conjugate pairs sit together, negative imaginary part first, with the real ones last.", P("A"), Opt("tol"), Opt("dim"));
+        Add("polyarea", "The area a closed polygon encloses, by the shoelace formula: a = polyarea(x, y).", P("x"), P("y"), Opt("dim"));
+        Add("rectint", "The area each rectangle of A shares with each rectangle of B, one row per rectangle of A.", P("A"), P("B"));
+        Add("inpolygon", "Which query points a polygon encloses, and which sit on its edge: [in, on] = inpolygon(xq, yq, xv, yv).", P("xq"), P("yq"), P("xv"), P("yv"));
+
         Add("copulacdf", "The probability a copula puts below a point of the unit cube: y = copulacdf('Clayton', u, 1.5).", P("family"), P("u"), P("param"), Opt("nu"));
         Add("copulapdf", "The density of a copula at a point of the unit cube: y = copulapdf('t', u, rho, 5).", P("family"), P("u"), P("param"), Opt("nu"));
         Add("copularnd", "Draws from a copula, one per row: u = copularnd('Gumbel', 2, 500).", P("family"), P("param"), P("n"), Opt("extra"));

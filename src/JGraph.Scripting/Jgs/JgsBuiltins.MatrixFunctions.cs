@@ -27,22 +27,6 @@ internal static partial class JgsBuiltins
             return JgsMatrix.Build(n, n, static (r, c) => 1.0 / (r + c + 1));
         });
 
-        Define("polyval", (args, line, col) =>
-        {
-            Arity("polyval", args, 2, line, col);
-            double[] coefficients = ToDoubles("polyval", args[0], line, col);
-            return MapNumeric("polyval", args[1], x =>
-            {
-                double y = 0;
-                foreach (double p in coefficients)
-                {
-                    y = (y * x) + p;
-                }
-
-                return y;
-            }, line, col);
-        });
-
         JgsValue[] PeaksGrids(IReadOnlyList<JgsValue> args, int line, int col)
         {
             ArityRange("peaks", args, 0, 1, line, col);

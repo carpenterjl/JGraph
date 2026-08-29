@@ -19,22 +19,22 @@ below is — and that is why an entire folder could sit at nought implemented wi
 
 ## Where it stands
 
-**172 of 377 names implemented**, and
-**225 of 1036 documented syntax forms accepted**.
+**186 of 377 names implemented**, and
+**241 of 1036 documented syntax forms accepted**.
 
 | Folder | Names | Forms documented | Forms accepted | Names missing |
 |---|---:|---:|---:|---:|
 | `strfun` | 27 / 41 | 88 | 37 | 14 |
-| `datafun` | 23 / 41 | 178 | 81 | 18 |
+| `datafun` | 26 / 41 | 178 | 83 | 15 |
 | `funfun` | 1 / 40 | 123 | 0 | 39 |
 | `sparfun` | 5 / 35 | 185 | 2 | 30 |
-| `polyfun` | 6 / 34 | 94 | 10 | 28 |
+| `polyfun` | 14 / 34 | 94 | 19 | 20 |
 | `elmat` | 18 / 33 | 68 | 29 | 15 |
 | `validators` | 24 / 31 | 33 | 16 | 7 |
 | `matfun` | 10 / 25 | 62 | 9 | 15 |
 | `specfun` | 12 / 23 | 38 | 8 | 11 |
 | `datatypes` | 9 / 22 | 40 | 3 | 13 |
-| `elfun` | 16 / 19 | 25 | 14 | 3 |
+| `elfun` | 19 / 19 | 25 | 19 | 0 |
 | `timefun` | 10 / 12 | 42 | 3 | 2 |
 | `lang` | 2 / 10 | 22 | 0 | 8 |
 | `optimfun` | 6 / 6 | 30 | 8 | 0 |
@@ -43,11 +43,11 @@ below is — and that is why an entire folder could sit at nought implemented wi
 
 | Verdict | Forms | What it means |
 |---|---:|---|
-| accepted | 225 | the call returned without error |
+| accepted | 241 | the call returned without error |
 | refused | 4 | refused deliberately, with a message naming what is missing |
 | undefined | 0 | the name did not resolve at all |
-| error | 121 | failed some other way — **may be the prober's sample, not the build** |
-| unprobed | 77 | no call could be built |
+| error | 123 | failed some other way — **may be the prober's sample, not the build** |
+| unprobed | 87 | no call could be built |
 
 Only implemented names are probed, so "forms accepted" is bounded by the names column above it. As
 in the sibling document, **`accepted` is the trustworthy column** and every other one is a worklist:
@@ -56,17 +56,13 @@ command that quite rightly rejects it.
 
 ## Not implemented
 
-### `datafun` — 18
+### `datafun` — 15
 
-`conv` `convn` `deconv` `del2` `detrend` `filloutliers` `filter2` `findgroups` `hist` `histcounts2` `ischange` `isoutlier` `rmoutliers` `splitapply` `standardizeMissing` `subspace` `xcorr` `xcov`
+`del2` `detrend` `filloutliers` `filter2` `findgroups` `hist` `histcounts2` `ischange` `isoutlier` `rmoutliers` `splitapply` `standardizeMissing` `subspace` `xcorr` `xcov`
 
 ### `datatypes` — 13
 
 `celldisp` `cellplot` `formattedDisplayText` `isUnderlyingType` `iscom` `isenum` `isinterface` `ismethod` `isprop` `mat2cell` `methodsview` `substruct` `swapbytes`
-
-### `elfun` — 3
-
-`cplxpair` `nextpow2` `unwrap`
 
 ### `elmat` — 15
 
@@ -88,9 +84,9 @@ command that quite rightly rejects it.
 
 `pagectranspose` `pagetranspose`
 
-### `polyfun` — 28
+### `polyfun` — 20
 
-`boundary` `boundaryshape` `convhulln` `delaunayn` `dsearchn` `griddata` `griddatan` `inpolygon` `interp1q` `interpft` `interpn` `makima` `mkpp` `nsidedpoly` `pchip` `poly` `polyarea` `polyder` `polyint` `polyvalm` `ppval` `rectint` `roots` `spline` `stlread` `stlwrite` `tsearchn` `unmkpp`
+`boundary` `boundaryshape` `convhulln` `delaunayn` `dsearchn` `griddata` `griddatan` `interp1q` `interpft` `interpn` `makima` `mkpp` `nsidedpoly` `pchip` `ppval` `spline` `stlread` `stlwrite` `tsearchn` `unmkpp`
 
 ### `sparfun` — 30
 
