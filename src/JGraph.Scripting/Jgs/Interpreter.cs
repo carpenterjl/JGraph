@@ -642,7 +642,7 @@ internal sealed partial class Interpreter
                     if (!_globalWorkspace.Contains(name))
                     {
                         // MATLAB's answer for a global nobody has assigned yet is [], not an error.
-                        _globalWorkspace.Declare(name, JgsValue.Array(System.Array.Empty<JgsValue>()));
+                        _globalWorkspace.Declare(name, EmptyBracket());
                     }
                 }
 
@@ -919,6 +919,35 @@ internal sealed partial class Interpreter
         }
 
         return env.TryGet(name, out value);
+    }
+
+    /// <summary>
+    /// The workspace a name's binding lives in: the global one where a <c>global</c> declaration
+    /// reaching <paramref name="env"/> redirects it, and the scope itself otherwise.
+    /// </summary>
+    /// <remarks>
+    /// A plain assignment has asked this since globals were given a workspace of their own, but the
+    /// index and field writes went on reading and rebinding through <paramref name="env"/> — so a
+    /// write that has to replace its container (<c>c{end + 1} = s</c>, <c>x(k) = []</c>, a struct
+    /// array growing to fit) declared a fresh local in the frame that ran it and threw the whole
+    /// value away when the frame ended. It failed in silence, because declaring a local is an
+    /// ordinary thing for an assignment to do; only the numeric append looked right, and only
+    /// because growing a vector in place mutates the value the global workspace already holds.
+    /// </remarks>
+    private JgsEnvironment ScopeOf(string name, JgsEnvironment env) =>
+        env.IsGlobal(name) ? _globalWorkspace : env;
+
+    /// <summary>
+    /// Rebinds <paramref name="name"/> to a rebuilt value in whichever workspace holds it, declaring
+    /// it there when nothing is bound yet — how every write that replaces its container ends.
+    /// </summary>
+    private void Rebind(string name, JgsValue value, JgsEnvironment env)
+    {
+        JgsEnvironment scope = ScopeOf(name, env);
+        if (!scope.TryAssign(name, value))
+        {
+            scope.Declare(name, value);
+        }
     }
 
     /// <summary>
@@ -2699,11 +2728,7 @@ internal sealed partial class Interpreter
         }
 
         JgsValue grown = JgsMatrix.FromElements(elements, newRows, newCols);
-        if (!env.TryAssign(variable.Name, grown))
-        {
-            env.Declare(variable.Name, grown);
-        }
-
+        Rebind(variable.Name, grown, env);
         return grown;
     }
 
@@ -2737,11 +2762,7 @@ internal sealed partial class Interpreter
 
         JgsValue trimmed = JgsMatrix.BuildValues(keptRows.Length, keptCols.Length,
             (r, c) => JgsMatrix.At(current, keptRows[r], keptCols[c]));
-        if (!env.TryAssign(variable.Name, trimmed))
-        {
-            env.Declare(variable.Name, trimmed);
-        }
-
+        Rebind(variable.Name, trimmed, env);
         return trimmed;
     }
 
@@ -2793,11 +2814,7 @@ internal sealed partial class Interpreter
 
         JgsValue grown = JgsMatrix.FromElements(
             elements, growsAsColumn ? needed : 1, growsAsColumn ? 1 : needed);
-        if (!env.TryAssign(variable.Name, grown))
-        {
-            env.Declare(variable.Name, grown);
-        }
-
+        Rebind(variable.Name, grown, env);
         return grown;
     }
 
@@ -2813,11 +2830,7 @@ internal sealed partial class Interpreter
         }
 
         JgsValue emptied = EmptyBracket();
-        if (!env.TryAssign(variable.Name, emptied))
-        {
-            env.Declare(variable.Name, emptied);
-        }
-
+        Rebind(variable.Name, emptied, env);
         return emptied;
     }
 
@@ -2856,11 +2869,7 @@ internal sealed partial class Interpreter
         bool wasColumn = current.Cols == 1 && current.Rows != 1;
         JgsValue trimmed = JgsMatrix.FromElements(
             elements, wasColumn ? elements.Length : 1, wasColumn ? 1 : elements.Length);
-        if (!env.TryAssign(variable.Name, trimmed))
-        {
-            env.Declare(variable.Name, trimmed);
-        }
-
+        Rebind(variable.Name, trimmed, env);
         return trimmed;
     }
 
@@ -4917,15 +4926,11 @@ internal sealed partial class Interpreter
         // mint-time only, so the write builds a new value and rebinds — which is also why it has to
         // name a variable rather than a nested expression, and says so when it does not.
         if (member.Target is VariableExpr timeTarget
-            && env.TryGet(timeTarget.Name, out JgsValue held) && held.IsTime)
+            && LookUp(timeTarget.Name, env, out JgsValue held) && held.IsTime)
         {
             JgsValue rebuilt = JgsBuiltins.SetTimeProperty(
                 held, FieldName(member, env), value, member.Line, member.Column);
-            if (!env.TryAssign(timeTarget.Name, rebuilt))
-            {
-                env.Declare(timeTarget.Name, rebuilt);
-            }
-
+            Rebind(timeTarget.Name, rebuilt, env);
             return value;
         }
 
@@ -5008,7 +5013,7 @@ internal sealed partial class Interpreter
         switch (expr)
         {
             case VariableExpr variable:
-                if (env.TryGet(variable.Name, out JgsValue existing))
+                if (LookUp(variable.Name, env, out JgsValue existing))
                 {
                     if (existing.Type != JgsType.Struct)
                     {
@@ -5026,7 +5031,7 @@ internal sealed partial class Interpreter
                 }
 
                 JgsValue created = JgsValue.EmptyStruct();
-                env.Declare(variable.Name, created);
+                ScopeOf(variable.Name, env).Declare(variable.Name, created);
                 return created;
 
             case MemberExpr nested:
@@ -5071,7 +5076,7 @@ internal sealed partial class Interpreter
     private JgsValue ResolveStructElementForWrite(
         VariableExpr variable, Expr subscript, Node at, JgsEnvironment env, out JgsStructArray? owner)
     {
-        bool defined = env.TryGet(variable.Name, out JgsValue existing);
+        bool defined = LookUp(variable.Name, env, out JgsValue existing);
         bool isStruct = defined && existing.Type == JgsType.Struct;
 
         // `end` inside the subscript counts the elements already there, so S(end+1).f = v appends —
@@ -5135,10 +5140,7 @@ internal sealed partial class Interpreter
             array = JgsValue.StructArray(payload,
                 column ? grown.Length : 1, column ? 1 : grown.Length);
             array.SetClassName(existing.ClassName);
-            if (!env.TryAssign(variable.Name, array))
-            {
-                env.Declare(variable.Name, array);
-            }
+            Rebind(variable.Name, array, env);
         }
 
         owner = payload;
@@ -5168,10 +5170,18 @@ internal sealed partial class Interpreter
                     $"Braces assign into a cell array, but this is a {target.TypeName}.");
             }
         }
-        else if (!env.TryGet(variable.Name, out target))
+        else if (!LookUp(variable.Name, env, out target))
         {
             target = JgsValue.Cell(System.Array.Empty<JgsValue>());
-            env.Declare(variable.Name, target);
+            ScopeOf(variable.Name, env).Declare(variable.Name, target);
+        }
+        else if (target.Type == JgsType.Array && target.ArrayLength == 0)
+        {
+            // [] is the empty of every container MATLAB has, so a brace write onto one makes a cell.
+            // That is the value a 'global c' nobody has assigned holds — the declaration seeds the
+            // empty — so without this the accumulation idiom would refuse the name it is written for.
+            target = JgsValue.Cell(System.Array.Empty<JgsValue>());
+            Rebind(variable.Name, target, env);
         }
 
         if (target.Type != JgsType.Cell)
@@ -5227,7 +5237,7 @@ internal sealed partial class Interpreter
             }
 
             grown[position] = value;
-            env.TryAssign(variable.Name, JgsValue.Cell(grown));
+            Rebind(variable.Name, JgsValue.Cell(grown), env);
             return value;
         }
 

@@ -144,7 +144,9 @@ The first of these narrows a rule ADR 0062 set; the rest are differences this mi
   numeric array works and a whole-value reassignment of a global cell works; MATLAB does all three.
   And `sort` refuses a cell array of character vectors, which MATLAB sorts alphabetically. Both were
   hit while writing this milestone's tests, both are older than it, and both are worked around in
-  the tests rather than fixed here.
+  the tests rather than fixed here. *The global-cell one has since been fixed: every indexed write
+  that rebuilds its container now rebinds in the workspace a `global` declaration names rather than
+  in the frame that ran it. The `sort` one still stands.*
 
 ## Consequences
 

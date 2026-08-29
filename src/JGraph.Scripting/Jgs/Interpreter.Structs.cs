@@ -226,11 +226,7 @@ internal sealed partial class Interpreter
             written = JgsValue.StructArray(rebuilt, existing.Rows, existing.Cols);
         }
 
-        if (!env.TryAssign(variable.Name, written))
-        {
-            env.Declare(variable.Name, written);
-        }
-
+        Rebind(variable.Name, written, env);
         return rhs;
     }
 

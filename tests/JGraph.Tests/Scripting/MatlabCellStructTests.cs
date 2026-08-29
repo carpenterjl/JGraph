@@ -300,4 +300,129 @@ public class MatlabCellStructTests : IDisposable
 
         Assert.Contains("2", output, StringComparison.Ordinal);
     }
+
+    [Fact]
+    public void AppendingToAGlobalCellInsideAFunction_WritesBackToTheGlobal()
+    {
+        // The accumulation idiom reached through a global. c{end+1} = s used to declare a cell in
+        // the helper's own workspace and drop it when the call returned — in silence, no error, the
+        // appended element simply not there — while the numeric append beside it worked, because
+        // growing a vector mutates the value the global workspace is already holding rather than
+        // rebinding the name. MATLAB R2024a counts 2 for all three.
+        string output = RunAndRead("""
+            global c
+            c = {};
+            add('a');
+            add('b');
+            assert(numel(c) == 2);
+            assert(strcmp(c{1}, 'a'));
+            assert(strcmp(c{2}, 'b'));
+
+            global v
+            v = [];
+            addv(1);
+            addv(2);
+            assert(numel(v) == 2);
+
+            global s2
+            s2 = {};
+            addwhole('p');
+            addwhole('q');
+            assert(numel(s2) == 2);
+            disp('appended')
+
+            function add(s)
+            global c
+            c{end+1} = s;
+            end
+
+            function addv(n)
+            global v
+            v(end+1) = n;
+            end
+
+            function addwhole(x)
+            global s2
+            s2 = [s2, {x}];
+            end
+            """);
+
+        Assert.Contains("appended", output, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void EveryWriteThatRebuildsAGlobal_LandsInTheGlobalWorkspace()
+    {
+        // A brace append is not the only write that replaces its container instead of filling one in:
+        // deleting elements, writing a field, and growing a struct array all rebuild and rebind, and
+        // each of them rebound the running frame's own copy of the name. Every assert here is what
+        // MATLAB R2024a answers.
+        string output = RunAndRead("""
+            global g
+            g = {'a', 'b'};
+            setfirst();
+            assert(strcmp(g{1}, 'y'));
+
+            global n
+            n = [1 2 3];
+            drop();
+            assert(numel(n) == 2);
+
+            global board
+            board = cell(2, 2);
+            corner();
+            assert(strcmp(board{2, 2}, 'w'));
+
+            global s
+            s = struct('f', 1);
+            bump();
+            assert(s.f == 9);
+
+            global arr
+            arr = struct('f', 1);
+            extend();
+            assert(numel(arr) == 2);
+
+            % A global nobody has assigned holds [], which is the empty of every container — so the
+            % append makes a cell of it rather than refusing the name, and it is 0-by-0 as MATLAB's is.
+            global fresh
+            assert(isequal(size(fresh), [0 0]));
+            push();
+            push();
+            assert(numel(fresh) == 2);
+            disp('rebound')
+
+            function setfirst()
+            global g
+            g{1} = 'y';
+            end
+
+            function drop()
+            global n
+            n(1) = [];
+            end
+
+            function corner()
+            global board
+            board{2, 2} = 'w';
+            end
+
+            function bump()
+            global s
+            s.f = 9;
+            end
+
+            function extend()
+            global arr
+            arr(2).f = 7;
+            end
+
+            function push()
+            global fresh
+            fresh{end+1} = 'k';
+            end
+            """);
+
+        Assert.Contains("rebound", output, StringComparison.Ordinal);
+    }
 }
