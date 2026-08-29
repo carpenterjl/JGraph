@@ -19,13 +19,13 @@ below is — and that is why an entire folder could sit at nought implemented wi
 
 ## Where it stands
 
-**210 of 377 names implemented**, and
-**290 of 1036 documented syntax forms accepted**.
+**224 of 377 names implemented**, and
+**349 of 1036 documented syntax forms accepted**.
 
 | Folder | Names | Forms documented | Forms accepted | Names missing |
 |---|---:|---:|---:|---:|
 | `strfun` | 27 / 41 | 88 | 37 | 14 |
-| `datafun` | 26 / 41 | 178 | 83 | 15 |
+| `datafun` | 40 / 41 | 178 | 142 | 1 |
 | `funfun` | 1 / 40 | 123 | 0 | 39 |
 | `sparfun` | 5 / 35 | 185 | 2 | 30 |
 | `polyfun` | 23 / 34 | 94 | 38 | 11 |
@@ -43,11 +43,11 @@ below is — and that is why an entire folder could sit at nought implemented wi
 
 | Verdict | Forms | What it means |
 |---|---:|---|
-| accepted | 290 | the call returned without error |
+| accepted | 349 | the call returned without error |
 | refused | 4 | refused deliberately, with a message naming what is missing |
 | undefined | 0 | the name did not resolve at all |
 | error | 120 | failed some other way — **may be the prober's sample, not the build** |
-| unprobed | 90 | no call could be built |
+| unprobed | 96 | no call could be built |
 
 Only implemented names are probed, so "forms accepted" is bounded by the names column above it. As
 in the sibling document, **`accepted` is the trustworthy column** and every other one is a worklist:
@@ -56,9 +56,9 @@ command that quite rightly rejects it.
 
 ## Not implemented
 
-### `datafun` — 15
+### `datafun` — 1
 
-`del2` `detrend` `filloutliers` `filter2` `findgroups` `hist` `histcounts2` `ischange` `isoutlier` `rmoutliers` `splitapply` `standardizeMissing` `subspace` `xcorr` `xcov`
+`hist`
 
 ### `datatypes` — 13
 

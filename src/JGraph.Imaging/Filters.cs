@@ -43,11 +43,11 @@ public static class Filters
     /// <param name="full">Return the full (H+kh-1)×(W+kw-1) result rather than the same-size centre.</param>
     /// <remarks>
     /// Correlation puts the kernel origin at <c>(kh-1)/2</c>, which is MATLAB's
-    /// <c>floor((size(h)+1)/2)</c> written 0-based. Convolution flips the kernel and takes the
-    /// complementary anchor <c>kh/2</c>; that is exactly the offset which makes
+    /// <c>floor((size(h)+1)/2)</c> written 0-based. Convolution flips the kernel and keeps the same
+    /// anchor — the flip itself is what moves an even kernel's centre — which is exactly what makes
     /// <c>Filter(A, h, convolve: true)</c> and <see cref="Convolve2"/> with
-    /// <see cref="Conv2Shape.Same"/> agree, including for even-sized kernels where the two anchors
-    /// differ.
+    /// <see cref="Conv2Shape.Same"/> agree with each other and with MATLAB, even-sized kernels
+    /// included (measured against R2024a in M103, which also moved <c>Same</c>'s crop).
     /// </remarks>
     public static ImageBuffer Filter(
         ImageBuffer image,
@@ -62,8 +62,12 @@ public static class Filters
         int kh = kernel.GetLength(0);
         int kw = kernel.GetLength(1);
         double[,] applied = convolve ? Rotate180(kernel) : kernel;
-        int anchorR = convolve ? kh / 2 : (kh - 1) / 2;
-        int anchorC = convolve ? kw / 2 : (kw - 1) / 2;
+
+        // Flipping the kernel flips which way an even kernel's centre leans, and rotating it here
+        // has already spent that flip — so both modes anchor at (k−1)/2, and convolution lands on
+        // the same samples MATLAB's conv2(…, 'same') reads (measured; M103).
+        int anchorR = (kh - 1) / 2;
+        int anchorC = (kw - 1) / 2;
 
         // 'full' is the same filter evaluated over a window that starts before the image and ends
         // after it, so it is one index shift away from the same-size case rather than a second loop.
@@ -214,7 +218,9 @@ public static class Filters
         return shape switch
         {
             Conv2Shape.Full => full,
-            Conv2Shape.Same => Crop(full, (bh - 1) / 2, (bw - 1) / 2, ah, aw),
+            // The centre of an even kernel leans forward: MATLAB's 'same' starts at floor(k/2),
+            // which only differs from floor((k-1)/2) when the kernel has an even side (M103).
+            Conv2Shape.Same => Crop(full, bh / 2, bw / 2, ah, aw),
             Conv2Shape.Valid => ah >= bh && aw >= bw
                 ? Crop(full, bh - 1, bw - 1, ah - bh + 1, aw - bw + 1)
                 : new double[0, 0],
@@ -502,7 +508,7 @@ public static class Filters
         return shape switch
         {
             Conv2Shape.Full => full,
-            Conv2Shape.Same => Crop(full, (uh - 1) / 2, (vw - 1) / 2, ah, aw),
+            Conv2Shape.Same => Crop(full, uh / 2, vw / 2, ah, aw),
             Conv2Shape.Valid => ah >= uh && aw >= vw
                 ? Crop(full, uh - 1, vw - 1, ah - uh + 1, aw - vw + 1)
                 : new double[0, 0],

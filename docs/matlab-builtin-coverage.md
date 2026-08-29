@@ -103,8 +103,14 @@ see. This file refused to count them while they drew nothing; **M56 made them re
 number and this one agree again. `opengl` *is* counted, because an accepted no-op is an answer — the
 same reading that counted `shading`, `lighting` and `camlight` in M43.
 
-Across every callable kind — builtin, function, operator, keyword, script — the count is **971 of
-2,024** as of M102, which finished MATLAB's `elmat` folder: `toeplitz` `hankel` `blkdiag` `compan`
+Across every callable kind — builtin, function, operator, keyword, script — the count is **985 of
+2,024** as of M103, which took data cleaning and grouping: `isoutlier` `rmoutliers` `filloutliers`
+`ischange` `findgroups` `splitapply` `standardizeMissing` `subspace` `detrend` `del2` `filter2`
+`histcounts2` `xcorr` `xcov`. Those fourteen take `datafun` to 40 of its 41 names (the one out is
+`hist`, the legacy histogram), and ten younger siblings — `groupcounts` `grouptransform`
+`groupfilter` `head` `tail` `topkrows` `clip` `isuniform` `rmse` `mape` — ride along without
+moving this count, because they post-date the R2021b dump the denominator is drawn from.
+971 after M102, which finished MATLAB's `elmat` folder: `toeplitz` `hankel` `blkdiag` `compan`
 `vander` `hadamard` `pascal` `rosser` `wilkinson` `invhilb` `gallery` `repelem` `shiftdim`
 `ipermute` `flipdim`. Those fifteen take `elmat` from 18 of 33 to all 33 and its accepted forms
 from 29 to 59, and the largest of them is not a matrix but a catalogue: `gallery` answers

@@ -1382,6 +1382,33 @@ public static class JgsBuiltinCatalog
         Add("ipermute", "Undoes a permute: A = ipermute(B, dimorder).", P("B"), P("dimorder"));
         Add("flipdim", "The values reversed along one dimension; the older spelling of flip: B = flipdim(A, dim).", P("A"), P("dim"));
 
+        // M103: data cleaning and grouping — the outlier trio, change points, groups, and the
+        // trend-and-correlation leftovers of datafun.
+        Add("isoutlier", "Which readings sit outside the fences: [TF, L, U, C] = isoutlier(A, method, dim, 'ThresholdFactor', t).", P("A"), Opt("method"), Opt("window"), Opt("dim"), Opt("options"));
+        Add("rmoutliers", "The data with its outliers removed — elements of a vector, whole rows of a matrix: [B, TF] = rmoutliers(A, method, dim).", P("A"), Opt("method"), Opt("window"), Opt("dim"), Opt("options"));
+        Add("filloutliers", "Outliers replaced — by the center, the nearer fence, a neighbour, or an interpolant: [B, TF, L, U, C] = filloutliers(A, fill, method).", P("A"), P("fillmethod"), Opt("findmethod"), Opt("window"), Opt("dim"), Opt("options"));
+        Add("ischange", "Where a signal stops being one thing: [TF, S1, S2] = ischange(A, method, 'Threshold', t).", P("A"), Opt("method"), Opt("dim"), Opt("options"));
+        Add("findgroups", "Category values numbered in sorted order: [G, ID] = findgroups(A1, ..., AN), or over a table's variables.", P("A"), Opt("more"));
+        Add("splitapply", "A function applied to each group of the data and the answers joined: Y = splitapply(func, X, G).", P("func"), P("X"), P("G"), Opt("more"));
+        Add("standardizeMissing", "Named stand-ins replaced by the missing value of the data's kind: B = standardizeMissing(A, indicator).", P("A"), P("indicator"), Opt("options"));
+        Add("subspace", "The largest principal angle between the ranges of two matrices: theta = subspace(A, B).", P("A"), P("B"));
+        Add("detrend", "The best-fitting polynomial trend removed, segmented at breakpoints: y = detrend(x, n, bp, 'SamplePoints', t).", P("x"), Opt("n"), Opt("bp"), Opt("options"));
+        Add("del2", "The discrete Laplacian over 2·ndims, boundaries by extrapolation: L = del2(U, hx, hy).", P("U"), Opt("h"), Opt("more"));
+        Add("filter2", "Two-dimensional correlation, which is conv2 with the kernel turned half a turn: Y = filter2(H, X, shape).", P("H"), P("X"), Opt("shape"));
+        Add("histcounts2", "Pairs counted onto a grid: [N, Xedges, Yedges, binX, binY] = histcounts2(X, Y, nbins).", P("X"), P("Y"), Opt("bins"), Opt("more"), Opt("options"));
+        Add("xcorr", "Cross- or auto-correlation at every lag: [r, lags] = xcorr(x, y, maxlag, scaleopt).", P("x"), Opt("y"), Opt("maxlag"), Opt("scaleopt"));
+        Add("xcov", "Cross- or auto-covariance — xcorr after each signal loses its mean: [c, lags] = xcov(x, y, maxlag, scaleopt).", P("x"), Opt("y"), Opt("maxlag"), Opt("scaleopt"));
+        Add("groupcounts", "How many of each: [GC, GR, GP] = groupcounts(A), or a summary table with counts and percentages.", P("A"), Opt("groupvars"));
+        Add("grouptransform", "Each group transformed in place — zscore, rescale, a fill, or a function handle: B = grouptransform(A, G, method).", P("A"), P("G"), P("method"));
+        Add("groupfilter", "The rows of every group the predicate approves: B = groupfilter(A, G, method).", P("A"), P("G"), P("method"), Opt("datavars"));
+        Add("head", "The first rows of an array or a table, eight when unasked: B = head(A, k).", P("A"), Opt("k"));
+        Add("tail", "The last rows of an array or a table, eight when unasked: B = tail(A, k).", P("A"), Opt("k"));
+        Add("topkrows", "The top rows under a lexicographic sort, descending unless told otherwise: [B, I] = topkrows(X, k, col, direction).", P("X"), P("k"), Opt("col"), Opt("direction"));
+        Add("clip", "Every reading pulled inside the bounds: y = clip(x, lower, upper).", P("x"), P("lower"), P("upper"));
+        Add("isuniform", "Whether the readings are evenly spaced, and by how much: [TF, step] = isuniform(v).", P("v"));
+        Add("rmse", "Root-mean-square error between forecast and actual: E = rmse(F, A, dim, 'Weights', w).", P("F"), P("A"), Opt("dim"), Opt("options"));
+        Add("mape", "Mean absolute percentage error between forecast and actual: E = mape(F, A, dim).", P("F"), P("A"), Opt("dim"), Opt("options"));
+
         Add("copulacdf", "The probability a copula puts below a point of the unit cube: y = copulacdf('Clayton', u, 1.5).", P("family"), P("u"), P("param"), Opt("nu"));
         Add("copulapdf", "The density of a copula at a point of the unit cube: y = copulapdf('t', u, rho, 5).", P("family"), P("u"), P("param"), Opt("nu"));
         Add("copularnd", "Draws from a copula, one per row: u = copularnd('Gumbel', 2, 500).", P("family"), P("param"), P("n"), Opt("extra"));

@@ -139,7 +139,18 @@ public static class Binning
     /// drawn round a circle, and the counts a script checks them against cannot choose differently.
     /// </summary>
     public static double[] EdgesFor(
-        IReadOnlyList<double> data, int? requested, double? width, double[]? limits, string rule)
+        IReadOnlyList<double> data, int? requested, double? width, double[]? limits, string rule) =>
+        EdgesFor(data, requested, width, limits, rule, 3);
+
+    /// <summary>
+    /// The same chooser with the sample-count root named. One dimension of a histogram divides by
+    /// the cube root of the sample count; each dimension of a two-dimensional one divides by the
+    /// fourth root, because the same readings are being spread over bins in two directions at once.
+    /// <c>histcounts2</c> passes 4 here and everything else takes the default.
+    /// </summary>
+    public static double[] EdgesFor(
+        IReadOnlyList<double> data, int? requested, double? width, double[]? limits, string rule,
+        int sampleRoot)
     {
         IEnumerable<double> inside = limits is null
             ? data
@@ -201,8 +212,9 @@ public static class Binning
             "sturges" => (high - low) / System.Math.Ceiling(System.Math.Log2(finite.Length) + 1),
             "sqrt" => (high - low) / System.Math.Ceiling(System.Math.Sqrt(finite.Length)),
             "fd" => 2 * (Quartiles.Percentile(finite, 75) - Quartiles.Percentile(finite, 25))
-                / System.Math.Cbrt(finite.Length),
-            _ => 3.5 * System.Math.Sqrt(finite.Length > 1 ? Spread(finite) : 0) / System.Math.Cbrt(finite.Length),
+                / System.Math.Pow(finite.Length, 1.0 / sampleRoot),
+            _ => 3.5 * System.Math.Sqrt(finite.Length > 1 ? Spread(finite) : 0)
+                / System.Math.Pow(finite.Length, 1.0 / sampleRoot),
         };
 
         // Limits given by name are exact — they say where the histogram starts and stops, so the

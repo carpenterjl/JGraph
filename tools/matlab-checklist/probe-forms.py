@@ -151,6 +151,41 @@ NAME_ARG_SAMPLES: dict[tuple[str, str], str] = {
     # families do.
     ("gallery", "matrixname"): "'house'",
     ("gallery", "P1"): "[3; 1; 2]", ("gallery", "P2"): "0", ("gallery", "Pn"): "0",
+
+    # The cleaning and grouping family (M103). A method is a word from that verb's own list, a
+    # window is a width, and `del2`'s N-spacing form needs an array with an N to speak of.
+    ("isoutlier", "method"): "'mean'", ("isoutlier", "movmethod"): "'movmedian'",
+    ("isoutlier", "window"): "3", ("isoutlier", "threshold"): "[10 90]",
+    ("rmoutliers", "method"): "'mean'", ("rmoutliers", "movmethod"): "'movmedian'",
+    ("rmoutliers", "window"): "3", ("rmoutliers", "threshold"): "[10 90]",
+    ("filloutliers", "fillmethod"): "'center'", ("filloutliers", "findmethod"): "'mean'",
+    ("filloutliers", "movmethod"): "'movmedian'", ("filloutliers", "window"): "3",
+    ("filloutliers", "threshold"): "[10 90]",
+    ("ischange", "method"): "'variance'",
+    ("findgroups", "A"): "[2 1 2]", ("findgroups", "A1"): "[2 1 2]", ("findgroups", "AN"): "[4 4 5]",
+    # One sample must satisfy every splitapply form at once: `max` takes one data argument or
+    # two, and answers a second output when asked — no other everyday name covers all four forms.
+    ("splitapply", "func"): "@max",
+    ("splitapply", "X"): "[1 2]",
+    ("splitapply", "X1"): "[1 2]", ("splitapply", "XN"): "[3 4]",
+    ("splitapply", "G"): "[1 2]",
+    ("standardizeMissing", "indicator"): "-99",
+    ("standardizeMissing", "A"): "table([1;2], [3;4])",
+    ("standardizeMissing", "datavars"): "'Var2'",
+    ("rmoutliers", "dim"): "2",
+    ("subspace", "A"): "[1 0; 0 1; 0 0]", ("subspace", "B"): "[1 1; 0 2; 0 0]",
+    ("detrend", "n"): "1", ("detrend", "bp"): "[2]", ("detrend", "nanflag"): "'omitnan'",
+    ("del2", "U"): "reshape(1:12, 2, 3, 2)", ("del2", "h"): "2",
+    ("del2", "hx"): "1", ("del2", "hy"): "2", ("del2", "hN"): "3",
+    ("filter2", "H"): "[1 2; 3 4]", ("filter2", "X"): "[1 2 3; 4 5 6; 7 8 10]",
+    ("filter2", "shape"): "'same'",
+    ("histcounts2", "X"): "[1 2 3 4]", ("histcounts2", "Y"): "[5 6 7 8]",
+    ("histcounts2", "nbins"): "[2 3]",
+    ("histcounts2", "Xedges"): "[0 2 5]", ("histcounts2", "Yedges"): "[4 6 9]",
+    ("xcorr", "x"): "[1 2 3]", ("xcorr", "y"): "[4 5 6]",
+    ("xcorr", "maxlag"): "1", ("xcorr", "scaleopt"): "'biased'",
+    ("xcov", "x"): "[1 2 3]", ("xcov", "y"): "[4 5 6]",
+    ("xcov", "maxlag"): "1", ("xcov", "scaleopt"): "'biased'",
 }
 
 # Placeholders the documented type phrase cannot describe well enough to sample, whatever command
