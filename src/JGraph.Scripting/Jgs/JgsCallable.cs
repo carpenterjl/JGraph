@@ -379,16 +379,40 @@ internal sealed class AnonymousFunction : IJgsCallable, IJgsMultiCallable
     /// </summary>
     public JgsValue[] CallMultiple(IReadOnlyList<JgsValue> arguments, int wanted, int line, int column)
     {
-        if (arguments.Count != _declaration.Parameters.Count)
+        // A trailing 'varargin' collects whatever the fixed parameters did not take, exactly as it does
+        // in a function file; the parameters before it must still all arrive.
+        IReadOnlyList<string> parameters = _declaration.Parameters;
+        bool variadic = parameters.Count > 0 && parameters[^1] == "varargin";
+        int fixedCount = variadic ? parameters.Count - 1 : parameters.Count;
+
+        if (arguments.Count < fixedCount || (!variadic && arguments.Count > fixedCount))
         {
             throw new JgsRuntimeException(line, column,
-                $"This anonymous function expects {_declaration.Parameters.Count} argument(s) but got {arguments.Count}.");
+                $"This anonymous function expects {parameters.Count} argument(s) but got {arguments.Count}.");
         }
 
         var local = new JgsEnvironment(_captured);
-        for (int i = 0; i < arguments.Count; i++)
+        for (int i = 0; i < fixedCount; i++)
         {
-            local.Declare(_declaration.Parameters[i], _interpreter.CopyForBinding(arguments[i]));
+            local.Declare(parameters[i], _interpreter.CopyForBinding(arguments[i]));
+        }
+
+        if (variadic)
+        {
+            var rest = new JgsValue[arguments.Count - fixedCount];
+            for (int i = 0; i < rest.Length; i++)
+            {
+                rest[i] = _interpreter.CopyForBinding(arguments[fixedCount + i]);
+            }
+
+            local.Declare("varargin", JgsValue.Cell(rest));
+        }
+
+        // MATLAB answers an anonymous function's own arity from inside its body, in preference to the
+        // nargin of whatever function defined it.
+        if (_interpreter.Dialect.MatlabFunctions)
+        {
+            local.Declare("nargin", JgsValue.Number(arguments.Count));
         }
 
         return _interpreter.EvaluateForOutputsIn(_declaration.Body, wanted, local);

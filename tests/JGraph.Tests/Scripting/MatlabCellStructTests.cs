@@ -280,6 +280,80 @@ public class MatlabCellStructTests : IDisposable
         Assert.Contains("2", RunAndRead("f = @twice;\ndisp(f(1))\n\nfunction y = twice(x)\ny = 2*x;\nend"), StringComparison.Ordinal);
     }
 
+    [Fact]
+    public void AnAnonymousVararginCollectsTheRemainingArguments()
+    {
+        // MATLAB: 'varargin' is not an ordinary parameter here either — the handle takes any count.
+        string output = RunAndRead("""
+            f = @(varargin) numel(varargin);
+            disp(f(1, 2, 3))
+            disp(f())
+            """);
+
+        Assert.Contains("3", output, StringComparison.Ordinal);
+        Assert.Contains("0", output, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void AnAnonymousVararginFollowsTheFixedParameters()
+    {
+        string output = RunAndRead("""
+            g = @(a, varargin) a + numel(varargin);
+            disp(g(10, 1, 2))
+            disp(g(40))
+            """);
+
+        Assert.Contains("12", output, StringComparison.Ordinal);
+        Assert.Contains("40", output, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void AnAnonymousVararginArrivesAsACell()
+    {
+        string output = RunAndRead("""
+            pick = @(varargin) varargin{2};
+            disp(pick('a', 'b', 'c'))
+            kind = @(varargin) class(varargin);
+            disp(kind(1))
+            """);
+
+        Assert.Contains("b", output, StringComparison.Ordinal);
+        Assert.Contains("cell", output, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void NarginInsideAnAnonymousFunctionCountsItsOwnCall()
+    {
+        // The handle's own arity wins over the nargin of the function that defined it: MATLAB answers
+        // 1 for the inner call even though 'outer' received three arguments.
+        string output = RunAndRead("""
+            h = @(varargin) nargin;
+            disp(h(1, 2, 3, 4))
+            outer(1, 2, 3)
+
+            function outer(a, b, c)
+            f = @(varargin) nargin;
+            disp(f(7))
+            end
+            """);
+
+        Assert.Contains("4", output, StringComparison.Ordinal);
+        Assert.Contains("1", output, StringComparison.Ordinal);
+        Assert.DoesNotContain("3", output, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void AnAnonymousVararginStillRequiresTheFixedArguments()
+    {
+        ScriptRunResult result = RunMatlab("""
+            n = @(a, varargin) a;
+            n();
+            """);
+
+        Assert.False(result.Success);
+        Assert.Contains("expects 2 argument(s) but got 0", result.Message!, StringComparison.Ordinal);
+    }
+
     // --- global ---------------------------------------------------------------------------------
 
     [Fact]
