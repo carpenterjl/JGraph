@@ -1,11 +1,20 @@
 # MATLAB builtin coverage
 
 > **This file counts names. Since M69 there is a second file that counts *forms*.**
-> `docs/matlab-form-coverage.md` runs each of MATLAB's 2,422 documented syntax forms for these
-> commands and records what came back: **1,011 are confirmed working**, 159 commands accept every
-> form they document, and **137 accept some and not others**. A name in the table below means the
+> `docs/matlab-form-coverage.md` runs each of MATLAB's 2,454 documented syntax forms for these
+> commands and records what came back: **1,344 are confirmed working**, 225 commands accept every
+> form they document, and **149 accept some and not others**. A name in the table below means the
 > name resolves — it has never meant that every way MATLAB documents calling it works. Read the two
 > together, and see ADR 0069 for how the forms are measured and ADR 0070 for the 62 that M70 closed.
+> (Those four numbers were stale from M69 until M99, quoting the sweep as it stood before six
+> milestones had moved it. The sibling document had been right the whole time; nothing re-read it.)
+>
+> **And a fourth, since M99, that counts the toolbox functions.**
+> `docs/matlab-toolbox-coverage.md` measures the third population entirely: the mathematical library
+> functions MATLAB writes *in MATLAB* and ships on its own path — `fminsearch`, `ode45`, `spline`,
+> `roots`. **172 of 377 names** and **225 of 1,036 documented forms**. Not one of them is kind
+> *builtin*, so not one has ever been counted in the tables below, which is how a whole folder could
+> sit at nought implemented with no number moving. See ADR 0100.
 >
 > **And a third that counts properties.** `docs/matlab-property-coverage.md` builds each graphics
 > object and asks it: **436 of 1,361 documented properties** are answered across the 26 object kinds
@@ -94,8 +103,12 @@ see. This file refused to count them while they drew nothing; **M56 made them re
 number and this one agree again. `opengl` *is* counted, because an accepted no-op is an answer — the
 same reading that counted `shading`, `lighting` and `camlight` in M43.
 
-Across every callable kind — builtin, function, operator, keyword, script — the count is **927 of
-2,024** as of M87, which built the two verbs that wait for a person — `waitforbuttonpress` and
+Across every callable kind — builtin, function, operator, keyword, script — the count is **933 of
+2,024** as of M99, which opened the optimfun folder: `fminsearch` `fminbnd` `fzero` `lsqnonneg`
+`optimset` `optimget`. Those are the first six names counted here that MATLAB documents as
+*functions* and does not draw with — the population `docs/matlab-toolbox-coverage.md` was added to
+measure, because none of them can ever appear in the tables below.
+927 after M87, which built the two verbs that wait for a person — `waitforbuttonpress` and
 `ginput` — once it found that the ground for excluding them, *no key routing to the interpreter*, had
 stopped being true in M75 and nobody had come back to the sentence. Both need a window and both
 refuse by name where there is none.

@@ -1326,6 +1326,18 @@ public static class JgsBuiltinCatalog
         Add("statset", "The settings structure the iterative names take: opts = statset('MaxIter', 500).", Opt("options"));
         Add("statget", "One setting out of that structure, or a fallback: n = statget(opts, 'MaxIter', 100).", P("options"), P("name"), Opt("default"));
 
+        // M99: optimfun. The first names here that MATLAB documents as functions rather than
+        // builtins, and the first of the toolbox-function arc.
+        Add("fminsearch", "A local minimum of a function of several variables, by the Nelder-Mead simplex and no derivative: [x, fval] = fminsearch(@(v) norm(v), [1; 2]).", P("fun"), P("x0"), Opt("options"));
+        Add("fminbnd", "The minimum of a function of one variable inside an interval: [x, fval] = fminbnd(@cos, 3, 4).", P("fun"), P("x1"), P("x2"), Opt("options"));
+        Add("fzero", "A zero of a function of one variable, from a guess or from an interval it changes sign across: x = fzero(@cos, [1 2]).", P("fun"), P("x0"), Opt("options"));
+        Add("lsqnonneg", "The least-squares solution of C*x = d with every entry of x at or above zero: [x, resnorm] = lsqnonneg(C, d).", P("C"), P("d"), Opt("options"));
+        Add("optimset", "The settings structure the solvers take, or one solver's defaults: opts = optimset('TolX', 1e-8).", Opt("options"));
+        Add("optimget", "One setting out of that structure, or a fallback: t = optimget(opts, 'TolX', 1e-4).", P("options"), P("name"), Opt("default"));
+        Add("optimplotfval", "A solver's PlotFcns entry that draws the objective against the iteration: optimset('PlotFcns', @optimplotfval).", P("x"), P("optimValues"), P("state"));
+        Add("optimplotx", "A solver's PlotFcns entry that draws the current point, one bar per unknown.", P("x"), P("optimValues"), P("state"));
+        Add("optimplotfunccount", "A solver's PlotFcns entry that draws how many evaluations have been spent.", P("x"), P("optimValues"), P("state"));
+
         Add("copulacdf", "The probability a copula puts below a point of the unit cube: y = copulacdf('Clayton', u, 1.5).", P("family"), P("u"), P("param"), Opt("nu"));
         Add("copulapdf", "The density of a copula at a point of the unit cube: y = copulapdf('t', u, rho, 5).", P("family"), P("u"), P("param"), Opt("nu"));
         Add("copularnd", "Draws from a copula, one per row: u = copularnd('Gumbel', 2, 500).", P("family"), P("param"), P("n"), Opt("extra"));

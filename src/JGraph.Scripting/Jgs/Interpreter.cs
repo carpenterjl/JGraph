@@ -689,6 +689,19 @@ internal sealed partial class Interpreter
         {
             if (existing.Type == JgsType.Function)
             {
+                // A name that both calls itself when mentioned bare and cares whether anyone wanted
+                // the answer is told that nobody did, exactly as a written-out call would be (M99).
+                // `optimset` on its own line prints the settings and `o = optimset` hands back the
+                // structure, and without this arm the bare word took the first road to the second
+                // road's answer and echoed `ans = struct(…)`.
+                if (existing.AsCallable is BuiltinFunction
+                    { AutoCallsBare: true, KnowsWhenDiscarded: true } asked
+                    && asked.MultiOutput is { } discardedBare)
+                {
+                    discardedBare([], 0, statement.Line, statement.Column);
+                    return;
+                }
+
                 JgsValue called = existing.AsCallable.Call(System.Array.Empty<JgsValue>(), statement.Line, statement.Column);
                 if (BindsAns(existing))
                 {
