@@ -136,6 +136,21 @@ NAME_ARG_SAMPLES: dict[tuple[str, str], str] = {
     ("delaunay", "y"): "[0 0 1 1 0 0 1 1]",
     ("delaunay", "z"): "[0 0 0 0 1 1 1 1]",
     ("delaunay", "P"): "[0 0; 1 0; 1 1; 0 1]",
+
+    # Placeholders a syntax names that its own argument table does not (M102). `compan(u)` is
+    # documented over `c`; `flipdim(A, dim)` over `x`; and the repeated arguments behind an
+    # ellipsis are described once, for the group, in a row the per-token lookup cannot see.
+    ("compan", "u"): "[1 0 -7 6]",
+    ("flipdim", "A"): "[1 2 3; 4 5 6]", ("flipdim", "dim"): "2",
+    ("blkdiag", "A1"): "[1 2; 3 4]", ("blkdiag", "AN"): "[5 6; 7 8]",
+    ("repelem", "r1"): "2", ("repelem", "rN"): "2",
+    # `gallery`'s documented form writes both its outputs and its parameters as ellipses, and how
+    # many of each there are is decided by the family named in the first argument. Sampled as a
+    # family with one output, the form's own `[A1,A2,...]` asked for two and scored a failure the
+    # engine never had. `house` answers three, and ignores parameters past its own — as MATLAB's
+    # families do.
+    ("gallery", "matrixname"): "'house'",
+    ("gallery", "P1"): "[3; 1; 2]", ("gallery", "P2"): "0", ("gallery", "Pn"): "0",
 }
 
 # Placeholders the documented type phrase cannot describe well enough to sample, whatever command
@@ -287,6 +302,19 @@ def split_arguments(text: str) -> list[str]:
     return parts
 
 
+def repetition_ellipsis(tokens: list[str], index: int) -> bool:
+    """Whether the ellipsis at ``index`` stands for repetition rather than for the other forms.
+
+    Repetition is written with a placeholder on each side naming the same thing twice over —
+    ``A1,...,AN``, ``P1,P2,...,Pn``, ``r1,...,rN``. Anything else, an ellipsis alone or at either
+    end of the list included, is the older spelling of ``___``.
+    """
+    before = tokens[index - 1].strip() if index > 0 else ""
+    after = tokens[index + 1].strip() if index + 1 < len(tokens) else ""
+    placeholder = re.compile(r"[A-Za-z_][A-Za-z0-9_]*")
+    return bool(placeholder.fullmatch(before) and placeholder.fullmatch(after))
+
+
 def parse_syntax(syntax: str, name: str) -> tuple[int, list[str]] | None:
     """(output count, argument tokens) for one documented syntax, or None when it is not a call."""
     text = syntax.strip()
@@ -346,7 +374,7 @@ def build_call(name: str, syntax: str, arg_types: dict[str, str],
         prelude, named = FILE_PRELUDE, FILE_NAMES
 
     values: list[str] = []
-    for token in tokens:
+    for index, token in enumerate(tokens):
         bare = token.strip()
         if bare in named:
             values.append(named[bare])
@@ -357,6 +385,21 @@ def build_call(name: str, syntax: str, arg_types: dict[str, str],
             if first_args is None:
                 return None
             values.extend(first_args)
+            continue
+        if bare in ("...", "…"):
+            # An ellipsis means two different things in these dumps, and only one of them can be
+            # sampled. Between two placeholders — `blkdiag(A1,...,AN)` — it says "any number of
+            # these", and the pair around it already stands for two, so dropping it samples the
+            # form at the smallest count that exercises what it means. Until M102 that made the
+            # whole form unprobed: six forms across four names, and `gradient`'s N-spacing form,
+            # which turns out to be a real gap this uncovered.
+            #
+            # At either end — `bar3(...,style)`, `coneplot(axes_handle,...)` — it means the other
+            # forms' arguments, the way `___` does in the newer dumps, and what belongs there is
+            # not recoverable from this form alone. Those stay unprobed rather than being sampled
+            # with a call the prober invented and then scored against the build.
+            if not repetition_ellipsis(tokens, index):
+                return None
             continue
         if bare.startswith(("'", '"')):
             values.append(bare)

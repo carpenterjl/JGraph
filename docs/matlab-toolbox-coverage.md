@@ -19,8 +19,8 @@ below is — and that is why an entire folder could sit at nought implemented wi
 
 ## Where it stands
 
-**195 of 377 names implemented**, and
-**260 of 1036 documented syntax forms accepted**.
+**210 of 377 names implemented**, and
+**290 of 1036 documented syntax forms accepted**.
 
 | Folder | Names | Forms documented | Forms accepted | Names missing |
 |---|---:|---:|---:|---:|
@@ -29,7 +29,7 @@ below is — and that is why an entire folder could sit at nought implemented wi
 | `funfun` | 1 / 40 | 123 | 0 | 39 |
 | `sparfun` | 5 / 35 | 185 | 2 | 30 |
 | `polyfun` | 23 / 34 | 94 | 38 | 11 |
-| `elmat` | 18 / 33 | 68 | 29 | 15 |
+| `elmat` | 33 / 33 | 68 | 59 | 0 |
 | `validators` | 24 / 31 | 33 | 16 | 7 |
 | `matfun` | 10 / 25 | 62 | 9 | 15 |
 | `specfun` | 12 / 23 | 38 | 8 | 11 |
@@ -43,11 +43,11 @@ below is — and that is why an entire folder could sit at nought implemented wi
 
 | Verdict | Forms | What it means |
 |---|---:|---|
-| accepted | 260 | the call returned without error |
+| accepted | 290 | the call returned without error |
 | refused | 4 | refused deliberately, with a message naming what is missing |
 | undefined | 0 | the name did not resolve at all |
-| error | 119 | failed some other way — **may be the prober's sample, not the build** |
-| unprobed | 91 | no call could be built |
+| error | 120 | failed some other way — **may be the prober's sample, not the build** |
+| unprobed | 90 | no call could be built |
 
 Only implemented names are probed, so "forms accepted" is bounded by the names column above it. As
 in the sibling document, **`accepted` is the trustworthy column** and every other one is a worklist:
@@ -63,10 +63,6 @@ command that quite rightly rejects it.
 ### `datatypes` — 13
 
 `celldisp` `cellplot` `formattedDisplayText` `isUnderlyingType` `iscom` `isenum` `isinterface` `ismethod` `isprop` `mat2cell` `methodsview` `substruct` `swapbytes`
-
-### `elmat` — 15
-
-`blkdiag` `compan` `flipdim` `gallery` `hadamard` `hankel` `invhilb` `ipermute` `pascal` `repelem` `rosser` `shiftdim` `toeplitz` `vander` `wilkinson`
 
 ### `funfun` — 39
 

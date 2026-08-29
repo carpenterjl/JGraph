@@ -495,8 +495,8 @@ cool,function,1,c = cool(m),accepted,
 copper,function,0,c = copper,accepted,
 copper,function,1,c = copper(m),accepted,
 copyfile,builtin,0,copyfile source,error,"copyfile expects between 2 and 3 argument(s), but got 1."
-copyfile,builtin,1,copyfile source destination,error,copyfile: Could not find file 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-forms-u_7ojzdh\source'.
-copyfile,builtin,2,copyfile source destination f,error,copyfile: Could not find file 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-forms-u_7ojzdh\source'.
+copyfile,builtin,1,copyfile source destination,error,copyfile: Could not find file 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-forms-a8h3580q\source'.
+copyfile,builtin,2,copyfile source destination f,error,copyfile: Could not find file 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-forms-a8h3580q\source'.
 copyfile,builtin,3,status = copyfile(___),error,"copyfile expects between 2 and 3 argument(s), but got 1."
 copyfile,builtin,4,"[status,msg] = copyfile(___)",error,"copyfile expects between 2 and 3 argument(s), but got 1."
 copyfile,builtin,5,"[status,msg,msgID] = copyfile(___)",error,"copyfile expects between 2 and 3 argument(s), but got 1."
@@ -1365,8 +1365,8 @@ more,builtin,1,more off,accepted,
 more,builtin,2,more(n),accepted,
 more,builtin,3,A = more(___),accepted,
 movefile,builtin,0,movefile source,error,"movefile expects between 2 and 3 argument(s), but got 1."
-movefile,builtin,1,movefile source destination,error,movefile: Could not find file 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-forms-u_7ojzdh\source'.
-movefile,builtin,2,movefile source destination f,error,movefile: Could not find file 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-forms-u_7ojzdh\source'.
+movefile,builtin,1,movefile source destination,error,movefile: Could not find file 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-forms-a8h3580q\source'.
+movefile,builtin,2,movefile source destination f,error,movefile: Could not find file 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-forms-a8h3580q\source'.
 movefile,builtin,3,status = movefile(___),error,"movefile expects between 2 and 3 argument(s), but got 1."
 movefile,builtin,4,"[status,msg] = movefile(___)",error,"movefile expects between 2 and 3 argument(s), but got 1."
 movefile,builtin,5,"[status,msg,msgID] = movefile(___)",error,"movefile expects between 2 and 3 argument(s), but got 1."
@@ -1464,10 +1464,10 @@ ones,builtin,2,"X = ones(sz1,...,szN)",unprobed,no sample for this form's argume
 ones,builtin,3,X = ones(sz),accepted,
 ones,builtin,4,"X = ones(___,typename)",accepted,
 ones,builtin,5,"X = ones(___,'like',p)",unprobed,no sample for this form's arguments
-openfig,function,0,openfig(filename),error,Could not find file 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-forms-u_7ojzdh\a.fig'.
-openfig,function,1,"openfig(filename,copies)",error,Could not find file 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-forms-u_7ojzdh\a.fig'.
-openfig,function,2,"openfig(___,visibility)",error,Could not find file 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-forms-u_7ojzdh\a.fig'.
-openfig,function,3,fig = openfig(___),error,Could not find file 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-forms-u_7ojzdh\a.fig'.
+openfig,function,0,openfig(filename),error,Could not find file 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-forms-a8h3580q\a.fig'.
+openfig,function,1,"openfig(filename,copies)",error,Could not find file 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-forms-a8h3580q\a.fig'.
+openfig,function,2,"openfig(___,visibility)",error,Could not find file 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-forms-a8h3580q\a.fig'.
+openfig,function,3,fig = openfig(___),error,Could not find file 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-forms-a8h3580q\a.fig'.
 opengl,function,0,opengl info,accepted,
 opengl,function,1,d = opengl('data'),accepted,
 opengl,function,2,opengl software,accepted,
@@ -1789,10 +1789,10 @@ rlim,function,4,m = rlim('mode'),error,"rlim expects 'auto' or 'manual', but got
 rlim,function,5,"___ = rlim(pax,___)",error,"rlim expects a two-element [min, max] array."
 rmappdata,builtin,0,"rmappdata(obj,name)",error,rmappdata: nothing is stored under 'a' on this object.
 rmdir,builtin,0,rmdir folderName,accepted,
-rmdir,builtin,1,rmdir folderName s,error,rmdir: Could not find a part of the path 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-forms-u_7ojzdh\folderName'.
-rmdir,builtin,2,status = rmdir(___),error,rmdir: Could not find a part of the path 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-forms-u_7ojzdh\folderName'.
-rmdir,builtin,3,"[status,msg] = rmdir(___)",error,rmdir: Could not find a part of the path 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-forms-u_7ojzdh\folderName'.
-rmdir,builtin,4,"[status,msg,msgID] = rmdir(___)",error,rmdir: Could not find a part of the path 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-forms-u_7ojzdh\folderName'.
+rmdir,builtin,1,rmdir folderName s,error,rmdir: Could not find a part of the path 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-forms-a8h3580q\folderName'.
+rmdir,builtin,2,status = rmdir(___),error,rmdir: Could not find a part of the path 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-forms-a8h3580q\folderName'.
+rmdir,builtin,3,"[status,msg] = rmdir(___)",error,rmdir: Could not find a part of the path 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-forms-a8h3580q\folderName'.
+rmdir,builtin,4,"[status,msg,msgID] = rmdir(___)",error,rmdir: Could not find a part of the path 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-forms-a8h3580q\folderName'.
 rose,function,0,rose(theta),unprobed,no sample for this form's arguments
 rose,function,1,"rose(theta,x)",unprobed,no sample for this form's arguments
 rose,function,2,"rose(theta,nbins)",unprobed,no sample for this form's arguments
@@ -2309,7 +2309,7 @@ waterfall,function,3,"waterfall(Z,C)",error,"waterfall expects 3 argument(s), bu
 waterfall,function,4,"waterfall(ax,___)",accepted,
 waterfall,function,5,p = waterfall(___),accepted,
 what,builtin,0,what,accepted,
-what,builtin,1,what folderName,refused,what: 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-forms-u_7ojzdh\folderName' is not a folder.
+what,builtin,1,what folderName,refused,what: 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-forms-a8h3580q\folderName' is not a folder.
 what,builtin,2,s = what(___),accepted,
 which,builtin,0,which item,accepted,
 which,builtin,1,which fun1 in fun2,error,"which expects 1 argument(s), but got 3."

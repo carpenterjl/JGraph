@@ -168,16 +168,11 @@ internal static partial class JgsBuiltins
                 return args[0];
             }
 
-            if (IsMatrixValue(args[0]))
-            {
-                // The default dimension is the first non-singleton one: rows, for a matrix.
-                return (dim ?? 1) == 1
-                    ? FlipRows("flip", args[0], line, col)
-                    : FlipColumns("flip", args[0], line, col);
-            }
-
-            // A vector is a row here, so its non-singleton dimension is 2; flip(v, 1) is a no-op.
-            return dim == 1 ? args[0] : ReversedVector("flip", args[0], line, col);
+            // The default dimension is the first non-singleton one, which is rows for a matrix and
+            // columns for the row a vector is here. Past that, flipping along any direction is one
+            // shared reversal (M102) — this used to answer a matrix's columns for flip(A, 3).
+            int along = dim ?? (IsMatrixValue(args[0]) ? 1 : 2);
+            return FlipAlong("flip", args[0], along, line, col);
         });
 
         Define("fliplr", (args, line, col) =>
@@ -237,77 +232,7 @@ internal static partial class JgsBuiltins
         Define("permute", (args, line, col) =>
         {
             Arity("permute", args, 2, line, col);
-            double[] orderRaw = ToDoubles("permute", args[1], line, col);
-            if (args[0].Type != JgsType.Array)
-            {
-                return args[0]; // a scalar is 1-by-1 whichever way its dimensions are ordered
-            }
-
-            int[] source = JgsMatrix.DimsOf(args[0]);
-            if (orderRaw.Length < source.Length)
-            {
-                throw new JgsRuntimeException(line, col,
-                    $"permute needs an order covering all {source.Length} dimensions.");
-            }
-
-            var order = new int[orderRaw.Length];
-            var seen = new bool[orderRaw.Length];
-            for (int i = 0; i < order.Length; i++)
-            {
-                order[i] = (int)orderRaw[i] - 1;
-                if (order[i] < 0 || order[i] >= order.Length || seen[order[i]])
-                {
-                    throw new JgsRuntimeException(line, col, "permute's order must use each dimension exactly once.");
-                }
-
-                seen[order[i]] = true;
-            }
-
-            // Pad the source with singletons up to the order's length, then gather column-major.
-            var padded = new int[order.Length];
-            for (int i = 0; i < padded.Length; i++)
-            {
-                padded[i] = i < source.Length ? source[i] : 1;
-            }
-
-            double[] flat = FlattenColumnMajor("permute", args[0], line, col);
-            var strides = new long[padded.Length];
-            long stride = 1;
-            for (int i = 0; i < padded.Length; i++)
-            {
-                strides[i] = stride;
-                stride *= padded[i];
-            }
-
-            var resultDims = new int[order.Length];
-            for (int i = 0; i < order.Length; i++)
-            {
-                resultDims[i] = padded[order[i]];
-            }
-
-            var result = new double[flat.Length];
-            var counter = new int[order.Length]; // odometer over the RESULT dims, column-major
-            for (int i = 0; i < result.Length; i++)
-            {
-                long sourceIndex = 0;
-                for (int d = 0; d < order.Length; d++)
-                {
-                    sourceIndex += counter[d] * strides[order[d]];
-                }
-
-                result[i] = flat[sourceIndex];
-                for (int d = 0; d < order.Length; d++)
-                {
-                    if (++counter[d] < resultDims[d])
-                    {
-                        break;
-                    }
-
-                    counter[d] = 0;
-                }
-            }
-
-            return JgsMatrix.FromColumnMajorDims(result, resultDims);
+            return PermuteDimensions("permute", args[0], args[1], line, col);
         });
 
         Define("transpose", (args, line, col) =>
@@ -624,6 +549,89 @@ internal static partial class JgsBuiltins
         }
 
         return product == 1 ? JgsValue.Number(flat[0]) : JgsMatrix.FromColumnMajorDims(flat, dims);
+    }
+
+    /// <summary>
+    /// <c>permute(A, order)</c>, and the operation <c>ipermute</c> and <c>shiftdim</c> are also
+    /// spellings of. The gather walks the RESULT column-major and reads the source through the
+    /// permuted strides, so no intermediate is built however many directions there are.
+    /// </summary>
+    private static JgsValue PermuteDimensions(
+        string name, JgsValue value, JgsValue orderValue, int line, int col)
+    {
+        IReadOnlyList<JgsValue> args = [value, orderValue];
+        double[] orderRaw = ToDoubles(name, args[1], line, col);
+        if (args[0].Type != JgsType.Array)
+        {
+            return args[0]; // a scalar is 1-by-1 whichever way its dimensions are ordered
+        }
+
+        int[] source = JgsMatrix.DimsOf(args[0]);
+        if (orderRaw.Length < source.Length)
+        {
+            throw new JgsRuntimeException(line, col,
+                $"{name} needs an order covering all {source.Length} dimensions.");
+        }
+
+        var order = new int[orderRaw.Length];
+        var seen = new bool[orderRaw.Length];
+        for (int i = 0; i < order.Length; i++)
+        {
+            order[i] = (int)orderRaw[i] - 1;
+            if (order[i] < 0 || order[i] >= order.Length || seen[order[i]])
+            {
+                throw new JgsRuntimeException(line, col,
+                    $"{name}'s order must use each dimension exactly once.");
+            }
+
+            seen[order[i]] = true;
+        }
+
+        // Pad the source with singletons up to the order's length, then gather column-major.
+        var padded = new int[order.Length];
+        for (int i = 0; i < padded.Length; i++)
+        {
+            padded[i] = i < source.Length ? source[i] : 1;
+        }
+
+        double[] flat = FlattenColumnMajor(name, args[0], line, col);
+        var strides = new long[padded.Length];
+        long stride = 1;
+        for (int i = 0; i < padded.Length; i++)
+        {
+            strides[i] = stride;
+            stride *= padded[i];
+        }
+
+        var resultDims = new int[order.Length];
+        for (int i = 0; i < order.Length; i++)
+        {
+            resultDims[i] = padded[order[i]];
+        }
+
+        var result = new double[flat.Length];
+        var counter = new int[order.Length]; // odometer over the RESULT dims, column-major
+        for (int i = 0; i < result.Length; i++)
+        {
+            long sourceIndex = 0;
+            for (int d = 0; d < order.Length; d++)
+            {
+                sourceIndex += counter[d] * strides[order[d]];
+            }
+
+            result[i] = flat[sourceIndex];
+            for (int d = 0; d < order.Length; d++)
+            {
+                if (++counter[d] < resultDims[d])
+                {
+                    break;
+                }
+
+                counter[d] = 0;
+            }
+        }
+
+        return JgsMatrix.FromColumnMajorDims(result, resultDims);
     }
 
     /// <summary>Elementwise set membership: each element of <paramref name="subject"/> against the set.</summary>

@@ -2387,6 +2387,7 @@ internal static partial class JgsBuiltins
         RegisterOptimizeBuiltins(env, host);
         RegisterPolynomialBuiltins(env);
         RegisterInterpolationBuiltins(env, host);
+        RegisterMatrixBuilderBuiltins(env, host);
 
         // After every imaging define, since these wrap builtins declared above.
         RegisterImagingMultiOutputForms(env, host, random, dialect);

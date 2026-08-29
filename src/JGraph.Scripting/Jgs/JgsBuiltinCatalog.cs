@@ -1365,6 +1365,23 @@ public static class JgsBuiltinCatalog
         Add("interpft", "Resamples a record to n points through its Fourier transform: y = interpft(X, n, dim).", P("X"), P("n"), Opt("dim"));
         Add("interpn", "A grid of any number of directions read between its samples: Vq = interpn(X1, ..., V, Xq1, ..., method, extrapval).", P("V"), Opt("Xq1"), Opt("more"), Opt("method"), Opt("extrapval"));
 
+        // M102: the matrix builders of elmat, and the shape verbs that rearrange one.
+        Add("toeplitz", "The matrix that is constant down every diagonal: T = toeplitz(c, r).", P("c"), Opt("r"));
+        Add("hankel", "The matrix that is constant along every anti-diagonal: H = hankel(c, r).", P("c"), Opt("r"));
+        Add("blkdiag", "The blocks laid corner to corner down a matrix of zeros: B = blkdiag(A1, A2, ...).", P("A1"), Opt("A2"), Opt("more"));
+        Add("compan", "The companion matrix of a polynomial, whose eigenvalues are its roots: A = compan(u).", P("u"));
+        Add("vander", "The Vandermonde matrix of a vector, powers descending across each row: A = vander(v).", P("v"));
+        Add("hadamard", "A matrix of plus and minus ones with orthogonal columns: H = hadamard(n).", P("n"), Opt("classname"));
+        Add("pascal", "Pascal's matrix of binomial coefficients, or one of its two factors: P = pascal(n, k).", P("n"), Opt("k"), Opt("classname"));
+        Add("rosser", "Rosser's 8-by-8 symmetric eigenvalue test matrix: A = rosser.", Opt("classname"));
+        Add("wilkinson", "Wilkinson's tridiagonal eigenvalue test matrix: W = wilkinson(n).", P("n"), Opt("classname"));
+        Add("invhilb", "The exact inverse of the Hilbert matrix, whose entries are integers: H = invhilb(n).", P("n"), Opt("classname"));
+        Add("gallery", "One of the Higham test matrices, by name: A = gallery('lehmer', 5).", P("matrixname"), Opt("p1"), Opt("more"), Opt("classname"));
+        Add("repelem", "Each element repeated in place, as many times as its position asks: B = repelem(A, r1, r2).", P("A"), P("r1"), Opt("r2"), Opt("more"));
+        Add("shiftdim", "The dimensions rotated, or the leading singletons stripped: [B, m] = shiftdim(A, n).", P("A"), Opt("n"));
+        Add("ipermute", "Undoes a permute: A = ipermute(B, dimorder).", P("B"), P("dimorder"));
+        Add("flipdim", "The values reversed along one dimension; the older spelling of flip: B = flipdim(A, dim).", P("A"), P("dim"));
+
         Add("copulacdf", "The probability a copula puts below a point of the unit cube: y = copulacdf('Clayton', u, 1.5).", P("family"), P("u"), P("param"), Opt("nu"));
         Add("copulapdf", "The density of a copula at a point of the unit cube: y = copulapdf('t', u, rho, 5).", P("family"), P("u"), P("param"), Opt("nu"));
         Add("copularnd", "Draws from a copula, one per row: u = copularnd('Gumbel', 2, 500).", P("family"), P("param"), P("n"), Opt("extra"));
