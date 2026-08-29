@@ -75,8 +75,22 @@ $failed = @()
 
 foreach ($entry in $scripts) {
     $name = $entry.File.Name
-    $output = & $Exe -batch $name -sd $Dir 2>&1 | Out-String
-    $code = $LASTEXITCODE
+
+    # Windows PowerShell 5.1 wraps each stderr line of a native command in a NativeCommandError
+    # when 2>&1 merges it, and $ErrorActionPreference = 'Stop' makes that terminating — so a single
+    # warning printed by jgraph.exe ended the whole run where it stood, with an exit code of 0 and
+    # a cheerful summary counting only the scripts it had reached. stess_38 prints one (interp2
+    # reverting 'cubic' to 'linear' on a 2-by-2 grid), which is how 27 of the 64 scripts went
+    # unreported, one of them failing. Only the invocation needs the softer preference.
+    $previous = $ErrorActionPreference
+    $ErrorActionPreference = 'Continue'
+    try {
+        $output = & $Exe -batch $name -sd $Dir 2>&1 | Out-String
+        $code = $LASTEXITCODE
+    }
+    finally {
+        $ErrorActionPreference = $previous
+    }
 
     # -match on a multi-line string with (?m) finds a Fail: line anywhere in the output.
     $failLines = @($output -split "`r?`n" | Where-Object { $_ -match '^\s*Fail:' })
