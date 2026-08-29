@@ -582,7 +582,13 @@ internal static partial class JgsBuiltins
         Define("disp", (args, line, col) =>
         {
             Arity("disp", args, 1, line, col);
-            host.print(args[0].Display());
+
+            // A char matrix shows its rows, one per line, the way MATLAB's disp does and the way a
+            // char row here already showed its bare text — the bracketed one-liner Display() gives is
+            // for a value inside a larger message, not for the whole of what disp was asked to print.
+            host.print(args[0].IsCharMatrix
+                ? string.Join(System.Environment.NewLine, args[0].CharMatrixRows())
+                : args[0].Display());
             return JgsValue.Null;
         });
 
@@ -2446,6 +2452,10 @@ internal static partial class JgsBuiltins
 
         RegisterStringEditingBuiltins(env);
         RegisterStringArrayBuiltins(env);
+
+        // Last of all, so it wraps whichever wrapper each name ended up with (M105) — the same reason
+        // the string-array marks are applied last.
+        KeepCharMatrixKind(env);
 
         return env;
     }

@@ -242,25 +242,15 @@ internal static class MatFileWriter
     }
 
     /// <summary>
-    /// The rows of a char matrix — JGraph keeps one as a column of equal-length strings — or null
-    /// when <paramref name="value"/> is not text at all or its rows are ragged.
+    /// The rows of a char matrix, or null when <paramref name="value"/> is not one.
     /// </summary>
-    private static string[]? CharMatrixRows(JgsValue value)
-    {
-        int count = value.ArrayLength;
-        if (count == 0 || value.IsPacked || value.IsStringArray || !AllStrings(value))
-        {
-            return null;
-        }
-
-        var rows = new string[count];
-        for (int i = 0; i < count; i++)
-        {
-            rows[i] = value.ElementAt(i).AsString;
-        }
-
-        return rows.All(row => row.Length == rows[0].Length) ? rows : null;
-    }
+    /// <remarks>
+    /// Since M105 a char matrix says so itself, so this asks the tag rather than sniffing for a column
+    /// of equal-length strings — which is what it had to do while a char matrix <em>was</em> that
+    /// column, and which could not tell one from an ordinary array that happened to hold text.
+    /// </remarks>
+    private static string[]? CharMatrixRows(JgsValue value) =>
+        value.IsCharMatrix && value.ArrayLength > 0 ? value.CharMatrixRows() : null;
 
     private static bool AllStrings(JgsValue value)
     {

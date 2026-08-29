@@ -548,7 +548,14 @@ internal static partial class JgsBuiltins
                 $"reshape must keep the element count: {flat.Length} element(s) do not fill {string.Join("x", dims)}.");
         }
 
-        return product == 1 ? JgsValue.Number(flat[0]) : JgsMatrix.FromColumnMajorDims(flat, dims);
+        JgsValue reshaped = product == 1
+            ? JgsValue.Number(flat[0])
+            : JgsMatrix.FromColumnMajorDims(flat, dims);
+
+        // Reshaping char keeps char (M105). The elements were flattened to code points on the way in,
+        // so without this the answer came back double — which is what made reshape the one way to
+        // lose the character of a char matrix while keeping every one of its characters.
+        return args[0].IsCharMatrix ? WrapCharMatrix(reshaped) : reshaped;
     }
 
     /// <summary>

@@ -456,6 +456,9 @@ internal static partial class JgsBuiltins
         // A string array is asked about first of all, because it is an array of strings underneath
         // and every question below would answer for the array rather than for what it holds (M63).
         value.IsStringArray ? "string"
+        // A char matrix is asked about next, and for the same reason again: it is an array of code
+        // points underneath, so the numeric arm below answered 'double' for it (M105).
+        : value.IsCharMatrix ? "char"
         // A time is asked about next, and for exactly the same reason: it is an array of milliseconds
         // underneath, so every question below would answer 'double' for it (M64).
         : value.IsTime ? TimeClassName(value)
@@ -487,6 +490,9 @@ internal static partial class JgsBuiltins
         // A string array is an array of strings underneath, so it has to be excluded by name (M63) —
         // otherwise isnumeric(["a" "b"]) would answer for the container rather than what it holds.
         !value.IsStringArray
+        // A char matrix is excluded for the same reason (M105): isnumeric('ab') is false in MATLAB,
+        // and a stack of char rows is no more numeric than one of them is.
+        && !value.IsCharMatrix
         // And a time is excluded for the same reason (M64): isnumeric(datetime) is false in MATLAB,
         // because the milliseconds underneath are storage rather than the value's meaning.
         && !value.IsTime

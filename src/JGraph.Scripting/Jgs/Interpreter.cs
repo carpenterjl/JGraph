@@ -1,4 +1,4 @@
-using System.Globalization;
+﻿using System.Globalization;
 using System.Numerics;
 using System.Text;
 using JGraph.Numerics;
@@ -1532,6 +1532,14 @@ internal sealed partial class Interpreter
             return ConcatenateStringArrays(rows, matrix);
         }
 
+        // A bracket stacking char rows is a char matrix (M105): ['ab'; 'cd'] is 2-by-2 char. The block
+        // machinery below reads a char row as one anonymous element, so a semicolon used to answer a
+        // 2-by-1 double whose class was double — the same failure ["a"; "b"] had one milestone ago.
+        if (Dialect.ConcatenatesBrackets && StacksCharRows(rows))
+        {
+            return ConcatenateCharRows(rows, matrix);
+        }
+
         var shapes = new List<(int Height, int Width)[]>(rows.Count);
         foreach (JgsValue[] row in rows)
         {
@@ -1712,6 +1720,13 @@ internal sealed partial class Interpreter
             }
 
             return JgsValue.Str(text.ToString());
+        }
+
+        // A single row holding a char matrix joins side by side (M105): [A, A] is 2-by-6 char where A
+        // is 2-by-3. The all-char-row join above has already taken the commoner case.
+        if (Dialect.ConcatenatesBrackets && joinable.Length > 0 && StacksCharRows([joinable]))
+        {
+            return ConcatenateCharRows([joinable], array);
         }
 
         // [] itself lands here — nothing to concatenate, nothing to pack — and in MATLAB it is the
@@ -1917,6 +1932,123 @@ internal sealed partial class Interpreter
         }
 
         return JgsValue.StringArray([.. joined]);
+    }
+
+    /// <summary>
+    /// Whether a bracket literal stacks char into a char matrix (M105): every piece is char, and
+    /// either there is more than one bracket row or one of the pieces is already a char matrix.
+    /// </summary>
+    /// <remarks>
+    /// A single row of nothing but char rows is left to the join above, which is the older and
+    /// cheaper path and answers the same thing — <c>['ab' 'cd']</c> is the char row <c>'abcd'</c>.
+    /// A bracket mixing char with numbers is left alone too: MATLAB reads the numbers as code points
+    /// there, which this does not do and did not do before.
+    /// </remarks>
+    private static bool StacksCharRows(List<JgsValue[]> rows)
+    {
+        bool anyChar = false;
+        bool anyMatrix = false;
+        foreach (JgsValue[] row in rows)
+        {
+            foreach (JgsValue piece in row)
+            {
+                if (IsEmptyPiece(piece))
+                {
+                    continue;
+                }
+
+                if (piece.Type != JgsType.String && !piece.IsCharMatrix)
+                {
+                    return false;
+                }
+
+                anyChar = true;
+                anyMatrix |= piece.IsCharMatrix;
+            }
+        }
+
+        return anyChar && (anyMatrix || rows.Count > 1);
+    }
+
+    /// <summary>Whether a bracket piece contributes nothing, and so is omitted from the join.</summary>
+    private static bool IsEmptyPiece(JgsValue piece) =>
+        (piece.Type == JgsType.Array && piece.ArrayLength == 0)
+        || (piece.Type == JgsType.String && piece.AsString.Length == 0);
+
+    /// <summary>
+    /// Stacks char rows and char matrices into one char matrix (M105), the way MATLAB's own
+    /// concatenation does: within a bracket row the blocks stand side by side and must agree on
+    /// height, then the rows stack and must agree on width.
+    /// </summary>
+    /// <remarks>
+    /// MATLAB pads nothing here — <c>['a'; 'bcd']</c> is an error, and only <c>char</c> and
+    /// <c>strvcat</c> pad — so a width that does not line up is refused with MATLAB's own message
+    /// rather than quietly filled with spaces.
+    /// </remarks>
+    private static JgsValue ConcatenateCharRows(List<JgsValue[]> rows, Node at)
+    {
+        var stacked = new List<string>();
+        int width = -1;
+        foreach (JgsValue[] row in rows)
+        {
+            List<string>? band = null;
+            foreach (JgsValue piece in row)
+            {
+                if (IsEmptyPiece(piece))
+                {
+                    continue;
+                }
+
+                string[] block = piece.Type == JgsType.String
+                    ? [piece.AsString]
+                    : piece.CharMatrixRows();
+
+                if (band is null)
+                {
+                    band = [.. block];
+                    continue;
+                }
+
+                if (band.Count != block.Length)
+                {
+                    throw new JgsRuntimeException(at.Line, at.Column,
+                        "MATLAB:catenate:dimensionMismatch",
+                        "Dimensions of arrays being concatenated are not consistent.");
+                }
+
+                for (int i = 0; i < band.Count; i++)
+                {
+                    band[i] += block[i];
+                }
+            }
+
+            if (band is null)
+            {
+                continue;
+            }
+
+            if (width < 0)
+            {
+                width = band[0].Length;
+            }
+            else if (width != band[0].Length)
+            {
+                throw new JgsRuntimeException(at.Line, at.Column,
+                    "MATLAB:catenate:dimensionMismatch",
+                    "Dimensions of arrays being concatenated are not consistent.");
+            }
+
+            stacked.AddRange(band);
+        }
+
+        // One row is a char row, which is what a bracket that stacked nothing is worth: ['ab'; []]
+        // is the char row 'ab' in MATLAB, not a 1-by-2 char matrix wearing a tag.
+        return stacked.Count switch
+        {
+            0 => JgsValue.Str(string.Empty),
+            1 => JgsValue.Str(stacked[0]),
+            _ => JgsValue.CharMatrix([.. stacked]),
+        };
     }
 
     /// <summary>
@@ -2542,8 +2674,9 @@ internal sealed partial class Interpreter
     }
 
     /// <summary>
-    /// Gives a freshly built value the three tags that say what it <em>is</em> — its numeric class,
-    /// whether it is a string array, and what kind of time it holds — without touching its shape.
+    /// Gives a freshly built value the four tags that say what it <em>is</em> — its numeric class,
+    /// whether it is a string array, whether it is a char matrix, and what kind of time it holds —
+    /// without touching its shape.
     /// </summary>
     /// <remarks>
     /// This is the same trap M62's MException class name fell into and M63's string array fell into
@@ -2561,12 +2694,25 @@ internal sealed partial class Interpreter
             copy.MarkStringArray();
         }
 
+        // A char matrix stays a char matrix through a transpose and through every copy (M105): A' is
+        // 3-by-2 char, not 3-by-2 double. This is the fourth tag to land here for the reason the
+        // remark above gives, and the first that a transpose can carry unchanged — its elements are
+        // characters wherever they are moved to.
+        if (source.IsCharMatrix)
+        {
+            copy.MarkCharMatrix();
+        }
+
         if (source.TimeTag is JgsTimeTag time)
         {
             copy.MarkTime(time);
         }
 
-        return copy;
+        // A char value with one row is a char row, never a one-row char matrix — there is one
+        // representation of a char row here and it is JgsType.String. Only a transpose can reach this
+        // with a single row (A(:, 2)' is 1-by-2), and without the collapse it came back as an array no
+        // text builtin would take.
+        return source.IsCharMatrix ? JgsBuiltins.WrapCharMatrix(copy) : copy;
     }
 
     /// <summary>Maps a compound-assignment token to the underlying binary operator.</summary>
@@ -3651,6 +3797,15 @@ internal sealed partial class Interpreter
             return picked.Type == JgsType.String ? JgsValue.StringScalar(picked.AsString)
                 : picked.Type == JgsType.Array && !picked.IsStringArray ? picked.MarkStringArray()
                 : picked;
+        }
+
+        // A selection out of a char matrix is char (M105), and this one line is the whole of what
+        // indexing needed: the shape, the gather and the bounds are the numeric array machinery,
+        // because a char matrix *is* a numeric array of code points. All that a plain read loses is
+        // that the codes are characters.
+        if (target.IsCharMatrix)
+        {
+            return JgsBuiltins.WrapCharMatrix(IndexIntoCore(target, subscripts, at, env));
         }
 
         // A subscript into a keyed collection is a key, not a position (M64), so it resolves before

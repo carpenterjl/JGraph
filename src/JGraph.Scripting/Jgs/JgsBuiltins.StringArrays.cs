@@ -73,6 +73,13 @@ internal static partial class JgsBuiltins
             return Array.ConvertAll(value.BoxedElements(), static e => e.AsString);
         }
 
+        // A char matrix is its rows (M105), which is the same reading every other text container gets
+        // here: one entry per element of the container, and a char matrix's elements are its rows.
+        if (value.IsCharMatrix)
+        {
+            return value.CharMatrixRows();
+        }
+
         if (value.Type == JgsType.Cell && Array.TrueForAll(value.AsCell, static e => e.Type == JgsType.String))
         {
             return Array.ConvertAll(value.AsCell, static e => e.AsString);
@@ -116,18 +123,128 @@ internal static partial class JgsBuiltins
     /// longest, short rows padded with spaces. It is the reason <c>char</c> of a string array is
     /// rarely what a script wants and <c>cellstr</c> usually is.
     /// </summary>
-    private static JgsValue PadIntoCharMatrix(string[] texts)
+    private static JgsValue PadIntoCharMatrix(string[] texts) => JgsValue.CharMatrix(texts);
+
+    /// <summary>
+    /// Gives a value read out of a char matrix its character back (M105). One element is a one-character
+    /// char row, a single row is the char row it spells, and anything taller stays a char matrix —
+    /// which is exactly MATLAB's own reading, where <c>A(2, :)</c> is a 1-by-n char and <c>A(:, 2)</c>
+    /// is an n-by-1 one.
+    /// </summary>
+    /// <remarks>
+    /// Collapsing a one-row result to <see cref="JgsType.String"/> is what keeps the rest of the text
+    /// surface working unchanged: <c>A(2, :)</c> comes back as the same char row a literal would have
+    /// been, so every builtin that has always taken one goes on taking it.
+    /// </remarks>
+    internal static JgsValue WrapCharMatrix(JgsValue picked)
     {
-        int width = texts.Max(static t => t.Length);
-        var rows = new JgsValue[texts.Length];
-        for (int i = 0; i < texts.Length; i++)
+        if (picked.Type == JgsType.Number)
         {
-            rows[i] = JgsValue.Str(texts[i].PadRight(width));
+            return JgsValue.Str(((char)(int)picked.AsNumber).ToString());
         }
 
-        JgsValue matrix = JgsValue.Array(rows);
-        matrix.Reshape(texts.Length, 1);
-        return matrix;
+        if (picked.Type != JgsType.Array)
+        {
+            return picked;
+        }
+
+        // Only a genuinely 2-D single row collapses: a 1-by-n-by-m char keeps its dimensions, and
+        // reading Rows alone would have flattened it into a char row.
+        if (picked.Rows == 1 && picked.Dims.Length <= 2)
+        {
+            var row = new char[picked.ArrayLength];
+            for (int i = 0; i < row.Length; i++)
+            {
+                row[i] = (char)(int)picked.ElementAt(i).AsNumber;
+            }
+
+            return JgsValue.Str(new string(row));
+        }
+
+        return picked.MarkCharMatrix();
+    }
+
+    /// <summary>
+    /// The builtins that rearrange a value without changing what its elements are — so a char matrix
+    /// going in means a char matrix coming out, exactly as it does in MATLAB.
+    /// </summary>
+    /// <remarks>
+    /// Every one of these already answered the right <em>shape</em> once a char matrix became a real
+    /// 2-D array (M105); what each dropped was only the tag, because each mints a fresh wrapper from
+    /// the code points. Retrofitting them by name here is the same move M63 made for the
+    /// text-kind-preserving verbs, and for the same reason: fifteen call sites across five files
+    /// would each have had to remember, and the sixteenth would not have.
+    /// </remarks>
+    private static readonly string[] CharPreservingBuiltins =
+    [
+        "sortrows", "fliplr", "flipud", "flip", "flipdim", "rot90", "circshift", "repmat",
+        "horzcat", "vertcat", "cat", "sort", "unique", "permute", "ipermute", "squeeze",
+        "shiftdim", "triu", "tril", "transpose", "ctranspose",
+    ];
+
+    /// <summary>Whether any argument is a char matrix.</summary>
+    /// <remarks>
+    /// Any argument, and not just the first: <c>cat</c> takes the dimension in front of the values,
+    /// so asking <c>args[0]</c> alone would have missed <c>cat(1, A, A)</c>.
+    /// </remarks>
+    private static bool AnyCharMatrix(IReadOnlyList<JgsValue> args)
+    {
+        foreach (JgsValue arg in args)
+        {
+            if (arg.IsCharMatrix)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /// <summary>
+    /// Wraps <see cref="CharPreservingBuiltins"/> so a char matrix argument produces a char answer.
+    /// </summary>
+    /// <remarks>
+    /// Only the first output is re-tagged: <c>sort</c> and <c>unique</c> answer positions in their
+    /// second and third, and those are numbers however char the first one is.
+    /// </remarks>
+    private static void KeepCharMatrixKind(JgsEnvironment env)
+    {
+        foreach (string name in CharPreservingBuiltins)
+        {
+            if (!env.TryGet(name, out JgsValue declared)
+                || declared.Type != JgsType.Function
+                || declared.AsCallable is not BuiltinFunction inner)
+            {
+                continue;
+            }
+
+            env.Declare(name, JgsValue.Function(new BuiltinFunction(name, (args, line, col) =>
+            {
+                bool wasChar = AnyCharMatrix(args);
+                JgsValue answer = inner.Call(args, line, col);
+                return wasChar ? WrapCharMatrix(answer) : answer;
+            })
+            {
+                // Every one of the inner builtin's flags is carried, not just the two that looked
+                // relevant: a wrapper that forgets one silently changes how the name is called rather
+                // than what it answers, which is the hardest kind of regression to see.
+                KeepsStringArguments = inner.KeepsStringArguments,
+                BindsAnsAsStatement = inner.BindsAnsAsStatement,
+                AutoCallsBare = inner.AutoCallsBare,
+                KnowsWhenDiscarded = inner.KnowsWhenDiscarded,
+                MultiOutput = inner.MultiOutput is null ? null : (args, wanted, line, col) =>
+                {
+                    bool wasChar = AnyCharMatrix(args);
+                    JgsValue[] outputs = inner.MultiOutput(args, wanted, line, col);
+                    if (wasChar && outputs.Length > 0)
+                    {
+                        outputs[0] = WrapCharMatrix(outputs[0]);
+                    }
+
+                    return outputs;
+                },
+            }));
+        }
     }
 
     // --- Operators ---------------------------------------------------------------------------------

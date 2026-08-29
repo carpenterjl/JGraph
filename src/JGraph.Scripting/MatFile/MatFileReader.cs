@@ -324,10 +324,11 @@ internal sealed class MatFileReader
             return JgsValue.Str(text);
         }
 
-        // A char matrix is stored down its columns; JGraph keeps one as a column of equal-length
-        // rows, so this is the one place a MAT-file read genuinely transposes.
+        // A char matrix is stored down its columns, which since M105 is exactly how JGraph holds one
+        // too — so the transpose this used to do is now only the read back into rows that
+        // JgsValue.CharMatrix takes.
         int width = count / rows;
-        var lines = new JgsValue[rows];
+        var lines = new string[rows];
         for (int r = 0; r < rows; r++)
         {
             var row = new char[width];
@@ -336,12 +337,10 @@ internal sealed class MatFileReader
                 row[c] = text[(c * rows) + r];
             }
 
-            lines[r] = JgsValue.Str(new string(row));
+            lines[r] = new string(row);
         }
 
-        JgsValue matrix = JgsValue.Array(lines);
-        matrix.Reshape(rows, 1);
-        return matrix;
+        return JgsValue.CharMatrix(lines);
     }
 
     private JgsValue ReadCellArray(ref int at, int end, int count, int[] dims)

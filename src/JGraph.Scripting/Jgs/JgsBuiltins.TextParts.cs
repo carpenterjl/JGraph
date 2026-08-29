@@ -134,16 +134,16 @@ internal static partial class JgsBuiltins
             return true;
         }
 
-        // A char matrix is an array of equal-length char rows, which is how a stack of strings is
-        // held here; it reads as its rows, exactly as MATLAB's does.
-        if (value.Type == JgsType.Array && value.ArrayLength > 0
-            && Array.TrueForAll(value.BoxedElements(), static e => e.Type == JgsType.String))
+        // A char matrix reads as its rows, exactly as MATLAB's does. Until M105 this had to sniff for
+        // an array whose every element was a char row, because that was the representation; it is now
+        // a 2-D array of code points wearing a tag, so the question is asked of the tag — which is
+        // both cheaper and exact, where the sniff called any cell-free array of strings a char matrix.
+        if (value.IsCharMatrix)
         {
-            bundle = new(
-                TextKind.Char,
-                Array.ConvertAll(value.BoxedElements(), static e => e.AsString),
-                value.Rows,
-                value.Cols);
+            // N-by-1 and not N-by-W: a bundle's shape is the layout of its *pieces*, which is what
+            // ElementIndex subscripts, and a char matrix is N pieces of text however wide they are.
+            string[] rows = value.CharMatrixRows();
+            bundle = new(TextKind.Char, rows, rows.Length, 1);
             return true;
         }
 

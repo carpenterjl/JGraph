@@ -104,6 +104,11 @@ internal sealed class JgsValue
     // exactly like SetNumericClass.
     private bool _isStringArray;
 
+    // Whether this array is a MATLAB char matrix (M105): a 2-D array whose elements are code points
+    // rather than numbers. False for every other array. Mutable ONLY by MarkCharMatrix, at mint
+    // time, exactly like MarkStringArray.
+    private bool _isCharMatrix;
+
     // What kind of time this array is holding, and how it displays (M64). Null for every array that
     // is not a datetime or a duration — which is nearly all of them, and is why the numeric storage
     // underneath goes on behaving exactly as it did. Mutable ONLY by MarkTime, at mint time.
@@ -581,6 +586,103 @@ internal sealed class JgsValue
     /// </summary>
     public static JgsValue StringScalar(string text) => Array([Str(text)]).MarkStringArray();
 
+    /// <summary>
+    /// Whether this value is a MATLAB char matrix (M105): a 2-D array of <em>code points</em>, one
+    /// element per character, which is what <c>char('a', 'bcd')</c> and <c>['ab'; 'cd']</c> build.
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    /// A char <em>row</em> is <see cref="JgsType.String"/> and always was — the whole text surface is
+    /// built on it. This tag is only for the stack of them, and it says the elements underneath are
+    /// characters rather than numbers. Storage is an ordinary numeric array, exactly as it is for the
+    /// integer classes, which is what makes <c>A(2, 3)</c>, <c>A(:)</c>, <c>A'</c>, <c>double(A)</c>,
+    /// <c>A == ' '</c> and <c>size(A)</c> all correct without a line of their own: they are the array
+    /// machinery that was already there, reading a real 2-D shape.
+    /// </para>
+    /// <para>
+    /// Before M105 a char matrix was an N-by-1 array of char <em>rows</em>, which is why
+    /// <c>class</c> answered <c>double</c> and <c>size</c> answered N-by-1: nothing was 2-D about it,
+    /// and <c>A(:, 2)</c> raised an index error rather than answering a column.
+    /// </para>
+    /// </remarks>
+    public bool IsCharMatrix => _isCharMatrix;
+
+    /// <summary>
+    /// Marks a freshly-minted array as a char matrix and hands it back. Mint-time only, like
+    /// <see cref="MarkStringArray"/>.
+    /// </summary>
+    public JgsValue MarkCharMatrix()
+    {
+        _isCharMatrix = true;
+        return this;
+    }
+
+    /// <summary>
+    /// The char matrix over <paramref name="rows"/>, space-padded to the longest — MATLAB's own rule,
+    /// and the only way a stack of unequal rows can be rectangular. Every mint site goes through here
+    /// rather than building the array by hand, so the shape, the padding and the tag cannot disagree.
+    /// </summary>
+    public static JgsValue CharMatrix(string[] rows)
+    {
+        int width = 0;
+        foreach (string row in rows)
+        {
+            width = System.Math.Max(width, row.Length);
+        }
+
+        // Column-major, which is the storage every other array uses: element (r, c) sits at c*N + r.
+        var codes = new double[rows.Length * width];
+        for (int r = 0; r < rows.Length; r++)
+        {
+            string row = rows[r];
+            for (int c = 0; c < width; c++)
+            {
+                codes[(c * rows.Length) + r] = c < row.Length ? row[c] : ' ';
+            }
+        }
+
+        JgsValue matrix = JgsMatrix.FromColumnMajor(codes, rows.Length, width);
+        matrix.Reshape(rows.Length, width);
+        return matrix.MarkCharMatrix();
+    }
+
+    /// <summary>
+    /// A char matrix read in storage order, which is the column-major run of its characters — what
+    /// <c>A(:)'</c> spells, and what <c>fprintf('%s', A)</c> prints. For <c>['a  '; 'bcd']</c> that
+    /// is <c>"ab c d"</c> and not either of the rows.
+    /// </summary>
+    public string CharMatrixText()
+    {
+        int count = ArrayLength;
+        var run = new char[count];
+        for (int i = 0; i < count; i++)
+        {
+            run[i] = (char)(int)ElementAt(i).AsNumber;
+        }
+
+        return new string(run);
+    }
+
+    /// <summary>The rows of a char matrix, read back as text — the inverse of <see cref="CharMatrix"/>.</summary>
+    public string[] CharMatrixRows()
+    {
+        int height = Rows;
+        int width = Cols;
+        var rows = new string[height];
+        for (int r = 0; r < height; r++)
+        {
+            var row = new char[width];
+            for (int c = 0; c < width; c++)
+            {
+                row[c] = (char)(int)ElementAt((c * height) + r).AsNumber;
+            }
+
+            rows[r] = new string(row);
+        }
+
+        return rows;
+    }
+
     /// <summary>A string array over <paramref name="elements"/> (each of which must be a string).</summary>
     public static JgsValue StringArray(JgsValue[] elements) => Array(elements).MarkStringArray();
 
@@ -872,6 +974,7 @@ internal sealed class JgsValue
         JgsType.Bool => _number != 0 ? "true" : "false",
         JgsType.String => AsString,
         JgsType.Array when _time is not null => FormatTime(this),
+        JgsType.Array when _isCharMatrix => FormatCharMatrix(this),
         JgsType.Array => _isStringArray ? FormatStringArray(this) : FormatArray(this),
         JgsType.Table => $"table[{AsTable.RowCount}x{AsTable.ColumnCount}]",
         JgsType.Image => FormatImage(AsImage),
@@ -1065,6 +1168,15 @@ internal sealed class JgsValue
     /// elements quoted, because the quotes are the only thing on the page that says string rather
     /// than cell.
     /// </summary>
+    /// <summary>
+    /// Formats a char matrix (M105) as its rows rather than as the code points underneath — which is
+    /// the whole reason the tag exists on the display path at all. The layout is the one every other
+    /// matrix here uses, rows separated by semicolons, because this display is JGraph's own and not
+    /// MATLAB's block form.
+    /// </summary>
+    private static string FormatCharMatrix(JgsValue array) =>
+        string.Concat("[", string.Join("; ", array.CharMatrixRows()), "]");
+
     private static string FormatStringArray(JgsValue array)
     {
         int count = array.ArrayLength;

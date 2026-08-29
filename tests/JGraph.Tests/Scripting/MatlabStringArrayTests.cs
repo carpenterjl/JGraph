@@ -148,11 +148,17 @@ public class MatlabStringArrayTests : IDisposable
 
         % char of several strings pads them to a common width and stacks them, which is what
         % MATLAB's char matrix is — and the reason cellstr is usually what a script actually wants.
-        % JGraph writes a stack of char rows the way ['ab'; 'cd'] has always written one: as rows
-        % rather than as a single char array, which is a recorded divergence.
-        m = char(["a", "bbb"]);
-        assert(isequal(size(m), [2 1]));
-        assert(strcmp(m(1), 'a  '));
+        % Since M105 that stack is a real 2-D array of characters, so it measures 2-by-3 and answers
+        % 'char'; it used to be a column of char rows, which measured 2-by-1 and answered 'double'.
+        % (A row string array is char's N-D case in MATLAB — char(["a", "bbb"]) is 1-by-3-by-2 —
+        % so the column is the form that stacks, and the form pinned here.)
+        m = char(["a"; "bbb"]);
+        assert(ischar(m));
+        assert(strcmp(class(m), 'char'));
+        assert(isequal(size(m), [2 3]));
+        assert(strcmp(m(1,:), 'a  '));
+        assert(strcmp(m(2,:), 'bbb'));
+        assert(numel(m) == 6);
 
         assert(isstring(strings(2)) && numel(strings(2)) == 4);
         assert(strcmp(char(65), 'A'));

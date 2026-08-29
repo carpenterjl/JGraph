@@ -192,16 +192,17 @@ public class MatFileV5CompletionTests : IDisposable
     [Fact]
     public void ACharMatrix_KeepsItsRowsRatherThanBecomingNumbers()
     {
-        // JGraph holds a char matrix as a column of equal-length strings; MAT-files store the
-        // characters down the columns, so this is the one read that genuinely transposes.
-        JgsValue matrix = JgsValue.Array([JgsValue.Str("ab"), JgsValue.Str("cd"), JgsValue.Str("ef")]);
-        matrix.Reshape(3, 1);
+        // A char matrix is a 2-D array of characters here and in the MAT-file both, so the round trip
+        // has to keep its shape as well as its text (M105) — it used to be a column of char rows,
+        // and the read that rebuilt it answered a 3-by-1.
+        JgsValue matrix = JgsValue.CharMatrix(["ab", "cd", "ef"]);
 
         JgsValue read = RoundTrip(matrix);
-        Assert.Equal(3, read.ArrayLength);
-        Assert.Equal("ab", read.ElementAt(0).AsString);
-        Assert.Equal("cd", read.ElementAt(1).AsString);
-        Assert.Equal("ef", read.ElementAt(2).AsString);
+        Assert.True(read.IsCharMatrix);
+        Assert.Equal(6, read.ArrayLength);
+        Assert.Equal(3, read.Rows);
+        Assert.Equal(2, read.Cols);
+        Assert.Equal(["ab", "cd", "ef"], read.CharMatrixRows());
     }
 
     [Fact]

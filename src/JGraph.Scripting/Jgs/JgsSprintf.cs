@@ -67,7 +67,14 @@ internal static class JgsSprintf
         var stream = new List<JgsValue>();
         foreach (JgsValue arg in args)
         {
-            if (arg.Type == JgsType.Array)
+            // A char matrix feeds one piece of text, not one value per code point (M105) — and the
+            // text is its storage order, so fprintf('%s', ['a  '; 'bcd']) prints 'ab c d' exactly as
+            // MATLAB's does. Spreading it would have handed %s the numbers underneath.
+            if (arg.IsCharMatrix)
+            {
+                stream.Add(JgsValue.Str(arg.CharMatrixText()));
+            }
+            else if (arg.Type == JgsType.Array)
             {
                 stream.AddRange(arg.BoxedElements());
             }

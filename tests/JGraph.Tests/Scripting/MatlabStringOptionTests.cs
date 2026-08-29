@@ -339,12 +339,14 @@ public class MatlabStringOptionTests : IDisposable
     /// as a cell of strings — the rule <c>dec2bin</c> already follows — with the columns still aligned.
     /// </summary>
     [Fact]
-    public Task SeveralRowsComeBackAsACellWithTheColumnsStillLinedUp() => RunAsserting("""
+    public Task SeveralRowsComeBackAsACharMatrixWithTheColumnsStillLinedUp() => RunAsserting("""
+        % MATLAB answers a char matrix here, not a cell: the columns were lined up so that the rows
+        % could stand one above the other, which is the one container that says so (M105).
         rows = num2str([1 20; 300 4]);
-        assert(iscell(rows));
-        assert(numel(rows) == 2);
-        assert(strcmp(rows{1}, '  1   20'));
-        assert(strcmp(rows{2}, '300    4'));
+        assert(ischar(rows));
+        assert(isequal(size(rows), [2 8]));
+        assert(strcmp(rows(1,:), '  1   20'));
+        assert(strcmp(rows(2,:), '300    4'));
         """);
 
     [Fact]

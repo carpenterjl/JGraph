@@ -177,7 +177,10 @@ internal static partial class JgsBuiltins
         Define("ischar", (args, line, col) =>
         {
             Arity("ischar", args, 1, line, col);
-            return JgsValue.Bool(args[0].Type == JgsType.String);
+
+            // A char matrix is char too (M105) — it is the stack of char rows char('a', 'bcd') builds,
+            // and asking only about the char row missed every one of them.
+            return JgsValue.Bool(args[0].Type == JgsType.String || args[0].IsCharMatrix);
         });
 
         Define("islogical", (args, line, col) =>

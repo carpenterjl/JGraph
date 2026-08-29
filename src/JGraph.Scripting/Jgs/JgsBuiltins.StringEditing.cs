@@ -50,6 +50,14 @@ internal static partial class JgsBuiltins
 
             JgsValue only = args[0];
 
+            // char of a char matrix is that char matrix (M105). Asked before the numeric arm below,
+            // which would otherwise read its code points as one long char row — which is what
+            // char(char('a', 'bcd')) used to answer, a 1-by-6 where MATLAB says 2-by-3.
+            if (only.IsCharMatrix)
+            {
+                return only;
+            }
+
             // A time is its display text, not its code points (M64) — asked before the numeric arm
             // below, which would otherwise read a datetime's milliseconds as characters.
             if (only.IsTime)

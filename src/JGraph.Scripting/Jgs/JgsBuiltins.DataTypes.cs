@@ -95,6 +95,18 @@ internal static partial class JgsBuiltins
         {
             Arity("cellstr", args, 1, line, col);
             JgsValue input = args[0];
+
+            // A char matrix is its rows, one cell each, with the padding taken back off (M105) —
+            // MATLAB deblanks here, which is exactly what makes cellstr the usual way back out of a
+            // char matrix. The Array arm below would otherwise have read its code points as numbers.
+            if (input.IsCharMatrix)
+            {
+                string[] rows = input.CharMatrixRows();
+                JgsValue answer = JgsValue.Cell(Array.ConvertAll(rows, static r => JgsValue.Str(r.TrimEnd(' '))));
+                answer.Reshape(rows.Length, 1);
+                return answer;
+            }
+
             return input.Type switch
             {
                 JgsType.Cell => input,

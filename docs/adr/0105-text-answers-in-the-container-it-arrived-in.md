@@ -87,11 +87,6 @@ is where that is said out loud rather than left to look like arithmetic drift.
 
 ### Divergences recorded here
 
-- **A char matrix here reports `double` for its class and rows-by-one for its size** — this build
-  holds one as an array of equal-length char rows, and there is no tag saying so, which predates
-  M104 by forty milestones (`char('a','bcd')` has always answered this way). `strvcat`, `str2mat`,
-  `strjust` and `num2hex` all build one, so all four report a class and a size MATLAB does not.
-  The characters themselves, and every row read out of one, agree exactly.
 - **`repmat` of a char row answers separate strings rather than a longer row** — `repmat('a',1,63)`
   is a 1-by-63 array of sixty-three one-character strings here and a 63-character char row in
   MATLAB, so `isvarname(repmat('a',1,63))` is false here and true there. `char(…)` around it
@@ -110,9 +105,9 @@ is where that is said out loud rather than left to look like arithmetic drift.
 - **`strread`**, the last `strfun` name — the legacy delimited-text reader, which belongs with
   `textscan` and the file-reading family rather than with the string verbs; `strfun` stands at 40
   of 41.
-- **The char-matrix model** itself: giving one a tag of its own, so `class` says `char` and `size`
-  says rows-by-columns, is a milestone's work across `size`, `class`, indexing and display, and is
-  recorded above rather than begun here.
+- **The char-matrix model** itself was left recorded above rather than begun here; it was closed
+  afterwards in M105, which gave a char matrix a tag of its own so that `class` says `char` and
+  `size` says rows-by-columns. The divergence this ADR recorded is gone with it.
 - **`genvarname`** and the seven other `lang` names; `isvarname` was taken because
   `mustBeValidVariableName` needed the rule, not because the folder was commissioned.
 

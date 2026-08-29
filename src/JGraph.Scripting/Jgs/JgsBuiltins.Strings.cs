@@ -706,9 +706,13 @@ internal static partial class JgsBuiltins
             ? FormattedRows(args[1].AsString, rows, line, col)
             : AlignedRows(rows, args.Count == 2 ? Count("num2str", args, 1, line, col) : null);
 
+        // Several rows are a char matrix, which is what MATLAB answers and what the aligned columns
+        // above were computed for (M105). It used to be a cell, so num2str([1; 22]) came back 1-by-2
+        // cell where MATLAB says 2-by-2 char — and a cell is the one container none of the char rules
+        // apply to.
         return text.Length == 1
             ? JgsValue.Str(text[0])
-            : JgsValue.Cell(text.Select(JgsValue.Str).ToArray());
+            : JgsValue.CharMatrix(text);
     }
 
     /// <summary><c>num2str(A, '%8.3f')</c>: the format is applied a row at a time, cycling over it.</summary>
