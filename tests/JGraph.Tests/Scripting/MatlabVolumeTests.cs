@@ -574,10 +574,11 @@ public class MatlabVolumeTests : IDisposable
     }
 
     [Fact]
-    public async Task AnInterp3MethodOtherThanLinearIsRefusedWithAReason()
+    public async Task AnInterp3MethodIsReadTheWayItsNameSaysAndOnlyMakimaIsRefused()
     {
-        string message = await RunExpectingFailure(Field + "interp3(X, Y, Z, V, 0, 0, 0, 'spline');");
-        Assert.Contains("spline", message, StringComparison.Ordinal);
-        Assert.Contains("linear", message, StringComparison.Ordinal);
+        // Since M101 a volume is read by the same grid sampler two dimensions use, so 'spline' and
+        // 'cubic' work here as well; 'makima' alone is refused, and says so by name.
+        string message = await RunExpectingFailure(Field + "interp3(X, Y, Z, V, 0, 0, 0, 'makima');");
+        Assert.Contains("makima", message, StringComparison.Ordinal);
     }
 }

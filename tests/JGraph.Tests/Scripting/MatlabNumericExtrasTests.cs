@@ -148,9 +148,11 @@ public class MatlabNumericExtrasTests : IDisposable
     }
 
     [Fact]
-    public void FittingASurfaceThroughTheNeighboursIsRefusedByName()
+    public void FittingASurfaceThroughTheNeighboursIsOnlyRefusedForMakima()
     {
-        Assert.Contains("'linear' and 'nearest'", Error("interp2([1 2; 3 4], 1.5, 1.5, 'cubic');"));
+        // M101 built the other four; makima over more than one direction is the one still refused,
+        // because MATLAB's cross terms for it are not the ones a plain tensor product gives.
+        Assert.Contains("makima", Error("interp2([1 2 3; 4 5 6; 7 8 9], 1.5, 1.5, 'makima');"));
     }
 
     // --- constructor classes --------------------------------------------------------------------

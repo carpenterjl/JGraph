@@ -171,7 +171,13 @@ public class MatlabDataAnalysisTests : IDisposable
         assert(abs(interp1(x, y, 2.5, 'spline') - 15.625) < 1e-10);
         % pchip gives up that exactness to stop the curve overshooting, so it answers differently.
         assert(abs(interp1(x, y, 2.5, 'pchip') - 15.625) > 1e-6);
-        assert(interp1(x, y, 2.5, 'cubic') == interp1(x, y, 2.5, 'pchip'));
+        % 'cubic' is cubic convolution, which is what 'v5cubic' has always meant and what MATLAB
+        % answers today; it is exact on a cubic where pchip is not.
+        assert(interp1(x, y, 2.5, 'cubic') == interp1(x, y, 2.5, 'v5cubic'));
+        assert(abs(interp1(x, y, 2.5, 'cubic') - 15.625) < 1e-10);
+        assert(interp1(x, y, 2.5, 'cubic') ~= interp1(x, y, 2.5, 'pchip'));
+        % makima is a third cubic again, and neither of the other two.
+        assert(abs(interp1(x, y, 2.5, 'makima') - 15.635834670947) < 1e-10);
         """);
 
     [Fact]
@@ -199,14 +205,6 @@ public class MatlabDataAnalysisTests : IDisposable
 
     [Fact]
     public Task Interp1RefusesAMethodItWouldHaveToGuessAt() => RunAsserting("""
-        refused = '';
-        try
-            interp1([1 2 3], [1 2 3], 1.5, 'makima');
-        catch err
-            refused = err.message;
-        end
-        assert(contains(refused, 'spline'));
-
         unknown = '';
         try
             interp1([1 2 3], [1 2 3], 1.5, 'quadratic');

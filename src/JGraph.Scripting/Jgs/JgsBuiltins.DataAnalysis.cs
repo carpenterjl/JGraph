@@ -23,7 +23,8 @@ namespace JGraph.Scripting.Jgs;
 internal static partial class JgsBuiltins
 {
     /// <summary>Registers the data-analysis builtins, replacing three earlier registrations.</summary>
-    private static void RegisterDataAnalysisBuiltins(JgsEnvironment env, JgsDialect dialect)
+    private static void RegisterDataAnalysisBuiltins(
+        JgsEnvironment env, JgsDialect dialect, JGraphScriptGlobals host)
     {
         void Define(string name, Func<IReadOnlyList<JgsValue>, int, int, JgsValue> body,
             Func<IReadOnlyList<JgsValue>, int, int, int, JgsValue[]>? multi = null) =>
@@ -39,7 +40,7 @@ internal static partial class JgsBuiltins
         DefineBoth("gradient", SlopeFields);
         Define("trapz", (args, line, col) => Integrate("trapz", args, cumulative: false, line, col));
         Define("cumtrapz", (args, line, col) => Integrate("cumtrapz", args, cumulative: true, line, col));
-        Define("interp1", (args, line, col) => Interpolate(args, dialect, line, col));
+        Define("interp1", (args, line, col) => Interpolate(args, dialect, host, line, col));
 
         DefineBoth("polyfit", PolynomialFit);
         DefineBoth("polyval", PolynomialValue);
@@ -539,9 +540,30 @@ internal static partial class JgsBuiltins
     /// the cubics, which is what MATLAB does and the one place the method changes more than shape.
     /// </remarks>
     private static JgsValue Interpolate(
-        IReadOnlyList<JgsValue> args, JgsDialect dialect, int line, int col)
+        IReadOnlyList<JgsValue> args, JgsDialect dialect, JGraphScriptGlobals host, int line, int col)
     {
         ArityRange("interp1", args, 2, 5, line, col);
+
+        // pp = interp1(x, v, method, 'pp') hands back the curve instead of reading it, so it is
+        // settled before the arguments are counted the usual way: there are no query points in
+        // it, and the slot they would occupy holds the method.
+        if (args[^1].Type == JgsType.String
+            && string.Equals(args[^1].AsString, "pp", StringComparison.OrdinalIgnoreCase))
+        {
+            if (args.Count != 4 || args[2].Type != JgsType.String)
+            {
+                throw new JgsRuntimeException(line, col, "MATLAB:interp1:ppOutput",
+                    "Use 4 inputs for PP=INTERP1(X,V,METHOD,'pp').");
+            }
+
+            return Interp1Piecewise(
+                FlattenColumnMajor("interp1", args[0], line, col),
+                args[1],
+                OneWord("interp1", args, 2, line, col, Interp1Methods),
+                host,
+                line,
+                col);
+        }
 
         int numeric = 0;
         while (numeric < args.Count && args[numeric].Type != JgsType.String)
@@ -577,18 +599,15 @@ internal static partial class JgsBuiltins
         string method = numeric < args.Count
             ? OneWord("interp1", args, numeric, line, col, Interp1Methods)
             : "linear";
-        if (method is "makima" or "v5cubic")
+        if (method == "v5cubic")
         {
-            throw new JgsRuntimeException(line, col,
-                $"interp1: '{method}' is not available here; 'spline' and 'pchip' are the cubics that are.");
+            method = "cubic"; // the same cubic convolution under the name version 5 gave it
         }
 
-        if (method == "cubic")
-        {
-            method = "pchip"; // MATLAB's own alias since R2020b
-        }
-
-        bool extrapolate = method is "spline" or "pchip";
+        // Which methods carry on past the last sample is not a tidy rule and is not ours: the
+        // three slope-based cubics extrapolate their end piece, and cubic convolution does not,
+        // because its kernel is only defined inside a cell.
+        bool extrapolate = method is "spline" or "pchip" or "makima";
         double outside = double.NaN;
         if (numeric + 1 < args.Count)
         {
@@ -610,19 +629,29 @@ internal static partial class JgsBuiltins
             }
         }
 
+        if (extrapolate && method == "cubic")
+        {
+            // Cubic convolution has no extrapolation to offer: its kernel is written over a cell
+            // and there is no cell outside the samples. MATLAB says so and answers NaN rather
+            // than continuing the end piece, which would be a different curve.
+            host.WriteErr(
+                "Warning: The 'cubic' and 'v5cubic' methods do not support extrapolation.\n");
+            extrapolate = false;
+        }
+
         if (args.Count > numeric + 2)
         {
             throw new JgsRuntimeException(line, col,
                 $"interp1 expects at most {numeric + 2} argument(s) in this form, but got {args.Count}.");
         }
 
-        return Resample(samples, values, queries, method, extrapolate, outside, line, col);
+        return Resample(samples, values, queries, method, extrapolate, outside, host, line, col);
     }
 
     /// <summary>Interpolates one data set, or each column of a matrix of them.</summary>
     private static JgsValue Resample(
         double[] samples, JgsValue values, JgsValue queries, string method,
-        bool extrapolate, double outside, int line, int col)
+        bool extrapolate, double outside, JGraphScriptGlobals host, int line, int col)
     {
         int n = samples.Length;
         if (n < 2)
@@ -656,6 +685,7 @@ internal static partial class JgsBuiltins
             x[i] = samples[order[i]];
         }
 
+        method = SettleInterp1Method(method, x, host);
         var answer = new double[at.Length * sets];
         for (int set = 0; set < sets; set++)
         {
@@ -665,17 +695,12 @@ internal static partial class JgsBuiltins
                 y[i] = flat[(set * n) + order[i]];
             }
 
-            double[] slopes = method switch
-            {
-                "spline" => Interpolation.SplineSlopes(x, y),
-                "pchip" => Interpolation.PchipSlopes(x, y),
-                _ => [],
-            };
+            double[] coefficients = CubicCoefficients(x, y, method);
 
             for (int q = 0; q < at.Length; q++)
             {
                 answer[(set * at.Length) + q] =
-                    ValueAt(x, y, slopes, method, at[q], extrapolate, outside);
+                    ValueAt(x, y, coefficients, method, at[q], extrapolate, outside);
             }
         }
 
@@ -686,7 +711,8 @@ internal static partial class JgsBuiltins
 
     /// <summary>One query point, by whichever rule the method names.</summary>
     private static double ValueAt(
-        double[] x, double[] y, double[] slopes, string method, double at, bool extrapolate, double outside)
+        double[] x, double[] y, double[] coefficients, string method, double at, bool extrapolate,
+        double outside)
     {
         int n = x.Length;
         if (double.IsNaN(at))
@@ -709,7 +735,7 @@ internal static partial class JgsBuiltins
             "nearest" => at - x[i] < x[i + 1] - at ? y[i] : y[i + 1],
             "previous" => at >= x[i + 1] ? y[i + 1] : at < x[i] ? double.NaN : y[i],
             "next" => at <= x[i] ? y[i] : at > x[i + 1] ? double.NaN : y[i + 1],
-            "spline" or "pchip" => Interpolation.Hermite(x[i], x[i + 1], y[i], y[i + 1], slopes[i], slopes[i + 1], at),
+            "spline" or "pchip" or "makima" or "cubic" => CubicAt(coefficients, i, at - x[i]),
             _ => y[i] + ((y[i + 1] - y[i]) * (at - x[i]) / (x[i + 1] - x[i])),
         };
     }

@@ -2352,7 +2352,7 @@ internal static partial class JgsBuiltins
         RegisterFunctionPlotBuiltins(env);
 
         // The volume verbs draw with those too, and several of them hand a shape to `patch`.
-        RegisterVolumeBuiltins(env);
+        RegisterVolumeBuiltins(env, host);
 
         // The figure-tooling verbs work on what the verbs above drew rather than drawing themselves.
         RegisterFigureToolBuiltins(env, host);
@@ -2373,19 +2373,20 @@ internal static partial class JgsBuiltins
 
         // After every other define, because three of these replace a name declared above; and before
         // the reductions, so rms is wrapped for a dimension the same way mean is.
-        RegisterDataAnalysisBuiltins(env, dialect);
+        RegisterDataAnalysisBuiltins(env, dialect, host);
         RegisterSetOperations(env, dialect);
 
         // The preprocessing family (M66) after the data analysis it shares a binning rule with, so
         // discretize and histcounts cannot be given two different opinions about where a bin starts.
         RegisterPreprocessingBuiltins(env, dialect);
-        RegisterNumericExtraBuiltins(env);
+        RegisterNumericExtraBuiltins(env, host);
 
         // The Statistics Toolbox (M53), after the base names it replaces or leans on and before the
         // reductions, so a statistic that reduces columns is wrapped for a dimension exactly once.
         RegisterStatisticsBuiltins(env, host, random, dialect);
         RegisterOptimizeBuiltins(env, host);
         RegisterPolynomialBuiltins(env);
+        RegisterInterpolationBuiltins(env, host);
 
         // After every imaging define, since these wrap builtins declared above.
         RegisterImagingMultiOutputForms(env, host, random, dialect);

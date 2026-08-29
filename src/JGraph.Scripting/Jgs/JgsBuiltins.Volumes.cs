@@ -25,7 +25,7 @@ namespace JGraph.Scripting.Jgs;
 /// </remarks>
 internal static partial class JgsBuiltins
 {
-    private static void RegisterVolumeBuiltins(JgsEnvironment env)
+    private static void RegisterVolumeBuiltins(JgsEnvironment env, JGraphScriptGlobals host)
     {
         void Define(string name, Func<IReadOnlyList<JgsValue>, int, int, JgsValue> body) =>
             env.Declare(name, JgsValue.Function(new BuiltinFunction(name, body)));
@@ -56,7 +56,10 @@ internal static partial class JgsBuiltins
             MultiOutput = (args, wanted, line, col) => Curl(args, wanted, line, col),
         }));
 
-        Define("interp3", (args, line, col) => Interp3(args, line, col));
+        // interp3 reads a plaid grid, which is what JgsBuiltins.Interpolation.Grid.cs does for
+        // two, three and n directions alike (M101). It stays registered here, beside the volume
+        // names it is used with, because a second Define elsewhere would shadow this one silently.
+        Define("interp3", (args, line, col) => SampleGridded("interp3", args, 3, host, line, col));
 
         RegisterIsoSurfaceBuiltins(env);
         RegisterStreamBuiltins(env);
@@ -572,55 +575,5 @@ internal static partial class JgsBuiltins
             new ScalarField(x, y, z, uu),
             new ScalarField(x, y, z, vv),
             new ScalarField(x, y, z, ww));
-    }
-
-    /// <summary>
-    /// <c>interp3(X, Y, Z, V, xq, yq, zq)</c>: the readings at points that need not be on the grid,
-    /// by straight-line interpolation along each direction.
-    /// </summary>
-    private static JgsValue Interp3(IReadOnlyList<JgsValue> args, int line, int col)
-    {
-        ArityRange("interp3", args, 4, 8, line, col);
-        (ScalarField field, int next) = ReadScalarField("interp3", args, line, col);
-        if (args.Count < next + 3)
-        {
-            throw new JgsRuntimeException(line, col,
-                "interp3 needs the points to read at: interp3(X, Y, Z, V, xq, yq, zq).");
-        }
-
-        double[] qx = ToDoubles("interp3", args[next], line, col);
-        double[] qy = ToDoubles("interp3", args[next + 1], line, col);
-        double[] qz = ToDoubles("interp3", args[next + 2], line, col);
-        if (qx.Length != qy.Length || qx.Length != qz.Length)
-        {
-            throw new JgsRuntimeException(line, col,
-                "interp3: the three lists of points have to be the same length.");
-        }
-
-        if (args.Count > next + 3)
-        {
-            string method = Str("interp3", args, next + 3, line, col);
-            if (!method.Equals("linear", StringComparison.OrdinalIgnoreCase))
-            {
-                throw new JgsRuntimeException(line, col,
-                    $"interp3: '{method}' is not a method here; only 'linear' is, because a volume "
-                    + "is read by straight lines along each direction.");
-            }
-        }
-
-        var readings = new double[qx.Length];
-        for (int i = 0; i < qx.Length; i++)
-        {
-            readings[i] = field.Sample(qx[i], qy[i], qz[i]);
-        }
-
-        // The answer takes the shape of the points asked about, and a single point answers a single
-        // number — reshaping a scalar to the shape a scalar reports is not the same thing.
-        if (readings.Length == 1 && args[next].Type is JgsType.Number or JgsType.Bool)
-        {
-            return JgsValue.Number(readings[0]);
-        }
-
-        return JgsMatrix.FromColumnMajorDims(readings, JgsMatrix.DimsOf(args[next]));
     }
 }

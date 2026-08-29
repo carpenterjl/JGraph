@@ -194,7 +194,7 @@ ode45,funfun,0,"[t,y] = ode45(odefun,tspan,y0)",error,"sin expects 1 argument(s)
 ode45,funfun,1,"[t,y] = ode45(odefun,tspan,y0,options)",error,"ode45 expects 3 argument(s), but got 4."
 ode45,funfun,2,"[t,y,te,ye,ie] = ode45(odefun,tspan,y0,options)",error,"ode45 expects 3 argument(s), but got 4."
 ode45,funfun,3,sol = ode45(___),error,"ode45 produces two outputs: use [t, y] = ode45(f, tspan, y0)."
-run,lang,0,run(scriptname),refused,run: cannot read 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-toolbox-aluxz4ob\a': Could not find file 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-toolbox-aluxz4ob\a'.
+run,lang,0,run(scriptname),refused,run: cannot read 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-toolbox-18jhhxzv\a': Could not find file 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-toolbox-18jhhxzv\a'.
 validateattributes,lang,0,"validateattributes(A,classes,attributes)",error,validateattributes expects a cell of class names.
 validateattributes,lang,1,"validateattributes(A,classes,attributes,argIndex)",error,"validateattributes expects argument 4 to be a string, but got a number."
 validateattributes,lang,2,"validateattributes(A,classes,attributes,funcName)",error,validateattributes expects a cell of class names.
@@ -261,19 +261,34 @@ interp1,polyfun,2,"vq = interp1(x,v,xq,method,extrapolation)",accepted,
 interp1,polyfun,3,"vq = interp1(v,xq)",accepted,
 interp1,polyfun,4,"vq = interp1(v,xq,method)",accepted,
 interp1,polyfun,5,"vq = interp1(v,xq,method,extrapolation)",accepted,
-interp1,polyfun,6,"pp = interp1(x,v,method,'pp')",error,interp1: 'pp' is not an extrapolation; say 'extrap' or a fill value.
+interp1,polyfun,6,"pp = interp1(x,v,method,'pp')",accepted,
+interp1q,polyfun,0,"yi = interp1q(x,Y,xi)",accepted,
 interp2,polyfun,0,"Vq = interp2(X,Y,V,Xq,Yq)",unprobed,no sample for this form's arguments
 interp2,polyfun,1,"Vq = interp2(V,Xq,Yq)",unprobed,no sample for this form's arguments
-interp2,polyfun,2,Vq = interp2(V),error,"interp2 takes (V, Xq, Yq) or (X, Y, V, Xq, Yq), and a method word after them."
-interp2,polyfun,3,"Vq = interp2(V,k)",error,"interp2 takes (V, Xq, Yq) or (X, Y, V, Xq, Yq), and a method word after them."
-interp2,polyfun,4,"Vq = interp2(___,method)",error,"interp2 takes (V, Xq, Yq) or (X, Y, V, Xq, Yq), and a method word after them."
-interp2,polyfun,5,"Vq = interp2(___,method,extrapval)",error,"interp2: unexpected argument 3; options come after the data (options: 'linear', 'nearest', 'cubic', 'spline', 'makima')."
+interp2,polyfun,2,Vq = interp2(V),accepted,
+interp2,polyfun,3,"Vq = interp2(V,k)",accepted,
+interp2,polyfun,4,"Vq = interp2(___,method)",accepted,
+interp2,polyfun,5,"Vq = interp2(___,method,extrapval)",accepted,
 interp3,polyfun,0,"Vq = interp3(X,Y,Z,V,Xq,Yq,Zq)",unprobed,no sample for this form's arguments
 interp3,polyfun,1,"Vq = interp3(V,Xq,Yq,Zq)",unprobed,no sample for this form's arguments
-interp3,polyfun,2,Vq = interp3(V),error,"interp3 expects between 4 and 8 argument(s), but got 1."
-interp3,polyfun,3,"Vq = interp3(V,k)",error,"interp3 expects between 4 and 8 argument(s), but got 2."
-interp3,polyfun,4,"Vq = interp3(___,method)",error,"interp3 expects between 4 and 8 argument(s), but got 2."
-interp3,polyfun,5,"Vq = interp3(___,method,extrapval)",error,"interp3 expects between 4 and 8 argument(s), but got 3."
+interp3,polyfun,2,Vq = interp3(V),error,Interpolation requires at least two sample points for each grid dimension.
+interp3,polyfun,3,"Vq = interp3(V,k)",error,Interpolation requires at least two sample points for each grid dimension.
+interp3,polyfun,4,"Vq = interp3(___,method)",error,Interpolation requires at least two sample points for each grid dimension.
+interp3,polyfun,5,"Vq = interp3(___,method,extrapval)",error,Interpolation requires at least two sample points for each grid dimension.
+interpft,polyfun,0,"y = interpft(X,n)",accepted,
+interpft,polyfun,1,"y = interpft(X,n,dim)",accepted,
+interpn,polyfun,0,"Vq = interpn(X1,X2,...,Xn,V,Xq1,Xq2,...,Xqn)",unprobed,no sample for this form's arguments
+interpn,polyfun,1,"Vq = interpn(V,Xq1,Xq2,...,Xqn)",unprobed,no sample for this form's arguments
+interpn,polyfun,2,Vq = interpn(V),accepted,
+interpn,polyfun,3,"Vq = interpn(V,k)",accepted,
+interpn,polyfun,4,"Vq = interpn(___,method)",accepted,
+interpn,polyfun,5,"Vq = interpn(___,method,extrapval)",accepted,
+makima,polyfun,0,"yq = makima(x,y,xq)",accepted,
+makima,polyfun,1,"pp = makima(x,y)",accepted,
+mkpp,polyfun,0,"pp = mkpp(breaks,coefs)",accepted,
+mkpp,polyfun,1,"pp = mkpp(breaks,coefs,d)",error,"The requested number of polynomial pieces, 2, is incompatible with the proposed size, [2], of a coefficient and the number, 6, of scalar coefficients provided."
+pchip,polyfun,0,"p = pchip(x,y,xq)",accepted,
+pchip,polyfun,1,"pp = pchip(x,y)",accepted,
 poly,polyfun,0,p = poly(r),accepted,
 poly,polyfun,1,p = poly(A),error,Argument must be a vector or a square matrix.
 polyarea,polyfun,0,"a = polyarea(x,y)",accepted,
@@ -291,8 +306,12 @@ polyval,polyfun,1,"[y,delta] = polyval(p,x,S)",unprobed,no sample for this form'
 polyval,polyfun,2,"y = polyval(p,x,[],mu)",error,"polyval: mu is polyfit's [centre, scale] pair, so it holds two numbers."
 polyval,polyfun,3,"[y,delta] = polyval(p,x,S,mu)",unprobed,no sample for this form's arguments
 polyvalm,polyfun,0,"Y = polyvalm(p,X)",error,Matrix must be square.
+ppval,polyfun,0,"v = ppval(pp,xq)",unprobed,no sample for this form's arguments
 rectint,polyfun,0,"area = rectint(A,B)",unprobed,no sample for this form's arguments
 roots,polyfun,0,r = roots(p),accepted,
+spline,polyfun,0,"s = spline(x,y,xq)",accepted,
+spline,polyfun,1,"pp = spline(x,y)",accepted,
+unmkpp,polyfun,0,"[breaks,coefs,L,order,dim] = unmkpp(pp)",unprobed,no sample for this form's arguments
 voronoin,polyfun,0,"[v,c] = voronoin(P)",error,voronoin: only 2-D point sets are supported — X must be an n-by-2 matrix.
 voronoin,polyfun,1,"[v,c] = voronoin(P,opts)",error,"voronoin expects 1 argument(s), but got 2."
 rng,randfun,0,rng(seed),accepted,

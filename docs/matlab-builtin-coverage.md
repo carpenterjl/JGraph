@@ -103,8 +103,13 @@ see. This file refused to count them while they drew nothing; **M56 made them re
 number and this one agree again. `opengl` *is* counted, because an accepted no-op is an answer — the
 same reading that counted `shading`, `lighting` and `camlight` in M43.
 
-Across every callable kind — builtin, function, operator, keyword, script — the count is **947 of
-2,024** as of M100, which took the polynomial and 1-D signal names: `roots` `poly` `polyder`
+Across every callable kind — builtin, function, operator, keyword, script — the count is **956 of
+2,024** as of M101, which took the interpolation half of `polyfun`: `spline` `pchip` `makima`
+`ppval` `mkpp` `unmkpp` `interp1q` `interpft` `interpn`. Those nine take that folder from 14 of 34
+to 23, and they bring the piecewise polynomial itself — MATLAB's `pp` structure — which is what
+let `interp1`, `interp2` and `interp3` gain nine documented forms between them without gaining a
+name.
+947 after M100, which took the polynomial and 1-D signal names: `roots` `poly` `polyder`
 `polyint` `polyvalm` `conv` `deconv` `convn` `nextpow2` `unwrap` `cplxpair` `polyarea` `rectint`
 `inpolygon`. Those fourteen finish MATLAB's `elfun` folder and take `polyfun` from 6 of 34 to 14.
 933 after M99, which opened the optimfun folder: `fminsearch` `fminbnd` `fzero` `lsqnonneg`

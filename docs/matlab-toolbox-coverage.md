@@ -19,8 +19,8 @@ below is — and that is why an entire folder could sit at nought implemented wi
 
 ## Where it stands
 
-**186 of 377 names implemented**, and
-**241 of 1036 documented syntax forms accepted**.
+**195 of 377 names implemented**, and
+**260 of 1036 documented syntax forms accepted**.
 
 | Folder | Names | Forms documented | Forms accepted | Names missing |
 |---|---:|---:|---:|---:|
@@ -28,7 +28,7 @@ below is — and that is why an entire folder could sit at nought implemented wi
 | `datafun` | 26 / 41 | 178 | 83 | 15 |
 | `funfun` | 1 / 40 | 123 | 0 | 39 |
 | `sparfun` | 5 / 35 | 185 | 2 | 30 |
-| `polyfun` | 14 / 34 | 94 | 19 | 20 |
+| `polyfun` | 23 / 34 | 94 | 38 | 11 |
 | `elmat` | 18 / 33 | 68 | 29 | 15 |
 | `validators` | 24 / 31 | 33 | 16 | 7 |
 | `matfun` | 10 / 25 | 62 | 9 | 15 |
@@ -43,11 +43,11 @@ below is — and that is why an entire folder could sit at nought implemented wi
 
 | Verdict | Forms | What it means |
 |---|---:|---|
-| accepted | 241 | the call returned without error |
+| accepted | 260 | the call returned without error |
 | refused | 4 | refused deliberately, with a message naming what is missing |
 | undefined | 0 | the name did not resolve at all |
-| error | 123 | failed some other way — **may be the prober's sample, not the build** |
-| unprobed | 87 | no call could be built |
+| error | 119 | failed some other way — **may be the prober's sample, not the build** |
+| unprobed | 91 | no call could be built |
 
 Only implemented names are probed, so "forms accepted" is bounded by the names column above it. As
 in the sibling document, **`accepted` is the trustworthy column** and every other one is a worklist:
@@ -84,9 +84,9 @@ command that quite rightly rejects it.
 
 `pagectranspose` `pagetranspose`
 
-### `polyfun` — 20
+### `polyfun` — 11
 
-`boundary` `boundaryshape` `convhulln` `delaunayn` `dsearchn` `griddata` `griddatan` `interp1q` `interpft` `interpn` `makima` `mkpp` `nsidedpoly` `pchip` `ppval` `spline` `stlread` `stlwrite` `tsearchn` `unmkpp`
+`boundary` `boundaryshape` `convhulln` `delaunayn` `dsearchn` `griddata` `griddatan` `nsidedpoly` `stlread` `stlwrite` `tsearchn`
 
 ### `sparfun` — 30
 

@@ -1354,6 +1354,17 @@ public static class JgsBuiltinCatalog
         Add("rectint", "The area each rectangle of A shares with each rectangle of B, one row per rectangle of A.", P("A"), P("B"));
         Add("inpolygon", "Which query points a polygon encloses, and which sit on its edge: [in, on] = inpolygon(xq, yq, xv, yv).", P("xq"), P("yq"), P("xv"), P("yv"));
 
+        // M101: the interpolation half of polyfun, and the piecewise polynomial behind it.
+        Add("spline", "The not-a-knot cubic spline through samples, read at points or handed back as a pp: s = spline(x, y, xq).", P("x"), P("y"), Opt("xq"));
+        Add("pchip", "The shape-preserving cubic through samples, which never overshoots one: p = pchip(x, y, xq).", P("x"), P("y"), Opt("xq"));
+        Add("makima", "The modified Akima cubic through samples, local enough not to ring: yq = makima(x, y, xq).", P("x"), P("y"), Opt("xq"));
+        Add("ppval", "A piecewise polynomial read at points: v = ppval(pp, xq).", P("pp"), P("xq"));
+        Add("mkpp", "Builds a piecewise polynomial from its breaks and coefficients: pp = mkpp(breaks, coefs, d).", P("breaks"), P("coefs"), Opt("d"));
+        Add("unmkpp", "Takes a piecewise polynomial apart: [breaks, coefs, L, order, dim] = unmkpp(pp).", P("pp"));
+        Add("interp1q", "Quick straight-line interpolation that checks nothing, for columns only: yi = interp1q(x, Y, xi).", P("x"), P("Y"), P("xi"));
+        Add("interpft", "Resamples a record to n points through its Fourier transform: y = interpft(X, n, dim).", P("X"), P("n"), Opt("dim"));
+        Add("interpn", "A grid of any number of directions read between its samples: Vq = interpn(X1, ..., V, Xq1, ..., method, extrapval).", P("V"), Opt("Xq1"), Opt("more"), Opt("method"), Opt("extrapval"));
+
         Add("copulacdf", "The probability a copula puts below a point of the unit cube: y = copulacdf('Clayton', u, 1.5).", P("family"), P("u"), P("param"), Opt("nu"));
         Add("copulapdf", "The density of a copula at a point of the unit cube: y = copulapdf('t', u, rho, 5).", P("family"), P("u"), P("param"), Opt("nu"));
         Add("copularnd", "Draws from a copula, one per row: u = copularnd('Gumbel', 2, 500).", P("family"), P("param"), P("n"), Opt("extra"));
