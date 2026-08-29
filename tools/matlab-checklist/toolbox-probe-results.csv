@@ -289,7 +289,9 @@ ode45,funfun,0,"[t,y] = ode45(odefun,tspan,y0)",error,"sin expects 1 argument(s)
 ode45,funfun,1,"[t,y] = ode45(odefun,tspan,y0,options)",error,"ode45 expects 3 argument(s), but got 4."
 ode45,funfun,2,"[t,y,te,ye,ie] = ode45(odefun,tspan,y0,options)",error,"ode45 expects 3 argument(s), but got 4."
 ode45,funfun,3,sol = ode45(___),error,"ode45 produces two outputs: use [t, y] = ode45(f, tspan, y0)."
-run,lang,0,run(scriptname),refused,run: cannot read 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-toolbox-48a1gn81\a': Could not find file 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-toolbox-48a1gn81\a'.
+isvarname,lang,0,tf = isvarname(s),accepted,
+isvarname,lang,1,isvarname s,accepted,
+run,lang,0,run(scriptname),refused,run: cannot read 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-toolbox-pyxl4vb4\a': Could not find file 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-toolbox-pyxl4vb4\a'.
 validateattributes,lang,0,"validateattributes(A,classes,attributes)",error,validateattributes expects a cell of class names.
 validateattributes,lang,1,"validateattributes(A,classes,attributes,argIndex)",error,"validateattributes expects argument 4 to be a string, but got a number."
 validateattributes,lang,2,"validateattributes(A,classes,attributes,funcName)",error,validateattributes expects a cell of class names.
@@ -447,6 +449,7 @@ nchoosek,specfun,0,"b = nchoosek(n,k)",accepted,
 nchoosek,specfun,1,"C = nchoosek(v,k)",accepted,
 perms,specfun,0,P = perms(v),accepted,
 primes,specfun,0,p = primes(n),accepted,
+append,strfun,0,"str = append(str1,...,strN)",accepted,
 base2dec,strfun,0,"D = base2dec(baseStr,n)",error,"base2dec expects a string or a cell of strings, but got a array."
 blanks,strfun,0,chr = blanks(n),accepted,
 cellstr,strfun,0,C = cellstr(A),accepted,
@@ -461,6 +464,11 @@ dec2bin,strfun,1,"binStr = dec2bin(D,minDigits)",accepted,
 dec2hex,strfun,0,hexStr = dec2hex(D),accepted,
 dec2hex,strfun,1,"hexStr = dec2hex(D,minDigits)",accepted,
 erase,strfun,0,"newStr = erase(str,match)",accepted,
+eraseBetween,strfun,0,"newStr = eraseBetween(str,startPat,endPat)",accepted,
+eraseBetween,strfun,1,"newStr = eraseBetween(str,startPos,endPos)",accepted,
+eraseBetween,strfun,2,"newStr = eraseBetween(___,'Boundaries',bounds)",accepted,
+extract,strfun,0,"newStr = extract(str,pat)",accepted,
+extract,strfun,1,"newStr = extract(str,pos)",accepted,
 extractAfter,strfun,0,"newStr = extractAfter(str,pat)",accepted,
 extractAfter,strfun,1,"newStr = extractAfter(str,pos)",error,"extractAfter expects argument 2 to be a number, but got a array."
 extractBefore,strfun,0,"newStr = extractBefore(str,pat)",accepted,
@@ -468,11 +476,13 @@ extractBefore,strfun,1,"newStr = extractBefore(str,pos)",error,"extractBefore ex
 extractBetween,strfun,0,"newStr = extractBetween(str,startPat,endPat)",accepted,
 extractBetween,strfun,1,"newStr = extractBetween(str,startPos,endPos)",error,"extractBetween expects argument 2 to be a number, but got a array."
 extractBetween,strfun,2,"newStr = extractBetween(___,'Boundaries',bounds)",unprobed,no sample for this form's arguments
+hex2num,strfun,0,X = hex2num(hexStr),accepted,
 insertAfter,strfun,0,"newStr = insertAfter(str,pat,newText)",accepted,
 insertAfter,strfun,1,"newStr = insertAfter(str,pos,newText)",error,"insertAfter expects argument 2 to be a number, but got a array."
 insertBefore,strfun,0,"newStr = insertBefore(str,pat,newText)",accepted,
 insertBefore,strfun,1,"newStr = insertBefore(str,pos,newText)",error,"insertBefore expects argument 2 to be a number, but got a array."
 int2str,strfun,0,chr = int2str(N),accepted,
+isStringScalar,strfun,0,tf = isStringScalar(A),accepted,
 join,strfun,0,newStr = join(str),error,"join expects argument 1 to be an array, but got a string."
 join,strfun,1,"newStr = join(str,delimiter)",error,"join expects argument 1 to be an array, but got a string."
 join,strfun,2,"newStr = join(str,dim)",error,"join expects argument 2 to be a string, but got a number."
@@ -480,6 +490,7 @@ join,strfun,3,"newStr = join(str,delimiter,dim)",error,"join expects between 1 a
 mat2str,strfun,0,chr = mat2str(X),accepted,
 mat2str,strfun,1,"chr = mat2str(X,n)",accepted,
 mat2str,strfun,2,"chr = mat2str(___,'class')",error,"mat2str expects argument 2 to be a number, but got a string."
+num2hex,strfun,0,hexStr = num2hex(X),accepted,
 num2str,strfun,0,s = num2str(A),accepted,
 num2str,strfun,1,"s = num2str(A,precision)",accepted,
 num2str,strfun,2,"s = num2str(A,formatSpec)",accepted,
@@ -489,12 +500,17 @@ pad,strfun,2,"newStr = pad(str,side)",accepted,
 pad,strfun,3,"newStr = pad(str,numberOfCharacters,side)",accepted,
 pad,strfun,4,"newStr = pad(___,padCharacter)",refused,"pad: ' ' is not a side — use 'left', 'right', or 'both'."
 replace,strfun,0,"newStr = replace(str,old,new)",accepted,
+replaceBetween,strfun,0,"newStr = replaceBetween(str,startPat,endPat,newText)",accepted,
+replaceBetween,strfun,1,"newStr = replaceBetween(str,startPos,endPos,newText)",accepted,
+replaceBetween,strfun,2,"newStr = replaceBetween(___,'Boundaries',bounds)",accepted,
 reverse,strfun,0,newStr = reverse(str),accepted,
 split,strfun,0,newStr = split(str),accepted,
 split,strfun,1,"newStr = split(str,delimiter)",accepted,
 split,strfun,2,"newStr = split(str,delimiter,dim)",error,"split expects between 1 and 2 argument(s), but got 3."
 split,strfun,3,"[newStr,match] = split(___)",error,"This call returns 1 value(s), but 2 were asked for."
+splitlines,strfun,0,newStr = splitlines(str),accepted,
 str2double,strfun,0,X = str2double(str),accepted,
+str2mat,strfun,0,"S = str2mat(T1, T2, T3, ...)",accepted,
 str2num,strfun,0,X = str2num(chr),error,"str2num expects argument 1 to be a string, but got a array."
 str2num,strfun,1,"[X,tf] = str2num(chr)",error,"str2num expects argument 1 to be a string, but got a array."
 strcat,strfun,0,"s = strcat(s1,...,sN)",unprobed,no sample for this form's arguments
@@ -503,10 +519,19 @@ strip,strfun,1,"newStr = strip(str,side)",accepted,
 strip,strfun,2,"newStr = strip(___,stripCharacter)",refused,"strip: ' ' is not a side — use 'left', 'right', or 'both'."
 strjoin,strfun,0,str = strjoin(C),accepted,
 strjoin,strfun,1,"str = strjoin(C,delimiter)",accepted,
+strjust,strfun,0,newStr = strjust(str),accepted,
+strjust,strfun,1,"newStr = strjust(str,side)",accepted,
+strmatch,strfun,0,"x = strmatch(str, strarray)",accepted,
+strmatch,strfun,1,"x = strmatch(str, strarray, 'exact')",accepted,
 strsplit,strfun,0,C = strsplit(str),accepted,
 strsplit,strfun,1,"C = strsplit(str,delimiter)",accepted,
 strsplit,strfun,2,"C = strsplit(str,delimiter,Name,Value)",unprobed,"Name,Value form; the dump lists no pair names"
 strsplit,strfun,3,"[C,matches] = strsplit(___)",accepted,
+strtok,strfun,0,token = strtok(str),accepted,
+strtok,strfun,1,"token = strtok(str,delimiters)",accepted,
+strtok,strfun,2,"[token,remain] = strtok(___)",accepted,
+strvcat,strfun,0,"S = strvcat(str1,...,strN)",accepted,
+strvcat,strfun,1,S = strvcat(txt),accepted,
 addtodate,timefun,0,"R = addtodate(D, Q, F)",error,addtodate: The added or subtracted value results in an un-representable DateTime.
 calendar,timefun,0,c = calendar,accepted,
 calendar,timefun,1,c = calendar(d),unprobed,no sample for this form's arguments
@@ -543,11 +568,13 @@ weekday,timefun,2,"[DayNumber,DayName] = weekday(D,DayForm)",error,"weekday expe
 weekday,timefun,3,"[DayNumber,DayName] = weekday(D,language)",error,"weekday expects 1 argument(s), but got 2."
 weekday,timefun,4,"[DayNumber,DayName] = weekday(D,DayForm,language)",error,"weekday expects 1 argument(s), but got 3."
 mustBeA,validators,0,"mustBeA(value,classNames)",unprobed,no sample for this form's arguments
+mustBeFile,validators,0,mustBeFile(path),accepted,
 mustBeFinite,validators,0,mustBeFinite(value),accepted,
 mustBeFloat,validators,0,mustBeFloat(value),accepted,
+mustBeFolder,validators,0,mustBeFolder(path),accepted,
 mustBeGreaterThan,validators,0,"mustBeGreaterThan(value,c)",error,Value must be greater than 2.
 mustBeGreaterThanOrEqual,validators,0,"mustBeGreaterThanOrEqual(value,c)",accepted,
-mustBeInRange,validators,0,"mustBeInRange(value,lower,upper)",error,Value must be in the range 1 to 1.
+mustBeInRange,validators,0,"mustBeInRange(value,lower,upper)",error,"Value must be greater than or equal to 1, and less than or equal to 1."
 mustBeInRange,validators,1,"mustBeInRange(value,lower,upper,boundflag1,boundflag2)",unprobed,no sample for this form's arguments
 mustBeInteger,validators,0,mustBeInteger(value),accepted,
 mustBeLessThan,validators,0,"mustBeLessThan(value,c)",error,Value must be less than 2.
@@ -557,14 +584,16 @@ mustBeNegative,validators,0,mustBeNegative(value),error,Value must be negative.
 mustBeNonNan,validators,0,mustBeNonNan(value),accepted,
 mustBeNonempty,validators,0,mustBeNonempty(value),accepted,
 mustBeNonnegative,validators,0,mustBeNonnegative(value),accepted,
-mustBeNonpositive,validators,0,mustBeNonpositive(value),error,Value must be nonpositive.
+mustBeNonpositive,validators,0,mustBeNonpositive(value),error,Value must not be positive.
+mustBeNonsparse,validators,0,mustBeNonsparse(value),accepted,
 mustBeNonzero,validators,0,mustBeNonzero(value),accepted,
 mustBeNumeric,validators,0,mustBeNumeric(value),accepted,
 mustBeNumericOrLogical,validators,0,mustBeNumericOrLogical(value),accepted,
 mustBePositive,validators,0,mustBePositive(value),accepted,
 mustBeReal,validators,0,mustBeReal(value),accepted,
 mustBeScalarOrEmpty,validators,0,mustBeScalarOrEmpty(value),accepted,
-mustBeText,validators,0,mustBeText(value),error,Value must be text.
-mustBeTextScalar,validators,0,mustBeTextScalar(value),error,Value must be a single piece of text.
+mustBeText,validators,0,mustBeText(value),error,"Value must be a character vector, string array, or cell array of character vectors."
+mustBeTextScalar,validators,0,mustBeTextScalar(value),error,Value must be a character vector or string scalar.
+mustBeValidVariableName,validators,0,mustBeValidVariableName(varname),accepted,
 mustBeVector,validators,0,mustBeVector(value),accepted,
 mustBeVector,validators,1,"mustBeVector(value,""allow-all-empties"")",error,"mustBeVector expects 1 argument(s), but got 2."

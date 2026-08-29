@@ -1522,6 +1522,16 @@ internal sealed partial class Interpreter
             return ConcatenateCells(rows, matrix);
         }
 
+        // A bracket holding any string array is a string array however many rows it has (M104). The
+        // single-row path has joined them since M63, but a semicolon sent them to the numeric block
+        // machinery below instead, which reads a string as one anonymous element — so ["a"; "b"]
+        // came back as a 2-by-1 double whose class was double and whose contents no text function
+        // would touch. Asked after cells, because a bracket cannot sensibly hold both.
+        if (Dialect.ConcatenatesBrackets && AnyStringArray(rows))
+        {
+            return ConcatenateStringArrays(rows, matrix);
+        }
+
         var shapes = new List<(int Height, int Width)[]>(rows.Count);
         foreach (JgsValue[] row in rows)
         {
@@ -1740,6 +1750,145 @@ internal sealed partial class Interpreter
     /// <c>"bc"</c> and <c>"3"</c>, which is MATLAB's rule and the reason this cannot reuse the
     /// numeric concatenation machinery below.
     /// </summary>
+    /// <summary>Whether any row of a bracket literal holds a string array.</summary>
+    private static bool AnyStringArray(List<JgsValue[]> rows)
+    {
+        foreach (JgsValue[] row in rows)
+        {
+            if (Array.Exists(row, static e => e.IsStringArray))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /// <summary>
+    /// A multi-row bracket of string arrays, joined the way the numeric block machinery joins
+    /// numbers: each row's blocks stand side by side and must agree on height, then the rows stack
+    /// and must agree on width. An empty block contributes nothing, exactly as it does elsewhere.
+    /// </summary>
+    private static JgsValue ConcatenateStringArrays(List<JgsValue[]> rows, Node at)
+    {
+        var bands = new List<(int Rows, int Cols, string[] Texts)>(rows.Count);
+        foreach (JgsValue[] row in rows)
+        {
+            var blocks = new List<(int Rows, int Cols, string[] Texts)>(row.Length);
+            int height = -1;
+            foreach (JgsValue piece in row)
+            {
+                (int Rows, int Cols, string[] Texts) block = StringBlock(piece);
+                if (block.Rows == 0 || block.Cols == 0)
+                {
+                    continue;
+                }
+
+                if (height < 0)
+                {
+                    height = block.Rows;
+                }
+                else if (height != block.Rows)
+                {
+                    throw new JgsRuntimeException(at.Line, at.Column,
+                        "Dimensions of arrays being concatenated are not consistent.");
+                }
+
+                blocks.Add(block);
+            }
+
+            if (blocks.Count == 0)
+            {
+                continue;
+            }
+
+            int width = 0;
+            foreach ((int Rows, int Cols, string[] Texts) block in blocks)
+            {
+                width += block.Cols;
+            }
+
+            var band = new string[height * width];
+            int placed = 0;
+            foreach ((int Rows, int Cols, string[] Texts) block in blocks)
+            {
+                for (int c = 0; c < block.Cols; c++)
+                {
+                    for (int r = 0; r < height; r++)
+                    {
+                        band[r + ((placed + c) * height)] = block.Texts[r + (c * block.Rows)];
+                    }
+                }
+
+                placed += block.Cols;
+            }
+
+            bands.Add((height, width, band));
+        }
+
+        if (bands.Count == 0)
+        {
+            return JgsValue.StringArray([], 0, 0);
+        }
+
+        int cols = bands[0].Cols;
+        int total = 0;
+        foreach ((int Rows, int Cols, string[] Texts) band in bands)
+        {
+            if (band.Cols != cols)
+            {
+                throw new JgsRuntimeException(at.Line, at.Column,
+                    "Dimensions of arrays being concatenated are not consistent.");
+            }
+
+            total += band.Rows;
+        }
+
+        var texts = new JgsValue[total * cols];
+        int top = 0;
+        foreach ((int Rows, int Cols, string[] Texts) band in bands)
+        {
+            for (int c = 0; c < cols; c++)
+            {
+                for (int r = 0; r < band.Rows; r++)
+                {
+                    texts[top + r + (c * total)] = JgsValue.Str(band.Texts[r + (c * band.Rows)]);
+                }
+            }
+
+            top += band.Rows;
+        }
+
+        return JgsValue.StringArray(texts, total, cols);
+    }
+
+    /// <summary>One block of a string-array bracket: its shape, and its elements in column order.</summary>
+    private static (int Rows, int Cols, string[] Texts) StringBlock(JgsValue piece)
+    {
+        if (piece.IsStringArray)
+        {
+            return (piece.Rows, piece.Cols,
+                Array.ConvertAll(piece.BoxedElements(), static e => e.AsString));
+        }
+
+        // A char row is one element of the answer, not a row of characters — the same rule the
+        // single-row join follows, and the reason ["a" 'b'] is 1-by-2 rather than 1-by-1.
+        if (piece.Type == JgsType.String)
+        {
+            return (1, 1, [piece.AsString]);
+        }
+
+        if (piece.Type == JgsType.Array)
+        {
+            return piece.ArrayLength == 0
+                ? (0, 0, [])
+                : (piece.Rows, piece.Cols,
+                    Array.ConvertAll(piece.BoxedElements(), static e => e.Display()));
+        }
+
+        return (1, 1, [piece.Display()]);
+    }
+
     private static JgsValue JoinStringArrays(JgsValue[] elements)
     {
         var joined = new List<JgsValue>();

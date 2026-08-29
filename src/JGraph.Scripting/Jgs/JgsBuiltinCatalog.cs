@@ -1408,6 +1408,26 @@ public static class JgsBuiltinCatalog
         Add("isuniform", "Whether the readings are evenly spaced, and by how much: [TF, step] = isuniform(v).", P("v"));
         Add("rmse", "Root-mean-square error between forecast and actual: E = rmse(F, A, dim, 'Weights', w).", P("F"), P("A"), Opt("dim"), Opt("options"));
         Add("mape", "Mean absolute percentage error between forecast and actual: E = mape(F, A, dim).", P("F"), P("A"), Opt("dim"), Opt("options"));
+        // M104: strings and validators — the between-verbs, the char-matrix builders, the two that
+        // spell a number's own bits, and the four mustBe... names the validators folder still lacked.
+        Add("append", "Text joined with nothing between and nothing trimmed: s = append(s1, s2, ...).", P("text1"), Opt("text..."));
+        Add("eraseBetween", "The text between two markers or two positions, taken out: s = eraseBetween(str, from, to).", P("str"), P("from"), P("to"), Opt("options"));
+        Add("replaceBetween", "The text between two markers or two positions, written over: s = replaceBetween(str, from, to, new).", P("str"), P("from"), P("to"), P("newText"), Opt("options"));
+        Add("extract", "Every occurrence of a piece of text, or the character at a position: s = extract(str, pat).", P("str"), P("pattern"));
+        Add("splitlines", "The pieces of text between line breaks, as a column.", P("str"));
+        Add("strtok", "The first run of non-delimiter characters, and what follows it: [t, r] = strtok(str, delims).", P("str"), Opt("delimiters"));
+        Add("strjust", "Each row's characters moved to one side of its blanks: B = strjust(A, 'left').", P("A"), Opt("side"));
+        Add("strvcat", "Text stacked into a char matrix, blank arguments left out: S = strvcat(a, b, c).", Opt("text..."));
+        Add("str2mat", "Text stacked into a char matrix, blank arguments kept as blank rows.", Opt("text..."));
+        Add("strmatch", "Which rows of a list of text begin with the text sought: x = strmatch(str, list, 'exact').", P("str"), P("list"), Opt("exact"));
+        Add("isStringScalar", "Whether the value is a one-element string array.", P("A"));
+        Add("hex2num", "The double whose bits a run of hexadecimal digits spells: x = hex2num('400921fb54442d18').", P("hexStr"));
+        Add("num2hex", "The hexadecimal spelling of a number's own bits: s = num2hex(pi).", P("X"));
+        Add("isvarname", "Whether the text is a name a variable could have.", P("s"));
+        Add("mustBeNonsparse", "Errors if the value is sparse.", P("value"));
+        Add("mustBeValidVariableName", "Errors unless every name could be a variable's.", P("value"));
+        Add("mustBeFile", "Errors unless every path names a file that exists.", P("path"));
+        Add("mustBeFolder", "Errors unless every path names a folder that exists.", P("path"));
 
         Add("copulacdf", "The probability a copula puts below a point of the unit cube: y = copulacdf('Clayton', u, 1.5).", P("family"), P("u"), P("param"), Opt("nu"));
         Add("copulapdf", "The density of a copula at a point of the unit cube: y = copulapdf('t', u, rho, 5).", P("family"), P("u"), P("param"), Opt("nu"));

@@ -2391,6 +2391,7 @@ internal static partial class JgsBuiltins
         RegisterCleaningBuiltins(env);
         RegisterGroupingBuiltins(env);
         RegisterDataTrendBuiltins(env);
+        RegisterTextPartBuiltins(env);
 
         // After every imaging define, since these wrap builtins declared above.
         RegisterImagingMultiOutputForms(env, host, random, dialect);

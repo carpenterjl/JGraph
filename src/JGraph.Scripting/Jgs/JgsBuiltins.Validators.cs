@@ -216,7 +216,8 @@ internal static partial class JgsBuiltins
                 {
                     if (!ok(x))
                     {
-                        throw new JgsRuntimeException(line, col, $"Value must be {requirement}.");
+                        throw new JgsRuntimeException(line, col, ValidatorId(name),
+                            Requires(requirement));
                     }
                 }
 
@@ -226,11 +227,11 @@ internal static partial class JgsBuiltins
         Elementwise("mustBePositive", static x => x > 0, "positive");
         Elementwise("mustBeNonnegative", static x => x >= 0, "nonnegative");
         Elementwise("mustBeNegative", static x => x < 0, "negative");
-        Elementwise("mustBeNonpositive", static x => x <= 0, "nonpositive");
+        Elementwise("mustBeNonpositive", static x => x <= 0, "not positive");
         Elementwise("mustBeFinite", static x => !double.IsNaN(x) && !double.IsInfinity(x), "finite");
-        Elementwise("mustBeNonNan", static x => !double.IsNaN(x), "a number, not NaN");
-        Elementwise("mustBeNonzero", static x => x != 0, "nonzero");
-        Elementwise("mustBeInteger", static x => double.IsInteger(x), "an integer");
+        Elementwise("mustBeNonNan", static x => !double.IsNaN(x), "not NaN");
+        Elementwise("mustBeNonzero", static x => x != 0, "not zero");
+        Elementwise("mustBeInteger", static x => double.IsInteger(x), "integer");
 
         // The comparisons take the bound as their second argument and hold elementwise against it,
         // so mustBeGreaterThan(v, 0) is a whole-vector check rather than a scalar one.
@@ -243,7 +244,7 @@ internal static partial class JgsBuiltins
                 {
                     if (!ok(x, bound))
                     {
-                        throw new JgsRuntimeException(line, col,
+                        throw new JgsRuntimeException(line, col, ValidatorId(name),
                             $"Value must be {requirement} {Format(bound)}.");
                     }
                 }
@@ -284,8 +285,10 @@ internal static partial class JgsBuiltins
                 bool ok = (openLow ? x > low : x >= low) && (openHigh ? x < high : x <= high);
                 if (!ok)
                 {
-                    throw new JgsRuntimeException(line, col,
-                        $"Value must be in the range {Format(low)} to {Format(high)}.");
+                    throw new JgsRuntimeException(line, col, "MATLAB:validators:mustBeInRange",
+                        $"Value must be greater than {(openLow ? string.Empty : "or equal to ")}"
+                        + $"{Format(low)}, and less than {(openHigh ? string.Empty : "or equal to ")}"
+                        + $"{Format(high)}.");
                 }
             }
 
@@ -299,24 +302,32 @@ internal static partial class JgsBuiltins
                 Arity(name, args, 1, line, col);
                 return ok(args[0])
                     ? JgsValue.Null
-                    : throw new JgsRuntimeException(line, col, $"Value must be {requirement}.");
+                    : throw new JgsRuntimeException(line, col, ValidatorId(name),
+                        Requires(requirement));
             });
 
         Whole("mustBeNumeric", IsNumericValue, "numeric");
         Whole("mustBeNumericOrLogical",
             static v => IsNumericValue(v) || IsLogicalValue(v), "numeric or logical");
-        Whole("mustBeFloat", IsNumericValue, "floating-point");
+        // A float is a double or a single and nothing else: an integer class is numeric but
+        // not floating-point, which is the whole point of the name.
+        Whole("mustBeFloat",
+            static v => IsNumericValue(v)
+                && v.NumericClass is JgsNumericClass.Double or JgsNumericClass.Single,
+            "a floating-point array");
         Whole("mustBeReal", static v => v.Type != JgsType.Complex, "real");
-        Whole("mustBeNonempty", static v => !IsEmptyValue(v), "nonempty");
+        Whole("mustBeNonempty", static v => !IsEmptyValue(v), "not empty");
         Whole("mustBeScalarOrEmpty",
             static v => IsEmptyValue(v) || SizeDims(v).All(static d => d == 1), "scalar or empty");
         Whole("mustBeVector", static v =>
         {
             int[] dims = SizeDims(v);
             return dims.Length == 2 && (dims[0] == 1 || dims[1] == 1) && !IsEmptyValue(v);
-        }, "a vector");
-        Whole("mustBeText", static v => v.Type == JgsType.String || IsCellOfText(v), "text");
-        Whole("mustBeTextScalar", static v => v.Type == JgsType.String, "a single piece of text");
+        }, "a 1-by-n vector or an n-by-1 vector");
+        Whole("mustBeText", static v => v.Type == JgsType.String || IsCellOfText(v),
+            "a character vector, string array, or cell array of character vectors");
+        Whole("mustBeTextScalar", static v => v.Type == JgsType.String,
+            "a character vector or string scalar");
 
         Define("mustBeMember", (args, line, col) =>
         {
@@ -329,8 +340,12 @@ internal static partial class JgsBuiltins
             {
                 if (!System.Array.Exists(allowed, candidate => JgsValue.AreEqual(element, candidate)))
                 {
-                    throw new JgsRuntimeException(line, col,
-                        $"Value must be one of: {string.Join(", ", allowed.Select(static a => a.Display()))}.");
+                    throw new JgsRuntimeException(line, col, "MATLAB:validators:mustBeMember",
+                        "Value must be a member of this set:\n"
+                        + string.Concat(allowed.Select(static a => "    "
+                            + (a.Type == JgsType.String || IsStringScalar(a)
+                                ? "'" + TextOf(a) + "'"
+                                : a.Display()) + "\n")));
                 }
             }
 
@@ -347,9 +362,30 @@ internal static partial class JgsBuiltins
             string actual = ClassOf(args[0], JgsDialect.Matlab);
             return System.Array.Exists(wanted, w => string.Equals(w, actual, StringComparison.Ordinal))
                 ? JgsValue.Null
-                : throw new JgsRuntimeException(line, col,
-                    $"Value must be {string.Join(" or ", wanted)}, but it is {actual}.");
+                : throw new JgsRuntimeException(line, col, "MATLAB:validators:mustBeA",
+                    "Value must be one of the following types: "
+                    + string.Join(", ", wanted.Select(static w => $"'{w}'")) + ".");
         });
+
+        // M104's four. Each is the same shape as the family above it — a question asked of the
+        // value, and MATLAB's own sentence when the answer is no — except that the three that read
+        // text ask first whether there is any, and say so in mustBeNonzeroLengthText's words.
+        Whole("mustBeNonsparse", static v => v.Type != JgsType.Sparse, "not sparse");
+
+        Define("mustBeValidVariableName", (args, line, col) =>
+            NamesMustHold("mustBeValidVariableName", args,
+                static name => IsValidVariableName(name),
+                "The following are not valid variable names", line, col));
+
+        Define("mustBeFile", (args, line, col) =>
+            NamesMustHold("mustBeFile", args,
+                static path => System.IO.File.Exists(path),
+                "The following files do not exist", line, col));
+
+        Define("mustBeFolder", (args, line, col) =>
+            NamesMustHold("mustBeFolder", args,
+                static path => System.IO.Directory.Exists(path),
+                "The following folders do not exist", line, col));
 
         Define("validateattributes", (args, line, col) =>
         {
@@ -493,6 +529,55 @@ internal static partial class JgsBuiltins
         JgsType.String => value.AsString.Length == 0,
         JgsType.Null => true,
         _ => false,
+    };
+
+    /// <summary>
+    /// A validator's sentence. MATLAB puts the negative before the verb — "Value must not be
+    /// empty", not "Value must be not empty" — so a requirement written as a negation moves the
+    /// word rather than being pasted after "be".
+    /// </summary>
+    private static string Requires(string requirement) =>
+        requirement.StartsWith("not ", StringComparison.Ordinal)
+            ? $"Value must not be {requirement[4..]}."
+            : $"Value must be {requirement}.";
+
+    /// <summary>The identifier MathWorks documents for a validator, which is its name qualified.</summary>
+    private static string ValidatorId(string name) => "MATLAB:validators:" + name;
+
+    /// <summary>
+    /// The shape the three text-reading validators share: every piece of text must answer
+    /// <paramref name="holds"/>, and the ones that do not are named together in one sentence. A
+    /// value that is not text, or is text with no characters in it, fails the earlier check MATLAB
+    /// makes first — <c>mustBeNonzeroLengthText</c>'s.
+    /// </summary>
+    private static JgsValue NamesMustHold(
+        string name, IReadOnlyList<JgsValue> args, Func<string, bool> holds, string lead,
+        int line, int col)
+    {
+        Arity(name, args, 1, line, col);
+        string[]? texts = TextElementsOf(args[0]);
+        if (texts is null || texts.Length == 0 || System.Array.Exists(texts, static t => t.Length == 0))
+        {
+            throw new JgsRuntimeException(line, col, "MATLAB:validators:mustBeNonzeroLengthText",
+                "Value must be text with one or more characters.");
+        }
+
+        string[] failed = [.. texts.Where(t => !holds(t)).Select(static t => $"'{t}'")];
+        return failed.Length == 0
+            ? JgsValue.Null
+            : throw new JgsRuntimeException(line, col, ValidatorId(name),
+                $"{lead}: {JoinWithAnd(failed)}.");
+    }
+
+    /// <summary>
+    /// MATLAB's own way of listing things in a sentence: two are joined with <c>and</c>, three or
+    /// more with commas and a final <c>, and</c>.
+    /// </summary>
+    private static string JoinWithAnd(IReadOnlyList<string> items) => items.Count switch
+    {
+        1 => items[0],
+        2 => $"{items[0]} and {items[1]}",
+        _ => $"{string.Join(", ", items.Take(items.Count - 1))}, and {items[^1]}",
     };
 
     private static string Format(double value) =>

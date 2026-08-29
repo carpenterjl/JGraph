@@ -103,8 +103,15 @@ see. This file refused to count them while they drew nothing; **M56 made them re
 number and this one agree again. `opengl` *is* counted, because an accepted no-op is an answer — the
 same reading that counted `shading`, `lighting` and `camlight` in M43.
 
-Across every callable kind — builtin, function, operator, keyword, script — the count is **985 of
-2,024** as of M103, which took data cleaning and grouping: `isoutlier` `rmoutliers` `filloutliers`
+Across every callable kind — builtin, function, operator, keyword, script — the count is **1,003 of
+2,024** as of M104, which took the string names MATLAB writes in MATLAB and the four
+`mustBe…` validators the folder still lacked: `append` `eraseBetween` `replaceBetween` `extract`
+`splitlines` `strtok` `strjust` `strvcat` `str2mat` `strmatch` `isStringScalar` `hex2num`
+`num2hex` `mustBeNonsparse` `mustBeValidVariableName` `mustBeFile` `mustBeFolder`, with
+`isvarname` riding along because `mustBeValidVariableName` is that question asked twice. Those
+take `strfun` from 27 of 41 names to 40 (the one out is `strread`) and `validators` to 28 of 31.
+
+985 after M103, which took data cleaning and grouping: `isoutlier` `rmoutliers` `filloutliers`
 `ischange` `findgroups` `splitapply` `standardizeMissing` `subspace` `detrend` `del2` `filter2`
 `histcounts2` `xcorr` `xcov`. Those fourteen take `datafun` to 40 of its 41 names (the one out is
 `hist`, the legacy histogram), and ten younger siblings — `groupcounts` `grouptransform`

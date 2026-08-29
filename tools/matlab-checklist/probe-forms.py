@@ -186,6 +186,34 @@ NAME_ARG_SAMPLES: dict[tuple[str, str], str] = {
     ("xcorr", "maxlag"): "1", ("xcorr", "scaleopt"): "'biased'",
     ("xcov", "x"): "[1 2 3]", ("xcov", "y"): "[4 5 6]",
     ("xcov", "maxlag"): "1", ("xcov", "scaleopt"): "'biased'",
+
+    # The string family (M104). A between-verb needs text long enough for the positions it is
+    # given and markers that are actually in it; a side and a boundary are words from a fixed
+    # list; and the two file validators need a path that exists, which inside a probe script is
+    # the probe script.
+    ("append", "str1"): "'a'", ("append", "strN"): "'b'",
+    ("eraseBetween", "str"): "'abcdef'",
+    ("eraseBetween", "startPat"): "'b'", ("eraseBetween", "endPat"): "'e'",
+    ("eraseBetween", "startPos"): "2", ("eraseBetween", "endPos"): "4",
+    ("eraseBetween", "bounds"): "'inclusive'",
+    ("replaceBetween", "str"): "'abcdef'", ("replaceBetween", "newText"): "'-'",
+    ("replaceBetween", "startPat"): "'b'", ("replaceBetween", "endPat"): "'e'",
+    ("replaceBetween", "startPos"): "2", ("replaceBetween", "endPos"): "4",
+    ("replaceBetween", "bounds"): "'inclusive'",
+    ("extract", "str"): "'abcdef'", ("extract", "pat"): "'b'", ("extract", "pos"): "2",
+    ("splitlines", "str"): "'ab'",
+    ("strtok", "str"): "'a b'", ("strtok", "delimiters"): "' '",
+    ("strjust", "str"): "'  a'", ("strjust", "side"): "'left'",
+    ("strvcat", "str1"): "'a'", ("strvcat", "strN"): "'bc'", ("strvcat", "txt"): "{'a','bc'}",
+    ("str2mat", "T1"): "'a'", ("str2mat", "T2"): "'bc'", ("str2mat", "T3"): "'d'",
+    ("strmatch", "str"): "'ap'", ("strmatch", "strarray"): "{'apple','answer'}",
+    ("isStringScalar", "A"): '"a"',
+    ("hex2num", "hexStr"): "'3ff0000000000000'",
+    ("num2hex", "X"): "pi",
+    ("mustBeNonsparse", "value"): "1",
+    ("mustBeValidVariableName", "varname"): "'x'",
+    ("mustBeFile", "path"): "[mfilename('fullpath') '.m']",
+    ("mustBeFolder", "path"): "pwd",
 }
 
 # Placeholders the documented type phrase cannot describe well enough to sample, whatever command
@@ -347,7 +375,21 @@ def repetition_ellipsis(tokens: list[str], index: int) -> bool:
     before = tokens[index - 1].strip() if index > 0 else ""
     after = tokens[index + 1].strip() if index + 1 < len(tokens) else ""
     placeholder = re.compile(r"[A-Za-z_][A-Za-z0-9_]*")
-    return bool(placeholder.fullmatch(before) and placeholder.fullmatch(after))
+    if placeholder.fullmatch(before) and placeholder.fullmatch(after):
+        return True
+
+    # A trailing ellipsis after a numbered series is repetition too — `str2mat(T1, T2, T3,
+    # ...)` writes out three of the thing and then says "and more". What separates it from
+    # `coneplot(axes_handle,...)` is that every placeholder before it belongs to one numbered
+    # series, so there is no other argument the ellipsis could be standing in for. One form in
+    # the whole dump reads that way, and until M104 it was the only strfun form left unprobed.
+    if index != len(tokens) - 1:
+        return False
+
+    numbered = re.compile(r"([A-Za-z_][A-Za-z0-9_]*?)\d+")
+    series = [numbered.fullmatch(token.strip()) for token in tokens[:index]]
+    return (len(series) >= 2 and all(series)
+            and len({match.group(1) for match in series if match}) == 1)
 
 
 def parse_syntax(syntax: str, name: str) -> tuple[int, list[str]] | None:

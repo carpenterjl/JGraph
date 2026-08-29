@@ -19,31 +19,31 @@ below is — and that is why an entire folder could sit at nought implemented wi
 
 ## Where it stands
 
-**224 of 377 names implemented**, and
-**349 of 1036 documented syntax forms accepted**.
+**242 of 377 names implemented**, and
+**378 of 1036 documented syntax forms accepted**.
 
 | Folder | Names | Forms documented | Forms accepted | Names missing |
 |---|---:|---:|---:|---:|
-| `strfun` | 27 / 41 | 88 | 37 | 14 |
+| `strfun` | 40 / 41 | 88 | 60 | 1 |
 | `datafun` | 40 / 41 | 178 | 142 | 1 |
 | `funfun` | 1 / 40 | 123 | 0 | 39 |
 | `sparfun` | 5 / 35 | 185 | 2 | 30 |
 | `polyfun` | 23 / 34 | 94 | 38 | 11 |
 | `elmat` | 33 / 33 | 68 | 59 | 0 |
-| `validators` | 24 / 31 | 33 | 16 | 7 |
+| `validators` | 28 / 31 | 33 | 20 | 3 |
 | `matfun` | 10 / 25 | 62 | 9 | 15 |
 | `specfun` | 12 / 23 | 38 | 8 | 11 |
 | `datatypes` | 9 / 22 | 40 | 3 | 13 |
 | `elfun` | 19 / 19 | 25 | 19 | 0 |
 | `timefun` | 10 / 12 | 42 | 3 | 2 |
-| `lang` | 2 / 10 | 22 | 0 | 8 |
+| `lang` | 3 / 10 | 22 | 2 | 7 |
 | `optimfun` | 6 / 6 | 30 | 8 | 0 |
 | `ops` | 2 / 4 | 5 | 2 | 2 |
 | `randfun` | 1 / 1 | 3 | 3 | 0 |
 
 | Verdict | Forms | What it means |
 |---|---:|---|
-| accepted | 349 | the call returned without error |
+| accepted | 378 | the call returned without error |
 | refused | 4 | refused deliberately, with a message naming what is missing |
 | undefined | 0 | the name did not resolve at all |
 | error | 120 | failed some other way — **may be the prober's sample, not the build** |
@@ -68,9 +68,9 @@ command that quite rightly rejects it.
 
 `bvp4c` `bvp5c` `bvpget` `bvpinit` `bvpset` `bvpxtend` `dblquad` `dde23` `ddeget` `ddensd` `ddesd` `ddeset` `decic` `deval` `integral` `integral2` `integral3` `ode113` `ode15i` `ode15s` `ode23` `ode23s` `ode23t` `ode23tb` `ode78` `ode89` `odeget` `odeset` `odextend` `pdepe` `pdeval` `quad` `quad2d` `quadgk` `quadl` `quadv` `symvar` `triplequad` `vectorize`
 
-### `lang` — 8
+### `lang` — 7
 
-`clearAllMemoizedCaches` `details` `genvarname` `iskeyword` `isvarname` `javachk` `memoize` `validatestring`
+`clearAllMemoizedCaches` `details` `genvarname` `iskeyword` `javachk` `memoize` `validatestring`
 
 ### `matfun` — 15
 
@@ -92,17 +92,17 @@ command that quite rightly rejects it.
 
 `cart2pol` `cart2sph` `ellipj` `ellipke` `expint` `legendre` `matchpairs` `pol2cart` `rat` `rats` `sph2cart`
 
-### `strfun` — 14
+### `strfun` — 1
 
-`append` `eraseBetween` `extract` `hex2num` `isStringScalar` `num2hex` `replaceBetween` `splitlines` `str2mat` `strjust` `strmatch` `strread` `strtok` `strvcat`
+`strread`
 
 ### `timefun` — 2
 
 `datetick` `timeit`
 
-### `validators` — 7
+### `validators` — 3
 
-`mustBeFile` `mustBeFolder` `mustBeNonmissing` `mustBeNonsparse` `mustBeNonzeroLengthText` `mustBeUnderlyingType` `mustBeValidVariableName`
+`mustBeNonmissing` `mustBeNonzeroLengthText` `mustBeUnderlyingType`
 
 ## Keeping this current
 
