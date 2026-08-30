@@ -215,6 +215,7 @@ internal sealed class RecordingRenderContext : IRenderContext
         Texts.Add(text);
         TextPositions.Add(position);
         TextStyles.Add(style);
+        TextAlignments.Add((horizontal, vertical));
     }
 
     /// <summary>Every string drawn, in draw order — lets tests assert on legend rows and labels.</summary>
@@ -225,6 +226,13 @@ internal sealed class RecordingRenderContext : IRenderContext
 
     /// <summary>The style of each string, parallel to <see cref="Texts"/> — how a dimmed label is told apart.</summary>
     public List<TextStyle> TextStyles { get; } = new();
+
+    /// <summary>
+    /// How each string was anchored, parallel to <see cref="Texts"/>. Without it a position is only
+    /// half a placement: two labels can share an anchor and still not overlap, and two labels a
+    /// dozen pixels apart can overlap anyway — which box a label occupies is the alignment's answer.
+    /// </summary>
+    public List<(HorizontalAlignment Horizontal, VerticalAlignment Vertical)> TextAlignments { get; } = new();
 
     public Size2D MeasureText(string text, TextStyle style) =>
         new(text.Length * style.FontSize * 0.5, style.FontSize * 1.2);

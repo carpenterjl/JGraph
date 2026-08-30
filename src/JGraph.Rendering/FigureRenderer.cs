@@ -20,6 +20,15 @@ public sealed class FigureRenderer
     private const double LabelPadding = 4;
     private const double EdgePadding = 6;
 
+    /// <summary>Gap between a 3D floor tick and the near edge of its label, along the outward push.</summary>
+    private const double TickLabelPush = 18;
+
+    /// <summary>Gap between the vertical box edge and the right edge of a z tick label.</summary>
+    private const double ZTickLabelPush = 10;
+
+    /// <summary>Gap between a 3D floor edge and the near edge of its axis title.</summary>
+    private const double AxisTitlePush = 44;
+
     /// <summary>Renders a figure, laying it out for the context's current size, and returns its geometry.</summary>
     public FigureRenderResult Render(FigureModel figure, IRenderContext context, ITheme? theme = null)
     {
@@ -529,29 +538,48 @@ public sealed class FigureRenderer
         if (clip3D) { context.PopClip(); }
 
         // Tick labels along the front-bottom edges (drawn unclipped so they may sit in the margins).
-        Point2D floorCenter = projection.ProjectPoint(xMid, yMid, zFar);
-
-        void EdgeLabel(string text, Point2D anchor, TextStyle style, double push)
+        // A floor label is pushed away from the box along the OTHER floor axis — the screen
+        // direction that axis runs as it leaves the box — rather than radially from the floor
+        // centre. In the middle of an edge the two agree; at its ends they do not, and that is the
+        // whole bug: the x and y rulers meet at the near corner, so a radial push put both corner
+        // labels on the identical pixel, and the leftmost vertical edge the z ruler rides is the
+        // foot of a floor edge, so the same radial push slid an x label under "-1.5". Splaying each
+        // ruler outward along its partner separates them, which is where MATLAB puts them too.
+        (double X, double Y) Outward(Point2D from, Point2D to)
         {
-            double dx = anchor.X - floorCenter.X;
-            double dy = anchor.Y - floorCenter.Y;
+            double dx = to.X - from.X;
+            double dy = to.Y - from.Y;
             double length = System.Math.Sqrt((dx * dx) + (dy * dy));
-            if (length < 1e-6)
-            {
-                dx = 0;
-                dy = 1;
-                length = 1;
-            }
+            return length < 1e-6 ? (0, 1) : (dx / length, dy / length);
+        }
 
-            var position = new Point2D(anchor.X + (dx / length * push), anchor.Y + (dy / length * push));
-            context.DrawText(text, position, style, HorizontalAlignment.Center, VerticalAlignment.Middle);
+        (double X, double Y) yOut = Outward(
+            projection.ProjectPoint(xMid, yFar, zFar), projection.ProjectPoint(xMid, yNear, zFar));
+        (double X, double Y) xOut = Outward(
+            projection.ProjectPoint(xFar, yMid, zFar), projection.ProjectPoint(xNear, yMid, zFar));
+
+        // Anchoring by octant is what keeps the push honest: the text box then grows away from the
+        // box rather than straddling the anchor, so the gap the push asks for is the gap you get.
+        void EdgeLabel(string text, Point2D anchor, (double X, double Y) dir, TextStyle style, double push)
+        {
+            var position = new Point2D(anchor.X + (dir.X * push), anchor.Y + (dir.Y * push));
+            context.DrawText(
+                text,
+                position,
+                style,
+                dir.X > 0.25 ? HorizontalAlignment.Left
+                    : dir.X < -0.25 ? HorizontalAlignment.Right
+                    : HorizontalAlignment.Center,
+                dir.Y > 0.25 ? VerticalAlignment.Top
+                    : dir.Y < -0.25 ? VerticalAlignment.Bottom
+                    : VerticalAlignment.Middle);
         }
 
         if (xAxis.ShowTickLabels)
         {
             foreach (Tick t in xTicks.MajorTicks)
             {
-                EdgeLabel(t.Label, projection.ProjectPoint(t.Value, yNear, zFar), xAxis.TickLabelStyle, 14);
+                EdgeLabel(t.Label, projection.ProjectPoint(t.Value, yNear, zFar), yOut, xAxis.TickLabelStyle, TickLabelPush);
             }
         }
 
@@ -559,11 +587,12 @@ public sealed class FigureRenderer
         {
             foreach (Tick t in yTicks.MajorTicks)
             {
-                EdgeLabel(t.Label, projection.ProjectPoint(xNear, t.Value, zFar), yAxis.TickLabelStyle, 14);
+                EdgeLabel(t.Label, projection.ProjectPoint(xNear, t.Value, zFar), xOut, yAxis.TickLabelStyle, TickLabelPush);
             }
         }
 
-        // Z ticks on the leftmost vertical box edge.
+        // Z ticks on the leftmost vertical box edge. The push clears the widest floor label that can
+        // reach the foot of that edge, so the ruler that shares the corner passes underneath it.
         (double zx, double zy) = LeftmostVerticalEdge(projection, xr, yr, zMid);
         if (zAxis.ShowTickLabels)
         {
@@ -572,7 +601,7 @@ public sealed class FigureRenderer
                 Point2D p = projection.ProjectPoint(zx, zy, t.Value);
                 context.DrawText(
                     t.Label,
-                    new Point2D(p.X - 8, p.Y),
+                    new Point2D(p.X - ZTickLabelPush, p.Y),
                     zAxis.TickLabelStyle,
                     HorizontalAlignment.Right,
                     VerticalAlignment.Middle);
@@ -582,12 +611,12 @@ public sealed class FigureRenderer
         // Axis titles at the edge midpoints, pushed further out than the tick labels.
         if (!string.IsNullOrEmpty(xAxis.Label))
         {
-            EdgeLabel(xAxis.Label, projection.ProjectPoint(xMid, yNear, zFar), xAxis.LabelStyle, 34);
+            EdgeLabel(xAxis.Label, projection.ProjectPoint(xMid, yNear, zFar), yOut, xAxis.LabelStyle, AxisTitlePush);
         }
 
         if (!string.IsNullOrEmpty(yAxis.Label))
         {
-            EdgeLabel(yAxis.Label, projection.ProjectPoint(xNear, yMid, zFar), yAxis.LabelStyle, 34);
+            EdgeLabel(yAxis.Label, projection.ProjectPoint(xNear, yMid, zFar), xOut, yAxis.LabelStyle, AxisTitlePush);
         }
 
         if (!string.IsNullOrEmpty(zAxis.Label))
