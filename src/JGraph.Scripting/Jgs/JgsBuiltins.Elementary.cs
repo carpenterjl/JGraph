@@ -31,7 +31,7 @@ internal static partial class JgsBuiltins
         void Constant(string name, Func<IReadOnlyList<JgsValue>, int, int, JgsValue> body) =>
             env.Declare(name, JgsValue.Function(new BuiltinFunction(name, body) { AutoCallsBare = true }));
 
-        RegisterLimits(env, Constant);
+        RegisterLimits(env, Constant, dialect);
         RegisterTypePredicates(env, Define, dialect);
         RegisterTrigonometry(Define);
     }
@@ -39,12 +39,41 @@ internal static partial class JgsBuiltins
     // --- Constants and limits -------------------------------------------------------------------
 
     private static void RegisterLimits(
-        JgsEnvironment env, Action<string, Func<IReadOnlyList<JgsValue>, int, int, JgsValue>> Constant)
+        JgsEnvironment env, Action<string, Func<IReadOnlyList<JgsValue>, int, int, JgsValue>> Constant,
+        JgsDialect dialect)
     {
         // MATLAB spells these with capitals; JGS has always had the lowercase pair. Both stay: they
         // are the same value, and a MATLAB script writing Inf must not have to know about JGS.
         env.Declare("Inf", JgsValue.Number(double.PositiveInfinity));
         env.Declare("NaN", JgsValue.Number(double.NaN));
+
+        // In MATLAB the two are constructors as well as constants, taking exactly the size arguments
+        // zeros and ones take — Inf(n) is n-by-n, Inf(m, n) and Inf([m n]) are the same rectangle,
+        // any number of dimensions is allowed, and a trailing class name or 'like' prototype names
+        // the class to build it in. That is NdConstructorValue's whole job already, so both names
+        // borrow it rather than growing a second shape reader beside it; only the fill differs, and
+        // only the class tail is narrower, because an integer class holds neither value. Made bare
+        // by AutoCallsBare, so a mention with no parentheses is still the plain scalar it always was.
+        // JGS keeps its value bindings: nobody writes Inf(2, 2) there.
+        if (dialect.IsMatlab)
+        {
+            Spreadable("Inf", double.PositiveInfinity);
+            Spreadable("inf", double.PositiveInfinity);
+            Spreadable("NaN", double.NaN);
+            Spreadable("nan", double.NaN);
+        }
+
+        void Spreadable(string name, double fill) => Constant(name, (args, line, col) =>
+        {
+            JgsValue built = NdConstructorValue(name, args, line, col, () => fill);
+            if (built.NumericClass.IsInteger())
+            {
+                throw new JgsRuntimeException(line, col,
+                    $"{name}: a class argument must be 'double' or 'single' — no integer class holds a {name}.");
+            }
+
+            return built;
+        });
 
         // The imaginary unit under both of its names. A script that uses i as a loop variable simply
         // shadows it, exactly as in MATLAB.
@@ -374,10 +403,62 @@ internal static partial class JgsBuiltins
     {
         // A char array converts through its codes, which is what makes double('A') 65.
         JgsValue source = value.Type == JgsType.String ? CharactersAsCodes(value.AsString) : value;
+
+        // double(z) and single(z) answer the complex number they were handed. A class conversion in
+        // MATLAB is about which class holds the sample, not about projecting it onto the reals, and
+        // the two floating classes are the only ones a complex sample lives in here — single rounds
+        // both parts to float precision, double is the identity. Before this the whole family threw
+        // "expects a number or numeric array, but got a complex", which cost every parity harness a
+        // double() it could not write.
+        if (!numericClass.IsInteger() && HoldsComplexSample(source))
+        {
+            JgsValue converted = MapComplexProducing(name, source,
+                x => JgsNumericClasses.Convert(x, numericClass), Always,
+                z => JgsValue.ComplexNum(Componentwise(z, x => JgsNumericClasses.Convert(x, numericClass))),
+                line, col);
+            converted.SetNumericClass(numericClass);
+            return converted;
+        }
+
         JgsValue result = MapNumeric(name, source, x => JgsNumericClasses.Convert(x, numericClass), line, col,
                                      rounding: JgsNumericClasses.RoundingFor(numericClass));
         result.SetNumericClass(numericClass);
         return result;
+    }
+
+    /// <summary>Whether a value carries a complex sample anywhere inside it.</summary>
+    /// <remarks>
+    /// Asked before the conversion rather than during it so the real path — every <c>double</c> of a
+    /// logical mask, every <c>uint8</c> of an image — keeps the flat kernel it has had since M97 and
+    /// learns nothing about complex numbers at all. A packed real buffer answers false without a
+    /// look; only a boxed array is walked, and only until the first complex element.
+    /// </remarks>
+    private static bool HoldsComplexSample(JgsValue value)
+    {
+        if (value.Type == JgsType.Complex)
+        {
+            return true;
+        }
+
+        if (value.Type != JgsType.Array || value.IsPacked)
+        {
+            return false;
+        }
+
+        if (value.IsPackedComplex)
+        {
+            return true;
+        }
+
+        foreach (JgsValue element in value.AsArray)
+        {
+            if (HoldsComplexSample(element))
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /// <summary>The eight MATLAB integer classes, each a constructor and an <c>.empty</c> static.</summary>

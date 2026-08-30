@@ -3658,7 +3658,7 @@ internal sealed partial class Interpreter
             return IndexTableParen(target, indexExpr.Indices, indexExpr, env);
         }
 
-        if (target.Type is JgsType.Number or JgsType.Bool)
+        if (IsIndexableScalar(target))
         {
             target = OneElementArray(target);
         }
@@ -3745,7 +3745,7 @@ internal sealed partial class Interpreter
         // lone handle, x(1) on a scalar reading. Found writing M57's stress script, where a chart verb
         // that drew one thing handed back one handle and h(1) — the spelling that works when it drew
         // several — could not read it back.
-        if (callee.Type is JgsType.Number or JgsType.Bool && call.Arguments.Count > 0)
+        if (IsIndexableScalar(callee) && call.Arguments.Count > 0)
         {
             return IndexInto(OneElementArray(callee), call.Arguments, call, env);
         }
@@ -3801,6 +3801,21 @@ internal sealed partial class Interpreter
     /// </summary>
     private static JgsValue OneElementArray(JgsValue scalar) =>
         JgsNumericClasses.Stamp(JgsValue.Array([scalar]), scalar.NumericClass);
+
+    /// <summary>
+    /// Whether a value is a lone sample that a subscript reads out of as though it were the
+    /// one-by-one array it is: a number, a logical, or a complex.
+    /// </summary>
+    /// <remarks>
+    /// The complex arm arrived last. A complex <em>array</em> had always indexed, and every real
+    /// scalar had always indexed, but a complex scalar fell past both tests to the arm that reports
+    /// the value is not a function — so <c>z(1)</c> and the idiomatic flatten <c>z(:)</c> were
+    /// refused for the one shape in between, and every verb that can answer a one-by-one complex
+    /// (<c>roots([1 1i])</c>, <c>eig</c> of a one-by-one, <c>polyval</c> at a complex point) handed
+    /// back something the next line could not subscript.
+    /// </remarks>
+    private static bool IsIndexableScalar(JgsValue value) =>
+        value.Type is JgsType.Number or JgsType.Bool or JgsType.Complex;
 
     private JgsValue IndexInto(JgsValue target, IReadOnlyList<Expr> subscripts, Node at, JgsEnvironment env)
     {
