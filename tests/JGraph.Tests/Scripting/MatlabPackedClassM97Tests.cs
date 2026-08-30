@@ -42,7 +42,11 @@ public class MatlabPackedClassM97Tests : IDisposable
         }
     }
 
-    private static void AssertParity(string code, bool expectSuccess = true)
+    /// <summary>
+    /// Runs the script on both roads and asserts they answered the same, handing back the answer so
+    /// a caller that also knows what MATLAB says can pin it.
+    /// </summary>
+    private static string[] AssertParity(string code, bool expectSuccess = true)
     {
         (string[] packedOut, bool packedOk, string? packedMessage) = RunWith(packed: true, code);
         (string[] boxedOut, bool boxedOk, string? boxedMessage) = RunWith(packed: false, code);
@@ -59,6 +63,7 @@ public class MatlabPackedClassM97Tests : IDisposable
         }
 
         Assert.Equal(boxedOut, packedOut);
+        return boxedOut;
     }
 
     /// <summary>Prints class, shape and both the samples and their reciprocals at full precision.</summary>
@@ -158,23 +163,20 @@ public class MatlabPackedClassM97Tests : IDisposable
     }
 
     /// <summary>
-    /// N-D arithmetic keeps its dimensions on the packed road. The boxed road does not, and did not
-    /// before M97 either — a scalar multiply of a 2x3x4 comes back 2x12 there, which is the same
-    /// dropped-shape defect M94 recorded. This pins the answer the fast path gives rather than
-    /// asserting the two roads agree, because on this one point they do not.
+    /// Arithmetic keeps every dimension, not the two MATLAB folds an N-D array into for a
+    /// two-subscript reader. Both roads, now: the boxed one reshaped its answer to rows-by-columns
+    /// and handed back a 2-by-12 where a 2-by-3-by-4 went in.
     /// </summary>
     [Fact]
-    public void ArithmeticOverManyDimensionsKeepsThemOnThePackedRoad()
+    public void ArithmeticOverManyDimensionsKeepsThem()
     {
-        (string[] output, bool ok, string? message) = RunWith(packed: true, """
+        string[] output = AssertParity("""
             A = int16(reshape(1:24, 2, 3, 4));
             B = A * 1000;
             disp(sprintf('%s %dx%dx%d %.17g', class(B), size(B, 1), size(B, 2), size(B, 3), sum(double(B(:)))));
             C = single(reshape(1:24, 2, 3, 4)) ./ 3;
             disp(sprintf('%s %dx%dx%d', class(C), size(C, 1), size(C, 2), size(C, 3)));
             """);
-
-        Assert.True(ok, message);
 
         // 1000 .. 24000 saturate at int16's 32767, so the sum is the clipped one.
         double clipped = 0;
@@ -188,15 +190,14 @@ public class MatlabPackedClassM97Tests : IDisposable
     }
 
     /// <summary>
-    /// Growing an integer array past its end keeps the class on the packed road, and the new element
-    /// saturates into it like every other. The boxed road drops to double and stores the raw number
-    /// instead, and did so before M97 as well — the same family of lost tag as the dropped N-D shape
-    /// above — so this pins the packed answer rather than comparing the two.
+    /// Growing an integer array past its end keeps the class, and the new element saturates into it
+    /// like every other. Both roads, now: only the packed one could grow a buffer in place and so
+    /// keep the wrapper the tag lived on, and the boxed rebuild came back a plain double array.
     /// </summary>
     [Fact]
-    public void GrowingAnIntegerArrayKeepsItsClassOnThePackedRoad()
+    public void GrowingAnIntegerArrayKeepsItsClass()
     {
-        (string[] output, bool ok, string? message) = RunWith(packed: true, """
+        string[] output = AssertParity("""
             x = uint8([10 20 30]);
             x(2) = 300;
             x(end + 1) = -7;
@@ -207,7 +208,6 @@ public class MatlabPackedClassM97Tests : IDisposable
             disp(sprintf('%s %g %g %g %g', class(s), double(s(1)), double(s(2)), double(s(3)), double(s(4))));
             """);
 
-        Assert.True(ok, message);
         Assert.Equal("uint8 10 255 30 0 4", output[0].Trim());
         Assert.Equal("int8 1 2 0 127", output[1].Trim());
     }

@@ -2738,6 +2738,24 @@ internal sealed partial class Interpreter
         return source.IsCharMatrix ? JgsBuiltins.WrapCharMatrix(copy) : copy;
     }
 
+    /// <summary>
+    /// Gives a rebuilt array the numeric class of the array it was rebuilt from, and only that.
+    /// </summary>
+    /// <remarks>
+    /// What growth fills its new cells with is a numeric zero, and a numeric zero is a uint8 zero
+    /// and an int8 zero and a single zero all at once — so the class carries, and MATLAB's grown
+    /// uint8 is what comes back. It is not a character, a string or a date, so the other three tags
+    /// <see cref="CarryValueTags"/> knows about deliberately do not travel this road: an array
+    /// wearing a tag that says its elements are dates, over a cell holding the number nought, lies
+    /// about itself in a way the forgetful version at least did not. Deletion has no new cells and
+    /// no such trouble, and carries all four.
+    /// </remarks>
+    private static JgsValue KeepNumericClass(JgsValue source, JgsValue rebuilt)
+    {
+        rebuilt.SetNumericClass(source.NumericClass);
+        return rebuilt;
+    }
+
     /// <summary>Maps a compound-assignment token to the underlying binary operator.</summary>
     private static TokenType UnderlyingOp(TokenType op) => op switch
     {
@@ -3045,7 +3063,7 @@ internal sealed partial class Interpreter
             }
         }
 
-        JgsValue grown = JgsMatrix.FromElements(elements, newRows, newCols);
+        JgsValue grown = KeepNumericClass(current, JgsMatrix.FromElements(elements, newRows, newCols));
         Rebind(variable.Name, grown, env);
         return grown;
     }
@@ -3078,8 +3096,8 @@ internal sealed partial class Interpreter
         int[] keptRows = deletingRows ? Remaining(rows, drop) : AllPicks(rows);
         int[] keptCols = deletingRows ? AllPicks(cols) : Remaining(cols, drop);
 
-        JgsValue trimmed = JgsMatrix.BuildValues(keptRows.Length, keptCols.Length,
-            (r, c) => JgsMatrix.At(current, keptRows[r], keptCols[c]));
+        JgsValue trimmed = CarryValueTags(current, JgsMatrix.BuildValues(keptRows.Length, keptCols.Length,
+            (r, c) => JgsMatrix.At(current, keptRows[r], keptCols[c])));
         Rebind(variable.Name, trimmed, env);
         return trimmed;
     }
@@ -3105,6 +3123,13 @@ internal sealed partial class Interpreter
     /// Extends a vector to <paramref name="needed"/> elements, zero-filling, and rebinds the name —
     /// the <c>x(end + 1) = v</c> idiom. The vector keeps whichever orientation it already had.
     /// </summary>
+    /// <remarks>
+    /// And whichever class it already wore. A rebuild mints a fresh wrapper, the class lives on the
+    /// wrapper, and only the packed in-place growth above keeps the one it was handed — so
+    /// <c>uint8([10 20 30])</c> grown past its end came back a plain double array wherever the
+    /// in-place path could not be taken, which is the whole of the boxed road and every N-D array on
+    /// either.
+    /// </remarks>
     private JgsValue GrowVector(Expr target, JgsValue current, int needed, Node at, JgsEnvironment env)
     {
         if (target is not VariableExpr variable)
@@ -3130,8 +3155,8 @@ internal sealed partial class Interpreter
             elements[i] = current.ElementAt(i);
         }
 
-        JgsValue grown = JgsMatrix.FromElements(
-            elements, growsAsColumn ? needed : 1, growsAsColumn ? 1 : needed);
+        JgsValue grown = KeepNumericClass(current, JgsMatrix.FromElements(
+            elements, growsAsColumn ? needed : 1, growsAsColumn ? 1 : needed));
         Rebind(variable.Name, grown, env);
         return grown;
     }
@@ -3140,14 +3165,14 @@ internal sealed partial class Interpreter
     /// <c>x(:) = []</c>: removes every element there is and rebinds (M96b). What is left is the
     /// shapeless empty whatever <c>x</c> was — a row, a column and a matrix all answer 0-by-0.
     /// </summary>
-    private JgsValue DeleteEverything(Expr target, Node at, JgsEnvironment env)
+    private JgsValue DeleteEverything(Expr target, JgsValue current, Node at, JgsEnvironment env)
     {
         if (target is not VariableExpr variable)
         {
             throw new JgsRuntimeException(at.Line, at.Column, "Deleting elements needs a plain variable on the left.");
         }
 
-        JgsValue emptied = EmptyBracket();
+        JgsValue emptied = CarryValueTags(current, EmptyBracket());
         Rebind(variable.Name, emptied, env);
         return emptied;
     }
@@ -3185,8 +3210,8 @@ internal sealed partial class Interpreter
         }
 
         bool wasColumn = current.Cols == 1 && current.Rows != 1;
-        JgsValue trimmed = JgsMatrix.FromElements(
-            elements, wasColumn ? elements.Length : 1, wasColumn ? 1 : elements.Length);
+        JgsValue trimmed = CarryValueTags(current, JgsMatrix.FromElements(
+            elements, wasColumn ? elements.Length : 1, wasColumn ? 1 : elements.Length));
         Rebind(variable.Name, trimmed, env);
         return trimmed;
     }
@@ -3210,12 +3235,15 @@ internal sealed partial class Interpreter
     }
 
     /// <summary>
-    /// Writes one element of an array value. Packed arrays take the fast path when the value's
-    /// type matches the buffer's kind; any other write demotes the array to boxed in place first
-    /// (all aliases share the wrapper, so they all see the demotion — semantics identical).
+    /// Writes one element of an array value, through the class the array wears. Packed arrays take
+    /// the fast path when the value's type matches the buffer's kind; any other write demotes the
+    /// array to boxed in place first (all aliases share the wrapper, so they all see the demotion —
+    /// semantics identical).
     /// </summary>
     private static void WriteElement(JgsValue container, int index, JgsValue value)
     {
+        value = JgsNumericClasses.Storable(value, container.NumericClass);
+
         if (container.IsPacked)
         {
             // SetPackedNumber, not AsBuffer: the growth-capacity write path must stay capacity-aware,
@@ -3307,8 +3335,18 @@ internal sealed partial class Interpreter
             // as a null index, which is why this used to fall through to the write path and refuse
             // to "assign 0 values into 3 selected elements".
             return index is null
-                ? DeleteEverything(target, at, env)
+                ? DeleteEverything(target, callee, at, env)
                 : DeleteElements(target, callee, index, at, env);
+        }
+
+        // What an integer or single array stores is what its class can hold. Rounding and saturating
+        // the incoming value once, here, is what puts 255 into a uint8 rather than the 300 the script
+        // wrote — and every write below, packed bulk scatter included, then has nothing left to do.
+        // The class is read before the growth below because a rebuilt array is a fresh wrapper.
+        JgsNumericClass storeClass = callee.NumericClass;
+        if (op == TokenType.Assign)
+        {
+            rhs = JgsNumericClasses.Storable(rhs, storeClass);
         }
 
         if (index is not null)
@@ -3354,7 +3392,7 @@ internal sealed partial class Interpreter
             int single = ToIndex(index, array.Length, at.Line, at.Column);
             JgsValue stored = op == TokenType.Assign
                 ? rhs
-                : ApplyBinary(UnderlyingOp(op), array[single], rhs, at);
+                : JgsNumericClasses.Storable(ApplyBinary(UnderlyingOp(op), array[single], rhs, at), storeClass);
             array[single] = stored;
             return stored;
         }
@@ -3367,7 +3405,9 @@ internal sealed partial class Interpreter
         {
             foreach (int pick in picks)
             {
-                array[pick] = op == TokenType.Assign ? rhs : ApplyBinary(UnderlyingOp(op), array[pick], rhs, at);
+                array[pick] = op == TokenType.Assign
+                    ? rhs
+                    : JgsNumericClasses.Storable(ApplyBinary(UnderlyingOp(op), array[pick], rhs, at), storeClass);
             }
         }
         else
@@ -3383,7 +3423,8 @@ internal sealed partial class Interpreter
             {
                 array[picks[i]] = op == TokenType.Assign
                     ? source[i]
-                    : ApplyBinary(UnderlyingOp(op), array[picks[i]], source[i], at);
+                    : JgsNumericClasses.Storable(
+                        ApplyBinary(UnderlyingOp(op), array[picks[i]], source[i], at), storeClass);
             }
         }
 
@@ -3423,9 +3464,14 @@ internal sealed partial class Interpreter
             }
 
             int single = ToIndex(index, target.ArrayLength, at.Line, at.Column);
+
+            // A plain assignment arrived already in the target's class; a compound one is arithmetic
+            // over two untagged samples and still owes the buffer a value the class can hold.
             double stored = simple
                 ? rhs.AsNumber
-                : ApplyBinary(UnderlyingOp(op), target.ElementAt(single), rhs, at).AsNumber;
+                : JgsNumericClasses.Convert(
+                    ApplyBinary(UnderlyingOp(op), target.ElementAt(single), rhs, at).AsNumber,
+                    target.NumericClass);
             target.SetPackedNumber(single, stored);
             result = simple ? rhs : JgsValue.Number(stored);
             return true;
@@ -3470,10 +3516,12 @@ internal sealed partial class Interpreter
 
         NumericBuffer? source = rhsPacked ? rhs.AsBuffer : null;
         double scalarRhs = rhsScalar ? rhs.AsNumber : 0;
+        PackedMath.Rounding into = JgsNumericClasses.RoundingFor(target.NumericClass);
         for (int i = 0; i < picks.Length; i++)
         {
             Span<double> span = buffer.AsSpan();
-            span[picks[i]] = combine(span[picks[i]], source is null ? scalarRhs : source.AsSpan()[i]);
+            span[picks[i]] = into.Apply(
+                combine(span[picks[i]], source is null ? scalarRhs : source.AsSpan()[i]));
             if ((i & ((1 << 20) - 1)) == (1 << 20) - 1)
             {
                 _cancelCheck();
@@ -5886,18 +5934,22 @@ internal sealed partial class Interpreter
 
     /// <summary>The boxed twin of <c>PackedOps.KeepShape</c>: an elementwise result is the same
     /// shape as the operand it was computed over.</summary>
+    /// <remarks>
+    /// Every dimension, not just the first two. This read <c>IsShaped</c> alone and reshaped to
+    /// <c>Rows</c>-by-<c>Cols</c>, which is MATLAB's own 2-D view of an N-D array — so a 2-by-3-by-4
+    /// came back from <c>A * 1000</c> as a 2-by-12, on the boxed road only, while the packed kernels
+    /// kept all three. A 1-by-1-by-4 was worse off still: its first dimension is 1, so it was not
+    /// even recognised as a model and the answer came back a bare row.
+    /// </remarks>
     private static JgsValue ShapeLike(JgsValue result, JgsValue left, JgsValue right)
     {
-        JgsValue model = left.Type == JgsType.Array && left.IsShaped ? left
-            : right.Type == JgsType.Array && right.IsShaped ? right
-            : JgsValue.Null;
-        if (model.Type == JgsType.Array && model.ArrayLength == result.ArrayLength)
-        {
-            result.Reshape(model.Rows, model.Cols);
-        }
-
-        return result;
+        JgsValue model = CarriesShape(left) ? left : CarriesShape(right) ? right : JgsValue.Null;
+        return model.Type == JgsType.Array ? JgsMatrix.Like(model, result) : result;
     }
+
+    /// <summary>Whether an operand has a shape worth handing on: a matrix, or anything N-D.</summary>
+    private static bool CarriesShape(JgsValue value) =>
+        value.Type == JgsType.Array && (value.IsShaped || value.IsNd);
 
     private static bool AreEqual(JgsValue left, JgsValue right) => JgsValue.AreEqual(left, right);
 

@@ -149,6 +149,22 @@ internal static class JgsNumericClasses
         return converted;
     }
 
+    /// <summary>
+    /// One value on its way <em>into</em> storage of <paramref name="numericClass"/>: every sample
+    /// rounded and saturated exactly as <see cref="Convert"/> would, and no tag, because the elements
+    /// of a classed array are plain numbers and the class lives on the wrapper.
+    /// </summary>
+    /// <remarks>
+    /// MATLAB applies the class at the write, not at the read. After <c>x = uint8([10 20 30]);
+    /// x(2) = 300</c> the array holds 255, so <c>sum(x)</c> is 295 and <c>max(x)</c> is 255. Clamping
+    /// only what an indexed read hands back left every verb that read the array wholesale — every
+    /// reduction, every display, every <c>double(x)</c> — looking at a 300 the class cannot hold,
+    /// which is a wrong answer no error ever announced. The write is the one place that can fix that
+    /// for all of them at once, which is why the rule belongs here and not in each reader.
+    /// </remarks>
+    public static JgsValue Storable(JgsValue value, JgsNumericClass numericClass) =>
+        numericClass == JgsNumericClass.Double ? value : Map(value, numericClass);
+
     private static JgsValue Map(JgsValue value, JgsNumericClass numericClass)
     {
         switch (value.Type)
