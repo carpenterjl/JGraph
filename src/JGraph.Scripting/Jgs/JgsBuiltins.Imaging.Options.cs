@@ -269,5 +269,59 @@ internal static partial class JgsBuiltins
             // A mask is 0 or 1 whatever it was computed over, so it goes back in logical's units and
             // not in the units of the picture that produced it: thresholding a uint8 array must not
             // hand back 255s.
-            : NumbersOut(result, source.Shape, ImageClass.Logical);
+            : MaskOut(result, source.Shape);
+
+    /// <summary>
+    /// Hands a mask back as a plain logical array, the way MATLAB's <c>imbinarize</c> answers
+    /// <c>logical</c> over a <c>uint8</c> matrix rather than the class it was handed.
+    /// </summary>
+    /// <remarks>
+    /// A logical array in this interpreter is one whose <em>elements</em> are <see cref="JgsType.Bool"/>
+    /// rather than a numeric array wearing a class tag — <c>islogical</c> and <c>class</c> both read the
+    /// elements. So the mask is built out of <see cref="JgsValue.Bool"/>: going through
+    /// <see cref="NumbersOut"/> gave the right zeros and ones under a <c>double</c> tag, which is what
+    /// made <c>class(imbinarize(uint8Matrix, 0.5))</c> answer <c>'double'</c>.
+    /// </remarks>
+    private static JgsValue MaskOut(ImageBuffer result, ImgShape shape)
+    {
+        using (result)
+        {
+            // Colour planes came in, so colour planes go back — unless the operation collapsed the
+            // picture to one value per pixel, which is a plain matrix in anybody's reading.
+            if (shape == ImgShape.Planes && result.Channels == 3)
+            {
+                var flat = new JgsValue[result.Height * result.Width * 3];
+                for (int ch = 0; ch < 3; ch++)
+                {
+                    for (int c = 0; c < result.Width; c++)
+                    {
+                        for (int r = 0; r < result.Height; r++)
+                        {
+                            flat[r + (c * result.Height) + (ch * result.Height * result.Width)] =
+                                JgsValue.Bool(result[r, c, ch] != 0);
+                        }
+                    }
+                }
+
+                return JgsMatrix.FromElementsDims(flat, [result.Height, result.Width, 3]);
+            }
+
+            int rows = result.Height;
+            int cols = result.Width;
+            var elements = new JgsValue[rows * cols];
+            for (int c = 0; c < cols; c++)
+            {
+                int origin = c * rows;
+                for (int r = 0; r < rows; r++)
+                {
+                    elements[origin + r] = JgsValue.Bool(result[r, c, 0] != 0);
+                }
+            }
+
+            // A one-pixel mask is a single true or false, the way a one-element matrix is a scalar.
+            return rows == 1 && cols == 1
+                ? elements[0]
+                : JgsMatrix.FromElements(elements, rows, cols);
+        }
+    }
 }

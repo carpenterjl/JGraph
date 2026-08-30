@@ -200,6 +200,33 @@ public sealed class MatlabImageClassTests : IDisposable
     }
 
     [Fact]
+    public async Task AMaskOverAPlainMatrix_IsLogical_AndNotJustZerosAndOnes()
+    {
+        // The values were right long before the class was: a mask over a plain array was built out
+        // of numbers, so it answered 'double' where MATLAB answers 'logical'. A logical array here
+        // is one whose elements are booleans, which is what islogical and class both read.
+        await RunAsserting("""
+            U = uint8([10 20; 200 250]);
+            M = imbinarize(U, 0.5);
+            assert(isa(M, 'logical'), 'a mask over a plain matrix should be logical');
+            assert(strcmp(class(M), 'logical'), ['class said ' class(M)]);
+            assert(islogical(M), 'islogical should agree with class');
+            assert(M(1, 1) == 0 && M(1, 2) == 0 && M(2, 1) == 1 && M(2, 2) == 1, 'the mask has the wrong values');
+            assert(sum(M(:)) == 2, 'arithmetic over a logical mask should count its true elements');
+            A = [1 2; 3 4];
+            picked = A(M);
+            assert(numel(picked) == 2 && picked(1) == 3 && picked(2) == 4, 'indexing with a mask should select, not index by position');
+            product = M .* A;
+            assert(product(1, 1) == 0 && product(2, 2) == 4, 'a logical mask should multiply as zeros and ones');
+            N = ~M;
+            assert(islogical(N) && N(1, 1) == 1 && N(2, 2) == 0, 'negating a mask should stay logical');
+            assert(any(M(:)) && ~all(M(:)), 'any and all should read the mask');
+            E = edge(double([0 0 1 1; 0 0 1 1; 0 0 1 1; 0 0 1 1]), 'sobel');
+            assert(islogical(E), 'edge over a plain matrix should be logical too');
+            """);
+    }
+
+    [Fact]
     public async Task IntlutTakesAUint8Array_NowThatOneCanSayWhatItsNumbersMean()
     {
         // intlut used to demand a picture value, because its table is indexed by the sample's own
