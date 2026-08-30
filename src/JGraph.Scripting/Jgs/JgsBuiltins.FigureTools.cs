@@ -317,7 +317,8 @@ internal static partial class JgsBuiltins
     }
 
     /// <summary>
-    /// A captured figure as MATLAB's <c>cdata</c>: a height-by-width-by-3 array of <c>uint8</c>.
+    /// A captured figure as MATLAB's <c>cdata</c>: a height-by-width-by-3 array of <c>uint8</c>, or
+    /// height-by-width-by-4 when the figure has no page and the capture is therefore a cut-out.
     /// <para>
     /// It is deliberately a plain array rather than this build's image value. A frame is something a
     /// script does arithmetic on — <c>double(f.cdata)</c> to difference two of them is the whole
@@ -330,12 +331,13 @@ internal static partial class JgsBuiltins
     {
         int height = pixels.Height;
         int width = pixels.Width;
-        var flat = new double[(long)height * width * 3];
+        int channels = pixels.Channels;
+        var flat = new double[(long)height * width * channels];
         ReadOnlySpan<double> samples = pixels.Pixels;
 
         // The buffer is row-major and interleaved; an array is column-major with the channels last,
         // so this is a transpose rather than a copy.
-        for (int channel = 0; channel < 3; channel++)
+        for (int channel = 0; channel < channels; channel++)
         {
             int plane = channel * height * width;
             for (int c = 0; c < width; c++)
@@ -343,12 +345,13 @@ internal static partial class JgsBuiltins
                 int column = plane + (c * height);
                 for (int r = 0; r < height; r++)
                 {
-                    flat[column + r] = System.Math.Round(samples[(((r * width) + c) * 3) + channel] * 255);
+                    flat[column + r] =
+                        System.Math.Round(samples[(((r * width) + c) * channels) + channel] * 255);
                 }
             }
         }
 
-        JgsValue data = JgsMatrix.FromColumnMajorDims(flat, [height, width, 3]);
+        JgsValue data = JgsMatrix.FromColumnMajorDims(flat, [height, width, channels]);
         data.SetNumericClass(JgsNumericClass.UInt8);
         return data;
     }

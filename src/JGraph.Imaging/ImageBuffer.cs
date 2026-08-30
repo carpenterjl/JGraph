@@ -24,15 +24,19 @@ public sealed class ImageBuffer : IDisposable
     /// <summary>Allocates a zero-filled image of the given dimensions.</summary>
     /// <param name="height">Row count; must be positive.</param>
     /// <param name="width">Column count; must be positive.</param>
-    /// <param name="channels">1 (grayscale) or 3 (RGB).</param>
+    /// <param name="channels">
+    /// 1 (grayscale), 3 (RGB) or 4 (RGB and coverage). The fourth is for a capture rather than for a
+    /// picture: it is what a figure drawn on no page hands back, and the image verbs — which read
+    /// <see cref="Channels"/> as "one or three" throughout — are not asked to filter one.
+    /// </param>
     public ImageBuffer(int height, int width, int channels)
     {
         ArgumentOutOfRangeException.ThrowIfNegativeOrZero(height);
         ArgumentOutOfRangeException.ThrowIfNegativeOrZero(width);
-        if (channels is not (1 or 3))
+        if (channels is not (1 or 3 or 4))
         {
             throw new ArgumentOutOfRangeException(nameof(channels), channels,
-                "image channels must be 1 (grayscale) or 3 (RGB)");
+                "image channels must be 1 (grayscale), 3 (RGB) or 4 (RGB with coverage)");
         }
 
         Height = height;
@@ -55,7 +59,7 @@ public sealed class ImageBuffer : IDisposable
     /// <summary>Number of columns.</summary>
     public int Width { get; }
 
-    /// <summary>Number of channels: 1 (grayscale) or 3 (RGB).</summary>
+    /// <summary>Number of channels: 1 (grayscale), 3 (RGB) or 4 (RGB with coverage).</summary>
     public int Channels { get; }
 
     /// <summary>
@@ -123,11 +127,20 @@ public sealed class ImageBuffer : IDisposable
     }
 
     /// <summary>
-    /// An RGB image from row-major, four-bytes-per-pixel RGBA samples. The alpha channel is dropped
-    /// rather than composited: this reads what a renderer drew, and a figure's own background is
-    /// already part of that drawing.
+    /// An image from row-major, four-bytes-per-pixel RGBA samples.
     /// </summary>
-    public static ImageBuffer FromRgba(ReadOnlySpan<byte> rgba, int width, int height)
+    /// <param name="rgba">The samples, row-major and four bytes a pixel.</param>
+    /// <param name="width">Pixels across; must be positive.</param>
+    /// <param name="height">Pixels down; must be positive.</param>
+    /// <param name="keepAlpha">
+    /// Whether to answer with four channels. The alpha channel is dropped by default rather than
+    /// composited: this reads what a renderer drew, and a figure's own background is already part of
+    /// that drawing. It is kept only when the caller knows there was no background — a figure whose
+    /// page is transparent draws a cut-out, and dropping the coverage there loses the whole picture's
+    /// shape rather than one of its properties.
+    /// </param>
+    public static ImageBuffer FromRgba(
+        ReadOnlySpan<byte> rgba, int width, int height, bool keepAlpha = false)
     {
         ArgumentOutOfRangeException.ThrowIfNegativeOrZero(width);
         ArgumentOutOfRangeException.ThrowIfNegativeOrZero(height);
@@ -138,13 +151,18 @@ public sealed class ImageBuffer : IDisposable
                 $"{width}x{height} RGBA needs {expected} bytes, not {rgba.Length}.", nameof(rgba));
         }
 
-        var image = new ImageBuffer(height, width, 3);
+        int channels = keepAlpha ? 4 : 3;
+        var image = new ImageBuffer(height, width, channels);
         Span<double> pixels = image.Pixels;
-        for (int i = 0, source = 0, target = 0; i < width * height; i++, source += 4, target += 3)
+        for (int i = 0, source = 0, target = 0; i < width * height; i++, source += 4, target += channels)
         {
             pixels[target] = rgba[source] / 255.0;
             pixels[target + 1] = rgba[source + 1] / 255.0;
             pixels[target + 2] = rgba[source + 2] / 255.0;
+            if (keepAlpha)
+            {
+                pixels[target + 3] = rgba[source + 3] / 255.0;
+            }
         }
 
         image.Class = ImageClass.UInt8;

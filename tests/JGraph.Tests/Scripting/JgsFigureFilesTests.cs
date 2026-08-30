@@ -23,7 +23,7 @@ internal sealed class TestFigureFiles : IScriptFigureFiles
     {
         (int width, int height, byte[] rgba) =
             FigureExporter.RenderRgba(figure, new ExportOptions { Scale = scale });
-        return JGraph.Imaging.ImageBuffer.FromRgba(rgba, width, height);
+        return JGraph.Imaging.ImageBuffer.FromRgba(rgba, width, height, figure.Background.IsTransparent);
     }
 
     /// <summary>A test host has no clipboard, which is what a headless run reports too.</summary>

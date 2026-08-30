@@ -45,10 +45,24 @@ public class ImageBufferTests
     [InlineData(0, 4, 1)]
     [InlineData(4, 0, 1)]
     [InlineData(2, 2, 2)]
-    [InlineData(2, 2, 4)]
+    [InlineData(2, 2, 5)]
     public void Constructor_RejectsInvalidShape(int h, int w, int ch)
     {
         Assert.Throws<ArgumentOutOfRangeException>(() => new ImageBuffer(h, w, ch));
+    }
+
+    /// <summary>
+    /// Four channels are allowed as of M112, and for one caller: a figure drawn on no page hands its
+    /// capture back with the coverage still on it. It is not a picture the image verbs will filter —
+    /// they read <see cref="ImageBuffer.Channels"/> as one or three throughout — which is why this is
+    /// asserted next to the shapes that are still refused rather than folded in among them.
+    /// </summary>
+    [Fact]
+    public void Constructor_TakesFourChannelsForACapture()
+    {
+        using var image = new ImageBuffer(2, 3, 4);
+        Assert.Equal(4, image.Channels);
+        Assert.Equal(24, image.SampleCount);
     }
 
     [Fact]

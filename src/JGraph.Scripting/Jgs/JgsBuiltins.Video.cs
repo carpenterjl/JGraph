@@ -71,6 +71,13 @@ internal static partial class JgsBuiltins
     /// <summary>
     /// The profiles, in the order <c>VideoWriter.getProfiles</c> lists them. Two of MATLAB's seven are
     /// missing and say so by name when asked for: both are JPEG 2000, which no encoder here writes.
+    /// <para>
+    /// Two more are added after MATLAB's seven, and they are the only two that keep a frame's alpha.
+    /// None of MATLAB's profiles does — a transparent figure exported to any of them is composited
+    /// onto something before it is stored — so a script that has gone to the trouble of drawing a
+    /// cut-out has nowhere to put it. 'Animated PNG' is the one to reach for (it is lossless and
+    /// every browser plays it); 'Uncompressed AVI with Alpha' is the one an editor wants.
+    /// </para>
     /// </summary>
     private static readonly (string Name, string Extension, string Compression, string Format, int Channels, VideoCodec? Codec, string Description)[] VideoProfiles =
     [
@@ -88,6 +95,10 @@ internal static partial class JgsBuiltins
             "A MPEG-4 file with H.264 Compression"),
         ("Uncompressed AVI", ".avi", "Uncompressed", "RGB24", 3, VideoCodec.UncompressedAvi,
             "An AVI file with uncompressed RGB24 video data"),
+        ("Animated PNG", ".apng", "PNG", "RGBA", 4, VideoCodec.AnimatedPng,
+            "An animated PNG file with lossless RGBA video data"),
+        ("Uncompressed AVI with Alpha", ".avi", "Uncompressed", "RGBA", 4, VideoCodec.UncompressedAvi32,
+            "An AVI file with uncompressed RGBA video data"),
     ];
 
     /// <summary>Whether a value is a <c>VideoWriter</c>.</summary>
@@ -166,7 +177,7 @@ internal static partial class JgsBuiltins
             throw new JgsRuntimeException(line, col,
                 $"VideoWriter: the '{profile.Name}' profile is JPEG 2000, which this build has no "
                 + "encoder for. Use 'Motion JPEG AVI', 'Uncompressed AVI', 'Grayscale AVI', "
-                + "'Indexed AVI' or 'MPEG-4'.");
+                + "'Indexed AVI', 'MPEG-4', 'Animated PNG' or 'Uncompressed AVI with Alpha'.");
         }
 
         // MATLAB's rule for a name the profile does not agree with is to append rather than to
@@ -186,7 +197,7 @@ internal static partial class JgsBuiltins
             ["Width"] = JgsValue.Array([]),
             ["FrameCount"] = JgsValue.Number(0),
             ["FrameRate"] = JgsValue.Number(30),
-            ["VideoBitsPerPixel"] = JgsValue.Number(profile.Channels == 1 ? 8 : 24),
+            ["VideoBitsPerPixel"] = JgsValue.Number(profile.Channels * 8),
             ["VideoFormat"] = JgsValue.Str(profile.Format),
             ["VideoCompressionMethod"] = JgsValue.Str(profile.Compression),
         };
@@ -301,8 +312,9 @@ internal static partial class JgsBuiltins
         }
 
         (string profileName, VideoCodec codec) = ProfileOf(state, line, col);
-        bool indexed = VideoEncoder.IsIndexed(codec);
-        VideoFrame read = ReadFrame(profileName, picture, indexed, line, col);
+        VideoFrame read = ReadFrame(
+            profileName, picture, VideoEncoder.IsIndexed(codec), VideoEncoder.CarriesAlpha(codec),
+            line, col);
 
         IVideoEncoder encoder;
         if (state.Encoder < 0)
@@ -404,12 +416,21 @@ internal static partial class JgsBuiltins
     /// and is scaled by 255. Getting that backwards is the difference between a video and a white
     /// rectangle, which is why the class is read rather than guessed from the values.
     /// </summary>
-    private static VideoFrame ReadFrame(string profile, JgsValue picture, bool indexed, int line, int col)
+    private static VideoFrame ReadFrame(
+        string profile, JgsValue picture, bool indexed, bool alpha, int line, int col)
     {
         int[] dims = JgsMatrix.DimsOf(picture) ?? [];
         int height, width, channels;
         switch (dims)
         {
+            case [int h, int w, 4] when alpha:
+                (height, width, channels) = (h, w, 4);
+                break;
+            case [int h, int w, 4]:
+                throw new JgsRuntimeException(line, col,
+                    $"writeVideo: the '{profile}' profile carries no transparency, so a "
+                    + "height-by-width-by-4 frame has nowhere to put its fourth page. "
+                    + "Use 'Animated PNG' or 'Uncompressed AVI with Alpha', or drop the page.");
             case [int h, int w, 3]:
                 (height, width, channels) = (h, w, 3);
                 break;
@@ -456,7 +477,10 @@ internal static partial class JgsBuiltins
             }
         }
 
-        int outputChannels = indexed ? 1 : 3;
+        // An alpha profile always stores four bytes a pixel. A frame that arrived with three pages
+        // is opaque -- which is the only reading of a picture that did not say otherwise, and it is
+        // what lets one loop write an ordinary getframe and a transparent one to the same file.
+        int outputChannels = indexed ? 1 : alpha ? 4 : 3;
         var samples = new byte[(long)height * width * outputChannels];
         for (int r = 0; r < height; r++)
         {
@@ -469,11 +493,17 @@ internal static partial class JgsBuiltins
                     continue;
                 }
 
-                for (int ch = 0; ch < 3; ch++)
+                for (int ch = 0; ch < outputChannels; ch++)
                 {
+                    if (ch >= channels)
+                    {
+                        samples[to + ch] = byte.MaxValue;
+                        continue;
+                    }
+
                     // The frame is column-major with the channels last; the encoder wants rows of
                     // interleaved pixels, so this is a transpose as much as a conversion.
-                    int from = channels == 3 ? r + (c * height) + (ch * height * width) : r + (c * height);
+                    int from = channels == 1 ? r + (c * height) : r + (c * height) + (ch * height * width);
                     samples[to + ch] = Sample(picture, from, scale);
                 }
             }
@@ -544,18 +574,29 @@ internal static partial class JgsBuiltins
             "" or ".avi" => "Motion JPEG AVI",
             ".mp4" or ".m4v" => "MPEG-4",
             ".mj2" => "Archival",
+
+            // A bare .png or .apng can only have meant the animated one: a video writer asked for a
+            // still is a script that has said what it wants twice and been believed once.
+            ".apng" or ".png" => "Animated PNG",
             _ => throw new JgsRuntimeException(line, col,
-                $"VideoWriter: '{extension}' is not a video extension — use .avi, .mp4, .m4v or .mj2, "
-                + "or name a profile."),
+                $"VideoWriter: '{extension}' is not a video extension — use .avi, .mp4, .m4v, .mj2, "
+                + ".apng or .png, or name a profile."),
         };
 
-    /// <summary>Whether a profile writes files of this extension. MPEG-4 alone writes two.</summary>
-    private static bool AcceptsExtension(string profile, string extension) =>
-        profile == "MPEG-4"
-            ? extension.Equals(".mp4", StringComparison.OrdinalIgnoreCase)
-                || extension.Equals(".m4v", StringComparison.OrdinalIgnoreCase)
-            : extension.Equals(
-                VideoProfiles.First(p => p.Name == profile).Extension, StringComparison.OrdinalIgnoreCase);
+    /// <summary>
+    /// Whether a profile writes files of this extension. Two profiles write two apiece — MPEG-4's
+    /// pair are MATLAB's, and an animated PNG is a PNG whichever of its two names it is given, which
+    /// matters because '.png' is the one every viewer already knows how to open.
+    /// </summary>
+    private static bool AcceptsExtension(string profile, string extension) => profile switch
+    {
+        "MPEG-4" => extension.Equals(".mp4", StringComparison.OrdinalIgnoreCase)
+            || extension.Equals(".m4v", StringComparison.OrdinalIgnoreCase),
+        "Animated PNG" => extension.Equals(".apng", StringComparison.OrdinalIgnoreCase)
+            || extension.Equals(".png", StringComparison.OrdinalIgnoreCase),
+        _ => extension.Equals(
+            VideoProfiles.First(p => p.Name == profile).Extension, StringComparison.OrdinalIgnoreCase),
+    };
 
     /// <summary>The struct array <c>VideoWriter.getProfiles</c> answers with.</summary>
     private static JgsValue ProfileTable()
@@ -568,9 +609,12 @@ internal static partial class JgsBuiltins
             {
                 ["Name"] = JgsValue.Str(profile.Name),
                 ["Description"] = JgsValue.Str(profile.Description),
-                ["FileExtensions"] = profile.Name == "MPEG-4"
-                    ? JgsValue.Cell([JgsValue.Str(".mp4"), JgsValue.Str(".m4v")])
-                    : JgsValue.Cell([JgsValue.Str(profile.Extension)]),
+                ["FileExtensions"] = profile.Name switch
+                {
+                    "MPEG-4" => JgsValue.Cell([JgsValue.Str(".mp4"), JgsValue.Str(".m4v")]),
+                    "Animated PNG" => JgsValue.Cell([JgsValue.Str(".apng"), JgsValue.Str(".png")]),
+                    _ => JgsValue.Cell([JgsValue.Str(profile.Extension)]),
+                },
                 ["VideoCompressionMethod"] = JgsValue.Str(profile.Compression),
                 ["VideoFormat"] = JgsValue.Str(profile.Format),
             };

@@ -31,7 +31,10 @@ public sealed class AppScriptFigureFiles : IScriptFigureFiles
     {
         (int width, int height, byte[] rgba) =
             FigureExporter.RenderRgba(figure, new ExportOptions { Scale = scale });
-        return ImageBuffer.FromRgba(rgba, width, height);
+
+        // A figure with no page drew a cut-out, and its coverage is the only thing that says where
+        // the cut is -- so that capture keeps four channels where an ordinary one keeps three.
+        return ImageBuffer.FromRgba(rgba, width, height, figure.Background.IsTransparent);
     }
 
     /// <inheritdoc />

@@ -1500,10 +1500,20 @@ internal static partial class JgsGraphicsProperties
         if (typeof(FigureModel).IsAssignableFrom(type))
         {
             Put(table, "Number", entry => JgsValue.Number(JG.GetFigureNumber((FigureModel)entry.Target)));
+            // A figure's Color takes the word 'none', which is MATLAB's spelling of "there is no
+            // page here" -- the figure is drawn without a background and an export writes what is
+            // behind it as nothing at all. It reads back as the word, not as a triplet, because no
+            // triplet means it.
             Put(table, "Color",
-                entry => ColorRow(((FigureModel)entry.Target).Background),
+                entry => ((FigureModel)entry.Target).Background.IsTransparent
+                    ? JgsValue.Str("none")
+                    : ColorRow(((FigureModel)entry.Target).Background),
                 (entry, value, line, col) =>
-                    ((FigureModel)entry.Target).Background = JgsBuiltins.OptionColor(value, line, col, "figure"));
+                    ((FigureModel)entry.Target).Background =
+                        value.Type == JgsType.String
+                        && value.AsString.Equals("none", StringComparison.OrdinalIgnoreCase)
+                            ? JGraph.Core.Drawing.Colors.Transparent
+                            : JgsBuiltins.OptionColor(value, line, col, "figure"));
             Put(table, "CurrentAxes", entry => ((FigureModel)entry.Target).Axes.Count > 0
                 ? JgsHandleRegistry.For(JG.CurrentAxesOrNull ?? ((FigureModel)entry.Target).Axes[0])
                 : JgsValue.Array([]));

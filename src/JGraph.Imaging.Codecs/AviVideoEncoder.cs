@@ -38,6 +38,7 @@ internal sealed class AviVideoEncoder : IVideoEncoder
     private readonly double _frameRate;
     private readonly int _quality;
     private readonly bool _indexed;
+    private readonly int _bytesPerPixel;
     private readonly int _stride;
     private readonly string _frameChunkId;
     private readonly List<(uint Offset, uint Length)> _index = new();
@@ -71,9 +72,10 @@ internal sealed class AviVideoEncoder : IVideoEncoder
         _quality = quality;
         _indexed = VideoEncoder.IsIndexed(codec);
 
-        // A DIB row is padded to a four-byte boundary; a JPEG frame has no rows to pad.
-        int bytesPerPixel = _indexed ? 1 : 3;
-        _stride = (((width * bytesPerPixel) + 3) / 4) * 4;
+        // A DIB row is padded to a four-byte boundary; a JPEG frame has no rows to pad. A 32-bit
+        // row is already on one, which is the quiet reason the alpha form costs nothing to store.
+        _bytesPerPixel = _indexed ? 1 : codec == VideoCodec.UncompressedAvi32 ? 4 : 3;
+        _stride = (((width * _bytesPerPixel) + 3) / 4) * 4;
 
         // 'dc' is a compressed frame and 'db' an uncompressed one. Players accept either for both,
         // but naming them honestly is what lets a stream dump say what it is looking at.
@@ -84,7 +86,12 @@ internal sealed class AviVideoEncoder : IVideoEncoder
     }
 
     /// <inheritdoc />
-    public VideoSampleLayout Layout => _indexed ? VideoSampleLayout.Indexed8 : VideoSampleLayout.Rgb24;
+    public VideoSampleLayout Layout => _bytesPerPixel switch
+    {
+        1 => VideoSampleLayout.Indexed8,
+        4 => VideoSampleLayout.Rgba32,
+        _ => VideoSampleLayout.Rgb24,
+    };
 
     /// <inheritdoc />
     public int FrameCount => _index.Count;
@@ -93,7 +100,7 @@ internal sealed class AviVideoEncoder : IVideoEncoder
     public void WriteFrame(ReadOnlySpan<byte> samples)
     {
         ObjectDisposedException.ThrowIf(_closed, this);
-        int wanted = _width * _height * (_indexed ? 1 : 3);
+        int wanted = _width * _height * _bytesPerPixel;
         if (samples.Length != wanted)
         {
             throw new ArgumentException(
@@ -238,7 +245,7 @@ internal sealed class AviVideoEncoder : IVideoEncoder
         WriteUInt32((uint)_width);
         WriteUInt32((uint)_height);
         WriteUInt16(1); // planes
-        WriteUInt16((ushort)(_indexed ? 8 : 24));
+        WriteUInt16((ushort)(_bytesPerPixel * 8));
         if (_codec == VideoCodec.MotionJpegAvi)
         {
             WriteFourCc("MJPG");
@@ -322,24 +329,29 @@ internal sealed class AviVideoEncoder : IVideoEncoder
     private uint WriteDibFrame(ReadOnlySpan<byte> samples)
     {
         byte[] row = _row ??= new byte[_stride];
-        int bytesPerPixel = _indexed ? 1 : 3;
         for (int y = _height - 1; y >= 0; y--)
         {
             Array.Clear(row);
-            ReadOnlySpan<byte> source = samples.Slice(y * _width * bytesPerPixel, _width * bytesPerPixel);
+            ReadOnlySpan<byte> source =
+                samples.Slice(y * _width * _bytesPerPixel, _width * _bytesPerPixel);
             if (_indexed)
             {
                 source.CopyTo(row);
             }
             else
             {
-                // A DIB pixel is blue, green, red — the reverse of the caller's.
+                // A DIB pixel is blue, green, red — the reverse of the caller's — and a 32-bit one
+                // then carries the coverage byte through untouched where the padding used to sit.
                 for (int x = 0; x < _width; x++)
                 {
-                    int at = x * 3;
+                    int at = x * _bytesPerPixel;
                     row[at] = source[at + 2];
                     row[at + 1] = source[at + 1];
                     row[at + 2] = source[at];
+                    if (_bytesPerPixel == 4)
+                    {
+                        row[at + 3] = source[at + 3];
+                    }
                 }
             }
 

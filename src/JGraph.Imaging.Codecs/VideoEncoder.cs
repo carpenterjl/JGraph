@@ -12,6 +12,12 @@ public enum VideoCodec
     /// <summary>An AVI of raw bottom-up RGB24 rows. MATLAB's "Uncompressed AVI".</summary>
     UncompressedAvi,
 
+    /// <summary>
+    /// An AVI of raw bottom-up BGRA rows — the same container with a fourth byte per pixel that is
+    /// the coverage rather than padding. Not one of MATLAB's profiles; see <see cref="AnimatedPng"/>.
+    /// </summary>
+    UncompressedAvi32,
+
     /// <summary>An AVI of 8-bit samples under a grey ramp. MATLAB's "Grayscale AVI".</summary>
     GrayscaleAvi,
 
@@ -20,6 +26,13 @@ public enum VideoCodec
 
     /// <summary>An MP4 carrying H.264. MATLAB's "MPEG-4".</summary>
     Mpeg4,
+
+    /// <summary>
+    /// An animated PNG: every frame whole, losslessly compressed, and carrying eight bits of alpha.
+    /// Not one of MATLAB's profiles, and the reason it is here is that none of MATLAB's seven keeps
+    /// a transparent page transparent — an exported cut-out has nowhere to go otherwise.
+    /// </summary>
+    AnimatedPng,
 }
 
 /// <summary>How a frame's samples are laid out in the span handed to <see cref="IVideoEncoder.WriteFrame"/>.</summary>
@@ -30,6 +43,12 @@ public enum VideoSampleLayout
 
     /// <summary>One byte per pixel — a grey level or a palette index — rows top-down and unpadded.</summary>
     Indexed8,
+
+    /// <summary>
+    /// Four bytes per pixel, red first and coverage last, rows top-down and unpadded. The colours
+    /// are not premultiplied: they are what was drawn, beside how much of it was drawn.
+    /// </summary>
+    Rgba32,
 }
 
 /// <summary>
@@ -66,6 +85,10 @@ public static class VideoEncoder
     public static bool IsIndexed(VideoCodec codec) =>
         codec is VideoCodec.GrayscaleAvi or VideoCodec.IndexedAvi;
 
+    /// <summary>Whether <paramref name="codec"/> keeps a frame's alpha channel rather than dropping it.</summary>
+    public static bool CarriesAlpha(VideoCodec codec) =>
+        codec is VideoCodec.UncompressedAvi32 or VideoCodec.AnimatedPng;
+
     /// <summary>
     /// Creates an encoder writing <paramref name="path"/>.
     /// </summary>
@@ -95,6 +118,11 @@ public static class VideoEncoder
         if (!(frameRate > 0) || double.IsInfinity(frameRate))
         {
             throw new ArgumentOutOfRangeException(nameof(frameRate), frameRate, "the frame rate must be positive.");
+        }
+
+        if (codec == VideoCodec.AnimatedPng)
+        {
+            return new AnimatedPngEncoder(path, width, height, frameRate);
         }
 
         if (codec != VideoCodec.Mpeg4)

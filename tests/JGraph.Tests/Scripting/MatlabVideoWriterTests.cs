@@ -231,17 +231,23 @@ public class MatlabVideoWriterTests : IDisposable
         Assert.Equal(new[] { "1", "1" }, _output.NormalLines);
     }
 
+    /// <summary>
+    /// MATLAB's seven come first and in MATLAB's order. M112 added two after them that carry an alpha
+    /// channel — see <see cref="MatlabTransparentVideoTests"/> — so the count is nine here; what this
+    /// pins is that nothing was inserted among MATLAB's own, which a script indexing the table sees.
+    /// </summary>
     [Fact]
-    public async Task GetProfilesNamesAllSevenOfMatlabs()
+    public async Task GetProfilesNamesAllSevenOfMatlabsFirst()
     {
         await RunAsserting("""
             p = VideoWriter.getProfiles();
             disp(numel(p));
             disp(p(6).Name);
             disp(p(6).FileExtensions{1});
+            disp(p(7).Name);
             """);
 
-        Assert.Equal(new[] { "7", "MPEG-4", ".mp4" }, _output.NormalLines);
+        Assert.Equal(new[] { "9", "MPEG-4", ".mp4", "Uncompressed AVI" }, _output.NormalLines);
     }
 
     [Fact]
