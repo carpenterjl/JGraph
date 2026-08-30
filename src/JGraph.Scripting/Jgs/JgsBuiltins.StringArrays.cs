@@ -38,6 +38,12 @@ internal static partial class JgsBuiltins
 
         // The one text operation that has to tell a missing string from the text of one.
         "ismissing",
+
+        // repmat answers in whichever container it was handed, so the two representations part
+        // company at the answer as well as at the question: repmat('a', 1, 3) is the 1-by-3 char
+        // 'aaa', where repmat("a", 1, 3) is three separate strings. Demoted, a string scalar took
+        // the char road and came back as one longer piece of text.
+        "repmat",
     };
 
     /// <summary>

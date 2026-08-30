@@ -1110,7 +1110,35 @@ internal sealed class JgsValue
         ? $"image[{image.Height}x{image.Width}]"
         : $"image[{image.Height}x{image.Width}x{image.Channels}]";
 
-    private static string FormatNumber(double value) => JgsNumberFormat.Format(value);
+    /// <summary>
+    /// One number as display text. The three values that have a name rather than digits are spelled
+    /// the way MATLAB spells them — <c>Inf</c>, <c>-Inf</c>, <c>NaN</c> — and everything else is laid
+    /// out by whichever precision <c>format</c> has selected.
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    /// .NET calls the first two "Infinity" and "-Infinity", and every one of the precision modes would
+    /// have handed that spelling straight through, because a custom numeric format string answers the
+    /// culture's symbol for a non-finite double rather than laying out digits. So <c>x = Inf</c>
+    /// echoed <c>x = Infinity</c> while <c>sprintf</c> and <c>num2str</c> in the same session wrote
+    /// <c>Inf</c> — one program with two spellings for one value. This is the single funnel every
+    /// display reaches, so naming them here covers the echo, <c>disp</c>, an array, a cell, a struct
+    /// field, a sparse entry and both halves of a complex number at once.
+    /// </para>
+    /// <para>
+    /// It belongs here and not one level down in <see cref="JgsNumberFormat.Format"/>, even though
+    /// that is where the precision modes live, because <c>writematrix</c> and <c>writecell</c> share
+    /// that helper to write a CSV — and this program's own <c>readmatrix</c> parses ".NET"'s
+    /// "Infinity" and not "Inf", so naming them there would write a file JGraph could no longer read
+    /// back. That the file also disagrees with MATLAB, which writes and reads <c>Inf</c>, is a
+    /// separate defect on the reader and is not this one's to fix.
+    /// </para>
+    /// </remarks>
+    private static string FormatNumber(double value) =>
+        double.IsNaN(value) ? "NaN"
+        : double.IsPositiveInfinity(value) ? "Inf"
+        : double.IsNegativeInfinity(value) ? "-Inf"
+        : JgsNumberFormat.Format(value);
 
     /// <summary>Formats like MATLAB: <c>1.2i</c> when purely imaginary, else <c>0.5+1.2i</c> / <c>0.5-1.2i</c>.</summary>
     private static string FormatComplex(Complex value)

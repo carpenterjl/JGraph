@@ -151,6 +151,23 @@ internal static partial class JgsBuiltins
             }
 
             JgsValue source = args[0];
+
+            // A char row is one value here and 1-by-n characters in MATLAB, so tiling it as an element
+            // built a grid of separate one-character pieces: repmat('ab', 1, 3) answered a 1-by-3
+            // double where MATLAB answers the 1-by-6 char 'ababab'. repmat has always multiplied the
+            // source's size, and the size of a char row is the size of its text.
+            if (source.Type == JgsType.String)
+            {
+                return TiledCharRow(source.AsString, down, across);
+            }
+
+            // A string array does tile as elements — repmat("a", 1, 3) is three strings, not a longer
+            // one — but the tag saying so lives on the wrapper, and the tiling mints a fresh one.
+            if (source.IsStringArray)
+            {
+                return TiledStringArray(source, down, across);
+            }
+
             if (source.Type != JgsType.Array)
             {
                 return JgsMatrix.BuildValues(down, across, (_, _) => source);
@@ -512,6 +529,72 @@ internal static partial class JgsBuiltins
         }
 
         RegisterMultiOutputForms(env, dialect);
+    }
+
+    /// <summary>
+    /// <c>repmat</c> of a char row: <paramref name="down"/> by <paramref name="across"/> copies of the
+    /// text, answered as the one longer piece of text MATLAB answers rather than as a grid of pieces.
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    /// The size arithmetic is repmat's own — the answer is (1 × down)-by-(n × across) — and the two
+    /// empty corners fall straight out of it. An empty char row is 0-by-0 here exactly as it is in
+    /// MATLAB, so repeating one is still nothing however large the counts; and a zero count leaves a
+    /// dimension empty while the other keeps the size it was multiplied to, which is why
+    /// <c>repmat('abc', 0, 2)</c> is 0-by-6 and not 0-by-0.
+    /// </para>
+    /// <para>
+    /// A single row comes back as <see cref="JgsType.String"/> — the representation a char row has
+    /// always had here — and anything taller as a real char matrix, which is the same collapse
+    /// <see cref="WrapCharMatrix"/> performs for a value read out of one.
+    /// </para>
+    /// </remarks>
+    private static JgsValue TiledCharRow(string text, int down, int across)
+    {
+        int height = (text.Length == 0 ? 0 : 1) * down;
+        int width = text.Length * across;
+        if (height == 1)
+        {
+            return JgsValue.Str(string.Concat(Enumerable.Repeat(text, across)));
+        }
+
+        if (height == 0 && width == 0)
+        {
+            return JgsValue.Str(string.Empty); // the 0-by-0 char row '' already is
+        }
+
+        var codes = new JgsValue[height * width];
+        for (int c = 0; c < width; c++)
+        {
+            for (int r = 0; r < height; r++)
+            {
+                codes[(c * height) + r] = JgsValue.Number(text[c % text.Length]);
+            }
+        }
+
+        return JgsValue.Shaped(codes, height, width).MarkCharMatrix();
+    }
+
+    /// <summary>
+    /// <c>repmat</c> of a string array: the elements tile the way any other array's do, and the answer
+    /// is marked a string array again because the tag lives on the wrapper the tiling replaced.
+    /// </summary>
+    private static JgsValue TiledStringArray(JgsValue source, int down, int across)
+    {
+        int rows = JgsMatrix.RowCount(source);
+        int cols = JgsMatrix.ColCount(source);
+        int height = rows * down;
+        int width = cols * across;
+        var elements = new JgsValue[height * width];
+        for (int c = 0; c < width; c++)
+        {
+            for (int r = 0; r < height; r++)
+            {
+                elements[(c * height) + r] = JgsMatrix.At(source, r % rows, c % cols);
+            }
+        }
+
+        return JgsValue.StringArray(elements, height, width);
     }
 
     /// <summary>

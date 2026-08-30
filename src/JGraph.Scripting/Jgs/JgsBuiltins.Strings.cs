@@ -702,6 +702,8 @@ internal static partial class JgsBuiltins
             ? [[subject.AsNumber]]
             : JgsMatrix.ToRows("num2str", subject, line, col);
 
+        DropNegativeZero(rows);
+
         string[] text = args.Count == 2 && args[1].Type == JgsType.String
             ? FormattedRows(args[1].AsString, rows, line, col)
             : AlignedRows(rows, args.Count == 2 ? Count("num2str", args, 1, line, col) : null);
@@ -713,6 +715,33 @@ internal static partial class JgsBuiltins
         return text.Length == 1
             ? JgsValue.Str(text[0])
             : JgsValue.CharMatrix(text);
+    }
+
+    /// <summary>
+    /// Turns every negative zero into a positive one, in place, before <c>num2str</c> writes a word
+    /// for it. MATLAB keeps the sign in the value and never shows it here: <c>num2str(-0)</c> is
+    /// <c>'0'</c>, and so are <c>num2str(-0, '%g')</c> and <c>num2str(-0, 8)</c>, even though
+    /// <c>sprintf('%g', -0)</c> in the same session is <c>'-0'</c>. So it is the one builtin that
+    /// normalises rather than the formatter underneath it, and it does so for every form at once.
+    /// </summary>
+    /// <remarks>
+    /// Done on the value and not on the finished text, because the width of a column is measured from
+    /// the strings: leaving the sign in and stripping it afterwards would have made
+    /// <c>num2str([-0 1])</c> a character wider than <c>num2str([0 1])</c>, where MATLAB writes the
+    /// two identically.
+    /// </remarks>
+    private static void DropNegativeZero(double[][] rows)
+    {
+        foreach (double[] row in rows)
+        {
+            for (int c = 0; c < row.Length; c++)
+            {
+                if (row[c] == 0 && double.IsNegative(row[c]))
+                {
+                    row[c] = 0.0;
+                }
+            }
+        }
     }
 
     /// <summary><c>num2str(A, '%8.3f')</c>: the format is applied a row at a time, cycling over it.</summary>
