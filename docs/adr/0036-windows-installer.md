@@ -55,7 +55,8 @@ permanent identity; it is how a re-run finds the existing installation to replac
 orphans every existing install as a second "JGraph" in Apps & Features.
 
 **`AllowSameVersionUpgrades="yes"`, and ICE61 is suppressed.** The product version does not move
-every milestone, so a re-built 0.1.0 MSI must still replace an installed 0.1.0. ICE61 is MSI
+every milestone — it went 0.1.0 to 0.2.0 at M113 after sixty-one milestones of standing still — so a
+re-built MSI of a given version must still replace an installed one of the same version. ICE61 is MSI
 validation complaining about exactly that policy; it is the documented cost of the policy, not a
 defect. ICE57 is also suppressed: an all-users Start Menu shortcut in a per-machine package trips
 it regardless of authoring — it is a known false positive.

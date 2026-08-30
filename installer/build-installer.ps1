@@ -49,7 +49,11 @@ $anchors = @(
     "JGraph.Application.exe",
     "python\jgraph_console.py",
     "docs\jgs-scripting-guide.html",
-    "examples\example.jgs"
+    "examples\example.jgs",
+    # The splash animation. It is carried by a Content item with a TargetPath rather than by the
+    # publish's own folder rules, so it is exactly the kind of file a layout change drops silently -
+    # and the product would still start, just wearing the fallback panel instead of its own face.
+    "splash.apng"
 )
 foreach ($anchor in $anchors) {
     if (-not (Test-Path (Join-Path $staging $anchor))) {

@@ -67,4 +67,45 @@ public class SplashArtworkTests
     [Fact]
     public void Find_ReturnsNullWhenGivenNoDirectoriesAtAll() =>
         Assert.Null(SplashArtwork.Find(null, null, _ => true));
+
+    [Fact]
+    public void FindAnimation_ReturnsNullWhenThereIsOnlyAStill()
+    {
+        // The two are separate questions, because the answers mean different things to the splash:
+        // an animation is a background and the wordmark stays over it, a still replaces it.
+        string png = Path.Combine(ExeDir, "splash.png");
+        Assert.Null(SplashArtwork.FindAnimation(AppData, ExeDir, Present(png)));
+    }
+
+    [Fact]
+    public void FindAnimation_ReturnsNullWhenThereIsNoArtwork() =>
+        Assert.Null(SplashArtwork.FindAnimation(AppData, ExeDir, _ => false));
+
+    [Fact]
+    public void FindAnimation_PrefersTheUsersOwnFolderOverTheDeployments()
+    {
+        string mine = Path.Combine(AppData, "splash.apng");
+        string theirs = Path.Combine(ExeDir, "splash.apng");
+
+        Assert.Equal(mine, SplashArtwork.FindAnimation(AppData, ExeDir, Present(mine, theirs)));
+    }
+
+    [Fact]
+    public void FindAnimation_TriesEveryDocumentedExtension()
+    {
+        foreach (string extension in SplashArtwork.AnimationExtensions)
+        {
+            string candidate = Path.Combine(AppData, SplashArtwork.BaseName + extension);
+            Assert.Equal(candidate, SplashArtwork.FindAnimation(AppData, ExeDir, Present(candidate)));
+        }
+    }
+
+    [Fact]
+    public void Find_IgnoresAnAnimation()
+    {
+        // A still is what the still probe answers with; an .apng handed to a BitmapImage would
+        // decode as the first frame and stand there, which is the one outcome nobody asked for.
+        string apng = Path.Combine(ExeDir, "splash.apng");
+        Assert.Null(SplashArtwork.Find(AppData, ExeDir, Present(apng)));
+    }
 }

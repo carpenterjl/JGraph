@@ -12,6 +12,11 @@ namespace JGraph.Application.Startup;
 /// runtime — are both lazy DI singletons that would otherwise be resolved at an arbitrary later
 /// moment, freezing the UI then instead of now.
 /// </summary>
+/// <remarks>
+/// The splash closes the moment the shell is ready and not a frame later: its animation loops to
+/// fill however long this takes, and nothing here waits for a pass to finish. See
+/// <see cref="SplashWindow"/>.
+/// </remarks>
 public static class InteractiveStartup
 {
     /// <summary>

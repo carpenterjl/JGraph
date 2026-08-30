@@ -17,6 +17,15 @@
   </ItemGroup>
 
   <ItemGroup>
+    <!-- The startup splash's artwork, copied next to the executable rather than embedded: that is
+         where SplashArtwork looks, and it is the same place a deployment drops its own to brand a
+         build. Assets\make-splash.m is the script that draws it. -->
+    <Content Include="Assets\splash.apng" CopyToOutputDirectory="PreserveNewest">
+      <TargetPath>splash.apng</TargetPath>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
     <!-- Seeds the first-run workspace (see ExampleWorkspaceSeeder): with nothing to open, JGraph
          copies these into the user's documents and roots the workspace there. -->
     <Content Include="..\..\examples\**\*" LinkBase="examples" CopyToOutputDirectory="PreserveNewest" />
@@ -24,6 +33,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\JGraph.Core\JGraph.Core.csproj" />
+    <ProjectReference Include="..\JGraph.Imaging.Codecs\JGraph.Imaging.Codecs.csproj" />
     <ProjectReference Include="..\JGraph.Data\JGraph.Data.csproj" />
     <ProjectReference Include="..\JGraph.Math\JGraph.Math.csproj" />
     <ProjectReference Include="..\JGraph.Objects\JGraph.Objects.csproj" />

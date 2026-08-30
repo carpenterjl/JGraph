@@ -21,7 +21,7 @@ namespace JGraph.Imaging.Codecs;
 /// <para>
 /// A decoder that has never heard of APNG sees a plain PNG holding the first frame and ignores the
 /// rest. That is why the format was designed this way, and why the first frame's data is written as
-/// <c>IDAT</c> while every later one is <c>fdAT</c>.
+/// <c>IDAT</c> while every later one is <c>fdAT</c>. <see cref="AnimatedPngReader"/> reads one back.
 /// </para>
 /// <para>
 /// Like the AVI muxer this writes forwards and patches backwards: the frame count in <c>acTL</c>
@@ -31,10 +31,6 @@ namespace JGraph.Imaging.Codecs;
 /// </remarks>
 internal sealed class AnimatedPngEncoder : IVideoEncoder
 {
-    private static readonly byte[] Signature = [137, 80, 78, 71, 13, 10, 26, 10];
-
-    private static readonly uint[] CrcTable = BuildCrcTable();
-
     private readonly FileStream _file;
     private readonly int _width;
     private readonly int _height;
@@ -84,7 +80,7 @@ internal sealed class AnimatedPngEncoder : IVideoEncoder
 
         if (_frames == 0)
         {
-            _file.Write(Signature);
+            _file.Write(PngChunks.Signature);
             WriteChunk("IHDR", header);
 
             // acTL has to precede the first IDAT, and its frame count is the number this loop has
@@ -196,7 +192,7 @@ internal sealed class AnimatedPngEncoder : IVideoEncoder
         byte[]? header = null;
         using var data = new MemoryStream();
 
-        int at = Signature.Length;
+        int at = PngChunks.Signature.Length;
         while (at + 8 <= png.Length)
         {
             int length = (int)BinaryPrimitives.ReadUInt32BigEndian(png.AsSpan(at));
@@ -222,23 +218,8 @@ internal sealed class AnimatedPngEncoder : IVideoEncoder
             data.ToArray());
     }
 
-    private void WriteChunk(string name, ReadOnlySpan<byte> payload)
-    {
-        Span<byte> length = stackalloc byte[4];
-        BinaryPrimitives.WriteUInt32BigEndian(length, (uint)payload.Length);
-        _file.Write(length);
-
-        Span<byte> tag = stackalloc byte[4];
-        Encoding.ASCII.GetBytes(name, tag);
-        _file.Write(tag);
-        _file.Write(payload);
-
-        // A PNG chunk's check covers its name and its payload, and not its length.
-        uint crc = Crc(Crc(0xFFFF_FFFFu, tag), payload) ^ 0xFFFF_FFFFu;
-        Span<byte> check = stackalloc byte[4];
-        BinaryPrimitives.WriteUInt32BigEndian(check, crc);
-        _file.Write(check);
-    }
+    private void WriteChunk(string name, ReadOnlySpan<byte> payload) =>
+        PngChunks.Write(_file, name, payload);
 
     /// <summary>Recomputes <c>acTL</c>'s check once the frame count inside it is the real one.</summary>
     private void PatchAnimationControlCrc()
@@ -251,37 +232,9 @@ internal sealed class AnimatedPngEncoder : IVideoEncoder
         BinaryPrimitives.WriteUInt32BigEndian(chunk.AsSpan(8), 0);
 
         _file.Position = _frameCountAt + 8;
-        uint crc = Crc(0xFFFF_FFFFu, chunk) ^ 0xFFFF_FFFFu;
         Span<byte> check = stackalloc byte[4];
-        BinaryPrimitives.WriteUInt32BigEndian(check, crc);
+        BinaryPrimitives.WriteUInt32BigEndian(check, PngChunks.Check(chunk.AsSpan(0, 4), chunk.AsSpan(4)));
         _file.Write(check);
         _file.Position = _file.Length;
-    }
-
-    private static uint Crc(uint running, ReadOnlySpan<byte> bytes)
-    {
-        foreach (byte b in bytes)
-        {
-            running = CrcTable[(running ^ b) & 0xFF] ^ (running >> 8);
-        }
-
-        return running;
-    }
-
-    private static uint[] BuildCrcTable()
-    {
-        var table = new uint[256];
-        for (uint n = 0; n < 256; n++)
-        {
-            uint c = n;
-            for (int k = 0; k < 8; k++)
-            {
-                c = (c & 1) != 0 ? 0xEDB8_8320u ^ (c >> 1) : c >> 1;
-            }
-
-            table[n] = c;
-        }
-
-        return table;
     }
 }
