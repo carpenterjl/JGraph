@@ -425,6 +425,14 @@ internal static partial class JgsBuiltins
             return true;
         }
 
+        // VideoWriter.getProfiles() (M108) reads off the constructor the same way, and for the same
+        // reason: the dot never was a struct access.
+        if (owner == VideoWriterClassName && member == "getProfiles")
+        {
+            value = VideoProfilesBuiltin();
+            return true;
+        }
+
         value = JgsValue.Null;
         return false;
     }

@@ -103,8 +103,17 @@ see. This file refused to count them while they drew nothing; **M56 made them re
 number and this one agree again. `opengl` *is* counted, because an accepted no-op is an answer — the
 same reading that counted `shading`, `lighting` and `camlight` in M43.
 
-Across every callable kind — builtin, function, operator, keyword, script — the count is **1,029 of
-2,024** as of M107, which took the matrix-function leftovers and so finished MATLAB's `matfun`
+Across every callable kind — builtin, function, operator, keyword, script — the count is **1,030 of
+2,024** as of M108, which came from a bug report rather than a plan row: a morphing-surface script
+drew one static picture and wrote no video, and setting a breakpoint to find out why changed what
+the script meant. `VideoWriter` is the name the count moved for — the divergence ADR 0072 recorded
+is retired, and five of MATLAB's seven profiles are written (the two JPEG 2000 ones are refused by
+name). `open` and `writeVideo` come with it and are not separately counted here, and neither are
+the two smaller gaps the same script fell into: `axis`'s three-dimensional and colour-limit forms,
+and a surface's `ZData`, which could be read but not written and so made `set(h, 'ZData', Z)` — the
+animation idiom — impossible.
+
+1,029 after M107, which took the matrix-function leftovers and so finished MATLAB's `matfun`
 folder: `rref` `planerot` `qrinsert` `qrdelete` `cdf2rdf` `rsf2csf` `condeig` `normest` `condest`
 `sylvester` `lsqminnorm` `lscov` `polyeig` `funm` `gsvd`. Those fifteen take `matfun` from 10 of 25
 names to 25 of 25, and every one of their 42 documented forms is accepted. Two riders came with

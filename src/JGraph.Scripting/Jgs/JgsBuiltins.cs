@@ -1674,14 +1674,29 @@ internal static partial class JgsBuiltins
 
             if (args.Count == 1)
             {
+                // MATLAB's three vector lengths, each a prefix of the next: the box in the plane,
+                // the box in space, and the box plus the range the colormap is stretched over. A
+                // script that draws a surface reaches for the six-element form to pin the height
+                // axis, which is the whole reason it exists.
                 double[] limits = ToDoubles("axis", args[0], line, col);
-                if (limits.Length != 4)
+                if (limits.Length is not (4 or 6 or 8))
                 {
-                    throw new JgsRuntimeException(line, col, "axis expects [xmin xmax ymin ymax].");
+                    throw new JgsRuntimeException(line, col,
+                        "axis expects [xmin xmax ymin ymax], [xmin xmax ymin ymax zmin zmax], "
+                        + "or [xmin xmax ymin ymax zmin zmax cmin cmax].");
                 }
 
                 JG.XLim(limits[0], limits[1]);
                 JG.YLim(limits[2], limits[3]);
+                if (limits.Length >= 6)
+                {
+                    JG.ZLim(limits[4], limits[5]);
+                }
+
+                if (limits.Length == 8)
+                {
+                    JG.CLim(limits[6], limits[7]);
+                }
             }
 
             return JgsValue.Null;
@@ -1887,6 +1902,13 @@ internal static partial class JgsBuiltins
 
         Define("close", (args, line, col) =>
         {
+            // close(v) on a VideoWriter finishes its file. It is told from close(figureNumber) by the
+            // argument's class rather than by counting, so neither verb has to know about the other.
+            if (TryCloseVideoWriter(host, args, line, col))
+            {
+                return JgsValue.Null;
+            }
+
             JgsValue answer = CloseFigures(host, args, line, col);
 
             // Closing retires a figure, so every handle into it now names nothing. Letting go of them
@@ -2433,6 +2455,7 @@ internal static partial class JgsBuiltins
         RegisterTimeBuiltins(env);
         RegisterTimePartBuiltins(env);
         RegisterKeyedCollectionBuiltins(env);
+        RegisterVideoBuiltins(env, host);
         TimeAwareReductions(env);
 
         // The two that are NOT new are put back as they were for JGS. `seconds` answered with its own

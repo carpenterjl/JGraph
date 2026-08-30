@@ -1981,6 +1981,11 @@ public static class JgsBuiltinCatalog
         Add("frame2im", "The picture inside a frame: im = frame2im(f).", P("frame"));
         Add("im2frame", "Turns a picture into a frame movie can play: f = im2frame(im) or im2frame(indices, map).", P("image"), Opt("map"));
 
+        // M108: where a frame goes once getframe has made one.
+        Add("VideoWriter", "Creates a video file writer: v = VideoWriter('clip.mp4', 'MPEG-4'). The profile decides the container — 'Motion JPEG AVI' (the default for .avi), 'Uncompressed AVI', 'Grayscale AVI', 'Indexed AVI' or 'MPEG-4'. VideoWriter.getProfiles lists them.", P("filename"), Opt("profile"));
+        Add("open", "Opens a VideoWriter for writing: open(v). Nothing is written until the first frame, which is what fixes the frame size.", P("v"));
+        Add("writeVideo", "Appends one frame to an open VideoWriter: writeVideo(v, frame). The frame is a getframe struct, an array of them, or an image — uint8 0 to 255, or double 0 to 1.", P("v"), P("frame"));
+
         // M67: the objects a living figure is built from.
         Add("animatedline", "Creates a line points are added to as a script runs: h = animatedline or animatedline(x, y[, z], 'MaximumNumPoints', n).", Opt("x"), Opt("y"), Opt("z"), Opt("name"), Opt("value"));
         Add("addpoints", "Adds points to an animated line: addpoints(h, x, y) or addpoints(h, x, y, z).", P("h"), P("x"), P("y"), Opt("z"));

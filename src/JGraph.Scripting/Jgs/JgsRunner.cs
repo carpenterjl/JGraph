@@ -31,13 +31,31 @@ internal static class JgsRunner
     {
         dialect ??= JgsDialect.Jgs;
 
-        // JGS scripts drive the same static JG facade; start each run from a clean state. The
-        // previous completed run's packed buffers are released deterministically here (its figures
-        // and variable snapshots hold copies, never the buffers); finalizers remain the backstop
-        // for everything else.
-        JG.Reset();
-        JgsHandleRegistry.Clear();
-        DisposePreviousRunBuffers();
+        // Whether this run owns the process's graphics state, or is nested inside something that
+        // already does. A live session installs a dispatcher when it is built and keeps it for its
+        // whole life, so finding one here means a workspace is alive around this run — which is the
+        // case for a debug run started from the editor, and never the case under -batch.
+        JgsCallbackDispatcher? displaced = JgsCallbackDispatcher.Current;
+        bool nested = displaced is not null;
+
+        // JGS scripts drive the same static JG facade; a run that owns it starts from a clean state.
+        // The previous completed run's packed buffers are released deterministically here (its
+        // figures and variable snapshots hold copies, never the buffers); finalizers remain the
+        // backstop for everything else.
+        //
+        // A nested run must not do any of it. The session around it still has figures open, handles
+        // its console workspace names, and variables pointing at those buffers — and JgsHandleRegistry
+        // .Clear() rewinds the handle counter, so the first object this run drew was handed the number
+        // the session's first object already had. That is what made setting a breakpoint change what
+        // a script meant: the same statement that read a surface before the debug run read whatever
+        // object the debug run minted first after it.
+        if (!nested)
+        {
+            JG.Reset();
+            JgsHandleRegistry.Clear();
+            DisposePreviousRunBuffers();
+        }
+
         var globals = new JGraphScriptGlobals(context);
 
         // A one-shot run knows which file it came from, and mfilename has to be able to say so.
@@ -54,7 +72,6 @@ internal static class JgsRunner
             StatementToken = cancellationToken,
             StatementThreadId = Environment.CurrentManagedThreadId,
         };
-        JgsCallbackDispatcher? displaced = JgsCallbackDispatcher.Current;
         JgsCallbackDispatcher.Install(dispatcher);
 
         try
@@ -96,12 +113,18 @@ internal static class JgsRunner
         }
         catch (JgsException ex)
         {
+            // Whatever ran before the error keeps its effect, figures included — the same rule the
+            // prompt keeps. Without this a script that drew and then failed showed its figure on an
+            // ordinary run and nothing at all under the debugger, which is the second way a
+            // breakpoint used to change what a script did.
             var diagnostic = new ScriptDiagnostic(ex.Line, ex.Column, ex.Message, IsError: true);
             context.Output.WriteError(diagnostic.ToString());
+            globals.ShowTouchedFigures();
             return ScriptRunResult.Failed(ex.Message, new[] { diagnostic });
         }
         catch (OperationCanceledException)
         {
+            globals.ShowTouchedFigures();
             return ScriptRunResult.Failed("Script run was cancelled.");
         }
         catch (Exception ex)
@@ -114,6 +137,7 @@ internal static class JgsRunner
             var diagnostic = new ScriptDiagnostic(0, 0,
                 $"Internal error: {ex.GetType().Name}: {ex.Message}", IsError: true);
             context.Output.WriteError(diagnostic.ToString());
+            globals.ShowTouchedFigures();
             return ScriptRunResult.Failed(diagnostic.Message, new[] { diagnostic });
         }
         finally

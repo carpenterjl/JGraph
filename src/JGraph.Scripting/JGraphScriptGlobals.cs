@@ -408,6 +408,37 @@ public sealed class JGraphScriptGlobals
     private int _nextFileId = 3; // MATLAB reserves 0-2 for stdin/stdout/stderr
 
     /// <summary>
+    /// The encoders <c>VideoWriter</c> has open, by the id its object carries. A live encoder holds an
+    /// operating-system file handle and, for MPEG-4, a Media Foundation session, so it belongs to the
+    /// run the way an <c>fopen</c> stream does rather than to the value a script is holding — a value
+    /// gets copied, and two copies must not be two encoders.
+    /// </summary>
+    private readonly Dictionary<int, JGraph.Imaging.Codecs.IVideoEncoder> _videoWriters = new();
+    private int _nextVideoWriterId = 1;
+
+    /// <summary>Takes ownership of an open encoder and returns the id the script's object carries.</summary>
+    internal int AddVideoWriter(JGraph.Imaging.Codecs.IVideoEncoder encoder)
+    {
+        ArgumentNullException.ThrowIfNull(encoder);
+        int id = _nextVideoWriterId++;
+        _videoWriters[id] = encoder;
+        return id;
+    }
+
+    /// <summary>The encoder behind an id, or null when it was never opened or has been closed.</summary>
+    internal JGraph.Imaging.Codecs.IVideoEncoder? VideoWriter(int id) =>
+        _videoWriters.TryGetValue(id, out JGraph.Imaging.Codecs.IVideoEncoder? encoder) ? encoder : null;
+
+    /// <summary>Finishes one encoder's file and forgets it. Doing it twice is not an error.</summary>
+    internal void CloseVideoWriter(int id)
+    {
+        if (_videoWriters.Remove(id, out JGraph.Imaging.Codecs.IVideoEncoder? encoder))
+        {
+            encoder.Close();
+        }
+    }
+
+    /// <summary>
     /// Opens a file for the <c>fopen</c> builtin and returns its id, or -1 when it cannot be opened —
     /// MATLAB's convention, so scripts can test <c>fid == -1</c>. A trailing 'b'/'t' is accepted and
     /// ignored, because everything here is binary-exact either way.
@@ -535,6 +566,23 @@ public sealed class JGraphScriptGlobals
         }
 
         _openFiles.Clear();
+
+        // A video the script never closed is finished rather than abandoned: MATLAB writes what was
+        // written when the object goes out of scope, and a half-written container is not a video at
+        // all. A codec that fails on the way out must not take the run's own result with it.
+        foreach (JGraph.Imaging.Codecs.IVideoEncoder encoder in _videoWriters.Values)
+        {
+            try
+            {
+                encoder.Close();
+            }
+            catch (Exception ex) when (ex is IOException or InvalidOperationException or ObjectDisposedException)
+            {
+                _context.Output.WriteError($"jgraph: a video file could not be finished — {ex.Message}");
+            }
+        }
+
+        _videoWriters.Clear();
     }
 
     /// <summary>Clears the output sink's display — the <c>clc</c> builtin. Sinks without a display ignore it.</summary>

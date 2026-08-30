@@ -144,14 +144,19 @@ pass, and a script building a hundred-frame animation never holds more than one 
   script markup the two languages share, which is what almost every axis label uses it for.
 - **`slice`'s trailing interpolation-method word is checked and then read linearly** whichever of the
   three it names.
-- **There is no `VideoWriter`.** GIF is now the way a script saves an animation; a real video
-  container needs a codec this build does not carry.
 - **An appended GIF frame must match the first frame's size.** The size a viewer shows is fixed by
   the logical screen descriptor, so a differently-sized frame is refused rather than silently
   cropped.
 - **Outside a GIF, an indexed `imwrite(X, map, path)` paints through the map rather than storing it.**
   None of the other formats written here is an indexed one, so the picture is saved as the colours it
   then has — the same picture.
+
+**Retired by M108, and deleted from the list above rather than struck through**: *"There is no
+`VideoWriter`"*. The reasoning held for a codec this project would have had to ship, and not for the
+two it does not: an AVI is a RIFF file written here, and MP4 goes out through the H.264 encoder
+Windows already provides. Five of MATLAB's seven profiles are written; the two JPEG 2000 ones are
+refused by name. See ADR 0109. GIF remains the right answer for a short animation that has to work
+everywhere, and is the only answer off Windows for anything but AVI.
 
 **Retired by M85, and deleted from the list above rather than struck through** (the harvest lifts a
 struck-through bullet whole): *"`slice` draws axis-aligned planes only"*. ADR 0085 built the slicing

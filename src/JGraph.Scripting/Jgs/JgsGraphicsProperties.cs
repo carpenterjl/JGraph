@@ -854,7 +854,12 @@ internal static partial class JgsGraphicsProperties
                     ? Grid(grid)
                     : Row(((SurfacePlot)entry.Target).Y),
                 (entry, value, line, col) => WriteSurfaceRuler(entry, value, line, col, alongX: false));
-            Put(table, "ZData", entry => Grid(((SurfacePlot)entry.Target).Z));
+            // Writable since M108: a surface whose heights could be read but not replaced left
+            // set(h, 'ZData', Z) — the animation idiom — with nothing to write to, so a morphing
+            // surface had to be drawn again from scratch every frame.
+            Put(table, "ZData",
+                entry => Grid(((SurfacePlot)entry.Target).Z),
+                WriteSurfaceHeights);
             AddSurfaceBlock(table);
 
             // A surface's two colours are the one place where an absent colour does not mean 'none':

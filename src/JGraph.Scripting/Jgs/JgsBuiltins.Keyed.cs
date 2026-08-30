@@ -37,7 +37,8 @@ internal static partial class JgsBuiltins
     /// collection that is one, and M68's <c>classdef … &lt; handle</c> joins it.
     /// </summary>
     internal static bool IsHandleClass(JgsValue value) =>
-        value.Type == JgsType.Struct && value.ClassName == MapClassName;
+        value.Type == JgsType.Struct
+        && value.ClassName is MapClassName or VideoWriterClassName;
 
     /// <summary>Whether this value is one of the two keyed collections.</summary>
     internal static bool IsKeyedCollection(JgsValue value) =>

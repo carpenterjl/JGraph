@@ -434,6 +434,78 @@ internal static partial class JgsGraphicsProperties
         }
     }
 
+    /// <summary>
+    /// MATLAB's <c>set(h, 'ZData', Z)</c> — the move every surface animation is written around, and
+    /// the reason the heights had to stop being read-only: a script that can replace the colours but
+    /// not the shape can only recolour a frozen sheet.
+    /// <para>
+    /// Heights of the grid's own size are simply put in place, which is the animating case and costs
+    /// nothing else. A differently-sized grid is a resize, and is allowed exactly where MATLAB allows
+    /// it: on a ruler that was counted out rather than given (<c>XDataMode</c> 'auto'), which is
+    /// counted out again. The per-vertex channels described the grid that has just gone, so they go
+    /// back to following the heights rather than being left over a lattice that no longer exists.
+    /// </para>
+    /// </summary>
+    private static void WriteSurfaceHeights(JgsHandleEntry entry, JgsValue value, int line, int col)
+    {
+        var sheet = (SurfacePlot)entry.Target;
+        double[,] given = JgsBuiltins.HeatmapGrid(value, line, col);
+        int rows = given.GetLength(0);
+        int columns = given.GetLength(1);
+
+        if (sheet.XGrid is { } xGrid && sheet.YGrid is { } yGrid)
+        {
+            // A parametric surface's positions are a position per vertex. The heights have to land on
+            // the vertices those two matrices name, and writing through Z alone would quietly throw
+            // the pair away and leave a rectilinear surface wearing the wrong shape.
+            if (rows != xGrid.GetLength(0) || columns != xGrid.GetLength(1))
+            {
+                throw new JgsRuntimeException(line, col,
+                    $"ZData on a parametric surface must match its position grids: "
+                    + $"{rows}-by-{columns} given, "
+                    + $"{xGrid.GetLength(0)}-by-{xGrid.GetLength(1)} wanted.");
+            }
+
+            sheet.SetData(xGrid, yGrid, given);
+            return;
+        }
+
+        bool resized = rows != sheet.Y.Length || columns != sheet.X.Length;
+        double[] x = columns == sheet.X.Length
+            ? sheet.X
+            : sheet.XImplied
+                ? Ramp(columns)
+                : throw new JgsRuntimeException(line, col,
+                    $"ZData needs one value per grid column: {columns} given, {sheet.X.Length} wanted "
+                    + "— XData was given real positions, so set it too if the grid is to change size.");
+        double[] y = rows == sheet.Y.Length
+            ? sheet.Y
+            : sheet.YImplied
+                ? Ramp(rows)
+                : throw new JgsRuntimeException(line, col,
+                    $"ZData needs one value per grid row: {rows} given, {sheet.Y.Length} wanted "
+                    + "— YData was given real positions, so set it too if the grid is to change size.");
+
+        sheet.SetData(x, y, given);
+        if (resized)
+        {
+            sheet.CData = null;
+            sheet.AlphaData = null;
+        }
+    }
+
+    /// <summary>The positions a counted-out ruler holds: 1..<paramref name="count"/>, as MATLAB counts.</summary>
+    private static double[] Ramp(int count)
+    {
+        var values = new double[count];
+        for (int i = 0; i < count; i++)
+        {
+            values[i] = i + 1;
+        }
+
+        return values;
+    }
+
     // --- The arrow field ------------------------------------------------------------------------
 
     /// <summary>
