@@ -2400,6 +2400,9 @@ internal static partial class JgsBuiltins
         RegisterTextPartBuiltins(env);
         RegisterCoordinateBuiltins(env);
         RegisterSpecfunPartBuiltins(env);
+        RegisterMatfunBuiltins(env, host, random);
+        RegisterMatfunSpectralBuiltins(env, host);
+        RegisterDecompositionBuiltins(env, host);
 
         // After every imaging define, since these wrap builtins declared above.
         RegisterImagingMultiOutputForms(env, host, random, dialect);

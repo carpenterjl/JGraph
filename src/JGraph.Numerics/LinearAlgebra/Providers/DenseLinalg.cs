@@ -245,6 +245,14 @@ public abstract class DenseLinalg
         Span<Complex> w, Span<Complex> vr, int ldvr);
 
     /// <summary>
+    /// The complex Schur factorization: <paramref name="a"/> is overwritten with the upper
+    /// triangular T, the eigenvalues land in <paramref name="w"/>, and the unitary in
+    /// <paramref name="vs"/>. There is no values-only form — unlike the real case, nothing is
+    /// cheaper without the vectors than <see cref="Zgeev"/> already is.
+    /// </summary>
+    public abstract int Zgees(int n, Span<Complex> a, int lda, Span<Complex> w, Span<Complex> vs, int ldvs);
+
+    /// <summary>
     /// The complex SVD, A = U·Σ·Vᴴ, with the same shape contract as <see cref="Gesdd"/>: the
     /// singular values — real, descending — in <paramref name="s"/>, U and Vᴴ sized by
     /// <paramref name="job"/>. Note the second factor is Vᴴ, conjugate-transposed, exactly as

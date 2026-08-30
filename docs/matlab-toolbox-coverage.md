@@ -19,8 +19,8 @@ below is — and that is why an entire folder could sit at nought implemented wi
 
 ## Where it stands
 
-**253 of 377 names implemented**, and
-**400 of 1036 documented syntax forms accepted**.
+**268 of 377 names implemented**, and
+**442 of 1036 documented syntax forms accepted**.
 
 | Folder | Names | Forms documented | Forms accepted | Names missing |
 |---|---:|---:|---:|---:|
@@ -31,7 +31,7 @@ below is — and that is why an entire folder could sit at nought implemented wi
 | `polyfun` | 23 / 34 | 94 | 38 | 11 |
 | `elmat` | 33 / 33 | 68 | 59 | 0 |
 | `validators` | 28 / 31 | 33 | 20 | 3 |
-| `matfun` | 10 / 25 | 62 | 9 | 15 |
+| `matfun` | 25 / 25 | 62 | 51 | 0 |
 | `specfun` | 23 / 23 | 38 | 30 | 0 |
 | `datatypes` | 9 / 22 | 40 | 3 | 13 |
 | `elfun` | 19 / 19 | 25 | 19 | 0 |
@@ -43,7 +43,7 @@ below is — and that is why an entire folder could sit at nought implemented wi
 
 | Verdict | Forms | What it means |
 |---|---:|---|
-| accepted | 400 | the call returned without error |
+| accepted | 442 | the call returned without error |
 | refused | 4 | refused deliberately, with a message naming what is missing |
 | undefined | 0 | the name did not resolve at all |
 | error | 120 | failed some other way — **may be the prober's sample, not the build** |
@@ -71,10 +71,6 @@ command that quite rightly rejects it.
 ### `lang` — 7
 
 `clearAllMemoizedCaches` `details` `genvarname` `iskeyword` `javachk` `memoize` `validatestring`
-
-### `matfun` — 15
-
-`cdf2rdf` `condeig` `condest` `funm` `gsvd` `lscov` `lsqminnorm` `normest` `planerot` `polyeig` `qrdelete` `qrinsert` `rref` `rsf2csf` `sylvester`
 
 ### `ops` — 2
 

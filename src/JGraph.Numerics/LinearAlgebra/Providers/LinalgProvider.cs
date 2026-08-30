@@ -163,6 +163,10 @@ public static class LinalgProvider
             Span<Complex> w, Span<Complex> vr, int ldvr) =>
             throw new InvalidOperationException(reason);
 
+        public override int Zgees(int n, Span<Complex> a, int lda,
+            Span<Complex> w, Span<Complex> vs, int ldvs) =>
+            throw new InvalidOperationException(reason);
+
         public override int Zgesdd(SvdVectors job, int m, int n, Span<Complex> a, int lda,
             Span<double> s, Span<Complex> u, int ldu, Span<Complex> vt, int ldvt) =>
             throw new InvalidOperationException(reason);

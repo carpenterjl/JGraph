@@ -1444,6 +1444,30 @@ public static class JgsBuiltinCatalog
         Add("rats", "A matrix written as a table of fractions: S = rats(X, strlen).", P("X"), Opt("strlen"));
         Add("matchpairs", "The cheapest pairing of rows with columns: M = matchpairs(Cost, costUnmatched).", P("Cost"), P("costUnmatched"), Opt("goal"));
 
+        // M107: the matrix-function leftovers — the elimination, the plane rotation and the two
+        // factorization updates over it, the two conversions between real and complex forms, the
+        // eigenvalue conditioning, the three estimators, the Sylvester equation, the two least
+        // squares solvers, the polynomial eigenproblem, the general matrix function, the
+        // generalized SVD, and the decomposition object. This closes the matfun folder.
+        Add("rref", "Reduced row echelon form by Gauss-Jordan elimination: [R, jb] = rref(A).", P("A"), Opt("tol"));
+        Add("planerot", "The Givens rotation that puts a two-element column on its first axis: [G, y] = planerot(x).", P("x"));
+        Add("qrinsert", "The QR factors after one column or row is inserted: [Q, R] = qrinsert(Q, R, j, x).", P("Q"), P("R"), P("j"), P("x"), Opt("orient"));
+        Add("qrdelete", "The QR factors after one column or row is removed: [Q, R] = qrdelete(Q, R, j).", P("Q"), P("R"), P("j"), Opt("orient"));
+        Add("cdf2rdf", "A complex diagonal eigenform rewritten as a real block one: [V, D] = cdf2rdf(V, D).", P("V"), P("D"));
+        Add("rsf2csf", "A real Schur form rewritten as a complex triangular one: [U, T] = rsf2csf(U, T).", P("U"), P("T"));
+        Add("condeig", "How sensitive each eigenvalue is to perturbation: s = condeig(A), or [V, D, s].", P("A"));
+        Add("normest", "The 2-norm of a matrix, estimated by power iteration: [e, cnt] = normest(S, tol).", P("S"), Opt("tol"));
+        Add("normest1", "The 1-norm of a matrix or operator, estimated by the block algorithm: normest1(A, t).", P("A"), Opt("t"), Opt("X0"));
+        Add("condest", "The 1-norm condition number, estimated: [c, v] = condest(A, t).", P("A"), Opt("t"));
+        Add("sylvester", "The solution X of the Sylvester equation A*X + X*B = C.", P("A"), P("B"), P("C"));
+        Add("lsqminnorm", "The least-squares solution of smallest length: X = lsqminnorm(A, B, tol).", P("A"), P("B"), Opt("tol"), Opt("rankWarn"));
+        Add("lscov", "Least squares with a covariance or weights: [x, stdx, mse, S] = lscov(A, b, V, alg).", P("A"), P("B"), Opt("V"), Opt("alg"));
+        Add("polyeig", "The eigenvalues of a matrix polynomial: [X, e, s] = polyeig(A0, A1, ..., Ap).", P("A0"), Opt("A1..."));
+        Add("funm", "A general function of a matrix, by Schur-Parlett: F = funm(A, @cos).", P("A"), P("fun"), Opt("options"), Opt("args..."));
+        Add("gsvd", "The generalized singular value decomposition of a pair: [U, V, X, C, S] = gsvd(A, B).", P("A"), P("B"), Opt("flag"));
+        Add("decomposition", "A matrix factored once and kept, so that a solve with it costs only a solve.", P("A"), Opt("type"), Opt("options..."));
+        Add("isIllConditioned", "Whether a decomposition's matrix is ill conditioned.", P("dA"));
+
         Add("copulacdf", "The probability a copula puts below a point of the unit cube: y = copulacdf('Clayton', u, 1.5).", P("family"), P("u"), P("param"), Opt("nu"));
         Add("copulapdf", "The density of a copula at a point of the unit cube: y = copulapdf('t', u, rho, 5).", P("family"), P("u"), P("param"), Opt("nu"));
         Add("copularnd", "Draws from a copula, one per row: u = copularnd('Gumbel', 2, 500).", P("family"), P("param"), P("n"), Opt("extra"));

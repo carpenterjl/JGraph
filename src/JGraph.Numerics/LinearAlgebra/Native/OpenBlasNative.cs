@@ -249,6 +249,16 @@ internal static unsafe partial class OpenBlasNative
     internal static partial int Zgeev(int layout, byte jobvl, byte jobvr, int n, Complex* a, int lda,
         Complex* w, Complex* vl, int ldvl, Complex* vr, int ldvr);
 
+    /// <summary>
+    /// The complex Schur factorization. Unlike <see cref="Dgees"/> the answer is genuinely
+    /// triangular — there are no two-by-two blocks, because complex arithmetic has nowhere it needs
+    /// to hide a conjugate pair.
+    /// </summary>
+    [LibraryImport(Library, EntryPoint = "LAPACKE_zgees")]
+    [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvCdecl) })]
+    internal static partial int Zgees(int layout, byte jobvs, byte sort, nint select, int n,
+        Complex* a, int lda, int* sdim, Complex* w, Complex* vs, int ldvs);
+
     /// <summary>The complex divide-and-conquer SVD; the singular values themselves stay real.</summary>
     [LibraryImport(Library, EntryPoint = "LAPACKE_zgesdd")]
     [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvCdecl) })]

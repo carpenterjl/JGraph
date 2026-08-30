@@ -2263,6 +2263,18 @@ internal sealed partial class Interpreter
     private JgsValue EvaluateUnary(UnaryExpr unary, JgsEnvironment env)
     {
         JgsValue operand = Evaluate(unary.Operand, env);
+        if (operand.Type == JgsType.Struct && JgsBuiltins.TryDecompositionUnary(
+            unary.Op switch
+            {
+                TokenType.Minus => "uminus",
+                TokenType.Plus => "uplus",
+                _ => string.Empty,
+            },
+            operand, unary.Line, unary.Column, out JgsValue negated))
+        {
+            return negated;
+        }
+
         if (AnyClasses && TryUnaryOverload(unary.Op, operand, unary, out JgsValue overloaded))
         {
             return overloaded;
@@ -2367,6 +2379,18 @@ internal sealed partial class Interpreter
                                      JgsNumericClass into, out bool alreadyInClass)
     {
         alreadyInClass = false;
+
+        // A decomposition object is a struct wearing a class name, so it has to claim the operator
+        // before the struct is read as anything else. Its four operators are the reason it exists:
+        // the backslash is the whole point of having factored the matrix.
+        if ((left.Type == JgsType.Struct || right.Type == JgsType.Struct)
+            && JgsBuiltins.TryDecompositionBinary(
+                OperatorMethodName(op) ?? string.Empty, left, right, at.Line, at.Column,
+                out JgsValue viaDecomposition))
+        {
+            return viaDecomposition;
+        }
+
         // An operand that is an instance of a user class decides what the operator means (M68), and
         // has to decide before any numeric reading of the operands below — the same lesson M63 and
         // M64 each learnt one branch lower down.
@@ -5558,6 +5582,13 @@ internal sealed partial class Interpreter
     private JgsValue EvaluateTranspose(TransposeExpr transpose, JgsEnvironment env)
     {
         JgsValue value = Evaluate(transpose.Operand, env);
+        if (value.Type == JgsType.Struct && JgsBuiltins.TryDecompositionUnary(
+            transpose.Conjugate ? "ctranspose" : "transpose",
+            value, transpose.Line, transpose.Column, out JgsValue turned))
+        {
+            return turned;
+        }
+
         if (value.Type == JgsType.Complex)
         {
             return transpose.Conjugate ? JgsValue.ComplexNum(Complex.Conjugate(value.AsComplex)) : value;

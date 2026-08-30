@@ -222,6 +222,41 @@ public sealed partial class ManagedLinalg
     }
 
     /// <inheritdoc />
+    public override int Zgees(int n, Span<Complex> a, int lda,
+        Span<Complex> w, Span<Complex> vs, int ldvs)
+    {
+        if (n == 0)
+        {
+            return 0;
+        }
+
+        var matrix = new Complex[n, n];
+        for (int c = 0; c < n; c++)
+        {
+            for (int r = 0; r < n; r++)
+            {
+                matrix[r, c] = a[(c * lda) + r];
+            }
+        }
+
+        // No balancing here, unlike Zgeev: balancing is a similarity by a diagonal that is not
+        // unitary, and a Schur form that has been balanced is no longer one.
+        (Complex[,] u, Complex[,] t) = ComplexEigen.SchurManaged(matrix);
+        for (int c = 0; c < n; c++)
+        {
+            for (int r = 0; r < n; r++)
+            {
+                a[(c * lda) + r] = t[r, c];
+                vs[(c * ldvs) + r] = u[r, c];
+            }
+
+            w[c] = t[c, c];
+        }
+
+        return 0;
+    }
+
+    /// <inheritdoc />
     public override int Zgesdd(SvdVectors job, int m, int n, Span<Complex> a, int lda,
         Span<double> s, Span<Complex> u, int ldu, Span<Complex> vt, int ldvt)
     {

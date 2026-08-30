@@ -71,6 +71,52 @@ public static class ComplexEigen
     /// The managed single-shift QR iteration behind <see cref="Values"/>, reached directly by
     /// <see cref="ManagedLinalg"/>. Overwrites the matrix it is handed.
     /// </summary>
+    /// <summary>
+    /// The Schur factorization of a square complex matrix through the active backend: a unitary U
+    /// and an upper triangular T with <c>U·T·Uᴴ</c> the matrix, and the eigenvalues on T's diagonal.
+    /// </summary>
+    /// <remarks>
+    /// A real matrix has a real Schur form and does not need this one; what it needs is
+    /// <see cref="SchurConversion.RealToComplex"/> over the real form, which is both cheaper and
+    /// the answer MATLAB gives. This is for a matrix that is genuinely complex, where there is no
+    /// real form to convert.
+    /// </remarks>
+    /// <exception cref="InvalidOperationException">When the iteration fails to converge.</exception>
+    public static (Complex[,] U, Complex[,] T) Schur(Complex[,] matrix)
+    {
+        int n = matrix.GetLength(0);
+        if (n != matrix.GetLength(1))
+        {
+            throw new ArgumentException("The Schur decomposition needs a square matrix.", nameof(matrix));
+        }
+
+        if (n == 0)
+        {
+            return (new Complex[0, 0], new Complex[0, 0]);
+        }
+
+        Complex[] work = FlattenRect(matrix, n, n);
+        var values = new Complex[n];
+        var vs = new Complex[(long)n * n];
+        if (LinalgProvider.Current.Zgees(n, work, n, values, vs, n) != 0)
+        {
+            throw new InvalidOperationException("The complex Schur iteration did not converge.");
+        }
+
+        var t = new Complex[n, n];
+        var u = new Complex[n, n];
+        for (int c = 0; c < n; c++)
+        {
+            for (int r = 0; r < n; r++)
+            {
+                t[r, c] = r <= c ? work[(c * n) + r] : Complex.Zero;
+                u[r, c] = vs[(c * n) + r];
+            }
+        }
+
+        return (u, t);
+    }
+
     internal static Complex[] ValuesManaged(Complex[,] matrix)
     {
         int n = matrix.GetLength(0);
@@ -84,7 +130,52 @@ public static class ComplexEigen
             return [matrix[0, 0]];
         }
 
-        Complex[,] h = ToHessenberg(matrix);
+        return Iterate(ToHessenberg(matrix), null);
+    }
+
+    /// <summary>
+    /// The Schur factorization of a complex matrix in managed code: the same Hessenberg reduction
+    /// and shifted QR iteration the eigenvalues come from, with every reflection and rotation
+    /// carried into a second matrix so that what the iteration converged to can be stated as a
+    /// similarity rather than only as a list.
+    /// </summary>
+    internal static (Complex[,] U, Complex[,] T) SchurManaged(Complex[,] matrix)
+    {
+        int n = matrix.GetLength(0);
+        var u = new Complex[n, n];
+        for (int i = 0; i < n; i++)
+        {
+            u[i, i] = Complex.One;
+        }
+
+        if (n <= 1)
+        {
+            return (u, (Complex[,])matrix.Clone());
+        }
+
+        Complex[,] t = ToHessenberg(matrix, u);
+        _ = Iterate(t, u);
+
+        // The iteration leaves rounding dust below the diagonal that the deflation test has already
+        // declared to be nought; a caller reading T as triangular should not have to filter it.
+        for (int c = 0; c < n; c++)
+        {
+            for (int r = c + 1; r < n; r++)
+            {
+                t[r, c] = Complex.Zero;
+            }
+        }
+
+        return (u, t);
+    }
+
+    /// <summary>
+    /// The shifted QR iteration over an upper Hessenberg matrix, deflating from the bottom up and
+    /// answering the eigenvalues in the order the diagonal ends up holding them.
+    /// </summary>
+    private static Complex[] Iterate(Complex[,] h, Complex[,]? u)
+    {
+        int n = h.GetLength(0);
         var values = new Complex[n];
         int high = n - 1;
         int sinceDeflation = 0;
@@ -131,7 +222,7 @@ public static class ComplexEigen
                 shift = (first - d).Magnitude <= (second - d).Magnitude ? first : second;
             }
 
-            QrStep(h, low, high, shift);
+            QrStep(h, low, high, shift, u);
         }
 
         return values;
@@ -156,7 +247,15 @@ public static class ComplexEigen
     }
 
     /// <summary>One explicit shifted QR iteration on the active block, by complex Givens rotations.</summary>
-    private static void QrStep(Complex[,] h, int low, int high, Complex shift)
+    private static void QrStep(Complex[,] h, int low, int high, Complex shift) =>
+        QrStep(h, low, high, shift, null);
+
+    /// <summary>
+    /// The same iteration, accumulating its rotations into <paramref name="u"/> when one is
+    /// supplied. Accumulating also widens where the right-hand rotations reach: an eigenvalue only
+    /// needs the active block, but a Schur form needs the whole column above it too.
+    /// </summary>
+    private static void QrStep(Complex[,] h, int low, int high, Complex shift, Complex[,]? u)
     {
         int n = h.GetLength(0);
         for (int i = low; i <= high; i++)
@@ -189,12 +288,25 @@ public static class ComplexEigen
             double c = cosines[k - low];
             Complex s = sines[k - low];
             int limit = Math.Min(k + 2, high);
-            for (int row = low; row <= limit; row++)
+            for (int row = u is null ? low : 0; row <= limit; row++)
             {
                 Complex left = h[row, k];
                 Complex right = h[row, k + 1];
                 h[row, k] = (c * left) + (Complex.Conjugate(s) * right);
                 h[row, k + 1] = (-s * left) + (c * right);
+            }
+
+            if (u is null)
+            {
+                continue;
+            }
+
+            for (int row = 0; row < n; row++)
+            {
+                Complex left = u[row, k];
+                Complex right = u[row, k + 1];
+                u[row, k] = (c * left) + (Complex.Conjugate(s) * right);
+                u[row, k + 1] = (-s * left) + (c * right);
             }
         }
 
@@ -226,7 +338,14 @@ public static class ComplexEigen
     }
 
     /// <summary>Householder reduction of a copy of <paramref name="matrix"/> to upper Hessenberg form.</summary>
-    private static Complex[,] ToHessenberg(Complex[,] matrix)
+    private static Complex[,] ToHessenberg(Complex[,] matrix) => ToHessenberg(matrix, null);
+
+    /// <summary>
+    /// The same reduction, accumulating the unitary it performs into <paramref name="u"/> when one
+    /// is supplied — which is the whole difference between wanting eigenvalues and wanting a Schur
+    /// form.
+    /// </summary>
+    private static Complex[,] ToHessenberg(Complex[,] matrix, Complex[,]? u)
     {
         int n = matrix.GetLength(0);
         var h = (Complex[,])matrix.Clone();
@@ -299,6 +418,28 @@ public static class ComplexEigen
                 for (int i = k + 1; i < n; i++)
                 {
                     h[row, i] -= dot * Complex.Conjugate(v[i]);
+                }
+            }
+
+            if (u is null)
+            {
+                continue;
+            }
+
+            // The reflector is its own inverse and Hermitian, so the accumulated unitary takes it
+            // on the right exactly as the matrix did.
+            for (int row = 0; row < n; row++)
+            {
+                Complex dot = Complex.Zero;
+                for (int i = k + 1; i < n; i++)
+                {
+                    dot += u[row, i] * v[i];
+                }
+
+                dot *= 2;
+                for (int i = k + 1; i < n; i++)
+                {
+                    u[row, i] -= dot * Complex.Conjugate(v[i]);
                 }
             }
         }

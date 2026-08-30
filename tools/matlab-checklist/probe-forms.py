@@ -235,6 +235,31 @@ NAME_ARG_SAMPLES: dict[tuple[str, str], str] = {
     ("rats", "X"): "[1.5 2.25]", ("rats", "strlen"): "13",
     ("matchpairs", "Cost"): "[1 3; 4 2]", ("matchpairs", "costUnmatched"): "10",
     ("matchpairs", "goal"): "'max'",
+
+    # The matrix-function leftovers (M107). Most of these take a matrix whose shape has to agree
+    # with another argument's, which the generic samples cannot know: a Sylvester equation needs
+    # three matrices that fit together, a least-squares fit needs a design and a right-hand side of
+    # the same height, and a factorization update needs a Q and an R that are actually a pair.
+    # The pair is written at order one on purpose — `qrinsert`'s inserted piece is a column for
+    # 'col' and a row for 'row', and only a one-by-one factorization lets one sample be both.
+    ("rref", "A"): "[1 2 3; 4 5 6; 7 8 9]", ("rref", "tol"): "1e-6",
+    ("planerot", "x"): "[3; 4]",
+    ("qrinsert", "Q"): "1", ("qrinsert", "R"): "1", ("qrinsert", "j"): "1", ("qrinsert", "x"): "1",
+    ("qrdelete", "Q"): "1", ("qrdelete", "R"): "1", ("qrdelete", "j"): "1",
+    ("cdf2rdf", "V"): "[1 1; 1i -1i]", ("cdf2rdf", "D"): "[2+3i 0; 0 2-3i]",
+    ("rsf2csf", "U"): "eye(2)", ("rsf2csf", "T"): "[1 2; 0 3]",
+    ("condeig", "A"): "[1 2; 3 4]",
+    ("normest", "S"): "magic(4)", ("normest", "tol"): "1e-6",
+    ("condest", "A"): "[1 2; 3 4]", ("condest", "t"): "2",
+    ("sylvester", "A"): "[1 2; 3 4]", ("sylvester", "B"): "[5 6; 7 8]", ("sylvester", "C"): "eye(2)",
+    ("lsqminnorm", "A"): "[1 2; 3 4]", ("lsqminnorm", "B"): "[1; 2]",
+    ("lsqminnorm", "tol"): "1e-10", ("lsqminnorm", "rankWarn"): "'nowarn'",
+    ("lscov", "A"): "[1 1; 1 2; 1 3]", ("lscov", "B"): "[1; 2; 3]",
+    ("lscov", "w"): "[1; 1; 1]", ("lscov", "V"): "eye(3)", ("lscov", "alg"): "'chol'",
+    ("polyeig", "A0"): "[1 0; 0 2]", ("polyeig", "A1"): "[3 1; 1 4]", ("polyeig", "Ap"): "eye(2)",
+    ("funm", "A"): "[1 1 0; 0 2 1; 0 0 3]", ("funm", "fun"): "@exp",
+    ("funm", "options"): "struct('TolBlk', 0.1)", ("funm", "p1"): "1", ("funm", "p2"): "2",
+    ("gsvd", "A"): "[1 2; 3 4; 5 6]", ("gsvd", "B"): "[7 8; 9 10]",
 }
 
 # Placeholders the documented type phrase cannot describe well enough to sample, whatever command
@@ -407,10 +432,20 @@ def repetition_ellipsis(tokens: list[str], index: int) -> bool:
     if index != len(tokens) - 1:
         return False
 
+    # What matters is the run of numbered placeholders immediately before the ellipsis, not the
+    # whole list: `funm(A,fun,options,p1,p2,...)` says "and more p" just as plainly as
+    # `str2mat(T1,T2,T3,...)` does, and the three arguments before its series are not part of what
+    # the ellipsis stands for. One placeholder alone is not a series — `coneplot(axes_handle,...)`
+    # is the other reading and has to stay it.
     numbered = re.compile(r"([A-Za-z_][A-Za-z0-9_]*?)\d+")
-    series = [numbered.fullmatch(token.strip()) for token in tokens[:index]]
-    return (len(series) >= 2 and all(series)
-            and len({match.group(1) for match in series if match}) == 1)
+    stems: list[str] = []
+    for token in reversed(tokens[:index]):
+        match = numbered.fullmatch(token.strip())
+        if match is None or (stems and match.group(1) != stems[0]):
+            break
+        stems.insert(0, match.group(1))
+
+    return len(stems) >= 2
 
 
 def parse_syntax(syntax: str, name: str) -> tuple[int, list[str]] | None:
@@ -496,6 +531,15 @@ def build_call(name: str, syntax: str, arg_types: dict[str, str],
             # forms' arguments, the way `___` does in the newer dumps, and what belongs there is
             # not recoverable from this form alone. Those stay unprobed rather than being sampled
             # with a call the prober invented and then scored against the build.
+            if len(tokens) == 1 and first_args is not None:
+                # A form whose whole argument list is an ellipsis — `[F,exitflag] = funm(...)`,
+                # `[x,stdx] = lscov(...)` — is the older dumps' spelling of `___`: the same
+                # arguments as the first form, with more outputs asked for. Reading it that way
+                # rather than declining to build it takes 47 forms across 37 names out of
+                # `unprobed`, five of them in M107's own folder.
+                values.extend(first_args)
+                continue
+
             if not repetition_ellipsis(tokens, index):
                 return None
             continue

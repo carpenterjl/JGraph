@@ -585,6 +585,26 @@ public sealed class OpenBlasLinalg : DenseLinalg
     }
 
     /// <inheritdoc />
+    public override unsafe int Zgees(int n, Span<Complex> a, int lda,
+        Span<Complex> w, Span<Complex> vs, int ldvs)
+    {
+        if (n == 0)
+        {
+            return 0;
+        }
+
+        int sorted = 0;
+        fixed (Complex* pa = a)
+        fixed (Complex* pw = w)
+        fixed (Complex* pvs = vs)
+        {
+            return OpenBlasNative.Zgees(OpenBlasNative.LapackColMajor,
+                OpenBlasNative.CharVectors, OpenBlasNative.CharNone, 0, n,
+                pa, lda, &sorted, pw, pvs, Math.Max(ldvs, 1));
+        }
+    }
+
+    /// <inheritdoc />
     public override unsafe int Zgesdd(SvdVectors job, int m, int n, Span<Complex> a, int lda,
         Span<double> s, Span<Complex> u, int ldu, Span<Complex> vt, int ldvt)
     {

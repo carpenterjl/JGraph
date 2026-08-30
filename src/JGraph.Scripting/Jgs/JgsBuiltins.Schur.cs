@@ -18,9 +18,17 @@ internal static partial class JgsBuiltins
             env.Declare(name, JgsValue.Function(new BuiltinFunction(name, body) { MultiOutput = multi }));
 
         Define("schur",
-            (args, line, col) => FromRect(Factorized("schur", args, line, col).T),
+            (args, line, col) => WantsComplex("schur", args, line, col)
+                ? MatValue(ComplexSchur("schur", args, line, col).T)
+                : FromRect(Factorized("schur", args, line, col).T),
             (args, _, line, col) =>
             {
+                if (WantsComplex("schur", args, line, col))
+                {
+                    (Complex[,] u, Complex[,] t) = ComplexSchur("schur", args, line, col);
+                    return [MatValue(u), MatValue(t)];
+                }
+
                 Schur factored = Factorized("schur", args, line, col);
                 return [FromRect(factored.U), FromRect(factored.T)];
             });
@@ -54,23 +62,43 @@ internal static partial class JgsBuiltins
         if (args.Count == 2)
         {
             string kind = Str(name, args, 1, line, col);
-            if (kind == "complex")
-            {
-                // The complex form would need a unitary factor and a triangular one over the
-                // complex numbers. JGraph's matrices hold complex entries, but nothing else in the
-                // linear-algebra stack works in complex arithmetic, so a complex Schur form would
-                // be a factorization no other builtin here could consume.
-                throw new JgsRuntimeException(line, col,
-                    "schur: only the real Schur form is available; its 2-by-2 blocks hold the conjugate pairs.");
-            }
-
-            if (kind != "real")
+            if (kind != "real" && kind != "complex")
             {
                 throw new JgsRuntimeException(line, col, $"schur: '{kind}' is not 'real' or 'complex'.");
             }
         }
 
         return Schur.Factor(SquareRect(name, args[0], line, col));
+    }
+
+    /// <summary>Whether the caller asked for the complex form, or handed a matrix that has no other.</summary>
+    private static bool WantsComplex(string name, IReadOnlyList<JgsValue> args, int line, int col)
+    {
+        ArityRange(name, args, 1, 2, line, col);
+        bool asked = args.Count == 2 && Str(name, args, 1, line, col) == "complex";
+        return asked || HasComplexElements(args[0]);
+    }
+
+    /// <summary>
+    /// The complex Schur form: strictly triangular, with the conjugate pairs spelled out on the
+    /// diagonal rather than folded into two-by-two blocks.
+    /// </summary>
+    /// <remarks>
+    /// A real matrix does not get its own complex iteration. It is factored in real arithmetic —
+    /// which is both faster and better conditioned — and the result is turned over by
+    /// <c>rsf2csf</c>, the conversion M107 brought with it. Only a matrix that is genuinely complex
+    /// reaches the complex iteration, because only then is there no real form to convert.
+    /// </remarks>
+    private static (Complex[,] U, Complex[,] T) ComplexSchur(
+        string name, IReadOnlyList<JgsValue> args, int line, int col)
+    {
+        if (HasComplexElements(args[0]))
+        {
+            return ComplexEigen.Schur(ComplexSquareOf(name, args[0], line, col));
+        }
+
+        Schur real = Schur.Factor(SquareRect(name, args[0], line, col));
+        return SchurConversion.RealToComplex(Widen(real.U), Widen(real.T));
     }
 
     /// <summary>Reorders a Schur form, reading MATLAB's selection vector or region word.</summary>

@@ -291,32 +291,74 @@ ode45,funfun,2,"[t,y,te,ye,ie] = ode45(odefun,tspan,y0,options)",error,"ode45 ex
 ode45,funfun,3,sol = ode45(___),error,"ode45 produces two outputs: use [t, y] = ode45(f, tspan, y0)."
 isvarname,lang,0,tf = isvarname(s),accepted,
 isvarname,lang,1,isvarname s,accepted,
-run,lang,0,run(scriptname),refused,run: cannot read 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-toolbox-ddnragcs\a': Could not find file 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-toolbox-ddnragcs\a'.
+run,lang,0,run(scriptname),refused,run: cannot read 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-toolbox-olfg5xlf\a': Could not find file 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-toolbox-olfg5xlf\a'.
 validateattributes,lang,0,"validateattributes(A,classes,attributes)",error,validateattributes expects a cell of class names.
 validateattributes,lang,1,"validateattributes(A,classes,attributes,argIndex)",error,"validateattributes expects argument 4 to be a string, but got a number."
 validateattributes,lang,2,"validateattributes(A,classes,attributes,funcName)",error,validateattributes expects a cell of class names.
 validateattributes,lang,3,"validateattributes(A,classes,attributes,funcName,varName)",error,validateattributes expects a cell of class names.
 validateattributes,lang,4,"validateattributes(A,classes,attributes,funcName,varName,argIndex)",error,validateattributes expects a cell of class names.
+cdf2rdf,matfun,0,"[Vnew,Dnew] = cdf2rdf(V,D)",accepted,
 cond,matfun,0,C = cond(A),error,"cond needs a square matrix, but got 2x3."
 cond,matfun,1,"C = cond(A,p)",error,"cond needs a square matrix, but got 2x3."
+condeig,matfun,0,c = condeig(A),accepted,
+condeig,matfun,1,"[V,D,s] = condeig(A)",accepted,
+condest,matfun,0,c = condest(A),accepted,
+condest,matfun,1,"c = condest(A,t)",accepted,
+condest,matfun,2,"[c,v] = condest(A)",accepted,
 expm,matfun,0,Y = expm(X),error,"expm needs a square matrix, but got 2x3."
+funm,matfun,0,"F = funm(A,fun)",accepted,
+funm,matfun,1,"F = funm(A,fun,options)",accepted,
+funm,matfun,2,"F = funm(A,fun,options,p1,p2,...)",accepted,
+funm,matfun,3,"[F,exitflag] = funm(...)",accepted,
+funm,matfun,4,"[F,exitflag,output] = funm(...)",accepted,
+gsvd,matfun,0,"[U,V,X,C,S] = gsvd(A,B)",accepted,
+gsvd,matfun,1,"[U,V,X,C,S] = gsvd(A,B,0)",accepted,
+gsvd,matfun,2,"sigma = gsvd(A,B)",accepted,
 logm,matfun,0,L = logm(A),accepted,
 logm,matfun,1,"[L,exitflag] = logm(A)",error,"This call returns 1 value(s), but 2 were asked for."
+lscov,matfun,0,"x = lscov(A,B)",accepted,
+lscov,matfun,1,"x = lscov(A,B,w)",accepted,
+lscov,matfun,2,"x = lscov(A,B,V)",accepted,
+lscov,matfun,3,"x = lscov(A,B,V,alg)",accepted,
+lscov,matfun,4,"[x,stdx] = lscov(...)",accepted,
+lscov,matfun,5,"[x,stdx,mse] = lscov(...)",accepted,
+lscov,matfun,6,"[x,stdx,mse,S] = lscov(...)",accepted,
+lsqminnorm,matfun,0,"X = lsqminnorm(A,B)",accepted,
+lsqminnorm,matfun,1,"X = lsqminnorm(A,B,tol)",accepted,
+lsqminnorm,matfun,2,"X = lsqminnorm(___,rankWarn)",accepted,
 mpower,matfun,0,C = A^B,unprobed,no sample for this form's arguments
 mpower,matfun,1,"C = mpower(A,B)",accepted,
+normest,matfun,0,n = normest(S),accepted,
+normest,matfun,1,"n = normest(S,tol)",accepted,
+normest,matfun,2,"[n,count] = normest(___)",accepted,
 null,matfun,0,Z = null(A),accepted,
 null,matfun,1,"Z = null(A,'r')",error,"null expects 1 argument(s), but got 2."
 orth,matfun,0,Q = orth(A),accepted,
 pinv,matfun,0,B = pinv(A),accepted,
 pinv,matfun,1,"B = pinv(A,tol)",error,"pinv expects 1 argument(s), but got 2."
+planerot,matfun,0,"[G,y] = planerot(x)",accepted,
+polyeig,matfun,0,"e = polyeig(A0,A1,...,Ap)",accepted,
+polyeig,matfun,1,"[X,e] = polyeig(A0,A1,...,Ap)",accepted,
+polyeig,matfun,2,"[X,e,s] = polyeig(A0,A1,...,Ap)",accepted,
+qrdelete,matfun,0,"[Q1,R1] = qrdelete(Q,R,j)",accepted,
+qrdelete,matfun,1,"[Q1,R1] = qrdelete(Q,R,j,'col')",accepted,
+qrdelete,matfun,2,"[Q1,R1] = qrdelete(Q,R,j,'row')",accepted,
+qrinsert,matfun,0,"[Q1,R1] = qrinsert(Q,R,j,x)",accepted,
+qrinsert,matfun,1,"[Q1,R1] = qrinsert(Q,R,j,x,'col')",accepted,
+qrinsert,matfun,2,"[Q1,R1] = qrinsert(Q,R,j,x,'row')",accepted,
 rank,matfun,0,k = rank(A),accepted,
 rank,matfun,1,"k = rank(A,tol)",accepted,
+rref,matfun,0,R = rref(A),accepted,
+rref,matfun,1,"R = rref(A,tol)",accepted,
+rref,matfun,2,"[R,p] = rref(A)",accepted,
+rsf2csf,matfun,0,"[Unew,Tnew] = rsf2csf(U,T)",accepted,
 schur,matfun,0,T = schur(A),accepted,
 schur,matfun,1,"T = schur(A,flag)",unprobed,no sample for this form's arguments
 schur,matfun,2,"[U,T] = schur(A,...)",unprobed,no sample for this form's arguments
 sqrtm,matfun,0,X = sqrtm(A),accepted,
 sqrtm,matfun,1,"[X,residual] = sqrtm(A)",error,"This call returns 1 value(s), but 2 were asked for."
 sqrtm,matfun,2,"[X,alpha,condx] = sqrtm(A)",error,"This call returns 1 value(s), but 3 were asked for."
+sylvester,matfun,0,"X = sylvester(A,B,C)",accepted,
 idivide,ops,0,"C = idivide(A,B)",accepted,
 idivide,ops,1,"C = idivide(A,B,opt)",accepted,
 kron,ops,0,"K = kron(A,B)",unprobed,no sample for this form's arguments

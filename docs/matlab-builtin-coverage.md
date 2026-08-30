@@ -103,8 +103,16 @@ see. This file refused to count them while they drew nothing; **M56 made them re
 number and this one agree again. `opengl` *is* counted, because an accepted no-op is an answer — the
 same reading that counted `shading`, `lighting` and `camlight` in M43.
 
-Across every callable kind — builtin, function, operator, keyword, script — the count is **1,014 of
-2,024** as of M106, which took the coordinate conversions and the elementary special functions and
+Across every callable kind — builtin, function, operator, keyword, script — the count is **1,029 of
+2,024** as of M107, which took the matrix-function leftovers and so finished MATLAB's `matfun`
+folder: `rref` `planerot` `qrinsert` `qrdelete` `cdf2rdf` `rsf2csf` `condeig` `normest` `condest`
+`sylvester` `lsqminnorm` `lscov` `polyeig` `funm` `gsvd`. Those fifteen take `matfun` from 10 of 25
+names to 25 of 25, and every one of their 42 documented forms is accepted. Two riders came with
+them and are not in the count, because the dump this file measures against does not carry them:
+`normest1`, the block one-norm estimator `condest` is written over, and `decomposition`, the object
+that keeps a factorization so that solving with it many times costs one.
+
+1,014 after M106, which took the coordinate conversions and the elementary special functions and
 so finished MATLAB's `specfun` folder: `cart2pol` `pol2cart` `cart2sph` `sph2cart` `ellipke`
 `ellipj` `expint` `legendre` `rat` `rats` `matchpairs`. Those eleven take `specfun` from 12 of 23
 names to 23 of 23, and every one of their 22 documented forms is accepted.
