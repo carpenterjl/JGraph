@@ -695,10 +695,9 @@ internal sealed partial class Interpreter
                 // structure, and without this arm the bare word took the first road to the second
                 // road's answer and echoed `ans = struct(…)`.
                 if (existing.AsCallable is BuiltinFunction
-                    { AutoCallsBare: true, KnowsWhenDiscarded: true } asked
-                    && asked.MultiOutput is { } discardedBare)
+                    { AutoCallsBare: true, KnowsWhenDiscarded: true, MultiOutput: not null } asked)
                 {
-                    discardedBare([], 0, statement.Line, statement.Column);
+                    asked.CallDiscarded([], statement.Line, statement.Column);
                     return;
                 }
 
@@ -720,8 +719,8 @@ internal sealed partial class Interpreter
         // evaluated, "nobody wanted this" looks exactly like "somebody wanted one of these".
         if (expression is CallExpr discarded
             && CalleeValue(discarded, env).Type == JgsType.Function
-            && CalleeValue(discarded, env).AsCallable is BuiltinFunction { KnowsWhenDiscarded: true } knowing
-            && knowing.MultiOutput is { } none)
+            && CalleeValue(discarded, env).AsCallable is BuiltinFunction
+                { KnowsWhenDiscarded: true, MultiOutput: not null } knowing)
         {
             var given = new JgsValue[discarded.Arguments.Count];
             for (int i = 0; i < given.Length; i++)
@@ -729,7 +728,7 @@ internal sealed partial class Interpreter
                 given[i] = Evaluate(discarded.Arguments[i], env);
             }
 
-            none(given, 0, discarded.Line, discarded.Column);
+            knowing.CallDiscarded(given, discarded.Line, discarded.Column);
             return;
         }
 

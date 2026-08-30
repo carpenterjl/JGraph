@@ -669,15 +669,47 @@ internal static partial class JgsBuiltins
             return JgsValue.Null;
         });
 
-        Define("dir", (args, line, col) =>
+        // dir and ls answer when asked and print when not, so both carry KnowsWhenDiscarded: `dir` on
+        // its own line is the listing a console session expects, and `d = dir(...)` is the struct
+        // array (or, for ls, the char matrix) a script walks. AutoCallsBare is what makes the bare
+        // word a call rather than a handle, so the discarded arm can be reached at all.
+        string Queried(string name, IReadOnlyList<JgsValue> args, int line, int col)
         {
             if (args.Count > 1)
             {
-                throw new JgsRuntimeException(line, col, "dir(pattern) expects at most one argument.");
+                throw new JgsRuntimeException(line, col, $"{name}(pattern) expects at most one argument.");
             }
 
-            return ListDirectory(host, args.Count == 1 ? Str("dir", args, 0, line, col) : string.Empty, line, col);
-        });
+            return args.Count == 1 ? Str(name, args, 0, line, col) : string.Empty;
+        }
+
+        void DefineListing(
+            string name,
+            Func<JGraphScriptGlobals, string, int, int, JgsValue> answer,
+            Func<JGraphScriptGlobals, string, string>? missing = null) =>
+            env.Declare(name, JgsValue.Function(new BuiltinFunction(
+                name, (args, line, col) => answer(host, Queried(name, args, line, col), line, col))
+            {
+                AutoCallsBare = true,
+                KnowsWhenDiscarded = true,
+                MultiOutput = (args, wanted, line, col) =>
+                {
+                    string query = Queried(name, args, line, col);
+                    if (wanted != 0)
+                    {
+                        return [answer(host, query, line, col)];
+                    }
+
+                    List<DirectoryEntry> entries = DirectoryEntries(host, name, query, line, col);
+                    host.WriteOut(entries.Count == 0 && missing is not null
+                        ? missing(host, query)
+                        : FormatDirectoryListing(entries));
+                    return [JgsValue.Null];
+                },
+            }));
+
+        DefineListing("dir", ListDirectory);
+        DefineListing("ls", ListNames, NotFoundNotice);
 
         // path itself is declared with the search-path builtins in RegisterPathBuiltins — the search
         // path is interpreter state, and the plain working-directory answer that used to live here
@@ -5123,13 +5155,29 @@ internal static partial class JgsBuiltins
         throw new JgsRuntimeException(line, col, $"{name} expects a number or numeric array, but got a {value.TypeName}.");
     }
 
+    /// <summary>One entry of a folder listing, before it is dressed as a struct or as a name.</summary>
+    /// <remarks>
+    /// <c>.</c> and <c>..</c> are entries like any other — MATLAB lists them, and a script that walks
+    /// <c>dir</c> filters on <c>isdir</c> rather than on the count. Their <c>Folder</c> is still the
+    /// folder they were found in, not the folder they point at.
+    /// </remarks>
+    private readonly record struct DirectoryEntry(
+        string Name, string Folder, DateTime Written, long Bytes, bool IsDirectory);
+
+    /// <summary>The fields <c>dir</c> answers with, in MATLAB's own order (M109).</summary>
+    private static readonly string[] DirectoryFields = ["name", "folder", "date", "bytes", "isdir", "datenum"];
+
+    /// <summary>The two entries the directory enumerator never yields but MATLAB always lists.</summary>
+    private static readonly string[] DotEntries = [".", ".."];
+
     /// <summary>
-    /// The body of <c>dir</c>: the names in a folder as a cell array of strings, folders suffixed with
-    /// the directory separator, sorted ordinally. The bare-name echo of the cell <em>is</em> the
-    /// listing, and <c>d = dir('*.m')</c> captures it — builtins have no nargout, so MATLAB's struct
-    /// array form is deliberately not attempted. A missing folder yields an empty cell.
+    /// The entries <c>dir</c> and <c>ls</c> both list: a folder's contents, or the one file a plain
+    /// name resolves to, sorted ordinally by name and including <c>.</c> and <c>..</c> whenever the
+    /// pattern admits them. A folder that does not exist lists nothing rather than raising — that is
+    /// MATLAB's answer, and it is what lets <c>isempty(dir(p))</c> stand in for "nothing there".
     /// </summary>
-    private static JgsValue ListDirectory(JGraphScriptGlobals host, string query, int line, int col)
+    private static List<DirectoryEntry> DirectoryEntries(
+        JGraphScriptGlobals host, string name, string query, int line, int col)
     {
         string directory;
         string pattern;
@@ -5153,32 +5201,140 @@ internal static partial class JgsBuiltins
                 : (Path.GetDirectoryName(resolved) ?? resolved, leaf);
         }
 
+        var entries = new List<DirectoryEntry>();
         if (!Directory.Exists(directory))
         {
-            return JgsValue.Cell(System.Array.Empty<JgsValue>());
+            return entries;
         }
+
+        // The folder every entry reports is the one it was found in, spelled absolutely and without a
+        // trailing separator — except at a root, where the separator is part of the name.
+        string owner = Path.TrimEndingDirectorySeparator(Path.GetFullPath(directory));
 
         try
         {
-            var names = new List<string>();
+            foreach (string self in DotEntries)
+            {
+                // .NET matches a real entry with the simple expression; the two that the enumerator
+                // never yields have to be held against the same rule by hand, or `dir('*.m')` would
+                // list them and `dir('folder')` would not.
+                if (System.IO.Enumeration.FileSystemName.MatchesSimpleExpression(pattern, self, ignoreCase: true))
+                {
+                    string target = self == "." ? directory : Path.Combine(directory, "..");
+                    entries.Add(new DirectoryEntry(
+                        self, owner, Directory.GetLastWriteTime(target), 0L, IsDirectory: true));
+                }
+            }
+
             foreach (string folder in Directory.EnumerateDirectories(directory, pattern))
             {
-                names.Add(Path.GetFileName(folder) + Path.DirectorySeparatorChar);
+                entries.Add(new DirectoryEntry(
+                    Path.GetFileName(folder), owner, Directory.GetLastWriteTime(folder), 0L, IsDirectory: true));
             }
 
             foreach (string file in Directory.EnumerateFiles(directory, pattern))
             {
-                names.Add(Path.GetFileName(file));
+                var info = new FileInfo(file);
+                entries.Add(new DirectoryEntry(info.Name, owner, info.LastWriteTime, info.Length, IsDirectory: false));
             }
-
-            names.Sort(StringComparer.Ordinal);
-            return JgsValue.Cell(names.Select(JgsValue.Str).ToArray());
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or ArgumentException)
         {
-            throw new JgsRuntimeException(line, col, $"dir: cannot list '{directory}': {ex.Message}");
+            throw new JgsRuntimeException(line, col, $"{name}: cannot list '{directory}': {ex.Message}");
         }
+
+        entries.Sort(static (a, b) => string.CompareOrdinal(a.Name, b.Name));
+        return entries;
     }
+
+    /// <summary>
+    /// The body of <c>dir</c>: MATLAB's struct array, one element per entry, carrying
+    /// <c>name folder date bytes isdir datenum</c> as a column. An empty listing is a 0-by-1 struct
+    /// array that still remembers the six fields, so <c>fieldnames(dir('nowhere'))</c> answers them.
+    /// </summary>
+    private static JgsValue ListDirectory(JGraphScriptGlobals host, string query, int line, int col)
+    {
+        List<DirectoryEntry> entries = DirectoryEntries(host, "dir", query, line, col);
+        var elements = new Dictionary<string, JgsValue>[entries.Count];
+        for (int i = 0; i < elements.Length; i++)
+        {
+            DirectoryEntry entry = entries[i];
+
+            // MATLAB's date and datenum are the same instant, truncated to the whole second: the
+            // string carries no fraction, so a datenum that did would disagree with it.
+            DateTime whole = entry.Written.AddTicks(-(entry.Written.Ticks % TimeSpan.TicksPerSecond));
+            elements[i] = new Dictionary<string, JgsValue>(StringComparer.Ordinal)
+            {
+                ["name"] = JgsValue.Str(entry.Name),
+                ["folder"] = JgsValue.Str(entry.Folder),
+                ["date"] = JgsValue.Str(whole.ToString("dd-MMM-yyyy HH:mm:ss", CultureInfo.InvariantCulture)),
+                ["bytes"] = JgsValue.Number(entry.Bytes),
+                ["isdir"] = JgsValue.Bool(entry.IsDirectory),
+                ["datenum"] = JgsValue.Number(whole.ToOADate() + JgsTime.DatenumOffset),
+            };
+        }
+
+        return JgsValue.StructArray(
+            new JgsStructArray(elements, DirectoryFields), elements.Length, 1);
+    }
+
+    /// <summary>
+    /// The listing <c>dir</c> and <c>ls</c> print when nobody asked for the answer: the names in
+    /// ordinal order, laid out down the columns of a fixed-width grid, blank-line delimited.
+    /// </summary>
+    private static string FormatDirectoryListing(List<DirectoryEntry> entries)
+    {
+        if (entries.Count == 0)
+        {
+            return string.Empty;
+        }
+
+        int width = 2;
+        foreach (DirectoryEntry entry in entries)
+        {
+            width = System.Math.Max(width, entry.Name.Length + 2);
+        }
+
+        int columns = System.Math.Max(1, DirectoryListingWidth / width);
+        int rows = ((entries.Count - 1) / columns) + 1;
+
+        var text = new System.Text.StringBuilder("\n");
+        for (int r = 0; r < rows; r++)
+        {
+            for (int c = 0; c < columns; c++)
+            {
+                // Column-major, which is what puts the alphabet down the page rather than across it.
+                int index = (c * rows) + r;
+                if (index < entries.Count)
+                {
+                    text.Append(entries[index].Name.PadRight(width));
+                }
+            }
+
+            text.Append('\n');
+        }
+
+        return text.Append('\n').ToString();
+    }
+
+    /// <summary>
+    /// The width the printed listing lays its columns out in. MATLAB asks its command window; JGraph's
+    /// console has no width to ask for, so this is the classic terminal's 80.
+    /// </summary>
+    private const int DirectoryListingWidth = 80;
+
+    /// <summary>
+    /// The body of <c>ls</c>: the same entries <c>dir</c> lists, as the space-padded char matrix of
+    /// their names. A query that names nothing answers a 0-by-0 char, and says so on the console when
+    /// nobody caught the answer — which is where <c>ls</c> and <c>dir</c> differ in MATLAB as well.
+    /// </summary>
+    private static JgsValue ListNames(JGraphScriptGlobals host, string query, int line, int col) =>
+        JgsValue.CharMatrix(
+            [.. DirectoryEntries(host, "ls", query, line, col).Select(static e => e.Name)]);
+
+    /// <summary>What <c>ls</c> says on the console about a name that matched nothing.</summary>
+    private static string NotFoundNotice(JGraphScriptGlobals host, string query) =>
+        $"'{(query.Length == 0 ? ResolveFolder(host, string.Empty) : query)}' not found. Check the path or file permissions.{'\n'}";
 
     /// <summary>Anchors a (possibly empty) relative folder to the run's working directory. Patterns
     /// cannot go through the workspace resolver — it probes for existing files.</summary>

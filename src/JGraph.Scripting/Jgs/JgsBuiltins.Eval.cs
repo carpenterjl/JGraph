@@ -306,6 +306,15 @@ internal static partial class JgsBuiltins
                 return JgsValue.Number(1);
             }
 
+            // A built-in outranks a file or a folder of the same name when nothing said which kind
+            // was meant: MATLAB answers 5 for `exist('fix')` standing beside a folder called `fix`,
+            // and only `exist('fix', 'dir')` reaches the folder (M109). Naming a kind skips this arm,
+            // so 'file' and 'dir' still answer about the disk alone.
+            if (kind is null && env.TryGet(name, out JgsValue builtin) && builtin.Type == JgsType.Function)
+            {
+                return JgsValue.Number(5);
+            }
+
             if (wantFile)
             {
                 string resolved = host.Resolve(name);

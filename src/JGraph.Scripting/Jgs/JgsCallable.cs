@@ -109,6 +109,16 @@ internal sealed class BuiltinFunction : IJgsCallable, IJgsMultiCallable
             : [Call(arguments, line, column)];
 
     /// <summary>
+    /// Runs a <see cref="KnowsWhenDiscarded"/> builtin with nobody wanting its answer. The interpreter
+    /// reaches <see cref="MultiOutput"/> directly for that case, and going through here rather than
+    /// calling the delegate is what gives the discarded arm the same string demotion and the same
+    /// exception translation every other arm has — without it, <c>dir fix</c> handed <c>dir</c> the
+    /// command word as a string array where <c>dir('fix')</c> handed it a char row (M109).
+    /// </summary>
+    public void CallDiscarded(IReadOnlyList<JgsValue> arguments, int line, int column) =>
+        Guarded(() => MultiOutput!(DemoteStringScalars(arguments), 0, line, column), line, column);
+
+    /// <summary>
     /// Runs a builtin's body and turns the argument-shaped exceptions the layers underneath throw
     /// into script errors a script can catch.
     /// </summary>

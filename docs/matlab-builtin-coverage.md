@@ -103,15 +103,23 @@ see. This file refused to count them while they drew nothing; **M56 made them re
 number and this one agree again. `opengl` *is* counted, because an accepted no-op is an answer — the
 same reading that counted `shading`, `lighting` and `camlight` in M43.
 
-Across every callable kind — builtin, function, operator, keyword, script — the count is **1,030 of
-2,024** as of M108, which came from a bug report rather than a plan row: a morphing-surface script
-drew one static picture and wrote no video, and setting a breakpoint to find out why changed what
-the script meant. `VideoWriter` is the name the count moved for — the divergence ADR 0072 recorded
-is retired, and five of MATLAB's seven profiles are written (the two JPEG 2000 ones are refused by
-name). `open` and `writeVideo` come with it and are not separately counted here, and neither are
-the two smaller gaps the same script fell into: `axis`'s three-dimensional and colour-limit forms,
-and a surface's `ZData`, which could be read but not written and so made `set(h, 'ZData', Z)` — the
-animation idiom — impossible.
+Across every callable kind — builtin, function, operator, keyword, script — the count is **1,031 of
+2,024** as of M109, which came from a bug report rather than a plan row, as M108 did: `dir` answered
+a cell array of names where MATLAB answers a struct array, so `d(k).isdir` — the way every script
+walks a listing — died here on "needs a struct, but this is a cell". `ls` is the name the count
+moved for; it did not exist at all, and is the same listing as the padded char matrix of names that
+M105's char matrix first made expressible. `dir`, `what` and `exist` were already counted and
+changed shape rather than appearing: `dir` answers MATLAB's six fields, `what` MATLAB's twelve
+rather than four of its own, and `exist` learned that a built-in outranks a folder sharing its name.
+
+M108, one milestone earlier, took the count to 1,030: a morphing-surface script drew one static
+picture and wrote no video, and setting a breakpoint to find out why changed what the script meant.
+`VideoWriter` is the name that count moved for — the divergence ADR 0072 recorded is retired, and
+five of MATLAB's seven profiles are written (the two JPEG 2000 ones are refused by name). `open`
+and `writeVideo` come with it and are not separately counted here, and neither are the two smaller
+gaps the same script fell into: `axis`'s three-dimensional and colour-limit forms, and a surface's
+`ZData`, which could be read but not written and so made `set(h, 'ZData', Z)` — the animation idiom
+— impossible.
 
 1,029 after M107, which took the matrix-function leftovers and so finished MATLAB's `matfun`
 folder: `rref` `planerot` `qrinsert` `qrdelete` `cdf2rdf` `rsf2csf` `condeig` `normest` `condest`

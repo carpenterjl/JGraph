@@ -1693,7 +1693,8 @@ public static class JgsBuiltinCatalog
         Add("image", "Displays a matrix as a colormapped image over its cell indices (an image value shows as-is).", P("z"));
         Add("help", "Shows a builtin's signature and summary; help alone lists every function.", Opt("name"));
         Add("format", "Sets numeric display precision: short, long, shortE, longE (bare format resets).", Opt("mode"));
-        Add("dir", "The files and folders in the working directory (or matching pattern) as a cell array of names; folders end with the path separator.", Opt("pattern"));
+        Add("dir", "The files and folders in the working directory (or matching pattern) as a struct array with fields name, folder, date, bytes, isdir and datenum; bare dir prints the names instead.", Opt("pattern"));
+        Add("ls", "The same listing as dir, as a char matrix of names padded to the longest; raises when nothing matches.", Opt("pattern"));
         Add("path", "The search path as one string; path(folders) replaces the added folders.", Opt("folders..."));
         Add("addpath", "Adds folders to the search path, so their .m files answer bare names; '-end' appends instead.", P("folder"), Opt("more..."));
         Add("rmpath", "Removes folders from the search path.", P("folder"), Opt("more..."));

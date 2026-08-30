@@ -182,18 +182,30 @@ internal static partial class JgsBuiltins
             string folder = args.Count == 1 ? host.Resolve(Str("what", args, 0, line, col)) : host.CurrentDirectory;
             if (!Directory.Exists(folder))
             {
-                throw new JgsRuntimeException(line, col, $"what: '{folder}' is not a folder.");
+                // MATLAB answers a 0-by-1 struct array rather than raising, so a caller can ask about
+                // a folder that may not be there and test isempty on the answer.
+                return JgsValue.StructArray(new JgsStructArray([], WhatFields), 0, 1);
             }
 
-            // MATLAB groups a folder's contents by kind. JGraph's kinds are its own script and
-            // figure files rather than MATLAB's p-files and classes.
+            // MATLAB's field set, in MATLAB's order, so `w.m` and `fieldnames(w)` read the same here
+            // as there. The kinds JGraph has no notion of — MATLAB apps, live scripts, MEX binaries,
+            // Simulink models, p-code — are still asked for by name and answer empty, and `jgs` is
+            // appended for JGraph's own scripts (ADR 0110).
             return JgsValue.Struct(new Dictionary<string, JgsValue>(StringComparer.Ordinal)
             {
                 ["path"] = JgsValue.Str(folder),
                 ["m"] = NamesIn(folder, "*.m"),
-                ["jgs"] = NamesIn(folder, "*.jgs"),
+                ["mlapp"] = NamesIn(folder, "*.mlapp"),
+                ["mlx"] = NamesIn(folder, "*.mlx"),
                 ["mat"] = NamesIn(folder, "*.mat"),
-                ["fig"] = NamesIn(folder, "*.graph"),
+                ["mex"] = NamesIn(folder, "*.mex*"),
+                ["mdl"] = NamesIn(folder, "*.mdl"),
+                ["slx"] = NamesIn(folder, "*.slx"),
+                ["sfx"] = NamesIn(folder, "*.sfx"),
+                ["p"] = NamesIn(folder, "*.p"),
+                ["classes"] = FoldersIn(folder, "@*"),
+                ["packages"] = FoldersIn(folder, "+*"),
+                ["jgs"] = NamesIn(folder, "*.jgs"),
             });
         });
 
@@ -261,8 +273,33 @@ internal static partial class JgsBuiltins
     {
         string[] files = Directory.GetFiles(folder, pattern);
         Array.Sort(files, StringComparer.OrdinalIgnoreCase);
-        return JgsValue.Cell([.. files.Select(f => JgsValue.Str(Path.GetFileName(f)))]);
+        return ColumnOfNames(files, static f => Path.GetFileName(f));
     }
+
+    /// <summary>
+    /// The sub-folders matching <paramref name="pattern"/>, with the marker character that selected
+    /// them dropped: MATLAB's <c>what</c> reports the class in <c>@MyCls</c> as <c>MyCls</c>.
+    /// </summary>
+    private static JgsValue FoldersIn(string folder, string pattern)
+    {
+        string[] folders = Directory.GetDirectories(folder, pattern);
+        Array.Sort(folders, StringComparer.OrdinalIgnoreCase);
+        return ColumnOfNames(folders, static f => Path.GetFileName(f)[1..]);
+    }
+
+    /// <summary>The names as a column cell — the orientation MATLAB's <c>what</c> answers in.</summary>
+    private static JgsValue ColumnOfNames(string[] paths, Func<string, string> name)
+    {
+        JgsValue cell = JgsValue.Cell([.. paths.Select(p => JgsValue.Str(name(p)))]);
+        cell.Reshape(paths.Length, 1);
+        return cell;
+    }
+
+    /// <summary>The fields <c>what</c> answers with, remembered for the empty answer (M109).</summary>
+    private static readonly string[] WhatFields =
+    [
+        "path", "m", "mlapp", "mlx", "mat", "mex", "mdl", "slx", "sfx", "p", "classes", "packages", "jgs",
+    ];
 
     /// <summary>Reads an 'on'/'off' argument, toggling when there is none.</summary>
     private static bool Switched(string name, IReadOnlyList<JgsValue> args, bool current, int line, int col)
