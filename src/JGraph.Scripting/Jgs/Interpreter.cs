@@ -2259,9 +2259,20 @@ internal sealed partial class Interpreter
         }
     }
 
-    private JgsValue EvaluateUnary(UnaryExpr unary, JgsEnvironment env)
+    private JgsValue EvaluateUnary(UnaryExpr unary, JgsEnvironment env) =>
+        EvaluateUnary(unary, env, out _);
+
+    private JgsValue EvaluateUnary(UnaryExpr unary, JgsEnvironment env, out bool owned)
     {
         JgsValue operand = Evaluate(unary.Operand, env);
+        JgsValue answer = ApplyUnary(unary, operand);
+        owned = OwnsFreshResult(answer, operand, null);
+        return answer;
+    }
+
+    /// <summary>The unary operator itself, on an already-evaluated operand.</summary>
+    private JgsValue ApplyUnary(UnaryExpr unary, JgsValue operand)
+    {
         if (operand.Type == JgsType.Struct && JgsBuiltins.TryDecompositionUnary(
             unary.Op switch
             {
@@ -2311,12 +2322,95 @@ internal sealed partial class Interpreter
         return left.IsTruthy ? JgsValue.True : JgsValue.Bool(Evaluate(logical.Right, env).IsTruthy);
     }
 
-    private JgsValue EvaluateBinary(BinaryExpr binary, JgsEnvironment env)
+    private JgsValue EvaluateBinary(BinaryExpr binary, JgsEnvironment env) =>
+        EvaluateBinary(binary, env, out _);
+
+    private JgsValue EvaluateBinary(BinaryExpr binary, JgsEnvironment env, out bool owned)
     {
         JgsValue left = Evaluate(binary.Left, env);
         JgsValue right = Evaluate(binary.Right, env);
-        return ApplyBinary(binary.Op, left, right, binary);
+        JgsValue answer = ApplyBinary(binary.Op, left, right, binary);
+        owned = OwnsFreshResult(answer, left, right);
+        return answer;
     }
+
+    // --- Taking an operator's answer rather than copying it (M109) ------------------------------
+
+    /// <summary>
+    /// Whether an operator's answer is a packed array that this evaluation alone can reach, so the
+    /// name being bound to it may take it instead of copying its whole buffer.
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    /// MATLAB's assignment copies containers, because <c>b = a; b(1) = 0</c> must leave <c>a</c>
+    /// alone. It does not have to copy <c>y = sin(x) .* exp(-x) + sqrt(x)</c>: the buffer that
+    /// arithmetic just minted is held by nothing but the expression that made it, and copying it is
+    /// a whole extra pass over memory — about 60 ms at 400 MB, measured in M92.
+    /// </para>
+    /// <para>
+    /// The whole safety argument is that this question is asked and answered on the stack. Nothing
+    /// is written on the value, so no "this one is fresh" mark can outlive the statement, reach a
+    /// builtin that stores its argument, and come back later attached to something a name already
+    /// holds. The only caller is <see cref="EvaluateForBinding"/>, which is called by
+    /// <see cref="EvaluateAssign"/> and by nothing else.
+    /// </para>
+    /// <para>
+    /// The conditions are what make the answer provably unshared. It must be packed and non-empty,
+    /// which is the only case worth eliding and the only one whose storage is a single buffer. The
+    /// operands must be ordinary numbers or arrays: an object, a struct, a sparse matrix or a
+    /// time-tagged array sends
+    /// <see cref="ApplyBinaryCore(TokenType, JgsValue, JgsValue, Node)"/> off to an operator
+    /// overload, a stored decomposition factor or the calendar arithmetic, and those may hand back
+    /// a value some other name holds. And it must be a different wrapper over different
+    /// storage from either operand, which is what rules out an operator that returns what it was
+    /// given — <c>A^1</c>, a conjugate transpose of a real, a unary plus. Every remaining road
+    /// through the operator (the packed kernels, implicit expansion, the matrix product and solve,
+    /// the boxed fallback, the blocked transpose) allocates its answer, and the operands are the
+    /// only values any of them can see.
+    /// </para>
+    /// <para>
+    /// The last two conditions cannot fire on the code as it stands, and were kept anyway. A user
+    /// function cannot hand back a wrapper another name holds, because a parameter is bound through
+    /// <see cref="CopyForBinding"/> and an output name is assigned; the functions that do answer with
+    /// what they were given are builtins written in C#, and a call is never elided. So the identity
+    /// checks are not carrying today's correctness — the operand check is. They are here because the
+    /// claim this method makes has to stay true of roads not yet built, and three reference
+    /// comparisons are a cheap way to make the answer wrong loudly rather than quietly.
+    /// </para>
+    /// </remarks>
+    private static bool OwnsFreshResult(JgsValue answer, JgsValue left, JgsValue? right)
+    {
+        if (!answer.IsPacked && !answer.IsPackedComplex)
+        {
+            return false; // a scalar, a string, a cell — CopyForBinding is already cheap or a no-op
+        }
+
+        if (answer.ArrayLength == 0)
+        {
+            return false; // nothing to save, and the shared empties are not worth reasoning about
+        }
+
+        if (!IsOrdinaryOperand(left) || (right is not null && !IsOrdinaryOperand(right)))
+        {
+            return false;
+        }
+
+        if (ReferenceEquals(answer, left) || (right is not null && ReferenceEquals(answer, right)))
+        {
+            return false;
+        }
+
+        return !answer.SharesStorageWith(left) && (right is null || !answer.SharesStorageWith(right));
+    }
+
+    /// <summary>
+    /// Whether an operand keeps the operator on its numeric roads — the ones whose answer is always
+    /// freshly allocated from the operands alone.
+    /// </summary>
+    private static bool IsOrdinaryOperand(JgsValue value) =>
+        value.Type is JgsType.Number or JgsType.Bool or JgsType.Complex or JgsType.Array
+        && value.TimeTag is null
+        && !value.IsStringArray;
 
     /// <summary>Applies a binary operator to already-evaluated operands (shared with compound assignment).</summary>
     /// <summary>
@@ -2770,9 +2864,43 @@ internal sealed partial class Interpreter
     /// <summary>An empty pristine table, for a <see cref="JgsEnvironment.Forget"/> that reverts to nothing.</summary>
     private static readonly Dictionary<string, JgsValue> EmptyPristine = new();
 
+    /// <summary>
+    /// Evaluates an assignment's right-hand side, saying whether the answer is one this evaluation
+    /// alone can reach — see <see cref="OwnsFreshResult"/>. Only the operator forms can say yes: a
+    /// call, an index read or a bare name may all hand back something another name already holds,
+    /// and the default answer is the copy that has always been made.
+    /// </summary>
+    private JgsValue EvaluateForBinding(Expr value, JgsEnvironment env, out bool owned)
+    {
+        switch (value)
+        {
+            case BinaryExpr binary:
+                return EvaluateBinary(binary, env, out owned);
+            case UnaryExpr unary:
+                return EvaluateUnary(unary, env, out owned);
+            case TransposeExpr transpose:
+                return EvaluateTranspose(transpose, env, out owned);
+            default:
+                owned = false;
+                return Evaluate(value, env);
+        }
+    }
+
     private JgsValue EvaluateAssign(AssignExpr assign, JgsEnvironment env)
     {
-        JgsValue rhs = Evaluate(assign.Value, env);
+        // A plain assignment may take an operator's freshly minted buffer rather than copy it; every
+        // other right-hand side, and every compound assignment, goes through Evaluate as before.
+        JgsValue rhs;
+        bool owned;
+        if (assign.Op == TokenType.Assign)
+        {
+            rhs = EvaluateForBinding(assign.Value, env, out owned);
+        }
+        else
+        {
+            rhs = Evaluate(assign.Value, env);
+            owned = false;
+        }
 
         if (assign.Target is VariableExpr variable)
         {
@@ -2791,7 +2919,7 @@ internal sealed partial class Interpreter
             }
             else
             {
-                stored = CopyForBinding(stored);
+                stored = owned ? stored : CopyForBinding(stored);
             }
 
             if (!scope.TryAssign(variable.Name, stored))
@@ -2817,7 +2945,7 @@ internal sealed partial class Interpreter
                 return AssignToMember(member, ApplyBinary(UnderlyingOp(assign.Op), current, rhs, assign), env);
             }
 
-            return AssignToMember(member, CopyForBinding(rhs), env);
+            return AssignToMember(member, owned ? rhs : CopyForBinding(rhs), env);
         }
 
         if (assign.Target is BraceIndexExpr brace)
@@ -2828,7 +2956,7 @@ internal sealed partial class Interpreter
                 return AssignToBraceIndex(brace, ApplyBinary(UnderlyingOp(assign.Op), current, rhs, assign), env);
             }
 
-            return AssignToBraceIndex(brace, CopyForBinding(rhs), env);
+            return AssignToBraceIndex(brace, owned ? rhs : CopyForBinding(rhs), env);
         }
 
         // An index write in either spelling: x(k) = v, x[0:n] = 0, x(mask) = v, x[:] = v. The parser
@@ -5641,9 +5769,20 @@ internal sealed partial class Interpreter
     /// a real column, where it used to hand the same row back — so a transposed vector can be
     /// concatenated into a matrix and reports its own size. A scalar is its own transpose.
     /// </summary>
-    private JgsValue EvaluateTranspose(TransposeExpr transpose, JgsEnvironment env)
+    private JgsValue EvaluateTranspose(TransposeExpr transpose, JgsEnvironment env) =>
+        EvaluateTranspose(transpose, env, out _);
+
+    private JgsValue EvaluateTranspose(TransposeExpr transpose, JgsEnvironment env, out bool owned)
     {
         JgsValue value = Evaluate(transpose.Operand, env);
+        JgsValue answer = ApplyTranspose(transpose, value);
+        owned = OwnsFreshResult(answer, value, null);
+        return answer;
+    }
+
+    /// <summary>The transpose itself, on an already-evaluated operand.</summary>
+    private JgsValue ApplyTranspose(TransposeExpr transpose, JgsValue value)
+    {
         if (value.Type == JgsType.Struct && JgsBuiltins.TryDecompositionUnary(
             transpose.Conjugate ? "ctranspose" : "transpose",
             value, transpose.Line, transpose.Column, out JgsValue turned))

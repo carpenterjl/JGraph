@@ -425,6 +425,55 @@ internal sealed class JgsValue
     public bool IsPackedComplex => _reference is JgsPackedComplex;
 
     /// <summary>
+    /// Whether these two values are backed by the same storage — the same buffer, the same complex
+    /// payload, or the same boxed element array — so that a write through one would be seen through
+    /// the other.
+    /// </summary>
+    /// <remarks>
+    /// Asked by <see cref="Interpreter.CopyForBinding"/>'s elision (M109) to prove an operator's
+    /// answer is not its own operand wearing a new wrapper. It reads <c>_reference</c> directly
+    /// rather than through <see cref="AsBuffer"/> on purpose: <c>AsBuffer</c> compacts growth
+    /// capacity, which reallocates, and a question about identity must not move anything.
+    /// </remarks>
+    public bool SharesStorageWith(JgsValue other)
+    {
+        if (_reference is null || other._reference is null)
+        {
+            return false;
+        }
+
+        if (ReferenceEquals(_reference, other._reference))
+        {
+            return true;
+        }
+
+        // A complex value's storage is two buffers behind one payload object, so two distinct
+        // payloads can still be one plane apiece of the same numbers.
+        NumericBuffer? mineReal = _reference as NumericBuffer;
+        NumericBuffer? theirsReal = other._reference as NumericBuffer;
+        JgsPackedComplex? minePlanes = _reference as JgsPackedComplex;
+        JgsPackedComplex? theirsPlanes = other._reference as JgsPackedComplex;
+
+        if (minePlanes is not null && theirsPlanes is not null)
+        {
+            return ReferenceEquals(minePlanes.Re, theirsPlanes.Re) || ReferenceEquals(minePlanes.Re, theirsPlanes.Im)
+                || ReferenceEquals(minePlanes.Im, theirsPlanes.Re) || ReferenceEquals(minePlanes.Im, theirsPlanes.Im);
+        }
+
+        if (minePlanes is not null && theirsReal is not null)
+        {
+            return ReferenceEquals(minePlanes.Re, theirsReal) || ReferenceEquals(minePlanes.Im, theirsReal);
+        }
+
+        if (theirsPlanes is not null && mineReal is not null)
+        {
+            return ReferenceEquals(theirsPlanes.Re, mineReal) || ReferenceEquals(theirsPlanes.Im, mineReal);
+        }
+
+        return false;
+    }
+
+    /// <summary>
     /// The packed buffer (valid only when <see cref="IsPacked"/>). Compacts growth capacity first,
     /// so raw-buffer consumers always see exactly Rows*Cols column-major elements.
     /// </summary>
