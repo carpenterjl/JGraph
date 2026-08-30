@@ -182,8 +182,12 @@ public static class FigureHitTesting
                 (zr.Max - zr.Min) / dar.Z)
             : axes.PlotBoxAspect;
 
-        return axes.HasAutomaticCamera
-            ? new Projection3D(xr, yr, zr, axes.Azimuth, axes.Elevation, plotArea, boxAspect, axes.Roll)
+        // The same branch the renderer takes, so a click lands where the pixel it was aimed at was
+        // drawn — a chosen view angle alone is a zoom about the framing the angles give.
+        return axes.HasAutomaticCameraPlacement
+            ? new Projection3D(
+                xr, yr, zr, axes.Azimuth, axes.Elevation, plotArea, boxAspect, axes.Roll,
+                axes.CameraZoomFactor)
             : new Projection3D(
                 xr, yr, zr, plotArea, boxAspect, axes.Roll,
                 axes.EffectiveCameraPosition(), axes.EffectiveCameraTarget(), axes.EffectiveCameraUpVector(),

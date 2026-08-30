@@ -77,13 +77,13 @@ public sealed class FigureRenderer
         var infos = new List<AxesRenderInfo>();
         foreach (AxesModel axes in figure.Axes.InDrawOrder())
         {
-            if (axes.Visible)
+            // Every axes is drawn, visible or not: MATLAB's Visible governs the axes' own furniture
+            // — background, rulers, ticks, grid and the two axis labels — and never its children,
+            // so `axis off` leaves the surface on the page with nothing drawn around it.
+            AxesRenderInfo? info = RenderAxes(axes, context, theme, content);
+            if (info is not null)
             {
-                AxesRenderInfo? info = RenderAxes(axes, context, theme, content);
-                if (info is not null)
-                {
-                    infos.Add(info);
-                }
+                infos.Add(info);
             }
         }
 
@@ -221,8 +221,11 @@ public sealed class FigureRenderer
 
         var transform = AxisTransform.Create(plotArea, xAxis, yAxis);
 
-        // Axes background.
-        context.DrawRectangle(plotArea, stroke: null, fill: axes.Background);
+        // Axes background, which is furniture: an invisible axes shows the figure through it.
+        if (axes.Visible)
+        {
+            context.DrawRectangle(plotArea, stroke: null, fill: axes.Background);
+        }
 
         // 3D axes take a separate path: an axonometric box with projected plots instead of the 2D
         // grid/frame/tick machinery. The returned info still carries the 2D transform so hit-testing
@@ -281,7 +284,7 @@ public sealed class FigureRenderer
         }
 
         // Grid under or over the data as Layer says (MATLAB 'bottom'/'top').
-        if (axes.Layer == AxesLayer.Bottom)
+        if (axes.Visible && axes.Layer == AxesLayer.Bottom)
         {
             DrawGrid(context, axes.Grid, plotArea, transform, xTicks, yTicks);
         }
@@ -289,7 +292,7 @@ public sealed class FigureRenderer
         // Plot content, clipped to the plot area.
         DrawPlots(axes, context, plotArea, theme);
 
-        if (axes.Layer == AxesLayer.Top)
+        if (axes.Visible && axes.Layer == AxesLayer.Top)
         {
             DrawGrid(context, axes.Grid, plotArea, transform, xTicks, yTicks);
         }
@@ -305,6 +308,7 @@ public sealed class FigureRenderer
         // rulers sit on are drawn whenever those rulers show ticks or labels — MATLAB's box off
         // keeps the ruler lines — and Box adds the far pair. Charts that put their rulers away
         // entirely (pie, Smith, imshow) still draw nothing here.
+        if (axes.Visible)
         {
             var xPen = new LineStyle(xAxis.RulerColor ?? theme.AxisLine, axes.LineWidth);
             var yPen = new LineStyle(yAxis.RulerColor ?? theme.AxisLine, axes.LineWidth);
@@ -337,11 +341,15 @@ public sealed class FigureRenderer
         // Ticks and tick labels. On a two-sided axes each ruler is tinted like the data it measures,
         // which is the only thing telling a reader which curve belongs to which scale.
         Color? leftTint = TintFor(axes, theme, 0);
-        DrawXTicks(context, axes, xAxis, plotArea, transform, xTicks, theme);
-        DrawYTicks(context, axes, yAxis, plotArea, transform, yTicks, theme, leftTint);
-        DrawSideRulers(context, sideRulers, xAxis, plotArea, theme);
+        if (axes.Visible)
+        {
+            DrawXTicks(context, axes, xAxis, plotArea, transform, xTicks, theme);
+            DrawYTicks(context, axes, yAxis, plotArea, transform, yTicks, theme, leftTint);
+            DrawSideRulers(context, sideRulers, xAxis, plotArea, theme);
+        }
 
-        // Axis labels and title.
+        // Axis labels and title. The title outlives `axis off` and the two axis labels do not, which
+        // is MATLAB's own split and the reason the title block is drawn either way.
         DrawAxisTitles(context, axes, xAxis, yAxis, plotArea, metrics, leftTint);
 
         // Legend.
@@ -389,8 +397,10 @@ public sealed class FigureRenderer
         // An axes whose camera is still the angles' to decide projects through the constructor it
         // always did, so an untouched 3D figure is drawn to the same pixel it was before M74. Placing
         // the camera, or asking for perspective, moves it onto the one that takes a camera.
-        Projection3D projection = axes.HasAutomaticCamera
-            ? new Projection3D(xr, yr, zr, axes.Azimuth, axes.Elevation, plotArea, boxAspect, axes.Roll)
+        Projection3D projection = axes.HasAutomaticCameraPlacement
+            ? new Projection3D(
+                xr, yr, zr, axes.Azimuth, axes.Elevation, plotArea, boxAspect, axes.Roll,
+                axes.CameraZoomFactor)
             : new Projection3D(
                 xr, yr, zr, plotArea, boxAspect, axes.Roll,
                 axes.EffectiveCameraPosition(), axes.EffectiveCameraTarget(), axes.EffectiveCameraUpVector(),
@@ -419,7 +429,11 @@ public sealed class FigureRenderer
         LineStyle xFrame = FramePen(xAxis), yFrame = FramePen(yAxis), zFrame = FramePen(zAxis);
         LineStyle gridStyle = axes.Grid.MajorLineStyle;
         GridModel grid = axes.Grid;
-        bool gridOn = grid.Visible;
+
+        // The box, its grid, the tick labels and the two edge labels are the axes' own furniture, so
+        // an invisible axes draws none of them and still draws every plot standing inside them.
+        bool decorated = axes.Visible;
+        bool gridOn = decorated && grid.Visible;
 
         void Line3D(double x1, double y1, double z1, double x2, double y2, double z2, LineStyle style) =>
             context.DrawLine(projection.ProjectPoint(x1, y1, z1), projection.ProjectPoint(x2, y2, z2), style);
@@ -478,25 +492,28 @@ public sealed class FigureRenderer
         }
 
         // Outlines of the three far faces.
-        Line3D(xr.Min, yr.Min, zFar, xr.Max, yr.Min, zFar, xFrame);
-        Line3D(xr.Min, yr.Max, zFar, xr.Max, yr.Max, zFar, xFrame);
-        Line3D(xr.Min, yr.Min, zFar, xr.Min, yr.Max, zFar, yFrame);
-        Line3D(xr.Max, yr.Min, zFar, xr.Max, yr.Max, zFar, yFrame);
-        Line3D(xFar, yr.Min, zr.Min, xFar, yr.Min, zr.Max, zFrame);
-        Line3D(xFar, yr.Max, zr.Min, xFar, yr.Max, zr.Max, zFrame);
-        Line3D(xr.Min, yFar, zr.Min, xr.Min, yFar, zr.Max, zFrame);
-        Line3D(xr.Max, yFar, zr.Min, xr.Max, yFar, zr.Max, zFrame);
-
-        // BoxStyle 'full' closes the box: the near face at z = zNear and the one vertical edge the
-        // far faces do not reach. 'back' — the default — is exactly the eight edges above.
-        if (axes.BoxStyle == Box3DStyle.Full)
+        if (decorated)
         {
-            double zNear = zFar == zr.Min ? zr.Max : zr.Min;
-            Line3D(xr.Min, yr.Min, zNear, xr.Max, yr.Min, zNear, xFrame);
-            Line3D(xr.Min, yr.Max, zNear, xr.Max, yr.Max, zNear, xFrame);
-            Line3D(xr.Min, yr.Min, zNear, xr.Min, yr.Max, zNear, yFrame);
-            Line3D(xr.Max, yr.Min, zNear, xr.Max, yr.Max, zNear, yFrame);
-            Line3D(xNear, yNear, zr.Min, xNear, yNear, zr.Max, zFrame);
+            Line3D(xr.Min, yr.Min, zFar, xr.Max, yr.Min, zFar, xFrame);
+            Line3D(xr.Min, yr.Max, zFar, xr.Max, yr.Max, zFar, xFrame);
+            Line3D(xr.Min, yr.Min, zFar, xr.Min, yr.Max, zFar, yFrame);
+            Line3D(xr.Max, yr.Min, zFar, xr.Max, yr.Max, zFar, yFrame);
+            Line3D(xFar, yr.Min, zr.Min, xFar, yr.Min, zr.Max, zFrame);
+            Line3D(xFar, yr.Max, zr.Min, xFar, yr.Max, zr.Max, zFrame);
+            Line3D(xr.Min, yFar, zr.Min, xr.Min, yFar, zr.Max, zFrame);
+            Line3D(xr.Max, yFar, zr.Min, xr.Max, yFar, zr.Max, zFrame);
+
+            // BoxStyle 'full' closes the box: the near face at z = zNear and the one vertical edge the
+            // far faces do not reach. 'back' — the default — is exactly the eight edges above.
+            if (axes.BoxStyle == Box3DStyle.Full)
+            {
+                double zNear = zFar == zr.Min ? zr.Max : zr.Min;
+                Line3D(xr.Min, yr.Min, zNear, xr.Max, yr.Min, zNear, xFrame);
+                Line3D(xr.Min, yr.Max, zNear, xr.Max, yr.Max, zNear, xFrame);
+                Line3D(xr.Min, yr.Min, zNear, xr.Min, yr.Max, zNear, yFrame);
+                Line3D(xr.Max, yr.Min, zNear, xr.Max, yr.Max, zNear, yFrame);
+                Line3D(xNear, yNear, zr.Min, xNear, yNear, zr.Max, zFrame);
+            }
         }
 
         // Plot content.
@@ -575,7 +592,7 @@ public sealed class FigureRenderer
                     : VerticalAlignment.Middle);
         }
 
-        if (xAxis.ShowTickLabels)
+        if (decorated && xAxis.ShowTickLabels)
         {
             foreach (Tick t in xTicks.MajorTicks)
             {
@@ -583,7 +600,7 @@ public sealed class FigureRenderer
             }
         }
 
-        if (yAxis.ShowTickLabels)
+        if (decorated && yAxis.ShowTickLabels)
         {
             foreach (Tick t in yTicks.MajorTicks)
             {
@@ -594,7 +611,7 @@ public sealed class FigureRenderer
         // Z ticks on the leftmost vertical box edge. The push clears the widest floor label that can
         // reach the foot of that edge, so the ruler that shares the corner passes underneath it.
         (double zx, double zy) = LeftmostVerticalEdge(projection, xr, yr, zMid);
-        if (zAxis.ShowTickLabels)
+        if (decorated && zAxis.ShowTickLabels)
         {
             foreach (Tick t in zTicks.MajorTicks)
             {
@@ -609,17 +626,17 @@ public sealed class FigureRenderer
         }
 
         // Axis titles at the edge midpoints, pushed further out than the tick labels.
-        if (!string.IsNullOrEmpty(xAxis.Label))
+        if (decorated && !string.IsNullOrEmpty(xAxis.Label))
         {
             EdgeLabel(xAxis.Label, projection.ProjectPoint(xMid, yNear, zFar), yOut, xAxis.LabelStyle, AxisTitlePush);
         }
 
-        if (!string.IsNullOrEmpty(yAxis.Label))
+        if (decorated && !string.IsNullOrEmpty(yAxis.Label))
         {
             EdgeLabel(yAxis.Label, projection.ProjectPoint(xNear, yMid, zFar), xOut, yAxis.LabelStyle, AxisTitlePush);
         }
 
-        if (!string.IsNullOrEmpty(zAxis.Label))
+        if (decorated && !string.IsNullOrEmpty(zAxis.Label))
         {
             Point2D p = projection.ProjectPoint(zx, zy, zMid);
             context.DrawText(
@@ -1068,8 +1085,12 @@ public sealed class FigureRenderer
         bool xOnTop = xAxis.Position == AxisPosition.Top;
         bool yOnRight = yAxis.Position == AxisPosition.Right;
 
+        // Furniture that is not drawn claims no margin either, so `axis off` hands the plot box the
+        // room the ticks and labels were holding — which is most of the point of saying it.
+        bool decorated = axes.Visible;
+
         double yTickWidth = 0;
-        if (yAxis.ShowTickLabels)
+        if (decorated && yAxis.ShowTickLabels)
         {
             foreach (Tick tick in yTicks.MajorTicks)
             {
@@ -1088,7 +1109,7 @@ public sealed class FigureRenderer
         }
 
         double yLabelHeight = 0;
-        if (!string.IsNullOrEmpty(yAxis.Label))
+        if (decorated && !string.IsNullOrEmpty(yAxis.Label))
         {
             yLabelHeight = context.MeasureText(yAxis.Label, yAxis.LabelStyle).Height;
             if (yOnRight)
@@ -1102,7 +1123,7 @@ public sealed class FigureRenderer
         }
 
         double xTickHeight = 0;
-        if (xAxis.ShowTickLabels)
+        if (decorated && xAxis.ShowTickLabels)
         {
             // Upright labels are all one line tall, so one measurement answers for the row. A rotated
             // one stands as tall as its longest text is wide, so the row has to be measured.
@@ -1130,7 +1151,7 @@ public sealed class FigureRenderer
         }
 
         double xLabelHeight = 0;
-        if (!string.IsNullOrEmpty(xAxis.Label))
+        if (decorated && !string.IsNullOrEmpty(xAxis.Label))
         {
             xLabelHeight = context.MeasureText(xAxis.Label, xAxis.LabelStyle).Height;
             if (xOnTop)
@@ -1433,7 +1454,7 @@ public sealed class FigureRenderer
         DecorationMetrics metrics,
         Color? yTint)
     {
-        if (!string.IsNullOrEmpty(xAxis.Label))
+        if (axes.Visible && !string.IsNullOrEmpty(xAxis.Label))
         {
             bool onTop = xAxis.Position == AxisPosition.Top;
             double offset = metrics.XTickOutward + LabelPadding + metrics.XTickHeight + LabelPadding;
@@ -1445,7 +1466,7 @@ public sealed class FigureRenderer
                 onTop ? VerticalAlignment.Bottom : VerticalAlignment.Top);
         }
 
-        if (!string.IsNullOrEmpty(yAxis.Label))
+        if (axes.Visible && !string.IsNullOrEmpty(yAxis.Label))
         {
             // For the rotated label, VerticalAlignment.Bottom places the glyph cell on the far side
             // of this x, clear of the tick labels between it and the plot.

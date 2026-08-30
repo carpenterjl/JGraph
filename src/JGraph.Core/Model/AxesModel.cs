@@ -1060,9 +1060,28 @@ public sealed class AxesModel : GraphObject
     }
 
     /// <summary>True while the camera is entirely the angles' to decide and the rays are parallel.</summary>
-    public bool HasAutomaticCamera =>
+    public bool HasAutomaticCamera => HasAutomaticCameraPlacement && _cameraViewAngle is null;
+
+    /// <summary>
+    /// True while nothing but the view angle has been chosen: the camera still stands where the
+    /// angles put it and the rays are still parallel. A chosen angle alone is a zoom about the
+    /// framing those angles give, so it does not send the picture through the placed-camera path —
+    /// which would have had to invent a stand-off, and whose stand-off used to be derived from the
+    /// very angle it was scaling by, so the two cancelled and <c>camva</c> did nothing at all.
+    /// </summary>
+    public bool HasAutomaticCameraPlacement =>
         _cameraPosition is null && _cameraTarget is null && _cameraUpVector is null
-        && _cameraViewAngle is null && _projection == ProjectionType.Orthographic;
+        && _projection == ProjectionType.Orthographic;
+
+    /// <summary>
+    /// How much tighter than the automatic framing a chosen view angle draws: a cone half as wide
+    /// shows half as much across, so the picture is twice the size. One when no angle was chosen.
+    /// </summary>
+    public double CameraZoomFactor =>
+        _cameraViewAngle is { } angle
+            ? System.Math.Tan(DefaultCameraViewAngle * System.Math.PI / 360.0)
+                / System.Math.Tan(angle * System.Math.PI / 360.0)
+            : 1.0;
 
     /// <summary>The point the camera looks at, chosen or derived.</summary>
     public Vector3D EffectiveCameraTarget()
@@ -1135,7 +1154,10 @@ public sealed class AxesModel : GraphObject
             diagonal = 1;
         }
 
-        double half = EffectiveCameraViewAngle() * System.Math.PI / 360.0;
+        // The stand-off is the one the default angle implies, and not the one the chosen angle
+        // implies: MATLAB leaves CameraPosition where it is when camva narrows the cone, and a
+        // stand-off that grew with the angle would put the box back at the size it already was.
+        double half = DefaultCameraViewAngle * System.Math.PI / 360.0;
         double distance = diagonal / 2 / System.Math.Tan(half);
 
         return new Vector3D(

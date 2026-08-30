@@ -664,9 +664,10 @@ M59's, from the volume verbs (ADR 0059 carries the reasoning):
   do not interpenetrate correctly.
 - **The camera is orthographic with an automatic fit** (ADR 0022), so `campos` reads only the
   *direction* from the box centre and ignores distance; `camtarget` is always the centre of the data
-  box and `camup` always +z, both fixed; and `camva` is applied as a zoom about the default framing,
-  so it always reports 6.6086° back. `axis vis3d` is accepted and does nothing, because nothing here
-  rescales during a rotate.
+  box and `camup` always +z, both fixed. `camva` is a zoom about the automatic framing — a chosen
+  angle multiplies the fit by `tan(6.6086°/2) / tan(angle/2)` rather than placing a camera, so it is
+  continuous with the automatic view and reads back what it was given (ADR 0112). `axis vis3d` is
+  accepted and does nothing, because nothing here rescales during a rotate.
 - **`surfl` colors by height, not by reflectance.** MATLAB's `surfl` maps the *lighting* through the
   colormap; here it is `surf` plus a light placed 45° round from the view, which is the useful
   reading and composes with `material`.

@@ -37,7 +37,9 @@ public sealed class Projection3D : ISpatialMapper
     /// Builds the projection. <c>boxAspect</c> gives the relative lengths of the plot box's three
     /// sides (MATLAB <c>pbaspect</c>); the default — equal on all three — is the cube every 3D axes
     /// drew before M45, and any aspect is rescaled so the longest side is 1, so the box still fits
-    /// the plot area whatever magnitudes the caller used.
+    /// the plot area whatever magnitudes the caller used. <paramref name="zoom"/> scales that fit —
+    /// it is what a chosen <c>CameraViewAngle</c> comes to, since narrowing the cone about a camera
+    /// that has not moved is exactly a magnification.
     /// </summary>
     public Projection3D(
         DataRange xRange,
@@ -47,7 +49,8 @@ public sealed class Projection3D : ISpatialMapper
         double elevationDegrees,
         Rect2D plotArea,
         Vector3D? boxAspect = null,
-        double rollDegrees = 0)
+        double rollDegrees = 0,
+        double zoom = 1)
     {
         double az = azimuthDegrees * System.Math.PI / 180.0;
         double el = elevationDegrees * System.Math.PI / 180.0;
@@ -109,7 +112,10 @@ public sealed class Projection3D : ISpatialMapper
 
         double spanU = System.Math.Max(maxU - minU, 1e-9);
         double spanV = System.Math.Max(maxV - minV, 1e-9);
-        _scale = System.Math.Min(plotArea.Width / spanU, plotArea.Height / spanV);
+        // The fit, times whatever a chosen view angle asks for over the default one. Multiplying the
+        // fit is what keeps camva continuous with the automatic framing: at the default angle the
+        // factor is exactly one, so an untouched figure is drawn to the pixel it always was.
+        _scale = System.Math.Min(plotArea.Width / spanU, plotArea.Height / spanV) * zoom;
         _centerU = (minU + maxU) / 2;
         _centerV = (minV + maxV) / 2;
         _pixelCenterX = plotArea.CenterX;

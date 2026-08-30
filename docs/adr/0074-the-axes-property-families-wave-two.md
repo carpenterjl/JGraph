@@ -32,6 +32,12 @@ distance` where the distance is the one the view angle asks for, so reading `cam
 `camproj` back describes a camera that would draw the picture on screen. A test asserts the two
 constructors agree to six decimals at four different view angles.
 
+**Corrected by ADR 0112.** Deriving the stand-off from the chosen angle made `camva` a no-op: the
+scale the placed-camera constructor computes divides by `tan(va/2)` too, so the two cancelled and
+every angle drew the same picture. The stand-off is now the one the *default* angle implies, which
+is also what MATLAB does — `CameraPosition` does not move when `camva` narrows the cone — and an
+axes given nothing but an angle no longer takes the placed-camera constructor at all.
+
 `view` releases all four slots — MATLAB's own behavior, and the reason `SetViewAngles` exists as a
 single method that every angle writer routes through: `JG.View`, the `View` property, `camorbit`, and
 the rotate drag. Undo captures the slots beside the angles, so undoing a rotate that released a

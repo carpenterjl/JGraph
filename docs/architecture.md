@@ -783,7 +783,8 @@ Implemented through Milestone 45 — a working figure window you can edit, save,
   `line`, `text`, `fill`, `fill3`, `patch`, `surface`, `light`. The colormap generators return
   m-by-3 tables so `colormap(parula(64))` works, and `caxis`/`material`/`lightangle`/`camlight`
   reach M44's lighting model. The camera verbs map onto the orthographic projection and **say where
-  they cannot** — `campos` reads direction only, `camtarget`/`camup` are fixed, `camva` is a zoom.
+  they cannot** — `campos` reads direction only, `camtarget`/`camup` are fixed, `camva` is a zoom
+  about the automatic framing (ADR 0112).
   Nine of the twelve surface variants turned out to be geometry rather than rendering: `meshz` rings
   the grid with a curtain at the base height, `waterfall` is one closed polygon per row, `contour3`
   is the existing tracer with each vertex placed at its own level. `.graph` stays v5, every addition

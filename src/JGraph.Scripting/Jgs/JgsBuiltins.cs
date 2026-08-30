@@ -1689,8 +1689,17 @@ internal static partial class JgsBuiltins
                     case "padded":
                         SetLimitMethod(JG.Gca(), Core.Model.LimitMethod.Padded);
                         break;
-                    case "auto" or "on" or "off" or "ij" or "xy" or "manual":
-                        break; // accepted; auto limits and visible frames are already the defaults
+                    // MATLAB's own division of labour: Visible governs the axes' furniture — its
+                    // background, rulers, ticks, grid and the two axis labels — and never its
+                    // children or its title, so `axis off` clears the frame and leaves the picture.
+                    case "off":
+                        JG.Gca().Visible = false;
+                        break;
+                    case "on":
+                        JG.Gca().Visible = true;
+                        break;
+                    case "auto" or "ij" or "xy" or "manual":
+                        break; // accepted; auto limits are already the default
 
                     // vis3d stops MATLAB's box from being refitted as the camera turns. This
                     // projection refits every frame by design, so the word is accepted and the
