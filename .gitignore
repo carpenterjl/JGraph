@@ -47,3 +47,9 @@ Thumbs.db
 ## Python bytecode from the checklist tools
 __pycache__/
 *.pyc
+
+## Scratch git worktrees, one per background agent. Each is a full checkout with its own build
+## output, so they are large and they are never part of the history: the work in them is landed by
+## cherry-picking the branch, not by committing the directory. Remove a finished one with
+## `git worktree remove`; `git worktree list` shows what is still there.
+.claude/worktrees/
