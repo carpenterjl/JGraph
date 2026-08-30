@@ -291,7 +291,7 @@ ode45,funfun,2,"[t,y,te,ye,ie] = ode45(odefun,tspan,y0,options)",error,"ode45 ex
 ode45,funfun,3,sol = ode45(___),error,"ode45 produces two outputs: use [t, y] = ode45(f, tspan, y0)."
 isvarname,lang,0,tf = isvarname(s),accepted,
 isvarname,lang,1,isvarname s,accepted,
-run,lang,0,run(scriptname),refused,run: cannot read 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-toolbox-pyxl4vb4\a': Could not find file 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-toolbox-pyxl4vb4\a'.
+run,lang,0,run(scriptname),refused,run: cannot read 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-toolbox-ddnragcs\a': Could not find file 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-toolbox-ddnragcs\a'.
 validateattributes,lang,0,"validateattributes(A,classes,attributes)",error,validateattributes expects a cell of class names.
 validateattributes,lang,1,"validateattributes(A,classes,attributes,argIndex)",error,"validateattributes expects argument 4 to be a string, but got a number."
 validateattributes,lang,2,"validateattributes(A,classes,attributes,funcName)",error,validateattributes expects a cell of class names.
@@ -435,20 +435,42 @@ symamd,sparfun,1,"p = symamd(S,knobs)",unprobed,no sample for this form's argume
 symamd,sparfun,2,"[p,stats] = symamd(...)",unprobed,no sample for this form's arguments
 beta,specfun,0,"B = beta(Z,W)",accepted,
 betaln,specfun,0,"L = betaln(Z,W)",unprobed,no sample for this form's arguments
+cart2pol,specfun,0,"[theta,rho] = cart2pol(x,y)",accepted,
+cart2pol,specfun,1,"[theta,rho,z] = cart2pol(x,y,z)",accepted,
+cart2sph,specfun,0,"[azimuth,elevation,r] = cart2sph(x,y,z)",accepted,
 cross,specfun,0,"C = cross(A,B)",unprobed,no sample for this form's arguments
 cross,specfun,1,"C = cross(A,B,dim)",unprobed,no sample for this form's arguments
 dot,specfun,0,"C = dot(A,B)",unprobed,no sample for this form's arguments
 dot,specfun,1,"C = dot(A,B,dim)",unprobed,no sample for this form's arguments
+ellipj,specfun,0,"[SN,CN,DN] = ellipj(U,M)",accepted,
+ellipj,specfun,1,"[SN,CN,DN] = ellipj(U,M,tol)",accepted,
+ellipke,specfun,0,K = ellipke(M),accepted,
+ellipke,specfun,1,"[K,E] = ellipke(M)",accepted,
+ellipke,specfun,2,"[K,E] = ellipke(M,tol)",accepted,
+expint,specfun,0,Y = expint(X),accepted,
 factor,specfun,0,f = factor(n),accepted,
 factorial,specfun,0,f = factorial(n),accepted,
 gcd,specfun,0,"G = gcd(A,B)",unprobed,no sample for this form's arguments
 gcd,specfun,1,"[G,U,V] = gcd(A,B)",unprobed,no sample for this form's arguments
 isprime,specfun,0,TF = isprime(X),accepted,
 lcm,specfun,0,"L = lcm(A,B)",unprobed,no sample for this form's arguments
+legendre,specfun,0,"P = legendre(n,X)",accepted,
+legendre,specfun,1,"P = legendre(n,X,normalization)",accepted,
+matchpairs,specfun,0,"M = matchpairs(Cost,costUnmatched)",accepted,
+matchpairs,specfun,1,"[M,uR,uC] = matchpairs(Cost,costUnmatched)",accepted,
+matchpairs,specfun,2,"[___] = matchpairs(Cost,costUnmatched,goal)",accepted,
 nchoosek,specfun,0,"b = nchoosek(n,k)",accepted,
 nchoosek,specfun,1,"C = nchoosek(v,k)",accepted,
 perms,specfun,0,P = perms(v),accepted,
+pol2cart,specfun,0,"[x,y] = pol2cart(theta,rho)",accepted,
+pol2cart,specfun,1,"[x,y,z] = pol2cart(theta,rho,z)",accepted,
 primes,specfun,0,p = primes(n),accepted,
+rat,specfun,0,R = rat(X),accepted,
+rat,specfun,1,"R = rat(X,tol)",accepted,
+rat,specfun,2,"[N,D] = rat(___)",accepted,
+rats,specfun,0,S = rats(X),accepted,
+rats,specfun,1,"S = rats(X,strlen)",accepted,
+sph2cart,specfun,0,"[x,y,z] = sph2cart(azimuth,elevation,r)",accepted,
 append,strfun,0,"str = append(str1,...,strN)",accepted,
 base2dec,strfun,0,"D = base2dec(baseStr,n)",error,"base2dec expects a string or a cell of strings, but got a array."
 blanks,strfun,0,chr = blanks(n),accepted,

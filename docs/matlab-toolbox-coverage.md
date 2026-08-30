@@ -19,8 +19,8 @@ below is — and that is why an entire folder could sit at nought implemented wi
 
 ## Where it stands
 
-**242 of 377 names implemented**, and
-**378 of 1036 documented syntax forms accepted**.
+**253 of 377 names implemented**, and
+**400 of 1036 documented syntax forms accepted**.
 
 | Folder | Names | Forms documented | Forms accepted | Names missing |
 |---|---:|---:|---:|---:|
@@ -32,7 +32,7 @@ below is — and that is why an entire folder could sit at nought implemented wi
 | `elmat` | 33 / 33 | 68 | 59 | 0 |
 | `validators` | 28 / 31 | 33 | 20 | 3 |
 | `matfun` | 10 / 25 | 62 | 9 | 15 |
-| `specfun` | 12 / 23 | 38 | 8 | 11 |
+| `specfun` | 23 / 23 | 38 | 30 | 0 |
 | `datatypes` | 9 / 22 | 40 | 3 | 13 |
 | `elfun` | 19 / 19 | 25 | 19 | 0 |
 | `timefun` | 10 / 12 | 42 | 3 | 2 |
@@ -43,7 +43,7 @@ below is — and that is why an entire folder could sit at nought implemented wi
 
 | Verdict | Forms | What it means |
 |---|---:|---|
-| accepted | 378 | the call returned without error |
+| accepted | 400 | the call returned without error |
 | refused | 4 | refused deliberately, with a message naming what is missing |
 | undefined | 0 | the name did not resolve at all |
 | error | 120 | failed some other way — **may be the prober's sample, not the build** |
@@ -87,10 +87,6 @@ command that quite rightly rejects it.
 ### `sparfun` — 30
 
 `bicg` `bicgstab` `bicgstabl` `cgs` `colamd` `colperm` `equilibrate` `etreeplot` `gmres` `gplot` `lsqr` `minres` `pcg` `qmr` `spaugment` `spconvert` `spdiags` `spfun` `spones` `spparms` `sprandn` `sprandsym` `sprank` `svds` `svdsketch` `symmlq` `tfqmr` `treelayout` `treeplot` `unmesh`
-
-### `specfun` — 11
-
-`cart2pol` `cart2sph` `ellipj` `ellipke` `expint` `legendre` `matchpairs` `pol2cart` `rat` `rats` `sph2cart`
 
 ### `strfun` — 1
 

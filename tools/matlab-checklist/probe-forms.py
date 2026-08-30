@@ -214,6 +214,27 @@ NAME_ARG_SAMPLES: dict[tuple[str, str], str] = {
     ("mustBeValidVariableName", "varname"): "'x'",
     ("mustBeFile", "path"): "[mfilename('fullpath') '.m']",
     ("mustBeFolder", "path"): "pwd",
+
+    # Coordinates and elementary special functions (M106). Three of these have a domain the
+    # generic numeric sample walks straight out of: an elliptic parameter must be in [0, 1], a
+    # Legendre argument in [-1, 1], and a Legendre degree must be a whole number — so the generic
+    # `[1 2 3]` would be measuring the sample rather than the build. `goal` and `normalization`
+    # are words from fixed lists, and `costUnmatched` has to be big enough that some pairing is
+    # actually preferred to leaving everything out.
+    ("cart2pol", "x"): "[1 2]", ("cart2pol", "y"): "[3 4]", ("cart2pol", "z"): "[5 6]",
+    ("pol2cart", "theta"): "[0 1]", ("pol2cart", "rho"): "[1 2]", ("pol2cart", "z"): "[5 6]",
+    ("cart2sph", "x"): "[1 2]", ("cart2sph", "y"): "[3 4]", ("cart2sph", "z"): "[5 6]",
+    ("sph2cart", "azimuth"): "[0 1]", ("sph2cart", "elevation"): "[0 0.5]",
+    ("sph2cart", "r"): "[1 2]",
+    ("ellipke", "M"): "[0.1 0.5]", ("ellipke", "tol"): "1e-8",
+    ("ellipj", "U"): "[0.5 1]", ("ellipj", "M"): "[0.1 0.5]", ("ellipj", "tol"): "1e-8",
+    ("expint", "X"): "[1 2 3]",
+    ("legendre", "n"): "2", ("legendre", "X"): "[0.1 0.5]",
+    ("legendre", "normalization"): "'norm'",
+    ("rat", "X"): "[1.5 2.25]", ("rat", "tol"): "1e-3",
+    ("rats", "X"): "[1.5 2.25]", ("rats", "strlen"): "13",
+    ("matchpairs", "Cost"): "[1 3; 4 2]", ("matchpairs", "costUnmatched"): "10",
+    ("matchpairs", "goal"): "'max'",
 }
 
 # Placeholders the documented type phrase cannot describe well enough to sample, whatever command

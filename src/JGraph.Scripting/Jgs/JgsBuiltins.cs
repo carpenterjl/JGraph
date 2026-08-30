@@ -2398,6 +2398,8 @@ internal static partial class JgsBuiltins
         RegisterGroupingBuiltins(env);
         RegisterDataTrendBuiltins(env);
         RegisterTextPartBuiltins(env);
+        RegisterCoordinateBuiltins(env);
+        RegisterSpecfunPartBuiltins(env);
 
         // After every imaging define, since these wrap builtins declared above.
         RegisterImagingMultiOutputForms(env, host, random, dialect);
@@ -4829,7 +4831,17 @@ internal static partial class JgsBuiltins
         throw new JgsRuntimeException(line, col, $"{name} expects a number or numeric array, but got a {value.TypeName}.");
     }
 
-    /// <summary>Pairwise elementwise application with scalar broadcast (atan2(y, x) over arrays).</summary>
+    /// <summary>
+    /// Pairwise elementwise application over two arrays (atan2(y, x), hypot, besselj, gammainc).
+    /// </summary>
+    /// <remarks>
+    /// The shape rule is <see cref="JgsBroadcast"/>'s, not one of this method's own: two operands of
+    /// the same shape are walked side by side, a scalar is spread over the other, and anything else
+    /// goes to the expansion engine the elementwise operators use — so <c>atan2</c> of a column and
+    /// a row is their outer table, exactly as <c>./</c> of the same two is. Until M106 this compared
+    /// <em>lengths</em> and answered <see cref="JgsValue.Packed"/> without a shape, which refused
+    /// that call outright and flattened <c>hypot(A, 1)</c> of a matrix into a row.
+    /// </remarks>
     private static JgsValue Zip(string name, JgsValue a, JgsValue b, Func<double, double, double> f, int line, int col)
     {
         bool aScalar = a.Type is JgsType.Number or JgsType.Bool;
@@ -4839,57 +4851,52 @@ internal static partial class JgsBuiltins
             return JgsValue.Number(f(a.AsNumber, b.AsNumber));
         }
 
+        bool aArray = a.Type == JgsType.Array;
+        bool bArray = b.Type == JgsType.Array;
+        if (aArray && bArray && !JgsBroadcast.SameShape(a, b))
+        {
+            return JgsBroadcast.Map(a, b, name, line, col, (left, right) => Zip(name, left, right, f, line, col));
+        }
+
         // Packed fast paths: the same delegate over flat buffers (atan2 over a million samples
         // without a million boxes), through the kernel rather than a loop here, so the chunking and
         // the buffer-lifetime discipline are the ones every other packed operation gets (M92).
         // Shapes outside these fall through to the boxed recursion.
         if (a.IsPacked && b.IsPacked)
         {
-            if (a.ArrayLength != b.ArrayLength)
-            {
-                throw new JgsRuntimeException(line, col,
-                    $"{name} needs arrays of equal length ({a.ArrayLength} and {b.ArrayLength}).");
-            }
-
             var dest = JgsPacking.Allocate(a.ArrayLength);
             PackedMath.Zip(a.AsBuffer, b.AsBuffer, dest, f);
-            return JgsValue.Packed(dest);
+            return JgsMatrix.Like(a, JgsValue.Packed(dest));
         }
 
         if (a.IsPacked && bScalar)
         {
             var dest = JgsPacking.Allocate(a.ArrayLength);
             PackedMath.ZipScalar(a.AsBuffer, b.AsNumber, dest, f);
-            return JgsValue.Packed(dest);
+            return JgsMatrix.Like(a, JgsValue.Packed(dest));
         }
 
         if (aScalar && b.IsPacked)
         {
             var dest = JgsPacking.Allocate(b.ArrayLength);
             PackedMath.ZipScalar(b.AsBuffer, a.AsNumber, dest, f, scalarOnLeft: true);
-            return JgsValue.Packed(dest);
+            return JgsMatrix.Like(b, JgsValue.Packed(dest));
         }
 
-        if (a.Type == JgsType.Array && b.Type == JgsType.Array)
+        if (aArray && bArray)
         {
             JgsValue[] left = a.BoxedElements();
             JgsValue[] right = b.BoxedElements();
-            if (left.Length != right.Length)
-            {
-                throw new JgsRuntimeException(line, col,
-                    $"{name} needs arrays of equal length ({left.Length} and {right.Length}).");
-            }
-
             var paired = new JgsValue[left.Length];
             for (int i = 0; i < paired.Length; i++)
             {
                 paired[i] = Zip(name, left[i], right[i], f, line, col);
             }
 
-            return JgsValue.Array(paired);
+            return JgsMatrix.Like(a, JgsValue.Array(paired));
         }
 
-        if (a.Type == JgsType.Array && bScalar)
+        if (aArray && bScalar)
         {
             JgsValue[] left = a.BoxedElements();
             var spread = new JgsValue[left.Length];
@@ -4898,10 +4905,10 @@ internal static partial class JgsBuiltins
                 spread[i] = Zip(name, left[i], b, f, line, col);
             }
 
-            return JgsValue.Array(spread);
+            return JgsMatrix.Like(a, JgsValue.Array(spread));
         }
 
-        if (aScalar && b.Type == JgsType.Array)
+        if (aScalar && bArray)
         {
             JgsValue[] right = b.BoxedElements();
             var spread = new JgsValue[right.Length];
@@ -4910,7 +4917,7 @@ internal static partial class JgsBuiltins
                 spread[i] = Zip(name, a, right[i], f, line, col);
             }
 
-            return JgsValue.Array(spread);
+            return JgsMatrix.Like(b, JgsValue.Array(spread));
         }
 
         throw new JgsRuntimeException(line, col,

@@ -103,8 +103,13 @@ see. This file refused to count them while they drew nothing; **M56 made them re
 number and this one agree again. `opengl` *is* counted, because an accepted no-op is an answer — the
 same reading that counted `shading`, `lighting` and `camlight` in M43.
 
-Across every callable kind — builtin, function, operator, keyword, script — the count is **1,003 of
-2,024** as of M104, which took the string names MATLAB writes in MATLAB and the four
+Across every callable kind — builtin, function, operator, keyword, script — the count is **1,014 of
+2,024** as of M106, which took the coordinate conversions and the elementary special functions and
+so finished MATLAB's `specfun` folder: `cart2pol` `pol2cart` `cart2sph` `sph2cart` `ellipke`
+`ellipj` `expint` `legendre` `rat` `rats` `matchpairs`. Those eleven take `specfun` from 12 of 23
+names to 23 of 23, and every one of their 22 documented forms is accepted.
+
+1,003 after M104, which took the string names MATLAB writes in MATLAB and the four
 `mustBe…` validators the folder still lacked: `append` `eraseBetween` `replaceBetween` `extract`
 `splitlines` `strtok` `strjust` `strvcat` `str2mat` `strmatch` `isStringScalar` `hex2num`
 `num2hex` `mustBeNonsparse` `mustBeValidVariableName` `mustBeFile` `mustBeFolder`, with

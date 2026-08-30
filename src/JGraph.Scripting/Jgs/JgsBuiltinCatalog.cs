@@ -1429,6 +1429,21 @@ public static class JgsBuiltinCatalog
         Add("mustBeFile", "Errors unless every path names a file that exists.", P("path"));
         Add("mustBeFolder", "Errors unless every path names a folder that exists.", P("path"));
 
+        // M106: coordinates and elementary special functions — the four conversions, the elliptic
+        // family, the exponential integral, the Legendre functions, the two rational
+        // approximations, and the assignment problem. This closes the specfun folder.
+        Add("cart2pol", "Cartesian coordinates read as polar: [theta, rho] = cart2pol(x, y).", P("x"), P("y"), Opt("z"));
+        Add("pol2cart", "Polar coordinates read as Cartesian: [x, y] = pol2cart(theta, rho).", P("theta"), P("rho"), Opt("z"));
+        Add("cart2sph", "Cartesian coordinates read as spherical: [az, elev, r] = cart2sph(x, y, z).", P("x"), P("y"), P("z"));
+        Add("sph2cart", "Spherical coordinates read as Cartesian: [x, y, z] = sph2cart(az, elev, r).", P("azimuth"), P("elevation"), P("r"));
+        Add("ellipke", "The complete elliptic integrals of the first and second kind: [K, E] = ellipke(m).", P("m"), Opt("tol"));
+        Add("ellipj", "The Jacobi elliptic functions: [sn, cn, dn] = ellipj(u, m).", P("u"), P("m"), Opt("tol"));
+        Add("expint", "The exponential integral E1(x), which answers in complex on the negative axis.", P("X"));
+        Add("legendre", "Every order of the associated Legendre functions of one degree: P = legendre(n, X).", P("n"), P("X"), Opt("normalization"));
+        Add("rat", "The continued fraction of a number, spelled out or reduced: [N, D] = rat(X).", P("X"), Opt("tol"));
+        Add("rats", "A matrix written as a table of fractions: S = rats(X, strlen).", P("X"), Opt("strlen"));
+        Add("matchpairs", "The cheapest pairing of rows with columns: M = matchpairs(Cost, costUnmatched).", P("Cost"), P("costUnmatched"), Opt("goal"));
+
         Add("copulacdf", "The probability a copula puts below a point of the unit cube: y = copulacdf('Clayton', u, 1.5).", P("family"), P("u"), P("param"), Opt("nu"));
         Add("copulapdf", "The density of a copula at a point of the unit cube: y = copulapdf('t', u, rho, 5).", P("family"), P("u"), P("param"), Opt("nu"));
         Add("copularnd", "Draws from a copula, one per row: u = copularnd('Gumbel', 2, 500).", P("family"), P("param"), P("n"), Opt("extra"));
