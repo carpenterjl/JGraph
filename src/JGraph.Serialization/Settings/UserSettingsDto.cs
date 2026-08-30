@@ -43,4 +43,7 @@ public sealed class UserSettingsDto
     /// false: silently darkening an exported plot because the IDE is dark would be a real surprise.
     /// </summary>
     public bool LinkFigureThemeToAppTheme { get; set; }
+
+    /// <summary>The reply-to email the user last typed into the bug-report dialog, or null.</summary>
+    public string? BugReportReplyTo { get; set; }
 }

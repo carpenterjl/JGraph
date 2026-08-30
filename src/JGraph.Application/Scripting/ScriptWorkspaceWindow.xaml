@@ -56,6 +56,9 @@
             <MenuItem Header="_Help">
                 <MenuItem Header="_Scripting Guide"
                           Command="{x:Static local:WorkspaceCommands.ScriptingGuide}" />
+                <Separator />
+                <MenuItem Header="_Report a Bug…"
+                          Command="{x:Static local:WorkspaceCommands.ReportBug}" />
             </MenuItem>
         </Menu>
 
@@ -90,6 +93,10 @@
                 <Button Content="Step Out" Padding="8,2"
                         Command="{x:Static local:WorkspaceCommands.StepOut}"
                         ToolTip="Run until the current function returns (Shift+F11)" />
+                <Separator />
+                <Button Content="Report a Bug…" Padding="8,2"
+                        Command="{x:Static local:WorkspaceCommands.ReportBug}"
+                        ToolTip="Send a bug report to the developer" />
             </ToolBar>
         </ToolBarTray>
 

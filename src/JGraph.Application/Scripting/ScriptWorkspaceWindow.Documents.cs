@@ -4,6 +4,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using AvalonDock.Layout;
+using JGraph.Application.Services;
 using JGraph.Controls.Scripting;
 using JGraph.Scripting;
 using JGraph.Scripting.Workspace;
@@ -216,6 +217,13 @@ public partial class ScriptWorkspaceWindow
         _documents.FirstOrDefault(d => d.Document.IsActive)
         ?? _documents.FirstOrDefault(d => d.Document.IsSelected)
         ?? _documents.FirstOrDefault();
+
+    /// <summary>
+    /// The script the user is looking at, for a bug report to attach. Public because the crash
+    /// guard lives in <c>App</c> and <see cref="ActiveDocument"/> deliberately does not.
+    /// </summary>
+    public BugReportScriptSnapshot? GetActiveScriptSnapshot() =>
+        ActiveDocument is { } entry ? new(entry.Model.FileName, entry.Editor.ScriptText) : null;
 
     /// <summary>Set once every dirty document has been dealt with in <c>OnClosing</c>, so the
     /// per-tab Closing handlers do not re-prompt while the window tears its documents down.</summary>

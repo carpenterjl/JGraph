@@ -10,6 +10,7 @@ using JGraph.Application.Theming;
 using JGraph.Core.Model;
 using JGraph.Numerics;
 using JGraph.Plugins;
+using JGraph.Reporting;
 using JGraph.Scripting;
 using JGraph.Scripting.Jgs;
 using JGraph.Scripting.Startup;
@@ -131,34 +132,36 @@ public partial class App : System.Windows.Application
     /// <summary>
     /// Catches what would otherwise end the process without a word. A WPF application with no handler
     /// here dies to the operating system on any exception that escapes an event handler or a command,
-    /// which also means <see cref="ScriptWorkspaceWindow"/>'s closing hook never runs and the session —
-    /// open files, dock layout, breakpoints — goes with it, on top of whatever was unsaved. Reporting
-    /// and carrying on gives the user the one thing worth having at that moment: the chance to save.
+    /// with nothing on screen to say why. Every guard funnels into <see cref="ReportCrash"/>, which
+    /// shows the bug-report dialog prefilled with the fault and then ends the session — the state is
+    /// untrusted after an unhandled exception, so the dialog is the last thing the process does
+    /// (M114; this supersedes the earlier report-and-carry-on behaviour).
     /// </summary>
     private void InstallCrashGuards()
     {
         DispatcherUnhandledException += (_, args) =>
         {
             args.Handled = true;
-            ReportCrash(args.Exception, alert: true);
+            ReportCrash(args.Exception);
 
-            // Handling it is only worth doing if there is something left to go back to. With no
-            // window open and nothing that will ever close to end the session, swallowing it would
-            // leave a process with no UI and no way out but Task Manager.
+            // ReportCrash already ends the session on the first crash; this is the backstop for
+            // the ones it declines (latch taken, headless). Swallowing those with no window open
+            // and nothing that will ever close would leave a process with no UI and no way out
+            // but Task Manager.
             if (Windows.Count == 0 && ShutdownMode == ShutdownMode.OnExplicitShutdown)
             {
                 Shutdown(StartupExitCodes.ScriptError);
             }
         };
 
-        // A background thread's exception cannot be handled — the runtime is already unwinding — but
-        // it can be named before the process goes, which is the difference between a bug report and
-        // "it just closed".
+        // A background thread's exception cannot be handled — the runtime is already unwinding —
+        // but ReportCrash blocks on the crash dialog before this handler returns, which is the
+        // difference between a bug report and "it just closed".
         AppDomain.CurrentDomain.UnhandledException += (_, args) =>
         {
             if (args.ExceptionObject is Exception ex)
             {
-                ReportCrash(ex, alert: false);
+                ReportCrash(ex);
             }
         };
 
@@ -166,30 +169,74 @@ public partial class App : System.Windows.Application
         TaskScheduler.UnobservedTaskException += (_, args) =>
         {
             args.SetObserved();
-            ReportCrash(args.Exception, alert: false);
+            ReportCrash(args.Exception);
         };
     }
 
-    private void ReportCrash(Exception exception, bool alert)
+    private void ReportCrash(Exception exception)
     {
         Log(exception);
 
-        // At most one dialog for the whole session. A fault raised from a layout or a render pass
-        // recurs on the next pass, and MessageBox pumps the dispatcher while it is up — so a box per
-        // occurrence is a box the user cannot get past to reach File then Save, which is the one
-        // thing this is here to let them do. The first says what to do; the rest are in the log.
-        if (!alert || _headless || !Dispatcher.CheckAccess()
-            || Interlocked.Exchange(ref _alerted, 1) != 0)
+        // At most one dialog for the whole session: a fault raised from a layout or a render pass
+        // recurs on the next pass, and the dialog pumps the dispatcher while it is up. The latch is
+        // taken before marshalling so a second crash — on any thread — just logs while the first
+        // one's dialog decides how the session ends. Headless runs never had a dialog and still
+        // do not; their report is the log and the exit code.
+        if (_headless || Interlocked.Exchange(ref _alerted, 1) != 0)
         {
             return;
         }
 
-        MessageBox.Show(
-            "JGraph hit an unexpected error. It is still running, so save your work now and restart."
-            + Environment.NewLine + Environment.NewLine + exception.Message,
-            "JGraph",
-            MessageBoxButton.OK,
-            MessageBoxImage.Warning);
+        if (Dispatcher.CheckAccess())
+        {
+            PromptAndExit(exception);
+            return;
+        }
+
+        // A background thread's crash must BLOCK here: the AppDomain handler's return is the last
+        // thing before the runtime tears the process down, so the dialog gets its say first.
+        try
+        {
+            Dispatcher.Invoke(() => PromptAndExit(exception));
+        }
+        catch (Exception marshalling) when (marshalling is TaskCanceledException or InvalidOperationException)
+        {
+            // The dispatcher is already shutting down; the fault is in the log.
+        }
+    }
+
+    /// <summary>
+    /// The last thing the session does: the crash dialog (prefilled with the fault, offering the
+    /// script on screen as an attachment), then a clean shutdown. Anything failing in here — the
+    /// dialog itself throwing on a poisoned render loop — skips straight to ending the process,
+    /// because the alternative is a crash loop with no way out but Task Manager.
+    /// </summary>
+    private void PromptAndExit(Exception exception)
+    {
+        try
+        {
+            Scripting.ScriptWorkspaceWindow? shell = Windows.OfType<Scripting.ScriptWorkspaceWindow>().FirstOrDefault();
+            if (_services?.GetService<IBugReportService>() is { } reports)
+            {
+                reports.ShowCrashDialog(exception, shell?.GetActiveScriptSnapshot());
+            }
+            else
+            {
+                // Before the container exists there is no dialog to show; say what the dialog would.
+                MessageBox.Show(
+                    "JGraph hit an unexpected error and has to close." + Environment.NewLine
+                    + Environment.NewLine + exception.Message,
+                    "JGraph",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Warning);
+            }
+
+            Shutdown(StartupExitCodes.ScriptError);
+        }
+        catch (Exception)
+        {
+            Environment.Exit(StartupExitCodes.ScriptError);
+        }
     }
 
     /// <summary>
@@ -362,6 +409,13 @@ public partial class App : System.Windows.Application
         services.AddSingleton<IScriptingService, ScriptingService>();
         services.AddSingleton<IOptionsService, OptionsService>();
 
+        // Bug reports (ADR 0116): the product's one outbound network call. The transport aims at
+        // the deployed relay; the environment variable exists so a test relay can be tried without
+        // rebuilding. No credential is involved anywhere - the relay sends the mail.
+        services.AddSingleton<IBugReportTransport>(new HttpBugReportTransport(
+            Environment.GetEnvironmentVariable("JGRAPH_BUGREPORT_URL") ?? BugReportRelay.Url));
+        services.AddSingleton<IBugReportService, BugReportService>();
+
         // The shell is a singleton — it is the main window, and closing it ends the session. Figure
         // windows stay transient: FigureWindowService mints one per figure number.
         services.AddSingleton(sp => new ScriptWorkspaceWindow(
@@ -369,7 +423,8 @@ public partial class App : System.Windows.Application
             sp.GetRequiredService<IWorkspaceStateService>(),
             sp.GetRequiredService<IFigureWindowService>(),
             sp.GetRequiredService<ISettingsService>(),
-            sp.GetRequiredService<IOptionsService>()));
+            sp.GetRequiredService<IOptionsService>(),
+            sp.GetRequiredService<IBugReportService>()));
 
         services.AddTransient<FigureViewModel>();
         services.AddTransient<FigureWindow>();

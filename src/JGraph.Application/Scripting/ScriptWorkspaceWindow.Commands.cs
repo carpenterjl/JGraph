@@ -45,6 +45,8 @@ public partial class ScriptWorkspaceWindow
         Bind(WorkspaceCommands.Options, (_, _) => _options?.ShowOptions(),
             (_, e) => e.CanExecute = _options is not null);
         Bind(WorkspaceCommands.ScriptingGuide, (_, _) => OpenScriptingGuide());
+        Bind(WorkspaceCommands.ReportBug, (_, _) => _bugReports?.ShowReportDialog(GetActiveScriptSnapshot()),
+            (_, e) => e.CanExecute = _bugReports is not null);
 
         // A MenuItem loses the focused element as its command target the moment the menu opens, so
         // the standard editing commands would arrive with nowhere to go. Forward them explicitly.

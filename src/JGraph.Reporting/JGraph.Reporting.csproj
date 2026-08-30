@@ -1,0 +1,9 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <RootNamespace>JGraph.Reporting</RootNamespace>
+    <Description>Builds and sends user bug reports — the payload, its exact email subject, and the HTTP transport to the mail relay (ADR 0116).</Description>
+  </PropertyGroup>
+
+</Project>

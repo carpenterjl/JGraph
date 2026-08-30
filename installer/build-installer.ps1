@@ -53,7 +53,11 @@ $anchors = @(
     # The splash animation. It is carried by a Content item with a TargetPath rather than by the
     # publish's own folder rules, so it is exactly the kind of file a layout change drops silently -
     # and the product would still start, just wearing the fallback panel instead of its own face.
-    "splash.apng"
+    "splash.apng",
+    # The bug-report assembly (ADR 0116). Referenced by JGraph.Application, so the publish
+    # carries it - this line is here so a removed reference fails the build loudly instead of
+    # shipping a product whose Report a Bug button cannot load its types.
+    "JGraph.Reporting.dll"
 )
 foreach ($anchor in $anchors) {
     if (-not (Test-Path (Join-Path $staging $anchor))) {

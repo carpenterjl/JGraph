@@ -34,6 +34,7 @@
   <ItemGroup>
     <ProjectReference Include="..\JGraph.Core\JGraph.Core.csproj" />
     <ProjectReference Include="..\JGraph.Imaging.Codecs\JGraph.Imaging.Codecs.csproj" />
+    <ProjectReference Include="..\JGraph.Reporting\JGraph.Reporting.csproj" />
     <ProjectReference Include="..\JGraph.Data\JGraph.Data.csproj" />
     <ProjectReference Include="..\JGraph.Math\JGraph.Math.csproj" />
     <ProjectReference Include="..\JGraph.Objects\JGraph.Objects.csproj" />

@@ -1,0 +1,57 @@
+<Window x:Class="JGraph.Application.BugReportWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Report a Bug" Height="560" Width="520"
+        WindowStartupLocation="CenterOwner" ShowInTaskbar="False">
+    <DockPanel Margin="12">
+        <StackPanel DockPanel.Dock="Bottom" Margin="0,12,0,0">
+            <TextBlock x:Name="StatusLabel" TextWrapping="Wrap" Margin="0,0,0,6" Visibility="Collapsed" />
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                <Button x:Name="CopyButton" Content="Copy Report" Padding="12,2" Margin="4,0"
+                        Click="OnCopy"
+                        ToolTip="Copies the whole report as text, so it can be sent by hand" />
+                <Button x:Name="SendButton" Content="Send" Width="80" Margin="4,0" IsDefault="True"
+                        IsEnabled="False" Click="OnSend" />
+                <Button x:Name="CancelButton" Content="Cancel" Width="80" Margin="4,0" IsCancel="True" />
+            </StackPanel>
+        </StackPanel>
+
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <TextBlock x:Name="CrashHeader" Grid.Row="0" TextWrapping="Wrap" Margin="0,0,0,10"
+                       FontWeight="SemiBold" Visibility="Collapsed"
+                       Text="JGraph hit an unrecoverable error and will close when this window does. Sending the details below helps get it fixed; nothing is sent without pressing Send." />
+
+            <TextBlock Grid.Row="1" Text="Title" Margin="0,0,0,2" />
+            <TextBox x:Name="TitleBox" Grid.Row="2" Margin="0,0,0,8" VerticalContentAlignment="Center"
+                     TextChanged="OnFieldChanged" />
+
+            <TextBlock Grid.Row="3" Text="What happened" Margin="0,0,0,2" />
+            <TextBox x:Name="DescriptionBox" Grid.Row="4" Margin="0,0,0,8" AcceptsReturn="True"
+                     TextWrapping="Wrap" VerticalScrollBarVisibility="Auto"
+                     TextChanged="OnFieldChanged" />
+
+            <DockPanel Grid.Row="5" Margin="0,0,0,8">
+                <TextBlock Text="Reply-to email (optional)" VerticalAlignment="Center" Margin="0,0,8,0" />
+                <TextBox x:Name="ReplyToBox" VerticalContentAlignment="Center"
+                         ToolTip="Where to answer when the bug is fixed; leave blank to stay anonymous" />
+            </DockPanel>
+
+            <CheckBox x:Name="AttachScriptBox" Grid.Row="6" Margin="0,0,0,8" Visibility="Collapsed" />
+
+            <TextBlock x:Name="NotConfiguredLabel" Grid.Row="7" TextWrapping="Wrap" Visibility="Collapsed"
+                       Foreground="{DynamicResource JG.Brush.TextSecondary}"
+                       Text="Bug reporting is not configured in this build, so Send is disabled. Copy Report puts the whole report on the clipboard instead." />
+        </Grid>
+    </DockPanel>
+</Window>

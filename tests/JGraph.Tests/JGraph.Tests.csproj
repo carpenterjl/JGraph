@@ -44,6 +44,7 @@
     <ProjectReference Include="..\..\src\JGraph.Export\JGraph.Export.csproj" />
     <ProjectReference Include="..\..\src\JGraph.Plugins\JGraph.Plugins.csproj" />
     <ProjectReference Include="..\..\src\JGraph.Scripting\JGraph.Scripting.csproj" />
+    <ProjectReference Include="..\..\src\JGraph.Reporting\JGraph.Reporting.csproj" />
   </ItemGroup>
 
 </Project>

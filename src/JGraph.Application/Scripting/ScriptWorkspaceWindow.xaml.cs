@@ -31,6 +31,7 @@ public partial class ScriptWorkspaceWindow : Window
     private readonly IFigureWindowService _figureWindows;
     private readonly ISettingsService? _settings;
     private readonly IOptionsService? _options;
+    private readonly IBugReportService? _bugReports;
     private readonly ScriptSessionModel _session;
     private readonly AppScriptAudio _audio = new();
     private readonly List<DocumentEntry> _documents = new();
@@ -70,12 +71,14 @@ public partial class ScriptWorkspaceWindow : Window
     /// <param name="figureWindows">Opens/reuses a numbered figure window for each figure a script shows.</param>
     /// <param name="settings">The user's preferences (default language and script directory), or null.</param>
     /// <param name="options">Opens the Options dialog from the View menu, or null to hide that item.</param>
+    /// <param name="bugReports">Opens the bug-report dialog from Help, or null to disable the command.</param>
     public ScriptWorkspaceWindow(
         IReadOnlyList<IScriptEngine> engines,
         IWorkspaceStateService stateService,
         IFigureWindowService figureWindows,
         ISettingsService? settings = null,
-        IOptionsService? options = null)
+        IOptionsService? options = null,
+        IBugReportService? bugReports = null)
     {
         InitializeComponent();
 
@@ -84,6 +87,7 @@ public partial class ScriptWorkspaceWindow : Window
         _figureWindows = figureWindows;
         _settings = settings;
         _options = options;
+        _bugReports = bugReports;
         _session = new ScriptSessionModel(engines.Where(e => e.IsAvailable).Select(e => e.Language));
         _session.StateChanged += (_, _) => Dispatcher.Invoke(UpdateCommandStates);
         DockManager.ActiveContentChanged += (_, _) => UpdateCommandStates(); // Run reflects the active tab

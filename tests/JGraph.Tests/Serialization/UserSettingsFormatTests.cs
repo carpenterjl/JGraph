@@ -23,6 +23,7 @@ public class UserSettingsFormatTests
             DefaultNewScriptLanguage = "MATLAB",
             AppTheme = "dark",
             LinkFigureThemeToAppTheme = true,
+            BugReportReplyTo = "user@example.com",
         };
 
         UserSettingsDto? loaded = UserSettingsFormat.Deserialize(UserSettingsFormat.Serialize(settings));
@@ -36,6 +37,7 @@ public class UserSettingsFormatTests
         Assert.Equal("MATLAB", loaded.DefaultNewScriptLanguage);
         Assert.Equal("dark", loaded.AppTheme);
         Assert.True(loaded.LinkFigureThemeToAppTheme);
+        Assert.Equal("user@example.com", loaded.BugReportReplyTo);
     }
 
     [Fact]
@@ -52,6 +54,18 @@ public class UserSettingsFormatTests
         Assert.Equal("IEEE", loaded.DefaultFigureTheme);
         Assert.Null(loaded.AppTheme);
         Assert.False(loaded.LinkFigureThemeToAppTheme);
+    }
+
+    [Fact]
+    public void AFileWithoutAReplyToLoadsNull()
+    {
+        // M114 added the bug-report reply-to the same additive way: a settings file written before
+        // it must load with the field simply absent, not fail or invent a value.
+        UserSettingsDto? loaded = UserSettingsFormat.Deserialize(
+            "{ \"format\": \"jgraph-settings\", \"formatVersion\": 1 }");
+
+        Assert.NotNull(loaded);
+        Assert.Null(loaded.BugReportReplyTo);
     }
 
     [Fact]

@@ -71,6 +71,9 @@ public static class WorkspaceCommands
     /// <summary>Opens the scripting guide.</summary>
     public static RoutedUICommand ScriptingGuide { get; } = Create("Scripting Guide", Key.F1, ModifierKeys.None);
 
+    /// <summary>Opens the bug-report dialog.</summary>
+    public static RoutedUICommand ReportBug { get; } = Create("Report a Bug…");
+
     private static RoutedUICommand Create(string text) =>
         new(text, text.Replace("…", string.Empty, StringComparison.Ordinal).Replace(" ", string.Empty, StringComparison.Ordinal),
             typeof(WorkspaceCommands));
