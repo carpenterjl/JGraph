@@ -1,4 +1,4 @@
-﻿using System.ComponentModel;
+using System.ComponentModel;
 using System.Globalization;
 using System.Windows;
 using JGraph.Application.Mvvm;
@@ -50,6 +50,10 @@ public partial class FigureWindow : Window
         _viewModel.AttachNavigator(FigureView);
         _viewModel.PropertyChanged += OnViewModelPropertyChanged;
         FigureView.CursorDataPositionChanged += OnCursorMoved;
+
+        // The axes toolbar changes the tool from inside the control, so the view model has to hear
+        // about it: the mode buttons and the status line both read from it.
+        FigureView.ActiveModeChanged += (_, _) => _viewModel.ActiveMode = FigureView.ActiveMode;
 
         // The window half of the figure's own properties: where it sits, how it is displayed,
         // whether it can be resized, which pointer it shows, whether the toolbar is there. The

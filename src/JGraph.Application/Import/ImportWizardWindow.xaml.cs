@@ -48,7 +48,23 @@ public partial class ImportWizardWindow : Window
 
     private void OnPaste(object sender, RoutedEventArgs e)
     {
-        string text = Clipboard.ContainsText() ? Clipboard.GetText() : string.Empty;
+        // The clipboard is a shared, singly-owned Win32 resource. Any other process holding it open
+        // — a clipboard manager, a remote-desktop sync agent, a spreadsheet mid-copy — makes WPF
+        // retry for a second and then throw, and this is a button a user presses on purpose.
+        string text;
+        try
+        {
+            text = Clipboard.ContainsText() ? Clipboard.GetText() : string.Empty;
+        }
+        catch (System.Runtime.InteropServices.ExternalException)
+        {
+            MessageBox.Show(
+                this,
+                "Another program is using the clipboard just now. Try again in a moment.",
+                "Paste", MessageBoxButton.OK, MessageBoxImage.Information);
+            return;
+        }
+
         if (ClipboardTableParser.LooksLikeTable(text))
         {
             _viewModel.LoadClipboardText(text);

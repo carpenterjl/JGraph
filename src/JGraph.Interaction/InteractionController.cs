@@ -104,6 +104,14 @@ public sealed class InteractionController
 
     public void PointerUp(PointerEventArgs e) => _current.OnPointerUp(this, e);
 
+    /// <summary>
+    /// Abandons whatever gesture is in progress, as Escape and a mode switch already do. The host
+    /// calls this when the window loses the mouse capture a drag was relying on: no button release
+    /// is coming, so without it the gesture stays armed and the next bare mouse movement continues
+    /// a drag the user finished somewhere else.
+    /// </summary>
+    public void CancelGesture() => _current.Cancel(this);
+
     public void KeyDown(KeyEventArgs e)
     {
         if (e.Key == InteractionKey.Escape)

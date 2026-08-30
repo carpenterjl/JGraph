@@ -46,7 +46,7 @@ public sealed class WorkspaceStateService : IWorkspaceStateService
         try
         {
             Directory.CreateDirectory(Path.GetDirectoryName(_path)!);
-            File.WriteAllText(_path, ScriptWorkspaceStateFormat.Serialize(state));
+            AtomicFile.Write(_path, ScriptWorkspaceStateFormat.Serialize(state));
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
         {

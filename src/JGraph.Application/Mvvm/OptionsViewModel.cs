@@ -134,7 +134,13 @@ public sealed class OptionsViewModel
             DefaultScriptDirectory = string.IsNullOrWhiteSpace(DefaultScriptDirectory) ? null : DefaultScriptDirectory,
             DefaultFigureTheme = DefaultTheme == AvailableThemes[0] ? null : DefaultTheme,
             DefaultNewScriptLanguage = DefaultNewScriptLanguage,
-            DisabledPlugins = [.. Plugins.Where(p => !p.Enabled).Select(p => p.TypeName)],
+            // Only when there is a plugin list to read the answer off. Discovery gives up on a
+            // missing folder and on one bad assembly alike, and rebuilding the list from an empty
+            // Plugins collection silently re-enabled every plugin the user had turned off — quite
+            // possibly the one that had just broken the folder.
+            DisabledPlugins = Plugins.Count > 0
+                ? [.. Plugins.Where(p => !p.Enabled).Select(p => p.TypeName)]
+                : [.. before.DisabledPlugins],
             AppTheme = SelectedAppTheme.Id,
             LinkFigureThemeToAppTheme = LinkFigureThemeToAppTheme,
         };

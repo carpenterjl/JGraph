@@ -15,7 +15,8 @@
             </DockPanel>
         </Border>
 
-        <TreeView x:Name="Tree" BorderThickness="0" ContextMenuOpening="OnContextMenuOpening">
+        <TreeView x:Name="Tree" BorderThickness="0" ContextMenuOpening="OnContextMenuOpening"
+                  PreviewMouseRightButtonDown="OnTreeRightButtonDown">
             <TreeView.ItemContainerStyle>
                 <Style TargetType="TreeViewItem">
                     <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />

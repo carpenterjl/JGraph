@@ -53,7 +53,11 @@ public sealed class UserSettings
             JgsIndexBase = dto.JgsIndexBase,
             DefaultScriptDirectory = dto.DefaultScriptDirectory,
             DefaultFigureTheme = dto.DefaultFigureTheme,
-            DisabledPlugins = [.. dto.DisabledPlugins],
+            // A hand-edited or third-party-written settings file can carry an explicit null here,
+            // which System.Text.Json assigns over the initialiser. Spreading that threw out of the
+            // settings service's constructor, which runs before any window exists — the app died at
+            // launch, every launch, with nothing on screen naming the file to delete.
+            DisabledPlugins = dto.DisabledPlugins is { } disabled ? [.. disabled] : [],
             DefaultNewScriptLanguage = dto.DefaultNewScriptLanguage,
             AppTheme = dto.AppTheme,
             LinkFigureThemeToAppTheme = dto.LinkFigureThemeToAppTheme,

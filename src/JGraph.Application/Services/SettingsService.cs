@@ -42,7 +42,7 @@ public sealed class SettingsService : ISettingsService
         try
         {
             Directory.CreateDirectory(Path.GetDirectoryName(_path)!);
-            File.WriteAllText(_path, UserSettingsFormat.Serialize(settings.ToDto()));
+            AtomicFile.Write(_path, UserSettingsFormat.Serialize(settings.ToDto()));
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
         {

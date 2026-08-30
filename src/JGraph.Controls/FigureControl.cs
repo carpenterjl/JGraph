@@ -38,6 +38,7 @@ public class FigureControl : SKElement, IInteractionSurface, IFigureNavigator
     // over that one alone, which is what makes it a hovering strip rather than permanent chrome.
     private AxesModel? _hoveredAxes;
     private Rect2D _hoveredPlotArea;
+    private InteractionModeKind _announcedMode;
 
     public FigureControl()
     {
@@ -45,7 +46,16 @@ public class FigureControl : SKElement, IInteractionSurface, IFigureNavigator
         Focusable = true;
         UndoStack = new UndoStack();
         _controller = new InteractionController(this);
-        _controller.StateChanged += (_, _) => UpdateCursor();
+        _announcedMode = _controller.CurrentMode.Kind;
+        _controller.StateChanged += (_, _) =>
+        {
+            UpdateCursor();
+            if (_announcedMode != _controller.CurrentMode.Kind)
+            {
+                _announcedMode = _controller.CurrentMode.Kind;
+                ActiveModeChanged?.Invoke(this, EventArgs.Empty);
+            }
+        };
         UndoStack.StateChanged += (_, _) => NavigationStateChanged?.Invoke(this, EventArgs.Empty);
         SizeChanged += OnViewportSizeChanged;
         UpdateCursor();
@@ -101,6 +111,14 @@ public class FigureControl : SKElement, IInteractionSurface, IFigureNavigator
             InvalidateVisual();
         }
     }
+
+    /// <summary>
+    /// Raised when the active tool changes, whoever changed it. The axes toolbar's pan and
+    /// data-cursor buttons change it from inside this control, and a host that does not hear about
+    /// that goes on showing the tool that was replaced — and its already-checked button then cannot
+    /// be clicked back, because setting a checked button checked again raises nothing.
+    /// </summary>
+    public event EventHandler? ActiveModeChanged;
 
     /// <summary>The active interaction mode.</summary>
     public InteractionModeKind ActiveMode
@@ -380,6 +398,22 @@ public class FigureControl : SKElement, IInteractionSurface, IFigureNavigator
         _controller.PointerDown(ToPointerArgs(e, ButtonOf(e)));
     }
 
+    /// <summary>
+    /// The mouse capture a drag depends on can be taken away — another window is activated, a dialog
+    /// opens — and when it is, no button release ever arrives here. The gesture would stay armed and
+    /// the next plain mouse move, with nothing pressed, would go on panning or dragging the rubber
+    /// band from the abandoned drag's origin. Abandoning it is the same thing Escape does.
+    /// </summary>
+    protected override void OnLostMouseCapture(MouseEventArgs e)
+    {
+        base.OnLostMouseCapture(e);
+        _rightDown = null;
+
+        // Each mode's Cancel requests a render itself when it actually undoes something, and this
+        // runs at the end of every ordinary release too, so there is nothing to repaint here.
+        _controller.CancelGesture();
+    }
+
     protected override void OnMouseMove(MouseEventArgs e)
     {
         base.OnMouseMove(e);
@@ -487,10 +521,15 @@ public class FigureControl : SKElement, IInteractionSurface, IFigureNavigator
         base.OnMouseUp(e);
         RaisePointerActivity(ToPoint(e), PointerAction.Released, SelectionOf(e));
         _controller.PointerUp(ToPointerArgs(e, ButtonOf(e)));
+
+        // Read the press before letting the capture go. ReleaseMouseCapture raises LostMouseCapture
+        // synchronously, and that handler abandons an interrupted gesture — including this press —
+        // so asking afterwards is always answered "there was no press" and the menu never opens.
+        Point2D? pressedRight = _rightDown;
         ReleaseMouseCapture();
 
         // A right click (not a drag) opens the tool-aware plot context menu.
-        if (e.ChangedButton == MouseButton.Right && _rightDown is { } down)
+        if (e.ChangedButton == MouseButton.Right && pressedRight is { } down)
         {
             _rightDown = null;
             Point2D position = ToPoint(e);
@@ -662,6 +701,11 @@ public class FigureControl : SKElement, IInteractionSurface, IFigureNavigator
         }
 
         control.UndoStack.Clear();
+
+        // The selection belongs to the figure that was replaced, and the overlay draws from it — an
+        // object left selected here goes on painting its handles over the new figure at the pixels
+        // the old one last occupied, while the inspector correctly reports nothing selected.
+        control._controller.Selection.Clear();
         control.InvalidateVisual();
     }
 

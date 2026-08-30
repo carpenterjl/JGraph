@@ -5,7 +5,9 @@
     <UserControl.Resources>
         <inspector:HexBrushConverter x:Key="HexBrush" />
 
-        <Style x:Key="EditorTextBox" TargetType="TextBox">
+        <!-- BasedOn, or assigning this style opts the box out of the theme's implicit TextBox
+             style altogether and every editable field renders stock white on a dark panel. -->
+        <Style x:Key="EditorTextBox" TargetType="TextBox" BasedOn="{StaticResource {x:Type TextBox}}">
             <Setter Property="VerticalContentAlignment" Value="Center" />
             <Setter Property="Padding" Value="2,1" />
             <EventSetter Event="KeyDown" Handler="OnEditorTextBoxKeyDown" />

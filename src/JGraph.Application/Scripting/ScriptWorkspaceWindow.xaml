@@ -167,6 +167,7 @@
                             <dock:LayoutAnchorable Title="Workspace" ContentId="variables" CanClose="False">
                                 <ListView x:Name="VariablesList" BorderThickness="0"
                                           MouseDoubleClick="OnVariablesDoubleClick"
+                                          PreviewMouseRightButtonDown="OnVariablesRightButtonDown"
                                           ToolTip="Double-click an array, matrix, cell, struct or table to open it in the Data Viewer">
                                     <ListView.ContextMenu>
                                         <ContextMenu>

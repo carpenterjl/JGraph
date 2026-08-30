@@ -17,6 +17,22 @@ public partial class ScriptWorkspaceWindow
 {
     private void OnVariablesDoubleClick(object sender, MouseButtonEventArgs e) => OpenSelectedVariable();
 
+    /// <summary>
+    /// Selects the row the pointer is over before its context menu opens. A ListViewItem takes
+    /// selection on the left button only, and both menu commands read SelectedItem — so without
+    /// this, right-clicking a variable plotted whichever one was last left-clicked, under the other
+    /// one's name, and right-clicking with nothing selected said there was nothing to plot.
+    /// </summary>
+    private void OnVariablesRightButtonDown(object sender, MouseButtonEventArgs e)
+    {
+        if (e.OriginalSource is System.Windows.DependencyObject source
+            && System.Windows.Controls.ItemsControl.ContainerFromElement(VariablesList, source)
+                is System.Windows.Controls.ListViewItem row)
+        {
+            row.IsSelected = true;
+        }
+    }
+
     private void OnPlotVariableClick(object sender, System.Windows.RoutedEventArgs e) => PlotSelectedVariable();
 
     private void OnOpenVariableClick(object sender, System.Windows.RoutedEventArgs e) => OpenSelectedVariable();

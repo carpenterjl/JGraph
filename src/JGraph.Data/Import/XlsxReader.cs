@@ -73,7 +73,11 @@ public static class XlsxReader
         {
             return File.OpenRead(path);
         }
-        catch (IOException ex)
+        // A file whose ACL denies reading, in a folder that can still be listed, throws
+        // UnauthorizedAccessException rather than IOException — and File.Exists said it was there,
+        // so the not-found guard did not fire. Left uncaught it escaped the Browse button as a
+        // crash instead of the inline message every other bad file produces.
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
         {
             throw new ImportException($"Could not read '{path}': {ex.Message}", ex);
         }

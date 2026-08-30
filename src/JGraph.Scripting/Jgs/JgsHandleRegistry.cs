@@ -257,15 +257,26 @@ internal static class JgsHandleRegistry
         ArgumentNullException.ThrowIfNull(target);
         entry = null;
 
-        // A live figure gets its entry on demand — being open is what being alive means for it.
+        // A figure's entry is read, never minted: this method's whole contract is to ask without
+        // creating, and FigureEntries holds a strong reference to its key. Minting here meant that
+        // merely asking whether a figure had a CloseRequestFcn — which the window does as it closes —
+        // put the figure into a static dictionary that outlived it, and with it the control, the
+        // window, and every array plotted in it. A figure with no entry has no callbacks and no
+        // queues, which is the same answer every caller wants from a false return.
         if (target is FigureModel figure)
         {
             if (JG.GetFigureNumber(figure) > 0)
             {
-                entry = FigureEntry(figure);
-                return true;
+                lock (Gate)
+                {
+                    if (FigureEntries.TryGetValue(figure, out entry))
+                    {
+                        return true;
+                    }
+                }
             }
 
+            entry = null;
             return false;
         }
 

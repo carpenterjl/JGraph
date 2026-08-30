@@ -203,8 +203,19 @@ public partial class ScriptWorkspaceWindow
     private LayoutDocumentPane? GetDocumentPane() =>
         DockManager.Layout.Descendents().OfType<LayoutDocumentPane>().FirstOrDefault();
 
+    /// <summary>
+    /// The tab the user is looking at, which is what Run, Save, Close Tab and Toggle Breakpoint all
+    /// act on. <c>IsActive</c> alone is not that tab: AvalonDock keeps one active content for the
+    /// whole layout, so clicking into the console or the Files pane takes it away from every
+    /// document, and a restored layout never sets it at all. Falling straight through to the first
+    /// document then aimed the window's primary actions at whichever tab happened to be first —
+    /// running the wrong script, and closing the wrong tab. <c>IsSelected</c> is the per-pane notion
+    /// and is the tab actually on screen.
+    /// </summary>
     private DocumentEntry? ActiveDocument =>
-        _documents.FirstOrDefault(d => d.Document.IsActive) ?? _documents.FirstOrDefault();
+        _documents.FirstOrDefault(d => d.Document.IsActive)
+        ?? _documents.FirstOrDefault(d => d.Document.IsSelected)
+        ?? _documents.FirstOrDefault();
 
     /// <summary>Set once every dirty document has been dealt with in <c>OnClosing</c>, so the
     /// per-tab Closing handlers do not re-prompt while the window tears its documents down.</summary>
@@ -230,7 +241,9 @@ public partial class ScriptWorkspaceWindow
     /// False means the document is still unsaved — the dialog was cancelled or the write failed —
     /// which a pending close must treat as "do not close".</summary>
     private bool TrySave(DocumentEntry entry) =>
-        entry.Model.FilePath is null ? TrySaveAs(entry) : TryWriteDocument(entry, entry.Model.FilePath);
+        entry.Model.FilePath is null
+            ? TrySaveAs(entry)
+            : TryWriteDocument(entry, entry.Model.FilePath) is not SaveOutcome.Failed;
 
     /// <summary>Save As: always prompts, writes first, and only re-homes the document (path, language,
     /// tab identity) once the write has actually succeeded.</summary>
@@ -261,9 +274,18 @@ public partial class ScriptWorkspaceWindow
             return false;
         }
 
-        if (!TryWriteDocument(entry, dialog.FileName))
+        // Diverted means the read-only prompt sent the user round Save As again and the document is
+        // already homed at the writable copy that inner call wrote. Re-homing it here would rename the
+        // tab to the read-only path nothing was written to, mark it clean, and aim the next Ctrl+S at
+        // the very file the user chose not to overwrite.
+        switch (TryWriteDocument(entry, dialog.FileName))
         {
-            return false;
+            case SaveOutcome.Failed:
+                return false;
+            case SaveOutcome.Diverted:
+                return true;
+            default:
+                break;
         }
 
         entry.Model.SetFilePath(dialog.FileName);
@@ -278,7 +300,7 @@ public partial class ScriptWorkspaceWindow
     /// the user can strip the attribute, divert to a writable copy, or abort. Any remaining failure
     /// gets a dialog, not just a status-bar line a close prompt would race past.
     /// </summary>
-    private bool TryWriteDocument(DocumentEntry entry, string path)
+    private SaveOutcome TryWriteDocument(DocumentEntry entry, string path)
     {
         try
         {
@@ -299,9 +321,9 @@ public partial class ScriptWorkspaceWindow
                             File.SetAttributes(path, attributes & ~FileAttributes.ReadOnly);
                             break;
                         case MessageBoxResult.No:
-                            return TrySaveAs(entry);
+                            return TrySaveAs(entry) ? SaveOutcome.Diverted : SaveOutcome.Failed;
                         default:
-                            return false;
+                            return SaveOutcome.Failed;
                     }
                 }
             }
@@ -311,15 +333,29 @@ public partial class ScriptWorkspaceWindow
             entry.Model.MarkSaved();
             entry.Document.Title = entry.Model.FileName;
             SetStatus($"Saved {path}");
-            return true;
+            return SaveOutcome.Written;
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
         {
             SetStatus($"Could not save: {ex.Message}");
             MessageBox.Show(this, $"Could not save '{path}'.\n\n{ex.Message}",
                 "Save failed", MessageBoxButton.OK, MessageBoxImage.Error);
-            return false;
+            return SaveOutcome.Failed;
         }
+    }
+
+    /// <summary>What a write attempt did, which the caller needs because one of the three answers —
+    /// the read-only prompt's "save a writable copy" — has already re-homed the document itself.</summary>
+    private enum SaveOutcome
+    {
+        /// <summary>Nothing was written; the document is still unsaved.</summary>
+        Failed,
+
+        /// <summary>The text reached the requested path.</summary>
+        Written,
+
+        /// <summary>The text reached a different path, and the document is already homed there.</summary>
+        Diverted,
     }
 
     /// <summary>The per-tab close gate: once app-wide shutdown has already settled every dirty

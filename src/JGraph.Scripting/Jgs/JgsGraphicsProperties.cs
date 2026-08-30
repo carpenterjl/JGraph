@@ -1,4 +1,4 @@
-﻿using System.Collections.Concurrent;
+using System.Collections.Concurrent;
 using System.ComponentModel;
 using System.Reflection;
 using JGraph.Api;
@@ -339,6 +339,12 @@ internal static partial class JgsGraphicsProperties
         var all = new List<GraphObject>(ChildrenOf(target));
         if (target is AxesModel axes)
         {
+            // The toolbar and its buttons are the axes' own parts, exactly as the rulers are. They
+            // were missing here, so a script's handle to an axtoolbar or an axtoolbarbtn was reaped
+            // by the first sweep after it was taken — its SelectionChangedFcn stopped firing and the
+            // handle went dead — while the axes it belongs to was still on screen.
+            all.Add(axes.Toolbar);
+            all.AddRange(axes.Toolbar.Buttons);
             all.AddRange(axes.XAxes);
             all.AddRange(axes.YAxes);
             all.Add(axes.ZAxis);

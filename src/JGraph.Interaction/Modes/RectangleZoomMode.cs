@@ -89,6 +89,14 @@ public sealed class RectangleZoomMode : InteractionModeBase, IContextMenuSource
 
     public override void OnPointerUp(InteractionController controller, PointerEventArgs e)
     {
+        // The press that began this checked the button; the release has to as well. Every release
+        // arrives here, so right-clicking part-way through a left-button drag — which is exactly how
+        // the constraint menu is reached — was committing the half-drawn rectangle as a real zoom.
+        if (e.Button != PointerButton.Left)
+        {
+            return;
+        }
+
         if (!_active || _axes is null || _mapper is null || _before is null)
         {
             return;

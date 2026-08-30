@@ -23,6 +23,12 @@ public partial class DataGridTableControl : UserControl
         UpdateHeader();
     }
 
+    /// <summary>The most columns the viewer will build. Past this the grid stops being readable
+    /// long before it stops being affordable, and the title says how many were left out.</summary>
+    private const int MaxColumns = 512;
+
+    private int _columnsShown;
+
     /// <summary>Displays <paramref name="adapter"/> (null clears the viewer).</summary>
     public void Show(TableGridAdapter? adapter)
     {
@@ -31,7 +37,12 @@ public partial class DataGridTableControl : UserControl
         Grid.Columns.Clear();
         if (adapter is not null)
         {
-            for (int i = 0; i < adapter.ColumnNames.Count; i++)
+            // A DataGrid virtualizes cells, never the column collection: every column is a live
+            // object and each Add re-notifies every realized row, so the cost is quadratic in the
+            // column count. A 2-by-100000 matrix passes the engine's cell budget and would hang the
+            // window for minutes here. Rows are already paged; columns are bounded the same way.
+            _columnsShown = Math.Min(adapter.ColumnNames.Count, MaxColumns);
+            for (int i = 0; i < _columnsShown; i++)
             {
                 Grid.Columns.Add(new DataGridTextColumn
                 {
@@ -62,7 +73,14 @@ public partial class DataGridTableControl : UserControl
             return;
         }
 
-        TitleText.Text = adapter.Title;
+        TitleText.Text = _columnsShown < adapter.ColumnNames.Count
+            ? string.Format(
+                CultureInfo.CurrentCulture,
+                "{0} — first {1:N0} of {2:N0} columns",
+                adapter.Title,
+                _columnsShown,
+                adapter.ColumnNames.Count)
+            : adapter.Title;
         bool paged = adapter.PageCount > 1;
         PrevPageButton.Visibility = paged ? Visibility.Visible : Visibility.Collapsed;
         NextPageButton.Visibility = paged ? Visibility.Visible : Visibility.Collapsed;

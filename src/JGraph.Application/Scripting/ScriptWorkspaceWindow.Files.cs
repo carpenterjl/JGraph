@@ -84,8 +84,26 @@ public partial class ScriptWorkspaceWindow
 
     private void OnWorkspaceChanged(object? sender, EventArgs e) => Dispatcher.BeginInvoke(RefreshFilesTree);
 
+    /// <summary>
+    /// Stands in for a folder's unread contents. Its presence is what says "this folder has not been
+    /// opened yet", and it gives the item an expander chevron without anyone reading the directory.
+    /// </summary>
+    private static readonly object UnreadFolder = new();
+
+    /// <summary>
+    /// Rebuilds the tree, reading only the root and re-opening the folders that were open before.
+    /// The root can be any directory the user names — the parent button walks straight up to a user
+    /// profile or a drive — so nothing here may be proportional to what is under the root: a folder
+    /// is read when it is expanded, and not before.
+    /// </summary>
     private void RefreshFilesTree()
     {
+        var open = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        CollectExpandedFolders(FilesTree.Items, open);
+        string? selected = (FilesTree.SelectedItem as TreeViewItem)?.Tag is WorkspaceEntry previous
+            ? previous.FullPath
+            : null;
+
         FilesTree.Items.Clear();
         if (_workspace is null)
         {
@@ -95,24 +113,17 @@ public partial class ScriptWorkspaceWindow
         var root = new TreeViewItem
         {
             Header = Path.GetFileName(_workspace.RootPath.TrimEnd(Path.DirectorySeparatorChar)),
-            IsExpanded = true,
+            Tag = new WorkspaceEntry(_workspace.RootPath, string.Empty, IsDirectory: true, []),
+            ContextMenu = FolderMenu(_workspace.RootPath, isRoot: true),
         };
-        var refresh = new MenuItem { Header = "Refresh" };
-        refresh.Click += (_, _) => RefreshFilesTree();
-        root.ContextMenu = new ContextMenu { Items = { refresh } };
-        try
-        {
-            foreach (WorkspaceEntry entry in _workspace.EnumerateAll())
-            {
-                root.Items.Add(BuildTreeItem(entry));
-            }
-        }
-        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
-        {
-            SetStatus($"Could not read workspace: {ex.Message}");
-        }
-
+        root.Items.Add(UnreadFolder);
+        root.Expanded += OnFolderExpanded;
         FilesTree.Items.Add(root);
+
+        // The root is always open; the rest are opened again only if they were open before, which is
+        // what stops a file written by a running script from collapsing the pane under the user.
+        root.IsExpanded = true;
+        ReopenFolders(root, open, selected);
     }
 
     private TreeViewItem BuildTreeItem(WorkspaceEntry entry)
@@ -120,19 +131,104 @@ public partial class ScriptWorkspaceWindow
         var item = new TreeViewItem { Header = entry.Name, Tag = entry };
         if (entry.IsDirectory)
         {
-            var setRoot = new MenuItem { Header = "Set as workspace root" };
-            setRoot.Click += (_, _) => OpenWorkspace(entry.FullPath);
-            var refresh = new MenuItem { Header = "Refresh" };
-            refresh.Click += (_, _) => RefreshFilesTree();
-            item.ContextMenu = new ContextMenu { Items = { setRoot, refresh } };
-        }
-
-        foreach (WorkspaceEntry child in entry.Children)
-        {
-            item.Items.Add(BuildTreeItem(child));
+            item.ContextMenu = FolderMenu(entry.FullPath, isRoot: false);
+            item.Items.Add(UnreadFolder);
+            item.Expanded += OnFolderExpanded;
         }
 
         return item;
+    }
+
+    private ContextMenu FolderMenu(string path, bool isRoot)
+    {
+        var menu = new ContextMenu();
+        if (!isRoot)
+        {
+            var setRoot = new MenuItem { Header = "Set as workspace root" };
+            setRoot.Click += (_, _) => OpenWorkspace(path);
+            menu.Items.Add(setRoot);
+        }
+
+        var refresh = new MenuItem { Header = "Refresh" };
+        refresh.Click += (_, _) => RefreshFilesTree();
+        menu.Items.Add(refresh);
+        return menu;
+    }
+
+    private void OnFolderExpanded(object sender, RoutedEventArgs e)
+    {
+        // Expanded bubbles, so a child's expansion arrives at every ancestor as well.
+        if (sender is TreeViewItem item && ReferenceEquals(sender, e.OriginalSource))
+        {
+            ReadFolder(item);
+        }
+    }
+
+    /// <summary>Replaces a folder's placeholder with its immediate entries, once.</summary>
+    private void ReadFolder(TreeViewItem item)
+    {
+        if (item.Items.Count != 1 || !ReferenceEquals(item.Items[0], UnreadFolder))
+        {
+            return;
+        }
+
+        item.Items.Clear();
+        if (_workspace is null || item.Tag is not WorkspaceEntry folder)
+        {
+            return;
+        }
+
+        try
+        {
+            foreach (WorkspaceEntry child in _workspace.EnumerateChildren(folder.FullPath))
+            {
+                item.Items.Add(BuildTreeItem(child));
+            }
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+        {
+            SetStatus($"Could not read '{folder.Name}': {ex.Message}");
+        }
+    }
+
+    private static void CollectExpandedFolders(ItemCollection items, HashSet<string> open)
+    {
+        foreach (object child in items)
+        {
+            if (child is TreeViewItem { IsExpanded: true, Tag: WorkspaceEntry entry } item)
+            {
+                open.Add(entry.FullPath);
+                CollectExpandedFolders(item.Items, open);
+            }
+        }
+    }
+
+    private void ReopenFolders(TreeViewItem item, HashSet<string> open, string? selected)
+    {
+        if (item.Tag is not WorkspaceEntry entry)
+        {
+            return;
+        }
+
+        if (selected is not null && string.Equals(entry.FullPath, selected, StringComparison.OrdinalIgnoreCase))
+        {
+            item.IsSelected = true;
+        }
+
+        if (!entry.IsDirectory || !open.Contains(entry.FullPath))
+        {
+            return;
+        }
+
+        item.IsExpanded = true;
+        ReadFolder(item); // A no-op when setting IsExpanded above already fired Expanded.
+        foreach (object child in item.Items)
+        {
+            if (child is TreeViewItem sub)
+            {
+                ReopenFolders(sub, open, selected);
+            }
+        }
     }
 
     private void OnFilesTreeDoubleClick(object sender, MouseButtonEventArgs e)
@@ -142,8 +238,12 @@ public partial class ScriptWorkspaceWindow
             return;
         }
 
-        // A folder becomes the new workspace root (MATLAB's Current Folder navigation).
-        if (entry.IsDirectory)
+        // A folder becomes the new workspace root (MATLAB's Current Folder navigation) — except the
+        // root itself, which is already open: re-opening it would rebuild the workspace and its
+        // watcher for no change, and the double-click has just collapsed the node, so the rebuild
+        // would take every expanded folder with it.
+        if (entry.IsDirectory
+            && !string.Equals(entry.FullPath, _workspace?.RootPath, StringComparison.OrdinalIgnoreCase))
         {
             OpenWorkspace(entry.FullPath);
             e.Handled = true;

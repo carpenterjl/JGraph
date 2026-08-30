@@ -63,6 +63,36 @@ internal sealed class CompletionSupport
     /// scripts, harvested by the host via <see cref="JgsCompletionEngine.HarvestFunctions"/>.</summary>
     public Func<IReadOnlyList<CompletionItem>>? WorkspaceSymbols { get; set; }
 
+    /// <summary>
+    /// The workspace's symbols, harvested at most once every <see cref="SymbolCacheMilliseconds"/>.
+    /// Harvesting re-lexes every open document and walks the workspace folder recursively, and an
+    /// open signature tooltip asks for it on every caret movement — so an unmemoised call made a
+    /// recursive directory walk part of the cost of pressing an arrow key inside a call.
+    /// </summary>
+    private IReadOnlyList<CompletionItem>? CurrentWorkspaceSymbols()
+    {
+        if (WorkspaceSymbols is null)
+        {
+            return null;
+        }
+
+        long now = Environment.TickCount64;
+        if (_symbols is null || now - _symbolsHarvestedAt > SymbolCacheMilliseconds)
+        {
+            _symbols = WorkspaceSymbols();
+            _symbolsHarvestedAt = now;
+        }
+
+        return _symbols;
+    }
+
+    /// <summary>How long a symbol harvest stands before it is taken again. Short enough that a name
+    /// defined in another tab shows up while the user is still looking for it.</summary>
+    private const long SymbolCacheMilliseconds = 2000;
+
+    private IReadOnlyList<CompletionItem>? _symbols;
+    private long _symbolsHarvestedAt = long.MinValue;
+
     /// <summary>Supplies the workspace's files and folders for path completion inside the string
     /// arguments of the file builtins (<c>readcsv("…</c>). Null when no workspace is open.</summary>
     public Func<IReadOnlyList<WorkspaceFileEntry>>? WorkspaceFiles { get; set; }
@@ -148,7 +178,7 @@ internal sealed class CompletionSupport
         else if (UsesOurInterpreter)
         {
             JgsCompletionResult result = JgsCompletionEngine.GetCompletions(
-                _editor.Text, offset, WorkspaceSymbols?.Invoke(), IsMatlab);
+                _editor.Text, offset, CurrentWorkspaceSymbols(), IsMatlab);
             replaceStart = result.ReplaceStart;
             items = result.Items;
         }
@@ -209,7 +239,7 @@ internal sealed class CompletionSupport
     {
         JgsSignatureHelp? help = UsesOurInterpreter
             ? JgsCompletionEngine.GetSignatureHelp(
-                _editor.Text, _editor.CaretOffset, WorkspaceSymbols?.Invoke(), IsMatlab)
+                _editor.Text, _editor.CaretOffset, CurrentWorkspaceSymbols(), IsMatlab)
             : null;
         if (help is null)
         {

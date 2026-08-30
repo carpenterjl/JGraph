@@ -256,6 +256,33 @@ public partial class ScriptWorkspaceWindow
         {
             // A stale or corrupt layout must never break the window; fall back to the default layout.
             AppendConsole($"(Could not restore the window layout: {ex.Message})");
+            ReattachDetachedContent();
+        }
+    }
+
+    /// <summary>
+    /// Puts the pane and document controls back after a failed restore. They are detached above so
+    /// that the saved layout can re-own them, and nothing else re-attaches them — so a layout file
+    /// that fails to deserialize left every tool pane and every script tab as an empty frame, and
+    /// the same structure was saved again on exit, which made it permanent.
+    /// </summary>
+    private void ReattachDetachedContent()
+    {
+        foreach (PaneDescriptor descriptor in PaneCatalog.For(this))
+        {
+            if (FindPane(descriptor.ContentId) is { } pane)
+            {
+                pane.Content ??= descriptor.Content;
+            }
+            else
+            {
+                EnsureKnownPane(descriptor);
+            }
+        }
+
+        foreach (DocumentEntry entry in _documents)
+        {
+            entry.Document.Content ??= entry.Editor;
         }
     }
 

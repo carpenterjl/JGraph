@@ -1,4 +1,4 @@
-﻿using JGraph.Core.Model;
+using JGraph.Core.Model;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace JGraph.Application.Services;
@@ -71,6 +71,21 @@ public sealed class FigureWindowService : IFigureWindowService
         {
             _windows.Remove(number);
             JGraph.Api.JG.CloseFigure(number);
+
+            // Retiring the figure is what makes its script-side handles unreachable; this is what
+            // lets go of them. Without it the registry keeps the figure, and through it the whole
+            // model subtree and the window that drew it, for the rest of the session — one graph per
+            // open-and-close, which is the ordinary way a plotting session is used.
+            try
+            {
+                JGraph.Scripting.ScriptGraphicsCallbacks.ReleaseRetiredFigures();
+            }
+            catch (InvalidOperationException)
+            {
+                // The sweep walks the live model, and a script on its own thread may be adding to it
+                // as this runs. Missing one sweep costs a delayed release; throwing out of a window's
+                // Closed handler would cost the user a dialog.
+            }
         };
         _windows[number] = window;
         window.Show();

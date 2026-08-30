@@ -74,7 +74,27 @@ public sealed class ScriptWorkspace : IDisposable
     /// Enumerates the whole workspace as a tree: the root's entries, each directory carrying its
     /// children, directories before files, both sorted by name.
     /// </summary>
-    public IReadOnlyList<WorkspaceEntry> EnumerateAll() => EnumerateDirectory(RootPath);
+    public IReadOnlyList<WorkspaceEntry> EnumerateAll() => EnumerateDirectory(RootPath, depth: 0);
+
+    /// <summary>
+    /// Enumerates one directory's immediate entries — directories first, then files, both sorted by
+    /// name — without descending into them. Unlike <see cref="EnumerateAll"/> the directories come
+    /// back with no <see cref="WorkspaceEntry.Children"/>, because none have been read; a caller that
+    /// shows a tree asks again for the folder the user actually opens. That is the difference between
+    /// work proportional to what is on screen and work proportional to everything under the root,
+    /// which for a root like a user profile does not finish.
+    /// </summary>
+    /// <param name="directory">The absolute path of the directory to read, or null for the root.</param>
+    public IReadOnlyList<WorkspaceEntry> EnumerateChildren(string? directory = null)
+    {
+        string target = directory ?? RootPath;
+        var entries = new List<WorkspaceEntry>();
+        foreach (string sub in Directory.EnumerateDirectories(target).Order(StringComparer.OrdinalIgnoreCase))
+            entries.Add(new WorkspaceEntry(sub, Path.GetRelativePath(RootPath, sub), IsDirectory: true, []));
+        foreach (string file in Directory.EnumerateFiles(target).Order(StringComparer.OrdinalIgnoreCase))
+            entries.Add(new WorkspaceEntry(file, Path.GetRelativePath(RootPath, file), IsDirectory: false, []));
+        return entries;
+    }
 
     /// <summary>
     /// Resolves a script-supplied file path. Probe order: an absolute path is returned as-is; then the
@@ -111,14 +131,25 @@ public sealed class ScriptWorkspace : IDisposable
         _debounce.Dispose();
     }
 
+    /// <summary>How deep <see cref="EnumerateAll"/> descends before it stops. Well past any real
+    /// source tree, and short of the depth at which a junction cycle would end the process.</summary>
+    private const int MaxEnumerationDepth = 32;
+
     private static bool IsScript(string path) =>
         ScriptExtensions.Contains(Path.GetExtension(path), StringComparer.OrdinalIgnoreCase);
 
-    private IReadOnlyList<WorkspaceEntry> EnumerateDirectory(string directory)
+    private IReadOnlyList<WorkspaceEntry> EnumerateDirectory(string directory, int depth)
     {
         var entries = new List<WorkspaceEntry>();
+
+        // A directory junction pointing at one of its own ancestors is a cycle the file system is
+        // happy to walk forever. The recursion ends in a StackOverflowException, which no catch
+        // block can see, so the depth is bounded here instead.
+        if (depth >= MaxEnumerationDepth)
+            return entries;
+
         foreach (string sub in Directory.EnumerateDirectories(directory).Order(StringComparer.OrdinalIgnoreCase))
-            entries.Add(new WorkspaceEntry(sub, Path.GetRelativePath(RootPath, sub), IsDirectory: true, EnumerateDirectory(sub)));
+            entries.Add(new WorkspaceEntry(sub, Path.GetRelativePath(RootPath, sub), IsDirectory: true, EnumerateDirectory(sub, depth + 1)));
         foreach (string file in Directory.EnumerateFiles(directory).Order(StringComparer.OrdinalIgnoreCase))
             entries.Add(new WorkspaceEntry(file, Path.GetRelativePath(RootPath, file), IsDirectory: false, []));
         return entries;

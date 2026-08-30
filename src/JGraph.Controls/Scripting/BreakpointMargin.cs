@@ -224,6 +224,21 @@ internal sealed class BreakpointMargin : AbstractMargin
     }
 
     /// <inheritdoc />
+    protected override void OnLostMouseCapture(MouseEventArgs e)
+    {
+        base.OnLostMouseCapture(e);
+
+        // A modal dialog, a UAC prompt or another window being activated takes the capture away and
+        // no button release ever arrives. The drag would stay armed, so the next click anywhere in
+        // the gutter would toggle a breakpoint and then, on its release, move the program counter to
+        // that line. The ordinary end of a drag clears the flag before it releases, so this is only
+        // ever the interrupted case.
+        _dragging = false;
+        _dragTargetLine = null;
+        InvalidateVisual();
+    }
+
+    /// <inheritdoc />
     protected override void OnMouseMove(MouseEventArgs e)
     {
         base.OnMouseMove(e);

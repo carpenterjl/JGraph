@@ -37,6 +37,10 @@ public static class EditablePropertyFactory
         Func<object, object?> Read,
         Func<object, object?, object> Rebuild);
 
+    // Every rebuilder below reconstructs the whole value from one changed member, so it must carry
+    // the members it is not changing. TextStyle has seven and the interpreter and the antialias flag
+    // were being left off: editing the font size of a label silently put its interpreter back to Tex,
+    // which re-renders an underscore as a subscript in text a script had asked to be taken literally.
     private static readonly Dictionary<Type, CompositeMember[]> Composites = new()
     {
         [typeof(TextStyle)] = new[]
@@ -46,35 +50,35 @@ public static class EditablePropertyFactory
                 (s, v) =>
                 {
                     TextStyle t = (TextStyle)s;
-                    return new TextStyle(t.Color, t.FontSize, AsString(v), t.Bold, t.Italic);
+                    return new TextStyle(t.Color, t.FontSize, AsString(v), t.Bold, t.Italic, t.Interpreter, t.Antialias);
                 }),
             new CompositeMember("Font size", PropertyEditorKind.Number, typeof(double),
                 s => ((TextStyle)s).FontSize,
                 (s, v) =>
                 {
                     TextStyle t = (TextStyle)s;
-                    return new TextStyle(t.Color, AsDouble(v, t.FontSize), t.FontFamily, t.Bold, t.Italic);
+                    return new TextStyle(t.Color, AsDouble(v, t.FontSize), t.FontFamily, t.Bold, t.Italic, t.Interpreter, t.Antialias);
                 }),
             new CompositeMember("Bold", PropertyEditorKind.Toggle, typeof(bool),
                 s => ((TextStyle)s).Bold,
                 (s, v) =>
                 {
                     TextStyle t = (TextStyle)s;
-                    return new TextStyle(t.Color, t.FontSize, t.FontFamily, AsBool(v, t.Bold), t.Italic);
+                    return new TextStyle(t.Color, t.FontSize, t.FontFamily, AsBool(v, t.Bold), t.Italic, t.Interpreter, t.Antialias);
                 }),
             new CompositeMember("Italic", PropertyEditorKind.Toggle, typeof(bool),
                 s => ((TextStyle)s).Italic,
                 (s, v) =>
                 {
                     TextStyle t = (TextStyle)s;
-                    return new TextStyle(t.Color, t.FontSize, t.FontFamily, t.Bold, AsBool(v, t.Italic));
+                    return new TextStyle(t.Color, t.FontSize, t.FontFamily, t.Bold, AsBool(v, t.Italic), t.Interpreter, t.Antialias);
                 }),
             new CompositeMember("Color", PropertyEditorKind.Color, typeof(Color),
                 s => ((TextStyle)s).Color,
                 (s, v) =>
                 {
                     TextStyle t = (TextStyle)s;
-                    return new TextStyle(AsColor(v, t.Color), t.FontSize, t.FontFamily, t.Bold, t.Italic);
+                    return new TextStyle(AsColor(v, t.Color), t.FontSize, t.FontFamily, t.Bold, t.Italic, t.Interpreter, t.Antialias);
                 }),
         },
         [typeof(LineStyle)] = new[]

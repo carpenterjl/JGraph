@@ -45,9 +45,20 @@ public partial class ScriptEditorControl : UserControl
         SetResourceReference(SyntaxIsDarkProperty, Themes.ThemeKeys.ThemeIsDark);
         Editor.TextArea.LeftMargins.Insert(0, _breakpointMargin);
         Editor.TextArea.TextView.BackgroundRenderers.Add(_currentLineRenderer);
+        // Find has no implementation until the search panel is installed. Without this the Edit menu's
+        // Find item is bound to a command nothing in the window can execute, so it is permanently grey.
+        ICSharpCode.AvalonEdit.Search.SearchPanel.Install(Editor);
         _breakpointMargin.BreakpointToggled += (_, _) => BreakpointsChanged?.Invoke(this, EventArgs.Empty);
         _breakpointMargin.SetNextLineRequested += (_, line) => SetNextStatementRequested?.Invoke(this, line);
     }
+
+    /// <summary>
+    /// The element the standard editing commands act on. It is the text area and not this control:
+    /// AvalonEdit installs Undo, Redo, Cut, Copy, Paste and Select All on the text area, whereas a
+    /// routed command aimed at the UserControl finds nothing that handles it and bubbles back out to
+    /// whatever hosts it.
+    /// </summary>
+    public IInputElement EditingSurface => Editor.TextArea;
 
     /// <summary>The band drawn behind the line the debugger is paused at.</summary>
     public Brush CurrentLineBrush

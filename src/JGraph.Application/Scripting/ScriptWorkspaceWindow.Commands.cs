@@ -58,17 +58,52 @@ public partial class ScriptWorkspaceWindow
             RoutedUICommand command = editing;
             CommandBindings.Add(new CommandBinding(
                 command,
-                (_, e) =>
-                {
-                    if (ActiveDocument?.Editor is { } editor && command.CanExecute(null, editor))
-                    {
-                        command.Execute(null, editor);
-                        e.Handled = true;
-                    }
-                },
-                (_, e) => e.CanExecute = ActiveDocument?.Editor is { } editor && command.CanExecute(null, editor)));
+                (_, e) => e.Handled = ForwardToEditor(command, run: true),
+                (_, e) => e.CanExecute = ForwardToEditor(command, run: false)));
         }
     }
+
+    /// <summary>
+    /// Asks the active document's text area whether it can run one of the standard editing commands,
+    /// and runs it there when asked to. Returns false when there is no document, when the text area
+    /// declines, or when the query has already re-entered.
+    /// </summary>
+    private bool ForwardToEditor(RoutedUICommand command, bool run)
+    {
+        // The forwarded query is raised on an element inside this window, so anything the text area
+        // declines — Undo with an empty stack, Paste with a foreign clipboard — keeps bubbling and
+        // arrives back at this very binding. Re-entering then asks the same question again, one
+        // stack frame deeper, for ever: a StackOverflowException, which no catch block can see and
+        // which takes the process down without a dialog. The guard is what makes forwarding safe.
+        if (_forwardingToEditor || ActiveDocument?.Editor is not { } editor)
+        {
+            return false;
+        }
+
+        _forwardingToEditor = true;
+        try
+        {
+            IInputElement target = editor.EditingSurface;
+            if (!command.CanExecute(null, target))
+            {
+                return false;
+            }
+
+            if (run)
+            {
+                command.Execute(null, target);
+            }
+
+            return true;
+        }
+        finally
+        {
+            _forwardingToEditor = false;
+        }
+    }
+
+    /// <summary>Guards <see cref="ForwardToEditor"/> against the query it raises coming back to it.</summary>
+    private bool _forwardingToEditor;
 
     private void Bind(RoutedUICommand command, ExecutedRoutedEventHandler execute, CanExecuteRoutedEventHandler? canExecute = null) =>
         CommandBindings.Add(canExecute is null

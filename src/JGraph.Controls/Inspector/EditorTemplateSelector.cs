@@ -43,7 +43,22 @@ public sealed class EditorTemplateSelector : DataTemplateSelector
             PropertyEditorKind.FontFamily => FontFamilyTemplate,
 
             // Header rows have no editor: the value column stays empty.
-            _ => base.SelectTemplate(item, container),
+            _ => NoEditor,
         };
+    }
+
+    /// <summary>
+    /// What "no editor" has to be. Returning null does not leave the cell blank — a
+    /// <see cref="ContentPresenter"/> whose selector returns null falls back to its default template,
+    /// which renders the bound object's <c>ToString()</c>, so the value column of every composite
+    /// caption row read out the view model's full type name.
+    /// </summary>
+    private static readonly DataTemplate NoEditor = EmptyTemplate();
+
+    private static DataTemplate EmptyTemplate()
+    {
+        var template = new DataTemplate { VisualTree = new FrameworkElementFactory(typeof(Grid)) };
+        template.Seal();
+        return template;
     }
 }

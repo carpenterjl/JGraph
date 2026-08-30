@@ -18,6 +18,14 @@ namespace JGraph.Scripting;
 public static class ScriptGraphicsCallbacks
 {
     /// <summary>
+    /// Lets go of the script-side handles of every object no longer reachable from a live figure.
+    /// A host calls this when it has retired a figure — closing its window — because until it does,
+    /// the registry keeps that figure, and through it the whole model subtree and the control that
+    /// drew it, for the rest of the session.
+    /// </summary>
+    public static void ReleaseRetiredFigures() => Jgs.JgsHandleRegistry.DropUnreachable();
+
+    /// <summary>
     /// Queues a legend's <c>ItemHitFcn</c> for a clicked series. Returns false when that legend was
     /// never given a callback, so the caller can treat the click as an ordinary one.
     /// </summary>

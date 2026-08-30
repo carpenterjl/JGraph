@@ -159,19 +159,32 @@ public partial class PlotBrowserControl : UserControl
 
     private void Rebuild()
     {
-        foreach (GraphNodeViewModel root in _roots)
+        // Clearing the roots makes the TreeView deselect its containers, and the two-way IsSelected
+        // binding writes that straight back into the shared SelectionManager — so the figure's
+        // selection was being cleared by the act of redrawing the tree, and the restore below then
+        // had nothing left to restore. The guard is the same one the two selection handlers use.
+        bool syncing = _syncingSelection;
+        _syncingSelection = true;
+        try
         {
-            root.Dispose();
+            foreach (GraphNodeViewModel root in _roots)
+            {
+                root.Dispose();
+            }
+
+            _roots.Clear();
+
+            if (Figure is not { } figure)
+            {
+                return;
+            }
+
+            _roots.Add(BuildFigureNode(figure));
         }
-
-        _roots.Clear();
-
-        if (Figure is not { } figure)
+        finally
         {
-            return;
+            _syncingSelection = syncing;
         }
-
-        _roots.Add(BuildFigureNode(figure));
 
         // Restore the highlight for whatever is currently selected.
         if (_selection?.Selected is { } selected)
@@ -256,6 +269,43 @@ public partial class PlotBrowserControl : UserControl
         {
             SyncSelection(child, selected);
         }
+    }
+
+    /// <summary>
+    /// Selects the node the pointer is over before its context menu opens. A TreeViewItem takes
+    /// selection on the left button only, and the menu is built from Tree.SelectedItem — so
+    /// right-clicking one node added an annotation to, or removed, a different one, and
+    /// right-clicking before anything had ever been selected suppressed the menu entirely.
+    /// </summary>
+    private void OnTreeRightButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+    {
+        if (NodeUnder(e.OriginalSource as DependencyObject) is { } node)
+        {
+            // SetCurrentValue, not a plain assignment: IsSelected is bound TwoWay from the container
+            // style, and a local value outranks a style setter permanently. Assigning it would detach
+            // that container from its view model for good — the figure's own highlight would stop
+            // following the tree, and a later programmatic deselection would not show.
+            node.SetCurrentValue(TreeViewItem.IsSelectedProperty, true);
+        }
+    }
+
+    /// <summary>
+    /// The tree node an element sits inside. <c>ItemsControl.ContainerFromElement</c> is wrong here:
+    /// in a TreeView only the top-level items belong to the TreeView's own container generator — a
+    /// nested node belongs to its parent node's — so it climbs straight past the node that was
+    /// clicked and answers with the root, which would have pointed the context menu at the figure
+    /// whichever object the user aimed at.
+    /// </summary>
+    private static TreeViewItem? NodeUnder(DependencyObject? source)
+    {
+        while (source is not null and not TreeViewItem)
+        {
+            source = source is System.Windows.Media.Visual or System.Windows.Media.Media3D.Visual3D
+                ? System.Windows.Media.VisualTreeHelper.GetParent(source)
+                : LogicalTreeHelper.GetParent(source);
+        }
+
+        return source as TreeViewItem;
     }
 
     private void OnContextMenuOpening(object sender, ContextMenuEventArgs e)

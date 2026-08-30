@@ -28,10 +28,13 @@ public partial class App : System.Windows.Application
 {
     private ServiceProvider? _services;
     private int? _pendingExitCode;
+    private int _alerted;
+    private bool _headless;
 
     protected override void OnStartup(StartupEventArgs e)
     {
         base.OnStartup(e);
+        InstallCrashGuards();
 
         StartupOptions options = StartupCommandLine.Parse(e.Args);
         if (options.HasUsageError)
@@ -95,13 +98,121 @@ public partial class App : System.Windows.Application
             return;
         }
 
-        MainWindow = shell;
-        shell.Show();
-        ShutdownMode = ShutdownMode.OnMainWindowClose;
+        // Inside the try as well: showing the shell is the step that materialises the restored
+        // dock layout, and until ShutdownMode moves off OnExplicitShutdown a throw here would leave
+        // a dispatcher running with no window, no taskbar entry and no way out but Task Manager.
+        try
+        {
+            MainWindow = shell;
+            shell.Show();
+            ShutdownMode = ShutdownMode.OnMainWindowClose;
+        }
+        catch (Exception ex)
+        {
+            ShowText("JGraph could not open its main window: " + ex.Message, "JGraph");
+            Shutdown(StartupExitCodes.ScriptError);
+            return;
+        }
 
         if (options.Mode == StartupMode.Run && options.Statement is { Length: > 0 } statement)
         {
-            _services!.GetRequiredService<IScriptingService>().OpenEditorAndRun(statement, options.LogFile);
+            try
+            {
+                _services!.GetRequiredService<IScriptingService>().OpenEditorAndRun(statement, options.LogFile);
+            }
+            catch (Exception ex)
+            {
+                // The shell is up, so this is reportable without ending the session.
+                ShowText("JGraph could not run " + statement + ": " + ex.Message, "JGraph");
+            }
+        }
+    }
+
+    /// <summary>
+    /// Catches what would otherwise end the process without a word. A WPF application with no handler
+    /// here dies to the operating system on any exception that escapes an event handler or a command,
+    /// which also means <see cref="ScriptWorkspaceWindow"/>'s closing hook never runs and the session —
+    /// open files, dock layout, breakpoints — goes with it, on top of whatever was unsaved. Reporting
+    /// and carrying on gives the user the one thing worth having at that moment: the chance to save.
+    /// </summary>
+    private void InstallCrashGuards()
+    {
+        DispatcherUnhandledException += (_, args) =>
+        {
+            args.Handled = true;
+            ReportCrash(args.Exception, alert: true);
+
+            // Handling it is only worth doing if there is something left to go back to. With no
+            // window open and nothing that will ever close to end the session, swallowing it would
+            // leave a process with no UI and no way out but Task Manager.
+            if (Windows.Count == 0 && ShutdownMode == ShutdownMode.OnExplicitShutdown)
+            {
+                Shutdown(StartupExitCodes.ScriptError);
+            }
+        };
+
+        // A background thread's exception cannot be handled — the runtime is already unwinding — but
+        // it can be named before the process goes, which is the difference between a bug report and
+        // "it just closed".
+        AppDomain.CurrentDomain.UnhandledException += (_, args) =>
+        {
+            if (args.ExceptionObject is Exception ex)
+            {
+                ReportCrash(ex, alert: false);
+            }
+        };
+
+        // A faulted fire-and-forget task is silent by default, and the startup path is one.
+        TaskScheduler.UnobservedTaskException += (_, args) =>
+        {
+            args.SetObserved();
+            ReportCrash(args.Exception, alert: false);
+        };
+    }
+
+    private void ReportCrash(Exception exception, bool alert)
+    {
+        Log(exception);
+
+        // At most one dialog for the whole session. A fault raised from a layout or a render pass
+        // recurs on the next pass, and MessageBox pumps the dispatcher while it is up — so a box per
+        // occurrence is a box the user cannot get past to reach File then Save, which is the one
+        // thing this is here to let them do. The first says what to do; the rest are in the log.
+        if (!alert || _headless || !Dispatcher.CheckAccess()
+            || Interlocked.Exchange(ref _alerted, 1) != 0)
+        {
+            return;
+        }
+
+        MessageBox.Show(
+            "JGraph hit an unexpected error. It is still running, so save your work now and restart."
+            + Environment.NewLine + Environment.NewLine + exception.Message,
+            "JGraph",
+            MessageBoxButton.OK,
+            MessageBoxImage.Warning);
+    }
+
+    /// <summary>
+    /// Records a fault where it can be read afterwards. Debug.WriteLine is compiled out of a release
+    /// build and a windowed process has no console attached, so without a file the only report of a
+    /// swallowed exception would be the one dialog — and only for the first.
+    /// </summary>
+    private static void Log(Exception exception)
+    {
+        Console.Error.WriteLine("jgraph: " + exception.Message);
+        try
+        {
+            string path = Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "JGraph", "crash.log");
+            Directory.CreateDirectory(Path.GetDirectoryName(path)!);
+            File.AppendAllText(
+                path,
+                $"{DateTime.Now:u} {exception}{Environment.NewLine}{Environment.NewLine}");
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException
+            or System.Security.SecurityException)
+        {
+            // Nothing left to report with.
         }
     }
 
@@ -126,6 +237,9 @@ public partial class App : System.Windows.Application
     /// </summary>
     private void RunBatch(StartupOptions options)
     {
+        // No dialogs from here on. This mode reports on the standard streams and must end with an
+        // exit code, so a modal box would hang a scripted run for ever with nobody to click it.
+        _headless = true;
         ShutdownMode = ShutdownMode.OnExplicitShutdown;
 
         IScriptOutput console = ConsoleScriptOutput.Instance;
