@@ -221,7 +221,7 @@ internal static partial class JgsBuiltins
         if (options.Named("BackgroundColor") is { } asked)
         {
             restore = figure.Background;
-            figure.Background = OptionColor(asked, line, col, verb);
+            figure.Background = ExportBackground(verb, asked, path, figure, line, col);
         }
         else if (figure.ExportSetup.Background is { } preset)
         {
@@ -240,6 +240,40 @@ internal static partial class JgsBuiltins
                 figure.Background = original;
             }
         }
+    }
+
+    /// <summary>
+    /// The colour to clear the page with. MATLAB spells "let whatever this is laid over show through"
+    /// as the word <c>'none'</c>, and it is the only way to get a picture that will sit on something
+    /// else — so it is read here and answered with a fully transparent colour, which the renderer
+    /// clears to and which PNG, PDF and SVG all carry. The formats that cannot carry it say so, rather
+    /// than quietly writing the black rectangle a transparent clear leaves behind in them.
+    /// </summary>
+    private static JGraph.Core.Drawing.Color ExportBackground(
+        string verb, JgsValue asked, string path, FigureModel figure, int line, int col)
+    {
+        if (asked.Type == JgsType.String)
+        {
+            string word = asked.AsString;
+            if (word.Equals("none", StringComparison.OrdinalIgnoreCase))
+            {
+                string extension = Path.GetExtension(path).ToLowerInvariant();
+                return extension is ".png" or ".pdf" or ".svg"
+                    ? JGraph.Core.Drawing.Colors.Transparent
+                    : throw new JgsRuntimeException(line, col,
+                        $"{verb}: BackgroundColor 'none' needs a format that carries transparency, and "
+                        + $"'{extension}' does not — .png, .pdf and .svg do.");
+            }
+
+            // 'current' and 'figure' are MATLAB's two spellings of "the colour it already wears".
+            if (word.Equals("current", StringComparison.OrdinalIgnoreCase)
+                || word.Equals("figure", StringComparison.OrdinalIgnoreCase))
+            {
+                return figure.Background;
+            }
+        }
+
+        return OptionColor(asked, line, col, verb);
     }
 
     private static JgsValue CopyGraphics(

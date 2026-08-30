@@ -49,8 +49,11 @@ public static class FigureExporter
         // MATLAB's InvertHardcopy: a figure that is dark on screen is saved on white, so a printed
         // page does not come out of the printer black. The swap is undone before this returns, so
         // nothing outside this call ever sees the figure wearing a colour it did not choose.
+        // A background that was asked to be transparent is not a dark background to be rescued: the
+        // whole point of it is that there is no page under the drawing, so inverting it would write
+        // the one thing the caller said not to.
         Color onScreen = figure.Background;
-        bool inverted = figure.InvertHardcopy && onScreen != Colors.White;
+        bool inverted = figure.InvertHardcopy && onScreen != Colors.White && !onScreen.IsTransparent;
         if (inverted)
         {
             figure.Background = Colors.White;
