@@ -86,6 +86,15 @@ internal static partial class JgsBuiltins
                 throw new JgsRuntimeException(line, col, "imwrite needs an image and a path.");
             }
 
+            // A class no image format stores is refused by name. Before this the array's class was not
+            // read at all, so an int32 picture went out as whatever a [0, 1] reading of 0-255 makes,
+            // which is white; saying so is better than writing that.
+            if (UnstorableClass(parsed.Positional[0]) is { } refused)
+            {
+                throw new JgsRuntimeException(line, col,
+                    $"imwrite: an image is logical, uint8, uint16, int16, single or double, but this one is {refused}.");
+            }
+
             using ImgArg source = ImgLike("imwrite", parsed.Positional, 0, line, col);
             ImageBuffer image = source.Buffer;
             string path = host.ResolveForWrite(Str("imwrite", parsed.Positional, 1, line, col));
@@ -364,13 +373,16 @@ internal static partial class JgsBuiltins
         {
             Arity("intlut", args, 2, line, col);
 
-            // Strictly an image: the table is indexed by the sample's own integer value, and a plain
-            // array carries no class to say what those values mean.
-            ImageBuffer image = Img("intlut", args, 0, line, col);
+            // The table is indexed by the sample's own integer value, so this needs a class that says
+            // what those values mean. A picture has always carried one; a plain array does too now
+            // that the class it was minted with is read, which is why uint8 numbers are accepted here
+            // where once only a picture was.
+            using ImgArg source = ImgLike("intlut", args, 0, line, col);
+            ImageBuffer image = source.Buffer;
             if (!image.Class.IsInteger())
             {
                 throw new JgsRuntimeException(line, col,
-                    $"intlut needs an integer-class image; this one is {image.Class.MatlabName()} " +
+                    $"intlut needs integer-class samples; these are {image.Class.MatlabName()} " +
                     "(convert with im2uint8 first).");
             }
 
@@ -391,7 +403,7 @@ internal static partial class JgsBuiltins
             }
 
             GC.KeepAlive(result);
-            return ImgOut(result, image.Class);
+            return ImgLikeOut(result, source);
         });
 
         // --- Intensity + histogram -----------------------------------------------------------
@@ -1562,6 +1574,18 @@ internal static partial class JgsBuiltins
         ImageClass.UInt8 => 256,
         _ => 256,
     };
+
+    /// <summary>
+    /// The name of a numeric class <c>imwrite</c> cannot store, or null when the value is one it can.
+    /// An image value has already been given one of the six classes a format can hold, so only a plain
+    /// array can arrive carrying <c>int8</c>, <c>int32</c>, <c>int64</c>, <c>uint32</c> or <c>uint64</c>.
+    /// </summary>
+    private static string? UnstorableClass(JgsValue value) =>
+        value.Type != JgsType.Image
+        && value.NumericClass is JgsNumericClass.Int8 or JgsNumericClass.Int32 or JgsNumericClass.Int64
+            or JgsNumericClass.UInt32 or JgsNumericClass.UInt64
+            ? value.NumericClass.MatlabName()
+            : null;
 
     /// <summary>Whether a value is shaped like a colour map: an n-by-3 matrix of at most 256 rows.</summary>
     private static bool IsColorMap(JgsValue value) =>

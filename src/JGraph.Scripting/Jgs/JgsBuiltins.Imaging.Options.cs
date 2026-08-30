@@ -83,9 +83,15 @@ internal static partial class JgsBuiltins
             return new ImgArg(value.AsImage, ImgShape.Image);
         }
 
+        // The samples arrive in the units of the class the array carries, and the buffer beneath every
+        // imaging algorithm here holds [0, 1]. A double array is already in those units, which is why
+        // this stayed invisible until a script passed the uint8 array getframe hands back: at 0–255
+        // every sample sat far above the top of the range and the picture came out white.
+        ImageClass carried = CarriedClass(value);
+
         if (value.Type == JgsType.Array && JgsMatrix.DimsOf(value) is [int high, int wide, 3])
         {
-            var planes = new ImageBuffer(high, wide, 3);
+            var planes = new ImageBuffer(high, wide, 3) { Class = carried };
             for (int ch = 0; ch < 3; ch++)
             {
                 for (int c = 0; c < wide; c++)
@@ -93,7 +99,8 @@ internal static partial class JgsBuiltins
                     for (int r = 0; r < high; r++)
                     {
                         // Column-major storage: page ch, column c, row r.
-                        planes[r, c, ch] = value.ElementAt(r + (c * high) + (ch * high * wide)).AsNumber;
+                        planes[r, c, ch] = carried.FromNative(
+                            value.ElementAt(r + (c * high) + (ch * high * wide)).AsNumber);
                     }
                 }
             }
@@ -101,9 +108,53 @@ internal static partial class JgsBuiltins
             return new ImgArg(planes, ImgShape.Planes);
         }
 
-        return new ImgArg(
-            PointOps.WrapValues(Rectangle($"{name} argument {index + 1}", value, line, col)), ImgShape.Matrix);
+        ImageBuffer wrapped =
+            PointOps.WrapValues(Rectangle($"{name} argument {index + 1}", value, line, col));
+        wrapped.Class = carried;
+        if (carried.IsInteger())
+        {
+            Span<double> samples = wrapped.Pixels;
+            for (int i = 0; i < samples.Length; i++)
+            {
+                samples[i] = carried.FromNative(samples[i]);
+            }
+        }
+
+        return new ImgArg(wrapped, ImgShape.Matrix);
     }
+
+    /// <summary>
+    /// The image class a plain numeric argument stands for: the tag <c>uint8</c> and its siblings left
+    /// on the array, or <c>logical</c> for a mask.
+    /// </summary>
+    /// <remarks>
+    /// MATLAB's rule is that the class decides the range — <c>uint8</c> is 0-255, <c>uint16</c> and
+    /// <c>int16</c> span 16 bits, and only the floating classes are [0, 1]. The five integer classes
+    /// no image format stores (<c>int8</c>, <c>int32</c>, <c>int64</c>, <c>uint32</c>, <c>uint64</c>)
+    /// have no reading here, so they keep the one they have always had; <c>imwrite</c> refuses them by
+    /// name rather than writing whatever a [0, 1] reading of them would produce.
+    /// </remarks>
+    private static ImageClass CarriedClass(JgsValue value) =>
+        IsLogicalValue(value)
+            ? ImageClass.Logical
+            : value.NumericClass switch
+            {
+                JgsNumericClass.UInt8 => ImageClass.UInt8,
+                JgsNumericClass.UInt16 => ImageClass.UInt16,
+                JgsNumericClass.Int16 => ImageClass.Int16,
+                JgsNumericClass.Single => ImageClass.Single,
+                _ => ImageClass.Double,
+            };
+
+    /// <summary>The tag a returned array carries so <c>class</c> answers what it was handed.</summary>
+    private static JgsNumericClass NumericClassOf(ImageClass imageClass) => imageClass switch
+    {
+        ImageClass.UInt8 => JgsNumericClass.UInt8,
+        ImageClass.UInt16 => JgsNumericClass.UInt16,
+        ImageClass.Int16 => JgsNumericClass.Int16,
+        ImageClass.Single => JgsNumericClass.Single,
+        _ => JgsNumericClass.Double,
+    };
 
     /// <summary>
     /// Numeric data as a rectangular field. A scalar is a 1×1, and a plain vector — a range, a
@@ -154,11 +205,21 @@ internal static partial class JgsBuiltins
             return ImgOut(result, source.Buffer.Class);
         }
 
+        return NumbersOut(result, source.Shape, source.Buffer.Class);
+    }
+
+    /// <summary>
+    /// Hands a buffer back as plain numbers in the units of the class it was read in, undoing the
+    /// normalization <see cref="ImgLike"/> applied so a class survives a round trip through an imaging
+    /// builtin the way it does in MATLAB.
+    /// </summary>
+    private static JgsValue NumbersOut(ImageBuffer result, ImgShape shape, ImageClass carried)
+    {
         using (result)
         {
             // Colour planes came in, so colour planes go back — unless the operation collapsed the
             // picture to one value per pixel, which is a plain matrix in anybody's reading.
-            if (source.Shape == ImgShape.Planes && result.Channels == 3)
+            if (shape == ImgShape.Planes && result.Channels == 3)
             {
                 var flat = new double[result.Height * result.Width * 3];
                 for (int ch = 0; ch < 3; ch++)
@@ -167,15 +228,32 @@ internal static partial class JgsBuiltins
                     {
                         for (int r = 0; r < result.Height; r++)
                         {
-                            flat[r + (c * result.Height) + (ch * result.Height * result.Width)] = result[r, c, ch];
+                            flat[r + (c * result.Height) + (ch * result.Height * result.Width)] =
+                                carried.ToNative(result[r, c, ch]);
                         }
                     }
                 }
 
-                return JgsMatrix.FromColumnMajorDims(flat, [result.Height, result.Width, 3]);
+                JgsValue planes = JgsMatrix.FromColumnMajorDims(flat, [result.Height, result.Width, 3]);
+                planes.SetNumericClass(NumericClassOf(carried));
+                return planes;
             }
 
-            return MatrixToRows(PointOps.ToMatrix(result, 0));
+            double[,] plane = PointOps.ToMatrix(result, 0);
+            if (carried.IsInteger())
+            {
+                for (int r = 0; r < plane.GetLength(0); r++)
+                {
+                    for (int c = 0; c < plane.GetLength(1); c++)
+                    {
+                        plane[r, c] = carried.ToNative(plane[r, c]);
+                    }
+                }
+            }
+
+            JgsValue numbers = MatrixToRows(plane);
+            numbers.SetNumericClass(NumericClassOf(carried));
+            return numbers;
         }
     }
 
@@ -188,5 +266,8 @@ internal static partial class JgsBuiltins
     private static JgsValue ImgMaskOut(ImageBuffer result, ImgArg source) =>
         source.Shape == ImgShape.Image
             ? ImgOut(result, ImageClass.Logical)
-            : ImgLikeOut(result, source);
+            // A mask is 0 or 1 whatever it was computed over, so it goes back in logical's units and
+            // not in the units of the picture that produced it: thresholding a uint8 array must not
+            // hand back 255s.
+            : NumbersOut(result, source.Shape, ImageClass.Logical);
 }

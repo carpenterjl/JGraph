@@ -159,16 +159,17 @@ By reason:
 
 ## Recorded divergences
 
-- **A class tag rides on a picture, not on a plain array of numbers.** `imread` answers `uint8`,
-  `class(I)` says so, `I(1, 1)` reads 0–255 and `im2double`/`im2uint16` re-tag as they convert. But
-  MATLAB also carries a class on an ordinary array, so its `class(uint8(7))` is `'uint8'` where this
-  answers `'double'`: integer conversion here rounds and saturates the values on double storage
-  (ADR 0045) without recording what it did. `intlut` is the one toolbox function that therefore
-  needs a real picture rather than an array, since its table is indexed by the sample's own integer
-  value and an untagged array cannot say what those values mean.
-- **A picture and a plain matrix are interchangeable almost everywhere, and the exceptions are
-  named.** Every function that measures or filters takes either. `imwrite` takes either. The ones
-  that genuinely need a picture are `intlut` (above) and `im2mat`, which exists to unwrap one.
+- **The five integer classes no image format stores have no reading here.** `logical`, `uint8`,
+  `uint16`, `int16`, `single` and `double` each say what an array's numbers mean, and every imaging
+  builtin reads the one the array carries. `int8`, `int32`, `int64`, `uint32` and `uint64` say
+  nothing an image can use, so `imwrite` refuses them by name rather than writing what a `[0, 1]`
+  reading of them would produce. MATLAB refuses `int32` too, and its list is one shorter still: it
+  will not write `int16` to a PNG, where this will — `int16` has a place in the class table here
+  (−32768 is black, 32767 is white), so it is taken rather than refused.
+- **A picture and a plain matrix are interchangeable almost everywhere, and the exception is named.**
+  Every function that measures or filters takes either. `imwrite` takes either. `intlut` takes either
+  as long as the class is an integer one, since its table is indexed by the sample's own value. The
+  one function that genuinely needs a picture is `im2mat`, which exists to unwrap one.
 - **`imgaussfilt`'s `'FilterDomain'` is accepted but never changes the answer.** MATLAB offers
   `'auto'`, `'spatial'` and `'frequency'` because its spatial path slows down as the kernel grows.
   The one here is separable, so it already costs `kh + kw` multiplies per pixel rather than
@@ -621,3 +622,18 @@ Each changed an existing result, so each is written down.
   out of the interpreter rather than raising a script error, and any selection reaching past the row
   count did the same. The read path had always known both storage forms; now the write path does too.
   This is base-language rather than toolbox, and it was found by writing the milestone's own script.
+- **The class an array carries was not read, so a `uint8` picture came out white.** Every plain array
+  reaching an imaging builtin was taken for `[0, 1]` samples, whatever class it had been minted with.
+  A `double` array is in those units already, which is why this went unseen; a `uint8` one is 0–255,
+  so every sample but an exact zero sat above the top of the range and clamped. `imwrite(f.cdata)`
+  on the array `getframe` hands back — the documented way to save an animation frame — wrote a blank
+  white file. The class is now read where a plain array becomes a buffer and undone where the buffer
+  becomes plain numbers again, so it is one fix for the whole family rather than for `imwrite`:
+  `imcomplement(uint8([10 20]))` is 245 and 235 where it was `1 - 10`, `imbinarize` thresholds
+  against the picture's own scale, and a `uint8` argument comes back `uint8`. Every line of it was
+  diffed against R2024a: `uint8`, `single`, `double` and `logical` writes of both a grayscale and a
+  colour array, and `imcomplement`, `imfilter`, `imbinarize`, `imresize`, `intlut` and
+  `graythresh`/`stretchlim` — which answer `[0, 1]` whatever class they are handed — are identical
+  to the sample. Two are not, and neither is the class reading: a `uint16` array and a mask come
+  back at 8 bits per sample where MATLAB writes 16 and 1, which is the 16-bit PNG divergence above
+  and the same encoder's floor beneath it. Their values are the right samples at the depth written.
