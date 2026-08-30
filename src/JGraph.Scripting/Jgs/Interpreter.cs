@@ -2334,7 +2334,7 @@ internal sealed partial class Interpreter
         return answer;
     }
 
-    // --- Taking an operator's answer rather than copying it (M109) ------------------------------
+    // --- Taking an operator's answer rather than copying it (M110) ------------------------------
 
     /// <summary>
     /// Whether an operator's answer is a packed array that this evaluation alone can reach, so the

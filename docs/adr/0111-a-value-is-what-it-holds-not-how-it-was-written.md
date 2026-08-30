@@ -22,7 +22,7 @@ That ratio is the reason the triage is written down here rather than assumed. It
 in this project's history that a recorded gap turned out to have been closed before anyone read the
 record again.
 
-The thirteen live chips were then given to six agents working in parallel, one git worktree each,
+The fourteen live chips were then given to seven agents working in parallel, one git worktree each,
 partitioned so that no two agents held the same file. What that partition could not do is stop two
 agents from disagreeing about *behaviour*, and one pair did; the story is under **Testing**.
 
@@ -151,6 +151,32 @@ it in `sprintf`, so the builtin normalises rather than the formatter — and it 
 rather than the text, which is visible in `num2str([-0 1])` being one character narrower than a
 sign-stripped string would give.
 
+### Taking the buffer rather than copying it
+
+The last chip is the only one here that is not a defect. Assignment copies a container, because
+`b = a; b(1) = 0` must leave `a` alone — but it does not have to copy `y = sin(x) .* exp(-x)`, whose
+buffer is held by nothing except the expression that made it.
+
+The chip proposed carrying a "freshly allocated" mark on the value, or a count on the buffer. **The
+audit ruled both out, and that is the useful result.** A builtin here can durably store the very
+wrapper it is handed — `setappdata` puts one in a figure's application data, and a graphics object's
+`UserData` takes one raw. So a mark that outlives the statement can be stored along with the value
+and come back, on some later line, attached to something a name still holds; and a count cannot tell
+one wrapper from one wrapper a name is bound to, which would elide `b = a` itself.
+
+So the freshness is a `bool` on the stack, threaded from the operator's evaluation to the assignment
+and to nothing else. Nothing is written on the value, which is the whole safety argument. The
+elision then applies only to a binary operator, a unary minus or not, or a transpose, on the plain
+assignment path, and only when the answer is packed and non-empty, both operands are ordinary
+numbers rather than anything that would send the operator off to an overload or to calendar
+arithmetic, and the answer is a different wrapper over different storage from either operand. A call
+is never elided, which is what keeps the builtins that hand back their own argument out of it.
+
+Two of those conditions cannot fire on the code as it stands, and were kept deliberately: a user
+function cannot return a wrapper another name holds, because its parameters are bound by copy and
+its outputs are assigned. They are there so that the claim stays true of roads not yet built, and
+the code says so rather than leaving a later reader to discover that they carry nothing.
+
 ## Divergences recorded
 
 - **A repeated or misplaced `printf` flag is refused rather than silently abandoning the format.**
@@ -194,26 +220,51 @@ pass in both engines now.
 
 ## Measured
 
-The full suite goes from **6,401 tests to 6,629**, all passing, the 228 new ones being the six
-agents' own. `dotnet build JGraph.sln` is clean with warnings as errors. The five coverage verifiers
+The full suite goes from **6,401 tests to 6,647**, all passing, the 246 new ones being the seven
+agents' own.
+
+**The boxed lane is green for the first time.** It has carried 57 failures for as long as this
+project has recorded it, and a control run of the base commit with `JGRAPH_JGS_PACKED=0` reproduces
+exactly that: 57 failed of 6,401. On the merged tree the same lane passes all 6,647. They were the
+shape loss above, the whole `MatlabVolumeTests` family — those tests build arrays of three
+dimensions and elementwise arithmetic had been folding them to two, so a fix written for a chip
+about an integer class closed a family nothing had connected to it. The control was run because a
+lane reporting no failures where 57 were expected is as likely to be an environment variable that
+did not reach the test host as it is to be good news, and the difference is not something to guess
+at. `dotnet build JGraph.sln` is clean with warnings as errors. The five coverage verifiers
 pass. The stress corpus is **68 of 68**, with the runner's script count matching the file count —
 which is checked rather than read off the summary, because a single warning once ended a run at 37
 of 64 while printing that all 37 had passed.
 
-The divergence ledger stands at **216 across 42 ADRs** before this ADR's own five are harvested.
+The divergence ledger stands at **221 across 43 ADRs**, five of them this one's.
+
+The only performance claim in the milestone is the elision's, and it is made with a control row in
+the same run that must not move. Twenty assignments of an 80 MB array: the control drifts 9 % across
+runs, while the assignment's before and after ranges do not overlap at all, 0.514–0.558 s against
+0.307–0.371 s. The internal check is what makes it believable rather than merely favourable — the
+saving is 9.2 ms per assignment and the control says one copy of that array costs 11.1 ms, so what
+was saved is one copy, which is exactly the copy that stopped happening. One run in sixteen came
+back an outlier and is reported rather than dropped.
 
 Every behavioural question in this milestone was settled against MATLAB R2024a running headless on
 this machine rather than from memory, and the volume is the point: 293 format cases for the printf
 flags alone, 42 forms for the scalar argument, a 20-verb shape sweep for the linear algebra, and
 every integer-storage case at both saturation ends of five classes.
 
-Two counts are deliberately **not** claimed. The accepted-form total is left at 442 of 1,036 even
-though it is now too low — `linspace`, `mod`, `rem`, `unwrap`, `find`, `qr`, `diag`, `eig`, the
-`mustBe…` family and every `sprintf` flag form accept what they refused. The prober has no name
-filter, so moving that number honestly means re-running the whole sweep, and an estimate written
+The form sweep was re-run once the box was free rather than estimated, because an estimate written
 into a coverage document is exactly the kind of unmeasured claim this project's machinery exists to
-prevent. The same goes for any performance figure: this box ran six agents all day and its timings
-drift further than most effects worth measuring.
+prevent. **Accepted forms move from 1,344 to 1,358 of 2,454**: seven names that had been undefined
+now resolve, eight rows that had been errors are answers, and one more is a deliberate refusal.
+
+The toolbox slice does not move at all, and the reason is worth writing down because it looks like a
+mistake and is not. The prober records whether a call *returns*, not whether it returns the right
+thing. `diag`, `eig`, `qr` and `ordeig` answering the wrong shape never cost anybody a form, so
+correcting them cannot buy one back; what moved are only the calls that used to fail outright, and
+those are builtins rather than toolbox names. A form count measures reach, not correctness, and this
+milestone was almost entirely about correctness.
+
+No performance figure beyond the elision's is claimed. This box ran seven agents all day and its
+timings drift further than most effects worth measuring.
 
 ## Found on the way, not fixed here
 

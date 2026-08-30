@@ -1,16 +1,16 @@
 name,kind,form_index,syntax,verdict,detail
 Inf,builtin,0,X = Inf,accepted,
-Inf,builtin,1,X = Inf(n),error,Index 2 is out of range for length 1 (indexing is 1-based).
+Inf,builtin,1,X = Inf(n),accepted,
 Inf,builtin,2,"X = Inf(sz1,...,szN)",unprobed,no sample for this form's arguments
-Inf,builtin,3,X = Inf(sz),error,Index 2 is out of range for length 1 (indexing is 1-based).
-Inf,builtin,4,"X = Inf(___,typename)",error,"An index must be a number, but got a string."
-Inf,builtin,5,"X = Inf(___,'like',p)",error,"An index must be a number, but got a string."
+Inf,builtin,3,X = Inf(sz),accepted,
+Inf,builtin,4,"X = Inf(___,typename)",accepted,
+Inf,builtin,5,"X = Inf(___,'like',p)",accepted,
 NaN,builtin,0,X = NaN,accepted,
-NaN,builtin,1,X = NaN(n),error,Index 2 is out of range for length 1 (indexing is 1-based).
+NaN,builtin,1,X = NaN(n),accepted,
 NaN,builtin,2,"X = NaN(sz1,...,szN)",unprobed,no sample for this form's arguments
-NaN,builtin,3,X = NaN(sz),error,Index 2 is out of range for length 1 (indexing is 1-based).
-NaN,builtin,4,"X = NaN(___,typename)",error,"An index must be a number, but got a string."
-NaN,builtin,5,"X = NaN(___,'like',p)",error,"An index must be a number, but got a string."
+NaN,builtin,3,X = NaN(sz),accepted,
+NaN,builtin,4,"X = NaN(___,typename)",accepted,
+NaN,builtin,5,"X = NaN(___,'like',p)",accepted,
 abs,builtin,0,Y = abs(X),accepted,
 accumarray,builtin,0,"B = accumarray(ind,data)",accepted,
 accumarray,builtin,1,"B = accumarray(ind,data,sz)",accepted,
@@ -113,7 +113,7 @@ axes,builtin,1,"axes(Name,Value)",unprobed,"Name,Value form; the dump lists no p
 axes,builtin,2,"axes(parent,Name,Value)",unprobed,"Name,Value form; the dump lists no pair names"
 axes,builtin,3,ax = axes(___),accepted,
 axes,builtin,4,axes(cax),accepted,
-axis,function,0,axis(limits),error,axis expects [xmin xmax ymin ymax].
+axis,function,0,axis(limits),error,"axis expects [xmin xmax ymin ymax], [xmin xmax ymin ymax zmin zmax], or [xmin xmax ymin ymax zmin zmax cmin cmax]."
 axis,function,1,axis style,refused,axis: unknown option 'style'.
 axis,function,2,axis mode,refused,axis: unknown option 'mode'.
 axis,function,3,axis ydirection,refused,axis: unknown option 'ydirection'.
@@ -267,7 +267,7 @@ camlight,function,4,"camlight(az,el)",unprobed,no sample for this form's argumen
 camlight,function,5,"camlight(...,'style')",unprobed,no sample for this form's arguments
 camlight,function,6,"camlight(lgt,...)",unprobed,no sample for this form's arguments
 camlight,function,7,"camlight(ax,...)",unprobed,no sample for this form's arguments
-camlight,function,8,lgt = camlight(...),unprobed,no sample for this form's arguments
+camlight,function,8,lgt = camlight(...),accepted,
 camlookat,function,0,camlookat(object_handles),unprobed,no sample for this form's arguments
 camlookat,function,1,camlookat(axes_handle),unprobed,no sample for this form's arguments
 camlookat,function,2,camlookat,accepted,
@@ -433,7 +433,7 @@ coneplot,function,4,"coneplot(...,'quiver')",unprobed,no sample for this form's 
 coneplot,function,5,"coneplot(...,'method')",unprobed,no sample for this form's arguments
 coneplot,function,6,"coneplot(X,Y,Z,U,V,W,'nointerp')",error,"coneplot needs the places to put its cones: coneplot(X, Y, Z, U, V, W, Cx, Cy, Cz)."
 coneplot,function,7,"coneplot(axes_handle,...)",unprobed,no sample for this form's arguments
-coneplot,function,8,h = coneplot(...),unprobed,no sample for this form's arguments
+coneplot,function,8,h = coneplot(...),error,"coneplot needs the places to put its cones: coneplot(X, Y, Z, U, V, W, Cx, Cy, Cz)."
 conj,builtin,0,Zc = conj(Z),accepted,
 contains,builtin,0,"TF = contains(str,pat)",accepted,
 contains,builtin,1,"TF = contains(str,pat,'IgnoreCase',true)",unprobed,no sample for this form's arguments
@@ -495,8 +495,8 @@ cool,function,1,c = cool(m),accepted,
 copper,function,0,c = copper,accepted,
 copper,function,1,c = copper(m),accepted,
 copyfile,builtin,0,copyfile source,error,"copyfile expects between 2 and 3 argument(s), but got 1."
-copyfile,builtin,1,copyfile source destination,error,copyfile: Could not find file 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-forms-a8h3580q\source'.
-copyfile,builtin,2,copyfile source destination f,error,copyfile: Could not find file 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-forms-a8h3580q\source'.
+copyfile,builtin,1,copyfile source destination,error,copyfile: Could not find file 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-forms-70lky7ln\source'.
+copyfile,builtin,2,copyfile source destination f,error,copyfile: Could not find file 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-forms-70lky7ln\source'.
 copyfile,builtin,3,status = copyfile(___),error,"copyfile expects between 2 and 3 argument(s), but got 1."
 copyfile,builtin,4,"[status,msg] = copyfile(___)",error,"copyfile expects between 2 and 3 argument(s), but got 1."
 copyfile,builtin,5,"[status,msg,msgID] = copyfile(___)",error,"copyfile expects between 2 and 3 argument(s), but got 1."
@@ -1096,8 +1096,8 @@ isocaps,function,0,"fvc = isocaps(X,Y,Z,V,isovalue)",accepted,
 isocaps,function,1,"fvc = isocaps(V,isovalue)",accepted,
 isocaps,function,2,"fvc = isocaps(...,'enclose')",unprobed,no sample for this form's arguments
 isocaps,function,3,"fvc = isocaps(...,'whichplane')",unprobed,no sample for this form's arguments
-isocaps,function,4,"[f,v,c] = isocaps(...)",unprobed,no sample for this form's arguments
-isocaps,function,5,isocaps(...),unprobed,no sample for this form's arguments
+isocaps,function,4,"[f,v,c] = isocaps(...)",accepted,
+isocaps,function,5,isocaps(...),accepted,
 isocolors,function,0,"nc = isocolors(X,Y,Z,C,vertices)",unprobed,no sample for this form's arguments
 isocolors,function,1,"nc = isocolors(X,Y,Z,R,G,B,vertices)",unprobed,no sample for this form's arguments
 isocolors,function,2,"nc = isocolors(C,vertices)",unprobed,no sample for this form's arguments
@@ -1223,8 +1223,8 @@ line,builtin,4,"line(ax,___)",accepted,
 line,builtin,5,pl = line(___),accepted,
 lines,function,0,c = lines,accepted,
 lines,function,1,c = lines(m),accepted,
-linkaxes,function,0,linkaxes(ax),error,"linkaxes wants handles to axes, such as the ones subplot hands back."
-linkaxes,function,1,"linkaxes(ax,dimension)",error,"linkaxes wants handles to axes, such as the ones subplot hands back."
+linkaxes,function,0,linkaxes(ax),refused,This is not a handle to a figure object; it may belong to a figure that has since been cleared.
+linkaxes,function,1,"linkaxes(ax,dimension)",refused,This is not a handle to a figure object; it may belong to a figure that has since been cleared.
 linkprop,function,0,"hlink = linkprop(obj_handles,'PropertyName')",unprobed,no sample for this form's arguments
 linkprop,function,1,"hlink = linkprop(obj_handles,{'PropertyName1','PropertyName2',...})",unprobed,no sample for this form's arguments
 linsolve,builtin,0,"X = linsolve(A,B)",accepted,
@@ -1365,8 +1365,8 @@ more,builtin,1,more off,accepted,
 more,builtin,2,more(n),accepted,
 more,builtin,3,A = more(___),accepted,
 movefile,builtin,0,movefile source,error,"movefile expects between 2 and 3 argument(s), but got 1."
-movefile,builtin,1,movefile source destination,error,movefile: Could not find file 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-forms-a8h3580q\source'.
-movefile,builtin,2,movefile source destination f,error,movefile: Could not find file 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-forms-a8h3580q\source'.
+movefile,builtin,1,movefile source destination,error,movefile: Could not find file 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-forms-70lky7ln\source'.
+movefile,builtin,2,movefile source destination f,error,movefile: Could not find file 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-forms-70lky7ln\source'.
 movefile,builtin,3,status = movefile(___),error,"movefile expects between 2 and 3 argument(s), but got 1."
 movefile,builtin,4,"[status,msg] = movefile(___)",error,"movefile expects between 2 and 3 argument(s), but got 1."
 movefile,builtin,5,"[status,msg,msgID] = movefile(___)",error,"movefile expects between 2 and 3 argument(s), but got 1."
@@ -1464,10 +1464,10 @@ ones,builtin,2,"X = ones(sz1,...,szN)",unprobed,no sample for this form's argume
 ones,builtin,3,X = ones(sz),accepted,
 ones,builtin,4,"X = ones(___,typename)",accepted,
 ones,builtin,5,"X = ones(___,'like',p)",unprobed,no sample for this form's arguments
-openfig,function,0,openfig(filename),error,Could not find file 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-forms-a8h3580q\a.fig'.
-openfig,function,1,"openfig(filename,copies)",error,Could not find file 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-forms-a8h3580q\a.fig'.
-openfig,function,2,"openfig(___,visibility)",error,Could not find file 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-forms-a8h3580q\a.fig'.
-openfig,function,3,fig = openfig(___),error,Could not find file 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-forms-a8h3580q\a.fig'.
+openfig,function,0,openfig(filename),error,Could not find file 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-forms-70lky7ln\a.fig'.
+openfig,function,1,"openfig(filename,copies)",error,Could not find file 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-forms-70lky7ln\a.fig'.
+openfig,function,2,"openfig(___,visibility)",error,Could not find file 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-forms-70lky7ln\a.fig'.
+openfig,function,3,fig = openfig(___),error,Could not find file 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-forms-70lky7ln\a.fig'.
 opengl,function,0,opengl info,accepted,
 opengl,function,1,d = opengl('data'),accepted,
 opengl,function,2,opengl software,accepted,
@@ -1743,7 +1743,7 @@ reducepatch,function,7,"nfv = reducepatch(f,v,r)",unprobed,no sample for this fo
 reducepatch,function,8,"[nf,nv] = reducepatch(...)",unprobed,no sample for this form's arguments
 reducevolume,function,0,"[nx,ny,nz,nv] = reducevolume(X,Y,Z,V,[Rx,Ry,Rz])",accepted,
 reducevolume,function,1,"[nx,ny,nz,nv] = reducevolume(V,[Rx,Ry,Rz])",accepted,
-reducevolume,function,2,nv = reducevolume(...),unprobed,no sample for this form's arguments
+reducevolume,function,2,nv = reducevolume(...),accepted,
 refresh,function,0,refresh,accepted,
 refresh,function,1,refresh(h),unprobed,no sample for this form's arguments
 refreshdata,function,0,refreshdata,accepted,
@@ -1789,10 +1789,10 @@ rlim,function,4,m = rlim('mode'),error,"rlim expects 'auto' or 'manual', but got
 rlim,function,5,"___ = rlim(pax,___)",error,"rlim expects a two-element [min, max] array."
 rmappdata,builtin,0,"rmappdata(obj,name)",error,rmappdata: nothing is stored under 'a' on this object.
 rmdir,builtin,0,rmdir folderName,accepted,
-rmdir,builtin,1,rmdir folderName s,error,rmdir: Could not find a part of the path 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-forms-a8h3580q\folderName'.
-rmdir,builtin,2,status = rmdir(___),error,rmdir: Could not find a part of the path 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-forms-a8h3580q\folderName'.
-rmdir,builtin,3,"[status,msg] = rmdir(___)",error,rmdir: Could not find a part of the path 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-forms-a8h3580q\folderName'.
-rmdir,builtin,4,"[status,msg,msgID] = rmdir(___)",error,rmdir: Could not find a part of the path 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-forms-a8h3580q\folderName'.
+rmdir,builtin,1,rmdir folderName s,error,rmdir: Could not find a part of the path 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-forms-70lky7ln\folderName'.
+rmdir,builtin,2,status = rmdir(___),error,rmdir: Could not find a part of the path 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-forms-70lky7ln\folderName'.
+rmdir,builtin,3,"[status,msg] = rmdir(___)",error,rmdir: Could not find a part of the path 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-forms-70lky7ln\folderName'.
+rmdir,builtin,4,"[status,msg,msgID] = rmdir(___)",error,rmdir: Could not find a part of the path 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-forms-70lky7ln\folderName'.
 rose,function,0,rose(theta),unprobed,no sample for this form's arguments
 rose,function,1,"rose(theta,x)",unprobed,no sample for this form's arguments
 rose,function,2,"rose(theta,nbins)",unprobed,no sample for this form's arguments
@@ -2018,7 +2018,7 @@ streamribbon,function,3,"streamribbon(vertices,cav,speed)",unprobed,no sample fo
 streamribbon,function,4,"streamribbon(vertices,twistangle)",unprobed,no sample for this form's arguments
 streamribbon,function,5,"streamribbon(...,width)",unprobed,no sample for this form's arguments
 streamribbon,function,6,"streamribbon(axes_handle,...)",unprobed,no sample for this form's arguments
-streamribbon,function,7,h = streamribbon(...),unprobed,no sample for this form's arguments
+streamribbon,function,7,h = streamribbon(...),accepted,
 streamslice,function,0,"streamslice(X,Y,Z,U,V,W,xslice,yslice,zslice)",accepted,
 streamslice,function,1,"streamslice(U,V,W,xslice,yslice,zslice)",accepted,
 streamslice,function,2,"streamslice(X,Y,U,V)",accepted,
@@ -2037,7 +2037,7 @@ streamtube,function,4,"streamtube(vertices,width)",unprobed,no sample for this f
 streamtube,function,5,streamtube(vertices),unprobed,no sample for this form's arguments
 streamtube,function,6,"streamtube(...,[scale n])",unprobed,no sample for this form's arguments
 streamtube,function,7,"streamtube(ax,...)",unprobed,no sample for this form's arguments
-streamtube,function,8,h = streamtube(...),unprobed,no sample for this form's arguments
+streamtube,function,8,h = streamtube(...),accepted,
 strfind,builtin,0,"k = strfind(str,pat)",accepted,
 strfind,builtin,1,"k = strfind(str,pat,'ForceCellOutput',cellOutput)",unprobed,no sample for this form's arguments
 strings,builtin,0,str = strings,accepted,
@@ -2185,7 +2185,7 @@ thetaticks,function,0,thetaticks(ticks),accepted,
 thetaticks,function,1,tv = thetaticks,accepted,
 thetaticks,function,2,thetaticks('auto'),accepted,
 thetaticks,function,3,thetaticks('manual'),accepted,
-thetaticks,function,4,m = thetaticks('mode'),accepted,
+thetaticks,function,4,m = thetaticks('mode'),error,"thetaticks: 'mode' is neither 'auto' nor 'manual'. Labels come in a cell, such as {'low', 'high'}."
 thetaticks,function,5,"___ = thetaticks(pax,___)",accepted,
 tic,builtin,0,tic,accepted,
 tic,builtin,1,timerVal = tic,accepted,
@@ -2309,7 +2309,7 @@ waterfall,function,3,"waterfall(Z,C)",error,"waterfall expects 3 argument(s), bu
 waterfall,function,4,"waterfall(ax,___)",accepted,
 waterfall,function,5,p = waterfall(___),accepted,
 what,builtin,0,what,accepted,
-what,builtin,1,what folderName,refused,what: 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-forms-a8h3580q\folderName' is not a folder.
+what,builtin,1,what folderName,accepted,
 what,builtin,2,s = what(___),accepted,
 which,builtin,0,which item,accepted,
 which,builtin,1,which fun1 in fun2,error,"which expects 1 argument(s), but got 3."
