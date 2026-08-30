@@ -39,8 +39,10 @@ internal static partial class JgsBuiltins
 
             // Unlike eig, this reports the eigenvalues in the order their diagonal blocks appear,
             // which is the whole point: it is how a caller says which ones ordschur should select.
+            // The order is the difference between the two verbs; the shape is not, so this answers
+            // the same column eig does.
             Complex[] values = Schur.EigenvaluesOf(SquareRect("ordeig", args[0], line, col));
-            return JgsValue.Array([.. values.Select(ComplexValue)]);
+            return EigenvalueList(values);
         }, null);
 
         Define("ordschur",

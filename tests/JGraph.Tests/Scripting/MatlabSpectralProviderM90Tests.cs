@@ -379,7 +379,7 @@ public class MatlabSpectralProviderM90Tests : IDisposable
     {
         RunAsserting("""
             A = [1 1e6 0; 1e-6 1 1e-6; 0 1e6 1];
-            exact = sort([1 - sqrt(2), 1, 1 + sqrt(2)]);
+            exact = sort([1 - sqrt(2); 1; 1 + sqrt(2)]);
             assert(max(abs(sort(real(eig(A))) - exact)) < 1e-13, 'eig balances before it iterates');
             """);
     }

@@ -76,12 +76,12 @@ internal static partial class JgsBuiltins
             Complex[,] z = ComplexSquareOf("eig", value, line, col);
             if (wanted <= 1)
             {
-                return [EigenvalueList(ComplexEigen.Values(z), asColumn: true)];
+                return [EigenvalueList(ComplexEigen.Values(z))];
             }
 
             (Complex[] zValues, Complex[,] zVectors) = ComplexEigen.Factor(z);
             JgsValue zDiagonal = asVector
-                ? EigenvalueList(zValues, asColumn: false)
+                ? EigenvalueList(zValues)
                 : FromComplexRect(Diagonal(zValues));
             if (wanted <= 2)
             {
@@ -98,20 +98,20 @@ internal static partial class JgsBuiltins
             // No vectors asked for and none computed: recovering them is most of what a general
             // eigensolver does, and this form of the verb never looks at one.
             Complex[] spectrum = Eigen.Spectrum(a, n);
-            return [asVector ? EigenvalueList(spectrum, asColumn: false) : FromComplexRect(Diagonal(spectrum))];
+            return [asVector ? EigenvalueList(spectrum) : FromComplexRect(Diagonal(spectrum))];
         }
 
         if (wanted <= 2)
         {
             Eigen pair = Eigen.FactorAdopting(a, n);
             JgsValue values = asVector
-                ? EigenvalueList(pair.Values, asColumn: false)
+                ? EigenvalueList(pair.Values)
                 : FromComplexRect(Diagonal(pair.Values));
             return [FromComplexRect(pair.Vectors), values];
         }
 
         Eigen eigen = Eigen.Factor(a, n);
-        JgsValue d = asVector ? EigenvalueList(eigen.Values, asColumn: false) : FromComplexRect(Diagonal(eigen.Values));
+        JgsValue d = asVector ? EigenvalueList(eigen.Values) : FromComplexRect(Diagonal(eigen.Values));
         return [FromComplexRect(eigen.Vectors), d, FromComplexRect(LeftEigenvectors(a, n, eigen.Values))];
     }
 
@@ -160,7 +160,7 @@ internal static partial class JgsBuiltins
         if (wanted <= 1)
         {
             Complex[] spectrum = Eigen.PencilSpectrum(FlattenSquare(a), FlattenSquare(b), order);
-            return [asVector ? EigenvalueList(spectrum, asColumn: false) : FromComplexRect(Diagonal(spectrum))];
+            return [asVector ? EigenvalueList(spectrum) : FromComplexRect(Diagonal(spectrum))];
         }
 
         Complex[] values;
@@ -175,14 +175,14 @@ internal static partial class JgsBuiltins
             vectors = new Complex[0, 0];
         }
 
-        if (Array.Exists(values, static v => double.IsInfinity(v.Real) || double.IsInfinity(v.Imaginary)))
+        if (Array.Exists(values, static v => !double.IsFinite(v.Real) || !double.IsFinite(v.Imaginary)))
         {
             throw new JgsRuntimeException(line, col,
                 "[V, D] = eig(A, B) needs a nonsingular B: this pencil has an eigenvalue at infinity, " +
                 "which has no eigenvector to report. e = eig(A, B) gives the eigenvalues themselves.");
         }
 
-        JgsValue d = asVector ? EigenvalueList(values, asColumn: false) : FromComplexRect(Diagonal(values));
+        JgsValue d = asVector ? EigenvalueList(values) : FromComplexRect(Diagonal(values));
         if (wanted <= 2)
         {
             return [FromComplexRect(vectors), d];
@@ -221,7 +221,7 @@ internal static partial class JgsBuiltins
             values[i] = new Complex(real[i], 0);
         }
 
-        JgsValue d = asVector ? EigenvalueList(values, asColumn: false) : FromComplexRect(Diagonal(values));
+        JgsValue d = asVector ? EigenvalueList(values) : FromComplexRect(Diagonal(values));
         if (wanted <= 1)
         {
             return [d];
@@ -365,6 +365,7 @@ internal static partial class JgsBuiltins
         double[] a = DenseColumnMajorOf("qr", args[0], out int rows, out int cols, line, col);
 
         bool economy = false;
+        bool zeroFlag = false;
         string form = string.Empty;
         double[]? rhs = null;
         int rhsColumns = 0;
@@ -407,7 +408,13 @@ internal static partial class JgsBuiltins
             }
 
             economy = true;
+            zeroFlag = true;
         }
+
+        // MATLAB's two economy spellings do not agree about the third output: the older literal
+        // zero asks for the permutation as a vector, where 'econ' leaves it the matrix qr(A) gives.
+        // A word said outright still wins over both.
+        string permutation = form.Length > 0 ? form : zeroFlag ? "vector" : string.Empty;
 
         QrDecomposition qr = QrDecomposition.FactorAdopting(a, rows, cols, pivot: wanted >= 3);
         int reflectors = Math.Min(rows, cols);
@@ -421,7 +428,7 @@ internal static partial class JgsBuiltins
             qr.ApplyTransposeInPlace(rhs, rhsColumns);
             JgsValue c = FromColumnMajorRect(Leading(rhs, rows, qColumns, rhsColumns), qColumns, rhsColumns);
             JgsValue r = FromColumnMajorRect(qr.RColumnMajor(!economy), qColumns, cols);
-            return wanted >= 3 ? [c, r, Permutation(qr, cols, form)] : [c, r];
+            return wanted >= 3 ? [c, r, Permutation(qr, cols, permutation)] : [c, r];
         }
 
         if (wanted <= 1)
@@ -435,7 +442,7 @@ internal static partial class JgsBuiltins
             FromColumnMajorRect(qr.RColumnMajor(!economy), qColumns, cols),
         ];
 
-        return wanted <= 2 ? factors : [factors[0], factors[1], Permutation(qr, cols, form)];
+        return wanted <= 2 ? factors : [factors[0], factors[1], Permutation(qr, cols, permutation)];
     }
 
     /// <summary>The first <paramref name="keep"/> rows of a column-major block, compacted.</summary>
@@ -1045,18 +1052,14 @@ internal static partial class JgsBuiltins
         return d;
     }
 
-    /// <summary>
-    /// The eigenvalues as a list, in the shape this build has always answered them in: a row for a
-    /// real matrix and a column for a complex one.
-    /// </summary>
+    /// <summary>The eigenvalues as MATLAB's column, whatever route computed them.</summary>
     /// <remarks>
-    /// MATLAB answers a column in both cases, and the difference is long-standing rather than new
-    /// here — frozen stress scripts compare <c>sort(real(eig(B)))</c> against a row literal, and
-    /// turning the row into a column would silently broadcast those comparisons into matrices. The
-    /// shape is therefore left as it stands and recorded as a divergence, and the pencil form
-    /// answers in the same shape as the single-matrix one so that the two agree with each other.
+    /// A real matrix used to answer a row here and a complex one a column, which made the shape of
+    /// an answer depend on a property of the argument no caller looks at. The row was the worse
+    /// half: implicit expansion turns a mismatched orientation from an error into an outer product,
+    /// so <c>eig(A) - b</c> against a column answered a plausible matrix rather than raising.
     /// </remarks>
-    private static JgsValue EigenvalueList(Complex[] values, bool asColumn)
+    private static JgsValue EigenvalueList(Complex[] values)
     {
         var boxed = new JgsValue[values.Length];
         for (int i = 0; i < boxed.Length; i++)
@@ -1065,7 +1068,7 @@ internal static partial class JgsBuiltins
         }
 
         JgsValue list = JgsValue.Array(boxed);
-        if (asColumn && boxed.Length > 1)
+        if (boxed.Length > 1)
         {
             list.Reshape(boxed.Length, 1);
         }

@@ -62,7 +62,7 @@ public class MatlabSchurBuiltinTests : IDisposable
     public Task Ordeig_ReadsTheDiagonalInBlockOrder() => RunAsserting("""
         T = [1 5 9; 0 2 6; 0 0 3];
         e = ordeig(T);
-        assert(isequal(e, [1 2 3]));
+        assert(isequal(e, [1; 2; 3]));
         """);
 
     [Fact]

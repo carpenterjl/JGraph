@@ -204,7 +204,10 @@ public sealed class Eigen
     /// <summary>
     /// α/β as eigenvalues. A β at rounding scale is snapped to the infinity it stands for — the
     /// managed QZ's own rule, applied here so a blocked native iteration keeps the same promise:
-    /// a singular B answers Inf, not 1e16.
+    /// a singular B answers Inf, not 1e16. The infinity keeps α's sign, because that is the sign
+    /// the ratio was heading towards: LAPACK's β comes back real and non-negative, so every sign
+    /// in the answer is α's alone. A zero over a zero is the one ratio that has no direction to
+    /// keep, and it answers NaN.
     /// </summary>
     private static Complex[] Ratios(double[] alphar, double[] alphai, double[] beta, int n, double scale)
     {
@@ -212,13 +215,23 @@ public sealed class Eigen
         var values = new Complex[n];
         for (int i = 0; i < n; i++)
         {
-            values[i] = Math.Abs(beta[i]) <= tolerance
-                ? new Complex(double.PositiveInfinity, 0)
-                : new Complex(alphar[i], alphai[i]) / beta[i];
+            if (Math.Abs(beta[i]) > tolerance)
+            {
+                values[i] = new Complex(alphar[i], alphai[i]) / beta[i];
+                continue;
+            }
+
+            values[i] = alphar[i] == 0 && alphai[i] == 0
+                ? new Complex(double.NaN, 0)
+                : new Complex(Unbounded(alphar[i]), Unbounded(alphai[i]));
         }
 
         return values;
     }
+
+    /// <summary>The infinity a part of α is heading for over a vanishing β; a zero part stays zero.</summary>
+    private static double Unbounded(double part) =>
+        part == 0 ? 0 : Math.CopySign(double.PositiveInfinity, part);
 
     /// <summary>The largest magnitude in an n×n column-major matrix — the snap rule's yardstick.</summary>
     private static double LargestOf(ReadOnlySpan<double> a, int n)

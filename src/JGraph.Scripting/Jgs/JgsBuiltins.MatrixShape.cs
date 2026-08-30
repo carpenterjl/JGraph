@@ -47,26 +47,29 @@ internal static partial class JgsBuiltins
                 return JgsEmpty.Shaped(0, vector ? 0 : 1);
             }
 
-            if (IsMatrixValue(args[0]))
+            // Which of the two readings applies is a question about the argument's shape and about
+            // nothing else: one row or one column is the vector a diagonal is built from, and only
+            // something wider than one in both directions is the matrix a diagonal is read out of.
+            // A column used to fall on the matrix side here, so diag([1; 2; 3]) answered its own
+            // first element where MATLAB builds the 3-by-3.
+            if (IsMatrixValue(args[0])
+                && JgsMatrix.RowCount(args[0]) != 1
+                && JgsMatrix.ColCount(args[0]) != 1)
             {
-                // Matrix in: extract the k-th diagonal as a vector.
-                double[][] rows = RowsOfMatrix("diag", args[0], line, col);
-                int height = rows.Length;
-                int width = rows[0].Length;
-                var extracted = new List<double>();
-                for (int r = 0; r < height; r++)
-                {
-                    int c = r + offset;
-                    if (c >= 0 && c < width)
-                    {
-                        extracted.Add(rows[r][c]);
-                    }
-                }
-
-                return Numbers(extracted.ToArray());
+                return DiagonalOf(args[0], offset, line, col);
             }
 
             // Vector in: build a matrix with the vector on the k-th diagonal.
+            if (HasComplexElements(args[0]))
+            {
+                Complex[] entries = FlattenedComplex("diag", args[0], line, col);
+                int order = entries.Length + System.Math.Abs(offset);
+                return JgsMatrix.BuildValues(order, order, (r, c) =>
+                    c - r == offset && (offset >= 0 ? r : c) < entries.Length
+                        ? ComplexValue(entries[offset >= 0 ? r : c])
+                        : JgsValue.Number(0));
+            }
+
             double[] values = ToDoubles("diag", args[0], line, col);
             int n = values.Length + System.Math.Abs(offset);
             return BuildMatrix(n, n, (r, c) =>
@@ -1733,6 +1736,79 @@ internal static partial class JgsBuiltins
     }
 
     // --- Shared matrix helpers ------------------------------------------------------------------
+
+    /// <summary>
+    /// The k-th diagonal of a matrix, as the column MATLAB answers. The orientation is the whole
+    /// point: a row here and a column there is not a shape error under implicit expansion, it is a
+    /// plausible outer product, so <c>diag(S) - stdx</c> would answer a matrix instead of raising.
+    /// </summary>
+    private static JgsValue DiagonalOf(JgsValue matrix, int offset, int line, int col)
+    {
+        int height = JgsMatrix.RowCount(matrix);
+        int width = JgsMatrix.ColCount(matrix);
+        var picked = new List<int>();
+        for (int r = 0; r < height; r++)
+        {
+            int c = r + offset;
+            if (c >= 0 && c < width)
+            {
+                picked.Add(r);
+            }
+        }
+
+        // A diagonal past the corner of the matrix is the empty column, not the empty row.
+        if (picked.Count == 0)
+        {
+            return JgsEmpty.Shaped(0, 1);
+        }
+
+        if (HasComplexElements(matrix))
+        {
+            Complex[,] z = ComplexRectOf("diag", matrix, line, col);
+            var boxed = new JgsValue[picked.Count];
+            for (int i = 0; i < boxed.Length; i++)
+            {
+                boxed[i] = ComplexValue(z[picked[i], picked[i] + offset]);
+            }
+
+            JgsValue complexColumn = JgsValue.Array(boxed);
+            if (boxed.Length > 1)
+            {
+                complexColumn.Reshape(boxed.Length, 1);
+            }
+
+            return complexColumn;
+        }
+
+        double[][] rows = RowsOfMatrix("diag", matrix, line, col);
+        var extracted = new double[picked.Count];
+        for (int i = 0; i < extracted.Length; i++)
+        {
+            extracted[i] = rows[picked[i]][picked[i] + offset];
+        }
+
+        JgsValue column = Numbers(extracted);
+        if (extracted.Length > 1)
+        {
+            column.Reshape(extracted.Length, 1);
+        }
+
+        return column;
+    }
+
+    /// <summary>A complex vector value read out in order, whichever way it lies.</summary>
+    private static Complex[] FlattenedComplex(string name, JgsValue value, int line, int col)
+    {
+        Complex[,] source = ComplexRectOf(name, value, line, col);
+        var flat = new Complex[source.Length];
+        int at = 0;
+        foreach (Complex entry in source)
+        {
+            flat[at++] = entry;
+        }
+
+        return flat;
+    }
 
     /// <summary>Whether a value is a matrix — see <see cref="JgsMatrix"/> for what that means now.</summary>
     private static bool IsMatrixValue(JgsValue value) => JgsMatrix.IsMatrix(value);

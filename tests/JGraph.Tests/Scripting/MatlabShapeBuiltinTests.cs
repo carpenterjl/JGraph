@@ -43,8 +43,9 @@ public class MatlabShapeBuiltinTests : IDisposable
     public Task Diag_BuildsAndExtractsDiagonals() => RunAsserting("""
         assert(isequal(diag([1 2 3]), [1 0 0; 0 2 0; 0 0 3]));
         assert(isequal(diag([1 2], 1), [0 1 0; 0 0 2; 0 0 0]));
-        assert(isequal(diag(magic(3)), [8 5 2]));
-        assert(isequal(diag(magic(3), 1), [1 7]));
+        assert(isequal(diag(magic(3)), [8; 5; 2]));
+        assert(isequal(diag(magic(3), 1), [1; 7]));
+        assert(isequal(diag([1; 2; 3]), [1 0 0; 0 2 0; 0 0 3]));
         """);
 
     [Fact]

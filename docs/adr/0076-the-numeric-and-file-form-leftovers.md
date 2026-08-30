@@ -227,10 +227,10 @@ measurement of the same build, not a regression, and every one of the 38 was che
 
 ## Recorded divergences
 
-- **`eig` answers a row where MATLAB answers a column**, for a real matrix; a complex one gives a
-  column. This is long-standing rather than new — frozen scripts compare `sort(real(eig(B)))` against
-  a row literal — and the pencil form answers in the same shape so that the two agree with each
-  other. `fscanf` and `sscanf` answer rows for the same reason.
+- **`fscanf` and `sscanf` answer a row where MATLAB answers a column.** Frozen scripts compare what
+  they read against a row literal, so the shape is left as it stands. `eig` answered a row for the
+  same reason until the orientation was corrected to MATLAB's column, which is what implicit
+  expansion makes it: a row where a column belongs is an outer product rather than an error.
 - **`[V, D] = eig(A, B)` needs a nonsingular B.** The eigenvalues of a singular pencil are answered
   in full, infinities included, but an eigenvector for an infinite eigenvalue is not computed and the
   form refuses by name rather than returning something for it.

@@ -236,9 +236,25 @@ internal static partial class JgsBuiltins
             throw new JgsRuntimeException(line, col, $"norm does not recognize the option '{args[1].AsString}'.");
         }
 
+        // Every norm but one reads magnitudes and nothing else, so a complex argument is answered
+        // by handing the same arithmetic |a| in place of a. The exception is the matrix 2-norm,
+        // which is the largest singular value and has to ask the complex solver for it.
+        JgsValue subject = args[0];
+        if (HasComplexElements(args[0]))
+        {
+            Complex[,] z = ComplexRectOf("norm", args[0], line, col);
+            if (isMatrix && word != "fro" && p == 2)
+            {
+                double[] singular = ComplexEigen.SingularValues(z);
+                return JgsValue.Number(singular.Length == 0 ? 0 : singular[0]);
+            }
+
+            subject = MagnitudesOf(z);
+        }
+
         if (!isMatrix)
         {
-            double[] v = ToDoubles("norm", args[0], line, col);
+            double[] v = ToDoubles("norm", subject, line, col);
             if (word == "fro" || p == 2)
             {
                 double sumSquares = 0;
@@ -269,7 +285,7 @@ internal static partial class JgsBuiltins
             return JgsValue.Number(System.Math.Pow(sum, 1 / p));
         }
 
-        double[] a = ColumnMajorOf("norm", args[0], out int rows, out int cols, line, col);
+        double[] a = ColumnMajorOf("norm", subject, out int rows, out int cols, line, col);
         if (word == "fro")
         {
             double sumSquares = 0;
@@ -388,6 +404,23 @@ internal static partial class JgsBuiltins
         }
 
         return MatrixFromRows(jagged);
+    }
+
+    /// <summary>A complex matrix's magnitudes, in the same shape — what every norm but one reads.</summary>
+    private static JgsValue MagnitudesOf(Complex[,] matrix)
+    {
+        int rows = matrix.GetLength(0);
+        int cols = matrix.GetLength(1);
+        var sizes = new double[rows, cols];
+        for (int r = 0; r < rows; r++)
+        {
+            for (int c = 0; c < cols; c++)
+            {
+                sizes[r, c] = matrix[r, c].Magnitude;
+            }
+        }
+
+        return FromRect(sizes);
     }
 
     /// <summary>A complex matrix as a script value; all-real entries stay plain numbers.</summary>

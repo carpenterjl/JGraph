@@ -143,8 +143,18 @@ internal static partial class JgsBuiltins
             Define(name, (args, line, col) =>
             {
                 ArityRange(name, args, 1, 2, line, col);
-                double[,] a = RectOf(name, args[0], line, col);
                 int k = args.Count == 2 ? Count(name, args, 1, line, col) : 0;
+
+                // Both verbs are pure selection: an entry is kept where it lies or written over
+                // with a zero, and neither one ever looks at what the entry holds. A complex
+                // matrix was refused here only because the reader on the way in was the real one.
+                if (HasComplexElements(args[0]))
+                {
+                    return FromComplexRect(
+                        KeptTriangle(ComplexRectOf(name, args[0], line, col), k, keepLower));
+                }
+
+                double[,] a = RectOf(name, args[0], line, col);
                 int rows = a.GetLength(0);
                 int cols = a.GetLength(1);
                 var kept = new double[rows, cols];
@@ -162,6 +172,25 @@ internal static partial class JgsBuiltins
 
         Triangle("tril", keepLower: true);
         Triangle("triu", keepLower: false);
+    }
+
+    /// <summary>The k-th triangle of a complex matrix, with a zero everywhere outside it.</summary>
+    private static System.Numerics.Complex[,] KeptTriangle(
+        System.Numerics.Complex[,] matrix, int k, bool keepLower)
+    {
+        int rows = matrix.GetLength(0);
+        int cols = matrix.GetLength(1);
+        var kept = new System.Numerics.Complex[rows, cols];
+        for (int r = 0; r < rows; r++)
+        {
+            for (int c = 0; c < cols; c++)
+            {
+                bool inside = keepLower ? c - r <= k : c - r >= k;
+                kept[r, c] = inside ? matrix[r, c] : System.Numerics.Complex.Zero;
+            }
+        }
+
+        return kept;
     }
 
     // --- Factorizations ---------------------------------------------------------------------------

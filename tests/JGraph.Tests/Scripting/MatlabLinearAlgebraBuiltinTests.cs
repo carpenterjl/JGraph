@@ -99,7 +99,7 @@ public class MatlabLinearAlgebraBuiltinTests : IDisposable
     [Fact]
     public Task Eig_SymmetricValuesAscend_AndPairsSatisfyTheDefinition() => RunAsserting("""
         e = eig([2 1; 1 2]);
-        assert(norm(e - [1 3]) < 1e-9);
+        assert(norm(e - [1; 3]) < 1e-9);
         A = [2 1; 1 2];
         [V, D] = eig(A);
         assert(norm(A * V - V * D, 'fro') < 1e-8);

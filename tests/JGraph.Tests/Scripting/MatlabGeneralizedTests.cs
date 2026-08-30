@@ -67,7 +67,7 @@ public class MatlabGeneralizedTests : IDisposable
         Assert.Equal("1 1\n", RunAndRead("""
             A = [1 1e6 0; 1e-6 1 1e-6; 0 1e6 1];
             [~, B] = balance(A);
-            exact = sort([1 - sqrt(2), 1, 1 + sqrt(2)]);
+            exact = sort([1 - sqrt(2); 1; 1 + sqrt(2)]);
             scaled = max(abs(sort(real(eig(A))) - exact));
             balanced = max(abs(sort(real(eig(B))) - exact));
             fprintf('%d %d\n', scaled < 1e-9, balanced < 1e-9);
