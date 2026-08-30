@@ -4,10 +4,13 @@ using System.Text;
 namespace JGraph.Scripting.Jgs;
 
 /// <summary>
-/// The formatter behind the JGS <c>sprintf</c> builtin: a fixed C/MATLAB subset —
-/// <c>%d %i %f %e %g %s %x %%</c>, with optional width (<c>%8d</c>, zero-padded <c>%08d</c>,
-/// left-aligned <c>%-8s</c>) and precision (<c>%.2f</c>, <c>%.3g</c>). Invariant culture throughout.
-/// Anything else is a runtime error rather than a silent pass-through, so typos surface immediately.
+/// The formatter behind the JGS and MATLAB <c>sprintf</c>/<c>fprintf</c> builtins: a fixed C/MATLAB
+/// subset — <c>%d %i %f %e %g %s %x %%</c> and friends — each taking the printf flags
+/// (<c>-</c> left align, <c>+</c> always sign, a space where the sign would go, <c>0</c> zero pad,
+/// <c>#</c> alternate form) in any order, then an optional width (<c>%8d</c>) and precision
+/// (<c>%.2f</c>, <c>%.3g</c>), either of which a <c>*</c> may take from the argument list.
+/// Invariant culture throughout. Anything else is a runtime error rather than a silent
+/// pass-through, so typos surface immediately.
 /// </summary>
 internal static class JgsSprintf
 {
@@ -47,7 +50,7 @@ internal static class JgsSprintf
     {
         var sb = new StringBuilder(format.Length + 16);
         int argIndex = 0;
-        Emit(sb, format, args, ref argIndex, stopWhenExhausted: false);
+        Emit(sb, format, args, ref argIndex, stopWhenExhausted: false, matlabRules: false);
 
         if (argIndex < args.Count)
         {
@@ -89,7 +92,7 @@ internal static class JgsSprintf
         do
         {
             int before = at;
-            Emit(sb, format, stream, ref at, stopWhenExhausted: true);
+            Emit(sb, format, stream, ref at, stopWhenExhausted: true, matlabRules: true);
             if (at == before)
             {
                 break; // the format consumes nothing — one pass is the whole answer
@@ -100,9 +103,22 @@ internal static class JgsSprintf
         return sb.ToString();
     }
 
+    /// <summary>
+    /// Everything one specifier says about the value it prints, gathered between the <c>%</c> and the
+    /// conversion character. A width or precision of <c>-1</c> means the format did not give one.
+    /// </summary>
+    private readonly record struct Spec(
+        bool LeftAlign,
+        bool ZeroPad,
+        bool ForceSign,
+        bool SpaceSign,
+        bool Alternate,
+        int Width,
+        int Precision);
+
     /// <summary>One pass over the format, consuming values from <paramref name="argIndex"/> on.</summary>
     private static void Emit(StringBuilder sb, string format, IReadOnlyList<JgsValue> args, ref int argIndex,
-        bool stopWhenExhausted)
+        bool stopWhenExhausted, bool matlabRules)
     {
         for (int i = 0; i < format.Length; i++)
         {
@@ -123,17 +139,52 @@ internal static class JgsSprintf
             int specStart = i;
             i++; // past '%'
 
+            // The flags come first and in any order, so '%-+d' and '%+-d' are the same specifier.
+            // MATLAB allows each of them once: it silently abandons the rest of the format on a
+            // repeat, and this says so instead, which is the habit of every other misuse here.
             bool leftAlign = false;
             bool zeroPad = false;
-            while (i < format.Length && (format[i] == '-' || format[i] == '0'))
+            bool forceSign = false;
+            bool spaceSign = false;
+            bool alternate = false;
+            while (i < format.Length)
             {
-                if (format[i] == '-')
+                char flag = format[i];
+                bool already;
+                if (flag == '-')
                 {
+                    already = leftAlign;
                     leftAlign = true;
+                }
+                else if (flag == '0')
+                {
+                    already = zeroPad;
+                    zeroPad = true;
+                }
+                else if (flag == '+')
+                {
+                    already = forceSign;
+                    forceSign = true;
+                }
+                else if (flag == ' ')
+                {
+                    already = spaceSign;
+                    spaceSign = true;
+                }
+                else if (flag == '#')
+                {
+                    already = alternate;
+                    alternate = true;
                 }
                 else
                 {
-                    zeroPad = true;
+                    break;
+                }
+
+                if (already)
+                {
+                    throw new FormatException(
+                        $"sprintf repeats the '{flag}' flag in the specifier \"{format[specStart..(i + 1)]}\".");
                 }
 
                 i++;
@@ -192,7 +243,9 @@ internal static class JgsSprintf
                 or 'c' or 'u' or 'X' or 'E' or 'G'))
             {
                 throw new FormatException(
-                    $"sprintf does not support the specifier \"%{verb}\" (supported: %c %d %i %e %E %f %g %G %o %s %u %x %X %%).");
+                    $"sprintf does not support the specifier \"{format[specStart..(i + 1)]}\" (supported: "
+                    + "%c %d %i %e %E %f %g %G %o %s %u %x %X %%, each taking the flags - + 0 # and space, "
+                    + "then a width and a .precision).");
             }
 
             if (argIndex >= args.Count)
@@ -205,22 +258,8 @@ internal static class JgsSprintf
                 throw new FormatException($"sprintf format needs more arguments: nothing left for \"{format[specStart..(i + 1)]}\".");
             }
 
-            JgsValue arg = args[argIndex++];
-            string text = FormatOne(verb, precision, arg);
-
-            if (zeroPad && !leftAlign && text.Length < width && verb is not 's')
-            {
-                // Re-pad after any leading sign so -007 comes out right.
-                bool negative = text.StartsWith('-');
-                string digits = negative ? text[1..] : text;
-                text = (negative ? "-" : "") + digits.PadLeft(width - (negative ? 1 : 0), '0');
-            }
-            else if (text.Length < width)
-            {
-                text = leftAlign ? text.PadRight(width) : text.PadLeft(width);
-            }
-
-            sb.Append(text);
+            var spec = new Spec(leftAlign, zeroPad, forceSign, spaceSign, alternate, width, precision);
+            sb.Append(Render(verb, spec, args[argIndex++], matlabRules));
         }
     }
 
@@ -245,20 +284,20 @@ internal static class JgsSprintf
         return (int)given.AsNumber;
     }
 
-    private static string FormatOne(char verb, int precision, JgsValue arg)
+    /// <summary>One value written the way its specifier asks, width and all.</summary>
+    private static string Render(char verb, in Spec spec, JgsValue arg, bool matlabRules)
     {
-        if (verb == 's')
-        {
-            return arg.Display();
-        }
-
         // %c is a single character: from a number it is the code point, and from text it is the text
-        // itself, which is how MATLAB lets sprintf('%c', 'abc') print all three.
-        if (verb == 'c')
+        // itself, which is how MATLAB lets sprintf('%c', 'abc') print all three. Text takes no sign,
+        // but it does take the zero flag — MATLAB pads '%06s' with zeros, on whichever side it aligns.
+        if (verb is 's' or 'c')
         {
-            return arg.Type == JgsType.String ? arg.AsString
+            string body = verb == 's' ? arg.Display()
+                : arg.Type == JgsType.String ? arg.AsString
                 : arg.Type is JgsType.Number or JgsType.Bool ? ((char)(int)arg.AsNumber).ToString()
                 : arg.Display();
+
+            return PadText(body, spec, spec.ZeroPad ? '0' : ' ');
         }
 
         if (arg.Type is not (JgsType.Number or JgsType.Bool))
@@ -270,35 +309,196 @@ internal static class JgsSprintf
 
         // Infinity and NaN are written the way MATLAB writes them, whichever numeric specifier asked
         // for them: .NET spells the first one "Infinity", and the integer specifiers would try to cast
-        // it to a whole number and answer a large negative one.
+        // it to a whole number and answer a large negative one. A sign flag reaches the infinities but
+        // never NaN, and the zero flag reaches neither — a leading zero would read as a digit.
         if (!double.IsFinite(value))
         {
-            return double.IsNaN(value) ? "NaN" : value > 0 ? "Inf" : "-Inf";
+            return double.IsNaN(value)
+                ? PadNumber(string.Empty, string.Empty, "NaN", spec, zeroFill: false)
+                : PadNumber(SignOf(value < 0, spec), string.Empty, "Inf", spec, zeroFill: false);
         }
 
-        return verb switch
+        bool unsigned = verb is 'u' or 'o' or 'x' or 'X';
+        if (unsigned || verb is 'd' or 'i')
         {
-            'd' or 'i' => ((long)Math.Round(value, MidpointRounding.AwayFromZero)).ToString(CultureInfo.InvariantCulture),
+            // MATLAB's own rule, and the one thing about its printf that surprises everybody: a value
+            // the named conversion cannot hold is written as %e instead, keeping every flag, the width
+            // and the precision it was given. So sprintf('%+d', 2.5) is '+2.500000e+00', and '%+u' of
+            // the same value gains the sign that %u itself would have ignored. JGS keeps its older
+            // reading, where a fractional value simply rounds.
+            if (matlabRules && !FitsWholeNumber(value, unsigned))
+            {
+                return RenderFloat('e', spec, value);
+            }
 
-            // %u is unsigned, so a negative value is an error in C and simply the magnitude here —
-            // MATLAB prints the number rather than a wrapped one, and so does this.
-            'u' => ((ulong)Math.Abs(Math.Round(value, MidpointRounding.AwayFromZero))).ToString(CultureInfo.InvariantCulture),
-            'f' => value.ToString("F" + (precision < 0 ? 6 : precision), CultureInfo.InvariantCulture),
-            'e' => value.ToString("0." + new string('0', precision < 0 ? 6 : precision) + "e+00", CultureInfo.InvariantCulture),
-            'E' => value.ToString("0." + new string('0', precision < 0 ? 6 : precision) + "E+00", CultureInfo.InvariantCulture),
-            'g' => FormatGeneral(value, precision),
-            'G' => FormatGeneral(value, precision).ToUpperInvariant(),
-            'x' => ((long)Math.Round(value, MidpointRounding.AwayFromZero)).ToString("x", CultureInfo.InvariantCulture),
-            'X' => ((long)Math.Round(value, MidpointRounding.AwayFromZero)).ToString("X", CultureInfo.InvariantCulture),
-            'o' => Convert.ToString((long)Math.Round(value, MidpointRounding.AwayFromZero), 8),
-            _ => throw new FormatException($"sprintf does not support the specifier \"%{verb}\"."),
-        };
+            return RenderInteger(verb, spec, value, unsigned);
+        }
+
+        return RenderFloat(verb, spec, value);
     }
+
+    /// <summary>Whether MATLAB's integer conversions can hold <paramref name="value"/> as written.</summary>
+    private static bool FitsWholeNumber(double value, bool unsigned) =>
+        value == Math.Floor(value)
+        && (unsigned
+            ? value >= 0 && value < 18446744073709551616.0
+            : value >= -9223372036854775808.0 && value < 9223372036854775808.0);
+
+    /// <summary>The sign a signed conversion writes: a minus always, else a plus or a space if asked.</summary>
+    private static string SignOf(bool negative, in Spec spec) =>
+        negative ? "-"
+        : spec.ForceSign ? "+"
+        : spec.SpaceSign ? " "
+        : string.Empty;
+
+    /// <summary><c>%d %i %u %o %x %X</c>: the digits, a precision that is a minimum digit count, and <c>#</c>'s prefix.</summary>
+    private static string RenderInteger(char verb, in Spec spec, double value, bool unsigned)
+    {
+        bool negative = false;
+        ulong magnitude;
+        if (unsigned)
+        {
+            // Outside MATLAB's rules a negative can still arrive here: %u answers its magnitude and the
+            // base conversions answer its bits, which is what C writes and what JGS has always written.
+            double rounded = Math.Round(value, MidpointRounding.AwayFromZero);
+            magnitude = rounded >= 0 ? (ulong)rounded
+                : verb == 'u' ? (ulong)(-rounded)
+                : unchecked((ulong)(long)rounded);
+        }
+        else
+        {
+            long whole = (long)Math.Round(value, MidpointRounding.AwayFromZero);
+            negative = whole < 0;
+            magnitude = negative ? unchecked((ulong)(-(whole + 1))) + 1UL : (ulong)whole;
+        }
+
+        string digits = verb switch
+        {
+            'x' => magnitude.ToString("x", CultureInfo.InvariantCulture),
+            'X' => magnitude.ToString("X", CultureInfo.InvariantCulture),
+            'o' => Convert.ToString(unchecked((long)magnitude), 8),
+            _ => magnitude.ToString(CultureInfo.InvariantCulture),
+        };
+
+        // A precision on an integer is a minimum number of digits, not a number of decimals — and a
+        // zero written to no places at all is nothing, which is how C reads '%.0d' of 0.
+        if (spec.Precision == 0 && magnitude == 0)
+        {
+            digits = string.Empty;
+        }
+        else if (spec.Precision > digits.Length)
+        {
+            digits = digits.PadLeft(spec.Precision, '0');
+        }
+
+        string prefix = string.Empty;
+        if (spec.Alternate)
+        {
+            if (verb == 'o' && !digits.StartsWith('0'))
+            {
+                digits = "0" + digits;
+            }
+            else if (verb is 'x' or 'X' && magnitude != 0)
+            {
+                prefix = verb == 'x' ? "0x" : "0X";
+            }
+        }
+
+        // The unsigned conversions take no sign at all, so '%+x' is '%x'. And a precision turns the
+        // zero flag off, because the precision has already said how many digits there are to be.
+        return PadNumber(
+            unsigned ? string.Empty : SignOf(negative, spec),
+            prefix,
+            digits,
+            spec,
+            zeroFill: spec.ZeroPad && !spec.LeftAlign && spec.Precision < 0);
+    }
+
+    /// <summary><c>%f %e %E %g %G</c>: the magnitude written to the asked-for places, then its sign.</summary>
+    private static string RenderFloat(char verb, in Spec spec, double value)
+    {
+        // The sign is taken off first so that the zero padding can slot in behind it, and so that a
+        // negative zero keeps its minus — sprintf('%+.2f', -0) is '-0.00' in MATLAB, not '+0.00'.
+        bool negative = double.IsNegative(value);
+        double magnitude = Math.Abs(value);
+        int places = spec.Precision < 0 ? 6 : spec.Precision;
+
+        string digits = verb switch
+        {
+            'f' => magnitude.ToString("F" + places, CultureInfo.InvariantCulture),
+            'e' => Scientific(magnitude, places),
+            'E' => Scientific(magnitude, places).ToUpperInvariant(),
+            'g' => spec.Alternate ? GeneralAlternate(magnitude, spec.Precision) : FormatGeneral(magnitude, spec.Precision),
+            _ => (spec.Alternate ? GeneralAlternate(magnitude, spec.Precision) : FormatGeneral(magnitude, spec.Precision))
+                .ToUpperInvariant(),
+        };
+
+        // '#' on a fixed or scientific conversion asks only that the point be written even where no
+        // decimals follow it, so '%#.0f' of 1 is '1.' and '%#.0e' of 1 is '1.e+00'. On %g it asks for
+        // more, and GeneralAlternate has already done it.
+        if (spec.Alternate && verb is 'f' or 'e' or 'E')
+        {
+            digits = ForcePoint(digits);
+        }
+
+        return PadNumber(
+            SignOf(negative, spec),
+            string.Empty,
+            digits,
+            spec,
+            zeroFill: spec.ZeroPad && !spec.LeftAlign);
+    }
+
+    /// <summary>Text and characters: padded on the aligned side with whatever <paramref name="pad"/> says.</summary>
+    private static string PadText(string body, in Spec spec, char pad) =>
+        body.Length >= spec.Width ? body
+        : spec.LeftAlign ? body.PadRight(spec.Width, pad)
+        : body.PadLeft(spec.Width, pad);
+
+    /// <summary>
+    /// A number assembled in the order C writes it: the sign, then any <c>0x</c> prefix, then the
+    /// digits. Zero padding goes between the prefix and the digits so that '%#08x' of 255 is
+    /// '0x0000ff' and '%05d' of -42 is '-0042'; left-aligning turns it back into spaces.
+    /// </summary>
+    private static string PadNumber(string sign, string prefix, string digits, in Spec spec, bool zeroFill)
+    {
+        int have = sign.Length + prefix.Length + digits.Length;
+        if (have >= spec.Width)
+        {
+            return sign + prefix + digits;
+        }
+
+        if (spec.LeftAlign)
+        {
+            return (sign + prefix + digits).PadRight(spec.Width);
+        }
+
+        return zeroFill
+            ? sign + prefix + new string('0', spec.Width - have) + digits
+            : (sign + prefix + digits).PadLeft(spec.Width);
+    }
+
+    /// <summary>Writes a decimal point where a conversion left none, before the exponent if there is one.</summary>
+    private static string ForcePoint(string text)
+    {
+        if (text.Contains('.', StringComparison.Ordinal))
+        {
+            return text;
+        }
+
+        int at = text.IndexOfAny(['e', 'E']);
+        return at < 0 ? text + "." : text[..at] + "." + text[at..];
+    }
+
+    /// <summary><c>%e</c>: one digit, the decimals asked for, and an exponent of at least two digits.</summary>
+    private static string Scientific(double magnitude, int places) =>
+        magnitude.ToString("0." + new string('0', places) + "e+00", CultureInfo.InvariantCulture);
 
     private static string FormatGeneral(double value, int precision)
     {
-        // %g: shortest of fixed/scientific at the given significant digits (default 6, like C).
-        int digits = precision <= 0 ? 6 : precision;
+        // %g: shortest of fixed/scientific at the given significant digits (default 6, like C, and
+        // a precision of zero asks for one digit rather than none — %.0g of 1.5 is 2).
+        int digits = precision < 0 ? 6 : Math.Max(1, precision);
         string text = value.ToString("G" + digits, CultureInfo.InvariantCulture);
         int at = text.IndexOf('E', StringComparison.Ordinal);
         if (at < 0)
@@ -312,5 +512,28 @@ internal static class JgsSprintf
         string sign = text[at + 1] == '-' ? "-" : "+";
         string exponent = text[(at + 2)..].TrimStart('0');
         return text[..at] + "e" + sign + exponent.PadLeft(2, '0');
+    }
+
+    /// <summary>
+    /// <c>%#g</c>: C's own choice between fixed and scientific — fixed while the exponent sits in
+    /// <c>[-4, significant digits)</c> — but with the trailing zeros kept and the point always
+    /// written, which is the whole of what '#' asks of a general conversion.
+    /// </summary>
+    private static string GeneralAlternate(double magnitude, int precision)
+    {
+        int significant = precision < 0 ? 6 : Math.Max(1, precision);
+        string scientific = magnitude.ToString("E" + (significant - 1), CultureInfo.InvariantCulture);
+        int exponent = magnitude == 0
+            ? 0
+            : int.Parse(
+                scientific[(scientific.IndexOf('E', StringComparison.Ordinal) + 1)..],
+                NumberStyles.AllowLeadingSign,
+                CultureInfo.InvariantCulture);
+
+        string text = exponent >= -4 && exponent < significant
+            ? magnitude.ToString("F" + (significant - 1 - exponent), CultureInfo.InvariantCulture)
+            : Scientific(magnitude, significant - 1);
+
+        return ForcePoint(text);
     }
 }
