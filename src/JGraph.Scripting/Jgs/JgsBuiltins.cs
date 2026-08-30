@@ -5449,15 +5449,70 @@ internal static partial class JgsBuiltins
         return (int)raw;
     }
 
+    /// <summary>
+    /// Reads a scalar numeric argument, accepting a one-element numeric array as the number it holds.
+    /// </summary>
+    /// <remarks>
+    /// MATLAB draws no distinction at all between <c>[1]</c> and <c>1</c>, and neither does the rest
+    /// of this program — <c>isscalar([1])</c> is true, <c>numel([1])</c> is 1, <c>size([1])</c> is
+    /// <c>[1 1]</c> — so refusing one here was this helper disagreeing with its own program. Every
+    /// other refusal stands: an empty array, an array of two or more, a cell, a complex (which
+    /// <c>round</c> and <c>circshift</c> both refuse in MATLAB, rather than taking the real part),
+    /// and text. A one-element <em>logical</em> unwraps because a bare <c>true</c> has always been
+    /// accepted here; a one-element <em>char</em> does not, because a bare <c>'a'</c> never was, and
+    /// accepting the array while refusing the scalar would only move the inconsistency.
+    /// </remarks>
     private static double Num(string name, IReadOnlyList<JgsValue> args, int index, int line, int col)
     {
         JgsValue value = args[index];
-        if (value.Type is not (JgsType.Number or JgsType.Bool))
+        if (value.Type is JgsType.Number or JgsType.Bool)
         {
-            throw new JgsRuntimeException(line, col, $"{name} expects argument {index + 1} to be a number, but got a {value.TypeName}.");
+            return value.AsNumber;
         }
 
-        return value.AsNumber;
+        if (TrySoleNumber(value, out double sole))
+        {
+            return sole;
+        }
+
+        throw new JgsRuntimeException(line, col, $"{name} expects argument {index + 1} to be a number, but got a {value.TypeName}.");
+    }
+
+    /// <summary>
+    /// The one number a one-element numeric array holds, if that is what <paramref name="value"/> is.
+    /// </summary>
+    /// <remarks>
+    /// The text arrays are excluded by name rather than by their element type, because a char matrix
+    /// stores its code points as plain numbers: without the guard, <c>['a']</c> would be read as 97
+    /// where the identical <c>'a'</c> is refused. The descent is for the older boxed shape, where a
+    /// 1-by-1 matrix can be an array holding a one-element row; nothing in MATLAB makes a nest of
+    /// one-element arrays mean anything but the number at the bottom of it. Two levels is as deep as
+    /// any of that goes, and the bound is what stops the boxed <c>a = [1]; a(1) = a;</c> — which
+    /// really does store the array inside itself — from being descended into for ever.
+    /// </remarks>
+    private static bool TrySoleNumber(JgsValue value, out double sole)
+    {
+        for (int depth = 0; depth < 4; depth++)
+        {
+            if (value.Type != JgsType.Array
+                || value.ArrayLength != 1
+                || value.IsStringArray
+                || value.IsCharMatrix
+                || value.IsPackedComplex)
+            {
+                break;
+            }
+
+            value = value.ElementAt(0);
+            if (value.Type is JgsType.Number or JgsType.Bool)
+            {
+                sole = value.AsNumber;
+                return true;
+            }
+        }
+
+        sole = 0;
+        return false;
     }
 
     /// <summary>The size of a value per dimension, as <c>size</c>, <c>height</c> and <c>width</c> read it.</summary>
