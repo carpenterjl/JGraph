@@ -153,7 +153,10 @@ public class ChipComplexAndConstantTests : IDisposable
     public void TheBracketFormReadsAComplexScalarToo()
     {
         // The bracket spelling is JGS's, and it had the same hole: a(…) and a[…] promote a scalar at
-        // two different places. JGS keeps its own constants, so Inf is still a plain value here.
+        // two different places. JGS keeps its own constants, so inf is still a plain value here and
+        // not the constructor the MATLAB dialect gained — it takes no size. How an infinity is spelled
+        // on the way out is a display question rather than a dialect one, though, and both dialects
+        // now write the word MATLAB writes rather than the one .NET writes.
         JG.Reset();
         var output = new RecordingScriptOutput();
         var context = new ScriptContext(output, (_, _) => { }, null);
@@ -162,7 +165,7 @@ public class ChipComplexAndConstantTests : IDisposable
             context, default, sourceId: "", hook: null, JgsDialect.Jgs);
 
         Assert.True(result.Success, result.Message);
-        Assert.Equal(new[] { "1+2i\n", "1+2i\n", "Infinity\n" }, output.Normal.ToArray());
+        Assert.Equal(new[] { "1+2i\n", "1+2i\n", "Inf\n" }, output.Normal.ToArray());
     }
 
     [Fact]

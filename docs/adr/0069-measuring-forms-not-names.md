@@ -233,9 +233,6 @@ against reality is a claim, not a measurement**, which is the same sentence as t
 - **`int64` and `uint64` are exact only to 2^53.** Storage is `double` and the class is a tag, so
   `int64(2^53 + 1)` answers `2^53` and `intmax('int64')` formats as a negative number. Asserted in
   `stess_41.m` so the bound cannot drift unnoticed.
-- **`Inf(n)` and `NaN(n)` do not build a matrix.** Both names are constants with `AutoCallsBare`, so
-  a subscript indexes the scalar. `zeros(n)` and `ones(n)` are unaffected, so this is these two names
-  rather than the shape family.
 
 ### Closed by a later milestone
 
@@ -255,6 +252,12 @@ the harvester matches on. What each one became is in ADR 0070.
   still echoes nothing.
 - **`pcolor(C)` was refused**, where MATLAB documents the one-argument form. **Closed in M70.B**,
   which generates the implicit grid from the matrix's own row and column numbers.
+- **`Inf(n)` and `NaN(n)` built nothing.** Both names were constants with `AutoCallsBare`, so a
+  subscript indexed the scalar and `Inf(2)` answered "Index 2 is out of range for length 1".
+  **Closed in M110**, which made the two names constructors in the MATLAB dialect over the same
+  shape reader `zeros` and `ones` already use, so they take every size form those take and refuse
+  only an integer class, which holds neither value. `stess_41.m` section 14 turned from an
+  assertion that this refuses into an assertion that it builds.
 
 ## What is not done
 

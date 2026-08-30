@@ -137,11 +137,20 @@ holds at once. An object whose factors have been cleared takes them again from t
 carries, so the answers never change — only the promise of speed lapses, and only under a script
 holding hundreds of live decompositions.
 
-Four gaps the parity harness walked into are none of them this milestone's, and each is left to its
-own task: `norm` refuses any complex argument; `tril` and `triu` refuse one too; `diag` of a matrix
-answers a row where MATLAB answers a column, and so does `eig`; and an infinite eigenvalue of a
-pencil is always `+Inf` here where MATLAB carries the sign — which is why `polyeig` of a singular
-leading coefficient shows one `-Inf` there and four `+Inf` here.
+Four gaps the parity harness walked into are none of them this milestone's, and each was left to its
+own task: `norm` refused any complex argument; `tril` and `triu` refused one too; `diag` of a matrix
+answered a row where MATLAB answers a column, and so did `eig`; and an infinite eigenvalue of a
+pencil was always `+Inf` here where MATLAB carries the sign — which is why `polyeig` of a singular
+leading coefficient showed one `-Inf` there and four `+Inf` here.
+
+All four of those tasks have since been done, so the paragraph above is written in the past tense.
+Two things about the doing of them are worth keeping. `diag` had a second defect standing behind the
+reported one: a column counted as a matrix, so `diag([1; 2; 3])` took the extract branch and answered
+its own first element instead of building the three-by-three, and correcting only the orientation
+would have broken `tril(A) + triu(A) - diag(diag(A))`. And carrying the sign of an infinity through
+the snap leaves one case this ADR's β-snap did not have before: a β at rounding scale against an α of
+exactly zero is a nought over a nought, which answers `NaN` here where MATLAB, snapping nothing,
+answers `0`. It is reachable only for a genuinely singular pencil.
 
 `funm` of a block bigger than two under `@exp` takes the general Taylor path rather than a matrix
 exponential of its own, because there is no complex `expm` here to call. A block is a cluster of

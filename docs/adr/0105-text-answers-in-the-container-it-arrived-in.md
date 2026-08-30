@@ -87,11 +87,6 @@ is where that is said out loud rather than left to look like arithmetic drift.
 
 ### Divergences recorded here
 
-- **`repmat` of a char row answers separate strings rather than a longer row** — `repmat('a',1,63)`
-  is a 1-by-63 array of sixty-three one-character strings here and a 63-character char row in
-  MATLAB, so `isvarname(repmat('a',1,63))` is false here and true there. `char(…)` around it
-  recovers the row. Pre-existing, unrelated to any name in this milestone, and spawned as its own
-  task rather than patched inside it.
 - **A three-dimensional answer from `splitlines` or `extract` is refused by name** — MATLAB spreads
   the pieces of a 1-by-2 string array into a 1-by-2-by-2, and nothing in this build holds a
   three-dimensional container of text. A column, which is what a script actually writes, answers
@@ -108,6 +103,10 @@ is where that is said out loud rather than left to look like arithmetic drift.
 - **The char-matrix model** itself was left recorded above rather than begun here; it was closed
   afterwards in M105, which gave a char matrix a tag of its own so that `class` says `char` and
   `size` says rows-by-columns. The divergence this ADR recorded is gone with it.
+- **`repmat` of a char row** was recorded above as a divergence and left to its own task. That task
+  has since been done: `repmat` repeats the characters of a char row into a longer row, so
+  `isvarname(repmat('a',1,63))` is now true here as it is in MATLAB. The bullet is deleted rather
+  than struck through, because the divergence harvest lifts a struck-through bullet whole.
 - **`genvarname`** and the seven other `lang` names; `isvarname` was taken because
   `mustBeValidVariableName` needed the rule, not because the folder was commissioned.
 
@@ -129,8 +128,8 @@ is where that is said out loud rather than left to look like arithmetic drift.
 
 Eight probe scripts and a 229-line side-by-side run against MATLAB R2024a on this machine:
 **221 lines identical**, and **8 that differ**, every one of them a line asking a char matrix for
-its class or its size, or asking `repmat` for a char row — the two divergences above, and nothing
-else. All twenty-five validator refusals — identifier and message both — are identical.
+its class or its size, or asking `repmat` for a char row — the two divergences this ADR
+recorded, both since closed, and nothing else. All twenty-five validator refusals — identifier and message both — are identical.
 
 ## Testing
 
