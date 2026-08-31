@@ -198,6 +198,51 @@ public class MatlabCharMatrixTests : IDisposable
         assert(strcmp(sprintf('%s', A), 'ab c d'));
         """);
 
+    // --- code points keep their shape (M119) ------------------------------------------------------
+
+    /// <summary>
+    /// <c>char</c> of a matrix of code points reads each of its rows as a row of characters. It used
+    /// to read the storage order end to end and answer one long row, which lost the shape at
+    /// construction — so the answer had no second row for a subscript to ask about, and the error
+    /// text named row-and-column indexing as supported while refusing it.
+    /// </summary>
+    [Fact]
+    public Task CharOfANumericMatrixKeepsTheMatrixsShape() => RunAsserting("""
+        M = [72 73 74; 75 76 77];
+        A = char(M);
+        assert(isequal(size(A), [2 3]));          % 1-by-6 before M119
+        assert(strcmp(class(A), 'char'));
+        assert(isequal(A, ['HIJ'; 'KLM']));
+        assert(strcmp(A(2, :), 'KLM'));
+        assert(strcmp(A(:, 2)', 'IL'));
+        """);
+
+    /// <summary>
+    /// A column of code points is a column of characters, for the same reason. The row vector is the
+    /// one shape that was already right, and it stays a plain char row rather than becoming a 1-by-N
+    /// matrix — which is what MATLAB answers and what the rest of the text machinery expects.
+    /// </summary>
+    [Fact]
+    public Task CharOfAVectorFollowsTheVectorsOrientation() => RunAsserting("""
+        assert(isequal(size(char([72 73 74])), [1 3]));
+        assert(strcmp(char([72 73 74]), 'HIJ'));
+
+        down = char([72; 73; 74]);
+        assert(isequal(size(down), [3 1]));
+        assert(strcmp(class(down), 'char'));
+        assert(isequal(down, ['H'; 'I'; 'J']));
+        """);
+
+    /// <summary>
+    /// Round-tripping is what the shape is for: the code points of a char matrix are the matrix that
+    /// built it, in the same places.
+    /// </summary>
+    [Fact]
+    public Task TheCodePointsOfACharMatrixAreTheMatrixItWasBuiltFrom() => RunAsserting("""
+        M = reshape(65:70, 2, 3);
+        assert(isequal(double(char(M)), M));
+        """);
+
     // --- the wrapper ------------------------------------------------------------------------------
 
     /// <summary>

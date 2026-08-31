@@ -85,13 +85,37 @@ internal static partial class JgsBuiltins
             // A numeric array is code points, which is the other half of what char means.
             if (only.Type == JgsType.Array)
             {
+                static string Glyph(JgsValue element) => element.Type == JgsType.String
+                    ? element.AsString
+                    : ((char)(int)element.AsNumber).ToString();
+
+                // A matrix of code points keeps its shape, because MATLAB reads each of its ROWS as
+                // a row of characters: [72 73 74; 75 76 77] is ['HIJ'; 'KLM'] and not the 1-by-6 that
+                // reading storage order end to end gives. The shape was being lost at construction,
+                // so every 2-D subscript on the answer was then refused for want of a second row.
+                int height = only.Rows;
+                int width = only.Cols;
+                if (height > 1 && (long)height * width == only.ArrayLength)
+                {
+                    var rows = new string[height];
+                    for (int r = 0; r < height; r++)
+                    {
+                        var row = new System.Text.StringBuilder(width);
+                        for (int c = 0; c < width; c++)
+                        {
+                            row.Append(Glyph(only.ElementAt((c * height) + r)));
+                        }
+
+                        rows[r] = row.ToString();
+                    }
+
+                    return JgsValue.CharMatrix(rows);
+                }
+
                 var text = new System.Text.StringBuilder();
                 for (int i = 0; i < only.ArrayLength; i++)
                 {
-                    JgsValue element = only.ElementAt(i);
-                    text.Append(element.Type == JgsType.String
-                        ? element.AsString
-                        : ((char)(int)element.AsNumber).ToString());
+                    text.Append(Glyph(only.ElementAt(i)));
                 }
 
                 return JgsValue.Str(text.ToString());

@@ -229,10 +229,13 @@ public sealed class SkiaRenderContext : IRenderContext, IDisposable
         _stroke.Color = ToSk(edgeColor);
         _stroke.StrokeWidth = (float)style.EdgeWidth;
         _stroke.PathEffect = null;
-        if (fillColor is { } fc)
-        {
-            _fill.Color = ToSk(fc);
-        }
+
+        // Every other glyph is an outline that a fill sits inside, so one with no face colour simply
+        // skips the fill. A point has no outline — it IS its fill — so it is drawn in the edge colour
+        // when no face colour was asked for, which is the one colour a '.' series always carries.
+        // Leaving the fill at whatever the last caller set paints the point in a stale colour, and a
+        // stale colour is usually no colour at all.
+        _fill.Color = ToSk(fillColor ?? edgeColor);
 
         foreach (Point2D p in points)
         {
@@ -573,6 +576,8 @@ public sealed class SkiaRenderContext : IRenderContext, IDisposable
                 break;
 
             case MarkerType.Point:
+                // A third of the radius, because MATLAB's '.' is the one marker drawn smaller than
+                // the size it is given. The fill is always a real colour here — see DrawMarkers.
                 _canvas.DrawCircle(cx, cy, System.Math.Max(1f, r / 3f), _fill);
                 break;
         }

@@ -11,6 +11,14 @@ public interface ICoordinateMapper
     /// <summary>The device-space rectangle that data is mapped into.</summary>
     Rect2D PlotArea { get; }
 
+    /// <summary>
+    /// Whether one device column stands for a range of data x and nothing else, so that samples may
+    /// be reduced column by column before they are mapped. True of a pair of rulers at right angles,
+    /// and so the default; false of an angular mapping, where a column crosses every angle it passes
+    /// through. Only a reduction that happens before mapping needs to ask.
+    /// </summary>
+    bool ColumnsAreXRanges => true;
+
     /// <summary>Maps a data-space coordinate to device/pixel space.</summary>
     Point2D DataToPixel(double x, double y);
 

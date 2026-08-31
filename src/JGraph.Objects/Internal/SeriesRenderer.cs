@@ -35,7 +35,12 @@ internal static class SeriesRenderer
         DataRange visibleX = VisibleXRange(mapper, area);
         int columns = System.Math.Max(1, (int)area.Width);
 
-        bool canDecimate = data.IsXAscending
+        // The reduction below buckets samples by data x into device columns, which is a reduction
+        // only where a column IS a range of x. On an angular mapper it is not, and the visible range
+        // read back through the plot area's corners is a wedge rather than the whole turn — so the
+        // curve would be cut down to whatever angles those corners happen to name.
+        bool canDecimate = mapper.ColumnsAreXRanges
+            && data.IsXAscending
             && data.Count > columns * 2
             && data.TryGetSpans(out ReadOnlySpan<double> xs, out ReadOnlySpan<double> ys);
 

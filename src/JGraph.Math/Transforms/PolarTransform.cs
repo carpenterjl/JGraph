@@ -114,6 +114,14 @@ public sealed class PolarTransform : ICoordinateMapper
     /// <inheritdoc />
     public Rect2D PlotArea { get; }
 
+    /// <summary>
+    /// Never, because a column of a polar chart is a chord and not a slice of θ: it crosses every
+    /// angle between the two its own ends name, and it crosses most of them twice. A reduction that
+    /// buckets samples by θ into device columns before mapping them would keep the wedge the plot
+    /// area's corners happen to subtend and throw the rest of the circle away.
+    /// </summary>
+    public bool ColumnsAreXRanges => false;
+
     /// <summary>The device-space radius of the outermost ring.</summary>
     public double PixelRadius => _pixelRadius;
 

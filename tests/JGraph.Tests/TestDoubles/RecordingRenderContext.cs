@@ -66,10 +66,41 @@ internal sealed class RecordingRenderContext : IRenderContext
     {
         PolylineCount++;
         PolylineColors.Add(style.Color);
+        PolylineSizes.Add(points.Length);
+
+        double left = double.PositiveInfinity;
+        double top = double.PositiveInfinity;
+        double right = double.NegativeInfinity;
+        double bottom = double.NegativeInfinity;
+        foreach (Point2D p in points)
+        {
+            if (!p.IsFinite)
+            {
+                continue;
+            }
+
+            left = System.Math.Min(left, p.X);
+            top = System.Math.Min(top, p.Y);
+            right = System.Math.Max(right, p.X);
+            bottom = System.Math.Max(bottom, p.Y);
+        }
+
+        PolylineBounds.Add(right >= left
+            ? new Rect2D(left, top, right - left, bottom - top)
+            : default);
     }
 
     /// <summary>The stroke color of each polyline, in draw order — which is how a series' color is checked.</summary>
     public List<Color> PolylineColors { get; } = new();
+
+    /// <summary>
+    /// How many samples each polyline arrived with, in draw order. A reduction applied before the
+    /// samples are mapped shows up here and nowhere else.
+    /// </summary>
+    public List<int> PolylineSizes { get; } = new();
+
+    /// <summary>The device-space extent of each polyline, in draw order — which is where it reached.</summary>
+    public List<Rect2D> PolylineBounds { get; } = new();
 
     public void DrawRectangle(Rect2D rect, LineStyle? stroke, Color? fill) => RectangleCount++;
 

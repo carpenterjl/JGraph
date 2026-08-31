@@ -252,6 +252,45 @@ public class PolarAxesTests
         Assert.Equal(north.X, south.X, 6);
     }
 
+    /// <summary>
+    /// M119: the samples of a polar curve all reach the canvas. The min/max reduction that keeps a
+    /// long Cartesian series cheap buckets samples by data x into device columns, and reads the
+    /// columns it must cover back through the plot area's corners. Both halves are meaningless on a
+    /// disc — a column is a chord and not a slice of θ, and the corners of the plot area subtend a
+    /// wedge rather than the whole turn — so the rose came back as whatever petals fell inside that
+    /// wedge, which was the bottom half of it. It switched on at samples above twice the plot area's
+    /// width in device units, which is why a large figure looked right and a tile did not.
+    /// </summary>
+    [Fact]
+    public void APolarCurveIsNotReducedByAColumnRuleThatDoesNotApplyToIt()
+    {
+        (FigureModel figure, AxesModel axes) = PolarFigure();
+
+        var theta = new double[720];
+        var radius = new double[720];
+        for (int i = 0; i < theta.Length; i++)
+        {
+            theta[i] = 2 * System.Math.PI * i / (theta.Length - 1);
+            radius[i] = System.Math.Abs(System.Math.Cos(4 * theta[i])) + 0.15;
+        }
+
+        axes.AddLine(theta, radius);
+
+        // Small enough that the reduction's own condition — more samples than twice the width in
+        // device columns — is comfortably met.
+        var context = new RecordingRenderContext(new Size2D(220, 220));
+        new FigureRenderer().Render(figure, context, Theme.Light);
+
+        int at = context.PolylineSizes.IndexOf(theta.Length);
+        Assert.True(at >= 0, $"no polyline carried all {theta.Length} samples: {string.Join(", ", context.PolylineSizes)}");
+
+        // Eight petals of equal reach, so the curve's own extent is square and centred on the disc.
+        // Reduced, it was a wide flat strip below the middle.
+        Rect2D box = context.PolylineBounds[at];
+        Assert.Equal(box.Width, box.Height, 1);
+        Assert.True(box.Width > 0);
+    }
+
     [Fact]
     public void ARulerToldWhereItsTicksGoIsObeyed()
     {
