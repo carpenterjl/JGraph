@@ -9,7 +9,7 @@
     <!-- A fallback only: build-installer.ps1 always passes the version it read from
          Directory.Build.props, which is the single source of truth. Kept in step with it so the
          two can never quietly disagree about what a hand-run build produces. -->
-    <ProductVersion Condition="'$(ProductVersion)' == ''">0.2.1</ProductVersion>
+    <ProductVersion Condition="'$(ProductVersion)' == ''">0.2.2</ProductVersion>
     <StagingDir Condition="'$(StagingDir)' == ''">$(MSBuildThisFileDirectory)..\staging</StagingDir>
     <OutputName>JGraph-$(ProductVersion)</OutputName>
     <!-- 64-bit package: ProgramFiles64Folder and the 64-bit registry view. -->
