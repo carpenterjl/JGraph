@@ -1425,7 +1425,6 @@ internal static partial class JgsBuiltins
         double[] slice, string method, int window, int degree, bool omitNan, double[]? points)
     {
         int n = slice.Length;
-        var result = new double[n];
         int behind = window / 2;
         int ahead = (window - 1) / 2;
 
@@ -1444,14 +1443,83 @@ internal static partial class JgsBuiltins
                 kind, slice, behind, ahead, WindowEnds.Shrink, 0, omitNan, double.NaN);
         }
 
+        // Evenly spaced readings give every interior window the same offsets from its own centre,
+        // and a window whose shape does not change from one point to the next weighs its neighbours
+        // by one row of numbers, worked out once. The robust fits are not in this list because
+        // their weights are read off the data, so their shape does change — and a series carrying
+        // places of its own has no fixed offsets to begin with.
+        double[]? shaped = null;
+        bool[]? unanswered = null;
+        if (points is null)
+        {
+            // Stepping over a missing reading changes the shape of every window that holds it, so
+            // those windows are walked afterwards and all the others are answered by the kernel.
+            // That trade is worth making while there are fewer windows to walk than the series has
+            // points; past that it is cheaper to walk the lot, which is what the walk below does.
+            int missing = omitNan ? SmoothKernels.Missing(slice) : 0;
+            if ((long)missing * (behind + ahead + 1) < n)
+            {
+                shaped = method switch
+                {
+                    "gaussian" => SmoothKernels.Gaussian(slice, behind, ahead, window),
+                    "lowess" => SmoothKernels.LocalPolynomial(slice, behind, ahead, 1, weighted: true),
+                    "loess" => SmoothKernels.LocalPolynomial(slice, behind, ahead, 2, weighted: true),
+                    "sgolay" => SmoothKernels.LocalPolynomial(
+                        slice, behind, ahead, Math.Max(1, degree), weighted: false),
+                    _ => null,
+                };
+            }
+
+            if (shaped is not null)
+            {
+                if (missing == 0)
+                {
+                    return shaped;
+                }
+
+                // A window holds the reading at i when it starts no later than i and ends no
+                // earlier, which is every point from i - ahead to i + behind.
+                unanswered = new bool[n];
+                for (int i = 0; i < n; i++)
+                {
+                    if (!double.IsNaN(slice[i]))
+                    {
+                        continue;
+                    }
+
+                    for (int j = Math.Max(0, i - ahead); j <= Math.Min(n - 1, i + behind); j++)
+                    {
+                        unanswered[j] = true;
+                    }
+                }
+            }
+        }
+
+        // Everything else reads its window one at a time. The buffers below are filled and refilled
+        // rather than built per sample: this walk used to allocate four arrays for every answer it
+        // gave, and a normal system's worth of scratch for every reading inside every one of them.
+        int order = method switch
+        {
+            "loess" or "rloess" => 2,
+            "sgolay" => Math.Max(1, degree),
+            _ => 1,
+        };
+        double[] result = shaped ?? new double[n];
+        var xs = new double[n];
+        var ys = new double[n];
+        FitBuffers buffers = FitBuffers.For(n, order);
         for (int i = 0; i < n; i++)
         {
+            if (unanswered is not null && !unanswered[i])
+            {
+                continue;
+            }
+
             (int from, int to) = points is null
                 ? (Math.Max(0, i - behind), Math.Min(n - 1, i + ahead))
                 : SpanAround(points, i, window);
 
-            var xs = new List<double>(to - from + 1);
-            var ys = new List<double>(to - from + 1);
+            int held = 0;
             for (int j = from; j <= to; j++)
             {
                 if (omitNan && double.IsNaN(slice[j]))
@@ -1459,27 +1527,28 @@ internal static partial class JgsBuiltins
                     continue;
                 }
 
-                xs.Add(points is null ? j : points[j]);
-                ys.Add(slice[j]);
+                xs[held] = points is null ? j : points[j];
+                ys[held] = slice[j];
+                held++;
             }
 
-            if (ys.Count == 0)
+            if (held == 0)
             {
                 result[i] = double.NaN;
                 continue;
             }
 
+            ReadOnlySpan<double> alongX = xs.AsSpan(0, held);
+            ReadOnlySpan<double> alongY = ys.AsSpan(0, held);
             double at = points is null ? i : points[i];
             result[i] = method switch
             {
-                "movmedian" => MedianOf([.. ys]),
-                "gaussian" => GaussianAt([.. xs], [.. ys], at, window),
-                "lowess" => LocalFit([.. xs], [.. ys], at, 1, robust: false),
-                "loess" => LocalFit([.. xs], [.. ys], at, 2, robust: false),
-                "rlowess" => LocalFit([.. xs], [.. ys], at, 1, robust: true),
-                "rloess" => LocalFit([.. xs], [.. ys], at, 2, robust: true),
-                "sgolay" => LocalFit([.. xs], [.. ys], at, Math.Max(1, degree), robust: false, weighted: false),
-                _ => ys.Average(),
+                "movmedian" => MedianOf(alongY, buffers.Sorted),
+                "gaussian" => GaussianAt(alongX, alongY, at, window),
+                "lowess" or "loess" => LocalFit(alongX, alongY, at, order, false, buffers),
+                "rlowess" or "rloess" => LocalFit(alongX, alongY, at, order, true, buffers),
+                "sgolay" => LocalFit(alongX, alongY, at, order, false, buffers, weighted: false),
+                _ => SmoothKernels.Mean(alongY),
             };
         }
 
@@ -1506,7 +1575,8 @@ internal static partial class JgsBuiltins
     }
 
     /// <summary>A Gaussian-weighted average whose standard deviation is a quarter of the window.</summary>
-    private static double GaussianAt(double[] xs, double[] ys, double at, int window)
+    private static double GaussianAt(
+        ReadOnlySpan<double> xs, ReadOnlySpan<double> ys, double at, double window)
     {
         double sigma = Math.Max(window / 4.0, 1e-12);
         double total = 0;
@@ -1522,14 +1592,32 @@ internal static partial class JgsBuiltins
         return weight == 0 ? double.NaN : total / weight;
     }
 
+    /// <summary>The middle of a window, sorted into a buffer the caller keeps rather than a fresh copy.</summary>
+    private static double MedianOf(ReadOnlySpan<double> window, double[] scratch)
+    {
+        window.CopyTo(scratch);
+        Array.Sort(scratch, 0, window.Length);
+        int middle = window.Length / 2;
+        return window.Length % 2 == 1
+            ? scratch[middle]
+            : (scratch[middle - 1] + scratch[middle]) / 2.0;
+    }
+
     /// <summary>
     /// A polynomial fitted through the window and evaluated at its centre — the local regression
     /// behind lowess (degree 1), loess (degree 2) and sgolay. The robust variants refit a few times,
     /// shrinking the weight of whatever the previous fit missed by the most, which is what stops one
     /// outlier from dragging the whole window.
     /// </summary>
+    /// <remarks>
+    /// One fit answers everywhere. Each pass of the robust loop used to solve the normal system
+    /// again for every residual it measured — as many systems as the window has readings, where one
+    /// does, since a residual asks the same polynomial about a different place rather than asking a
+    /// different polynomial about the same one.
+    /// </remarks>
     private static double LocalFit(
-        double[] xs, double[] ys, double at, int degree, bool robust, bool weighted = true)
+        ReadOnlySpan<double> xs, ReadOnlySpan<double> ys, double at, int degree, bool robust,
+        in FitBuffers buffers, bool weighted = true)
     {
         int n = xs.Length;
         if (n == 0)
@@ -1539,7 +1627,7 @@ internal static partial class JgsBuiltins
 
         if (n <= degree)
         {
-            return ys.Average();
+            return SmoothKernels.Mean(ys);
         }
 
         double furthest = 0;
@@ -1548,7 +1636,7 @@ internal static partial class JgsBuiltins
             furthest = Math.Max(furthest, Math.Abs(x - at));
         }
 
-        var weights = new double[n];
+        Span<double> weights = buffers.Weights.AsSpan(0, n);
         for (int i = 0; i < n; i++)
         {
             if (!weighted || furthest == 0)
@@ -1562,23 +1650,23 @@ internal static partial class JgsBuiltins
             weights[i] = Math.Max(0, tri * tri * tri);
         }
 
-        double fitted = WeightedPolynomialAt(xs, ys, weights, degree, at);
+        Span<double> coefficients = buffers.Coefficients.AsSpan(0, degree + 1);
+        SmoothKernels.Fit(xs, ys, weights, degree, at, buffers.Normal, buffers.Powers, coefficients);
+        double fitted = coefficients[0];
         if (!robust)
         {
             return fitted;
         }
 
+        Span<double> residuals = buffers.Residuals.AsSpan(0, n);
         for (int pass = 0; pass < 3; pass++)
         {
-            var residuals = new double[n];
             for (int i = 0; i < n; i++)
             {
-                residuals[i] = Math.Abs(ys[i] - WeightedPolynomialAt(xs, ys, weights, degree, xs[i]));
+                residuals[i] = Math.Abs(ys[i] - SmoothKernels.At(coefficients, xs[i] - at));
             }
 
-            var sorted = (double[])residuals.Clone();
-            Array.Sort(sorted);
-            double median = MedianOf(sorted);
+            double median = MedianOf(residuals, buffers.Sorted);
             if (median == 0)
             {
                 break;
@@ -1591,107 +1679,25 @@ internal static partial class JgsBuiltins
                 weights[i] *= bisquare;
             }
 
-            fitted = WeightedPolynomialAt(xs, ys, weights, degree, at);
+            SmoothKernels.Fit(xs, ys, weights, degree, at, buffers.Normal, buffers.Powers, coefficients);
+            fitted = coefficients[0];
         }
 
         return fitted;
     }
 
-    /// <summary>A weighted least-squares polynomial, solved through its normal equations.</summary>
-    private static double WeightedPolynomialAt(
-        double[] xs, double[] ys, double[] weights, int degree, double at)
+    /// <summary>Everything a windowed fit writes in, held for the whole slice rather than per sample.</summary>
+    private readonly record struct FitBuffers(
+        double[] Weights, double[] Residuals, double[] Sorted,
+        double[] Normal, double[] Powers, double[] Coefficients)
     {
-        int terms = degree + 1;
-        var normal = new double[terms, terms + 1];
-        for (int i = 0; i < xs.Length; i++)
+        public static FitBuffers For(int length, int degree)
         {
-            if (weights[i] <= 0)
-            {
-                continue;
-            }
-
-            var powers = new double[terms];
-            double running = 1;
-            for (int p = 0; p < terms; p++)
-            {
-                powers[p] = running;
-                running *= xs[i] - at;
-            }
-
-            for (int r = 0; r < terms; r++)
-            {
-                for (int c = 0; c < terms; c++)
-                {
-                    normal[r, c] += weights[i] * powers[r] * powers[c];
-                }
-
-                normal[r, terms] += weights[i] * powers[r] * ys[i];
-            }
+            int terms = degree + 1;
+            return new FitBuffers(
+                new double[length], new double[length], new double[length],
+                new double[terms * (terms + 1)], new double[terms], new double[terms]);
         }
-
-        // Gaussian elimination with partial pivoting. A window that cannot support the degree asked
-        // for leaves a singular system, and the honest answer there is the weighted mean.
-        for (int pivot = 0; pivot < terms; pivot++)
-        {
-            int best = pivot;
-            for (int r = pivot + 1; r < terms; r++)
-            {
-                if (Math.Abs(normal[r, pivot]) > Math.Abs(normal[best, pivot]))
-                {
-                    best = r;
-                }
-            }
-
-            if (Math.Abs(normal[best, pivot]) < 1e-12)
-            {
-                return WeightedMean(ys, weights);
-            }
-
-            if (best != pivot)
-            {
-                for (int c = pivot; c <= terms; c++)
-                {
-                    (normal[pivot, c], normal[best, c]) = (normal[best, c], normal[pivot, c]);
-                }
-            }
-
-            for (int r = pivot + 1; r < terms; r++)
-            {
-                double factor = normal[r, pivot] / normal[pivot, pivot];
-                for (int c = pivot; c <= terms; c++)
-                {
-                    normal[r, c] -= factor * normal[pivot, c];
-                }
-            }
-        }
-
-        var solution = new double[terms];
-        for (int r = terms - 1; r >= 0; r--)
-        {
-            double sum = normal[r, terms];
-            for (int c = r + 1; c < terms; c++)
-            {
-                sum -= normal[r, c] * solution[c];
-            }
-
-            solution[r] = sum / normal[r, r];
-        }
-
-        // The polynomial was built in powers of (x − at), so its value at `at` is the constant term.
-        return solution[0];
-    }
-
-    private static double WeightedMean(double[] ys, double[] weights)
-    {
-        double total = 0;
-        double weight = 0;
-        for (int i = 0; i < ys.Length; i++)
-        {
-            total += weights[i] * ys[i];
-            weight += weights[i];
-        }
-
-        return weight == 0 ? ys.Average() : total / weight;
     }
 
     // --- groupsummary -------------------------------------------------------------------------

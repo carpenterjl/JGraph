@@ -390,18 +390,29 @@ internal static partial class JgsBuiltins
         return new([lower], [upper], [center]);
     }
 
+    /// <summary>
+    /// A window measured against its own median: the scaled median of how far each reading sits
+    /// from the middle one. It is the one spread here that cannot be carried, because the centre it
+    /// is measured from moves with the window.
+    /// </summary>
+    private static double ScaledMedianDeviationOf(ReadOnlySpan<double> window)
+    {
+        double middle = MedianOf(window);
+        var apart = new double[window.Length];
+        for (int i = 0; i < window.Length; i++)
+        {
+            apart[i] = Math.Abs(window[i] - middle);
+        }
+
+        return ScaledMadFactor * MedianOf(apart);
+    }
+
     /// <summary>The moving fences: a sliding center and a sliding spread, one value per element.</summary>
     private static OutlierFencesOf MovingFences(string name, double[] slice, OutlierPlan plan, int line, int col)
     {
         bool byMedian = plan.Method == "movmedian";
-        Func<double[], double> center = byMedian ? MedianOf : static w => w.Average();
-        Func<double[], double> spread = byMedian
-            ? static w =>
-            {
-                double middle = MedianOf(w);
-                return ScaledMadFactor * MedianOf(Array.ConvertAll(w, v => Math.Abs(v - middle)));
-            }
-            : static w => Math.Sqrt(SampleVarianceOf(w));
+        WindowSummary center = byMedian ? MedianOf : MeanOf;
+        WindowSummary spread = byMedian ? ScaledMedianDeviationOf : StandardDeviationOf;
 
         // The centre is a sliding summary either way; only the median's own spread — a deviation
         // measured from a centre that moves with the window — has to be walked window by window.

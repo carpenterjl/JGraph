@@ -1172,7 +1172,7 @@ internal static partial class JgsBuiltins
     /// </remarks>
     private static void RegisterMovingStatistics(JgsEnvironment env)
     {
-        void Moving(string name, double identity, WindowStat kind, Func<double[], double> statistic) =>
+        void Moving(string name, double identity, WindowStat kind, WindowSummary statistic) =>
             env.Declare(name, JgsValue.Function(new BuiltinFunction(name, (args, line, col) =>
             {
                 OptionSpec spec = new(name, Flags: ["omitnan", "includenan"], Names: ["Endpoints", "SamplePoints"]);
@@ -1226,28 +1226,20 @@ internal static partial class JgsBuiltins
                 return JgsMatrix.FromColumnMajorDims(joined, shape);
             })));
 
-        Moving("movmean", double.NaN, WindowStat.Mean, static w => w.Average());
-        Moving("movsum", 0, WindowStat.Sum, static w => w.Sum());
-        Moving("movmax", double.NaN, WindowStat.Max, static w => w.Max());
-        Moving("movmin", double.NaN, WindowStat.Min, static w => w.Min());
-        Moving("movprod", 1, WindowStat.Product, static w => w.Aggregate(1.0, static (product, x) => product * x));
+        Moving("movmean", double.NaN, WindowStat.Mean, MeanOf);
+        Moving("movsum", 0, WindowStat.Sum, TotalOf);
+        Moving("movmax", double.NaN, WindowStat.Max, LargestOf);
+        Moving("movmin", double.NaN, WindowStat.Min, SmallestOf);
+        Moving("movprod", 1, WindowStat.Product, ProductOf);
         Moving("movmedian", double.NaN, WindowStat.Median, MedianOf);
         Moving("movvar", double.NaN, WindowStat.Variance, SampleVarianceOf);
-        Moving("movstd", double.NaN, WindowStat.StandardDeviation, static w => Math.Sqrt(SampleVarianceOf(w)));
+        Moving("movstd", double.NaN, WindowStat.StandardDeviation, StandardDeviationOf);
 
         // The mean absolute deviation about the window's own mean — the one summary here that cannot
         // be carried from one window to the next, because it is measured from a centre that moves.
-        Moving("movmad", double.NaN, WindowStat.Other, static w =>
-        {
-            double mean = w.Average();
-            double total = 0;
-            foreach (double x in w)
-            {
-                total += Math.Abs(x - mean);
-            }
-
-            return total / w.Length;
-        });
+        // What it can stop doing is building the window it measures, which is what the walk below
+        // now spares it: two passes over a buffer it already had, and nothing allocated per answer.
+        Moving("movmad", double.NaN, WindowStat.Other, DeviationOf);
     }
 
     /// <summary>How far the window reaches behind and ahead of the point it is centred on.</summary>
@@ -1325,7 +1317,7 @@ internal static partial class JgsBuiltins
     /// </summary>
     private static double[] SlideOverPoints(
         double[] values, double[] points, double behind, double ahead, string endpoints,
-        bool omitNan, double identity, WindowStat kind, Func<double[], double> statistic)
+        bool omitNan, double identity, WindowStat kind, WindowSummary statistic)
     {
         // Places that rise are what make the window's two ends move forward and never back; places
         // in any other order leave the walk below, which reads every reading for every reading.
@@ -1336,6 +1328,7 @@ internal static partial class JgsBuiltins
         }
 
         var answers = new List<double>(values.Length);
+        var window = new double[values.Length];
 
         for (int i = 0; i < values.Length; i++)
         {
@@ -1351,7 +1344,7 @@ internal static partial class JgsBuiltins
                 continue;
             }
 
-            var window = new List<double>();
+            int held = 0;
             for (int j = 0; j < values.Length; j++)
             {
                 if (points[j] < points[i] - behind || points[j] > points[i] + ahead)
@@ -1364,10 +1357,10 @@ internal static partial class JgsBuiltins
                     continue;
                 }
 
-                window.Add(values[j]);
+                window[held++] = values[j];
             }
 
-            answers.Add(window.Count == 0 ? identity : statistic([.. window]));
+            answers.Add(held == 0 ? identity : statistic(window.AsSpan(0, held)));
         }
 
         return [.. answers];
@@ -1404,9 +1397,16 @@ internal static partial class JgsBuiltins
     }
 
     /// <summary>One slice, window by window, through whichever summary the name asked for.</summary>
+    /// <summary>
+    /// What one window is worth. A span rather than an array because the walk keeps one buffer for
+    /// the whole slice and refills it: the summary sees the readings without their being copied
+    /// into something of their own first.
+    /// </summary>
+    private delegate double WindowSummary(ReadOnlySpan<double> window);
+
     private static double[] Slide(
         double[] values, int behind, int ahead, string endpoints, double pad,
-        bool omitNan, double identity, WindowStat kind, Func<double[], double> statistic)
+        bool omitNan, double identity, WindowStat kind, WindowSummary statistic)
     {
         // Every summary but the mean absolute deviation can be carried from one window to the next
         // rather than rebuilt, which is what stops the cost depending on how wide the window is.
@@ -1421,6 +1421,7 @@ internal static partial class JgsBuiltins
         int from = endpoints == "discard" ? behind : 0;
         int to = endpoints == "discard" ? values.Length - 1 - ahead : values.Length - 1;
         var result = new double[Math.Max(0, to - from + 1)];
+        var window = new double[behind + ahead + 1];
 
         for (int i = from; i <= to; i++)
         {
@@ -1433,50 +1434,49 @@ internal static partial class JgsBuiltins
                 continue;
             }
 
-            var window = new List<double>(stop - start + 1);
+            int held = 0;
             for (int j = start; j <= stop; j++)
             {
                 bool inside = j >= 0 && j < values.Length;
-                if (inside)
+                if (!inside && endpoints != "pad")
                 {
-                    window.Add(values[j]);
+                    continue;
                 }
-                else if (endpoints == "pad")
-                {
-                    window.Add(pad);
-                }
-            }
 
-            if (omitNan)
-            {
-                window.RemoveAll(double.IsNaN);
+                double value = inside ? values[j] : pad;
+                if (omitNan && double.IsNaN(value))
+                {
+                    continue;
+                }
+
+                window[held++] = value;
             }
 
             // A window with nothing left in it is the statistic of nothing: 0 for a sum, 1 for a
             // product, NaN for anything that has to divide by how many values it saw.
-            result[i - from] = window.Count == 0 ? identity : statistic(window.ToArray());
+            result[i - from] = held == 0 ? identity : statistic(window.AsSpan(0, held));
         }
 
         return result;
     }
 
-    private static double MedianOf(double[] window)
+    private static double MedianOf(ReadOnlySpan<double> window)
     {
-        var sorted = (double[])window.Clone();
+        double[] sorted = window.ToArray();
         Array.Sort(sorted);
         int middle = sorted.Length / 2;
         return sorted.Length % 2 == 1 ? sorted[middle] : (sorted[middle - 1] + sorted[middle]) / 2.0;
     }
 
     /// <summary>The sample variance (dividing by n-1), which is what MATLAB's var and movvar report.</summary>
-    private static double SampleVarianceOf(double[] window)
+    private static double SampleVarianceOf(ReadOnlySpan<double> window)
     {
         if (window.Length < 2)
         {
             return 0;
         }
 
-        double mean = window.Average();
+        double mean = MeanOf(window);
         double total = 0;
         foreach (double x in window)
         {
@@ -1484,5 +1484,100 @@ internal static partial class JgsBuiltins
         }
 
         return total / (window.Length - 1);
+    }
+
+    /// <summary>The standard deviation of a window, which is the root of its sample variance.</summary>
+    private static double StandardDeviationOf(ReadOnlySpan<double> window) =>
+        Math.Sqrt(SampleVarianceOf(window));
+
+    /// <summary>The mean, summed in the order the readings sit in.</summary>
+    private static double MeanOf(ReadOnlySpan<double> window) => TotalOf(window) / window.Length;
+
+    /// <summary>The total, summed in the order the readings sit in.</summary>
+    private static double TotalOf(ReadOnlySpan<double> window)
+    {
+        double total = 0;
+        foreach (double x in window)
+        {
+            total += x;
+        }
+
+        return total;
+    }
+
+    /// <summary>The product, multiplied in the order the readings sit in.</summary>
+    private static double ProductOf(ReadOnlySpan<double> window)
+    {
+        double product = 1;
+        foreach (double x in window)
+        {
+            product *= x;
+        }
+
+        return product;
+    }
+
+    /// <summary>
+    /// The largest, which steps over missing readings until it has seen a real one and then ignores
+    /// them entirely. That is what a maximum over doubles has always answered here, and it is why a
+    /// missing reading is the <em>identity</em> of a maximum rather than an answer from one.
+    /// </summary>
+    private static double LargestOf(ReadOnlySpan<double> window)
+    {
+        int at = 0;
+        double value = window[0];
+        while (double.IsNaN(value))
+        {
+            if (++at == window.Length)
+            {
+                return value;
+            }
+
+            value = window[at];
+        }
+
+        while (++at < window.Length)
+        {
+            double x = window[at];
+            if (x > value)
+            {
+                value = x;
+            }
+        }
+
+        return value;
+    }
+
+    /// <summary>The smallest, which a missing reading swallows the moment it meets one.</summary>
+    private static double SmallestOf(ReadOnlySpan<double> window)
+    {
+        double value = window[0];
+        for (int i = 1; i < window.Length; i++)
+        {
+            double x = window[i];
+            if (x < value)
+            {
+                value = x;
+            }
+            else if (double.IsNaN(x))
+            {
+                return x;
+            }
+        }
+
+        return value;
+    }
+
+    /// <summary>The mean distance of a window's readings from the window's own mean.</summary>
+    private static double DeviationOf(ReadOnlySpan<double> window)
+    {
+        double mean = MeanOf(window);
+        double total = 0;
+        foreach (double x in window)
+        {
+            total += Math.Abs(x - mean);
+        }
+
+        return total / window.Length;
     }
 }
