@@ -140,8 +140,12 @@ public class SmoothKernelsM117Tests
 
     /// <summary>
     /// A window with fewer readings than the degree needs cannot pin a polynomial, and the answer
-    /// there is their plain mean — the retreat the walk made, and at the ends the only one available.
+    /// there is their plain mean — the one retreat available when there is nothing to fit through.
     /// </summary>
+    /// <remarks>
+    /// Every window here holds three readings, the ends included: a fit does not let its window
+    /// shrink at the ends, so the first answer is the mean of the same three the second reads.
+    /// </remarks>
     [Fact]
     public void TooFewReadingsForTheDegreeIsTheirPlainMean()
     {
@@ -149,9 +153,9 @@ public class SmoothKernelsM117Tests
 
         // Degree 4 over a window of three: every window in this series is too small for it.
         double[] got = SmoothKernels.LocalPolynomial(values, 1, 1, 4, weighted: false);
-        Assert.Equal((1 + 2) / 2.0, got[0], 12);
+        Assert.Equal((1 + 2 + 4) / 3.0, got[0], 12);
         Assert.Equal((1 + 2 + 4) / 3.0, got[1], 12);
-        Assert.Equal((16 + 32) / 2.0, got[^1], 12);
+        Assert.Equal((8 + 16 + 32) / 3.0, got[^1], 12);
     }
 
     /// <summary>Nothing to smooth is nothing smoothed, rather than an exception.</summary>
@@ -288,7 +292,13 @@ public class SmoothKernelsM117Tests
         return values;
     }
 
-    // --- the walk this replaced -----------------------------------------------------------------
+    // --- the walk, written out again -------------------------------------------------------------
+    //
+    // These are the rules measured off MATLAB in M118, not the ones JGraph used to follow: the
+    // Gaussian's standard deviation is a fifth of its window rather than a quarter, and a fit at
+    // the ends reads the width nearest the point rather than a window cut short by the end of the
+    // readings. Writing the walk out again is still worth it -- it says the kernel and the walk
+    // agree -- but what it is written against is MATLAB.
 
     private static double[] WalkedGaussian(double[] values, int behind, int ahead, double window)
     {
@@ -297,7 +307,7 @@ public class SmoothKernelsM117Tests
         {
             int from = Math.Max(0, i - behind);
             int to = Math.Min(values.Length - 1, i + ahead);
-            double sigma = Math.Max(window / 4.0, 1e-12);
+            double sigma = Math.Max(window / 5.0, 1e-12);
             double total = 0;
             double weight = 0;
             for (int j = from; j <= to; j++)
@@ -317,10 +327,14 @@ public class SmoothKernelsM117Tests
     private static double[] WalkedFit(double[] values, int behind, int ahead, int degree, bool weighted)
     {
         var result = new double[values.Length];
+        int width = Math.Min(behind + ahead + 1, values.Length);
         for (int i = 0; i < values.Length; i++)
         {
-            int from = Math.Max(0, i - behind);
-            int to = Math.Min(values.Length - 1, i + ahead);
+            // A fit reads the width nearest the point: at the ends the window stops sliding
+            // rather than shrinking, which is why a fit reproduces a polynomial right up to the
+            // first and last reading where a weighted average cannot.
+            int from = Math.Clamp(i - behind, 0, values.Length - width);
+            int to = from + width - 1;
             var xs = new List<double>();
             var ys = new List<double>();
             for (int j = from; j <= to; j++)
@@ -368,9 +382,36 @@ public class SmoothKernelsM117Tests
             weights[i] = Math.Max(0, tri * tri * tri);
         }
 
-        return WeightedPolynomialAt(xs, ys, weights, degree, at);
+        // A window that cannot pin a polynomial of this degree will often pin a lower one, and
+        // that is what a least-squares solve of the rank-deficient system amounts to: it still
+        // passes through the readings the window can see. Tricube weights make this ordinary
+        // rather than exotic -- the outermost reading of a window carries a weight of exactly
+        // zero, so a window of three readings is a window of two as far as the fit is concerned.
+        for (int use = degree; use >= 1; use--)
+        {
+            double pinned = WeightedPolynomialAt(xs, ys, weights, use, at);
+            if (!double.IsNaN(pinned))
+            {
+                return pinned;
+            }
+        }
+
+        double whole = weights.Sum();
+        if (whole == 0)
+        {
+            return ys.Average();
+        }
+
+        double leaning = 0;
+        for (int i = 0; i < n; i++)
+        {
+            leaning += weights[i] * ys[i];
+        }
+
+        return leaning / whole;
     }
 
+    /// <summary>The fit, or NaN when the window cannot pin a polynomial of this degree.</summary>
     private static double WeightedPolynomialAt(
         double[] xs, double[] ys, double[] weights, int degree, double at)
     {
@@ -415,15 +456,9 @@ public class SmoothKernelsM117Tests
 
             if (Math.Abs(normal[best, pivot]) < 1e-12)
             {
-                double total = 0;
-                double weight = 0;
-                for (int i = 0; i < ys.Length; i++)
-                {
-                    total += weights[i] * ys[i];
-                    weight += weights[i];
-                }
-
-                return weight == 0 ? ys.Average() : total / weight;
+                // Not pinned at this degree. The caller drops a degree and tries again, and only
+                // retreats to a weighted mean when even a straight line will not stand up.
+                return double.NaN;
             }
 
             if (best != pivot)

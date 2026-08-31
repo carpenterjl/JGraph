@@ -337,6 +337,15 @@ public class WindowKernelsM116Tests
     {
         var sorted = (double[])window.Clone();
         Array.Sort(sorted);
+
+        // A window with a missing reading in it has no middle. The sort puts every NaN in front,
+        // so reading the middle of the whole window answered with a real reading whenever fewer
+        // than half of them were missing -- which is what this said until M118 measured it.
+        if (sorted.Length > 0 && double.IsNaN(sorted[0]))
+        {
+            return double.NaN;
+        }
+
         int middle = sorted.Length / 2;
         return sorted.Length % 2 == 1 ? sorted[middle] : (sorted[middle - 1] + sorted[middle]) / 2.0;
     }

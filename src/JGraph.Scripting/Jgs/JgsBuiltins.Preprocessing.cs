@@ -1330,20 +1330,38 @@ internal static partial class JgsBuiltins
         // The dimension may come before the method or after it, so both leading positionals are
         // examined: whichever numbers are there are the dimension and the window.
         int? dim = PrepDim("smoothdata", args, 1, line, col);
-        int? given = null;
+        JgsValue? given = null;
         for (int i = 0; i < parsed.Positional.Count; i++)
         {
-            if (parsed.Positional[i].Type is JgsType.Number or JgsType.Bool)
+            JgsValue at = parsed.Positional[i];
+
+            // The window is one width or a [before after] pair, and the pair is a pair of numbers
+            // rather than a number -- so a test that only admits scalars quietly drops it and
+            // reaches for the automatic width instead, which is a different window entirely.
+            bool isWidth = at.Type is JgsType.Number or JgsType.Bool
+                || (at.Type is JgsType.Array && at.Rows * at.Cols == 2);
+            if (isWidth)
             {
-                given = Count("smoothdata", parsed.Positional, i, line, col);
+                given = at;
             }
         }
 
         (double[][] slices, int chosen) = PrepSlices(bare, dim);
         int length = slices.Length == 0 ? 0 : slices[0].Length;
-        int window = given ?? AutomaticWindow(length, parsed.Named("SmoothingFactor") is null
+        int automatic = AutomaticWindow(length, parsed.Named("SmoothingFactor") is null
             ? null
             : parsed.Scalar("SmoothingFactor", 0.25), line, col);
+        (int behind, int ahead) = given is null
+            ? (automatic / 2, (automatic - 1) / 2)
+            : ReachOf("smoothdata", given, line, col);
+        int window = behind + ahead + 1;
+
+        // How wide the Gaussian is told to be, which is not quite how many readings it covers: a
+        // window given as one number is that number wide, and one given as a [before after] pair
+        // is as wide as it reaches -- one less, because the reading it is centred on is counted by
+        // neither half. Measured off the kernel itself, a window of 7 has a standard deviation of
+        // 1.4 and a [3 3] one of 1.2.
+        int spread = given is not null && given.Rows * given.Cols == 2 ? behind + ahead : window;
         int degree = parsed.Whole("degree", method == "sgolay" ? 2 : 1);
 
         var done = new double[slices.Length][];
@@ -1355,10 +1373,13 @@ internal static partial class JgsBuiltins
                     $"smoothdata: 'SamplePoints' has {points.Length} places for {slices[s].Length} values.");
             }
 
-            done[s] = SmoothSlice(slices[s], method, window, degree, omitNan, points);
+            done[s] = SmoothSlice(
+                slices[s], method, behind, ahead, spread, degree, omitNan, points);
         }
 
-        return Outputs(wanted, PrepJoin(bare, done, chosen), JgsValue.Number(window));
+        // The window comes back as it was given: a pair stays a pair, which is the only way a
+        // script can tell an asymmetric window was honoured.
+        return Outputs(wanted, PrepJoin(bare, done, chosen), given ?? JgsValue.Number(window));
     }
 
     private static (string Method, int Consumed) SmoothMethod(IReadOnlyList<JgsValue> args, int line, int col)
@@ -1422,11 +1443,11 @@ internal static partial class JgsBuiltins
     }
 
     private static double[] SmoothSlice(
-        double[] slice, string method, int window, int degree, bool omitNan, double[]? points)
+        double[] slice, string method, int behind, int ahead, int spread, int degree, bool omitNan,
+        double[]? points)
     {
         int n = slice.Length;
-        int behind = window / 2;
-        int ahead = (window - 1) / 2;
+        int window = behind + ahead + 1;
 
         // The two moving-average methods are the same shrinking window the mov* family slides, and
         // the default window here is a tenth of the data (ADR 0066) — so rebuilding it at every
@@ -1461,7 +1482,7 @@ internal static partial class JgsBuiltins
             {
                 shaped = method switch
                 {
-                    "gaussian" => SmoothKernels.Gaussian(slice, behind, ahead, window),
+                    "gaussian" => SmoothKernels.Gaussian(slice, behind, ahead, spread),
                     "lowess" => SmoothKernels.LocalPolynomial(slice, behind, ahead, 1, weighted: true),
                     "loess" => SmoothKernels.LocalPolynomial(slice, behind, ahead, 2, weighted: true),
                     "sgolay" => SmoothKernels.LocalPolynomial(
@@ -1478,7 +1499,16 @@ internal static partial class JgsBuiltins
                 }
 
                 // A window holds the reading at i when it starts no later than i and ends no
-                // earlier, which is every point from i - ahead to i + behind.
+                // earlier, which is every point from i - ahead to i + behind. The ends are the
+                // exception: a fit there reads the width nearest the point, and that is the same
+                // width for every point at that end, so one missing reading inside it spoils the
+                // whole end rather than a window's worth of it.
+                int reach = Math.Min(behind + ahead + 1, n);
+                bool nearest = method is not "gaussian";
+                int endsBefore = Math.Min(behind, n);
+                int endsAfter = Math.Max(endsBefore, n - ahead);
+                bool spoiledBefore = false;
+                bool spoiledAfter = false;
                 unanswered = new bool[n];
                 for (int i = 0; i < n; i++)
                 {
@@ -1487,10 +1517,22 @@ internal static partial class JgsBuiltins
                         continue;
                     }
 
+                    spoiledBefore |= nearest && i < reach;
+                    spoiledAfter |= nearest && i >= n - reach;
                     for (int j = Math.Max(0, i - ahead); j <= Math.Min(n - 1, i + behind); j++)
                     {
                         unanswered[j] = true;
                     }
+                }
+
+                if (spoiledBefore)
+                {
+                    Array.Fill(unanswered, true, 0, endsBefore);
+                }
+
+                if (spoiledAfter)
+                {
+                    Array.Fill(unanswered, true, endsAfter, n - endsAfter);
                 }
             }
         }
@@ -1504,69 +1546,244 @@ internal static partial class JgsBuiltins
             "sgolay" => Math.Max(1, degree),
             _ => 1,
         };
+        // At the ends a fit reads the width nearest the point rather than a window cut short by
+        // the end of the readings -- which is why a fit reproduces a polynomial right up to the
+        // first and last reading, where a weighted average cannot. The averages keep the window
+        // they are given and let it shrink.
+        bool fitsNearest = method is "lowess" or "loess" or "rlowess" or "rloess" or "sgolay";
+        int nearWidth = Math.Min(behind + ahead + 1, n);
+
+        // Places evenly spread are a plain count wearing different numbers, and are answered as
+        // one: the same windows throughout, and the same rule where the readings run out. Places
+        // genuinely of their own measure their window as a distance, and that window is cut short
+        // at the ends rather than slid back inside the readings.
+        bool evenlySpread = points is not null && EvenlySpread(points);
         double[] result = shaped ?? new double[n];
         var xs = new double[n];
         var ys = new double[n];
         FitBuffers buffers = FitBuffers.For(n, order);
-        for (int i = 0; i < n; i++)
+
+        // A robust fit is not a fit repeated inside each window. Every reading is measured against
+        // the smooth of the WHOLE series, those residuals are scaled by one median taken over all
+        // of them, and each reading is handed a single weight that then follows it into every
+        // window it is read in. Five reweightings, and so six sweeps.
+        bool robust = method is "rlowess" or "rloess";
+        double[]? trust = null;
+        double[]? carried = null;
+        if (robust)
         {
-            if (unanswered is not null && !unanswered[i])
-            {
-                continue;
-            }
+            trust = new double[n];
+            Array.Fill(trust, 1.0);
+            carried = new double[n];
+        }
 
-            (int from, int to) = points is null
-                ? (Math.Max(0, i - behind), Math.Min(n - 1, i + ahead))
-                : SpanAround(points, i, window);
-
-            int held = 0;
-            for (int j = from; j <= to; j++)
+        for (int pass = 0; ; pass++)
+        {
+            for (int i = 0; i < n; i++)
             {
-                if (omitNan && double.IsNaN(slice[j]))
+                if (unanswered is not null && !unanswered[i])
                 {
                     continue;
                 }
 
-                xs[held] = points is null ? j : points[j];
-                ys[held] = slice[j];
-                held++;
+                (int from, int to) = points is not null
+                    ? SpanAround(points, i, window, fitsNearest && evenlySpread)
+                    : fitsNearest ? NearestWindow(i, behind, nearWidth, n)
+                    : (Math.Max(0, i - behind), Math.Min(n - 1, i + ahead));
+
+                int held = 0;
+                for (int j = from; j <= to; j++)
+                {
+                    if (omitNan && double.IsNaN(slice[j]))
+                    {
+                        continue;
+                    }
+
+                    xs[held] = points is null ? j : points[j];
+                    ys[held] = slice[j];
+                    if (carried is not null)
+                    {
+                        carried[held] = trust![j];
+                    }
+
+                    held++;
+                }
+
+                if (held == 0)
+                {
+                    result[i] = double.NaN;
+                    continue;
+                }
+
+                ReadOnlySpan<double> alongX = xs.AsSpan(0, held);
+                ReadOnlySpan<double> alongY = ys.AsSpan(0, held);
+                ReadOnlySpan<double> alongTrust = carried is null
+                    ? default
+                    : carried.AsSpan(0, held);
+                double at = points is null ? i : points[i];
+                result[i] = method switch
+                {
+                    "movmedian" => MedianOf(alongY, buffers.Sorted),
+                    "gaussian" => GaussianAt(alongX, alongY, at, spread),
+                    "lowess" or "loess" or "rlowess" or "rloess" =>
+                        LocalFit(alongX, alongY, alongTrust, at, order, buffers),
+                    "sgolay" => LocalFit(alongX, alongY, alongTrust, at, order, buffers, weighted: false),
+                    _ => SmoothKernels.Mean(alongY),
+                };
             }
 
-            if (held == 0)
+            if (!robust || pass >= RobustPasses || !Retrust(slice, result, trust!, buffers))
             {
-                result[i] = double.NaN;
-                continue;
+                break;
             }
-
-            ReadOnlySpan<double> alongX = xs.AsSpan(0, held);
-            ReadOnlySpan<double> alongY = ys.AsSpan(0, held);
-            double at = points is null ? i : points[i];
-            result[i] = method switch
-            {
-                "movmedian" => MedianOf(alongY, buffers.Sorted),
-                "gaussian" => GaussianAt(alongX, alongY, at, window),
-                "lowess" or "loess" => LocalFit(alongX, alongY, at, order, false, buffers),
-                "rlowess" or "rloess" => LocalFit(alongX, alongY, at, order, true, buffers),
-                "sgolay" => LocalFit(alongX, alongY, at, order, false, buffers, weighted: false),
-                _ => SmoothKernels.Mean(alongY),
-            };
         }
 
         return result;
     }
 
-    /// <summary>The window around a point when the samples are not evenly spaced.</summary>
-    private static (int From, int To) SpanAround(double[] points, int at, double window)
+    /// <summary>How many times a robust fit reweighs its readings before it is done.</summary>
+    private const int RobustPasses = 5;
+
+    /// <summary>
+    /// Cleveland's robustness weights: every reading measured against the smooth of the whole
+    /// series, scaled by one median taken over all of those residuals, and turned into the weight
+    /// that reading carries into every window it is read in. False when there is nothing left to
+    /// weigh -- a smooth that already passes through every reading has no residual to scale by,
+    /// and reweighing against a scale of nothing would throw every reading away at once.
+    /// </summary>
+    private static bool Retrust(
+        double[] slice, double[] fitted, double[] trust, in FitBuffers buffers)
     {
-        double half = window / 2.0;
+        int n = slice.Length;
+        int held = 0;
+        for (int i = 0; i < n; i++)
+        {
+            double away = Math.Abs(slice[i] - fitted[i]);
+            if (!double.IsNaN(away))
+            {
+                buffers.Residuals[held++] = away;
+            }
+        }
+
+        if (held == 0)
+        {
+            return false;
+        }
+
+        double median = MedianOf(buffers.Residuals.AsSpan(0, held), buffers.Sorted);
+        if (!(median > 0))
+        {
+            return false;
+        }
+
+        double scale = 6 * median;
+        for (int i = 0; i < n; i++)
+        {
+            double away = Math.Abs(slice[i] - fitted[i]);
+            if (double.IsNaN(away))
+            {
+                // A reading that could not be smoothed cannot be judged against the smooth either,
+                // so it is left trusted and spoils its own windows as it would have anyway.
+                trust[i] = 1;
+                continue;
+            }
+
+            double u = away / scale;
+            double bisquare = u >= 1 ? 0 : (1 - (u * u)) * (1 - (u * u));
+            trust[i] = bisquare;
+        }
+
+        return true;
+    }
+
+    /// <summary>
+    /// The readings nearest a point, for the fits, whose window stops sliding at the ends rather
+    /// than shrinking there.
+    /// </summary>
+    private static (int From, int To) NearestWindow(int at, int behind, int width, int n)
+    {
+        int from = Math.Clamp(at - behind, 0, n - width);
+        return (from, from + width - 1);
+    }
+
+    /// <summary>
+    /// Whether the readings are evenly spread, and so are a plain count wearing different numbers.
+    /// </summary>
+    private static bool EvenlySpread(double[] points)
+    {
+        if (points.Length < 3)
+        {
+            return true;
+        }
+
+        double step = points[1] - points[0];
+        if (!(step > 0))
+        {
+            return false;
+        }
+
+        double slack = step * 1e-9;
+        for (int i = 2; i < points.Length; i++)
+        {
+            if (Math.Abs(points[i] - points[i - 1] - step) > slack)
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /// <summary>The window around a point when the readings carry places of their own.</summary>
+    /// <remarks>
+    /// <para>
+    /// The window is half open. A reading exactly half a window ahead belongs to the next window
+    /// rather than this one, which is what lets a window of even width hold as many readings as it
+    /// is wide -- and is what makes places of its own answer the same as a plain count when the
+    /// places happen to be evenly spread.
+    /// </para>
+    /// <para>
+    /// At the ends a fit's window slides back inside the readings rather than shrinking, so that a
+    /// fit there is taken through as many readings as one in the middle. An average's does not: it
+    /// keeps its place and is cut short, which is the same split the plain count form makes.
+    /// </para>
+    /// </remarks>
+    private static (int From, int To) SpanAround(double[] points, int at, double window, bool slide)
+    {
+        int n = points.Length;
+        double first = points[0];
+        double last = points[n - 1];
+
+        // Where the window starts, once it has been slid back inside the readings.
+        double lo = points[at] - (window / 2.0);
+        bool againstEnd = slide && lo + window > last;
+        if (againstEnd)
+        {
+            lo = last - window;
+        }
+
+        if (lo < first && slide)
+        {
+            lo = first;
+            againstEnd = false;
+        }
+
+        // Half open, and the half that is open turns round at the far end: a window slid back
+        // against the last reading runs from just after where it starts to the last reading
+        // itself, so that it holds as many readings as one that had room to sit where it liked.
         int from = at;
-        while (from > 0 && points[at] - points[from - 1] <= half)
+        while (from > 0 && (againstEnd ? points[from - 1] > lo : points[from - 1] >= lo))
         {
             from--;
         }
 
+        if (againstEnd)
+        {
+            return (from, n - 1);
+        }
+
         int to = at;
-        while (to < points.Length - 1 && points[to + 1] - points[at] <= half)
+        while (to < n - 1 && points[to + 1] < lo + window)
         {
             to++;
         }
@@ -1574,11 +1791,11 @@ internal static partial class JgsBuiltins
         return (from, to);
     }
 
-    /// <summary>A Gaussian-weighted average whose standard deviation is a quarter of the window.</summary>
+    /// <summary>A Gaussian-weighted average whose standard deviation is a fifth of the window.</summary>
     private static double GaussianAt(
         ReadOnlySpan<double> xs, ReadOnlySpan<double> ys, double at, double window)
     {
-        double sigma = Math.Max(window / 4.0, 1e-12);
+        double sigma = Math.Max(window / 5.0, 1e-12);
         double total = 0;
         double weight = 0;
         for (int i = 0; i < xs.Length; i++)
@@ -1616,8 +1833,8 @@ internal static partial class JgsBuiltins
     /// different polynomial about the same one.
     /// </remarks>
     private static double LocalFit(
-        ReadOnlySpan<double> xs, ReadOnlySpan<double> ys, double at, int degree, bool robust,
-        in FitBuffers buffers, bool weighted = true)
+        ReadOnlySpan<double> xs, ReadOnlySpan<double> ys, ReadOnlySpan<double> trust, double at,
+        int degree, in FitBuffers buffers, bool weighted = true)
     {
         int n = xs.Length;
         if (n == 0)
@@ -1639,51 +1856,24 @@ internal static partial class JgsBuiltins
         Span<double> weights = buffers.Weights.AsSpan(0, n);
         for (int i = 0; i < n; i++)
         {
-            if (!weighted || furthest == 0)
+            double weight = 1;
+            if (weighted && furthest != 0)
             {
-                weights[i] = 1;
-                continue;
+                double u = Math.Abs(xs[i] - at) / furthest;
+                double tri = 1 - (u * u * u);
+                weight = Math.Max(0, tri * tri * tri);
             }
 
-            double u = Math.Abs(xs[i] - at) / furthest;
-            double tri = 1 - (u * u * u);
-            weights[i] = Math.Max(0, tri * tri * tri);
+            // How far the window leans towards a reading, times how far the series as a whole is
+            // willing to believe it. The second is one for every reading of a fit that is not
+            // robust, and is read afresh from the tricube each pass rather than piled onto the
+            // last pass -- weights multiplied together over and over only ever shrink.
+            weights[i] = trust.IsEmpty ? weight : weight * trust[i];
         }
 
         Span<double> coefficients = buffers.Coefficients.AsSpan(0, degree + 1);
         SmoothKernels.Fit(xs, ys, weights, degree, at, buffers.Normal, buffers.Powers, coefficients);
-        double fitted = coefficients[0];
-        if (!robust)
-        {
-            return fitted;
-        }
-
-        Span<double> residuals = buffers.Residuals.AsSpan(0, n);
-        for (int pass = 0; pass < 3; pass++)
-        {
-            for (int i = 0; i < n; i++)
-            {
-                residuals[i] = Math.Abs(ys[i] - SmoothKernels.At(coefficients, xs[i] - at));
-            }
-
-            double median = MedianOf(residuals, buffers.Sorted);
-            if (median == 0)
-            {
-                break;
-            }
-
-            for (int i = 0; i < n; i++)
-            {
-                double u = residuals[i] / (6 * median);
-                double bisquare = u >= 1 ? 0 : (1 - (u * u)) * (1 - (u * u));
-                weights[i] *= bisquare;
-            }
-
-            SmoothKernels.Fit(xs, ys, weights, degree, at, buffers.Normal, buffers.Powers, coefficients);
-            fitted = coefficients[0];
-        }
-
-        return fitted;
+        return coefficients[0];
     }
 
     /// <summary>Everything a windowed fit writes in, held for the whole slice rather than per sample.</summary>

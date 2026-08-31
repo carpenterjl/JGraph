@@ -172,28 +172,4 @@ public class MatlabSmoothingM117Tests : IDisposable
         assert(max(abs(smoothdata(cubic, 'sgolay', 31, 'Degree', 2) - cubic)) > 1e-4);
         assert(max(abs(smoothdata(cubic, 'sgolay', 31, 'Degree', 3) - cubic)) < 1e-8);
         """);
-
-    /// <summary>
-    /// <c>movmad</c> measures each window from its own mean, and its window shrinks at the ends
-    /// like every other moving summary.
-    /// </summary>
-    [Fact]
-    public Task TheMeanAbsoluteDeviationIsMeasuredFromTheWindowsOwnMean() => RunAsserting("""
-        x = [1 2 3 4 100];
-        got = movmad(x, 3);
-        assert(abs(got(1) - 0.5) < 1e-12);
-        assert(abs(got(2) - 2/3) < 1e-12);
-        assert(abs(got(3) - 2/3) < 1e-12);
-        assert(abs(got(5) - 48) < 1e-12);
-        % A window of one has nothing to deviate from.
-        assert(isequal(movmad(x, 1), zeros(1, 5)));
-        % The endpoint rules apply to it as they do to the rest of the family.
-        assert(numel(movmad(x, 3, 'Endpoints', 'discard')) == 3);
-        assert(all(isnan(movmad(x, 3, 'Endpoints', 'fill')([1 5]))));
-        assert(isequal(size(movmad(x, [2 0])), [1 5]));
-        % A missing reading spoils its own windows, and can be stepped over.
-        holed = [1 2 NaN 4 5];
-        assert(isequal(isnan(movmad(holed, 3)), [false true true true false]));
-        assert(~any(isnan(movmad(holed, 3, 'omitnan'))));
-        """);
 }

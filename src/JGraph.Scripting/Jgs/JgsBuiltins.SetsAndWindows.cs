@@ -1,3 +1,4 @@
+using System.Buffers;
 using System.Numerics;
 using JGraph.Maths;
 using JGraph.Numerics;
@@ -1239,7 +1240,7 @@ internal static partial class JgsBuiltins
         // be carried from one window to the next, because it is measured from a centre that moves.
         // What it can stop doing is building the window it measures, which is what the walk below
         // now spares it: two passes over a buffer it already had, and nothing allocated per answer.
-        Moving("movmad", double.NaN, WindowStat.Other, DeviationOf);
+        Moving("movmad", double.NaN, WindowStat.MedianDeviation, DeviationOf);
     }
 
     /// <summary>How far the window reaches behind and ahead of the point it is centred on.</summary>
@@ -1464,6 +1465,14 @@ internal static partial class JgsBuiltins
     {
         double[] sorted = window.ToArray();
         Array.Sort(sorted);
+
+        // A sort puts every NaN in front, so a window holding one still had a real reading at its
+        // middle. A window with a hole in it has no median at all.
+        if (sorted.Length > 0 && double.IsNaN(sorted[0]))
+        {
+            return double.NaN;
+        }
+
         int middle = sorted.Length / 2;
         return sorted.Length % 2 == 1 ? sorted[middle] : (sorted[middle - 1] + sorted[middle]) / 2.0;
     }
@@ -1569,15 +1578,58 @@ internal static partial class JgsBuiltins
     }
 
     /// <summary>The mean distance of a window's readings from the window's own mean.</summary>
+    /// <summary>
+    /// The median absolute deviation of a window: how far its readings sit from their own middle,
+    /// answered by the middle of those distances.
+    /// </summary>
+    /// <remarks>
+    /// A median about a median, not a mean about a mean. The two agree on a window of one or two
+    /// readings and part company on every larger one, which is what made the difference easy to
+    /// miss: <c>movmad([1 2 3 4 100], 3)</c> is <c>[0.5 1 1 1 48]</c> and not
+    /// <c>[0.5 2/3 2/3 42.9 48]</c>. The point of the statistic is that a wild reading moves it
+    /// hardly at all, which a mean cannot do.
+    /// </remarks>
     private static double DeviationOf(ReadOnlySpan<double> window)
     {
-        double mean = MeanOf(window);
-        double total = 0;
-        foreach (double x in window)
+        // Two medians per answer, and a median has to order what it reads. One buffer per thread
+        // rather than one per answer: this is called once for every reading in the series, and ten
+        // million rented arrays cost more than the sorting does.
+        int held = window.Length;
+        double[] scratch = _deviations ??= new double[Math.Max(held * 2, 64)];
+        if (scratch.Length < held * 2)
         {
-            total += Math.Abs(x - mean);
+            scratch = _deviations = new double[held * 2];
         }
 
-        return total / window.Length;
+        Span<double> sorted = scratch.AsSpan(0, held);
+        window.CopyTo(sorted);
+        sorted.Sort();
+        if (held > 0 && double.IsNaN(sorted[0]))
+        {
+            return double.NaN;
+        }
+
+        double middle = MiddleOf(sorted);
+        Span<double> apart = scratch.AsSpan(held, held);
+        for (int i = 0; i < held; i++)
+        {
+            apart[i] = Math.Abs(window[i] - middle);
+        }
+
+        apart.Sort();
+        return MiddleOf(apart);
+    }
+
+    /// <summary>Scratch for <see cref="DeviationOf"/>, which needs two orderings per answer.</summary>
+    [ThreadStatic]
+    private static double[]? _deviations;
+
+    /// <summary>The middle of an already ordered run of readings.</summary>
+    private static double MiddleOf(ReadOnlySpan<double> sorted)
+    {
+        int middle = sorted.Length / 2;
+        return sorted.Length % 2 == 1
+            ? sorted[middle]
+            : (sorted[middle - 1] + sorted[middle]) / 2.0;
     }
 }

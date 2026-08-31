@@ -34,6 +34,16 @@ internal static class JgsStdlib
     {
         double[] sorted = (double[])values.Clone();
         Array.Sort(sorted);
+
+        // A sort over doubles puts every NaN in front, so the middle of a run holding one is a
+        // real reading rather than the missing answer it should be. There is no median of a run
+        // with a hole in it -- stepping over the hole is what 'omitnan' asks for, and the caller
+        // that asked has already taken them out.
+        if (sorted.Length > 0 && double.IsNaN(sorted[0]))
+        {
+            return double.NaN;
+        }
+
         int mid = sorted.Length / 2;
         return sorted.Length % 2 == 1 ? sorted[mid] : (sorted[mid - 1] + sorted[mid]) / 2.0;
     }
