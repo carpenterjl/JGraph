@@ -103,8 +103,15 @@ see. This file refused to count them while they drew nothing; **M56 made them re
 number and this one agree again. `opengl` *is* counted, because an accepted no-op is an answer — the
 same reading that counted `shading`, `lighting` and `camlight` in M43.
 
-Across every callable kind — builtin, function, operator, keyword, script — the count is **1,031 of
-2,024** as of M109, which came from a bug report rather than a plan row, as M108 did: `dir` answered
+Across every callable kind — builtin, function, operator, keyword, script — the count is **1,035 of
+2,024** as of M121, which came from the capability probe rather than a plan row: the head-to-head
+suite's "Solvers and quadrature" group listed nine forms and JGraph answered six. The four names are
+`integral` and `quadgk` — one adaptive Gauss–Kronrod engine behind two interfaces, as they are in
+MATLAB — and `odeset` with `odeget`, which are the other half of a name that had been here since
+M43: `ode45` existed but could not be told a tolerance, a `Refine`, a `MaxStep` or an
+`InitialStep`, so its accuracy was whatever the default happened to be.
+
+M109 took the count to 1,031, and came from a bug report rather than a plan row, as M108 did: `dir` answered
 a cell array of names where MATLAB answers a struct array, so `d(k).isdir` — the way every script
 walks a listing — died here on "needs a struct, but this is a cell". `ls` is the name the count
 moved for; it did not exist at all, and is the same listing as the padded char matrix of names that

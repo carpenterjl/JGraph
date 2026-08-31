@@ -80,13 +80,17 @@ public static class OdeSolvers
     /// <param name="relativeTolerance">Per-step relative tolerance (MATLAB's default is 1e-3).</param>
     /// <param name="absoluteTolerance">Per-step absolute tolerance (MATLAB's default is 1e-6).</param>
     /// <param name="refine">Points reported per accepted step when no times are named.</param>
+    /// <param name="largestStep">MATLAB's <c>MaxStep</c>; null leaves the default tenth of the interval.</param>
+    /// <param name="firstStep">MATLAB's <c>InitialStep</c>; null leaves the step the slope suggests.</param>
     public static List<OdePoint> DormandPrince(
         Func<double, double[], double[]> derivative,
         IReadOnlyList<double> tspan,
         double[] initial,
         double relativeTolerance = 1e-3,
         double absoluteTolerance = 1e-6,
-        int refine = DefaultRefine)
+        int refine = DefaultRefine,
+        double? largestStep = null,
+        double? firstStep = null)
     {
         if (tspan.Count < 2)
         {
@@ -122,7 +126,12 @@ public static class OdeSolvers
         }
 
         double span = Math.Abs(tEnd - t);
-        double hMax = 0.1 * span;
+
+        // A tenth of the interval unless the caller named a ceiling, which is MATLAB's rule for
+        // MaxStep: the option replaces the default rather than being taken alongside it.
+        double hMax = largestStep is { } ceiling && ceiling > 0
+            ? Math.Min(span, ceiling)
+            : 0.1 * span;
 
         // The first step is chosen so that the leading error term is about the tolerance: the slope
         // at the start says how fast the state is moving, and the fifth root is the order of the
@@ -132,6 +141,13 @@ public static class OdeSolvers
         if (absH * rh > 1)
         {
             absH = 1 / rh;
+        }
+
+        if (firstStep is { } chosen && chosen > 0)
+        {
+            // InitialStep says where to start, not where to stay: the step control takes over from
+            // the first accepted step onwards exactly as it would have.
+            absH = Math.Min(hMax, Math.Abs(chosen));
         }
 
         absH = Math.Max(absH, MinimumStep(t));

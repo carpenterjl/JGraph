@@ -1528,7 +1528,7 @@ internal sealed partial class Interpreter
         // would touch. Asked after cells, because a bracket cannot sensibly hold both.
         if (Dialect.ConcatenatesBrackets && AnyStringArray(rows))
         {
-            return ConcatenateStringArrays(rows, matrix);
+            return JgsBuiltins.ConcatenateStringArrays(rows, matrix.Line, matrix.Column);
         }
 
         // A bracket stacking char rows is a char matrix (M105): ['ab'; 'cd'] is 2-by-2 char. The block
@@ -1698,10 +1698,15 @@ internal sealed partial class Interpreter
         // than being spliced character by character. This is MATLAB's rule and the reason a script
         // can build a list of labels without a cell. It is asked first, because the char-row join
         // below would otherwise swallow the mixed case.
+        //
+        // Through the block machinery rather than by running the pieces together, because a piece
+        // may be taller than one row: [s s] where s is 2-by-1 is 2-by-2, and until M121 it was the
+        // 1-by-4 that flattening every piece into one list makes of it. One row of blocks is what
+        // the multi-row arm below has always done with each of its rows.
         if (Dialect.ConcatenatesBrackets && joinable.Length > 0
             && Array.Exists(joinable, static e => e.IsStringArray))
         {
-            return JoinStringArrays(joinable);
+            return JgsBuiltins.ConcatenateStringArrays([joinable], array.Line, array.Column);
         }
 
         // Char rows join into one longer char row: ['SN:' id] is how a MATLAB script builds a label.
@@ -1776,161 +1781,6 @@ internal sealed partial class Interpreter
         }
 
         return false;
-    }
-
-    /// <summary>
-    /// A multi-row bracket of string arrays, joined the way the numeric block machinery joins
-    /// numbers: each row's blocks stand side by side and must agree on height, then the rows stack
-    /// and must agree on width. An empty block contributes nothing, exactly as it does elsewhere.
-    /// </summary>
-    private static JgsValue ConcatenateStringArrays(List<JgsValue[]> rows, Node at)
-    {
-        var bands = new List<(int Rows, int Cols, string[] Texts)>(rows.Count);
-        foreach (JgsValue[] row in rows)
-        {
-            var blocks = new List<(int Rows, int Cols, string[] Texts)>(row.Length);
-            int height = -1;
-            foreach (JgsValue piece in row)
-            {
-                (int Rows, int Cols, string[] Texts) block = StringBlock(piece);
-                if (block.Rows == 0 || block.Cols == 0)
-                {
-                    continue;
-                }
-
-                if (height < 0)
-                {
-                    height = block.Rows;
-                }
-                else if (height != block.Rows)
-                {
-                    throw new JgsRuntimeException(at.Line, at.Column,
-                        "Dimensions of arrays being concatenated are not consistent.");
-                }
-
-                blocks.Add(block);
-            }
-
-            if (blocks.Count == 0)
-            {
-                continue;
-            }
-
-            int width = 0;
-            foreach ((int Rows, int Cols, string[] Texts) block in blocks)
-            {
-                width += block.Cols;
-            }
-
-            var band = new string[height * width];
-            int placed = 0;
-            foreach ((int Rows, int Cols, string[] Texts) block in blocks)
-            {
-                for (int c = 0; c < block.Cols; c++)
-                {
-                    for (int r = 0; r < height; r++)
-                    {
-                        band[r + ((placed + c) * height)] = block.Texts[r + (c * block.Rows)];
-                    }
-                }
-
-                placed += block.Cols;
-            }
-
-            bands.Add((height, width, band));
-        }
-
-        if (bands.Count == 0)
-        {
-            return JgsValue.StringArray([], 0, 0);
-        }
-
-        int cols = bands[0].Cols;
-        int total = 0;
-        foreach ((int Rows, int Cols, string[] Texts) band in bands)
-        {
-            if (band.Cols != cols)
-            {
-                throw new JgsRuntimeException(at.Line, at.Column,
-                    "Dimensions of arrays being concatenated are not consistent.");
-            }
-
-            total += band.Rows;
-        }
-
-        var texts = new JgsValue[total * cols];
-        int top = 0;
-        foreach ((int Rows, int Cols, string[] Texts) band in bands)
-        {
-            for (int c = 0; c < cols; c++)
-            {
-                for (int r = 0; r < band.Rows; r++)
-                {
-                    texts[top + r + (c * total)] = JgsValue.Str(band.Texts[r + (c * band.Rows)]);
-                }
-            }
-
-            top += band.Rows;
-        }
-
-        return JgsValue.StringArray(texts, total, cols);
-    }
-
-    /// <summary>One block of a string-array bracket: its shape, and its elements in column order.</summary>
-    private static (int Rows, int Cols, string[] Texts) StringBlock(JgsValue piece)
-    {
-        if (piece.IsStringArray)
-        {
-            return (piece.Rows, piece.Cols,
-                Array.ConvertAll(piece.BoxedElements(), static e => e.AsString));
-        }
-
-        // A char row is one element of the answer, not a row of characters — the same rule the
-        // single-row join follows, and the reason ["a" 'b'] is 1-by-2 rather than 1-by-1.
-        if (piece.Type == JgsType.String)
-        {
-            return (1, 1, [piece.AsString]);
-        }
-
-        if (piece.Type == JgsType.Array)
-        {
-            return piece.ArrayLength == 0
-                ? (0, 0, [])
-                : (piece.Rows, piece.Cols,
-                    Array.ConvertAll(piece.BoxedElements(), static e => e.Display()));
-        }
-
-        return (1, 1, [piece.Display()]);
-    }
-
-    private static JgsValue JoinStringArrays(JgsValue[] elements)
-    {
-        var joined = new List<JgsValue>();
-        foreach (JgsValue piece in elements)
-        {
-            if (piece.IsStringArray)
-            {
-                joined.AddRange(piece.BoxedElements());
-            }
-            else if (piece.Type == JgsType.String)
-            {
-                joined.Add(piece);
-            }
-            else if (piece.Type == JgsType.Array)
-            {
-                // A numeric array spreads, one string per number, the way string(x) would make it.
-                for (int i = 0; i < piece.ArrayLength; i++)
-                {
-                    joined.Add(JgsValue.Str(piece.ElementAt(i).Display()));
-                }
-            }
-            else
-            {
-                joined.Add(JgsValue.Str(piece.Display()));
-            }
-        }
-
-        return JgsValue.StringArray([.. joined]);
     }
 
     /// <summary>

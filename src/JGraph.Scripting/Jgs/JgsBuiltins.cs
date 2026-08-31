@@ -1308,11 +1308,12 @@ internal static partial class JgsBuiltins
                 return SplitCalendar(args[0], args[1], line, col);
             }
 
+            string subject = Str("split", args, 0, line, col);
             string[] parts;
             if (args.Count == 1)
             {
                 // MATLAB's default: split on runs of whitespace.
-                parts = Str("split", args, 0, line, col).Split((char[]?)null, StringSplitOptions.RemoveEmptyEntries);
+                parts = subject.Split((char[]?)null, StringSplitOptions.RemoveEmptyEntries);
             }
             else
             {
@@ -1322,77 +1323,94 @@ internal static partial class JgsBuiltins
                     throw new JgsRuntimeException(line, col, "split separator must not be empty.");
                 }
 
-                parts = Str("split", args, 0, line, col).Split(separator, StringSplitOptions.None);
+                parts = subject.Split(separator, StringSplitOptions.None);
             }
 
-            var result = new JgsValue[parts.Length];
-            for (int i = 0; i < parts.Length; i++)
+            if (!dialect!.IsMatlab)
             {
-                result[i] = JgsValue.Str(parts[i]);
+                // JGS keeps the flat list it has always answered; only MATLAB has containers of text
+                // to preserve, and only MATLAB reads the answer as a column.
+                return JgsValue.Array(Array.ConvertAll(parts, JgsValue.Str));
             }
 
-            JgsValue column = JgsValue.Array(result);
-            if (result.Length > 1 && dialect!.IsMatlab)
-            {
-                column.Reshape(result.Length, 1); // split answers are columns in MATLAB; JGS keeps the flat list
-            }
-
-            return column;
+            // The pieces go into the container the subject arrived in — a char row into a cell, a
+            // string into a string array — which is the one-to-many rule M104 already wrote down for
+            // splitlines and extract. Until M121 this built a bare array of strings and left the tag
+            // off, which is why `class(split('a,b', ','))` answered 'double'.
+            return SpreadPieces(
+                "split", ReadText(args[0], "First argument must be text.", line, col),
+                [parts], "delimiters", line, col);
         });
 
-        Define("join", (args, line, col) =>
-        {
-            ArityRange("join", args, 1, 2, line, col);
-            string separator = args.Count == 2 ? Str("join", args, 1, line, col) : " ";
-
-            // A shaped string array joins along its rows (MATLAB's dim 2): one string per row.
-            JgsValue input = args[0];
-            if (input.Type == JgsType.Array && input.Rows > 1 && input.Cols > 1)
-            {
-                var rows = new JgsValue[input.Rows];
-                for (int r = 0; r < input.Rows; r++)
-                {
-                    var cells = new string[input.Cols];
-                    for (int c = 0; c < input.Cols; c++)
-                    {
-                        cells[c] = input.ElementAt(r + (c * input.Rows)).Display();
-                    }
-
-                    rows[r] = JgsValue.Str(string.Join(separator, cells));
-                }
-
-                JgsValue column = JgsValue.Array(rows);
-                column.Reshape(rows.Length, 1);
-                return column;
-            }
-
-            JgsValue[] parts = Arr("join", args, 0, line, col);
-            return JgsValue.Str(string.Join(separator, parts.Select(static p => p.Display())));
-        });
+        Define("join", (args, line, col) => Joined(args, line, col));
 
         // MATLAB spells these with the interior capital, and one canonical spelling beats two.
         Define("startsWith", (args, line, col) =>
         {
             Arity("startsWith", args, 2, line, col);
-            return JgsValue.Bool(Str("startsWith", args, 0, line, col).StartsWith(Str("startsWith", args, 1, line, col), StringComparison.Ordinal));
+            string opening = Str("startsWith", args, 0, line, col);
+            if (IsOnePattern(args[1], out string oneOpening))
+            {
+                return JgsValue.Bool(opening.StartsWith(oneOpening, StringComparison.Ordinal));
+            }
+
+            // A plain loop rather than Array.Exists: that predicate captures `opening`, and a
+            // closure built once per element is the whole cost of supporting the list.
+            foreach (string pattern in PatternsOf("startsWith", args, 1, line, col))
+            {
+                if (opening.StartsWith(pattern, StringComparison.Ordinal))
+                {
+                    return JgsValue.Bool(true);
+                }
+            }
+
+            return JgsValue.Bool(false);
         });
 
         Define("endsWith", (args, line, col) =>
         {
             Arity("endsWith", args, 2, line, col);
-            return JgsValue.Bool(Str("endsWith", args, 0, line, col).EndsWith(Str("endsWith", args, 1, line, col), StringComparison.Ordinal));
+            string closing = Str("endsWith", args, 0, line, col);
+            if (IsOnePattern(args[1], out string oneClosing))
+            {
+                return JgsValue.Bool(closing.EndsWith(oneClosing, StringComparison.Ordinal));
+            }
+
+            foreach (string pattern in PatternsOf("endsWith", args, 1, line, col))
+            {
+                if (closing.EndsWith(pattern, StringComparison.Ordinal))
+                {
+                    return JgsValue.Bool(true);
+                }
+            }
+
+            return JgsValue.Bool(false);
         });
 
         Define("replace", (args, line, col) =>
         {
             Arity("replace", args, 3, line, col);
-            string oldText = Str("replace", args, 1, line, col);
-            if (oldText.Length == 0)
+            if (IsOnePattern(args[1], out string onlyOld) && IsOnePattern(args[2], out string onlyNew))
+            {
+                if (onlyOld.Length == 0)
+                {
+                    throw new JgsRuntimeException(line, col, "replace cannot search for an empty string.");
+                }
+
+                return JgsValue.Str(Str("replace", args, 0, line, col)
+                    .Replace(onlyOld, onlyNew, StringComparison.Ordinal));
+            }
+
+            string[] wanted = PatternsOf("replace", args, 1, line, col);
+            if (Array.Exists(wanted, static p => p.Length == 0))
             {
                 throw new JgsRuntimeException(line, col, "replace cannot search for an empty string.");
             }
 
-            return JgsValue.Str(Str("replace", args, 0, line, col).Replace(oldText, Str("replace", args, 2, line, col), StringComparison.Ordinal));
+            return JgsValue.Str(ReplacedAtOnce(
+                Str("replace", args, 0, line, col),
+                wanted,
+                ReplacementsFor("replace", args, 2, wanted, line, col)));
         });
 
         Define("contains", (args, line, col) =>
@@ -1401,7 +1419,23 @@ internal static partial class JgsBuiltins
             // Polymorphic: substring test on strings, membership test on arrays.
             if (args[0].Type == JgsType.String)
             {
-                return JgsValue.Bool(args[0].AsString.Contains(Str("contains", args, 1, line, col), StringComparison.Ordinal));
+                // Several patterns ask one question between them: MATLAB answers true when *any* of
+                // them is in the text, which is why the loop stops at the first that is.
+                string subject = args[0].AsString;
+                if (IsOnePattern(args[1], out string onlyPattern))
+                {
+                    return JgsValue.Bool(subject.Contains(onlyPattern, StringComparison.Ordinal));
+                }
+
+                foreach (string pattern in PatternsOf("contains", args, 1, line, col))
+                {
+                    if (subject.Contains(pattern, StringComparison.Ordinal))
+                    {
+                        return JgsValue.Bool(true);
+                    }
+                }
+
+                return JgsValue.Bool(false);
             }
 
             JgsValue[] haystack = Arr("contains", args, 0, line, col);
@@ -2519,8 +2553,13 @@ internal static partial class JgsBuiltins
             })));
         }
 
+        RegisterSolverBuiltins(env);
         RegisterStringEditingBuiltins(env);
         RegisterStringArrayBuiltins(env);
+
+        // After every define and after the other retrofits, so it wraps whichever wrapper each of
+        // these six names ended up with (M121).
+        MapTextSubjects(env);
 
         // Last of all, so it wraps whichever wrapper each name ended up with (M105) — the same reason
         // the string-array marks are applied last.

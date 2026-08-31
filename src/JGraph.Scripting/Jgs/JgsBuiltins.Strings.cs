@@ -324,34 +324,44 @@ internal static partial class JgsBuiltins
         }
 
         string text = Str("regexprep", args, 0, line, col);
-        string pattern = Str("regexprep", args, 1, line, col);
-        string replacement = Str("regexprep", args, 2, line, col);
+        string[] patterns = PatternsOf("regexprep", args, 1, line, col);
+        string[] replacements = ReplacementsFor("regexprep", args, 2, patterns, line, col);
         RegexMode mode = ReadRegexWords("regexprep", args, 3, RegexOptions.None, requested: null, line, col);
 
+        // Several expressions are applied one after another, each to what the one before it left —
+        // which is MATLAB's rule and not `replace`'s. The two genuinely differ, and the difference
+        // is visible in one line: regexprep("a", ["a";"b"], ["b";"c"]) is "c", because the b the
+        // first expression wrote is found by the second, where replace of the same lists is "b".
         var built = new StringBuilder();
-        int at = 0;
-        foreach (Match match in Compile("regexprep", pattern, mode.Options, line, col).Matches(text))
+        for (int p = 0; p < patterns.Length; p++)
         {
-            if (match.Length == 0 && !mode.EmptyMatch)
+            built.Clear();
+            int at = 0;
+            foreach (Match match in Compile("regexprep", patterns[p], mode.Options, line, col).Matches(text))
             {
-                continue;
+                if (match.Length == 0 && !mode.EmptyMatch)
+                {
+                    continue;
+                }
+
+                built.Append(text, at, match.Index - at);
+
+                // MATLAB and .NET spell a capture reference the same way ($1), so the replacement text
+                // passes straight through the substitution.
+                string produced = match.Result(replacements[p]);
+                built.Append(mode.PreserveCase ? InTheCaseOf(match.Value, produced) : produced);
+                at = match.Index + match.Length;
+                if (mode.Once)
+                {
+                    break;
+                }
             }
 
-            built.Append(text, at, match.Index - at);
-
-            // MATLAB and .NET spell a capture reference the same way ($1), so the replacement text
-            // passes straight through the substitution.
-            string produced = match.Result(replacement);
-            built.Append(mode.PreserveCase ? InTheCaseOf(match.Value, produced) : produced);
-            at = match.Index + match.Length;
-            if (mode.Once)
-            {
-                break;
-            }
+            built.Append(text, at, text.Length - at);
+            text = built.ToString();
         }
 
-        built.Append(text, at, text.Length - at);
-        return JgsValue.Str(built.ToString());
+        return JgsValue.Str(text);
     }
 
     /// <summary>

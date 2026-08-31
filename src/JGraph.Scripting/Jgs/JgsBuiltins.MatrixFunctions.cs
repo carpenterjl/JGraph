@@ -63,11 +63,16 @@ internal static partial class JgsBuiltins
                 "ode45 produces two outputs: use [t, y] = ode45(f, tspan, y0)."),
             (args, _, line, col) =>
             {
-                Arity("ode45", args, 3, line, col);
+                ArityRange("ode45", args, 3, 4, line, col);
                 if (args[0].Type != JgsType.Function)
                 {
                     throw new JgsRuntimeException(line, col, "ode45 expects a function handle f(t, y).");
                 }
+
+                // The fourth argument is odeset's structure (M121). Without one the settings are
+                // the defaults this solver has always used, so nothing that ran before moves.
+                (double relative, double absolute, int refine, double? maxStep, double? firstStep) =
+                    Ode45Settings(args.Count > 3 ? args[3] : null);
 
                 IJgsCallable f = args[0].AsCallable;
                 double[] tspan = ToDoubles("ode45", args[1], line, col);
@@ -91,7 +96,8 @@ internal static partial class JgsBuiltins
                 List<JGraph.Numerics.OdeSolvers.OdePoint> points;
                 try
                 {
-                    points = JGraph.Numerics.OdeSolvers.DormandPrince(Derivative, tspan, initial);
+                    points = JGraph.Numerics.OdeSolvers.DormandPrince(
+                        Derivative, tspan, initial, relative, absolute, refine, maxStep, firstStep);
                 }
                 catch (Exception ex) when (ex is ArgumentException or InvalidOperationException)
                 {

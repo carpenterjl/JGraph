@@ -75,16 +75,42 @@ internal static partial class JgsBuiltins
         Define("count", (args, line, col) =>
         {
             Arity("count", args, 2, line, col);
-            string pattern = Str("count", args, 1, line, col);
-            return PerString("count", args[0], text => JgsValue.Number(Occurrences(text, pattern, 0).Length), line, col);
+
+            if (IsOnePattern(args[1], out string onePattern))
+            {
+                return PerString("count", args[0],
+                    text => JgsValue.Number(Occurrences(text, onePattern, 0).Length), line, col);
+            }
+
+            // Several patterns are counted together, not compared: MATLAB adds up how many times
+            // any of them appears.
+            string[] wanted = PatternsOf("count", args, 1, line, col);
+            return PerString("count", args[0], text =>
+            {
+                int total = 0;
+                foreach (string pattern in wanted)
+                {
+                    total += Occurrences(text, pattern, 0).Length;
+                }
+
+                return JgsValue.Number(total);
+            }, line, col);
         }, null);
 
         Define("matches", (args, line, col) =>
         {
             Arity("matches", args, 2, line, col);
-            string pattern = Str("matches", args, 1, line, col);
+            if (IsOnePattern(args[1], out string oneWhole))
+            {
+                return PerString("matches", args[0],
+                    text => JgsValue.Bool(string.Equals(text, oneWhole, StringComparison.Ordinal)),
+                    line, col);
+            }
+
+            string[] whole = PatternsOf("matches", args, 1, line, col);
             return PerString("matches", args[0],
-                text => JgsValue.Bool(string.Equals(text, pattern, StringComparison.Ordinal)), line, col);
+                text => JgsValue.Bool(Array.Exists(whole, p => string.Equals(text, p, StringComparison.Ordinal))),
+                line, col);
         }, null);
 
         Define("strlength", (args, line, col) =>

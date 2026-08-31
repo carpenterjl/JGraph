@@ -2118,6 +2118,13 @@ internal static partial class JgsBuiltins
             return JgsValue.Str(string.Concat(parts.Select(static p => p.AsString)));
         }
 
+        // A string array among the pieces makes this the bracket's job, not the numeric one — and
+        // the bracket already knows how (M121). Before this, horzcat(s, s) refused what [s s] built.
+        if (parts.Any(static p => p.IsStringArray))
+        {
+            return ConcatenateStringArrays([[.. parts]], line, col);
+        }
+
         if (parts.Any(p => IsMatrixValue(p)))
         {
             double[][][] blocks = parts.Select(p => AsJaggedRows(name, p, line, col)).ToArray();
@@ -2161,6 +2168,13 @@ internal static partial class JgsBuiltins
         }
 
         parts = joinable;
+
+        // As in ConcatHorizontal: a string array makes this the bracket's stacking rule, one band
+        // per piece (M121).
+        if (parts.Any(static p => p.IsStringArray))
+        {
+            return ConcatenateStringArrays([.. parts.Select(static p => new[] { p })], line, col);
+        }
 
         double[][][] blocks = parts.Select(p => AsJaggedRows(name, p, line, col)).ToArray();
         int width = blocks[0][0].Length;

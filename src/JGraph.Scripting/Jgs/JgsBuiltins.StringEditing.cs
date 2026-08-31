@@ -27,6 +27,17 @@ internal static partial class JgsBuiltins
         "erase", "pad", "insertAfter", "insertBefore", "extractAfter", "extractBefore",
     ];
 
+    /// <summary>
+    /// The names whose arguments after the subject are a list of patterns rather than a partner to
+    /// pair elementwise with. MATLAB lets every one of them take several, and each does its own
+    /// thing with the list: <c>contains</c> asks whether any matched, <c>count</c> adds them up,
+    /// <c>replace</c> and <c>erase</c> apply them all in one pass.
+    /// </summary>
+    private static readonly HashSet<string> PatternTakingBuiltins = new(StringComparer.Ordinal)
+    {
+        "contains", "startsWith", "endsWith", "matches", "count", "replace", "erase", "regexprep",
+    };
+
     /// <summary>Registers the editing family and applies the elementwise retrofit.</summary>
     internal static void RegisterStringEditingBuiltins(JgsEnvironment env)
     {
@@ -171,8 +182,15 @@ internal static partial class JgsBuiltins
         Define("erase", (args, line, col) =>
         {
             Arity("erase", args, 2, line, col);
-            return JgsValue.Str(Str("erase", args, 0, line, col)
-                .Replace(Str("erase", args, 1, line, col), string.Empty, StringComparison.Ordinal));
+            if (IsOnePattern(args[1], out string onlyGone))
+            {
+                return JgsValue.Str(Str("erase", args, 0, line, col)
+                    .Replace(onlyGone, string.Empty, StringComparison.Ordinal));
+            }
+
+            string[] gone = PatternsOf("erase", args, 1, line, col);
+            return JgsValue.Str(ReplacedAtOnce(
+                Str("erase", args, 0, line, col), gone, new string?[gone.Length]));
         });
 
         Define("insertAfter", (args, line, col) => Insert("insertAfter", args, after: true, line, col));
@@ -299,8 +317,13 @@ internal static partial class JgsBuiltins
 
             env.Declare(name, JgsValue.Function(new BuiltinFunction(name, (args, line, col) =>
             {
+                // Which argument the map walks. For most names it is the first container found —
+                // strcmp("a", ["a" "b"]) compares one against each — but for the search-and-edit
+                // verbs a container after the subject is a *list of patterns* the body applies
+                // together, not a partner to pair with, and mapping over it would answer once per
+                // pattern instead of once (M121).
                 int slot = FirstTextContainer(args);
-                if (slot < 0)
+                if (slot < 0 || (slot > 0 && PatternTakingBuiltins.Contains(name)))
                 {
                     return inner.Call(args, line, col);
                 }

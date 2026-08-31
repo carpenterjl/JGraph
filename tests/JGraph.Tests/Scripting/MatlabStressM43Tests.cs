@@ -80,6 +80,14 @@ public class MatlabStressM43Tests : IDisposable
         Assert.Contains("2 1", output, StringComparison.Ordinal);
     }
 
+    /// <summary>Splitting and rejoining text, in both containers MATLAB has one for.</summary>
+    /// <remarks>
+    /// The <c>joined{1}</c> here is not decoration. <c>split</c> of a <em>char row</em> answers a
+    /// cell and <c>join</c> of a cell answers a 1-by-1 cell, so the text has to be taken out of the
+    /// cell before <c>fprintf</c> can print it — which is what R2024a requires, measured rather than
+    /// assumed. Until M121 this script read <c>joined</c> directly, because <c>split</c> gave back a
+    /// bare array of strings whatever container it was handed.
+    /// </remarks>
     [Fact]
     public void StringConversionsRoundTrip()
     {
@@ -88,10 +96,34 @@ public class MatlabStressM43Tests : IDisposable
             joined = join(parts');
             cs = cellstr(["a", "b"]);
             back = string(cs);
-            fprintf('%d %s %s %s\n', numel(parts), joined, cs{2}, back(1));
+            fprintf('%d %s %s %s\n', numel(parts), joined{1}, cs{2}, back(1));
             """);
 
         Assert.Contains("3 one two three b a", output, StringComparison.Ordinal);
+    }
+
+    /// <summary>A one-to-many text verb answers in the container it was handed (M121).</summary>
+    /// <remarks>
+    /// Every expectation here is R2024a's own: a char row splits to a cell, a string to a string
+    /// array, and a column of two strings to a 2-by-2 — the pieces along a new dimension, not a
+    /// longer list. The last line is what a flattened answer would get wrong while keeping the
+    /// count right, so it is the one that would catch a regression to the old behaviour.
+    /// </remarks>
+    [Fact]
+    public void SplitAnswersInTheContainerItWasHanded()
+    {
+        string output = RunAndRead("""
+            a = split('a,b', ',');
+            b = split("a,b", ",");
+            c = split(["a,b"; "c,d"], ",");
+            fprintf('%s %s %s\n', class(a), class(b), class(c));
+            fprintf('%d %d %d %d\n', size(c, 1), size(c, 2), numel(a), numel(b));
+            fprintf('%s %s\n', c(2, 1), c(1, 2));
+            """);
+
+        Assert.Contains("cell string string", output, StringComparison.Ordinal);
+        Assert.Contains("2 2 2 2", output, StringComparison.Ordinal);
+        Assert.Contains("c b", output, StringComparison.Ordinal);
     }
 
     [Fact]

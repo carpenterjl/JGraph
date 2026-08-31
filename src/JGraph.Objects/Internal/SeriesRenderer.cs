@@ -13,7 +13,24 @@ namespace JGraph.Objects.Internal;
 /// </summary>
 internal static class SeriesRenderer
 {
-    /// <summary>Above this many samples, markers are suppressed to avoid clutter and cost.</summary>
+    /// <summary>
+    /// Above this many samples, markers are placed one per device pixel rather than one per sample.
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    /// Until M121 this was the count above which markers were <em>suppressed</em>, and the comment
+    /// said so: "to avoid clutter and cost". The cost was real and the clutter was not — a marker
+    /// per sample is what MATLAB draws, however many there are. What the rule actually did was
+    /// leave an axes completely blank whenever the series had no line to fall back on, which is
+    /// every <c>plot(x, y, '.')</c> over more than five thousand points: the limits were computed
+    /// from the data, the ticks were drawn, and nothing was inside them.
+    /// </para>
+    /// <para>
+    /// The count is kept as the threshold for the collapse below rather than deleted, so that every
+    /// series that drew markers before draws exactly the same ones now — overlapping marks are only
+    /// merged past the point where none were being drawn at all.
+    /// </para>
+    /// </remarks>
     public const int MaxMarkerCount = 5000;
 
     public static void DrawLine(
@@ -120,6 +137,13 @@ internal static class SeriesRenderer
         // which is how a line of ten thousand points is given a dozen readable markers.
         int wanted = indices?.Length ?? data.Count;
         EnsureCapacity(ref pixelBuffer, wanted);
+
+        // Past the threshold, samples that land on the same device pixel are drawn once. Two
+        // hundred thousand markers over a plot area of half a million pixels is at most half a
+        // million marks and usually far fewer, so the work stops growing with the data and starts
+        // being bounded by the picture — and the picture is the same one, because a second opaque
+        // mark on a pixel already marked adds no ink.
+        HashSet<long>? drawn = wanted > MaxMarkerCount ? new HashSet<long>(MaxMarkerCount) : null;
         int m = 0;
         for (int k = 0; k < wanted; k++)
         {
@@ -131,13 +155,33 @@ internal static class SeriesRenderer
 
             double x = data.GetX(i);
             double y = data.GetY(i);
-            if (double.IsFinite(x) && double.IsFinite(y))
+            if (!double.IsFinite(x) || !double.IsFinite(y))
             {
-                pixelBuffer[m++] = mapper.DataToPixel(x, y);
+                continue;
             }
+
+            Point2D at = mapper.DataToPixel(x, y);
+            if (drawn is not null && !drawn.Add(PixelKey(at)))
+            {
+                continue;
+            }
+
+            pixelBuffer[m++] = at;
         }
 
         context.DrawMarkers(pixelBuffer.AsSpan(0, m), marker, seriesColor);
+    }
+
+    /// <summary>
+    /// One device pixel, as a single number two marks can be compared by. Non-finite coordinates
+    /// never reach here, and the clamp keeps a point far outside the axes from wrapping onto one
+    /// inside it.
+    /// </summary>
+    private static long PixelKey(Point2D at)
+    {
+        long column = (long)System.Math.Clamp(System.Math.Round(at.X), -1_000_000.0, 1_000_000.0);
+        long row = (long)System.Math.Clamp(System.Math.Round(at.Y), -1_000_000.0, 1_000_000.0);
+        return (column << 22) ^ row;
     }
 
     public static DataRange VisibleXRange(ICoordinateMapper mapper, Rect2D area)

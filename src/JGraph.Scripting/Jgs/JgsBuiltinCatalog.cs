@@ -461,7 +461,11 @@ public static class JgsBuiltinCatalog
         Add("cond", "The condition number of a matrix (2-norm by default; 1, Inf, and 'fro' accepted).", P("A"), Opt("p"));
         Add("sqrtm", "The principal matrix square root, by the Denman-Beavers iteration.", P("A"));
         Add("logm", "The principal matrix logarithm, by inverse scaling and squaring over sqrtm.", P("A"));
-        Add("ode45", "Solves dy/dt = f(t, y): [t, y] = ode45(f, tspan, y0), Dormand-Prince with adaptive steps.", P("f"), P("tspan"), P("y0"));
+        Add("ode45", "Solves dy/dt = f(t, y): [t, y] = ode45(f, tspan, y0, options), Dormand-Prince with adaptive steps.", P("f"), P("tspan"), P("y0"), Opt("options"));
+        Add("odeset", "The settings structure ode45 takes: opts = odeset('RelTol', 1e-8, 'MaxStep', 0.01).", Opt("options"));
+        Add("odeget", "One setting out of that structure, or a fallback: r = odeget(opts, 'RelTol', 1e-3).", P("options"), P("name"), Opt("default"));
+        Add("integral", "The definite integral of a function, adaptively: q = integral(@(x) x.^2, 0, 1). Either limit may be infinite.", P("fun"), P("a"), P("b"), Opt("options"));
+        Add("quadgk", "Adaptive Gauss-Kronrod quadrature with its own error bound: [q, errbnd] = quadgk(fun, a, b).", P("fun"), P("a"), P("b"), Opt("options"));
         Add("sparse", "Converts to sparse storage: sparse(A), sparse(m, n), sparse(i, j, v), or sparse(i, j, v, m, n).", P("A"), Opt("j"), Opt("v"), Opt("m"), Opt("n"));
         Add("sprand", "A sparse random matrix with roughly m*n*density uniform nonzeros.", P("m"), P("n"), P("density"));
         Add("eigs", "The k eigenvalues of largest magnitude (Arnoldi); [V, D] = eigs(A, k) adds Ritz vectors.", P("A"), P("k"));

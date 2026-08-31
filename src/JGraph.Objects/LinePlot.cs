@@ -165,7 +165,7 @@ public sealed class LinePlot : XYPlot, IDrawable, ILegendItem
         SeriesRenderer.DrawLine(
             context, state, path, line, ref _dataBuffer, ref _pixelBuffer, _alignVertexCenters);
 
-        if (_marker != MarkerType.None && Data.Count <= SeriesRenderer.MaxMarkerCount)
+        if (_marker != MarkerType.None)
         {
             Color edge = _markerEdge ?? color;
             var marker = new MarkerStyle(_marker, _markerSize, _markerFill, edge);
