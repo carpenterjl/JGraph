@@ -102,6 +102,27 @@ internal sealed class BuiltinFunction : IJgsCallable, IJgsMultiCallable
     public JgsValue Call(IReadOnlyList<JgsValue> arguments, int line, int column) =>
         Guarded(() => _implementation(DemoteStringScalars(arguments), line, column), line, column);
 
+    /// <summary>
+    /// The body alone, with none of the work <see cref="Call"/> does around it, for a caller that
+    /// has already done that work itself.
+    /// </summary>
+    /// <remarks>
+    /// The one caller is the elementwise text wrapper, which runs a builtin once per element of a
+    /// string array. Everything <see cref="Call"/> adds — a closure and a delegate for the guard, a
+    /// walk over the arguments and an array for the demotion — depends on the arguments beside the
+    /// text, and those do not change as the map walks. Done once for the container rather than once
+    /// per element, they stop being most of what the call costs.
+    /// </remarks>
+    internal JgsValue Invoke(IReadOnlyList<JgsValue> arguments, int line, int column) =>
+        _implementation(arguments, line, column);
+
+    /// <summary>Runs <paramref name="body"/> under this builtin's own exception translation.</summary>
+    internal T Protect<T>(Func<T> body, int line, int column) => Guarded(body, line, column);
+
+    /// <summary>One argument as <see cref="Call"/> would hand it to the body.</summary>
+    internal JgsValue Demote(JgsValue value) =>
+        !KeepsStringArguments && IsStringScalar(value) ? value.ElementAt(0) : value;
+
     /// <inheritdoc />
     public JgsValue[] CallMultiple(IReadOnlyList<JgsValue> arguments, int wanted, int line, int column) =>
         MultiOutput is { } multi && wanted > 1

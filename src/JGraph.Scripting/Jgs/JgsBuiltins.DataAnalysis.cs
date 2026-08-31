@@ -1094,25 +1094,7 @@ internal static partial class JgsBuiltins
             }
         }
 
-        var order = new int[rows];
-        for (int r = 0; r < rows; r++)
-        {
-            order[r] = r;
-        }
-
-        Array.Sort(order, (a, b) =>
-        {
-            foreach ((int column, bool descending) in keys)
-            {
-                int rank = RankNumbers(flat[a + (column * rows)], flat[b + (column * rows)]);
-                if (rank != 0)
-                {
-                    return descending ? -rank : rank;
-                }
-            }
-
-            return a.CompareTo(b); // equal rows keep the order they came in
-        });
+        int[] order = RowOrder(flat, rows, keys);
 
         var sorted = new double[flat.Length];
         var places = new double[rows];
@@ -1132,10 +1114,79 @@ internal static partial class JgsBuiltins
     }
 
     /// <summary>A missing reading sorts to the back, which is where MATLAB's own comparisons put it.</summary>
-    private static int RankNumbers(double a, double b) =>
-        double.IsNaN(a) ? (double.IsNaN(b) ? 0 : 1)
-        : double.IsNaN(b) ? -1
-        : a.CompareTo(b);
+    /// <summary>
+    /// The rows in order: by the first key, then by the second where the first ties, and by the
+    /// order they arrived in where every key ties.
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    /// Ascending within a key means ascending among the numbers with every missing reading behind
+    /// them, and it used to be said as a comparison delegate walking the key list afresh at every
+    /// one of the N log N comparisons a sort makes. It is said here instead as one stable pass per
+    /// key, taken from the last key to
+    /// the first, which is the same order for the same reason a radix sort is: sorting by the least
+    /// important key first and letting each later pass keep what the earlier ones settled leaves the
+    /// keys ranked in the order they were applied, backwards.
+    /// </para>
+    /// <para>
+    /// Each pass sorts a <see cref="ulong"/> that stands for the double at that key, so no
+    /// comparison is a call; the library sort is not stable, so the run of rows tying on a key is
+    /// put back into the order it held before the pass, which is what makes the pass stable and the
+    /// whole thing lexicographic.
+    /// </para>
+    /// </remarks>
+    private static int[] RowOrder(double[] flat, int rows, List<(int Column, bool Descending)> keys)
+    {
+        var order = new int[rows];
+        for (int r = 0; r < rows; r++)
+        {
+            order[r] = r;
+        }
+
+        var next = new int[rows];
+        var places = new int[rows];
+        var ranks = new ulong[rows];
+        for (int k = keys.Count - 1; k >= 0; k--)
+        {
+            (int column, bool descending) = keys[k];
+            int at = column * rows;
+            for (int r = 0; r < rows; r++)
+            {
+                ulong rank = RankOf(flat[order[r] + at]);
+
+                // Turning the key over reverses the order it stands for, missing readings included:
+                // NaN ranks above everything ascending, and below everything descending, which is
+                // what negating the comparison did.
+                ranks[r] = descending ? ~rank : rank;
+                places[r] = r;
+            }
+
+            Array.Sort(ranks, places, 0, rows);
+
+            int start = 0;
+            for (int r = 1; r <= rows; r++)
+            {
+                if (r == rows || ranks[r] != ranks[start])
+                {
+                    if (r - start > 1)
+                    {
+                        Array.Sort(places, start, r - start);
+                    }
+
+                    start = r;
+                }
+            }
+
+            for (int r = 0; r < rows; r++)
+            {
+                next[r] = order[places[r]];
+            }
+
+            (order, next) = (next, order);
+        }
+
+        return order;
+    }
 
     /// <summary>One direction word for every sort key: a single word applies to all of them.</summary>
     private static string[] DirectionWords(JgsValue given, int keys, int line, int col)
@@ -1256,9 +1307,10 @@ internal static partial class JgsBuiltins
         double[] edges = given ?? Binning.EdgesFor(data, requested, width, limits, rule);
         var counts = new double[edges.Length - 1];
         var which = new double[data.Length];
+        Binning.BinFinder finder = Binning.BinFinder.For(edges);
         for (int i = 0; i < data.Length; i++)
         {
-            int bin = BinOf(data[i], edges);
+            int bin = finder.Of(data[i]);
             which[i] = bin < 0 ? dialect.IndexBase - 1 : bin + dialect.IndexBase;
             if (bin >= 0)
             {
@@ -1273,36 +1325,6 @@ internal static partial class JgsBuiltins
             JgsMatrix.FromColumnMajorDims(which, SizeDims(parsed.Positional[0])));
     }
 
-    /// <summary>Which bin a value falls in, or −1 for one outside every bin.</summary>
-    private static int BinOf(double value, double[] edges)
-    {
-        if (double.IsNaN(value) || value < edges[0] || value > edges[^1])
-        {
-            return -1;
-        }
-
-        if (value == edges[^1])
-        {
-            return edges.Length - 2; // the last bin is closed at both ends
-        }
-
-        int low = 0;
-        int high = edges.Length - 1;
-        while (high - low > 1)
-        {
-            int mid = (low + high) / 2;
-            if (value < edges[mid])
-            {
-                high = mid;
-            }
-            else
-            {
-                low = mid;
-            }
-        }
-
-        return low;
-    }
 
     /// <summary>Bins filling exactly the span from low to high, which is what named limits mean.</summary>
     private static double[] Spanning(double low, double high, int bins)

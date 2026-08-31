@@ -393,14 +393,20 @@ internal static partial class JgsBuiltins
     /// <summary>The moving fences: a sliding center and a sliding spread, one value per element.</summary>
     private static OutlierFencesOf MovingFences(string name, double[] slice, OutlierPlan plan, int line, int col)
     {
-        Func<double[], double> center = plan.Method == "movmedian" ? MedianOf : static w => w.Average();
-        Func<double[], double> spread = plan.Method == "movmedian"
+        bool byMedian = plan.Method == "movmedian";
+        Func<double[], double> center = byMedian ? MedianOf : static w => w.Average();
+        Func<double[], double> spread = byMedian
             ? static w =>
             {
                 double middle = MedianOf(w);
                 return ScaledMadFactor * MedianOf(Array.ConvertAll(w, v => Math.Abs(v - middle)));
             }
             : static w => Math.Sqrt(SampleVarianceOf(w));
+
+        // The centre is a sliding summary either way; only the median's own spread — a deviation
+        // measured from a centre that moves with the window — has to be walked window by window.
+        WindowStat centerKind = byMedian ? WindowStat.Median : WindowStat.Mean;
+        WindowStat spreadKind = byMedian ? WindowStat.Other : WindowStat.StandardDeviation;
 
         double[] centers;
         double[] spreads;
@@ -413,14 +419,16 @@ internal static partial class JgsBuiltins
             }
 
             (double behind, double ahead) = SpanOf(name, plan.Window!, line, col);
-            centers = SlideOverPoints(slice, points, behind, ahead, "shrink", true, double.NaN, center);
-            spreads = SlideOverPoints(slice, points, behind, ahead, "shrink", true, double.NaN, spread);
+            centers = SlideOverPoints(
+                slice, points, behind, ahead, "shrink", true, double.NaN, centerKind, center);
+            spreads = SlideOverPoints(
+                slice, points, behind, ahead, "shrink", true, double.NaN, spreadKind, spread);
         }
         else
         {
             (int behind, int ahead) = ReachOf(name, plan.Window!, line, col);
-            centers = Slide(slice, behind, ahead, "shrink", 0, true, double.NaN, center);
-            spreads = Slide(slice, behind, ahead, "shrink", 0, true, double.NaN, spread);
+            centers = Slide(slice, behind, ahead, "shrink", 0, true, double.NaN, centerKind, center);
+            spreads = Slide(slice, behind, ahead, "shrink", 0, true, double.NaN, spreadKind, spread);
         }
 
         var lower = new double[slice.Length];

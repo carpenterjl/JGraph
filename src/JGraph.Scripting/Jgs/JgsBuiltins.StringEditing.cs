@@ -285,15 +285,30 @@ internal static partial class JgsBuiltins
                 bool asStrings = container.IsStringArray;
                 JgsValue[] pieces = asStrings ? container.BoxedElements() : container.AsCell;
 
-                var answers = new JgsValue[pieces.Length];
-                var one = args.ToArray();
-                for (int i = 0; i < pieces.Length; i++)
+                // The arguments beside the text are the same at every element, so they are demoted
+                // once here rather than walked and copied inside the inner call each time round —
+                // and the one exception translation wraps the whole map for the same reason. What
+                // reaches the builtin is what reached it before, element for element.
+                var one = new JgsValue[args.Count];
+                for (int i = 0; i < args.Count; i++)
                 {
-                    one[slot] = pieces[i];
-                    answers[i] = inner.Call(one, line, col);
+                    one[i] = inner.Demote(args[i]);
                 }
 
-                return Reassemble(answers, container, asStrings);
+                return inner.Protect(
+                    () =>
+                    {
+                        var answers = new JgsValue[pieces.Length];
+                        for (int i = 0; i < pieces.Length; i++)
+                        {
+                            one[slot] = inner.Demote(pieces[i]);
+                            answers[i] = inner.Invoke(one, line, col);
+                        }
+
+                        return Reassemble(answers, container, asStrings);
+                    },
+                    line,
+                    col);
             })
             {
                 // The wrapper has to see the string array to map over it, so it opts out of the

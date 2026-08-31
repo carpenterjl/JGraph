@@ -1,5 +1,6 @@
 using JGraph.Maths;
 using JGraph.Data;
+using JGraph.Numerics;
 
 namespace JGraph.Scripting.Jgs;
 
@@ -559,9 +560,10 @@ internal static partial class JgsBuiltins
         }
 
         var result = new double[bare.Values.Length];
+        Binning.BinFinder finder = Binning.BinFinder.For(edges);
         for (int i = 0; i < result.Length; i++)
         {
-            int bin = rightEdge ? RightBinOf(bare.Values[i], edges) : BinOf(bare.Values[i], edges);
+            int bin = rightEdge ? finder.OfRightClosed(bare.Values[i]) : finder.Of(bare.Values[i]);
             result[i] = bin < 0 ? double.NaN
                 : binValues is not null ? binValues[bin]
                 : bin + dialect.IndexBase;
@@ -573,36 +575,6 @@ internal static partial class JgsBuiltins
             Numbers(edges));
     }
 
-    /// <summary>Which bin a value falls in when each bin owns its right edge; −1 for one outside them all.</summary>
-    private static int RightBinOf(double value, double[] edges)
-    {
-        if (double.IsNaN(value) || value < edges[0] || value > edges[^1])
-        {
-            return -1;
-        }
-
-        if (value == edges[0])
-        {
-            return 0; // the first bin is closed at both ends, mirroring how the last one is by default
-        }
-
-        int low = 0;
-        int high = edges.Length - 1;
-        while (high - low > 1)
-        {
-            int mid = (low + high) / 2;
-            if (value <= edges[mid])
-            {
-                high = mid;
-            }
-            else
-            {
-                low = mid;
-            }
-        }
-
-        return low;
-    }
 
     // --- fillmissing --------------------------------------------------------------------------
 
@@ -1456,6 +1428,21 @@ internal static partial class JgsBuiltins
         var result = new double[n];
         int behind = window / 2;
         int ahead = (window - 1) / 2;
+
+        // The two moving-average methods are the same shrinking window the mov* family slides, and
+        // the default window here is a tenth of the data (ADR 0066) — so rebuilding it at every
+        // point made the default call quadratic in the length of the series.
+        WindowStat kind = method switch
+        {
+            "movmedian" => WindowStat.Median,
+            "gaussian" or "lowess" or "loess" or "rlowess" or "rloess" or "sgolay" => WindowStat.Other,
+            _ => WindowStat.Mean,
+        };
+        if (points is null && WindowKernels.Handles(kind))
+        {
+            return WindowKernels.Slide(
+                kind, slice, behind, ahead, WindowEnds.Shrink, 0, omitNan, double.NaN);
+        }
 
         for (int i = 0; i < n; i++)
         {

@@ -674,10 +674,12 @@ internal static partial class JgsBuiltins
         var counts = new double[nx * ny];
         var binX = new double[xs.Length];
         var binY = new double[ys.Length];
+        Binning.BinFinder across = Binning.BinFinder.For(xEdges);
+        Binning.BinFinder down = Binning.BinFinder.For(yEdges);
         for (int i = 0; i < xs.Length; i++)
         {
-            int bx = Binning.BinOf(xs[i], xEdges);
-            int by = Binning.BinOf(ys[i], yEdges);
+            int bx = across.Of(xs[i]);
+            int by = down.Of(ys[i]);
             if (bx >= 0 && by >= 0)
             {
                 counts[(by * nx) + bx]++;

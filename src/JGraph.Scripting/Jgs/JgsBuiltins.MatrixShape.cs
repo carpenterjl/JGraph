@@ -647,8 +647,19 @@ internal static partial class JgsBuiltins
     /// <summary>Elementwise set membership: each element of <paramref name="subject"/> against the set.</summary>
     private static JgsValue Ismember(JgsValue subject, JgsValue set, int line, int col)
     {
+        // The set read once, rather than once per candidate. The walk below asks every member about
+        // every value, which is a product where it could be a sum: asking whether five thousand
+        // readings appear among a hundred thousand was five hundred million comparisons.
+        ulong[]? ranked = RankedMembers(set);
+
         bool Contains(JgsValue candidate)
         {
+            if (ranked is not null)
+            {
+                return candidate.Type is JgsType.Number or JgsType.Bool
+                    && Array.BinarySearch(ranked, MemberKeyOf(candidate.AsNumber)) >= 0;
+            }
+
             if (set.Type is JgsType.Array or JgsType.Cell)
             {
                 IEnumerable<JgsValue> members = set.Type == JgsType.Cell
@@ -689,6 +700,49 @@ internal static partial class JgsBuiltins
 
         return JgsValue.Bool(Contains(subject));
     }
+
+    /// <summary>
+    /// A set of plain numbers as sorted whole-order keys, or null when it holds anything else — text,
+    /// a cell, a complex number — for which the walk is still the only road.
+    /// </summary>
+    /// <remarks>
+    /// Two keys are equal exactly when <see cref="SameScalar"/> calls the two values the same, which
+    /// is what makes the search answer what the walk answered. That takes both of the rules
+    /// <see cref="double.Equals(double)"/> has and a comparison does not: every NaN is one key, so a
+    /// missing reading is a member of a set holding one, and the two zeros share a key.
+    /// </remarks>
+    private static ulong[]? RankedMembers(JgsValue set)
+    {
+        // A short set is walked as it always was: sorting it would cost more than the walk it saves.
+        if (set.Type != JgsType.Array || set.ArrayLength < 16)
+        {
+            return null;
+        }
+
+        var keys = new ulong[set.ArrayLength];
+        int at = 0;
+        foreach (JgsValue member in EnumerateElements(set))
+        {
+            if (at == keys.Length || member.Type is not (JgsType.Number or JgsType.Bool))
+            {
+                return null;
+            }
+
+            keys[at++] = MemberKeyOf(member.AsNumber);
+        }
+
+        if (at != keys.Length)
+        {
+            return null;
+        }
+
+        Array.Sort(keys);
+        return keys;
+    }
+
+    /// <summary>The key two values share exactly when <see cref="SameScalar"/> calls them the same.</summary>
+    private static ulong MemberKeyOf(double value) =>
+        double.IsNaN(value) ? ulong.MaxValue : RankOf(value == 0 ? 0 : value);
 
     private static bool SameScalar(JgsValue a, JgsValue b)
     {

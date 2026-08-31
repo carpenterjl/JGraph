@@ -1,4 +1,6 @@
 using System.Numerics;
+using JGraph.Maths;
+using JGraph.Numerics;
 
 namespace JGraph.Scripting.Jgs;
 
@@ -35,6 +37,13 @@ internal static partial class JgsBuiltins
     private static (int[] Order, int[] Positions) GroupDistinct(
         string name, IReadOnlyList<JgsValue[]> keys, bool stable, bool last, int line, int col)
     {
+        // A key that is one plain number is what nearly every call has, and for those the order can
+        // be settled by the bits rather than by a comparison delegate over boxed values.
+        if (LoneNumbersOf(keys) is { } numbers)
+        {
+            return GroupNumbers(numbers, stable, last);
+        }
+
         int count = keys.Count;
         var sorted = new int[count];
         for (int i = 0; i < count; i++)
@@ -50,24 +59,177 @@ internal static partial class JgsBuiltins
             return order != 0 ? order : a.CompareTo(b);
         });
 
+        var starts = new bool[count];
+        for (int i = 0; i < count; i++)
+        {
+            int at = sorted[i];
+            starts[i] = i == 0
+                || HasMissing(keys[at])
+                || CompareKeys(name, keys[sorted[i - 1]], keys[at], line, col) != 0;
+        }
+
+        return GroupsFrom(sorted, starts, stable, last);
+    }
+
+    /// <summary>
+    /// The same grouping over plain numbers, with nothing boxed and no comparison delegate: the
+    /// order is settled by a key made from each value's own bits, which is a total order agreeing
+    /// with <see cref="CompareValues"/> everywhere — the two zeros apart, NaN last.
+    /// </summary>
+    /// <remarks>
+    /// The library sort this leans on is not stable, and it does not have to be. Which member of a
+    /// group the sort leaves in front changes nothing below: membership is decided by comparing
+    /// neighbouring keys, and the member a group is named by is its smallest or largest index, taken
+    /// with <see cref="Math.Min(int, int)"/> and <see cref="Math.Max(int, int)"/> rather than read
+    /// off the front of the run.
+    /// </remarks>
+    private static (int[] Order, int[] Positions) GroupNumbers(
+        ReadOnlySpan<double> values, bool stable, bool last)
+    {
+        int count = values.Length;
+        var sorted = new int[count];
+        var ranks = new ulong[count];
+        int kept = 0;
+        for (int i = 0; i < count; i++)
+        {
+            if (!double.IsNaN(values[i]))
+            {
+                ranks[kept] = RankOf(values[i]);
+                sorted[kept] = i;
+                kept++;
+            }
+        }
+
+        Array.Sort(ranks, sorted, 0, kept);
+
+        // A missing reading is its own group every time and sorts behind everything, so the NaNs go
+        // on the end in the order they arrived — which is where the comparison left them too.
+        int at = kept;
+        for (int i = 0; i < count; i++)
+        {
+            if (double.IsNaN(values[i]))
+            {
+                sorted[at++] = i;
+            }
+        }
+
+        var starts = new bool[count];
+        for (int i = 0; i < count; i++)
+        {
+            starts[i] = i == 0 || i >= kept || ranks[i - 1] != ranks[i];
+        }
+
+        return GroupsFrom(sorted, starts, stable, last);
+    }
+
+    /// <summary>
+    /// A whole-order key for a double: unsigned integers in this order sit in the order the doubles
+    /// do, with −0 before +0 and every NaN behind everything, which is <see cref="CompareValues"/>'s
+    /// order exactly.
+    /// </summary>
+    private static ulong RankOf(double value)
+    {
+        if (double.IsNaN(value))
+        {
+            return ulong.MaxValue;
+        }
+
+        ulong bits = (ulong)BitConverter.DoubleToInt64Bits(value);
+        return (bits & 0x8000_0000_0000_0000UL) != 0 ? ~bits : bits | 0x8000_0000_0000_0000UL;
+    }
+
+    /// <summary>
+    /// The keys as plain numbers, or null when even one of them is something else — a row, a piece
+    /// of text, a complex number — in which case the boxed comparison is the only road there is.
+    /// </summary>
+    private static double[]? LoneNumbersOf(IReadOnlyList<JgsValue[]> keys)
+    {
+        int count = keys.Count;
+
+        // Looked at before anything is allocated: a set of text keys would otherwise pay for an
+        // array of doubles it never fills, which is a cost the boxed road did not have.
+        if (count == 0 || keys[0].Length != 1 || keys[0][0].Type is not (JgsType.Number or JgsType.Bool))
+        {
+            return null;
+        }
+
+        var values = new double[count];
+        for (int i = 0; i < count; i++)
+        {
+            JgsValue[] key = keys[i];
+            if (key.Length != 1 || key[0].Type is not (JgsType.Number or JgsType.Bool))
+            {
+                return null;
+            }
+
+            values[i] = key[0].AsNumber;
+        }
+
+        return values;
+    }
+
+    /// <summary>
+    /// The distinct groups among values that are each their own key, without wrapping every one of
+    /// them in an array of one first — which for a two-million-element <c>unique</c> was two million
+    /// allocations before anything had been compared.
+    /// </summary>
+    private static (int[] Order, int[] Positions) DistinctAmong(
+        string name, JgsValue[] elements, bool stable, bool last, int line, int col)
+    {
+        bool numeric = elements.Length > 0 && elements[0].Type is JgsType.Number or JgsType.Bool;
+        if (numeric)
+        {
+            var values = new double[elements.Length];
+            for (int i = 0; i < elements.Length; i++)
+            {
+                if (elements[i].Type is not (JgsType.Number or JgsType.Bool))
+                {
+                    numeric = false;
+                    break;
+                }
+
+                values[i] = elements[i].AsNumber;
+            }
+
+            if (numeric)
+            {
+                return GroupNumbers(values, stable, last);
+            }
+        }
+
+        var keys = new JgsValue[elements.Length][];
+        for (int i = 0; i < elements.Length; i++)
+        {
+            keys[i] = [elements[i]];
+        }
+
+        return GroupDistinct(name, keys, stable, last, line, col);
+    }
+
+    /// <summary>
+    /// The part of the grouping that does not care how the order was arrived at: given the sorted
+    /// positions and which of them begin a new group, which input names each group and where every
+    /// input landed.
+    /// </summary>
+    private static (int[] Order, int[] Positions) GroupsFrom(
+        int[] sorted, bool[] starts, bool stable, bool last)
+    {
+        int count = sorted.Length;
         var group = new int[count];
         var firstOf = new List<int>();
         var lastOf = new List<int>();
         for (int i = 0; i < count; i++)
         {
             int at = sorted[i];
-            bool joins = i > 0
-                && !HasMissing(keys[at])
-                && CompareKeys(name, keys[sorted[i - 1]], keys[at], line, col) == 0;
-            if (joins)
-            {
-                firstOf[^1] = Math.Min(firstOf[^1], at);
-                lastOf[^1] = Math.Max(lastOf[^1], at);
-            }
-            else
+            if (starts[i])
             {
                 firstOf.Add(at);
                 lastOf.Add(at);
+            }
+            else
+            {
+                firstOf[^1] = Math.Min(firstOf[^1], at);
+                lastOf[^1] = Math.Max(lastOf[^1], at);
             }
 
             group[at] = firstOf.Count - 1;
@@ -234,13 +396,7 @@ internal static partial class JgsBuiltins
         // reaches for when it asks which serial numbers appear in a log.
         bool cells = subject.Type == JgsType.Cell;
         JgsValue[] elements = cells ? subject.AsCell : Arr("unique", [subject], 0, line, col);
-        var keys = new JgsValue[elements.Length][];
-        for (int i = 0; i < elements.Length; i++)
-        {
-            keys[i] = [elements[i]];
-        }
-
-        (int[] order, int[] positions) = GroupDistinct("unique", keys, stable, last, line, col);
+        (int[] order, int[] positions) = DistinctAmong("unique", elements, stable, last, line, col);
         var picked = new JgsValue[order.Length];
         for (int i = 0; i < order.Length; i++)
         {
@@ -604,6 +760,73 @@ internal static partial class JgsBuiltins
     private static double[] InBins(double[] values, double[] edges)
     {
         var counts = new double[edges.Length];
+        if (edges.Length == 0)
+        {
+            return counts;
+        }
+
+        if (edges.Length == 1)
+        {
+            foreach (double value in values)
+            {
+                if (value == edges[0])
+                {
+                    counts[0]++;
+                }
+            }
+
+            return counts;
+        }
+
+        // Edges that rise are read once instead of once per reading. The walk below asked every bin
+        // in turn, from the top down, so a reading in the first of two hundred and fifty-six bins
+        // cost two hundred and fifty-six comparisons; the finder settles it in one or two.
+        if (!Rising(edges))
+        {
+            return CountedByScan(values, edges);
+        }
+
+        Binning.BinFinder finder = Binning.BinFinder.For(edges);
+        double top = edges[^1];
+        foreach (double value in values)
+        {
+            if (value == top)
+            {
+                counts[^1]++; // histc gives the final edge a bin of its own, holding exact hits alone
+                continue;
+            }
+
+            int bin = finder.Of(value);
+            if (bin >= 0)
+            {
+                counts[bin]++;
+            }
+        }
+
+        return counts;
+    }
+
+    /// <summary>Whether the edges never step backwards, which a NaN among them also fails.</summary>
+    private static bool Rising(double[] edges)
+    {
+        for (int i = 1; i < edges.Length; i++)
+        {
+            if (!(edges[i] >= edges[i - 1]))
+            {
+                return false;
+            }
+        }
+
+        return !double.IsNaN(edges[0]);
+    }
+
+    /// <summary>
+    /// The original walk, kept for edges that do not rise: nothing documents what those mean, so
+    /// what they meant here is what they go on meaning.
+    /// </summary>
+    private static double[] CountedByScan(double[] values, double[] edges)
+    {
+        var counts = new double[edges.Length];
         foreach (double value in values)
         {
             for (int b = edges.Length - 1; b >= 0; b--)
@@ -949,7 +1172,7 @@ internal static partial class JgsBuiltins
     /// </remarks>
     private static void RegisterMovingStatistics(JgsEnvironment env)
     {
-        void Moving(string name, double identity, Func<double[], double> statistic) =>
+        void Moving(string name, double identity, WindowStat kind, Func<double[], double> statistic) =>
             env.Declare(name, JgsValue.Function(new BuiltinFunction(name, (args, line, col) =>
             {
                 OptionSpec spec = new(name, Flags: ["omitnan", "includenan"], Names: ["Endpoints", "SamplePoints"]);
@@ -993,26 +1216,28 @@ internal static partial class JgsBuiltins
                     }
 
                     windowed[s] = points is null
-                        ? Slide(slices[s], behind, ahead, endpoints, pad, omitNan, identity, statistic)
+                        ? Slide(slices[s], behind, ahead, endpoints, pad, omitNan, identity, kind, statistic)
                         : SlideOverPoints(
-                            slices[s], points, reachBehind, reachAhead, endpoints, omitNan, identity, statistic);
+                            slices[s], points, reachBehind, reachAhead, endpoints, omitNan, identity,
+                            kind, statistic);
                 }
 
                 (double[] joined, int[] shape) = JgsMatrix.JoinAlong(windowed, dims, dim);
                 return JgsMatrix.FromColumnMajorDims(joined, shape);
             })));
 
-        Moving("movmean", double.NaN, static w => w.Average());
-        Moving("movsum", 0, static w => w.Sum());
-        Moving("movmax", double.NaN, static w => w.Max());
-        Moving("movmin", double.NaN, static w => w.Min());
-        Moving("movprod", 1, static w => w.Aggregate(1.0, static (product, x) => product * x));
-        Moving("movmedian", double.NaN, MedianOf);
-        Moving("movvar", double.NaN, SampleVarianceOf);
-        Moving("movstd", double.NaN, static w => Math.Sqrt(SampleVarianceOf(w)));
+        Moving("movmean", double.NaN, WindowStat.Mean, static w => w.Average());
+        Moving("movsum", 0, WindowStat.Sum, static w => w.Sum());
+        Moving("movmax", double.NaN, WindowStat.Max, static w => w.Max());
+        Moving("movmin", double.NaN, WindowStat.Min, static w => w.Min());
+        Moving("movprod", 1, WindowStat.Product, static w => w.Aggregate(1.0, static (product, x) => product * x));
+        Moving("movmedian", double.NaN, WindowStat.Median, MedianOf);
+        Moving("movvar", double.NaN, WindowStat.Variance, SampleVarianceOf);
+        Moving("movstd", double.NaN, WindowStat.StandardDeviation, static w => Math.Sqrt(SampleVarianceOf(w)));
 
-        // The mean absolute deviation about the window's own mean.
-        Moving("movmad", double.NaN, static w =>
+        // The mean absolute deviation about the window's own mean — the one summary here that cannot
+        // be carried from one window to the next, because it is measured from a centre that moves.
+        Moving("movmad", double.NaN, WindowStat.Other, static w =>
         {
             double mean = w.Average();
             double total = 0;
@@ -1100,8 +1325,16 @@ internal static partial class JgsBuiltins
     /// </summary>
     private static double[] SlideOverPoints(
         double[] values, double[] points, double behind, double ahead, string endpoints,
-        bool omitNan, double identity, Func<double[], double> statistic)
+        bool omitNan, double identity, WindowStat kind, Func<double[], double> statistic)
     {
+        // Places that rise are what make the window's two ends move forward and never back; places
+        // in any other order leave the walk below, which reads every reading for every reading.
+        if (WindowKernels.Handles(kind) && WindowKernels.IsAscending(points))
+        {
+            return WindowKernels.SlideOverPoints(
+                kind, values, points, behind, ahead, EndsOf(endpoints), omitNan, identity);
+        }
+
         var answers = new List<double>(values.Length);
 
         for (int i = 0; i < values.Length; i++)
@@ -1140,6 +1373,15 @@ internal static partial class JgsBuiltins
         return [.. answers];
     }
 
+    /// <summary>The endpoint word as the kernels name it; anything unrecognised shrinks, as it always did.</summary>
+    private static WindowEnds EndsOf(string endpoints) => endpoints switch
+    {
+        "discard" => WindowEnds.Discard,
+        "fill" => WindowEnds.Fill,
+        "pad" => WindowEnds.Pad,
+        _ => WindowEnds.Shrink,
+    };
+
     private static int WholeCount(string name, double value, string what, int line, int col) =>
         value == Math.Floor(value) && double.IsFinite(value)
             ? (int)value
@@ -1164,8 +1406,16 @@ internal static partial class JgsBuiltins
     /// <summary>One slice, window by window, through whichever summary the name asked for.</summary>
     private static double[] Slide(
         double[] values, int behind, int ahead, string endpoints, double pad,
-        bool omitNan, double identity, Func<double[], double> statistic)
+        bool omitNan, double identity, WindowStat kind, Func<double[], double> statistic)
     {
+        // Every summary but the mean absolute deviation can be carried from one window to the next
+        // rather than rebuilt, which is what stops the cost depending on how wide the window is.
+        if (WindowKernels.Handles(kind))
+        {
+            return WindowKernels.Slide(
+                kind, values, behind, ahead, EndsOf(endpoints), pad, omitNan, identity);
+        }
+
         // 'discard' keeps only the points whose window fits inside the data, so the answer is shorter
         // than its input — the one endpoint rule that changes the length rather than the values.
         int from = endpoints == "discard" ? behind : 0;

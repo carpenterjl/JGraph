@@ -51,9 +51,24 @@ public static class Binning
         ArgumentNullException.ThrowIfNull(edges);
 
         var counts = new double[System.Math.Max(0, edges.Count - 1)];
-        foreach (double value in values)
+        BinFinder finder = BinFinder.For(edges);
+        if (values is double[] flat)
         {
-            int bin = BinOf(value, edges);
+            foreach (double value in flat)
+            {
+                int bin = finder.Of(value);
+                if (bin >= 0)
+                {
+                    counts[bin]++;
+                }
+            }
+
+            return counts;
+        }
+
+        for (int i = 0; i < values.Count; i++)
+        {
+            int bin = finder.Of(values[i]);
             if (bin >= 0)
             {
                 counts[bin]++;
@@ -61,6 +76,221 @@ public static class Binning
         }
 
         return counts;
+    }
+
+    /// <summary>
+    /// Which bin a value falls in, over a set of edges read once instead of once per value.
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    /// The rule is <see cref="BinOf(double, IReadOnlyList{double})"/>'s, unchanged, and so is every
+    /// answer. What changes is how the bin is reached. A histogram's edges are nearly always evenly
+    /// spread — every one this project chooses for itself is, since <see cref="Spanning"/> and
+    /// <see cref="Uniform"/> are the only two that build them — and for evenly spread edges the bin
+    /// is one subtraction and one multiply rather than a walk down a binary search that reads a
+    /// different cache line at every step.
+    /// </para>
+    /// <para>
+    /// Arithmetic on doubles does not land exactly, so the guess is checked against the edges it
+    /// claims to sit between and stepped until it does. Because the edges were measured to be evenly
+    /// spread to within a quarter of a bin, that step happens at most twice; a set that somehow needs
+    /// more is handed to the search, which is also what an unevenly spread set gets from the start.
+    /// The answer is therefore the search's answer whatever the edges look like, and the arithmetic
+    /// is only ever a shortcut to it.
+    /// </para>
+    /// </remarks>
+    public readonly struct BinFinder
+    {
+        private readonly double[] _edges;
+        private readonly double _first;
+        private readonly double _perWidth;
+        private readonly int _bins;
+
+        private BinFinder(double[] edges, double perWidth)
+        {
+            _edges = edges;
+            _first = edges.Length > 0 ? edges[0] : 0;
+            _perWidth = perWidth;
+            _bins = edges.Length - 1;
+        }
+
+        /// <summary>A finder over <paramref name="edges"/>, measuring once whether they are evenly spread.</summary>
+        public static BinFinder For(IReadOnlyList<double> edges)
+        {
+            ArgumentNullException.ThrowIfNull(edges);
+            double[] own = edges as double[] ?? [.. edges];
+            return new BinFinder(own, EvenWidthOf(own));
+        }
+
+        /// <summary>Which bin <paramref name="value"/> falls in, or −1 for one outside every bin.</summary>
+        public int Of(double value)
+        {
+            if (_bins < 1)
+            {
+                return -1;
+            }
+
+            double[] edges = _edges;
+            if (double.IsNaN(value) || value < edges[0] || value > edges[^1])
+            {
+                return -1;
+            }
+
+            if (value == edges[^1])
+            {
+                return _bins - 1; // the last bin is closed at both ends
+            }
+
+            if (_perWidth <= 0)
+            {
+                return Searched(edges, value);
+            }
+
+            int bin = Guess(value);
+            for (int step = 0; step < RepairSteps; step++)
+            {
+                if (bin > 0 && value < edges[bin])
+                {
+                    bin--;
+                }
+                else if (bin < _bins - 1 && value >= edges[bin + 1])
+                {
+                    bin++;
+                }
+                else
+                {
+                    return bin;
+                }
+            }
+
+            return Searched(edges, value);
+        }
+
+        /// <summary>
+        /// The same, for bins that own their right edge rather than their left — <c>discretize</c>'s
+        /// <c>'IncludedEdge', 'right'</c>, where the first bin is the one closed at both ends.
+        /// </summary>
+        public int OfRightClosed(double value)
+        {
+            if (_bins < 1)
+            {
+                return -1;
+            }
+
+            double[] edges = _edges;
+            if (double.IsNaN(value) || value < edges[0] || value > edges[^1])
+            {
+                return -1;
+            }
+
+            if (value == edges[0])
+            {
+                return 0;
+            }
+
+            if (_perWidth <= 0)
+            {
+                return SearchedRight(edges, value);
+            }
+
+            int bin = Guess(value);
+            for (int step = 0; step < RepairSteps; step++)
+            {
+                if (bin > 0 && value <= edges[bin])
+                {
+                    bin--;
+                }
+                else if (bin < _bins - 1 && value > edges[bin + 1])
+                {
+                    bin++;
+                }
+                else
+                {
+                    return bin;
+                }
+            }
+
+            return SearchedRight(edges, value);
+        }
+
+        private const int RepairSteps = 4;
+
+        private int Guess(double value)
+        {
+            int bin = (int)((value - _first) * _perWidth);
+            return bin < 0 ? 0 : bin > _bins - 1 ? _bins - 1 : bin;
+        }
+
+        /// <summary>
+        /// One over the width when the edges are evenly spread to within a quarter of a bin, and zero
+        /// when they are not — which is also what a set holding an infinity or a NaN reports.
+        /// </summary>
+        private static double EvenWidthOf(double[] edges)
+        {
+            int bins = edges.Length - 1;
+            if (bins < 1)
+            {
+                return 0;
+            }
+
+            double width = (edges[^1] - edges[0]) / bins;
+            if (!double.IsFinite(width) || !(width > 0))
+            {
+                return 0;
+            }
+
+            double slack = width * 0.25;
+            for (int i = 1; i <= bins; i++)
+            {
+                if (!(edges[i] >= edges[i - 1])
+                    || System.Math.Abs(edges[i] - (edges[0] + (i * width))) > slack)
+                {
+                    return 0;
+                }
+            }
+
+            return 1 / width;
+        }
+
+        private static int Searched(double[] edges, double value)
+        {
+            int low = 0;
+            int high = edges.Length - 1;
+            while (high - low > 1)
+            {
+                int mid = (low + high) / 2;
+                if (value < edges[mid])
+                {
+                    high = mid;
+                }
+                else
+                {
+                    low = mid;
+                }
+            }
+
+            return low;
+        }
+
+        private static int SearchedRight(double[] edges, double value)
+        {
+            int low = 0;
+            int high = edges.Length - 1;
+            while (high - low > 1)
+            {
+                int mid = (low + high) / 2;
+                if (value <= edges[mid])
+                {
+                    high = mid;
+                }
+                else
+                {
+                    low = mid;
+                }
+            }
+
+            return low;
+        }
     }
 
     /// <summary>
@@ -88,11 +318,13 @@ public static class Binning
             System.Math.Max(0, xEdges.Count - 1),
             System.Math.Max(0, yEdges.Count - 1)];
 
+        BinFinder across = BinFinder.For(xEdges);
+        BinFinder down = BinFinder.For(yEdges);
         int pairs = System.Math.Min(xs.Count, ys.Count);
         for (int i = 0; i < pairs; i++)
         {
-            int column = BinOf(xs[i], xEdges);
-            int row = BinOf(ys[i], yEdges);
+            int column = across.Of(xs[i]);
+            int row = down.Of(ys[i]);
             if (column >= 0 && row >= 0)
             {
                 counts[column, row]++;
