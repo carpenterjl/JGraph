@@ -28,6 +28,7 @@ public sealed class AnimatedPngReader : IDisposable
     private readonly byte[] _header;                 // the file's IHDR payload, 13 bytes
     private readonly List<(string Name, byte[] Payload)> _preamble;
     private readonly List<Frame> _frames;
+    private readonly TimeSpan[] _elapsed;            // time to the end of frame k-1, so _elapsed[0] is zero
     private readonly byte[] _canvas;
     private byte[]? _saved;                          // for APNG_DISPOSE_OP_PREVIOUS
     private int _index = -1;
@@ -50,6 +51,12 @@ public sealed class AnimatedPngReader : IDisposable
         Height = height;
         PlayCount = playCount;
         _canvas = new byte[(long)width * height * 4];
+
+        _elapsed = new TimeSpan[frames.Count + 1];
+        for (int k = 0; k < frames.Count; k++)
+        {
+            _elapsed[k + 1] = _elapsed[k] + frames[k].Delay;
+        }
     }
 
     /// <summary>The canvas width in pixels. Every frame composites onto a canvas this size.</summary>
@@ -69,6 +76,16 @@ public sealed class AnimatedPngReader : IDisposable
 
     /// <summary>How long the frame now on the canvas should be shown for.</summary>
     public TimeSpan Delay => _index < 0 ? TimeSpan.Zero : _frames[_index].Delay;
+
+    /// <summary>How long one pass through every frame lasts, by the delays the file asks for.</summary>
+    public TimeSpan Duration => _elapsed[^1];
+
+    /// <summary>
+    /// How far into a pass the canvas stands: the delays of every frame already shown, so it is
+    /// zero before the first <see cref="Advance"/> and <see cref="Duration"/> at the end of the
+    /// last frame. <c>Duration - Elapsed</c> is what is left to play.
+    /// </summary>
+    public TimeSpan Elapsed => _elapsed[_index + 1];
 
     /// <summary>
     /// The canvas, in straight (not premultiplied) RGBA, row by row from the top. Valid until the

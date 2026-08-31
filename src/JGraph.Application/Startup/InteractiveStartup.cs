@@ -13,9 +13,11 @@ namespace JGraph.Application.Startup;
 /// moment, freezing the UI then instead of now.
 /// </summary>
 /// <remarks>
-/// The splash closes the moment the shell is ready and not a frame later: its animation loops to
-/// fill however long this takes, and nothing here waits for a pass to finish. See
-/// <see cref="SplashWindow"/>.
+/// The splash outlives the warm-up by whatever is left of the animation: it loops to fill however
+/// long the loading takes, and then the pass on screen is played out to its last frame instead of
+/// being cut off part-way through a morph. The shell is built and its session restored before that
+/// wait, so nothing is loading during it and the caption and bar say exactly that. See
+/// <see cref="SplashWindow.PlayToEndAsync"/>.
 /// </remarks>
 public static class InteractiveStartup
 {
@@ -50,6 +52,10 @@ public static class InteractiveStartup
             splash.Report("Restoring workspace…", 0.8);
             var shell = services.GetRequiredService<ScriptWorkspaceWindow>();
             shell.RestoreSession();
+
+            // Everything the shell needs is in hand. What is left is the artwork finishing its
+            // pass, which reports itself.
+            await splash.PlayToEndAsync().ConfigureAwait(true);
             splash.Report("Ready", 1.0);
             return shell;
         }

@@ -130,6 +130,34 @@ public class AnimatedPngReaderTests : IDisposable
         Assert.Equal(255, reader.Pixels[11]);
     }
 
+    /// <summary>
+    /// The splash bar is charged in the artwork's own time, so a pass has to be able to say how long
+    /// it lasts and how much of it has been shown. Both are in the file's delays, not in the frame
+    /// count — a file whose frames run at different lengths still has to read as time.
+    /// </summary>
+    [Fact]
+    public void APassKnowsHowLongItLastsAndHowFarThroughItIs()
+    {
+        string path = WriteAnimation(4, 20); // four frames, 50 ms each
+
+        using AnimatedPngReader reader = AnimatedPngReader.Open(path);
+
+        Assert.Equal(TimeSpan.FromMilliseconds(200), reader.Duration);
+        Assert.Equal(TimeSpan.Zero, reader.Elapsed);
+
+        for (int k = 1; k <= 4; k++)
+        {
+            Assert.True(reader.Advance());
+            Assert.Equal(TimeSpan.FromMilliseconds(50 * k), reader.Elapsed);
+        }
+
+        Assert.False(reader.Advance());
+        Assert.Equal(reader.Duration, reader.Elapsed); // the end of the pass, with nothing left to play
+
+        reader.Rewind();
+        Assert.Equal(TimeSpan.Zero, reader.Elapsed);
+    }
+
     [Fact]
     public void APlainPngIsRefusedByName()
     {

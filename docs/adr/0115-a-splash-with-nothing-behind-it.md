@@ -41,7 +41,9 @@ Four things follow from that, and each was decided rather than defaulted:
   ops and both blend ops are honoured, because the replaceable artwork is a public contract and an
   APNG from any other tool will use them — the one this build writes uses neither.
 - **The splash loops for as long as loading takes and not one frame longer.** Startup is never held
-  back to finish a pass. The frames are decoded one at a time on a `DispatcherPriority.Background`
+  back to finish a pass. *(Superseded: [ADR 0117](0117-the-splash-plays-out.md) — the pass on
+  screen is played out to its last frame once the shell is ready, so the loop is seen closing rather
+  than being cut off. The rest of this bullet stands.)* The frames are decoded one at a time on a `DispatcherPriority.Background`
   tick, so the animation yields to the warm-up rather than competing with it, and a frame that will
   not decode ends the animation and leaves the last good one standing rather than failing a start.
 - **An animation and a still are separate questions.** `SplashArtwork.FindAnimation` probes
