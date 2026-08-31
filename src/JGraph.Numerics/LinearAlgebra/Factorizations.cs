@@ -331,6 +331,7 @@ public sealed class Hessenberg
         int n = matrix.GetLength(0);
         var h = (double[,])matrix.Clone();
         var q = Linear.Identity(n);
+        var scratch = new double[n];
 
         for (int k = 0; k < n - 2; k++)
         {
@@ -366,9 +367,9 @@ public sealed class Hessenberg
                 continue;
             }
 
-            ApplyLeft(h, v, vv, n);
-            ApplyRight(h, v, vv, n);
-            ApplyRight(q, v, vv, n);
+            ApplyLeft(h, v, vv, n, k + 1, scratch);
+            ApplyRight(h, v, vv, n, k + 1);
+            ApplyRight(q, v, vv, n, k + 1);
         }
 
         // The reflections leave rounding dust below the subdiagonal; Hessenberg form means exactly
@@ -384,38 +385,79 @@ public sealed class Hessenberg
         return new Hessenberg(h, q);
     }
 
-    /// <summary>M ← (I - 2vvᵀ/vᵀv)·M.</summary>
-    private static void ApplyLeft(double[,] m, double[] v, double vv, int n)
+    /// <summary>M ← (I - 2vvᵀ/vᵀv)·M, over rows <paramref name="first"/> and after.</summary>
+    /// <remarks>
+    /// <para>
+    /// The reflector is zero above <paramref name="first"/>, so those rows contribute nothing and
+    /// are skipped -- half the work on average, and exactly the same answer, because what is
+    /// skipped is a running sum adding zero to zero.
+    /// </para>
+    /// <para>
+    /// The rows are the outer loop and the columns the inner one, which is the opposite of how a
+    /// dot product per column reads and the whole of why this used to cost what it did. A
+    /// <c>double[,]</c> is stored a row at a time, so walking a column is a stride of n doubles per
+    /// step: at 400 square that is a cache line fetched and one number used out of it, four hundred
+    /// times per column, four hundred columns, four hundred reflectors. Accumulating a whole row of
+    /// dot products at once reads every one of those lines once and uses all of it (M120).
+    /// </para>
+    /// </remarks>
+    private static void ApplyLeft(double[,] m, double[] v, double vv, int n, int first, double[] dots)
     {
-        for (int c = 0; c < n; c++)
+        Array.Clear(dots, 0, n);
+        for (int r = first; r < n; r++)
         {
-            double dot = 0;
-            for (int r = 0; r < n; r++)
+            double weight = v[r];
+            if (weight == 0)
             {
-                dot += v[r] * m[r, c];
+                continue;
             }
 
-            dot = 2.0 * dot / vv;
-            for (int r = 0; r < n; r++)
+            for (int c = 0; c < n; c++)
             {
-                m[r, c] -= dot * v[r];
+                dots[c] += weight * m[r, c];
+            }
+        }
+
+        // Written as the multiply and then the divide, in that order, because that is the order the
+        // one-column-at-a-time version used and (2·d)/v is not d·(2/v) in the last bit. Reassociating
+        // it moved the reduction of a 17-square by three parts in a thousand -- every answer still
+        // backward stable, MATLAB's own a third value again, and none of that a reason to move.
+        for (int c = 0; c < n; c++)
+        {
+            dots[c] = 2.0 * dots[c] / vv;
+        }
+
+        for (int r = first; r < n; r++)
+        {
+            double weight = v[r];
+            if (weight == 0)
+            {
+                continue;
+            }
+
+            for (int c = 0; c < n; c++)
+            {
+                m[r, c] -= dots[c] * weight;
             }
         }
     }
 
-    /// <summary>M ← M·(I - 2vvᵀ/vᵀv).</summary>
-    private static void ApplyRight(double[,] m, double[] v, double vv, int n)
+    /// <summary>M ← M·(I - 2vvᵀ/vᵀv), over columns <paramref name="first"/> and after.</summary>
+    /// <remarks>
+    /// This one already ran along the rows, so only the reflector's leading zeros are dropped.
+    /// </remarks>
+    private static void ApplyRight(double[,] m, double[] v, double vv, int n, int first)
     {
         for (int r = 0; r < n; r++)
         {
             double dot = 0;
-            for (int c = 0; c < n; c++)
+            for (int c = first; c < n; c++)
             {
                 dot += m[r, c] * v[c];
             }
 
             dot = 2.0 * dot / vv;
-            for (int c = 0; c < n; c++)
+            for (int c = first; c < n; c++)
             {
                 m[r, c] -= dot * v[c];
             }

@@ -1,3 +1,5 @@
+using JGraph.Numerics;
+
 namespace JGraph.Statistics;
 
 /// <summary>
@@ -30,17 +32,61 @@ public static class DescriptiveStatistics
     /// <param name="percents">The percentiles wanted, each between 0 and 100.</param>
     public static double[] Percentiles(IReadOnlyList<double> values, IReadOnlyList<double> percents)
     {
-        double[] sorted = SortedWithoutNaN(values);
+        double[] sample = WithoutNaN(values);
+
+        // Only the ranks a percentile actually reads are placed, and they are placed together: one
+        // recursion serves every rank on either side of each partition it makes, so the two
+        // quartiles cost appreciably less than two medians and much less than the sort they used
+        // to share (M120). Each percentile names at most the pair it interpolates between.
+        var ranks = new List<int>(percents.Count * 2);
+        for (int i = 0; i < percents.Count; i++)
+        {
+            AddRanks(ranks, sample.Length, percents[i]);
+        }
+
+        SelectKernels.PartialSort(sample, System.Runtime.InteropServices.CollectionsMarshal.AsSpan(ranks));
+
         var result = new double[percents.Count];
         for (int i = 0; i < percents.Count; i++)
         {
-            result[i] = PercentileOf(sorted, percents[i]);
+            result[i] = PercentileOf(sample, percents[i]);
         }
 
         return result;
     }
 
-    /// <summary>One percentile of an already sorted, NaN-free sample.</summary>
+    /// <summary>The one or two ranks <see cref="PercentileOf"/> will read for this percentile.</summary>
+    /// <remarks>
+    /// Written beside <see cref="PercentileOf"/> and reading the same position, so that the two can
+    /// only ever disagree if someone changes one of them: an unplaced rank would be read out of a
+    /// partly ordered array and answer something arbitrary rather than fail.
+    /// </remarks>
+    private static void AddRanks(List<int> ranks, int n, double percent)
+    {
+        if (n == 0 || double.IsNaN(percent))
+        {
+            return;
+        }
+
+        double position = ((percent / 100.0) * n) - 0.5;
+        if (n == 1 || position <= 0)
+        {
+            ranks.Add(0);
+            return;
+        }
+
+        if (position >= n - 1)
+        {
+            ranks.Add(n - 1);
+            return;
+        }
+
+        int below = (int)Math.Floor(position);
+        ranks.Add(below);
+        ranks.Add(below + 1);
+    }
+
+    /// <summary>One percentile of a sample whose relevant ranks are in place, NaN already dropped.</summary>
     private static double PercentileOf(double[] sorted, double percent)
     {
         int n = sorted.Length;
@@ -539,19 +585,52 @@ public static class DescriptiveStatistics
     /// <summary>The median of a sample, NaN dropped.</summary>
     public static double Median(IReadOnlyList<double> values)
     {
-        double[] sorted = SortedWithoutNaN(values);
-        int n = sorted.Length;
+        double[] sample = WithoutNaN(values);
+        int n = sample.Length;
         if (n == 0)
         {
             return double.NaN;
         }
 
-        return n % 2 == 1 ? sorted[n / 2] : (sorted[(n / 2) - 1] + sorted[n / 2]) / 2.0;
+        // One rank for an odd count and two adjacent ones for an even count: the middle of a sorted
+        // array is the only part of it a median ever looks at, and placing just that is linear
+        // where sorting the whole is not (M120).
+        if (n % 2 == 1)
+        {
+            Span<int> middle = [n / 2];
+            SelectKernels.PartialSort(sample, middle);
+            return sample[n / 2];
+        }
+
+        Span<int> pair = [(n / 2) - 1, n / 2];
+        SelectKernels.PartialSort(sample, pair);
+        return (sample[(n / 2) - 1] + sample[n / 2]) / 2.0;
     }
 
     /// <summary>The sample with every NaN removed, in the order it was given.</summary>
+    /// <remarks>
+    /// The array case is written out rather than left to the interface because of how often the
+    /// caller has one: reading ten million samples through <see cref="IReadOnlyList{T}"/> is ten
+    /// million interface dispatches, and growing a <see cref="List{T}"/> to hold them and copying
+    /// it out again is two more passes over eighty megabytes on top (M120).
+    /// </remarks>
     public static double[] WithoutNaN(IReadOnlyList<double> values)
     {
+        if (values is double[] array)
+        {
+            var straight = new double[array.Length];
+            int taken = 0;
+            foreach (double value in array)
+            {
+                if (!double.IsNaN(value))
+                {
+                    straight[taken++] = value;
+                }
+            }
+
+            return taken == straight.Length ? straight : straight[..taken];
+        }
+
         var kept = new List<double>(values.Count);
         foreach (double value in values)
         {

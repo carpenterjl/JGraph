@@ -9,19 +9,16 @@ namespace JGraph.Numerics;
 /// Everything here works to close to full double precision and is written in terms of two workhorses
 /// — a Lanczos log-gamma and modified-Lentz continued fractions — rather than a table of
 /// approximations per function, so accuracy is a property of two pieces of code instead of fifteen.
-/// The inverses bracket their answer and bisect: slower than a Newton polish, but there is no
-/// starting guess to go wrong on a hard case.
+/// The inverses that remain here bracket their answer and bisect: slower than a Newton polish, but
+/// there is no starting guess to go wrong on a hard case. The error functions are the one family
+/// that left, to <see cref="ErrorFunctions"/>, and that file says why.
 /// </remarks>
 public static class SpecialFunctions
 {
     /// <summary>ln(√(2π)), the constant in front of every Lanczos evaluation.</summary>
     private const double LogSqrtTwoPi = 0.918938533204672741780329736406;
 
-    /// <summary>2/√π, the derivative of erf at 0 and the scale factor of its series.</summary>
-    private const double TwoOverSqrtPi = 1.1283791670955125738961589031;
 
-    /// <summary>1/√π, the tail factor of the scaled complementary error function.</summary>
-    private const double OneOverSqrtPi = 0.564189583547756286948079451561;
 
     /// <summary>The smallest number the continued fractions may divide by without losing control.</summary>
     private const double Tiny = 1e-300;
@@ -230,160 +227,29 @@ public static class SpecialFunctions
 
     // --- Error functions --------------------------------------------------------------------------
 
+    // The error functions moved to ErrorFunctions in M120 and are forwarded rather than reimplemented,
+    // so that every caller here -- the confidence half-widths, the normal quantiles, the script
+    // builtins -- reaches the same arithmetic through the same names it always used. They are the one
+    // family in this file that a script calls a few million times in a row, and the continued fraction
+    // the rest of the file is built on cost 143 times what MATLAB charges for the inverse.
+
     /// <summary>erf(x), the error function.</summary>
-    public static double Erf(double x)
-    {
-        if (double.IsNaN(x))
-        {
-            return double.NaN;
-        }
-
-        // The limits, named rather than computed: the tail formula below multiplies exp(-x²) by x,
-        // which is zero times infinity at the ends and answers NaN where the function is exactly ±1.
-        if (double.IsInfinity(x))
-        {
-            return Math.Sign(x);
-        }
-
-        if (x < 0)
-        {
-            return -Erf(-x);
-        }
-
-        return x < 0.5 ? ErfSeries(x) : 1.0 - Erfc(x);
-    }
+    public static double Erf(double x) => ErrorFunctions.Erf(x);
 
     /// <summary>erfc(x) = 1 - erf(x), evaluated so that the tail keeps its significant digits.</summary>
-    public static double Erfc(double x)
-    {
-        if (double.IsNaN(x))
-        {
-            return double.NaN;
-        }
-
-        if (double.IsInfinity(x))
-        {
-            return x > 0 ? 0 : 2;
-        }
-
-        if (x < 0)
-        {
-            return 2.0 - Erfc(-x);
-        }
-
-        if (x < 0.5)
-        {
-            return 1.0 - ErfSeries(x);
-        }
-
-        // erfc(x) = Q(1/2, x²): the upper incomplete gamma, with the exponential kept outside the
-        // continued fraction so the result underflows gracefully instead of cancelling.
-        return Math.Exp(-x * x) * x * OneOverSqrtPi * UpperGammaFraction(0.5, x * x);
-    }
+    public static double Erfc(double x) => ErrorFunctions.Erfc(x);
 
     /// <summary>
-    /// exp(x²)·erfc(x), the scaled complementary error function. It exists because erfc(30) is
-    /// 2.6e-393 — zero as a double — while this is 0.0187, and the ratio is what most formulas want.
+    /// exp(x^2)*erfc(x), the scaled complementary error function. It exists because erfc(30) is
+    /// 2.6e-393 -- zero as a double -- while this is 0.0187, and the ratio is what most formulas want.
     /// </summary>
-    public static double ErfcScaled(double x)
-    {
-        if (double.IsNaN(x))
-        {
-            return double.NaN;
-        }
-
-        if (double.IsInfinity(x))
-        {
-            return x > 0 ? 0 : double.PositiveInfinity;
-        }
-
-        if (x < 0)
-        {
-            // The reflection needs exp(x²), which is where erfcx genuinely overflows.
-            double reflected = Math.Exp(x * x) * (2.0 - Erfc(-x));
-            return double.IsInfinity(reflected) ? double.PositiveInfinity : reflected;
-        }
-
-        // For x ≥ 0.5 the exponential cancels exactly against the one inside Q(1/2, x²), which is
-        // the whole point: nothing ever overflows or underflows on the way.
-        return x < 0.5
-            ? Math.Exp(x * x) * (1.0 - ErfSeries(x))
-            : x * OneOverSqrtPi * UpperGammaFraction(0.5, x * x);
-    }
-
-    /// <summary>The Maclaurin series for erf, used where it converges before it cancels.</summary>
-    private static double ErfSeries(double x)
-    {
-        double term = x;
-        double sum = x;
-        double square = x * x;
-        for (int n = 1; n < 100; n++)
-        {
-            term *= -square / n;
-            double contribution = term / ((2 * n) + 1);
-            sum += contribution;
-            if (Math.Abs(contribution) < Math.Abs(sum) * Epsilon)
-            {
-                break;
-            }
-        }
-
-        return TwoOverSqrtPi * sum;
-    }
+    public static double ErfcScaled(double x) => ErrorFunctions.ErfcScaled(x);
 
     /// <summary>The inverse error function: the y with erf(y) = <paramref name="value"/>.</summary>
-    public static double ErfInverse(double value)
-    {
-        if (double.IsNaN(value) || value < -1 || value > 1)
-        {
-            return double.NaN;
-        }
-
-        if (value == 1)
-        {
-            return double.PositiveInfinity;
-        }
-
-        if (value == -1)
-        {
-            return double.NegativeInfinity;
-        }
-
-        // Past 0.9 the erf curve is flat, so inverting erfc instead keeps the digits the subtraction
-        // 1 - |value| would otherwise throw away.
-        return Math.Abs(value) > 0.9
-            ? Math.Sign(value) * ErfcInverse(1.0 - Math.Abs(value))
-            : Solve(value, Erf, -6, 6);
-    }
+    public static double ErfInverse(double value) => ErrorFunctions.ErfInverse(value);
 
     /// <summary>The inverse complementary error function: the y with erfc(y) = <paramref name="value"/>.</summary>
-    public static double ErfcInverse(double value)
-    {
-        if (double.IsNaN(value) || value < 0 || value > 2)
-        {
-            return double.NaN;
-        }
-
-        if (value == 0)
-        {
-            return double.PositiveInfinity;
-        }
-
-        if (value == 2)
-        {
-            return double.NegativeInfinity;
-        }
-
-        if (value >= 1e-3)
-        {
-            return Solve(value, Erfc, -6, 6, decreasing: true);
-        }
-
-        // Deep in the tail erfc itself underflows, so the solve happens on its logarithm, where
-        // ln erfc(x) = -x² + ln erfcx(x) stays perfectly well behaved.
-        double target = Math.Log(value);
-        return Solve(target, x => (-x * x) + Math.Log(ErfcScaled(x)), 0, 1e5, decreasing: true);
-    }
+    public static double ErfcInverse(double value) => ErrorFunctions.ErfcInverse(value);
 
     // --- Incomplete gamma -------------------------------------------------------------------------
 

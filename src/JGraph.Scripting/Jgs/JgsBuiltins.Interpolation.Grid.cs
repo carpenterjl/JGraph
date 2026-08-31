@@ -98,16 +98,24 @@ internal static partial class JgsBuiltins
         var sampler = new GridSampler(axes, values, dims, MethodOf(method));
         int count = points.Length == 0 ? 0 : points[0].Length;
         var answer = new double[count];
-        Span<double> point = stackalloc double[rank];
-        for (int q = 0; q < count; q++)
-        {
-            for (int d = 0; d < rank; d++)
-            {
-                point[d] = points[d][q];
-            }
 
-            answer[q] = sampler.Sample(point, extrapolate, fill);
-        }
+        // A grain gets a sampler of its own because the one above keeps its working indices and
+        // weights in fields; what it does not get is a second copy of the grid or of the spline
+        // slopes, which is the expensive half and is read only (M120).
+        ParallelKernels.For(count, ParallelKernels.ComputeBoundThreshold, null, (start, length) =>
+        {
+            GridSampler mine = sampler.ForAnotherThread();
+            Span<double> point = stackalloc double[rank];
+            for (int q = start; q < start + length; q++)
+            {
+                for (int d = 0; d < rank; d++)
+                {
+                    point[d] = points[d][q];
+                }
+
+                answer[q] = mine.Sample(point, extrapolate, fill);
+            }
+        });
 
         return ShapedNumbers(answer, answerDims);
     }

@@ -102,7 +102,7 @@ public static class WindowKernels
     /// </summary>
     public static double[] Slide(
         WindowStat stat,
-        ReadOnlySpan<double> values,
+        double[] values,
         int behind,
         int ahead,
         WindowEnds ends,
@@ -114,23 +114,23 @@ public static class WindowKernels
         return stat switch
         {
             WindowStat.Sum =>
-                Walk(new Folded<SumFold>(room, mean: false), values, behind, ahead, ends, pad, omitNan, identity),
+                Walk(() => new Folded<SumFold>(room, mean: false), values, behind, ahead, ends, pad, omitNan, identity),
             WindowStat.Mean =>
-                Walk(new Folded<SumFold>(room, mean: true), values, behind, ahead, ends, pad, omitNan, identity),
+                Walk(() => new Folded<SumFold>(room, mean: true), values, behind, ahead, ends, pad, omitNan, identity),
             WindowStat.Max =>
-                Walk(new Folded<MaxFold>(room, mean: false), values, behind, ahead, ends, pad, omitNan, identity),
+                Walk(() => new Folded<MaxFold>(room, mean: false), values, behind, ahead, ends, pad, omitNan, identity),
             WindowStat.Min =>
-                Walk(new Folded<MinFold>(room, mean: false), values, behind, ahead, ends, pad, omitNan, identity),
+                Walk(() => new Folded<MinFold>(room, mean: false), values, behind, ahead, ends, pad, omitNan, identity),
             WindowStat.Product =>
-                Walk(new Folded<ProductFold>(room, mean: false), values, behind, ahead, ends, pad, omitNan, identity),
+                Walk(() => new Folded<ProductFold>(room, mean: false), values, behind, ahead, ends, pad, omitNan, identity),
             WindowStat.Variance =>
-                Walk(new Spread(room, root: false), values, behind, ahead, ends, pad, omitNan, identity),
+                Walk(() => new Spread(room, root: false), values, behind, ahead, ends, pad, omitNan, identity),
             WindowStat.StandardDeviation =>
-                Walk(new Spread(room, root: true), values, behind, ahead, ends, pad, omitNan, identity),
+                Walk(() => new Spread(room, root: true), values, behind, ahead, ends, pad, omitNan, identity),
             WindowStat.Median =>
-                Walk(new Middle(room), values, behind, ahead, ends, pad, omitNan, identity),
+                Walk(() => new Middle(room), values, behind, ahead, ends, pad, omitNan, identity),
             WindowStat.MedianDeviation =>
-                Walk(new Middle(room, spread: true), values, behind, ahead, ends, pad, omitNan, identity),
+                Walk(() => new Middle(room, spread: true), values, behind, ahead, ends, pad, omitNan, identity),
             _ => throw new ArgumentOutOfRangeException(
                 nameof(stat), stat, "there is no incremental form for this summary"),
         };
@@ -196,8 +196,8 @@ public static class WindowKernels
     /// and taken out once whatever the width.
     /// </summary>
     private static double[] Walk<TWindow>(
-        TWindow window,
-        ReadOnlySpan<double> values,
+        Func<TWindow> newWindow,
+        double[] values,
         int behind,
         int ahead,
         WindowEnds ends,
@@ -215,12 +215,112 @@ public static class WindowKernels
             return result;
         }
 
+        int[] resume = ResumePoints(length, from, last, behind, ahead, ends);
+        int blocks = resume.Length + 1;
+        ParallelKernels.ForBlocks(blocks, blocks > 1, block =>
+        {
+            int walkFrom = block == 0 ? from : resume[block - 1];
+            int reportFrom = block == 0 ? from : resume[block - 1] + 1;
+            int walkTo = block == blocks - 1 ? last : resume[block];
+            Sweep(
+                newWindow(), values, result, from, walkFrom, reportFrom, walkTo,
+                behind, ahead, ends, pad, omitNan, identity);
+        });
+
+        return result;
+    }
+
+    /// <summary>
+    /// Outputs at which a second thread may pick the walk up, or an empty list when it may not.
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    /// The window is carried rather than rebuilt, so a block cannot simply start wherever a share
+    /// of the work begins: the queue underneath holds the window as two folds, and where it splits
+    /// them depends on how many values have left since it last turned itself over. Start a block
+    /// anywhere and it will split the same window in a different place — which for a sum is the
+    /// same addition in a different order, and a different last bit. This kernel answers what the
+    /// one-threaded walk answers or it does not thread at all.
+    /// </para>
+    /// <para>
+    /// So a block resumes only where the queue would have turned over anyway. Turnovers happen on
+    /// the first removal and every <c>room</c> removals after it, and in the interior one value
+    /// leaves per output, so those are the outputs <c>firstRemoval + k·room</c>. A block that walks
+    /// one output earlier than such a point and reports from the point itself begins with the same
+    /// window, in the same two stacks, split in the same place — and every output after it is the
+    /// serial walk's, to the bit. The one output it walks and does not report is the price.
+    /// </para>
+    /// <para>
+    /// The warm-up output has to see a whole window for that to hold, so the resumption points stay
+    /// clear of the ends where the window is clipped. Everything the head and the tail need is then
+    /// inside the first and last block, which walk them exactly as one thread would.
+    /// </para>
+    /// </remarks>
+    private static int[] ResumePoints(
+        int length, int from, int last, int behind, int ahead, WindowEnds ends)
+    {
+        int outputs = last - from + 1;
+        if (outputs < ParallelKernels.ComputeBoundThreshold || ParallelKernels.MaxDegree == 1)
+        {
+            return [];
+        }
+
         bool padded = ends == WindowEnds.Pad;
-        int left = padded ? from - behind : Math.Max(0, from - behind);
+        int room = behind + ahead + 1;
+
+        // A padded walk never clips, so its very first output already drops a value; an unpadded one
+        // has to reach the first output whose window has moved off the front.
+        int firstTurn = padded ? 1 : behind + 1;
+        int earliest = padded ? from : Math.Max(from, behind);
+        int latest = padded ? last : Math.Min(last, length - 1 - ahead);
+
+        // Blocks of at least a grain, measured in whole turnovers so every boundary lands on one.
+        long stride = ((ParallelKernels.GrainElements + room - 1) / room) * (long)room;
+        if (stride <= 0 || stride > outputs / 2)
+        {
+            return [];
+        }
+
+        var points = new List<int>();
+        for (long at = firstTurn - 1 + stride; at <= latest; at += stride)
+        {
+            if (at > earliest)
+            {
+                points.Add((int)at);
+            }
+        }
+
+        return points.Count == 0 ? [] : [.. points];
+    }
+
+    /// <summary>
+    /// One stretch of the walk: the window is carried from <paramref name="walkFrom"/>, and the
+    /// answers are kept from <paramref name="reportFrom"/> — the two differ only for a block that
+    /// picked the walk up from another one.
+    /// </summary>
+    private static void Sweep<TWindow>(
+        TWindow window,
+        double[] values,
+        double[] result,
+        int from,
+        int walkFrom,
+        int reportFrom,
+        int walkTo,
+        int behind,
+        int ahead,
+        WindowEnds ends,
+        double pad,
+        bool omitNan,
+        double identity)
+        where TWindow : struct, IWindow
+    {
+        int length = values.Length;
+        bool padded = ends == WindowEnds.Pad;
+        int left = padded ? walkFrom - behind : Math.Max(0, walkFrom - behind);
         int right = left - 1;
         int count = 0;
 
-        for (int i = from; i <= last; i++)
+        for (int i = walkFrom; i <= walkTo; i++)
         {
             int lo = padded ? i - behind : Math.Max(0, i - behind);
             int hi = padded ? i + ahead : Math.Min(length - 1, i + ahead);
@@ -250,13 +350,16 @@ public static class WindowKernels
                 }
             }
 
+            if (i < reportFrom)
+            {
+                continue;
+            }
+
             bool complete = i - behind >= 0 && i + ahead < length;
             result[i - from] = !complete && ends == WindowEnds.Fill ? double.NaN
                 : count == 0 ? identity
                 : window.Result(count);
         }
-
-        return result;
     }
 
     /// <summary>The walk when the window is a span along the sample points rather than a count.</summary>

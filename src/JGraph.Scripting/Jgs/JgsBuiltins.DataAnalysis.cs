@@ -697,11 +697,19 @@ internal static partial class JgsBuiltins
 
             double[] coefficients = CubicCoefficients(x, y, method);
 
-            for (int q = 0; q < at.Length; q++)
+            // The rule is settled once for the whole set rather than at every query point. It was a
+            // switch over the method's spelling inside the loop, which is why all five of interp1's
+            // methods cost the same to a hundredth of a second over two million points: what was
+            // being measured was the string comparison and not the arithmetic (M120).
+            Interp1Rule rule = RuleOf(method);
+            int offset = set * at.Length;
+            ParallelKernels.For(at.Length, ParallelKernels.ComputeBoundThreshold, null, (start, length) =>
             {
-                answer[(set * at.Length) + q] =
-                    ValueAt(x, y, coefficients, method, at[q], extrapolate, outside);
-            }
+                for (int q = start; q < start + length; q++)
+                {
+                    answer[offset + q] = ValueAt(x, y, coefficients, rule, at[q], extrapolate, outside);
+                }
+            });
         }
 
         return sets == 1
@@ -709,9 +717,31 @@ internal static partial class JgsBuiltins
             : JgsMatrix.FromColumnMajor(answer, at.Length, sets);
     }
 
-    /// <summary>One query point, by whichever rule the method names.</summary>
+    /// <summary>How <see cref="ValueAt"/> reads between two samples, once the method word is settled.</summary>
+    private enum Interp1Rule
+    {
+        Linear,
+        Nearest,
+        Previous,
+        Next,
+
+        /// <summary>Any of spline, pchip, makima and cubic — they differ in their coefficients, not here.</summary>
+        Cubic,
+    }
+
+    /// <summary>The rule a method word names. Anything unrecognised interpolates linearly, as before.</summary>
+    private static Interp1Rule RuleOf(string method) => method switch
+    {
+        "nearest" => Interp1Rule.Nearest,
+        "previous" => Interp1Rule.Previous,
+        "next" => Interp1Rule.Next,
+        "spline" or "pchip" or "makima" or "cubic" => Interp1Rule.Cubic,
+        _ => Interp1Rule.Linear,
+    };
+
+    /// <summary>One query point, by whichever rule the method named.</summary>
     private static double ValueAt(
-        double[] x, double[] y, double[] coefficients, string method, double at, bool extrapolate,
+        double[] x, double[] y, double[] coefficients, Interp1Rule rule, double at, bool extrapolate,
         double outside)
     {
         int n = x.Length;
@@ -728,14 +758,14 @@ internal static partial class JgsBuiltins
         // The interval the point falls in, clamped so an extrapolated point continues the end piece.
         int i = Bracket(x, at);
 
-        return method switch
+        return rule switch
         {
             // Exactly halfway between two samples takes the later one, because MATLAB's nearest
             // rounds the fractional index away from zero rather than down.
-            "nearest" => at - x[i] < x[i + 1] - at ? y[i] : y[i + 1],
-            "previous" => at >= x[i + 1] ? y[i + 1] : at < x[i] ? double.NaN : y[i],
-            "next" => at <= x[i] ? y[i] : at > x[i + 1] ? double.NaN : y[i + 1],
-            "spline" or "pchip" or "makima" or "cubic" => CubicAt(coefficients, i, at - x[i]),
+            Interp1Rule.Nearest => at - x[i] < x[i + 1] - at ? y[i] : y[i + 1],
+            Interp1Rule.Previous => at >= x[i + 1] ? y[i + 1] : at < x[i] ? double.NaN : y[i],
+            Interp1Rule.Next => at <= x[i] ? y[i] : at > x[i + 1] ? double.NaN : y[i + 1],
+            Interp1Rule.Cubic => CubicAt(coefficients, i, at - x[i]),
             _ => y[i] + ((y[i + 1] - y[i]) * (at - x[i]) / (x[i + 1] - x[i])),
         };
     }

@@ -1,3 +1,5 @@
+using JGraph.Numerics;
+
 namespace JGraph.Scripting.Jgs;
 
 /// <summary>
@@ -32,20 +34,31 @@ internal static class JgsStdlib
     /// <summary>Median of a non-empty array (mean of the middle two for even counts).</summary>
     public static double Median(double[] values)
     {
-        double[] sorted = (double[])values.Clone();
-        Array.Sort(sorted);
-
         // A sort over doubles puts every NaN in front, so the middle of a run holding one is a
         // real reading rather than the missing answer it should be. There is no median of a run
         // with a hole in it -- stepping over the hole is what 'omitnan' asks for, and the caller
-        // that asked has already taken them out.
-        if (sorted.Length > 0 && double.IsNaN(sorted[0]))
+        // that asked has already taken them out. A selection does not order the NaNs anywhere in
+        // particular, so the run is asked directly rather than read off a front element (M120).
+        foreach (double value in values)
         {
-            return double.NaN;
+            if (double.IsNaN(value))
+            {
+                return double.NaN;
+            }
         }
 
-        int mid = sorted.Length / 2;
-        return sorted.Length % 2 == 1 ? sorted[mid] : (sorted[mid - 1] + sorted[mid]) / 2.0;
+        double[] scratch = (double[])values.Clone();
+        int mid = scratch.Length / 2;
+        if (scratch.Length % 2 == 1)
+        {
+            Span<int> middle = [mid];
+            SelectKernels.PartialSort(scratch, middle);
+            return scratch[mid];
+        }
+
+        Span<int> pair = [mid - 1, mid];
+        SelectKernels.PartialSort(scratch, pair);
+        return (scratch[mid - 1] + scratch[mid]) / 2.0;
     }
 
     /// <summary>Most frequent value of a non-empty array; the smallest wins a tie (MATLAB).</summary>

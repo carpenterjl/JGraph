@@ -94,6 +94,36 @@ public sealed class GridSampler
         _derivatives = method == GridMethod.Spline ? BuildDerivatives() : null;
     }
 
+    /// <summary>Shares one sampler's grid and slopes, with scratch of this one's own.</summary>
+    private GridSampler(GridSampler shared)
+    {
+        _grids = shared._grids;
+        _values = shared._values;
+        _dims = shared._dims;
+        _strides = shared._strides;
+        _method = shared._method;
+        _rank = shared._rank;
+        _derivatives = shared._derivatives;
+
+        _cells = new int[_rank];
+        _starts = new int[_rank];
+        _counts = new int[_rank];
+        _weights = new double[_rank * 4];
+        _basis = new double[_rank * 4];
+    }
+
+    /// <summary>
+    /// A second sampler over the same grid, safe to use while this one is in use.
+    /// </summary>
+    /// <remarks>
+    /// The scratch above is what makes one sampler serve one loop and not several threads, and it
+    /// is five small arrays; the grid, the samples and the spline slopes are none of those things
+    /// and are read only. Building a whole second sampler to split a query set across cores would
+    /// re-solve every tridiagonal system in <see cref="BuildDerivatives"/> once per thread, so what
+    /// is copied here is exactly the scratch and nothing else (M120).
+    /// </remarks>
+    public GridSampler ForAnotherThread() => new(this);
+
     /// <summary>The value at one point.</summary>
     /// <param name="point">One coordinate per direction.</param>
     /// <param name="extrapolate">Whether to continue the end piece past the grid.</param>
