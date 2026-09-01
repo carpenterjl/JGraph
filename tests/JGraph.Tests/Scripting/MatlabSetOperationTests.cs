@@ -147,8 +147,12 @@ public class MatlabSetOperationTests : IDisposable
         assert(strcmp(mat2str([1 2; 3 4]), '[1 2;3 4]'));
         assert(strcmp(mat2str([1 2 3]), '[1 2 3]'));
         assert(strcmp(mat2str(pi, 4), '3.142'));
-        % A char row reads back as a char row, so the quotes are part of the answer.
-        assert(strcmp(mat2str('abc'), '"abc"'));
+        % A char row reads back as a char row, so the quotes are part of the answer -- and they are
+        % single quotes, because double ones would read back as a string. This line asserted the
+        % double-quoted form until M122, with this same comment above it saying the opposite.
+        assert(strcmp(mat2str('abc'), '''abc'''));
+        assert(strcmp(mat2str("abc"), '"abc"'));
+        assert(strcmp(mat2str(['ab';'cd']), '[''ab'';''cd'']'));
         assert(strcmp(mat2str([true false]), '[true false]'));
         """);
 

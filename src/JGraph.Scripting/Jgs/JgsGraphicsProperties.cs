@@ -1297,6 +1297,120 @@ internal static partial class JgsGraphicsProperties
                     (Colormap)ValueBridge.FromValue(typeof(Colormap), "Colormap", value, line, col)!);
         }
 
+        if (typeof(Histogram2Plot).IsAssignableFrom(type))
+        {
+            // The readings and the counts are read-only for the reason a binned scatter's are: the
+            // grid is worked out from the readings, so a new set of them is a new chart. Everything
+            // that decides *how* the grid is cut is writable, because MATLAB lets a script change its
+            // mind about the bins without redrawing.
+            Put(table, "Data", entry => Grid(Readings((Histogram2Plot)entry.Target)));
+            Put(table, "XBinEdges", entry => Row([.. ((Histogram2Plot)entry.Target).XBinEdges]));
+            Put(table, "YBinEdges", entry => Row([.. ((Histogram2Plot)entry.Target).YBinEdges]));
+            Put(table, "Values", entry => Grid(((Histogram2Plot)entry.Target).Values));
+            Put(table, "BinCounts", entry => Grid(((Histogram2Plot)entry.Target).BinCounts));
+
+            Put(table, "NumBins",
+                entry => Row(
+                    ((Histogram2Plot)entry.Target).NumBins.Across,
+                    ((Histogram2Plot)entry.Target).NumBins.Up),
+                (entry, value, line, col) => ((Histogram2Plot)entry.Target).NumBins =
+                    JgsBuiltins.BinCounts("NumBins", value, line, col));
+
+            Put(table, "BinWidth",
+                entry => Row(
+                    ((Histogram2Plot)entry.Target).BinWidth!.Value.Across,
+                    ((Histogram2Plot)entry.Target).BinWidth!.Value.Up),
+                (entry, value, line, col) =>
+                {
+                    double[] widths = JgsBuiltins.ToDoubles("BinWidth", value, line, col);
+                    if (widths.Length is not (1 or 2) || Array.Exists(widths, w => !(w > 0)))
+                    {
+                        throw new JgsRuntimeException(line, col,
+                            "BinWidth is one positive number or a positive pair.");
+                    }
+
+                    ((Histogram2Plot)entry.Target).BinWidth = (widths[0], widths[^1]);
+                });
+
+            Put(table, "XBinLimits",
+                entry => Ends(((Histogram2Plot)entry.Target).XBinEdges),
+                (entry, value, line, col) => ((Histogram2Plot)entry.Target).XBinLimits =
+                    JgsBuiltins.SpanOption("XBinLimits", value, line, col));
+            Put(table, "YBinLimits",
+                entry => Ends(((Histogram2Plot)entry.Target).YBinEdges),
+                (entry, value, line, col) => ((Histogram2Plot)entry.Target).YBinLimits =
+                    JgsBuiltins.SpanOption("YBinLimits", value, line, col));
+
+            Put(table, "BinMethod",
+                entry => JgsValue.Str(((Histogram2Plot)entry.Target).BinMethod),
+                (entry, value, line, col) => ((Histogram2Plot)entry.Target).BinMethod =
+                    JgsBuiltins.StrOf("BinMethod", value, line, col));
+            Put(table, "Normalization",
+                entry => JgsValue.Str(((Histogram2Plot)entry.Target).Normalization),
+                (entry, value, line, col) => ((Histogram2Plot)entry.Target).Normalization =
+                    JgsBuiltins.StrOf("Normalization", value, line, col));
+
+            Put(table, "DisplayStyle",
+                entry => JgsValue.Str(
+                    ((Histogram2Plot)entry.Target).DisplayStyle == Histogram2DisplayStyle.Tile
+                        ? "tile"
+                        : "bar3"),
+                (entry, value, line, col) =>
+                {
+                    var plot = (Histogram2Plot)entry.Target;
+                    plot.DisplayStyle = JgsBuiltins.StrOf("DisplayStyle", value, line, col)
+                        .Equals("tile", StringComparison.OrdinalIgnoreCase)
+                            ? Histogram2DisplayStyle.Tile
+                            : Histogram2DisplayStyle.Bar3;
+
+                    // The style is what decides how many dimensions the axes has, so changing it
+                    // through get/set has to move the axes exactly as the verb's own option does.
+                    if (Owner(entry) is { } axes)
+                    {
+                        axes.Is3D = plot.DisplayStyle == Histogram2DisplayStyle.Bar3;
+                        axes.Colorbar.Visible = plot.DisplayStyle == Histogram2DisplayStyle.Tile;
+                    }
+                });
+
+            // 'auto' is a colour that is not a colour: it means each box takes its own height's
+            // place in the colormap, which is what the model stores as no colour at all.
+            Put(table, "FaceColor",
+                entry => ((Histogram2Plot)entry.Target).FaceColorWord is { } word
+                    ? JgsValue.Str(word)
+                    : ValueBridge.ToValue(((Histogram2Plot)entry.Target).FaceColor!.Value),
+                (entry, value, line, col) =>
+                {
+                    var plot = (Histogram2Plot)entry.Target;
+                    if (JgsBuiltins.IsTextScalar(value)
+                        && Histogram2Plot.IsFaceColorWord(JgsBuiltins.TextOf(value)))
+                    {
+                        plot.FaceColorWord = JgsBuiltins.TextOf(value).ToLowerInvariant();
+                    }
+                    else
+                    {
+                        plot.FaceColor = JgsBuiltins.OptionColor(value, line, col, "FaceColor");
+                    }
+                });
+            Put(table, "EdgeColor",
+                entry => ((Histogram2Plot)entry.Target).EdgeColor is { } edge
+                    ? ValueBridge.ToValue(edge)
+                    : JgsValue.Str("none"),
+                (entry, value, line, col) => ((Histogram2Plot)entry.Target).EdgeColor =
+                    JgsBuiltins.IsTextScalar(value)
+                    && JgsBuiltins.TextOf(value).Equals("none", StringComparison.OrdinalIgnoreCase)
+                        ? null
+                        : JgsBuiltins.OptionColor(value, line, col, "EdgeColor"));
+
+            Put(table, "ShowEmptyBins",
+                entry => OnOff(((Histogram2Plot)entry.Target).ShowEmptyBins),
+                (entry, value, line, col) => ((Histogram2Plot)entry.Target).ShowEmptyBins =
+                    ToOnOff("ShowEmptyBins", value, line, col));
+            Put(table, "Colormap",
+                entry => ValueBridge.ToValue(((Histogram2Plot)entry.Target).Colormap),
+                (entry, value, line, col) => ((Histogram2Plot)entry.Target).Colormap =
+                    (Colormap)ValueBridge.FromValue(typeof(Colormap), "Colormap", value, line, col)!);
+        }
+
         if (typeof(BoxChartPlot).IsAssignableFrom(type))
         {
             // The observations and their grouping are plain arrays, which reflection does not carry,
@@ -2479,6 +2593,22 @@ internal static partial class JgsGraphicsProperties
     /// <summary>A rows-by-columns grid of numbers, as the matrix a script would have written.</summary>
     private static JgsValue Grid(double[,] values) =>
         JgsMatrix.Build(values.GetLength(0), values.GetLength(1), (r, c) => values[r, c]);
+
+    /// <summary>
+    /// A bivariate histogram's readings as MATLAB's <c>Data</c>: one row per reading, x then y. A
+    /// chart built from counts rather than readings has none, and answers the 0-by-2 MATLAB does.
+    /// </summary>
+    private static double[,] Readings(Histogram2Plot plot)
+    {
+        var pairs = new double[plot.XData.Count, 2];
+        for (int i = 0; i < plot.XData.Count; i++)
+        {
+            pairs[i, 0] = plot.XData[i];
+            pairs[i, 1] = plot.YData[i];
+        }
+
+        return pairs;
+    }
 
     /// <summary>The six arrays of an arrow field, in the order the model takes them.</summary>
     private static readonly string[] ArrowFieldNames =

@@ -628,6 +628,34 @@ public static class AxesExtensions
     }
 
     /// <summary>
+    /// Adds a bivariate histogram of the readings (MATLAB <c>histogram2</c>). The axes becomes
+    /// three-dimensional for the box field and stays flat for the tile, which is the one chart here
+    /// whose display style decides how many dimensions its axes has.
+    /// </summary>
+    public static Histogram2Plot AddHistogram2(this AxesModel axes, double[] x, double[] y)
+    {
+        ArgumentNullException.ThrowIfNull(axes);
+        var plot = new Histogram2Plot(x, y);
+        axes.Plots.Add(plot);
+        axes.Is3D = true;
+        return plot;
+    }
+
+    /// <summary>
+    /// Adds a bivariate histogram from counts that were worked out elsewhere (MATLAB's
+    /// <c>'BinCounts'</c> form).
+    /// </summary>
+    public static Histogram2Plot AddHistogram2(
+        this AxesModel axes, double[] xEdges, double[] yEdges, double[,] counts)
+    {
+        ArgumentNullException.ThrowIfNull(axes);
+        var plot = new Histogram2Plot(xEdges, yEdges, counts);
+        axes.Plots.Add(plot);
+        axes.Is3D = true;
+        return plot;
+    }
+
+    /// <summary>
     /// Adds a box chart of <paramref name="yData"/>, cut into one box per distinct value of
     /// <paramref name="xData"/> when that is given and drawn as a single box when it is not.
     /// </summary>

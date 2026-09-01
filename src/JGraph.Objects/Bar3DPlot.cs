@@ -71,11 +71,7 @@ public readonly record struct Bar3DBox(
 /// </summary>
 public sealed class Bar3DPlot : PlotObject, I3DDrawable, IHasZData, ILegendItem
 {
-    /// <summary>How much of a face's colour survives, per face direction. Top first.</summary>
-    private const double TopShade = 1.0;
-    private const double BottomShade = 0.5;
-    private const double XFaceShade = 0.82;
-    private const double YFaceShade = 0.66;
+    private readonly BoxFieldRenderer _painter = new();
 
     private double[,] _z;
     private double[]? _rowPositions;
@@ -91,9 +87,6 @@ public sealed class Bar3DPlot : PlotObject, I3DDrawable, IHasZData, ILegendItem
     private double _faceAlpha = 1.0;
     private Colormap _colormap = Colormap.Parula;
 
-    private Point2D[] _face = new Point2D[4];
-    private double[] _faceDepths = [];
-    private int[] _faceOrder = [];
 
     public Bar3DPlot(double[,] z)
     {
@@ -274,85 +267,17 @@ public sealed class Bar3DPlot : PlotObject, I3DDrawable, IHasZData, ILegendItem
         ArgumentNullException.ThrowIfNull(state);
 
         IReadOnlyList<Bar3DBox> boxes = Boxes();
-        if (boxes.Count == 0)
-        {
-            return;
-        }
-
         int columns = System.Math.Max(_z.GetLength(1), 1);
         Color[] palette = _colormap.Resample(columns);
         LineStyle? stroke = _edgeColor is { } edge && _lineWidth > 0
             ? new LineStyle(edge.WithOpacity(Opacity), _lineWidth)
             : null;
 
-        // Every face of every box is sorted together: the boxes interleave in depth as soon as the
-        // camera is off an axis, so sorting box by box would put a near face behind a far one.
-        int faces = boxes.Count * BoxFaces.Length;
-        if (_faceDepths.Length < faces)
-        {
-            _faceDepths = new double[faces];
-            _faceOrder = new int[faces];
-        }
-
-        var corners = new Point2D[boxes.Count * 8];
-        var depths = new double[boxes.Count * 8];
-        for (int b = 0; b < boxes.Count; b++)
-        {
-            Bar3DBox box = boxes[b];
-            for (int corner = 0; corner < 8; corner++)
-            {
-                (double x, double y, double z) = CornerOf(box, corner);
-                (corners[(b * 8) + corner], depths[(b * 8) + corner]) = projection.Project(x, y, z);
-            }
-        }
-
-        for (int f = 0; f < faces; f++)
-        {
-            int[] indices = BoxFaces[f % BoxFaces.Length];
-            int at = (f / BoxFaces.Length) * 8;
-            double sum = 0;
-            foreach (int corner in indices)
-            {
-                sum += depths[at + corner];
-            }
-
-            _faceDepths[f] = sum / indices.Length;
-            _faceOrder[f] = f;
-        }
-
-        // SortMethod 'childorder' paints the faces in the order they are held, so the sort is what
-        // is skipped: the arrays already carry that order.
-        if (state.DepthSort)
-        {
-            Array.Sort(_faceDepths, _faceOrder, 0, faces);
-        }
-
-
-        for (int i = 0; i < faces; i++)
-        {
-            int f = _faceOrder[i];
-            int which = f % BoxFaces.Length;
-            int b = f / BoxFaces.Length;
-            int[] indices = BoxFaces[which];
-
-            bool drawable = true;
-            for (int v = 0; v < indices.Length; v++)
-            {
-                _face[v] = corners[(b * 8) + indices[v]];
-                drawable &= _face[v].IsFinite;
-            }
-
-            if (!drawable)
-            {
-                continue;
-            }
-
-            Color color = _faceColor ?? palette[boxes[b].Column % palette.Length];
-            context.DrawPolygon(
-                _face.AsSpan(0, indices.Length),
-                stroke,
-                Shaded(color, FaceShades[which]).WithOpacity(Opacity * _faceAlpha));
-        }
+        _painter.Render(
+            context, projection, state, boxes,
+            b => _faceColor ?? palette[boxes[b].Column % palette.Length],
+            stroke,
+            Opacity * _faceAlpha);
     }
 
     /// <inheritdoc />
@@ -362,23 +287,7 @@ public sealed class Bar3DPlot : PlotObject, I3DDrawable, IHasZData, ILegendItem
         swatch: (_faceColor ?? _colormap.Resample(System.Math.Max(_z.GetLength(1), 1))[0])
             .WithOpacity(Opacity * _faceAlpha));
 
-    /// <summary>The corners of each face, as indices into the eight corners of a box.</summary>
-    private static readonly int[][] BoxFaces =
-    [
-        [4, 5, 7, 6],   // top    (z max)
-        [0, 1, 3, 2],   // bottom (z min)
-        [0, 1, 5, 4],   // front  (y min)
-        [2, 3, 7, 6],   // back   (y max)
-        [0, 2, 6, 4],   // left   (x min)
-        [1, 3, 7, 5],   // right  (x max)
-    ];
 
-    /// <summary>How much of the bar's colour each of those faces keeps, in the same order.</summary>
-    private static readonly double[] FaceShades =
-        [TopShade, BottomShade, YFaceShade, YFaceShade, XFaceShade, XFaceShade];
-
-    private static Color Shaded(Color color, double keep) =>
-        keep >= 1 ? color : Color.Lerp(color, Colors.Black, 1 - keep);
 
     /// <summary>
     /// One box, placed from the slot it fills. <paramref name="u"/> is the column direction,

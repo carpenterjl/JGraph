@@ -330,6 +330,24 @@ public static class JG
     }
 
     /// <summary>
+    /// Plots the readings as a grid of bins with a box standing on each (MATLAB <c>histogram2</c>).
+    /// </summary>
+    public static Histogram2Plot Histogram2(double[] x, double[] y)
+    {
+        AxesModel axes = PrepareAxes();
+        return axes.AddHistogram2(x, y);
+    }
+
+    /// <summary>
+    /// Plots a grid of counts that were worked out elsewhere as a bivariate histogram.
+    /// </summary>
+    public static Histogram2Plot Histogram2(double[] xEdges, double[] yEdges, double[,] counts)
+    {
+        AxesModel axes = PrepareAxes();
+        return axes.AddHistogram2(xEdges, yEdges, counts);
+    }
+
+    /// <summary>
     /// Plots a box and whiskers per group of observations (MATLAB <c>boxchart</c>).
     /// </summary>
     public static BoxChartPlot BoxChart(double[]? xData, double[] yData)

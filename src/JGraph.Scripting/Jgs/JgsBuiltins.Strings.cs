@@ -912,10 +912,14 @@ internal static partial class JgsBuiltins
             throw new JgsRuntimeException(line, col, "mat2str: the precision is a count of digits, so it is at least 1.");
         }
 
-        if (subject.Type == JgsType.String)
+        // Text reads back as the same kind of text, which means the quotes are part of the answer —
+        // and which kind of quote is the whole of the difference (M122). This used to write a double
+        // quote round a char row, so mat2str('auto') answered text eval would read back as a string:
+        // the one function whose contract is "eval reads this back as what it was" got the type wrong
+        // for every char row it was ever given.
+        if (TryReadText(subject, out TextBundle text))
         {
-            // A char row reads back as a char row, which means the quotes are part of the answer.
-            return JgsValue.Str("\"" + subject.AsString + "\"");
+            return JgsValue.Str(TextMatrixText(text));
         }
 
         // A complex value has to be written as one (M81). Before this, mat2str reached JgsMatrix.ToRows,
@@ -948,6 +952,41 @@ internal static partial class JgsBuiltins
         }
 
         return JgsValue.Str("[" + string.Join(";", written) + "]");
+    }
+
+    /// <summary>
+    /// <c>mat2str</c> of text: the pieces in the quotes their container takes, laid out in its shape.
+    /// </summary>
+    /// <remarks>
+    /// A char row and a char matrix are written in single quotes with an internal quote doubled,
+    /// which is how a MATLAB literal escapes one; a string array is written in double quotes and does
+    /// not need the doubling, because these are the only two containers here and neither writes the
+    /// other's quote. A cell of text has no literal form <c>eval</c> reads back and never reaches
+    /// this — MATLAB refuses <c>mat2str</c> of a cell, and so does the reader below it.
+    /// </remarks>
+    private static string TextMatrixText(TextBundle text)
+    {
+        bool doubled = text.Kind == TextKind.String;
+        var rows = new List<string>(text.Rows);
+        for (int r = 0; r < System.Math.Max(text.Rows, 1); r++)
+        {
+            var pieces = new List<string>(System.Math.Max(text.Cols, 1));
+            for (int c = 0; c < System.Math.Max(text.Cols, 1); c++)
+            {
+                int at = r + (c * text.Rows);
+                string piece = at < text.Texts.Length ? text.Texts[at] : string.Empty;
+                pieces.Add(doubled
+                    ? "\"" + piece + "\""
+                    : "'" + piece.Replace("'", "''", StringComparison.Ordinal) + "'");
+            }
+
+            rows.Add(string.Join(" ", pieces));
+        }
+
+        // One piece stands on its own; several are a literal with the brackets that build it.
+        return text.Texts.Length == 1 && text.Rows <= 1
+            ? rows[0]
+            : "[" + string.Join(";", rows) + "]";
     }
 
     /// <summary>

@@ -125,8 +125,6 @@ finds the places that were guessing at it.
 - **A tag that a builtin does not know about is lost.** `unique`, `sort`, `join`, `split` and the
   elementwise family were taught; anything else handed a string array and returning a rebuilt array
   hands back a plain one. The failure is visible (`class` says `double`) rather than silent.
-- **`fliplr` still refuses a char row.** It is an array function here and `reverse` is the text one;
-  MATLAB allows both.
 - **`extractAfter` and friends answer empty text when the marker is absent**, where MATLAB answers
   `<missing>`. Empty text is still one string, and an array of none breaks every caller that goes on
   to index it.

@@ -46,6 +46,8 @@ internal static partial class JgsBuiltins
         Define("polyint", PolynomialIntegral);
         Define("polyvalm", PolynomialMatrixValue);
 
+        DefineBoth("residue", Residue);
+
         Define("conv", Convolve);
         DefineBoth("deconv", Deconvolve);
         Define("convn", ConvolveN);
@@ -255,6 +257,51 @@ internal static partial class JgsBuiltins
     /// <c>[q, r] = deconv(u, v)</c>: long division of one sequence by another, so that
     /// <c>u</c> is <c>conv(v, q) + r</c>.
     /// </summary>
+    /// <summary>
+    /// <c>[r, p, k] = residue(b, a)</c>, and the same name read backwards as
+    /// <c>[b, a] = residue(r, p, k)</c>.
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    /// One name, two directions, told apart by how many arguments arrive — which is MATLAB's own
+    /// rule and not a convenience. Three inputs is always the way back, because the forward
+    /// direction has only ever taken two.
+    /// </para>
+    /// <para>
+    /// The poles come back in the order <c>roots</c> gives, so <c>residue</c> and <c>roots</c> agree
+    /// about a polynomial with no repeated factor. A repeated one is the case where they part: the
+    /// eigenvalue solver hands back a double root as a conjugate pair about 1e-8 off the axis, and
+    /// this reads that pair as the one pole it is (see <see cref="PartialFractions"/>).
+    /// </para>
+    /// </remarks>
+    private static JgsValue[] Residue(IReadOnlyList<JgsValue> args, int wanted, int line, int col)
+    {
+        ArityRange("residue", args, 2, 3, line, col);
+
+        if (args.Count == 3)
+        {
+            (Complex[] numerator, Complex[] denominator) = PartialFractions.Combine(
+                ComplexArrayOf("residue", args[0], line, col),
+                ComplexArrayOf("residue", args[1], line, col),
+                ComplexArrayOf("residue", args[2], line, col));
+
+            return [ComplexRow(numerator), ComplexRow(denominator)];
+        }
+
+        PartialFractions.Expansion expansion = PartialFractions.Expand(
+            ComplexArrayOf("residue", args[0], line, col),
+            ComplexArrayOf("residue", args[1], line, col));
+
+        // r and p are columns and k is a row, whatever shape the call was written with — the same
+        // asymmetry roots and poly have, and for the same reason: one of the three is a polynomial.
+        return
+        [
+            ComplexColumn(expansion.Residues),
+            ComplexColumn(expansion.Poles),
+            ComplexRow(expansion.Direct),
+        ];
+    }
+
     private static JgsValue[] Deconvolve(
         IReadOnlyList<JgsValue> args, int wanted, int line, int col)
     {

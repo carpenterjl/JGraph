@@ -131,6 +131,25 @@ internal static class PlotMapper
                 Colormap = DtoConvert.ToDto(p.Colormap),
                 ColorLimits = p.ColorLimits is { } counts ? DtoConvert.ToDto(counts) : null,
             },
+            Histogram2Plot p => new Histogram2PlotDto
+            {
+                XData = [.. p.XData],
+                YData = [.. p.YData],
+                BinCounts = p.CountsWereGiven ? Flatten(p.BinCounts) : null,
+                BinCountsAcross = p.CountsWereGiven ? p.BinCounts.GetLength(0) : 0,
+                XBinEdges = [.. p.XBinEdges],
+                YBinEdges = [.. p.YBinEdges],
+                BinMethod = p.BinMethod,
+                Normalization = p.Normalization,
+                DisplayStyle = p.DisplayStyle == Histogram2DisplayStyle.Tile ? "tile" : "bar3",
+                FaceColorWord = p.FaceColorWord,
+                FaceColor = p.FaceColor,
+                EdgeColor = p.EdgeColor,
+                LineWidth = p.LineWidth,
+                FaceAlpha = p.FaceAlpha,
+                ShowEmptyBins = p.ShowEmptyBins,
+                Colormap = DtoConvert.ToDto(p.Colormap),
+            },
             BoxChartPlot p => new BoxChartPlotDto
             {
                 XData = p.XData,
@@ -571,6 +590,7 @@ internal static class PlotMapper
                 Colormap = DtoConvert.ToColormap(d.Colormap),
                 ColorLimits = d.ColorLimits is { } counts ? DtoConvert.ToRange(counts) : null,
             },
+            Histogram2PlotDto d => Histogram2From(d),
             BoxChartPlotDto d => new BoxChartPlot(d.XData, d.YData)
             {
                 BoxFaceColor = d.BoxFaceColor,
@@ -1157,6 +1177,75 @@ internal static class PlotMapper
         wedges.SpecularColorReflectance = stored.SpecularColorReflectance;
         wedges.AlignVertexCenters = stored.AlignVertexCenters;
         return pie;
+    }
+
+    /// <summary>A grid of counts as one row-major run, which is how the DTO stores it.</summary>
+    private static double[] Flatten(double[,] grid)
+    {
+        var flat = new double[grid.Length];
+        int at = 0;
+        for (int i = 0; i < grid.GetLength(0); i++)
+        {
+            for (int j = 0; j < grid.GetLength(1); j++)
+            {
+                flat[at++] = grid[i, j];
+            }
+        }
+
+        return flat;
+    }
+
+    /// <summary>
+    /// A bivariate histogram back from its stored form. The two ways it can have been built are two
+    /// different constructors, so this cannot be an object initializer like its neighbours: a chart
+    /// whose counts were given has no readings to count and must not be handed any.
+    /// </summary>
+    private static Histogram2Plot Histogram2From(Histogram2PlotDto d)
+    {
+        Histogram2Plot plot;
+        if (d.BinCounts is { } flat && d.XBinEdges is { } xEdges && d.YBinEdges is { } yEdges
+            && d.BinCountsAcross > 0)
+        {
+            int up = flat.Length / d.BinCountsAcross;
+            var counts = new double[d.BinCountsAcross, up];
+            for (int i = 0; i < d.BinCountsAcross; i++)
+            {
+                for (int j = 0; j < up; j++)
+                {
+                    counts[i, j] = flat[(i * up) + j];
+                }
+            }
+
+            plot = new Histogram2Plot(xEdges, yEdges, counts);
+        }
+        else
+        {
+            plot = new Histogram2Plot(d.XData, d.YData) { BinMethod = d.BinMethod };
+            if (d.XBinEdges is { Length: > 1 } xs && d.YBinEdges is { Length: > 1 } ys)
+            {
+                plot.SetBinEdges(xs, ys);
+            }
+        }
+
+        plot.Normalization = d.Normalization;
+        plot.DisplayStyle = d.DisplayStyle == "tile"
+            ? Histogram2DisplayStyle.Tile
+            : Histogram2DisplayStyle.Bar3;
+        if (d.FaceColorWord is { } word)
+        {
+            plot.FaceColorWord = word;
+        }
+        else
+        {
+            plot.FaceColor = d.FaceColor;
+        }
+
+        plot.EdgeColor = d.EdgeColor;
+        plot.LineWidth = d.LineWidth;
+        plot.FaceAlpha = d.FaceAlpha;
+        plot.ShowEmptyBins = d.ShowEmptyBins;
+        plot.Colormap = DtoConvert.ToColormap(d.Colormap);
+        return plot;
     }
 
     private static string PixelsToBase64(uint[] pixels)

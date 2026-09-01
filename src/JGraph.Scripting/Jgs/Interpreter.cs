@@ -787,6 +787,14 @@ internal sealed partial class Interpreter
     /// Looks <paramref name="name"/> up on the MATLAB search path — the last thing tried before a name
     /// is declared undefined.
     /// </summary>
+    /// <summary>
+    /// Looks a function up by name for a builtin that was handed one — <c>nargin('helper')</c> — which
+    /// is the ordinary lookup minus the workspace: a variable called <c>plot</c> does not answer a
+    /// question about the function called <c>plot</c>.
+    /// </summary>
+    internal bool TryResolveFunctionByName(string name, out JgsValue value) =>
+        TryResolveOnPath(name, out value) && value.Type == JgsType.Function;
+
     private bool TryResolveOnPath(string name, out JgsValue value)
     {
         if (Dialect.IsMatlab && FunctionPath is { } path)
@@ -5650,6 +5658,14 @@ internal sealed partial class Interpreter
         if (value.Type == JgsType.Sparse)
         {
             return JgsValue.Sparse(value.AsSparse.Transpose());
+        }
+
+        // A quoted word is 1-by-n characters in MATLAB, so it stands up like any other row (M122).
+        // It used to come back unturned, because a char row is one String value here rather than an
+        // array — which made `keys'` a no-op that a script had no way to notice.
+        if (value.Type == JgsType.String && Dialect.IsMatlab)
+        {
+            value = JgsValue.CharMatrix([value.AsString]);
         }
 
         if (value.Type != JgsType.Array)

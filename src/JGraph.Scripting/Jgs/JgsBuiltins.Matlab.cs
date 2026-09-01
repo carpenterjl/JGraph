@@ -168,6 +168,15 @@ internal static partial class JgsBuiltins
                 return TiledStringArray(source, down, across);
             }
 
+            // A cell tiles as elements too, and was falling through to the line below — which treats
+            // anything that is not an array as one value and built a 1-by-2 double out of a 2-by-2
+            // cell (M122). It is the same tiling as a string array's, differing only in what the
+            // answer is wrapped in.
+            if (source.Type == JgsType.Cell)
+            {
+                return TiledCell(source, down, across);
+            }
+
             if (source.Type != JgsType.Array)
             {
                 return JgsMatrix.BuildValues(down, across, (_, _) => source);
@@ -245,7 +254,12 @@ internal static partial class JgsBuiltins
 
         // num2str writes a number for a person to read; mat2str writes one for the language to read
         // back, which is why it keeps the brackets and the semicolons (M52 wave E).
-        Define("mat2str", (args, line, col) => MatrixText(args, line, col));
+        // Marked string-aware because the whole point of mat2str is to write text eval reads
+        // back as the same value, and a string demoted to a char row on the way in cannot be told
+        // from one that was written as a char row (M122).
+        env.Declare("mat2str", JgsValue.Function(
+            new BuiltinFunction("mat2str", (args, line, col) => MatrixText(args, line, col))
+            { KeepsStringArguments = true }));
         Define("int2str", (args, line, col) => WholeNumberText(args, line, col));
 
         Define("str2double", (args, line, col) =>
@@ -595,6 +609,27 @@ internal static partial class JgsBuiltins
         }
 
         return JgsValue.StringArray(elements, height, width);
+    }
+
+    /// <summary>A cell tiled down-by-across, in the cell it came in.</summary>
+    private static JgsValue TiledCell(JgsValue source, int down, int across)
+    {
+        int rows = JgsMatrix.RowCount(source);
+        int cols = JgsMatrix.ColCount(source);
+        int height = rows * down;
+        int width = cols * across;
+        var elements = new JgsValue[height * width];
+        for (int c = 0; c < width; c++)
+        {
+            for (int r = 0; r < height; r++)
+            {
+                elements[(c * height) + r] = JgsMatrix.At(source, r % rows, c % cols);
+            }
+        }
+
+        JgsValue tiled = JgsValue.Cell(elements);
+        tiled.Reshape(height, width);
+        return tiled;
     }
 
     /// <summary>

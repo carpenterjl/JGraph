@@ -17,6 +17,7 @@ internal static partial class JgsBuiltins
     [
         "eval", "evalc", "evalin", "assignin", "str2func", "str2num",
         "exist", "who", "which", "narginchk", "nargoutchk", "nargchk",
+        "nargin", "nargout",
         "lasterr", "lasterror", "lastwarn", "refreshdata",
 
         // M62: the error objects — error is re-declared over its plain form, the rest are new.
@@ -289,6 +290,16 @@ internal static partial class JgsBuiltins
         Action<string, Func<IReadOnlyList<JgsValue>, int, int, JgsValue>> Define,
         JgsEnvironment env, Interpreter interpreter, JGraphScriptGlobals host)
     {
+        // nargin and nargout are two different questions wearing one name. Inside a function body
+        // they are the *variables* a call declared, bound by JgsCallable when the frame opens; called
+        // with an argument they ask about a function that is not running. The local binding shadows
+        // this one, which is MATLAB's arrangement and not a collision to be resolved.
+        Define("nargin", (args, line, col) =>
+            JgsValue.Number(DeclaredArgumentCount("nargin", args, env, interpreter, line, col)));
+
+        Define("nargout", (args, line, col) =>
+            JgsValue.Number(DeclaredArgumentCount("nargout", args, env, interpreter, line, col)));
+
         Define("exist", (args, line, col) =>
         {
             ArityRange("exist", args, 1, 2, line, col);
@@ -454,6 +465,106 @@ internal static partial class JgsBuiltins
 
                 return inner.Call(args, line, col);
             });
+        }
+    }
+
+    /// <summary>
+    /// <c>nargin(f)</c> and <c>nargout(f)</c>: how many inputs or outputs a function <em>declares</em>,
+    /// which is a different question from how many a running call was given (M122).
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    /// MATLAB's sign convention is kept: a declaration ending in <c>varargin</c> or <c>varargout</c>
+    /// answers a negative number, <c>-(fixed + 1)</c>, so <c>-1</c> means "any number" and <c>-3</c>
+    /// means "two, then any number". A caller that only wants the fixed count reads
+    /// <c>abs(n) - 1</c> when <c>n</c> is negative, which is what MATLAB's own documentation says.
+    /// </para>
+    /// <para>
+    /// For a function written in a script or a file the answer is read from its own header, so it is
+    /// the same answer MATLAB gives for the same file. For a builtin it is read from
+    /// <see cref="JgsBuiltinCatalog"/> — the signature <c>help</c> prints and the editor completes —
+    /// because a builtin here has no header to read: it validates its arguments as it runs. That is a
+    /// recorded divergence rather than a defect. MATLAB's number describes MATLAB's implementation of
+    /// the name and this one describes JGraph's, and the two are not the same function; of the 1,641
+    /// names both engines carry, 671 answer the same number.
+    /// </para>
+    /// <para>
+    /// <c>nargout</c> of a builtin is the one place the answer is not read from the catalog, because
+    /// the catalog does not describe outputs. It is read from the registration instead, where it is a
+    /// fact rather than a guess: a builtin with no multiple-output form has exactly one output, and
+    /// one that has such a form answers however many the caller asks for.
+    /// </para>
+    /// </remarks>
+    private static double DeclaredArgumentCount(
+        string verb, IReadOnlyList<JgsValue> args, JgsEnvironment env, Interpreter interpreter,
+        int line, int col)
+    {
+        Arity(verb, args, 1, line, col);
+
+        JgsValue given = args[0];
+        if (IsTextScalar(given))
+        {
+            string name = TextOf(given);
+            if (!env.TryGet(name, out given) || given.Type != JgsType.Function)
+            {
+                if (!interpreter.TryResolveFunctionByName(name, out given))
+                {
+                    throw new JgsRuntimeException(line, col, "MATLAB:narginout:notValidMfile",
+                        "Not a valid MATLAB file.");
+                }
+            }
+        }
+
+        if (given.Type != JgsType.Function)
+        {
+            throw new JgsRuntimeException(line, col, "MATLAB:narginout:notValidMfile",
+                "Not a valid MATLAB file.");
+        }
+
+        bool inputs = verb == "nargin";
+        switch (given.AsCallable)
+        {
+            case UserFunction user:
+                return Counted(inputs ? user.Declaration.Parameters : user.Declaration.Outputs, inputs);
+
+            case AnonymousFunction anonymous:
+                // A handle names no outputs: it hands back however many the body it wraps hands
+                // back, which is what MATLAB's -1 says and is measured rather than assumed —
+                // nargout(@(x) x) answers -1 in R2024a, not 1.
+                return inputs ? Counted(anonymous.Declaration.Parameters, true) : -1;
+
+            case BuiltinFunction builtin when !inputs:
+                return builtin.MultiOutput is null ? 1 : -1;
+
+            case BuiltinFunction builtin:
+                if (JgsBuiltinCatalog.Find(builtin.Name) is { } info)
+                {
+                    // The catalog spells an open-ended tail by ending the last parameter's name in an
+                    // ellipsis — deal(value, more...) — which is the same thing varargin says.
+                    var declared = new string[info.Parameters.Count];
+                    for (int i = 0; i < declared.Length; i++)
+                    {
+                        declared[i] = info.Parameters[i].Name.EndsWith("...", StringComparison.Ordinal)
+                            ? "varargin"
+                            : info.Parameters[i].Name;
+                    }
+
+                    return Counted(declared, true);
+                }
+
+                return -1;
+
+            default:
+                throw new JgsRuntimeException(line, col, "MATLAB:narginout:notValidMfile",
+                    "Not a valid MATLAB file.");
+        }
+
+        static double Counted(IReadOnlyList<string> declared, bool inputs)
+        {
+            string open = inputs ? "varargin" : "varargout";
+            return declared.Count > 0 && declared[^1] == open
+                ? -declared.Count
+                : declared.Count;
         }
     }
 }

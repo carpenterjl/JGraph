@@ -195,6 +195,8 @@ public static class JgsBuiltinCatalog
         Add("exist", "What a name is: 1 a variable, 2 a file, 5 a builtin, 7 a folder, 0 nothing.", P("name"), Opt("kind"));
         Add("who", "The names of the variables in scope, as a cell array.", Opt("pattern"));
         Add("which", "Where a name comes from — a builtin, or the file it resolves to.", P("name"));
+        Add("nargin", "How many inputs a function declares: nargin('name') or nargin(@f), negative when the last is varargin. Inside a function body the bare name is how many the call passed.", P("f"));
+        Add("nargout", "How many outputs a function declares: nargout('name') or nargout(@f), negative when the last is varargout. Inside a function body the bare name is how many the caller asked for.", P("f"));
         Add("narginchk", "Fails unless the enclosing function got between low and high arguments.", P("low"), P("high"));
         Add("nargoutchk", "Fails unless the enclosing function was asked for between low and high outputs.", P("low"), P("high"));
         Add("nargchk", "The pre-R2011 spelling of narginchk.", P("low"), P("high"));
@@ -1348,6 +1350,7 @@ public static class JgsBuiltinCatalog
         Add("polyder", "The derivative of a polynomial, of a product polyder(a, b), or of a ratio [q, d] = polyder(b, a).", P("p"), Opt("b"));
         Add("polyint", "The antiderivative of a polynomial, with an optional constant of integration: q = polyint(p, k).", P("p"), Opt("k"));
         Add("polyvalm", "A polynomial evaluated at a square matrix, every power a matrix power: Y = polyvalm(p, X).", P("p"), P("X"));
+        Add("residue", "Partial fractions: [r, p, k] = residue(b, a) splits b(s)/a(s) into residues, poles and a polynomial part, and [b, a] = residue(r, p, k) puts it back.", P("b"), P("a"), Opt("k"));
         Add("conv", "The convolution of two vectors, which is also the product of two polynomials; shape 'full' (default), 'same', or 'valid'.", P("u"), P("v"), Opt("shape"));
         Add("deconv", "Long division of one vector by another: [q, r] = deconv(u, v), so that u is conv(v, q) + r.", P("u"), P("v"));
         Add("convn", "Convolution over every dimension at once; shape 'full' (default), 'same', or 'valid'.", P("A"), P("B"), Opt("shape"));
@@ -1827,9 +1830,9 @@ public static class JgsBuiltinCatalog
         Add("stem", "Stem plot: stem(y), stem(x, y), with a LineSpec, 'filled', and Color, LineStyle, LineWidth, Marker, MarkerSize, MarkerEdgeColor, MarkerFaceColor, BaseValue and ShowBaseLine.", P("x"), Opt("y"), Opt("spec"), Opt("options"));
         Add("histogram", "Counts values into bins and draws them: histogram(x), histogram(x, nbins | edges), histogram(categories), histogram('BinEdges', e, 'BinCounts', n), histogram(table, column), with BinWidth, BinLimits, BinMethod, NumBins, Normalization, DisplayStyle, Orientation, BarWidth, FaceColor, EdgeColor, FaceAlpha, EdgeAlpha, LineWidth, LineStyle, DisplayOrder, NumDisplayBins and ShowOthers.", Opt("values"), Opt("bins"), Opt("options"));
         Add("errorbar", "Line plot with error bars: errorbar(x, y, err), errorbar(x, y, neg, pos), errorbar(x, y, yneg, ypos, xneg, xpos), with 'vertical', 'horizontal' or 'both', a LineSpec, the table form, and CapSize, Color, LineStyle, LineWidth, Marker, MarkerSize, MarkerEdgeColor and MarkerFaceColor.", P("x"), P("y"), P("error"), Opt("pos"), Opt("options"));
-        Add("semilogx", "Line plot with a logarithmic x axis: semilogx(x, y) or semilogx(y).", Opt("x"), P("y"), Opt("spec"));
-        Add("semilogy", "Line plot with a logarithmic y axis: semilogy(x, y) or semilogy(y).", Opt("x"), P("y"), Opt("spec"));
-        Add("loglog", "Line plot with logarithmic x and y axes: loglog(x, y) or loglog(y).", Opt("x"), P("y"), Opt("spec"));
+        Add("semilogx", "Line plot with a logarithmic x axis: semilogx(y), semilogx(x, y, spec?), repeated (x, y, spec) groups, or a table and two column names — every form plot takes, with the same options.", Opt("x"), P("y"), Opt("spec"), Opt("options"));
+        Add("semilogy", "Line plot with a logarithmic y axis: semilogy(y), semilogy(x, y, spec?), repeated (x, y, spec) groups, or a table and two column names — every form plot takes, with the same options.", Opt("x"), P("y"), Opt("spec"), Opt("options"));
+        Add("loglog", "Line plot with logarithmic x and y axes: loglog(y), loglog(x, y, spec?), repeated (x, y, spec) groups, or a table and two column names — every form plot takes, with the same options.", Opt("x"), P("y"), Opt("spec"), Opt("options"));
         Add("title", "Sets the current axes title, with optional text properties: title('t', 'Color', 'r', 'FontSize', 14).", P("text"), Opt("name"), Opt("value"));
         Add("subtitle", "Sets a second line under the axes title, with the same text properties title takes.", P("text"), Opt("name"), Opt("value"));
         Add("sgtitle", "Sets a title over the whole figure, above every subplot in it.", P("text"), Opt("name"), Opt("value"));
@@ -1907,6 +1910,7 @@ public static class JgsBuiltinCatalog
         Add("bar3", "A matrix as a field of bars: bar3(z), bar3(y, z), then a width, a layout word ('detached', 'grouped', 'stacked') and options.", P("y"), Opt("z"), Opt("width"));
         Add("bar3h", "The same chart with the bars laid along x instead of standing up.", P("y"), Opt("z"), Opt("width"));
         Add("pie3", "A raised pie chart: pie3(x), pie3(x, explode), pie3(x, labels).", P("x"), Opt("explode"), Opt("labels"));
+        Add("histogram2", "Pairs counted onto a grid and drawn as a field of boxes: histogram2(x, y), then a bin count or a pair of edge vectors, then NumBins, BinWidth, XBinEdges, YBinEdges, XBinLimits, YBinLimits, BinMethod, BinCounts, Normalization, DisplayStyle, FaceColor, EdgeColor, LineWidth, FaceAlpha and ShowEmptyBins.", P("x"), P("y"), Opt("bins"), Opt("options"));
         Add("binscatter", "The readings counted into a grid of bins and coloured by how many fell in each: binscatter(x, y), binscatter(x, y, nbins).", P("x"), P("y"), Opt("nbins"));
         Add("swarmchart", "A scatter whose crowded points are spread sideways so all of them show: swarmchart(x, y), swarmchart(x, y, sz, c).", P("x"), P("y"), Opt("sz"), Opt("c"));
         Add("swarmchart3", "The same spread in space: swarmchart3(x, y, z), swarmchart3(x, y, z, sz, c).", P("x"), P("y"), P("z"), Opt("sz"), Opt("c"));

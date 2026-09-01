@@ -103,9 +103,16 @@ see. This file refused to count them while they drew nothing; **M56 made them re
 number and this one agree again. `opengl` *is* counted, because an accepted no-op is an answer — the
 same reading that counted `shading`, `lighting` and `camlight` in M43.
 
-Across every callable kind — builtin, function, operator, keyword, script — the count is **1,035 of
-2,024** as of M121, which came from the capability probe rather than a plan row: the head-to-head
-suite's "Solvers and quadrature" group listed nine forms and JGraph answered six. The four names are
+Across every callable kind — builtin, function, operator, keyword, script — the count is **1,038 of
+2,024** as of M122, which came from the capability probe as M121's did — and from the last seven
+forms in it. Three of those seven were names that did not exist: `residue`, the partial-fraction
+expansion, and `histogram2`, a bivariate histogram drawn as a field of boxes, and `nargin` in the
+form that takes a function rather than reading the running call's own count (with `nargout` beside
+it, which the probe does not ask for and which is the same mechanism). The other four were forms of
+names that did exist, and are recorded in ADR 0124 rather than here, because a form is not a name.
+
+M121 took the count to 1,035, which came from the capability probe rather than a plan row: the
+head-to-head suite's "Solvers and quadrature" group listed nine forms and JGraph answered six. The four names are
 `integral` and `quadgk` — one adaptive Gauss–Kronrod engine behind two interfaces, as they are in
 MATLAB — and `odeset` with `odeget`, which are the other half of a name that had been here since
 M43: `ode45` existed but could not be told a tolerance, a `Refine`, a `MaxStep` or an

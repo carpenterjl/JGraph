@@ -1981,15 +1981,26 @@ internal static partial class JgsBuiltins
             return value;
         }
 
+        // A row stands up (M122). The comment that used to sit here said vectors have no orientation
+        // "matching the interpreter's own ' operator" — and the operator had long since stopped
+        // agreeing: `v'` answered the 4-by-1 MATLAB answers while `transpose(v)` answered the row it
+        // was given. One engine cannot hold two readings of one operation, and the operator's is the
+        // one MATLAB shares.
+        if (value.Type == JgsType.Array && !IsMatrixValue(value) && value.DimCount <= 2)
+        {
+            double[] flat = FlattenColumnMajor(name, value, line, col);
+            JgsValue column = JgsMatrix.FromColumnMajor(flat, flat.Length, 1);
+            return value.IsCharMatrix ? column.MarkCharMatrix() : column;
+        }
+
         if (!IsMatrixValue(value))
         {
-            // Vectors here have no orientation, so their transpose is themselves — matching the
-            // interpreter's own ' operator (see EvaluateTranspose).
             return value;
         }
 
         double[][] rows = RowsOfMatrix(name, value, line, col);
-        return MatrixFromRows(TransposeRows(rows));
+        JgsValue turned = MatrixFromRows(TransposeRows(rows));
+        return value.IsCharMatrix ? turned.MarkCharMatrix() : turned;
     }
 
     private static IEnumerable<JgsValue> EnumerateElements(JgsValue array)

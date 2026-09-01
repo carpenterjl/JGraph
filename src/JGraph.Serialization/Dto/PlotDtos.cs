@@ -27,6 +27,7 @@ namespace JGraph.Serialization.Dto;
 [JsonDerivedType(typeof(PiePlotDto), "pie")]
 [JsonDerivedType(typeof(HeatmapPlotDto), "heatmap")]
 [JsonDerivedType(typeof(BinScatterPlotDto), "binscatter")]
+[JsonDerivedType(typeof(Histogram2PlotDto), "histogram2")]
 [JsonDerivedType(typeof(BoxChartPlotDto), "boxchart")]
 [JsonDerivedType(typeof(StemPlotDto), "stem")]
 [JsonDerivedType(typeof(HistogramPlotDto), "histogram")]
@@ -402,6 +403,53 @@ public sealed class BinScatterPlotDto : PlotDto
 
     /// <summary>The colour limits that were set, or null when they come from the counts.</summary>
     public RangeDto? ColorLimits { get; set; }
+}
+
+/// <summary>
+/// The serialized form of a <see cref="Histogram2Plot"/>. The readings are stored and the grid is
+/// worked out again on load, for the same reason a binned scatter's is: the readings are smaller
+/// than the counts for the sample sizes this chart is for, and they are the only form that lets the
+/// bins be moved after the fact. A chart built from counts has no readings, and stores those
+/// instead — which is the one case where the grid cannot be worked out again.
+/// </summary>
+public sealed class Histogram2PlotDto : PlotDto
+{
+    public double[] XData { get; set; } = Array.Empty<double>();
+
+    public double[] YData { get; set; } = Array.Empty<double>();
+
+    /// <summary>The counts, row-major, when they were given rather than counted; null otherwise.</summary>
+    public double[]? BinCounts { get; set; }
+
+    /// <summary>How many bins the stored counts are across, when there are stored counts.</summary>
+    public int BinCountsAcross { get; set; }
+
+    /// <summary>The edges across when they were named or when the counts were given; null otherwise.</summary>
+    public double[]? XBinEdges { get; set; }
+
+    /// <summary>The edges up when they were named or when the counts were given; null otherwise.</summary>
+    public double[]? YBinEdges { get; set; }
+
+    public string BinMethod { get; set; } = "auto";
+
+    public string Normalization { get; set; } = "count";
+
+    public string DisplayStyle { get; set; } = "bar3";
+
+    /// <summary>The word colouring the faces, or null when a colour was named.</summary>
+    public string? FaceColorWord { get; set; } = "auto";
+
+    public Color? FaceColor { get; set; }
+
+    public Color? EdgeColor { get; set; }
+
+    public double LineWidth { get; set; } = 0.5;
+
+    public double FaceAlpha { get; set; } = 1;
+
+    public bool ShowEmptyBins { get; set; }
+
+    public ColormapDto Colormap { get; set; } = new("Parula", Array.Empty<Color>());
 }
 
 /// <summary>The serialized form of a <see cref="BoxChartPlot"/>.</summary>

@@ -2269,9 +2269,9 @@ internal static partial class JgsBuiltins
             BindsAnsAsStatement = false,
         }));
 
-        DefineSilent("semilogy", OnNamedAxes((args, line, col) => Semilog("semilogy", args, line, col, (x, y, s) => JG.SemilogY(x, y, s))));
-        DefineSilent("semilogx", OnNamedAxes((args, line, col) => Semilog("semilogx", args, line, col, (x, y, s) => JG.SemilogX(x, y, s))));
-        DefineSilent("loglog", OnNamedAxes((args, line, col) => Semilog("loglog", args, line, col, (x, y, s) => JG.LogLog(x, y, s))));
+        DefineSilent("semilogy", OnNamedAxes((args, line, col) => Semilog("semilogy", args, dialect, line, col, logX: false, logY: true)));
+        DefineSilent("semilogx", OnNamedAxes((args, line, col) => Semilog("semilogx", args, dialect, line, col, logX: true, logY: false)));
+        DefineSilent("loglog", OnNamedAxes((args, line, col) => Semilog("loglog", args, dialect, line, col, logX: true, logY: true)));
 
         // Every axes-facing verb accepts a leading axes handle, MATLAB's title(ax, '…') form. The
         // named axes is made current only for the call, so gca does not move (M51).
@@ -2560,6 +2560,10 @@ internal static partial class JgsBuiltins
         // After every define and after the other retrofits, so it wraps whichever wrapper each of
         // these six names ended up with (M121).
         MapTextSubjects(env);
+
+        // Beneath the char-matrix marks, because this one hands the verb a char matrix it built and
+        // re-tags the answer itself; the mark above reads the arguments the *script* wrote (M122).
+        RearrangeText(env, dialect);
 
         // Last of all, so it wraps whichever wrapper each name ended up with (M105) — the same reason
         // the string-array marks are applied last.
@@ -4179,34 +4183,43 @@ internal static partial class JgsBuiltins
         return values;
     }
 
+    /// <summary>
+    /// <c>semilogx</c>, <c>semilogy</c> and <c>loglog</c>: <c>plot</c>, and then a logarithmic ruler
+    /// on whichever axis the verb is named for.
+    /// </summary>
+    /// <remarks>
+    /// These three used to read their own arguments, and read only three of them: a call carrying a
+    /// name/value pair — <c>semilogy(x, y, '-o', 'LineWidth', 1.2)</c>, which is the form the
+    /// documentation opens with — was refused for having five. They are not a different kind of
+    /// drawing from <c>plot</c>; they are <c>plot</c> with a ruler changed afterwards, so they run
+    /// <see cref="PlotCore"/> and inherit every form it accepts: repeated <c>(x, y, spec)</c> groups,
+    /// the option list, a table and its two column names, and datetimes along either axis.
+    ///
+    /// <para>
+    /// The scale is set after the drawing rather than before, because a verb drawn with <c>hold</c>
+    /// off clears the axes and would take the ruler with it. The implicit x stays 1-based in both
+    /// dialects, which is what these three have always counted from — <c>plot</c>'s 0-based JGS
+    /// numbering would put a sample on a logarithmic x axis at a coordinate it has no room for.
+    /// </para>
+    /// </remarks>
     private static JgsValue Semilog(
-        string name, IReadOnlyList<JgsValue> args, int line, int col,
-        Func<double[], double[], string?, PlotObject> apply)
+        string name, IReadOnlyList<JgsValue> args, JgsDialect dialect, int line, int col,
+        bool logX, bool logY)
     {
-        ArityRange(name, args, 1, 3, line, col);
+        JgsValue handles = PlotCore(args, dialect, line, col, verb: name, implicitX: Counting);
 
-        // semilogy(y) counts along the whole numbers, exactly as plot(y) does — the one form of
-        // these three that a script most often reaches for, and the one that used to be refused.
-        // A trailing line spec still names the style, so semilogy(y, 'r--') is told from
-        // semilogx(x, y) by whether the second argument is a word.
-        double[] first = DoubleArray(name, args, 0, line, col);
-        bool implicitX = args.Count == 1 || (args.Count == 2 && args[1].Type == JgsType.String);
-        string? spec = implicitX
-            ? args.Count == 2 ? Str(name, args, 1, line, col) : null
-            : args.Count == 3 ? Str(name, args, 2, line, col) : null;
-
-        if (implicitX)
+        AxesModel axes = JG.Gca();
+        if (logX)
         {
-            var counted = new double[first.Length];
-            for (int i = 0; i < counted.Length; i++)
-            {
-                counted[i] = i + 1;
-            }
-
-            return Handle(apply(counted, first, spec));
+            axes.PrimaryXAxis.Scale = AxisScaleType.Logarithmic;
         }
 
-        return Handle(apply(first, DoubleArray(name, args, 1, line, col), spec));
+        if (logY)
+        {
+            axes.PrimaryYAxis.Scale = AxisScaleType.Logarithmic;
+        }
+
+        return handles;
     }
 
     // --- RF network table glue -------------------------------------------------------------------
