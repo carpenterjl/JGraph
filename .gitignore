@@ -53,3 +53,4 @@ __pycache__/
 ## cherry-picking the branch, not by committing the directory. Remove a finished one with
 ## `git worktree remove`; `git worktree list` shows what is still there.
 .claude/worktrees/
+docs/plans/
