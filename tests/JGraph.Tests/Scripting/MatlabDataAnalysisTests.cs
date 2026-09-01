@@ -336,7 +336,9 @@ public class MatlabDataAnalysisTests : IDisposable
         d = [1 2 2 3 3 3 4 4 4 4];
         [n, e] = histcounts(d, 4);
         assert(isequal(n, [1 2 3 4]));
-        assert(isequal(e, [1 1.75 2.5 3.25 4]));
+        % A bin count is a count and not a set of edges, so the edges left over are chosen to be
+        % readable rather than to end on the data: 0.9 wide from 0.7, which reaches 4.3 (M123).
+        assert(max(abs(e - [0.7 1.6 2.5 3.4 4.3])) < 1e-12);
         [n2, e2] = histcounts(d, [0 2 4 6]);
         assert(isequal(n2, [1 5 4]));
         assert(isequal(e2, [0 2 4 6]));

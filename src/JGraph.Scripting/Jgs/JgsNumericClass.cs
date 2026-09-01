@@ -179,6 +179,25 @@ internal static class JgsNumericClasses
                 return JgsMatrix.Like(value, JgsValue.Packed(destination));
             }
 
+            case JgsType.Complex:
+                return JgsValue.ComplexNum(new System.Numerics.Complex(
+                    Convert(value.AsComplex.Real, numericClass),
+                    Convert(value.AsComplex.Imaginary, numericClass)));
+
+            // Both planes, because a complex single is a pair of floats and not a float beside a
+            // double. Nothing had ever asked a complex array for its class, so this arm did not
+            // exist and the boxed one below threw for the packed payload -- which is how `fft` of a
+            // single first refused to run at all.
+            case JgsType.Array when value.IsPackedComplex:
+            {
+                JgsPackedComplex source = value.AsPackedComplex;
+                NumericBuffer re = JgsPacking.Allocate(source.Length);
+                NumericBuffer im = JgsPacking.Allocate(source.Length);
+                PackedMath.Round(source.Re, re, RoundingFor(numericClass));
+                PackedMath.Round(source.Im, im, RoundingFor(numericClass));
+                return JgsMatrix.Like(value, JgsValue.PackedComplexArray(new JgsPackedComplex(re, im)));
+            }
+
             case JgsType.Array:
             {
                 JgsValue[] source = value.AsArray;

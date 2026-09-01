@@ -2554,6 +2554,8 @@ internal static partial class JgsBuiltins
         }
 
         RegisterSolverBuiltins(env);
+        RegisterOdeSolutionBuiltins(env);
+        RegisterCosineTransformBuiltins(env);
         RegisterStringEditingBuiltins(env);
         RegisterStringArrayBuiltins(env);
 
@@ -2564,6 +2566,12 @@ internal static partial class JgsBuiltins
         // Beneath the char-matrix marks, because this one hands the verb a char matrix it built and
         // re-tags the answer itself; the mark above reads the arguments the *script* wrote (M122).
         RearrangeText(env, dialect);
+
+        // Outside the shape retrofit, so a classed argument is read as the script wrote it and the
+        // tag goes back on whatever that retrofit answered. The two never meet in practice — a char
+        // row has no numeric class and a classed array has no text in it — but the order is the one
+        // that stays right if they ever do (M123).
+        CarryNumericClass(env);
 
         // Last of all, so it wraps whichever wrapper each name ended up with (M105) — the same reason
         // the string-array marks are applied last.

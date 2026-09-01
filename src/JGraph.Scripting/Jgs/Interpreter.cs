@@ -1239,12 +1239,23 @@ internal sealed partial class Interpreter
         bool byColumns = JgsMatrix.IsMatrix(iterable) && JgsMatrix.RowCount(iterable) > 1;
         int iterationCount = byColumns ? JgsMatrix.ColCount(iterable) : iterable.ArrayLength;
         int columnRows = byColumns ? JgsMatrix.RowCount(iterable) : 0;
+
+        // The class of what is being walked, read once rather than per pass: an element read out of
+        // an array is a bare number, so `for i = int16(1):int16(4)` bound a double i under a value
+        // that knew perfectly well it was an int16. The check is an enum comparison for the plain
+        // double loops that are all anyone writes, and the stamp only happens where there is a class.
+        JgsNumericClass walked = iterable.NumericClass;
         for (int index = 0; index < iterationCount; index++)
         {
             int column = index; // for the lambda below; 'index' is also the elementwise position
             JgsValue element = byColumns
                 ? JgsMatrix.BuildValues(columnRows, 1, (r, _) => JgsMatrix.At(iterable, r, column))
                 : CopyForBinding(iterable.ElementAt(index));
+            if (walked != JgsNumericClass.Double)
+            {
+                element = JgsNumericClasses.Stamp(element, walked);
+            }
+
             Tick();
             JgsEnvironment local = BlockScope(env);
             local.Declare(statement.Variable, element);
@@ -1441,9 +1452,10 @@ internal sealed partial class Interpreter
     /// </summary>
     private JgsValue EvaluateRange(RangeExpr range, JgsEnvironment env)
     {
-        double start = RangeBound(range.Start, "start", env);
-        double step = range.Step is null ? 1 : RangeBound(range.Step, "step", env);
-        double stop = RangeBound(range.Stop, "stop", env);
+        JgsNumericClass carried = JgsNumericClass.Double;
+        double start = RangeBound(range.Start, "start", env, ref carried);
+        double step = range.Step is null ? 1 : RangeBound(range.Step, "step", env, ref carried);
+        double stop = RangeBound(range.Stop, "stop", env, ref carried);
 
         if (step == 0)
         {
@@ -1470,7 +1482,8 @@ internal sealed partial class Interpreter
 
         if (JgsPacking.Enabled)
         {
-            return PackedOps.CreateRange(start, step, count, _cancelCheck);
+            return JgsNumericClasses.Stamp(
+                PackedOps.CreateRange(start, step, count, _cancelCheck), carried);
         }
 
         var values = new JgsValue[count];
@@ -1479,10 +1492,37 @@ internal sealed partial class Interpreter
             values[i] = JgsValue.Number(start + (i * step));
         }
 
-        return JgsValue.Array(values);
+        return JgsNumericClasses.Stamp(JgsValue.Array(values), carried);
     }
 
+    /// <summary>
+    /// One end of a <em>nested</em> range inside a running compiled loop, where the class cannot be
+    /// carried and cannot be refused either.
+    /// </summary>
+    /// <remarks>
+    /// The outer loop refuses a classed range before it starts and lets the walk have it. This one
+    /// is already running, its registers are doubles, and there is no way back out at this point, so
+    /// a class written into a nested range is dropped here. It takes an explicit conversion inside a
+    /// nested range inside an already-compiled scalar loop to reach this line, and it is recorded in
+    /// ADR 0125 rather than left as a silent difference between two spellings of one loop.
+    /// </remarks>
     private double RangeBound(Expr bound, string what, JgsEnvironment env)
+    {
+        JgsNumericClass dropped = JgsNumericClass.Double;
+        return RangeBound(bound, what, env, ref dropped);
+    }
+
+    /// <summary>
+    /// One end of a range, and the class it contributes.
+    /// </summary>
+    /// <remarks>
+    /// A range takes its class from its ends, which is MATLAB's rule and was not this one's:
+    /// <c>int16(1):int16(4)</c> is an int16 row there and was a double row here, because the three
+    /// bounds were read straight through <c>AsNumber</c> and a number has no class. The combining
+    /// order is concatenation's — an integer beats a single beats a double — because a range is the
+    /// row those three would have made.
+    /// </remarks>
+    private double RangeBound(Expr bound, string what, JgsEnvironment env, ref JgsNumericClass carried)
     {
         JgsValue value = Evaluate(bound, env);
         if (!IsNumericScalar(value))
@@ -1491,6 +1531,8 @@ internal sealed partial class Interpreter
                 $"The {what} of a range must be a number, but got a {value.TypeName}.");
         }
 
+        carried = JgsNumericClasses.CombineForConcat(
+            carried, value.NumericClass, "A range", bound.Line, bound.Column);
         return value.AsNumber;
     }
 

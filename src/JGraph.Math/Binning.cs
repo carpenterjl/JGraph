@@ -406,12 +406,20 @@ public static class Binning
 
         if (requested is { } count)
         {
-            if (high == low)
+            // Named limits are exact — they say where the histogram starts and stops — so the count
+            // only decides how many bins fit between them. Without them the count is a request and
+            // the edges are still chosen to be readable, which is the rule below.
+            if (limits is not null)
             {
-                (low, high) = (low - 0.5, low + 0.5);
+                if (high == low)
+                {
+                    (low, high) = (low - 0.5, low + 0.5);
+                }
+
+                return Spanning(low, high, count);
             }
 
-            return Spanning(low, high, count);
+            return CountedEdges(low, high, count);
         }
 
         if (width is { } size)
@@ -458,6 +466,86 @@ public static class Binning
         }
 
         return NiceEdges(raw, low, high);
+    }
+
+    /// <summary>
+    /// The edges for a bin count the caller named, chosen to land on readable numbers.
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    /// Splitting the exact range into <c>count</c> equal pieces is the obvious answer and it is not
+    /// MATLAB's. Asking for 256 bins over readings that happen to run from 5.96e-6 to 0.99999 gives
+    /// edges at those two numbers and every multiple of 0.0039062 between them, which is a histogram
+    /// nobody can read the axis of. MATLAB spends the freedom a bin count leaves — it is a count, not
+    /// a set of edges — on making the width and the left edge round, exactly as the automatic rule
+    /// does, and covers the data by reaching past it rather than by stopping on it.
+    /// </para>
+    /// <para>
+    /// The width is chosen in two passes. The first rounds the raw width <em>down</em> to a whole
+    /// multiple of its own power of ten, purely to have something round to place the left edge on.
+    /// The second then asks what width, starting from that edge, puts the largest reading inside the
+    /// last bin: anything from <c>(xmax - left) / count</c> up to <c>(xmax - left) / (count - 1)</c>
+    /// does, and the roundest number in that interval is the one it takes. That is why 256 bins over
+    /// the same readings come out 0.00391 wide rather than 0.0039062 — three digits instead of
+    /// seventeen, for a right edge 0.001 past the data.
+    /// </para>
+    /// <para>
+    /// Transcribed from R2024a's own <c>binpicker</c> rather than reconstructed from its answers, and
+    /// checked against them: the width, the left edge and the right edge all agree for every count
+    /// the suite asks for.
+    /// </para>
+    /// </remarks>
+    private static double[] CountedEdges(double low, double high, int count)
+    {
+        int bins = System.Math.Max(1, count);
+        double scale = System.Math.Max(System.Math.Abs(low), System.Math.Abs(high));
+        double raw = System.Math.Max((high - low) / bins, Ulp(scale));
+
+        // Nearly constant data has no width to be clever about: put the readings in the middle of a
+        // span whose ends are whole or half numbers, which is what MATLAB does with the same case.
+        const double SqrtEpsilon = 1.4901161193847656e-08;
+        if (!(high - low > System.Math.Max(SqrtEpsilon * scale, double.Epsilon)))
+        {
+            double range = System.Math.Max(1, System.Math.Ceiling(bins * Ulp(scale)));
+            double flatLeft = System.Math.Floor(2 * (low - (range / 4))) / 2;
+            double flatRight = System.Math.Ceiling(2 * (high + (range / 4))) / 2;
+            return Spanning(flatLeft, flatRight, bins);
+        }
+
+        double powerOfTen = System.Math.Pow(10, System.Math.Floor(System.Math.Log10(raw)));
+        double width = powerOfTen * System.Math.Floor(raw / powerOfTen);
+        double left = System.Math.Max(
+            System.Math.Min(width * System.Math.Floor(low / width), low), -double.MaxValue);
+
+        if (bins > 1)
+        {
+            double lowest = (high - left) / bins;
+            double highest = (high - left) / (bins - 1);
+            double step = System.Math.Pow(10, System.Math.Floor(System.Math.Log10(highest - lowest)));
+            width = step * System.Math.Ceiling(lowest / step);
+        }
+
+        double right = System.Math.Min(System.Math.Max(left + (bins * width), high), double.MaxValue);
+        var edges = new double[bins + 1];
+        for (int i = 0; i < bins; i++)
+        {
+            edges[i] = left + (i * width);
+        }
+
+        edges[bins] = right;
+        return edges;
+    }
+
+    /// <summary>The distance from <paramref name="value"/> to the next double, which is MATLAB's <c>eps(x)</c>.</summary>
+    private static double Ulp(double value)
+    {
+        double magnitude = System.Math.Abs(value);
+        if (!double.IsFinite(magnitude))
+        {
+            return double.NaN;
+        }
+
+        return magnitude == 0 ? double.Epsilon : System.Math.BitIncrement(magnitude) - magnitude;
     }
 
     /// <summary>

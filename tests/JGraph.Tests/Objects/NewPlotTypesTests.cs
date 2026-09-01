@@ -43,8 +43,11 @@ public class NewPlotTypesTests
         var hist = new HistogramPlot(new double[] { 1, 2, 2, 3, 3, 3 }) { NumBins = 3 };
         Assert.Equal(new double[] { 1, 2, 3 }, hist.BinHeights.ToArray());
         Assert.Equal(4, hist.BinEdges.Length);
-        Assert.Equal(1, hist.BinEdges[0], 6);
-        Assert.Equal(3, hist.BinEdges[^1], 6);
+
+        // 0.8 wide from 0.6, which is what MATLAB's histogram(d, 3) draws for the same readings: a
+        // named bin count leaves the edges free, and free edges are put on round numbers (M123).
+        Assert.Equal(0.6, hist.BinEdges[0], 6);
+        Assert.Equal(3.0, hist.BinEdges[^1], 6);
     }
 
     [Fact]

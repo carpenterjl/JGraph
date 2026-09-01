@@ -103,9 +103,10 @@ see. This file refused to count them while they drew nothing; **M56 made them re
 number and this one agree again. `opengl` *is* counted, because an accepted no-op is an answer — the
 same reading that counted `shading`, `lighting` and `camlight` in M43.
 
-Across every callable kind — builtin, function, operator, keyword, script — the count is **1,038 of
-2,024** as of M122, which came from the capability probe as M121's did — and from the last seven
-forms in it. Three of those seven were names that did not exist: `residue`, the partial-fraction
+Across every callable kind — builtin, function, operator, keyword, script — the count is **1,039 of
+2,024** as of M123, which added `deval` — the one name that lets a solution structure be read at a
+time nobody asked for while it was being computed. The 1,038 before it came from M122's capability
+probe, and from the last seven forms in it. Three of those seven were names that did not exist: `residue`, the partial-fraction
 expansion, and `histogram2`, a bivariate histogram drawn as a field of boxes, and `nargin` in the
 form that takes a function rather than reading the running call's own count (with `nargout` beside
 it, which the probe does not ask for and which is the same mechanism). The other four were forms of

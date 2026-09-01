@@ -59,14 +59,26 @@ internal sealed partial class Interpreter
             return false;
         }
 
-        // Past this point there is no refusing: the root bounds are evaluated (once, like the walk's
-        // own range evaluation, and throwing the walk's own errors), and the program runs.
+        // The root bounds are evaluated here (once, like the walk's own range evaluation, and
+        // throwing the walk's own errors). There is one refusal left after them, and only one.
         if (loop is ForStmt forStmt)
         {
             var range = (RangeExpr)forStmt.Iterable;
-            double start = RangeBound(range.Start, "start", env);
-            double step = range.Step is null ? 1 : RangeBound(range.Step, "step", env);
-            double stop = RangeBound(range.Stop, "stop", env);
+            JgsNumericClass bound = JgsNumericClass.Double;
+            double start = RangeBound(range.Start, "start", env, ref bound);
+            double step = range.Step is null ? 1 : RangeBound(range.Step, "step", env, ref bound);
+            double stop = RangeBound(range.Stop, "stop", env, ref bound);
+
+            // A register is a double and has nowhere to put a class, so a loop over `int16(1):int16(4)`
+            // would bind a double i where the walk binds an int16 — one construct with two answers
+            // depending on a threshold nobody can see. The walk takes it instead. Re-reading the three
+            // bounds is the price, and it is a small one: reaching here at all takes an explicit
+            // conversion written inside the range, and a conversion has nothing to repeat.
+            if (bound != JgsNumericClass.Double)
+            {
+                return false;
+            }
+
             long count = HotLoopRangeCount(start, step, stop, range.Line, range.Column);
             int state = program.OuterRegBase;
             regs[state] = start;

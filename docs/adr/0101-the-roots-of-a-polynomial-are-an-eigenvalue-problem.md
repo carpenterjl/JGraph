@@ -85,13 +85,6 @@ the rest. All were read from the running MATLAB and match.
   other sign for the same reason — the real part of `roots([1 0 1])` is `-0` here and `+0` in
   MATLAB, which `1/real(r)` can tell apart and nothing else can. Every other answer these fourteen
   names produce was diffed against MATLAB R2024a and matches to all seventeen digits.
-- **A `single` or integer-class argument comes back as a double.** MATLAB keeps the class through
-  `nextpow2`, `conv`, `roots`, `unwrap`, `cplxpair` and `rectint`; these return double. This is not
-  new to M100 and is not particular to it — `sqrt`, `sort`, `cumsum` and `fft` have all done the
-  same since long before, and M97's integer classes covered the arithmetic operators rather than the
-  library functions. It is recorded here because it is the first time it has been measured and
-  written down, and because these fourteen names inherit it rather than escape it. The values agree;
-  only the class does not.
 
 ## What this did not close
 

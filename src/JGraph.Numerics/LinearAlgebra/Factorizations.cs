@@ -1,3 +1,5 @@
+using System.Diagnostics.CodeAnalysis;
+
 namespace JGraph.Numerics.LinearAlgebra;
 
 /// <summary>
@@ -328,6 +330,11 @@ public sealed class Hessenberg
     public static Hessenberg Reduce(double[,] matrix)
     {
         ArgumentNullException.ThrowIfNull(matrix);
+        if (TryReduceNative(matrix, out Hessenberg? blocked))
+        {
+            return blocked;
+        }
+
         int n = matrix.GetLength(0);
         var h = (double[,])matrix.Clone();
         var q = Linear.Identity(n);
@@ -383,6 +390,71 @@ public sealed class Hessenberg
         }
 
         return new Hessenberg(h, q);
+    }
+
+    /// <summary>
+    /// The same reduction on the backend's blocked kernel, when it has one.
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    /// The loop below is the reduction written as rank-one updates, and M120 already spent what
+    /// there is to spend on it by walking rows instead of columns. What is left between it and
+    /// MATLAB is not a cache miss but an algorithm: LAPACK accumulates a panel of reflectors and
+    /// applies them as one matrix multiply, so the work lands on BLAS-3 instead of BLAS-2. That is
+    /// the difference between 0.196 s and 0.005 s at 400 square, and it is not something a managed
+    /// rewrite of the same loop can close.
+    /// </para>
+    /// <para>
+    /// Both halves are asked for, and the whole road is abandoned if either says no: half a
+    /// reduction is not a reduction, and falling back is free.
+    /// </para>
+    /// </remarks>
+    private static bool TryReduceNative(double[,] matrix, [NotNullWhen(true)] out Hessenberg? reduced)
+    {
+        reduced = null;
+        int n = matrix.GetLength(0);
+        if (n < 1 || matrix.GetLength(1) != n || !LinalgProvider.Current.IsNative)
+        {
+            return false;
+        }
+
+        // Column-major, which is the layout the contract is written in.
+        var a = new double[n * n];
+        for (int c = 0; c < n; c++)
+        {
+            for (int r = 0; r < n; r++)
+            {
+                a[r + (c * n)] = matrix[r, c];
+            }
+        }
+
+        var tau = new double[Math.Max(n - 1, 1)];
+        if (!LinalgProvider.Current.TryGehrd(n, a, n, tau))
+        {
+            return false;
+        }
+
+        // The reduction's output carries H above the subdiagonal and the reflectors below, so Q is
+        // formed from a copy and H is read out of the original with the reflectors zeroed away.
+        var forQ = (double[])a.Clone();
+        if (!LinalgProvider.Current.TryOrghr(n, forQ, n, tau))
+        {
+            return false;
+        }
+
+        var h = new double[n, n];
+        var q = new double[n, n];
+        for (int c = 0; c < n; c++)
+        {
+            for (int r = 0; r < n; r++)
+            {
+                h[r, c] = r > c + 1 ? 0 : a[r + (c * n)];
+                q[r, c] = forQ[r + (c * n)];
+            }
+        }
+
+        reduced = new Hessenberg(h, q);
+        return true;
     }
 
     /// <summary>M ← (I - 2vvᵀ/vᵀv)·M, over rows <paramref name="first"/> and after.</summary>

@@ -1348,9 +1348,8 @@ internal static partial class JgsBuiltins
 
         (double[][] slices, int chosen) = PrepSlices(bare, dim);
         int length = slices.Length == 0 ? 0 : slices[0].Length;
-        int automatic = AutomaticWindow(length, parsed.Named("SmoothingFactor") is null
-            ? null
-            : parsed.Scalar("SmoothingFactor", 0.25), line, col);
+        int automatic = AutomaticWindow(
+            slices, parsed.Scalar("SmoothingFactor", 0.25), line, col);
         (int behind, int ahead) = given is null
             ? (automatic / 2, (automatic - 1) / 2)
             : ReachOf("smoothdata", given, line, col);
@@ -1427,19 +1426,169 @@ internal static partial class JgsBuiltins
     /// of the length, and <c>'SmoothingFactor'</c> replaces the tenth with a fraction of the caller's
     /// choosing. The exact rule is recorded in ADR 0066 rather than claimed to match.
     /// </summary>
-    private static int AutomaticWindow(int length, double? factor, int line, int col)
+    /// <summary>
+    /// The window <c>smoothdata</c> chooses when nobody names one: wide enough to remove the
+    /// frequencies above where the readings keep most of their energy.
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    /// This used to be a tenth of the sample count, which is a rule about how <em>much</em> data
+    /// there is rather than about what is in it. MATLAB's is a rule about the data: centre the
+    /// readings, take their periodogram, walk the normalised cumulative energy until it passes
+    /// <c>tau</c>, and turn the frequency it stopped at into the width of the moving average whose
+    /// response is half power there. Ten thousand readings of a smooth signal want a window of four;
+    /// the old rule gave them a window of ten thousand.
+    /// </para>
+    /// <para>
+    /// The difference is not visible in a sum — averaging a symmetric signal over four samples or
+    /// over ten thousand gives nearly the same mean, which is why a check on the total only ever
+    /// showed a difference in the fourth decimal — but it is the entire picture: every default
+    /// <c>smoothdata</c> call was smoothing by a completely different amount, and the six methods
+    /// that share the window were all wrong with it.
+    /// </para>
+    /// <para>
+    /// The constant is MATLAB's own. <c>0.44294</c> is the half-power bandwidth of a boxcar in
+    /// cycles per sample, so dividing it by the cutoff frequency gives the boxcar that rolls off
+    /// there; the square root with one added keeps a very high cutoff from asking for a window of
+    /// zero.
+    /// </para>
+    /// <para>
+    /// The columns are averaged rather than smoothed apart, which is MATLAB's arrangement: one
+    /// window for the whole array, chosen from all of it.
+    /// </para>
+    /// </remarks>
+    /// <param name="slices">The runs of readings the smoothing will walk.</param>
+    /// <param name="factor">
+    /// <c>SmoothingFactor</c>, from 0 (no smoothing) to 1 (a window as wide as the data).
+    /// </param>
+    /// <param name="line">Where the call sits, for the diagnostic.</param>
+    /// <param name="col">Where the call sits, for the diagnostic.</param>
+    private static int AutomaticWindow(double[][] slices, double factor, int line, int col)
     {
-        if (factor is { } f)
+        if (factor is < 0 or > 1)
         {
-            if (f is < 0 or > 1)
-            {
-                throw new JgsRuntimeException(line, col, "smoothdata: 'SmoothingFactor' runs from 0 to 1.");
-            }
-
-            return Math.Max(2, (int)Math.Ceiling(f * length));
+            throw new JgsRuntimeException(line, col, "smoothdata: 'SmoothingFactor' runs from 0 to 1.");
         }
 
-        return Math.Max(2, (int)Math.Ceiling(length / 10.0));
+        int length = slices.Length == 0 ? 0 : slices[0].Length;
+        if (length < 2)
+        {
+            return 1;
+        }
+
+        // The two ends, which the periodogram cannot express: everything, and nothing.
+        double tau = 1 - factor;
+        if (tau <= 0)
+        {
+            return length;
+        }
+
+        if (tau >= 1)
+        {
+            return 1;
+        }
+
+        var cumulative = new double[length];
+        int counted = 0;
+        foreach (double[] slice in slices)
+        {
+            if (slice.Length != length || !Accumulate(slice, cumulative))
+            {
+                continue;
+            }
+
+            counted++;
+        }
+
+        if (counted == 0)
+        {
+            return 1; // every run is constant, so there is nothing to smooth away
+        }
+
+        int rho = -1;
+        for (int i = 0; i < length; i++)
+        {
+            if (cumulative[i] / counted > tau)
+            {
+                rho = i + 1;
+                break;
+            }
+        }
+
+        if (rho < 0)
+        {
+            return 1;
+        }
+
+        double bandwidth = 0.44294 * 2 * length / Math.Max(rho - 1, 1);
+        double chosen = Math.Ceiling(Math.Sqrt((bandwidth * bandwidth) + 1));
+        return double.IsFinite(chosen) && chosen >= 1 ? (int)chosen : 1;
+    }
+
+    /// <summary>
+    /// Adds one run's normalised cumulative periodogram to <paramref name="running"/>; false when the
+    /// run carries no energy at all.
+    /// </summary>
+    /// <remarks>
+    /// The transform is taken at twice the length over the centred readings, which is the
+    /// periodogram of the run padded with zeros — a finer frequency grid than the run's own, and the
+    /// grid the constant below is written against. Readings that are not finite are replaced by the
+    /// mean of the ones that are, so a gap neither shifts the spectrum nor stops the choice being
+    /// made.
+    /// </remarks>
+    private static bool Accumulate(double[] slice, double[] running)
+    {
+        int n = slice.Length;
+        double mean = 0;
+        int finite = 0;
+        foreach (double value in slice)
+        {
+            if (double.IsFinite(value))
+            {
+                mean += value;
+                finite++;
+            }
+        }
+
+        if (finite == 0)
+        {
+            return false;
+        }
+
+        mean /= finite;
+
+        var padded = new System.Numerics.Complex[2 * n];
+        for (int i = 0; i < n; i++)
+        {
+            padded[i] = new System.Numerics.Complex(
+                (double.IsFinite(slice[i]) ? slice[i] : mean) - mean, 0);
+        }
+
+        JGraph.Signal.Fft.Transform(padded, inverse: false);
+
+        var power = new double[n];
+        double total = 0;
+        for (int i = 0; i < n; i++)
+        {
+            double p = ((padded[i].Real * padded[i].Real)
+                + (padded[i].Imaginary * padded[i].Imaginary)) / (2.0 * n);
+            power[i] = p;
+            total += p;
+        }
+
+        if (!(total > 0))
+        {
+            return false;
+        }
+
+        double climbing = 0;
+        for (int i = 0; i < n; i++)
+        {
+            climbing += power[i] / total;
+            running[i] += climbing;
+        }
+
+        return true;
     }
 
     private static double[] SmoothSlice(

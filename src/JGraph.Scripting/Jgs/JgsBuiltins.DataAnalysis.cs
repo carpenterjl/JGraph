@@ -1267,7 +1267,7 @@ internal static partial class JgsBuiltins
     private static readonly OptionSpec HistCountsOptions = new(
         "histcounts",
         Flags: [],
-        Names: ["BinWidth", "BinLimits", "Normalization", "BinMethod"]);
+        Names: ["BinWidth", "BinLimits", "Normalization", "BinMethod", "NumBins"]);
 
     /// <summary>
     /// <c>[N, edges, bin] = histcounts(X, …)</c>: how many values fall in each bin, the bin edges,
@@ -1301,7 +1301,15 @@ internal static partial class JgsBuiltins
         string rule = parsed.Word("BinMethod", "auto", "auto", "scott", "sturges", "sqrt", "fd", "integers");
 
         double[]? given = null;
-        int? requested = null;
+
+        // The count can be written either way — histcounts(x, 8) and histcounts(x, 'NumBins', 8) are
+        // the same call in MATLAB, and only the positional one was taken here.
+        int? requested = parsed.Named("NumBins") is null ? null : parsed.Whole("NumBins", 0);
+        if (requested is < 1)
+        {
+            throw new JgsRuntimeException(line, col, "histcounts needs at least one bin.");
+        }
+
         if (parsed.Positional.Count == 2)
         {
             JgsValue second = parsed.Positional[1];

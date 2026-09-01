@@ -108,6 +108,43 @@ public abstract class DenseLinalg
     public abstract int Geqrf(int m, int n, Span<double> a, int lda, Span<double> tau);
 
     /// <summary>
+    /// A = Q·H·Qᵀ, the upper Hessenberg reduction, when the backend has one; false when it does not.
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    /// The only optional method on this contract, and virtual rather than abstract for that reason.
+    /// Every other entry here is something the managed kernels owe an answer to, because a script
+    /// calling <c>qr</c> has to get one whichever backend is loaded. This is an <em>acceleration</em>
+    /// of a reduction that already exists in managed form and answers correctly: LAPACK's blocked
+    /// version does the same arithmetic on BLAS-3 panels instead of rank-one updates, which is
+    /// thirty-nine times faster at 400 square and identical to rounding.
+    /// </para>
+    /// <para>
+    /// Writing a managed <c>dgehrd</c> to satisfy an abstract declaration would mean a second
+    /// implementation of a reduction this project already has, kept in LAPACK's reflector storage,
+    /// to be called by nothing. A default of "no" is the honest shape.
+    /// </para>
+    /// </remarks>
+    /// <param name="n">The order of the square matrix.</param>
+    /// <param name="a">
+    /// Column-major, overwritten: H on and above the first subdiagonal, reflectors below.
+    /// </param>
+    /// <param name="lda">The leading dimension of <paramref name="a"/>.</param>
+    /// <param name="tau">The n−1 reflector scalars.</param>
+    /// <returns>False when this backend has no Hessenberg reduction of its own.</returns>
+    public virtual bool TryGehrd(int n, Span<double> a, int lda, Span<double> tau) => false;
+
+    /// <summary>
+    /// Expands a <see cref="TryGehrd"/> reduction's reflectors into Q, in place.
+    /// </summary>
+    /// <param name="n">The order of the square matrix.</param>
+    /// <param name="a">Column-major, the reduction's output, overwritten with Q.</param>
+    /// <param name="lda">The leading dimension of <paramref name="a"/>.</param>
+    /// <param name="tau">The reflector scalars <see cref="TryGehrd"/> produced.</param>
+    /// <returns>False when this backend has no Hessenberg reduction of its own.</returns>
+    public virtual bool TryOrghr(int n, Span<double> a, int lda, ReadOnlySpan<double> tau) => false;
+
+    /// <summary>
     /// Expands the first <paramref name="k"/> reflectors of a <see cref="Geqrf"/> factorization into
     /// the first <paramref name="n"/> columns of Q, overwriting them where the reflectors were.
     /// </summary>

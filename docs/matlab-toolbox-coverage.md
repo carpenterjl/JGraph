@@ -19,14 +19,14 @@ below is — and that is why an entire folder could sit at nought implemented wi
 
 ## Where it stands
 
-**272 of 377 names implemented**, and
+**273 of 377 names implemented**, and
 **442 of 1036 documented syntax forms accepted**.
 
 | Folder | Names | Forms documented | Forms accepted | Names missing |
 |---|---:|---:|---:|---:|
 | `strfun` | 40 / 41 | 88 | 60 | 1 |
 | `datafun` | 40 / 41 | 178 | 142 | 1 |
-| `funfun` | 5 / 40 | 123 | 0 | 35 |
+| `funfun` | 6 / 40 | 123 | 0 | 34 |
 | `sparfun` | 5 / 35 | 185 | 2 | 30 |
 | `polyfun` | 23 / 34 | 94 | 38 | 11 |
 | `elmat` | 33 / 33 | 68 | 59 | 0 |
@@ -64,9 +64,9 @@ command that quite rightly rejects it.
 
 `celldisp` `cellplot` `formattedDisplayText` `isUnderlyingType` `iscom` `isenum` `isinterface` `ismethod` `isprop` `mat2cell` `methodsview` `substruct` `swapbytes`
 
-### `funfun` — 35
+### `funfun` — 34
 
-`bvp4c` `bvp5c` `bvpget` `bvpinit` `bvpset` `bvpxtend` `dblquad` `dde23` `ddeget` `ddensd` `ddesd` `ddeset` `decic` `deval` `integral2` `integral3` `ode113` `ode15i` `ode15s` `ode23` `ode23s` `ode23t` `ode23tb` `ode78` `ode89` `odextend` `pdepe` `pdeval` `quad` `quad2d` `quadl` `quadv` `symvar` `triplequad` `vectorize`
+`bvp4c` `bvp5c` `bvpget` `bvpinit` `bvpset` `bvpxtend` `dblquad` `dde23` `ddeget` `ddensd` `ddesd` `ddeset` `decic` `integral2` `integral3` `ode113` `ode15i` `ode15s` `ode23` `ode23s` `ode23t` `ode23tb` `ode78` `ode89` `odextend` `pdepe` `pdeval` `quad` `quad2d` `quadl` `quadv` `symvar` `triplequad` `vectorize`
 
 ### `lang` — 7
 

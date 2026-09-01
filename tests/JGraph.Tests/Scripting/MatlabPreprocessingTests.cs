@@ -270,7 +270,9 @@ public class MatlabPreprocessingTests : IDisposable
     public void SmoothdataReportsTheWindowItChose()
     {
         // The second output is the only way to find out what an automatic width actually was.
-        Assert.Equal("2 5\n", RunAndRead("""
+        // Five, and not the two a tenth of the length would give: the width is chosen from where
+        // the readings keep their energy, so a ten-sample ramp gets a window of five (M123).
+        Assert.Equal("5 5\n", RunAndRead("""
             [~, automatic] = smoothdata(1:10);
             [~, asked] = smoothdata(1:10, 'movmean', 5);
             fprintf('%d %d\n', automatic, asked);

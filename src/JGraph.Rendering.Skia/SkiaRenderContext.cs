@@ -22,6 +22,15 @@ public sealed class SkiaRenderContext : IRenderContext, IDisposable
     private readonly bool _supportsMeshes;
     private readonly Dictionary<(string Family, bool Bold, bool Italic), SKTypeface> _typefaces = new();
 
+    /// <summary>
+    /// The face that can draw a character the chosen one cannot, remembered per (face, character).
+    /// </summary>
+    /// <remarks>
+    /// A figure asks for the same missing glyph on every redraw — the same axis label, the same
+    /// legend entry — so the system font list is walked once per character and never again.
+    /// </remarks>
+    private readonly Dictionary<(SKTypeface Face, int Character), SKTypeface?> _fallbacks = new();
+
     private SKPoint[] _pointBuffer = new SKPoint[256];
 
     // DrawVertices takes exactly-sized arrays in SkiaSharp 2.88, so an oversized buffer cannot be
@@ -403,7 +412,7 @@ public sealed class SkiaRenderContext : IRenderContext, IDisposable
         _text.Color = ToSk(style.Color);
         _text.IsAntialias = style.Antialias && _smoothing;
 
-        float width = _text.MeasureText(text);
+        float width = RunWidth(text);
         SKFontMetrics metrics = _text.FontMetrics;
 
         float dx = horizontal switch
@@ -427,13 +436,143 @@ public sealed class SkiaRenderContext : IRenderContext, IDisposable
             _canvas.Save();
             _canvas.Translate((float)position.X, (float)position.Y);
             _canvas.RotateDegrees((float)rotationDegrees);
-            _canvas.DrawText(text, dx, dy, _text);
+            DrawRuns(text, dx, dy);
             _canvas.Restore();
         }
         else
         {
-            _canvas.DrawText(text, (float)position.X + dx, (float)position.Y + dy, _text);
+            DrawRuns(text, (float)position.X + dx, (float)position.Y + dy);
         }
+    }
+
+    /// <summary>
+    /// Draws <paramref name="text"/> from <paramref name="x"/>, changing face wherever the chosen one
+    /// has no glyph for what comes next.
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    /// Skia draws one string with one face and puts a box where that face has nothing. That is what
+    /// made <c>title('t \in [0, 60]')</c> come out as <em>t □ [0, 60]</em>: the markup had already
+    /// turned <c>\in</c> into <c>∈</c> correctly, and then the figure's font — a plain UI sans — was
+    /// asked to draw a character it does not carry. The label was right and the picture was wrong,
+    /// which is why nothing in the console ever mentioned it.
+    /// </para>
+    /// <para>
+    /// A string of ASCII takes the single-call road it always took, so nothing that already drew can
+    /// move: every face carries ASCII, so a split would produce one run and one call anyway.
+    /// </para>
+    /// </remarks>
+    private void DrawRuns(string text, float x, float y)
+    {
+        if (IsPlain(text))
+        {
+            _canvas.DrawText(text, x, y, _text);
+            return;
+        }
+
+        SKTypeface chosen = _text.Typeface;
+        foreach ((string piece, SKTypeface face) in Runs(text, chosen))
+        {
+            _text.Typeface = face;
+            _canvas.DrawText(piece, x, y, _text);
+            x += _text.MeasureText(piece);
+        }
+
+        _text.Typeface = chosen;
+    }
+
+    /// <summary>The width of <paramref name="text"/> once every run is measured in its own face.</summary>
+    private float RunWidth(string text)
+    {
+        if (IsPlain(text))
+        {
+            return _text.MeasureText(text);
+        }
+
+        SKTypeface chosen = _text.Typeface;
+        float width = 0;
+        foreach ((string piece, SKTypeface face) in Runs(text, chosen))
+        {
+            _text.Typeface = face;
+            width += _text.MeasureText(piece);
+        }
+
+        _text.Typeface = chosen;
+        return width;
+    }
+
+    /// <summary>Whether every character is one no font is short of, so no split is needed.</summary>
+    private static bool IsPlain(string text)
+    {
+        foreach (char c in text)
+        {
+            if (c > 0x7E)
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /// <summary>
+    /// <paramref name="text"/> cut into stretches, each with a face that can draw all of it.
+    /// </summary>
+    private List<(string Text, SKTypeface Face)> Runs(string text, SKTypeface primary)
+    {
+        var runs = new List<(string, SKTypeface)>();
+        var run = new System.Text.StringBuilder();
+        SKTypeface current = primary;
+
+        for (int i = 0; i < text.Length;)
+        {
+            int size = char.IsHighSurrogate(text[i]) && i + 1 < text.Length ? 2 : 1;
+            int point = size == 2 ? char.ConvertToUtf32(text[i], text[i + 1]) : text[i];
+            SKTypeface face = FaceFor(primary, point);
+            if (run.Length > 0 && !ReferenceEquals(face, current))
+            {
+                runs.Add((run.ToString(), current));
+                run.Clear();
+            }
+
+            current = face;
+            run.Append(text, i, size);
+            i += size;
+        }
+
+        if (run.Length > 0)
+        {
+            runs.Add((run.ToString(), current));
+        }
+
+        return runs;
+    }
+
+    /// <summary>
+    /// The face to draw one character in: the chosen one when it has the glyph, otherwise whatever
+    /// the system offers, and the chosen one again when nothing does.
+    /// </summary>
+    /// <remarks>
+    /// Falling back to the chosen face for a character nobody has is deliberate: the box it draws is
+    /// the honest answer when the machine has no font for the character, and it keeps the run list
+    /// from growing a face per unknown glyph.
+    /// </remarks>
+    private SKTypeface FaceFor(SKTypeface primary, int character)
+    {
+        if (primary.ContainsGlyph(character))
+        {
+            return primary;
+        }
+
+        var key = (primary, character);
+        if (!_fallbacks.TryGetValue(key, out SKTypeface? found))
+        {
+            found = SKFontManager.Default.MatchCharacter(
+                primary.FamilyName, primary.FontStyle, null, character);
+            _fallbacks[key] = found;
+        }
+
+        return found ?? primary;
     }
 
     /// <inheritdoc />
@@ -449,7 +588,7 @@ public sealed class SkiaRenderContext : IRenderContext, IDisposable
         text = TexMarkup.Render(text, style.Interpreter);
 
         ConfigureFont(style);
-        float width = _text.MeasureText(text);
+        float width = RunWidth(text);
         SKFontMetrics metrics = _text.FontMetrics;
         return new Size2D(width, metrics.Descent - metrics.Ascent);
     }
@@ -461,6 +600,13 @@ public sealed class SkiaRenderContext : IRenderContext, IDisposable
         _fill.Dispose();
         _text.Dispose();
         _mesh.Dispose();
+        foreach (SKTypeface? fallback in _fallbacks.Values)
+        {
+            fallback?.Dispose();
+        }
+
+        _fallbacks.Clear();
+
         foreach (SKTypeface typeface in _typefaces.Values)
         {
             typeface.Dispose();

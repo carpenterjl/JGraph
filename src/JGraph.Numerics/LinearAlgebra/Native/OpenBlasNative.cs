@@ -121,6 +121,16 @@ internal static unsafe partial class OpenBlasNative
     [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvCdecl) })]
     internal static partial int Dgeqrf(int layout, int m, int n, double* a, int lda, double* tau);
 
+    /// <summary>A = Q·H·Qᵀ in place: H on and above the subdiagonal, the reflector vectors below.</summary>
+    [LibraryImport(Library, EntryPoint = "LAPACKE_dgehrd")]
+    [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvCdecl) })]
+    internal static partial int Dgehrd(int layout, int n, int ilo, int ihi, double* a, int lda, double* tau);
+
+    /// <summary>Expands the reflectors of a <see cref="Dgehrd"/> reduction into the similarity Q.</summary>
+    [LibraryImport(Library, EntryPoint = "LAPACKE_dorghr")]
+    [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvCdecl) })]
+    internal static partial int Dorghr(int layout, int n, int ilo, int ihi, double* a, int lda, double* tau);
+
     /// <summary>Expands the reflectors of a <see cref="Dgeqrf"/> factorization into Q's first n columns.</summary>
     [LibraryImport(Library, EntryPoint = "LAPACKE_dorgqr")]
     [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvCdecl) })]

@@ -527,19 +527,94 @@ internal static partial class JgsBuiltins
         {
             Arity("typecast", args, 2, line, col);
             string target = Str("typecast", args, 1, line, col);
+            if (JgsNumericClasses.Parse(target) is not JgsNumericClass targetClass)
+            {
+                throw new JgsRuntimeException(line, col, $"typecast: '{target}' is not a numeric class.");
+            }
 
-            // Every JGraph number is a double, so the source bytes are always a double's eight.
+            // The bytes are the bytes of the class the value is *wearing*, not of the double it is
+            // stored in. That distinction is the whole of this function: typecast exists to read one
+            // number's bits as another class, so reading a single's four bytes as a double's eight
+            // answers a question nobody asked. Storage has been doubles since the beginning and the
+            // class has been a tag on the wrapper since M97; only this verb never read the tag.
+            JgsNumericClass sourceClass = args[0].NumericClass;
             double[] source = args[0].Type is JgsType.Number or JgsType.Bool
                 ? [args[0].AsNumber]
                 : ToDoubles("typecast", args[0], line, col);
-            var bytes = new byte[source.Length * sizeof(double)];
+
+            int stride = WidthOf(sourceClass);
+            var bytes = new byte[source.Length * stride];
             for (int i = 0; i < source.Length; i++)
             {
-                BitConverter.GetBytes(source[i]).CopyTo(bytes, i * sizeof(double));
+                WriteBytes(source[i], sourceClass, bytes.AsSpan(i * stride, stride));
             }
 
-            return Numbers(Reinterpret("typecast", bytes, target, line, col));
+            JgsValue read = Numbers(Reinterpret("typecast", bytes, target, line, col));
+
+            // A column in is a column out, which is MATLAB's rule and the one thing a flat rewrite
+            // of the samples would lose.
+            if (args[0].Type == JgsType.Array && args[0].Dims is [_, 1])
+            {
+                read.ReshapeDims([read.ArrayLength, 1]);
+            }
+
+            return JgsNumericClasses.Stamp(read, targetClass);
         }, null);
+    }
+
+    /// <summary>How many bytes one element of a numeric class occupies.</summary>
+    private static int WidthOf(JgsNumericClass numericClass) => numericClass switch
+    {
+        JgsNumericClass.Int8 or JgsNumericClass.UInt8 => 1,
+        JgsNumericClass.Int16 or JgsNumericClass.UInt16 => 2,
+        JgsNumericClass.Int32 or JgsNumericClass.UInt32 or JgsNumericClass.Single => 4,
+        _ => 8,
+    };
+
+    /// <summary>
+    /// One sample laid down as the bytes its class stores it in.
+    /// </summary>
+    /// <remarks>
+    /// The narrowing casts are safe rather than hopeful: a tagged array has already been through
+    /// <see cref="JgsNumericClasses.Convert"/>, so its samples are whole and inside the class's range
+    /// before they reach here. The one exception is a 64-bit integer past 2^53, which a double cannot
+    /// hold in the first place and which no cast here could recover.
+    /// </remarks>
+    private static void WriteBytes(double value, JgsNumericClass numericClass, Span<byte> destination)
+    {
+        switch (numericClass)
+        {
+            case JgsNumericClass.Single:
+                BitConverter.TryWriteBytes(destination, (float)value);
+                break;
+            case JgsNumericClass.Int8:
+                destination[0] = unchecked((byte)(sbyte)value);
+                break;
+            case JgsNumericClass.UInt8:
+                destination[0] = (byte)value;
+                break;
+            case JgsNumericClass.Int16:
+                BitConverter.TryWriteBytes(destination, (short)value);
+                break;
+            case JgsNumericClass.UInt16:
+                BitConverter.TryWriteBytes(destination, (ushort)value);
+                break;
+            case JgsNumericClass.Int32:
+                BitConverter.TryWriteBytes(destination, (int)value);
+                break;
+            case JgsNumericClass.UInt32:
+                BitConverter.TryWriteBytes(destination, (uint)value);
+                break;
+            case JgsNumericClass.Int64:
+                BitConverter.TryWriteBytes(destination, (long)value);
+                break;
+            case JgsNumericClass.UInt64:
+                BitConverter.TryWriteBytes(destination, (ulong)value);
+                break;
+            default:
+                BitConverter.TryWriteBytes(destination, value);
+                break;
+        }
     }
 
     /// <summary>Reads bytes back as the values of a named numeric class.</summary>

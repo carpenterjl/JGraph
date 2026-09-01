@@ -463,7 +463,8 @@ public static class JgsBuiltinCatalog
         Add("cond", "The condition number of a matrix (2-norm by default; 1, Inf, and 'fro' accepted).", P("A"), Opt("p"));
         Add("sqrtm", "The principal matrix square root, by the Denman-Beavers iteration.", P("A"));
         Add("logm", "The principal matrix logarithm, by inverse scaling and squaring over sqrtm.", P("A"));
-        Add("ode45", "Solves dy/dt = f(t, y): [t, y] = ode45(f, tspan, y0, options), Dormand-Prince with adaptive steps.", P("f"), P("tspan"), P("y0"), Opt("options"));
+        Add("ode45", "Solves dy/dt = f(t, y): [t, y] = ode45(f, tspan, y0, options), Dormand-Prince with adaptive steps; one output answers a solution structure instead.", P("f"), P("tspan"), P("y0"), Opt("options"));
+        Add("deval", "Reads a solution structure at any time: y = deval(sol, t), [y, yp] = deval(sol, t), or deval(sol, t, component).", P("sol"), P("t"), Opt("component"));
         Add("odeset", "The settings structure ode45 takes: opts = odeset('RelTol', 1e-8, 'MaxStep', 0.01).", Opt("options"));
         Add("odeget", "One setting out of that structure, or a fallback: r = odeget(opts, 'RelTol', 1e-3).", P("options"), P("name"), Opt("default"));
         Add("integral", "The definite integral of a function, adaptively: q = integral(@(x) x.^2, 0, 1). Either limit may be infinite.", P("fun"), P("a"), P("b"), Opt("options"));
@@ -897,6 +898,8 @@ public static class JgsBuiltinCatalog
         // M46 wave H — transforms and correlation. Each of these answers with plain numbers rather
         // than a picture: coefficients, projections and correlation surfaces are measurements about
         // an image, not images.
+        Add("dct", "The discrete cosine transform along one dimension: dct(x), dct(x, n), dct(x, n, dim), and 'Type' 1 to 4.", P("x"), Opt("n"), Opt("dim"), Opt("name"), Opt("value"));
+        Add("idct", "The inverse discrete cosine transform, with the same forms and types as dct.", P("y"), Opt("n"), Opt("dim"), Opt("name"), Opt("value"));
         Add("dct2", "The two-dimensional discrete cosine transform, padded or cropped to an optional size.", P("a"), Opt("rowsOrSize"), Opt("cols"));
         Add("idct2", "The inverse two-dimensional discrete cosine transform.", P("b"), Opt("rowsOrSize"), Opt("cols"));
         Add("dctmtx", "The n-by-n orthonormal DCT matrix, so that dct2(A) is D*A*D'.", P("n"));

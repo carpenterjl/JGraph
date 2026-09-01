@@ -29,6 +29,12 @@ public static class OdeSolvers
     /// <summary>Points reported per accepted step when the caller names no times — MATLAB's <c>Refine</c>.</summary>
     public const int DefaultRefine = 4;
 
+    /// <summary>
+    /// One accepted step, with everything the pair's continuous extension needs to be read again:
+    /// where the step started, how long it was, the state at its start and its seven stage slopes.
+    /// </summary>
+    public readonly record struct OdeStep(double Start, double Step, double[] State, double[][] Stages);
+
     // The Dormand–Prince tableau.
     private static readonly double[] C = [0, 1.0 / 5, 3.0 / 10, 4.0 / 5, 8.0 / 9, 1, 1];
 
@@ -82,6 +88,10 @@ public static class OdeSolvers
     /// <param name="refine">Points reported per accepted step when no times are named.</param>
     /// <param name="largestStep">MATLAB's <c>MaxStep</c>; null leaves the default tenth of the interval.</param>
     /// <param name="firstStep">MATLAB's <c>InitialStep</c>; null leaves the step the slope suggests.</param>
+    /// <param name="recording">
+    /// Filled in with every accepted step and what the run cost, when the caller wants to read the
+    /// solution again later. Null leaves the solver exactly as it was.
+    /// </param>
     public static List<OdePoint> DormandPrince(
         Func<double, double[], double[]> derivative,
         IReadOnlyList<double> tspan,
@@ -90,7 +100,8 @@ public static class OdeSolvers
         double absoluteTolerance = 1e-6,
         int refine = DefaultRefine,
         double? largestStep = null,
-        double? firstStep = null)
+        double? firstStep = null,
+        OdeRecording? recording = null)
     {
         if (tspan.Count < 2)
         {
@@ -120,6 +131,11 @@ public static class OdeSolvers
 
         var k = new double[7][];
         k[0] = derivative(t, y);
+        if (recording is not null)
+        {
+            recording.Evaluations++;
+        }
+
         if (k[0].Length != n)
         {
             throw new ArgumentException("The derivative must return one value per state variable.");
@@ -197,6 +213,10 @@ public static class OdeSolvers
                     }
 
                     k[stage] = derivative(t + (C[stage] * h), staged);
+                    if (recording is not null)
+                    {
+                        recording.Evaluations++;
+                    }
                 }
 
                 error = 0;
@@ -229,12 +249,32 @@ public static class OdeSolvers
                     ? Math.Max(hMin, 0.5 * absH)
                     : Math.Max(hMin, absH * Math.Max(0.1, 0.8 * Math.Pow(relativeTolerance / error, 0.2)));
 
+                if (recording is not null)
+                {
+                    recording.Failed++;
+                }
+
                 failedHere = true;
                 done = false;
                 h = direction * absH;
             }
 
             double tNext = done ? tEnd : t + h;
+
+            // The step's own stages, kept before the first-same-as-last rotation overwrites them.
+            // This is what lets the solution be read again at a time nobody asked for while it ran:
+            // the pair carries a fourth-order polynomial across every step it took, and without the
+            // stages that polynomial is gone the moment the next step starts.
+            if (recording is not null)
+            {
+                var stages = new double[7][];
+                for (int stage = 0; stage < 7; stage++)
+                {
+                    stages[stage] = (double[])k[stage].Clone();
+                }
+
+                recording.Steps.Add(new OdeStep(tNext - h, h, (double[])y.Clone(), stages));
+            }
 
             if (namedTimes)
             {
@@ -306,6 +346,84 @@ public static class OdeSolvers
         }
 
         return results;
+    }
+
+    /// <summary>
+    /// The state and the slope at <paramref name="at"/>, off the continuous extension of whichever
+    /// recorded step covers it.
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    /// The same polynomial the solver uses for its own refined output, evaluated after the fact:
+    /// reading a solution at a time nobody named is the same operation as reporting four points per
+    /// step, and it is right that they share the coefficients rather than agreeing by construction.
+    /// </para>
+    /// <para>
+    /// A time outside the recorded span is extrapolated from the nearest step rather than refused,
+    /// which is what MATLAB's <c>deval</c> does after warning about it.
+    /// </para>
+    /// </remarks>
+    /// <param name="steps">The accepted steps, in the order they were taken.</param>
+    /// <param name="at">The time wanted.</param>
+    /// <param name="slope">dy/dt there, from the derivative of the same polynomial.</param>
+    /// <returns>The state at <paramref name="at"/>.</returns>
+    public static double[] Interpolate(IReadOnlyList<OdeStep> steps, double at, out double[] slope)
+    {
+        if (steps.Count == 0)
+        {
+            throw new ArgumentException("A solution with no steps cannot be read.", nameof(steps));
+        }
+
+        // Which step covers the time. The steps run in whichever direction the integration did, so
+        // the comparison is written against the step's own end rather than against a fixed order.
+        int found = steps.Count - 1;
+        for (int i = 0; i < steps.Count; i++)
+        {
+            OdeStep candidate = steps[i];
+            double end = candidate.Start + candidate.Step;
+            bool covered = candidate.Step > 0
+                ? at <= end
+                : at >= end;
+            if (covered)
+            {
+                found = i;
+                break;
+            }
+        }
+
+        OdeStep step = steps[found];
+        double s = (at - step.Start) / step.Step;
+        int n = step.State.Length;
+        var state = new double[n];
+        slope = new double[n];
+        for (int i = 0; i < n; i++)
+        {
+            double sum = 0;
+            double rate = 0;
+            for (int stage = 0; stage < 7; stage++)
+            {
+                double[] row = Interpolant[stage];
+                double power = s;   // s^(q+1), the weight's own term
+                double lower = 1;   // s^q, one power down, which is what the derivative takes
+                double weight = 0;
+                double gradient = 0;
+                for (int q = 0; q < 4; q++)
+                {
+                    weight += row[q] * power;
+                    gradient += row[q] * (q + 1) * lower;
+                    lower = power;
+                    power *= s;
+                }
+
+                sum += weight * step.Stages[stage][i];
+                rate += gradient * step.Stages[stage][i];
+            }
+
+            state[i] = step.State[i] + (step.Step * sum);
+            slope[i] = rate;
+        }
+
+        return state;
     }
 
     /// <summary>

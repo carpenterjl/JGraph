@@ -215,6 +215,47 @@ public sealed class OpenBlasLinalg : DenseLinalg
     }
 
     /// <inheritdoc />
+    public override unsafe bool TryGehrd(int n, Span<double> a, int lda, Span<double> tau)
+    {
+        if (n <= 2)
+        {
+            // A matrix of order two is already upper Hessenberg and has no reflector to store, which
+            // LAPACK expresses by leaving tau empty rather than by refusing.
+            tau.Clear();
+            return true;
+        }
+
+        fixed (double* pa = a)
+        fixed (double* pt = tau)
+        {
+            return OpenBlasNative.Dgehrd(OpenBlasNative.LapackColMajor, n, 1, n, pa, lda, pt) == 0;
+        }
+    }
+
+    /// <inheritdoc />
+    public override unsafe bool TryOrghr(int n, Span<double> a, int lda, ReadOnlySpan<double> tau)
+    {
+        if (n <= 2)
+        {
+            for (int c = 0; c < n; c++)
+            {
+                for (int r = 0; r < n; r++)
+                {
+                    a[r + (c * lda)] = r == c ? 1 : 0;
+                }
+            }
+
+            return true;
+        }
+
+        fixed (double* pa = a)
+        fixed (double* pt = tau)
+        {
+            return OpenBlasNative.Dorghr(OpenBlasNative.LapackColMajor, n, 1, n, pa, lda, pt) == 0;
+        }
+    }
+
+    /// <inheritdoc />
     public override unsafe int Orgqr(int m, int n, int k, Span<double> a, int lda, ReadOnlySpan<double> tau)
     {
         if (m == 0 || n == 0)
