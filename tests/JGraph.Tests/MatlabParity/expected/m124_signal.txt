@@ -1,0 +1,26 @@
+CHK|butter_two_outputs|1|div=ADR0126
+CHK|butter_b1|0.01856301062689715|rel=1e-12
+CHK|butter_b3|0.1113780637613829|rel=1e-12
+CHK|butter_a2|-1.5703988512281719|rel=1e-12
+CHK|butter_a5|0.076197064610332293|rel=1e-12
+CHK|butter_bsum|0.2970081700303544|rel=1e-12
+CHK|butter_asum|0.2970081700303544|rel=1e-12
+CHK|filter_shape|[1 20]|shape
+CHK|filter_y10|7.4352111130405341|rel=1e-12
+CHK|filter_y20|17.435139115553273|rel=1e-12
+CHK|filter_step_settles|0.99999999999999989|rel=1e-9
+CHK|filter_fir|2|rel=1e-14
+CHK|freqz_single_numel|8|div=ADR0126
+CHK|dct_shape|[1 8]|shape
+CHK|dct_1|12.727922061357857|rel=1e-12
+CHK|dct_2|-6.4423230227051373|rel=1e-12
+CHK|dct_8|-0.050702322759645924|abs=1e-12
+CHK|idct_roundtrip|1.3322676295501878e-15|abs=1e-12
+CHK|idct_last|8|rel=1e-12
+CHK|firpm_shape|[1 21]|shape
+CHK|firpm_centre|0.40014297857167191|div=ADR0126
+CHK|firpm_symmetric|0|abs=1e-12
+CHK|firpm_dc|0.98855322116660715|div=ADR0126
+CHK|db_2|6.0205999132796251|rel=1e-12
+CHK|db_half|-6.0205999132796251|rel=1e-12
+CHK|db_10|20|rel=1e-12

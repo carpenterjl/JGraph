@@ -28,6 +28,15 @@
              CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
+  <!--
+    MATLAB parity fixtures (M124). The .m scripts and MATLAB's recorded answers ride along to the
+    output folder so MatlabParityFixtureTests can read them by path; MATLAB itself is never run.
+  -->
+  <ItemGroup>
+    <Content Include="MatlabParity\fixtures\*.m;MatlabParity\expected\*.txt"
+             CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\..\src\JGraph.Core\JGraph.Core.csproj" />
     <ProjectReference Include="..\..\src\JGraph.Data\JGraph.Data.csproj" />

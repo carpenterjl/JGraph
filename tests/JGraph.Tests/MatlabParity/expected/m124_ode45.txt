@@ -1,0 +1,28 @@
+CHK|decay_nsteps|10|exact
+CHK|decay_nfailed|0|exact
+CHK|decay_nfevals|61|exact
+CHK|decay_final|0.1353353167184872|rel=1e-10
+CHK|decay_solver|ode45|exact
+CHK|osc_refine1_rows|19|exact
+CHK|osc_refine1_shape|[19 2]|shape
+CHK|osc_refine1_final|-0.83825184597983537|rel=1e-6
+CHK|osc_refine4_rows|73|exact
+CHK|osc_refine4_t2|5.0237728630191596e-05|rel=1e-12
+CHK|osc_maxstep_rows|817|exact
+CHK|osc_maxstep_final|-0.83907152831345266|rel=1e-8
+CHK|osc_tight_rows|613|exact
+CHK|osc_tight_final|-0.83907152434067644|rel=1e-7
+CHK|osc_tight_err|1|exact
+CHK|osc_grid_rows|21|exact
+CHK|osc_grid_last_t|10|exact
+CHK|osc_grid_y5|-0.41638445565662152|rel=1e-5
+CHK|deval_shape|[2 3]|shape
+CHK|deval_1|0.54027398450495778|rel=1e-5
+CHK|deval_2|-0.80129868101001578|rel=1e-5
+CHK|deval_3|-0.65756766914378362|rel=1e-5
+CHK|lorenz_rows|957|exact
+CHK|lorenz_zmax|47.880064276729634|rel=1e-3
+CHK|odeget_reltol|1.0000000000000001e-05|exact
+CHK|odeget_refine|2|exact
+CHK|odeget_default|0.25|exact
+CHK|odeget_empty|1|exact

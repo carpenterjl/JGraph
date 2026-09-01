@@ -1,0 +1,20 @@
+CHK|poly|0.33333333333333331|rel=1e-12
+CHK|sinx|1.9999999999999998|rel=1e-10
+CHK|expx2|0.88208139076242176|rel=1e-10
+CHK|gauss_full|1.7724538507803129|rel=1e-10
+CHK|expdecay_half|1|rel=1e-10
+CHK|lorentz|3.1415926535897927|rel=1e-10
+CHK|reversed|-0.33333333333333331|rel=1e-12
+CHK|degenerate|0|exact
+CHK|reltol|0.66666666666666663|rel=1e-8
+CHK|sqrt_sing|1.9999999999999998|rel=1e-8
+CHK|strong_sing|9.9934495538576424|div=ADR0123
+CHK|quadgk_value|1.6583475942188741|rel=1e-10
+CHK|quadgk_errbnd_small|1|exact
+CHK|quadgk_inf|1.7724538507803129|rel=1e-10
+CHK|oscillatory|-1.6167622796103842e-15|abs=1e-9
+CHK|trapz|0.33500000000000002|rel=1e-14
+CHK|trapz_unit|21.5|rel=1e-14
+CHK|cumtrapz_shape|[1 11]|shape
+CHK|cumtrapz_end|0.33500000000000002|rel=1e-14
+CHK|cumtrapz_mid|0.042500000000000003|rel=1e-14
