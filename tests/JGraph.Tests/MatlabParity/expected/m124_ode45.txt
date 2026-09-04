@@ -19,7 +19,7 @@ CHK|osc_grid_y5|-0.41638445565662152|rel=1e-5
 CHK|deval_shape|[2 3]|shape
 CHK|deval_1|0.54027398450495778|rel=1e-5
 CHK|deval_2|-0.80129868101001578|rel=1e-5
-CHK|deval_3|-0.65756766914378362|rel=1e-5
+CHK|deval_3|-0.65756766914378384|rel=1e-5
 CHK|lorenz_rows|957|exact
 CHK|lorenz_zmax|47.880064276729634|rel=1e-3
 CHK|odeget_reltol|1.0000000000000001e-05|exact

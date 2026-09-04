@@ -285,13 +285,48 @@ vander,elmat,0,A = vander(v),accepted,
 width,elmat,0,W = width(T),accepted,
 wilkinson,elmat,0,W = wilkinson(n),accepted,
 wilkinson,elmat,1,"W = wilkinson(n,classname)",accepted,
-ode45,funfun,0,"[t,y] = ode45(odefun,tspan,y0)",error,"sin expects 1 argument(s), but got 2."
-ode45,funfun,1,"[t,y] = ode45(odefun,tspan,y0,options)",error,"ode45 expects 3 argument(s), but got 4."
-ode45,funfun,2,"[t,y,te,ye,ie] = ode45(odefun,tspan,y0,options)",error,"ode45 expects 3 argument(s), but got 4."
-ode45,funfun,3,sol = ode45(___),error,"ode45 produces two outputs: use [t, y] = ode45(f, tspan, y0)."
+deval,funfun,0,"y = deval(sol,x)",accepted,
+deval,funfun,1,"y = deval(x,sol)",accepted,
+deval,funfun,2,"y = deval(___,idx)",accepted,
+deval,funfun,3,"[y,yp] = deval(___)",accepted,
+integral,funfun,0,"q = integral(fun,xmin,xmax)",accepted,
+integral,funfun,1,"q = integral(fun,xmin,xmax,Name,Value)",unprobed,"Name,Value form; the dump lists no pair names"
+ode113,funfun,0,"[t,y] = ode113(odefun,tspan,y0)",accepted,
+ode113,funfun,1,"[t,y] = ode113(odefun,tspan,y0,options)",accepted,
+ode113,funfun,2,"[t,y,te,ye,ie] = ode113(odefun,tspan,y0,options)",accepted,
+ode113,funfun,3,sol = ode113(___),accepted,
+ode23,funfun,0,"[t,y] = ode23(odefun,tspan,y0)",accepted,
+ode23,funfun,1,"[t,y] = ode23(odefun,tspan,y0,options)",accepted,
+ode23,funfun,2,"[t,y,te,ye,ie] = ode23(odefun,tspan,y0,options)",accepted,
+ode23,funfun,3,sol = ode23(___),accepted,
+ode45,funfun,0,"[t,y] = ode45(odefun,tspan,y0)",accepted,
+ode45,funfun,1,"[t,y] = ode45(odefun,tspan,y0,options)",accepted,
+ode45,funfun,2,"[t,y,te,ye,ie] = ode45(odefun,tspan,y0,options)",accepted,
+ode45,funfun,3,sol = ode45(___),accepted,
+ode78,funfun,0,"[t,y] = ode78(odefun,tspan,y0)",accepted,
+ode78,funfun,1,"[t,y] = ode78(odefun,tspan,y0,options)",accepted,
+ode78,funfun,2,"[t,y,te,ye,ie] = ode78(odefun,tspan,y0,options)",accepted,
+ode78,funfun,3,sol = ode78(___),accepted,
+ode89,funfun,0,"[t,y] = ode89(odefun,tspan,y0)",accepted,
+ode89,funfun,1,"[t,y] = ode89(odefun,tspan,y0,options)",accepted,
+ode89,funfun,2,"[t,y,te,ye,ie] = ode89(odefun,tspan,y0,options)",accepted,
+ode89,funfun,3,sol = ode89(___),accepted,
+odeget,funfun,0,"v = odeget(options,'Name')",unprobed,no sample for this form's arguments
+odeget,funfun,1,"v = odeget(options,'Name',default)",unprobed,no sample for this form's arguments
+odeset,funfun,0,"options = odeset(Name,Value,...)",unprobed,"Name,Value form; the dump lists no pair names"
+odeset,funfun,1,"options = odeset(oldopts,Name,Value,...)",unprobed,"Name,Value form; the dump lists no pair names"
+odeset,funfun,2,"options = odeset(oldopts,newopts)",unprobed,no sample for this form's arguments
+odeset,funfun,3,odeset,accepted,
+odextend,funfun,0,"solext = odextend(sol,odefun,tfinal)",accepted,
+odextend,funfun,1,"solext = odextend(sol,[],tfinal)",accepted,
+odextend,funfun,2,"solext = odextend(sol,odefun,tfinal,y0)",accepted,
+odextend,funfun,3,"solext = odextend(sol,odefun,tfinal,y0,options)",accepted,
+quadgk,funfun,0,"q = quadgk(fun,a,b)",accepted,
+quadgk,funfun,1,"[q,errbnd] = quadgk(fun,a,b)",accepted,
+quadgk,funfun,2,"[___] = quadgk(fun,a,b,Name,Value)",unprobed,"Name,Value form; the dump lists no pair names"
 isvarname,lang,0,tf = isvarname(s),accepted,
 isvarname,lang,1,isvarname s,accepted,
-run,lang,0,run(scriptname),refused,run: cannot read 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-toolbox-olfg5xlf\a': Could not find file 'E:\Temp_Folder\Appdata\Local\Temp\jgraph-toolbox-olfg5xlf\a'.
+run,lang,0,run(scriptname),refused,run: cannot read 'C:\Users\Carpe\AppData\Local\Temp\jgraph-toolbox-gka2bnph\a': Could not find file 'C:\Users\Carpe\AppData\Local\Temp\jgraph-toolbox-gka2bnph\a'.
 validateattributes,lang,0,"validateattributes(A,classes,attributes)",error,validateattributes expects a cell of class names.
 validateattributes,lang,1,"validateattributes(A,classes,attributes,argIndex)",error,"validateattributes expects argument 4 to be a string, but got a number."
 validateattributes,lang,2,"validateattributes(A,classes,attributes,funcName)",error,validateattributes expects a cell of class names.
@@ -451,7 +486,7 @@ roots,polyfun,0,r = roots(p),accepted,
 spline,polyfun,0,"s = spline(x,y,xq)",accepted,
 spline,polyfun,1,"pp = spline(x,y)",accepted,
 unmkpp,polyfun,0,"[breaks,coefs,L,order,dim] = unmkpp(pp)",unprobed,no sample for this form's arguments
-voronoin,polyfun,0,"[v,c] = voronoin(P)",error,voronoin: only 2-D point sets are supported — X must be an n-by-2 matrix.
+voronoin,polyfun,0,"[v,c] = voronoin(P)",error,voronoin: only 2-D point sets are supported - X must be an n-by-2 matrix.
 voronoin,polyfun,1,"[v,c] = voronoin(P,opts)",error,"voronoin expects 1 argument(s), but got 2."
 rng,randfun,0,rng(seed),accepted,
 rng,randfun,1,"rng(seed,generator)",accepted,
@@ -547,10 +582,10 @@ insertBefore,strfun,0,"newStr = insertBefore(str,pat,newText)",accepted,
 insertBefore,strfun,1,"newStr = insertBefore(str,pos,newText)",error,"insertBefore expects argument 2 to be a number, but got a array."
 int2str,strfun,0,chr = int2str(N),accepted,
 isStringScalar,strfun,0,tf = isStringScalar(A),accepted,
-join,strfun,0,newStr = join(str),error,"join expects argument 1 to be an array, but got a string."
-join,strfun,1,"newStr = join(str,delimiter)",error,"join expects argument 1 to be an array, but got a string."
-join,strfun,2,"newStr = join(str,dim)",error,"join expects argument 2 to be a string, but got a number."
-join,strfun,3,"newStr = join(str,delimiter,dim)",error,"join expects between 1 and 2 argument(s), but got 3."
+join,strfun,0,newStr = join(str),accepted,
+join,strfun,1,"newStr = join(str,delimiter)",accepted,
+join,strfun,2,"newStr = join(str,dim)",accepted,
+join,strfun,3,"newStr = join(str,delimiter,dim)",accepted,
 mat2str,strfun,0,chr = mat2str(X),accepted,
 mat2str,strfun,1,"chr = mat2str(X,n)",accepted,
 mat2str,strfun,2,"chr = mat2str(___,'class')",error,"mat2str expects argument 2 to be a number, but got a string."
@@ -562,7 +597,7 @@ pad,strfun,0,newStr = pad(str),accepted,
 pad,strfun,1,"newStr = pad(str,numberOfCharacters)",accepted,
 pad,strfun,2,"newStr = pad(str,side)",accepted,
 pad,strfun,3,"newStr = pad(str,numberOfCharacters,side)",accepted,
-pad,strfun,4,"newStr = pad(___,padCharacter)",refused,"pad: ' ' is not a side — use 'left', 'right', or 'both'."
+pad,strfun,4,"newStr = pad(___,padCharacter)",refused,"pad: ' ' is not a side - use 'left', 'right', or 'both'."
 replace,strfun,0,"newStr = replace(str,old,new)",accepted,
 replaceBetween,strfun,0,"newStr = replaceBetween(str,startPat,endPat,newText)",accepted,
 replaceBetween,strfun,1,"newStr = replaceBetween(str,startPos,endPos,newText)",accepted,
@@ -580,7 +615,7 @@ str2num,strfun,1,"[X,tf] = str2num(chr)",error,"str2num expects argument 1 to be
 strcat,strfun,0,"s = strcat(s1,...,sN)",unprobed,no sample for this form's arguments
 strip,strfun,0,newStr = strip(str),accepted,
 strip,strfun,1,"newStr = strip(str,side)",accepted,
-strip,strfun,2,"newStr = strip(___,stripCharacter)",refused,"strip: ' ' is not a side — use 'left', 'right', or 'both'."
+strip,strfun,2,"newStr = strip(___,stripCharacter)",refused,"strip: ' ' is not a side - use 'left', 'right', or 'both'."
 strjoin,strfun,0,str = strjoin(C),accepted,
 strjoin,strfun,1,"str = strjoin(C,delimiter)",accepted,
 strjust,strfun,0,newStr = strjust(str),accepted,

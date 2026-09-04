@@ -1,6 +1,6 @@
 <#
 .SYNOPSIS
-    Records what MATLAB R2024a prints for each parity fixture, so the test suite can compare against
+    Records what MATLAB prints for each parity fixture (R2025b since M125), so the test suite can compare against
     it without MATLAB present.
 
 .DESCRIPTION

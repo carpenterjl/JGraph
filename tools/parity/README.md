@@ -1,6 +1,6 @@
 # The MATLAB parity fixture suite
 
-A permanent, MATLAB-free test that JGraph answers what R2024a answers, line by line, by the rule
+A permanent, MATLAB-free test that JGraph answers what MATLAB answers (R2025b since M125; R2024a before), line by line, by the rule
 each line asks for. Introduced by M124 (ADR 0126) as the gate for the solver and Signal milestones.
 
 ## The pieces

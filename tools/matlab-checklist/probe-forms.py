@@ -260,6 +260,15 @@ NAME_ARG_SAMPLES: dict[tuple[str, str], str] = {
     ("funm", "A"): "[1 1 0; 0 2 1; 0 0 3]", ("funm", "fun"): "@exp",
     ("funm", "options"): "struct('TolBlk', 0.1)", ("funm", "p1"): "1", ("funm", "p2"): "2",
     ("gsvd", "A"): "[1 2; 3 4; 5 6]", ("gsvd", "B"): "[7 8; 9 10]",
+    # The explicit ODE family (M125): a derivative handle, a span, a scalar state, and options the
+    # solver can act on. The forms with five outputs answer empty events when none are watched.
+    **{(solver, arg): sample
+       for solver in ("ode23", "ode45", "ode78", "ode89", "ode113")
+       for arg, sample in (("odefun", "@(t,y) -y"), ("tspan", "[0 1]"), ("y0", "1"),
+                           ("options", "odeset('RelTol', 1e-6)"))},
+    ("deval", "sol"): "ode45(@(t,y) -y, [0 1], 1)", ("deval", "x"): "0.5", ("deval", "idx"): "1",
+    ("odextend", "sol"): "ode45(@(t,y) -y, [0 1], 1)", ("odextend", "odefun"): "@(t,y) -y",
+    ("odextend", "tfinal"): "2", ("odextend", "y0"): "1", ("odextend", "options"): "odeset('RelTol', 1e-6)",
 }
 
 # Placeholders the documented type phrase cannot describe well enough to sample, whatever command

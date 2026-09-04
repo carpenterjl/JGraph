@@ -9,7 +9,7 @@ namespace JGraph.Tests.MatlabParity;
 /// <summary>
 /// M124: one theory case per fixture under <c>MatlabParity/fixtures</c>. Each fixture is run in the
 /// MATLAB dialect and its <c>CHK</c> lines are compared, by the rule each line carries, against the
-/// recording MATLAB R2024a made of the same script (<c>MatlabParity/expected</c>, written by
+/// recording MATLAB R2025b made of the same script (<c>MatlabParity/expected</c>, written by
 /// <c>tools/parity/record-matlab.ps1</c>). MATLAB is never run here.
 /// </summary>
 /// <remarks>
@@ -67,7 +67,7 @@ public class MatlabParityFixtureTests : IDisposable
     {
         string path = Path.Combine(Root, "expected", "matlab_version.txt");
         Assert.True(File.Exists(path), "expected/matlab_version.txt is missing — run record-matlab.ps1");
-        Assert.Contains("R2024a", File.ReadAllText(path));
+        Assert.Contains("R2025b", File.ReadAllText(path));
     }
 
     // The comparator itself, so a wrong line cannot pass by accident.

@@ -12,7 +12,7 @@ CHK|strong_sing|9.9934495538576424|div=ADR0123
 CHK|quadgk_value|1.6583475942188741|rel=1e-10
 CHK|quadgk_errbnd_small|1|exact
 CHK|quadgk_inf|1.7724538507803129|rel=1e-10
-CHK|oscillatory|-1.6167622796103842e-15|abs=1e-9
+CHK|oscillatory|-1.6514567491299204e-15|abs=1e-9
 CHK|trapz|0.33500000000000002|rel=1e-14
 CHK|trapz_unit|21.5|rel=1e-14
 CHK|cumtrapz_shape|[1 11]|shape

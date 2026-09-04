@@ -348,19 +348,4 @@ internal static partial class JgsBuiltins
             : null;
     }
 
-    /// <summary>
-    /// The four settings <c>ode45</c> knows how to obey, read out of an options structure.
-    /// </summary>
-    /// <remarks>
-    /// The other eighteen are accepted and stored — a script may set them, and <c>odeget</c> reads
-    /// them back — but nothing here acts on them. That is deliberate and recorded rather than
-    /// hidden: the alternative is refusing a structure over a field the solve does not need.
-    /// </remarks>
-    private static (double Relative, double Absolute, int Refine, double? MaxStep, double? FirstStep)
-        Ode45Settings(JgsValue? options) =>
-        (OdeNumber(options, "RelTol") ?? 1e-3,
-         OdeNumber(options, "AbsTol") ?? 1e-6,
-         (int)(OdeNumber(options, "Refine") ?? OdeSolvers.DefaultRefine),
-         OdeNumber(options, "MaxStep"),
-         OdeNumber(options, "InitialStep"));
 }

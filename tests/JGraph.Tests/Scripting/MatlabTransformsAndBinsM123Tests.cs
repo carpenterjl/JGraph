@@ -195,7 +195,7 @@ public class MatlabTransformsAndBinsM123Tests : IDisposable
     /// </summary>
     [Fact]
     public void OneOutputIsASolutionAndTwoAreThePair() =>
-        Assert.Equal("struct ode45 [1 16] [2 16] 15 0 91 [2 7 15] 11 41", Run("""
+        Assert.Equal("struct ode45 [1 16] [2 16] 15 0 91 [2 7 16] 11 41", Run("""
             sol = ode45(@(t,y) [y(2); -y(1)], [0 4], [1; 0]);
             o = odeset('RelTol', 1e-8);
             s2 = ode45(@(t,y) -y, [0 1], 1, o);

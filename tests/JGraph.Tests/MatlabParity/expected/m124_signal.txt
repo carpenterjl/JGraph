@@ -1,14 +1,14 @@
 CHK|butter_two_outputs|1|div=ADR0126
-CHK|butter_b1|0.01856301062689715|rel=1e-12
-CHK|butter_b3|0.1113780637613829|rel=1e-12
-CHK|butter_a2|-1.5703988512281719|rel=1e-12
-CHK|butter_a5|0.076197064610332293|rel=1e-12
-CHK|butter_bsum|0.2970081700303544|rel=1e-12
-CHK|butter_asum|0.2970081700303544|rel=1e-12
+CHK|butter_b1|0.018563010626897174|rel=1e-12
+CHK|butter_b3|0.11137806376138304|rel=1e-12
+CHK|butter_a2|-1.5703988512281726|rel=1e-12
+CHK|butter_a5|0.076197064610332516|rel=1e-12
+CHK|butter_bsum|0.29700817003035479|rel=1e-12
+CHK|butter_asum|0.29700817003035473|rel=1e-12
 CHK|filter_shape|[1 20]|shape
-CHK|filter_y10|7.4352111130405341|rel=1e-12
-CHK|filter_y20|17.435139115553273|rel=1e-12
-CHK|filter_step_settles|0.99999999999999989|rel=1e-9
+CHK|filter_y10|7.4352111130405394|rel=1e-12
+CHK|filter_y20|17.435139115553287|rel=1e-12
+CHK|filter_step_settles|0.99999999999999967|rel=1e-9
 CHK|filter_fir|2|rel=1e-14
 CHK|freqz_single_numel|8|div=ADR0126
 CHK|dct_shape|[1 8]|shape

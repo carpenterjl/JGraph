@@ -58,71 +58,8 @@ internal static partial class JgsBuiltins
                 return wanted >= 3 ? grids : wanted == 2 ? grids[..2] : [grids[2]];
             });
 
-        // One output is a solution structure and two are the pair of arrays; they are the same
-        // integration, run with a different Refine. The structure keeps the mesh the solver actually
-        // stepped on, because the points between are read off the polynomial when somebody asks for
-        // them, and the pair reports Refine points per step because nobody will ask again.
-        JgsValue[] Ode45(IReadOnlyList<JgsValue> args, int wanted, int line, int col)
-        {
-            ArityRange("ode45", args, 3, 4, line, col);
-            if (args[0].Type != JgsType.Function)
-            {
-                throw new JgsRuntimeException(line, col, "ode45 expects a function handle f(t, y).");
-            }
-
-            // The fourth argument is odeset's structure (M121). Without one the settings are
-            // the defaults this solver has always used, so nothing that ran before moves.
-            (double relative, double absolute, int refine, double? maxStep, double? firstStep) =
-                Ode45Settings(args.Count > 3 ? args[3] : null);
-
-            IJgsCallable f = args[0].AsCallable;
-            double[] tspan = ToDoubles("ode45", args[1], line, col);
-            double[] initial = ToDoubles("ode45", args[2], line, col);
-            int states = initial.Length;
-            bool asSolution = wanted <= 1;
-
-            double[] Derivative(double t, double[] y)
-            {
-                JgsValue yColumn = JgsMatrix.FromColumnMajorDims((double[])y.Clone(), [states, 1]);
-                JgsValue slope = f.Call([JgsValue.Number(t), yColumn], line, col);
-                double[] dy = ToDoubles("ode45", slope, line, col);
-                if (dy.Length != states)
-                {
-                    throw new JgsRuntimeException(line, col,
-                        $"ode45: f returned {dy.Length} value(s) for {states} state(s).");
-                }
-
-                return dy;
-            }
-
-            var recording = asSolution ? new JGraph.Numerics.OdeRecording() : null;
-            List<JGraph.Numerics.OdeSolvers.OdePoint> points;
-            try
-            {
-                points = JGraph.Numerics.OdeSolvers.DormandPrince(
-                    Derivative, tspan, initial, relative, absolute,
-                    asSolution ? 1 : refine, maxStep, firstStep, recording);
-            }
-            catch (Exception ex) when (ex is ArgumentException or InvalidOperationException)
-            {
-                throw new JgsRuntimeException(line, col, $"ode45: {ex.Message}");
-            }
-
-            if (asSolution)
-            {
-                return [OdeSolution(
-                    args[0], args.Count > 3 ? args[3] : null, points, recording!, states)];
-            }
-
-            JgsValue times = JgsMatrix.Build(points.Count, 1, (r, _) => points[r].Time);
-            JgsValue trajectory = JgsMatrix.Build(points.Count, states, (r, c) => points[r].State[c]);
-            return [times, trajectory];
-        }
-
-        Define("ode45",
-            (args, line, col) => Ode45(args, 1, line, col)[0],
-            (args, wanted, line, col) => Ode45(args, wanted, line, col));
-
+        // ode45 lived here from M42 to M124; it is registered with the rest of its family now
+        // (JgsBuiltins.OdeFamily.cs).
         Define("cond", (args, line, col) =>
         {
             ArityRange("cond", args, 1, 2, line, col);
