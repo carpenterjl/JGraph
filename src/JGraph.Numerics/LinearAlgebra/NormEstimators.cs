@@ -402,20 +402,34 @@ public static class NormEstimators
     /// </remarks>
     public static double VectorNorm(Complex[] x)
     {
-        double biggest = 0.0;
-        foreach (Complex value in x)
+        // A complex vector is a real vector of twice the length, and its length is the same sum.
+        var parts = new double[2 * x.Length];
+        for (int i = 0; i < x.Length; i++)
         {
-            if (double.IsNaN(value.Real) || double.IsNaN(value.Imaginary))
+            parts[2 * i] = x[i].Real;
+            parts[(2 * i) + 1] = x[i].Imaginary;
+        }
+
+        return VectorNorm(parts);
+    }
+
+    /// <summary>The same correctly rounded length, of a real vector.</summary>
+    public static double VectorNorm(ReadOnlySpan<double> x)
+    {
+        double biggest = 0.0;
+        foreach (double value in x)
+        {
+            if (double.IsNaN(value))
             {
                 return double.NaN;
             }
 
-            if (double.IsInfinity(value.Real) || double.IsInfinity(value.Imaginary))
+            if (double.IsInfinity(value))
             {
                 return double.PositiveInfinity;
             }
 
-            biggest = Math.Max(biggest, Math.Max(Math.Abs(value.Real), Math.Abs(value.Imaginary)));
+            biggest = Math.Max(biggest, Math.Abs(value));
         }
 
         if (biggest == 0)
@@ -427,19 +441,17 @@ public static class NormEstimators
         double scale = Math.ScaleB(1.0, -shift);
         double sum = 0.0;
         double dropped = 0.0;
-        foreach (Complex value in x)
+        foreach (double value in x)
         {
-            foreach (double part in new[] { value.Real * scale, value.Imaginary * scale })
-            {
-                double square = part * part;
-                dropped += Math.FusedMultiplyAdd(part, part, -square);
+            double part = value * scale;
+            double square = part * part;
+            dropped += Math.FusedMultiplyAdd(part, part, -square);
 
-                // Neumaier's compensation, which unlike Kahan's is right when the addend is the
-                // larger of the two — which it often is here, the sum having started at nought.
-                double total = sum + square;
-                dropped += Math.Abs(sum) >= square ? (sum - total) + square : (square - total) + sum;
-                sum = total;
-            }
+            // Neumaier's compensation, which unlike Kahan's is right when the addend is the
+            // larger of the two — which it often is here, the sum having started at nought.
+            double total = sum + square;
+            dropped += Math.Abs(sum) >= square ? (sum - total) + square : (square - total) + sum;
+            sum = total;
         }
 
         double root = Math.Sqrt(sum);

@@ -252,18 +252,29 @@ internal static partial class JgsBuiltins
             subject = MagnitudesOf(z);
         }
 
-        if (!isMatrix)
+        // A vector, whichever way it lies, takes the vector norms: MATLAB's p there is any real
+        // number, and its 2-norm is correctly rounded. A column used to count as a matrix and go
+        // to the singular values, which refused p = 3 and lost a length whose square underflows —
+        // norm([1; 1] * 1e-200) is 1.41e-200, not 0 — and the row's own sum of squares lost it too.
+        double[] v;
+        int rows;
+        int cols;
+        if (isMatrix)
         {
-            double[] v = ToDoubles("norm", subject, line, col);
+            v = ColumnMajorOf("norm", subject, out rows, out cols, line, col);
+        }
+        else
+        {
+            v = ToDoubles("norm", subject, line, col);
+            rows = 1;
+            cols = v.Length;
+        }
+
+        if (rows == 1 || cols == 1)
+        {
             if (word == "fro" || p == 2)
             {
-                double sumSquares = 0;
-                foreach (double x in v)
-                {
-                    sumSquares += x * x;
-                }
-
-                return JgsValue.Number(System.Math.Sqrt(sumSquares));
+                return JgsValue.Number(NormEstimators.VectorNorm(v));
             }
 
             if (double.IsPositiveInfinity(p))
@@ -285,7 +296,7 @@ internal static partial class JgsBuiltins
             return JgsValue.Number(System.Math.Pow(sum, 1 / p));
         }
 
-        double[] a = ColumnMajorOf("norm", subject, out int rows, out int cols, line, col);
+        double[] a = v;
         if (word == "fro")
         {
             double sumSquares = 0;

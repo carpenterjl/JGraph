@@ -158,20 +158,12 @@ public sealed class GeneralizedSchur
     }
 
     /// <summary>
-    /// The managed QZ behind <see cref="Factor"/> — the iteration when B cooperates, the
-    /// reciprocal pencil when it is singular. <see cref="ManagedLinalg"/> reaches it directly.
+    /// The managed QZ behind <see cref="Factor"/>, which <see cref="ManagedLinalg"/> reaches
+    /// directly. A singular B is not a separate case: a zero on its diagonal is chased to the
+    /// bottom of the active block and deflated there, as LAPACK's <c>dhgeqz</c> does it, so an
+    /// eigenvalue at infinity is reported with the sign the native route reports.
     /// </summary>
-    internal static GeneralizedSchur FactorManaged(double[,] a, double[,] b)
-    {
-        try
-        {
-            return Iterated(a, b);
-        }
-        catch (DegeneratePencil)
-        {
-            return ThroughTheReciprocal(a, b);
-        }
-    }
+    internal static GeneralizedSchur FactorManaged(double[,] a, double[,] b) => Iterated(a, b);
 
     private static double[] Flatten(double[,] source, int n)
     {
@@ -215,142 +207,76 @@ public sealed class GeneralizedSchur
         return rect;
     }
 
-    /// <summary>
-    /// The pencil taken the other way round, for a <c>B</c> that is singular.
-    /// </summary>
-    /// <remarks>
-    /// <para>
-    /// The iteration wants a denominator it can divide by, and a singular <c>B</c> has none: some
-    /// eigenvalue is at infinity, and no amount of iterating makes a zero pivot workable. Turning
-    /// the pencil over turns that infinity into a zero, which is an ordinary number.
-    /// </para>
-    /// <para>
-    /// Factoring (<c>B</c>, <c>A + μB</c>) for a μ that makes the second matrix nonsingular gives
-    /// orthogonal Q and Z with <c>Q·B·Z</c> quasi-triangular and <c>Q·(A + μB)·Z</c> triangular.
-    /// The same pair then answers for the original: <c>Q·A·Z</c> is that triangular matrix less μ
-    /// times the other, and a difference of a triangular and a quasi-triangular matrix is
-    /// quasi-triangular. One thing has to be put right — this pencil's 2-by-2 blocks land in the
-    /// matrix that is required to be triangular — and a single rotation of rows per block moves
-    /// each one across into <c>AA</c>, where a real factorization is allowed to keep it.
-    /// </para>
-    /// </remarks>
-    private static GeneralizedSchur ThroughTheReciprocal(double[,] a, double[,] b)
+    /// <summary>The Frobenius norm of B on the way in, which no rotation changes: the yardstick a negligible diagonal is measured against.</summary>
+    private static double FrobeniusNorm(double[,] m)
     {
-        int n = a.GetLength(0);
-        double scale = 1 + Norm(a) + Norm(b);
-
-        foreach (double shift in new[] { 0.0, 1.0, -1.0, 0.5, -0.25, 2.0, 0.125 })
-        {
-            var shifted = new double[n, n];
-            for (int i = 0; i < n; i++)
-            {
-                for (int j = 0; j < n; j++)
-                {
-                    shifted[i, j] = a[i, j] + (shift * scale * b[i, j]);
-                }
-            }
-
-            GeneralizedSchur turned;
-            try
-            {
-                turned = Iterated(b, shifted);
-            }
-            catch (DegeneratePencil)
-            {
-                continue; // this shift left the second matrix singular too; try another
-            }
-
-            double[,] bb = (double[,])turned.AA.Clone();     // Q·B·Z, quasi-triangular for now
-            double[,] upper = (double[,])turned.BB.Clone();  // Q·(A + μB)·Z, triangular
-            double[,] q = Linear.Transpose(turned.Q);
-            double[,] z = turned.Z;
-
-            // Any 2-by-2 block belongs on the other side of the pair. One rotation of its two rows
-            // triangularizes it there, and leaves the matrix it moves into free to be full.
-            for (int i = 0; i + 1 < n; i++)
-            {
-                if (bb[i + 1, i] == 0)
-                {
-                    continue;
-                }
-
-                (double c, double s) = RotationZeroingSecond(bb[i, i], bb[i + 1, i]);
-                ApplyLeft(bb, i, i + 1, c, s);
-                ApplyLeft(upper, i, i + 1, c, s);
-                ApplyRight(q, i, i + 1, c, s);
-                bb[i + 1, i] = 0;
-            }
-
-            var aa = new double[n, n];
-            for (int i = 0; i < n; i++)
-            {
-                for (int j = 0; j < n; j++)
-                {
-                    aa[i, j] = upper[i, j] - (shift * scale * bb[i, j]);
-                }
-            }
-
-            ZeroBelowDiagonal(bb, 1);
-            ZeroBelowDiagonal(aa, 2);
-
-            // The whole point of coming this way was an eigenvalue at infinity, and an infinity is
-            // an exact zero denominator. Arriving at 1e-17 instead would make the answer say the
-            // pencil is finite, which is the one thing it is not.
-            double tolerance = 1e-12 * (1 + Norm(bb));
-            for (int i = 0; i < n; i++)
-            {
-                if (Math.Abs(bb[i, i]) <= tolerance)
-                {
-                    bb[i, i] = 0;
-                }
-            }
-
-            (Complex[] alpha, double[] beta) = EigenvaluePairs(aa, bb);
-            return new GeneralizedSchur(aa, bb, Linear.Transpose(q), z, alpha, beta);
-        }
-
-        throw new ArgumentException(
-            "This pencil is singular — every number is an eigenvalue of it — so it has no " +
-            "generalized Schur form to compute.");
-    }
-
-    private static double Norm(double[,] m)
-    {
-        double largest = 0;
+        double sum = 0;
         foreach (double value in m)
         {
-            largest = Math.Max(largest, Math.Abs(value));
+            sum += value * value;
         }
 
-        return largest;
+        return Math.Sqrt(sum);
     }
 
-    /// <summary>The iteration proper, for a pencil whose second matrix stays nonsingular.</summary>
+    /// <summary>The three phases in order: B triangular, A Hessenberg beside it, then the iteration.</summary>
+    /// <remarks>
+    /// Before any of them, LAPACK's <c>dggbal</c> permutation: a row or a column with at most one
+    /// nonzero in both matrices already holds an eigenvalue, and is moved to the edge so the three
+    /// phases work on the block between. That is not an economy here but a convention. The QR runs
+    /// on the block alone, which decides the reflectors, which decide the signs the eigenvalues at
+    /// infinity come out with — and the native route's signs are the ones being matched.
+    /// </remarks>
     private static GeneralizedSchur Iterated(double[,] a, double[,] b)
     {
         int n = a.GetLength(0);
+        var work = (double[,])a.Clone();
+        var triangular = (double[,])b.Clone();
+        (int[] rowOrder, int[] columnOrder) = Isolate(work, triangular, out int low, out int high);
 
-        // Phase one: B triangular. Its QR gives the left factor that does it, and A comes along.
-        QrDecomposition qr = QrDecomposition.Factor(b);
-        double[,] qAccumulated = qr.FullQ;
-        double[,] work = Linear.Multiply(Linear.Transpose(qAccumulated), a);
-        double[,] triangular = Linear.Multiply(Linear.Transpose(qAccumulated), b);
-        ZeroBelowDiagonal(triangular, 1);
-
-        // A zero on the triangle's diagonal is a singular B, which this iteration has no answer for
-        // and the reciprocal route does. Asked here, before any work, rather than discovered in the
-        // middle of a sweep.
-        if (SingularDiagonal(triangular, 0, n - 1) >= 0)
+        // Phase one: B triangular over the block. Its QR gives the left factor that does it, and A
+        // comes along; outside the block both are triangular already.
+        int rows = high - low + 1;
+        int columns = n - low;
+        var block = new double[rows, columns];
+        for (int r = 0; r < rows; r++)
         {
-            throw new DegeneratePencil();
+            for (int c = 0; c < columns; c++)
+            {
+                block[r, c] = triangular[low + r, low + c];
+            }
         }
 
-        double[,] zAccumulated = Linear.Identity(n);
+        double[,] blockQ = QrDecomposition.Factor(block).FullQ;
+        ApplyTransposeToRows(blockQ, work, low);
+        ApplyTransposeToRows(blockQ, triangular, low);
+        ZeroBelowDiagonal(triangular, 1);
 
-        // Phase two: A to Hessenberg, B kept triangular.
-        for (int column = 0; column < n - 2; column++)
+        // The accumulating factors start as the permutations, with the block's Q folded into the
+        // left one — which holds the transpose of Q, as every rotation below expects.
+        var qAccumulated = new double[n, n];
+        var zAccumulated = new double[n, n];
+        for (int i = 0; i < n; i++)
         {
-            ReduceColumn(work, triangular, qAccumulated, zAccumulated, column, column + 2, n - 1);
+            zAccumulated[columnOrder[i], i] = 1;
+            if (i < low || i > high)
+            {
+                qAccumulated[rowOrder[i], i] = 1;
+            }
+        }
+
+        for (int r = 0; r < rows; r++)
+        {
+            for (int c = 0; c < rows; c++)
+            {
+                qAccumulated[rowOrder[low + r], low + c] = blockQ[r, c];
+            }
+        }
+
+        // Phase two: A to Hessenberg over the block, B kept triangular.
+        for (int column = low; column < high - 1; column++)
+        {
+            ReduceColumn(work, triangular, qAccumulated, zAccumulated, column, column + 2, high);
         }
 
         // Phase three: the iteration.
@@ -359,6 +285,161 @@ public sealed class GeneralizedSchur
         double[,] q = Linear.Transpose(qAccumulated);
         (Complex[] alpha, double[] beta) = EigenvaluePairs(work, triangular);
         return new GeneralizedSchur(work, triangular, q, zAccumulated, alpha, beta);
+    }
+
+    /// <summary>
+    /// LAPACK's <c>dggbal</c> permutation. A row with at most one nonzero across both matrices, in
+    /// the columns still in play, is swapped to the bottom along with the column that nonzero
+    /// stands in; then a column with at most one nonzero in the rows still in play is swapped to
+    /// the front along with its row. Each swap isolates one eigenvalue, and the search restarts
+    /// after each. The pair is permuted in place; the answer is the block that is left and, for
+    /// each position, the original row and column now standing there.
+    /// </summary>
+    private static (int[] Rows, int[] Columns) Isolate(double[,] a, double[,] b, out int low, out int high)
+    {
+        int n = a.GetLength(0);
+        var rows = new int[n];
+        var columns = new int[n];
+        for (int i = 0; i < n; i++)
+        {
+            rows[i] = i;
+            columns[i] = i;
+        }
+
+        int first = 0;
+        int last = n - 1;
+        bool swapped = true;
+        while (swapped && last > 0)
+        {
+            swapped = false;
+            for (int i = last; i >= 0; i--)
+            {
+                if (!LoneNonzero(a, b, i, 0, last, byRow: true, out int at))
+                {
+                    continue;
+                }
+
+                SwapRows(a, b, rows, i, last);
+                SwapColumns(a, b, columns, at < 0 ? last : at, last);
+                last--;
+                swapped = true;
+                break;
+            }
+        }
+
+        swapped = true;
+        while (swapped && first < last)
+        {
+            swapped = false;
+            for (int j = first; j <= last; j++)
+            {
+                if (!LoneNonzero(a, b, j, first, last, byRow: false, out int at))
+                {
+                    continue;
+                }
+
+                SwapColumns(a, b, columns, j, first);
+                SwapRows(a, b, rows, at < 0 ? last : at, first);
+                first++;
+                swapped = true;
+                break;
+            }
+        }
+
+        low = first;
+        high = last;
+        return (rows, columns);
+    }
+
+    /// <summary>
+    /// Whether row (or column) <paramref name="index"/> has at most one nonzero in either matrix
+    /// over positions <paramref name="from"/>..<paramref name="to"/>, and where it is: −1 for none.
+    /// </summary>
+    private static bool LoneNonzero(double[,] a, double[,] b, int index, int from, int to, bool byRow, out int at)
+    {
+        at = -1;
+        for (int k = from; k <= to; k++)
+        {
+            bool zero = byRow
+                ? a[index, k] == 0 && b[index, k] == 0
+                : a[k, index] == 0 && b[k, index] == 0;
+            if (zero)
+            {
+                continue;
+            }
+
+            if (at >= 0)
+            {
+                return false;
+            }
+
+            at = k;
+        }
+
+        return true;
+    }
+
+    private static void SwapRows(double[,] a, double[,] b, int[] order, int i, int m)
+    {
+        if (i == m)
+        {
+            return;
+        }
+
+        int n = a.GetLength(1);
+        for (int j = 0; j < n; j++)
+        {
+            (a[i, j], a[m, j]) = (a[m, j], a[i, j]);
+            (b[i, j], b[m, j]) = (b[m, j], b[i, j]);
+        }
+
+        (order[i], order[m]) = (order[m], order[i]);
+    }
+
+    private static void SwapColumns(double[,] a, double[,] b, int[] order, int j, int m)
+    {
+        if (j == m)
+        {
+            return;
+        }
+
+        int n = a.GetLength(0);
+        for (int i = 0; i < n; i++)
+        {
+            (a[i, j], a[i, m]) = (a[i, m], a[i, j]);
+            (b[i, j], b[i, m]) = (b[i, m], b[i, j]);
+        }
+
+        (order[j], order[m]) = (order[m], order[j]);
+    }
+
+    /// <summary>Rows <paramref name="low"/> onwards of <paramref name="m"/>, as many as the block has, become Qᵀ times themselves.</summary>
+    private static void ApplyTransposeToRows(double[,] blockQ, double[,] m, int low)
+    {
+        int rows = blockQ.GetLength(0);
+        int columns = m.GetLength(1);
+        var mixed = new double[rows, columns];
+        for (int r = 0; r < rows; r++)
+        {
+            for (int c = 0; c < columns; c++)
+            {
+                double sum = 0;
+                for (int k = 0; k < rows; k++)
+                {
+                    sum += blockQ[k, r] * m[low + k, c];
+                }
+
+                mixed[r, c] = sum;
+            }
+        }
+
+        for (int r = 0; r < rows; r++)
+        {
+            for (int c = 0; c < columns; c++)
+            {
+                m[low + r, c] = mixed[r, c];
+            }
+        }
     }
 
     /// <summary>
@@ -417,11 +498,17 @@ public sealed class GeneralizedSchur
 
     // --- the iteration ----------------------------------------------------------------------
 
+    /// <summary>One unit in the last place — LAPACK's <c>dlamch('P')</c>.</summary>
+    private const double Ulp = 2.220446049250313e-16;
+
     private static void Iterate(double[,] a, double[,] b, double[,] q, double[,] z, int n)
     {
+        // What a diagonal of B has to be smaller than to count as zero: LAPACK's btol.
+        double bTolerance = Math.Max(double.Epsilon, Ulp * FrobeniusNorm(b));
+
         int high = n - 1;
         int budget = IterationsPerEigenvalue * n;
-        while (high > 0 && budget-- > 0)
+        while (high >= 0 && budget-- > 0)
         {
             // Everything negligible below the diagonal is made exactly zero, so that what is left
             // describes one unreduced block and the search for it cannot be fooled by dust.
@@ -434,30 +521,77 @@ public sealed class GeneralizedSchur
                 }
             }
 
-            if (a[high, high - 1] == 0)
+            if (high == 0 || a[high, high - 1] == 0)
             {
-                high--;                                    // a 1-by-1 block has converged
+                // A 1-by-1 block has converged. Its denominator is made non-negative before it is
+                // read, so that every sign in the answer is the numerator's — LAPACK's convention,
+                // and the one the ratios are read under.
+                MakeDenominatorNonNegative(a, b, z, high, high + 1);
+                high--;
                 continue;
             }
 
-            int low = high - 1;
-            while (low > 0 && a[low, low - 1] != 0)
+            if (Math.Abs(b[high, high]) <= bTolerance)
             {
+                // An eigenvalue at infinity, already at the bottom: one rotation of the last two
+                // columns clears A's subdiagonal there, and the block is a 1-by-1 over a zero.
+                b[high, high] = 0;
+                SplitInfiniteAtBottom(a, b, z, high);
+                MakeDenominatorNonNegative(a, b, z, high, high + 1);
+                high--;
+                continue;
+            }
+
+            // Up to the top of the unreduced block, watching B's diagonal on the way: a zero there
+            // cannot be iterated over and is chased to the bottom instead, where the pass above
+            // deflates it.
+            int low = high - 1;
+            bool chased = false;
+            while (true)
+            {
+                bool splitAbove = low == 0 || a[low, low - 1] == 0;
+                if (Math.Abs(b[low, low]) <= bTolerance)
+                {
+                    b[low, low] = 0;
+                    if (splitAbove)
+                    {
+                        ChaseWithRows(a, b, q, low, high, bTolerance);
+                    }
+                    else
+                    {
+                        ChaseWithRowsAndColumns(a, b, q, z, low, high);
+                    }
+
+                    chased = true;
+                    break;
+                }
+
+                if (splitAbove)
+                {
+                    break;
+                }
+
                 low--;
+            }
+
+            if (chased)
+            {
+                continue;
             }
 
             if (low == high - 1)
             {
                 // Two eigenvalues, either a conjugate pair that stays as a block or a real pair the
                 // form is meant to separate.
-                Split2x2(a, b, q, z, low);
-                high = low - 1 < 0 ? 0 : low - 1;
-                continue;
-            }
+                if (Split2x2(a, b, q, z, low))
+                {
+                    continue; // two 1-by-1 blocks now, read by the next two passes
+                }
 
-            if (SingularDiagonal(b, low, high) >= 0)
-            {
-                throw new DegeneratePencil();
+                MakeDenominatorNonNegative(a, b, z, low, low + 2);
+                MakeDenominatorNonNegative(a, b, z, low + 1, low + 2);
+                high = low - 1;
+                continue;
             }
 
             DoubleShiftStep(a, b, q, z, low, high);
@@ -562,7 +696,7 @@ public sealed class GeneralizedSchur
                 continue;
             }
 
-            (double c, double s) = RotationZeroingSecond(a[i - 1, column], a[i, column]);
+            (double c, double s, _) = Rotation(a[i - 1, column], a[i, column]);
             ApplyLeft(a, i - 1, i, c, s);
             ApplyLeft(b, i - 1, i, c, s);
             ApplyRight(q, i - 1, i, c, s);
@@ -586,46 +720,119 @@ public sealed class GeneralizedSchur
             return;
         }
 
-        (double c, double s) = RotationZeroingFirst(b[row, p], b[row, q]);
-        ApplyRight(a, p, q, c, s);
-        ApplyRight(b, p, q, c, s);
-        ApplyRight(z, p, q, c, s);
+        // dlartg's way round: the entry that stays is the rotation's f, and keeps its sign.
+        (double c, double s, _) = Rotation(b[row, q], b[row, p]);
+        ApplyRight(a, q, p, c, s);
+        ApplyRight(b, q, p, c, s);
+        ApplyRight(z, q, p, c, s);
         b[row, p] = 0;
     }
 
-    /// <summary>The first index in the block whose diagonal of B has gone to zero, or −1.</summary>
-    private static int SingularDiagonal(double[,] b, int low, int high)
+    /// <summary>
+    /// B's last diagonal is zero: a rotation of the last two columns clears A's subdiagonal there,
+    /// which leaves an infinite eigenvalue as a 1-by-1 block whose numerator is what the rotation
+    /// put on A's diagonal — with <c>dlartg</c>'s sign, so the infinity carries the sign LAPACK's
+    /// does.
+    /// </summary>
+    private static void SplitInfiniteAtBottom(double[,] a, double[,] b, double[,] z, int high)
     {
-        double scale = 0;
-        for (int i = low; i <= high; i++)
-        {
-            scale = Math.Max(scale, Math.Abs(b[i, i]));
-        }
-
-        double tolerance = double.Epsilon + (1e-15 * scale);
-        for (int i = low; i <= high; i++)
-        {
-            if (Math.Abs(b[i, i]) <= tolerance)
-            {
-                b[i, i] = 0;
-                return i;
-            }
-        }
-
-        return -1;
+        (double c, double s, double r) = Rotation(a[high, high], a[high, high - 1]);
+        a[high, high] = r;
+        a[high, high - 1] = 0;
+        RotateColumns(a, high, high - 1, c, s, high);
+        RotateColumns(b, high, high - 1, c, s, high);
+        RotateColumns(z, high, high - 1, c, s, z.GetLength(0));
     }
 
     /// <summary>
-    /// Triangularizes a 2-by-2 block whose eigenvalues are real, and leaves one whose eigenvalues
-    /// are a conjugate pair alone — which is what makes the result quasi-triangular rather than
-    /// triangular, and is the only shape a real factorization can have.
+    /// A zero on B's diagonal at <paramref name="low"/>, where A is already split above it: row
+    /// rotations walk the split down A one row at a time, and stop early where B's diagonal below
+    /// turns out not to be zero — the block from there down is regular and is iterated on its
+    /// own, and the one above ends in the zero, deflated when the bottom reaches it.
     /// </summary>
-    private static void Split2x2(double[,] a, double[,] b, double[,] q, double[,] z, int at)
+    private static void ChaseWithRows(double[,] a, double[,] b, double[,] q, int low, int high,
+        double tolerance)
+    {
+        for (int jch = low; jch < high; jch++)
+        {
+            (double c, double s, double r) = Rotation(a[jch, jch], a[jch + 1, jch]);
+            a[jch, jch] = r;
+            a[jch + 1, jch] = 0;
+            RotateRows(a, jch, jch + 1, c, s, jch + 1);
+            RotateRows(b, jch, jch + 1, c, s, jch + 1);
+            ApplyRight(q, jch, jch + 1, c, s);
+            if (Math.Abs(b[jch + 1, jch + 1]) >= tolerance)
+            {
+                return;
+            }
+
+            b[jch + 1, jch + 1] = 0;
+        }
+    }
+
+    /// <summary>
+    /// A zero on B's diagonal at <paramref name="low"/> inside an unreduced block: a row rotation
+    /// moves the zero one place down B's diagonal, which puts fill below A's subdiagonal, and a
+    /// column rotation takes the fill back out — repeated until the zero stands at the bottom.
+    /// </summary>
+    private static void ChaseWithRowsAndColumns(double[,] a, double[,] b, double[,] q, double[,] z,
+        int low, int high)
+    {
+        int n = a.GetLength(0);
+        for (int jch = low; jch < high; jch++)
+        {
+            (double c, double s, double r) = Rotation(b[jch, jch + 1], b[jch + 1, jch + 1]);
+            b[jch, jch + 1] = r;
+            b[jch + 1, jch + 1] = 0;
+            RotateRows(b, jch, jch + 1, c, s, jch + 2);
+            RotateRows(a, jch, jch + 1, c, s, jch - 1);
+            ApplyRight(q, jch, jch + 1, c, s);
+
+            (c, s, r) = Rotation(a[jch + 1, jch], a[jch + 1, jch - 1]);
+            a[jch + 1, jch] = r;
+            a[jch + 1, jch - 1] = 0;
+            RotateColumns(a, jch, jch - 1, c, s, jch + 1);
+            RotateColumns(b, jch, jch - 1, c, s, jch);
+            RotateColumns(z, jch, jch - 1, c, s, n);
+        }
+    }
+
+    /// <summary>
+    /// Negates column <paramref name="column"/> of the pair, and of Z, when B's diagonal there is
+    /// negative — a right transformation, so the factorization still holds — which is what makes
+    /// every denominator non-negative and every sign in an eigenvalue the numerator's.
+    /// </summary>
+    private static void MakeDenominatorNonNegative(double[,] a, double[,] b, double[,] z, int column, int rows)
+    {
+        if (b[column, column] >= 0)
+        {
+            return;
+        }
+
+        for (int i = 0; i < rows; i++)
+        {
+            a[i, column] = -a[i, column];
+            b[i, column] = -b[i, column];
+        }
+
+        int n = z.GetLength(0);
+        for (int i = 0; i < n; i++)
+        {
+            z[i, column] = -z[i, column];
+        }
+    }
+
+    /// <summary>
+    /// Triangularizes a 2-by-2 block whose eigenvalues are real, and says so; one whose eigenvalues
+    /// are a conjugate pair is left alone — which is what makes the result quasi-triangular rather
+    /// than triangular, and is the only shape a real factorization can have.
+    /// </summary>
+    private static bool Split2x2(double[,] a, double[,] b, double[,] q, double[,] z, int at)
     {
         (double sum, double product, bool real) = BlockShift(a, b, at);
         if (!real)
         {
-            return;
+            return false;
         }
 
         double root = Math.Sqrt(Math.Max(0, (sum * sum) - (4 * product)));
@@ -634,6 +841,7 @@ public sealed class GeneralizedSchur
         // this one keeps the subtraction out of the numerator.
         double lambda = sum >= 0 ? (sum + root) / 2 : (sum - root) / 2;
         PlaceEigenvalueFirst(a, b, q, z, at, lambda);
+        return true;
     }
 
     /// <summary>Exchanges the two 1-by-1 blocks at <paramref name="at"/> and the one after it.</summary>
@@ -774,29 +982,61 @@ public sealed class GeneralizedSchur
         return (alpha, beta);
     }
 
+    // --- rotations ------------------------------------------------------------------------------
+
     /// <summary>
-    /// Raised inside the iteration when B turns out to be singular, so that the caller can take the
-    /// reciprocal route instead. Private and always caught here: it is control flow between two
-    /// halves of one algorithm, never something a caller sees.
+    /// LAPACK's <c>dlartg</c>: the rotation taking (f, g) to (r, 0), with r carrying f's sign and
+    /// c never negative. The convention is the point — it decides the sign an eigenvalue at
+    /// infinity is reported with — so the deflations follow it.
     /// </summary>
-    private sealed class DegeneratePencil : Exception
+    private static (double C, double S, double R) Rotation(double f, double g)
     {
+        if (g == 0)
+        {
+            return (1, 0, f);
+        }
+
+        if (f == 0)
+        {
+            return (0, Math.Sign(g), Math.Abs(g));
+        }
+
+        double d = Math.Sqrt((f * f) + (g * g));
+        double r = Math.CopySign(d, f);
+        return (Math.Abs(f) / d, g / r, r);
     }
 
-    // --- rotations ------------------------------------------------------------------------------
+    /// <summary>Rotates rows <paramref name="p"/> and <paramref name="q"/> from column <paramref name="fromColumn"/> on.</summary>
+    private static void RotateRows(double[,] m, int p, int q, double c, double s, int fromColumn)
+    {
+        int columns = m.GetLength(1);
+        for (int j = Math.Max(0, fromColumn); j < columns; j++)
+        {
+            double top = m[p, j];
+            double bottom = m[q, j];
+            m[p, j] = (c * top) + (s * bottom);
+            m[q, j] = (c * bottom) - (s * top);
+        }
+    }
+
+    /// <summary>Rotates columns <paramref name="p"/> and <paramref name="q"/> over the first <paramref name="rows"/> rows.</summary>
+    private static void RotateColumns(double[,] m, int p, int q, double c, double s, int rows)
+    {
+        for (int i = 0; i < rows; i++)
+        {
+            double left = m[i, p];
+            double right = m[i, q];
+            m[i, p] = (c * left) + (s * right);
+            m[i, q] = (c * right) - (s * left);
+        }
+    }
+
 
     /// <summary>The rotation taking (x, y) to (r, 0) — it clears the second of the pair.</summary>
     private static (double C, double S) RotationZeroingSecond(double x, double y)
     {
         double r = Math.Sqrt((x * x) + (y * y));
         return r == 0 ? (1, 0) : (x / r, y / r);
-    }
-
-    /// <summary>The rotation clearing the first of the pair rather than the second.</summary>
-    private static (double C, double S) RotationZeroingFirst(double x, double y)
-    {
-        double r = Math.Sqrt((x * x) + (y * y));
-        return r == 0 ? (1, 0) : (y / r, -x / r);
     }
 
     /// <summary>Rotates rows <paramref name="p"/> and <paramref name="q"/> of a matrix.</summary>

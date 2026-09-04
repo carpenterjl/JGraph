@@ -485,75 +485,157 @@ public sealed class Schur
     }
 
     /// <summary>
-    /// Puts the 2×2 block at <paramref name="i"/> into standard form: split into two 1×1 blocks if
-    /// its eigenvalues turn out to be real, and otherwise rotated until its diagonal entries are
-    /// equal, which is what lets the pair be read off as a ± ib.
+    /// Puts the 2×2 block at <paramref name="i"/> into standard form — LAPACK's <c>dlanv2</c>:
+    /// split into two 1×1 blocks if its eigenvalues turn out to be real, and otherwise rotated
+    /// until its diagonal entries are equal, which is what lets the pair be read off as a ± ib.
     /// </summary>
+    /// <remarks>
+    /// The block's own four entries are computed in closed form and written; only the rest of its
+    /// two rows and two columns is rotated. Rotating the block too and reading its diagonal
+    /// afterwards puts a rounding error into each eigenvalue that the closed form does not have:
+    /// the companion matrix of <c>s² + 3s + 2</c> came out as −1.9999999999999996 and
+    /// −0.99999999999999978 that way, where LAPACK answers −2 and −1 exactly, and <c>residue</c>
+    /// then reported 2.2e-16 for a residue that is 0. The rescaling <c>dlanv2</c> does for entries
+    /// near overflow or underflow is left out.
+    /// </remarks>
     private static void Standardize(double[,] h, double[,] u, int n, int i)
     {
         double a = h[i, i];
         double b = h[i, i + 1];
         double c = h[i + 1, i];
         double d = h[i + 1, i + 1];
-        double half = 0.5 * (a - d);
-        double discriminant = half * half + b * c;
+        double cos = 1;
+        double sin = 0;
 
-        double cos, sin;
-
-        if (discriminant >= 0)
+        if (c == 0)
         {
-            // Real eigenvalues: rotate onto the eigenvector of the dominant one, which annihilates
-            // the subdiagonal entry and leaves two ordinary 1×1 blocks.
-            double root = Math.Sqrt(discriminant);
-            double z = half + (half >= 0 ? root : -root);
-            double length = Math.Sqrt(z * z + c * c);
-            if (length == 0)
-            {
-                return;
-            }
-
-            cos = z / length;
-            sin = c / length;
+            // Already split.
+        }
+        else if (b == 0)
+        {
+            // Swap rows and columns: a quarter turn puts the zero below the diagonal.
+            cos = 0;
+            sin = 1;
+            (a, d) = (d, a);
+            b = -c;
+            c = 0;
+        }
+        else if (a - d == 0 && SignOf(b) != SignOf(c))
+        {
+            // Already standard: an equal diagonal over off-diagonals of opposite sign.
         }
         else
         {
-            // A conjugate pair: rotate until the diagonal entries match. The angle is half the
-            // arctangent because a similarity turns twice as fast as the rotation does.
-            double angle = 0.5 * Math.Atan2(d - a, b + c);
-            cos = Math.Cos(angle);
-            sin = Math.Sin(angle);
+            double temp = a - d;
+            double p = 0.5 * temp;
+            double bcMax = Math.Max(Math.Abs(b), Math.Abs(c));
+            double bcMis = Math.Min(Math.Abs(b), Math.Abs(c)) * SignOf(b) * SignOf(c);
+            double scale = Math.Max(Math.Abs(p), bcMax);
+            double z = ((p / scale) * p) + ((bcMax / scale) * bcMis);
+
+            if (z >= 4 * Epsilon)
+            {
+                // Real eigenvalues. The diagonal becomes the pair itself, formed from the
+                // discriminant and the product rather than read off a rotated block.
+                z = p + Math.CopySign(Math.Sqrt(scale) * Math.Sqrt(z), p);
+                a = d + z;
+                d -= (bcMax / z) * bcMis;
+                double tau = Math.Sqrt((c * c) + (z * z));
+                cos = z / tau;
+                sin = c / tau;
+                b -= c;
+                c = 0;
+            }
+            else
+            {
+                // A conjugate pair, or a real pair too close to tell apart: make the diagonal
+                // entries equal.
+                double sigma = b + c;
+                double tau = Math.Sqrt((sigma * sigma) + (temp * temp));
+                cos = Math.Sqrt(0.5 * (1 + (Math.Abs(sigma) / tau)));
+                sin = -(p / (tau * cos)) * SignOf(sigma);
+
+                // [a b; c d]·[cos -sin; sin cos], and then [cos sin; -sin cos] on the left of that.
+                double aa = (a * cos) + (b * sin);
+                double bb = (-a * sin) + (b * cos);
+                double cc = (c * cos) + (d * sin);
+                double dd = (-c * sin) + (d * cos);
+                a = (aa * cos) + (cc * sin);
+                b = (bb * cos) + (dd * sin);
+                c = (-aa * sin) + (cc * cos);
+                d = (-bb * sin) + (dd * cos);
+                temp = 0.5 * (a + d);
+                a = temp;
+                d = temp;
+
+                if (c != 0)
+                {
+                    if (b != 0)
+                    {
+                        if (SignOf(b) == SignOf(c))
+                        {
+                            // Real eigenvalues after all: one more rotation makes it triangular.
+                            double sab = Math.Sqrt(Math.Abs(b));
+                            double sac = Math.Sqrt(Math.Abs(c));
+                            p = Math.CopySign(sab * sac, c);
+                            tau = 1 / Math.Sqrt(Math.Abs(b + c));
+                            a = temp + p;
+                            d = temp - p;
+                            b -= c;
+                            c = 0;
+                            double cos1 = sab * tau;
+                            double sin1 = sac * tau;
+                            temp = (cos * cos1) - (sin * sin1);
+                            sin = (cos * sin1) + (sin * cos1);
+                            cos = temp;
+                        }
+                    }
+                    else
+                    {
+                        b = -c;
+                        c = 0;
+                        temp = cos;
+                        cos = -sin;
+                        sin = temp;
+                    }
+                }
+            }
         }
 
-        // Gᵀ·H·G with G = [cos -sin; sin cos], applied to the full rows and columns.
-        for (int j = 0; j < n; j++)
+        // Gᵀ·H·G with G = [cos -sin; sin cos] over the rest of the two rows, the rest of the two
+        // columns, and the accumulated U; the block itself is written below.
+        for (int j = i + 2; j < n; j++)
         {
             double top = h[i, j];
             double bottom = h[i + 1, j];
-            h[i, j] = cos * top + sin * bottom;
-            h[i + 1, j] = cos * bottom - sin * top;
+            h[i, j] = (cos * top) + (sin * bottom);
+            h[i + 1, j] = (cos * bottom) - (sin * top);
         }
 
-        for (int j = 0; j < n; j++)
+        for (int j = 0; j < i; j++)
         {
             double left = h[j, i];
             double right = h[j, i + 1];
-            h[j, i] = cos * left + sin * right;
-            h[j, i + 1] = cos * right - sin * left;
+            h[j, i] = (cos * left) + (sin * right);
+            h[j, i + 1] = (cos * right) - (sin * left);
         }
 
         for (int j = 0; j < n; j++)
         {
             double left = u[j, i];
             double right = u[j, i + 1];
-            u[j, i] = cos * left + sin * right;
-            u[j, i + 1] = cos * right - sin * left;
+            u[j, i] = (cos * left) + (sin * right);
+            u[j, i + 1] = (cos * right) - (sin * left);
         }
 
-        if (discriminant >= 0)
-        {
-            h[i + 1, i] = 0;
-        }
+        h[i, i] = a;
+        h[i, i + 1] = b;
+        h[i + 1, i] = c;
+        h[i + 1, i + 1] = d;
     }
+
+    /// <summary>Fortran's <c>SIGN(1, x)</c>: −1 for a negative x and 1 otherwise, zero included.</summary>
+    private static double SignOf(double x) => x < 0 ? -1 : 1;
 
     // --- Exchanging adjacent diagonal blocks -----------------------------------------------------------
 

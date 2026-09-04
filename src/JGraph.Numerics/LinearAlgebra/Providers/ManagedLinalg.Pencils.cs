@@ -24,12 +24,7 @@ public sealed partial class ManagedLinalg
         {
             // Values through the QZ iteration, which is the only managed route that can answer an
             // eigenvalue at infinity — a singular B never reaches a division there.
-            GeneralizedSchur? qz = TryFactorPencil(Rect(a, lda, n), Rect(b, ldb, n));
-            if (qz is null)
-            {
-                return 1;
-            }
-
+            GeneralizedSchur qz = GeneralizedSchur.FactorManaged(Rect(a, lda, n), Rect(b, ldb, n));
             for (int i = 0; i < n; i++)
             {
                 alphar[i] = qz.Alpha[i].Real;
@@ -174,12 +169,7 @@ public sealed partial class ManagedLinalg
             return 0;
         }
 
-        GeneralizedSchur? qz = TryFactorPencil(Rect(a, lda, n), Rect(b, ldb, n));
-        if (qz is null)
-        {
-            return 1;
-        }
-
+        GeneralizedSchur qz = GeneralizedSchur.FactorManaged(Rect(a, lda, n), Rect(b, ldb, n));
         WriteRect(qz.AA, a, lda);
         WriteRect(qz.BB, b, ldb);
         if (vectors)
@@ -221,21 +211,6 @@ public sealed partial class ManagedLinalg
         }
 
         return 0;
-    }
-
-    /// <summary>The managed QZ, with its singular-pencil refusal turned into a null for the contract's info code.</summary>
-    private static GeneralizedSchur? TryFactorPencil(double[,] a, double[,] b)
-    {
-        try
-        {
-            return GeneralizedSchur.FactorManaged(a, b);
-        }
-        catch (ArgumentException)
-        {
-            // "This pencil is singular — every number is an eigenvalue of it": the one failure the
-            // kernel reports by throwing, and the contract reports by info.
-            return null;
-        }
     }
 
     /// <summary>

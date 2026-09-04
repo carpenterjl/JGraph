@@ -147,8 +147,8 @@ public class GeneralizedSchurTests
     }
 
     /// <summary>
-    /// The reciprocal route, exercised in bulk: a B built with a dependent column is singular, so
-    /// every one of these pencils has an eigenvalue at infinity and takes the other path.
+    /// The deflation of an eigenvalue at infinity, exercised in bulk: a B built with a dependent
+    /// column is singular, so every one of these pencils has a zero on B's diagonal to chase.
     /// </summary>
     [Theory]
     [InlineData(3)]

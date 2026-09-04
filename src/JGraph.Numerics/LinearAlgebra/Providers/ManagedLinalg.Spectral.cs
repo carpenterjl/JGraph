@@ -851,8 +851,16 @@ public sealed partial class ManagedLinalg
             x[i] = 1.0 / Math.Sqrt(n);
         }
 
-        for (int iteration = 0; iteration < 3; iteration++)
+        // Until two successive iterates agree, not for a fixed count. Three solves were taken here
+        // once, and three is one short whenever the starting vector is orthogonal to the left
+        // eigenvector of the value wanted: the first solve then carries nothing along the right
+        // one, the second is seeded from rounding alone, and the third is the first that converges
+        // — to a vector whose residual is the shift's own perturbation rather than the working
+        // precision. The pencil a matrix polynomial is linearized into produced exactly that start.
+        var previous = new Complex[n];
+        for (int iteration = 0; iteration < 12; iteration++)
         {
+            Array.Copy(x, previous, n);
             Complex[] next = SolveComplex(shifted, x);
             double norm = 0;
             foreach (Complex entry in next)
@@ -869,6 +877,18 @@ public sealed partial class ManagedLinalg
             for (int i = 0; i < n; i++)
             {
                 x[i] = next[i] / norm;
+            }
+
+            // Two unit vectors that agree have an inner product of unit size, whatever the phase.
+            Complex overlap = Complex.Zero;
+            for (int i = 0; i < n; i++)
+            {
+                overlap += Complex.Conjugate(previous[i]) * x[i];
+            }
+
+            if (1 - overlap.Magnitude <= n * Epsilon)
+            {
+                break;
             }
         }
 

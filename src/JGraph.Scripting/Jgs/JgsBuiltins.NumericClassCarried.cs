@@ -409,7 +409,7 @@ internal static partial class JgsBuiltins
         IReadOnlyList<JgsValue> args, JgsNumericClass numericClass, bool product, out JgsValue scanned)
     {
         scanned = JgsValue.Number(0);
-        if (args.Count != 1 || args[0].Type != JgsType.Array || !args[0].IsPacked)
+        if (args.Count != 1 || args[0].Type != JgsType.Array)
         {
             return false;
         }

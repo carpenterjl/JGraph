@@ -493,6 +493,12 @@ public sealed class JgsDebugSession
 
             _mode = mode;
             _stepDepth = _pausedDepth;
+
+            // Running from here on, as far as any caller can see. The interpreter thread clears
+            // this flag too, once it is through the gate — but that is later, and a Pause() that
+            // arrives in between used to read the stale value and drop the request, leaving the
+            // script running with nobody waiting for it.
+            _isPaused = false;
         }
 
         _gate.Set();
