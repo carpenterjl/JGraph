@@ -20,6 +20,29 @@ public abstract class JgsException : Exception
 
     /// <summary>The 1-based column the error refers to, or 0 when unknown.</summary>
     public int Column { get; }
+
+    /// <summary>
+    /// The file <see cref="Line"/> and <see cref="Column"/> count in, or "" when the error belongs to
+    /// the source being run (or to no file at all).
+    /// </summary>
+    /// <remarks>
+    /// An error is raised knowing its line and not its file, because the thousands of sites that
+    /// raise one see an expression and an expression carries no path. The file is put on as the error
+    /// leaves the frame that ran it — a script called by name, a function loaded from the path — and
+    /// only the first frame to claim it is believed, since the innermost is where the line is.
+    /// Without this a failure in <c>sub.m</c> read as <c>(4,12)</c> with nothing to say that line 4 of
+    /// the main script was blameless.
+    /// </remarks>
+    public string SourceId { get; private set; } = "";
+
+    /// <summary>Names the file the error's location refers to, unless one is already named.</summary>
+    internal void AttributeTo(string sourceId)
+    {
+        if (SourceId.Length == 0 && sourceId.Length > 0)
+        {
+            SourceId = sourceId;
+        }
+    }
 }
 
 /// <summary>An error raised while lexing or parsing a script (a malformed program).</summary>

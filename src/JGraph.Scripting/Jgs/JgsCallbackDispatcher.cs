@@ -230,8 +230,7 @@ internal sealed class JgsCallbackDispatcher
         }
         catch (JgsException ex)
         {
-            _context.Output.WriteError(
-                new ScriptDiagnostic(ex.Line, ex.Column, ex.Message, IsError: true).ToString());
+            _context.Output.WriteError(ScriptDiagnostic.For(ex, runSourceId: "").ToString());
         }
         catch (Exception ex) when (ScriptExitException.Unwrap(ex) is null)
         {

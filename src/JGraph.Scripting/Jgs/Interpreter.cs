@@ -289,9 +289,10 @@ internal sealed partial class Interpreter
     /// Runs a script file's statements in <paramref name="scope"/> — how a script named on the search
     /// path runs. MATLAB's rule is that a script shares the workspace of whatever called it, so this
     /// takes the caller's frame rather than making one, and the file's own functions are hoisted into
-    /// that frame the way the top level's are.
+    /// that frame the way the top level's are. An error that escapes is attributed to
+    /// <paramref name="sourceId"/>, the file's path, so it is not read as a line of the caller's.
     /// </summary>
-    internal void RunScriptFile(IReadOnlyList<Stmt> program, JgsEnvironment scope)
+    internal void RunScriptFile(IReadOnlyList<Stmt> program, JgsEnvironment scope, string sourceId)
     {
         foreach (Stmt statement in program)
         {
@@ -301,7 +302,17 @@ internal sealed partial class Interpreter
             }
         }
 
-        Completion completion = ExecuteBlock(program, scope);
+        Completion completion;
+        try
+        {
+            completion = ExecuteBlock(program, scope);
+        }
+        catch (JgsException error)
+        {
+            error.AttributeTo(sourceId);
+            throw;
+        }
+
         if (completion.Kind is CompletionKind.Break or CompletionKind.Continue)
         {
             throw new JgsRuntimeException(completion.Line, completion.Column,
@@ -368,6 +379,7 @@ internal sealed partial class Interpreter
             // frame records the line that was running in it: this one's own failing line for the
             // innermost, and the call it was waiting on for everything outside.
             error.PushFrame(declaration.Name, declaration.SourceId, callLine);
+            error.AttributeTo(declaration.SourceId);
             throw;
         }
         finally
@@ -1543,6 +1555,27 @@ internal sealed partial class Interpreter
     private double RangeBound(Expr bound, string what, JgsEnvironment env, ref JgsNumericClass carried)
     {
         JgsValue value = Evaluate(bound, env);
+        JgsNumericClass numericClass = value.NumericClass;
+
+        // MATLAB has no 1-by-1 array that is not a scalar, so `1:N` reads N whether it was written
+        // `3` or `[3]` or came back from an indexing that kept its brackets. An empty operand makes
+        // an empty range there (1:[] is 1-by-0), and NaN is how a bound says so to the count below;
+        // any other shape is refused in MATLAB's words, identifier and all.
+        if (value.Type == JgsType.Array && !value.IsPackedComplex)
+        {
+            switch (value.ArrayLength)
+            {
+                case 1:
+                    value = value.ElementAt(0);
+                    break;
+                case 0:
+                    return double.NaN;
+                default:
+                    throw new JgsRuntimeException(bound.Line, bound.Column,
+                        "MATLAB:colon:operandsNotRealScalar", "Colon operands must be real scalars.");
+            }
+        }
+
         if (!IsNumericScalar(value))
         {
             throw new JgsRuntimeException(bound.Line, bound.Column,
@@ -1550,7 +1583,7 @@ internal sealed partial class Interpreter
         }
 
         carried = JgsNumericClasses.CombineForConcat(
-            carried, value.NumericClass, "A range", bound.Line, bound.Column);
+            carried, numericClass, "A range", bound.Line, bound.Column);
         return value.AsNumber;
     }
 

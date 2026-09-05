@@ -152,7 +152,16 @@ internal sealed class JgsFunctionPath
             throw new JgsRuntimeException(0, 0, $"'{name}': cannot read '{path}': {ex.Message}");
         }
 
-        IReadOnlyList<Stmt> program = Parser.Parse(source, path, JgsDialect.Matlab);
+        IReadOnlyList<Stmt> program;
+        try
+        {
+            program = Parser.Parse(source, path, JgsDialect.Matlab);
+        }
+        catch (JgsSyntaxException error)
+        {
+            error.AttributeTo(path);
+            throw;
+        }
 
         // A class file holds one classdef and nothing else, and the name it answers to is the file's.
         // What the path hands back for it is the constructor, which is what makes `Circle(2)` an
@@ -180,7 +189,7 @@ internal sealed class JgsFunctionPath
                 }
 
                 _interpreter.RunInDialect(JgsDialect.Matlab,
-                    () => _interpreter.RunScriptFile(program, _interpreter.CurrentFrame));
+                    () => _interpreter.RunScriptFile(program, _interpreter.CurrentFrame, path));
                 return JgsValue.Null;
             }));
         }

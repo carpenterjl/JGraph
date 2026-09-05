@@ -189,6 +189,85 @@ public class MatlabFunctionsFilesAndErrorsTests : IDisposable
         Assert.Equal(5.0, Number(result, "m"));
     }
 
+    // --- An error that happened in another file says which -----------------------------------
+
+    /// <summary>
+    /// A script called by name runs in the caller's workspace, and until this was fixed its errors
+    /// read as the caller's too: <c>(3,5)</c> with nothing to say that line 3 of the main script was
+    /// blameless. The diagnostic now carries the file, and the printed line leads with it.
+    /// </summary>
+    [Fact]
+    public async Task AnErrorInAPathScript_NamesTheFile()
+    {
+        File.WriteAllText(Path.Combine(_library, "broken_script.m"), """
+            x = 1;
+            y = 2;
+            z = undefined_thing + 1;
+            """);
+
+        ScriptRunResult result = await RunMatlab($"""
+            addpath('{_library.Replace("\\", "\\\\")}');
+            broken_script;
+            """);
+
+        Assert.False(result.Success);
+        ScriptDiagnostic diagnostic = Assert.Single(result.Diagnostics);
+        Assert.EndsWith("broken_script.m", diagnostic.File, StringComparison.Ordinal);
+        Assert.Equal(3, diagnostic.Line);
+        Assert.Contains("broken_script.m(3,5): 'undefined_thing'", _output.ErrorText, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public async Task AnErrorInAPathFunction_NamesTheFile()
+    {
+        File.WriteAllText(Path.Combine(_folder, "broken_fn.m"), """
+            function y = broken_fn(x)
+                y = x + 1;
+                y = y + nothing_here;
+            end
+            """);
+
+        ScriptRunResult result = await RunMatlab("v = broken_fn(2);");
+
+        Assert.False(result.Success);
+        ScriptDiagnostic diagnostic = Assert.Single(result.Diagnostics);
+        Assert.EndsWith("broken_fn.m", diagnostic.File, StringComparison.Ordinal);
+        Assert.Equal(3, diagnostic.Line);
+        Assert.StartsWith(diagnostic.File + "(3,", _output.ErrorText, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public async Task ASyntaxErrorInAPathFile_NamesTheFile()
+    {
+        File.WriteAllText(Path.Combine(_folder, "wont_parse.m"), "x = (1 + ;\n");
+
+        ScriptRunResult result = await RunMatlab("wont_parse;");
+
+        Assert.False(result.Success);
+        ScriptDiagnostic diagnostic = Assert.Single(result.Diagnostics);
+        Assert.EndsWith("wont_parse.m", diagnostic.File, StringComparison.Ordinal);
+        Assert.Equal(1, diagnostic.Line);
+    }
+
+    /// <summary>
+    /// The source being run is what the reader is looking at, so its own errors read as they always
+    /// have — no file, just the location — even when the failing line called into another file that
+    /// returned fine.
+    /// </summary>
+    [Fact]
+    public async Task AnErrorInTheScriptItself_StaysUnnamed()
+    {
+        ScriptRunResult result = await RunMatlab("""
+            y = beside_me(4);
+            z = undefined_thing + y;
+            """);
+
+        Assert.False(result.Success);
+        ScriptDiagnostic diagnostic = Assert.Single(result.Diagnostics);
+        Assert.Equal(string.Empty, diagnostic.File);
+        Assert.StartsWith("(2,5): ", _output.ErrorText, StringComparison.Ordinal);
+    }
+
     // --- Wave B: errors that know their own name ----------------------------------------------
 
     [Fact]

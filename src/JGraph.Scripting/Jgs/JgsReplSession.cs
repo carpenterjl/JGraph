@@ -191,7 +191,7 @@ internal sealed class JgsReplSession : IScriptSession, IGraphicsEventSession
         {
             // A failed statement leaves the workspace as it stands — that is the point of a prompt.
             // Whatever ran before the error keeps its effect, exactly as MATLAB does.
-            var diagnostic = new ScriptDiagnostic(ex.Line, ex.Column, ex.Message, IsError: true);
+            ScriptDiagnostic diagnostic = ScriptDiagnostic.For(ex, sourceId);
             _context.Output.WriteError(diagnostic.ToString());
             _globals.ShowTouchedFigures();
             return ScriptRunResult.Failed(ex.Message, new[] { diagnostic });

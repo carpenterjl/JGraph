@@ -117,7 +117,7 @@ internal static class JgsRunner
             // prompt keeps. Without this a script that drew and then failed showed its figure on an
             // ordinary run and nothing at all under the debugger, which is the second way a
             // breakpoint used to change what a script did.
-            var diagnostic = new ScriptDiagnostic(ex.Line, ex.Column, ex.Message, IsError: true);
+            ScriptDiagnostic diagnostic = ScriptDiagnostic.For(ex, sourceId);
             context.Output.WriteError(diagnostic.ToString());
             globals.ShowTouchedFigures();
             return ScriptRunResult.Failed(ex.Message, new[] { diagnostic });
