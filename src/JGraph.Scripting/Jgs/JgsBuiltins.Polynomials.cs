@@ -294,11 +294,13 @@ internal static partial class JgsBuiltins
 
         // r and p are columns and k is a row, whatever shape the call was written with — the same
         // asymmetry roots and poly have, and for the same reason: one of the three is a polynomial.
+        // A proper fraction has no direct term, and MATLAB's k is then the 0-by-0 [] — which
+        // mat2str writes as zeros(0,0), where a row of nothing would be zeros(1,0).
         return
         [
             ComplexColumn(expansion.Residues),
             ComplexColumn(expansion.Poles),
-            ComplexRow(expansion.Direct),
+            expansion.Direct.Length == 0 ? JgsEmpty.Zero() : ComplexRow(expansion.Direct),
         ];
     }
 

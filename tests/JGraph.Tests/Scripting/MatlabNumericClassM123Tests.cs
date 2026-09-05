@@ -193,7 +193,7 @@ public class MatlabNumericClassM123Tests : IDisposable
               mat2str(cumsum(uint8([200 200 1]))), mat2str(cumprod(int8([100 100 0]))));
             """);
 
-        Assert.Equal("[100 127 27] [200 255 255] [100 127 0]", sums);
+        Assert.Equal("int8([100 127 27]) uint8([200 255 255]) int8([100 127 0])", sums);
     }
 
     /// <summary>
@@ -208,7 +208,8 @@ public class MatlabNumericClassM123Tests : IDisposable
             """);
 
         // 2.5 rounds away from zero, and 3 - 5 saturates at the bottom of uint8 rather than wrapping.
-        Assert.Equal("3 [4 0]", answers);
+        // mat2str names every class but double, as MATLAB does.
+        Assert.Equal("int16(3) uint8([4 0])", answers);
     }
 
     /// <summary>A range takes its class from its ends, and a loop over one binds it.</summary>
@@ -260,7 +261,7 @@ public class MatlabNumericClassM123Tests : IDisposable
             fprintf('%s %s %s', class(v), mat2str(real(v)), mat2str(imag(v)));
             """);
 
-        Assert.Equal("single [10 -2 -2 -2] [0 2 0 -2]", answer);
+        Assert.Equal("single single([10 -2 -2 -2]) single([0 2 0 -2])", answer);
     }
 
     /// <summary>

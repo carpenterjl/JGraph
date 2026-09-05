@@ -170,8 +170,9 @@ internal static partial class JgsBuiltins
 
     private static void RegisterRadixBuiltins(Action<string, Func<IReadOnlyList<JgsValue>, int, int, JgsValue>> Define)
     {
-        // MATLAB returns a char matrix here, one row per input. JGraph has no char matrix, so a scalar
-        // gives a string and an array gives a cell of strings — the same information, one type up.
+        // A scalar gives a char row; an array gives a char matrix, one row per element, every row
+        // zero-padded to the widest — which is MATLAB's answer, and what a caller indexing rows of
+        // dec2bin(0:7) is written against. (It was a cell before there was a char matrix.)
         void ToBase(string name, int radix, int typeArgument) =>
             Define(name, (args, line, col) =>
             {
@@ -256,7 +257,10 @@ internal static partial class JgsBuiltins
         return total;
     }
 
-    /// <summary>Maps a number or numeric array to text, one string per element (cell for an array).</summary>
+    /// <summary>
+    /// Maps a number or numeric array to text: a char row for one number, a char matrix with one
+    /// zero-padded row per element for an array.
+    /// </summary>
     private static JgsValue TextPerElement(string name, JgsValue value, Func<double, string> render, int line, int col)
     {
         if (value.Type is JgsType.Number or JgsType.Bool)
@@ -270,41 +274,72 @@ internal static partial class JgsBuiltins
         }
 
         double[] values = ToDoubles(name, value, line, col);
-        var cells = new JgsValue[values.Length];
-        for (int i = 0; i < values.Length; i++)
+        if (values.Length == 1)
         {
-            cells[i] = JgsValue.Str(render(values[i]));
+            return JgsValue.Str(render(values[0]));
         }
 
-        return JgsValue.Cell(cells);
+        var rows = new string[values.Length];
+        int widest = 0;
+        for (int i = 0; i < values.Length; i++)
+        {
+            rows[i] = render(values[i]);
+            widest = Math.Max(widest, rows[i].Length);
+        }
+
+        for (int i = 0; i < rows.Length; i++)
+        {
+            rows[i] = rows[i].PadLeft(widest, '0');
+        }
+
+        return JgsValue.CharMatrix(rows);
     }
 
-    /// <summary>The inverse of <see cref="TextPerElement"/>: one string, or a cell of them, back to numbers.</summary>
+    /// <summary>
+    /// The inverse of <see cref="TextPerElement"/>: one string back to one number, and a char matrix
+    /// or a cell of strings back to a column of them. Text with no digits in it is the empty array,
+    /// which is what <c>bin2dec('')</c> answers in MATLAB.
+    /// </summary>
     private static JgsValue NumberPerText(string name, JgsValue value, Func<string, double> read, int line, int col)
     {
         if (value.Type == JgsType.String)
         {
-            return JgsValue.Number(read(value.AsString));
+            return string.IsNullOrWhiteSpace(value.AsString) ? JgsEmpty.Zero() : JgsValue.Number(read(value.AsString));
         }
 
-        if (value.Type != JgsType.Cell)
+        string[] pieces;
+        if (value.IsCharMatrix)
+        {
+            pieces = value.CharMatrixRows();
+        }
+        else if (value.Type == JgsType.Cell)
+        {
+            JgsValue[] cells = value.AsCell;
+            pieces = new string[cells.Length];
+            for (int i = 0; i < cells.Length; i++)
+            {
+                if (cells[i].Type != JgsType.String)
+                {
+                    throw new JgsRuntimeException(line, col, $"{name}: cell element {i + 1} is a {cells[i].TypeName}, not a string.");
+                }
+
+                pieces[i] = cells[i].AsString;
+            }
+        }
+        else
         {
             throw new JgsRuntimeException(line, col, $"{name} expects a string or a cell of strings, but got a {value.TypeName}.");
         }
 
-        JgsValue[] cells = value.AsCell;
-        var numbers = new double[cells.Length];
-        for (int i = 0; i < cells.Length; i++)
+        var numbers = new double[pieces.Length];
+        for (int i = 0; i < pieces.Length; i++)
         {
-            if (cells[i].Type != JgsType.String)
-            {
-                throw new JgsRuntimeException(line, col, $"{name}: cell element {i + 1} is a {cells[i].TypeName}, not a string.");
-            }
-
-            numbers[i] = read(cells[i].AsString);
+            numbers[i] = read(pieces[i]);
         }
 
-        return Numbers(numbers);
+        JgsValue column = Numbers(numbers);
+        column.Reshape(numbers.Length, 1);
+        return column;
     }
 
     // --- Elementary functions ---------------------------------------------------------------------

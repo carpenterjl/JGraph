@@ -191,7 +191,7 @@ public static class JgsBuiltinCatalog
         Add("evalin", "Runs a string as code in the 'base' or 'caller' workspace.", P("workspace"), P("code"));
         Add("assignin", "Creates a variable in the 'base' or 'caller' workspace.", P("workspace"), P("name"), P("value"));
         Add("str2func", "A function handle from its name, or from an @(x) … expression.", P("text"));
-        Add("str2num", "Text evaluated as an expression: '[1 2 3]' is a vector. Empty when it does not evaluate.", P("text"));
+        Add("str2num", "Text evaluated inside brackets: '1 2; 3 4' is a matrix. Empty when it does not evaluate; [x, ok] says whether it did.", P("text"));
         Add("exist", "What a name is: 1 a variable, 2 a file, 5 a builtin, 7 a folder, 0 nothing.", P("name"), Opt("kind"));
         Add("who", "The names of the variables in scope, as a cell array.", Opt("pattern"));
         Add("which", "Where a name comes from — a builtin, or the file it resolves to.", P("name"));
@@ -387,7 +387,7 @@ public static class JgsBuiltinCatalog
         Add("bitshift", "x shifted left by k bits, or right when k is negative.", P("x"), P("k"), Opt("type"));
 
         // --- Radix conversion ----------------------------------------------------------------------
-        Add("dec2bin", "A number as binary text, zero-padded to at least minLength digits.", P("x"), Opt("minLength"));
+        Add("dec2bin", "A number as binary text, zero-padded to at least minLength digits; an array gives one row per element.", P("x"), Opt("minLength"));
         Add("dec2hex", "A number as hexadecimal text, zero-padded to at least minLength digits.", P("x"), Opt("minLength"));
         Add("dec2base", "A number as text in a base from 2 to 36.", P("x"), P("base"), Opt("minLength"));
         Add("bin2dec", "The number a string of binary digits stands for.", P("text"));
@@ -551,10 +551,10 @@ public static class JgsBuiltinCatalog
         Add("strsplit", "Splits text into a cell of pieces, on a delimiter (or a cell of them) or on whitespace; [C, matches] also reports the delimiters cut on.", P("text"), Opt("delimiter"), Opt("options"));
         Add("strjoin", "Joins a cell (or array) of pieces into one string; a cell separator gives every gap its own.", P("parts"), Opt("separator"));
         Add("num2str", "Formats a number or an array as text, optionally to a given number of significant digits or a sprintf format.", P("x"), Opt("digits"));
-        Add("mat2str", "Writes a value the way the language reads it back: '[1 2;3 4]', to n significant digits.", P("x"), Opt("digits"));
+        Add("mat2str", "Writes a value the way the language reads it back: '[1 2;3 4]', to n significant digits; 'class' adds the class constructor.", P("x"), Opt("digits"), Opt("class"));
         Add("int2str", "Rounds to whole numbers and formats them as text.", P("x"));
         Add("deal", "Hands one value to every output, or one value each: [a, b] = deal(1, 2).", P("value"), Opt("more..."));
-        Add("str2double", "Parses text as a number, or NaN when it is not one.", P("text"));
+        Add("str2double", "Parses text as a number (Inf, NaN, thousands commas and complex forms included), or NaN when it is not one.", P("text"));
         Add("error", "Stops the script with a message (accepts a format string and an optional 'id:sub' first).", P("message"), Opt("args..."));
         Add("warning", "Writes a warning to the console without stopping; warning('off') is accepted and ignored.", P("message"), Opt("args..."));
         Add("assert", "Stops the script when the condition is false, with an optional message.", P("condition"), Opt("message"));

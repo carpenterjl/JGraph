@@ -262,13 +262,13 @@ internal static partial class JgsBuiltins
             { KeepsStringArguments = true }));
         Define("int2str", (args, line, col) => WholeNumberText(args, line, col));
 
+        // str2double reads MATLAB's spelling of a number and nothing else — see NumberSpelledBy for
+        // what that admits. A value that is not text is NaN, not an error: NaN is the answer the
+        // function promises for "not a number", and a caller filtering with isnan relies on it.
         Define("str2double", (args, line, col) =>
         {
             Arity("str2double", args, 1, line, col);
-            return JgsValue.Number(double.TryParse(
-                Str("str2double", args, 0, line, col), NumberStyles.Float, CultureInfo.InvariantCulture, out double parsed)
-                ? parsed
-                : double.NaN); // MATLAB answers NaN for text that is not a number
+            return NumbersSpelledBy(args[0]);
         });
 
         // --- Errors -----------------------------------------------------------------------------

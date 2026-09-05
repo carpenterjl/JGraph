@@ -331,7 +331,7 @@ public class MatlabStringOptionTests : IDisposable
         assert(strcmp(num2str([1 2 3]), '1  2  3'));
         % NaN and Inf are spelled, so the column has to be wide enough for the word.
         assert(strcmp(num2str([1 NaN Inf]), '1  NaN  Inf'));
-        assert(strcmp(strtrim(num2str([1.5 2.25])), '1.5    2.25'));
+        assert(strcmp(strtrim(num2str([1.5 2.25])), '1.5        2.25'));
         """);
 
     /// <summary>

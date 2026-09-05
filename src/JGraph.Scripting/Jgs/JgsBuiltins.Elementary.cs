@@ -401,8 +401,13 @@ internal static partial class JgsBuiltins
     private static JgsValue ToNumericClass(
         string name, JgsNumericClass numericClass, JgsValue value, int line, int col)
     {
-        // A char array converts through its codes, which is what makes double('A') 65.
-        JgsValue source = value.Type == JgsType.String ? CharactersAsCodes(value.AsString) : value;
+        // A char array converts through its codes, which is what makes double('A') 65. A string
+        // is read as the number it spells — double("5") is 5 and double("abc") is NaN — which is
+        // MATLAB's rule and the reason these constructors are string-aware: demoted to a char row
+        // first, "5" was the code 53.
+        JgsValue source = value.Type == JgsType.String ? CharactersAsCodes(value.AsString)
+            : value.IsStringArray ? NumbersSpelledBy(value)
+            : value;
 
         // double(z) and single(z) answer the complex number they were handed. A class conversion in
         // MATLAB is about which class holds the sample, not about projecting it onto the reals, and
@@ -521,6 +526,12 @@ internal static partial class JgsBuiltins
     /// <summary>Text as its character codes — what <c>double('A')</c> means.</summary>
     private static JgsValue CharactersAsCodes(string text)
     {
+        // '' is 0-by-0 in MATLAB, and so is double('') — where a row of no codes would be 1-by-0.
+        if (text.Length == 0)
+        {
+            return JgsEmpty.Zero();
+        }
+
         var codes = new double[text.Length];
         for (int i = 0; i < text.Length; i++)
         {

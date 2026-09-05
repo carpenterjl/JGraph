@@ -44,6 +44,10 @@ internal static partial class JgsBuiltins
         // 'aaa', where repmat("a", 1, 3) is three separate strings. Demoted, a string scalar took
         // the char road and came back as one longer piece of text.
         "repmat",
+
+        // The class constructors read a string as the number it spells: double("5") is 5, where
+        // the char row it would be demoted to is the code 53.
+        "double", "single", "int8", "int16", "int32", "int64", "uint8", "uint16", "uint32", "uint64",
     };
 
     /// <summary>

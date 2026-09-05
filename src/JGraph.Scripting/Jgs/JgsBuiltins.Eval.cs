@@ -185,28 +185,46 @@ internal static partial class JgsBuiltins
             return interpreter.EvaluateSource(Str("eval", args, 0, line, col), interpreter.CurrentFrame, line, col);
         });
 
-        // str2num evaluates its text as an expression, which is exactly what separates it from
-        // str2double: '[1 2 3]' is a vector and '1+1' is 2. Text that does not evaluate answers
-        // empty rather than failing, which is MATLAB's behaviour and the reason callers who only
-        // ever have a number are steered to str2double instead.
-        Define("str2num", (args, line, col) =>
+        // str2num evaluates its text inside brackets, which is exactly what separates it from
+        // str2double: '[1 2 3]' is a vector, '1+1' is 2, and '1 2; 3 4' is a matrix because the
+        // brackets make the spaces and the semicolon separators. Evaluated bare, as this once was,
+        // '1,2' was two statements and answered the last one. A char matrix is one row of the
+        // bracket per row of text. Text that does not evaluate answers the 0-by-0 empty rather than
+        // failing, which is MATLAB's behaviour and the reason callers who only ever have a number
+        // are steered to str2double instead; [x, ok] = str2num(...) says which happened.
+        JgsValue[] EvaluateBracketed(IReadOnlyList<JgsValue> args, int line, int col)
         {
             Arity("str2num", args, 1, line, col);
-            string text = Str("str2num", args, 0, line, col).Trim();
-            if (text.Length == 0)
-            {
-                return JgsValue.Array([]);
-            }
+            string[] rows = args[0].IsCharMatrix
+                ? args[0].CharMatrixRows()
+                : [Str("str2num", args, 0, line, col)];
+            string source = "[" + string.Join(";", rows) + "]";
 
             try
             {
-                return interpreter.EvaluateSource(text, interpreter.CurrentFrame, line, col);
+                JgsValue answer = interpreter.EvaluateSource(source, interpreter.CurrentFrame, line, col);
+                if (answer.Type == JgsType.Null)
+                {
+                    answer = JgsEmpty.Zero();
+                }
+                else if (answer.Type == JgsType.Array && answer.ArrayLength == 1 && answer.ElementAt(0).Type == JgsType.Complex)
+                {
+                    answer = answer.ElementAt(0); // [3+4i] is the complex scalar, as 3+4i is
+                }
+
+                return [answer, JgsValue.Bool(true)];
             }
-            catch (JgsRuntimeException)
+            catch (JgsException)
             {
-                return JgsValue.Array([]);
+                return [JgsEmpty.Zero(), JgsValue.Bool(false)];
             }
-        });
+        }
+
+        env.Declare("str2num", JgsValue.Function(new BuiltinFunction(
+            "str2num", (args, line, col) => EvaluateBracketed(args, line, col)[0])
+        {
+            MultiOutput = (args, wanted, line, col) => EvaluateBracketed(args, line, col),
+        }));
 
         Define("evalc", (args, line, col) =>
         {

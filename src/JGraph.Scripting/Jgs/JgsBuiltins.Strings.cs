@@ -785,16 +785,23 @@ internal static partial class JgsBuiltins
     /// the largest element, which is what makes <c>num2str([1 2 3])</c> read <c>'1  2  3'</c> and
     /// <c>num2str([1 20; 300 4])</c> keep its columns lined up.
     /// </summary>
+    /// <remarks>
+    /// The rule is num2str.m's. Whole numbers take <c>%g</c> at as many digits as the largest has,
+    /// in a field two wider — a minus sign uses the slack and does not widen the column, so
+    /// <c>num2str([1 -2 3])</c> is <c>'1 -2  3'</c>. Anything else takes <c>%g</c> at four digits
+    /// past the largest element's leading digit (five at least, sixteen at most) in a field seven
+    /// wider than that: <c>num2str([pi exp(1)])</c> is <c>'3.1416      2.7183'</c>, six blanks
+    /// between. The widths used to be computed from the digit count instead of the precision, which
+    /// put two blanks there rather than six and added one for a minus sign.
+    /// </remarks>
     private static string[] AlignedRows(double[][] rows, int? digits)
     {
         double biggest = 0;
         bool whole = true;
-        bool negative = false;
         foreach (double[] row in rows)
         {
             foreach (double value in row)
             {
-                negative |= value < 0;
                 if (!double.IsFinite(value))
                 {
                     continue; // NaN and Inf have a spelling, not a magnitude
@@ -805,9 +812,7 @@ internal static partial class JgsBuiltins
             }
         }
 
-        int magnitude = biggest > 0
-            ? Math.Min(15, Math.Max(1, (int)Math.Floor(Math.Log10(biggest)) + 1))
-            : 1;
+        int exponent = biggest > 0 ? (int)Math.Floor(Math.Log10(biggest)) : 0;
 
         int width;
         int precision;
@@ -818,13 +823,13 @@ internal static partial class JgsBuiltins
         }
         else if (whole)
         {
-            width = magnitude + (negative ? 1 : 0) + 2;
-            precision = 0;
+            precision = Math.Min(16, Math.Max(1, exponent + 1));
+            width = precision + 2;
         }
         else
         {
-            width = magnitude + 7;
-            precision = magnitude + 4;
+            precision = Math.Min(16, Math.Max(5, exponent + 5));
+            width = precision + 7;
         }
 
         var cells = new string[rows.Length][];
@@ -835,12 +840,16 @@ internal static partial class JgsBuiltins
             for (int c = 0; c < rows[r].Length; c++)
             {
                 cells[r][c] = OneNumber(rows[r][c], precision);
-                longest = Math.Max(longest, cells[r][c].Length);
+                if (!double.IsFinite(rows[r][c]))
+                {
+                    longest = Math.Max(longest, cells[r][c].Length);
+                }
             }
         }
 
         // NaN and Inf are spelled, not sized, so a column of small numbers holding one of them would
-        // otherwise be narrower than the word in it and run the elements together.
+        // otherwise be narrower than the word in it and run the elements together. Only the words
+        // count: a minus sign fits in the two blanks the field already has.
         width = Math.Max(width, longest + 2);
 
         var text = new string[rows.Length];
@@ -871,7 +880,12 @@ internal static partial class JgsBuiltins
         return text;
     }
 
-    /// <summary>One element as text: a whole number keeps every digit, anything else takes %g.</summary>
+    /// <summary>One element as text: <c>%g</c> at <paramref name="precision"/> significant digits.</summary>
+    /// <remarks>
+    /// Whole numbers used to go through .NET's <c>"0"</c> custom format, which rounds to fifteen
+    /// significant digits: <c>num2str(2^53)</c> ended in 990 instead of 992, and <c>1e100</c> was
+    /// written out as a hundred digits of rounding noise. <c>%g</c> is exact to the precision asked.
+    /// </remarks>
     private static string OneNumber(double value, int precision)
     {
         if (double.IsNaN(value))
@@ -884,10 +898,8 @@ internal static partial class JgsBuiltins
             return value > 0 ? "Inf" : "-Inf";
         }
 
-        return precision == 0
-            ? value.ToString("0", CultureInfo.InvariantCulture)
-            : JgsSprintf.FormatMatlab(
-                "%." + precision.ToString(CultureInfo.InvariantCulture) + "g", [JgsValue.Number(value)]);
+        return JgsSprintf.FormatMatlab(
+            "%." + Math.Max(1, precision).ToString(CultureInfo.InvariantCulture) + "g", [JgsValue.Number(value)]);
     }
 
     // --- mat2str, int2str and deal (M52 wave E) ---------------------------------------------------
@@ -904,9 +916,25 @@ internal static partial class JgsBuiltins
     /// </remarks>
     private static JgsValue MatrixText(IReadOnlyList<JgsValue> args, int line, int col)
     {
-        ArityRange("mat2str", args, 1, 2, line, col);
+        ArityRange("mat2str", args, 1, 3, line, col);
         JgsValue subject = args[0];
-        int precision = args.Count == 2 ? Count("mat2str", args, 1, line, col) : 15;
+
+        // mat2str(A, n), mat2str(A, 'class') and mat2str(A, n, 'class'): the digit count and the
+        // word can come in either order after the value.
+        int precision = 15;
+        bool namesClass = false;
+        for (int i = 1; i < args.Count; i++)
+        {
+            if (IsTextScalar(args[i]) && TextOf(args[i]).Equals("class", StringComparison.OrdinalIgnoreCase))
+            {
+                namesClass = true;
+            }
+            else
+            {
+                precision = Count("mat2str", args, i, line, col);
+            }
+        }
+
         if (precision < 1)
         {
             throw new JgsRuntimeException(line, col, "mat2str: the precision is a count of digits, so it is at least 1.");
@@ -922,16 +950,42 @@ internal static partial class JgsBuiltins
             return JgsValue.Str(TextMatrixText(text));
         }
 
+        if (subject.Type is not (JgsType.Number or JgsType.Bool or JgsType.Complex or JgsType.Array))
+        {
+            throw new JgsRuntimeException(line, col,
+                $"mat2str writes a numeric, char, string or logical array, not a {subject.TypeName}.");
+        }
+
+        if (subject.Type == JgsType.Array && SizeDims(subject).Length > 2)
+        {
+            throw new JgsRuntimeException(line, col, "mat2str writes a two-dimensional array; this one has more dimensions.");
+        }
+
+        // Anything but a double is wrapped in its constructor so eval reads the class back too:
+        // mat2str(int8([1 2])) is 'int8([1 2])'. 'class' asks for the wrapper on a double as well.
+        // A logical is never wrapped, because true and false already say what they are.
+        bool logical = IsLogicalValue(subject);
+        string className = subject.NumericClass.MatlabName();
+        bool wrapped = !logical && (namesClass || className != "double");
+        string Wrapped(string body) => wrapped ? className + "(" + body + ")" : body;
+
+        // An empty has no literal that keeps its shape, so it is written as the call that makes it.
+        if (JgsEmpty.IsEmptyArray(subject))
+        {
+            return JgsValue.Str(Wrapped(
+                "zeros(" + subject.Rows.ToString(CultureInfo.InvariantCulture) + ","
+                + subject.Cols.ToString(CultureInfo.InvariantCulture) + ")"));
+        }
+
         // A complex value has to be written as one (M81). Before this, mat2str reached JgsMatrix.ToRows,
         // which reads only reals: a complex scalar came back as the bare text '[]' and a complex array
         // threw — so the one function whose whole contract is "text eval reads back as this value"
         // silently failed to hold it.
         if (subject.Type == JgsType.Complex || HasComplexElements(subject))
         {
-            return JgsValue.Str(ComplexMatrixText(subject, precision, line, col));
+            return JgsValue.Str(Wrapped(ComplexMatrixText(subject, precision, line, col)));
         }
 
-        bool logical = IsLogicalValue(subject);
         double[][] rows = subject.Type is JgsType.Number or JgsType.Bool
             ? [[subject.AsNumber]]
             : JgsMatrix.ToRows("mat2str", subject, line, col);
@@ -942,7 +996,7 @@ internal static partial class JgsBuiltins
 
         if (rows.Length == 1 && rows[0].Length == 1)
         {
-            return JgsValue.Str(One(rows[0][0]));
+            return JgsValue.Str(Wrapped(One(rows[0][0])));
         }
 
         var written = new List<string>(rows.Length);
@@ -951,7 +1005,7 @@ internal static partial class JgsBuiltins
             written.Add(string.Join(" ", row.Select(One)));
         }
 
-        return JgsValue.Str("[" + string.Join(";", written) + "]");
+        return JgsValue.Str(Wrapped("[" + string.Join(";", written) + "]"));
     }
 
     /// <summary>

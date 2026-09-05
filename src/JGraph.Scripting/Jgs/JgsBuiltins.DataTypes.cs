@@ -82,12 +82,25 @@ internal static partial class JgsBuiltins
                 return ShapedLike(input, texts).MarkStringArray();
             }
 
+            // A char matrix is one string per row, stacked the way the rows were.
+            if (input.IsCharMatrix)
+            {
+                string[] rows = input.CharMatrixRows();
+                return JgsValue.StringArray(Array.ConvertAll(rows, JgsValue.Str), rows.Length, 1);
+            }
+
+            // string([]) is the 0-by-0 string array, which ShapedLike cannot build from no elements.
+            if (JgsEmpty.IsEmptyArray(input))
+            {
+                return JgsValue.StringArray([], input.Rows, input.Cols);
+            }
+
             return input.Type switch
             {
                 JgsType.String => JgsValue.StringScalar(input.AsString),
                 JgsType.Cell => ShapedLike(input, Array.ConvertAll(input.AsCell, StringOf)).MarkStringArray(),
                 JgsType.Array => ShapedLike(input, Array.ConvertAll(input.BoxedElements(), StringOf)).MarkStringArray(),
-                _ => JgsValue.StringScalar(input.Display()),
+                _ => JgsValue.StringScalar(StringOf(input).AsString),
             };
         });
 
@@ -475,9 +488,26 @@ internal static partial class JgsBuiltins
         return false;
     }
 
-    /// <summary>One element as a string value, through Display for non-strings.</summary>
-    private static JgsValue StringOf(JgsValue value) =>
-        value.Type == JgsType.String ? value : JgsValue.Str(value.Display());
+    /// <summary>
+    /// One element as a string value. A number is written the way <c>num2str</c> writes it, which is
+    /// MATLAB's rule for <c>string(pi)</c> — <c>"3.1416"</c>, not every digit the double holds —
+    /// and <c>string(NaN)</c> is <c>"NaN"</c>, not the missing string. Anything else goes through
+    /// Display.
+    /// </summary>
+    private static JgsValue StringOf(JgsValue value)
+    {
+        if (value.Type == JgsType.String)
+        {
+            return value;
+        }
+
+        if (value.Type is JgsType.Number or JgsType.Complex)
+        {
+            return NumberText([value], 0, 0);
+        }
+
+        return JgsValue.Str(value.Display());
+    }
 
     /// <summary>Wraps freshly built elements in the input's shape (or a plain row when unshaped).</summary>
     private static JgsValue ShapedLike(JgsValue input, JgsValue[] elements)
@@ -487,7 +517,7 @@ internal static partial class JgsBuiltins
         {
             result.Reshape(input.Rows, input.Cols);
         }
-        else if (elements.Length > 1 && input.Type == JgsType.Array && input.Cols == 1 && input.Rows > 1)
+        else if (elements.Length > 1 && input.Type is (JgsType.Array or JgsType.Cell) && input.Cols == 1 && input.Rows > 1)
         {
             result.Reshape(elements.Length, 1);
         }
