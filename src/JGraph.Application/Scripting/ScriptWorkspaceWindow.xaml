@@ -166,7 +166,7 @@
                                 </DockPanel>
                             </dock:LayoutAnchorable>
                             <dock:LayoutAnchorable Title="Data Viewer" ContentId="dataviewer" CanClose="False">
-                                <controls:DataGridTableControl x:Name="DataViewer" />
+                                <controls:DataGridTableControl x:Name="DataViewer" CellEdited="OnDataViewerCellEdited" />
                             </dock:LayoutAnchorable>
                         </dock:LayoutAnchorablePane>
                     </dock:LayoutPanel>
@@ -177,7 +177,7 @@
                                 <ListView x:Name="VariablesList" BorderThickness="0"
                                           MouseDoubleClick="OnVariablesDoubleClick"
                                           PreviewMouseRightButtonDown="OnVariablesRightButtonDown"
-                                          ToolTip="Double-click an array, matrix, cell, struct or table to open it in the Data Viewer">
+                                          ToolTip="Double-click an array, matrix, cell, struct or table to open it in the Data Viewer, where its cells can be edited in place">
                                     <ListView.ContextMenu>
                                         <ContextMenu>
                                             <MenuItem Header="_Plot" Click="OnPlotVariableClick" />

@@ -258,16 +258,7 @@ internal static partial class JgsBuiltins
         for (int i = 0; i < columnCount; i++)
         {
             string columnName = names is not null ? names[i] : $"Var{i + 1}";
-            JgsValue value = args[i];
-            if (value.Type == JgsType.Cell || (value.Type == JgsType.Array && HasStringElements(value)))
-            {
-                JgsValue[] elements = value.Type == JgsType.Cell ? value.AsCell : value.BoxedElements();
-                columns.Add(new TextColumn(columnName, Array.ConvertAll(elements, v => (string?)StringOf(v).AsString)));
-            }
-            else
-            {
-                columns.Add(new NumberColumn(columnName, ToDoubles(name, value, line, col)));
-            }
+            columns.Add(TableColumnFrom(name, columnName, args[i], line, col));
         }
 
         int rows = columns[0].RowCount;
@@ -281,6 +272,59 @@ internal static partial class JgsBuiltins
         }
 
         return JgsValue.Table(new Table(columns));
+    }
+
+    /// <summary>
+    /// A script value as the table column <paramref name="columnName"/> — the rule <c>table(…)</c>
+    /// applies to each argument, and the converse of <see cref="TableColumnValue"/>: a cell or an
+    /// array of strings is a text column, anything else is numbers.
+    /// </summary>
+    internal static TableColumn TableColumnFrom(string verb, string columnName, JgsValue value, int line, int col)
+    {
+        if (value.Type == JgsType.Cell || (value.Type == JgsType.Array && HasStringElements(value)))
+        {
+            JgsValue[] elements = value.Type == JgsType.Cell ? value.AsCell : value.BoxedElements();
+            return new TextColumn(columnName, Array.ConvertAll(elements, v => (string?)StringOf(v).AsString));
+        }
+
+        return new NumberColumn(columnName, ToDoubles(verb, value, line, col));
+    }
+
+    /// <summary>
+    /// <paramref name="table"/> with <paramref name="column"/> in place of the variable of the same
+    /// name, or appended when there is none — what <c>T.Var = v</c> means. A <see cref="Table"/>
+    /// holds its columns by value, so a write is a rebuild; the row count is the one thing that must
+    /// already agree.
+    /// </summary>
+    internal static Table WithColumn(Table table, TableColumn column, int line, int col)
+    {
+        if (column.RowCount != table.RowCount)
+        {
+            throw new JgsRuntimeException(line, col,
+                $"To assign to or create a variable in a table, the number of rows must match the table's ({column.RowCount} given, {table.RowCount} expected).");
+        }
+
+        var columns = new List<TableColumn>(table.Columns);
+        int existing = -1;
+        for (int i = 0; i < columns.Count; i++)
+        {
+            if (string.Equals(columns[i].Name, column.Name, StringComparison.Ordinal))
+            {
+                existing = i;
+                break;
+            }
+        }
+
+        if (existing >= 0)
+        {
+            columns[existing] = column;
+        }
+        else
+        {
+            columns.Add(column);
+        }
+
+        return new Table(columns);
     }
 
     /// <summary>

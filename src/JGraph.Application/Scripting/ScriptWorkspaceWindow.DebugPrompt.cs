@@ -49,6 +49,16 @@ public partial class ScriptWorkspaceWindow
             return;
         }
 
+        await EvaluateAtPausedPromptAsync(code).ConfigureAwait(true);
+        ConsolePrompt.Focus();
+    }
+
+    /// <summary>
+    /// Evaluates one statement in the selected paused frame and reports it — shared by typed
+    /// <c>K&gt;&gt;</c> input and the writes the Data Viewer composes while paused.
+    /// </summary>
+    private async Task EvaluateAtPausedPromptAsync(string code)
+    {
         if (_debugSession is not { IsPaused: true } session)
         {
             AppendConsole("--- The script is no longer paused. ---");
@@ -81,11 +91,9 @@ public partial class ScriptWorkspaceWindow
         }
         else if (_debugSession is { IsPaused: true })
         {
-            VariablesList.ItemsSource = result.Variables;
+            ShowVariables(result.Variables, _session.RunningLanguage);
             SetStatus($"{PausedPrompt} done — {result.Variables.Count} variable(s) in {FrameName(_selectedFrame)}.");
         }
-
-        ConsolePrompt.Focus();
     }
 
     private void ExecuteDebugCommand(DebugPromptCommand command)
@@ -223,7 +231,7 @@ public partial class ScriptWorkspaceWindow
         _selectedFrame = index;
         try
         {
-            VariablesList.ItemsSource = session.GetVariables(index);
+            ShowVariables(session.GetVariables(index), _session.RunningLanguage);
         }
         catch (InvalidOperationException)
         {

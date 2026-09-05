@@ -15,7 +15,7 @@ namespace JGraph.Scripting.Jgs;
 /// <c>figure(1)</c> at the prompt must keep meaning the window it already opened), releasing packed
 /// buffers (live variables still point at them), and rebuilding the built-in scope. See ADR 0035.
 /// </remarks>
-internal sealed class JgsReplSession : IScriptSession, IGraphicsEventSession
+internal sealed class JgsReplSession : IScriptSession, IGraphicsEventSession, IWorkspaceCellEditor
 {
     private readonly ScriptContext _context;
     private readonly JgsDialect _dialect;
@@ -92,6 +92,10 @@ internal sealed class JgsReplSession : IScriptSession, IGraphicsEventSession
 
     /// <summary>The sink a paused debugger's typed statements report their errors to.</summary>
     internal IScriptOutput Output => _context.Output;
+
+    /// <inheritdoc />
+    public string? ComposeCellAssignment(ScriptVariable variable, int row, int column, string text) =>
+        JgsCellAssignment.Compose(variable, row, column, text, _dialect);
 
     /// <inheritdoc />
     public IReadOnlyList<ScriptVariable> GetVariables() =>

@@ -1,3 +1,4 @@
+using JGraph.Data;
 using System.Globalization;
 using System.Numerics;
 using System.Text;
@@ -2993,6 +2994,15 @@ internal sealed partial class Interpreter
             _ => (((IndexExpr)assign.Target).Target, ((IndexExpr)assign.Target).Indices),
         };
 
+        // T.Var(i) = v: a table variable is read out as the array it is, written like any array, and
+        // put back — the same rebuild-and-rebind a whole-column write does. Without this the write
+        // landed in the copy T.Var reads out, and the table never changed.
+        if (container is MemberExpr { Target: VariableExpr tableName } tableColumn
+            && LookUp(tableName.Name, env, out JgsValue heldTable) && heldTable.Type == JgsType.Table)
+        {
+            return AssignIntoTableColumn(tableName, tableColumn, heldTable, subscripts, assign.Op, rhs, assign, env);
+        }
+
         // MATLAB conjures the variable an index write names: x(5) = 1 with no x makes [0 0 0 0 1],
         // the same grow-and-zero-fill an existing array gets. The write starts from [] and the growth
         // below does the rest; a write that then fails takes the conjured variable with it, so a bad
@@ -3032,6 +3042,41 @@ internal sealed partial class Interpreter
             conjuredScope.Forget(conjuredName!, EmptyPristine);
             throw;
         }
+    }
+
+    /// <summary>
+    /// <c>T.Var(i) = v</c>. The column is bound under a scratch name so the ordinary index writes
+    /// can do everything they do for a variable — grow, delete, scatter — and whatever the scratch
+    /// name holds afterwards becomes the column again. A text column comes out as a cell, so a
+    /// string written into one is wrapped the way MATLAB's own string column would take it.
+    /// </summary>
+    private JgsValue AssignIntoTableColumn(
+        VariableExpr tableName, MemberExpr column, JgsValue table, IReadOnlyList<Expr> subscripts,
+        TokenType op, JgsValue rhs, Node at, JgsEnvironment env)
+    {
+        string field = FieldName(column, env);
+        JgsValue current = JgsBuiltins.TableColumnValue(table.AsTable, field, at.Line, at.Column);
+        if (current.Type == JgsType.Cell && rhs.Type == JgsType.String && op == TokenType.Assign)
+        {
+            rhs = JgsValue.Cell(new[] { rhs });
+        }
+
+        const string slot = "\u0001column"; // no script can spell this, so nothing can collide with it
+        var scratch = new JgsEnvironment(env);
+        scratch.Declare(slot, current);
+        var target = new VariableExpr(slot) { Line = at.Line, Column = at.Column };
+        JgsValue result = subscripts.Count switch
+        {
+            2 => AssignTwoSubscripts(target, subscripts, op, rhs, at, scratch),
+            > 2 => AssignNSubscripts(target, subscripts, op, rhs, at, scratch),
+            _ => AssignThroughIndex(target, subscripts, op, rhs, at, scratch),
+        };
+
+        scratch.TryGet(slot, out JgsValue written);
+        TableColumn rebuilt = JgsBuiltins.TableColumnFrom("table", field, written, at.Line, at.Column);
+        Rebind(tableName.Name,
+            JgsValue.Table(JgsBuiltins.WithColumn(table.AsTable, rebuilt, at.Line, at.Column)), env);
+        return result;
     }
 
     /// <summary>
@@ -5550,6 +5595,19 @@ internal sealed partial class Interpreter
             JgsValue rebuilt = JgsBuiltins.SetTimeProperty(
                 held, FieldName(member, env), value, member.Line, member.Column);
             Rebind(timeTarget.Name, rebuilt, env);
+            return value;
+        }
+
+        // T.Var = column replaces a table variable, or adds one. A Table holds its columns by value,
+        // so the write is a rebuild-and-rebind like a time property's — and, like it, has to name a
+        // variable. Asked before the struct path, which would otherwise refuse the table.
+        if (member.Target is VariableExpr tableTarget
+            && LookUp(tableTarget.Name, env, out JgsValue heldTable) && heldTable.Type == JgsType.Table)
+        {
+            TableColumn column = JgsBuiltins.TableColumnFrom(
+                "table", FieldName(member, env), value, member.Line, member.Column);
+            Rebind(tableTarget.Name,
+                JgsValue.Table(JgsBuiltins.WithColumn(heldTable.AsTable, column, member.Line, member.Column)), env);
             return value;
         }
 

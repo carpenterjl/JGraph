@@ -287,6 +287,32 @@ public partial class ScriptWorkspaceWindow
             return;
         }
 
+        await ExecuteStatementAsync(session, language, isFile ? resolved.Code : code, resolved.SourcePath ?? string.Empty)
+            .ConfigureAwait(true);
+        ConsolePrompt.Focus();
+    }
+
+    /// <summary>
+    /// Runs a statement the workspace itself asked for — a Data Viewer cell edit — through the
+    /// prompt's own path, so it waits its turn, can be interrupted, reports an error the same way,
+    /// and leaves the Workspace pane and the viewer refreshed. Not echoed: the user did not type it.
+    /// </summary>
+    private async Task RunWorkspaceStatementAsync(string language, string code)
+    {
+        if (SessionFor(language) is not { } session)
+        {
+            return;
+        }
+
+        await ExecuteStatementAsync(session, language, code, sourceId: string.Empty).ConfigureAwait(true);
+    }
+
+    /// <summary>
+    /// The prompt's statement ceremony: wait out a pump run, take the session, execute, and report —
+    /// shared by typed statements and the writes the Data Viewer composes.
+    /// </summary>
+    private async Task ExecuteStatementAsync(IScriptSession session, string language, string code, string sourceId)
+    {
         await YieldPumpAsync().ConfigureAwait(true);
         if (!_session.TryBeginRun(language))
         {
@@ -299,9 +325,7 @@ public partial class ScriptWorkspaceWindow
         ScriptRunResult result;
         try
         {
-            result = await session
-                .ExecuteAsync(isFile ? resolved.Code : code, resolved.SourcePath ?? string.Empty, _cts.Token)
-                .ConfigureAwait(true);
+            result = await session.ExecuteAsync(code, sourceId, _cts.Token).ConfigureAwait(true);
         }
         catch (Exception ex) when (ex is InvalidOperationException or IOException)
         {
@@ -314,8 +338,7 @@ public partial class ScriptWorkspaceWindow
             _session.EndRun();
         }
 
-        ShowRunResult(result, announceSuccess: false);
-        ConsolePrompt.Focus();
+        ShowRunResult(result, announceSuccess: false, language);
         PumpGraphicsEventsWhenIdle();
     }
 
@@ -361,9 +384,9 @@ public partial class ScriptWorkspaceWindow
     /// Reports a finished run or statement in the console, the status bar and the Workspace pane.
     /// Shared by F5 and the prompt so both leave the window in the same state.
     /// </summary>
-    private void ShowRunResult(ScriptRunResult result, bool announceSuccess)
+    private void ShowRunResult(ScriptRunResult result, bool announceSuccess, string? language)
     {
-        VariablesList.ItemsSource = result.Variables;
+        ShowVariables(result.Variables, language);
         CallStackList.ItemsSource = null;
         PromptLabel.Text = IdlePrompt;
 
@@ -405,7 +428,7 @@ public partial class ScriptWorkspaceWindow
             session.Clear();
         }
 
-        VariablesList.ItemsSource = null;
+        ShowVariables(null, null);
         AppendConsole("--- Workspace cleared. ---");
         SetStatus("Workspace cleared.");
     }

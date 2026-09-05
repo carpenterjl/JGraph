@@ -120,7 +120,7 @@ public partial class ScriptWorkspaceWindow
         // Shared with the prompt, so a script run and a typed statement leave the window the same way.
         // exit()/quit() is honoured here too, not only under -batch: a script that says "stop" means
         // the same thing whichever way it was started.
-        ShowRunResult(result, announceSuccess: true);
+        ShowRunResult(result, announceSuccess: true, language);
         if (result.ExitCode is not null)
         {
             return;

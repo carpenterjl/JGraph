@@ -17,11 +17,16 @@
                        Foreground="{DynamicResource JG.Brush.TextSecondary}" />
         </DockPanel>
 
+        <!-- Read-only until the host says the value behind the grid can take a write (CanEdit);
+             columns never reorder, so a column's index is the value's column. -->
         <DataGrid x:Name="Grid" Grid.Row="1"
                   AutoGenerateColumns="False"
                   IsReadOnly="True"
                   CanUserAddRows="False"
+                  CanUserDeleteRows="False"
+                  CanUserReorderColumns="False"
                   CanUserSortColumns="False"
+                  CellEditEnding="OnCellEditEnding"
                   HeadersVisibility="Column"
                   GridLinesVisibility="All"
                   EnableRowVirtualization="True"

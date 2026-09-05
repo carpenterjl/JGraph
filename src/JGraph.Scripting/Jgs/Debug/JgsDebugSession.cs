@@ -159,6 +159,15 @@ public sealed class JgsDebugSession
     public bool IsEvaluating => _evaluating;
 
     /// <summary>
+    /// The statement that writes <paramref name="text"/> into one Data Viewer cell of a paused
+    /// frame's <paramref name="variable"/>, for <see cref="EvaluateAsync"/> to run in that frame —
+    /// the debugger's twin of <see cref="IWorkspaceCellEditor.ComposeCellAssignment"/>. Null when
+    /// that cell cannot be edited.
+    /// </summary>
+    public string? ComposeCellAssignment(ScriptVariable variable, int row, int column, string text) =>
+        JgsCellAssignment.Compose(variable, row, column, text, _dialect);
+
+    /// <summary>
     /// Runs <paramref name="code"/> in the given paused frame — the <c>K&gt;&gt;</c> prompt. The
     /// statement reads and writes the frame's variables, its output and echo go where the script's
     /// do, and an error is reported like a prompt error: printed, returned as a failed result, and

@@ -7,14 +7,31 @@ using JGraph.Data;
 namespace JGraph.Controls.Scripting;
 
 /// <summary>
-/// The Data Viewer grid: a read-only, virtualized spreadsheet view of a <see cref="TableGridAdapter"/>
-/// (a table or an array), MATLAB's variable-viewer style. Large data is paged — the adapter caps a page
-/// at <see cref="TableGridAdapter.PageSize"/> rows and the header offers page navigation.
+/// The Data Viewer grid: a virtualized spreadsheet view of a <see cref="TableGridAdapter"/> (a table
+/// or an array), MATLAB's variable-viewer style. Large data is paged — the adapter caps a page at
+/// <see cref="TableGridAdapter.PageSize"/> rows and the header offers page navigation. When the host
+/// says the value behind the grid can take a write (<see cref="CanEdit"/>), a cell edit is reported
+/// through <see cref="CellEdited"/> rather than applied here: the grid shows formatted text, and only
+/// the workspace that owns the value can turn typed text back into an element of it.
 /// </summary>
 public partial class DataGridTableControl : UserControl
 {
     private TableGridAdapter? _adapter;
     private int _page;
+
+    /// <summary>Raised when the user commits an edit to a cell (absolute row, column, typed text).</summary>
+    public event EventHandler<DataGridCellEditedEventArgs>? CellEdited;
+
+    /// <summary>
+    /// Whether cells may be edited. The host sets it with the value it shows: true for a variable of
+    /// a workspace that can write one cell, false for a file opened from disk or a value nothing can
+    /// write back into.
+    /// </summary>
+    public bool CanEdit
+    {
+        get => !Grid.IsReadOnly;
+        set => Grid.IsReadOnly = !value;
+    }
 
     /// <summary>Creates an empty viewer; call <see cref="Show"/> to display data.</summary>
     public DataGridTableControl()
@@ -54,6 +71,41 @@ public partial class DataGridTableControl : UserControl
         }
 
         ShowCurrentPage();
+    }
+
+    /// <summary>
+    /// Re-shows the same value after it changed underneath — a cell edit, a statement, a debugger
+    /// step — keeping the page the user was on. <see cref="Show"/> would send them back to page 0.
+    /// </summary>
+    public void Refresh(TableGridAdapter? adapter)
+    {
+        int page = _page;
+        Show(adapter);
+        if (adapter is not null && page > 0)
+        {
+            _page = Math.Min(page, adapter.PageCount - 1);
+            ShowCurrentPage();
+        }
+    }
+
+    private void OnCellEditEnding(object sender, DataGridCellEditEndingEventArgs e)
+    {
+        if (e.EditAction != DataGridEditAction.Commit
+            || _adapter is null
+            || e.EditingElement is not TextBox box)
+        {
+            return;
+        }
+
+        int column = Grid.Columns.IndexOf(e.Column);
+        int row = _page * TableGridAdapter.PageSize + e.Row.GetIndex();
+        if (column < 0 || row < 0 || row >= _adapter.RowCount
+            || string.Equals(box.Text, _adapter.GetText(row, column), StringComparison.Ordinal))
+        {
+            return; // nothing changed, or the row is not one of the value's
+        }
+
+        CellEdited?.Invoke(this, new DataGridCellEditedEventArgs(row, column, box.Text));
     }
 
     private void ShowCurrentPage()
@@ -117,4 +169,25 @@ public partial class DataGridTableControl : UserControl
             ShowCurrentPage();
         }
     }
+}
+
+/// <summary>One committed cell edit in a <see cref="DataGridTableControl"/>.</summary>
+public sealed class DataGridCellEditedEventArgs : EventArgs
+{
+    /// <summary>Creates the event for the cell at (<paramref name="row"/>, <paramref name="column"/>).</summary>
+    public DataGridCellEditedEventArgs(int row, int column, string text)
+    {
+        Row = row;
+        Column = column;
+        Text = text;
+    }
+
+    /// <summary>The 0-based absolute row (across pages).</summary>
+    public int Row { get; }
+
+    /// <summary>The 0-based column.</summary>
+    public int Column { get; }
+
+    /// <summary>What the user typed into the cell.</summary>
+    public string Text { get; }
 }
