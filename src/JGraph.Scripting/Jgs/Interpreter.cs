@@ -1011,21 +1011,39 @@ internal sealed partial class Interpreter
         }
         catch (JgsRuntimeException error)
         {
-            // MATLAB remembers the last caught error for lasterr/lasterror, and this is where the
-            // catching happens — recording it anywhere else would miss the runtime's own errors.
-            LastError = error.Message;
-
-            LastErrorIdentifier = error.Identifier;
-
-            JgsEnvironment handler = BlockScope(env);
-            if (statement.ErrorVariable is { } name)
-            {
-                handler.Declare(name, JgsBuiltins.MakeException(
-                    error.Identifier, error.Message, StackOf(error)));
-            }
-
-            return ExecuteBlock(statement.Handler, handler);
+            return ExecuteHandler(statement, error, env);
         }
+        catch (Exception fault) when (IsInternalFault(fault))
+        {
+            // A defect in this build — a bad cast, an index off the end — used to fly past every
+            // catch in the script and end the run (audit 6.1). It is still reported as a defect, in
+            // the words the top level uses, but a script that guarded the call gets to handle it.
+            return ExecuteHandler(statement, new JgsRuntimeException(statement.Line, statement.Column,
+                "JGraph:internalError", $"Internal error: {fault.GetType().Name}: {fault.Message}"), env);
+        }
+    }
+
+    /// <summary>The kinds of exception that mean a defect in the runtime rather than a way a run ends.</summary>
+    private static bool IsInternalFault(Exception fault) => fault is InvalidCastException
+        or IndexOutOfRangeException or NullReferenceException or InvalidOperationException
+        or ArgumentException or FormatException or OverflowException or KeyNotFoundException;
+
+    private Completion ExecuteHandler(TryStmt statement, JgsRuntimeException error, JgsEnvironment env)
+    {
+        // MATLAB remembers the last caught error for lasterr/lasterror, and this is where the
+        // catching happens — recording it anywhere else would miss the runtime's own errors.
+        LastError = error.Message;
+
+        LastErrorIdentifier = error.Identifier;
+
+        JgsEnvironment handler = BlockScope(env);
+        if (statement.ErrorVariable is { } name)
+        {
+            handler.Declare(name, JgsBuiltins.MakeException(
+                error.Identifier, error.Message, StackOf(error)));
+        }
+
+        return ExecuteBlock(statement.Handler, handler);
     }
 
     /// <summary>
@@ -2202,6 +2220,12 @@ internal sealed partial class Interpreter
             return JgsValue.Bool(!operand.IsTruthy);
         }
 
+        if (operand.IsStringArray)
+        {
+            throw new JgsRuntimeException(unary.Line, unary.Column,
+                "Invalid data type. Argument must be numeric, char, or logical.");
+        }
+
         // Minus: numeric negation, element-wise over arrays (complex included). Negation stays inside
         // the operand's class, so -uint8(5) saturates to 0 rather than escaping to a negative double.
         return JgsNumericClasses.Stamp(
@@ -2325,6 +2349,20 @@ internal sealed partial class Interpreter
     /// </remarks>
     private JgsValue ApplyBinary(TokenType op, JgsValue left, JgsValue right, Node at)
     {
+        // A string array joins text under + and answers a string whatever class the other side wears
+        // ("abc" + int8(5) is "abc5", measured), and refuses every other arithmetic operator in
+        // MATLAB's words. Deciding here keeps the class machinery below from stamping int8 on text.
+        if (IsArithmetic(op) && (left.IsStringArray || right.IsStringArray))
+        {
+            if (op != TokenType.Plus)
+            {
+                throw new JgsRuntimeException(at.Line, at.Column,
+                    "Invalid data type. Argument must be numeric, char, or logical.");
+            }
+
+            return ApplyBinaryCore(op, left, right, at);
+        }
+
         if (left.NumericClass == JgsNumericClass.Double && right.NumericClass == JgsNumericClass.Double)
         {
             return ApplyBinaryCore(op, left, right, at);
@@ -2882,7 +2920,14 @@ internal sealed partial class Interpreter
         {
             conjuredScope = env.IsGlobal(fresh.Name) ? _globalWorkspace : env;
             conjuredName = fresh.Name;
-            conjuredScope.Declare(conjuredName, JgsValue.Array(System.Array.Empty<JgsValue>()));
+
+            // What is conjured is an empty of the kind being written: x(1) = "a" with no x is a
+            // string array and c(1) = {5} a cell (measured), where x = []; x(1) = "a" is a double
+            // holding NaN. The empty here is the difference between those two scripts.
+            JgsValue conjured = rhs.IsStringArray ? JgsValue.StringArray(System.Array.Empty<JgsValue>(), 0, 0)
+                : rhs.Type == JgsType.Cell ? JgsValue.Cell(System.Array.Empty<JgsValue>())
+                : JgsValue.Array(System.Array.Empty<JgsValue>());
+            conjuredScope.Declare(conjuredName, conjured);
         }
 
         try
@@ -2910,10 +2955,25 @@ internal sealed partial class Interpreter
         Expr target, IReadOnlyList<Expr> subscripts, TokenType op, JgsValue rhs, Node at, JgsEnvironment env)
     {
         JgsValue callee = Evaluate(target, env);
+        if (Dialect.IsMatlab && callee.Type == JgsType.String)
+        {
+            return AssignIntoCharRow(target, callee, subscripts, op, rhs, at, env);
+        }
+
+        if (callee.Type == JgsType.Cell)
+        {
+            return AssignIntoCellParen(target, callee, subscripts, op, rhs, at, env);
+        }
+
         if (callee.Type != JgsType.Array)
         {
             throw new JgsRuntimeException(at.Line, at.Column,
                 $"Cannot assign by index into a {callee.TypeName}; only arrays support element assignment.");
+        }
+
+        if (op == TokenType.Assign)
+        {
+            rhs = ReconcileWrittenValue(callee, rhs, at);
         }
 
         int rows = JgsMatrix.RowCount(callee);
@@ -2922,7 +2982,7 @@ internal sealed partial class Interpreter
         JgsValue? rowIndex = EvaluateIndexArgument(subscripts[0], extents, 0, env);
         JgsValue? colIndex = EvaluateIndexArgument(subscripts[1], extents, 1, env);
 
-        if (op == TokenType.Assign && rhs.Type == JgsType.Array && rhs.ArrayLength == 0)
+        if (op == TokenType.Assign && IsDeletion(rhs))
         {
             return DeleteSlice(target, callee, rowIndex, colIndex, rows, cols, at, env);
         }
@@ -3082,7 +3142,7 @@ internal sealed partial class Interpreter
         }
 
         var elements = new JgsValue[newRows * newCols];
-        Array.Fill(elements, JgsValue.Number(0));
+        Array.Fill(elements, GrowthFill(current));
         for (int c = 0; c < cols; c++)
         {
             for (int r = 0; r < rows; r++)
@@ -3091,7 +3151,7 @@ internal sealed partial class Interpreter
             }
         }
 
-        JgsValue grown = KeepNumericClass(current, JgsMatrix.FromElements(elements, newRows, newCols));
+        JgsValue grown = KeepTextKind(current, KeepNumericClass(current, JgsMatrix.FromElements(elements, newRows, newCols)));
         Rebind(variable.Name, grown, env);
         return grown;
     }
@@ -3177,17 +3237,37 @@ internal sealed partial class Interpreter
         }
 
         var elements = new JgsValue[needed];
-        Array.Fill(elements, JgsValue.Number(0));
+        Array.Fill(elements, GrowthFill(current));
         for (int i = 0; i < current.ArrayLength; i++)
         {
             elements[i] = current.ElementAt(i);
         }
 
-        JgsValue grown = KeepNumericClass(current, JgsMatrix.FromElements(
-            elements, growsAsColumn ? needed : 1, growsAsColumn ? 1 : needed));
+        JgsValue grown = KeepTextKind(current, KeepNumericClass(current, JgsMatrix.FromElements(
+            elements, growsAsColumn ? needed : 1, growsAsColumn ? 1 : needed)));
         Rebind(variable.Name, grown, env);
         return grown;
     }
+
+    /// <summary>
+    /// What a slot an array grows into holds: zero, or the missing string for a string array
+    /// (measured: x = ["a" "b"]; x(4) = "d" is ["a" "b" missing "d"]).
+    /// </summary>
+    private static JgsValue GrowthFill(JgsValue current) => current.IsStringArray
+        ? JgsValue.Str(JgsBuiltins.MissingSentinel)
+        : JgsValue.Number(0);
+
+    /// <summary>
+    /// Whether a right-hand side is the <c>[]</c> that deletes. MATLAB deletes for a 0-by-0 and nothing
+    /// else: <c>x(2) = zeros(1, 0)</c>, <c>x(2) = strings(0)</c> and <c>x(2) = {}</c> are all count
+    /// mismatches (measured). JGS keeps reading every empty array as the deletion it always was.
+    /// </summary>
+    private bool IsDeletion(JgsValue rhs) => rhs.Type == JgsType.Array && rhs.ArrayLength == 0 && !rhs.IsStringArray
+        && (!Dialect.IsMatlab || (rhs.Rows == 0 && rhs.Cols == 0));
+
+    /// <summary>A grown string array is still a string array; the tag lives on the wrapper a rebuild replaces.</summary>
+    private static JgsValue KeepTextKind(JgsValue source, JgsValue rebuilt) =>
+        source.IsStringArray ? rebuilt.MarkStringArray() : rebuilt;
 
     /// <summary>
     /// <c>x(:) = []</c>: removes every element there is and rebinds (M96b). What is left is the
@@ -3223,12 +3303,9 @@ internal sealed partial class Interpreter
             return current;
         }
 
-        if (current.Rows > 1 && current.Cols > 1)
-        {
-            throw new JgsRuntimeException(at.Line, at.Column,
-                "Deleting from a matrix takes a whole row or column: A(i, :) = [] or A(:, j) = [].");
-        }
-
+        // A matrix that loses elements by linear index or mask cannot stay rectangular, and MATLAB
+        // answers with the row of what is left: A(A == 1) = [] on a 2-by-2 is 1-by-3 (measured).
+        // Only the whole-row and whole-column forms, A(i, :) = [] and A(:, j) = [], keep a matrix.
         var removed = new HashSet<int>(ComputePicks(AsIndexArray(index), current.ArrayLength, "array", at.Line, at.Column));
         int[] kept = Remaining(current.ArrayLength, removed);
         var elements = new JgsValue[kept.Length];
@@ -3340,6 +3417,18 @@ internal sealed partial class Interpreter
             return AssignIntoStruct(target, callee, subscripts, rhs, at, env);
         }
 
+        // c(k) = 'x' on a char row and c(k) = {v} on a cell are writes of their own kind; a string
+        // array is an array underneath, and only has to be handed a plain element (audit 6.1).
+        if (Dialect.IsMatlab && callee.Type == JgsType.String && subscripts.Count is 1 or 2)
+        {
+            return AssignIntoCharRow(target, callee, subscripts, op, rhs, at, env);
+        }
+
+        if (callee.Type == JgsType.Cell && subscripts.Count is 1 or 2)
+        {
+            return AssignIntoCellParen(target, callee, subscripts, op, rhs, at, env);
+        }
+
         if (callee.Type != JgsType.Array)
         {
             throw new JgsRuntimeException(at.Line, at.Column,
@@ -3352,11 +3441,16 @@ internal sealed partial class Interpreter
                 "Index assignment takes one subscript (an index, a range, a mask, or ':') or two (a row and a column).");
         }
 
+        if (op == TokenType.Assign)
+        {
+            rhs = ReconcileWrittenValue(callee, rhs, at);
+        }
+
         JgsValue? index = EvaluateIndexArgument(subscripts[0], callee.ArrayLength, env);
 
         // x(idx) = [] removes those elements; x(n) = v past the end grows and zero-fills. Both
         // replace the value rather than writing into it, so both need a plain variable to rebind.
-        if (op == TokenType.Assign && rhs.Type == JgsType.Array && rhs.ArrayLength == 0)
+        if (op == TokenType.Assign && IsDeletion(rhs))
         {
             // x(:) = [] removes every element there is, and what is left is the shapeless empty
             // whatever x was — 0-by-0 for a row, a column and a matrix alike (M96b). ':' arrives here
@@ -3418,6 +3512,20 @@ internal sealed partial class Interpreter
         if (index is { Type: not JgsType.Array })
         {
             int single = ToIndex(index, array.Length, at.Line, at.Column);
+
+            // One slot takes one value. MATLAB refuses an array of any other length here, where JGS
+            // nests it; storing a 1-by-1 string array whole is what put an array inside a string
+            // array (audit 6.1), so the one element it holds is what goes in.
+            if (Dialect.IsMatlab && op == TokenType.Assign && rhs.Type == JgsType.Array)
+            {
+                if (rhs.ArrayLength != 1)
+                {
+                    throw new JgsRuntimeException(at.Line, at.Column, CountMismatch);
+                }
+
+                rhs = rhs.ElementAt(0);
+            }
+
             JgsValue stored = op == TokenType.Assign
                 ? rhs
                 : JgsNumericClasses.Storable(ApplyBinary(UnderlyingOp(op), array[single], rhs, at), storeClass);
@@ -4157,6 +4265,11 @@ internal sealed partial class Interpreter
         {
             throw new JgsRuntimeException(at.Line, at.Column,
                 "Deleting with three or more subscripts is not supported; delete whole rows or columns instead.");
+        }
+
+        if (op == TokenType.Assign)
+        {
+            rhs = ReconcileWrittenValue(callee, rhs, at);
         }
 
         int count = subscripts.Count;
@@ -5600,6 +5713,21 @@ internal sealed partial class Interpreter
             // empty — so without this the accumulation idiom would refuse the name it is written for.
             target = JgsValue.Cell(System.Array.Empty<JgsValue>());
             Rebind(variable.Name, target, env);
+        }
+
+        // w{k} = 'p' on a string array writes the string the char row spells, and only a char row
+        // (measured: w{2} = "p" is refused). The write itself is the paren write of that row.
+        if (target.IsStringArray)
+        {
+            if (value.Type != JgsType.String)
+            {
+                throw new JgsRuntimeException(brace.Line, brace.Column,
+                    "Curly brace assignment into a string expects a character vector.");
+            }
+
+            return brace.Indices.Count == 2
+                ? AssignTwoSubscripts(brace.Target, brace.Indices, TokenType.Assign, value, brace, env)
+                : AssignThroughIndex(brace.Target, brace.Indices, TokenType.Assign, value, brace, env);
         }
 
         if (target.Type != JgsType.Cell)

@@ -609,7 +609,7 @@ internal static partial class JgsBuiltins
     /// below would call <c>[]</c> logical and make <c>class([])</c> answer <c>'logical'</c> where
     /// MATLAB says <c>'double'</c> — the emptiness carries no type, so the default has to win.
     /// </remarks>
-    private static bool IsLogicalValue(JgsValue value)
+    internal static bool IsLogicalValue(JgsValue value)
     {
         if (value.Type == JgsType.Bool)
         {

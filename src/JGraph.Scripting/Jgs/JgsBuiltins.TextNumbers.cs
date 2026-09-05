@@ -45,7 +45,7 @@ internal static partial class JgsBuiltins
     /// The number a piece of text spells, or NaN when it spells none. A complex spelling answers a
     /// complex value.
     /// </summary>
-    private static JgsValue NumberSpelledBy(string text)
+    internal static JgsValue NumberSpelledBy(string text)
     {
         string trimmed = ThousandsComma.Replace(text.Trim(), string.Empty);
         Match match = NumberTextPattern.Match(trimmed);

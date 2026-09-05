@@ -100,6 +100,8 @@ internal static partial class JgsBuiltins
             {
                 JgsType.String => JgsValue.StringScalar(input.AsString),
                 JgsType.Cell => ShapedLike(input, Array.ConvertAll(input.AsCell, StringElementOf)).MarkStringArray(),
+                JgsType.Array when HasComplexElements(input) =>
+                    ShapedLike(input, Array.ConvertAll(input.BoxedElements(), static e => JgsValue.Str(ComplexText(e)))).MarkStringArray(),
                 JgsType.Array => ShapedLike(input, Array.ConvertAll(input.BoxedElements(), StringElementOf)).MarkStringArray(),
                 _ => JgsValue.StringScalar(StringElementOf(input).AsString),
             };
@@ -388,10 +390,24 @@ internal static partial class JgsBuiltins
     /// Display.
     /// </summary>
     /// <summary>One element of <c>string(x)</c>: NaN is the missing string (measured), the rest as <see cref="StringOf"/>.</summary>
-    private static JgsValue StringElementOf(JgsValue value) =>
+    internal static JgsValue StringElementOf(JgsValue value) =>
         value.Type == JgsType.Number && double.IsNaN(value.AsNumber)
             ? JgsValue.Str(MissingSentinel)
+            : value.Type == JgsType.Complex ? JgsValue.Str(ComplexText(value))
             : IsStringScalar(value) ? JgsValue.Str(TextOf(value)) : StringOf(value);
+
+    /// <summary>
+    /// A number as <c>string</c> spells a complex one: both parts, always, so string(2.5i) is
+    /// "0+2.5i" and 3 inside a complex array is "3+0i" (measured).
+    /// </summary>
+    internal static string ComplexText(JgsValue value)
+    {
+        System.Numerics.Complex z = value.Type == JgsType.Complex ? value.AsComplex : new(value.AsNumber, 0);
+        string re = NumberText([JgsValue.Number(z.Real)], 0, 0).AsString;
+        string im = NumberText([JgsValue.Number(Math.Abs(z.Imaginary))], 0, 0).AsString;
+        string sign = z.Imaginary < 0 || (z.Imaginary == 0 && double.IsNegative(z.Imaginary)) ? "-" : "+";
+        return re + sign + im + "i";
+    }
 
     private static JgsValue StringOf(JgsValue value)
     {

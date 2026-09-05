@@ -273,8 +273,8 @@ internal static partial class JgsBuiltins
     /// </summary>
     internal static JgsValue ConcatenateStrings(JgsValue left, JgsValue right, int line, int col)
     {
-        (string?[] a, int aRows, int aCols) = ConcatSide(left);
-        (string?[] b, int bRows, int bCols) = ConcatSide(right);
+        (string?[] a, int aRows, int aCols) = ConcatSide(left, line, col);
+        (string?[] b, int bRows, int bCols) = ConcatSide(right, line, col);
 
         // Implicit expansion over both dimensions: ["a" "b"] + ["1"; "2"] is 2-by-2 (measured).
         int rows = Expand("+", aRows, bRows, line, col);
@@ -300,7 +300,7 @@ internal static partial class JgsBuiltins
     /// is written as <c>string</c> writes it, so "abc" + pi is "abc3.1416"; a cell contributes the
     /// text of each element.
     /// </summary>
-    private static (string?[] Texts, int Rows, int Cols) ConcatSide(JgsValue value)
+    private static (string?[] Texts, int Rows, int Cols) ConcatSide(JgsValue value, int line, int col)
     {
         if (value.IsStringArray)
         {
@@ -315,29 +315,80 @@ internal static partial class JgsBuiltins
 
         if (value.IsCharMatrix)
         {
-            return ([value.CharMatrixText()], 1, 1);
+            // Each row of a char matrix is one string: "abc" + ['ab'; 'cd'] is 2-by-1 (measured).
+            string[] rows = value.CharMatrixRows();
+            return (rows, rows.Length, 1);
         }
 
         if (value.Type == JgsType.Cell)
         {
-            return (Array.ConvertAll(value.AsCell, e => (string?)PieceText(e)), value.Rows, value.Cols);
+            // Each cell must hold one string's worth: "abc" + {1; 2} is two strings, "abc" + {[1 2]}
+            // is refused (measured).
+            JgsValue[] cells = value.AsCell;
+            var texts = new string?[cells.Length];
+            for (int i = 0; i < cells.Length; i++)
+            {
+                JgsValue cell = cells[i];
+                bool scalar = cell.Type is JgsType.String or JgsType.Number or JgsType.Bool or JgsType.Complex
+                    || (cell.IsStringArray && cell.ArrayLength == 1);
+                if (!scalar)
+                {
+                    throw new JgsRuntimeException(line, col,
+                        $"Conversion from cell failed. Element {i + 1} must be convertible to a string scalar.");
+                }
+
+                texts[i] = PieceText(cell, line, col);
+            }
+
+            return (texts, value.Rows, value.Cols);
         }
 
         if (value.Type == JgsType.Array)
         {
-            return (Array.ConvertAll(value.BoxedElements(), e => (string?)PieceText(e)), value.Rows, value.Cols);
+            // One complex element makes every element complex: "abc" + [1+2i 3] ends in "3+0i" (measured).
+            JgsValue[] elements = value.BoxedElements();
+            return (HasComplexElements(value)
+                    ? Array.ConvertAll(elements, static e => (string?)ComplexText(e))
+                    : Array.ConvertAll(elements, e => PieceText(e, line, col)),
+                value.Rows, value.Cols);
         }
 
-        return ([PieceText(value)], 1, 1);
+        return ([PieceText(value, line, col)], 1, 1);
     }
 
-    /// <summary>The text a single piece of a concatenation contributes: a number as string() writes it.</summary>
-    private static string PieceText(JgsValue piece) => piece.Type switch
+    /// <summary>
+    /// The text a single piece of a concatenation contributes: a number as string() writes it, a
+    /// logical as true or false, NaN and the missing string as null. A struct or a function has no
+    /// text to give and is refused in MATLAB's words.
+    /// </summary>
+    private static string? PieceText(JgsValue piece, int line, int col)
     {
-        JgsType.String => piece.AsString,
-        JgsType.Number or JgsType.Complex => StringElementOf(piece).AsString,
-        JgsType.Bool => piece.AsNumber == 0 ? "0" : "1",
-        _ when IsStringScalar(piece) => TextOf(piece),
-        _ => piece.Display(),
+        switch (piece.Type)
+        {
+            case JgsType.String:
+                return IsMissingText(piece.AsString) ? null : piece.AsString;
+            case JgsType.Number or JgsType.Complex:
+            {
+                string text = StringElementOf(piece).AsString;
+                return IsMissingText(text) ? null : text;
+            }
+
+            case JgsType.Bool:
+                return piece.AsBool ? "true" : "false";
+            case JgsType.Array when piece.IsStringArray && piece.ArrayLength == 1:
+                return IsMissingText(piece.ElementAt(0).AsString) ? null : piece.ElementAt(0).AsString;
+            default:
+                throw new JgsRuntimeException(line, col,
+                    $"Conversion to string from {MatlabKindWord(piece)} is not possible.");
+        }
+    }
+
+    private static string MatlabKindWord(JgsValue value) => value.Type switch
+    {
+        JgsType.Cell => "cell",
+        JgsType.Struct => "struct",
+        JgsType.Function => "function_handle",
+        JgsType.Bool => "logical",
+        _ => value.TypeName,
     };
 }

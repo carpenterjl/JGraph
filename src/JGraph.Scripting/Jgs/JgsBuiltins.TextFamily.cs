@@ -37,7 +37,7 @@ internal static partial class JgsBuiltins
     private static readonly char[] DeblankWhitespace = ['\t', '\n', '\v', '\f', '\r', ' ', '\0'];
 
     /// <summary>Whether a string-array element is the missing string.</summary>
-    private static bool IsMissingText(string text) => text == MissingSentinel;
+    internal static bool IsMissingText(string text) => text == MissingSentinel;
 
     /// <summary>Registers the family. Runs after every other text define so it holds each name.</summary>
     internal static void RegisterTextFamilyBuiltins(JgsEnvironment env, JgsDialect dialect)
