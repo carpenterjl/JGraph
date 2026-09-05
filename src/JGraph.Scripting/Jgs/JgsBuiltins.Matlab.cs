@@ -695,8 +695,35 @@ internal static partial class JgsBuiltins
                 case 'n': sb.Append('\n'); break;
                 case 't': sb.Append('\t'); break;
                 case 'r': sb.Append('\r'); break;
-                case '0': sb.Append('\0'); break;
+                case 'a': sb.Append('\a'); break;
+                case 'b': sb.Append('\b'); break;
+                case 'f': sb.Append('\f'); break;
+                case 'v': sb.Append('\v'); break;
                 case '\\': sb.Append('\\'); break;
+                case 'x' when i + 1 < format.Length && char.IsAsciiHexDigit(format[i + 1]):
+                    // '\x41' is 'A': up to two hex digits name the character.
+                    int hex = 0;
+                    int taken = 0;
+                    while (taken < 2 && i + 1 < format.Length && char.IsAsciiHexDigit(format[i + 1]))
+                    {
+                        hex = (hex * 16) + Convert.ToInt32(format[++i].ToString(), 16);
+                        taken++;
+                    }
+
+                    sb.Append((char)hex);
+                    break;
+                case >= '0' and <= '7':
+                    // '\101' is 'A' and '\0' is NUL: up to three octal digits name the character.
+                    int octal = next - '0';
+                    int digits = 1;
+                    while (digits < 3 && i + 1 < format.Length && format[i + 1] is >= '0' and <= '7')
+                    {
+                        octal = (octal * 8) + (format[++i] - '0');
+                        digits++;
+                    }
+
+                    sb.Append((char)octal);
+                    break;
                 default:
                     // Not an escape MATLAB knows: both characters stand as written.
                     sb.Append('\\').Append(next);

@@ -1046,8 +1046,13 @@ internal static partial class JgsBuiltins
     private static JgsValue WholeNumberText(IReadOnlyList<JgsValue> args, int line, int col)
     {
         Arity("int2str", args, 1, line, col);
+
+        // Text is its character codes, which is MATLAB's reading: int2str('a') is '97'.
+        JgsValue input = args[0].Type == JgsType.String
+            ? Numbers(Array.ConvertAll(args[0].AsString.ToCharArray(), static c => (double)c))
+            : args[0];
         JgsValue rounded = MapNumeric(
-            "int2str", args[0], static x => double.IsFinite(x) ? Math.Round(x, MidpointRounding.AwayFromZero) : x,
+            "int2str", input, static x => double.IsFinite(x) ? Math.Round(x, MidpointRounding.AwayFromZero) : x,
             line, col);
         return NumberText([rounded], line, col);
     }

@@ -143,7 +143,7 @@ public class MatlabStressM43Tests : IDisposable
     public void ComposeFormatsPerElement()
     {
         Assert.Contains("0.500", RunAndRead(
-            "s = compose('%0.3f', [0.5; 0.25]);\nfprintf('%s\\n', s(1));"), StringComparison.Ordinal);
+            "s = compose('%0.3f', [0.5; 0.25]);\nfprintf('%s\\n', s{1});"), StringComparison.Ordinal);
     }
 
     [Fact]

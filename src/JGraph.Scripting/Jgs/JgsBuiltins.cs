@@ -2425,7 +2425,7 @@ internal static partial class JgsBuiltins
         RegisterSparseBuiltins(env, random);
         RegisterSparseOrderingBuiltins(env, dialect);
         RegisterGeneralizedBuiltins(env);
-        RegisterDataTypeBuiltins(env);
+        RegisterDataTypeBuiltins(env, dialect);
         RegisterFileIoBuiltins(env, host);
         RegisterElementaryBuiltins(env, dialect);
         RegisterNumericBuiltins(env);

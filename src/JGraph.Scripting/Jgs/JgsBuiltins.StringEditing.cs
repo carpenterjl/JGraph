@@ -400,7 +400,7 @@ internal static partial class JgsBuiltins
     /// not on the elementwise list because each consumes the whole array rather than mapping over it.
     /// </summary>
     private static readonly string[] TextKindPreservingBuiltins =
-        ["join", "split", "strsplit", "strjoin", "compose"];
+        ["join", "split", "strsplit", "strjoin"];
 
     /// <summary>
     /// Wraps <see cref="TextKindPreservingBuiltins"/> so a string argument produces string answers.

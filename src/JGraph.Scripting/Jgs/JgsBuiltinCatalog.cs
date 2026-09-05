@@ -500,7 +500,7 @@ public static class JgsBuiltinCatalog
         Add("extractBefore", "What precedes a marker or a position, as a string.", P("s"), P("marker"));
         Add("extractBetween", "What lies between two markers, or between two positions.", P("s"), P("from"), P("to"));
         Add("cellstr", "A string array as a cell of character rows.", P("x"));
-        Add("compose", "Formats each element through the format string, one output string per element.", P("format"), P("values"));
+        Add("compose", "Formats each row of the data through the format string, one output string per row.", P("format"), Opt("values"));
         Add("missing", "The missing value: a string slot with nothing in it (displays as <missing>).");
         Add("ismissing", "Whether each element is missing (the missing string, or NaN).", P("x"));
         Add("tiledlayout", "Starts an r-by-c tile grid (or 'flow') and answers the layout object.", P("rows"), P("cols"), Opt("name"), Opt("value"));

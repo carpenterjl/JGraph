@@ -1,4 +1,4 @@
-using System.Globalization;
+﻿using System.Globalization;
 using System.Text;
 
 namespace JGraph.Scripting.Jgs;
@@ -8,53 +8,24 @@ namespace JGraph.Scripting.Jgs;
 /// subset — <c>%d %i %f %e %g %s %x %%</c> and friends — each taking the printf flags
 /// (<c>-</c> left align, <c>+</c> always sign, a space where the sign would go, <c>0</c> zero pad,
 /// <c>#</c> alternate form) in any order, then an optional width (<c>%8d</c>) and precision
-/// (<c>%.2f</c>, <c>%.3g</c>), either of which a <c>*</c> may take from the argument list.
-/// Invariant culture throughout. Anything else is a runtime error rather than a silent
-/// pass-through, so typos surface immediately.
+/// (<c>%.2f</c>, <c>%.3g</c>), either of which a <c>*</c> may take from the argument list. A
+/// specifier may also name its argument by position (<c>%2$d</c>), and carries C's length
+/// modifiers (<c>%ld</c>) without effect. Invariant culture throughout. Anything else is a runtime
+/// error rather than a silent pass-through, so typos surface immediately.
 /// </summary>
 internal static class JgsSprintf
 {
-    /// <summary>
-    /// How many values one pass over <paramref name="format"/> consumes. <c>compose</c> needs it to
-    /// hand out its values in groups: a format with two specifiers makes one answer from two values,
-    /// not two answers from one each.
-    /// </summary>
-    public static int SpecifierCount(string format)
-    {
-        int count = 0;
-        for (int i = 0; i < format.Length; i++)
-        {
-            if (format[i] != '%')
-            {
-                continue;
-            }
-
-            if (i + 1 < format.Length && format[i + 1] == '%')
-            {
-                i++; // an escaped percent is a character, not a slot
-                continue;
-            }
-
-            count++;
-            while (i + 1 < format.Length && !char.IsAsciiLetter(format[i + 1]))
-            {
-                i++;
-            }
-        }
-
-        return count;
-    }
-
     /// <summary>Formats <paramref name="format"/> with <paramref name="args"/>; throws <see cref="FormatException"/> with a user-facing message on any misuse.</summary>
     public static string Format(string format, IReadOnlyList<JgsValue> args)
     {
         var sb = new StringBuilder(format.Length + 16);
         int argIndex = 0;
-        Emit(sb, format, args, ref argIndex, stopWhenExhausted: false, matlabRules: false);
+        var list = new List<JgsValue>(args);
+        Emit(sb, format, list, ref argIndex, stopWhenExhausted: false, matlabRules: false);
 
-        if (argIndex < args.Count)
+        if (argIndex < list.Count)
         {
-            throw new FormatException($"sprintf got {args.Count - argIndex} more argument(s) than the format uses.");
+            throw new FormatException($"sprintf got {list.Count - argIndex} more argument(s) than the format uses.");
         }
 
         return sb.ToString();
@@ -116,10 +87,16 @@ internal static class JgsSprintf
         int Width,
         int Precision);
 
-    /// <summary>One pass over the format, consuming values from <paramref name="argIndex"/> on.</summary>
-    private static void Emit(StringBuilder sb, string format, IReadOnlyList<JgsValue> args, ref int argIndex,
+    /// <summary>
+    /// One pass over the format, consuming values from <paramref name="argIndex"/> on. The list is
+    /// writable because MATLAB hands a numeric conversion the character codes of a text argument one
+    /// at a time — <c>sprintf('%d', 'ab')</c> is <c>9798</c> — so a text value met by <c>%d</c> is
+    /// spread into its codes in place and the rest of the format goes on over them.
+    /// </summary>
+    private static void Emit(StringBuilder sb, string format, List<JgsValue> args, ref int argIndex,
         bool stopWhenExhausted, bool matlabRules)
     {
+        bool positional = false;
         for (int i = 0; i < format.Length; i++)
         {
             char c = format[i];
@@ -138,6 +115,30 @@ internal static class JgsSprintf
 
             int specStart = i;
             i++; // past '%'
+
+            // '%2$d' names its argument by position instead of taking the next one. The whole format
+            // then has to say where every value comes from, so a positional pass never cycles.
+            int position = -1;
+            int digitsAt = i;
+            int candidate = 0;
+            while (digitsAt < format.Length && char.IsAsciiDigit(format[digitsAt]))
+            {
+                candidate = (candidate * 10) + (format[digitsAt] - '0');
+                digitsAt++;
+            }
+
+            if (digitsAt > i && digitsAt < format.Length && format[digitsAt] == '$')
+            {
+                if (candidate < 1 || candidate > args.Count)
+                {
+                    throw new FormatException(
+                        $"sprintf format asks for argument {candidate} in \"{format[specStart..(digitsAt + 1)]}\", but {args.Count} were given.");
+                }
+
+                position = candidate - 1;
+                positional = true;
+                i = digitsAt + 1;
+            }
 
             // The flags come first and in any order, so '%-+d' and '%+-d' are the same specifier.
             // MATLAB allows each of them once: it silently abandons the rest of the format on a
@@ -233,6 +234,12 @@ internal static class JgsSprintf
                 }
             }
 
+            // C's length modifiers: every value is a double here, so '%ld' is '%d'.
+            while (i < format.Length && format[i] is 'l' or 'h' or 'L')
+            {
+                i++;
+            }
+
             if (i >= format.Length)
             {
                 throw new FormatException($"sprintf format ends inside the specifier \"{format[specStart..]}\".");
@@ -248,7 +255,20 @@ internal static class JgsSprintf
                     + "then a width and a .precision).");
             }
 
-            if (argIndex >= args.Count)
+            if (position < 0 && matlabRules && verb is not ('s' or 'c') && argIndex < args.Count
+                && args[argIndex].Type == JgsType.String)
+            {
+                // Text met by a numeric conversion becomes its character codes, one value each; an
+                // empty text is no values at all.
+                string text = args[argIndex].AsString;
+                args.RemoveAt(argIndex);
+                for (int k = text.Length - 1; k >= 0; k--)
+                {
+                    args.Insert(argIndex, JgsValue.Number(text[k]));
+                }
+            }
+
+            if (position < 0 && argIndex >= args.Count)
             {
                 if (stopWhenExhausted)
                 {
@@ -259,7 +279,13 @@ internal static class JgsSprintf
             }
 
             var spec = new Spec(leftAlign, zeroPad, forceSign, spaceSign, alternate, width, precision);
-            sb.Append(Render(verb, spec, args[argIndex++], matlabRules));
+            JgsValue arg = position >= 0 ? args[position] : args[argIndex++];
+            sb.Append(Render(verb, spec, arg, matlabRules));
+        }
+
+        if (positional)
+        {
+            argIndex = args.Count; // every value was reachable by number; none is left over or unread
         }
     }
 
@@ -268,7 +294,7 @@ internal static class JgsSprintf
     /// negative width means left-aligned, which is C's rule and the reason this hands the sign back
     /// rather than dropping it.
     /// </summary>
-    private static int TakeStarValue(string format, IReadOnlyList<JgsValue> args, ref int argIndex, int at)
+    private static int TakeStarValue(string format, List<JgsValue> args, ref int argIndex, int at)
     {
         if (argIndex >= args.Count)
         {
@@ -287,15 +313,47 @@ internal static class JgsSprintf
     /// <summary>One value written the way its specifier asks, width and all.</summary>
     private static string Render(char verb, in Spec spec, JgsValue arg, bool matlabRules)
     {
+        if (matlabRules && arg.Type == JgsType.Complex)
+        {
+            arg = JgsValue.Number(arg.AsComplex.Real); // MATLAB prints the real part and drops the rest
+        }
+
         // %c is a single character: from a number it is the code point, and from text it is the text
         // itself, which is how MATLAB lets sprintf('%c', 'abc') print all three. Text takes no sign,
         // but it does take the zero flag — MATLAB pads '%06s' with zeros, on whichever side it aligns.
         if (verb is 's' or 'c')
         {
-            string body = verb == 's' ? arg.Display()
-                : arg.Type == JgsType.String ? arg.AsString
-                : arg.Type is JgsType.Number or JgsType.Bool ? ((char)(int)arg.AsNumber).ToString()
-                : arg.Display();
+            string body;
+            if (arg.Type == JgsType.String)
+            {
+                body = arg.AsString;
+            }
+            else if (arg.Type is JgsType.Number or JgsType.Bool)
+            {
+                // MATLAB reads a number under %s as a character code, and one that is not a code —
+                // a fraction, a negative — as if %e had been asked for, flags and width included.
+                double code = arg.AsNumber;
+                if (verb == 's' && matlabRules && !IsCharacterCode(code))
+                {
+                    return Render('e', spec, arg, matlabRules); // Inf and NaN keep their spelling
+                }
+
+                body = verb == 's' && !matlabRules ? arg.Display() : CharacterOf(code);
+            }
+            else if (matlabRules)
+            {
+                throw new FormatException($"sprintf \"%{verb}\" needs text or a number, but got a {arg.TypeName}.");
+            }
+            else
+            {
+                body = arg.Display();
+            }
+
+            // A precision on %s is the most of the text to write, which is how '%.3s' clips a label.
+            if (verb == 's' && spec.Precision >= 0 && body.Length > spec.Precision)
+            {
+                body = body[..spec.Precision];
+            }
 
             return PadText(body, spec, spec.ZeroPad ? '0' : ' ');
         }
@@ -337,6 +395,16 @@ internal static class JgsSprintf
         return RenderFloat(verb, spec, value);
     }
 
+    /// <summary>Whether <paramref name="value"/> is a whole number a character can stand for.</summary>
+    private static bool IsCharacterCode(double value) =>
+        value == Math.Floor(value) && value >= 0 && value <= 0x10FFFF;
+
+    /// <summary>The character with code <paramref name="value"/>, past the basic plane included.</summary>
+    private static string CharacterOf(double value) =>
+        value is >= 0 and <= 0x10FFFF and (< 0xD800 or > 0xDFFF) && value == Math.Floor(value)
+            ? char.ConvertFromUtf32((int)value)
+            : ((char)(int)value).ToString();
+
     /// <summary>Whether MATLAB's integer conversions can hold <paramref name="value"/> as written.</summary>
     private static bool FitsWholeNumber(double value, bool unsigned) =>
         value == Math.Floor(value)
@@ -356,20 +424,22 @@ internal static class JgsSprintf
     {
         bool negative = false;
         ulong magnitude;
+        double rounded = Math.Round(value, MidpointRounding.AwayFromZero);
         if (unsigned)
         {
             // Outside MATLAB's rules a negative can still arrive here: %u answers its magnitude and the
             // base conversions answer its bits, which is what C writes and what JGS has always written.
-            double rounded = Math.Round(value, MidpointRounding.AwayFromZero);
             magnitude = rounded >= 0 ? (ulong)rounded
                 : verb == 'u' ? (ulong)(-rounded)
                 : unchecked((ulong)(long)rounded);
         }
         else
         {
-            long whole = (long)Math.Round(value, MidpointRounding.AwayFromZero);
-            negative = whole < 0;
-            magnitude = negative ? unchecked((ulong)(-(whole + 1))) + 1UL : (ulong)whole;
+            // The magnitude is taken as a ulong so that -2^63 prints in digits like everything else;
+            // a double beyond the range (under JGS's rules, which never fall back to %e) saturates.
+            negative = rounded < 0;
+            double size = Math.Abs(rounded);
+            magnitude = size >= 18446744073709551616.0 ? ulong.MaxValue : (ulong)size;
         }
 
         string digits = verb switch
@@ -490,9 +560,18 @@ internal static class JgsSprintf
         return at < 0 ? text + "." : text[..at] + "." + text[at..];
     }
 
-    /// <summary><c>%e</c>: one digit, the decimals asked for, and an exponent of at least two digits.</summary>
-    private static string Scientific(double magnitude, int places) =>
-        magnitude.ToString("0." + new string('0', places) + "e+00", CultureInfo.InvariantCulture);
+    /// <summary>
+    /// <c>%e</c>: one digit, the decimals asked for, and an exponent of at least two digits. .NET's
+    /// "E" format writes the exact digits to any precision where a custom picture rounds at fifteen,
+    /// so it is the picture's three-digit exponent that is trimmed here rather than the digits.
+    /// </summary>
+    private static string Scientific(double magnitude, int places)
+    {
+        string text = magnitude.ToString("E" + places, CultureInfo.InvariantCulture);
+        int at = text.IndexOf('E', StringComparison.Ordinal);
+        string exponent = text[(at + 2)..].TrimStart('0');
+        return text[..at] + "e" + text[at + 1] + exponent.PadLeft(2, '0');
+    }
 
     private static string FormatGeneral(double value, int precision)
     {

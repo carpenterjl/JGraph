@@ -264,9 +264,11 @@ public class MatlabStringArrayTests : IDisposable
         assert(strcmp(sprintf("%d apples", 3), '3 apples'));
         assert(strcmp(compose("%d-%d", [1 2]), '1-2'));
 
-        % One specifier still means one answer per value, which is what compose is usually for.
+        % One answer per row of the data — and a char format makes a cell, as a string one makes
+        % a string array.
         many = compose('%0.1f', [1.25; 2.5]);
-        assert(numel(many) == 2);
+        assert(iscell(many) && numel(many) == 2);
+        assert(isequal(compose("%d-%d", [1 2; 3 4]), ["1-2"; "3-4"]));
         """);
 
     // --- The frozen dialect -----------------------------------------------------------------------
