@@ -192,8 +192,12 @@ public class MatlabStringArrayTests : IDisposable
     [Fact]
     public Task AMarkerThatIsNotThereChangesNothing() => RunAsserting("""
         assert(strcmp(insertAfter("abc", "z", "-"), 'abc'));
-        assert(strlength(extractAfter("abc", "z")) == 0);
-        assert(strlength(extractBetween("abc", "[", "]")) == 0);
+        % MATLAB's answers (R2025b): a string subject with no marker extracts the missing string,
+        % and extractBetween answers a 0-by-1 array of the pieces there were none of.
+        assert(ismissing(extractAfter("abc", "z")));
+        assert(isequal(size(extractBetween("abc", "[", "]")), [0 1]));
+        assert(strcmp(extractAfter('abc', 'z'), ''));
+        assert(isequal(size(extractBetween('abc', '[', ']')), [0 1]));
         """);
 
     /// <summary>

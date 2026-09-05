@@ -226,6 +226,17 @@ internal static partial class JgsBuiltins
             MultiOutput = (args, wanted, line, col) => EvaluateBracketed(args, line, col),
         }));
 
+        // regexprep's ${...} replacements are MATLAB code — regexprep('hello', '^(.)', '${upper($1)}')
+        // — so the builtin is declared again here with the interpreter to run them, and wrapped again
+        // so that a container subject still maps element by element.
+        env.Declare("regexprep", JgsValue.Function(new BuiltinFunction(
+            "regexprep",
+            (args, line, col) => ReplaceMatches(
+                args,
+                (code, l, c) => interpreter.EvaluateSource(code, interpreter.CurrentFrame, l, c),
+                line, col))));
+        MapTextSubject(env, new SubjectMap("regexprep", TextAnswer.Text));
+
         Define("evalc", (args, line, col) =>
         {
             ArityRange("evalc", args, 1, 2, line, col);

@@ -217,194 +217,6 @@ internal static partial class JgsBuiltins
         return built.ToString();
     }
 
-    // --- Regular-expression option words ----------------------------------------------------------
-
-    /// <summary>What MATLAB's regular-expression option words select, once they have all been read.</summary>
-    /// <param name="Options">The .NET flags the words add up to.</param>
-    /// <param name="Once">Whether only the first match counts.</param>
-    /// <param name="EmptyMatch">Whether a zero-length match is a match.</param>
-    /// <param name="PreserveCase">Whether a replacement takes the case of the text it replaces.</param>
-    private readonly record struct RegexMode(RegexOptions Options, bool Once, bool EmptyMatch, bool PreserveCase);
-
-    /// <summary>The words that name an output of <c>regexp</c>, in MATLAB's own default order.</summary>
-    private static readonly string[] RegexOutputWords =
-        ["start", "end", "tokenExtents", "match", "tokens", "names", "split"];
-
-    /// <summary>The words that change how the expression is matched, shared by every regex builtin.</summary>
-    private static readonly string[] RegexModeWords =
-    [
-        "once", "matchcase", "ignorecase", "preservecase", "noemptymatch", "emptymatch",
-        "dotall", "dotexceptnewline", "stringanchors", "lineanchors", "literalspacing", "freespacing",
-    ];
-
-    /// <summary>
-    /// Reads the option tail every regular-expression builtin shares. <paramref name="requested"/> is
-    /// non-null for the builtins that also let a word name an output; passing null makes an output word
-    /// an unknown option, which is the truth for <c>regexprep</c>.
-    /// </summary>
-    /// <remarks>
-    /// The defaults are MATLAB's, not .NET's, and two of them differ: a dot spans a newline unless
-    /// <c>'dotexceptnewline'</c> says otherwise, and a zero-length match is ignored unless
-    /// <c>'emptymatch'</c> asks for it. Both used to follow .NET by omission.
-    /// </remarks>
-    private static RegexMode ReadRegexWords(
-        string name, IReadOnlyList<JgsValue> args, int from, RegexOptions options,
-        List<string>? requested, int line, int col)
-    {
-        bool once = false;
-        bool emptyMatch = false;
-        bool preserveCase = false;
-        options |= RegexOptions.Singleline;
-
-        for (int i = from; i < args.Count; i++)
-        {
-            string word = Str(name, args, i, line, col);
-            switch (word)
-            {
-                case "once": once = true; break;
-                case "ignorecase": options |= RegexOptions.IgnoreCase; preserveCase = false; break;
-                case "matchcase": options &= ~RegexOptions.IgnoreCase; preserveCase = false; break;
-
-                // 'preservecase' matches without regard to case and then puts the case back, so it
-                // implies 'ignorecase' rather than competing with it.
-                case "preservecase": options |= RegexOptions.IgnoreCase; preserveCase = true; break;
-                case "emptymatch": emptyMatch = true; break;
-                case "noemptymatch": emptyMatch = false; break;
-                case "dotall": options |= RegexOptions.Singleline; break;
-                case "dotexceptnewline": options &= ~RegexOptions.Singleline; break;
-                case "stringanchors": options &= ~RegexOptions.Multiline; break;
-                case "lineanchors": options |= RegexOptions.Multiline; break;
-                case "literalspacing": options &= ~RegexOptions.IgnorePatternWhitespace; break;
-                case "freespacing": options |= RegexOptions.IgnorePatternWhitespace; break;
-                default:
-                    if (requested is not null && Array.IndexOf(RegexOutputWords, word) >= 0)
-                    {
-                        requested.Add(word);
-                        break;
-                    }
-
-                    throw new JgsRuntimeException(line, col,
-                        $"{name}: unknown option '{word}' (options: {RegexAlternatives(requested is not null)}).");
-            }
-        }
-
-        return new RegexMode(options, once, emptyMatch, preserveCase);
-    }
-
-    private static string RegexAlternatives(bool withOutputs)
-    {
-        var all = new List<string>();
-        foreach (string word in RegexModeWords)
-        {
-            all.Add($"'{word}'");
-        }
-
-        if (withOutputs)
-        {
-            foreach (string word in RegexOutputWords)
-            {
-                all.Add($"'{word}'");
-            }
-        }
-
-        return string.Join(", ", all);
-    }
-
-    /// <summary>
-    /// <c>regexprep(str, expression, replacement, options…)</c>. The replacement is built match by match
-    /// rather than handed to <see cref="Regex.Replace(string, string)"/> so that <c>'once'</c>,
-    /// <c>'noemptymatch'</c> and <c>'preservecase'</c> each have somewhere to act.
-    /// </summary>
-    private static JgsValue ReplaceMatches(IReadOnlyList<JgsValue> args, int line, int col)
-    {
-        if (args.Count < 3)
-        {
-            throw new JgsRuntimeException(line, col,
-                $"regexprep expects at least 3 argument(s), but got {args.Count}.");
-        }
-
-        string text = Str("regexprep", args, 0, line, col);
-        string[] patterns = PatternsOf("regexprep", args, 1, line, col);
-        string[] replacements = ReplacementsFor("regexprep", args, 2, patterns, line, col);
-        RegexMode mode = ReadRegexWords("regexprep", args, 3, RegexOptions.None, requested: null, line, col);
-
-        // Several expressions are applied one after another, each to what the one before it left —
-        // which is MATLAB's rule and not `replace`'s. The two genuinely differ, and the difference
-        // is visible in one line: regexprep("a", ["a";"b"], ["b";"c"]) is "c", because the b the
-        // first expression wrote is found by the second, where replace of the same lists is "b".
-        var built = new StringBuilder();
-        for (int p = 0; p < patterns.Length; p++)
-        {
-            built.Clear();
-            int at = 0;
-            foreach (Match match in Compile("regexprep", patterns[p], mode.Options, line, col).Matches(text))
-            {
-                if (match.Length == 0 && !mode.EmptyMatch)
-                {
-                    continue;
-                }
-
-                built.Append(text, at, match.Index - at);
-
-                // MATLAB and .NET spell a capture reference the same way ($1), so the replacement text
-                // passes straight through the substitution.
-                string produced = match.Result(replacements[p]);
-                built.Append(mode.PreserveCase ? InTheCaseOf(match.Value, produced) : produced);
-                at = match.Index + match.Length;
-                if (mode.Once)
-                {
-                    break;
-                }
-            }
-
-            built.Append(text, at, text.Length - at);
-            text = built.ToString();
-        }
-
-        return JgsValue.Str(text);
-    }
-
-    /// <summary>
-    /// A replacement wearing the case of the text it replaced: SHOUTED text stays shouted, a Capitalized
-    /// word stays capitalized, and anything else is left as the replacement was written.
-    /// </summary>
-    private static string InTheCaseOf(string matched, string replacement)
-    {
-        bool letters = false;
-        bool upper = true;
-        bool lower = true;
-        foreach (char character in matched)
-        {
-            if (!char.IsLetter(character))
-            {
-                continue;
-            }
-
-            letters = true;
-            upper &= char.IsUpper(character);
-            lower &= char.IsLower(character);
-        }
-
-        if (!letters || replacement.Length == 0)
-        {
-            return replacement;
-        }
-
-        if (upper)
-        {
-            return replacement.ToUpperInvariant();
-        }
-
-        if (lower)
-        {
-            return replacement.ToLowerInvariant();
-        }
-
-        return char.IsUpper(matched[0])
-            ? char.ToUpperInvariant(replacement[0]) + replacement[1..]
-            : replacement;
-    }
-
     // --- cellfun ----------------------------------------------------------------------------------
 
     private static readonly OptionSpec CellOptions = new(
@@ -969,12 +781,14 @@ internal static partial class JgsBuiltins
         bool wrapped = !logical && (namesClass || className != "double");
         string Wrapped(string body) => wrapped ? className + "(" + body + ")" : body;
 
-        // An empty has no literal that keeps its shape, so it is written as the call that makes it.
+        // An empty has no literal that keeps its shape, so it is written as the call that makes it —
+        // except the 0-by-0, whose literal is [].
         if (JgsEmpty.IsEmptyArray(subject))
         {
-            return JgsValue.Str(Wrapped(
-                "zeros(" + subject.Rows.ToString(CultureInfo.InvariantCulture) + ","
-                + subject.Cols.ToString(CultureInfo.InvariantCulture) + ")"));
+            return JgsValue.Str(Wrapped(subject.Rows == 0 && subject.Cols == 0
+                ? "[]"
+                : "zeros(" + subject.Rows.ToString(CultureInfo.InvariantCulture) + ","
+                    + subject.Cols.ToString(CultureInfo.InvariantCulture) + ")"));
         }
 
         // A complex value has to be written as one (M81). Before this, mat2str reached JgsMatrix.ToRows,
@@ -1021,6 +835,14 @@ internal static partial class JgsBuiltins
     private static string TextMatrixText(TextBundle text)
     {
         bool doubled = text.Kind == TextKind.String;
+
+        // An empty string array is written as the call that makes it, as an empty numeric is.
+        if (doubled && text.Texts.Length == 0)
+        {
+            return "strings(" + text.Rows.ToString(CultureInfo.InvariantCulture) + ","
+                + text.Cols.ToString(CultureInfo.InvariantCulture) + ")";
+        }
+
         var rows = new List<string>(text.Rows);
         for (int r = 0; r < System.Math.Max(text.Rows, 1); r++)
         {
@@ -1030,7 +852,7 @@ internal static partial class JgsBuiltins
                 int at = r + (c * text.Rows);
                 string piece = at < text.Texts.Length ? text.Texts[at] : string.Empty;
                 pieces.Add(doubled
-                    ? "\"" + piece + "\""
+                    ? (piece == MissingSentinel ? "string(missing)" : "\"" + piece + "\"")
                     : "'" + piece.Replace("'", "''", StringComparison.Ordinal) + "'");
             }
 

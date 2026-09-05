@@ -11,9 +11,6 @@ namespace JGraph.Scripting.Jgs;
 /// </summary>
 internal static partial class JgsBuiltins
 {
-    /// <summary>How long a regular expression may run before it is treated as pathological.</summary>
-    private static readonly TimeSpan RegexBudget = TimeSpan.FromSeconds(5);
-
     /// <summary>Registers the string and regular-expression builtins (M38).</summary>
     private static void RegisterTextBuiltins(JgsEnvironment env, JgsDialect dialect)
     {
@@ -23,7 +20,7 @@ internal static partial class JgsBuiltins
 
         RegisterStringSearch(Define, dialect);
         RegisterStringShaping(Define);
-        RegisterRegexBuiltins(Define, dialect);
+        RegisterRegexBuiltins(env, dialect);
         RegisterCharacterClasses(Define);
         RegisterByteViews(Define);
         RegisterScanning(Define, dialect);
@@ -39,7 +36,7 @@ internal static partial class JgsBuiltins
         Define("strfind", (args, line, col) =>
         {
             Arity("strfind", args, 2, line, col);
-            return Numbers(Occurrences(
+            return Found(Occurrences(
                 Str("strfind", args, 0, line, col), Str("strfind", args, 1, line, col), dialect.IndexBase));
         }, null);
 
@@ -51,8 +48,8 @@ internal static partial class JgsBuiltins
 
             // The pre-R2011 spelling, which looks for whichever argument is shorter inside the other.
             return first.Length <= second.Length
-                ? Numbers(Occurrences(second, first, dialect.IndexBase))
-                : Numbers(Occurrences(first, second, dialect.IndexBase));
+                ? Found(Occurrences(second, first, dialect.IndexBase))
+                : Found(Occurrences(first, second, dialect.IndexBase));
         }, null);
 
         void CompareFirst(string name, StringComparison comparison) =>
@@ -76,25 +73,17 @@ internal static partial class JgsBuiltins
         {
             Arity("count", args, 2, line, col);
 
+            // Occurrences are counted without overlap — count('aaa', 'aa') is 1 where strfind
+            // finds two — and several patterns are counted in one pass over the text rather than
+            // added up, so that count('abab', {'ab', 'ba'}) is 2 and not 3. Both measured.
             if (IsOnePattern(args[1], out string onePattern))
             {
                 return PerString("count", args[0],
-                    text => JgsValue.Number(Occurrences(text, onePattern, 0).Length), line, col);
+                    text => JgsValue.Number(CountAtOnce(text, [onePattern])), line, col);
             }
 
-            // Several patterns are counted together, not compared: MATLAB adds up how many times
-            // any of them appears.
             string[] wanted = PatternsOf("count", args, 1, line, col);
-            return PerString("count", args[0], text =>
-            {
-                int total = 0;
-                foreach (string pattern in wanted)
-                {
-                    total += Occurrences(text, pattern, 0).Length;
-                }
-
-                return JgsValue.Number(total);
-            }, line, col);
+            return PerString("count", args[0], text => JgsValue.Number(CountAtOnce(text, wanted)), line, col);
         }, null);
 
         Define("matches", (args, line, col) =>
@@ -120,6 +109,9 @@ internal static partial class JgsBuiltins
         }, null);
     }
 
+    /// <summary>Positions as a row, or the 0-by-0 empty MATLAB answers when there are none.</summary>
+    private static JgsValue Found(double[] positions) => positions.Length == 0 ? JgsEmpty.Zero() : Numbers(positions);
+
     /// <summary>Every start position of <paramref name="pattern"/> in <paramref name="text"/>, overlapping.</summary>
     private static double[] Occurrences(string text, string pattern, int origin)
     {
@@ -137,6 +129,40 @@ internal static partial class JgsBuiltins
         }
 
         return found.ToArray();
+    }
+
+    /// <summary>
+    /// How many times any of <paramref name="patterns"/> occurs in <paramref name="text"/>, in one
+    /// left-to-right pass without overlap. An empty pattern occurs at every position, the end included.
+    /// </summary>
+    private static int CountAtOnce(string text, string[] patterns)
+    {
+        int count = 0;
+        int at = 0;
+        while (at <= text.Length)
+        {
+            int matched = -1;
+            for (int p = 0; p < patterns.Length; p++)
+            {
+                int length = patterns[p].Length;
+                if (length == 0 || (at + length <= text.Length && string.CompareOrdinal(text, at, patterns[p], 0, length) == 0))
+                {
+                    matched = p;
+                    break;
+                }
+            }
+
+            if (matched < 0)
+            {
+                at++;
+                continue;
+            }
+
+            count++;
+            at += Math.Max(1, patterns[matched].Length);
+        }
+
+        return count;
     }
 
     /// <summary>Applies a per-string function to a string, or to every element of a cell of strings.</summary>
@@ -251,198 +277,6 @@ internal static partial class JgsBuiltins
         }
 
         return JgsValue.Str(text.ToString());
-    }
-
-    // --- Regular expressions ----------------------------------------------------------------------
-
-    private static void RegisterRegexBuiltins(
-        Action<string, Func<IReadOnlyList<JgsValue>, int, int, JgsValue>,
-            Func<IReadOnlyList<JgsValue>, int, int, int, JgsValue[]>?> Define,
-        JgsDialect dialect)
-    {
-        void Search(string name, RegexOptions options)
-        {
-            Define(name,
-                (args, line, col) => RegexOutputs(name, args, options, dialect, wanted: 1, line, col)[0],
-                (args, wanted, line, col) => RegexOutputs(name, args, options, dialect, wanted, line, col));
-        }
-
-        Search("regexp", RegexOptions.None);
-        Search("regexpi", RegexOptions.IgnoreCase);
-
-        Define("regexprep", (args, line, col) => ReplaceMatches(args, line, col), null);
-
-        Define("regexptranslate", (args, line, col) =>
-        {
-            Arity("regexptranslate", args, 2, line, col);
-            string mode = Str("regexptranslate", args, 0, line, col);
-            string text = Str("regexptranslate", args, 1, line, col);
-            return JgsValue.Str(mode switch
-            {
-                "escape" => Regex.Escape(text),
-
-                // A wildcard pattern is a file glob: * and ? mean what they mean in a shell, and
-                // everything else is literal.
-                "wildcard" => Regex.Escape(text).Replace("\\*", ".*").Replace("\\?", ".").Replace("\\.", "\\."),
-                "flexible" => text,
-                _ => throw new JgsRuntimeException(line, col,
-                    $"regexptranslate: '{mode}' is not 'escape', 'wildcard', or 'flexible'."),
-            });
-        }, null);
-    }
-
-    /// <summary>
-    /// Runs a regular expression and produces the outputs MATLAB's <c>regexp</c> would. Option words
-    /// name the outputs and fix their order; with none given the order is MATLAB's default
-    /// (start, end, tokenExtents, match, tokens, names, split).
-    /// </summary>
-    private static JgsValue[] RegexOutputs(
-        string name, IReadOnlyList<JgsValue> args, RegexOptions options, JgsDialect dialect,
-        int wanted, int line, int col)
-    {
-        if (args.Count < 2)
-        {
-            throw new JgsRuntimeException(line, col, $"{name} expects at least 2 argument(s), but got {args.Count}.");
-        }
-
-        string text = Str(name, args, 0, line, col);
-        string pattern = Str(name, args, 1, line, col);
-
-        var requested = new List<string>();
-        RegexMode mode = ReadRegexWords(name, args, 2, options, requested, line, col);
-        if (requested.Count == 0)
-        {
-            requested.AddRange(RegexOutputWords);
-        }
-
-        // MATLAB ignores a zero-length match unless 'emptymatch' asks for it, which is the opposite
-        // of what .NET does with the same expression.
-        var matches = new List<Match>();
-        foreach (Match match in Compile(name, pattern, mode.Options, line, col).Matches(text))
-        {
-            if (match.Length > 0 || mode.EmptyMatch)
-            {
-                matches.Add(match);
-            }
-        }
-
-        int produced = Math.Min(Math.Max(wanted, 1), requested.Count);
-        var outputs = new JgsValue[produced];
-        for (int i = 0; i < produced; i++)
-        {
-            outputs[i] = RegexOutput(requested[i], matches, text, dialect.IndexBase, mode.Once);
-        }
-
-        return outputs;
-    }
-
-    /// <summary>Builds one named <c>regexp</c> output from the match list.</summary>
-    private static JgsValue RegexOutput(string kind, IReadOnlyList<Match> matches, string text, int origin, bool once)
-    {
-        switch (kind)
-        {
-            case "start":
-                return Once(once, matches.Select(m => JgsValue.Number(m.Index + origin)).ToArray(), JgsValue.Array([]));
-
-            case "end":
-                // The end index is the last character of the match, not one past it.
-                return Once(once, matches.Select(m => JgsValue.Number(m.Index + m.Length - 1 + origin)).ToArray(), JgsValue.Array([]));
-
-            case "match":
-                return Once(once, matches.Select(m => JgsValue.Str(m.Value)).ToArray(), JgsValue.Str(string.Empty), asCell: true);
-
-            case "tokens":
-                return Once(once, matches.Select(m => TokensOf(m)).ToArray(), JgsValue.Cell([]), asCell: true);
-
-            case "tokenExtents":
-                return Once(once, matches.Select(m => TokenExtentsOf(m, origin)).ToArray(), JgsValue.Array([]), asCell: true);
-
-            case "names":
-                return matches.Count == 0 ? JgsValue.EmptyStruct() : NamesOf(matches[0]);
-
-            default:
-                return SplitOn(matches, text);
-        }
-    }
-
-    /// <summary>Wraps a per-match list as MATLAB does: a cell (or array), or the first item for 'once'.</summary>
-    private static JgsValue Once(bool once, JgsValue[] items, JgsValue empty, bool asCell = false)
-    {
-        if (once)
-        {
-            return items.Length == 0 ? empty : items[0];
-        }
-
-        return asCell ? JgsValue.Cell(items) : JgsValue.Array(items);
-    }
-
-    private static JgsValue TokensOf(Match match)
-    {
-        var tokens = new List<JgsValue>();
-        for (int g = 1; g < match.Groups.Count; g++)
-        {
-            tokens.Add(JgsValue.Str(match.Groups[g].Value));
-        }
-
-        return JgsValue.Cell(tokens.ToArray());
-    }
-
-    private static JgsValue TokenExtentsOf(Match match, int origin)
-    {
-        var rows = new List<JgsValue>();
-        for (int g = 1; g < match.Groups.Count; g++)
-        {
-            Group group = match.Groups[g];
-            rows.Add(JgsValue.Array([
-                JgsValue.Number(group.Index + origin),
-                JgsValue.Number(group.Index + group.Length - 1 + origin),
-            ]));
-        }
-
-        return JgsValue.Array(rows.ToArray());
-    }
-
-    private static JgsValue NamesOf(Match match)
-    {
-        var fields = new Dictionary<string, JgsValue>(StringComparer.Ordinal);
-        foreach (Group group in match.Groups)
-        {
-            // .NET numbers unnamed groups, so a purely numeric name is a positional group, not a
-            // named one, and MATLAB's 'names' output only carries the named ones.
-            if (!int.TryParse(group.Name, out _))
-            {
-                fields[group.Name] = JgsValue.Str(group.Value);
-            }
-        }
-
-        return JgsValue.Struct(fields);
-    }
-
-    private static JgsValue SplitOn(IReadOnlyList<Match> matches, string text)
-    {
-        var pieces = new List<JgsValue>();
-        int at = 0;
-        foreach (Match match in matches)
-        {
-            pieces.Add(JgsValue.Str(text[at..match.Index]));
-            at = match.Index + match.Length;
-        }
-
-        pieces.Add(JgsValue.Str(text[at..]));
-        return JgsValue.Cell(pieces.ToArray());
-    }
-
-    /// <summary>Compiles a pattern, turning a bad one into a script diagnostic rather than a crash.</summary>
-    private static Regex Compile(string name, string pattern, RegexOptions options, int line, int col)
-    {
-        try
-        {
-            return new Regex(pattern, options, RegexBudget);
-        }
-        catch (ArgumentException ex)
-        {
-            throw new JgsRuntimeException(line, col, $"{name}: '{pattern}' is not a valid regular expression — {ex.Message}");
-        }
     }
 
     // --- Character classification -----------------------------------------------------------------

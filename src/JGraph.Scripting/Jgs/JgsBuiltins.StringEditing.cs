@@ -22,9 +22,9 @@ internal static partial class JgsBuiltins
     /// </summary>
     private static readonly string[] ElementwiseTextBuiltins =
     [
-        "upper", "lower", "strtrim", "strip", "strrep", "replace", "reverse", "str2double",
+        "upper", "lower", "strtrim", "strip", "replace", "reverse", "str2double",
         "contains", "startsWith", "endsWith", "strcmp", "strcmpi", "strncmp", "strncmpi",
-        "erase", "pad", "insertAfter", "insertBefore", "extractAfter", "extractBefore",
+        "erase", "pad",
     ];
 
     /// <summary>
@@ -182,52 +182,22 @@ internal static partial class JgsBuiltins
         Define("erase", (args, line, col) =>
         {
             Arity("erase", args, 2, line, col);
+            string text = Str("erase", args, 0, line, col);
+
+            // Nothing is erased for an empty pattern: erase('abc', '') is 'abc' (measured), where
+            // .NET's Replace would refuse the empty search text.
             if (IsOnePattern(args[1], out string onlyGone))
             {
-                return JgsValue.Str(Str("erase", args, 0, line, col)
-                    .Replace(onlyGone, string.Empty, StringComparison.Ordinal));
+                return JgsValue.Str(onlyGone.Length == 0 ? text : text.Replace(onlyGone, string.Empty, StringComparison.Ordinal));
             }
 
-            string[] gone = PatternsOf("erase", args, 1, line, col);
-            return JgsValue.Str(ReplacedAtOnce(
-                Str("erase", args, 0, line, col), gone, new string?[gone.Length]));
+            string[] gone = Array.FindAll(PatternsOf("erase", args, 1, line, col), static p => p.Length > 0);
+            return JgsValue.Str(gone.Length == 0 ? text : ReplacedAtOnce(text, gone, new string?[gone.Length]));
         });
 
-        Define("insertAfter", (args, line, col) => Insert("insertAfter", args, after: true, line, col));
-        Define("insertBefore", (args, line, col) => Insert("insertBefore", args, after: false, line, col));
-
-        Define("extractAfter", (args, line, col) => Extract("extractAfter", args, after: true, line, col));
-        Define("extractBefore", (args, line, col) => Extract("extractBefore", args, after: false, line, col));
-
-        Define("extractBetween", (args, line, col) =>
-        {
-            Arity("extractBetween", args, 3, line, col);
-            string text = Str("extractBetween", args, 0, line, col);
-
-            // Two numbers are positions and two strings are delimiters, which is the same overload
-            // MATLAB has and the reason the arguments are read rather than declared.
-            if (args[1].Type != JgsType.String)
-            {
-                int from = Count("extractBetween", args, 1, line, col) - 1;
-                int to = Count("extractBetween", args, 2, line, col) - 1;
-                return JgsValue.StringScalar(Slice(text, from, to - from + 1));
-            }
-
-            string open = Str("extractBetween", args, 1, line, col);
-            string close = Str("extractBetween", args, 2, line, col);
-            int start = text.IndexOf(open, StringComparison.Ordinal);
-            if (start < 0)
-            {
-                // A marker that is not there gives back empty text rather than no text: the answer
-                // is still one string, and an array of none breaks every caller that goes on to
-                // index it.
-                return JgsValue.StringScalar(string.Empty);
-            }
-
-            start += open.Length;
-            int stop = text.IndexOf(close, start, StringComparison.Ordinal);
-            return JgsValue.StringScalar(stop < 0 ? string.Empty : text[start..stop]);
-        });
+        // insertAfter, insertBefore, extractAfter, extractBefore, extractBetween and strrep read their
+        // own containers and are declared beside each other.
+        RegisterTextPositionBuiltins(env);
 
         // str2num is not here: it evaluates its text as an expression, so it needs the running
         // interpreter and is declared beside eval, which is the only thing that has one.
@@ -244,59 +214,6 @@ internal static partial class JgsBuiltins
         _ when IsStringScalar(value) => TextOf(value),
         _ => throw new JgsRuntimeException(line, col, $"char cannot convert a {value.TypeName}."),
     };
-
-    private static JgsValue Insert(string name, IReadOnlyList<JgsValue> args, bool after, int line, int col)
-    {
-        Arity(name, args, 3, line, col);
-        string text = Str(name, args, 0, line, col);
-        string insert = Str(name, args, 2, line, col);
-
-        if (args[1].Type != JgsType.String)
-        {
-            int at = Count(name, args, 1, line, col);
-            int cut = Math.Clamp(after ? at : at - 1, 0, text.Length);
-            return JgsValue.Str(text[..cut] + insert + text[cut..]);
-        }
-
-        string marker = Str(name, args, 1, line, col);
-        int found = text.IndexOf(marker, StringComparison.Ordinal);
-        if (found < 0)
-        {
-            return JgsValue.Str(text); // no marker, nothing inserted — MATLAB's answer too
-        }
-
-        int point = after ? found + marker.Length : found;
-        return JgsValue.Str(text[..point] + insert + text[point..]);
-    }
-
-    private static JgsValue Extract(string name, IReadOnlyList<JgsValue> args, bool after, int line, int col)
-    {
-        Arity(name, args, 2, line, col);
-        string text = Str(name, args, 0, line, col);
-
-        if (args[1].Type != JgsType.String)
-        {
-            int at = Count(name, args, 1, line, col);
-            int cut = Math.Clamp(after ? at : at - 1, 0, text.Length);
-            return JgsValue.StringScalar(after ? text[cut..] : text[..cut]);
-        }
-
-        string marker = Str(name, args, 1, line, col);
-        int found = text.IndexOf(marker, StringComparison.Ordinal);
-        if (found < 0)
-        {
-            return JgsValue.StringScalar(string.Empty); // see extractBetween: empty text, not no text
-        }
-
-        return JgsValue.StringScalar(after ? text[(found + marker.Length)..] : text[..found]);
-    }
-
-    /// <summary>A substring clamped to what is there, so an out-of-range request answers rather than throws.</summary>
-    private static string Slice(string text, int from, int length)
-    {
-        int start = Math.Clamp(from, 0, text.Length);
-        return text.Substring(start, Math.Clamp(length, 0, text.Length - start));
-    }
 
     // --- The elementwise retrofit ------------------------------------------------------------------
 
@@ -448,10 +365,20 @@ internal static partial class JgsBuiltins
             return JgsValue.StringScalar(answer.AsString);
         }
 
-        return answer.Type == JgsType.Array && !answer.IsStringArray && answer.ArrayLength > 0
-               && Array.TrueForAll(answer.BoxedElements(), static e => e.Type == JgsType.String)
-            ? answer.MarkStringArray()
-            : answer;
+        if (answer.Type == JgsType.Array && !answer.IsStringArray && answer.ArrayLength > 0
+            && Array.TrueForAll(answer.BoxedElements(), static e => e.Type == JgsType.String))
+        {
+            return answer.MarkStringArray();
+        }
+
+        // strsplit answers its pieces in a cell, which for a string subject is a string array of
+        // the same shape: strsplit("a,b", ",") is ["a" "b"] (measured).
+        if (answer.Type == JgsType.Cell && Array.TrueForAll(answer.AsCell, static e => e.Type == JgsType.String))
+        {
+            return JgsValue.StringArray(answer.AsCell, answer.Rows, answer.Cols);
+        }
+
+        return answer;
     }
 
     /// <summary>

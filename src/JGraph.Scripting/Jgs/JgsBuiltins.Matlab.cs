@@ -235,12 +235,6 @@ internal static partial class JgsBuiltins
         Define("strcmp", (args, line, col) => StringCompare("strcmp", args, line, col, StringComparison.Ordinal));
         Define("strcmpi", (args, line, col) => StringCompare("strcmpi", args, line, col, StringComparison.OrdinalIgnoreCase));
 
-        Define("strrep", (args, line, col) =>
-        {
-            Arity("strrep", args, 3, line, col);
-            return JgsValue.Str(Str("strrep", args, 0, line, col)
-                .Replace(Str("strrep", args, 1, line, col), Str("strrep", args, 2, line, col), StringComparison.Ordinal));
-        });
 
         Define("strtrim", (args, line, col) =>
         {

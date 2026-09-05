@@ -61,9 +61,6 @@ internal static partial class JgsBuiltins
     [
         new("split", TextAnswer.Pieces),
         new("regexprep", TextAnswer.Text),
-        new("extractBetween", TextAnswer.Text),
-        new("regexp", TextAnswer.Boxed),
-        new("regexpi", TextAnswer.Boxed),
         new("strfind", TextAnswer.Boxed),
     ];
 
@@ -75,33 +72,43 @@ internal static partial class JgsBuiltins
     {
         foreach (SubjectMap map in SubjectMappedBuiltins)
         {
-            if (!env.TryGet(map.Name, out JgsValue declared)
-                || declared.Type != JgsType.Function
-                || declared.AsCallable is not BuiltinFunction inner)
-            {
-                continue;
-            }
-
-            SubjectMap captured = map;
-            env.Declare(map.Name, JgsValue.Function(new BuiltinFunction(
-                map.Name,
-                (args, line, col) => OverSubject(captured, inner, args, wanted: 1, line, col)[0])
-            {
-                // The wrapper has to see the string array to map over it, so it opts out of the
-                // demotion — and then hands each element down as the char row the body expects.
-                KeepsStringArguments = true,
-                BindsAnsAsStatement = inner.BindsAnsAsStatement,
-                AutoCallsBare = inner.AutoCallsBare,
-                KnowsWhenDiscarded = inner.KnowsWhenDiscarded,
-
-                // Carried only where there was one to carry: handing a name a multi-output form it
-                // never had changes how CallMultiple treats it, which is a change to the calling
-                // convention rather than to the answer.
-                MultiOutput = inner.MultiOutput is null
-                    ? null
-                    : (args, wanted, line, col) => OverSubject(captured, inner, args, wanted, line, col),
-            }));
+            MapTextSubject(env, map);
         }
+    }
+
+    /// <summary>
+    /// Wraps one name so a string array or a cell of char in its first argument is answered once per
+    /// element. Also called by <see cref="RegisterEvalBuiltins"/>, which declares <c>regexprep</c> a
+    /// second time once there is an interpreter to hand it and has to wrap it again.
+    /// </summary>
+    private static void MapTextSubject(JgsEnvironment env, SubjectMap map)
+    {
+        if (!env.TryGet(map.Name, out JgsValue declared)
+            || declared.Type != JgsType.Function
+            || declared.AsCallable is not BuiltinFunction inner)
+        {
+            return;
+        }
+
+        SubjectMap captured = map;
+        env.Declare(map.Name, JgsValue.Function(new BuiltinFunction(
+            map.Name,
+            (args, line, col) => OverSubject(captured, inner, args, wanted: 1, line, col)[0])
+        {
+            // The wrapper has to see the string array to map over it, so it opts out of the
+            // demotion — and then hands each element down as the char row the body expects.
+            KeepsStringArguments = true,
+            BindsAnsAsStatement = inner.BindsAnsAsStatement,
+            AutoCallsBare = inner.AutoCallsBare,
+            KnowsWhenDiscarded = inner.KnowsWhenDiscarded,
+
+            // Carried only where there was one to carry: handing a name a multi-output form it
+            // never had changes how CallMultiple treats it, which is a change to the calling
+            // convention rather than to the answer.
+            MultiOutput = inner.MultiOutput is null
+                ? null
+                : (args, wanted, line, col) => OverSubject(captured, inner, args, wanted, line, col),
+        }));
     }
 
     /// <summary>
@@ -535,6 +542,14 @@ internal static partial class JgsBuiltins
             throw new JgsRuntimeException(line, col, $"{name} expects an argument in position {index + 1}.");
         }
 
+        // A char matrix is not a list of patterns to MATLAB — replace('abc', ['a';'b'], 'X') is
+        // refused by name — so its rows are not quietly read as one.
+        if (args[index].IsCharMatrix)
+        {
+            throw new JgsRuntimeException(line, col,
+                $"{name}: text to search for must be a char row vector, a cell array of char row vectors, or a string array.");
+        }
+
         return TextElementsOf(args[index])
             ?? throw new JgsRuntimeException(line, col,
                 $"{name} expects argument {index + 1} to be text, but got a {args[index].TypeName}.");
@@ -554,7 +569,7 @@ internal static partial class JgsBuiltins
     /// </remarks>
     private static string ReplacedAtOnce(string text, string[] patterns, string?[] with)
     {
-        if (patterns.Length == 1)
+        if (patterns.Length == 1 && patterns[0].Length > 0)
         {
             // The null a caller passes for "erase this" is an empty replacement, not a reason to
             // walk the string a character at a time. Getting this wrong made erase over 200,000
@@ -562,15 +577,17 @@ internal static partial class JgsBuiltins
             return text.Replace(patterns[0], with[0] ?? string.Empty, StringComparison.Ordinal);
         }
 
+        // An empty pattern matches at every position, the end included, which is how
+        // replace('abc', '', 'X') comes to be 'XaXbXcX' (measured).
         var built = new System.Text.StringBuilder(text.Length);
         int at = 0;
-        while (at < text.Length)
+        while (at <= text.Length)
         {
             int matched = -1;
             for (int p = 0; p < patterns.Length; p++)
             {
-                if (patterns[p].Length > 0
-                    && string.CompareOrdinal(text, at, patterns[p], 0, patterns[p].Length) == 0)
+                int length = patterns[p].Length;
+                if (length == 0 || (at + length <= text.Length && string.CompareOrdinal(text, at, patterns[p], 0, length) == 0))
                 {
                     matched = p;
                     break;
@@ -579,12 +596,29 @@ internal static partial class JgsBuiltins
 
             if (matched < 0)
             {
-                built.Append(text[at++]);
+                if (at < text.Length)
+                {
+                    built.Append(text[at]);
+                }
+
+                at++;
                 continue;
             }
 
             built.Append(with[matched] ?? string.Empty);
-            at += patterns[matched].Length;
+            if (patterns[matched].Length == 0)
+            {
+                if (at < text.Length)
+                {
+                    built.Append(text[at]);
+                }
+
+                at++;
+            }
+            else
+            {
+                at += patterns[matched].Length;
+            }
         }
 
         return built.ToString();

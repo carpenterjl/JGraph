@@ -1390,23 +1390,14 @@ internal static partial class JgsBuiltins
         Define("replace", (args, line, col) =>
         {
             Arity("replace", args, 3, line, col);
+            // An empty pattern is found at every position, so replace('abc', '', 'X') is
+            // 'XaXbXcX' — MATLAB's answer, and ReplacedAtOnce's, where .NET's Replace refuses it.
             if (IsOnePattern(args[1], out string onlyOld) && IsOnePattern(args[2], out string onlyNew))
             {
-                if (onlyOld.Length == 0)
-                {
-                    throw new JgsRuntimeException(line, col, "replace cannot search for an empty string.");
-                }
-
-                return JgsValue.Str(Str("replace", args, 0, line, col)
-                    .Replace(onlyOld, onlyNew, StringComparison.Ordinal));
+                return JgsValue.Str(ReplacedAtOnce(Str("replace", args, 0, line, col), [onlyOld], [onlyNew]));
             }
 
             string[] wanted = PatternsOf("replace", args, 1, line, col);
-            if (Array.Exists(wanted, static p => p.Length == 0))
-            {
-                throw new JgsRuntimeException(line, col, "replace cannot search for an empty string.");
-            }
-
             return JgsValue.Str(ReplacedAtOnce(
                 Str("replace", args, 0, line, col),
                 wanted,

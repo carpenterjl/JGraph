@@ -305,7 +305,7 @@ public static class JgsBuiltinCatalog
         Add("findstr", "The positions where the shorter of two strings appears in the longer.", P("a"), P("b"));
         Add("strncmp", "Whether two strings agree in their first n characters.", P("a"), P("b"), P("n"));
         Add("strncmpi", "Whether two strings agree in their first n characters, ignoring case.", P("a"), P("b"), P("n"));
-        Add("count", "How many times a pattern appears in a string, or in each of a cell of strings.", P("text"), P("pattern"));
+        Add("count", "How many times a pattern appears, without overlap, in a string or in each element of a container; several patterns are counted in one pass.", P("text"), P("pattern"));
         Add("matches", "Whether a string is exactly the pattern.", P("text"), P("pattern"));
         Add("strlength", "The number of characters in a string, or in each of a cell of strings.", P("text"));
         Add("deblank", "A string with its trailing whitespace removed.", P("text"));
@@ -315,9 +315,9 @@ public static class JgsBuiltinCatalog
         Add("convertCharsToStrings", "The value unchanged: JGraph's text is char, and there is no string type to convert to.", P("x"));
         Add("convertStringsToChars", "The value unchanged: JGraph's text is already char.", P("x"));
         Add("convertContainedStringsToChars", "The value unchanged: JGraph's text is already char.", P("x"));
-        Add("regexp", "Regular expression search: start positions, or the outputs the option words name.", P("text"), P("expr"), Opt("option"));
-        Add("regexpi", "Regular expression search, ignoring case.", P("text"), P("expr"), Opt("option"));
-        Add("regexprep", "Every match of a regular expression replaced; $1 refers to a captured group. Option words: 'once', 'ignorecase', 'preservecase', 'emptymatch', 'dotexceptnewline', 'lineanchors', 'freespacing'.", P("text"), P("expr"), P("replacement"), Opt("option"), Opt("option2"));
+        Add("regexp", "Regular expression search over a char row, string array or cell: start positions, or the outputs the option words name ('match', 'tokens', 'names', 'split', 'start', 'end', 'tokenExtents'), with 'once', 'ignorecase', 'emptymatch', 'lineanchors', 'forceCellOutput' and the rest. A string subject answers strings; \\< and \\> are word anchors.", P("text"), P("expr"), Opt("option"));
+        Add("regexpi", "Regular expression search, ignoring case; otherwise regexp.", P("text"), P("expr"), Opt("option"));
+        Add("regexprep", "Every match of a regular expression replaced. In the replacement $0 is the match, $1 and $<name> are tokens, ${expr} runs MATLAB code on them, and \\n, \\\\ and \\$ are decoded. Option words: 'once', 'ignorecase', 'preservecase', 'emptymatch', 'dotexceptnewline', 'lineanchors', 'freespacing', or a match number.", P("text"), P("expr"), P("replacement"), Opt("option"), Opt("option2"));
         Add("regexptranslate", "A string turned into a regular expression: 'escape', 'wildcard', or 'flexible'.", P("mode"), P("text"));
         Add("isstrprop", "Which characters belong to a category ('alpha', 'digit', 'wspace', …).", P("text"), P("category"));
         Add("unicode2native", "The bytes a string encodes to (UTF-8 by default).", P("text"), Opt("encoding"));
@@ -494,11 +494,11 @@ public static class JgsBuiltinCatalog
         Add("strip", "Whitespace removed from a string: strip(s), or strip(s, 'left'|'right'|'both').", P("s"), P("side?"));
         Add("pad", "A string padded to a width: pad(s, width) or pad(s, width, 'left'|'right'|'both').", P("s"), P("width?"), P("side?"));
         Add("erase", "The string with every occurrence of a piece of text taken out.", P("s"), P("what"));
-        Add("insertAfter", "Text inserted after a marker or a position.", P("s"), P("marker"), P("what"));
-        Add("insertBefore", "Text inserted before a marker or a position.", P("s"), P("marker"), P("what"));
-        Add("extractAfter", "What follows a marker or a position, as a string.", P("s"), P("marker"));
-        Add("extractBefore", "What precedes a marker or a position, as a string.", P("s"), P("marker"));
-        Add("extractBetween", "What lies between two markers, or between two positions.", P("s"), P("from"), P("to"));
+        Add("insertAfter", "Text inserted after every occurrence of a marker, or after a position, in the kind of text given.", P("s"), P("marker"), P("what"));
+        Add("insertBefore", "Text inserted before every occurrence of a marker, or before a position, in the kind of text given.", P("s"), P("marker"), P("what"));
+        Add("extractAfter", "What follows the first occurrence of a marker, or a position; char in, char out ('' when absent), string in, string out (missing when absent).", P("s"), P("marker"));
+        Add("extractBefore", "What precedes the first occurrence of a marker, or a position; char in, char out ('' when absent), string in, string out (missing when absent).", P("s"), P("marker"));
+        Add("extractBetween", "Every piece between two markers, as a column, or the piece between two positions; 'Boundaries', 'inclusive' keeps the markers.", P("s"), P("from"), P("to"), Opt("Boundaries"), Opt("side"));
         Add("cellstr", "A string array as a cell of character rows.", P("x"));
         Add("compose", "Formats each row of the data through the format string, one output string per row.", P("format"), Opt("values"));
         Add("missing", "The missing value: a string slot with nothing in it (displays as <missing>).");
@@ -546,7 +546,7 @@ public static class JgsBuiltinCatalog
         Add("isstruct", "True for a struct.", P("x"));
         Add("strcmp", "Compares two strings (or a cell of strings against one), case-sensitively.", P("a"), P("b"));
         Add("strcmpi", "Compares two strings ignoring case.", P("a"), P("b"));
-        Add("strrep", "Replaces every occurrence of one substring with another.", P("text"), P("find"), P("replace"));
+        Add("strrep", "Replaces every occurrence of one substring with another, overlapping occurrences included; any string argument makes the answer a string, any cell a cell.", P("text"), P("find"), P("replace"));
         Add("strtrim", "Removes leading and trailing whitespace.", P("text"));
         Add("strsplit", "Splits text into a cell of pieces, on a delimiter (or a cell of them) or on whitespace; [C, matches] also reports the delimiters cut on.", P("text"), Opt("delimiter"), Opt("options"));
         Add("strjoin", "Joins a cell (or array) of pieces into one string; a cell separator gives every gap its own.", P("parts"), Opt("separator"));

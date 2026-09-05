@@ -189,8 +189,8 @@ public class MatlabHistogram2M122Tests : IDisposable
               size(r, 2), size(p, 2), mat2str(round(r2)), mat2str(k2));
             """);
 
-        // mat2str writes an empty as the call that makes it, as MATLAB does.
-        Assert.Equal("[1;0] [-2;-1] zeros(0,0) 1 1 | [-6;-4;3] 2", answer);
+        // mat2str writes the 0-by-0 empty as [], as MATLAB does.
+        Assert.Equal("[1;0] [-2;-1] [] 1 1 | [-6;-4;3] 2", answer);
     });
 
     [Fact]
