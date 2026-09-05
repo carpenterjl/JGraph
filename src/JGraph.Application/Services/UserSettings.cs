@@ -26,7 +26,7 @@ public sealed class UserSettings
     /// <summary>The full type names of discovered plugins the user has turned off.</summary>
     public List<string> DisabledPlugins { get; set; } = [];
 
-    /// <summary>The language a blank New Script starts in, or null for JGS.</summary>
+    /// <summary>The language a blank New Script starts in, or null for MATLAB.</summary>
     public string? DefaultNewScriptLanguage { get; set; }
 
     /// <summary>The application chrome theme by id ("light", "dark"), or null for the shipped default.</summary>

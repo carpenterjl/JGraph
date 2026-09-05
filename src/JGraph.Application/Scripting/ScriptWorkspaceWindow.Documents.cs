@@ -48,11 +48,13 @@ public partial class ScriptWorkspaceWindow
     }
 
     /// <summary>The language a blank New Script opens in: the user's preference when it names an
-    /// available engine, otherwise JGS.</summary>
+    /// available engine, otherwise MATLAB — the same default the console prompt starts on.</summary>
     private string DefaultNewScriptLanguage()
     {
         string? preferred = _settings?.Current.DefaultNewScriptLanguage;
-        return preferred is not null && _engines.ContainsKey(preferred) ? preferred : "JGS";
+        return preferred is not null && _engines.ContainsKey(preferred) ? preferred
+            : _engines.ContainsKey(DefaultConsoleLanguage) ? DefaultConsoleLanguage
+            : "JGS";
     }
 
     /// <summary>The folder open/save dialogs start in when no workspace is open, from the user's settings.</summary>

@@ -76,9 +76,11 @@ public sealed class OptionsViewModel
             ? theme
             : AvailableThemes[0];
 
+        // MATLAB when nothing is chosen, matching the window's own default for a blank New Script.
         NewScriptLanguages = [.. languages];
         DefaultNewScriptLanguage = current.DefaultNewScriptLanguage is { } language && NewScriptLanguages.Contains(language)
             ? language
+            : NewScriptLanguages.Contains("MATLAB") ? "MATLAB"
             : NewScriptLanguages.FirstOrDefault() ?? "JGS";
 
         Plugins = new ObservableCollection<PluginToggle>(DiscoverToggles(pluginDirectory, current));

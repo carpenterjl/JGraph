@@ -13,7 +13,8 @@ namespace JGraph.Application.Scripting;
 
 /// <summary>
 /// The dock layout and session persistence: restoring the previous session on open, the tool-pane
-/// registry behind the View menu, and saving workspace, open files, breakpoints and layout on close.
+/// registry behind the View menu, and saving workspace, open files, breakpoints, the console
+/// language and layout on close.
 /// </summary>
 public partial class ScriptWorkspaceWindow
 {
@@ -116,6 +117,7 @@ public partial class ScriptWorkspaceWindow
         }
 
         RestorePlacement(state);
+        SelectConsoleLanguage(state.ConsoleLanguage);
 
         foreach ((string file, List<int> lines) in state.Breakpoints)
         {
@@ -402,6 +404,7 @@ public partial class ScriptWorkspaceWindow
             Breakpoints = new Dictionary<string, List<int>>(_persistedBreakpoints),
             DockLayoutXml = SerializeLayout(),
             LayoutSchema = ScriptWorkspaceStateFormat.CurrentLayoutSchema,
+            ConsoleLanguage = _consoleLanguage,
 
             // RestoreBounds, not Left/Top/Width/Height: those report the maximized frame, so a window
             // closed maximized would reopen full-screen-sized but un-maximized on the next un-maximize.

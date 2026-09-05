@@ -131,7 +131,14 @@ public partial class ScriptWorkspaceWindow
     /// <summary>Where Up/Down is in the history; equal to the count when the user is on a fresh line.</summary>
     private int _historyIndex;
 
-    private string _consoleLanguage = "JGS";
+    private string _consoleLanguage = DefaultConsoleLanguage;
+
+    /// <summary>
+    /// The language the prompt speaks until the user picks another: MATLAB, the language most
+    /// people arrive with. The pick is remembered with the window layout (see the session state),
+    /// so it is a first-run default rather than a setting.
+    /// </summary>
+    private const string DefaultConsoleLanguage = "MATLAB";
 
     /// <summary>
     /// Fills the language picker. Engines that cannot host a session, and engines whose runtime is
@@ -141,12 +148,10 @@ public partial class ScriptWorkspaceWindow
     private void BuildConsoleLanguages(IReadOnlyList<IScriptEngine> engines)
     {
         ConsoleLanguage.Items.Clear();
-        ComboBoxItem? first = null;
-
         foreach (IScriptEngine engine in engines)
         {
             bool repl = engine is IScriptRepl;
-            var item = new ComboBoxItem
+            ConsoleLanguage.Items.Add(new ComboBoxItem
             {
                 Content = engine.Language,
                 Tag = engine.Language,
@@ -154,15 +159,30 @@ public partial class ScriptWorkspaceWindow
                 ToolTip = repl
                     ? engine.IsAvailable ? null : PythonScriptEngine.UnavailableMessage
                     : $"{engine.Language} has no interactive console.",
-            };
-
-            ConsoleLanguage.Items.Add(item);
-            first ??= item.IsEnabled ? item : null;
+            });
         }
 
-        ConsoleLanguage.SelectedItem = first;
-        _consoleLanguage = first?.Tag as string ?? "JGS";
+        SelectConsoleLanguage(DefaultConsoleLanguage);
     }
+
+    /// <summary>
+    /// Points the prompt at <paramref name="language"/> when that console exists here, else at the
+    /// default, else at the first console there is — a restored session must not select a language
+    /// this machine cannot run.
+    /// </summary>
+    private void SelectConsoleLanguage(string? language)
+    {
+        ComboBoxItem? pick = FindConsoleLanguage(language) ?? FindConsoleLanguage(DefaultConsoleLanguage)
+            ?? ConsoleLanguage.Items.OfType<ComboBoxItem>().FirstOrDefault(static i => i.IsEnabled);
+        ConsoleLanguage.SelectedItem = pick;
+        _consoleLanguage = pick?.Tag as string ?? DefaultConsoleLanguage;
+    }
+
+    private ComboBoxItem? FindConsoleLanguage(string? language) =>
+        language is null
+            ? null
+            : ConsoleLanguage.Items.OfType<ComboBoxItem>()
+                .FirstOrDefault(i => i.IsEnabled && string.Equals(i.Tag as string, language, StringComparison.Ordinal));
 
     private void OnConsoleLanguageChanged(object sender, SelectionChangedEventArgs e)
     {

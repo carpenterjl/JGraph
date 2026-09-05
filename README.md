@@ -88,11 +88,12 @@ built for performance (millions of points).
   `function` definitions, cells, and structs (see [the scripting guide](docs/jgs-scripting-guide.html)) —
   in the in-app editor; every script calls the same `JG` API, so every plot type and option is available.
 - **A scripting workspace** — open a folder of scripts and data files in the docking scripting window
-  (file tree, multi-tab editors, console, and a variables panel). **New Script** asks which language
-  you want and opens `NewScript.jgs` / `.m` / `.csx` / `.py`, so highlighting and the Run engine are right
-  before you save anything; scripts find workspace data files by
-  bare name (`readcsv("data.csv")`), JGS scripts compose via `run("helpers.jgs")`, and the window
-  remembers your workspace, open files, breakpoints, and layout between sessions. The Files pane is a
+  (file tree, multi-tab editors, console, and a variables panel). **New Script** opens a MATLAB
+  `.m` file by default, or asks which language you want (`.jgs` / `.csx` / `.py`), so highlighting and
+  the Run engine are right before you save anything; the console prompt speaks MATLAB by default too.
+  Scripts find workspace data files by bare name (`readcsv("data.csv")`), JGS scripts compose via
+  `run("helpers.jgs")`, and the window remembers your workspace, open files, breakpoints, console
+  language, and layout between sessions. The Files pane is a
   Current Folder browser: an address bar and Up button, double-click a folder (or
   right-click → "Set as workspace root") to browse into it, and double-click files to open them by
   type — scripts in tabs, csv/tsv/xlsx in the Data Viewer, saved `.graph` documents as live figures,

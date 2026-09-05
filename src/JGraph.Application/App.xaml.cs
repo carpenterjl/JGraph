@@ -398,12 +398,14 @@ public partial class App : System.Windows.Application
         // The print and page dialogs (M84), beside the export and document services they sit with.
         services.AddSingleton<IFigurePrintService, Printing.FigurePrintService>();
 
-        // Scripting engines: C#, JGS and MATLAB are always available; Python is available when a
-        // CPython runtime is found. JGS reads the user's language options on each run.
+        // Scripting engines: MATLAB, JGS and C# are always available; Python is available when a
+        // CPython runtime is found. JGS reads the user's language options on each run. The order is
+        // the order of every picker (New Script, the console's language list), MATLAB first because
+        // it is the language the window defaults to.
+        services.AddSingleton<IScriptEngine, MatlabScriptEngine>();
+        services.AddSingleton<IScriptEngine>(new JgsScriptEngine(() => settings.Current.ToJgsOptions()));
         services.AddSingleton<IScriptEngine, CSharpScriptEngine>();
         services.AddSingleton<IScriptEngine, PythonScriptEngine>();
-        services.AddSingleton<IScriptEngine>(new JgsScriptEngine(() => settings.Current.ToJgsOptions()));
-        services.AddSingleton<IScriptEngine, MatlabScriptEngine>();
         services.AddSingleton<IWorkspaceStateService, WorkspaceStateService>();
         services.AddSingleton<IFigureWindowService, FigureWindowService>();
         services.AddSingleton<IScriptingService, ScriptingService>();

@@ -19,6 +19,7 @@ public class ScriptWorkspaceStateFormatTests
             },
             DockLayoutXml = "<LayoutRoot><RootPanel /></LayoutRoot>",
             LayoutSchema = ScriptWorkspaceStateFormat.CurrentLayoutSchema,
+            ConsoleLanguage = "JGS",
             WindowLeft = 120,
             WindowTop = 60,
             WindowWidth = 1280,
@@ -41,6 +42,7 @@ public class ScriptWorkspaceStateFormatTests
         Assert.Equal(state.ActiveFile, loaded.ActiveFile);
         Assert.Equal(new[] { 3, 12 }, loaded.Breakpoints[@"C:\work\signals\main.jgs"]);
         Assert.Equal(state.DockLayoutXml, loaded.DockLayoutXml);
+        Assert.Equal("JGS", loaded.ConsoleLanguage);
         Assert.Equal(ScriptWorkspaceStateFormat.FormatTag, loaded.Format);
         Assert.Equal(ScriptWorkspaceStateFormat.CurrentVersion, loaded.FormatVersion);
     }
@@ -54,6 +56,16 @@ public class ScriptWorkspaceStateFormatTests
             """{ "format": "something-else", "formatVersion": 1 }"""));                  // wrong tag
         Assert.Null(ScriptWorkspaceStateFormat.Deserialize(
             $$"""{ "format": "{{ScriptWorkspaceStateFormat.FormatTag}}", "formatVersion": 999 }""")); // newer
+    }
+
+    [Fact]
+    public void AStateWrittenBeforeTheConsoleLanguageExisted_LoadsWithNone()
+    {
+        ScriptWorkspaceStateDto? loaded = ScriptWorkspaceStateFormat.Deserialize(
+            $$"""{ "format": "{{ScriptWorkspaceStateFormat.FormatTag}}", "formatVersion": 1, "rootPath": "C:/work" }""");
+        Assert.NotNull(loaded);
+        Assert.Null(loaded.ConsoleLanguage);
+        Assert.Equal("C:/work", loaded.RootPath);
     }
 
     [Fact]

@@ -29,6 +29,13 @@ public sealed class ScriptWorkspaceStateDto
     public string? DockLayoutXml { get; set; }
 
     /// <summary>
+    /// The language the console prompt was set to ("MATLAB", "JGS", …), or null when never chosen.
+    /// Part of the session rather than the settings: it is picked in the window, beside the layout,
+    /// and comes back with it.
+    /// </summary>
+    public string? ConsoleLanguage { get; set; }
+
+    /// <summary>
     /// The arrangement generation <see cref="DockLayoutXml"/> was written by (see
     /// <see cref="ScriptWorkspaceStateFormat.CurrentLayoutSchema"/>). A release that rearranges the
     /// default panes incompatibly bumps it, and a layout from an older generation is discarded rather
