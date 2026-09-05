@@ -122,17 +122,15 @@ public class MatlabM76FileFormTests : IDisposable
     public Task ABoundedFscanf_LeavesTheFileWhereItStopped() => RunAsserting(WriteGrid + """
         fid = fopen('grid.txt', 'r');
 
-        % A row, which is the shape this build's sscanf has always answered in; MATLAB answers a
-        % column, and the difference is recorded rather than changed here.
         a = fscanf(fid, '%f', 3);
-        assert(isequal(a, [1 2 3]));
+        assert(isequal(a, [1; 2; 3]), 'a count bounds the read and the answer is a column');
 
         [b, count] = fscanf(fid, '%f', [3 1]);
         assert(count == 3);
         assert(isequal(b, [4; 5; 6]), 'an asked-for shape is given, and reading went on from 4');
 
         rest = fscanf(fid, '%f');
-        assert(isequal(rest, [7 8 9]));
+        assert(isequal(rest, [7; 8; 9]));
         fclose(fid);
         """);
 

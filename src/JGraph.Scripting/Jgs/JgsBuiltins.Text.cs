@@ -26,7 +26,7 @@ internal static partial class JgsBuiltins
         RegisterRegexBuiltins(Define, dialect);
         RegisterCharacterClasses(Define);
         RegisterByteViews(Define);
-        RegisterScanning(Define);
+        RegisterScanning(Define, dialect);
     }
 
     // --- Searching and comparing ------------------------------------------------------------------
@@ -679,135 +679,196 @@ internal static partial class JgsBuiltins
 
     private static void RegisterScanning(
         Action<string, Func<IReadOnlyList<JgsValue>, int, int, JgsValue>,
-            Func<IReadOnlyList<JgsValue>, int, int, int, JgsValue[]>?> Define)
+            Func<IReadOnlyList<JgsValue>, int, int, int, JgsValue[]>?> Define, JgsDialect dialect)
     {
-        Define("sscanf", (args, line, col) =>
+        Define("sscanf", (args, line, col) => ScanText(args, 1, dialect, line, col)[0],
+            (args, wanted, line, col) => ScanText(args, wanted, dialect, line, col));
+    }
+
+    /// <summary>
+    /// <c>[A, count, errmsg, nextindex] = sscanf(text, format, size)</c>: the text read under a scanf
+    /// format, bounded by a count or an <c>[m n]</c> shape.
+    /// </summary>
+    private static JgsValue[] ScanText(IReadOnlyList<JgsValue> args, int wanted, JgsDialect dialect,
+        int line, int col)
+    {
+        ArityRange("sscanf", args, 2, 3, line, col);
+        string text = Str("sscanf", args, 0, line, col);
+        string format = Str("sscanf", args, 1, line, col);
+        if (dialect.IsMatlab)
         {
-            ArityRange("sscanf", args, 2, 3, line, col);
-            string text = Str("sscanf", args, 0, line, col);
-            string format = Str("sscanf", args, 1, line, col);
-            int limit = args.Count == 3 ? Count("sscanf", args, 2, line, col) : int.MaxValue;
-            return Scan(text, format, limit, line, col);
-        }, null);
+            // MATLAB's quotes keep '\n' as two characters and leave the decoding to the format reader.
+            format = UnescapeFormat(format);
+        }
+
+        (int rows, int limit) = args.Count == 3
+            ? ScanSize("sscanf", args, 2, line, col)
+            : (-1, int.MaxValue);
+        ScanResult result = Scan(text, format, limit, line, col, "sscanf");
+        return ScanOutputs(result, rows, wanted);
+    }
+
+    /// <summary>
+    /// The size argument of a scan: a count, or <c>[m n]</c> as a row count and an element limit.
+    /// Either may be Inf, which is "as many as there are".
+    /// </summary>
+    private static (int Rows, int Limit) ScanSize(string name, IReadOnlyList<JgsValue> args, int at,
+        int line, int col)
+    {
+        double[] size = SizeArgument(name, args, at, line, col);
+        if (size.Length == 1)
+        {
+            return (-1, double.IsInfinity(size[0]) ? int.MaxValue : (int)size[0]);
+        }
+
+        int rows = (int)size[0];
+        return (rows, double.IsInfinity(size[1]) ? int.MaxValue : rows * (int)size[1]);
+    }
+
+    /// <summary>The four outputs of a scan, as many of them as were asked for.</summary>
+    private static JgsValue[] ScanOutputs(ScanResult result, int rows, int wanted)
+    {
+        JgsValue answer = ShapeScanned(result, rows);
+        if (wanted <= 1)
+        {
+            return [answer];
+        }
+
+        JgsValue[] outputs =
+        [
+            answer,
+            JgsValue.Number(result.Count),
+            JgsValue.Str(result.Error),
+            JgsValue.Number(result.Consumed + 1),
+        ];
+        return outputs[..System.Math.Min(wanted, outputs.Length)];
+    }
+
+    /// <summary>
+    /// A scan's answer in the shape MATLAB gives it: text when every stored conversion was a text one,
+    /// otherwise a numeric column — or, when <paramref name="rows"/> was asked for, that many rows
+    /// filled down each column and padded with zeros to fill the last.
+    /// </summary>
+    private static JgsValue ShapeScanned(ScanResult result, int rows)
+    {
+        if (result.Textual)
+        {
+            return JgsValue.Str(result.Text);
+        }
+
+        double[] values = result.Elements.ToArray();
+        int columns;
+        if (rows > 0)
+        {
+            columns = (values.Length + rows - 1) / rows;
+            if (values.Length != rows * columns)
+            {
+                Array.Resize(ref values, rows * columns);
+            }
+        }
+        else
+        {
+            rows = values.Length;
+            columns = values.Length == 0 ? 0 : 1;
+        }
+
+        JgsValue answer = Numbers(values);
+        answer.Reshape(rows, columns);
+        return answer;
+    }
+
+    /// <summary>One conversion in a scanf format.</summary>
+    /// <param name="Kind">The conversion letter, with <c>[</c> standing for a character set.</param>
+    /// <param name="Width">The most characters the conversion may read, or 0 for no bound.</param>
+    /// <param name="Suppressed">Whether <c>%*</c> asked for the value to be read but not stored.</param>
+    /// <param name="Set">For <c>%[...]</c>, the characters listed (ranges expanded).</param>
+    /// <param name="Negated">For <c>%[^...]</c>, whether the set is the characters <em>not</em> listed.</param>
+    private readonly record struct ScanConversion(char Kind, int Width, bool Suppressed, string Set, bool Negated)
+    {
+        public bool IsText => Kind is 's' or 'c' or '[';
+
+        /// <summary>Whether the conversion skips leading whitespace, which every one but %c and %[ does.</summary>
+        public bool SkipsWhitespace => Kind is not ('c' or '[');
+    }
+
+    /// <summary>One piece of a compiled scanf format: a conversion, or literal text to be matched.</summary>
+    private readonly record struct ScanPiece(ScanConversion? Conversion, string Literal);
+
+    /// <summary>What one scan produced.</summary>
+    /// <param name="Elements">Every stored value in reading order, characters as their codes.</param>
+    /// <param name="Text">The stored characters, for a format whose stored conversions are all text.</param>
+    /// <param name="Textual">Whether the answer is text rather than numbers.</param>
+    /// <param name="Count">How many conversions stored a value: a <c>%s</c> field counts once however long.</param>
+    /// <param name="Consumed">How many characters of the input the scan used.</param>
+    /// <param name="Error">MATLAB's <c>errmsg</c>: empty, or why the scan stopped early.</param>
+    private readonly record struct ScanResult(List<double> Elements, string Text, bool Textual, int Count, int Consumed, string Error);
+
+    /// <summary>What one attempt to match a piece of the format came to.</summary>
+    private enum ScanStep
+    {
+        /// <summary>The piece matched (and stored its value, if it had one).</summary>
+        Matched,
+
+        /// <summary>The input ended before the piece could be read: the scan is over, without complaint.</summary>
+        EndOfText,
+
+        /// <summary>The input did not look like the piece: the scan is over, and that is an error.</summary>
+        Mismatch,
     }
 
     /// <summary>
     /// Reads values out of <paramref name="text"/> under a scanf format, cycling the format until the
-    /// text runs out — which is what makes <c>sscanf(s, '%f')</c> read every number in the string.
-    /// </summary>
-    private static JgsValue Scan(string text, string format, int limit, int line, int col) =>
-        Scan(text, format, limit, line, col, "sscanf", out _, out _);
-
-    /// <summary>
-    /// The same scan, also reporting how much of the text it used and how many values it produced.
+    /// text runs out, it stops matching, or <paramref name="limit"/> elements have been stored — which
+    /// is what makes <c>sscanf(s, '%f')</c> read every number in the string.
     /// </summary>
     /// <remarks>
-    /// Those two numbers are what let a file reader put its stream back where the scan stopped
-    /// instead of at the end. Before M76 every file scan read the whole remainder of the file
-    /// whatever the format matched, so a bounded <c>fscanf</c> left the position wrong and a
-    /// following <c>fgetl</c> read nothing.
+    /// <para>
+    /// This follows C's scanf as MATLAB does: <c>%*</c> reads a field without storing it, a width
+    /// bounds how many characters a conversion may take, <c>%d</c> stops at the first character that is
+    /// not a digit, and a literal that is not there ends the scan rather than being skipped over.
+    /// </para>
+    /// <para>
+    /// The answer reports how much of the text it used and how many values it produced. Those two
+    /// numbers are what let a file reader put its stream back where the scan stopped instead of at
+    /// the end. Before M76 every file scan read the whole remainder of the file whatever the format
+    /// matched, so a bounded <c>fscanf</c> left the position wrong and a following <c>fgetl</c> read
+    /// nothing.
+    /// </para>
     /// </remarks>
-    private static JgsValue Scan(string text, string format, int limit, int line, int col,
-        string name, out int consumed, out int count)
+    private static ScanResult Scan(string text, string format, int limit, int line, int col, string name)
     {
-        var values = new List<double>();
-        var characters = new StringBuilder();
-        bool textual = false;
-        int at = 0;
+        List<ScanPiece> pieces = CompileScanFormat(format, name, line, col);
 
-        while (at < text.Length && values.Count + characters.Length < limit)
+        // The answer is text only when something is stored and everything stored is text; a format
+        // that mixes the two answers the character codes beside the numbers, as MATLAB does.
+        bool stored = false;
+        bool numeric = false;
+        foreach (ScanPiece piece in pieces)
+        {
+            if (piece.Conversion is { Suppressed: false } conversion)
+            {
+                stored = true;
+                numeric |= !conversion.IsText;
+            }
+        }
+
+        var elements = new List<double>();
+        var characters = new StringBuilder();
+        int at = 0;
+        int count = 0;
+        ScanStep step = ScanStep.Matched;
+
+        while (step == ScanStep.Matched && at < text.Length && count < limit)
         {
             int before = at;
-            for (int f = 0; f < format.Length && at < text.Length; f++)
+            foreach (ScanPiece piece in pieces)
             {
-                if (format[f] != '%')
-                {
-                    // Literal text in the format: whitespace matches any run of it, anything else
-                    // has to be there.
-                    if (char.IsWhiteSpace(format[f]))
-                    {
-                        while (at < text.Length && char.IsWhiteSpace(text[at]))
-                        {
-                            at++;
-                        }
-                    }
-                    else if (text[at] == format[f])
-                    {
-                        at++;
-                    }
-
-                    continue;
-                }
-
-                // Skip the width and flags: JGraph reads the whole token either way.
-                f++;
-                while (f < format.Length && (char.IsAsciiDigit(format[f]) || format[f] is '.' or '*' or 'l' or 'h'))
-                {
-                    f++;
-                }
-
-                if (f >= format.Length)
+                step = piece.Conversion is { } conversion
+                    ? ReadConversion(text, ref at, conversion, ref count, elements, characters)
+                    : MatchLiteral(text, ref at, piece.Literal);
+                if (step != ScanStep.Matched || count >= limit)
                 {
                     break;
-                }
-
-                while (at < text.Length && char.IsWhiteSpace(text[at]) && format[f] != 'c')
-                {
-                    at++;
-                }
-
-                if (at >= text.Length)
-                {
-                    break;
-                }
-
-                switch (format[f])
-                {
-                    case 'd' or 'i' or 'u' or 'f' or 'g' or 'e':
-                        if (!ReadNumber(text, ref at, out double number))
-                        {
-                            at = text.Length;
-                            break;
-                        }
-
-                        values.Add(number);
-                        break;
-
-                    case 'x':
-                        int start = at;
-                        while (at < text.Length && char.IsAsciiHexDigit(text[at]))
-                        {
-                            at++;
-                        }
-
-                        values.Add(at > start ? Convert.ToInt64(text[start..at], 16) : 0);
-                        break;
-
-                    case 's':
-                        textual = true;
-                        while (at < text.Length && !char.IsWhiteSpace(text[at]))
-                        {
-                            characters.Append(text[at++]);
-                        }
-
-                        break;
-
-                    case 'c':
-                        textual = true;
-                        characters.Append(text[at++]);
-                        break;
-
-                    case '%':
-                        if (text[at] == '%')
-                        {
-                            at++;
-                        }
-
-                        break;
-
-                    default:
-                        throw new JgsRuntimeException(line, col,
-                            $"{name} does not support the conversion '%{format[f]}'.");
                 }
             }
 
@@ -817,43 +878,430 @@ internal static partial class JgsBuiltins
             }
         }
 
-        consumed = at;
-        count = values.Count + characters.Length;
-        return textual ? JgsValue.Str(characters.ToString()) : Numbers(values.ToArray());
+        return new ScanResult(elements, characters.ToString(), stored && !numeric, count, at,
+            step == ScanStep.Mismatch ? "Matching failure in format." : string.Empty);
     }
 
-    /// <summary>Reads one number from <paramref name="text"/>, advancing past it.</summary>
-    private static bool ReadNumber(string text, ref int at, out double value)
+    /// <summary>Splits a scanf format into its conversions and the literal text between them.</summary>
+    private static List<ScanPiece> CompileScanFormat(string format, string name, int line, int col)
     {
+        var pieces = new List<ScanPiece>();
+        var literal = new StringBuilder();
+
+        void FlushLiteral()
+        {
+            if (literal.Length > 0)
+            {
+                pieces.Add(new ScanPiece(null, literal.ToString()));
+                literal.Clear();
+            }
+        }
+
+        int f = 0;
+        while (f < format.Length)
+        {
+            if (format[f] != '%')
+            {
+                literal.Append(format[f++]);
+                continue;
+            }
+
+            f++;
+            if (f < format.Length && format[f] == '%')
+            {
+                literal.Append('%');
+                f++;
+                continue;
+            }
+
+            FlushLiteral();
+
+            bool suppressed = false;
+            if (f < format.Length && format[f] == '*')
+            {
+                suppressed = true;
+                f++;
+            }
+
+            int width = 0;
+            while (f < format.Length && char.IsAsciiDigit(format[f]))
+            {
+                width = (width * 10) + (format[f++] - '0');
+            }
+
+            // A precision means nothing to a reader; MATLAB ignores one rather than objecting.
+            if (f < format.Length && format[f] == '.')
+            {
+                f++;
+                while (f < format.Length && char.IsAsciiDigit(format[f]))
+                {
+                    f++;
+                }
+            }
+
+            // C's length modifiers: every value is a double here, so they change nothing.
+            while (f < format.Length && format[f] is 'l' or 'h' or 'L')
+            {
+                f++;
+            }
+
+            if (f >= format.Length)
+            {
+                throw new JgsRuntimeException(line, col, $"{name}: the format ends inside a conversion.");
+            }
+
+            char kind = format[f++];
+            string set = string.Empty;
+            bool negated = false;
+            switch (kind)
+            {
+                case '[':
+                    if (f < format.Length && format[f] == '^')
+                    {
+                        negated = true;
+                        f++;
+                    }
+
+                    int start = f;
+                    if (f < format.Length && format[f] == ']')
+                    {
+                        f++; // a ']' first in the set is a member of it, not its end
+                    }
+
+                    while (f < format.Length && format[f] != ']')
+                    {
+                        f++;
+                    }
+
+                    if (f >= format.Length)
+                    {
+                        throw new JgsRuntimeException(line, col, $"{name}: a '%[' conversion has no closing ']'.");
+                    }
+
+                    set = ExpandScanSet(format[start..f]);
+                    f++;
+                    break;
+
+                case 'd' or 'i' or 'u' or 'o' or 'x' or 'X' or 'f' or 'e' or 'E' or 'g' or 'G' or 's' or 'c':
+                    break;
+
+                default:
+                    throw new JgsRuntimeException(line, col, $"{name} does not support the conversion '%{kind}'.");
+            }
+
+            pieces.Add(new ScanPiece(new ScanConversion(kind, width, suppressed, set, negated), string.Empty));
+        }
+
+        FlushLiteral();
+        return pieces;
+    }
+
+    /// <summary>The characters a <c>%[...]</c> set names, with each <c>a-z</c> range written out.</summary>
+    private static string ExpandScanSet(string set)
+    {
+        var expanded = new StringBuilder(set.Length);
+        for (int i = 0; i < set.Length; i++)
+        {
+            if (i + 2 < set.Length && set[i + 1] == '-' && set[i + 2] >= set[i])
+            {
+                for (char c = set[i]; c <= set[i + 2]; c++)
+                {
+                    expanded.Append(c);
+                }
+
+                i += 2;
+            }
+            else
+            {
+                expanded.Append(set[i]);
+            }
+        }
+
+        return expanded.ToString();
+    }
+
+    /// <summary>
+    /// Matches literal format text: whitespace in the format stands for any amount of whitespace in
+    /// the input, including none, and anything else has to be there character for character.
+    /// </summary>
+    private static ScanStep MatchLiteral(string text, ref int at, string literal)
+    {
+        foreach (char expected in literal)
+        {
+            if (char.IsWhiteSpace(expected))
+            {
+                while (at < text.Length && char.IsWhiteSpace(text[at]))
+                {
+                    at++;
+                }
+
+                continue;
+            }
+
+            if (at >= text.Length)
+            {
+                return ScanStep.EndOfText;
+            }
+
+            if (text[at] != expected)
+            {
+                return ScanStep.Mismatch;
+            }
+
+            at++;
+        }
+
+        return ScanStep.Matched;
+    }
+
+    /// <summary>
+    /// Reads one conversion at <paramref name="at"/>, storing what it read unless it was suppressed
+    /// and counting it once when it did — a <c>%s</c> field is one element however many characters
+    /// it holds, which is how MATLAB's <c>count</c> and size limit both count.
+    /// </summary>
+    private static ScanStep ReadConversion(string text, ref int at, ScanConversion conversion, ref int count,
+        List<double> elements, StringBuilder characters)
+    {
+        if (conversion.SkipsWhitespace)
+        {
+            while (at < text.Length && char.IsWhiteSpace(text[at]))
+            {
+                at++;
+            }
+        }
+
+        if (at >= text.Length)
+        {
+            return ScanStep.EndOfText;
+        }
+
+        int end = conversion.Width > 0 ? System.Math.Min(text.Length, at + conversion.Width) : text.Length;
         int start = at;
-        if (at < text.Length && (text[at] == '+' || text[at] == '-'))
+
+        if (conversion.IsText)
         {
-            at++;
+            switch (conversion.Kind)
+            {
+                case 's':
+                    while (at < end && !char.IsWhiteSpace(text[at]))
+                    {
+                        at++;
+                    }
+
+                    break;
+
+                case 'c':
+                    at = conversion.Width > 0 ? end : at + 1;
+                    break;
+
+                default:
+                    while (at < end && conversion.Set.Contains(text[at]) != conversion.Negated)
+                    {
+                        at++;
+                    }
+
+                    break;
+            }
+
+            if (at == start)
+            {
+                return ScanStep.Mismatch;
+            }
+
+            if (!conversion.Suppressed)
+            {
+                for (int i = start; i < at; i++)
+                {
+                    elements.Add(text[i]);
+                    characters.Append(text[i]);
+                }
+
+                count++;
+            }
+
+            return ScanStep.Matched;
         }
 
-        while (at < text.Length && (char.IsAsciiDigit(text[at]) || text[at] == '.'))
+        double number;
+        bool read = conversion.Kind switch
         {
-            at++;
+            'd' or 'u' => ReadInteger(text, ref at, end, 10, out number),
+            'o' => ReadInteger(text, ref at, end, 8, out number),
+            'x' or 'X' => ReadInteger(text, ref at, end, 16, out number),
+            'i' => ReadPrefixedInteger(text, ref at, end, out number),
+            _ => ReadFloat(text, ref at, end, out number),
+        };
+
+        if (!read)
+        {
+            at = start;
+            return ScanStep.Mismatch;
         }
 
-        if (at < text.Length && (text[at] is 'e' or 'E'))
+        if (!conversion.Suppressed)
         {
-            int exponent = at + 1;
-            if (exponent < text.Length && (text[exponent] == '+' || text[exponent] == '-'))
+            elements.Add(number);
+            count++;
+        }
+
+        return ScanStep.Matched;
+    }
+
+    /// <summary>
+    /// Reads an optionally signed whole number in <paramref name="radix"/> from <paramref name="at"/>
+    /// up to <paramref name="end"/>, accepting a <c>0x</c> prefix when the radix is 16.
+    /// </summary>
+    private static bool ReadInteger(string text, ref int at, int end, int radix, out double value)
+    {
+        value = 0;
+        int cursor = at;
+        bool negative = false;
+        if (cursor < end && (text[cursor] == '+' || text[cursor] == '-'))
+        {
+            negative = text[cursor] == '-';
+            cursor++;
+        }
+
+        if (radix == 16 && cursor + 2 < end && text[cursor] == '0' && text[cursor + 1] is 'x' or 'X'
+            && HexDigit(text[cursor + 2]) >= 0)
+        {
+            cursor += 2;
+        }
+
+        int digits = 0;
+        while (cursor < end)
+        {
+            int digit = HexDigit(text[cursor]);
+            if (digit < 0 || digit >= radix)
+            {
+                break;
+            }
+
+            value = (value * radix) + digit;
+            digits++;
+            cursor++;
+        }
+
+        if (digits == 0)
+        {
+            return false;
+        }
+
+        at = cursor;
+        value = negative ? -value : value;
+        return true;
+    }
+
+    /// <summary>
+    /// <c>%i</c>: a whole number whose base its prefix names — <c>0x</c> for hexadecimal, a leading
+    /// <c>0</c> for octal, anything else decimal.
+    /// </summary>
+    private static bool ReadPrefixedInteger(string text, ref int at, int end, out double value)
+    {
+        int cursor = at;
+        if (cursor < end && (text[cursor] == '+' || text[cursor] == '-'))
+        {
+            cursor++;
+        }
+
+        int radix = 10;
+        if (cursor < end && text[cursor] == '0')
+        {
+            radix = cursor + 1 < end && text[cursor + 1] is 'x' or 'X' ? 16 : 8;
+        }
+
+        return ReadInteger(text, ref at, end, radix, out value);
+    }
+
+    /// <summary>
+    /// Reads a floating-point number from <paramref name="at"/> up to <paramref name="end"/>: a sign,
+    /// digits with a point, an exponent — or <c>Inf</c> and <c>NaN</c> in any case, which are what
+    /// <c>num2str</c> and <c>sprintf</c> write for those values.
+    /// </summary>
+    private static bool ReadFloat(string text, ref int at, int end, out double value)
+    {
+        value = 0;
+        int cursor = at;
+        bool negative = false;
+        if (cursor < end && (text[cursor] == '+' || text[cursor] == '-'))
+        {
+            negative = text[cursor] == '-';
+            cursor++;
+        }
+
+        if (end - cursor >= 3)
+        {
+            string word = text.Substring(cursor, 3);
+            if (word.Equals("inf", StringComparison.OrdinalIgnoreCase))
+            {
+                value = negative ? double.NegativeInfinity : double.PositiveInfinity;
+                at = cursor + 3;
+                return true;
+            }
+
+            if (word.Equals("nan", StringComparison.OrdinalIgnoreCase))
+            {
+                value = double.NaN;
+                at = cursor + 3;
+                return true;
+            }
+        }
+
+        int digits = 0;
+        while (cursor < end && char.IsAsciiDigit(text[cursor]))
+        {
+            cursor++;
+            digits++;
+        }
+
+        if (cursor < end && text[cursor] == '.')
+        {
+            cursor++;
+            while (cursor < end && char.IsAsciiDigit(text[cursor]))
+            {
+                cursor++;
+                digits++;
+            }
+        }
+
+        if (digits == 0)
+        {
+            return false;
+        }
+
+        if (cursor < end && text[cursor] is 'e' or 'E')
+        {
+            int exponent = cursor + 1;
+            if (exponent < end && (text[exponent] == '+' || text[exponent] == '-'))
             {
                 exponent++;
             }
 
-            if (exponent < text.Length && char.IsAsciiDigit(text[exponent]))
+            if (exponent < end && char.IsAsciiDigit(text[exponent]))
             {
-                at = exponent;
-                while (at < text.Length && char.IsAsciiDigit(text[at]))
+                cursor = exponent;
+                while (cursor < end && char.IsAsciiDigit(text[cursor]))
                 {
-                    at++;
+                    cursor++;
                 }
             }
         }
 
-        return double.TryParse(text[start..at], NumberStyles.Float, CultureInfo.InvariantCulture, out value);
+        if (!double.TryParse(text[at..cursor], NumberStyles.Float, CultureInfo.InvariantCulture, out value))
+        {
+            return false;
+        }
+
+        at = cursor;
+        return true;
     }
+
+    /// <summary>The value of a hexadecimal digit, or -1 for any other character.</summary>
+    private static int HexDigit(char c) => c switch
+    {
+        >= '0' and <= '9' => c - '0',
+        >= 'a' and <= 'f' => c - 'a' + 10,
+        >= 'A' and <= 'F' => c - 'A' + 10,
+        _ => -1,
+    };
 }

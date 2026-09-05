@@ -323,7 +323,7 @@ public static class JgsBuiltinCatalog
         Add("unicode2native", "The bytes a string encodes to (UTF-8 by default).", P("text"), Opt("encoding"));
         Add("native2unicode", "The string a sequence of bytes decodes to (UTF-8 by default).", P("bytes"), Opt("encoding"));
         Add("typecast", "The same bits read as another numeric class.", P("x"), P("type"));
-        Add("sscanf", "Numbers or text read out of a string under a scanf format.", P("text"), P("format"), Opt("count"));
+        Add("sscanf", "Numbers or text read out of a string under a scanf format, bounded by a count or an [m n] shape; also answers the count read, an error message and the next index.", P("text"), P("format"), Opt("size"));
 
         // --- Matrix shape questions and linear algebra -----------------------------------------------
         Add("istril", "Whether every entry above the diagonal is zero.", P("a"));

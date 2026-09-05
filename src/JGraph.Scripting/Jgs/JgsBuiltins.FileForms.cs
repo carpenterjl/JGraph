@@ -356,40 +356,18 @@ internal static partial class JgsBuiltins
         JGraphScriptGlobals.FileEntry entry = EntryOf(host, "fscanf", args, line, col);
         string format = Str("fscanf", args, 1, line, col);
 
-        int rows = -1;
-        int limit = int.MaxValue;
-        if (args.Count == 3)
-        {
-            double[] size = SizeArgument("fscanf", args, 2, line, col);
-            if (size.Length == 1)
-            {
-                limit = double.IsInfinity(size[0]) ? int.MaxValue : (int)size[0];
-            }
-            else
-            {
-                rows = (int)size[0];
-                limit = double.IsInfinity(size[1]) ? int.MaxValue : rows * (int)size[1];
-            }
-        }
+        (int rows, int limit) = args.Count == 3
+            ? ScanSize("fscanf", args, 2, line, col)
+            : (-1, int.MaxValue);
 
         (string text, long start) = RemainderOf(entry);
-        JgsValue answer = Scan(text, format, limit, line, col, "fscanf",
-            out int consumed, out int count);
+        ScanResult result = Scan(text, format, limit, line, col, "fscanf");
 
         // Only what the scan actually used is consumed. Reading to the end regardless was what made
         // a bounded fscanf leave the file at EOF and the next read come back empty.
-        entry.Stream.Position = start + entry.Encoding.GetByteCount(text[..consumed]);
+        entry.Stream.Position = start + entry.Encoding.GetByteCount(text[..result.Consumed]);
 
-        if (rows > 0 && answer.Type == JgsType.Array && answer.ArrayLength > 0)
-        {
-            int columns = (answer.ArrayLength + rows - 1) / rows;
-            if (rows * columns == answer.ArrayLength)
-            {
-                answer.Reshape(rows, columns);
-            }
-        }
-
-        return wanted <= 1 ? [answer] : [answer, JgsValue.Number(count)];
+        return ScanOutputs(result, rows, wanted);
     }
 
     /// <summary>

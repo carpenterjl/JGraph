@@ -113,10 +113,10 @@ public class MatlabTextBuiltinTests : IDisposable
 
     [Fact]
     public Task Sscanf_ReadsEveryNumberInTheString() => RunAsserting("""
-        assert(isequal(sscanf('1 2 3', '%f'), [1 2 3]));
-        assert(isequal(sscanf('1.5, 2.5', '%f, %f'), [1.5 2.5]));
+        assert(isequal(sscanf('1 2 3', '%f'), [1; 2; 3]));   % a column, as MATLAB answers
+        assert(isequal(sscanf('1.5, 2.5', '%f, %f'), [1.5; 2.5]));
         assert(sscanf('-3e2', '%f') == -300);   % one value still comes back as a one-element array
-        assert(isequal(sscanf('10 20 30', '%d', 2), [10 20]));
+        assert(isequal(sscanf('10 20 30', '%d', 2), [10; 20]));
         assert(strcmp(sscanf('abc', '%s'), 'abc'));
         """);
 
