@@ -47,7 +47,7 @@ probe found gaps recorded in none of the three.
 | [0063](adr/0063-string-arrays.md) | string arrays | `'a' + 'b'` concatenates, where MATLAB adds code points. |
 | [0063](adr/0063-string-arrays.md) | string arrays | `char` of several strings stacks padded rows rather than building a char matrix. |
 | [0063](adr/0063-string-arrays.md) | string arrays | A tag that a builtin does not know about is lost. |
-| [0063](adr/0063-string-arrays.md) | string arrays | `extractAfter` and friends answer empty text when the marker is absent |
+| [0063](adr/0063-string-arrays.md) | string arrays | ~~`extractAfter` and friends answer empty text when the marker is absent~~ — **lifted;** they answer `<missing>` or a 0-by-1 since commit 7a5a923. |
 | [0064](adr/0064-time-types-and-keyed-collections.md) | time types and keyed collections | A timetable's row times are numbers. |
 | [0064](adr/0064-time-types-and-keyed-collections.md) | time types and keyed collections | `dateshift(…, 'dayofweek', …)` refuses |
 | [0064](adr/0064-time-types-and-keyed-collections.md) | time types and keyed collections | A tag a builtin does not know about is lost |
@@ -108,7 +108,7 @@ probe found gaps recorded in none of the three.
 | [0075](adr/0075-the-figure-property-surface-and-the-layout-family.md) | the figure property surface and the layout family | Normalized rectangles are fractions of the figure's content area. |
 | [0075](adr/0075-the-figure-property-surface-and-the-layout-family.md) | the figure property surface and the layout family | `PointerShapeCData` and `PointerShapeHotSpot` are read-only. |
 | [0075](adr/0075-the-figure-property-surface-and-the-layout-family.md) | the figure property surface and the layout family | `PaperType` accepts the twenty-five standard names and refuses the rest |
-| [0076](adr/0076-the-numeric-and-file-form-leftovers.md) | the numeric and file form leftovers | `fscanf` and `sscanf` answer a row where MATLAB answers a column. |
+| [0076](adr/0076-the-numeric-and-file-form-leftovers.md) | the numeric and file form leftovers | ~~`fscanf` and `sscanf` answer a row where MATLAB answers a column.~~ — **lifted;** both answer a column since commit 1e06103. |
 | [0076](adr/0076-the-numeric-and-file-form-leftovers.md) | the numeric and file form leftovers | `[V, D] = eig(A, B)` needs a nonsingular B. |
 | [0076](adr/0076-the-numeric-and-file-form-leftovers.md) | the numeric and file form leftovers | `eig` accepts `'balance'` and `'nobalance'` and computes the same answer for both. |
 | [0076](adr/0076-the-numeric-and-file-form-leftovers.md) | the numeric and file form leftovers | `lu`'s four- and five-output forms work for a dense matrix |
