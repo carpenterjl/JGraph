@@ -19,6 +19,7 @@ public partial class ScriptEditorControl : UserControl
     private readonly CurrentLineRenderer _currentLineRenderer = new();
     private readonly CompletionSupport _completion;
     private readonly MenuItem _openSymbolItem = new() { InputGestureText = "Ctrl+D" };
+    private ToolTip? _datatip;
 
     /// <summary>
     /// The band drawn behind the line the debugger is paused at. Themed, and pushed into
@@ -53,6 +54,67 @@ public partial class ScriptEditorControl : UserControl
         _breakpointMargin.BreakpointToggled += (_, _) => BreakpointsChanged?.Invoke(this, EventArgs.Empty);
         _breakpointMargin.SetNextLineRequested += (_, line) => SetNextStatementRequested?.Invoke(this, line);
         InstallContextMenu();
+        InstallDatatips();
+    }
+
+    /// <summary>
+    /// Answers the datatip for a name the pointer rests on — its current value as text — or null
+    /// when there is nothing to show. Supplied by the host, which knows which workspace the document
+    /// belongs to and whether the debugger is paused in it; MATLAB shows these while debugging, and
+    /// the host may answer for an idle workspace too.
+    /// </summary>
+    public Func<string, string?>? DatatipProvider { get; set; }
+
+    /// <summary>
+    /// A datatip is a tooltip that follows the pointer's rest: it opens when the mouse hovers a name
+    /// the provider can answer for, and closes the moment the mouse moves on.
+    /// </summary>
+    private void InstallDatatips()
+    {
+        ICSharpCode.AvalonEdit.Rendering.TextView view = Editor.TextArea.TextView;
+        view.MouseHover += (_, e) =>
+        {
+            CloseDatatip();
+            if (DatatipProvider is null
+                || Editor.GetPositionFromPoint(e.GetPosition(Editor)) is not { } position)
+            {
+                return;
+            }
+
+            string? name = IdentifierAt(Editor.Document.GetOffset(position.Location));
+            string? text = name is null ? null : DatatipProvider(name);
+            if (text is null)
+            {
+                return;
+            }
+
+            var tip = new ToolTip
+            {
+                Content = new TextBlock { Text = text, FontFamily = Editor.FontFamily, FontSize = Editor.FontSize },
+                PlacementTarget = Editor,
+                Placement = System.Windows.Controls.Primitives.PlacementMode.Relative,
+                HorizontalOffset = e.GetPosition(Editor).X + 12,
+                VerticalOffset = e.GetPosition(Editor).Y + 20,
+                StaysOpen = true,
+            };
+            tip.SetResourceReference(BackgroundProperty, "JG.Brush.EditorBackground");
+            tip.SetResourceReference(ForegroundProperty, "JG.Brush.EditorForeground");
+            _datatip = tip;
+            tip.IsOpen = true;
+            e.Handled = true;
+        };
+        view.MouseHoverStopped += (_, _) => CloseDatatip();
+        Editor.TextArea.TextEntered += (_, _) => CloseDatatip();
+        Editor.TextArea.MouseLeave += (_, _) => CloseDatatip();
+    }
+
+    private void CloseDatatip()
+    {
+        if (_datatip is { } tip)
+        {
+            tip.IsOpen = false;
+            _datatip = null;
+        }
     }
 
     /// <summary>

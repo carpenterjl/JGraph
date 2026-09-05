@@ -64,6 +64,36 @@ public partial class ScriptWorkspaceWindow
         DataViewer.CanEdit = CanEdit(variable!);
     }
 
+    /// <summary>
+    /// The datatip for <paramref name="name"/> hovered in <paramref name="document"/>: the variable's
+    /// class and value as the Workspace pane shows them. Answered from the paused frame while the
+    /// debugger is stopped (MATLAB's own datatips), and from the document's language's workspace
+    /// when idle — a name the workspace does not hold gets no tip, so hovering code that has not
+    /// run shows nothing rather than something stale.
+    /// </summary>
+    private string? DatatipFor(DocumentEntry document, string name)
+    {
+        bool paused = _debugSession is { IsPaused: true };
+        if (!paused && !string.Equals(document.Model.Language, _variablesLanguage, StringComparison.Ordinal))
+        {
+            return null;
+        }
+
+        ScriptVariable? variable = (VariablesList.ItemsSource as IEnumerable<ScriptVariable>)?
+            .FirstOrDefault(v => string.Equals(v.Name, name, StringComparison.Ordinal));
+        if (variable is null)
+        {
+            return null;
+        }
+
+        // A matrix displays over many lines; a datatip is a glance, not the Data Viewer.
+        string[] lines = variable.DisplayValue.Replace("\r", string.Empty).Split('\n');
+        string value = lines.Length <= 8
+            ? variable.DisplayValue
+            : string.Join(Environment.NewLine, lines.Take(8)) + Environment.NewLine + "…";
+        return $"{variable.Name}: {variable.Type}{Environment.NewLine}{value}";
+    }
+
     /// <summary>The Workspace pane's entry for the viewed variable, or null when it has gone.</summary>
     private ScriptVariable? ViewedVariable() =>
         _viewedVariable is null

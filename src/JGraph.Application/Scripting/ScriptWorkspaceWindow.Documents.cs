@@ -164,6 +164,7 @@ public partial class ScriptWorkspaceWindow
 
         editor.SetNextStatementRequested += (_, line) => RequestSetNextStatement(entry, line);
         editor.OpenSymbolRequested += (_, name) => OpenSymbol(entry, name);
+        editor.DatatipProvider = name => DatatipFor(entry, name);
         editor.CompletionWorkspaceSymbols = () => HarvestWorkspaceSymbols(entry);
         editor.CompletionWorkspaceFiles = () => _workspace is null
             ? Array.Empty<JGraph.Scripting.Completion.WorkspaceFileEntry>()
