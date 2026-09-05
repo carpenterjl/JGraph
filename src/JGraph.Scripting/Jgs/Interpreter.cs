@@ -1,4 +1,4 @@
-﻿using System.Globalization;
+using System.Globalization;
 using System.Numerics;
 using System.Text;
 using JGraph.Numerics;
@@ -5710,6 +5710,27 @@ internal sealed partial class Interpreter
             value = JgsValue.CharMatrix([value.AsString]);
         }
 
+        // A cell stands on its side like any other array: {'a','b'}' is 2-by-1 (measured). It used
+        // to come back unturned, because a cell is not an Array here.
+        if (value.Type == JgsType.Cell)
+        {
+            JgsValue[] cells = value.AsCell;
+            int cellRows = value.Rows;
+            int cellCols = value.Cols;
+            var stood = new JgsValue[cells.Length];
+            for (int r = 0; r < cellRows; r++)
+            {
+                for (int c = 0; c < cellCols; c++)
+                {
+                    stood[c + (r * cellCols)] = cells[r + (c * cellRows)];
+                }
+            }
+
+            JgsValue result = JgsValue.Cell(stood);
+            result.Reshape(cellCols, cellRows);
+            return result;
+        }
+
         if (value.Type != JgsType.Array)
         {
             return value;
@@ -5881,6 +5902,14 @@ internal sealed partial class Interpreter
             (left, right) = (RealPartOf(left), RealPartOf(right));
         }
 
+        // Strings order by character code, which is MATLAB's rule for "a" < "b" (measured).
+        if ((left.IsStringArray || right.IsStringArray)
+            && (left.IsStringArray || left.Type == JgsType.String)
+            && (right.IsStringArray || right.Type == JgsType.String))
+        {
+            return StringOrdering(left, right, opToken, at, op);
+        }
+
         if (IsNumericScalar(left) && IsNumericScalar(right))
         {
             return JgsValue.Bool(op(left.AsNumber, right.AsNumber));
@@ -5943,6 +5972,13 @@ internal sealed partial class Interpreter
     /// </summary>
     private static JgsValue Equality(JgsValue left, JgsValue right, bool negate, Node at)
     {
+        // A string array compares its texts, and a missing string is equal to nothing, itself
+        // included (measured): string(missing) == string(missing) is false and ~= is true.
+        if (left.IsStringArray || right.IsStringArray)
+        {
+            return StringEquality(left, right, negate, at);
+        }
+
         if (left.Type != JgsType.Array && right.Type != JgsType.Array)
         {
             return JgsValue.Bool(AreEqual(left, right) != negate);
@@ -5977,6 +6013,97 @@ internal sealed partial class Interpreter
         }
 
         return ShapeLike(JgsValue.Array(result), left, right);
+    }
+
+    /// <summary>The texts one side of a string comparison holds; null where a piece is not text or is missing.</summary>
+    private static string?[] ComparableTexts(JgsValue side)
+    {
+        if (side.IsStringArray)
+        {
+            return Array.ConvertAll(side.BoxedElements(),
+                static e => e.AsString == JgsBuiltins.MissingSentinel ? null : e.AsString);
+        }
+
+        if (side.Type == JgsType.String)
+        {
+            return [side.AsString == JgsBuiltins.MissingSentinel ? null : side.AsString];
+        }
+
+        if (side.Type == JgsType.Array)
+        {
+            return new string?[side.ArrayLength];
+        }
+
+        return [null];
+    }
+
+    /// <summary>The shape two sides of an elementwise string comparison answer in.</summary>
+    private static (int Rows, int Cols) ComparisonShape(JgsValue left, JgsValue right, int leftCount, int rightCount, string symbol, Node at)
+    {
+        static (int, int) ShapeOf(JgsValue v) => v.Type == JgsType.Array ? (v.Rows, v.Cols) : (1, 1);
+        if (leftCount == 1)
+        {
+            return ShapeOf(right);
+        }
+
+        if (rightCount == 1 || (ShapeOf(left) == ShapeOf(right)))
+        {
+            return ShapeOf(left);
+        }
+
+        throw new JgsRuntimeException(at.Line, at.Column,
+            $"Cannot apply '{symbol}' to arrays of different sizes ({leftCount} and {rightCount}).");
+    }
+
+    /// <summary><c>==</c> and <c>~=</c> where a side is a string array.</summary>
+    private static JgsValue StringEquality(JgsValue left, JgsValue right, bool negate, Node at)
+    {
+        string?[] a = ComparableTexts(left);
+        string?[] b = ComparableTexts(right);
+        (int rows, int cols) = ComparisonShape(left, right, a.Length, b.Length, negate ? "~=" : "==", at);
+        int count = rows * cols;
+        var flags = new JgsValue[count];
+        for (int i = 0; i < count; i++)
+        {
+            string? x = a[a.Length == 1 ? 0 : i];
+            string? y = b[b.Length == 1 ? 0 : i];
+            bool same = x is not null && y is not null && string.Equals(x, y, StringComparison.Ordinal);
+            flags[i] = JgsValue.Bool(same != negate);
+        }
+
+        if (count == 1 && rows == 1 && cols == 1)
+        {
+            return flags[0];
+        }
+
+        JgsValue mask = JgsValue.Array(flags);
+        mask.Reshape(rows, cols);
+        return mask;
+    }
+
+    /// <summary><c>&lt;</c>, <c>&lt;=</c>, <c>&gt;</c> and <c>&gt;=</c> between texts: by character code, false for a missing string.</summary>
+    private static JgsValue StringOrdering(JgsValue left, JgsValue right, TokenType opToken, Node at, Func<double, double, bool> op)
+    {
+        string?[] a = ComparableTexts(left);
+        string?[] b = ComparableTexts(right);
+        (int rows, int cols) = ComparisonShape(left, right, a.Length, b.Length, TokenText(opToken), at);
+        int count = rows * cols;
+        var flags = new JgsValue[count];
+        for (int i = 0; i < count; i++)
+        {
+            string? x = a[a.Length == 1 ? 0 : i];
+            string? y = b[b.Length == 1 ? 0 : i];
+            flags[i] = JgsValue.Bool(x is not null && y is not null && op(string.CompareOrdinal(x, y), 0));
+        }
+
+        if (count == 1 && rows == 1 && cols == 1)
+        {
+            return flags[0];
+        }
+
+        JgsValue mask = JgsValue.Array(flags);
+        mask.Reshape(rows, cols);
+        return mask;
     }
 
     /// <summary>The boxed twin of <c>PackedOps.KeepShape</c>: an elementwise result is the same

@@ -751,7 +751,7 @@ internal static partial class JgsBuiltins
     {
         ArityRange("strjust", args, 1, 2, line, col);
         TextBundle subject = ReadText(args[0], "First argument must be text.", line, col);
-        string side = args.Count > 1 && IsTextArgument(args[1]) ? TextOf2(args[1]) : "right";
+        string side = args.Count > 1 && IsTextArgument(args[1]) ? TextOf2(args[1]).ToLowerInvariant() : "right";
         if (side is not ("left" or "right" or "center"))
         {
             throw new JgsRuntimeException(line, col, "MATLAB:strjust:UnknownParameter",

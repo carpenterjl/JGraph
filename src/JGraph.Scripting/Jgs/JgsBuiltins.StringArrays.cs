@@ -273,34 +273,71 @@ internal static partial class JgsBuiltins
     /// </summary>
     internal static JgsValue ConcatenateStrings(JgsValue left, JgsValue right, int line, int col)
     {
-        JgsValue[] a = PartsForConcat(left);
-        JgsValue[] b = PartsForConcat(right);
-        if (a.Length != b.Length && a.Length != 1 && b.Length != 1)
+        (string?[] a, int aRows, int aCols) = ConcatSide(left);
+        (string?[] b, int bRows, int bCols) = ConcatSide(right);
+
+        // Implicit expansion over both dimensions: ["a" "b"] + ["1"; "2"] is 2-by-2 (measured).
+        int rows = Expand("+", aRows, bRows, line, col);
+        int cols = Expand("+", aCols, bCols, line, col);
+        var joined = new JgsValue[rows * cols];
+        for (int c = 0; c < cols; c++)
         {
-            throw new JgsRuntimeException(line, col,
-                $"'+' joins a string array of {a.Length} to one of {b.Length}, which do not line up.");
+            for (int r = 0; r < rows; r++)
+            {
+                string? x = a[(aRows == 1 ? 0 : r) + ((aCols == 1 ? 0 : c) * aRows)];
+                string? y = b[(bRows == 1 ? 0 : r) + ((bCols == 1 ? 0 : c) * bRows)];
+
+                // A missing string joined to anything is missing (measured).
+                joined[r + (c * rows)] = JgsValue.Str(x is null || y is null ? MissingSentinel : x + y);
+            }
         }
 
-        int count = System.Math.Max(a.Length, b.Length);
-        var joined = new JgsValue[count];
-        for (int i = 0; i < count; i++)
-        {
-            joined[i] = JgsValue.Str(
-                PieceText(a[a.Length == 1 ? 0 : i]) + PieceText(b[b.Length == 1 ? 0 : i]));
-        }
-
-        JgsValue result = JgsValue.StringArray(joined);
-        result.TakeShapeOf(a.Length >= b.Length ? left : right);
-        return result;
+        return JgsValue.StringArray(joined, rows, cols);
     }
 
-    /// <summary>The pieces one side of a <c>+</c> contributes: a string array's elements, or itself.</summary>
-    private static JgsValue[] PartsForConcat(JgsValue value) =>
-        value.IsStringArray ? value.BoxedElements()
-        : value.Type == JgsType.Array ? value.BoxedElements()
-        : [value];
+    /// <summary>
+    /// One side of a string <c>+</c>: its texts (null for a missing string) and its shape. A number
+    /// is written as <c>string</c> writes it, so "abc" + pi is "abc3.1416"; a cell contributes the
+    /// text of each element.
+    /// </summary>
+    private static (string?[] Texts, int Rows, int Cols) ConcatSide(JgsValue value)
+    {
+        if (value.IsStringArray)
+        {
+            return (Array.ConvertAll(value.BoxedElements(), static e => IsMissingText(e.AsString) ? null : e.AsString),
+                value.Rows, value.Cols);
+        }
 
-    /// <summary>The text a single piece of a concatenation contributes.</summary>
-    private static string PieceText(JgsValue piece) =>
-        piece.Type == JgsType.String ? piece.AsString : piece.Display();
+        if (value.Type == JgsType.String)
+        {
+            return ([IsMissingText(value.AsString) ? null : value.AsString], 1, 1);
+        }
+
+        if (value.IsCharMatrix)
+        {
+            return ([value.CharMatrixText()], 1, 1);
+        }
+
+        if (value.Type == JgsType.Cell)
+        {
+            return (Array.ConvertAll(value.AsCell, e => (string?)PieceText(e)), value.Rows, value.Cols);
+        }
+
+        if (value.Type == JgsType.Array)
+        {
+            return (Array.ConvertAll(value.BoxedElements(), e => (string?)PieceText(e)), value.Rows, value.Cols);
+        }
+
+        return ([PieceText(value)], 1, 1);
+    }
+
+    /// <summary>The text a single piece of a concatenation contributes: a number as string() writes it.</summary>
+    private static string PieceText(JgsValue piece) => piece.Type switch
+    {
+        JgsType.String => piece.AsString,
+        JgsType.Number or JgsType.Complex => StringElementOf(piece).AsString,
+        JgsType.Bool => piece.AsNumber == 0 ? "0" : "1",
+        _ when IsStringScalar(piece) => TextOf(piece),
+        _ => piece.Display(),
+    };
 }

@@ -76,9 +76,9 @@ public class MatlabStringOptionTests : IDisposable
     public Task TheDelimiterTypeSaysWhetherThePatternIsText() => RunAsserting("""
         assert(isequal(strsplit(sprintf('a\tb'), '\t'), {'a', 'b'}));
         assert(isequal(strsplit('a1b22c', '\d+', 'DelimiterType', 'RegularExpression'), {'a', 'b', 'c'}));
-        % '\d' is not one of sprintf's escapes, so a simple delimiter leaves it as two characters
-        % and splits on them literally rather than on any digit.
-        assert(isequal(strsplit('a\db', '\d'), {'a', 'b'}));
+        % '\d' is not one of sprintf's escapes, so a simple delimiter drops the backslash and splits
+        % on the 'd' alone, as MATLAB does (measured), rather than on any digit.
+        assert(isequal(strsplit('a\db', '\d'), {'a\', 'b'}));
         assert(isequal(strsplit('a1b', '\d'), {'a1b'}));
         """);
 
@@ -114,9 +114,12 @@ public class MatlabStringOptionTests : IDisposable
 
     [Fact]
     public Task AWrongNumberOfSeparatorsSaysHowManyItWanted() => RunAsserting("""
+        % One delimiter in a cell is one for every gap, as MATLAB reads it (measured); three for
+        % three pieces is the mismatch.
+        assert(strcmp(strjoin({'a', 'b', 'c'}, {'-'}), 'a-b-c'));
         ok = 0;
         try
-            strjoin({'a', 'b', 'c'}, {'-'});
+            strjoin({'a', 'b', 'c'}, {'-', '+', '*'});
         catch err
             ok = ~isempty(strfind(err.message, '2 delimiter'));
         end

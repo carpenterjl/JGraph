@@ -89,8 +89,9 @@ internal static partial class JgsBuiltins
                 return JgsValue.StringArray(Array.ConvertAll(rows, JgsValue.Str), rows.Length, 1);
             }
 
-            // string([]) is the 0-by-0 string array, which ShapedLike cannot build from no elements.
-            if (JgsEmpty.IsEmptyArray(input))
+            // string([]) is the 0-by-0 string array, which ShapedLike cannot build from no elements,
+            // and string({}) the same (measured).
+            if (JgsEmpty.IsEmptyArray(input) || (input.Type == JgsType.Cell && input.AsCell.Length == 0))
             {
                 return JgsValue.StringArray([], input.Rows, input.Cols);
             }
@@ -98,9 +99,9 @@ internal static partial class JgsBuiltins
             return input.Type switch
             {
                 JgsType.String => JgsValue.StringScalar(input.AsString),
-                JgsType.Cell => ShapedLike(input, Array.ConvertAll(input.AsCell, StringOf)).MarkStringArray(),
-                JgsType.Array => ShapedLike(input, Array.ConvertAll(input.BoxedElements(), StringOf)).MarkStringArray(),
-                _ => JgsValue.StringScalar(StringOf(input).AsString),
+                JgsType.Cell => ShapedLike(input, Array.ConvertAll(input.AsCell, StringElementOf)).MarkStringArray(),
+                JgsType.Array => ShapedLike(input, Array.ConvertAll(input.BoxedElements(), StringElementOf)).MarkStringArray(),
+                _ => JgsValue.StringScalar(StringElementOf(input).AsString),
             };
         });
 
@@ -130,117 +131,9 @@ internal static partial class JgsBuiltins
             };
         });
 
-        // compose(format, A1, ..., An): one answer per row, each row's values taken from every data
-        // argument in turn and formatted under sprintf's MATLAB rules — so the format cycles across a
-        // row with more values than specifiers, and compose('%d-%d', [1 2; 3 4]) is {'1-2'; '3-4'}.
-        // The answer takes the format's kind, as MATLAB's does: a string format makes a string
-        // array, a char one a cell of char rows. A call with no data is the format itself, escapes
-        // decoded and specifiers left alone.
-        env.Declare("compose", JgsValue.Function(new BuiltinFunction("compose", (args, line, col) =>
-        {
-            if (args.Count < 1)
-            {
-                throw new JgsRuntimeException(line, col, "compose expects a format string first.");
-            }
-
-            bool asStrings = args[0].IsStringArray;
-            string[] formats = asStrings
-                ? Array.ConvertAll(args[0].BoxedElements(), static e => e.AsString)
-                : [Str("compose", args, 0, line, col)];
-            if (dialect?.IsMatlab == true)
-            {
-                // MATLAB's quotes keep '\n' as two characters; compose decodes them like sprintf.
-                formats = Array.ConvertAll(formats, UnescapeFormat);
-            }
-
-            JgsValue Answer(string[] texts, int rows, int cols)
-            {
-                JgsValue[] boxed = Array.ConvertAll(texts, JgsValue.Str);
-                if (asStrings)
-                {
-                    return JgsValue.StringArray(boxed, rows, cols);
-                }
-
-                JgsValue cell = JgsValue.Cell(boxed);
-                cell.Reshape(rows, cols);
-                return cell;
-            }
-
-            if (args.Count == 1)
-            {
-                string[] plain = Array.ConvertAll(formats, static f => f.Replace("%%", "%", StringComparison.Ordinal));
-                return Answer(plain, args[0].Type == JgsType.Array ? args[0].Rows : 1,
-                    args[0].Type == JgsType.Array ? args[0].Cols : 1);
-            }
-
-            static bool IsRowData(JgsValue data) =>
-                data.Type is JgsType.Array or JgsType.Cell && !data.IsCharMatrix;
-
-            int dataRows = 1;
-            for (int a = 1; a < args.Count; a++)
-            {
-                int given = IsRowData(args[a]) ? args[a].Rows : 1;
-                if (given != 1 && dataRows != 1 && given != dataRows)
-                {
-                    throw new JgsRuntimeException(line, col,
-                        $"compose expects every data argument to have the same number of rows, but got {dataRows} and {given}.");
-                }
-
-                dataRows = given == 1 ? dataRows : given;
-            }
-
-            if (formats.Length > 1 && dataRows > 1)
-            {
-                throw new JgsRuntimeException(line, col,
-                    "compose takes several formats only when the data has one row.");
-            }
-
-            var values = new List<JgsValue>();
-            string RowText(string format, int r)
-            {
-                values.Clear();
-                for (int a = 1; a < args.Count; a++)
-                {
-                    JgsValue data = args[a];
-                    if (!IsRowData(data))
-                    {
-                        values.Add(data);
-                        continue;
-                    }
-
-                    int row = data.Rows == 1 ? 0 : r; // a one-row argument is repeated for every row
-                    JgsValue[] cells = data.Type == JgsType.Cell ? data.AsCell : [];
-                    for (int c = 0; c < data.Cols; c++)
-                    {
-                        int at = data.LinearIndex(row, c);
-                        values.Add(data.Type == JgsType.Cell ? cells[at] : data.ElementAt(at));
-                    }
-                }
-
-                return JgsSprintf.FormatMatlab(format, values);
-            }
-
-            try
-            {
-                if (formats.Length > 1)
-                {
-                    string[] each = Array.ConvertAll(formats, f => RowText(f, 0));
-                    return Answer(each, args[0].Rows, args[0].Cols);
-                }
-
-                var texts = new string[dataRows];
-                for (int r = 0; r < dataRows; r++)
-                {
-                    texts[r] = RowText(formats[0], r);
-                }
-
-                return Answer(texts, dataRows, 1);
-            }
-            catch (FormatException ex)
-            {
-                throw new JgsRuntimeException(line, col, ex.Message);
-            }
-        })
+        // compose(format, A1, ..., An) is declared in JgsBuiltins.Compose.cs.
+        env.Declare("compose", JgsValue.Function(new BuiltinFunction("compose",
+            (args, line, col) => Composed(args, dialect, line, col))
         { KeepsStringArguments = true }));
 
         // A categorical is its cell of category names; class() will say cell, and summary counts.
@@ -494,6 +387,12 @@ internal static partial class JgsBuiltins
     /// and <c>string(NaN)</c> is <c>"NaN"</c>, not the missing string. Anything else goes through
     /// Display.
     /// </summary>
+    /// <summary>One element of <c>string(x)</c>: NaN is the missing string (measured), the rest as <see cref="StringOf"/>.</summary>
+    private static JgsValue StringElementOf(JgsValue value) =>
+        value.Type == JgsType.Number && double.IsNaN(value.AsNumber)
+            ? JgsValue.Str(MissingSentinel)
+            : IsStringScalar(value) ? JgsValue.Str(TextOf(value)) : StringOf(value);
+
     private static JgsValue StringOf(JgsValue value)
     {
         if (value.Type == JgsType.String)

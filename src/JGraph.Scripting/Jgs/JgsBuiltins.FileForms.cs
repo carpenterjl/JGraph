@@ -418,11 +418,9 @@ internal static partial class JgsBuiltins
             entry.Stream.Position = start + entry.Encoding.GetByteCount(body[..consumed]);
         }
 
+        // A row of columns, which for a format of nothing but skipped fields is the 1-by-0 cell.
         JgsValue cell = JgsValue.Cell([.. columns]);
-        if (columns.Count > 1)
-        {
-            cell.Reshape(1, columns.Count);
-        }
+        cell.Reshape(1, columns.Count);
 
         return wanted <= 1
             ? [cell]
@@ -435,9 +433,28 @@ internal static partial class JgsBuiltins
     {
         var delimiters = new List<string>();
         int headerLines = 0;
-        string whitespace = " \t";
+        string whitespace = " \b\t";
         double empty = double.NaN;
         bool collect = false;
+        string? endOfLine = null;
+        string? commentOpen = null;
+        string? commentClose = null;
+        bool multipleDelimsAsOne = false;
+        var treatAsEmpty = new List<string>();
+        bool returnOnError = true;
+
+        string[] TextsOf(string option)
+        {
+            JgsValue value = args[at + 1];
+            string[]? texts = TextElementsOf(value);
+            if (texts is null || value.IsCharMatrix)
+            {
+                throw new JgsRuntimeException(line, col,
+                    $"textscan: '{option}' takes text or a cell array of text.");
+            }
+
+            return texts;
+        }
 
         for (; at + 1 < args.Count; at += 2)
         {
@@ -445,16 +462,21 @@ internal static partial class JgsBuiltins
             switch (name.ToLowerInvariant())
             {
                 case "delimiter":
-                    if (args[at + 1].Type == JgsType.Cell)
+                    // A char row names one delimiter per character, a cell one per element: ',;'
+                    // splits on either (measured), where {',;'} would split on the pair.
+                    if (args[at + 1].Type == JgsType.Cell || args[at + 1].IsStringArray)
                     {
-                        foreach (JgsValue one in args[at + 1].AsCell)
+                        foreach (string one in TextsOf("Delimiter"))
                         {
-                            delimiters.Add(one.Type == JgsType.String ? one.AsString : one.Display());
+                            delimiters.Add(TranslateEscapes(one));
                         }
                     }
                     else
                     {
-                        delimiters.Add(Str("textscan", args, at + 1, line, col));
+                        foreach (char one in TranslateEscapes(Str("textscan", args, at + 1, line, col)))
+                        {
+                            delimiters.Add(one.ToString());
+                        }
                     }
 
                     break;
@@ -462,7 +484,7 @@ internal static partial class JgsBuiltins
                     headerLines = Count("textscan", args, at + 1, line, col);
                     break;
                 case "whitespace":
-                    whitespace = Str("textscan", args, at + 1, line, col);
+                    whitespace = TranslateEscapes(Str("textscan", args, at + 1, line, col));
                     break;
                 case "emptyvalue":
                     empty = Num("textscan", args, at + 1, line, col);
@@ -470,10 +492,37 @@ internal static partial class JgsBuiltins
                 case "collectoutput":
                     collect = args[at + 1].IsTruthy;
                     break;
+                case "endofline":
+                    endOfLine = TranslateEscapes(Str("textscan", args, at + 1, line, col));
+                    break;
+                case "commentstyle":
+                {
+                    string[] marks = TextsOf("CommentStyle");
+                    if (marks.Length is not (1 or 2))
+                    {
+                        throw new JgsRuntimeException(line, col,
+                            "textscan: 'CommentStyle' is one marker, or a cell of an opening and a closing one.");
+                    }
+
+                    commentOpen = marks[0];
+                    commentClose = marks.Length == 2 ? marks[1] : null;
+                    break;
+                }
+
+                case "multipledelimsasone":
+                    multipleDelimsAsOne = args[at + 1].IsTruthy;
+                    break;
+                case "treatasempty":
+                    treatAsEmpty.AddRange(TextsOf("TreatAsEmpty"));
+                    break;
+                case "returnonerror":
+                    returnOnError = args[at + 1].IsTruthy;
+                    break;
                 default:
                     throw new JgsRuntimeException(line, col,
-                        $"textscan: '{name}' is not an option it reads. It takes Delimiter, " +
-                        "HeaderLines, Whitespace, EmptyValue and CollectOutput.");
+                        $"textscan: '{name}' is not an option it reads. It takes Delimiter, HeaderLines, " +
+                        "Whitespace, EmptyValue, CollectOutput, EndOfLine, CommentStyle, MultipleDelimsAsOne, " +
+                        "TreatAsEmpty and ReturnOnError.");
             }
         }
 
@@ -490,6 +539,12 @@ internal static partial class JgsBuiltins
             Whitespace = whitespace,
             EmptyValue = empty,
             CollectOutput = collect,
+            EndOfLine = endOfLine,
+            CommentOpen = commentOpen,
+            CommentClose = commentClose,
+            MultipleDelimsAsOne = multipleDelimsAsOne,
+            TreatAsEmpty = treatAsEmpty,
+            ReturnOnError = returnOnError,
         };
     }
 

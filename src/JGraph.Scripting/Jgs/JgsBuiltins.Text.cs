@@ -1,4 +1,4 @@
-﻿using System.Globalization;
+using System.Globalization;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -33,13 +33,8 @@ internal static partial class JgsBuiltins
             Func<IReadOnlyList<JgsValue>, int, int, int, JgsValue[]>?> Define,
         JgsDialect dialect)
     {
-        Define("strfind", (args, line, col) =>
-        {
-            Arity("strfind", args, 2, line, col);
-            return Found(Occurrences(
-                Str("strfind", args, 0, line, col), Str("strfind", args, 1, line, col), dialect.IndexBase));
-        }, null);
-
+        // strfind, strncmp, strncmpi, count, matches and strlength are declared in
+        // JgsBuiltins.TextFamily.cs, over the containers MATLAB hands them.
         Define("findstr", (args, line, col) =>
         {
             Arity("findstr", args, 2, line, col);
@@ -52,61 +47,6 @@ internal static partial class JgsBuiltins
                 : Found(Occurrences(first, second, dialect.IndexBase));
         }, null);
 
-        void CompareFirst(string name, StringComparison comparison) =>
-            Define(name, (args, line, col) =>
-            {
-                Arity(name, args, 3, line, col);
-                string a = Str(name, args, 0, line, col);
-                string b = Str(name, args, 1, line, col);
-                int n = Count(name, args, 2, line, col);
-
-                // MATLAB is false when either string is shorter than the compared prefix, rather than
-                // comparing what is there — a length mismatch is a mismatch.
-                return JgsValue.Bool(a.Length >= n && b.Length >= n
-                    && string.Compare(a, 0, b, 0, n, comparison) == 0);
-            }, null);
-
-        CompareFirst("strncmp", StringComparison.Ordinal);
-        CompareFirst("strncmpi", StringComparison.OrdinalIgnoreCase);
-
-        Define("count", (args, line, col) =>
-        {
-            Arity("count", args, 2, line, col);
-
-            // Occurrences are counted without overlap — count('aaa', 'aa') is 1 where strfind
-            // finds two — and several patterns are counted in one pass over the text rather than
-            // added up, so that count('abab', {'ab', 'ba'}) is 2 and not 3. Both measured.
-            if (IsOnePattern(args[1], out string onePattern))
-            {
-                return PerString("count", args[0],
-                    text => JgsValue.Number(CountAtOnce(text, [onePattern])), line, col);
-            }
-
-            string[] wanted = PatternsOf("count", args, 1, line, col);
-            return PerString("count", args[0], text => JgsValue.Number(CountAtOnce(text, wanted)), line, col);
-        }, null);
-
-        Define("matches", (args, line, col) =>
-        {
-            Arity("matches", args, 2, line, col);
-            if (IsOnePattern(args[1], out string oneWhole))
-            {
-                return PerString("matches", args[0],
-                    text => JgsValue.Bool(string.Equals(text, oneWhole, StringComparison.Ordinal)),
-                    line, col);
-            }
-
-            string[] whole = PatternsOf("matches", args, 1, line, col);
-            return PerString("matches", args[0],
-                text => JgsValue.Bool(Array.Exists(whole, p => string.Equals(text, p, StringComparison.Ordinal))),
-                line, col);
-        }, null);
-
-        Define("strlength", (args, line, col) =>
-        {
-            Arity("strlength", args, 1, line, col);
-            return PerString("strlength", args[0], text => JgsValue.Number(text.Length), line, col);
-        }, null);
     }
 
     /// <summary>Positions as a row, or the 0-by-0 empty MATLAB answers when there are none.</summary>
@@ -165,79 +105,22 @@ internal static partial class JgsBuiltins
         return count;
     }
 
-    /// <summary>Applies a per-string function to a string, or to every element of a cell of strings.</summary>
-    private static JgsValue PerString(string name, JgsValue value, Func<string, JgsValue> f, int line, int col)
-    {
-        if (value.Type == JgsType.String)
-        {
-            return f(value.AsString);
-        }
-
-        // A string array maps the same way a cell of char does, and keeps its shape (M63) — which is
-        // what makes strlength(["a" "bb"]) answer [1 2] rather than one number for the whole thing.
-        if (value.IsStringArray)
-        {
-            JgsValue[] texts = value.BoxedElements();
-            var mapped = new JgsValue[texts.Length];
-            for (int i = 0; i < texts.Length; i++)
-            {
-                mapped[i] = f(texts[i].AsString);
-            }
-
-            JgsValue answer = JgsValue.Array(mapped);
-            answer.TakeShapeOf(value);
-            return answer;
-        }
-
-        if (value.Type != JgsType.Cell)
-        {
-            throw new JgsRuntimeException(line, col, $"{name} expects a string or a cell of strings, but got a {value.TypeName}.");
-        }
-
-        JgsValue[] cells = value.AsCell;
-        var results = new JgsValue[cells.Length];
-        for (int i = 0; i < cells.Length; i++)
-        {
-            if (cells[i].Type != JgsType.String)
-            {
-                throw new JgsRuntimeException(line, col, $"{name}: cell element {i + 1} is a {cells[i].TypeName}, not a string.");
-            }
-
-            results[i] = f(cells[i].AsString);
-        }
-
-        return JgsValue.Array(results);
-    }
-
     // --- Shaping ----------------------------------------------------------------------------------
 
     private static void RegisterStringShaping(
         Action<string, Func<IReadOnlyList<JgsValue>, int, int, JgsValue>,
             Func<IReadOnlyList<JgsValue>, int, int, int, JgsValue[]>?> Define)
     {
-        Define("deblank", (args, line, col) =>
-        {
-            Arity("deblank", args, 1, line, col);
-            return PerString("deblank", args[0], static text => JgsValue.Str(text.TrimEnd()), line, col);
-        }, null);
-
+        // deblank, strcat and the three convert… helpers are declared in JgsBuiltins.TextFamily.cs.
         Define("blanks", (args, line, col) =>
         {
             Arity("blanks", args, 1, line, col);
-            return JgsValue.Str(new string(' ', Math.Max(0, Count("blanks", args, 0, line, col))));
-        }, null);
+            int count = args[0].Type == JgsType.Array && args[0].ArrayLength == 0
+                ? 0
+                : Count("blanks", args, 0, line, col);
 
-        Define("strcat", (args, line, col) =>
-        {
-            var joined = new StringBuilder();
-            for (int i = 0; i < args.Count; i++)
-            {
-                // strcat drops trailing whitespace from each piece — a quirk of its char-matrix
-                // origins that scripts nonetheless rely on. [a b] is the concatenation that keeps it.
-                joined.Append(Str("strcat", args, i, line, col).TrimEnd());
-            }
-
-            return JgsValue.Str(joined.ToString());
+            // blanks(0) is the 1-by-0 char, not the 0-by-0 '' (measured); so is blanks of anything less.
+            return count <= 0 ? JgsValue.CharMatrix([string.Empty]) : JgsValue.Str(new string(' ', count));
         }, null);
 
         Define("setstr", (args, line, col) =>
@@ -246,17 +129,6 @@ internal static partial class JgsBuiltins
             return CharactersOf("setstr", args[0], line, col);
         }, null);
 
-        // With no string-array type there is nothing for these to convert: text is char either way.
-        // They exist so a script written for R2016b onward runs unchanged.
-        foreach (string name in new[] { "convertCharsToStrings", "convertStringsToChars", "convertContainedStringsToChars" })
-        {
-            string captured = name;
-            Define(captured, (args, line, col) =>
-            {
-                Arity(captured, args, 1, line, col);
-                return args[0];
-            }, null);
-        }
     }
 
     /// <summary>Character codes back to text — the body of <c>char</c> and its legacy name.</summary>

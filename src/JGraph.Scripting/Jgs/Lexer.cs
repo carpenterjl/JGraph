@@ -179,11 +179,13 @@ internal static class Lexer
             // MATLAB spells transpose with the same character it uses to quote a char literal. It is
             // transpose when it follows something transposable and nothing separates them; a space before
             // it always starts a literal, which is what makes command syntax ("disp 'hi'") read correctly.
-            if (matlab && c == '\'' && !spaceBefore && tokens.Count > 0 && tokens[^1].Type is
+            if (matlab && c == '\'' && !spaceBefore && tokens.Count > 0 && (tokens[^1].Type is
                 TokenType.Identifier or TokenType.Number or TokenType.ImaginaryNumber or TokenType.End
                 or TokenType.RParen or TokenType.RBracket or TokenType.RBrace
-                or TokenType.Transpose or TokenType.DotTranspose)
+                or TokenType.Transpose or TokenType.DotTranspose
+                || (tokens[^1].Type == TokenType.String && !tokens[^1].IsCharLiteral)))
             {
+                // A double-quoted string stands on its side too: "abc"' is the 1-by-1 it was (measured).
                 Add(TokenType.Transpose, "'", start);
                 i++;
                 continue;

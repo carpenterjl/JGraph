@@ -157,6 +157,14 @@ internal static class JgsStdlib
         static bool IsOneElementArray(JgsValue value) =>
             value.Type == JgsType.Array && value.ArrayLength == 1 && !value.IsNd;
 
+        // A missing string is unequal to everything, itself included, exactly as NaN is; isequaln
+        // is the reading under which two of them match (measured).
+        if (left.Type == JgsType.String && right.Type == JgsType.String
+            && left.AsString == JgsBuiltins.MissingSentinel && right.AsString == JgsBuiltins.MissingSentinel)
+        {
+            return nanEqual;
+        }
+
         if (left.Type == JgsType.Array && right.Type == JgsType.Array)
         {
             // Sizes must agree, which is what MATLAB's isequal means by equal — and comparing

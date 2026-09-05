@@ -189,8 +189,8 @@ public class MatlabNumericClassM123Tests : IDisposable
     public void ARunningTotalSaturatesAtEveryStep()
     {
         string sums = Run("""
-            fprintf('%s %s %s', mat2str(cumsum(int8([100 100 -100]))), ...
-              mat2str(cumsum(uint8([200 200 1]))), mat2str(cumprod(int8([100 100 0]))));
+            fprintf('%s %s %s', mat2str(cumsum(int8([100 100 -100])), 'class'), ...
+              mat2str(cumsum(uint8([200 200 1])), 'class'), mat2str(cumprod(int8([100 100 0])), 'class'));
             """);
 
         Assert.Equal("int8([100 127 27]) uint8([200 255 255]) int8([100 127 0])", sums);
@@ -204,11 +204,11 @@ public class MatlabNumericClassM123Tests : IDisposable
     public void AnAnswerBetweenTwoIntegersIsRoundedIntoTheClass()
     {
         string answers = Run("""
-            fprintf('%s %s', mat2str(median(int16([1 2 3 4]))), mat2str(diff(uint8([1 5 3]))));
+            fprintf('%s %s', mat2str(median(int16([1 2 3 4])), 'class'), mat2str(diff(uint8([1 5 3])), 'class'));
             """);
 
         // 2.5 rounds away from zero, and 3 - 5 saturates at the bottom of uint8 rather than wrapping.
-        // mat2str names every class but double, as MATLAB does.
+        // mat2str names the class only when asked with 'class', as MATLAB's does (measured).
         Assert.Equal("int16(3) uint8([4 0])", answers);
     }
 
@@ -258,7 +258,7 @@ public class MatlabNumericClassM123Tests : IDisposable
     {
         string answer = Run("""
             v = fft(single([1 2 3 4]));
-            fprintf('%s %s %s', class(v), mat2str(real(v)), mat2str(imag(v)));
+            fprintf('%s %s %s', class(v), mat2str(real(v), 'class'), mat2str(imag(v), 'class'));
             """);
 
         Assert.Equal("single single([10 -2 -2 -2]) single([0 2 0 -2])", answer);

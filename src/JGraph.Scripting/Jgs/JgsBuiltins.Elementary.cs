@@ -621,7 +621,12 @@ internal static partial class JgsBuiltins
             return value.AsImage.Class == JGraph.Imaging.ImageClass.Logical;
         }
 
-        return value.Type == JgsType.Array && value.ArrayLength > 0 && AllOfType(value, JgsType.Bool);
+        // An empty logical is one too: strcmp({}, {}) is a 0-by-0 logical (measured), which only the
+        // packed kind can say once there are no elements to ask.
+        return value.Type == JgsType.Array
+            && (value.ArrayLength > 0
+                ? AllOfType(value, JgsType.Bool)
+                : value.IsPacked && value.PackedKind == JgsPackedKind.Bool);
     }
 
     /// <summary>Whether a value carries a non-zero imaginary part anywhere inside it.</summary>

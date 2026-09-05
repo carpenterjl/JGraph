@@ -154,6 +154,12 @@ internal static partial class JgsBuiltins
         for (int i = 0; i < count; i++)
         {
             string text = subject.Texts[i];
+            if (subject.Kind == TextKind.String && IsMissingText(text))
+            {
+                texts[i] = text; // a missing string stays missing (measured)
+                continue;
+            }
+
             if (places[i].Marker is { } marker)
             {
                 texts[i] = InsertedAtMarkers(text, marker, what[i], after);
@@ -219,6 +225,12 @@ internal static partial class JgsBuiltins
         for (int i = 0; i < count; i++)
         {
             string text = subject.Texts[i];
+            if (subject.Kind == TextKind.String && IsMissingText(text))
+            {
+                texts[i] = text; // a missing string stays missing (measured)
+                continue;
+            }
+
             if (places[i].Marker is { } marker)
             {
                 int found = text.IndexOf(marker, StringComparison.Ordinal);

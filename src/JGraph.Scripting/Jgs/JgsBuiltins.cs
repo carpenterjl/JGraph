@@ -1342,7 +1342,13 @@ internal static partial class JgsBuiltins
                 [parts], "delimiters", line, col);
         });
 
-        Define("join", (args, line, col) => Joined(args, line, col));
+        env.Declare("join", JgsValue.Function(new BuiltinFunction("join",
+            (args, line, col) => Joined(args, dialect.IsMatlab, line, col))
+        {
+            // Read whole: a string(missing) delimiter answers a missing string where the bare
+            // `missing` value is refused, and only the undemoted argument tells them apart.
+            KeepsStringArguments = true,
+        }));
 
         // MATLAB spells these with the interior capital, and one canonical spelling beats two.
         Define("startsWith", (args, line, col) =>
@@ -2548,7 +2554,7 @@ internal static partial class JgsBuiltins
         RegisterOdeSolutionBuiltins(env);
         RegisterOdeFamilyBuiltins(env, host);
         RegisterCosineTransformBuiltins(env);
-        RegisterStringEditingBuiltins(env);
+        RegisterStringEditingBuiltins(env, dialect);
         RegisterStringArrayBuiltins(env);
 
         // After every define and after the other retrofits, so it wraps whichever wrapper each of

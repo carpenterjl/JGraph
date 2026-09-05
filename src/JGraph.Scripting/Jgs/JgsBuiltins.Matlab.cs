@@ -145,10 +145,9 @@ internal static partial class JgsBuiltins
                 across = (int)Math.Round(counts[^1]);
             }
 
-            if (down < 0 || across < 0)
-            {
-                throw new JgsRuntimeException(line, col, "repmat counts cannot be negative.");
-            }
+            // A negative count is no copies: repmat('a', -1, 1) is a 0-by-1 char (measured).
+            down = Math.Max(0, down);
+            across = Math.Max(0, across);
 
             JgsValue source = args[0];
 
@@ -232,16 +231,7 @@ internal static partial class JgsBuiltins
         });
 
         // --- Strings ----------------------------------------------------------------------------
-        Define("strcmp", (args, line, col) => StringCompare("strcmp", args, line, col, StringComparison.Ordinal));
-        Define("strcmpi", (args, line, col) => StringCompare("strcmpi", args, line, col, StringComparison.OrdinalIgnoreCase));
-
-
-        Define("strtrim", (args, line, col) =>
-        {
-            Arity("strtrim", args, 1, line, col);
-            return JgsValue.Str(Str("strtrim", args, 0, line, col).Trim());
-        });
-
+        // strcmp, strcmpi and strtrim are declared in JgsBuiltins.TextFamily.cs.
         Define("strsplit", (args, line, col) => SplitText(args, 1, line, col)[0]);
         Define("strjoin", (args, line, col) => JoinText(args, line, col));
         Define("num2str", (args, line, col) => NumberText(args, line, col));
@@ -336,7 +326,11 @@ internal static partial class JgsBuiltins
         Define("fieldnames", (args, line, col) =>
         {
             Arity("fieldnames", args, 1, line, col);
-            return JgsValue.Cell(StructOf("fieldnames", args[0], line, col).Keys.Select(JgsValue.Str).ToArray());
+
+            // A column, as MATLAB's is (measured): fieldnames(s)' is the row a script compares with.
+            JgsValue names = JgsValue.Cell(StructOf("fieldnames", args[0], line, col).Keys.Select(JgsValue.Str).ToArray());
+            names.Reshape(names.AsCell.Length, 1);
+            return names;
         });
 
         Define("isfield", (args, line, col) =>
@@ -569,6 +563,11 @@ internal static partial class JgsBuiltins
         if (height == 0 && width == 0)
         {
             return JgsValue.Str(string.Empty); // the 0-by-0 char row '' already is
+        }
+
+        if (height == 1 && width == 0)
+        {
+            return JgsValue.CharMatrix([string.Empty]); // repmat('a', 1, 0) is the 1-by-0 char (measured)
         }
 
         var codes = new JgsValue[height * width];
@@ -1165,33 +1164,6 @@ internal static partial class JgsBuiltins
         throw new JgsRuntimeException(line, col, $"{name} expects a struct, but got a {value.TypeName}.");
     }
 
-    /// <summary>
-    /// String comparison in MATLAB's shape: two strings give a single answer, and a cell of strings on
-    /// either side gives one answer per element.
-    /// </summary>
-    private static JgsValue StringCompare(
-        string name, IReadOnlyList<JgsValue> args, int line, int col, StringComparison comparison)
-    {
-        Arity(name, args, 2, line, col);
-        if (args[0].Type == JgsType.Cell || args[1].Type == JgsType.Cell)
-        {
-            JgsValue[] cell = (args[0].Type == JgsType.Cell ? args[0] : args[1]).AsCell;
-            JgsValue other = args[0].Type == JgsType.Cell ? args[1] : args[0];
-            var mask = new JgsValue[cell.Length];
-            for (int i = 0; i < mask.Length; i++)
-            {
-                mask[i] = JgsValue.Bool(Same(cell[i], other, comparison));
-            }
-
-            return JgsValue.Array(mask);
-        }
-
-        return JgsValue.Bool(Same(args[0], args[1], comparison));
-    }
-
-    private static bool Same(JgsValue a, JgsValue b, StringComparison comparison) =>
-        a.Type == JgsType.String && b.Type == JgsType.String
-        && string.Equals(a.AsString, b.AsString, comparison);
 
     /// <summary>Formats an <c>error</c>/<c>warning</c>/<c>assert</c> message, honouring a format string.</summary>
     private static string FormatMessage(string name, IReadOnlyList<JgsValue> args, int start, int line, int col)

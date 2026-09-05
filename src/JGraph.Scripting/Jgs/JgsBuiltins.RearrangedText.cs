@@ -101,7 +101,9 @@ internal static partial class JgsBuiltins
             {
                 // Carried whole, for the reason M105's wrapper carries them whole: a flag dropped here
                 // changes how the name may be *called*, which no test of what it answers would see.
-                KeepsStringArguments = inner.KeepsStringArguments,
+                // The position-gathering verbs keep a string scalar as the 1-by-1 array it is, so that
+                // fliplr("abc") is "abc" and not the reversed char row it was demoted to (measured).
+                KeepsStringArguments = inner.KeepsStringArguments || gathersPositions,
                 BindsAnsAsStatement = inner.BindsAnsAsStatement,
                 AutoCallsBare = inner.AutoCallsBare,
                 KnowsWhenDiscarded = inner.KnowsWhenDiscarded,

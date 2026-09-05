@@ -257,7 +257,7 @@ public static class JgsBuiltinCatalog
         Add("fseek", "Moves the position in an open file; 0 on success, -1 on failure.", P("fid"), P("offset"), Opt("origin"));
         Add("fgets", "The next line of an open file, keeping its newline and stopping after a given number of characters; -1 at the end.", P("fid"), Opt("nchar"));
         Add("fscanf", "Numbers or text read from an open file under a scanf format, bounded by a count or an [m n] shape, leaving the file where the reading stopped.", P("fid"), P("format"), Opt("size"));
-        Add("textscan", "A file or a piece of text read under a format as a table: one cell per conversion, optionally a set number of times, with Delimiter, HeaderLines, Whitespace, EmptyValue and CollectOutput.", P("source"), P("format"), Opt("N"));
+        Add("textscan", "A file or a piece of text read under a format as a table: one cell per conversion, optionally a set number of times, with Delimiter, HeaderLines, Whitespace, EmptyValue, CollectOutput, EndOfLine, CommentStyle, MultipleDelimsAsOne, TreatAsEmpty and ReturnOnError; an empty field reads as EmptyValue.", P("source"), P("format"), Opt("N"));
         Add("type", "Prints a file's contents to the console.", P("path"));
         Add("getenv", "The value of an environment variable, or '' when it is not set.", P("name"));
         Add("setenv", "Sets an environment variable for this process.", P("name"), Opt("value"));
@@ -301,20 +301,20 @@ public static class JgsBuiltinCatalog
         Add("movmad", "The mean absolute deviation over a sliding window of width k, or a [before after] reach; 'Endpoints' says what an incomplete window at the ends means.", P("x"), P("k"), Opt("dim"), Opt("options"));
 
         // --- Text search, shaping, and regular expressions ------------------------------------------
-        Add("strfind", "Every position where a pattern appears in a string.", P("text"), P("pattern"));
+        Add("strfind", "Every position where a pattern appears in text, or in a numeric array; one row per element of a container, or always a cell with 'ForceCellOutput'.", P("text"), P("pattern"), Opt("options"));
         Add("findstr", "The positions where the shorter of two strings appears in the longer.", P("a"), P("b"));
-        Add("strncmp", "Whether two strings agree in their first n characters.", P("a"), P("b"), P("n"));
-        Add("strncmpi", "Whether two strings agree in their first n characters, ignoring case.", P("a"), P("b"), P("n"));
-        Add("count", "How many times a pattern appears, without overlap, in a string or in each element of a container; several patterns are counted in one pass.", P("text"), P("pattern"));
-        Add("matches", "Whether a string is exactly the pattern.", P("text"), P("pattern"));
-        Add("strlength", "The number of characters in a string, or in each of a cell of strings.", P("text"));
-        Add("deblank", "A string with its trailing whitespace removed.", P("text"));
+        Add("strncmp", "Whether two strings agree in their first n characters, elementwise over cells and string arrays.", P("a"), P("b"), P("n"));
+        Add("strncmpi", "Whether two strings agree in their first n characters, ignoring case, elementwise over cells and string arrays.", P("a"), P("b"), P("n"));
+        Add("count", "How many times a pattern appears, without overlap, in a string or in each element of a container; several patterns are counted in one pass, and 'IgnoreCase' compares without case.", P("text"), P("pattern"), Opt("options"));
+        Add("matches", "Whether text is exactly one of the patterns, elementwise over a container, with 'IgnoreCase'.", P("text"), P("pattern"), Opt("options"));
+        Add("strlength", "The number of characters in a string, or in each element of a container; NaN for a missing string.", P("text"));
+        Add("deblank", "Text with its trailing whitespace removed, in the container it came in; a char matrix loses its blank columns.", P("text"));
         Add("blanks", "A string of n spaces.", P("n"));
-        Add("strcat", "Strings joined end to end, each with its trailing whitespace dropped.", P("a"), Opt("b"));
+        Add("strcat", "Text joined end to end: char arguments lose their trailing whitespace, containers pair element by element, and the answer is a string, a cell or char by what was given.", P("a"), Opt("b"));
         Add("setstr", "Character codes as text (the pre-R2006 spelling of char).", P("codes"));
-        Add("convertCharsToStrings", "The value unchanged: JGraph's text is char, and there is no string type to convert to.", P("x"));
-        Add("convertStringsToChars", "The value unchanged: JGraph's text is already char.", P("x"));
-        Add("convertContainedStringsToChars", "The value unchanged: JGraph's text is already char.", P("x"));
+        Add("convertCharsToStrings", "A char row or a cell of char as strings; anything else unchanged, one output per input.", P("x"));
+        Add("convertStringsToChars", "A string as char, a string array as a cell of char; anything else unchanged, one output per input.", P("x"));
+        Add("convertContainedStringsToChars", "Every string inside a cell or a struct as char, at any depth; one output per input.", P("x"));
         Add("regexp", "Regular expression search over a char row, string array or cell: start positions, or the outputs the option words name ('match', 'tokens', 'names', 'split', 'start', 'end', 'tokenExtents'), with 'once', 'ignorecase', 'emptymatch', 'lineanchors', 'forceCellOutput' and the rest. A string subject answers strings; \\< and \\> are word anchors.", P("text"), P("expr"), Opt("option"));
         Add("regexpi", "Regular expression search, ignoring case; otherwise regexp.", P("text"), P("expr"), Opt("option"));
         Add("regexprep", "Every match of a regular expression replaced. In the replacement $0 is the match, $1 and $<name> are tokens, ${expr} runs MATLAB code on them, and \\n, \\\\ and \\$ are decoded. Option words: 'once', 'ignorecase', 'preservecase', 'emptymatch', 'dotexceptnewline', 'lineanchors', 'freespacing', or a match number.", P("text"), P("expr"), P("replacement"), Opt("option"), Opt("option2"));
@@ -447,7 +447,7 @@ public static class JgsBuiltinCatalog
         Add("transpose", "The non-conjugate transpose, x.' as a function.", P("x"));
         Add("ctranspose", "The complex-conjugate transpose, x' as a function.", P("x"));
         Add("prod", "The product of a numeric array, over one dimension, several, or 'all'.", P("array"), Opt("dim"));
-        Add("ismember", "Whether each element of x is in the set: [tf, loc] = ismember(x, set, 'rows') also says where.", P("x"), P("set"), Opt("option"));
+        Add("ismember", "Whether each element of x is in the set, text included: [tf, loc] = ismember(x, set, 'rows') also says where; two char arrays compare character by character.", P("x"), P("set"), Opt("option"));
         Add("union", "Every value in either set, once: [c, ia, ib] = union(a, b, 'rows', 'stable').", P("a"), P("b"), Opt("option"));
         Add("intersect", "The values in both sets: [c, ia, ib] = intersect(a, b, 'rows', 'stable').", P("a"), P("b"), Opt("option"));
         Add("setdiff", "The values in a that are not in b: [c, ia] = setdiff(a, b, 'rows', 'stable').", P("a"), P("b"), Opt("option"));
@@ -491,18 +491,19 @@ public static class JgsBuiltinCatalog
         Add("string", "The value as a string array: a char row becomes one string, a cell or array one per element.", P("x"));
         Add("strings", "An array of empty strings: strings(n) is n-by-n, strings(r, c) is r-by-c.", P("rows?"), P("cols?"));
         Add("char", "Text as a char row: a string, a cell, or code points; several arguments stack into a char matrix.", P("x"), P("more?"));
-        Add("strip", "Whitespace removed from a string: strip(s), or strip(s, 'left'|'right'|'both').", P("s"), P("side?"));
-        Add("pad", "A string padded to a width: pad(s, width) or pad(s, width, 'left'|'right'|'both').", P("s"), P("width?"), P("side?"));
+        Add("strip", "Whitespace, or one named character, removed from text: strip(s), strip(s, side), strip(s, ch) or strip(s, side, ch), over any container.", P("s"), Opt("side"), Opt("character"));
+        Add("pad", "Text padded to a width, or to the longest element: pad(s), pad(s, n), pad(s, side), pad(s, n, side, ch), over any container.", P("s"), Opt("width"), Opt("side"), Opt("character"));
         Add("erase", "The string with every occurrence of a piece of text taken out.", P("s"), P("what"));
         Add("insertAfter", "Text inserted after every occurrence of a marker, or after a position, in the kind of text given.", P("s"), P("marker"), P("what"));
         Add("insertBefore", "Text inserted before every occurrence of a marker, or before a position, in the kind of text given.", P("s"), P("marker"), P("what"));
         Add("extractAfter", "What follows the first occurrence of a marker, or a position; char in, char out ('' when absent), string in, string out (missing when absent).", P("s"), P("marker"));
         Add("extractBefore", "What precedes the first occurrence of a marker, or a position; char in, char out ('' when absent), string in, string out (missing when absent).", P("s"), P("marker"));
         Add("extractBetween", "Every piece between two markers, as a column, or the piece between two positions; 'Boundaries', 'inclusive' keeps the markers.", P("s"), P("from"), P("to"), Opt("Boundaries"), Opt("side"));
-        Add("cellstr", "A string array as a cell of character rows.", P("x"));
-        Add("compose", "Formats each row of the data through the format string, one output string per row.", P("format"), Opt("values"));
+        Add("cellstr", "A string array or char array as a cell of character rows, the shape kept and trailing blanks removed.", P("x"));
+        Add("compose", "Formats the data through the format string: one string per row, and one per group of as many values as the format has operators.", P("format"), Opt("values"));
         Add("missing", "The missing value: a string slot with nothing in it (displays as <missing>).");
-        Add("ismissing", "Whether each element is missing (the missing string, or NaN).", P("x"));
+        Add("ismissing", "Whether each element is missing: the missing string, an empty char in a cell, or NaN; with indicators, whether it is one of them.", P("x"), Opt("indicators"));
+        Add("anymissing", "Whether any element is missing, as one logical.", P("x"));
         Add("tiledlayout", "Starts an r-by-c tile grid (or 'flow') and answers the layout object.", P("rows"), P("cols"), Opt("name"), Opt("value"));
         Add("nexttile", "Takes the next tile of the grid (or tile n, spanning [r c]) and answers its axes.", Opt("n"), Opt("span"));
         Add("axis", "Aspect and limit control: axis equal/image/square/tight/off, or axis([xmin xmax ymin ymax]).", Opt("option"));
@@ -544,14 +545,14 @@ public static class JgsBuiltinCatalog
         Add("islogical", "True for a bool or an array of bools (a mask).", P("x"));
         Add("iscell", "True for a cell array.", P("x"));
         Add("isstruct", "True for a struct.", P("x"));
-        Add("strcmp", "Compares two strings (or a cell of strings against one), case-sensitively.", P("a"), P("b"));
-        Add("strcmpi", "Compares two strings ignoring case.", P("a"), P("b"));
+        Add("strcmp", "Whether two pieces of text are the same, elementwise over cells and string arrays; a missing string matches nothing.", P("a"), P("b"));
+        Add("strcmpi", "Whether two pieces of text are the same ignoring case, elementwise over cells and string arrays.", P("a"), P("b"));
         Add("strrep", "Replaces every occurrence of one substring with another, overlapping occurrences included; any string argument makes the answer a string, any cell a cell.", P("text"), P("find"), P("replace"));
-        Add("strtrim", "Removes leading and trailing whitespace.", P("text"));
+        Add("strtrim", "Text with its leading and trailing whitespace removed, in the container it came in.", P("text"));
         Add("strsplit", "Splits text into a cell of pieces, on a delimiter (or a cell of them) or on whitespace; [C, matches] also reports the delimiters cut on.", P("text"), Opt("delimiter"), Opt("options"));
-        Add("strjoin", "Joins a cell (or array) of pieces into one string; a cell separator gives every gap its own.", P("parts"), Opt("separator"));
+        Add("strjoin", "Joins a cell or string array of pieces into one; a cell separator gives every gap its own, or one for all.", P("parts"), Opt("separator"));
         Add("num2str", "Formats a number or an array as text, optionally to a given number of significant digits or a sprintf format.", P("x"), Opt("digits"));
-        Add("mat2str", "Writes a value the way the language reads it back: '[1 2;3 4]', to n significant digits; 'class' adds the class constructor.", P("x"), Opt("digits"), Opt("class"));
+        Add("mat2str", "Writes a value the way the language reads it back: '[1 2;3 4]', to n significant digits; only 'class' adds the class constructor.", P("x"), Opt("digits"), Opt("class"));
         Add("int2str", "Rounds to whole numbers and formats them as text.", P("x"));
         Add("deal", "Hands one value to every output, or one value each: [a, b] = deal(1, 2).", P("value"), Opt("more..."));
         Add("str2double", "Parses text as a number (Inf, NaN, thousands commas and complex forms included), or NaN when it is not one.", P("text"));
@@ -1047,7 +1048,7 @@ public static class JgsBuiltinCatalog
         Add("islocalmin", "Local minima and their prominence, with the same options as islocalmax.", P("x"), Opt("dim"), Opt("options"));
         Add("smoothdata", "Smoothed data and the window it used: [b, k] = smoothdata(x, dim, 'movmean' | 'movmedian' | 'gaussian' | 'lowess' | 'loess' | 'rlowess' | 'rloess' | 'sgolay', k).", P("x"), Opt("dim"), Opt("method"), Opt("window"), Opt("options"));
         Add("groupsummary", "One summary per group: [b, g] = groupsummary(x, groups, method), or a table of groups when given a table.", P("data"), P("groups"), Opt("method"), Opt("datavars"));
-        Add("sortrows", "Rows in order of whole columns: [b, i] = sortrows(a, cols, 'descend'); a negative column is descending.", P("a"), Opt("columns"), Opt("direction"));
+        Add("sortrows", "Rows in order of whole columns, of numbers, text or a cell of either: [b, i] = sortrows(a, cols, 'descend'); a negative column is descending.", P("a"), Opt("columns"), Opt("direction"));
         Add("gradient", "Numerical gradient by central differences: [fx, fy] = gradient(f, hx, hy).", P("f"), Opt("hx"), Opt("hy"));
         Add("trapz", "The area under sampled data by the trapezoid rule: trapz(y), trapz(x, y), trapz(y, dim), trapz(x, y, dim).", P("first"), Opt("y"), Opt("dim"));
         Add("cumtrapz", "The running area under sampled data, starting at zero: cumtrapz(y), cumtrapz(x, y), cumtrapz(x, y, dim).", P("first"), Opt("y"), Opt("dim"));
@@ -1615,15 +1616,15 @@ public static class JgsBuiltinCatalog
         Add("hmmtrain", "The two matrices estimated from the observations alone: [TRANS, EMIS] = hmmtrain(seqs, guessTR, guessE, 'Tolerance', 1e-6).", P("seqs"), P("guessTR"), P("guessE"), Opt("options"));
 
         // --- Array operations ---------------------------------------------------------------------
-        Add("sort", "A sorted copy of a numeric or string array; order \"ascend\" (default) or \"descend\", with 'MissingPlacement' and 'ComparisonMethod' for where NaN lands and how complex numbers order.", P("array"), Opt("order"), Opt("options"));
-        Add("unique", "The distinct values of a numeric or string array: [c, ia, ic] = unique(x, 'rows', 'stable', 'last'), where c = x(ia) and x = c(ic).", P("array"), Opt("option"), Opt("more"));
+        Add("sort", "A sorted copy of a numeric array, string array or cell of char; order \"ascend\" (default) or \"descend\", with 'MissingPlacement' and 'ComparisonMethod' for where NaN or a missing string lands and how complex numbers order.", P("array"), Opt("order"), Opt("options"));
+        Add("unique", "The distinct values of a numeric array, string array or cell of char: [c, ia, ic] = unique(x, 'rows', 'stable', 'last'), where c = x(ia) and x = c(ic).", P("array"), Opt("option"), Opt("more"));
         Add("find", "Indices of the truthy elements: volt(find(temp > 85)) gathers the matches. In a .m file find(x, k) keeps the first k ('last' for the other end); in JGS the second argument is the index base, 0 by default.", P("mask"), Opt("k"), Opt("direction"));
         Add("any", "Whether at least one element is truthy, over one dimension, several, or 'all'.", P("array"), Opt("dim"));
         Add("all", "Whether every element is truthy, over one dimension, several, or 'all'.", P("array"), Opt("dim"));
         Add("concat", "One array from arrays and scalars, in order: concat(a, b), concat(a, 5).", P("first"), P("second"));
         Add("slice", "In JGS, elements [start, stop) by 0-based index; stop defaults to the array length. In MATLAB, the volume shown where something cuts it: slice(V, sx, sy, sz) or slice(X, Y, Z, V, sx, sy, sz) for axis-aligned planes, any list [] for none, or three same-sized matrices for a slicing surface.", P("array"), P("start"), Opt("stop"));
         Add("indexof", "0-based index of the first element equal to value, or -1.", P("array"), P("value"));
-        Add("reverse", "A reversed copy of an array.", P("array"));
+        Add("reverse", "Text with its characters reversed, over any container; under JGS also a reversed array.", P("text"));
         Add("isnan", "Whether x is NaN, element-wise over arrays.", P("x"));
         Add("isequal", "Deep equality of two values (arrays element-by-element), as one bool.", P("a"), P("b"));
         Add("isequaln", "Deep equality treating NaN as equal to NaN.", P("a"), P("b"));
@@ -1643,7 +1644,7 @@ public static class JgsBuiltinCatalog
         Add("iscellstr", "True for a cell array whose every element is a string.", P("x"));
         Add("isletter", "Whether each character is a letter, as a mask.", P("text"));
         Add("isspace", "Whether each character is whitespace, as a mask.", P("text"));
-        Add("issorted", "Whether the values are in non-decreasing order along a dimension.", P("x"), Opt("dim"));
+        Add("issorted", "Whether the values, or the text, are in non-decreasing order along a dimension.", P("x"), Opt("dim"));
         Add("class", "The class name of a value: double, logical, char, cell, struct, function_handle.", P("x"));
         Add("isa", "Whether a value has the named class, or is 'numeric'/'float'/'integer'.", P("x"), P("type"));
         Add("logical", "The value converted to a logical (true where non-zero).", P("x"));
@@ -1667,12 +1668,12 @@ public static class JgsBuiltinCatalog
         Add("upper", "The string in upper case.", P("text"));
         Add("lower", "The string in lower case.", P("text"));
         Add("trim", "The string without leading/trailing whitespace.", P("text"));
-        Add("split", "The pieces of text between occurrences of separator, as a string array.", P("text"), P("separator"));
-        Add("join", "The array's elements joined into one string with separator between them.", P("array"), P("separator"));
-        Add("startsWith", "Whether text starts with prefix.", P("text"), P("prefix"));
-        Add("endsWith", "Whether text ends with suffix.", P("text"), P("suffix"));
+        Add("split", "The pieces of text between occurrences of one or more delimiters, laid along a dimension; [pieces, delimiters] also answers what was cut on.", P("text"), Opt("delimiter"), Opt("dim"));
+        Add("join", "The elements of a string array or cell joined along a dimension with a delimiter between them; a delimiter array gives every gap its own.", P("array"), Opt("delimiter"), Opt("dim"));
+        Add("startsWith", "Whether text starts with one of the prefixes, elementwise over a container, with 'IgnoreCase'.", P("text"), P("prefix"), Opt("options"));
+        Add("endsWith", "Whether text ends with one of the suffixes, elementwise over a container, with 'IgnoreCase'.", P("text"), P("suffix"), Opt("options"));
         Add("replace", "text with every occurrence of old replaced by new.", P("text"), P("old"), P("new"));
-        Add("contains", "Whether a string contains a substring, or an array contains a value.", P("value"), P("search"));
+        Add("contains", "Whether text contains one of the patterns, elementwise over a container, with 'IgnoreCase'; under JGS also whether an array contains a value.", P("value"), P("search"), Opt("options"));
 
         // --- Table access -----------------------------------------------------------------------
         Add("readcsv", "Reads a delimited text file into a table, skipping skiprows leading junk lines first. Bare names resolve against the script, then the workspace root.", P("path"), Opt("skiprows"));

@@ -46,52 +46,105 @@ internal static partial class JgsBuiltins
             throw new JgsRuntimeException(line, col, "strsplit needs text to split.");
         }
 
+        string text = Str("strsplit", args, 0, line, col);
         bool given = args.Count > 1 && !NamesSplitOption(args[1]);
-        ParsedArgs parsed = SplitOptions.Parse(args, given ? 2 : 1, line, col);
-        string text = Str("strsplit", parsed.Positional, 0, line, col);
-        bool collapse = parsed.Flag("CollapseDelimiters", true);
-        bool simple = parsed.Word("DelimiterType", "Simple", "Simple", "RegularExpression") == "Simple";
         string[] delimiters = given
-            ? DelimitersOf(parsed.Positional[1], line, col)
+            ? DelimitersOf(args[1], line, col)
             : WhitespaceDelimiters;
 
+        // The options, by name or by any leading part of it — MATLAB reads 'Collapse' as
+        // 'CollapseDelimiters' and 'r' as 'RegularExpression' (measured).
+        bool collapse = true;
+        bool simple = true;
+        for (int at = given ? 2 : 1; at < args.Count; at += 2)
+        {
+            if (at + 1 >= args.Count)
+            {
+                throw new JgsRuntimeException(line, col,
+                    $"strsplit: '{TextOfAnswer(args[at])}' needs a value after it.");
+            }
+
+            if (NamesOption(args[at], "CollapseDelimiters"))
+            {
+                if (!IsOneNumber(args[at + 1]) || OneNumber(args[at + 1]) is not (0 or 1))
+                {
+                    throw new JgsRuntimeException(line, col,
+                        "strsplit: 'CollapseDelimiters' must be true or false.");
+                }
+
+                collapse = OneNumber(args[at + 1]) != 0;
+            }
+            else if (NamesOption(args[at], "DelimiterType"))
+            {
+                JgsValue kind = args[at + 1];
+                if (NamesOption(kind, "RegularExpression"))
+                {
+                    simple = false;
+                }
+                else if (NamesOption(kind, "Simple"))
+                {
+                    simple = true;
+                }
+                else
+                {
+                    throw new JgsRuntimeException(line, col,
+                        "strsplit: 'DelimiterType' is 'Simple' or 'RegularExpression'.");
+                }
+            }
+            else
+            {
+                throw new JgsRuntimeException(line, col,
+                    $"strsplit: unknown option '{TextOfAnswer(args[at])}'. The options are 'CollapseDelimiters' and 'DelimiterType'.");
+            }
+        }
+
+        // An empty delimiter splits on nothing and is dropped: strsplit('a', '') is {'a'} (measured).
         var alternatives = new List<string>();
         foreach (string delimiter in delimiters)
         {
             if (delimiter.Length == 0)
             {
-                throw new JgsRuntimeException(line, col, "strsplit: an empty delimiter has nothing to split on.");
+                continue;
             }
 
             // A simple delimiter is literal text, but sprintf's escapes still name the characters a
-            // script cannot type — '\t' is a tab here, exactly as it is in MATLAB.
+            // script cannot type: '\t' is a tab here, exactly as it is in MATLAB. The delimiters are
+            // tried in the order given: strsplit('a--b-c', {'-', '--'}, 'CollapseDelimiters', false)
+            // cuts on the single dash first (measured).
             alternatives.Add(simple ? Regex.Escape(TranslateEscapes(delimiter)) : delimiter);
         }
 
         var pieces = new List<JgsValue>();
         var matched = new List<JgsValue>();
-        string pattern = "(?:" + string.Join("|", alternatives) + ")" + (collapse ? "+" : string.Empty);
-        int at = 0;
-        foreach (Match match in Compile("strsplit", pattern, RegexOptions.None, line, col).Matches(text))
+        int from = 0;
+        if (alternatives.Count > 0)
         {
-            if (match.Length == 0)
+            string pattern = "(?:" + string.Join("|", alternatives) + ")" + (collapse ? "+" : string.Empty);
+            foreach (Match match in Compile("strsplit", pattern, RegexOptions.None, line, col).Matches(text))
             {
-                continue; // a delimiter that matches nothing would split between every character
-            }
+                if (match.Length == 0)
+                {
+                    continue; // a delimiter that matches nothing would split between every character
+                }
 
-            pieces.Add(JgsValue.Str(text[at..match.Index]));
-            matched.Add(JgsValue.Str(match.Value));
-            at = match.Index + match.Length;
+                pieces.Add(JgsValue.Str(text[from..match.Index]));
+                matched.Add(JgsValue.Str(match.Value));
+                from = match.Index + match.Length;
+            }
         }
 
-        pieces.Add(JgsValue.Str(text[at..]));
-        return Outputs(outputs, JgsValue.Cell(pieces.ToArray()), JgsValue.Cell(matched.ToArray()));
+        pieces.Add(JgsValue.Str(text[from..]));
+        JgsValue cuts = JgsValue.Cell(matched.ToArray());
+        if (matched.Count == 0)
+        {
+            cuts.Reshape(0, 0); // nothing cut on is the 0-by-0 cell (measured)
+        }
+
+        return Outputs(outputs, JgsValue.Cell(pieces.ToArray()), cuts);
     }
 
     private static bool NamesSplitOption(JgsValue value) =>
-        value.Type == JgsType.String
-        && (string.Equals(value.AsString, "CollapseDelimiters", StringComparison.OrdinalIgnoreCase)
-            || string.Equals(value.AsString, "DelimiterType", StringComparison.OrdinalIgnoreCase));
+        NamesOption(value, "CollapseDelimiters") || NamesOption(value, "DelimiterType");
 
     /// <summary>One delimiter or a cell of them — MATLAB accepts either wherever a delimiter goes.</summary>
     private static string[] DelimitersOf(JgsValue value, int line, int col)
@@ -125,9 +178,30 @@ internal static partial class JgsBuiltins
     {
         ArityRange("strjoin", args, 1, 2, line, col);
         var parts = new List<string>();
+        bool missing = false;
         foreach (JgsValue element in Elements("strjoin", args[0], line, col))
         {
-            parts.Add(element.Type == JgsType.String ? element.AsString : element.Display());
+            // Every piece is text: strjoin({'a', 1}) is refused, as MATLAB refuses it (measured).
+            string text = element.Type == JgsType.String
+                ? element.AsString
+                : IsStringScalar(element)
+                    ? TextOf(element)
+                    : throw new JgsRuntimeException(line, col, "MATLAB:strjoin:InvalidCstrType",
+                        "First input must be a cell array of character vectors or a string array.");
+            missing |= args[0].IsStringArray && IsMissingText(text);
+            parts.Add(text);
+        }
+
+        if (args.Count == 2 && args[1].Type == JgsType.String && IsMissingText(args[1].AsString))
+        {
+            throw new JgsRuntimeException(line, col, "MATLAB:strjoin:InvalidDelimiterType",
+                "The delimiter must be a character vector, a string, or a cell array of character vectors.");
+        }
+
+        // A missing string among the pieces makes the whole answer missing (measured).
+        if (missing)
+        {
+            return JgsValue.Str(MissingSentinel);
         }
 
         if (args.Count == 1)
@@ -140,9 +214,10 @@ internal static partial class JgsBuiltins
             return JgsValue.Str(string.Join(TranslateEscapes(Str("strjoin", args, 1, line, col)), parts));
         }
 
+        // One delimiter for every gap, or one for all of them: strjoin(C, {'-'}) is strjoin(C, '-').
         JgsValue[] gaps = args[1].AsCell;
         int wanted = Math.Max(parts.Count - 1, 0);
-        if (gaps.Length != wanted)
+        if (gaps.Length != wanted && gaps.Length != 1)
         {
             throw new JgsRuntimeException(line, col,
                 $"strjoin: joining {parts.Count} piece(s) takes {wanted} delimiter(s), but got {gaps.Length}.");
@@ -153,7 +228,7 @@ internal static partial class JgsBuiltins
         {
             if (i > 0)
             {
-                joined.Append(TranslateEscapes(TextIn("strjoin", gaps[i - 1], line, col)));
+                joined.Append(TranslateEscapes(TextIn("strjoin", gaps[gaps.Length == 1 ? 0 : i - 1], line, col)));
             }
 
             joined.Append(parts[i]);
@@ -169,8 +244,9 @@ internal static partial class JgsBuiltins
             : throw new JgsRuntimeException(line, col, $"{name} expects text, but got a {value.TypeName}.");
 
     /// <summary>
-    /// The escape sequences MATLAB reads inside a simple delimiter. Anything else keeps its backslash,
-    /// so a Windows path used as a delimiter survives intact.
+    /// The escape sequences MATLAB reads inside a simple delimiter. A backslash before any other
+    /// character is dropped, as MATLAB's own reading drops it: strjoin({'a','b'}, '\\x') is 'axb'
+    /// and strsplit('a.b', '\\.') cuts on the dot (measured). A trailing backslash stays.
     /// </summary>
     private static string TranslateEscapes(string text)
     {
@@ -206,12 +282,13 @@ internal static partial class JgsBuiltins
             if (plain is { } character)
             {
                 built.Append(character);
-                i++;
             }
             else
             {
-                built.Append(text[i]);
+                built.Append(escape);
             }
+
+            i++;
         }
 
         return built.ToString();
@@ -773,12 +850,12 @@ internal static partial class JgsBuiltins
             throw new JgsRuntimeException(line, col, "mat2str writes a two-dimensional array; this one has more dimensions.");
         }
 
-        // Anything but a double is wrapped in its constructor so eval reads the class back too:
-        // mat2str(int8([1 2])) is 'int8([1 2])'. 'class' asks for the wrapper on a double as well.
-        // A logical is never wrapped, because true and false already say what they are.
+        // Only 'class' asks for the constructor round the value: mat2str(int8([1 2])) is '[1 2]' and
+        // mat2str(int8([1 2]), 'class') is 'int8([1 2])' (measured). A logical is never wrapped,
+        // because true and false already say what they are.
         bool logical = IsLogicalValue(subject);
         string className = subject.NumericClass.MatlabName();
-        bool wrapped = !logical && (namesClass || className != "double");
+        bool wrapped = !logical && namesClass;
         string Wrapped(string body) => wrapped ? className + "(" + body + ")" : body;
 
         // An empty has no literal that keeps its shape, so it is written as the call that makes it —

@@ -22,10 +22,17 @@ internal static partial class JgsBuiltins
     /// </summary>
     private static readonly string[] ElementwiseTextBuiltins =
     [
-        "upper", "lower", "strtrim", "strip", "replace", "reverse", "str2double",
-        "contains", "startsWith", "endsWith", "strcmp", "strcmpi", "strncmp", "strncmpi",
-        "erase", "pad",
+        "upper", "lower", "replace", "reverse", "str2double", "erase",
     ];
+
+    /// <summary>
+    /// The mapped names that answer text, for which a missing string answers a missing string:
+    /// <c>upper(string(missing))</c> is missing, not <c>"&lt;MISSING&gt;"</c> (measured).
+    /// </summary>
+    private static readonly HashSet<string> MissingKeepingBuiltins = new(StringComparer.Ordinal)
+    {
+        "upper", "lower", "replace", "reverse", "erase",
+    };
 
     /// <summary>
     /// The names whose arguments after the subject are a list of patterns rather than a partner to
@@ -39,7 +46,7 @@ internal static partial class JgsBuiltins
     };
 
     /// <summary>Registers the editing family and applies the elementwise retrofit.</summary>
-    internal static void RegisterStringEditingBuiltins(JgsEnvironment env)
+    internal static void RegisterStringEditingBuiltins(JgsEnvironment env, JgsDialect dialect)
     {
         void Define(string name, Func<IReadOnlyList<JgsValue>, int, int, JgsValue> body) =>
             env.Declare(name, JgsValue.Function(new BuiltinFunction(name, body)));
@@ -140,45 +147,6 @@ internal static partial class JgsBuiltins
             };
         });
 
-        Define("strip", (args, line, col) =>
-        {
-            ArityRange("strip", args, 1, 2, line, col);
-            string text = Str("strip", args, 0, line, col);
-            string side = args.Count > 1 ? Str("strip", args, 1, line, col) : "both";
-            return JgsValue.Str(side switch
-            {
-                "left" => text.TrimStart(),
-                "right" => text.TrimEnd(),
-                "both" => text.Trim(),
-                _ => throw new JgsRuntimeException(line, col,
-                    $"strip: '{side}' is not a side — use 'left', 'right', or 'both'."),
-            });
-        });
-
-        Define("pad", (args, line, col) =>
-        {
-            ArityRange("pad", args, 1, 3, line, col);
-            string text = Str("pad", args, 0, line, col);
-
-            // pad(s) with no width pads to the longest, which for one string is its own length; the
-            // width only means something once the elementwise wrapper has several to compare.
-            int width = args.Count > 1 && args[1].Type != JgsType.String
-                ? Count("pad", args, 1, line, col)
-                : text.Length;
-            string side = args.Count > 1 && args[^1].Type == JgsType.String
-                ? Str("pad", args, args.Count - 1, line, col)
-                : "right";
-
-            return JgsValue.Str(side switch
-            {
-                "left" => text.PadLeft(width),
-                "right" => text.PadRight(width),
-                "both" => text.PadLeft(text.Length + ((width - text.Length) / 2)).PadRight(width),
-                _ => throw new JgsRuntimeException(line, col,
-                    $"pad: '{side}' is not a side — use 'left', 'right', or 'both'."),
-            });
-        });
-
         Define("erase", (args, line, col) =>
         {
             Arity("erase", args, 2, line, col);
@@ -202,8 +170,12 @@ internal static partial class JgsBuiltins
         // str2num is not here: it evaluates its text as an expression, so it needs the running
         // interpreter and is declared beside eval, which is the only thing that has one.
         MapOverText(env);
-        SortAndUniqueOverText(env);
         KeepTextKind(env);
+
+        // The comparing, searching, trimming, padding and ordering verbs read their own containers
+        // and are declared over whatever the retrofits above left, so they hold each name last.
+        RegisterTextFamilyBuiltins(env, dialect);
+        RegisterTextOrderBuiltins(env, dialect);
     }
 
     /// <summary>The text one argument of <c>char</c> contributes.</summary>
@@ -263,8 +235,15 @@ internal static partial class JgsBuiltins
                     () =>
                     {
                         var answers = new JgsValue[pieces.Length];
+                        bool keepsMissing = asStrings && MissingKeepingBuiltins.Contains(name);
                         for (int i = 0; i < pieces.Length; i++)
                         {
+                            if (keepsMissing && pieces[i].Type == JgsType.String && IsMissingText(pieces[i].AsString))
+                            {
+                                answers[i] = pieces[i];
+                                continue;
+                            }
+
                             one[slot] = inner.Demote(pieces[i]);
                             answers[i] = inner.Invoke(one, line, col);
                         }
@@ -317,7 +296,7 @@ internal static partial class JgsBuiltins
     /// not on the elementwise list because each consumes the whole array rather than mapping over it.
     /// </summary>
     private static readonly string[] TextKindPreservingBuiltins =
-        ["join", "split", "strsplit", "strjoin"];
+        ["join", "strsplit", "strjoin", "sprintf"];
 
     /// <summary>
     /// Wraps <see cref="TextKindPreservingBuiltins"/> so a string argument produces string answers.
@@ -349,8 +328,11 @@ internal static partial class JgsBuiltins
                 // into a shortfall — which is exactly what the first version of this did.
                 MultiOutput = inner.MultiOutput is null ? null : (args, wanted, line, col) =>
                 {
+                    // Through CallMultiple rather than the delegate, so the string scalars this
+                    // wrapper kept are demoted for the body exactly as the one-output road demotes
+                    // them: [c, m] = strsplit("a,b", ",") used to hand the body a string array.
                     bool wasStringInput = args.Count > 0 && args[0].IsStringArray;
-                    JgsValue[] outputs = inner.MultiOutput(args, wanted, line, col);
+                    JgsValue[] outputs = inner.CallMultiple(args, wanted, line, col);
                     return wasStringInput ? Array.ConvertAll(outputs, PromoteText) : outputs;
                 },
             }));
@@ -379,55 +361,6 @@ internal static partial class JgsBuiltins
         }
 
         return answer;
-    }
-
-    /// <summary>
-    /// Teaches <c>sort</c> and <c>unique</c> about string arrays. Both reach for numbers otherwise,
-    /// and a list of labels is precisely the thing a script most wants to sort.
-    /// </summary>
-    private static void SortAndUniqueOverText(JgsEnvironment env)
-    {
-        void Wrap(string name, Func<string[], string[]> over)
-        {
-            if (!env.TryGet(name, out JgsValue declared)
-                || declared.Type != JgsType.Function
-                || declared.AsCallable is not BuiltinFunction inner)
-            {
-                return;
-            }
-
-            env.Declare(name, JgsValue.Function(new BuiltinFunction(name, (args, line, col) =>
-            {
-                if (args.Count == 0 || !args[0].IsStringArray)
-                {
-                    return inner.Call(args, line, col);
-                }
-
-                string[] texts = Array.ConvertAll(args[0].BoxedElements(), static e => e.AsString);
-                string[] answer = over(texts);
-                JgsValue built = JgsValue.StringArray(Array.ConvertAll(answer, JgsValue.Str));
-
-                // A sorted array keeps its orientation; a smaller one cannot, so only sort does.
-                if (answer.Length == texts.Length)
-                {
-                    built.TakeShapeOf(args[0]);
-                }
-                else if (args[0].Rows > 1 && args[0].Cols == 1)
-                {
-                    built.Reshape(answer.Length, 1);
-                }
-
-                return built;
-            })
-            {
-                KeepsStringArguments = true,
-                BindsAnsAsStatement = inner.BindsAnsAsStatement,
-                MultiOutput = inner.MultiOutput,
-            }));
-        }
-
-        Wrap("sort", static texts => [.. texts.OrderBy(static t => t, StringComparer.Ordinal)]);
-        Wrap("unique", static texts => [.. texts.Distinct(StringComparer.Ordinal).OrderBy(static t => t, StringComparer.Ordinal)]);
     }
 
     /// <summary>

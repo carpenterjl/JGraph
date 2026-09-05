@@ -59,9 +59,9 @@ internal static partial class JgsBuiltins
     /// </summary>
     private static readonly SubjectMap[] SubjectMappedBuiltins =
     [
-        new("split", TextAnswer.Pieces),
+        // split and strfind read their own containers since the section-5 rebuild; regexprep is
+        // the one name still mapped here.
         new("regexprep", TextAnswer.Text),
-        new("strfind", TextAnswer.Boxed),
     ];
 
     /// <summary>
@@ -413,15 +413,26 @@ internal static partial class JgsBuiltins
     /// shorter, and it is measured against MATLAB rather than inferred from the documentation.
     /// </para>
     /// </remarks>
-    private static JgsValue Joined(IReadOnlyList<JgsValue> args, int line, int col)
+    private static JgsValue Joined(IReadOnlyList<JgsValue> args, bool matlab, int line, int col)
     {
+        if (args.Count > 3)
+        {
+            throw new JgsRuntimeException(line, col, "MATLAB:TooManyInputs", "Too many input arguments.");
+        }
+
         ArityRange("join", args, 1, 3, line, col);
 
-        if (!TryReadText(args[0], out TextBundle subject))
+        if (args[0].IsCharMatrix || !TryReadText(args[0], out TextBundle subject))
         {
-            // Not a container of text at all. join([1 2 3], "-") has run everything together into
-            // one string since the dialect landed, and a name that already answers something is not
-            // the place to start refusing.
+            if (matlab)
+            {
+                throw new JgsRuntimeException(line, col, "MATLAB:string:MustBeCharCellArrayOrString",
+                    "First argument must be text.");
+            }
+
+            // JGS's join([1 2 3], "-") has run everything together into one string since the
+            // dialect landed, and a name that already answers something is not the place to start
+            // refusing.
             string only = args.Count >= 2 && TryReadText(args[1], out TextBundle written)
                 ? written.Texts[0]
                 : " ";
@@ -430,13 +441,14 @@ internal static partial class JgsBuiltins
         }
 
         // Which of the two second arguments this is, asked the way MATLAB asks it: text is the
-        // delimiter and a number is the dimension.
-        bool delimiterGiven = args.Count >= 2 && TryReadText(args[1], out _);
+        // delimiter and a number is the dimension. The bare `missing` value is neither.
+        bool delimiterGiven = args.Count >= 2 && TryReadText(args[1], out _) && !args[1].IsCharMatrix
+            && !(args[1].Type == JgsType.String && IsMissingText(args[1].AsString));
         int dimensionAt = args.Count == 3 ? 2 : args.Count == 2 && !delimiterGiven ? 1 : -1;
         if (args.Count == 3 && !delimiterGiven)
         {
-            throw new JgsRuntimeException(line, col,
-                "join expects a delimiter before the dimension: join(str, delimiter, dim).");
+            throw new JgsRuntimeException(line, col, "MATLAB:string:MustBeCharCellArrayOrString",
+                "Delimiter must be a string array, character vector, or cell array of character vectors.");
         }
 
         TextBundle delimiter = delimiterGiven
@@ -445,25 +457,50 @@ internal static partial class JgsBuiltins
 
         int rows = subject.Rows;
         int cols = subject.Cols;
-        int dim = dimensionAt >= 0
-            ? Count("join", args, dimensionAt, line, col)
-            : cols > 1 ? 2 : 1;
-        if (dim < 1)
+        int dim;
+        if (dimensionAt >= 0)
         {
-            throw new JgsRuntimeException(line, col, "join: the dimension must be 1 or more.");
+            if (!IsOneNumber(args[dimensionAt]) || OneNumber(args[dimensionAt]) < 1
+                || OneNumber(args[dimensionAt]) != Math.Floor(OneNumber(args[dimensionAt])))
+            {
+                throw new JgsRuntimeException(line, col, "MATLAB:string:MustBePositiveIntegerScalar",
+                    "Dimension argument must be a positive integer scalar within indexing range.");
+            }
+
+            dim = (int)OneNumber(args[dimensionAt]);
+        }
+        else
+        {
+            // The last dimension that is not 1: a 0 counts, which is what makes join(strings(1, 0))
+            // join along its empty second dimension and answer one missing string (measured).
+            dim = cols != 1 ? 2 : 1;
         }
 
-        // Joining along a dimension the array does not have, or has only one of, joins nothing —
+        // Joining along a dimension the array does not have, or has only one of, joins nothing,
         // and MATLAB answers the array back rather than refusing it.
-        if (dim > 2 || (dim == 1 ? rows : cols) <= 1)
+        if (dim > 2 || (dim == 1 ? rows : cols) == 1)
         {
             return RebuildLike(subject, subject.Texts);
         }
 
         int gapRows = dim == 1 ? rows - 1 : rows;
         int gapCols = dim == 1 ? cols : cols - 1;
-        Expand("join", delimiter.Rows, gapRows, line, col);
-        Expand("join", delimiter.Cols, gapCols, line, col);
+        if ((dim == 1 ? rows : cols) == 0)
+        {
+            // Nothing to join: each answer is the missing string, or '' in a cell (measured).
+            int emptyRows = dim == 1 ? 1 : rows;
+            int emptyCols = dim == 1 ? cols : 1;
+            var none = new string[emptyRows * emptyCols];
+            Array.Fill(none, subject.Kind == TextKind.String ? MissingSentinel : string.Empty);
+            return RebuildText(subject.Kind == TextKind.Char ? TextKind.Cell : subject.Kind, none, emptyRows, emptyCols);
+        }
+
+        // The delimiter expands over the gaps: each of its dimensions is 1 or the gap count, exactly.
+        if ((delimiter.Rows != 1 && delimiter.Rows != gapRows) || (delimiter.Cols != 1 && delimiter.Cols != gapCols))
+        {
+            throw new JgsRuntimeException(line, col, "MATLAB:string:InvalidDelimiterDimensions",
+                "Invalid delimiter dimensions.");
+        }
 
         int outRows = dim == 1 ? 1 : rows;
         int outCols = dim == 1 ? cols : 1;
@@ -476,6 +513,7 @@ internal static partial class JgsBuiltins
             int along = dim == 1 ? rows : cols;
 
             built.Clear();
+            bool missing = false;
             for (int k = 0; k < along; k++)
             {
                 int r = dim == 1 ? k : fixedRow;
@@ -485,13 +523,18 @@ internal static partial class JgsBuiltins
                     // The gap before element k is gap k-1 along the joined dimension.
                     int gr = dim == 1 ? k - 1 : r;
                     int gc = dim == 1 ? c : k - 1;
-                    built.Append(delimiter.Texts[ElementIndex(delimiter, gr, gc)]);
+                    string between = delimiter.Texts[ElementIndex(delimiter, gr, gc)];
+                    missing |= delimiter.Kind == TextKind.String && IsMissingText(between);
+                    built.Append(between);
                 }
 
-                built.Append(subject.Texts[r + (c * rows)]);
+                string piece = subject.Texts[r + (c * rows)];
+                missing |= subject.Kind == TextKind.String && IsMissingText(piece);
+                built.Append(piece);
             }
 
-            joined[slot] = built.ToString();
+            // A missing string anywhere in the run, or as its delimiter, makes the answer missing.
+            joined[slot] = missing ? MissingSentinel : built.ToString();
         }
 
         return RebuildText(subject.Kind == TextKind.Char ? TextKind.Cell : subject.Kind,

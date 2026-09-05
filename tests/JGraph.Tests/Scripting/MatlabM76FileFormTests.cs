@@ -301,7 +301,7 @@ public class MatlabM76FileFormTests : IDisposable
     [Theory]
     [InlineData("fgetl(99);", "not an open file")]
     [InlineData("textscan('a', '%f', 'Nope', 1);", "is not an option")]
-    [InlineData("textscan('a', 'no conversions here');", "no conversions")]
+    [InlineData("textscan('a', '%f', 'ReturnOnError', false);", "Mismatch")]
     public Task TheFileVerbsRefuseByName(string code, string fragment) =>
         RunExpectingError(code, fragment);
 
