@@ -202,9 +202,13 @@ internal sealed class JgsValue
     public static JgsValue Shaped(NumericBuffer buffer, int rows, int cols, JgsPackedKind kind = JgsPackedKind.Number) =>
         new(JgsType.Array, buffer, kind, rows, cols);
 
-    /// <summary>Wraps a boxed element array as a column-major matrix (the array is used directly).</summary>
-    public static JgsValue Shaped(JgsValue[] elements, int rows, int cols) =>
-        new(JgsType.Array, elements, JgsPackedKind.Number, rows, cols);
+    /// <summary>
+    /// Wraps a boxed element array as a column-major matrix (the array is used directly). The kind
+    /// is what an <em>empty</em> boxed array has to say for itself — a 0-by-0 logical holds no
+    /// element that could say it — and is what every boxed element already says otherwise.
+    /// </summary>
+    public static JgsValue Shaped(JgsValue[] elements, int rows, int cols, JgsPackedKind kind = JgsPackedKind.Number) =>
+        new(JgsType.Array, elements, kind, rows, cols);
 
     /// <summary>Wraps a packed planar complex payload as a column-major matrix.</summary>
     public static JgsValue ShapedComplex(JgsPackedComplex payload, int rows, int cols) =>

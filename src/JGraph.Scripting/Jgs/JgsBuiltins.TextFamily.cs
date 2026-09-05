@@ -162,10 +162,13 @@ internal static partial class JgsBuiltins
     private static double OneNumber(JgsValue value) =>
         value.Type == JgsType.Array ? value.ElementAt(0).AsNumber : value.AsNumber;
 
-    /// <summary>An empty array that class reports as logical, in the shape asked for.</summary>
+    /// <summary>
+    /// An empty array that class reports as logical, in the shape asked for — in either storage,
+    /// since the boxed one answered a double empty until the boxed lanes were run.
+    /// </summary>
     private static JgsValue EmptyLogical(int rows, int cols) => JgsPacking.Enabled
         ? JgsValue.Shaped(JgsPacking.Allocate(0), rows, cols, JgsPackedKind.Bool)
-        : JgsEmpty.Shaped(rows, cols);
+        : JgsValue.Shaped([], rows, cols, JgsPackedKind.Bool);
 
     /// <summary>A logical array in the shape asked for; one element in a 1-by-1 is the bare logical.</summary>
     private static JgsValue LogicalMask(bool[] flags, int rows, int cols)
