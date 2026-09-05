@@ -12,7 +12,7 @@ namespace JGraph.Scripting.Workspace;
 public sealed class ScriptWorkspace : IDisposable
 {
     /// <summary>The file extensions the workspace treats as scripts, lowercase with the leading dot.</summary>
-    public static readonly IReadOnlyList<string> ScriptExtensions = [".jgs", ".csx", ".cs", ".py"];
+    public static readonly IReadOnlyList<string> ScriptExtensions = [".jgs", ".m", ".csx", ".cs", ".py"];
 
     private static readonly TimeSpan DebounceDelay = TimeSpan.FromMilliseconds(300);
 

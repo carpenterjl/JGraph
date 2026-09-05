@@ -67,6 +67,14 @@ public static class JgsBuiltinCatalog
     public static IReadOnlyList<string> MatlabKeywords { get; } =
         Lexer.MatlabKeywordNames.OrderBy(static k => k, StringComparer.Ordinal).ToArray();
 
+    /// <summary>
+    /// Whether <paramref name="name"/> is a MATLAB function JGraph knows of and does not provide,
+    /// with <paramref name="what"/> saying which family it belongs to — so a host can answer
+    /// "open plotmatrix" with more than "not found".
+    /// </summary>
+    public static bool IsUnsupportedMatlabFunction(string name, out string what) =>
+        JgsBuiltins.IsUnsupportedMatlabFunction(name, out what);
+
     /// <summary>Looks up a builtin by name; null when <paramref name="name"/> is not a builtin.</summary>
     public static JgsBuiltinInfo? Find(string name) =>
         ByName.TryGetValue(name, out JgsBuiltinInfo? info) ? info : null;

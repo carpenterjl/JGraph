@@ -173,11 +173,15 @@ public partial class ScriptWorkspaceWindow
 
     private void OpenSelectedVariable()
     {
-        if (VariablesList.SelectedItem is not ScriptVariable variable)
+        if (VariablesList.SelectedItem is ScriptVariable variable)
         {
-            return;
+            OpenVariable(variable);
         }
+    }
 
+    /// <summary>Shows <paramref name="variable"/> in the Data Viewer — the pane's double-click, and <c>open x</c> at the prompt.</summary>
+    private void OpenVariable(ScriptVariable variable)
+    {
         if (AdapterFor(variable) is { } adapter)
         {
             _viewedVariable = variable.Name;

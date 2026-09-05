@@ -1,5 +1,6 @@
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Media;
 
 namespace JGraph.Controls.Scripting;
@@ -17,6 +18,7 @@ public partial class ScriptEditorControl : UserControl
     private readonly BreakpointMargin _breakpointMargin = new();
     private readonly CurrentLineRenderer _currentLineRenderer = new();
     private readonly CompletionSupport _completion;
+    private readonly MenuItem _openSymbolItem = new() { InputGestureText = "Ctrl+D" };
 
     /// <summary>
     /// The band drawn behind the line the debugger is paused at. Themed, and pushed into
@@ -50,6 +52,136 @@ public partial class ScriptEditorControl : UserControl
         ICSharpCode.AvalonEdit.Search.SearchPanel.Install(Editor);
         _breakpointMargin.BreakpointToggled += (_, _) => BreakpointsChanged?.Invoke(this, EventArgs.Empty);
         _breakpointMargin.SetNextLineRequested += (_, line) => SetNextStatementRequested?.Invoke(this, line);
+        InstallContextMenu();
+    }
+
+    /// <summary>
+    /// The text area's context menu: <em>Open name</em> for the identifier under the pointer (the
+    /// caret is moved there first, as MATLAB does, so the menu names what was right-clicked), then
+    /// the editing commands. Ctrl+D and F12 are the keyboard forms — Ctrl+D is MATLAB's, and it
+    /// shadows AvalonEdit's own delete-line binding on purpose.
+    /// </summary>
+    private void InstallContextMenu()
+    {
+        _openSymbolItem.Click += (_, _) => RequestOpenSymbol();
+        var menu = new ContextMenu();
+        menu.Items.Add(_openSymbolItem);
+        menu.Items.Add(new Separator());
+        menu.Items.Add(new MenuItem { Header = "Cu_t", Command = ApplicationCommands.Cut, CommandTarget = Editor.TextArea });
+        menu.Items.Add(new MenuItem { Header = "_Copy", Command = ApplicationCommands.Copy, CommandTarget = Editor.TextArea });
+        menu.Items.Add(new MenuItem { Header = "_Paste", Command = ApplicationCommands.Paste, CommandTarget = Editor.TextArea });
+        menu.Items.Add(new Separator());
+        menu.Items.Add(new MenuItem { Header = "Select _All", Command = ApplicationCommands.SelectAll, CommandTarget = Editor.TextArea });
+        menu.Opened += (_, _) =>
+        {
+            string? name = IdentifierAtCaret();
+            _openSymbolItem.Header = name is null ? "_Open" : $"_Open {name}";
+            _openSymbolItem.IsEnabled = name is not null;
+        };
+        Editor.TextArea.ContextMenu = menu;
+
+        Editor.TextArea.PreviewMouseRightButtonDown += (_, e) =>
+        {
+            // A right-click inside a selection keeps it (Cut/Copy act on it); anywhere else the
+            // caret goes under the pointer so 'Open' names the word that was clicked.
+            if (Editor.SelectionLength == 0
+                && Editor.GetPositionFromPoint(e.GetPosition(Editor)) is { } position)
+            {
+                Editor.TextArea.Caret.Position = position;
+            }
+        };
+
+        var open = new ActionCommand(RequestOpenSymbol);
+        Editor.TextArea.InputBindings.Add(new KeyBinding(open, Key.D, ModifierKeys.Control));
+        Editor.TextArea.InputBindings.Add(new KeyBinding(open, Key.F12, ModifierKeys.None));
+    }
+
+    private void RequestOpenSymbol()
+    {
+        if (IdentifierAtCaret() is { } name)
+        {
+            OpenSymbolRequested?.Invoke(this, name);
+        }
+    }
+
+    /// <summary>Raised when the user asks to open the definition of a name (the context menu, Ctrl+D or F12).</summary>
+    public event EventHandler<string>? OpenSymbolRequested;
+
+    /// <summary>
+    /// The identifier at the caret: the selection when it is one word, otherwise the word the caret
+    /// touches. Null when the caret is on nothing that could be a name.
+    /// </summary>
+    public string? IdentifierAtCaret()
+    {
+        if (Editor.SelectionLength > 0)
+        {
+            string selected = Editor.SelectedText.Trim();
+            return IsIdentifier(selected) ? selected : null;
+        }
+
+        return IdentifierAt(Editor.CaretOffset);
+    }
+
+    /// <summary>The identifier that includes <paramref name="offset"/> (or ends right before it), or null.</summary>
+    public string? IdentifierAt(int offset)
+    {
+        ICSharpCode.AvalonEdit.Document.TextDocument document = Editor.Document;
+        if (offset < 0 || offset > document.TextLength)
+        {
+            return null;
+        }
+
+        int start = offset;
+        while (start > 0 && IsIdentifierChar(document.GetCharAt(start - 1)))
+        {
+            start--;
+        }
+
+        int end = offset;
+        while (end < document.TextLength && IsIdentifierChar(document.GetCharAt(end)))
+        {
+            end++;
+        }
+
+        if (end == start)
+        {
+            return null;
+        }
+
+        string word = document.GetText(start, end - start);
+        return IsIdentifier(word) ? word : null;
+    }
+
+    /// <summary>Puts the caret at the start of <paramref name="line"/> (1-based, clamped), scrolls to it and focuses the editor.</summary>
+    public void GoToLine(int line)
+    {
+        int target = Math.Clamp(line, 1, Math.Max(1, Editor.Document.LineCount));
+        Editor.CaretOffset = Editor.Document.GetLineByNumber(target).Offset;
+        Editor.ScrollToLine(target);
+        FocusEditor();
+    }
+
+    private static bool IsIdentifierChar(char c) => char.IsLetterOrDigit(c) || c == '_';
+
+    private static bool IsIdentifier(string word) =>
+        word.Length > 0 && (char.IsLetter(word[0]) || word[0] == '_') && word.All(IsIdentifierChar);
+
+    /// <summary>A command over a plain action, for the key bindings the editor adds itself.</summary>
+    private sealed class ActionCommand : ICommand
+    {
+        private readonly Action _action;
+
+        public ActionCommand(Action action) => _action = action;
+
+        public event EventHandler? CanExecuteChanged
+        {
+            add { }
+            remove { }
+        }
+
+        public bool CanExecute(object? parameter) => true;
+
+        public void Execute(object? parameter) => _action();
     }
 
     /// <summary>

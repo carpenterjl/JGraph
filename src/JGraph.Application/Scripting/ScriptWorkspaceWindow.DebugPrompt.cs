@@ -49,6 +49,13 @@ public partial class ScriptWorkspaceWindow
             return;
         }
 
+        if (EditPromptCommand.TryParse(code, out EditPromptCommand? edit))
+        {
+            RunEditCommand(edit!);
+            ConsolePrompt.Focus();
+            return;
+        }
+
         await EvaluateAtPausedPromptAsync(code).ConfigureAwait(true);
         ConsolePrompt.Focus();
     }

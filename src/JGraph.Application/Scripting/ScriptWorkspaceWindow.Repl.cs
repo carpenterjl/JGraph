@@ -274,6 +274,14 @@ public partial class ScriptWorkspaceWindow
             AppendConsole(">> " + line.TrimEnd('\r'));
         }
 
+        // 'edit foo' and 'open x' open things in the window; they are the host's, not the interpreter's.
+        if (EditPromptCommand.TryParse(code, out EditPromptCommand? edit))
+        {
+            RunEditCommand(edit!);
+            ConsolePrompt.Focus();
+            return;
+        }
+
         // 'analysis.jgs' at the prompt runs that file; 'disp(1)' runs as source. This is the same
         // disambiguation -r already does, reused rather than re-guessed.
         ResolvedStatement resolved = StartupStatement.Resolve(
