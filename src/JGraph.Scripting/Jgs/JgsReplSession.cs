@@ -70,6 +70,29 @@ internal sealed class JgsReplSession : IScriptSession, IGraphicsEventSession
         return ScriptThread.Run(() => Execute(code, sourceId, cancellationToken, asFile: true));
     }
 
+    /// <summary>
+    /// Runs a document under <paramref name="hook"/> — how a breakpointed F5 runs <em>inside</em> the
+    /// console workspace rather than beside it. The hook is attached for exactly this file and taken
+    /// off again after, so the next prompt runs at full speed; everything the file leaves behind
+    /// stays, exactly as an undebugged run's would.
+    /// </summary>
+    /// <param name="code">The complete text of the file being run.</param>
+    /// <param name="sourceId">The file's path, or "" for an unsaved document.</param>
+    /// <param name="hook">The debugger to attach for this run.</param>
+    /// <param name="cancellationToken">Interrupts the run, paused or not.</param>
+    internal Task<ScriptRunResult> ExecuteFileAsync(
+        string code, string sourceId, IJgsDebugHook hook, CancellationToken cancellationToken)
+    {
+        ArgumentNullException.ThrowIfNull(code);
+        ArgumentNullException.ThrowIfNull(sourceId);
+        ArgumentNullException.ThrowIfNull(hook);
+        ObjectDisposedException.ThrowIf(_disposed, this);
+        return ScriptThread.Run(() => Execute(code, sourceId, cancellationToken, asFile: true, hook));
+    }
+
+    /// <summary>The sink a paused debugger's typed statements report their errors to.</summary>
+    internal IScriptOutput Output => _context.Output;
+
     /// <inheritdoc />
     public IReadOnlyList<ScriptVariable> GetVariables() =>
         _disposed ? Array.Empty<ScriptVariable>() : JgsRunner.SnapshotGlobals(_environment, _pristine);
@@ -148,16 +171,20 @@ internal sealed class JgsReplSession : IScriptSession, IGraphicsEventSession
         }
     }
 
-    private ScriptRunResult Execute(string code, string sourceId, CancellationToken cancellationToken, bool asFile = false)
+    private ScriptRunResult Execute(
+        string code, string sourceId, CancellationToken cancellationToken, bool asFile = false, IJgsDebugHook? hook = null)
     {
         Interlocked.Exchange(ref _busy, 1);
         _dispatcher.StatementThreadId = Environment.CurrentManagedThreadId;
+        _interpreter.DebugHook = hook;
         try
         {
+            hook?.RunStarting(_interpreter, _environment);
             return ExecuteCore(code, sourceId, cancellationToken, asFile);
         }
         finally
         {
+            _interpreter.DebugHook = null;
             _dispatcher.StatementThreadId = null;
             Interlocked.Exchange(ref _busy, 0);
         }

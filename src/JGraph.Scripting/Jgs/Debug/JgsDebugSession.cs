@@ -13,8 +13,14 @@ namespace JGraph.Scripting.Jgs.Debug;
 /// raised on the interpreter thread, so a UI host must marshal. While <see cref="IsPaused"/> is true the
 /// interpreter thread is blocked, which is what makes <see cref="GetCallStack"/>/<see cref="GetVariables"/>
 /// race-free to call from another thread — and what makes <see cref="TryApplyEdit"/> free to mutate the
-/// program. Cancelling the run token aborts the run even while paused — the gate wait observes it and
+/// program and <see cref="EvaluateAsync"/> free to borrow the interpreter for a typed statement.
+/// Cancelling the run token aborts the run even while paused — the gate wait observes it and
 /// unwinds exactly like the interpreter's cooperative cancellation.
+///
+/// A run either owns a fresh workspace (<see cref="RunAsync(string, string, ScriptContext, CancellationToken)"/>)
+/// or runs inside a live console session's (<see cref="RunAsync(IScriptSession, string, string, CancellationToken)"/>),
+/// which is what MATLAB does: a script paused at a breakpoint is in the base workspace, and what it
+/// leaves behind is there at the prompt afterwards.
 /// </summary>
 public sealed class JgsDebugSession
 {
@@ -34,6 +40,9 @@ public sealed class JgsDebugSession
     private FnStmt? _pendingFunction;
 
     private volatile bool _isPaused;
+    private volatile bool _evaluating;
+    private readonly ManualResetEventSlim _evaluationDone = new(initialState: true);
+    private IScriptOutput? _output;
     private JgsDebugLocation? _pausedLocation;
     private IReadOnlyList<JgsStackFrame> _pausedCallStack = Array.Empty<JgsStackFrame>();
     private JgsEnvironment? _pausedEnvironment;
@@ -107,9 +116,122 @@ public sealed class JgsDebugSession
         }
 
         _runToken = cancellationToken;
+        _output = context.Output;
         return ScriptThread.Run(
             () => JgsRunner.Run(code, context, cancellationToken, sourceId, _hook, _dialect),
             cancellationToken);
+    }
+
+    /// <summary>
+    /// Runs the script under the debugger <em>inside</em> <paramref name="session"/>'s workspace: the
+    /// script sees what the prompt defined, the prompt keeps what the script leaves, and a function
+    /// defined at the prompt is stepped into like any other. The session must come from the same
+    /// engine family (<see cref="JgsScriptEngine"/> or <see cref="MatlabScriptEngine"/>); the run
+    /// completes as a statement of that session does — cancellation comes back as a failed result.
+    /// </summary>
+    /// <param name="session">The live console session whose workspace the run joins.</param>
+    /// <param name="sourceId">The identity of <paramref name="code"/> (its file path, or "" when unsaved).</param>
+    /// <param name="code">The JGS or MATLAB source.</param>
+    /// <param name="cancellationToken">Stops the run; also aborts a pause.</param>
+    /// <exception cref="ArgumentException"><paramref name="session"/> is not one of ours.</exception>
+    public Task<ScriptRunResult> RunAsync(
+        IScriptSession session, string sourceId, string code, CancellationToken cancellationToken)
+    {
+        ArgumentNullException.ThrowIfNull(session);
+        ArgumentNullException.ThrowIfNull(sourceId);
+        ArgumentNullException.ThrowIfNull(code);
+        if (session is not JgsReplSession host)
+        {
+            throw new ArgumentException("Only a JGS or MATLAB console session can host a debug run.", nameof(session));
+        }
+
+        if (Interlocked.Exchange(ref _started, 1) != 0)
+        {
+            throw new InvalidOperationException("A debug session runs one script once; create a new session.");
+        }
+
+        _runToken = cancellationToken;
+        _output = host.Output;
+        return host.ExecuteFileAsync(code, sourceId, _hook, cancellationToken);
+    }
+
+    /// <summary>Whether a typed statement is currently borrowing the paused interpreter.</summary>
+    public bool IsEvaluating => _evaluating;
+
+    /// <summary>
+    /// Runs <paramref name="code"/> in the given paused frame — the <c>K&gt;&gt;</c> prompt. The
+    /// statement reads and writes the frame's variables, its output and echo go where the script's
+    /// do, and an error is reported like a prompt error: printed, returned as a failed result, and
+    /// the script stays paused where it was. Breakpoints inside anything the statement calls do not
+    /// fire — the debugger stands aside while it runs. The result's variables are the frame's after
+    /// the statement.
+    /// </summary>
+    /// <param name="code">One or more statements in the run's dialect.</param>
+    /// <param name="frameIndex">The frame to evaluate in (0 = innermost), as for <see cref="GetVariables"/>.</param>
+    /// <param name="cancellationToken">Interrupts the statement without ending the run.</param>
+    /// <exception cref="InvalidOperationException">The session is not paused, or a statement is already running.</exception>
+    /// <exception cref="ArgumentOutOfRangeException">No such frame.</exception>
+    public Task<ScriptRunResult> EvaluateAsync(string code, int frameIndex, CancellationToken cancellationToken)
+    {
+        ArgumentNullException.ThrowIfNull(code);
+        JgsEnvironment environment;
+        lock (_stateLock)
+        {
+            EnsurePaused();
+            if (_evaluating)
+            {
+                throw new InvalidOperationException("A statement is already being evaluated.");
+            }
+
+            environment = EnvironmentOf(frameIndex);
+            _evaluating = true;
+            _evaluationDone.Reset();
+        }
+
+        // The run's own token ends the statement too: Stop while a K>> statement runs must not leave
+        // it running in a workspace the run is unwinding out of.
+        var linked = CancellationTokenSource.CreateLinkedTokenSource(_runToken, cancellationToken);
+        return ScriptThread.Run(() =>
+        {
+            try
+            {
+                return Evaluate(code, environment, linked.Token);
+            }
+            finally
+            {
+                linked.Dispose();
+                _evaluating = false;
+                _evaluationDone.Set();
+            }
+        });
+    }
+
+    private ScriptRunResult Evaluate(string code, JgsEnvironment environment, CancellationToken cancellationToken)
+    {
+        Interpreter interpreter = _interpreter!;
+        try
+        {
+            IReadOnlyList<Stmt> program = Parser.Parse(code, sourceId: "", _dialect);
+            interpreter.RunWhilePaused(program, environment, cancellationToken);
+            return ScriptRunResult.Ok(0, Project(environment));
+        }
+        catch (JgsException ex)
+        {
+            ScriptDiagnostic diagnostic = ScriptDiagnostic.For(ex, runSourceId: "");
+            _output?.WriteError(diagnostic.ToString());
+            return ScriptRunResult.Failed(ex.Message, new[] { diagnostic });
+        }
+        catch (OperationCanceledException)
+        {
+            return ScriptRunResult.Failed("Statement was cancelled.");
+        }
+        catch (Exception ex) when (ScriptExitException.Unwrap(ex) is null)
+        {
+            var diagnostic = new ScriptDiagnostic(0, 0,
+                $"Internal error: {ex.GetType().Name}: {ex.Message}", IsError: true);
+            _output?.WriteError(diagnostic.ToString());
+            return ScriptRunResult.Failed(diagnostic.Message, new[] { diagnostic });
+        }
     }
 
     /// <summary>
@@ -180,18 +302,25 @@ public sealed class JgsDebugSession
     public IReadOnlyList<ScriptVariable> GetVariables(int frameIndex = 0)
     {
         EnsurePaused();
+        return Project(EnvironmentOf(frameIndex));
+    }
+
+    /// <summary>
+    /// The environment a paused frame reads and writes. Frame 0 is the exact paused environment
+    /// (innermost block scope included); caller frames see their function-local scope chain; the
+    /// script frame sees the globals.
+    /// </summary>
+    private JgsEnvironment EnvironmentOf(int frameIndex)
+    {
         if (frameIndex < 0 || frameIndex >= _pausedCallStack.Count)
         {
             throw new ArgumentOutOfRangeException(nameof(frameIndex));
         }
 
-        // Frame 0 sees the exact paused environment (innermost block scope included); caller frames
-        // see their function-local scope chain; the script frame sees the globals.
         int depth = _pausedDepth - frameIndex;
-        JgsEnvironment? environment = frameIndex == 0
+        return (frameIndex == 0
             ? _pausedEnvironment
-            : depth > 0 ? _frames[depth - 1].Local : GlobalsOf(_pausedEnvironment);
-        return Project(environment);
+            : depth > 0 ? _frames[depth - 1].Local : GlobalsOf(_pausedEnvironment))!;
     }
 
     /// <summary>
@@ -213,6 +342,12 @@ public sealed class JgsDebugSession
             if (!_isPaused)
             {
                 error = "The script is not paused.";
+                return false;
+            }
+
+            if (_evaluating)
+            {
+                error = "A statement is being evaluated at the prompt; wait for it to finish.";
                 return false;
             }
 
@@ -266,6 +401,7 @@ public sealed class JgsDebugSession
         ArgumentNullException.ThrowIfNull(sourceId);
         ArgumentNullException.ThrowIfNull(newCode);
         EnsurePaused();
+        EnsureNotEvaluating();
 
         IReadOnlyList<Stmt> newProgram;
         try
@@ -491,6 +627,8 @@ public sealed class JgsDebugSession
                 return; // benign: the run may have just completed
             }
 
+            EnsureNotEvaluating();
+
             _mode = mode;
             _stepDepth = _pausedDepth;
 
@@ -509,6 +647,19 @@ public sealed class JgsDebugSession
         if (!_isPaused)
         {
             throw new InvalidOperationException("The session is not paused.");
+        }
+    }
+
+    /// <summary>
+    /// A typed statement has borrowed the interpreter; waking the interpreter thread underneath it
+    /// would put two threads in one interpreter. The host disables stepping while a statement runs,
+    /// so reaching this is a host bug worth hearing about rather than a race to paper over.
+    /// </summary>
+    private void EnsureNotEvaluating()
+    {
+        if (_evaluating)
+        {
+            throw new InvalidOperationException("A statement is being evaluated at the prompt; wait for it to finish.");
         }
     }
 
@@ -555,6 +706,11 @@ public sealed class JgsDebugSession
 
     private void OnEnterBlock(BlockExecution block)
     {
+        if (_evaluating)
+        {
+            return; // a K>> statement's blocks are not part of the paused program
+        }
+
         var entry = new BlockEntry(block.Statements);
         if (_pendingFunction is FnStmt function)
         {
@@ -585,7 +741,7 @@ public sealed class JgsDebugSession
 
     private void OnExitBlock()
     {
-        if (_blocks.Count > 0)
+        if (!_evaluating && _blocks.Count > 0)
         {
             _blocks.RemoveAt(_blocks.Count - 1);
         }
@@ -593,6 +749,11 @@ public sealed class JgsDebugSession
 
     private int? OnBeforeStatement(BlockExecution block, int index, JgsEnvironment env, int callDepth)
     {
+        if (_evaluating)
+        {
+            return null; // the debugger stands aside for a typed statement: no breakpoints, no steps
+        }
+
         _blocks[^1].Index = index;
         Stmt statement = block.Statements[index];
         _currentSourceId = statement.SourceId;
@@ -624,6 +785,10 @@ public sealed class JgsDebugSession
         }
         finally
         {
+            // Stop can arrive while a typed statement holds the interpreter. Its linked token has
+            // already told it to finish; the unwinding must not start until it has, or two threads
+            // are tearing down one interpreter.
+            _evaluationDone.Wait();
             _isPaused = false;
             _pausedEnvironment = null;
             Resumed?.Invoke(this, EventArgs.Empty);
@@ -704,6 +869,11 @@ public sealed class JgsDebugSession
 
     private void OnEnterFunction(FnStmt declaration, int callLine, JgsEnvironment local)
     {
+        if (_evaluating)
+        {
+            return;
+        }
+
         // The call site lives in the statement the interpreter last announced.
         _frames.Add(new FrameEntry(declaration.Name, _currentSourceId, callLine, local));
         _pendingFunction = declaration; // the next EnterBlock is this function's body
@@ -711,7 +881,7 @@ public sealed class JgsDebugSession
 
     private void OnExitFunction()
     {
-        if (_frames.Count > 0)
+        if (!_evaluating && _frames.Count > 0)
         {
             _frames.RemoveAt(_frames.Count - 1);
         }

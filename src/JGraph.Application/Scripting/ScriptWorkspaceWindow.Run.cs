@@ -80,13 +80,13 @@ public partial class ScriptWorkspaceWindow
         try
         {
             // Three ways to run, in priority order. A script with breakpoints goes under the debugger,
-            // which owns its own fresh environment. Otherwise an engine with a console runs *inside*
-            // the live session, so the script and the prompt share one workspace. Anything else runs
-            // one-shot, exactly as before.
+            // inside the live console session when there is one — the paused script is then in the
+            // prompt's workspace, exactly as in MATLAB. Otherwise an engine with a console runs
+            // inside the live session, so the script and the prompt share one workspace. Anything
+            // else runs one-shot, exactly as before.
             if (debugged)
             {
-                AppendConsole("(Debug run — its variables are separate from the console workspace.)");
-                result = await RunJgsDebugAsync((IJgsDebuggable)engine, entry, context, _cts.Token);
+                result = await RunJgsDebugAsync((IJgsDebuggable)engine, entry, context, SessionFor(language), _cts.Token);
             }
             else if (SessionFor(language) is { } session)
             {
@@ -110,6 +110,9 @@ public partial class ScriptWorkspaceWindow
             _cts.Dispose();
             _cts = null;
             _debugSession = null;
+            _selectedFrame = 0;
+            _stepsRemaining = 0;
+            PromptLabel.Text = IdlePrompt;
             ClearExecutionMarkers();
             _session.EndRun();
         }
@@ -190,8 +193,14 @@ public partial class ScriptWorkspaceWindow
 
     // --- Debugging (JGS and MATLAB) ---------------------------------------------------------------
 
+    /// <summary>
+    /// Runs a document under the debugger. With a live console session for the language the run
+    /// joins its workspace; without one (an engine that could not open a session) it falls back to a
+    /// workspace of its own, which is what every debug run had before the K&gt;&gt; prompt (ADR 0128).
+    /// </summary>
     private Task<ScriptRunResult> RunJgsDebugAsync(
-        IJgsDebuggable engine, DocumentEntry entry, ScriptContext context, System.Threading.CancellationToken token)
+        IJgsDebuggable engine, DocumentEntry entry, ScriptContext context, IScriptSession? host,
+        System.Threading.CancellationToken token)
     {
         JgsDebugSession session = engine.CreateDebugSession();
         _debugSession = session;
@@ -221,7 +230,9 @@ public partial class ScriptWorkspaceWindow
             document.DebugBaseline = document.Editor.ScriptText;
         }
 
-        return session.RunAsync(SourceIdOf(entry), entry.Editor.ScriptText, context, token);
+        return host is not null
+            ? session.RunAsync(host, SourceIdOf(entry), entry.Editor.ScriptText, token)
+            : session.RunAsync(SourceIdOf(entry), entry.Editor.ScriptText, context, token);
     }
 
     private static string SourceIdOf(DocumentEntry entry) => entry.Model.FilePath ?? "";
@@ -300,31 +311,31 @@ public partial class ScriptWorkspaceWindow
                 return;
             }
 
+            // dbstep N: keep stepping until the count is spent — unless something else stopped the
+            // run on the way, in which case the user wants to look.
+            if (_stepsRemaining > 0 && e.Reason == PauseReason.Step)
+            {
+                _stepsRemaining--;
+                session.StepOver();
+                return;
+            }
+
+            _stepsRemaining = 0;
             _session.MarkPaused();
-            DocumentEntry? entry = FindOrOpenDocument(e.Location.SourceId);
-            if (entry is not null)
-            {
-                entry.Document.IsActive = true;
-                entry.Editor.SetCurrentLine(e.Location.Line);
-            }
+            PromptLabel.Text = PausedPrompt;
 
+            // The innermost frame is selected first; selecting it is what shows its variables and
+            // moves the execution marker (see ShowFrame).
             CallStackList.ItemsSource = e.CallStack;
-            try
-            {
-                VariablesList.ItemsSource = session.GetVariables();
-            }
-            catch (InvalidOperationException)
-            {
-                // The run finished between the pause notification and this callback.
-            }
-
-            SetStatus($"Paused at line {e.Location.Line} ({e.Reason}).");
+            SelectFrame(0);
+            SetStatus($"Paused at line {e.Location.Line} ({e.Reason}) — the prompt is now K>>.");
         });
 
     private void OnDebugResumed(object? sender, EventArgs e) =>
         Dispatcher.BeginInvoke(() =>
         {
             _session.MarkResumed();
+            PromptLabel.Text = IdlePrompt;
             ClearExecutionMarkers();
             CallStackList.ItemsSource = null;
             if (_session.State == ScriptSessionState.Running)
@@ -394,7 +405,9 @@ public partial class ScriptWorkspaceWindow
             return true;
         }
 
-        foreach (DocumentEntry entry in _documents.Where(d => d.Model.Language == "JGS").ToList())
+        // Only the running language's documents: the debug session parses an edit in the run's
+        // dialect, so a MATLAB tab's text must not be read as JGS or the other way round.
+        foreach (DocumentEntry entry in _documents.Where(d => d.Model.Language == _session.RunningLanguage).ToList())
         {
             string text = entry.Editor.ScriptText;
             if (entry.DebugBaseline is null || string.Equals(entry.DebugBaseline, text, StringComparison.Ordinal))

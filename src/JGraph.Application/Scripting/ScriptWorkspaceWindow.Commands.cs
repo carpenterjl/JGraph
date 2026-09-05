@@ -116,10 +116,13 @@ public partial class ScriptWorkspaceWindow
     {
         // A "Text" tab (or any language without an engine) is viewable but not runnable.
         bool runnable = ActiveDocument is not { } active || _engines.ContainsKey(active.Model.Language);
-        e.CanExecute = runnable && _session.State is ScriptSessionState.Idle or ScriptSessionState.Paused;
+        e.CanExecute = runnable && !IsEvaluating
+            && _session.State is ScriptSessionState.Idle or ScriptSessionState.Paused;
     }
 
-    private void CanStep(object sender, CanExecuteRoutedEventArgs e) => e.CanExecute = _session.CanStep;
+    // Not while a K>> statement holds the interpreter: waking the script underneath it would put two
+    // threads in one interpreter, and the session refuses it anyway.
+    private void CanStep(object sender, CanExecuteRoutedEventArgs e) => e.CanExecute = _session.CanStep && !IsEvaluating;
 
     private void CanSave(object sender, CanExecuteRoutedEventArgs e) => e.CanExecute = ActiveDocument is not null;
 

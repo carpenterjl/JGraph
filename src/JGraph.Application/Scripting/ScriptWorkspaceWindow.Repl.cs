@@ -183,11 +183,20 @@ public partial class ScriptWorkspaceWindow
                 break;
 
             // Ctrl+C only interrupts when there is something to interrupt; otherwise it stays Copy,
-            // which is what a user selecting text in the prompt expects.
+            // which is what a user selecting text in the prompt expects. A K>> statement in flight
+            // is interrupted on its own — the paused script stays paused.
             case Key.C when (Keyboard.Modifiers & ModifierKeys.Control) != 0
-                            && ConsolePrompt.SelectionLength == 0 && _session.CanStop:
+                            && ConsolePrompt.SelectionLength == 0 && (IsEvaluating || _session.CanStop):
                 e.Handled = true;
-                _cts?.Cancel();
+                if (_evaluationCts is { } evaluation)
+                {
+                    evaluation.Cancel();
+                }
+                else
+                {
+                    _cts?.Cancel();
+                }
+
                 AppendConsole("--- Interrupt requested ---");
                 break;
 
@@ -233,7 +242,14 @@ public partial class ScriptWorkspaceWindow
             return;
         }
 
-        if (_session.State != ScriptSessionState.Idle && _pumpTask is null)
+        bool paused = _session.State == ScriptSessionState.Paused && _debugSession is { IsPaused: true };
+        if (paused && IsEvaluating)
+        {
+            SetStatus("Busy — the previous K>> statement is still running (Ctrl+C interrupts it).");
+            return;
+        }
+
+        if (!paused && _session.State != ScriptSessionState.Idle && _pumpTask is null)
         {
             SetStatus("Busy — stop the current run first.");
             return;
@@ -246,7 +262,7 @@ public partial class ScriptWorkspaceWindow
 
         _historyIndex = _promptHistory.Count;
         ConsolePrompt.Clear();
-        _ = RunPromptAsync(code);
+        _ = paused ? RunDebugPromptAsync(code) : RunPromptAsync(code);
     }
 
     private async Task RunPromptAsync(string code)
@@ -349,6 +365,7 @@ public partial class ScriptWorkspaceWindow
     {
         VariablesList.ItemsSource = result.Variables;
         CallStackList.ItemsSource = null;
+        PromptLabel.Text = IdlePrompt;
 
         if (!result.Success)
         {

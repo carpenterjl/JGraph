@@ -1129,8 +1129,14 @@ minimum degree rather than the approximate one, and `dissect` bisects on breadth
 `dbclear` `dbcont` `dbdown` `dbquit` `dbstack` `dbstatus` `dbstep` `dbstop` `dbtype` `dbup`
 `keyboard`
 
-JGraph debugs through the editor: breakpoints in the margin, step buttons, a Workspace pane. A
-parallel console debugger would be a second, worse interface to the same thing.
+JGraph debugs through the editor: breakpoints in the margin, step buttons, a Workspace pane. Six
+of these words — `dbcont` `dbdown` `dbquit` `dbstack` `dbstep` `dbup` — are nonetheless answered
+at the JGraph console while a script is paused (ADR 0128), because at a `K>>` prompt they are what
+a MATLAB hand types. They are host commands rather than builtins: each drives the debugger the
+paused script is under, which the interpreter alone cannot reach, so a `-batch` run still does not
+know them and this count does not move. The other five stay out for the reason above — `dbstop`,
+`dbclear` and `dbstatus` are the breakpoint margin, `dbtype` prints a file the editor already
+shows, and `keyboard` would pause a run that is not under the debugger.
 
 ### The remaining seven
 

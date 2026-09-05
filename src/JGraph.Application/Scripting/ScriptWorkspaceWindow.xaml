@@ -137,7 +137,9 @@
                                         <ComboBox x:Name="ConsoleLanguage" DockPanel.Dock="Left" Width="90"
                                                   Margin="0,0,4,0" SelectionChanged="OnConsoleLanguageChanged"
                                                   ToolTip="The language the prompt runs" />
-                                        <TextBlock DockPanel.Dock="Left" Text="&gt;&gt;" Margin="0,0,4,0"
+                                        <!-- ">>" when idle, "K>>" while a debugged script is paused: the
+                                             prompt then talks to the paused frame, as MATLAB's does. -->
+                                        <TextBlock x:Name="PromptLabel" DockPanel.Dock="Left" Text="&gt;&gt;" Margin="0,0,4,0"
                                                    FontFamily="{DynamicResource JG.Font.Mono}"
                                                    Foreground="{DynamicResource JG.Brush.Accent}"
                                                    VerticalAlignment="Center" />
@@ -150,7 +152,7 @@
                                                  VerticalScrollBarVisibility="Auto"
                                                  VerticalContentAlignment="Center"
                                                  PreviewKeyDown="OnConsolePromptKeyDown"
-                                                 ToolTip="Enter runs · Shift+Enter adds a line · Up/Down recalls history · Ctrl+C interrupts" />
+                                                 ToolTip="Enter runs · Shift+Enter adds a line · Up/Down recalls history · Ctrl+C interrupts · while paused, K&gt;&gt; reads and writes the paused frame (dbcont, dbstep, dbquit, dbstack, dbup, dbdown)" />
                                     </DockPanel>
                                     <TextBox x:Name="ConsoleBox" IsReadOnly="True" IsReadOnlyCaretVisible="True"
                                              FontFamily="{DynamicResource JG.Font.Mono}"
@@ -200,7 +202,9 @@
                         </dock:LayoutAnchorablePane>
                         <dock:LayoutAnchorablePane DockHeight="180">
                             <dock:LayoutAnchorable Title="Call Stack" ContentId="callstack" CanClose="False">
-                                <ListView x:Name="CallStackList" BorderThickness="0">
+                                <ListView x:Name="CallStackList" BorderThickness="0"
+                                          SelectionChanged="OnCallStackSelectionChanged"
+                                          ToolTip="Click a frame to see its variables and evaluate K&gt;&gt; statements in it">
                                     <ListView.View>
                                         <GridView>
                                             <GridViewColumn Header="Function" Width="110"

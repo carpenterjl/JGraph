@@ -49,7 +49,7 @@ internal sealed partial class Interpreter
     /// </remarks>
     private readonly JgsEnvironment _globalWorkspace = new();
     private CancellationToken _cancellationToken;
-    private readonly IJgsDebugHook? _hook;
+    private IJgsDebugHook? _hook;
     private readonly Action<string>? _echo;
     // 'end' resolves against the top entry: the extents of the value being subscripted, and which
     // subscript slot is being evaluated. Two entries make A(end, end) mean the last row and the last
@@ -250,6 +250,61 @@ internal sealed partial class Interpreter
     {
         _cancellationToken = cancellationToken;
         _steps = 0;
+    }
+
+    /// <summary>
+    /// The debug hook in force, attachable after construction so a long-lived session can run one
+    /// file under the debugger and go back to full speed for the next prompt. Set only between
+    /// statements: the block executor reads it on entry, and a hook that appears halfway through a
+    /// block would see exits it never saw the entries of.
+    /// </summary>
+    internal IJgsDebugHook? DebugHook
+    {
+        get => _hook;
+        set => _hook = value;
+    }
+
+    /// <summary>
+    /// Runs <paramref name="program"/> in <paramref name="env"/> on behalf of a paused debugger — the
+    /// <c>K&gt;&gt;</c> prompt. The interpreter thread is blocked at its gate, so the caller's thread
+    /// borrows the interpreter: the token and step budget belong to the typed statement and are put
+    /// back afterwards, as is the current frame, which <c>eval</c> and <c>who</c> read. The hook is
+    /// still attached and must be told to stand aside by whoever owns it.
+    /// </summary>
+    /// <param name="program">The parsed statements.</param>
+    /// <param name="env">The paused frame's environment to read and write.</param>
+    /// <param name="cancellationToken">Interrupts the typed statement alone.</param>
+    internal void RunWhilePaused(IReadOnlyList<Stmt> program, JgsEnvironment env, CancellationToken cancellationToken)
+    {
+        CancellationToken runToken = _cancellationToken;
+        long runSteps = _steps;
+        JgsEnvironment runFrame = CurrentFrame;
+        _cancellationToken = cancellationToken;
+        _steps = 0;
+        CurrentFrame = env;
+        try
+        {
+            foreach (Stmt statement in program)
+            {
+                if (statement is FnStmt fn)
+                {
+                    env.Declare(fn.Name, JgsValue.Function(new UserFunction(fn, env, this)));
+                }
+            }
+
+            Completion completion = ExecuteBlock(program, env);
+            if (completion.Kind is CompletionKind.Break or CompletionKind.Continue)
+            {
+                throw new JgsRuntimeException(completion.Line, completion.Column,
+                    $"'{(completion.Kind == CompletionKind.Break ? "break" : "continue")}' can only appear inside a loop.");
+            }
+        }
+        finally
+        {
+            CurrentFrame = runFrame;
+            _cancellationToken = runToken;
+            _steps = runSteps;
+        }
     }
 
     private enum CompletionKind
