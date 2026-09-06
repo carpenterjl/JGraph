@@ -25,7 +25,7 @@ public static class ColorbarRenderer
     {
         ArgumentNullException.ThrowIfNull(axes);
         ColorbarModel bar = axes.Colorbar;
-        if (!bar.Visible || FindSource(axes) is null || !bar.IsOutside)
+        if (!bar.Visible || FindSource(axes) is null || !bar.IsOutside || bar.LayoutSide is not null)
         {
             return new Thickness(0);
         }
@@ -70,7 +70,21 @@ public static class ColorbarRenderer
         ColorbarModel bar = axes.Colorbar;
         (double min, double max) = Span(bar, source);
 
-        Rect2D strip = Place(bar, plotArea, figureArea, context, axes);
+        Rect2D strip;
+        if (bar.LayoutSide is { } side && (axes.Parent as FigureModel)?.TiledLayout is { } layout)
+        {
+            Rect2D b = layout.Bounds;
+            double x = figureArea.Left + b.Left * figureArea.Width, y = figureArea.Top + b.Top * figureArea.Height;
+            double w = b.Width * figureArea.Width, h = b.Height * figureArea.Height;
+            strip = side switch
+            {
+                "west" => new Rect2D(x + 0.06 * w, y + 0.12 * h, bar.Width, 0.76 * h),
+                "north" => new Rect2D(x + 0.12 * w, y + 0.06 * h, 0.76 * w, bar.Width),
+                "south" => new Rect2D(x + 0.12 * w, y + 0.9 * h, 0.76 * w, bar.Width),
+                _ => new Rect2D(x + 0.9 * w, y + 0.12 * h, bar.Width, 0.76 * h),
+            };
+        }
+        else strip = Place(bar, plotArea, figureArea, context, axes);
         bar.LastBox = strip;
         if (strip.Width <= 0 || strip.Height <= 0)
         {

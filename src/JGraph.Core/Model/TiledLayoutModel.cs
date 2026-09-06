@@ -323,6 +323,14 @@ public sealed class TiledLayoutModel : GraphObject
         double width = _bounds.Width * (1 - (2 * pad) - LeftBand);
         double height = _bounds.Height * (1 - (2 * pad) - TopBand - BottomBand);
 
+        bool HasBar(string side) => _tiles.Any(t => t.Colorbar.Visible && t.Colorbar.LayoutSide == side);
+        double west = HasBar("west") ? 0.1 : 0, east = HasBar("east") ? 0.1 : 0;
+        double north = HasBar("north") ? 0.1 : 0, south = HasBar("south") ? 0.1 : 0;
+        left += west * _bounds.Width;
+        top += north * _bounds.Height;
+        width -= (west + east) * _bounds.Width;
+        height -= (north + south) * _bounds.Height;
+
         double cellW = width / _columns;
         double cellH = height / _rows;
         double gutter = _tileSpacing switch

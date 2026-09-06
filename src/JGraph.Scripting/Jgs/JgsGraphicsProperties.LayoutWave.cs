@@ -351,9 +351,18 @@ internal static partial class JgsGraphicsProperties
             (TiledLayoutOptionsModel)entry.Target;
 
         Put(table, "Tile",
-            entry => JgsValue.Number(Place(entry).Tile),
-            (entry, value, line, col) => Place(entry).Tile = JgsBuiltins.WholeNumber(
-                "Tile", Numbers("Tile", value, 1, line, col)[0], line, col));
+            entry => Place(entry).Colorbar?.LayoutSide is { } side ? JgsValue.Str(side) : JgsValue.Number(Place(entry).Tile),
+            (entry, value, line, col) =>
+            {
+                if (value.Type == JgsType.String)
+                {
+                    string side = value.AsString.ToLowerInvariant();
+                    if (Place(entry).Colorbar is null || side is not ("east" or "west" or "north" or "south"))
+                        throw new JgsRuntimeException(line, col, "A colorbar tile side must be east, west, north, or south.");
+                    Place(entry).SetSide(side);
+                }
+                else Place(entry).Tile = JgsBuiltins.WholeNumber("Tile", Numbers("Tile", value, 1, line, col)[0], line, col);
+            });
 
         Put(table, "TileSpan",
             entry => Row(Place(entry).RowSpan, Place(entry).ColumnSpan),
@@ -377,7 +386,7 @@ internal static partial class JgsGraphicsProperties
         Func<JgsHandleEntry, AxesModel?> whose = owner;
         Put(table, "Layout",
             entry => whose(entry) is { LayoutTile: not null } axes
-                ? JgsHandleRegistry.For(axes.LayoutOptions)
+                ? JgsHandleRegistry.For(entry.Target is ColorbarModel bar ? bar.LayoutOptions(axes) : axes.LayoutOptions)
                 : JgsValue.Array([]));
     }
 }

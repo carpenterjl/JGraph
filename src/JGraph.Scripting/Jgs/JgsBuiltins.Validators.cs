@@ -429,9 +429,8 @@ internal static partial class JgsBuiltins
     private static void CheckAttributes(
         string what, JgsValue value, JgsValue[] attributes, int line, int col)
     {
-        double[] numbers = value.Type is JgsType.String or JgsType.Cell
-            ? []
-            : ToDoubles("validateattributes", value, line, col);
+        double[]? numericCache = null;
+        double[] Numbers() => numericCache ??= ToDoubles("validateattributes", value, line, col);
         int[] dims = SizeDims(value);
 
         void Require(bool ok, string requirement)
@@ -461,14 +460,32 @@ internal static partial class JgsBuiltins
 
             switch (attribute)
             {
-                case "positive": Require(System.Array.TrueForAll(numbers, static x => x > 0), "positive"); break;
-                case "nonnegative": Require(System.Array.TrueForAll(numbers, static x => x >= 0), "nonnegative"); break;
-                case "negative": Require(System.Array.TrueForAll(numbers, static x => x < 0), "negative"); break;
-                case "nonpositive": Require(System.Array.TrueForAll(numbers, static x => x <= 0), "nonpositive"); break;
-                case "nonzero": Require(System.Array.TrueForAll(numbers, static x => x != 0), "nonzero"); break;
-                case "finite": Require(System.Array.TrueForAll(numbers, static x => !double.IsNaN(x) && !double.IsInfinity(x)), "finite"); break;
-                case "nonnan": Require(System.Array.TrueForAll(numbers, static x => !double.IsNaN(x)), "free of NaN"); break;
-                case "integer": Require(System.Array.TrueForAll(numbers, double.IsInteger), "made of integers"); break;
+                case "size":
+                {
+                    if (++i >= attributes.Length)
+                        throw new JgsRuntimeException(line, col, "validateattributes: 'size' needs a dimension vector after it.");
+                    double[] expected = ToDoubles("validateattributes", attributes[i], line, col);
+                    if (expected.Length < 2 ||
+                        expected.Any(d => !double.IsNaN(d) && (!double.IsFinite(d) || d < 0 || !double.IsInteger(d))))
+                        throw new JgsRuntimeException(line, col, "validateattributes: 'size' needs an array of nonnegative integers or NaN with at least two elements.");
+                    bool matches = true;
+                    for (int d = 0; d < Math.Max(dims.Length, expected.Length); d++)
+                    {
+                        double wanted = d < expected.Length ? expected[d] : 1;
+                        int actualSize = d < dims.Length ? dims[d] : 1;
+                        matches &= double.IsNaN(wanted) || wanted == actualSize;
+                    }
+                    Require(matches, "of the specified size");
+                    break;
+                }
+                case "positive": Require(System.Array.TrueForAll(Numbers(), static x => x > 0), "positive"); break;
+                case "nonnegative": Require(System.Array.TrueForAll(Numbers(), static x => x >= 0), "nonnegative"); break;
+                case "negative": Require(System.Array.TrueForAll(Numbers(), static x => x < 0), "negative"); break;
+                case "nonpositive": Require(System.Array.TrueForAll(Numbers(), static x => x <= 0), "nonpositive"); break;
+                case "nonzero": Require(System.Array.TrueForAll(Numbers(), static x => x != 0), "nonzero"); break;
+                case "finite": Require(System.Array.TrueForAll(Numbers(), static x => !double.IsNaN(x) && !double.IsInfinity(x)), "finite"); break;
+                case "nonnan": Require(System.Array.TrueForAll(Numbers(), static x => !double.IsNaN(x)), "free of NaN"); break;
+                case "integer": Require(System.Array.TrueForAll(Numbers(), double.IsInteger), "made of integers"); break;
                 case "real": Require(value.Type != JgsType.Complex, "real"); break;
                 case "nonempty": Require(!IsEmptyValue(value), "nonempty"); break;
                 case "scalar": Require(System.Array.TrueForAll(dims, static d => d == 1), "a scalar"); break;
@@ -477,17 +494,17 @@ internal static partial class JgsBuiltins
                 case "column": Require(dims.Length == 2 && dims[1] == 1, "a column vector"); break;
                 case "2d": Require(dims.Length == 2, "two-dimensional"); break;
                 case "square": Require(dims.Length == 2 && dims[0] == dims[1], "square"); break;
-                case "increasing": Require(IsOrdered(numbers, static (a, b) => b > a), "increasing"); break;
-                case "decreasing": Require(IsOrdered(numbers, static (a, b) => b < a), "decreasing"); break;
-                case "nondecreasing": Require(IsOrdered(numbers, static (a, b) => b >= a), "nondecreasing"); break;
-                case "nonincreasing": Require(IsOrdered(numbers, static (a, b) => b <= a), "nonincreasing"); break;
+                case "increasing": Require(IsOrdered(Numbers(), static (a, b) => b > a), "increasing"); break;
+                case "decreasing": Require(IsOrdered(Numbers(), static (a, b) => b < a), "decreasing"); break;
+                case "nondecreasing": Require(IsOrdered(Numbers(), static (a, b) => b >= a), "nondecreasing"); break;
+                case "nonincreasing": Require(IsOrdered(Numbers(), static (a, b) => b <= a), "nonincreasing"); break;
 
-                case ">": { double bound = Paired(); Require(System.Array.TrueForAll(numbers, x => x > bound), $"greater than {Format(bound)}"); break; }
-                case ">=": { double bound = Paired(); Require(System.Array.TrueForAll(numbers, x => x >= bound), $"greater than or equal to {Format(bound)}"); break; }
-                case "<": { double bound = Paired(); Require(System.Array.TrueForAll(numbers, x => x < bound), $"less than {Format(bound)}"); break; }
-                case "<=": { double bound = Paired(); Require(System.Array.TrueForAll(numbers, x => x <= bound), $"less than or equal to {Format(bound)}"); break; }
+                case ">": { double bound = Paired(); Require(System.Array.TrueForAll(Numbers(), x => x > bound), $"greater than {Format(bound)}"); break; }
+                case ">=": { double bound = Paired(); Require(System.Array.TrueForAll(Numbers(), x => x >= bound), $"greater than or equal to {Format(bound)}"); break; }
+                case "<": { double bound = Paired(); Require(System.Array.TrueForAll(Numbers(), x => x < bound), $"less than {Format(bound)}"); break; }
+                case "<=": { double bound = Paired(); Require(System.Array.TrueForAll(Numbers(), x => x <= bound), $"less than or equal to {Format(bound)}"); break; }
 
-                case "numel": { double count = Paired(); Require(numbers.Length == (int)count, $"{(int)count} elements long"); break; }
+                case "numel": { double count = Paired(); Require(Numbers().Length == (int)count, $"{(int)count} elements long"); break; }
                 case "ncols": { double count = Paired(); Require(dims.Length > 1 && dims[1] == (int)count, $"{(int)count} columns wide"); break; }
                 case "nrows": { double count = Paired(); Require(dims[0] == (int)count, $"{(int)count} rows tall"); break; }
 

@@ -16,15 +16,30 @@ public sealed class TiledLayoutOptionsModel : GraphObject
 {
     private readonly AxesModel _axes;
 
-    public TiledLayoutOptionsModel(AxesModel axes)
+    public TiledLayoutOptionsModel(AxesModel axes, ColorbarModel? colorbar = null)
     {
         _axes = axes ?? throw new ArgumentNullException(nameof(axes));
+        Colorbar = colorbar;
         Name = "Tile";
     }
 
     /// <summary>The axes this describes the place of.</summary>
     [Browsable(false)]
     public AxesModel Axes => _axes;
+
+    /// <summary>A colorbar with its own outer placement, when this is furniture's layout.</summary>
+    [Browsable(false)]
+    public ColorbarModel? Colorbar { get; }
+
+    /// <summary>Assigns a shared colorbar band and rearranges the grid.</summary>
+    public void SetSide(string side)
+    {
+        if (Colorbar is null || side is not ("east" or "west" or "north" or "south"))
+            throw new ArgumentException("A colorbar tile side must be east, west, north, or south.", nameof(side));
+        Colorbar.LayoutSide = side;
+        Colorbar.FigureBox = null;
+        Rearrange();
+    }
 
     /// <summary>Which cell of the grid the axes holds, counting from one.</summary>
     [Category("Layout")]
@@ -33,6 +48,7 @@ public sealed class TiledLayoutOptionsModel : GraphObject
         get => _axes.LayoutTile ?? 0;
         set
         {
+            if (Colorbar is not null) Colorbar.LayoutSide = null;
             _axes.LayoutTile = value;
             Rearrange();
         }

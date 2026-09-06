@@ -59,6 +59,20 @@ public sealed class ColorbarModel : GraphObject
     private bool _boxVisible = true;
     private Color? _ink;
     private double _lineWidth = 0.5;
+    private string? _layoutSide;
+    private TiledLayoutOptionsModel? _layoutOptions;
+
+    /// <summary>An outer tiled-layout band, or null to remain beside the owning axes.</summary>
+    [Browsable(false)]
+    public string? LayoutSide
+    {
+        get => _layoutSide;
+        set => SetProperty(ref _layoutSide, value, InvalidationKind.Layout);
+    }
+
+    /// <summary>The colorbar's placement, independent of its source axes.</summary>
+    public TiledLayoutOptionsModel LayoutOptions(AxesModel axes) =>
+        _layoutOptions ??= new TiledLayoutOptionsModel(axes, this);
 
     public ColorbarModel()
     {
@@ -102,7 +116,7 @@ public sealed class ColorbarModel : GraphObject
     }
 
     /// <summary>True when the strip lies on its side, with values running left to right.</summary>
-    public bool IsHorizontal => _location is ColorbarLocation.North or ColorbarLocation.South
+    public bool IsHorizontal => LayoutSide is { } side ? side is "north" or "south" : _location is ColorbarLocation.North or ColorbarLocation.South
         or ColorbarLocation.NorthOutside or ColorbarLocation.SouthOutside
         || (_location == ColorbarLocation.Manual && _figureBox is { } box && box.Width > box.Height);
 

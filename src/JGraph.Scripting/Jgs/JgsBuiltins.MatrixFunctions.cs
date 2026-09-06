@@ -18,7 +18,27 @@ internal static partial class JgsBuiltins
     {
         void Define(string name, Func<IReadOnlyList<JgsValue>, int, int, JgsValue> body,
             Func<IReadOnlyList<JgsValue>, int, int, int, JgsValue[]>? multi = null) =>
-            env.DeclareFunction(name, JgsValue.Function(new BuiltinFunction(name, body) { MultiOutput = multi, KnowsWhenDiscarded = name == "peaks" }));
+            env.DeclareFunction(name, JgsValue.Function(new BuiltinFunction(name, body) { MultiOutput = multi, KnowsWhenDiscarded = name is "peaks" or "membrane" }));
+
+        Define("membrane", Membrane, (args, wanted, line, col) =>
+        {
+            if (wanted > 1) throw new JgsRuntimeException(line, col, "membrane returns one output.");
+            JgsValue result = Membrane(args, line, col);
+            if (wanted != 0) return [result];
+            double[,] z = Matrix("membrane", [result], 0, line, col);
+            int count = z.GetLength(0);
+            var x = new double[count, count];
+            var y = new double[count, count];
+            for (int r = 0; r < count; r++)
+                for (int c = 0; c < count; c++)
+                {
+                    x[r, c] = -1 + 2.0 * c / (count - 1);
+                    y[r, c] = -1 + 2.0 * r / (count - 1);
+                }
+            JGraph.Api.JG.Surf(x, y, z);
+            JGraph.Api.JG.Colormap("cool");
+            return [];
+        });
 
         Define("hilb", (args, line, col) =>
         {

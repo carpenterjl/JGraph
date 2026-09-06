@@ -439,6 +439,7 @@ internal static class FigureMapper
             axes.Colorbar.Width = dto.Colorbar.Width;
             axes.Colorbar.Label = dto.Colorbar.Label;
             axes.Colorbar.Location = dto.Colorbar.Location;
+            axes.Colorbar.LayoutSide = dto.Colorbar.LayoutSide;
             axes.Colorbar.FigureBox = dto.Colorbar.FigureBox is { } bar
                 ? DtoConvert.ToRect(bar)
                 : null;
@@ -741,6 +742,7 @@ internal static class FigureMapper
         Label = colorbar.Label,
         TickLabelStyle = DtoConvert.ToDto(colorbar.TickLabelStyle),
         Location = colorbar.Location,
+        LayoutSide = colorbar.LayoutSide,
         FigureBox = colorbar.FigureBox is { } bar ? DtoConvert.ToDto(bar) : null,
         Limits = colorbar.Limits is { } span ? DtoConvert.ToDto(span) : null,
         TickValues = colorbar.TickValues,

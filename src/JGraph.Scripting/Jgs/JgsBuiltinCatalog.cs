@@ -468,6 +468,7 @@ public static class JgsBuiltinCatalog
         Add("hilb", "The n-by-n Hilbert matrix, H(i,j) = 1/(i+j-1) — the classic ill-conditioned test matrix.", P("n"));
         Add("polyval", "Evaluates polynomial p (highest power first) at x; [y, delta] = polyval(p, x, s, mu) adds polyfit's error estimate.", P("p"), P("x"), Opt("s"), Opt("mu"));
         Add("peaks", "The peaks demonstration surface; [X, Y, Z] = peaks(n) hands back the grids too.", Opt("n"));
+        Add("membrane", "An L-shaped membrane eigenfunction (1–12); plots a surface when no output is requested.", Opt("k"), Opt("m"), Opt("n"), Opt("np"));
         Add("cond", "The condition number of a matrix (2-norm by default; 1, Inf, and 'fro' accepted).", P("A"), Opt("p"));
         Add("sqrtm", "The principal matrix square root, by the Denman-Beavers iteration.", P("A"));
         Add("logm", "The principal matrix logarithm, by inverse scaling and squaring over sqrtm.", P("A"));

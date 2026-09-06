@@ -458,6 +458,7 @@ public sealed class GridDto
 /// <summary>The serialized form of a <see cref="ColorbarModel"/>.</summary>
 public sealed class ColorbarDto
 {
+    public string? LayoutSide { get; set; }
     public bool Visible { get; set; }
 
     public double Width { get; set; } = 18;
