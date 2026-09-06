@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using JGraph.Maths.Transforms;
 using JGraph.Core.Drawing;
 using JGraph.Core.Model;
 using JGraph.Core.Primitives;
@@ -12,12 +13,35 @@ namespace JGraph.Objects;
 /// is built once and cached; it is redrawn scaled by the renderer, so pan/zoom stays cheap. Non-finite
 /// samples are drawn transparent.
 /// </summary>
-public sealed class ImagePlot : PlotObject, IDrawable, IColorMapped
+public sealed class ImagePlot : PlotObject, IDrawable, I3DDrawable, IHasZData, IColorMapped
 {
     /// <inheritdoc />
     public (double Min, double Max) ColorRange => ResolveColorRange();
 
     private double[,] _values;
+    private Color[,]? _trueColors;
+    [Browsable(false)]
+    public Color[,]? TrueColors
+    {
+        get => _trueColors;
+        set { _trueColors = value; _pixels = null; Invalidate(InvalidationKind.Render); }
+    }
+    private double[]? _xData, _yData;
+    public double[] XData { get => _xData ?? [1, Columns]; set { _xData = value; _pixels = null; UpdateImageExtents(); Invalidate(InvalidationKind.Render); } }
+    public double[] YData { get => _yData ?? [1, Rows]; set { _yData = value; _pixels = null; UpdateImageExtents(); Invalidate(InvalidationKind.Render); } }
+    private static DataRange PixelExtent(double[] data, int count)
+    {
+        double first = data[0], last = data.Length == 1 ? first + count - 1 : data[^1];
+        double half = count > 1 ? Math.Abs(last - first) / (count - 1) / 2 : .5;
+        return new DataRange(Math.Min(first, last) - half, Math.Max(first, last) + half);
+    }
+    public void UpdateImageExtents()
+    {
+        XExtent = PixelExtent(XData, Columns);
+        YExtent = PixelExtent(YData, Rows);
+    }
+    public DataRange GetZDataBounds() => new(0, 0);
+
     private Colormap _colormap = Colormap.Parula;
     private DataRange _xExtent;
     private DataRange _yExtent;
@@ -34,6 +58,19 @@ public sealed class ImagePlot : PlotObject, IDrawable, IColorMapped
     private bool _builtLogColor;
     private bool _builtYInverted;
     private double[,]? _alphaData;
+    private double _scalarAlpha = 1;
+    [Browsable(false)]
+    public bool ColorDirectZeroBased { get; set; }
+    [Browsable(false)]
+    public bool AlphaDirectZeroBased { get; set; }
+
+
+    [Browsable(false)]
+    public double ScalarAlpha
+    {
+        get => _scalarAlpha;
+        set { _scalarAlpha = value; _pixels = null; Invalidate(InvalidationKind.Render); }
+    }
     private double[,]? _builtAlphaData;
     private DataRange? _builtAlphaLimits;
     private IReadOnlyList<double>? _builtAlphamap;
@@ -66,6 +103,7 @@ public sealed class ImagePlot : PlotObject, IDrawable, IColorMapped
         {
             ArgumentNullException.ThrowIfNull(value);
             _values = value;
+            if (_xData is not null || _yData is not null) UpdateImageExtents();
             _pixels = null;
             Invalidate(InvalidationKind.Data);
         }
@@ -272,6 +310,32 @@ public sealed class ImagePlot : PlotObject, IDrawable, IColorMapped
         context.DrawImage(_pixels!, cols, rows, dest, _interpolate);
     }
 
+    public void Render3D(IRenderContext context, Projection3D projection, RenderState state)
+    {
+        (double min, double max) = ResolveColorRange();
+        AlphaLookup alpha = this.ResolveAlpha(_alphaData is null ? new DataRange(_scalarAlpha, _scalarAlpha) : AlphaResolver.BoundsOf(_alphaData));
+        double x0 = XData[0], x1 = XData.Length == 1 ? x0 + Columns - 1 : XData[^1];
+        double y0 = YData[0], y1 = YData.Length == 1 ? y0 + Rows - 1 : YData[^1];
+        double dx = Columns > 1 ? (x1 - x0) / (Columns - 1) : 1;
+        double dy = Rows > 1 ? (y1 - y0) / (Rows - 1) : 1;
+        Span<Point2D> corners = stackalloc Point2D[6];
+        Span<uint> colors = stackalloc uint[6];
+        for (int r = 0; r < Rows; r++)
+            for (int c = 0; c < Columns; c++)
+            {
+                double x = x0 + (c - .5) * dx, y = y0 + (r - .5) * dy;
+                corners[0] = projection.Project(x, y, 0).Item1;
+                corners[1] = projection.Project(x + dx, y, 0).Item1;
+                corners[2] = projection.Project(x + dx, y + dy, 0).Item1;
+                corners[3] = corners[0];
+                corners[4] = corners[2];
+                corners[5] = projection.Project(x, y + dy, 0).Item1;
+                Color color = _trueColors is null ? Mapped(_values[r,c], min, max, this.LogColorScale()) : _trueColors[r,c];
+                colors.Fill(color.WithOpacity(Opacity * OpacityOf(_alphaData is null ? _scalarAlpha : _alphaData[r,c], alpha)).ToArgb());
+                context.DrawTriangles(corners, colors);
+            }
+    }
+
     /// <summary>
     /// One value looked up as <see cref="CDataMapping"/> says to: as a one-based index into the
     /// colormap, or stretched over the colour limits first. Direct is an image's default because a
@@ -285,7 +349,7 @@ public sealed class ImagePlot : PlotObject, IDrawable, IColorMapped
         }
 
         int count = System.Math.Max(1, _colormap.Stops.Count);
-        int index = System.Math.Clamp((int)System.Math.Round(value) - 1, 0, count - 1);
+        int index = System.Math.Clamp((int)System.Math.Floor(value) - (ColorDirectZeroBased ? 0 : 1), 0, count - 1);
         return _colormap.Stops[index];
     }
 
@@ -305,7 +369,7 @@ public sealed class ImagePlot : PlotObject, IDrawable, IColorMapped
             case AlphaMapping.Direct:
             {
                 IReadOnlyList<double> map = Axes?.ResolveAlphamap() ?? AlphaSampler.DefaultMap;
-                int index = System.Math.Clamp((int)System.Math.Round(raw) - 1, 0, map.Count - 1);
+                int index = System.Math.Clamp((int)System.Math.Floor(raw) - (AlphaDirectZeroBased ? 0 : 1), 0, map.Count - 1);
                 return System.Math.Clamp(map[index], 0, 1);
             }
 
@@ -337,26 +401,29 @@ public sealed class ImagePlot : PlotObject, IDrawable, IColorMapped
         _builtLogColor = logColor;
         _builtYInverted = Axes?.ActiveYAxis.Inverted ?? false;
 
+        bool flipX = XData[0] > XData[^1], flipY = YData[0] > YData[^1];
         for (int r = 0; r < rows; r++)
         {
             int srcRow = _rowZeroAtTop != _builtYInverted ? r : rows - 1 - r;
+            if (flipY) srcRow = rows - 1 - srcRow;
             int rowOffset = r * cols;
             for (int c = 0; c < cols; c++)
             {
-                double v = _values[srcRow, c];
+                int srcCol = flipX ? cols - 1 - c : c;
+                double v = _values[srcRow, srcCol];
                 if (!double.IsFinite(v))
                 {
                     pixels[rowOffset + c] = 0; // transparent
                     continue;
                 }
 
-                Color color = Mapped(v, min, max, logColor);
+                Color color = _trueColors is null ? Mapped(v, min, max, logColor) : _trueColors[srcRow, srcCol];
 
                 // Per-pixel alpha multiplies the whole image's own opacity rather than replacing it,
                 // the same way a surface's FaceAlpha does, so the two knobs compose.
                 double pixelOpacity = alphaData is null
-                    ? opacity
-                    : opacity * OpacityOf(alphaData[srcRow, c], alpha);
+                    ? opacity * OpacityOf(_scalarAlpha, this.ResolveAlpha(new DataRange(_scalarAlpha, _scalarAlpha)))
+                    : opacity * OpacityOf(alphaData[srcRow, srcCol], alpha);
                 pixels[rowOffset + c] = color.WithOpacity(pixelOpacity).ToArgb();
             }
         }

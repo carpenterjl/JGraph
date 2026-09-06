@@ -34,25 +34,35 @@ internal static partial class JgsBuiltins
                         Count("sparse", args, 0, line, col), Count("sparse", args, 1, line, col), []));
                 case 3:
                 case 5:
+                case 6:
                 {
                     double[] i = ToDoubles("sparse", args[0], line, col);
                     double[] j = ToDoubles("sparse", args[1], line, col);
                     double[] v = ToDoubles("sparse", args[2], line, col);
+                    int length = Math.Max(i.Length, Math.Max(j.Length, v.Length));
+                    if (i.Length == 1 && length > 1) i = Enumerable.Repeat(i[0], length).ToArray();
+                    if (j.Length == 1 && length > 1) j = Enumerable.Repeat(j[0], length).ToArray();
+                    if (v.Length == 1 && length > 1) v = Enumerable.Repeat(v[0], length).ToArray();
                     if (i.Length != j.Length || i.Length != v.Length)
                     {
                         throw new JgsRuntimeException(line, col,
                             "sparse(i, j, v) needs i, j, and v to be the same length.");
                     }
 
-                    int rows = args.Count == 5 ? Count("sparse", args, 3, line, col) : (int)i.Max();
-                    int cols = args.Count == 5 ? Count("sparse", args, 4, line, col) : (int)j.Max();
+                    int rows = args.Count >= 5 ? Count("sparse", args, 3, line, col) : (i.Length == 0 ? 0 : (int)i.Max());
+                    int cols = args.Count >= 5 ? Count("sparse", args, 4, line, col) : (j.Length == 0 ? 0 : (int)j.Max());
                     var triplets = new (int, int, double)[i.Length];
                     for (int t = 0; t < i.Length; t++)
                     {
+                        if (!double.IsFinite(i[t]) || !double.IsFinite(j[t]) || i[t] != Math.Truncate(i[t])
+                            || j[t] != Math.Truncate(j[t]) || i[t] < 1 || j[t] < 1 || i[t] > rows || j[t] > cols)
+                            throw new JgsRuntimeException(line, col, "sparse indices must be positive integers within the matrix dimensions.");
                         triplets[t] = ((int)i[t] - 1, (int)j[t] - 1, v[t]);
                     }
 
-                    return JgsValue.Sparse(CscMatrix.FromTriplets(rows, cols, triplets));
+                    var matrix = CscMatrix.FromTriplets(rows, cols, triplets);
+                    if (args.Count == 6) matrix = matrix.WithReservedCapacity(Count("sparse", args, 5, line, col));
+                    return JgsValue.Sparse(matrix);
                 }
                 default:
                     throw new JgsRuntimeException(line, col,
@@ -179,15 +189,6 @@ internal static partial class JgsBuiltins
             (args, _, line, col) => Eigenpairs(args, line, col));
     }
 
-    /// <summary>How many elements a sparse subscript may materialize before it is refused by name.</summary>
-    /// <remarks>
-    /// A scalar subscript never materializes anything. Anything else goes through the dense value, and
-    /// a sparse matrix is exactly the shape that has no business becoming dense: a 10⁶-by-10⁶ pattern
-    /// is a few megabytes sparse and a petabyte dense. The limit is where an accident stops being
-    /// affordable, and the message names <c>find</c>, which answers the same question without it.
-    /// </remarks>
-    private const long SparseSubscriptLimit = 4_000_000;
-
     /// <summary>
     /// Whether a subscripted name is a sparse matrix being indexed rather than a function being
     /// called — the same question a struct array and a keyed collection each had to answer, for the
@@ -197,7 +198,7 @@ internal static partial class JgsBuiltins
 
     /// <summary>
     /// One reading out of a sparse matrix. A pair of scalar subscripts is answered from the stored
-    /// columns; anything wider goes through the dense value and comes back sparse, so
+    /// columns; wider selections gather stored entries and stay sparse, so
     /// <c>issparse</c> still says what it should.
     /// </summary>
     internal static JgsValue SparseSubscript(
@@ -206,6 +207,8 @@ internal static partial class JgsBuiltins
         CscMatrix matrix = value.AsSparse;
         if (subscripts.Count == 2 && IsScalarSubscript(subscripts[0]) && IsScalarSubscript(subscripts[1]))
         {
+            Validate(subscripts[0].AsNumber, matrix.Rows);
+            Validate(subscripts[1].AsNumber, matrix.Cols);
             int r = (int)subscripts[0].AsNumber - dialect.IndexBase;
             int c = (int)subscripts[1].AsNumber - dialect.IndexBase;
             if (r < 0 || r >= matrix.Rows || c < 0 || c >= matrix.Cols)
@@ -220,6 +223,7 @@ internal static partial class JgsBuiltins
 
         if (subscripts.Count == 1 && IsScalarSubscript(subscripts[0]))
         {
+            Validate(subscripts[0].AsNumber, checked(matrix.Rows * matrix.Cols));
             long index = (long)subscripts[0].AsNumber - dialect.IndexBase;
             long total = (long)matrix.Rows * matrix.Cols;
             if (index < 0 || index >= total)
@@ -231,18 +235,51 @@ internal static partial class JgsBuiltins
             return JgsValue.Number(matrix.At((int)(index % matrix.Rows), (int)(index / matrix.Rows)));
         }
 
-        if ((long)matrix.Rows * matrix.Cols > SparseSubscriptLimit)
+        void Validate(double index, int extent)
         {
-            throw new JgsRuntimeException(line, col,
-                $"A subscript wider than one element reads a {matrix.Rows}x{matrix.Cols} sparse matrix as a " +
-                "dense one, which is too large to hold; use find() to reach its entries.");
+            if (!double.IsFinite(index) || index != Math.Truncate(index))
+                throw new JgsRuntimeException(line, col, "Sparse index must be an integer within the matrix dimensions.");
         }
-
-        return JgsValue.Sparse(CscFromDense("subscript", SparseAsDense(matrix), line, col));
+        int[] Picks(JgsValue index, int extent)
+        {
+            if (index.Type == JgsType.Bool) return index.AsNumber == 0 ? [] : extent > 0 ? [0] : throw new JgsRuntimeException(line, col, "Logical sparse index is outside the matrix dimensions.");
+            double[] raw = ToDoubles("subscript", index, line, col);
+            if (index.Type == JgsType.Array && index.ArrayLength > 0 && (index.IsPacked ? index.PackedKind == JgsPackedKind.Bool : index.AsArray.All(v => v.Type == JgsType.Bool)))
+            {
+                int[] selected = raw.Select((v, i) => (v, i)).Where(t => t.v != 0).Select(t => t.i).ToArray();
+                if (selected.Any(i => i >= extent)) throw new JgsRuntimeException(line, col, "Logical sparse index is outside the matrix dimensions.");
+                return selected;
+            }
+            if (raw.Any(v => !double.IsFinite(v) || v != Math.Truncate(v) || v < dialect.IndexBase || v >= extent + dialect.IndexBase))
+                throw new JgsRuntimeException(line, col, "Sparse index is outside the matrix dimensions.");
+            return raw.Select(v => (int)v - dialect.IndexBase).ToArray();
+        }
+        if (subscripts.Count == 1)
+        {
+            int[] picks = Picks(subscripts[0], checked(matrix.Rows * matrix.Cols));
+            var values = picks.Select(k => matrix.At(k % matrix.Rows, k / matrix.Rows)).ToArray();
+            int rows = JgsMatrix.RowCount(subscripts[0]);
+            return JgsValue.Sparse(CscMatrix.FromColumnMajor(values, rows, rows == 0 ? 0 : values.Length / rows));
+        }
+        if (subscripts.Count != 2)
+            throw new JgsRuntimeException(line, col, "Sparse matrices support one or two subscripts.");
+        int[] rp = Picks(subscripts[0], matrix.Rows), cp = Picks(subscripts[1], matrix.Cols);
+        var entries = new List<(int, int, double)>();
+        var selectedRows = new Dictionary<int, List<int>>();
+        for (int r = 0; r < rp.Length; r++)
+        {
+            if (!selectedRows.TryGetValue(rp[r], out var destinations)) selectedRows[rp[r]] = destinations = [];
+            destinations.Add(r);
+        }
+        for (int c = 0; c < cp.Length; c++)
+            for (int k = matrix.ColumnStarts[cp[c]]; k < matrix.ColumnStarts[cp[c] + 1]; k++)
+                if (selectedRows.TryGetValue(matrix.RowIndices[k], out var destinations))
+                    foreach (int r in destinations) entries.Add((r, c, matrix.Values[k]));
+        return JgsValue.Sparse(CscMatrix.FromTriplets(rp.Length, cp.Length, entries));
     }
 
     private static bool IsScalarSubscript(JgsValue value) =>
-        value.Type is JgsType.Number or JgsType.Bool;
+        value.Type is JgsType.Number;
 
     /// <summary>The dense value a sparse matrix stands for — what <c>full</c> hands back.</summary>
     internal static JgsValue SparseAsDense(CscMatrix matrix) =>

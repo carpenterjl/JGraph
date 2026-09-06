@@ -87,11 +87,9 @@ internal static partial class JgsBuiltins
         {
             Arity("nzmax", args, 1, line, col);
 
-            // MATLAB reports the space allocated, which can exceed the nonzero count after a matrix
-            // has been edited. Nothing here edits in place — every operation builds a new matrix that
-            // is exactly as large as it needs to be — so the two numbers are always the same one.
+            // Explicit sparse preallocation survives independently of the stored entries.
             return JgsValue.Number(args[0].Type == JgsType.Sparse
-                ? args[0].AsSparse.NonZeroCount
+                ? Math.Max(1, Math.Max(args[0].AsSparse.NonZeroCount, args[0].AsSparse.ReservedCapacity))
                 : CountNonZeros("nzmax", args[0], line, col));
         });
 

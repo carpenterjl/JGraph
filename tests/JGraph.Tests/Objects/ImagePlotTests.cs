@@ -9,6 +9,29 @@ namespace JGraph.Tests.Objects;
 
 public class ImagePlotTests
 {
+    [Theory]
+    [InlineData(0, 0)]
+    [InlineData(.5, 128)]
+    [InlineData(2, 255)]
+    public void ImagePlaneUsesScalarAlphaWithoutChangingStoredValue(double alpha, int expectedAlpha)
+    {
+        var image = new ImagePlot(new double[,] { { 1, 2 }, { 3, 4 } })
+        {
+            ScalarAlpha = alpha,
+            AlphaDataMapping = AlphaMapping.None,
+            XData = [1, 2], YData = [1, 2],
+        };
+        var area = new Rect2D(0, 0, 200, 200);
+        var context = new RecordingRenderContext(new Size2D(200, 200));
+        var projection = new JGraph.Maths.Transforms.Projection3D(
+            new DataRange(0, 3), new DataRange(0, 3), new DataRange(0, 10), -37.5, 30, area);
+        image.Render3D(context, projection, new RenderState(new IdentityMapper(area), area, Colors.Blue));
+        Assert.Equal(alpha, image.ScalarAlpha);
+        Assert.Equal(new DataRange(0, 0), image.GetZDataBounds());
+        Assert.Equal(24, context.TotalTriangleVertices);
+        Assert.All(context.TriangleColors, color => Assert.Equal(expectedAlpha, (int)(color >> 24)));
+    }
+
     [Fact]
     public void HeatmapProvidesColorbarScaleAndDrawsGradient()
     {

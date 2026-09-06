@@ -72,6 +72,9 @@ internal sealed class JgsHandleEntry
 
     public GraphObject Target { get; }
 
+    public JgsValue? ImageCData { get; set; }
+    public JgsValue? ImageAlphaData { get; set; }
+
     /// <summary>The MATLAB type word for this object — what <c>get(h, 'Type')</c> answers.</summary>
     public string TypeName => JgsGraphicsProperties.TypeNameOf(Target);
 

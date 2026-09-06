@@ -584,9 +584,8 @@ internal static partial class JgsGraphicsProperties
         static ImagePlot Picture(JgsHandleEntry entry) => (ImagePlot)entry.Target;
 
         Put(table, "CData",
-            entry => Grid(Picture(entry).Values),
-            (entry, value, line, col) => Picture(entry).Values =
-                JgsBuiltins.HeatmapGrid(value, line, col));
+            entry => entry.ImageCData ?? Grid(Picture(entry).Values),
+            (entry, value, line, col) => SetImageCData(entry, value, line, col));
 
         AddWordProperty(table, "CDataMapping",
             entry => Picture(entry).CDataMapping == ColorMapping.Direct ? "direct" : "scaled",
@@ -633,24 +632,56 @@ internal static partial class JgsGraphicsProperties
             entry =>
             {
                 var picture = (ImagePlot)entry.Target;
-                DataRange extent = alongX ? picture.XExtent : picture.YExtent;
-                return Row(extent.Min, extent.Max);
+                double[] data = alongX ? picture.XData : picture.YData;
+                return data.Length == 1 ? JgsValue.Number(data[0]) : Row(data);
             },
             (entry, value, line, col) =>
             {
                 var picture = (ImagePlot)entry.Target;
-                double[] pair = Numbers(spelling, value, 2, line, col);
-                var extent = new DataRange(
-                    System.Math.Min(pair[0], pair[1]), System.Math.Max(pair[0], pair[1]));
-                if (alongX)
-                {
-                    picture.XExtent = extent;
-                }
-                else
-                {
-                    picture.YExtent = extent;
-                }
+                double[] data = JgsBuiltins.ToDoubles(spelling, value, line, col);
+                if (data.Length == 0 || data.Any(v => !double.IsFinite(v)))
+                    throw new JgsRuntimeException(line, col, $"{spelling} requires finite coordinates.");
+                if (alongX) picture.XData = data;
+                else picture.YData = data;
             });
+    }
+
+    internal static JgsValue CopyImageData(JgsValue value)
+    {
+        if (value.Type != JgsType.Array) return value;
+        var stored = value.IsPacked
+            ? JgsValue.Packed(JGraph.Numerics.ManagedBuffer.Adopt(value.AsBuffer.AsSpan().ToArray()), value.PackedKind)
+            : JgsMatrix.FromElements(Enumerable.Range(0, value.ArrayLength).Select(value.ElementAt).ToArray(), 1, value.ArrayLength);
+        stored.ReshapeDims(JgsMatrix.DimsOf(value));
+        stored.SetNumericClass(value.NumericClass);
+        return stored;
+    }
+
+    internal static void SetImageCData(JgsHandleEntry entry, JgsValue value, int line, int col)
+    {
+        var picture = (ImagePlot)entry.Target;
+        if (JgsMatrix.IsNested(value)) value = JgsMatrix.FromRows(JgsMatrix.ToRows("CData", value, line, col));
+        int[] dims = JgsMatrix.DimsOf(value);
+        if (dims.Length > 3 || dims.Length == 3 && dims[2] != 3)
+            throw new JgsRuntimeException(line, col, "CData must be an M-by-N or M-by-N-by-3 numeric array.");
+        int rows = dims[0], cols = dims[1];
+        double[] flat = JgsBuiltins.ToDoubles("CData", value, line, col);
+        var grid = new double[rows, cols];
+        Color[,]? colors = dims.Length == 3 ? new Color[rows, cols] : null;
+        double scale = value.NumericClass == JgsNumericClass.UInt8 ? 255 : value.NumericClass == JgsNumericClass.UInt16 ? 65535 : 1;
+        for (int c = 0; c < cols; c++)
+            for (int r = 0; r < rows; r++)
+            {
+                int k = r + c * rows;
+                grid[r,c] = flat[k];
+                if (colors is not null) colors[r,c] = Color.FromScRgb(flat[k] / scale, flat[k+rows*cols] / scale, flat[k+2*rows*cols] / scale);
+            }
+        picture.ColorDirectZeroBased = value.NumericClass is not (JgsNumericClass.Double or JgsNumericClass.Single)
+            || value.Type == JgsType.Bool || value.Type == JgsType.Array && value.ArrayLength > 0 && value.ElementAt(0).Type == JgsType.Bool;
+        picture.Values = grid;
+        picture.TrueColors = colors;
+        entry.ImageCData = CopyImageData(value);
+        picture.UpdateImageExtents();
     }
 
     // --- The patch ------------------------------------------------------------------------------

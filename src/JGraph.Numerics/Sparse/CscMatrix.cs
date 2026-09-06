@@ -28,6 +28,12 @@ public sealed class CscMatrix
 
     public double[] Values { get; }
 
+    /// <summary>Requested storage capacity, retained independently of the nonzero count.</summary>
+    public int ReservedCapacity { get; private init; }
+
+    public CscMatrix WithReservedCapacity(int capacity) =>
+        new(Rows, Cols, ColumnStarts, RowIndices, Values) { ReservedCapacity = Math.Max(NonZeroCount, capacity) };
+
     public int NonZeroCount => ColumnStarts[Cols];
 
     /// <summary>Builds from unordered (row, col, value) triplets; duplicates sum, zeros are kept out.</summary>

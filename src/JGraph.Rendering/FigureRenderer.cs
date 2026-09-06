@@ -516,13 +516,19 @@ public sealed class FigureRenderer
             }
         }
 
-        // Plot content.
+        // Sort whole objects by their projected centers. This places image planes behind
+        // surfaces above them while childorder preserves explicit painter ordering.
         IReadOnlyList<Color> palette = SeriesPalette.Of(axes, theme);
-        int colorIndex = 0;
-        foreach (PlotObject plot in axes.Plots.InDrawOrder())
+        IEnumerable<(PlotObject Plot, int Index)> plots = axes.Plots.InDrawOrder().Select((plot, index) => (plot, index));
+        if (axes.SortMethod == SortMethodType.Depth)
+        {
+            plots = plots.OrderBy(item => projection.Project(
+                item.Plot.GetXDataBounds().Center, item.Plot.GetYDataBounds().Center,
+                item.Plot is IHasZData z ? z.GetZDataBounds().Center : 0).Item2);
+        }
+        foreach ((PlotObject plot, int colorIndex) in plots)
         {
             Color seriesColor = SeriesPalette.Resolve(palette, plot, colorIndex);
-            colorIndex++;
             if (plot.Visible && plot is I3DDrawable drawable)
             {
                 var state = new RenderState(

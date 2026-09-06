@@ -3019,6 +3019,28 @@ internal sealed partial class Interpreter
             return AssignIntoTableColumn(tableName, tableColumn, heldTable, subscripts, assign.Op, rhs, assign, env);
         }
 
+        // Rebuild indexed image properties through their setter so their render data and
+        // cached script value stay in sync, including writes that resize CData.
+        if (container is MemberExpr imageProperty
+            && JgsHandleRegistry.TryGet(Evaluate(imageProperty.Target, env), out var imageEntry)
+            && imageEntry.Target is JGraph.Objects.ImagePlot)
+        {
+            string field = FieldName(imageProperty, env);
+            var scratch = new JgsEnvironment(env);
+            const string slot = "\u0001imageProperty";
+            scratch.Declare(slot, CopyForBinding(JgsGraphicsProperties.Get(imageEntry, field, assign.Line, assign.Column)));
+            var target = new VariableExpr(slot) { Line = assign.Line, Column = assign.Column };
+            JgsValue result = subscripts.Count switch
+            {
+                2 => AssignTwoSubscripts(target, subscripts, assign.Op, rhs, assign, scratch),
+                > 2 => AssignNSubscripts(target, subscripts, assign.Op, rhs, assign, scratch),
+                _ => AssignThroughIndex(target, subscripts, assign.Op, rhs, assign, scratch),
+            };
+            scratch.TryGet(slot, out var updated);
+            JgsGraphicsProperties.Set(imageEntry, field, updated, assign.Line, assign.Column);
+            return result;
+        }
+
         // MATLAB conjures the variable an index write names: x(5) = 1 with no x makes [0 0 0 0 1],
         // the same grow-and-zero-fill an existing array gets. The write starts from [] and the growth
         // below does the rest; a write that then fails takes the conjured variable with it, so a bad
@@ -3040,7 +3062,7 @@ internal sealed partial class Interpreter
             // holding NaN. The empty here is the difference between those two scripts.
             JgsValue conjured = rhs.IsStringArray ? JgsValue.StringArray(System.Array.Empty<JgsValue>(), 0, 0)
                 : rhs.Type == JgsType.Cell ? JgsValue.Cell(System.Array.Empty<JgsValue>())
-                : JgsValue.Array(System.Array.Empty<JgsValue>());
+                : JgsMatrix.FromElements(System.Array.Empty<JgsValue>(), 0, 0);
             conjuredScope.Declare(conjuredName, conjured);
         }
 
@@ -4105,8 +4127,16 @@ internal sealed partial class Interpreter
         // otherwise, and until M66 nothing said so for sparse.
         if (JgsBuiltins.IsSparseSubscript(callee) && call.Arguments.Count > 0)
         {
-            return JgsBuiltins.SparseSubscript(
-                callee, EvaluateAll(call.Arguments, env), Dialect, call.Line, call.Column);
+            var sparse = callee.AsSparse;
+            int[] extents = SubscriptExtents([sparse.Rows, sparse.Cols], call.Arguments.Count);
+            var indices = new JgsValue[call.Arguments.Count];
+            for (int i = 0; i < indices.Length; i++)
+            {
+                JgsValue? index = EvaluateIndexArgument(call.Arguments[i], extents, i, env);
+                indices[i] = index ?? JgsMatrix.FromColumnMajor(
+                    AllPicks(extents[i]).Select(n => (double)(n + Dialect.IndexBase)).ToArray(), extents[i], 1);
+            }
+            return JgsBuiltins.SparseSubscript(callee, indices, Dialect, call.Line, call.Column);
         }
 
         if (callee.Type != JgsType.Function)
@@ -4397,13 +4427,17 @@ internal sealed partial class Interpreter
 
     /// <summary>
     /// <c>A(i, j, k, …) = v</c> for three or more subscripts: a scalar right-hand side fills the
-    /// selection, an array must match its element count. In-range only — growing an N-D array by
-    /// assignment is not supported.
+    /// selection, an array must match its element count. Growth preserves existing coordinates.
     /// </summary>
     private JgsValue AssignNSubscripts(
         Expr target, IReadOnlyList<Expr> subscripts, TokenType op, JgsValue rhs, Node at, JgsEnvironment env)
     {
         JgsValue callee = Evaluate(target, env);
+        if (callee.Type is JgsType.Number or JgsType.Bool)
+        {
+            callee = OneElementArray(callee);
+            if (target is VariableExpr scalar) Rebind(scalar.Name, callee, env);
+        }
         if (callee.Type != JgsType.Array)
         {
             throw new JgsRuntimeException(at.Line, at.Column,
@@ -4423,12 +4457,18 @@ internal sealed partial class Interpreter
 
         int count = subscripts.Count;
         int[] extents = SubscriptExtents(JgsMatrix.DimsOf(callee), count);
+        int[] grownExtents = (int[])extents.Clone();
+        int[] rhsExtents = SubscriptExtents(JgsMatrix.DimsOf(rhs), count);
 
         var picks = new int[count][];
+        int rhsDimension = 0;
         for (int i = 0; i < count; i++)
         {
             JgsValue? index = EvaluateIndexArgument(subscripts[i], extents, i, env);
-            picks[i] = SubscriptPicks(index, extents[i], $"dimension-{i + 1}", at);
+            picks[i] = index is null && callee.ArrayLength == 0
+                ? AllPicks(rhsExtents[Math.Min(rhsDimension, rhsExtents.Length - 1)]) : WritePicks(index, extents[i], at);
+            if (index is null || picks[i].Length != 1) rhsDimension++;
+            grownExtents[i] = Math.Max(extents[i], Highest(picks[i]) + 1);
         }
 
         var strides = new int[count];
@@ -4436,7 +4476,7 @@ internal sealed partial class Interpreter
         for (int i = 0; i < count; i++)
         {
             strides[i] = stride;
-            stride *= extents[i];
+            stride = checked(stride * grownExtents[i]);
         }
 
         long wanted = 1;
@@ -4445,11 +4485,32 @@ internal sealed partial class Interpreter
             wanted *= pick.Length;
         }
 
-        bool scalarRhs = rhs.Type is not JgsType.Array;
+        bool scalarRhs = rhs.Type is not JgsType.Array || rhs.ArrayLength == 1;
         if (!scalarRhs && rhs.ArrayLength != wanted)
         {
             throw new JgsRuntimeException(at.Line, at.Column,
                 $"Cannot assign {rhs.ArrayLength} values into a selection of {wanted} element(s).");
+        }
+
+        if (!extents.SequenceEqual(grownExtents) && wanted > 0)
+        {
+            if (target is not VariableExpr variable)
+                throw new JgsRuntimeException(at.Line, at.Column, "Array growth requires a variable target.");
+            var elements = new JgsValue[stride];
+            System.Array.Fill(elements, GrowthFill(callee));
+            for (int n = 0; n < callee.ArrayLength; n++)
+            {
+                int rest = n, slot = 0;
+                for (int d = 0; d < count; d++)
+                {
+                    slot += (rest % extents[d]) * strides[d];
+                    rest /= extents[d];
+                }
+                elements[slot] = callee.ElementAt(n);
+            }
+            callee = KeepNumericClass(callee, JgsMatrix.FromElements(elements, 1, elements.Length));
+            callee.ReshapeDims(grownExtents);
+            Rebind(variable.Name, callee, env);
         }
 
         var counter = new int[count];
@@ -4461,7 +4522,7 @@ internal sealed partial class Interpreter
                 slot += picks[d][counter[d]] * strides[d];
             }
 
-            JgsValue source = scalarRhs ? rhs : rhs.ElementAt((int)n);
+            JgsValue source = rhs.Type == JgsType.Array ? rhs.ElementAt(scalarRhs ? 0 : (int)n) : rhs;
             JgsValue stored = op == TokenType.Assign
                 ? source
                 : ApplyBinary(UnderlyingOp(op), callee.ElementAt(slot), source, at);

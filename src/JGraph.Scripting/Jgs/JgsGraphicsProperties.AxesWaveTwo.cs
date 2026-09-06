@@ -416,15 +416,28 @@ internal static partial class JgsGraphicsProperties
     private static void AddImageAlphaData(IDictionary<string, GraphicsProperty> table)
     {
         Put(table, "AlphaData",
-            entry => ((ImagePlot)entry.Target).AlphaData is { } data
+            entry => entry.ImageAlphaData ?? (((ImagePlot)entry.Target).AlphaData is { } data
                 ? Grid(data)
-                : JgsValue.Number(1),
+                : JgsValue.Number(((ImagePlot)entry.Target).ScalarAlpha)),
             (entry, value, line, col) =>
             {
+                var image = (ImagePlot)entry.Target;
+                bool zeroBased = value.NumericClass is not (JgsNumericClass.Double or JgsNumericClass.Single)
+                    || value.Type == JgsType.Bool || value.Type == JgsType.Array && value.ArrayLength > 0 && value.ElementAt(0).Type == JgsType.Bool;
+                if (value.Type is JgsType.Number or JgsType.Bool || value.Type == JgsType.Array && value.ArrayLength == 1)
+                {
+                    image.AlphaData = null;
+                    image.AlphaDirectZeroBased = zeroBased;
+                    entry.ImageAlphaData = CopyImageData(value);
+                    image.ScalarAlpha = value.Type == JgsType.Array ? value.ElementAt(0).AsNumber : value.AsNumber;
+                    return;
+                }
                 double[,]? grid = AlphaGrid("AlphaData", value, line, col);
                 try
                 {
-                    ((ImagePlot)entry.Target).AlphaData = grid;
+                    image.AlphaData = grid;
+                    image.AlphaDirectZeroBased = zeroBased;
+                    entry.ImageAlphaData = CopyImageData(value);
                 }
                 catch (ArgumentException mismatch)
                 {

@@ -52,10 +52,10 @@ public class MatlabDocumentedChartFormTests : IDisposable
 
         // MATLAB reads only the first and last element of x and y, whatever length they are: they
         // give the two ends of the span, not one coordinate per column.
-        Assert.Equal(10, plot.XExtent.Min);
-        Assert.Equal(20, plot.XExtent.Max);
-        Assert.Equal(5, plot.YExtent.Min);
-        Assert.Equal(9, plot.YExtent.Max);
+        Assert.Equal(5, plot.XExtent.Min);
+        Assert.Equal(25, plot.XExtent.Max);
+        Assert.Equal(3, plot.YExtent.Min);
+        Assert.Equal(11, plot.YExtent.Max);
     }
 
     [Fact]
@@ -64,8 +64,8 @@ public class MatlabDocumentedChartFormTests : IDisposable
         await Run("image('XData', [10 20], 'YData', [5 9], 'CData', [1 2; 3 4]);");
 
         ImagePlot plot = Single<ImagePlot>();
-        Assert.Equal(10, plot.XExtent.Min);
-        Assert.Equal(9, plot.YExtent.Max);
+        Assert.Equal(5, plot.XExtent.Min);
+        Assert.Equal(11, plot.YExtent.Max);
     }
 
     [Fact]

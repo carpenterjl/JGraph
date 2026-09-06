@@ -119,94 +119,66 @@ internal static partial class JgsBuiltins
     private static JgsValue DrawImage(
         string verb, IReadOnlyList<JgsValue> args, bool scaled, int line, int col)
     {
-        double[]? x = null, y = null, limits = null;
-        double[,]? c = null;
-
-        // The name-value spelling, image('XData', x, 'YData', y, 'CData', C), is a different shape
-        // from the positional one rather than a tail on it, so it is read first and separately.
-        if (args.Count >= 2 && args.Count % 2 == 0 && args[0].Type == JgsType.String)
+        if (args.Count == 0) throw new JgsRuntimeException(line, col, $"{verb} requires image data.");
+        bool highLevel = args[0].Type != JgsType.String;
+        int cursor = 0;
+        JgsValue? data = null, x = null, y = null;
+        double[]? limits = null;
+        var properties = new List<(string Name, JgsValue Value)>();
+        if (highLevel)
         {
-            for (int i = 0; i + 1 < args.Count; i += 2)
+            if (args.Count >= 3 && args[1].Type != JgsType.String && args[2].Type != JgsType.String)
             {
-                string key = Str(verb, args, i, line, col);
-                if (key.Equals("CData", StringComparison.OrdinalIgnoreCase))
-                {
-                    c = Matrix(verb, args, i + 1, line, col);
-                }
-                else if (key.Equals("XData", StringComparison.OrdinalIgnoreCase))
-                {
-                    x = DoubleArray(verb, args, i + 1, line, col);
-                }
-                else if (key.Equals("YData", StringComparison.OrdinalIgnoreCase))
-                {
-                    y = DoubleArray(verb, args, i + 1, line, col);
-                }
-                else
-                {
-                    throw new JgsRuntimeException(line, col,
-                        $"{verb} takes 'CData', 'XData' and 'YData', but got '{key}'.");
-                }
+                x = args[0]; y = args[1]; data = args[2]; cursor = 3;
             }
-
-            if (c is null)
+            else { data = args[0]; cursor = 1; }
+        }
+        while (cursor < args.Count)
+        {
+            if (scaled && cursor == args.Count - 1 && args[cursor].Type != JgsType.String)
             {
-                throw new JgsRuntimeException(line, col, $"{verb} needs a 'CData' array to draw.");
+                limits = ClimsOf(verb, args, cursor++, line, col);
+                break;
+            }
+            if (cursor + 1 >= args.Count) throw new JgsRuntimeException(line, col, $"{verb} properties require name/value pairs.");
+            string name = Str(verb, args, cursor, line, col);
+            JgsValue value = args[cursor + 1]; cursor += 2;
+            switch (name.ToLowerInvariant())
+            {
+                case "cdata": data = value; break;
+                case "xdata": x = value; break;
+                case "ydata": y = value; break;
+                default: properties.Add((name, value)); break;
             }
         }
-        else
-        {
-            ArityRange(verb, args, 1, scaled ? 4 : 3, line, col);
-            if (args.Count >= 3)
-            {
-                x = DoubleArray(verb, args, 0, line, col);
-                y = DoubleArray(verb, args, 1, line, col);
-                c = Matrix(verb, args, 2, line, col);
-                if (args.Count == 4)
-                {
-                    limits = ClimsOf(verb, args, 3, line, col);
-                }
-            }
-            else
-            {
-                c = Matrix(verb, args, 0, line, col);
-                if (args.Count == 2)
-                {
-                    limits = ClimsOf(verb, args, 1, line, col);
-                }
-            }
-        }
-
-        bool highLevel = args.Count > 0 && args[0].Type != JgsType.String;
+        if (data is null) throw new JgsRuntimeException(line, col, $"{verb} requires CData.");
         bool holding = JG.IsHolding;
-        ImagePlot plot = JG.Image(c);
-        // MATLAB row one lies at the low Y coordinate; reversing the axes puts it at the top.
+        ImagePlot plot = highLevel ? JG.Image(new double[0,0]) : JG.Gca().AddImage(new double[0,0]);
+        var entry = JgsHandleRegistry.EntryFor(plot);
+        JgsGraphicsProperties.SetImageCData(entry, data, line, col);
         plot.RowZeroAtTop = false;
+        plot.AlphaDataMapping = AlphaMapping.None;
+        plot.CDataMapping = scaled ? ColorMapping.Scaled : ColorMapping.Direct;
+        if (x is not null) JgsGraphicsProperties.Set(entry, "XData", x, line, col);
+        if (y is not null) JgsGraphicsProperties.Set(entry, "YData", y, line, col);
         if (highLevel && !holding)
         {
             JG.Gca().ActiveYAxis.Inverted = true;
+            JG.Gca().Layer = JGraph.Core.Model.AxesLayer.Top;
+            JG.Gca().SetViewAngles(0, 90);
         }
-
-        // The one difference MATLAB draws between the two verbs: image reads its numbers as colour
-        // numbers, and imagesc stretches them over the limits — which is the whole of what the sc
-        // means. Everything else in this body is shared.
-        plot.CDataMapping = scaled ? ColorMapping.Scaled : ColorMapping.Direct;
-        if (x is { Length: > 0 })
+        foreach (var property in properties) JgsGraphicsProperties.Set(entry, property.Name, property.Value, line, col);
+        if (scaled && plot.TrueColors is null)
         {
-            plot.XExtent = new DataRange(x[0], x[^1]);
+            plot.AutoScaleColor = true;
+            var range = plot.ColorRange;
+            JG.Gca().ColorLimits = new DataRange(range.Min, range.Max);
         }
-
-        if (y is { Length: > 0 })
-        {
-            plot.YExtent = new DataRange(y[0], y[^1]);
-        }
-
         if (limits is not null)
         {
-            plot.AutoScaleColor = false;
-            plot.ColorMin = limits[0];
-            plot.ColorMax = limits[1];
+            JG.Gca().ColorLimits = new DataRange(limits[0], limits[1]);
+            plot.AutoScaleColor = false; plot.ColorMin = limits[0]; plot.ColorMax = limits[1];
         }
-
         return JgsHandleRegistry.For(plot);
     }
 
@@ -214,7 +186,7 @@ internal static partial class JgsBuiltins
     private static double[] ClimsOf(string verb, IReadOnlyList<JgsValue> args, int at, int line, int col)
     {
         double[] pair = DoubleArray(verb, args, at, line, col);
-        if (pair.Length != 2)
+        if (pair.Length != 2 || !double.IsFinite(pair[0]) || !double.IsFinite(pair[1]) || pair[0] >= pair[1])
         {
             throw new JgsRuntimeException(line, col,
                 $"{verb}: clims is [cmin cmax], but got {pair.Length} value(s).");
