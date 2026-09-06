@@ -259,10 +259,28 @@ internal static partial class JgsGraphicsProperties
         static SurfacePlot Sheet(JgsHandleEntry entry) => (SurfacePlot)entry.Target;
 
         Put(table, "CData",
-            entry => Grid(Sheet(entry).CData ?? Sheet(entry).Z),
+            entry => entry.SurfaceCData ?? Grid(Sheet(entry).CData ?? Sheet(entry).Z),
             (entry, value, line, col) =>
             {
                 var sheet = Sheet(entry);
+                int[] dims = JgsMatrix.DimsOf(value);
+                if (dims.Length == 3 && dims[2] == 3)
+                {
+                    if (dims[0] != sheet.Z.GetLength(0) || dims[1] != sheet.Z.GetLength(1))
+                        throw new JgsRuntimeException(line, col, "Surface RGB CData must match ZData rows and columns.");
+                    double[] flat = JgsBuiltins.ToDoubles("CData", value, line, col);
+                    int rows = dims[0], cols = dims[1], plane = rows * cols;
+                    double scale = value.NumericClass == JgsNumericClass.UInt8 ? 255 : value.NumericClass == JgsNumericClass.UInt16 ? 65535 : 1;
+                    var colors = new uint[plane];
+                    for (int r=0; r<rows; r++) for (int c=0; c<cols; c++)
+                    {
+                        int k = r+c*rows;
+                        colors[r*cols+c] = Color.FromScRgb(flat[k]/scale, flat[k+plane]/scale, flat[k+2*plane]/scale).ToArgb();
+                    }
+                    sheet.TextureData = colors;
+                    entry.SurfaceCData = CopyImageData(value);
+                    return;
+                }
                 double[,] given = JgsBuiltins.HeatmapGrid(value, line, col);
                 if (given.GetLength(0) != sheet.Z.GetLength(0) || given.GetLength(1) != sheet.Z.GetLength(1))
                 {
@@ -273,6 +291,8 @@ internal static partial class JgsGraphicsProperties
                 }
 
                 sheet.CData = given;
+                sheet.TextureData = null;
+                entry.SurfaceCData = CopyImageData(value);
             });
 
         AddNullableMode(table, "CDataMode",
@@ -490,6 +510,7 @@ internal static partial class JgsGraphicsProperties
         if (resized)
         {
             sheet.CData = null;
+            entry.SurfaceCData = null;
             sheet.AlphaData = null;
         }
     }

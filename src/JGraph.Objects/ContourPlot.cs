@@ -60,6 +60,14 @@ public sealed class ContourPlot : PlotObject, IDrawable, I3DDrawable, IHasZData,
     private double[]? _boundaryScratch;
     private int _rendering;
 
+    [Browsable(false)]
+    public IReadOnlyDictionary<double, string>? FormattedLabels
+    {
+        get => _formattedLabels;
+        set { _formattedLabels = value; Invalidate(InvalidationKind.Render); }
+    }
+    private IReadOnlyDictionary<double, string>? _formattedLabels;
+
     /// <summary>Creates a contour plot of <c>z[row, col]</c> sampled at <c>x[col]</c>/<c>y[row]</c>.</summary>
     public ContourPlot(double[] x, double[] y, double[,] z)
     {
@@ -697,7 +705,7 @@ public sealed class ContourPlot : PlotObject, IDrawable, I3DDrawable, IHasZData,
         double level,
         Color color)
     {
-        string text = level.ToString("G4", CultureInfo.InvariantCulture);
+        string text = FormattedLabels is { } labels && labels.TryGetValue(level, out string? label) ? label : level.ToString("G4", CultureInfo.InvariantCulture);
         double half = (context.MeasureText(text, _labelStyle ?? new TextStyle(color, 9)).Width / 2) + 2;
 
         int middle = (from + to) / 2;

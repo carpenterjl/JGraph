@@ -2647,7 +2647,7 @@ internal static partial class JgsBuiltins
         "LineWidth", "Color", "LineStyle", "Marker", "MarkerSize", "DisplayName", "HandleVisibility",
         "MarkerEdgeColor", "MarkerFaceColor", "MarkerIndices", "LineJoin", "AlignVertexCenters",
         "ButtonDownFcn", "CreateFcn", "DeleteFcn", "Interruptible", "BusyAction",
-        "Selected", "SelectionHighlight", "HitTest", "PickableParts",
+        "Selected", "SelectionHighlight", "HitTest", "PickableParts", "DurationTickFormat",
     };
 
     /// <summary>
@@ -2738,6 +2738,16 @@ internal static partial class JgsBuiltins
         // sees it (M64), and the ruler is told afterwards what those numbers mean. The two halves
         // have to be separate: the drawing pipeline works in doubles from end to end, so the type
         // cannot travel through it — only the axis remembers.
+        bool durationX = args.Count >= 2 && args[0].IsDuration;
+        bool durationY = (args.Count == 1 ? args[0] : args[1]).IsDuration;
+        string durationFormat = "hh:mm:ss";
+        foreach (var option in options.Where(o => o.Name.Equals("DurationTickFormat", StringComparison.OrdinalIgnoreCase)))
+        {
+            durationFormat = StrOf("DurationTickFormat", option.Value, line, col);
+            if (!System.Text.RegularExpressions.Regex.IsMatch(durationFormat, @"^(y|d|h|m|s|hh:mm|(?:dd:)?hh:mm:ss(?:\.S{1,9})?|mm:ss(?:\.S{1,9})?)$"))
+                throw new JgsRuntimeException(line, col, "Invalid DurationTickFormat.");
+        }
+        options.RemoveAll(o => o.Name.Equals("DurationTickFormat", StringComparison.OrdinalIgnoreCase));
         (args, bool datesAlongX, bool datesAlongY) = ConvertTimesForPlot(args);
 
         var created = new List<LinePlot>();
@@ -2831,6 +2841,11 @@ internal static partial class JgsBuiltins
 
         ApplyPlotOptions(verb, created, options, line, col);
 
+        if (created.Count > 0)
+        {
+            if (durationX) created[0].Axes!.PrimaryXAxis.DurationFormat = durationFormat;
+            if (durationY) created[0].Axes!.ActiveYAxis.DurationFormat = durationFormat;
+        }
         if ((datesAlongX || datesAlongY) && created.Count > 0)
         {
             AxesModel? axes = created[0].Axes;
@@ -3393,15 +3408,29 @@ internal static partial class JgsBuiltins
             throw new JgsRuntimeException(line, col, "stem expects (y) or (x, y), with an optional spec.");
         }
 
-        double[] heights = DoubleArray("stem", positional, positional.Count - 1, line, col);
-        double[] positions = positional.Count == 2
-            ? DoubleArray("stem", positional, 0, line, col)
-            : ImplicitX(dialect, heights.Length);
-
-        StemPlot plot = JG.Stem(positions, heights);
-        plot.XImplied = positional.Count == 1;
-        ApplyStemOptions(plot, spec, parsed, line, col);
-        return Handle(plot);
+        JgsValue y = positional[^1];
+        bool matrix = JgsMatrix.RowCount(y) > 1 && JgsMatrix.ColCount(y) > 1;
+        int count = matrix ? JgsMatrix.ColCount(y) : 1;
+        var created = new List<StemPlot>();
+        bool held = JG.Gca().Hold;
+        try
+        {
+            for (int c = 0; c < count; c++)
+            {
+                double[] heights = matrix ? Enumerable.Range(0, JgsMatrix.RowCount(y)).Select(r => JgsMatrix.At(y,r,c).AsNumber).ToArray() : ToDoubles("stem", y, line, col);
+                JgsValue? x = positional.Count == 2 ? positional[0] : null;
+                double[] positions = x is null ? ImplicitX(dialect, heights.Length)
+                    : JgsMatrix.RowCount(x) > 1 && JgsMatrix.ColCount(x) > 1
+                        ? Enumerable.Range(0, JgsMatrix.RowCount(x)).Select(r => JgsMatrix.At(x,r,c).AsNumber).ToArray()
+                        : ToDoubles("stem", x, line, col);
+                StemPlot plot = JG.Stem(positions, heights);
+                plot.XImplied = x is null;
+                ApplyStemOptions(plot, spec, parsed, line, col);
+                created.Add(plot); JG.Hold(true);
+            }
+        }
+        finally { JG.Hold(held); }
+        return HandlesFor(created);
     }
 
     /// <summary>The spec first, then the named options, so a name always wins over a shorthand.</summary>
@@ -3983,10 +4012,10 @@ internal static partial class JgsBuiltins
             break;
         }
 
-        double[,]? cData = null;
+        JgsValue? cData = null;
         if (takesColorData && args.Count is 2 or 4)
         {
-            cData = Matrix(name, args, args.Count - 1, line, col);
+            cData = args[^1];
             args = [.. args.Take(args.Count - 1)];
         }
 
@@ -3996,7 +4025,15 @@ internal static partial class JgsBuiltins
             {
                 try
                 {
-                    surface.CData = SkirtColors(cData, surface.Z);
+                    JgsValue colors = cData;
+                    if (JgsMatrix.DimsOf(colors).Length <= 2)
+                    {
+                        double[,] original = Matrix(name, [colors], 0, line, col);
+                        double[,] padded = SkirtColors(original, surface.Z);
+                        if (!ReferenceEquals(original, padded))
+                            colors = JgsMatrix.Build(padded.GetLength(0), padded.GetLength(1), (r,c) => padded[r,c]);
+                    }
+                    JgsGraphicsProperties.Set(JgsHandleRegistry.EntryFor(surface), "CData", colors, line, col);
                 }
                 catch (ArgumentException ex)
                 {
@@ -4115,6 +4152,11 @@ internal static partial class JgsBuiltins
     private static JgsValue Contour(
         string name, IReadOnlyList<JgsValue> args, int line, int col, bool filled, bool elevated = false)
     {
+        int firstWord = args.ToList().FindIndex(v => v.Type == JgsType.String);
+        IReadOnlyList<JgsValue> options = firstWord < 0 ? [] : args.Skip(firstWord).ToArray();
+        args = firstWord < 0 ? args : args.Take(firstWord).ToArray();
+        string? spec = null;
+        if (options.Count % 2 == 1) { spec = StrOf(name, options[0], line, col); options = options.Skip(1).ToArray(); }
         ArityRange(name, args, 1, 4, line, col);
 
         // contour(Z) and contour(Z, levels) index the grid by row and column, the way surf(Z) does.
@@ -4166,6 +4208,14 @@ internal static partial class JgsBuiltins
             // one-matrix form is exactly the case where they were.
             drawn.XImplied = !gridded;
             drawn.YImplied = !gridded;
+            if (spec is not null)
+            {
+                LineSpec style = LineSpec.Parse(spec);
+                if (style.Dash is { } dash) drawn.LineDash = dash;
+                if (style.Color is { } color) drawn.LineColor = color;
+            }
+            for (int i = 0; i < options.Count; i += 2)
+                JgsGraphicsProperties.Set(JgsHandleRegistry.EntryFor(drawn), StrOf(name, options[i], line, col), options[i+1], line, col);
             return Handle(drawn);
         }
         catch (ArgumentException ex)

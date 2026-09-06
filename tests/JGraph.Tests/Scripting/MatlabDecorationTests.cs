@@ -241,7 +241,7 @@ public class MatlabDecorationTests : IDisposable
         await RunAsserting("""
             figure(1);
             Z = peaks(20);
-            h = contour(Z);
+            [~, h] = contour(Z);
             disp(strcmp(get(h, 'Type'), 'contour'));
 
             % The x it made up runs 1..columns, which is what the grid form would have been given,
@@ -252,14 +252,14 @@ public class MatlabDecorationTests : IDisposable
 
             % A second argument is the levels, not a y.
             hold on;
-            n = contour(Z, 4);
+            [~, n] = contour(Z, 4);
             disp(numel(get(n, 'LevelList')));
-            v = contour(Z, [-2 0 2]);
+            [~, v] = contour(Z, [-2 0 2]);
             disp(numel(get(v, 'LevelList')));
 
             % And the gridded form still means what it meant.
             [X, Y] = meshgrid(1:20, 1:20);
-            g = contour(X, Y, Z, 4);
+            [~, g] = contour(X, Y, Z, 4);
             disp(numel(get(g, 'LevelList')));
             """);
 

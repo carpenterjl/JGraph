@@ -112,24 +112,26 @@ internal static partial class JgsBuiltins
         DefineSilent("clabel", (args, line, col) => Clabel(args, line, col));
 
         // --- The contour matrix ------------------------------------------------------------------
-        // [C, h] = contour(…) is how a script gets at the traced curves, and it is the form clabel is
-        // written against. One output still answers the handle, which is what this build has always
-        // returned and what every plotting verb here returns — a recorded divergence from MATLAB,
-        // where a lone output is the matrix.
+        // MATLAB returns the contour matrix first and the mutable graphics handle second.
+        // JGS retains its handle-only single-output API.
         void DefineContour(string name, bool silent, bool filled, bool elevated)
         {
             // The peel is here rather than around Single so both the one-output and the
             // [C, h] = contour(ax, Z) paths see the same argument list.
             var body = OnNamedAxes((args, line, col) => Contour(name, args, line, col, filled, elevated));
 
-            JgsValue Single(IReadOnlyList<JgsValue> args, int line, int col) => body(args, line, col);
+            JgsValue Single(IReadOnlyList<JgsValue> args, int line, int col)
+            {
+                JgsValue handle = body(args, line, col);
+                return dialect.IsMatlab ? ContourMatrixOf((ContourPlot)JgsHandleRegistry.Require(handle, line, col).Target) : handle;
+            }
 
             env.DeclareFunction(name, JgsValue.Function(new BuiltinFunction(name, Single)
             {
                 BindsAnsAsStatement = !silent,
                 MultiOutput = (args, wanted, line, col) =>
                 {
-                    JgsValue handle = Single(args, line, col);
+                    JgsValue handle = body(args, line, col);
                     JgsHandleEntry entry = JgsHandleRegistry.Require(handle, line, col);
                     return wanted >= 2 && entry.Target is ContourPlot plot
                         ? [ContourMatrixOf(plot), handle]

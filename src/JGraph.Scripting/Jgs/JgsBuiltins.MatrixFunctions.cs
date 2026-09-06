@@ -18,7 +18,7 @@ internal static partial class JgsBuiltins
     {
         void Define(string name, Func<IReadOnlyList<JgsValue>, int, int, JgsValue> body,
             Func<IReadOnlyList<JgsValue>, int, int, int, JgsValue[]>? multi = null) =>
-            env.DeclareFunction(name, JgsValue.Function(new BuiltinFunction(name, body) { MultiOutput = multi }));
+            env.DeclareFunction(name, JgsValue.Function(new BuiltinFunction(name, body) { MultiOutput = multi, KnowsWhenDiscarded = name == "peaks" }));
 
         Define("hilb", (args, line, col) =>
         {
@@ -29,25 +29,31 @@ internal static partial class JgsBuiltins
 
         JgsValue[] PeaksGrids(IReadOnlyList<JgsValue> args, int line, int col)
         {
-            ArityRange("peaks", args, 0, 1, line, col);
-            int n = args.Count == 1 ? Count("peaks", args, 0, line, col) : 49;
-            if (n < 2)
+            ArityRange("peaks", args, 0, 2, line, col);
+            JgsValue x, y;
+            if (args.Count == 2) { x = args[0]; y = args[1]; }
+            else
             {
-                throw new JgsRuntimeException(line, col, "peaks needs a grid of at least 2 points.");
+                double[] coordinates;
+                if (args.Count == 1 && args[0].Type == JgsType.Array && args[0].ArrayLength != 1)
+                {
+                    coordinates = ToDoubles("peaks", args[0], line, col);
+                }
+                else
+                {
+                    int n = args.Count == 1 ? Count("peaks", args, 0, line, col) : 49;
+                    if (n < 2) throw new JgsRuntimeException(line, col, "peaks needs a grid of at least 2 points.");
+                    coordinates = Enumerable.Range(0, n).Select(i => -3.0 + 6.0 * i / (n - 1)).ToArray();
+                }
+                x = JgsMatrix.Build(coordinates.Length, coordinates.Length, (r,c) => coordinates[c]);
+                y = JgsMatrix.Build(coordinates.Length, coordinates.Length, (r,c) => coordinates[r]);
             }
-
-            double At(int i) => -3.0 + (6.0 * i / (n - 1));
             static double Z(double x, double y) =>
                 (3 * (1 - x) * (1 - x) * System.Math.Exp(-(x * x) - ((y + 1) * (y + 1))))
                 - (10 * ((x / 5) - (x * x * x) - (y * y * y * y * y)) * System.Math.Exp(-(x * x) - (y * y)))
                 - (System.Math.Exp(-((x + 1) * (x + 1)) - (y * y)) / 3);
 
-            return
-            [
-                JgsMatrix.Build(n, n, (r, c) => At(c)),
-                JgsMatrix.Build(n, n, (r, c) => At(r)),
-                JgsMatrix.Build(n, n, (r, c) => Z(At(c), At(r))),
-            ];
+            return [x, y, Zip("peaks", x, y, Z, line, col)];
         }
 
         Define("peaks",
@@ -55,6 +61,15 @@ internal static partial class JgsBuiltins
             (args, wanted, line, col) =>
             {
                 JgsValue[] grids = PeaksGrids(args, line, col);
+                if (wanted == 0)
+                {
+                    JgsValue x = Zip("peaks", grids[0], grids[1], (a,b) => a, line, col);
+                    JgsValue y = Zip("peaks", grids[0], grids[1], (a,b) => b, line, col);
+                    JGraph.Api.JG.Surf(Matrix("peaks", [x], 0, line, col), Matrix("peaks", [y], 0, line, col), Matrix("peaks", grids, 2, line, col));
+                    var axes = JGraph.Api.JG.Gca();
+                    axes.Title = "Peaks"; axes.PrimaryXAxis.Label = "x"; axes.ActiveYAxis.Label = "y";
+                    return [];
+                }
                 return wanted >= 3 ? grids : wanted == 2 ? grids[..2] : [grids[2]];
             });
 

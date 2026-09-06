@@ -582,7 +582,7 @@ public class MatlabM78FurniturePropertyTests : IDisposable
     public async Task TheContourAnswersItsLevelsItsInkAndItsLabels()
     {
         ScriptRunResult result = await RunMatlab("""
-            c = contour(peaks(8));
+            [~, c] = contour(peaks(8));
             c.Fill = 'on';
             filled = c.Fill;
             c.LineColor = [0 0 0];
@@ -621,7 +621,7 @@ public class MatlabM78FurniturePropertyTests : IDisposable
     public async Task AContoursLevelStepPutsTheLevelsOnRoundNumbers()
     {
         ScriptRunResult result = await RunMatlab("""
-            c = contour(peaks(8));
+            [~, c] = contour(peaks(8));
             c.LevelStep = 2;
             levels = c.LevelList;
             remainder = max(abs(levels - 2 * round(levels / 2)));
@@ -638,7 +638,7 @@ public class MatlabM78FurniturePropertyTests : IDisposable
     public async Task AContourHandsBackTheMatrixItsCurvesAreIn()
     {
         ScriptRunResult result = await RunMatlab("""
-            c = contour(peaks(8));
+            [~, c] = contour(peaks(8));
             m = c.ContourMatrix;
             rows = size(m, 1);
             columns = size(m, 2);
@@ -868,7 +868,7 @@ public class MatlabM78FurniturePropertyTests : IDisposable
             ("plot([1 2 3]); set(legend('a'), 'Orientation', 'sideways');", "Orientation is"),
             ("surf(peaks(8)); set(colorbar, 'Location', 'sideways');", "Location is one of"),
             ("set(surf(peaks(8)), 'MeshStyle', 'diagonal');", "MeshStyle is"),
-            ("set(contour(peaks(8)), 'ZLocation', 'floor');", "ZLocation is"));
+            ("[~, c] = contour(peaks(8)); set(c, 'ZLocation', 'floor');", "ZLocation is"));
 
     /// <summary>
     /// The four refusals that are decisions rather than typos. Each names what this build does not
@@ -913,7 +913,7 @@ public class MatlabM78FurniturePropertyTests : IDisposable
     [InlineData("plot([1 2 3]); h = legend('a');", 49)]
     [InlineData("plot([1 2 3]); h = text(0.5, 0.5, 'label');", 57)]
     [InlineData("h = surf(peaks(8));", 81)]
-    [InlineData("h = contour(peaks(8));", 65)]
+    [InlineData("[~, h] = contour(peaks(8));", 65)]
     [InlineData("h = heatmap(magic(4));", 70)]
     [InlineData("surf(peaks(8)); h = colorbar;", 55)]
     [InlineData("h = patch([0 1 1], [0 0 1], 'r');", 77)]

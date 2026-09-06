@@ -23,7 +23,7 @@ public static class TickGenerators
     public static ITickGenerator For(AxisModel axis)
     {
         ArgumentNullException.ThrowIfNull(axis);
-        ITickGenerator automatic = axis.Scale switch
+        ITickGenerator automatic = axis.DurationFormat is { } durationFormat ? new DurationTickGenerator(durationFormat) : axis.Scale switch
         {
             AxisScaleType.Logarithmic => LogarithmicTickGenerator.Instance,
             AxisScaleType.DateTime => DateTimeTickGenerator.Instance,

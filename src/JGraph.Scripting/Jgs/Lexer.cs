@@ -445,7 +445,8 @@ internal static class Lexer
             i++;
         }
 
-        if (i < source.Length && source[i] == '.')
+        if (i < source.Length && source[i] == '.'
+            && (i + 1 >= source.Length || source[i + 1] is not ('*' or '/' or '\\' or '^' or '\'' or '.')))
         {
             i++;
             while (i < source.Length && char.IsDigit(source[i]))

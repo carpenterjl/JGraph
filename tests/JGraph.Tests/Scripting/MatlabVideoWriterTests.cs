@@ -368,9 +368,8 @@ public class MatlabVideoWriterTests : IDisposable
             disp(get(h, 'EdgeColor'));
             """);
 
-        // EdgeColor reads back as [] rather than 'none' — the surface-colour divergence ADR 0072
-        // recorded, unchanged by this milestone and asserted here so it stays visible.
-        Assert.Equal(new[] { "[3 4]", "12", "[]" }, _output.NormalLines);
+        // Replacing heights retains MATLAB's explicit disabled-edge property.
+        Assert.Equal(new[] { "[3 4]", "12", "none" }, _output.NormalLines);
     }
 
     [Fact]

@@ -1555,9 +1555,20 @@ internal sealed partial class Interpreter
     private JgsValue EvaluateRange(RangeExpr range, JgsEnvironment env)
     {
         JgsNumericClass carried = JgsNumericClass.Double;
-        double start = RangeBound(range.Start, "start", env, ref carried);
-        double step = range.Step is null ? 1 : RangeBound(range.Step, "step", env, ref carried);
-        double stop = RangeBound(range.Stop, "stop", env, ref carried);
+        JgsValue startValue = Evaluate(range.Start, env);
+        JgsValue stepValue = range.Step is null ? JgsValue.Number(1) : Evaluate(range.Step, env);
+        JgsValue stopValue = Evaluate(range.Stop, env);
+        JgsTimeTag? time = startValue.TimeTag ?? stopValue.TimeTag ?? stepValue.TimeTag;
+        double start = RangeBoundValue(startValue, range.Start, "start", ref carried);
+        double step = RangeBoundValue(stepValue, range.Step ?? range.Start, "step", ref carried);
+        double stop = RangeBoundValue(stopValue, range.Stop, "stop", ref carried);
+        if (time is not null)
+        {
+            if (!startValue.IsTime) start *= JgsTime.MsPerDay;
+            if (!stepValue.IsTime) step *= JgsTime.MsPerDay;
+            if (!stopValue.IsTime) stop *= JgsTime.MsPerDay;
+        }
+        JgsValue Finish(JgsValue result) => time is null ? result : result.MarkTime(time);
 
         if (step == 0)
         {
@@ -1567,7 +1578,7 @@ internal sealed partial class Interpreter
         double ratio = (stop - start) / step;
         if (double.IsNaN(ratio) || ratio < 0)
         {
-            return JgsValue.Array(System.Array.Empty<JgsValue>());
+            return Finish(JgsValue.Array(System.Array.Empty<JgsValue>()));
         }
 
         const double MachineEpsilon = 2.220446049250313e-16;
@@ -1584,8 +1595,8 @@ internal sealed partial class Interpreter
 
         if (JgsPacking.Enabled)
         {
-            return JgsNumericClasses.Stamp(
-                PackedOps.CreateRange(start, step, count, _cancelCheck), carried);
+            return Finish(JgsNumericClasses.Stamp(
+                PackedOps.CreateRange(start, step, count, _cancelCheck), carried));
         }
 
         var values = new JgsValue[count];
@@ -1594,7 +1605,7 @@ internal sealed partial class Interpreter
             values[i] = JgsValue.Number(start + (i * step));
         }
 
-        return JgsNumericClasses.Stamp(JgsValue.Array(values), carried);
+        return Finish(JgsNumericClasses.Stamp(JgsValue.Array(values), carried));
     }
 
     /// <summary>
@@ -1626,7 +1637,11 @@ internal sealed partial class Interpreter
     /// </remarks>
     private double RangeBound(Expr bound, string what, JgsEnvironment env, ref JgsNumericClass carried)
     {
-        JgsValue value = Evaluate(bound, env);
+        return RangeBoundValue(Evaluate(bound, env), bound, what, ref carried);
+    }
+
+    private static double RangeBoundValue(JgsValue value, Expr bound, string what, ref JgsNumericClass carried)
+    {
         JgsNumericClass numericClass = value.NumericClass;
 
         // MATLAB has no 1-by-1 array that is not a scalar, so `1:N` reads N whether it was written
@@ -3023,7 +3038,7 @@ internal sealed partial class Interpreter
         // cached script value stay in sync, including writes that resize CData.
         if (container is MemberExpr imageProperty
             && JgsHandleRegistry.TryGet(Evaluate(imageProperty.Target, env), out var imageEntry)
-            && imageEntry.Target is JGraph.Objects.ImagePlot)
+            && imageEntry.Target is JGraph.Objects.ImagePlot or JGraph.Objects.SurfacePlot)
         {
             string field = FieldName(imageProperty, env);
             var scratch = new JgsEnvironment(env);

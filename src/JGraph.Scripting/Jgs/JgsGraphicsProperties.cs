@@ -1498,6 +1498,31 @@ internal static partial class JgsGraphicsProperties
 
         if (typeof(ContourPlot).IsAssignableFrom(type))
         {
+            Put(table, "LabelFormat", entry => entry.ContourLabelFormat ?? JgsValue.Str("%g"),
+                (entry, value, line, col) =>
+                {
+                    var plot = (ContourPlot)entry.Target;
+                    double[] levels = plot.ResolvedLevels;
+                    var labels = new Dictionary<double,string>();
+                    if (value.Type == JgsType.Function)
+                    {
+                        JgsValue result = value.AsCallable.Call([Row(levels)], line, col);
+                        if (result.Type == JgsType.String && levels.Length == 1) labels[levels[0]] = result.AsString;
+                        else
+                        {
+                            if (result.Type != JgsType.Array || result.ArrayLength != levels.Length)
+                                throw new JgsRuntimeException(line, col, "LabelFormat callback must return one label per level.");
+                            for (int i=0; i<levels.Length; i++) labels[levels[i]] = JgsBuiltins.StrOf("LabelFormat", result.ElementAt(i), line, col);
+                        }
+                    }
+                    else
+                    {
+                        string format = JgsBuiltins.StrOf("LabelFormat", value, line, col);
+                        foreach (double level in levels) labels[level] = JgsSprintf.FormatMatlab(format, [JgsValue.Number(level)]);
+                    }
+                    entry.ContourLabelFormat = value;
+                    plot.FormattedLabels = labels;
+                });
             // MATLAB calls the levels LevelList, and answers with the ones actually drawn rather than
             // with nothing when they were chosen automatically — which is what clabel needs to see.
             Put(table, "LevelList",
@@ -1855,13 +1880,9 @@ internal static partial class JgsGraphicsProperties
         SurfaceStyle without)
     {
         Put(table, name,
-            // Reading answers the colour or nothing, which is what a surface here has always said and
-            // what the shipped scripts test against: an unset colour means 'take it from the
-            // colormap'. MATLAB would say 'flat' for that and 'none' for a half that is not drawn,
-            // and this is the one corner of M72 where the older spelling was kept rather than
-            // replaced -- see the divergence note. Writing takes MATLAB's words either way, which is
-            // the half that was reported and the half a script actually needs.
-            entry => read((SurfacePlot)entry.Target) is { } chosen ? ColorRow(chosen) : JgsValue.Array([]),
+            entry => ((SurfacePlot)entry.Target).Style == without ? JgsValue.Str("none")
+                : read((SurfacePlot)entry.Target) is { } chosen ? ColorRow(chosen)
+                : JgsValue.Str(((SurfacePlot)entry.Target).Shading == SurfaceShading.Interp ? "interp" : "flat"),
             (entry, value, line, col) =>
             {
                 var surface = (SurfacePlot)entry.Target;

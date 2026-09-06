@@ -72,6 +72,8 @@ internal sealed class JgsHandleEntry
 
     public GraphObject Target { get; }
 
+    public JgsValue? SurfaceCData { get; set; }
+    public JgsValue? ContourLabelFormat { get; set; }
     public JgsValue? ImageCData { get; set; }
     public JgsValue? ImageAlphaData { get; set; }
 

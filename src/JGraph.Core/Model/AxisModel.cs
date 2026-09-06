@@ -182,6 +182,10 @@ public sealed class AxisModel : GraphObject
         set => SetProperty(ref _targetMajorTickCount, System.Math.Max(2, value), InvalidationKind.Layout);
     }
 
+    /// <summary>Duration tick format; values on this ruler are stored as days.</summary>
+    [Browsable(false)]
+    public string? DurationFormat { get; set; }
+
     /// <summary>A .NET numeric format string for tick labels, or null to format automatically.</summary>
     [Category("Ticks"), DisplayName("Tick label format")]
     public string? TickLabelFormat

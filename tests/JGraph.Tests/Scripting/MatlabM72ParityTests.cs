@@ -83,7 +83,7 @@ public class MatlabM72ParityTests : IDisposable
             [X, Y] = meshgrid(1:5, 1:5);
             s = surf(X, Y, X + Y, 'FaceAlpha', 0.4, 'EdgeColor', 'none');
             fa = get(s, 'FaceAlpha');
-            edges = isempty(get(s, 'EdgeColor'));
+            edges = strcmp(get(s, 'EdgeColor'), 'none');
             """);
 
         Assert.True(result.Success, result.Message);

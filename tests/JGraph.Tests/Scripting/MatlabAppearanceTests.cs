@@ -156,11 +156,11 @@ public class MatlabAppearanceTests : IDisposable
         await RunAsserting("""
             figure(1);
             h = mesh(peaks(10));
-            disp(isempty(get(h, 'FaceColor')));
+            disp(strcmp(get(h, 'FaceColor'), 'none'));
             hidden on;
             disp(numel(get(h, 'FaceColor')));
             hidden off;
-            disp(isempty(get(h, 'FaceColor')));
+            disp(strcmp(get(h, 'FaceColor'), 'none'));
             """);
 
         // Unset before and after; a colour while it is on.
