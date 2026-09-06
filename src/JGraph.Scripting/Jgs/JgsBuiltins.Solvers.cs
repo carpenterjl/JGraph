@@ -86,13 +86,18 @@ internal static partial class JgsBuiltins
         }
 
         IJgsCallable f = args[0].AsCallable;
-        double a = Num(name, args, 1, line, col);
-        double b = Num(name, args, 2, line, col);
+        var start = ScalarComplex(name, args[1], line, col);
+        var stop = ScalarComplex(name, args[2], line, col);
+        double a = start.Real;
+        double b = stop.Real;
 
         double relative = Quadrature.DefaultRelativeTolerance;
         double absolute = Quadrature.DefaultAbsoluteTolerance;
         int maximum = Quadrature.DefaultMaximumIntervals;
         bool oneAtATime = false;
+        bool arrayValued = false;
+        bool vectorized = true;
+        System.Numerics.Complex[]? complexWaypoints = null;
         List<double>? waypoints = null;
 
         if ((args.Count - 3) % 2 != 0)
@@ -119,11 +124,17 @@ internal static partial class JgsBuiltins
             }
             else if (Names(option, "ArrayValued"))
             {
-                oneAtATime = Truth(value);
+                arrayValued = Truth(value);
+                oneAtATime = arrayValued;
+            }
+            else if (Names(option, "Vectorized") && name == "integral")
+            {
+                vectorized = Truth(value);
             }
             else if (Names(option, "Waypoints"))
             {
-                waypoints = [.. ToDoubles(name, value, line, col)];
+                complexWaypoints = FlattenedComplex(name, value, line, col);
+                waypoints = complexWaypoints.Select(z => z.Real).ToList();
             }
             else
             {
@@ -131,6 +142,16 @@ internal static partial class JgsBuiltins
                     $"'{option}' is not a recognized option for {name}.");
             }
         }
+
+        oneAtATime |= !vectorized;
+        if (!double.IsFinite(relative) || !double.IsFinite(absolute) || relative < 0 || absolute < 0)
+            throw new JgsRuntimeException(line, col, $"{name}: tolerances must be finite and nonnegative.");
+        bool contour = start.Imaginary != 0 || stop.Imaginary != 0 || complexWaypoints?.Any(z => z.Imaginary != 0) == true;
+        if (arrayValued || contour)
+            return IntegrateComponents(name, f, start, stop, complexWaypoints, arrayValued, oneAtATime, relative, absolute, maximum, wanted, line, col);
+        double probe = double.IsFinite(a) && double.IsFinite(b) ? a / 2 + b / 2 : double.IsFinite(a) ? a + 1 : double.IsFinite(b) ? b - 1 : 0;
+        if (HasComplexElements(f.Call([JgsValue.Number(probe)], line, col)))
+            return IntegrateComponents(name, f, start, stop, complexWaypoints, false, oneAtATime, relative, absolute, maximum, wanted, line, col);
 
         double[] Sample(double[] at)
         {

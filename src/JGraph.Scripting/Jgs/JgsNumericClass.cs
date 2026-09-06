@@ -195,7 +195,7 @@ internal static class JgsNumericClasses
                 NumericBuffer im = JgsPacking.Allocate(source.Length);
                 PackedMath.Round(source.Re, re, RoundingFor(numericClass));
                 PackedMath.Round(source.Im, im, RoundingFor(numericClass));
-                return JgsMatrix.Like(value, JgsValue.PackedComplexArray(new JgsPackedComplex(re, im)));
+                return JgsMatrix.Like(value, JgsValue.PackedComplexArray(new JgsPackedComplex(re, im, source.PreserveComplex)));
             }
 
             case JgsType.Array:

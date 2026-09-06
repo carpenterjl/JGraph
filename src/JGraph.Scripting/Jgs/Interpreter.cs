@@ -2818,7 +2818,7 @@ internal sealed partial class Interpreter
             planes.Re.AsSpan().CopyTo(re.AsSpan());
             planes.Im.AsSpan().CopyTo(im.AsSpan());
             GC.KeepAlive(planes);
-            return KeepShape(value, JgsValue.PackedComplexArray(new JgsPackedComplex(re, im)));
+            return KeepShape(value, JgsValue.PackedComplexArray(new JgsPackedComplex(re, im, planes.PreserveComplex)));
         }
 
         JgsValue[] source2 = value.AsArray;
@@ -6123,6 +6123,20 @@ internal sealed partial class Interpreter
 
         int rows = JgsMatrix.RowCount(value);
         int columns = JgsMatrix.ColCount(value);
+        if (value.IsPackedComplex)
+        {
+            var source = value.AsPackedComplex;
+            var re = JgsPacking.Allocate(source.Length);
+            var im = JgsPacking.Allocate(source.Length);
+            for (int c = 0; c < columns; c++) for (int r = 0; r < rows; r++)
+            {
+                re.AsSpan()[r * columns + c] = source.Re.AsSpan()[c * rows + r];
+                im.AsSpan()[r * columns + c] = source.Im.AsSpan()[c * rows + r] * (transpose.Conjugate ? -1 : 1);
+            }
+            var result = JgsValue.PackedComplexArray(new JgsPackedComplex(re, im, source.PreserveComplex));
+            result.Reshape(columns, rows);
+            return CarryValueTags(value, result);
+        }
         var transposed = new JgsValue[rows * columns];
         for (int r = 0; r < rows; r++)
         {
@@ -6179,7 +6193,7 @@ internal sealed partial class Interpreter
             }
 
             GC.KeepAlive(planes);
-            return KeepShape(value, JgsValue.PackedComplexArray(new JgsPackedComplex(re, im)));
+            return KeepShape(value, JgsValue.PackedComplexArray(new JgsPackedComplex(re, im, planes.PreserveComplex)));
         }
 
         JgsValue[] source2 = value.AsArray;

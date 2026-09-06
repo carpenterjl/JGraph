@@ -105,13 +105,10 @@ public class MatlabReductionOptionTests : IDisposable
         assert(sum([1 2 3], 'double') == 6);
         assert(sum([1 2 3], 'default') == 6);
         assert(mean([1 2 3], 'double') == 2);
-        ok = 0;
-        try
-            sum([1 2 3], 'native');
-        catch err
-            ok = ~isempty(strfind(err.message, 'double'));
-        end
-        assert(ok == 1);
+        assert(sum([1 2 3], 'native') == 6);
+        a = sum(int16([1 2 3]), 'native');
+        assert(strcmp(class(a), 'int16'));
+        assert(a == 6);
         """);
 
     /// <summary>

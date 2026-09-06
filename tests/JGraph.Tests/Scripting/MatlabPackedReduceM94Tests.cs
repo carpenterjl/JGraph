@@ -238,7 +238,8 @@ public class MatlabPackedReduceM94Tests : IDisposable
         AssertParity("""
             A = reshape(1:6, 2, 3);
             b = sum(A, 1, 'native');
-            """, expectSuccess: false);
+            assert(isequal(b, [3 7 11]));
+            """);
     }
 
     [Fact]

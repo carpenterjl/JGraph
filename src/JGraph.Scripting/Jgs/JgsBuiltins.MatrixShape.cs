@@ -20,6 +20,8 @@ internal static partial class JgsBuiltins
         // --- Matrix generation ------------------------------------------------------------------
         Define("eye", (args, line, col) =>
         {
+            var original = args;
+            (args, JgsNumericClass? asked) = ClassSuffix("eye", args, line, col);
             ArityRange("eye", args, 0, 2, line, col);
             int[] dims = SquareDims("eye", args, line, col);
             if (dims.Length != 2)
@@ -27,13 +29,14 @@ internal static partial class JgsBuiltins
                 throw new JgsRuntimeException(line, col, "eye builds 2-D identity matrices only.");
             }
 
-            return BuildMatrix(dims[0], dims[1], static (r, c) => r == c ? 1.0 : 0.0);
+            return ConstructorTraits("eye", original, BuildMatrix(dims[0], dims[1], static (r, c) => r == c ? 1.0 : 0.0), asked, line, col);
         });
 
         Define("diag", (args, line, col) =>
         {
             ArityRange("diag", args, 1, 2, line, col);
             int offset = args.Count == 2 ? Count("diag", args, 1, line, col) : 0;
+            if (args[0].Type == JgsType.Sparse) return SparseDiagonal(args[0].AsSparse, offset);
 
             // Neither reading of an empty has anything to answer, and the matrix reading below walks
             // off the end of a matrix with no rows in it (M96b). A vector builds a square of its own
@@ -356,11 +359,10 @@ internal static partial class JgsBuiltins
     private static JgsValue NdConstructorValue(
         string name, IReadOnlyList<JgsValue> args, int line, int col, Func<double> next)
     {
+        var original = args;
         (args, JgsNumericClass? asked) = ClassSuffix(name, args, line, col);
         JgsValue built = NdConstructorOfDoubles(name, args, line, col, next);
-        return asked is { } numericClass
-            ? ToNumericClass(name, numericClass, built, line, col)
-            : built;
+        return ConstructorTraits(name, original, built, asked, line, col);
     }
 
     /// <summary>
@@ -377,6 +379,7 @@ internal static partial class JgsBuiltins
     {
         if (args.Count >= 2 && IsTextScalar(args[^2]) && string.Equals(TextOf(args[^2]), "like", StringComparison.OrdinalIgnoreCase))
         {
+            if (IsLogicalValue(args[^1])) return (args.Take(args.Count - 2).ToList(), JgsNumericClass.Double);
             JgsNumericClass? prototype = JgsNumericClasses.Parse(ClassOf(args[^1], JgsDialect.Matlab));
             if (prototype is null)
             {
@@ -390,6 +393,7 @@ internal static partial class JgsBuiltins
         if (args.Count >= 1 && IsTextScalar(args[^1]))
         {
             string word = TextOf(args[^1]);
+            if (word.Equals("logical", StringComparison.OrdinalIgnoreCase)) return (args.Take(args.Count - 1).ToList(), JgsNumericClass.Double);
             if (JgsNumericClasses.Parse(word) is { } named)
             {
                 return (args.Take(args.Count - 1).ToList(), named);
@@ -917,9 +921,9 @@ internal static partial class JgsBuiltins
                 bool order = spec.Words.HasFlag(TailWords.Reverse);
                 bool outtype = spec.Words.HasFlag(TailWords.Outtype);
 
-                if (nan && word is "omitnan" or "includenan")
+                if (nan && word is "omitnan" or "includenan" or "omitmissing" or "includemissing")
                 {
-                    omitNan = word == "omitnan";
+                    omitNan = word is "omitnan" or "omitmissing";
                 }
                 else if (order && word is "reverse" or "forward")
                 {
@@ -932,8 +936,7 @@ internal static partial class JgsBuiltins
                 }
                 else if (outtype && word == "native")
                 {
-                    throw new JgsRuntimeException(line, col,
-                        $"{name}: 'native' asks for the answer in the input's own class, which this reduction does not do — it always answers in double.");
+                    // The final result is converted after reduction.
                 }
                 else
                 {
@@ -1224,6 +1227,25 @@ internal static partial class JgsBuiltins
 
         JgsValue Single(IReadOnlyList<JgsValue> args, int line, int col)
         {
+            if (name == "median") return MedianReduction(args, line, col);
+            var normalized = args.ToArray();
+            bool sparse = args.Count > 0 && args[0].Type == JgsType.Sparse;
+            if (sparse && name == "sum")
+            {
+                var parsed = Split(args, line, col);
+                if (parsed.Extra.Length == 0)
+                    return SparseSum(args[0].AsSparse, parsed.Dim, parsed.Vecdim, parsed.All, parsed.OmitNan, line, col);
+            }
+            if (sparse) normalized[0] = SparseAsDense(args[0].AsSparse);
+            JgsValue result = SingleCore(normalized, line, col);
+            if (spec.Words.HasFlag(TailWords.Outtype) && args.Skip(1).Any(v => IsTextScalar(v) && TextOf(v).Equals("native", StringComparison.OrdinalIgnoreCase)))
+                result = IsLogicalValue(args[0]) ? AsMask(result) : ToNumericClass(name, args[0].NumericClass, result, line, col);
+            if (sparse && name is "sum" or "prod" or "mean") result = JgsValue.Sparse(CscFromDense(name, result, line, col));
+            return result;
+        }
+
+        JgsValue SingleCore(IReadOnlyList<JgsValue> args, int line, int col)
+        {
             (JgsValue subject, int? dim, int[]? vecdim, JgsValue[] extra, bool all, int order,
                 bool omitNan, bool reverse) = Split(args, line, col);
             if (order == 0)
@@ -1475,9 +1497,11 @@ internal static partial class JgsBuiltins
             {
                 switch (rest[^1].AsString.ToLowerInvariant())
                 {
+                    case "omitmissing":
                     case "omitnan":
                         omitNan = true;
                         break;
+                    case "includemissing":
                     case "includenan":
                         omitNan = false;
                         break;
@@ -1655,6 +1679,7 @@ internal static partial class JgsBuiltins
         JgsValue Single(IReadOnlyList<JgsValue> args, int line, int col)
         {
             (bool omitNan, bool linear, IReadOnlyList<JgsValue> rest) = TakeWords(args, line, col);
+            if (NeedsRankedExtreme(args)) return RankedExtreme(args, 1, Multi, line, col)[0];
             if (Reduces(rest))
             {
                 return Both(rest, omitNan, linear, line, col)[0];
@@ -1671,6 +1696,7 @@ internal static partial class JgsBuiltins
         JgsValue[] Multi(IReadOnlyList<JgsValue> args, int wanted, int line, int col)
         {
             (bool omitNan, bool linear, IReadOnlyList<JgsValue> rest) = TakeWords(args, line, col);
+            if (NeedsRankedExtreme(args)) return RankedExtreme(args, wanted, Multi, line, col);
             if (Reduces(rest))
             {
                 return Both(rest, omitNan, linear, line, col);

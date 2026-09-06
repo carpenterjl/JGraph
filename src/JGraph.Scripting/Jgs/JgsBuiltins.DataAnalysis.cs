@@ -62,6 +62,13 @@ internal static partial class JgsBuiltins
     private static JgsValue EvenlySpaced(IReadOnlyList<JgsValue> args, int line, int col)
     {
         ArityRange("linspace", args, 2, 3, line, col);
+        if (HasComplexElements(args[0]) || HasComplexElements(args[1]))
+        {
+            var first = ScalarComplex("linspace", args[0], line, col);
+            var last = ScalarComplex("linspace", args[1], line, col);
+            int n = args.Count == 3 ? (int)Math.Floor(Num("linspace", args, 2, line, col)) : 100;
+            return ComplexStorage(Enumerable.Range(0, Math.Max(0, n)).Select(i => n == 1 || i == n - 1 ? last : first + (last - first) * ((double)i / (n - 1))).ToArray(), [1, Math.Max(0, n)]);
+        }
         double start = Num("linspace", args, 0, line, col);
         double stop = Num("linspace", args, 1, line, col);
         int count = args.Count == 3 ? Count("linspace", args, 2, line, col) : 100;
@@ -609,6 +616,7 @@ internal static partial class JgsBuiltins
         // because its kernel is only defined inside a cell.
         bool extrapolate = method is "spline" or "pchip" or "makima";
         double outside = double.NaN;
+        double outsideImaginary = double.NaN;
         if (numeric + 1 < args.Count)
         {
             JgsValue tail = args[numeric + 1];
@@ -624,7 +632,9 @@ internal static partial class JgsBuiltins
             }
             else
             {
-                outside = Num("interp1", args, numeric + 1, line, col);
+                var fill = ScalarComplex("interp1", tail, line, col);
+                outside = fill.Real;
+                outsideImaginary = fill.Imaginary;
                 extrapolate = false;
             }
         }
@@ -645,6 +655,15 @@ internal static partial class JgsBuiltins
                 $"interp1 expects at most {numeric + 2} argument(s) in this form, but got {args.Count}.");
         }
 
+        if (HasComplexElements(values) || outsideImaginary != 0 && !double.IsNaN(outsideImaginary))
+        {
+            var z = ColumnComplex("interp1", values, line, col);
+            var re = Resample(samples, ShapedNumbers(z.Select(v => v.Real).ToArray(), SizeDims(values)), queries, method, extrapolate, outside, host, line, col);
+            var im = Resample(samples, ShapedNumbers(z.Select(v => v.Imaginary).ToArray(), SizeDims(values)), queries, method, extrapolate, outsideImaginary, host, line, col);
+            var rv = FlattenColumnMajor("interp1", re, line, col);
+            var iv = FlattenColumnMajor("interp1", im, line, col);
+            return ComplexStorage(rv.Select((v, i) => new System.Numerics.Complex(v, iv[i])).ToArray(), SizeDims(re));
+        }
         return Resample(samples, values, queries, method, extrapolate, outside, host, line, col);
     }
 

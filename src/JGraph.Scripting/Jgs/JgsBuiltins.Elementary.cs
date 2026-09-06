@@ -287,8 +287,8 @@ internal static partial class JgsBuiltins
         // name is what isequaln was called before R2012a, and old scripts still use it.
         JgsValue NanEqual(string name, IReadOnlyList<JgsValue> args, int line, int col)
         {
-            Arity(name, args, 2, line, col);
-            return JgsValue.Bool(JgsStdlib.DeepEquals(args[0], args[1], nanEqual: true));
+            ArityRange(name, args, 2, int.MaxValue, line, col);
+            return JgsValue.Bool(args.Skip(1).All(v => JgsStdlib.DeepEquals(args[0], v, nanEqual: true)));
         }
 
         Define("isequaln", (args, line, col) => NanEqual("isequaln", args, line, col));
@@ -648,15 +648,7 @@ internal static partial class JgsBuiltins
         // would ask it about: isreal(fft(x)) has been an error since packing arrived (M96a).
         if (value.IsPackedComplex)
         {
-            foreach (double part in value.AsPackedComplex.Im.AsSpan())
-            {
-                if (part != 0)
-                {
-                    return true;
-                }
-            }
-
-            return false;
+            return value.AsPackedComplex.PreserveComplex || value.AsPackedComplex.Im.AsSpan().ContainsAnyExcept(0.0);
         }
 
         return Array.Exists(value.AsArray, HasComplexPart);

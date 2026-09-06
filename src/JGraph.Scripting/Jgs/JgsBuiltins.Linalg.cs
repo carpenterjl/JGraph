@@ -97,7 +97,7 @@ internal static partial class JgsBuiltins
             (args, line, col) => QrAnswer(args, 1, line, col)[0],
             QrAnswer);
 
-        Define("svd", SingularValueList, SingularValueFactors);
+        Define("svd", (a, l, c) => SvdFormatted(a, 1, l, c)[0], SvdFormatted);
     }
 
     /// <summary>s = svd(A) — the singular values, as MATLAB's column.</summary>

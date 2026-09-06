@@ -156,6 +156,12 @@ internal static class JgsStdlib
     {
         left = JgsBuiltins.ImageNumbers(left);
         right = JgsBuiltins.ImageNumbers(right);
+        if (left.Type == JgsType.Sparse) left = JgsBuiltins.SparseAsDense(left.AsSparse);
+        if (right.Type == JgsType.Sparse) right = JgsBuiltins.SparseAsDense(right.AsSparse);
+        if (left.Type == JgsType.String && right.Type is JgsType.Number or JgsType.Bool or JgsType.Array)
+            left = JgsValue.Array(left.AsString.Select(c => JgsValue.Number(c)).ToArray());
+        if (right.Type == JgsType.String && left.Type is JgsType.Number or JgsType.Bool or JgsType.Array)
+            right = JgsValue.Array(right.AsString.Select(c => JgsValue.Number(c)).ToArray());
         static bool IsOneElementArray(JgsValue value) =>
             value.Type == JgsType.Array && value.ArrayLength == 1 && !value.IsNd;
 
@@ -271,6 +277,14 @@ internal static class JgsStdlib
             return double.IsNaN(x) || double.IsNaN(y) ? nanEqual && double.IsNaN(x) && double.IsNaN(y) : x == y;
         }
 
+        if (left.Type is JgsType.Number or JgsType.Bool or JgsType.Complex
+            && right.Type is JgsType.Number or JgsType.Bool or JgsType.Complex)
+        {
+            var x = left.Type == JgsType.Complex ? left.AsComplex : new System.Numerics.Complex(left.AsNumber, 0);
+            var y = right.Type == JgsType.Complex ? right.AsComplex : new System.Numerics.Complex(right.AsNumber, 0);
+            bool Same(double a, double b) => a == b || nanEqual && double.IsNaN(a) && double.IsNaN(b);
+            return Same(x.Real, y.Real) && Same(x.Imaginary, y.Imaginary);
+        }
         return JgsValue.AreEqual(left, right);
     }
 

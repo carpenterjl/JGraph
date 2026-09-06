@@ -358,6 +358,28 @@ internal static partial class JgsBuiltins
     {
         int line = at.Line;
         int col = at.Column;
+        JgsValue other = left.Type == JgsType.Sparse ? right : left;
+        if (op is TokenType.Plus or TokenType.Minus && other.Type is JgsType.Number or JgsType.Bool && other.AsNumber == 0)
+            return JgsValue.Sparse((left.Type == JgsType.Sparse ? left : right).AsSparse.Scale(op == TokenType.Minus && right.Type == JgsType.Sparse ? -1 : 1));
+        if (op is TokenType.Plus or TokenType.Minus && (left.Type != JgsType.Sparse || right.Type != JgsType.Sparse))
+        {
+            JgsValue a = left.Type == JgsType.Sparse ? SparseAsDense(left.AsSparse) : left;
+            JgsValue b = right.Type == JgsType.Sparse ? SparseAsDense(right.AsSparse) : right;
+            int[] ad = SizeDims(a), bd = SizeDims(b);
+            int rows = ad[0] == 1 ? bd[0] : ad[0], cols = ad[1] == 1 ? bd[1] : ad[1];
+            if ((ad[0] != bd[0] && ad[0] != 1 && bd[0] != 1) || (ad[1] != bd[1] && ad[1] != 1 && bd[1] != 1))
+                throw new JgsRuntimeException(line, col, "Array dimensions must agree.");
+            var av = ColumnComplex("sparse arithmetic", a, line, col);
+            var bv = ColumnComplex("sparse arithmetic", b, line, col);
+            var output = new System.Numerics.Complex[rows * cols];
+            for (int c = 0; c < cols; c++) for (int r = 0; r < rows; r++)
+            {
+                var x = av[(ad[1] == 1 ? 0 : c) * ad[0] + (ad[0] == 1 ? 0 : r)];
+                var y = bv[(bd[1] == 1 ? 0 : c) * bd[0] + (bd[0] == 1 ? 0 : r)];
+                output[c * rows + r] = op == TokenType.Plus ? x + y : x - y;
+            }
+            return output.Any(z => z.Imaginary != 0) ? ComplexStorage(output, [rows, cols]) : JgsMatrix.FromColumnMajor(output.Select(z => z.Real).ToArray(), rows, cols);
+        }
         if (left.Type == JgsType.Sparse && right.Type == JgsType.Sparse)
         {
             CscMatrix a = left.AsSparse;
@@ -527,6 +549,42 @@ internal static partial class JgsBuiltins
         throw new JgsRuntimeException(line, col,
             $"'{OpName(op)}' between a sparse matrix and a {(left.Type == JgsType.Sparse ? right : left).TypeName} " +
             "is not supported; use full() first.");
+    }
+
+    private static JgsValue SparseDiagonal(CscMatrix input, int offset)
+    {
+        bool vector = input.Rows == 1 || input.Cols == 1;
+        int n = vector ? Math.Max(input.Rows, input.Cols) + Math.Abs(offset) : Math.Max(0, Math.Min(input.Rows + Math.Min(offset, 0), input.Cols - Math.Max(offset, 0)));
+        var entries = new List<(int Row, int Col, double Value)>();
+        for (int c = 0; c < input.Cols; c++) for (int k = input.ColumnStarts[c]; k < input.ColumnStarts[c + 1]; k++)
+        {
+            int r = input.RowIndices[k];
+            if (vector)
+            {
+                int i = input.Rows == 1 ? c : r;
+                entries.Add((i + Math.Max(0, -offset), i + Math.Max(0, offset), input.Values[k]));
+            }
+            else if (c - r == offset) entries.Add((r - Math.Max(0, -offset), 0, input.Values[k]));
+        }
+        return JgsValue.Sparse(CscMatrix.FromTriplets(n, vector ? n : 1, entries));
+    }
+
+    private static JgsValue SparseSum(CscMatrix input, int? dim, int[]? vecdim, bool all, bool omitNan, int line, int col)
+    {
+        int[] dimensions = all ? [1, 2] : vecdim ?? [dim ?? (input.Rows != 1 ? 1 : 2)];
+        if (dimensions.Any(d => d < 1)) throw new JgsRuntimeException(line, col, "sum: dimension must be positive.");
+        bool rowsReduced = dimensions.Contains(1), colsReduced = dimensions.Contains(2);
+        if (!rowsReduced && !colsReduced) return JgsValue.Sparse(input.Scale(1));
+        int rows = rowsReduced ? 1 : input.Rows, cols = colsReduced ? 1 : input.Cols;
+        var sums = new Dictionary<(int Row, int Col), double>();
+        for (int c = 0; c < input.Cols; c++) for (int k = input.ColumnStarts[c]; k < input.ColumnStarts[c + 1]; k++)
+        {
+            double v = input.Values[k];
+            if (omitNan && double.IsNaN(v)) continue;
+            var key = (rowsReduced ? 0 : input.RowIndices[k], colsReduced ? 0 : c);
+            sums[key] = sums.GetValueOrDefault(key) + v;
+        }
+        return JgsValue.Sparse(CscMatrix.FromTriplets(rows, cols, sums.Select(p => (p.Key.Row, p.Key.Col, p.Value)).ToArray()));
     }
 
     /// <summary>The user-facing spelling of an operator token, for sparse error messages.</summary>

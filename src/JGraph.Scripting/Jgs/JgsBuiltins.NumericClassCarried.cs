@@ -215,6 +215,12 @@ internal static partial class JgsBuiltins
             env.DeclareFunction(name, JgsValue.Function(new BuiltinFunction(name, (args, line, col) =>
             {
                 JgsNumericClass carried = ClassOf(args, from, subjects, carry);
+                if (name is "sum" or "prod" or "mean" or "cumsum" or "cumprod")
+                {
+                    string? output = args.Skip(1).Where(IsTextScalar).Select(TextOf).LastOrDefault(v => v is "double" or "native" or "default");
+                    if (output == "double") carried = JgsNumericClass.Double;
+                    else if (output == "native" && args.Count > 0) carried = args[0].NumericClass;
+                }
                 if (accumulates && carried.IsInteger()
                     && TrySaturatingScan(args, carried, product, out JgsValue scanned))
                 {

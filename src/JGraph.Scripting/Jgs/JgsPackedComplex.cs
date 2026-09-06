@@ -11,7 +11,7 @@ namespace JGraph.Scripting.Jgs;
 /// </summary>
 internal sealed class JgsPackedComplex : IDisposable
 {
-    public JgsPackedComplex(NumericBuffer re, NumericBuffer im)
+    public JgsPackedComplex(NumericBuffer re, NumericBuffer im, bool preserveComplex = false)
     {
         if (re.Length != im.Length)
         {
@@ -20,6 +20,7 @@ internal sealed class JgsPackedComplex : IDisposable
 
         Re = re;
         Im = im;
+        PreserveComplex = preserveComplex;
     }
 
     /// <summary>The real plane.</summary>
@@ -27,6 +28,9 @@ internal sealed class JgsPackedComplex : IDisposable
 
     /// <summary>The imaginary plane.</summary>
     public NumericBuffer Im { get; }
+
+    /// <summary>Explicit complex construction retains its type even when its imaginary plane is zero.</summary>
+    public bool PreserveComplex { get; }
 
     /// <summary>Element count.</summary>
     public int Length => Re.Length;

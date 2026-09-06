@@ -1174,8 +1174,8 @@ internal static partial class JgsBuiltins
 
         Define("isequal", (args, line, col) =>
         {
-            Arity("isequal", args, 2, line, col);
-            return JgsValue.Bool(JgsStdlib.DeepEquals(args[0], args[1]));
+            ArityRange("isequal", args, 2, int.MaxValue, line, col);
+            return JgsValue.Bool(args.Skip(1).All(v => JgsStdlib.DeepEquals(args[0], v)));
         });
 
         Define("and", (args, line, col) => Logical2("and", args, line, col, static (a, b) => a && b));

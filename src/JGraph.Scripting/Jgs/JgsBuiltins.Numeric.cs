@@ -408,7 +408,9 @@ internal static partial class JgsBuiltins
         {
             ArityRange("complex", args, 1, 2, line, col);
             JgsValue imaginary = args.Count == 2 ? args[1] : JgsValue.Number(0);
-            return ZipComplex("complex", args[0], imaginary, line, col);
+            JgsValue result = ZipComplex("complex", args[0], imaginary, line, col);
+            result.SetNumericClass(args[0].NumericClass == JgsNumericClass.Single || imaginary.NumericClass == JgsNumericClass.Single ? JgsNumericClass.Single : JgsNumericClass.Double);
+            return result;
         });
     }
 
