@@ -395,7 +395,7 @@ public class MatlabM77PlotPropertyTests : IDisposable
 
         // The marker reads back as MATLAB spells it. Before this wave a stem had no Marker alias and
         // answered with the enum's own word, 'circle'.
-        Assert.Equal("s", Text(result, "marker"));
+        Assert.Equal("square", Text(result, "marker"));
         Assert.Equal("--", Text(result, "style"));
         Assert.Equal(1, Number(result, "base"));
         Assert.Equal([0, 0, 1], Row(result, "edge"));

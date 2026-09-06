@@ -1484,7 +1484,7 @@ public sealed class FigureRenderer
                 Tinted(yAxis.LabelStyle, yAxis.RulerColor ?? yTint),
                 HorizontalAlignment.Center,
                 VerticalAlignment.Bottom,
-                rotationDegrees: onRight ? 90 : -90);
+                rotationDegrees: yAxis.LabelRotation is { } rotation ? -rotation : onRight ? 90 : -90);
         }
 
         DrawTitleBlock(context, axes, plotArea);

@@ -97,8 +97,8 @@ public class MatlabStackedPlotTests : IDisposable
             {{Log}}
             [h, ax] = stackedplot(t, 'XVariable', 't');
             disp(numel(h));
-            disp(get(ax(1), 'YLabel'));
-            disp(get(ax(2), 'YLabel'));
+            disp(get(get(ax(1), 'YLabel'), 'String'));
+            disp(get(get(ax(2), 'YLabel'), 'String'));
 
             % The variable the panels are drawn against is not a panel of its own.
             disp(get(h(1), 'XData'));
@@ -115,7 +115,7 @@ public class MatlabStackedPlotTests : IDisposable
             {{Log}}
             [h, ax] = stackedplot(t, {'v'}, 'DisplayLabels', {'volts'}, 'LineWidth', 3);
             disp(numel(h));
-            disp(get(ax(1), 'YLabel'));
+            disp(get(get(ax(1), 'YLabel'), 'String'));
             disp(get(h, 'LineWidth'));
             """);
 

@@ -33,7 +33,7 @@ public static class ColorbarRenderer
         double band = Gap + bar.Width + TickPixels(bar, 100) + LabelPadding + LabelBand(axes, context);
         if (!string.IsNullOrEmpty(bar.Label))
         {
-            band += context.MeasureText(bar.Label, bar.TickLabelStyle).Height + LabelPadding;
+            band += context.MeasureText(bar.Label, bar.LabelStyle).Height + LabelPadding;
         }
 
         return bar.Location switch
@@ -109,7 +109,7 @@ public static class ColorbarRenderer
         }
 
         DrawScale(context, bar, strip, min, max, logScale, lineStyle, horizontal);
-        DrawLabel(context, bar, strip, horizontal);
+        DrawLabel(context, axes, bar, strip, horizontal);
     }
 
     /// <summary>The strip's rectangle, from the location or from an explicitly pinned box.</summary>
@@ -242,19 +242,20 @@ public static class ColorbarRenderer
         }
     }
 
-    private static void DrawLabel(IRenderContext context, ColorbarModel bar, Rect2D strip, bool horizontal)
+    private static void DrawLabel(IRenderContext context, AxesModel axes, ColorbarModel bar, Rect2D strip, bool horizontal)
     {
         if (string.IsNullOrEmpty(bar.Label))
         {
             return;
         }
 
+        double offset = TickPixels(bar,horizontal ? strip.Width : strip.Height) + LabelPadding + LabelBand(axes,context) + LabelPadding;
         if (horizontal)
         {
             context.DrawText(
                 bar.Label!,
-                new Point2D(strip.CenterX, bar.LabelsInside ? strip.Top - LabelPadding : strip.Bottom + LabelPadding),
-                bar.TickLabelStyle,
+                new Point2D(strip.CenterX, bar.LabelsInside ? strip.Top - offset : strip.Bottom + offset),
+                bar.LabelStyle,
                 HorizontalAlignment.Center,
                 bar.LabelsInside ? VerticalAlignment.Bottom : VerticalAlignment.Top);
             return;
@@ -262,11 +263,11 @@ public static class ColorbarRenderer
 
         context.DrawText(
             bar.Label!,
-            new Point2D(bar.LabelsInside ? strip.Left - LabelPadding : strip.Right + LabelPadding, strip.CenterY),
-            bar.TickLabelStyle,
+            new Point2D(bar.LabelsInside ? strip.Left - offset : strip.Right + offset, strip.CenterY),
+            bar.LabelStyle,
             HorizontalAlignment.Center,
             VerticalAlignment.Top,
-            rotationDegrees: 90);
+            rotationDegrees: -90);
     }
 
     /// <summary>The values and labels the scale shows: the chosen ones, or the generated ones.</summary>

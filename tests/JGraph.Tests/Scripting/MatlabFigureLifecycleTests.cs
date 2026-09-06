@@ -113,7 +113,7 @@ public class MatlabFigureLifecycleTests : IDisposable
     }
 
     [Fact]
-    public async Task ClfWithANumber_ClearsThatFigureAndSelectsIt()
+    public async Task ClfWithANumber_ClearsThatFigureWithoutSelectingIt()
     {
         await using IScriptSession session = NewSession();
         await Prompt(session, "figure(1)\nplot([1 2], [3 4])\nfigure(2)\nplot([1 2], [3 4])");
@@ -124,7 +124,7 @@ public class MatlabFigureLifecycleTests : IDisposable
         Assert.True(JG.TryGetFigure(2, out FigureModel two));
         Assert.Empty(one.Axes);
         Assert.Single(two.Axes);
-        Assert.Equal(1, JG.CurrentFigureNumber);
+        Assert.Equal(2, JG.CurrentFigureNumber);
     }
 
     [Fact]

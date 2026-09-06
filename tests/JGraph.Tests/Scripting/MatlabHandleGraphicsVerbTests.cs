@@ -282,10 +282,10 @@ public class MatlabHandleGraphicsVerbTests : IDisposable
             hold on;
             cla;
             disp(numel(gca.Children));
-            disp(gca.Title);
+            disp(gca.Title.String);
             disp(ishold);
             cla reset;
-            disp(isempty(gca.Title));
+            disp(isempty(gca.Title.String));
             disp(ishold);
             """);
 

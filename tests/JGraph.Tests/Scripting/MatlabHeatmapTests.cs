@@ -146,9 +146,9 @@ public class MatlabHeatmapTests : IDisposable
 
             % They are the axes' own properties, so the axes handle answers with the same words.
             ax = gca;
-            disp(get(ax, 'Title'));
-            disp(get(ax, 'XLabel'));
-            disp(get(ax, 'YLabel'));
+            disp(get(get(ax, 'Title'), 'String'));
+            disp(get(get(ax, 'XLabel'), 'String'));
+            disp(get(get(ax, 'YLabel'), 'String'));
             """);
 
         Assert.Equal(

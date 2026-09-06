@@ -12,6 +12,7 @@ namespace JGraph.Core.Model;
 /// </summary>
 public sealed class AxisModel : GraphObject
 {
+    private double? _labelRotation;
     private AxisScaleType _scale = AxisScaleType.Linear;
     private DataRange _range = DataRange.Unit;
     private DataRange _dataBounds = DataRange.Empty;
@@ -194,7 +195,10 @@ public sealed class AxisModel : GraphObject
         set => SetProperty(ref _tickLabelFormat, value, InvalidationKind.Layout);
     }
 
-    /// <summary>How the axis label is drawn.</summary>
+    /// <summary>Label rotation in degrees counterclockwise; null uses the ruler default.</summary>
+    [Category("General"), DisplayName("Label rotation")]
+    public double? LabelRotation { get => _labelRotation; set => SetProperty(ref _labelRotation,value,InvalidationKind.Layout); }
+
     [Category("General"), DisplayName("Label style")]
     public TextStyle LabelStyle
     {

@@ -1553,31 +1553,7 @@ internal static partial class JgsBuiltins
 
             return JgsValue.Number(JG.CurrentFigureNumber);
         });
-        DefineSilent("subplot", (args, line, col) =>
-        {
-            ArityRange("subplot", args, 3, 4, line, col);
-            if (args.Count == 4)
-            {
-                // 'replace' and 'align' name how the panel is made, and this build makes every panel
-                // the same way — a fresh axes on an aligned grid. Accepting the two words lets a
-                // ported script through; any other word still refuses by name, which is the house
-                // style rather than a silent shrug.
-                string how = Str("subplot", args, 3, line, col);
-                if (!how.Equals("replace", StringComparison.OrdinalIgnoreCase)
-                    && !how.Equals("align", StringComparison.OrdinalIgnoreCase))
-                {
-                    throw new JgsRuntimeException(line, col,
-                        $"subplot takes 'replace' or 'align', but got '{how}'.");
-                }
-            }
-
-            AxesModel axes = JG.Subplot(
-                Count("subplot", args, 0, line, col),
-                Count("subplot", args, 1, line, col),
-                Count("subplot", args, 2, line, col));
-            return JgsHandleRegistry.For(axes);
-        });
-
+        DefineSilent("subplot", MatlabSubplot);
         // --- Tiled layouts (M43, made an object in M80) --------------------------------------------
         //
         // Until M80 this was three integers and a flag in this closure, which is why a script could
@@ -1699,7 +1675,7 @@ internal static partial class JgsBuiltins
         { BindsAnsAsStatement = false, AutoCallsBare = true }));
 
         // axis: the aspect/limits words plus the [xmin xmax ymin ymax] vector form.
-        Define("axis", (args, line, col) =>
+        Define("axis", OnAxesArray((args, line, col) =>
         {
             ArityRange("axis", args, 0, 1, line, col);
             if (args.Count == 1 && args[0].Type == JgsType.String)
@@ -1729,8 +1705,14 @@ internal static partial class JgsBuiltins
                     case "on":
                         JG.Gca().Visible = true;
                         break;
-                    case "auto" or "ij" or "xy" or "manual":
-                        break; // accepted; auto limits are already the default
+                    case "ij" or "xy":
+                        JG.Gca().PrimaryYAxis.Inverted = args[0].AsString == "ij";
+                        break;
+                    case "auto" or "manual":
+                        JG.Gca().RecomputeDataBounds();
+                        foreach (var ruler in JG.Gca().XAxes.Concat(JG.Gca().YAxes).Append(JG.Gca().ZAxis))
+                            ruler.AutoScale = args[0].AsString == "auto";
+                        break;
 
                     // vis3d stops MATLAB's box from being refitted as the camera turns. This
                     // projection refits every frame by design, so the word is accepted and the
@@ -1744,6 +1726,13 @@ internal static partial class JgsBuiltins
                 return JgsValue.Null;
             }
 
+            if (args.Count == 0)
+            {
+                var axes = JG.Gca(); axes.RecomputeDataBounds();
+                var limits = new List<double> { axes.PrimaryXAxis.Range.Min,axes.PrimaryXAxis.Range.Max,axes.PrimaryYAxis.Range.Min,axes.PrimaryYAxis.Range.Max };
+                if (axes.Is3D) limits.AddRange([axes.ZAxis.Range.Min,axes.ZAxis.Range.Max]);
+                return JgsMatrix.FromColumnMajor(limits.ToArray(),1,limits.Count);
+            }
             if (args.Count == 1)
             {
                 // MATLAB's three vector lengths, each a prefix of the next: the box in the plane,
@@ -1772,7 +1761,7 @@ internal static partial class JgsBuiltins
             }
 
             return JgsValue.Null;
-        });
+        }));
 
         // shading: MATLAB drives this through the surface's FaceColor and EdgeColor, and so does
         // JGraph -- 'faceted' is flat faces with grid lines, 'flat' drops the lines, and 'interp'
@@ -1991,71 +1980,43 @@ internal static partial class JgsBuiltins
 
         JgsValue CloseFigures(JGraphScriptGlobals graphicsHost, IReadOnlyList<JgsValue> args, int line, int col)
         {
-            ArityRange("close", args, 0, 2, line, col);
-
-            // A trailing 'force' skips the figure's CloseRequestFcn — close(fig, 'force'),
-            // close all force. Without it, a figure that was given one is asked, not closed: the
-            // callback closes (closereq, delete) or, by returning without either, keeps the window.
-            bool force = false;
-            if (args.Count > 0 && args[^1].Type == JgsType.String
-                && args[^1].AsString.Equals("force", StringComparison.OrdinalIgnoreCase))
+            bool force = args.Any(a => a.Type == JgsType.String && a.AsString.Equals("force",StringComparison.OrdinalIgnoreCase));
+            bool hidden = args.Any(a => a.Type == JgsType.String && a.AsString.Equals("hidden",StringComparison.OrdinalIgnoreCase));
+            var inputs = args.Where(a => a.Type != JgsType.String || !new[] { "force", "hidden" }.Contains(a.AsString.ToLowerInvariant())).ToArray();
+            var numbers = new List<int>();
+            if (inputs.Length == 0) { if (JG.FigureNumbers.Count > 0) numbers.Add(JG.CurrentFigureNumber); }
+            foreach (var input in inputs)
             {
-                force = true;
-                args = [.. args.Take(args.Count - 1)];
-            }
-
-            void CloseOne(int number)
-            {
-                if (!force
-                    && JG.TryGetFigure(number, out FigureModel figure)
-                    && JgsHandleRegistry.TryGetEntry(figure, out JgsHandleEntry? entry)
-                    && entry.CloseRequestFcn is { Type: JgsType.Function }
-                    && JgsCallbackDispatcher.Current is { } dispatcher)
+                if (input.Type == JgsType.String)
                 {
-                    dispatcher.FireCloseRequest(figure);
-                    return;
+                    bool all = input.AsString.Equals("all",StringComparison.OrdinalIgnoreCase);
+                    foreach (int n in JG.FigureNumbers)
+                        if (JG.TryGetFigure(n,out var f) && (all || f.Name == input.AsString)
+                            && (!all || hidden || force || !JgsHandleRegistry.TryGetEntry(f,out var e) || e.HandleVisible)) numbers.Add(n);
                 }
-
-                graphicsHost.CloseFigure(number);
-            }
-
-            if (args.Count == 0)
-            {
-                // MATLAB closes the current figure; with none open there is nothing to do.
-                if (JG.FigureNumbers.Count > 0)
+                else foreach (double n in ToDoubles("close",input,line,col))
                 {
-                    CloseOne(JG.CurrentFigureNumber);
+                    if (n != System.Math.Truncate(n) || !JG.TryGetFigure((int)n,out _)) throw new JgsRuntimeException(line,col,$"There is no figure {n} to close.");
+                    numbers.Add((int)n);
                 }
-
-                return JgsValue.Null;
             }
-
-            if (args[0].Type == JgsType.String)
+            bool success = true;
+            foreach (int n in numbers.Distinct())
             {
-                string what = Str("close", args, 0, line, col);
-                if (!what.Equals("all", StringComparison.OrdinalIgnoreCase))
+                if (!JG.TryGetFigure(n,out var f)) continue;
+                if (!force && JgsHandleRegistry.TryGetEntry(f,out var e) && e.CloseRequestFcn is { } callback)
                 {
-                    throw new JgsRuntimeException(line, col,
-                        $"close does not understand '{what}' — use close, close(n), close all, or close all force.");
+                    if (callback.Type == JgsType.Function) JgsCallbackDispatcher.Current?.FireCloseRequest(f);
+                    else if (callback.Type == JgsType.String && callback.AsString.Length > 0)
+                    {
+                        using var scope = JgsGraphicsCallbackState.Enter(f,null);
+                        if (env.TryGet("evalin",out var eval)) eval.AsCallable.Call([JgsValue.Str("base"),callback],line,col);
+                    }
                 }
-
-                foreach (int number in JG.FigureNumbers)
-                {
-                    CloseOne(number);
-                }
-
-                return JgsValue.Null;
+                else graphicsHost.CloseFigure(n);
+                success &= !JG.TryGetFigure(n,out _);
             }
-
-            Arity("close", args, 1, line, col);
-            int target = Count("close", args, 0, line, col);
-            if (!JG.TryGetFigure(target, out _))
-            {
-                throw new JgsRuntimeException(line, col, $"There is no figure {target} to close.");
-            }
-
-            CloseOne(target);
-            return JgsValue.Null;
+            return JgsValue.Number(success ? 1 : 0);
         }
 
         // The default close a CloseRequestFcn opts back into: deletes the figure whose callback is
@@ -2078,23 +2039,31 @@ internal static partial class JgsBuiltins
         })
         { AutoCallsBare = true, BindsAnsAsStatement = false }));
 
-        Define("clf", (args, line, col) =>
+        DefineSilent("clf", (args,line,col) =>
         {
-            ArityRange("clf", args, 0, 1, line, col);
-            if (args.Count == 0)
+            ArityRange("clf",args,0,2,line,col);
+            bool reset = args.Count > 0 && args[^1].Type == JgsType.String && args[^1].AsString.Equals("reset",StringComparison.OrdinalIgnoreCase);
+            var rest = reset ? args.Take(args.Count-1).ToArray() : args.ToArray();
+            if (rest.Length > 1) throw new JgsRuntimeException(line,col,"clf expects a figure and optional reset.");
+            var figures = rest.Length == 0 ? new[] { JG.CurrentFigure } : ToDoubles("clf",rest[0],line,col).Select(n =>
+                n == System.Math.Truncate(n) && JG.TryGetFigure((int)n,out var f) ? f
+                    : throw new JgsRuntimeException(line,col,$"There is no figure {n} to clear.")).ToArray();
+            foreach (FigureModel figure in figures)
             {
-                JG.Clf();
-                return JgsValue.Null;
-            }
-
-            int number = Count("clf", args, 0, line, col);
-            if (!JG.TryGetFigure(number, out _))
+            foreach (var child in JgsGraphicsProperties.ChildrenOf(figure).ToArray())
+                if (reset || !JgsHandleRegistry.TryGetEntry(child,out var e) || e.HandleVisible) Remove(child,host);
+            if (reset)
             {
-                throw new JgsRuntimeException(line, col, $"There is no figure {number} to clear.");
+                var fresh = new FigureModel();
+                foreach (var property in typeof(FigureModel).GetProperties())
+                    if (property.CanWrite && property.Name is not ("Position" or "Size" or "PaperUnits" or "PaperPosition" or "PositionSpecified" or "ToolBar" or "WindowState" or "SelectionType" or "CurrentPointPx"))
+                        property.SetValue(figure,property.GetValue(fresh));
+                JgsHandleRegistry.ResetEntry(figure);
             }
-
-            JG.Clf(number);
-            return JgsValue.Null;
+            figure.TiledLayout = null;
+            }
+            JgsHandleRegistry.DropUnreachable();
+            return rest.Length > 0 ? rest[0] : JgsHandleRegistry.For(figures[0]);
         });
 
         // Like gca below, the bare name has to be the answer: findobj(gcf, …) must be handed the
@@ -2341,12 +2310,12 @@ internal static partial class JgsBuiltins
             JG.Grid(OnOff("grid", args, line, col, dialect, () => JG.Gca().Grid.ShowMajor));
             return JgsValue.Null;
         });
-        DefineOnAxes("hold", (args, line, col) =>
+        Define("hold", OnAxesArray((args, line, col) =>
         {
             ArityRange("hold", args, 0, 1, line, col);
             JG.Hold(OnOff("hold", args, line, col, dialect, () => JG.IsHolding));
             return JgsValue.Null;
-        });
+        }));
 
         DefineSilent("legend", (args, line, col) =>
         {

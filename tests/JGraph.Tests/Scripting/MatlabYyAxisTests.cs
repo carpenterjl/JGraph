@@ -56,10 +56,10 @@ public class MatlabYyAxisTests : IDisposable
 
             ax = gca;
             yyaxis left;
-            disp(get(ax, 'YLabel'));
+            disp(get(get(ax, 'YLabel'), 'String'));
             small = ylim;
             yyaxis right;
-            disp(get(ax, 'YLabel'));
+            disp(get(get(ax, 'YLabel'), 'String'));
             large = ylim;
             disp(large(2) > small(2));
 

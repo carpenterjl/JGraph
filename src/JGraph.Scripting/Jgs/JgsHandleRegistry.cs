@@ -417,6 +417,8 @@ internal static class JgsHandleRegistry
     private static readonly Dictionary<FigureModel, JgsHandleEntry> FigureEntries =
         new(FigureEquality.Instance);
 
+    internal static void ResetEntry(FigureModel figure) { lock (Gate) FigureEntries[figure] = new JgsHandleEntry(figure); }
+
     private static JgsHandleEntry FigureEntry(FigureModel figure)
     {
         lock (Gate)

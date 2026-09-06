@@ -46,6 +46,21 @@ internal static partial class JgsBuiltins
     /// mean the axes they belong to.
     /// </para>
     /// </summary>
+    internal static Func<IReadOnlyList<JgsValue>, int, int, JgsValue> OnAxesArray(
+        Func<IReadOnlyList<JgsValue>, int, int, JgsValue> body) => (args,line,col) =>
+    {
+        if (args.Count > 0 && args[0].Type == JgsType.Array && args[0].ArrayLength > 0
+            && JgsHandleRegistry.TryGet(args[0].ElementAt(0),out var first) && first.Target is AxesModel)
+        {
+            var targets = HandleList("axes targets",args[0],line,col);
+            if (targets.Any(e => e.Target is not AxesModel)) throw new JgsRuntimeException(line,col,"Expected axes handles.");
+            JgsValue answer = JgsValue.Null;
+            foreach (var target in targets) answer = OnAxes((AxesModel)target.Target,() => body(args.Skip(1).ToArray(),line,col));
+            return answer;
+        }
+        return OnNamedAxes(body)(args,line,col);
+    };
+
     internal static (AxesModel? Axes, IReadOnlyList<JgsValue> Remaining) PeelAxes(IReadOnlyList<JgsValue> args)
     {
         (AxesModel? axes, _, IReadOnlyList<JgsValue> rest) = PeelRuler(args);
@@ -97,6 +112,7 @@ internal static partial class JgsBuiltins
             return body();
         }
 
+        int previousFigure = JG.CurrentFigureNumber;
         AxesModel? previous = JG.CurrentAxesOrNull;
         JG.MakeCurrent(axes);
         try
@@ -105,6 +121,7 @@ internal static partial class JgsBuiltins
         }
         finally
         {
+            if (previous is null && previousFigure > 0) JG.Figure(previousFigure);
             if (previous is not null && !ReferenceEquals(previous, axes))
             {
                 JG.MakeCurrent(previous);
@@ -270,8 +287,8 @@ internal static partial class JgsBuiltins
     internal static string MarkerWord(MarkerType marker) => marker switch
     {
         MarkerType.Circle => "o",
-        MarkerType.Square => "s",
-        MarkerType.Diamond => "d",
+        MarkerType.Square => "square",
+        MarkerType.Diamond => "diamond",
         MarkerType.TriangleUp => "^",
         MarkerType.TriangleDown => "v",
         MarkerType.Plus => "+",

@@ -431,11 +431,11 @@ internal static partial class JgsBuiltins
         JG.MakeCurrent(axes);
 
         var spec = new OptionSpec(
-            "axes", [], ["Position", "XLim", "YLim", "ZLim", "Color", "Box", "Tag", "Title"]);
+            "axes", [], ["Position", "XLim", "YLim", "ZLim", "Color", "Box", "Tag", "Title", "HandleVisibility"]);
         ParsedArgs parsed = spec.Parse(args, 0, line, col);
         JgsHandleEntry entry = JgsHandleRegistry.EntryFor(axes);
         foreach (string name in new[]
-                 { "Position", "XLim", "YLim", "ZLim", "Color", "Box", "Tag", "Title" })
+                 { "Position", "XLim", "YLim", "ZLim", "Color", "Box", "Tag", "Title", "HandleVisibility" })
         {
             if (parsed.Named(name) is { } value)
             {

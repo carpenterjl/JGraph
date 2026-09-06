@@ -124,7 +124,7 @@ public class MatlabDocumentedChartFormTests : IDisposable
         try
             subplot(2, 2, 3, 'sideways');
         catch err
-            ok = ~isempty(strfind(err.message, 'replace'));
+            ok = ~isempty(strfind(err.message, 'pairs'));
         end
         assert(ok);
         """);

@@ -173,7 +173,7 @@ public class MatlabScatterHistogramTests : IDisposable
             disp(get(s, 'YData'));
 
             % The scatter is left current, so a following label lands on the picture.
-            disp(get(gca, 'XLabel'));
+            disp(get(get(gca, 'XLabel'), 'String'));
             """);
 
         Assert.Equal(new[] { "[10, 20, 30]", "t" }, _output.NormalLines);

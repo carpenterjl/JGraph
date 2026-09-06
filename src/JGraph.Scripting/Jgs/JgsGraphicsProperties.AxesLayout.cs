@@ -126,6 +126,7 @@ internal static partial class JgsGraphicsProperties
     /// <summary>The plot box, as fractions of the figure with Y still downward.</summary>
     private static Rect2D InnerOf(AxesModel axes)
     {
+        if (axes.InnerTarget is { } target) return target;
         AxesLayoutSnapshot layout = LayoutOf(axes);
         return layout.Normalize(layout.PlotAreaPx);
     }

@@ -126,7 +126,7 @@ public class MatlabBubbleChartTests : IDisposable
             """);
 
         Assert.Equal(
-            new[] { "[0, 0.5019607843137255, 0]", "0.25098039215686274", "0.8", "2", "s", "runs" },
+            new[] { "[0, 0.5019607843137255, 0]", "0.25098039215686274", "0.8", "2", "square", "runs" },
             _output.NormalLines);
     }
 

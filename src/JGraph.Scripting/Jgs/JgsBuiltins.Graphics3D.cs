@@ -75,10 +75,10 @@ internal static partial class JgsBuiltins
         }
 
         env.DeclareFunction("caxis", JgsValue.Function(new BuiltinFunction(
-            "caxis", OnNamedAxes((args, line, col) => ColorLimits("caxis", args, line, col)))
+            "caxis", OnAxesArray((args, line, col) => ColorLimits("caxis", args, line, col)))
         { AutoCallsBare = true }));
         env.DeclareFunction("clim", JgsValue.Function(new BuiltinFunction(
-            "clim", (args, line, col) => ColorLimits("clim", args, line, col))
+            "clim", OnAxesArray((args, line, col) => ColorLimits("clim", args, line, col)))
         { AutoCallsBare = true }));
 
         Define("brighten", (args, line, col) =>

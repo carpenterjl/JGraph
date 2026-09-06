@@ -64,6 +64,7 @@ internal static partial class JgsGraphicsProperties
     public static string TypeNameOf(GraphObject target) => target switch
     {
         JgsGraphicsRoot => "root",
+        JgsTextLabel => "text",
         JgsGraphicsGroup { Transforms: true } => "hgtransform",
         JgsGraphicsGroup => "hggroup",
         FigureModel => "figure",
@@ -367,6 +368,7 @@ internal static partial class JgsGraphicsProperties
             }
         }
 
+        all.AddRange(JgsTextLabel.Existing(target));
         return all;
     }
 
@@ -385,6 +387,32 @@ internal static partial class JgsGraphicsProperties
 
     public static JgsValue Get(JgsHandleEntry entry, string name, int line, int col)
     {
+        if (name.Equals("factory",StringComparison.OrdinalIgnoreCase))
+        {
+            var fields=new Dictionary<string,JgsValue>();
+            foreach (var pair in new Dictionary<string,GraphObject> { ["Line"]=new LinePlot([],[]), ["Axes"]=new AxesModel(), ["Figure"]=new FigureModel() })
+                foreach (var item in TableFor(pair.Value.GetType()).Values)
+                    if (item.Write is not null && item.Name is not ("Parent" or "Children"))
+                        fields["factory"+pair.Key+item.Name]=Get(new JgsHandleEntry(pair.Value),"factory"+pair.Key+item.Name,line,col);
+            return JgsValue.Struct(fields);
+        }
+        if (name.Equals("default",StringComparison.OrdinalIgnoreCase)) return JgsValue.EmptyStruct();
+        string prefix = name.StartsWith("factory",StringComparison.OrdinalIgnoreCase) ? "factory" : name.StartsWith("default",StringComparison.OrdinalIgnoreCase) ? "default" : "";
+        if (prefix.Length > 0)
+        {
+            string key=name[prefix.Length..];
+            GraphObject? fresh=null; int length=0;
+            if (key.StartsWith("line",StringComparison.OrdinalIgnoreCase)) { fresh=new LinePlot([],[]); length=4; }
+            else if (key.StartsWith("axes",StringComparison.OrdinalIgnoreCase)) { fresh=new AxesModel(); length=4; }
+            else if (key.StartsWith("figure",StringComparison.OrdinalIgnoreCase)) { fresh=new FigureModel(); length=6; }
+            else if (key.StartsWith("text",StringComparison.OrdinalIgnoreCase)) { fresh=JgsTextLabel.For(new AxesModel(),"Title"); length=4; }
+            if (fresh is not null)
+            {
+                if (key.Equals("LineColor",StringComparison.OrdinalIgnoreCase)) return Row(33.0/255,33.0/255,33.0/255);
+                return Get(new JgsHandleEntry(fresh),key[length..],line,col);
+            }
+        }
+
         if (!TryFind(entry.Target, name, out GraphicsProperty property))
         {
             throw Unknown(entry.Target, name, line, col);
@@ -1654,7 +1682,7 @@ internal static partial class JgsGraphicsProperties
                             ? JGraph.Core.Drawing.Colors.Transparent
                             : JgsBuiltins.OptionColor(value, line, col, "figure"));
             Put(table, "CurrentAxes", entry => ((FigureModel)entry.Target).Axes.Count > 0
-                ? JgsHandleRegistry.For(JG.CurrentAxesOrNull ?? ((FigureModel)entry.Target).Axes[0])
+                ? JgsHandleRegistry.For(JG.CurrentAxesOrNull is { } current && current.Parent == entry.Target ? current : ((FigureModel)entry.Target).Axes[^1])
                 : JgsValue.Array([]));
             AddCallbackSlot(table, "CloseRequestFcn",
                 static entry => entry.CloseRequestFcn, static (entry, value) => entry.CloseRequestFcn = value);
@@ -1701,6 +1729,27 @@ internal static partial class JgsGraphicsProperties
         {
             AddAnnotationAliases(type, table);
         }
+
+        if (type == typeof(JgsTextLabel))
+        {
+            Put(table, "Parent", e => JgsHandleRegistry.For(((JgsTextLabel)e.Target).Owner is AxisModel ruler ? ruler.Parent! : ((JgsTextLabel)e.Target).Owner));
+            Put(table, "String", e => ((JgsTextLabel)e.Target).ReadString(),
+                (e,v,l,c) => ((JgsTextLabel)e.Target).WriteString(v,l,c));
+            AddTextStyleBlock(table, e => ((JgsTextLabel)e.Target).Style, (e,v) => ((JgsTextLabel)e.Target).Style = v);
+            Put(table, "Color", e => ColorRow(((JgsTextLabel)e.Target).Style.Color),
+                (e,v,l,c) => ((JgsTextLabel)e.Target).Style = ((JgsTextLabel)e.Target).Style.WithColor(JgsBuiltins.OptionColor(v,l,c,"Color")));
+            Put(table, "Rotation", e => JgsValue.Number(((JgsTextLabel)e.Target).Rotation),
+                (e,v,l,c) => ((JgsTextLabel)e.Target).Rotation = Numbers("Rotation",v,1,l,c)[0]);
+        }
+        if (type == typeof(AxesModel))
+        {
+            foreach (string role in new[] { "Title", "Subtitle" })
+                Put(table, role, e => JgsHandleRegistry.For(JgsTextLabel.For(e.Target, role)),
+                    (e,v,l,c) => JgsTextLabel.For(e.Target, role).WriteString(v,l,c));
+        }
+        if (type == typeof(ColorbarModel) || type == typeof(AxisModel))
+            Put(table, "Label", e => JgsHandleRegistry.For(JgsTextLabel.For(e.Target)),
+                (e,v,l,c) => JgsTextLabel.For(e.Target).WriteString(v,l,c));
 
         AddPlotWaveNested(type, table);
     }
@@ -2129,7 +2178,7 @@ internal static partial class JgsGraphicsProperties
             });
 
         Put(table, "Label",
-            entry => JgsValue.Str(Ruler(entry).Label),
+            entry => JgsHandleRegistry.For(JgsTextLabel.For(Ruler(entry))),
             (entry, value, line, col) => Ruler(entry).Label = JgsBuiltins.StrOf("Label", value, line, col));
 
         // A ruler handle is the only handle a script has for one side of a two-sided axes — plotyy
@@ -2205,7 +2254,7 @@ internal static partial class JgsGraphicsProperties
             entry => read(entry) ?? JgsValue.Array([]),
             (entry, value, line, col) =>
             {
-                if (value.Type == JgsType.Function)
+                if (value.Type == JgsType.Function || name == "CloseRequestFcn" && value.Type == JgsType.String)
                 {
                     write(entry, value);
                 }
@@ -2342,7 +2391,7 @@ internal static partial class JgsGraphicsProperties
     {
         Func<AxesModel, AxisModel> chosen = pick;
         Put(table, name,
-            entry => JgsValue.Str(chosen(Axes(entry)).Label),
+            entry => JgsHandleRegistry.For(JgsTextLabel.For(chosen(Axes(entry)))),
             (entry, value, line, col) => chosen(Axes(entry)).Label = JgsBuiltins.StrOf(name, value, line, col));
     }
 

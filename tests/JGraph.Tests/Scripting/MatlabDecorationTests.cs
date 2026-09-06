@@ -52,9 +52,9 @@ public class MatlabDecorationTests : IDisposable
             xlabel('t', 'FontWeight', 'bold');
 
             ax = gca;
-            disp(get(ax, 'Title'));
-            disp(get(ax, 'Subtitle'));
-            disp(get(ax, 'XLabel'));
+            disp(get(get(ax, 'Title'), 'String'));
+            disp(get(get(ax, 'Subtitle'), 'String'));
+            disp(get(get(ax, 'XLabel'), 'String'));
             disp(get(gcf, 'Title'));
             """);
 
@@ -71,7 +71,7 @@ public class MatlabDecorationTests : IDisposable
             """);
 
         Assert.Contains("Colr", message, StringComparison.Ordinal);
-        Assert.Contains("FontSize", message, StringComparison.Ordinal);
+        Assert.Contains("Color", message, StringComparison.Ordinal);
     }
 
     [Fact]
@@ -221,8 +221,8 @@ public class MatlabDecorationTests : IDisposable
             xline(first, 4);
 
             disp(gca == second);
-            disp(get(first, 'Title'));
-            disp(get(first, 'Subtitle'));
+            disp(get(get(first, 'Title'), 'String'));
+            disp(get(get(first, 'Subtitle'), 'String'));
             disp(get(first, 'Box'));
             disp(numel(get(first, 'Children')));
             """);

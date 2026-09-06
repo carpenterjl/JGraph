@@ -35,7 +35,7 @@ public static class JG
     /// Whether new plots accumulate (hold on) or replace existing content (hold off, default).
     /// Hold lives on the current axes, as in MATLAB, so it ends when those axes do.
     /// </summary>
-    public static bool IsHolding => _currentAxes?.Hold ?? false;
+    public static bool IsHolding => CurrentAxesOrNull?.Hold ?? false;
 
     /// <summary>The current figure, creating figure 1 if none exists yet.</summary>
     public static FigureModel CurrentFigure => _currentFigure ?? Figure(1);
@@ -211,7 +211,7 @@ public static class JG
     public static FigureModel Gcf() => CurrentFigure;
 
     /// <summary>The current axes, or null when no figure has been drawn into yet.</summary>
-    public static AxesModel? CurrentAxesOrNull => _currentAxes;
+    public static AxesModel? CurrentAxesOrNull => _currentAxes?.Parent is FigureModel ? _currentAxes : null;
 
     /// <summary>
     /// Makes <paramref name="axes"/> current, along with the figure that owns it. This is how a verb
@@ -234,6 +234,7 @@ public static class JG
     /// <summary>Returns the current axes, creating a figure and axes if necessary (MATLAB <c>gca</c>).</summary>
     public static AxesModel Gca()
     {
+        if (_currentAxes is not null && _currentAxes.Parent is not FigureModel) _currentAxes = null;
         AxesModel axes = _currentAxes ??= CurrentFigure.Axes.Count > 0
             ? CurrentFigure.Axes[^1]
             : CurrentFigure.AddAxes();

@@ -194,7 +194,7 @@ public class MatlabPolarPlotTests : IDisposable
         Assert.Equal(
             new[]
             {
-                "polaraxes", "scatter", "[60, 60, 60]", "[0, 0.45, 0.74]", "s", "[4, 5, 6]",
+                "polaraxes", "scatter", "[60, 60, 60]", "[0, 0.45, 0.74]", "square", "[4, 5, 6]",
             },
             _output.NormalLines);
     }

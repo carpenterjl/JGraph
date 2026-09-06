@@ -164,6 +164,11 @@ internal static partial class JgsBuiltins
         if (rest.Count == 1 && rest[0].Type == JgsType.String)
         {
             string word = rest[0].AsString;
+            if (word is "padded" or "tight" or "tickaligned")
+            {
+                ruler.LimitMethod = word == "padded" ? LimitMethod.Padded : word == "tight" ? LimitMethod.Tight : LimitMethod.Tickaligned;
+                ruler.AutoScale = true; axes.RecomputeDataBounds(); return JgsValue.Null;
+            }
             if (word.Equals("auto", StringComparison.OrdinalIgnoreCase))
             {
                 ruler.AutoScale = true;

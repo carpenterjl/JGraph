@@ -403,6 +403,20 @@ public sealed class SkiaRenderContext : IRenderContext, IDisposable
             return;
         }
 
+        if (text.Contains('\n'))
+        {
+            string[] lines = text.Replace("\r", "").Split('\n');
+            double height = MeasureText("Mg",style).Height * 1.2;
+            double shift = vertical switch { VerticalAlignment.Bottom => -(lines.Length-1)*height,
+                VerticalAlignment.Middle => -(lines.Length-1)*height/2, _ => 0 };
+            _canvas.Save();
+            _canvas.Translate((float)position.X,(float)position.Y);
+            _canvas.RotateDegrees((float)rotationDegrees);
+            for (int i=0;i<lines.Length;i++) DrawText(lines[i],new Point2D(0,shift+i*height),style,horizontal,vertical);
+            _canvas.Restore();
+            return;
+        }
+
         // Every text in a figure arrives here, which is why the markup is read here: a title, a tick
         // label, a legend entry and a text object are one call each, and one call each is what the
         // interpreter has to reach for a label written with \sigma to read as one wherever it sits.
@@ -583,6 +597,12 @@ public sealed class SkiaRenderContext : IRenderContext, IDisposable
             return Size2D.Empty;
         }
 
+        if (text.Contains('\n'))
+        {
+            var lines=text.Replace("\r", "").Split('\n');
+            double height=MeasureText("Mg",style).Height;
+            return new Size2D(lines.Max(l=>MeasureText(l,style).Width),height*(1+(lines.Length-1)*1.2));
+        }
         // Measured as it will be drawn, or every layout that reserves room for a label would reserve
         // room for the markup instead of for the symbols.
         text = TexMarkup.Render(text, style.Interpreter);

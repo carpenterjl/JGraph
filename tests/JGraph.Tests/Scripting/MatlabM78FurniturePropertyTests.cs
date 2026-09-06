@@ -789,7 +789,7 @@ public class MatlabM78FurniturePropertyTests : IDisposable
         Succeeded(result);
         Assert.Equal("-.", Text(result, "dash"));
         Assert.Equal("round", Text(result, "join"));
-        Assert.Equal("s", Text(result, "marker"));
+        Assert.Equal("square", Text(result, "marker"));
         Assert.Equal([1, 2, 3], Row(result, "colours"));
         Assert.Equal([1, 0.5, 0.2], Row(result, "alphas"));
         Assert.Equal("direct", Text(result, "mapping"));
@@ -853,7 +853,7 @@ public class MatlabM78FurniturePropertyTests : IDisposable
         Assert.Equal("manual", Text(result, "afterDash"));
         Assert.Equal(":", Text(result, "dash"));
         Assert.Equal("manual", Text(result, "markerMode"));
-        Assert.Equal("d", Text(result, "marker"));
+        Assert.Equal("diamond", Text(result, "marker"));
         Assert.Equal(5, Number(result, "size"));
         Assert.Equal("us", Text(result, "source"));
         Assert.Equal("none", Text(result, "released"));

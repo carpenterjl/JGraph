@@ -306,18 +306,18 @@ internal static partial class JgsBuiltins
         {
             // A cell of names asks for a row of answers, one per name, per handle.
             string[] names = CellOfNames("get", args[1], line, col);
-            JgsValue[] rows = targets
-                .Select(entry => JgsValue.Cell(
-                    names.Select(name => JgsGraphicsProperties.Get(entry, name, line, col)).ToArray()))
-                .ToArray();
-            return rows.Length == 1 ? rows[0] : JgsValue.Cell(rows);
+            var values = new JgsValue[targets.Count * names.Length];
+            for (int c=0;c<names.Length;c++) for (int row=0;row<targets.Count;row++)
+                values[c*targets.Count+row] = JgsGraphicsProperties.Get(targets[row],names[c],line,col);
+            var result = JgsValue.Cell(values); result.Reshape(targets.Count,names.Length); return result;
         }
 
         string one = StrOf("get", args[1], line, col);
         JgsValue[] answers = targets
             .Select(entry => JgsGraphicsProperties.Get(entry, one, line, col))
             .ToArray();
-        return answers.Length == 1 ? answers[0] : JgsValue.Cell(answers);
+        if (answers.Length == 1) return answers[0];
+        var column = JgsValue.Cell(answers); column.Reshape(answers.Length,1); return column;
     }
 
     /// <summary>Every property an object answers to, as a struct, in the order <c>get</c> lists them.</summary>
@@ -359,24 +359,20 @@ internal static partial class JgsBuiltins
         {
             Arity("set", args, 3, line, col);
             string[] names = CellOfNames("set", args[1], line, col);
-            if (args[2].Type != JgsType.Cell || args[2].ArrayLength != names.Length)
-            {
-                throw new JgsRuntimeException(line, col,
-                    $"set: {names.Length} names need a cell of {names.Length} values.");
-            }
-
-            for (int i = 0; i < names.Length; i++)
-            {
-                JgsValue value = args[2].ElementAt(i);
-                foreach (JgsHandleEntry entry in targets)
-                {
-                    JgsGraphicsProperties.Set(entry, names[i], value, line, col);
-                }
-            }
+            if (args[2].Type != JgsType.Cell || args[2].Rows != targets.Count || args[2].Cols != names.Length)
+                throw new JgsRuntimeException(line,col,$"set: values must be a {targets.Count}-by-{names.Length} cell array.");
+            for (int c=0;c<names.Length;c++) for (int row=0;row<targets.Count;row++)
+                JgsGraphicsProperties.Set(targets[row],names[c],args[2].ElementAt(c*targets.Count+row),line,col);
 
             return JgsValue.Null;
         }
 
+        if (args.Count == 2 && args[1].Type == JgsType.Struct)
+        {
+            foreach (var pair in args[1].AsStruct) foreach (var target in targets)
+                JgsGraphicsProperties.Set(target,pair.Key,pair.Value,line,col);
+            return JgsValue.Null;
+        }
         if ((args.Count - 1) % 2 != 0)
         {
             throw new JgsRuntimeException(line, col,
@@ -616,8 +612,18 @@ internal static partial class JgsBuiltins
         JgsHandleEntry destination = JgsHandleRegistry.Require(args[1], line, col);
 
         var copies = new double[sources.Count];
-        for (int i = 0; i < sources.Count; i++)
+        foreach (int i in Enumerable.Range(0, sources.Count).OrderBy(i => sources[i].Target is LegendModel ? 1 : 0))
         {
+            if (sources[i].Target is LegendModel legend && legend.Parent is AxesModel sourceAxes)
+            {
+                int index = sources.FindIndex(e => ReferenceEquals(e.Target,sourceAxes));
+                if (index >= 0 && copies[index] != 0)
+                {
+                    var copiedAxes = (AxesModel)JgsHandleRegistry.Require(JgsValue.Number(copies[index]),line,col).Target;
+                    copiedAxes.Legend.Visible = legend.Visible;
+                    copies[i] = JgsHandleRegistry.For(copiedAxes.Legend).AsNumber; continue;
+                }
+            }
             copies[i] = JgsHandleRegistry.For(CopyOne(sources[i].Target, destination.Target, line, col)).AsNumber;
         }
 
@@ -658,6 +664,7 @@ internal static partial class JgsBuiltins
             copy = CopyableParts(copy)[step];
         }
 
+        if (copy is AxesModel copiedAxes) copiedAxes.Legend.Visible = false;
         Attach(copy, parent, line, col);
         return copy;
     }
@@ -679,6 +686,7 @@ internal static partial class JgsBuiltins
                 parts.AddRange(axes.Plots);
                 parts.AddRange(axes.Annotations);
                 parts.AddRange(axes.Lights);
+                parts.Add(axes.Legend);
                 break;
         }
 

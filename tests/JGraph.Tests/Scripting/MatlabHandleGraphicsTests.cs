@@ -53,10 +53,10 @@ public class MatlabHandleGraphicsTests : IDisposable
         ylabel(ax1, 'Volts');
         xlabel(ax2, 'Time');
         hold(ax1, 'off');
-        assert(strcmp(ax1.Title, 'Top'));
-        assert(strcmp(ax1.YLabel, 'Volts'));
-        assert(strcmp(ax2.XLabel, 'Time'));
-        assert(isempty(ax2.Title));
+        assert(strcmp(ax1.Title.String, 'Top'));
+        assert(strcmp(ax1.YLabel.String, 'Volts'));
+        assert(strcmp(ax2.XLabel.String, 'Time'));
+        assert(isempty(ax2.Title.String));
         """);
 
     [Fact]
@@ -190,7 +190,7 @@ public class MatlabHandleGraphicsTests : IDisposable
         assert(isnumeric(here));
         assert(here == ax);
         title(gca, 'From gca');
-        assert(strcmp(ax.Title, 'From gca'));
+        assert(strcmp(ax.Title.String, 'From gca'));
         """);
 
     [Fact]

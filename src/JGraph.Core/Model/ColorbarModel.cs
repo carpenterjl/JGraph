@@ -43,6 +43,7 @@ public enum ColorbarLocation
 /// </summary>
 public sealed class ColorbarModel : GraphObject
 {
+    private TextStyle _labelStyle = new(Colors.DarkGray, 11);
     private double _width = 18;
     private string? _label;
     private TextStyle _tickLabelStyle = new(Colors.DarkGray, 11);
@@ -81,7 +82,10 @@ public sealed class ColorbarModel : GraphObject
         set => SetProperty(ref _label, value, InvalidationKind.Layout);
     }
 
-    /// <summary>The style of the value labels beside the strip.</summary>
+    /// <summary>The style of the colorbar title.</summary>
+    [Category("Appearance"), DisplayName("Label style")]
+    public TextStyle LabelStyle { get => _labelStyle; set => SetProperty(ref _labelStyle,value,InvalidationKind.Layout); }
+
     [Category("Ticks"), DisplayName("Tick label style")]
     public TextStyle TickLabelStyle
     {

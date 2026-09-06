@@ -35,24 +35,29 @@ internal static partial class JgsBuiltins
 
         // Every axes-facing verb takes a leading axes handle without moving gca (M51).
         void DefineOnAxes(string name, Func<IReadOnlyList<JgsValue>, int, int, JgsValue> body) =>
-            Define(name, (args, line, col) =>
+            DefineSilent(name, (args, line, col) =>
             {
                 (AxesModel? axes, IReadOnlyList<JgsValue> rest) = PeelAxes(args);
                 return OnAxes(axes, () => body(rest, line, col));
             });
 
         // --- The titling family --------------------------------------------------------------
-        DefineOnAxes("title", (args, line, col) => Titled(
-            "title", args, line, col,
-            text => JG.Gca().Title = text,
-            () => JG.Gca().TitleStyle,
-            style => JG.Gca().TitleStyle = style));
-
-        DefineOnAxes("subtitle", (args, line, col) => Titled(
-            "subtitle", args, line, col,
-            text => JG.Gca().Subtitle = text,
-            () => JG.Gca().SubtitleStyle,
-            style => JG.Gca().SubtitleStyle = style));
+        JgsValue[] Titles(IReadOnlyList<JgsValue> args, int line, int col)
+        {
+            var (axes, rest) = PeelAxes(args);
+            return OnAxes(axes, () =>
+            {
+                if (rest.Count == 0) throw new JgsRuntimeException(line,col,"title expects text.");
+                bool subtitle = rest.Count % 2 == 0;
+                JgsValue t = WriteLabel(JgsTextLabel.For(JG.Gca(), "Title"), rest[0], rest.Skip(subtitle ? 2 : 1).ToArray(), line,col);
+                var sub = JgsTextLabel.For(JG.Gca(), "Subtitle");
+                if (subtitle) WriteLabel(sub, rest[1], rest.Skip(2).ToArray(), line,col);
+                return new[] { t, JgsHandleRegistry.For(sub) };
+            });
+        }
+        env.DeclareFunction("title", JgsValue.Function(new BuiltinFunction("title", (a,l,c) => Titles(a,l,c)[0])
+        { BindsAnsAsStatement = false, MultiOutput = (a,w,l,c) => Titles(a,l,c) }));
+        DefineOnAxes("subtitle", (a,l,c) => WriteLabel(JgsTextLabel.For(JG.Gca(), "Subtitle"), a[0], a.Skip(1).ToArray(), l,c));
 
         // sgtitle names the figure, not an axes — but it still accepts a leading handle, which for
         // a figure is its number, and MATLAB's own sgtitle(fig, …) form passes exactly that.
@@ -76,17 +81,14 @@ internal static partial class JgsBuiltins
         // A label names one ruler, so a handle on a ruler labels that one rather than whichever side
         // yyaxis last made active — which is how the two sides of a plotyy get their own labels.
         void DefineLabel(string name, Func<AxesModel, AxisModel> otherwise) =>
-            Define(name, (args, line, col) =>
+            DefineSilent(name, (args, line, col) =>
             {
                 (AxesModel? axes, AxisModel? aimed, IReadOnlyList<JgsValue> rest) = PeelRuler(args);
                 return OnAxes(axes, () =>
                 {
                     AxisModel ruler = aimed ?? otherwise(JG.Gca());
-                    return Titled(
-                        name, rest, line, col,
-                        text => ruler.Label = text,
-                        () => ruler.LabelStyle,
-                        style => ruler.LabelStyle = style);
+                    if (rest.Count == 0) throw new JgsRuntimeException(line,col,$"{name} expects text.");
+                    return WriteLabel(JgsTextLabel.For(ruler), rest[0], rest.Skip(1).ToArray(), line,col);
                 });
             });
 
@@ -194,20 +196,23 @@ internal static partial class JgsBuiltins
     /// draws one line, so the rows are joined with a space and the divergence is recorded rather than
     /// the call refused — losing the line break is better than losing the title.
     /// </summary>
+    private static JgsValue WriteLabel(JgsTextLabel label, JgsValue text, IReadOnlyList<JgsValue> options, int line, int col)
+    {
+        label.WriteString(text,line,col);
+        if (options.Count % 2 != 0) throw new JgsRuntimeException(line,col,"Text options require name/value pairs.");
+        var handle = JgsHandleRegistry.For(label);
+        var entry = JgsHandleRegistry.Require(handle,line,col);
+        for (int i=0;i<options.Count;i+=2)
+            JgsGraphicsProperties.Set(entry,StrOf("text option",options[i],line,col),options[i+1],line,col);
+        return handle;
+    }
+
     internal static string TitleText(string verb, JgsValue value, int line, int col)
     {
-        if (value.Type != JgsType.Cell)
-        {
-            return StrOf(verb, value, line, col);
-        }
-
-        var parts = new List<string>();
-        foreach (JgsValue item in value.AsCell)
-        {
-            parts.Add(StrOf(verb, item, line, col));
-        }
-
-        return string.Join(' ', parts);
+        if (value.Type == JgsType.Number) return value.AsNumber.ToString("G6",System.Globalization.CultureInfo.InvariantCulture);
+        if (value.Type == JgsType.Cell || value.Type == JgsType.Array)
+            return string.Join("\n", Enumerable.Range(0,value.ArrayLength).Select(i => TitleText(verb,value.ElementAt(i),line,col)));
+        return StrOf(verb,value,line,col);
     }
 
     /// <summary>Applies <c>'Name', value</c> text properties onto a style, naming the spellings it knows.</summary>

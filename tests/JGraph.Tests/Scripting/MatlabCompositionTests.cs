@@ -201,7 +201,7 @@ public class MatlabCompositionTests : IDisposable
             disp(size(get(gcf, 'Children')));
             """);
 
-        Assert.Equal(new[] { "s", "[1, 0, 0]", "[1, 4]" }, _output.NormalLines);
+        Assert.Equal(new[] { "square", "[1, 0, 0]", "[1, 4]" }, _output.NormalLines);
     }
 
     // --- plotyy ---------------------------------------------------------------------------------
@@ -274,14 +274,14 @@ public class MatlabCompositionTests : IDisposable
             ylabel(AX(2), 'ohms');
             ylim(AX(1), [0 10]);
             yticks(AX(2), [0 150 300]);
-            disp(get(AX(1), 'YLabel'));
-            disp(get(AX(2), 'Label'));
+            disp(get(get(AX(1), 'YLabel'), 'String'));
+            disp(get(get(AX(2), 'Label'), 'String'));
             disp(get(AX(1), 'YLim'));
             disp(get(AX(2), 'TickValues'));
 
             % Naming a ruler does not move the active side, so a bare verb still says what it said.
             title(AX(1), 'both sides');
-            disp(get(gca, 'Title'));
+            disp(get(get(gca, 'Title'), 'String'));
             """);
 
         Assert.Equal(
