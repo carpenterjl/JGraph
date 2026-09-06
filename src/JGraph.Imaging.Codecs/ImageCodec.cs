@@ -17,14 +17,13 @@ public sealed record CodecWriteOptions(int? JpegQuality = null, int? BitDepth = 
 /// <remarks>
 /// Decoding stamps the <see cref="ImageBuffer.Class"/> the file's bit depth implies — <c>uint8</c> for
 /// an ordinary file, <c>uint16</c> for a 16-bit PNG — so a script sees MATLAB's classes rather than a
-/// uniform double. TIFF is absent because Skia carries no TIFF codec; the read error names the
-/// formats that do work.
+/// uniform double. TIFF pages use the managed LibTiff decoder.
 /// </remarks>
-public static class ImageCodec
+public static partial class ImageCodec
 {
     /// <summary>Extensions <see cref="Read(string, int)"/> can decode, for error messages and completion.</summary>
     public static readonly string[] ReadableExtensions =
-        [".png", ".jpg", ".jpeg", ".bmp", ".gif", ".ico", ".webp"];
+        [".png", ".jpg", ".jpeg", ".bmp", ".gif", ".ico", ".webp", ".tif", ".tiff"];
 
     /// <summary>
     /// Reads an image file. A file whose pixels are all neutral gray (R == G == B everywhere) decodes
@@ -49,6 +48,15 @@ public static class ImageCodec
     /// </summary>
     public static (ImageBuffer Image, ImageBuffer? Alpha) ReadWithAlpha(string path, int frameIndex = 0)
     {
+        if (TiffCodec.IsTiff(path))
+        {
+            var decoded = TiffCodec.Read(path, frameIndex);
+            if (decoded.Map is null) return (decoded.Image, decoded.Alpha);
+            using ImageBuffer indexed = decoded.Image;
+            var rgb = new ImageBuffer(indexed.Height, indexed.Width, 3) { Class = ImageClass.UInt8 };
+            for (int p = 0; p < indexed.Height * indexed.Width; p++) for (int c = 0; c < 3; c++) rgb.Pixels[p*3+c] = decoded.Map[(int)Math.Round(indexed.Class.ToNative(indexed.Pixels[p])),c];
+            return (rgb, decoded.Alpha);
+        }
         ArgumentException.ThrowIfNullOrEmpty(path);
         ArgumentOutOfRangeException.ThrowIfNegative(frameIndex);
 
@@ -61,7 +69,7 @@ public static class ImageCodec
         {
             throw new InvalidDataException(
                 $"'{path}' is not a supported or valid image file (readable formats: " +
-                $"{string.Join(", ", ReadableExtensions)}; TIFF is not supported).");
+                $"{string.Join(", ", ReadableExtensions)}).");
         }
 
         int frames = Math.Max(1, codec.FrameCount);
@@ -75,21 +83,21 @@ public static class ImageCodec
         int width = codec.Info.Width;
         int height = codec.Info.Height;
 
-        return Is16BitPng(bytes)
+        return IsNativeSamplePng(bytes)
             ? Png16Reader.Read(bytes, width, height)
             : Read8Bit(codec, options, width, height, path);
     }
 
     /// <summary>
-    /// True when the bytes are a PNG whose IHDR declares 16 bits per channel. The header is at a fixed
+    /// True when the bytes are a non-indexed PNG whose IHDR declares 8 or 16 bits per channel. The header is at a fixed
     /// offset — 8-byte signature, 4-byte length, "IHDR", 4-byte width, 4-byte height, then depth — so
     /// this needs no decoder, which matters because the decoder is what discards the extra bits.
     /// </summary>
-    private static bool Is16BitPng(byte[] bytes) =>
+    private static bool IsNativeSamplePng(byte[] bytes) =>
         bytes.Length > 25 &&
         bytes[0] == 0x89 && bytes[1] == 0x50 && bytes[2] == 0x4E && bytes[3] == 0x47 &&
         bytes[12] == (byte)'I' && bytes[13] == (byte)'H' && bytes[14] == (byte)'D' && bytes[15] == (byte)'R' &&
-        bytes[24] == 16;
+        bytes[24] is 8 or 16 && bytes[25] != 3;
 
     private static (ImageBuffer Image, ImageBuffer? Alpha) Read8Bit(
         SKCodec codec, SKCodecOptions options, int width, int height, string path)
@@ -125,6 +133,7 @@ public static class ImageCodec
             }
         }
 
+        if (EncodedChannels(path) is { } encodedChannels) grayscale = encodedChannels == 1;
         var image = new ImageBuffer(height, width, grayscale ? 1 : 3) { Class = ImageClass.UInt8 };
         Span<double> pixels = image.Pixels;
         if (grayscale)
@@ -180,6 +189,7 @@ public static class ImageCodec
     /// <exception cref="InvalidDataException">Encoding failed.</exception>
     public static void Write(string path, ImageBuffer image, CodecWriteOptions? options)
     {
+        if (TiffCodec.IsTiff(path)) { TiffCodec.Write(path, image); return; }
         ArgumentException.ThrowIfNullOrEmpty(path);
         ArgumentNullException.ThrowIfNull(image);
         options ??= new CodecWriteOptions();
@@ -211,6 +221,10 @@ public static class ImageCodec
         }
 
         int quality = Math.Clamp(options.JpegQuality ?? 95, 0, 100);
+        if (format == SKEncodedImageFormat.Png)
+        {
+            Write8BitPng(path,image,alpha); return;
+        }
         var info = new SKImageInfo(image.Width, image.Height, SKColorType.Rgba8888, SKAlphaType.Unpremul);
         using var bitmap = new SKBitmap(info);
 

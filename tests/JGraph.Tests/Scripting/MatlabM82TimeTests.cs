@@ -232,7 +232,7 @@ public class MatlabM82TimeTests : IDisposable
     {
         ScriptRunResult result = await RunMatlab(
             "a = char(datetime(2024, 1, 1, 0, 0, 1.0005, 'Format', 'ss.SSSSSS')); "
-            + "b = char(seconds(1.000001)); "
+            + "format long; b = char(seconds(1.000001)); "
             + "c = microseconds(microseconds(7)); d = nanoseconds(nanoseconds(250));");
         Succeeded(result);
         Assert.Equal("01.000500", Text(result, "a"));

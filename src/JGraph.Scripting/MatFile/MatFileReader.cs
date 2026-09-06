@@ -96,7 +96,8 @@ internal sealed class MatFileReader
                 Take(dataStart, size, wanted, variables);
             }
 
-            at = next;
+            // Compressed top-level elements are not padded to an eight-byte boundary.
+            at = type == MiCompressed ? dataStart + size : next;
         }
 
         return variables;

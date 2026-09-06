@@ -1,4 +1,5 @@
 using JGraph.Core.Drawing;
+using JGraph.Imaging;
 using JGraph.Core.Model;
 using JGraph.Core.Primitives;
 using JGraph.Maths.Ticks;
@@ -680,6 +681,7 @@ internal static partial class JgsGraphicsProperties
 
     internal static void SetImageCData(JgsHandleEntry entry, JgsValue value, int line, int col)
     {
+        value = JgsBuiltins.ImageNumbers(value);
         var picture = (ImagePlot)entry.Target;
         if (JgsMatrix.IsNested(value)) value = JgsMatrix.FromRows(JgsMatrix.ToRows("CData", value, line, col));
         int[] dims = JgsMatrix.DimsOf(value);

@@ -1074,7 +1074,8 @@ internal static partial class JgsBuiltins
             }
 
             JgsValue cell = args[(i * 2) + 1];
-            if (count != 1 && cell.AsCell.Length != count)
+            if (cell.AsCell.Length == 1) continue;
+            if (count != 1 && (cell.AsCell.Length != count || cell.Rows != rows || cell.Cols != cols))
             {
                 throw new JgsRuntimeException(line, col,
                     $"struct: '{names[i]}' has {cell.AsCell.Length} values but another field has {count}.");
@@ -1092,7 +1093,7 @@ internal static partial class JgsBuiltins
             for (int i = 0; i < names.Length; i++)
             {
                 JgsValue given = args[(i * 2) + 1];
-                fields[names[i]] = given.Type == JgsType.Cell ? given.AsCell[e] : given;
+                fields[names[i]] = given.Type == JgsType.Cell ? given.AsCell[given.AsCell.Length == 1 ? 0 : e] : given;
             }
 
             elements[e] = fields;
@@ -1104,6 +1105,7 @@ internal static partial class JgsBuiltins
     /// <summary>One field name, or a cell of them — the shape <c>rmfield</c> and friends accept.</summary>
     private static string[] FieldNameList(string name, JgsValue value, int line, int col)
     {
+        if (value.IsStringArray) return value.BoxedElements().Select(v => v.AsString).ToArray();
         if (value.Type == JgsType.Cell)
         {
             var names = new string[value.AsCell.Length];

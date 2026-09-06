@@ -23,6 +23,7 @@ internal static partial class JgsBuiltins
         Random random,
         JgsDialect dialect)
     {
+        define("imtile", TileImages);
         // --- File IO -------------------------------------------------------------------------
         define("imread", (args, line, col) =>
         {
@@ -46,7 +47,14 @@ internal static partial class JgsBuiltins
             string path = host.Resolve(Str("imfinfo", args, 0, line, col));
             try
             {
-                using ImageBuffer probe = ImageCodec.Read(path);
+                var pages = new List<Dictionary<string, JgsValue>>();
+                for (int page = 0; page < ImageCodec.FrameCount(path); page++)
+                {
+                double[,]? palette = null; ImageBuffer? alpha = null; ImageBuffer decoded;
+                if (TiffCodec.IsTiff(path)) (decoded, palette, alpha) = TiffCodec.Read(path,page);
+                else if (IndexedPng.IsIndexed(path)) (decoded,palette,alpha) = IndexedPng.Read(path);
+                else decoded = ImageCodec.Read(path,page);
+                using ImageBuffer probe = decoded; alpha?.Dispose();
                 var info = new Dictionary<string, JgsValue>(StringComparer.Ordinal)
                 {
                     ["Filename"] = JgsValue.Str(Path.GetFullPath(path)),
@@ -56,9 +64,13 @@ internal static partial class JgsBuiltins
                     ["Height"] = JgsValue.Number(probe.Height),
                     ["BitDepth"] = JgsValue.Number(
                         (probe.Class == ImageClass.UInt16 ? 16 : 8) * probe.Channels),
-                    ["ColorType"] = JgsValue.Str(probe.Channels == 1 ? "grayscale" : "truecolor"),
+                    ["ColorType"] = JgsValue.Str(palette is not null ? "indexed" : probe.Channels == 1 ? "grayscale" : "truecolor"),
+                    ["NumberOfSamples"] = JgsValue.Number(probe.Channels),
+                    ["Comment"] = JgsValue.Cell(ImageCodec.JpegComments(path).Select(JgsValue.Str).ToArray()),
                 };
-                return JgsValue.Struct(info);
+                pages.Add(info);
+                }
+                return JgsValue.StructArray(new JgsStructArray(pages.ToArray(), pages[0].Keys.ToArray()),pages.Count,1);
             }
             catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or InvalidDataException)
             {
@@ -80,6 +92,8 @@ internal static partial class JgsBuiltins
                 args = [args[0], .. args.Skip(2)];
             }
 
+            if (args.Count > 2 && args[2].Type == JgsType.String && new[] { "gif", "tif", "tiff", "png", "jpg", "jpeg", "bmp" }.Contains(args[2].AsString.ToLowerInvariant()))
+                args = [args[0], args[1], .. args.Skip(3)];
             ParsedArgs parsed = WriteSpec.Parse(args, positionalMax: 3, line, col);
             if (parsed.Positional.Count < 2)
             {
@@ -113,6 +127,11 @@ internal static partial class JgsBuiltins
                     line, col, $"imwrite: WriteMode is 'overwrite' or 'append', but got '{mode}'.");
             }
 
+            if (TiffCodec.IsTiff(path))
+            {
+                TiffCodec.Write(path, image, mode.Equals("append", StringComparison.OrdinalIgnoreCase), map);
+                return JgsValue.Null;
+            }
             if (gif)
             {
                 double delay = parsed.Scalar("DelayTime", 0.5);
@@ -154,6 +173,7 @@ internal static partial class JgsBuiltins
 
             if (map is not null)
             {
+                if (Path.GetExtension(path).Equals(".png",StringComparison.OrdinalIgnoreCase)) { IndexedPng.Write(path,image,map); return JgsValue.Null; }
                 // Outside a GIF a map is applied rather than stored, because none of the other formats
                 // written here is an indexed one: the picture is painted through the map and saved as
                 // the colours it then has, which is the same picture.
@@ -172,11 +192,13 @@ internal static partial class JgsBuiltins
             }
 
             double depth = parsed.Scalar("BitDepth", double.NaN);
-            ImageBuffer? alpha = parsed.Named("Alpha") is { Type: JgsType.Image } a ? a.AsImage : null;
+            using ImgArg? alphaSource = parsed.Named("Alpha") is { } a ? ImgLike("imwrite: Alpha", [a], 0, line, col) : null;
+            ImageBuffer? alpha = alphaSource?.Buffer;
             try
             {
                 ImageCodec.Write(path, image, new CodecWriteOptions(
                     quality, double.IsNaN(depth) ? null : (int)Math.Round(depth), alpha));
+                if (parsed.Named("Comment") is { } comment) ImageCodec.WriteJpegComments(path, FieldNameList("imwrite", comment, line, col));
             }
             catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or ArgumentException or InvalidDataException)
             {
@@ -189,6 +211,11 @@ internal static partial class JgsBuiltins
         // --- Display -------------------------------------------------------------------------
         define("imshow", (args, line, col) =>
         {
+            if (args.Count > 0 && (args[0].Type == JgsType.String || IsStringScalar(args[0])))
+            {
+                using ImageBuffer fileImage = ImageCodec.Read(host.Resolve(TextOf(args[0])));
+                JG.RgbImage(ToArgb(fileImage), fileImage.Width, fileImage.Height); StyleImageAxes(JG.Gca()); return JgsValue.Null;
+            }
             ParsedArgs parsed = ShowSpec.Parse(args, positionalMax: 2, line, col);
             if (parsed.Positional.Count == 0)
             {
@@ -203,6 +230,11 @@ internal static partial class JgsBuiltins
             // imshow(I, [low high]) and imshow(I, []) set the display window. The limits are quoted in
             // the image's own class, so a uint8 picture takes [0 255] — normalize before use.
             (double low, double high) = (0.0, 1.0);
+            if (parsed.Positional.Count == 2 && IsColorMap(parsed.Positional[1]))
+            {
+                using ImageBuffer rgb = ThroughColorMap(image, Matrix("imshow", parsed.Positional, 1, line, col));
+                JG.RgbImage(ToArgb(rgb), rgb.Width, rgb.Height); StyleImageAxes(JG.Gca()); return JgsValue.Null;
+            }
             if (parsed.Positional.Count == 2)
             {
                 double[] range = ToDoubles("imshow", parsed.Positional[1], line, col);
@@ -1607,13 +1639,13 @@ internal static partial class JgsBuiltins
         var painted = new ImageBuffer(image.Height, image.Width, 3) { Class = ImageClass.Double };
         ReadOnlySpan<double> samples = image.Pixels;
         Span<double> target = painted.Pixels;
-        double scale = image.Class == ImageClass.Double ? entries - 1 : image.Class.Scale();
+          double scale = image.Class.Scale();
         for (int i = 0; i < count; i++)
         {
-            int at = (int)Math.Clamp(Math.Round(samples[i] * scale), 0, entries - 1);
+              int at = (int)Math.Clamp(Math.Round(samples[i] * scale) - (image.Class is ImageClass.Double or ImageClass.Single ? 1 : 0), 0, entries - 1);
             for (int c = 0; c < 3; c++)
             {
-                target[(c * count) + i] = Math.Clamp(map[at, c], 0, 1);
+                  target[(i * 3) + c] = Math.Clamp(map[at, c], 0, 1);
             }
         }
 
@@ -1624,7 +1656,7 @@ internal static partial class JgsBuiltins
     private static readonly OptionSpec WriteSpec = new(
         "imwrite",
         Flags: [],
-        Names: ["Quality", "BitDepth", "Alpha", "WriteMode", "DelayTime", "LoopCount"],
+        Names: ["Quality", "BitDepth", "Alpha", "WriteMode", "DelayTime", "LoopCount", "Comment"],
         StringPositionals: 2);
 
     private static readonly OptionSpec ShowSpec = new(

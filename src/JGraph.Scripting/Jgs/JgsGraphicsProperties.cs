@@ -423,6 +423,7 @@ internal static partial class JgsGraphicsProperties
 
     public static void Set(JgsHandleEntry entry, string name, JgsValue value, int line, int col)
     {
+        if (value.IsStringArray && value.ArrayLength == 1) value = value.ElementAt(0);
         if (!TryFind(entry.Target, name, out GraphicsProperty property))
         {
             throw Unknown(entry.Target, name, line, col);

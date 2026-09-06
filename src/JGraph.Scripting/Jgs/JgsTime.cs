@@ -314,10 +314,10 @@ internal static class JgsTime
     // --- Formatting --------------------------------------------------------------------------
 
     /// <summary>Renders one storage value through its tag's own format.</summary>
-    public static string Format(double ms, JgsTimeTag tag) =>
-        tag.Kind == JgsTimeKind.Datetime ? FormatDatetime(ms, tag) : FormatDuration(ms, tag.Format);
+    public static string Format(double ms, JgsTimeTag tag, CultureInfo? culture = null) =>
+        tag.Kind == JgsTimeKind.Datetime ? FormatDatetime(ms, tag, culture) : FormatDuration(ms, tag.Format);
 
-    private static string FormatDatetime(double ms, JgsTimeTag tag)
+    private static string FormatDatetime(double ms, JgsTimeTag tag, CultureInfo? culture = null)
     {
         if (double.IsNaN(ms))
         {
@@ -330,7 +330,7 @@ internal static class JgsTime
         string net = ToNetFormat(WithZoneTokens(tag.Format, ms, tag));
         try
         {
-            return moment.ToString(net, CultureInfo.InvariantCulture);
+            return moment.ToString(net, culture ?? CultureInfo.InvariantCulture);
         }
         catch (FormatException)
         {
@@ -416,6 +416,7 @@ internal static class JgsTime
                     built.Append('f', run);          // SSS is fractional seconds; .NET spells it fff
                     break;
                 case 'E':
+                case 'e':
                     built.Append('d', System.Math.Max(run, 3));  // EEE is the day name, .NET's ddd
                     break;
                 case 'a':
@@ -477,6 +478,7 @@ internal static class JgsTime
 
         return format switch
         {
+            "hh:mm" => $"{sign}{totalHours:00}:{minutes:00}",
             "mm:ss" => $"{sign}{totalMinutes:00}:{secondText}",
             "dd:hh:mm:ss" =>
                 $"{sign}{totalHours / 24:00}:{totalHours % 24:00}:{minutes:00}:{secondText}",

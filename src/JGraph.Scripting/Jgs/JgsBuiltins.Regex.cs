@@ -1444,7 +1444,7 @@ internal static partial class JgsBuiltins
         }
 
         return firstUpper && restLower
-            ? char.ToUpperInvariant(replacement[0]) + replacement[1..]
-            : replacement;
+            ? char.ToUpperInvariant(replacement[0]) + replacement[1..].ToLowerInvariant()
+            : !firstUpper && restLower ? replacement.ToLowerInvariant() : replacement;
     }
 }

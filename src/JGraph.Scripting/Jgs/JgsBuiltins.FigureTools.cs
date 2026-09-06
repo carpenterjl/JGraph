@@ -186,7 +186,7 @@ internal static partial class JgsBuiltins
 
     /// <summary>The option names the two picture verbs share, in MATLAB's spellings.</summary>
     private static readonly string[] PictureOptionNames =
-        ["Resolution", "ContentType", "BackgroundColor", "Append", "Colorspace"];
+        ["Resolution", "ContentType", "BackgroundColor", "Append", "Colorspace", "Units", "Width", "Height", "Padding"];
 
     private static JgsValue ExportGraphics(
         JGraphScriptGlobals host, string verb, IReadOnlyList<JgsValue> args, int line, int col)
@@ -231,6 +231,40 @@ internal static partial class JgsBuiltins
 
         try
         {
+            if (Path.GetExtension(path).Equals(".gif", StringComparison.OrdinalIgnoreCase))
+            {
+                using ImageBuffer pixels = RequireFigureFiles(host, verb, line, col).Capture(figure, resolution / 96.0);
+                string destination = host.ResolveForWrite(path);
+                if (options.Named("Append") is { } append && append.AsNumber != 0 && File.Exists(destination)) JGraph.Imaging.Codecs.GifEncoder.Append(destination, pixels, null, 1.0/15);
+                else JGraph.Imaging.Codecs.GifEncoder.Write(destination, pixels, null, 1.0/15, 0);
+                return JgsValue.Null;
+            }
+            if (options.Named("Width") is not null || options.Named("Height") is not null)
+            {
+                string units = options.Word("Units", "pixels", "pixels", "inches", "centimeters", "points");
+                double factor = units switch { "inches" => resolution, "centimeters" => resolution/2.54, "points" => resolution/72, _ => 1 };
+                Size2D previousSize = figure.Size;
+                double width = options.Scalar("Width", previousSize.Width/factor)*factor;
+                double height = options.Scalar("Height", previousSize.Height/factor)*factor;
+                if (options.Named("Width") is null) width = height * previousSize.Width / previousSize.Height;
+                if (options.Named("Height") is null) height = width * previousSize.Height / previousSize.Width;
+                if (!double.IsFinite(width) || !double.IsFinite(height) || width <= 0 || height <= 0) throw new JgsRuntimeException(line,col,"Export width and height must be positive and finite.");
+                try
+                {
+                    figure.Size = new Size2D(width*96/resolution,height*96/resolution);
+                    if (options.Named("Padding") is { Type: JgsType.Number } padding && Path.GetExtension(path).ToLowerInvariant() is ".png" or ".jpg" or ".jpeg" or ".bmp" or ".tif" or ".tiff")
+                    {
+                        int border = (int)Math.Round(padding.AsNumber*factor);
+                        if (border < 0 || 2*border >= Math.Min(width,height)) throw new JgsRuntimeException(line,col,"Padding must fit inside the export dimensions.");
+                        using ImageBuffer capture = RequireFigureFiles(host,verb,line,col).Capture(figure,resolution/96);
+                        using ImageBuffer output = PadExport(capture,(int)Math.Round(width),(int)Math.Round(height),border);
+                        JGraph.Imaging.Codecs.ImageCodec.Write(host.ResolveForWrite(path),output);
+                        return JgsValue.Null;
+                    }
+                    return Attempt(() => host.exportfigure(path, figure, resolution / 96.0), line, col);
+                }
+                finally { figure.Size = previousSize; }
+            }
             return Attempt(() => host.exportfigure(path, figure, resolution / 96.0), line, col);
         }
         finally

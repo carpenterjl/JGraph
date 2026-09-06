@@ -110,6 +110,11 @@ internal static partial class JgsBuiltins
 
         if (time.IsDatetime)
         {
+            if (op == TokenType.Plus || op == TokenType.Minus && leftIsTime)
+            {
+                JgsValue days = numeric(TokenType.Star, plain, JgsValue.Number(JgsTime.MsPerDay));
+                return WrapTime(numeric(op, Untagged(time), days), time.TimeTag!);
+            }
             throw new JgsRuntimeException(line, col,
                 $"'{symbol}' cannot combine a datetime with a number: a point in time has no units of its own. " +
                 "Wrap the number in days, hours, minutes or seconds to say how much time it is.");

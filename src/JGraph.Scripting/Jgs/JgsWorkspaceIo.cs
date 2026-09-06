@@ -20,7 +20,8 @@ internal static class JgsWorkspaceIo
     public static void DefineSaveLoad(
         JgsEnvironment environment,
         JGraphScriptGlobals host,
-        Func<IEnumerable<(string Name, JgsValue Value)>> userVariables)
+        Func<IEnumerable<(string Name, JgsValue Value)>> userVariables,
+        Func<JgsEnvironment>? activeWorkspace = null)
     {
         // Bare statements stay silent, like MATLAB: neither verb binds ans.
         environment.DeclareFunction("save", JgsValue.Function(
@@ -30,7 +31,7 @@ internal static class JgsWorkspaceIo
             }));
 
         environment.DeclareFunction("load", JgsValue.Function(
-            new BuiltinFunction("load", (args, line, col) => Load(environment, host, args, line, col))
+            new BuiltinFunction("load", (args, line, col) => Load(activeWorkspace?.Invoke() ?? environment, host, args, line, col))
             {
                 BindsAnsAsStatement = false,
             }));

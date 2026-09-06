@@ -7,7 +7,7 @@
 // sample-laser.png is a 96x96 grayscale image: a uniform disk with a brighter core to the
 // right of its middle, so the two centres land in visibly different places.
 
-let I = imread('sample-laser.png');
+let I = rgb2gray(imread('sample-laser.png'));
 let height = size(I, 1);
 print('image size:', size(I));
 

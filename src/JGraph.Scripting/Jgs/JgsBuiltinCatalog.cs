@@ -493,6 +493,10 @@ public static class JgsBuiltinCatalog
 
         // --- Data types and conversions (M43) ---------------------------------------------------
         Add("table", "Builds a table from column variables; a trailing 'VariableNames', {…} names them (default Var1…VarN).", P("var1"), Opt("var2"));
+        Add("array2table", "Makes one table variable per input matrix column; supports VariableNames and RowNames.", P("A"), Opt("options"));
+        Add("readtimetable", "Reads a delimited table with date/time row coordinates in its first column.", P("filename"), Opt("options"));
+        Add("istimetable", "Whether a value is a table with row time coordinates.", P("value"));
+        Add("imtile", "Arranges a cell of images in a grid, with borders, background and thumbnail sizing.", P("images"), Opt("options"));
         Add("timetable", "A table whose first variable is the row times: timetable(rowTimes, var1, …).", P("rowTimes"), P("var1"));
         Add("categorical", "Category labels from a cell or array (represented as the cell of names).", P("x"));
         Add("summary", "Per-variable statistics of a table, or category counts of a categorical, as a struct.", P("x"));

@@ -28,10 +28,15 @@ internal static class JgsNumberFormat
     }
 
     /// <summary>The mode numeric display currently uses.</summary>
-    internal static Mode Current { get; set; } = Mode.Long;
+    private static Mode _current = Mode.Long;
+    private static bool _explicit;
+    internal static Mode Current { get => _current; set { _current = value; _explicit = true; } }
+
+    /// <summary>MATLAB temporal text defaults to short precision, independently of JGraph's numeric console default.</summary>
+    internal static Mode Temporal => _explicit ? _current : Mode.Short;
 
     /// <summary>Back to the default, as a fresh session (or bare <c>format</c>) asks.</summary>
-    internal static void Reset() => Current = Mode.Long;
+    internal static void Reset() { _current = Mode.Long; _explicit = false; }
 
     /// <summary>Formats <paramref name="value"/> in the current mode.</summary>
     internal static string Format(double value)

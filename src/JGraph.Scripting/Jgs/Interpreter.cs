@@ -180,6 +180,7 @@ internal sealed partial class Interpreter
 
     /// <summary>The call being made right now, handed to the frame it is about to create.</summary>
     private CallExpr? _pendingCall;
+    internal CallExpr? PendingCall => _pendingCall;
 
     /// <summary>The global environment — <c>evalin('base', …)</c>'s workspace.</summary>
     internal JgsEnvironment Globals => _globals;

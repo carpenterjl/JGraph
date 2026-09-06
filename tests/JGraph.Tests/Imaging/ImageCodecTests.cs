@@ -59,7 +59,7 @@ public sealed class ImageCodecTests : IDisposable
     }
 
     [Fact]
-    public void Png_NeutralGrayCollapsesToOneChannel()
+    public void Png_NeutralRgbPreservesThreeChannels()
     {
         using var image = new ImageBuffer(2, 2, 3);
         for (int r = 0; r < 2; r++)
@@ -75,7 +75,7 @@ public sealed class ImageCodecTests : IDisposable
         ImageCodec.Write(path, image);
         using ImageBuffer read = ImageCodec.Read(path);
 
-        Assert.Equal(1, read.Channels); // R==G==B everywhere → decoded as grayscale
+        Assert.Equal(3, read.Channels); // File color type determines shape, including neutral RGB pixels.
         Assert.Equal(128 / 255.0, read[1, 0, 0], 6);
     }
 

@@ -226,15 +226,17 @@ internal static partial class JgsBuiltins
     private static JgsValue BuildTable(string name, IReadOnlyList<JgsValue> args, TableColumn? timeColumn, int line, int col)
     {
         string[]? names = null;
+        string[]? rowNames = null;
         int columnCount = args.Count;
-        if (columnCount >= 2 && args[columnCount - 2].Type == JgsType.String
-            && args[columnCount - 2].AsString == "VariableNames")
+        while (columnCount >= 2 && args[columnCount - 2].Type == JgsType.String
+            && args[columnCount - 2].AsString is "VariableNames" or "RowNames")
         {
             JgsValue nameList = args[columnCount - 1];
             JgsValue[] nameValues = nameList.Type == JgsType.Cell ? nameList.AsCell
                 : nameList.Type == JgsType.Array ? nameList.BoxedElements()
                 : throw new JgsRuntimeException(line, col, $"{name}: 'VariableNames' takes a cell of names.");
-            names = Array.ConvertAll(nameValues, v => StringOf(v).AsString);
+            if (args[columnCount - 2].AsString == "RowNames") rowNames = Array.ConvertAll(nameValues, v => StringOf(v).AsString);
+            else names = Array.ConvertAll(nameValues, v => StringOf(v).AsString);
             columnCount -= 2;
         }
 
@@ -250,10 +252,6 @@ internal static partial class JgsBuiltins
         }
 
         var columns = new List<TableColumn>();
-        if (timeColumn is not null)
-        {
-            columns.Add(timeColumn);
-        }
 
         for (int i = 0; i < columnCount; i++)
         {
@@ -271,7 +269,9 @@ internal static partial class JgsBuiltins
             }
         }
 
-        return JgsValue.Table(new Table(columns));
+        if (rowNames is not null && (rowNames.Length != rows || rowNames.Distinct().Count() != rows || rowNames.Any(string.IsNullOrEmpty)))
+            throw new JgsRuntimeException(line, col, "table: RowNames must contain one unique nonempty name per row.");
+        return JgsValue.Table(new Table(columns) { RowNames = rowNames, RowTimes = timeColumn });
     }
 
     /// <summary>
@@ -281,12 +281,15 @@ internal static partial class JgsBuiltins
     /// </summary>
     internal static TableColumn TableColumnFrom(string verb, string columnName, JgsValue value, int line, int col)
     {
+        if (value.IsDatetime) return new DateTimeColumn(columnName, TimeMs(value).Select(ms => ms / JgsTime.MsPerDay).ToArray());
         if (value.Type == JgsType.Cell || (value.Type == JgsType.Array && HasStringElements(value)))
         {
             JgsValue[] elements = value.Type == JgsType.Cell ? value.AsCell : value.BoxedElements();
             return new TextColumn(columnName, Array.ConvertAll(elements, v => (string?)StringOf(v).AsString));
         }
 
+        if (value.Type == JgsType.Array && value.Cols > 1)
+            return new NumberMatrixColumn(columnName, FlattenColumnMajor(verb, value, line, col), value.Rows, value.Cols);
         return new NumberColumn(columnName, ToDoubles(verb, value, line, col));
     }
 
@@ -333,12 +336,19 @@ internal static partial class JgsBuiltins
     /// </summary>
     internal static JgsValue TableColumnValue(Table table, string columnName, int line, int col)
     {
+        if (columnName == "Properties") return JgsValue.Struct(new Dictionary<string, JgsValue> {
+            ["VariableNames"] = JgsValue.Cell(table.ColumnNames.Select(JgsValue.Str).ToArray()),
+            ["RowNames"] = RowNameCell(table.RowNames),
+            ["RowTimes"] = table.RowTimes is null ? JgsValue.Array([]) : TableColumnValue(new Table([table.RowTimes]), table.RowTimes.Name, line, col)
+        });
+        if (table.RowTimes is { } time && columnName == time.Name) return TableColumnValue(new Table([time]), columnName, line, col);
         if (!table.TryGetColumn(columnName, out TableColumn column))
         {
             throw new JgsRuntimeException(line, col,
                 $"The table has no variable '{columnName}'. Its variables are: {string.Join(", ", table.ColumnNames)}.");
         }
 
+        if (column is NumberMatrixColumn matrix) return JgsMatrix.FromColumnMajorDims((double[])matrix.Values.Clone(), [matrix.RowCount, matrix.Width]);
         if (column.Type == ColumnType.Text)
         {
             var cells = new JgsValue[column.RowCount];
@@ -358,7 +368,9 @@ internal static partial class JgsBuiltins
             values[r] = column.GetNumber(r);
         }
 
-        return JgsMatrix.FromColumnMajorDims(values, [values.Length, 1]);
+        return column.Type == ColumnType.DateTime
+            ? JgsMatrix.FromColumnMajorDims(values.Select(d => d * JgsTime.MsPerDay).ToArray(), [values.Length, 1]).MarkTime(new JgsTimeTag(JgsTimeKind.Datetime, JgsTime.DefaultDatetimeFormat))
+            : JgsMatrix.FromColumnMajorDims(values, [values.Length, 1]);
     }
 
     /// <summary>Per-variable min/max/mean (numeric) or size/type (text) — <c>summary(T)</c>.</summary>

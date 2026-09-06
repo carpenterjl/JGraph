@@ -3,12 +3,15 @@ using System.IO.Compression;
 
 namespace JGraph.Imaging.Codecs;
 
-/// <summary>Preserves integer PNG samples that Skia's decoder otherwise reduces to eight bits.</summary>
+/// <summary>Preserves 8/16-bit PNG samples, including RGB under fully transparent pixels.</summary>
 internal static class Png16Reader
 {
     internal static (ImageBuffer Image, ImageBuffer? Alpha) Read(byte[] file, int width, int height)
     {
         int colorType = file[25];
+        int sampleBytes = file[24] / 8;
+        double maximum = sampleBytes == 2 ? 65535 : 255;
+        ImageClass imageClass = sampleBytes == 2 ? ImageClass.UInt16 : ImageClass.UInt8;
         int channels = colorType switch { 0 => 1, 2 => 3, 4 => 2, 6 => 4,
             _ => throw new InvalidDataException("Invalid 16-bit PNG color type.") };
         int colors = colorType is 0 or 4 ? 1 : 3;
@@ -29,9 +32,9 @@ internal static class Png16Reader
         }
         compressed.Position = 0;
         using var zlib = new ZLibStream(compressed, CompressionMode.Decompress);
-        var image = new ImageBuffer(height, width, colors) { Class = ImageClass.UInt16 };
+        var image = new ImageBuffer(height, width, colors) { Class = imageClass };
         ImageBuffer? alpha = channels != colors || transparent is not null
-            ? new ImageBuffer(height, width, 1) { Class = ImageClass.UInt16 } : null;
+            ? new ImageBuffer(height, width, 1) { Class = imageClass } : null;
         bool opaque = true;
         try
         {
@@ -51,7 +54,7 @@ internal static class Png16Reader
         {
             if (x0 >= width || y0 >= height) return;
             int columns = (width - x0 + dx - 1) / dx;
-            int bpp = channels * 2;
+            int bpp = channels * sampleBytes;
             byte[] previous = new byte[checked(columns * bpp)];
             byte[] row = new byte[previous.Length];
             for (int y = y0; y < height; y += dy)
@@ -75,18 +78,18 @@ internal static class Png16Reader
                     bool clear = transparent is not null && transparent.Length == colors * 2;
                     for (int ch = 0; ch < colors; ch++)
                     {
-                        ushort sample = BinaryPrimitives.ReadUInt16BigEndian(row.AsSpan(offset + ch * 2, 2));
-                        image[y, x, ch] = sample / 65535.0;
+                        int sample = sampleBytes == 2 ? BinaryPrimitives.ReadUInt16BigEndian(row.AsSpan(offset + ch * 2, 2)) : row[offset + ch];
+                        image[y, x, ch] = sample / maximum;
                         clear &= transparent is not null && transparent.Length >= ch * 2 + 2
                             && sample == BinaryPrimitives.ReadUInt16BigEndian(transparent.AsSpan(ch * 2, 2));
                     }
                     if (alpha is not null)
                     {
-                        ushort sample = channels != colors
-                            ? BinaryPrimitives.ReadUInt16BigEndian(row.AsSpan(offset + colors * 2, 2))
-                            : clear ? (ushort)0 : ushort.MaxValue;
-                        alpha[y, x, 0] = sample / 65535.0;
-                        opaque &= sample == ushort.MaxValue;
+                        int sample = channels != colors
+                            ? sampleBytes == 2 ? BinaryPrimitives.ReadUInt16BigEndian(row.AsSpan(offset + colors * 2, 2)) : row[offset + colors]
+                            : clear ? 0 : (int)maximum;
+                        alpha[y, x, 0] = sample / maximum;
+                        opaque &= sample == maximum;
                     }
                 }
                 (row, previous) = (previous, row);

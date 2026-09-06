@@ -184,6 +184,13 @@ internal static partial class JgsBuiltins
         Define("fliplr", (args, line, col) =>
         {
             Arity("fliplr", args, 1, line, col);
+            if (HasComplexElements(args[0]))
+            {
+                int[] shape = SizeDims(args[0]); int height = shape[0], width = shape[1];
+                var values = ColumnComplex("fliplr", args[0], line, col); var flipped = new System.Numerics.Complex[values.Length];
+                for (int page = 0; page < values.Length; page += height * width) for (int c = 0; c < width; c++) for (int r = 0; r < height; r++) flipped[page+c*height+r]=values[page+(width-1-c)*height+r];
+                return ComplexStorage(flipped,shape);
+            }
             if (JgsEmpty.IsEmptyArray(args[0]))
             {
                 return args[0]; // see flip: an empty reversed is the same empty

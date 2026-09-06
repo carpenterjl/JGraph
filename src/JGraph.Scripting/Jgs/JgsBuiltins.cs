@@ -2568,6 +2568,7 @@ internal static partial class JgsBuiltins
         // Last of all, so it wraps whichever wrapper each name ended up with (M105) — the same reason
         // the string-array marks are applied last.
         KeepCharMatrixKind(env);
+        RegisterTableCompatibility(env, host);
 
         return env;
     }
@@ -2723,6 +2724,23 @@ internal static partial class JgsBuiltins
 
         if (args.Count > 0 && args[0].Type == JgsType.Table)
         {
+            if (args.Count == 2 && args[0].AsTable.RowTimes is { } rowTimes)
+            {
+                Table timetable = args[0].AsTable;
+                Table plotting = new Table(new[] { rowTimes }.Concat(timetable.Columns).ToArray());
+                bool holding = JG.IsHolding;
+                try
+                {
+                    foreach (string variable in FieldNameList(verb, args[1], line, col))
+                    {
+                        created.Add(JG.Plot(plotting, rowTimes.Name, variable));
+                        JG.Hold(true);
+                    }
+                }
+                finally { JG.Hold(holding); }
+                ApplyPlotOptions(verb, created, options, line, col);
+                return HandlesFor(created);
+            }
             ArityRange(verb, args, 3, 4, line, col);
             Table table = Tbl(verb, args, 0, line, col);
             string xColumn = Str(verb, args, 1, line, col);
@@ -2948,6 +2966,14 @@ internal static partial class JgsBuiltins
         int col)
     {
         double[] Implicit(int n) => implicitX is null ? ImplicitX(dialect, n) : implicitX(n);
+        if (dialect.IsMatlab && HasComplexElements(y))
+        {
+            var complex = ColumnComplex(verb,y,line,col);
+            bool complexPlane = x is null;
+            if (x is null) x = JgsMatrix.FromColumnMajorDims(complex.Select(z=>z.Real).ToArray(),SizeDims(y));
+            y = JgsMatrix.FromColumnMajorDims(complex.Select(z=>complexPlane?z.Imaginary:z.Real).ToArray(),SizeDims(y));
+        }
+        if (dialect.IsMatlab && x is not null && HasComplexElements(x)) x = JgsMatrix.FromColumnMajorDims(ColumnComplex(verb,x,line,col).Select(z=>z.Real).ToArray(),SizeDims(x));
         double[]? xs = x is null ? null : DoubleArray(verb, [x], 0, line, col);
 
         bool matrixY = y.Type == JgsType.Array

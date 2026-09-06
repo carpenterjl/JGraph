@@ -60,10 +60,56 @@ internal static partial class JgsBuiltins
                 return JgsValue.Str(string.Empty);
             }
 
+            if (args[0].IsTime)
+            {
+                ArityRange("char", args, 1, 3, line, col);
+                JgsValue time = args[0];
+                if (IsCalendarDuration(time))
+                {
+                    string[] calendar = Enumerable.Range(0,time.ArrayLength).Select(i => TimeText(time,i)).ToArray();
+                    return calendar.Length == 1 ? JgsValue.Str(calendar[0]) : PadIntoCharMatrix(calendar);
+                }
+                var tag = time.TimeTag!;
+                if (args.Count > 1 && !(args[1].Type == JgsType.Array && args[1].ArrayLength == 0))
+                    tag = tag with { Format = Str("char", args, 1, line, col) };
+                CultureInfo culture = args.Count > 2
+                    ? CultureInfo.GetCultureInfo(Str("char", args, 2, line, col).Replace('_', '-'))
+                    : CultureInfo.InvariantCulture;
+                var texts = new string[time.ArrayLength];
+                for (int i = 0; i < texts.Length; i++)
+                {
+                    texts[i] = JgsTime.Format(time.ElementAt(i).AsNumber, tag, culture);
+                    if (time.IsDuration && tag.Format is "s" or "m" or "h" or "d" or "y")
+                    {
+                        double divisor = tag.Format switch { "s" => JgsTime.MsPerSecond, "m" => JgsTime.MsPerMinute, "h" => JgsTime.MsPerHour, "d" => JgsTime.MsPerDay, _ => JgsTime.MsPerDay * 365.2425 };
+                        string suffix = tag.Format switch { "s" => " sec", "m" => " min", "h" => " hr", "d" => " day", _ => " yr" };
+                        string precision = JgsNumberFormat.Temporal is JgsNumberFormat.Mode.Long or JgsNumberFormat.Mode.LongE ? "G15" : "G5";
+                        texts[i] = (time.ElementAt(i).AsNumber / divisor).ToString(precision,culture) + suffix;
+                    }
+                }
+                return texts.Length == 1 ? JgsValue.Str(texts[0]) : PadIntoCharMatrix(texts);
+            }
+
             // char of several arguments stacks them, which is how MATLAB builds a char matrix.
             if (args.Count > 1)
             {
-                return PadIntoCharMatrix([.. args.Select(a => TextForChar(a, line, col))]);
+                var rows = new List<string>();
+                foreach (JgsValue value in args)
+                {
+                    if (value.IsCharMatrix) rows.AddRange(value.CharMatrixRows());
+                    else if (value.Type == JgsType.Array && !value.IsStringArray)
+                    {
+                        for (int r = 0; r < value.Rows; r++)
+                        {
+                            var chars = new char[value.Cols];
+                            for (int c = 0; c < chars.Length; c++) chars[c] = (char)(int)value.ElementAt(c * value.Rows + r).AsNumber;
+                            rows.Add(new string(chars));
+                        }
+                    }
+                    else if (value.IsStringArray) rows.AddRange(value.BoxedElements().Select(v => v.AsString));
+                    else rows.Add(TextForChar(value, line, col));
+                }
+                return PadIntoCharMatrix(rows.ToArray());
             }
 
             JgsValue only = args[0];

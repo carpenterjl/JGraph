@@ -50,6 +50,12 @@ public sealed class Table
     /// <summary>The number of rows.</summary>
     public int RowCount { get; }
 
+    /// <summary>Optional row labels, kept when rows are selected.</summary>
+    public IReadOnlyList<string>? RowNames { get; init; }
+
+    /// <summary>Timetable row coordinates, separate from its data variables.</summary>
+    public TableColumn? RowTimes { get; init; }
+
     /// <summary>The number of columns.</summary>
     public int ColumnCount => _columns.Length;
 
@@ -117,13 +123,20 @@ public sealed class Table
             picked[c] = SelectRows(_columns[index], rows, RowCount);
         }
 
-        return new Table(picked);
+        return new Table(picked) { RowNames = RowNames is null ? null : rows.Select(r => RowNames[r]).ToArray(), RowTimes = RowTimes is null ? null : SelectRows(RowTimes, rows, RowCount) };
     }
 
     private static TableColumn SelectRows(TableColumn column, IReadOnlyList<int> rows, int rowCount)
     {
         switch (column)
         {
+            case NumberMatrixColumn matrix:
+            {
+                var values = new double[rows.Count * matrix.Width];
+                for (int c = 0; c < matrix.Width; c++)
+                    for (int r = 0; r < rows.Count; r++) values[c * rows.Count + r] = matrix.Values[c * rowCount + CheckRow(rows[r], rowCount)];
+                return new NumberMatrixColumn(column.Name, values, rows.Count, matrix.Width);
+            }
             case NumberColumn numbers:
             {
                 var values = new double[rows.Count];

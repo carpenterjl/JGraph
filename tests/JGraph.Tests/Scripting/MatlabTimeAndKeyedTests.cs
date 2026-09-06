@@ -184,7 +184,7 @@ public class MatlabTimeAndKeyedTests : IDisposable
     [Fact]
     public async Task TheOperatorsRefuseWhatHasNoMeaning()
     {
-        Assert.Contains("no units of its own", await RunRefusing("datetime(2024,1,1) + 1;"), StringComparison.Ordinal);
+        await RunAsserting("assert(datetime(2024,1,1) + 1 == datetime(2024,1,2));");
         Assert.Contains("no units of its own", await RunRefusing("datetime(2024,1,1) * 2;"), StringComparison.Ordinal);
         Assert.Contains("only subtraction", await RunRefusing("datetime(2024,1,1) + datetime(2024,1,2);"), StringComparison.Ordinal);
         Assert.Contains("cannot combine two durations", await RunRefusing("hours(1) * hours(2);"), StringComparison.Ordinal);

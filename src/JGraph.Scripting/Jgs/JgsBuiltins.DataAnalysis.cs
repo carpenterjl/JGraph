@@ -1,3 +1,4 @@
+using JGraph.Data;
 using JGraph.Maths;
 using JGraph.Numerics;
 using JGraph.Numerics.LinearAlgebra;
@@ -1093,6 +1094,17 @@ internal static partial class JgsBuiltins
         IReadOnlyList<JgsValue> args, int wanted, JgsDialect dialect, int line, int col)
     {
         ArityRange("sortrows", args, 1, 3, line, col);
+        if (args[0].Type == JgsType.Table)
+        {
+            Table table = args[0].AsTable;
+            TableColumn[] tableKeys = args.Count > 1 && !IsEmpty(args[1])
+                ? FieldNameList("sortrows", args[1], line, col).Select(n => table[n]).ToArray()
+                : table.RowTimes is { } times ? [times] : table.Columns.ToArray();
+            bool descending = args.Count > 2 && Str("sortrows", args, 2, line, col) == "descend";
+            int[] tableOrder = Enumerable.Range(0, table.RowCount).ToArray();
+            Array.Sort(tableOrder, (a,b) => { foreach (TableColumn key in tableKeys) { int compare = key.Type == ColumnType.Text ? string.CompareOrdinal(key.GetText(a), key.GetText(b)) : key.GetNumber(a).CompareTo(key.GetNumber(b)); if (compare != 0) return descending ? -compare : compare; } return a.CompareTo(b); });
+            return [JgsValue.Table(table.Select(tableOrder, Enumerable.Range(0, table.ColumnCount).ToArray())), JgsMatrix.FromColumnMajorDims(tableOrder.Select(i => (double)(i + dialect.IndexBase)).ToArray(), [tableOrder.Length, 1])];
+        }
         int[] dims = SizeDims(args[0]);
         if (dims.Length > 2)
         {

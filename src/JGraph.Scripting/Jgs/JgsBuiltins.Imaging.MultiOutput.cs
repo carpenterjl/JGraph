@@ -249,19 +249,34 @@ internal static partial class JgsBuiltins
         // non-indexed file and a recorded divergence for a genuinely indexed one.
         Wrap("imread", (args, wanted, line, col) =>
         {
-            ArityRange("imread", args, 1, 2, line, col);
+            var readSpec = new OptionSpec("imread", [], ["PixelRegion", "AutoOrient", "Index"], StringPositionals: 1);
+            ParsedArgs readOptions = readSpec.Parse(args, 2, line, col);
             string path = host.Resolve(Str("imread", args, 0, line, col));
-            int frame = args.Count == 2 ? Count("imread", args, 1, line, col) - dialect.IndexBase : 0;
+            int frame = readOptions.Positional.Count == 2 ? Count("imread", readOptions.Positional, 1, line, col) - dialect.IndexBase : 0;
+            if (readOptions.Named("Index") is { } index) frame = (int)index.AsNumber - dialect.IndexBase;
             try
             {
-                (ImageBuffer image, ImageBuffer? alpha) = ImageCodec.ReadWithAlpha(path, frame);
+                ImageBuffer image; ImageBuffer? alpha; double[,]? palette = null;
+                if (TiffCodec.IsTiff(path)) (image, palette, alpha) = TiffCodec.Read(path, frame);
+                else if (IndexedPng.IsIndexed(path)) (image, palette, alpha) = IndexedPng.Read(path);
+                else (image, alpha) = ImageCodec.ReadWithAlpha(path, frame);
+                if (readOptions.Named("PixelRegion") is { } region)
+                {
+                    ImageBuffer cropped = CropReadRegion(image, region, line, col); image.Dispose(); image = cropped;
+                    if (alpha is not null) { cropped = CropReadRegion(alpha, region, line, col); alpha.Dispose(); alpha = cropped; }
+                }
+                if (readOptions.Named("AutoOrient") is { } orient && orient.AsNumber != 0)
+                {
+                    image = ImageCodec.AutoOrient(path, image);
+                    if (alpha is not null) alpha = ImageCodec.AutoOrient(path, alpha);
+                }
                 if (wanted < 2)
                 {
                     alpha?.Dispose();
                     return [JgsValue.Image(image)];
                 }
 
-                JgsValue map = JgsMatrix.Build(0, 3, static (_, _) => 0.0);
+                JgsValue map = palette is null ? JgsMatrix.Build(0, 3, static (_, _) => 0.0) : JgsMatrix.Build(palette.GetLength(0), 3, (r,c) => palette[r,c]);
                 if (wanted < 3)
                 {
                     alpha?.Dispose();

@@ -88,9 +88,9 @@ internal static class JgsRunner
             // script itself defined (or rebound). save/load must be declared before the capture, or
             // they would list themselves as the user's variables.
             Dictionary<string, JgsValue> pristine = null!;
-            JgsWorkspaceIo.DefineSaveLoad(environment, globals, () => environment.Locals
+            JgsWorkspaceIo.DefineSaveLoad(environment, globals, () => interpreter.CurrentFrame.Locals
                 .Where(p => !pristine.TryGetValue(p.Key, out JgsValue? original) || !ReferenceEquals(original, p.Value))
-                .Select(static p => (p.Key, p.Value)));
+                .Select(static p => (p.Key, p.Value)), () => interpreter.CurrentFrame);
             DefineWorkspaceBuiltins(environment, interpreter, context.Output, () => pristine);
             hook?.RunStarting(interpreter, environment);
 
@@ -262,10 +262,34 @@ internal static class JgsRunner
         JgsEnvironment environment, Interpreter interpreter, IScriptOutput output,
         Func<IReadOnlyDictionary<string, JgsValue>> pristine)
     {
+        foreach (string constructor in new[] { "table", "array2table" })
+        {
+            if (!environment.TryGet(constructor, out JgsValue existing)) continue;
+            environment.DeclareFunction(constructor, JgsValue.Function(new BuiltinFunction(constructor, (args, line, col) =>
+            {
+                var given = args.ToList();
+                if (interpreter.PendingCall is { } call && !args.Any(a => a.Type == JgsType.String && a.AsString == "VariableNames"))
+                {
+                    int count = constructor == "array2table" ? (args.Count > 0 ? args[0].Cols : 0) : args.Count;
+                    if (constructor == "table") for (int i = 0; i + 1 < args.Count; i++) if (args[i].Type == JgsType.String && args[i].AsString == "RowNames") { count = i; break; }
+                    var names = new JgsValue[count];
+                    for (int i = 0; i < count; i++)
+                    {
+                        string inferred = constructor == "array2table"
+                            ? (call.Arguments.FirstOrDefault() is VariableExpr array ? array.Name : "Var") + (i + 1)
+                            : i < call.Arguments.Count && call.Arguments[i] is VariableExpr variable ? variable.Name : "Var" + (i + 1);
+                        names[i] = JgsValue.Str(inferred);
+                    }
+                    given.Add(JgsValue.Str("VariableNames")); given.Add(JgsValue.Cell(names));
+                }
+                return existing.AsCallable.Call(given, line, col);
+            })));
+        }
+
         IEnumerable<(string Name, JgsValue Value)> UserVariables()
         {
             IReadOnlyDictionary<string, JgsValue> baseline = pristine();
-            foreach ((string name, JgsValue value) in environment.Locals)
+            foreach ((string name, JgsValue value) in interpreter.CurrentFrame.Locals)
             {
                 if (!baseline.TryGetValue(name, out JgsValue? original) || !ReferenceEquals(original, value)
                     || (value.Type == JgsType.Function && !environment.IsFunctionBinding(name)))
@@ -393,12 +417,18 @@ internal static class JgsRunner
 
         environment.DeclareFunction("whos", JgsValue.Function(new BuiltinFunction("whos", (args, line, column) =>
         {
-            if (args.Count != 0)
+            var selectors = new List<System.Text.RegularExpressions.Regex>();
+            bool regexp = false;
+            foreach (JgsValue arg in args)
             {
-                throw new JgsRuntimeException(line, column, "whos takes no arguments.");
+                if (arg.Type != JgsType.String) throw new JgsRuntimeException(line, column, "whos expects variable names.");
+                if (arg.AsString == "-regexp") { regexp = true; continue; }
+                string pattern = regexp ? arg.AsString : "^" + System.Text.RegularExpressions.Regex.Escape(arg.AsString).Replace("\\*", ".*").Replace("\\?", ".") + "$";
+                selectors.Add(new System.Text.RegularExpressions.Regex(pattern, System.Text.RegularExpressions.RegexOptions.CultureInvariant, TimeSpan.FromSeconds(1)));
             }
 
             List<(string Name, string Size, string Kind)> rows = UserVariables()
+                .Where(pair => selectors.Count == 0 || selectors.Any(s => s.IsMatch(pair.Name)))
                 .OrderBy(static pair => pair.Name, StringComparer.Ordinal)
                 .Select(pair => (pair.Name, SizeOf(pair.Value), KindOf(pair.Value)))
                 .ToList();
