@@ -34,7 +34,7 @@ internal static partial class JgsBuiltins
             string name,
             Func<IReadOnlyList<JgsValue>, int, int, JgsValue> draw,
             Func<IReadOnlyList<JgsValue>, int, int, JgsValue[]> data) =>
-            env.Declare(name, JgsValue.Function(new BuiltinFunction(name, draw)
+            env.DeclareFunction(name, JgsValue.Function(new BuiltinFunction(name, draw)
             {
                 BindsAnsAsStatement = false,
                 MultiOutput = (args, wanted, line, col) => wanted >= 2
@@ -45,7 +45,7 @@ internal static partial class JgsBuiltins
         DefineDrawOrData("voronoi", VoronoiPlot, VoronoiEdgeData);
         DefineDrawOrData("triplot", TriPlot, TriPlotData);
 
-        env.Declare("tetramesh", JgsValue.Function(
+        env.DeclareFunction("tetramesh", JgsValue.Function(
             new BuiltinFunction("tetramesh", (args, line, col) => TetraMesh(args, line, col))
             {
                 BindsAnsAsStatement = false,

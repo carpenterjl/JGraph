@@ -49,7 +49,7 @@ internal static partial class JgsBuiltins
     internal static void RegisterStringEditingBuiltins(JgsEnvironment env, JgsDialect dialect)
     {
         void Define(string name, Func<IReadOnlyList<JgsValue>, int, int, JgsValue> body) =>
-            env.Declare(name, JgsValue.Function(new BuiltinFunction(name, body)));
+            env.DeclareFunction(name, JgsValue.Function(new BuiltinFunction(name, body)));
 
         // char is the char-row constructor, and it was missing entirely: nothing declared it before
         // M63, so char('abc') and char(65) both failed on a name rather than on an argument.
@@ -204,7 +204,7 @@ internal static partial class JgsBuiltins
                 continue;
             }
 
-            env.Declare(name, JgsValue.Function(new BuiltinFunction(name, (args, line, col) =>
+            env.DeclareFunction(name, JgsValue.Function(new BuiltinFunction(name, (args, line, col) =>
             {
                 // Which argument the map walks. For most names it is the first container found —
                 // strcmp("a", ["a" "b"]) compares one against each — but for the search-and-edit
@@ -313,7 +313,7 @@ internal static partial class JgsBuiltins
                 continue;
             }
 
-            env.Declare(name, JgsValue.Function(new BuiltinFunction(name, (args, line, col) =>
+            env.DeclareFunction(name, JgsValue.Function(new BuiltinFunction(name, (args, line, col) =>
             {
                 bool wasString = args.Count > 0 && args[0].IsStringArray;
                 JgsValue answer = inner.Call(args, line, col);

@@ -129,7 +129,7 @@ internal static partial class JgsBuiltins
     private static void RegisterRegexBuiltins(JgsEnvironment env, JgsDialect dialect)
     {
         void Search(string name, RegexOptions options) =>
-            env.Declare(name, JgsValue.Function(new BuiltinFunction(
+            env.DeclareFunction(name, JgsValue.Function(new BuiltinFunction(
                 name, (args, line, col) => RegexOutputs(name, args, options, dialect, wanted: 1, line, col)[0])
             {
                 MultiOutput = (args, wanted, line, col) => RegexOutputs(name, args, options, dialect, wanted, line, col),
@@ -144,10 +144,10 @@ internal static partial class JgsBuiltins
 
         // Without the interpreter a ${…} replacement cannot be evaluated; RegisterEvalBuiltins
         // re-declares regexprep with one as soon as there is an interpreter to hand it.
-        env.Declare("regexprep", JgsValue.Function(new BuiltinFunction(
+        env.DeclareFunction("regexprep", JgsValue.Function(new BuiltinFunction(
             "regexprep", (args, line, col) => ReplaceMatches(args, evaluate: null, line, col))));
 
-        env.Declare("regexptranslate", JgsValue.Function(new BuiltinFunction("regexptranslate", (args, line, col) =>
+        env.DeclareFunction("regexptranslate", JgsValue.Function(new BuiltinFunction("regexptranslate", (args, line, col) =>
         {
             Arity("regexptranslate", args, 2, line, col);
             string mode = Str("regexptranslate", args, 0, line, col);

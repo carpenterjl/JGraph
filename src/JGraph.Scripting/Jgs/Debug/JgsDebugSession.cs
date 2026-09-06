@@ -604,7 +604,7 @@ public sealed class JgsDebugSession
         {
             foreach (FnStmt fn in hoists)
             {
-                globals.Declare(fn.Name, JgsValue.Function(new UserFunction(fn, globals, interpreter)));
+                globals.DeclareFunction(fn.Name, JgsValue.Function(new UserFunction(fn, globals, interpreter)));
             }
         }
 

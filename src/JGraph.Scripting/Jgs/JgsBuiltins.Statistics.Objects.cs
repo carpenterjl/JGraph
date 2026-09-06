@@ -90,15 +90,15 @@ internal static partial class JgsBuiltins
     private static void RegisterDistributionObjectForms(JgsEnvironment env, Random random)
     {
         void Define(string name, Func<IReadOnlyList<JgsValue>, int, int, JgsValue> body) =>
-            env.Declare(name, JgsValue.Function(new BuiltinFunction(name, body)));
+            env.DeclareFunction(name, JgsValue.Function(new BuiltinFunction(name, body)));
 
         void DefineBoth(string name, Func<IReadOnlyList<JgsValue>, int, int, int, JgsValue[]> both) =>
-            env.Declare(name, JgsValue.Function(
+            env.DeclareFunction(name, JgsValue.Function(
                 new BuiltinFunction(name, (args, line, col) => both(args, 1, line, col)[0]) { MultiOutput = both }));
 
         // makedist on its own answers the list of names it knows, so the bare word has to call
         // rather than evaluate to the function itself.
-        env.Declare("makedist", JgsValue.Function(new BuiltinFunction(
+        env.DeclareFunction("makedist", JgsValue.Function(new BuiltinFunction(
             "makedist", (args, line, col) => MakeDistribution(args, line, col)) { AutoCallsBare = true }));
         DefineBoth("fitdist", (args, wanted, line, col) => FitDistribution(args, wanted, line, col));
         Define("truncate", (args, line, col) => TruncateDistribution(args, line, col));
@@ -163,7 +163,7 @@ internal static partial class JgsBuiltins
                 : [inner.Call(args, line, col)];
         }
 
-        env.Declare(name, JgsValue.Function(new BuiltinFunction(
+        env.DeclareFunction(name, JgsValue.Function(new BuiltinFunction(
             name, (args, line, col) => Both(args, 1, line, col)[0])
         {
             MultiOutput = Both,

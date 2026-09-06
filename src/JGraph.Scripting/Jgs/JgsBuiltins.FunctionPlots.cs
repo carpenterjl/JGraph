@@ -35,7 +35,7 @@ internal static partial class JgsBuiltins
     {
         // The legacy two-output form answers with the readings instead of drawing them, which is the
         // only way a script can measure where the sampler chose to look.
-        env.Declare("fplot", JgsValue.Function(new BuiltinFunction("fplot",
+        env.DeclareFunction("fplot", JgsValue.Function(new BuiltinFunction("fplot",
             (args, line, col) => FunctionLine("fplot", spatial: false, args, line, col))
         {
             BindsAnsAsStatement = false,
@@ -44,12 +44,12 @@ internal static partial class JgsBuiltins
                 : [FunctionLine("fplot", spatial: false, args, line, col)],
         }));
 
-        env.Declare("fplot3", JgsValue.Function(new BuiltinFunction("fplot3",
+        env.DeclareFunction("fplot3", JgsValue.Function(new BuiltinFunction("fplot3",
             (args, line, col) => FunctionLine("fplot3", spatial: true, args, line, col))
         { BindsAnsAsStatement = false }));
 
         void DefineSilent(string name, Func<IReadOnlyList<JgsValue>, int, int, JgsValue> body) =>
-            env.Declare(name, JgsValue.Function(
+            env.DeclareFunction(name, JgsValue.Function(
                 new BuiltinFunction(name, body) { BindsAnsAsStatement = false }));
 
         DefineSilent("fsurf", (args, line, col) => FunctionSurface("fsurf", wireframe: false, args, line, col));

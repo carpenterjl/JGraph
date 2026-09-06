@@ -28,18 +28,18 @@ internal static partial class JgsBuiltins
     private static void RegisterVolumeBuiltins(JgsEnvironment env, JGraphScriptGlobals host)
     {
         void Define(string name, Func<IReadOnlyList<JgsValue>, int, int, JgsValue> body) =>
-            env.Declare(name, JgsValue.Function(new BuiltinFunction(name, body)));
+            env.DeclareFunction(name, JgsValue.Function(new BuiltinFunction(name, body)));
 
-        env.Declare("volumebounds", JgsValue.Function(new BuiltinFunction("volumebounds",
+        env.DeclareFunction("volumebounds", JgsValue.Function(new BuiltinFunction("volumebounds",
             (args, line, col) => VolumeBounds(args, line, col))));
 
-        env.Declare("subvolume", JgsValue.Function(new BuiltinFunction("subvolume",
+        env.DeclareFunction("subvolume", JgsValue.Function(new BuiltinFunction("subvolume",
             (args, line, col) => Subvolume(args, 1, line, col)[^1])
         {
             MultiOutput = (args, wanted, line, col) => Subvolume(args, wanted, line, col),
         }));
 
-        env.Declare("reducevolume", JgsValue.Function(new BuiltinFunction("reducevolume",
+        env.DeclareFunction("reducevolume", JgsValue.Function(new BuiltinFunction("reducevolume",
             (args, line, col) => ReduceVolume(args, 1, line, col)[^1])
         {
             MultiOutput = (args, wanted, line, col) => ReduceVolume(args, wanted, line, col),
@@ -47,10 +47,10 @@ internal static partial class JgsBuiltins
 
         Define("smooth3", (args, line, col) => Smooth3(args, line, col));
 
-        env.Declare("divergence", JgsValue.Function(new BuiltinFunction("divergence",
+        env.DeclareFunction("divergence", JgsValue.Function(new BuiltinFunction("divergence",
             (args, line, col) => Divergence(args, line, col))));
 
-        env.Declare("curl", JgsValue.Function(new BuiltinFunction("curl",
+        env.DeclareFunction("curl", JgsValue.Function(new BuiltinFunction("curl",
             (args, line, col) => Curl(args, 1, line, col)[0])
         {
             MultiOutput = (args, wanted, line, col) => Curl(args, wanted, line, col),

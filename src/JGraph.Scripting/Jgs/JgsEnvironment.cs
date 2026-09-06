@@ -7,6 +7,8 @@ namespace JGraph.Scripting.Jgs;
 internal sealed class JgsEnvironment
 {
     private readonly Dictionary<string, JgsValue> _values = new(StringComparer.Ordinal);
+    private readonly HashSet<string> _functionBindings = new(StringComparer.Ordinal);
+    private readonly Dictionary<string, JgsValue> _functionDefinitions = new(StringComparer.Ordinal);
     private readonly JgsEnvironment? _parent;
 
     // Names a 'global' statement in this scope bound to the global workspace. Null until one does,
@@ -44,7 +46,49 @@ internal sealed class JgsEnvironment
     public bool IsCallBoundary { get; init; }
 
     /// <summary>Declares (or redeclares) <paramref name="name"/> in this scope with <paramref name="value"/>.</summary>
-    public void Declare(string name, JgsValue value) => _values[name] = value;
+    public void Declare(string name, JgsValue value)
+    {
+        _values[name] = value;
+        _functionBindings.Remove(name);
+    }
+
+    /// <summary>Registers a function definition, as distinct from a variable holding its handle.</summary>
+    public void DeclareFunction(string name, JgsValue value)
+    {
+        _values[name] = value;
+        _functionBindings.Add(name);
+        _functionDefinitions[name] = value;
+    }
+
+    /// <summary>Resolves @name without confusing a shadowing variable with the function.</summary>
+    public bool TryGetFunction(string name, out JgsValue value)
+    {
+        for (JgsEnvironment? scope = this; scope is not null; scope = scope._parent)
+        {
+            if (scope._functionDefinitions.TryGetValue(name, out JgsValue? found))
+            {
+                value = found;
+                return true;
+            }
+        }
+
+        value = JgsValue.Null;
+        return false;
+    }
+
+    /// <summary>Whether the nearest binding is a function definition rather than a variable.</summary>
+    public bool IsFunctionBinding(string name)
+    {
+        for (JgsEnvironment? scope = this; scope is not null; scope = scope._parent)
+        {
+            if (scope._values.ContainsKey(name))
+            {
+                return scope._functionBindings.Contains(name);
+            }
+        }
+
+        return false;
+    }
 
     /// <summary>
     /// Records that a <c>global</c> statement in this scope binds <paramref name="name"/> to the
@@ -98,10 +142,13 @@ internal sealed class JgsEnvironment
             if (!pristine.TryGetValue(name, out JgsValue? original))
             {
                 _values.Remove(name);
+                _functionDefinitions.Remove(name);
+                _functionBindings.Remove(name);
             }
             else if (!ReferenceEquals(original, _values[name]))
             {
                 _values[name] = original;
+                if (original.Type == JgsType.Function) _functionBindings.Add(name);
             }
         }
 
@@ -109,6 +156,7 @@ internal sealed class JgsEnvironment
         foreach ((string name, JgsValue value) in pristine)
         {
             _values.TryAdd(name, value);
+            if (value.Type == JgsType.Function) _functionBindings.Add(name);
         }
     }
 
@@ -121,10 +169,13 @@ internal sealed class JgsEnvironment
         if (pristine.TryGetValue(name, out JgsValue? original))
         {
             _values[name] = original;
+            if (original.Type == JgsType.Function) _functionBindings.Add(name);
         }
         else
         {
             _values.Remove(name);
+            if (_functionBindings.Contains(name)) _functionDefinitions.Remove(name);
+            _functionBindings.Remove(name);
         }
     }
 
@@ -170,6 +221,7 @@ internal sealed class JgsEnvironment
             if (scope._values.ContainsKey(name))
             {
                 scope._values[name] = value;
+                scope._functionBindings.Remove(name);
                 return true;
             }
 

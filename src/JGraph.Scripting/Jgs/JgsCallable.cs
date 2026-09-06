@@ -388,7 +388,14 @@ internal sealed class AnonymousFunction : IJgsCallable, IJgsMultiCallable
         {
             if (defining.TryGet(name, out JgsValue value))
             {
-                snapshot.Declare(name, value);
+                if (defining.IsFunctionBinding(name))
+                {
+                    snapshot.DeclareFunction(name, value);
+                }
+                else
+                {
+                    snapshot.Declare(name, value);
+                }
             }
         }
 

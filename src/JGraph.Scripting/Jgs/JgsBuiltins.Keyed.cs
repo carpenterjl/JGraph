@@ -49,7 +49,7 @@ internal static partial class JgsBuiltins
     internal static void RegisterKeyedCollectionBuiltins(JgsEnvironment env)
     {
         void Define(string name, Func<IReadOnlyList<JgsValue>, int, int, JgsValue> body) =>
-            env.Declare(name, JgsValue.Function(new BuiltinFunction(name, body)));
+            env.DeclareFunction(name, JgsValue.Function(new BuiltinFunction(name, body)));
 
         // containers.Map is a dotted name, so it is a struct with a Map field holding the builtin —
         // the same shape M51 used for graphics.primitive.Line.empty. A bare `containers.Map` with no
@@ -63,7 +63,7 @@ internal static partial class JgsBuiltins
         env.Declare("containers", JgsValue.Struct(
             new Dictionary<string, JgsValue>(StringComparer.Ordinal) { ["Map"] = mapConstructor }));
 
-        env.Declare("dictionary", JgsValue.Function(new BuiltinFunction(DictionaryClassName,
+        env.DeclareFunction("dictionary", JgsValue.Function(new BuiltinFunction(DictionaryClassName,
             (args, line, col) => NewKeyed(DictionaryClassName, args, line, col))
         {
             AutoCallsBare = true,

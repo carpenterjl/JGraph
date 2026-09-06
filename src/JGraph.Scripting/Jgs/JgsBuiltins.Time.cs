@@ -72,12 +72,12 @@ internal static partial class JgsBuiltins
     internal static void RegisterTimeBuiltins(JgsEnvironment env)
     {
         void Define(string name, Func<IReadOnlyList<JgsValue>, int, int, JgsValue> body) =>
-            env.Declare(name, JgsValue.Function(new BuiltinFunction(name, body)));
+            env.DeclareFunction(name, JgsValue.Function(new BuiltinFunction(name, body)));
 
         // A bare NaT or datetime is the value, not the function — the same reading tic, eps and now
         // take, and the reason `if isnat(t)` after `t = NaT` works at all.
         void DefineBare(string name, Func<IReadOnlyList<JgsValue>, int, int, JgsValue> body) =>
-            env.Declare(name, JgsValue.Function(new BuiltinFunction(name, body) { AutoCallsBare = true }));
+            env.DeclareFunction(name, JgsValue.Function(new BuiltinFunction(name, body) { AutoCallsBare = true }));
 
         DefineBare("datetime", (args, line, col) => Datetime(args, line, col));
         Define("duration", (args, line, col) => Duration(args, line, col));
@@ -212,7 +212,7 @@ internal static partial class JgsBuiltins
         // table with three columns; a cell is the honest shape here, because the UTC offset a zone has
         // is a question about a moment rather than about the zone, and a table column would have to
         // pick one moment and not say which.
-        env.Declare("timezones", JgsValue.Function(new BuiltinFunction("timezones", (args, line, col) =>
+        env.DeclareFunction("timezones", JgsValue.Function(new BuiltinFunction("timezones", (args, line, col) =>
         {
             ArityRange("timezones", args, 0, 1, line, col);
             string? area = args.Count == 1 ? TextOfArgument("timezones", args[0], line, col) : null;
@@ -243,7 +243,7 @@ internal static partial class JgsBuiltins
     /// </summary>
     private static void DefineUnit(JgsEnvironment env, string name, double msPerUnit, string format)
     {
-        env.Declare(name, JgsValue.Function(new BuiltinFunction(name, (args, line, col) =>
+        env.DeclareFunction(name, JgsValue.Function(new BuiltinFunction(name, (args, line, col) =>
         {
             Arity(name, args, 1, line, col);
             JgsValue input = args[0];

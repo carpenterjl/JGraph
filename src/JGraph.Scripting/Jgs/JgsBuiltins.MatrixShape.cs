@@ -15,7 +15,7 @@ internal static partial class JgsBuiltins
     private static void RegisterShapeBuiltins(JgsEnvironment env, Random random, JgsDialect dialect)
     {
         void Define(string name, Func<IReadOnlyList<JgsValue>, int, int, JgsValue> body) =>
-            env.Declare(name, JgsValue.Function(new BuiltinFunction(name, body)));
+            env.DeclareFunction(name, JgsValue.Function(new BuiltinFunction(name, body)));
 
         // --- Matrix generation ------------------------------------------------------------------
         Define("eye", (args, line, col) =>
@@ -323,14 +323,14 @@ internal static partial class JgsBuiltins
     private static void RegisterMatlabConstructorShapes(JgsEnvironment env, Random random)
     {
         void Redefine(string name, Func<IReadOnlyList<JgsValue>, int, int, JgsValue> body) =>
-            env.Declare(name, JgsValue.Function(new BuiltinFunction(name, body)));
+            env.DeclareFunction(name, JgsValue.Function(new BuiltinFunction(name, body)));
 
         // rand and randn are questions as well as constructors: MATLAB's `x = rand` is one number,
         // and `@(t) t + randn` is how a proposal distribution is written. Without the bare call the
         // name evaluates to the function itself and the addition fails, which is how stess_25 found
         // this. zeros and ones stay as they are — nobody writes a bare `zeros`.
         void RedefineAutoCalling(string name, Func<IReadOnlyList<JgsValue>, int, int, JgsValue> body) =>
-            env.Declare(name, JgsValue.Function(new BuiltinFunction(name, body) { AutoCallsBare = true }));
+            env.DeclareFunction(name, JgsValue.Function(new BuiltinFunction(name, body) { AutoCallsBare = true }));
 
         Redefine("zeros", (args, line, col) => NdConstructorValue("zeros", args, line, col, static () => 0.0));
         Redefine("ones", (args, line, col) => NdConstructorValue("ones", args, line, col, static () => 1.0));
@@ -1345,7 +1345,7 @@ internal static partial class JgsBuiltins
             return outputs;
         }
 
-        env.Declare(name, JgsValue.Function(new BuiltinFunction(name, Single) { MultiOutput = Multi }));
+        env.DeclareFunction(name, JgsValue.Function(new BuiltinFunction(name, Single) { MultiOutput = Multi }));
     }
 
     /// <summary>
@@ -1681,7 +1681,7 @@ internal static partial class JgsBuiltins
                 : [Single(args, line, col)];
         }
 
-        env.Declare(name, JgsValue.Function(new BuiltinFunction(name, Single) { MultiOutput = Multi }));
+        env.DeclareFunction(name, JgsValue.Function(new BuiltinFunction(name, Single) { MultiOutput = Multi }));
     }
 
     /// <summary>

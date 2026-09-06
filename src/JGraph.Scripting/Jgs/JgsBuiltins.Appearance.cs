@@ -20,10 +20,10 @@ internal static partial class JgsBuiltins
     private static void RegisterLegacyAppearanceBuiltins(JgsEnvironment env, JgsDialect dialect)
     {
         void Define(string name, Func<IReadOnlyList<JgsValue>, int, int, JgsValue> body) =>
-            env.Declare(name, JgsValue.Function(new BuiltinFunction(name, body)));
+            env.DeclareFunction(name, JgsValue.Function(new BuiltinFunction(name, body)));
 
         void DefineBare(string name, Func<IReadOnlyList<JgsValue>, int, int, JgsValue> body) =>
-            env.Declare(name, JgsValue.Function(new BuiltinFunction(name, body) { AutoCallsBare = true }));
+            env.DeclareFunction(name, JgsValue.Function(new BuiltinFunction(name, body) { AutoCallsBare = true }));
 
         DefineBare("colorcube", (args, line, col) =>
         {

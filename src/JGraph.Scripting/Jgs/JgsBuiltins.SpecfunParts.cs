@@ -36,10 +36,10 @@ internal static partial class JgsBuiltins
     internal static void RegisterSpecfunPartBuiltins(JgsEnvironment env)
     {
         void Define(string name, Func<IReadOnlyList<JgsValue>, int, int, JgsValue> body) =>
-            env.Declare(name, JgsValue.Function(new BuiltinFunction(name, body)));
+            env.DeclareFunction(name, JgsValue.Function(new BuiltinFunction(name, body)));
 
         void DefineBoth(string name, Func<IReadOnlyList<JgsValue>, int, int, int, JgsValue[]> both) =>
-            env.Declare(name, JgsValue.Function(new BuiltinFunction(name, (args, line, col) => both(args, 1, line, col)[0])
+            env.DeclareFunction(name, JgsValue.Function(new BuiltinFunction(name, (args, line, col) => both(args, 1, line, col)[0])
             {
                 MultiOutput = both,
             }));

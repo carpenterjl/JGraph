@@ -27,7 +27,7 @@ internal static partial class JgsBuiltins
     {
         // Asked for two outputs it hands back the buttons as well, which is the documented form a
         // script uses to reach them without walking Children.
-        env.Declare("axtoolbar", JgsValue.Function(new BuiltinFunction("axtoolbar",
+        env.DeclareFunction("axtoolbar", JgsValue.Function(new BuiltinFunction("axtoolbar",
             (args, line, col) => AxToolbar(args, line, col))
         {
             AutoCallsBare = true,
@@ -44,7 +44,7 @@ internal static partial class JgsBuiltins
             },
         }));
 
-        env.Declare("axtoolbarbtn", JgsValue.Function(new BuiltinFunction("axtoolbarbtn",
+        env.DeclareFunction("axtoolbarbtn", JgsValue.Function(new BuiltinFunction("axtoolbarbtn",
             (args, line, col) => AxToolbarButton(args, line, col))));
     }
 

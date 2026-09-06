@@ -12,8 +12,11 @@ namespace JGraph.Objects;
 /// is built once and cached; it is redrawn scaled by the renderer, so pan/zoom stays cheap. Non-finite
 /// samples are drawn transparent.
 /// </summary>
-public sealed class ImagePlot : PlotObject, IDrawable
+public sealed class ImagePlot : PlotObject, IDrawable, IColorMapped
 {
+    /// <inheritdoc />
+    public (double Min, double Max) ColorRange => ResolveColorRange();
+
     private double[,] _values;
     private Colormap _colormap = Colormap.Parula;
     private DataRange _xExtent;
@@ -29,6 +32,7 @@ public sealed class ImagePlot : PlotObject, IDrawable
     private uint[]? _pixels;
     private double _builtOpacity = 1;
     private bool _builtLogColor;
+    private bool _builtYInverted;
     private double[,]? _alphaData;
     private double[,]? _builtAlphaData;
     private DataRange? _builtAlphaLimits;
@@ -254,6 +258,7 @@ public sealed class ImagePlot : PlotObject, IDrawable
         }
 
         if (_pixels is null || _builtOpacity != Opacity || _builtLogColor != this.LogColorScale()
+            || _builtYInverted != (Axes?.ActiveYAxis.Inverted ?? false)
             || !ReferenceEquals(_builtAlphaData, _alphaData) || AlphaStampStale())
         {
             BuildTile();
@@ -330,10 +335,11 @@ public sealed class ImagePlot : PlotObject, IDrawable
         // or the cached pixels silently keep the old spread.
         bool logColor = this.LogColorScale();
         _builtLogColor = logColor;
+        _builtYInverted = Axes?.ActiveYAxis.Inverted ?? false;
 
         for (int r = 0; r < rows; r++)
         {
-            int srcRow = _rowZeroAtTop ? r : rows - 1 - r;
+            int srcRow = _rowZeroAtTop != _builtYInverted ? r : rows - 1 - r;
             int rowOffset = r * cols;
             for (int c = 0; c < cols; c++)
             {

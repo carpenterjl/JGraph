@@ -274,13 +274,10 @@ By reason:
   a differently-coloured one.
 - **`lab2double` and `xyz2double` need a class tag.** They undo an integer encoding, and the class is
   the only record of which encoding was used, so they take an image and refuse a bare colormap.
-- **16-bit PNG degrades to 8 bits.** Measured on SkiaSharp 2.88.8, in both directions: the PNG
-  encoder accepts the 16-bit colour type and copies the pixels, then writes a depth-8 IHDR anyway,
-  and the decoder will not return 16-bit samples from a file that genuinely has them. `imwrite` with
-  `'BitDepth', 16` therefore writes an 8-bit file, and `imread` of a real 16-bit PNG reports `uint8`.
-  The codec checks the *encoded bytes* rather than the return codes, so the class a script sees
-  always matches the precision the file actually holds — an image tagged `uint16` over 8-bit data
-  would be the worse outcome. The path stays and begins working if a future Skia encodes 16 bits.
+- **16-bit PNG now preserves native samples (AstraScripts regression fixes).** A dedicated PNG
+  reader/writer bypasses Skia's eight-bit conversion for grayscale, RGB, and alpha samples.
+  The reader supports PNG filters and Adam7 interlacing. Roundtrip tests cover all 65,536 sample
+  values in grayscale, RGB, and alpha planes.
 - **TIFF is not supported.** Skia carries no TIFF codec; `imread` names the formats that do work.
 - **`[X, map] = imread(...)` always returns an empty map.** Skia decodes a palettized file straight
   to truecolour and never exposes the palette. That is MATLAB's own answer for a non-indexed file;
@@ -634,6 +631,5 @@ Each changed an existing result, so each is written down.
   diffed against R2024a: `uint8`, `single`, `double` and `logical` writes of both a grayscale and a
   colour array, and `imcomplement`, `imfilter`, `imbinarize`, `imresize`, `intlut` and
   `graythresh`/`stretchlim` — which answer `[0, 1]` whatever class they are handed — are identical
-  to the sample. Two are not, and neither is the class reading: a `uint16` array and a mask come
-  back at 8 bits per sample where MATLAB writes 16 and 1, which is the 16-bit PNG divergence above
-  and the same encoder's floor beneath it. Their values are the right samples at the depth written.
+  to the sample. The historical `uint16` PNG precision divergence is now fixed. Logical masks still
+  come back at eight bits per sample where MATLAB writes one; that encoder limitation remains.

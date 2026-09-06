@@ -35,7 +35,7 @@ internal static partial class JgsBuiltins
                 return;
             }
 
-            env.Declare(name, JgsValue.Function(new BuiltinFunction(
+            env.DeclareFunction(name, JgsValue.Function(new BuiltinFunction(
                 name,
                 (args, line, col) => outputs(args, 1, line, col)[0])
             {
@@ -95,7 +95,7 @@ internal static partial class JgsBuiltins
         if (env.TryGet("whitepoint", out JgsValue whitepoint) && whitepoint.Type == JgsType.Function)
         {
             IJgsCallable body = whitepoint.AsCallable;
-            env.Declare("whitepoint", JgsValue.Function(new BuiltinFunction(
+            env.DeclareFunction("whitepoint", JgsValue.Function(new BuiltinFunction(
                 "whitepoint", (args, line, col) => body.Call(args, line, col))
             {
                 AutoCallsBare = true,

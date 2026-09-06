@@ -42,7 +42,7 @@ internal static partial class JgsBuiltins
     internal static void RegisterCalendarDurationBuiltins(JgsEnvironment env)
     {
         void Define(string name, Func<IReadOnlyList<JgsValue>, int, int, JgsValue> body) =>
-            env.Declare(name, JgsValue.Function(new BuiltinFunction(name, body)));
+            env.DeclareFunction(name, JgsValue.Function(new BuiltinFunction(name, body)));
 
         // The single-unit constructors. caldays and calweeks moved here from the unit family: they had
         // been plain durations, on the argument that an unzoned datetime has no daylight saving to

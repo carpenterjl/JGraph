@@ -55,13 +55,13 @@ internal sealed class JgsClass
             new BuiltinFunction(Name, (args, line, col) => Construct(args, line, col)) { AutoCallsBare = true });
         foreach (ClassMethod method in declaration.Methods)
         {
-            scope.Declare(method.Function.Name, JgsValue.Function(Callable(method)));
+            scope.DeclareFunction(method.Function.Name, JgsValue.Function(Callable(method)));
         }
 
         // Last, so that the class's own name means the constructor and not the constructor's raw
         // body. Declaring it first let the loop above overwrite it, and `Money(3)` inside a method
         // then ran the body with no object to fill in — which quietly built a struct instead.
-        scope.Declare(Name, _constructor);
+        scope.DeclareFunction(Name, _constructor);
     }
 
     /// <summary>The parsed <c>classdef</c> this class was built from.</summary>

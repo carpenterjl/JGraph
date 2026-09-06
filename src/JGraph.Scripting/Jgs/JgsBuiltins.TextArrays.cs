@@ -91,7 +91,7 @@ internal static partial class JgsBuiltins
         }
 
         SubjectMap captured = map;
-        env.Declare(map.Name, JgsValue.Function(new BuiltinFunction(
+        env.DeclareFunction(map.Name, JgsValue.Function(new BuiltinFunction(
             map.Name,
             (args, line, col) => OverSubject(captured, inner, args, wanted: 1, line, col)[0])
         {

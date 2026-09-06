@@ -1,4 +1,4 @@
-using System.Runtime.InteropServices;
+
 using SkiaSharp;
 
 namespace JGraph.Imaging.Codecs;
@@ -75,8 +75,8 @@ public static class ImageCodec
         int width = codec.Info.Width;
         int height = codec.Info.Height;
 
-        return Is16BitPng(bytes) && TryRead16Bit(codec, options, width, height, out var deep)
-            ? deep
+        return Is16BitPng(bytes)
+            ? Png16Reader.Read(bytes, width, height)
             : Read8Bit(codec, options, width, height, path);
     }
 
@@ -90,85 +90,6 @@ public static class ImageCodec
         bytes[0] == 0x89 && bytes[1] == 0x50 && bytes[2] == 0x4E && bytes[3] == 0x47 &&
         bytes[12] == (byte)'I' && bytes[13] == (byte)'H' && bytes[14] == (byte)'D' && bytes[15] == (byte)'R' &&
         bytes[24] == 16;
-
-    /// <summary>
-    /// Decodes into 16 bits per channel. Returns false when Skia declines the colour type, in which
-    /// case the caller falls back to the 8-bit path and the file simply reads as <c>uint8</c>.
-    /// </summary>
-    private static bool TryRead16Bit(
-        SKCodec codec, SKCodecOptions options, int width, int height,
-        out (ImageBuffer Image, ImageBuffer? Alpha) result)
-    {
-        result = default;
-        var info = new SKImageInfo(width, height, SKColorType.Rgba16161616, SKAlphaType.Unpremul);
-        using var bitmap = new SKBitmap(info);
-        SKCodecResult decoded = codec.GetPixels(info, bitmap.GetPixels(), options);
-        if (decoded is not (SKCodecResult.Success or SKCodecResult.IncompleteInput))
-        {
-            return false;
-        }
-
-        ReadOnlySpan<ushort> samples = MemoryMarshal.Cast<byte, ushort>(bitmap.GetPixelSpan());
-        int pixelCount = width * height;
-        if (samples.Length < pixelCount * 4)
-        {
-            return false;
-        }
-
-        bool grayscale = true;
-        for (int i = 0; i < pixelCount && grayscale; i++)
-        {
-            int b = i * 4;
-            grayscale = samples[b] == samples[b + 1] && samples[b + 1] == samples[b + 2];
-        }
-
-        var image = new ImageBuffer(height, width, grayscale ? 1 : 3) { Class = ImageClass.UInt16 };
-        Span<double> pixels = image.Pixels;
-        for (int i = 0; i < pixelCount; i++)
-        {
-            int src = i * 4;
-            if (grayscale)
-            {
-                pixels[i] = samples[src] / 65535.0;
-            }
-            else
-            {
-                int dst = i * 3;
-                pixels[dst] = samples[src] / 65535.0;
-                pixels[dst + 1] = samples[src + 1] / 65535.0;
-                pixels[dst + 2] = samples[src + 2] / 65535.0;
-            }
-        }
-
-        GC.KeepAlive(image);
-        result = (image, ExtractAlpha(samples, pixelCount, width, height, ImageClass.UInt16));
-        return true;
-    }
-
-    private static ImageBuffer? ExtractAlpha(
-        ReadOnlySpan<ushort> samples, int pixelCount, int width, int height, ImageClass imageClass)
-    {
-        bool opaque = true;
-        for (int i = 0; i < pixelCount && opaque; i++)
-        {
-            opaque = samples[(i * 4) + 3] == ushort.MaxValue;
-        }
-
-        if (opaque)
-        {
-            return null;
-        }
-
-        var alpha = new ImageBuffer(height, width, 1) { Class = imageClass };
-        Span<double> px = alpha.Pixels;
-        for (int i = 0; i < pixelCount; i++)
-        {
-            px[i] = samples[(i * 4) + 3] / 65535.0;
-        }
-
-        GC.KeepAlive(alpha);
-        return alpha;
-    }
 
     private static (ImageBuffer Image, ImageBuffer? Alpha) Read8Bit(
         SKCodec codec, SKCodecOptions options, int width, int height, string path)
@@ -326,77 +247,43 @@ public static class ImageCodec
         data.SaveTo(output);
     }
 
-    /// <summary>
-    /// Encodes a PNG at 16 bits per channel. Returns false when the encoder will not produce one, so
-    /// the caller falls back to 8 bits rather than failing the write.
-    /// </summary>
-    /// <remarks>
-    /// Measured on SkiaSharp 2.88.8: this always returns false. The 16-bit colour type is accepted and
-    /// the pixels are copied, but the PNG encoder writes a depth-8 IHDR anyway — so the check below is
-    /// on the encoded bytes, not on whether the calls succeeded. Trusting the return codes produced a
-    /// file that claimed 16 bits and held 8, which is worse than not offering the option. The code
-    /// stays because the check is what makes it safe: if a future Skia encodes 16 bits, it starts
-    /// working with no further change.
-    /// </remarks>
+    /// <summary>Writes native 16-bit PNG samples without Skia's silent 8-bit conversion.</summary>
     private static bool TryWrite16BitPng(string path, ImageBuffer image, ImageBuffer? alpha)
     {
-        var info = new SKImageInfo(image.Width, image.Height, SKColorType.Rgba16161616, SKAlphaType.Unpremul);
-        using var bitmap = new SKBitmap(info);
-        IntPtr destination = bitmap.GetPixels();
-        if (destination == IntPtr.Zero)
+        using FileStream output = File.Create(path);
+        output.Write(PngChunks.Signature);
+        byte[] header = new byte[13];
+        System.Buffers.Binary.BinaryPrimitives.WriteInt32BigEndian(header.AsSpan(0, 4), image.Width);
+        System.Buffers.Binary.BinaryPrimitives.WriteInt32BigEndian(header.AsSpan(4, 4), image.Height);
+        header[8] = 16;
+        header[9] = (byte)(image.Channels == 1 ? (alpha is null ? 0 : 4) : (alpha is null ? 2 : 6));
+        PngChunks.Write(output, "IHDR", header);
+        using var compressed = new MemoryStream();
+        using (var zlib = new System.IO.Compression.ZLibStream(compressed,
+            System.IO.Compression.CompressionLevel.Optimal, leaveOpen: true))
         {
-            return false;
-        }
-
-        int pixelCount = image.Width * image.Height;
-        var scratch = new ushort[pixelCount * 4];
-        ReadOnlySpan<double> pixels = image.Pixels;
-        ReadOnlySpan<double> alphaPixels = alpha is null ? default : alpha.Pixels;
-        for (int i = 0; i < pixelCount; i++)
-        {
-            int dst = i * 4;
-            if (image.Channels == 1)
+            int channels = image.Channels + (alpha is null ? 0 : 1);
+            byte[] row = new byte[checked(1 + image.Width * channels * 2)];
+            for (int r = 0; r < image.Height; r++)
             {
-                ushort v = ToUShort(pixels[i]);
-                scratch[dst] = scratch[dst + 1] = scratch[dst + 2] = v;
+                int at = 1; // PNG filter None.
+                for (int c = 0; c < image.Width; c++)
+                {
+                    for (int ch = 0; ch < channels; ch++)
+                    {
+                        double sample = ch < image.Channels ? image[r, c, ch] : alpha![r, c, 0];
+                        System.Buffers.Binary.BinaryPrimitives.WriteUInt16BigEndian(
+                            row.AsSpan(at, 2), ToUShort(sample));
+                        at += 2;
+                    }
+                }
+                zlib.Write(row);
             }
-            else
-            {
-                int b = i * 3;
-                scratch[dst] = ToUShort(pixels[b]);
-                scratch[dst + 1] = ToUShort(pixels[b + 1]);
-                scratch[dst + 2] = ToUShort(pixels[b + 2]);
-            }
-
-            scratch[dst + 3] = alpha is null ? ushort.MaxValue : ToUShort(alphaPixels[i]);
         }
-
-        GC.KeepAlive(image);
-        GC.KeepAlive(alpha);
-
-        var raw = new byte[scratch.Length * sizeof(ushort)];
-        Buffer.BlockCopy(scratch, 0, raw, 0, raw.Length);
-        Marshal.Copy(raw, 0, destination, raw.Length);
-
-        using SKImage skImage = SKImage.FromBitmap(bitmap);
-        using SKData? data = skImage.Encode(SKEncodedImageFormat.Png, 100);
-        if (data is null)
-        {
-            return false;
-        }
-
-        // Only accept the result if the encoder really wrote a 16-bit IHDR. Nothing else reports the
-        // downconversion, so without this the file would be tagged uint16 and hold 8 bits.
-        byte[] encoded = data.ToArray();
-        if (!Is16BitPng(encoded))
-        {
-            return false;
-        }
-
-        File.WriteAllBytes(path, encoded);
+        PngChunks.Write(output, "IDAT", compressed.ToArray());
+        PngChunks.Write(output, "IEND", []);
         return true;
     }
-
     private static byte ToByte(double value) => (byte)Math.Clamp((int)Math.Round(value * 255.0), 0, 255);
 
     private static ushort ToUShort(double value) => (ushort)Math.Clamp((int)Math.Round(value * 65535.0), 0, 65535);

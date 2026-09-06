@@ -50,6 +50,37 @@ public sealed class MatlabImageClassTests : IDisposable
     // --- imwrite reads the class the array carries ------------------------------------------------
 
     [Fact]
+    public async Task ImageRoundtripSupportsNumericEqualityAndText()
+    {
+        await RunAsserting("""
+            A = uint8([0 64;128 255]); imwrite(A, 'roundtrip.png'); B = imread('roundtrip.png');
+            assert(isequal(A,B) && isequal(B,A) && isequaln(A,B));
+            assert(~isequal(B,uint8([0 65;128 255])));
+            assert(strcmp(mat2str(B),'[0 64;128 255]'));
+            assert(strcmp(mat2str(B,'class'),"uint8([0 64;128 255])"));
+            assert(isequal({A},{B}));
+            A = uint16([0 1024;32768 65535]); imwrite(A,'sixteen.png'); B = imread('sixteen.png');
+            assert(isequal(A,B)); assert(strcmp(mat2str(A),mat2str(B)));
+            A = uint8(reshape(1:18,2,3,3)); imwrite(A,'rgb.png'); B = imread('rgb.png');
+            assert(isequal(A,B));
+            """);
+    }
+
+    [Fact]
+    public async Task ImagescReversesHighLevelAxesAndRespectsHold()
+    {
+        await RunAsserting("""
+            figure; imagesc([1 2;3 4]); assert(strcmp(get(gca,'YDir'),'reverse'));
+            set(gca,'YDir','normal'); hold on; imagesc([4 3;2 1]);
+            assert(strcmp(get(gca,'YDir'),'normal')); hold off;
+            imagesc('CData',[1 2;3 4]); assert(strcmp(get(gca,'YDir'),'normal'));
+            cb=colorbar(gca,'southoutside'); assert(strcmp(get(cb,'Location'),'southoutside'));
+            colorbar(gca,'Location','westoutside','Direction','reverse');
+            assert(strcmp(get(cb,'Location'),'westoutside'));
+            """);
+    }
+
+    [Fact]
     public async Task ImwriteOfAUint8Grayscale_WritesTheSamplesAsGiven()
     {
         await RunAsserting("""
@@ -107,16 +138,12 @@ public sealed class MatlabImageClassTests : IDisposable
     [Fact]
     public async Task ImwriteOfAUint16Array_SpansSixteenBits()
     {
-        // The samples are read as 0-65535, which is what this is about. The file is still eight bits
-        // deep - Skia will not encode a 16-bit PNG, a divergence matlab-ipt-coverage.md already
-        // records - so the values below are that range correctly scaled down, where R2024a reads the
-        // same four samples back at their full width.
+        // PNG preserves the native uint16 values, including samples between eight-bit levels.
         await RunAsserting("""
             imwrite(uint16([0 16384; 32768 65535]), 'u16.png');
             R = imread('u16.png');
-            assert(R(1, 1) == 0 && R(2, 2) == 255, 'the ends of the uint16 range moved');
-            assert(abs(double(R(1, 2)) - 64) <= 1, 'a quarter of 65535 should land near 64 in eight bits');
-            assert(abs(double(R(2, 1)) - 128) <= 1, 'a half of 65535 should land near 128 in eight bits');
+            assert(isequal(R,uint16([0 16384;32768 65535])));
+            assert(strcmp(class(R),'uint16'));
             """);
     }
 

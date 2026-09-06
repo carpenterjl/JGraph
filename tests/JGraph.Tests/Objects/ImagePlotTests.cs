@@ -9,6 +9,24 @@ namespace JGraph.Tests.Objects;
 
 public class ImagePlotTests
 {
+    [Fact]
+    public void HeatmapProvidesColorbarScaleAndDrawsGradient()
+    {
+        var axes = new JGraph.Core.Model.AxesModel();
+        var image = axes.AddImage(Field());
+        axes.Colorbar.Visible = true;
+        Assert.Equal((0.0, 5.0), ((IColorMapped)image).ColorRange);
+        var context = new RecordingRenderContext(new Size2D(400, 300));
+        Assert.True(ColorbarRenderer.MeasureReservedWidth(axes, context) > 0);
+        ColorbarRenderer.Draw(context, axes, new Rect2D(30, 30, 200, 200),
+            Theme.Light);
+        Assert.Equal(1, context.ImageCount);
+        Assert.True(context.TextCount > 0);
+        image.AutoScaleColor = false;
+        image.ColorMin = -2; image.ColorMax = 8;
+        Assert.Equal((-2.0, 8.0), ((IColorMapped)image).ColorRange);
+    }
+
     private static double[,] Field() => new double[,]
     {
         { 0, 1, 2 },

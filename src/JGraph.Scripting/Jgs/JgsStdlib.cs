@@ -154,6 +154,8 @@ internal static class JgsStdlib
     /// </summary>
     public static bool DeepEquals(JgsValue left, JgsValue right, bool nanEqual = false)
     {
+        left = JgsBuiltins.ImageNumbers(left);
+        right = JgsBuiltins.ImageNumbers(right);
         static bool IsOneElementArray(JgsValue value) =>
             value.Type == JgsType.Array && value.ArrayLength == 1 && !value.IsNd;
 

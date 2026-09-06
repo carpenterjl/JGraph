@@ -32,11 +32,11 @@ internal static partial class JgsBuiltins
     private static void RegisterMotionBuiltins(JgsEnvironment env)
     {
         void DefineSilent(string name, Func<IReadOnlyList<JgsValue>, int, int, JgsValue> body) =>
-            env.Declare(name, JgsValue.Function(
+            env.DeclareFunction(name, JgsValue.Function(
                 new BuiltinFunction(name, body) { BindsAnsAsStatement = false }));
 
         void Define(string name, Func<IReadOnlyList<JgsValue>, int, int, JgsValue> body) =>
-            env.Declare(name, JgsValue.Function(new BuiltinFunction(name, body)));
+            env.DeclareFunction(name, JgsValue.Function(new BuiltinFunction(name, body)));
 
         // --- Motion -------------------------------------------------------------------------------
         DefineSilent("comet", (args, line, col) => Comet("comet", args, line, col, spatial: false));

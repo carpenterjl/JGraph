@@ -1,4 +1,4 @@
-﻿using JGraph.Api;
+using JGraph.Api;
 using JGraph.Core.Drawing;
 using JGraph.Core.Model;
 using JGraph.Core.Primitives;
@@ -23,7 +23,7 @@ internal static partial class JgsBuiltins
     private static void RegisterGraphics2DBuiltins(JgsEnvironment env, JgsDialect dialect)
     {
         void DefineSilent(string name, Func<IReadOnlyList<JgsValue>, int, int, JgsValue> body) =>
-            env.Declare(name, JgsValue.Function(
+            env.DeclareFunction(name, JgsValue.Function(
                 new BuiltinFunction(name, body) { BindsAnsAsStatement = false }));
 
         DefineSilent("area", (args, line, col) => Area(args, line, col));
@@ -36,10 +36,10 @@ internal static partial class JgsBuiltins
 
         // bubblesize and bubblelim answer a question when handed nothing, so a bare name has to be
         // that answer rather than the function itself — the rule the ruler verbs already follow.
-        env.Declare("bubblesize", JgsValue.Function(new BuiltinFunction("bubblesize",
+        env.DeclareFunction("bubblesize", JgsValue.Function(new BuiltinFunction("bubblesize",
             (args, line, col) => BubbleRange("bubblesize", args, line, col))
         { AutoCallsBare = true }));
-        env.Declare("bubblelim", JgsValue.Function(new BuiltinFunction("bubblelim",
+        env.DeclareFunction("bubblelim", JgsValue.Function(new BuiltinFunction("bubblelim",
             (args, line, col) => BubbleRange("bubblelim", args, line, col))
         { AutoCallsBare = true }));
         DefineSilent("boxchart", (args, line, col) => BoxChartSeries(args, line, col));
@@ -48,7 +48,7 @@ internal static partial class JgsBuiltins
         // stairs is the one verb here that can answer with data instead of drawing: asked for two
         // outputs it hands back the stairstep path, which is what a script wants when it means to
         // draw the steps itself or measure them.
-        env.Declare("stairs", JgsValue.Function(new BuiltinFunction("stairs", (args, line, col) =>
+        env.DeclareFunction("stairs", JgsValue.Function(new BuiltinFunction("stairs", (args, line, col) =>
             Stairs(args, dialect, line, col))
         {
             BindsAnsAsStatement = false,

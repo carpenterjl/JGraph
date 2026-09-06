@@ -21,7 +21,7 @@ internal static partial class JgsBuiltins
     private static void RegisterIsoSurfaceBuiltins(JgsEnvironment env)
     {
         void Define(string name, Func<IReadOnlyList<JgsValue>, int, int, JgsValue> body) =>
-            env.Declare(name, JgsValue.Function(new BuiltinFunction(name, body)));
+            env.DeclareFunction(name, JgsValue.Function(new BuiltinFunction(name, body)));
 
         // These four draw when nobody wanted the shape and answer with it when somebody did, which
         // is a distinction only KnowsWhenDiscarded can make: `isosurface(V, 1)` on its own is a
@@ -29,7 +29,7 @@ internal static partial class JgsBuiltins
         // two look identical.
         void DefineDrawOrShape(
             string name, Func<IReadOnlyList<JgsValue>, int, int, int, JgsValue[]> body) =>
-            env.Declare(name, JgsValue.Function(
+            env.DeclareFunction(name, JgsValue.Function(
                 new BuiltinFunction(name, (args, line, col) => body(args, 1, line, col)[0])
                 {
                     BindsAnsAsStatement = false,
@@ -45,7 +45,7 @@ internal static partial class JgsBuiltins
         Define("isonormals", (args, line, col) => IsoNormals(args, line, col));
         Define("isocolors", (args, line, col) => IsoColors(args, line, col));
 
-        env.Declare("surf2patch", JgsValue.Function(new BuiltinFunction("surf2patch",
+        env.DeclareFunction("surf2patch", JgsValue.Function(new BuiltinFunction("surf2patch",
             (args, line, col) => Surf2Patch(args, 1, line, col)[0])
         {
             MultiOutput = (args, wanted, line, col) => Surf2Patch(args, wanted, line, col),

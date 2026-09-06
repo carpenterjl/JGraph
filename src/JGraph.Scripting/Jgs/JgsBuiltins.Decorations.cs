@@ -27,10 +27,10 @@ internal static partial class JgsBuiltins
     private static void RegisterDecorationBuiltins(JgsEnvironment env, JgsDialect dialect)
     {
         void Define(string name, Func<IReadOnlyList<JgsValue>, int, int, JgsValue> body) =>
-            env.Declare(name, JgsValue.Function(new BuiltinFunction(name, body)));
+            env.DeclareFunction(name, JgsValue.Function(new BuiltinFunction(name, body)));
 
         void DefineSilent(string name, Func<IReadOnlyList<JgsValue>, int, int, JgsValue> body) =>
-            env.Declare(name, JgsValue.Function(
+            env.DeclareFunction(name, JgsValue.Function(
                 new BuiltinFunction(name, body) { BindsAnsAsStatement = false }));
 
         // Every axes-facing verb takes a leading axes handle without moving gca (M51).
@@ -124,7 +124,7 @@ internal static partial class JgsBuiltins
 
             JgsValue Single(IReadOnlyList<JgsValue> args, int line, int col) => body(args, line, col);
 
-            env.Declare(name, JgsValue.Function(new BuiltinFunction(name, Single)
+            env.DeclareFunction(name, JgsValue.Function(new BuiltinFunction(name, Single)
             {
                 BindsAnsAsStatement = !silent,
                 MultiOutput = (args, wanted, line, col) =>

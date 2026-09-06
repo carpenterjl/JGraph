@@ -16,12 +16,12 @@ internal static partial class JgsBuiltins
     private static void RegisterPolarBuiltins(JgsEnvironment env, JgsDialect dialect)
     {
         void DefineSilent(string name, Func<IReadOnlyList<JgsValue>, int, int, JgsValue> body) =>
-            env.Declare(name, JgsValue.Function(
+            env.DeclareFunction(name, JgsValue.Function(
                 new BuiltinFunction(name, body) { BindsAnsAsStatement = false }));
 
         // polaraxes answers with a handle when a script asks for one, so its bare name has to be that
         // answer rather than the function itself — the rule gca already follows.
-        env.Declare("polaraxes", JgsValue.Function(new BuiltinFunction("polaraxes",
+        env.DeclareFunction("polaraxes", JgsValue.Function(new BuiltinFunction("polaraxes",
             (args, line, col) => PolarAxesVerb(args, line, col))
         {
             BindsAnsAsStatement = false,
@@ -43,7 +43,7 @@ internal static partial class JgsBuiltins
         // rose is the one angular verb that can answer with data instead of drawing: asked for two
         // outputs it hands back the petal outline, which is what its callers from the days before
         // polarhistogram used it for — the pair feeds straight back into a polar line plot.
-        env.Declare("rose", JgsValue.Function(new BuiltinFunction("rose",
+        env.DeclareFunction("rose", JgsValue.Function(new BuiltinFunction("rose",
             (args, line, col) => Rose(args, line, col))
         {
             BindsAnsAsStatement = false,

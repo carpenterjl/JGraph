@@ -46,17 +46,17 @@ internal static partial class JgsBuiltins
         var state = new SessionState();
 
         void Define(string name, Func<IReadOnlyList<JgsValue>, int, int, JgsValue> body) =>
-            env.Declare(name, JgsValue.Function(new BuiltinFunction(name, body)));
+            env.DeclareFunction(name, JgsValue.Function(new BuiltinFunction(name, body)));
 
         // Commands rather than questions: a bare 'diary on' should not leave ans behind or echo.
         void Command(string name, Func<IReadOnlyList<JgsValue>, int, int, JgsValue> body) =>
-            env.Declare(name, JgsValue.Function(new BuiltinFunction(name, body) { BindsAnsAsStatement = false }));
+            env.DeclareFunction(name, JgsValue.Function(new BuiltinFunction(name, body) { BindsAnsAsStatement = false }));
 
         // A question that takes no arguments has to answer when its bare name is mentioned, or
         // disp(computer) hands disp the function instead of the platform name. Callee position is
         // exempted by the interpreter, so computer('arch') still reaches the function.
         void Query(string name, Func<IReadOnlyList<JgsValue>, int, int, JgsValue> body) =>
-            env.Declare(name, JgsValue.Function(new BuiltinFunction(name, body) { AutoCallsBare = true }));
+            env.DeclareFunction(name, JgsValue.Function(new BuiltinFunction(name, body) { AutoCallsBare = true }));
 
         RegisterConsoleSession(Define, Command, Query, host, state);
         RegisterInstallationQueries(Query, state);

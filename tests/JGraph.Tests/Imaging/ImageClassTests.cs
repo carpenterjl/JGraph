@@ -111,11 +111,9 @@ public class ImageClassTests
     }
 
     [Fact]
-    public void SixteenBitPng_EitherRoundTripsAtFullPrecisionOrFallsBackToEightBits()
+    public void SixteenBitPng_RoundTripsAtFullPrecision()
     {
-        // Skia has no documented promise about the 16-bit colour type, so this measures rather than
-        // assumes: either the write and read both keep more than 8 bits, or the file degrades to uint8.
-        // Both are acceptable; a uint16 *tag* over 8-bit precision would not be, and that is what fails.
+        // A sample that cannot survive an eight-bit encoder must retain its native value.
         string path = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName() + ".png");
         try
         {
@@ -128,20 +126,46 @@ public class ImageClassTests
 
             using ImageBuffer read = ImageCodec.Read(path);
             double native = read.Class.ToNative(read[0, 0, 0]);
-            if (read.Class == ImageClass.UInt16)
-            {
-                Assert.Equal(1000.0, native, 0);
-            }
-            else
-            {
-                Assert.Equal(ImageClass.UInt8, read.Class);
-                Assert.Equal(Math.Round(value * 255.0), native);
-            }
+            Assert.Equal(ImageClass.UInt16, read.Class);
+            Assert.Equal(1000.0, native, 0);
         }
         finally
         {
             File.Delete(path);
         }
+    }
+
+    [Theory]
+    [InlineData(1)]
+    [InlineData(3)]
+    public void SixteenBitPng_PreservesEverySampleAndAlpha(int channels)
+    {
+        string path = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName() + ".png");
+        using var source = new ImageBuffer(256, 256, channels) { Class = ImageClass.UInt16 };
+        using var alpha = new ImageBuffer(256, 256, 1) { Class = ImageClass.UInt16 };
+        for (int r = 0; r < 256; r++)
+        {
+            for (int c = 0; c < 256; c++)
+            {
+                int sample = r * 256 + c;
+                alpha[r, c, 0] = sample / 65535.0;
+                for (int ch = 0; ch < channels; ch++)
+                    source[r, c, ch] = ((sample + ch * 1000) % 65536) / 65535.0;
+            }
+        }
+        try
+        {
+            ImageCodec.Write(path, source, new CodecWriteOptions(Alpha: alpha));
+            var decoded = ImageCodec.ReadWithAlpha(path);
+            using var read = decoded.Image;
+            using var opacity = decoded.Alpha;
+            Assert.Equal(ImageClass.UInt16, read.Class);
+            Assert.Equal(channels, read.Channels);
+            Assert.NotNull(opacity);
+            Assert.True(source.Pixels.SequenceEqual(read.Pixels));
+            Assert.True(alpha.Pixels.SequenceEqual(opacity.Pixels));
+        }
+        finally { File.Delete(path); }
     }
 
     [Fact]

@@ -289,7 +289,7 @@ internal sealed partial class Interpreter
             {
                 if (statement is FnStmt fn)
                 {
-                    env.Declare(fn.Name, JgsValue.Function(new UserFunction(fn, env, this)));
+                    env.DeclareFunction(fn.Name, JgsValue.Function(new UserFunction(fn, env, this)));
                 }
             }
 
@@ -323,7 +323,7 @@ internal sealed partial class Interpreter
         {
             if (statement is FnStmt fn)
             {
-                _globals.Declare(fn.Name, JgsValue.Function(new UserFunction(fn, _globals, this)));
+                _globals.DeclareFunction(fn.Name, JgsValue.Function(new UserFunction(fn, _globals, this)));
                 ScriptFunctionNames.Add(fn.Name);
             }
         }
@@ -354,7 +354,7 @@ internal sealed partial class Interpreter
         {
             if (statement is FnStmt fn)
             {
-                scope.Declare(fn.Name, JgsValue.Function(new UserFunction(fn, scope, this)));
+                scope.DeclareFunction(fn.Name, JgsValue.Function(new UserFunction(fn, scope, this)));
             }
         }
 
@@ -410,7 +410,7 @@ internal sealed partial class Interpreter
         {
             if (statement is FnStmt nested)
             {
-                local.Declare(nested.Name, JgsValue.Function(new UserFunction(nested, local, this)));
+                local.DeclareFunction(nested.Name, JgsValue.Function(new UserFunction(nested, local, this)));
             }
         }
 
@@ -657,7 +657,7 @@ internal sealed partial class Interpreter
                 return Completion.Normal;
 
             case FnStmt fn:
-                env.Declare(fn.Name, JgsValue.Function(new UserFunction(fn, env, this)));
+                env.DeclareFunction(fn.Name, JgsValue.Function(new UserFunction(fn, env, this)));
                 if (ReferenceEquals(env, _globals))
                 {
                     ScriptFunctionNames.Add(fn.Name);
@@ -729,7 +729,7 @@ internal sealed partial class Interpreter
             // class file itself is therefore how a class is defined, and a classdef written inside an
             // ordinary script works for the same reason — one statement, one meaning, no second path.
             case ClassdefStmt classdef:
-                env.Declare(
+                env.DeclareFunction(
                     classdef.Name,
                     DefineClass(classdef, new JgsEnvironment(_globals)).ConstructorValue);
                 return Completion.Normal;
@@ -755,7 +755,7 @@ internal sealed partial class Interpreter
 
         if (expression is VariableExpr name && env.TryGet(name.Name, out JgsValue existing))
         {
-            if (existing.Type == JgsType.Function)
+            if (existing.Type == JgsType.Function && (!Dialect.IsMatlab || env.IsFunctionBinding(name.Name)))
             {
                 // A name that both calls itself when mentioned bare and cares whether anyone wanted
                 // the answer is told that nobody did, exactly as a written-out call would be (M99).
@@ -763,9 +763,15 @@ internal sealed partial class Interpreter
                 // structure, and without this arm the bare word took the first road to the second
                 // road's answer and echoed `ans = struct(…)`.
                 if (existing.AsCallable is BuiltinFunction
-                    { AutoCallsBare: true, KnowsWhenDiscarded: true, MultiOutput: not null } asked)
+                    { KnowsWhenDiscarded: true, MultiOutput: not null } asked)
                 {
                     asked.CallDiscarded([], statement.Line, statement.Column);
+                    return;
+                }
+
+                if (Dialect.IsMatlab && existing.AsCallable is UserFunction user)
+                {
+                    user.CallMultiple([], 0, statement.Line, statement.Column);
                     return;
                 }
 
@@ -995,6 +1001,11 @@ internal sealed partial class Interpreter
 
         return env.TryGet(name, out value);
     }
+
+    private bool AutoCallsBare(string name, JgsValue value, JgsEnvironment env) =>
+        value.Type == JgsType.Function && (Dialect.IsMatlab
+            ? ScopeOf(name, env).IsFunctionBinding(name)
+            : value.AsCallable is BuiltinFunction { AutoCallsBare: true });
 
     /// <summary>
     /// The workspace a name's binding lives in: the global one where a <c>global</c> declaration
@@ -1230,10 +1241,17 @@ internal sealed partial class Interpreter
         // then report a shortfall, which is the wrong answer twice over.
         if (call is VariableExpr bare
             && LookUp(bare.Name, env, out JgsValue named)
-            && named.Type == JgsType.Function
-            && named.AsCallable is BuiltinFunction { AutoCallsBare: true } and IJgsMultiCallable zeroArgument)
+            && AutoCallsBare(bare.Name, named, env)
+            && named.AsCallable is IJgsMultiCallable zeroArgument)
         {
             return zeroArgument.CallMultiple(System.Array.Empty<JgsValue>(), wanted, bare.Line, bare.Column);
+        }
+
+        if (call is VariableExpr pathName && !LookUp(pathName.Name, env, out _)
+            && TryResolveOnPath(pathName.Name, out JgsValue pathFunction)
+            && pathFunction.AsCallable is IJgsMultiCallable pathMulti)
+        {
+            return pathMulti.CallMultiple([], wanted, pathName.Line, pathName.Column);
         }
 
         // [a, b] = c{1:2} distributes a comma-separated list across the targets. It is not a call at
@@ -1452,19 +1470,16 @@ internal sealed partial class Interpreter
             case VariableExpr variable:
                 if (LookUp(variable.Name, env, out JgsValue value))
                 {
-                    // MATLAB writes its constants as zero-argument functions, and a bare mention of
-                    // one means its value: x = eps is 2.2e-16. Only builtins that opt in behave this
-                    // way, and callee position resolves through EvaluateCallee, so eps(x) still calls.
-                    return value.Type == JgsType.Function
-                        && value.AsCallable is BuiltinFunction { AutoCallsBare: true } constant
-                            ? constant.Call(System.Array.Empty<JgsValue>(), variable.Line, variable.Column)
+                    // Function definitions auto-invoke in MATLAB value contexts. Variables holding
+                    // handles remain values; callee position still resolves through EvaluateCallee.
+                    return AutoCallsBare(variable.Name, value, env)
+                            ? value.AsCallable.Call(System.Array.Empty<JgsValue>(), variable.Line, variable.Column)
                             : value;
                 }
 
                 // A file on the path answers a bare name by running, which is MATLAB's rule for any
                 // name that is not a variable: 'setup' runs setup.m, and @setup is how you ask for
-                // the handle instead. Only path files behave this way — a built-in mentioned bare is
-                // still its own value unless it opted into AutoCallsBare above.
+                // the handle instead.
                 if (TryResolveOnPath(variable.Name, out JgsValue onPath))
                 {
                     return onPath.AsCallable.Call(System.Array.Empty<JgsValue>(), variable.Line, variable.Column);
@@ -1512,7 +1527,8 @@ internal sealed partial class Interpreter
                 return JgsValue.Function(AnonymousFunction.Create(anonymous, env, this));
 
             case FunctionHandleExpr handle:
-                if (env.TryGet(handle.Name, out JgsValue referenced) && referenced.Type == JgsType.Function)
+                if ((Dialect.IsMatlab ? env.TryGetFunction(handle.Name, out JgsValue referenced)
+                    : env.TryGet(handle.Name, out referenced)) && referenced.Type == JgsType.Function)
                 {
                     return referenced;
                 }
@@ -5463,8 +5479,19 @@ internal sealed partial class Interpreter
             return onClass;
         }
 
-        JgsValue target = Evaluate(member.Target, env);
         string field = FieldName(member, env);
+        // A constructor's static member must be resolved before evaluating its bare name.
+        // Otherwise uint8.empty invokes uint8() and VideoWriter.getProfiles invokes VideoWriter().
+        if (member.Target is VariableExpr constructorName
+            && LookUp(constructorName.Name, env, out JgsValue constructorValue)
+            && constructorValue.Type == JgsType.Function
+            && constructorValue.AsCallable is BuiltinFunction constructorBuiltin
+            && JgsBuiltins.TryGetBuiltinStatic(constructorBuiltin.Name, field, out JgsValue constructorMember))
+        {
+            return constructorMember;
+        }
+
+        JgsValue target = Evaluate(member.Target, env);
 
         // A table's dot reads a variable's column (M43): numeric columns come back as column
         // vectors, text columns as cells so T.Code{2} braces in.

@@ -49,10 +49,10 @@ internal static partial class JgsBuiltins
     private static void RegisterFileIoBuiltins(JgsEnvironment env, JGraphScriptGlobals host)
     {
         void Define(string name, Func<IReadOnlyList<JgsValue>, int, int, JgsValue> body) =>
-            env.Declare(name, JgsValue.Function(new BuiltinFunction(name, body)));
+            env.DeclareFunction(name, JgsValue.Function(new BuiltinFunction(name, body)));
 
         void DefineMany(string name, Func<IReadOnlyList<JgsValue>, int, int, int, JgsValue[]> body) =>
-            env.Declare(name, JgsValue.Function(new BuiltinFunction(name,
+            env.DeclareFunction(name, JgsValue.Function(new BuiltinFunction(name,
                 (args, line, col) => body(args, 1, line, col)[0])
             { MultiOutput = body }));
 
@@ -90,7 +90,7 @@ internal static partial class JgsBuiltins
             ReadLine(host, "fgets", args, wanted, keepTerminator: true, line, col));
 
         // image draws, so its handle does not echo as `ans` — the rule plot has always had.
-        env.Declare("image", JgsValue.Function(new BuiltinFunction(
+        env.DeclareFunction("image", JgsValue.Function(new BuiltinFunction(
             "image", OnNamedAxes((args, line, col) =>
             {
                 if (args.Count == 1 && args[0].Type == JgsType.Image)
@@ -176,7 +176,15 @@ internal static partial class JgsBuiltins
             }
         }
 
+        bool highLevel = args.Count > 0 && args[0].Type != JgsType.String;
+        bool holding = JG.IsHolding;
         ImagePlot plot = JG.Image(c);
+        // MATLAB row one lies at the low Y coordinate; reversing the axes puts it at the top.
+        plot.RowZeroAtTop = false;
+        if (highLevel && !holding)
+        {
+            JG.Gca().ActiveYAxis.Inverted = true;
+        }
 
         // The one difference MATLAB draws between the two verbs: image reads its numbers as colour
         // numbers, and imagesc stretches them over the limits — which is the whole of what the sc

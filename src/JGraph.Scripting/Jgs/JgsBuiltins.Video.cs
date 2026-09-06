@@ -113,17 +113,17 @@ internal static partial class JgsBuiltins
 
         // VideoWriter.getProfiles() is a static read off the constructor, which the interpreter
         // already routes through TryGetBuiltinStatic — the same door uint8.empty came in by.
-        env.Declare(VideoWriterClassName, JgsValue.Function(new BuiltinFunction(VideoWriterClassName,
+        env.DeclareFunction(VideoWriterClassName, JgsValue.Function(new BuiltinFunction(VideoWriterClassName,
             (args, line, col) => NewVideoWriter(host, args, line, col))));
 
-        env.Declare("open", JgsValue.Function(new BuiltinFunction("open", (args, line, col) =>
+        env.DeclareFunction("open", JgsValue.Function(new BuiltinFunction("open", (args, line, col) =>
         {
             Arity("open", args, 1, line, col);
             OpenVideoWriter(host, RequireVideoWriter("open", args[0], line, col), line, col);
             return JgsValue.Null;
         })));
 
-        env.Declare("writeVideo", JgsValue.Function(new BuiltinFunction("writeVideo", (args, line, col) =>
+        env.DeclareFunction("writeVideo", JgsValue.Function(new BuiltinFunction("writeVideo", (args, line, col) =>
         {
             Arity("writeVideo", args, 2, line, col);
             WriteVideoFrame(host, RequireVideoWriter("writeVideo", args[0], line, col), args[1], line, col);

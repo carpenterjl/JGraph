@@ -65,7 +65,7 @@ internal static partial class JgsBuiltins
     {
         void Define(string name, Func<IReadOnlyList<JgsValue>, int, int, JgsValue> body,
             Func<IReadOnlyList<JgsValue>, int, int, int, JgsValue[]>? multi = null) =>
-            env.Declare(name, JgsValue.Function(new BuiltinFunction(name, body) { MultiOutput = multi }));
+            env.DeclareFunction(name, JgsValue.Function(new BuiltinFunction(name, body) { MultiOutput = multi }));
 
         Define("spline", (args, line, col) => PiecewiseCubic("spline", CubicRule.Spline, args, line, col));
         Define("pchip", (args, line, col) => PiecewiseCubic("pchip", CubicRule.Pchip, args, line, col));

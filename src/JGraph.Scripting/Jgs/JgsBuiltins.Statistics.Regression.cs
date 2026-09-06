@@ -49,16 +49,16 @@ internal static partial class JgsBuiltins
     private static void RegisterRegressionBuiltins(JgsEnvironment env)
     {
         void DefineBoth(string name, Func<IReadOnlyList<JgsValue>, int, int, int, JgsValue[]> both) =>
-            env.Declare(name, JgsValue.Function(
+            env.DeclareFunction(name, JgsValue.Function(
                 new BuiltinFunction(name, (args, line, col) => both(args, 1, line, col)[0])
                 { MultiOutput = both }));
 
         DefineBoth("regress", LinearRegress);
         DefineBoth("regstats", RegressionStatistics);
-        env.Declare("leverage", JgsValue.Function(new BuiltinFunction("leverage", HatDiagonal)));
-        env.Declare("ridge", JgsValue.Function(new BuiltinFunction("ridge", RidgeFit)));
-        env.Declare("x2fx", JgsValue.Function(new BuiltinFunction("x2fx", TermsToDesign)));
-        env.Declare("dummyvar", JgsValue.Function(new BuiltinFunction("dummyvar", GroupIndicators)));
+        env.DeclareFunction("leverage", JgsValue.Function(new BuiltinFunction("leverage", HatDiagonal)));
+        env.DeclareFunction("ridge", JgsValue.Function(new BuiltinFunction("ridge", RidgeFit)));
+        env.DeclareFunction("x2fx", JgsValue.Function(new BuiltinFunction("x2fx", TermsToDesign)));
+        env.DeclareFunction("dummyvar", JgsValue.Function(new BuiltinFunction("dummyvar", GroupIndicators)));
 
         DefineBoth("polyconf", PolynomialConfidence);
         DefineBoth("invpred", InversePredict);

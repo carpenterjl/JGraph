@@ -369,7 +369,7 @@ internal static partial class JgsBuiltins
     private static void RegisterOptimPlotBuiltins(JgsEnvironment env)
     {
         void Define(string name, Func<IReadOnlyList<JgsValue>, int, int, JgsValue> body) =>
-            env.Declare(name, JgsValue.Function(new BuiltinFunction(name, body)));
+            env.DeclareFunction(name, JgsValue.Function(new BuiltinFunction(name, body)));
 
         Define("optimplotfval", (args, line, col) => PlotOptimValue(
             "optimplotfval", args, "fval", "Current Function Value: ", "Function value", line, col));

@@ -32,7 +32,7 @@ internal static partial class JgsBuiltins
     /// <summary>Declares MATLAB's volume <c>slice</c> over the JGS array slicer.</summary>
     private static void RegisterVolumeSlice(JgsEnvironment env)
     {
-        env.Declare("slice", JgsValue.Function(
+        env.DeclareFunction("slice", JgsValue.Function(
             new BuiltinFunction("slice", OnNamedAxes((args, line, col) => Slice(args, line, col)))
             {
                 BindsAnsAsStatement = false,

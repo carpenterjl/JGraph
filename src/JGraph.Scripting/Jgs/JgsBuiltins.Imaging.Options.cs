@@ -10,6 +10,22 @@ namespace JGraph.Scripting.Jgs;
 /// </summary>
 internal static partial class JgsBuiltins
 {
+    /// <summary>Reads an owned image as MATLAB numeric samples without disposing its buffer.</summary>
+    internal static JgsValue ImageNumbers(JgsValue value)
+    {
+        if (value.Type != JgsType.Image)
+        {
+            return value;
+        }
+        ImageBuffer image = value.AsImage;
+        if (image.Class == ImageClass.Logical && image.Channels == 1)
+        {
+            return JgsMatrix.BuildValues(image.Height, image.Width,
+                (r, c) => JgsValue.Bool(image[r, c, 0] != 0));
+        }
+        return NumbersOut(image.Clone(), image.Channels == 3 ? ImgShape.Planes : ImgShape.Matrix, image.Class);
+    }
+
     /// <summary>
     /// Wraps a freshly computed image as a value of the given class, snapping integer classes onto
     /// their sample grid. Every image-returning builtin goes through here, which is the one place the

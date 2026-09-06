@@ -83,7 +83,7 @@ internal static partial class JgsBuiltins
             bool promotesCharRows = dialect.IsMatlab;
             bool gathersPositions = Array.IndexOf(PositionRearrangingBuiltins, name) >= 0;
 
-            env.Declare(name, JgsValue.Function(new BuiltinFunction(name, (args, line, col) =>
+            env.DeclareFunction(name, JgsValue.Function(new BuiltinFunction(name, (args, line, col) =>
             {
                 if (promotesCharRows && IsCharRow(args))
                 {

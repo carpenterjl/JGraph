@@ -202,7 +202,7 @@ internal static class JgsRunner
             ? StringComparer.OrdinalIgnoreCase
             : StringComparer.Ordinal);
 
-        environment.Declare("run", JgsValue.Function(new BuiltinFunction("run", (args, line, column) =>
+        environment.DeclareFunction("run", JgsValue.Function(new BuiltinFunction("run", (args, line, column) =>
         {
             if (args.Count != 1 || args[0].Type != JgsType.String)
             {
@@ -267,19 +267,18 @@ internal static class JgsRunner
             IReadOnlyDictionary<string, JgsValue> baseline = pristine();
             foreach ((string name, JgsValue value) in environment.Locals)
             {
-                if (!baseline.TryGetValue(name, out JgsValue? original) || !ReferenceEquals(original, value))
+                if (!baseline.TryGetValue(name, out JgsValue? original) || !ReferenceEquals(original, value)
+                    || (value.Type == JgsType.Function && !environment.IsFunctionBinding(name)))
                 {
                     yield return (name, value);
                 }
             }
         }
 
-        // 'clear' and 'clearvars' behave identically here: user variables go, built-ins stay, and a
-        // rebound built-in reverts (which is all clearvars' "variables only" restriction can mean in
-        // a workspace where the built-ins are ordinary bindings).
+        // clearvars filters the active workspace; clear also supports the older function/all forms.
         void DefineClear(string builtin)
         {
-            environment.Declare(builtin, JgsValue.Function(new BuiltinFunction(builtin, (args, line, column) =>
+            environment.DeclareFunction(builtin, JgsValue.Function(new BuiltinFunction(builtin, (args, line, column) =>
             {
                 IReadOnlyDictionary<string, JgsValue> baseline = pristine();
                 var names = new List<string>();
@@ -292,6 +291,68 @@ internal static class JgsRunner
                     }
 
                     names.Add(argument.AsString);
+                }
+
+                if (builtin == "clearvars")
+                {
+                    JgsEnvironment frame = interpreter.CurrentFrame;
+                    var remove = new List<System.Text.RegularExpressions.Regex>();
+                    var keep = new List<System.Text.RegularExpressions.Regex>();
+                    bool except = false;
+                    bool regexp = false;
+                    foreach (string name in names)
+                    {
+                        if (name == "-except")
+                        {
+                            except = true;
+                            regexp = false;
+                            continue;
+                        }
+
+                        if (name == "-regexp")
+                        {
+                            regexp = true;
+                            continue;
+                        }
+
+                        if (name.StartsWith('-'))
+                        {
+                            throw new JgsRuntimeException(line, column, $"clearvars: unsupported option '{name}'.");
+                        }
+
+                        string pattern = regexp ? name : "^" + System.Text.RegularExpressions.Regex.Escape(name).Replace("\\*", ".*") + "$";
+                        (except ? keep : remove).Add(new System.Text.RegularExpressions.Regex(
+                            pattern, System.Text.RegularExpressions.RegexOptions.CultureInvariant, TimeSpan.FromSeconds(1)));
+                    }
+
+                    for (JgsEnvironment? scope = frame; scope is not null; scope = scope.Parent)
+                    {
+                        IReadOnlyDictionary<string, JgsValue> originals = ReferenceEquals(scope, environment)
+                            ? baseline : new Dictionary<string, JgsValue>();
+                        foreach ((string name, JgsValue value) in scope.Locals.ToList())
+                        {
+                            if (scope.IsFunctionBinding(name)
+                                || (value.Type != JgsType.Function && originals.TryGetValue(name, out JgsValue? original)
+                                    && ReferenceEquals(original, value)))
+                            {
+                                continue;
+                            }
+
+                            if ((remove.Count == 0 || remove.Any(pattern => pattern.IsMatch(name)))
+                                && !keep.Any(pattern => pattern.IsMatch(name)))
+                            {
+                                // Retained aliases may share a value, so do not dispose its buffer here.
+                                scope.Forget(name, originals);
+                            }
+                        }
+
+                        if (scope.IsCallBoundary)
+                        {
+                            break;
+                        }
+                    }
+
+                    return JgsValue.Null;
                 }
 
                 if (names.Count == 0 || names.Contains("all") || names.Contains("variables"))
@@ -330,7 +391,7 @@ internal static class JgsRunner
         DefineClear("clear");
         DefineClear("clearvars");
 
-        environment.Declare("whos", JgsValue.Function(new BuiltinFunction("whos", (args, line, column) =>
+        environment.DeclareFunction("whos", JgsValue.Function(new BuiltinFunction("whos", (args, line, column) =>
         {
             if (args.Count != 0)
             {

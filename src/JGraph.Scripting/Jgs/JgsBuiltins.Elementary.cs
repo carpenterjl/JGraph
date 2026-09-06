@@ -23,13 +23,13 @@ internal static partial class JgsBuiltins
     private static void RegisterElementaryBuiltins(JgsEnvironment env, JgsDialect dialect)
     {
         void Define(string name, Func<IReadOnlyList<JgsValue>, int, int, JgsValue> body) =>
-            env.Declare(name, JgsValue.Function(new BuiltinFunction(name, body)));
+            env.DeclareFunction(name, JgsValue.Function(new BuiltinFunction(name, body)));
 
         // MATLAB implements eps/realmax/intmax/… as zero-argument functions, so a bare mention is the
         // value (x = eps) while a call takes an argument (eps(x), intmax('int8')). AutoCallsBare gives
         // the first behaviour without giving up the second.
         void Constant(string name, Func<IReadOnlyList<JgsValue>, int, int, JgsValue> body) =>
-            env.Declare(name, JgsValue.Function(new BuiltinFunction(name, body) { AutoCallsBare = true }));
+            env.DeclareFunction(name, JgsValue.Function(new BuiltinFunction(name, body) { AutoCallsBare = true }));
 
         RegisterLimits(env, Constant, dialect);
         RegisterTypePredicates(env, Define, dialect);

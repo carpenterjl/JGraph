@@ -50,7 +50,7 @@ internal static partial class JgsBuiltins
 
         void Define(string name, Func<IReadOnlyList<JgsValue>, int, int, JgsValue> body,
             Func<IReadOnlyList<JgsValue>, int, int, int, JgsValue[]>? multi = null) =>
-            env.Declare(name, JgsValue.Function(new BuiltinFunction(name, body)
+            env.DeclareFunction(name, JgsValue.Function(new BuiltinFunction(name, body)
             {
                 MultiOutput = multi,
 
@@ -130,7 +130,7 @@ internal static partial class JgsBuiltins
         BuiltinFunction? legacyReverse = Inner("reverse");
         if (legacyReverse is not null && dialect.IsMatlab)
         {
-            env.Declare("reverse", JgsValue.Function(new BuiltinFunction("reverse", (args, line, col) =>
+            env.DeclareFunction("reverse", JgsValue.Function(new BuiltinFunction("reverse", (args, line, col) =>
             {
                 if (args.Count == 1 && (args[0].IsCharMatrix || !TryReadText(args[0], out _)))
                 {

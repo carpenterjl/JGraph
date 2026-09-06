@@ -17,7 +17,7 @@ internal static partial class JgsBuiltins
     private static void RegisterCameraExtraBuiltins(JgsEnvironment env)
     {
         void Define(string name, Func<IReadOnlyList<JgsValue>, int, int, JgsValue> body) =>
-            env.Declare(name, JgsValue.Function(new BuiltinFunction(name, body) { AutoCallsBare = true }));
+            env.DeclareFunction(name, JgsValue.Function(new BuiltinFunction(name, body) { AutoCallsBare = true }));
 
         Define("viewmtx", (args, line, col) => ViewMatrixOf(args, line, col));
         Define("makehgtform", (args, line, col) => HgTransform(args, line, col));

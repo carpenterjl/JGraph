@@ -600,10 +600,10 @@ internal static partial class JgsBuiltins
     private static void RegisterSelectionAndSets(JgsEnvironment env, JgsDialect dialect)
     {
         void Define(string name, Func<IReadOnlyList<JgsValue>, int, int, JgsValue> body) =>
-            env.Declare(name, JgsValue.Function(new BuiltinFunction(name, body)));
+            env.DeclareFunction(name, JgsValue.Function(new BuiltinFunction(name, body)));
 
         void DefineBoth(string name, Func<IReadOnlyList<JgsValue>, int, int, int, JgsValue[]> both) =>
-            env.Declare(name, JgsValue.Function(
+            env.DeclareFunction(name, JgsValue.Function(
                 new BuiltinFunction(name, (args, line, col) => both(args, 1, line, col)[0]) { MultiOutput = both }));
 
         foreach (string name in new[] { "maxk", "mink" })
@@ -1174,7 +1174,7 @@ internal static partial class JgsBuiltins
     private static void RegisterMovingStatistics(JgsEnvironment env)
     {
         void Moving(string name, double identity, WindowStat kind, WindowSummary statistic) =>
-            env.Declare(name, JgsValue.Function(new BuiltinFunction(name, (args, line, col) =>
+            env.DeclareFunction(name, JgsValue.Function(new BuiltinFunction(name, (args, line, col) =>
             {
                 OptionSpec spec = new(name, Flags: ["omitnan", "includenan"], Names: ["Endpoints", "SamplePoints"]);
                 ParsedArgs parsed = spec.Parse(args, 3, line, col);

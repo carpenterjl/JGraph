@@ -40,7 +40,7 @@ internal static partial class JgsBuiltins
             JgsValue[] Run(IReadOnlyList<JgsValue> args, int wanted, int line, int col) =>
                 body(inner, args, wanted, line, col) ?? Call(inner, args, wanted, line, col);
 
-            env.Declare(name, JgsValue.Function(new BuiltinFunction(name, (args, line, col) => Run(args, 1, line, col)[0])
+            env.DeclareFunction(name, JgsValue.Function(new BuiltinFunction(name, (args, line, col) => Run(args, 1, line, col)[0])
             {
                 KeepsStringArguments = true,
                 BindsAnsAsStatement = inner.BindsAnsAsStatement,

@@ -23,13 +23,13 @@ internal static class JgsWorkspaceIo
         Func<IEnumerable<(string Name, JgsValue Value)>> userVariables)
     {
         // Bare statements stay silent, like MATLAB: neither verb binds ans.
-        environment.Declare("save", JgsValue.Function(
+        environment.DeclareFunction("save", JgsValue.Function(
             new BuiltinFunction("save", (args, line, col) => Save(host, userVariables, args, line, col))
             {
                 BindsAnsAsStatement = false,
             }));
 
-        environment.Declare("load", JgsValue.Function(
+        environment.DeclareFunction("load", JgsValue.Function(
             new BuiltinFunction("load", (args, line, col) => Load(environment, host, args, line, col))
             {
                 BindsAnsAsStatement = false,

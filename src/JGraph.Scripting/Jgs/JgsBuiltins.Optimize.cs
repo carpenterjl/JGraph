@@ -65,7 +65,7 @@ internal static partial class JgsBuiltins
     internal static void RegisterOptimizeBuiltins(JgsEnvironment env, JGraphScriptGlobals host)
     {
         void DefineBoth(string name, Func<IReadOnlyList<JgsValue>, int, int, int, JgsValue[]> both) =>
-            env.Declare(name, JgsValue.Function(
+            env.DeclareFunction(name, JgsValue.Function(
                 new BuiltinFunction(name, (args, line, col) => both(args, 1, line, col)[0])
                 { MultiOutput = both }));
 
@@ -81,7 +81,7 @@ internal static partial class JgsBuiltins
         // optimset answers a structure when anything wants one and prints the settings when nothing
         // does, so it needs both flags: AutoCallsBare makes the bare word a call rather than a
         // handle, and KnowsWhenDiscarded is how it learns that nobody asked for the answer.
-        env.Declare("optimset", JgsValue.Function(new BuiltinFunction(
+        env.DeclareFunction("optimset", JgsValue.Function(new BuiltinFunction(
             "optimset", (args, line, col) => Optimset(env, host, args, wanted: 1, line, col)[0])
         {
             AutoCallsBare = true,
@@ -89,7 +89,7 @@ internal static partial class JgsBuiltins
             MultiOutput = (args, wanted, line, col) => Optimset(env, host, args, wanted, line, col),
         }));
 
-        env.Declare("optimget", JgsValue.Function(new BuiltinFunction("optimget", Optimget)));
+        env.DeclareFunction("optimget", JgsValue.Function(new BuiltinFunction("optimget", Optimget)));
 
         RegisterOptimPlotBuiltins(env);
     }

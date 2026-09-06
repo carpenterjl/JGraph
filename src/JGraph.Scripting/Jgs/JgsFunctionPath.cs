@@ -200,7 +200,7 @@ internal sealed class JgsFunctionPath
         foreach (Stmt statement in program)
         {
             var declaration = (FnStmt)statement;
-            fileScope.Declare(declaration.Name, JgsValue.Function(
+            fileScope.DeclareFunction(declaration.Name, JgsValue.Function(
                 new UserFunction(declaration, fileScope, _interpreter)));
         }
 

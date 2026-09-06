@@ -73,15 +73,15 @@ internal static partial class JgsBuiltins
     private static void RegisterStatisticsPlotBuiltins(JgsEnvironment env, Random random)
     {
         void Define(string name, Func<IReadOnlyList<JgsValue>, int, int, JgsValue> body) =>
-            env.Declare(name, JgsValue.Function(new BuiltinFunction(name, body)));
+            env.DeclareFunction(name, JgsValue.Function(new BuiltinFunction(name, body)));
 
         void DefineBoth(string name, Func<IReadOnlyList<JgsValue>, int, int, int, JgsValue[]> both) =>
-            env.Declare(name, JgsValue.Function(
+            env.DeclareFunction(name, JgsValue.Function(
                 new BuiltinFunction(name, (args, line, col) => both(args, 1, line, col)[0]) { MultiOutput = both }));
 
         // The two that answer numbers when asked and draw when not.
         void DefineDrawing(string name, Func<IReadOnlyList<JgsValue>, int, int, int, JgsValue[]> both) =>
-            env.Declare(name, JgsValue.Function(
+            env.DeclareFunction(name, JgsValue.Function(
                 new BuiltinFunction(name, (args, line, col) => both(args, 1, line, col)[0])
                 {
                     MultiOutput = both,
@@ -100,7 +100,7 @@ internal static partial class JgsBuiltins
         // Both of these are written as bare words — lsline on its own is the whole call — so the name
         // has to call rather than evaluate to the function.
         void DefineBare(string name, Func<IReadOnlyList<JgsValue>, int, int, JgsValue> body) =>
-            env.Declare(name, JgsValue.Function(new BuiltinFunction(name, body) { AutoCallsBare = true }));
+            env.DeclareFunction(name, JgsValue.Function(new BuiltinFunction(name, body) { AutoCallsBare = true }));
 
         DefineBare("lsline", LeastSquaresLines);
         DefineBare("refline", ReferenceLine);

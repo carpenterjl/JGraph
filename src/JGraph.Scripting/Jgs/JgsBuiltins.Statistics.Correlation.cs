@@ -22,7 +22,7 @@ internal static partial class JgsBuiltins
     private static void RegisterCorrelationBuiltins(JgsEnvironment env)
     {
         void DefineBoth(string name, Func<IReadOnlyList<JgsValue>, int, int, int, JgsValue[]> both) =>
-            env.Declare(name, JgsValue.Function(new BuiltinFunction(
+            env.DeclareFunction(name, JgsValue.Function(new BuiltinFunction(
                 name, (args, line, col) => both(args, 1, line, col)[0])
             { MultiOutput = both }));
 
@@ -30,7 +30,7 @@ internal static partial class JgsBuiltins
         DefineBoth("partialcorr", PartialCorrelate);
         DefineBoth("partialcorri", InternalPartialCorrelate);
         DefineBoth("corrcov", CorrelationFromCovariance);
-        env.Declare("nearcorr", JgsValue.Function(new BuiltinFunction("nearcorr", NearestCorrelation)));
+        env.DeclareFunction("nearcorr", JgsValue.Function(new BuiltinFunction("nearcorr", NearestCorrelation)));
     }
 
     /// <summary>

@@ -18,7 +18,7 @@ internal static partial class JgsBuiltins
     private static void RegisterNumericBuiltins(JgsEnvironment env)
     {
         void Define(string name, Func<IReadOnlyList<JgsValue>, int, int, JgsValue> body) =>
-            env.Declare(name, JgsValue.Function(new BuiltinFunction(name, body)));
+            env.DeclareFunction(name, JgsValue.Function(new BuiltinFunction(name, body)));
 
         RegisterBitBuiltins(Define);
         RegisterRadixBuiltins(Define);

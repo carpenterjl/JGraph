@@ -806,7 +806,7 @@ internal static partial class JgsBuiltins
     private static JgsValue MatrixText(IReadOnlyList<JgsValue> args, int line, int col)
     {
         ArityRange("mat2str", args, 1, 3, line, col);
-        JgsValue subject = args[0];
+        JgsValue subject = ImageNumbers(args[0]);
 
         // mat2str(A, n), mat2str(A, 'class') and mat2str(A, n, 'class'): the digit count and the
         // word can come in either order after the value.

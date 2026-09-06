@@ -1151,7 +1151,7 @@ internal sealed class Parser
             if (Check(TokenType.LParen) && !OpensANewLiteralElement())
             {
                 Token paren = Advance();
-                List<Expr> arguments = ParseSubscripts(TokenType.RParen, "')'");
+                List<Expr> arguments = ParseSubscripts(TokenType.RParen, "')'", namedArguments: _matlab);
                 expr = new CallExpr(expr, arguments) { Line = paren.Line, Column = paren.Column };
             }
             else if (Check(TokenType.LBracket) && !_matlab)
@@ -1222,20 +1222,34 @@ internal sealed class Parser
     /// Parses a comma-separated subscript/argument list up to <paramref name="closer"/>. A lone ':'
     /// filling a whole slot is "all elements" (<c>x(:)</c>).
     /// </summary>
-    private List<Expr> ParseSubscripts(TokenType closer, string closerText)
+    private List<Expr> ParseSubscripts(TokenType closer, string closerText, bool namedArguments = false)
     {
         var arguments = new List<Expr>();
+        bool sawNamedArgument = false;
         if (!Check(closer))
         {
             do
             {
-                if (Check(TokenType.Colon) && (NextType == TokenType.Comma || NextType == closer))
+                if (namedArguments && Check(TokenType.Identifier) && NextType == TokenType.Assign)
+                {
+                    sawNamedArgument = true;
+                    // MATLAB Name=value is a name/value pair, never a workspace assignment.
+                    Token name = Advance();
+                    Advance();
+                    arguments.Add(new StringLiteral(name.Text) { IsChar = true, Line = name.Line, Column = name.Column });
+                    arguments.Add(OutsideLiteral(ParseExpression));
+                }
+                else if (Check(TokenType.Colon) && (NextType == TokenType.Comma || NextType == closer))
                 {
                     Token colon = Advance();
                     arguments.Add(new AllExpr { Line = colon.Line, Column = colon.Column });
                 }
                 else
                 {
+                    if (sawNamedArgument)
+                    {
+                        throw Error(Current, "Positional arguments must precede Name=value arguments.");
+                    }
                     // An argument list is punctuated by commas, so spacing carries no meaning here even
                     // when the call itself sits inside a matrix literal.
                     arguments.Add(OutsideLiteral(ParseExpression));

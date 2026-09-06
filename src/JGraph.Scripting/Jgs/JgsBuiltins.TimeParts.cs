@@ -18,7 +18,7 @@ internal static partial class JgsBuiltins
     internal static void RegisterTimePartBuiltins(JgsEnvironment env)
     {
         void Define(string name, Func<IReadOnlyList<JgsValue>, int, int, JgsValue> body) =>
-            env.Declare(name, JgsValue.Function(new BuiltinFunction(name, body)));
+            env.DeclareFunction(name, JgsValue.Function(new BuiltinFunction(name, body)));
 
         // --- The field accessors ------------------------------------------------------------------
         // Declared from the shared table rather than filling it in as they are declared (M94): the
@@ -26,7 +26,7 @@ internal static partial class JgsBuiltins
         // apart, and no process-wide dictionary is written once per environment to arrange it.
         foreach ((string field, Func<JgsValue, int, int, JgsValue> read) in TimeFieldReaders)
         {
-            env.Declare(field, JgsValue.Function(new BuiltinFunction(field, (args, line, col) =>
+            env.DeclareFunction(field, JgsValue.Function(new BuiltinFunction(field, (args, line, col) =>
             {
                 Arity(field, args, 1, line, col);
                 return read(args[0], line, col);
@@ -350,7 +350,7 @@ internal static partial class JgsBuiltins
             return System.Math.Max(wanted, 1) >= fields ? outputs : outputs[..System.Math.Max(wanted, 1)];
         }
 
-        env.Declare(name, JgsValue.Function(new BuiltinFunction(name,
+        env.DeclareFunction(name, JgsValue.Function(new BuiltinFunction(name,
             (args, line, col) => Split(args, 1, line, col)[0])
         {
             MultiOutput = Split,

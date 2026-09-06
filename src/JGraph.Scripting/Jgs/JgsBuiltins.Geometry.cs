@@ -16,7 +16,7 @@ internal static partial class JgsBuiltins
     private static void RegisterGeometryBuiltins(JgsEnvironment env)
     {
         void Define(string name, Func<IReadOnlyList<JgsValue>, int, int, JgsValue> body) =>
-            env.Declare(name, JgsValue.Function(new BuiltinFunction(name, body)));
+            env.DeclareFunction(name, JgsValue.Function(new BuiltinFunction(name, body)));
 
         RegisterLogicalConstructors(Define);
         RegisterTwoDimensionalTransforms(Define);
@@ -101,7 +101,7 @@ internal static partial class JgsBuiltins
             return [vertices, JgsValue.Cell(cells)];
         }
 
-        env.Declare("voronoin", JgsValue.Function(
+        env.DeclareFunction("voronoin", JgsValue.Function(
             new BuiltinFunction("voronoin", (args, line, col) => Outputs(args, 1, line, col)[0])
             {
                 MultiOutput = Outputs,
@@ -322,7 +322,7 @@ internal static partial class JgsBuiltins
     // --- Convex hull ------------------------------------------------------------------------------
 
     private static void RegisterHulls(JgsEnvironment env) =>
-        env.Declare("convhull", JgsValue.Function(new BuiltinFunction("convhull",
+        env.DeclareFunction("convhull", JgsValue.Function(new BuiltinFunction("convhull",
             (args, line, col) => ConvexHullAnswer(args, 1, line, col)[0])
         { MultiOutput = ConvexHullAnswer }));
 

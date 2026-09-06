@@ -23,12 +23,12 @@ internal static partial class JgsBuiltins
     private static void RegisterSurfaceVariantBuiltins(JgsEnvironment env, JgsDialect dialect)
     {
         void Define(string name, Func<IReadOnlyList<JgsValue>, int, int, JgsValue> body) =>
-            env.Declare(name, JgsValue.Function(new BuiltinFunction(name, body)));
+            env.DeclareFunction(name, JgsValue.Function(new BuiltinFunction(name, body)));
 
         // For a verb that hands back a handle: drawing is what the statement is for, so the handle
         // does not echo as `ans` the way an ordinary value would. Same rule `plot` has always had.
         void DefineSilent(string name, Func<IReadOnlyList<JgsValue>, int, int, JgsValue> body) =>
-            env.Declare(name, JgsValue.Function(
+            env.DeclareFunction(name, JgsValue.Function(
                 new BuiltinFunction(name, body) { BindsAnsAsStatement = false }));
 
         Define("surfc", OnNamedAxes((args, line, col) => Surface3D("surfc", args, line, col,
@@ -130,7 +130,7 @@ internal static partial class JgsBuiltins
             }
         }
 
-        env.Declare(name, JgsValue.Function(
+        env.DeclareFunction(name, JgsValue.Function(
             new BuiltinFunction(name, Single) { MultiOutput = Multi, AutoCallsBare = true }));
     }
 

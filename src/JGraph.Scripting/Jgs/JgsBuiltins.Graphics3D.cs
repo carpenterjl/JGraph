@@ -1,4 +1,4 @@
-﻿using JGraph.Api;
+using JGraph.Api;
 using JGraph.Core.Drawing;
 using JGraph.Core.Model;
 using JGraph.Core.Primitives;
@@ -50,11 +50,11 @@ internal static partial class JgsBuiltins
     {
         void Define(string name, Func<IReadOnlyList<JgsValue>, int, int, JgsValue> body,
             Func<IReadOnlyList<JgsValue>, int, int, int, JgsValue[]>? multi = null) =>
-            env.Declare(name, JgsValue.Function(new BuiltinFunction(name, body) { MultiOutput = multi }));
+            env.DeclareFunction(name, JgsValue.Function(new BuiltinFunction(name, body) { MultiOutput = multi }));
 
         // A bare `parula` is the table itself, exactly as `x = eps` is a number (M37's AutoCallsBare).
         void DefineGenerator(string name, Func<Colormap> map) =>
-            env.Declare(name, JgsValue.Function(new BuiltinFunction(
+            env.DeclareFunction(name, JgsValue.Function(new BuiltinFunction(
                 name,
                 (args, line, col) =>
                 {
@@ -74,10 +74,10 @@ internal static partial class JgsBuiltins
             DefineGenerator(name, map);
         }
 
-        env.Declare("caxis", JgsValue.Function(new BuiltinFunction(
+        env.DeclareFunction("caxis", JgsValue.Function(new BuiltinFunction(
             "caxis", OnNamedAxes((args, line, col) => ColorLimits("caxis", args, line, col)))
         { AutoCallsBare = true }));
-        env.Declare("clim", JgsValue.Function(new BuiltinFunction(
+        env.DeclareFunction("clim", JgsValue.Function(new BuiltinFunction(
             "clim", (args, line, col) => ColorLimits("clim", args, line, col))
         { AutoCallsBare = true }));
 
@@ -88,14 +88,14 @@ internal static partial class JgsBuiltins
             return JgsValue.Null;
         });
 
-        env.Declare("colororder", JgsValue.Function(new BuiltinFunction(
+        env.DeclareFunction("colororder", JgsValue.Function(new BuiltinFunction(
             "colororder", OnNamedAxes((args, line, col) => ColorOrder(args, line, col)))
         { AutoCallsBare = true }));
 
         // surfl draws, so its handle is kept only when a script asks for it — the DefineSilent rule the
         // other drawing verbs have. Registering it with Define would echo `ans = 1000000.5` at every
         // unsuppressed call, which is the mistake M69 caught in quiver before it shipped.
-        env.Declare("surfl", JgsValue.Function(new BuiltinFunction(
+        env.DeclareFunction("surfl", JgsValue.Function(new BuiltinFunction(
             "surfl", OnNamedAxes((args, line, col) => Surfl(args, line, col)))
         { BindsAnsAsStatement = false }));
 
@@ -118,7 +118,7 @@ internal static partial class JgsBuiltins
     private static void RegisterCameraBuiltins(JgsEnvironment env)
     {
         void Define(string name, Func<IReadOnlyList<JgsValue>, int, int, JgsValue> body) =>
-            env.Declare(name, JgsValue.Function(new BuiltinFunction(name, body) { AutoCallsBare = true }));
+            env.DeclareFunction(name, JgsValue.Function(new BuiltinFunction(name, body) { AutoCallsBare = true }));
 
         Define("campos", (args, line, col) => CameraPosition(args, line, col));
         Define("camtarget", (args, line, col) => CameraVector(

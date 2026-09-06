@@ -15,7 +15,7 @@ internal static partial class JgsBuiltins
     {
         void Define(string name, Func<IReadOnlyList<JgsValue>, int, int, JgsValue> body,
             Func<IReadOnlyList<JgsValue>, int, int, int, JgsValue[]>? multi = null) =>
-            env.Declare(name, JgsValue.Function(new BuiltinFunction(name, body) { MultiOutput = multi }));
+            env.DeclareFunction(name, JgsValue.Function(new BuiltinFunction(name, body) { MultiOutput = multi }));
 
         Define("schur",
             (args, line, col) => WantsComplex("schur", args, line, col)

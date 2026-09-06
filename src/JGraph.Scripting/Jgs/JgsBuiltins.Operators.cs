@@ -29,7 +29,7 @@ internal static partial class JgsBuiltins
         // The operators tell a string from a char themselves (plus("abc", 5) is the string "abc5",
         // measured), so a string scalar must reach them as the string it is.
         void Define(string name, Func<IReadOnlyList<JgsValue>, int, int, JgsValue> body) =>
-            env.Declare(name, JgsValue.Function(new BuiltinFunction(name, body) { KeepsStringArguments = true }));
+            env.DeclareFunction(name, JgsValue.Function(new BuiltinFunction(name, body) { KeepsStringArguments = true }));
 
         void Binary(string name, TokenType op) =>
             Define(name, (args, line, col) =>
