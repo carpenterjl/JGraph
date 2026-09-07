@@ -3,9 +3,10 @@ using JGraph.Numerics;
 namespace JGraph.Scripting.Jgs;
 
 /// <summary>
-/// The explicit ODE family (M125): <c>ode23</c>, <c>ode45</c>, <c>ode78</c>, <c>ode89</c> and
-/// <c>ode113</c> on one path, <c>odextend</c>, and the four output functions <c>odeset</c> can
-/// name — <c>odeplot</c>, <c>odeprint</c>, <c>odephas2</c>, <c>odephas3</c>.
+/// The ODE family: the explicit solvers (M125) <c>ode23</c>, <c>ode45</c>, <c>ode78</c>,
+/// <c>ode89</c> and <c>ode113</c> and the stiff ones (M126) <c>ode15s</c>, <c>ode23s</c>,
+/// <c>ode23t</c> and <c>ode23tb</c> on one path, <c>odextend</c>, and the four output functions
+/// <c>odeset</c> can name — <c>odeplot</c>, <c>odeprint</c>, <c>odephas2</c>, <c>odephas3</c>.
 /// </summary>
 /// <remarks>
 /// <para>
@@ -18,16 +19,21 @@ namespace JGraph.Scripting.Jgs;
 /// </para>
 /// <para>
 /// The options are read once into the numerics layer's own record; the function handles among
-/// them — <c>Events</c>, <c>OutputFcn</c>, a <c>Mass</c> that is a function — become callbacks
-/// that call the script's handles, so the solver never sees a script value. The five fields the
-/// stiff solvers will read (<c>Jacobian</c>, <c>JPattern</c>, <c>JConstant</c>, <c>BDF</c>,
-/// <c>MaxOrder</c>) and the two only a state-dependent mass matrix needs are accepted and left
-/// alone, as MATLAB's explicit solvers leave them.
+/// them — <c>Events</c>, <c>OutputFcn</c>, a <c>Mass</c> or a <c>Jacobian</c> that is a function —
+/// become callbacks that call the script's handles, so the solver never sees a script value. The
+/// fields the explicit family stores and does not read are the ones the stiff family does:
+/// <c>Jacobian</c>, <c>JPattern</c>, <c>JConstant</c>, <c>Vectorized</c>, <c>BDF</c>,
+/// <c>MaxOrder</c>, <c>MassSingular</c>, <c>InitialSlope</c>, <c>MStateDependence</c> and
+/// <c>MvPattern</c>. One reader serves both, and each solver takes what it can use.
 /// </para>
 /// </remarks>
 internal static partial class JgsBuiltins
 {
-    private static readonly string[] OdeSolverNames = ["ode23", "ode45", "ode78", "ode89", "ode113"];
+    private static readonly string[] OdeSolverNames =
+        ["ode23", "ode45", "ode78", "ode89", "ode113", "ode15s", "ode23s", "ode23t", "ode23tb"];
+
+    /// <summary>The solvers that read the Jacobian and can carry a singular mass matrix.</summary>
+    private static readonly string[] OdeStiffSolverNames = ["ode15s", "ode23s", "ode23t", "ode23tb"];
 
     [ThreadStatic]
     private static List<double>? _odePlotTimes;
@@ -35,7 +41,7 @@ internal static partial class JgsBuiltins
     [ThreadStatic]
     private static List<double[]>? _odePlotStates;
 
-    /// <summary>Registers the five solvers, <c>odextend</c>, and the output functions.</summary>
+    /// <summary>Registers the nine solvers, <c>odextend</c>, and the output functions.</summary>
     internal static void RegisterOdeFamilyBuiltins(JgsEnvironment env, JGraphScriptGlobals host)
     {
         foreach (string solver in OdeSolverNames)
@@ -158,13 +164,52 @@ internal static partial class JgsBuiltins
             return dy;
         }
 
-        OdeOptions settings = OdeOptionsFrom(env, host, solver, options, states, statement, asSolution, line, col);
+        // Vectorized: the same handle over several states at once, which is what turns a numerical
+        // Jacobian from n calls into one. The states go across as the columns of a matrix and the
+        // slopes come back the same way.
+        double[][] Vectorized(double t, double[][] states2)
+        {
+            int columns = states2.Length;
+            var flat = new double[states * columns];
+            for (int c = 0; c < columns; c++)
+            {
+                Array.Copy(states2[c], 0, flat, c * states, states);
+            }
+
+            JgsValue block = JgsMatrix.FromColumnMajorDims(flat, [states, columns]);
+            JgsValue answer = f.Call([JgsValue.Number(t), block], line, col);
+            double[] slopes = ToDoubles(solver, answer, line, col);
+            if (slopes.Length != states * columns)
+            {
+                throw new JgsRuntimeException(line, col, "MATLAB:odearguments:SizeIC",
+                    $"{solver}: a vectorized derivative must answer one column per state column.");
+            }
+
+            var split = new double[columns][];
+            for (int c = 0; c < columns; c++)
+            {
+                split[c] = new double[states];
+                Array.Copy(slopes, c * states, split[c], 0, states);
+            }
+
+            return split;
+        }
+
+        OdeOptions settings = OdeOptionsFrom(env, host, solver, options, states, statement, asSolution, line, col)
+            with { VectorizedDerivative = Vectorized };
         try
         {
             RungeKuttaScheme? scheme = RungeKuttaScheme.Named(solver);
-            return scheme is not null
-                ? ExplicitRungeKutta.Run(scheme, Derivative, tspan, initial, settings)
-                : AdamsPece.Run(Derivative, tspan, initial, settings);
+            return solver switch
+            {
+                Ode15s.Name => Ode15s.Run(Derivative, tspan, initial, settings),
+                Ode23s.Name => Ode23s.Run(Derivative, tspan, initial, settings),
+                Ode23t.Name => Ode23t.Run(Derivative, tspan, initial, settings),
+                Ode23tb.Name => Ode23tb.Run(Derivative, tspan, initial, settings),
+                _ => scheme is not null
+                    ? ExplicitRungeKutta.Run(scheme, Derivative, tspan, initial, settings)
+                    : AdamsPece.Run(Derivative, tspan, initial, settings),
+            };
         }
         catch (OdeArgumentException ex)
         {
@@ -264,21 +309,40 @@ internal static partial class JgsBuiltins
             nonNegative = OneBasedIndices("NonNegative", ToDoubles("odeset", nonNeg, line, col), states, line, col);
         }
 
+        bool stiff = Array.IndexOf(OdeStiffSolverNames, solver) >= 0;
         double[,]? mass = null;
         Func<double, double[], double[,]>? massFunction = null;
         bool massDependsOnState = false;
+        bool massStronglyStateDependent = false;
+        var massSingular = OdeMassSingularity.Maybe;
+        if (Field("MassSingular") is { } ms && IsTextScalar(ms))
+        {
+            massSingular = TextOf(ms).ToLowerInvariant() switch
+            {
+                "yes" => OdeMassSingularity.Yes,
+                "no" => OdeMassSingularity.No,
+                "maybe" => OdeMassSingularity.Maybe,
+                _ => throw new JgsRuntimeException(line, col, "MATLAB:odeset:MassSingularInvalid",
+                    "MassSingular must be 'yes', 'no' or 'maybe'."),
+            };
+        }
+
         if (Field("Mass") is { } massValue)
         {
-            string singular = Field("MassSingular") is { } ms && IsTextScalar(ms) ? TextOf(ms).ToLowerInvariant() : "no";
-            if (singular == "yes")
+            if (!stiff)
             {
-                throw new JgsRuntimeException(line, col, $"MATLAB:{solver}:MassSingularYes",
-                    $"{solver.ToUpperInvariant()} cannot solve problems with a singular mass matrix.");
-            }
+                // MATLAB's explicit solvers invert the mass matrix, so a singular one is refused
+                // outright and an unknown one is assumed non-singular with a warning.
+                if (massSingular == OdeMassSingularity.Yes)
+                {
+                    throw new JgsRuntimeException(line, col, $"MATLAB:{solver}:MassSingularYes",
+                        $"{solver.ToUpperInvariant()} cannot solve problems with a singular mass matrix.");
+                }
 
-            if (singular == "maybe")
-            {
-                Warn(env, host, $"{solver.ToUpperInvariant()} does not support a singular mass matrix; a non-singular one is assumed.", line, col);
+                if (massSingular == OdeMassSingularity.Maybe)
+                {
+                    Warn(env, host, $"{solver.ToUpperInvariant()} does not support a singular mass matrix; a non-singular one is assumed.", line, col);
+                }
             }
 
             if (massValue.Type == JgsType.Function || IsTextScalar(massValue))
@@ -288,6 +352,7 @@ internal static partial class JgsBuiltins
                     ? TextOf(dep).ToLowerInvariant()
                     : "weak";
                 massDependsOnState = dependence != "none";
+                massStronglyStateDependent = dependence == "strong";
                 bool withState = massDependsOnState;
                 massFunction = (t, y) =>
                 {
@@ -300,6 +365,27 @@ internal static partial class JgsBuiltins
             else
             {
                 mass = SquareRect("Mass", massValue, line, col);
+            }
+        }
+
+        // The Jacobian: a matrix, a handle, or neither, in which case the solver differences it.
+        // Only the stiff solvers read it -- the explicit family stores it and leaves it alone, so
+        // one that does not fit the problem is not the explicit family's business to refuse. And
+        // ode15i's is a pair, read where its other paired options are.
+        double[,]? jacobian = null;
+        Func<double, double[], double[,]>? jacobianFunction = null;
+        if (stiff && Field("Jacobian") is { } jacobianValue)
+        {
+            if (jacobianValue.Type == JgsType.Function || IsTextScalar(jacobianValue))
+            {
+                IJgsCallable handle = OdeFunctionOf(env, solver, jacobianValue, line, col);
+                jacobianFunction = (t, y) => SquareRect("Jacobian",
+                    handle.Call([JgsValue.Number(t), JgsMatrix.FromColumnMajorDims((double[])y.Clone(), [states, 1])], line, col),
+                    line, col);
+            }
+            else
+            {
+                jacobian = SquareRect("Jacobian", jacobianValue, line, col);
             }
         }
 
@@ -319,12 +405,54 @@ internal static partial class JgsBuiltins
             Mass = mass,
             MassFunction = massFunction,
             MassDependsOnState = massDependsOnState,
+            MassStronglyStateDependent = massStronglyStateDependent,
+            MassVectorPattern = stiff && Field("MvPattern") is { } mv
+                ? PatternOf("MvPattern", mv, states, line, col)
+                : null,
+            MassSingular = massSingular,
+            InitialSlopeGuess = stiff && Field("InitialSlope") is { } slope0
+                ? ToDoubles("odeset", slope0, line, col)
+                : null,
+            Jacobian = jacobian,
+            JacobianFunction = jacobianFunction,
+            JacobianConstant = Flag("JConstant"),
+            JacobianPattern = stiff && Field("JPattern") is { } jp
+                ? PatternOf("JPattern", jp, states, line, col)
+                : null,
+            Vectorized = stiff && Flag("Vectorized"),
+            Bdf = Flag("BDF"),
+            MaxOrder = Number("MaxOrder") is { } order ? (int)order : null,
             Stats = Flag("Stats"),
             Warn = message => Warn(env, host, message, line, col),
             Print = text => host.print(text.TrimEnd('\n')),
             RecordSteps = asSolution,
             CollectOutput = !asSolution,
         };
+    }
+
+    /// <summary>A sparsity pattern out of an option: every nonzero entry is a place the matrix may fill.</summary>
+    private static bool[,] PatternOf(string option, JgsValue value, int states, int line, int col)
+    {
+        double[] entries = ToDoubles("odeset", value, line, col);
+        int[] dims = value.Dims;
+        int rows = dims.Length > 0 ? dims[0] : 0;
+        int columns = rows > 0 ? entries.Length / rows : 0;
+        if (rows != states || columns != states)
+        {
+            throw new JgsRuntimeException(line, col, $"MATLAB:odeset:{option}Invalid",
+                $"{option} must be a {states}-by-{states} matrix of zeros and ones.");
+        }
+
+        var pattern = new bool[rows, columns];
+        for (int c = 0; c < columns; c++)
+        {
+            for (int r = 0; r < rows; r++)
+            {
+                pattern[r, c] = entries[r + (c * rows)] != 0;
+            }
+        }
+
+        return pattern;
     }
 
     /// <summary>One-based component indices out of an option, checked against the state's size.</summary>
@@ -377,7 +505,8 @@ internal static partial class JgsBuiltins
         }
 
         string solver = TextOf(solverValue);
-        if (Array.IndexOf(OdeSolverNames, solver) < 0)
+        bool implicitSolver = solver == "ode15i";
+        if (!implicitSolver && Array.IndexOf(OdeSolverNames, solver) < 0)
         {
             throw new JgsRuntimeException(line, col, "MATLAB:odextend:InvalidSolverNameInSOL",
                 $"odextend cannot extend a solution from '{solver}'.");
@@ -414,10 +543,28 @@ internal static partial class JgsBuiltins
             : args[1];
         IJgsCallable f = OdeFunctionOf(env, solver, odefunValue, line, col);
 
+        // A fully implicit continuation needs a consistent pair, so its state argument is the two
+        // columns [y0 yp0] and its default slope is the one the run it continues ended at.
         double[] y0;
+        double[] yp0 = [];
         if (args.Count > 3 && !(args[3].Type == JgsType.Array && args[3].ArrayLength == 0))
         {
-            y0 = ToDoubles("odextend", args[3], line, col);
+            double[] supplied = ToDoubles("odextend", args[3], line, col);
+            if (implicitSolver)
+            {
+                if (supplied.Length != 2 * states)
+                {
+                    throw new JgsRuntimeException(line, col, "MATLAB:odextend:BadInitialState",
+                        $"odextend: an ode15i solution is continued from a {states}-by-2 array [y0 yp0].");
+                }
+
+                y0 = supplied[..states];
+                yp0 = supplied[states..];
+            }
+            else
+            {
+                y0 = supplied;
+            }
         }
         else
         {
@@ -425,6 +572,14 @@ internal static partial class JgsBuiltins
             for (int i = 0; i < states; i++)
             {
                 y0[i] = yFlat[i + ((mesh - 1) * states)];
+            }
+
+            if (implicitSolver)
+            {
+                yp0 = extdata.Type == JgsType.Struct && extdata.AsStruct.TryGetValue("ypfinal", out JgsValue? kept0)
+                    ? ToDoubles("odextend", kept0, line, col)
+                    : throw new JgsRuntimeException(line, col, "MATLAB:odextend:NoYpFinal",
+                        "odextend: the ode15i solution carries no final slope to continue from.");
             }
         }
 
@@ -439,8 +594,27 @@ internal static partial class JgsBuiltins
             options = kept;
         }
 
-        OdeResult result = RunOdeSolver(env, host, solver, f, [last, tFinal], y0, options,
-            asSolution: true, statement: false, line, col);
+        OdeResult result;
+        if (implicitSolver)
+        {
+            ImplicitOdeFunction residual = ImplicitResidualOf(f, solver, states, line, col);
+            ImplicitOdeOptions settings = ImplicitOptionsFrom(env, host, options, states, statement: false,
+                asSolution: true, line, col);
+            try
+            {
+                result = Ode15i.Run(residual, [last, tFinal], y0, yp0, settings);
+            }
+            catch (OdeArgumentException ex)
+            {
+                throw new JgsRuntimeException(line, col, ex.Identifier, ex.Message);
+            }
+        }
+        else
+        {
+            result = RunOdeSolver(env, host, solver, f, [last, tFinal], y0, options,
+                asSolution: true, statement: false, line, col);
+        }
+
         JgsValue extension = OdeSolution(solver, odefunValue, options, result, last, y0);
         return JoinedSolutions(solver, sol, extension, states, line, col);
     }

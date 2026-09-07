@@ -260,12 +260,22 @@ NAME_ARG_SAMPLES: dict[tuple[str, str], str] = {
     ("funm", "A"): "[1 1 0; 0 2 1; 0 0 3]", ("funm", "fun"): "@exp",
     ("funm", "options"): "struct('TolBlk', 0.1)", ("funm", "p1"): "1", ("funm", "p2"): "2",
     ("gsvd", "A"): "[1 2; 3 4; 5 6]", ("gsvd", "B"): "[7 8; 9 10]",
-    # The explicit ODE family (M125): a derivative handle, a span, a scalar state, and options the
-    # solver can act on. The forms with five outputs answer empty events when none are watched.
+    # The ODE family (M125 explicit, M126 stiff): a derivative handle, a span, a scalar state, and
+    # options the solver can act on. The forms with five outputs answer empty events when none are
+    # watched.
     **{(solver, arg): sample
-       for solver in ("ode23", "ode45", "ode78", "ode89", "ode113")
+       for solver in ("ode23", "ode45", "ode78", "ode89", "ode113",
+                      "ode15s", "ode23s", "ode23t", "ode23tb")
        for arg, sample in (("odefun", "@(t,y) -y"), ("tspan", "[0 1]"), ("y0", "1"),
                            ("options", "odeset('RelTol', 1e-6)"))},
+    # The fully implicit pair takes the residual and a consistent slope beside the state.
+    ("ode15i", "odefun"): "@(t,y,yp) yp + 3*y - 1", ("ode15i", "tspan"): "[0 1]",
+    ("ode15i", "y0"): "1", ("ode15i", "yp0"): "-2",
+    ("ode15i", "options"): "odeset('RelTol', 1e-6)",
+    ("decic", "odefun"): "@(t,y,yp) yp + 3*y - 1", ("decic", "t0"): "0",
+    ("decic", "y0"): "1", ("decic", "yp0"): "0",
+    ("decic", "fixed_y0"): "[1]", ("decic", "fixed_yp0"): "[]",
+    ("decic", "options"): "odeset('RelTol', 1e-6)",
     ("deval", "sol"): "ode45(@(t,y) -y, [0 1], 1)", ("deval", "x"): "0.5", ("deval", "idx"): "1",
     ("odextend", "sol"): "ode45(@(t,y) -y, [0 1], 1)", ("odextend", "odefun"): "@(t,y) -y",
     ("odextend", "tfinal"): "2", ("odextend", "y0"): "1", ("odextend", "options"): "odeset('RelTol', 1e-6)",

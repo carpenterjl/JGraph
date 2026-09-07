@@ -19,14 +19,14 @@ below is — and that is why an entire folder could sit at nought implemented wi
 
 ## Where it stands
 
-**278 of 377 names implemented**, and
-**478 of 1036 documented syntax forms accepted**.
+**284 of 377 names implemented**, and
+**508 of 1036 documented syntax forms accepted**.
 
 | Folder | Names | Forms documented | Forms accepted | Names missing |
 |---|---:|---:|---:|---:|
-| `strfun` | 40 / 41 | 88 | 64 | 1 |
-| `datafun` | 40 / 41 | 178 | 142 | 1 |
-| `funfun` | 11 / 40 | 123 | 32 | 29 |
+| `strfun` | 40 / 41 | 88 | 69 | 1 |
+| `datafun` | 40 / 41 | 178 | 144 | 1 |
+| `funfun` | 17 / 40 | 123 | 55 | 23 |
 | `sparfun` | 5 / 35 | 185 | 2 | 30 |
 | `polyfun` | 23 / 34 | 94 | 38 | 11 |
 | `elmat` | 33 / 33 | 68 | 59 | 0 |
@@ -43,10 +43,10 @@ below is — and that is why an entire folder could sit at nought implemented wi
 
 | Verdict | Forms | What it means |
 |---|---:|---|
-| accepted | 478 | the call returned without error |
-| refused | 4 | refused deliberately, with a message naming what is missing |
+| accepted | 508 | the call returned without error |
+| refused | 2 | refused deliberately, with a message naming what is missing |
 | undefined | 0 | the name did not resolve at all |
-| error | 112 | failed some other way — **may be the prober's sample, not the build** |
+| error | 107 | failed some other way — **may be the prober's sample, not the build** |
 | unprobed | 103 | no call could be built |
 
 Only implemented names are probed, so "forms accepted" is bounded by the names column above it. As
@@ -64,9 +64,9 @@ command that quite rightly rejects it.
 
 `celldisp` `cellplot` `formattedDisplayText` `isUnderlyingType` `iscom` `isenum` `isinterface` `ismethod` `isprop` `mat2cell` `methodsview` `substruct` `swapbytes`
 
-### `funfun` — 29
+### `funfun` — 23
 
-`bvp4c` `bvp5c` `bvpget` `bvpinit` `bvpset` `bvpxtend` `dblquad` `dde23` `ddeget` `ddensd` `ddesd` `ddeset` `decic` `integral2` `integral3` `ode15i` `ode15s` `ode23s` `ode23t` `ode23tb` `pdepe` `pdeval` `quad` `quad2d` `quadl` `quadv` `symvar` `triplequad` `vectorize`
+`bvp4c` `bvp5c` `bvpget` `bvpinit` `bvpset` `bvpxtend` `dblquad` `dde23` `ddeget` `ddensd` `ddesd` `ddeset` `integral2` `integral3` `pdepe` `pdeval` `quad` `quad2d` `quadl` `quadv` `symvar` `triplequad` `vectorize`
 
 ### `lang` — 7
 

@@ -477,6 +477,12 @@ public static class JgsBuiltinCatalog
         Add("ode78", "Solves dy/dt = f(t, y) with Verner's 7(8) pair, for tight tolerances: [t, y] = ode78(f, tspan, y0, options).", P("f"), P("tspan"), P("y0"), Opt("options"));
         Add("ode89", "Solves dy/dt = f(t, y) with Verner's 8(9) pair, for the tightest tolerances: [t, y] = ode89(f, tspan, y0, options).", P("f"), P("tspan"), P("y0"), Opt("options"));
         Add("ode113", "Solves dy/dt = f(t, y) with a variable-order Adams-Bashforth-Moulton method, for expensive right-hand sides: [t, y] = ode113(f, tspan, y0, options).", P("f"), P("tspan"), P("y0"), Opt("options"));
+        Add("ode15s", "Solves a stiff system, or an index-1 DAE with a singular mass matrix, by variable-order NDFs: [t, y] = ode15s(f, tspan, y0, options).", P("f"), P("tspan"), P("y0"), Opt("options"));
+        Add("ode23s", "Solves a stiff system with a modified Rosenbrock pair, for crude tolerances: [t, y] = ode23s(f, tspan, y0, options).", P("f"), P("tspan"), P("y0"), Opt("options"));
+        Add("ode23t", "Solves a moderately stiff system with the trapezoidal rule, which adds no numerical damping: [t, y] = ode23t(f, tspan, y0, options).", P("f"), P("tspan"), P("y0"), Opt("options"));
+        Add("ode23tb", "Solves a stiff system with TR-BDF2, one factorization serving both stages: [t, y] = ode23tb(f, tspan, y0, options).", P("f"), P("tspan"), P("y0"), Opt("options"));
+        Add("ode15i", "Solves a fully implicit system f(t, y, y') = 0: [t, y] = ode15i(odefun, tspan, y0, yp0, options).", P("odefun"), P("tspan"), P("y0"), P("yp0"), Opt("options"));
+        Add("decic", "Consistent initial conditions for ode15i: [y0, yp0] = decic(odefun, t0, y0, fixed_y0, yp0, fixed_yp0, options).", P("odefun"), P("t0"), P("y0"), P("fixed_y0"), P("yp0"), P("fixed_yp0"), Opt("options"));
         Add("odextend", "Continues a solution structure to a later time with the solver that made it: solext = odextend(sol, odefun, tfinal, y0, options).", P("sol"), P("odefun"), P("tfinal"), Opt("y0"), Opt("options"));
         Add("odeplot", "The output function a solver draws through when called as a statement: every component against time. status = odeplot(t, y, flag).", P("t"), P("y"), Opt("flag"));
         Add("odephas2", "An output function drawing the first two components against each other: odeset('OutputFcn', @odephas2).", P("t"), P("y"), Opt("flag"));

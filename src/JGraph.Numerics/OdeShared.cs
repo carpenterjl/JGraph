@@ -85,10 +85,13 @@ internal sealed class OdeSetup
     public double[]? NonNegativeThreshold { get; private set; }
 
     /// <summary>Sixteen ulps of <paramref name="t"/>: the smallest step that still moves the clock there.</summary>
-    public static double TinyStep(double t)
+    public static double TinyStep(double t) => 16 * Spacing(t);
+
+    /// <summary>One ulp of <paramref name="t"/> — MATLAB's <c>eps(t)</c>.</summary>
+    public static double Spacing(double t)
     {
         double magnitude = Math.Abs(t);
-        return 16 * (magnitude == 0 ? double.Epsilon : Math.BitIncrement(magnitude) - magnitude);
+        return magnitude == 0 ? double.Epsilon : Math.BitIncrement(magnitude) - magnitude;
     }
 
     /// <summary>Works everything out, refusing what MATLAB refuses with the identifier it uses.</summary>
@@ -373,6 +376,7 @@ internal sealed class OdeOutput
     /// <summary>Reports the initial point and tells the output function the run is starting.</summary>
     public void Begin(double[] y0)
     {
+        _result.InitialState = (double[])y0.Clone();
         if (_options.CollectOutput)
         {
             _result.Times.Add(_setup.T0);
@@ -475,6 +479,12 @@ internal sealed class OdeOutput
             print($"{_result.StepCount} successful steps\n");
             print($"{_result.Failed} failed attempts\n");
             print($"{_result.Evaluations} function evaluations\n");
+            if (_result.FullStatistics)
+            {
+                print($"{_result.PartialDerivatives} partial derivatives\n");
+                print($"{_result.Decompositions} LU decompositions\n");
+                print($"{_result.LinearSolves} solutions of linear systems\n");
+            }
         }
     }
 

@@ -12,6 +12,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <!-- The stiff solvers' machinery - the numerical Jacobian and its column grouping - is not
+         part of the public surface but is exactly what a parity test has to be able to read. -->
+    <InternalsVisibleTo Include="JGraph.Tests" />
+  </ItemGroup>
+
+  <ItemGroup>
     <!-- The bundled OpenBLAS (see native\win-x64\SOURCE.md). CopyToOutputDirectory items flow
          transitively through project references, so every host - jgraph.exe, the app, the tests,
          the benchmarks - gets native\libopenblas.dll without wiring of its own. -->

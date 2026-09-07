@@ -53,20 +53,33 @@ internal static partial class JgsBuiltins
         double t0, double[] y0)
     {
         int states = y0.Length;
+
+        // A differential-algebraic problem starts from a state the solver worked out, not from the
+        // guess it was handed, and the first column of the answer is the one it started from.
+        double[] start = result.InitialState is { Length: > 0 } moved ? moved : y0;
         IReadOnlyList<OdeStepRecord> steps = result.Steps;
         int mesh = steps.Count + 1;
         JgsValue x = JgsMatrix.Build(1, mesh, (_, c) => c == 0 ? t0 : steps[c - 1].End);
-        JgsValue y = JgsMatrix.Build(states, mesh, (r, c) => c == 0 ? y0[r] : steps[c - 1].EndState[r]);
+        JgsValue y = JgsMatrix.Build(states, mesh, (r, c) => c == 0 ? start[r] : steps[c - 1].EndState[r]);
+
+        var extdata = new Dictionary<string, JgsValue>(StringComparer.Ordinal)
+        {
+            ["odefun"] = odefun,
+            ["options"] = options ?? JgsValue.Array([]),
+            ["varargin"] = JgsValue.Cell([]),
+        };
+
+        if (result.FinalSlope is { } ypfinal)
+        {
+            // ode15i alone: a continuation has to start from a consistent pair, and the slope the
+            // run ended at is the only one there is.
+            extdata["ypfinal"] = JgsMatrix.FromColumnMajorDims((double[])ypfinal.Clone(), [states, 1]);
+        }
 
         var fields = new Dictionary<string, JgsValue>(StringComparer.Ordinal)
         {
             ["solver"] = JgsValue.Str(solver),
-            ["extdata"] = JgsValue.Struct(new Dictionary<string, JgsValue>(StringComparer.Ordinal)
-            {
-                ["odefun"] = odefun,
-                ["options"] = options ?? JgsValue.Array([]),
-                ["varargin"] = JgsValue.Cell([]),
-            }),
+            ["extdata"] = JgsValue.Struct(extdata),
             ["x"] = x,
             ["y"] = y,
         };
@@ -79,13 +92,24 @@ internal static partial class JgsBuiltins
             fields["ie"] = JgsMatrix.Build(found == 0 ? 0 : 1, found, (_, c) => result.EventIndices[c] + 1);
         }
 
-        fields["stats"] = JgsValue.Struct(new Dictionary<string, JgsValue>(StringComparer.Ordinal)
+        var stats = new Dictionary<string, JgsValue>(StringComparer.Ordinal)
         {
             ["nsteps"] = JgsValue.Number(result.StepCount),
             ["nfailed"] = JgsValue.Number(result.Failed),
             ["nfevals"] = JgsValue.Number(result.Evaluations),
-            ["tfinal"] = JgsValue.Number(result.FinalTime),
-        });
+        };
+
+        if (result.FullStatistics)
+        {
+            // What an implicit solver's cost actually is: the Jacobians, the factorizations and
+            // the solves, which the explicit solvers have none of and do not report.
+            stats["npds"] = JgsValue.Number(result.PartialDerivatives);
+            stats["ndecomps"] = JgsValue.Number(result.Decompositions);
+            stats["nsolves"] = JgsValue.Number(result.LinearSolves);
+        }
+
+        stats["tfinal"] = JgsValue.Number(result.FinalTime);
+        fields["stats"] = JgsValue.Struct(stats);
 
         JgsValue nonNegative = options is not null
             && TryReadField(options, "NonNegative", out JgsValue given) && !IsUnsetOption(given)
@@ -128,6 +152,63 @@ internal static partial class JgsBuiltins
             idata["phi3d"] = JgsMatrix.FromColumnMajorDims(phi, [states, kmax + 1, mesh]);
             idata["psi2d"] = JgsMatrix.FromColumnMajorDims(psi, [kmax, mesh]);
         }
+        else if (solver == Ode15s.Name)
+        {
+            // kvec and dif3d, the differences trimmed to the highest order the run reached — the
+            // same trim odefinalize does, and the reason a first-order run carries three columns.
+            int kmax = 0;
+            foreach (OdeStepRecord step in steps)
+            {
+                kmax = System.Math.Max(kmax, step.Order);
+            }
+
+            int width = kmax + 2;
+            var kvec = new double[mesh];
+            var dif = new double[states * width * mesh];
+            for (int page = 1; page < mesh; page++)
+            {
+                OdeStepRecord step = steps[page - 1];
+                kvec[page] = step.Order;
+                for (int c = 0; c < width && c < step.Stages.Length; c++)
+                {
+                    for (int r = 0; r < states; r++)
+                    {
+                        dif[r + (c * states) + (page * states * width)] = step.Stages[c][r];
+                    }
+                }
+            }
+
+            idata["kvec"] = JgsMatrix.FromColumnMajorDims(kvec, [1, mesh]);
+            idata["dif3d"] = JgsMatrix.FromColumnMajorDims(dif, [states, width, mesh]);
+        }
+        else if (solver == Ode15i.Name)
+        {
+            var kvec = new double[mesh];
+            for (int page = 1; page < mesh; page++)
+            {
+                kvec[page] = steps[page - 1].Order;
+            }
+
+            idata["kvec"] = JgsMatrix.FromColumnMajorDims(kvec, [1, mesh]);
+        }
+        else if (solver is Ode23s.Name or Ode23t.Name)
+        {
+            // Two vectors per step: the Rosenbrock stages, or the scaled slopes at both ends.
+            (string first, string second) = solver == Ode23s.Name ? ("k1", "k2") : ("z", "znew");
+            idata[first] = Column(steps, mesh, states, 0);
+            idata[second] = Column(steps, mesh, states, 1);
+        }
+        else if (solver == Ode23tb.Name)
+        {
+            var t2 = new double[mesh];
+            for (int page = 1; page < mesh; page++)
+            {
+                t2[page] = steps[page - 1].Psi![0];
+            }
+
+            idata["t2"] = JgsMatrix.FromColumnMajorDims(t2, [1, mesh]);
+            idata["y2"] = Column(steps, mesh, states, 0);
+        }
         else
         {
             int width = RungeKuttaScheme.Named(solver)!.InterpolationStages.Length;
@@ -147,9 +228,35 @@ internal static partial class JgsBuiltins
             idata["f3d"] = JgsMatrix.FromColumnMajorDims(f3d, [states, width, mesh]);
         }
 
-        idata["idxNonNegative"] = nonNegative;
+        // The two solvers that cannot honour a non-negativity constraint do not record one.
+        if (solver is not (Ode23s.Name or Ode15i.Name))
+        {
+            idata["idxNonNegative"] = nonNegative;
+        }
+
         fields["idata"] = JgsValue.Struct(idata);
         return JgsValue.Struct(fields);
+    }
+
+    /// <summary>One stage vector per mesh point, as an n-by-mesh matrix whose first page is zero.</summary>
+    private static JgsValue Column(IReadOnlyList<OdeStepRecord> steps, int mesh, int states, int stage)
+    {
+        var values = new double[states * mesh];
+        for (int page = 1; page < mesh; page++)
+        {
+            double[][] stages = steps[page - 1].Stages;
+            if (stage >= stages.Length)
+            {
+                continue;
+            }
+
+            for (int r = 0; r < states; r++)
+            {
+                values[r + (page * states)] = stages[stage][r];
+            }
+        }
+
+        return JgsMatrix.FromColumnMajorDims(values, [states, mesh]);
     }
 
     /// <summary>
@@ -207,13 +314,22 @@ internal static partial class JgsBuiltins
         Dictionary<string, JgsValue> statsB = b["stats"].AsStruct;
         double Stat(Dictionary<string, JgsValue> stats, string name) =>
             stats.TryGetValue(name, out JgsValue? value) ? value.AsNumber : 0;
-        fields["stats"] = JgsValue.Struct(new Dictionary<string, JgsValue>(StringComparer.Ordinal)
+        var joinedStats = new Dictionary<string, JgsValue>(StringComparer.Ordinal)
         {
             ["nsteps"] = JgsValue.Number(Stat(statsA, "nsteps") + Stat(statsB, "nsteps")),
             ["nfailed"] = JgsValue.Number(Stat(statsA, "nfailed") + Stat(statsB, "nfailed")),
             ["nfevals"] = JgsValue.Number(Stat(statsA, "nfevals") + Stat(statsB, "nfevals")),
-            ["tfinal"] = JgsValue.Number(Stat(statsB, "tfinal")),
-        });
+        };
+
+        if (statsB.ContainsKey("npds"))
+        {
+            joinedStats["npds"] = JgsValue.Number(Stat(statsA, "npds") + Stat(statsB, "npds"));
+            joinedStats["ndecomps"] = JgsValue.Number(Stat(statsA, "ndecomps") + Stat(statsB, "ndecomps"));
+            joinedStats["nsolves"] = JgsValue.Number(Stat(statsA, "nsolves") + Stat(statsB, "nsolves"));
+        }
+
+        joinedStats["tfinal"] = JgsValue.Number(Stat(statsB, "tfinal"));
+        fields["stats"] = JgsValue.Struct(joinedStats);
 
         Dictionary<string, JgsValue> idataA = a["idata"].AsStruct;
         Dictionary<string, JgsValue> idataB = b["idata"].AsStruct;
@@ -262,6 +378,57 @@ internal static partial class JgsBuiltins
             idata["phi3d"] = JgsMatrix.FromColumnMajorDims(phi, [states, kmax + 1, mesh]);
             idata["psi2d"] = JgsMatrix.FromColumnMajorDims(psi, [kmax, mesh]);
         }
+        else if (solver == Ode15s.Name)
+        {
+            // The differences of the two runs may be trimmed to different orders, so the join is as
+            // wide as the wider of them and each half is written into its own columns.
+            double[] ka = ToDoubles("odextend", idataA["kvec"], line, col);
+            double[] kb = ToDoubles("odextend", idataB["kvec"], line, col);
+            int[] dimsA = idataA["dif3d"].Dims;
+            int[] dimsB = idataB["dif3d"].Dims;
+            int widthA = dimsA.Length > 1 ? dimsA[1] : 3;
+            int widthB = dimsB.Length > 1 ? dimsB[1] : 3;
+            int width = System.Math.Max(widthA, widthB);
+            double[] difA = ToDoubles("odextend", idataA["dif3d"], line, col);
+            double[] difB = ToDoubles("odextend", idataB["dif3d"], line, col);
+
+            var kvec = new double[mesh];
+            var dif = new double[states * width * mesh];
+            for (int page = 0; page < mesh; page++)
+            {
+                bool fromA = page < meshA;
+                int source = fromA ? page : page - meshA + from;
+                kvec[page] = fromA ? ka[source] : kb[source];
+                int sourceWidth = fromA ? widthA : widthB;
+                double[] values = fromA ? difA : difB;
+                for (int c = 0; c < sourceWidth && c < width; c++)
+                {
+                    for (int r = 0; r < states; r++)
+                    {
+                        dif[r + (c * states) + (page * states * width)] =
+                            values[r + (c * states) + (source * states * sourceWidth)];
+                    }
+                }
+            }
+
+            idata["kvec"] = JgsMatrix.FromColumnMajorDims(kvec, [1, mesh]);
+            idata["dif3d"] = JgsMatrix.FromColumnMajorDims(dif, [states, width, mesh]);
+        }
+        else if (solver == Ode15i.Name)
+        {
+            idata["kvec"] = JoinRows(idataA["kvec"], idataB["kvec"], 1, meshA, meshB, mesh, from, line, col);
+        }
+        else if (solver is Ode23s.Name or Ode23t.Name)
+        {
+            (string leading, string trailing) = solver == Ode23s.Name ? ("k1", "k2") : ("z", "znew");
+            idata[leading] = JoinRows(idataA[leading], idataB[leading], states, meshA, meshB, mesh, from, line, col);
+            idata[trailing] = JoinRows(idataA[trailing], idataB[trailing], states, meshA, meshB, mesh, from, line, col);
+        }
+        else if (solver == Ode23tb.Name)
+        {
+            idata["t2"] = JoinRows(idataA["t2"], idataB["t2"], 1, meshA, meshB, mesh, from, line, col);
+            idata["y2"] = JoinRows(idataA["y2"], idataB["y2"], states, meshA, meshB, mesh, from, line, col);
+        }
         else
         {
             int width = RungeKuttaScheme.Named(solver)!.InterpolationStages.Length;
@@ -274,15 +441,33 @@ internal static partial class JgsBuiltins
             idata["f3d"] = JgsMatrix.FromColumnMajorDims(f3d, [states, width, mesh]);
         }
 
-        idata["idxNonNegative"] = idataB.TryGetValue("idxNonNegative", out JgsValue? nn) ? nn : JgsValue.Array([]);
+        if (idataA.ContainsKey("idxNonNegative") || idataB.ContainsKey("idxNonNegative"))
+        {
+            idata["idxNonNegative"] = idataB.TryGetValue("idxNonNegative", out JgsValue? nn) ? nn : JgsValue.Array([]);
+        }
+
         fields["idata"] = JgsValue.Struct(idata);
         return JgsValue.Struct(fields);
+    }
+
+    /// <summary>Two rows-by-mesh fields laid end to end, the second skipping its duplicate first page.</summary>
+    private static JgsValue JoinRows(JgsValue a, JgsValue b, int rows, int meshA, int meshB, int mesh,
+        int from, int line, int col)
+    {
+        double[] first = ToDoubles("odextend", a, line, col);
+        double[] second = ToDoubles("odextend", b, line, col);
+        var joined = new double[rows * mesh];
+        Array.Copy(first, 0, joined, 0, System.Math.Min(first.Length, rows * meshA));
+        int offset = from * rows;
+        Array.Copy(second, offset, joined, meshA * rows,
+            System.Math.Min(second.Length - offset, (meshB - from) * rows));
+        return JgsMatrix.FromColumnMajorDims(joined, [rows, mesh]);
     }
 
     // --- deval ------------------------------------------------------------------------------
 
     /// <summary>A solution structure taken apart into what its solver's interpolant reads.</summary>
-    private sealed class OdeSolutionData
+    private sealed record OdeSolutionData
     {
         public required string Solver { get; init; }
         public required double[] Times { get; init; }
@@ -296,6 +481,9 @@ internal static partial class JgsBuiltins
         public int PhiWidth { get; init; }
         public double[]? Psi { get; init; }               // psi2d, column-major
         public int PsiRows { get; init; }
+        public double[]? First { get; init; }             // ode23s k1, ode23t z, ode23tb y2
+        public double[]? Second { get; init; }            // ode23s k2, ode23t znew
+        public double[]? Midpoints { get; init; }         // ode23tb t2
         public int[]? NonNegative { get; init; }
 
         public int Mesh => Times.Length;
@@ -307,9 +495,82 @@ internal static partial class JgsBuiltins
             return state;
         }
 
+        /// <summary>One column of an n-by-mesh field, at mesh point <paramref name="page"/>.</summary>
+        private double[] Vector(double[]? source, int page)
+        {
+            var column = new double[N];
+            if (source is null)
+            {
+                return column;
+            }
+
+            for (int r = 0; r < N; r++)
+            {
+                int index = r + (page * N);
+                column[r] = index < source.Length ? source[index] : 0;
+            }
+
+            return column;
+        }
+
         /// <summary>The solution inside step <paramref name="step"/> (from mesh point step to step + 1) at <paramref name="at"/>.</summary>
         public double[] Read(int step, double at, double[]? slope)
         {
+            double h = Times[step + 1] - Times[step];
+            switch (Solver)
+            {
+                case Ode15s.Name:
+                {
+                    int ending = step + 1;
+                    int reached = System.Math.Max(1, (int)Orders![ending]);
+                    var dif = new double[StageWidth][];
+                    for (int j = 0; j < StageWidth; j++)
+                    {
+                        var column = new double[N];
+                        int offset = (j * N) + (ending * N * StageWidth);
+                        for (int r = 0; r < N; r++)
+                        {
+                            column[r] = offset + r < Stages!.Length ? Stages[offset + r] : 0;
+                        }
+
+                        dif[j] = column;
+                    }
+
+                    return OdeStiffInterpolants.Ntrp15s(at, Times[ending], StateAt(ending), h, dif, reached,
+                        slope, NonNegative);
+                }
+
+                case Ode23s.Name:
+                    return OdeStiffInterpolants.Ntrp23s(at, Times[step], StateAt(step), h,
+                        Vector(First, step + 1), Vector(Second, step + 1), slope);
+
+                case Ode23t.Name:
+                    return OdeStiffInterpolants.Ntrp23t(at, Times[step], StateAt(step), StateAt(step + 1), h,
+                        Vector(First, step + 1), Vector(Second, step + 1), slope, NonNegative);
+
+                case Ode23tb.Name:
+                    return OdeStiffInterpolants.Ntrp23tb(at, Times[step], StateAt(step), Times[step + 1],
+                        StateAt(step + 1), Midpoints![step + 1], Vector(First, step + 1), slope, NonNegative);
+
+                case Ode15i.Name:
+                {
+                    // The polynomial is through the step's end and the k mesh points behind it,
+                    // which the mesh itself carries: no interpolation data of its own is stored.
+                    int reached = System.Math.Max(1, (int)Orders![step + 1]);
+                    int behind = System.Math.Min(reached, step + 1);
+                    var nodes = new double[behind];
+                    var behindStates = new double[behind][];
+                    for (int j = 0; j < behind; j++)
+                    {
+                        nodes[j] = Times[step - j];
+                        behindStates[j] = StateAt(step - j);
+                    }
+
+                    return OdeStiffInterpolants.Ntrp15i(at, Times[step + 1], StateAt(step + 1), nodes,
+                        behindStates, slope);
+                }
+            }
+
             if (Scheme is { } scheme)
             {
                 var stages = new double[StageWidth][];
@@ -517,7 +778,8 @@ internal static partial class JgsBuiltins
 
         string solver = TextOf(solverValue);
         RungeKuttaScheme? scheme = RungeKuttaScheme.Named(solver);
-        if (scheme is null && solver != AdamsPece.Name)
+        bool stiff = solver is Ode15s.Name or Ode23s.Name or Ode23t.Name or Ode23tb.Name or Ode15i.Name;
+        if (scheme is null && !stiff && solver != AdamsPece.Name)
         {
             throw new JgsRuntimeException(line, col, "MATLAB:deval:InvalidSolver",
                 $"deval cannot read a solution from '{solver}'.");
@@ -546,6 +808,62 @@ internal static partial class JgsBuiltins
             for (int i = 0; i < given.Length; i++)
             {
                 nonNegative[i] = (int)given[i] - 1;
+            }
+        }
+
+        if (stiff)
+        {
+            JgsValue? Field(string name) =>
+                idata.AsStruct.TryGetValue(name, out JgsValue? found) ? found : null;
+
+            double[]? Vector(string name) =>
+                Field(name) is { } found ? ToDoubles("deval", found, line, col) : null;
+
+            var data = new OdeSolutionData
+            {
+                Solver = solver,
+                Times = times,
+                States = states,
+                N = n,
+                NonNegative = nonNegative,
+            };
+
+            switch (solver)
+            {
+                case Ode15s.Name:
+                {
+                    if (Field("dif3d") is not { } dif || Field("kvec") is null)
+                    {
+                        throw new JgsRuntimeException(line, col,
+                            "deval: the ode15s solution structure is missing its differences.");
+                    }
+
+                    int[] dims = dif.Dims;
+                    return data with
+                    {
+                        Orders = Vector("kvec"),
+                        Stages = ToDoubles("deval", dif, line, col),
+                        StageWidth = dims.Length > 1 ? dims[1] : 3,
+                    };
+                }
+
+                case Ode15i.Name:
+                    if (Field("kvec") is null)
+                    {
+                        throw new JgsRuntimeException(line, col,
+                            "deval: the ode15i solution structure is missing its orders.");
+                    }
+
+                    return data with { Orders = Vector("kvec") };
+
+                case Ode23s.Name:
+                    return data with { First = Vector("k1"), Second = Vector("k2") };
+
+                case Ode23t.Name:
+                    return data with { First = Vector("z"), Second = Vector("znew") };
+
+                default:
+                    return data with { First = Vector("y2"), Midpoints = Vector("t2") };
             }
         }
 

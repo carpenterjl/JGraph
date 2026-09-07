@@ -33,11 +33,31 @@ public enum OdeOutputPhase
 /// </summary>
 public delegate bool OdeOutputFunction(OdeOutputPhase phase, double[] times, double[][] states);
 
+/// <summary>What the caller says about whether the mass matrix is singular — MATLAB's <c>MassSingular</c>.</summary>
+public enum OdeMassSingularity
+{
+    /// <summary><c>'maybe'</c>: the solver decides by conditioning. MATLAB's default.</summary>
+    Maybe,
+
+    /// <summary><c>'no'</c>: take it as non-singular, so the problem is an ODE.</summary>
+    No,
+
+    /// <summary><c>'yes'</c>: take it as singular, so the problem is a differential-algebraic equation.</summary>
+    Yes,
+}
+
 /// <summary>
-/// Everything <c>odeset</c> can say that the explicit solvers act on. Null or unset means MATLAB's
-/// default, which each solver applies itself because two of the defaults differ by solver.
+/// Everything <c>odeset</c> can say that a solver acts on. Null or unset means MATLAB's default,
+/// which each solver applies itself because some of the defaults differ by solver.
 /// </summary>
-public sealed class OdeOptions
+/// <remarks>
+/// The last block of fields is the part the explicit family stores and does not read: a Jacobian,
+/// its sparsity pattern, the order cap and the family switch. They belong here rather than in a
+/// record of their own because they are what one <c>odeset</c> structure carries, and because a
+/// script may hand the same structure to <c>ode45</c> and to <c>ode15s</c> and expect each to take
+/// what it can use.
+/// </remarks>
+public sealed record OdeOptions
 {
     /// <summary>Relative tolerance; MATLAB's default is 1e-3.</summary>
     public double RelativeTolerance { get; init; } = 1e-3;
@@ -80,6 +100,45 @@ public sealed class OdeOptions
 
     /// <summary>Whether <see cref="MassFunction"/> reads the state as well as the time.</summary>
     public bool MassDependsOnState { get; init; }
+
+    /// <summary>
+    /// Whether the mass matrix depends on the state <em>strongly</em> — <c>MStateDependence</c>
+    /// <c>'strong'</c>, which puts <c>d(M·v)/dy</c> into the iteration matrix.
+    /// </summary>
+    public bool MassStronglyStateDependent { get; init; }
+
+    /// <summary>Which entries of <c>d(M·v)/dy</c> can be nonzero — <c>MvPattern</c>; null is all of them.</summary>
+    public bool[,]? MassVectorPattern { get; init; }
+
+    /// <summary>What the caller says about the mass matrix being singular.</summary>
+    public OdeMassSingularity MassSingular { get; init; } = OdeMassSingularity.Maybe;
+
+    /// <summary>A guess at <c>y'(t0)</c> for a differential-algebraic problem — <c>InitialSlope</c>.</summary>
+    public double[]? InitialSlopeGuess { get; init; }
+
+    /// <summary>A constant Jacobian <c>df/dy</c> the caller supplied as a matrix; null is none.</summary>
+    public double[,]? Jacobian { get; init; }
+
+    /// <summary>A function answering <c>df/dy</c> at a point; null is none.</summary>
+    public Func<double, double[], double[,]>? JacobianFunction { get; init; }
+
+    /// <summary>Whether the Jacobian never changes — <c>JConstant</c>, so it is formed once.</summary>
+    public bool JacobianConstant { get; init; }
+
+    /// <summary>Which entries of the Jacobian can be nonzero — <c>JPattern</c>; null is a full one.</summary>
+    public bool[,]? JacobianPattern { get; init; }
+
+    /// <summary>Whether the derivative answers a matrix of states in one call — <c>Vectorized</c>.</summary>
+    public bool Vectorized { get; init; }
+
+    /// <summary>The derivative over several states at once, when <see cref="Vectorized"/>; null otherwise.</summary>
+    public Func<double, double[][], double[][]>? VectorizedDerivative { get; init; }
+
+    /// <summary>Use the backward differentiation formulas rather than the NDFs — <c>BDF</c>.</summary>
+    public bool Bdf { get; init; }
+
+    /// <summary>The highest order a variable-order formula may reach — <c>MaxOrder</c>; null is five.</summary>
+    public int? MaxOrder { get; init; }
 
     /// <summary>Print the step, failure and evaluation counts when the run ends.</summary>
     public bool Stats { get; init; }
@@ -155,6 +214,34 @@ public sealed class OdeResult
     /// <summary>Calls of the derivative.</summary>
     public int Evaluations { get; set; }
 
+    /// <summary>Jacobians formed — MATLAB's <c>npds</c>. Only the implicit solvers report it.</summary>
+    public int PartialDerivatives { get; set; }
+
+    /// <summary>Factorizations of the iteration matrix — MATLAB's <c>ndecomps</c>.</summary>
+    public int Decompositions { get; set; }
+
+    /// <summary>Solves against those factorizations — MATLAB's <c>nsolves</c>.</summary>
+    public int LinearSolves { get; set; }
+
+    /// <summary>
+    /// Whether the three counts above are part of this solver's answer. The explicit solvers leave
+    /// them out of the statistics structure entirely, as <c>odefinalize</c> does.
+    /// </summary>
+    public bool FullStatistics { get; init; }
+
     /// <summary>Where the integration ended — the end of the span, or where an event or the output function stopped it.</summary>
     public double FinalTime { get; set; }
+
+    /// <summary>
+    /// The slope the run ended at, which only <c>ode15i</c> reports — its solution structure carries
+    /// it as <c>extdata.ypfinal</c>, so that a continuation can start consistently.
+    /// </summary>
+    public double[]? FinalSlope { get; set; }
+
+    /// <summary>
+    /// The state the first step actually started from. It is the caller's <c>y0</c> everywhere
+    /// except on a differential-algebraic problem, where the solver has moved the guess onto the
+    /// constraint before taking a step — and the answer has to report the point it started from.
+    /// </summary>
+    public double[]? InitialState { get; set; }
 }
