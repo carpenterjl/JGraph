@@ -637,16 +637,53 @@ public static class PackedMath
     /// <summary>dest[i] = start + i * step (colon-range materialization).</summary>
     public static void Fill(NumericBuffer dest, double start, double step, Action? betweenChunks = null)
     {
+        long count = dest.Length;
         ParallelKernels.For(dest.Length, ParallelKernels.MemoryBoundThreshold, betweenChunks, (at, len) =>
         {
             Span<double> d = dest.AsSpan(at, len);
             for (int i = 0; i < len; i++)
             {
-                d[i] = start + (at + i) * step;
+                d[i] = RangeElement(start, step, count, at + i);
             }
         });
 
         GC.KeepAlive(dest);
+    }
+
+    /// <summary>
+    /// One element of an arithmetic range, by MATLAB's rule rather than the obvious one (M132).
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    /// The obvious rule is <c>start + i*step</c>, and it drifts: with a step that is not a binary
+    /// fraction the error grows with the index, so the far end of the range is one or two units in
+    /// the last place away from where it should be. MATLAB's rule computes the first half forwards
+    /// from the start and the second half backwards from the last element, which halves the longest
+    /// chain and puts the drift in the middle, where the values are largest and it matters least.
+    /// </para>
+    /// <para>
+    /// This is invisible until something compares a range value against a boundary. It surfaced in
+    /// M132, where a pulse train's edges are open on one side: <c>0:1/1000:0.1</c> put its 91st
+    /// sample one unit in the last place above where MATLAB puts it, which was enough to move a
+    /// pulse from one frame to the next. Every whole-number range is unaffected, because both rules
+    /// are exact there.
+    /// </para>
+    /// </remarks>
+    public static double RangeElement(double start, double step, long count, long index)
+    {
+        long steps = count - 1;
+        if (steps <= 0)
+        {
+            return start;
+        }
+
+        double last = start + (steps * step);
+        if (index * 2 <= steps && double.IsFinite(last))
+        {
+            return start + (index * step);
+        }
+
+        return double.IsFinite(last) ? last - ((steps - index) * step) : start + (index * step);
     }
 
     /// <summary>dest[i] = value.</summary>

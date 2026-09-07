@@ -2558,6 +2558,13 @@ internal static partial class JgsBuiltins
         RegisterSparseKrylovBuiltins(env, host, dialect, random);
         RegisterScatteredDataBuiltins(env, host);
         RegisterBvpDdeBuiltins(env, host);
+
+        // M132: the windows, generators, transforms and conversions of the Signal Processing
+        // Toolbox. Four files rather than one because the four families share no grammar.
+        RegisterSignalWindowBuiltins(env);
+        RegisterSignalGeneratorBuiltins(env);
+        RegisterSignalTransformBuiltins(env);
+        RegisterSignalFramingBuiltins(env);
         RegisterCosineTransformBuiltins(env);
         RegisterStringEditingBuiltins(env, dialect);
         RegisterStringArrayBuiltins(env);

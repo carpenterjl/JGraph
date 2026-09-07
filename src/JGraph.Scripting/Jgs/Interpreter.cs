@@ -1319,7 +1319,22 @@ internal sealed partial class Interpreter
             return compiled;
         }
 
-        JgsValue iterable = Evaluate(statement.Iterable, env);
+        // A range written out in the loop head is stepped rather than built (M132). MATLAB's two
+        // spellings really do differ: `v = 0:0.1:1` computes its second half backwards from the last
+        // element, and `for x = 0:0.1:1` adds the step again each pass, so the seventh value of the
+        // array and the seventh pass of the loop are one unit in the last place apart. The compiled
+        // road already stepped; this is the walk agreeing with it, and with MATLAB.
+        if (statement.Iterable is RangeExpr steppedRange)
+        {
+            return ExecuteForOverSteps(statement, steppedRange, env);
+        }
+
+        return ExecuteForOverArray(statement, Evaluate(statement.Iterable, env), env);
+    }
+
+    /// <summary>Runs a <c>for</c> over an already-built value, which is every loop but a stepped one.</summary>
+    private Completion ExecuteForOverArray(ForStmt statement, JgsValue iterable, JgsEnvironment env)
+    {
         if (iterable.Type == JgsType.Cell)
         {
             return ExecuteForOverCell(statement, iterable, env);
@@ -1359,6 +1374,58 @@ internal sealed partial class Interpreter
             if (walked != JgsNumericClass.Double)
             {
                 element = JgsNumericClasses.Stamp(element, walked);
+            }
+
+            Tick();
+            JgsEnvironment local = BlockScope(env);
+            local.Declare(statement.Variable, element);
+            Completion completion = ExecuteBlock(statement.Body, local);
+            if (completion.Kind == CompletionKind.Break)
+            {
+                break;
+            }
+
+            if (completion.Kind == CompletionKind.Return)
+            {
+                return completion;
+            }
+        }
+
+        return Completion.Normal;
+    }
+
+    /// <summary>
+    /// Runs a <c>for</c> whose loop expression is a range written out in the head, by stepping.
+    /// </summary>
+    /// <remarks>
+    /// The bounds are read once, the count is the one the range itself would have, and the value
+    /// bound each pass is the start plus the step that many times — which is what MATLAB does here
+    /// and what the compiled loop was already doing. Everything else about the loop, including the
+    /// class the bounds carry, is the walk's.
+    /// </remarks>
+    private Completion ExecuteForOverSteps(ForStmt statement, RangeExpr range, JgsEnvironment env)
+    {
+        JgsNumericClass carried = JgsNumericClass.Double;
+        JgsValue startValue = Evaluate(range.Start, env);
+        JgsValue stepValue = range.Step is null ? JgsValue.Number(1) : Evaluate(range.Step, env);
+        JgsValue stopValue = Evaluate(range.Stop, env);
+        if (startValue.TimeTag is not null || stepValue.TimeTag is not null || stopValue.TimeTag is not null)
+        {
+            // A range of instants is a range of instants whichever spelling reaches it; the walk
+            // over the built array is the one that knows how to carry the tag.
+            return ExecuteForOverArray(statement, EvaluateRange(range, env), env);
+        }
+
+        double start = RangeBoundValue(startValue, range.Start, "start", ref carried);
+        double step = RangeBoundValue(stepValue, range.Step ?? range.Start, "step", ref carried);
+        double stop = RangeBoundValue(stopValue, range.Stop, "stop", ref carried);
+        long count = HotLoopRangeCount(start, step, stop, range.Line, range.Column);
+        for (long index = 0; index < count; index++)
+        {
+            JgsValue element = JgsValue.Number(start + (index * step));
+            if (carried != JgsNumericClass.Double)
+            {
+                element = JgsNumericClasses.Stamp(element, carried);
             }
 
             Tick();
@@ -1603,7 +1670,7 @@ internal sealed partial class Interpreter
         var values = new JgsValue[count];
         for (long i = 0; i < count; i++)
         {
-            values[i] = JgsValue.Number(start + (i * step));
+            values[i] = JgsValue.Number(PackedMath.RangeElement(start, step, count, i));
         }
 
         return Finish(JgsNumericClasses.Stamp(JgsValue.Array(values), carried));

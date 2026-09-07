@@ -8,13 +8,12 @@ without a catalog entry, or registered without being called implemented.
 
 ## Where it stands
 
-**6 of 351 documented names implemented**; 272 are planned across six milestones
-(M132-M137; ADR 0126 holds the plan) and 73 are excluded by name.
+**61 of 351 documented names implemented**; 217 are planned across five milestones
+(M133-M137; ADR 0126 holds the plan) and 73 are excluded by name.
 
 | Bucket | Names |
 |---|---:|
-| Implemented | 6 |
-| Not implemented, M132 | 55 |
+| Implemented | 61 |
 | Not implemented, M133 | 36 |
 | Not implemented, M134 | 55 |
 | Not implemented, M135 | 6 |
@@ -31,13 +30,9 @@ recorded R2024a output. Names MATLAB keeps outside this folder but the plan impl
 
 ## Implemented
 
-`butter`, `db`, `dct`, `firpm`, `freqz`, `idct`
+`barthannwin`, `bartlett`, `bitrevorder`, `blackman`, `blackmanharris`, `bohmanwin`, `boxcar`, `buffer`, `butter`, `cceps`, `chebwin`, `czt`, `datawrap`, `db`, `db2pow`, `dct`, `demod`, `dftmtx`, `digitrevorder`, `diric`, `dpss`, `firpm`, `flattopwin`, `framesig`, `freqz`, `fwht`, `gauspuls`, `gausswin`, `gmonopuls`, `goertzel`, `hamming`, `hann`, `hanning`, `hilbert`, `icceps`, `idct`, `ifwht`, `kaiser`, `marcumq`, `modulate`, `nuttallwin`, `parzenwin`, `pow2db`, `pulstran`, `rceps`, `rectpuls`, `rectwin`, `sawtooth`, `seqperiod`, `shiftdata`, `sinc`, `square`, `taylorwin`, `triang`, `tripuls`, `tukeywin`, `udecode`, `uencode`, `unshiftdata`, `vco`, `window`
 
 ## Not implemented
-
-### M132: Windows, waveform generators, transforms, unit conversions (55)
-
-`barthannwin`, `bartlett`, `bitrevorder`, `blackman`, `blackmanharris`, `bohmanwin`, `boxcar`, `buffer`, `cceps`, `chebwin`, `czt`, `datawrap`, `db2pow`, `demod`, `dftmtx`, `digitrevorder`, `diric`, `dpss`, `flattopwin`, `framesig`, `fwht`, `gauspuls`, `gausswin`, `gmonopuls`, `goertzel`, `hamming`, `hann`, `hanning`, `hilbert`, `icceps`, `ifwht`, `kaiser`, `marcumq`, `modulate`, `nuttallwin`, `parzenwin`, `pow2db`, `pulstran`, `rceps`, `rectpuls`, `rectwin`, `sawtooth`, `seqperiod`, `shiftdata`, `sinc`, `square`, `taylorwin`, `triang`, `tripuls`, `tukeywin`, `udecode`, `uencode`, `unshiftdata`, `vco`, `window`
 
 ### M133: Filtering, coefficient conversions, multirate (36)
 

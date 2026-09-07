@@ -103,12 +103,17 @@ see. This file refused to count them while they drew nothing; **M56 made them re
 number and this one agree again. `opengl` *is* counted, because an accepted no-op is an answer — the
 same reading that counted `shading`, `lighting` and `camlight` in M43.
 
-Across every callable kind — builtin, function, operator, keyword, script — the count is **1,054 of
-2,024** as of M126, which added the stiff ODE family (`ode15s`, `ode23s`, `ode23t`, `ode23tb`) and
-the fully implicit pair (`ode15i`, `decic`) — six names, and the first of them that can solve a
-differential-algebraic equation rather than only an ordinary one. M125 added five before them
-(`ode23`, `ode78`, `ode89`, `ode113`, `odextend`), and the commits between the two milestones
-added four more without a count of their own.
+Across every callable kind — builtin, function, operator, keyword, script — the count is **1,113 of
+2,024** as of M132. The fifty-nine names since M126 came in one wave and one milestone after it: the
+five parallel milestones M127–M131 added the quadrature above one dimension, the sparse iterative
+solvers and orderings, the scattered-data interpolants, the boundary-value and delay solvers, and
+`pdepe`; M132 added the Signal Processing Toolbox's windows and generators, which are counted by
+`matlab-signal-coverage.md` rather than here, and three base names beside them (`chirp`, `db2mag`,
+`mag2db`). The count stood at **1,054** as of M126, which added the stiff ODE family (`ode15s`,
+`ode23s`, `ode23t`, `ode23tb`) and the fully implicit pair (`ode15i`, `decic`) — six names, and the
+first of them that can solve a differential-algebraic equation rather than only an ordinary one.
+M125 added five before them (`ode23`, `ode78`, `ode89`, `ode113`, `odextend`), and the commits
+between the two milestones added four more without a count of their own.
 
 The count was **1,039** as of M123, which added `deval` — the one name that lets a solution
 structure be read at a time nobody asked for while it was being computed. The 1,038 before it came from M122's capability

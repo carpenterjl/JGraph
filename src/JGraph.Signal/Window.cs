@@ -24,8 +24,15 @@ public enum WindowType
 
 /// <summary>
 /// Generates and applies tapering windows used before an <see cref="Fft"/> to reduce spectral leakage.
-/// Windows are symmetric (the classic "periodic = false" form, denominator N−1).
+/// Windows are symmetric (the classic "periodic = false" form, denominator N-1).
 /// </summary>
+/// <remarks>
+/// The coefficients come from <see cref="SignalWindows"/>, which is where every window MATLAB
+/// documents lives (M132). Before that this class carried its own copy of the raised-cosine table
+/// and evaluated it at every index; the table agreed with MATLAB's and the evaluation did not,
+/// because MATLAB computes one half of a window and reflects it. Two tables of the same numbers is
+/// how one of them drifts, so there is now one.
+/// </remarks>
 public static class Window
 {
     /// <summary>Builds the coefficients of a length-<paramref name="length"/> window of the given type.</summary>
@@ -36,33 +43,15 @@ public static class Window
             throw new ArgumentOutOfRangeException(nameof(length), "Window length must be positive.");
         }
 
-        var w = new double[length];
-        if (length == 1)
+        return type switch
         {
-            w[0] = 1.0;
-            return w;
-        }
-
-        double denom = length - 1;
-        for (int n = 0; n < length; n++)
-        {
-            double t = n / denom; // 0..1
-            w[n] = type switch
-            {
-                WindowType.Rectangular => 1.0,
-                WindowType.Hann => 0.5 - (0.5 * Cos(1, t)),
-                WindowType.Hamming => 0.54 - (0.46 * Cos(1, t)),
-                WindowType.Blackman => 0.42 - (0.5 * Cos(1, t)) + (0.08 * Cos(2, t)),
-                WindowType.BlackmanHarris =>
-                    0.35875 - (0.48829 * Cos(1, t)) + (0.14128 * Cos(2, t)) - (0.01168 * Cos(3, t)),
-                WindowType.FlatTop =>
-                    0.21557895 - (0.41663158 * Cos(1, t)) + (0.277263158 * Cos(2, t))
-                        - (0.083578947 * Cos(3, t)) + (0.006947368 * Cos(4, t)),
-                _ => 1.0,
-            };
-        }
-
-        return w;
+            WindowType.Hann => SignalWindows.Hann(length),
+            WindowType.Hamming => SignalWindows.Hamming(length),
+            WindowType.Blackman => SignalWindows.Blackman(length),
+            WindowType.BlackmanHarris => SignalWindows.BlackmanHarris(length),
+            WindowType.FlatTop => SignalWindows.FlatTop(length),
+            _ => SignalWindows.Rectangular(length),
+        };
     }
 
     /// <summary>Multiplies <paramref name="frame"/> in place by a window of the given type.</summary>
@@ -95,7 +84,4 @@ public static class Window
 
         return sum / window.Length;
     }
-
-    private static double Cos(int harmonic, double t) =>
-        System.Math.Cos(harmonic * 2.0 * System.Math.PI * t);
 }
