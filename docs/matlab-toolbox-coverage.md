@@ -19,14 +19,14 @@ below is — and that is why an entire folder could sit at nought implemented wi
 
 ## Where it stands
 
-**331 of 377 names implemented**, and
-**707 of 1036 documented syntax forms accepted**.
+**342 of 377 names implemented**, and
+**724 of 1036 documented syntax forms accepted**.
 
 | Folder | Names | Forms documented | Forms accepted | Names missing |
 |---|---:|---:|---:|---:|
 | `strfun` | 40 / 41 | 88 | 69 | 1 |
 | `datafun` | 40 / 41 | 178 | 144 | 1 |
-| `funfun` | 29 / 40 | 123 | 82 | 11 |
+| `funfun` | 40 / 40 | 123 | 99 | 0 |
 | `sparfun` | 31 / 35 | 185 | 150 | 4 |
 | `polyfun` | 32 / 34 | 94 | 62 | 2 |
 | `elmat` | 33 / 33 | 68 | 59 | 0 |
@@ -43,11 +43,11 @@ below is — and that is why an entire folder could sit at nought implemented wi
 
 | Verdict | Forms | What it means |
 |---|---:|---|
-| accepted | 707 | the call returned without error |
+| accepted | 724 | the call returned without error |
 | refused | 4 | refused deliberately, with a message naming what is missing |
 | undefined | 2 | the name did not resolve at all |
-| error | 111 | failed some other way — **may be the prober's sample, not the build** |
-| unprobed | 108 | no call could be built |
+| error | 115 | failed some other way — **may be the prober's sample, not the build** |
+| unprobed | 117 | no call could be built |
 
 Only implemented names are probed, so "forms accepted" is bounded by the names column above it. As
 in the sibling document, **`accepted` is the trustworthy column** and every other one is a worklist:
@@ -63,10 +63,6 @@ command that quite rightly rejects it.
 ### `datatypes` — 13
 
 `celldisp` `cellplot` `formattedDisplayText` `isUnderlyingType` `iscom` `isenum` `isinterface` `ismethod` `isprop` `mat2cell` `methodsview` `substruct` `swapbytes`
-
-### `funfun` — 11
-
-`bvp4c` `bvp5c` `bvpget` `bvpinit` `bvpset` `bvpxtend` `dde23` `ddeget` `ddensd` `ddesd` `ddeset`
 
 ### `lang` — 7
 

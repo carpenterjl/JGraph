@@ -408,6 +408,38 @@ NAME_ARG_SAMPLES: dict[tuple[str, str], str] = {
     ("stlwrite", "filename"): "fullfile(tempdir, 'jgraph_probe_mesh.stl')",
     ("stlwrite", "TR"): "triangulation([1 2 3; 1 3 4], [0 0 0; 1 0 0; 1 1 0; 0 1 0])",
     ("stlwrite", "fileformat"): "'text'",
+    # The collocation pair (M130): a two-point problem with a guess, and the structure bvpinit
+    # forms for it. y'' = -y on [0, pi/2] with y(0) = 0 and y(pi/2) = 1 is the smallest problem
+    # that has a solution and needs a guess to find it.
+    **{(solver, arg): sample
+       for solver in ("bvp4c", "bvp5c")
+       for arg, sample in (("odefun", "@(x,y) [y(2); -y(1)]"),
+                           ("bcfun", "@(ya,yb) [ya(1); yb(1) - 1]"),
+                           ("solinit", "bvpinit(linspace(0, pi/2, 5), [0; 1])"),
+                           ("options", "bvpset('RelTol', 1e-6)"))},
+    ("bvpinit", "x"): "linspace(0, 1, 5)", ("bvpinit", "yinit"): "[0; 1]",
+    ("bvpinit", "parameters"): "1",
+    ("bvpxtend", "sol"): "bvp4c(@(x,y) [y(2); -y(1)], @(ya,yb) [ya(1); yb(1) - 1], "
+                         "bvpinit(linspace(0, pi/2, 5), [0; 1]))",
+    ("bvpxtend", "xnew"): "2", ("bvpxtend", "ynew"): "[0; 1]", ("bvpxtend", "parameters"): "1",
+    ("bvpset", "options"): "bvpset('RelTol', 1e-6)",
+    ("bvpget", "options"): "bvpset('RelTol', 1e-6)", ("bvpget", "name"): "'RelTol'",
+    ("bvpget", "default"): "1e-3",
+    # The delay solvers: a constant lag, a constant history, and the two forms that take delay
+    # functions instead of lags.
+    ("dde23", "ddefun"): "@(t,y,Z) -Z(1)", ("dde23", "lags"): "1",
+    ("dde23", "history"): "1", ("dde23", "tspan"): "[0 2]",
+    ("dde23", "options"): "ddeset('RelTol', 1e-6)",
+    ("ddesd", "ddefun"): "@(t,y,Z) -Z(1)", ("ddesd", "delays"): "@(t,y) t - 1",
+    ("ddesd", "history"): "1", ("ddesd", "tspan"): "[0 2]",
+    ("ddesd", "options"): "ddeset('RelTol', 1e-6)",
+    ("ddensd", "ddefun"): "@(t,y,ydel,ypdel) -ydel - 0.1*ypdel",
+    ("ddensd", "dely"): "@(t,y) t - 1", ("ddensd", "delyp"): "@(t,y) t - 1",
+    ("ddensd", "history"): "1", ("ddensd", "tspan"): "[0 2]",
+    ("ddensd", "options"): "ddeset('RelTol', 1e-4)",
+    ("ddeset", "options"): "ddeset('RelTol', 1e-6)",
+    ("ddeget", "options"): "ddeset('RelTol', 1e-6)", ("ddeget", "name"): "'RelTol'",
+    ("ddeget", "default"): "1e-3",
 }
 
 # Placeholders the documented type phrase cannot describe well enough to sample, whatever command

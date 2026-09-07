@@ -514,6 +514,17 @@ public static class JgsBuiltinCatalog
         Add("deval", "Reads a solution structure at any time: y = deval(sol, t), [y, yp] = deval(sol, t), or deval(sol, t, component).", P("sol"), P("t"), Opt("component"));
         Add("odeset", "The settings structure the ODE solvers take: opts = odeset('RelTol', 1e-8, 'MaxStep', 0.01, 'Events', @events).", Opt("options"));
         Add("odeget", "One setting out of that structure, or a fallback: r = odeget(opts, 'RelTol', 1e-3).", P("options"), P("name"), Opt("default"));
+        Add("bvp4c", "Solves a boundary value problem by three-stage Lobatto IIIa collocation with residual control: sol = bvp4c(odefun, bcfun, solinit, options).", P("odefun"), P("bcfun"), P("solinit"), Opt("options"));
+        Add("bvp5c", "The same problem by the four-stage formula, controlling the error rather than the residual: sol = bvp5c(odefun, bcfun, solinit, options).", P("odefun"), P("bcfun"), P("solinit"), Opt("options"));
+        Add("bvpinit", "The guess structure a collocation solver starts from: solinit = bvpinit(x, yinit) or bvpinit(x, yinit, parameters).", P("x"), P("yinit"), Opt("parameters"));
+        Add("bvpxtend", "Carries a solution past one of its own ends to form a guess on a longer interval: solinit = bvpxtend(sol, xnew, ynew).", P("sol"), P("xnew"), Opt("ynew"), Opt("parameters"));
+        Add("bvpset", "The settings structure the collocation solvers take: opts = bvpset('RelTol', 1e-6, 'FJacobian', @jac, 'Vectorized', 'on').", Opt("options"));
+        Add("bvpget", "One setting out of that structure, or a fallback: r = bvpget(opts, 'RelTol', 1e-3).", P("options"), P("name"), Opt("default"));
+        Add("dde23", "Solves a delay problem with constant lags: sol = dde23(ddefun, lags, history, tspan, options).", P("ddefun"), P("lags"), P("history"), P("tspan"), Opt("options"));
+        Add("ddesd", "Solves a delay problem whose delays depend on time and state: sol = ddesd(ddefun, delays, history, tspan, options).", P("ddefun"), P("delays"), P("history"), P("tspan"), Opt("options"));
+        Add("ddensd", "Solves a delay problem of neutral type, with delayed derivatives: sol = ddensd(ddefun, dely, delyp, history, tspan, options).", P("ddefun"), P("dely"), P("delyp"), P("history"), P("tspan"), Opt("options"));
+        Add("ddeset", "The settings structure the delay solvers take: opts = ddeset('RelTol', 1e-5, 'Jumps', 600, 'Events', @events).", Opt("options"));
+        Add("ddeget", "One setting out of that structure, or a fallback: r = ddeget(opts, 'RelTol', 1e-3).", P("options"), P("name"), Opt("default"));
         Add("integral", "The definite integral of a function, adaptively: q = integral(@(x) x.^2, 0, 1). Either limit may be infinite.", P("fun"), P("a"), P("b"), Opt("options"));
         Add("quadgk", "Adaptive Gauss-Kronrod quadrature with its own error bound: [q, errbnd] = quadgk(fun, a, b).", P("fun"), P("a"), P("b"), Opt("options"));
         Add("integral2", "The double integral over ymin(x) <= y <= ymax(x): q = integral2(fun, xmin, xmax, ymin, ymax). Options: 'AbsTol', 'RelTol', 'Method' ('auto', 'tiled', 'iterated').", P("fun"), P("xmin"), P("xmax"), P("ymin"), P("ymax"), Opt("options"));

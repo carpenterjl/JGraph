@@ -484,6 +484,8 @@ internal static partial class JgsBuiltins
         public double[]? First { get; init; }             // ode23s k1, ode23t z, ode23tb y2
         public double[]? Second { get; init; }            // ode23s k2, ode23t znew
         public double[]? Midpoints { get; init; }         // ode23tb t2
+        public double[]? Slopes { get; init; }            // bvp4c and the delay solvers: sol.yp
+        public double[]? Ymid { get; init; }              // bvp5c: idata.ymid
         public int[]? NonNegative { get; init; }
 
         public int Mesh => Times.Length;
@@ -519,6 +521,38 @@ internal static partial class JgsBuiltins
             double h = Times[step + 1] - Times[step];
             switch (Solver)
             {
+                // The collocation and delay solvers keep the slope at every mesh point and nothing
+                // else, so the polynomial over a step is the Hermite cubic through both ends — with
+                // bvp5c's quartic taking the interval's midpoint as a fifth condition.
+                case BoundaryValueSolvers.Bvp4cName:
+                case DelaySolvers.Dde23Name:
+                case DelaySolvers.DdesdName:
+                case DelaySolvers.DdensdName:
+                {
+                    (double[] value, double[] derivative) = BoundaryValueSolvers.Hermite3(at,
+                        Times[step], StateAt(step), Times[step + 1], StateAt(step + 1),
+                        Vector(Slopes, step), Vector(Slopes, step + 1));
+                    if (slope is not null)
+                    {
+                        Array.Copy(derivative, slope, N);
+                    }
+
+                    return value;
+                }
+
+                case BoundaryValueSolvers.Bvp5cName:
+                {
+                    (double[] value, double[] derivative) = BoundaryValueSolvers.Hermite4(at,
+                        Times[step], StateAt(step), Times[step + 1], StateAt(step + 1),
+                        Vector(Ymid, step), Vector(Slopes, step), Vector(Slopes, step + 1));
+                    if (slope is not null)
+                    {
+                        Array.Copy(derivative, slope, N);
+                    }
+
+                    return value;
+                }
+
                 case Ode15s.Name:
                 {
                     int ending = step + 1;
@@ -779,7 +813,10 @@ internal static partial class JgsBuiltins
         string solver = TextOf(solverValue);
         RungeKuttaScheme? scheme = RungeKuttaScheme.Named(solver);
         bool stiff = solver is Ode15s.Name or Ode23s.Name or Ode23t.Name or Ode23tb.Name or Ode15i.Name;
-        if (scheme is null && !stiff && solver != AdamsPece.Name)
+        bool hermite = solver is BoundaryValueSolvers.Bvp4cName or DelaySolvers.Dde23Name
+            or DelaySolvers.DdesdName or DelaySolvers.DdensdName;
+        bool quartic = solver == BoundaryValueSolvers.Bvp5cName;
+        if (scheme is null && !stiff && !hermite && !quartic && solver != AdamsPece.Name)
         {
             throw new JgsRuntimeException(line, col, "MATLAB:deval:InvalidSolver",
                 $"deval cannot read a solution from '{solver}'.");
@@ -792,6 +829,43 @@ internal static partial class JgsBuiltins
         if (mesh < 1 || n < 1)
         {
             throw new JgsRuntimeException(line, col, "deval: this solution has no points to read.");
+        }
+
+        if (hermite || quartic)
+        {
+            // The collocation and delay solutions carry a slope per mesh point rather than the
+            // stages of a step: bvp4c and the delay solvers keep it as sol.yp, bvp5c inside idata
+            // beside the midpoints its quartic also passes through.
+            JgsValue? midpoints = null;
+            JgsValue? slopes = null;
+            if (quartic)
+            {
+                if (solution.AsStruct.TryGetValue("idata", out JgsValue? inner) && inner.Type == JgsType.Struct)
+                {
+                    inner.AsStruct.TryGetValue("yp", out slopes);
+                    inner.AsStruct.TryGetValue("ymid", out midpoints);
+                }
+            }
+            else
+            {
+                solution.AsStruct.TryGetValue("yp", out slopes);
+            }
+
+            if (slopes is null || (quartic && midpoints is null))
+            {
+                throw new JgsRuntimeException(line, col, "MATLAB:deval:SolNotFromDiffEqSolver",
+                    $"deval: the {solver} solution structure is missing the slopes its interpolant reads.");
+            }
+
+            return new OdeSolutionData
+            {
+                Solver = solver,
+                Times = times,
+                States = states,
+                N = n,
+                Slopes = ToDoubles("deval", slopes, line, col),
+                Ymid = midpoints is null ? null : ToDoubles("deval", midpoints, line, col),
+            };
         }
 
         if (!solution.AsStruct.TryGetValue("idata", out JgsValue? idata) || idata.Type != JgsType.Struct)

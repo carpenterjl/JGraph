@@ -285,9 +285,39 @@ vander,elmat,0,A = vander(v),accepted,
 width,elmat,0,W = width(T),accepted,
 wilkinson,elmat,0,W = wilkinson(n),accepted,
 wilkinson,elmat,1,"W = wilkinson(n,classname)",accepted,
+bvp4c,funfun,0,"sol = bvp4c(odefun,bcfun,solinit)",accepted,
+bvp4c,funfun,1,"sol = bvp4c(odefun,bcfun,solinit,options)",accepted,
+bvp5c,funfun,0,"sol = bvp5c(odefun,bcfun,solinit)",accepted,
+bvp5c,funfun,1,"sol = bvp5c(odefun,bcfun,solinit,options)",accepted,
+bvpget,funfun,0,"val = bvpget(options,'name')",error,Unrecognized property name 'name'.
+bvpget,funfun,1,"val = bvpget(options,'name',default)",error,Unrecognized property name 'name'.
+bvpinit,funfun,0,"solinit = bvpinit(x,yinit)",accepted,
+bvpinit,funfun,1,"solinit = bvpinit(sol,[anew bnew])",unprobed,no sample for this form's arguments
+bvpinit,funfun,2,"solinit = bvpinit(___,parameters)",accepted,
+bvpset,funfun,0,"options = bvpset('name1',value1,'name2',value2,...)",unprobed,no sample for this form's arguments
+bvpset,funfun,1,"options = bvpset(oldopts,'name1',value1,...)",unprobed,no sample for this form's arguments
+bvpset,funfun,2,"options = bvpset(oldopts,newopts)",unprobed,no sample for this form's arguments
+bvpset,funfun,3,bvpset,accepted,
+bvpxtend,funfun,0,"solinit = bvpxtend(sol,xnew,ynew)",accepted,
+bvpxtend,funfun,1,"solinit = bvpxtend(sol,xnew,extrap)",unprobed,no sample for this form's arguments
+bvpxtend,funfun,2,"solinit = bvpxtend(sol,xnew)",accepted,
+bvpxtend,funfun,3,"solinit = bvpxtend(sol,xnew,ynew,pnew)",accepted,
+bvpxtend,funfun,4,"solinit = bvpxtend(sol,xnew,extrap,pnew)",unprobed,no sample for this form's arguments
 dblquad,funfun,0,"q = dblquad(fun,xmin,xmax,ymin,ymax)",accepted,
 dblquad,funfun,1,"q = dblquad(fun,xmin,xmax,ymin,ymax,tol)",accepted,
 dblquad,funfun,2,"q = dblquad(fun,xmin,xmax,ymin,ymax,tol,method)",accepted,
+dde23,funfun,0,"sol = dde23(ddefun,lags,history,tspan)",accepted,
+dde23,funfun,1,"sol = dde23(ddefun,lags,history,tspan,options)",accepted,
+ddeget,funfun,0,"val = ddeget(options,'name')",error,Unrecognized property name 'name'.
+ddeget,funfun,1,"val = ddeget(options,'name',default)",error,Unrecognized property name 'name'.
+ddensd,funfun,0,"sol = ddensd(ddefun,dely,delyp,history,tspan)",accepted,
+ddensd,funfun,1,"sol = ddensd(ddefun,dely,delyp,history,tspan,options)",accepted,
+ddesd,funfun,0,"sol = ddesd(ddefun,delays,history,tspan)",accepted,
+ddesd,funfun,1,"sol = ddesd(ddefun,delays,history,tspan,options)",accepted,
+ddeset,funfun,0,"options = ddeset('name1',value1,'name2',value2,...)",unprobed,no sample for this form's arguments
+ddeset,funfun,1,"options = ddeset(oldopts,'name1',value1,...)",unprobed,no sample for this form's arguments
+ddeset,funfun,2,"options = ddeset(oldopts,newopts)",unprobed,no sample for this form's arguments
+ddeset,funfun,3,ddeset,accepted,
 decic,funfun,0,"[y0_new,yp0_new] = decic(odefun,t0,y0,fixed_y0,yp0,fixed_yp0)",accepted,
 decic,funfun,1,"[y0_new,yp0_new] = decic(odefun,t0,y0,fixed_y0,yp0,fixed_yp0,options)",accepted,
 decic,funfun,2,"[y0_new,yp0_new,resnrm] = decic(___)",accepted,
@@ -380,7 +410,7 @@ triplequad,funfun,2,"q = triplequad(fun,xmin,xmax,ymin,ymax,zmin,zmax,tol,method
 vectorize,funfun,0,cdot = vectorize(c),accepted,
 isvarname,lang,0,tf = isvarname(s),accepted,
 isvarname,lang,1,isvarname s,accepted,
-run,lang,0,run(scriptname),refused,run: cannot read 'C:\Users\Carpe\AppData\Local\Temp\jgraph-toolbox-0nctu739\a': Could not find file 'C:\Users\Carpe\AppData\Local\Temp\jgraph-toolbox-0nctu739\a'.
+run,lang,0,run(scriptname),refused,run: cannot read 'C:\Users\Carpe\AppData\Local\Temp\jgraph-toolbox-ya1c5qvx\a': Could not find file 'C:\Users\Carpe\AppData\Local\Temp\jgraph-toolbox-ya1c5qvx\a'.
 validateattributes,lang,0,"validateattributes(A,classes,attributes)",error,validateattributes expects a cell of class names.
 validateattributes,lang,1,"validateattributes(A,classes,attributes,argIndex)",error,"validateattributes expects argument 4 to be a string, but got a number."
 validateattributes,lang,2,"validateattributes(A,classes,attributes,funcName)",error,validateattributes expects a cell of class names.
