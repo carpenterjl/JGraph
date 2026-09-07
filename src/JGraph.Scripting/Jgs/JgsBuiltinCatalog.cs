@@ -751,6 +751,21 @@ public static class JgsBuiltinCatalog
         Add("zplane", "Draws the poles and zeros against the unit circle: zplane(b, a) on rows, zplane(z, p) on columns.", P("b"), Opt("a"));
         Add("zplaneplot", "The same pole-zero picture as zplane, under the name the plot layer uses.", P("z"), Opt("p"));
 
+        // --- Signal Processing Toolbox: designfilt and the digitalFilter value (M135) ------------
+        Add("designfilt", "Designs a digital filter from a response name and a set of named specifications: d = designfilt('lowpassfir', 'FilterOrder', 40, 'CutoffFrequency', 0.4).", P("response"), Opt("name"), Opt("value"));
+        Add("digitalFilter", "The filter value designfilt returns; called on one it hands the same filter back.", P("d"));
+        Add("isfir", "Whether a designed filter has no feedback.", P("d"));
+        Add("isdouble", "Whether a designed filter's coefficients are double precision.", P("d"));
+        Add("issingle", "Whether a designed filter's coefficients are single precision.", P("d"));
+        Add("info", "A short description of a designed filter: its length, stability and design method.", P("d"));
+        Add("tf", "A designed filter's numerator and denominator: [b, a] = tf(d).", P("d"));
+        Add("zpk", "A designed filter's zeros, poles and gain: [z, p, k] = zpk(d).", P("d"));
+        Add("ss", "A designed filter as a state-space quadruple: [A, B, C, D] = ss(d).", P("d"));
+        Add("lowpass", "Lowpass filters a signal, designing the filter as it goes: [y, d] = lowpass(x, wpass, fs, 'Steepness', s, 'StopbandAttenuation', a, 'ImpulseResponse', r).", P("x"), P("wpass"), Opt("fs"), Opt("name"), Opt("value"));
+        Add("highpass", "Highpass filters a signal, designing the filter as it goes; the same options as lowpass.", P("x"), P("wpass"), Opt("fs"), Opt("name"), Opt("value"));
+        Add("bandpass", "Bandpass filters a signal between two passband frequencies, designing the filter as it goes.", P("x"), P("wpass"), Opt("fs"), Opt("name"), Opt("value"));
+        Add("bandstop", "Bandstop filters a signal between two passband frequencies, designing the filter as it goes.", P("x"), P("wpass"), Opt("fs"), Opt("name"), Opt("value"));
+
         Add("audioread", "Reads a .wav file: [samples, fs] with samples normalized to [-1, 1] (stereo averaged to mono).", P("path"));
         Add("sound", "Plays samples through the host's audio output without blocking (fs defaults to 8192).", P("y"), Opt("fs"));
         Add("pause", "Waits: pause(seconds) for a fixed wait (interruptible by Stop), bare pause for a key press, and pause('on'|'off'|'query') to turn every pause in a script on or off, answering the state as it was.", Opt("seconds"));

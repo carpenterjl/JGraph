@@ -130,6 +130,13 @@ internal static partial class JgsBuiltins
             throw new JgsRuntimeException(line, col, $"{name} needs a filter.");
         }
 
+        // A designed filter stands in for the pair, which is the whole of how the digitalFilter
+        // methods work: every one of them is this name with a value in front of it (M135).
+        if (TryFilterCoefficients(args[0], out double[] designedB, out double[] designedA))
+        {
+            return (designedB, designedA, 1);
+        }
+
         double[] b = FilterVector(name, args[0], line, col);
 
         // The second numeric argument is always the denominator. None of these names has a form
@@ -405,6 +412,8 @@ internal static partial class JgsBuiltins
     /// <summary><c>s = filternorm(b, a, pnorm, tol)</c>.</summary>
     private static JgsValue FilterNormValue(IReadOnlyList<JgsValue> args, int line, int col)
     {
+        // filternorm is not one of the names a digitalFilter answers to — MATLAB's list of its
+        // methods does not carry it — so this one keeps taking a coefficient pair and nothing else.
         ArityRange("filternorm", args, 2, 4, line, col);
         double[] b = FilterVector("filternorm", args[0], line, col);
         double[] a = FilterVector("filternorm", args[1], line, col);
@@ -425,7 +434,9 @@ internal static partial class JgsBuiltins
     private static JgsValue FirTypeValue(IReadOnlyList<JgsValue> args, int line, int col)
     {
         Arity("firtype", args, 1, line, col);
-        double[] b = FilterVector("firtype", args[0], line, col);
+        double[] b = TryFilterCoefficients(args[0], out double[] designed, out _)
+            ? designed
+            : FilterVector("firtype", args[0], line, col);
         try
         {
             return JgsValue.Number(FilterAnalysis.FirType(b));
@@ -447,6 +458,16 @@ internal static partial class JgsBuiltins
 
         try
         {
+            // A designed IIR filter is asked section by section rather than through the polynomial
+            // its sections multiply out to. That is not a refinement: eight zeros at −1 leave the
+            // expanded numerator with roots a hundredth off the circle, so the expanded filter is
+            // not minimum phase when the cascade plainly is (M135).
+            if (name is "isminphase" or "ismaxphase" or "isallpass"
+                && TryFilterSections(args[0], out double[] sos, out int rows))
+            {
+                return JgsValue.Bool(EverySection(name, sos, rows, tolerance));
+            }
+
             bool answer = name switch
             {
                 "isstable" => FilterAnalysis.IsStable(a),
@@ -462,6 +483,29 @@ internal static partial class JgsBuiltins
         {
             throw new JgsRuntimeException(line, col, $"{name}: {ex.Message}");
         }
+    }
+
+    /// <summary>Whether every section of a cascade answers the predicate.</summary>
+    private static bool EverySection(string name, double[] sos, int rows, double tolerance)
+    {
+        for (int i = 0; i < rows; i++)
+        {
+            double[] b = [sos[i], sos[i + rows], sos[i + (2 * rows)]];
+            double[] a = [sos[i + (3 * rows)], sos[i + (4 * rows)], sos[i + (5 * rows)]];
+            bool answer = name switch
+            {
+                "isminphase" => FilterAnalysis.IsMinimumPhase(b, a, tolerance),
+                "ismaxphase" => FilterAnalysis.IsMaximumPhase(b, a, tolerance),
+                _ => FilterAnalysis.IsAllPass(b, a, tolerance),
+            };
+
+            if (!answer)
+            {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     // --- Plots ---------------------------------------------------------------------------------------

@@ -103,10 +103,12 @@ see. This file refused to count them while they drew nothing; **M56 made them re
 number and this one agree again. `opengl` *is* counted, because an accepted no-op is an answer — the
 same reading that counted `shading`, `lighting` and `camlight` in M43.
 
-Across every callable kind — builtin, function, operator, keyword, script — the count is **1,114 of
-2,024** as of M133, which added the Signal Processing Toolbox's filtering, coefficient conversions
-and multirate names. Only one of the forty-two lands here — `ss2tf`, which MATLAB keeps in a shared
-control folder rather than in the Signal one — and the rest are counted by
+Across every callable kind — builtin, function, operator, keyword, script — the count is **1,115 of
+2,024** as of M135, which added `designfilt`, the `digitalFilter` value and the four one-line
+filters. None of the six lands here; the one name that moved the figure is `ss`, the state-space
+reading of a designed filter, which MATLAB keeps in a shared control folder rather than in the
+Signal one. M133 before it added the Signal Processing Toolbox's filtering, coefficient conversions
+and multirate names, of which only `ss2tf` landed here for the same reason, the rest being counted by
 `matlab-signal-coverage.md`; the other five conversions the milestone implements beside them
 (`tf2zp`, `zp2tf`, `tf2ss`, `zp2ss`, `ss2zp`) are in neither inventory, which is what makes a
 milestone of forty-two names move this figure by one. The fifty-nine names before it came in one

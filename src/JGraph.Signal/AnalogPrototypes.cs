@@ -33,8 +33,8 @@ namespace JGraph.Signal;
 /// </remarks>
 public static class AnalogPrototypes
 {
-    /// <summary>How many Landen steps the elliptic construction takes; seven is past convergence.</summary>
-    private const int LandenSteps = 7;
+    /// <summary>How many terms the theta-function series carries; seven is past convergence.</summary>
+    private const int SeriesTerms = 7;
 
     /// <summary>
     /// <c>buttap</c>: <paramref name="order"/> poles evenly spaced on the left half of the unit
@@ -236,6 +236,165 @@ public static class AnalogPrototypes
         return ([], poles, 1);
     }
 
+    /// <summary>
+    /// The same elliptic prototype written as second-order sections rather than as roots, which is
+    /// the form a cascade design needs (M135).
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    /// Each row is a monic-in-<c>s⁰</c> quadratic <c>[1, −2·Re(1/r), |1/r|²]</c> built from a zero
+    /// or a pole, listed from the band edge inwards. Ahead of them sits one more row: the passband
+    /// gain for an even order, the real first-order pole for an odd one. Writing the sections from
+    /// the reciprocals rather than from the roots is what keeps the constant term exact, and it is
+    /// what the reference does.
+    /// </para>
+    /// <para>
+    /// The modulus comes from the product form of the degree equation rather than from the nome,
+    /// which is the branch the reference takes for every selectivity above a millionth. The two
+    /// agree to the last figures; taking the same one removes the question.
+    /// </para>
+    /// </remarks>
+    internal static (double[,] Numerators, double[,] Denominators) EllipticSections(
+        int order, double rippleDb, double attenuationDb)
+    {
+        CheckOrder(order, "ellipap");
+        double gp = System.Math.Pow(10, -rippleDb / 20);
+        double ep = System.Math.Sqrt(System.Math.Pow(10, rippleDb / 10) - 1);
+        double es = System.Math.Sqrt(System.Math.Pow(10, attenuationDb / 10) - 1);
+        double k1 = ep / es;
+        double k = DegreeByProduct(order, k1);
+        if (k >= 1)
+        {
+            throw new ArgumentOutOfRangeException(
+                nameof(order), "The elliptic filter order is too large for the given specification.");
+        }
+
+        int pairs = order / 2;
+        bool odd = order % 2 == 1;
+        Complex v0 = -Complex.ImaginaryOne * ArcSnByCd(Complex.ImaginaryOne / ep, k1) / order;
+
+        var b = new double[pairs + 1, 3];
+        var a = new double[pairs + 1, 3];
+        for (int i = 1; i <= pairs; i++)
+        {
+            double u = (double)((2 * i) - 1) / order;
+            Complex zero = Complex.ImaginaryOne / (k * Cd(u, k));
+            Complex pole = Complex.ImaginaryOne * Cd(u - (Complex.ImaginaryOne * v0), k);
+            Complex rz = 1 / zero;
+            Complex rp = 1 / pole;
+            b[i, 0] = 1;
+            b[i, 1] = -2 * rz.Real;
+            b[i, 2] = Magnitude(rz);
+            a[i, 0] = 1;
+            a[i, 1] = -2 * rp.Real;
+            a[i, 2] = Magnitude(rp);
+        }
+
+        if (odd)
+        {
+            Complex p0 = Complex.ImaginaryOne * Sn(Complex.ImaginaryOne * v0, k);
+            b[0, 0] = 1;
+            a[0, 0] = 1;
+            a[0, 1] = -(1 / p0).Real;
+        }
+        else
+        {
+            b[0, 0] = gp;
+            a[0, 0] = 1;
+        }
+
+        return (b, a);
+    }
+
+    /// <summary>
+    /// The inverse Jacobi <c>sn</c> written the reference's way — as one minus the inverse
+    /// <c>cd</c> — rather than by inverting the ascending transformation directly.
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    /// The two are the same function and disagree in the eleventh figure, which is enough to move a
+    /// designed pole in the eleventh. The difference is which quadratic each descending step solves:
+    /// this one carries the previous modulus into the square root and divides by <c>1 + v</c>
+    /// afterwards, where <see cref="ArcSn"/> solves the step's own quadratic. Since a cascade's
+    /// coefficients are compared against MATLAB's to ten figures, the arithmetic has to be the same
+    /// arithmetic and not merely the same identity.
+    /// </para>
+    /// <para>
+    /// The result is folded back into the fundamental rectangle at the end, as the reference folds
+    /// it: the real part modulo four and the imaginary part modulo twice the quarter-period ratio,
+    /// each brought to the half-interval around zero.
+    /// </para>
+    /// </remarks>
+    private static Complex ArcSnByCd(Complex w, double k) => 1 - ArcCd(w, k);
+
+    /// <summary>The inverse of <see cref="Cd"/>, in quarter periods.</summary>
+    private static Complex ArcCd(Complex w, double k)
+    {
+        double[] v = Landen(k);
+        for (int n = 0; n < v.Length; n++)
+        {
+            double previous = n == 0 ? k : v[n - 1];
+            Complex root = Complex.Sqrt(1 - (w * w * previous * previous));
+            w = w / (1 + root) * (2 / (1 + v[n]));
+        }
+
+        Complex u = 2 / System.Math.PI * Complex.Acos(w);
+        if (w == Complex.One)
+        {
+            u = Complex.Zero;
+        }
+
+        double ratio = CompleteIntegral(ComplementaryModulus(k)) / CompleteIntegral(k);
+        return new Complex(SymmetricRemainder(u.Real, 4), SymmetricRemainder(u.Imaginary, 2 * ratio));
+    }
+
+    /// <summary>The remainder brought into the half-interval around zero rather than the full one.</summary>
+    private static double SymmetricRemainder(double x, double y)
+    {
+        // MATLAB's rem truncates towards zero, which is not what IEEERemainder does.
+        double z = x - (y * System.Math.Truncate(x / y));
+        if (System.Math.Abs(z) > y / 2)
+        {
+            z -= y * System.Math.Sign(z);
+        }
+
+        return z;
+    }
+
+    /// <summary>The absolute square of a complex number, written as MATLAB's <c>abs(x)^2</c> is.</summary>
+    private static double Magnitude(Complex value)
+    {
+        double m = Complex.Abs(value);
+        return m * m;
+    }
+
+    /// <summary>
+    /// The degree equation solved through the product of Jacobi sines, which is the branch the
+    /// reference takes whenever the selectivity is not vanishingly small.
+    /// </summary>
+    internal static double DegreeByProduct(int order, double k1)
+    {
+        if (k1 < 1e-6)
+        {
+            return Degree(order, k1);
+        }
+
+        // Both square roots are written as the reference writes them, √(1 − x²) rather than the
+        // factored √((1−x)(1+x)) used elsewhere here. The factored form is the better one, and that
+        // is exactly why it cannot be used: for an odd order the complement comes out close enough
+        // to one that the two forms part in the eleventh figure, and a modulus is what every pole
+        // of the design is a function of.
+        double kc = System.Math.Sqrt(1 - (k1 * k1));
+        double product = 1;
+        for (int i = 1; i <= order / 2; i++)
+        {
+            product *= Sn((double)((2 * i) - 1) / order, kc).Real;
+        }
+
+        double kp = System.Math.Pow(kc, order) * System.Math.Pow(product, 4);
+        return System.Math.Sqrt(1 - (kp * kp));
+    }
+
     // --- The elliptic machinery ----------------------------------------------------------------
 
     /// <summary>
@@ -261,7 +420,7 @@ public static class AnalogPrototypes
     {
         double numerator = 0;
         double denominator = 0;
-        for (int m = 1; m <= LandenSteps; m++)
+        for (int m = 1; m <= SeriesTerms; m++)
         {
             numerator += System.Math.Pow(q, m * (m + 1));
             denominator += System.Math.Pow(q, m * m);
@@ -305,19 +464,35 @@ public static class AnalogPrototypes
         System.Math.Sqrt((1 - k) * (1 + k));
 
     /// <summary>The descending Landen sequence of moduli, which is what every Jacobi call rides on.</summary>
+    /// <remarks>
+    /// The sequence runs until the modulus falls below the machine epsilon, and how long that takes
+    /// depends entirely on where it starts. From a half it is two or three steps; from within a
+    /// rounding error of one — which is where a seventy-decibel stopband puts the complementary
+    /// modulus — it is nearer sixty, because the first steps only double the distance from one
+    /// before the convergence becomes quadratic. A fixed step count is therefore not a
+    /// simplification but a wrong answer for exactly the demanding specifications.
+    /// </remarks>
     private static double[] Landen(double k)
     {
-        var v = new double[LandenSteps];
-        double current = k;
-        for (int i = 0; i < LandenSteps; i++)
+        if (k == 0 || k == 1)
         {
-            double ratio = current / (1 + ComplementaryModulus(current));
-            current = ratio * ratio;
-            v[i] = current;
+            return [k];
         }
 
-        return v;
+        var v = new List<double>();
+        double current = k;
+        while (current > DoubleSpacing)
+        {
+            double ratio = current / (1 + System.Math.Sqrt(1 - (current * current)));
+            current = ratio * ratio;
+            v.Add(current);
+        }
+
+        return [.. v];
     }
+
+    /// <summary>The spacing of doubles at one, which is where the Landen descent stops.</summary>
+    private const double DoubleSpacing = 2.220446049250313e-16;
 
     /// <summary>Jacobi <c>cd(u·K, k)</c> with <paramref name="u"/> measured in quarter periods.</summary>
     private static Complex Cd(Complex u, double k) =>

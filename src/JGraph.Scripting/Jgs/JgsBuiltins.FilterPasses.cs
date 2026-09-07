@@ -79,6 +79,11 @@ internal static partial class JgsBuiltins
     /// <summary><c>filtfilt(b, a, x)</c>, <c>filtfilt(sos, g, x)</c> and the cascaded form.</summary>
     private static JgsValue ZeroPhaseFiltered(IReadOnlyList<JgsValue> args, int line, int col)
     {
+        if (TryDigitalFilterPass("filtfilt", args, line, col, out JgsValue designed))
+        {
+            return designed;
+        }
+
         ArityRange("filtfilt", args, 2, 4, line, col);
 
         if (args.Count == 2)
@@ -277,6 +282,11 @@ internal static partial class JgsBuiltins
     /// <summary><c>fftfilt(b, x)</c> and <c>fftfilt(b, x, n)</c>.</summary>
     private static JgsValue BlockFiltered(IReadOnlyList<JgsValue> args, int line, int col)
     {
+        if (TryDigitalFilterPass("fftfilt", args, line, col, out JgsValue designedBlock))
+        {
+            return designedBlock;
+        }
+
         ArityRange("fftfilt", args, 2, 3, line, col);
 
         int[] bDims = SizeDims(args[0]);

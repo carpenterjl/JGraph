@@ -8,15 +8,14 @@ without a catalog entry, or registered without being called implemented.
 
 ## Where it stands
 
-**150 of 351 documented names implemented**; 128 are planned across three milestones
-(M135-M137; ADR 0126 holds the plan), two are the complex equiripple exchange that M134 did not
+**156 of 351 documented names implemented**; 120 are planned across two milestones
+(M136-M137; ADR 0126 holds the plan), two are the complex equiripple exchange that M134 did not
 write (ADR 0138), and 73 are excluded by name.
 
 | Bucket | Names |
 |---|---:|
-| Implemented | 150 |
+| Implemented | 156 |
 | Not implemented, M134 | 2 |
-| Not implemented, M135 | 6 |
 | Not implemented, M136 | 65 |
 | Not implemented, M137 | 55 |
 | Excluded | 73 |
@@ -30,17 +29,13 @@ recorded R2024a output. Names MATLAB keeps outside this folder but the plan impl
 
 ## Implemented
 
-`barthannwin`, `bartlett`, `besselap`, `besself`, `bilinear`, `bitrevorder`, `blackman`, `blackmanharris`, `bohmanwin`, `boxcar`, `buffer`, `buttap`, `butter`, `buttord`, `cceps`, `cell2sos`, `cheb1ap`, `cheb1ord`, `cheb2ap`, `cheb2ord`, `chebwin`, `cheby1`, `cheby2`, `czt`, `datawrap`, `db`, `db2pow`, `dct`, `decimate`, `demod`, `dftmtx`, `digitrevorder`, `diric`, `downsample`, `dpss`, `ellip`, `ellipord`, `envelope`, `eqtflength`, `fftfilt`, `fillgaps`, `filternorm`, `filtfilt`, `filtic`, `filtord`, `filtstates`, `fir1`, `fir2`, `fircls`, `fircls1`, `firgauss`, `firls`, `firpm`, `firpmord`, `firrcos`, `firtype`, `flattopwin`, `framesig`, `freqs`, `freqz`, `fwht`, `gauspuls`, `gaussdesign`, `gaussfir`, `gausswin`, `gmonopuls`, `goertzel`, `grpdelay`, `hamming`, `hampel`, `hann`, `hanning`, `hilbert`, `icceps`, `idct`, `ifwht`, `impinvar`, `impz`, `impzlength`, `interp`, `intfilt`, `isallpass`, `islinphase`, `ismaxphase`, `isminphase`, `isstable`, `kaiser`, `kaiserord`, `latc2tf`, `latcfilt`, `lp2bp`, `lp2bs`, `lp2hp`, `lp2lp`, `marcumq`, `maxflat`, `medfilt1`, `modulate`, `nuttallwin`, `parzenwin`, `phasedelay`, `phasez`, `polyscale`, `polystab`, `pow2db`, `pulstran`, `rceps`, `rcosdesign`, `rectpuls`, `rectwin`, `remez`, `remezord`, `resample`, `residuez`, `sawtooth`, `scaleFilterSections`, `seqperiod`, `sgolay`, `sgolayfilt`, `shiftdata`, `sinc`, `sos2cell`, `sos2ctf`, `sos2ss`, `sos2tf`, `sos2zp`, `sosfilt`, `square`, `ss2sos`, `stepz`, `taylorwin`, `tf2latc`, `tf2sos`, `tf2zpk`, `triang`, `tripuls`, `tukeywin`, `udecode`, `uencode`, `unshiftdata`, `upfirdn`, `upsample`, `vco`, `window`, `yulewalk`, `zerophase`, `zp2ctf`, `zp2sos`, `zplane`, `zplaneplot`
+`bandpass`, `bandstop`, `barthannwin`, `bartlett`, `besselap`, `besself`, `bilinear`, `bitrevorder`, `blackman`, `blackmanharris`, `bohmanwin`, `boxcar`, `buffer`, `buttap`, `butter`, `buttord`, `cceps`, `cell2sos`, `cheb1ap`, `cheb1ord`, `cheb2ap`, `cheb2ord`, `chebwin`, `cheby1`, `cheby2`, `czt`, `datawrap`, `db`, `db2pow`, `dct`, `decimate`, `demod`, `designfilt`, `dftmtx`, `digitalFilter`, `digitrevorder`, `diric`, `downsample`, `dpss`, `ellip`, `ellipord`, `envelope`, `eqtflength`, `fftfilt`, `fillgaps`, `filternorm`, `filtfilt`, `filtic`, `filtord`, `filtstates`, `fir1`, `fir2`, `fircls`, `fircls1`, `firgauss`, `firls`, `firpm`, `firpmord`, `firrcos`, `firtype`, `flattopwin`, `framesig`, `freqs`, `freqz`, `fwht`, `gauspuls`, `gaussdesign`, `gaussfir`, `gausswin`, `gmonopuls`, `goertzel`, `grpdelay`, `hamming`, `hampel`, `hann`, `hanning`, `highpass`, `hilbert`, `icceps`, `idct`, `ifwht`, `impinvar`, `impz`, `impzlength`, `interp`, `intfilt`, `isallpass`, `islinphase`, `ismaxphase`, `isminphase`, `isstable`, `kaiser`, `kaiserord`, `latc2tf`, `latcfilt`, `lowpass`, `lp2bp`, `lp2bs`, `lp2hp`, `lp2lp`, `marcumq`, `maxflat`, `medfilt1`, `modulate`, `nuttallwin`, `parzenwin`, `phasedelay`, `phasez`, `polyscale`, `polystab`, `pow2db`, `pulstran`, `rceps`, `rcosdesign`, `rectpuls`, `rectwin`, `remez`, `remezord`, `resample`, `residuez`, `sawtooth`, `scaleFilterSections`, `seqperiod`, `sgolay`, `sgolayfilt`, `shiftdata`, `sinc`, `sos2cell`, `sos2ctf`, `sos2ss`, `sos2tf`, `sos2zp`, `sosfilt`, `square`, `ss2sos`, `stepz`, `taylorwin`, `tf2latc`, `tf2sos`, `tf2zpk`, `triang`, `tripuls`, `tukeywin`, `udecode`, `uencode`, `unshiftdata`, `upfirdn`, `upsample`, `vco`, `window`, `yulewalk`, `zerophase`, `zp2ctf`, `zp2sos`, `zplane`, `zplaneplot`
 
 ## Not implemented
 
 ### M134: the complex equiripple exchange (2)
 
 `cfirpm`, `cremez`
-
-### M135: `designfilt`, the `digitalFilter` value, and the four one-line filters (6)
-
-`bandpass`, `bandstop`, `designfilt`, `digitalFilter`, `highpass`, `lowpass`
 
 ### M136: Spectral estimation and measurements (65)
 

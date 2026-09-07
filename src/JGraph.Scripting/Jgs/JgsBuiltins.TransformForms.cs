@@ -369,6 +369,11 @@ internal static partial class JgsBuiltins
     /// </summary>
     private static JgsValue[] FilterAnswer(IReadOnlyList<JgsValue> args, int wanted, int line, int col)
     {
+        if (TryDigitalFilterPass("filter", args, line, col, out JgsValue designedFilter))
+        {
+            return [designedFilter];
+        }
+
         ArityRange("filter", args, 3, 5, line, col);
         double[] numerator = NumericVector("filter", args, 0, line, col).ToArray();
         double[] denominator = NumericVector("filter", args, 1, line, col).ToArray();

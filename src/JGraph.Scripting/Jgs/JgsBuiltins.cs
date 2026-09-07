@@ -2519,6 +2519,7 @@ internal static partial class JgsBuiltins
         RegisterIirDesignBuiltins(env, host);
         RegisterFirDesignBuiltins(env, host);
         RegisterFilterAnalysisBuiltins(env);
+        RegisterDesignFiltBuiltins(env, host);
         RegisterCosineTransformBuiltins(env);
         RegisterStringEditingBuiltins(env, dialect);
         RegisterStringArrayBuiltins(env);
