@@ -136,18 +136,21 @@ public Signal `.m` (by the harvester, for their syntax lines only).
 
 ## Divergences
 
-Three are added, all in Signal, all assigned to M134.
+None remain. Three were recorded here, all in Signal, all assigned to M134, and **M134 closed all
+three** (ADR 0138). What they were, and what closed each one, is worth keeping:
 
-- **`[b, a] = butter(n, Wn)` is refused, and `butter(n, Wn)` answers `[b; a]` as a 2-by-(n+1)
-  matrix where MATLAB answers `b` alone.** Pinned by `m124_signal`'s `butter_two_outputs` line.
-- **`h = freqz(b, a, n)` answers `[h; w]` as a 2-by-n matrix where MATLAB answers `h` alone**
-  (and `[h, w] = freqz(...)` is refused). Pinned by `freqz_single_numel`. Both this answer and
-  `butter`'s report `size` 2-by-n but **`numel` 2**: the value is a list of two rows wearing a
-  matrix's size, not a matrix, and `numel` counts the rows. M134 replaces both with real
-  multi-output forms, which retires the shape question with the divergence.
-- **`firpm`'s equiripple exchange does not converge to MATLAB's design**: the centre tap of
-  `firpm(20, [0 0.3 0.5 1], [1 1 0 0])` is 0.400135 here and 0.400143 in R2024a, and at order 400
-  the exchange stops early with a warning. Pinned by `firpm_centre` and `firpm_dc`.
+`[b, a] = butter(n, Wn)` was refused and `butter(n, Wn)` answered `[b; a]` as two rows where MATLAB
+answers `b` alone. `h = freqz(b, a, n)` answered `[h; w]` as two rows and `[h, w] = freqz(...)` was
+refused. Both were closed by the multi-output design pipeline: the number of outputs now chooses
+between coefficients, roots and a state-space quadruple, and one output is the numerator. The shape
+question went with them — those answers reported `size` 2-by-n but `numel` 2, being a list of two
+rows wearing a matrix's size.
+
+`firpm`'s equiripple exchange did not converge to MATLAB's design: the centre tap of
+`firpm(20, [0 0.3 0.5 1], [1 1 0 0])` was 0.400135 here and 0.400143 in R2024a, and at order 400 the
+exchange stopped early with a warning. It was closed by replacing the reimplementation with a
+transcription of `firpm.m`. The fixed point of an exchange is a property of its grid rather than of
+the mathematics, and the grid is now the same grid.
 
 ## Still open
 

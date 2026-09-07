@@ -18,8 +18,9 @@ namespace JGraph.Signal;
 /// The filters are the whole of the parity. <c>interp</c> designs a least-squares half-band-like
 /// filter over a comb of bands, <c>decimate</c> a Chebyshev IIR or a windowed FIR, and
 /// <c>resample</c> a Kaiser-windowed least-squares design at the larger of the two rates. All three
-/// designs live in <see cref="PrototypeDesigns"/>, borrowed forward from M134; what is here is the
-/// edge handling, which is where they differ from each other and from the textbook.
+/// designs live in <see cref="FirWindowDesign"/> and <see cref="IirDesign"/>, which M133 borrowed
+/// forward and M134 now owns; what is here is the edge handling, which is where the three differ
+/// from each other and from the textbook.
 /// </para>
 /// </remarks>
 public static class Multirate
@@ -210,7 +211,8 @@ public static class Multirate
             doubled[i] = 2 * frequencies[i];
         }
 
-        return PrototypeDesigns.LeastSquares(2 * r * n, doubled, magnitude, []);
+        return FirWindowDesign.LeastSquares(
+            2 * r * n, doubled, magnitude, [], LinearPhaseType.Symmetric, out _);
     }
 
     /// <summary>
@@ -226,7 +228,8 @@ public static class Multirate
 
         while (n > 0)
         {
-            (b, a) = PrototypeDesigns.ChebyshevLowpass(n, ripple, 0.8 / r);
+            (b, a) = IirDesign.ToTransferFunction(IirDesign.Classical(
+                PrototypeKind.Chebyshev1, n, [0.8 / r], FilterBandType.LowPass, analog: false, ripple, 0));
             if (!AllZero(b) && System.Math.Abs(MagnitudeDb(b, a, 0.8 / r) + ripple) <= 1e-6)
             {
                 break;
@@ -276,7 +279,7 @@ public static class Multirate
     {
         int nd = x.Length;
         int nout = (int)System.Math.Ceiling(nd / (double)r);
-        double[] b = PrototypeDesigns.WindowedLowpass(order, 1.0 / r);
+        double[] b = FirWindowDesign.Windowed(order, [1.0 / r], null, [], scale: true, hilbert: false, out _);
         int taps = order + 1;
 
         var head = new double[taps];
@@ -297,7 +300,7 @@ public static class Multirate
 
         double[] after = DigitalFilter.Filter(b, [1.0], tail, state);
 
-        int begin = (int)System.Math.Round(PrototypeDesigns.GroupDelayAtZero(b) + 1.25,
+        int begin = (int)System.Math.Round(FilterAnalysis.GroupDelayAtZero(b) + 1.25,
             MidpointRounding.AwayFromZero);
 
         var kept = new List<double>();
@@ -369,7 +372,8 @@ public static class Multirate
         double cutoff = 1.0 / 2 / larger;
         int length = (2 * n * larger) + 1;
 
-        double[] h = PrototypeDesigns.LeastSquares(length - 1, [0, 2 * cutoff, 2 * cutoff, 1], [1, 1, 0, 0], []);
+        double[] h = FirWindowDesign.LeastSquares(
+            length - 1, [0, 2 * cutoff, 2 * cutoff, 1], [1, 1, 0, 0], [], LinearPhaseType.Symmetric, out _);
         double[] window = SignalWindows.Kaiser(length, beta);
 
         double sum = 0;

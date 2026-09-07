@@ -215,67 +215,6 @@ internal static partial class JgsBuiltins
             (args, line, col) => FilterAnswer(args, 1, line, col)[0])
         { MultiOutput = FilterAnswer }));
 
-        Define("freqz", (args, line, col) =>
-        {
-            ArityRange("freqz", args, 2, 4, line, col);
-            int count = args.Count >= 3 ? Count("freqz", args, 2, line, col) : 512;
-            double fs = args.Count == 4 ? Num("freqz", args, 3, line, col) : 2; // default: normalized 0..1
-            (Complex[] response, double[] frequencies) = DigitalFilter.Freqz(
-                NumericVector("freqz", args, 0, line, col),
-                NumericVector("freqz", args, 1, line, col),
-                count, fs);
-            return JgsValue.Array([FromComplexArray(response), Numbers(frequencies)]);
-        });
-
-        Define("butter", (args, line, col) =>
-        {
-            ArityRange("butter", args, 2, 3, line, col);
-            int order = Count("butter", args, 0, line, col);
-            double[] cutoffs = NumericVector("butter", args, 1, line, col);
-            FilterBandType type = args.Count == 3
-                ? Str("butter", args, 2, line, col).ToLowerInvariant() switch
-                {
-                    "low" => FilterBandType.LowPass,
-                    "high" => FilterBandType.HighPass,
-                    "bandpass" => FilterBandType.BandPass,
-                    "stop" => FilterBandType.BandStop,
-                    string other => throw new JgsRuntimeException(line, col,
-                        $"butter type must be \"low\", \"high\", \"bandpass\", or \"stop\", not \"{other}\"."),
-                }
-                : cutoffs.Length == 2 ? FilterBandType.BandPass : FilterBandType.LowPass;
-            try
-            {
-                (double[] b, double[] a) = IirDesign.Butterworth(order, cutoffs, type);
-                return JgsValue.Array([Numbers(b), Numbers(a)]);
-            }
-            catch (ArgumentException ex)
-            {
-                throw new JgsRuntimeException(line, col, "butter: " + ex.Message);
-            }
-        });
-
-        Define("firpm", (args, line, col) =>
-        {
-            Arity("firpm", args, 3, line, col);
-            int order = Count("firpm", args, 0, line, col);
-            double[] edges = DoubleArray("firpm", args, 1, line, col);
-            double[] amplitudes = DoubleArray("firpm", args, 2, line, col);
-            try
-            {
-                double[] h = FirDesign.Remez(order, edges, amplitudes, out bool converged);
-                if (!converged)
-                {
-                    host.print("firpm: the equiripple exchange did not fully converge; returning the best design found.");
-                }
-
-                return Numbers(h);
-            }
-            catch (ArgumentException ex)
-            {
-                throw new JgsRuntimeException(line, col, "firpm: " + ex.Message);
-            }
-        });
-
         Define("audioread", (args, line, col) =>
         {
             Arity("audioread", args, 1, line, col);
@@ -2572,6 +2511,14 @@ internal static partial class JgsBuiltins
         RegisterFilterConversionBuiltins(env);
         RegisterFilterPassBuiltins(env);
         RegisterMultirateBuiltins(env);
+
+        // M134: design and analysis. The IIR designs are one pipeline behind five names, the FIR
+        // ones are five different algorithms behind twenty, and the analysis names are what both
+        // halves are checked with — three files because the three have nothing in common but their
+        // subject.
+        RegisterIirDesignBuiltins(env, host);
+        RegisterFirDesignBuiltins(env, host);
+        RegisterFilterAnalysisBuiltins(env);
         RegisterCosineTransformBuiltins(env);
         RegisterStringEditingBuiltins(env, dialect);
         RegisterStringArrayBuiltins(env);

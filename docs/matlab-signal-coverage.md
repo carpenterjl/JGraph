@@ -8,13 +8,14 @@ without a catalog entry, or registered without being called implemented.
 
 ## Where it stands
 
-**97 of 351 documented names implemented**; 181 are planned across four milestones
-(M134-M137; ADR 0126 holds the plan) and 73 are excluded by name.
+**150 of 351 documented names implemented**; 128 are planned across three milestones
+(M135-M137; ADR 0126 holds the plan), two are the complex equiripple exchange that M134 did not
+write (ADR 0138), and 73 are excluded by name.
 
 | Bucket | Names |
 |---|---:|
-| Implemented | 97 |
-| Not implemented, M134 | 55 |
+| Implemented | 150 |
+| Not implemented, M134 | 2 |
 | Not implemented, M135 | 6 |
 | Not implemented, M136 | 65 |
 | Not implemented, M137 | 55 |
@@ -29,13 +30,13 @@ recorded R2024a output. Names MATLAB keeps outside this folder but the plan impl
 
 ## Implemented
 
-`barthannwin`, `bartlett`, `bitrevorder`, `blackman`, `blackmanharris`, `bohmanwin`, `boxcar`, `buffer`, `butter`, `cceps`, `cell2sos`, `chebwin`, `czt`, `datawrap`, `db`, `db2pow`, `dct`, `decimate`, `demod`, `dftmtx`, `digitrevorder`, `diric`, `downsample`, `dpss`, `envelope`, `eqtflength`, `fftfilt`, `fillgaps`, `filtfilt`, `filtic`, `filtstates`, `firpm`, `flattopwin`, `framesig`, `freqz`, `fwht`, `gauspuls`, `gausswin`, `gmonopuls`, `goertzel`, `hamming`, `hampel`, `hann`, `hanning`, `hilbert`, `icceps`, `idct`, `ifwht`, `interp`, `kaiser`, `latc2tf`, `latcfilt`, `marcumq`, `medfilt1`, `modulate`, `nuttallwin`, `parzenwin`, `polyscale`, `polystab`, `pow2db`, `pulstran`, `rceps`, `rectpuls`, `rectwin`, `resample`, `residuez`, `sawtooth`, `scaleFilterSections`, `seqperiod`, `sgolay`, `sgolayfilt`, `shiftdata`, `sinc`, `sos2cell`, `sos2ctf`, `sos2ss`, `sos2tf`, `sos2zp`, `sosfilt`, `square`, `ss2sos`, `taylorwin`, `tf2latc`, `tf2sos`, `tf2zpk`, `triang`, `tripuls`, `tukeywin`, `udecode`, `uencode`, `unshiftdata`, `upfirdn`, `upsample`, `vco`, `window`, `zp2ctf`, `zp2sos`
+`barthannwin`, `bartlett`, `besselap`, `besself`, `bilinear`, `bitrevorder`, `blackman`, `blackmanharris`, `bohmanwin`, `boxcar`, `buffer`, `buttap`, `butter`, `buttord`, `cceps`, `cell2sos`, `cheb1ap`, `cheb1ord`, `cheb2ap`, `cheb2ord`, `chebwin`, `cheby1`, `cheby2`, `czt`, `datawrap`, `db`, `db2pow`, `dct`, `decimate`, `demod`, `dftmtx`, `digitrevorder`, `diric`, `downsample`, `dpss`, `ellip`, `ellipord`, `envelope`, `eqtflength`, `fftfilt`, `fillgaps`, `filternorm`, `filtfilt`, `filtic`, `filtord`, `filtstates`, `fir1`, `fir2`, `fircls`, `fircls1`, `firgauss`, `firls`, `firpm`, `firpmord`, `firrcos`, `firtype`, `flattopwin`, `framesig`, `freqs`, `freqz`, `fwht`, `gauspuls`, `gaussdesign`, `gaussfir`, `gausswin`, `gmonopuls`, `goertzel`, `grpdelay`, `hamming`, `hampel`, `hann`, `hanning`, `hilbert`, `icceps`, `idct`, `ifwht`, `impinvar`, `impz`, `impzlength`, `interp`, `intfilt`, `isallpass`, `islinphase`, `ismaxphase`, `isminphase`, `isstable`, `kaiser`, `kaiserord`, `latc2tf`, `latcfilt`, `lp2bp`, `lp2bs`, `lp2hp`, `lp2lp`, `marcumq`, `maxflat`, `medfilt1`, `modulate`, `nuttallwin`, `parzenwin`, `phasedelay`, `phasez`, `polyscale`, `polystab`, `pow2db`, `pulstran`, `rceps`, `rcosdesign`, `rectpuls`, `rectwin`, `remez`, `remezord`, `resample`, `residuez`, `sawtooth`, `scaleFilterSections`, `seqperiod`, `sgolay`, `sgolayfilt`, `shiftdata`, `sinc`, `sos2cell`, `sos2ctf`, `sos2ss`, `sos2tf`, `sos2zp`, `sosfilt`, `square`, `ss2sos`, `stepz`, `taylorwin`, `tf2latc`, `tf2sos`, `tf2zpk`, `triang`, `tripuls`, `tukeywin`, `udecode`, `uencode`, `unshiftdata`, `upfirdn`, `upsample`, `vco`, `window`, `yulewalk`, `zerophase`, `zp2ctf`, `zp2sos`, `zplane`, `zplaneplot`
 
 ## Not implemented
 
-### M134: Filter design and analysis (55)
+### M134: the complex equiripple exchange (2)
 
-`besselap`, `besself`, `bilinear`, `buttap`, `buttord`, `cfirpm`, `cheb1ap`, `cheb1ord`, `cheb2ap`, `cheb2ord`, `cheby1`, `cheby2`, `cremez`, `ellip`, `ellipord`, `filternorm`, `filtord`, `fir1`, `fir2`, `fircls`, `fircls1`, `firgauss`, `firls`, `firpmord`, `firrcos`, `firtype`, `freqs`, `gaussdesign`, `gaussfir`, `grpdelay`, `impinvar`, `impz`, `impzlength`, `intfilt`, `isallpass`, `islinphase`, `ismaxphase`, `isminphase`, `isstable`, `kaiserord`, `lp2bp`, `lp2bs`, `lp2hp`, `lp2lp`, `maxflat`, `phasedelay`, `phasez`, `rcosdesign`, `remez`, `remezord`, `stepz`, `yulewalk`, `zerophase`, `zplane`, `zplaneplot`
+`cfirpm`, `cremez`
 
 ### M135: `designfilt`, the `digitalFilter` value, and the four one-line filters (6)
 

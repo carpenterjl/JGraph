@@ -587,9 +587,6 @@ public static class JgsBuiltinCatalog
         Add("fftshift", "Rotates a spectrum so DC sits at the center, along one dimension or all of them.", P("x"), Opt("dim"));
         Add("ifftshift", "Undoes fftshift, restoring DC-first order.", P("x"), Opt("dim"));
         Add("filter", "Applies the digital filter b/a down each column of x, from rest or from given initial conditions; [y, zf] hands the final ones back.", P("b"), P("a"), P("x"), Opt("zi"), Opt("dim"));
-        Add("freqz", "Frequency response of b/a: [H, f] with complex H at count points (fs defaults to 2 = normalized).", P("b"), P("a"), Opt("count"), Opt("fs"));
-        Add("butter", "Butterworth design: [b, a] for order n and normalized cutoff(s) Wn; type \"low\"/\"high\"/\"bandpass\"/\"stop\".", P("n"), P("Wn"), Opt("type"));
-        Add("firpm", "Parks-McClellan equiripple FIR: order n, normalized band edges f, band amplitudes a.", P("n"), P("f"), P("a"));
 
         // --- Signal Processing Toolbox: windows, generators, transforms, conversions (M132) ------
         Add("barthannwin", "A modified Bartlett-Hann window of n points, as a column.", P("n"));
@@ -694,6 +691,66 @@ public static class JgsBuiltinCatalog
         Add("resample", "Resamples by a rational factor: [y, b] = resample(x, p, q, n, beta) or a given filter.", P("x"), P("p"), Opt("q"), Opt("n"), Opt("beta"), Opt("dim"));
         Add("fillgaps", "Fills runs of NaN by autoregressive prediction from both sides: fillgaps(x, maxlen, order).", P("x"), Opt("maxlen"), Opt("order"));
         Add("envelope", "The amplitude bounds of a signal: [yupper, ylower] = envelope(x, n, 'analytic'|'rms'|'peaks').", P("x"), Opt("n"), Opt("method"));
+
+        // --- Signal Processing Toolbox: filter design and analysis (M134) ------------------------
+        Add("butter", "Butterworth design: b, [b, a], [z, p, k] or [A, B, C, D] for order n and cutoff(s) Wn; \"low\"/\"high\"/\"bandpass\"/\"stop\", \"s\" for analogue, \"ctf\" for a cascade.", P("n"), P("Wn"), Opt("type"), Opt("analog"), Opt("ctf"), Opt("sectionOrder"));
+        Add("cheby1", "Chebyshev type I design with Rp decibels of passband ripple; same output forms and options as butter.", P("n"), P("Rp"), P("Wp"), Opt("type"), Opt("analog"), Opt("ctf"), Opt("sectionOrder"));
+        Add("cheby2", "Chebyshev type II design with Rs decibels of stopband attenuation; same output forms and options as butter.", P("n"), P("Rs"), P("Ws"), Opt("type"), Opt("analog"), Opt("ctf"), Opt("sectionOrder"));
+        Add("ellip", "Elliptic design with Rp decibels of passband ripple and Rs of stopband attenuation; same output forms and options as butter.", P("n"), P("Rp"), P("Rs"), P("Wp"), Opt("type"), Opt("analog"), Opt("ctf"), Opt("sectionOrder"));
+        Add("besself", "Bessel analogue design, whose group delay is flattest at the origin: b/[b,a]/[z,p,k]/[A,B,C,D] for order n and cutoff(s) Wo.", P("n"), P("Wo"), Opt("type"));
+        Add("buttord", "The lowest Butterworth order meeting a specification: [n, Wn] = buttord(Wp, Ws, Rp, Rs, \"z\"|\"s\").", P("Wp"), P("Ws"), P("Rp"), P("Rs"), Opt("domain"));
+        Add("cheb1ord", "The lowest Chebyshev type I order meeting a specification: [n, Wp] = cheb1ord(Wp, Ws, Rp, Rs, \"z\"|\"s\").", P("Wp"), P("Ws"), P("Rp"), P("Rs"), Opt("domain"));
+        Add("cheb2ord", "The lowest Chebyshev type II order meeting a specification: [n, Ws] = cheb2ord(Wp, Ws, Rp, Rs, \"z\"|\"s\").", P("Wp"), P("Ws"), P("Rp"), P("Rs"), Opt("domain"));
+        Add("ellipord", "The lowest elliptic order meeting a specification: [n, Wp] = ellipord(Wp, Ws, Rp, Rs, \"z\"|\"s\").", P("Wp"), P("Ws"), P("Rp"), P("Rs"), Opt("domain"));
+        Add("buttap", "The Butterworth analogue lowpass prototype: [z, p, k] = buttap(n), cutoff one radian per second.", P("n"));
+        Add("cheb1ap", "The Chebyshev type I analogue prototype: [z, p, k] = cheb1ap(n, Rp).", P("n"), P("Rp"));
+        Add("cheb2ap", "The Chebyshev type II analogue prototype: [z, p, k] = cheb2ap(n, Rs).", P("n"), P("Rs"));
+        Add("ellipap", "The elliptic analogue prototype: [z, p, k] = ellipap(n, Rp, Rs).", P("n"), P("Rp"), P("Rs"));
+        Add("besselap", "The Bessel analogue prototype: [z, p, k] = besselap(n), for orders up to 25.", P("n"));
+        Add("lp2lp", "Rescales an analogue lowpass to a new cutoff, on coefficients or on a state-space quadruple.", P("num"), P("den"), Opt("Wo"), Opt("D"), Opt("Wo2"));
+        Add("lp2hp", "Turns an analogue lowpass into a highpass, on coefficients or on a state-space quadruple.", P("num"), P("den"), Opt("Wo"), Opt("D"), Opt("Wo2"));
+        Add("lp2bp", "Turns an analogue lowpass into a bandpass of centre Wo and width Bw, on coefficients or state space.", P("num"), P("den"), Opt("Wo"), Opt("Bw"), Opt("D"), Opt("Bw2"));
+        Add("lp2bs", "Turns an analogue lowpass into a bandstop of centre Wo and width Bw, on coefficients or state space.", P("num"), P("den"), Opt("Wo"), Opt("Bw"), Opt("D"), Opt("Bw2"));
+        Add("bilinear", "Maps an analogue filter to the unit circle: on [z, p, k], on [num, den], or on [A, B, C, D], with an optional match frequency.", P("z"), P("p"), Opt("k"), Opt("fs"), Opt("fp"), Opt("fp2"));
+        Add("impinvar", "The digital filter whose impulse response samples the analogue one: [bz, az] = impinvar(b, a, fs, tol).", P("b"), P("a"), Opt("fs"), Opt("tol"));
+        Add("freqs", "Analogue frequency response: [h, w] = freqs(b, a, w) or a point count; no output draws it.", P("b"), P("a"), Opt("w"));
+        Add("fir1", "Window-method FIR design: fir1(n, Wn, type, window, \"scale\"|\"noscale\"), with \"DC-0\"/\"DC-1\" for a multiband answer.", P("n"), P("Wn"), Opt("type"), Opt("window"), Opt("scaling"), Opt("more"));
+        Add("fir2", "Frequency-sampled FIR design: fir2(n, f, m, npt, lap, window).", P("n"), P("f"), P("m"), Opt("npt"), Opt("lap"), Opt("window"));
+        Add("firls", "Least-squares linear-phase FIR design: firls(n, f, a, w, \"hilbert\"|\"differentiator\").", P("n"), P("f"), P("a"), Opt("w"), Opt("ftype"));
+        Add("firpm", "Parks-McClellan equiripple FIR design: [h, err, res] = firpm(n, f, a, w, ftype, {lgrid}).", P("n"), P("f"), P("a"), Opt("w"), Opt("ftype"), Opt("lgrid"));
+        Add("remez", "The former name of firpm, kept for scripts that still call it.", P("n"), P("f"), P("a"), Opt("w"), Opt("ftype"), Opt("lgrid"));
+        Add("firpmord", "The equiripple order a specification needs: [n, f, a, w] = firpmord(f, a, dev, fs).", P("f"), P("a"), P("dev"), Opt("fs"), Opt("cell"));
+        Add("remezord", "The former name of firpmord, kept for scripts that still call it.", P("f"), P("a"), P("dev"), Opt("fs"), Opt("cell"));
+        Add("kaiserord", "The Kaiser-window order a specification needs: [n, Wn, beta, ftype] = kaiserord(f, a, dev, fs).", P("f"), P("a"), P("dev"), Opt("fs"), Opt("cell"));
+        Add("fircls", "Constrained least-squares multiband FIR design: fircls(n, f, a, up, lo).", P("n"), P("f"), P("a"), P("up"), P("lo"), Opt("display"));
+        Add("fircls1", "Constrained least-squares lowpass or highpass: fircls1(n, wo, dp, ds, wt), or with wp, ws and a weight.", P("n"), P("wo"), P("dp"), P("ds"), Opt("wt"), Opt("ws"), Opt("k"), Opt("type"), Opt("display"));
+        Add("maxflat", "Maximally flat design: [b, a, b1, b2, sos, g] = maxflat(n, m, Wn), or maxflat(n, \"sym\", Wn).", P("n"), P("m"), P("Wn"), Opt("display"));
+        Add("rcosdesign", "Raised-cosine pulse shape: rcosdesign(beta, span, sps, \"sqrt\"|\"normal\").", P("beta"), P("span"), P("sps"), Opt("shape"));
+        Add("firrcos", "The older raised-cosine design, taking a cutoff and a roll-off or bandwidth in absolute frequency.", P("n"), P("Fc"), P("df"), Opt("fs"), Opt("designType"), Opt("delay"), Opt("window"), Opt("more"));
+        Add("gaussdesign", "Gaussian pulse-shaping filter: gaussdesign(bt, span, sps).", P("bt"), Opt("span"), Opt("sps"));
+        Add("gaussfir", "Gaussian FIR pulse-shaping filter: gaussfir(bt, nt, of).", P("bt"), Opt("nt"), Opt("of"));
+        Add("firgauss", "A Gaussian by k passes of a moving average: [h, n] = firgauss(k, n) or firgauss(k, \"minorder\", variance).", P("k"), P("n"), Opt("variance"));
+        Add("intfilt", "Interpolation filter: intfilt(r, l, alpha) bandlimited, or intfilt(r, n, \"l\") Lagrange.", P("r"), P("l"), P("alpha"));
+        Add("yulewalk", "Recursive filter fitted to a magnitude response: [b, a] = yulewalk(n, f, m).", P("n"), P("f"), P("m"), Opt("npt"), Opt("lap"));
+        Add("freqz", "Frequency response of a digital filter: [h, w] = freqz(b, a, n, \"whole\", fs) or at given frequencies; no output draws it.", P("b"), Opt("a"), Opt("n"), Opt("range"), Opt("fs"));
+        Add("impz", "Impulse response: [h, t] = impz(b, a, n, fs); no output draws it.", P("b"), Opt("a"), Opt("n"), Opt("fs"));
+        Add("stepz", "Step response: [s, t] = stepz(b, a, n, fs); no output draws it.", P("b"), Opt("a"), Opt("n"), Opt("fs"));
+        Add("impzlength", "How many impulse-response samples are worth having: impzlength(b, a, tol).", P("b"), Opt("a"), Opt("tol"));
+        Add("grpdelay", "Group delay: [gd, w] = grpdelay(b, a, n, \"whole\", fs); no output draws it.", P("b"), Opt("a"), Opt("n"), Opt("range"), Opt("fs"));
+        Add("phasez", "Unwrapped phase response: [phi, w] = phasez(b, a, n, \"whole\", fs); no output draws it.", P("b"), Opt("a"), Opt("n"), Opt("range"), Opt("fs"));
+        Add("phasedelay", "Phase delay: [phi, w] = phasedelay(b, a, n, \"whole\", fs); no output draws it.", P("b"), Opt("a"), Opt("n"), Opt("range"), Opt("fs"));
+        Add("zerophase", "Amplitude response, which keeps its sign: [Hr, w, phi] = zerophase(b, a, n, \"whole\", fs).", P("b"), Opt("a"), Opt("n"), Opt("range"), Opt("fs"));
+        Add("filtord", "The order of a filter, ignoring negligible trailing coefficients: filtord(b, a).", P("b"), Opt("a"));
+        Add("filternorm", "The 2-norm of the impulse response or the peak gain: filternorm(b, a, pnorm, tol).", P("b"), P("a"), Opt("pnorm"), Opt("tol"));
+        Add("firtype", "Which of the four linear-phase symmetries a feed-forward filter has: firtype(b).", P("b"));
+        Add("isstable", "Whether every pole is inside the unit circle: isstable(b, a).", P("b"), Opt("a"));
+        Add("isminphase", "Whether every zero and pole is inside the unit circle: isminphase(b, a, tol).", P("b"), Opt("a"), Opt("tol"));
+        Add("ismaxphase", "Whether every zero is outside the unit circle and the filter is stable: ismaxphase(b, a, tol).", P("b"), Opt("a"), Opt("tol"));
+        Add("isallpass", "Whether the numerator reads as the denominator backwards: isallpass(b, a, tol).", P("b"), Opt("a"), Opt("tol"));
+        Add("islinphase", "Whether the coefficients are symmetric or antisymmetric: islinphase(b, a, tol).", P("b"), Opt("a"), Opt("tol"));
+        Add("zplane", "Draws the poles and zeros against the unit circle: zplane(b, a) on rows, zplane(z, p) on columns.", P("b"), Opt("a"));
+        Add("zplaneplot", "The same pole-zero picture as zplane, under the name the plot layer uses.", P("z"), Opt("p"));
+
         Add("audioread", "Reads a .wav file: [samples, fs] with samples normalized to [-1, 1] (stereo averaged to mono).", P("path"));
         Add("sound", "Plays samples through the host's audio output without blocking (fs defaults to 8192).", P("y"), Opt("fs"));
         Add("pause", "Waits: pause(seconds) for a fixed wait (interruptible by Stop), bare pause for a key press, and pause('on'|'off'|'query') to turn every pause in a script on or off, answering the state as it was.", Opt("seconds"));

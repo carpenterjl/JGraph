@@ -1,4 +1,5 @@
-CHK|butter_two_outputs|1|div=ADR0126
+CHK|butter_two_outputs|1|exact
+CHK|butter_single_numel|5|exact
 CHK|butter_b1|0.018563010626897174|rel=1e-12
 CHK|butter_b3|0.11137806376138304|rel=1e-12
 CHK|butter_a2|-1.5703988512281726|rel=1e-12
@@ -10,7 +11,9 @@ CHK|filter_y10|7.4352111130405394|rel=1e-12
 CHK|filter_y20|17.435139115553287|rel=1e-12
 CHK|filter_step_settles|0.99999999999999967|rel=1e-9
 CHK|filter_fir|2|rel=1e-14
-CHK|freqz_single_numel|8|div=ADR0126
+CHK|freqz_single_numel|8|exact
+CHK|freqz_h2_real|0.50262099650834124|rel=1e-12
+CHK|freqz_h2_imag|-0.86419497499586462|rel=1e-12
 CHK|dct_shape|[1 8]|shape
 CHK|dct_1|12.727922061357857|rel=1e-12
 CHK|dct_2|-6.4423230227051373|rel=1e-12
@@ -18,9 +21,9 @@ CHK|dct_8|-0.050702322759645924|abs=1e-12
 CHK|idct_roundtrip|1.3322676295501878e-15|abs=1e-12
 CHK|idct_last|8|rel=1e-12
 CHK|firpm_shape|[1 21]|shape
-CHK|firpm_centre|0.40014297857167191|div=ADR0126
+CHK|firpm_centre|0.40014297857167191|rel=1e-12
 CHK|firpm_symmetric|0|abs=1e-12
-CHK|firpm_dc|0.98855322116660715|div=ADR0126
+CHK|firpm_dc|0.98855322116660715|rel=1e-12
 CHK|db_2|6.0205999132796251|rel=1e-12
 CHK|db_half|-6.0205999132796251|rel=1e-12
 CHK|db_10|20|rel=1e-12

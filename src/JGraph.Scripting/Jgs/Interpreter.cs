@@ -631,6 +631,39 @@ internal sealed partial class Interpreter
                 return Completion.Normal;
 
             case DestructuringLetStmt destructure:
+                // A call to a name that can answer several things is asked for as many as the
+                // statement names, which is what `let [b, a] = butter(4, 0.3)` has always meant and
+                // what it now does. Before M134 the right-hand side was evaluated for one answer
+                // and that answer was taken apart, which worked only while every such builtin
+                // happened to pack its outputs into an array.
+                if (destructure.Value is CallExpr wanting
+                    && CalleeValue(wanting, env) is { Type: JgsType.Function } callee
+                    && callee.AsCallable is BuiltinFunction { MultiOutput: not null } asking)
+                {
+                    var supplied = new JgsValue[wanting.Arguments.Count];
+                    for (int i = 0; i < supplied.Length; i++)
+                    {
+                        supplied[i] = Evaluate(wanting.Arguments[i], env);
+                    }
+
+                    JgsValue[] answers = asking.CallMultiple(
+                        supplied, destructure.Names.Count, destructure.Line, destructure.Column);
+                    if (answers.Length >= destructure.Names.Count)
+                    {
+                        for (int n = 0; n < destructure.Names.Count; n++)
+                        {
+                            env.Declare(destructure.Names[n], answers[n]);
+                            EchoBinding(destructure, destructure.Names[n], answers[n]);
+                        }
+
+                        return Completion.Normal;
+                    }
+
+                    throw new JgsRuntimeException(destructure.Line, destructure.Column,
+                        $"'{wanting.Callee}' answers {answers.Length} value(s), but the 'let' names "
+                        + $"{destructure.Names.Count}.");
+                }
+
                 JgsValue tuple = Evaluate(destructure.Value, env);
                 if (tuple.Type != JgsType.Array)
                 {

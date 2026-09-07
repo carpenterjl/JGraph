@@ -1,21 +1,11 @@
-% m124_signal.m -- the six Signal names that exist today (butter db dct firpm freqz idct) and the
-% base filter, pinned in the forms both engines accept. Two of butter's and freqz's forms diverge
-% today and are recorded as such (ADR 0126); M134 closes them and retires the lines.
+% m124_signal.m -- the six Signal names that existed at M124 (butter db dct firpm freqz idct) and
+% the base filter. Three of these forms diverged when the fixture was written and were recorded
+% under ADR 0126; M134 closed all three, so the lines below are ordinary pinned values now.
 
-% butter's two-output form is refused here and its single output answers [b; a] as two rows,
-% where MATLAB's single output is b alone (ADR 0126; M134 closes it). The fixture must run on both
-% engines, so it asks for MATLAB's form first and falls back to the two-row answer.
-try
-    [b, a] = butter(4, 0.3);
-    two_outputs = 1;
-catch
-    ba = butter(4, 0.3);
-    b = ba(1, :);
-    a = ba(2, :);
-    two_outputs = 0;
-end
-fprintf('CHK|butter_two_outputs|%d|div=ADR0126\n', two_outputs);
-% The coefficients themselves agree, whichever row they arrive in.
+% butter's two-output form, and its single output, which is b alone.
+[b, a] = butter(4, 0.3);
+fprintf('CHK|butter_two_outputs|%d|exact\n', 1);
+fprintf('CHK|butter_single_numel|%d|exact\n', numel(butter(4, 0.3)));
 fprintf('CHK|butter_b1|%.17g|rel=1e-12\n', b(1));
 fprintf('CHK|butter_b3|%.17g|rel=1e-12\n', b(3));
 fprintf('CHK|butter_a2|%.17g|rel=1e-12\n', a(2));
@@ -32,9 +22,11 @@ s = filter(b, a, ones(1, 200));
 fprintf('CHK|filter_step_settles|%.17g|rel=1e-9\n', s(200));
 fprintf('CHK|filter_fir|%.17g|rel=1e-14\n', sum(filter([1 2 1] / 4, 1, [1 0 0 0 1 0 0 0])));
 
-% freqz's single-output form answers [h; w] as two rows here; MATLAB's single output is h alone.
+% freqz's single output is h alone, eight complex values.
 h = freqz(b, a, 8);
-fprintf('CHK|freqz_single_numel|%d|div=ADR0126\n', numel(h));
+fprintf('CHK|freqz_single_numel|%d|exact\n', numel(h));
+fprintf('CHK|freqz_h2_real|%.17g|rel=1e-12\n', real(h(2)));
+fprintf('CHK|freqz_h2_imag|%.17g|rel=1e-12\n', imag(h(2)));
 
 % dct and idct on a ramp: a round trip and two coefficients.
 d = dct(1:8);
@@ -46,14 +38,13 @@ r = idct(d);
 fprintf('CHK|idct_roundtrip|%.17g|abs=1e-12\n', max(abs(r - (1:8))));
 fprintf('CHK|idct_last|%.17g|rel=1e-12\n', r(8));
 
-% firpm: a lowpass of order 20. The shape and the symmetry agree; the coefficients do NOT -- the
-% centre tap is 8e-6 from MATLAB's and the exchange here warns it has not converged at order 400.
-% Recorded as a divergence (ADR 0126) for M134, which rewrites the exchange, to close.
+% firpm: a lowpass of order 20. The exchange is a transcription of MATLAB's since M134, so the
+% coefficients agree to the last figures rather than to five.
 f = firpm(20, [0 0.3 0.5 1], [1 1 0 0]);
 fprintf('CHK|firpm_shape|%s|shape\n', mat2str(size(f)));
-fprintf('CHK|firpm_centre|%.17g|div=ADR0126\n', f(11));
+fprintf('CHK|firpm_centre|%.17g|rel=1e-12\n', f(11));
 fprintf('CHK|firpm_symmetric|%.17g|abs=1e-12\n', max(abs(f - fliplr(f))));
-fprintf('CHK|firpm_dc|%.17g|div=ADR0126\n', sum(f));
+fprintf('CHK|firpm_dc|%.17g|rel=1e-12\n', sum(f));
 
 % db: the decibel conversion in its voltage and power readings.
 fprintf('CHK|db_2|%.17g|rel=1e-12\n', db(2));

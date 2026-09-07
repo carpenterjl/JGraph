@@ -201,7 +201,10 @@ public class DspTests
     public void Remez_DemoLowPass_MeetsItsSpec()
     {
         // The FM-demod demo call: firpm(127, [0 20 30 500]/500, [1 1 0 0]).
-        double[] h = FirDesign.Remez(127, [0, 0.04, 0.06, 1], [1, 1, 0, 0], out bool converged);
+        FirDesign.RemezResult found = FirDesign.Remez(
+            127, [0, 0.04, 0.06, 1], [1, 1, 0, 0], [], LinearPhaseType.Symmetric, FirDesign.DefaultGridDensity);
+        double[] h = found.H;
+        bool converged = found.Converged;
 
         Assert.True(converged, "the demo design must converge");
         Assert.Equal(128, h.Length);
@@ -240,7 +243,10 @@ public class DspTests
     public void Remez_TypeI_HighPassBand_Works()
     {
         // Even order → odd length (Type I): a simple two-band design with a passband at the top.
-        double[] h = FirDesign.Remez(64, [0, 0.3, 0.5, 1], [0, 0, 1, 1], out bool converged);
+        FirDesign.RemezResult found = FirDesign.Remez(
+            64, [0, 0.3, 0.5, 1], [0, 0, 1, 1], [], LinearPhaseType.Symmetric, FirDesign.DefaultGridDensity);
+        double[] h = found.H;
+        bool converged = found.Converged;
 
         Assert.True(converged);
         Assert.Equal(65, h.Length);
@@ -262,7 +268,10 @@ public class DspTests
     [Fact]
     public void Remez_ErrorRipples_Alternate()
     {
-        double[] h = FirDesign.Remez(31, [0, 0.35, 0.5, 1], [1, 1, 0, 0], out bool converged);
+        FirDesign.RemezResult found = FirDesign.Remez(
+            31, [0, 0.35, 0.5, 1], [1, 1, 0, 0], [], LinearPhaseType.Symmetric, FirDesign.DefaultGridDensity);
+        double[] h = found.H;
+        bool converged = found.Converged;
 
         Assert.True(converged);
         (Complex[] response, double[] f) = DigitalFilter.Freqz(h, [1.0], 4096, sampleRate: 2);
