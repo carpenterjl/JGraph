@@ -363,6 +363,14 @@ internal static class JgsHandleRegistry
             }
         }
 
+        // A group draws nothing, so it is not in the tree the walk above covers — and reading its
+        // absence as death dropped the handle of every live group at the first clf of the session,
+        // whichever figure that clf named. A group is alive while the axes it was made in is.
+        foreach (JgsGraphicsGroup group in JgsGraphicsProperties.KeepGroupsIn(live))
+        {
+            live.Add(group);
+        }
+
         lock (Gate)
         {
             var dead = new List<double>();

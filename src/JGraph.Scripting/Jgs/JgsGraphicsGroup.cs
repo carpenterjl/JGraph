@@ -30,14 +30,24 @@ internal sealed class JgsGraphicsGroup : GraphObject
 
     private readonly List<PlotObject> _members = new();
 
-    public JgsGraphicsGroup(bool transforms)
+    public JgsGraphicsGroup(bool transforms, AxesModel? home = null)
     {
         Transforms = transforms;
+        Home = home;
         Name = transforms ? "Transform" : "Group";
     }
 
     /// <summary>Whether this group carries a matrix — that is, whether it is an hgtransform.</summary>
     public bool Transforms { get; }
+
+    /// <summary>
+    /// The axes this group was made in. A group is beside the render tree, so the sweep that reaps
+    /// handles no longer reachable from a live figure cannot see it — and without somewhere to look,
+    /// it read every group as unreachable and dropped its handle at the first <c>clf</c> in the
+    /// session, whichever figure that <c>clf</c> was aimed at. This is where it looks: a group lives
+    /// exactly as long as the axes it belongs to, which is what MATLAB means by parenting it there.
+    /// </summary>
+    public AxesModel? Home { get; }
 
     /// <summary>The members, in the order they joined.</summary>
     public IReadOnlyList<PlotObject> Members => _members;

@@ -1778,10 +1778,15 @@ internal static partial class JgsBuiltins
                 _ => throw new JgsRuntimeException(line, col, $"shading: unknown mode '{mode}'."),
             };
 
-            foreach (SurfacePlot surface in JG.Gca().Plots.OfType<SurfacePlot>())
+            // MATLAB's shading sorts an axes' surfaces into meshes and the rest by the same test
+            // hidden uses, and a mesh takes only the edge half of the word: `shading interp` on a
+            // mesh interpolates its wires and leaves its faces the background they were painted.
+            // Without the test the verb filled every mesh in the axes and took the mesh away.
+            AxesModel shaded = JG.Gca();
+            foreach (SurfacePlot surface in shaded.Plots.OfType<SurfacePlot>())
             {
                 surface.Shading = shading;
-                if (surface.Style == SurfaceStyle.Wireframe)
+                if (IsMeshLike(shaded, surface))
                 {
                     continue;
                 }

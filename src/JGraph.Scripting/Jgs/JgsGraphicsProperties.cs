@@ -185,6 +185,20 @@ internal static partial class JgsGraphicsProperties
         }
     }
 
+    /// <summary>
+    /// Forgets the groups whose axes has gone, and answers the ones that are left. The handle sweep
+    /// calls this: a group is beside the render tree, so it can neither be walked to from a figure
+    /// nor be reaped by walking one, and both halves of that have to be done here.
+    /// </summary>
+    internal static IReadOnlyList<JgsGraphicsGroup> KeepGroupsIn(HashSet<GraphObject> live)
+    {
+        lock (Groups)
+        {
+            Groups.RemoveAll(group => group.Home is not null && !live.Contains(group.Home));
+            return Groups.ToArray();
+        }
+    }
+
     /// <summary>The group holding <paramref name="target"/>, or null when nothing does.</summary>
     private static JgsGraphicsGroup? GroupOwning(GraphObject target)
     {

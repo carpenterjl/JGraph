@@ -150,21 +150,50 @@ public class MatlabAppearanceTests : IDisposable
         Assert.Equal(new[] { "64", "3", "true", "true", "true", "16" }, _output.NormalLines);
     }
 
+    /// <summary>
+    /// A mesh starts hidden — MATLAB paints its faces the axes background when it draws it, so
+    /// <c>hidden</c> is the verb that takes them away and puts them back, not the one that first
+    /// puts them on. <c>hidden</c> with no word toggles.
+    /// </summary>
     [Fact]
-    public async Task HiddenPaintsAMeshOpaqueAndBackAgain()
+    public async Task HiddenTakesAMeshesFacesAwayAndPutsThemBack()
     {
         await RunAsserting("""
             figure(1);
             h = mesh(peaks(10));
-            disp(strcmp(get(h, 'FaceColor'), 'none'));
-            hidden on;
             disp(numel(get(h, 'FaceColor')));
             hidden off;
             disp(strcmp(get(h, 'FaceColor'), 'none'));
+            hidden on;
+            disp(numel(get(h, 'FaceColor')));
+            hidden;
+            disp(strcmp(get(h, 'FaceColor'), 'none'));
+            hidden;
+            disp(numel(get(h, 'FaceColor')));
             """);
 
-        // Unset before and after; a colour while it is on.
-        Assert.Equal(new[] { "true", "3", "true" }, _output.NormalLines);
+        // A colour to start with, gone while it is off, and back when it is on again.
+        Assert.Equal(new[] { "3", "true", "3", "true", "3" }, _output.NormalLines);
+    }
+
+    /// <summary>
+    /// Which surfaces the verb touches is MATLAB's rule and worth its own test: only ones whose face
+    /// colour is <c>'none'</c> or the background. A <c>surf</c> takes its faces from the colormap, so
+    /// <c>hidden</c> must leave it alone — before this it turned every surface in the axes to wires.
+    /// </summary>
+    [Fact]
+    public async Task HiddenLeavesASurfAlone()
+    {
+        await RunAsserting("""
+            figure(1);
+            s = surf(peaks(10));
+            hidden off;
+            disp(get(s, 'FaceColor'));
+            hidden on;
+            disp(get(s, 'FaceColor'));
+            """);
+
+        Assert.Equal(new[] { "flat", "flat" }, _output.NormalLines);
     }
 
     [Fact]

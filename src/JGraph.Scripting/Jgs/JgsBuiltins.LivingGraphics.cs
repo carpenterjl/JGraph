@@ -450,7 +450,10 @@ internal static partial class JgsBuiltins
 
     private static JgsValue Group(string verb, IReadOnlyList<JgsValue> args, int line, int col)
     {
-        var group = new JgsGraphicsGroup(transforms: verb == "hgtransform");
+        // MATLAB's hggroup parents itself to gca, making a figure and an axes when there is none.
+        // Recording that axes is also what keeps the group's handle alive across a clf aimed
+        // elsewhere: the sweep has nowhere else to look for a group.
+        var group = new JgsGraphicsGroup(transforms: verb == "hgtransform", home: JG.Gca());
         JgsGraphicsProperties.Remember(group);
         var spec = new OptionSpec(verb, [], ["Matrix", "Tag", "Visible", "Parent"]);
         ParsedArgs parsed = spec.Parse(args, 0, line, col);

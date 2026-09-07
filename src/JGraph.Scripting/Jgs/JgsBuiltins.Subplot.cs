@@ -48,6 +48,13 @@ internal static partial class JgsBuiltins
                     ?? throw new JgsRuntimeException(line,col,"subplot Parent must be a figure.");
                 options.RemoveRange(i,2); break;
             }
+        // A fourth word is peeled above when it is 'replace' or 'align'. One that is neither is left
+        // behind as half of a name/value pair, and the script was told its options came out odd —
+        // true, and no help at all when the mistake is a word from the wrong vocabulary. MATLAB
+        // quotes the word back; so does this, and it names the two the position accepts.
+        if (options.Count==1 && options[0].Type==JgsType.String)
+            throw new JgsRuntimeException(line,col,
+                $"subplot: '{options[0].AsString}' is not a layout word; the fourth word is 'replace' or 'align'.");
         AxesModel? axes=supplied;
         foreach (var existing in figure.Axes.ToArray())
         {

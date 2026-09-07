@@ -500,18 +500,29 @@ public static class JG
         return axes.AddSurface(x, y, z, SurfaceStyle.FilledWithWireframe);
     }
 
+    /// <summary>
+    /// A mesh's faces are painted the axes' own background, which is what makes it hide what is
+    /// behind it — MATLAB's <c>mesh</c> sets <c>FaceColor</c> to the background colour and leaves
+    /// <c>hidden</c> on, and <c>hidden off</c> is the call that takes the faces away again.
+    /// </summary>
+    private static SurfacePlot Opaque(AxesModel axes, SurfacePlot surface)
+    {
+        surface.FaceColor = axes.Background;
+        return surface;
+    }
+
     /// <summary>Plots a wireframe 3D surface (MATLAB <c>mesh</c>) and switches the axes to 3D.</summary>
     public static SurfacePlot Mesh(double[] x, double[] y, double[,] z)
     {
         AxesModel axes = PrepareAxes();
-        return axes.AddSurface(x, y, z, SurfaceStyle.Wireframe);
+        return Opaque(axes, axes.AddSurface(x, y, z, SurfaceStyle.FilledWithWireframe));
     }
 
     /// <summary>Plots a parametric wireframe surface (MATLAB <c>mesh</c> with full X/Y matrices).</summary>
     public static SurfacePlot Mesh(double[,] x, double[,] y, double[,] z)
     {
         AxesModel axes = PrepareAxes();
-        return axes.AddSurface(x, y, z, SurfaceStyle.Wireframe);
+        return Opaque(axes, axes.AddSurface(x, y, z, SurfaceStyle.FilledWithWireframe));
     }
 
     /// <summary>Plots a wireframe surface with unit-spaced X/Y (MATLAB <c>mesh(Z)</c>).</summary>

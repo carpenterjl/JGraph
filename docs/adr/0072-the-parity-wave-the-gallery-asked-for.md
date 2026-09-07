@@ -133,9 +133,12 @@ pass, and a script building a hundred-frame animation never holds more than one 
 
 ## Divergences recorded
 
-- **A surface answers `[]` for an unset `FaceColor`/`EdgeColor`, where MATLAB answers `'flat'` (or
+- ~~**A surface answers `[]` for an unset `FaceColor`/`EdgeColor`, where MATLAB answers `'flat'` (or
   `'none'` for a mesh's faces).** Writing takes MATLAB's words; only reading keeps the older
-  spelling, because `stess_26.m` is frozen and asserts it.
+  spelling, because `stess_26.m` is frozen and asserts it.~~ — **lifted;** reading answers MATLAB's
+  words too: a `surf` gives `'flat'` and a mesh with its faces taken away gives `'none'`. The frozen
+  `stess_26.m` assertion was the reason this stood, and it was corrected in ADR 0130, which also
+  records what a `surf`'s `EdgeColor` still answers.
 - **TeX is rendered to characters rather than laid out.** No stacked fractions or integral limits;
   `\bf`, `\it`, `\rm`, `\color`, `\fontname` and `\fontsize` are read and dropped, since a run drawn
   in one call has one style. A superscript or subscript falls back to the plain character where

@@ -413,9 +413,30 @@ internal static partial class JgsBuiltins
     private const int DefaultContrastRows = 64;
 
     /// <summary>
-    /// <c>hidden on</c> / <c>hidden off</c>: whether a mesh hides what is behind it. A mesh here is
-    /// a wireframe with no faces at all, so hiding is done by painting its faces the axes' own
-    /// background — the same picture, and reversible.
+    /// Whether a surface is one <c>hidden</c> and <c>shading</c> should treat as a mesh: MATLAB's own
+    /// test, which is neither the class nor the verb that drew it but the face colour — <c>'none'</c>,
+    /// or the axes background. A <c>surf</c> takes its faces from the colormap and fails the test, and
+    /// so does a mesh a script has since painted a colour of its own.
+    /// <para>
+    /// A null face colour is two answers here and only the style tells them apart: on a wireframe it
+    /// reads back <c>'none'</c>, and anywhere else it reads back <c>'flat'</c>, the colormap.
+    /// </para>
+    /// </summary>
+    internal static bool IsMeshLike(AxesModel axes, SurfacePlot surface) =>
+        (surface.FaceColor is null && surface.Style == SurfaceStyle.Wireframe)
+        || surface.FaceColor == axes.Background;
+
+    /// <summary>
+    /// <c>hidden on</c> / <c>hidden off</c>: whether a mesh hides what is behind it. A mesh is drawn
+    /// with its faces painted the axes' own background, and taking them away is what lets a script
+    /// see through it.
+    /// <para>
+    /// Which surfaces it touches is the whole of MATLAB's rule, and worth copying exactly: only ones
+    /// whose face colour is already <c>'none'</c> or already the background — that is, only the ones
+    /// that could be a mesh. A <c>surf</c> takes its faces from the colormap, so <c>hidden</c> leaves
+    /// it alone, and so does a mesh a script has since painted a colour of its own. Without the test
+    /// this verb turned every surface in the axes into a wireframe.
+    /// </para>
     /// </summary>
     private static JgsValue Hidden(IReadOnlyList<JgsValue> args, int line, int col, JgsDialect dialect)
     {
@@ -423,15 +444,21 @@ internal static partial class JgsBuiltins
         ArityRange("hidden", rest, 0, 1, line, col);
         AxesModel axes = named ?? JG.Gca();
 
-        bool on = OnOff("hidden", rest, line, col, dialect, () => axes.Plots.OfType<SurfacePlot>().Any(s => s.FaceColor is not null));
-        foreach (SurfacePlot surface in axes.Plots.OfType<SurfacePlot>())
+        SurfacePlot[] meshes = axes.Plots.OfType<SurfacePlot>().Where(s => IsMeshLike(axes, s)).ToArray();
+
+        // With no word, the first mesh decides and the rest follow it, which is how MATLAB's own
+        // toggle reads: it flips the first surface it can and latches the answer for the others.
+        bool on = OnOff("hidden", rest, line, col, dialect,
+            () => meshes.Length > 0 && meshes[0].FaceColor is not null);
+
+        foreach (SurfacePlot surface in meshes)
         {
-            if (on && surface.Style == SurfaceStyle.Wireframe)
+            if (on)
             {
                 surface.Style = SurfaceStyle.FilledWithWireframe;
                 surface.FaceColor = axes.Background;
             }
-            else if (!on && surface.FaceColor is not null)
+            else
             {
                 surface.Style = SurfaceStyle.Wireframe;
                 surface.FaceColor = null;

@@ -327,6 +327,32 @@ public class MatlabLivingGraphicsTests : IDisposable
         Assert.Contains("no matrix", Error("g = hggroup; set(g, 'Matrix', eye(4));"));
     }
 
+    /// <summary>
+    /// A group draws nothing, so it is not in the tree the handle sweep walks — and reading its
+    /// absence from that walk as death dropped the handle of every live group at the first
+    /// <c>clf</c> of the session, whichever figure the <c>clf</c> named. Checked against R2025b:
+    /// there the group stays valid through a clf aimed elsewhere and dies with its own axes.
+    /// </summary>
+    [Fact]
+    public void AGroupOutlivesAClearAimedAtAnotherFigure()
+    {
+        Assert.Equal("on\n", RunAndRead("""
+            figure(1); a = plot(1:3); g = hggroup; set(a, 'Parent', g);
+            figure(2); clf;
+            fprintf('%s\n', get(g, 'Visible'));
+            """));
+    }
+
+    [Fact]
+    public void AGroupDiesWithTheAxesItWasMadeIn()
+    {
+        Assert.Contains("since been cleared", Error("""
+            figure(1); a = plot(1:3); g = hggroup; set(a, 'Parent', g);
+            figure(1); clf;
+            get(g, 'Visible');
+            """));
+    }
+
     [Fact]
     public void AnObjectCannotBeGivenAParentThatCannotHoldIt()
     {

@@ -124,7 +124,12 @@ public class MatlabDocumentedChartFormTests : IDisposable
         try
             subplot(2, 2, 3, 'sideways');
         catch err
-            ok = ~isempty(strfind(err.message, 'pairs'));
+            % The refusal quotes the word back and names the two the position takes, which the
+            % 'options come in Name, value pairs' message it used to give did not: a lone fourth
+            % word is half a pair, so that message was true and no help.
+            ok = ~isempty(strfind(err.message, 'sideways')) ...
+                 && ~isempty(strfind(err.message, 'replace')) ...
+                 && ~isempty(strfind(err.message, 'align'));
         end
         assert(ok);
         """);

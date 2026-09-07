@@ -129,8 +129,14 @@ public class Jgs3DPlottingTests : IDisposable
         Assert.Equal(10, axes.ZAxis.Range.Max);
     }
 
+    /// <summary>
+    /// A mesh's faces are painted the axes background rather than left out: that is what makes it
+    /// hide what is behind it, and it is what MATLAB's <c>mesh</c> does — <c>FaceColor</c> reads back
+    /// as the background colour, not as <c>'none'</c>. <c>hidden off</c> is the call that takes the
+    /// faces away.
+    /// </summary>
     [Fact]
-    public async Task Mesh_And_Meshc_SelectWireframeStyles()
+    public async Task Mesh_And_Meshc_PaintTheirFacesTheBackground()
     {
         ScriptRunResult result = await Run("""
             mesh([[1, 2], [3, 4]])
@@ -138,8 +144,10 @@ public class Jgs3DPlottingTests : IDisposable
             """);
 
         Assert.True(result.Success, result.Message);
-        var surface = Assert.IsType<SurfacePlot>(_figures[0].Axes[^1].Plots[0]);
-        Assert.Equal(SurfaceStyle.Wireframe, surface.Style);
+        AxesModel meshAxes = _figures[0].Axes[^1];
+        var surface = Assert.IsType<SurfacePlot>(meshAxes.Plots[0]);
+        Assert.Equal(SurfaceStyle.FilledWithWireframe, surface.Style);
+        Assert.Equal(meshAxes.Background, surface.FaceColor);
         Assert.False(surface.ShowContourBelow);
 
         JG.Reset();
@@ -186,7 +194,9 @@ public class Jgs3DPlottingTests : IDisposable
         Assert.Equal(SurfaceShading.Interp, interpSurface.Shading);
         Assert.Equal(SurfaceStyle.Filled, interpSurface.Style);
 
-        // A mesh has nothing but its lines, so shading must not take them away.
+        // A mesh takes only the edge half of the word. MATLAB's shading sorts an axes' surfaces by
+        // face colour and hands a mesh — one whose faces are 'none' or the background — nothing but
+        // a new EdgeColor, so `shading interp` on a mesh must leave it a mesh.
         JG.Reset();
         _figures.Clear();
         ScriptRunResult wire = await Run("""
@@ -196,7 +206,11 @@ public class Jgs3DPlottingTests : IDisposable
             """);
 
         Assert.True(wire.Success, wire.Message);
-        Assert.Equal(SurfaceStyle.Wireframe, Assert.IsType<SurfacePlot>(_figures[0].Axes[^1].Plots[0]).Style);
+        AxesModel wireAxes = _figures[0].Axes[^1];
+        var wireSurface = Assert.IsType<SurfacePlot>(wireAxes.Plots[0]);
+        Assert.Equal(SurfaceStyle.FilledWithWireframe, wireSurface.Style);
+        Assert.Equal(wireAxes.Background, wireSurface.FaceColor);
+        Assert.Equal(SurfaceShading.Interp, wireSurface.Shading);
     }
 
     /// <summary>

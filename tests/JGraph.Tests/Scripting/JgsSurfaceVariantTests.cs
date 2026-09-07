@@ -67,7 +67,9 @@ public class JgsSurfaceVariantTests : IDisposable
         await Succeeds(Grid + "meshz(Z)");
 
         SurfacePlot surface = Single<SurfacePlot>();
-        Assert.Equal(SurfaceStyle.Wireframe, surface.Style);
+
+        // meshz is a mesh, so its faces are the axes background — the curtain hides what is behind it.
+        Assert.Equal(SurfaceStyle.FilledWithWireframe, surface.Style);
         Assert.Equal(5, surface.Z.GetLength(0));
         Assert.Equal(5, surface.Z.GetLength(1));
         for (int c = 0; c < 5; c++)
