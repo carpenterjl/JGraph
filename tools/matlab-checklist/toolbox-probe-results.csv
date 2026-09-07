@@ -380,7 +380,7 @@ triplequad,funfun,2,"q = triplequad(fun,xmin,xmax,ymin,ymax,zmin,zmax,tol,method
 vectorize,funfun,0,cdot = vectorize(c),accepted,
 isvarname,lang,0,tf = isvarname(s),accepted,
 isvarname,lang,1,isvarname s,accepted,
-run,lang,0,run(scriptname),refused,run: cannot read 'C:\Users\Carpe\AppData\Local\Temp\jgraph-toolbox-bm7drv0x\a': Could not find file 'C:\Users\Carpe\AppData\Local\Temp\jgraph-toolbox-bm7drv0x\a'.
+run,lang,0,run(scriptname),refused,run: cannot read 'C:\Users\Carpe\AppData\Local\Temp\jgraph-toolbox-0nctu739\a': Could not find file 'C:\Users\Carpe\AppData\Local\Temp\jgraph-toolbox-0nctu739\a'.
 validateattributes,lang,0,"validateattributes(A,classes,attributes)",error,validateattributes expects a cell of class names.
 validateattributes,lang,1,"validateattributes(A,classes,attributes,argIndex)",error,"validateattributes expects argument 4 to be a string, but got a number."
 validateattributes,lang,2,"validateattributes(A,classes,attributes,funcName)",error,validateattributes expects a cell of class names.
@@ -481,6 +481,28 @@ optimset,optimfun,2,options = optimset,accepted,
 optimset,optimfun,3,options = optimset(optimfun),error,No default options available for the function 'sin'.
 optimset,optimfun,4,"options = optimset(oldopts,Name,Value)",unprobed,"Name,Value form; the dump lists no pair names"
 optimset,optimfun,5,"options = optimset(oldopts,newopts)",unprobed,no sample for this form's arguments
+boundary,polyfun,0,"k = boundary(x,y)",accepted,
+boundary,polyfun,1,"k = boundary(x,y,z)",accepted,
+boundary,polyfun,2,k = boundary(P),accepted,
+boundary,polyfun,3,"k = boundary(___,s)",accepted,
+boundary,polyfun,4,"[k,v] = boundary(___)",accepted,
+convhulln,polyfun,0,k = convhulln(P),accepted,
+convhulln,polyfun,1,"k = convhulln(P,opts)",accepted,
+convhulln,polyfun,2,"[k,vol] = convhulln(___)",accepted,
+delaunayn,polyfun,0,T = delaunayn(X),accepted,
+delaunayn,polyfun,1,"T = delaunayn(X,options)",accepted,
+dsearchn,polyfun,0,"k = dsearchn(P,PQ)",accepted,
+dsearchn,polyfun,1,"k = dsearchn(P,T,PQ)",accepted,
+dsearchn,polyfun,2,"k = dsearchn(P,T,PQ,outind)",accepted,
+dsearchn,polyfun,3,"[k,dist] = dsearchn(___)",accepted,
+griddata,polyfun,0,"vq = griddata(x,y,v,xq,yq)",accepted,
+griddata,polyfun,1,"vq = griddata(x,y,z,v,xq,yq,zq)",accepted,
+griddata,polyfun,2,"vq = griddata(___,method)",accepted,
+griddata,polyfun,3,"[Xq,Yq,vq] = griddata(x,y,v,xq,yq)",accepted,
+griddata,polyfun,4,"[Xq,Yq,vq] = griddata(x,y,v,xq,yq,method)",accepted,
+griddatan,polyfun,0,"vq = griddatan(x,v,xq)",accepted,
+griddatan,polyfun,1,"vq = griddatan(x,v,xq,method)",accepted,
+griddatan,polyfun,2,"vq = griddatan(x,v,xq,method,options)",accepted,
 inpolygon,polyfun,0,"in = inpolygon(xq,yq,xv,yv)",accepted,
 inpolygon,polyfun,1,"[in,on] = inpolygon(xq,yq,xv,yv)",accepted,
 interp1,polyfun,0,"vq = interp1(x,v,xq)",accepted,
@@ -539,6 +561,13 @@ rectint,polyfun,0,"area = rectint(A,B)",unprobed,no sample for this form's argum
 roots,polyfun,0,r = roots(p),accepted,
 spline,polyfun,0,"s = spline(x,y,xq)",accepted,
 spline,polyfun,1,"pp = spline(x,y)",accepted,
+stlread,polyfun,0,TR = stlread(filename),refused,stlread: cannot open 'C:\Users\Carpe\AppData\Local\Temp\jgraph_probe_mesh.stl'.
+stlread,polyfun,1,"[TR,fileformat,attributes,solidID] = stlread(filename)",refused,stlread: cannot open 'C:\Users\Carpe\AppData\Local\Temp\jgraph_probe_mesh.stl'.
+stlwrite,polyfun,0,"stlwrite(TR,filename)",undefined,'triangulation' is not recognized as a variable or a function.
+stlwrite,polyfun,1,"stlwrite(TR,filename,fileformat)",undefined,'triangulation' is not recognized as a variable or a function.
+stlwrite,polyfun,2,"stlwrite(___,Name,Value)",unprobed,"Name,Value form; the dump lists no pair names"
+tsearchn,polyfun,0,"t = tsearchn(X,TRI,XI)",accepted,
+tsearchn,polyfun,1,"[t,P] = tsearchn(X,TRI,XI)",accepted,
 unmkpp,polyfun,0,"[breaks,coefs,L,order,dim] = unmkpp(pp)",unprobed,no sample for this form's arguments
 voronoin,polyfun,0,"[v,c] = voronoin(P)",error,voronoin: only 2-D point sets are supported - X must be an n-by-2 matrix.
 voronoin,polyfun,1,"[v,c] = voronoin(P,opts)",error,"voronoin expects 1 argument(s), but got 2."

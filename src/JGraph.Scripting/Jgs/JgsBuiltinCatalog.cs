@@ -493,6 +493,20 @@ public static class JgsBuiltinCatalog
         Add("fcnchk", "A function handle from a name, an expression or a handle, with 'vectorized' as an option: f = fcnchk('x^2', 'vectorized').", P("fun"), Opt("args"));
         Add("formula", "The formula an inline function was written as: formula(inline('x^2+y')).", P("f"));
         Add("argnames", "The argument names of an inline function, as a cell column: argnames(inline('x^2+y')).", P("f"));
+
+        // Scattered data (M129): a surface through points that are not on a grid, the two
+        // interpolant values, the tessellation verbs in any number of directions, and STL.
+        Add("griddata", "Fits a surface to scattered data and reads it on a grid: vq = griddata(x, y, v, xq, yq, method), with 'nearest', 'linear', 'natural', 'cubic' or 'v4'.", P("x"), P("y"), P("v"), P("xq"), P("yq"), Opt("zq"), Opt("method"));
+        Add("griddatan", "Fits a hyper-surface to scattered data in n directions: yi = griddatan(X, Y, XI, method).", P("X"), P("Y"), P("XI"), Opt("method"), Opt("options"));
+        Add("scatteredInterpolant", "A surface through scattered data, held as a value and read like a function: F = scatteredInterpolant(x, y, v, method, extrapolation); F(xq, yq).", Opt("x"), Opt("y"), Opt("v"), Opt("method"), Opt("extrapolation"));
+        Add("griddedInterpolant", "A grid of samples, held as a value and read like a function: F = griddedInterpolant(x, v, method, extrapolation); F(xq) or F({xg, yg}).", P("x"), Opt("v"), Opt("method"), Opt("extrapolation"));
+        Add("delaunayn", "The Delaunay tessellation of points in n directions: T = delaunayn(X).", P("X"), Opt("options"));
+        Add("tsearchn", "Which simplex of a tessellation a point lands in, and its barycentric coordinates there: [t, p] = tsearchn(X, T, XI).", P("X"), P("T"), P("XI"));
+        Add("dsearchn", "The nearest data point to each query point, and its distance: [k, d] = dsearchn(X, T, XI, outval).", P("X"), P("T"), Opt("XI"), Opt("outval"), Opt("coptions"), Opt("doptions"));
+        Add("convhulln", "The convex hull of points in n directions, with its area or volume: [K, V] = convhulln(X).", P("X"), Opt("options"));
+        Add("boundary", "A boundary around a set of points that can shrink towards them: [K, V] = boundary(x, y, s), where s runs from 0 (the convex hull) to 1.", P("x"), Opt("y"), Opt("z"), Opt("s"));
+        Add("stlread", "Reads an STL file, text or binary: [TR, fileformat, attributes, solidID] = stlread(filename).", P("filename"));
+        Add("stlwrite", "Writes a triangulation to an STL file: stlwrite(TR, filename, 'text').", P("TR"), P("filename"), Opt("fileformat"), Opt("name"), Opt("value"));
         Add("odeplot", "The output function a solver draws through when called as a statement: every component against time. status = odeplot(t, y, flag).", P("t"), P("y"), Opt("flag"));
         Add("odephas2", "An output function drawing the first two components against each other: odeset('OutputFcn', @odephas2).", P("t"), P("y"), Opt("flag"));
         Add("odephas3", "An output function drawing the first three components in 3-D: odeset('OutputFcn', @odephas3).", P("t"), P("y"), Opt("flag"));

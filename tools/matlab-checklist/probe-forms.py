@@ -373,6 +373,41 @@ NAME_ARG_SAMPLES: dict[tuple[str, str], str] = {
     ("etreeplot", "edgeSpec"): "'r-'",
     ("gplot", "A"): "sparse([1 2], [2 1], 1, 2, 2)", ("gplot", "XYCoords"): "[0 0; 1 1]",
     ("unmesh", "E"): "[0 0 1 0; 1 0 1 1; 1 1 0 1; 0 1 0 0]",
+
+    # The scattered-data family (M129). Six points in general position: enough for a triangulation
+    # in the plane and in space, and no four of them co-circular, so the two engines tessellate the
+    # same set. Every coordinate is a column, because `boundary` refuses anything else.
+    ("griddata", "x"): "[0; 1; 0.4; 0.9; 0.15; 0.75]",
+    ("griddata", "y"): "[0; 0.1; 1; 0.85; 0.55; 0.45]",
+    ("griddata", "z"): "[0; 0.3; 0.7; 0.2; 0.9; 0.5]",
+    ("griddata", "v"): "[1; 2; 3; 4; 5; 6]",
+    ("griddata", "xq"): "0.5", ("griddata", "yq"): "0.5", ("griddata", "zq"): "0.5",
+    ("griddata", "method"): "'linear'",
+    ("griddatan", "x"): "[0 0; 1 0; 0.4 1; 0.9 0.85; 0.15 0.55; 0.75 0.45]",
+    ("griddatan", "v"): "[1; 2; 3; 4; 5; 6]", ("griddatan", "xq"): "[0.5 0.5]",
+    ("griddatan", "method"): "'linear'", ("griddatan", "options"): "{'Qt'}",
+    ("delaunayn", "X"): "[0 0; 1 0; 0.4 1; 0.9 0.85; 0.15 0.55; 0.75 0.45]",
+    ("delaunayn", "options"): "{'Qt', 'Qbb', 'Qc'}",
+    ("tsearchn", "X"): "[0 0; 1 0; 0.4 1; 0.9 0.85; 0.15 0.55; 0.75 0.45]",
+    ("tsearchn", "TRI"): "delaunayn([0 0; 1 0; 0.4 1; 0.9 0.85; 0.15 0.55; 0.75 0.45])",
+    ("tsearchn", "XI"): "[0.5 0.5]",
+    ("dsearchn", "P"): "[0 0; 1 0; 0.4 1; 0.9 0.85; 0.15 0.55; 0.75 0.45]",
+    ("dsearchn", "T"): "delaunayn([0 0; 1 0; 0.4 1; 0.9 0.85; 0.15 0.55; 0.75 0.45])",
+    ("dsearchn", "PQ"): "[0.5 0.5]", ("dsearchn", "outind"): "Inf",
+    ("convhulln", "P"): "[0 0; 1 0; 0.4 1; 0.9 0.85; 0.15 0.55; 0.75 0.45]",
+    ("convhulln", "opts"): "{'Qt'}",
+    ("boundary", "x"): "[0; 1; 0.4; 0.9; 0.15; 0.75]",
+    ("boundary", "y"): "[0; 0.1; 1; 0.85; 0.55; 0.45]",
+    ("boundary", "z"): "[0; 0.3; 0.7; 0.2; 0.9; 0.5]",
+    ("boundary", "P"): "[0 0; 1 0; 0.4 1; 0.9 0.85; 0.15 0.55; 0.75 0.45]",
+    ("boundary", "s"): "0.5",
+    # The STL pair reads and writes a file rather than a value, so its sample is a path in the
+    # system's temporary folder; `stlread`'s form only measures once something has been written
+    # there, which is what `stlwrite`'s does.
+    ("stlread", "filename"): "fullfile(tempdir, 'jgraph_probe_mesh.stl')",
+    ("stlwrite", "filename"): "fullfile(tempdir, 'jgraph_probe_mesh.stl')",
+    ("stlwrite", "TR"): "triangulation([1 2 3; 1 3 4], [0 0 0; 1 0 0; 1 1 0; 0 1 0])",
+    ("stlwrite", "fileformat"): "'text'",
 }
 
 # Placeholders the documented type phrase cannot describe well enough to sample, whatever command

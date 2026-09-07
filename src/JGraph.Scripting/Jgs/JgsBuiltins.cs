@@ -2556,6 +2556,7 @@ internal static partial class JgsBuiltins
         RegisterPdeBuiltins(env, host);
         RegisterQuadratureBuiltins(env, host);
         RegisterSparseKrylovBuiltins(env, host, dialect, random);
+        RegisterScatteredDataBuiltins(env, host);
         RegisterCosineTransformBuiltins(env);
         RegisterStringEditingBuiltins(env, dialect);
         RegisterStringArrayBuiltins(env);

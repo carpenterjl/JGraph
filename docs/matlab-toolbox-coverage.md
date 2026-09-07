@@ -19,8 +19,8 @@ below is — and that is why an entire folder could sit at nought implemented wi
 
 ## Where it stands
 
-**322 of 377 names implemented**, and
-**683 of 1036 documented syntax forms accepted**.
+**331 of 377 names implemented**, and
+**707 of 1036 documented syntax forms accepted**.
 
 | Folder | Names | Forms documented | Forms accepted | Names missing |
 |---|---:|---:|---:|---:|
@@ -28,7 +28,7 @@ below is — and that is why an entire folder could sit at nought implemented wi
 | `datafun` | 40 / 41 | 178 | 144 | 1 |
 | `funfun` | 29 / 40 | 123 | 82 | 11 |
 | `sparfun` | 31 / 35 | 185 | 150 | 4 |
-| `polyfun` | 23 / 34 | 94 | 38 | 11 |
+| `polyfun` | 32 / 34 | 94 | 62 | 2 |
 | `elmat` | 33 / 33 | 68 | 59 | 0 |
 | `validators` | 28 / 31 | 33 | 20 | 3 |
 | `matfun` | 25 / 25 | 62 | 51 | 0 |
@@ -43,11 +43,11 @@ below is — and that is why an entire folder could sit at nought implemented wi
 
 | Verdict | Forms | What it means |
 |---|---:|---|
-| accepted | 683 | the call returned without error |
-| refused | 2 | refused deliberately, with a message naming what is missing |
-| undefined | 0 | the name did not resolve at all |
+| accepted | 707 | the call returned without error |
+| refused | 4 | refused deliberately, with a message naming what is missing |
+| undefined | 2 | the name did not resolve at all |
 | error | 111 | failed some other way — **may be the prober's sample, not the build** |
-| unprobed | 107 | no call could be built |
+| unprobed | 108 | no call could be built |
 
 Only implemented names are probed, so "forms accepted" is bounded by the names column above it. As
 in the sibling document, **`accepted` is the trustworthy column** and every other one is a worklist:
@@ -76,9 +76,9 @@ command that quite rightly rejects it.
 
 `pagectranspose` `pagetranspose`
 
-### `polyfun` — 11
+### `polyfun` — 2
 
-`boundary` `boundaryshape` `convhulln` `delaunayn` `dsearchn` `griddata` `griddatan` `nsidedpoly` `stlread` `stlwrite` `tsearchn`
+`boundaryshape` `nsidedpoly`
 
 ### `sparfun` — 4
 

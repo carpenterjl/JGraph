@@ -4129,6 +4129,15 @@ internal sealed partial class Interpreter
             return JgsBuiltins.Lookup(callee, Evaluate(call.Arguments[0], env), call.Line, call.Column);
         }
 
+        // F(xq, yq) on an interpolant reads the field it stands for (M129). It arrives here for the
+        // same reason a Map lookup does — a name followed by parentheses parses as a call until
+        // something says otherwise — and it has to be asked before the struct subscript below,
+        // because an interpolant is a struct and F(1) would otherwise pick a struct out of it.
+        if (JgsBuiltins.IsInterpolant(callee) && call.Arguments.Count > 0)
+        {
+            return JgsBuiltins.CallInterpolant(callee, EvaluateAll(call.Arguments, env), call.Line, call.Column);
+        }
+
         // S(k) on a struct is a subscript, not a call (M65) — it arrives here for the same reason a
         // Map lookup does: a name followed by parentheses parses as a call until something says
         // otherwise. Before M65 nothing did, so S(2).a on a struct array reported it was not a
