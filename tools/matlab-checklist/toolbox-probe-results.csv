@@ -285,6 +285,9 @@ vander,elmat,0,A = vander(v),accepted,
 width,elmat,0,W = width(T),accepted,
 wilkinson,elmat,0,W = wilkinson(n),accepted,
 wilkinson,elmat,1,"W = wilkinson(n,classname)",accepted,
+dblquad,funfun,0,"q = dblquad(fun,xmin,xmax,ymin,ymax)",accepted,
+dblquad,funfun,1,"q = dblquad(fun,xmin,xmax,ymin,ymax,tol)",accepted,
+dblquad,funfun,2,"q = dblquad(fun,xmin,xmax,ymin,ymax,tol,method)",accepted,
 decic,funfun,0,"[y0_new,yp0_new] = decic(odefun,t0,y0,fixed_y0,yp0,fixed_yp0)",accepted,
 decic,funfun,1,"[y0_new,yp0_new] = decic(odefun,t0,y0,fixed_y0,yp0,fixed_yp0,options)",accepted,
 decic,funfun,2,"[y0_new,yp0_new,resnrm] = decic(___)",accepted,
@@ -294,6 +297,10 @@ deval,funfun,2,"y = deval(___,idx)",accepted,
 deval,funfun,3,"[y,yp] = deval(___)",accepted,
 integral,funfun,0,"q = integral(fun,xmin,xmax)",accepted,
 integral,funfun,1,"q = integral(fun,xmin,xmax,Name,Value)",unprobed,"Name,Value form; the dump lists no pair names"
+integral2,funfun,0,"q = integral2(fun,xmin,xmax,ymin,ymax)",accepted,
+integral2,funfun,1,"q = integral2(fun,xmin,xmax,ymin,ymax,Name,Value)",unprobed,"Name,Value form; the dump lists no pair names"
+integral3,funfun,0,"q = integral3(fun,xmin,xmax,ymin,ymax,zmin,zmax)",accepted,
+integral3,funfun,1,"q = integral3(fun,xmin,xmax,ymin,ymax,zmin,zmax,Name,Value)",unprobed,"Name,Value form; the dump lists no pair names"
 ode113,funfun,0,"[t,y] = ode113(odefun,tspan,y0)",accepted,
 ode113,funfun,1,"[t,y] = ode113(odefun,tspan,y0,options)",accepted,
 ode113,funfun,2,"[t,y,te,ye,ie] = ode113(odefun,tspan,y0,options)",accepted,
@@ -348,14 +355,32 @@ pdepe,funfun,0,"sol = pdepe(m,pdefun,icfun,bcfun,xmesh,tspan)",accepted,
 pdepe,funfun,1,"sol = pdepe(m,pdefun,icfun,bcfun,xmesh,tspan,options)",accepted,
 pdepe,funfun,2,"[sol,tsol,sole,te,ie] = pdepe(m,pdefun,icfun,bcfun,xmesh,tspan,options)",error,"This call returns 1 value(s), but 5 were asked for."
 pdeval,funfun,0,"[u,dudx] = pdeval(m,xmesh,usol,xq)",accepted,
+quad,funfun,0,"q = quad(fun,a,b)",accepted,
+quad,funfun,1,"q = quad(fun,a,b,tol)",accepted,
+quad,funfun,2,"q = quad(fun,a,b,tol,trace)",accepted,
+quad,funfun,3,"[q,fcnEvals] = quad(___)",accepted,
+quad2d,funfun,0,"q = quad2d(fun,a,b,c,d)",accepted,
+quad2d,funfun,1,"q = quad2d(fun,a,b,c,d,Name,Value)",unprobed,"Name,Value form; the dump lists no pair names"
+quad2d,funfun,2,"[q,E] = quad2d(___)",accepted,
 quadgk,funfun,0,"q = quadgk(fun,a,b)",accepted,
 quadgk,funfun,1,"[q,errbnd] = quadgk(fun,a,b)",accepted,
 quadgk,funfun,2,"[___] = quadgk(fun,a,b,Name,Value)",unprobed,"Name,Value form; the dump lists no pair names"
+quadl,funfun,0,"q = quadl(fun,a,b)",accepted,
+quadl,funfun,1,"q = quadl(fun,a,b,tol)",accepted,
+quadl,funfun,2,"quadl(fun,a,b,tol,trace)",accepted,
+quadl,funfun,3,"[q,fcnt] = quadl(...)",accepted,
+quadv,funfun,0,"Q = quadv(fun,a,b)",accepted,
+quadv,funfun,1,"Q = quadv(fun,a,b,tol)",accepted,
+quadv,funfun,2,"Q = quadv(fun,a,b,tol,trace)",accepted,
+quadv,funfun,3,"[Q,fcnt] = quadv(...)",accepted,
 symvar,funfun,0,C = symvar(expr),accepted,
+triplequad,funfun,0,"q = triplequad(fun,xmin,xmax,ymin,ymax,zmin,zmax)",accepted,
+triplequad,funfun,1,"q = triplequad(fun,xmin,xmax,ymin,ymax,zmin,zmax,tol)",accepted,
+triplequad,funfun,2,"q = triplequad(fun,xmin,xmax,ymin,ymax,zmin,zmax,tol,method)",accepted,
 vectorize,funfun,0,cdot = vectorize(c),accepted,
 isvarname,lang,0,tf = isvarname(s),accepted,
 isvarname,lang,1,isvarname s,accepted,
-run,lang,0,run(scriptname),refused,run: cannot read 'C:\Users\Carpe\AppData\Local\Temp\jgraph-toolbox-_e5e5u_w\a': Could not find file 'C:\Users\Carpe\AppData\Local\Temp\jgraph-toolbox-_e5e5u_w\a'.
+run,lang,0,run(scriptname),refused,run: cannot read 'C:\Users\Carpe\AppData\Local\Temp\jgraph-toolbox-7ihdsmqa\a': Could not find file 'C:\Users\Carpe\AppData\Local\Temp\jgraph-toolbox-7ihdsmqa\a'.
 validateattributes,lang,0,"validateattributes(A,classes,attributes)",error,validateattributes expects a cell of class names.
 validateattributes,lang,1,"validateattributes(A,classes,attributes,argIndex)",error,"validateattributes expects argument 4 to be a string, but got a number."
 validateattributes,lang,2,"validateattributes(A,classes,attributes,funcName)",error,validateattributes expects a cell of class names.

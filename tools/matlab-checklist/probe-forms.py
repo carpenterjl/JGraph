@@ -298,6 +298,43 @@ NAME_ARG_SAMPLES: dict[tuple[str, str], str] = {
     ("inlineeval", "expr"): "'x^2'",
     ("fcnchk", "fun"): "'x^2'", ("fcnchk", "args"): "'x'",
     ("formula", "f"): "inline('x^2+y')", ("argnames", "f"): "inline('x^2+y')",
+
+    # The quadrature above one dimension (M127). Every one of these is documented with a name the
+    # generic table reads as something true and useless: `fun` is a "function handle" and `@sin`
+    # takes one argument where a double integral wants two, and `a`, `b`, `xmin` and the rest are
+    # "real number", which samples as 2 and would then be integrating over an empty region or a
+    # backwards one. Written out here the probe measures the verb rather than its own sample.
+    # `quad2d`'s limits are documented under the joined names "a,b" and "c,d", which no per-argument
+    # lookup can find at all, so all four are named.
+    ("integral2", "fun"): "@(x,y) x + y", ("integral2", "xmin"): "0", ("integral2", "xmax"): "1",
+    ("integral2", "ymin"): "0", ("integral2", "ymax"): "1",
+    ("integral3", "fun"): "@(x,y,z) x + y + z",
+    ("integral3", "xmin"): "0", ("integral3", "xmax"): "1",
+    ("integral3", "ymin"): "0", ("integral3", "ymax"): "1",
+    ("integral3", "zmin"): "0", ("integral3", "zmax"): "1",
+    ("quad2d", "fun"): "@(x,y) x + y", ("quad2d", "a"): "0", ("quad2d", "b"): "1",
+    ("quad2d", "c"): "0", ("quad2d", "d"): "1",
+    # The three recursive rules take an absolute tolerance and a trace toggle; `trace` is documented
+    # "nonzero scalar", which is the value that turns printing *on*, so it is named as the off it
+    # also accepts rather than filling the probe's transcript with recursion traces.
+    ("quad", "fun"): "@(x) x.^2", ("quad", "a"): "0", ("quad", "b"): "1",
+    ("quad", "tol"): "1e-6", ("quad", "trace"): "0",
+    ("quadl", "fun"): "@(x) x.^2", ("quadl", "funfcn"): "@(x) x.^2",
+    ("quadl", "a"): "0", ("quadl", "b"): "1", ("quadl", "tol"): "1e-6", ("quadl", "trace"): "0",
+    # quadv's integrand is asked about one abscissa at a time and answers an array, which is the
+    # whole point of the name: a scalar-valued sample would probe a different verb.
+    ("quadv", "fun"): "@(x) [x, x.^2]", ("quadv", "funfcn"): "@(x) [x, x.^2]",
+    ("quadv", "a"): "0", ("quadv", "b"): "1", ("quadv", "tol"): "1e-6", ("quadv", "trace"): "0",
+    ("dblquad", "fun"): "@(x,y) x + y", ("dblquad", "intfcn"): "@(x,y) x + y",
+    ("dblquad", "xmin"): "0", ("dblquad", "xmax"): "1",
+    ("dblquad", "ymin"): "0", ("dblquad", "ymax"): "1",
+    ("dblquad", "tol"): "1e-6", ("dblquad", "method"): "@quadl", ("dblquad", "quadf"): "@quadl",
+    ("triplequad", "fun"): "@(x,y,z) x + y + z", ("triplequad", "intfcn"): "@(x,y,z) x + y + z",
+    ("triplequad", "xmin"): "0", ("triplequad", "xmax"): "1",
+    ("triplequad", "ymin"): "0", ("triplequad", "ymax"): "1",
+    ("triplequad", "zmin"): "0", ("triplequad", "zmax"): "1",
+    ("triplequad", "tol"): "1e-6", ("triplequad", "method"): "@quadl",
+    ("triplequad", "quadf"): "@quadl",
 }
 
 # Placeholders the documented type phrase cannot describe well enough to sample, whatever command

@@ -502,6 +502,14 @@ public static class JgsBuiltinCatalog
         Add("odeget", "One setting out of that structure, or a fallback: r = odeget(opts, 'RelTol', 1e-3).", P("options"), P("name"), Opt("default"));
         Add("integral", "The definite integral of a function, adaptively: q = integral(@(x) x.^2, 0, 1). Either limit may be infinite.", P("fun"), P("a"), P("b"), Opt("options"));
         Add("quadgk", "Adaptive Gauss-Kronrod quadrature with its own error bound: [q, errbnd] = quadgk(fun, a, b).", P("fun"), P("a"), P("b"), Opt("options"));
+        Add("integral2", "The double integral over ymin(x) <= y <= ymax(x): q = integral2(fun, xmin, xmax, ymin, ymax). Options: 'AbsTol', 'RelTol', 'Method' ('auto', 'tiled', 'iterated').", P("fun"), P("xmin"), P("xmax"), P("ymin"), P("ymax"), Opt("options"));
+        Add("integral3", "The triple integral over ymin(x) <= y <= ymax(x), zmin(x, y) <= z <= zmax(x, y): q = integral3(fun, xmin, xmax, ymin, ymax, zmin, zmax).", P("fun"), P("xmin"), P("xmax"), P("ymin"), P("ymax"), P("zmin"), P("zmax"), Opt("options"));
+        Add("quad2d", "The double integral over a plane region with its own error bound: [q, errbnd] = quad2d(fun, a, b, c, d). Options: 'AbsTol', 'RelTol', 'Singular', 'MaxFunEvals', 'FailurePlot'.", P("fun"), P("a"), P("b"), P("c"), P("d"), Opt("options"));
+        Add("quad", "Adaptive Simpson quadrature to an absolute tolerance, with its evaluation count: [q, fcnt] = quad(fun, a, b, tol, trace).", P("fun"), P("a"), P("b"), Opt("tol"), Opt("trace"), Opt("args..."));
+        Add("quadl", "Adaptive Lobatto quadrature to an absolute tolerance: [q, fcnt] = quadl(fun, a, b, tol, trace).", P("fun"), P("a"), P("b"), Opt("tol"), Opt("trace"), Opt("args..."));
+        Add("quadv", "Adaptive Simpson quadrature of an array-valued integrand of a scalar: [Q, fcnt] = quadv(fun, a, b, tol, trace).", P("fun"), P("a"), P("b"), Opt("tol"), Opt("trace"), Opt("args..."));
+        Add("dblquad", "The double integral over a rectangle by repeated quad: q = dblquad(fun, xmin, xmax, ymin, ymax, tol, @quadl).", P("fun"), P("xmin"), P("xmax"), P("ymin"), P("ymax"), Opt("tol"), Opt("method"));
+        Add("triplequad", "The triple integral over a box by repeated quad: q = triplequad(fun, xmin, xmax, ymin, ymax, zmin, zmax, tol, @quadl).", P("fun"), P("xmin"), P("xmax"), P("ymin"), P("ymax"), P("zmin"), P("zmax"), Opt("tol"), Opt("method"));
         Add("sparse", "Converts to sparse storage: sparse(A), sparse(m, n), sparse(i, j, v), or sparse(i, j, v, m, n).", P("A"), Opt("j"), Opt("v"), Opt("m"), Opt("n"));
         Add("sprand", "A sparse random matrix with roughly m*n*density uniform nonzeros.", P("m"), P("n"), P("density"));
         Add("eigs", "The k eigenvalues of largest magnitude (Arnoldi); [V, D] = eigs(A, k) adds Ritz vectors.", P("A"), P("k"));

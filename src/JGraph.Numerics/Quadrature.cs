@@ -26,7 +26,7 @@ namespace JGraph.Numerics;
 /// and loudly, which a table copied out of a book does not.
 /// </para>
 /// </remarks>
-public static class Quadrature
+public static partial class Quadrature
 {
     /// <summary>What an integration answered: its value, the bound on its error, and whether it met the tolerance.</summary>
     public readonly record struct Result(double Value, double ErrorBound, bool Converged);

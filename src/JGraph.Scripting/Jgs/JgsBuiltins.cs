@@ -2554,6 +2554,7 @@ internal static partial class JgsBuiltins
         RegisterOdeFamilyBuiltins(env, host);
         RegisterOdeImplicitBuiltins(env, host);
         RegisterPdeBuiltins(env, host);
+        RegisterQuadratureBuiltins(env, host);
         RegisterCosineTransformBuiltins(env);
         RegisterStringEditingBuiltins(env, dialect);
         RegisterStringArrayBuiltins(env);
