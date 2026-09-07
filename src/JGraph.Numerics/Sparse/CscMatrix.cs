@@ -31,6 +31,13 @@ public sealed class CscMatrix
     /// <summary>Requested storage capacity, retained independently of the nonzero count.</summary>
     public int ReservedCapacity { get; private init; }
 
+    /// <summary>
+    /// The row-indexed copy of the same entries, built the first time a matrix–vector product asks
+    /// for it. Safe to fill without a lock because the matrix is immutable: two threads that race
+    /// here build identical views and either will do.
+    /// </summary>
+    private RowView? _byRow;
+
     public CscMatrix WithReservedCapacity(int capacity) =>
         new(Rows, Cols, ColumnStarts, RowIndices, Values) { ReservedCapacity = Math.Max(NonZeroCount, capacity) };
 
@@ -249,7 +256,25 @@ public sealed class CscMatrix
         return new CscMatrix(Rows, other.Cols, starts, rowsOut.ToArray(), valuesOut.ToArray());
     }
 
-    /// <summary>this · x for a dense vector.</summary>
+    /// <summary>
+    /// this · x for a dense vector, one row at a time so the work can be cut into row blocks.
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    /// A Krylov solver is one matrix–vector product per iteration and almost nothing else, so this
+    /// is the loop a large sparse solve spends its life in, and it is worth threading. Cutting by
+    /// rows rather than by columns is what makes that possible: accumulating column by column
+    /// scatters into <c>y</c>, and two threads scattering into the same <c>y</c> would need either
+    /// a lock or a private copy per thread. A row's answer is one dot product owned by one thread.
+    /// </para>
+    /// <para>
+    /// The answer is the same to the bit whether it ran on one thread or on sixteen, and the same
+    /// as the column-scattered form it replaces: within a row, the stored entries are in increasing
+    /// column order either way, so the sum is the same sum in the same order. What decides
+    /// bit-identity is only that each row's dot product stays a single serial accumulation, which
+    /// it does — the split is between rows and never inside one.
+    /// </para>
+    /// </remarks>
     public double[] MultiplyVector(double[] x)
     {
         if (x.Length != Cols)
@@ -258,21 +283,74 @@ public sealed class CscMatrix
         }
 
         var y = new double[Rows];
+        RowView rows = ByRow();
+
+        // Blocks are a function of the row count alone, so the grain boundaries — and therefore
+        // every partial sum — are the same on every machine and at every thread count.
+        int blockRows = Math.Max(1, ParallelKernels.GrainElements / 8);
+        int blocks = Rows == 0 ? 0 : ((Rows - 1) / blockRows) + 1;
+        bool parallel = NonZeroCount >= ParallelKernels.MemoryBoundThreshold;
+        ParallelKernels.ForBlocks(blocks, parallel, block =>
+        {
+            int first = block * blockRows;
+            int last = Math.Min(Rows, first + blockRows);
+            for (int r = first; r < last; r++)
+            {
+                double sum = 0;
+                for (int i = rows.Starts[r]; i < rows.Starts[r + 1]; i++)
+                {
+                    double factor = x[rows.Columns[i]];
+                    if (factor != 0)
+                    {
+                        sum += factor * rows.Values[i];
+                    }
+                }
+
+                y[r] = sum;
+            }
+        });
+
+        return y;
+    }
+
+    /// <summary>The same entries indexed by row, built once and kept — what a row-blocked product needs.</summary>
+    private readonly record struct RowView(int[] Starts, int[] Columns, double[] Values);
+
+    private RowView ByRow()
+    {
+        RowView? cached = _byRow;
+        if (cached is not null)
+        {
+            return cached.Value;
+        }
+
+        var starts = new int[Rows + 1];
+        foreach (int r in RowIndices)
+        {
+            starts[r + 1]++;
+        }
+
+        for (int r = 0; r < Rows; r++)
+        {
+            starts[r + 1] += starts[r];
+        }
+
+        var columns = new int[NonZeroCount];
+        var values = new double[NonZeroCount];
+        var at = (int[])starts.Clone();
         for (int c = 0; c < Cols; c++)
         {
-            double factor = x[c];
-            if (factor == 0)
-            {
-                continue;
-            }
-
             for (int i = ColumnStarts[c]; i < ColumnStarts[c + 1]; i++)
             {
-                y[RowIndices[i]] += factor * Values[i];
+                int slot = at[RowIndices[i]]++;
+                columns[slot] = c;
+                values[slot] = Values[i];
             }
         }
 
-        return y;
+        var view = new RowView(starts, columns, values);
+        _byRow = view;
+        return view;
     }
 
     /// <summary>
@@ -314,14 +392,22 @@ public sealed class CscMatrix
     /// <see cref="LowerUpper"/> and substituting afterwards would mean recovering the permutation from
     /// L's pattern; keeping it here means the substitutions know it.
     /// </summary>
-    public double[] Solve(double[] b)
+    public double[] Solve(double[] b) => SolveWith(Factorize("\\"), b);
+
+    /// <summary>
+    /// The factorization on its own, so a caller that solves against the same matrix many times —
+    /// a Krylov preconditioner, which does one solve per iteration — pays for it once.
+    /// </summary>
+    internal Factorization FactorFor(string name) => Factorize(name);
+
+    /// <summary>The two substitutions against an already-computed factorization.</summary>
+    internal double[] SolveWith(in Factorization factored, double[] b)
     {
         if (b.Length != Rows)
         {
             throw new ArgumentException($"A {Rows}x{Cols} matrix cannot be solved against {b.Length} values.");
         }
 
-        Factorization factored = Factorize("\\");
         int n = Rows;
 
         // Forward substitution against unit lower triangular L, in pivot order.
@@ -381,7 +467,7 @@ public sealed class CscMatrix
     }
 
     /// <summary>What one Gilbert–Peierls pass leaves behind: the pivot order and the two factors by column.</summary>
-    private readonly record struct Factorization(
+    internal readonly record struct Factorization(
         int[] Permutation,
         int[] WhereIs,
         List<(int Row, double Value)>?[] LowerColumns,

@@ -335,6 +335,44 @@ NAME_ARG_SAMPLES: dict[tuple[str, str], str] = {
     ("triplequad", "zmin"): "0", ("triplequad", "zmax"): "1",
     ("triplequad", "tol"): "1e-6", ("triplequad", "method"): "@quadl",
     ("triplequad", "quadf"): "@quadl",
+
+    # The Krylov solvers (M128). All eleven take the same arguments in the same places apart from
+    # gmres's restart length, so one dictionary comprehension covers them: a small symmetric
+    # positive definite matrix every method converges on, a column right-hand side, and a diagonal
+    # preconditioner, which is the one shape that is a legal M1 and a legal M2 at once.
+    **{(solver, arg): sample
+       for solver in ("pcg", "bicg", "bicgstab", "bicgstabl", "cgs", "gmres",
+                      "lsqr", "minres", "qmr", "symmlq", "tfqmr")
+       for arg, sample in (("A", "[4 -1 0; -1 4 -1; 0 -1 4]"), ("b", "[1; 1; 1]"),
+                           ("tol", "1e-8"), ("maxit", "20"),
+                           ("M", "[4 0 0; 0 4 0; 0 0 4]"),
+                           ("M1", "[4 0 0; 0 4 0; 0 0 4]"), ("M2", "[1 0 0; 0 1 0; 0 0 1]"),
+                           ("x0", "[0; 0; 0]"), ("restart", "2"))},
+
+    # The rest of sparfun. A sparse sample rather than a dense one wherever the verb is about
+    # storage: spdiags, spones and colperm all answer something different for a full matrix.
+    ("svds", "A"): "sparse([4 -1 0; -1 4 -1; 0 -1 4])", ("svds", "k"): "2",
+    ("svds", "sigma"): "'largest'", ("svds", "opts"): "struct('MaxIterations', 100)",
+    ("svds", "Afun"): "@(x, t) x", ("svds", "n"): "[3 3]",
+    ("spdiags", "A"): "sparse([1 2 0; 0 3 4; 0 0 5])", ("spdiags", "d"): "[0 1]",
+    ("spdiags", "Bin"): "[1 4; 2 5; 3 6]", ("spdiags", "m"): "3", ("spdiags", "n"): "3",
+    ("spfun", "func"): "@sqrt", ("spfun", "S"): "sparse([1 0; 0 4])",
+    ("spones", "S"): "sparse([1 0; 0 4])",
+    ("spconvert", "D"): "[1 1 5; 2 2 6]",
+    ("spaugment", "A"): "sparse([1 2; 3 4; 5 6])", ("spaugment", "c"): "2",
+    ("sprank", "A"): "sparse([1 0; 0 4])",
+    ("colperm", "S"): "sparse([1 1; 0 4])",
+    ("sprandn", "S"): "sparse([1 0; 0 4])", ("sprandn", "m"): "4", ("sprandn", "n"): "5",
+    ("sprandn", "density"): "0.3", ("sprandn", "rc"): "0.1",
+    ("sprandsym", "S"): "sparse([1 1; 1 4])", ("sprandsym", "n"): "4",
+    ("sprandsym", "density"): "0.3", ("sprandsym", "rc"): "0.1", ("sprandsym", "kind"): "1",
+    ("treelayout", "parent"): "[3 3 0]", ("treelayout", "post"): "[1 2 3]",
+    ("treeplot", "p"): "[3 3 0]", ("treeplot", "NodeSpec"): "'ro'",
+    ("treeplot", "EdgeSpec"): "'r-'",
+    ("etreeplot", "A"): "sparse([2 1 0; 1 2 1; 0 1 2])", ("etreeplot", "nodeSpec"): "'ro'",
+    ("etreeplot", "edgeSpec"): "'r-'",
+    ("gplot", "A"): "sparse([1 2], [2 1], 1, 2, 2)", ("gplot", "XYCoords"): "[0 0; 1 1]",
+    ("unmesh", "E"): "[0 0 1 0; 1 0 1 1; 1 1 0 1; 0 1 0 0]",
 }
 
 # Placeholders the documented type phrase cannot describe well enough to sample, whatever command

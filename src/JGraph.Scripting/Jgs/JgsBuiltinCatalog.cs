@@ -1070,6 +1070,35 @@ public static class JgsBuiltinCatalog
         Add("symbfact", "How many nonzeros each column of the Cholesky factor will hold, counted without forming it.", P("S"));
         Add("ichol", "Incomplete Cholesky with no fill: the factorization restricted to the pattern S already has.", P("S"));
         Add("ilu", "Incomplete LU with no fill: [L, U] = ilu(S), restricted to the pattern S already has.", P("S"));
+
+        // The Krylov solvers and the rest of sparfun (M128). All eleven take the same arguments in
+        // the same places, apart from gmres's restart length in third position.
+        Add("pcg", "Preconditioned conjugate gradients for a symmetric positive definite system: [x, flag, relres, iter, resvec] = pcg(A, b, tol, maxit, M1, M2, x0).", P("A"), P("b"), Opt("tol"), Opt("maxit"), Opt("M1"), Opt("M2"), Opt("x0"));
+        Add("bicg", "The biconjugate gradient method; a function handle for A must accept a 'transp' flag.", P("A"), P("b"), Opt("tol"), Opt("maxit"), Opt("M1"), Opt("M2"), Opt("x0"));
+        Add("bicgstab", "Stabilized biconjugate gradients; iter counts in halves because each pass makes two iterates.", P("A"), P("b"), Opt("tol"), Opt("maxit"), Opt("M1"), Opt("M2"), Opt("x0"));
+        Add("bicgstabl", "BiCGstab(2): two Bi-CG steps then a minimal-residual polynomial over the residuals collected.", P("A"), P("b"), Opt("tol"), Opt("maxit"), Opt("M1"), Opt("M2"), Opt("x0"));
+        Add("cgs", "Conjugate gradients squared: bicg without the transpose, at the price of a wilder residual.", P("A"), P("b"), Opt("tol"), Opt("maxit"), Opt("M1"), Opt("M2"), Opt("x0"));
+        Add("gmres", "Generalized minimal residual, restarted every 'restart' steps: gmres(A, b, restart, tol, maxit, M1, M2, x0); iter is [outer inner].", P("A"), P("b"), Opt("restart"), Opt("tol"), Opt("maxit"), Opt("M1"), Opt("M2"), Opt("x0"));
+        Add("lsqr", "Paige and Saunders' bidiagonalization for min norm(b - A*x); A may be rectangular.", P("A"), P("b"), Opt("tol"), Opt("maxit"), Opt("M1"), Opt("M2"), Opt("x0"));
+        Add("minres", "The minimum residual method for a symmetric, possibly indefinite, matrix.", P("A"), P("b"), Opt("tol"), Opt("maxit"), Opt("M1"), Opt("M2"), Opt("x0"));
+        Add("qmr", "Quasi-minimal residual over the two-sided Lanczos basis; needs A' as well as A.", P("A"), P("b"), Opt("tol"), Opt("maxit"), Opt("M1"), Opt("M2"), Opt("x0"));
+        Add("symmlq", "SYMMLQ: the projected tridiagonal system solved in LQ form, for a symmetric matrix.", P("A"), P("b"), Opt("tol"), Opt("maxit"), Opt("M1"), Opt("M2"), Opt("x0"));
+        Add("tfqmr", "Transpose-free QMR; the iteration reported is the half-step count halved.", P("A"), P("b"), Opt("tol"), Opt("maxit"), Opt("M1"), Opt("M2"), Opt("x0"));
+        Add("svds", "A few singular values: svds(A, k, 'largest' | 'smallest' | 'smallestnz' | sigma), or [U, S, V, flag].", P("A"), Opt("k"), Opt("sigma"));
+        Add("spdiags", "Diagonals in and out of a matrix: [B, d] = spdiags(A), spdiags(A, d), spdiags(B, d, A), spdiags(B, d, m, n).", P("first"), Opt("d"), Opt("third"), Opt("n"));
+        Add("spfun", "A function applied to the stored entries alone, so the zeros stay zeros: spfun(@exp, S).", P("fun"), P("S"));
+        Add("spones", "The same pattern with ones in it: the structure of S without its values.", P("S"));
+        Add("spconvert", "A sparse matrix from an N-by-3 list of [row, column, value].", P("D"));
+        Add("spaugment", "The least-squares augmented system [c*I A; A' 0]; c defaults to max(max(abs(A)))/1000.", P("A"), Opt("c"));
+        Add("sprank", "Structural rank: the largest matching in the pattern's bipartite graph.", P("A"));
+        Add("colperm", "The columns in nondecreasing order of nonzero count, as a permutation.", P("S"));
+        Add("sprandn", "A sparse matrix of normal random values: sprandn(S), sprandn(m, n, density), sprandn(m, n, density, rc).", P("first"), Opt("n"), Opt("density"), Opt("rc"));
+        Add("sprandsym", "A symmetric sparse random matrix: sprandsym(S), sprandsym(n, density), sprandsym(n, density, rc, kind).", P("first"), Opt("density"), Opt("rc"), Opt("kind"));
+        Add("treelayout", "Where to draw a tree's nodes: [x, y, h, s] = treelayout(parent, post).", P("parent"), Opt("post"));
+        Add("treeplot", "Draws a tree from its parent pointers: treeplot(p, nodeSpec, edgeSpec).", P("p"), Opt("nodeSpec"), Opt("edgeSpec"));
+        Add("etreeplot", "Draws the elimination tree of A (or of A + A' when it is unsymmetric).", P("A"), Opt("nodeSpec"), Opt("edgeSpec"));
+        Add("gplot", "Draws a graph from its adjacency matrix and node coordinates; [X, Y] = gplot(A, xy) returns them instead.", P("A"), P("xy"), Opt("LineSpec"));
+        Add("unmesh", "An edge list of endpoint coordinates turned into a Laplacian and a vertex list: [A, xy] = unmesh(E).", P("E"));
         Add("kron", "The Kronecker product: every element of A times the whole of B, laid out in blocks.", P("A"), P("B"));
         Add("perms", "Every arrangement of a vector's values, one per row, in reverse lexicographic order.", P("v"));
         Add("factor", "The prime factors of a positive whole number, smallest first and repeated as they divide.", P("n"));

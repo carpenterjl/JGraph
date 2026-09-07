@@ -19,15 +19,15 @@ below is — and that is why an entire folder could sit at nought implemented wi
 
 ## Where it stands
 
-**296 of 377 names implemented**, and
-**535 of 1036 documented syntax forms accepted**.
+**322 of 377 names implemented**, and
+**683 of 1036 documented syntax forms accepted**.
 
 | Folder | Names | Forms documented | Forms accepted | Names missing |
 |---|---:|---:|---:|---:|
 | `strfun` | 40 / 41 | 88 | 69 | 1 |
 | `datafun` | 40 / 41 | 178 | 144 | 1 |
 | `funfun` | 29 / 40 | 123 | 82 | 11 |
-| `sparfun` | 5 / 35 | 185 | 2 | 30 |
+| `sparfun` | 31 / 35 | 185 | 150 | 4 |
 | `polyfun` | 23 / 34 | 94 | 38 | 11 |
 | `elmat` | 33 / 33 | 68 | 59 | 0 |
 | `validators` | 28 / 31 | 33 | 20 | 3 |
@@ -43,11 +43,11 @@ below is — and that is why an entire folder could sit at nought implemented wi
 
 | Verdict | Forms | What it means |
 |---|---:|---|
-| accepted | 535 | the call returned without error |
+| accepted | 683 | the call returned without error |
 | refused | 2 | refused deliberately, with a message naming what is missing |
 | undefined | 0 | the name did not resolve at all |
-| error | 108 | failed some other way — **may be the prober's sample, not the build** |
-| unprobed | 106 | no call could be built |
+| error | 111 | failed some other way — **may be the prober's sample, not the build** |
+| unprobed | 107 | no call could be built |
 
 Only implemented names are probed, so "forms accepted" is bounded by the names column above it. As
 in the sibling document, **`accepted` is the trustworthy column** and every other one is a worklist:
@@ -80,9 +80,9 @@ command that quite rightly rejects it.
 
 `boundary` `boundaryshape` `convhulln` `delaunayn` `dsearchn` `griddata` `griddatan` `nsidedpoly` `stlread` `stlwrite` `tsearchn`
 
-### `sparfun` — 30
+### `sparfun` — 4
 
-`bicg` `bicgstab` `bicgstabl` `cgs` `colamd` `colperm` `equilibrate` `etreeplot` `gmres` `gplot` `lsqr` `minres` `pcg` `qmr` `spaugment` `spconvert` `spdiags` `spfun` `spones` `spparms` `sprandn` `sprandsym` `sprank` `svds` `svdsketch` `symmlq` `tfqmr` `treelayout` `treeplot` `unmesh`
+`colamd` `equilibrate` `spparms` `svdsketch`
 
 ### `strfun` — 1
 
