@@ -484,6 +484,15 @@ public static class JgsBuiltinCatalog
         Add("ode15i", "Solves a fully implicit system f(t, y, y') = 0: [t, y] = ode15i(odefun, tspan, y0, yp0, options).", P("odefun"), P("tspan"), P("y0"), P("yp0"), Opt("options"));
         Add("decic", "Consistent initial conditions for ode15i: [y0, yp0] = decic(odefun, t0, y0, fixed_y0, yp0, fixed_yp0, options).", P("odefun"), P("t0"), P("y0"), P("fixed_y0"), P("yp0"), P("fixed_yp0"), Opt("options"));
         Add("odextend", "Continues a solution structure to a later time with the solver that made it: solext = odextend(sol, odefun, tfinal, y0, options).", P("sol"), P("odefun"), P("tfinal"), Opt("y0"), Opt("options"));
+        Add("pdepe", "Solves a 1-D parabolic-elliptic system by the method of lines: sol = pdepe(m, pdefun, icfun, bcfun, xmesh, tspan, options); [sol, tsol, sole, te, ie] with Events.", P("m"), P("pdefun"), P("icfun"), P("bcfun"), P("xmesh"), P("tspan"), Opt("options"));
+        Add("pdeval", "Reads one component of a pdepe answer between mesh points: [u, dudx] = pdeval(m, xmesh, usol, xq).", P("m"), P("xmesh"), P("usol"), P("xq"));
+        Add("symvar", "The variable names in a string expression, sorted, leaving out constants and function names: c = symvar('cos(pi*x - beta1)').", P("expr"));
+        Add("vectorize", "A dot before every *, / and ^ in an expression or an inline function: cdot = vectorize('x^2').", P("c"));
+        Add("inline", "The legacy expression function, superseded by anonymous functions: f = inline('x^2+y', 'x', 'y'), inline(expr), inline(expr, n).", P("expr"), Opt("args"));
+        Add("inlineeval", "Evaluates an inline formula against a cell of inputs: inlineeval(inputs, inputExpr, expr).", P("inputs"), P("inputExpr"), P("expr"));
+        Add("fcnchk", "A function handle from a name, an expression or a handle, with 'vectorized' as an option: f = fcnchk('x^2', 'vectorized').", P("fun"), Opt("args"));
+        Add("formula", "The formula an inline function was written as: formula(inline('x^2+y')).", P("f"));
+        Add("argnames", "The argument names of an inline function, as a cell column: argnames(inline('x^2+y')).", P("f"));
         Add("odeplot", "The output function a solver draws through when called as a statement: every component against time. status = odeplot(t, y, flag).", P("t"), P("y"), Opt("flag"));
         Add("odephas2", "An output function drawing the first two components against each other: odeset('OutputFcn', @odephas2).", P("t"), P("y"), Opt("flag"));
         Add("odephas3", "An output function drawing the first three components in 3-D: odeset('OutputFcn', @odephas3).", P("t"), P("y"), Opt("flag"));

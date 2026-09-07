@@ -279,6 +279,25 @@ NAME_ARG_SAMPLES: dict[tuple[str, str], str] = {
     ("deval", "sol"): "ode45(@(t,y) -y, [0 1], 1)", ("deval", "x"): "0.5", ("deval", "idx"): "1",
     ("odextend", "sol"): "ode45(@(t,y) -y, [0 1], 1)", ("odextend", "odefun"): "@(t,y) -y",
     ("odextend", "tfinal"): "2", ("odextend", "y0"): "1", ("odextend", "options"): "odeset('RelTol', 1e-6)",
+    # M131: the 1-D parabolic-elliptic solver. The problem is the smallest one that is well posed --
+    # heat flow on a slab with both ends held at zero -- because the prober only asks whether the
+    # form is accepted, and pdepe refuses a mesh or a span shorter than three points.
+    ("pdepe", "m"): "0",
+    ("pdepe", "pdefun"): "@(x,t,u,DuDx) deal(1, DuDx, 0)",
+    ("pdepe", "icfun"): "@(x) sin(pi*x)",
+    ("pdepe", "bcfun"): "@(xl,ul,xr,ur,t) deal(ul, 0, ur, 0)",
+    ("pdepe", "xmesh"): "linspace(0, 1, 5)", ("pdepe", "tspan"): "linspace(0, 1, 3)",
+    ("pdepe", "options"): "odeset('RelTol', 1e-6)",
+    ("pdeval", "m"): "0", ("pdeval", "xmesh"): "linspace(0, 1, 5)",
+    ("pdeval", "usol"): "linspace(0, 1, 5)", ("pdeval", "xq"): "0.5",
+    # The legacy expression helpers take text, not values.
+    ("symvar", "expr"): "'cos(pi*x - beta1)'",
+    ("vectorize", "c"): "'x^2'",
+    ("inline", "expr"): "'x^2+y'", ("inline", "args"): "'x'",
+    ("inlineeval", "inputs"): "{1}", ("inlineeval", "inputExpr"): "' x = INLINE_INPUTS_{1};'",
+    ("inlineeval", "expr"): "'x^2'",
+    ("fcnchk", "fun"): "'x^2'", ("fcnchk", "args"): "'x'",
+    ("formula", "f"): "inline('x^2+y')", ("argnames", "f"): "inline('x^2+y')",
 }
 
 # Placeholders the documented type phrase cannot describe well enough to sample, whatever command

@@ -60,6 +60,13 @@ internal static partial class JgsBuiltins
                 return JgsValue.Str(string.Empty);
             }
 
+            // char of an inline function is its formula, which is the one subject whose text is not
+            // in the value itself but in what the caller wrote (M131).
+            if (args.Count == 1 && args[0].Type == JgsType.Function && args[0].AsCallable is InlineFunction inlined)
+            {
+                return JgsValue.Str(inlined.Formula);
+            }
+
             if (args[0].IsTime)
             {
                 ArityRange("char", args, 1, 3, line, col);
