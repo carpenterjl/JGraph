@@ -8,13 +8,12 @@ without a catalog entry, or registered without being called implemented.
 
 ## Where it stands
 
-**61 of 351 documented names implemented**; 217 are planned across five milestones
-(M133-M137; ADR 0126 holds the plan) and 73 are excluded by name.
+**97 of 351 documented names implemented**; 181 are planned across four milestones
+(M134-M137; ADR 0126 holds the plan) and 73 are excluded by name.
 
 | Bucket | Names |
 |---|---:|
-| Implemented | 61 |
-| Not implemented, M133 | 36 |
+| Implemented | 97 |
 | Not implemented, M134 | 55 |
 | Not implemented, M135 | 6 |
 | Not implemented, M136 | 65 |
@@ -30,13 +29,9 @@ recorded R2024a output. Names MATLAB keeps outside this folder but the plan impl
 
 ## Implemented
 
-`barthannwin`, `bartlett`, `bitrevorder`, `blackman`, `blackmanharris`, `bohmanwin`, `boxcar`, `buffer`, `butter`, `cceps`, `chebwin`, `czt`, `datawrap`, `db`, `db2pow`, `dct`, `demod`, `dftmtx`, `digitrevorder`, `diric`, `dpss`, `firpm`, `flattopwin`, `framesig`, `freqz`, `fwht`, `gauspuls`, `gausswin`, `gmonopuls`, `goertzel`, `hamming`, `hann`, `hanning`, `hilbert`, `icceps`, `idct`, `ifwht`, `kaiser`, `marcumq`, `modulate`, `nuttallwin`, `parzenwin`, `pow2db`, `pulstran`, `rceps`, `rectpuls`, `rectwin`, `sawtooth`, `seqperiod`, `shiftdata`, `sinc`, `square`, `taylorwin`, `triang`, `tripuls`, `tukeywin`, `udecode`, `uencode`, `unshiftdata`, `vco`, `window`
+`barthannwin`, `bartlett`, `bitrevorder`, `blackman`, `blackmanharris`, `bohmanwin`, `boxcar`, `buffer`, `butter`, `cceps`, `cell2sos`, `chebwin`, `czt`, `datawrap`, `db`, `db2pow`, `dct`, `decimate`, `demod`, `dftmtx`, `digitrevorder`, `diric`, `downsample`, `dpss`, `envelope`, `eqtflength`, `fftfilt`, `fillgaps`, `filtfilt`, `filtic`, `filtstates`, `firpm`, `flattopwin`, `framesig`, `freqz`, `fwht`, `gauspuls`, `gausswin`, `gmonopuls`, `goertzel`, `hamming`, `hampel`, `hann`, `hanning`, `hilbert`, `icceps`, `idct`, `ifwht`, `interp`, `kaiser`, `latc2tf`, `latcfilt`, `marcumq`, `medfilt1`, `modulate`, `nuttallwin`, `parzenwin`, `polyscale`, `polystab`, `pow2db`, `pulstran`, `rceps`, `rectpuls`, `rectwin`, `resample`, `residuez`, `sawtooth`, `scaleFilterSections`, `seqperiod`, `sgolay`, `sgolayfilt`, `shiftdata`, `sinc`, `sos2cell`, `sos2ctf`, `sos2ss`, `sos2tf`, `sos2zp`, `sosfilt`, `square`, `ss2sos`, `taylorwin`, `tf2latc`, `tf2sos`, `tf2zpk`, `triang`, `tripuls`, `tukeywin`, `udecode`, `uencode`, `unshiftdata`, `upfirdn`, `upsample`, `vco`, `window`, `zp2ctf`, `zp2sos`
 
 ## Not implemented
-
-### M133: Filtering, coefficient conversions, multirate (36)
-
-`cell2sos`, `decimate`, `downsample`, `envelope`, `eqtflength`, `fftfilt`, `fillgaps`, `filtfilt`, `filtic`, `filtstates`, `hampel`, `interp`, `latc2tf`, `latcfilt`, `medfilt1`, `polyscale`, `polystab`, `resample`, `residuez`, `scaleFilterSections`, `sgolay`, `sgolayfilt`, `sos2cell`, `sos2ctf`, `sos2ss`, `sos2tf`, `sos2zp`, `sosfilt`, `ss2sos`, `tf2latc`, `tf2sos`, `tf2zpk`, `upfirdn`, `upsample`, `zp2ctf`, `zp2sos`
 
 ### M134: Filter design and analysis (55)
 

@@ -2565,6 +2565,13 @@ internal static partial class JgsBuiltins
         RegisterSignalGeneratorBuiltins(env);
         RegisterSignalTransformBuiltins(env);
         RegisterSignalFramingBuiltins(env);
+
+        // M133: filtering, coefficient conversions and multirate. Three files again, and again
+        // because the three families share no grammar — a conversion reads coefficients, a filter
+        // reads a signal, and a rate change reads both and a ratio.
+        RegisterFilterConversionBuiltins(env);
+        RegisterFilterPassBuiltins(env);
+        RegisterMultirateBuiltins(env);
         RegisterCosineTransformBuiltins(env);
         RegisterStringEditingBuiltins(env, dialect);
         RegisterStringArrayBuiltins(env);

@@ -92,6 +92,12 @@ public static class ZeroPhaseFilter
         return y;
     }
 
+    /// <summary>
+    /// The steady-state delay line, exposed for M133's <c>filtfilt</c>, which needs one per stage of
+    /// a cascade rather than the single one this class's own pass uses.
+    /// </summary>
+    public static double[] SteadyStateOf(double[] b, double[] a, int m) => SteadyState(b, a, m);
+
     /// <summary>One pass started from <paramref name="zi"/> scaled by the first sample.</summary>
     private static double[] RunFrom(double[] b, double[] a, double[] x, double[] zi, double first)
     {
