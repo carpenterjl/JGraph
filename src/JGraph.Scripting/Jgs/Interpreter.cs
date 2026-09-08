@@ -2704,7 +2704,10 @@ internal sealed partial class Interpreter
                 // it takes the swap below exactly as a bare number does: `[2] \ A` is `A / 2`.
                 if (left.Type == JgsType.Array && !ScalarForm(op))
                 {
-                    if (right.Type == JgsType.Array)
+                    // A bare number on the right is the one-by-one it would be with brackets round
+                    // it, and a one-row matrix has room for exactly that: `[1 2 3] \ 2` is one
+                    // equation in three unknowns, which MATLAB solves rather than refuses (M140).
+                    if (right.Type == JgsType.Array || rightScalar)
                     {
                         return MatrixOperation(op, left, right, at);
                     }
@@ -2737,8 +2740,15 @@ internal sealed partial class Interpreter
             }
             else if (op is TokenType.Star or TokenType.Slash or TokenType.Caret
                      && !ScalarForm(op)
-                     && left.Type == JgsType.Array && right.Type == JgsType.Array)
+                     && right.Type == JgsType.Array
+                     && (left.Type == JgsType.Array || (op == TokenType.Slash && leftScalar)))
             {
+                // A bare number is the one-by-one it would be with brackets round it on the left of
+                // a division as much as on the right, which is the other half of M138's claim.
+                // `2 / [1 2 3]` asks for the X with X·[1 2 3] = 2 and there is none, so MATLAB
+                // refuses it where reading it elementwise quietly hands back three numbers; and
+                // `2 / [1; 2]` does have one, the 1-by-2 `[0 1]`, which is not the 2-by-1 the
+                // elementwise reading gave (M140).
                 return MatrixOperation(op, left, right, at);
             }
         }
@@ -5061,7 +5071,10 @@ internal sealed partial class Interpreter
             // A\B: the solution of A·X = B. Complex operands take the boxed z-routine solve.
             if (JgsBuiltins.HasComplexElements(left) || JgsBuiltins.HasComplexElements(right))
             {
-                return JgsBuiltins.ComplexMatrixSolve(left, right, divide: false, at.Line, at.Column);
+                JgsValue answer = JgsBuiltins.ComplexMatrixSolve(left, right, divide: false, at.Line, at.Column,
+                    out int solvedRank, out int rankLimit, out double rankTolerance);
+                WarnIfRankDeficient(solvedRank, rankLimit, rankTolerance);
+                return answer;
             }
 
             double[] coefficients = ColumnMajorOf(left, out int rowsA, out int colsA, at);
@@ -5081,7 +5094,10 @@ internal sealed partial class Interpreter
             // A/B: the solution of X·B = A, computed as (Bᵀ \ Aᵀ)ᵀ.
             if (JgsBuiltins.HasComplexElements(left) || JgsBuiltins.HasComplexElements(right))
             {
-                return JgsBuiltins.ComplexMatrixSolve(right, left, divide: true, at.Line, at.Column);
+                JgsValue answer = JgsBuiltins.ComplexMatrixSolve(right, left, divide: true, at.Line, at.Column,
+                    out int solvedRank, out int rankLimit, out double rankTolerance);
+                WarnIfRankDeficient(solvedRank, rankLimit, rankTolerance);
+                return answer;
             }
 
             double[] coefficients = TransposedColumnMajorOf(right, out int rowsA, out int colsA, at);
@@ -5257,6 +5273,37 @@ internal sealed partial class Interpreter
     }
 
     /// <summary>
+    /// MATLAB's rank-deficiency warning, when a division's factorization ran out of independent
+    /// columns before the shape said it should.
+    /// </summary>
+    /// <remarks>
+    /// The system still has an answer here — the basic solution — and MATLAB hands it back with
+    /// this said out loud rather than refusing, so the warning is the only thing that tells a
+    /// script the answer it got was one of many. It is raised by calling the script's own
+    /// <c>warning</c>, which is what lets <c>lastwarn</c> report it and what a script that has
+    /// redefined <c>warning</c> will see; the message is MATLAB's own text, down to the width the
+    /// tolerance is printed at, because a script may well be reading it. What it is not is
+    /// silenceable — <c>warning('off', …)</c> is accepted and ignored here, so this raises every
+    /// time round a loop where MATLAB would raise it once and then stop.
+    /// </remarks>
+    private void WarnIfRankDeficient(int rank, int limit, double tolerance)
+    {
+        if (rank >= limit)
+        {
+            return;
+        }
+
+        string message = $"Rank deficient, rank = {rank}, tol = {tolerance,13:0.000000e+00}.";
+        if (_globals.TryGet("warning", out JgsValue warning) && warning.Type == JgsType.Function)
+        {
+            warning.AsCallable.Call([JgsValue.Str(message)], 0, 0);
+            return;
+        }
+
+        _echo?.Invoke("Warning: " + message);
+    }
+
+    /// <summary>
     /// Runs the dense solver over column-major operands, translating its shape and rank complaints
     /// into script errors. Both arrays are the solver's to overwrite — they were built for it here.
     /// </summary>
@@ -5271,7 +5318,9 @@ internal sealed partial class Interpreter
 
         try
         {
-            double[] x = JGraph.Numerics.LinearAlgebra.Linear.Solve(a, rowsA, colsA, b, colsB);
+            double[] x = JGraph.Numerics.LinearAlgebra.Linear.Solve(a, rowsA, colsA, b, colsB,
+                out int rank, out double tolerance);
+            WarnIfRankDeficient(rank, System.Math.Min(rowsA, colsA), tolerance);
             if (!transposeResult)
             {
                 return JgsBuiltins.FromColumnMajorRect(x, colsA, colsB);
@@ -6387,6 +6436,14 @@ internal sealed partial class Interpreter
 
     private double[] RowOf(JgsValue value)
     {
+        // A bare number keeps nothing behind a reference, so it has no array to be asked the length
+        // of — it is a row of one, and saying so here is what lets `[1 2 3] \ 2` read its
+        // right-hand side as the one-by-one MATLAB reads it as (M140).
+        if (value.Type is JgsType.Number or JgsType.Bool)
+        {
+            return [value.AsNumber];
+        }
+
         int length = value.ArrayLength;
         var row = new double[length];
         for (int i = 0; i < length; i++)

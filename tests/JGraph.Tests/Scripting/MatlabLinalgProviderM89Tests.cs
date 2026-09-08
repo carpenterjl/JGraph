@@ -94,8 +94,18 @@ public class MatlabLinalgProviderM89Tests : IDisposable
             """);
     }
 
+    /// <summary>
+    /// An under-determined system answers the basic solution, not the shortest one (M140).
+    /// </summary>
+    /// <remarks>
+    /// Both are exact solutions, so "is it a solution" cannot tell them apart — which is how the
+    /// minimum-norm answer this test used to assert went unnoticed as a divergence for so long.
+    /// What separates them is where the noughts are: R2025b answers <c>[1.5; 0; 1.5]</c> here, on
+    /// the two columns its pivoting ranked first, where the shortest solution is <c>[1; 1; 1]</c>
+    /// and uses all three.
+    /// </remarks>
     [Fact]
-    public void WideSolveIsTheMinimumNormAnswer()
+    public void WideSolveIsTheBasicAnswer()
     {
         RunAsserting("""
             A = [1 1 1; 1 2 3];
@@ -103,7 +113,8 @@ public class MatlabLinalgProviderM89Tests : IDisposable
             x = A \ b;
             assert(isequal(size(x), [3 1]));
             assert(max(abs(A * x - b)) < 1e-12, 'it is a solution');
-            assert(max(abs(x - A' * ((A * A') \ b))) < 1e-10, 'and the shortest one');
+            assert(max(abs(x - [1.5; 0; 1.5])) < 1e-12, 'and the basic one');
+            assert(max(abs(x - A' * ((A * A') \ b))) > 0.4, 'which is not the shortest one');
             """);
     }
 

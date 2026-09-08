@@ -107,6 +107,15 @@ public sealed partial class ManagedLinalg
     public override int Ormqr(bool leftSide, bool transpose, int m, int n, int k,
         ReadOnlySpan<double> a, int lda, ReadOnlySpan<double> tau, Span<double> c, int ldc)
     {
+        // A product with no rows, no columns or no reflectors is LAPACK's quick return, and has to
+        // be one here too: the loop below slices `c` at the reflector's offset, which walks off the
+        // end of an empty right-hand side rather than doing nothing to it. `A \ zeros(2, 0)` found
+        // this — the native lane solved it and the managed lane threw (M140).
+        if (m == 0 || n == 0 || k == 0)
+        {
+            return 0;
+        }
+
         // Q = H₀·H₁·…·H_{k−1}, so multiplying by Q takes the reflectors in reverse and by Qᵀ takes
         // them forward — and the two swap over again when the product is from the right.
         bool forward = leftSide == transpose;

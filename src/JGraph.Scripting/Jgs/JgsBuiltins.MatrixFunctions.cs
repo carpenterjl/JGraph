@@ -368,10 +368,16 @@ internal static partial class JgsBuiltins
 
     /// <summary>
     /// The matrix division when either operand holds complex elements — MATLAB's <c>A\B</c> (and
-    /// <c>A/B</c>, which arrives as the transposed problem). Square systems only: a complex
-    /// least-squares solve is machinery JGraph does not have, and saying so beats guessing.
+    /// <c>A/B</c>, which arrives as the transposed problem). A square system is solved outright; a
+    /// rectangular one takes the same basic least-squares solution the real path takes, reporting
+    /// the rank it settled on so the caller can say so when it fell short.
     /// </summary>
-    internal static JgsValue ComplexMatrixSolve(JgsValue coefficients, JgsValue rhs, bool divide, int line, int col)
+    internal static JgsValue ComplexMatrixSolve(JgsValue coefficients, JgsValue rhs, bool divide, int line, int col) =>
+        ComplexMatrixSolve(coefficients, rhs, divide, line, col, out _, out _, out _);
+
+    /// <inheritdoc cref="ComplexMatrixSolve(JgsValue, JgsValue, bool, int, int)"/>
+    internal static JgsValue ComplexMatrixSolve(JgsValue coefficients, JgsValue rhs, bool divide, int line, int col,
+        out int rank, out int limit, out double tolerance)
     {
         string name = divide ? "'/'" : "'\\'";
         Complex[,] a = ComplexRectOf(name, coefficients, line, col);
@@ -389,26 +395,64 @@ internal static partial class JgsBuiltins
             b = TransposePlain(b);
         }
 
-        int n = a.GetLength(0);
-        if (a.GetLength(1) != n)
-        {
-            throw new JgsRuntimeException(line, col,
-                $"{name} of a complex system needs a square matrix here ({n}x{a.GetLength(1)} given): " +
-                "the complex least-squares solve is not supported.");
-        }
-
-        if (b.GetLength(0) != n)
+        int rows = a.GetLength(0);
+        int cols = a.GetLength(1);
+        if (b.GetLength(0) != rows)
         {
             throw new JgsRuntimeException(line, col,
                 "Matrix dimensions do not agree for the division: the right-hand side must have as many rows as the matrix.");
         }
 
-        if (!ComplexLinear.TrySolve(a, b, out Complex[,] solution))
+        limit = System.Math.Min(rows, cols);
+        Complex[,] solution;
+        if (rows == cols)
         {
-            throw new JgsRuntimeException(line, col, "The matrix is singular to working precision.");
+            if (!ComplexLinear.TrySolve(a, b, out solution))
+            {
+                throw new JgsRuntimeException(line, col, "The matrix is singular to working precision.");
+            }
+
+            rank = cols;
+            tolerance = 0.0;
+        }
+        else
+        {
+            // A rectangular complex system takes the basic solution, exactly as a real one does
+            // (M140). The pivoted factorization was already in the numerics layer; refusing the
+            // shape was never an answer MATLAB gives.
+            //
+            // The rank tolerance is ten times looser here than on the real path, which is measured
+            // rather than reasoned about: `[1+1i 2 3; 2+2i 4 6] \ [1; 2]` warns at 4.468561e-14 in
+            // R2025b where the same shape in reals warns at 4.468561e-15, and the factor holds
+            // across every complex shape probed. The leading entry of a pivoted factorization is
+            // the largest column norm, so the cut is known before the factorization runs.
+            double cut = 10.0 * System.Math.Max(rows, cols) * DoubleSpacing * LargestColumnNorm(a);
+            solution = HouseholderQr.BasicSolution(a, b, cut, out rank, out tolerance);
         }
 
         return FromComplexRect(divide ? TransposePlain(solution) : solution);
+    }
+
+    /// <summary>
+    /// The largest column length, which is what column pivoting puts in the leading diagonal entry
+    /// of R — so a rank tolerance can be found from the matrix itself, before any factoring.
+    /// </summary>
+    private static double LargestColumnNorm(Complex[,] a)
+    {
+        double largest = 0.0;
+        for (int c = 0; c < a.GetLength(1); c++)
+        {
+            double sum = 0.0;
+            for (int r = 0; r < a.GetLength(0); r++)
+            {
+                Complex entry = a[r, c];
+                sum += (entry.Real * entry.Real) + (entry.Imaginary * entry.Imaginary);
+            }
+
+            largest = System.Math.Max(largest, System.Math.Sqrt(sum));
+        }
+
+        return largest;
     }
 
     private static Complex[,] TransposePlain(Complex[,] m)

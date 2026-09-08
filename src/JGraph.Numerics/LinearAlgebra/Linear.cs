@@ -7,6 +7,9 @@ namespace JGraph.Numerics.LinearAlgebra;
 /// </summary>
 public static class Linear
 {
+    /// <summary>The spacing of one at double precision, which every rank tolerance is a multiple of.</summary>
+    private const double DoubleSpacing = 2.220446049250313e-16;
+
     /// <summary>
     /// Solves A·X = B, MATLAB's <c>A\B</c>: LU for square A, least squares for tall A, and the
     /// minimum-norm solution for wide A.
@@ -60,48 +63,116 @@ public static class Linear
     /// m-by-nrhs; <em>both are overwritten</em>, and the n-by-nrhs solution comes back as an array
     /// that may be <paramref name="b"/> itself.
     /// </summary>
-    /// <exception cref="InvalidOperationException">A is singular or rank deficient.</exception>
-    public static double[] Solve(double[] a, int m, int n, double[] b, int nrhs)
+    /// <exception cref="InvalidOperationException">A square A is singular.</exception>
+    public static double[] Solve(double[] a, int m, int n, double[] b, int nrhs) =>
+        Solve(a, m, n, b, nrhs, out _, out _);
+
+    /// <summary>
+    /// The same, saying what the rank decision was. A <paramref name="rank"/> short of
+    /// <c>min(m, n)</c> is the deficiency MATLAB warns about rather than refuses, and
+    /// <paramref name="tolerance"/> is the cut it was taken at — the two numbers that warning
+    /// quotes. A square system takes no rank decision and reports its order.
+    /// </summary>
+    /// <exception cref="InvalidOperationException">A square A is singular.</exception>
+    public static double[] Solve(double[] a, int m, int n, double[] b, int nrhs,
+        out int rank, out double tolerance)
     {
         if (m == n)
         {
+            rank = n;
+            tolerance = 0.0;
             LuDecomposition lu = LuDecomposition.FactorAdopting(a, n);
             lu.SolveInPlace(b, nrhs, n);
             return b;
         }
 
-        // Over- and under-determined systems go to the provider's least-squares/minimum-norm solve,
-        // which is one blocked QR natively and the hand-rolled Householder factorization on the
-        // managed fallback. Both want the right-hand side padded to max(m, n) rows, so an
-        // under-determined system's wider solution has somewhere to land.
-        int height = Math.Max(m, n);
-        double[] rhs = b;
-        if (height != m)
+        return BasicSolution(a, m, n, b, nrhs, out rank, out tolerance);
+    }
+
+    /// <summary>
+    /// The <em>basic</em> least-squares solution of a rectangular system, which is the one MATLAB's
+    /// <c>\</c> answers: factor A·P = Q·R with column pivoting, keep the leading columns whose
+    /// diagonal entry clears the rank tolerance, solve that triangle, and leave a nought wherever
+    /// the pivoting did not reach.
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    /// A rectangular system rarely has one answer to give. An under-determined one has a whole
+    /// affine space of exact solutions, and a rank-deficient over-determined one a whole space of
+    /// least-squares ones; the two conventional ways to choose from that space disagree, and only
+    /// one of them is MATLAB's. The minimum-norm solution is the shortest vector in it and spreads
+    /// the answer over every column — it makes <c>[1 2 3] \ 2</c> into <c>[1; 2; 3]/7</c>. The
+    /// basic solution carries the answer on the <c>rank(A)</c> columns the pivoting ranked first,
+    /// and is <c>[0; 0; 2/3]</c>, which is what MATLAB prints.
+    /// </para>
+    /// <para>
+    /// Every rectangular shape takes this road, not only the under-determined ones, and that is
+    /// what lets a rank-deficient system answer sensibly at all. The unpivoted factorization behind
+    /// <see cref="DenseLinalg.Gels"/> has no rank test worth the name — it asks whether a diagonal
+    /// entry is exactly nought, which rounding sees to it is almost never true — so a deficient
+    /// system came back with whatever a near-singular triangle produced. That was some point of the
+    /// solution space rather than nonsense, but it was neither the shortest one nor MATLAB's.
+    /// </para>
+    /// </remarks>
+    private static double[] BasicSolution(double[] a, int m, int n, double[] b, int nrhs,
+        out int rank, out double tolerance)
+    {
+        int p = Math.Min(m, n);
+        var x = new double[(long)n * nrhs];
+        if (p == 0)
         {
-            rhs = new double[(long)height * nrhs];
-            for (int c = 0; c < nrhs; c++)
-            {
-                b.AsSpan(c * m, m).CopyTo(rhs.AsSpan(c * height, m));
-            }
+            // Nothing to factor and no column to keep, which is the rank nought MATLAB reports for
+            // zeros(0, 3) \ zeros(0, 1) — with a 3-by-1 of noughts to go with it.
+            rank = 0;
+            tolerance = 0.0;
+            return x;
         }
 
-        if (LinalgProvider.Current.Gels(m, n, nrhs, a, m, rhs, height) != 0)
+        DenseLinalg provider = LinalgProvider.Current;
+        var pivot = new int[n];
+        var tau = new double[p];
+        if (provider.Geqp3(m, n, a, m, pivot, tau) != 0)
+        {
+            throw new InvalidOperationException("The pivoted factorization failed.");
+        }
+
+        // The pivoting puts the largest diagonal entry first, so the whole rank decision reads off
+        // that one number. This is MATLAB's tolerance exactly, down to the last digit it prints.
+        tolerance = Math.Max(m, n) * DoubleSpacing * Math.Abs(a[0]);
+        rank = 0;
+        while (rank < p && Math.Abs(a[(rank * m) + rank]) > tolerance)
+        {
+            rank++;
+        }
+
+        if (rank == 0)
+        {
+            return x;
+        }
+
+        // Qᵀ·B, and then the leading triangle. Q is never formed: the reflectors apply straight to
+        // the right-hand side, which is what keeps this one factorization rather than a
+        // factorization and an m-by-m expansion after it.
+        if (provider.Ormqr(leftSide: true, transpose: true, m, nrhs, p, a, m, tau, b, m) != 0)
+        {
+            throw new InvalidOperationException("The factorization's reflectors could not be applied.");
+        }
+
+        if (provider.Trtrs(lower: false, transpose: false, rank, nrhs, a, m, b, m) != 0)
         {
             throw new InvalidOperationException("The matrix is rank deficient to working precision.");
         }
 
-        if (height == n)
-        {
-            return rhs;
-        }
-
-        var solution = new double[(long)n * nrhs];
+        // Back through the pivoting, into a solution that is noughts everywhere the pivoting left.
         for (int c = 0; c < nrhs; c++)
         {
-            rhs.AsSpan(c * height, n).CopyTo(solution.AsSpan(c * n, n));
+            for (int i = 0; i < rank; i++)
+            {
+                x[(c * n) + pivot[i] - 1] = b[(c * m) + i];
+            }
         }
 
-        return solution;
+        return x;
     }
 
     /// <summary>

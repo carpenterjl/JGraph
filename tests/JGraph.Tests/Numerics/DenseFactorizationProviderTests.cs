@@ -355,6 +355,31 @@ public class DenseFactorizationProviderTests
         }
     }
 
+    /// <summary>
+    /// A product against a right-hand side with no columns is a quick return on both backends.
+    /// </summary>
+    /// <remarks>
+    /// LAPACK returns at once when any of m, n or k is nought, and the managed kernel did not — it
+    /// sliced the right-hand side at each reflector's offset and walked off the end of an empty
+    /// one. Nothing noticed until <c>A \ zeros(2, 0)</c> reached it: the native lane answered the
+    /// 3-by-0 MATLAB answers with and the managed lane threw (M140). An empty operand is exactly
+    /// where the two backends stop being interchangeable unless someone checks.
+    /// </remarks>
+    [Fact]
+    public void MultiplyingByQLeavesAnEmptyRightHandSideAlone()
+    {
+        const int m = 2, n = 3;
+        foreach (DenseLinalg backend in Backends())
+        {
+            double[] a = [1, 4, 2, 5, 3, 6];
+            var pivot = new int[n];
+            var tau = new double[Math.Min(m, n)];
+            Assert.Equal(0, backend.Geqp3(m, n, a, m, pivot, tau));
+            Assert.Equal(0, backend.Ormqr(leftSide: true, transpose: true, m, 0, tau.Length, a, m, tau, [], m));
+            Assert.Equal(0, backend.Trtrs(lower: false, transpose: false, tau.Length, 0, a, m, [], m));
+        }
+    }
+
     [Fact]
     public void LeastSquaresMinimizesTheResidualOfATallSystem()
     {

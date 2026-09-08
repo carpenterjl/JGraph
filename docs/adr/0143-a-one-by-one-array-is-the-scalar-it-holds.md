@@ -105,9 +105,12 @@ did.
   — which is a milestone of its own.
 - **`A ^ p` for a non-integer `p` is refused**, where MATLAB answers with the principal power:
   `[1 2; 3 4] ^ 0.5` is `sqrtm` of it. The refusal is honest and predates this work.
-- **An underdetermined `\` answers the minimum-norm solution**, where MATLAB answers the basic one:
-  `[1 2 3] \ [2]` is `[0.143; 0.286; 0.429]` here and `[0; 0; 0.667]` there. Unrelated to the shape
-  question this milestone settles, but it is the last remaining value disagreement in the probe.
 - **`r.'` does not parse**, where MATLAB reads it as the non-conjugate transpose: after a name, a dot
   begins a field access here and the apostrophe then opens a string literal. `(r).'` and
   `r(:).'` parse, which is why this had not been noticed.
+
+Closed since: **an underdetermined `\` answered the minimum-norm solution** where MATLAB answers the
+basic one — `[1 2 3] \ [2]` was `[0.143; 0.286; 0.429]` here and `[0; 0; 0.667]` there. ADR 0144
+settled it, and the bullet is struck from the list above rather than left standing, because
+`docs/matlab-divergences.md` is generated from these sections and says of each entry that it *is* a
+difference from MATLAB.

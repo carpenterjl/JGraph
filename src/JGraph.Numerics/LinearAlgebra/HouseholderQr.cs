@@ -234,7 +234,15 @@ public sealed class HouseholderQr
     /// what MATLAB returns (with a rank-deficiency warning) and therefore what a transcription of a
     /// MATLAB algorithm must use if it is to give MATLAB's numbers.
     /// </remarks>
-    public static Complex[,] BasicSolution(Complex[,] a, Complex[,] b, double tolerance, out int rank)
+    public static Complex[,] BasicSolution(Complex[,] a, Complex[,] b, double tolerance, out int rank) =>
+        BasicSolution(a, b, tolerance, out rank, out _);
+
+    /// <summary>
+    /// The same, reporting the cut the rank was taken at as well as the rank — the pair MATLAB
+    /// quotes when it warns that a system was rank deficient.
+    /// </summary>
+    public static Complex[,] BasicSolution(Complex[,] a, Complex[,] b, double tolerance, out int rank,
+        out double appliedTolerance)
     {
         ArgumentNullException.ThrowIfNull(a);
         ArgumentNullException.ThrowIfNull(b);
@@ -243,6 +251,7 @@ public sealed class HouseholderQr
         int rhs = b.GetLength(1);
         HouseholderQr qr = Factor(a, pivot: true);
         double cut = tolerance >= 0 ? tolerance : qr.DefaultRankTolerance();
+        appliedTolerance = cut;
         rank = qr.RankAbove(cut);
 
         var x = new Complex[n, rhs];

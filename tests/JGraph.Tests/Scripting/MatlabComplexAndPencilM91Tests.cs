@@ -91,14 +91,24 @@ public class MatlabComplexAndPencilM91Tests : IDisposable
         Assert.Contains("singular", message);
     }
 
+    /// <summary>
+    /// A rectangular complex system is solved rather than refused (M140).
+    /// </summary>
+    /// <remarks>
+    /// This used to name the solver JGraph did not have — "the complex least-squares solve is not
+    /// supported" — which was an honest refusal for as long as it was true. The pivoted
+    /// factorization the real path took for its basic solution works over complex entries as it
+    /// stands, so the refusal went with it.
+    /// </remarks>
     [Fact]
-    public void ARectangularComplexSystemNamesTheMissingSolver()
+    public void ARectangularComplexSystemIsSolved()
     {
-        string message = RunExpectingFailure("""
+        RunAsserting("""
             A = [1+1i; 2; 3];
             x = A \ [1; 2; 3];
+            assert(isequal(size(x), [1 1]));
+            assert(abs(x - (0.93333333333333335 - 0.06666666666666668i)) < 1e-12);
             """);
-        Assert.Contains("least-squares", message);
     }
 
     // --- complex eig ----------------------------------------------------------------------------
