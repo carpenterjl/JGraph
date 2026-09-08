@@ -2520,6 +2520,16 @@ internal static partial class JgsBuiltins
         RegisterFirDesignBuiltins(env, host);
         RegisterFilterAnalysisBuiltins(env);
         RegisterDesignFiltBuiltins(env, host);
+        RegisterSpectralEstimateBuiltins(env);
+        RegisterLegacySpectralBuiltins(env);
+        RegisterParametricSpectralBuiltins(env);
+        RegisterMultitaperBuiltins(env);
+        RegisterLombScargleBuiltins(env);
+        RegisterSpectralMeasureBuiltins(env);
+        RegisterPeakMeasureBuiltins(env);
+        RegisterBilevelBuiltins(env);
+        RegisterAlignmentBuiltins(env);
+        RegisterChangeDetectionBuiltins(env);
         RegisterCosineTransformBuiltins(env);
         RegisterStringEditingBuiltins(env, dialect);
         RegisterStringArrayBuiltins(env);

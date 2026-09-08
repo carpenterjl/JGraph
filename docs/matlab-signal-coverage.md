@@ -8,15 +8,15 @@ without a catalog entry, or registered without being called implemented.
 
 ## Where it stands
 
-**156 of 351 documented names implemented**; 120 are planned across two milestones
-(M136-M137; ADR 0126 holds the plan), two are the complex equiripple exchange that M134 did not
+**217 of 351 documented names implemented**; 59 are planned or deferred (M137, and the four
+M136 left behind; ADR 0126 holds the plan and ADR 0140 says why the four were left), two are the complex equiripple exchange that M134 did not
 write (ADR 0138), and 73 are excluded by name.
 
 | Bucket | Names |
 |---|---:|
-| Implemented | 156 |
+| Implemented | 217 |
 | Not implemented, M134 | 2 |
-| Not implemented, M136 | 65 |
+| Not implemented, M136 | 4 |
 | Not implemented, M137 | 55 |
 | Excluded | 73 |
 | **Total** | **351** |
@@ -29,7 +29,7 @@ recorded R2024a output. Names MATLAB keeps outside this folder but the plan impl
 
 ## Implemented
 
-`bandpass`, `bandstop`, `barthannwin`, `bartlett`, `besselap`, `besself`, `bilinear`, `bitrevorder`, `blackman`, `blackmanharris`, `bohmanwin`, `boxcar`, `buffer`, `buttap`, `butter`, `buttord`, `cceps`, `cell2sos`, `cheb1ap`, `cheb1ord`, `cheb2ap`, `cheb2ord`, `chebwin`, `cheby1`, `cheby2`, `czt`, `datawrap`, `db`, `db2pow`, `dct`, `decimate`, `demod`, `designfilt`, `dftmtx`, `digitalFilter`, `digitrevorder`, `diric`, `downsample`, `dpss`, `ellip`, `ellipord`, `envelope`, `eqtflength`, `fftfilt`, `fillgaps`, `filternorm`, `filtfilt`, `filtic`, `filtord`, `filtstates`, `fir1`, `fir2`, `fircls`, `fircls1`, `firgauss`, `firls`, `firpm`, `firpmord`, `firrcos`, `firtype`, `flattopwin`, `framesig`, `freqs`, `freqz`, `fwht`, `gauspuls`, `gaussdesign`, `gaussfir`, `gausswin`, `gmonopuls`, `goertzel`, `grpdelay`, `hamming`, `hampel`, `hann`, `hanning`, `highpass`, `hilbert`, `icceps`, `idct`, `ifwht`, `impinvar`, `impz`, `impzlength`, `interp`, `intfilt`, `isallpass`, `islinphase`, `ismaxphase`, `isminphase`, `isstable`, `kaiser`, `kaiserord`, `latc2tf`, `latcfilt`, `lowpass`, `lp2bp`, `lp2bs`, `lp2hp`, `lp2lp`, `marcumq`, `maxflat`, `medfilt1`, `modulate`, `nuttallwin`, `parzenwin`, `phasedelay`, `phasez`, `polyscale`, `polystab`, `pow2db`, `pulstran`, `rceps`, `rcosdesign`, `rectpuls`, `rectwin`, `remez`, `remezord`, `resample`, `residuez`, `sawtooth`, `scaleFilterSections`, `seqperiod`, `sgolay`, `sgolayfilt`, `shiftdata`, `sinc`, `sos2cell`, `sos2ctf`, `sos2ss`, `sos2tf`, `sos2zp`, `sosfilt`, `square`, `ss2sos`, `stepz`, `taylorwin`, `tf2latc`, `tf2sos`, `tf2zpk`, `triang`, `tripuls`, `tukeywin`, `udecode`, `uencode`, `unshiftdata`, `upfirdn`, `upsample`, `vco`, `window`, `yulewalk`, `zerophase`, `zp2ctf`, `zp2sos`, `zplane`, `zplaneplot`
+`alignsignals`, `bandpass`, `bandpower`, `bandstop`, `barthannwin`, `bartlett`, `besselap`, `besself`, `bilinear`, `bitrevorder`, `blackman`, `blackmanharris`, `bohmanwin`, `boxcar`, `buffer`, `buttap`, `butter`, `buttord`, `cceps`, `cconv`, `cell2sos`, `cheb1ap`, `cheb1ord`, `cheb2ap`, `cheb2ord`, `chebwin`, `cheby1`, `cheby2`, `cohere`, `convmtx`, `corrmtx`, `cpsd`, `csd`, `cusum`, `czt`, `datawrap`, `db`, `db2pow`, `dct`, `decimate`, `demod`, `designfilt`, `dftmtx`, `digitalFilter`, `digitrevorder`, `diric`, `downsample`, `dpss`, `dtw`, `dutycycle`, `edr`, `ellip`, `ellipord`, `enbw`, `envelope`, `eqtflength`, `falltime`, `fftfilt`, `fillgaps`, `filternorm`, `filtfilt`, `filtic`, `filtord`, `filtstates`, `findchangepts`, `finddelay`, `findpeaks`, `findsignal`, `fir1`, `fir2`, `fircls`, `fircls1`, `firgauss`, `firls`, `firpm`, `firpmord`, `firrcos`, `firtype`, `flattopwin`, `framesig`, `freqs`, `freqz`, `fwht`, `gauspuls`, `gaussdesign`, `gaussfir`, `gausswin`, `gmonopuls`, `goertzel`, `grpdelay`, `hamming`, `hampel`, `hann`, `hanning`, `highpass`, `hilbert`, `icceps`, `idct`, `ifwht`, `impinvar`, `impz`, `impzlength`, `interp`, `intfilt`, `isallpass`, `islinphase`, `ismaxphase`, `isminphase`, `isstable`, `kaiser`, `kaiserord`, `latc2tf`, `latcfilt`, `lowpass`, `lp2bp`, `lp2bs`, `lp2hp`, `lp2lp`, `marcumq`, `maxflat`, `meanfreq`, `medfilt1`, `medfreq`, `midcross`, `modulate`, `mscohere`, `nuttallwin`, `obw`, `overshoot`, `parzenwin`, `pburg`, `pcov`, `peak2peak`, `peak2rms`, `peig`, `periodogram`, `phasedelay`, `phasez`, `plomb`, `pmcov`, `pmem`, `pmtm`, `pmusic`, `polyscale`, `polystab`, `pow2db`, `powerbw`, `psd`, `pulseperiod`, `pulsesep`, `pulsewidth`, `pulstran`, `pwelch`, `pyulear`, `rceps`, `rcosdesign`, `rectpuls`, `rectwin`, `remez`, `remezord`, `resample`, `residuez`, `risetime`, `rooteig`, `rootmusic`, `rssq`, `sawtooth`, `scaleFilterSections`, `seqperiod`, `settlingtime`, `sfdr`, `sgolay`, `sgolayfilt`, `shiftdata`, `sinad`, `sinc`, `slewrate`, `snr`, `sos2cell`, `sos2ctf`, `sos2ss`, `sos2tf`, `sos2zp`, `sosfilt`, `specgram`, `spectrum`, `square`, `ss2sos`, `statelevels`, `stepz`, `taylorwin`, `tf2latc`, `tf2sos`, `tf2zpk`, `tfe`, `tfestimate`, `thd`, `toi`, `triang`, `tripuls`, `tukeywin`, `udecode`, `uencode`, `undershoot`, `unshiftdata`, `upfirdn`, `upsample`, `vco`, `window`, `xcorr2`, `yulewalk`, `zerocrossrate`, `zerophase`, `zp2ctf`, `zp2sos`, `zplane`, `zplaneplot`
 
 ## Not implemented
 
@@ -37,9 +37,9 @@ recorded R2024a output. Names MATLAB keeps outside this folder but the plan impl
 
 `cfirpm`, `cremez`
 
-### M136: Spectral estimation and measurements (65)
+### M136: the four that rest on pspectrum and on the octave filter bank (4)
 
-`alignsignals`, `bandpower`, `cconv`, `cohere`, `convmtx`, `corrmtx`, `cpsd`, `csd`, `cusum`, `dtw`, `dutycycle`, `edr`, `enbw`, `falltime`, `findchangepts`, `finddelay`, `findpeaks`, `findsignal`, `instbw`, `instfreq`, `meanfreq`, `medfreq`, `midcross`, `mscohere`, `obw`, `overshoot`, `pburg`, `pcov`, `peak2peak`, `peak2rms`, `peig`, `periodogram`, `plomb`, `pmcov`, `pmem`, `pmtm`, `pmusic`, `poctave`, `powerbw`, `psd`, `pspectrum`, `pulseperiod`, `pulsesep`, `pulsewidth`, `pwelch`, `pyulear`, `risetime`, `rooteig`, `rootmusic`, `rssq`, `settlingtime`, `sfdr`, `sinad`, `slewrate`, `snr`, `specgram`, `spectrum`, `statelevels`, `tfe`, `tfestimate`, `thd`, `toi`, `undershoot`, `xcorr2`, `zerocrossrate`
+`instbw`, `instfreq`, `poctave`, `pspectrum`
 
 ### M137: Time-frequency, signal modelling, vibration (55)
 
