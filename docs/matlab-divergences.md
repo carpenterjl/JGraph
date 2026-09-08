@@ -327,7 +327,7 @@ probe found gaps recorded in none of the three.
 | [0143](adr/0143-a-one-by-one-array-is-the-scalar-it-holds.md) | a one by one array is the scalar it holds | `A ^ p` for a non-integer `p` is refused |
 | [0143](adr/0143-a-one-by-one-array-is-the-scalar-it-holds.md) | a one by one array is the scalar it holds | `r.'` does not parse |
 | [0144](adr/0144-a-rectangular-division-answers-the-basic-solution.md) | a rectangular division answers the basic solution | A singular square system is refused where MATLAB answers with infinities. |
-| [0144](adr/0144-a-rectangular-division-answers-the-basic-solution.md) | a rectangular division answers the basic solution | A rank-deficient *complex* rectangular system may put its answer on a different set of columns from MATLAB's. |
+| [0144](adr/0144-a-rectangular-division-answers-the-basic-solution.md) | a rectangular division answers the basic solution | A rank-deficient system may put its answer on a different set of columns from MATLAB's, and the two lanes may disagree with each other about which. |
 | [0144](adr/0144-a-rectangular-division-answers-the-basic-solution.md) | a rectangular division answers the basic solution | The rank-deficiency warning cannot be turned off. |
 | [0144](adr/0144-a-rectangular-division-answers-the-basic-solution.md) | a rectangular division answers the basic solution | A `single` rectangular system is solved in double precision and rounded. |
 | [0145](adr/0145-an-eigenvector-is-checked-against-its-eigenvalue.md) | an eigenvector is checked against its eigenvalue | A defective matrix's eigenvectors are accurate only to about 1e-10 on the managed backend |

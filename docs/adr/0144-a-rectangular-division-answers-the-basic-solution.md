@@ -119,13 +119,21 @@ the basic one *and* that it is not the shortest, which is the assertion that wou
   other way: `A(:, [1 1 2 3 4]) \ b` for a 5-by-5 with a repeated column answers finite numbers here
   and infinities there, because the two factorizations disagree about whether an exactly dependent
   column produces an exactly zero pivot.
-- **A rank-deficient *complex* rectangular system may put its answer on a different set of columns
-  from MATLAB's.** A 5-by-7 complex matrix of rank 4 answers on columns 1, 3, 5, 6 here and on 3, 4,
-  5, 6 there. Both are basic solutions, both achieve the same minimum residual — 1.147079 for that
-  system, in both — and neither is more correct; they differ because the real path reaches LAPACK's
-  `dgeqp3` and the complex path has no `zgeqp3` to reach, so it uses this project's own pivoted
-  factorization on both lanes. Matching would mean transcribing LAPACK's norm downdating, and the
-  two lanes agreeing with each other is worth more than either agreeing with MATLAB here.
+- **A rank-deficient system may put its answer on a different set of columns from MATLAB's, and the
+  two lanes may disagree with each other about which.** Which columns a basic solution rests on is
+  whatever the pivoting ranked first, and on a near-tie two correct implementations of column
+  pivoting rank differently. A 5-by-7 complex matrix of rank 4 answers on columns 1, 3, 5, 6 here
+  and on 3, 4, 5, 6 in R2025b. On the **managed** backend the same happens to *real* systems — a
+  5-by-7 real matrix of rank 4, and a rank-deficient 3-by-8, both land elsewhere than R2025b — where
+  on the native backend they agree, because there the real path is LAPACK's own `dgeqp3`. Complex
+  systems diverge on both lanes, there being no `zgeqp3` on the contract to reach.
+
+  Every one of these is a basic solution and every one achieves the same minimum residual —
+  1.147079 for that complex system, in both lanes and in MATLAB — so none is more correct than
+  another. But they are different numbers, and a script that solves a rank-deficient system can see
+  which lane it is on, which is the part worth minding. Closing it means transcribing LAPACK's norm
+  downdating, including the restart heuristic that decides when a downdated norm is no longer
+  trustworthy; the full-rank case, which is almost every case, is unaffected either way.
 - **The rank-deficiency warning cannot be turned off.** `warning('off', 'MATLAB:rankDeficientMatrix')`
   is the first thing a script that means to solve deficient systems in a loop will reach for, and
   JGraph's `warning` accepts `'off'` and ignores it — it keeps no such state — so the warning is
