@@ -1,7 +1,9 @@
+using System.Numerics;
+
 namespace JGraph.Scripting.Jgs;
 
 /// <summary>
-/// The shape verbs, taught that what they are rearranging may not be numbers (M122).
+/// The shape verbs, taught that what they are rearranging may not be doubles (M122, M137).
 /// </summary>
 /// <remarks>
 /// <para>
@@ -34,6 +36,31 @@ namespace JGraph.Scripting.Jgs;
 /// sorts the positions, which says nothing about the text at those positions, and MATLAB refuses
 /// <c>triu</c> of a string array outright rather than inventing a zero for text.
 /// </para>
+/// <para>
+/// M137 found the third container the same way, from a probe script doing an ordinary
+/// <c>circshift</c> on a column of an STFT: a <b>complex</b> array was refused by nine of these
+/// names — <c>flipud needs numbers, but element (1, 0) was a complex</c> — while <c>flip</c>,
+/// <c>fliplr</c> and <c>ctranspose</c> happened to have grown a complex path of their own. Complex
+/// is neither of the first two cases: it cannot be promoted to a code point, and its elements are
+/// numbers, so the boxes lane would not have it. But it is the same <em>shape</em> of answer, and it
+/// rides the same positions — run the verb on 1 to N, read where each position went, gather the
+/// complex elements there. Adding a name to the list is again the whole of the work.
+/// </para>
+/// <para>
+/// <c>ctranspose</c> is the one name that does something beyond moving its elements: for text its
+/// apostrophe is a plain transpose, which is why it is on the positions list at all, but for numbers
+/// it conjugates. A permutation of positions cannot conjugate anything, so the conjugation happens
+/// on the way out, once the gather has put each element where the transpose sent it.
+/// </para>
+/// <para>
+/// The one detail MATLAB does not leave to symmetry is whether the answer stays complex when every
+/// imaginary part is zero, and it splits the family in two — measured in R2025b, not recalled.
+/// <c>isreal(reshape(complex(1,0)))</c> is false, and so is permute's, squeeze's, shiftdim's and
+/// transpose's: those hand back the same data with a new shape stamped on it, complexity flag and
+/// all. <c>isreal(flipud(complex(1,0)))</c> is <em>true</em>, and so is flip's, fliplr's,
+/// flipdim's, circshift's and rot90's: those copy their elements into a new array, and the new array
+/// is real if what lands in it is. <see cref="ComplexNarrowingBuiltins"/> is that second list.
+/// </para>
 /// </remarks>
 internal static partial class JgsBuiltins
 {
@@ -60,8 +87,28 @@ internal static partial class JgsBuiltins
     ];
 
     /// <summary>
-    /// Wraps the shape verbs so a char row, a string array or a cell reaches them as something they
-    /// can rearrange, and leaves in the container it arrived in.
+    /// The verbs that gather complex elements through their own answer — the positions list entire,
+    /// with <c>ctranspose</c>'s conjugation applied after the gather.
+    /// </summary>
+    private static readonly string[] ComplexRearrangingBuiltins =
+    [
+        "reshape", "permute", "ipermute", "squeeze", "shiftdim", "circshift", "rot90",
+        "fliplr", "flipud", "flip", "flipdim", "transpose", "ctranspose",
+    ];
+
+    /// <summary>
+    /// The verbs whose answer is a fresh array rather than a re-stamped one, so a complex argument
+    /// with nothing but zeros for imaginary parts comes back <em>real</em> — MATLAB's own seam, and
+    /// the reason this is a list and not a rule (see the remarks above).
+    /// </summary>
+    private static readonly string[] ComplexNarrowingBuiltins =
+    [
+        "circshift", "rot90", "fliplr", "flipud", "flip", "flipdim",
+    ];
+
+    /// <summary>
+    /// Wraps the shape verbs so a char row, a string array, a cell or a complex array reaches them as
+    /// something they can rearrange, and leaves in the container it arrived in.
     /// </summary>
     /// <param name="env">The environment whose bindings are re-declared.</param>
     /// <param name="dialect">
@@ -69,7 +116,7 @@ internal static partial class JgsBuiltins
     /// a quoted word is an array of characters — where a JGS string is one value whose transpose is
     /// itself.
     /// </param>
-    private static void RearrangeText(JgsEnvironment env, JgsDialect dialect)
+    private static void Rearrange(JgsEnvironment env, JgsDialect dialect)
     {
         foreach (string name in CharRowShapeBuiltins)
         {
@@ -82,6 +129,9 @@ internal static partial class JgsBuiltins
 
             bool promotesCharRows = dialect.IsMatlab;
             bool gathersPositions = Array.IndexOf(PositionRearrangingBuiltins, name) >= 0;
+            bool gathersComplex = Array.IndexOf(ComplexRearrangingBuiltins, name) >= 0;
+            bool keepsComplexFlag = Array.IndexOf(ComplexNarrowingBuiltins, name) < 0;
+            bool conjugates = name == "ctranspose";
 
             env.DeclareFunction(name, JgsValue.Function(new BuiltinFunction(name, (args, line, col) =>
             {
@@ -94,6 +144,16 @@ internal static partial class JgsBuiltins
                 {
                     return GatheredBoxes(
                         args[0], boxes, inner.Call(WithFirst(args, PositionsLike(args[0])), line, col));
+                }
+
+                if (gathersComplex && args.Count > 0 && TryReadComplexElements(
+                        name, args[0], line, col, out Complex[] parts, out bool complexFlag))
+                {
+                    return GatheredComplex(
+                        parts,
+                        inner.Call(WithFirst(args, PositionsFor(args[0])), line, col),
+                        complexFlag && keepsComplexFlag,
+                        conjugates);
                 }
 
                 return inner.Call(args, line, col);
@@ -131,6 +191,20 @@ internal static partial class JgsBuiltins
                         if (outputs.Length > 0)
                         {
                             outputs[0] = GatheredBoxes(args[0], boxes, outputs[0]);
+                        }
+
+                        return outputs;
+                    }
+
+                    if (gathersComplex && args.Count > 0 && TryReadComplexElements(
+                            name, args[0], line, col, out Complex[] parts, out bool complexFlag))
+                    {
+                        JgsValue[] outputs = inner.MultiOutput(
+                            WithFirst(args, PositionsFor(args[0])), wanted, line, col);
+                        if (outputs.Length > 0)
+                        {
+                            outputs[0] = GatheredComplex(
+                                parts, outputs[0], complexFlag && keepsComplexFlag, conjugates);
                         }
 
                         return outputs;
@@ -219,5 +293,66 @@ internal static partial class JgsBuiltins
         JgsValue array = JgsValue.StringArray(picked);
         array.ReshapeDims(dims);
         return array;
+    }
+
+    /// <summary>
+    /// The elements of a complex array, in column-major order, or false. <paramref name="keepsFlag"/>
+    /// says whether the argument was one MATLAB calls complex despite every imaginary part being
+    /// zero — <c>complex(1, 0)</c> — which some of these verbs carry and the rest drop.
+    /// </summary>
+    private static bool TryReadComplexElements(
+        string name, JgsValue value, int line, int col, out Complex[] elements, out bool keepsFlag)
+    {
+        if (!HasComplexElements(value))
+        {
+            elements = [];
+            keepsFlag = false;
+            return false;
+        }
+
+        elements = ColumnComplex(name, value, line, col);
+        keepsFlag = value.Type == JgsType.Array
+            && value.IsPackedComplex
+            && value.AsPackedComplex.PreserveComplex;
+        return true;
+    }
+
+    /// <summary>
+    /// The positions of a complex argument. A complex <em>scalar</em> is not an array here, and
+    /// asking one for its dimensions would be asking the wrong object: it is position 1, and a verb
+    /// answers about a single position the same way it answers about a single number.
+    /// </summary>
+    private static JgsValue PositionsFor(JgsValue source) =>
+        source.Type == JgsType.Array ? PositionsLike(source) : JgsValue.Number(1);
+
+    /// <summary>
+    /// The complex elements the verb's answer points at, in the shape the verb chose. Storing them
+    /// packed is what every other complex answer in the interpreter is, whichever representation the
+    /// argument arrived in.
+    /// </summary>
+    private static JgsValue GatheredComplex(
+        Complex[] elements, JgsValue positions, bool keepsFlag, bool conjugate)
+    {
+        bool many = positions.Type == JgsType.Array;
+        int count = many ? positions.ArrayLength : 1;
+
+        // Nothing to gather, and the verb's own answer is the one to keep: the empty rules are the
+        // verbs' — flip of a 0-by-3 is a 0-by-3 and reshape may have been told a new shape — and
+        // rebuilding one from a dimension list here flattened both to 1-by-0.
+        if (count == 0)
+        {
+            return positions;
+        }
+
+        var picked = new Complex[count];
+        for (int i = 0; i < count; i++)
+        {
+            JgsValue at = many ? positions.ElementAt(i) : positions;
+            int index = (int)at.AsNumber - 1;
+            Complex moved = index >= 0 && index < elements.Length ? elements[index] : Complex.Zero;
+            picked[i] = conjugate ? Complex.Conjugate(moved) : moved;
+        }
+
+        return ComplexStorage(picked, many ? positions.Dims : [1, 1], keepsFlag);
     }
 }

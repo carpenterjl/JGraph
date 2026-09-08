@@ -2014,6 +2014,15 @@ internal static partial class JgsBuiltins
             return value;
         }
 
+        // An empty turns over the way anything else does, and its two dimensions are the whole of
+        // what it has: transpose(zeros(0, 3)) is 3-by-0 in MATLAB, and here it fell into the vector
+        // path below, flattened to nothing and came back 0-by-0. The ' operator had it right all
+        // along, so `v'` and `transpose(v)` disagreed about an empty (M137).
+        if (JgsEmpty.IsEmptyArray(value))
+        {
+            return JgsEmpty.Shaped(JgsMatrix.ColCount(value), JgsMatrix.RowCount(value));
+        }
+
         // A row stands up (M122). The comment that used to sit here said vectors have no orientation
         // "matching the interpreter's own ' operator" — and the operator had long since stopped
         // agreeing: `v'` answered the 4-by-1 MATLAB answers while `transpose(v)` answered the row it

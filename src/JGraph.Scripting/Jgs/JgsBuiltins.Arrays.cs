@@ -544,7 +544,10 @@ internal static partial class JgsBuiltins
                 return args[0];
             }
 
-            int[] dims = JgsMatrix.DimsOf(args[0]);
+            // SizeDims and not JgsMatrix.DimsOf, which answers about an array and reads a bare
+            // number as the 1-by-0 it is not: circshift(7, 0) came back empty, and so did every
+            // shift of a scalar (M137).
+            int[] dims = SizeDims(args[0]);
             double[] flat = FlattenColumnMajor("circshift", args[0], line, col);
             double[] by = NumericVector("circshift", args[1], line, col);
 

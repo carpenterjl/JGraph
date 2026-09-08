@@ -2547,7 +2547,7 @@ internal static partial class JgsBuiltins
 
         // Beneath the char-matrix marks, because this one hands the verb a char matrix it built and
         // re-tags the answer itself; the mark above reads the arguments the *script* wrote (M122).
-        RearrangeText(env, dialect);
+        Rearrange(env, dialect);
 
         // Outside the shape retrofit, so a classed argument is read as the script wrote it and the
         // tag goes back on whatever that retrofit answered. The two never meet in practice — a char
