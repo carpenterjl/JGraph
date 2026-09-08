@@ -8,16 +8,18 @@ without a catalog entry, or registered without being called implemented.
 
 ## Where it stands
 
-**217 of 351 documented names implemented**; 59 are planned or deferred (M137, and the four
-M136 left behind; ADR 0126 holds the plan and ADR 0140 says why the four were left), two are the complex equiripple exchange that M134 did not
-write (ADR 0138), and 73 are excluded by name.
+**269 of 351 documented names implemented**; seven are deferred and every one of them is waiting
+on the same missing name. `pspectrum` is a streaming zoom estimator of its own (ADR 0140), and
+`instfreq`, `instbw`, `pentropy`, `pkurtosis` and `rpmtrack` all reach for it; `poctave` needs an
+octave filter bank nothing else here has. Two more are the complex equiripple exchange that M134
+did not write (ADR 0138), and 73 are excluded by name.
 
 | Bucket | Names |
 |---|---:|
-| Implemented | 217 |
+| Implemented | 269 |
 | Not implemented, M134 | 2 |
 | Not implemented, M136 | 4 |
-| Not implemented, M137 | 55 |
+| Not implemented, M137 | 3 |
 | Excluded | 73 |
 | **Total** | **351** |
 
@@ -29,7 +31,7 @@ recorded R2024a output. Names MATLAB keeps outside this folder but the plan impl
 
 ## Implemented
 
-`alignsignals`, `bandpass`, `bandpower`, `bandstop`, `barthannwin`, `bartlett`, `besselap`, `besself`, `bilinear`, `bitrevorder`, `blackman`, `blackmanharris`, `bohmanwin`, `boxcar`, `buffer`, `buttap`, `butter`, `buttord`, `cceps`, `cconv`, `cell2sos`, `cheb1ap`, `cheb1ord`, `cheb2ap`, `cheb2ord`, `chebwin`, `cheby1`, `cheby2`, `cohere`, `convmtx`, `corrmtx`, `cpsd`, `csd`, `cusum`, `czt`, `datawrap`, `db`, `db2pow`, `dct`, `decimate`, `demod`, `designfilt`, `dftmtx`, `digitalFilter`, `digitrevorder`, `diric`, `downsample`, `dpss`, `dtw`, `dutycycle`, `edr`, `ellip`, `ellipord`, `enbw`, `envelope`, `eqtflength`, `falltime`, `fftfilt`, `fillgaps`, `filternorm`, `filtfilt`, `filtic`, `filtord`, `filtstates`, `findchangepts`, `finddelay`, `findpeaks`, `findsignal`, `fir1`, `fir2`, `fircls`, `fircls1`, `firgauss`, `firls`, `firpm`, `firpmord`, `firrcos`, `firtype`, `flattopwin`, `framesig`, `freqs`, `freqz`, `fwht`, `gauspuls`, `gaussdesign`, `gaussfir`, `gausswin`, `gmonopuls`, `goertzel`, `grpdelay`, `hamming`, `hampel`, `hann`, `hanning`, `highpass`, `hilbert`, `icceps`, `idct`, `ifwht`, `impinvar`, `impz`, `impzlength`, `interp`, `intfilt`, `isallpass`, `islinphase`, `ismaxphase`, `isminphase`, `isstable`, `kaiser`, `kaiserord`, `latc2tf`, `latcfilt`, `lowpass`, `lp2bp`, `lp2bs`, `lp2hp`, `lp2lp`, `marcumq`, `maxflat`, `meanfreq`, `medfilt1`, `medfreq`, `midcross`, `modulate`, `mscohere`, `nuttallwin`, `obw`, `overshoot`, `parzenwin`, `pburg`, `pcov`, `peak2peak`, `peak2rms`, `peig`, `periodogram`, `phasedelay`, `phasez`, `plomb`, `pmcov`, `pmem`, `pmtm`, `pmusic`, `polyscale`, `polystab`, `pow2db`, `powerbw`, `psd`, `pulseperiod`, `pulsesep`, `pulsewidth`, `pulstran`, `pwelch`, `pyulear`, `rceps`, `rcosdesign`, `rectpuls`, `rectwin`, `remez`, `remezord`, `resample`, `residuez`, `risetime`, `rooteig`, `rootmusic`, `rssq`, `sawtooth`, `scaleFilterSections`, `seqperiod`, `settlingtime`, `sfdr`, `sgolay`, `sgolayfilt`, `shiftdata`, `sinad`, `sinc`, `slewrate`, `snr`, `sos2cell`, `sos2ctf`, `sos2ss`, `sos2tf`, `sos2zp`, `sosfilt`, `specgram`, `spectrum`, `square`, `ss2sos`, `statelevels`, `stepz`, `taylorwin`, `tf2latc`, `tf2sos`, `tf2zpk`, `tfe`, `tfestimate`, `thd`, `toi`, `triang`, `tripuls`, `tukeywin`, `udecode`, `uencode`, `undershoot`, `unshiftdata`, `upfirdn`, `upsample`, `vco`, `window`, `xcorr2`, `yulewalk`, `zerocrossrate`, `zerophase`, `zp2ctf`, `zp2sos`, `zplane`, `zplaneplot`
+`ac2poly`, `ac2rc`, `alignsignals`, `arburg`, `arcov`, `armcov`, `aryule`, `bandpass`, `bandpower`, `bandstop`, `barthannwin`, `bartlett`, `besselap`, `besself`, `bilinear`, `bitrevorder`, `blackman`, `blackmanharris`, `bohmanwin`, `boxcar`, `buffer`, `buttap`, `butter`, `buttord`, `cceps`, `cconv`, `cell2sos`, `cheb1ap`, `cheb1ord`, `cheb2ap`, `cheb2ord`, `chebwin`, `cheby1`, `cheby2`, `cohere`, `convmtx`, `corrmtx`, `cpsd`, `csd`, `cusum`, `czt`, `datawrap`, `db`, `db2pow`, `dct`, `decimate`, `demod`, `designfilt`, `dftmtx`, `digitalFilter`, `digitrevorder`, `diric`, `downsample`, `dpss`, `dtw`, `dutycycle`, `edr`, `ellip`, `ellipord`, `enbw`, `envelope`, `envspectrum`, `eqtflength`, `falltime`, `fftfilt`, `fillgaps`, `filternorm`, `filtfilt`, `filtic`, `filtord`, `filtstates`, `findchangepts`, `finddelay`, `findpeaks`, `findsignal`, `fir1`, `fir2`, `fircls`, `fircls1`, `firgauss`, `firls`, `firpm`, `firpmord`, `firrcos`, `firtype`, `flattopwin`, `framesig`, `freqs`, `freqz`, `fsst`, `fwht`, `gauspuls`, `gaussdesign`, `gaussfir`, `gausswin`, `gmonopuls`, `goertzel`, `grpdelay`, `hamming`, `hampel`, `hann`, `hanning`, `highpass`, `hilbert`, `icceps`, `idct`, `ifsst`, `ifwht`, `impinvar`, `impz`, `impzlength`, `interp`, `intfilt`, `invfreqs`, `invfreqz`, `is2rc`, `isallpass`, `iscola`, `islinphase`, `ismaxphase`, `isminphase`, `isstable`, `istft`, `kaiser`, `kaiserord`, `kurtogram`, `lar2rc`, `latc2tf`, `latcfilt`, `levinson`, `lowpass`, `lp2bp`, `lp2bs`, `lp2hp`, `lp2lp`, `lpc`, `lsf2poly`, `marcumq`, `maxflat`, `meanfreq`, `medfilt1`, `medfreq`, `midcross`, `modalfit`, `modalfrf`, `modalsd`, `modulate`, `mscohere`, `nuttallwin`, `obw`, `orderspectrum`, `ordertrack`, `orderwaveform`, `overshoot`, `parzenwin`, `pburg`, `pcov`, `peak2peak`, `peak2rms`, `peig`, `periodogram`, `phasedelay`, `phasez`, `plomb`, `pmcov`, `pmem`, `pmtm`, `pmusic`, `poly2ac`, `poly2lsf`, `poly2rc`, `polyscale`, `polystab`, `pow2db`, `powerbw`, `prony`, `psd`, `pulseperiod`, `pulsesep`, `pulsewidth`, `pulstran`, `pwelch`, `pyulear`, `rainflow`, `rc2ac`, `rc2is`, `rc2lar`, `rc2poly`, `rceps`, `rcosdesign`, `rectpuls`, `rectwin`, `remez`, `remezord`, `resample`, `residuez`, `risetime`, `rlevinson`, `rooteig`, `rootmusic`, `rpmfreqmap`, `rpmordermap`, `rssq`, `sawtooth`, `scaleFilterSections`, `schurrc`, `seqperiod`, `settlingtime`, `sfdr`, `sgolay`, `sgolayfilt`, `shiftdata`, `sinad`, `sinc`, `slewrate`, `snr`, `sos2cell`, `sos2ctf`, `sos2ss`, `sos2tf`, `sos2zp`, `sosfilt`, `specgram`, `spectralCrest`, `spectralEntropy`, `spectralFlatness`, `spectralKurtosis`, `spectralSkewness`, `spectrogram`, `spectrum`, `square`, `ss2sos`, `statelevels`, `stepz`, `stft`, `stftmag2sig`, `stmcb`, `strips`, `tachorpm`, `taylorwin`, `tf2latc`, `tf2sos`, `tf2zpk`, `tfe`, `tfestimate`, `tfridge`, `thd`, `toi`, `triang`, `tripuls`, `tsa`, `tukeywin`, `udecode`, `uencode`, `undershoot`, `unshiftdata`, `upfirdn`, `upsample`, `vco`, `window`, `xcorr2`, `xspectrogram`, `yulewalk`, `zerocrossrate`, `zerophase`, `zp2ctf`, `zp2sos`, `zplane`, `zplaneplot`
 
 ## Not implemented
 
@@ -41,9 +43,9 @@ recorded R2024a output. Names MATLAB keeps outside this folder but the plan impl
 
 `instbw`, `instfreq`, `poctave`, `pspectrum`
 
-### M137: Time-frequency, signal modelling, vibration (55)
+### M137: the three that rest on pspectrum (3)
 
-`ac2poly`, `ac2rc`, `arburg`, `arcov`, `armcov`, `aryule`, `envspectrum`, `fsst`, `ifsst`, `invfreqs`, `invfreqz`, `is2rc`, `iscola`, `istft`, `kurtogram`, `lar2rc`, `levinson`, `lpc`, `lsf2poly`, `modalfit`, `modalfrf`, `modalsd`, `orderspectrum`, `ordertrack`, `orderwaveform`, `pentropy`, `pkurtosis`, `poly2ac`, `poly2lsf`, `poly2rc`, `prony`, `rainflow`, `rc2ac`, `rc2is`, `rc2lar`, `rc2poly`, `rlevinson`, `rpmfreqmap`, `rpmordermap`, `rpmtrack`, `schurrc`, `spectralCrest`, `spectralEntropy`, `spectralFlatness`, `spectralKurtosis`, `spectralSkewness`, `spectrogram`, `stft`, `stftmag2sig`, `stmcb`, `strips`, `tachorpm`, `tfridge`, `tsa`, `xspectrogram`
+`pentropy`, `pkurtosis`, `rpmtrack`
 
 ## Excluded
 

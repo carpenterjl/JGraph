@@ -223,6 +223,68 @@ public sealed class HouseholderQr
         Math.Max(_m, _n) * 2.220446049250313e-16 * (_p == 0 ? 0.0 : _qr[0, 0].Magnitude);
 
     /// <summary>
+    /// The <em>basic</em> least-squares solution of <c>A·X = B</c>: the one MATLAB's backslash
+    /// gives, with at most <c>rank(A)</c> non-zero entries and a nought in every column the
+    /// pivoting left out.
+    /// </summary>
+    /// <remarks>
+    /// A rank-deficient least-squares problem has a whole affine space of solutions, and there are
+    /// two conventional ways to pick one. <see cref="MinimumNormSolution"/> takes the shortest;
+    /// this takes the one supported on the columns the pivoted factorization ranked first, which is
+    /// what MATLAB returns (with a rank-deficiency warning) and therefore what a transcription of a
+    /// MATLAB algorithm must use if it is to give MATLAB's numbers.
+    /// </remarks>
+    public static Complex[,] BasicSolution(Complex[,] a, Complex[,] b, double tolerance, out int rank)
+    {
+        ArgumentNullException.ThrowIfNull(a);
+        ArgumentNullException.ThrowIfNull(b);
+
+        int n = a.GetLength(1);
+        int rhs = b.GetLength(1);
+        HouseholderQr qr = Factor(a, pivot: true);
+        double cut = tolerance >= 0 ? tolerance : qr.DefaultRankTolerance();
+        rank = qr.RankAbove(cut);
+
+        var x = new Complex[n, rhs];
+        if (rank == 0)
+        {
+            return x;
+        }
+
+        Complex[,] applied = qr.ApplyConjugateTranspose(b);
+        var top = new Complex[rank, rhs];
+        for (int r = 0; r < rank; r++)
+        {
+            for (int c = 0; c < rhs; c++)
+            {
+                top[r, c] = applied[r, c];
+            }
+        }
+
+        var leading = new Complex[rank, rank];
+        Complex[,] upper = qr.R(full: false);
+        for (int r = 0; r < rank; r++)
+        {
+            for (int c = r; c < rank; c++)
+            {
+                leading[r, c] = upper[r, c];
+            }
+        }
+
+        SolveUpper(leading, rank, top);
+        int[] pivot = qr.Pivot;
+        for (int r = 0; r < rank; r++)
+        {
+            for (int c = 0; c < rhs; c++)
+            {
+                x[pivot[r], c] = top[r, c];
+            }
+        }
+
+        return x;
+    }
+
+    /// <summary>
     /// The minimum-norm least-squares solution of <c>A·X = B</c>, by completing the pivoted
     /// factorization to a complete orthogonal one when the matrix is rank deficient.
     /// </summary>

@@ -2530,6 +2530,13 @@ internal static partial class JgsBuiltins
         RegisterBilevelBuiltins(env);
         RegisterAlignmentBuiltins(env);
         RegisterChangeDetectionBuiltins(env);
+        RegisterShortTimeBuiltins(env);
+        RegisterSynchrosqueezeBuiltins(env);
+        RegisterSpectralDescriptorBuiltins(env);
+        RegisterLinearPredictionBuiltins(env);
+        RegisterModalBuiltins(env);
+        RegisterVibrationBuiltins(env);
+        RegisterOrderTrackingBuiltins(env);
         RegisterCosineTransformBuiltins(env);
         RegisterStringEditingBuiltins(env, dialect);
         RegisterStringArrayBuiltins(env);

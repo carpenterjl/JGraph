@@ -1,4 +1,5 @@
 using System.Numerics;
+using JGraph.Numerics.LinearAlgebra;
 
 namespace JGraph.Signal;
 
@@ -56,6 +57,12 @@ public sealed class SpectralRequest
 
     /// <summary>Which trace a segmented estimate keeps.</summary>
     public SpectralTrace Trace { get; set; } = SpectralTrace.Mean;
+
+    /// <summary>Whether the two-signal estimates pair every input with every output.</summary>
+    public bool Mimo { get; set; }
+
+    /// <summary>Whether a transfer estimate divides the output's autospectrum by the cross one.</summary>
+    public bool SecondEstimator { get; set; }
 
     /// <summary>True when the estimate is a coherence, whose one-sided doubling is not undone by centring.</summary>
     public bool Unscaled { get; set; }
@@ -188,6 +195,200 @@ public static class SpectralEstimators
         return answer;
     }
 
+    /// <summary>
+    /// MATLAB's <c>'mimo'</c> transfer estimate: every input paired with every output, and the
+    /// matrix of cross spectra divided by the matrix of input autospectra at every frequency.
+    /// </summary>
+    /// <remarks>
+    /// With one input the transfer function is a ratio; with several it is a linear system, because
+    /// each output is driven by all of them at once and the inputs are generally correlated. The
+    /// division is a matrix one, and a singular input matrix at some frequency means the inputs did
+    /// not excite that frequency independently.
+    /// </remarks>
+    public static SpectralAnswer MimoTransfer(
+        Complex[][] x,
+        Complex[][] y,
+        bool realInput,
+        SpectralRequest request)
+    {
+        ArgumentNullException.ThrowIfNull(x);
+        ArgumentNullException.ThrowIfNull(y);
+        ArgumentNullException.ThrowIfNull(request);
+
+        int inputs = x.Length;
+        int outputs = y.Length;
+        SpectralRequest plain = Plain(request);
+        SpectralAnswer autos = Welch(Pick(x, Repeat(inputs, inputs)), Pick(x, Spread(inputs, inputs)),
+            realInput, plain);
+        SpectralAnswer cross = Welch(Pick(y, Repeat(outputs, inputs)), Pick(x, Spread(inputs, outputs)),
+            realInput, plain);
+
+        int bins = cross.Frequencies.Length;
+        var values = new Complex[inputs * outputs][];
+        for (int c = 0; c < values.Length; c++)
+        {
+            values[c] = new Complex[bins];
+        }
+
+        for (int f = 0; f < bins; f++)
+        {
+            var gram = new Complex[inputs, inputs];
+            for (int r = 0; r < inputs; r++)
+            {
+                for (int c = 0; c < inputs; c++)
+                {
+                    gram[r, c] = autos.Values[r + (c * inputs)][f];
+                }
+            }
+
+            var right = new Complex[inputs, outputs];
+            for (int r = 0; r < inputs; r++)
+            {
+                for (int c = 0; c < outputs; c++)
+                {
+                    // A right division by the input matrix is a left division of its transpose.
+                    right[r, c] = cross.Values[c + (r * outputs)][f];
+                }
+            }
+
+            Complex[,] solved = HouseholderQr.BasicSolution(Transposed(gram, inputs), right, -1, out _);
+            for (int r = 0; r < inputs; r++)
+            {
+                for (int c = 0; c < outputs; c++)
+                {
+                    values[c + (r * outputs)][f] = solved[r, c];
+                }
+            }
+        }
+
+        var answer = new SpectralAnswer
+        {
+            Values = values,
+            Frequencies = cross.Frequencies,
+            Segments = cross.Segments,
+        };
+        Finish(answer, request, realInput, cross.Segments, request.Nfft, request.Frequencies is null);
+        return answer;
+    }
+
+    /// <summary>MATLAB's <c>'mimo'</c> coherence: one number per output, over all inputs at once.</summary>
+    public static SpectralAnswer MimoCoherence(
+        Complex[][] x,
+        Complex[][] y,
+        bool realInput,
+        SpectralRequest request)
+    {
+        ArgumentNullException.ThrowIfNull(x);
+        ArgumentNullException.ThrowIfNull(y);
+        ArgumentNullException.ThrowIfNull(request);
+
+        int inputs = x.Length;
+        int outputs = y.Length;
+        SpectralRequest plain = Plain(request);
+        SpectralAnswer autos = Welch(Pick(x, Repeat(inputs, inputs)), Pick(x, Spread(inputs, inputs)),
+            realInput, plain);
+        SpectralAnswer outs = Welch(y, null, realInput, plain);
+        SpectralAnswer cross = Welch(Pick(x, Repeat(inputs, outputs)), Pick(y, Spread(outputs, inputs)),
+            realInput, plain);
+
+        int bins = cross.Frequencies.Length;
+        var values = new Complex[outputs][];
+        for (int c = 0; c < outputs; c++)
+        {
+            values[c] = new Complex[bins];
+        }
+
+        for (int f = 0; f < bins; f++)
+        {
+            var gram = new Complex[inputs, inputs];
+            for (int r = 0; r < inputs; r++)
+            {
+                for (int c = 0; c < inputs; c++)
+                {
+                    gram[r, c] = autos.Values[r + (c * inputs)][f];
+                }
+            }
+
+            for (int o = 0; o < outputs; o++)
+            {
+                var column = new Complex[inputs, 1];
+                for (int j = 0; j < inputs; j++)
+                {
+                    column[j, 0] = cross.Values[(o * inputs) + j][f];
+                }
+
+                // The coherence divides on the right of a row vector and on the left of a column
+                // one, so the system solved here is the plain matrix, not its transpose.
+                Complex[,] solved = HouseholderQr.BasicSolution(gram, column, -1, out _);
+                Complex sum = 0;
+                for (int j = 0; j < inputs; j++)
+                {
+                    sum += Complex.Conjugate(cross.Values[(o * inputs) + j][f]) * solved[j, 0];
+                }
+
+                values[o][f] = sum.Real / outs.Values[o][f].Real;
+            }
+        }
+
+        var answer = new SpectralAnswer
+        {
+            Values = values,
+            Frequencies = cross.Frequencies,
+            Segments = cross.Segments,
+        };
+        Finish(answer, request, realInput, cross.Segments, request.Nfft, request.Frequencies is null);
+        return answer;
+    }
+
+    /// <summary><c>repmat(1:n, 1, times)</c>.</summary>
+    private static int[] Repeat(int n, int times)
+    {
+        var index = new int[n * times];
+        for (int i = 0; i < index.Length; i++)
+        {
+            index[i] = i % n;
+        }
+
+        return index;
+    }
+
+    /// <summary><c>repelem(1:n, times)</c>, written as MATLAB writes it with a reshape.</summary>
+    private static int[] Spread(int n, int times)
+    {
+        var index = new int[n * times];
+        for (int i = 0; i < index.Length; i++)
+        {
+            index[i] = i / times;
+        }
+
+        return index;
+    }
+
+    private static Complex[][] Pick(Complex[][] channels, int[] index)
+    {
+        var picked = new Complex[index.Length][];
+        for (int i = 0; i < index.Length; i++)
+        {
+            picked[i] = channels[index[i]];
+        }
+
+        return picked;
+    }
+
+    private static Complex[,] Transposed(Complex[,] a, int n)
+    {
+        var t = new Complex[n, n];
+        for (int r = 0; r < n; r++)
+        {
+            for (int c = 0; c < n; c++)
+            {
+                t[r, c] = a[c, r];
+            }
+        }
+
+        return t;
+    }
+
     /// <summary>MATLAB's <c>mscohere</c>: the cross spectrum's squared magnitude over the two autos.</summary>
     public static SpectralAnswer Coherence(
         Complex[][] x,
@@ -229,13 +430,21 @@ public static class SpectralEstimators
         bool realInput,
         SpectralRequest request)
     {
-        SpectralAnswer pxx = Welch(x, null, realInput, Plain(request));
-        SpectralAnswer pyx = Welch(y, x, realInput, Plain(request));
-        var values = new Complex[pyx.Values.Length][];
+        // H1 divides the cross spectrum by the input's autospectrum, which is unbiased when the
+        // noise is on the output; H2 divides the output's autospectrum by the cross one, which is
+        // unbiased when the noise is on the input.
+        SpectralAnswer above = request.SecondEstimator
+            ? Welch(y, null, realInput, Plain(request))
+            : Welch(y, x, realInput, Plain(request));
+        SpectralAnswer below = request.SecondEstimator
+            ? Welch(x, y, realInput, Plain(request))
+            : Welch(x, null, realInput, Plain(request));
+        SpectralAnswer pyx = above;
+        var values = new Complex[System.Math.Max(above.Values.Length, below.Values.Length)][];
         for (int c = 0; c < values.Length; c++)
         {
-            Complex[] cross = pyx.Values[c];
-            Complex[] a = pxx.Values[c % pxx.Values.Length];
+            Complex[] cross = above.Values[c % above.Values.Length];
+            Complex[] a = below.Values[c % below.Values.Length];
             values[c] = new Complex[cross.Length];
             for (int i = 0; i < cross.Length; i++)
             {

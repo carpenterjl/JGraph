@@ -152,6 +152,10 @@ internal static partial class JgsBuiltins
         public SpectralScaling Scaling { get; set; } = SpectralScaling.Psd;
 
         public SpectralTrace Trace { get; set; } = SpectralTrace.Mean;
+
+        public bool Mimo { get; set; }
+
+        public bool SecondEstimator { get; set; }
     }
 
     /// <summary>
@@ -190,6 +194,26 @@ internal static partial class JgsBuiltins
                         break;
                     case "reassigned":
                         words.Reassign = true;
+                        break;
+                    case "mimo":
+                        words.Mimo = true;
+                        break;
+                    case "estimator":
+                        if (i + 1 >= args.Count)
+                        {
+                            throw new JgsRuntimeException(line, col,
+                                $"{name} needs a value after 'Estimator'.");
+                        }
+
+                        string which = StrOf(name, args[i + 1], line, col).ToLowerInvariant();
+                        words.SecondEstimator = which == "h2";
+                        if (which != "h1" && which != "h2")
+                        {
+                            throw new JgsRuntimeException(line, col,
+                                $"{name} takes 'H1' or 'H2' as its estimator.");
+                        }
+
+                        i++;
                         break;
                     case "mean":
                         words.Trace = SpectralTrace.Mean;
@@ -289,7 +313,7 @@ internal static partial class JgsBuiltins
         string[] allowed =
         [
             "onesided", "twosided", "centered", "half", "whole", "power", "psd", "ms",
-            "reassigned", "mean", "maxhold", "minhold", "confidencelevel", "mimo",
+            "reassigned", "mean", "maxhold", "minhold", "confidencelevel", "mimo", "estimator",
         ];
         foreach (string candidate in allowed)
         {
@@ -336,6 +360,8 @@ internal static partial class JgsBuiltins
             Reassign = words.Reassign,
             Scaling = words.Scaling,
             Trace = words.Trace,
+            Mimo = words.Mimo,
+            SecondEstimator = words.SecondEstimator,
         };
     }
 
@@ -484,14 +510,65 @@ internal static partial class JgsBuiltins
             request.ConfidenceLevel = SpectralEstimation.DefaultConfidence;
         }
 
-        SpectralAnswer answer = modern switch
+        bool mimo = request.Mimo && (channels.Length > 1 || (second is not null && second.Length > 1));
+        int[]? pages = null;
+        SpectralAnswer answer;
+        if (mimo && modern == "cpsd")
         {
-            "mscohere" => SpectralEstimators.Coherence(channels, second!, real, request),
-            "tfestimate" => SpectralEstimators.TransferEstimate(channels, second!, real, request),
-            _ => SpectralEstimators.Welch(channels, second, real, request),
-        };
+            var left = new Complex[channels.Length * second!.Length][];
+            var right = new Complex[left.Length][];
+            for (int i = 0; i < left.Length; i++)
+            {
+                left[i] = channels[i % channels.Length];
+                right[i] = second[i / channels.Length];
+            }
 
-        return PackEstimate(answer, request, wanted, wasVector, words.Frequencies is not null);
+            answer = SpectralEstimators.Welch(left, right, real, request);
+            pages = [channels.Length, second.Length];
+        }
+        else if (mimo && modern == "tfestimate")
+        {
+            answer = SpectralEstimators.MimoTransfer(channels, second!, real, request);
+            pages = [second!.Length, channels.Length];
+        }
+        else
+        {
+            answer = modern switch
+            {
+                "mscohere" => mimo
+                    ? SpectralEstimators.MimoCoherence(channels, second!, real, request)
+                    : SpectralEstimators.Coherence(channels, second!, real, request),
+                "tfestimate" => SpectralEstimators.TransferEstimate(channels, second!, real, request),
+                _ => SpectralEstimators.Welch(channels, second, real, request),
+            };
+        }
+
+        JgsValue[] packed = PackEstimate(answer, request, wanted, wasVector, words.Frequencies is not null);
+        if (pages is not null && packed.Length > 0)
+        {
+            packed[0] = ComplexPages(answer.Values, pages[0], pages[1]);
+        }
+
+        return packed;
+    }
+
+    /// <summary>
+    /// A many-channel estimate as a page per input: MATLAB reports a MIMO transfer function as
+    /// frequency down the rows, output across the columns and input across the pages.
+    /// </summary>
+    private static JgsValue ComplexPages(Complex[][] channels, int first, int second)
+    {
+        int bins = channels.Length == 0 ? 0 : channels[0].Length;
+        var flat = new Complex[bins * first * second];
+        for (int c = 0; c < channels.Length; c++)
+        {
+            for (int i = 0; i < bins; i++)
+            {
+                flat[i + (c * bins)] = channels[c][i];
+            }
+        }
+
+        return ComplexShaped(flat, [bins, first, second]);
     }
 
     // --- Packing the answer ------------------------------------------------------------------------

@@ -1,4 +1,5 @@
 using System.Numerics;
+using JGraph.Numerics.LinearAlgebra;
 
 namespace JGraph.Signal;
 
@@ -323,81 +324,31 @@ public static class AutoRegressiveModels
     }
 
     /// <summary>
-    /// The least-squares solution of an over-determined system, by the normal equations with a
-    /// Cholesky-like elimination. The matrices here are small — an order and a signal's length.
+    /// The least-squares solution of an over-determined system, by the pivoted factorization
+    /// MATLAB's backslash uses.
     /// </summary>
+    /// <remarks>
+    /// The normal equations would be shorter and are what an earlier version of this did, but they
+    /// square the condition number: the data matrix of an order-six covariance fit is close enough
+    /// to singular that the coefficients came out differing from MATLAB's in the ninth digit. The
+    /// factorization does not square anything, and a rank-deficient system gets the same basic
+    /// solution MATLAB gives rather than the shortest one.
+    /// </remarks>
     private static Complex[] LeastSquares(Complex[,] matrix, Complex[] rhs)
     {
         int rows = matrix.GetLength(0);
         int columns = matrix.GetLength(1);
-        var normal = new Complex[columns, columns + 1];
+        var right = new Complex[rows, 1];
+        for (int r = 0; r < rows; r++)
+        {
+            right[r, 0] = rhs[r];
+        }
+
+        Complex[,] answer = HouseholderQr.BasicSolution(matrix, right, -1, out _);
+        var solution = new Complex[columns];
         for (int i = 0; i < columns; i++)
         {
-            for (int j = 0; j < columns; j++)
-            {
-                Complex sum = 0;
-                for (int r = 0; r < rows; r++)
-                {
-                    sum += Complex.Conjugate(matrix[r, i]) * matrix[r, j];
-                }
-
-                normal[i, j] = sum;
-            }
-
-            Complex target = 0;
-            for (int r = 0; r < rows; r++)
-            {
-                target += Complex.Conjugate(matrix[r, i]) * rhs[r];
-            }
-
-            normal[i, columns] = target;
-        }
-
-        for (int pivot = 0; pivot < columns; pivot++)
-        {
-            int best = pivot;
-            for (int r = pivot + 1; r < columns; r++)
-            {
-                if (normal[r, pivot].Magnitude > normal[best, pivot].Magnitude)
-                {
-                    best = r;
-                }
-            }
-
-            if (best != pivot)
-            {
-                for (int c = pivot; c <= columns; c++)
-                {
-                    (normal[pivot, c], normal[best, c]) = (normal[best, c], normal[pivot, c]);
-                }
-            }
-
-            Complex head = normal[pivot, pivot];
-            if (head == Complex.Zero)
-            {
-                continue;
-            }
-
-            for (int r = pivot + 1; r < columns; r++)
-            {
-                Complex factor = normal[r, pivot] / head;
-                for (int c = pivot; c <= columns; c++)
-                {
-                    normal[r, c] -= factor * normal[pivot, c];
-                }
-            }
-        }
-
-        var solution = new Complex[columns];
-        for (int i = columns - 1; i >= 0; i--)
-        {
-            Complex sum = normal[i, columns];
-            for (int j = i + 1; j < columns; j++)
-            {
-                sum -= normal[i, j] * solution[j];
-            }
-
-            solution[i] = normal[i, i] == Complex.Zero ? 0 : sum / normal[i, i];
+            solution[i] = answer[i, 0];
         }
 
         return solution;
