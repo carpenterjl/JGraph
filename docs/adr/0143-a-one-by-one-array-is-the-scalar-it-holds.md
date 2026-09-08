@@ -96,13 +96,6 @@ did.
 
 ### Divergences
 
-- **`s ^ A` — a scalar raised to a matrix power — answers elementwise**, where MATLAB answers with
-  the eigendecomposition `V * diag(s .^ diag(D)) / V`. This predates M138 and is a wrong number
-  rather than a refusal: `2 ^ [1 2; 3 4]` is `[2 4; 8 16]` here and `[10.48 14.15; 21.23 31.71]`
-  there. What M138 settles is only that `[2] ^ A` and `2 ^ A` now give the *same* wrong answer
-  instead of one of them being refused. Matching MATLAB means reproducing its eig-based formula
-  including its behaviour on a defective matrix — `3 ^ [2 1; 0 2]` is not `expm(log(3) * [2 1; 0 2])`
-  — which is a milestone of its own.
 - **`A ^ p` for a non-integer `p` is refused**, where MATLAB answers with the principal power:
   `[1 2; 3 4] ^ 0.5` is `sqrtm` of it. The refusal is honest and predates this work.
 - **`r.'` does not parse**, where MATLAB reads it as the non-conjugate transpose: after a name, a dot
@@ -114,3 +107,8 @@ basic one — `[1 2 3] \ [2]` was `[0.143; 0.286; 0.429]` here and `[0; 0; 0.667
 settled it, and the bullet is struck from the list above rather than left standing, because
 `docs/matlab-divergences.md` is generated from these sections and says of each entry that it *is* a
 difference from MATLAB.
+
+And **`s ^ A` — a scalar raised to a matrix power — answered elementwise** where MATLAB answers
+with the eigendecomposition: `2 ^ [1 2; 3 4]` was `[2 4; 8 16]` here and
+`[10.48 14.15; 21.23 31.71]` there. ADR 0145 settled that one, and it is struck from the list above
+for the same reason.

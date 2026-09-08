@@ -367,6 +367,86 @@ internal static partial class JgsBuiltins
     }
 
     /// <summary>
+    /// MATLAB's words when <c>^</c> is handed a pair of shapes it cannot read as a base and an
+    /// exponent — neither operand scalar, or a matrix that is not square.
+    /// </summary>
+    internal const string MPowerShapeRefusal =
+        "Incorrect dimensions for raising a matrix to a power. Check that the matrix is square and "
+        + "the power is a scalar. To operate on each element of the matrix individually, use POWER "
+        + "(.^) for elementwise power.";
+
+    /// <summary>
+    /// MATLAB's words when <c>^</c> is handed an integer class it will not work in. Integer
+    /// <c>mpower</c> is defined only when both operands are scalar, whatever the shapes otherwise
+    /// are, and this refusal is measured to come before the one about combining classes.
+    /// </summary>
+    internal const string MPowerIntegerRefusal =
+        "MPOWER (^) is not fully supported for integer classes. Both arguments must be scalar. To "
+        + "operate on each element of the matrix individually, use POWER (.^) for elementwise power.";
+
+    /// <summary>
+    /// MATLAB's <c>s ^ A</c>: a scalar raised to a square matrix, which is not the elementwise
+    /// power it used to answer here but the eigendecomposition
+    /// <c>[V, D] = eig(A); V * diag(s .^ diag(D)) / V</c> (M139).
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    /// The mirror case, <c>A ^ p</c>, has been the repeated product since the beginning; this is
+    /// the other half of <c>mpower</c>, and until M139 it fell through to <c>.^</c> and answered
+    /// <c>[2 4; 8 16]</c> for <c>2 ^ [1 2; 3 4]</c> — a wrong number rather than a refusal, which
+    /// is the worst kind of divergence to leave standing.
+    /// </para>
+    /// <para>
+    /// An integer class is refused before this is reached, by the operator itself, because the
+    /// refusal covers <c>A ^ p</c> just as much and MATLAB puts it ahead of every other complaint
+    /// the pair could draw.
+    /// </para>
+    /// </remarks>
+    internal static JgsValue ScalarMatrixPower(JgsValue scalar, JgsValue matrix, int line, int col)
+    {
+        int rows = JgsMatrix.RowCount(matrix);
+        int cols = JgsMatrix.ColCount(matrix);
+        if (rows != cols)
+        {
+            throw new JgsRuntimeException(line, col, MPowerShapeRefusal);
+        }
+
+        if (rows == 0)
+        {
+            return JgsMatrix.BuildValues(0, 0, static (r, c) => JgsValue.Number(0));
+        }
+
+        Complex baseValue = ComplexRectOf("'^'", scalar, line, col)[0, 0];
+        try
+        {
+            Complex[,] answer = HasComplexElements(matrix)
+                ? MatrixFunction.ScalarPower(baseValue, ComplexSquareOf("'^'", matrix, line, col), MatlabPower)
+                : MatrixFunction.ScalarPower(baseValue, SquareRect("'^'", matrix, line, col), MatlabPower);
+            return FromComplexRect(answer);
+        }
+        catch (InvalidOperationException ex)
+        {
+            throw new JgsRuntimeException(line, col, ex.Message);
+        }
+    }
+
+    /// <summary>
+    /// One scalar raised to another under MATLAB's own domain rule, which is the rule <c>.^</c>
+    /// already follows: a negative base with a whole exponent stays real, and everything else that
+    /// leaves the reals answers a complex number rather than <c>Math.Pow</c>'s NaN.
+    /// </summary>
+    /// <remarks>
+    /// Staying on <see cref="System.Math.Pow"/> where the answer is real is what makes
+    /// <c>2 ^ [1 0; 0 3]</c> exactly <c>[2 0; 0 8]</c>: <c>Complex.Pow</c> would route the
+    /// same question through <c>exp(λ·log(s))</c> and land a few ulps away.
+    /// </remarks>
+    private static Complex MatlabPower(Complex baseValue, Complex exponent) =>
+        baseValue.Imaginary == 0 && exponent.Imaginary == 0
+        && PowerStaysReal(baseValue.Real, exponent.Real)
+            ? new Complex(System.Math.Pow(baseValue.Real, exponent.Real), 0)
+            : Complex.Pow(baseValue, exponent);
+
+    /// <summary>
     /// The matrix division when either operand holds complex elements — MATLAB's <c>A\B</c> (and
     /// <c>A/B</c>, which arrives as the transposed problem). A square system is solved outright; a
     /// rectangular one takes the same basic least-squares solution the real path takes, reporting
