@@ -2672,29 +2672,50 @@ internal sealed partial class Interpreter
         // elementwise. Everything below this point is elementwise, so the matrix forms resolve first.
         if (Dialect.IsMatlab)
         {
+            // MATLAB's matrix operators read a 1-by-1 array as the scalar it was written from:
+            // `[1]` and `1` are the same value, so `zeros(2, 3) * [1]` is a scaling and not a
+            // product with a one-row right-hand side (M138). Which side has to be the scalar is
+            // each operator's own business — `A / s` divides elementwise where `s / A` still
+            // solves — so the two questions are asked once here and answered per operator by
+            // ScalarForm below.
+            bool leftScalar = IsScalarOperand(left);
+            bool rightScalar = IsScalarOperand(right);
+
+            bool ScalarForm(TokenType which) => which switch
+            {
+                TokenType.Star => leftScalar || rightScalar,
+                TokenType.Slash => rightScalar,
+                TokenType.Backslash or TokenType.Caret => leftScalar,
+                _ => false,
+            };
+
             if (op == TokenType.DotBackslash)
             {
                 // a .\ b is b ./ a — elementwise division read the other way around. Mapping onto
                 // './' (not '/') keeps the swapped operands off the matrix-division branch below.
                 (left, right) = (right, left);
+                (leftScalar, rightScalar) = (rightScalar, leftScalar);
                 op = TokenType.DotSlash;
             }
 
             if (op == TokenType.Backslash)
             {
-                if (left.Type == JgsType.Array && right.Type == JgsType.Array)
+                // A 1-by-1 left-hand side is a scalar divisor rather than a system to solve, so
+                // it takes the swap below exactly as a bare number does: `[2] \ A` is `A / 2`.
+                if (left.Type == JgsType.Array && !ScalarForm(op))
                 {
-                    return MatrixOperation(op, left, right, at);
-                }
+                    if (right.Type == JgsType.Array)
+                    {
+                        return MatrixOperation(op, left, right, at);
+                    }
 
-                if (left.Type == JgsType.Array)
-                {
                     throw new JgsRuntimeException(at.Line, at.Column,
                         "'\\' expects a right-hand side with as many rows as the left matrix.");
                 }
 
                 // scalar \ x is x / scalar.
                 (left, right) = (right, left);
+                (leftScalar, rightScalar) = (rightScalar, leftScalar);
                 op = TokenType.Slash;
             }
 
@@ -2707,15 +2728,18 @@ internal sealed partial class Interpreter
                     _ => TokenType.Caret,
                 };
             }
+            else if (op == TokenType.Caret && !ScalarForm(op) && IsMatrix(left) && rightScalar
+                     && !JgsBuiltins.HasComplexElements(right))
+            {
+                // The exponent is read before the general matrix branch below, so a 1-by-1 array
+                // raises a matrix to a power exactly as the number it holds does.
+                return MatrixPower(left, ScalarValue(right), at);
+            }
             else if (op is TokenType.Star or TokenType.Slash or TokenType.Caret
+                     && !ScalarForm(op)
                      && left.Type == JgsType.Array && right.Type == JgsType.Array)
             {
                 return MatrixOperation(op, left, right, at);
-            }
-            else if (op == TokenType.Caret && IsMatrix(left)
-                     && right.Type is JgsType.Number or JgsType.Bool)
-            {
-                return MatrixPower(left, right.AsNumber, at);
             }
         }
 
@@ -6320,6 +6344,21 @@ internal sealed partial class Interpreter
 
     /// <summary>Whether a value is a matrix — see <see cref="JgsMatrix"/> for what that means now.</summary>
     private static bool IsMatrix(JgsValue value) => JgsMatrix.IsMatrix(value);
+
+    /// <summary>
+    /// Whether an operand is a scalar for MATLAB's matrix operators: a bare number or bool, or the
+    /// 1-by-1 array that is the same value written with brackets (M138). Text, cells, structs and
+    /// class instances are not — they carry their own meanings for these operators, settled higher up.
+    /// </summary>
+    private static bool IsScalarOperand(JgsValue value) =>
+        value.Type is JgsType.Number or JgsType.Bool or JgsType.Complex
+        || (value.Type == JgsType.Array && value.ArrayLength == 1 && !value.IsStringArray
+            && !JgsMatrix.IsNested(value)
+            && value.ElementAt(0).Type is JgsType.Number or JgsType.Bool or JgsType.Complex);
+
+    /// <summary>The number an operand holds, whether it is a bare number or a 1-by-1 array of one.</summary>
+    private static double ScalarValue(JgsValue value) =>
+        value.Type == JgsType.Array ? value.ElementAt(0).AsNumber : value.AsNumber;
 
     /// <summary>Whether an array has a singleton dimension, so its orientation could be flipped.</summary>
     private static bool IsVector(JgsValue value) =>
