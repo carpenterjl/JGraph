@@ -854,10 +854,25 @@ public sealed partial class ManagedLinalg
             shifted[r, r] -= shift;
         }
 
-        var x = new Complex[n];
-        for (int i = 0; i < n; i++)
+        // Inverse iteration amplifies whatever part of the start vector lies along the eigenvector
+        // it is looking for, so a start with none of that part has nothing to amplify — it sits
+        // still, and the agreement test below reads sitting still as convergence. The flat vector
+        // is not a safe start for this, because it *is* an eigenvector of some matrices: [1; 1] is
+        // one of [4 1; 2 3]'s, and asking that matrix for the other eigenvector used to hand back
+        // the one it started from, twice over, with a residual of 3. So the answer is measured
+        // against the residual it claims, and a start that fails is replaced. No single vector can
+        // be orthogonal to every eigenvector at once, so the axes are enough to fall back on.
+        double accept = Math.Max(scale, 1) * 1e-7;
+        Complex[] x = Iterate(Flat(n));
+        double best = Residual(matrix, value, x);
+        for (int axis = 0; axis < n && best > accept; axis++)
         {
-            x[i] = 1.0 / Math.Sqrt(n);
+            Complex[] candidate = Iterate(Axis(n, axis));
+            double residual = Residual(matrix, value, candidate);
+            if (residual < best)
+            {
+                (x, best) = (candidate, residual);
+            }
         }
 
         // Until two successive iterates agree, not for a fixed count. Three solves were taken here
@@ -866,39 +881,45 @@ public sealed partial class ManagedLinalg
         // one, the second is seeded from rounding alone, and the third is the first that converges
         // — to a vector whose residual is the shift's own perturbation rather than the working
         // precision. The pencil a matrix polynomial is linearized into produced exactly that start.
-        var previous = new Complex[n];
-        for (int iteration = 0; iteration < 12; iteration++)
+        Complex[] Iterate(Complex[] start)
         {
-            Array.Copy(x, previous, n);
-            Complex[] next = SolveComplex(shifted, x);
-            double norm = 0;
-            foreach (Complex entry in next)
+            var vector = (Complex[])start.Clone();
+            var previous = new Complex[n];
+            for (int iteration = 0; iteration < 12; iteration++)
             {
-                norm += entry.Magnitude * entry.Magnitude;
+                Array.Copy(vector, previous, n);
+                Complex[] next = SolveComplex(shifted, vector);
+                double norm = 0;
+                foreach (Complex entry in next)
+                {
+                    norm += entry.Magnitude * entry.Magnitude;
+                }
+
+                norm = Math.Sqrt(norm);
+                if (norm == 0 || double.IsNaN(norm) || double.IsInfinity(norm))
+                {
+                    break;
+                }
+
+                for (int i = 0; i < n; i++)
+                {
+                    vector[i] = next[i] / norm;
+                }
+
+                // Two unit vectors that agree have an inner product of unit size, whatever the phase.
+                Complex overlap = Complex.Zero;
+                for (int i = 0; i < n; i++)
+                {
+                    overlap += Complex.Conjugate(previous[i]) * vector[i];
+                }
+
+                if (1 - overlap.Magnitude <= n * Epsilon)
+                {
+                    break;
+                }
             }
 
-            norm = Math.Sqrt(norm);
-            if (norm == 0 || double.IsNaN(norm) || double.IsInfinity(norm))
-            {
-                break;
-            }
-
-            for (int i = 0; i < n; i++)
-            {
-                x[i] = next[i] / norm;
-            }
-
-            // Two unit vectors that agree have an inner product of unit size, whatever the phase.
-            Complex overlap = Complex.Zero;
-            for (int i = 0; i < n; i++)
-            {
-                overlap += Complex.Conjugate(previous[i]) * x[i];
-            }
-
-            if (1 - overlap.Magnitude <= n * Epsilon)
-            {
-                break;
-            }
+            return vector;
         }
 
         // Fix the free phase: make the largest entry real and positive, so results are stable.
@@ -921,6 +942,47 @@ public sealed partial class ManagedLinalg
         }
 
         return x;
+    }
+
+    /// <summary>The flat start, which is the one that works for almost every matrix.</summary>
+    private static Complex[] Flat(int n)
+    {
+        var start = new Complex[n];
+        for (int i = 0; i < n; i++)
+        {
+            start[i] = 1.0 / Math.Sqrt(n);
+        }
+
+        return start;
+    }
+
+    /// <summary>One axis, as a start to fall back on when the flat one carried nothing.</summary>
+    private static Complex[] Axis(int n, int index)
+    {
+        var start = new Complex[n];
+        start[index] = Complex.One;
+        return start;
+    }
+
+    /// <summary>
+    /// How far <c>A·x − λ·x</c> is from nought, which is the whole of what an eigenvector claims.
+    /// </summary>
+    private static double Residual(double[,] matrix, Complex value, Complex[] x)
+    {
+        int n = x.Length;
+        double sum = 0;
+        for (int r = 0; r < n; r++)
+        {
+            Complex row = -value * x[r];
+            for (int c = 0; c < n; c++)
+            {
+                row += matrix[r, c] * x[c];
+            }
+
+            sum += row.Magnitude * row.Magnitude;
+        }
+
+        return Math.Sqrt(sum);
     }
 
     /// <summary>Complex Gaussian elimination with partial pivoting.</summary>

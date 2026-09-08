@@ -356,6 +356,89 @@ public class DenseFactorizationProviderTests
     }
 
     /// <summary>
+    /// Every eigenvector both backends return actually is one: <c>A·v − λ·v</c> is nought.
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    /// The managed backend finds an eigenvector by inverse iteration from a flat start vector, and
+    /// a start with no component along the eigenvector it is looking for has nothing to amplify —
+    /// it sits still, and the iteration's agreement test reads sitting still as convergence. The
+    /// flat vector is exactly that start for some matrices, because it *is* one of their
+    /// eigenvectors: <c>[1; 1]</c> is <c>[4 1; 2 3]</c>'s, for the eigenvalue 5. Asking that matrix
+    /// for its other eigenvector, at the well-separated eigenvalue 2, handed back the one it
+    /// started from — two identical columns, <c>det(V)</c> nought, and a residual of 3 where LAPACK
+    /// gives 1e-16.
+    /// </para>
+    /// <para>
+    /// Nothing caught it: a sweep of forty general matrices passes on both backends, and no test
+    /// asserted an eigen*vector* rather than an eigenvalue. What found it was
+    /// <c>s ^ A</c> — the first thing in the project to divide by V — coming back as -592770333
+    /// on one lane and 22.67 on the other. So this test asserts the property rather than the
+    /// vectors: which vectors an eigensolver returns, and in what order, is its own business, but
+    /// that each one satisfies its eigenvalue is not.
+    /// </para>
+    /// </remarks>
+    [Theory]
+    [InlineData(2, new double[] { 4, 2, 1, 3 })]           // the regression: eigenvalues 5 and 2
+    [InlineData(2, new double[] { 2, 0, 1, 3 })]           // triangular, eigenvalues 2 and 3
+    [InlineData(2, new double[] { 2, 0, 1, 2 })]           // defective, one eigenvector to give
+    [InlineData(2, new double[] { 1, 3, 2, 4 })]           // irrational eigenvalues
+    [InlineData(2, new double[] { 0, 1, -1, 0 })]          // a conjugate pair
+    [InlineData(3, new double[] { 1, 0, 0, 1, 1, 0, 0, 1, 2 })]
+    public void EveryEigenvectorSatisfiesItsEigenvalue(int n, double[] columnMajor)
+    {
+        double scale = columnMajor.Select(Math.Abs).DefaultIfEmpty(0).Max();
+        foreach (DenseLinalg backend in Backends())
+        {
+            var a = (double[])columnMajor.Clone();
+            var wr = new double[n];
+            var wi = new double[n];
+            var vr = new double[n * n];
+            Assert.Equal(0, backend.Geev(vectors: true, n, a, n, wr, wi, vr, n));
+
+            for (int j = 0; j < n; j++)
+            {
+                // Unpack column j into a complex vector. A conjugate pair is stored once, as a real
+                // column followed by an imaginary one, so the second of the pair is the first
+                // conjugated and a real eigenvalue's column is the whole of its vector.
+                var re = new double[n];
+                var im = new double[n];
+                int first = wi[j] >= 0 ? j : j - 1;
+                double sign = wi[j] < 0 ? -1 : 1;
+                for (int r = 0; r < n; r++)
+                {
+                    re[r] = vr[(first * n) + r];
+                    im[r] = wi[j] == 0 ? 0 : sign * vr[((first + 1) * n) + r];
+                }
+
+                double length = 0;
+                double worst = 0;
+                for (int r = 0; r < n; r++)
+                {
+                    length += (re[r] * re[r]) + (im[r] * im[r]);
+                    double sr = -((wr[j] * re[r]) - (wi[j] * im[r]));
+                    double si = -((wr[j] * im[r]) + (wi[j] * re[r]));
+                    for (int c = 0; c < n; c++)
+                    {
+                        sr += columnMajor[(c * n) + r] * re[c];
+                        si += columnMajor[(c * n) + r] * im[c];
+                    }
+
+                    worst = Math.Max(worst, Math.Sqrt((sr * sr) + (si * si)));
+                }
+
+                worst /= Math.Max(Math.Sqrt(length), 1e-300);
+
+                // Loose on purpose. The managed iteration perturbs its shift to keep the system out
+                // of exact singularity, which caps what a defective matrix can reach at about
+                // 1e-10; what this is here to catch is an answer that is not an eigenvector at all.
+                Assert.True(worst <= 1e-7 * Math.Max(1, scale),
+                    $"{backend.Description}: eigenvector {j} has residual {worst:E3}");
+            }
+        }
+    }
+
+    /// <summary>
     /// A product against a right-hand side with no columns is a quick return on both backends.
     /// </summary>
     /// <remarks>
