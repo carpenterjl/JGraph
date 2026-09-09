@@ -684,9 +684,9 @@ internal static partial class JgsBuiltins
             }
 
             int count = 0;
-            foreach (double value in Flatten("nnz", args[0], line, col))
+            foreach (Complex value in FlattenComplex("nnz", args[0], line, col))
             {
-                if (value != 0)
+                if (IsCountedNonZero(value))
                 {
                     count++;
                 }
@@ -698,25 +698,56 @@ internal static partial class JgsBuiltins
         Define("nonzeros", (args, line, col) =>
         {
             Arity("nonzeros", args, 1, line, col);
-            var kept = new List<double>();
-            foreach (double value in Flatten("nonzeros", args[0], line, col))
+            var kept = new List<Complex>();
+            bool imaginary = false;
+            foreach (Complex value in FlattenComplex("nonzeros", args[0], line, col))
             {
-                if (value != 0)
+                if (IsCountedNonZero(value))
                 {
                     kept.Add(value);
+                    imaginary |= value.Imaginary != 0;
                 }
             }
 
-            return Numbers(kept.ToArray());
+            if (!imaginary)
+            {
+                // Real data leaves by the road it always did: packed, unshaped, and uncopied.
+                var reals = new double[kept.Count];
+                for (int i = 0; i < reals.Length; i++)
+                {
+                    reals[i] = kept[i].Real;
+                }
+
+                return Numbers(reals);
+            }
+
+            return ShapedComplex([.. kept], 1, kept.Count);
         });
     }
 
-    /// <summary>Every number in a value, walking nested rows so a matrix reads as one long sequence.</summary>
-    private static IEnumerable<double> Flatten(string name, JgsValue value, int line, int col)
+    /// <summary>
+    /// Whether an element counts as nonzero. MATLAB asks a complex number the same question it asks a
+    /// real one and answers it a plane at a time, so <c>0+1i</c> counts and <c>complex(0, -0)</c> does
+    /// not; a NaN in either plane counts, because NaN is not equal to zero.
+    /// </summary>
+    private static bool IsCountedNonZero(Complex value) => value.Real != 0 || value.Imaginary != 0;
+
+    /// <summary>
+    /// Every element of a value as a complex number, walking nested rows so a matrix reads as one long
+    /// column-major sequence. A real element arrives with a zero imaginary part, so a caller only has
+    /// to ask whether an element is zero and never which storage it came out of.
+    /// </summary>
+    private static IEnumerable<Complex> FlattenComplex(string name, JgsValue value, int line, int col)
     {
         if (value.Type is JgsType.Number or JgsType.Bool)
         {
-            yield return value.AsNumber;
+            yield return new Complex(value.AsNumber, 0);
+            yield break;
+        }
+
+        if (value.Type == JgsType.Complex)
+        {
+            yield return value.AsComplex;
             yield break;
         }
 
@@ -725,11 +756,28 @@ internal static partial class JgsBuiltins
             throw new JgsRuntimeException(line, col, $"{name} expects a number or numeric array, but got a {value.TypeName}.");
         }
 
+        if (value.IsPackedComplex)
+        {
+            // The planes, not the boxed elements: a packed complex array throws when it is read as
+            // JgsValues, and boxing a whole transform's output just to count it would be the wrong
+            // trade even where it worked.
+            JgsPackedComplex planes = value.AsPackedComplex;
+            double[] re = planes.Re.AsSpan().ToArray();
+            double[] im = planes.Im.AsSpan().ToArray();
+            GC.KeepAlive(planes);
+            for (int i = 0; i < re.Length; i++)
+            {
+                yield return new Complex(re[i], im[i]);
+            }
+
+            yield break;
+        }
+
         if (value.IsPacked)
         {
             foreach (double element in value.AsBuffer.AsSpan().ToArray())
             {
-                yield return element;
+                yield return new Complex(element, 0);
             }
 
             yield break;
@@ -737,7 +785,7 @@ internal static partial class JgsBuiltins
 
         foreach (JgsValue element in value.AsArray)
         {
-            foreach (double inner in Flatten(name, element, line, col))
+            foreach (Complex inner in FlattenComplex(name, element, line, col))
             {
                 yield return inner;
             }
