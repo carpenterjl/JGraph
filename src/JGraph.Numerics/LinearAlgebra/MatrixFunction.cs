@@ -938,6 +938,191 @@ public static class MatrixFunction
 
     private static Complex Atanh(Complex z) => (Complex.Log(1 + z) - Complex.Log(1 - z)) / 2.0;
 
+    /// <summary>
+    /// The triangular form a function of a matrix is evaluated over, with the unitary basis that
+    /// takes the answer back: the matrix itself when it is already upper triangular, and a complex
+    /// Schur form otherwise.
+    /// </summary>
+    /// <param name="a">The matrix.</param>
+    /// <param name="real">
+    /// Whether it may be treated as real. A real matrix goes to the real Schur form and through
+    /// <c>rsf2csf</c>, which is cheaper than the complex factorization and is what MATLAB does, so
+    /// that the two names share one triangularization instead of each having its own.
+    /// </param>
+    public static (Complex[,] U, Complex[,] T) Triangularize(Complex[,] a, bool real)
+    {
+        ArgumentNullException.ThrowIfNull(a);
+        int n = a.GetLength(0);
+        if (IsUpperTriangular(a, n))
+        {
+            var identity = new Complex[n, n];
+            for (int i = 0; i < n; i++)
+            {
+                identity[i, i] = Complex.One;
+            }
+
+            return (identity, (Complex[,])a.Clone());
+        }
+
+        if (!real)
+        {
+            return ComplexEigen.Schur(a);
+        }
+
+        var block = new double[n, n];
+        for (int c = 0; c < n; c++)
+        {
+            for (int r = 0; r < n; r++)
+            {
+                block[r, c] = a[r, c].Real;
+            }
+        }
+
+        Schur schur = Schur.Factor(block);
+        return SchurConversion.RealToComplex(Widen(schur.U), Widen(schur.T));
+    }
+
+    /// <summary>
+    /// <c>s ^ A</c> for a scalar base and a square matrix exponent: the matrix function
+    /// <c>f(x) = s^x</c>, evaluated by Schur-Parlett.
+    /// </summary>
+    /// <param name="scalar">The base.</param>
+    /// <param name="matrix">The exponent, which must be square.</param>
+    /// <param name="power">
+    /// One scalar raised to another under the caller's own domain rule — a negative base with a
+    /// whole exponent stays real, everything else that leaves the reals goes complex — so that the
+    /// diagonal here is spelt the way <c>.^</c> is spelt everywhere else, and so that
+    /// <c>2 ^ [1 0; 0 3]</c> is exactly <c>[2 0; 0 8]</c> rather than a few ulps away from it.
+    /// </param>
+    /// <remarks>
+    /// <para>
+    /// The derivatives are the whole reason this can be written at all: f⁽ᵏ⁾(x) = (ln s)ᵏ·s^x, so
+    /// the function knows its own derivatives to every order and <see cref="Evaluate"/> can take a
+    /// repeated eigenvalue in one block rather than dividing by the difference of two equal
+    /// numbers. That is what makes a defective exponent come out right — <c>2 ^ [2 1; 0 2]</c> is
+    /// <c>[4 4·ln2; 0 4]</c>, which is what the Jordan form says and what MATLAB does not answer.
+    /// </para>
+    /// <para>
+    /// The logarithm is taken once, and on the principal branch, which is the branch that makes
+    /// <c>s ^ A</c> agree with <c>expm(log(s)·A)</c> everywhere both are defined. For a positive
+    /// real base it is taken in real arithmetic so that the derivative factors of a real problem
+    /// carry no imaginary dust into the recurrence.
+    /// </para>
+    /// </remarks>
+    public static Complex[,] ScalarPower(
+        Complex scalar, Complex[,] matrix, Func<Complex, Complex, Complex> power)
+    {
+        ArgumentNullException.ThrowIfNull(matrix);
+        ArgumentNullException.ThrowIfNull(power);
+        int n = matrix.GetLength(0);
+        if (matrix.GetLength(1) != n)
+        {
+            throw new ArgumentException("A scalar is raised to a square matrix.", nameof(matrix));
+        }
+
+        if (n == 0)
+        {
+            return new Complex[0, 0];
+        }
+
+        // s^x leaves the reals exactly when s is negative — a positive base has a real logarithm, a
+        // zero or infinite or NaN one gives a real answer of its own kind, and only a negative base
+        // has the iπ in its principal logarithm that makes the function complex-valued.
+        bool real = !AnyImaginary(matrix);
+        bool realValued = scalar.Imaginary == 0 && !(scalar.Real < 0);
+        Complex logarithm = scalar.Imaginary == 0 && scalar.Real > 0
+            ? new Complex(Math.Log(scalar.Real), 0.0)
+            : Complex.Log(scalar);
+
+        Complex[] Raised(Complex[] x, int order)
+        {
+            Complex factor = Complex.One;
+            for (int i = 0; i < order; i++)
+            {
+                factor *= logarithm;
+            }
+
+            var values = new Complex[x.Length];
+            for (int i = 0; i < x.Length; i++)
+            {
+                Complex value = power(scalar, x[i]);
+                values[i] = order == 0 ? value : value * factor;
+            }
+
+            return values;
+        }
+
+        (Complex[,] u, Complex[,] t) = Triangularize(matrix, real);
+        Complex[,] f = Evaluate(u, t, Raised, Kind.General, new Options()).F;
+
+        // A real exponent under a real-valued function has a real answer, so every imaginary part
+        // left in it is the complex Schur form's own roundoff — 2 ^ [0 -1; 1 0] has a conjugate
+        // pair of eigenvalues and a real answer, and 0 ^ [1 2; 3 4] is a real matrix of infinities
+        // and NaNs rather than a complex one. A negative base has no such guarantee and keeps
+        // whatever the arithmetic gave it, which is how (-2) ^ [2 0; 0 4] stays real — its two
+        // powers are whole and exact — while (-2) ^ [1 2; 3 4] does not.
+        if (real && realValued)
+        {
+            for (int r = 0; r < n; r++)
+            {
+                for (int c = 0; c < n; c++)
+                {
+                    f[r, c] = new Complex(f[r, c].Real, 0.0);
+                }
+            }
+        }
+
+        return f;
+    }
+
+    /// <summary>Whether everything below the diagonal is nought.</summary>
+    private static bool IsUpperTriangular(Complex[,] a, int n)
+    {
+        for (int c = 0; c < n; c++)
+        {
+            for (int r = c + 1; r < n; r++)
+            {
+                if (a[r, c] != Complex.Zero)
+                {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
+    /// <summary>Whether any entry has an imaginary part, which is what stops the real Schur form.</summary>
+    private static bool AnyImaginary(Complex[,] a)
+    {
+        foreach (Complex value in a)
+        {
+            if (value.Imaginary != 0)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /// <summary>A real matrix widened into complex storage.</summary>
+    private static Complex[,] Widen(double[,] a)
+    {
+        int rows = a.GetLength(0);
+        int cols = a.GetLength(1);
+        var wide = new Complex[rows, cols];
+        for (int r = 0; r < rows; r++)
+        {
+            for (int c = 0; c < cols; c++)
+            {
+                wide[r, c] = new Complex(a[r, c], 0.0);
+            }
+        }
+
+        return wide;
+    }
+
     /// <summary>How many turns the principal logarithm dropped — <c>ceil((imag(z) − π) / 2π)</c>.</summary>
     private static double Unwinding(Complex z) => Math.Ceiling((z.Imaginary - Math.PI) / (2 * Math.PI));
 }

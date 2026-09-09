@@ -2594,6 +2594,17 @@ internal sealed partial class Interpreter
             return ApplyBinaryCore(op, left, right, at);
         }
 
+        // MATLAB defines mpower for an integer class only when both operands are scalar, and says
+        // so before it says anything about combining an integer with a double — so the refusal has
+        // to come ahead of Combine below, which would otherwise report the combination as the
+        // problem and name the wrong fix (M142).
+        if (Dialect.IsMatlab && op == TokenType.Caret
+            && (left.NumericClass.IsInteger() || right.NumericClass.IsInteger())
+            && !(IsScalarOperand(left) && IsScalarOperand(right)))
+        {
+            throw new JgsRuntimeException(at.Line, at.Column, JgsBuiltins.MPowerIntegerRefusal);
+        }
+
         JgsNumericClass numericClass =
             JgsNumericClasses.Combine(left, right, OperatorSymbol(op), at.Line, at.Column);
         JgsValue answer = ApplyBinaryCore(op, left, right, at, numericClass, out bool alreadyInClass);
@@ -2730,6 +2741,14 @@ internal sealed partial class Interpreter
                     TokenType.DotSlash => TokenType.Slash,
                     _ => TokenType.Caret,
                 };
+            }
+            else if (op == TokenType.Caret && leftScalar && !rightScalar && IsPowerExponentMatrix(right))
+            {
+                // `s ^ A` is the other half of mpower, and the half that had never been written: a
+                // scalar raised to a matrix is the matrix function f(x) = s^x, not the elementwise
+                // power this used to fall through to (M142). ScalarForm says the left side is the
+                // scalar one for '^', which is exactly the shape that reaches here.
+                return JgsBuiltins.ScalarMatrixPower(left, right, at.Line, at.Column);
             }
             else if (op == TokenType.Caret && !ScalarForm(op) && IsMatrix(left) && rightScalar
                      && !JgsBuiltins.HasComplexElements(right))
@@ -5062,8 +5081,10 @@ internal sealed partial class Interpreter
     {
         if (op == TokenType.Caret)
         {
-            throw new JgsRuntimeException(at.Line, at.Column,
-                "'^' between two arrays is not defined. Use '.^' for the elementwise power.");
+            // Two matrices are neither a base with a scalar exponent nor a scalar with a matrix
+            // one, which is the only complaint MATLAB has about them and now the only one made
+            // here: the two shapes that '^' does read answer above, in MATLAB's own words (M142).
+            throw new JgsRuntimeException(at.Line, at.Column, JgsBuiltins.MPowerShapeRefusal);
         }
 
         if (op == TokenType.Backslash)
@@ -5412,6 +5433,13 @@ internal sealed partial class Interpreter
         {
             throw new JgsRuntimeException(at.Line, at.Column,
                 "'^' on a matrix supports integer exponents only. Use '.^' for the elementwise power.");
+        }
+
+        // An N-D base is refused for having pages, not for the shape of one of them, and MATLAB
+        // says so in its own sentence — the same one `s ^ A` draws for an N-D exponent (M142).
+        if (JgsMatrix.DimsOf(matrix).Length > 2)
+        {
+            throw new JgsRuntimeException(at.Line, at.Column, JgsBuiltins.MPowerDimensionRefusal);
         }
 
         double[,] a = Rect(AsRows(matrix), at);
@@ -6404,6 +6432,20 @@ internal sealed partial class Interpreter
         || (value.Type == JgsType.Array && value.ArrayLength == 1 && !value.IsStringArray
             && !JgsMatrix.IsNested(value)
             && value.ElementAt(0).Type is JgsType.Number or JgsType.Bool or JgsType.Complex);
+
+    /// <summary>
+    /// Whether an operand is the matrix half of <c>s ^ A</c> — an array of something other than the
+    /// one element that would make it a scalar (M142).
+    /// </summary>
+    /// <remarks>
+    /// A string array is left where it was, and so is everything that is not an array at all. A
+    /// char <em>matrix</em> does reach here, because that is what it is underneath and because
+    /// MATLAB reads one as its matrix of character codes: <c>2 ^ ['ab'; 'cd']</c> answers the same
+    /// four numbers in both. A char <em>row</em> is a string here and never was an array, so it is
+    /// refused below as it always was, where MATLAB refuses it for its shape.
+    /// </remarks>
+    private static bool IsPowerExponentMatrix(JgsValue value) =>
+        value.Type == JgsType.Array && value.ArrayLength != 1 && !value.IsStringArray;
 
     /// <summary>The number an operand holds, whether it is a bare number or a 1-by-1 array of one.</summary>
     private static double ScalarValue(JgsValue value) =>

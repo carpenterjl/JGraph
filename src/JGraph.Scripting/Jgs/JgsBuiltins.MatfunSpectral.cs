@@ -542,7 +542,7 @@ internal static partial class JgsBuiltins
         }
 
         bool real = !IsComplexBlock(a);
-        (Complex[,] u, Complex[,] t) = FunmSchur(a, n, real);
+        (Complex[,] u, Complex[,] t) = FunmSchur(a, real);
 
         var eigenvalues = new Complex[n];
         for (int i = 0; i < n; i++)
@@ -694,37 +694,13 @@ internal static partial class JgsBuiltins
     /// <c>rsf2csf</c> — which this milestone also brought — turns it into the complex one. That is
     /// both cheaper and what MATLAB does, and it means the two names share their answer rather than
     /// each having its own triangularization.
+    /// <para>
+    /// It moved down beside Schur-Parlett itself in M142, when <c>s ^ A</c> became a second caller
+    /// that needs the same triangle for the same reason. This is what is left of it here.
+    /// </para>
     /// </remarks>
-    private static (Complex[,] U, Complex[,] T) FunmSchur(Complex[,] a, int n, bool real)
-    {
-        if (IsUpperTriangular(a, n))
-        {
-            var identity = new Complex[n, n];
-            for (int i = 0; i < n; i++)
-            {
-                identity[i, i] = Complex.One;
-            }
-
-            return (identity, (Complex[,])a.Clone());
-        }
-
-        if (!real)
-        {
-            return ComplexEigen.Schur(a);
-        }
-
-        var block = new double[n, n];
-        for (int c = 0; c < n; c++)
-        {
-            for (int r = 0; r < n; r++)
-            {
-                block[r, c] = a[r, c].Real;
-            }
-        }
-
-        Schur schur = Schur.Factor(block);
-        return SchurConversion.RealToComplex(Widen(schur.U), Widen(schur.T));
-    }
+    private static (Complex[,] U, Complex[,] T) FunmSchur(Complex[,] a, bool real) =>
+        MatrixFunction.Triangularize(a, real);
 
     /// <summary>The six functions MATLAB knows the derivatives of by name, or the empty string.</summary>
     private static string KnownFunction(JgsValue fun)
