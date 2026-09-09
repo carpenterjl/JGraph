@@ -79,7 +79,8 @@ internal static partial class JgsBuiltins
 
     /// <summary>Declares <c>error</c>, <c>MException</c>, and the three throwing verbs.</summary>
     private static void RegisterErrorObjects(
-        Action<string, Func<IReadOnlyList<JgsValue>, int, int, JgsValue>> Define, Interpreter interpreter)
+        Action<string, Func<IReadOnlyList<JgsValue>, int, int, JgsValue>> Define, Interpreter interpreter,
+        JgsEnvironment env, JGraphScriptGlobals host, JgsDialect dialect)
     {
         // error is re-declared here rather than edited where it was: the identifier-carrying form and
         // the MException form both need the shape this file defines, and one implementation of
@@ -103,7 +104,7 @@ internal static partial class JgsBuiltins
             bool hasIdentifier = args.Count > 1 && IsErrorIdentifier(first);
             throw new JgsRuntimeException(line, col,
                 hasIdentifier ? first : string.Empty,
-                FormatMessage("error", args, hasIdentifier ? 1 : 0, line, col));
+                FormatMessage(env, host, dialect, "error", args, hasIdentifier ? 1 : 0, hasIdentifier, line, col));
         });
 
         Define("MException", (args, line, col) =>
@@ -122,7 +123,10 @@ internal static partial class JgsBuiltins
                     $"MException: '{identifier}' is not an identifier — it must read component:mnemonic, with no spaces.");
             }
 
-            return MakeException(identifier, FormatMessage("MException", args, 1, line, col));
+            // An identifier always came first here, so the message is a format even with no data
+            // after it — MException('a:b', 'x \ y') warns and truncates in R2025b, as error does.
+            return MakeException(
+                identifier, FormatMessage(env, host, dialect, "MException", args, 1, identified: true, line, col));
         });
 
         // throw, rethrow and throwAsCaller differ in MATLAB only by which frame the report points at,

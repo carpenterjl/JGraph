@@ -2367,7 +2367,7 @@ internal static partial class JgsBuiltins
         RegisterSpecialFunctionBuiltins(env);
         RegisterMatrixBuiltins(env);
         RegisterSchurBuiltins(env);
-        RegisterTextBuiltins(env, dialect);
+        RegisterTextBuiltins(env, host, dialect);
         RegisterArrayBuiltins(env, random, dialect);
         RegisterEnvironmentBuiltins(env, host);
         RegisterGeometryBuiltins(env);

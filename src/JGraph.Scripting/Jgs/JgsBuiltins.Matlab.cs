@@ -272,7 +272,7 @@ internal static partial class JgsBuiltins
                 return JgsValue.Null; // warning('off', ...) toggles state JGraph does not keep
             }
 
-            host.WriteErr("Warning: " + FormatMessage("warning", args, 0, line, col));
+            host.WriteErr("Warning: " + FormatMessage(env, host, dialect, "warning", args, 0, identified: false, line, col));
             return JgsValue.Null;
         });
 
@@ -285,7 +285,9 @@ internal static partial class JgsBuiltins
             }
 
             throw new JgsRuntimeException(line, col,
-                args.Count > 1 ? FormatMessage("assert", args, 1, line, col) : "Assertion failed.");
+                args.Count > 1
+                    ? FormatMessage(env, host, dialect, "assert", args, 1, identified: false, line, col)
+                    : "Assertion failed.");
         });
 
         // --- Cells and structs ------------------------------------------------------------------
@@ -527,7 +529,7 @@ internal static partial class JgsBuiltins
 
         if (dialect.IsMatlab)
         {
-            WrapFormatters(env);
+            WrapFormatters(env, host);
         }
 
         RegisterMultiOutputForms(env, dialect);
@@ -630,7 +632,13 @@ internal static partial class JgsBuiltins
     /// prints a line break even though the literal holds a backslash and an 'n'. JGS decodes escapes in
     /// the literal itself, so only the MATLAB side needs this pass — and only on the format string.
     /// </summary>
-    private static void WrapFormatters(JgsEnvironment env)
+    /// <remarks>
+    /// An escape MATLAB does not recognise ends the format string there rather than passing through:
+    /// the warning goes out once for the call, and the shortened format is what <c>sprintf</c> then
+    /// works from — which is also what makes the truncation repeat correctly, since MATLAB stops each
+    /// pass over a cycling format at the same place (ADR 0148).
+    /// </remarks>
+    private static void WrapFormatters(JgsEnvironment env, JGraphScriptGlobals host)
     {
         foreach (string name in new[] { "sprintf", "fprintf" })
         {
@@ -654,77 +662,21 @@ internal static partial class JgsBuiltins
                     return inner.Call(args, line, col);
                 }
 
+                string format = JgsFormatEscapes.Decode(args[at].AsString, out JgsFormatEscapes.Fault? fault);
+                if (fault is { } bad)
+                {
+                    Warn(env, host, bad.Message, line, col);
+                }
+
                 var unescaped = new JgsValue[args.Count];
                 for (int i = 0; i < args.Count; i++)
                 {
-                    unescaped[i] = i == at ? JgsValue.Str(UnescapeFormat(args[i].AsString)) : args[i];
+                    unescaped[i] = i == at ? JgsValue.Str(format) : args[i];
                 }
 
                 return inner.Call(unescaped, line, col);
             })));
         }
-    }
-
-    /// <summary>Decodes the escape sequences MATLAB's formatting functions understand.</summary>
-    private static string UnescapeFormat(string format)
-    {
-        if (!format.Contains('\\', StringComparison.Ordinal))
-        {
-            return format;
-        }
-
-        var sb = new System.Text.StringBuilder(format.Length);
-        for (int i = 0; i < format.Length; i++)
-        {
-            if (format[i] != '\\' || i + 1 >= format.Length)
-            {
-                sb.Append(format[i]);
-                continue;
-            }
-
-            char next = format[++i];
-            switch (next)
-            {
-                case 'n': sb.Append('\n'); break;
-                case 't': sb.Append('\t'); break;
-                case 'r': sb.Append('\r'); break;
-                case 'a': sb.Append('\a'); break;
-                case 'b': sb.Append('\b'); break;
-                case 'f': sb.Append('\f'); break;
-                case 'v': sb.Append('\v'); break;
-                case '\\': sb.Append('\\'); break;
-                case 'x' when i + 1 < format.Length && char.IsAsciiHexDigit(format[i + 1]):
-                    // '\x41' is 'A': up to two hex digits name the character.
-                    int hex = 0;
-                    int taken = 0;
-                    while (taken < 2 && i + 1 < format.Length && char.IsAsciiHexDigit(format[i + 1]))
-                    {
-                        hex = (hex * 16) + Convert.ToInt32(format[++i].ToString(), 16);
-                        taken++;
-                    }
-
-                    sb.Append((char)hex);
-                    break;
-                case >= '0' and <= '7':
-                    // '\101' is 'A' and '\0' is NUL: up to three octal digits name the character.
-                    int octal = next - '0';
-                    int digits = 1;
-                    while (digits < 3 && i + 1 < format.Length && format[i + 1] is >= '0' and <= '7')
-                    {
-                        octal = (octal * 8) + (format[++i] - '0');
-                        digits++;
-                    }
-
-                    sb.Append((char)octal);
-                    break;
-                default:
-                    // Not an escape MATLAB knows: both characters stand as written.
-                    sb.Append('\\').Append(next);
-                    break;
-            }
-        }
-
-        return sb.ToString();
     }
 
     /// <summary>
@@ -1168,12 +1120,55 @@ internal static partial class JgsBuiltins
 
 
     /// <summary>Formats an <c>error</c>/<c>warning</c>/<c>assert</c> message, honouring a format string.</summary>
-    private static string FormatMessage(string name, IReadOnlyList<JgsValue> args, int start, int line, int col)
+    /// <remarks>
+    /// <para>
+    /// <c>identified</c> says whether an identifier was read off the front of the call. It decides,
+    /// together with whether any data follows, whether the message argument is a format at all — and a
+    /// message that is not a format is used exactly as written, escapes and per cent signs and all.
+    /// </para>
+    /// <para>
+    /// <c>error('a \n b')</c> keeps its backslash and its 'n' in R2025b, where <c>error('a \n b', 1)</c>
+    /// and <c>error('my:id', 'a \n b')</c> both break the line: MATLAB reads the message as a format
+    /// only when something follows it, or when an identifier came before it. Decoding it either way
+    /// would put a line break in a message that a script wrote a literal backslash into, and would
+    /// make the escape warning below fire on messages nobody asked to have formatted — including,
+    /// recursively, the warning's own text, which names the offending character after a backslash.
+    /// </para>
+    /// </remarks>
+    private static string FormatMessage(
+        JgsEnvironment env, JGraphScriptGlobals host, JgsDialect dialect, string name,
+        IReadOnlyList<JgsValue> args, int start, bool identified, int line, int col)
     {
-        string format = UnescapeFormat(Str(name, args, start, line, col));
-        return args.Count > start + 1
-            ? JgsSprintf.Format(format, args.Skip(start + 1).ToArray())
-            : format;
+        string format = Str(name, args, start, line, col);
+        bool hasData = args.Count > start + 1;
+        bool isFormat = identified || hasData;
+
+        // Only MATLAB leaves escapes to the format reader; a JGS literal arrived with its own already
+        // decoded by the lexer, so decoding again here would read a backslash the script had asked to
+        // keep.
+        if (isFormat && dialect.IsMatlab)
+        {
+            format = JgsFormatEscapes.Decode(format, out JgsFormatEscapes.Fault? fault);
+            if (fault is { } bad)
+            {
+                Warn(env, host, bad.Message, line, col);
+            }
+        }
+
+        if (!hasData)
+        {
+            return format;
+        }
+
+        // These four read their data the way MATLAB's sprintf does — the format repeats until the
+        // values are gone and stops where they run out, so error('a%d ', 1, 2) is 'a1 a2 ' and
+        // error('a%d %d', 1) is 'a1 '. It matters here beyond the general parity: a format cut short
+        // at a bad escape usually has no conversions left, and the strict reading refused the call
+        // outright rather than dropping the values MATLAB drops.
+        JgsValue[] data = args.Skip(start + 1).ToArray();
+        return dialect.IsMatlab
+            ? JgsSprintf.FormatMatlab(format, data)
+            : JgsSprintf.Format(format, data);
     }
 
 }

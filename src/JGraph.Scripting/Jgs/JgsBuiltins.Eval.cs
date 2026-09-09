@@ -51,7 +51,7 @@ internal static partial class JgsBuiltins
         RegisterEvaluation(Define, env, interpreter, host);
         RegisterWorkspaceQuestions(Define, env, interpreter, host);
         RegisterErrorHistory(Define, env, interpreter);
-        RegisterErrorObjects(Define, interpreter);
+        RegisterErrorObjects(Define, interpreter, env, host, dialect);
         RegisterIntrospection(Define, DefineBare, interpreter, host);
         RegisterLegacyFunctionPlotBuiltins(env, interpreter);
         RegisterClassBuiltins(env, interpreter);
@@ -487,12 +487,17 @@ internal static partial class JgsBuiltins
         {
             Define("warning", (args, line, col) =>
             {
+                JgsValue answer = inner.Call(args, line, col);
+
+                // Recorded after the call and not before it: raising this warning can itself raise
+                // one — a bad escape in the format is warned about first, the way MATLAB does it
+                // (ADR 0148) — and the inner warning would otherwise be the one lastwarn kept.
                 if (args.Count > 0 && args[0].Type == JgsType.String)
                 {
                     interpreter.LastWarning = args[0].AsString;
                 }
 
-                return inner.Call(args, line, col);
+                return answer;
             });
         }
     }

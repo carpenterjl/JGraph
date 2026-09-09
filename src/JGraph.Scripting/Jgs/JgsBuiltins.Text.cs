@@ -12,7 +12,7 @@ namespace JGraph.Scripting.Jgs;
 internal static partial class JgsBuiltins
 {
     /// <summary>Registers the string and regular-expression builtins (M38).</summary>
-    private static void RegisterTextBuiltins(JgsEnvironment env, JgsDialect dialect)
+    private static void RegisterTextBuiltins(JgsEnvironment env, JGraphScriptGlobals host, JgsDialect dialect)
     {
         void Define(string name, Func<IReadOnlyList<JgsValue>, int, int, JgsValue> body,
             Func<IReadOnlyList<JgsValue>, int, int, int, JgsValue[]>? multi = null) =>
@@ -23,7 +23,7 @@ internal static partial class JgsBuiltins
         RegisterRegexBuiltins(env, dialect);
         RegisterCharacterClasses(Define);
         RegisterByteViews(Define);
-        RegisterScanning(Define, dialect);
+        RegisterScanning(Define, env, host, dialect);
     }
 
     // --- Searching and comparing ------------------------------------------------------------------
@@ -385,18 +385,19 @@ internal static partial class JgsBuiltins
 
     private static void RegisterScanning(
         Action<string, Func<IReadOnlyList<JgsValue>, int, int, JgsValue>,
-            Func<IReadOnlyList<JgsValue>, int, int, int, JgsValue[]>?> Define, JgsDialect dialect)
+            Func<IReadOnlyList<JgsValue>, int, int, int, JgsValue[]>?> Define,
+        JgsEnvironment env, JGraphScriptGlobals host, JgsDialect dialect)
     {
-        Define("sscanf", (args, line, col) => ScanText(args, 1, dialect, line, col)[0],
-            (args, wanted, line, col) => ScanText(args, wanted, dialect, line, col));
+        Define("sscanf", (args, line, col) => ScanText(args, 1, env, host, dialect, line, col)[0],
+            (args, wanted, line, col) => ScanText(args, wanted, env, host, dialect, line, col));
     }
 
     /// <summary>
     /// <c>[A, count, errmsg, nextindex] = sscanf(text, format, size)</c>: the text read under a scanf
     /// format, bounded by a count or an <c>[m n]</c> shape.
     /// </summary>
-    private static JgsValue[] ScanText(IReadOnlyList<JgsValue> args, int wanted, JgsDialect dialect,
-        int line, int col)
+    private static JgsValue[] ScanText(IReadOnlyList<JgsValue> args, int wanted, JgsEnvironment env,
+        JGraphScriptGlobals host, JgsDialect dialect, int line, int col)
     {
         ArityRange("sscanf", args, 2, 3, line, col);
         string text = Str("sscanf", args, 0, line, col);
@@ -404,7 +405,13 @@ internal static partial class JgsBuiltins
         if (dialect.IsMatlab)
         {
             // MATLAB's quotes keep '\n' as two characters and leave the decoding to the format reader.
-            format = UnescapeFormat(format);
+            // sscanf shares sprintf's escapes and sprintf's answer to a bad one: warn, and read on
+            // with the format cut short there (ADR 0148).
+            format = JgsFormatEscapes.Decode(format, out JgsFormatEscapes.Fault? fault);
+            if (fault is { } bad)
+            {
+                Warn(env, host, bad.Message, line, col);
+            }
         }
 
         (int rows, int limit) = args.Count == 3

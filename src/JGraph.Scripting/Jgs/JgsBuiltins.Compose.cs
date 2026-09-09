@@ -31,8 +31,20 @@ internal static partial class JgsBuiltins
             : [Str("compose", args, 0, line, col)];
         if (dialect?.IsMatlab == true)
         {
-            // MATLAB's quotes keep '\n' as two characters; compose decodes them like sprintf.
-            formats = Array.ConvertAll(formats, UnescapeFormat);
+            // MATLAB's quotes keep '\n' as two characters; compose decodes them like sprintf. Where
+            // it parts company with sprintf is the escape it does not recognise: compose raises
+            // MATLAB's printf error rather than warning and carrying on with a shortened format.
+            // That is measured rather than inferred — compose('B \ C') throws
+            // MATLAB:printf:BadEscapeSequenceInFormat in R2025b where sprintf('B \ C') warns and
+            // answers 'B ' (ADR 0148).
+            for (int i = 0; i < formats.Length; i++)
+            {
+                formats[i] = JgsFormatEscapes.Decode(formats[i], out JgsFormatEscapes.Fault? fault);
+                if (fault is { } bad)
+                {
+                    throw new JgsRuntimeException(line, col, bad.Identifier, bad.Message);
+                }
+            }
         }
 
         JgsValue Answer(string[] texts, int rows, int cols)
