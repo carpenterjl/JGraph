@@ -256,7 +256,10 @@ internal static partial class JgsBuiltins
             ArityRange("rehash", args, 0, 1, line, col);
 
             // MATLAB caches which files hold which functions and needs telling when that changes.
-            // JGraph looks on disk at the moment of the call, so there is nothing to rebuild.
+            // Since M145 JGraph keeps such a cache too — the function path's file index — and this
+            // is how a script tells it that another program has been at the folders. A function
+            // file itself is still re-read whenever its timestamp has moved, with or without this.
+            host.NoteFileChanging(null);
             return JgsValue.Null;
         });
 

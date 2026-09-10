@@ -12,7 +12,8 @@ namespace JGraph.Scripting.Jgs;
 /// Resolution deliberately runs <em>last</em>. In MATLAB a path file shadows a built-in of the same
 /// name; here the ~2,500 built-ins win, because a script that quietly gets a user's half-finished
 /// <c>mean.m</c> instead of the real one fails in a way nobody can read. ADR 0062 records the
-/// divergence.
+/// divergence. M145 is lifting it in steps: the <see cref="Index"/> already knows which built-in
+/// names a file claims, and a later step will consult it.
 /// </remarks>
 internal sealed class JgsFunctionPath
 {
@@ -26,6 +27,7 @@ internal sealed class JgsFunctionPath
     private readonly Interpreter _interpreter;
     private readonly JGraphScriptGlobals _host;
     private readonly List<string> _folders = [];
+    private readonly JgsFileIndex _index;
 
     // Names are case-sensitive the way MATLAB's are; the *paths* they resolve to are not, on Windows.
     private readonly Dictionary<string, Loaded> _loaded = new(StringComparer.Ordinal);
@@ -35,10 +37,23 @@ internal sealed class JgsFunctionPath
     {
         _interpreter = interpreter;
         _host = host;
+        _index = new JgsFileIndex(
+            () => host.ImplicitCodeFolders.Concat(_folders),
+            () => interpreter.StatementEpoch,
+            name => interpreter.Globals.Builtins.TryGet(name, out _),
+            message => host.WriteErr(message + "\n"));
+        host.FileChanging += _index.Invalidate;
     }
 
     /// <summary>The folders <c>addpath</c> has added, in search order (the implicit ones are not listed).</summary>
     public IReadOnlyList<string> Folders => _folders;
+
+    /// <summary>
+    /// What <c>.m</c> files the search folders hold, kept current so that whether a built-in name is
+    /// shadowed by a file can be answered without a disk probe. Nothing consults its shadowing set
+    /// yet; the flip that does is a later step of M145.
+    /// </summary>
+    public JgsFileIndex Index => _index;
 
     /// <summary>
     /// Adds <paramref name="folder"/> to the search path, at the front unless
@@ -60,8 +75,9 @@ internal sealed class JgsFunctionPath
 
         // A folder joining or leaving the path can change what a name means, and the cache holds the
         // old answer. It is small and rebuilding it is a file read, so clear it rather than reason
-        // about which entries the change could have reached.
+        // about which entries the change could have reached. The index re-reads for the same reason.
         _loaded.Clear();
+        _index.Invalidate(null);
     }
 
     /// <summary>Removes <paramref name="folder"/> from the search path; false when it was not on it.</summary>
@@ -76,6 +92,7 @@ internal sealed class JgsFunctionPath
 
         _folders.RemoveAt(at);
         _loaded.Clear();
+        _index.Invalidate(null);
         return true;
     }
 
@@ -122,16 +139,41 @@ internal sealed class JgsFunctionPath
         }
 
         DateTime written = File.GetLastWriteTimeUtc(path);
-        if (_loaded.TryGetValue(name, out Loaded? cached)
-            && PathComparer.Equals(cached.Path, path) && cached.Written == written)
+        bool loadedBefore = _loaded.TryGetValue(name, out Loaded? cached) && PathComparer.Equals(cached.Path, path);
+        if (loadedBefore && cached!.Written == written)
         {
             value = cached.Value;
             return true;
         }
 
-        value = Load(name, path);
+        try
+        {
+            value = Load(name, path);
+        }
+        catch (JgsRuntimeException) when (loadedBefore && !CanRead(path))
+        {
+            // MATLAB's words for a function it had and cannot re-read. (A file that has been deleted
+            // outright is the case above — Find no longer sees it — and falls through to the next
+            // candidate instead, a recorded divergence: a dead binding that errors is stale-cache
+            // behaviour, not fidelity.)
+            throw new JgsRuntimeException(0, 0, $"Previously accessible file \"{path}\" is now inaccessible.");
+        }
+
         _loaded[name] = new Loaded(path, written, value);
         return true;
+    }
+
+    private static bool CanRead(string path)
+    {
+        try
+        {
+            using FileStream probe = File.OpenRead(path);
+            return true;
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+        {
+            return false;
+        }
     }
 
     /// <summary>

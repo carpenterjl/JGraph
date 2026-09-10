@@ -179,6 +179,41 @@ public sealed class JGraphScriptGlobals
         }
 
         _currentDirectory = target;
+        NoteFileChanging(null); // the search folders have moved, so every cached view of them is suspect
+    }
+
+    /// <summary>
+    /// Raised before the interpreter changes a file or folder, with the full path, or with null
+    /// when everything under the search folders is to be re-read (<c>cd</c>, <c>rehash</c>). The
+    /// function path's file index listens, so a script that writes <c>mean.m</c> is seen to have
+    /// done so in the same statement (M145).
+    /// </summary>
+    internal event Action<string?>? FileChanging;
+
+    /// <summary>Tells <see cref="FileChanging"/> listeners that <paramref name="path"/> is about to change.</summary>
+    internal void NoteFileChanging(string? path) => FileChanging?.Invoke(path);
+
+    /// <summary>
+    /// The folders a bare <c>name.m</c> is looked for in before the search path proper, in the order
+    /// <see cref="Resolve"/> tries them: where <c>cd</c> moved to, the running script's own folder,
+    /// and the workspace root. Read live, because the first two move during a run.
+    /// </summary>
+    internal IEnumerable<string> ImplicitCodeFolders
+    {
+        get
+        {
+            if (_currentDirectory is { Length: > 0 } moved)
+            {
+                yield return moved;
+            }
+
+            if (_runScriptDirectory is { Length: > 0 } scriptDir)
+            {
+                yield return scriptDir;
+            }
+
+            yield return _context.WorkingDirectory is { Length: > 0 } root ? root : Directory.GetCurrentDirectory();
+        }
     }
 
     /// <summary>Writes raw text (no newline) to the error console. Backs Python's redirected stderr.</summary>
@@ -377,6 +412,7 @@ public sealed class JGraphScriptGlobals
         ArgumentNullException.ThrowIfNull(path);
         if (Path.IsPathRooted(path))
         {
+            NoteFileChanging(path);
             return path;
         }
 
@@ -387,7 +423,9 @@ public sealed class JGraphScriptGlobals
             : _runScriptDirectory is { Length: > 0 } scriptDir
                 ? scriptDir
                 : _context.WorkingDirectory;
-        return baseDirectory is { Length: > 0 } directory ? Path.Combine(directory, path) : path;
+        string resolved = baseDirectory is { Length: > 0 } directory ? Path.Combine(directory, path) : path;
+        NoteFileChanging(resolved);
+        return resolved;
     }
 
     private IScriptFigureFiles RequireFigureFiles(string operation) =>

@@ -167,10 +167,9 @@ internal static partial class JgsBuiltins
             return JgsValue.Str(Path.PathSeparator.ToString());
         });
 
-        // rehash is deliberately left where it already was, as the accepted no-op the session builtins
-        // declare. It exists to drop MATLAB's cached view of the path, and there is nothing here to
-        // drop: a function file is re-read whenever its timestamp has moved, so what rehash promises
-        // is already true without it.
+        // rehash stays with the session builtins, where it was declared as a no-op before M145 gave
+        // it a cache to drop: it now tells the host, and through it the file index, to re-read the
+        // search folders.
     }
 
     /// <summary>Adds one folder to <paramref name="search"/>, refusing a folder that is not there.</summary>

@@ -61,6 +61,17 @@ internal sealed partial class Interpreter
     private long _steps;
     private int _callDepth;
 
+    // How deep in nested blocks execution is: 1 in the outermost block of the program being run.
+    private int _blockDepth;
+
+    /// <summary>
+    /// Counts top-level statements: bumped once per statement of the outermost block, and not at
+    /// all inside a loop body, a function, or a statement evaluated from within another. The file
+    /// index re-reads folder times at most once per value of this, which is what makes "a file
+    /// another program dropped is seen at the next prompt line" cost a loop nothing (M145).
+    /// </summary>
+    internal int StatementEpoch { get; private set; }
+
     /// <summary>Creates an interpreter over a prepared <paramref name="globals"/> environment.</summary>
     /// <param name="globals">The global environment, seeded with the built-ins.</param>
     /// <param name="cancellationToken">Checked cooperatively before every statement.</param>
@@ -574,28 +585,46 @@ internal sealed partial class Interpreter
         }
 
         // The plain path stays allocation-free and hook-free — full speed for normal runs.
-        foreach (Stmt statement in statements)
+        _blockDepth++;
+        try
         {
-            Tick();
-            Completion completion = Execute(statement, env);
-            if (completion.Kind != CompletionKind.Normal)
+            foreach (Stmt statement in statements)
             {
-                return completion;
-            }
-        }
+                Tick();
+                if (_blockDepth == 1)
+                {
+                    StatementEpoch++;
+                }
 
-        return Completion.Normal;
+                Completion completion = Execute(statement, env);
+                if (completion.Kind != CompletionKind.Normal)
+                {
+                    return completion;
+                }
+            }
+
+            return Completion.Normal;
+        }
+        finally
+        {
+            _blockDepth--;
+        }
     }
 
     private Completion ExecuteBlockHooked(IReadOnlyList<Stmt> statements, JgsEnvironment env)
     {
         var block = new BlockExecution(statements);
         _hook!.EnterBlock(block);
+        _blockDepth++;
         try
         {
             for (int i = 0; i < block.Statements.Count; i++)
             {
                 Tick();
+                if (_blockDepth == 1)
+                {
+                    StatementEpoch++; // before the hook, so what the hook reads is read as this statement
+                }
 
                 // The hook may block (pause), edit the block's statement list in place (live edit),
                 // or redirect execution (set next statement) by returning a jump index.
@@ -616,6 +645,7 @@ internal sealed partial class Interpreter
         }
         finally
         {
+            _blockDepth--;
             _hook.ExitBlock();
         }
     }

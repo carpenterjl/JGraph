@@ -228,7 +228,7 @@ public static class JgsBuiltinCatalog
         Add("beep", "Sounds the console bell, or turns it on or off.", Opt("state"));
         Add("pack", "Asks the runtime to collect and compact memory now.", Opt("target"));
         Add("recycle", "Reports whether delete recycles rather than removes; JGraph always removes.", Opt("state"));
-        Add("rehash", "A no-op: a function file is re-read whenever its timestamp has moved, so there is no stale cache to drop.", Opt("scope"));
+        Add("rehash", "Re-reads the search folders' file lists, for files another program changed mid-statement; a function file itself is re-read whenever its timestamp has moved.", Opt("scope"));
         Add("display", "Prints a value the way the console would.", P("value"));
 
         // --- The installation -----------------------------------------------------------------------

@@ -83,6 +83,7 @@ internal static partial class JgsBuiltins
         {
             ArityRange("rmdir", args, 1, 2, line, col);
             string path = host.Resolve(Str("rmdir", args, 0, line, col));
+            host.NoteFileChanging(path);
 
             // MATLAB refuses to remove a non-empty folder without the 's' switch, and so does this:
             // deleting a tree because the caller mistyped a name is not a recoverable mistake.
@@ -102,6 +103,7 @@ internal static partial class JgsBuiltins
         {
             ArityRange("movefile", args, 2, 3, line, col);
             string source = host.Resolve(Str("movefile", args, 0, line, col));
+            host.NoteFileChanging(source); // the destination reports itself through ResolveForWrite
             string destination = host.ResolveForWrite(Str("movefile", args, 1, line, col));
             return Attempt("movefile", line, col, () => File.Move(source, DestinationFor(source, destination), overwrite: true));
         });
@@ -118,7 +120,9 @@ internal static partial class JgsBuiltins
                     continue;
                 }
 
-                File.Delete(host.Resolve(Str("delete", args, i, line, col)));
+                string path = host.Resolve(Str("delete", args, i, line, col));
+                host.NoteFileChanging(path);
+                File.Delete(path);
             }
 
             return JgsValue.Null;
