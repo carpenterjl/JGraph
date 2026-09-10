@@ -128,6 +128,7 @@ internal sealed class JgsClass
         try
         {
             verified = JgsBuiltins.CheckArgument(property.Spec, value, line, col, _interpreter.Globals);
+            using Interpreter.FileContext classFile = _interpreter.EnterFile(Declaration.SourceId);
             _interpreter.RunValidators(property.Spec.Validators, verified, _scope);
         }
         catch (JgsRuntimeException failure)
@@ -143,6 +144,7 @@ internal sealed class JgsClass
     public JgsObject NewDefault(int line, int col)
     {
         var instance = new JgsObject(this);
+        JgsEnvironment defaults = DefaultWorkspace();
         foreach (ClassProperty property in Properties)
         {
             if (property.Constant)
@@ -151,7 +153,7 @@ internal sealed class JgsClass
             }
 
             JgsValue start = property.Spec.Default is { } expression
-                ? _interpreter.EvaluateIn(expression, _scope)
+                ? _interpreter.EvaluateInContext(expression, defaults, Declaration.SourceId)
                 : JgsValue.Array([]);
             instance.Fields[property.Spec.Name] = Check(property, start, line, col);
         }
@@ -227,6 +229,15 @@ internal sealed class JgsClass
         return result;
     }
 
+    /// <summary>
+    /// The workspace a property default or a constant is evaluated in: a private, writable frame
+    /// over the class's scope that is thrown away afterwards. R2025b was measured (M145, step 0): a
+    /// function called from a default reads no variable of the constructing frame, can
+    /// <c>assignin('caller', …)</c> without error, and nothing sees what it assigned. The class
+    /// file's local functions are visible to the default itself and to nothing it calls.
+    /// </summary>
+    private JgsEnvironment DefaultWorkspace() => new(_scope) { IsCallBoundary = true };
+
     private Dictionary<string, JgsValue> BuildConstants()
     {
         var constants = new Dictionary<string, JgsValue>(StringComparer.Ordinal);
@@ -245,7 +256,7 @@ internal sealed class JgsClass
 
             constants[property.Spec.Name] = Check(
                 property,
-                _interpreter.EvaluateIn(expression, _scope),
+                _interpreter.EvaluateInContext(expression, DefaultWorkspace(), Declaration.SourceId),
                 Declaration.Line,
                 Declaration.Column);
         }

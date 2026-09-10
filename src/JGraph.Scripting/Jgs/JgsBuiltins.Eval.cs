@@ -17,6 +17,9 @@ internal static partial class JgsBuiltins
     [
         "eval", "evalc", "evalin", "assignin", "str2func", "str2num",
         "exist", "who", "which", "narginchk", "nargoutchk", "nargchk",
+
+        // M145: feval resolves the name it is handed through the interpreter, so it moved here.
+        "feval",
         "nargin", "nargout",
         "lasterr", "lasterror", "lastwarn", "refreshdata",
 
@@ -90,12 +93,18 @@ internal static partial class JgsBuiltins
                 throw new JgsRuntimeException(line, col, "functions expects a function handle.");
             }
 
-            bool anonymous = args[0].AsCallable is AnonymousFunction;
+            // A named handle reports what it captured: the kind of target, and the file it came
+            // from — a path function's own file, not the run's (M145).
+            IJgsCallable callable = args[0].AsCallable;
+            string file = callable is NamedHandle named
+                ? named.File ?? string.Empty
+                : callable is UserFunction ? host.RunScriptPath ?? string.Empty : string.Empty;
+            IJgsCallable target = callable is NamedHandle captured ? captured.Captured : callable;
             return JgsValue.Struct(new Dictionary<string, JgsValue>(StringComparer.Ordinal)
             {
                 ["function"] = JgsValue.Str(SourceTextOf("functions", args[0], line, col).TrimStart('@')),
-                ["type"] = JgsValue.Str(anonymous ? "anonymous" : args[0].AsCallable is UserFunction ? "simple" : "builtin"),
-                ["file"] = JgsValue.Str(args[0].AsCallable is UserFunction ? host.RunScriptPath ?? string.Empty : string.Empty),
+                ["type"] = JgsValue.Str(target is AnonymousFunction ? "anonymous" : target is UserFunction ? "simple" : "builtin"),
+                ["file"] = JgsValue.Str(file),
             });
         });
 
@@ -261,20 +270,52 @@ internal static partial class JgsBuiltins
             return JgsValue.Str(captured);
         });
 
+        // The named workspace is installed as the current frame while the text runs, so a function
+        // the text calls sees it as its caller (M145); the text's own names still resolve from the
+        // file that called evalin, as MATLAB's do.
         Define("evalin", (args, line, col) =>
         {
             Arity("evalin", args, 2, line, col);
-            return interpreter.EvaluateSource(
+            return interpreter.EvaluateSourceIn(
                 Str("evalin", args, 1, line, col), WorkspaceNamed("evalin", args, 0, interpreter, line, col), line, col);
         });
 
         Define("assignin", (args, line, col) =>
         {
             Arity("assignin", args, 3, line, col);
-            WorkspaceNamed("assignin", args, 0, interpreter, line, col)
-                .Declare(Str("assignin", args, 1, line, col), args[2]);
+            JgsEnvironment target = WorkspaceNamed("assignin", args, 0, interpreter, line, col);
+            string name = Str("assignin", args, 1, line, col);
+
+            // An anonymous function's workspace is the snapshot its handle took: a captured name can
+            // be changed, a new one cannot be added, and MATLAB refuses with these words (M145).
+            if (target.IsStaticWorkspace && !target.IsBoundWithinStaticWorkspace(name))
+            {
+                throw new JgsRuntimeException(line, col, $"Attempt to add \"{name}\" to a static workspace.");
+            }
+
+            target.Declare(name, args[2]);
             return JgsValue.Null;
         });
+
+        // feval takes a handle *or a name*, and answers as many outputs as it is asked for. Both
+        // halves were missing until M69's form probe ran the documented syntaxes: `feval('sin', x)`
+        // is the form MATLAB documents first and this refused it by type, and `[q, r] = feval(@f, x)`
+        // silently produced one value because the entry carried no MultiOutput body — a wrong answer
+        // rather than an error, which is the worse of the two failures.
+        env.Builtins.Register("feval", JgsValue.Function(new BuiltinFunction(
+            "feval",
+            (args, line, col) => FevalTarget(interpreter, args, line, col)
+                .Call(args.Skip(1).ToArray(), line, col))
+        {
+            MultiOutput = (args, wanted, line, col) =>
+            {
+                IJgsCallable target = FevalTarget(interpreter, args, line, col);
+                IReadOnlyList<JgsValue> rest = args.Skip(1).ToArray();
+                return target is IJgsMultiCallable several
+                    ? several.CallMultiple(rest, wanted, line, col)
+                    : [target.Call(rest, line, col)];
+            },
+        }));
 
         Define("str2func", (args, line, col) =>
         {
@@ -287,17 +328,51 @@ internal static partial class JgsBuiltins
                 return interpreter.EvaluateSource(text, interpreter.CurrentFrame, line, col);
             }
 
-            if (env.TryGet(text, out JgsValue found) && found.Type == JgsType.Function)
-            {
-                return found;
-            }
-
-            return interpreter.FunctionPath is { } search && search.TryResolve(text, out JgsValue onPath)
-                ? onPath
+            // The same handle @name would make where the call stands (M145).
+            return interpreter.TryMakeHandle(text, interpreter.CurrentFrame, out JgsValue handle)
+                ? handle
                 : throw new JgsRuntimeException(line, col, $"str2func: '{text}' is not a function.");
         });
 
         _ = host;
+    }
+
+    /// <summary>
+    /// What <c>feval</c> is being asked to call: a function handle, or the name of one as text.
+    /// </summary>
+    /// <remarks>
+    /// MATLAB documents <c>feval(name, x1, ..., xn)</c> before the handle form, and a ported script
+    /// is as likely to hold the name in a variable as the handle. The name resolves the way the same
+    /// name written as a call would — Invoke mode, from the frame the call is made in — so a path
+    /// file answers to it as readily as a builtin (M145; it used to be refused by name).
+    /// </remarks>
+    private static IJgsCallable FevalTarget(
+        Interpreter interpreter, IReadOnlyList<JgsValue> args, int line, int col)
+    {
+        if (args.Count == 0)
+        {
+            throw new JgsRuntimeException(line, col, "feval needs a function to call.");
+        }
+
+        if (args[0].Type == JgsType.Function)
+        {
+            return args[0].AsCallable;
+        }
+
+        if (args[0].Type == JgsType.String)
+        {
+            string name = args[0].AsString;
+            Resolution found = interpreter.Resolver.Invoke(name, interpreter.CurrentFrame);
+            if (found.Found && found.Value.Type == JgsType.Function)
+            {
+                return found.Value.AsCallable;
+            }
+
+            throw new JgsRuntimeException(line, col, $"feval: '{name}' is not a function.");
+        }
+
+        throw new JgsRuntimeException(
+            line, col, $"feval expects a function handle or a function name, but got a {args[0].TypeName}.");
     }
 
     /// <summary>Resolves MATLAB's workspace words to an environment.</summary>
@@ -350,7 +425,7 @@ internal static partial class JgsBuiltins
             // was meant: MATLAB answers 5 for `exist('fix')` standing beside a folder called `fix`,
             // and only `exist('fix', 'dir')` reaches the folder (M109). Naming a kind skips this arm,
             // so 'file' and 'dir' still answer about the disk alone.
-            if (kind is null && env.TryGet(name, out JgsValue builtin) && builtin.Type == JgsType.Function)
+            if (kind is null && interpreter.Resolver.Lookup(name, env).Value is { Type: JgsType.Function })
             {
                 return JgsValue.Number(5);
             }
@@ -369,7 +444,7 @@ internal static partial class JgsBuiltins
                 }
             }
 
-            if (wantFunction && env.TryGet(name, out JgsValue callable) && callable.Type == JgsType.Function)
+            if (wantFunction && interpreter.Resolver.Lookup(name, env).Value is { Type: JgsType.Function })
             {
                 return JgsValue.Number(5);
             }
@@ -405,7 +480,7 @@ internal static partial class JgsBuiltins
         {
             Arity("which", args, 1, line, col);
             string name = Str("which", args, 0, line, col);
-            if (env.TryGet(name, out JgsValue value) && value.Type == JgsType.Function)
+            if (interpreter.Resolver.Lookup(name, env).Value is { Type: JgsType.Function })
             {
                 return JgsValue.Str($"{name} is a built-in function.");
             }
@@ -538,15 +613,16 @@ internal static partial class JgsBuiltins
         JgsValue given = args[0];
         if (IsTextScalar(given))
         {
+            // Query mode: the first layer holding the name as a function, the workspace walk before
+            // the files, as the resolver orders them.
             string name = TextOf(given);
-            if (!env.TryGet(name, out given) || given.Type != JgsType.Function)
-            {
-                if (!interpreter.TryResolveFunctionByName(name, out given))
-                {
-                    throw new JgsRuntimeException(line, col, "MATLAB:narginout:notValidMfile",
-                        "Not a valid MATLAB file.");
-                }
-            }
+            given = interpreter.Resolver.Query(name, env).FirstOrDefault(Resolution.None).Value;
+        }
+
+        // A named handle answers for what it captured, which has a header — or a catalog entry — to read.
+        if (given.Type == JgsType.Function && given.AsCallable is NamedHandle named)
+        {
+            given = JgsValue.Function(named.Captured);
         }
 
         if (given.Type != JgsType.Function)

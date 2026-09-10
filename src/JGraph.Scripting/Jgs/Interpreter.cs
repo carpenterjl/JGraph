@@ -49,6 +49,11 @@ internal sealed partial class Interpreter
     /// This scope has no parent, which is what keeps it unreachable except through a declaration.
     /// </remarks>
     private readonly JgsEnvironment _globalWorkspace = new();
+
+    // The one place a name's meaning is decided (M145), and the file the running code came from,
+    // which the resolver will read for a file's own functions and nothing else reads.
+    private readonly JgsNameResolver _resolver;
+    private string _currentFile = "";
     private CancellationToken _cancellationToken;
     private IJgsDebugHook? _hook;
     private readonly Action<string>? _echo;
@@ -88,6 +93,7 @@ internal sealed partial class Interpreter
     {
         _globals = globals;
         CurrentFrame = globals;
+        _resolver = new JgsNameResolver(this, _globalWorkspace);
         _cancellationToken = cancellationToken;
         _hook = hook;
         _echo = echo;
@@ -196,6 +202,79 @@ internal sealed partial class Interpreter
     /// <summary>The global environment — <c>evalin('base', …)</c>'s workspace.</summary>
     internal JgsEnvironment Globals => _globals;
 
+    /// <summary>The resolver every name goes through; the built-ins that take a name ask it too.</summary>
+    internal JgsNameResolver Resolver => _resolver;
+
+    /// <summary>
+    /// The file the running code came from: the script's, a called function's, the closure's for an
+    /// anonymous body, the class's for a property default — "" for code with no file behind it. A
+    /// piece of interpreter state of its own, because most of the entries that evaluate code never
+    /// swap the frame; see <see cref="EnterFile"/>.
+    /// </summary>
+    internal string CurrentFile => _currentFile;
+
+    /// <summary>
+    /// Makes <paramref name="file"/> the current file until the returned token is disposed, which
+    /// puts the previous one back — a <c>using</c> at every entry, so an exception, a cancellation
+    /// or a re-entrant call unwinds it. The entries: a function body, a script run by name, an
+    /// anonymous body, a class default or validator, the paused debugger's prompt, and the run itself.
+    /// </summary>
+    internal FileContext EnterFile(string file)
+    {
+        string previous = _currentFile;
+        _currentFile = file;
+        return new FileContext(this, previous);
+    }
+
+    /// <summary>The token <see cref="EnterFile"/> hands out; disposing it restores the file it replaced.</summary>
+    internal readonly struct FileContext(Interpreter interpreter, string previous) : IDisposable
+    {
+        /// <inheritdoc />
+        public void Dispose() => interpreter._currentFile = previous;
+    }
+
+    /// <summary>
+    /// Evaluates <paramref name="expression"/> with <paramref name="env"/> as the current frame and
+    /// <paramref name="file"/> as the current file, both put back afterwards — the pair a class
+    /// property default runs under, so that a function it calls sees the default's own workspace as
+    /// its caller and the class file as where the default's names come from.
+    /// </summary>
+    internal JgsValue EvaluateInContext(Expr expression, JgsEnvironment env, string file)
+    {
+        JgsEnvironment frame = CurrentFrame;
+        using FileContext entered = EnterFile(file);
+        CurrentFrame = env;
+        try
+        {
+            return Evaluate(expression, env);
+        }
+        finally
+        {
+            CurrentFrame = frame;
+        }
+    }
+
+    /// <summary>
+    /// Evaluates <paramref name="expression"/> asking for <paramref name="wanted"/> outputs, under the
+    /// same pair as <see cref="EvaluateInContext"/> — how an anonymous handle runs its body: in its
+    /// own workspace, which a function it calls then sees as its caller, and under the file the
+    /// handle was made in, which is where the body's names come from.
+    /// </summary>
+    internal JgsValue[] EvaluateForOutputsInContext(Expr expression, int wanted, JgsEnvironment env, string file)
+    {
+        JgsEnvironment frame = CurrentFrame;
+        using FileContext entered = EnterFile(file);
+        CurrentFrame = env;
+        try
+        {
+            return EvaluateForOutputs(expression, wanted, env);
+        }
+        finally
+        {
+            CurrentFrame = frame;
+        }
+    }
+
     /// <summary>
     /// Parses and runs <paramref name="code"/> in <paramref name="env"/>, returning the value of a
     /// trailing bare expression so <c>x = eval('1+1')</c> is 2. A parse failure becomes a runtime
@@ -226,6 +305,28 @@ internal sealed partial class Interpreter
         }
 
         return result;
+    }
+
+    /// <summary>
+    /// Runs <paramref name="code"/> in <paramref name="workspace"/> with that workspace installed as
+    /// the current frame for the duration — <c>evalin</c>. A function the text calls then sees the
+    /// named workspace as its caller, so its own <c>evalin</c>/<c>assignin('caller', …)</c> reach
+    /// it. The file stays the evaluating function's: MATLAB resolves the text's function names from
+    /// the file that called <c>evalin</c>, the same as <c>eval</c>, and only its variables from the
+    /// target.
+    /// </summary>
+    internal JgsValue EvaluateSourceIn(string code, JgsEnvironment workspace, int line, int column)
+    {
+        JgsEnvironment frame = CurrentFrame;
+        CurrentFrame = workspace;
+        try
+        {
+            return EvaluateSource(code, workspace, line, column);
+        }
+        finally
+        {
+            CurrentFrame = frame;
+        }
     }
 
     /// <summary>
@@ -286,15 +387,19 @@ internal sealed partial class Interpreter
     /// </summary>
     /// <param name="program">The parsed statements.</param>
     /// <param name="env">The paused frame's environment to read and write.</param>
+    /// <param name="file">The file the selected frame's code came from, for its names.</param>
     /// <param name="cancellationToken">Interrupts the typed statement alone.</param>
-    internal void RunWhilePaused(IReadOnlyList<Stmt> program, JgsEnvironment env, CancellationToken cancellationToken)
+    internal void RunWhilePaused(
+        IReadOnlyList<Stmt> program, JgsEnvironment env, string file, CancellationToken cancellationToken)
     {
         CancellationToken runToken = _cancellationToken;
         long runSteps = _steps;
         JgsEnvironment runFrame = CurrentFrame;
+        string runFile = _currentFile;
         _cancellationToken = cancellationToken;
         _steps = 0;
         CurrentFrame = env;
+        _currentFile = file;
         try
         {
             foreach (Stmt statement in program)
@@ -315,6 +420,7 @@ internal sealed partial class Interpreter
         finally
         {
             CurrentFrame = runFrame;
+            _currentFile = runFile;
             _cancellationToken = runToken;
             _steps = runSteps;
         }
@@ -343,6 +449,7 @@ internal sealed partial class Interpreter
         // The top level runs through the same block executor as everything else, so a debug hook sees
         // top-level statements too. (Reaching a FnStmt just re-declares it — hoisting made it callable
         // earlier; re-declaration is the same binding again.)
+        using FileContext entered = EnterFile(FileOf(program));
         Completion completion = ExecuteBlock(program, _globals);
         if (completion.Kind is CompletionKind.Break or CompletionKind.Continue)
         {
@@ -352,6 +459,9 @@ internal sealed partial class Interpreter
 
         // A top-level 'return' simply ends the script.
     }
+
+    /// <summary>The file a parsed program came from — the parser stamps every statement with it.</summary>
+    private static string FileOf(IReadOnlyList<Stmt> program) => program.Count > 0 ? program[0].SourceId : "";
 
     /// <summary>
     /// Runs a script file's statements in <paramref name="scope"/> — how a script named on the search
@@ -370,6 +480,8 @@ internal sealed partial class Interpreter
             }
         }
 
+        // The workspace stays the caller's; only the file changes.
+        using FileContext entered = EnterFile(sourceId);
         Completion completion;
         try
         {
@@ -409,11 +521,13 @@ internal sealed partial class Interpreter
         JgsEnvironment? callersCaller = CallerFrame;
         CallExpr? callerCall = CurrentCall;
         FnStmt? callerFunction = _currentFunction;
+        string callerFile = _currentFile;
         CurrentFrame = local;
         CallerFrame = callerFrame;
         CurrentCall = _pendingCall;
         _pendingCall = null;
         _currentFunction = declaration;
+        _currentFile = declaration.SourceId;
 
         // Nested functions hoist like top-level ones do in Run(): a handle taken before the nested
         // declaration line (increment = @doInc) must already resolve. Each closes over this call's
@@ -426,7 +540,7 @@ internal sealed partial class Interpreter
             }
         }
 
-        _hook?.EnterFunction(declaration, callLine, local);
+        _hook?.EnterFunction(declaration, callLine, local, callerFrame, callerFile);
         try
         {
             Completion completion = ExecuteBlock(declaration.Body, local);
@@ -457,6 +571,7 @@ internal sealed partial class Interpreter
             CallerFrame = callersCaller;
             CurrentCall = callerCall;
             _currentFunction = callerFunction;
+            _currentFile = callerFile;
             _callDepth--;
             _hook?.ExitFunction();
         }
@@ -817,9 +932,10 @@ internal sealed partial class Interpreter
     {
         Expr expression = statement.Expression;
 
-        if (expression is VariableExpr name && env.TryGet(name.Name, out JgsValue existing))
+        if (expression is VariableExpr name && _resolver.Lookup(name.Name, env) is { Found: true } held)
         {
-            if (existing.Type == JgsType.Function && (!Dialect.IsMatlab || env.IsFunctionBinding(name.Name)))
+            JgsValue existing = held.Value;
+            if (existing.Type == JgsType.Function && (!Dialect.IsMatlab || held.IsFunctionDefinition))
             {
                 // A name that both calls itself when mentioned bare and cares whether anyone wanted
                 // the answer is told that nobody did, exactly as a written-out call would be (M99).
@@ -856,8 +972,8 @@ internal sealed partial class Interpreter
         // that is a distinction only the statement itself can make: by the time the call has been
         // evaluated, "nobody wanted this" looks exactly like "somebody wanted one of these".
         if (expression is CallExpr discarded
-            && CalleeValue(discarded, env).Type == JgsType.Function
-            && CalleeValue(discarded, env).AsCallable is BuiltinFunction
+            && CalleeValue(discarded, env) is { Type: JgsType.Function } discardedCallee
+            && discardedCallee.AsCallable is BuiltinFunction
                 { KnowsWhenDiscarded: true, MultiOutput: not null } knowing)
         {
             var given = new JgsValue[discarded.Arguments.Count];
@@ -894,19 +1010,17 @@ internal sealed partial class Interpreter
     /// </summary>
     private JgsValue EvaluateCallee(Expr callee, JgsEnvironment env)
     {
+        // Invoke mode, phase one: nothing evaluated yet, because what the parentheses mean depends
+        // on the answer. A bound value goes back to be indexed, applied or called; a function
+        // definition — a path file included, which must not fall through to Evaluate, since that
+        // would *run* the file with no arguments and subscript the answer — goes back to be called
+        // with the arguments evaluated once.
         if (callee is VariableExpr name)
         {
-            if (LookUp(name.Name, env, out JgsValue resolved))
+            Resolution resolved = _resolver.Invoke(name.Name, env);
+            if (resolved.Found)
             {
-                return resolved;
-            }
-
-            // The path is consulted here as well as at the bare-name site, and it has to be: falling
-            // through to Evaluate would find the same file and then *call* it, so f(3) would run f
-            // with no arguments and subscript the answer.
-            if (TryResolveOnPath(name.Name, out JgsValue fromFile))
-            {
-                return fromFile;
+                return resolved.Value;
             }
         }
 
@@ -922,17 +1036,31 @@ internal sealed partial class Interpreter
     }
 
     /// <summary>
-    /// Looks <paramref name="name"/> up on the MATLAB search path — the last thing tried before a name
-    /// is declared undefined.
+    /// The value <c>@name</c> stands for in <paramref name="env"/> — Handle mode — or false when no
+    /// function has the name. In the MATLAB dialect a <see cref="NamedHandle"/>, which calls through
+    /// the resolver's own walk; in JGS the function value itself, as it always was.
     /// </summary>
-    /// <summary>
-    /// Looks a function up by name for a builtin that was handed one — <c>nargin('helper')</c> — which
-    /// is the ordinary lookup minus the workspace: a variable called <c>plot</c> does not answer a
-    /// question about the function called <c>plot</c>.
-    /// </summary>
-    internal bool TryResolveFunctionByName(string name, out JgsValue value) =>
-        TryResolveOnPath(name, out value) && value.Type == JgsType.Function;
+    internal bool TryMakeHandle(string name, JgsEnvironment env, out JgsValue handle)
+    {
+        Resolution referenced = _resolver.Handle(name, env);
+        if (!referenced.Found || referenced.Value.Type != JgsType.Function)
+        {
+            handle = JgsValue.Null;
+            return false;
+        }
 
+        handle = Dialect.IsMatlab
+            ? JgsValue.Function(new NamedHandle(
+                name, referenced.Layer, referenced.Value.AsCallable, referenced.File, _resolver))
+            : referenced.Value;
+        return true;
+    }
+
+    /// <summary>
+    /// Loads <paramref name="name"/> from the MATLAB search path, ignoring the workspace. Not a
+    /// resolution — the resolver owns the order — but the way a class file is loaded on the first
+    /// mention of its name in a dotted expression, where evaluating the name would build an instance.
+    /// </summary>
     private bool TryResolveOnPath(string name, out JgsValue value)
     {
         if (Dialect.IsMatlab && FunctionPath is { } path)
@@ -944,11 +1072,13 @@ internal sealed partial class Interpreter
         return false;
     }
 
-    /// <summary>The callable a call expression resolved to, when it is a plain name that is in scope.</summary>
-    private static JgsValue CalleeValue(CallExpr call, JgsEnvironment env) =>
-        call.Callee is VariableExpr name && env.TryGet(name.Name, out JgsValue value)
-            ? value
-            : JgsValue.Null;
+    /// <summary>
+    /// The value a call's plain-name callee holds in the workspace walk, or null — what a statement
+    /// asks before deciding how to run the call. The disk is never touched: a path file is not a
+    /// built-in, and the built-in flags are all the statement wants to know about.
+    /// </summary>
+    private JgsValue CalleeValue(CallExpr call, JgsEnvironment env) =>
+        call.Callee is VariableExpr name ? _resolver.Lookup(name.Name, env).Value : JgsValue.Null;
 
     /// <summary>Whether a bare call of this value should bind and echo <c>ans</c>.</summary>
     private static bool BindsAns(JgsValue callee) =>
@@ -1066,10 +1196,15 @@ internal sealed partial class Interpreter
         return env.TryGet(name, out value);
     }
 
-    private bool AutoCallsBare(string name, JgsValue value, JgsEnvironment env) =>
-        value.Type == JgsType.Function && (Dialect.IsMatlab
-            ? ScopeOf(name, env).IsFunctionBinding(name)
-            : value.AsCallable is BuiltinFunction { AutoCallsBare: true });
+    /// <summary>
+    /// Whether a bare mention of what <paramref name="resolved"/> found calls it: in MATLAB every
+    /// function definition (a variable holding a handle is a value); in JGS only a built-in that
+    /// asked to be.
+    /// </summary>
+    private bool AutoCallsBare(Resolution resolved) =>
+        resolved.Value.Type == JgsType.Function && (Dialect.IsMatlab
+            ? resolved.IsFunctionDefinition
+            : resolved.Value.AsCallable is BuiltinFunction { AutoCallsBare: true });
 
     /// <summary>
     /// The workspace a name's binding lives in: the global one where a <c>global</c> declaration
@@ -1304,18 +1439,11 @@ internal sealed partial class Interpreter
         // would evaluate the name through the zero-argument path — drawing a sphere on the way — and
         // then report a shortfall, which is the wrong answer twice over.
         if (call is VariableExpr bare
-            && LookUp(bare.Name, env, out JgsValue named)
-            && AutoCallsBare(bare.Name, named, env)
-            && named.AsCallable is IJgsMultiCallable zeroArgument)
+            && _resolver.Value(bare.Name, env) is { Found: true } named
+            && AutoCallsBare(named)
+            && named.Value.AsCallable is IJgsMultiCallable zeroArgument)
         {
             return zeroArgument.CallMultiple(System.Array.Empty<JgsValue>(), wanted, bare.Line, bare.Column);
-        }
-
-        if (call is VariableExpr pathName && !LookUp(pathName.Name, env, out _)
-            && TryResolveOnPath(pathName.Name, out JgsValue pathFunction)
-            && pathFunction.AsCallable is IJgsMultiCallable pathMulti)
-        {
-            return pathMulti.CallMultiple([], wanted, pathName.Line, pathName.Column);
         }
 
         // [a, b] = c{1:2} distributes a comma-separated list across the targets. It is not a call at
@@ -1599,24 +1727,21 @@ internal sealed partial class Interpreter
                     "':' by itself is only valid as an index argument, like x(:).");
 
             case VariableExpr variable:
-                if (LookUp(variable.Name, env, out JgsValue value))
+            {
+                // Value mode. A function definition auto-invokes in a MATLAB value context — a
+                // built-in constant, a local function, a file on the path ('setup' runs setup.m, and
+                // @setup is how you ask for the handle instead). A variable, one holding a handle
+                // included, is its value; callee position resolves through EvaluateCallee.
+                Resolution resolved = _resolver.Value(variable.Name, env);
+                if (!resolved.Found)
                 {
-                    // Function definitions auto-invoke in MATLAB value contexts. Variables holding
-                    // handles remain values; callee position still resolves through EvaluateCallee.
-                    return AutoCallsBare(variable.Name, value, env)
-                            ? value.AsCallable.Call(System.Array.Empty<JgsValue>(), variable.Line, variable.Column)
-                            : value;
+                    throw new JgsRuntimeException(variable.Line, variable.Column, Undefined(variable.Name));
                 }
 
-                // A file on the path answers a bare name by running, which is MATLAB's rule for any
-                // name that is not a variable: 'setup' runs setup.m, and @setup is how you ask for
-                // the handle instead.
-                if (TryResolveOnPath(variable.Name, out JgsValue onPath))
-                {
-                    return onPath.AsCallable.Call(System.Array.Empty<JgsValue>(), variable.Line, variable.Column);
-                }
-
-                throw new JgsRuntimeException(variable.Line, variable.Column, Undefined(variable.Name));
+                return AutoCallsBare(resolved)
+                    ? resolved.Value.AsCallable.Call(System.Array.Empty<JgsValue>(), variable.Line, variable.Column)
+                    : resolved.Value;
+            }
 
             case PreEvaluated ready:
                 return ready.Value;
@@ -1658,17 +1783,11 @@ internal sealed partial class Interpreter
                 return JgsValue.Function(AnonymousFunction.Create(anonymous, env, this));
 
             case FunctionHandleExpr handle:
-                if ((Dialect.IsMatlab ? env.TryGetFunction(handle.Name, out JgsValue referenced)
-                    : env.TryGet(handle.Name, out referenced)) && referenced.Type == JgsType.Function)
+                // Handle mode: never a variable, and a file as readily as a function in scope, or a
+                // path function could be called but never passed to cellfun.
+                if (TryMakeHandle(handle.Name, env, out JgsValue made))
                 {
-                    return referenced;
-                }
-
-                // @helper has to reach a file the same way helper(x) does, or a path function could
-                // be called but never passed to cellfun.
-                if (TryResolveOnPath(handle.Name, out JgsValue handleFromFile))
-                {
-                    return handleFromFile;
+                    return made;
                 }
 
                 throw new JgsRuntimeException(handle.Line, handle.Column,

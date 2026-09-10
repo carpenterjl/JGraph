@@ -31,42 +31,6 @@ internal static partial class JgsBuiltins
     internal static bool IsUnsupportedMatlabFunction(string name, out string what) =>
         UnsupportedFunctions.TryGetValue(name, out what!);
 
-    /// <summary>
-    /// What <c>feval</c> is being asked to call: a function handle, or the name of one as text.
-    /// </summary>
-    /// <remarks>
-    /// MATLAB documents <c>feval(name, x1, ..., xn)</c> before the handle form, and a ported script
-    /// is as likely to hold the name in a variable as the handle. The name is looked up the way any
-    /// other name is, so a path file or a user class method answers to it as readily as a builtin.
-    /// </remarks>
-    private static IJgsCallable FevalTarget(
-        JgsEnvironment env, IReadOnlyList<JgsValue> args, int line, int col)
-    {
-        if (args.Count == 0)
-        {
-            throw new JgsRuntimeException(line, col, "feval needs a function to call.");
-        }
-
-        if (args[0].Type == JgsType.Function)
-        {
-            return args[0].AsCallable;
-        }
-
-        if (args[0].Type == JgsType.String)
-        {
-            string name = args[0].AsString;
-            if (env.TryGet(name, out JgsValue found) && found.Type == JgsType.Function)
-            {
-                return found.AsCallable;
-            }
-
-            throw new JgsRuntimeException(line, col, $"feval: '{name}' is not a function.");
-        }
-
-        throw new JgsRuntimeException(
-            line, col, $"feval expects a function handle or a function name, but got a {args[0].TypeName}.");
-    }
-
     /// <summary>Registers the MATLAB-facing builtins into <paramref name="env"/>.</summary>
     private static void RegisterMatlabBuiltins(
         JgsEnvironment env, JGraphScriptGlobals host, Random random, JgsDialect dialect)
@@ -470,26 +434,9 @@ internal static partial class JgsBuiltins
 
         // --- Applying functions -----------------------------------------------------------------
         //
-        // feval takes a handle *or a name*, and answers as many outputs as it is asked for. Both
-        // halves were missing until M69's form probe ran the documented syntaxes: `feval('sin', x)`
-        // is the form MATLAB documents first and this refused it by type, and `[q, r] = feval(@f, x)`
-        // silently produced one value because the entry carried no MultiOutput body — a wrong answer
-        // rather than an error, which is the worse of the two failures.
-        env.Builtins.Register("feval", JgsValue.Function(new BuiltinFunction(
-            "feval",
-            (args, line, col) => FevalTarget(env, args, line, col)
-                .Call(args.Skip(1).ToArray(), line, col))
-        {
-            MultiOutput = (args, wanted, line, col) =>
-            {
-                IJgsCallable target = FevalTarget(env, args, line, col);
-                IReadOnlyList<JgsValue> rest = args.Skip(1).ToArray();
-                return target is IJgsMultiCallable several
-                    ? several.CallMultiple(rest, wanted, line, col)
-                    : [target.Call(rest, line, col)];
-            },
-        }));
-
+        // feval is declared with the eval family: a name it is handed resolves through the
+        // interpreter, the way the same name written as a call would.
+        //
         // cellfun(..., 'UniformOutput', false) hands back a cell instead of an array — without it,
         // every result has to be a scalar, exactly as MATLAB insists.
         Define("cellfun", (args, line, col) => ApplyOverCells(env, args, 1, line, col)[0]);

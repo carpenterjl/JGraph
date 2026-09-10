@@ -97,8 +97,15 @@ internal sealed class JgsFunctionPath
     }
 
     /// <summary>The file <paramref name="name"/> would resolve to, or null when no folder holds one.</summary>
-    public string? Find(string name)
+    public string? Find(string name) => Find(name, out _);
+
+    /// <summary>
+    /// The same, saying whether the file came from a folder <c>addpath</c> added rather than from the
+    /// current folder, the script's folder or the workspace root — the two layers a resolution names.
+    /// </summary>
+    internal string? Find(string name, out bool fromAddedFolder)
     {
+        fromAddedFolder = false;
         if (!IsPlainName(name))
         {
             return null;
@@ -117,6 +124,7 @@ internal sealed class JgsFunctionPath
             string candidate = Path.Combine(folder, name + ".m");
             if (File.Exists(candidate))
             {
+                fromAddedFolder = true;
                 return candidate;
             }
         }
@@ -129,15 +137,23 @@ internal sealed class JgsFunctionPath
     /// the first time and re-reading it when it has been written since. Returns false when no file on
     /// the path carries the name.
     /// </summary>
-    public bool TryResolve(string name, out JgsValue value)
+    public bool TryResolve(string name, out JgsValue value) => TryResolve(name, out value, out _, out _);
+
+    /// <summary>
+    /// The same, handing back the file's path and which kind of folder held it, for the resolver
+    /// to record where the answer came from.
+    /// </summary>
+    public bool TryResolve(string name, out JgsValue value, out string? file, out bool fromAddedFolder)
     {
         value = JgsValue.Null;
-        if (Find(name) is not { } path)
+        file = null;
+        if (Find(name, out fromAddedFolder) is not { } path)
         {
             _loaded.Remove(name); // the file that used to answer this name is gone
             return false;
         }
 
+        file = path;
         DateTime written = File.GetLastWriteTimeUtc(path);
         bool loadedBefore = _loaded.TryGetValue(name, out Loaded? cached) && PathComparer.Equals(cached.Path, path);
         if (loadedBefore && cached!.Written == written)

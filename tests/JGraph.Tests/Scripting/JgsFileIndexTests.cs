@@ -441,7 +441,8 @@ public class JgsFileIndexTests : IDisposable
 
         public void EnterBlock(BlockExecution block) { }
         public void ExitBlock() { }
-        public void EnterFunction(FnStmt declaration, int callLine, JgsEnvironment local) { }
+        public void EnterFunction(
+            FnStmt declaration, int callLine, JgsEnvironment local, JgsEnvironment callerFrame, string callerFile) { }
         public void ExitFunction() { }
     }
 }

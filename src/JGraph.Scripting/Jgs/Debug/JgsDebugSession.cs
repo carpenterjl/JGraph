@@ -184,6 +184,7 @@ public sealed class JgsDebugSession
     {
         ArgumentNullException.ThrowIfNull(code);
         JgsEnvironment environment;
+        string file;
         lock (_stateLock)
         {
             EnsurePaused();
@@ -193,6 +194,7 @@ public sealed class JgsDebugSession
             }
 
             environment = EnvironmentOf(frameIndex);
+            file = FileOf(frameIndex);
             _evaluating = true;
             _evaluationDone.Reset();
         }
@@ -204,7 +206,7 @@ public sealed class JgsDebugSession
         {
             try
             {
-                return Evaluate(code, environment, linked.Token);
+                return Evaluate(code, environment, file, linked.Token);
             }
             finally
             {
@@ -215,13 +217,14 @@ public sealed class JgsDebugSession
         });
     }
 
-    private ScriptRunResult Evaluate(string code, JgsEnvironment environment, CancellationToken cancellationToken)
+    private ScriptRunResult Evaluate(
+        string code, JgsEnvironment environment, string file, CancellationToken cancellationToken)
     {
         Interpreter interpreter = _interpreter!;
         try
         {
             IReadOnlyList<Stmt> program = Parser.Parse(code, sourceId: "", _dialect);
-            interpreter.RunWhilePaused(program, environment, cancellationToken);
+            interpreter.RunWhilePaused(program, environment, file, cancellationToken);
             return ScriptRunResult.Ok(0, Project(environment));
         }
         catch (JgsException ex)
@@ -316,8 +319,12 @@ public sealed class JgsDebugSession
 
     /// <summary>
     /// The environment a paused frame reads and writes. Frame 0 is the exact paused environment
-    /// (innermost block scope included); caller frames see their function-local scope chain; the
-    /// script frame sees the globals.
+    /// (innermost block scope included). Every other frame is the caller of the record above it,
+    /// read from that record — the workspace the interpreter had when it made the call, handed to
+    /// the hook at entry — and never reconstructed from depth: the frame below a function reached
+    /// through an escaped anonymous handle is the handle's own workspace, not the invoker's, and
+    /// the frame below one called from <c>evalin('caller', …)</c> is the named workspace. The
+    /// script frame is the base workspace that way too, by identity and not by walking.
     /// </summary>
     private JgsEnvironment EnvironmentOf(int frameIndex)
     {
@@ -326,17 +333,16 @@ public sealed class JgsDebugSession
             throw new ArgumentOutOfRangeException(nameof(frameIndex));
         }
 
-        int depth = _pausedDepth - frameIndex;
-        return (frameIndex == 0
-            ? _pausedEnvironment
-            : depth > 0 ? _frames[depth - 1].Local : BaseWorkspace())!;
+        return (frameIndex == 0 ? _pausedEnvironment : _frames[_pausedDepth - frameIndex].CallerFrame)!;
     }
 
     /// <summary>
-    /// The base workspace of the paused run: the one the run started with, or the paused scope's own
-    /// by identity. Never found by walking to the outermost scope — that is the built-in layer.
+    /// The file a paused frame's names come from: the interpreter's current file at the pause for
+    /// frame 0, and for every other frame the file its record says the call was made from — the
+    /// pair with <see cref="EnvironmentOf"/>, installed together for the prompt.
     /// </summary>
-    private JgsEnvironment? BaseWorkspace() => _globals ?? _pausedEnvironment?.Base;
+    private string FileOf(int frameIndex) =>
+        frameIndex == 0 ? _pausedFile : _frames[_pausedDepth - frameIndex].CallerFile;
 
     /// <summary>
     /// Moves the execution point of the paused script to the statement on <paramref name="line"/> of
@@ -776,6 +782,7 @@ public sealed class JgsDebugSession
             _mode = DebugMode.Run; // each step command re-arms; a pause request is now satisfied
             _pausedLocation = location;
             _pausedEnvironment = env;
+            _pausedFile = _interpreter!.CurrentFile;
             _pausedDepth = callDepth;
             _pausedCallStack = BuildCallStack(location, callDepth);
             args = new JgsPausedEventArgs(location, _pausedCallStack, reason.Value);
@@ -872,15 +879,17 @@ public sealed class JgsDebugSession
         return stack;
     }
 
-    private void OnEnterFunction(FnStmt declaration, int callLine, JgsEnvironment local)
+    private void OnEnterFunction(
+        FnStmt declaration, int callLine, JgsEnvironment local, JgsEnvironment callerFrame, string callerFile)
     {
         if (_evaluating)
         {
             return;
         }
 
-        // The call site lives in the statement the interpreter last announced.
-        _frames.Add(new FrameEntry(declaration.Name, _currentSourceId, callLine, local));
+        // The call site lives in the statement the interpreter last announced; the caller's
+        // workspace and file are what the interpreter handed over, not a reconstruction.
+        _frames.Add(new FrameEntry(declaration.Name, _currentSourceId, callLine, local, callerFrame, callerFile));
         _pendingFunction = declaration; // the next EnterBlock is this function's body
     }
 
@@ -888,13 +897,20 @@ public sealed class JgsDebugSession
     {
         if (!_evaluating && _frames.Count > 0)
         {
+            // Back in the statement that made the call: in `x = a() + b()` the record for b must
+            // name the caller's file, not the last line of a.m that was announced.
+            _currentSourceId = _frames[^1].CallSiteSourceId;
             _frames.RemoveAt(_frames.Count - 1);
         }
     }
 
     private string _currentSourceId = "";
+    private string _pausedFile = "";
 
-    private sealed record FrameEntry(string Name, string CallSiteSourceId, int CallLine, JgsEnvironment Local);
+    /// <summary>One user-function call on the stack: the frame it runs in, and the (workspace, file) pair it was called from.</summary>
+    private sealed record FrameEntry(
+        string Name, string CallSiteSourceId, int CallLine, JgsEnvironment Local,
+        JgsEnvironment CallerFrame, string CallerFile);
 
     /// <summary>One block on the execution stack: which statement list, where in it execution is, and
     /// how it hangs off its surroundings (the live-edit path back to a program root).</summary>
@@ -932,8 +948,9 @@ public sealed class JgsDebugSession
 
         public void ExitBlock() => _session.OnExitBlock();
 
-        public void EnterFunction(FnStmt declaration, int callLine, JgsEnvironment local) =>
-            _session.OnEnterFunction(declaration, callLine, local);
+        public void EnterFunction(
+            FnStmt declaration, int callLine, JgsEnvironment local, JgsEnvironment callerFrame, string callerFile) =>
+            _session.OnEnterFunction(declaration, callLine, local, callerFrame, callerFile);
 
         public void ExitFunction() => _session.OnExitFunction();
     }

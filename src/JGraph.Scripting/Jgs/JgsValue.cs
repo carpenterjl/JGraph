@@ -993,6 +993,11 @@ internal sealed class JgsValue
             JgsType.Null => true,
             JgsType.Complex => left.AsComplex.Equals(right.AsComplex),
             JgsType.String => string.Equals(left.AsString, right.AsString, StringComparison.Ordinal),
+
+            // Two named handles are one value when they name the same thing from the same layer
+            // (M145): isequal(@max, @max) is true without a table of handles behind it.
+            JgsType.Function when left.AsCallable is NamedHandle named && right.AsCallable is NamedHandle other =>
+                named.SameAs(other),
             _ => ReferenceEquals(left, right),
         };
     }

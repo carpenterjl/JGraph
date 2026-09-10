@@ -366,12 +366,15 @@ internal sealed class AnonymousFunction : IJgsCallable, IJgsMultiCallable
     private readonly AnonymousFnExpr _declaration;
     private readonly JgsEnvironment _captured;
     private readonly Interpreter _interpreter;
+    private readonly string _file;
 
-    private AnonymousFunction(AnonymousFnExpr declaration, JgsEnvironment captured, Interpreter interpreter)
+    private AnonymousFunction(
+        AnonymousFnExpr declaration, JgsEnvironment captured, Interpreter interpreter, string file)
     {
         _declaration = declaration;
         _captured = captured;
         _interpreter = interpreter;
+        _file = file;
     }
 
     /// <inheritdoc />
@@ -380,10 +383,19 @@ internal sealed class AnonymousFunction : IJgsCallable, IJgsMultiCallable
     /// <summary>The expression the handle was written as, which <c>func2str</c> prints back.</summary>
     public AnonymousFnExpr Declaration => _declaration;
 
+    /// <summary>
+    /// The file the handle was made in, which is where its body's names come from however far the
+    /// handle travels: <c>@(x) helper(x)</c> returned from <c>maker.m</c> keeps <c>maker.m</c>'s
+    /// <c>helper</c>.
+    /// </summary>
+    public string File => _file;
+
     /// <summary>Creates the handle, snapshotting every name its body refers to that is not a parameter.</summary>
     public static AnonymousFunction Create(AnonymousFnExpr declaration, JgsEnvironment defining, Interpreter interpreter)
     {
-        var snapshot = new JgsEnvironment(defining);
+        // The snapshot is a static workspace: a name it captured can be changed and a new one cannot
+        // be added, which is what assignin into it from a function the body called runs into.
+        var snapshot = new JgsEnvironment(defining) { IsStaticWorkspace = true };
         foreach (string name in FreeNames(declaration))
         {
             if (defining.TryGet(name, out JgsValue value))
@@ -399,7 +411,7 @@ internal sealed class AnonymousFunction : IJgsCallable, IJgsMultiCallable
             }
         }
 
-        return new AnonymousFunction(declaration, snapshot, interpreter);
+        return new AnonymousFunction(declaration, snapshot, interpreter, interpreter.CurrentFile);
     }
 
     /// <inheritdoc />
@@ -429,7 +441,7 @@ internal sealed class AnonymousFunction : IJgsCallable, IJgsMultiCallable
                 $"This anonymous function expects {parameters.Count} argument(s) but got {arguments.Count}.");
         }
 
-        var local = new JgsEnvironment(_captured);
+        var local = new JgsEnvironment(_captured) { IsStaticWorkspace = true };
         for (int i = 0; i < fixedCount; i++)
         {
             local.Declare(parameters[i], _interpreter.CopyForBinding(arguments[i]));
@@ -453,7 +465,10 @@ internal sealed class AnonymousFunction : IJgsCallable, IJgsMultiCallable
             local.Declare("nargin", JgsValue.Number(arguments.Count));
         }
 
-        return _interpreter.EvaluateForOutputsIn(_declaration.Body, wanted, local);
+        // The body runs as a context of its own — its workspace as the current frame, so a function
+        // it calls sees that workspace as its caller, and its file as the current file — and the
+        // invoker's pair comes back afterwards.
+        return _interpreter.EvaluateForOutputsInContext(_declaration.Body, wanted, local, _file);
     }
 
     /// <summary>Every identifier the body mentions apart from the parameters.</summary>

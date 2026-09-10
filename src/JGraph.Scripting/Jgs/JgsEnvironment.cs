@@ -1,3 +1,5 @@
+using System.Diagnostics.CodeAnalysis;
+
 namespace JGraph.Scripting.Jgs;
 
 /// <summary>
@@ -99,6 +101,34 @@ internal sealed class JgsEnvironment
     /// </remarks>
     public bool IsCallBoundary { get; init; }
 
+    /// <summary>
+    /// Whether this scope is an anonymous function's workspace: the snapshot taken when the handle
+    /// was made, and the frame a call of it binds its parameters in. MATLAB calls that a static
+    /// workspace — a captured name can be changed, a new one cannot be added — and
+    /// <c>assignin('caller', …)</c> from a function the body called refuses with those words.
+    /// </summary>
+    public bool IsStaticWorkspace { get; init; }
+
+    /// <summary>
+    /// Whether this scope is a call frame or sits inside one — where a nested function lives, as
+    /// opposed to a script's, a file's or a class's own scope.
+    /// </summary>
+    public bool IsInsideCall
+    {
+        get
+        {
+            for (JgsEnvironment? scope = this; scope is not null && !scope.IsBuiltinLayer; scope = scope._parent)
+            {
+                if (scope.IsCallBoundary)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+    }
+
     /// <summary>Declares (or redeclares) <paramref name="name"/> in this scope with <paramref name="value"/>.</summary>
     public void Declare(string name, JgsValue value)
     {
@@ -148,6 +178,48 @@ internal sealed class JgsEnvironment
         }
 
         value = JgsValue.Null;
+        return false;
+    }
+
+    /// <summary>
+    /// Resolves @name as <see cref="TryGetFunction(string, out JgsValue)"/> does, and says which scope
+    /// holds the definition — the resolver reads the layer off the scope.
+    /// </summary>
+    public bool TryGetFunction(string name, [NotNullWhen(true)] out JgsEnvironment? scope, out JgsValue value)
+    {
+        for (JgsEnvironment? candidate = this; candidate is not null; candidate = candidate._parent)
+        {
+            if (candidate._functionDefinitions.TryGetValue(name, out JgsValue? found))
+            {
+                scope = candidate;
+                value = found;
+                return true;
+            }
+        }
+
+        scope = null;
+        value = JgsValue.Null;
+        return false;
+    }
+
+    /// <summary>Whether this scope itself binds <paramref name="name"/> as a function definition.</summary>
+    public bool DeclaresFunctionLocally(string name) => _functionBindings.Contains(name);
+
+    /// <summary>
+    /// Whether <paramref name="name"/> is bound somewhere in the static workspace this scope belongs
+    /// to — the frame and the snapshot under it, and no further — so an <c>assignin</c> into it can
+    /// tell a captured name it may change from a new one it may not add.
+    /// </summary>
+    public bool IsBoundWithinStaticWorkspace(string name)
+    {
+        for (JgsEnvironment? scope = this; scope is not null && scope.IsStaticWorkspace; scope = scope._parent)
+        {
+            if (scope._values.ContainsKey(name))
+            {
+                return true;
+            }
+        }
+
         return false;
     }
 
@@ -286,6 +358,28 @@ internal sealed class JgsEnvironment
             }
         }
 
+        value = JgsValue.Null;
+        return false;
+    }
+
+    /// <summary>
+    /// Looks <paramref name="name"/> up as <see cref="TryGet"/> does, and says which scope holds it —
+    /// the built-in layer, a call frame, the base workspace — which is what tells a built-in from a
+    /// local function from a variable without a second walk.
+    /// </summary>
+    public bool TryGetScope(string name, [NotNullWhen(true)] out JgsEnvironment? scope, out JgsValue value)
+    {
+        for (JgsEnvironment? candidate = this; candidate is not null; candidate = candidate._parent)
+        {
+            if (candidate._values.TryGetValue(name, out JgsValue? found))
+            {
+                scope = candidate;
+                value = found;
+                return true;
+            }
+        }
+
+        scope = null;
         value = JgsValue.Null;
         return false;
     }

@@ -40,7 +40,13 @@ internal interface IJgsDebugHook
     /// <param name="declaration">The function being invoked (name, parameters, body, source).</param>
     /// <param name="callLine">The 1-based line of the call site.</param>
     /// <param name="local">The function's local environment (parameters already bound).</param>
-    void EnterFunction(FnStmt declaration, int callLine, JgsEnvironment local);
+    /// <param name="callerFrame">
+    /// The frame the call was made from — the workspace <c>evalin('caller', …)</c> means inside the
+    /// function, handed over rather than reconstructed from depth, because it is an anonymous body's
+    /// workspace when the call came from one and the target's when it came from <c>evalin</c>.
+    /// </param>
+    /// <param name="callerFile">The file the calling code came from, for the caller frame's names.</param>
+    void EnterFunction(FnStmt declaration, int callLine, JgsEnvironment local, JgsEnvironment callerFrame, string callerFile);
 
     /// <summary>Called when the innermost user function exits (normally or by unwinding).</summary>
     void ExitFunction();
