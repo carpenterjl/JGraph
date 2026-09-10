@@ -507,5 +507,8 @@ public class JgsNameResolverTests : IDisposable
         public void EnterFunction(
             FnStmt declaration, int callLine, JgsEnvironment local, JgsEnvironment callerFrame, string callerFile) { }
         public void ExitFunction() { }
+        public void EnterContext(
+            string name, string file, int callLine, JgsEnvironment local, JgsEnvironment callerFrame, string callerFile) { }
+        public void ExitContext() { }
     }
 }

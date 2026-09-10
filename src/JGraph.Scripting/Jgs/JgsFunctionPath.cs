@@ -96,6 +96,17 @@ internal sealed class JgsFunctionPath
         return true;
     }
 
+    /// <summary>
+    /// Forgets every loaded file, so the next call of each name re-reads it from disk — what
+    /// <c>clear all</c> and <c>clear functions</c> mean for the path. Function storage a file made
+    /// stays behind for any handle still holding one of its functions; the re-read replaces it.
+    /// </summary>
+    public void Unload()
+    {
+        _loaded.Clear();
+        _index.Invalidate(null);
+    }
+
     /// <summary>The file <paramref name="name"/> would resolve to, or null when no folder holds one.</summary>
     public string? Find(string name) => Find(name, out _);
 
@@ -233,11 +244,16 @@ internal sealed class JgsFunctionPath
                     + $"'{classFile.Name}' and not to '{name}' — a class file is named after its class.");
             }
 
-            return _interpreter.DefineClass(classFile, new JgsEnvironment(_interpreter.Globals)).ConstructorValue;
+            // The class's scope sits under the built-in layer like a file's: a method or a property
+            // default reads the class file's names and the built-ins, and no variable of the script.
+            return _interpreter.DefineClass(classFile, _interpreter.NewFileScope()).ConstructorValue;
         }
 
         if (!JgsRunner.IsFunctionFile(program))
         {
+            // A script's functions are hoisted into its storage on each run; a re-read starts it over
+            // so a function the edit removed does not linger.
+            _interpreter.ReplaceFile(path);
             return JgsValue.Function(new BuiltinFunction(name, (args, line, column) =>
             {
                 if (args.Count > 0)
@@ -252,20 +268,19 @@ internal sealed class JgsFunctionPath
             }));
         }
 
-        // The file's functions see each other and the globals behind them, and nothing outside the
-        // file sees any but the first — MATLAB's local-function rule, expressed as a scope.
-        var fileScope = new JgsEnvironment(_interpreter.Globals);
+        // The file's functions live with the file: they see each other through the resolver, the
+        // built-ins through the scope they close over, and nothing of any workspace; nothing outside
+        // the file sees any but the first — MATLAB's local-function rule.
+        FunctionFile file = _interpreter.ReplaceFile(path);
         foreach (Stmt statement in program)
         {
-            var declaration = (FnStmt)statement;
-            fileScope.DeclareFunction(declaration.Name, JgsValue.Function(
-                new UserFunction(declaration, fileScope, _interpreter)));
+            _interpreter.Hoist((FnStmt)statement, path);
         }
 
         // MATLAB dispatches on the file name, not on the header: helper.m answers to 'helper' even if
         // its first function is spelt something else.
         var main = (FnStmt)program[0];
-        return fileScope.TryGet(main.Name, out JgsValue callable) ? callable : JgsValue.Null;
+        return file.TryGet(main.Name, out JgsValue callable) ? callable : JgsValue.Null;
     }
 
     /// <summary>

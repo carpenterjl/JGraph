@@ -390,6 +390,11 @@ internal sealed class AnonymousFunction : IJgsCallable, IJgsMultiCallable
     /// </summary>
     public string File => _file;
 
+    /// <summary>The handle as written, which is how the debugger names the body's frame; printed once.</summary>
+    internal string Text => _text ??= AstPrinter.Print(_declaration);
+
+    private string? _text;
+
     /// <summary>Creates the handle, snapshotting every name its body refers to that is not a parameter.</summary>
     public static AnonymousFunction Create(AnonymousFnExpr declaration, JgsEnvironment defining, Interpreter interpreter)
     {
@@ -468,7 +473,7 @@ internal sealed class AnonymousFunction : IJgsCallable, IJgsMultiCallable
         // The body runs as a context of its own — its workspace as the current frame, so a function
         // it calls sees that workspace as its caller, and its file as the current file — and the
         // invoker's pair comes back afterwards.
-        return _interpreter.EvaluateForOutputsInContext(_declaration.Body, wanted, local, _file);
+        return _interpreter.EvaluateForOutputsInContext(_declaration.Body, wanted, local, _file, Text, line);
     }
 
     /// <summary>Every identifier the body mentions apart from the parameters.</summary>

@@ -50,6 +50,9 @@ internal sealed class JgsEnvironment
     /// </summary>
     public bool IsBuiltinLayer { get; }
 
+    /// <summary>Whether the chain this scope belongs to was built over a built-in layer.</summary>
+    public bool HasBuiltinLayer => _layer is not null;
+
     /// <summary>
     /// The built-in layer under this scope, the one place a built-in may be registered.
     /// </summary>

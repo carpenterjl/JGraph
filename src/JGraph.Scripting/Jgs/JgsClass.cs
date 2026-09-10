@@ -153,7 +153,8 @@ internal sealed class JgsClass
             }
 
             JgsValue start = property.Spec.Default is { } expression
-                ? _interpreter.EvaluateInContext(expression, defaults, Declaration.SourceId)
+                ? _interpreter.EvaluateInContext(
+                    expression, defaults, Declaration.SourceId, $"{Name}.{property.Spec.Name} default", line)
                 : JgsValue.Array([]);
             instance.Fields[property.Spec.Name] = Check(property, start, line, col);
         }
@@ -256,7 +257,9 @@ internal sealed class JgsClass
 
             constants[property.Spec.Name] = Check(
                 property,
-                _interpreter.EvaluateInContext(expression, DefaultWorkspace(), Declaration.SourceId),
+                _interpreter.EvaluateInContext(
+                    expression, DefaultWorkspace(), Declaration.SourceId, $"{Name}.{property.Spec.Name} default",
+                    Declaration.Line),
                 Declaration.Line,
                 Declaration.Column);
         }

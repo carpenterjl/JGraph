@@ -50,6 +50,24 @@ internal interface IJgsDebugHook
 
     /// <summary>Called when the innermost user function exits (normally or by unwinding).</summary>
     void ExitFunction();
+
+    /// <summary>
+    /// Called when code enters a context of its own that is not a function call — an anonymous
+    /// body, a class property default — which the stack shows as a frame of its own, one call level
+    /// deeper. A function it calls records the context's workspace and file as what it was called
+    /// from, so the frame below such a function is the context.
+    /// </summary>
+    /// <param name="name">What to show the frame as: the handle's text, the default's owner.</param>
+    /// <param name="file">The file the context's own names come from.</param>
+    /// <param name="callLine">The 1-based line the context was entered from.</param>
+    /// <param name="local">The context's own workspace.</param>
+    /// <param name="callerFrame">The workspace the interpreter had when the context was entered.</param>
+    /// <param name="callerFile">The file the entering code came from.</param>
+    void EnterContext(
+        string name, string file, int callLine, JgsEnvironment local, JgsEnvironment callerFrame, string callerFile);
+
+    /// <summary>Called when the innermost context exits (normally or by unwinding).</summary>
+    void ExitContext();
 }
 
 /// <summary>

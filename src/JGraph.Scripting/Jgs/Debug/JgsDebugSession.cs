@@ -36,7 +36,6 @@ public sealed class JgsDebugSession
     private int _started;
     private CancellationToken _runToken;
     private Interpreter? _interpreter;
-    private JgsEnvironment? _globals;
     private FnStmt? _pendingFunction;
 
     private volatile bool _isPaused;
@@ -555,9 +554,10 @@ public sealed class JgsDebugSession
         var hoists = new List<FnStmt>();
         foreach (FnStmt fn in newProgram.OfType<FnStmt>())
         {
+            // The file's storage is asked by source id: a function lives with its file (M145).
             UserFunction? existing =
-                _globals is not null
-                && _globals.Locals.TryGetValue(fn.Name, out JgsValue? bound)
+                _interpreter is Interpreter live
+                && live.TryGetHoisted(sourceId, fn.Name, out JgsValue bound)
                 && bound.Type == JgsType.Function
                 && bound.AsCallable is UserFunction user
                 && SourceIdComparer.Equals(user.Declaration.SourceId, sourceId)
@@ -612,11 +612,11 @@ public sealed class JgsDebugSession
             target.AddRange(content);
         }
 
-        if (_interpreter is Interpreter interpreter && _globals is JgsEnvironment globals)
+        if (_interpreter is Interpreter interpreter)
         {
             foreach (FnStmt fn in hoists)
             {
-                globals.DeclareFunction(fn.Name, JgsValue.Function(new UserFunction(fn, globals, interpreter)));
+                interpreter.Hoist(fn, sourceId);
             }
         }
 
@@ -709,11 +709,7 @@ public sealed class JgsDebugSession
 
     // --- Interpreter-thread side (the hook) ------------------------------------------------------
 
-    private void OnRunStarting(Interpreter interpreter, JgsEnvironment globals)
-    {
-        _interpreter = interpreter;
-        _globals = globals;
-    }
+    private void OnRunStarting(Interpreter interpreter, JgsEnvironment globals) => _interpreter = interpreter;
 
     private void OnEnterBlock(BlockExecution block)
     {
@@ -904,6 +900,23 @@ public sealed class JgsDebugSession
         }
     }
 
+    private void OnEnterContext(
+        string name, string file, int callLine, JgsEnvironment local, JgsEnvironment callerFrame, string callerFile)
+    {
+        if (_evaluating)
+        {
+            return;
+        }
+
+        // A context is a frame like a call's, entered from the statement last announced. Its own
+        // calls are made from its file: a function it calls records that as its call site, the way
+        // one called from a function's statement records the function's file.
+        _frames.Add(new FrameEntry(name, _currentSourceId, callLine, local, callerFrame, callerFile));
+        _currentSourceId = file;
+    }
+
+    private void OnExitContext() => OnExitFunction();
+
     private string _currentSourceId = "";
     private string _pausedFile = "";
 
@@ -953,5 +966,11 @@ public sealed class JgsDebugSession
             _session.OnEnterFunction(declaration, callLine, local, callerFrame, callerFile);
 
         public void ExitFunction() => _session.OnExitFunction();
+
+        public void EnterContext(
+            string name, string file, int callLine, JgsEnvironment local, JgsEnvironment callerFrame, string callerFile) =>
+            _session.OnEnterContext(name, file, callLine, local, callerFrame, callerFile);
+
+        public void ExitContext() => _session.OnExitContext();
     }
 }

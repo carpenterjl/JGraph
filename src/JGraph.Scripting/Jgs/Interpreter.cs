@@ -31,9 +31,10 @@ internal sealed partial class Interpreter
     private readonly Dictionary<FnStmt, Dictionary<string, JgsValue>> _persistents = [];
 
     /// <summary>
-    /// Names of functions user code has defined at the global scope. MATLAB's plain <c>clear</c>
-    /// drops variables but not functions, and this set is how <c>clear</c> tells them apart from a
-    /// variable that merely holds a handle.
+    /// Names of functions JGS code has defined at the global scope. JGS keeps its lexical closures in
+    /// the workspace, and this set is how <c>clear</c> tells them apart from a variable that merely
+    /// holds a handle. The MATLAB dialect keeps a file's functions with the file (see
+    /// <see cref="FunctionFile"/>), so nothing of its lands here.
     /// </summary>
     internal HashSet<string> ScriptFunctionNames { get; } = new(StringComparer.Ordinal);
 
@@ -54,6 +55,14 @@ internal sealed partial class Interpreter
     // which the resolver will read for a file's own functions and nothing else reads.
     private readonly JgsNameResolver _resolver;
     private string _currentFile = "";
+    private FunctionFile? _currentStorage;
+
+    // Every file's own functions by source id (M145, step 5): the main script's, each path file's,
+    // each script's run by name. A function lives with its file and in no workspace, so the resolver
+    // answers a name from the running file's storage and never by walking into another file's — or
+    // the script's — workspace. Keyed the way the file system compares paths.
+    private readonly Dictionary<string, FunctionFile> _files = new(
+        OperatingSystem.IsWindows() ? StringComparer.OrdinalIgnoreCase : StringComparer.Ordinal);
     private CancellationToken _cancellationToken;
     private IJgsDebugHook? _hook;
     private readonly Action<string>? _echo;
@@ -222,15 +231,186 @@ internal sealed partial class Interpreter
     internal FileContext EnterFile(string file)
     {
         string previous = _currentFile;
-        _currentFile = file;
-        return new FileContext(this, previous);
+        FunctionFile? previousStorage = _currentStorage;
+        SetFile(file);
+        return new FileContext(this, previous, previousStorage);
     }
 
     /// <summary>The token <see cref="EnterFile"/> hands out; disposing it restores the file it replaced.</summary>
-    internal readonly struct FileContext(Interpreter interpreter, string previous) : IDisposable
+    internal readonly struct FileContext(Interpreter interpreter, string previous, FunctionFile? previousStorage) : IDisposable
     {
         /// <inheritdoc />
-        public void Dispose() => interpreter._currentFile = previous;
+        public void Dispose() => interpreter.RestoreFile(previous, previousStorage);
+    }
+
+    // The file and its storage move together: the storage is looked up once per entry rather than
+    // once per name, and put back with the file.
+    private void SetFile(string file)
+    {
+        _currentFile = file;
+        _files.TryGetValue(file, out _currentStorage);
+    }
+
+    private void RestoreFile(string file, FunctionFile? storage)
+    {
+        _currentFile = file;
+        _currentStorage = storage;
+    }
+
+    // --- Function storage (M145, step 5) ----------------------------------------------------------
+
+    /// <summary>The storage for <paramref name="sourceId"/>'s functions, made on first use.</summary>
+    internal FunctionFile FileFor(string sourceId)
+    {
+        if (!_files.TryGetValue(sourceId, out FunctionFile? file))
+        {
+            file = new FunctionFile(sourceId, NewFileScope());
+            _files[sourceId] = file;
+            if (string.Equals(sourceId, _currentFile, StringComparison.Ordinal))
+            {
+                _currentStorage = file; // the running file just got storage: keep the cached pair true
+            }
+        }
+
+        return file;
+    }
+
+    /// <summary>
+    /// Fresh storage for <paramref name="sourceId"/>, replacing whatever an earlier load made — how a
+    /// re-read of an edited file drops the functions the edit removed. A handle taken before keeps
+    /// the <see cref="UserFunction"/> it holds, so it keeps working.
+    /// </summary>
+    internal FunctionFile ReplaceFile(string sourceId)
+    {
+        var file = new FunctionFile(sourceId, NewFileScope());
+        _files[sourceId] = file;
+        if (string.Equals(sourceId, _currentFile, StringComparison.Ordinal))
+        {
+            _currentStorage = file;
+        }
+
+        return file;
+    }
+
+    /// <summary>
+    /// A scope for a file's functions — or a class's — to close over: a child of the built-in
+    /// layer, not of the base workspace, so the walk from a frame reaches parameters, nested
+    /// functions and built-ins and never a variable of the script. A workspace built without a
+    /// layer (bare interpreters in tests) keeps the old parent.
+    /// </summary>
+    internal JgsEnvironment NewFileScope() => new(_globals.HasBuiltinLayer ? _globals.Builtins.Root : _globals);
+
+    /// <summary>
+    /// Hoists <paramref name="fn"/>, a file-level declaration of <paramref name="sourceId"/>, into
+    /// that file's storage — or, for JGS, into the workspace, where its closures have always lived.
+    /// </summary>
+    internal void Hoist(FnStmt fn, string sourceId)
+    {
+        if (Dialect.IsMatlab)
+        {
+            FunctionFile file = FileFor(sourceId);
+            file.Declare(fn.Name, JgsValue.Function(new UserFunction(fn, file.Scope, this)));
+        }
+        else
+        {
+            _globals.DeclareFunction(fn.Name, JgsValue.Function(new UserFunction(fn, _globals, this)));
+            ScriptFunctionNames.Add(fn.Name);
+        }
+    }
+
+    /// <summary>
+    /// Drops every function's persistent variables — what <c>clear all</c> and <c>clear functions</c>
+    /// do beside forgetting the loaded files, so the next call of a function starts its persistents
+    /// empty as MATLAB's does.
+    /// </summary>
+    internal void ForgetPersistents() => _persistents.Clear();
+
+    private void HoistAll(IReadOnlyList<Stmt> program, string sourceId)
+    {
+        foreach (Stmt statement in program)
+        {
+            if (statement is FnStmt fn)
+            {
+                Hoist(fn, sourceId);
+            }
+        }
+    }
+
+    /// <summary>
+    /// A file-level function of the running file — the local-function layer of the search order,
+    /// which the resolver asks after the workspaces and before the built-ins.
+    /// </summary>
+    internal bool TryGetFileFunction(string name, out JgsValue value, out string file)
+    {
+        if (_currentStorage is { } current && current.TryGet(name, out value))
+        {
+            file = current.SourceId;
+            return true;
+        }
+
+        value = JgsValue.Null;
+        file = "";
+        return false;
+    }
+
+    /// <summary>
+    /// What <paramref name="sourceId"/> hoisted under <paramref name="name"/>, read by file rather
+    /// than through the current one: the runner's call of a function file's main function and the
+    /// debugger's live edit ask this. JGS answers from the workspace.
+    /// </summary>
+    internal bool TryGetHoisted(string sourceId, string name, out JgsValue value)
+    {
+        if (Dialect.IsMatlab)
+        {
+            if (_files.TryGetValue(sourceId, out FunctionFile? file) && file.TryGet(name, out value))
+            {
+                return true;
+            }
+
+            value = JgsValue.Null;
+            return false;
+        }
+
+        return _globals.TryGet(name, out value) && value.Type == JgsType.Function;
+    }
+
+    /// <summary>
+    /// Runs code that is a context of its own without being a function call — an anonymous body, a
+    /// class property default — with <paramref name="env"/> as the current frame and
+    /// <paramref name="file"/> as the current file, both put back on dispose, and one call level
+    /// deeper: the debugger sees such a context as a frame named <paramref name="name"/>, and a
+    /// function it calls records the context's workspace and file as what it was called from.
+    /// </summary>
+    private ContextScope EnterContext(JgsEnvironment env, string file, string name, int callLine)
+    {
+        if (++_callDepth > MaxCallDepth)
+        {
+            _callDepth--;
+            throw new JgsRuntimeException(callLine, 0,
+                $"Maximum recursion limit of {MaxCallDepth} reached.");
+        }
+
+        JgsEnvironment frame = CurrentFrame;
+        string previousFile = _currentFile;
+        FunctionFile? previousStorage = _currentStorage;
+        SetFile(file);
+        CurrentFrame = env;
+        _hook?.EnterContext(name, file, callLine, env, frame, previousFile);
+        return new ContextScope(this, frame, previousFile, previousStorage);
+    }
+
+    /// <summary>The token <see cref="EnterContext"/> hands out; disposing it leaves the context.</summary>
+    private readonly struct ContextScope(
+        Interpreter interpreter, JgsEnvironment frame, string previousFile, FunctionFile? previousStorage) : IDisposable
+    {
+        /// <inheritdoc />
+        public void Dispose()
+        {
+            interpreter.CurrentFrame = frame;
+            interpreter.RestoreFile(previousFile, previousStorage);
+            interpreter._callDepth--;
+            interpreter._hook?.ExitContext();
+        }
     }
 
     /// <summary>
@@ -239,19 +419,15 @@ internal sealed partial class Interpreter
     /// property default runs under, so that a function it calls sees the default's own workspace as
     /// its caller and the class file as where the default's names come from.
     /// </summary>
-    internal JgsValue EvaluateInContext(Expr expression, JgsEnvironment env, string file)
+    /// <param name="expression">The expression to evaluate.</param>
+    /// <param name="env">The context's own workspace.</param>
+    /// <param name="file">The file the context's names come from.</param>
+    /// <param name="name">What the debugger shows the context as — the default's owner, the handle's text.</param>
+    /// <param name="callLine">The line the context was entered from, for the debugger's stack.</param>
+    internal JgsValue EvaluateInContext(Expr expression, JgsEnvironment env, string file, string name, int callLine)
     {
-        JgsEnvironment frame = CurrentFrame;
-        using FileContext entered = EnterFile(file);
-        CurrentFrame = env;
-        try
-        {
-            return Evaluate(expression, env);
-        }
-        finally
-        {
-            CurrentFrame = frame;
-        }
+        using ContextScope context = EnterContext(env, file, name, callLine);
+        return Evaluate(expression, env);
     }
 
     /// <summary>
@@ -260,19 +436,11 @@ internal sealed partial class Interpreter
     /// own workspace, which a function it calls then sees as its caller, and under the file the
     /// handle was made in, which is where the body's names come from.
     /// </summary>
-    internal JgsValue[] EvaluateForOutputsInContext(Expr expression, int wanted, JgsEnvironment env, string file)
+    internal JgsValue[] EvaluateForOutputsInContext(
+        Expr expression, int wanted, JgsEnvironment env, string file, string name, int callLine)
     {
-        JgsEnvironment frame = CurrentFrame;
-        using FileContext entered = EnterFile(file);
-        CurrentFrame = env;
-        try
-        {
-            return EvaluateForOutputs(expression, wanted, env);
-        }
-        finally
-        {
-            CurrentFrame = frame;
-        }
+        using ContextScope context = EnterContext(env, file, name, callLine);
+        return EvaluateForOutputs(expression, wanted, env);
     }
 
     /// <summary>
@@ -396,10 +564,11 @@ internal sealed partial class Interpreter
         long runSteps = _steps;
         JgsEnvironment runFrame = CurrentFrame;
         string runFile = _currentFile;
+        FunctionFile? runStorage = _currentStorage;
         _cancellationToken = cancellationToken;
         _steps = 0;
         CurrentFrame = env;
-        _currentFile = file;
+        SetFile(file);
         try
         {
             foreach (Stmt statement in program)
@@ -420,7 +589,7 @@ internal sealed partial class Interpreter
         finally
         {
             CurrentFrame = runFrame;
-            _currentFile = runFile;
+            RestoreFile(runFile, runStorage);
             _cancellationToken = runToken;
             _steps = runSteps;
         }
@@ -434,22 +603,18 @@ internal sealed partial class Interpreter
         Return,
     }
 
-    /// <summary>Runs a whole program. Top-level function declarations are hoisted so order does not matter.</summary>
+    /// <summary>
+    /// Runs a whole program. Top-level function declarations are hoisted first — into the program's
+    /// own file storage in the MATLAB dialect, into the workspace for JGS — so order does not matter.
+    /// </summary>
     public void Run(IReadOnlyList<Stmt> program)
     {
-        foreach (Stmt statement in program)
-        {
-            if (statement is FnStmt fn)
-            {
-                _globals.DeclareFunction(fn.Name, JgsValue.Function(new UserFunction(fn, _globals, this)));
-                ScriptFunctionNames.Add(fn.Name);
-            }
-        }
+        string file = FileOf(program);
+        HoistAll(program, file);
 
         // The top level runs through the same block executor as everything else, so a debug hook sees
-        // top-level statements too. (Reaching a FnStmt just re-declares it — hoisting made it callable
-        // earlier; re-declaration is the same binding again.)
-        using FileContext entered = EnterFile(FileOf(program));
+        // top-level statements too. (Reaching a hoisted FnStmt is a no-op; see the statement arm.)
+        using FileContext entered = EnterFile(file);
         Completion completion = ExecuteBlock(program, _globals);
         if (completion.Kind is CompletionKind.Break or CompletionKind.Continue)
         {
@@ -466,19 +631,15 @@ internal sealed partial class Interpreter
     /// <summary>
     /// Runs a script file's statements in <paramref name="scope"/> — how a script named on the search
     /// path runs. MATLAB's rule is that a script shares the workspace of whatever called it, so this
-    /// takes the caller's frame rather than making one, and the file's own functions are hoisted into
-    /// that frame the way the top level's are. An error that escapes is attributed to
-    /// <paramref name="sourceId"/>, the file's path, so it is not read as a line of the caller's.
+    /// takes the caller's frame rather than making one; the file's own functions are hoisted into
+    /// the file's storage, visible to the script's statements and to nothing else — not to the
+    /// caller, whose same-named function they no longer overwrite, and not as nested functions of a
+    /// caller that is a function. An error that escapes is attributed to <paramref name="sourceId"/>,
+    /// the file's path, so it is not read as a line of the caller's.
     /// </summary>
     internal void RunScriptFile(IReadOnlyList<Stmt> program, JgsEnvironment scope, string sourceId)
     {
-        foreach (Stmt statement in program)
-        {
-            if (statement is FnStmt fn)
-            {
-                scope.DeclareFunction(fn.Name, JgsValue.Function(new UserFunction(fn, scope, this)));
-            }
-        }
+        HoistAll(program, sourceId);
 
         // The workspace stays the caller's; only the file changes.
         using FileContext entered = EnterFile(sourceId);
@@ -522,12 +683,13 @@ internal sealed partial class Interpreter
         CallExpr? callerCall = CurrentCall;
         FnStmt? callerFunction = _currentFunction;
         string callerFile = _currentFile;
+        FunctionFile? callerStorage = _currentStorage;
         CurrentFrame = local;
         CallerFrame = callerFrame;
         CurrentCall = _pendingCall;
         _pendingCall = null;
         _currentFunction = declaration;
-        _currentFile = declaration.SourceId;
+        SetFile(declaration.SourceId);
 
         // Nested functions hoist like top-level ones do in Run(): a handle taken before the nested
         // declaration line (increment = @doInc) must already resolve. Each closes over this call's
@@ -571,7 +733,7 @@ internal sealed partial class Interpreter
             CallerFrame = callersCaller;
             CurrentCall = callerCall;
             _currentFunction = callerFunction;
-            _currentFile = callerFile;
+            RestoreFile(callerFile, callerStorage);
             _callDepth--;
             _hook?.ExitFunction();
         }
@@ -836,6 +998,15 @@ internal sealed partial class Interpreter
                 return Completion.Normal;
 
             case FnStmt fn:
+                // Two cases, told apart by the storage: a file-level declaration was hoisted into its
+                // file before the first statement ran and is a no-op here; anything else is a nested
+                // function, declared into the frame of the function that holds it — one closure per
+                // invocation, sharing that invocation's variables, visible to no other function.
+                if (Dialect.IsMatlab && FileFor(fn.SourceId).Holds(fn))
+                {
+                    return Completion.Normal;
+                }
+
                 env.DeclareFunction(fn.Name, JgsValue.Function(new UserFunction(fn, env, this)));
                 if (ReferenceEquals(env, _globals))
                 {

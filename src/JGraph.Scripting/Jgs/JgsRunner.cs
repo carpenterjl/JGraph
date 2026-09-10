@@ -102,7 +102,7 @@ internal static class JgsRunner
                 static p => p.Key, static p => p.Value, StringComparer.Ordinal);
 
             interpreter.Run(program);
-            InvokeMainIfFunctionFile(program, environment);
+            InvokeMainIfFunctionFile(program, interpreter);
             globals.ShowTouchedFigures(); // MATLAB expectation: created figures appear without show()
             ScriptRunResult ok = ScriptRunResult.Ok(globals.FiguresShown, SnapshotGlobals(environment, pristine));
             RegisterCompletedRun(environment, hook);
@@ -168,7 +168,7 @@ internal static class JgsRunner
     /// MATLAB dispatches on the file name, and the first function in the file is that function.
     /// Arity and runtime errors surface as ordinary diagnostics from the call site of the file.
     /// </summary>
-    internal static void InvokeMainIfFunctionFile(IReadOnlyList<Stmt> program, JgsEnvironment environment)
+    internal static void InvokeMainIfFunctionFile(IReadOnlyList<Stmt> program, Interpreter interpreter)
     {
         if (!IsFunctionFile(program))
         {
@@ -176,7 +176,7 @@ internal static class JgsRunner
         }
 
         var main = (FnStmt)program[0];
-        if (environment.TryGet(main.Name, out JgsValue value) && value.Type == JgsType.Function)
+        if (interpreter.TryGetHoisted(main.SourceId, main.Name, out JgsValue value) && value.Type == JgsType.Function)
         {
             value.AsCallable.Call(System.Array.Empty<JgsValue>(), main.Line, main.Column);
         }
@@ -384,12 +384,22 @@ internal static class JgsRunner
                     return JgsValue.Null;
                 }
 
-                if (names.Count == 0 || names.Contains("all") || names.Contains("variables"))
+                // 'clear all' and 'clear functions' forget every file the path loaded, so the next
+                // call re-reads it, and every persistent — MATLAB's meaning (R2025b: a counter's
+                // persistent is 1 again after 'clear all'). A script's own functions live with the
+                // script and stay callable, as they do in MATLAB, where the file is simply read again.
+                bool everything = names.Contains("all");
+                if (everything || names.Contains("functions"))
+                {
+                    interpreter.FunctionPath?.Unload();
+                    interpreter.ForgetPersistents();
+                }
+
+                if (names.Count == 0 || everything || names.Contains("variables"))
                 {
                     // Dropping everything at once takes every user wrapper (aliases included), so
                     // their packed buffers can be released deterministically. MATLAB's plain clear
-                    // drops variables but not the functions a script defined — those need 'clear all'.
-                    bool everything = names.Contains("all");
+                    // drops variables but not the functions a JGS script defined — those need 'clear all'.
                     var dropped = new List<JgsValue>();
                     foreach ((string cleared, JgsValue value) in UserVariables().ToList())
                     {

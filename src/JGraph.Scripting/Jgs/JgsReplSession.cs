@@ -210,7 +210,7 @@ internal sealed class JgsReplSession : IScriptSession, IGraphicsEventSession, IW
             {
                 // A file that is nothing but function definitions is a MATLAB function file: running
                 // it means calling its main function. Prompt input never takes this branch.
-                JgsRunner.InvokeMainIfFunctionFile(program, _environment);
+                JgsRunner.InvokeMainIfFunctionFile(program, _interpreter);
             }
 
             _globals.ShowTouchedFigures();

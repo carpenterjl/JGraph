@@ -69,10 +69,11 @@ internal readonly record struct Resolution(ResolutionLayer Layer, JgsValue Value
 /// <remarks>
 /// <para>
 /// The order implemented is the one the interpreter has always had: the nearest binding in the
-/// workspace walk, variable or function (a variable, a nested or local function, or a built-in,
-/// whichever the walk meets first), then a file on the search path. Files above built-ins — the
-/// order MATLAB has and the point of the milestone — is a later step's flip; it changes only this
-/// class and the layers a handle walks, which is why the sites were routed through here first.
+/// workspace walk, variable or nested function, then the running file's own functions (read from
+/// the file's <see cref="FunctionFile"/>, where step 5 moved them out of the workspace), then a
+/// built-in, then a file on the search path. Files above built-ins — the order MATLAB has and the
+/// point of the milestone — is a later step's flip; it changes only this class and the layers a
+/// handle walks, which is why the sites were routed through here first.
 /// </para>
 /// <para>
 /// <see cref="Invoke"/> is asked <em>before</em> a call's arguments are evaluated, because what the
@@ -120,12 +121,17 @@ internal sealed class JgsNameResolver
             return Lookup(name, env);
         }
 
-        if (env.TryGetFunction(name, out JgsEnvironment? scope, out JgsValue value))
+        if (env.TryGetFunction(name, out JgsEnvironment? scope, out JgsValue value) && !scope.IsBuiltinLayer)
         {
             return Classify(name, scope, value);
         }
 
-        return FromFile(name);
+        if (_interpreter.TryGetFileFunction(name, out JgsValue local, out string file))
+        {
+            return new Resolution(ResolutionLayer.Local, local, file);
+        }
+
+        return scope is not null ? new Resolution(ResolutionLayer.Builtin, value, null) : FromFile(name);
     }
 
     /// <summary>
@@ -148,10 +154,11 @@ internal sealed class JgsNameResolver
     }
 
     /// <summary>
-    /// The workspace walk alone — layers 1 to 3 and the built-in layer, whichever the walk meets
-    /// first — honouring a <c>global</c> declaration that redirects the name. This is what a
-    /// statement asks about its callee before deciding how to run it, and what the loop JIT asks
-    /// about every name it wants to compile: neither may touch the disk.
+    /// Everything but the disk: the workspace walk — a variable or a nested function, honouring a
+    /// <c>global</c> declaration that redirects the name — then the running file's own functions,
+    /// then the built-in layer. This is what a statement asks about its callee before deciding how
+    /// to run it, and what the loop JIT asks about every name it wants to compile: neither may
+    /// touch the disk.
     /// </summary>
     public Resolution Lookup(string name, JgsEnvironment env)
     {
@@ -160,9 +167,20 @@ internal sealed class JgsNameResolver
             return Classify(name, global, shared);
         }
 
-        return env.TryGetScope(name, out JgsEnvironment? scope, out JgsValue value)
-            ? Classify(name, scope, value)
-            : Resolution.None;
+        if (env.TryGetScope(name, out JgsEnvironment? scope, out JgsValue value) && !scope.IsBuiltinLayer)
+        {
+            return Classify(name, scope, value);
+        }
+
+        // No workspace on the walk holds the name: the file's own functions come before the built-in
+        // the walk ended on, exactly as a script's local functions beat built-ins when they lived in
+        // the base workspace.
+        if (_interpreter.TryGetFileFunction(name, out JgsValue local, out string file))
+        {
+            return new Resolution(ResolutionLayer.Local, local, file);
+        }
+
+        return scope is not null ? new Resolution(ResolutionLayer.Builtin, value, null) : Resolution.None;
     }
 
     /// <summary>
