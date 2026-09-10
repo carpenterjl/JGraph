@@ -1,0 +1,38 @@
+class,pattern,note
+double,double,
+single,double,the sweep measured double for every floating class
+int8,int8,int8 stands for every integer class in the sweep
+int16,int8,
+int32,int8,
+int64,int8,
+uint8,int8,
+uint16,int8,
+uint32,int8,
+uint64,int8,
+logical,logical,
+char,char,
+string,string,
+cell,cell,
+struct,struct,
+function_handle,fh,
+table,table,a timetable answers 'table' to class() here and takes the table column
+datetime,datetime,
+duration,duration,
+calendarDuration,duration,the nearest measured time class
+containers.Map,map,
+dictionary,struct,never swept; struct is the column under which the built-in wins least often
+meta.class,struct,never swept
+VideoWriter,struct,never swept
+object,struct,a user object is dominant before this table is consulted (rule 1); this row is for completeness
+image,struct,the JGS dialect's image class; the MATLAB dialect answers the pixel class
+affine2d,struct,a tagged struct
+projective2d,struct,a tagged struct
+rigid2d,struct,a tagged struct
+imref2d,struct,a tagged struct
+strel,struct,a tagged struct
+offsetstrel,struct,a tagged struct
+gabor,struct,a tagged struct
+ExhaustiveSearcher,struct,a tagged struct
+KDTreeSearcher,struct,a tagged struct
+paretotails,struct,a tagged struct
+prob.*,struct,every distribution object is a tagged struct with a package-qualified class

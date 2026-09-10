@@ -1,0 +1,37 @@
+[Warning: Function sum has the same name as a MATLAB built-in. We suggest you rename the function to avoid a potential name conflict.] 
+             helper: 'pf2-local-helper(1)'
+              phelp: 'lib-private-phelp2'
+                  v: 'probe0c-v'
+               sumv: 3
+              sumon: -555
+        base_helper: 'pf2-local-helper(1)'
+        eval_helper: 'pf2-local-helper(1)'
+       feval_helper: 'pf2-local-helper(1)'
+    str2func_helper: 'pf2-local-helper(1)'
+      handle_helper: 'pf2-local-helper(1)'
+
+--- from a script run by name (worker2 in wdir)
+             helper: 'pf2-local-helper(1)'
+              phelp: 'lib-private-phelp2'
+                  v: 'probe0c-v'
+               sumv: 3
+              sumon: -555
+        base_helper: 'pf2-local-helper(1)'
+        eval_helper: 'pf2-local-helper(1)'
+       feval_helper: 'pf2-local-helper(1)'
+    str2func_helper: 'pf2-local-helper(1)'
+      handle_helper: 'pf2-local-helper(1)'
+
+--- evalin from an anonymous body context via g2
+             helper: 'pf2-local-helper(1)'
+              phelp: 'lib-private-phelp2'
+                  v: 'ERR: Unrecognized function or variable 'v'.'
+               sumv: 3
+              sumon: 'ERR: Unrecognized function or variable 'on'.'
+        base_helper: 'pf2-local-helper(1)'
+        eval_helper: 'pf2-local-helper(1)'
+       feval_helper: 'pf2-local-helper(1)'
+    str2func_helper: 'pf2-local-helper(1)'
+      handle_helper: 'pf2-local-helper(1)'
+
+=== done

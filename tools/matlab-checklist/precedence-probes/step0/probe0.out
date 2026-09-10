@@ -1,0 +1,69 @@
+[Warning: Function sum has the same name as a MATLAB built-in. We suggest you rename the function to avoid a potential name conflict.] 
+=== A. @sum on user objects (sum.m in cur returns -555; Obj has sum, ObjNo does not)
+sum(o) => Obj-sum
+sum(1,o) => Obj-sum
+sum(on) => -555
+sum(1,on) => -555
+sum([1 2]) => 3
+hs(o) => Obj-sum
+hs(1,o) => Obj-sum
+hs(on) => -555
+hs(1,on) => -555
+hs([1 2]) => 3
+cellfun(hs,{o,on,[1 2]}) => {Obj-sum | -555 | 3}
+feval('sum',o) => Obj-sum
+feval('sum',on) => -555
+feval(hs,on) => -555
+after cd lib: hs(on) => -555
+after cd lib: sum(on) => Invalid data type. First argument must be numeric or logical.
+[Warning: Function sum has the same name as a MATLAB built-in. We suggest you rename the function to avoid a potential name conflict.] 
+[> In probe0 (line 29)] 
+
+=== B. nested handle escaping its parent
+h1() h1() h2() => [1 2 1]
+functions(h1).type/function => {nested | nestmaker/inc}
+after clear nestmaker: h1() => 3
+
+=== C. evalin('caller') from a path function, caller is this script (local helper here)
+pf() from probe0 => ERR: Undefined function 'helper' for input arguments of type 'double'.
+pfp() from probe0 (private phelp) => ERR: Unrecognized function or variable 'phelp'.
+worker: pf() => ERR: Undefined function 'helper' for input arguments of type 'double'.
+worker: pfp() => ERR: Unrecognized function or variable 'phelp'.
+worker: helper(1) direct => worker-helper(1)
+worker: phelp() direct => wdir-private-phelp
+probe0 after worker: helper(1) => probe0-helper(1)
+
+=== D. g through an escaped @(x) g(x, v) from maker.m (maker local helper, maker v)
+g via f: evalin helper() => ERR: Unrecognized function or variable 'helper'.
+g via f: evalin v => maker-v
+g via f: assignin seen => ERR: Attempt to add "seen" to a static workspace.
+probe0 has seen? => 0
+g direct from probe0: helper => ERR: Unrecognized function or variable 'helper'.
+g direct: v => probe0-v
+probe0 seen now => 1
+g direct: dbstack from anon => g@C:\Users\Carpe\AppData\Local\Temp\claude\D--EE-Projects-JGraph-JGraph\6788f568-1afc-433c-bd53-dca52cb162b6\scratchpad\prec2\lib\g.m <- @(x)g(x,v)@C:\Users\Carpe\AppData\Local\Temp\claude\D--EE-Projects-JGraph-JGraph\6788f568-1afc-433c-bd53-dca52cb162b6\scratchpad\prec2\lib\maker.m <- probe0@C:\Users\Carpe\AppData\Local\Temp\claude\D--EE-Projects-JGraph-JGraph\6788f568-1afc-433c-bd53-dca52cb162b6\scratchpad\prec2\cur\probe0.m
+
+=== E. g called from a classdef property default (DefClass local helper)
+DefClass.p.helper => ERR: Unrecognized function or variable 'helper'.
+DefClass.p.v => ERR: Unrecognized function or variable 'v'.
+DefClass.p.assign => ok
+DefClass.p.stack => g@C:\Users\Carpe\AppData\Local\Temp\claude\D--EE-Projects-JGraph-JGraph\6788f568-1afc-433c-bd53-dca52cb162b6\scratchpad\prec2\lib\g.m <- probe0@C:\Users\Carpe\AppData\Local\Temp\claude\D--EE-Projects-JGraph-JGraph\6788f568-1afc-433c-bd53-dca52cb162b6\scratchpad\prec2\cur\probe0.m
+
+=== F. globals under builtin names
+size(end) => 30
+size(:)' => [10 20 30]
+size(2:end) => [20 30]
+
+ans =
+
+    20
+
+numel via builtin('size',size) => [1 3]
+disp(4) => 8
+
+ans =
+
+    10
+
+y = disp(6) => 12
+=== done
