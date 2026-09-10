@@ -37,7 +37,7 @@ internal static partial class JgsBuiltins
     /// <summary>Registers the constructor and the three queries that take a decomposition.</summary>
     internal static void RegisterDecompositionBuiltins(JgsEnvironment env, JGraphScriptGlobals host)
     {
-        env.DeclareFunction(DecompositionClass, JgsValue.Function(
+        env.Builtins.Register(DecompositionClass, JgsValue.Function(
             new BuiltinFunction(DecompositionClass, (args, line, col) => BuildDecomposition(args, line, col))
             {
                 AutoCallsBare = true,
@@ -66,7 +66,7 @@ internal static partial class JgsBuiltins
                 MultiOutput = original?.MultiOutput,
             };
 
-            env.DeclareFunction(name, JgsValue.Function(wrapper));
+            env.Builtins.Register(name, JgsValue.Function(wrapper));
         }
 
         Wrap("rank", (inner, args, line, col) =>
@@ -103,7 +103,7 @@ internal static partial class JgsBuiltins
             return JgsValue.Number(factors.ReciprocalCondition);
         });
 
-        env.DeclareFunction("isIllConditioned", JgsValue.Function(new BuiltinFunction("isIllConditioned",
+        env.Builtins.Register("isIllConditioned", JgsValue.Function(new BuiltinFunction("isIllConditioned",
             (args, line, col) =>
             {
                 ArityRange("isIllConditioned", args, 1, 1, line, col);

@@ -116,12 +116,12 @@ internal static partial class JgsBuiltins
     private static void RegisterHandleGraphicsBuiltins(JgsEnvironment env, JGraphScriptGlobals host)
     {
         void Define(string name, Func<IReadOnlyList<JgsValue>, int, int, JgsValue> body) =>
-            env.DeclareFunction(name, JgsValue.Function(new BuiltinFunction(name, body)));
+            env.Builtins.Register(name, JgsValue.Function(new BuiltinFunction(name, body)));
 
         // A verb that acts rather than answers prints nothing as a bare statement, even though it
         // hands something back for the script that wants it.
         void DefineSilent(string name, Func<IReadOnlyList<JgsValue>, int, int, JgsValue> body) =>
-            env.DeclareFunction(name, JgsValue.Function(
+            env.Builtins.Register(name, JgsValue.Function(
                 new BuiltinFunction(name, body) { BindsAnsAsStatement = false }));
 
         Define("get", Get);
@@ -130,7 +130,7 @@ internal static partial class JgsBuiltins
         // Both answer a question with no arguments — every object there is — so the bare name has to
         // be that answer rather than the function itself, or numel(findobj) counts a function.
         void DefineSearch(string name, bool hidden) =>
-            env.DeclareFunction(name, JgsValue.Function(
+            env.Builtins.Register(name, JgsValue.Function(
                 new BuiltinFunction(name, (args, line, col) => Find(name, args, line, col, hidden))
                 { AutoCallsBare = true }));
 
@@ -149,21 +149,21 @@ internal static partial class JgsBuiltins
 
         // The three "which object" questions. gco outlives its click; the other two are only true
         // while a callback is running, and answer empty otherwise.
-        env.DeclareFunction("gco", JgsValue.Function(new BuiltinFunction("gco", (args, line, col) =>
+        env.Builtins.Register("gco", JgsValue.Function(new BuiltinFunction("gco", (args, line, col) =>
         {
             ArityRange("gco", args, 0, 1, line, col);
             return Named(JgsGraphicsCallbackState.CurrentObject);
         })
         { AutoCallsBare = true, BindsAnsAsStatement = false }));
 
-        env.DeclareFunction("gcbo", JgsValue.Function(new BuiltinFunction("gcbo", (args, line, col) =>
+        env.Builtins.Register("gcbo", JgsValue.Function(new BuiltinFunction("gcbo", (args, line, col) =>
         {
             Arity("gcbo", args, 0, line, col);
             return Named(JgsGraphicsCallbackState.CallbackObject);
         })
         { AutoCallsBare = true, BindsAnsAsStatement = false }));
 
-        env.DeclareFunction("gcbf", JgsValue.Function(new BuiltinFunction("gcbf", (args, line, col) =>
+        env.Builtins.Register("gcbf", JgsValue.Function(new BuiltinFunction("gcbf", (args, line, col) =>
         {
             Arity("gcbf", args, 0, line, col);
             return Named(FigureOf(JgsGraphicsCallbackState.CallbackObject));
@@ -178,7 +178,7 @@ internal static partial class JgsBuiltins
         // side — cm = uicontextmenu — and a bare name in expression position is otherwise the
         // function rather than a call of it.
         void DefineMenuVerb(string name, Func<IReadOnlyList<JgsValue>, int, int, JgsValue> body) =>
-            env.DeclareFunction(name, JgsValue.Function(
+            env.Builtins.Register(name, JgsValue.Function(
                 new BuiltinFunction(name, body) { AutoCallsBare = true, BindsAnsAsStatement = false }));
 
         DefineMenuVerb("uicontextmenu", (args, line, col) =>
@@ -250,7 +250,7 @@ internal static partial class JgsBuiltins
             return JgsHandleRegistry.For(item);
         });
 
-        env.DeclareFunction("ishold", JgsValue.Function(new BuiltinFunction("ishold", (args, line, col) =>
+        env.Builtins.Register("ishold", JgsValue.Function(new BuiltinFunction("ishold", (args, line, col) =>
         {
             ArityRange("ishold", args, 0, 1, line, col);
             (AxesModel? named, IReadOnlyList<JgsValue> rest) = PeelAxes(args);
@@ -259,7 +259,7 @@ internal static partial class JgsBuiltins
         })
         { AutoCallsBare = true }));
 
-        env.DeclareFunction("newplot", JgsValue.Function(new BuiltinFunction("newplot", (args, line, col) =>
+        env.Builtins.Register("newplot", JgsValue.Function(new BuiltinFunction("newplot", (args, line, col) =>
         {
             ArityRange("newplot", args, 0, 1, line, col);
             (AxesModel? named, IReadOnlyList<JgsValue> rest) = PeelAxes(args);

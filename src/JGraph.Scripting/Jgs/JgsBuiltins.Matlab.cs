@@ -72,7 +72,7 @@ internal static partial class JgsBuiltins
         JgsEnvironment env, JGraphScriptGlobals host, Random random, JgsDialect dialect)
     {
         void Define(string name, Func<IReadOnlyList<JgsValue>, int, int, JgsValue> body) =>
-            env.DeclareFunction(name, JgsValue.Function(new BuiltinFunction(name, body)));
+            env.Builtins.Register(name, JgsValue.Function(new BuiltinFunction(name, body)));
 
         // The mustBe… family (M62). They are validators inside an arguments block and ordinary
         // builtins outside one, which is how MATLAB's are, so they register with everything else.
@@ -241,7 +241,7 @@ internal static partial class JgsBuiltins
         // Marked string-aware because the whole point of mat2str is to write text eval reads
         // back as the same value, and a string demoted to a char row on the way in cannot be told
         // from one that was written as a char row (M122).
-        env.DeclareFunction("mat2str", JgsValue.Function(
+        env.Builtins.Register("mat2str", JgsValue.Function(
             new BuiltinFunction("mat2str", (args, line, col) => MatrixText(args, line, col))
             { KeepsStringArguments = true }));
         Define("int2str", (args, line, col) => WholeNumberText(args, line, col));
@@ -475,7 +475,7 @@ internal static partial class JgsBuiltins
         // is the form MATLAB documents first and this refused it by type, and `[q, r] = feval(@f, x)`
         // silently produced one value because the entry carried no MultiOutput body — a wrong answer
         // rather than an error, which is the worse of the two failures.
-        env.DeclareFunction("feval", JgsValue.Function(new BuiltinFunction(
+        env.Builtins.Register("feval", JgsValue.Function(new BuiltinFunction(
             "feval",
             (args, line, col) => FevalTarget(env, args, line, col)
                 .Call(args.Skip(1).ToArray(), line, col))
@@ -648,7 +648,7 @@ internal static partial class JgsBuiltins
             }
 
             IJgsCallable inner = existing.AsCallable;
-            env.DeclareFunction(name, JgsValue.Function(new BuiltinFunction(name, (args, line, col) =>
+            env.Builtins.Register(name, JgsValue.Function(new BuiltinFunction(name, (args, line, col) =>
             {
                 // The format is normally first; fprintf(fid, fmt, …) shifts it one slot right.
                 int at = args.Count > 0 && args[0].Type == JgsType.String
@@ -694,13 +694,13 @@ internal static partial class JgsBuiltins
             }
 
             IJgsCallable single = existing.AsCallable;
-            env.DeclareFunction(name, JgsValue.Function(
+            env.Builtins.Register(name, JgsValue.Function(
                 new BuiltinFunction(name, single.Call) { MultiOutput = both }));
         }
 
         // deal exists only to feed several outputs at once, so it is declared where the several-output
         // forms are (M52 wave E). One value is handed to every output; several must match them.
-        env.DeclareFunction("deal", JgsValue.Function(new BuiltinFunction(
+        env.Builtins.Register("deal", JgsValue.Function(new BuiltinFunction(
             "deal",
             (args, line, col) => Dealt(args, 1, line, col)[0])
         {
@@ -827,7 +827,7 @@ internal static partial class JgsBuiltins
             Func<IReadOnlyList<JgsValue>, int, int, JgsValue> single = dialect.IsMatlab
                 ? (args, line, col) => setForm.Call(args, line, col).ElementAt(0)
                 : setForm.Call;
-            env.DeclareFunction(name, JgsValue.Function(new BuiltinFunction(name, single)
+            env.Builtins.Register(name, JgsValue.Function(new BuiltinFunction(name, single)
             {
                 MultiOutput = (args, wanted, line, col) =>
                 {

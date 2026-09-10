@@ -23,19 +23,19 @@ internal static partial class JgsBuiltins
     /// <summary>Registers the partial-differential pair and the legacy expression helpers.</summary>
     internal static void RegisterPdeBuiltins(JgsEnvironment env, JGraphScriptGlobals host)
     {
-        env.DeclareFunction("pdepe", JgsValue.Function(new BuiltinFunction("pdepe",
+        env.Builtins.Register("pdepe", JgsValue.Function(new BuiltinFunction("pdepe",
             (args, line, col) => SolvePde(env, host, args, 1, line, col)[0])
         {
             MultiOutput = (args, wanted, line, col) => SolvePde(env, host, args, wanted, line, col),
         }));
 
-        env.DeclareFunction("pdeval", JgsValue.Function(new BuiltinFunction("pdeval",
+        env.Builtins.Register("pdeval", JgsValue.Function(new BuiltinFunction("pdeval",
             (args, line, col) => EvaluatePde(args, 1, line, col)[0])
         {
             MultiOutput = (args, wanted, line, col) => EvaluatePde(args, wanted, line, col),
         }));
 
-        env.DeclareFunction("symvar", JgsValue.Function(new BuiltinFunction("symvar", (args, line, col) =>
+        env.Builtins.Register("symvar", JgsValue.Function(new BuiltinFunction("symvar", (args, line, col) =>
         {
             Arity("symvar", args, 1, line, col);
             if (args[0].Type == JgsType.Function && args[0].AsCallable is InlineFunction existing)
@@ -46,7 +46,7 @@ internal static partial class JgsBuiltins
             return CellColumnOf(SymbolicVariables(TextArgument("symvar", args[0], line, col), line, col));
         })));
 
-        env.DeclareFunction("vectorize", JgsValue.Function(new BuiltinFunction("vectorize", (args, line, col) =>
+        env.Builtins.Register("vectorize", JgsValue.Function(new BuiltinFunction("vectorize", (args, line, col) =>
         {
             Arity("vectorize", args, 1, line, col);
             if (args[0].Type == JgsType.Function && args[0].AsCallable is InlineFunction inlined)
@@ -61,7 +61,7 @@ internal static partial class JgsBuiltins
             return vectorized.Length == 0 ? JgsMatrix.FromColumnMajorDims([], [0, 0]) : JgsValue.Str(vectorized);
         })));
 
-        env.DeclareFunction("inline", JgsValue.Function(new BuiltinFunction("inline", (args, line, col) =>
+        env.Builtins.Register("inline", JgsValue.Function(new BuiltinFunction("inline", (args, line, col) =>
         {
             if (args.Count == 0)
             {
@@ -103,19 +103,19 @@ internal static partial class JgsBuiltins
             return MakeInline(env, expression, names, line, col);
         })));
 
-        env.DeclareFunction("formula", JgsValue.Function(new BuiltinFunction("formula", (args, line, col) =>
+        env.Builtins.Register("formula", JgsValue.Function(new BuiltinFunction("formula", (args, line, col) =>
         {
             Arity("formula", args, 1, line, col);
             return JgsValue.Str(FormulaOf("formula", args[0], line, col));
         })));
 
-        env.DeclareFunction("argnames", JgsValue.Function(new BuiltinFunction("argnames", (args, line, col) =>
+        env.Builtins.Register("argnames", JgsValue.Function(new BuiltinFunction("argnames", (args, line, col) =>
         {
             Arity("argnames", args, 1, line, col);
             return CellColumnOf(ArgumentNamesOf("argnames", args[0], line, col));
         })));
 
-        env.DeclareFunction("inlineeval", JgsValue.Function(new BuiltinFunction("inlineeval", (args, line, col) =>
+        env.Builtins.Register("inlineeval", JgsValue.Function(new BuiltinFunction("inlineeval", (args, line, col) =>
         {
             Arity("inlineeval", args, 3, line, col);
             if (args[0].Type != JgsType.Cell)
@@ -130,7 +130,7 @@ internal static partial class JgsBuiltins
                 .AsCallable.Call(args[0].AsCell, line, col);
         })));
 
-        env.DeclareFunction("fcnchk", JgsValue.Function(new BuiltinFunction("fcnchk", (args, line, col) =>
+        env.Builtins.Register("fcnchk", JgsValue.Function(new BuiltinFunction("fcnchk", (args, line, col) =>
         {
             if (args.Count == 0)
             {

@@ -42,36 +42,36 @@ internal static partial class JgsBuiltins
     /// <summary>Registers the two collocation solvers, the three delay solvers and their helpers.</summary>
     internal static void RegisterBvpDdeBuiltins(JgsEnvironment env, JGraphScriptGlobals host)
     {
-        env.DeclareFunction("bvpset", JgsValue.Function(new BuiltinFunction(
+        env.Builtins.Register("bvpset", JgsValue.Function(new BuiltinFunction(
             "bvpset", (args, line, col) => OptionsStructure("bvpset", BvpsetFields, args, line, col))
         {
             AutoCallsBare = true,
         }));
-        env.DeclareFunction("bvpget", JgsValue.Function(new BuiltinFunction("bvpget",
+        env.Builtins.Register("bvpget", JgsValue.Function(new BuiltinFunction("bvpget",
             (args, line, col) => OptionsSetting("bvpget", BvpsetFields, args, line, col))));
-        env.DeclareFunction("ddeset", JgsValue.Function(new BuiltinFunction(
+        env.Builtins.Register("ddeset", JgsValue.Function(new BuiltinFunction(
             "ddeset", (args, line, col) => OptionsStructure("ddeset", DdesetFields, args, line, col))
         {
             AutoCallsBare = true,
         }));
-        env.DeclareFunction("ddeget", JgsValue.Function(new BuiltinFunction("ddeget",
+        env.Builtins.Register("ddeget", JgsValue.Function(new BuiltinFunction("ddeget",
             (args, line, col) => OptionsSetting("ddeget", DdesetFields, args, line, col))));
 
-        env.DeclareFunction("bvpinit", JgsValue.Function(new BuiltinFunction("bvpinit",
+        env.Builtins.Register("bvpinit", JgsValue.Function(new BuiltinFunction("bvpinit",
             (args, line, col) => BvpInit(env, args, line, col))));
-        env.DeclareFunction("bvpxtend", JgsValue.Function(new BuiltinFunction("bvpxtend",
+        env.Builtins.Register("bvpxtend", JgsValue.Function(new BuiltinFunction("bvpxtend",
             (args, line, col) => BvpExtend(args, line, col))));
 
-        env.DeclareFunction("bvp4c", JgsValue.Function(new BuiltinFunction("bvp4c",
+        env.Builtins.Register("bvp4c", JgsValue.Function(new BuiltinFunction("bvp4c",
             (args, line, col) => SolveBvp(env, host, "bvp4c", args, line, col))));
-        env.DeclareFunction("bvp5c", JgsValue.Function(new BuiltinFunction("bvp5c",
+        env.Builtins.Register("bvp5c", JgsValue.Function(new BuiltinFunction("bvp5c",
             (args, line, col) => SolveBvp(env, host, "bvp5c", args, line, col))));
 
-        env.DeclareFunction("dde23", JgsValue.Function(new BuiltinFunction("dde23",
+        env.Builtins.Register("dde23", JgsValue.Function(new BuiltinFunction("dde23",
             (args, line, col) => SolveDde(env, host, "dde23", args, line, col))));
-        env.DeclareFunction("ddesd", JgsValue.Function(new BuiltinFunction("ddesd",
+        env.Builtins.Register("ddesd", JgsValue.Function(new BuiltinFunction("ddesd",
             (args, line, col) => SolveDde(env, host, "ddesd", args, line, col))));
-        env.DeclareFunction("ddensd", JgsValue.Function(new BuiltinFunction("ddensd",
+        env.Builtins.Register("ddensd", JgsValue.Function(new BuiltinFunction("ddensd",
             (args, line, col) => SolveDde(env, host, "ddensd", args, line, col))));
     }
 

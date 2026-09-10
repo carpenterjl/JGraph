@@ -32,7 +32,7 @@ internal static partial class JgsBuiltins
             JgsValue.Struct(new Dictionary<string, JgsValue>(StringComparer.Ordinal) { [field] = inner });
 
         JgsValue line = Namespace("empty", empty);
-        env.Declare("graphics", Namespace("primitive", Namespace("Line", line)));
+        env.Builtins.RegisterConstant("graphics", Namespace("primitive", Namespace("Line", line)));
     }
 
     // --- Aiming a verb at a named axes ----------------------------------------------------------

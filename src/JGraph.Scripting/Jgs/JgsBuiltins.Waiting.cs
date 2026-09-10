@@ -35,7 +35,7 @@ internal static partial class JgsBuiltins
 
     private static void RegisterWaitingBuiltins(JgsEnvironment env, CancellationToken cancellationToken)
     {
-        env.DeclareFunction("waitforbuttonpress", JgsValue.Function(new BuiltinFunction(
+        env.Builtins.Register("waitforbuttonpress", JgsValue.Function(new BuiltinFunction(
             "waitforbuttonpress",
             (args, line, col) =>
             {
@@ -56,7 +56,7 @@ internal static partial class JgsBuiltins
             AutoCallsBare = true,
         }));
 
-        env.DeclareFunction("ginput", JgsValue.Function(new BuiltinFunction(
+        env.Builtins.Register("ginput", JgsValue.Function(new BuiltinFunction(
             "ginput",
             (args, line, col) => Ginput(args, 1, cancellationToken, line, col)[0])
         {

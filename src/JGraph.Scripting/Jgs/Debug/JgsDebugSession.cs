@@ -329,8 +329,14 @@ public sealed class JgsDebugSession
         int depth = _pausedDepth - frameIndex;
         return (frameIndex == 0
             ? _pausedEnvironment
-            : depth > 0 ? _frames[depth - 1].Local : GlobalsOf(_pausedEnvironment))!;
+            : depth > 0 ? _frames[depth - 1].Local : BaseWorkspace())!;
     }
+
+    /// <summary>
+    /// The base workspace of the paused run: the one the run started with, or the paused scope's own
+    /// by identity. Never found by walking to the outermost scope — that is the built-in layer.
+    /// </summary>
+    private JgsEnvironment? BaseWorkspace() => _globals ?? _pausedEnvironment?.Base;
 
     /// <summary>
     /// Moves the execution point of the paused script to the statement on <paramref name="line"/> of
@@ -672,22 +678,12 @@ public sealed class JgsDebugSession
         }
     }
 
-    private static JgsEnvironment? GlobalsOf(JgsEnvironment? environment)
-    {
-        JgsEnvironment? scope = environment;
-        while (scope?.Parent is not null)
-        {
-            scope = scope.Parent;
-        }
-
-        return scope;
-    }
-
     private static IReadOnlyList<ScriptVariable> Project(JgsEnvironment? environment)
     {
         var variables = new List<ScriptVariable>();
         var seen = new HashSet<string>(StringComparer.Ordinal);
-        for (JgsEnvironment? scope = environment; scope is not null; scope = scope.Parent)
+        // The built-in layer is not a workspace: its constants (pi, i, newline) are not variables.
+        for (JgsEnvironment? scope = environment; scope is not null && !scope.IsBuiltinLayer; scope = scope.Parent)
         {
             foreach ((string name, JgsValue value) in scope.Locals)
             {

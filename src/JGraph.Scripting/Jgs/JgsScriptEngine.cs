@@ -77,7 +77,7 @@ public sealed class JgsScriptEngine : IScriptEngine, IJgsDebuggable, IScriptRepl
         // 'run' and 'clear' are not seeded by CreateGlobals: they need the interpreter and the session
         // respectively, so they are declared afterwards by whoever owns those. The operator function
         // forms come from the interpreter for the same reason. Editors still know them all.
-        var names = new List<string>(globals.Locals.Keys) { "run", "clear", "clearvars", "whos", "save", "load" };
+        var names = new List<string>(globals.Builtins.Entries.Keys) { "run", "clear", "clearvars", "whos", "save", "load" };
         names.AddRange(JgsBuiltins.OperatorFunctionNames);
         names.AddRange(JgsBuiltins.EvalBuiltinNames);
         names.AddRange(JgsBuiltins.SessionBuiltinNames);

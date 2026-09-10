@@ -18,7 +18,7 @@ internal static partial class JgsBuiltins
     {
         void Define(string name, Func<IReadOnlyList<JgsValue>, int, int, JgsValue> body,
             Func<IReadOnlyList<JgsValue>, int, int, int, JgsValue[]>? multi = null) =>
-            env.DeclareFunction(name, JgsValue.Function(new BuiltinFunction(name, body) { MultiOutput = multi, KnowsWhenDiscarded = name is "peaks" or "membrane" }));
+            env.Builtins.Register(name, JgsValue.Function(new BuiltinFunction(name, body) { MultiOutput = multi, KnowsWhenDiscarded = name is "peaks" or "membrane" }));
 
         Define("membrane", Membrane, (args, wanted, line, col) =>
         {

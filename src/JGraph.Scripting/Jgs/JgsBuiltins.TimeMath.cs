@@ -278,6 +278,6 @@ internal static partial class JgsBuiltins
             KeepsStringArguments = inner.KeepsStringArguments,
         };
 
-        env.DeclareFunction(name, JgsValue.Function(wrapper));
+        env.Builtins.Register(name, JgsValue.Function(wrapper));
     }
 }

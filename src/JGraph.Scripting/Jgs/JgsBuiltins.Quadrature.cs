@@ -39,13 +39,13 @@ internal static partial class JgsBuiltins
     /// <summary>Registers the plane and solid integrals and the five names that came before them.</summary>
     internal static void RegisterQuadratureBuiltins(JgsEnvironment env, JGraphScriptGlobals host)
     {
-        env.DeclareFunction("integral2", JgsValue.Function(new BuiltinFunction(
+        env.Builtins.Register("integral2", JgsValue.Function(new BuiltinFunction(
             "integral2", (args, line, col) => IntegrateOverAPlane(env, host, args, line, col))));
 
-        env.DeclareFunction("integral3", JgsValue.Function(new BuiltinFunction(
+        env.Builtins.Register("integral3", JgsValue.Function(new BuiltinFunction(
             "integral3", (args, line, col) => IntegrateOverASolid(env, host, args, line, col))));
 
-        env.DeclareFunction("quad2d", JgsValue.Function(new BuiltinFunction(
+        env.Builtins.Register("quad2d", JgsValue.Function(new BuiltinFunction(
             "quad2d", (args, line, col) => Quad2d(env, host, args, 1, line, col)[0])
         {
             // quad2d's second output is the bound on its own error, which is the one thing it has
@@ -53,28 +53,28 @@ internal static partial class JgsBuiltins
             MultiOutput = (args, wanted, line, col) => Quad2d(env, host, args, wanted, line, col),
         }));
 
-        env.DeclareFunction("quad", JgsValue.Function(new BuiltinFunction(
+        env.Builtins.Register("quad", JgsValue.Function(new BuiltinFunction(
             "quad", (args, line, col) => Recursive(env, host, "quad", args, 1, line, col)[0])
         {
             MultiOutput = (args, wanted, line, col) => Recursive(env, host, "quad", args, wanted, line, col),
         }));
 
-        env.DeclareFunction("quadl", JgsValue.Function(new BuiltinFunction(
+        env.Builtins.Register("quadl", JgsValue.Function(new BuiltinFunction(
             "quadl", (args, line, col) => Recursive(env, host, "quadl", args, 1, line, col)[0])
         {
             MultiOutput = (args, wanted, line, col) => Recursive(env, host, "quadl", args, wanted, line, col),
         }));
 
-        env.DeclareFunction("quadv", JgsValue.Function(new BuiltinFunction(
+        env.Builtins.Register("quadv", JgsValue.Function(new BuiltinFunction(
             "quadv", (args, line, col) => Recursive(env, host, "quadv", args, 1, line, col)[0])
         {
             MultiOutput = (args, wanted, line, col) => Recursive(env, host, "quadv", args, wanted, line, col),
         }));
 
-        env.DeclareFunction("dblquad", JgsValue.Function(new BuiltinFunction(
+        env.Builtins.Register("dblquad", JgsValue.Function(new BuiltinFunction(
             "dblquad", (args, line, col) => Dblquad(env, args, line, col))));
 
-        env.DeclareFunction("triplequad", JgsValue.Function(new BuiltinFunction(
+        env.Builtins.Register("triplequad", JgsValue.Function(new BuiltinFunction(
             "triplequad", (args, line, col) => Triplequad(env, args, line, col))));
     }
 

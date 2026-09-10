@@ -51,7 +51,7 @@ public class JgsBuiltinRegistrationTests
     public void BuildingGlobals_OnManyThreadsAtOnce_NeverThrowsAndAlwaysDeclaresTheSameNames()
     {
         (IReadOnlyList<Exception> failures, IReadOnlyList<string[]> answers) =
-            Storm(static () => Globals().Locals.Keys.ToArray());
+            Storm(static () => Globals().Builtins.Entries.Keys.ToArray());
 
         Assert.True(failures.Count == 0, Report(failures));
         Assert.Equal(Threads * Rounds, answers.Count);

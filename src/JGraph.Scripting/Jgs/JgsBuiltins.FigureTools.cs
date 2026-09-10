@@ -34,11 +34,11 @@ internal static partial class JgsBuiltins
     private static void RegisterFigureToolBuiltins(JgsEnvironment env, JGraphScriptGlobals host)
     {
         void DefineSilent(string name, Func<IReadOnlyList<JgsValue>, int, int, JgsValue> body) =>
-            env.DeclareFunction(name, JgsValue.Function(
+            env.Builtins.Register(name, JgsValue.Function(
                 new BuiltinFunction(name, body) { BindsAnsAsStatement = false }));
 
         void Define(string name, Func<IReadOnlyList<JgsValue>, int, int, JgsValue> body) =>
-            env.DeclareFunction(name, JgsValue.Function(new BuiltinFunction(name, body)));
+            env.Builtins.Register(name, JgsValue.Function(new BuiltinFunction(name, body)));
 
         DefineSilent("annotation", Annotation);
 
@@ -57,7 +57,7 @@ internal static partial class JgsBuiltins
         DefineSilent("copygraphics", (args, line, col) => CopyGraphics(host, args, line, col));
         // `f = getframe` with no parentheses is the form every script uses, so the bare name has to
         // take the picture rather than hand back the verb that would.
-        env.DeclareFunction("getframe", JgsValue.Function(
+        env.Builtins.Register("getframe", JgsValue.Function(
             new BuiltinFunction("getframe", (args, line, col) => GetFrame(host, args, line, col))
             { AutoCallsBare = true }));
 

@@ -50,10 +50,10 @@ internal static partial class JgsBuiltins
     private static void RegisterComponentBuiltins(JgsEnvironment env, Random random)
     {
         void Define(string name, Func<IReadOnlyList<JgsValue>, int, int, JgsValue> body) =>
-            env.DeclareFunction(name, JgsValue.Function(new BuiltinFunction(name, body)));
+            env.Builtins.Register(name, JgsValue.Function(new BuiltinFunction(name, body)));
 
         void DefineBoth(string name, Func<IReadOnlyList<JgsValue>, int, int, int, JgsValue[]> both) =>
-            env.DeclareFunction(name, JgsValue.Function(
+            env.Builtins.Register(name, JgsValue.Function(
                 new BuiltinFunction(name, (args, line, col) => both(args, 1, line, col)[0]) { MultiOutput = both }));
 
         void DefineSeeded(string name, Func<Random, IReadOnlyList<JgsValue>, int, int, int, JgsValue[]> both) =>

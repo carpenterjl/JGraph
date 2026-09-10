@@ -212,7 +212,7 @@ internal static partial class JgsBuiltins
             bool masks = Array.IndexOf(LogicalCarryingBuiltins, name) >= 0;
             int subjects = Array.IndexOf(MultiSubjectBuiltins, name) >= 0 ? int.MaxValue : 1;
 
-            env.DeclareFunction(name, JgsValue.Function(new BuiltinFunction(name, (args, line, col) =>
+            env.Builtins.Register(name, JgsValue.Function(new BuiltinFunction(name, (args, line, col) =>
             {
                 JgsNumericClass carried = ClassOf(args, from, subjects, carry);
                 if (name is "sum" or "prod" or "mean" or "cumsum" or "cumprod")

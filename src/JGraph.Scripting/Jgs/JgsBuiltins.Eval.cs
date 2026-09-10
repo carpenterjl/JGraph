@@ -42,10 +42,10 @@ internal static partial class JgsBuiltins
         JgsEnvironment env, Interpreter interpreter, JGraphScriptGlobals host, JgsDialect dialect)
     {
         void Define(string name, Func<IReadOnlyList<JgsValue>, int, int, JgsValue> body) =>
-            env.DeclareFunction(name, JgsValue.Function(new BuiltinFunction(name, body)));
+            env.Builtins.Register(name, JgsValue.Function(new BuiltinFunction(name, body)));
 
         void DefineBare(string name, Func<IReadOnlyList<JgsValue>, int, int, JgsValue> body) =>
-            env.DeclareFunction(name, JgsValue.Function(new BuiltinFunction(name, body) { AutoCallsBare = true }));
+            env.Builtins.Register(name, JgsValue.Function(new BuiltinFunction(name, body) { AutoCallsBare = true }));
 
         RegisterPathBuiltins(env, interpreter, host);
         RegisterEvaluation(Define, env, interpreter, host);
@@ -58,7 +58,7 @@ internal static partial class JgsBuiltins
 
         // refreshdata belongs with the handle verbs and is registered here only because it is the one
         // of them that reads a workspace, which is a thing only the interpreter knows about.
-        env.DeclareFunction("refreshdata", JgsValue.Function(new BuiltinFunction(
+        env.Builtins.Register("refreshdata", JgsValue.Function(new BuiltinFunction(
             "refreshdata", (args, line, col) => RefreshData(args, interpreter, line, col))
         { BindsAnsAsStatement = false, AutoCallsBare = true }));
         _ = dialect;
@@ -220,7 +220,7 @@ internal static partial class JgsBuiltins
             }
         }
 
-        env.DeclareFunction("str2num", JgsValue.Function(new BuiltinFunction(
+        env.Builtins.Register("str2num", JgsValue.Function(new BuiltinFunction(
             "str2num", (args, line, col) => EvaluateBracketed(args, line, col)[0])
         {
             MultiOutput = (args, wanted, line, col) => EvaluateBracketed(args, line, col),
@@ -229,7 +229,7 @@ internal static partial class JgsBuiltins
         // regexprep's ${...} replacements are MATLAB code — regexprep('hello', '^(.)', '${upper($1)}')
         // — so the builtin is declared again here with the interpreter to run them, and wrapped again
         // so that a container subject still maps element by element.
-        env.DeclareFunction("regexprep", JgsValue.Function(new BuiltinFunction(
+        env.Builtins.Register("regexprep", JgsValue.Function(new BuiltinFunction(
             "regexprep",
             (args, line, col) => ReplaceMatches(
                 args,

@@ -32,7 +32,7 @@ internal static partial class JgsBuiltins
     internal static void RegisterClassBuiltins(JgsEnvironment env, Interpreter interpreter)
     {
         void Define(string name, Func<IReadOnlyList<JgsValue>, int, int, JgsValue> body) =>
-            env.DeclareFunction(name, JgsValue.Function(new BuiltinFunction(name, body) { KeepsStringArguments = true }));
+            env.Builtins.Register(name, JgsValue.Function(new BuiltinFunction(name, body) { KeepsStringArguments = true }));
 
         Define("isobject", (args, line, col) =>
         {

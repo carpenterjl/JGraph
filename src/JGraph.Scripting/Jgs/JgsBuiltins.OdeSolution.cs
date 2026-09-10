@@ -31,7 +31,7 @@ internal static partial class JgsBuiltins
     /// <summary>Registers <c>deval</c>; the solvers register themselves beside <c>odextend</c>.</summary>
     private static void RegisterOdeSolutionBuiltins(JgsEnvironment env)
     {
-        env.DeclareFunction("deval", JgsValue.Function(new BuiltinFunction("deval", (args, line, col) =>
+        env.Builtins.Register("deval", JgsValue.Function(new BuiltinFunction("deval", (args, line, col) =>
             Deval(args, line, col)[0])
         {
             MultiOutput = (args, wanted, line, col) =>

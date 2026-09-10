@@ -47,7 +47,7 @@ internal static partial class JgsBuiltins
         foreach (string solver in OdeSolverNames)
         {
             string name = solver;
-            env.DeclareFunction(name, JgsValue.Function(new BuiltinFunction(name,
+            env.Builtins.Register(name, JgsValue.Function(new BuiltinFunction(name,
                 (args, line, col) => SolveOde(env, host, name, args, 1, line, col)[0])
             {
                 // A solver written as a statement draws rather than answers, so it has to be told
@@ -57,16 +57,16 @@ internal static partial class JgsBuiltins
             }));
         }
 
-        env.DeclareFunction("odextend", JgsValue.Function(new BuiltinFunction("odextend",
+        env.Builtins.Register("odextend", JgsValue.Function(new BuiltinFunction("odextend",
             (args, line, col) => Odextend(env, host, args, line, col))));
 
-        env.DeclareFunction("odeplot", JgsValue.Function(new BuiltinFunction("odeplot",
+        env.Builtins.Register("odeplot", JgsValue.Function(new BuiltinFunction("odeplot",
             (args, line, col) => OdePlotFunction(env, "odeplot", args, line, col))));
-        env.DeclareFunction("odephas2", JgsValue.Function(new BuiltinFunction("odephas2",
+        env.Builtins.Register("odephas2", JgsValue.Function(new BuiltinFunction("odephas2",
             (args, line, col) => OdePlotFunction(env, "odephas2", args, line, col))));
-        env.DeclareFunction("odephas3", JgsValue.Function(new BuiltinFunction("odephas3",
+        env.Builtins.Register("odephas3", JgsValue.Function(new BuiltinFunction("odephas3",
             (args, line, col) => OdePlotFunction(env, "odephas3", args, line, col))));
-        env.DeclareFunction("odeprint", JgsValue.Function(new BuiltinFunction("odeprint",
+        env.Builtins.Register("odeprint", JgsValue.Function(new BuiltinFunction("odeprint",
             (args, line, col) => OdePrint(host, args, line, col))));
     }
 

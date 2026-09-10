@@ -43,10 +43,10 @@ internal static partial class JgsBuiltins
     /// <summary>Registers the quadrature pair and the ODE options structure.</summary>
     internal static void RegisterSolverBuiltins(JgsEnvironment env)
     {
-        env.DeclareFunction("integral", JgsValue.Function(new BuiltinFunction(
+        env.Builtins.Register("integral", JgsValue.Function(new BuiltinFunction(
             "integral", (args, line, col) => Integrate("integral", args, wanted: 1, line, col)[0])));
 
-        env.DeclareFunction("quadgk", JgsValue.Function(new BuiltinFunction(
+        env.Builtins.Register("quadgk", JgsValue.Function(new BuiltinFunction(
             "quadgk", (args, line, col) => Integrate("quadgk", args, wanted: 1, line, col)[0])
         {
             // quadgk's second output is the bound on its own error, which is the one thing it has
@@ -54,7 +54,7 @@ internal static partial class JgsBuiltins
             MultiOutput = (args, wanted, line, col) => Integrate("quadgk", args, wanted, line, col),
         }));
 
-        env.DeclareFunction("odeset", JgsValue.Function(new BuiltinFunction(
+        env.Builtins.Register("odeset", JgsValue.Function(new BuiltinFunction(
             "odeset", (args, line, col) => Odeset(args, line, col))
         {
             // The bare word is a call, not a handle — the same pair of flags optimset needs, and for
@@ -62,7 +62,7 @@ internal static partial class JgsBuiltins
             AutoCallsBare = true,
         }));
 
-        env.DeclareFunction("odeget", JgsValue.Function(new BuiltinFunction("odeget", Odeget)));
+        env.Builtins.Register("odeget", JgsValue.Function(new BuiltinFunction("odeget", Odeget)));
     }
 
     // --- integral and quadgk ------------------------------------------------------------------------

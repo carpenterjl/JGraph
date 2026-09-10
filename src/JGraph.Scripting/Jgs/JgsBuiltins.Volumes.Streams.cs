@@ -29,12 +29,12 @@ internal static partial class JgsBuiltins
     private static void RegisterStreamBuiltins(JgsEnvironment env)
     {
         void DefineSilent(string name, Func<IReadOnlyList<JgsValue>, int, int, JgsValue> body) =>
-            env.DeclareFunction(name, JgsValue.Function(
+            env.Builtins.Register(name, JgsValue.Function(
                 new BuiltinFunction(name, body) { BindsAnsAsStatement = false }));
 
-        env.DeclareFunction("stream2", JgsValue.Function(new BuiltinFunction("stream2",
+        env.Builtins.Register("stream2", JgsValue.Function(new BuiltinFunction("stream2",
             (args, line, col) => Stream("stream2", args, line, col))));
-        env.DeclareFunction("stream3", JgsValue.Function(new BuiltinFunction("stream3",
+        env.Builtins.Register("stream3", JgsValue.Function(new BuiltinFunction("stream3",
             (args, line, col) => Stream("stream3", args, line, col))));
 
         DefineSilent("streamline", OnNamedAxes((args, line, col) => Streamline(args, line, col)));
@@ -42,7 +42,7 @@ internal static partial class JgsBuiltins
         // Wrapped the way streamline beside it is: streamslice(ax, ...) is a documented form, and
         // without the peel the axes handle was read as the first component of the field. Both doors
         // are wrapped, because M85 gave the verb a second one.
-        env.DeclareFunction("streamslice", JgsValue.Function(new BuiltinFunction("streamslice",
+        env.Builtins.Register("streamslice", JgsValue.Function(new BuiltinFunction("streamslice",
             OnNamedAxes((args, line, col) => StreamSliceOutputs(args, 1, line, col)[0]))
         {
             BindsAnsAsStatement = false,

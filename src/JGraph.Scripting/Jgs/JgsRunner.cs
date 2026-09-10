@@ -92,8 +92,12 @@ internal static class JgsRunner
                 .Where(p => !pristine.TryGetValue(p.Key, out JgsValue? original) || !ReferenceEquals(original, p.Value))
                 .Select(static p => (p.Key, p.Value)), () => interpreter.CurrentFrame);
             DefineWorkspaceBuiltins(environment, interpreter, context.Output, () => pristine);
+            environment.Builtins.Seal(); // the last registrar has run; nothing else may land in built-in storage
             hook?.RunStarting(interpreter, environment);
 
+            // Every built-in lives in the layer under the workspace, so the workspace starts empty
+            // and this snapshot with it; it stays so that a rebound name can still be told from a
+            // fresh one by the same test as before.
             pristine = environment.Locals.ToDictionary(
                 static p => p.Key, static p => p.Value, StringComparer.Ordinal);
 
@@ -202,7 +206,7 @@ internal static class JgsRunner
             ? StringComparer.OrdinalIgnoreCase
             : StringComparer.Ordinal);
 
-        environment.DeclareFunction("run", JgsValue.Function(new BuiltinFunction("run", (args, line, column) =>
+        environment.Builtins.Register("run", JgsValue.Function(new BuiltinFunction("run", (args, line, column) =>
         {
             if (args.Count != 1 || args[0].Type != JgsType.String)
             {
@@ -265,7 +269,7 @@ internal static class JgsRunner
         foreach (string constructor in new[] { "table", "array2table" })
         {
             if (!environment.TryGet(constructor, out JgsValue existing)) continue;
-            environment.DeclareFunction(constructor, JgsValue.Function(new BuiltinFunction(constructor, (args, line, col) =>
+            environment.Builtins.Register(constructor, JgsValue.Function(new BuiltinFunction(constructor, (args, line, col) =>
             {
                 var given = args.ToList();
                 if (interpreter.PendingCall is { } call && !args.Any(a => a.Type == JgsType.String && a.AsString == "VariableNames"))
@@ -302,7 +306,7 @@ internal static class JgsRunner
         // clearvars filters the active workspace; clear also supports the older function/all forms.
         void DefineClear(string builtin)
         {
-            environment.DeclareFunction(builtin, JgsValue.Function(new BuiltinFunction(builtin, (args, line, column) =>
+            environment.Builtins.Register(builtin, JgsValue.Function(new BuiltinFunction(builtin, (args, line, column) =>
             {
                 IReadOnlyDictionary<string, JgsValue> baseline = pristine();
                 var names = new List<string>();
@@ -349,7 +353,8 @@ internal static class JgsRunner
                             pattern, System.Text.RegularExpressions.RegexOptions.CultureInvariant, TimeSpan.FromSeconds(1)));
                     }
 
-                    for (JgsEnvironment? scope = frame; scope is not null; scope = scope.Parent)
+                    // The walk ends at the built-in layer: it is not a workspace and is never cleared.
+                    for (JgsEnvironment? scope = frame; scope is not null && !scope.IsBuiltinLayer; scope = scope.Parent)
                     {
                         IReadOnlyDictionary<string, JgsValue> originals = ReferenceEquals(scope, environment)
                             ? baseline : new Dictionary<string, JgsValue>();
@@ -415,7 +420,7 @@ internal static class JgsRunner
         DefineClear("clear");
         DefineClear("clearvars");
 
-        environment.DeclareFunction("whos", JgsValue.Function(new BuiltinFunction("whos", (args, line, column) =>
+        environment.Builtins.Register("whos", JgsValue.Function(new BuiltinFunction("whos", (args, line, column) =>
         {
             var selectors = new List<System.Text.RegularExpressions.Regex>();
             bool regexp = false;
@@ -634,6 +639,9 @@ internal static class JgsRunner
     // --- Deterministic release of the previous run's packed buffers -----------------------------
 
     private static JgsEnvironment? _lastCompletedRun;
+
+    /// <summary>The base workspace of the last plain run to complete, for tests that inspect it.</summary>
+    internal static JgsEnvironment? LastCompletedRun => _lastCompletedRun;
 
     /// <summary>Remembers a completed plain run for disposal when the next run starts. Debugged
     /// runs are excluded: a debug session's lifetime is managed by its own window, and a paused

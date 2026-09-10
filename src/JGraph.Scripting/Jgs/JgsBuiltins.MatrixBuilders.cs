@@ -38,7 +38,7 @@ internal static partial class JgsBuiltins
     {
         void Define(string name, Func<IReadOnlyList<JgsValue>, int, int, JgsValue> body,
             Func<IReadOnlyList<JgsValue>, int, int, int, JgsValue[]>? multi = null) =>
-            env.DeclareFunction(name, JgsValue.Function(new BuiltinFunction(name, body) { MultiOutput = multi }));
+            env.Builtins.Register(name, JgsValue.Function(new BuiltinFunction(name, body) { MultiOutput = multi }));
 
         // --- the named matrices -----------------------------------------------------------------
         Define("toeplitz", (args, line, col) =>
@@ -184,7 +184,7 @@ internal static partial class JgsBuiltins
         });
 
         // Answers bare: `rosser` on its own line is the matrix, not the handle (M84's lesson).
-        env.DeclareFunction("rosser", JgsValue.Function(new BuiltinFunction("rosser", (args, line, col) =>
+        env.Builtins.Register("rosser", JgsValue.Function(new BuiltinFunction("rosser", (args, line, col) =>
         {
             (IReadOnlyList<JgsValue> rest, JgsNumericClass? numericClass) =
                 ClassNameTail("rosser", args, null, line, col);

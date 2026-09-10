@@ -26,14 +26,14 @@ internal static partial class JgsBuiltins
     /// <summary>Registers <c>ode15i</c> and <c>decic</c>.</summary>
     internal static void RegisterOdeImplicitBuiltins(JgsEnvironment env, JGraphScriptGlobals host)
     {
-        env.DeclareFunction("ode15i", JgsValue.Function(new BuiltinFunction("ode15i",
+        env.Builtins.Register("ode15i", JgsValue.Function(new BuiltinFunction("ode15i",
             (args, line, col) => SolveImplicitOde(env, host, args, 1, line, col)[0])
         {
             KnowsWhenDiscarded = true,
             MultiOutput = (args, wanted, line, col) => SolveImplicitOde(env, host, args, wanted, line, col),
         }));
 
-        env.DeclareFunction("decic", JgsValue.Function(new BuiltinFunction("decic",
+        env.Builtins.Register("decic", JgsValue.Function(new BuiltinFunction("decic",
             (args, line, col) => Decic(env, host, args, 1, line, col)[0])
         {
             MultiOutput = (args, wanted, line, col) => Decic(env, host, args, wanted, line, col),

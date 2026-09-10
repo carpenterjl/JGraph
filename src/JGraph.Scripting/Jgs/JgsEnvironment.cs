@@ -16,14 +16,68 @@ internal sealed class JgsEnvironment
     // write would cost every call for the few that do.
     private HashSet<string>? _globalNames;
 
+    // The built-in layer this scope sits under, inherited from the parent; null for a chain built
+    // without one (the interpreter's global-variable workspace, and bare scopes in tests).
+    private readonly JgsBuiltinLayer? _layer;
+
     /// <summary>Creates a scope nested inside <paramref name="parent"/> (null for the global scope).</summary>
-    public JgsEnvironment(JgsEnvironment? parent = null) => _parent = parent;
+    public JgsEnvironment(JgsEnvironment? parent = null)
+    {
+        _parent = parent;
+        _layer = parent?._layer;
+    }
+
+    /// <summary>Creates the root scope of <paramref name="layer"/>, the one holding the built-ins.</summary>
+    internal JgsEnvironment(JgsBuiltinLayer layer)
+    {
+        _layer = layer;
+        IsBuiltinLayer = true;
+    }
 
     /// <summary>The bindings declared directly in this scope (not the enclosing scopes).</summary>
     public IReadOnlyDictionary<string, JgsValue> Locals => _values;
 
     /// <summary>The enclosing scope, or null for the global scope.</summary>
     public JgsEnvironment? Parent => _parent;
+
+    /// <summary>
+    /// Whether this scope is the built-in layer's own — the outermost scope of a workspace chain,
+    /// holding every built-in and nothing else. A boundary for assignment and for <c>global</c>, the
+    /// way a call frame is: a write that walks this far has found no variable, and declares in the
+    /// scope it started from rather than here.
+    /// </summary>
+    public bool IsBuiltinLayer { get; }
+
+    /// <summary>
+    /// The built-in layer under this scope, the one place a built-in may be registered.
+    /// </summary>
+    /// <exception cref="InvalidOperationException">The chain was built without a layer.</exception>
+    public JgsBuiltinLayer Builtins =>
+        _layer ?? throw new InvalidOperationException("This scope has no built-in layer under it.");
+
+    /// <summary>
+    /// The base workspace this scope belongs to — the scope a script's variables go into. Read from
+    /// the layer by identity, because the outermost scope of the chain is the layer, not the base.
+    /// A chain built without a layer answers its outermost scope, as before.
+    /// </summary>
+    public JgsEnvironment Base
+    {
+        get
+        {
+            if (_layer is not null)
+            {
+                return _layer.Base;
+            }
+
+            JgsEnvironment scope = this;
+            while (scope._parent is not null)
+            {
+                scope = scope._parent;
+            }
+
+            return scope;
+        }
+    }
 
     /// <summary>
     /// Whether this scope is a call's own workspace, which an assignment may not write out of.
@@ -48,6 +102,7 @@ internal sealed class JgsEnvironment
     /// <summary>Declares (or redeclares) <paramref name="name"/> in this scope with <paramref name="value"/>.</summary>
     public void Declare(string name, JgsValue value)
     {
+        ThrowIfSealedLayer(name);
         _values[name] = value;
         _functionBindings.Remove(name);
     }
@@ -55,9 +110,29 @@ internal sealed class JgsEnvironment
     /// <summary>Registers a function definition, as distinct from a variable holding its handle.</summary>
     public void DeclareFunction(string name, JgsValue value)
     {
+        ThrowIfSealedLayer(name);
         _values[name] = value;
         _functionBindings.Add(name);
         _functionDefinitions[name] = value;
+    }
+
+    // The layer takes declarations only through JgsBuiltinLayer.Register, and only until it is
+    // sealed. A declaration reaching it any other way is a walk that went one scope too far.
+    private void ThrowIfSealedLayer(string name)
+    {
+        if (IsBuiltinLayer && _layer!.IsSealed)
+        {
+            throw new InvalidOperationException(
+                $"'{name}' cannot be declared in the built-in layer: it is sealed.");
+        }
+    }
+
+    private void ThrowIfLayer(string operation)
+    {
+        if (IsBuiltinLayer)
+        {
+            throw new InvalidOperationException($"The built-in layer cannot be {operation}.");
+        }
     }
 
     /// <summary>Resolves @name without confusing a shadowing variable with the function.</summary>
@@ -94,8 +169,11 @@ internal sealed class JgsEnvironment
     /// Records that a <c>global</c> statement in this scope binds <paramref name="name"/> to the
     /// global workspace, so reads and writes of it here reach the shared variable.
     /// </summary>
-    public void DeclareGlobal(string name) =>
+    public void DeclareGlobal(string name)
+    {
+        ThrowIfLayer("the scope of a global declaration");
         (_globalNames ??= new HashSet<string>(StringComparer.Ordinal)).Add(name);
+    }
 
     /// <summary>
     /// Whether a <c>global</c> declaration reaching this scope binds <paramref name="name"/>.
@@ -118,7 +196,7 @@ internal sealed class JgsEnvironment
                 return true;
             }
 
-            if (scope.IsCallBoundary)
+            if (scope.IsCallBoundary || scope.IsBuiltinLayer)
             {
                 return false;
             }
@@ -137,6 +215,7 @@ internal sealed class JgsEnvironment
     /// </summary>
     public void RetainOnly(IReadOnlyDictionary<string, JgsValue> pristine)
     {
+        ThrowIfLayer("cleared");
         foreach (string name in _values.Keys.ToList())
         {
             if (!pristine.TryGetValue(name, out JgsValue? original))
@@ -166,6 +245,7 @@ internal sealed class JgsEnvironment
     /// </summary>
     public void Forget(string name, IReadOnlyDictionary<string, JgsValue> pristine)
     {
+        ThrowIfLayer("cleared");
         if (pristine.TryGetValue(name, out JgsValue? original))
         {
             _values[name] = original;
@@ -214,10 +294,19 @@ internal sealed class JgsEnvironment
     /// Assigns to an existing variable, updating the nearest scope that declares it. Returns false when the
     /// variable is not declared anywhere (the caller reports the error with a source location).
     /// </summary>
+    /// <remarks>
+    /// The built-in layer is never assigned into: <c>max = 7</c> at the top level finds no variable
+    /// and so declares one in the base workspace, hiding the built-in until <c>clear max</c> drops it.
+    /// </remarks>
     public bool TryAssign(string name, JgsValue value)
     {
         for (JgsEnvironment? scope = this; scope is not null; scope = scope._parent)
         {
+            if (scope.IsBuiltinLayer)
+            {
+                return false; // a built-in is not a variable; see IsBuiltinLayer
+            }
+
             if (scope._values.ContainsKey(name))
             {
                 scope._values[name] = value;

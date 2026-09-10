@@ -18,7 +18,7 @@ internal static partial class JgsBuiltins
     /// <summary>Registers <c>plomb</c>.</summary>
     internal static void RegisterLombScargleBuiltins(JgsEnvironment env)
     {
-        env.DeclareFunction("plomb", JgsValue.Function(new BuiltinFunction(
+        env.Builtins.Register("plomb", JgsValue.Function(new BuiltinFunction(
             "plomb", (args, line, col) => LombPeriodogram(args, 1, line, col)[0])
         {
             MultiOutput = (args, wanted, line, col) => LombPeriodogram(args, wanted, line, col),

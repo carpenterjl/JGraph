@@ -29,7 +29,7 @@ internal static partial class JgsBuiltins
     internal static void RegisterDialogBuiltins(JgsEnvironment env, JGraphScriptGlobals host)
     {
         void DefineSilent(string name, Func<IReadOnlyList<JgsValue>, int, int, JgsValue> body) =>
-            env.DeclareFunction(name, JgsValue.Function(
+            env.Builtins.Register(name, JgsValue.Function(
                 new BuiltinFunction(name, body) { BindsAnsAsStatement = false }));
 
         // printdlg(fig) prints; printdlg('-setup', fig) is MATLAB's spelling of page setup, and it is
@@ -97,7 +97,7 @@ internal static partial class JgsBuiltins
         // `ax = uiaxes` with no parentheses is the form every app-building script uses, so the bare
         // name has to make the axes rather than hand back the verb that would — the rule bubblesize
         // wrote and nexttile paid for again in M80.
-        env.DeclareFunction("uiaxes", JgsValue.Function(new BuiltinFunction("uiaxes", (args, line, col) =>
+        env.Builtins.Register("uiaxes", JgsValue.Function(new BuiltinFunction("uiaxes", (args, line, col) =>
         {
             (FigureModel figure, IReadOnlyList<JgsValue> rest) = PeelFigure(args);
             AxesModel axes = figure.AddAxes();

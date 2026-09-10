@@ -68,14 +68,14 @@ internal static partial class JgsBuiltins
     private static void RegisterNonlinearRegressionBuiltins(JgsEnvironment env)
     {
         void DefineBoth(string name, Func<IReadOnlyList<JgsValue>, int, int, int, JgsValue[]> both) =>
-            env.DeclareFunction(name, JgsValue.Function(
+            env.Builtins.Register(name, JgsValue.Function(
                 new BuiltinFunction(name, (args, line, col) => both(args, 1, line, col)[0])
                 { MultiOutput = both }));
 
         DefineBoth("nlinfit", NonlinearFit);
-        env.DeclareFunction("nlparci", JgsValue.Function(new BuiltinFunction("nlparci", ParameterInterval)));
+        env.Builtins.Register("nlparci", JgsValue.Function(new BuiltinFunction("nlparci", ParameterInterval)));
         DefineBoth("nlpredci", NonlinearPrediction);
-        env.DeclareFunction("hougen", JgsValue.Function(new BuiltinFunction("hougen", HougenModel)));
+        env.Builtins.Register("hougen", JgsValue.Function(new BuiltinFunction("hougen", HougenModel)));
 
         DefineBoth("lasso", (args, wanted, line, col) => PenalizedPath("lasso", args, wanted, line, col));
         DefineBoth("lassoglm", (args, wanted, line, col) => PenalizedPath("lassoglm", args, wanted, line, col));

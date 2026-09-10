@@ -36,7 +36,7 @@ internal static partial class JgsBuiltins
 
             // A bare name is the object, not the function: `ax.Interactions = [panInteraction
             // zoomInteraction]` is how MATLAB's own documentation writes it.
-            env.DeclareFunction(name, JgsValue.Function(new BuiltinFunction(name, (args, line, col) =>
+            env.Builtins.Register(name, JgsValue.Function(new BuiltinFunction(name, (args, line, col) =>
             {
                 InteractionModel interaction = build();
                 JgsHandleEntry entry = JgsHandleRegistry.EntryFor(interaction);

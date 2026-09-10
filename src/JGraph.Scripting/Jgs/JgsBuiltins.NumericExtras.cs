@@ -14,7 +14,7 @@ internal static partial class JgsBuiltins
     private static void RegisterNumericExtraBuiltins(JgsEnvironment env, JGraphScriptGlobals host)
     {
         void Define(string name, Func<IReadOnlyList<JgsValue>, int, int, JgsValue> body) =>
-            env.DeclareFunction(name, JgsValue.Function(new BuiltinFunction(name, body)));
+            env.Builtins.Register(name, JgsValue.Function(new BuiltinFunction(name, body)));
 
         Define("kron", KroneckerProduct);
         Define("perms", Permutations);

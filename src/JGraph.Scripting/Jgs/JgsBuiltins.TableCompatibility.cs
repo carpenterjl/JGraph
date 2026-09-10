@@ -13,7 +13,7 @@ internal static partial class JgsBuiltins
     }
     private static void RegisterTableCompatibility(JgsEnvironment env, JGraphScriptGlobals host)
     {
-        void Define(string name, Func<IReadOnlyList<JgsValue>, int, int, JgsValue> body) => env.DeclareFunction(name, JgsValue.Function(new BuiltinFunction(name, body)));
+        void Define(string name, Func<IReadOnlyList<JgsValue>, int, int, JgsValue> body) => env.Builtins.Register(name, JgsValue.Function(new BuiltinFunction(name, body)));
         Define("array2table", (args, line, col) =>
         {
             ArityRange("array2table", args, 1, 5, line, col);

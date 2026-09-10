@@ -18,7 +18,7 @@ internal static partial class JgsBuiltins
     /// <summary>Registers <c>pmtm</c>.</summary>
     internal static void RegisterMultitaperBuiltins(JgsEnvironment env)
     {
-        env.DeclareFunction("pmtm", JgsValue.Function(new BuiltinFunction(
+        env.Builtins.Register("pmtm", JgsValue.Function(new BuiltinFunction(
             "pmtm", (args, line, col) => MultitaperSpectrum(args, 1, line, col)[0])
         {
             MultiOutput = (args, wanted, line, col) => MultitaperSpectrum(args, wanted, line, col),

@@ -50,11 +50,11 @@ internal static partial class JgsBuiltins
     {
         void Define(string name, Func<IReadOnlyList<JgsValue>, int, int, JgsValue> body,
             Func<IReadOnlyList<JgsValue>, int, int, int, JgsValue[]>? multi = null) =>
-            env.DeclareFunction(name, JgsValue.Function(new BuiltinFunction(name, body) { MultiOutput = multi }));
+            env.Builtins.Register(name, JgsValue.Function(new BuiltinFunction(name, body) { MultiOutput = multi }));
 
         // A bare `parula` is the table itself, exactly as `x = eps` is a number (M37's AutoCallsBare).
         void DefineGenerator(string name, Func<Colormap> map) =>
-            env.DeclareFunction(name, JgsValue.Function(new BuiltinFunction(
+            env.Builtins.Register(name, JgsValue.Function(new BuiltinFunction(
                 name,
                 (args, line, col) =>
                 {
@@ -74,10 +74,10 @@ internal static partial class JgsBuiltins
             DefineGenerator(name, map);
         }
 
-        env.DeclareFunction("caxis", JgsValue.Function(new BuiltinFunction(
+        env.Builtins.Register("caxis", JgsValue.Function(new BuiltinFunction(
             "caxis", OnAxesArray((args, line, col) => ColorLimits("caxis", args, line, col)))
         { AutoCallsBare = true }));
-        env.DeclareFunction("clim", JgsValue.Function(new BuiltinFunction(
+        env.Builtins.Register("clim", JgsValue.Function(new BuiltinFunction(
             "clim", OnAxesArray((args, line, col) => ColorLimits("clim", args, line, col)))
         { AutoCallsBare = true }));
 
@@ -88,14 +88,14 @@ internal static partial class JgsBuiltins
             return JgsValue.Null;
         });
 
-        env.DeclareFunction("colororder", JgsValue.Function(new BuiltinFunction(
+        env.Builtins.Register("colororder", JgsValue.Function(new BuiltinFunction(
             "colororder", OnNamedAxes((args, line, col) => ColorOrder(args, line, col)))
         { AutoCallsBare = true }));
 
         // surfl draws, so its handle is kept only when a script asks for it — the DefineSilent rule the
         // other drawing verbs have. Registering it with Define would echo `ans = 1000000.5` at every
         // unsuppressed call, which is the mistake M69 caught in quiver before it shipped.
-        env.DeclareFunction("surfl", JgsValue.Function(new BuiltinFunction(
+        env.Builtins.Register("surfl", JgsValue.Function(new BuiltinFunction(
             "surfl", OnNamedAxes((args, line, col) => Surfl(args, line, col)))
         { BindsAnsAsStatement = false }));
 
@@ -118,7 +118,7 @@ internal static partial class JgsBuiltins
     private static void RegisterCameraBuiltins(JgsEnvironment env)
     {
         void Define(string name, Func<IReadOnlyList<JgsValue>, int, int, JgsValue> body) =>
-            env.DeclareFunction(name, JgsValue.Function(new BuiltinFunction(name, body) { AutoCallsBare = true }));
+            env.Builtins.Register(name, JgsValue.Function(new BuiltinFunction(name, body) { AutoCallsBare = true }));
 
         Define("campos", (args, line, col) => CameraPosition(args, line, col));
         Define("camtarget", (args, line, col) => CameraVector(

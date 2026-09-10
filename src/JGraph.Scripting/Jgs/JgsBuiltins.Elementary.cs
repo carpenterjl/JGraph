@@ -23,13 +23,13 @@ internal static partial class JgsBuiltins
     private static void RegisterElementaryBuiltins(JgsEnvironment env, JgsDialect dialect)
     {
         void Define(string name, Func<IReadOnlyList<JgsValue>, int, int, JgsValue> body) =>
-            env.DeclareFunction(name, JgsValue.Function(new BuiltinFunction(name, body)));
+            env.Builtins.Register(name, JgsValue.Function(new BuiltinFunction(name, body)));
 
         // MATLAB implements eps/realmax/intmax/… as zero-argument functions, so a bare mention is the
         // value (x = eps) while a call takes an argument (eps(x), intmax('int8')). AutoCallsBare gives
         // the first behaviour without giving up the second.
         void Constant(string name, Func<IReadOnlyList<JgsValue>, int, int, JgsValue> body) =>
-            env.DeclareFunction(name, JgsValue.Function(new BuiltinFunction(name, body) { AutoCallsBare = true }));
+            env.Builtins.Register(name, JgsValue.Function(new BuiltinFunction(name, body) { AutoCallsBare = true }));
 
         RegisterLimits(env, Constant, dialect);
         RegisterTypePredicates(env, Define, dialect);
@@ -44,8 +44,8 @@ internal static partial class JgsBuiltins
     {
         // MATLAB spells these with capitals; JGS has always had the lowercase pair. Both stay: they
         // are the same value, and a MATLAB script writing Inf must not have to know about JGS.
-        env.Declare("Inf", JgsValue.Number(double.PositiveInfinity));
-        env.Declare("NaN", JgsValue.Number(double.NaN));
+        env.Builtins.RegisterConstant("Inf", JgsValue.Number(double.PositiveInfinity));
+        env.Builtins.RegisterConstant("NaN", JgsValue.Number(double.NaN));
 
         // In MATLAB the two are constructors as well as constants, taking exactly the size arguments
         // zeros and ones take — Inf(n) is n-by-n, Inf(m, n) and Inf([m n]) are the same rectangle,
@@ -77,9 +77,9 @@ internal static partial class JgsBuiltins
 
         // The imaginary unit under both of its names. A script that uses i as a loop variable simply
         // shadows it, exactly as in MATLAB.
-        env.Declare("i", JgsValue.ComplexNum(Complex.ImaginaryOne));
-        env.Declare("j", JgsValue.ComplexNum(Complex.ImaginaryOne));
-        env.Declare("newline", JgsValue.Str("\n"));
+        env.Builtins.RegisterConstant("i", JgsValue.ComplexNum(Complex.ImaginaryOne));
+        env.Builtins.RegisterConstant("j", JgsValue.ComplexNum(Complex.ImaginaryOne));
+        env.Builtins.RegisterConstant("newline", JgsValue.Str("\n"));
 
         Constant("eps", (args, line, col) =>
         {

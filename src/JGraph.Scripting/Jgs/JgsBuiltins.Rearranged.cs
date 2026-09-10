@@ -133,7 +133,7 @@ internal static partial class JgsBuiltins
             bool keepsComplexFlag = Array.IndexOf(ComplexNarrowingBuiltins, name) < 0;
             bool conjugates = name == "ctranspose";
 
-            env.DeclareFunction(name, JgsValue.Function(new BuiltinFunction(name, (args, line, col) =>
+            env.Builtins.Register(name, JgsValue.Function(new BuiltinFunction(name, (args, line, col) =>
             {
                 if (promotesCharRows && IsCharRow(args))
                 {

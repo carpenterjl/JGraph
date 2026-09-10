@@ -27,10 +27,10 @@ internal static partial class JgsBuiltins
     private static void RegisterDecorationBuiltins(JgsEnvironment env, JgsDialect dialect)
     {
         void Define(string name, Func<IReadOnlyList<JgsValue>, int, int, JgsValue> body) =>
-            env.DeclareFunction(name, JgsValue.Function(new BuiltinFunction(name, body)));
+            env.Builtins.Register(name, JgsValue.Function(new BuiltinFunction(name, body)));
 
         void DefineSilent(string name, Func<IReadOnlyList<JgsValue>, int, int, JgsValue> body) =>
-            env.DeclareFunction(name, JgsValue.Function(
+            env.Builtins.Register(name, JgsValue.Function(
                 new BuiltinFunction(name, body) { BindsAnsAsStatement = false }));
 
         // Every axes-facing verb takes a leading axes handle without moving gca (M51).
@@ -55,7 +55,7 @@ internal static partial class JgsBuiltins
                 return new[] { t, JgsHandleRegistry.For(sub) };
             });
         }
-        env.DeclareFunction("title", JgsValue.Function(new BuiltinFunction("title", (a,l,c) => Titles(a,l,c)[0])
+        env.Builtins.Register("title", JgsValue.Function(new BuiltinFunction("title", (a,l,c) => Titles(a,l,c)[0])
         { BindsAnsAsStatement = false, MultiOutput = (a,w,l,c) => Titles(a,l,c) }));
         DefineOnAxes("subtitle", (a,l,c) => WriteLabel(JgsTextLabel.For(JG.Gca(), "Subtitle"), a[0], a.Skip(1).ToArray(), l,c));
 
@@ -128,7 +128,7 @@ internal static partial class JgsBuiltins
                 return dialect.IsMatlab ? ContourMatrixOf((ContourPlot)JgsHandleRegistry.Require(handle, line, col).Target) : handle;
             }
 
-            env.DeclareFunction(name, JgsValue.Function(new BuiltinFunction(name, Single)
+            env.Builtins.Register(name, JgsValue.Function(new BuiltinFunction(name, Single)
             {
                 BindsAnsAsStatement = !silent,
                 MultiOutput = (args, wanted, line, col) =>

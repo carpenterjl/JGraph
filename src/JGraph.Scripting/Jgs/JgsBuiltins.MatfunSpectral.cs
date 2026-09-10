@@ -33,7 +33,7 @@ internal static partial class JgsBuiltins
     internal static void RegisterMatfunSpectralBuiltins(JgsEnvironment env, JGraphScriptGlobals host)
     {
         void DefineBoth(string name, Func<IReadOnlyList<JgsValue>, int, int, int, JgsValue[]> both) =>
-            env.DeclareFunction(name, JgsValue.Function(new BuiltinFunction(name, (args, line, col) => both(args, 1, line, col)[0])
+            env.Builtins.Register(name, JgsValue.Function(new BuiltinFunction(name, (args, line, col) => both(args, 1, line, col)[0])
             {
                 MultiOutput = both,
             }));

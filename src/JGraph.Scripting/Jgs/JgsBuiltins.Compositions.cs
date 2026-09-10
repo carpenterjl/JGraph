@@ -32,7 +32,7 @@ internal static partial class JgsBuiltins
     /// </summary>
     private static void DefineComposition(
         JgsEnvironment env, string name, Func<IReadOnlyList<JgsValue>, int, int, JgsValue[]> body) =>
-        env.DeclareFunction(name, JgsValue.Function(new BuiltinFunction(name, (args, line, col) => body(args, line, col)[0])
+        env.Builtins.Register(name, JgsValue.Function(new BuiltinFunction(name, (args, line, col) => body(args, line, col)[0])
         {
             BindsAnsAsStatement = false,
             MultiOutput = (args, wanted, line, col) =>

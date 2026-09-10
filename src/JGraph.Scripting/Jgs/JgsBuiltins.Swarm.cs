@@ -21,7 +21,7 @@ internal static partial class JgsBuiltins
     private static void RegisterSwarmBuiltins(JgsEnvironment env)
     {
         void Silent(string name, Func<IReadOnlyList<JgsValue>, int, int, JgsValue> body) =>
-            env.DeclareFunction(name, JgsValue.Function(
+            env.Builtins.Register(name, JgsValue.Function(
                 new BuiltinFunction(name, body) { BindsAnsAsStatement = false }));
 
         Silent("swarmchart", (args, line, col) => SwarmChart(args, line, col));

@@ -13,7 +13,7 @@ internal static partial class JgsBuiltins
     private static void RegisterArrayBuiltins(JgsEnvironment env, JgsRandomSource random, JgsDialect dialect)
     {
         void Define(string name, Func<IReadOnlyList<JgsValue>, int, int, JgsValue> body) =>
-            env.DeclareFunction(name, JgsValue.Function(new BuiltinFunction(name, body)));
+            env.Builtins.Register(name, JgsValue.Function(new BuiltinFunction(name, body)));
 
         RegisterApplication(env, Define);
         RegisterRunningStatistics(Define);
@@ -147,7 +147,7 @@ internal static partial class JgsBuiltins
         // Declared with its several-output form rather than wrapped later: this registrar runs after
         // the MATLAB one, and that wrapper takes an already-registered name and silently does nothing
         // when there is none. The multi-output form went missing exactly that quietly (M61).
-        env.DeclareFunction("arrayfun", JgsValue.Function(new BuiltinFunction(
+        env.Builtins.Register("arrayfun", JgsValue.Function(new BuiltinFunction(
             "arrayfun",
             (args, line, col) => ApplyOverArrays(args, 1, line, col)[0])
         {
@@ -401,7 +401,7 @@ internal static partial class JgsBuiltins
             }
         }
 
-        env.DeclareFunction("rng", JgsValue.Function(
+        env.Builtins.Register("rng", JgsValue.Function(
             new BuiltinFunction("rng", Rng) { AutoCallsBare = true, BindsAnsAsStatement = false }));
     }
 

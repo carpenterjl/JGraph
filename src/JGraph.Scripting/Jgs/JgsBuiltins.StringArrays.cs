@@ -106,7 +106,7 @@ internal static partial class JgsBuiltins
     internal static void RegisterStringArrayBuiltins(JgsEnvironment env)
     {
         // strings(n) / strings(r, c): an array of empty strings, the way zeros(n) is one of zeros.
-        env.DeclareFunction("strings", JgsValue.Function(new BuiltinFunction("strings", (args, line, col) =>
+        env.Builtins.Register("strings", JgsValue.Function(new BuiltinFunction("strings", (args, line, col) =>
         {
             ArityRange("strings", args, 0, 2, line, col);
             int rows = args.Count == 0 ? 1 : Count("strings", args, 0, line, col);
@@ -228,7 +228,7 @@ internal static partial class JgsBuiltins
                 continue;
             }
 
-            env.DeclareFunction(name, JgsValue.Function(new BuiltinFunction(name, (args, line, col) =>
+            env.Builtins.Register(name, JgsValue.Function(new BuiltinFunction(name, (args, line, col) =>
             {
                 bool wasChar = AnyCharMatrix(args);
                 JgsValue answer = inner.Call(args, line, col);

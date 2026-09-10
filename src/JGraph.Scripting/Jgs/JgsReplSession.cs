@@ -49,6 +49,9 @@ internal sealed class JgsReplSession : IScriptSession, IGraphicsEventSession, IW
     /// <inheritdoc />
     public string Language { get; }
 
+    /// <summary>The session's base workspace, for tests that check what it holds.</summary>
+    internal JgsEnvironment Workspace => _environment;
+
     /// <inheritdoc />
     public Task<ScriptRunResult> ExecuteAsync(string code, string sourceId, CancellationToken cancellationToken)
     {
@@ -269,6 +272,7 @@ internal sealed class JgsReplSession : IScriptSession, IGraphicsEventSession, IW
             () => ReferenceEquals(_interpreter.CurrentFrame, _environment) ? UserVariables() : _interpreter.CurrentFrame.Locals.Where(p => !_interpreter.CurrentFrame.IsFunctionBinding(p.Key)).Select(p => (p.Key,p.Value)),
             () => _interpreter.CurrentFrame);
         JgsRunner.DefineWorkspaceBuiltins(_environment, _interpreter, _context.Output, () => _pristine);
+        _environment.Builtins.Seal();
 
         _pristine = _environment.Locals.ToDictionary(
             static p => p.Key, static p => p.Value, StringComparer.Ordinal);

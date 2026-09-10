@@ -47,7 +47,7 @@ internal static partial class JgsBuiltins
     private static void RegisterLegacyFunctionPlotBuiltins(JgsEnvironment env, Interpreter interpreter)
     {
         void DefineSilent(string name, Func<IReadOnlyList<JgsValue>, int, int, JgsValue> body) =>
-            env.DeclareFunction(name, JgsValue.Function(
+            env.Builtins.Register(name, JgsValue.Function(
                 new BuiltinFunction(name, body) { BindsAnsAsStatement = false }));
 
         DefineSilent("ezplot", OnNamedAxes((args, line, col) => EzPlot(args, env, interpreter, line, col)));

@@ -36,7 +36,12 @@ internal static partial class JgsBuiltins
         ArgumentNullException.ThrowIfNull(host);
 
         dialect ??= JgsDialect.Jgs;
-        var env = new JgsEnvironment();
+
+        // Every built-in is registered into the layer; the scope handed back is the base workspace
+        // sitting on it. `env` here is that workspace: the registrars below declare through its
+        // layer and, where a body reads the environment (feval, exist, which), read the workspace.
+        var layer = new JgsBuiltinLayer();
+        JgsEnvironment env = layer.Base;
 
         // One stream for the whole run, so `rng(7)` makes every later draw repeatable rather than
         // just the next one. Sparse used to keep a second, private generator; it shares this now.
@@ -46,18 +51,18 @@ internal static partial class JgsBuiltins
         JgsNumberFormat.Reset();
 
         void Define(string name, Func<IReadOnlyList<JgsValue>, int, int, JgsValue> body) =>
-            env.DeclareFunction(name, JgsValue.Function(new BuiltinFunction(name, body)));
+            env.Builtins.Register(name, JgsValue.Function(new BuiltinFunction(name, body)));
 
         // For verbs that hand back a handle but print nothing as a bare statement (MATLAB `figure(1)`).
         void DefineSilent(string name, Func<IReadOnlyList<JgsValue>, int, int, JgsValue> body) =>
-            env.DeclareFunction(name, JgsValue.Function(
+            env.Builtins.Register(name, JgsValue.Function(
                 new BuiltinFunction(name, body) { BindsAnsAsStatement = false }));
 
         // --- Constants -----------------------------------------------------------------------
-        env.Declare("pi", JgsValue.Number(System.Math.PI));
-        env.Declare("e", JgsValue.Number(System.Math.E));
-        env.Declare("inf", JgsValue.Number(double.PositiveInfinity));
-        env.Declare("nan", JgsValue.Number(double.NaN));
+        env.Builtins.RegisterConstant("pi", JgsValue.Number(System.Math.PI));
+        env.Builtins.RegisterConstant("e", JgsValue.Number(System.Math.E));
+        env.Builtins.RegisterConstant("inf", JgsValue.Number(double.PositiveInfinity));
+        env.Builtins.RegisterConstant("nan", JgsValue.Number(double.NaN));
 
         // --- Element-wise math ---------------------------------------------------------------
         //
@@ -211,7 +216,7 @@ internal static partial class JgsBuiltins
             return Rotated("ifftshift", args, forward: false, line, col);
         });
 
-        env.DeclareFunction("filter", JgsValue.Function(new BuiltinFunction("filter",
+        env.Builtins.Register("filter", JgsValue.Function(new BuiltinFunction("filter",
             (args, line, col) => FilterAnswer(args, 1, line, col)[0])
         { MultiOutput = FilterAnswer }));
 
@@ -278,7 +283,7 @@ internal static partial class JgsBuiltins
 
         // Both auto-call on their bare names — 't0 = tic' stores a handle and 't = toc' stores the
         // elapsed seconds, not the functions. A bare 'tic' statement is silent, like MATLAB's.
-        env.DeclareFunction("tic", JgsValue.Function(new BuiltinFunction("tic", (args, line, col) =>
+        env.Builtins.Register("tic", JgsValue.Function(new BuiltinFunction("tic", (args, line, col) =>
         {
             Arity("tic", args, 0, line, col);
             double handle = StopwatchTicksNow();
@@ -287,7 +292,7 @@ internal static partial class JgsBuiltins
         })
         { AutoCallsBare = true, BindsAnsAsStatement = false }));
 
-        env.DeclareFunction("toc", JgsValue.Function(new BuiltinFunction("toc", (args, line, col) =>
+        env.Builtins.Register("toc", JgsValue.Function(new BuiltinFunction("toc", (args, line, col) =>
         {
             ArityRange("toc", args, 0, 1, line, col);
             double startTicks;
@@ -313,7 +318,7 @@ internal static partial class JgsBuiltins
         // time, so `datestr(now)` — the commonest date line anyone writes — failed complaining that it
         // had been handed a function. M64 found that by probing the surface it was about to build on.
         void DefineClock(string name, Func<IReadOnlyList<JgsValue>, int, int, JgsValue> body) =>
-            env.DeclareFunction(name, JgsValue.Function(new BuiltinFunction(name, body) { AutoCallsBare = true }));
+            env.Builtins.Register(name, JgsValue.Function(new BuiltinFunction(name, body) { AutoCallsBare = true }));
 
         DefineClock("clock", (args, line, col) =>
         {
@@ -626,7 +631,7 @@ internal static partial class JgsBuiltins
             string name,
             Func<JGraphScriptGlobals, string, int, int, JgsValue> answer,
             Func<JGraphScriptGlobals, string, string>? missing = null) =>
-            env.DeclareFunction(name, JgsValue.Function(new BuiltinFunction(
+            env.Builtins.Register(name, JgsValue.Function(new BuiltinFunction(
                 name, (args, line, col) => answer(host, Queried(name, args, line, col), line, col))
             {
                 AutoCallsBare = true,
@@ -1281,7 +1286,7 @@ internal static partial class JgsBuiltins
                 [parts], "delimiters", line, col);
         });
 
-        env.DeclareFunction("join", JgsValue.Function(new BuiltinFunction("join",
+        env.Builtins.Register("join", JgsValue.Function(new BuiltinFunction("join",
             (args, line, col) => Joined(args, dialect.IsMatlab, line, col))
         {
             // Read whole: a string(missing) delimiter answers a missing string where the bare
@@ -1546,7 +1551,7 @@ internal static partial class JgsBuiltins
         // `ax = nexttile` with no brackets is the ordinary way to write it, so a bare name has to be
         // the tile it hands out rather than the function itself — the rule bubblesize follows, and
         // the one this verb did not need until M80 gave it something to hand back.
-        env.DeclareFunction("nexttile", JgsValue.Function(new BuiltinFunction("nexttile", (args, line, col) =>
+        env.Builtins.Register("nexttile", JgsValue.Function(new BuiltinFunction("nexttile", (args, line, col) =>
         {
             (TiledLayoutModel? named, IReadOnlyList<JgsValue> rest) = PeelLayout(args);
             TiledLayoutModel layout = named ?? CurrentLayout();
@@ -1968,7 +1973,7 @@ internal static partial class JgsBuiltins
         // again, or a callback whose body is closereq would ask itself forever. AutoCallsBare,
         // because its natural spelling is the bare word — @(src, event) closereq — and a bare name
         // in expression position is otherwise the function rather than a call of it.
-        env.DeclareFunction("closereq", JgsValue.Function(new BuiltinFunction("closereq", (args, line, col) =>
+        env.Builtins.Register("closereq", JgsValue.Function(new BuiltinFunction("closereq", (args, line, col) =>
         {
             Arity("closereq", args, 0, line, col);
             FigureModel? figure = FigureOf(JgsGraphicsCallbackState.CallbackObject);
@@ -2012,7 +2017,7 @@ internal static partial class JgsBuiltins
 
         // Like gca below, the bare name has to be the answer: findobj(gcf, …) must be handed the
         // figure, not the function that would find it.
-        env.DeclareFunction("gcf", JgsValue.Function(new BuiltinFunction("gcf", (args, line, col) =>
+        env.Builtins.Register("gcf", JgsValue.Function(new BuiltinFunction("gcf", (args, line, col) =>
         {
             Arity("gcf", args, 0, line, col);
             return JgsValue.Number(JG.CurrentFigureNumber);
@@ -2022,7 +2027,7 @@ internal static partial class JgsBuiltins
         // gca creates the figure and axes MATLAB would and hands back a handle on them, so both
         // `gca; xlabel('t')` and `ax = gca; xlabel(ax, 't')` behave the same way. Auto-calling on
         // the bare name is what makes the second form an axes rather than the builtin itself.
-        env.DeclareFunction("gca", JgsValue.Function(new BuiltinFunction("gca", (args, line, col) =>
+        env.Builtins.Register("gca", JgsValue.Function(new BuiltinFunction("gca", (args, line, col) =>
         {
             Arity("gca", args, 0, line, col);
             return JgsHandleRegistry.For(JG.Gca());
@@ -2084,12 +2089,12 @@ internal static partial class JgsBuiltins
         }));
 
         Define("zlabel", (args, line, col) => { Arity("zlabel", args, 1, line, col); JG.ZLabel(Str("zlabel", args, 0, line, col)); return JgsValue.Null; });
-        env.DeclareFunction("view", JgsValue.Function(
+        env.Builtins.Register("view", JgsValue.Function(
             new BuiltinFunction("view", OnNamedAxes(View)) { AutoCallsBare = true }));
 
         // Bare `m = colormap` is the read, the way `x = eps` is a number (M37's AutoCallsBare);
         // the callee position stays exempt, so colormap(jet) still calls.
-        env.DeclareFunction("colormap", JgsValue.Function(new BuiltinFunction("colormap", (args, line, col) =>
+        env.Builtins.Register("colormap", JgsValue.Function(new BuiltinFunction("colormap", (args, line, col) =>
         {
             ArityRange("colormap", args, 0, 2, line, col);
 
@@ -2168,7 +2173,7 @@ internal static partial class JgsBuiltins
         // AutoCallsBare because 'h = colorbar;' — no parentheses, and the handle kept — is how MATLAB
         // documents it and how a script reaches the bar to label it. Without it the bare name bound
         // the builtin itself, so h was a function and every later property write refused.
-        env.DeclareFunction("colorbar", JgsValue.Function(new BuiltinFunction("colorbar", OnNamedAxes((args, line, col) =>
+        env.Builtins.Register("colorbar", JgsValue.Function(new BuiltinFunction("colorbar", OnNamedAxes((args, line, col) =>
         {
             JgsHandleEntry entry = JgsHandleRegistry.EntryFor(JG.Gca().Colorbar);
             if (args.Count >= 2 && args.Count % 2 == 0)
@@ -2475,13 +2480,13 @@ internal static partial class JgsBuiltins
         // the milestone.
         if (!dialect.IsMatlab)
         {
-            env.DeclareFunction("seconds", JgsValue.Function(new BuiltinFunction("seconds", (args, line, col) =>
+            env.Builtins.Register("seconds", JgsValue.Function(new BuiltinFunction("seconds", (args, line, col) =>
             {
                 Arity("seconds", args, 1, line, col);
                 return MapNumeric("seconds", args[0], static x => x, line, col);
             })));
 
-            env.DeclareFunction("datetime", JgsValue.Function(new BuiltinFunction("datetime", (args, line, col) =>
+            env.Builtins.Register("datetime", JgsValue.Function(new BuiltinFunction("datetime", (args, line, col) =>
             {
                 Arity("datetime", args, 0, line, col);
                 return JgsValue.Str(DateTime.Now.ToString("dd-MMM-yyyy HH:mm:ss", CultureInfo.InvariantCulture));

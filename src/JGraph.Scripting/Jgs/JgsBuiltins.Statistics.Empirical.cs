@@ -23,14 +23,14 @@ internal static partial class JgsBuiltins
     private static void RegisterEmpiricalBuiltins(JgsEnvironment env)
     {
         void DefineBoth(string name, Func<IReadOnlyList<JgsValue>, int, int, int, JgsValue[]> both) =>
-            env.DeclareFunction(name, JgsValue.Function(new BuiltinFunction(
+            env.Builtins.Register(name, JgsValue.Function(new BuiltinFunction(
                 name, (args, line, col) => both(args, 1, line, col)[0])
             { MultiOutput = both }));
 
         // ecdf and ksdensity draw the curve when nobody asked for the numbers, which is what makes
         // ecdf(x) on its own a plot; wanted is zero exactly then (M53 wave J).
         void DefineDrawing(string name, Func<IReadOnlyList<JgsValue>, int, int, int, JgsValue[]> both) =>
-            env.DeclareFunction(name, JgsValue.Function(new BuiltinFunction(
+            env.Builtins.Register(name, JgsValue.Function(new BuiltinFunction(
                 name, (args, line, col) => both(args, 1, line, col)[0])
             {
                 MultiOutput = both,
@@ -405,13 +405,13 @@ internal static partial class JgsBuiltins
         {
             string capture = modern;
             string name = legacy;
-            env.DeclareFunction(name, JgsValue.Function(new BuiltinFunction(name, (args, line, col) =>
+            env.Builtins.Register(name, JgsValue.Function(new BuiltinFunction(name, (args, line, col) =>
                 OmittingNaN(env, name, capture, args, line, col))));
         }
 
         // nancov is the odd one out: cov spells the same request as a word rather than a flag, and
         // that word goes last rather than in the option tail.
-        env.DeclareFunction("nancov", JgsValue.Function(new BuiltinFunction("nancov", (args, line, col) =>
+        env.Builtins.Register("nancov", JgsValue.Function(new BuiltinFunction("nancov", (args, line, col) =>
         {
             if (!env.TryGet("cov", out JgsValue covariance) || covariance.Type != JgsType.Function)
             {

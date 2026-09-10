@@ -49,10 +49,10 @@ internal static partial class JgsBuiltins
     private static void RegisterFileIoBuiltins(JgsEnvironment env, JGraphScriptGlobals host)
     {
         void Define(string name, Func<IReadOnlyList<JgsValue>, int, int, JgsValue> body) =>
-            env.DeclareFunction(name, JgsValue.Function(new BuiltinFunction(name, body)));
+            env.Builtins.Register(name, JgsValue.Function(new BuiltinFunction(name, body)));
 
         void DefineMany(string name, Func<IReadOnlyList<JgsValue>, int, int, int, JgsValue[]> body) =>
-            env.DeclareFunction(name, JgsValue.Function(new BuiltinFunction(name,
+            env.Builtins.Register(name, JgsValue.Function(new BuiltinFunction(name,
                 (args, line, col) => body(args, 1, line, col)[0])
             { MultiOutput = body }));
 
@@ -90,7 +90,7 @@ internal static partial class JgsBuiltins
             ReadLine(host, "fgets", args, wanted, keepTerminator: true, line, col));
 
         // image draws, so its handle does not echo as `ans` — the rule plot has always had.
-        env.DeclareFunction("image", JgsValue.Function(new BuiltinFunction(
+        env.Builtins.Register("image", JgsValue.Function(new BuiltinFunction(
             "image", OnNamedAxes((args, line, col) =>
             {
                 if (args.Count == 1 && args[0].Type == JgsType.Image)

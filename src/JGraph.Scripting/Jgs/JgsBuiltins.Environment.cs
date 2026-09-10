@@ -15,19 +15,19 @@ internal static partial class JgsBuiltins
     private static void RegisterEnvironmentBuiltins(JgsEnvironment env, JGraphScriptGlobals host)
     {
         void Define(string name, Func<IReadOnlyList<JgsValue>, int, int, JgsValue> body) =>
-            env.DeclareFunction(name, JgsValue.Function(new BuiltinFunction(name, body)));
+            env.Builtins.Register(name, JgsValue.Function(new BuiltinFunction(name, body)));
 
         // The folder commands hand back a path or a status flag that a bare statement should not
         // echo: `cd subfolder` and `mkdir data` print nothing in MATLAB, and binding ans would make
         // them print their result instead.
         void Command(string name, Func<IReadOnlyList<JgsValue>, int, int, JgsValue> body) =>
-            env.DeclareFunction(name, JgsValue.Function(new BuiltinFunction(name, body) { BindsAnsAsStatement = false }));
+            env.Builtins.Register(name, JgsValue.Function(new BuiltinFunction(name, body) { BindsAnsAsStatement = false }));
 
         // A question that takes no arguments has to answer when its bare name is mentioned, or
         // disp(pwd) hands disp the function rather than the folder. Callee position is exempted by
         // the interpreter, so a form that does take arguments still reaches the function.
         void Query(string name, Func<IReadOnlyList<JgsValue>, int, int, JgsValue> body) =>
-            env.DeclareFunction(name, JgsValue.Function(new BuiltinFunction(name, body) { AutoCallsBare = true }));
+            env.Builtins.Register(name, JgsValue.Function(new BuiltinFunction(name, body) { AutoCallsBare = true }));
 
         RegisterDirectoryBuiltins(Command, Query, host);
         RegisterPathBuiltins(Define, Query, host);
@@ -262,7 +262,7 @@ internal static partial class JgsBuiltins
             return JgsValue.Bool(stream.Position >= stream.Length);
         });
 
-        env.DeclareFunction("ferror", JgsValue.Function(new BuiltinFunction("ferror",
+        env.Builtins.Register("ferror", JgsValue.Function(new BuiltinFunction("ferror",
             (args, line, col) => Failure(host, args, 1, line, col)[0])
         { MultiOutput = (args, wanted, line, col) => Failure(host, args, wanted, line, col) }));
 
@@ -304,11 +304,11 @@ internal static partial class JgsBuiltins
 
         // fgets moved to the file wave in M76, beside fgetl: the two differ only in whether the
         // terminator comes back, and both now report how long it was.
-        env.DeclareFunction("fscanf", JgsValue.Function(new BuiltinFunction("fscanf",
+        env.Builtins.Register("fscanf", JgsValue.Function(new BuiltinFunction("fscanf",
             (args, line, col) => ScanFile(host, args, 1, line, col)[0])
         { MultiOutput = (args, wanted, line, col) => ScanFile(host, args, wanted, line, col) }));
 
-        env.DeclareFunction("textscan", JgsValue.Function(new BuiltinFunction("textscan",
+        env.Builtins.Register("textscan", JgsValue.Function(new BuiltinFunction("textscan",
             (args, line, col) => ScanColumns(host, args, 1, line, col)[0])
         { MultiOutput = (args, wanted, line, col) => ScanColumns(host, args, wanted, line, col) }));
     }

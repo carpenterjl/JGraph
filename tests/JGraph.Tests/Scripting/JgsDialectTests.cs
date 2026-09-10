@@ -105,7 +105,7 @@ public class JgsDialectTests : IDisposable
     [Fact]
     public void OmittedDialect_MeansJgs()
     {
-        var interpreter = new Interpreter(new JgsEnvironment(), default);
+        var interpreter = new Interpreter(new JgsBuiltinLayer().Base, default);
         Assert.Equal(JgsDialect.Jgs, interpreter.Dialect);
     }
 

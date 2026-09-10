@@ -32,7 +32,7 @@ internal static partial class JgsBuiltins
     private static void RegisterTextPositionBuiltins(JgsEnvironment env)
     {
         void Define(string name, Func<IReadOnlyList<JgsValue>, int, int, JgsValue> body) =>
-            env.DeclareFunction(name, JgsValue.Function(new BuiltinFunction(name, body) { KeepsStringArguments = true }));
+            env.Builtins.Register(name, JgsValue.Function(new BuiltinFunction(name, body) { KeepsStringArguments = true }));
 
         Define("insertAfter", (args, line, col) => InsertAround("insertAfter", args, after: true, line, col));
         Define("insertBefore", (args, line, col) => InsertAround("insertBefore", args, after: false, line, col));

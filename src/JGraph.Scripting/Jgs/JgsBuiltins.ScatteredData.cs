@@ -47,10 +47,10 @@ internal static partial class JgsBuiltins
     internal static void RegisterScatteredDataBuiltins(JgsEnvironment env, JGraphScriptGlobals host)
     {
         void Define(string name, Func<IReadOnlyList<JgsValue>, int, int, JgsValue> body) =>
-            env.DeclareFunction(name, JgsValue.Function(new BuiltinFunction(name, body)));
+            env.Builtins.Register(name, JgsValue.Function(new BuiltinFunction(name, body)));
 
         void DefineMany(string name, Func<IReadOnlyList<JgsValue>, int, int, int, JgsValue[]> body) =>
-            env.DeclareFunction(name, JgsValue.Function(new BuiltinFunction(name,
+            env.Builtins.Register(name, JgsValue.Function(new BuiltinFunction(name,
                 (args, line, col) => body(args, 1, line, col)[0])
             {
                 MultiOutput = (args, wanted, line, col) => body(args, wanted, line, col),

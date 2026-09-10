@@ -31,7 +31,7 @@ internal static partial class JgsBuiltins
         // Every one of these answers a question when handed nothing, so a bare name has to be that
         // answer rather than the function itself — otherwise numel(xticks) counts a function.
         void Define(string name, Func<IReadOnlyList<JgsValue>, int, int, JgsValue> body) =>
-            env.DeclareFunction(name, JgsValue.Function(new BuiltinFunction(name, body) { AutoCallsBare = true }));
+            env.Builtins.Register(name, JgsValue.Function(new BuiltinFunction(name, body) { AutoCallsBare = true }));
 
         foreach (RulerSide side in new[] { RulerSide.X, RulerSide.Y, RulerSide.Z })
         {
@@ -57,9 +57,9 @@ internal static partial class JgsBuiltins
         // logarithmic, category, date — stores its data as doubles, so the conversion MATLAB needs for
         // a datetime ruler has nothing to do. The pair still checks that it was handed a ruler, because
         // a script that calls these is asking about one.
-        env.DeclareFunction("num2ruler", JgsValue.Function(new BuiltinFunction("num2ruler",
+        env.Builtins.Register("num2ruler", JgsValue.Function(new BuiltinFunction("num2ruler",
             (args, line, col) => SameValue("num2ruler", args, line, col))));
-        env.DeclareFunction("ruler2num", JgsValue.Function(new BuiltinFunction("ruler2num",
+        env.Builtins.Register("ruler2num", JgsValue.Function(new BuiltinFunction("ruler2num",
             (args, line, col) => SameValue("ruler2num", args, line, col))));
 
         // The angular rulers. r is an ordinary scale, so its verbs are the Cartesian machinery pointed

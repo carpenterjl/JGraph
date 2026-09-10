@@ -50,7 +50,7 @@ internal static partial class JgsBuiltins
     {
         // These hand back a handle but stay quiet as a bare statement, exactly as the 2-D verbs do.
         void Define(string name, Func<IReadOnlyList<JgsValue>, int, int, JgsValue> body) =>
-            env.DeclareFunction(name, JgsValue.Function(
+            env.Builtins.Register(name, JgsValue.Function(
                 new BuiltinFunction(name, body) { BindsAnsAsStatement = false }));
 
         Define("plot3", OnNamedAxes((args, line, col) => Plot3(args, line, col)));

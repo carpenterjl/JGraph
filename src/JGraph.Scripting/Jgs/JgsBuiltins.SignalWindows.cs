@@ -34,7 +34,7 @@ internal static partial class JgsBuiltins
     internal static void RegisterSignalWindowBuiltins(JgsEnvironment env)
     {
         void Define(string name, Func<IReadOnlyList<JgsValue>, int, int, JgsValue> body) =>
-            env.DeclareFunction(name, JgsValue.Function(new BuiltinFunction(name, body)));
+            env.Builtins.Register(name, JgsValue.Function(new BuiltinFunction(name, body)));
 
         foreach (string name in PlainWindowNames)
         {
@@ -54,13 +54,13 @@ internal static partial class JgsBuiltins
         Define("tukeywin", (args, line, col) => ShapedWindow("tukeywin", args, line, col));
         Define("taylorwin", (args, line, col) => ShapedWindow("taylorwin", args, line, col));
 
-        env.DeclareFunction("dpss", JgsValue.Function(new BuiltinFunction(
+        env.Builtins.Register("dpss", JgsValue.Function(new BuiltinFunction(
             "dpss", (args, line, col) => Slepian(args, 1, line, col)[0])
         {
             MultiOutput = (args, wanted, line, col) => Slepian(args, wanted, line, col),
         }));
 
-        env.DeclareFunction("window", JgsValue.Function(new BuiltinFunction(
+        env.Builtins.Register("window", JgsValue.Function(new BuiltinFunction(
             "window", NamedWindow)));
     }
 

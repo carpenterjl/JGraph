@@ -24,13 +24,13 @@ internal static class JgsWorkspaceIo
         Func<JgsEnvironment>? activeWorkspace = null)
     {
         // Bare statements stay silent, like MATLAB: neither verb binds ans.
-        environment.DeclareFunction("save", JgsValue.Function(
+        environment.Builtins.Register("save", JgsValue.Function(
             new BuiltinFunction("save", (args, line, col) => Save(host, userVariables, args, line, col))
             {
                 BindsAnsAsStatement = false,
             }));
 
-        environment.DeclareFunction("load", JgsValue.Function(
+        environment.Builtins.Register("load", JgsValue.Function(
             new BuiltinFunction("load", (args, line, col) => Load(activeWorkspace?.Invoke() ?? environment, host, args, line, col))
             {
                 BindsAnsAsStatement = false,

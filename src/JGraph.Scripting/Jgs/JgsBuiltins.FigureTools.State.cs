@@ -23,10 +23,10 @@ internal static partial class JgsBuiltins
     private static void RegisterFigureStateBuiltins(JgsEnvironment env)
     {
         void Define(string name, Func<IReadOnlyList<JgsValue>, int, int, JgsValue> body) =>
-            env.DeclareFunction(name, JgsValue.Function(new BuiltinFunction(name, body)));
+            env.Builtins.Register(name, JgsValue.Function(new BuiltinFunction(name, body)));
 
         void DefineSilent(string name, Func<IReadOnlyList<JgsValue>, int, int, JgsValue> body) =>
-            env.DeclareFunction(name, JgsValue.Function(
+            env.Builtins.Register(name, JgsValue.Function(
                 new BuiltinFunction(name, body) { BindsAnsAsStatement = false }));
 
         // --- Application data -------------------------------------------------------------------
@@ -43,13 +43,13 @@ internal static partial class JgsBuiltins
         DefineSilent("alpha", Alpha);
         // Both answer a value when asked bare, which is the form a script reads them in.
         void DefineBare(string name, Func<IReadOnlyList<JgsValue>, int, int, JgsValue> body) =>
-            env.DeclareFunction(name, JgsValue.Function(new BuiltinFunction(name, body) { AutoCallsBare = true }));
+            env.Builtins.Register(name, JgsValue.Function(new BuiltinFunction(name, body) { AutoCallsBare = true }));
 
         DefineBare("alim", AlphaLimits);
         DefineBare("alphamap", AlphaMap);
 
         // --- What is drawing ----------------------------------------------------------------------
-        env.DeclareFunction("rendererinfo", JgsValue.Function(
+        env.Builtins.Register("rendererinfo", JgsValue.Function(
             new BuiltinFunction("rendererinfo", RendererInfo) { AutoCallsBare = true }));
     }
 

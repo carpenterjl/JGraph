@@ -87,8 +87,8 @@ internal sealed partial class Interpreter
         _cancelCheck = () => _cancellationToken.ThrowIfCancellationRequested();
 
         // plus/minus/mldivide/… are the operators under function names, so only something that can
-        // apply an operator may declare them. Declaring here also puts them in the globals before a
-        // workspace owner snapshots it, which keeps them out of whos and save.
+        // apply an operator may declare them. They go into the built-in layer under `globals` like
+        // every other built-in, before the workspace owner seals it.
         JgsBuiltins.RegisterOperatorFunctions(globals, this);
     }
 

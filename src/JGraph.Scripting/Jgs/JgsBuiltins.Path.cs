@@ -22,13 +22,13 @@ internal static partial class JgsBuiltins
         interpreter.FunctionPath = search;
 
         void Define(string name, Func<IReadOnlyList<JgsValue>, int, int, JgsValue> body) =>
-            env.DeclareFunction(name, JgsValue.Function(new BuiltinFunction(name, body) { BindsAnsAsStatement = false }));
+            env.Builtins.Register(name, JgsValue.Function(new BuiltinFunction(name, body) { BindsAnsAsStatement = false }));
 
         // path and pathsep answer their bare names, the way pwd and filesep already do — MATLAB's
         // `path` on its own is how the search path is looked at, and handing back the function value
         // instead showed the user nothing at all. Callee position is exempt, so path(p) still sets.
         void Query(string name, Func<IReadOnlyList<JgsValue>, int, int, JgsValue> body) =>
-            env.DeclareFunction(name, JgsValue.Function(new BuiltinFunction(name, body) { AutoCallsBare = true }));
+            env.Builtins.Register(name, JgsValue.Function(new BuiltinFunction(name, body) { AutoCallsBare = true }));
 
         // A relative folder means one beside the running script, not one beside whatever directory the
         // process happens to have been launched from. Every other file a script names already resolves

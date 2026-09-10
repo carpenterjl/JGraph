@@ -38,7 +38,7 @@ internal static partial class JgsBuiltins
     {
         void Define(string name, Func<IReadOnlyList<JgsValue>, int, int, JgsValue> body,
             Func<IReadOnlyList<JgsValue>, int, int, int, JgsValue[]>? multi = null) =>
-            env.DeclareFunction(name, JgsValue.Function(new BuiltinFunction(name, body) { MultiOutput = multi }));
+            env.Builtins.Register(name, JgsValue.Function(new BuiltinFunction(name, body) { MultiOutput = multi }));
 
         void Solver(string name, KrylovMethod method)
         {
@@ -256,7 +256,7 @@ internal static partial class JgsBuiltins
         // gplot is the one name here that behaves differently as a statement than as an
         // expression: asked for nothing it draws, asked for X it hands back the coordinates and
         // draws nothing. It therefore has to be told when its answer was discarded.
-        env.DeclareFunction("gplot", JgsValue.Function(new BuiltinFunction("gplot",
+        env.Builtins.Register("gplot", JgsValue.Function(new BuiltinFunction("gplot",
             (args, line, col) => GraphPlot(args, 1, line, col)[0])
         {
             KnowsWhenDiscarded = true,

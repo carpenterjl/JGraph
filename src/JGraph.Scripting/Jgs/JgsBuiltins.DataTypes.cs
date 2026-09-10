@@ -20,10 +20,10 @@ internal static partial class JgsBuiltins
     private static void RegisterDataTypeBuiltins(JgsEnvironment env, JgsDialect? dialect)
     {
         void Define(string name, Func<IReadOnlyList<JgsValue>, int, int, JgsValue> body) =>
-            env.DeclareFunction(name, JgsValue.Function(new BuiltinFunction(name, body)));
+            env.Builtins.Register(name, JgsValue.Function(new BuiltinFunction(name, body)));
 
         // missing is a value, not a function: ["apple", missing, "banana"] must just evaluate.
-        env.Declare("missing", JgsValue.Str(MissingSentinel));
+        env.Builtins.RegisterConstant("missing", JgsValue.Str(MissingSentinel));
 
         Define("ismissing", (args, line, col) =>
         {
@@ -134,7 +134,7 @@ internal static partial class JgsBuiltins
         });
 
         // compose(format, A1, ..., An) is declared in JgsBuiltins.Compose.cs.
-        env.DeclareFunction("compose", JgsValue.Function(new BuiltinFunction("compose",
+        env.Builtins.Register("compose", JgsValue.Function(new BuiltinFunction("compose",
             (args, line, col) => Composed(args, dialect, line, col))
         { KeepsStringArguments = true }));
 

@@ -14,11 +14,11 @@ internal static partial class JgsBuiltins
 {
     private static void RegisterDensityBuiltins(JgsEnvironment env)
     {
-        env.DeclareFunction("binscatter", JgsValue.Function(
+        env.Builtins.Register("binscatter", JgsValue.Function(
             new BuiltinFunction("binscatter", (args, line, col) => BinScatter(args, line, col))
             { BindsAnsAsStatement = false }));
 
-        env.DeclareFunction("histogram2", JgsValue.Function(
+        env.Builtins.Register("histogram2", JgsValue.Function(
             new BuiltinFunction("histogram2", (args, line, col) => Histogram2(args, line, col))
             { BindsAnsAsStatement = false }));
     }

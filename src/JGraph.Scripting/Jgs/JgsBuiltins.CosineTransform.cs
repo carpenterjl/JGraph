@@ -31,9 +31,9 @@ internal static partial class JgsBuiltins
     /// <summary>Registers <c>dct</c> and <c>idct</c>.</summary>
     private static void RegisterCosineTransformBuiltins(JgsEnvironment env)
     {
-        env.DeclareFunction("dct", JgsValue.Function(new BuiltinFunction("dct",
+        env.Builtins.Register("dct", JgsValue.Function(new BuiltinFunction("dct",
             (args, line, col) => CosineLine("dct", args, inverse: false, line, col))));
-        env.DeclareFunction("idct", JgsValue.Function(new BuiltinFunction("idct",
+        env.Builtins.Register("idct", JgsValue.Function(new BuiltinFunction("idct",
             (args, line, col) => CosineLine("idct", args, inverse: true, line, col))));
     }
 
