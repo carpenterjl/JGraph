@@ -277,12 +277,22 @@ added to the catalogue; the count across every callable kind is 1,116 of 2,024.
 - **`func2str(@sin)` answers `'@sin'`** where MATLAB answers `'sin'` — a named handle prints
   with its `@`, an anonymous one with its text, and `MatlabSessionBuiltinTests` pins the form.
   Found by the stress scripts, older than the milestone, left as it is.
+- **`run` takes a path, not a name on the search path.** MATLAB's `run('p')` finds a `p.m` on
+  the path and runs it where the caller stands; JGraph's `run` resolves its argument as a file
+  beside the caller, with or without its `.m`, and refuses a bare name it does not find there.
+- **`run` of a function file defines the function and does not call it.** MATLAB's `run('fn.m')`
+  invokes `fn` with no arguments; JGraph hoists the file's functions into its storage and runs
+  its (empty) statement list.
 
 ## Still open
 
-- `run('other\folder\s.m')` runs the script without putting its folder on the implicit path, so a
-  `max.m` beside such a script is not seen unless the script `cd`s there. MATLAB's `run` changes
-  folder for the duration; worth its own fix.
+- ~~`run('other\folder\s.m')` runs the script without putting its folder on the implicit
+  path~~ — closed the same day. `run` now enters the script's folder for the duration, as measured
+  in R2025b: `pwd` inside the script is its folder, so a `max.m` or a `sib.m` beside it answers and
+  a `run('u.m')` inside it means the `u.m` beside it; the caller's folder is put back afterwards,
+  an error included, unless the script itself moved with `cd`, whose move stands. A `.jgs` include
+  stays where it was called from. `JgsRunFolderTests` and the fixture `m145_run` (18 R2025b lines,
+  no divergent row) pin it; the two `run` divergences above were found on the way.
 - The head-to-head timing rows join the arc's deferred set, per the standing decision recorded
   in ADR 0131; the micro-benchmark above is the milestone's own measurement.
 - The step-5 note stands as the next saving if one is ever needed: phase one's storage miss and

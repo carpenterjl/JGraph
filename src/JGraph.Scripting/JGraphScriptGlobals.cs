@@ -183,6 +183,48 @@ public sealed class JGraphScriptGlobals
     }
 
     /// <summary>
+    /// Makes <paramref name="folder"/> the working directory until the returned token is disposed,
+    /// which puts the previous one back — unless the code that ran meanwhile moved with <c>cd</c>,
+    /// whose move then stands. This is MATLAB's <c>run</c> (measured in R2025b): a script named by
+    /// path runs in its own folder, <c>pwd</c> says so inside it, the caller is back where it was
+    /// afterwards, an error included, and a <c>cd</c> the script made is the caller's to keep. A
+    /// folder that is already current is not entered, so nothing is invalidated for nothing.
+    /// </summary>
+    internal DirectoryScope EnterDirectory(string folder)
+    {
+        string? previous = _currentDirectory;
+        string target = Path.GetFullPath(folder);
+        if (PathsEqual(CurrentDirectory, target))
+        {
+            return default;
+        }
+
+        ChangeDirectory(target);
+        return new DirectoryScope(this, previous, target);
+    }
+
+    /// <summary>The token <see cref="EnterDirectory"/> hands out; disposing it restores the folder it replaced.</summary>
+    internal readonly struct DirectoryScope(JGraphScriptGlobals? globals, string? previous, string entered) : IDisposable
+    {
+        /// <inheritdoc />
+        public void Dispose()
+        {
+            if (globals is null || !PathsEqual(globals.CurrentDirectory, entered))
+            {
+                return; // nothing was entered, or the script moved on and its move stands
+            }
+
+            globals._currentDirectory = previous;
+            globals.NoteFileChanging(null);
+        }
+    }
+
+    private static bool PathsEqual(string a, string b) =>
+        string.Equals(
+            Path.TrimEndingDirectorySeparator(a), Path.TrimEndingDirectorySeparator(b),
+            OperatingSystem.IsWindows() ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal);
+
+    /// <summary>
     /// Raised before the interpreter changes a file or folder, with the full path, or with null
     /// when everything under the search folders is to be re-read (<c>cd</c>, <c>rehash</c>). The
     /// function path's file index listens, so a script that writes <c>mean.m</c> is seen to have

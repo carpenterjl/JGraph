@@ -197,7 +197,12 @@ internal static class JgsRunner
     /// Defines the <c>run(path)</c> builtin: it resolves the path like the table readers do, parses the
     /// file, and executes it into the global scope (functions hoisted first) — MATLAB-style script
     /// composition. Re-entrant includes are guarded so a cycle fails with a clear error. An included
-    /// file is parsed in the caller's dialect unless it is a <c>.m</c> file, which always means MATLAB.
+    /// file is parsed in the caller's dialect unless it is a <c>.m</c> file, which always means MATLAB,
+    /// and a MATLAB file runs in its own folder the way MATLAB's <c>run</c> runs it: the working
+    /// directory is the script's for the duration, so a file beside it answers a name and a relative
+    /// path means the copy beside it, and the caller's folder is put back afterwards unless the
+    /// script moved with <c>cd</c>. A JGS include stays where it was called from. The file may be
+    /// named with or without its extension, since MATLAB names a script by its stem.
     /// </summary>
     internal static void DefineRunBuiltin(
         JgsEnvironment environment, Interpreter interpreter, JGraphScriptGlobals globals, JgsDialect dialect)
@@ -214,6 +219,15 @@ internal static class JgsRunner
             }
 
             string resolved = globals.Resolve(args[0].AsString);
+            if (!File.Exists(resolved) && Path.GetExtension(resolved).Length == 0)
+            {
+                string withExtension = globals.Resolve(args[0].AsString + ".m");
+                if (File.Exists(withExtension))
+                {
+                    resolved = withExtension;
+                }
+            }
+
             string fullPath;
             string source;
             try
@@ -237,6 +251,15 @@ internal static class JgsRunner
                 // step-in lands in the right editor tab. The include runs under its own dialect, not
                 // just parses in it — a .m reached from JGS must still index 1-based and auto-declare.
                 JgsDialect included = DialectForInclude(fullPath, dialect);
+
+                // A MATLAB script runs in its own folder (R2025b: pwd inside run('other/s.m') is
+                // other, and the caller is back where it was after — an error included — unless the
+                // script cd'd away). The scope is what lets a max.m or a sib.m beside the script be
+                // found, and a run('u.m') inside it mean the u.m beside it.
+                using JGraphScriptGlobals.DirectoryScope folder =
+                    included.IsMatlab && Path.GetDirectoryName(fullPath) is { Length: > 0 } scriptFolder
+                        ? globals.EnterDirectory(scriptFolder)
+                        : default;
                 interpreter.RunInDialect(included, () => interpreter.Run(Parser.Parse(source, fullPath, included)));
             }
             finally

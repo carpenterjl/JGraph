@@ -2080,7 +2080,7 @@ public static class JgsBuiltinCatalog
         Add("textcolumn", "A table column as a string array (missing cells become \"\") — for serial numbers and IDs.", P("table"), P("name"));
 
         // --- Composition and output ---------------------------------------------------------------
-        Add("run", "Runs another JGS script into the current global scope (an include).", P("path"));
+        Add("run", "Runs another script into the current workspace (an include). A .m file runs in its own folder, as MATLAB's run does, and the caller's folder is put back afterwards unless the script moved.", P("path"));
         Add("clear", "Clears the workspace (or just the named variables) and reverts any rebound built-in. Figures stay open.", Opt("names"));
         Add("clearvars", "Clears the user's variables (all, or just the named ones). Built-ins are untouched.", Opt("names"));
         Add("print", "In JGS, writes the values to the console, space-separated. In the MATLAB dialect the paper verb instead: print('plot.png'), print(gcf, 'plot', '-dpdf'), with '-dpng'/'-djpeg'/'-dpdf'/'-dsvg' for the format and '-r300' for the resolution.", P("values"));

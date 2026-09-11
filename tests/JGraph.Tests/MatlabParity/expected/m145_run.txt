@@ -1,0 +1,18 @@
+CHK|run_pwd_inside|<root>\other|exact
+CHK|run_pwd_after|<root>|exact
+CHK|run_sibling|sibling|exact
+CHK|run_file_beside_script|file max|exact
+CHK|run_sibling_gone_after|1|exact
+CHK|run_mover_inside|<root>\other|exact
+CHK|run_mover_after|<root>\elsewhere|exact
+CHK|run_error_id|m145:boom|exact
+CHK|run_error_pwd_inside|<root>\other|exact
+CHK|run_error_pwd_after|<root>|exact
+CHK|run_nested_inside|<root>\other|exact
+CHK|run_nested_sibling|sibling|exact
+CHK|run_nested_pwd|<root>\other|exact
+CHK|run_nested_after|<root>|exact
+CHK|run_without_extension|<root>|exact
+CHK|run_missing_refused|1|exact
+CHK|run_relative_to_moved|<root>\other|exact
+CHK|run_relative_after|<root>\elsewhere|exact
