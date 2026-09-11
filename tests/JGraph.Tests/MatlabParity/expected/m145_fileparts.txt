@@ -1,0 +1,52 @@
+CHK|three_01|[C:\a\b][c][.txt]|exact
+CHK|one_01|[C:\a\b]|exact
+CHK|three_02|[a/b][c.tar][.gz]|exact
+CHK|one_02|[a/b]|exact
+CHK|three_03|[][c][.txt]|exact
+CHK|one_03|[]|exact
+CHK|three_04|[][][.gitignore]|exact
+CHK|one_04|[]|exact
+CHK|three_05|[a\b][][]|exact
+CHK|one_05|[a\b]|exact
+CHK|three_06|[a/b][][]|exact
+CHK|one_06|[a/b]|exact
+CHK|three_07|[][][]|exact
+CHK|one_07|[]|exact
+CHK|three_08|[a\b][c][]|exact
+CHK|one_08|[a\b]|exact
+CHK|three_09|[C:\][][]|exact
+CHK|one_09|[C:\]|exact
+CHK|three_10|[C:\][a][]|exact
+CHK|one_10|[C:\]|exact
+CHK|three_11|[a.b][c][]|exact
+CHK|one_11|[a.b]|exact
+CHK|three_12|[a/b][][.]|exact
+CHK|one_12|[a/b]|exact
+CHK|three_13|[a/b][.][.]|exact
+CHK|one_13|[a/b]|exact
+CHK|three_14|[][x][.]|exact
+CHK|one_14|[]|exact
+CHK|three_15|[a/b/c.txt][][]|exact
+CHK|one_15|[a/b/c.txt]|exact
+CHK|three_16|[/x][y][.m]|exact
+CHK|one_16|[/x]|exact
+CHK|three_17|[\][y][.m]|exact
+CHK|one_17|[\]|exact
+CHK|string_class|string string string|exact
+CHK|string_parts|[a/b][c][.txt]|exact
+CHK|string_one|string [a/b]|exact
+CHK|cell_class|cell cell cell|exact
+CHK|cell_parts|[a][b][.txt] [c/d][e][]|exact
+CHK|cell_one|cell|exact
+CHK|number_refused|1|exact
+CHK|joined_back|one\two\x|exact
+CHK|fullfile_slashes|a\b\c|exact
+CHK|fullfile_runs|a\b\c\|exact
+CHK|fullfile_unc|\\srv\share\f|exact
+CHK|fullfile_empty_parts|a\x|exact
+CHK|fullfile_leading_empty|x|exact
+CHK|fullfile_trailing|a\b\|exact
+CHK|fullfile_dots|a\..\b\x|exact
+CHK|fullfile_one|a|exact
+CHK|fullfile_string|string|exact
+CHK|fullfile_string_text|a\b|exact

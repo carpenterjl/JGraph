@@ -150,9 +150,11 @@ public class MatlabEvalBuiltinTests : IDisposable
         joined = fullfile('one', 'two', 'three.txt');
         assert(~isempty(strfind(joined, 'three.txt')));
 
-        parts = fileparts(joined);
-        assert(strcmp(parts{2}, 'three'));
-        assert(strcmp(parts{3}, '.txt'));
+        [folder, name, ext] = fileparts(joined);
+        assert(strcmp(folder, fullfile('one', 'two')));
+        assert(strcmp(name, 'three'));
+        assert(strcmp(ext, '.txt'));
+        assert(strcmp(fileparts(joined), folder));
         assert(strlength(filesep()) == 1);
         assert(strcmp(filemarker(), '>'));
         """);

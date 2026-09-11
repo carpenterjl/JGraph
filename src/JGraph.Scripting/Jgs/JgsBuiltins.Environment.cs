@@ -30,7 +30,7 @@ internal static partial class JgsBuiltins
             env.Builtins.Register(name, JgsValue.Function(new BuiltinFunction(name, body) { AutoCallsBare = true }));
 
         RegisterDirectoryBuiltins(Command, Query, host);
-        RegisterPathBuiltins(Define, Query, host);
+        RegisterPathBuiltins(Define, Query, env, host);
         RegisterStreamBuiltins(Define, env, host);
         RegisterMachineBuiltins(Define, Query, host);
         RegisterJsonBuiltins(Define);
@@ -176,7 +176,7 @@ internal static partial class JgsBuiltins
 
     private static void RegisterPathBuiltins(
         Action<string, Func<IReadOnlyList<JgsValue>, int, int, JgsValue>> Define,
-        Action<string, Func<IReadOnlyList<JgsValue>, int, int, JgsValue>> Query, JGraphScriptGlobals host)
+        Action<string, Func<IReadOnlyList<JgsValue>, int, int, JgsValue>> Query, JgsEnvironment env, JGraphScriptGlobals host)
     {
         Query("filesep", (args, line, col) =>
         {
@@ -217,35 +217,122 @@ internal static partial class JgsBuiltins
             return JgsValue.Bool(Directory.Exists(host.Resolve(Str("isfolder", args, 0, line, col))));
         });
 
-        Define("fullfile", (args, line, col) =>
+        // fullfile is text, not Path.Combine (R2025b): the parts are joined with the platform's
+        // separator, every slash becomes that separator on Windows, runs of it collapse to one except
+        // a leading pair (a UNC share), empty parts are dropped, a trailing separator stays, and a
+        // string among the parts makes the answer a string.
+        env.Builtins.Register("fullfile", JgsValue.Function(new BuiltinFunction("fullfile", (args, line, col) =>
         {
-            var parts = new string[args.Count];
+            var parts = new List<string>(args.Count);
+            bool asString = false;
             for (int i = 0; i < args.Count; i++)
             {
-                parts[i] = Str("fullfile", args, i, line, col);
+                if (!IsTextScalar(args[i]))
+                {
+                    throw new JgsRuntimeException(line, col,
+                        $"fullfile expects argument {i + 1} to be a string, but got a {args[i].TypeName}.");
+                }
+
+                asString |= IsStringScalar(args[i]);
+                string part = TextOf(args[i]);
+                if (part.Length > 0)
+                {
+                    parts.Add(part);
+                }
             }
 
-            return JgsValue.Str(parts.Length == 0 ? string.Empty : Path.Combine(parts));
-        });
+            string joined = JoinPath(parts);
+            return asString ? JgsValue.StringScalar(joined) : JgsValue.Str(joined);
+        })
+        { KeepsStringArguments = true }));
 
-        DefineFileparts(Define);
+        DefineFileparts(env);
     }
 
-    /// <summary>Declares <c>fileparts</c>, which splits a path into folder, name, and extension.</summary>
-    private static void DefineFileparts(Action<string, Func<IReadOnlyList<JgsValue>, int, int, JgsValue>> Define) =>
-        Define("fileparts", (args, line, col) =>
+    /// <summary>
+    /// Declares <c>fileparts</c>: <c>[folder, name, ext] = fileparts(path)</c>, and one output is the
+    /// folder alone, as in MATLAB. The split is textual and never looks at the disk (measured in
+    /// R2025b): the folder is everything before the last separator, either slash counting on every
+    /// platform, and keeps that separator only when it is a root (<c>C:\</c>, <c>/</c>); the extension
+    /// starts at the last dot of what is left, so <c>.gitignore</c> is all extension and
+    /// <c>c.tar.gz</c> is <c>c.tar</c> plus <c>.gz</c>; a trailing separator leaves the name and
+    /// extension empty. A string scalar answers strings, a cellstr answers cells of the same length.
+    /// </summary>
+    private static void DefineFileparts(JgsEnvironment env)
+    {
+        static JgsValue[] Split(IReadOnlyList<JgsValue> args, int wanted, int line, int col)
         {
             Arity("fileparts", args, 1, line, col);
-            string path = Str("fileparts", args, 0, line, col);
+            JgsValue input = args[0];
+            if (input.Type == JgsType.String)
+            {
+                return SplitPath(input.AsString).Select(JgsValue.Str).ToArray();
+            }
 
-            // One output is the folder; the name and extension come back as a cell so a script can
-            // take all three without multiple-output plumbing for a builtin that rarely needs it.
-            return JgsValue.Cell([
-                JgsValue.Str(Path.GetDirectoryName(path) ?? string.Empty),
-                JgsValue.Str(Path.GetFileNameWithoutExtension(path)),
-                JgsValue.Str(Path.GetExtension(path)),
-            ]);
-        });
+            if (IsStringScalar(input))
+            {
+                return SplitPath(TextOf(input)).Select(JgsValue.StringScalar).ToArray();
+            }
+
+            if (input.Type == JgsType.Cell && input.AsCell.All(static e => e.Type == JgsType.String))
+            {
+                string[][] parts = input.AsCell.Select(e => SplitPath(e.AsString)).ToArray();
+                return Enumerable.Range(0, 3)
+                    .Select(k => JgsValue.Cell(parts.Select(p => JgsValue.Str(p[k])).ToArray()))
+                    .ToArray();
+            }
+
+            throw new JgsRuntimeException(line, col,
+                "fileparts: Input must be a row vector of characters, or a string scalar, or a cellstr, or a string matrix.");
+        }
+
+        env.Builtins.Register("fileparts", JgsValue.Function(new BuiltinFunction("fileparts",
+            (args, line, col) => Split(args, 1, line, col)[0])
+        { MultiOutput = Split, KeepsStringArguments = true }));
+    }
+
+    /// <summary>The non-empty <paramref name="parts"/> joined under MATLAB's <c>fullfile</c> rule.</summary>
+    private static string JoinPath(IReadOnlyList<string> parts)
+    {
+        char sep = Path.DirectorySeparatorChar;
+        string joined = string.Join(sep, parts);
+        if (OperatingSystem.IsWindows())
+        {
+            joined = joined.Replace('/', sep);
+        }
+
+        var result = new StringBuilder(joined.Length);
+        for (int i = 0; i < joined.Length; i++)
+        {
+            bool repeated = joined[i] == sep && i > 0 && joined[i - 1] == sep && i != 1;
+            if (!repeated)
+            {
+                result.Append(joined[i]);
+            }
+        }
+
+        return result.ToString();
+    }
+
+    /// <summary>The folder, name, and extension of <paramref name="path"/> under MATLAB's textual rule.</summary>
+    private static string[] SplitPath(string path)
+    {
+        int separator = path.LastIndexOfAny(['/', '\\']);
+        string folder = string.Empty;
+        string rest = path;
+        if (separator >= 0)
+        {
+            string before = path[..separator];
+            bool driveRoot = before.Length == 2 && before[1] == ':' && char.IsLetter(before[0]);
+            folder = before.Length == 0
+                ? Path.DirectorySeparatorChar.ToString() // a bare root answers the platform's separator (R2025b: the folder of '/y.m' is a lone backslash on Windows)
+                : driveRoot ? path[..(separator + 1)] : before;
+            rest = path[(separator + 1)..];
+        }
+
+        int dot = rest.LastIndexOf('.');
+        return dot < 0 ? [folder, rest, string.Empty] : [folder, rest[..dot], rest[dot..]];
+    }
 
     // --- Streams ----------------------------------------------------------------------------------
 

@@ -259,7 +259,7 @@ public static class JgsBuiltinCatalog
         Add("isfile", "Whether the path names a file that exists.", P("path"));
         Add("isfolder", "Whether the path names a folder that exists.", P("path"));
         Add("fullfile", "Path pieces joined with the right separator.", P("part"), Opt("more"));
-        Add("fileparts", "A path split into {folder, name, extension}.", P("path"));
+        Add("fileparts", "[folder, name, ext] = fileparts(path); one output is the folder. A textual split that never looks at the disk.", P("path"));
         Add("feof", "Whether an open file is at its end.", P("fid"));
         Add("ferror", "The last error on an open file — empty, since failures are raised instead.", P("fid"), Opt("clear"));
         Add("ftell", "The current byte position in an open file.", P("fid"));

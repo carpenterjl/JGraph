@@ -292,7 +292,12 @@ added to the catalogue; the count across every callable kind is 1,116 of 2,024.
   a `run('u.m')` inside it means the `u.m` beside it; the caller's folder is put back afterwards,
   an error included, unless the script itself moved with `cd`, whose move stands. A `.jgs` include
   stays where it was called from. `JgsRunFolderTests` and the fixture `m145_run` (18 R2025b lines,
-  no divergent row) pin it; the two `run` divergences above were found on the way.
+  no divergent row) pin it; the two `run` divergences above were found on the way. So was a
+  one-output `fileparts` that answered a three-cell where MATLAB answers the folder, fixed the
+  same day as a proper multi-output builtin under MATLAB's textual split, with `fullfile` made
+  to join as MATLAB's does (the platform separator, slashes converted on Windows, runs collapsed
+  but for a UNC pair, empty parts dropped, a string part making a string); the fixture
+  `m145_fileparts` (52 R2025b lines, no divergent row) pins both.
 - The head-to-head timing rows join the arc's deferred set, per the standing decision recorded
   in ADR 0131; the micro-benchmark above is the milestone's own measurement.
 - The step-5 note stands as the next saving if one is ever needed: phase one's storage miss and
