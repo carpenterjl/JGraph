@@ -14,7 +14,8 @@ namespace JGraph.Tests.Scripting;
 /// does in MATLAB. One test per row of the plan's probe tables (<c>prec/</c>, <c>step0/</c>,
 /// <c>prec6/probe6.out</c>), every expectation a line MATLAB printed. Step 7 adds the tools over
 /// the same layers (<c>prec7/probe7.out</c>): <c>builtin</c> as a forwarder over the built-in layer,
-/// <c>which -all</c>, <c>exist</c> by the layers, and the shadowing warning.
+/// <c>which -all</c>, <c>exist</c> by the layers, and the shadowing warning. Step 8 (the stress
+/// scripts) adds the anonymous-body row (<c>prec8/probe8.out</c>).
 /// </summary>
 [Collection("JG facade")]
 public class JgsPrecedenceTests : IDisposable
@@ -1127,5 +1128,56 @@ public class JgsPrecedenceTests : IDisposable
         Assert.Equal(-999.0, Number(result, "b"));
         Assert.StartsWith("Function max has the same name as a MATLAB built-in.", Text(result, "w"), StringComparison.Ordinal);
         Assert.Equal(1, _output.ErrorText.Split("Function max has the same name").Length - 1);
+    }
+
+    /// <summary>
+    /// R2025b, measured in step 8 (<c>prec8/probe8.out</c>): an anonymous body asks the current
+    /// folder when it is <em>called</em>, not when the handle is made. Beside <c>max.m</c>,
+    /// <c>@() max({1})</c> is the file's -999 direct, with a parameter, through <c>cellfun</c> and
+    /// from a local function; after <c>cd</c> to a folder without the file the same handle reaches
+    /// the built-in, and a handle made there answers the file once back beside it. (Before the
+    /// fix the handle captured the built-in as a local function of its body and never asked the
+    /// folders.)
+    /// </summary>
+    [Fact]
+    public async Task AnAnonymousBody_AsksTheFolders_WhenItIsCalled()
+    {
+        string cur = Path.Combine(_folder, "cur");
+        WriteFile(Path.Combine("cur", "max.m"), Shadow("max", -999));
+
+        ScriptRunResult result = await RunMatlab($$$"""
+            cd('{{{Escaped(cur)}}}');
+            f = @() max({1});
+            g = @(c) max(c);
+            a = f();
+            b = g([1 5 3]);
+            c = g({1});
+            d = cellfun(@(c) max(c), {{1}});
+            e = local_anon();
+            cd('{{{Escaped(_library)}}}');
+            try
+                p = f();
+            catch err
+                p = 'built-in';
+            end
+            q = g([1 5 3]);
+            h = @() max({1});
+            cd('{{{Escaped(cur)}}}');
+            r = h();
+            function k = local_anon()
+                hh = @() max({1});
+                k = hh();
+            end
+            """);
+
+        Ok(result);
+        Assert.Equal(-999.0, Number(result, "a"));
+        Assert.Equal(5.0, Number(result, "b"));
+        Assert.Equal(-999.0, Number(result, "c"));
+        Assert.Equal(new double[] { -999 }, (double[])Value(result, "d")!);
+        Assert.Equal(-999.0, Number(result, "e"));
+        Assert.Equal("built-in", Text(result, "p"));
+        Assert.Equal(5.0, Number(result, "q"));
+        Assert.Equal(-999.0, Number(result, "r"));
     }
 }

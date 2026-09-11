@@ -403,8 +403,17 @@ internal sealed class AnonymousFunction : IJgsCallable, IJgsMultiCallable
         var snapshot = new JgsEnvironment(defining) { IsStaticWorkspace = true };
         foreach (string name in FreeNames(declaration))
         {
-            if (defining.TryGet(name, out JgsValue value))
+            if (defining.TryGetScope(name, out JgsEnvironment? scope, out JgsValue value))
             {
+                // A built-in is not captured in the MATLAB dialect: the body's walk reaches the
+                // layer when the handle is called, and the folders are asked then — R2025b answers
+                // `@() max({1})` with the max.m of the current folder at the call, not at the
+                // creation (M145). Capturing it here would make it a local function of the body.
+                if (scope.IsBuiltinLayer && interpreter.Dialect.IsMatlab)
+                {
+                    continue;
+                }
+
                 if (defining.IsFunctionBinding(name))
                 {
                     snapshot.DeclareFunction(name, value);
