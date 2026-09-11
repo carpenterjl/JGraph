@@ -1,0 +1,145 @@
+CHK|cd_warns|1|exact
+CHK|cd_warns_rename|1|exact
+CHK|addpath_warning|Function abs has the same name as a MATLAB built-in. We suggest you rename the function to avoid a potential name conflict.|exact
+CHK|abs_exist|5|exact
+CHK|abs_which|1|exact
+CHK|max_cell|-999|exact
+CHK|max_none|-999|exact
+CHK|max_char|-999|exact
+CHK|max_string|-999|exact
+CHK|max_struct|-999|exact
+CHK|max_handle|-999|exact
+CHK|max_double_cell|-999|exact
+CHK|max_cell_double|-999|exact
+CHK|max_char_double|-999|exact
+CHK|max_three_string|-999|exact
+CHK|max_three_cell|-999|exact
+CHK|max_all_flag|-999|exact
+CHK|abs_cell|-777|exact
+CHK|max_double|5|exact
+CHK|max_two|2|exact
+CHK|max_logical|1|exact
+CHK|max_int8|3|exact
+CHK|max_int8_double|3|exact
+CHK|max_int8_fraction|3|exact
+CHK|max_double_single|2|exact
+CHK|abs_logical|1|exact
+CHK|abs_double|2|exact
+CHK|numel_double_string|-333|exact
+CHK|numel_string|1|exact
+CHK|numel_double|3|exact
+CHK|plus_double|3|exact
+CHK|plus_double_string|1x|exact
+CHK|mod_double|1|exact
+CHK|eps_bare|-777|exact
+CHK|eps_double|2.2204460492503131e-16|exact
+CHK|eps_string|-777|exact
+CHK|mean_file|-222|exact
+CHK|exist_mean|2|div=ADR0149
+CHK|exist_mean_builtin|0|div=ADR0149
+CHK|exist_mean_file|2|exact
+CHK|builtin_mean|error|div=ADR0149
+CHK|table_under_numel|error|div=ADR0149
+CHK|which_all_under_numel|27|div=ADR0149
+CHK|eps_deleted|error|div=ADR0149
+CHK|ans_method|5|exact
+CHK|ans_file|-999|exact
+CHK|loop_file|-2997|exact
+CHK|loop_method|6|exact
+CHK|inside_double|5|exact
+CHK|inside_cell|-999|exact
+CHK|inside_func2str|1|exact
+CHK|beside_cell_after_cd|-999|exact
+CHK|beside_double_after_cd|5|exact
+CHK|beside_cellfun|[-999 5]|shape
+CHK|beside_feval|-999|exact
+CHK|feval_name_cell|-999|exact
+CHK|feval_name_double|5|exact
+CHK|str2func_cell|-999|exact
+CHK|object_file|-555|exact
+CHK|object_second_file|-555|exact
+CHK|double_method_with_file|3|exact
+CHK|object_handle|-555|exact
+CHK|object_handle_after_cd|-555|exact
+CHK|object_no_file|error|exact
+CHK|method_foo|method foo|exact
+CHK|file_foo|file foo|exact
+CHK|bound_foo|bound|exact
+CHK|method_foo_again|method foo|exact
+CHK|private_from_script|1|exact
+CHK|dup_from_script|cur dup|exact
+CHK|private_from_file|private secret|private dup|secret2->private secret|private dup|exact
+CHK|private_handle_after_cd|private secret|exact
+CHK|local_over_method|local foo|exact
+CHK|local_over_file|local foo|exact
+CHK|local_over_method_double|-5|exact
+CHK|local_through_handle|-5|exact
+CHK|local_through_feval|-5|exact
+CHK|private_over_method|private bar|exact
+CHK|nestcheck|private bar|nested inner|method foo|exact
+CHK|clear_file_bare|[1 1 0]|shape
+CHK|clear_file_named|[1 1]|shape
+CHK|clear_real|0|exact
+CHK|exist_fifteen|[5 5 2 2 2 2 2 0 7 7 7 5 0 5 2]|shape
+CHK|exist_max|5|exact
+CHK|exist_max_file|2|exact
+CHK|exist_plain|2|exact
+CHK|which_max|1|exact
+CHK|which_sin|1|exact
+CHK|which_secret|1|exact
+CHK|which_loc|1|exact
+CHK|which_nosuch|1|exact
+CHK|which_plain|1|exact
+CHK|which_all_is_column|1|exact
+CHK|which_all_count|27|div=ADR0149
+CHK|which_all_file_first|1|exact
+CHK|which_all_builtin_second|1|exact
+CHK|which_all_either_order|1|exact
+CHK|which_all_nosuch|[0 0]|shape
+CHK|which_all_plain|[1 1]|shape
+CHK|which_all_secret|[1 1]|shape
+CHK|which_all_loc|[1 1]|shape
+CHK|builtin_class_string|string|exact
+CHK|builtin_class_char|char|exact
+CHK|builtin_two_outputs|[3 2]|shape
+CHK|builtin_max_double|5|exact
+CHK|builtin_string_name|double|exact
+CHK|builtin_through_feval|double|exact
+CHK|builtin_through_handle|double|exact
+CHK|builtin_handle_class|function_handle|exact
+CHK|builtin_exist|5|exact
+CHK|builtin_which|1|exact
+CHK|builtin_refuses_path_function|MATLAB:dispatcher:CannotFindBuiltinFunction|exact
+CHK|builtin_refuses_private|MATLAB:dispatcher:CannotFindBuiltinFunction|exact
+CHK|builtin_refuses_unknown|MATLAB:dispatcher:CannotFindBuiltinFunction|exact
+CHK|builtin_refuses_none|MATLAB:minrhs|exact
+CHK|builtin_refuses_number|MATLAB:string:MustBeStringScalarOrCharacterVector|exact
+CHK|builtin_refuses_handle|MATLAB:string:MustBeStringScalarOrCharacterVector|exact
+CHK|builtin_max_cell_refused|1|exact
+CHK|builtin_size_no_args_refused|1|exact
+CHK|builtin_statement_ans|[1 3]|shape
+CHK|builtin_disp_no_ans|0|exact
+CHK|builtin_shadowed_call|-1|exact
+CHK|builtin_shadowed_feval|-1|exact
+CHK|builtin_shadowed_handle|-1|exact
+CHK|builtin_shadowed_exist|5|exact
+CHK|builtin_shadowed_which|1|exact
+CHK|builtin_back|double|exact
+CHK|path_function_reads_no_base|1|exact
+CHK|local_function_reads_no_base|1|exact
+CHK|path_function_sees_no_script_helper|1|exact
+CHK|script_a_helper|A-helper|exact
+CHK|script_b_helper|B-helper|exact
+CHK|script_a_helper_again|A-helper|exact
+CHK|persistent_counts|3|exact
+CHK|anonymous_keeps_its_file|maker5-helper-1|exact
+CHK|anon_cell|-999|exact
+CHK|anon_double|5|exact
+CHK|anon_arg_cell|-999|exact
+CHK|anon_cellfun|-999|shape
+CHK|anon_in_local|-999|exact
+CHK|anon_after_cd_refused|1|exact
+CHK|anon_after_cd_double|5|exact
+CHK|anon_made_elsewhere|-999|exact
+CHK|end_of_path_shadow|error|div=ADR0149
+CHK|end_of_path_method|1|exact

@@ -50,8 +50,10 @@ A file that is *not* a function file is a script, and runs in the caller's own f
 reason a `setup` file is worth having.
 
 Caching is by name, keyed on the resolved path and the file's last-write time, so editing a helper
-between two runs of a console session is picked up without anything being told. `rehash` is therefore
-left as the accepted no-op it already was: what it promises is already true.
+between two runs of a console session is picked up without anything being told. `rehash` was therefore
+left as the accepted no-op it already was, since what it promised was already true — until M145
+(ADR 0149) gave the search folders a file index: `rehash` now re-reads their file lists, for a file
+another program dropped mid-statement.
 
 ### A bare name that is a file runs; `@name` is how you ask for the handle
 
@@ -138,8 +140,11 @@ against the script's own directory, like every other path a script names. The le
 
 ### Recorded divergences
 
-- **A built-in wins a name a path file also claims**, where MATLAB gives the file priority. Reasons
-  above.
+- ~~A built-in wins a name a path file also claims~~ — **lifted; see
+  [0149](0149-a-file-takes-a-builtin-name-unless-a-method-claims-the-call.md).** M145 measured
+  what MATLAB does — a file takes the name unless a method of the built-in claims the call's
+  argument classes — and made it so; the reason recorded here is answered by MATLAB's own warning
+  at `addpath` and at `cd`, so a stray file still cannot change a computation silently.
 - **`throwAsCaller` reports the same line `throw` does.** JGraph has no notion of blaming a frame.
 - **A name-value argument (`options.Width`) is refused**, by name and with its own reason, rather
   than mis-parsed. Take the pairs through `varargin`. `(Repeating)` is likewise not implemented.
