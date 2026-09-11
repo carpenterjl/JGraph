@@ -49,6 +49,18 @@ internal sealed class JgsFileIndex
     private HashSet<string>? _shadowing;
     private List<string> _lastSearched = [];
     private int _checkedEpoch = -1;
+    private readonly HashSet<string> _reported = new(StringComparer.Ordinal);
+    private readonly List<string> _unreported = [];
+
+    /// <summary>
+    /// Told each built-in name a search folder is seen to shadow — when the set is rebuilt (its
+    /// first build, <c>addpath</c>, <c>cd</c>, a file appearing) and again on every later read
+    /// until it answers true. The function path raises MATLAB's own warning from it and answers
+    /// true once it has; a name is remembered as reported only then, so a build under a dialect
+    /// that does not warn (the JGS statement a batch starts with) leaves the warning for the
+    /// MATLAB script that follows, which raises it at its first built-in call.
+    /// </summary>
+    internal Func<string, bool>? ShadowingFound { get; set; }
 
     /// <summary>
     /// Creates the index over <paramref name="searchFolders"/> (the folders a bare name is looked
@@ -83,6 +95,11 @@ internal sealed class JgsFileIndex
         get
         {
             Refresh();
+            if (_unreported.Count > 0)
+            {
+                Report();
+            }
+
             return _shadowing!;
         }
     }
@@ -247,6 +264,32 @@ internal sealed class JgsFileIndex
         }
 
         _shadowing = shadowing;
+        _unreported.Clear();
+        foreach (string name in shadowing)
+        {
+            if (!_reported.Contains(name))
+            {
+                _unreported.Add(name);
+            }
+        }
+    }
+
+    /// <summary>Offers every shadowing name not yet warned about to <see cref="ShadowingFound"/>, keeping the ones it declines.</summary>
+    private void Report()
+    {
+        if (ShadowingFound is not { } report)
+        {
+            return;
+        }
+
+        for (int i = _unreported.Count - 1; i >= 0; i--)
+        {
+            if (report(_unreported[i]))
+            {
+                _reported.Add(_unreported[i]);
+                _unreported.RemoveAt(i);
+            }
+        }
     }
 
     private bool TimeMoved(string folder, Folder entry)

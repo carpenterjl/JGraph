@@ -178,6 +178,7 @@ boxchart
 boxplot
 brighten
 bsxfun
+builtin
 bubblechart
 bubblechart3
 bubblelegend

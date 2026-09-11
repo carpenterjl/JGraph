@@ -157,6 +157,7 @@ bubblelegend,measured,mfile,,file,file,file,file,file,file,file,file,file,file,f
 bubblelim,measured,mfile,,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file
 bubblesize,measured,mfile,,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file
 buffer,measured,other,gpuArray,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file
+builtin,measured,builtin,half,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file
 BurrDistribution,measured,none,,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file
 buttap,measured,mfile,,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file
 butter,measured,mfile,,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file,file

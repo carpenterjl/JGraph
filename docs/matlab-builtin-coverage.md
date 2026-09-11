@@ -34,7 +34,7 @@ so long. The live tracker is `matlab-r2021b-documented.html` in the demo workspa
 `tools/matlab-checklist/build-checklist.py`; this file is the standing summary, so the shape of what
 is left does not have to be re-derived each time.
 
-**416 of 514 builtins implemented** (415 from M71 to M86; 413 from M68 to M70; 386 was written here from M63 to M66 and was stale — see the correction below; 385 from M60 to M62, 383 after M59, 382 after M54, 372 from M45 to M53, 364 after M43, 363 after
+**417 of 514 builtins implemented** (416 from M87 to M144; 415 from M71 to M86; 413 from M68 to M70; 386 was written here from M63 to M66 and was stale — see the correction below; 385 from M60 to M62, 383 after M59, 382 after M54, 372 from M45 to M53, 364 after M43, 363 after
 M39, 326 after M38, 185 after M37, 109 after M36) — M46 through M53 all added names MATLAB documents
 as *functions*, which this table does not hold. M45's eight are the drawing primitives the "handle
 graphics" section below used to list as missing and call the most useful thing left: `plot3`, `line`,
@@ -103,8 +103,9 @@ see. This file refused to count them while they drew nothing; **M56 made them re
 number and this one agree again. `opengl` *is* counted, because an accepted no-op is an answer — the
 same reading that counted `shading`, `lighting` and `camlight` in M43.
 
-Across every callable kind — builtin, function, operator, keyword, script — the count is **1,115 of
-2,024** as of M135, which added `designfilt`, the `digitalFilter` value and the four one-line
+Across every callable kind — builtin, function, operator, keyword, script — the count is **1,116 of
+2,024** as of M145, which added `builtin` — the forwarder that reaches a built-in past the file
+shadowing it, the one name in this table the precedence work needed; 1,115 as of M135, which added `designfilt`, the `digitalFilter` value and the four one-line
 filters. None of the six lands here; the one name that moved the figure is `ss`, the state-space
 reading of a designed filter, which MATLAB keeps in a shared control folder rather than in the
 Signal one. M133 before it added the Signal Processing Toolbox's filtering, coefficient conversions
@@ -1029,7 +1030,7 @@ M52 left these behind, each named rather than silent (the full table is in
   scoped out of M52 deliberately.~~ **`interp2` and `'SamplePoints'` closed in M66**; `'native'`
   output classes and the `histogram` object options are still out.
 
-## Not implemented — 98
+## Not implemented — 97
 
 ### Handle graphics and app building — 7
 
@@ -1115,16 +1116,18 @@ script in that language — which is a different thing from calling into them mi
 The R2020b pattern API is a composable value type of its own. Plain regular expressions cover the
 same ground and are implemented in full, including MATLAB's option-word output ordering.
 
-### OOP and metaclass plumbing — 18
+### OOP and metaclass plumbing — 17
 
-`builtin` `empty` `event.hasListener` `inmem` `listLength` `loadobj` `localfunctions`
+~~`builtin`~~ `empty` `event.hasListener` `inmem` `listLength` `loadobj` `localfunctions`
 `mislocked` `mlock` `munlock` `namedargs2cell` `numArgumentsFromSubscript` `saveobj` `subsasgn`
 `subsindex` `subsref` `superclasses` `underlyingType`
 
 The sentence that used to close this section — "these exist to customize the behaviour of
 user-defined classes, which JGS does not have" — stopped being true in **M68**, which gave the
 MATLAB dialect `classdef`. ~~`metaclass`~~ left this list with it, and `isobject`, `properties` and
-`methods` left the *function* and *keyword* tables beside it.
+`methods` left the *function* and *keyword* tables beside it. ~~`builtin`~~ left in **M145**, once a
+file could shadow a built-in and a script needed a way past it: `builtin(name, args…)` forwards
+to the built-in layer alone, with the output count and the call site of the written call.
 
 What remains is the part of the object model M68 deliberately excluded, and the exclusions are the
 reasons: `subsref`/`subsasgn`/`subsindex`/`numArgumentsFromSubscript` would let a class take over

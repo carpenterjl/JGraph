@@ -202,7 +202,8 @@ public static class JgsBuiltinCatalog
         Add("str2num", "Text evaluated inside brackets: '1 2; 3 4' is a matrix. Empty when it does not evaluate; [x, ok] says whether it did.", P("text"));
         Add("exist", "What a name is: 1 a variable, 2 a file, 5 a builtin, 7 a folder, 0 nothing.", P("name"), Opt("kind"));
         Add("who", "The names of the variables in scope, as a cell array.", Opt("pattern"));
-        Add("which", "Where a name comes from — a builtin, or the file it resolves to.", P("name"));
+        Add("which", "Where a name comes from — the file that answers it, or 'is a built-in function'; which(name, '-all') lists every layer holding it, files first.", P("name"), Opt("'-all'"));
+        Add("builtin", "Calls the built-in of that name past any file or variable that shadows it: builtin('size', A) reaches size while size.m takes every written call.", P("function"), Opt("args..."));
         Add("nargin", "How many inputs a function declares: nargin('name') or nargin(@f), negative when the last is varargin. Inside a function body the bare name is how many the call passed.", P("f"));
         Add("nargout", "How many outputs a function declares: nargout('name') or nargout(@f), negative when the last is varargout. Inside a function body the bare name is how many the caller asked for.", P("f"));
         Add("narginchk", "Fails unless the enclosing function got between low and high arguments.", P("low"), P("high"));

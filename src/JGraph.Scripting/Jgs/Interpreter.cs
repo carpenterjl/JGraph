@@ -209,6 +209,25 @@ internal sealed partial class Interpreter
     private CallExpr? _pendingCall;
     internal CallExpr? PendingCall => _pendingCall;
 
+    /// <summary>
+    /// Runs <paramref name="body"/> with <paramref name="call"/> as the pending call and puts the
+    /// previous one back afterwards — how <c>builtin('table', A, B)</c> hands the <c>table</c>
+    /// wrapper a call site without the selector in it, and how a nested forward sees its own.
+    /// </summary>
+    internal T WithPendingCall<T>(CallExpr? call, Func<T> body)
+    {
+        CallExpr? previous = _pendingCall;
+        _pendingCall = call;
+        try
+        {
+            return body();
+        }
+        finally
+        {
+            _pendingCall = previous;
+        }
+    }
+
     /// <summary>The global environment — <c>evalin('base', …)</c>'s workspace.</summary>
     internal JgsEnvironment Globals => _globals;
 
@@ -1194,6 +1213,19 @@ internal sealed partial class Interpreter
         if (expression is CallExpr named && named.Callee is VariableExpr calleeName
             && TryResolveCall(named, calleeName.Name, env, out Resolution resolvedCall, out JgsValue[] given))
         {
+            // builtin('ecdf', x); is ecdf(x); — the forwarder runs the target's statement form and
+            // says whether the target would have bound ans (M145, step 7).
+            if (resolvedCall.Value.AsCallable is JgsBuiltinForwarder forwarder)
+            {
+                _pendingCall = named;
+                if (forwarder.CallAsStatement(given, named.Line, named.Column, out JgsValue forwarded))
+                {
+                    BindAns(statement, forwarded, env);
+                }
+
+                return;
+            }
+
             if (resolvedCall.Value.AsCallable is BuiltinFunction
                 { KnowsWhenDiscarded: true, MultiOutput: not null } knowing)
             {

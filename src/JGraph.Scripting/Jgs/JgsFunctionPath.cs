@@ -49,7 +49,45 @@ internal sealed class JgsFunctionPath
             () => interpreter.StatementEpoch,
             name => interpreter.Globals.Builtins.TryGet(name, out _),
             message => host.WriteErr(message + "\n"));
-        host.FileChanging += _index.Invalidate;
+        _index.ShadowingFound = WarnShadowing;
+        host.FileChanging += path =>
+        {
+            _index.Invalidate(path);
+
+            // The search folders moved (cd, rehash): read them now rather than at the next built-in
+            // call, so that a folder holding max.m is warned about as the script arrives in it, the
+            // way MATLAB warns at the cd.
+            if (path is null)
+            {
+                _ = _index.Shadowing;
+            }
+        };
+    }
+
+    /// <summary>
+    /// MATLAB's own warning for a file that takes a built-in's name, raised through the script's
+    /// <c>warning</c> so that <c>lastwarn</c> keeps it and the ordinary channel carries it. The file
+    /// keeps the name — ADR 0062's reason for warning was that a stray <c>mean.m</c> must not fail in
+    /// a way nobody can read, and that reason survives the flip. Answers whether it warned: the JGS
+    /// dialect never does, and the index must not count the name as reported when it did not.
+    /// </summary>
+    private bool WarnShadowing(string name)
+    {
+        if (!_interpreter.Dialect.IsMatlab)
+        {
+            return false;
+        }
+
+        string message = $"Function {name} has the same name as a MATLAB built-in. "
+            + "We suggest you rename the function to avoid a potential name conflict.";
+        if (_interpreter.Globals.TryGet("warning", out JgsValue warning) && warning.Type == JgsType.Function)
+        {
+            warning.AsCallable.Call([JgsValue.Str(message)], 0, 0);
+            return true;
+        }
+
+        _host.WriteErr("Warning: " + message + "\n");
+        return true;
     }
 
     /// <summary>The folders <c>addpath</c> has added, in search order (the implicit ones are not listed).</summary>
@@ -85,6 +123,7 @@ internal sealed class JgsFunctionPath
         // about which entries the change could have reached. The index re-reads for the same reason.
         _loaded.Clear();
         _index.Invalidate(null);
+        _ = _index.Shadowing; // read now, so a shadowing file in the folder is warned about at the addpath
     }
 
     /// <summary>Removes <paramref name="folder"/> from the search path; false when it was not on it.</summary>

@@ -12,7 +12,9 @@ namespace JGraph.Tests.Scripting;
 /// <c>private/</c> folder; a user class method on the dominant object; the current folder; the
 /// <c>addpath</c> folders; and the built-in layer last, so a user file takes a built-in's name as it
 /// does in MATLAB. One test per row of the plan's probe tables (<c>prec/</c>, <c>step0/</c>,
-/// <c>prec6/probe6.out</c>), every expectation a line MATLAB printed.
+/// <c>prec6/probe6.out</c>), every expectation a line MATLAB printed. Step 7 adds the tools over
+/// the same layers (<c>prec7/probe7.out</c>): <c>builtin</c> as a forwarder over the built-in layer,
+/// <c>which -all</c>, <c>exist</c> by the layers, and the shadowing warning.
 /// </summary>
 [Collection("JG facade")]
 public class JgsPrecedenceTests : IDisposable
@@ -829,5 +831,301 @@ public class JgsPrecedenceTests : IDisposable
         {
             JgsLoopJit.Enabled = previous;
         }
+    }
+
+    // --- Step 7: builtin(), which -all, exist, the shadowing warning -----------------------------
+
+    /// <summary>
+    /// <c>builtin</c> hands the arguments over as written, so the target's own string policy
+    /// applies: <c>builtin('class', "abc")</c> is <c>string</c> like <c>class("abc")</c>. A name the
+    /// layer holds as a value is the zero-argument function MATLAB has under it.
+    /// </summary>
+    [Fact]
+    public async Task Builtin_ForwardsTheArgumentsAsWritten()
+    {
+        ScriptRunResult result = await RunMatlab("""
+            a = builtin('class', "abc");
+            b = builtin('class', 'abc');
+            c = class("abc");
+            d = builtin("class", 1);
+            p = builtin('pi');
+            """);
+
+        Ok(result);
+        Assert.Equal("string", Text(result, "a"));
+        Assert.Equal("char", Text(result, "b"));
+        Assert.Equal("string", Text(result, "c"));
+        Assert.Equal("double", Text(result, "d"));
+        Assert.Equal(Math.PI, Number(result, "p"));
+    }
+
+    /// <summary>The output count is forwarded: <c>[m, n] = builtin('size', A)</c> reaches <c>size</c>'s multi-output body.</summary>
+    [Fact]
+    public async Task Builtin_ForwardsTheOutputCount()
+    {
+        ScriptRunResult result = await RunMatlab("""
+            A = [1 2; 3 4; 5 6];
+            [m, n] = builtin('size', A);
+            s = builtin('size', A);
+            """);
+
+        Ok(result);
+        Assert.Equal(3.0, Number(result, "m"));
+        Assert.Equal(2.0, Number(result, "n"));
+        Assert.Equal(new double[] { 3, 2 }, (double[])Value(result, "s")!);
+    }
+
+    /// <summary>
+    /// A statement forwards its statement-ness: <c>builtin('ecdf', x);</c> draws because <c>ecdf</c>
+    /// is told nobody wanted the numbers, <c>builtin('size', A);</c> binds <c>ans</c> because
+    /// <c>size</c> would have, and <c>builtin('disp', x);</c> leaves no <c>ans</c> behind.
+    /// </summary>
+    [Fact]
+    public async Task Builtin_AsAStatement_RunsTheTargetsStatementForm()
+    {
+        ScriptRunResult result = await RunMatlab("""
+            builtin('size', [1 2 3]);
+            s = ans;
+            clear ans
+            builtin('disp', 'DISPLINE');
+            gone = exist('ans');
+            builtin('ecdf', [1 2 3 4]);
+            """);
+
+        Ok(result);
+        Assert.Equal(new double[] { 1, 3 }, (double[])Value(result, "s")!);
+        Assert.Equal(0.0, Number(result, "gone"));
+        Assert.Contains("DISPLINE", _output.NormalText, StringComparison.Ordinal);
+        Assert.Single(JG.Gca().Plots);
+    }
+
+    /// <summary>
+    /// The call site is forwarded without the selector, so the <c>table</c> wrapper names the
+    /// variables from <c>builtin('table', A, B)</c> exactly as it does from <c>table(A, B)</c>.
+    /// </summary>
+    [Fact]
+    public async Task Builtin_ForwardsTheCallSite_SoTableNamesItsVariables()
+    {
+        ScriptRunResult result = await RunMatlab("""
+            A = [1; 2]; B = [3; 4];
+            t = builtin('table', A, B);
+            ok = isequal(t.Properties.VariableNames, {'A', 'B'});
+            u = table(A, B);
+            same = isequal(u.Properties.VariableNames, t.Properties.VariableNames);
+            """);
+
+        Ok(result);
+        Assert.True(Assert.IsType<bool>(Value(result, "ok")));
+        Assert.True(Assert.IsType<bool>(Value(result, "same")));
+    }
+
+    /// <summary>
+    /// A name the layer does not hold errors with MATLAB's words and identifier, a local function
+    /// of the script included: <c>builtin</c> reaches the layer and nothing above it. The
+    /// argument errors carry MATLAB's identifiers too.
+    /// </summary>
+    [Fact]
+    public async Task Builtin_ErrorsWithMatlabsWords_ForANameTheLayerLacks()
+    {
+        ScriptRunResult result = await RunMatlab("""
+            try; builtin('helper'); id1 = ''; m1 = ''; catch e; id1 = e.identifier; m1 = e.message; end
+            try; builtin('loc'); m2 = ''; catch e; m2 = e.message; end
+            try; builtin(); id3 = ''; catch e; id3 = e.identifier; end
+            try; builtin(1); id4 = ''; m4 = ''; catch e; id4 = e.identifier; m4 = e.message; end
+            y = loc();
+            function y = loc()
+            y = 1;
+            end
+            """);
+
+        Ok(result);
+        Assert.Equal("MATLAB:dispatcher:CannotFindBuiltinFunction", Text(result, "id1"));
+        Assert.Equal("Cannot find built-in function 'helper'", Text(result, "m1"));
+        Assert.Equal("Cannot find built-in function 'loc'", Text(result, "m2"));
+        Assert.Equal("MATLAB:minrhs", Text(result, "id3"));
+        Assert.Equal("MATLAB:string:MustBeStringScalarOrCharacterVector", Text(result, "id4"));
+        Assert.Equal("Argument must be a text scalar.", Text(result, "m4"));
+        Assert.Equal(1.0, Number(result, "y"));
+    }
+
+    /// <summary>
+    /// With <c>max.m</c> taking every written call a cell reaches, <c>builtin('max', …)</c> reaches
+    /// the built-in for a double and for a cell alike — the file is never consulted.
+    /// </summary>
+    [Fact]
+    public async Task Builtin_ReachesTheBuiltinPastAShadowingFile()
+    {
+        WriteFile("max.m", Shadow("max", -999));
+
+        ScriptRunResult result = await RunMatlab("""
+            a = builtin('max', [1 5 3]);
+            b = max({1});
+            try; c = builtin('max', {1}); catch; c = NaN; end
+            fileTookIt = isequal(c, -999);
+            """);
+
+        Ok(result);
+        Assert.Equal(5.0, Number(result, "a"));
+        Assert.Equal(-999.0, Number(result, "b"));
+        Assert.False(Assert.IsType<bool>(Value(result, "fileTookIt")));
+    }
+
+    /// <summary>
+    /// <c>builtin</c> is a name like any other: <c>builtin.m</c> beside the script takes the written
+    /// call, <c>feval('builtin', …)</c> and <c>@builtin</c> — R2025b's three answers — while
+    /// <c>exist</c> still says 5 and <c>which</c> names the file.
+    /// </summary>
+    [Fact]
+    public async Task BuiltinDotM_ShadowsBuiltinItself()
+    {
+        WriteFile("builtin.m", Shadow("builtin", -1));
+
+        ScriptRunResult result = await RunMatlab("""
+            a = builtin('class', 1);
+            b = feval('builtin', 'class', 1);
+            h = @builtin;
+            c = h('class', 1);
+            k = exist('builtin');
+            w = which('builtin');
+            """);
+
+        Ok(result);
+        Assert.Equal(-1.0, Number(result, "a"));
+        Assert.Equal(-1.0, Number(result, "b"));
+        Assert.Equal(-1.0, Number(result, "c"));
+        Assert.Equal(5.0, Number(result, "k"));
+        Assert.EndsWith("builtin.m", Text(result, "w"), StringComparison.Ordinal);
+    }
+
+    /// <summary>Unshadowed, the same three roads reach the forwarder.</summary>
+    [Fact]
+    public async Task Builtin_IsReachedByFevalAndByAHandle()
+    {
+        ScriptRunResult result = await RunMatlab("""
+            a = feval('builtin', 'class', 1);
+            h = @builtin;
+            b = h('class', "s");
+            n = nargin('builtin');
+            """);
+
+        Ok(result);
+        Assert.Equal("double", Text(result, "a"));
+        Assert.Equal("string", Text(result, "b"));
+        Assert.Equal(1.0, Number(result, "n"));
+    }
+
+    /// <summary>
+    /// <c>exist</c> by the rules R2025b answered: 5 for a built-in whether or not a file shadows it,
+    /// 2 for a file the resolver would run — a private function and a local function of the running
+    /// file included — 7 for a folder, 0 for <c>exist('sin', 'file')</c>, and a named kind asks
+    /// about that kind alone.
+    /// </summary>
+    [Fact]
+    public async Task Exist_AnswersByTheLayers()
+    {
+        WriteFile("max.m", Shadow("max", -999));
+        WriteFile("plain.m", "function y = plain()\ny = 1;\nend\n");
+        WriteFile(Path.Combine("private", "secret.m"), "function y = secret()\ny = 7;\nend\n");
+        Directory.CreateDirectory(Path.Combine(_folder, "fixdir"));
+
+        ScriptRunResult result = await RunAsFile("main.m", """
+            e = [exist('max'), exist('max', 'builtin'), exist('max', 'file'), ...
+                 exist('secret'), exist('secret', 'file'), exist('loc'), exist('loc', 'builtin'), ...
+                 exist('plain'), exist('nosuch'), exist('fixdir'), exist('fixdir', 'dir'), ...
+                 exist('fixdir', 'file'), exist('sin'), exist('sin', 'file'), exist('sin', 'builtin')];
+            function y = loc()
+            y = 1;
+            end
+            """);
+
+        Ok(result);
+        Assert.Equal(new double[] { 5, 5, 2, 2, 2, 2, 0, 2, 0, 7, 7, 7, 5, 0, 5 }, (double[])Value(result, "e")!);
+    }
+
+    /// <summary>
+    /// <c>which(name)</c> is the layer that would answer; <c>which(name, '-all')</c> — either
+    /// argument order — is every layer holding it as a cell column, files first, and 0-by-0 when
+    /// none does. A private file and a local function name their file.
+    /// </summary>
+    [Fact]
+    public async Task Which_NamesTheLayerThatAnswers_AndAllOfThem()
+    {
+        WriteFile("max.m", Shadow("max", -999));
+        WriteFile("plain.m", "function y = plain()\ny = 1;\nend\n");
+        WriteFile(Path.Combine("private", "secret.m"), "function y = secret()\ny = 7;\nend\n");
+
+        ScriptRunResult result = await RunAsFile("main.m", """
+            a = which('max'); b = which('sin'); c = which('secret'); d = which('nosuch');
+            e = which('plain'); f = which('loc');
+            g = which('max', '-all'); h = which('-all', 'max'); k = which('nosuch', '-all');
+            g1 = g{1}; g2 = g{2}; gs = size(g); hs = size(h); ks = size(k);
+            same = isequal(g, h);
+            function y = loc()
+            y = 1;
+            end
+            """);
+
+        Ok(result);
+        Assert.Equal(Path.Combine(_folder, "max.m"), Text(result, "a"));
+        Assert.Equal("sin is a built-in function.", Text(result, "b"));
+        Assert.Equal(Path.Combine(_folder, "private", "secret.m"), Text(result, "c"));
+        Assert.Equal("", Text(result, "d"));
+        Assert.Equal(Path.Combine(_folder, "plain.m"), Text(result, "e"));
+        Assert.Equal(Path.Combine(_folder, "main.m"), Text(result, "f"));
+        Assert.Equal(Path.Combine(_folder, "max.m"), Text(result, "g1"));
+        Assert.Equal("max is a built-in function.", Text(result, "g2"));
+        Assert.Equal(new double[] { 2, 1 }, (double[])Value(result, "gs")!);
+        Assert.Equal(new double[] { 2, 1 }, (double[])Value(result, "hs")!);
+        Assert.Equal(new double[] { 0, 0 }, (double[])Value(result, "ks")!);
+        Assert.True(Assert.IsType<bool>(Value(result, "same")));
+    }
+
+    /// <summary>
+    /// A file that takes a built-in's name is warned about with MATLAB's own words, once per name,
+    /// through the script's <c>warning</c> — so <c>lastwarn</c> keeps it — at the <c>addpath</c>
+    /// that brought the folder in, and the file keeps the name.
+    /// </summary>
+    [Fact]
+    public async Task AShadowingFile_IsWarnedAboutOnce_ThroughWarning()
+    {
+        File.WriteAllText(Path.Combine(_library, "abs.m"), Shadow("abs", -777));
+
+        ScriptRunResult result = await RunMatlab($$"""
+            lastwarn('');
+            addpath('{{Escaped(_library)}}');
+            w = lastwarn;
+            a = abs({-3});
+            b = abs(-3);
+            addpath('{{Escaped(_library)}}');
+            c = abs({-3});
+            """);
+
+        Ok(result);
+        const string expected = "Function abs has the same name as a MATLAB built-in. "
+            + "We suggest you rename the function to avoid a potential name conflict.";
+        Assert.Equal(expected, Text(result, "w"));
+        Assert.Equal(-777.0, Number(result, "a"));
+        Assert.Equal(3.0, Number(result, "b"));
+        Assert.Equal(-777.0, Number(result, "c"));
+        Assert.Equal(1, _output.ErrorText.Split("Function abs has the same name").Length - 1);
+    }
+
+    /// <summary>The same warning for a file in the current folder, raised when the index is first built and not again.</summary>
+    [Fact]
+    public async Task AShadowingFileInTheCurrentFolder_IsWarnedAboutOnce()
+    {
+        WriteFile("max.m", Shadow("max", -999));
+
+        ScriptRunResult result = await RunMatlab("""
+            a = max({1});
+            b = max({2});
+            w = lastwarn;
+            """);
+
+        Ok(result);
+        Assert.Equal(-999.0, Number(result, "a"));
+        Assert.Equal(-999.0, Number(result, "b"));
+        Assert.StartsWith("Function max has the same name as a MATLAB built-in.", Text(result, "w"), StringComparison.Ordinal);
+        Assert.Equal(1, _output.ErrorText.Split("Function max has the same name").Length - 1);
     }
 }

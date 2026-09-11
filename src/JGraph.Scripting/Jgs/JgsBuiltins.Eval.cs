@@ -16,7 +16,7 @@ internal static partial class JgsBuiltins
     internal static IReadOnlyList<string> EvalBuiltinNames { get; } =
     [
         "eval", "evalc", "evalin", "assignin", "str2func", "str2num",
-        "exist", "who", "which", "narginchk", "nargoutchk", "nargchk",
+        "exist", "who", "which", "builtin", "narginchk", "nargoutchk", "nargchk",
 
         // M145: feval resolves the name it is handed through the interpreter, so it moved here.
         "feval",
@@ -54,6 +54,10 @@ internal static partial class JgsBuiltins
         RegisterEvaluation(Define, env, interpreter, host);
         RegisterWorkspaceQuestions(Define, env, interpreter, host);
         RegisterErrorHistory(Define, env, interpreter);
+
+        // builtin(name, args…) is its own callable rather than a delegate: everything it does — the
+        // output count, the statement form, the call site — is the target's (M145, step 7).
+        env.Builtins.Register("builtin", JgsValue.Function(new JgsBuiltinForwarder(interpreter)));
         RegisterErrorObjects(Define, interpreter, env, host, dialect);
         RegisterIntrospection(Define, DefineBare, interpreter, host);
         RegisterLegacyFunctionPlotBuiltins(env, interpreter);
@@ -411,6 +415,21 @@ internal static partial class JgsBuiltins
         Define("nargout", (args, line, col) =>
             JgsValue.Number(DeclaredArgumentCount("nargout", args, env, interpreter, line, col)));
 
+        // exist and which ask Query mode (M145, step 7): every layer that holds the name as a
+        // function, in the resolver's order with no argument to dispatch on — a nested or local
+        // function, the running file's private/, the current folder, the addpath folders, the
+        // built-in. In the JGS dialect the walk is the whole order, and a function anywhere in it
+        // is the dialect's "built-in" answer, as it always was.
+        bool IsBuiltinHere(string name) =>
+            interpreter.Dialect.IsMatlab
+                ? interpreter.Resolver.BuiltinOf(name) is { Type: JgsType.Function }
+                : interpreter.Resolver.Lookup(name, interpreter.CurrentFrame).Value is { Type: JgsType.Function };
+
+        bool AFileAnswers(string name) =>
+            interpreter.Dialect.IsMatlab
+            && interpreter.Resolver.Query(name, interpreter.CurrentFrame)
+                .Any(found => found.Layer != ResolutionLayer.Builtin);
+
         Define("exist", (args, line, col) =>
         {
             ArityRange("exist", args, 1, 2, line, col);
@@ -418,8 +437,9 @@ internal static partial class JgsBuiltins
             string? kind = args.Count == 2 ? Str("exist", args, 1, line, col) : null;
 
             bool wantVariable = kind is null or "var";
-            bool wantFile = kind is null or "file" or "dir";
-            bool wantFunction = kind is null or "builtin";
+            bool wantBuiltin = kind is null or "builtin";
+            bool wantFile = kind is null or "file";
+            bool wantFolder = kind is null or "file" or "dir";
 
             // MATLAB's return code is a category, not a boolean: 1 variable, 2 file, 5 builtin.
             if (wantVariable && interpreter.CurrentFrame.TryGet(name, out JgsValue found)
@@ -428,39 +448,33 @@ internal static partial class JgsBuiltins
                 return JgsValue.Number(1);
             }
 
-            // A built-in outranks a file or a folder of the same name when nothing said which kind
-            // was meant: MATLAB answers 5 for `exist('fix')` standing beside a folder called `fix`,
-            // and only `exist('fix', 'dir')` reaches the folder (M109). Naming a kind skips this arm,
-            // so 'file' and 'dir' still answer about the disk alone.
-            if (kind is null && interpreter.Resolver.Lookup(name, env).Value is { Type: JgsType.Function })
+            // A built-in is 5 whether or not a file shadows it — R2025b answers 5 for exist('max')
+            // beside a max.m that takes every call — and it outranks a file or a folder of the same
+            // name when nothing said which kind was meant: exist('fix') beside a folder called fix
+            // is 5, and only exist('fix', 'dir') reaches the folder (M109). exist('sin', 'file') is
+            // 0: naming 'file' asks about the disk alone. (exist('mean') is 5 here and 2 in MATLAB,
+            // whose mean is a .m file — the recorded divergence.)
+            if (wantBuiltin && IsBuiltinHere(name))
             {
                 return JgsValue.Number(5);
             }
 
-            if (wantFile)
-            {
-                string resolved = host.Resolve(name);
-                if (File.Exists(resolved))
-                {
-                    return JgsValue.Number(2);
-                }
-
-                if (Directory.Exists(resolved))
-                {
-                    return JgsValue.Number(7);
-                }
-            }
-
-            if (wantFunction && interpreter.Resolver.Lookup(name, env).Value is { Type: JgsType.Function })
-            {
-                return JgsValue.Number(5);
-            }
-
-            // A file on the search path is MATLAB's category 2 — a file — even though calling it is
-            // what a script actually does with it.
-            if (kind is null or "file" && interpreter.FunctionPath?.Find(name) is not null)
+            // A function the resolver would run from a file — a local function of the running file
+            // included, which R2025b also reports as 2 — before a plain file of that exact name.
+            if (wantFile && AFileAnswers(name))
             {
                 return JgsValue.Number(2);
+            }
+
+            string resolved = host.Resolve(name);
+            if (wantFile && File.Exists(resolved))
+            {
+                return JgsValue.Number(2);
+            }
+
+            if (wantFolder && Directory.Exists(resolved))
+            {
+                return JgsValue.Number(7);
             }
 
             return JgsValue.Number(0);
@@ -483,24 +497,46 @@ internal static partial class JgsBuiltins
             return JgsValue.Cell(names.ToArray());
         });
 
+        // which(name) is the layer that would answer the name; which(name, '-all') is every layer
+        // that holds it, files first, as a cell column — the shape R2025b hands back, and 0-by-0
+        // when nothing does. A built-in keeps JGraph's phrasing: there is no file path to print.
         Define("which", (args, line, col) =>
         {
-            Arity("which", args, 1, line, col);
-            string name = Str("which", args, 0, line, col);
-            if (interpreter.Resolver.Lookup(name, env).Value is { Type: JgsType.Function })
+            ArityRange("which", args, 1, 2, line, col);
+            string first = Str("which", args, 0, line, col);
+            string? second = args.Count == 2 ? Str("which", args, 1, line, col) : null;
+            bool all = second is not null;
+            string name = second switch
             {
-                return JgsValue.Str($"{name} is a built-in function.");
+                null => first,
+                "-all" => first,
+                _ when first == "-all" => second,
+                _ => throw new JgsRuntimeException(line, col, $"which: '{second}' is not an option; only '-all' is."),
+            };
+
+            var where = new List<string>();
+            foreach (Resolution found in interpreter.Resolver.Query(name, interpreter.CurrentFrame))
+            {
+                where.Add(found.Layer == ResolutionLayer.Builtin
+                    ? $"{name} is a built-in function."
+                    : found.File is { Length: > 0 } file ? file : $"{name} is a local function.");
+                if (!all)
+                {
+                    break;
+                }
             }
 
-            // The search path is asked before the plain file probe, because 'which helper' means the
-            // file that would answer the name — not a file that happens to be called that.
-            if (interpreter.FunctionPath?.Find(name) is { } onPath)
+            // Not a function at all: a data file the name spells out, when there is one.
+            if (where.Count == 0)
             {
-                return JgsValue.Str(onPath);
+                string resolved = host.Resolve(name);
+                if (File.Exists(resolved))
+                {
+                    where.Add(resolved);
+                }
             }
 
-            string resolved = host.Resolve(name);
-            return JgsValue.Str(File.Exists(resolved) ? resolved : string.Empty);
+            return all ? CellColumn(where) : JgsValue.Str(where.Count > 0 ? where[0] : string.Empty);
         });
 
         // narginchk and its relatives read the nargin/nargout the current frame was called with, so
@@ -652,6 +688,9 @@ internal static partial class JgsBuiltins
 
             case BuiltinFunction builtin when !inputs:
                 return builtin.MultiOutput is null ? 1 : -1;
+
+            case JgsBuiltinForwarder:
+                return 1; // what R2025b answers for both, though the forwarder takes and answers any number
 
             case BuiltinFunction builtin:
                 if (JgsBuiltinCatalog.Find(builtin.Name) is { } info)

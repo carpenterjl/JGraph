@@ -229,7 +229,10 @@ public class JgsFileIndexTests : IDisposable
         Assert.True(probe.At(line: 5)[0].ShadowsMean);
         Assert.Contains("could not be read", _output.ErrorText);
         Assert.Contains("no longer yours", _output.ErrorText);
-        Assert.Equal(1, _output.ErrorText.Split("Warning:").Length - 1);
+        Assert.Equal(1, _output.ErrorText.Split("could not be read").Length - 1);
+
+        // The other warning in the text is mean.m's own — the file shadows a built-in (step 7).
+        Assert.Equal(1, _output.ErrorText.Split("Function mean has the same name").Length - 1);
     }
 
     /// <summary>
