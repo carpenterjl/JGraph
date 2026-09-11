@@ -103,8 +103,8 @@ see. This file refused to count them while they drew nothing; **M56 made them re
 number and this one agree again. `opengl` *is* counted, because an accepted no-op is an answer — the
 same reading that counted `shading`, `lighting` and `camlight` in M43.
 
-Across every callable kind — builtin, function, operator, keyword, script — the count is **1,116 of
-2,024** as of M145, which added `builtin` — the forwarder that reaches a built-in past the file
+Across every callable kind — builtin, function, operator, keyword, script — the count is **1,117 of
+2,024** as of ADR 0150, which added `hist`, the legacy histogram a folder of user scripts still called; 1,116 as of M145, which added `builtin` — the forwarder that reaches a built-in past the file
 shadowing it, the one name in this table the precedence work needed; 1,115 as of M135, which added `designfilt`, the `digitalFilter` value and the four one-line
 filters. None of the six lands here; the one name that moved the figure is `ss`, the state-space
 reading of a designed filter, which MATLAB keeps in a shared control folder rather than in the
@@ -181,8 +181,8 @@ take `strfun` from 27 of 41 names to 40 (the one out is `strread`) and `validato
 
 985 after M103, which took data cleaning and grouping: `isoutlier` `rmoutliers` `filloutliers`
 `ischange` `findgroups` `splitapply` `standardizeMissing` `subspace` `detrend` `del2` `filter2`
-`histcounts2` `xcorr` `xcov`. Those fourteen take `datafun` to 40 of its 41 names (the one out is
-`hist`, the legacy histogram), and ten younger siblings — `groupcounts` `grouptransform`
+`histcounts2` `xcorr` `xcov`. Those fourteen take `datafun` to 40 of its 41 names (the one then
+out, `hist`, the legacy histogram, arrived with ADR 0150), and ten younger siblings — `groupcounts` `grouptransform`
 `groupfilter` `head` `tail` `topkrows` `clip` `isuniform` `rmse` `mape` — ride along without
 moving this count, because they post-date the R2021b dump the denominator is drawn from.
 971 after M102, which finished MATLAB's `elmat` folder: `toeplitz` `hankel` `blkdiag` `compan`

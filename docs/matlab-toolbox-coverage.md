@@ -19,13 +19,13 @@ below is — and that is why an entire folder could sit at nought implemented wi
 
 ## Where it stands
 
-**342 of 377 names implemented**, and
+**343 of 377 names implemented**, and
 **724 of 1036 documented syntax forms accepted**.
 
 | Folder | Names | Forms documented | Forms accepted | Names missing |
 |---|---:|---:|---:|---:|
 | `strfun` | 40 / 41 | 88 | 69 | 1 |
-| `datafun` | 40 / 41 | 178 | 144 | 1 |
+| `datafun` | 41 / 41 | 178 | 144 | 0 |
 | `funfun` | 40 / 40 | 123 | 99 | 0 |
 | `sparfun` | 31 / 35 | 185 | 150 | 4 |
 | `polyfun` | 32 / 34 | 94 | 62 | 2 |
@@ -55,10 +55,6 @@ a `refused` or an `error` is as likely to be the prober's generic sample argumen
 command that quite rightly rejects it.
 
 ## Not implemented
-
-### `datafun` — 1
-
-`hist`
 
 ### `datatypes` — 13
 

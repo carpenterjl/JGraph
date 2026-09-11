@@ -53,7 +53,7 @@ internal static partial class JgsBuiltins
         RegisterPathBuiltins(env, interpreter, host);
         RegisterEvaluation(Define, env, interpreter, host);
         RegisterWorkspaceQuestions(Define, env, interpreter, host);
-        RegisterErrorHistory(Define, env, interpreter);
+        RegisterErrorHistory(Define, env, interpreter, host);
 
         // builtin(name, args…) is its own callable rather than a delegate: everything it does — the
         // output count, the statement form, the call site — is the target's (M145, step 7).
@@ -573,7 +573,7 @@ internal static partial class JgsBuiltins
 
     private static void RegisterErrorHistory(
         Action<string, Func<IReadOnlyList<JgsValue>, int, int, JgsValue>> Define,
-        JgsEnvironment env, Interpreter interpreter)
+        JgsEnvironment env, Interpreter interpreter, JGraphScriptGlobals host)
     {
         Define("lasterr", (args, line, col) =>
         {
@@ -587,37 +587,29 @@ internal static partial class JgsBuiltins
             return JgsValue.Str(previous);
         });
 
-        Define("lastwarn", (args, line, col) =>
+        // [msg, id] = lastwarn reads what warning recorded on the host, shown or suppressed; one
+        // argument replaces the message and clears the identifier, two replace both (R2025b).
+        JgsValue[] LastWarn(IReadOnlyList<JgsValue> args, int wanted, int line, int col)
         {
-            ArityRange("lastwarn", args, 0, 1, line, col);
-            string previous = interpreter.LastWarning;
-            if (args.Count == 1)
+            ArityRange("lastwarn", args, 0, 2, line, col);
+            JgsWarningState state = host.Warnings;
+            string message = state.LastMessage;
+            string identifier = state.LastIdentifier;
+            if (args.Count >= 1)
             {
-                interpreter.LastWarning = Str("lastwarn", args, 0, line, col);
+                state.Record(
+                    args.Count == 2 ? Str("lastwarn", args, 1, line, col) : string.Empty,
+                    Str("lastwarn", args, 0, line, col));
             }
 
-            return JgsValue.Str(previous);
-        });
-
-        // warning already exists; wrapping it here is what lets lastwarn report the message without
-        // the warning builtin having to know the interpreter exists.
-        if (env.TryGet("warning", out JgsValue existing) && existing.AsCallable is { } inner)
-        {
-            Define("warning", (args, line, col) =>
-            {
-                JgsValue answer = inner.Call(args, line, col);
-
-                // Recorded after the call and not before it: raising this warning can itself raise
-                // one — a bad escape in the format is warned about first, the way MATLAB does it
-                // (ADR 0148) — and the inner warning would otherwise be the one lastwarn kept.
-                if (args.Count > 0 && args[0].Type == JgsType.String)
-                {
-                    interpreter.LastWarning = args[0].AsString;
-                }
-
-                return answer;
-            });
+            return wanted >= 2 ? [JgsValue.Str(message), JgsValue.Str(identifier)] : [JgsValue.Str(message)];
         }
+
+        env.Builtins.Register("lastwarn", JgsValue.Function(new BuiltinFunction("lastwarn",
+            (args, line, col) => LastWarn(args, 1, line, col)[0])
+        {
+            MultiOutput = LastWarn,
+        }));
     }
 
     /// <summary>

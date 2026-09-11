@@ -223,22 +223,23 @@ internal static partial class JgsBuiltins
         // error itself lives in JgsBuiltins.Errors.cs (M62), where the identifier and the MException
         // form are defined together. It is declared there rather than here because it is re-declared
         // over this registration, and two implementations of one name is one too many.
-        Define("warning", (args, line, col) =>
+        // warning is three verbs under one name (measured R2025b): a message, raised through the same
+        // reader error uses so 'pkg:id' before the format is an identifier; a state change,
+        // warning('off' | 'on', id), which hands back the state it replaced when asked to; and a
+        // question, warning('query', id), which prints the state as a statement and answers a
+        // struct as an expression. The state lives on the host (JgsWarningState), and a warning
+        // that is switched off is still what lastwarn reports.
+        env.Builtins.Register("warning", JgsValue.Function(new BuiltinFunction("warning",
+            (args, line, col) =>
+            {
+                JgsValue[] answers = Warning(env, host, dialect, args, 1, line, col);
+                return answers.Length > 0 ? answers[0] : JgsValue.Null;
+            })
         {
-            if (args.Count == 0)
-            {
-                return JgsValue.Null;
-            }
-
-            string first = Str("warning", args, 0, line, col);
-            if (first is "on" or "off")
-            {
-                return JgsValue.Null; // warning('off', ...) toggles state JGraph does not keep
-            }
-
-            host.WriteErr("Warning: " + FormatMessage(env, host, dialect, "warning", args, 0, identified: false, line, col));
-            return JgsValue.Null;
-        });
+            MultiOutput = (args, wanted, line, col) => Warning(env, host, dialect, args, wanted, line, col),
+            KnowsWhenDiscarded = true,
+            BindsAnsAsStatement = false,
+        }));
 
         Define("assert", (args, line, col) =>
         {
@@ -1116,6 +1117,169 @@ internal static partial class JgsBuiltins
         return dialect.IsMatlab
             ? JgsSprintf.FormatMatlab(format, data)
             : JgsSprintf.Format(format, data);
+    }
+
+    // --- warning ------------------------------------------------------------------------------------
+
+    /// <summary>
+    /// The three forms of <c>warning</c>; see the registration. <paramref name="wanted"/> is zero for
+    /// a statement, which is when a query prints and a state change says nothing.
+    /// </summary>
+    private static JgsValue[] Warning(
+        JgsEnvironment env, JGraphScriptGlobals host, JgsDialect dialect,
+        IReadOnlyList<JgsValue> args, int wanted, int line, int col)
+    {
+        JgsWarningState state = host.Warnings;
+
+        // warning alone is warning('query', 'all').
+        if (args.Count == 0)
+        {
+            return WarningQuery(host, state, "all", wanted);
+        }
+
+        // warning(s) puts back what an earlier query or state change handed out.
+        if (args[0].Type == JgsType.Struct)
+        {
+            Arity("warning", args, 1, line, col);
+            foreach (Dictionary<string, JgsValue> fields in StructElements(args[0]))
+            {
+                if (fields.TryGetValue("identifier", out JgsValue? id) && id.Type == JgsType.String
+                    && fields.TryGetValue("state", out JgsValue? on) && on.Type == JgsType.String)
+                {
+                    state.Set(id.AsString, on.AsString.Equals("on", StringComparison.OrdinalIgnoreCase));
+                }
+            }
+
+            return [];
+        }
+
+        string first = Str("warning", args, 0, line, col);
+        string verb = first.ToLowerInvariant();
+        if (verb is "on" or "off" or "query")
+        {
+            ArityRange("warning", args, 1, 2, line, col);
+            if (args.Count == 2 && args[1].Type != JgsType.String)
+            {
+                throw new JgsRuntimeException(line, col, "MATLAB:badopt", "Unknown command option.");
+            }
+
+            string identifier = args.Count == 2 ? args[1].AsString : "all";
+            if (!IsWarningSetting(identifier))
+            {
+                throw new JgsRuntimeException(line, col, "MATLAB:warning:unknownSettingOrId",
+                    $"Unknown setting or incorrect message identifier '{identifier}'.");
+            }
+
+            if (verb == "query")
+            {
+                return WarningQuery(host, state, identifier, wanted);
+            }
+
+            // The answer is the state being replaced, which is why it is read before the change.
+            JgsValue previous = identifier == "all" ? WarningTable(state) : WarningEntry(identifier, state.IsOn(identifier));
+            state.Set(identifier, verb == "on");
+            return wanted > 0 ? [previous] : [];
+        }
+
+        // A message. The identifier rule is error's own: at least one colon, no whitespace, no
+        // conversion, and something after it to be the format.
+        bool hasIdentifier = args.Count > 1 && IsErrorIdentifier(first);
+        string message = FormatMessage(env, host, dialect, "warning", args, hasIdentifier ? 1 : 0, hasIdentifier, line, col);
+        string under = hasIdentifier ? first : string.Empty;
+        state.Record(under, message);
+        if (state.IsOn(under))
+        {
+            host.WriteErr("Warning: " + message);
+        }
+
+        return [];
+    }
+
+    /// <summary>
+    /// A name <c>warning</c> can switch: <c>'all'</c>, the two settings, or a message identifier,
+    /// which has a colon somewhere inside it and no whitespace.
+    /// </summary>
+    private static bool IsWarningSetting(string identifier) =>
+        identifier is "all" or "backtrace" or "verbose"
+        || (identifier.Contains(':', StringComparison.Ordinal)
+            && !identifier.Any(char.IsWhiteSpace)
+            && !identifier.StartsWith(':')
+            && !identifier.EndsWith(':'));
+
+    /// <summary>
+    /// <c>warning('query', id)</c>: the state as a struct, or, as a statement, the sentence MATLAB
+    /// prints — one line for an identifier, the table of everything not at the default for 'all'.
+    /// </summary>
+    private static JgsValue[] WarningQuery(JGraphScriptGlobals host, JgsWarningState state, string identifier, int wanted)
+    {
+        if (wanted > 0)
+        {
+            return [identifier == "all" ? WarningTable(state) : WarningEntry(identifier, state.IsOn(identifier))];
+        }
+
+        if (identifier != "all")
+        {
+            host.print($"The state of warning '{identifier}' is '{(state.IsOn(identifier) ? "on" : "off")}'.");
+            return [];
+        }
+
+        host.print($"The default warning state is '{(state.DefaultOn ? "on" : "off")}'. Warnings not set to the default are:");
+        host.print(string.Empty);
+        host.print("    State  Warning Identifier");
+        host.print(string.Empty);
+        foreach ((string id, bool on) in state.Explicit())
+        {
+            if (on != state.DefaultOn)
+            {
+                host.print($"    {(on ? " on" : "off"),5}  {id}");
+            }
+        }
+
+        return [];
+    }
+
+    /// <summary>One row of the state table: <c>identifier</c> and <c>state</c>.</summary>
+    private static JgsValue WarningEntry(string identifier, bool on) =>
+        JgsValue.Struct(WarningFields(identifier, on));
+
+    private static Dictionary<string, JgsValue> WarningFields(string identifier, bool on) =>
+        new(StringComparer.Ordinal)
+        {
+            ["identifier"] = JgsValue.Str(identifier),
+            ["state"] = JgsValue.Str(on ? "on" : "off"),
+        };
+
+    /// <summary>The whole table as a column of structs: the default first, then every explicit setting.</summary>
+    private static JgsValue WarningTable(JgsWarningState state)
+    {
+        var rows = new List<Dictionary<string, JgsValue>> { WarningFields("all", state.DefaultOn) };
+        foreach ((string id, bool on) in state.Explicit())
+        {
+            rows.Add(WarningFields(id, on));
+        }
+
+        return JgsValue.StructArray(new JgsStructArray([.. rows]), rows.Count, 1);
+    }
+
+    /// <summary>The elements of a struct or struct array, each as its field dictionary.</summary>
+    private static IEnumerable<Dictionary<string, JgsValue>> StructElements(JgsValue value)
+    {
+        if (value.Type != JgsType.Struct)
+        {
+            yield break;
+        }
+
+        if (value.IsStructArray)
+        {
+            foreach (Dictionary<string, JgsValue> element in value.AsStructArray.Elements)
+            {
+                yield return element;
+            }
+
+            yield break;
+        }
+
+        yield return value.AsStruct;
     }
 
 }

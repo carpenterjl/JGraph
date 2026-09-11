@@ -508,6 +508,10 @@ public static class JG
     private static SurfacePlot Opaque(AxesModel axes, SurfacePlot surface)
     {
         surface.FaceColor = axes.Background;
+
+        // The lines are the plot: MATLAB colours a mesh's wires by height and hides the far side
+        // behind faces the colour of the axes, and a wireframe over dark lines was neither.
+        surface.ColormapEdges = true;
         return surface;
     }
 

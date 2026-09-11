@@ -919,7 +919,8 @@ internal static partial class JgsGraphicsProperties
             AddSurfaceColor(table, "EdgeColor",
                 surface => surface.EdgeColor,
                 (surface, colour) => surface.EdgeColor = colour,
-                SurfaceStyle.Filled);
+                SurfaceStyle.Filled,
+                (surface, colormapped) => surface.ColormapEdges = colormapped);
 
             AddSurfaceAlphaData(table);
         }
@@ -1941,7 +1942,8 @@ internal static partial class JgsGraphicsProperties
         string name,
         Func<SurfacePlot, Color?> read,
         Action<SurfacePlot, Color?> write,
-        SurfaceStyle without)
+        SurfaceStyle without,
+        Action<SurfacePlot, bool>? colormapped = null)
     {
         Put(table, name,
             entry => ((SurfacePlot)entry.Target).Style == without ? JgsValue.Str("none")
@@ -1965,6 +1967,7 @@ internal static partial class JgsGraphicsProperties
                         || word.Equals("interp", StringComparison.OrdinalIgnoreCase))
                     {
                         write(surface, null);
+                        colormapped?.Invoke(surface, true);
                         surface.Shading = word.Equals("interp", StringComparison.OrdinalIgnoreCase)
                             ? SurfaceShading.Interp
                             : SurfaceShading.Flat;
@@ -1974,6 +1977,7 @@ internal static partial class JgsGraphicsProperties
                 }
 
                 write(surface, JgsBuiltins.OptionColor(value, line, col, name));
+                colormapped?.Invoke(surface, false);
                 Restore(surface, without);
             });
 

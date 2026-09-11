@@ -673,6 +673,9 @@ public sealed class RgbImagePlotDto : PlotDto
 
 public sealed class SurfacePlotDto : PlotDto
 {
+    /// <summary>Edges over filled faces coloured through the colormap (a mesh), rather than dark.</summary>
+    public bool ColormapEdges { get; set; }
+
     public double[] X { get; set; } = Array.Empty<double>();
 
     public double[] Y { get; set; } = Array.Empty<double>();

@@ -7,6 +7,7 @@ using JGraph.Core.Model;
 using JGraph.Core.Primitives;
 using JGraph.Data;
 using JGraph.Data.Import;
+using JGraph.Scripting.Jgs;
 
 namespace JGraph.Scripting;
 
@@ -35,6 +36,12 @@ public sealed class JGraphScriptGlobals
 
     /// <summary>How many figures the current run has displayed.</summary>
     public int FiguresShown => Volatile.Read(ref _figuresShown);
+
+    /// <summary>
+    /// Which warnings are switched off and what the last one said: <c>warning</c> writes it and
+    /// <c>lastwarn</c> reads it, and it outlives a run the way MATLAB's table outlives a script.
+    /// </summary>
+    internal JgsWarningState Warnings { get; } = new();
 
     /// <summary>
     /// Starts a new run: figure display is tracked per run, so a script that plots into figures it

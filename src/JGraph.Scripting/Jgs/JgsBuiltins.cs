@@ -1,4 +1,4 @@
-using System.Globalization;
+﻿using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Numerics;
@@ -1235,8 +1235,8 @@ internal static partial class JgsBuiltins
                 NumberStyles.Float, CultureInfo.InvariantCulture, out double value) ? value : double.NaN);
         });
 
-        Define("upper", (args, line, col) => { Arity("upper", args, 1, line, col); return JgsValue.Str(Str("upper", args, 0, line, col).ToUpperInvariant()); });
-        Define("lower", (args, line, col) => { Arity("lower", args, 1, line, col); return JgsValue.Str(Str("lower", args, 0, line, col).ToLowerInvariant()); });
+        Define("upper", (args, line, col) => CaseMapped("upper", args, static t => t.ToUpperInvariant(), line, col));
+        Define("lower", (args, line, col) => CaseMapped("lower", args, static t => t.ToLowerInvariant(), line, col));
         Define("trim", (args, line, col) => { Arity("trim", args, 1, line, col); return JgsValue.Str(Str("trim", args, 0, line, col).Trim()); });
 
         Define("split", (args, line, col) =>
@@ -2042,6 +2042,16 @@ internal static partial class JgsBuiltins
         DefineSilent("scatter", (args, line, col) => Scatter(args, line, col));
         DefineSilent("stem", OnNamedAxes((args, line, col) => Stem(args, dialect, line, col)));
         DefineSilent("histogram", (args, line, col) => Histogram(args, line, col));
+
+        // hist draws when nobody wanted the numbers and counts when somebody did, which is why it
+        // is told when its answer is thrown away (M53 wave J's rule for ecdf).
+        env.Builtins.Register("hist", JgsValue.Function(new BuiltinFunction("hist",
+            (args, line, col) => Hist(args, 1, line, col)[0])
+        {
+            MultiOutput = Hist,
+            KnowsWhenDiscarded = true,
+            BindsAnsAsStatement = false,
+        }));
         DefineSilent("errorbar", OnNamedAxes((args, line, col) => ErrorBar(args, line, col)));
 
         // --- 3D surfaces, contours, and images -----------------------------------------------
@@ -3523,6 +3533,249 @@ internal static partial class JgsBuiltins
     /// equal bins it always cut were the only histogram this build could draw.
     /// </para>
     /// </summary>
+
+    /// <summary>
+    /// <c>upper</c> and <c>lower</c> over what MATLAB accepts (measured R2025b): a char row or
+    /// matrix is mapped, a cell must hold char rows and is mapped element by element with its shape
+    /// kept, and anything else — a number, a logical, a struct, a handle — is handed back untouched,
+    /// which is what lets <c>strcmp(upper(dia), 'NAN')</c> ask a question of an argument that may
+    /// be either. String arrays never arrive here: the elementwise wrapper maps them first.
+    /// </summary>
+    private static JgsValue CaseMapped(
+        string name, IReadOnlyList<JgsValue> args, Func<string, string> map, int line, int col)
+    {
+        Arity(name, args, 1, line, col);
+        JgsValue value = args[0];
+        if (value.Type == JgsType.String)
+        {
+            return JgsValue.Str(map(value.AsString));
+        }
+
+        if (value.IsCharMatrix)
+        {
+            return JgsValue.CharMatrix(System.Array.ConvertAll(value.CharMatrixRows(), row => map(row)));
+        }
+
+        if (value.Type == JgsType.Cell)
+        {
+            JgsValue[] cells = value.AsCell;
+            var mapped = new JgsValue[cells.Length];
+            for (int i = 0; i < cells.Length; i++)
+            {
+                if (cells[i].Type != JgsType.String)
+                {
+                    throw new JgsRuntimeException(line, col, $"MATLAB:{name}:CellsMustContainChars",
+                        "Cell elements must be character arrays.");
+                }
+
+                mapped[i] = JgsValue.Str(map(cells[i].AsString));
+            }
+
+            JgsValue cell = JgsValue.Cell(mapped);
+            cell.Reshape(value.Rows, value.Cols);
+            return cell;
+        }
+
+        return value;
+    }
+
+    // --- hist ---------------------------------------------------------------------------------------
+
+    /// <summary>
+    /// <c>[n, x] = hist(y, m)</c>, the legacy histogram, by MATLAB's own arithmetic (R2025b): a count
+    /// <c>m</c> cuts the finite range of the data into <c>floor(m)</c> equal bins (a constant range
+    /// is widened to one unit per bin about the value), a vector is the bin centres, and each bin
+    /// takes the values above its lower edge up to and including its upper one, the outer two
+    /// reaching to infinity. NaN is skipped; a matrix is counted column by column. With no output
+    /// wanted the bins are drawn as bars instead.
+    /// </summary>
+    private static JgsValue[] Hist(IReadOnlyList<JgsValue> args, int wanted, int line, int col)
+    {
+        if (args.Count == 0)
+        {
+            throw new JgsRuntimeException(line, col, "MATLAB:narginchk:notEnoughInputs", "Not enough input arguments.");
+        }
+
+        ArityRange("hist", args, 1, 2, line, col);
+        static bool Numeric(JgsValue value) =>
+            value.Type is JgsType.Number or JgsType.Bool
+            || (value.Type == JgsType.Array && !value.IsStringArray && !value.IsCharMatrix);
+
+        JgsValue y = args[0];
+        if (!Numeric(y) || (args.Count == 2 && !Numeric(args[1])))
+        {
+            throw new JgsRuntimeException(line, col, "MATLAB:hist:InvalidInput",
+                "Input arguments must be numeric or a categorical array.");
+        }
+
+        double[] flat = FlattenColumnMajor("hist", y, line, col);
+        bool matrix = y.Type == JgsType.Array && y.Rows > 1 && y.Cols > 1 && flat.Length > 0;
+        int columns = matrix ? y.Cols : 1;
+        int height = matrix ? y.Rows : flat.Length;
+
+        int bins = 10;
+        double[]? centers = null;
+        bool centersDown = false;
+        if (args.Count == 2)
+        {
+            double[] given = FlattenColumnMajor("hist", args[1], line, col);
+            if (given.Length == 1)
+            {
+                double count = given[0];
+                if (!(count >= 0) || double.IsInfinity(count))
+                {
+                    throw new JgsRuntimeException(line, col, "hist: the number of bins must be a non-negative number.");
+                }
+
+                bins = (int)System.Math.Floor(count);
+            }
+            else if (given.Length == 0)
+            {
+                throw new JgsRuntimeException(line, col, "hist: the bins are a count or a vector of centres.");
+            }
+            else
+            {
+                centers = given;
+                centersDown = args[1].Type == JgsType.Array && args[1].Rows > 1;
+                bins = centers.Length;
+            }
+        }
+
+        // No data at all: MATLAB numbers the bins 1..m down a column and counts nothing.
+        if (flat.Length == 0 && centers is null)
+        {
+            var numbered = new double[bins];
+            for (int i = 0; i < bins; i++)
+            {
+                numbered[i] = i + 1;
+            }
+
+            return HistAnswers(new double[bins], numbered, 1, bins, xDown: true, wanted, line, col);
+        }
+
+        // The range is the whole matrix's, so every column is cut into the same bins and one set
+        // of centres answers for all of them.
+        double lo = double.PositiveInfinity;
+        double hi = double.NegativeInfinity;
+        foreach (double v in flat)
+        {
+            if (double.IsFinite(v))
+            {
+                lo = System.Math.Min(lo, v);
+                hi = System.Math.Max(hi, v);
+            }
+        }
+
+        if (lo > hi)
+        {
+            lo = hi = 0; // nothing finite: MATLAB centres the bins about zero
+        }
+
+        // The edges, from MATLAB's arithmetic: a count spaces them from the low end by the bin
+        // width, centres put them half a gap above each centre.
+        double[] edges = new double[bins + 1];
+        double[] shared;
+        if (centers is null)
+        {
+            if (lo == hi)
+            {
+                lo -= System.Math.Floor(bins / 2.0) + 0.5;
+                hi += System.Math.Ceiling(bins / 2.0) - 0.5;
+            }
+
+            double width = (hi - lo) / bins;
+            shared = new double[bins];
+            for (int i = 0; i <= bins; i++)
+            {
+                edges[i] = lo + (width * i);
+            }
+
+            edges[bins] = hi;
+            for (int i = 0; i < bins; i++)
+            {
+                shared[i] = edges[i] + (width / 2);
+            }
+        }
+        else
+        {
+            double[] sorted = (double[])centers.Clone();
+            System.Array.Sort(sorted);
+            for (int i = 0; i < bins - 1; i++)
+            {
+                edges[i + 1] = sorted[i] + ((sorted[i + 1] - sorted[i]) / 2);
+            }
+
+            double first = bins > 1 ? sorted[0] - ((sorted[1] - sorted[0]) / 2) : sorted[0] - 0.5;
+            double last = bins > 1 ? sorted[^1] + ((sorted[^1] - sorted[^2]) / 2) : sorted[^1] + 0.5;
+            edges[0] = System.Math.Min(first, lo);
+            edges[bins] = System.Math.Max(last, hi);
+            shared = centers;
+        }
+
+        var counts = new double[bins * columns];
+        for (int c = 0; c < columns; c++)
+        {
+            ReadOnlySpan<double> data = flat.AsSpan(c * height, height);
+
+            // Bin k holds the values above edge k and at or below edge k + 1; the first and the
+            // last bins also take everything beyond them.
+            if (bins > 0)
+            {
+                foreach (double v in data)
+                {
+                    if (double.IsNaN(v))
+                    {
+                        continue;
+                    }
+
+                    int k = 0;
+                    while (k < bins - 1 && edges[k + 1] < v)
+                    {
+                        k++;
+                    }
+
+                    counts[(c * bins) + k]++;
+                }
+            }
+
+            if (wanted == 0 && bins > 0)
+            {
+                double[] column = new double[bins];
+                System.Array.Copy(counts, c * bins, column, 0, bins);
+                HistogramPlot bars = JG.Histogram(HistogramPlot.FromCounts(edges, column));
+                // MATLAB's bars are a patch coloured through the colormap, which puts them at its
+                // low end: parula's blue-violet, black-edged.
+                bars.EdgeColor = Color.FromRgb(0, 0, 0);
+                bars.FaceColor = (bars.Axes?.ResolveColormap() ?? Colormap.Parula).Sample(0);
+            }
+        }
+
+        return HistAnswers(counts, shared, columns, bins, xDown: centersDown || matrix, wanted, line, col);
+    }
+
+    /// <summary>The counts, one row per column of data, and the centres, across or down.</summary>
+    private static JgsValue[] HistAnswers(
+        double[] counts, double[] centers, int columns, int bins, bool xDown, int wanted, int line, int col)
+    {
+        if (wanted == 0)
+        {
+            return [];
+        }
+
+        JgsValue n = columns == 1
+            ? JgsMatrix.FromColumnMajor(counts, 1, bins)
+            : JgsMatrix.FromColumnMajor(counts, bins, columns);
+        if (wanted == 1)
+        {
+            return [n];
+        }
+
+        JgsValue x = xDown
+            ? JgsMatrix.FromColumnMajor(centers, centers.Length, 1)
+            : JgsMatrix.FromColumnMajor(centers, 1, centers.Length);
+        return [n, x];
+    }
+
     private static JgsValue Histogram(IReadOnlyList<JgsValue> args, int line, int col)
     {
         if (args.Count > 0 && args[0].Type == JgsType.Table)

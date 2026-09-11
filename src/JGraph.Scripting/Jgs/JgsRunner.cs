@@ -63,6 +63,15 @@ internal static class JgsRunner
         {
             globals.BeginRun(Path.GetDirectoryName(sourceId), sourceId);
         }
+        else if (context.ScriptPath is { Length: > 0 } scriptPath && Path.IsPathRooted(scriptPath))
+        {
+            // The launcher's -batch file.m names the file on the context and hands its code over
+            // with no source id, so its diagnostics stay bare. The file's folder still has to be
+            // the running script's folder: the file index scans that folder for helpers that share
+            // a built-in's name, and without it an extract.m beside the script was listed by which
+            // and passed over by the call, which went to the built-in (ADR 0150).
+            globals.BeginRun(Path.GetDirectoryName(scriptPath), scriptPath);
+        }
 
         // A one-shot run gets a dispatcher too — not for interface events, which have nowhere to
         // come from, but because DeleteFcn and CreateFcn fire from the script's own doings (a clf,
@@ -196,7 +205,7 @@ internal static class JgsRunner
     /// <summary>
     /// Defines the <c>run(path)</c> builtin: it resolves the path like the table readers do, parses the
     /// file, and executes it into the global scope (functions hoisted first) — MATLAB-style script
-    /// composition. Re-entrant includes are guarded so a cycle fails with a clear error. An included
+    /// composition; a function file's main function is then called, as MATLAB's <c>run</c> calls it. Re-entrant includes are guarded so a cycle fails with a clear error. An included
     /// file is parsed in the caller's dialect unless it is a <c>.m</c> file, which always means MATLAB,
     /// and a MATLAB file runs in its own folder the way MATLAB's <c>run</c> runs it: the working
     /// directory is the script's for the duration, so a file beside it answers a name and a relative
@@ -260,7 +269,16 @@ internal static class JgsRunner
                     included.IsMatlab && Path.GetDirectoryName(fullPath) is { Length: > 0 } scriptFolder
                         ? globals.EnterDirectory(scriptFolder)
                         : default;
-                interpreter.RunInDialect(included, () => interpreter.Run(Parser.Parse(source, fullPath, included)));
+                // A function file run by name runs its main function (R2025b: run('f.m') on a file
+                // that opens with `function f` calls f), which is what a legacy script that wraps
+                // itself in a function expects; the batch launcher and the console have always done
+                // this, and run() had only hoisted the functions and returned.
+                interpreter.RunInDialect(included, () =>
+                {
+                    IReadOnlyList<Stmt> program = Parser.Parse(source, fullPath, included);
+                    interpreter.Run(program);
+                    InvokeMainIfFunctionFile(program, interpreter);
+                });
             }
             finally
             {

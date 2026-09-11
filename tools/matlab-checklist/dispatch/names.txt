@@ -791,6 +791,7 @@ hidden
 highpass
 hilb
 hilbert
+hist
 hist3
 histc
 histcounts

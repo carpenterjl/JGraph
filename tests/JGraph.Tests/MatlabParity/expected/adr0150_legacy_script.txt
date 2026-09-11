@@ -1,0 +1,77 @@
+CHK|upper_number_class|double|exact
+CHK|upper_number|600|exact
+CHK|upper_number_strcmp|0|exact
+CHK|upper_row|[65 97]|exact
+CHK|lower_int8_class|int8|exact
+CHK|upper_logical|1|exact
+CHK|upper_logical_class|logical|exact
+CHK|upper_charmatrix_rows|AB/CD|exact
+CHK|upper_charmatrix_size|[2 2]|exact
+CHK|upper_cell_class|cell|exact
+CHK|upper_cell|AB/CD|exact
+CHK|upper_cell_col_size|[2 1]|exact
+CHK|upper_empty_cell_class|cell|exact
+CHK|upper_empty_cell_size|[0 0]|exact
+CHK|upper_string_class|string|exact
+CHK|upper_string|AB|exact
+CHK|lower_string_array|ab/cd|exact
+CHK|upper_zeros_size|[2 3]|exact
+CHK|upper_struct_field|1|exact
+CHK|upper_mixed_cell|MATLAB:upper:CellsMustContainChars|exact
+CHK|upper_string_in_cell|MATLAB:upper:CellsMustContainChars|exact
+CHK|query_class|struct|exact
+CHK|query_id|MATLAB:divideByZero|exact
+CHK|query_state|on|exact
+CHK|query_unset_state|on|exact
+CHK|off_previous_state|on|exact
+CHK|off_previous_id|ADR0150:one|exact
+CHK|off_then_query|off|exact
+CHK|lastwarn_hidden_msg|hidden 4|exact
+CHK|lastwarn_hidden_id|ADR0150:one|exact
+CHK|on_previous_state|off|exact
+CHK|on_then_query|on|exact
+CHK|restore_from_struct|off|exact
+CHK|restore_to_on|on|exact
+CHK|lastwarn_shown_msg|shown 5|exact
+CHK|lastwarn_shown_id|ADR0150:one|exact
+CHK|lastwarn_plain|[plain message 6][]|exact
+CHK|lastwarn_set|[replaced][ADR0150:two]|exact
+CHK|lastwarn_cleared|[][]|exact
+CHK|query_verb_case|on|exact
+CHK|query_all_class|struct|exact
+CHK|query_number|MATLAB:badopt|exact
+CHK|off_no_colon|MATLAB:warning:unknownSettingOrId|exact
+CHK|hist_default_n|[1 2 1 0 1 0 0 1 2 1]|exact
+CHK|hist_default_x|[1.45 2.35 3.25 4.15 5.05 5.95 6.85 7.75 8.65 9.55]|exact
+CHK|hist_4_n|[4 1 0 4]|exact
+CHK|hist_4_x|[2.125 4.375 6.625 8.875]|exact
+CHK|hist_centres_n|[4 1 4]|exact
+CHK|hist_centres_x|[2 5 8]|exact
+CHK|hist_centres2_n|[1 3 5 0]|exact
+CHK|hist_const|[0 0 3 0 0] [1 2 3 4 5]|exact
+CHK|hist_matrix_n|[1 1 1;1 1 1;1 1 1]|exact
+CHK|hist_matrix_x|[2.33333333333333;5;7.66666666666667]|exact
+CHK|hist_matrix_t_n|[3 0 0;0 3 0;0 0 3]|exact
+CHK|hist_col_sizes|[1 3] [1 3]|exact
+CHK|hist_nan|[2 1] [1.5 2.5]|exact
+CHK|hist_empty|[0 0 0] [1;2;3]|exact
+CHK|hist_one_out|[4 1 4]|exact
+CHK|hist_zero_bins|[1 0] [1 0]|exact
+CHK|hist_frac|[5 4] [3.25 7.75]|exact
+CHK|hist_one_bin|9 5.5|exact
+CHK|hist_dup_centres|[3 2 4] [2 2 8]|exact
+CHK|hist_all_nan|[0 0] [-1 0]|exact
+CHK|hist_inf|[1 2] [1.25 1.75]|exact
+CHK|hist_col_centres|[1 1 1 1] [1;2;3;4]|exact
+CHK|hist_matrix_centres|[3 0;0 3] [1.5;4.5]|exact
+CHK|hist_logical|[1 3] [0.25 0.75]|exact
+CHK|hist_char|MATLAB:hist:InvalidInput|exact
+CHK|hist_cell|MATLAB:hist:InvalidInput|exact
+CHK|hist_no_args|MATLAB:narginchk:notEnoughInputs|exact
+CHK|hist_noise_sum|500|exact
+CHK|hist_noise_max|11|exact
+CHK|hist_noise_n|[11 11 9 10 10 10 10 10 10 10 10 11 8 11 9 11 10 10 9 11 10 9 10 11 9 11 9 10 10 10 11 9 11 9 10 10 10 10 10 10 10 10 11 8 11 9 11 10 10 10]|exact
+CHK|hist_noise_x1|0.0118883225253947|rel=1e-12
+CHK|hist_noise_x50|0.98884481491056342|rel=1e-12
+CHK|run_main_called|yes|exact
+CHK|run_local_called|yes|exact

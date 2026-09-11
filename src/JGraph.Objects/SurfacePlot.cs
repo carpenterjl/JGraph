@@ -76,6 +76,7 @@ public sealed class SurfacePlot : PlotObject, I3DDrawable, IHasZData, ILegendIte
     private SurfaceShading _shading = SurfaceShading.Flat;
     private bool _showContourBelow;
     private Color? _edgeColor;
+    private bool _colormapEdges;
     private Color? _faceColor;
     private double _faceAlpha = 1;
     private double _edgeAlpha = 1;
@@ -571,12 +572,25 @@ public sealed class SurfacePlot : PlotObject, I3DDrawable, IHasZData, ILegendIte
         set => SetProperty(ref _edgeAlpha, System.Math.Clamp(value, 0, 1), InvalidationKind.Render);
     }
 
-    /// <summary>The wireframe/edge color; null colors edges through the colormap (wireframe) or dark gray (filled).</summary>
+    /// <summary>The wireframe/edge color; null colors edges through the colormap (wireframe, or <see cref="ColormapEdges"/>) or dark gray (filled).</summary>
     [Category("Appearance"), DisplayName("Edge color")]
     public Color? EdgeColor
     {
         get => _edgeColor;
         set => SetProperty(ref _edgeColor, value, InvalidationKind.Render);
+    }
+
+    /// <summary>
+    /// Whether edges drawn over filled faces take their colour from the colormap, cell by cell, the
+    /// way a wireframe's always have. MATLAB's <c>mesh</c> is this: faces the colour of the axes
+    /// hiding what lies behind, and lines coloured by height (its <c>EdgeColor</c> is 'flat'); a
+    /// <c>surf</c> keeps its dark lines. A named <see cref="EdgeColor"/> overrides it either way.
+    /// </summary>
+    [Category("Appearance"), DisplayName("Colormap edges")]
+    public bool ColormapEdges
+    {
+        get => _colormapEdges;
+        set => SetProperty(ref _colormapEdges, value, InvalidationKind.Render);
     }
 
     /// <summary>The wireframe/edge line width.</summary>
@@ -1244,7 +1258,7 @@ public sealed class SurfacePlot : PlotObject, I3DDrawable, IHasZData, ILegendIte
     {
         Point2D[] verts = RenderScratch.Rent(ref _edgeVerts, (end - begin) * 8, exclusive);
         int[] starts = RenderScratch.Rent(ref _edgeStarts, (end - begin) * 4, exclusive);
-        bool perCell = outline || (_edgeColor is null && _style == SurfaceStyle.Wireframe);
+        bool perCell = outline || (_edgeColor is null && (_style == SurfaceStyle.Wireframe || _colormapEdges));
 
         if (!perCell)
         {

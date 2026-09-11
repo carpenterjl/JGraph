@@ -211,7 +211,7 @@ public static class JgsBuiltinCatalog
         Add("nargchk", "The pre-R2011 spelling of narginchk.", P("low"), P("high"));
         Add("lasterr", "The message of the last caught error; an argument replaces it.", Opt("message"));
         Add("lasterror", "The last caught error as a struct with message and identifier fields.", Opt("err"));
-        Add("lastwarn", "The message of the last warning; an argument replaces it.", Opt("message"));
+        Add("lastwarn", "The message of the last warning raised, shown or not, and [msg, id] = lastwarn its identifier; lastwarn(msg) or lastwarn(msg, id) replaces them.", Opt("message"), Opt("identifier"));
         Add("rethrow", "Raises the error a catch block was handed, unchanged.", P("err"));
         Add("func2str", "The source text of a function handle.", P("f"));
         Add("functions", "What a function handle is, as a struct with function, type, and file.", P("f"));
@@ -912,7 +912,7 @@ public static class JgsBuiltinCatalog
         Add("deal", "Hands one value to every output, or one value each: [a, b] = deal(1, 2).", P("value"), Opt("more..."));
         Add("str2double", "Parses text as a number (Inf, NaN, thousands commas and complex forms included), or NaN when it is not one.", P("text"));
         Add("error", "Stops the script with a message (accepts a format string and an optional 'id:sub' first).", P("message"), Opt("args..."));
-        Add("warning", "Writes a warning to the console without stopping; warning('off') is accepted and ignored.", P("message"), Opt("args..."));
+        Add("warning", "Raises a warning: warning(msg), warning(fmt, args...), warning('pkg:id', fmt, ...). warning('off' | 'on', id) switches one identifier or 'all' and hands back the state it replaced; s = warning('query', id) is a struct with identifier and state, and warning(s) restores it.", P("message"), Opt("args..."));
         Add("assert", "Stops the script when the condition is false, with an optional message.", P("condition"), Opt("message"));
         Add("cell", "Creates a cell array of the given size, filled with empty arrays.", P("count"), Opt("count2"));
         Add("struct", "Builds a struct from name/value pairs; a cell value spreads across a struct array, so struct('a', {1, 2}) is 1-by-2 and struct('a', {}) is empty.", Opt("name"), Opt("value"));
@@ -2049,8 +2049,8 @@ public static class JgsBuiltinCatalog
         Add("fprintf", "Writes a sprintf-formatted string to the console or to an open file with no added newline; answers how many bytes went out.", P("format"), P("values"));
         Add("str", "Any value formatted as a string.", P("value"));
         Add("num", "A string parsed as a number; NaN when it does not parse (filter with isnan).", P("text"));
-        Add("upper", "The string in upper case.", P("text"));
-        Add("lower", "The string in lower case.", P("text"));
+        Add("upper", "The text in upper case: a char row or matrix, a string array, or a cellstr element by element; anything else is handed back unchanged.", P("text"));
+        Add("lower", "The text in lower case: a char row or matrix, a string array, or a cellstr element by element; anything else is handed back unchanged.", P("text"));
         Add("trim", "The string without leading/trailing whitespace.", P("text"));
         Add("split", "The pieces of text between occurrences of one or more delimiters, laid along a dimension; [pieces, delimiters] also answers what was cut on.", P("text"), Opt("delimiter"), Opt("dim"));
         Add("join", "The elements of a string array or cell joined along a dimension with a delimiter between them; a delimiter array gives every gap its own.", P("array"), Opt("delimiter"), Opt("dim"));
@@ -2225,6 +2225,7 @@ public static class JgsBuiltinCatalog
         Add("stackedplot", "One panel per variable, stacked over a shared x: stackedplot(tbl), stackedplot(tbl, vars), stackedplot(X, Y), 'XVariable', 'DisplayLabels'.", P("tbl"), Opt("vars"), Opt("options"));
         Add("scatterhistogram", "Points with each coordinate's distribution drawn beside them: scatterhistogram(x, y), scatterhistogram(tbl, xvar, yvar), 'GroupVariable', 'NumBins'.", P("x"), P("y"), Opt("yvar"), Opt("options"));
         Add("stem", "Stem plot: stem(y), stem(x, y), with a LineSpec, 'filled', and Color, LineStyle, LineWidth, Marker, MarkerSize, MarkerEdgeColor, MarkerFaceColor, BaseValue and ShowBaseLine.", P("x"), Opt("y"), Opt("spec"), Opt("options"));
+        Add("hist", "The legacy histogram: hist(y) draws ten equal bins over the range of y, hist(y, m) m bins, hist(y, x) bins centred on x; [n, x] = hist(...) answers the counts and centres instead, column by column for a matrix.", P("y"), Opt("bins"));
         Add("histogram", "Counts values into bins and draws them: histogram(x), histogram(x, nbins | edges), histogram(categories), histogram('BinEdges', e, 'BinCounts', n), histogram(table, column), with BinWidth, BinLimits, BinMethod, NumBins, Normalization, DisplayStyle, Orientation, BarWidth, FaceColor, EdgeColor, FaceAlpha, EdgeAlpha, LineWidth, LineStyle, DisplayOrder, NumDisplayBins and ShowOthers.", Opt("values"), Opt("bins"), Opt("options"));
         Add("errorbar", "Line plot with error bars: errorbar(x, y, err), errorbar(x, y, neg, pos), errorbar(x, y, yneg, ypos, xneg, xpos), with 'vertical', 'horizontal' or 'both', a LineSpec, the table form, and CapSize, Color, LineStyle, LineWidth, Marker, MarkerSize, MarkerEdgeColor and MarkerFaceColor.", P("x"), P("y"), P("error"), Opt("pos"), Opt("options"));
         Add("semilogx", "Line plot with a logarithmic x axis: semilogx(y), semilogx(x, y, spec?), repeated (x, y, spec) groups, or a table and two column names — every form plot takes, with the same options.", Opt("x"), P("y"), Opt("spec"), Opt("options"));

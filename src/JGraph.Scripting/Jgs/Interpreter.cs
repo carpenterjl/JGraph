@@ -181,9 +181,6 @@ internal sealed partial class Interpreter
             frames.Length, frames.Length == 0 ? 0 : 1);
     }
 
-    /// <summary>The message of the last warning raised — what <c>lastwarn</c> reports.</summary>
-    internal string LastWarning { get; set; } = string.Empty;
-
     /// <summary>
     /// The environment of the innermost running function, or the globals when the script itself is
     /// running. It is the scope <c>eval</c> evaluates in and <c>exist</c>/<c>who</c> answer about,

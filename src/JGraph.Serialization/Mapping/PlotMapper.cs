@@ -274,6 +274,7 @@ internal static class PlotMapper
                 ContourLevels = p.ContourLevels,
                 FaceColor = p.FaceColor,
                 EdgeColor = p.EdgeColor,
+                ColormapEdges = p.ColormapEdges,
                 EdgeWidth = p.EdgeWidth,
                 AutoScaleColor = p.AutoScaleColor,
                 ColorMin = p.ColorMin,
@@ -1020,6 +1021,7 @@ internal static class PlotMapper
         surface.ContourLevels = d.ContourLevels;
         surface.FaceColor = d.FaceColor;
         surface.EdgeColor = d.EdgeColor;
+        surface.ColormapEdges = d.ColormapEdges;
         surface.EdgeWidth = d.EdgeWidth;
         surface.AutoScaleColor = d.AutoScaleColor;
         surface.ColorMin = d.ColorMin;
