@@ -361,8 +361,15 @@ internal static partial class JgsBuiltins
 
         if (args[0].Type == JgsType.String)
         {
+            // Both phases, as a written call: a bound handle is called, and anything else is resolved
+            // with the classes of the arguments feval will pass on.
             string name = args[0].AsString;
             Resolution found = interpreter.Resolver.Invoke(name, interpreter.CurrentFrame);
+            if (found.Layer != ResolutionLayer.Bound)
+            {
+                found = interpreter.Resolver.Invoke(name, found, args.Skip(1).ToArray());
+            }
+
             if (found.Found && found.Value.Type == JgsType.Function)
             {
                 return found.Value.AsCallable;

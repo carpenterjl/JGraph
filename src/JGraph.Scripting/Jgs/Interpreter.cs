@@ -144,8 +144,9 @@ internal sealed partial class Interpreter
 
     /// <summary>
     /// The MATLAB search path, or null when this run has none (JGS, and hosts that never built one).
-    /// It is consulted only after the workspace, the script's own functions, and the built-ins have
-    /// all failed a name — see <see cref="JgsFunctionPath"/> for why that order is deliberate.
+    /// The resolver asks it after the workspace, the running file's own functions, the built-in
+    /// method table and the file's <c>private/</c> folder, and before the built-in layer — see
+    /// <see cref="JgsNameResolver"/> for the order and <see cref="JgsFunctionPath"/> for the folders.
     /// </summary>
     internal JgsFunctionPath? FunctionPath { get; set; }
 
@@ -244,11 +245,16 @@ internal sealed partial class Interpreter
     }
 
     // The file and its storage move together: the storage is looked up once per entry rather than
-    // once per name, and put back with the file.
+    // once per name, and put back with the file. A file that has none yet — a class file, whose
+    // methods are the class's and not the file's — gets empty storage, which is what carries its
+    // private/ folder.
     private void SetFile(string file)
     {
         _currentFile = file;
-        _files.TryGetValue(file, out _currentStorage);
+        if (!_files.TryGetValue(file, out _currentStorage) && file.Length > 0)
+        {
+            _currentStorage = FileFor(file);
+        }
     }
 
     private void RestoreFile(string file, FunctionFile? storage)
@@ -334,23 +340,55 @@ internal sealed partial class Interpreter
                 Hoist(fn, sourceId);
             }
         }
+
+        // A function file's main function is the file's answer to its own name, not a local
+        // function of the file; see FunctionFile.MainName.
+        if (Dialect.IsMatlab && JgsRunner.IsFunctionFile(program))
+        {
+            FileFor(sourceId).MainName = ((FnStmt)program[0]).Name;
+        }
     }
 
     /// <summary>
-    /// A file-level function of the running file — the local-function layer of the search order,
-    /// which the resolver asks after the workspaces and before the built-ins.
+    /// A file-level function of the running file — the local-function layer of the search order.
+    /// <paramref name="isMain"/> says the function is a function file's main one, which the file
+    /// answers to from outside and inside alike: the resolver puts it with the current-folder layer.
     /// </summary>
-    internal bool TryGetFileFunction(string name, out JgsValue value, out string file)
+    internal bool TryGetFileFunction(string name, out JgsValue value, out string file, out bool isMain)
     {
         if (_currentStorage is { } current && current.TryGet(name, out value))
         {
             file = current.SourceId;
+            isMain = current.IsMain(name);
             return true;
         }
 
         value = JgsValue.Null;
         file = "";
+        isMain = false;
         return false;
+    }
+
+    /// <summary>
+    /// The <c>private/</c> folder the running code may see, or null for code with no file — the
+    /// private layer's one input, read off the file's storage so a call pays a field read.
+    /// </summary>
+    internal string? CurrentPrivateFolder => _currentStorage?.PrivateFolder;
+
+    /// <summary>
+    /// The <c>.m</c> stems of the running file's <c>private/</c> folder as <paramref name="index"/>
+    /// knows them, or null when the code has no file — the per-call read, through the entry the
+    /// file's storage keeps.
+    /// </summary>
+    internal IReadOnlySet<string>? CurrentPrivateStems(JgsFileIndex index)
+    {
+        if (_currentStorage is not { PrivateFolder: { } folder } file)
+        {
+            return null;
+        }
+
+        file.PrivateEntry ??= index.Track(folder);
+        return index.StemsOf(file.PrivateEntry);
     }
 
     /// <summary>
@@ -1103,7 +1141,16 @@ internal sealed partial class Interpreter
     {
         Expr expression = statement.Expression;
 
-        if (expression is VariableExpr name && _resolver.Lookup(name.Name, env) is { Found: true } held)
+        // Value mode for the bare name. A file that answers it — a path file, or a file shadowing a
+        // built-in, `eps` with eps.m present — is left to the expression walk below, which calls it
+        // and binds `ans` as a written call would; the arm here is for what the workspace walk and
+        // the built-in layer hold.
+        if (expression is VariableExpr name
+            && _resolver.Value(name.Name, env) is
+            {
+                Layer: ResolutionLayer.Bound or ResolutionLayer.Nested or ResolutionLayer.Local
+                    or ResolutionLayer.Builtin or ResolutionLayer.BuiltinMethod,
+            } held)
         {
             JgsValue existing = held.Value;
             if (existing.Type == JgsType.Function && (!Dialect.IsMatlab || held.IsFunctionDefinition))
@@ -1139,21 +1186,28 @@ internal sealed partial class Interpreter
             return;
         }
 
-        // A few builtins draw when nothing was asked for and answer numbers when something was, and
-        // that is a distinction only the statement itself can make: by the time the call has been
-        // evaluated, "nobody wanted this" looks exactly like "somebody wanted one of these".
-        if (expression is CallExpr discarded
-            && CalleeValue(discarded, env) is { Type: JgsType.Function } discardedCallee
-            && discardedCallee.AsCallable is BuiltinFunction
-                { KnowsWhenDiscarded: true, MultiOutput: not null } knowing)
+        // A call of a plain name that is not a bound value: Invoke mode end to end, here rather than
+        // in the expression walk, because a few builtins draw when nothing was asked for and answer
+        // numbers when something was — a distinction only the statement can make, and only once the
+        // arguments' classes have said which layer answers (M145: `max([1 5 3]);` with max.m present
+        // is the built-in's, `max({1});` the file's).
+        if (expression is CallExpr named && named.Callee is VariableExpr calleeName
+            && TryResolveCall(named, calleeName.Name, env, out Resolution resolvedCall, out JgsValue[] given))
         {
-            var given = new JgsValue[discarded.Arguments.Count];
-            for (int i = 0; i < given.Length; i++)
+            if (resolvedCall.Value.AsCallable is BuiltinFunction
+                { KnowsWhenDiscarded: true, MultiOutput: not null } knowing)
             {
-                given[i] = Evaluate(discarded.Arguments[i], env);
+                knowing.CallDiscarded(given, named.Line, named.Column);
+                return;
             }
 
-            knowing.CallDiscarded(given, discarded.Line, discarded.Column);
+            _pendingCall = named;
+            JgsValue answered = resolvedCall.Value.AsCallable.Call(given, named.Line, named.Column);
+            if (BindsAns(resolvedCall.Value))
+            {
+                BindAns(statement, answered, env);
+            }
+
             return;
         }
 
@@ -1175,29 +1229,51 @@ internal sealed partial class Interpreter
     }
 
     /// <summary>
-    /// Resolves what is being called. Identical to <see cref="Evaluate"/> except that a plain name is
-    /// taken as-is: an auto-calling constant such as <c>eps</c> must stay a function here, so
-    /// <c>eps(x)</c> reaches the builtin instead of trying to subscript the number it evaluates to.
+    /// Invoke mode for a call of a plain name, end to end. Phase one asks the resolver with nothing
+    /// evaluated, because what the parentheses mean depends on the answer: a <em>bound</em> value —
+    /// a variable, one holding a handle included, or a built-in constant — is handed back for the
+    /// caller to index, apply or call with the unevaluated arguments (<c>A(end)</c> needs them), and
+    /// this returns false. Anything else is a function to call: the arguments are evaluated once,
+    /// phase two runs the remaining layers with their classes — the built-in method table, the
+    /// file's <c>private/</c>, a user method on the dominant object, the folders, the built-in —
+    /// and this returns true with the callable in <paramref name="resolved"/>. A name nothing holds
+    /// is the dialect's undefined-name error, at the callee.
+    /// </summary>
+    private bool TryResolveCall(
+        CallExpr call, string name, JgsEnvironment env, out Resolution resolved, out JgsValue[] given)
+    {
+        resolved = _resolver.Invoke(name, env);
+        if (resolved.Layer == ResolutionLayer.Bound || (resolved.Found && resolved.Value.Type != JgsType.Function))
+        {
+            given = [];
+            return false;
+        }
+
+        // A name nothing holds errors before its arguments are evaluated, unless a user class is
+        // loaded, in which case an object among the arguments could still answer with a method.
+        if (!resolved.Found && !AnyClasses)
+        {
+            throw new JgsRuntimeException(call.Callee.Line, call.Callee.Column, Undefined(name));
+        }
+
+        given = EvaluateAll(call.Arguments, env);
+        resolved = _resolver.Invoke(name, resolved, given);
+        if (!resolved.Found)
+        {
+            throw new JgsRuntimeException(call.Callee.Line, call.Callee.Column, Undefined(name));
+        }
+
+        return true;
+    }
+
+    /// <summary>
+    /// Resolves a callee that is not a plain name (those are <see cref="TryResolveCall"/>'s).
+    /// Identical to <see cref="Evaluate"/> except that a dotted name is resolved without the
+    /// auto-call a bare mention gets: <c>containers.Map(k, v)</c> must hand the arguments to the
+    /// constructor, not build an empty collection and then subscript it (M64).
     /// </summary>
     private JgsValue EvaluateCallee(Expr callee, JgsEnvironment env)
     {
-        // Invoke mode, phase one: nothing evaluated yet, because what the parentheses mean depends
-        // on the answer. A bound value goes back to be indexed, applied or called; a function
-        // definition — a path file included, which must not fall through to Evaluate, since that
-        // would *run* the file with no arguments and subscript the answer — goes back to be called
-        // with the arguments evaluated once.
-        if (callee is VariableExpr name)
-        {
-            Resolution resolved = _resolver.Invoke(name.Name, env);
-            if (resolved.Found)
-            {
-                return resolved.Value;
-            }
-        }
-
-        // A dotted name in callee position is resolved without the auto-call a bare mention gets, for
-        // the same reason the name branch above skips the path: `containers.Map(k, v)` must hand the
-        // arguments to the constructor, not build an empty collection and then subscript it (M64).
         if (callee is MemberExpr dotted)
         {
             return EvaluateMember(dotted, env, autoCall: false);
@@ -1222,7 +1298,8 @@ internal sealed partial class Interpreter
 
         handle = Dialect.IsMatlab
             ? JgsValue.Function(new NamedHandle(
-                name, referenced.Layer, referenced.Value.AsCallable, referenced.File, _resolver))
+                name, referenced.Layer, referenced.Value.AsCallable, referenced.File,
+                _resolver.BuiltinOf(name)?.AsCallable, _resolver))
             : referenced.Value;
         return true;
     }
@@ -1578,31 +1655,41 @@ internal sealed partial class Interpreter
     /// </summary>
     private JgsValue[] EvaluateForOutputs(Expr call, int wanted, JgsEnvironment env)
     {
-        // [a, b] = f(obj, …) dispatches on the object exactly as the single-output form does (M68);
-        // asking here as well is what keeps a method with two outputs reachable.
-        if (call is CallExpr dispatched && CouldDispatchOnClass(dispatched, env))
+        // [a, b] = f(x): Invoke mode for a plain name, the same two phases as the single-output
+        // form, so a user method with two outputs, a file that shadows a built-in and the built-in
+        // method the table keeps are all reachable here (M68, M145). A bound handle is called; a
+        // bound value with data in it is indexed by the walk at the bottom.
+        if (call is CallExpr invocation)
         {
-            JgsValue[] given = EvaluateAll(dispatched.Arguments, env);
-            if (TryMethodDispatch(((VariableExpr)dispatched.Callee).Name, given, out IJgsCallable? method))
+            JgsValue callee;
+            if (invocation.Callee is VariableExpr name)
             {
-                return method is IJgsMultiCallable several
-                    ? several.CallMultiple(given, wanted, dispatched.Line, dispatched.Column)
-                    : [method.Call(given, dispatched.Line, dispatched.Column)];
+                if (TryResolveCall(invocation, name.Name, env, out Resolution resolved, out JgsValue[] given))
+                {
+                    _pendingCall = invocation;
+                    return resolved.Value.AsCallable is IJgsMultiCallable several
+                        ? several.CallMultiple(given, wanted, invocation.Line, invocation.Column)
+                        : [resolved.Value.AsCallable.Call(given, invocation.Line, invocation.Column)];
+                }
+
+                callee = resolved.Value;
+            }
+            else
+            {
+                callee = EvaluateCallee(invocation.Callee, env);
             }
 
-            return InvokeWithArguments(dispatched, given, wanted, env);
-        }
-
-        if (call is CallExpr invocation && EvaluateCallee(invocation.Callee, env) is { Type: JgsType.Function } callee)
-        {
-            JgsValue[] arguments = EvaluateAll(invocation.Arguments, env);
-
-            if (callee.AsCallable is IJgsMultiCallable multi)
+            if (callee.Type == JgsType.Function)
             {
-                return multi.CallMultiple(arguments, wanted, invocation.Line, invocation.Column);
-            }
+                JgsValue[] arguments = EvaluateAll(invocation.Arguments, env);
 
-            return [callee.AsCallable.Call(arguments, invocation.Line, invocation.Column)];
+                if (callee.AsCallable is IJgsMultiCallable multi)
+                {
+                    return multi.CallMultiple(arguments, wanted, invocation.Line, invocation.Column);
+                }
+
+                return [callee.AsCallable.Call(arguments, invocation.Line, invocation.Column)];
+            }
         }
 
         // A bare name that auto-calls is still a call when several outputs are asked for, so
@@ -4519,22 +4606,26 @@ internal sealed partial class Interpreter
 
     private JgsValue EvaluateCall(CallExpr call, JgsEnvironment env)
     {
-        // A call is dispatched on the class of its first argument before the name is looked up at all
-        // (M68), because a class method must beat a builtin of the same name. The guard is three cheap
-        // checks that a script defining no classes fails on the first of them.
-        if (CouldDispatchOnClass(call, env))
+        // A plain name: Invoke mode, both phases (M145). A function — nested, local, a built-in
+        // method the table keeps, a private file, a user method on the dominant object, a folder
+        // file, the built-in — is called with the arguments evaluated once. A bound value falls
+        // through to the meanings a call expression has for data: indexing, a keyed lookup, an
+        // interpolant, a handle held in a variable.
+        JgsValue callee;
+        if (call.Callee is VariableExpr name)
         {
-            JgsValue[] given = EvaluateAll(call.Arguments, env);
-            if (TryMethodDispatch(((VariableExpr)call.Callee).Name, given, out IJgsCallable? method))
+            if (TryResolveCall(call, name.Name, env, out Resolution resolved, out JgsValue[] given))
             {
                 _pendingCall = call;
-                return method.Call(given, call.Line, call.Column);
+                return resolved.Value.AsCallable.Call(given, call.Line, call.Column);
             }
 
-            return InvokeWithArguments(call, given, env);
+            callee = resolved.Value;
         }
-
-        JgsValue callee = EvaluateCallee(call.Callee, env);
+        else
+        {
+            callee = EvaluateCallee(call.Callee, env);
+        }
 
         // "Calling" an array, string, or image with subscripts is indexing, identical to the bracket
         // form — a scalar lookup, a bool-mask filter, an index-array/range gather, 'end', or ':'.

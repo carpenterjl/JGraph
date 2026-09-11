@@ -9,11 +9,15 @@ namespace JGraph.Scripting.Jgs;
 /// codebase arrives in and which JGraph had no answer for before M62.
 /// </summary>
 /// <remarks>
-/// Resolution deliberately runs <em>last</em>. In MATLAB a path file shadows a built-in of the same
-/// name; here the ~2,500 built-ins win, because a script that quietly gets a user's half-finished
-/// <c>mean.m</c> instead of the real one fails in a way nobody can read. ADR 0062 records the
-/// divergence. M145 is lifting it in steps: the <see cref="Index"/> already knows which built-in
-/// names a file claims, and a later step will consult it.
+/// A file here outranks a built-in of the same name, as it does in MATLAB (M145): the resolver asks
+/// the folders before the built-in layer, and the <see cref="Index"/> tells it, without a disk probe,
+/// whether a built-in name has a file claiming it at all. What still lets a built-in answer ahead of
+/// a same-named file is the measured dispatch table — a built-in <em>class method</em> for the
+/// arguments' classes — which is the resolver's business, not this class's. Until M145 the
+/// built-ins won outright, a divergence ADR 0062 recorded so that a stray <c>mean.m</c> could not
+/// quietly replace the real one; the shadowing warning of step 7 is what keeps that readable now.
+/// A file's <c>private/</c> folder is served by <see cref="TryResolvePrivate"/>, through the same
+/// loader and cache.
 /// </remarks>
 internal sealed class JgsFunctionPath
 {
@@ -31,6 +35,9 @@ internal sealed class JgsFunctionPath
 
     // Names are case-sensitive the way MATLAB's are; the *paths* they resolve to are not, on Windows.
     private readonly Dictionary<string, Loaded> _loaded = new(StringComparer.Ordinal);
+
+    // Private files are keyed by their path: the same name means a different file under every folder.
+    private readonly Dictionary<string, Loaded> _private = new(PathComparer);
 
     /// <summary>Creates the path over the interpreter whose globals its functions close over.</summary>
     public JgsFunctionPath(Interpreter interpreter, JGraphScriptGlobals host)
@@ -50,8 +57,8 @@ internal sealed class JgsFunctionPath
 
     /// <summary>
     /// What <c>.m</c> files the search folders hold, kept current so that whether a built-in name is
-    /// shadowed by a file can be answered without a disk probe. Nothing consults its shadowing set
-    /// yet; the flip that does is a later step of M145.
+    /// shadowed by a file can be answered without a disk probe — the one read the resolver makes on
+    /// its way to an unshadowed built-in, and the loop compiler's guard.
     /// </summary>
     public JgsFileIndex Index => _index;
 
@@ -104,6 +111,7 @@ internal sealed class JgsFunctionPath
     public void Unload()
     {
         _loaded.Clear();
+        _private.Clear();
         _index.Invalidate(null);
     }
 
@@ -165,14 +173,77 @@ internal sealed class JgsFunctionPath
         }
 
         file = path;
-        DateTime written = File.GetLastWriteTimeUtc(path);
-        bool loadedBefore = _loaded.TryGetValue(name, out Loaded? cached) && PathComparer.Equals(cached.Path, path);
+        _loaded.TryGetValue(name, out Loaded? cached);
+        if (!TryLoadCurrent(name, path, cached, out Loaded loaded))
+        {
+            return false;
+        }
+
+        _loaded[name] = loaded;
+        value = loaded.Value;
+        return true;
+    }
+
+    /// <summary>
+    /// Resolves <paramref name="name"/> to the function <c><paramref name="privateFolder"/>/name.m</c>
+    /// defines — the private layer, visible only to code in the folder above <c>private/</c>, which
+    /// is why the caller names the folder rather than this class working it out. The index says
+    /// whether the file is there (no disk probe on a miss); the loader and cache are the path's.
+    /// </summary>
+    public bool TryResolvePrivate(string privateFolder, string name, out JgsValue value, out string? file)
+    {
+        value = JgsValue.Null;
+        file = null;
+        if (!IsPlainName(name) || !_index.StemsOfFullPath(privateFolder).Contains(name))
+        {
+            return false;
+        }
+
+        string path = Path.Combine(privateFolder, name + ".m");
+        _private.TryGetValue(path, out Loaded? cached);
+        if (!TryLoadCurrent(name, path, cached, out Loaded loaded))
+        {
+            _private.Remove(path);
+            return false;
+        }
+
+        _private[path] = loaded;
+        value = loaded.Value;
+        file = path;
+        return true;
+    }
+
+    /// <summary>
+    /// The loaded form of <paramref name="path"/> as of now: <paramref name="cached"/> when it is
+    /// that path and the file has not been written since, a fresh load otherwise. False when the
+    /// file is not there — the index can be a statement behind another process.
+    /// </summary>
+    private bool TryLoadCurrent(string name, string path, Loaded? cached, out Loaded loaded)
+    {
+        DateTime written;
+        try
+        {
+            written = File.GetLastWriteTimeUtc(path);
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+        {
+            written = default;
+        }
+
+        if (!File.Exists(path))
+        {
+            loaded = null!;
+            return false;
+        }
+
+        bool loadedBefore = cached is not null && PathComparer.Equals(cached.Path, path);
         if (loadedBefore && cached!.Written == written)
         {
-            value = cached.Value;
+            loaded = cached;
             return true;
         }
 
+        JgsValue value;
         try
         {
             value = Load(name, path);
@@ -186,7 +257,7 @@ internal sealed class JgsFunctionPath
             throw new JgsRuntimeException(0, 0, $"Previously accessible file \"{path}\" is now inaccessible.");
         }
 
-        _loaded[name] = new Loaded(path, written, value);
+        loaded = new Loaded(path, written, value);
         return true;
     }
 
@@ -278,8 +349,10 @@ internal sealed class JgsFunctionPath
         }
 
         // MATLAB dispatches on the file name, not on the header: helper.m answers to 'helper' even if
-        // its first function is spelt something else.
+        // its first function is spelt something else. The main function is the file's answer, not a
+        // local function of it — see FunctionFile.MainName.
         var main = (FnStmt)program[0];
+        file.MainName = main.Name;
         return file.TryGet(main.Name, out JgsValue callable) ? callable : JgsValue.Null;
     }
 

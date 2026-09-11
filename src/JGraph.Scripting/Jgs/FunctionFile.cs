@@ -23,6 +23,7 @@ internal sealed class FunctionFile
     {
         SourceId = sourceId;
         Scope = scope;
+        PrivateFolder = PrivateFolderOf(sourceId);
     }
 
     /// <summary>The source the functions came from — the file's path, or "" for code with no file.</summary>
@@ -31,14 +32,65 @@ internal sealed class FunctionFile
     /// <summary>The scope the file's functions close over: a child of the built-in layer, holding nothing itself.</summary>
     public JgsEnvironment Scope { get; }
 
+    /// <summary>
+    /// The name of a function file's main function, or null for a script. The main function is not a
+    /// local function of its own file: inside <c>max.m</c> the name <c>max</c> resolves past the
+    /// built-in method layer and <c>private/</c> to the file itself, exactly as it does from outside
+    /// (R2025b: a handle to <c>max</c> taken inside <c>max.m</c> still lets the built-in answer for a
+    /// double), so the resolver treats it as the current-folder layer rather than the local one.
+    /// </summary>
+    public string? MainName { get; set; }
+
+    /// <summary>
+    /// The <c>private/</c> folder this file's code may see, or null for code with no file: the folder
+    /// beside the file, or — for a file that is itself private — its own folder, since private
+    /// functions call one another. Kept as a full path so the per-call check is a dictionary read.
+    /// </summary>
+    public string? PrivateFolder { get; }
+
+    /// <summary>
+    /// The index's entry for <see cref="PrivateFolder"/>, kept once asked for so that the check a
+    /// built-in call makes on its way — "does this file's <c>private/</c> claim the name" — is a
+    /// field read and a set lookup, never a path hash.
+    /// </summary>
+    internal JgsFileIndex.Folder? PrivateEntry { get; set; }
+
     /// <summary>The functions by name.</summary>
     public IReadOnlyDictionary<string, JgsValue> Functions => _functions;
+
+    private static string? PrivateFolderOf(string sourceId)
+    {
+        if (sourceId.Length == 0 || !Path.IsPathRooted(sourceId))
+        {
+            return null;
+        }
+
+        try
+        {
+            string? folder = Path.GetDirectoryName(Path.GetFullPath(sourceId));
+            if (folder is null)
+            {
+                return null;
+            }
+
+            return string.Equals(Path.GetFileName(folder), "private", StringComparison.OrdinalIgnoreCase)
+                ? folder
+                : Path.Combine(folder, "private");
+        }
+        catch (Exception ex) when (ex is ArgumentException or NotSupportedException or PathTooLongException)
+        {
+            return null;
+        }
+    }
 
     /// <summary>Stores (or replaces) the function <paramref name="name"/>.</summary>
     public void Declare(string name, JgsValue function) => _functions[name] = function;
 
-    /// <summary>The function <paramref name="name"/>, when this file has one.</summary>
+    /// <summary>The function <paramref name="name"/>, when this file has one — the main function included.</summary>
     public bool TryGet(string name, out JgsValue value) => _functions.TryGetValue(name, out value!);
+
+    /// <summary>Whether <paramref name="name"/> is this file's main function; see <see cref="MainName"/>.</summary>
+    public bool IsMain(string name) => MainName is not null && string.Equals(MainName, name, StringComparison.Ordinal);
 
     /// <summary>
     /// Whether <paramref name="declaration"/> itself is what this file holds under its name — how the

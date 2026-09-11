@@ -200,20 +200,22 @@ internal sealed partial class Interpreter
     };
 
     /// <summary>
-    /// The class method a call written <c>name(first, …)</c> should reach, if any. MATLAB dispatches a
-    /// call on the class of its arguments, and it has to win over the builtin table: <c>area(c)</c> on
-    /// a Circle is the class's own method, not the chart verb of the same name.
+    /// The class method a call written <c>name(…, obj, …)</c> reaches on <paramref name="dominant"/>,
+    /// the user object the resolver picked as dominant (the leftmost one). MATLAB dispatches a call
+    /// on the class of its arguments: <c>area(c)</c> on a Circle is the class's own method, not the
+    /// chart verb of the same name. This is the user-method layer of the search order (M145): below
+    /// a bound name, a nested or local function and a private file, above the folders and the
+    /// built-ins — the resolver asks it in that place rather than before the name is looked up.
     /// </summary>
-    private bool TryMethodDispatch(
-        string name, IReadOnlyList<JgsValue> arguments, [NotNullWhen(true)] out IJgsCallable? callable)
+    internal bool TryUserMethod(string name, JgsValue dominant, [NotNullWhen(true)] out IJgsCallable? callable)
     {
         callable = null;
-        if (arguments.Count == 0 || arguments[0].Type != JgsType.Object)
+        if (dominant.Type != JgsType.Object)
         {
             return false;
         }
 
-        JgsClass definition = arguments[0].AsObject.Class;
+        JgsClass definition = dominant.AsObject.Class;
         if (!definition.TryMethod(name, out ClassMethod? method) || method.Static)
         {
             return false;
@@ -222,18 +224,6 @@ internal sealed partial class Interpreter
         callable = definition.Callable(method);
         return true;
     }
-
-    /// <summary>
-    /// Whether a call expression could be a method call at all: a plain name that is not a variable
-    /// holding data. A name bound to a function handle still qualifies — the object wins, and the
-    /// handle is tried after.
-    /// </summary>
-    private bool CouldDispatchOnClass(CallExpr call, JgsEnvironment env) =>
-        AnyClasses
-        && Dialect.IsMatlab
-        && call.Arguments.Count > 0
-        && call.Callee is VariableExpr name
-        && (!env.TryGet(name.Name, out JgsValue bound) || bound.Type == JgsType.Function);
 
     /// <summary>
     /// The method name MATLAB gives each operator. A class overloads an operator by defining a method
@@ -339,33 +329,4 @@ internal sealed partial class Interpreter
         return true;
     }
 
-    /// <summary>
-    /// Invokes a call whose arguments have already been evaluated. Reached only from the class-dispatch
-    /// path, where the callee is known not to be a variable holding data, so none of the indexing
-    /// meanings a call expression can have apply.
-    /// </summary>
-    private JgsValue InvokeWithArguments(CallExpr call, JgsValue[] arguments, JgsEnvironment env)
-    {
-        JgsValue[] answered = InvokeWithArguments(call, arguments, wanted: 1, env);
-        return answered.Length > 0 ? answered[0] : JgsValue.Null;
-    }
-
-    /// <summary>
-    /// The same, asking for <paramref name="wanted"/> outputs. Keeping the output count here is what
-    /// stops <c>[a, b] = size(x)</c> answering once merely because some class happens to be loaded.
-    /// </summary>
-    private JgsValue[] InvokeWithArguments(CallExpr call, JgsValue[] arguments, int wanted, JgsEnvironment env)
-    {
-        JgsValue callee = EvaluateCallee(call.Callee, env);
-        if (callee.Type != JgsType.Function)
-        {
-            throw new JgsRuntimeException(call.Line, call.Column,
-                $"Cannot call a {callee.TypeName}; it is not a function.");
-        }
-
-        _pendingCall = call;
-        return callee.AsCallable is IJgsMultiCallable several
-            ? several.CallMultiple(arguments, wanted, call.Line, call.Column)
-            : [callee.AsCallable.Call(arguments, call.Line, call.Column)];
-    }
 }

@@ -19,6 +19,14 @@
   </ItemGroup>
 
   <ItemGroup>
+    <!-- The R2025b dispatch sweep (M145): per built-in name and argument pattern, whether a built-in
+         class method outranks a same-named user file. One copy, kept where the sweep scripts and the
+         verifier live, and read by JgsDispatchTable at run time. -->
+    <EmbeddedResource Include="..\..\tools\matlab-checklist\matlab-r2025b-dispatch.csv" LogicalName="JGraph.Scripting.dispatch-table.csv" />
+    <EmbeddedResource Include="..\..\tools\matlab-checklist\dispatch-class-map.csv" LogicalName="JGraph.Scripting.dispatch-class-map.csv" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Scripting" Version="4.9.2" />
     <PackageReference Include="pythonnet" Version="3.0.5" />
   </ItemGroup>

@@ -167,9 +167,7 @@ internal sealed partial class Interpreter
             }
             else if (value.Type == JgsType.Function
                      && JgsBuiltins.IsHotLoopBareConstant(slot.Name)
-                     && _resolver.Lookup(slot.Name, env) is { Layer: ResolutionLayer.Builtin } folded
-                     && folded.Value.AsCallable is BuiltinFunction { AutoCallsBare: true } constant
-                     && constant.Name == slot.Name)
+                     && _resolver.CompiledBuiltin(slot.Name, env, bare: true) is BuiltinFunction { AutoCallsBare: true } constant)
             {
                 // The walk calls the constant on every mention; one call at entry is the same
                 // number every time, which is what qualifies the name for the list.
@@ -189,12 +187,11 @@ internal sealed partial class Interpreter
 
         foreach (string name in program.RequiredBuiltins)
         {
-            // The resolver says which layer answers; anything but the built-in layer — a variable,
-            // a global, a local function — means the walk does whatever the script arranged.
-            if (_resolver.Lookup(name, env) is not { Layer: ResolutionLayer.Builtin } required
-                || required.Value.Type != JgsType.Function
-                || required.Value.AsCallable is not BuiltinFunction resolved
-                || resolved.Name != name)
+            // The resolver says whether the built-in is what a call from this loop would reach:
+            // anything else — a variable, a global, a local function, a file or private function the
+            // dispatch table does not let the built-in beat for the loop's numeric arguments — means
+            // the walk does whatever the script arranged.
+            if (_resolver.CompiledBuiltin(name, env, bare: false) is null)
             {
                 return false; // shadowed or rebound: the walk does whatever the script arranged
             }

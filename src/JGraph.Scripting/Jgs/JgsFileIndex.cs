@@ -20,13 +20,20 @@ namespace JGraph.Scripting.Jgs;
 /// </remarks>
 internal sealed class JgsFileIndex
 {
-    private sealed class Folder
+    /// <summary>
+    /// One folder the index knows. Handed out by <see cref="Track"/> so that a caller asking about
+    /// the same folder on every call — the resolver, about a file's <c>private/</c> — keeps the
+    /// entry and pays no path hashing; the entry is never removed, so a kept one stays valid.
+    /// </summary>
+    internal sealed class Folder
     {
         public readonly HashSet<string> Stems = new(StringComparer.Ordinal);
+        public string Path = "";
         public DateTime Written;
         public bool Dirty = true;
         public bool Read;
         public bool Warned;
+        public int CheckedEpoch = -1;
     }
 
     private static readonly StringComparer PathComparer = OperatingSystem.IsWindows()
@@ -81,12 +88,28 @@ internal sealed class JgsFileIndex
     }
 
     /// <summary>The <c>.m</c> stems <paramref name="folder"/> holds, read now if it has not been.</summary>
-    public IReadOnlySet<string> StemsOf(string folder)
+    public IReadOnlySet<string> StemsOf(string folder) => StemsOfFullPath(Path.GetFullPath(folder));
+
+    /// <summary>
+    /// The same for a folder already given as a full path — a file's <c>private/</c> folder, which
+    /// the resolver asks about on the way to every built-in call from that file, so nothing here
+    /// touches the path string. Refreshed by the same two rules as the search folders: at once after
+    /// an invalidation, and by write time at most once per statement epoch.
+    /// </summary>
+    internal IReadOnlySet<string> StemsOfFullPath(string folder) => StemsOf(EntryFor(folder));
+
+    /// <summary>The entry for <paramref name="fullFolder"/>, to hand back to <see cref="StemsOf(Folder)"/> on every call.</summary>
+    internal Folder Track(string fullFolder) => EntryFor(fullFolder);
+
+    /// <summary>The stems of a tracked folder, refreshed as <see cref="StemsOfFullPath"/> refreshes.</summary>
+    internal IReadOnlySet<string> StemsOf(Folder entry)
     {
-        Folder entry = EntryFor(Path.GetFullPath(folder));
-        if (entry.Dirty || (!entry.Read))
+        int epoch = _statementEpoch();
+        bool checkTime = epoch != entry.CheckedEpoch;
+        entry.CheckedEpoch = epoch;
+        if (entry.Dirty || !entry.Read || (checkTime && TimeMoved(entry.Path, entry)))
         {
-            ReadFolder(folder, entry);
+            ReadFolder(entry.Path, entry);
         }
 
         return entry.Stems;
@@ -151,7 +174,7 @@ internal sealed class JgsFileIndex
     {
         if (!_folders.TryGetValue(folder, out Folder? entry))
         {
-            entry = new Folder();
+            entry = new Folder { Path = folder };
             _folders[folder] = entry;
         }
 
@@ -163,6 +186,13 @@ internal sealed class JgsFileIndex
         int epoch = _statementEpoch();
         bool checkTimes = epoch != _checkedEpoch;
         _checkedEpoch = epoch;
+
+        // The common case, once per built-in call: the set is built, nothing has been invalidated
+        // since (an invalidation drops it), and this statement's folder times were already read.
+        if (!checkTimes && _shadowing is not null)
+        {
+            return;
+        }
 
         var searched = new List<string>();
         bool changed = _shadowing is null;
@@ -223,6 +253,8 @@ internal sealed class JgsFileIndex
     {
         try
         {
+            // A folder that is not there answers a fixed time for as long as it is not there; the
+            // read below records it, so the folder is not re-read every statement for not existing.
             return LastWrite(folder) != entry.Written;
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
@@ -253,10 +285,12 @@ internal sealed class JgsFileIndex
                 }
             }
         }
-        catch (DirectoryNotFoundException) when (!entry.Read)
+        catch (DirectoryNotFoundException)
         {
-            // A folder that is not there has no files in it; the run's script folder is often one.
-            entry.Written = default;
+            // A folder that is not there has no files in it — the run's script folder is often one,
+            // and most files have no private/ folder beside them. One that has been removed since it
+            // was read is the same case: a loaded file from it is the loader's business, not the index's.
+            entry.Written = MissingFolderTime(folder);
             entry.Stems.Clear();
             entry.Dirty = false;
             entry.Read = true;
@@ -282,5 +316,18 @@ internal sealed class JgsFileIndex
         entry.Dirty = false;
         entry.Read = true;
         entry.Warned = false;
+    }
+
+    /// <summary>What the write-time read answers for a folder that does not exist, so that <see cref="TimeMoved"/> stays false until it does.</summary>
+    private DateTime MissingFolderTime(string folder)
+    {
+        try
+        {
+            return LastWrite(folder);
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+        {
+            return default;
+        }
     }
 }

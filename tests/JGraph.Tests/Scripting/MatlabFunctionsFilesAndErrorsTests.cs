@@ -170,12 +170,14 @@ public class MatlabFunctionsFilesAndErrorsTests : IDisposable
     }
 
     /// <summary>
-    /// The recorded divergence: JGraph's built-ins win a name a path file also claims. MATLAB gives
-    /// the file priority; here the 2,500 built-ins do, so a stray <c>max.m</c> cannot quietly replace
-    /// the real one — see ADR 0062.
+    /// A file beside the script takes a built-in's name, as it does in MATLAB (M145 lifted ADR 0062's
+    /// divergence, under which the built-ins won outright) — unless the measured dispatch table says
+    /// a built-in <em>method</em> of the arguments' class applies: <c>max([1 5 3])</c> is
+    /// <c>@double/max</c>'s and answers 5 with <c>max.m</c> present, while <c>max({1, 2})</c> has no
+    /// built-in method and reaches the file (R2025b, both).
     /// </summary>
     [Fact]
-    public async Task ABuiltinBeatsAFileOfTheSameName()
+    public async Task AFileBeatsABuiltinOfTheSameName_UnlessTheTableSaysTheMethodApplies()
     {
         File.WriteAllText(Path.Combine(_folder, "max.m"), """
             function y = max(varargin)
@@ -183,10 +185,14 @@ public class MatlabFunctionsFilesAndErrorsTests : IDisposable
             end
             """);
 
-        ScriptRunResult result = await RunMatlab("m = max([1 5 3]);");
+        ScriptRunResult result = await RunMatlab("""
+            m = max([1 5 3]);
+            f = max({1, 2});
+            """);
 
         Assert.True(result.Success, result.Message + _output.ErrorText);
         Assert.Equal(5.0, Number(result, "m"));
+        Assert.Equal(-999.0, Number(result, "f"));
     }
 
     // --- An error that happened in another file says which -----------------------------------
