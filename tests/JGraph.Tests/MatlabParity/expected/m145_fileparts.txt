@@ -50,3 +50,18 @@ CHK|fullfile_dots|a\..\b\x|exact
 CHK|fullfile_one|a|exact
 CHK|fullfile_string|string|exact
 CHK|fullfile_string_text|a\b|exact
+CHK|cell_char_class|cell [1 2]|exact
+CHK|cell_char_text|a\c b\c|exact
+CHK|char_cell_col|[2 1] r\a r\b|exact
+CHK|cell_cell|a\x b\y|exact
+CHK|cell_one_repeats|a\x b\x|exact
+CHK|cell_empty_elem|[a\x] [x]|exact
+CHK|cell_one_class|cell [1 1] a\x|exact
+CHK|cell_empty|cell [0 0]|exact
+CHK|strarr_class|string [1 2]|exact
+CHK|strarr_text|a\c b\c|exact
+CHK|cell_string|string a\s b\s|exact
+CHK|strarr_cell|string a\x b\y|exact
+CHK|mismatch_refused|1|exact
+CHK|row_col_refused|1|exact
+CHK|noargs_refused|1|exact

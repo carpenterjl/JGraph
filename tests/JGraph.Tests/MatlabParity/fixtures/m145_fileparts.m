@@ -40,6 +40,35 @@ chk('fullfile_one', fullfile('a'));
 chk('fullfile_string', class(fullfile("a", 'b')));
 chk('fullfile_string_text', char(fullfile("a", 'b')));
 
+% A cellstr or string array part joins element by element (measured in R2025b): every container
+% must share a shape or be a scalar, which repeats; the answer is a string when any part is a
+% string and a cell otherwise; no arguments at all is refused.
+c = fullfile({'a', 'b'}, 'c');
+chk('cell_char_class', [class(c) ' ' mat2str(size(c))]);
+chk('cell_char_text', [c{1} ' ' c{2}]);
+c = fullfile('r', {'a'; 'b'});
+chk('char_cell_col', [mat2str(size(c)) ' ' c{1} ' ' c{2}]);
+c = fullfile({'a', 'b'}, {'x', 'y'});
+chk('cell_cell', [c{1} ' ' c{2}]);
+c = fullfile({'a', 'b'}, {'x'});
+chk('cell_one_repeats', [c{1} ' ' c{2}]);
+c = fullfile({'a', ''}, 'x');
+chk('cell_empty_elem', ['[' c{1} '] [' c{2} ']']);
+c = fullfile({'a'}, 'x');
+chk('cell_one_class', [class(c) ' ' mat2str(size(c)) ' ' c{1}]);
+c = fullfile({}, 'x');
+chk('cell_empty', [class(c) ' ' mat2str(size(c))]);
+s = fullfile(["a", "b"], 'c');
+chk('strarr_class', [class(s) ' ' mat2str(size(s))]);
+chk('strarr_text', [char(s(1)) ' ' char(s(2))]);
+s = fullfile({'a', 'b'}, "s");
+chk('cell_string', [class(s) ' ' char(s(1)) ' ' char(s(2))]);
+s = fullfile(["a", "b"], {'x', 'y'});
+chk('strarr_cell', [class(s) ' ' char(s(1)) ' ' char(s(2))]);
+chk('mismatch_refused', refused(@() fullfile({'a', 'b'}, {'x', 'y', 'z'})));
+chk('row_col_refused', refused(@() fullfile({'a', 'b'}, {'x'; 'y'})));
+chk('noargs_refused', refused(@() fullfile()));
+
 function chk(name, v)
 fprintf('CHK|%s|%s|exact\n', name, show(v));
 end

@@ -297,7 +297,9 @@ added to the catalogue; the count across every callable kind is 1,116 of 2,024.
   same day as a proper multi-output builtin under MATLAB's textual split, with `fullfile` made
   to join as MATLAB's does (the platform separator, slashes converted on Windows, runs collapsed
   but for a UNC pair, empty parts dropped, a string part making a string); the fixture
-  `m145_fileparts` (52 R2025b lines, no divergent row) pins both.
+  `m145_fileparts` (67 R2025b lines, no divergent row) pins both, and the cellstr and string-array
+  forms of `fullfile` (element by element over a shared shape, a scalar part repeating, a string
+  part making a string array, no arguments refused with MATLAB's narginchk words).
 - The head-to-head timing rows join the arc's deferred set, per the standing decision recorded
   in ADR 0131; the micro-benchmark above is the milestone's own measurement.
 - The step-5 note stands as the next saving if one is ever needed: phase one's storage miss and

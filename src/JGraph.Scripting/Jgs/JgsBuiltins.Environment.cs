@@ -220,29 +220,104 @@ internal static partial class JgsBuiltins
         // fullfile is text, not Path.Combine (R2025b): the parts are joined with the platform's
         // separator, every slash becomes that separator on Windows, runs of it collapse to one except
         // a leading pair (a UNC share), empty parts are dropped, a trailing separator stays, and a
-        // string among the parts makes the answer a string.
+        // string among the parts makes the answer a string. A cellstr or string array among the
+        // parts joins element by element: every such container must have the same shape or be a
+        // scalar (which repeats), the answer has that shape, and it is a string array when any part
+        // is a string and a cell otherwise. No arguments at all is MATLAB's narginchk error.
         env.Builtins.Register("fullfile", JgsValue.Function(new BuiltinFunction("fullfile", (args, line, col) =>
         {
-            var parts = new List<string>(args.Count);
-            bool asString = false;
-            for (int i = 0; i < args.Count; i++)
+            if (args.Count == 0)
             {
-                if (!IsTextScalar(args[i]))
-                {
-                    throw new JgsRuntimeException(line, col,
-                        $"fullfile expects argument {i + 1} to be a string, but got a {args[i].TypeName}.");
-                }
-
-                asString |= IsStringScalar(args[i]);
-                string part = TextOf(args[i]);
-                if (part.Length > 0)
-                {
-                    parts.Add(part);
-                }
+                throw new JgsRuntimeException(line, col, "MATLAB:narginchk:notEnoughInputs", "Not enough input arguments.");
             }
 
-            string joined = JoinPath(parts);
-            return asString ? JgsValue.StringScalar(joined) : JgsValue.Str(joined);
+            bool asString = false;
+            bool anyContainer = false; // a cell or string array among the parts, scalar or not
+            bool container = false; // a non-scalar one has fixed the answer's shape
+            int rows = 1, cols = 1;
+            var texts = new string[args.Count][];
+            for (int i = 0; i < args.Count; i++)
+            {
+                JgsValue arg = args[i];
+                asString |= arg.IsStringArray;
+                if (arg.Type == JgsType.String)
+                {
+                    texts[i] = [arg.AsString];
+                    continue;
+                }
+
+                if (arg.Type != JgsType.Cell && !arg.IsStringArray)
+                {
+                    throw new JgsRuntimeException(line, col,
+                        $"fullfile expects argument {i + 1} to be a string, but got a {arg.TypeName}.");
+                }
+
+                anyContainer = true;
+                JgsValue[] elements = arg.Type == JgsType.Cell ? arg.AsCell : arg.BoxedElements();
+                texts[i] = new string[elements.Length];
+                for (int k = 0; k < elements.Length; k++)
+                {
+                    if (!IsTextScalar(elements[k]))
+                    {
+                        throw new JgsRuntimeException(line, col,
+                            $"fullfile expects every element of argument {i + 1} to be a string, but found a {elements[k].TypeName}.");
+                    }
+
+                    texts[i][k] = TextOf(elements[k]);
+                }
+
+                if (arg.Type == JgsType.Cell && elements.Length == 1)
+                {
+                    continue; // a one-cell repeats like a char row does (measured: fullfile({'a','b'}, {'x'}))
+                }
+
+                if (arg.IsStringArray && elements.Length == 1 && arg.Rows == 1 && arg.Cols == 1)
+                {
+                    continue;
+                }
+
+                if (container && (arg.Rows != rows || arg.Cols != cols))
+                {
+                    throw new JgsRuntimeException(line, col, "MATLAB:fullfile:CellstrSizeMismatch",
+                        "All string and cell array inputs must be the same size or scalars.");
+                }
+
+                container = true;
+                rows = arg.Rows;
+                cols = arg.Cols;
+            }
+
+            if (!anyContainer)
+            {
+                string joined = JoinPath([.. texts.Select(static t => t[0]).Where(static p => p.Length > 0)]);
+                return asString ? JgsValue.StringScalar(joined) : JgsValue.Str(joined);
+            }
+
+            int count = rows * cols;
+            var answers = new JgsValue[count];
+            for (int k = 0; k < count; k++)
+            {
+                var parts = new List<string>(args.Count);
+                foreach (string[] t in texts)
+                {
+                    string part = t[t.Length == 1 ? 0 : k];
+                    if (part.Length > 0)
+                    {
+                        parts.Add(part);
+                    }
+                }
+
+                answers[k] = JgsValue.Str(JoinPath(parts));
+            }
+
+            if (asString)
+            {
+                return JgsValue.StringArray(answers, rows, cols);
+            }
+
+            JgsValue cell = JgsValue.Cell(answers);
+            cell.Reshape(rows, cols);
+            return cell;
         })
         { KeepsStringArguments = true }));
 

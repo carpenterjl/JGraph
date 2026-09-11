@@ -258,7 +258,7 @@ public static class JgsBuiltinCatalog
         Add("filemarker", "The character that separates a file from a function inside it.");
         Add("isfile", "Whether the path names a file that exists.", P("path"));
         Add("isfolder", "Whether the path names a folder that exists.", P("path"));
-        Add("fullfile", "Path pieces joined with the right separator.", P("part"), Opt("more"));
+        Add("fullfile", "Path pieces joined with the platform separator; a cellstr or string array part joins element by element.", P("part"), Opt("more"));
         Add("fileparts", "[folder, name, ext] = fileparts(path); one output is the folder. A textual split that never looks at the disk.", P("path"));
         Add("feof", "Whether an open file is at its end.", P("fid"));
         Add("ferror", "The last error on an open file — empty, since failures are raised instead.", P("fid"), Opt("clear"));
