@@ -24,10 +24,10 @@ public class BarLayoutTests
 
         Assert.Equal(2, bars.Count);
 
-        // The slot is 0.8 of the unit spacing, so each of the two bars is 0.4 wide and their
-        // centers sit a bar-width apart, straddling the position.
-        Assert.Equal(2 - 0.2, bars[0].CenterAt(1), 12);
-        Assert.Equal(2 + 0.2, bars[1].CenterAt(1), 12);
+        // Two series share 2/3.5 of the unit spacing (ADR 0152), so their centers sit half of that
+        // share either side of the position — R2025b's XEndPoints for this chart.
+        Assert.Equal(2 - (1.0 / 7), bars[0].CenterAt(1), 12);
+        Assert.Equal(2 + (1.0 / 7), bars[1].CenterAt(1), 12);
 
         // Grouping never changes what the bars are worth.
         Assert.Equal(5, bars[1].TopAt(1));

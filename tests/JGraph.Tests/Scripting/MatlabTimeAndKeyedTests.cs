@@ -234,7 +234,10 @@ public class MatlabTimeAndKeyedTests : IDisposable
         assert(isstring(string(t)));
         assert(strcmp(string(t), '05-Mar-2024 14:30:45'));
         assert(strcmp(datestr(t), '05-Mar-2024 14:30:45'));
-        assert(strcmp(datestr(t, 'uuuu/MM/dd'), '2024/03/05'));
+        % datestr reads datestr's language, not datetime's (ADR 0152): lower-case mm is the month
+        % there, and the datetime tokens are literal text — both measured in R2025b.
+        assert(strcmp(datestr(t, 'yyyy/mm/dd'), '2024/03/05'));
+        assert(strcmp(datestr(t, 'uuuu/MM/dd'), 'uuuu/30/05'));
 
         % A date with no time of day says so, which is the format MATLAB's own constructor picks.
         assert(strcmp(char(datetime(2024, 3, 5)), '05-Mar-2024'));

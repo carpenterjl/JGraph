@@ -207,7 +207,7 @@ public sealed class BarPlot : XYPlot, IDrawable, ILegendItem
 
     /// <summary>Where the center of bar <paramref name="i"/> sits along the category axis.</summary>
     public double CenterAt(int i) =>
-        Data.GetX(i) + SlotShift() + ((_groupIndex - ((_groupCount - 1) / 2.0)) * 2 * HalfBarWidth());
+        Data.GetX(i) + SlotShift() + ((_groupIndex - ((_groupCount - 1) / 2.0)) * SeriesPitch());
 
     public override DataRange GetXDataBounds() =>
         _horizontal ? ValueBounds() : ExpandByHalfBar(Data.XBounds);
@@ -321,11 +321,23 @@ public sealed class BarPlot : XYPlot, IDrawable, ILegendItem
                 mapper.DataToPixel(center + halfWidth, floor));
     }
 
-    /// <summary>Half the width of one bar — a share of the slot when the chart is grouped.</summary>
-    private double HalfBarWidth() => SlotHalfWidth() / _groupCount;
+    /// <summary>Half the width of one bar, which is its share of the pitch.</summary>
+    private double HalfBarWidth() => 0.5 * _barWidthFraction * SeriesPitch();
 
-    /// <summary>Half the width of the slot at each position, which the whole group fills.</summary>
-    private double SlotHalfWidth() => 0.5 * _barWidthFraction * Spacing();
+    /// <summary>
+    /// The distance between the centers of one position's neighbouring series, which is the group's
+    /// span divided between them.
+    /// </summary>
+    private double SeriesPitch() => GroupSpan() / _groupCount;
+
+    /// <summary>
+    /// How much of the gap between positions the whole group is allowed. A single series takes all
+    /// of it, so its bar is <c>BarWidth</c> of the gap; a group of n takes n/(n + 1.5) of it, capped
+    /// at 0.8, which leaves the measured air between groups that R2025b draws.
+    /// </summary>
+    private double GroupSpan() => Spacing() * (_groupCount <= 1
+        ? 1.0
+        : System.Math.Min(0.8, _groupCount / (_groupCount + 1.5)));
 
     /// <summary>What the bars span along the value axis, floors and baseline included.</summary>
     private DataRange ValueBounds()
@@ -346,11 +358,13 @@ public sealed class BarPlot : XYPlot, IDrawable, ILegendItem
     }
 
     /// <summary>How far the slot is shifted along the category axis, in data units.</summary>
-    private double SlotShift() => _positionOffset * 2 * SlotHalfWidth();
+    private double SlotShift() => _positionOffset * _barWidthFraction * Spacing();
 
     private DataRange ExpandByHalfBar(DataRange positions)
     {
-        double half = SlotHalfWidth();
+        // The whole group, not this one series: every series of a grouped chart reports the same
+        // reach, so the axes enclose the outermost bar whichever series is asked.
+        double half = (((_groupCount - 1) / 2.0) * SeriesPitch()) + HalfBarWidth();
         double shift = SlotShift();
         return positions.IsEmpty
             ? positions

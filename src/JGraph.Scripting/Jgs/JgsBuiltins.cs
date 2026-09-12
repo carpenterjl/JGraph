@@ -387,47 +387,37 @@ internal static partial class JgsBuiltins
         {
             ArityRange("datestr", args, 0, 2, line, col);
 
-            // A datetime formats through its own machinery (M64), so datestr(t) and disp(t) cannot
-            // disagree about what a moment looks like.
-            if (args.Count >= 1 && args[0].IsDatetime)
+            // Whatever the moments were written as, they reach the one formatter as serial date
+            // numbers: datestr reads its own format language (ADR 0152) and reads it the same way
+            // for a datetime as for a number, which is what R2025b does and what the two branches
+            // this replaced disagreed about.
+            if (args.Count >= 1 && args[0].Type == JgsType.String)
             {
-                string shape = args.Count >= 2 ? Str("datestr", args, 1, line, col) : JgsTime.DefaultDatetimeFormat;
-                var tag = new JgsTimeTag(JgsTimeKind.Datetime, shape);
-                double[] moments = TimeMs(args[0]);
-                if (moments.Length == 1)
+                throw new JgsRuntimeException(line, col,
+                    "datestr expects a serial date number or a datetime, not text.");
+            }
+
+            double[] serials = args.Count == 0
+                ? [DateTime.Now.ToOADate() + matlabDatenumOffset]
+                : args[0].IsDatetime
+                    ? System.Array.ConvertAll(TimeMs(args[0]), JgsTime.ToDatenum)
+                    : ToDoubles("datestr", args[0], line, col);
+
+            var moments = new DateTime[serials.Length];
+            for (int i = 0; i < serials.Length; i++)
+            {
+                double oaDate = serials[i] - matlabDatenumOffset;
+                if (double.IsNaN(oaDate) || oaDate < -657435.0 || oaDate > 2958465.99999999)
                 {
-                    return JgsValue.Str(JgsTime.Format(moments[0], tag));
+                    throw new JgsRuntimeException(line, col, "datestr: the serial date number is out of range.");
                 }
 
-                return PadIntoCharMatrix(System.Array.ConvertAll(moments, ms => JgsTime.Format(ms, tag)));
+                moments[i] = DateTime.FromOADate(oaDate);
             }
 
-            double serial = args.Count >= 1
-                ? Num("datestr", args, 0, line, col)
-                : DateTime.Now.ToOADate() + matlabDatenumOffset;
-
-            double oaDate = serial - matlabDatenumOffset;
-            if (double.IsNaN(oaDate) || oaDate < -657435.0 || oaDate > 2958465.99999999)
-            {
-                throw new JgsRuntimeException(line, col, "datestr: the serial date number is out of range.");
-            }
-
-            DateTime moment = DateTime.FromOADate(oaDate);
-            // Through the same token translation the datetime branch above uses (M64). Without it the
-            // one name read a format two ways: 'uuuu-MM-dd' was a year for a datetime and the four
-            // literal letters "uuuu" for a serial number. The translation leaves the .NET tokens this
-            // has always accepted alone, so nothing that worked stops working.
-            string format = args.Count >= 2
-                ? JgsTime.ToNetFormat(Str("datestr", args, 1, line, col))
-                : "dd-MMM-yyyy HH:mm:ss";
-            try
-            {
-                return JgsValue.Str(moment.ToString(format, CultureInfo.InvariantCulture));
-            }
-            catch (FormatException)
-            {
-                throw new JgsRuntimeException(line, col, $"datestr: '{format}' is not a valid .NET date format string.");
-            }
+            string shape = DatestrShape("datestr", args, moments, line, col);
+            string[] written = System.Array.ConvertAll(moments, m => JgsTime.FormatDatestr(m, shape));
+            return written.Length == 1 ? JgsValue.Str(written[0]) : PadIntoCharMatrix(written);
         });
 
         // datetime itself is registered by RegisterTimeBuiltins (M64), which replaced the placeholder
@@ -1910,7 +1900,9 @@ internal static partial class JgsBuiltins
             return JgsValue.Null;
         });
 
-        Define("close", (args, line, col) =>
+        // Silent: MATLAB's close answers whether the figures went only when an output is asked for,
+        // so the bare command form — `close all` at the top of a script — prints nothing.
+        DefineSilent("close", (args, line, col) =>
         {
             // close(v) on a VideoWriter finishes its file. It is told from close(figureNumber) by the
             // argument's class rather than by counting, so neither verb has to know about the other.
@@ -6264,6 +6256,42 @@ internal static partial class JgsBuiltins
         }
 
         return result;
+    }
+
+    /// <summary>
+    /// Which format a <c>datestr</c> call asked for: the one it spelled out, the one a number stands
+    /// for, or — with nothing asked — the date alone when every moment is midnight and the date and
+    /// time otherwise, which is R2025b's rule for the bare call.
+    /// </summary>
+    private static string DatestrShape(
+        string name, IReadOnlyList<JgsValue> args, DateTime[] moments, int line, int col)
+    {
+        if (args.Count < 2)
+        {
+            foreach (DateTime moment in moments)
+            {
+                if (moment.TimeOfDay != TimeSpan.Zero)
+                {
+                    return JgsTime.DatestrPattern(0)!;
+                }
+            }
+
+            return JgsTime.DatestrPattern(1)!;
+        }
+
+        if (args[1].Type == JgsType.String)
+        {
+            return args[1].AsString;
+        }
+
+        double id = Num(name, args, 1, line, col);
+        if (id != System.Math.Truncate(id) || JgsTime.DatestrPattern((int)id) is not { } numbered)
+        {
+            throw new JgsRuntimeException(line, col,
+                $"{name}: {FormatNumber(id)} is not one of datestr's numbered formats.");
+        }
+
+        return numbered;
     }
 
     /// <summary>Numeric unpack of a whole array value: packed buffers bulk-copy, boxed arrays convert per element.</summary>

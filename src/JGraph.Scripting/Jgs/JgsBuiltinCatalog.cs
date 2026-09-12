@@ -548,7 +548,7 @@ public static class JgsBuiltinCatalog
         Add("istimetable", "Whether a value is a table with row time coordinates.", P("value"));
         Add("imtile", "Arranges a cell of images in a grid, with borders, background and thumbnail sizing.", P("images"), Opt("options"));
         Add("timetable", "A table whose first variable is the row times: timetable(rowTimes, var1, …).", P("rowTimes"), P("var1"));
-        Add("categorical", "Category labels from a cell or array (represented as the cell of names).", P("x"));
+        Add("categorical", "Category labels from a cell or array (represented as the cell of names); a value set and its category names relabel them.", P("x"), Opt("valueset"), Opt("categorynames"));
         Add("summary", "Per-variable statistics of a table, or category counts of a categorical, as a struct.", P("x"));
         Add("string", "The value as a string array: a char row becomes one string, a cell or array one per element.", P("x"));
         Add("strings", "An array of empty strings: strings(n) is n-by-n, strings(r, c) is r-by-c.", P("rows?"), P("cols?"));
@@ -935,7 +935,7 @@ public static class JgsBuiltinCatalog
         Add("clock", "The current local time as a [year, month, day, hour, minute, seconds] vector.");
         Add("now", "The current local date and time as a serial date number (days since year 0).");
         Add("datenum", "Serial date number from year, month, day (optionally hour, minute, second), or a 3-/6-element vector.", P("year"), P("month"), P("day"), Opt("hour"), Opt("minute"), Opt("second"));
-        Add("datestr", "Formats a datetime or a serial date number (default: now) as text.", Opt("when"), Opt("format"));
+        Add("datestr", "Formats a datetime or a serial date number (default: now) as text, in datestr's own tokens (mm month, MM minute) or by a numbered format 0-31.", Opt("when"), Opt("format"));
         Add("date", "The current local date as a 'dd-MMM-yyyy' string.");
         Add("time", "The current time as Unix epoch seconds (UTC), including a fractional part.");
 
@@ -2208,7 +2208,7 @@ public static class JgsBuiltinCatalog
         Add("feather", "The same arrows spread along the x axis in sample order: feather(u, v), feather(z), with a line spec and options.", P("u"), Opt("v"), Opt("spec"));
         Add("plot", "Line plot: plot(y), plot(x, y, spec?), or plot(table, xColumn, yColumn, spec?), with LineWidth, Color, LineStyle, Marker, MarkerSize, MarkerEdgeColor, MarkerFaceColor, MarkerIndices, LineJoin and AlignVertexCenters.", P("x"), P("y"), Opt("spec"), Opt("options"));
         Add("scatter", "Scatter plot: scatter(x, y), scatter(x, y, sz, c, 'filled'), or scatter(table, xColumn, yColumn).", P("x"), P("y"), Opt("sz"), Opt("c"));
-        Add("bar", "Bar chart, one series per column: bar(y), bar(x, y), bar(x, y, width), bar(x, y, 'stacked').", P("x"), P("y"), Opt("width"));
+        Add("bar", "Bar chart, one series per column: bar(y), bar(x, y), bar(x, y, width), bar(x, y, 'stacked'), any of them followed by 'Name', value pairs.", P("x"), P("y"), Opt("width"));
         Add("barh", "Horizontal bar chart, taking everything bar takes: barh(y), barh(x, y, 'stacked').", P("x"), P("y"), Opt("width"));
         Add("stairs", "Stairstep line: stairs(y), stairs(x, y), [xb, yb] = stairs(x, y) for the path alone.", P("x"), Opt("y"));
         Add("area", "Filled band under a series, stacked one per column: area(y), area(x, y), area(x, y, baseValue).", P("x"), P("y"), Opt("baseValue"));

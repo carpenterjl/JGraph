@@ -141,16 +141,18 @@ internal static partial class JgsBuiltins
         // A categorical is its cell of category names; class() will say cell, and summary counts.
         Define("categorical", (args, line, col) =>
         {
-            Arity("categorical", args, 1, line, col);
+            ArityRange("categorical", args, 1, 3, line, col);
             JgsValue input = args[0];
-            return input.Type switch
+            JgsValue named = input.Type switch
             {
-                JgsType.Cell => JgsValue.Cell(Array.ConvertAll(input.AsCell, StringOf)),
-                JgsType.Array => JgsValue.Cell(Array.ConvertAll(input.BoxedElements(), StringOf)),
+                JgsType.Cell => CellShapedLike(input, Array.ConvertAll(input.AsCell, StringOf)),
+                JgsType.Array => CellShapedLike(input, Array.ConvertAll(input.BoxedElements(), StringOf)),
                 JgsType.String => JgsValue.Cell([input]),
                 _ => throw new JgsRuntimeException(line, col,
                     $"categorical expects a cell or array, but got a {input.TypeName}."),
             };
+
+            return args.Count == 1 ? named : Relabelled(named, args, line, col);
         });
 
         Define("summary", (args, line, col) =>
@@ -478,6 +480,89 @@ internal static partial class JgsBuiltins
         }
 
         return JgsValue.Str(value.Display());
+    }
+
+    /// <summary>What MATLAB calls an element of a categorical whose value is in no category.</summary>
+    internal const string UndefinedCategory = "<undefined>";
+
+    /// <summary>
+    /// <c>categorical(values, valueset)</c> and <c>categorical(values, valueset, names)</c>: a value
+    /// that stands in the value set takes the name at its place there, and one that does not becomes
+    /// <c>&lt;undefined&gt;</c>, which is what R2025b's display and its <c>cellstr</c> call it.
+    /// Without the third argument the value set names itself, written the way the values were.
+    /// </summary>
+    /// <remarks>
+    /// Matching is on the text each value is written as, because that is already what a categorical
+    /// is here — a cell of names — so the value set and the values are compared after exactly one
+    /// conversion rather than two kinds of comparison, one per kind of value set.
+    /// </remarks>
+    private static JgsValue Relabelled(JgsValue named, IReadOnlyList<JgsValue> args, int line, int col)
+    {
+        string[] valueset = TextElementsOf("categorical: the value set", args[1], line, col);
+        string[] names = args.Count >= 3
+            ? TextElementsOf("categorical: the category names", args[2], line, col)
+            : valueset;
+        if (names.Length != valueset.Length)
+        {
+            throw new JgsRuntimeException(line, col,
+                $"categorical: the value set has {valueset.Length} values but there are {names.Length} category names.");
+        }
+
+        var byValue = new Dictionary<string, string>(StringComparer.Ordinal);
+        for (int i = 0; i < valueset.Length; i++)
+        {
+            if (!byValue.TryAdd(valueset[i], names[i]))
+            {
+                throw new JgsRuntimeException(line, col,
+                    $"categorical: '{valueset[i]}' appears more than once in the value set.");
+            }
+        }
+
+        JgsValue[] elements = named.AsCell;
+        var relabelled = new JgsValue[elements.Length];
+        for (int i = 0; i < relabelled.Length; i++)
+        {
+            relabelled[i] = JgsValue.Str(byValue.TryGetValue(elements[i].AsString, out string? name)
+                ? name
+                : UndefinedCategory);
+        }
+
+        return CellShapedLike(named, relabelled);
+    }
+
+    /// <summary>Every element of a cell, string array or numeric array, written as text.</summary>
+    private static string[] TextElementsOf(string what, JgsValue value, int line, int col)
+    {
+        if (value.Type == JgsType.String)
+        {
+            return [value.AsString];
+        }
+
+        JgsValue[] elements = value.Type switch
+        {
+            JgsType.Cell => value.AsCell,
+            JgsType.Array => value.BoxedElements(),
+            _ => throw new JgsRuntimeException(line, col,
+                $"{what} must be a cell, a string array, or a numeric array, not a {value.TypeName}."),
+        };
+
+        return Array.ConvertAll(elements, static e => StringOf(e).AsString);
+    }
+
+    /// <summary>Wraps freshly built elements in a cell of the input's shape.</summary>
+    private static JgsValue CellShapedLike(JgsValue input, JgsValue[] elements)
+    {
+        JgsValue result = JgsValue.Cell(elements);
+        if (input.Rows > 1 && input.Cols > 1)
+        {
+            result.Reshape(input.Rows, input.Cols);
+        }
+        else if (elements.Length > 1 && input.Cols == 1 && input.Rows > 1)
+        {
+            result.Reshape(elements.Length, 1);
+        }
+
+        return result;
     }
 
     /// <summary>Wraps freshly built elements in the input's shape (or a plain row when unshaped).</summary>

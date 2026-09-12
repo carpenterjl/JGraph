@@ -187,10 +187,12 @@ internal static partial class JgsBuiltins
             // Where the option pairs begin stays put; only how much of the head is data moves.
             int optionStart = dataEnd;
             double? width = null;
-            if (dataEnd > 1 && IsScalar(rest[dataEnd - 1]) && !IsScalar(rest[dataEnd - 2]))
+            if (dataEnd > 1 && IsScalar(rest[dataEnd - 1]) && (dataEnd > 2 || !IsScalar(rest[0])))
             {
-                // A trailing scalar is the bar width — unless everything is a scalar, in which case
-                // the call is bar(x, y) drawing a single bar and there is no width to find.
+                // A trailing scalar is the bar width — unless the data is two scalars and nothing
+                // else, in which case the call is bar(x, y) drawing a single bar and there is no
+                // width to find. A third number settles it: bar(x, y, w) is the only reading of one,
+                // whatever name/value pairs follow it.
                 width = rest[dataEnd - 1].AsNumber;
                 dataEnd--;
             }
@@ -263,6 +265,10 @@ internal static partial class JgsBuiltins
         });
     }
 
+    /// <summary>Whether a colour option was written as the word 'none'.</summary>
+    private static bool IsNoneWord(JgsValue value) =>
+        value.Type == JgsType.String && value.AsString.Equals("none", StringComparison.OrdinalIgnoreCase);
+
     private static void BarOptions(
         string name, IReadOnlyList<BarPlot> plots, IReadOnlyList<JgsValue> args,
         int start, int line, int col)
@@ -281,6 +287,14 @@ internal static partial class JgsBuiltins
             {
                 switch (option.ToLowerInvariant())
                 {
+                    // 'none' is not a colour but the absence of one, which a bar draws by having
+                    // nothing to draw with: no stroke around the bar, no paint inside it.
+                    case "facecolor" when IsNoneWord(value):
+                        plot.FaceAlpha = 0;
+                        break;
+                    case "edgecolor" when IsNoneWord(value):
+                        plot.EdgeWidth = 0;
+                        break;
                     case "facecolor":
                         plot.FillColor = OptionColor(value, line, col, name);
                         break;

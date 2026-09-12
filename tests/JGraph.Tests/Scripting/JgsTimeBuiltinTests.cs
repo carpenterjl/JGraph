@@ -125,11 +125,18 @@ public class JgsTimeBuiltinTests : IDisposable
 
     [Fact]
     public async Task Datestr_DefaultFormat_RoundTripsFromDatenum() =>
-        Assert.Equal("01-Jan-2020 00:00:00", await Eval("datestr(datenum(2020, 1, 1))"));
+        // A moment at midnight is a date, which is what the bare call answers with in R2025b.
+        Assert.Equal("01-Jan-2020", await Eval("datestr(datenum(2020, 1, 1))"));
 
     [Fact]
-    public async Task Datestr_CustomFormat_UsesDotNetTokens() =>
-        Assert.Equal("2020-01-01", await Eval("datestr(737791, 'yyyy-MM-dd')"));
+    public async Task Datestr_CustomFormat_UsesDatestrsOwnTokens() =>
+        // Lower-case mm is the month and upper-case MM the minute, which is datestr's own language
+        // rather than datetime's (ADR 0152). Both lines are R2025b's answers.
+        Assert.Equal("2020-01-01", await Eval("datestr(737791, 'yyyy-mm-dd')"));
+
+    [Fact]
+    public async Task Datestr_UpperCaseMM_IsTheMinute() =>
+        Assert.Equal("2020-00-01", await Eval("datestr(737791, 'yyyy-MM-dd')"));
 
     [Fact]
     public async Task Datestr_OutOfRangeSerial_IsRuntimeError()

@@ -1,0 +1,76 @@
+CHK|list_plain|x,y,z|exact
+CHK|list_through_field|x,y,z|exact
+CHK|list_through_field_size|[1 3]|shape
+CHK|list_two_fields_deep|x,y,z|exact
+CHK|list_through_cell|x,y,z|exact
+CHK|list_field_sliced|y,z|exact
+CHK|list_numeric_through_field|[1 2 3]|exact
+CHK|list_count|3|exact
+CHK|list_as_arguments|xyz|exact
+CHK|list_sorted|x,y,z|exact
+CHK|datestr_default|12-Sep-2026 14:35:07|exact
+CHK|datestr_iso|2026-09-12 14:35:07|exact
+CHK|datestr_day_month_year|12-Sep-2026|exact
+CHK|datestr_month_name|September 12, 2026|exact
+CHK|datestr_compact|20260912T143507|exact
+CHK|datestr_fraction|14:35:07.250|exact
+CHK|datestr_quarter|Q3 26|exact
+CHK|datestr_weekday|Sat Sep 12|exact
+CHK|datestr_weekday_full|Saturday|exact
+CHK|datestr_initials|S S|exact
+CHK|datestr_meridiem| 2:35 PM|exact
+CHK|datestr_meridiem_am| 9:05 AM|exact
+CHK|datestr_hour_24|09:05:03|exact
+CHK|datestr_literal|2026 at 14:35|exact
+CHK|datestr_id_0|12-Sep-2026 14:35:07|exact
+CHK|datestr_id_1|12-Sep-2026|exact
+CHK|datestr_id_2|09/12/26|exact
+CHK|datestr_id_3|Sep|exact
+CHK|datestr_id_5|09|exact
+CHK|datestr_id_12|Sep26|exact
+CHK|datestr_id_13|14:35:07|exact
+CHK|datestr_id_14| 2:35:07 PM|exact
+CHK|datestr_id_16| 2:35 PM|exact
+CHK|datestr_id_17|Q3-26|exact
+CHK|datestr_id_18|Q3|exact
+CHK|datestr_id_21|Sep.12,2026 14:35:07|exact
+CHK|datestr_id_23|09/12/2026|exact
+CHK|datestr_id_26|2026/09/12|exact
+CHK|datestr_id_29|2026-09-12|exact
+CHK|datestr_id_30|20260912T143507|exact
+CHK|datestr_id_31|2026-09-12 14:35:07|exact
+CHK|datestr_midnight_default|05-Jan-2026|exact
+CHK|datestr_vector_size|[2 19]|shape
+CHK|datestr_vector_second|2026-01-05 09:05:03|exact
+CHK|cell_grow_two_subscripts|[2 1]|shape
+CHK|cell_grow_wrote|a|exact
+CHK|cell_grow_from_column|[2 1]|shape
+CHK|cell_grow_linear_empty|[1 3]|shape
+CHK|cell_grow_column_stays_column|[4 1]|shape
+CHK|cell_grow_column_kept|q|exact
+CHK|cell_grow_row_stays_row|[1 4]|shape
+CHK|cell_grow_rectangle|[2 3]|shape
+CHK|cell_grow_both_ways|[3 3]|shape
+CHK|cell_grow_from_empty_row|[1 3]|shape
+CHK|cell_grow_column_widened|[2 4]|shape
+CHK|cell_grow_fill_is_empty|0|exact
+CHK|cell_grow_fill_shape|[0 0]|div=ADR0152
+CHK|bar_group_two_first|[0.85714285714285721 1.8571428571428572 2.8571428571428572]|exact
+CHK|bar_group_two_second|[1.1428571428571428 2.1428571428571428 3.1428571428571428]|exact
+CHK|bar_group_three_first|[0.77777777777777779 1.7777777777777777 2.7777777777777777]|exact
+CHK|bar_group_three_middle|[1 2 3]|exact
+CHK|bar_group_six_first|[0.66666666666666674 1.6666666666666667]|exact
+CHK|bar_group_spacing_two|[0.7142857142857143 2.7142857142857144 4.7142857142857144]|exact
+CHK|bar_single_series|[1 2 3]|exact
+CHK|bar_width_then_pairs_x|1|exact
+CHK|bar_width_then_pairs_width|0.59999999999999998|exact
+CHK|bar_width_then_pairs_color|[0 0 1]|exact
+CHK|bar_vector_width_then_pairs|0.40000000000000002|exact
+CHK|bar_two_scalars_is_x_and_y|0.80000000000000004|exact
+CHK|bar_two_scalars_position|1|exact
+CHK|categorical_size|[3 1]|shape
+CHK|categorical_names|A,A,B|exact
+CHK|categorical_unused_level|A,A,B|exact
+CHK|categorical_text_values|Ex,Why,Ex|exact
+CHK|categorical_value_outside_set|A,<undefined>,B|exact
+CHK|categorical_value_set_names_itself|1,2|exact

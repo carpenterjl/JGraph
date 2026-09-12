@@ -6032,48 +6032,33 @@ internal sealed partial class Interpreter
             }
         }
 
-        // A struct array's field is a list of that field across the elements. Reading the target is
-        // restricted to a plain name so that asking the question cannot run a call twice; s.field is
-        // the form scripts write. MATLAB dialect only: JGS has answered this with the collected row
-        // since M41 and that surface is frozen.
-        if (Dialect.IsMatlab && expr is MemberExpr { Target: VariableExpr name } member
-            && LookUp(name.Name, env, out JgsValue array)
-            && array.IsStructArray)
-        {
-            return StructArrayFieldValues(array, FieldName(member, env), member);
-        }
-
-        // S(2:3).field names the same list over a slice. The target is evaluated once and only when
-        // the name it indexes already holds a struct, which is what keeps the restriction above —
-        // asking the question must not run anything twice — while letting the commoner half of the
-        // idiom through.
-        // The subscript reaches here as either shape, because MATLAB spells indexing and calling the
-        // same way and the parser cannot know which S is until it runs.
+        // A struct array's field is a list of that field across the elements, however the array was
+        // reached: s.field, s(2:3).field, h.list.field, k{1}.field. What the target may be is said
+        // in terms of the whole path rather than its last step — every step must be a subscript or a
+        // field over a variable that already holds a struct or a cell. Such a path names stored
+        // values and holds no call, so evaluating it to ask the question cannot run anything, which
+        // is the restriction the single-name form was written for; a root that is a class instance
+        // is left out of it, because a property read there is a call in all but spelling.
+        // MATLAB dialect only: JGS has answered this with the collected row since M41 and that
+        // surface is frozen.
         if (Dialect.IsMatlab
-            && expr is MemberExpr picked
-            && SubscriptedName(picked.Target) is { } indexed
-            && LookUp(indexed, env, out JgsValue whole)
-            && whole.Type == JgsType.Struct
-            && Evaluate(picked.Target, env) is { } chosen
-            && chosen.IsStructArray)
+            && expr is MemberExpr member
+            && RootName(member.Target) is { } root
+            && LookUp(root, env, out JgsValue holder)
+            && holder.Type is JgsType.Struct or JgsType.Cell)
         {
-            return StructArrayFieldValues(chosen, FieldName(picked, env), picked);
+            // Read once: the path is walked here, and if what it named is not a struct array after
+            // all — h.list(2).b picks one element — the dot finishes on the value in hand rather
+            // than sending the whole path round again, which would run a subscript's call twice.
+            JgsValue owner = Evaluate(member.Target, env);
+            string field = FieldName(member, env);
+            return owner.IsStructArray
+                ? StructArrayFieldValues(owner, field, member)
+                : [MemberOf(owner, field, member, autoCall: true)];
         }
 
         return [Evaluate(expr, env)];
     }
-
-    /// <summary>
-    /// The plain name a subscript expression is over, or null when it is over anything else. Both
-    /// shapes are checked because MATLAB spells indexing and calling alike, so which one the parser
-    /// built says nothing about which one it turns out to be.
-    /// </summary>
-    private static string? SubscriptedName(Expr expr) => expr switch
-    {
-        IndexExpr { Target: VariableExpr name } => name.Name,
-        CallExpr { Callee: VariableExpr callee } => callee.Name,
-        _ => null,
-    };
 
     /// <summary>
     /// Evaluates a whole argument or element list, spreading any comma-separated list inside it.
@@ -6112,7 +6097,7 @@ internal sealed partial class Interpreter
         for (int i = 0; i < exprs.Count; i++)
         {
             if (exprs[i] is BraceIndexExpr
-                || (Dialect.IsMatlab && exprs[i] is MemberExpr { Target: VariableExpr }))
+                || (Dialect.IsMatlab && exprs[i] is MemberExpr))
             {
                 return true;
             }
@@ -6218,8 +6203,16 @@ internal sealed partial class Interpreter
             return constructorMember;
         }
 
-        JgsValue target = Evaluate(member.Target, env);
+        return MemberOf(Evaluate(member.Target, env), field, member, autoCall);
+    }
 
+    /// <summary>
+    /// What a dot names on a target that has already been read. Split out of
+    /// <see cref="EvaluateMember"/> so a caller that had to read the target to find out what it is
+    /// — the comma-separated list does — can finish the read rather than walk the path again.
+    /// </summary>
+    private JgsValue MemberOf(JgsValue target, string field, MemberExpr member, bool autoCall)
+    {
         // A table's dot reads a variable's column (M43): numeric columns come back as column
         // vectors, text columns as cells so T.Code{2} braces in.
         if (target.Type == JgsType.Table)
@@ -6638,9 +6631,38 @@ internal sealed partial class Interpreter
 
         JgsValue[] elements = target.AsCell;
 
-        // C{r, c} writes through the cell's shape, in range only — growth is the linear form's.
+        // C{r, c} writes through the cell's shape, growing it to reach a slot past an edge — to
+        // r-by-c rectangle enclosing what was there and what was named, which is MATLAB's rule and
+        // the one the accumulation idiom C{end + 1, 1} = v relies on. Growth needs a rebindable
+        // name, so a cell reached through a field keeps the in-range write it has always had.
         if (brace.Indices.Count == 2)
         {
+            int[] extents = [target.Rows, target.Cols];
+            if (target.Rows * target.Cols == elements.Length
+                && TryOneSubscript(brace.Indices[0], extents, 0, env, out int row)
+                && TryOneSubscript(brace.Indices[1], extents, 1, env, out int column))
+            {
+                if (row < target.Rows && column < target.Cols)
+                {
+                    elements[row + (column * target.Rows)] = value;
+                    return value;
+                }
+
+                if (variable is null)
+                {
+                    throw new JgsRuntimeException(brace.Line, brace.Column,
+                        "A cell reached through a field cannot grow by brace assignment; assign the field a larger cell first.");
+                }
+
+                JgsValue widened = GrownCell(
+                    target,
+                    System.Math.Max(target.Rows, row + 1),
+                    System.Math.Max(target.Cols, column + 1));
+                widened.AsCell[row + (column * widened.Rows)] = value;
+                Rebind(variable.Name, widened, env);
+                return value;
+            }
+
             int[] slots = BraceSlots(target, brace.Indices, brace, env);
             if (slots.Length != 1)
             {
@@ -6675,20 +6697,87 @@ internal sealed partial class Interpreter
                     "A cell reached through a field cannot grow by brace assignment; assign the field a larger cell first.");
             }
 
-            var grown = new JgsValue[position + 1];
-            System.Array.Copy(elements, grown, elements.Length);
-            for (int i = elements.Length; i < grown.Length; i++)
+            // One subscript grows along the dimension the cell already runs in: a column stays a
+            // column, a row or an empty becomes a row, and a cell that is neither has no one
+            // dimension to grow — which is what MATLAB refuses by name rather than picking for you.
+            bool column = target.Cols == 1 && target.Rows != 1;
+            if (elements.Length > 0 && target.Rows > 1 && target.Cols > 1)
             {
-                grown[i] = JgsValue.Array(System.Array.Empty<JgsValue>());
+                throw new JgsRuntimeException(brace.Line, brace.Column,
+                    "Attempt to grow array along ambiguous dimension.");
             }
 
-            grown[position] = value;
-            Rebind(variable.Name, JgsValue.Cell(grown), env);
+            JgsValue grown = column
+                ? GrownCell(target, System.Math.Max(target.Rows, position + 1), 1)
+                : GrownCell(target, 1, System.Math.Max(elements.Length, position + 1));
+            grown.AsCell[position] = value;
+            Rebind(variable.Name, grown, env);
             return value;
         }
 
         elements[position] = value;
         return value;
+    }
+
+    /// <summary>
+    /// The single zero-based subscript an index expression names, or false where it names ':', a
+    /// list, a mask, or anything that is not a whole position. Growth is defined for the one-slot
+    /// write alone, so everything else is left to the in-range path, which already says what is
+    /// wrong with it.
+    /// </summary>
+    private bool TryOneSubscript(
+        Expr subscript, int[] extents, int which, JgsEnvironment env, out int position)
+    {
+        position = -1;
+        JgsValue? index = EvaluateIndexArgument(subscript, extents, which, env);
+        if (index is null || index.Type != JgsType.Number)
+        {
+            return false;
+        }
+
+        double named = index.AsNumber;
+        if (named != System.Math.Truncate(named) || named < Dialect.IndexBase)
+        {
+            return false;
+        }
+
+        position = (int)named - Dialect.IndexBase;
+        return true;
+    }
+
+    /// <summary>
+    /// A cell of exactly <paramref name="rows"/> by <paramref name="cols"/> holding what
+    /// <paramref name="cell"/> held, each element where its own subscripts put it. The slots that
+    /// were not there before hold <c>[]</c>, which is what MATLAB fills a grown cell with.
+    /// </summary>
+    private static JgsValue GrownCell(JgsValue cell, int rows, int cols)
+    {
+        JgsValue[] held = cell.AsCell;
+        int wasRows = cell.Rows;
+        int wasCols = cell.Cols;
+        if (wasRows * wasCols != held.Length)
+        {
+            // A cell that never had a shape put on it is the row its storage spells.
+            (wasRows, wasCols) = held.Length == 0 ? (0, 0) : (1, held.Length);
+        }
+
+        var grown = new JgsValue[rows * cols];
+        for (int i = 0; i < grown.Length; i++)
+        {
+            grown[i] = JgsValue.Array(System.Array.Empty<JgsValue>());
+        }
+
+        for (int c = 0; c < wasCols && c < cols; c++)
+        {
+            for (int r = 0; r < wasRows && r < rows; r++)
+            {
+                grown[r + (c * rows)] = held[r + (c * wasRows)];
+            }
+        }
+
+        JgsValue answer = JgsValue.Cell(grown);
+        answer.Reshape(rows, cols);
+        return answer;
     }
 
     /// <summary>

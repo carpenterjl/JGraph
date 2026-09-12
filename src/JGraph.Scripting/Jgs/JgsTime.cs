@@ -384,6 +384,169 @@ internal static class JgsTime
         return built.ToString();
     }
 
+    // --- datestr's own format language (ADR 0152) ------------------------------------------------
+    //
+    // `datestr` predates `datetime` and reads a different language from it: lower-case mm is the
+    // month and upper-case MM the minute, where `datetime`'s tokens — Unicode's, which .NET shares —
+    // have it the other way round. Reading one language as the other is how 'yyyy-mm-dd HH:MM:SS'
+    // came out as 2026-35-12 14:09:25. There is no translation into .NET's tokens that works: QQ has
+    // no counterpart there, and HH means two different hours depending on whether AM/PM appears
+    // elsewhere in the format. So the language is walked directly.
+
+    /// <summary>The format string one of <c>datestr</c>'s numbered formats stands for.</summary>
+    /// <remarks>
+    /// Recorded from R2025b for a moment in the afternoon of the third quarter, which tells every
+    /// one of them apart. -1 is the default, which is what an out-of-table number is not.
+    /// </remarks>
+    public static string? DatestrPattern(int id) => id switch
+    {
+        -1 or 0 => "dd-mmm-yyyy HH:MM:SS",
+        1 => "dd-mmm-yyyy",
+        2 => "mm/dd/yy",
+        3 => "mmm",
+        4 => "m",
+        5 => "mm",
+        6 => "mm/dd",
+        7 => "dd",
+        8 => "ddd",
+        9 => "d",
+        10 => "yyyy",
+        11 => "yy",
+        12 => "mmmyy",
+        13 => "HH:MM:SS",
+        14 => "HH:MM:SS PM",
+        15 => "HH:MM",
+        16 => "HH:MM PM",
+        17 => "QQ-yy",
+        18 => "QQ",
+        19 => "dd/mm",
+        20 => "dd/mm/yy",
+        21 => "mmm.dd,yyyy HH:MM:SS",
+        22 => "mmm.dd,yyyy",
+        23 => "mm/dd/yyyy",
+        24 => "dd/mm/yyyy",
+        25 => "yy/mm/dd",
+        26 => "yyyy/mm/dd",
+        27 => "QQ-yyyy",
+        28 => "mmmyyyy",
+        29 => "yyyy-mm-dd",
+        30 => "yyyymmddTHHMMSS",
+        31 => "yyyy-mm-dd HH:MM:SS",
+        _ => null,
+    };
+
+    /// <summary>
+    /// A moment written in <c>datestr</c>'s format language: <c>yyyy</c>/<c>yy</c> year,
+    /// <c>QQ</c> quarter, <c>mmmm</c>/<c>mmm</c>/<c>mm</c>/<c>m</c> month, <c>dddd</c>/<c>ddd</c>
+    /// weekday and <c>dd</c>/<c>d</c> day, <c>HH</c> hour, <c>MM</c> minute, <c>SS</c> second,
+    /// <c>FFF</c> fraction, and <c>AM</c>/<c>PM</c> the marker. Anything else is written out.
+    /// </summary>
+    /// <remarks>
+    /// <c>HH</c> is the 24-hour clock on its own and the 12-hour clock, right-aligned in two
+    /// columns, when the format also carries an AM/PM marker — so <c>'HH:MM PM'</c> is " 2:35 PM"
+    /// and <c>'HH:MM'</c> is "14:35". The marker is written upper-case however it was spelled, which
+    /// is measured rather than chosen.
+    /// </remarks>
+    public static string FormatDatestr(DateTime moment, string format)
+    {
+        bool twelveHour = HasMeridiem(format);
+        var built = new System.Text.StringBuilder(format.Length + 8);
+        int i = 0;
+        while (i < format.Length)
+        {
+            if (IsMeridiemAt(format, i))
+            {
+                built.Append(moment.Hour < 12 ? "AM" : "PM");
+                i += 2;
+                continue;
+            }
+
+            char c = format[i];
+            int run = 1;
+            while (i + run < format.Length && format[i + run] == c)
+            {
+                run++;
+            }
+
+            i += run;
+            switch (c)
+            {
+                case 'y':
+                    built.Append((moment.Year % (run >= 4 ? 10000 : 100))
+                        .ToString(new string('0', run), CultureInfo.InvariantCulture));
+                    break;
+                case 'Q' when run >= 2:
+                    built.Append('Q').Append(((moment.Month - 1) / 3) + 1);
+                    break;
+                case 'm':
+                    built.Append(MonthToken(moment, run));
+                    break;
+                case 'd':
+                    built.Append(DayToken(moment, run));
+                    break;
+                case 'H':
+                    built.Append(twelveHour
+                        ? HourOfTwelve(moment).ToString(CultureInfo.InvariantCulture).PadLeft(run)
+                        : moment.Hour.ToString(new string('0', run), CultureInfo.InvariantCulture));
+                    break;
+                case 'M':
+                    built.Append(moment.Minute.ToString(new string('0', run), CultureInfo.InvariantCulture));
+                    break;
+                case 'S':
+                    built.Append(moment.Second.ToString(new string('0', run), CultureInfo.InvariantCulture));
+                    break;
+                case 'F':
+                    built.Append(moment.ToString(new string('f', run), CultureInfo.InvariantCulture));
+                    break;
+                default:
+                    built.Append(c, run);
+                    break;
+            }
+        }
+
+        return built.ToString();
+    }
+
+    /// <summary>Whether an AM/PM marker appears anywhere in a <c>datestr</c> format.</summary>
+    private static bool HasMeridiem(string format)
+    {
+        for (int i = 0; i + 1 < format.Length; i++)
+        {
+            if (IsMeridiemAt(format, i))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /// <summary>Whether the two characters at <paramref name="i"/> spell AM or PM, in either case.</summary>
+    private static bool IsMeridiemAt(string format, int i) =>
+        i + 1 < format.Length
+        && (format[i] is 'A' or 'a' or 'P' or 'p')
+        && (format[i + 1] is 'M' or 'm');
+
+    /// <summary>The hour on the twelve-hour clock, with midnight and noon reading 12.</summary>
+    private static int HourOfTwelve(DateTime moment) =>
+        moment.Hour % 12 == 0 ? 12 : moment.Hour % 12;
+
+    private static string MonthToken(DateTime moment, int run) => run switch
+    {
+        1 => CultureInfo.InvariantCulture.DateTimeFormat.GetAbbreviatedMonthName(moment.Month)[..1],
+        2 => moment.Month.ToString("00", CultureInfo.InvariantCulture),
+        3 => CultureInfo.InvariantCulture.DateTimeFormat.GetAbbreviatedMonthName(moment.Month),
+        _ => CultureInfo.InvariantCulture.DateTimeFormat.GetMonthName(moment.Month),
+    };
+
+    private static string DayToken(DateTime moment, int run) => run switch
+    {
+        1 => CultureInfo.InvariantCulture.DateTimeFormat.GetAbbreviatedDayName(moment.DayOfWeek)[..1],
+        2 => moment.Day.ToString("00", CultureInfo.InvariantCulture),
+        3 => CultureInfo.InvariantCulture.DateTimeFormat.GetAbbreviatedDayName(moment.DayOfWeek),
+        _ => CultureInfo.InvariantCulture.DateTimeFormat.GetDayName(moment.DayOfWeek),
+    };
+
     /// <summary>
     /// Translates MATLAB's date format tokens into .NET's. Only the tokens that differ are touched,
     /// which is why a format a script wrote for <c>datestr</c> in .NET tokens keeps working.
