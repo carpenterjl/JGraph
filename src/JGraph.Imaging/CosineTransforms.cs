@@ -1,5 +1,6 @@
+using System.Buffers;
 using System.Numerics;
-using JGraph.Signal;
+using JGraph.Numerics;
 
 namespace JGraph.Imaging;
 
@@ -58,39 +59,73 @@ public static class CosineTransforms
     /// <returns>The coefficients, the same length.</returns>
     public static double[] Forward(ReadOnlySpan<double> values)
     {
+        var result = new double[values.Length];
+        Forward(values, result, inside: false);
+        return result;
+    }
+
+    /// <summary>
+    /// The orthonormal DCT-II of one line, written into <paramref name="result"/> (the same length
+    /// as <paramref name="values"/>). <paramref name="inside"/> lets the one transform underneath
+    /// thread itself when the caller has nothing else for the machine — a single long line rather
+    /// than a batch of short ones. The arithmetic is the same either way, and the same as the boxed
+    /// road this replaced: the even extension over two planes of doubles instead of an array of
+    /// <see cref="Complex"/>, the same FFT, and the half-sample turn spelled as the Complex multiply
+    /// spelled it, <c>(re·cos − im·sin)</c>.
+    /// </summary>
+    /// <param name="values">The samples.</param>
+    /// <param name="result">Where the coefficients go; must not overlap <paramref name="values"/>.</param>
+    /// <param name="inside">Whether the transform may spend threads within itself.</param>
+    public static void Forward(ReadOnlySpan<double> values, Span<double> result, bool inside)
+    {
         int n = values.Length;
+        if (result.Length != n)
+        {
+            throw new ArgumentException("the result must be the length of the input.", nameof(result));
+        }
+
         if (n == 0)
         {
-            return [];
+            return;
         }
 
         if (n == 1)
         {
-            return [values[0]];
+            result[0] = values[0];
+            return;
         }
 
         // The even extension: x0…x(n-1) followed by x(n-1)…x0. Its DFT, turned by a half-sample
         // phase, is real and is twice the unnormalized DCT-II.
-        var extended = new Complex[2 * n];
-        for (int i = 0; i < n; i++)
+        int length = 2 * n;
+        var pool = ArrayPool<double>.Shared;
+        double[] re = pool.Rent(length);
+        double[] im = pool.Rent(length);
+        try
         {
-            extended[i] = new Complex(values[i], 0);
-            extended[(2 * n) - 1 - i] = new Complex(values[i], 0);
+            Array.Clear(im, 0, length);
+            for (int i = 0; i < n; i++)
+            {
+                re[i] = values[i];
+                re[length - 1 - i] = values[i];
+            }
+
+            FftKernels.Transform(re.AsSpan(0, length), im.AsSpan(0, length), length, inverse: false, inside);
+
+            double first = Math.Sqrt(1.0 / n);
+            double rest = Math.Sqrt(2.0 / n);
+            for (int k = 0; k < n; k++)
+            {
+                double angle = -Math.PI * k / (2.0 * n);
+                double half = ((re[k] * Math.Cos(angle)) - (im[k] * Math.Sin(angle))) / 2.0;
+                result[k] = half * (k == 0 ? first : rest);
+            }
         }
-
-        Fft.Transform(extended, inverse: false);
-
-        var result = new double[n];
-        double first = Math.Sqrt(1.0 / n);
-        double rest = Math.Sqrt(2.0 / n);
-        for (int k = 0; k < n; k++)
+        finally
         {
-            double angle = -Math.PI * k / (2.0 * n);
-            double half = (extended[k] * Complex.FromPolarCoordinates(1, angle)).Real / 2.0;
-            result[k] = half * (k == 0 ? first : rest);
+            pool.Return(re);
+            pool.Return(im);
         }
-
-        return result;
     }
 
     /// <summary>The orthonormal DCT-III of one line — the exact inverse of <see cref="Forward(ReadOnlySpan{double})"/>.</summary>
@@ -98,38 +133,72 @@ public static class CosineTransforms
     /// <returns>The samples, the same length.</returns>
     public static double[] Inverse(ReadOnlySpan<double> coefficients)
     {
+        var result = new double[coefficients.Length];
+        Inverse(coefficients, result, inside: false);
+        return result;
+    }
+
+    /// <summary>
+    /// The orthonormal DCT-III of one line, written into <paramref name="result"/>; the counterpart
+    /// of <see cref="Forward(ReadOnlySpan{double}, Span{double}, bool)"/>, with the same arithmetic
+    /// as the boxed road: the half-filled, half-sample-shifted spectrum built as
+    /// <c>(w·cos, w·sin)</c>, one inverse FFT, and the real part scaled back.
+    /// </summary>
+    /// <param name="coefficients">The coefficients.</param>
+    /// <param name="result">Where the samples go; must not overlap <paramref name="coefficients"/>.</param>
+    /// <param name="inside">Whether the transform may spend threads within itself.</param>
+    public static void Inverse(ReadOnlySpan<double> coefficients, Span<double> result, bool inside)
+    {
         int n = coefficients.Length;
+        if (result.Length != n)
+        {
+            throw new ArgumentException("the result must be the length of the input.", nameof(result));
+        }
+
         if (n == 0)
         {
-            return [];
+            return;
         }
 
         if (n == 1)
         {
-            return [coefficients[0]];
+            result[0] = coefficients[0];
+            return;
         }
 
         // x(j) = Σ w(k)·cos(π·k·(2j+1)/2n) with the orthonormal weights folded into w. Written as a
         // length-2n inverse transform of a half-filled, half-sample-shifted spectrum, that sum is
         // one FFT rather than n².
-        var spectrum = new Complex[2 * n];
-        double first = Math.Sqrt(1.0 / n);
-        double rest = Math.Sqrt(2.0 / n);
-        for (int k = 0; k < n; k++)
+        int length = 2 * n;
+        var pool = ArrayPool<double>.Shared;
+        double[] re = pool.Rent(length);
+        double[] im = pool.Rent(length);
+        try
         {
-            double weight = coefficients[k] * (k == 0 ? first : rest);
-            spectrum[k] = Complex.FromPolarCoordinates(weight, Math.PI * k / (2.0 * n));
+            Array.Clear(re, 0, length);
+            Array.Clear(im, 0, length);
+            double first = Math.Sqrt(1.0 / n);
+            double rest = Math.Sqrt(2.0 / n);
+            for (int k = 0; k < n; k++)
+            {
+                double weight = coefficients[k] * (k == 0 ? first : rest);
+                double angle = Math.PI * k / (2.0 * n);
+                re[k] = weight * Math.Cos(angle);
+                im[k] = weight * Math.Sin(angle);
+            }
+
+            FftKernels.Transform(re.AsSpan(0, length), im.AsSpan(0, length), length, inverse: true, inside);
+
+            for (int j = 0; j < n; j++)
+            {
+                result[j] = re[j] * 2 * n;
+            }
         }
-
-        Fft.Transform(spectrum, inverse: true);
-
-        var result = new double[n];
-        for (int j = 0; j < n; j++)
+        finally
         {
-            result[j] = spectrum[j].Real * 2 * n;
+            pool.Return(re);
+            pool.Return(im);
         }
-
-        return result;
     }
 
     /// <summary>The two-dimensional DCT: the one-dimensional transform down each column, then along each row.</summary>

@@ -1,5 +1,6 @@
 using System.Buffers;
 using System.Collections.Concurrent;
+using System.Diagnostics;
 using System.Numerics;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
@@ -471,50 +472,34 @@ public static class FftKernels
     /// <summary>
     /// Bluestein's chirp-z transform: a length that is not a power of two written as a circular
     /// convolution of length 2n−1, padded up to one that is. The chirp exponent is reduced modulo
-    /// 2n in whole numbers so the phases stay accurate however long the signal is.
+    /// 2n in whole numbers so the phases stay accurate however long the signal is. The chirp and
+    /// its transform are a plan — a pure function of the length and direction — taken from
+    /// <see cref="BluesteinPlanFor"/>, so a repeated length pays for them once; the two transforms
+    /// that remain thread their tiles when <paramref name="inside"/> says the caller has nothing
+    /// else for the machine.
     /// </summary>
-    private static void Bluestein(Span<double> re, Span<double> im, int n, bool inverse)
+    private static void Bluestein(Span<double> re, Span<double> im, int n, bool inverse, bool inside)
     {
-        double sign = inverse ? 1.0 : -1.0;
-        int m = NextPowerOfTwo((2 * n) - 1);
+        BluesteinPlan plan = BluesteinPlanFor(n, inverse);
+        int m = plan.M;
+        double[] chirpRe = plan.ChirpRe;
+        double[] chirpIm = plan.ChirpIm;
+        double[] br = plan.BRe;
+        double[] bi = plan.BIm;
         var pool = ArrayPool<double>.Shared;
-        double[] chirpRe = pool.Rent(n);
-        double[] chirpIm = pool.Rent(n);
         double[] ar = pool.Rent(m);
         double[] ai = pool.Rent(m);
-        double[] br = pool.Rent(m);
-        double[] bi = pool.Rent(m);
         try
         {
             Array.Clear(ar, 0, m);
             Array.Clear(ai, 0, m);
-            Array.Clear(br, 0, m);
-            Array.Clear(bi, 0, m);
-            long modulus = 2L * n;
-            for (int j = 0; j < n; j++)
-            {
-                long j2 = (long)j * j % modulus;
-                double angle = sign * Math.PI * j2 / n;
-                chirpRe[j] = Math.Cos(angle);
-                chirpIm[j] = Math.Sin(angle);
-            }
-
             for (int j = 0; j < n; j++)
             {
                 ar[j] = (re[j] * chirpRe[j]) - (im[j] * chirpIm[j]);
                 ai[j] = (im[j] * chirpRe[j]) + (re[j] * chirpIm[j]);
             }
 
-            br[0] = chirpRe[0];
-            bi[0] = -chirpIm[0];
-            for (int j = 1; j < n; j++)
-            {
-                br[j] = br[m - j] = chirpRe[j];
-                bi[j] = bi[m - j] = -chirpIm[j];
-            }
-
-            PowerOfTwo(ar, ai, m, inverse: false);
-            PowerOfTwo(br, bi, m, inverse: false);
+            PowerOfTwo(ar, ai, m, inverse: false, inside);
             for (int j = 0; j < m; j++)
             {
                 double xr = ar[j];
@@ -523,7 +508,7 @@ public static class FftKernels
                 ai[j] = (xi * br[j]) + (xr * bi[j]);
             }
 
-            PowerOfTwo(ar, ai, m, inverse: true);
+            PowerOfTwo(ar, ai, m, inverse: true, inside);
             for (int k = 0; k < n; k++)
             {
                 // The /m completes the unscaled inverse above; then the chirp comes back off.
@@ -535,13 +520,210 @@ public static class FftKernels
         }
         finally
         {
-            pool.Return(chirpRe);
-            pool.Return(chirpIm);
             pool.Return(ar);
             pool.Return(ai);
-            pool.Return(br);
-            pool.Return(bi);
+            plan.Release();
         }
+    }
+
+    // --- Bluestein plans ------------------------------------------------------------------------
+
+    /// <summary>
+    /// What a Bluestein transform of one length and direction computes before it sees any data:
+    /// the chirp and the transform of its conjugate mirror. Immutable once published, so any number
+    /// of transforms may read one plan at once.
+    /// </summary>
+    internal sealed class BluesteinPlan
+    {
+        /// <param name="n">The transform length.</param>
+        /// <param name="inverse">The direction.</param>
+        /// <param name="cached">Whether the plan will live in the cache. One that will not — a plan
+        /// over the entry limit, built for a single call — takes its arrays from the shared pool and
+        /// gives them back through <see cref="Release"/>, as the transform before it did.</param>
+        internal BluesteinPlan(int n, bool inverse, bool cached)
+        {
+            N = n;
+            Inverse = inverse;
+            Cached = cached;
+            M = NextPowerOfTwo((2 * n) - 1);
+            if (cached)
+            {
+                ChirpRe = new double[n];
+                ChirpIm = new double[n];
+                BRe = new double[M];
+                BIm = new double[M];
+            }
+            else
+            {
+                var pool = ArrayPool<double>.Shared;
+                ChirpRe = pool.Rent(n);
+                ChirpIm = pool.Rent(n);
+                BRe = pool.Rent(M);
+                BIm = pool.Rent(M);
+                Array.Clear(BRe, 0, M);
+                Array.Clear(BIm, 0, M);
+            }
+
+            Bytes = 8L * ((2L * n) + (2L * M));
+
+            double sign = inverse ? 1.0 : -1.0;
+            long modulus = 2L * n;
+            for (int j = 0; j < n; j++)
+            {
+                long j2 = (long)j * j % modulus;
+                double angle = sign * Math.PI * j2 / n;
+                ChirpRe[j] = Math.Cos(angle);
+                ChirpIm[j] = Math.Sin(angle);
+            }
+
+            BRe[0] = ChirpRe[0];
+            BIm[0] = -ChirpIm[0];
+            for (int j = 1; j < n; j++)
+            {
+                BRe[j] = BRe[M - j] = ChirpRe[j];
+                BIm[j] = BIm[M - j] = -ChirpIm[j];
+            }
+
+            // Serial on purpose: a plan is built once, and the bits it holds must not depend on
+            // whether the caller that happened to build it could thread.
+            PowerOfTwo(BRe, BIm, M, inverse: false);
+        }
+
+        internal int N { get; }
+
+        internal bool Inverse { get; }
+
+        internal int M { get; }
+
+        internal double[] ChirpRe { get; }
+
+        internal double[] ChirpIm { get; }
+
+        internal double[] BRe { get; }
+
+        internal double[] BIm { get; }
+
+        internal long Bytes { get; }
+
+        internal bool Cached { get; }
+
+        internal long LastUse;
+
+        internal bool Charged;
+
+        /// <summary>Gives a single-call plan's arrays back to the pool; a cached plan keeps its own.</summary>
+        internal void Release()
+        {
+            if (Cached)
+            {
+                return;
+            }
+
+            var pool = ArrayPool<double>.Shared;
+            pool.Return(ChirpRe);
+            pool.Return(ChirpIm);
+            pool.Return(BRe);
+            pool.Return(BIm);
+        }
+    }
+
+    /// <summary>The most the cached plans may hold between them: 256 MB.</summary>
+    internal const long PlanCacheBudget = 256L << 20;
+
+    /// <summary>A plan larger than this — 64 MB — is built, used and dropped, never cached.</summary>
+    internal const long PlanCacheEntryLimit = 64L << 20;
+
+    private static readonly ConcurrentDictionary<(int N, bool Inverse), Lazy<BluesteinPlan>> Plans = new();
+
+    private static readonly object PlanGate = new();
+
+    private static long _planBytes;
+
+    /// <summary>The bytes the cached plans hold right now.</summary>
+    internal static long PlanCacheBytes
+    {
+        get
+        {
+            lock (PlanGate)
+            {
+                return _planBytes;
+            }
+        }
+    }
+
+    /// <summary>How many plans are cached right now.</summary>
+    internal static int PlanCacheCount => Plans.Count;
+
+    /// <summary>Drops every cached plan; a transform in flight keeps the reference it holds.</summary>
+    internal static void ClearPlanCache()
+    {
+        lock (PlanGate)
+        {
+            Plans.Clear();
+            _planBytes = 0;
+        }
+    }
+
+    /// <summary>
+    /// The plan for one length and direction: cached under a byte budget, built single-flight so two
+    /// callers arriving together share one construction, evicted by last use when the budget is
+    /// exceeded. A plan over the entry limit is built for this call alone.
+    /// </summary>
+    internal static BluesteinPlan BluesteinPlanFor(int n, bool inverse)
+    {
+        int m = NextPowerOfTwo((2 * n) - 1);
+        long bytes = 8L * ((2L * n) + (2L * m));
+        if (bytes > PlanCacheEntryLimit)
+        {
+            return new BluesteinPlan(n, inverse, cached: false);
+        }
+
+        (int N, bool Inverse) key = (n, inverse);
+        Lazy<BluesteinPlan> entry = Plans.GetOrAdd(
+            key, k => new Lazy<BluesteinPlan>(() => new BluesteinPlan(k.N, k.Inverse, cached: true), LazyThreadSafetyMode.ExecutionAndPublication));
+        BluesteinPlan plan = entry.Value;
+
+        lock (PlanGate)
+        {
+            plan.LastUse = Stopwatch.GetTimestamp();
+            if (!plan.Charged)
+            {
+                plan.Charged = true;
+                _planBytes += plan.Bytes;
+            }
+
+            while (_planBytes > PlanCacheBudget)
+            {
+                (int N, bool Inverse)? oldest = null;
+                long oldestUse = long.MaxValue;
+                foreach (KeyValuePair<(int N, bool Inverse), Lazy<BluesteinPlan>> pair in Plans)
+                {
+                    if (pair.Key == key || !pair.Value.IsValueCreated)
+                    {
+                        continue;
+                    }
+
+                    BluesteinPlan candidate = pair.Value.Value;
+                    if (candidate.Charged && candidate.LastUse < oldestUse)
+                    {
+                        oldestUse = candidate.LastUse;
+                        oldest = pair.Key;
+                    }
+                }
+
+                if (oldest is null)
+                {
+                    break; // only the plan just taken is charged; the budget bends for one caller
+                }
+
+                if (Plans.TryRemove(oldest.Value, out Lazy<BluesteinPlan>? gone))
+                {
+                    _planBytes -= gone.Value.Bytes;
+                }
+            }
+        }
+
+        return plan;
     }
 
     /// <summary>The sum written out, which at a handful of points is cheaper than anything clever.</summary>
@@ -583,9 +765,10 @@ public static class FftKernels
 
     /// <summary>
     /// A power-of-two length on plain arrays: walked when it fits in cache, factored when it does
-    /// not. Serial — a caller that can afford threads asks for them through the buffer overload.
+    /// not. Serial unless <paramref name="inside"/> — a caller with nothing else to hand the machine
+    /// lets the factored road thread its tiles, which are independent and so round the same way.
     /// </summary>
-    private static void PowerOfTwo(double[] re, double[] im, int n, bool inverse)
+    private static void PowerOfTwo(double[] re, double[] im, int n, bool inverse, bool inside = false)
     {
         if (n <= SixStepThreshold)
         {
@@ -601,7 +784,7 @@ public static class FftKernels
             Factored(
                 ManagedBuffer.Adopt(re), ManagedBuffer.Adopt(im), 0,
                 ManagedBuffer.Adopt(dr), ManagedBuffer.Adopt(di), 0,
-                n, inverse, inside: false);
+                n, inverse, inside);
             dr.AsSpan(0, n).CopyTo(re);
             di.AsSpan(0, n).CopyTo(im);
         }
@@ -677,7 +860,7 @@ public static class FftKernels
             }
             else
             {
-                Bluestein(dstRe.AsSpan(dstAt, n), dstIm.AsSpan(dstAt, n), n, inverse);
+                Bluestein(dstRe.AsSpan(dstAt, n), dstIm.AsSpan(dstAt, n), n, inverse, inside);
             }
         }
 
@@ -690,9 +873,18 @@ public static class FftKernels
 
     /// <summary>
     /// One transform of length <paramref name="n"/> in place over plain spans — the entry the boxed
-    /// signal code uses, and the one a test can call without a buffer in sight.
+    /// signal code uses, and the one a test can call without a buffer in sight. Serial.
     /// </summary>
-    public static void Transform(Span<double> re, Span<double> im, int n, bool inverse)
+    public static void Transform(Span<double> re, Span<double> im, int n, bool inverse) =>
+        Transform(re, im, n, inverse, inside: false);
+
+    /// <summary>
+    /// One transform of length <paramref name="n"/> in place over plain spans, where
+    /// <paramref name="inside"/> lets a caller with nothing else to hand the machine spend threads
+    /// within this one transform — the factored road's tiles, and the two factored transforms
+    /// inside Bluestein's. The tiles are independent, so the bits are the same either way.
+    /// </summary>
+    public static void Transform(Span<double> re, Span<double> im, int n, bool inverse, bool inside)
     {
         if (n <= 0)
         {
@@ -712,7 +904,7 @@ public static class FftKernels
                     {
                         re[..n].CopyTo(sr);
                         im[..n].CopyTo(si);
-                        PowerOfTwo(sr, si, n, inverse);
+                        PowerOfTwo(sr, si, n, inverse, inside);
                         sr.AsSpan(0, n).CopyTo(re);
                         si.AsSpan(0, n).CopyTo(im);
                     }
@@ -733,7 +925,7 @@ public static class FftKernels
             }
             else
             {
-                Bluestein(re, im, n, inverse);
+                Bluestein(re, im, n, inverse, inside);
             }
         }
 

@@ -1,4 +1,5 @@
 using JGraph.Imaging;
+using JGraph.Numerics;
 
 namespace JGraph.Scripting.Jgs;
 
@@ -87,6 +88,33 @@ internal static partial class JgsBuiltins
         // Inverting is asking for the other type: 1 and 4 undo themselves, and 2 and 3 undo each
         // other, so there is one transform here and no second implementation to disagree with it.
         int wanted = inverse ? type switch { 2 => 3, 3 => 2, _ => type } : type;
+
+        // A packed double array that is one contiguous line along dim — a vector, or any array cut
+        // along its only non-singleton dimension — is transformed where it lies into a packed
+        // answer: no unpacking, no slice copy, and the one transform may thread itself. Every other
+        // shape, type, class and length keeps the road below.
+        int alongPacked = dim <= dims.Length ? dims[dim - 1] : 1;
+        if (wanted is 2 or 3
+            && args[0].IsPacked
+            && args[0].PackedKind == JgsPackedKind.Number
+            && args[0].NumericClass == JgsNumericClass.Double
+            && alongPacked > 1
+            && alongPacked == args[0].ArrayLength
+            && (length is null || length.Value == alongPacked))
+        {
+            NumericBuffer source = args[0].AsBuffer;
+            NumericBuffer packed = JgsPacking.Allocate(alongPacked);
+            if (wanted == 2)
+            {
+                CosineTransforms.Forward(source.AsSpan(0, alongPacked), packed.AsSpan(0, alongPacked), inside: true);
+            }
+            else
+            {
+                CosineTransforms.Inverse(source.AsSpan(0, alongPacked), packed.AsSpan(0, alongPacked), inside: true);
+            }
+
+            return JgsMatrix.Like(args[0], JgsValue.Packed(packed));
+        }
 
         double[] flat = ToDoubles(name, args[0], line, col);
         (double[][] slices, _) = JgsMatrix.SlicesAlong(flat, dims, dim);
