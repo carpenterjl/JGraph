@@ -39,6 +39,7 @@ public sealed class OpenBlasLinalg : DenseLinalg
             return;
         }
 
+        using NativeThreads.Scope threads = NativeThreads.Use(NativeThreads.Work.Level3, (long)m * n * k);
         fixed (double* pa = a)
         fixed (double* pb = b)
         fixed (double* pc = c)
@@ -69,6 +70,7 @@ public sealed class OpenBlasLinalg : DenseLinalg
             return;
         }
 
+        using NativeThreads.Scope threads = NativeThreads.Use(NativeThreads.Work.Level3, (long)n * n * k);
         fixed (double* pa = a)
         fixed (double* pc = c)
         {
@@ -88,6 +90,7 @@ public sealed class OpenBlasLinalg : DenseLinalg
             return 0;
         }
 
+        using NativeThreads.Scope threads = NativeThreads.Use(NativeThreads.Work.Factor, Math.Min(m, n));
         fixed (double* pa = a)
         fixed (int* pivots = ipiv)
         {
@@ -104,6 +107,7 @@ public sealed class OpenBlasLinalg : DenseLinalg
             return;
         }
 
+        using NativeThreads.Scope threads = NativeThreads.Use(NativeThreads.Work.Factor, n);
         fixed (double* pa = a)
         fixed (int* pivots = ipiv)
         fixed (double* pb = b)
@@ -122,6 +126,7 @@ public sealed class OpenBlasLinalg : DenseLinalg
             return 0;
         }
 
+        using NativeThreads.Scope threads = NativeThreads.Use(NativeThreads.Work.Factor, n);
         fixed (double* pa = a)
         fixed (int* pivots = ipiv)
         {
@@ -138,6 +143,7 @@ public sealed class OpenBlasLinalg : DenseLinalg
         }
 
         double rcond = 0;
+        using NativeThreads.Scope threads = NativeThreads.Use(NativeThreads.Work.Factor, n);
         fixed (double* pa = a)
         {
             // LAPACK's estimator, which is what MATLAB's rcond reports — a lower bound on the true
@@ -157,6 +163,7 @@ public sealed class OpenBlasLinalg : DenseLinalg
             return 0;
         }
 
+        using NativeThreads.Scope threads = NativeThreads.Use(NativeThreads.Work.Factor, n);
         fixed (double* pa = a)
         {
             return OpenBlasNative.Dpotrf(OpenBlasNative.LapackColMajor,
@@ -173,6 +180,7 @@ public sealed class OpenBlasLinalg : DenseLinalg
             return 0;
         }
 
+        using NativeThreads.Scope threads = NativeThreads.Use(NativeThreads.Work.Factor, n);
         fixed (double* pa = a)
         fixed (double* pb = b)
         {
@@ -191,6 +199,7 @@ public sealed class OpenBlasLinalg : DenseLinalg
             return 0;
         }
 
+        using NativeThreads.Scope threads = NativeThreads.Use(NativeThreads.Work.Factor, Math.Min(m, n));
         fixed (double* pa = a)
         fixed (double* pb = b)
         {
@@ -207,6 +216,7 @@ public sealed class OpenBlasLinalg : DenseLinalg
             return 0;
         }
 
+        using NativeThreads.Scope threads = NativeThreads.Use(NativeThreads.Work.Factor, Math.Min(m, n));
         fixed (double* pa = a)
         fixed (double* pt = tau)
         {
@@ -225,6 +235,7 @@ public sealed class OpenBlasLinalg : DenseLinalg
             return true;
         }
 
+        using NativeThreads.Scope threads = NativeThreads.Use(NativeThreads.Work.Factor, n);
         fixed (double* pa = a)
         fixed (double* pt = tau)
         {
@@ -248,6 +259,7 @@ public sealed class OpenBlasLinalg : DenseLinalg
             return true;
         }
 
+        using NativeThreads.Scope threads = NativeThreads.Use(NativeThreads.Work.Factor, n);
         fixed (double* pa = a)
         fixed (double* pt = tau)
         {
@@ -263,6 +275,7 @@ public sealed class OpenBlasLinalg : DenseLinalg
             return 0;
         }
 
+        using NativeThreads.Scope threads = NativeThreads.Use(NativeThreads.Work.Factor, Math.Min(m, n));
         fixed (double* pa = a)
         fixed (double* pt = tau)
         {
@@ -279,6 +292,7 @@ public sealed class OpenBlasLinalg : DenseLinalg
             return 0;
         }
 
+        using NativeThreads.Scope threads = NativeThreads.Use(NativeThreads.Work.Factor, Math.Min(m, n));
         fixed (double* pa = a)
         fixed (double* pt = tau)
         fixed (double* pc = c)
@@ -300,6 +314,7 @@ public sealed class OpenBlasLinalg : DenseLinalg
 
         // Every entry must be zero on the way in; a nonzero one would pin that column to the front.
         jpvt.Clear();
+        using NativeThreads.Scope threads = NativeThreads.Use(NativeThreads.Work.Factor, Math.Min(m, n));
         fixed (double* pa = a)
         fixed (int* pj = jpvt)
         fixed (double* pt = tau)
@@ -321,6 +336,7 @@ public sealed class OpenBlasLinalg : DenseLinalg
         // same: a null one is outside the Fortran contract even where it is never dereferenced.
         Span<double> uOut = u.IsEmpty ? stackalloc double[1] : u;
         Span<double> vtOut = vt.IsEmpty ? stackalloc double[1] : vt;
+        using NativeThreads.Scope threads = NativeThreads.Use(NativeThreads.Work.Spectral, Math.Min(m, n));
         fixed (double* pa = a)
         fixed (double* ps = s)
         fixed (double* pu = uOut)
@@ -347,6 +363,7 @@ public sealed class OpenBlasLinalg : DenseLinalg
         // but the array has to exist because a failing call writes to it.
         var superb = new double[Math.Max(Math.Min(m, n) - 1, 1)];
         byte character = JobCharacter(job);
+        using NativeThreads.Scope threads = NativeThreads.Use(NativeThreads.Work.Spectral, Math.Min(m, n));
         fixed (double* pa = a)
         fixed (double* ps = s)
         fixed (double* pu = uOut)
@@ -366,6 +383,7 @@ public sealed class OpenBlasLinalg : DenseLinalg
             return 0;
         }
 
+        using NativeThreads.Scope threads = NativeThreads.Use(NativeThreads.Work.Spectral, n);
         fixed (double* pa = a)
         fixed (double* pw = w)
         {
@@ -386,6 +404,7 @@ public sealed class OpenBlasLinalg : DenseLinalg
 
         double left = 0;
         Span<double> vrOut = vr.IsEmpty ? stackalloc double[1] : vr;
+        using NativeThreads.Scope threads = NativeThreads.Use(NativeThreads.Work.Spectral, n);
         fixed (double* pa = a)
         fixed (double* pwr = wr)
         fixed (double* pwi = wi)
@@ -409,6 +428,7 @@ public sealed class OpenBlasLinalg : DenseLinalg
 
         double left = 0;
         Span<double> vrOut = vr.IsEmpty ? stackalloc double[1] : vr;
+        using NativeThreads.Scope threads = NativeThreads.Use(NativeThreads.Work.Spectral, n);
         fixed (double* pa = a)
         fixed (double* pb = b)
         fixed (double* par = alphar)
@@ -432,6 +452,7 @@ public sealed class OpenBlasLinalg : DenseLinalg
             return 0;
         }
 
+        using NativeThreads.Scope threads = NativeThreads.Use(NativeThreads.Work.Spectral, n);
         fixed (double* pa = a)
         fixed (double* pb = b)
         fixed (double* pw = w)
@@ -454,6 +475,7 @@ public sealed class OpenBlasLinalg : DenseLinalg
 
         int sorted = 0;
         Span<double> vsOut = vs.IsEmpty ? stackalloc double[1] : vs;
+        using NativeThreads.Scope threads = NativeThreads.Use(NativeThreads.Work.Spectral, n);
         fixed (double* pa = a)
         fixed (double* pwr = wr)
         fixed (double* pwi = wi)
@@ -479,6 +501,7 @@ public sealed class OpenBlasLinalg : DenseLinalg
         Span<double> vslOut = vsl.IsEmpty ? stackalloc double[1] : vsl;
         Span<double> vsrOut = vsr.IsEmpty ? stackalloc double[1] : vsr;
         byte job = vectors ? OpenBlasNative.CharVectors : OpenBlasNative.CharNone;
+        using NativeThreads.Scope threads = NativeThreads.Use(NativeThreads.Work.Spectral, n);
         fixed (double* pa = a)
         fixed (double* pb = b)
         fixed (double* par = alphar)
@@ -512,6 +535,7 @@ public sealed class OpenBlasLinalg : DenseLinalg
         int kept = 0;
         double condition = 0;
         double separation = 0;
+        using NativeThreads.Scope threads = NativeThreads.Use(NativeThreads.Work.Spectral, n);
         fixed (double* pt = t)
         fixed (double* pq = q)
         fixed (double* pwr = wr)
@@ -545,6 +569,7 @@ public sealed class OpenBlasLinalg : DenseLinalg
 
         Complex one = Complex.One;
         Complex zero = Complex.Zero;
+        using NativeThreads.Scope threads = NativeThreads.Use(NativeThreads.Work.Level3, 4L * m * n * k);
         fixed (Complex* pa = a)
         fixed (Complex* pb = b)
         fixed (Complex* pc = c)
@@ -563,6 +588,7 @@ public sealed class OpenBlasLinalg : DenseLinalg
             return 0;
         }
 
+        using NativeThreads.Scope threads = NativeThreads.Use(NativeThreads.Work.Factor, Math.Min(m, n));
         fixed (Complex* pa = a)
         fixed (int* pivots = ipiv)
         {
@@ -579,6 +605,7 @@ public sealed class OpenBlasLinalg : DenseLinalg
             return;
         }
 
+        using NativeThreads.Scope threads = NativeThreads.Use(NativeThreads.Work.Factor, n);
         fixed (Complex* pa = a)
         fixed (int* pivots = ipiv)
         fixed (Complex* pb = b)
@@ -596,6 +623,7 @@ public sealed class OpenBlasLinalg : DenseLinalg
             return 0;
         }
 
+        using NativeThreads.Scope threads = NativeThreads.Use(NativeThreads.Work.Factor, n);
         fixed (Complex* pa = a)
         fixed (int* pivots = ipiv)
         {
@@ -614,6 +642,7 @@ public sealed class OpenBlasLinalg : DenseLinalg
 
         Complex left = Complex.Zero;
         Span<Complex> vrOut = vr.IsEmpty ? stackalloc Complex[1] : vr;
+        using NativeThreads.Scope threads = NativeThreads.Use(NativeThreads.Work.Spectral, n);
         fixed (Complex* pa = a)
         fixed (Complex* pw = w)
         fixed (Complex* pvr = vrOut)
@@ -635,6 +664,7 @@ public sealed class OpenBlasLinalg : DenseLinalg
         }
 
         int sorted = 0;
+        using NativeThreads.Scope threads = NativeThreads.Use(NativeThreads.Work.Spectral, n);
         fixed (Complex* pa = a)
         fixed (Complex* pw = w)
         fixed (Complex* pvs = vs)
@@ -656,6 +686,7 @@ public sealed class OpenBlasLinalg : DenseLinalg
 
         Span<Complex> uOut = u.IsEmpty ? stackalloc Complex[1] : u;
         Span<Complex> vtOut = vt.IsEmpty ? stackalloc Complex[1] : vt;
+        using NativeThreads.Scope threads = NativeThreads.Use(NativeThreads.Work.Spectral, Math.Min(m, n));
         fixed (Complex* pa = a)
         fixed (double* ps = s)
         fixed (Complex* pu = uOut)

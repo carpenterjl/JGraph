@@ -109,6 +109,21 @@ public static class WindowKernels
         double pad,
         bool omitNan,
         double identity)
+        => Slide(stat, ManagedBuffer.Adopt(values), behind, ahead, ends, pad, omitNan, identity);
+
+    /// <summary>
+    /// Reads a packed slice without copying it. The caller retains ownership; this call only
+    /// reads the buffer and keeps it alive until all parallel readers have finished.
+    /// </summary>
+    public static double[] Slide(
+        WindowStat stat,
+        NumericBuffer values,
+        int behind,
+        int ahead,
+        WindowEnds ends,
+        double pad,
+        bool omitNan,
+        double identity)
     {
         int room = behind + ahead + 1;
         return stat switch
@@ -197,7 +212,7 @@ public static class WindowKernels
     /// </summary>
     private static double[] Walk<TWindow>(
         Func<TWindow> newWindow,
-        double[] values,
+        NumericBuffer values,
         int behind,
         int ahead,
         WindowEnds ends,
@@ -217,15 +232,22 @@ public static class WindowKernels
 
         int[] resume = ResumePoints(length, from, last, behind, ahead, ends);
         int blocks = resume.Length + 1;
-        ParallelKernels.ForBlocks(blocks, blocks > 1, block =>
+        try
         {
-            int walkFrom = block == 0 ? from : resume[block - 1];
-            int reportFrom = block == 0 ? from : resume[block - 1] + 1;
-            int walkTo = block == blocks - 1 ? last : resume[block];
-            Sweep(
-                newWindow(), values, result, from, walkFrom, reportFrom, walkTo,
-                behind, ahead, ends, pad, omitNan, identity);
-        });
+            ParallelKernels.ForBlocks(blocks, blocks > 1, block =>
+            {
+                int walkFrom = block == 0 ? from : resume[block - 1];
+                int reportFrom = block == 0 ? from : resume[block - 1] + 1;
+                int walkTo = block == blocks - 1 ? last : resume[block];
+                Sweep(
+                    newWindow(), values.AsSpan(), result, from, walkFrom, reportFrom, walkTo,
+                    behind, ahead, ends, pad, omitNan, identity);
+            });
+        }
+        finally
+        {
+            GC.KeepAlive(values);
+        }
 
         return result;
     }
@@ -300,7 +322,7 @@ public static class WindowKernels
     /// </summary>
     private static void Sweep<TWindow>(
         TWindow window,
-        double[] values,
+        ReadOnlySpan<double> values,
         double[] result,
         int from,
         int walkFrom,

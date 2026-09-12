@@ -858,7 +858,8 @@ internal static partial class JgsBuiltins
                 $"{name}: the dimension must be a positive whole number, but was {dim}.");
         }
 
-        (double[][] slices, _) = JgsMatrix.SlicesAlong(FlattenColumnMajor(name, subject, line, col), dims, dim);
+        // The flattened storage is this call's own copy, so a single contiguous slice is that copy.
+        (double[][] slices, _) = JgsMatrix.SlicesAlongOwned(FlattenColumnMajor(name, subject, line, col), dims, dim);
         return (slices, dims, dim);
     }
 
@@ -1205,6 +1206,40 @@ internal static partial class JgsBuiltins
                 (string endpoints, double pad) = EndpointsOf(name, parsed, line, col);
 
                 int? named = parsed.Positional.Count > 2 ? Count(name, parsed.Positional, 2, line, col) : null;
+                JgsValue subject = parsed.Positional[0];
+                int[] packedDims = JgsMatrix.DimsOf(subject);
+                int packedDim = named ?? JgsMatrix.DefaultDim(packedDims);
+                if (subject.IsPacked && WindowKernels.Handles(kind) && packedDim >= 1
+                    && packedDim <= packedDims.Length
+                    && packedDims.Where((_, index) => index != packedDim - 1).All(size => size == 1)
+                    && (points is null || WindowKernels.IsAscending(points)))
+                {
+                    // Only this read-only window path borrows storage. Cut's other callers may
+                    // mutate their slices, so they must continue to receive owned copies.
+                    NumericBuffer source = subject.AsBuffer;
+                    if (points is not null && points.Length != source.Length)
+                    {
+                        throw new JgsRuntimeException(line, col,
+                            $"{name}: 'SamplePoints' has {points.Length} places for {source.Length} values.");
+                    }
+
+                    double[] output;
+                    try
+                    {
+                        output = points is null
+                            ? WindowKernels.Slide(kind, source, behind, ahead, EndsOf(endpoints), pad, omitNan, identity)
+                            : WindowKernels.SlideOverPoints(kind, source.AsSpan(), points,
+                                reachBehind, reachAhead, EndsOf(endpoints), omitNan, identity);
+                    }
+                    finally
+                    {
+                        GC.KeepAlive(source);
+                    }
+
+                    packedDims[packedDim - 1] = output.Length;
+                    return JgsMatrix.FromColumnMajorDims(output, packedDims);
+                }
+
                 (double[][] slices, int[] dims, int dim) = Cut(name, parsed.Positional[0], named, line, col);
 
                 var windowed = new double[slices.Length][];
@@ -1463,6 +1498,37 @@ internal static partial class JgsBuiltins
 
     private static double MedianOf(ReadOnlySpan<double> window)
     {
+        // A moving window is a couple of dozen readings, and a sort is the cheapest way to the
+        // middle of that. A whole series — isoutlier's centre, normalize's 'medianiqr' — is not:
+        // two million readings sorted twice were 87% of an isoutlier call, where the selection
+        // kernel places the same two elements at the same two ranks in a linear pass. Both roads
+        // answer the same bits, which is the equivalence JgsStdlib.Median already rests on.
+        if (window.Length > SelectionWorthwhile)
+        {
+            // A selection does not order NaNs anywhere in particular, so the hole has to be found
+            // before it can be stepped in (M120).
+            foreach (double value in window)
+            {
+                if (double.IsNaN(value))
+                {
+                    return double.NaN;
+                }
+            }
+
+            double[] scratch = window.ToArray();
+            int mid = scratch.Length / 2;
+            if (scratch.Length % 2 == 1)
+            {
+                Span<int> one = [mid];
+                SelectKernels.PartialSort(scratch, one);
+                return scratch[mid];
+            }
+
+            Span<int> pair = [mid - 1, mid];
+            SelectKernels.PartialSort(scratch, pair);
+            return (scratch[mid - 1] + scratch[mid]) / 2.0;
+        }
+
         double[] sorted = window.ToArray();
         Array.Sort(sorted);
 
@@ -1476,6 +1542,9 @@ internal static partial class JgsBuiltins
         int middle = sorted.Length / 2;
         return sorted.Length % 2 == 1 ? sorted[middle] : (sorted[middle - 1] + sorted[middle]) / 2.0;
     }
+
+    /// <summary>Above this many readings a median is selected rather than sorted for.</summary>
+    private const int SelectionWorthwhile = 64;
 
     /// <summary>The sample variance (dividing by n-1), which is what MATLAB's var and movvar report.</summary>
     private static double SampleVarianceOf(ReadOnlySpan<double> window)

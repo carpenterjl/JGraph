@@ -1144,7 +1144,7 @@ internal static partial class JgsBuiltins
             }
 
             double[] flat = FlattenColumnMajor(name, subject, line, col);
-            (double[][] slices, int[] reduced) = JgsMatrix.SlicesAlong(flat, dims, dim);
+            (double[][] slices, int[] reduced) = JgsMatrix.SlicesAlongOwned(flat, dims, dim);
             return (slices, reduced, dims, dim);
         }
 

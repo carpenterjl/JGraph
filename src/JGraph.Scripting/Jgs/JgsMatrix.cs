@@ -276,6 +276,17 @@ internal static class JgsMatrix
         for (int o = 0; o < outer; o++)
         {
             int page = o * inner * length;
+            if (inner == 1)
+            {
+                // Down the first non-singleton dimension a slice is a contiguous run of the
+                // storage, and a block copy moves it at memory speed where the gather below
+                // read it a scalar at a time.
+                var run = new double[length];
+                Array.Copy(columnMajor, page, run, 0, length);
+                slices[o] = run;
+                continue;
+            }
+
             for (int i = 0; i < inner; i++)
             {
                 var slice = new double[length];
@@ -289,6 +300,22 @@ internal static class JgsMatrix
         }
 
         return (slices, ShapeAlong(dims, dim, 1));
+    }
+
+    /// <summary>
+    /// <see cref="SlicesAlong"/> for storage the caller owns and will not read again: when the
+    /// whole array is one contiguous slice — a vector cut along its length, or any array cut along
+    /// its only non-singleton dimension — that storage is the slice, and nothing is copied. Every
+    /// moving-window call over a ten-million-element vector was making that copy, element by
+    /// element, on the way in and again on the way out, around a kernel that was already right.
+    /// </summary>
+    public static (double[][] Slices, int[] ReducedDims) SlicesAlongOwned(
+        double[] columnMajor, IReadOnlyList<int> dims, int dim)
+    {
+        int length = dim <= dims.Count ? dims[dim - 1] : 1;
+        return length == columnMajor.Length && length > 0
+            ? ([columnMajor], ShapeAlong(dims, dim, 1))
+            : SlicesAlong(columnMajor, dims, dim);
     }
 
     /// <summary>
@@ -309,10 +336,23 @@ internal static class JgsMatrix
         }
 
         int outer = inner == 0 ? 0 : slices.Length / System.Math.Max(inner, 1);
+        if (inner == 1 && slices.Length == 1)
+        {
+            // One contiguous slice is the joined storage already. Every caller hands the join a
+            // slice it made for the purpose and wraps the answer at once, so nothing else holds it.
+            return (slices[0], ShapeAlong(dims, dim, length));
+        }
+
         var joined = new double[inner * outer * length];
         for (int o = 0; o < outer; o++)
         {
             int page = o * inner * length;
+            if (inner == 1)
+            {
+                Array.Copy(slices[o], 0, joined, page, length);
+                continue;
+            }
+
             for (int i = 0; i < inner; i++)
             {
                 double[] slice = slices[(o * inner) + i];

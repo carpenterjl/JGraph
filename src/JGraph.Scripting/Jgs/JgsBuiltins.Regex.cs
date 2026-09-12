@@ -292,8 +292,49 @@ internal static partial class JgsBuiltins
 
     // --- reading and compiling a pattern ----------------------------------------------------------
 
+    /// <summary>
+    /// Patterns already read and compiled, by the pair that decides the object. A script's patterns
+    /// are few and its calls many — five thousand regexp calls in a loop over one pattern were
+    /// spending 85% of their time building the same two Regex objects five thousand times — and a
+    /// compiled MatlabRegex is immutable, so one serves every call. Bounded LRU eviction retains
+    /// hot patterns when a script also manufactures cold ones. Matching culture is part of the key.
+    /// </summary>
+    private static readonly object CompiledMatlabGate = new();
+    private static readonly Dictionary<(string, RegexOptions, string), LinkedListNode<((string, RegexOptions, string) Key, MatlabRegex Regex)>> CompiledMatlab = new();
+    private static readonly LinkedList<((string, RegexOptions, string) Key, MatlabRegex Regex)> CompiledMatlabLru = new();
+
+    private const int CompiledMatlabCapacity = 256;
+
     /// <summary>Compiles a MATLAB pattern, turning a bad one into a script diagnostic rather than a crash.</summary>
     private static MatlabRegex CompileMatlab(string name, string pattern, RegexOptions options, int line, int col)
+    {
+        var key = (pattern, options, options.HasFlag(RegexOptions.CultureInvariant)
+            ? string.Empty : CultureInfo.CurrentCulture.Name);
+        lock (CompiledMatlabGate)
+        {
+            if (CompiledMatlab.TryGetValue(key, out var cached))
+            {
+                CompiledMatlabLru.Remove(cached);
+                CompiledMatlabLru.AddFirst(cached);
+                return cached.Value.Regex;
+            }
+
+            // Compile under the lock so concurrent misses build a pattern only once. Failures
+            // are not cached: the next caller must receive its own source location/diagnostic.
+            MatlabRegex compiled = CompileMatlabFresh(name, pattern, options, line, col);
+            if (CompiledMatlab.Count == CompiledMatlabCapacity)
+            {
+                var oldest = CompiledMatlabLru.Last!;
+                CompiledMatlab.Remove(oldest.Value.Key);
+                CompiledMatlabLru.RemoveLast();
+            }
+
+            CompiledMatlab.Add(key, CompiledMatlabLru.AddFirst((key, compiled)));
+            return compiled;
+        }
+    }
+
+    private static MatlabRegex CompileMatlabFresh(string name, string pattern, RegexOptions options, int line, int col)
     {
         CaptureGroup[] groups = CaptureGroupsOf(pattern);
         // An inline (?m) turns line anchors on from inside the pattern, and $ has to follow it.

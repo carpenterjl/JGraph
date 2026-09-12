@@ -38,6 +38,11 @@ internal static class PackedReduceOps
             return false;
         }
 
+        if (subject.NumericClass != JgsNumericClass.Double && !Widens(family))
+        {
+            return false;
+        }
+
         if (all)
         {
             // 'all' flattens to a single slice. The running reductions answer a bare vector there,
@@ -379,16 +384,29 @@ internal static class PackedReduceOps
     // --- Shapes and minting ---------------------------------------------------------------------
 
     /// <summary>
-    /// Whether this value takes the fast path at all: packing on, a non-empty packed array of plain
-    /// doubles. The numeric-class gate keeps the sized integer classes on the boxed road, where
-    /// their saturation and output-class rules live.
+    /// Whether this value takes the fast path at all: packing on, a non-empty packed array. The
+    /// class tag is not consulted here: a uint8 array holds the same doubles it would have held
+    /// anyway, the boxed road folds them as doubles too, and the class wrapper above stamps the
+    /// answer afterwards on either road. The gate that kept every classed array boxed was 80% of
+    /// the worst ratio in head2head_v3 — sum over twenty million uint8 copied 160 MB twice to reach
+    /// the same fold. <see cref="Widens"/> keeps the running families where they were.
     /// </summary>
     private static bool IsReducible(JgsValue value) =>
         JgsPacking.Enabled
         && value.Type == JgsType.Array
         && value.IsPacked
-        && value.NumericClass == JgsNumericClass.Double
         && value.ArrayLength > 0;
+
+    /// <summary>
+    /// The families whose answer over a classed array is the plain double fold — sum, prod, mean
+    /// and the rest widen an integer to double before the wrapper stamps whatever class it carries.
+    /// The running families stay boxed for a classed subject: their saturating scan is answered
+    /// before the reduction is reached, and the dimension-named form it declines is the boxed
+    /// road's to keep.
+    /// </summary>
+    private static bool Widens(Family family) =>
+        family is Family.Sum or Family.Prod or Family.Mean or Family.Rms or Family.Variance
+            or Family.Any or Family.All or Family.Norm;
 
     /// <summary>The <c>(inner, n, outer)</c> decomposition of a reduction along <paramref name="along"/>
     /// — the same arithmetic <c>JgsMatrix.SlicesAlong</c> cuts by.</summary>

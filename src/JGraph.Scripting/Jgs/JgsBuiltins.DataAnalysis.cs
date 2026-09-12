@@ -706,6 +706,7 @@ internal static partial class JgsBuiltins
         }
 
         method = SettleInterp1Method(method, x, host);
+        UniformKnots uniform = UniformKnots.Of(x);
         var answer = new double[at.Length * sets];
         for (int set = 0; set < sets; set++)
         {
@@ -727,7 +728,7 @@ internal static partial class JgsBuiltins
             {
                 for (int q = start; q < start + length; q++)
                 {
-                    answer[offset + q] = ValueAt(x, y, coefficients, rule, at[q], extrapolate, outside);
+                    answer[offset + q] = ValueAt(x, y, coefficients, rule, at[q], extrapolate, outside, uniform);
                 }
             });
         }
@@ -759,10 +760,32 @@ internal static partial class JgsBuiltins
         _ => Interp1Rule.Linear,
     };
 
+    /// <summary>
+    /// The arithmetic that finds a query point's interval when the knots are evenly spaced, which
+    /// is what linspace makes and what most sampled data is. Without it every one of two million
+    /// query points paid a fourteen-step bisection over twenty thousand knots — a chain of
+    /// dependent loads and mispredicted branches that was 70% of every interp1 row in head2head_v3
+    /// and made all five methods cost the same. The estimate is corrected against the knots
+    /// themselves, so the interval answered is the one the bisection would have found, to the index.
+    /// </summary>
+    private readonly record struct UniformKnots(bool Holds, double Origin, double PerUnit)
+    {
+        public static UniformKnots Of(double[] x)
+        {
+            if (x.Length < 2) return default;
+            double span = x[^1] - x[0];
+            double perUnit = (x.Length - 1) / span;
+            return span > 0 && double.IsFinite(span) && double.IsFinite(perUnit)
+                && perUnit > 0 && IsEvenlySpaced(x)
+                ? new(true, x[0], perUnit)
+                : default;
+        }
+    }
+
     /// <summary>One query point, by whichever rule the method named.</summary>
     private static double ValueAt(
         double[] x, double[] y, double[] coefficients, Interp1Rule rule, double at, bool extrapolate,
-        double outside)
+        double outside, UniformKnots uniform)
     {
         int n = x.Length;
         if (double.IsNaN(at))
@@ -776,7 +799,37 @@ internal static partial class JgsBuiltins
         }
 
         // The interval the point falls in, clamped so an extrapolated point continues the end piece.
-        int i = Bracket(x, at);
+        int i;
+        if (uniform.Holds)
+        {
+            // Clamped as a double before the cast: a point far outside the knots would otherwise
+            // convert to a value that means nothing. The two walks then settle the last-bit cases
+            // — a query on a knot, a step that rounded the wrong way — against the knots themselves,
+            // with at most two corrections before falling back to bisection.
+            double estimate = (at - uniform.Origin) * uniform.PerUnit;
+            i = estimate <= 0 ? 0 : estimate >= n - 2 ? n - 2 : (int)estimate;
+            int corrections = 0;
+            while (i > 0 && at < x[i] && corrections++ < 2)
+            {
+                i--;
+            }
+
+            while (i < n - 2 && at >= x[i + 1] && corrections++ < 2)
+            {
+                i++;
+            }
+
+            // Nearly uniform grids can pass the spacing tolerance while accumulating more
+            // than a rounding-sized error. Keep lookup logarithmic in that case.
+            if ((i > 0 && at < x[i]) || (i < n - 2 && at >= x[i + 1]))
+            {
+                i = Bracket(x, at);
+            }
+        }
+        else
+        {
+            i = Bracket(x, at);
+        }
 
         return rule switch
         {

@@ -7,8 +7,9 @@ namespace JGraph.Numerics.LinearAlgebra.Native;
 /// <c>native\</c> subfolder (copied there by JGraph.Numerics' build item), so a resolver maps the
 /// import name to that path; any failure — missing file, wrong architecture, a blocked load —
 /// degrades to a not-loaded status whose description says exactly why, and the managed kernels
-/// carry on. The thread count is fixed once at load (env <c>JGRAPH_BLAS_THREADS</c> overrides the
-/// default of ProcessorCount capped at 16), which keeps native results identical run to run.
+/// carry on. The thread ceiling is fixed once at load — one per performance core, capped at 16, or
+/// <c>JGRAPH_BLAS_THREADS</c> — and <see cref="NativeThreads"/> gives each call its share of that
+/// ceiling by routine and size, which keeps native results identical run to run.
 /// </summary>
 internal static class OpenBlasLoader
 {
@@ -17,6 +18,12 @@ internal static class OpenBlasLoader
 
     /// <summary>The load outcome; touching it triggers the one-time load attempt.</summary>
     internal static LoadStatus Status => Load.Value;
+
+    /// <summary>The most threads any native call may take; <see cref="NativeThreads"/> sizes each call under it.</summary>
+    internal static int MaxThreads { get; private set; } = 1;
+
+    /// <summary>Whether the count came from the environment, in which case every call takes it as given.</summary>
+    internal static bool PinnedByEnvironment { get; private set; }
 
     internal sealed record LoadStatus(bool Loaded, string Description);
 
@@ -40,9 +47,15 @@ internal static class OpenBlasLoader
 
             NativeLibrary.SetDllImportResolver(typeof(OpenBlasLoader).Assembly, Resolve);
 
-            int threads = ThreadCountFromEnvironment() ?? DefaultThreadCount();
-            OpenBlasNative.SetNumThreads(threads);
-            return new LoadStatus(true, $"{ConfigSummary()} (native, {OpenBlasNative.GetNumThreads()} threads)");
+            int? asked = ThreadCountFromEnvironment();
+            PinnedByEnvironment = asked is not null;
+            MaxThreads = asked ?? DefaultThreadCount();
+            OpenBlasNative.SetNumThreads(MaxThreads);
+            MaxThreads = OpenBlasNative.GetNumThreads();
+            string threads = PinnedByEnvironment
+                ? $"{MaxThreads} threads"
+                : $"up to {MaxThreads} threads, sized per call";
+            return new LoadStatus(true, $"{ConfigSummary()} (native, {threads})");
         }
         catch (Exception ex) when (ex is DllNotFoundException or BadImageFormatException or EntryPointNotFoundException or IOException)
         {
@@ -63,13 +76,14 @@ internal static class OpenBlasLoader
     }
 
     /// <summary>
-    /// One thread per physical core, capped at 16. Hyperthread siblings share the multiply-add
+    /// One thread per performance core, capped at 16. Hyperthread siblings share the multiply-add
     /// units a blocked factorization spends all its time in, so counting logical processors makes
-    /// <c>dgetrf</c> and <c>dgetri</c> measurably slower rather than faster — see
+    /// <c>dgetrf</c> and <c>dgetri</c> measurably slower rather than faster, and an efficiency core
+    /// given an equal share of a panel update holds the whole call at its pace — see
     /// <see cref="ProcessorTopology"/> for the numbers.
     /// </summary>
     private static int DefaultThreadCount() =>
-        Math.Clamp(ProcessorTopology.PhysicalCoreCount() ?? Environment.ProcessorCount, 1, 16);
+        Math.Clamp(ProcessorTopology.PerformanceCoreCount() ?? Environment.ProcessorCount, 1, 16);
 
     /// <summary>
     /// <c>JGRAPH_BLAS_THREADS</c> if this machine wants the native side counted differently from the
