@@ -1,0 +1,40 @@
+CHK|neg_zero|8000000000000000|exact
+CHK|nan|fff8000000000000|exact
+CHK|neg_nan|7ff8000000000000|exact
+CHK|zero_over_zero|fff8000000000000|exact
+CHK|inf|7ff0000000000000|exact
+CHK|neg_inf|fff0000000000000|exact
+CHK|subnormal|0008000000000000|exact
+CHK|smallest_subnormal|0000000000000001|exact
+CHK|eps|3cb0000000000000|exact
+CHK|one|3ff0000000000000|exact
+CHK|third|3fd5555555555555|exact
+CHK|single_pi|40490fdb|exact
+CHK|single_neg_zero|80000000|exact
+CHK|single_nan|ffc00000|exact
+CHK|single_inf|ff800000|exact
+CHK|single_subnormal|00400000|exact
+CHK|eps_single_class|single|exact
+CHK|eps_single|34000000|exact
+CHK|eps_single_256|38000000|exact
+CHK|single_plus_eps|3f800001|exact
+CHK|column_shape|[3 16]|exact
+CHK|row_shape|[3 16]|exact
+CHK|single_column_shape|[3 8]|exact
+CHK|empty_shape|[0 16]|exact
+CHK|rows_in_order|3ff0000000000000 4000000000000000 4000000000000000 3ff0000000000000|exact
+CHK|vector_1e5|d6a9b98d8f8115ce8c5020d0f1562837273284736b3565d5de0278315dbfc174|bits
+CHK|matrix_3x4|592a9a60b2787d9d61c98fa366459ea9d00913cb53a4d60af9f73e2adce53690|bits
+CHK|column|6b539ddb3fbf330ffc61b75a2e93ada61499fded882c4945969b64508783fa91|bits
+CHK|single_1e4|6d723cdd8d6828ecb7fc4ce8fe4d512dedec30ec2cf46e76910006f0704d9df6|bits
+CHK|complex|a8065f6b55216d073bf4eaf3c58f33f4b8b4a61d3ed35e4bd8d18346bd6cfcdc|bits
+CHK|complex_single|313613f9e1b7ef2eac62f81d505bd211ae1745bb17e84076d970c2688b50064d|bits
+CHK|logical|0bcc097cf5346bfc06564b3bc016ba799c9e34f568e1665fc00a458b580f2b0d|bits
+CHK|char|f93d9185c2669de4082afe02399130189a579542cc8e381cef6e752cfeb8a195|bits
+CHK|with_specials|c9f99e2e0d538cec983d1b2aeaf0999f59b0c60f5793a09fb60507e7f5f12ece|bits
+CHK|empty_0x3|e14fb630c56e97dd79358fb53d295a19504c4a391924a77309afa8a008abb73f|bits
+CHK|scalar|e8a17933e6ee0aa07487db37468c77c2c353130e28fa2e33a92a578d82fec592|bits
+CHK|nd_2x3x4|c98a24df0c1dd34a1955138a59a238483bd1ce57f8500d62eeed96de362231e3|bits
+CHK|int32|42ea21bcdc194289fdd2c9891d70b2783bb4b1a37205be750f02ddd0f14f158e|bits
+CHK|chunk_boundary|f99c29fa3257f273cf8f400dcc0a74c46332c9f07857ee3983b79fc850d706be|bits
+CHK|two_of_the_same|0f4198ec8c039fa073b2fd2e125f0c5490cde63d6c3c94509ad41552feb66d52|bits

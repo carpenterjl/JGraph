@@ -11,6 +11,11 @@ The line grammar is CHK|<name>|<value>|<rule>. The rules, and what a pass means:
     abs=<tol>    |actual - expected| <= tol
     div=ADRnnnn  the values MUST differ — a recorded divergence; agreement means the divergence
                  has been closed and the line (and the ADR entry) should be retired
+    bits         a whole array to the bit: the fixture prints file:<absolute path> naming the
+                 num2hex file its writebits helper wrote, and whoever captures the output
+                 (resolve_bits here) replaces the path with the file's SHA-256 and deletes the
+                 file and its tempname folder. A path that is missing, relative, or outside the
+                 temp folder becomes missing:<path>, which nothing matches.
 
 A line on one side with no partner on the other is a problem, as is a line whose rule differs
 between the two sides: a fixture and its recording are the same script, so the rules must match.
@@ -20,12 +25,38 @@ change to one is a change to both.
 
 from __future__ import annotations
 
+import hashlib
 import math
+import os
 import re
 import sys
+import tempfile
 from pathlib import Path
 
 LINE = re.compile(r"^CHK\|([^|]+)\|([^|]*)\|([^|]*)$")
+BITS_LINE = re.compile(r"^(CHK\|[^|\r\n]+\|)file:([^|\r\n]*)(\|bits)(?=[ \t]*\r?$)", re.MULTILINE)
+
+
+def _digest(path: str) -> str:
+    path = path.strip()
+    if not path or not os.path.isabs(path) or not os.path.isfile(path):
+        return "missing:" + path
+    full = os.path.normcase(os.path.realpath(path))
+    temp = os.path.normcase(os.path.realpath(tempfile.gettempdir()))
+    if not full.startswith(temp + os.sep):
+        return "missing:" + path
+    with open(full, "rb") as handle:
+        digest = hashlib.sha256(handle.read()).hexdigest()
+    os.remove(full)
+    folder = os.path.dirname(full)
+    if folder != temp and os.path.isdir(folder) and not os.listdir(folder):
+        os.rmdir(folder)
+    return digest
+
+
+def resolve_bits(text: str) -> str:
+    """Every `file:<path>` of a bits line replaced by the file's SHA-256; the file deleted."""
+    return BITS_LINE.sub(lambda m: m.group(1) + _digest(m.group(2)) + m.group(3), text)
 
 
 def parse(text: str) -> dict[str, tuple[str, str]]:
@@ -59,6 +90,15 @@ def check(name: str, expected: str, actual: str, rule: str) -> str | None:
     if rule == "shape":
         norm = lambda s: re.sub(r"\s+", " ", s.strip())
         return None if norm(expected) == norm(actual) else f"{name}: shape {actual} is not {expected}"
+    if rule == "bits":
+        for side, value in (("recorded", expected.strip()), ("printed", actual.strip())):
+            if value.startswith("missing:"):
+                return f"{name}: bits file missing ({side} {value[8:]})"
+            if value.startswith("file:"):
+                return f"{name}: bits file not resolved ({side} {value}) — resolve_bits must run before compare"
+            if len(value) != 64 or any(c not in "0123456789abcdefABCDEF" for c in value):
+                return f"{name}: '{value}' ({side}) is not a SHA-256 digest"
+        return None if expected.strip().lower() == actual.strip().lower() else f"{name}: bits {actual} are not {expected}"
     if rule.startswith("div="):
         if e is not None and a is not None:
             differs = not ((e == a) or (math.isnan(e) and math.isnan(a)))
@@ -104,8 +144,8 @@ def main(argv: list[str]) -> int:
     if len(argv) != 3:
         print(__doc__)
         return 2
-    expected = Path(argv[1]).read_text(encoding="utf-8-sig")
-    actual = Path(argv[2]).read_text(encoding="utf-8-sig")
+    expected = resolve_bits(Path(argv[1]).read_text(encoding="utf-8-sig"))
+    actual = resolve_bits(Path(argv[2]).read_text(encoding="utf-8-sig"))
     problems = compare(expected, actual)
     total = len(parse(expected))
     if problems:

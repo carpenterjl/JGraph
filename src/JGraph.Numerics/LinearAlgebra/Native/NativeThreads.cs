@@ -1,3 +1,6 @@
+using System.Diagnostics;
+using System.Globalization;
+
 namespace JGraph.Numerics.LinearAlgebra.Native;
 
 /// <summary>
@@ -31,6 +34,17 @@ internal static class NativeThreads
     private static readonly object Gate = new();
     private static int _current;
 
+    /// <summary>
+    /// Where a per-call trace line goes, or null for no tracing. <c>JGRAPH_NATIVE_TRACE=1</c> sends
+    /// <c>native|routine|threads=n|size=s|seconds</c> to standard error for every native call; the
+    /// stopwatch runs inside the lock the call already holds, so it costs the call nothing it was
+    /// not already paying. A test may set a sink of its own.
+    /// </summary>
+    internal static Action<string>? Trace =
+        Environment.GetEnvironmentVariable("JGRAPH_NATIVE_TRACE") == "1"
+            ? static line => Console.Error.WriteLine(line)
+            : null;
+
     /// <summary>What a routine spends its time in, which decides where threads start to pay.</summary>
     internal enum Work
     {
@@ -49,7 +63,7 @@ internal static class NativeThreads
     /// <see cref="Work.Level3"/> <paramref name="size"/> is the flop count m·n·k; otherwise it is the
     /// smaller matrix dimension.
     /// </summary>
-    internal static Scope Use(Work work, long size)
+    internal static Scope Use(Work work, long size, [System.Runtime.CompilerServices.CallerMemberName] string routine = "")
     {
         Monitor.Enter(Gate);
         try
@@ -61,7 +75,7 @@ internal static class NativeThreads
                 _current = wanted;
             }
 
-            return default;
+            return Trace is null ? default : new Scope(routine, wanted, size, Stopwatch.GetTimestamp());
         }
         catch
         {
@@ -93,9 +107,33 @@ internal static class NativeThreads
         };
     }
 
-    /// <summary>Releases the native lock taken by <see cref="Use"/>.</summary>
+    /// <summary>Releases the native lock taken by <see cref="Use"/>, reporting the call when tracing.</summary>
     internal readonly struct Scope : IDisposable
     {
-        public void Dispose() => Monitor.Exit(Gate);
+        private readonly string? _routine;
+        private readonly int _threads;
+        private readonly long _size;
+        private readonly long _started;
+
+        internal Scope(string routine, int threads, long size, long started)
+        {
+            _routine = routine;
+            _threads = threads;
+            _size = size;
+            _started = started;
+        }
+
+        public void Dispose()
+        {
+            if (_routine is not null && Trace is { } sink)
+            {
+                double seconds = Stopwatch.GetElapsedTime(_started).TotalSeconds;
+                sink(string.Create(
+                    CultureInfo.InvariantCulture,
+                    $"native|{_routine}|threads={_threads}|size={_size}|{seconds:F6}"));
+            }
+
+            Monitor.Exit(Gate);
+        }
     }
 }

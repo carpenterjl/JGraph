@@ -984,10 +984,19 @@ internal static partial class JgsBuiltins
 
         return spellings.Length switch
         {
-            0 => JgsValue.Str(string.Empty),
+            // MATLAB answers an empty input with a 0-by-16 (0-by-8 for single) char matrix.
+            0 => EmptyCharRows(single ? 8 : 16),
             1 => JgsValue.Str(spellings[0]),
             _ => PadIntoCharMatrix(spellings),
         };
+    }
+
+    /// <summary>A char matrix of no rows and <paramref name="width"/> columns.</summary>
+    private static JgsValue EmptyCharRows(int width)
+    {
+        JgsValue empty = JgsMatrix.FromColumnMajor([], 0, width);
+        empty.Reshape(0, width);
+        return empty.MarkCharMatrix();
     }
 
     // --- variable names -----------------------------------------------------------------------

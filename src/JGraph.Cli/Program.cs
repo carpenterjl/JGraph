@@ -112,7 +112,7 @@ internal static class Program
                 new PythonScriptEngine(),
             ];
 
-            return await BatchRunner.RunAsync(
+            int code = await BatchRunner.RunAsync(
                 options,
                 engines,
                 output,
@@ -120,12 +120,33 @@ internal static class Program
                 new CliFigureFiles(),
                 audio: null,
                 cancellation.Token).ConfigureAwait(false);
+            ReportBatchStats();
+            return code;
         }
         finally
         {
             Console.CancelKeyPress -= onCancel;
             tee?.Dispose();
         }
+    }
+
+    /// <summary>
+    /// With <c>JGRAPH_BATCH_STATS=1</c>, one line on standard error after the script: the bytes this
+    /// process allocated, its collection counts per generation, and its peak working set. Counters
+    /// read from the runtime, not a subtraction of two wall clocks — for a benchmark probe that
+    /// wants to say what a change did to allocation rather than guess it from the time.
+    /// </summary>
+    private static void ReportBatchStats()
+    {
+        if (Environment.GetEnvironmentVariable("JGRAPH_BATCH_STATS") != "1")
+        {
+            return;
+        }
+
+        using var self = System.Diagnostics.Process.GetCurrentProcess();
+        Console.Error.WriteLine(string.Create(
+            System.Globalization.CultureInfo.InvariantCulture,
+            $"stats|allocated_bytes={GC.GetTotalAllocatedBytes(precise: true)}|gen0={GC.CollectionCount(0)}|gen1={GC.CollectionCount(1)}|gen2={GC.CollectionCount(2)}|peak_working_set={self.PeakWorkingSet64}|peak_paged={self.PeakPagedMemorySize64}"));
     }
 
     /// <summary>

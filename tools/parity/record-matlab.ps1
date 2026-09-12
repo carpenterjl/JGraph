@@ -84,6 +84,29 @@ function Invoke-Matlab {
     }
 }
 
+# The SHA-256 of a bits file, lowercase, with the file and its emptied tempname folder removed;
+# 'missing:<path>' when the path is not absolute, not under the temp folder, or not there.
+function Resolve-BitsFile {
+    param([string] $Path)
+
+    if (-not $Path -or -not [System.IO.Path]::IsPathRooted($Path) -or -not (Test-Path -LiteralPath $Path -PathType Leaf)) {
+        return 'missing:' + $Path
+    }
+    $full = [System.IO.Path]::GetFullPath($Path)
+    $temp = [System.IO.Path]::GetFullPath([System.IO.Path]::GetTempPath())
+    if (-not $full.StartsWith($temp, [System.StringComparison]::OrdinalIgnoreCase)) {
+        return 'missing:' + $Path
+    }
+    $digest = (Get-FileHash -LiteralPath $full -Algorithm SHA256).Hash.ToLowerInvariant()
+    Remove-Item -LiteralPath $full -Force
+    $folder = Split-Path -Parent $full
+    if ($folder -and $folder.TrimEnd('\') -ne $temp.TrimEnd('\') -and (Test-Path -LiteralPath $folder) -and
+        -not (Get-ChildItem -LiteralPath $folder -Force | Select-Object -First 1)) {
+        Remove-Item -LiteralPath $folder -Force
+    }
+    return $digest
+}
+
 $fixtureDirMatlab = $fixtureDir -replace "'", "''"
 $version = Invoke-Matlab -Statement "fprintf('%s\n', version)" -WorkingDirectory $fixtureDir
 $versionLine = ($version.Text -split "`r?`n" | Where-Object { $_ -match '\(R\d{4}[ab]\)' } | Select-Object -First 1)
@@ -97,11 +120,26 @@ foreach ($name in $all) {
     $result = Invoke-Matlab -Statement "cd('$fixtureDirMatlab'); $name" -WorkingDirectory $fixtureDir
     $lines = @($result.Text -split "`r?`n" | ForEach-Object { $_.TrimEnd() } | Where-Object { $_ -match '^CHK\|' })
 
-    if ($result.Exit -ne 0 -or $lines.Count -eq 0) {
+    # A bits line names a file the fixture wrote; the recording carries the file's SHA-256, never
+    # the path, and the file and its tempname folder are deleted here. A path that is missing,
+    # relative, or outside the temp folder is a failed recording, not a substitute value.
+    $unresolved = 0
+    $lines = @($lines | ForEach-Object {
+        if ($_ -match '^(CHK\|[^|]+\|)file:([^|]*)(\|bits)\s*$') {
+            $digest = Resolve-BitsFile -Path $Matches[2].Trim()
+            if ($digest.StartsWith('missing:')) { $unresolved++ }
+            $Matches[1] + $digest + $Matches[3]
+        } else {
+            $_
+        }
+    })
+
+    if ($result.Exit -ne 0 -or $lines.Count -eq 0 -or $unresolved -gt 0) {
         $failed++
-        Write-Host ("  {0,-28} FAILED (exit {1}, {2} CHK lines)" -f $name, $result.Exit, $lines.Count)
+        Write-Host ("  {0,-28} FAILED (exit {1}, {2} CHK lines, {3} bits file(s) missing)" -f $name, $result.Exit, $lines.Count, $unresolved)
         $shown = ($result.Text + $result.Error) -split "`r?`n" | Where-Object { $_ -and $_ -notmatch '^CHK\|' } | Select-Object -Last 12
         foreach ($l in $shown) { Write-Host "      $l" }
+        foreach ($l in ($lines | Where-Object { $_ -match '\|missing:' })) { Write-Host "      $l" }
         continue
     }
 

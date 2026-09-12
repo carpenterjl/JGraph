@@ -9,14 +9,71 @@ namespace JGraph.Tests.MatlabParity;
 /// same comparator in two hosts, and a change to one is a change to both.
 /// </summary>
 /// <remarks>
+/// <para>
 /// Rules: <c>exact</c> (the same number, or the same text), <c>shape</c> (the same text once
-/// whitespace is normalised), <c>rel=tol</c>, <c>abs=tol</c>, and <c>div=ADRnnnn</c> — a recorded
+/// whitespace is normalised), <c>rel=tol</c>, <c>abs=tol</c>, <c>div=ADRnnnn</c> — a recorded
 /// divergence whose values <b>must differ</b>, so that a divergence quietly closed is noticed and
-/// retired from its ADR rather than left on the books.
+/// retired from its ADR rather than left on the books — and <c>bits</c>, a whole array compared
+/// to the bit.
+/// </para>
+/// <para>
+/// A <c>bits</c> line is printed by the fixture as <c>CHK|name|file:&lt;absolute path&gt;|bits</c>,
+/// naming a file its own <c>writebits</c> helper wrote: one header line <c>class rows cols …</c>,
+/// then one <c>num2hex</c> row per element in column-major order, a real plane then an imaginary
+/// one for complex. Whoever captures the output — the recorder, this harness, <c>compare.py</c> —
+/// calls <see cref="ResolveBits"/> first: it replaces the path with the SHA-256 of the file's
+/// bytes and deletes the file and its <c>tempname</c> folder, so a recording carries a digest and
+/// never a path. Nothing computable in exact doubles on both engines is a digest worth trusting,
+/// which is why the digest is taken on the host.
 /// </remarks>
 public static class MatlabParityComparer
 {
     private static readonly Regex Line = new(@"^CHK\|([^|]+)\|([^|]*)\|([^|]*)$", RegexOptions.Compiled);
+
+    private static readonly Regex BitsLine = new(
+        @"^(CHK\|[^|\r\n]+\|)file:([^|\r\n]*)(\|bits)(?=[ \t]*\r?$)",
+        RegexOptions.Compiled | RegexOptions.Multiline);
+
+    /// <summary>
+    /// Replaces every <c>file:&lt;path&gt;</c> value of a <c>bits</c> line with the SHA-256 of that
+    /// file, deleting the file and, once empty, the folder it sits in. A path that is not absolute,
+    /// not under the temp folder, or not there at all becomes <c>missing:&lt;path&gt;</c>, which no
+    /// recording can match — never a fallback, never a substitute.
+    /// </summary>
+    public static string ResolveBits(string text) => BitsLine.Replace(text, m => m.Groups[1].Value + Digest(m.Groups[2].Value.Trim()) + m.Groups[3].Value);
+
+    private static string Digest(string path)
+    {
+        if (path.Length == 0 || !Path.IsPathRooted(path) || !File.Exists(path))
+        {
+            return "missing:" + path;
+        }
+
+        string full = Path.GetFullPath(path);
+        string temp = Path.GetFullPath(Path.GetTempPath());
+        if (!full.StartsWith(temp, StringComparison.OrdinalIgnoreCase))
+        {
+            return "missing:" + path;
+        }
+
+        string digest;
+        using (FileStream stream = File.OpenRead(full))
+        {
+            digest = Convert.ToHexString(System.Security.Cryptography.SHA256.HashData(stream)).ToLowerInvariant();
+        }
+
+        File.Delete(full);
+        string? folder = Path.GetDirectoryName(full);
+        if (folder is not null
+            && !string.Equals(Path.GetFullPath(folder + Path.DirectorySeparatorChar), temp, StringComparison.OrdinalIgnoreCase)
+            && Directory.Exists(folder)
+            && !Directory.EnumerateFileSystemEntries(folder).Any())
+        {
+            Directory.Delete(folder);
+        }
+
+        return digest;
+    }
 
     /// <summary>The <c>name -> (value, rule)</c> pairs a log holds; a missing rule reads as <c>exact</c>.</summary>
     public static Dictionary<string, (string Value, string Rule)> Parse(string text)
@@ -93,6 +150,31 @@ public static class MatlabParityComparer
         {
             static string Norm(string s) => Regex.Replace(s.Trim(), @"\s+", " ");
             return Norm(expected) == Norm(actual) ? null : $"{name}: shape {actual} is not {expected}";
+        }
+
+        if (rule == "bits")
+        {
+            foreach ((string side, string value) in new[] { ("recorded", expected.Trim()), ("printed", actual.Trim()) })
+            {
+                if (value.StartsWith("missing:", StringComparison.Ordinal))
+                {
+                    return $"{name}: bits file missing ({side} {value[8..]})";
+                }
+
+                if (value.StartsWith("file:", StringComparison.Ordinal))
+                {
+                    return $"{name}: bits file not resolved ({side} {value}) — ResolveBits must run before Compare";
+                }
+
+                if (value.Length != 64 || !value.All(Uri.IsHexDigit))
+                {
+                    return $"{name}: '{value}' ({side}) is not a SHA-256 digest";
+                }
+            }
+
+            return string.Equals(expected.Trim(), actual.Trim(), StringComparison.OrdinalIgnoreCase)
+                ? null
+                : $"{name}: bits {actual} are not {expected}";
         }
 
         if (rule.StartsWith("div=", StringComparison.Ordinal))

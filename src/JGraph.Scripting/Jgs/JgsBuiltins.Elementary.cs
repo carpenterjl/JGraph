@@ -96,6 +96,17 @@ internal static partial class JgsBuiltins
 
             // eps(x) is the spacing at x: the gap to the next representable double. BitIncrement
             // handles 0 (the smallest denormal) and the infinities (NaN) the way MATLAB does.
+            // A single asks for the spacing of a single, answered as one: eps(single(1)) is 2^-23.
+            if (args[0].NumericClass == JgsNumericClass.Single)
+            {
+                JgsValue spacing = MapNumeric("eps", args[0], static x =>
+                {
+                    float magnitude = MathF.Abs((float)x);
+                    return MathF.BitIncrement(magnitude) - magnitude;
+                }, line, col);
+                return ToNumericClass("eps", JgsNumericClass.Single, spacing, line, col);
+            }
+
             return MapNumeric("eps", args[0], static x =>
             {
                 double magnitude = Math.Abs(x);

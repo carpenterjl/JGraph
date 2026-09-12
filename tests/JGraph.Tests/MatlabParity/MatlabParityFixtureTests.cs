@@ -55,7 +55,7 @@ public class MatlabParityFixtureTests : IDisposable
         string expected = File.ReadAllText(recording);
         Assert.Contains("CHK|", expected);
 
-        string actual = RunMatlabDialect(File.ReadAllText(script));
+        string actual = MatlabParityComparer.ResolveBits(RunMatlabDialect(File.ReadAllText(script)));
         List<string> problems = MatlabParityComparer.Compare(expected, actual);
         Assert.True(
             problems.Count == 0,
