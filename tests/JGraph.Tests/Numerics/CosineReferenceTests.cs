@@ -16,8 +16,11 @@ namespace JGraph.Tests.Numerics;
 /// production lengths) and against closed-form inputs at production lengths: a constant, one
 /// cosine, one impulse. The even-extension road it replaced is kept here as
 /// <see cref="EvenExtensionForward"/> and <see cref="EvenExtensionInverse"/> so the ADR can say
-/// which road was the more accurate on each length class, from a measurement.
+/// which road was the more accurate on each length class, from a measurement. In the facade
+/// collection because the plan cache is one static, and <see cref="TransformRoadTests"/> asserts
+/// on its counts.
 /// </summary>
+[Collection("JG facade")]
 public class CosineReferenceTests
 {
     private static readonly Lazy<JsonDocument> Reference = new(() =>

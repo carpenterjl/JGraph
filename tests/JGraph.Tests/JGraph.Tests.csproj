@@ -40,6 +40,7 @@
   <!-- The 30-digit cosine-transform reference tools/transforms/dct_reference.py writes (ADR 0153). -->
   <ItemGroup>
     <Content Include="Numerics\dct_reference.json" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="Numerics\fft_reference.json" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
   <ItemGroup>

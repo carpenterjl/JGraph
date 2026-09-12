@@ -30,7 +30,9 @@ namespace JGraph.Numerics;
 /// <para>
 /// The factored road is a different arrangement of the same sum and therefore a different rounding —
 /// the one deliberate divergence here. It is chosen by length alone, so it is the same choice on
-/// every run and on every machine, and never depends on how many threads are working.
+/// every run and on every machine, and never depends on how many threads are working. A length
+/// above the direct limit whose factors are all 2, 3 and 5 takes a third road on the same terms,
+/// the mixed-radix passes of <see cref="MixedRadixFft"/> (ADR 0154); Bluestein keeps the rest.
 /// </para>
 /// </remarks>
 public static class FftKernels
@@ -478,6 +480,13 @@ public static class FftKernels
     /// that remain thread their tiles when <paramref name="inside"/> says the caller has nothing
     /// else for the machine.
     /// </summary>
+    /// <summary>
+    /// Bluestein's road for any length, unscaled, whether or not the dispatcher would choose it —
+    /// so a test can measure it against the mixed-radix road on the same length (ADR 0154).
+    /// </summary>
+    internal static void BluesteinTransform(Span<double> re, Span<double> im, int n, bool inverse, bool inside) =>
+        Bluestein(re, im, n, inverse, inside);
+
     private static void Bluestein(Span<double> re, Span<double> im, int n, bool inverse, bool inside)
     {
         BluesteinPlan plan = BluesteinPlanFor(n, inverse);
@@ -526,14 +535,42 @@ public static class FftKernels
         }
     }
 
-    // --- Bluestein plans ------------------------------------------------------------------------
+    // --- transform plans ------------------------------------------------------------------------
 
     /// <summary>
-    /// What a Bluestein transform of one length and direction computes before it sees any data:
-    /// the chirp and the transform of its conjugate mirror. Immutable once published, so any number
-    /// of transforms may read one plan at once.
+    /// What a transform of one length and direction computes before it sees any data — Bluestein's
+    /// chirp and its transformed mirror, or the mixed-radix twiddles (ADR 0154) — held in one cache
+    /// under one budget. Immutable once published, so any number of transforms may read one plan
+    /// at once.
     /// </summary>
-    internal sealed class BluesteinPlan
+    internal abstract class FftPlan
+    {
+        protected FftPlan(int n, bool inverse)
+        {
+            N = n;
+            Inverse = inverse;
+        }
+
+        internal int N { get; }
+
+        internal bool Inverse { get; }
+
+        internal long Bytes { get; private protected set; }
+
+        internal long LastUse;
+
+        internal bool Charged;
+
+        /// <summary>Gives a single-call plan's pooled arrays back, if it has any; a cached plan keeps its own.</summary>
+        internal virtual void Release()
+        {
+        }
+    }
+
+    /// <summary>
+    /// Bluestein's plan: the chirp and the transform of its conjugate mirror.
+    /// </summary>
+    internal sealed class BluesteinPlan : FftPlan
     {
         /// <param name="n">The transform length.</param>
         /// <param name="inverse">The direction.</param>
@@ -541,9 +578,8 @@ public static class FftKernels
         /// over the entry limit, built for a single call — takes its arrays from the shared pool and
         /// gives them back through <see cref="Release"/>, as the transform before it did.</param>
         internal BluesteinPlan(int n, bool inverse, bool cached)
+            : base(n, inverse)
         {
-            N = n;
-            Inverse = inverse;
             Cached = cached;
             M = NextPowerOfTwo((2 * n) - 1);
             if (cached)
@@ -589,10 +625,6 @@ public static class FftKernels
             PowerOfTwo(BRe, BIm, M, inverse: false);
         }
 
-        internal int N { get; }
-
-        internal bool Inverse { get; }
-
         internal int M { get; }
 
         internal double[] ChirpRe { get; }
@@ -603,16 +635,10 @@ public static class FftKernels
 
         internal double[] BIm { get; }
 
-        internal long Bytes { get; }
-
         internal bool Cached { get; }
 
-        internal long LastUse;
-
-        internal bool Charged;
-
         /// <summary>Gives a single-call plan's arrays back to the pool; a cached plan keeps its own.</summary>
-        internal void Release()
+        internal override void Release()
         {
             if (Cached)
             {
@@ -633,7 +659,7 @@ public static class FftKernels
     /// <summary>A plan larger than this — 64 MB — is built, used and dropped, never cached.</summary>
     internal const long PlanCacheEntryLimit = 64L << 20;
 
-    private static readonly ConcurrentDictionary<(int N, bool Inverse), Lazy<BluesteinPlan>> Plans = new();
+    private static readonly ConcurrentDictionary<(int N, bool Inverse, bool Mixed), Lazy<FftPlan>> Plans = new();
 
     private static readonly object PlanGate = new();
 
@@ -664,24 +690,31 @@ public static class FftKernels
         }
     }
 
+    /// <summary>Bluestein's plan for one length and direction, through <see cref="PlanFor"/>.</summary>
+    internal static BluesteinPlan BluesteinPlanFor(int n, bool inverse) => (BluesteinPlan)PlanFor(n, inverse, mixed: false);
+
     /// <summary>
-    /// The plan for one length and direction: cached under a byte budget, built single-flight so two
-    /// callers arriving together share one construction, evicted by last use when the budget is
-    /// exceeded. A plan over the entry limit is built for this call alone.
+    /// The plan for one length, direction and road: cached under a byte budget, built single-flight
+    /// so two callers arriving together share one construction, evicted by last use when the budget
+    /// is exceeded. A plan over the entry limit is built for this call alone.
     /// </summary>
-    internal static BluesteinPlan BluesteinPlanFor(int n, bool inverse)
+    internal static FftPlan PlanFor(int n, bool inverse, bool mixed)
     {
-        int m = NextPowerOfTwo((2 * n) - 1);
-        long bytes = 8L * ((2L * n) + (2L * m));
+        long bytes = mixed
+            ? MixedRadixFft.Plan.BytesFor(n)
+            : 8L * ((2L * n) + (2L * NextPowerOfTwo((2 * n) - 1)));
         if (bytes > PlanCacheEntryLimit)
         {
-            return new BluesteinPlan(n, inverse, cached: false);
+            return mixed ? new MixedRadixFft.Plan(n, inverse) : new BluesteinPlan(n, inverse, cached: false);
         }
 
-        (int N, bool Inverse) key = (n, inverse);
-        Lazy<BluesteinPlan> entry = Plans.GetOrAdd(
-            key, k => new Lazy<BluesteinPlan>(() => new BluesteinPlan(k.N, k.Inverse, cached: true), LazyThreadSafetyMode.ExecutionAndPublication));
-        BluesteinPlan plan = entry.Value;
+        (int N, bool Inverse, bool Mixed) key = (n, inverse, mixed);
+        Lazy<FftPlan> entry = Plans.GetOrAdd(
+            key,
+            k => new Lazy<FftPlan>(
+                () => k.Mixed ? new MixedRadixFft.Plan(k.N, k.Inverse) : new BluesteinPlan(k.N, k.Inverse, cached: true),
+                LazyThreadSafetyMode.ExecutionAndPublication));
+        FftPlan plan = entry.Value;
 
         lock (PlanGate)
         {
@@ -694,16 +727,16 @@ public static class FftKernels
 
             while (_planBytes > PlanCacheBudget)
             {
-                (int N, bool Inverse)? oldest = null;
+                (int N, bool Inverse, bool Mixed)? oldest = null;
                 long oldestUse = long.MaxValue;
-                foreach (KeyValuePair<(int N, bool Inverse), Lazy<BluesteinPlan>> pair in Plans)
+                foreach (KeyValuePair<(int N, bool Inverse, bool Mixed), Lazy<FftPlan>> pair in Plans)
                 {
                     if (pair.Key == key || !pair.Value.IsValueCreated)
                     {
                         continue;
                     }
 
-                    BluesteinPlan candidate = pair.Value.Value;
+                    FftPlan candidate = pair.Value.Value;
                     if (candidate.Charged && candidate.LastUse < oldestUse)
                     {
                         oldestUse = candidate.LastUse;
@@ -716,7 +749,7 @@ public static class FftKernels
                     break; // only the plan just taken is charged; the budget bends for one caller
                 }
 
-                if (Plans.TryRemove(oldest.Value, out Lazy<BluesteinPlan>? gone))
+                if (Plans.TryRemove(oldest.Value, out Lazy<FftPlan>? gone))
                 {
                     _planBytes -= gone.Value.Bytes;
                 }
@@ -858,6 +891,10 @@ public static class FftKernels
             {
                 Direct(dstRe.AsSpan(dstAt, n), dstIm.AsSpan(dstAt, n), n, inverse);
             }
+            else if (MixedRadixFft.IsSmooth(n))
+            {
+                MixedRadixFft.Transform(dstRe.AsSpan(dstAt, n), dstIm.AsSpan(dstAt, n), n, inverse, inside);
+            }
             else
             {
                 Bluestein(dstRe.AsSpan(dstAt, n), dstIm.AsSpan(dstAt, n), n, inverse, inside);
@@ -922,6 +959,10 @@ public static class FftKernels
             else if (n <= DirectLimit)
             {
                 Direct(re, im, n, inverse);
+            }
+            else if (MixedRadixFft.IsSmooth(n))
+            {
+                MixedRadixFft.Transform(re, im, n, inverse, inside);
             }
             else
             {

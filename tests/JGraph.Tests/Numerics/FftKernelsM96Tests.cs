@@ -15,14 +15,51 @@ namespace JGraph.Tests.Numerics;
 /// kernel factors the sum a different way and rounds differently; that road is checked against the
 /// reference within a tolerance, against itself at one thread and at sixteen, and against the
 /// identity a transform and its inverse make.
+/// Awkward lengths build plans in one static cache that <see cref="TransformRoadTests"/> asserts
+/// counts on, so this class shares its collection.
 /// </summary>
+[Collection("JG facade")]
 public class FftKernelsM96Tests
 {
-    /// <summary>Lengths the direct road takes: powers of two, tiny sums, and Bluestein's.</summary>
+    /// <summary>
+    /// Lengths the direct road takes: powers of two, tiny sums, and Bluestein's. A 5-smooth length
+    /// above 32 left this list for the mixed-radix road (ADR 0154) and is held to a tolerance below.
+    /// </summary>
     public static TheoryData<int> DirectLengths() => new()
     {
-        1, 2, 3, 4, 5, 7, 8, 15, 16, 31, 32, 33, 64, 100, 128, 256, 360, 512, 1000, 1024, 4096, 32768,
+        1, 2, 3, 4, 5, 7, 8, 15, 16, 31, 32, 33, 64, 128, 256, 512, 1024, 4096, 32768, 7 * 1024, 4099,
     };
+
+    /// <summary>5-smooth lengths above 32: the mixed-radix road, with every radix and mixture.</summary>
+    public static TheoryData<int> SmoothLengths() => new() { 96, 100, 360, 1000, 1080, 4000, 98304, 100000 };
+
+    [Theory]
+    [MemberData(nameof(SmoothLengths))]
+    public void ASmoothLengthAgreesWithTheOldTransformToWithinItsOwnPrecision(int n)
+    {
+        Assert.True(MixedRadixFft.IsSmooth(n));
+        foreach (bool inverse in new[] { false, true })
+        {
+            Complex[] input = Signal(n, seed: n * 7);
+            Complex[] want = Reference(input, inverse);
+
+            double[] re = new double[n];
+            double[] im = new double[n];
+            Split(input, re, im);
+            FftKernels.Transform(re, im, n, inverse);
+
+            double scale = 0;
+            double worst = 0;
+            for (int i = 0; i < n; i++)
+            {
+                scale = Math.Max(scale, want[i].Magnitude);
+                worst = Math.Max(worst, Complex.Abs(new Complex(re[i], im[i]) - want[i]));
+            }
+
+            string road = inverse ? "inverse" : "forward";
+            Assert.True(worst <= scale * 1e-13, $"n = {n} {road}: mixed-radix answer drifted {worst / scale:E3} from the old one");
+        }
+    }
 
     [Theory]
     [MemberData(nameof(DirectLengths))]
