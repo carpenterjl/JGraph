@@ -4,8 +4,8 @@
 
 Accepted, in stages. Item 07 of the head2head_v3 gap-closure plan (`docs/plans/gap-closure-07-12-plan.md`,
 rev 6, agreed with Codex): the DCT/FFT pipeline behind the `d15_dct_idct_4M` and
-`d02_fft_batch32x64k` rows. This ADR carries stages 07a and 07b; the mixed-radix kernel (07c) is
-ADR 0154. Each stage is measured alone against the P0 baseline (`head2head_v3\runs\baseline-4605ef8`,
+`d02_fft_batch32x64k` rows. This ADR carries stages 07a, 07b and 07d; the mixed-radix kernel (07c)
+is ADR 0154. Each stage is measured alone against the P0 baseline (`head2head_v3\runs\baseline-4605ef8`,
 five counterbalanced repeats of the suite and of the prepared-kernel probes on the committed tree
 at 4605ef8) before the next lands.
 
@@ -67,7 +67,86 @@ against the sliced road of before through the script layer. Outside the test sui
 the 65536-point batch and five smaller lengths as `bits` lines from the baseline build and from
 this one, and `compare.py` finds all 28 digests equal.
 
-### 07b — pending
+### 07d — no length threshold for threading inside one transform (decided by measurement)
+
+The factorial the plan asked for — the `d02_fft_batch32x64k` row as written (thirty-two calls of
+65,536) against its batched reshape form, and one transform alone at each power of two from 2^15
+to 2^22, at the default thread count and at `JGRAPH_THREADS=1`, five repeats each on the 07a
+build (`runs\07d-factorial`, `runs\07d-factorial-t1`) — found the row's cost is not the
+transform: the batched form is 4.1× cheaper than the loop (0.033 s against 0.137 s), and what the
+loop pays is the slice and the per-call fan-out, which is item 12's affine range and is measured
+after 12a lands. One transform alone, warm, threaded against one thread: 2^15 and 2^16 equal
+(1.12 against 1.12 ms, 1.00 against 1.06 ms), 2^17 1.2× faster threaded, 2^18 1.8×, 2^19 to 2^22
+2.2–2.8×. Only the *cold* first call favoured one thread at 2^15 to 2^17 (by 1.15–1.55×), and a
+threshold of 2^18 was cut on that reading. It was wrong: with the threshold in, the row's cold
+pass went from 0.127 s to 0.195 s in five of five repeats and the warm pass did not move, and
+with `DOTNET_TieredCompilation=0` the cold gap closed (0.133 s against 0.126 s). The cold cost is
+tier-0 code, which threads divide across cores and one thread does not; there is no length at
+which a lone transform is better off serial. `Factored` threads its tiles whenever it is asked
+(`inside`), as 07a left it, and `probe_d02_fft_forms` stays in the rig for item 12a's turn.
+
+### 07b — Makhoul's reordering: one length-n transform per DCT
+
+The even extension is a length-2n sequence whose spectrum carries the DCT-II twice. Makhoul's
+reordering carries it once: `v[j] = x[2j]`, `v[n−1−j] = x[2j+1]` — the even-indexed samples in
+order, then the odd-indexed ones reversed — is a length-n sequence whose DFT `V`, turned by a
+quarter-sample phase, has the unnormalized DCT-II as its real part:
+
+    X[k] = w(k) · Re(e^{−iπk/2n} · V[k])
+
+The inverse is the mirror. With `C = X / w` the unnormalized coefficients,
+`V[k] = e^{iπk/2n} · (C[k] − i·C[n−k])` for `k ≥ 1` and `V[0] = C[0]` — the real part of
+`e^{−iπk/2n}·V[k]` is `C[k]` by construction, and its imaginary part is `−C[n−k]` because `V` is
+the spectrum of a real sequence — then one inverse transform of length n, then the reordering
+undone. `Forward` and `Inverse` keep their signatures and their `inside` flag; the two rented
+planes are now length n; `Matrix(n)` and the orthonormal weights are untouched, so every
+`dctmtx`-based identity still holds.
+
+For the 4M row this halves the Bluestein: n = 4,000,000 pads to m = 2^23 where the 8M-point
+extension padded to 2^24, so the three transforms inside are each half the length and the plan
+is 198 MB instead of 396. For a power of two the one transform of length n replaces one of 2n.
+
+**This moves the last bits.** It is a different operation sequence, so the 07a contract (bits
+equal to the boxed road) ends here, and forward and inverse are accepted *independently*
+against a reference outside the transform — a permutation or a sign error can cancel in a round
+trip and never be seen. `tools/transforms/dct_reference.py` sums the definitions directly in
+`mpmath` at 30 digits (cosines by the three-term recurrence, which loses log₁₀ n of them and
+leaves more than twenty) for the fixture's own LCG input, and writes
+`tests/JGraph.Tests/Numerics/dct_reference.json`: every coefficient of the DCT-II and DCT-III at
+n = 8, 33, 100, 1000 and 4096, and four coefficients of each (`k = 1, 7, n/2, n−1`) at 2^20 and
+4,000,000, where a full direct sum is hours. `CosineReferenceTests` checks the new road and the
+even-extension road it replaced (kept there as `EvenExtensionForward`/`Inverse`) against that
+file at `rel ≤ 1e-12` (small lengths, every coefficient) and `rel ≤ 1e-11` (production lengths,
+selected coefficients); against closed forms at 2^20, 4,000,000 and the prime 4,000,037 — a
+constant (only DC, `√n·c`), one cosine at `k0 ∈ {1, 7, n/2}` (one coefficient, `√(n/2)`) both
+directions, a unit impulse (coefficient `k` is `w(k)·cos(πk(2j0+1)/2n)`), and a DC-only spectrum
+back to a constant — at `1e-10`; and the round trip at 2^20, 3,981,312 (3-smooth), 4,000,000,
+4,000,037 and 2^22 at `1e-9` as a tripwire. The closed-form cosine reduces its integer numerator
+modulo 4n before the multiply: unreduced, `π(2j+1)k0/2n` reaches `π·n/2` at `k0 = n/2`, and a
+double that size carries 1e-9 of rounding into `cos` — an error of the expectation, which both
+roads reproduced to three digits before the reduction.
+
+The accuracy measured, worst |got − reference| over the vector relative to max |reference|,
+new road against the even extension (`JGRAPH_DCT_REPORT`):
+
+| length | forward, new | forward, old | inverse, new | inverse, old |
+| --- | --- | --- | --- | --- |
+| 8 | 7.1e-17 | 1.4e-16 | 1.3e-16 | 1.3e-16 |
+| 33 | 6.0e-16 | 5.4e-16 | 2.9e-16 | 1.1e-15 |
+| 100 | 6.7e-16 | 3.4e-16 | 3.8e-16 | 5.5e-16 |
+| 1000 | 1.1e-15 | 5.1e-16 | 4.4e-16 | 9.0e-16 |
+| 4096 | 5.7e-16 | 3.8e-16 | 4.5e-16 | 6.8e-16 |
+| 2^20 (selected) | 2.8e-16 | 1.0e-16 | 1.1e-16 | 1.5e-16 |
+| 4,000,000 (selected) | 3.0e-16 | 7.4e-17 | 2.7e-16 | 2.5e-16 |
+| closed forms, 2^20 to 4,000,037 | — | — | ≤ 2.8e-15 | ≤ 4.6e-15 |
+
+The round trip is 1.2e-15 to 2.4e-15 at every production length. The plan's clause — a length
+threshold if the new road is less accurate on any length class — is read against this table:
+the forward road is a few ulps further from the reference at six of the seven lengths, the
+inverse a few ulps nearer at six of the seven, every entry is within 5·ε of the scale and none
+grows with n. That is the rounding of one operation order against another, not a loss of
+accuracy, and both roads sit four orders inside the 1e-12 contract; the new road ships at every
+length, and this table is the record the clause asked for.
 
 ## Consequences
 
@@ -104,6 +183,40 @@ agrees with R2025b within the rules it carries.
 
 What is left of the row is the algorithm: two Bluesteins of three 2^24-point transforms each for
 an 8M-point even extension, which 07b halves and 07c removes.
+
+### 07b, measured alone
+
+The same rig against the 07a numbers: five counterbalanced repeats of the two scripts
+(`runs\07b-makhoul`) and of the three probes on the tree as it lands (`runs\07b-makhoul-final`,
+built after the 07d threshold came out; the script run carried the threshold, which touches no
+d15 row and no batched d02 row).
+
+| row | scope | 07a | 07b | speedup | J/M before → after |
+| --- | --- | --- | --- | --- | --- |
+| `d15_dct_idct_4M` | benchmark row | 2.250 s | 1.327 s | 1.70× | 10.0 → 5.7 |
+| `dct(4M)` | probe, cold | 1.208 s | 0.725 s | 1.67× | 7.3 → 4.2 |
+| `dct(4M)` | probe, warm | 1.022 s | 0.562 s | 1.82× | 20.5 → 10.5 |
+| `idct(4M)` | probe, cold | 1.059 s | 0.571 s | 1.85× | 17.3 → 9.8 |
+| `idct(4M)` | probe, warm | 1.045 s | 0.578 s | 1.81× | 19.4 → 10.5 |
+| `d02_fft_batch32x64k` | benchmark row | 0.126 s | 0.130 s | 0.97× | 2.8 → 2.8 |
+| `d02_fft_batch32x64k` | probe, cold / warm | 0.127 / 0.107 s | 0.131 / 0.106 s | — | 2.7 → 2.7 |
+| `d02_fft_4M` | benchmark row | 0.074 s | 0.076 s | 0.97× | 1.2 → 1.2 |
+
+Against the P0 baseline the row stands at 2.85× (3.787 s → 1.327 s) and its ratio to R2025b at
+5.7 from 15.6. `d15_signal` as a process allocates 1.15 GB, from 1.42 GB after 07a and 1.93 GB at
+baseline, and its peak working set is 2.42 GB from 2.72 GB. The d02 rows are the noise floor
+again, as they must be: the power-of-two road did not change.
+
+Bits: the `head2head_v3\bits` scripts on the baseline build and on this one. Every one of the
+thirteen DCT lines moved — `d(2)` from `3f97e1d77b9aed98` to `3f97e1d77b9aedd7`, and the digests
+of the full 4M `dct` and `idct` and of both at 1000, 4096, 65536, 100000 and 262144 — while the
+round-trip flag held; all fourteen FFT lines (the 4M `fft`/`ifft`, the 65536-point batch, and
+`fft`/`ifft` at 1000, 4096, 65536, 100000, 262144 and 4,000,000) are equal. That is the shape
+07b predicted: the DCT's last bits belong to the new operation order, whose distance from the
+30-digit reference the Decision's table records, and nothing outside the DCT moved.
+
+What is left of the row is Bluestein itself: one chirp-z of three 2^23-point transforms for a
+length that is 2^8·5^6, which 07c's mixed-radix kernel takes directly.
 
 ## Divergences
 

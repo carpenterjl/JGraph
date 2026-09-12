@@ -1,4 +1,3 @@
-using System.Numerics;
 using JGraph.Api;
 using JGraph.Imaging;
 using JGraph.Numerics;
@@ -10,11 +9,11 @@ using Xunit;
 namespace JGraph.Tests.Numerics;
 
 /// <summary>
-/// ADR 0153, stage 07a: the cosine transform's packed road and Bluestein's plan cache change no
-/// bits. The boxed road they replace is kept here as <see cref="OldForward"/> and
-/// <see cref="OldInverse"/> — the <see cref="Complex"/>-array code as it stood — so every claim of
-/// "the same answer" is checked against it rather than assumed. Threading inside one transform is
-/// checked against the serial road the same way, and the plan cache against its own budget.
+/// ADR 0153: the cosine transform's packed road, threading inside one transform, and Bluestein's
+/// plan cache. Threading and caching change no bits, and that is checked against the serial,
+/// uncached road rather than assumed; the plan cache is checked against its own budget; the packed
+/// <c>dct</c> against the sliced road through the script layer. The transform's accuracy against a
+/// 30-digit reference is <see cref="CosineReferenceTests"/>' business.
 /// </summary>
 [Collection("JG facade")]
 public class TransformRoadTests : IDisposable
@@ -23,34 +22,38 @@ public class TransformRoadTests : IDisposable
 
     public void Dispose() => JG.Reset();
 
-    public static TheoryData<int> Lengths() => new() { 2, 3, 8, 33, 100, 1000, 4097, 32768, 65536, 100000 };
+    public static TheoryData<int> Lengths() => new() { 2, 3, 8, 33, 100, 1000, 4097, 32768, 65536, 100000, 262144 };
 
     [Theory]
     [MemberData(nameof(Lengths))]
-    public void ThePlanarForwardAnswersTheBoxedRoadBitForBit(int n)
+    public void ThePlanarRoadAnswersTheSameBitsSerialAndThreaded(int n)
     {
         double[] x = Signal(n, seed: 3);
-        double[] want = OldForward(x);
-        double[] got = CosineTransforms.Forward(x);
-        AssertSameBits(want, got);
-
+        double[] serial = CosineTransforms.Forward(x);
         var threaded = new double[n];
         CosineTransforms.Forward(x, threaded, inside: true);
-        AssertSameBits(want, threaded);
+        AssertSameBits(serial, threaded);
+
+        double[] c = Signal(n, seed: 11);
+        double[] back = CosineTransforms.Inverse(c);
+        var backThreaded = new double[n];
+        CosineTransforms.Inverse(c, backThreaded, inside: true);
+        AssertSameBits(back, backThreaded);
     }
 
     [Theory]
     [MemberData(nameof(Lengths))]
-    public void ThePlanarInverseAnswersTheBoxedRoadBitForBit(int n)
+    public void TheInverseUndoesTheForwardToWorkingPrecision(int n)
     {
-        double[] c = Signal(n, seed: 11);
-        double[] want = OldInverse(c);
-        double[] got = CosineTransforms.Inverse(c);
-        AssertSameBits(want, got);
+        double[] x = Signal(n, seed: 3);
+        double[] back = CosineTransforms.Inverse(CosineTransforms.Forward(x));
+        double worst = 0;
+        for (int i = 0; i < n; i++)
+        {
+            worst = Math.Max(worst, Math.Abs(back[i] - x[i]));
+        }
 
-        var threaded = new double[n];
-        CosineTransforms.Inverse(c, threaded, inside: true);
-        AssertSameBits(want, threaded);
+        Assert.True(worst < 1e-12 * Math.Max(1, Math.Log2(n)), $"n = {n}: round trip off by {worst:E3}");
     }
 
     [Theory]
@@ -186,75 +189,6 @@ public class TransformRoadTests : IDisposable
         Assert.Equal("[64 1] [128 1] [100 1] single", lines[0]);
         Assert.Equal("1 1", lines[1]);
         Assert.Equal("1", lines[2]);
-    }
-
-    // --- the boxed road as it was, kept as the oracle ------------------------------------------
-
-    private static double[] OldForward(ReadOnlySpan<double> values)
-    {
-        int n = values.Length;
-        var extended = new Complex[2 * n];
-        for (int i = 0; i < n; i++)
-        {
-            extended[i] = new Complex(values[i], 0);
-            extended[(2 * n) - 1 - i] = new Complex(values[i], 0);
-        }
-
-        BoxedTransform(extended, inverse: false);
-
-        var result = new double[n];
-        double first = Math.Sqrt(1.0 / n);
-        double rest = Math.Sqrt(2.0 / n);
-        for (int k = 0; k < n; k++)
-        {
-            double angle = -Math.PI * k / (2.0 * n);
-            double half = (extended[k] * Complex.FromPolarCoordinates(1, angle)).Real / 2.0;
-            result[k] = half * (k == 0 ? first : rest);
-        }
-
-        return result;
-    }
-
-    private static double[] OldInverse(ReadOnlySpan<double> coefficients)
-    {
-        int n = coefficients.Length;
-        var spectrum = new Complex[2 * n];
-        double first = Math.Sqrt(1.0 / n);
-        double rest = Math.Sqrt(2.0 / n);
-        for (int k = 0; k < n; k++)
-        {
-            double weight = coefficients[k] * (k == 0 ? first : rest);
-            spectrum[k] = Complex.FromPolarCoordinates(weight, Math.PI * k / (2.0 * n));
-        }
-
-        BoxedTransform(spectrum, inverse: true);
-
-        var result = new double[n];
-        for (int j = 0; j < n; j++)
-        {
-            result[j] = spectrum[j].Real * 2 * n;
-        }
-
-        return result;
-    }
-
-    /// <summary>What <c>Fft.Transform(Complex[])</c> does: split, the serial planar kernel, join.</summary>
-    private static void BoxedTransform(Complex[] buffer, bool inverse)
-    {
-        int n = buffer.Length;
-        var re = new double[n];
-        var im = new double[n];
-        for (int i = 0; i < n; i++)
-        {
-            re[i] = buffer[i].Real;
-            im[i] = buffer[i].Imaginary;
-        }
-
-        FftKernels.Transform(re, im, n, inverse);
-        for (int i = 0; i < n; i++)
-        {
-            buffer[i] = new Complex(re[i], im[i]);
-        }
     }
 
     private static double[] Signal(int n, int seed)

@@ -37,6 +37,11 @@
              CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
+  <!-- The 30-digit cosine-transform reference tools/transforms/dct_reference.py writes (ADR 0153). -->
+  <ItemGroup>
+    <Content Include="Numerics\dct_reference.json" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\..\src\JGraph.Core\JGraph.Core.csproj" />
     <ProjectReference Include="..\..\src\JGraph.Data\JGraph.Data.csproj" />

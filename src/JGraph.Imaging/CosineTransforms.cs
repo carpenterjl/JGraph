@@ -15,8 +15,10 @@ namespace JGraph.Imaging;
 /// signal to length 2n makes it periodic without a step at the join, and a periodic signal with no
 /// step has no high-frequency energy to speak of — which is exactly why the DCT concentrates a
 /// picture into its first few coefficients where the DFT smears it across all of them. That
-/// identity is not just an explanation here, it is the implementation: one FFT of length 2n per
-/// line, giving O(n log n) where the definition reads O(n²).
+/// identity is the implementation, in Makhoul's form: the even-indexed samples in order, then
+/// the odd-indexed ones reversed, is a length-n sequence whose DFT carries the DCT once where
+/// the even extension carried it twice — one FFT of length n per line, O(n log n) where the
+/// definition reads O(n²) (ADR 0153).
 /// </para>
 /// <para>
 /// Everything is the orthonormal form MATLAB uses, so the transform is its own inverse transposed
@@ -95,30 +97,36 @@ public static class CosineTransforms
             return;
         }
 
-        // The even extension: x0…x(n-1) followed by x(n-1)…x0. Its DFT, turned by a half-sample
-        // phase, is real and is twice the unnormalized DCT-II.
-        int length = 2 * n;
+        // Makhoul's reordering: the even-indexed samples in order, then the odd-indexed ones in
+        // reverse, is a length-n sequence whose DFT, turned by a quarter-sample phase, has the
+        // unnormalized DCT-II as its real part — one transform of length n where the even
+        // extension needed one of length 2n (ADR 0153, 07b).
         var pool = ArrayPool<double>.Shared;
-        double[] re = pool.Rent(length);
-        double[] im = pool.Rent(length);
+        double[] re = pool.Rent(n);
+        double[] im = pool.Rent(n);
         try
         {
-            Array.Clear(im, 0, length);
-            for (int i = 0; i < n; i++)
+            Array.Clear(im, 0, n);
+            int half = (n + 1) / 2;
+            for (int j = 0; j < half; j++)
             {
-                re[i] = values[i];
-                re[length - 1 - i] = values[i];
+                re[j] = values[2 * j];
             }
 
-            FftKernels.Transform(re.AsSpan(0, length), im.AsSpan(0, length), length, inverse: false, inside);
+            for (int j = 0; j < n / 2; j++)
+            {
+                re[n - 1 - j] = values[(2 * j) + 1];
+            }
+
+            FftKernels.Transform(re.AsSpan(0, n), im.AsSpan(0, n), n, inverse: false, inside);
 
             double first = Math.Sqrt(1.0 / n);
             double rest = Math.Sqrt(2.0 / n);
             for (int k = 0; k < n; k++)
             {
                 double angle = -Math.PI * k / (2.0 * n);
-                double half = ((re[k] * Math.Cos(angle)) - (im[k] * Math.Sin(angle))) / 2.0;
-                result[k] = half * (k == 0 ? first : rest);
+                double unnormalized = (re[k] * Math.Cos(angle)) - (im[k] * Math.Sin(angle));
+                result[k] = unnormalized * (k == 0 ? first : rest);
             }
         }
         finally
@@ -166,32 +174,42 @@ public static class CosineTransforms
             return;
         }
 
-        // x(j) = Σ w(k)·cos(π·k·(2j+1)/2n) with the orthonormal weights folded into w. Written as a
-        // length-2n inverse transform of a half-filled, half-sample-shifted spectrum, that sum is
-        // one FFT rather than n².
-        int length = 2 * n;
+        // The mirror of the forward road. With C the unnormalized DCT-II coefficients, the DFT of
+        // Makhoul's reordered sequence is V[k] = e^{iπk/2n}·(C[k] − i·C[n−k]) (V[0] = C[0]): the
+        // real part of e^{−iπk/2n}·V[k] is C[k] by construction, and its imaginary part is −C[n−k]
+        // because V is the spectrum of a real sequence. One inverse transform of length n, then
+        // the reordering undone (ADR 0153, 07b).
         var pool = ArrayPool<double>.Shared;
-        double[] re = pool.Rent(length);
-        double[] im = pool.Rent(length);
+        double[] re = pool.Rent(n);
+        double[] im = pool.Rent(n);
         try
         {
-            Array.Clear(re, 0, length);
-            Array.Clear(im, 0, length);
-            double first = Math.Sqrt(1.0 / n);
-            double rest = Math.Sqrt(2.0 / n);
-            for (int k = 0; k < n; k++)
+            double first = Math.Sqrt(n);
+            double rest = Math.Sqrt(n / 2.0);
+            re[0] = coefficients[0] * first;
+            im[0] = 0;
+            for (int k = 1; k < n; k++)
             {
-                double weight = coefficients[k] * (k == 0 ? first : rest);
+                double a = coefficients[k] * rest;
+                double b = coefficients[n - k] * rest;
                 double angle = Math.PI * k / (2.0 * n);
-                re[k] = weight * Math.Cos(angle);
-                im[k] = weight * Math.Sin(angle);
+                double c = Math.Cos(angle);
+                double s = Math.Sin(angle);
+                re[k] = (a * c) + (b * s);
+                im[k] = (a * s) - (b * c);
             }
 
-            FftKernels.Transform(re.AsSpan(0, length), im.AsSpan(0, length), length, inverse: true, inside);
+            FftKernels.Transform(re.AsSpan(0, n), im.AsSpan(0, n), n, inverse: true, inside);
 
-            for (int j = 0; j < n; j++)
+            int half = (n + 1) / 2;
+            for (int j = 0; j < half; j++)
             {
-                result[j] = re[j] * 2 * n;
+                result[2 * j] = re[j];
+            }
+
+            for (int j = 0; j < n / 2; j++)
+            {
+                result[(2 * j) + 1] = re[n - 1 - j];
             }
         }
         finally
