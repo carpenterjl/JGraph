@@ -1,0 +1,1250 @@
+CHK|one_01|<0>|exact
+CHK|one_02|<0>|exact
+CHK|one_03|<1>|exact
+CHK|one_04|<-1>|exact
+CHK|one_05|<7>|exact
+CHK|one_06|<9>|exact
+CHK|one_07|<10>|exact
+CHK|one_08|<11>|exact
+CHK|one_09|<99>|exact
+CHK|one_10|<100>|exact
+CHK|one_11|<101>|exact
+CHK|one_12|<999>|exact
+CHK|one_13|<1000>|exact
+CHK|one_14|<99999>|exact
+CHK|one_15|<100000>|exact
+CHK|one_16|<100001>|exact
+CHK|one_17|<999999>|exact
+CHK|one_18|<1000000>|exact
+CHK|one_19|<123456789>|exact
+CHK|one_20|<2147483647>|exact
+CHK|one_21|<2147483648>|exact
+CHK|one_22|<4294967296>|exact
+CHK|one_23|<999999999999999>|exact
+CHK|one_24|<1000000000000000>|exact
+CHK|one_25|<1000000000000001>|exact
+CHK|one_26|<4503599627370496>|exact
+CHK|one_27|<9007199254740991>|exact
+CHK|one_28|<9007199254740992>|exact
+CHK|one_29|<9007199254740994>|exact
+CHK|one_30|<1e+16>|exact
+CHK|one_31|<1e+17>|exact
+CHK|one_32|<1e+21>|exact
+CHK|one_33|<1e+22>|exact
+CHK|one_34|<1e+100>|exact
+CHK|one_35|<1.797693134862316e+308>|exact
+CHK|one_36|<-1.797693134862316e+308>|exact
+CHK|one_37|<0.1>|exact
+CHK|one_38|<0.2>|exact
+CHK|one_39|<0.3>|exact
+CHK|one_40|<0.3>|exact
+CHK|one_41|<0.5>|exact
+CHK|one_42|<1.5>|exact
+CHK|one_43|<2.5>|exact
+CHK|one_44|<-2.5>|exact
+CHK|one_45|<0.25>|exact
+CHK|one_46|<0.33333>|exact
+CHK|one_47|<0.66667>|exact
+CHK|one_48|<3.1416>|exact
+CHK|one_49|<-3.1416>|exact
+CHK|one_50|<2.7183>|exact
+CHK|one_51|<12345.678>|exact
+CHK|one_52|<123456.78>|exact
+CHK|one_53|<1234567.8>|exact
+CHK|one_54|<99999.5>|exact
+CHK|one_55|<99999.4>|exact
+CHK|one_56|<100000.5>|exact
+CHK|one_57|<10000.1>|exact
+CHK|one_58|<100.5>|exact
+CHK|one_59|<1e-05>|exact
+CHK|one_60|<1.5e-05>|exact
+CHK|one_61|<0.0001>|exact
+CHK|one_62|<0.0001234>|exact
+CHK|one_63|<1.234e-05>|exact
+CHK|one_64|<1.2346e-07>|exact
+CHK|one_65|<1e-10>|exact
+CHK|one_66|<4.9407e-324>|exact
+CHK|one_67|<2.2251e-308>|exact
+CHK|one_68|<Inf>|exact
+CHK|one_69|<-Inf>|exact
+CHK|one_70|<10>|exact
+CHK|one_71|<9.9999>|exact
+CHK|one_72|<9.9999e-05>|exact
+CHK|one_73|<123.4568>|exact
+CHK|one_74|<0.00012346>|exact
+CHK|decades|<0 1 2 9 10 11 99 100 101 999 1000 1001 9999 10000 10001 99999 100000 100001 999999 1000000 1000001 9999999 10000000 10000001 99999999 100000000 100000001 999999999 1000000000 1000000001 9999999999 10000000000 10000000001 99999999999 100000000000 100000000001 999999999999 1000000000000 1000000000001 9999999999999 10000000000000 10000000000001 99999999999999 100000000000000 100000000000001 999999999999999 1000000000000000 1000000000000001 1e+16 1e+16 1e+16 1e+17 1e+17 1e+17>|exact
+CHK|powers_of_two|<0 1 -2 1 2 -3 3 4 -5 7 8 -9 15 16 -17 31 32 -33 63 64 -65 127 128 -129 255 256 -257 511 512 -513 1023 1024 -1025 2047 2048 -2049 4095 4096 -4097 8191 8192 -8193 16383 16384 -16385 32767 32768 -32769 65535 65536 -65537 131071 131072 -131073 262143 262144 -262145 524287 524288 -524289 1048575 1048576 -1048577 2097151 2097152 -2097153 4194303 4194304 -4194305 8388607 8388608 -8388609 16777215 16777216 -16777217 33554431 33554432 -33554433 67108863 67108864 -67108865 134217727 134217728 -134217729 268435455 268435456 -268435457 536870911 536870912 -536870913 1073741823 1073741824 -1073741825 2147483647 2147483648 -2147483649 4294967295 4294967296 -4294967297 8589934591 8589934592 -8589934593 17179869183 17179869184 -17179869185 34359738367 34359738368 -34359738369 68719476735 68719476736 -68719476737 137438953471 137438953472 -137438953473 274877906943 274877906944 -274877906945 549755813887 549755813888 -549755813889 1099511627775 1099511627776 -1099511627777 2199023255551 2199023255552 -2199023255553 4398046511103 4398046511104 -4398046511105 8796093022207 8796093022208 -8796093022209 17592186044415 17592186044416 -17592186044417 35184372088831 35184372088832 -35184372088833 70368744177663 70368744177664 -70368744177665 140737488355327 140737488355328 -140737488355329 281474976710655 281474976710656 -281474976710657 562949953421311 562949953421312 -562949953421313 1125899906842623 1125899906842624 -1125899906842625 2251799813685247 2251799813685248 -2251799813685249 4503599627370495 4503599627370496 -4503599627370497 9007199254740991 9007199254740992 -9007199254740992 1.801439850948198e+16 1.801439850948198e+16 -1.801439850948198e+16 3.602879701896397e+16 3.602879701896397e+16 -3.602879701896397e+16 7.205759403792794e+16 7.205759403792794e+16 -7.205759403792794e+16 1.441151880758559e+17 1.441151880758559e+17 -1.441151880758559e+17 2.882303761517117e+17 2.882303761517117e+17 -2.882303761517117e+17 5.764607523034235e+17 5.764607523034235e+17 -5.764607523034235e+17 1.152921504606847e+18 1.152921504606847e+18 -1.152921504606847e+18 2.305843009213694e+18 2.305843009213694e+18 -2.305843009213694e+18 4.611686018427388e+18 4.611686018427388e+18 -4.611686018427388e+18 9.223372036854776e+18 9.223372036854776e+18 -9.223372036854776e+18 1.844674407370955e+19 1.844674407370955e+19 -1.844674407370955e+19>|exact
+CHK|tenths|<-4 -3.9 -3.8 -3.7 -3.6 -3.5 -3.4 -3.3 -3.2 -3.1 -3 -2.9 -2.8 -2.7 -2.6 -2.5 -2.4 -2.3 -2.2 -2.1 -2 -1.9 -1.8 -1.7 -1.6 -1.5 -1.4 -1.3 -1.2 -1.1 -1 -0.9 -0.8 -0.7 -0.6 -0.5 -0.4 -0.3 -0.2 -0.1 0 0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1 1.1 1.2 1.3 1.4 1.5 1.6 1.7 1.8 1.9 2 2.1 2.2 2.3 2.4 2.5 2.6 2.7 2.8 2.9 3 3.1 3.2 3.3 3.4 3.5 3.6 3.7 3.8 3.9 4>|exact
+CHK|arr_row|<1 2.5 0 100000 1e-05>|exact
+CHK|arr_mat_size|[2 2]|exact
+CHK|arr_mat_missing|0010|exact
+CHK|arr_mat_11|<1>|exact
+CHK|arr_mat_21|<0>|exact
+CHK|arr_mat_22|<2.5>|exact
+CHK|arr_col_size|[3 1]|exact
+CHK|arr_empty_size|[0 3]|exact
+CHK|nan_row_missing|01|exact
+CHK|nan_plus_missing|1|exact
+CHK|word_nan_missing|0|exact
+CHK|word_nan_text|<NaN>|exact
+CHK|cls_int8|<-128 -1 0 127>|exact
+CHK|cls_uint8|<0 255>|exact
+CHK|cls_int16|<-32768 32767>|exact
+CHK|cls_uint16|<0 65535>|exact
+CHK|cls_int32|<-2147483648 2147483647>|exact
+CHK|cls_uint32|<0 4294967295>|exact
+CHK|cls_int64_small|<-9007199254740992 123456789012 9007199254740992>|exact
+CHK|cls_int64_max|<9223372036854775807>|div=ADR0156
+CHK|cls_uint64_max|<18446744073709551615>|div=ADR0156
+CHK|cls_single|<3.1415927410126 0.10000000149012 10000000000 16777216 -2.5 9.9999997473788e-06>|div=ADR0156
+CHK|cls_logical|<true false true>|exact
+CHK|sweep_fractions|15ec81832b22f6a8d3ca883e153e92da6e98065fea97f35018baa3b63fa205de|bits
+CHK|sweep_small|e7d2be073aa99affe7125d6f420f0cea2294297c7d6d25d8a5c52d4195098535|bits
+CHK|sweep_billions|e00f94e87ca8182ed78654577be9fd66a8ba7fa0e10163e34cf5c3d7f8a5ad1e|bits
+CHK|sweep_hundred_trillions|df3543b4bb026a21e9f4165a1ed5afa00c5e1de8071d3a89f4d9b205b8211705|bits
+CHK|array_precision|<9016.99437 12345.5 -4.2520535>|div=ADR0156
+CHK|array_precision_small|<-29.14401 -123.25>|div=ADR0156
+CHK|sweep_tenths|12206c9bfd01af991a5de388b64f0641fd3bf323f307386024703d9873fe3acc|bits
+CHK|chain_str_str_str|<string[1 1]:ababab>|exact
+CHK|chain_str_str_row|<string[1 2]:ababx,ababy>|exact
+CHK|chain_str_str_col|<string[2 1]:ababp,ababq>|exact
+CHK|chain_str_str_chr|<string[1 1]:ababcd>|exact
+CHK|chain_str_str_mis|<string[1 1]:<M>>|exact
+CHK|chain_str_str_num|<string[1 1]:abab7>|exact
+CHK|chain_str_str_nan|<string[1 1]:<M>>|exact
+CHK|chain_str_str_lgc|<string[1 1]:ababtrue>|exact
+CHK|chain_str_str_cmx|<string[2 1]:ababef,ababgh>|exact
+CHK|chain_str_str_cel|<string[2 1]:ababu,ababv>|exact
+CHK|chain_str_str_row3|<string[1 3]:ababx,ababy,ababz>|exact
+CHK|chain_str_row_str|<string[1 2]:abxab,abyab>|exact
+CHK|chain_str_row_row|<string[1 2]:abxx,abyy>|exact
+CHK|chain_str_row_col|<string[2 2]:abxp,abxq,abyp,abyq>|exact
+CHK|chain_str_row_chr|<string[1 2]:abxcd,abycd>|exact
+CHK|chain_str_row_mis|<string[1 2]:<M>,<M>>|exact
+CHK|chain_str_row_num|<string[1 2]:abx7,aby7>|exact
+CHK|chain_str_row_nan|<string[1 2]:<M>,<M>>|exact
+CHK|chain_str_row_lgc|<string[1 2]:abxtrue,abytrue>|exact
+CHK|chain_str_row_cmx|<string[2 2]:abxef,abxgh,abyef,abygh>|exact
+CHK|chain_str_row_cel|<string[2 2]:abxu,abxv,abyu,abyv>|exact
+CHK|chain_str_row_row3|<ERR>|exact
+CHK|chain_str_col_str|<string[2 1]:abpab,abqab>|exact
+CHK|chain_str_col_row|<string[2 2]:abpx,abqx,abpy,abqy>|exact
+CHK|chain_str_col_col|<string[2 1]:abpp,abqq>|exact
+CHK|chain_str_col_chr|<string[2 1]:abpcd,abqcd>|exact
+CHK|chain_str_col_mis|<string[2 1]:<M>,<M>>|exact
+CHK|chain_str_col_num|<string[2 1]:abp7,abq7>|exact
+CHK|chain_str_col_nan|<string[2 1]:<M>,<M>>|exact
+CHK|chain_str_col_lgc|<string[2 1]:abptrue,abqtrue>|exact
+CHK|chain_str_col_cmx|<string[2 1]:abpef,abqgh>|exact
+CHK|chain_str_col_cel|<string[2 1]:abpu,abqv>|exact
+CHK|chain_str_col_row3|<string[2 3]:abpx,abqx,abpy,abqy,abpz,abqz>|exact
+CHK|chain_str_chr_str|<string[1 1]:abcdab>|exact
+CHK|chain_str_chr_row|<string[1 2]:abcdx,abcdy>|exact
+CHK|chain_str_chr_col|<string[2 1]:abcdp,abcdq>|exact
+CHK|chain_str_chr_chr|<string[1 1]:abcdcd>|exact
+CHK|chain_str_chr_mis|<string[1 1]:<M>>|exact
+CHK|chain_str_chr_num|<string[1 1]:abcd7>|exact
+CHK|chain_str_chr_nan|<string[1 1]:<M>>|exact
+CHK|chain_str_chr_lgc|<string[1 1]:abcdtrue>|exact
+CHK|chain_str_chr_cmx|<string[2 1]:abcdef,abcdgh>|exact
+CHK|chain_str_chr_cel|<string[2 1]:abcdu,abcdv>|exact
+CHK|chain_str_chr_row3|<string[1 3]:abcdx,abcdy,abcdz>|exact
+CHK|chain_str_mis_str|<string[1 1]:<M>>|exact
+CHK|chain_str_mis_row|<string[1 2]:<M>,<M>>|exact
+CHK|chain_str_mis_col|<string[2 1]:<M>,<M>>|exact
+CHK|chain_str_mis_chr|<string[1 1]:<M>>|exact
+CHK|chain_str_mis_mis|<string[1 1]:<M>>|exact
+CHK|chain_str_mis_num|<string[1 1]:<M>>|exact
+CHK|chain_str_mis_nan|<string[1 1]:<M>>|exact
+CHK|chain_str_mis_lgc|<string[1 1]:<M>>|exact
+CHK|chain_str_mis_cmx|<string[2 1]:<M>,<M>>|exact
+CHK|chain_str_mis_cel|<string[2 1]:<M>,<M>>|exact
+CHK|chain_str_mis_row3|<string[1 3]:<M>,<M>,<M>>|exact
+CHK|chain_str_num_str|<string[1 1]:ab7ab>|exact
+CHK|chain_str_num_row|<string[1 2]:ab7x,ab7y>|exact
+CHK|chain_str_num_col|<string[2 1]:ab7p,ab7q>|exact
+CHK|chain_str_num_chr|<string[1 1]:ab7cd>|exact
+CHK|chain_str_num_mis|<string[1 1]:<M>>|exact
+CHK|chain_str_num_num|<string[1 1]:ab77>|exact
+CHK|chain_str_num_nan|<string[1 1]:<M>>|exact
+CHK|chain_str_num_lgc|<string[1 1]:ab7true>|exact
+CHK|chain_str_num_cmx|<string[2 1]:ab7ef,ab7gh>|exact
+CHK|chain_str_num_cel|<string[2 1]:ab7u,ab7v>|exact
+CHK|chain_str_num_row3|<string[1 3]:ab7x,ab7y,ab7z>|exact
+CHK|chain_str_nan_str|<string[1 1]:<M>>|exact
+CHK|chain_str_nan_row|<string[1 2]:<M>,<M>>|exact
+CHK|chain_str_nan_col|<string[2 1]:<M>,<M>>|exact
+CHK|chain_str_nan_chr|<string[1 1]:<M>>|exact
+CHK|chain_str_nan_mis|<string[1 1]:<M>>|exact
+CHK|chain_str_nan_num|<string[1 1]:<M>>|exact
+CHK|chain_str_nan_nan|<string[1 1]:<M>>|exact
+CHK|chain_str_nan_lgc|<string[1 1]:<M>>|exact
+CHK|chain_str_nan_cmx|<string[2 1]:<M>,<M>>|exact
+CHK|chain_str_nan_cel|<string[2 1]:<M>,<M>>|exact
+CHK|chain_str_nan_row3|<string[1 3]:<M>,<M>,<M>>|exact
+CHK|chain_str_lgc_str|<string[1 1]:abtrueab>|exact
+CHK|chain_str_lgc_row|<string[1 2]:abtruex,abtruey>|exact
+CHK|chain_str_lgc_col|<string[2 1]:abtruep,abtrueq>|exact
+CHK|chain_str_lgc_chr|<string[1 1]:abtruecd>|exact
+CHK|chain_str_lgc_mis|<string[1 1]:<M>>|exact
+CHK|chain_str_lgc_num|<string[1 1]:abtrue7>|exact
+CHK|chain_str_lgc_nan|<string[1 1]:<M>>|exact
+CHK|chain_str_lgc_lgc|<string[1 1]:abtruetrue>|exact
+CHK|chain_str_lgc_cmx|<string[2 1]:abtrueef,abtruegh>|exact
+CHK|chain_str_lgc_cel|<string[2 1]:abtrueu,abtruev>|exact
+CHK|chain_str_lgc_row3|<string[1 3]:abtruex,abtruey,abtruez>|exact
+CHK|chain_str_cmx_str|<string[2 1]:abefab,abghab>|exact
+CHK|chain_str_cmx_row|<string[2 2]:abefx,abghx,abefy,abghy>|exact
+CHK|chain_str_cmx_col|<string[2 1]:abefp,abghq>|exact
+CHK|chain_str_cmx_chr|<string[2 1]:abefcd,abghcd>|exact
+CHK|chain_str_cmx_mis|<string[2 1]:<M>,<M>>|exact
+CHK|chain_str_cmx_num|<string[2 1]:abef7,abgh7>|exact
+CHK|chain_str_cmx_nan|<string[2 1]:<M>,<M>>|exact
+CHK|chain_str_cmx_lgc|<string[2 1]:abeftrue,abghtrue>|exact
+CHK|chain_str_cmx_cmx|<string[2 1]:abefef,abghgh>|exact
+CHK|chain_str_cmx_cel|<string[2 1]:abefu,abghv>|exact
+CHK|chain_str_cmx_row3|<string[2 3]:abefx,abghx,abefy,abghy,abefz,abghz>|exact
+CHK|chain_str_cel_str|<string[2 1]:abuab,abvab>|exact
+CHK|chain_str_cel_row|<string[2 2]:abux,abvx,abuy,abvy>|exact
+CHK|chain_str_cel_col|<string[2 1]:abup,abvq>|exact
+CHK|chain_str_cel_chr|<string[2 1]:abucd,abvcd>|exact
+CHK|chain_str_cel_mis|<string[2 1]:<M>,<M>>|exact
+CHK|chain_str_cel_num|<string[2 1]:abu7,abv7>|exact
+CHK|chain_str_cel_nan|<string[2 1]:<M>,<M>>|exact
+CHK|chain_str_cel_lgc|<string[2 1]:abutrue,abvtrue>|exact
+CHK|chain_str_cel_cmx|<string[2 1]:abuef,abvgh>|exact
+CHK|chain_str_cel_cel|<string[2 1]:abuu,abvv>|exact
+CHK|chain_str_cel_row3|<string[2 3]:abux,abvx,abuy,abvy,abuz,abvz>|exact
+CHK|chain_str_row3_str|<string[1 3]:abxab,abyab,abzab>|exact
+CHK|chain_str_row3_row|<ERR>|exact
+CHK|chain_str_row3_col|<string[2 3]:abxp,abxq,abyp,abyq,abzp,abzq>|exact
+CHK|chain_str_row3_chr|<string[1 3]:abxcd,abycd,abzcd>|exact
+CHK|chain_str_row3_mis|<string[1 3]:<M>,<M>,<M>>|exact
+CHK|chain_str_row3_num|<string[1 3]:abx7,aby7,abz7>|exact
+CHK|chain_str_row3_nan|<string[1 3]:<M>,<M>,<M>>|exact
+CHK|chain_str_row3_lgc|<string[1 3]:abxtrue,abytrue,abztrue>|exact
+CHK|chain_str_row3_cmx|<string[2 3]:abxef,abxgh,abyef,abygh,abzef,abzgh>|exact
+CHK|chain_str_row3_cel|<string[2 3]:abxu,abxv,abyu,abyv,abzu,abzv>|exact
+CHK|chain_str_row3_row3|<string[1 3]:abxx,abyy,abzz>|exact
+CHK|chain_row_str_str|<string[1 2]:xabab,yabab>|exact
+CHK|chain_row_str_row|<string[1 2]:xabx,yaby>|exact
+CHK|chain_row_str_col|<string[2 2]:xabp,xabq,yabp,yabq>|exact
+CHK|chain_row_str_chr|<string[1 2]:xabcd,yabcd>|exact
+CHK|chain_row_str_mis|<string[1 2]:<M>,<M>>|exact
+CHK|chain_row_str_num|<string[1 2]:xab7,yab7>|exact
+CHK|chain_row_str_nan|<string[1 2]:<M>,<M>>|exact
+CHK|chain_row_str_lgc|<string[1 2]:xabtrue,yabtrue>|exact
+CHK|chain_row_str_cmx|<string[2 2]:xabef,xabgh,yabef,yabgh>|exact
+CHK|chain_row_str_cel|<string[2 2]:xabu,xabv,yabu,yabv>|exact
+CHK|chain_row_str_row3|<ERR>|exact
+CHK|chain_row_row_str|<string[1 2]:xxab,yyab>|exact
+CHK|chain_row_row_row|<string[1 2]:xxx,yyy>|exact
+CHK|chain_row_row_col|<string[2 2]:xxp,xxq,yyp,yyq>|exact
+CHK|chain_row_row_chr|<string[1 2]:xxcd,yycd>|exact
+CHK|chain_row_row_mis|<string[1 2]:<M>,<M>>|exact
+CHK|chain_row_row_num|<string[1 2]:xx7,yy7>|exact
+CHK|chain_row_row_nan|<string[1 2]:<M>,<M>>|exact
+CHK|chain_row_row_lgc|<string[1 2]:xxtrue,yytrue>|exact
+CHK|chain_row_row_cmx|<string[2 2]:xxef,xxgh,yyef,yygh>|exact
+CHK|chain_row_row_cel|<string[2 2]:xxu,xxv,yyu,yyv>|exact
+CHK|chain_row_row_row3|<ERR>|exact
+CHK|chain_row_col_str|<string[2 2]:xpab,xqab,ypab,yqab>|exact
+CHK|chain_row_col_row|<string[2 2]:xpx,xqx,ypy,yqy>|exact
+CHK|chain_row_col_col|<string[2 2]:xpp,xqq,ypp,yqq>|exact
+CHK|chain_row_col_chr|<string[2 2]:xpcd,xqcd,ypcd,yqcd>|exact
+CHK|chain_row_col_mis|<string[2 2]:<M>,<M>,<M>,<M>>|exact
+CHK|chain_row_col_num|<string[2 2]:xp7,xq7,yp7,yq7>|exact
+CHK|chain_row_col_nan|<string[2 2]:<M>,<M>,<M>,<M>>|exact
+CHK|chain_row_col_lgc|<string[2 2]:xptrue,xqtrue,yptrue,yqtrue>|exact
+CHK|chain_row_col_cmx|<string[2 2]:xpef,xqgh,ypef,yqgh>|exact
+CHK|chain_row_col_cel|<string[2 2]:xpu,xqv,ypu,yqv>|exact
+CHK|chain_row_col_row3|<ERR>|exact
+CHK|chain_row_chr_str|<string[1 2]:xcdab,ycdab>|exact
+CHK|chain_row_chr_row|<string[1 2]:xcdx,ycdy>|exact
+CHK|chain_row_chr_col|<string[2 2]:xcdp,xcdq,ycdp,ycdq>|exact
+CHK|chain_row_chr_chr|<string[1 2]:xcdcd,ycdcd>|exact
+CHK|chain_row_chr_mis|<string[1 2]:<M>,<M>>|exact
+CHK|chain_row_chr_num|<string[1 2]:xcd7,ycd7>|exact
+CHK|chain_row_chr_nan|<string[1 2]:<M>,<M>>|exact
+CHK|chain_row_chr_lgc|<string[1 2]:xcdtrue,ycdtrue>|exact
+CHK|chain_row_chr_cmx|<string[2 2]:xcdef,xcdgh,ycdef,ycdgh>|exact
+CHK|chain_row_chr_cel|<string[2 2]:xcdu,xcdv,ycdu,ycdv>|exact
+CHK|chain_row_chr_row3|<ERR>|exact
+CHK|chain_row_mis_str|<string[1 2]:<M>,<M>>|exact
+CHK|chain_row_mis_row|<string[1 2]:<M>,<M>>|exact
+CHK|chain_row_mis_col|<string[2 2]:<M>,<M>,<M>,<M>>|exact
+CHK|chain_row_mis_chr|<string[1 2]:<M>,<M>>|exact
+CHK|chain_row_mis_mis|<string[1 2]:<M>,<M>>|exact
+CHK|chain_row_mis_num|<string[1 2]:<M>,<M>>|exact
+CHK|chain_row_mis_nan|<string[1 2]:<M>,<M>>|exact
+CHK|chain_row_mis_lgc|<string[1 2]:<M>,<M>>|exact
+CHK|chain_row_mis_cmx|<string[2 2]:<M>,<M>,<M>,<M>>|exact
+CHK|chain_row_mis_cel|<string[2 2]:<M>,<M>,<M>,<M>>|exact
+CHK|chain_row_mis_row3|<ERR>|exact
+CHK|chain_row_num_str|<string[1 2]:x7ab,y7ab>|exact
+CHK|chain_row_num_row|<string[1 2]:x7x,y7y>|exact
+CHK|chain_row_num_col|<string[2 2]:x7p,x7q,y7p,y7q>|exact
+CHK|chain_row_num_chr|<string[1 2]:x7cd,y7cd>|exact
+CHK|chain_row_num_mis|<string[1 2]:<M>,<M>>|exact
+CHK|chain_row_num_num|<string[1 2]:x77,y77>|exact
+CHK|chain_row_num_nan|<string[1 2]:<M>,<M>>|exact
+CHK|chain_row_num_lgc|<string[1 2]:x7true,y7true>|exact
+CHK|chain_row_num_cmx|<string[2 2]:x7ef,x7gh,y7ef,y7gh>|exact
+CHK|chain_row_num_cel|<string[2 2]:x7u,x7v,y7u,y7v>|exact
+CHK|chain_row_num_row3|<ERR>|exact
+CHK|chain_row_nan_str|<string[1 2]:<M>,<M>>|exact
+CHK|chain_row_nan_row|<string[1 2]:<M>,<M>>|exact
+CHK|chain_row_nan_col|<string[2 2]:<M>,<M>,<M>,<M>>|exact
+CHK|chain_row_nan_chr|<string[1 2]:<M>,<M>>|exact
+CHK|chain_row_nan_mis|<string[1 2]:<M>,<M>>|exact
+CHK|chain_row_nan_num|<string[1 2]:<M>,<M>>|exact
+CHK|chain_row_nan_nan|<string[1 2]:<M>,<M>>|exact
+CHK|chain_row_nan_lgc|<string[1 2]:<M>,<M>>|exact
+CHK|chain_row_nan_cmx|<string[2 2]:<M>,<M>,<M>,<M>>|exact
+CHK|chain_row_nan_cel|<string[2 2]:<M>,<M>,<M>,<M>>|exact
+CHK|chain_row_nan_row3|<ERR>|exact
+CHK|chain_row_lgc_str|<string[1 2]:xtrueab,ytrueab>|exact
+CHK|chain_row_lgc_row|<string[1 2]:xtruex,ytruey>|exact
+CHK|chain_row_lgc_col|<string[2 2]:xtruep,xtrueq,ytruep,ytrueq>|exact
+CHK|chain_row_lgc_chr|<string[1 2]:xtruecd,ytruecd>|exact
+CHK|chain_row_lgc_mis|<string[1 2]:<M>,<M>>|exact
+CHK|chain_row_lgc_num|<string[1 2]:xtrue7,ytrue7>|exact
+CHK|chain_row_lgc_nan|<string[1 2]:<M>,<M>>|exact
+CHK|chain_row_lgc_lgc|<string[1 2]:xtruetrue,ytruetrue>|exact
+CHK|chain_row_lgc_cmx|<string[2 2]:xtrueef,xtruegh,ytrueef,ytruegh>|exact
+CHK|chain_row_lgc_cel|<string[2 2]:xtrueu,xtruev,ytrueu,ytruev>|exact
+CHK|chain_row_lgc_row3|<ERR>|exact
+CHK|chain_row_cmx_str|<string[2 2]:xefab,xghab,yefab,yghab>|exact
+CHK|chain_row_cmx_row|<string[2 2]:xefx,xghx,yefy,yghy>|exact
+CHK|chain_row_cmx_col|<string[2 2]:xefp,xghq,yefp,yghq>|exact
+CHK|chain_row_cmx_chr|<string[2 2]:xefcd,xghcd,yefcd,yghcd>|exact
+CHK|chain_row_cmx_mis|<string[2 2]:<M>,<M>,<M>,<M>>|exact
+CHK|chain_row_cmx_num|<string[2 2]:xef7,xgh7,yef7,ygh7>|exact
+CHK|chain_row_cmx_nan|<string[2 2]:<M>,<M>,<M>,<M>>|exact
+CHK|chain_row_cmx_lgc|<string[2 2]:xeftrue,xghtrue,yeftrue,yghtrue>|exact
+CHK|chain_row_cmx_cmx|<string[2 2]:xefef,xghgh,yefef,yghgh>|exact
+CHK|chain_row_cmx_cel|<string[2 2]:xefu,xghv,yefu,yghv>|exact
+CHK|chain_row_cmx_row3|<ERR>|exact
+CHK|chain_row_cel_str|<string[2 2]:xuab,xvab,yuab,yvab>|exact
+CHK|chain_row_cel_row|<string[2 2]:xux,xvx,yuy,yvy>|exact
+CHK|chain_row_cel_col|<string[2 2]:xup,xvq,yup,yvq>|exact
+CHK|chain_row_cel_chr|<string[2 2]:xucd,xvcd,yucd,yvcd>|exact
+CHK|chain_row_cel_mis|<string[2 2]:<M>,<M>,<M>,<M>>|exact
+CHK|chain_row_cel_num|<string[2 2]:xu7,xv7,yu7,yv7>|exact
+CHK|chain_row_cel_nan|<string[2 2]:<M>,<M>,<M>,<M>>|exact
+CHK|chain_row_cel_lgc|<string[2 2]:xutrue,xvtrue,yutrue,yvtrue>|exact
+CHK|chain_row_cel_cmx|<string[2 2]:xuef,xvgh,yuef,yvgh>|exact
+CHK|chain_row_cel_cel|<string[2 2]:xuu,xvv,yuu,yvv>|exact
+CHK|chain_row_cel_row3|<ERR>|exact
+CHK|chain_row_row3_str|<ERR>|exact
+CHK|chain_row_row3_row|<ERR>|exact
+CHK|chain_row_row3_col|<ERR>|exact
+CHK|chain_row_row3_chr|<ERR>|exact
+CHK|chain_row_row3_mis|<ERR>|exact
+CHK|chain_row_row3_num|<ERR>|exact
+CHK|chain_row_row3_nan|<ERR>|exact
+CHK|chain_row_row3_lgc|<ERR>|exact
+CHK|chain_row_row3_cmx|<ERR>|exact
+CHK|chain_row_row3_cel|<ERR>|exact
+CHK|chain_row_row3_row3|<ERR>|exact
+CHK|chain_col_str_str|<string[2 1]:pabab,qabab>|exact
+CHK|chain_col_str_row|<string[2 2]:pabx,qabx,paby,qaby>|exact
+CHK|chain_col_str_col|<string[2 1]:pabp,qabq>|exact
+CHK|chain_col_str_chr|<string[2 1]:pabcd,qabcd>|exact
+CHK|chain_col_str_mis|<string[2 1]:<M>,<M>>|exact
+CHK|chain_col_str_num|<string[2 1]:pab7,qab7>|exact
+CHK|chain_col_str_nan|<string[2 1]:<M>,<M>>|exact
+CHK|chain_col_str_lgc|<string[2 1]:pabtrue,qabtrue>|exact
+CHK|chain_col_str_cmx|<string[2 1]:pabef,qabgh>|exact
+CHK|chain_col_str_cel|<string[2 1]:pabu,qabv>|exact
+CHK|chain_col_str_row3|<string[2 3]:pabx,qabx,paby,qaby,pabz,qabz>|exact
+CHK|chain_col_row_str|<string[2 2]:pxab,qxab,pyab,qyab>|exact
+CHK|chain_col_row_row|<string[2 2]:pxx,qxx,pyy,qyy>|exact
+CHK|chain_col_row_col|<string[2 2]:pxp,qxq,pyp,qyq>|exact
+CHK|chain_col_row_chr|<string[2 2]:pxcd,qxcd,pycd,qycd>|exact
+CHK|chain_col_row_mis|<string[2 2]:<M>,<M>,<M>,<M>>|exact
+CHK|chain_col_row_num|<string[2 2]:px7,qx7,py7,qy7>|exact
+CHK|chain_col_row_nan|<string[2 2]:<M>,<M>,<M>,<M>>|exact
+CHK|chain_col_row_lgc|<string[2 2]:pxtrue,qxtrue,pytrue,qytrue>|exact
+CHK|chain_col_row_cmx|<string[2 2]:pxef,qxgh,pyef,qygh>|exact
+CHK|chain_col_row_cel|<string[2 2]:pxu,qxv,pyu,qyv>|exact
+CHK|chain_col_row_row3|<ERR>|exact
+CHK|chain_col_col_str|<string[2 1]:ppab,qqab>|exact
+CHK|chain_col_col_row|<string[2 2]:ppx,qqx,ppy,qqy>|exact
+CHK|chain_col_col_col|<string[2 1]:ppp,qqq>|exact
+CHK|chain_col_col_chr|<string[2 1]:ppcd,qqcd>|exact
+CHK|chain_col_col_mis|<string[2 1]:<M>,<M>>|exact
+CHK|chain_col_col_num|<string[2 1]:pp7,qq7>|exact
+CHK|chain_col_col_nan|<string[2 1]:<M>,<M>>|exact
+CHK|chain_col_col_lgc|<string[2 1]:pptrue,qqtrue>|exact
+CHK|chain_col_col_cmx|<string[2 1]:ppef,qqgh>|exact
+CHK|chain_col_col_cel|<string[2 1]:ppu,qqv>|exact
+CHK|chain_col_col_row3|<string[2 3]:ppx,qqx,ppy,qqy,ppz,qqz>|exact
+CHK|chain_col_chr_str|<string[2 1]:pcdab,qcdab>|exact
+CHK|chain_col_chr_row|<string[2 2]:pcdx,qcdx,pcdy,qcdy>|exact
+CHK|chain_col_chr_col|<string[2 1]:pcdp,qcdq>|exact
+CHK|chain_col_chr_chr|<string[2 1]:pcdcd,qcdcd>|exact
+CHK|chain_col_chr_mis|<string[2 1]:<M>,<M>>|exact
+CHK|chain_col_chr_num|<string[2 1]:pcd7,qcd7>|exact
+CHK|chain_col_chr_nan|<string[2 1]:<M>,<M>>|exact
+CHK|chain_col_chr_lgc|<string[2 1]:pcdtrue,qcdtrue>|exact
+CHK|chain_col_chr_cmx|<string[2 1]:pcdef,qcdgh>|exact
+CHK|chain_col_chr_cel|<string[2 1]:pcdu,qcdv>|exact
+CHK|chain_col_chr_row3|<string[2 3]:pcdx,qcdx,pcdy,qcdy,pcdz,qcdz>|exact
+CHK|chain_col_mis_str|<string[2 1]:<M>,<M>>|exact
+CHK|chain_col_mis_row|<string[2 2]:<M>,<M>,<M>,<M>>|exact
+CHK|chain_col_mis_col|<string[2 1]:<M>,<M>>|exact
+CHK|chain_col_mis_chr|<string[2 1]:<M>,<M>>|exact
+CHK|chain_col_mis_mis|<string[2 1]:<M>,<M>>|exact
+CHK|chain_col_mis_num|<string[2 1]:<M>,<M>>|exact
+CHK|chain_col_mis_nan|<string[2 1]:<M>,<M>>|exact
+CHK|chain_col_mis_lgc|<string[2 1]:<M>,<M>>|exact
+CHK|chain_col_mis_cmx|<string[2 1]:<M>,<M>>|exact
+CHK|chain_col_mis_cel|<string[2 1]:<M>,<M>>|exact
+CHK|chain_col_mis_row3|<string[2 3]:<M>,<M>,<M>,<M>,<M>,<M>>|exact
+CHK|chain_col_num_str|<string[2 1]:p7ab,q7ab>|exact
+CHK|chain_col_num_row|<string[2 2]:p7x,q7x,p7y,q7y>|exact
+CHK|chain_col_num_col|<string[2 1]:p7p,q7q>|exact
+CHK|chain_col_num_chr|<string[2 1]:p7cd,q7cd>|exact
+CHK|chain_col_num_mis|<string[2 1]:<M>,<M>>|exact
+CHK|chain_col_num_num|<string[2 1]:p77,q77>|exact
+CHK|chain_col_num_nan|<string[2 1]:<M>,<M>>|exact
+CHK|chain_col_num_lgc|<string[2 1]:p7true,q7true>|exact
+CHK|chain_col_num_cmx|<string[2 1]:p7ef,q7gh>|exact
+CHK|chain_col_num_cel|<string[2 1]:p7u,q7v>|exact
+CHK|chain_col_num_row3|<string[2 3]:p7x,q7x,p7y,q7y,p7z,q7z>|exact
+CHK|chain_col_nan_str|<string[2 1]:<M>,<M>>|exact
+CHK|chain_col_nan_row|<string[2 2]:<M>,<M>,<M>,<M>>|exact
+CHK|chain_col_nan_col|<string[2 1]:<M>,<M>>|exact
+CHK|chain_col_nan_chr|<string[2 1]:<M>,<M>>|exact
+CHK|chain_col_nan_mis|<string[2 1]:<M>,<M>>|exact
+CHK|chain_col_nan_num|<string[2 1]:<M>,<M>>|exact
+CHK|chain_col_nan_nan|<string[2 1]:<M>,<M>>|exact
+CHK|chain_col_nan_lgc|<string[2 1]:<M>,<M>>|exact
+CHK|chain_col_nan_cmx|<string[2 1]:<M>,<M>>|exact
+CHK|chain_col_nan_cel|<string[2 1]:<M>,<M>>|exact
+CHK|chain_col_nan_row3|<string[2 3]:<M>,<M>,<M>,<M>,<M>,<M>>|exact
+CHK|chain_col_lgc_str|<string[2 1]:ptrueab,qtrueab>|exact
+CHK|chain_col_lgc_row|<string[2 2]:ptruex,qtruex,ptruey,qtruey>|exact
+CHK|chain_col_lgc_col|<string[2 1]:ptruep,qtrueq>|exact
+CHK|chain_col_lgc_chr|<string[2 1]:ptruecd,qtruecd>|exact
+CHK|chain_col_lgc_mis|<string[2 1]:<M>,<M>>|exact
+CHK|chain_col_lgc_num|<string[2 1]:ptrue7,qtrue7>|exact
+CHK|chain_col_lgc_nan|<string[2 1]:<M>,<M>>|exact
+CHK|chain_col_lgc_lgc|<string[2 1]:ptruetrue,qtruetrue>|exact
+CHK|chain_col_lgc_cmx|<string[2 1]:ptrueef,qtruegh>|exact
+CHK|chain_col_lgc_cel|<string[2 1]:ptrueu,qtruev>|exact
+CHK|chain_col_lgc_row3|<string[2 3]:ptruex,qtruex,ptruey,qtruey,ptruez,qtruez>|exact
+CHK|chain_col_cmx_str|<string[2 1]:pefab,qghab>|exact
+CHK|chain_col_cmx_row|<string[2 2]:pefx,qghx,pefy,qghy>|exact
+CHK|chain_col_cmx_col|<string[2 1]:pefp,qghq>|exact
+CHK|chain_col_cmx_chr|<string[2 1]:pefcd,qghcd>|exact
+CHK|chain_col_cmx_mis|<string[2 1]:<M>,<M>>|exact
+CHK|chain_col_cmx_num|<string[2 1]:pef7,qgh7>|exact
+CHK|chain_col_cmx_nan|<string[2 1]:<M>,<M>>|exact
+CHK|chain_col_cmx_lgc|<string[2 1]:peftrue,qghtrue>|exact
+CHK|chain_col_cmx_cmx|<string[2 1]:pefef,qghgh>|exact
+CHK|chain_col_cmx_cel|<string[2 1]:pefu,qghv>|exact
+CHK|chain_col_cmx_row3|<string[2 3]:pefx,qghx,pefy,qghy,pefz,qghz>|exact
+CHK|chain_col_cel_str|<string[2 1]:puab,qvab>|exact
+CHK|chain_col_cel_row|<string[2 2]:pux,qvx,puy,qvy>|exact
+CHK|chain_col_cel_col|<string[2 1]:pup,qvq>|exact
+CHK|chain_col_cel_chr|<string[2 1]:pucd,qvcd>|exact
+CHK|chain_col_cel_mis|<string[2 1]:<M>,<M>>|exact
+CHK|chain_col_cel_num|<string[2 1]:pu7,qv7>|exact
+CHK|chain_col_cel_nan|<string[2 1]:<M>,<M>>|exact
+CHK|chain_col_cel_lgc|<string[2 1]:putrue,qvtrue>|exact
+CHK|chain_col_cel_cmx|<string[2 1]:puef,qvgh>|exact
+CHK|chain_col_cel_cel|<string[2 1]:puu,qvv>|exact
+CHK|chain_col_cel_row3|<string[2 3]:pux,qvx,puy,qvy,puz,qvz>|exact
+CHK|chain_col_row3_str|<string[2 3]:pxab,qxab,pyab,qyab,pzab,qzab>|exact
+CHK|chain_col_row3_row|<ERR>|exact
+CHK|chain_col_row3_col|<string[2 3]:pxp,qxq,pyp,qyq,pzp,qzq>|exact
+CHK|chain_col_row3_chr|<string[2 3]:pxcd,qxcd,pycd,qycd,pzcd,qzcd>|exact
+CHK|chain_col_row3_mis|<string[2 3]:<M>,<M>,<M>,<M>,<M>,<M>>|exact
+CHK|chain_col_row3_num|<string[2 3]:px7,qx7,py7,qy7,pz7,qz7>|exact
+CHK|chain_col_row3_nan|<string[2 3]:<M>,<M>,<M>,<M>,<M>,<M>>|exact
+CHK|chain_col_row3_lgc|<string[2 3]:pxtrue,qxtrue,pytrue,qytrue,pztrue,qztrue>|exact
+CHK|chain_col_row3_cmx|<string[2 3]:pxef,qxgh,pyef,qygh,pzef,qzgh>|exact
+CHK|chain_col_row3_cel|<string[2 3]:pxu,qxv,pyu,qyv,pzu,qzv>|exact
+CHK|chain_col_row3_row3|<string[2 3]:pxx,qxx,pyy,qyy,pzz,qzz>|exact
+CHK|chain_chr_str_str|<string[1 1]:cdabab>|exact
+CHK|chain_chr_str_row|<string[1 2]:cdabx,cdaby>|exact
+CHK|chain_chr_str_col|<string[2 1]:cdabp,cdabq>|exact
+CHK|chain_chr_str_chr|<string[1 1]:cdabcd>|exact
+CHK|chain_chr_str_mis|<string[1 1]:<M>>|exact
+CHK|chain_chr_str_num|<string[1 1]:cdab7>|exact
+CHK|chain_chr_str_nan|<string[1 1]:<M>>|exact
+CHK|chain_chr_str_lgc|<string[1 1]:cdabtrue>|exact
+CHK|chain_chr_str_cmx|<string[2 1]:cdabef,cdabgh>|exact
+CHK|chain_chr_str_cel|<string[2 1]:cdabu,cdabv>|exact
+CHK|chain_chr_str_row3|<string[1 3]:cdabx,cdaby,cdabz>|exact
+CHK|chain_chr_row_str|<string[1 2]:cdxab,cdyab>|exact
+CHK|chain_chr_row_row|<string[1 2]:cdxx,cdyy>|exact
+CHK|chain_chr_row_col|<string[2 2]:cdxp,cdxq,cdyp,cdyq>|exact
+CHK|chain_chr_row_chr|<string[1 2]:cdxcd,cdycd>|exact
+CHK|chain_chr_row_mis|<string[1 2]:<M>,<M>>|exact
+CHK|chain_chr_row_num|<string[1 2]:cdx7,cdy7>|exact
+CHK|chain_chr_row_nan|<string[1 2]:<M>,<M>>|exact
+CHK|chain_chr_row_lgc|<string[1 2]:cdxtrue,cdytrue>|exact
+CHK|chain_chr_row_cmx|<string[2 2]:cdxef,cdxgh,cdyef,cdygh>|exact
+CHK|chain_chr_row_cel|<string[2 2]:cdxu,cdxv,cdyu,cdyv>|exact
+CHK|chain_chr_row_row3|<ERR>|exact
+CHK|chain_chr_col_str|<string[2 1]:cdpab,cdqab>|exact
+CHK|chain_chr_col_row|<string[2 2]:cdpx,cdqx,cdpy,cdqy>|exact
+CHK|chain_chr_col_col|<string[2 1]:cdpp,cdqq>|exact
+CHK|chain_chr_col_chr|<string[2 1]:cdpcd,cdqcd>|exact
+CHK|chain_chr_col_mis|<string[2 1]:<M>,<M>>|exact
+CHK|chain_chr_col_num|<string[2 1]:cdp7,cdq7>|exact
+CHK|chain_chr_col_nan|<string[2 1]:<M>,<M>>|exact
+CHK|chain_chr_col_lgc|<string[2 1]:cdptrue,cdqtrue>|exact
+CHK|chain_chr_col_cmx|<string[2 1]:cdpef,cdqgh>|exact
+CHK|chain_chr_col_cel|<string[2 1]:cdpu,cdqv>|exact
+CHK|chain_chr_col_row3|<string[2 3]:cdpx,cdqx,cdpy,cdqy,cdpz,cdqz>|exact
+CHK|chain_chr_chr_str|<string[1 2]:198ab,200ab>|div=ADR0156
+CHK|chain_chr_chr_row|<string[1 2]:198x,200y>|div=ADR0156
+CHK|chain_chr_chr_col|<string[2 2]:198p,198q,200p,200q>|div=ADR0156
+CHK|chain_chr_chr_mis|<string[1 2]:<M>,<M>>|div=ADR0156
+CHK|chain_chr_chr_row3|<ERR>|div=ADR0156
+CHK|chain_chr_mis_str|<string[1 1]:<M>>|exact
+CHK|chain_chr_mis_row|<string[1 2]:<M>,<M>>|exact
+CHK|chain_chr_mis_col|<string[2 1]:<M>,<M>>|exact
+CHK|chain_chr_mis_chr|<string[1 1]:<M>>|exact
+CHK|chain_chr_mis_mis|<string[1 1]:<M>>|exact
+CHK|chain_chr_mis_num|<string[1 1]:<M>>|exact
+CHK|chain_chr_mis_nan|<string[1 1]:<M>>|exact
+CHK|chain_chr_mis_lgc|<string[1 1]:<M>>|exact
+CHK|chain_chr_mis_cmx|<string[2 1]:<M>,<M>>|exact
+CHK|chain_chr_mis_cel|<string[2 1]:<M>,<M>>|exact
+CHK|chain_chr_mis_row3|<string[1 3]:<M>,<M>,<M>>|exact
+CHK|chain_chr_num_str|<string[1 2]:106ab,107ab>|div=ADR0156
+CHK|chain_chr_num_row|<string[1 2]:106x,107y>|div=ADR0156
+CHK|chain_chr_num_col|<string[2 2]:106p,106q,107p,107q>|div=ADR0156
+CHK|chain_chr_num_mis|<string[1 2]:<M>,<M>>|div=ADR0156
+CHK|chain_chr_num_row3|<ERR>|div=ADR0156
+CHK|chain_chr_nan_str|<string[1 2]:<M>,<M>>|div=ADR0156
+CHK|chain_chr_nan_row|<string[1 2]:<M>,<M>>|div=ADR0156
+CHK|chain_chr_nan_col|<string[2 2]:<M>,<M>,<M>,<M>>|div=ADR0156
+CHK|chain_chr_nan_mis|<string[1 2]:<M>,<M>>|div=ADR0156
+CHK|chain_chr_nan_row3|<ERR>|div=ADR0156
+CHK|chain_chr_lgc_str|<string[1 2]:100ab,101ab>|div=ADR0156
+CHK|chain_chr_lgc_row|<string[1 2]:100x,101y>|div=ADR0156
+CHK|chain_chr_lgc_col|<string[2 2]:100p,100q,101p,101q>|div=ADR0156
+CHK|chain_chr_lgc_mis|<string[1 2]:<M>,<M>>|div=ADR0156
+CHK|chain_chr_lgc_row3|<ERR>|div=ADR0156
+CHK|chain_chr_cmx_str|<string[2 2]:200ab,202ab,202ab,204ab>|div=ADR0156
+CHK|chain_chr_cmx_row|<string[2 2]:200x,202x,202y,204y>|div=ADR0156
+CHK|chain_chr_cmx_col|<string[2 2]:200p,202q,202p,204q>|div=ADR0156
+CHK|chain_chr_cmx_mis|<string[2 2]:<M>,<M>,<M>,<M>>|div=ADR0156
+CHK|chain_chr_cmx_row3|<ERR>|div=ADR0156
+CHK|chain_chr_cel_str|<ERR>|div=ADR0156
+CHK|chain_chr_cel_row|<ERR>|div=ADR0156
+CHK|chain_chr_cel_col|<ERR>|div=ADR0156
+CHK|chain_chr_cel_mis|<ERR>|div=ADR0156
+CHK|chain_chr_cel_row3|<ERR>|div=ADR0156
+CHK|chain_chr_row3_str|<string[1 3]:cdxab,cdyab,cdzab>|exact
+CHK|chain_chr_row3_row|<ERR>|exact
+CHK|chain_chr_row3_col|<string[2 3]:cdxp,cdxq,cdyp,cdyq,cdzp,cdzq>|exact
+CHK|chain_chr_row3_chr|<string[1 3]:cdxcd,cdycd,cdzcd>|exact
+CHK|chain_chr_row3_mis|<string[1 3]:<M>,<M>,<M>>|exact
+CHK|chain_chr_row3_num|<string[1 3]:cdx7,cdy7,cdz7>|exact
+CHK|chain_chr_row3_nan|<string[1 3]:<M>,<M>,<M>>|exact
+CHK|chain_chr_row3_lgc|<string[1 3]:cdxtrue,cdytrue,cdztrue>|exact
+CHK|chain_chr_row3_cmx|<string[2 3]:cdxef,cdxgh,cdyef,cdygh,cdzef,cdzgh>|exact
+CHK|chain_chr_row3_cel|<string[2 3]:cdxu,cdxv,cdyu,cdyv,cdzu,cdzv>|exact
+CHK|chain_chr_row3_row3|<string[1 3]:cdxx,cdyy,cdzz>|exact
+CHK|chain_mis_str_str|<string[1 1]:<M>>|exact
+CHK|chain_mis_str_row|<string[1 2]:<M>,<M>>|exact
+CHK|chain_mis_str_col|<string[2 1]:<M>,<M>>|exact
+CHK|chain_mis_str_chr|<string[1 1]:<M>>|exact
+CHK|chain_mis_str_mis|<string[1 1]:<M>>|exact
+CHK|chain_mis_str_num|<string[1 1]:<M>>|exact
+CHK|chain_mis_str_nan|<string[1 1]:<M>>|exact
+CHK|chain_mis_str_lgc|<string[1 1]:<M>>|exact
+CHK|chain_mis_str_cmx|<string[2 1]:<M>,<M>>|exact
+CHK|chain_mis_str_cel|<string[2 1]:<M>,<M>>|exact
+CHK|chain_mis_str_row3|<string[1 3]:<M>,<M>,<M>>|exact
+CHK|chain_mis_row_str|<string[1 2]:<M>,<M>>|exact
+CHK|chain_mis_row_row|<string[1 2]:<M>,<M>>|exact
+CHK|chain_mis_row_col|<string[2 2]:<M>,<M>,<M>,<M>>|exact
+CHK|chain_mis_row_chr|<string[1 2]:<M>,<M>>|exact
+CHK|chain_mis_row_mis|<string[1 2]:<M>,<M>>|exact
+CHK|chain_mis_row_num|<string[1 2]:<M>,<M>>|exact
+CHK|chain_mis_row_nan|<string[1 2]:<M>,<M>>|exact
+CHK|chain_mis_row_lgc|<string[1 2]:<M>,<M>>|exact
+CHK|chain_mis_row_cmx|<string[2 2]:<M>,<M>,<M>,<M>>|exact
+CHK|chain_mis_row_cel|<string[2 2]:<M>,<M>,<M>,<M>>|exact
+CHK|chain_mis_row_row3|<ERR>|exact
+CHK|chain_mis_col_str|<string[2 1]:<M>,<M>>|exact
+CHK|chain_mis_col_row|<string[2 2]:<M>,<M>,<M>,<M>>|exact
+CHK|chain_mis_col_col|<string[2 1]:<M>,<M>>|exact
+CHK|chain_mis_col_chr|<string[2 1]:<M>,<M>>|exact
+CHK|chain_mis_col_mis|<string[2 1]:<M>,<M>>|exact
+CHK|chain_mis_col_num|<string[2 1]:<M>,<M>>|exact
+CHK|chain_mis_col_nan|<string[2 1]:<M>,<M>>|exact
+CHK|chain_mis_col_lgc|<string[2 1]:<M>,<M>>|exact
+CHK|chain_mis_col_cmx|<string[2 1]:<M>,<M>>|exact
+CHK|chain_mis_col_cel|<string[2 1]:<M>,<M>>|exact
+CHK|chain_mis_col_row3|<string[2 3]:<M>,<M>,<M>,<M>,<M>,<M>>|exact
+CHK|chain_mis_chr_str|<string[1 1]:<M>>|exact
+CHK|chain_mis_chr_row|<string[1 2]:<M>,<M>>|exact
+CHK|chain_mis_chr_col|<string[2 1]:<M>,<M>>|exact
+CHK|chain_mis_chr_chr|<string[1 1]:<M>>|exact
+CHK|chain_mis_chr_mis|<string[1 1]:<M>>|exact
+CHK|chain_mis_chr_num|<string[1 1]:<M>>|exact
+CHK|chain_mis_chr_nan|<string[1 1]:<M>>|exact
+CHK|chain_mis_chr_lgc|<string[1 1]:<M>>|exact
+CHK|chain_mis_chr_cmx|<string[2 1]:<M>,<M>>|exact
+CHK|chain_mis_chr_cel|<string[2 1]:<M>,<M>>|exact
+CHK|chain_mis_chr_row3|<string[1 3]:<M>,<M>,<M>>|exact
+CHK|chain_mis_mis_str|<string[1 1]:<M>>|exact
+CHK|chain_mis_mis_row|<string[1 2]:<M>,<M>>|exact
+CHK|chain_mis_mis_col|<string[2 1]:<M>,<M>>|exact
+CHK|chain_mis_mis_chr|<string[1 1]:<M>>|exact
+CHK|chain_mis_mis_mis|<string[1 1]:<M>>|exact
+CHK|chain_mis_mis_num|<string[1 1]:<M>>|exact
+CHK|chain_mis_mis_nan|<string[1 1]:<M>>|exact
+CHK|chain_mis_mis_lgc|<string[1 1]:<M>>|exact
+CHK|chain_mis_mis_cmx|<string[2 1]:<M>,<M>>|exact
+CHK|chain_mis_mis_cel|<string[2 1]:<M>,<M>>|exact
+CHK|chain_mis_mis_row3|<string[1 3]:<M>,<M>,<M>>|exact
+CHK|chain_mis_num_str|<string[1 1]:<M>>|exact
+CHK|chain_mis_num_row|<string[1 2]:<M>,<M>>|exact
+CHK|chain_mis_num_col|<string[2 1]:<M>,<M>>|exact
+CHK|chain_mis_num_chr|<string[1 1]:<M>>|exact
+CHK|chain_mis_num_mis|<string[1 1]:<M>>|exact
+CHK|chain_mis_num_num|<string[1 1]:<M>>|exact
+CHK|chain_mis_num_nan|<string[1 1]:<M>>|exact
+CHK|chain_mis_num_lgc|<string[1 1]:<M>>|exact
+CHK|chain_mis_num_cmx|<string[2 1]:<M>,<M>>|exact
+CHK|chain_mis_num_cel|<string[2 1]:<M>,<M>>|exact
+CHK|chain_mis_num_row3|<string[1 3]:<M>,<M>,<M>>|exact
+CHK|chain_mis_nan_str|<string[1 1]:<M>>|exact
+CHK|chain_mis_nan_row|<string[1 2]:<M>,<M>>|exact
+CHK|chain_mis_nan_col|<string[2 1]:<M>,<M>>|exact
+CHK|chain_mis_nan_chr|<string[1 1]:<M>>|exact
+CHK|chain_mis_nan_mis|<string[1 1]:<M>>|exact
+CHK|chain_mis_nan_num|<string[1 1]:<M>>|exact
+CHK|chain_mis_nan_nan|<string[1 1]:<M>>|exact
+CHK|chain_mis_nan_lgc|<string[1 1]:<M>>|exact
+CHK|chain_mis_nan_cmx|<string[2 1]:<M>,<M>>|exact
+CHK|chain_mis_nan_cel|<string[2 1]:<M>,<M>>|exact
+CHK|chain_mis_nan_row3|<string[1 3]:<M>,<M>,<M>>|exact
+CHK|chain_mis_lgc_str|<string[1 1]:<M>>|exact
+CHK|chain_mis_lgc_row|<string[1 2]:<M>,<M>>|exact
+CHK|chain_mis_lgc_col|<string[2 1]:<M>,<M>>|exact
+CHK|chain_mis_lgc_chr|<string[1 1]:<M>>|exact
+CHK|chain_mis_lgc_mis|<string[1 1]:<M>>|exact
+CHK|chain_mis_lgc_num|<string[1 1]:<M>>|exact
+CHK|chain_mis_lgc_nan|<string[1 1]:<M>>|exact
+CHK|chain_mis_lgc_lgc|<string[1 1]:<M>>|exact
+CHK|chain_mis_lgc_cmx|<string[2 1]:<M>,<M>>|exact
+CHK|chain_mis_lgc_cel|<string[2 1]:<M>,<M>>|exact
+CHK|chain_mis_lgc_row3|<string[1 3]:<M>,<M>,<M>>|exact
+CHK|chain_mis_cmx_str|<string[2 1]:<M>,<M>>|exact
+CHK|chain_mis_cmx_row|<string[2 2]:<M>,<M>,<M>,<M>>|exact
+CHK|chain_mis_cmx_col|<string[2 1]:<M>,<M>>|exact
+CHK|chain_mis_cmx_chr|<string[2 1]:<M>,<M>>|exact
+CHK|chain_mis_cmx_mis|<string[2 1]:<M>,<M>>|exact
+CHK|chain_mis_cmx_num|<string[2 1]:<M>,<M>>|exact
+CHK|chain_mis_cmx_nan|<string[2 1]:<M>,<M>>|exact
+CHK|chain_mis_cmx_lgc|<string[2 1]:<M>,<M>>|exact
+CHK|chain_mis_cmx_cmx|<string[2 1]:<M>,<M>>|exact
+CHK|chain_mis_cmx_cel|<string[2 1]:<M>,<M>>|exact
+CHK|chain_mis_cmx_row3|<string[2 3]:<M>,<M>,<M>,<M>,<M>,<M>>|exact
+CHK|chain_mis_cel_str|<string[2 1]:<M>,<M>>|exact
+CHK|chain_mis_cel_row|<string[2 2]:<M>,<M>,<M>,<M>>|exact
+CHK|chain_mis_cel_col|<string[2 1]:<M>,<M>>|exact
+CHK|chain_mis_cel_chr|<string[2 1]:<M>,<M>>|exact
+CHK|chain_mis_cel_mis|<string[2 1]:<M>,<M>>|exact
+CHK|chain_mis_cel_num|<string[2 1]:<M>,<M>>|exact
+CHK|chain_mis_cel_nan|<string[2 1]:<M>,<M>>|exact
+CHK|chain_mis_cel_lgc|<string[2 1]:<M>,<M>>|exact
+CHK|chain_mis_cel_cmx|<string[2 1]:<M>,<M>>|exact
+CHK|chain_mis_cel_cel|<string[2 1]:<M>,<M>>|exact
+CHK|chain_mis_cel_row3|<string[2 3]:<M>,<M>,<M>,<M>,<M>,<M>>|exact
+CHK|chain_mis_row3_str|<string[1 3]:<M>,<M>,<M>>|exact
+CHK|chain_mis_row3_row|<ERR>|exact
+CHK|chain_mis_row3_col|<string[2 3]:<M>,<M>,<M>,<M>,<M>,<M>>|exact
+CHK|chain_mis_row3_chr|<string[1 3]:<M>,<M>,<M>>|exact
+CHK|chain_mis_row3_mis|<string[1 3]:<M>,<M>,<M>>|exact
+CHK|chain_mis_row3_num|<string[1 3]:<M>,<M>,<M>>|exact
+CHK|chain_mis_row3_nan|<string[1 3]:<M>,<M>,<M>>|exact
+CHK|chain_mis_row3_lgc|<string[1 3]:<M>,<M>,<M>>|exact
+CHK|chain_mis_row3_cmx|<string[2 3]:<M>,<M>,<M>,<M>,<M>,<M>>|exact
+CHK|chain_mis_row3_cel|<string[2 3]:<M>,<M>,<M>,<M>,<M>,<M>>|exact
+CHK|chain_mis_row3_row3|<string[1 3]:<M>,<M>,<M>>|exact
+CHK|chain_num_str_str|<string[1 1]:7abab>|exact
+CHK|chain_num_str_row|<string[1 2]:7abx,7aby>|exact
+CHK|chain_num_str_col|<string[2 1]:7abp,7abq>|exact
+CHK|chain_num_str_chr|<string[1 1]:7abcd>|exact
+CHK|chain_num_str_mis|<string[1 1]:<M>>|exact
+CHK|chain_num_str_num|<string[1 1]:7ab7>|exact
+CHK|chain_num_str_nan|<string[1 1]:<M>>|exact
+CHK|chain_num_str_lgc|<string[1 1]:7abtrue>|exact
+CHK|chain_num_str_cmx|<string[2 1]:7abef,7abgh>|exact
+CHK|chain_num_str_cel|<string[2 1]:7abu,7abv>|exact
+CHK|chain_num_str_row3|<string[1 3]:7abx,7aby,7abz>|exact
+CHK|chain_num_row_str|<string[1 2]:7xab,7yab>|exact
+CHK|chain_num_row_row|<string[1 2]:7xx,7yy>|exact
+CHK|chain_num_row_col|<string[2 2]:7xp,7xq,7yp,7yq>|exact
+CHK|chain_num_row_chr|<string[1 2]:7xcd,7ycd>|exact
+CHK|chain_num_row_mis|<string[1 2]:<M>,<M>>|exact
+CHK|chain_num_row_num|<string[1 2]:7x7,7y7>|exact
+CHK|chain_num_row_nan|<string[1 2]:<M>,<M>>|exact
+CHK|chain_num_row_lgc|<string[1 2]:7xtrue,7ytrue>|exact
+CHK|chain_num_row_cmx|<string[2 2]:7xef,7xgh,7yef,7ygh>|exact
+CHK|chain_num_row_cel|<string[2 2]:7xu,7xv,7yu,7yv>|exact
+CHK|chain_num_row_row3|<ERR>|exact
+CHK|chain_num_col_str|<string[2 1]:7pab,7qab>|exact
+CHK|chain_num_col_row|<string[2 2]:7px,7qx,7py,7qy>|exact
+CHK|chain_num_col_col|<string[2 1]:7pp,7qq>|exact
+CHK|chain_num_col_chr|<string[2 1]:7pcd,7qcd>|exact
+CHK|chain_num_col_mis|<string[2 1]:<M>,<M>>|exact
+CHK|chain_num_col_num|<string[2 1]:7p7,7q7>|exact
+CHK|chain_num_col_nan|<string[2 1]:<M>,<M>>|exact
+CHK|chain_num_col_lgc|<string[2 1]:7ptrue,7qtrue>|exact
+CHK|chain_num_col_cmx|<string[2 1]:7pef,7qgh>|exact
+CHK|chain_num_col_cel|<string[2 1]:7pu,7qv>|exact
+CHK|chain_num_col_row3|<string[2 3]:7px,7qx,7py,7qy,7pz,7qz>|exact
+CHK|chain_num_chr_str|<string[1 2]:106ab,107ab>|div=ADR0156
+CHK|chain_num_chr_row|<string[1 2]:106x,107y>|div=ADR0156
+CHK|chain_num_chr_col|<string[2 2]:106p,106q,107p,107q>|div=ADR0156
+CHK|chain_num_chr_mis|<string[1 2]:<M>,<M>>|div=ADR0156
+CHK|chain_num_chr_row3|<ERR>|div=ADR0156
+CHK|chain_num_mis_str|<string[1 1]:<M>>|exact
+CHK|chain_num_mis_row|<string[1 2]:<M>,<M>>|exact
+CHK|chain_num_mis_col|<string[2 1]:<M>,<M>>|exact
+CHK|chain_num_mis_chr|<string[1 1]:<M>>|exact
+CHK|chain_num_mis_mis|<string[1 1]:<M>>|exact
+CHK|chain_num_mis_num|<string[1 1]:<M>>|exact
+CHK|chain_num_mis_nan|<string[1 1]:<M>>|exact
+CHK|chain_num_mis_lgc|<string[1 1]:<M>>|exact
+CHK|chain_num_mis_cmx|<string[2 1]:<M>,<M>>|exact
+CHK|chain_num_mis_cel|<string[2 1]:<M>,<M>>|exact
+CHK|chain_num_mis_row3|<string[1 3]:<M>,<M>,<M>>|exact
+CHK|chain_num_num_str|<string[1 1]:14ab>|exact
+CHK|chain_num_num_row|<string[1 2]:14x,14y>|exact
+CHK|chain_num_num_col|<string[2 1]:14p,14q>|exact
+CHK|chain_num_num_mis|<string[1 1]:<M>>|exact
+CHK|chain_num_num_row3|<string[1 3]:14x,14y,14z>|exact
+CHK|chain_num_nan_str|<string[1 1]:<M>>|exact
+CHK|chain_num_nan_row|<string[1 2]:<M>,<M>>|exact
+CHK|chain_num_nan_col|<string[2 1]:<M>,<M>>|exact
+CHK|chain_num_nan_mis|<string[1 1]:<M>>|exact
+CHK|chain_num_nan_row3|<string[1 3]:<M>,<M>,<M>>|exact
+CHK|chain_num_lgc_str|<string[1 1]:8ab>|exact
+CHK|chain_num_lgc_row|<string[1 2]:8x,8y>|exact
+CHK|chain_num_lgc_col|<string[2 1]:8p,8q>|exact
+CHK|chain_num_lgc_mis|<string[1 1]:<M>>|exact
+CHK|chain_num_lgc_row3|<string[1 3]:8x,8y,8z>|exact
+CHK|chain_num_cmx_str|<string[2 2]:108ab,110ab,109ab,111ab>|exact
+CHK|chain_num_cmx_row|<string[2 2]:108x,110x,109y,111y>|exact
+CHK|chain_num_cmx_col|<string[2 2]:108p,110q,109p,111q>|exact
+CHK|chain_num_cmx_mis|<string[2 2]:<M>,<M>,<M>,<M>>|exact
+CHK|chain_num_cmx_row3|<ERR>|exact
+CHK|chain_num_cel_str|<ERR>|exact
+CHK|chain_num_cel_row|<ERR>|exact
+CHK|chain_num_cel_col|<ERR>|exact
+CHK|chain_num_cel_mis|<ERR>|exact
+CHK|chain_num_cel_row3|<ERR>|exact
+CHK|chain_num_row3_str|<string[1 3]:7xab,7yab,7zab>|exact
+CHK|chain_num_row3_row|<ERR>|exact
+CHK|chain_num_row3_col|<string[2 3]:7xp,7xq,7yp,7yq,7zp,7zq>|exact
+CHK|chain_num_row3_chr|<string[1 3]:7xcd,7ycd,7zcd>|exact
+CHK|chain_num_row3_mis|<string[1 3]:<M>,<M>,<M>>|exact
+CHK|chain_num_row3_num|<string[1 3]:7x7,7y7,7z7>|exact
+CHK|chain_num_row3_nan|<string[1 3]:<M>,<M>,<M>>|exact
+CHK|chain_num_row3_lgc|<string[1 3]:7xtrue,7ytrue,7ztrue>|exact
+CHK|chain_num_row3_cmx|<string[2 3]:7xef,7xgh,7yef,7ygh,7zef,7zgh>|exact
+CHK|chain_num_row3_cel|<string[2 3]:7xu,7xv,7yu,7yv,7zu,7zv>|exact
+CHK|chain_num_row3_row3|<string[1 3]:7xx,7yy,7zz>|exact
+CHK|chain_nan_str_str|<string[1 1]:<M>>|exact
+CHK|chain_nan_str_row|<string[1 2]:<M>,<M>>|exact
+CHK|chain_nan_str_col|<string[2 1]:<M>,<M>>|exact
+CHK|chain_nan_str_chr|<string[1 1]:<M>>|exact
+CHK|chain_nan_str_mis|<string[1 1]:<M>>|exact
+CHK|chain_nan_str_num|<string[1 1]:<M>>|exact
+CHK|chain_nan_str_nan|<string[1 1]:<M>>|exact
+CHK|chain_nan_str_lgc|<string[1 1]:<M>>|exact
+CHK|chain_nan_str_cmx|<string[2 1]:<M>,<M>>|exact
+CHK|chain_nan_str_cel|<string[2 1]:<M>,<M>>|exact
+CHK|chain_nan_str_row3|<string[1 3]:<M>,<M>,<M>>|exact
+CHK|chain_nan_row_str|<string[1 2]:<M>,<M>>|exact
+CHK|chain_nan_row_row|<string[1 2]:<M>,<M>>|exact
+CHK|chain_nan_row_col|<string[2 2]:<M>,<M>,<M>,<M>>|exact
+CHK|chain_nan_row_chr|<string[1 2]:<M>,<M>>|exact
+CHK|chain_nan_row_mis|<string[1 2]:<M>,<M>>|exact
+CHK|chain_nan_row_num|<string[1 2]:<M>,<M>>|exact
+CHK|chain_nan_row_nan|<string[1 2]:<M>,<M>>|exact
+CHK|chain_nan_row_lgc|<string[1 2]:<M>,<M>>|exact
+CHK|chain_nan_row_cmx|<string[2 2]:<M>,<M>,<M>,<M>>|exact
+CHK|chain_nan_row_cel|<string[2 2]:<M>,<M>,<M>,<M>>|exact
+CHK|chain_nan_row_row3|<ERR>|exact
+CHK|chain_nan_col_str|<string[2 1]:<M>,<M>>|exact
+CHK|chain_nan_col_row|<string[2 2]:<M>,<M>,<M>,<M>>|exact
+CHK|chain_nan_col_col|<string[2 1]:<M>,<M>>|exact
+CHK|chain_nan_col_chr|<string[2 1]:<M>,<M>>|exact
+CHK|chain_nan_col_mis|<string[2 1]:<M>,<M>>|exact
+CHK|chain_nan_col_num|<string[2 1]:<M>,<M>>|exact
+CHK|chain_nan_col_nan|<string[2 1]:<M>,<M>>|exact
+CHK|chain_nan_col_lgc|<string[2 1]:<M>,<M>>|exact
+CHK|chain_nan_col_cmx|<string[2 1]:<M>,<M>>|exact
+CHK|chain_nan_col_cel|<string[2 1]:<M>,<M>>|exact
+CHK|chain_nan_col_row3|<string[2 3]:<M>,<M>,<M>,<M>,<M>,<M>>|exact
+CHK|chain_nan_chr_str|<string[1 2]:<M>,<M>>|div=ADR0156
+CHK|chain_nan_chr_row|<string[1 2]:<M>,<M>>|div=ADR0156
+CHK|chain_nan_chr_col|<string[2 2]:<M>,<M>,<M>,<M>>|div=ADR0156
+CHK|chain_nan_chr_mis|<string[1 2]:<M>,<M>>|div=ADR0156
+CHK|chain_nan_chr_row3|<ERR>|div=ADR0156
+CHK|chain_nan_mis_str|<string[1 1]:<M>>|exact
+CHK|chain_nan_mis_row|<string[1 2]:<M>,<M>>|exact
+CHK|chain_nan_mis_col|<string[2 1]:<M>,<M>>|exact
+CHK|chain_nan_mis_chr|<string[1 1]:<M>>|exact
+CHK|chain_nan_mis_mis|<string[1 1]:<M>>|exact
+CHK|chain_nan_mis_num|<string[1 1]:<M>>|exact
+CHK|chain_nan_mis_nan|<string[1 1]:<M>>|exact
+CHK|chain_nan_mis_lgc|<string[1 1]:<M>>|exact
+CHK|chain_nan_mis_cmx|<string[2 1]:<M>,<M>>|exact
+CHK|chain_nan_mis_cel|<string[2 1]:<M>,<M>>|exact
+CHK|chain_nan_mis_row3|<string[1 3]:<M>,<M>,<M>>|exact
+CHK|chain_nan_num_str|<string[1 1]:<M>>|exact
+CHK|chain_nan_num_row|<string[1 2]:<M>,<M>>|exact
+CHK|chain_nan_num_col|<string[2 1]:<M>,<M>>|exact
+CHK|chain_nan_num_mis|<string[1 1]:<M>>|exact
+CHK|chain_nan_num_row3|<string[1 3]:<M>,<M>,<M>>|exact
+CHK|chain_nan_nan_str|<string[1 1]:<M>>|exact
+CHK|chain_nan_nan_row|<string[1 2]:<M>,<M>>|exact
+CHK|chain_nan_nan_col|<string[2 1]:<M>,<M>>|exact
+CHK|chain_nan_nan_mis|<string[1 1]:<M>>|exact
+CHK|chain_nan_nan_row3|<string[1 3]:<M>,<M>,<M>>|exact
+CHK|chain_nan_lgc_str|<string[1 1]:<M>>|exact
+CHK|chain_nan_lgc_row|<string[1 2]:<M>,<M>>|exact
+CHK|chain_nan_lgc_col|<string[2 1]:<M>,<M>>|exact
+CHK|chain_nan_lgc_mis|<string[1 1]:<M>>|exact
+CHK|chain_nan_lgc_row3|<string[1 3]:<M>,<M>,<M>>|exact
+CHK|chain_nan_cmx_str|<string[2 2]:<M>,<M>,<M>,<M>>|exact
+CHK|chain_nan_cmx_row|<string[2 2]:<M>,<M>,<M>,<M>>|exact
+CHK|chain_nan_cmx_col|<string[2 2]:<M>,<M>,<M>,<M>>|exact
+CHK|chain_nan_cmx_mis|<string[2 2]:<M>,<M>,<M>,<M>>|exact
+CHK|chain_nan_cmx_row3|<ERR>|exact
+CHK|chain_nan_cel_str|<ERR>|exact
+CHK|chain_nan_cel_row|<ERR>|exact
+CHK|chain_nan_cel_col|<ERR>|exact
+CHK|chain_nan_cel_mis|<ERR>|exact
+CHK|chain_nan_cel_row3|<ERR>|exact
+CHK|chain_nan_row3_str|<string[1 3]:<M>,<M>,<M>>|exact
+CHK|chain_nan_row3_row|<ERR>|exact
+CHK|chain_nan_row3_col|<string[2 3]:<M>,<M>,<M>,<M>,<M>,<M>>|exact
+CHK|chain_nan_row3_chr|<string[1 3]:<M>,<M>,<M>>|exact
+CHK|chain_nan_row3_mis|<string[1 3]:<M>,<M>,<M>>|exact
+CHK|chain_nan_row3_num|<string[1 3]:<M>,<M>,<M>>|exact
+CHK|chain_nan_row3_nan|<string[1 3]:<M>,<M>,<M>>|exact
+CHK|chain_nan_row3_lgc|<string[1 3]:<M>,<M>,<M>>|exact
+CHK|chain_nan_row3_cmx|<string[2 3]:<M>,<M>,<M>,<M>,<M>,<M>>|exact
+CHK|chain_nan_row3_cel|<string[2 3]:<M>,<M>,<M>,<M>,<M>,<M>>|exact
+CHK|chain_nan_row3_row3|<string[1 3]:<M>,<M>,<M>>|exact
+CHK|chain_lgc_str_str|<string[1 1]:trueabab>|exact
+CHK|chain_lgc_str_row|<string[1 2]:trueabx,trueaby>|exact
+CHK|chain_lgc_str_col|<string[2 1]:trueabp,trueabq>|exact
+CHK|chain_lgc_str_chr|<string[1 1]:trueabcd>|exact
+CHK|chain_lgc_str_mis|<string[1 1]:<M>>|exact
+CHK|chain_lgc_str_num|<string[1 1]:trueab7>|exact
+CHK|chain_lgc_str_nan|<string[1 1]:<M>>|exact
+CHK|chain_lgc_str_lgc|<string[1 1]:trueabtrue>|exact
+CHK|chain_lgc_str_cmx|<string[2 1]:trueabef,trueabgh>|exact
+CHK|chain_lgc_str_cel|<string[2 1]:trueabu,trueabv>|exact
+CHK|chain_lgc_str_row3|<string[1 3]:trueabx,trueaby,trueabz>|exact
+CHK|chain_lgc_row_str|<string[1 2]:truexab,trueyab>|exact
+CHK|chain_lgc_row_row|<string[1 2]:truexx,trueyy>|exact
+CHK|chain_lgc_row_col|<string[2 2]:truexp,truexq,trueyp,trueyq>|exact
+CHK|chain_lgc_row_chr|<string[1 2]:truexcd,trueycd>|exact
+CHK|chain_lgc_row_mis|<string[1 2]:<M>,<M>>|exact
+CHK|chain_lgc_row_num|<string[1 2]:truex7,truey7>|exact
+CHK|chain_lgc_row_nan|<string[1 2]:<M>,<M>>|exact
+CHK|chain_lgc_row_lgc|<string[1 2]:truextrue,trueytrue>|exact
+CHK|chain_lgc_row_cmx|<string[2 2]:truexef,truexgh,trueyef,trueygh>|exact
+CHK|chain_lgc_row_cel|<string[2 2]:truexu,truexv,trueyu,trueyv>|exact
+CHK|chain_lgc_row_row3|<ERR>|exact
+CHK|chain_lgc_col_str|<string[2 1]:truepab,trueqab>|exact
+CHK|chain_lgc_col_row|<string[2 2]:truepx,trueqx,truepy,trueqy>|exact
+CHK|chain_lgc_col_col|<string[2 1]:truepp,trueqq>|exact
+CHK|chain_lgc_col_chr|<string[2 1]:truepcd,trueqcd>|exact
+CHK|chain_lgc_col_mis|<string[2 1]:<M>,<M>>|exact
+CHK|chain_lgc_col_num|<string[2 1]:truep7,trueq7>|exact
+CHK|chain_lgc_col_nan|<string[2 1]:<M>,<M>>|exact
+CHK|chain_lgc_col_lgc|<string[2 1]:trueptrue,trueqtrue>|exact
+CHK|chain_lgc_col_cmx|<string[2 1]:truepef,trueqgh>|exact
+CHK|chain_lgc_col_cel|<string[2 1]:truepu,trueqv>|exact
+CHK|chain_lgc_col_row3|<string[2 3]:truepx,trueqx,truepy,trueqy,truepz,trueqz>|exact
+CHK|chain_lgc_chr_str|<string[1 2]:100ab,101ab>|div=ADR0156
+CHK|chain_lgc_chr_row|<string[1 2]:100x,101y>|div=ADR0156
+CHK|chain_lgc_chr_col|<string[2 2]:100p,100q,101p,101q>|div=ADR0156
+CHK|chain_lgc_chr_mis|<string[1 2]:<M>,<M>>|div=ADR0156
+CHK|chain_lgc_chr_row3|<ERR>|div=ADR0156
+CHK|chain_lgc_mis_str|<string[1 1]:<M>>|exact
+CHK|chain_lgc_mis_row|<string[1 2]:<M>,<M>>|exact
+CHK|chain_lgc_mis_col|<string[2 1]:<M>,<M>>|exact
+CHK|chain_lgc_mis_chr|<string[1 1]:<M>>|exact
+CHK|chain_lgc_mis_mis|<string[1 1]:<M>>|exact
+CHK|chain_lgc_mis_num|<string[1 1]:<M>>|exact
+CHK|chain_lgc_mis_nan|<string[1 1]:<M>>|exact
+CHK|chain_lgc_mis_lgc|<string[1 1]:<M>>|exact
+CHK|chain_lgc_mis_cmx|<string[2 1]:<M>,<M>>|exact
+CHK|chain_lgc_mis_cel|<string[2 1]:<M>,<M>>|exact
+CHK|chain_lgc_mis_row3|<string[1 3]:<M>,<M>,<M>>|exact
+CHK|chain_lgc_num_str|<string[1 1]:8ab>|exact
+CHK|chain_lgc_num_row|<string[1 2]:8x,8y>|exact
+CHK|chain_lgc_num_col|<string[2 1]:8p,8q>|exact
+CHK|chain_lgc_num_mis|<string[1 1]:<M>>|exact
+CHK|chain_lgc_num_row3|<string[1 3]:8x,8y,8z>|exact
+CHK|chain_lgc_nan_str|<string[1 1]:<M>>|exact
+CHK|chain_lgc_nan_row|<string[1 2]:<M>,<M>>|exact
+CHK|chain_lgc_nan_col|<string[2 1]:<M>,<M>>|exact
+CHK|chain_lgc_nan_mis|<string[1 1]:<M>>|exact
+CHK|chain_lgc_nan_row3|<string[1 3]:<M>,<M>,<M>>|exact
+CHK|chain_lgc_lgc_str|<string[1 1]:2ab>|exact
+CHK|chain_lgc_lgc_row|<string[1 2]:2x,2y>|exact
+CHK|chain_lgc_lgc_col|<string[2 1]:2p,2q>|exact
+CHK|chain_lgc_lgc_mis|<string[1 1]:<M>>|exact
+CHK|chain_lgc_lgc_row3|<string[1 3]:2x,2y,2z>|exact
+CHK|chain_lgc_cmx_str|<string[2 2]:102ab,104ab,103ab,105ab>|exact
+CHK|chain_lgc_cmx_row|<string[2 2]:102x,104x,103y,105y>|exact
+CHK|chain_lgc_cmx_col|<string[2 2]:102p,104q,103p,105q>|exact
+CHK|chain_lgc_cmx_mis|<string[2 2]:<M>,<M>,<M>,<M>>|exact
+CHK|chain_lgc_cmx_row3|<ERR>|exact
+CHK|chain_lgc_cel_str|<ERR>|exact
+CHK|chain_lgc_cel_row|<ERR>|exact
+CHK|chain_lgc_cel_col|<ERR>|exact
+CHK|chain_lgc_cel_mis|<ERR>|exact
+CHK|chain_lgc_cel_row3|<ERR>|exact
+CHK|chain_lgc_row3_str|<string[1 3]:truexab,trueyab,truezab>|exact
+CHK|chain_lgc_row3_row|<ERR>|exact
+CHK|chain_lgc_row3_col|<string[2 3]:truexp,truexq,trueyp,trueyq,truezp,truezq>|exact
+CHK|chain_lgc_row3_chr|<string[1 3]:truexcd,trueycd,truezcd>|exact
+CHK|chain_lgc_row3_mis|<string[1 3]:<M>,<M>,<M>>|exact
+CHK|chain_lgc_row3_num|<string[1 3]:truex7,truey7,truez7>|exact
+CHK|chain_lgc_row3_nan|<string[1 3]:<M>,<M>,<M>>|exact
+CHK|chain_lgc_row3_lgc|<string[1 3]:truextrue,trueytrue,trueztrue>|exact
+CHK|chain_lgc_row3_cmx|<string[2 3]:truexef,truexgh,trueyef,trueygh,truezef,truezgh>|exact
+CHK|chain_lgc_row3_cel|<string[2 3]:truexu,truexv,trueyu,trueyv,truezu,truezv>|exact
+CHK|chain_lgc_row3_row3|<string[1 3]:truexx,trueyy,truezz>|exact
+CHK|chain_cmx_str_str|<string[2 1]:efabab,ghabab>|exact
+CHK|chain_cmx_str_row|<string[2 2]:efabx,ghabx,efaby,ghaby>|exact
+CHK|chain_cmx_str_col|<string[2 1]:efabp,ghabq>|exact
+CHK|chain_cmx_str_chr|<string[2 1]:efabcd,ghabcd>|exact
+CHK|chain_cmx_str_mis|<string[2 1]:<M>,<M>>|exact
+CHK|chain_cmx_str_num|<string[2 1]:efab7,ghab7>|exact
+CHK|chain_cmx_str_nan|<string[2 1]:<M>,<M>>|exact
+CHK|chain_cmx_str_lgc|<string[2 1]:efabtrue,ghabtrue>|exact
+CHK|chain_cmx_str_cmx|<string[2 1]:efabef,ghabgh>|exact
+CHK|chain_cmx_str_cel|<string[2 1]:efabu,ghabv>|exact
+CHK|chain_cmx_str_row3|<string[2 3]:efabx,ghabx,efaby,ghaby,efabz,ghabz>|exact
+CHK|chain_cmx_row_str|<string[2 2]:efxab,ghxab,efyab,ghyab>|exact
+CHK|chain_cmx_row_row|<string[2 2]:efxx,ghxx,efyy,ghyy>|exact
+CHK|chain_cmx_row_col|<string[2 2]:efxp,ghxq,efyp,ghyq>|exact
+CHK|chain_cmx_row_chr|<string[2 2]:efxcd,ghxcd,efycd,ghycd>|exact
+CHK|chain_cmx_row_mis|<string[2 2]:<M>,<M>,<M>,<M>>|exact
+CHK|chain_cmx_row_num|<string[2 2]:efx7,ghx7,efy7,ghy7>|exact
+CHK|chain_cmx_row_nan|<string[2 2]:<M>,<M>,<M>,<M>>|exact
+CHK|chain_cmx_row_lgc|<string[2 2]:efxtrue,ghxtrue,efytrue,ghytrue>|exact
+CHK|chain_cmx_row_cmx|<string[2 2]:efxef,ghxgh,efyef,ghygh>|exact
+CHK|chain_cmx_row_cel|<string[2 2]:efxu,ghxv,efyu,ghyv>|exact
+CHK|chain_cmx_row_row3|<ERR>|exact
+CHK|chain_cmx_col_str|<string[2 1]:efpab,ghqab>|exact
+CHK|chain_cmx_col_row|<string[2 2]:efpx,ghqx,efpy,ghqy>|exact
+CHK|chain_cmx_col_col|<string[2 1]:efpp,ghqq>|exact
+CHK|chain_cmx_col_chr|<string[2 1]:efpcd,ghqcd>|exact
+CHK|chain_cmx_col_mis|<string[2 1]:<M>,<M>>|exact
+CHK|chain_cmx_col_num|<string[2 1]:efp7,ghq7>|exact
+CHK|chain_cmx_col_nan|<string[2 1]:<M>,<M>>|exact
+CHK|chain_cmx_col_lgc|<string[2 1]:efptrue,ghqtrue>|exact
+CHK|chain_cmx_col_cmx|<string[2 1]:efpef,ghqgh>|exact
+CHK|chain_cmx_col_cel|<string[2 1]:efpu,ghqv>|exact
+CHK|chain_cmx_col_row3|<string[2 3]:efpx,ghqx,efpy,ghqy,efpz,ghqz>|exact
+CHK|chain_cmx_chr_str|<string[2 2]:200ab,202ab,202ab,204ab>|div=ADR0156
+CHK|chain_cmx_chr_row|<string[2 2]:200x,202x,202y,204y>|div=ADR0156
+CHK|chain_cmx_chr_col|<string[2 2]:200p,202q,202p,204q>|div=ADR0156
+CHK|chain_cmx_chr_mis|<string[2 2]:<M>,<M>,<M>,<M>>|div=ADR0156
+CHK|chain_cmx_chr_row3|<ERR>|div=ADR0156
+CHK|chain_cmx_mis_str|<string[2 1]:<M>,<M>>|exact
+CHK|chain_cmx_mis_row|<string[2 2]:<M>,<M>,<M>,<M>>|exact
+CHK|chain_cmx_mis_col|<string[2 1]:<M>,<M>>|exact
+CHK|chain_cmx_mis_chr|<string[2 1]:<M>,<M>>|exact
+CHK|chain_cmx_mis_mis|<string[2 1]:<M>,<M>>|exact
+CHK|chain_cmx_mis_num|<string[2 1]:<M>,<M>>|exact
+CHK|chain_cmx_mis_nan|<string[2 1]:<M>,<M>>|exact
+CHK|chain_cmx_mis_lgc|<string[2 1]:<M>,<M>>|exact
+CHK|chain_cmx_mis_cmx|<string[2 1]:<M>,<M>>|exact
+CHK|chain_cmx_mis_cel|<string[2 1]:<M>,<M>>|exact
+CHK|chain_cmx_mis_row3|<string[2 3]:<M>,<M>,<M>,<M>,<M>,<M>>|exact
+CHK|chain_cmx_num_str|<string[2 2]:108ab,110ab,109ab,111ab>|exact
+CHK|chain_cmx_num_row|<string[2 2]:108x,110x,109y,111y>|exact
+CHK|chain_cmx_num_col|<string[2 2]:108p,110q,109p,111q>|exact
+CHK|chain_cmx_num_mis|<string[2 2]:<M>,<M>,<M>,<M>>|exact
+CHK|chain_cmx_num_row3|<ERR>|exact
+CHK|chain_cmx_nan_str|<string[2 2]:<M>,<M>,<M>,<M>>|exact
+CHK|chain_cmx_nan_row|<string[2 2]:<M>,<M>,<M>,<M>>|exact
+CHK|chain_cmx_nan_col|<string[2 2]:<M>,<M>,<M>,<M>>|exact
+CHK|chain_cmx_nan_mis|<string[2 2]:<M>,<M>,<M>,<M>>|exact
+CHK|chain_cmx_nan_row3|<ERR>|exact
+CHK|chain_cmx_lgc_str|<string[2 2]:102ab,104ab,103ab,105ab>|exact
+CHK|chain_cmx_lgc_row|<string[2 2]:102x,104x,103y,105y>|exact
+CHK|chain_cmx_lgc_col|<string[2 2]:102p,104q,103p,105q>|exact
+CHK|chain_cmx_lgc_mis|<string[2 2]:<M>,<M>,<M>,<M>>|exact
+CHK|chain_cmx_lgc_row3|<ERR>|exact
+CHK|chain_cmx_cmx_str|<string[2 2]:202ab,206ab,204ab,208ab>|exact
+CHK|chain_cmx_cmx_row|<string[2 2]:202x,206x,204y,208y>|exact
+CHK|chain_cmx_cmx_col|<string[2 2]:202p,206q,204p,208q>|exact
+CHK|chain_cmx_cmx_mis|<string[2 2]:<M>,<M>,<M>,<M>>|exact
+CHK|chain_cmx_cmx_row3|<ERR>|exact
+CHK|chain_cmx_cel_str|<ERR>|exact
+CHK|chain_cmx_cel_row|<ERR>|exact
+CHK|chain_cmx_cel_col|<ERR>|exact
+CHK|chain_cmx_cel_mis|<ERR>|exact
+CHK|chain_cmx_cel_row3|<ERR>|exact
+CHK|chain_cmx_row3_str|<string[2 3]:efxab,ghxab,efyab,ghyab,efzab,ghzab>|exact
+CHK|chain_cmx_row3_row|<ERR>|exact
+CHK|chain_cmx_row3_col|<string[2 3]:efxp,ghxq,efyp,ghyq,efzp,ghzq>|exact
+CHK|chain_cmx_row3_chr|<string[2 3]:efxcd,ghxcd,efycd,ghycd,efzcd,ghzcd>|exact
+CHK|chain_cmx_row3_mis|<string[2 3]:<M>,<M>,<M>,<M>,<M>,<M>>|exact
+CHK|chain_cmx_row3_num|<string[2 3]:efx7,ghx7,efy7,ghy7,efz7,ghz7>|exact
+CHK|chain_cmx_row3_nan|<string[2 3]:<M>,<M>,<M>,<M>,<M>,<M>>|exact
+CHK|chain_cmx_row3_lgc|<string[2 3]:efxtrue,ghxtrue,efytrue,ghytrue,efztrue,ghztrue>|exact
+CHK|chain_cmx_row3_cmx|<string[2 3]:efxef,ghxgh,efyef,ghygh,efzef,ghzgh>|exact
+CHK|chain_cmx_row3_cel|<string[2 3]:efxu,ghxv,efyu,ghyv,efzu,ghzv>|exact
+CHK|chain_cmx_row3_row3|<string[2 3]:efxx,ghxx,efyy,ghyy,efzz,ghzz>|exact
+CHK|chain_cel_str_str|<string[2 1]:uabab,vabab>|exact
+CHK|chain_cel_str_row|<string[2 2]:uabx,vabx,uaby,vaby>|exact
+CHK|chain_cel_str_col|<string[2 1]:uabp,vabq>|exact
+CHK|chain_cel_str_chr|<string[2 1]:uabcd,vabcd>|exact
+CHK|chain_cel_str_mis|<string[2 1]:<M>,<M>>|exact
+CHK|chain_cel_str_num|<string[2 1]:uab7,vab7>|exact
+CHK|chain_cel_str_nan|<string[2 1]:<M>,<M>>|exact
+CHK|chain_cel_str_lgc|<string[2 1]:uabtrue,vabtrue>|exact
+CHK|chain_cel_str_cmx|<string[2 1]:uabef,vabgh>|exact
+CHK|chain_cel_str_cel|<string[2 1]:uabu,vabv>|exact
+CHK|chain_cel_str_row3|<string[2 3]:uabx,vabx,uaby,vaby,uabz,vabz>|exact
+CHK|chain_cel_row_str|<string[2 2]:uxab,vxab,uyab,vyab>|exact
+CHK|chain_cel_row_row|<string[2 2]:uxx,vxx,uyy,vyy>|exact
+CHK|chain_cel_row_col|<string[2 2]:uxp,vxq,uyp,vyq>|exact
+CHK|chain_cel_row_chr|<string[2 2]:uxcd,vxcd,uycd,vycd>|exact
+CHK|chain_cel_row_mis|<string[2 2]:<M>,<M>,<M>,<M>>|exact
+CHK|chain_cel_row_num|<string[2 2]:ux7,vx7,uy7,vy7>|exact
+CHK|chain_cel_row_nan|<string[2 2]:<M>,<M>,<M>,<M>>|exact
+CHK|chain_cel_row_lgc|<string[2 2]:uxtrue,vxtrue,uytrue,vytrue>|exact
+CHK|chain_cel_row_cmx|<string[2 2]:uxef,vxgh,uyef,vygh>|exact
+CHK|chain_cel_row_cel|<string[2 2]:uxu,vxv,uyu,vyv>|exact
+CHK|chain_cel_row_row3|<ERR>|exact
+CHK|chain_cel_col_str|<string[2 1]:upab,vqab>|exact
+CHK|chain_cel_col_row|<string[2 2]:upx,vqx,upy,vqy>|exact
+CHK|chain_cel_col_col|<string[2 1]:upp,vqq>|exact
+CHK|chain_cel_col_chr|<string[2 1]:upcd,vqcd>|exact
+CHK|chain_cel_col_mis|<string[2 1]:<M>,<M>>|exact
+CHK|chain_cel_col_num|<string[2 1]:up7,vq7>|exact
+CHK|chain_cel_col_nan|<string[2 1]:<M>,<M>>|exact
+CHK|chain_cel_col_lgc|<string[2 1]:uptrue,vqtrue>|exact
+CHK|chain_cel_col_cmx|<string[2 1]:upef,vqgh>|exact
+CHK|chain_cel_col_cel|<string[2 1]:upu,vqv>|exact
+CHK|chain_cel_col_row3|<string[2 3]:upx,vqx,upy,vqy,upz,vqz>|exact
+CHK|chain_cel_chr_str|<ERR>|div=ADR0156
+CHK|chain_cel_chr_row|<ERR>|div=ADR0156
+CHK|chain_cel_chr_col|<ERR>|div=ADR0156
+CHK|chain_cel_chr_mis|<ERR>|div=ADR0156
+CHK|chain_cel_chr_row3|<ERR>|div=ADR0156
+CHK|chain_cel_mis_str|<string[2 1]:<M>,<M>>|exact
+CHK|chain_cel_mis_row|<string[2 2]:<M>,<M>,<M>,<M>>|exact
+CHK|chain_cel_mis_col|<string[2 1]:<M>,<M>>|exact
+CHK|chain_cel_mis_chr|<string[2 1]:<M>,<M>>|exact
+CHK|chain_cel_mis_mis|<string[2 1]:<M>,<M>>|exact
+CHK|chain_cel_mis_num|<string[2 1]:<M>,<M>>|exact
+CHK|chain_cel_mis_nan|<string[2 1]:<M>,<M>>|exact
+CHK|chain_cel_mis_lgc|<string[2 1]:<M>,<M>>|exact
+CHK|chain_cel_mis_cmx|<string[2 1]:<M>,<M>>|exact
+CHK|chain_cel_mis_cel|<string[2 1]:<M>,<M>>|exact
+CHK|chain_cel_mis_row3|<string[2 3]:<M>,<M>,<M>,<M>,<M>,<M>>|exact
+CHK|chain_cel_num_str|<ERR>|exact
+CHK|chain_cel_num_row|<ERR>|exact
+CHK|chain_cel_num_col|<ERR>|exact
+CHK|chain_cel_num_mis|<ERR>|exact
+CHK|chain_cel_num_row3|<ERR>|exact
+CHK|chain_cel_nan_str|<ERR>|exact
+CHK|chain_cel_nan_row|<ERR>|exact
+CHK|chain_cel_nan_col|<ERR>|exact
+CHK|chain_cel_nan_mis|<ERR>|exact
+CHK|chain_cel_nan_row3|<ERR>|exact
+CHK|chain_cel_lgc_str|<ERR>|exact
+CHK|chain_cel_lgc_row|<ERR>|exact
+CHK|chain_cel_lgc_col|<ERR>|exact
+CHK|chain_cel_lgc_mis|<ERR>|exact
+CHK|chain_cel_lgc_row3|<ERR>|exact
+CHK|chain_cel_cmx_str|<ERR>|exact
+CHK|chain_cel_cmx_row|<ERR>|exact
+CHK|chain_cel_cmx_col|<ERR>|exact
+CHK|chain_cel_cmx_mis|<ERR>|exact
+CHK|chain_cel_cmx_row3|<ERR>|exact
+CHK|chain_cel_cel_str|<ERR>|exact
+CHK|chain_cel_cel_row|<ERR>|exact
+CHK|chain_cel_cel_col|<ERR>|exact
+CHK|chain_cel_cel_mis|<ERR>|exact
+CHK|chain_cel_cel_row3|<ERR>|exact
+CHK|chain_cel_row3_str|<string[2 3]:uxab,vxab,uyab,vyab,uzab,vzab>|exact
+CHK|chain_cel_row3_row|<ERR>|exact
+CHK|chain_cel_row3_col|<string[2 3]:uxp,vxq,uyp,vyq,uzp,vzq>|exact
+CHK|chain_cel_row3_chr|<string[2 3]:uxcd,vxcd,uycd,vycd,uzcd,vzcd>|exact
+CHK|chain_cel_row3_mis|<string[2 3]:<M>,<M>,<M>,<M>,<M>,<M>>|exact
+CHK|chain_cel_row3_num|<string[2 3]:ux7,vx7,uy7,vy7,uz7,vz7>|exact
+CHK|chain_cel_row3_nan|<string[2 3]:<M>,<M>,<M>,<M>,<M>,<M>>|exact
+CHK|chain_cel_row3_lgc|<string[2 3]:uxtrue,vxtrue,uytrue,vytrue,uztrue,vztrue>|exact
+CHK|chain_cel_row3_cmx|<string[2 3]:uxef,vxgh,uyef,vygh,uzef,vzgh>|exact
+CHK|chain_cel_row3_cel|<string[2 3]:uxu,vxv,uyu,vyv,uzu,vzv>|exact
+CHK|chain_cel_row3_row3|<string[2 3]:uxx,vxx,uyy,vyy,uzz,vzz>|exact
+CHK|chain_row3_str_str|<string[1 3]:xabab,yabab,zabab>|exact
+CHK|chain_row3_str_row|<ERR>|exact
+CHK|chain_row3_str_col|<string[2 3]:xabp,xabq,yabp,yabq,zabp,zabq>|exact
+CHK|chain_row3_str_chr|<string[1 3]:xabcd,yabcd,zabcd>|exact
+CHK|chain_row3_str_mis|<string[1 3]:<M>,<M>,<M>>|exact
+CHK|chain_row3_str_num|<string[1 3]:xab7,yab7,zab7>|exact
+CHK|chain_row3_str_nan|<string[1 3]:<M>,<M>,<M>>|exact
+CHK|chain_row3_str_lgc|<string[1 3]:xabtrue,yabtrue,zabtrue>|exact
+CHK|chain_row3_str_cmx|<string[2 3]:xabef,xabgh,yabef,yabgh,zabef,zabgh>|exact
+CHK|chain_row3_str_cel|<string[2 3]:xabu,xabv,yabu,yabv,zabu,zabv>|exact
+CHK|chain_row3_str_row3|<string[1 3]:xabx,yaby,zabz>|exact
+CHK|chain_row3_row_str|<ERR>|exact
+CHK|chain_row3_row_row|<ERR>|exact
+CHK|chain_row3_row_col|<ERR>|exact
+CHK|chain_row3_row_chr|<ERR>|exact
+CHK|chain_row3_row_mis|<ERR>|exact
+CHK|chain_row3_row_num|<ERR>|exact
+CHK|chain_row3_row_nan|<ERR>|exact
+CHK|chain_row3_row_lgc|<ERR>|exact
+CHK|chain_row3_row_cmx|<ERR>|exact
+CHK|chain_row3_row_cel|<ERR>|exact
+CHK|chain_row3_row_row3|<ERR>|exact
+CHK|chain_row3_col_str|<string[2 3]:xpab,xqab,ypab,yqab,zpab,zqab>|exact
+CHK|chain_row3_col_row|<ERR>|exact
+CHK|chain_row3_col_col|<string[2 3]:xpp,xqq,ypp,yqq,zpp,zqq>|exact
+CHK|chain_row3_col_chr|<string[2 3]:xpcd,xqcd,ypcd,yqcd,zpcd,zqcd>|exact
+CHK|chain_row3_col_mis|<string[2 3]:<M>,<M>,<M>,<M>,<M>,<M>>|exact
+CHK|chain_row3_col_num|<string[2 3]:xp7,xq7,yp7,yq7,zp7,zq7>|exact
+CHK|chain_row3_col_nan|<string[2 3]:<M>,<M>,<M>,<M>,<M>,<M>>|exact
+CHK|chain_row3_col_lgc|<string[2 3]:xptrue,xqtrue,yptrue,yqtrue,zptrue,zqtrue>|exact
+CHK|chain_row3_col_cmx|<string[2 3]:xpef,xqgh,ypef,yqgh,zpef,zqgh>|exact
+CHK|chain_row3_col_cel|<string[2 3]:xpu,xqv,ypu,yqv,zpu,zqv>|exact
+CHK|chain_row3_col_row3|<string[2 3]:xpx,xqx,ypy,yqy,zpz,zqz>|exact
+CHK|chain_row3_chr_str|<string[1 3]:xcdab,ycdab,zcdab>|exact
+CHK|chain_row3_chr_row|<ERR>|exact
+CHK|chain_row3_chr_col|<string[2 3]:xcdp,xcdq,ycdp,ycdq,zcdp,zcdq>|exact
+CHK|chain_row3_chr_chr|<string[1 3]:xcdcd,ycdcd,zcdcd>|exact
+CHK|chain_row3_chr_mis|<string[1 3]:<M>,<M>,<M>>|exact
+CHK|chain_row3_chr_num|<string[1 3]:xcd7,ycd7,zcd7>|exact
+CHK|chain_row3_chr_nan|<string[1 3]:<M>,<M>,<M>>|exact
+CHK|chain_row3_chr_lgc|<string[1 3]:xcdtrue,ycdtrue,zcdtrue>|exact
+CHK|chain_row3_chr_cmx|<string[2 3]:xcdef,xcdgh,ycdef,ycdgh,zcdef,zcdgh>|exact
+CHK|chain_row3_chr_cel|<string[2 3]:xcdu,xcdv,ycdu,ycdv,zcdu,zcdv>|exact
+CHK|chain_row3_chr_row3|<string[1 3]:xcdx,ycdy,zcdz>|exact
+CHK|chain_row3_mis_str|<string[1 3]:<M>,<M>,<M>>|exact
+CHK|chain_row3_mis_row|<ERR>|exact
+CHK|chain_row3_mis_col|<string[2 3]:<M>,<M>,<M>,<M>,<M>,<M>>|exact
+CHK|chain_row3_mis_chr|<string[1 3]:<M>,<M>,<M>>|exact
+CHK|chain_row3_mis_mis|<string[1 3]:<M>,<M>,<M>>|exact
+CHK|chain_row3_mis_num|<string[1 3]:<M>,<M>,<M>>|exact
+CHK|chain_row3_mis_nan|<string[1 3]:<M>,<M>,<M>>|exact
+CHK|chain_row3_mis_lgc|<string[1 3]:<M>,<M>,<M>>|exact
+CHK|chain_row3_mis_cmx|<string[2 3]:<M>,<M>,<M>,<M>,<M>,<M>>|exact
+CHK|chain_row3_mis_cel|<string[2 3]:<M>,<M>,<M>,<M>,<M>,<M>>|exact
+CHK|chain_row3_mis_row3|<string[1 3]:<M>,<M>,<M>>|exact
+CHK|chain_row3_num_str|<string[1 3]:x7ab,y7ab,z7ab>|exact
+CHK|chain_row3_num_row|<ERR>|exact
+CHK|chain_row3_num_col|<string[2 3]:x7p,x7q,y7p,y7q,z7p,z7q>|exact
+CHK|chain_row3_num_chr|<string[1 3]:x7cd,y7cd,z7cd>|exact
+CHK|chain_row3_num_mis|<string[1 3]:<M>,<M>,<M>>|exact
+CHK|chain_row3_num_num|<string[1 3]:x77,y77,z77>|exact
+CHK|chain_row3_num_nan|<string[1 3]:<M>,<M>,<M>>|exact
+CHK|chain_row3_num_lgc|<string[1 3]:x7true,y7true,z7true>|exact
+CHK|chain_row3_num_cmx|<string[2 3]:x7ef,x7gh,y7ef,y7gh,z7ef,z7gh>|exact
+CHK|chain_row3_num_cel|<string[2 3]:x7u,x7v,y7u,y7v,z7u,z7v>|exact
+CHK|chain_row3_num_row3|<string[1 3]:x7x,y7y,z7z>|exact
+CHK|chain_row3_nan_str|<string[1 3]:<M>,<M>,<M>>|exact
+CHK|chain_row3_nan_row|<ERR>|exact
+CHK|chain_row3_nan_col|<string[2 3]:<M>,<M>,<M>,<M>,<M>,<M>>|exact
+CHK|chain_row3_nan_chr|<string[1 3]:<M>,<M>,<M>>|exact
+CHK|chain_row3_nan_mis|<string[1 3]:<M>,<M>,<M>>|exact
+CHK|chain_row3_nan_num|<string[1 3]:<M>,<M>,<M>>|exact
+CHK|chain_row3_nan_nan|<string[1 3]:<M>,<M>,<M>>|exact
+CHK|chain_row3_nan_lgc|<string[1 3]:<M>,<M>,<M>>|exact
+CHK|chain_row3_nan_cmx|<string[2 3]:<M>,<M>,<M>,<M>,<M>,<M>>|exact
+CHK|chain_row3_nan_cel|<string[2 3]:<M>,<M>,<M>,<M>,<M>,<M>>|exact
+CHK|chain_row3_nan_row3|<string[1 3]:<M>,<M>,<M>>|exact
+CHK|chain_row3_lgc_str|<string[1 3]:xtrueab,ytrueab,ztrueab>|exact
+CHK|chain_row3_lgc_row|<ERR>|exact
+CHK|chain_row3_lgc_col|<string[2 3]:xtruep,xtrueq,ytruep,ytrueq,ztruep,ztrueq>|exact
+CHK|chain_row3_lgc_chr|<string[1 3]:xtruecd,ytruecd,ztruecd>|exact
+CHK|chain_row3_lgc_mis|<string[1 3]:<M>,<M>,<M>>|exact
+CHK|chain_row3_lgc_num|<string[1 3]:xtrue7,ytrue7,ztrue7>|exact
+CHK|chain_row3_lgc_nan|<string[1 3]:<M>,<M>,<M>>|exact
+CHK|chain_row3_lgc_lgc|<string[1 3]:xtruetrue,ytruetrue,ztruetrue>|exact
+CHK|chain_row3_lgc_cmx|<string[2 3]:xtrueef,xtruegh,ytrueef,ytruegh,ztrueef,ztruegh>|exact
+CHK|chain_row3_lgc_cel|<string[2 3]:xtrueu,xtruev,ytrueu,ytruev,ztrueu,ztruev>|exact
+CHK|chain_row3_lgc_row3|<string[1 3]:xtruex,ytruey,ztruez>|exact
+CHK|chain_row3_cmx_str|<string[2 3]:xefab,xghab,yefab,yghab,zefab,zghab>|exact
+CHK|chain_row3_cmx_row|<ERR>|exact
+CHK|chain_row3_cmx_col|<string[2 3]:xefp,xghq,yefp,yghq,zefp,zghq>|exact
+CHK|chain_row3_cmx_chr|<string[2 3]:xefcd,xghcd,yefcd,yghcd,zefcd,zghcd>|exact
+CHK|chain_row3_cmx_mis|<string[2 3]:<M>,<M>,<M>,<M>,<M>,<M>>|exact
+CHK|chain_row3_cmx_num|<string[2 3]:xef7,xgh7,yef7,ygh7,zef7,zgh7>|exact
+CHK|chain_row3_cmx_nan|<string[2 3]:<M>,<M>,<M>,<M>,<M>,<M>>|exact
+CHK|chain_row3_cmx_lgc|<string[2 3]:xeftrue,xghtrue,yeftrue,yghtrue,zeftrue,zghtrue>|exact
+CHK|chain_row3_cmx_cmx|<string[2 3]:xefef,xghgh,yefef,yghgh,zefef,zghgh>|exact
+CHK|chain_row3_cmx_cel|<string[2 3]:xefu,xghv,yefu,yghv,zefu,zghv>|exact
+CHK|chain_row3_cmx_row3|<string[2 3]:xefx,xghx,yefy,yghy,zefz,zghz>|exact
+CHK|chain_row3_cel_str|<string[2 3]:xuab,xvab,yuab,yvab,zuab,zvab>|exact
+CHK|chain_row3_cel_row|<ERR>|exact
+CHK|chain_row3_cel_col|<string[2 3]:xup,xvq,yup,yvq,zup,zvq>|exact
+CHK|chain_row3_cel_chr|<string[2 3]:xucd,xvcd,yucd,yvcd,zucd,zvcd>|exact
+CHK|chain_row3_cel_mis|<string[2 3]:<M>,<M>,<M>,<M>,<M>,<M>>|exact
+CHK|chain_row3_cel_num|<string[2 3]:xu7,xv7,yu7,yv7,zu7,zv7>|exact
+CHK|chain_row3_cel_nan|<string[2 3]:<M>,<M>,<M>,<M>,<M>,<M>>|exact
+CHK|chain_row3_cel_lgc|<string[2 3]:xutrue,xvtrue,yutrue,yvtrue,zutrue,zvtrue>|exact
+CHK|chain_row3_cel_cmx|<string[2 3]:xuef,xvgh,yuef,yvgh,zuef,zvgh>|exact
+CHK|chain_row3_cel_cel|<string[2 3]:xuu,xvv,yuu,yvv,zuu,zvv>|exact
+CHK|chain_row3_cel_row3|<string[2 3]:xux,xvx,yuy,yvy,zuz,zvz>|exact
+CHK|chain_row3_row3_str|<string[1 3]:xxab,yyab,zzab>|exact
+CHK|chain_row3_row3_row|<ERR>|exact
+CHK|chain_row3_row3_col|<string[2 3]:xxp,xxq,yyp,yyq,zzp,zzq>|exact
+CHK|chain_row3_row3_chr|<string[1 3]:xxcd,yycd,zzcd>|exact
+CHK|chain_row3_row3_mis|<string[1 3]:<M>,<M>,<M>>|exact
+CHK|chain_row3_row3_num|<string[1 3]:xx7,yy7,zz7>|exact
+CHK|chain_row3_row3_nan|<string[1 3]:<M>,<M>,<M>>|exact
+CHK|chain_row3_row3_lgc|<string[1 3]:xxtrue,yytrue,zztrue>|exact
+CHK|chain_row3_row3_cmx|<string[2 3]:xxef,xxgh,yyef,yygh,zzef,zzgh>|exact
+CHK|chain_row3_row3_cel|<string[2 3]:xxu,xxv,yyu,yyv,zzu,zzv>|exact
+CHK|chain_row3_row3_row3|<string[1 3]:xxx,yyy,zzz>|exact
+CHK|chain4_keys|<string[4 1]:R1-a,R22-b,<M>,R333-d>|exact
+CHK|chain4_numeric_head|<string[1 1]:3a3>|exact
+CHK|chain4_char_head|<string[1 1]:121yz>|div=ADR0156
+CHK|chain5_cells|<string[2 2]:a-1.7,b-1.7,a-2.7,b-2.7>|exact
+CHK|chain_parens|<string[1 1]:qabq>|exact
+CHK|chain_nested_right|<string[1 1]:abcde>|exact
+CHK|chain_sentinel_text|<string[1 1]:<missing>xy>|div=ADR0156
+CHK|err_order_threw|1|exact
+CHK|err_order_touched|0|exact
+CHK|err_throwing_leaf|1|exact
+CHK|char_abc|<[1 3]:65,66,67,>|exact
+CHK|char_frac|<[1 5]:65,65,65,65,66,>|exact
+CHK|char_unicode|<[1 5]:955,8364,20320,65,0,>|exact
+CHK|char_wide|<[1 4]:65535,65535,65535,65535,>|div=ADR0156
+CHK|char_negative|<[1 1]:0,>|div=ADR0156
+CHK|char_nan|<[1 2]:65,0,>|exact
+CHK|char_inf|<[1 2]:65,65535,>|div=ADR0156
+CHK|char_huge|<[1 1]:65535,>|div=ADR0156
+CHK|char_matrix|<[2 3]:72,75,73,76,74,77,>|exact
+CHK|char_column|<[3 1]:65,66,67,>|exact
+CHK|char_empty_0x3|<[0 3]>|div=ADR0156
+CHK|char_empty_3x0|<[3 0]>|exact
+CHK|char_empty|<[0 0]>|exact
+CHK|char_int8|<[1 2]:72,0,>|div=ADR0156
+CHK|char_uint16|<[1 2]:955,8364,>|exact
+CHK|char_single|<[1 2]:72,73,>|exact
+CHK|char_logical|<ERR>|div=ADR0156
+CHK|char_charmatrix_row|<[1 40]:72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,>|exact

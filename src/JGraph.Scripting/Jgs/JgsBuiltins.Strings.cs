@@ -573,7 +573,7 @@ internal static partial class JgsBuiltins
     /// answers a char matrix, one row per row of the input; JGraph has no char matrix, so one row is a
     /// string and several are a cell of strings — the same rule <c>dec2bin</c> already follows.
     /// </summary>
-    private static JgsValue NumberText(IReadOnlyList<JgsValue> args, int line, int col)
+    internal static JgsValue NumberText(IReadOnlyList<JgsValue> args, int line, int col)
     {
         ArityRange("num2str", args, 1, 2, line, col);
         JgsValue subject = args[0];

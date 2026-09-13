@@ -100,6 +100,10 @@ internal static partial class JgsBuiltins
             {
                 JgsType.String => JgsValue.StringScalar(input.AsString),
                 JgsType.Cell => ShapedLike(input, Array.ConvertAll(input.AsCell, StringElementOf)).MarkStringArray(),
+
+                // A packed real array is read where it lies (ADR 0156): the same element for each
+                // double that the boxed arm below builds, without a boxed number per element first.
+                JgsType.Array when input.IsPacked => ShapedLike(input, PackedStringElements(input)).MarkStringArray(),
                 JgsType.Array when HasComplexElements(input) =>
                     ShapedLike(input, Array.ConvertAll(input.BoxedElements(), static e => JgsValue.Str(ComplexText(e)))).MarkStringArray(),
                 JgsType.Array => ShapedLike(input, Array.ConvertAll(input.BoxedElements(), StringElementOf)).MarkStringArray(),
@@ -442,17 +446,49 @@ internal static partial class JgsBuiltins
     }
 
     /// <summary>
-    /// One element as a string value. A number is written the way <c>num2str</c> writes it, which is
-    /// MATLAB's rule for <c>string(pi)</c> — <c>"3.1416"</c>, not every digit the double holds —
-    /// and <c>string(NaN)</c> is <c>"NaN"</c>, not the missing string. Anything else goes through
-    /// Display.
+    /// One element of <c>string(x)</c>. A number is written the way <c>num2str</c> writes one number,
+    /// which is MATLAB's rule for <c>string(pi)</c> — <c>"3.1416"</c>, not every digit the double
+    /// holds — through <see cref="JgsSprintf.FormatScalarGeneral"/>, and NaN is the missing string
+    /// (measured). A complex number spells both parts, a string scalar is its text, and anything
+    /// else goes through <see cref="StringOf"/>.
     /// </summary>
-    /// <summary>One element of <c>string(x)</c>: NaN is the missing string (measured), the rest as <see cref="StringOf"/>.</summary>
     internal static JgsValue StringElementOf(JgsValue value) =>
-        value.Type == JgsType.Number && double.IsNaN(value.AsNumber)
-            ? JgsValue.Str(MissingSentinel)
+        value.Type == JgsType.Number
+            ? JgsValue.Str(double.IsNaN(value.AsNumber) ? MissingSentinel : JgsSprintf.FormatScalarGeneral(value.AsNumber))
             : value.Type == JgsType.Complex ? JgsValue.Str(ComplexText(value))
             : IsStringScalar(value) ? JgsValue.Str(TextOf(value)) : StringOf(value);
+
+    /// <summary>
+    /// The elements of <c>string(x)</c> for a packed real array, in storage order: each double
+    /// through the scalar formatter, NaN as the missing string, a logical as its word — what
+    /// <see cref="StringElementOf"/> answers for each element <see cref="JgsValue.BoxedElements"/>
+    /// would have boxed, without boxing one (ADR 0156).
+    /// </summary>
+    private static JgsValue[] PackedStringElements(JgsValue input)
+    {
+        JGraph.Numerics.NumericBuffer buffer = input.AsBuffer;
+        int count = input.ArrayLength;
+        Span<double> values = buffer.AsSpan(0, count);
+        var texts = new JgsValue[count];
+        if (input.PackedKind == JgsPackedKind.Bool)
+        {
+            for (int i = 0; i < count; i++)
+            {
+                texts[i] = JgsValue.Str(values[i] != 0 ? "true" : "false");
+            }
+        }
+        else
+        {
+            for (int i = 0; i < count; i++)
+            {
+                double value = values[i];
+                texts[i] = JgsValue.Str(double.IsNaN(value) ? MissingSentinel : JgsSprintf.FormatScalarGeneral(value));
+            }
+        }
+
+        GC.KeepAlive(buffer);
+        return texts;
+    }
 
     /// <summary>
     /// A number as <c>string</c> spells a complex one: both parts, always, so string(2.5i) is

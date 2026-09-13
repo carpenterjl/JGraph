@@ -573,12 +573,93 @@ internal static class JgsSprintf
         return text[..at] + "e" + text[at + 1] + exponent.PadLeft(2, '0');
     }
 
+    /// <summary>
+    /// One number as <c>num2str(x)</c> and <c>string(x)</c> write it (ADR 0156): <c>%g</c> at the
+    /// precision num2str.m picks for a lone element — as many digits as a whole number has, or four
+    /// past a fraction's leading digit (five at least, sixteen at most) — with a negative zero
+    /// written as <c>0</c> and the infinities spelt. The same text the aligned-row road wrote for a
+    /// one-element row, written once as a function of the double rather than through a row list, a
+    /// column width and a format string parsed per number.
+    /// </summary>
+    /// <remarks>
+    /// NaN is spelt <c>NaN</c> here, as num2str spells it; <c>string(NaN)</c> is the missing string,
+    /// and that decision belongs to the caller, which asks before it gets here. A whole number of
+    /// fewer than sixteen digits whose digit count fits the precision is written from its integer,
+    /// which is what <c>%g</c> writes for an exact integer it has room to write in full; everything
+    /// else, and any whole number where the logarithm's floor undercounts its digits, goes through
+    /// <see cref="FormatGeneral"/> exactly as the format string did.
+    /// </remarks>
+    internal static string FormatScalarGeneral(double value)
+    {
+        if (double.IsNaN(value))
+        {
+            return "NaN";
+        }
+
+        if (double.IsInfinity(value))
+        {
+            return value > 0 ? "Inf" : "-Inf";
+        }
+
+        if (value == 0)
+        {
+            return "0"; // num2str drops the sign of a zero before it writes a word for it
+        }
+
+        double magnitude = Math.Abs(value);
+        int exponent = (int)Math.Floor(Math.Log10(magnitude));
+        bool whole = value == Math.Floor(value);
+        int precision = whole
+            ? Math.Min(16, Math.Max(1, exponent + 1))
+            : Math.Min(16, Math.Max(5, exponent + 5));
+
+        if (whole && magnitude < 1e15)
+        {
+            long integer = (long)magnitude;
+            if (DecimalDigits(integer) <= precision)
+            {
+                string written = integer.ToString(CultureInfo.InvariantCulture);
+                return value < 0 ? "-" + written : written;
+            }
+        }
+
+        string digits = FormatGeneral(magnitude, precision);
+        return value < 0 ? "-" + digits : digits;
+    }
+
+    /// <summary>How many decimal digits a positive integer below 10^15 has.</summary>
+    private static int DecimalDigits(long integer)
+    {
+        int count = 1;
+        for (long bound = 10; integer >= bound && count < 19; bound *= 10)
+        {
+            count++;
+        }
+
+        return count;
+    }
+
+    /// <summary>The "G1" to "G17" pictures <see cref="FormatGeneral"/> asks .NET for, made once.</summary>
+    private static readonly string[] GeneralPictures = MakeGeneralPictures();
+
+    private static string[] MakeGeneralPictures()
+    {
+        var pictures = new string[18];
+        for (int digits = 1; digits < pictures.Length; digits++)
+        {
+            pictures[digits] = "G" + digits.ToString(CultureInfo.InvariantCulture);
+        }
+
+        return pictures;
+    }
+
     private static string FormatGeneral(double value, int precision)
     {
         // %g: shortest of fixed/scientific at the given significant digits (default 6, like C, and
         // a precision of zero asks for one digit rather than none — %.0g of 1.5 is 2).
         int digits = precision < 0 ? 6 : Math.Max(1, precision);
-        string text = value.ToString("G" + digits, CultureInfo.InvariantCulture);
+        string picture = digits < GeneralPictures.Length ? GeneralPictures[digits] : "G" + digits;
+        string text = value.ToString(picture, CultureInfo.InvariantCulture);
         int at = text.IndexOf('E', StringComparison.Ordinal);
         if (at < 0)
         {

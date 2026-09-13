@@ -1,0 +1,124 @@
+# ADR 0156 — Text made once
+
+## Status
+
+Accepted. Item 09 of the head2head_v3 gap-closure plan (`docs/plans/gap-closure-07-12-plan.md`,
+rev 6, agreed with Codex): the `d12_concat_200k` row and part of `d12_charmatrix`. Three stages,
+each measured alone against the stage before it with the same rig: 09a, one scalar formatter;
+09b, a chain of string `+` built once; 09c, `char` of a numeric array written from its buffer.
+
+## Context
+
+`keys = "R" + string(ids') + "-" + sv` over 200,000 ids took 0.211 s where R2025b takes 0.030 s
+(`runs\09-before-08b`, the 08b binary re-run on `d12_text` the same day, because the 08b run
+folder holds only `d06`). Two things paid for it.
+
+`string(ids')` boxed every element of the packed column and sent each through
+`StringElementOf`, which reached `num2str`'s whole matrix road for one number: a row list, the
+negative-zero pass, `AlignedRows` choosing a precision and a column width, and a `%.Ng` format
+string built and parsed by `FormatMatlab` for the one number, then the padding trimmed off again.
+
+The three `+` then ran as three pairs. Each pair converted both sides to texts, built a fresh
+string array of 200,000 new strings, and handed it to the next pair as its left side, which
+converted it back to texts again; two of the three answers were thrown away the moment the next
+pair had read them.
+
+`char(65 + mod((r - 1) + (0:39), 26))` in the charmatrix loop cast each code point through
+`Glyph`, which read the element through `ElementAt`, boxed it, and made a one-character string
+per character before a `StringBuilder` joined them.
+
+## Decision
+
+**09a — one scalar formatter.** `JgsSprintf.FormatScalarGeneral(double)` is what `num2str` wrote
+for a lone number, written once as a function of the double: `%g` at the precision
+`AlignedRows` picks for a one-element row (as many digits as a whole number has; four past a
+fraction's leading digit, five at least, sixteen at most), a negative zero as `0`, the
+infinities spelt, and NaN as `NaN`. A whole number below 10^15 whose digit count fits the
+precision is written from its integer, which is what `%g` writes for an exact integer it has room
+for; anything else, and any whole number where the logarithm's floor undercounts its digits, goes
+through `FormatGeneral` with the same precision, which now takes its `"G<n>"` picture from a
+table instead of concatenating one per call. `StringElementOf` reaches it for every number, NaN
+staying the missing string in front of it, so `string`, string `+`, and every other road through
+that rule share it. `string(x)` of a packed real array iterates the buffer directly: each double
+through the formatter, NaN as the missing string, a packed logical as `true` or `false` — the
+elements the boxed arm built from `BoxedElements`, shaped by the same `ShapedLike`. The class tag
+selects nothing: the boxed road read an `int32` or a `single` element as the double it holds, and
+so does this one.
+
+The contract was byte equality with the road it replaces. `ScalarTextM156Tests` holds the
+formatter to `num2str`'s one-number road itself over 819,502 values: every integer decade to
+10^22 and power of two to 2^64 with their neighbours, every power of ten a double holds with its
+neighbours, the rounding boundary into the next decade at every precision from 1 to 16, 0.1-step
+decimals, negative zero, the infinities, and pseudo-random doubles by bit pattern, by log-uniform
+magnitude and as whole numbers, with both signs. The packed `string` is held to the boxed road's
+elements and shape over rows, columns, matrices and logicals.
+
+**The fixture came first.** `m156_text` was recorded from R2025b before any code moved, and run on
+the untouched 08b binary: the `string` sweep of single numbers, decades, powers of two, tenths,
+shapes, every integer class, `single`, logical and missing; five sweeps of 20,000 to 40,001
+elements as bits lines against MATLAB's own bytes; every chain of three string `+` operands over
+eleven kinds of operand in every position (819 lines) and seven longer or nested chains; an
+incompatible pair ahead of a state-changing operand and ahead of an undefined one; and `char` of
+fractional, Unicode, out-of-range, negative, NaN, Inf, matrix, column, empty, integer-class,
+`single` and logical codes. Everything on which JGraph already disagreed with MATLAB is a
+`div=ADR0156` line, listed below; none of them is new, and the 08b binary and the 09a build answer
+all 1,250 lines the same way.
+
+## Consequences
+
+**09a, measured alone** with the rig, five counterbalanced repeats of `d12_text` and of the two
+probes, against the 08b binary run the same day (`runs\09-before-08b`; `runs\09a-scalar-formatter`):
+
+| row | scope | before | 09a | speedup | J/M before → after |
+| --- | --- | --- | --- | --- | --- |
+| `d12_concat_200k` | benchmark row | 0.211 s | 0.049 s | 4.31× | 7.54 → 1.76 |
+| `concat` | probe, cold / warm | 0.281 / 0.224 s | 0.081 / 0.056 s | 3.5× / 4.0× | 9.95 / 6.57 → 2.92 / 1.69 |
+| `charmatrix` | probe, cold / warm | 0.047 / 0.019 s | 0.047 / 0.019 s | 1.0× | 8.16 / 8.26 → 8.88 / 8.00 |
+| `d12_total` | script | 1.912 s | 1.656 s | 1.15× | 0.22 → 0.16 |
+
+The script's allocation fell from 1,374 MB to 1,190 MB and its peak working set from 868 MB to 730
+MB; the concat probe's process allocation fell from 1,426 MB to 690 MB and its peak working set
+from 882 MB to 578 MB. Two rows whose code this stage does not touch also moved,
+`d12_predicates_200k` (0.116 → 0.058 s) and `d12_extract_200k` (0.057 → 0.038 s); both lie inside
+or at the edge of their before-run's own range (0.063–0.125 s and 0.037–0.066 s), and no claim is
+made for them. The `d12_charmatrix` row's median moved from 0.037 to 0.028 s inside the same kind
+of range while its probe did not move at all.
+
+Bits: `head2head_v3\bits\bits_d12_text.m` on the 08b binary and this one — the 200,000 composed
+keys, the string of their ids, `string` over fractions, scaled and whole sweeps, tenths, powers,
+every class and a matrix, every chain of three and four operands over thirteen kinds of operand
+(4,394 chains), and the codes of the charmatrix row's 2,000 rows and of every edge input of
+`char`: all 15 lines equal.
+
+## Divergences
+
+Every one of these was found by `m156_text` on the binary before item 09 and is kept by it.
+
+- `string` of a numeric array: R2025b takes one precision for the whole array from its largest
+  magnitude, as `num2str` does for a matrix, and writes `string([9016.9943749474514 12345.5])` as
+  `9016.99437` where JGraph writes each element at its own precision, `9016.9944` (`m156_text`,
+  `array_precision`, `array_precision_small`, `div=ADR0156`). 09a kept each element's own
+  precision byte for byte, which was its contract.
+- `string` of a `single`: R2025b writes the single's double value to fourteen significant digits,
+  `3.1415927410126`, where JGraph writes it as `num2str` writes the double, `3.1416` (`m156_text`,
+  `cls_single`, `div=ADR0156`).
+- `string` of an `int64` or `uint64` beyond 2^53: JGraph holds the value as a double and writes
+  `string(intmax('int64'))` as `9.223372036854776e+18` where R2025b writes every digit
+  (`m156_text`, `cls_int64_max`, `cls_uint64_max`, `div=ADR0156`). Narrow integer storage is
+  outside the plan.
+- A char row meeting a number, NaN, a logical, a char matrix, a cell or another char row under `+`:
+  JGraph joins their text, so `'x' + 1 + "y"` is `"x1y"`, where R2025b adds code points first,
+  `"121y"`, and refuses a cell (`m156_text`, the 55 `chain_chr_*` and `chain_*_chr_*` lines over
+  those operands, `chain4_char_head`, `div=ADR0156`).
+- A string whose text spells the missing sentinel: `"<miss" + "ing>" + "x"` is the missing string
+  in JGraph, whose missing string is that text, and `"<missing>x"` in R2025b (`m156_text`,
+  `chain_sentinel_text`, `div=ADR0156`).
+- `char` of a code outside 0 to 65535: R2025b saturates (Inf and 1e10 to 65535, a negative to 0)
+  where JGraph casts to an integer and keeps its low sixteen bits (65536 to 0, −1 to 65535, Inf and
+  1e10 to 0) (`m156_text`, `char_wide`, `char_negative`, `char_inf`, `char_huge`, `char_int8`,
+  `div=ADR0156`). The plan keeps the cast exactly, and a range check is a compatibility decision of
+  its own.
+- `char` of a logical: R2025b refuses it and JGraph answers codes 1 and 0 (`m156_text`,
+  `char_logical`, `div=ADR0156`).
+- `char(zeros(0, 3))`: 0-by-3 in R2025b, 0-by-0 in JGraph (`m156_text`, `char_empty_0x3`,
+  `div=ADR0156`).
