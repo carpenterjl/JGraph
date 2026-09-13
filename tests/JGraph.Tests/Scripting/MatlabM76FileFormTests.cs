@@ -134,6 +134,48 @@ public class MatlabM76FileFormTests : IDisposable
         fclose(fid);
         """);
 
+    /// <summary>
+    /// A bounded fscanf decodes only a window of the file, so a file read in pieces must come back
+    /// the same as one read whole, with the pieces' edges falling inside numbers and inside
+    /// multi-byte characters past the first window.
+    /// </summary>
+    [Fact]
+    public Task ABoundedFscanf_ReadInPieces_MatchesOneWholeRead() => RunAsserting("""
+        fid = fopen('nums.txt', 'w');
+        fprintf(fid, '%d ', 1:30000);
+        fprintf(fid, '\n');
+        fclose(fid);
+
+        fid = fopen('nums.txt', 'r');
+        got = [];
+        while true
+            piece = fscanf(fid, '%d', 777);
+            if isempty(piece), break; end
+            got = [got; piece];
+        end
+        assert(isequal(got, (1:30000)'), 'every number once, none split at an edge');
+        assert(isempty(fscanf(fid, '%d')), 'the pieces left the file at its end');
+        fclose(fid);
+
+        fid = fopen('words.txt', 'w', 'n', 'UTF-8');
+        for k = 1:12000
+            fprintf(fid, 'é%dø ', k);
+        end
+        fclose(fid);
+
+        fid = fopen('words.txt', 'r', 'n', 'UTF-8');
+        whole = fscanf(fid, '%s');
+        frewind(fid);
+        pieces = [];
+        while true
+            piece = fscanf(fid, '%s', 333);
+            if isempty(piece), break; end
+            pieces = [pieces, piece];
+        end
+        fclose(fid);
+        assert(isequal(pieces, whole), 'multi-byte text read in pieces equals the whole read');
+        """);
+
     [Fact]
     public Task TextscanReadsATableIntoColumns() => RunAsserting(WriteGrid + """
         fid = fopen('grid.txt', 'r');

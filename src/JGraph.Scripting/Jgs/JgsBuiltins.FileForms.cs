@@ -360,12 +360,30 @@ internal static partial class JgsBuiltins
             ? ScanSize("fscanf", args, 2, line, col)
             : (-1, int.MaxValue);
 
-        (string text, long start) = RemainderOf(entry);
-        ScanResult result = Scan(text, format, limit, line, col, "fscanf");
+        // A bounded read needs only the stretch of the file its count covers. Decoding the whole
+        // remainder on every call made a file read in bounded pieces quadratic: a 1024-profile map
+        // read one profile at a time decoded 4.3 GB to parse 8.5 MB. The window starts small and
+        // doubles until the scan stops clear of its end, far enough that no token, lookahead or
+        // character cut at the edge could have read differently, or until it holds the remainder.
+        long start = entry.Stream.Position;
+        int window = limit == int.MaxValue ? int.MaxValue : ScanWindowBytes;
+        string text;
+        ScanResult result;
+        while (true)
+        {
+            (text, bool whole) = WindowOf(entry, start, window);
+            result = Scan(text, format, limit, line, col, "fscanf");
+            if (whole || result.Consumed + ScanWindowMargin <= text.Length)
+            {
+                break;
+            }
+
+            window = window > int.MaxValue / 2 ? int.MaxValue : window * 2;
+        }
 
         // Only what the scan actually used is consumed. Reading to the end regardless was what made
         // a bounded fscanf leave the file at EOF and the next read come back empty.
-        entry.Stream.Position = start + entry.Encoding.GetByteCount(text[..result.Consumed]);
+        entry.Stream.Position = start + entry.Encoding.GetByteCount(text.AsSpan(0, result.Consumed));
 
         return ScanOutputs(result, rows, wanted);
     }
@@ -549,6 +567,30 @@ internal static partial class JgsBuiltins
     }
 
     /// <summary>What is left of a file from where it stands, decoded in its own encoding.</summary>
+    /// <summary>The first window a bounded <c>fscanf</c> decodes, in bytes; it doubles when too small.</summary>
+    private const int ScanWindowBytes = 1 << 16;
+
+    /// <summary>
+    /// How far short of a partial window's end a scan must stop for its answer to be trusted: past any
+    /// lookahead a conversion takes and any character a cut through a multi-byte sequence spoils.
+    /// </summary>
+    private const int ScanWindowMargin = 64;
+
+    /// <summary>
+    /// Up to <paramref name="window"/> bytes from <paramref name="start"/>, decoded, and whether they
+    /// are all the file has left. The stream is left after what was read; the caller puts it back.
+    /// </summary>
+    private static (string Text, bool Whole) WindowOf(
+        JGraphScriptGlobals.FileEntry entry, long start, int window)
+    {
+        long remaining = System.Math.Max(0, entry.Stream.Length - start);
+        int size = (int)System.Math.Min(remaining, window);
+        var bytes = new byte[size];
+        entry.Stream.Position = start;
+        int read = entry.Stream.ReadAtLeast(bytes, size, throwOnEndOfStream: false);
+        return (entry.Encoding.GetString(bytes, 0, read), read >= remaining);
+    }
+
     private static (string Text, long Start) RemainderOf(JGraphScriptGlobals.FileEntry entry)
     {
         long start = entry.Stream.Position;
