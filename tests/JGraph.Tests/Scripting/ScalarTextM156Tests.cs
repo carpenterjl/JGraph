@@ -267,4 +267,181 @@ public class ScalarTextM156Tests : IDisposable
         t = string([true false]);
         assert(t(1) == "true" && t(2) == "false");
         """);
+
+    // ----- 09b: a chain of string + built once ---------------------------------------------------
+
+    /// <summary>
+    /// Every kind of operand string <c>+</c> can meet: a string scalar, a row, a column, a char row, the
+    /// missing string, a number, NaN, a logical, a char matrix, a cell, a row of another length, the
+    /// two halves of the missing sentinel's spelling, a packed row and column, an empty string row and
+    /// a datetime, which is claimed before concatenation and so must break a chain.
+    /// </summary>
+    private const string ChainOperands = """
+        str = "ab"; row = ["x" "y"]; col = ["p"; "q"]; chr = 'cd'; mis = string(NaN); num = 7; nan = NaN;
+        lgc = true; cmx = ['ef'; 'gh']; cel = {'u'; 'v'}; row3 = ["x" "y" "z"]; miss1 = "<miss"; miss2 = "ing>";
+        pk = [1.5 -0 1e5]; pkc = (1:2)'; emp = string(zeros(1, 0)); dt = datetime(2024, 3, 5);
+        """;
+
+    private static readonly string[] ChainNames =
+        ["str", "row", "col", "chr", "mis", "num", "nan", "lgc", "cmx", "cel", "row3", "miss1", "miss2", "pk", "pkc", "emp", "dt"];
+
+    private static void Run(JgsEnvironment env, string code) =>
+        new Interpreter(env, default, dialect: JgsDialect.Matlab).Run(Parser.Parse(code, dialect: JgsDialect.Matlab));
+
+    /// <summary>What an expression answers — type, tags, shape, class and every element — or the error it throws, where.</summary>
+    private static string Outcome(JgsEnvironment env, string expression)
+    {
+        try
+        {
+            Run(env, $"answer__ = {expression};");
+        }
+        catch (JgsException error)
+        {
+            return $"error at {error.Line}:{error.Column}: {error.Message}";
+        }
+
+        JgsValue value = env.Locals["answer__"];
+        var text = new System.Text.StringBuilder();
+        text.Append(value.Type).Append(value.IsStringArray ? " string" : string.Empty)
+            .Append(value.IsCharMatrix ? " charmatrix" : string.Empty).Append(value.IsTime ? " time" : string.Empty)
+            .Append(' ').Append(value.Rows).Append('x').Append(value.Cols).Append(' ').Append(value.NumericClass);
+        if (value.Type == JgsType.Array && !value.IsTime)
+        {
+            for (int i = 0; i < value.ArrayLength; i++)
+            {
+                JgsValue element = value.ElementAt(i);
+                text.Append('|').Append(element.Type).Append(':').Append(
+                    element.Type == JgsType.Number ? element.AsNumber.ToString("R", System.Globalization.CultureInfo.InvariantCulture)
+                    : element.Type == JgsType.String ? element.AsString
+                    : element.Display());
+            }
+        }
+        else
+        {
+            text.Append('|').Append(value.Display());
+        }
+
+        return text.ToString();
+    }
+
+    /// <summary>The same expression down both roads, each in its own copy of the operands.</summary>
+    private static void AssertBothRoadsAgree(IEnumerable<string> expressions, string setup = ChainOperands)
+    {
+        JgsEnvironment fused = Globals();
+        JgsEnvironment pairwise = Globals();
+        Run(fused, setup);
+        Run(pairwise, setup);
+        foreach (string expression in expressions)
+        {
+            string expected;
+            JgsBuiltins.StringConcatChain.Enabled = false;
+            try
+            {
+                expected = Outcome(pairwise, expression);
+            }
+            finally
+            {
+                JgsBuiltins.StringConcatChain.Enabled = true;
+            }
+
+            string actual = Outcome(fused, expression);
+            Assert.True(expected == actual, $"{expression}\n  pairs: {expected}\n  chain: {actual}");
+        }
+    }
+
+    [Fact]
+    public void EveryChainOfThreeAnswersWhatThePairsAnswered()
+    {
+        var expressions = new List<string>();
+        foreach (string a in ChainNames)
+        {
+            foreach (string b in ChainNames)
+            {
+                foreach (string c in ChainNames)
+                {
+                    expressions.Add($"{a} + {b} + {c}");
+                }
+            }
+        }
+
+        long before = JgsBuiltins.StringConcatChain.FusedBuilds;
+        AssertBothRoadsAgree(expressions);
+        Assert.True(JgsBuiltins.StringConcatChain.FusedBuilds > before, "no chain was built at once");
+    }
+
+    [Fact]
+    public void EveryChainOfFourOverASampleOfOperandsAnswersWhatThePairsAnswered()
+    {
+        string[] sample = ["str", "col", "chr", "mis", "num", "row3", "miss1", "dt"];
+        var expressions = new List<string>();
+        foreach (string a in sample)
+        {
+            foreach (string b in sample)
+            {
+                foreach (string c in sample)
+                {
+                    foreach (string d in sample)
+                    {
+                        expressions.Add($"{a} + {b} + {c} + {d}");
+                    }
+                }
+            }
+        }
+
+        expressions.Add("str + (row + col) + chr");
+        expressions.Add("str + row - num + col");
+        expressions.Add("(str + row) + (col + str) + miss1 + miss2");
+        expressions.Add("miss1 + miss2 + str + row");
+        expressions.Add("pk + pkc + str + num");
+        AssertBothRoadsAgree(expressions);
+    }
+
+    /// <summary>
+    /// A pair that does not fit throws before the operand after it is evaluated, on both roads:
+    /// the third operand would set a variable and then fail for want of an output.
+    /// </summary>
+    [Fact]
+    public void AnOperandAfterAPairThatDoesNotFitIsNeverEvaluated()
+    {
+        const string Expression = "[\"a\" \"b\"] + [\"c\" \"d\" \"e\"] + string(assignin('base', 'touched', 1))";
+        AssertBothRoadsAgree([Expression, "[\"a\" \"b\"] + [\"c\" \"d\" \"e\"] + no_such_function_m156()"], "touched = 0;");
+
+        JgsEnvironment env = Globals();
+        Run(env, "touched = 0;");
+        string outcome = Outcome(env, Expression);
+        Assert.StartsWith("error at 1:", outcome);
+        Assert.Contains("incompatible sizes", outcome);
+        Assert.Equal(0, env.Locals["touched"].AsNumber);
+    }
+
+    /// <summary>Operands with side effects run once each, in order: the generator's draws land where they did.</summary>
+    [Fact]
+    public void OperandsAreEvaluatedOnceEachAndInOrder() => AssertBothRoadsAgree(
+        [
+            "string(rand) + \"-\" + string(randi(1000)) + \"-\" + string(rand)",
+            "\"a\" + string(rand(1, 3)) + string(rand(2, 1)) + \"z\"",
+        ],
+        "rng(7);");
+
+    [Fact]
+    public void TheBenchmarkChainIsBuiltOnceAndAnswersWhatThePairsAnswered()
+    {
+        const string Setup = """
+            ids = mod((1:2000) * 2654435761, 100000); ids(17) = NaN;
+            vals = mod((1:2000) * 0.618033988749895, 1);
+            sv = compose("%08.5f", vals'); sv(40) = string(NaN);
+            """;
+        AssertBothRoadsAgree(["\"R\" + string(ids') + \"-\" + sv"], Setup);
+
+        JgsEnvironment env = Globals();
+        Run(env, Setup);
+        long before = JgsBuiltins.StringConcatChain.FusedBuilds;
+        Run(env, "keys = \"R\" + string(ids') + \"-\" + sv;");
+        Assert.Equal(1, JgsBuiltins.StringConcatChain.FusedBuilds - before);
+        JgsValue keys = env.Locals["keys"];
+        Assert.Equal(2000, keys.Rows);
+        Assert.Equal("R35761-00.61803", keys.ElementAt(0).AsString);
+        Assert.Equal(JgsBuiltins.MissingSentinel, keys.ElementAt(16).AsString);
+        Assert.Equal(JgsBuiltins.MissingSentinel, keys.ElementAt(39).AsString);
+    }
 }

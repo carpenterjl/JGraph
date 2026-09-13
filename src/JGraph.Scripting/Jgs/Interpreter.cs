@@ -2908,12 +2908,106 @@ internal sealed partial class Interpreter
 
     private JgsValue EvaluateBinary(BinaryExpr binary, JgsEnvironment env, out bool owned)
     {
+        if (binary.Op == TokenType.Plus && binary.Left is BinaryExpr { Op: TokenType.Plus } spine
+            && JgsBuiltins.StringConcatChain.Enabled)
+        {
+            return EvaluatePlusChain(binary, spine, env, out owned);
+        }
+
         JgsValue left = Evaluate(binary.Left, env);
         JgsValue right = Evaluate(binary.Right, env);
         JgsValue answer = ApplyBinary(binary.Op, left, right, binary);
         owned = OwnsFreshResult(answer, left, right);
         return answer;
     }
+
+    // --- A chain of + built once (ADR 0156, stage 09b) --------------------------------------------
+
+    /// <summary>
+    /// <c>a + b + c + ...</c>, a left spine of <c>+</c> nodes, evaluated as the pairs evaluate it —
+    /// each operand in order, each pair's operator applied the moment its right operand exists —
+    /// except that a run of pairs joining text is handed to one
+    /// <see cref="JgsBuiltins.StringConcatChain"/> and its answer built once.
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    /// A pair joins the chain only when it would have gone straight to
+    /// <see cref="JgsBuiltins.ConcatenateStrings"/>: one side a string array and neither side an
+    /// operand that anything in <see cref="ApplyBinaryCore(TokenType, JgsValue, JgsValue, Node)"/>
+    /// claims first (<see cref="JoinsAsText"/>). Every other pair — numbers, an object's overloaded
+    /// <c>plus</c>, a time — is <see cref="ApplyBinary"/> exactly as before, with a pending chain
+    /// built first to be its left side. So no operand is evaluated earlier or later than it was, no
+    /// operand is read earlier or later than it was, and no error changes its text, its node or its
+    /// place in the order; the plan's restriction to pure operands is not needed for any of that,
+    /// and the benchmark's own operand, <c>string(ids')</c>, would not have met it.
+    /// </para>
+    /// <para>
+    /// A chain of numbers pays one extra test per pair and nothing else, and its outermost pair
+    /// still says whether its answer is fresh, so <see cref="EvaluateForBinding"/> keeps eliding
+    /// the copy of <c>y = a + b + c</c> it elided before.
+    /// </para>
+    /// </remarks>
+    private JgsValue EvaluatePlusChain(BinaryExpr outer, BinaryExpr spine, JgsEnvironment env, out bool owned)
+    {
+        JgsBuiltins.StringConcatChain? chain = null;
+        JgsValue? left = FoldPlus(spine, env, ref chain);
+        JgsValue right = Evaluate(outer.Right, env);
+        if (chain is not null)
+        {
+            if (JoinsAsText(right))
+            {
+                chain.Append(right, outer.Line, outer.Column);
+                owned = false;
+                return chain.Build();
+            }
+
+            left = chain.Build();
+        }
+
+        JgsValue answer = ApplyBinary(outer.Op, left!, right, outer);
+        owned = OwnsFreshResult(answer, left!, right);
+        return answer;
+    }
+
+    /// <summary>
+    /// One inner node of a <c>+</c> spine: its answer, or null while a chain is pending in
+    /// <paramref name="chain"/>.
+    /// </summary>
+    private JgsValue? FoldPlus(BinaryExpr node, JgsEnvironment env, ref JgsBuiltins.StringConcatChain? chain)
+    {
+        JgsValue? left = node.Left is BinaryExpr { Op: TokenType.Plus } inner
+            ? FoldPlus(inner, env, ref chain)
+            : Evaluate(node.Left, env);
+        JgsValue right = Evaluate(node.Right, env);
+
+        if (chain is not null)
+        {
+            if (JoinsAsText(right))
+            {
+                chain.Append(right, node.Line, node.Column);
+                return null;
+            }
+
+            left = chain.Build();
+            chain = null;
+        }
+        else if ((left!.IsStringArray || right.IsStringArray) && JoinsAsText(left) && JoinsAsText(right))
+        {
+            chain = new JgsBuiltins.StringConcatChain(left, right, node.Line, node.Column);
+            return null;
+        }
+
+        return ApplyBinary(node.Op, left!, right, node);
+    }
+
+    /// <summary>
+    /// Whether an operand meeting a string array under <c>+</c> reaches
+    /// <see cref="JgsBuiltins.ConcatenateStrings"/> with nothing claiming the pair first: not a
+    /// decomposition or other struct, not an object, not sparse, not a time.
+    /// </summary>
+    private static bool JoinsAsText(JgsValue operand) =>
+        operand.Type is JgsType.String or JgsType.Number or JgsType.Bool or JgsType.Complex or JgsType.Cell
+        || (operand.Type == JgsType.Array && !operand.IsTime);
 
     // --- Taking an operator's answer rather than copying it (M110) ------------------------------
 
@@ -3212,6 +3306,8 @@ internal sealed partial class Interpreter
         // is an array underneath, so "p" + ["1" "2"] would otherwise be expanded pair by pair, each
         // pair joined as char, and the answer reassembled as a plain array — the right text with the
         // wrong type. ConcatenateStrings does its own spreading, which is the same rule applied once.
+        // A chain of + is built once on the promise that nothing above claims a pair of the operands
+        // JoinsAsText lists (ADR 0156): a new claim above for one of them must take it off that list.
         if (op == TokenType.Plus && JgsBuiltins.ConcatenatesWithPlus(left, right))
         {
             return JgsBuiltins.ConcatenateStrings(left, right, at.Line, at.Column);

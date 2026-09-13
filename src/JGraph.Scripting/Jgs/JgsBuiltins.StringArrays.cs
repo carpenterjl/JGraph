@@ -271,28 +271,147 @@ internal static partial class JgsBuiltins
     /// <c>"a" + x</c> elementwise, with a scalar on either side expanding over the other — MATLAB's
     /// implicit expansion, restricted to the one shape combination string concatenation can meet.
     /// </summary>
-    internal static JgsValue ConcatenateStrings(JgsValue left, JgsValue right, int line, int col)
+    internal static JgsValue ConcatenateStrings(JgsValue left, JgsValue right, int line, int col) =>
+        new StringConcatChain(left, right, line, col).Build();
+
+    /// <summary>
+    /// A chain of string <c>+</c> built once (ADR 0156, stage 09b): <c>"R" + string(ids') + "-" + sv</c>
+    /// makes each answer string a single time where three pairs made two intermediate string arrays
+    /// and every string in them.
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    /// Everything the pairs did that anything can see is still done, at the same point: the
+    /// interpreter hands each operand over as soon as it has evaluated it, and
+    /// <see cref="Append"/> converts it and checks its shape against the answer so far then and
+    /// there, so a pair that does not fit throws its own error, at its own node, before the next
+    /// operand is evaluated. What is no longer done is building the intermediate answers, which
+    /// nothing could hold: they were temporaries of one expression.
+    /// </para>
+    /// <para>
+    /// The running shape is the intermediate answer's shape, and indexing each operand by implicit
+    /// expansion from the final element is indexing it from the intermediate element that element
+    /// was built from, because an operand with more than one row has as many rows as every answer
+    /// after it. A missing operand makes the element missing, and so does an intermediate text that
+    /// spells the missing sentinel, which the next pair read back as the missing string.
+    /// </para>
+    /// </remarks>
+    internal sealed class StringConcatChain
     {
-        (string?[] a, int aRows, int aCols) = ConcatSide(left, line, col);
-        (string?[] b, int bRows, int bCols) = ConcatSide(right, line, col);
+        private static long _fusedBuilds;
 
-        // Implicit expansion over both dimensions: ["a" "b"] + ["1"; "2"] is 2-by-2 (measured).
-        int rows = Expand("+", aRows, bRows, line, col);
-        int cols = Expand("+", aCols, bCols, line, col);
-        var joined = new JgsValue[rows * cols];
-        for (int c = 0; c < cols; c++)
+        private readonly List<(string?[] Texts, int Rows, int Cols)> _sides = new(4);
+        private int _rows;
+        private int _cols;
+
+        public StringConcatChain(JgsValue left, JgsValue right, int line, int col)
         {
-            for (int r = 0; r < rows; r++)
-            {
-                string? x = a[(aRows == 1 ? 0 : r) + ((aCols == 1 ? 0 : c) * aRows)];
-                string? y = b[(bRows == 1 ? 0 : r) + ((bCols == 1 ? 0 : c) * bRows)];
+            (string?[] Texts, int Rows, int Cols) a = ConcatSide(left, line, col);
+            (string?[] Texts, int Rows, int Cols) b = ConcatSide(right, line, col);
 
-                // A missing string joined to anything is missing (measured).
-                joined[r + (c * rows)] = JgsValue.Str(x is null || y is null ? MissingSentinel : x + y);
-            }
+            // Implicit expansion over both dimensions: ["a" "b"] + ["1"; "2"] is 2-by-2 (measured).
+            _rows = Expand("+", a.Rows, b.Rows, line, col);
+            _cols = Expand("+", a.Cols, b.Cols, line, col);
+            _sides.Add(a);
+            _sides.Add(b);
         }
 
-        return JgsValue.StringArray(joined, rows, cols);
+        /// <summary>Whether the interpreter folds a chain of <c>+</c> at all; a test lever, on by default.</summary>
+        internal static bool Enabled { get; set; } = true;
+
+        /// <summary>How many answers of three or more operands have been built at once (tests read it).</summary>
+        internal static long FusedBuilds => Interlocked.Read(ref _fusedBuilds);
+
+        /// <summary>
+        /// The next operand of the chain: converted and shape-checked now, exactly as the pair
+        /// joining it to the answer so far would have been. Converting the answer so far could not
+        /// throw — it is a string array — so the operand's conversion and the two expansions are
+        /// all of that pair's checks, in their order.
+        /// </summary>
+        public void Append(JgsValue right, int line, int col)
+        {
+            (string?[] Texts, int Rows, int Cols) b = ConcatSide(right, line, col);
+            _rows = Expand("+", _rows, b.Rows, line, col);
+            _cols = Expand("+", _cols, b.Cols, line, col);
+            _sides.Add(b);
+        }
+
+        /// <summary>The answer: every element built once from its operands' texts.</summary>
+        public JgsValue Build()
+        {
+            int rows = _rows;
+            int cols = _cols;
+            var joined = new JgsValue[rows * cols];
+            if (_sides.Count == 2)
+            {
+                (string?[] a, int aRows, int aCols) = _sides[0];
+                (string?[] b, int bRows, int bCols) = _sides[1];
+                for (int c = 0; c < cols; c++)
+                {
+                    for (int r = 0; r < rows; r++)
+                    {
+                        string? x = a[(aRows == 1 ? 0 : r) + ((aCols == 1 ? 0 : c) * aRows)];
+                        string? y = b[(bRows == 1 ? 0 : r) + ((bCols == 1 ? 0 : c) * bRows)];
+
+                        // A missing string joined to anything is missing (measured).
+                        joined[r + (c * rows)] = JgsValue.Str(x is null || y is null ? MissingSentinel : x + y);
+                    }
+                }
+
+                return JgsValue.StringArray(joined, rows, cols);
+            }
+
+            int count = _sides.Count;
+            var texts = new string?[count][];
+            var sideRows = new int[count];
+            var sideCols = new int[count];
+            for (int s = 0; s < count; s++)
+            {
+                (texts[s], sideRows[s], sideCols[s]) = _sides[s];
+            }
+
+            char[] scratch = new char[64];
+            for (int c = 0; c < cols; c++)
+            {
+                for (int r = 0; r < rows; r++)
+                {
+                    int length = 0;
+                    bool missing = false;
+                    for (int s = 0; s < count; s++)
+                    {
+                        string? piece = texts[s][(sideRows[s] == 1 ? 0 : r) + ((sideCols[s] == 1 ? 0 : c) * sideRows[s])];
+                        if (piece is null)
+                        {
+                            missing = true;
+                            break;
+                        }
+
+                        if (length + piece.Length > scratch.Length)
+                        {
+                            Array.Resize(ref scratch, Math.Max(scratch.Length * 2, length + piece.Length));
+                        }
+
+                        piece.CopyTo(0, scratch, length, piece.Length);
+                        length += piece.Length;
+
+                        // The pairs stored each intermediate answer as its text and read it back as the
+                        // next pair's left side, where a text spelling the sentinel is the missing
+                        // string: "<miss" + "ing>" + "x" was missing, so it still is.
+                        if (s > 0 && s < count - 1 && length == MissingSentinel.Length
+                            && scratch.AsSpan(0, length).SequenceEqual(MissingSentinel))
+                        {
+                            missing = true;
+                            break;
+                        }
+                    }
+
+                    joined[r + (c * rows)] = JgsValue.Str(missing ? MissingSentinel : new string(scratch, 0, length));
+                }
+            }
+
+            Interlocked.Increment(ref _fusedBuilds);
+            return JgsValue.StringArray(joined, rows, cols);
+        }
     }
 
     /// <summary>

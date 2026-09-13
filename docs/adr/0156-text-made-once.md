@@ -53,6 +53,40 @@ decimals, negative zero, the infinities, and pseudo-random doubles by bit patter
 magnitude and as whole numbers, with both signs. The packed `string` is held to the boxed road's
 elements and shape over rows, columns, matrices and logicals.
 
+**09b — a chain of string `+` built once.** `JgsBuiltins.StringConcatChain` holds the texts and
+shape of every operand of a chain and builds each answer string once; `ConcatenateStrings` is its
+two-operand case, with the pair's own loop kept for it. The interpreter reaches it from
+`EvaluateBinary`: a `+` whose left operand is another `+` folds its whole left spine
+(`EvaluatePlusChain`, `FoldPlus`), evaluating each operand exactly where the pairs evaluated it and
+applying each pair the moment its right operand exists. A pair joins the chain only when it would
+have gone straight to `ConcatenateStrings` — one side a string array and neither side an operand
+that `ApplyBinaryCore` claims first (a struct, an object, a sparse matrix, a time; `JoinsAsText`
+lists the rest, and a comment at the concatenation check says a new claim must take its operand off
+that list). Every other pair is `ApplyBinary` as before, a pending chain built first to be its left
+side. `StringConcatChain.Append` converts the new operand and checks its shape against the answer
+so far on the spot, which is every check that pair made, in its order, at its node: converting the
+answer so far could not throw, because it was a string array.
+
+Nothing anything can see has moved. No operand is evaluated or read earlier or later than it was,
+and no error changes its text, its node or its place in the order; what is gone is the intermediate
+string arrays, which were temporaries of one expression. Two details of the pairs are kept on
+purpose. An intermediate answer whose text spelled the missing sentinel was read back by the next
+pair as the missing string, so `"<miss" + "ing>" + "x"` stays missing. And the outermost pair of a
+chain that is not text still reports whether its answer is fresh, so `y = a + b + c` over numbers
+keeps the copy elision `EvaluateForBinding` gave it.
+
+The plan allowed fusion only when every operand was pure — a variable, a literal, or `string`,
+`num2str` or `char` of one — so that flattening the chain could not reorder side effects. That
+restriction answers a design that evaluates the operands first and checks them afterwards; this one
+never evaluates an operand before the pairs did, so it is not needed, and it would have excluded
+the benchmark's own operand, `string(ids')`, whose argument is a transpose. `ScalarTextM156Tests`
+holds the chain to the pairs on the same text with the fold switched off and on
+(`StringConcatChain.Enabled`): every chain of three over seventeen kinds of operand (4,913 chains),
+every chain of four over eight of them, parenthesised and mixed chains, an incompatible pair ahead
+of an operand that would set a variable (it is never evaluated) and ahead of an undefined function,
+operands that draw from the random generator (the draws land where they did), and the benchmark
+expression, which is built exactly once.
+
 **The fixture came first.** `m156_text` was recorded from R2025b before any code moved, and run on
 the untouched 08b binary: the `string` sweep of single numbers, decades, powers of two, tenths,
 shapes, every integer class, `single`, logical and missing; five sweeps of 20,000 to 40,001
@@ -61,8 +95,8 @@ eleven kinds of operand in every position (819 lines) and seven longer or nested
 incompatible pair ahead of a state-changing operand and ahead of an undefined one; and `char` of
 fractional, Unicode, out-of-range, negative, NaN, Inf, matrix, column, empty, integer-class,
 `single` and logical codes. Everything on which JGraph already disagreed with MATLAB is a
-`div=ADR0156` line, listed below; none of them is new, and the 08b binary and the 09a build answer
-all 1,250 lines the same way.
+`div=ADR0156` line, listed below; none of them is new, and the 08b binary and the 09a and 09b
+builds answer all 1,250 lines the same way.
 
 ## Consequences
 
@@ -89,6 +123,33 @@ keys, the string of their ids, `string` over fractions, scaled and whole sweeps,
 every class and a matrix, every chain of three and four operands over thirteen kinds of operand
 (4,394 chains), and the codes of the charmatrix row's 2,000 rows and of every edge input of
 `char`: all 15 lines equal.
+
+**09b, measured alone** against the 09a binary the same way (`runs\09b-concat-chain`):
+
+| row | scope | 09a | 09b | speedup | J/M before → after |
+| --- | --- | --- | --- | --- | --- |
+| `d12_concat_200k` | benchmark row | 0.049 s | 0.033 s | 1.48× | 1.76 → 1.19 |
+| `concat` | probe, cold / warm | 0.081 / 0.056 s | 0.056 / 0.050 s | 1.45× / 1.12× | 2.92 / 1.69 → 2.07 / 1.62 |
+| `d12_recombine_50k` | benchmark row | 0.009 s | 0.006 s | 1.50× | 1.12 → 0.86 |
+| `d12_total` | script | 1.656 s | 1.602 s | 1.03× | 0.16 → 0.19 |
+
+`d12_recombine_50k` is `head(1:50000) + "|" + tail(1:50000)`, a chain of three, and the fold
+reaches it with no change of its own. The concat probe's process allocation fell from 690 MB to 473
+MB and its peak working set from 578 MB to 470 MB; the script's allocation from 1,190 MB to 1,129
+MB. `d12_predicates_200k` read 0.058 s on 09a and 0.072 s here, inside two overlapping ranges
+(0.054–0.073 s and 0.051–0.089 s) of a row whose code neither stage touches.
+
+Over the two stages the row is 6.4× faster than before item 09 (0.211 → 0.033 s, J/M 7.54 → 1.19),
+and the probe's allocation is a third of what it was (1,426 → 473 MB).
+
+Five alternating rounds of `bits\chain_numeric_timing.m` on the two binaries
+(`runs\09b-concat-chain\chain_timing.log`) say what the fold costs a chain that is not text: a
+million interpreted `a + b + c + d` over scalars take 0.0222 s on 09a and 0.0220 s here, twenty
+thousand `A + B + C` over 1,000-element rows 0.162 and 0.156 s, and two hundred thousand `s + "a" +
+s` over one-character strings 0.297 s and 0.263 s.
+
+Bits: `bits_d12_text.m` on the 08b binary and this one, all 15 lines equal — among them the 4,394
+chains of three and four operands, which the 08b binary built pair by pair with the original loop.
 
 ## Divergences
 
