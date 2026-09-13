@@ -282,22 +282,28 @@ public static class Ode15s
             massSlope = massVector!.Evaluate(t, y, Psi(dif, k, G, invGa));
         }
 
+        // One iteration matrix and one set of factors for the whole run, written in place at each
+        // refactor: at n = 400 a fresh pair is 2.5 MB on the large-object heap, twenty-odd times a
+        // run, for a matrix nothing reads once it is factored. The previous factorization goes
+        // stale the moment the next is formed, which is how it was used anyway.
+        var iteration = new double[n, n];
+        var factors = new double[(long)n * n];
         Refactor();
 
         void Refactor()
         {
-            double[,] matrix = OdeStiffSupport.IterationMatrix(mass, hInvGak, dfdy);
+            OdeStiffSupport.IterationMatrixInto(iteration, mass, hInvGak, dfdy);
             if (massSlope is not null)
             {
-                OdeStiffSupport.AddInPlace(matrix, massSlope);
+                OdeStiffSupport.AddInPlace(iteration, massSlope);
             }
 
             if (dae)
             {
-                rowScale = OdeStiffSupport.ScaleRows(matrix);
+                rowScale = OdeStiffSupport.ScaleRows(iteration);
             }
 
-            factored = LuDecomposition.Factor(matrix);
+            factored = LuDecomposition.FactorReusing(iteration, factors);
             result.Decompositions++;
             haveRate = false;
         }

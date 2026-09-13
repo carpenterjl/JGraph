@@ -146,6 +146,29 @@ internal static class OdeStiffSupport
     }
 
     /// <summary>
+    /// <c>m − scale·j</c> written into <paramref name="into"/>, element for element the same
+    /// arithmetic in the same order as <see cref="IterationMatrix"/> — the form a solver that
+    /// refactors twenty times a run uses so that each refactor allocates nothing.
+    /// </summary>
+    /// <exception cref="ArgumentException">The buffer is not the shape of the operands.</exception>
+    public static void IterationMatrixInto(double[,] into, double[,] m, double scale, double[,] j)
+    {
+        int n = m.GetLength(0);
+        if (into.GetLength(0) != n || into.GetLength(1) != m.GetLength(1))
+        {
+            throw new ArgumentException("The iteration-matrix buffer must be the shape of the mass matrix.", nameof(into));
+        }
+
+        for (int r = 0; r < n; r++)
+        {
+            for (int c = 0; c < n; c++)
+            {
+                into[r, c] = m[r, c] - (scale * j[r, c]);
+            }
+        }
+    }
+
+    /// <summary>
     /// <c>M·v</c>, or <paramref name="v"/> itself when there is no mass matrix.
     /// </summary>
     /// <remarks>

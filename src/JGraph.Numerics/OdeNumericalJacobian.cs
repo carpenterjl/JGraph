@@ -111,7 +111,6 @@ internal static class OdeNumericalJacobian
         bool[,]? pattern = options.Pattern;
         int[]? groups = options.Groups;
         var jacobian = new double[nf, ny];
-        var difference = new double[nf, ny];   // Fdel - Fvalue, laid out by column of the Jacobian
         var largest = new double[ny];
         var largestRow = new int[ny];
         var perturbedAtRow = new double[ny];
@@ -151,7 +150,6 @@ internal static class OdeNumericalJacobian
                 for (int i = 0; i < nf; i++)
                 {
                     double d = columns[j][i] - value[i];
-                    difference[i, j] = d;
                     jacobian[i, j] = d / del[j];
                     double magnitude = Math.Abs(d);
                     if (magnitude > best)
@@ -199,6 +197,10 @@ internal static class OdeNumericalJacobian
                 : Map(states, f);
             evaluations = groupCount;
 
+            // Fdel − Fvalue by column of the Jacobian: only this branch reads it back, to take the
+            // largest entry of a column as the sparse matrix holds it. The dense branch never did,
+            // and no longer writes it.
+            var difference = new double[nf, ny];
             for (int j = 0; j < ny; j++)
             {
                 double best = 0;

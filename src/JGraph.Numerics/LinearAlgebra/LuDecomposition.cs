@@ -47,6 +47,39 @@ public sealed class LuDecomposition
     }
 
     /// <summary>
+    /// <see cref="Factor(double[,])"/> with the factors written into <paramref name="factors"/>,
+    /// which the decomposition then owns: a solver that refactors a matrix of one size many times
+    /// a run hands in one buffer and allocates nothing per refactor. Any decomposition made from
+    /// the same buffer earlier is overwritten and must not be used again — the bargain
+    /// <see cref="FactorAdopting"/> makes, made repeatedly.
+    /// </summary>
+    /// <exception cref="ArgumentException">The matrix is not square, or the buffer is shorter than n².</exception>
+    public static LuDecomposition FactorReusing(double[,] matrix, double[] factors)
+    {
+        ArgumentNullException.ThrowIfNull(factors);
+        int n = matrix.GetLength(0);
+        if (matrix.GetLength(1) != n)
+        {
+            throw new ArgumentException("LU factorization needs a square matrix.", nameof(matrix));
+        }
+
+        if (factors.LongLength < (long)n * n)
+        {
+            throw new ArgumentException("The factor buffer must hold n² elements.", nameof(factors));
+        }
+
+        for (int r = 0; r < n; r++)
+        {
+            for (int c = 0; c < n; c++)
+            {
+                factors[((long)c * n) + r] = matrix[r, c];
+            }
+        }
+
+        return FactorInPlace(factors, n);
+    }
+
+    /// <summary>
     /// Factors an n-by-n matrix already laid out column-major — the layout packed script storage
     /// uses, so this is the entry point that costs one copy and no transpose.
     /// </summary>
