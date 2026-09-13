@@ -87,6 +87,17 @@ of an operand that would set a variable (it is never evaluated) and ahead of an 
 operands that draw from the random generator (the draws land where they did), and the benchmark
 expression, which is built exactly once.
 
+**09c — `char` of a numeric array written from its buffer.** `PackedGlyphs` reads a packed array's
+codes where they lie and makes each row's text once: a matrix of more than one row stacks its rows,
+read row-major as before, and anything else is one row in storage order. The cast is `Glyph`'s own,
+`(char)(int)` on the double, with no range check, because `Glyph` never made one: `char([65536
+65537])` is codes 0 and 1 on both roads, and R2025b's saturation stays a recorded divergence rather
+than a change made inside a performance stage. A logical slot reads as 1 or 0, which is what
+`ElementAt` boxed it as, and the shape rules, 0-by-3 included, are untouched. `ScalarTextM156Tests`
+holds the packed road to the boxed element loop, and both to the cast itself, over fractional,
+Unicode, out-of-range, negative, NaN and infinite codes, a matrix holding out-of-range codes, a
+column, logicals and three empty shapes.
+
 **The fixture came first.** `m156_text` was recorded from R2025b before any code moved, and run on
 the untouched 08b binary: the `string` sweep of single numbers, decades, powers of two, tenths,
 shapes, every integer class, `single`, logical and missing; five sweeps of 20,000 to 40,001
@@ -95,8 +106,8 @@ eleven kinds of operand in every position (819 lines) and seven longer or nested
 incompatible pair ahead of a state-changing operand and ahead of an undefined one; and `char` of
 fractional, Unicode, out-of-range, negative, NaN, Inf, matrix, column, empty, integer-class,
 `single` and logical codes. Everything on which JGraph already disagreed with MATLAB is a
-`div=ADR0156` line, listed below; none of them is new, and the 08b binary and the 09a and 09b
-builds answer all 1,250 lines the same way.
+`div=ADR0156` line, listed below; none of them is new, and the 08b binary and the 09a, 09b
+and 09c builds answer all 1,250 lines the same way.
 
 ## Consequences
 
@@ -150,6 +161,39 @@ s` over one-character strings 0.297 s and 0.263 s.
 
 Bits: `bits_d12_text.m` on the 08b binary and this one, all 15 lines equal — among them the 4,394
 chains of three and four operands, which the 08b binary built pair by pair with the original loop.
+
+**09c, measured alone** against the 09b binary the same way (`runs\09c-packed-char`):
+
+| row | scope | 09b | 09c | speedup | J/M before → after |
+| --- | --- | --- | --- | --- | --- |
+| `charmatrix` | probe, cold / warm | 0.048 / 0.019 s | 0.041 / 0.014 s | 1.16× / 1.36× | 9.02 / 8.30 → 8.18 / 6.00 |
+| `d12_charmatrix` | benchmark row | 0.026 s | 0.023 s | 1.13× | 6.00 → 5.75 |
+| `d12_total` | script | 1.602 s | 1.618 s | 0.99× | 0.19 → 0.20 |
+
+The probe's ranges do not overlap (cold 0.046–0.063 s before and 0.040–0.043 s after, warm
+0.019–0.026 s and 0.014–0.015 s); the row's do (0.021–0.028 s on both), so the row claims nothing
+its probe does not. The probe's process allocation fell from 129 MB to 94 MB and its peak working
+set from 189 MB to 153 MB; the script's allocation from 1,129 MB to 1,120 MB. Of the row's kernel
+only the 2,000 calls of `char` on a row of 40 codes changed: `char(rowsc)` stacking the cell, the
+transpose and `double` are untouched, and the loop that builds the rows is item 12's, which is why
+the warm probe still takes six times MATLAB's.
+
+The same run read `d12_concat_200k` at 0.037 s against 0.033 s, and most rows of the script a few
+percent slower, MATLAB's total among them (7.89 to 8.22 s), though no `char` of a number lies on
+the concat row's path. Five alternating rounds of `d12_text` on the two binaries
+(`runs\09c-packed-char\ab_09b_09c.log`) settle it: `d12_concat_200k` 0.034 s on both,
+`d12_compose_200k` 0.238 and 0.237 s, `d12_edits_200k` 0.078 and 0.079 s, `d12_total` 1.519 and
+1.508 s, and `d12_charmatrix` 0.029 and 0.021 s. The move was the machine between runs, not the
+stage.
+
+Over the three stages `d12_concat_200k` is 6.4 times faster than before item 09 (0.211 to 0.033 s,
+J/M 7.54 to 1.19), the concat probe's allocation is a third of what it was (1,426 to 473 MB), the
+charmatrix probe is 1.16 times faster cold and 1.36 times warm, and the script allocates 1,120 MB
+where it allocated 1,374 MB.
+
+Bits: `bits_d12_text.m` on the 08b binary and this one, all 15 lines equal — among them the codes
+of the charmatrix row's 2,000 rows and of every edge input of `char` as a row, a matrix, a column,
+`single` and logical, which the 08b binary wrote element by element through `Glyph`.
 
 ## Divergences
 

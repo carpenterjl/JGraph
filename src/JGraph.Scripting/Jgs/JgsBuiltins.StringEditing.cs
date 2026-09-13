@@ -156,6 +156,14 @@ internal static partial class JgsBuiltins
             // A numeric array is code points, which is the other half of what char means.
             if (only.Type == JgsType.Array)
             {
+                // A packed array's codes are read where they lie and each row's text is made once
+                // (ADR 0156, stage 09c), with exactly the cast Glyph below makes and no range check,
+                // which Glyph has never made either: char([65536 65537]) is codes 0 and 1 both ways.
+                if (only.IsPacked)
+                {
+                    return PackedGlyphs(only);
+                }
+
                 static string Glyph(JgsValue element) => element.Type == JgsType.String
                     ? element.AsString
                     : ((char)(int)element.AsNumber).ToString();
@@ -441,5 +449,58 @@ internal static partial class JgsBuiltins
         JgsValue plain = JgsValue.Array(answers);
         plain.TakeShapeOf(container);
         return plain;
+    }
+
+    /// <summary>
+    /// <c>char</c> of a packed numeric or logical array (ADR 0156, stage 09c): the answer the boxed
+    /// element loop gives — a matrix of more than one row stacks its rows, anything else is one row
+    /// in storage order — written from the buffer, one string per row.
+    /// </summary>
+    /// <remarks>
+    /// The boxed loop read each element through <see cref="JgsValue.ElementAt"/>, which boxes a
+    /// logical slot as true or false (whose number is 1 or 0) and a numeric one as its double, and
+    /// cast that number with <c>(char)(int)</c>. Both readings are reproduced here, cast included,
+    /// so an out-of-range, fractional, negative or NaN code lands on the same character.
+    /// </remarks>
+    private static JgsValue PackedGlyphs(JgsValue only)
+    {
+        int height = only.Rows;
+        int width = only.Cols;
+        JGraph.Numerics.NumericBuffer buffer = only.AsBuffer;
+        int count = only.ArrayLength;
+        Span<double> codes = buffer.AsSpan(0, count);
+        bool logical = only.PackedKind == JgsPackedKind.Bool;
+        JgsValue answer;
+        if (height > 1 && (long)height * width == count)
+        {
+            var rows = new string[height];
+            var line = new char[width];
+            for (int r = 0; r < height; r++)
+            {
+                for (int c = 0; c < width; c++)
+                {
+                    line[c] = CodeGlyph(codes[(c * height) + r], logical);
+                }
+
+                rows[r] = new string(line);
+            }
+
+            answer = JgsValue.CharMatrix(rows);
+        }
+        else
+        {
+            var text = new char[count];
+            for (int i = 0; i < count; i++)
+            {
+                text[i] = CodeGlyph(codes[i], logical);
+            }
+
+            answer = JgsValue.Str(new string(text));
+        }
+
+        GC.KeepAlive(buffer);
+        return answer;
+
+        static char CodeGlyph(double code, bool logical) => logical ? (char)(code != 0 ? 1 : 0) : (char)(int)code;
     }
 }

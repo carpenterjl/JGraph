@@ -444,4 +444,54 @@ public class ScalarTextM156Tests : IDisposable
         Assert.Equal(JgsBuiltins.MissingSentinel, keys.ElementAt(16).AsString);
         Assert.Equal(JgsBuiltins.MissingSentinel, keys.ElementAt(39).AsString);
     }
+
+    // ----- 09c: char of a numeric array written from its buffer -------------------------------
+
+    public static TheoryData<double[], int, int, bool> CharInputs() => new()
+    {
+        { new double[] { 65, 66, 67 }, 1, 3, false },
+        { new double[] { 65, 65.4, 65.5, 65.9, 66.5, -0.5 }, 1, 6, false },
+        { new double[] { 955, 8364, 20320, 65, 0, 65535 }, 1, 6, false },
+        { new double[] { 65536, 65537, 70000, 1e10, -1, -65537, double.NaN, double.PositiveInfinity, double.NegativeInfinity, 2147483648.0 }, 1, 10, false },
+        { new double[] { 72, 75, 73, 76, 74, 77 }, 2, 3, false },
+        { new double[] { 65, 66, 67 }, 3, 1, false },
+        { new double[] { 72, 75, -1, 65536, double.NaN, 1e10 }, 3, 2, false },
+        { new double[] { 1, 0, 1, 1 }, 2, 2, true },
+        { new double[] { 1, 0, 1 }, 1, 3, true },
+        { new double[] { }, 0, 3, false },
+        { new double[] { }, 3, 0, false },
+        { new double[] { }, 1, 0, false },
+    };
+
+    [Theory]
+    [MemberData(nameof(CharInputs))]
+    public void CharOfAPackedArrayAnswersTheBoxedElementLoopsCodes(double[] values, int rows, int cols, bool logical)
+    {
+        JgsEnvironment env = Globals();
+        JgsValue packed = Call(env, "char", Packed(values, rows, cols, logical ? JgsPackedKind.Bool : JgsPackedKind.Number));
+        JgsValue boxed = Call(env, "char", Boxed(values, rows, cols, logical));
+
+        Assert.Equal(boxed.Type, packed.Type);
+        Assert.Equal(boxed.IsCharMatrix, packed.IsCharMatrix);
+        Assert.Equal(boxed.Rows, packed.Rows);
+        Assert.Equal(boxed.Cols, packed.Cols);
+        Assert.Equal(Codes(boxed), Codes(packed));
+
+        // And the codes are the cast itself, no range check: (char)(int)value, read row-major for a matrix.
+        int[] expected = new int[values.Length];
+        bool stacked = rows > 1 && rows * cols == values.Length;
+        for (int i = 0; i < values.Length; i++)
+        {
+            double value = stacked ? values[((i % cols) * rows) + (i / cols)] : values[i];
+            expected[i] = logical ? (value != 0 ? 1 : 0) : (char)(int)value;
+        }
+
+        Assert.Equal(expected, Codes(packed));
+    }
+
+    private static int[] Codes(JgsValue text)
+    {
+        string joined = text.IsCharMatrix ? string.Concat(text.CharMatrixRows()) : text.AsString;
+        return Array.ConvertAll(joined.ToCharArray(), static c => (int)c);
+    }
 }
