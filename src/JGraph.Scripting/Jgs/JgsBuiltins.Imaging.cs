@@ -894,8 +894,30 @@ internal static partial class JgsBuiltins
                 ? ParseConv2Shape(Str("conv2", args, shapeIndex, line, col), line, col)
                 : Conv2Shape.Full;
 
+            // 08b (ADR 0155): two packed real matrices are convolved where they lie, column-major
+            // in and column-major out, with no marshalling copy either way. The kernels answer the
+            // bits the boxed road answers. Anything else — an empty side, a boxed or complex or
+            // non-double operand, an answer with no elements — keeps the road below.
             if (!separable)
             {
+                if (IsPackedRealMatrix(args[0]) && IsPackedRealMatrix(args[1]))
+                {
+                    JgsValue image = args[0];
+                    JgsValue kernel = args[1];
+                    (int oh, int ow) = Filters.Convolve2Size(image.Rows, image.Cols, kernel.Rows, kernel.Cols, shape);
+                    if (oh > 0 && ow > 0)
+                    {
+                        NumericBuffer answer = JgsPacking.Allocate((long)oh * ow);
+                        Filters.Convolve2(
+                            image.AsBuffer.AsSpan(0, image.Rows * image.Cols), image.Rows, image.Cols,
+                            kernel.AsBuffer.AsSpan(0, kernel.Rows * kernel.Cols), kernel.Rows, kernel.Cols,
+                            shape, answer.AsSpan(0, oh * ow));
+                        GC.KeepAlive(image);
+                        GC.KeepAlive(kernel);
+                        return PackedAnswer(answer, oh, ow);
+                    }
+                }
+
                 double[,] a = Matrix("conv2", args, 0, line, col);
                 double[,] b = Matrix("conv2", args, 1, line, col);
                 return MatrixToRows(Filters.Convolve2(a, b, shape));
@@ -905,6 +927,21 @@ internal static partial class JgsBuiltins
             // per pixel where the kernel cost |u|·|v|, and they thread (ADR 0096).
             double[] u = ToDoubles("conv2", args[0], line, col);
             double[] v = ToDoubles("conv2", args[1], line, col);
+            if (u.Length > 0 && v.Length > 0 && IsPackedRealMatrix(args[2]))
+            {
+                JgsValue image = args[2];
+                (int oh, int ow) = Filters.Convolve2Size(image.Rows, image.Cols, u.Length, v.Length, shape);
+                if (oh > 0 && ow > 0 && Filters.SeparableFits(image.Rows, image.Cols, v.Length))
+                {
+                    NumericBuffer answer = JgsPacking.Allocate((long)oh * ow);
+                    Filters.SeparableConvolve2(
+                        image.AsBuffer.AsSpan(0, image.Rows * image.Cols), image.Rows, image.Cols,
+                        u, v, shape, answer.AsSpan(0, oh * ow));
+                    GC.KeepAlive(image);
+                    return PackedAnswer(answer, oh, ow);
+                }
+            }
+
             double[,] data = Matrix("conv2", args, 2, line, col);
             return MatrixToRows(Filters.SeparableConvolve2(data, u, v, shape));
         });
@@ -1792,6 +1829,37 @@ internal static partial class JgsBuiltins
             _ => throw new JgsRuntimeException(line, col,
                 $"unknown interpolation '{method}' (use 'nearest', 'bilinear', 'bicubic', 'lanczos2', or 'lanczos3')."),
         };
+
+    /// <summary>
+    /// A packed 2-D real double (or logical) array with at least one row and one column: the
+    /// operand the packed convolution takes. A single, a complex, an N-d, a boxed or an empty
+    /// array is not one, and keeps the boxed road.
+    /// </summary>
+    private static bool IsPackedRealMatrix(JgsValue value) =>
+        JgsPacking.Enabled
+        && value.Type == JgsType.Array
+        && value.IsPacked
+        && !value.IsNd
+        && value.Rows >= 1
+        && value.Cols >= 1
+        && (value.PackedKind == JgsPackedKind.Bool
+            || (value.PackedKind == JgsPackedKind.Number && value.NumericClass == JgsNumericClass.Double));
+
+    /// <summary>
+    /// A packed column-major answer as the value <see cref="MatrixToRows"/> would have built from
+    /// the same numbers: a scalar for a 1-by-1, otherwise the buffer adopted with its shape.
+    /// </summary>
+    private static JgsValue PackedAnswer(NumericBuffer answer, int rows, int cols)
+    {
+        if (rows == 1 && cols == 1)
+        {
+            double only = answer.AsSpan()[0];
+            answer.Dispose();
+            return JgsValue.Number(only);
+        }
+
+        return JgsMatrix.FromColumnMajor(answer, rows, cols);
+    }
 
     /// <summary>Builds a shaped matrix value from a scalar field.</summary>
     internal static JgsValue MatrixToRows(double[,] values)

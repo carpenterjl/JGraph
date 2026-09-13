@@ -93,6 +93,193 @@ public class FilterKernelsM96Tests
         MatrixLayout.Transpose(Array.Empty<double>(), 0, 5, Array.Empty<double>());
     }
 
+    // ----- 08b: the packed separable kernel ----------------------------------------------------
+
+    private static readonly Conv2Shape[] AllShapes = [Conv2Shape.Full, Conv2Shape.Same, Conv2Shape.Valid];
+
+    public static TheoryData<int, int, int, int> SeparableSizes() => new()
+    {
+        { 8, 8, 3, 3 },
+        { 8, 8, 4, 4 },      // even taps: the 'same' anchor leans forward
+        { 7, 11, 5, 3 },     // u longer than v
+        { 11, 7, 3, 5 },     // v longer than u
+        { 5, 5, 7, 7 },      // a kernel larger than the image
+        { 5, 9, 7, 2 },      // taller than the image only
+        { 1, 12, 1, 4 },     // a row of samples
+        { 12, 1, 4, 1 },     // a column
+        { 64, 48, 21, 21 },  // the blur benchmark's taps
+        { 97, 131, 5, 3 },   // ragged bands
+        { 130, 70, 2, 9 },   // two bands, even taps down
+    };
+
+    [Theory]
+    [MemberData(nameof(SeparableSizes))]
+    public void ThePackedSeparableKernelAnswersTheBoxedRoadsBits(int ah, int aw, int uh, int vw)
+    {
+        double[] field = Lcg(ah * aw, seed: ah + (aw * 7));
+        double[,] boxed = Boxed(field, ah, aw);
+        double[] u = Taps(uh, seed: uh);
+        double[] v = Taps(vw, seed: vw + 5);
+        foreach (Conv2Shape shape in AllShapes)
+        {
+            double[,] want = Filters.SeparableConvolve2(boxed, u, v, shape);
+            (int oh, int ow) = Filters.Convolve2Size(ah, aw, uh, vw, shape);
+            Assert.Equal((want.GetLength(0), want.GetLength(1)), (oh, ow));
+            var got = new double[oh * ow];
+            Filters.SeparableConvolve2(field, ah, aw, u, v, shape, got);
+            AssertSameBits(Packed(want), got, $"separable {ah}x{aw} with {uh} and {vw} taps, {shape}");
+        }
+    }
+
+    [Fact]
+    public void TheSeparableKernelCarriesZeroInfAndNaNTapsLikeTheBoxedRoad()
+    {
+        const int ah = 40, aw = 33;
+        double[] field = Lcg(ah * aw, seed: 4);
+        double[,] boxed = Boxed(field, ah, aw);
+        double[] u = [0, double.PositiveInfinity, 0.5, double.NaN, -1];
+        double[] v = [0.25, 0, double.NegativeInfinity];
+        foreach (Conv2Shape shape in AllShapes)
+        {
+            double[,] want = Filters.SeparableConvolve2(boxed, u, v, shape);
+            var got = new double[want.Length];
+            Filters.SeparableConvolve2(field, ah, aw, u, v, shape, got);
+            AssertSameBits(Packed(want), got, $"separable with special taps, {shape}");
+        }
+    }
+
+    // ----- 08b: the packed general kernel ------------------------------------------------------
+
+    public static TheoryData<int, int, int, int, string> GeneralCases() => new()
+    {
+        { 8, 8, 3, 3, "dense" },
+        { 8, 8, 2, 2, "dense" },       // even kernel
+        { 7, 11, 2, 3, "dense" },      // asymmetric, to catch a swapped axis
+        { 11, 7, 3, 2, "dense" },
+        { 5, 6, 9, 9, "dense" },       // a kernel larger than the image
+        { 1, 12, 1, 4, "dense" },
+        { 12, 1, 4, 1, "dense" },
+        { 97, 131, 9, 9, "mask" },     // the threshold row's shape: a sparse 0/1 mask, a box
+        { 97, 131, 9, 9, "dense" },
+        { 130, 70, 3, 3, "special" },  // Inf and NaN taps over a mask with zeros under them
+        { 66, 66, 5, 3, "special" },
+        { 200, 150, 65, 3, "mask" },   // a kernel taller than a tile
+    };
+
+    [Theory]
+    [MemberData(nameof(GeneralCases))]
+    public void ThePackedGeneralKernelAnswersTheBoxedRoadsBits(int ah, int aw, int bh, int bw, string kind)
+    {
+        double[] field = kind == "dense" ? Lcg(ah * aw, seed: ah * aw) : Mask(ah * aw, seed: ah + aw, density: 0.03);
+        double[] kernel = kind switch
+        {
+            "special" => Special(bh * bw),
+            "mask" => Box(bh * bw),
+            _ => Taps(bh * bw, seed: bh * bw),
+        };
+        double[,] boxed = Boxed(field, ah, aw);
+        double[,] boxedKernel = Boxed(kernel, bh, bw);
+        foreach (Conv2Shape shape in AllShapes)
+        {
+            double[,] want = Filters.Convolve2(boxed, boxedKernel, shape);
+            (int oh, int ow) = Filters.Convolve2Size(ah, aw, bh, bw, shape);
+            Assert.Equal((want.GetLength(0), want.GetLength(1)), (oh, ow));
+            var got = new double[oh * ow];
+            Filters.Convolve2(field, ah, aw, kernel, bh, bw, shape, got);
+            AssertSameBits(Packed(want), got, $"general {ah}x{aw} with {bh}x{bw} {kind}, {shape}");
+        }
+    }
+
+    /// <summary>
+    /// The one rule that makes the answer more than a rounding contract: a source value that is
+    /// zero is skipped before any multiply, so a zero under an Inf or a NaN tap contributes nothing
+    /// rather than a NaN. The dense image beside it has no zeros and so does see the NaN.
+    /// </summary>
+    [Fact]
+    public void AZeroUnderAnInfOrNaNTapContributesNothing()
+    {
+        double[] field = new double[5 * 5];
+        field[2 + (5 * 2)] = 1;                                  // one pixel in the middle
+        double[] kernel = [0, double.PositiveInfinity, 0, double.NaN, 1, 0, 0, 0, 0];   // 3×3 column-major
+        var got = new double[5 * 5];
+        Filters.Convolve2(field, 5, 5, kernel, 3, 3, Conv2Shape.Same, got);
+
+        // Only the pixel's own footprint is touched: NaN one row above it, Inf one column left.
+        int nan = 0, inf = 0, zero = 0;
+        foreach (double x in got)
+        {
+            if (double.IsNaN(x))
+            {
+                nan++;
+            }
+            else if (double.IsInfinity(x))
+            {
+                inf++;
+            }
+            else if (x == 0)
+            {
+                zero++;
+            }
+        }
+
+        Assert.Equal(1, nan);
+        Assert.Equal(1, inf);
+        Assert.Equal(22, zero);
+
+        double[,] want = Filters.Convolve2(Boxed(field, 5, 5), Boxed(kernel, 3, 3), Conv2Shape.Same);
+        AssertSameBits(Packed(want), got, "a zero under a special tap");
+    }
+
+    [Fact]
+    public void ThePackedKernelsDoNotMoveWithTheNumberOfThreads()
+    {
+        int was = ParallelKernels.MaxDegree;
+        try
+        {
+            const int ah = 700, aw = 600;
+            double[] mask = Mask(ah * aw, seed: 11, density: 0.008);
+            double[] box = Box(81);
+            double[] dense = Lcg(ah * aw, seed: 12);
+            double[] u = Taps(21, seed: 1);
+            double[] v = Taps(21, seed: 2);
+
+            ParallelKernels.MaxDegree = 1;
+            var oneGeneral = new double[ah * aw];
+            Filters.Convolve2(mask, ah, aw, box, 9, 9, Conv2Shape.Same, oneGeneral);
+            var oneSeparable = new double[ah * aw];
+            Filters.SeparableConvolve2(dense, ah, aw, u, v, Conv2Shape.Same, oneSeparable);
+
+            ParallelKernels.MaxDegree = 16;
+            var manyGeneral = new double[ah * aw];
+            Filters.Convolve2(mask, ah, aw, box, 9, 9, Conv2Shape.Same, manyGeneral);
+            var manySeparable = new double[ah * aw];
+            Filters.SeparableConvolve2(dense, ah, aw, u, v, Conv2Shape.Same, manySeparable);
+
+            AssertSameBits(oneGeneral, manyGeneral, "general, one thread against sixteen");
+            AssertSameBits(oneSeparable, manySeparable, "separable, one thread against sixteen");
+        }
+        finally
+        {
+            ParallelKernels.MaxDegree = was;
+        }
+    }
+
+    [Fact]
+    public void ThePackedKernelsRefuseAnEmptySideOrAMissizedSpan()
+    {
+        double[] four = [1, 2, 3, 4];
+        Assert.Throws<ArgumentOutOfRangeException>(() => Filters.Convolve2(four, 2, 2, [], 0, 1, Conv2Shape.Full, new double[0]));
+        Assert.Throws<ArgumentException>(() => Filters.Convolve2(four, 2, 2, [1.0], 1, 1, Conv2Shape.Full, new double[3]));
+        Assert.Throws<ArgumentException>(() => Filters.Convolve2(four, 4, 2, [1.0], 1, 1, Conv2Shape.Full, new double[8]));
+        Assert.Throws<ArgumentOutOfRangeException>(() => Filters.SeparableConvolve2(four, 2, 2, [], [1.0], Conv2Shape.Full, new double[4]));
+        Assert.Throws<ArgumentException>(() => Filters.SeparableConvolve2(four, 2, 2, [1.0], [1.0], Conv2Shape.Full, new double[5]));
+
+        // 'valid' with a kernel larger than the image is the empty answer, and nothing is written.
+        Assert.Equal((0, 0), Filters.Convolve2Size(2, 2, 3, 3, Conv2Shape.Valid));
+        Filters.Convolve2(four, 2, 2, Box(9), 3, 3, Conv2Shape.Valid, Span<double>.Empty);
+        Filters.SeparableConvolve2(four, 2, 2, [1.0, 2, 3], [1.0], Conv2Shape.Valid, Span<double>.Empty);
+    }
+
     // ----- helpers ------------------------------------------------------------------------------
 
     internal static void AssertSameBits(ReadOnlySpan<double> want, ReadOnlySpan<double> got, string? what = null)

@@ -449,6 +449,34 @@ internal static class JgsMatrix
         return value;
     }
 
+    /// <summary>
+    /// Adopts an already-column-major packed buffer as a rows-by-cols matrix value, with the shapes
+    /// the array overload gives: a 1-by-n stays a plain array, a column keeps its orientation, an
+    /// empty keeps the shape it was computed at.
+    /// </summary>
+    public static JgsValue FromColumnMajor(NumericBuffer buffer, int rows, int cols)
+    {
+        JgsValue value = JgsValue.Packed(buffer);
+        if (buffer.Length == 0 && (long)rows * cols == 0)
+        {
+            value.Reshape(rows, cols);
+            return value;
+        }
+
+        if (rows == 1 || cols == 1 || buffer.Length == 0)
+        {
+            if (cols == 1 && rows > 1)
+            {
+                value.Reshape(rows, 1);
+            }
+
+            return value;
+        }
+
+        value.Reshape(rows, cols);
+        return value;
+    }
+
     private static JgsValue Adopt(double[] values)
     {
         if (JgsPacking.Enabled)

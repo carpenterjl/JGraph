@@ -1,3 +1,4 @@
+using System.Buffers;
 using System.Numerics;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
@@ -45,7 +46,7 @@ public static class Filters
     /// Correlation puts the kernel origin at <c>(kh-1)/2</c>, which is MATLAB's
     /// <c>floor((size(h)+1)/2)</c> written 0-based. Convolution flips the kernel and keeps the same
     /// anchor — the flip itself is what moves an even kernel's centre — which is exactly what makes
-    /// <c>Filter(A, h, convolve: true)</c> and <see cref="Convolve2"/> with
+    /// <c>Filter(A, h, convolve: true)</c> and <see cref="Convolve2(double[,], double[,], Conv2Shape)"/> with
     /// <see cref="Conv2Shape.Same"/> agree with each other and with MATLAB, even-sized kernels
     /// included (measured against R2024a in M103, which also moved <c>Same</c>'s crop).
     /// </remarks>
@@ -433,7 +434,7 @@ public static class Filters
     }
 
     /// <summary>
-    /// The separable form of <see cref="Convolve2"/>: <c>conv2(u, v, A)</c>, where the kernel is the
+    /// The separable form of <see cref="Convolve2(double[,], double[,], Conv2Shape)"/>: <c>conv2(u, v, A)</c>, where the kernel is the
     /// outer product of two vectors and never has to be built. One pass along the rows with
     /// <paramref name="v"/> and one down the columns with <paramref name="u"/> costs
     /// <c>|u| + |v|</c> multiplies per pixel where the built kernel cost <c>|u|·|v|</c> — for the
@@ -516,6 +517,285 @@ public static class Filters
         };
     }
 
+    /// <summary>
+    /// The size of <c>conv2</c>'s answer for an <paramref name="ah"/>×<paramref name="aw"/> image, a
+    /// <paramref name="bh"/>×<paramref name="bw"/> kernel and a shape word, all four sides at least one.
+    /// </summary>
+    public static (int Rows, int Cols) Convolve2Size(int ah, int aw, int bh, int bw, Conv2Shape shape) => shape switch
+    {
+        Conv2Shape.Same => (ah, aw),
+        Conv2Shape.Valid => ah >= bh && aw >= bw ? (ah - bh + 1, aw - bw + 1) : (0, 0),
+        _ => (ah + bh - 1, aw + bw - 1),
+    };
+
+    /// <summary>Where the answer's top-left corner sits in the full convolution.</summary>
+    private static (int Row, int Col) Convolve2Origin(int bh, int bw, Conv2Shape shape) => shape switch
+    {
+        Conv2Shape.Same => (bh / 2, bw / 2),
+        Conv2Shape.Valid => (bh - 1, bw - 1),
+        _ => (0, 0),
+    };
+
+    /// <summary>
+    /// A tile of the answer one block owns: sixty-four rows by sixty-four columns of output, eight
+    /// kilobytes of a column-major buffer per column strip, small enough that the tile and the
+    /// source window that feeds it stay in one core's cache.
+    /// </summary>
+    private const int TileSide = 64;
+
+    /// <summary>
+    /// <see cref="Convolve2(double[,], double[,], Conv2Shape)"/> for a column-major image and kernel,
+    /// answering column-major into <paramref name="output"/>, which the caller sizes with
+    /// <see cref="Convolve2Size"/>. All four sides must be at least one.
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    /// The bits are the boxed road's: the scatter there visits the source in ascending row and then
+    /// column, skips every source value equal to zero before any multiply, and adds each product to
+    /// an accumulator that started at +0. Here every tile of the answer is owned by one block that
+    /// visits, in that same order, exactly the source pixels that can reach it, applies the same
+    /// skip, and adds the same products in the same order — so each output element sees the same
+    /// additions in the same sequence and rounds the same way. The skip is what keeps a zero under an
+    /// Inf or NaN tap from becoming a NaN: the scatter never added anything there, and neither does
+    /// this (item 08b, ADR 0155).
+    /// </para>
+    /// <para>
+    /// No sparse branch: the zero test is one compare per source pixel per tile that can see it, at
+    /// most a few per pixel for any kernel narrower than a tile, and a nonzero list would cost a
+    /// strided pass over the whole source to build — more than the test it would save. Blocks are
+    /// the tiles, cut by the answer's shape alone, and run in parallel when the answer has at least
+    /// <see cref="ParallelKernels.ComputeBoundThreshold"/> elements.
+    /// </para>
+    /// </remarks>
+    public static void Convolve2(
+        ReadOnlySpan<double> a, int ah, int aw,
+        ReadOnlySpan<double> b, int bh, int bw,
+        Conv2Shape shape, Span<double> output)
+    {
+        RequireSides(ah, aw, bh, bw);
+        RequireLength(a.Length, ah, aw, "image");
+        RequireLength(b.Length, bh, bw, "kernel");
+        (int oh, int ow) = Convolve2Size(ah, aw, bh, bw, shape);
+        RequireLength(output.Length, oh, ow, "output");
+        if (oh == 0 || ow == 0)
+        {
+            return;
+        }
+
+        (int r0, int c0) = Convolve2Origin(bh, bw, shape);
+        int tilesDown = ((oh - 1) / TileSide) + 1;
+        int tilesAcross = ((ow - 1) / TileSide) + 1;
+        bool parallel = (long)oh * ow >= ParallelKernels.ComputeBoundThreshold;
+        unsafe
+        {
+            fixed (double* pa = a, pb = b, po = output)
+            {
+                double* fa = pa, fb = pb, fo = po;
+                ParallelKernels.ForBlocks(tilesDown * tilesAcross, parallel, tile =>
+                {
+                    int ty = tile % tilesDown;
+                    int tx = tile / tilesDown;
+                    GatherTile(
+                        fa, ah, aw, fb, bh, bw, fo, oh, r0, c0,
+                        ty * TileSide, Math.Min((ty + 1) * TileSide, oh),
+                        tx * TileSide, Math.Min((tx + 1) * TileSide, ow));
+                });
+            }
+        }
+    }
+
+    /// <summary>
+    /// One tile of the answer, rows <c>[y0, y1)</c> and columns <c>[x0, x1)</c> of the output, from
+    /// the source pixels that can reach it, in the scatter's own order.
+    /// </summary>
+    private static unsafe void GatherTile(
+        double* a, int ah, int aw, double* b, int bh, int bw, double* output, int oh,
+        int r0, int c0, int y0, int y1, int x0, int x1)
+    {
+        for (int x = x0; x < x1; x++)
+        {
+            new Span<double>(output + ((long)x * oh) + y0, y1 - y0).Clear();
+        }
+
+        // The tile in the full convolution's coordinates, and the source window that reaches it.
+        int fullY0 = y0 + r0;
+        int fullY1 = y1 + r0;
+        int fullX0 = x0 + c0;
+        int fullX1 = x1 + c0;
+        int iFrom = Math.Max(0, fullY0 - bh + 1);
+        int iTo = Math.Min(ah - 1, fullY1 - 1);
+        int jFrom = Math.Max(0, fullX0 - bw + 1);
+        int jTo = Math.Min(aw - 1, fullX1 - 1);
+        for (int i = iFrom; i <= iTo; i++)
+        {
+            int mFrom = Math.Max(0, fullY0 - i);
+            int mTo = Math.Min(bh - 1, fullY1 - 1 - i);
+            for (int j = jFrom; j <= jTo; j++)
+            {
+                double av = a[i + ((long)ah * j)];
+                if (av == 0)
+                {
+                    continue;
+                }
+
+                int nFrom = Math.Max(0, fullX0 - j);
+                int nTo = Math.Min(bw - 1, fullX1 - 1 - j);
+                for (int n = nFrom; n <= nTo; n++)
+                {
+                    // Output row i + m − r0 of output column j + n − c0; kernel column n.
+                    double* column = output + ((long)(j + n - c0) * oh) + (i - r0);
+                    double* taps = b + ((long)n * bh);
+                    for (int m = mFrom; m <= mTo; m++)
+                    {
+                        column[m] += av * taps[m];
+                    }
+                }
+            }
+        }
+    }
+
+    /// <summary>
+    /// <see cref="SeparableConvolve2(double[,], double[], double[], Conv2Shape)"/> for a column-major
+    /// image, answering column-major into <paramref name="output"/>, which the caller sizes with
+    /// <see cref="Convolve2Size"/>; the image's sides and both tap vectors must be at least one, and
+    /// the intermediate <c>ah·(aw+|v|−1)</c> must fit an array (see <see cref="SeparableFits"/>).
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    /// The pass order is the boxed road's exactly: every input row is convolved with
+    /// <paramref name="v"/> across its columns into an <c>ah × (aw+|v|−1)</c> intermediate, taps
+    /// ascending; then each answer row is the sum over <paramref name="u"/>'s taps, ascending, of
+    /// the tap times the intermediate row above it. Each intermediate and answer element therefore
+    /// receives the same products in the same order as before, through the same
+    /// <see cref="AddScaled"/>, and rounds to the same bits.
+    /// </para>
+    /// <para>
+    /// What changes is which way the loops walk the memory: in column-major storage a row is the
+    /// strided direction, so the first pass takes a band of rows at a time and gathers each
+    /// intermediate column of that band from the input columns behind it, contiguous stretches both;
+    /// and the second pass walks answer columns, each a contiguous stretch of the intermediate
+    /// shifted by a tap. Only the columns the shape asks for are computed in the first pass, and the
+    /// second writes straight into the cropped answer. Bands and column blocks are cut by the shape
+    /// alone and own their outputs, so the thread count changes no bits (item 08b, ADR 0155).
+    /// </para>
+    /// </remarks>
+    public static void SeparableConvolve2(
+        ReadOnlySpan<double> a, int ah, int aw,
+        ReadOnlySpan<double> u, ReadOnlySpan<double> v,
+        Conv2Shape shape, Span<double> output)
+    {
+        int uh = u.Length;
+        int vw = v.Length;
+        RequireSides(ah, aw, uh, vw);
+        RequireLength(a.Length, ah, aw, "image");
+        if (!SeparableFits(ah, aw, vw))
+        {
+            throw new ArgumentException($"a {ah}x{aw} image with {vw} taps across needs an intermediate too large for one array.");
+        }
+
+        (int oh, int ow) = Convolve2Size(ah, aw, uh, vw, shape);
+        RequireLength(output.Length, oh, ow, "output");
+        if (oh == 0 || ow == 0)
+        {
+            return;
+        }
+
+        (int r0, int c0) = Convolve2Origin(uh, vw, shape);
+        int fullW = aw + vw - 1;
+        int middle = ah * fullW;
+        double[] rented = ArrayPool<double>.Shared.Rent(middle);
+        try
+        {
+            rented.AsSpan(0, middle).Clear();
+            bool wide = middle >= ParallelKernels.MemoryBoundThreshold;
+            unsafe
+            {
+                fixed (double* pa = a, pu = u, pv = v, pi = rented, po = output)
+                {
+                    double* fa = pa, fu = pu, fv = pv, fi = pi, fo = po;
+
+                    // Pass one, by bands of rows: intermediate column j of the band is the sum over
+                    // the taps n of v[n] times input column j − n, taps ascending.
+                    const int Band = 64;
+                    int bands = ((ah - 1) / Band) + 1;
+                    ParallelKernels.ForBlocks(bands, wide, band =>
+                    {
+                        int top = band * Band;
+                        int height = Math.Min(top + Band, ah) - top;
+                        for (int j = c0; j < c0 + ow; j++)
+                        {
+                            var line = new Span<double>(fi + ((long)j * ah) + top, height);
+                            int nFrom = Math.Max(0, j - aw + 1);
+                            int nTo = Math.Min(vw - 1, j);
+                            for (int n = nFrom; n <= nTo; n++)
+                            {
+                                AddScaled(new ReadOnlySpan<double>(fa + ((long)(j - n) * ah) + top, height), line, fv[n]);
+                            }
+                        }
+                    });
+
+                    // Pass two, by blocks of answer columns: answer row y of column x is the sum
+                    // over the taps m of u[m] times intermediate row y − m of the same column, taps
+                    // ascending; each tap is one contiguous stretch.
+                    const int Columns = 16;
+                    int blocks = ((ow - 1) / Columns) + 1;
+                    ParallelKernels.ForBlocks(blocks, wide, block =>
+                    {
+                        int first = block * Columns;
+                        int last = Math.Min(first + Columns, ow);
+                        for (int x = first; x < last; x++)
+                        {
+                            var answer = new Span<double>(fo + ((long)x * oh), oh);
+                            answer.Clear();
+                            double* source = fi + ((long)(x + c0) * ah);
+                            for (int m = 0; m < uh; m++)
+                            {
+                                int yFrom = Math.Max(m, r0);
+                                int yTo = Math.Min(m + ah, r0 + oh);
+                                if (yFrom >= yTo)
+                                {
+                                    continue;
+                                }
+
+                                AddScaled(
+                                    new ReadOnlySpan<double>(source + (yFrom - m), yTo - yFrom),
+                                    answer.Slice(yFrom - r0, yTo - yFrom),
+                                    fu[m]);
+                            }
+                        }
+                    });
+                }
+            }
+        }
+        finally
+        {
+            ArrayPool<double>.Shared.Return(rented);
+        }
+    }
+
+    /// <summary>
+    /// Whether the separable road's intermediate, <c>ah·(aw+|v|−1)</c> doubles, fits one array; the
+    /// boxed road falls back to the built kernel when it does not, and a caller of the packed one
+    /// should do the same.
+    /// </summary>
+    public static bool SeparableFits(int ah, int aw, int vw) => (long)ah * (aw + vw - 1) <= int.MaxValue;
+
+    private static void RequireSides(int ah, int aw, int bh, int bw)
+    {
+        if (ah < 1 || aw < 1 || bh < 1 || bw < 1)
+        {
+            throw new ArgumentOutOfRangeException(nameof(ah), $"the packed convolution wants every side at least one, got {ah}x{aw} and {bh}x{bw}.");
+        }
+    }
+
+    private static void RequireLength(int length, int rows, int cols, string what)
+    {
+        if (length != (long)rows * cols)
+        {
+            throw new ArgumentException($"the {what} span holds {length} elements where {rows}x{cols} needs {(long)rows * cols}.");
+        }
+    }
+
     /// <summary>The kernel the separable form never builds, for the edge cases that still want it.</summary>
     private static double[,] OuterProduct(double[] u, double[] v)
     {
@@ -580,7 +860,7 @@ public static class Filters
     }
 }
 
-/// <summary>Output-size convention for <see cref="Filters.Convolve2"/>.</summary>
+/// <summary>Output-size convention for <see cref="Filters.Convolve2(double[,], double[,], Conv2Shape)"/>.</summary>
 public enum Conv2Shape
 {
     /// <summary>The full (ah+bh-1)×(aw+bw-1) convolution.</summary>

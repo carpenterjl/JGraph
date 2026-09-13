@@ -1,0 +1,90 @@
+CHK|blur_same_shape|[256 256]|exact
+CHK|blur_same_mean|0.48865688060348555|rel=1e-13
+CHK|blur_same_centre|0.56212876194304251|rel=1e-13
+CHK|blur_same_corner|0.2180455981915668|rel=1e-13
+CHK|blur_same_edge|0.27113028158525576|rel=1e-13
+CHK|blur_full_shape|[276 276]|exact
+CHK|blur_full_mean|0.42996521918795599|rel=1e-13
+CHK|blur_full_corner|2.3172637972374027e-06|rel=1e-13
+CHK|blur_full_last|1.520376347766393e-06|rel=1e-13
+CHK|blur_valid_shape|[236 236]|exact
+CHK|blur_valid_mean|0.49994767149601421|rel=1e-13
+CHK|blur_valid_corner|0.3680006231837743|rel=1e-13
+CHK|sep_asym_full_shape|[101 133]|exact
+CHK|sep_asym_full_mean|0.31888804647146407|rel=1e-13
+CHK|sep_asym_full_r2c3|0.47916875861822|rel=1e-13
+CHK|sep_asym_full_r3c2|0.70070336437899838|rel=1e-13
+CHK|sep_asym_full_last|-0.0031176253634676203|rel=1e-13
+CHK|sep_even_full_shape|[100 132]|exact
+CHK|sep_even_full_mean|52.884236151249148|rel=1e-13
+CHK|sep_even_full_r1c1|3.1135222757209524|rel=1e-13
+CHK|sep_even_full_r4c5|75.581253666664765|rel=1e-13
+CHK|sep_asym_same_shape|[97 131]|exact
+CHK|sep_asym_same_mean|0.33273019464777692|rel=1e-13
+CHK|sep_asym_same_r2c3|0.47923722056533952|rel=1e-13
+CHK|sep_asym_same_r3c2|0.55211138229048562|rel=1e-13
+CHK|sep_asym_same_last|-0.020010924570482272|rel=1e-13
+CHK|sep_even_same_shape|[97 131]|exact
+CHK|sep_even_same_mean|54.257113839978672|rel=1e-13
+CHK|sep_even_same_r1c1|45.078009228631885|rel=1e-13
+CHK|sep_even_same_r4c5|69.056933788164699|rel=1e-13
+CHK|sep_asym_valid_shape|[93 129]|exact
+CHK|sep_asym_valid_mean|0.33616681765059314|rel=1e-13
+CHK|sep_asym_valid_r2c3|0.45694628868184911|rel=1e-13
+CHK|sep_asym_valid_r3c2|0.50804608368029047|rel=1e-13
+CHK|sep_asym_valid_last|0.44382305851607162|rel=1e-13
+CHK|sep_even_valid_shape|[94 130]|exact
+CHK|sep_even_valid_mean|54.839292718218822|rel=1e-13
+CHK|sep_even_valid_r1c1|77.517179318034522|rel=1e-13
+CHK|sep_even_valid_r4c5|66.372451423362406|rel=1e-13
+CHK|bw_frac|0.66448974609375|exact
+CHK|dens_same_shape|[256 256]|exact
+CHK|dens_mean|0.64760749722703992|rel=1e-13
+CHK|dens_max|1.0000000000000022|rel=1e-13
+CHK|clean_frac|0.7712860107421875|exact
+CHK|counts_same|4a0b45c05d6f0f3df975a1c2a2da447c601706109133dac269d8e9b8443f68a9|bits
+CHK|counts_full|e78e212d6b4268815f4bb9b7d1ea295810c93b5a1dc78a8de57bb08c78f53940|bits
+CHK|counts_valid|eb83dafafe5fc051070d42925230a981d58e5a9f790e3d55b5c14d0706c27925|bits
+CHK|dens_same|92c735d52a24c5da48bb746608067a745a123892d16b1b515b8636dcb5ae390e|bits
+CHK|counts_even|474718fbf71bd0b0f0d3c769662569dd9232823adf1fc5d3cea2ec4baefe8c6b|bits
+CHK|counts_asym|1b24e4f93f6f0be04defe5f906e81afb209b1ecbc2d627721f852a8e71a9e736|bits
+CHK|gen_asym_full_shape|[98 133]|exact
+CHK|gen_asym_full_mean|10.224664347180269|rel=1e-13
+CHK|gen_asym_full_r2c3|13.896891203180504|rel=1e-13
+CHK|gen_asym_full_r3c2|8.7179509136249287|rel=1e-13
+CHK|gen_asymT_full_shape|[99 132]|exact
+CHK|gen_asymT_full_mean|10.198062067733975|rel=1e-13
+CHK|gen_asymT_full_r2c3|8.1484442779620583|rel=1e-13
+CHK|gen_asym_same_shape|[97 131]|exact
+CHK|gen_asym_same_mean|10.399405558317342|rel=1e-13
+CHK|gen_asym_same_r2c3|15.240157410232252|rel=1e-13
+CHK|gen_asym_same_r3c2|16.48695227495012|rel=1e-13
+CHK|gen_asymT_same_shape|[97 131]|exact
+CHK|gen_asymT_same_mean|10.387743377415434|rel=1e-13
+CHK|gen_asymT_same_r2c3|14.736298456179487|rel=1e-13
+CHK|gen_asym_valid_shape|[96 129]|exact
+CHK|gen_asym_valid_mean|10.475500611329629|rel=1e-13
+CHK|gen_asym_valid_r2c3|14.908590107005072|rel=1e-13
+CHK|gen_asym_valid_r3c2|16.053495284443834|rel=1e-13
+CHK|gen_asymT_valid_shape|[95 130]|exact
+CHK|gen_asymT_valid_mean|10.474063511854132|rel=1e-13
+CHK|gen_asymT_valid_r2c3|15.474543512857949|rel=1e-13
+CHK|gen_big_same_shape|[5 6]|exact
+CHK|gen_big_same_mean|0.24887409243079511|rel=1e-13
+CHK|gen_big_valid_shape|[0 0]|exact
+CHK|odd_nan_count|12635|div=ADR0155
+CHK|odd_inf_count|71|div=ADR0155
+CHK|odd_finite_sum|1|div=ADR0155
+CHK|odd_shape|[97 131]|exact
+CHK|odd_dense_nan_count|12610|exact
+CHK|odd_dense_inf_count|96|exact
+CHK|sparse_frac|0.0099945068359375|exact
+CHK|sparse_dens_mean|0.007307264539930549|rel=1e-13
+CHK|sparse_dens_max|0.49382716049382713|rel=1e-13
+CHK|sparse_clean_frac|0|exact
+CHK|sparse_counts_same|d9e402f098d0e0d4ec0f685e1cd56b79c04d418d2a256a4903bb73ff81a3b1e4|bits
+CHK|sparse_dens_same|e482ecbada7a01a8689e38804c087312742385f29e463382ad2dce8814be5878|bits
+CHK|sparse_odd_nan_count|12706|div=ADR0155
+CHK|sparse_odd_inf_count|0|div=ADR0155
+CHK|sparse_odd_finite_sum|0|div=ADR0155
+CHK|sparse_odd_zero_count|1|div=ADR0155
