@@ -6064,22 +6064,16 @@ internal static partial class JgsBuiltins
         }
 
         // Packed storage goes straight into the rectangle: one pass over the buffer instead of a
-        // jagged array built element by element and then copied again (M96b).
+        // jagged array built element by element and then copied again (M96b). The pass is a tiled
+        // transpose rather than a strided loop, so a 2048-square image is read and written a
+        // cache-sized tile at a time (08a, ADR 0155).
         if (value.IsPacked && value.PackedKind is JgsPackedKind.Number or JgsPackedKind.Bool)
         {
             int height = value.Rows;
             int width = value.Cols;
             var packed = new double[height, width];
-            Span<double> flat = value.AsBuffer.AsSpan();
-            for (int c = 0; c < width; c++)
-            {
-                int origin = c * height;
-                for (int r = 0; r < height; r++)
-                {
-                    packed[r, c] = flat[origin + r];
-                }
-            }
-
+            ReadOnlySpan<double> flat = value.AsBuffer.AsSpan(0, height * width);
+            MatrixLayout.Transpose(flat, height, width, RowMajor(packed));
             GC.KeepAlive(value);
             return packed;
         }
@@ -6097,6 +6091,13 @@ internal static partial class JgsBuiltins
 
         return result;
     }
+
+    /// <summary>A rectangular array's storage as one span; it is already contiguous and row-major.</summary>
+    internal static Span<double> RowMajor(double[,] array) =>
+        System.Runtime.InteropServices.MemoryMarshal.CreateSpan(
+            ref System.Runtime.CompilerServices.Unsafe.As<byte, double>(
+                ref System.Runtime.InteropServices.MemoryMarshal.GetArrayDataReference(array)),
+            array.Length);
 
     /// <summary>xlim/ylim accept (min, max) or a single [min, max] array (MATLAB xlim([a, b])).</summary>
     private static (double Low, double High) LimitPair(string name, IReadOnlyList<JgsValue> args, int line, int col)

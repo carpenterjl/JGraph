@@ -3,6 +3,7 @@ using JGraph.Core.Drawing;
 using JGraph.Core.Model;
 using JGraph.Imaging;
 using JGraph.Imaging.Codecs;
+using JGraph.Numerics;
 using JGraph.Objects;
 
 namespace JGraph.Scripting.Jgs;
@@ -1802,17 +1803,10 @@ internal static partial class JgsBuiltins
             return JgsValue.Number(values[0, 0]);
         }
 
-        // The same transpose the builder would do, without a delegate call per element (M96b).
+        // The same transpose the builder would do, without a delegate call per element (M96b),
+        // and by tiles rather than a strided loop since 08a (ADR 0155).
         var flat = new double[rows * cols];
-        for (int c = 0; c < cols; c++)
-        {
-            int origin = c * rows;
-            for (int r = 0; r < rows; r++)
-            {
-                flat[origin + r] = values[r, c];
-            }
-        }
-
+        MatrixLayout.Transpose(RowMajor(values), cols, rows, flat);
         return JgsMatrix.FromColumnMajor(flat, rows, cols);
     }
 
