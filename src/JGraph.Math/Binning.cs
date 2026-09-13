@@ -1,3 +1,5 @@
+using System.Runtime.CompilerServices;
+
 namespace JGraph.Maths;
 
 /// <summary>
@@ -123,6 +125,9 @@ public static class Binning
         }
 
         /// <summary>Which bin <paramref name="value"/> falls in, or −1 for one outside every bin.</summary>
+        /// <remarks>Compiled optimised from the first call: this is the leaf of every histogram and
+        /// discretize loop, and ten million calls into tier-0 code cost the row (ADR 0158).</remarks>
+        [MethodImpl(MethodImplOptions.AggressiveOptimization)]
         public int Of(double value)
         {
             if (_bins < 1)
@@ -170,6 +175,7 @@ public static class Binning
         /// The same, for bins that own their right edge rather than their left — <c>discretize</c>'s
         /// <c>'IncludedEdge', 'right'</c>, where the first bin is the one closed at both ends.
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveOptimization)]
         public int OfRightClosed(double value)
         {
             if (_bins < 1)
@@ -215,6 +221,7 @@ public static class Binning
 
         private const int RepairSteps = 4;
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private int Guess(double value)
         {
             int bin = (int)((value - _first) * _perWidth);
@@ -252,6 +259,7 @@ public static class Binning
             return 1 / width;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveOptimization)]
         private static int Searched(double[] edges, double value)
         {
             int low = 0;
@@ -272,6 +280,7 @@ public static class Binning
             return low;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveOptimization)]
         private static int SearchedRight(double[] edges, double value)
         {
             int low = 0;
@@ -355,7 +364,8 @@ public static class Binning
     {
         int bins = System.Math.Max(1, count);
         var edges = new double[bins + 1];
-        for (int i = 0; i <= bins; i++)
+        edges[0] = low; // the left end itself, sign of zero and all, as linspace answers it
+        for (int i = 1; i <= bins; i++)
         {
             edges[i] = low + ((high - low) * i / bins);
         }
@@ -495,7 +505,7 @@ public static class Binning
     /// the suite asks for.
     /// </para>
     /// </remarks>
-    private static double[] CountedEdges(double low, double high, int count)
+    public static double[] CountedEdges(double low, double high, int count)
     {
         int bins = System.Math.Max(1, count);
         double scale = System.Math.Max(System.Math.Abs(low), System.Math.Abs(high));
@@ -521,13 +531,27 @@ public static class Binning
         {
             double lowest = (high - left) / bins;
             double highest = (high - left) / (bins - 1);
-            double step = System.Math.Pow(10, System.Math.Floor(System.Math.Log10(highest - lowest)));
-            width = step * System.Math.Ceiling(lowest / step);
+            double exponent = System.Math.Floor(System.Math.Log10(highest - lowest));
+            double step = System.Math.Pow(10, exponent);
+            double units = System.Math.Ceiling(lowest / step);
+
+            // The width is a whole number of decimal units — 1002 hundred-thousandths, say — and is
+            // written as that decimal: below one the unit's reciprocal is an exact power of ten, so
+            // the division is the correctly rounded decimal, where multiplying by the inexact
+            // 1e-5 lands an ulp off it. R2025b arrives at the same decimal by a different road (its
+            // 10^-5 is an ulp low, and the two errors cancel), and every edge is then leftEdge
+            // plus a multiple of this width on both engines (ADR 0158).
+            width = exponent < 0
+                ? units / System.Math.Pow(10, -exponent)
+                : step * units;
         }
 
         double right = System.Math.Min(System.Math.Max(left + (bins * width), high), double.MaxValue);
+        // The first edge is the left edge itself, as binpicker writes it: -0 stays -0 where
+        // left + 0 * width would answer +0 (ADR 0158).
         var edges = new double[bins + 1];
-        for (int i = 0; i < bins; i++)
+        edges[0] = left;
+        for (int i = 1; i < bins; i++)
         {
             edges[i] = left + (i * width);
         }
@@ -577,7 +601,8 @@ public static class Binning
     private static double[] Uniform(double left, double width, int bins, double reach)
     {
         var edges = new double[bins + 1];
-        for (int i = 0; i <= bins; i++)
+        edges[0] = left; // the left edge itself: -0 stays -0 (ADR 0158)
+        for (int i = 1; i <= bins; i++)
         {
             edges[i] = left + (i * width);
         }

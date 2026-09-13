@@ -1,3 +1,4 @@
+using System.Runtime.CompilerServices;
 using JGraph.Maths;
 using JGraph.Data;
 using JGraph.Numerics;
@@ -515,7 +516,15 @@ internal static partial class JgsBuiltins
         }
 
         ParsedArgs parsed = DiscretizeOptions.Parse(args, 3, line, col);
-        BareValues bare = PrepStrip("discretize", parsed.Positional[0], line, col);
+
+        // A packed array is read where it lies; anything else (a boxed array, a datetime's
+        // milliseconds) is stripped to a plain double[] and wrapped, so one fill serves both
+        // (item 11c, ADR 0158).
+        JgsValue data = parsed.Positional[0];
+        bool inPlace = data.IsPacked && !data.IsTime;
+        BareValues? stripped = inPlace ? null : PrepStrip("discretize", data, line, col);
+        int[] dims = inPlace ? SizeDims(data) : stripped!.Value.Dims;
+        NumericBuffer source = inPlace ? data.AsBuffer : ManagedBuffer.Adopt(stripped!.Value.Values);
         bool rightEdge = parsed.Word("IncludedEdge", "left", "left", "right") == "right";
 
         JgsValue second = parsed.Positional[1];
@@ -528,7 +537,8 @@ internal static partial class JgsBuiltins
                 throw new JgsRuntimeException(line, col, "discretize needs at least one bin.");
             }
 
-            edges = Binning.EdgesFor(bare.Values, count, null, null, "auto");
+            double[] sample = inPlace ? source.AsSpan().ToArray() : stripped!.Value.Values;
+            edges = Binning.EdgesFor(sample, count, null, null, "auto");
         }
         else
         {
@@ -559,20 +569,92 @@ internal static partial class JgsBuiltins
             }
         }
 
-        var result = new double[bare.Values.Length];
         Binning.BinFinder finder = Binning.BinFinder.For(edges);
-        for (int i = 0; i < result.Length; i++)
+        JgsValue answer;
+        if (JgsPacking.Enabled)
         {
-            int bin = rightEdge ? finder.OfRightClosed(bare.Values[i]) : finder.Of(bare.Values[i]);
-            result[i] = bin < 0 ? double.NaN
-                : binValues is not null ? binValues[bin]
-                : bin + dialect.IndexBase;
+            NumericBuffer dest = JgsPacking.Allocate(source.Length);
+            DiscretizeInto(source, dest, finder, rightEdge, binValues, dialect.IndexBase);
+            answer = JgsMatrix.FromColumnMajorDims(dest, dims);
+        }
+        else
+        {
+            var result = new double[source.Length];
+            DiscretizeInto(source, ManagedBuffer.Adopt(result), finder, rightEdge, binValues, dialect.IndexBase);
+            answer = JgsMatrix.FromColumnMajorDims(result, dims);
         }
 
-        return Outputs(
-            wanted,
-            JgsMatrix.FromColumnMajorDims(result, bare.Dims),
-            Numbers(edges));
+        GC.KeepAlive(data);
+        return Outputs(wanted, answer, Numbers(edges));
+    }
+
+    /// <summary>
+    /// The bin of every value, written to <paramref name="dest"/>: NaN for one outside every bin,
+    /// else the bin's label or its number in the dialect's base. Each of the four bodies — which
+    /// edge a bin owns, and whether bins are numbered or labelled — is its own loop, chosen once
+    /// outside the loop, and the loop runs in grains over <see cref="ParallelKernels.For"/> at
+    /// <see cref="ParallelKernels.MemoryBoundThreshold"/>. Every element's bin is a function of
+    /// the value and the edges alone, and the finder is read-only, so the partition moves nothing;
+    /// the finder's arithmetic guess and its search repair are as they were (item 11c, ADR 0158).
+    /// </summary>
+    internal static void DiscretizeInto(
+        NumericBuffer source, NumericBuffer dest, Binning.BinFinder finder, bool rightEdge,
+        double[]? binValues, double indexBase)
+    {
+        ParallelKernels.For(source.Length, ParallelKernels.MemoryBoundThreshold, null, (start, len) =>
+            FillBins(source.AsSpan(start, len), dest.AsSpan(start, len), finder, rightEdge, binValues, indexBase));
+
+        GC.KeepAlive(source);
+        GC.KeepAlive(dest);
+    }
+
+    /// <summary>
+    /// One grain of <see cref="DiscretizeInto"/>. Compiled optimised from its first call: a
+    /// ten-million-element loop that the tiered JIT starts in unoptimised code costs four times
+    /// what the optimised loop costs, and a script's first <c>discretize</c> is usually its only
+    /// one (measured on the d11 row, ADR 0158: 0.16 s in tier-0 code, 0.023 s optimised).
+    /// </summary>
+    [MethodImpl(MethodImplOptions.AggressiveOptimization)]
+    private static void FillBins(
+        Span<double> x, Span<double> y, Binning.BinFinder finder, bool rightEdge, double[]? binValues,
+        double indexBase)
+    {
+        int len = x.Length;
+        if (binValues is null)
+        {
+            if (rightEdge)
+            {
+                for (int i = 0; i < len; i++)
+                {
+                    int bin = finder.OfRightClosed(x[i]);
+                    y[i] = bin < 0 ? double.NaN : bin + indexBase;
+                }
+            }
+            else
+            {
+                for (int i = 0; i < len; i++)
+                {
+                    int bin = finder.Of(x[i]);
+                    y[i] = bin < 0 ? double.NaN : bin + indexBase;
+                }
+            }
+        }
+        else if (rightEdge)
+        {
+            for (int i = 0; i < len; i++)
+            {
+                int bin = finder.OfRightClosed(x[i]);
+                y[i] = bin < 0 ? double.NaN : binValues[bin];
+            }
+        }
+        else
+        {
+            for (int i = 0; i < len; i++)
+            {
+                int bin = finder.Of(x[i]);
+                y[i] = bin < 0 ? double.NaN : binValues[bin];
+            }
+        }
     }
 
 

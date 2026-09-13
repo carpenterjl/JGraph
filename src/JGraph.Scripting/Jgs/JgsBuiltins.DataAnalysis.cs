@@ -1,3 +1,4 @@
+using System.Runtime.CompilerServices;
 using JGraph.Data;
 using JGraph.Maths;
 using JGraph.Numerics;
@@ -1167,10 +1168,16 @@ internal static partial class JgsBuiltins
 
         int rows = dims[0];
         int columns = dims.Length > 1 ? dims[1] : 1;
-        double[] flat = FlattenColumnMajor("sortrows", args[0], line, col);
 
+        // A packed matrix is read where it lies; a boxed one is flattened once (item 11e, ADR 0158).
+        double[]? flattened = args[0].IsPacked ? null : FlattenColumnMajor("sortrows", args[0], line, col);
+        NumericBuffer flat = flattened is null ? args[0].AsBuffer : ManagedBuffer.Adopt(flattened);
+
+        // sortrows(A, 'descend') and sortrows(A, {'ascend', ...}): the direction alone, over every
+        // column, which MATLAB reads as the two-argument form's second argument (ADR 0158).
+        bool wordsOnly = args.Count == 2 && args[1].Type is JgsType.String or JgsType.Cell;
         var keys = new List<(int Column, bool Descending)>();
-        if (args.Count >= 2 && !IsEmpty(args[1]))
+        if (args.Count >= 2 && !wordsOnly && !IsEmpty(args[1]))
         {
             foreach (double raw in ToDoubles("sortrows", args[1], line, col))
             {
@@ -1199,9 +1206,9 @@ internal static partial class JgsBuiltins
             }
         }
 
-        if (args.Count == 3)
+        if (args.Count == 3 || wordsOnly)
         {
-            string[] words = DirectionWords(args[2], keys.Count, line, col);
+            string[] words = DirectionWords(args[wordsOnly ? 1 : 2], keys.Count, line, col);
             for (int i = 0; i < keys.Count; i++)
             {
                 keys[i] = (keys[i].Column, words[i] == "descend");
@@ -1210,21 +1217,63 @@ internal static partial class JgsBuiltins
 
         int[] order = RowOrder(flat, rows, keys);
 
-        var sorted = new double[flat.Length];
-        var places = new double[rows];
-        for (int r = 0; r < rows; r++)
+        // The gather: column by column, in blocks of output rows, so every write is sequential and
+        // only the reads follow the permutation; blocks are threaded from MemoryBoundThreshold
+        // elements. The positions are made only when the call asked for them.
+        JgsValue sortedValue;
+        if (JgsPacking.Enabled)
         {
-            places[r] = order[r] + dialect.IndexBase;
-            for (int c = 0; c < columns; c++)
-            {
-                sorted[r + (c * rows)] = flat[order[r] + (c * rows)];
-            }
+            NumericBuffer sorted = JgsPacking.Allocate(flat.Length);
+            GatherRows(flat, sorted, order, rows, columns);
+            sortedValue = JgsMatrix.FromColumnMajorDims(sorted, dims);
+        }
+        else
+        {
+            var sorted = new double[flat.Length];
+            GatherRows(flat, ManagedBuffer.Adopt(sorted), order, rows, columns);
+            sortedValue = JgsMatrix.FromColumnMajorDims(sorted, dims);
         }
 
-        return Outputs(
-            wanted,
-            JgsMatrix.FromColumnMajorDims(sorted, dims),
-            JgsMatrix.FromColumnMajor(places, rows, 1));
+        JgsValue placesValue = JgsValue.Null;
+        if (wanted >= 2)
+        {
+            var places = new double[rows];
+            for (int r = 0; r < rows; r++)
+            {
+                places[r] = order[r] + dialect.IndexBase;
+            }
+
+            placesValue = JgsMatrix.FromColumnMajor(places, rows, 1);
+        }
+
+        GC.KeepAlive(args[0]);
+        return Outputs(wanted, sortedValue, placesValue);
+    }
+
+    internal static void GatherRows(NumericBuffer source, NumericBuffer dest, int[] order, int rows, int columns)
+    {
+        int blockRows = ParallelKernels.GrainElements;
+        int blocks = rows == 0 ? 0 : ((rows - 1) / blockRows) + 1;
+        bool parallel = (long)rows * columns >= ParallelKernels.MemoryBoundThreshold;
+        ParallelKernels.ForBlocks(blocks, parallel, b =>
+            GatherBlock(source.AsSpan(), dest.AsSpan(), order, rows, columns, b * blockRows, Math.Min((b + 1) * blockRows, rows)));
+
+        GC.KeepAlive(source);
+        GC.KeepAlive(dest);
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveOptimization)]
+    private static void GatherBlock(
+        Span<double> x, Span<double> y, int[] order, int rows, int columns, int from, int to)
+    {
+        for (int c = 0; c < columns; c++)
+        {
+            int at = c * rows;
+            for (int r = from; r < to; r++)
+            {
+                y[r + at] = x[order[r] + at];
+            }
+        }
     }
 
     /// <summary>A missing reading sorts to the back, which is where MATLAB's own comparisons put it.</summary>
@@ -1246,10 +1295,13 @@ internal static partial class JgsBuiltins
     /// Each pass sorts a <see cref="ulong"/> that stands for the double at that key, so no
     /// comparison is a call; the library sort is not stable, so the run of rows tying on a key is
     /// put back into the order it held before the pass, which is what makes the pass stable and the
-    /// whole thing lexicographic.
+    /// whole thing lexicographic. Since item 11e (ADR 0158) the pass is
+    /// <see cref="SortKernels.SortRanks"/>, which is that sort and that repair, across threads
+    /// above its threshold; the ranks themselves stay this method's, with the sign of a zero
+    /// folded away before ranking, which is the tie rule MATLAB's <c>sortrows</c> keeps.
     /// </para>
     /// </remarks>
-    private static int[] RowOrder(double[] flat, int rows, List<(int Column, bool Descending)> keys)
+    private static int[] RowOrder(NumericBuffer flat, int rows, List<(int Column, bool Descending)> keys)
     {
         var order = new int[rows];
         for (int r = 0; r < rows; r++)
@@ -1264,9 +1316,14 @@ internal static partial class JgsBuiltins
         {
             (int column, bool descending) = keys[k];
             int at = column * rows;
+            Span<double> values = flat.AsSpan();
             for (int r = 0; r < rows; r++)
             {
-                ulong rank = RankOf(flat[order[r] + at]);
+                // The two zeros are one key: MATLAB's sortrows compares them equal, so rows that
+                // differ only in the sign of a zero keep their arrival order, or fall to the next
+                // key. RankOf on its own would put every -0 ahead of every +0 (ADR 0158).
+                double v = values[order[r] + at];
+                ulong rank = RankOf(v == 0 ? 0 : v);
 
                 // Turning the key over reverses the order it stands for, missing readings included:
                 // NaN ranks above everything ascending, and below everything descending, which is
@@ -1275,21 +1332,7 @@ internal static partial class JgsBuiltins
                 places[r] = r;
             }
 
-            Array.Sort(ranks, places, 0, rows);
-
-            int start = 0;
-            for (int r = 1; r <= rows; r++)
-            {
-                if (r == rows || ranks[r] != ranks[start])
-                {
-                    if (r - start > 1)
-                    {
-                        Array.Sort(places, start, r - start);
-                    }
-
-                    start = r;
-                }
-            }
+            SortKernels.SortRanks(ranks, places, rows);
 
             for (int r = 0; r < rows; r++)
             {
@@ -1299,6 +1342,7 @@ internal static partial class JgsBuiltins
             (order, next) = (next, order);
         }
 
+        GC.KeepAlive(flat);
         return order;
     }
 
@@ -1372,7 +1416,11 @@ internal static partial class JgsBuiltins
             throw new JgsRuntimeException(line, col, "histcounts needs the data before any option.");
         }
 
-        double[] data = FlattenColumnMajor("histcounts", parsed.Positional[0], line, col);
+        // A packed array is read where it lies; a boxed one is flattened once and wrapped, so the
+        // edge rule and the counting pass below take one buffer (item 11d, ADR 0158).
+        JgsValue given0 = parsed.Positional[0];
+        double[]? flattened = given0.IsPacked ? null : FlattenColumnMajor("histcounts", given0, line, col);
+        NumericBuffer data = flattened is null ? given0.AsBuffer : ManagedBuffer.Adopt(flattened);
         double[]? limits = parsed.Vector("BinLimits");
         double? width = parsed.Named("BinWidth") is null ? null : parsed.Scalar("BinWidth", 0);
         if (width is { } step && (!(step > 0) || !double.IsFinite(step)))
@@ -1426,25 +1474,153 @@ internal static partial class JgsBuiltins
             throw new JgsRuntimeException(line, col, "histcounts: 'BinLimits' takes a [low high] pair.");
         }
 
-        double[] edges = given ?? Binning.EdgesFor(data, requested, width, limits, rule);
-        var counts = new double[edges.Length - 1];
-        var which = new double[data.Length];
-        Binning.BinFinder finder = Binning.BinFinder.For(edges);
-        for (int i = 0; i < data.Length; i++)
+        double[] edges;
+        if (given is not null)
         {
-            int bin = finder.Of(data[i]);
-            which[i] = bin < 0 ? dialect.IndexBase - 1 : bin + dialect.IndexBase;
+            edges = given;
+        }
+        else if (requested is { } bins && width is null && limits is null)
+        {
+            // The requested-count rule needs only the finite range, so it is read in one streaming
+            // pass rather than through a copy of the finite values; the empty case is the same
+            // (0, 1) span EdgesFor spreads the count over. Scott, FD, sturges, sqrt, a width and
+            // named limits keep EdgesFor as it is.
+            (double low, double high, bool any) = PackedMath.FiniteRange(data);
+            edges = any ? Binning.CountedEdges(low, high, bins) : Binning.CountedEdges(0, 1, bins);
+        }
+        else
+        {
+            edges = Binning.EdgesFor(flattened ?? data.AsSpan().ToArray(), requested, width, limits, rule);
+        }
+
+        // The bin of each value is written only when the third output is wanted; the counts are
+        // whole numbers tallied in long, merged in bin order across threads, so they are exact
+        // however the values were divided among threads.
+        NumericBuffer? which = null;
+        double[]? whichArray = null;
+        if (wanted >= 3)
+        {
+            if (JgsPacking.Enabled)
+            {
+                which = JgsPacking.Allocate(data.Length);
+            }
+            else
+            {
+                whichArray = new double[data.Length];
+                which = ManagedBuffer.Adopt(whichArray);
+            }
+        }
+
+        long[] counts = CountBins(data, edges, which, dialect.IndexBase);
+        var asDoubles = new double[counts.Length];
+        for (int k = 0; k < counts.Length; k++)
+        {
+            asDoubles[k] = counts[k];
+        }
+
+        JgsValue whichValue = which is null ? JgsValue.Null
+            : whichArray is not null ? JgsMatrix.FromColumnMajorDims(whichArray, SizeDims(given0))
+            : JgsMatrix.FromColumnMajorDims(which, SizeDims(given0));
+        GC.KeepAlive(given0);
+        return Outputs(
+            wanted,
+            Numbers(Normalized(asDoubles, edges, normalization, data.Length)),
+            Numbers(edges),
+            whichValue);
+    }
+
+    /// <summary>
+    /// Most bins the threaded tally serves: above this the per-block tallies would outweigh the
+    /// counting they divide, and the values are counted on one thread.
+    /// </summary>
+    private const int ThreadedBinLimit = 1 << 16;
+
+    /// <summary>
+    /// How many values fall in each bin, and (when <paramref name="which"/> is given) which bin
+    /// each value fell in, 0 for one outside every bin. From
+    /// <see cref="ParallelKernels.MemoryBoundThreshold"/> values and up to
+    /// <see cref="ThreadedBinLimit"/> bins the values are cut into blocks — a function of the
+    /// length and the bin count alone — each block tallied into its own <c>long[]</c>, and the
+    /// tallies added in bin order; whole numbers add exactly, so the answer is the serial loop's.
+    /// </summary>
+    internal static long[] CountBins(NumericBuffer data, double[] edges, NumericBuffer? which, double indexBase)
+    {
+        int bins = Math.Max(0, edges.Length - 1);
+        int n = data.Length;
+        var counts = new long[bins];
+        Binning.BinFinder finder = Binning.BinFinder.For(edges);
+        bool threaded = n >= ParallelKernels.MemoryBoundThreshold && bins <= ThreadedBinLimit
+            && ParallelKernels.MaxDegree > 1;
+        if (!threaded)
+        {
+            Tally(data, 0, n, finder, counts, which, indexBase);
+            GC.KeepAlive(data);
+            GC.KeepAlive(which);
+            return counts;
+        }
+
+        int blocks = (int)Math.Clamp(Math.Min(n / ParallelKernels.GrainElements, (1 << 21) / Math.Max(bins, 1)), 1, 64);
+        int block = (int)(((long)n + blocks - 1) / blocks);
+        var tallies = new long[blocks * bins];
+        ParallelKernels.ForBlocks(blocks, true, b =>
+        {
+            int from = b * block;
+            int to = Math.Min(from + block, n);
+            if (from < to)
+            {
+                Tally(data, from, to, finder, tallies.AsSpan(b * bins, bins), which, indexBase);
+            }
+        });
+
+        for (int k = 0; k < bins; k++)
+        {
+            long total = 0;
+            for (int b = 0; b < blocks; b++)
+            {
+                total += tallies[(b * bins) + k];
+            }
+
+            counts[k] = total;
+        }
+
+        GC.KeepAlive(data);
+        GC.KeepAlive(which);
+        return counts;
+    }
+
+    /// <summary>One block of the tally, compiled optimised from its first call (see
+    /// <c>FillBins</c> in the preprocessing file for why: a first call in tier-0 code is the
+    /// row).</summary>
+    [MethodImpl(MethodImplOptions.AggressiveOptimization)]
+    private static void Tally(
+        NumericBuffer data, int from, int to, Binning.BinFinder finder, Span<long> counts,
+        NumericBuffer? which, double indexBase)
+    {
+        Span<double> x = data.AsSpan(from, to - from);
+        if (which is null)
+        {
+            for (int i = 0; i < x.Length; i++)
+            {
+                int bin = finder.Of(x[i]);
+                if (bin >= 0)
+                {
+                    counts[bin]++;
+                }
+            }
+
+            return;
+        }
+
+        Span<double> w = which.AsSpan(from, to - from);
+        for (int i = 0; i < x.Length; i++)
+        {
+            int bin = finder.Of(x[i]);
+            w[i] = bin < 0 ? indexBase - 1 : bin + indexBase;
             if (bin >= 0)
             {
                 counts[bin]++;
             }
         }
-
-        return Outputs(
-            wanted,
-            Numbers(Normalized(counts, edges, normalization, data.Length)),
-            Numbers(edges),
-            JgsMatrix.FromColumnMajorDims(which, SizeDims(parsed.Positional[0])));
     }
 
 

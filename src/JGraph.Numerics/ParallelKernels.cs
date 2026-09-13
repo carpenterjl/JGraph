@@ -60,7 +60,39 @@ public static class ParallelKernels
     /// </summary>
     public const int ReductionThreshold = 1 << 22;
 
+    /// <summary>
+    /// Length at or above which an <em>expensive</em> scalar map is worth splitting (16K): a Bessel
+    /// continued fraction is a few hundred nanoseconds per element, so sixteen thousand of them
+    /// are milliseconds of work to divide — where <see cref="ComputeBoundThreshold"/> waits for
+    /// two hundred and sixty thousand because a <c>Math.Pow</c> is only tens of cycles. Set by the
+    /// item 11 sweep (ADR 0158): the 200,000-element Bessel rows sat just under the compute
+    /// threshold and got no thread at all; at 16K the fine grain is already three times faster.
+    /// Gamma and erf, measured on the same sweep, are ten times cheaper an element and gain
+    /// nothing from it, so they stay on the compute-bound grain.
+    /// </summary>
+    public const int ExpensiveThreshold = 1 << 14;
+
+    /// <summary>The default <see cref="CostlyGrain"/>: 4K elements, a few hundred microseconds of
+    /// an expensive map, so a 16K array is four pieces rather than one.</summary>
+    public const int DefaultCostlyGrain = 1 << 12;
+
     private static int _maxDegree = ResolveDegree();
+
+    private static int _costlyGrain = ResolveCostlyGrain();
+
+    /// <summary>
+    /// Elements per grain for <see cref="ForCostly"/>: <c>JGRAPH_COSTLY_GRAIN</c> when set, else
+    /// <see cref="DefaultCostlyGrain"/>. A knob so the grain can be swept on a benchmark and pinned
+    /// by a test; it changes how an expensive map is cut, never what it answers, because every map
+    /// that reaches it is per element.
+    /// </summary>
+    public static int CostlyGrain
+    {
+        get => _costlyGrain;
+        set => _costlyGrain = value >= 1
+            ? value
+            : throw new ArgumentOutOfRangeException(nameof(value), value, "at least one element a grain");
+    }
 
     /// <summary>
     /// How many threads a kernel may use: <c>JGRAPH_THREADS</c> when set, otherwise one per logical
@@ -102,20 +134,33 @@ public static class ParallelKernels
     /// <param name="threshold">Length below which the work runs on the calling thread.</param>
     /// <param name="betweenGrains">The cancellation poll, or null.</param>
     /// <param name="body">Called with the start index and length of one grain.</param>
-    public static void For(int length, int threshold, Action? betweenGrains, Action<int, int> body)
+    public static void For(int length, int threshold, Action? betweenGrains, Action<int, int> body) =>
+        Grained(length, GrainElements, threshold, betweenGrains, body);
+
+    /// <summary>
+    /// <see cref="For"/> for a map whose every element is expensive — a special function rather
+    /// than an operator: grains of <see cref="CostlyGrain"/> elements, threaded from
+    /// <see cref="ExpensiveThreshold"/>. Only a per-element map may take this road, because a
+    /// smaller grain is a different partition and a partition changes nothing only when nothing
+    /// is folded across it.
+    /// </summary>
+    public static void ForCostly(int length, Action? betweenGrains, Action<int, int> body) =>
+        Grained(length, CostlyGrain, ExpensiveThreshold, betweenGrains, body);
+
+    private static void Grained(int length, int grain, int threshold, Action? betweenGrains, Action<int, int> body)
     {
         if (length <= 0)
         {
             return;
         }
 
-        int grains = ((length - 1) / GrainElements) + 1;
+        int grains = ((length - 1) / grain) + 1;
         if (grains == 1 || length < threshold || MaxDegree == 1)
         {
             for (int g = 0; g < grains; g++)
             {
-                int start = g * GrainElements;
-                body(start, Math.Min(GrainElements, length - start));
+                int start = g * grain;
+                body(start, Math.Min(grain, length - start));
                 betweenGrains?.Invoke();
             }
 
@@ -127,8 +172,8 @@ public static class ParallelKernels
         {
             Parallel.For(0, grains, options, g =>
             {
-                int start = g * GrainElements;
-                body(start, Math.Min(GrainElements, length - start));
+                int start = g * grain;
+                body(start, Math.Min(grain, length - start));
                 betweenGrains?.Invoke();
             });
         }
@@ -212,4 +257,9 @@ public static class ParallelKernels
 
         return Math.Clamp(Environment.ProcessorCount, 1, 16);
     }
+
+    private static int ResolveCostlyGrain() =>
+        int.TryParse(Environment.GetEnvironmentVariable("JGRAPH_COSTLY_GRAIN"), out int asked) && asked > 0
+            ? asked
+            : DefaultCostlyGrain;
 }

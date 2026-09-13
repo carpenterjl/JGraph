@@ -551,21 +551,31 @@ public static class ReduceKernels
     /// slices are one shorter than the source's. Repeated differencing is this applied again by the
     /// caller, exactly as the boxed builtin is called again.
     /// </summary>
+    /// <remarks>
+    /// A subtraction is correctly rounded whoever performs it, so the contiguous branch is
+    /// <see cref="TensorPrimitives.Subtract{T}(ReadOnlySpan{T}, ReadOnlySpan{T}, Span{T})"/> of the
+    /// slice against itself shifted by one — the same operand order as <c>x[j+1] - x[j]</c>, so a
+    /// NaN keeps the payload the scalar loop kept — and one long slice is cut by output index at
+    /// <see cref="ParallelKernels.MemoryBoundThreshold"/>, each grain reading one element past its
+    /// end (item 11b, ADR 0158). The interleaved branch was already this subtraction.
+    /// </remarks>
     public static void Differences(NumericBuffer src, NumericBuffer dest, Split split)
     {
         int shorter = split.Count - 1;
-        if (split.Inner == 1)
+        if (split.Inner == 1 && split.Outer == 1)
+        {
+            ParallelKernels.For(shorter, ParallelKernels.MemoryBoundThreshold, null, (start, len) =>
+                TensorPrimitives.Subtract<double>(
+                    src.AsSpan(start + 1, len), src.AsSpan(start, len), dest.AsSpan(start, len)));
+        }
+        else if (split.Inner == 1)
         {
             OverColumns(split, ParallelKernels.ReductionThreshold, (first, count) =>
             {
                 for (int s = first; s < first + count; s++)
                 {
                     Span<double> x = src.AsSpan(s * split.Count, split.Count);
-                    Span<double> y = dest.AsSpan(s * shorter, shorter);
-                    for (int j = 0; j < shorter; j++)
-                    {
-                        y[j] = x[j + 1] - x[j];
-                    }
+                    TensorPrimitives.Subtract<double>(x[1..], x[..shorter], dest.AsSpan(s * shorter, shorter));
                 }
             });
         }

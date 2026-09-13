@@ -53,6 +53,197 @@ public static class SortKernels
     private const int SampleFactor = 32;
 
     /// <summary>
+    /// Keys at or above which <see cref="SortRanks"/> goes across threads (256K). Measured on
+    /// item 11's sweep (ADR 0158) at 250k, 500k, 524,288 and 1M rows: the partition's two extra
+    /// passes cost about what the sort of a quarter-million keys saves, and win from there up.
+    /// </summary>
+    public static int RankThreshold { get; set; } = 1 << 18;
+
+    /// <summary>Keys a rank bucket is aimed at: a piece whose sort is a millisecond or so.</summary>
+    private const int TargetRankBucket = 1 << 14;
+
+    /// <summary>
+    /// A stable ascending sort of exact <see cref="ulong"/> ranks with an <see cref="int"/> payload
+    /// beside each — the pass <c>sortrows</c> makes per key column, where the caller has already
+    /// turned each double into a rank that orders <c>-0</c> before <c>+0</c> and NaN behind
+    /// everything (and complemented it for a descending key). The payload arrives in arrival
+    /// order; the sort leaves every run of equal keys with its payload ascending, which is what
+    /// makes the pass stable whatever the library sort did inside the run.
+    /// </summary>
+    /// <remarks>
+    /// Below <see cref="RankThreshold"/>, or on one thread, this is the library sort followed by the
+    /// same tie repair the serial pass always made. Above it the keys are cut by value into
+    /// buckets — splitters off a strided sample, a counting pass, a scatter block by block so each
+    /// bucket keeps arrival order — and each bucket is sorted and repaired on its own thread; the
+    /// buckets laid end to end are the answer, exactly as <see cref="SplitByValue"/> reasons for
+    /// doubles. Equal keys always share a bucket, so a run's repair sees the whole run. The answer
+    /// cannot depend on the schedule: it is settled by the keys and the tie rule alone.
+    /// </remarks>
+    public static void SortRanks(ulong[] keys, int[] payload, int n)
+    {
+        ArgumentNullException.ThrowIfNull(keys);
+        ArgumentNullException.ThrowIfNull(payload);
+        if (n < 0 || n > keys.Length || n > payload.Length)
+        {
+            throw new ArgumentOutOfRangeException(nameof(n), n, "within both arrays");
+        }
+
+        if (n < 2)
+        {
+            return;
+        }
+
+        if (n < RankThreshold || ParallelKernels.MaxDegree == 1)
+        {
+            Array.Sort(keys, payload, 0, n);
+            RepairRankTies(keys, payload, 0, n);
+            return;
+        }
+
+        ulong[] cuts = RankSplitters(keys, n);
+        int buckets = cuts.Length + 1;
+        if (buckets < 2)
+        {
+            Array.Sort(keys, payload, 0, n);
+            RepairRankTies(keys, payload, 0, n);
+            return;
+        }
+
+        int blockSize = ParallelKernels.GrainElements;
+        int blocks = ((n - 1) / blockSize) + 1;
+        var ids = new byte[n];
+        var counts = new int[blocks * buckets];
+        ParallelKernels.ForBlocks(blocks, true, b =>
+        {
+            int from = b * blockSize;
+            int to = Math.Min(from + blockSize, n);
+            Span<int> local = counts.AsSpan(b * buckets, buckets);
+            for (int i = from; i < to; i++)
+            {
+                int k = RankBucketOf(cuts, keys[i]);
+                ids[i] = (byte)k;
+                local[k]++;
+            }
+        });
+
+        var start = new int[buckets + 1];
+        int running = 0;
+        for (int k = 0; k < buckets; k++)
+        {
+            start[k] = running;
+            for (int b = 0; b < blocks; b++)
+            {
+                int slot = (b * buckets) + k;
+                int held = counts[slot];
+                counts[slot] = running;
+                running += held;
+            }
+        }
+
+        start[buckets] = running;
+
+        var sortedKeys = new ulong[n];
+        var sortedPayload = new int[n];
+        ParallelKernels.ForBlocks(blocks, true, b =>
+        {
+            int from = b * blockSize;
+            int to = Math.Min(from + blockSize, n);
+            Span<int> at = counts.AsSpan(b * buckets, buckets);
+            for (int i = from; i < to; i++)
+            {
+                int slot = at[ids[i]]++;
+                sortedKeys[slot] = keys[i];
+                sortedPayload[slot] = payload[i];
+            }
+        });
+
+        ParallelKernels.ForBlocks(buckets, true, k =>
+        {
+            int from = start[k];
+            int count = start[k + 1] - from;
+            if (count < 2)
+            {
+                return;
+            }
+
+            Array.Sort(sortedKeys, sortedPayload, from, count);
+            RepairRankTies(sortedKeys, sortedPayload, from, from + count);
+        });
+
+        Array.Copy(sortedKeys, keys, n);
+        Array.Copy(sortedPayload, payload, n);
+    }
+
+    /// <summary>Every run of equal keys in <c>[from, to)</c> gets its payload put ascending.</summary>
+    private static void RepairRankTies(ulong[] keys, int[] payload, int from, int to)
+    {
+        int runStart = from;
+        for (int i = from + 1; i <= to; i++)
+        {
+            if (i == to || keys[i] != keys[runStart])
+            {
+                if (i - runStart > 1)
+                {
+                    Array.Sort(payload, runStart, i - runStart);
+                }
+
+                runStart = i;
+            }
+        }
+    }
+
+    /// <summary>
+    /// The keys that cut the ranks into buckets, off a strided sample: a function of the keys
+    /// alone, oversampled past the bucket count, repeats dropped.
+    /// </summary>
+    private static ulong[] RankSplitters(ulong[] keys, int n)
+    {
+        int buckets = (int)Math.Clamp(((long)n + TargetRankBucket - 1) / TargetRankBucket, 2, MaxBuckets);
+        int wanted = Math.Min(n, buckets * SampleFactor);
+        var sample = new ulong[wanted];
+        int stride = n / wanted;
+        for (int i = 0; i < wanted; i++)
+        {
+            sample[i] = keys[i * stride];
+        }
+
+        Array.Sort(sample);
+        var cuts = new ulong[buckets - 1];
+        int kept = 0;
+        for (int i = 1; i < buckets; i++)
+        {
+            ulong cut = sample[(int)((long)i * wanted / buckets)];
+            if (kept == 0 || cut != cuts[kept - 1])
+            {
+                cuts[kept++] = cut;
+            }
+        }
+
+        return cuts[..kept];
+    }
+
+    /// <summary>How many splitters a key is at or past — monotone, so equal keys share a bucket.</summary>
+    private static int RankBucketOf(ulong[] cuts, ulong key)
+    {
+        int lo = 0;
+        int hi = cuts.Length;
+        while (lo < hi)
+        {
+            int mid = (int)(((uint)lo + (uint)hi) >> 1);
+            if (key < cuts[mid])
+            {
+                hi = mid;
+            }
+            else
+            {
+                lo = mid + 1;
+            }
+        }
+
+        return lo;
+    }
+
+    /// <summary>
     /// Sorts every slice along one dimension. <paramref name="positions"/> may be null when only the
     /// values are wanted; when it is not, each position is where that value sat in its own slice,
     /// already carrying <paramref name="indexBase"/>. <paramref name="missingFirst"/> is where NaN

@@ -16,6 +16,11 @@ internal static partial class JgsBuiltins
         void Define(string name, Func<IReadOnlyList<JgsValue>, int, int, JgsValue> body) =>
             env.Builtins.Register(name, JgsValue.Function(new BuiltinFunction(name, body)));
 
+        // These stay on the compute-bound grain. Item 11a (ADR 0158) measured them for the
+        // expensive class and found them ten times cheaper per element than a Bessel function:
+        // erf and gamma at a million elements ran the same on 4K grains as on 64K, and at two
+        // hundred thousand the fine grains cost more than the serial loop. The class is named by
+        // measurement, not by the number of exponentials in the formula.
         void Math1(string name, Func<double, double> f) =>
             Define(name, (args, line, col) => { Arity(name, args, 1, line, col); return MapNumeric(name, args[0], f, line, col); });
 
@@ -94,12 +99,21 @@ internal static partial class JgsBuiltins
     /// </summary>
     private static void RegisterBesselBuiltins(Action<string, Func<IReadOnlyList<JgsValue>, int, int, JgsValue>> Define)
     {
+        // A cylinder function is a continued fraction or a series per element, a few hundred
+        // nanoseconds each: the expensive class of PackedMath.Zip, which cuts the array into 4K
+        // grains and threads it from 16K elements rather than 256K (item 11a, ADR 0158; the grain
+        // and the threshold are the sweep's, three to five times faster at every length from 16K
+        // to 1M). A cost class names how the map is cut, never what it answers: a name may take it
+        // only because it already reaches the map with a per-element delegate. The refusal a
+        // negative argument raises comes back out of the threaded map as the one exception it was,
+        // so Guarded sees what it always saw.
         void Cylinder(string name, Func<double, double, bool, double> f) =>
             Define(name, (args, line, col) =>
             {
                 ArityRange(name, args, 2, 3, line, col);
                 bool scaled = ScaleWanted(name, args, 2, line, col);
-                return Guarded(name, line, col, () => Zip(name, args[0], args[1], (nu, x) => f(nu, x, scaled), line, col));
+                return Guarded(name, line, col, () => Zip(name, args[0], args[1], (nu, x) => f(nu, x, scaled), line, col,
+                    PackedMath.CostClass.Expensive));
             });
 
         Cylinder("besselj", static (nu, x, _) => BesselFunctions.J(nu, x));

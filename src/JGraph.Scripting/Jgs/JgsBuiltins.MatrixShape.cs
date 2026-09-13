@@ -1261,6 +1261,13 @@ internal static partial class JgsBuiltins
                 return subject;
             }
 
+            if (name == "diff" && subject.Type is JgsType.Number or JgsType.Bool)
+            {
+                // diff of a scalar is the 0-by-0 empty, not a 1-by-0 row: MATLAB treats the one
+                // value as having no dimension to difference along (ADR 0158).
+                return JgsMatrix.FromColumnMajorDims([], [0, 0]);
+            }
+
             // A packed double array with arguments the kernels understand reduces in place, without
             // the flatten and the boxed vector per slice this wrapper otherwise pays for (M94). The
             // kernels replicate every fold to the bit, so this is a shortcut, never a different road.

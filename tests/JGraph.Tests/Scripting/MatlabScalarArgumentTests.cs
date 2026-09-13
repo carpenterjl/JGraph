@@ -67,7 +67,9 @@ public class MatlabScalarArgumentTests : IDisposable
     [Fact]
     public Task DifferencingOneValueLeavesNothing() => RunAsserting("""
         assert(isempty(diff(5)));
-        assert(isequal(size(diff(5)), [1 0]));
+        % R2025b answers the 0-by-0 empty for a scalar (pinned in m158_loops, ADR 0158); the
+        % 1-by-0 row this once asserted was JGraph's own.
+        assert(isequal(size(diff(5)), [0 0]));
         """);
 
     [Fact]

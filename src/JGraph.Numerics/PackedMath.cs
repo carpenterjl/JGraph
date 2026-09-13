@@ -1,3 +1,4 @@
+using System.Runtime.CompilerServices;
 using System.Numerics;
 using System.Numerics.Tensors;
 using System.Runtime.InteropServices;
@@ -568,10 +569,10 @@ public static class PackedMath
     /// loop of its own, not this.
     /// </remarks>
     public static void Map(NumericBuffer source, NumericBuffer dest, Func<double, double> f,
-                           Action? betweenChunks = null)
+                           Action? betweenChunks = null, CostClass cost = CostClass.Compute)
     {
         RequireSameLength(source.Length, dest.Length);
-        ParallelKernels.For(dest.Length, ParallelKernels.ComputeBoundThreshold, betweenChunks, (start, len) =>
+        Grains(dest.Length, cost, betweenChunks, (start, len) =>
         {
             Span<double> x = source.AsSpan(start, len);
             Span<double> d = dest.AsSpan(start, len);
@@ -587,11 +588,12 @@ public static class PackedMath
 
     /// <summary>dest[i] = f(a[i], b[i]) — <see cref="Map"/>'s two-operand form (atan2, hypot, mod).</summary>
     public static void Zip(NumericBuffer a, NumericBuffer b, NumericBuffer dest,
-                           Func<double, double, double> f, Action? betweenChunks = null)
+                           Func<double, double, double> f, Action? betweenChunks = null,
+                           CostClass cost = CostClass.Compute)
     {
         RequireSameLength(a.Length, dest.Length);
         RequireSameLength(b.Length, dest.Length);
-        ParallelKernels.For(dest.Length, ParallelKernels.ComputeBoundThreshold, betweenChunks, (start, len) =>
+        Grains(dest.Length, cost, betweenChunks, (start, len) =>
         {
             Span<double> x = a.AsSpan(start, len);
             Span<double> y = b.AsSpan(start, len);
@@ -613,10 +615,10 @@ public static class PackedMath
     /// </summary>
     public static void ZipScalar(NumericBuffer a, double scalar, NumericBuffer dest,
                                  Func<double, double, double> f, bool scalarOnLeft = false,
-                                 Action? betweenChunks = null)
+                                 Action? betweenChunks = null, CostClass cost = CostClass.Compute)
     {
         RequireSameLength(a.Length, dest.Length);
-        ParallelKernels.For(dest.Length, ParallelKernels.ComputeBoundThreshold, betweenChunks, (start, len) =>
+        Grains(dest.Length, cost, betweenChunks, (start, len) =>
         {
             Span<double> x = a.AsSpan(start, len);
             Span<double> d = dest.AsSpan(start, len);
@@ -632,6 +634,125 @@ public static class PackedMath
 
         GC.KeepAlive(a);
         GC.KeepAlive(dest);
+    }
+
+    /// <summary>
+    /// What one element of a delegate map costs, which decides how the map is cut. A partition
+    /// cannot move a per-element answer, so the class is a question of speed only; it is the
+    /// builtin's to name, because only the builtin knows what its delegate does.
+    /// </summary>
+    public enum CostClass
+    {
+        /// <summary>Tens of cycles an element (a <see cref="Math"/> function): <see cref="ParallelKernels.For"/>
+        /// at <see cref="ParallelKernels.ComputeBoundThreshold"/>.</summary>
+        Compute,
+
+        /// <summary>Hundreds of cycles an element (a Bessel function, gamma, erf):
+        /// <see cref="ParallelKernels.ForCostly"/>.</summary>
+        Expensive,
+    }
+
+    private static void Grains(int length, CostClass cost, Action? betweenChunks, Action<int, int> body)
+    {
+        if (cost == CostClass.Expensive)
+        {
+            ParallelKernels.ForCostly(length, betweenChunks, body);
+        }
+        else
+        {
+            ParallelKernels.For(length, ParallelKernels.ComputeBoundThreshold, betweenChunks, body);
+        }
+    }
+
+    /// <summary>
+    /// The smallest and largest finite element, and whether there was one: the range a histogram's
+    /// bin count is spread over. NaN and both infinities are passed by. Ties keep the first
+    /// arrival — <c>-0</c> and <c>+0</c> compare equal, so whichever came first is the answer,
+    /// exactly as a serial <c>&lt;</c> fold answers — and the grains are merged in index order, so
+    /// the threaded fold is that serial fold to the bit.
+    /// </summary>
+    public static (double Low, double High, bool Any) FiniteRange(NumericBuffer a, Action? betweenChunks = null)
+    {
+        int grains = GrainsOf(a.Length);
+        var lows = new double[grains];
+        var highs = new double[grains];
+        var seen = new bool[grains];
+        ParallelKernels.For(a.Length, ParallelKernels.MemoryBoundThreshold, betweenChunks, (start, len) =>
+        {
+            int g = start / ParallelKernels.GrainElements;
+            seen[g] = FiniteRangeOf(a.AsSpan(start, len), out lows[g], out highs[g]);
+        });
+
+        GC.KeepAlive(a);
+        double lowest = 0;
+        double highest = 0;
+        bool found = false;
+        for (int g = 0; g < grains; g++)
+        {
+            if (!seen[g])
+            {
+                continue;
+            }
+
+            if (!found)
+            {
+                lowest = lows[g];
+                highest = highs[g];
+                found = true;
+                continue;
+            }
+
+            if (lows[g] < lowest)
+            {
+                lowest = lows[g];
+            }
+
+            if (highs[g] > highest)
+            {
+                highest = highs[g];
+            }
+        }
+
+        return (lowest, highest, found);
+    }
+
+    /// <summary>One grain of <see cref="FiniteRange"/>, compiled optimised from its first call so
+    /// a script's one histogram does not pay for tier-0 code (ADR 0158).</summary>
+    [MethodImpl(MethodImplOptions.AggressiveOptimization)]
+    private static bool FiniteRangeOf(Span<double> x, out double low, out double high)
+    {
+        low = 0;
+        high = 0;
+        bool any = false;
+        for (int i = 0; i < x.Length; i++)
+        {
+            double v = x[i];
+            if (!double.IsFinite(v))
+            {
+                continue;
+            }
+
+            if (!any)
+            {
+                low = v;
+                high = v;
+                any = true;
+            }
+            else
+            {
+                if (v < low)
+                {
+                    low = v;
+                }
+
+                if (v > high)
+                {
+                    high = v;
+                }
+            }
+        }
+
+        return any;
     }
 
     /// <summary>dest[i] = start + i * step (colon-range materialization).</summary>

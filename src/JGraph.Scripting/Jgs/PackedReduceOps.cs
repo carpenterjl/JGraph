@@ -375,7 +375,9 @@ internal static class PackedReduceOps
                 current.Dispose();
             }
 
-            return JgsValue.Array([]);
+            // Differenced past its length the dimension is empty and the others stay: diff of a
+            // 3-by-4 five times is 0-by-4, as the boxed road and MATLAB answer (ADR 0158).
+            return JgsMatrix.FromColumnMajorDims([], JgsMatrix.ShapeAlong(dims, along, 0));
         }
 
         return MintShaped(current, JgsMatrix.ShapeAlong(dims, along, length));

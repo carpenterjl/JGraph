@@ -5225,7 +5225,8 @@ internal static partial class JgsBuiltins
 
     private static JgsValue MapNumeric(string name, JgsValue value, Func<double, double> f, int line, int col,
                                        PackedMath.UnaryOp? vectorOp = null,
-                                       PackedMath.Rounding? rounding = null)
+                                       PackedMath.Rounding? rounding = null,
+                                       PackedMath.CostClass cost = PackedMath.CostClass.Compute)
     {
         if (value.Type is JgsType.Number or JgsType.Bool)
         {
@@ -5246,7 +5247,7 @@ internal static partial class JgsBuiltins
                 }
                 else
                 {
-                    ApplyUnary(value.AsBuffer, dest, f, vectorOp);
+                    ApplyUnary(value.AsBuffer, dest, f, vectorOp, cost);
                 }
 
                 return JgsMatrix.Like(value, JgsValue.Packed(dest));
@@ -5257,7 +5258,7 @@ internal static partial class JgsBuiltins
             for (int i = 0; i < source.Length; i++)
             {
                 // Recurse so nested arrays map elementwise: sin(X) works on meshgrid output.
-                result[i] = MapNumeric(name, source[i], f, line, col, vectorOp, rounding);
+                result[i] = MapNumeric(name, source[i], f, line, col, vectorOp, rounding, cost);
             }
 
             return JgsMatrix.Like(value, JgsValue.Array(result));
@@ -5277,7 +5278,8 @@ internal static partial class JgsBuiltins
     /// <em>lengths</em> and answered <see cref="JgsValue.Packed"/> without a shape, which refused
     /// that call outright and flattened <c>hypot(A, 1)</c> of a matrix into a row.
     /// </remarks>
-    private static JgsValue Zip(string name, JgsValue a, JgsValue b, Func<double, double, double> f, int line, int col)
+    private static JgsValue Zip(string name, JgsValue a, JgsValue b, Func<double, double, double> f, int line, int col,
+                                PackedMath.CostClass cost = PackedMath.CostClass.Compute)
     {
         bool aScalar = a.Type is JgsType.Number or JgsType.Bool;
         bool bScalar = b.Type is JgsType.Number or JgsType.Bool;
@@ -5290,7 +5292,7 @@ internal static partial class JgsBuiltins
         bool bArray = b.Type == JgsType.Array;
         if (aArray && bArray && !JgsBroadcast.SameShape(a, b))
         {
-            return JgsBroadcast.Map(a, b, name, line, col, (left, right) => Zip(name, left, right, f, line, col));
+            return JgsBroadcast.Map(a, b, name, line, col, (left, right) => Zip(name, left, right, f, line, col, cost));
         }
 
         // Packed fast paths: the same delegate over flat buffers (atan2 over a million samples
@@ -5300,21 +5302,21 @@ internal static partial class JgsBuiltins
         if (a.IsPacked && b.IsPacked)
         {
             var dest = JgsPacking.Allocate(a.ArrayLength);
-            PackedMath.Zip(a.AsBuffer, b.AsBuffer, dest, f);
+            PackedMath.Zip(a.AsBuffer, b.AsBuffer, dest, f, cost: cost);
             return JgsMatrix.Like(a, JgsValue.Packed(dest));
         }
 
         if (a.IsPacked && bScalar)
         {
             var dest = JgsPacking.Allocate(a.ArrayLength);
-            PackedMath.ZipScalar(a.AsBuffer, b.AsNumber, dest, f);
+            PackedMath.ZipScalar(a.AsBuffer, b.AsNumber, dest, f, cost: cost);
             return JgsMatrix.Like(a, JgsValue.Packed(dest));
         }
 
         if (aScalar && b.IsPacked)
         {
             var dest = JgsPacking.Allocate(b.ArrayLength);
-            PackedMath.ZipScalar(b.AsBuffer, a.AsNumber, dest, f, scalarOnLeft: true);
+            PackedMath.ZipScalar(b.AsBuffer, a.AsNumber, dest, f, scalarOnLeft: true, cost: cost);
             return JgsMatrix.Like(b, JgsValue.Packed(dest));
         }
 
@@ -5325,7 +5327,7 @@ internal static partial class JgsBuiltins
             var paired = new JgsValue[left.Length];
             for (int i = 0; i < paired.Length; i++)
             {
-                paired[i] = Zip(name, left[i], right[i], f, line, col);
+                paired[i] = Zip(name, left[i], right[i], f, line, col, cost);
             }
 
             return JgsMatrix.Like(a, JgsValue.Array(paired));
@@ -5428,7 +5430,8 @@ internal static partial class JgsBuiltins
     /// the very <see cref="System.Math"/> function the delegate calls (M92).
     /// </summary>
     private static void ApplyUnary(NumericBuffer source, NumericBuffer dest,
-                                   Func<double, double> f, PackedMath.UnaryOp? vectorOp)
+                                   Func<double, double> f, PackedMath.UnaryOp? vectorOp,
+                                   PackedMath.CostClass cost = PackedMath.CostClass.Compute)
     {
         if (vectorOp is { } op)
         {
@@ -5436,7 +5439,7 @@ internal static partial class JgsBuiltins
         }
         else
         {
-            PackedMath.Map(source, dest, f);
+            PackedMath.Map(source, dest, f, cost: cost);
         }
     }
 

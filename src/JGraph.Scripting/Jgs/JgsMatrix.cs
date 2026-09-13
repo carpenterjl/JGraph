@@ -388,6 +388,19 @@ internal static class JgsMatrix
     }
 
     /// <summary>
+    /// The same for a packed buffer a builtin wrote directly, which is only ever the road when
+    /// <see cref="JgsPacking.Enabled"/> — a builtin that fills a buffer checks that first and
+    /// fills a <c>double[]</c> for <see cref="FromColumnMajorDims(double[], IReadOnlyList{int})"/>
+    /// otherwise.
+    /// </summary>
+    public static JgsValue FromColumnMajorDims(NumericBuffer buffer, IReadOnlyList<int> dims)
+    {
+        JgsValue value = JgsValue.Packed(buffer);
+        value.ReshapeDims(dims);
+        return value;
+    }
+
+    /// <summary>
     /// Packs freshly built column-major elements if they are homogeneous, then shapes them to any
     /// number of dimensions. A single element is a scalar, not a one-element array — which is what
     /// keeps <c>sum</c> of a vector a number.
