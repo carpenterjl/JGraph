@@ -16,7 +16,11 @@ namespace JGraph.Scripting.Jgs;
 /// </summary>
 internal sealed partial class Interpreter
 {
-    private const long MaxSteps = 50_000_000;
+    /// <summary>
+    /// The statements a run may execute before it is stopped as runaway. Settable so a test can
+    /// place the limit inside a compiled loop (ADR 0160) and compare the state both roads leave.
+    /// </summary>
+    internal static long MaxSteps { get; set; } = 50_000_000;
 
     // MATLAB's default RecursionLimit is 500; 512 gives ported code that depth with a little
     // headroom. Every script entry point runs on a ScriptThread 16 MB stack, so this limit trips

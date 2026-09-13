@@ -10,7 +10,7 @@ namespace JGraph.Scripting.Jgs;
 /// cases a register cannot hold (an answer that leaves the reals, an error the walk would throw)
 /// bail back to the walk mid-run rather than being reimplemented.
 /// </summary>
-internal sealed class LoopCompiler
+internal sealed partial class LoopCompiler
 {
     /// <summary>The registers a for loop's state occupies, in order: start, step, stop, count, index.</summary>
     private const int ForStateSize = 5;
@@ -22,6 +22,7 @@ internal sealed class LoopCompiler
     private readonly Dictionary<double, int> _constOf = [];
     private readonly List<Func<double, double>> _unary = [];
     private readonly List<Func<double, bool>?> _unaryGuard = [];
+    private readonly List<string> _unaryNames = [];
     private readonly Dictionary<string, int> _unaryIndex = new(StringComparer.Ordinal);
     private readonly HashSet<string> _requiredBuiltins = new(StringComparer.Ordinal);
     private readonly HashSet<string> _calledNames = new(StringComparer.Ordinal);
@@ -37,23 +38,42 @@ internal sealed class LoopCompiler
     private int _registerCount;
     private int _outerRegBase = -1;
 
-    private LoopCompiler()
+    private readonly Func<string, bool> _vectorAtEntry;
+    private readonly Func<string, bool> _variableAtEntry;
+
+    private LoopCompiler(Func<string, bool> vectorAtEntry, Func<string, bool> variableAtEntry)
     {
+        _vectorAtEntry = vectorAtEntry;
+        _variableAtEntry = variableAtEntry;
     }
 
     /// <summary>
     /// Compiles <paramref name="root"/> (a <see cref="ForStmt"/> over a range, or a
     /// <see cref="WhileStmt"/>), or answers null when anything in it is outside the whitelist.
+    /// <paramref name="vectorAtEntry"/> says which names hold a vector of the class as the loop is
+    /// entered (ADR 0160, 12d): the kinds the body's syntax cannot show — <c>v = v - 0.2</c> is
+    /// a vector statement only if <c>v</c> already is one — are seeded from it; the entry check
+    /// still decides, on every entry, whether the value really qualifies.
+    /// <paramref name="variableAtEntry"/> says which names are bound to a variable (not a
+    /// function) as the loop is entered: <c>name(i)</c> is an element read of a vector only for
+    /// those; for any other name it is a call, and the statement walks.
     /// </summary>
-    public static RegisterProgram? Compile(Stmt root)
+    public static RegisterProgram? Compile(Stmt root, Func<string, bool>? vectorAtEntry = null, Func<string, bool>? variableAtEntry = null)
     {
-        var compiler = new LoopCompiler();
+        var compiler = new LoopCompiler(vectorAtEntry ?? (static _ => false), variableAtEntry ?? (static _ => true));
         try
         {
-            return compiler.Build(root);
+            RegisterProgram? program = compiler.Build(root);
+            if (program is null)
+            {
+                JgsLoopJit.Refused("the compiler refused the loop's shape", root);
+            }
+
+            return program;
         }
-        catch (RefusedException)
+        catch (RefusedException refused)
         {
+            JgsLoopJit.Refused("the compiler refused: " + refused.Where, root);
             return null;
         }
     }
@@ -130,6 +150,12 @@ internal sealed class LoopCompiler
         // pre-loop value some read may see (they must hold plain real scalars at entry).
         Constant(0);
         Constant(1);
+        if (JgsLoopJit.Vectors)
+        {
+            SeedKinds(root); // ADR 0160 (12d): the names that are vectors as the loop is entered
+            InferKinds(root); // and the names the body's own syntax makes vectors
+        }
+
         var assigned = new HashSet<string>(StringComparer.Ordinal);
         switch (root)
         {
@@ -157,11 +183,19 @@ internal sealed class LoopCompiler
                 return null;
         }
 
+        // A loop whose every statement is walked compiles nothing: the program would be the walk
+        // plus a spill and a reload per statement, which measured as a loss on the d12 cell-store
+        // loop (ADR 0160). The walk runs it as it always has.
+        if (_walked.Count > 0 && CompiledStatementCount(root) == 0)
+        {
+            return null;
+        }
+
         // A name cannot be both a callee and a variable: the first assignment would shadow the
         // builtin mid-loop, and only the walk gets that right.
         foreach (string name in _calledNames)
         {
-            if (_slotOf.ContainsKey(name))
+            if (_slotOf.ContainsKey(name) || _vslotOf.ContainsKey(name))
             {
                 return null;
             }
@@ -173,6 +207,8 @@ internal sealed class LoopCompiler
         _frozenConstCount = _constValues.Count;
         _nextReg = _constBase + _constValues.Count;
         _registerCount = _nextReg;
+        _nextVReg = _vslots.Count;
+        _vregCount = _nextVReg;
 
         var snapshot = new List<Stmt>();
         CollectStatements(root, snapshot);
@@ -202,7 +238,12 @@ internal sealed class LoopCompiler
             bail.ContinueIp = continueAt >= 0 ? _labels[continueAt] : -1;
         }
 
-        return new RegisterProgram
+        if (JgsLoopJit.ChargeBlocks)
+        {
+            CoalesceCharges();
+        }
+
+        var program = new RegisterProgram
         {
             Ops = [.. _ops],
             Slots = [.. _slots],
@@ -216,16 +257,187 @@ internal sealed class LoopCompiler
             OuterRegBase = _outerRegBase,
             Root = root,
             Snapshot = [.. snapshot],
+            VectorSlots = [.. _vslots],
+            VectorRegisterCount = _vregCount,
+            Nodes = [.. _nodes],
+            UnaryNames = [.. _unaryNames],
         };
+
+        // ADR 0160 (12c): the program the runner may read unchecked is the program the validator
+        // proved. One it cannot prove is a defect here, and the loop walks instead.
+        if (!LoopProgramValidator.Validate(program))
+        {
+            System.Diagnostics.Debug.Fail("The loop compiler emitted a program the validator could not prove.");
+            return null;
+        }
+
+        return program;
+    }
+
+    // --- Pass 3 (ADR 0160, 12b): charge blocks --------------------------------------------------
+
+    /// <summary>
+    /// Whether control can leave (or pause at) this op other than by falling through: a jump of
+    /// any kind, an op that can bail, the iteration poll, the halt. Each is a block of its own.
+    /// </summary>
+    internal static bool IsTerminator(LoopOp code) => code is LoopOp.Jump or LoopOp.JumpIfFalse or LoopOp.JumpIfTrue
+        or LoopOp.UnlessLt or LoopOp.UnlessLe or LoopOp.UnlessGt or LoopOp.UnlessGe or LoopOp.UnlessEq or LoopOp.UnlessNe
+        or LoopOp.ForHead or LoopOp.ForNext or LoopOp.ForStep or LoopOp.IterTick or LoopOp.Halt
+        or LoopOp.PowG or LoopOp.Call1G or LoopOp.RangeCount or LoopOp.StepBlock
+        or LoopOp.VLoad or LoopOp.VStore or LoopOp.VArithVV or LoopOp.VArithVS or LoopOp.VArithSV
+        or LoopOp.VNeg or LoopOp.VCall1 or LoopOp.Walk;
+
+    /// <summary>Whether <c>Arg</c> is an op index (a jump target) rather than a bail index or nothing.</summary>
+    internal static bool ArgIsOpIndex(LoopOp code) => code is LoopOp.Jump or LoopOp.JumpIfFalse or LoopOp.JumpIfTrue
+        or LoopOp.UnlessLt or LoopOp.UnlessLe or LoopOp.UnlessGt or LoopOp.UnlessGe or LoopOp.UnlessEq or LoopOp.UnlessNe
+        or LoopOp.ForHead or LoopOp.ForNext or LoopOp.ForStep or LoopOp.StepBlock;
+
+    /// <summary>
+    /// Replaces the per-statement <see cref="LoopOp.Step"/> charges of every straight-line block
+    /// that holds two or more with one <see cref="LoopOp.StepBlock"/> at the first of them. A block
+    /// is a maximal run of ops with no terminator inside it and no jump target inside it but its
+    /// first op — so once its charge is paid every statement charged is executed, and no bail can
+    /// publish a step count from its middle. The precheck's slow road is a verbatim copy of the
+    /// block from its first Step on, appended after the halt with a jump back to the op after the
+    /// block: there the limit is reported at the same statement, with the same registers, as the
+    /// per-statement program reports it. Jump targets are only the labels some jump or bail record
+    /// refers to; a statement's resume label that no bail uses does not split a block.
+    /// </summary>
+    private void CoalesceCharges()
+    {
+        int n = _ops.Count;
+        var isTarget = new bool[n + 1];
+        foreach ((_, int label) in _patches)
+        {
+            isTarget[_labels[label]] = true;
+        }
+
+        foreach ((_, int resume, int onTrue, int onFalse, int breakAt, int continueAt) in _bailLabels)
+        {
+            foreach (int label in (ReadOnlySpan<int>)[resume, onTrue, onFalse, breakAt, continueAt])
+            {
+                if (label >= 0)
+                {
+                    isTarget[_labels[label]] = true;
+                }
+            }
+        }
+
+        var remap = new int[n + 1];
+        var fresh = new List<RegOp>(n);
+        var slow = new List<(int BlockOp, int From, int To)>();
+        int i = 0;
+        while (i < n)
+        {
+            if (IsTerminator(_ops[i].Code))
+            {
+                remap[i] = fresh.Count;
+                fresh.Add(_ops[i]);
+                i++;
+                continue;
+            }
+
+            int end = i + 1;
+            while (end < n && !isTarget[end] && !IsTerminator(_ops[end].Code))
+            {
+                end++;
+            }
+
+            int charges = 0;
+            int first = -1;
+            for (int j = i; j < end; j++)
+            {
+                if (_ops[j].Code == LoopOp.Step)
+                {
+                    charges++;
+                    if (first < 0)
+                    {
+                        first = j;
+                    }
+                }
+            }
+
+            if (charges < 2 || charges > ushort.MaxValue)
+            {
+                for (int j = i; j < end; j++)
+                {
+                    remap[j] = fresh.Count;
+                    fresh.Add(_ops[j]);
+                }
+            }
+            else
+            {
+                for (int j = i; j < first; j++)
+                {
+                    remap[j] = fresh.Count;
+                    fresh.Add(_ops[j]);
+                }
+
+                remap[first] = fresh.Count;
+                slow.Add((fresh.Count, first, end));
+                fresh.Add(new RegOp(LoopOp.StepBlock, 0, (ushort)charges, 0, -1));
+                for (int j = first + 1; j < end; j++)
+                {
+                    remap[j] = fresh.Count; // a dropped Step maps to the op that follows it; nothing jumps there
+                    if (_ops[j].Code != LoopOp.Step)
+                    {
+                        fresh.Add(_ops[j]);
+                    }
+                }
+            }
+
+            i = end;
+        }
+
+        remap[n] = fresh.Count;
+        int fastCount = fresh.Count;
+        for (int k = 0; k < fastCount; k++)
+        {
+            RegOp op = fresh[k];
+            if (ArgIsOpIndex(op.Code) && op.Code != LoopOp.StepBlock)
+            {
+                fresh[k] = new RegOp(op.Code, op.Dest, op.A, op.B, remap[op.Arg]);
+            }
+        }
+
+        foreach ((int blockOp, int from, int to) in slow)
+        {
+            RegOp block = fresh[blockOp];
+            fresh[blockOp] = new RegOp(block.Code, block.Dest, block.A, block.B, fresh.Count);
+            for (int j = from; j < to; j++)
+            {
+                fresh.Add(_ops[j]); // no jump, no target, no bail inside: the copy is verbatim
+            }
+
+            fresh.Add(new RegOp(LoopOp.Jump, 0, 0, 0, remap[to]));
+        }
+
+        foreach (LoopBail bail in _bails)
+        {
+            bail.Resume = Remapped(bail.Resume);
+            bail.OnTrue = Remapped(bail.OnTrue);
+            bail.OnFalse = Remapped(bail.OnFalse);
+            bail.BreakIp = Remapped(bail.BreakIp);
+            bail.ContinueIp = Remapped(bail.ContinueIp);
+        }
+
+        _ops.Clear();
+        _ops.AddRange(fresh);
+
+        int Remapped(int ip) => ip >= 0 ? remap[ip] : -1;
     }
 
     // --- Pass 1: scan, refuse, and mark entry-required variables --------------------------------
 
-    private sealed class RefusedException : Exception
+    private sealed class RefusedException(string where) : Exception
     {
+        /// <summary>The compiler member that refused, for the trace.</summary>
+        public string Where { get; } = where;
     }
 
-    private static Exception Refuse() => throw new RefusedException();
+    private static Exception Refuse([System.Runtime.CompilerServices.CallerMemberName] string where = "",
+                                    [System.Runtime.CompilerServices.CallerLineNumber] int line = 0) =>
+        throw new RefusedException($"{where}:{line}");
 
     private void ScanBlock(IReadOnlyList<Stmt> statements, HashSet<string> assigned)
     {
@@ -237,8 +449,73 @@ internal sealed class LoopCompiler
 
     private void ScanStatement(Stmt statement, HashSet<string> assigned)
     {
+        if (!JgsLoopJit.Vectors)
+        {
+            ScanStatementCore(statement, assigned);
+            return;
+        }
+
+        // ADR 0160 (12d): a statement the whitelist refuses is handed to the walk instead of
+        // refusing the loop — provided it cannot reach the workspace by a road the program does
+        // not see. Whatever the failed scan declared is rolled back: a walked statement's names
+        // are the walk's business, and must not become slots the entry check would insist on.
+        ScanMark mark = Mark();
+        var before = new HashSet<string>(assigned, StringComparer.Ordinal);
+        try
+        {
+            ScanStatementCore(statement, assigned);
+        }
+        catch (RefusedException)
+        {
+            Rollback(mark);
+            assigned.Clear();
+            assigned.UnionWith(before);
+            if (!CanWalk(statement))
+            {
+                throw;
+            }
+
+            // The names the walked statement assigns are assigned from here on, as far as the
+            // definite-assignment analysis is concerned; after the walk runs it, each is reloaded
+            // from the environment or, if the statement left it unbound, the walk finishes the loop.
+            _walked.Add(statement);
+            foreach (string name in AssignedNames(statement))
+            {
+                assigned.Add(name);
+            }
+        }
+    }
+
+    private void ScanStatementCore(Stmt statement, HashSet<string> assigned)
+    {
         switch (statement)
         {
+            case ExprStmt { Suppressed: true, Expression: AssignExpr { Target: VariableExpr target } assign }
+                when _vectorNames.Contains(target.Name):
+                // A vector variable takes a whole vector-valued expression, nothing else.
+                if (assign.Op != TokenType.Assign || !IsVectorExpr(assign.Value))
+                {
+                    throw Refuse();
+                }
+
+                ScanVectorExpr(assign.Value, assigned);
+                DeclareVector(target.Name);
+                assigned.Add(target.Name);
+                return;
+
+            case ExprStmt { Suppressed: true, Expression: AssignExpr { Target: CallExpr { Callee: VariableExpr indexed, Arguments.Count: 1 } paren, Op: TokenType.Assign } assign }:
+                // x(i) = s: the value first, then the index, as the walk evaluates them; a logical
+                // value would demote the array, so it walks.
+                if (!_vectorNames.Contains(indexed.Name) || IsSyntacticallyLogical(assign.Value))
+                {
+                    throw Refuse();
+                }
+
+                ScanExpr(assign.Value, assigned);
+                ScanExpr(paren.Arguments[0], assigned);
+                ReadVector(indexed.Name, assigned);
+                return;
+
             case ExprStmt { Suppressed: true, Expression: AssignExpr { Target: VariableExpr target } assign }
                 when assign.Op is TokenType.Assign or TokenType.PlusAssign or TokenType.MinusAssign
                     or TokenType.StarAssign or TokenType.SlashAssign:
@@ -283,6 +560,7 @@ internal sealed class LoopCompiler
                 DeclareLoopVariable(forStmt.Variable);
                 var body = new HashSet<string>(assigned, StringComparer.Ordinal) { forStmt.Variable };
                 ScanBlock(forStmt.Body, body);
+                RefuseIfNothingCompiles(forStmt.Body); // a loop of only walked statements walks whole
                 return; // zero iterations are possible, so nothing it assigns is definite after it
             }
 
@@ -291,6 +569,7 @@ internal sealed class LoopCompiler
                 ScanExpr(whileStmt.Condition, assigned);
                 var body = new HashSet<string>(assigned, StringComparer.Ordinal);
                 ScanBlock(whileStmt.Body, body);
+                RefuseIfNothingCompiles(whileStmt.Body);
                 return;
             }
 
@@ -314,11 +593,32 @@ internal sealed class LoopCompiler
                 return; // 0 and 1 are already pooled
 
             case VariableExpr variable:
+                if (_vectorNames.Contains(variable.Name))
+                {
+                    throw Refuse(); // a vector where a scalar is wanted
+                }
+
+                // A bare name that no compiled write precedes must be a variable as the loop is
+                // entered (or a constant the entry check folds): `t = tic` names a function, and
+                // the statement walks rather than the loop refusing at entry (ADR 0160).
+                if (JgsLoopJit.Vectors && !assigned.Contains(variable.Name) && !_variableAtEntry(variable.Name)
+                    && !JgsBuiltins.IsHotLoopBareConstant(variable.Name))
+                {
+                    throw Refuse();
+                }
+
                 ReadVariable(variable.Name, assigned);
                 return;
 
             case UnaryExpr { Op: TokenType.Minus or TokenType.Bang } unary:
                 ScanExpr(unary.Operand, assigned);
+                return;
+
+            case CallExpr { Callee: VariableExpr indexed, Arguments.Count: 1 } read
+                when _vectorNames.Contains(indexed.Name):
+                // v(i): one scalar subscript; a range, ':' or 'end' is the walk's.
+                ScanExpr(read.Arguments[0], assigned);
+                ReadVector(indexed.Name, assigned);
                 return;
 
             case BinaryExpr binary when IsCompilableBinary(binary.Op):
@@ -339,6 +639,7 @@ internal sealed class LoopCompiler
                         _unaryIndex[callee.Name] = _unary.Count;
                         _unary.Add(kernel);
                         _unaryGuard.Add(staysReal);
+                        _unaryNames.Add(callee.Name);
                     }
                 }
                 else if (call.Arguments.Count != 2 || !JgsBuiltins.IsHotLoopBinary(callee.Name))
@@ -429,9 +730,9 @@ internal sealed class LoopCompiler
         public int Id = -1;
     }
 
-    private int EmitOp(LoopOp code, int dest = 0, int a = 0, int b = 0, int arg = 0)
+    private int EmitOp(LoopOp code, int dest = 0, int a = 0, int b = 0, int arg = 0, int c = 0)
     {
-        _ops.Add(new RegOp(code, (ushort)dest, (ushort)a, (ushort)b, arg));
+        _ops.Add(new RegOp(code, (ushort)dest, (ushort)a, (ushort)b, arg, (ushort)c));
         return _ops.Count - 1;
     }
 
@@ -443,9 +744,9 @@ internal sealed class LoopCompiler
 
     private void MarkLabel(int label) => _labels[label] = _ops.Count;
 
-    private void EmitJump(LoopOp code, int label, int a = 0)
+    private void EmitJump(LoopOp code, int label, int a = 0, int b = 0, int dest = 0)
     {
-        _patches.Add((EmitOp(code, a: a, arg: -1), label));
+        _patches.Add((EmitOp(code, dest: dest, a: a, b: b, arg: -1), label));
     }
 
     private int AllocReg()
@@ -499,10 +800,30 @@ internal sealed class LoopCompiler
         EmitJump(LoopOp.ForHead, exit, a: stateBase);
         EmitOp(LoopOp.IterTick);
         EmitOp(LoopOp.ForBind, dest: _slotOf[loop.Variable], a: stateBase);
+        int body = NewLabel();
+        MarkLabel(body);
         EmitBody(loop.Body, new LoopLabels(exit, next));
         MarkLabel(next);
-        EmitJump(LoopOp.ForNext, head, a: stateBase);
+        EmitBackEdge(loop, stateBase, head, body);
         MarkLabel(exit);
+    }
+
+    /// <summary>
+    /// The back edge of a for loop: one fused <see cref="LoopOp.ForStep"/> (ADR 0160, 12b) that
+    /// advances, tests, polls, charges and binds — the head's three ops in the head's order — and
+    /// jumps to the first op of the body; the exit is the op after it, which every caller marks
+    /// there. With fusion off, the M98 <see cref="LoopOp.ForNext"/> to the head.
+    /// </summary>
+    private void EmitBackEdge(ForStmt loop, int stateBase, int head, int body)
+    {
+        if (JgsLoopJit.Fusion)
+        {
+            EmitJump(LoopOp.ForStep, body, a: stateBase, dest: _slotOf[loop.Variable]);
+        }
+        else
+        {
+            EmitJump(LoopOp.ForNext, head, a: stateBase);
+        }
     }
 
     private void EmitWhileLoop(WhileStmt loop)
@@ -544,9 +865,58 @@ internal sealed class LoopCompiler
     private void EmitStatement(Stmt statement, LoopLabels labels)
     {
         int scratch = _nextReg;
+        int vscratch = _nextVReg;
         EmitOp(LoopOp.Step);
+        if (_walked.Contains(statement))
+        {
+            EmitWalk(statement, labels);
+            _nextReg = scratch;
+            _nextVReg = vscratch;
+            return;
+        }
+
         switch (statement)
         {
+            case ExprStmt { Expression: AssignExpr { Target: VariableExpr target } assign }
+                when _vslotOf.TryGetValue(target.Name, out int vslot):
+            {
+                var scope = new BailScope
+                {
+                    Kind = LoopBailKind.Statement,
+                    Statement = statement,
+                    Labels = labels,
+                };
+                int value = EmitVectorExpr(assign.Value, scope);
+                EmitOp(LoopOp.VBind, dest: vslot, a: value);
+                int resume = NewLabel();
+                MarkLabel(resume);
+                FinishStatementBail(scope, resume, targetSlot: -1, targetVector: vslot);
+                break;
+            }
+
+            case ExprStmt { Expression: AssignExpr { Target: CallExpr { Callee: VariableExpr indexed } paren } assign }:
+            {
+                var scope = new BailScope
+                {
+                    Kind = LoopBailKind.Statement,
+                    Statement = statement,
+                    Labels = labels,
+                };
+                int vslot = _vslotOf[indexed.Name];
+                (int value, bool isLogical) = EmitExpr(assign.Value, scope);
+                if (isLogical)
+                {
+                    throw Refuse(); // unreachable: the scan walks a logical store
+                }
+
+                (int index, _) = EmitExpr(paren.Arguments[0], scope);
+                EmitOp(LoopOp.VStore, dest: vslot, a: index, b: value, arg: EnsureBail(scope));
+                int resume = NewLabel();
+                MarkLabel(resume);
+                FinishStatementBail(scope, resume, targetSlot: -1, targetVector: vslot);
+                break;
+            }
+
             case ExprStmt { Expression: AssignExpr { Target: VariableExpr target } assign }:
             {
                 var scope = new BailScope
@@ -640,6 +1010,7 @@ internal sealed class LoopCompiler
         }
 
         _nextReg = scratch;
+        _nextVReg = vscratch;
     }
 
     private void EmitNested(IReadOnlyList<Stmt> block, LoopLabels labels, ForStmt? forStmt, WhileStmt? whileStmt, int regBase)
@@ -662,11 +1033,13 @@ internal sealed class LoopCompiler
                 EmitJump(LoopOp.ForHead, exit, a: stateBase);
                 EmitOp(LoopOp.IterTick);
                 EmitOp(LoopOp.ForBind, dest: _slotOf[forStmt.Variable], a: stateBase);
+                int body = NewLabel();
+                MarkLabel(body);
                 _frames.Add(new LoopDeoptFrame { Block = forStmt.Body, Index = 0, For = forStmt, RegBase = stateBase });
                 EmitBody(forStmt.Body, new LoopLabels(exit, next));
                 _frames.RemoveAt(_frames.Count - 1);
                 MarkLabel(next);
-                EmitJump(LoopOp.ForNext, head, a: stateBase);
+                EmitBackEdge(forStmt, stateBase, head, body);
                 MarkLabel(exit);
                 break;
             }
@@ -734,8 +1107,22 @@ internal sealed class LoopCompiler
             OnTrueLabel = onTrue,
             OnFalseLabel = onFalse,
         };
-        (int value, _) = EmitExpr(condition, scope);
-        EmitJump(LoopOp.JumpIfFalse, onFalse, a: value);
+        if (JgsLoopJit.Fusion && condition is BinaryExpr compare && FusedCompare(compare.Op) is { } fused)
+        {
+            // ADR 0160 (12b): the comparison and the branch are one op. The operands are emitted in
+            // the same order and the false side jumps, exactly as Lt + JumpIfFalse did; the
+            // comparison's value is never materialised, which nothing could observe — a condition
+            // binds no variable and a bail re-evaluates the whole expression by the walk.
+            (int left, _) = EmitExpr(compare.Left, scope);
+            (int right, _) = EmitExpr(compare.Right, scope);
+            EmitJump(fused, onFalse, a: left, b: right);
+        }
+        else
+        {
+            (int value, _) = EmitExpr(condition, scope);
+            EmitJump(LoopOp.JumpIfFalse, onFalse, a: value);
+        }
+
         if (scope.Id >= 0)
         {
             _bailLabels.Add((_bails[scope.Id], -1, onTrue, onFalse, -1, -1));
@@ -744,7 +1131,22 @@ internal sealed class LoopCompiler
         _nextReg = scratch;
     }
 
-    private void FinishStatementBail(BailScope scope, int resumeLabel, int targetSlot)
+    /// <summary>The fused compare-and-branch for a comparison operator, or null for any other operator.</summary>
+    private static LoopOp? FusedCompare(TokenType op) => op switch
+    {
+        TokenType.Less => LoopOp.UnlessLt,
+        TokenType.LessEqual => LoopOp.UnlessLe,
+        TokenType.Greater => LoopOp.UnlessGt,
+        TokenType.GreaterEqual => LoopOp.UnlessGe,
+        TokenType.EqualEqual => LoopOp.UnlessEq,
+        TokenType.BangEqual => LoopOp.UnlessNe,
+        _ => null,
+    };
+
+    private void FinishStatementBail(BailScope scope, int resumeLabel, int targetSlot, int targetVector = -1) =>
+        FinishStatementBail(scope, resumeLabel, targetSlot >= 0 ? [targetSlot] : [], targetVector >= 0 ? [targetVector] : [], walked: false);
+
+    private void FinishStatementBail(BailScope scope, int resumeLabel, int[] touched, int[] touchedVectors, bool walked)
     {
         if (scope.Id < 0)
         {
@@ -758,8 +1160,11 @@ internal sealed class LoopCompiler
             Statement = bail.Statement,
             Expression = bail.Expression,
             What = bail.What,
-            DestReg = targetSlot,
+            DestReg = touched.Length == 1 && !walked ? touched[0] : -1,
             Path = bail.Path,
+            Touched = touched,
+            TouchedVectors = touchedVectors,
+            IsWalk = walked,
         };
         _bailLabels.Add((_bails[scope.Id], resumeLabel, -1, -1, scope.Labels.BreakLabel, scope.Labels.ContinueLabel));
     }
@@ -827,6 +1232,15 @@ internal sealed class LoopCompiler
 
             case LogicalExpr logical:
                 return EmitLogical(logical, bail);
+
+            case CallExpr { Callee: VariableExpr indexed, Arguments.Count: 1 } read
+                when _vslotOf.TryGetValue(indexed.Name, out int vslot):
+            {
+                (int index, _) = EmitExpr(read.Arguments[0], bail);
+                int dest = AllocReg();
+                EmitOp(LoopOp.VLoad, dest: dest, a: vslot, b: index, arg: EnsureBail(bail));
+                return (dest, false);
+            }
 
             case CallExpr { Callee: VariableExpr callee } call:
                 return EmitCall(callee.Name, call, bail);

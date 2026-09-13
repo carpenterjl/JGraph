@@ -21,8 +21,66 @@ internal static class JgsLoopJit
     /// </summary>
     internal static long CompiledRuns;
 
-    private static bool? ReadEnvironmentOverride() =>
-        Environment.GetEnvironmentVariable("JGRAPH_LOOP_JIT") switch
+    /// <summary>
+    /// How many times a compiled loop handed a statement, a condition or a bound back to the tree
+    /// walk in this process — the tests' way of asserting that a shape guard really bailed
+    /// (ADR 0160, 12d) rather than the fast path silently computing something else.
+    /// </summary>
+    internal static long Bails;
+
+    /// <summary>
+    /// ADR 0160 (12b): a comparison that decides a branch is one op (<c>UnlessLt</c> and its
+    /// siblings) and a for loop's back edge is one op (<c>ForStep</c>). Off, every comparison is a
+    /// value op and a <c>JumpIfFalse</c>, and the back edge is <c>ForNext</c> to the head.
+    /// <c>JGRAPH_LOOP_FUSE=1|0</c> forces it; the measurement lever, and a parity lever.
+    /// </summary>
+    public static bool Fusion { get; set; } = ReadSwitch("JGRAPH_LOOP_FUSE") ?? true;
+
+    /// <summary>
+    /// ADR 0160 (12b): the statements of a straight-line block are charged against the step limit
+    /// once, at the block's start, after a precheck that sends a block the limit would interrupt
+    /// down a per-statement copy of itself. Off, every statement pays its own <c>Step</c>.
+    /// <c>JGRAPH_LOOP_BLOCKS=1|0</c> forces it.
+    /// </summary>
+    public static bool ChargeBlocks { get; set; } = ReadSwitch("JGRAPH_LOOP_BLOCKS") ?? true;
+
+    /// <summary>
+    /// ADR 0160 (12c): the runner reads its register file, op list and kernel tables without the
+    /// runtime's bounds checks, on the strength of the validator's proof over
+    /// every operand of every op. Off, the checked accessor runs. <c>JGRAPH_LOOP_UNCHECKED=1|0</c>
+    /// forces it.
+    /// </summary>
+    public static bool Unchecked { get; set; } = ReadSwitch("JGRAPH_LOOP_UNCHECKED") ?? true;
+
+    /// <summary>
+    /// ADR 0160 (12d): the guarded vector class — a packed real double row or column read by a
+    /// scalar index, written by a scalar index, combined elementwise — and the walked statement,
+    /// which hands one statement outside the whitelist to the tree walk each time instead of
+    /// refusing the loop. Off, both refuse as they did before the item.
+    /// <c>JGRAPH_LOOP_VECTORS=1|0</c> forces it.
+    /// </summary>
+    public static bool Vectors { get; set; } = ReadSwitch("JGRAPH_LOOP_VECTORS") ?? true;
+
+    /// <summary>
+    /// <c>JGRAPH_LOOP_TRACE=1</c>: every refusal — the compiler's, with where in the compiler it
+    /// refused, and the entry check's, with the variable or builtin that failed it — is written
+    /// to standard error, so a loop that walks when it was expected to compile explains itself.
+    /// </summary>
+    public static bool Trace { get; set; } = ReadSwitch("JGRAPH_LOOP_TRACE") ?? false;
+
+    /// <summary>Writes one refusal line when <see cref="Trace"/> is on.</summary>
+    internal static void Refused(string what, Node at)
+    {
+        if (Trace)
+        {
+            Console.Error.WriteLine($"loop-jit: ({at.Line},{at.Column}) {what}");
+        }
+    }
+
+    private static bool? ReadEnvironmentOverride() => ReadSwitch("JGRAPH_LOOP_JIT");
+
+    private static bool? ReadSwitch(string variable) =>
+        Environment.GetEnvironmentVariable(variable) switch
         {
             "1" or "true" => true,
             "0" or "false" => false,
@@ -130,10 +188,94 @@ internal enum LoopOp : byte
 
     /// <summary>Back edge: regs[A+4] += 1, jump to <c>Arg</c> (the head).</summary>
     ForNext,
+
+    /// <summary>
+    /// ADR 0160 (12b): the charge of a straight-line block — <c>A</c> statements at once. When
+    /// <c>steps + A</c> would pass the limit, jump to <c>Arg</c> instead: a copy of the block that
+    /// charges statement by statement, so the limit is reported at the same statement with the same
+    /// registers as before. Otherwise charge and fall through.
+    /// </summary>
+    StepBlock,
+
+    /// <summary>
+    /// ADR 0160 (12b): the fused compare-and-branch. Jump to <c>Arg</c> unless
+    /// <c>regs[A] &lt; regs[B]</c> — the false side jumps, as <see cref="JumpIfFalse"/> after
+    /// <see cref="Lt"/> did, so a NaN operand takes the jump.
+    /// </summary>
+    UnlessLt,
+    UnlessLe,
+    UnlessGt,
+    UnlessGe,
+    UnlessEq,
+    UnlessNe,
+
+    /// <summary>
+    /// ADR 0160 (12b): the fused for back edge. <c>regs[A+4] += 1</c>; when the loop is done, fall
+    /// through to the exit (the very next op); otherwise the head's own three ops in the head's own
+    /// order — the cancellation poll, the iteration's step, the bind of the loop variable into
+    /// <c>Dest</c> — and jump to <c>Arg</c>, the first op of the body.
+    /// </summary>
+    ForStep,
+
+    /// <summary>
+    /// ADR 0160 (12d): <c>v(i)</c> — regs[Dest] = element regs[B] of vector register A, the index
+    /// validated as <c>PackedOps.ToIndex</c> validates it (whole, finite, inside the extent under
+    /// base 1); anything else bails <c>Arg</c> and the walk throws its own words.
+    /// </summary>
+    VLoad,
+
+    /// <summary>
+    /// ADR 0160 (12d): <c>x(i) = s</c> — element regs[A] of vector slot Dest becomes regs[B], in
+    /// place, as the walk's own element write does; an index outside the extent (the walk grows
+    /// the array), a fractional one (the walk throws), or a logical value in slot B (the walk
+    /// demotes the array to boxed) bails <c>Arg</c>.
+    /// </summary>
+    VStore,
+
+    /// <summary>
+    /// ADR 0160 (12d): the binary operator of node C applied by the walk's own
+    /// <c>ApplyBinary</c> to vector register A and vector register B, the answer a fresh vector in
+    /// vector register Dest. An answer that is not a real double row or column (the operands'
+    /// shapes expanded, the answer went complex) bails <c>Arg</c>.
+    /// </summary>
+    VArithVV,
+
+    /// <summary>As <see cref="VArithVV"/> with a scalar on the right: vector A, regs[B].</summary>
+    VArithVS,
+
+    /// <summary>As <see cref="VArithVV"/> with a scalar on the left: regs[A], vector B.</summary>
+    VArithSV,
+
+    /// <summary>ADR 0160 (12d): unary minus of node C on vector register A into vector register Dest, by the walk's own <c>ApplyUnary</c>.</summary>
+    VNeg,
+
+    /// <summary>
+    /// ADR 0160 (12d): the builtin of kernel index B (the very function the name resolves to at
+    /// entry) called on vector register A at node C, its answer into vector register Dest; an
+    /// answer that is not a real double row or column bails <c>Arg</c>.
+    /// </summary>
+    VCall1,
+
+    /// <summary>
+    /// ADR 0160 (12d): whole-variable assignment — vector slot Dest takes vector register A: a
+    /// fresh temporary is adopted as the walk adopts an owned answer, and another slot is copied
+    /// as <c>CopyForBinding</c> copies it.
+    /// </summary>
+    VBind,
+
+    /// <summary>
+    /// ADR 0160 (12d): a statement outside the whitelist, handed to the walk every time — bail
+    /// <c>Arg</c> unconditionally, then resume.
+    /// </summary>
+    Walk,
 }
 
-/// <summary>One operation of a compiled loop. <c>Arg</c> is a jump target or a bail index by opcode.</summary>
-internal readonly struct RegOp(LoopOp code, ushort dest, ushort a, ushort b, int arg)
+/// <summary>
+/// One operation of a compiled loop. <c>Arg</c> is a jump target or a bail index by opcode;
+/// <c>C</c> is the index of the AST node an op evaluates through the walk's own functions
+/// (ADR 0160, 12d), and zero for every other op.
+/// </summary>
+internal readonly struct RegOp(LoopOp code, ushort dest, ushort a, ushort b, int arg, ushort c = 0)
 {
     public readonly LoopOp Code = code;
 
@@ -142,6 +284,8 @@ internal readonly struct RegOp(LoopOp code, ushort dest, ushort a, ushort b, int
     public readonly ushort A = a;
 
     public readonly ushort B = b;
+
+    public readonly ushort C = c;
 
     public readonly int Arg = arg;
 }
@@ -232,6 +376,24 @@ internal sealed class LoopBail
 
     /// <summary>The nesting from the root loop down to the bailed statement, outermost first.</summary>
     public LoopDeoptFrame[] Path { get; init; } = [];
+
+    /// <summary>
+    /// The slots the walked statement may have rebound — an assignment's target, a walked
+    /// statement's every assigned name. After the walk runs it, their registers are stale whatever
+    /// the program had done with them before, so the reload treats them as written: a value no
+    /// register can hold finishes the loop by the walk rather than reading the old register.
+    /// </summary>
+    public int[] Touched { get; init; } = [];
+
+    /// <summary>The vector slots the walked statement may have rebound (ADR 0160, 12d); see <see cref="Touched"/>.</summary>
+    public int[] TouchedVectors { get; init; } = [];
+
+    /// <summary>
+    /// Whether this is a walked statement (ADR 0160, 12d): one the program never compiled, so
+    /// after the walk runs it every builtin the program bound is checked to still resolve — a
+    /// walked statement may have rebound a name in ways a compiled one cannot.
+    /// </summary>
+    public bool IsWalk { get; init; }
 }
 
 /// <summary>
@@ -260,6 +422,12 @@ internal sealed class RegisterProgram
     public required Func<double, bool>?[] UnaryGuard { get; init; }
 
     /// <summary>
+    /// The builtin name beside each unary kernel (ADR 0160, 12d): a vector op calls the builtin
+    /// itself, resolved at entry, rather than the scalar core.
+    /// </summary>
+    public string[] UnaryNames { get; init; } = [];
+
+    /// <summary>
     /// Every builtin name the program bound a kernel for. At each entry the name must still resolve
     /// to the builtin of that name — a shadowed or rebound name refuses the fast path, and the walk
     /// does whatever the script arranged.
@@ -283,4 +451,16 @@ internal sealed class RegisterProgram
     /// in place, so each entry re-walks the tree and compares references; any difference recompiles.
     /// </summary>
     public required Stmt[] Snapshot { get; init; }
+
+    /// <summary>
+    /// ADR 0160 (12d): the vector variables, slot by slot; vector register i is vector slot i for
+    /// i below the slot count, and a per-statement temporary above it.
+    /// </summary>
+    public LoopSlot[] VectorSlots { get; init; } = [];
+
+    /// <summary>The vector register file's size: the vector slots and the temporaries after them.</summary>
+    public int VectorRegisterCount { get; init; }
+
+    /// <summary>The AST nodes the vector ops evaluate through, by <see cref="RegOp.C"/>.</summary>
+    public Node[] Nodes { get; init; } = [];
 }

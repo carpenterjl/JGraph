@@ -809,6 +809,15 @@ internal sealed class JgsValue
     public int LinearIndex(int row, int col) => row + (col * _rows);
 
     /// <summary>Element <paramref name="index"/> of an array value, packed or boxed (0-based).</summary>
+    /// <summary>
+    /// Reads logical element <paramref name="index"/> of a packed real buffer as the raw double —
+    /// what <see cref="ElementAt"/> reads before it wraps it, for a reader (the compiled loop's
+    /// <c>v(i)</c>, ADR 0160) that keeps the number unboxed. Capacity-aware like
+    /// <see cref="SetPackedNumber"/>. Valid only when <see cref="IsPacked"/>.
+    /// </summary>
+    internal double GetPackedNumber(int index) =>
+        ((NumericBuffer)_reference!).AsSpan()[StorageSlot(index)];
+
     public JgsValue ElementAt(int index)
     {
         switch (_reference)

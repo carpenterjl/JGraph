@@ -364,14 +364,15 @@ public class MatlabLoopJitM98Tests : IDisposable
         fprintf('%d|%s\n', x, class(x));
         """, expectCompiled: false);
 
+    /// <summary>Since ADR 0160 (12d) an indexed write into a double vector compiles, and the echoing statement below walks inside its loop; the bytes are the walk's either way.</summary>
     [Fact]
-    public void IndexedWritesStayOnTheWalk() => AssertParity("""
+    public void IndexedWritesCompileSinceTheVectorClass() => AssertParity("""
         xs = zeros(1, 5);
         for k = 1:5
             xs(k) = k * k;
         end
         fprintf('%.17g\n', sum(xs));
-        """, expectCompiled: false);
+        """, expectCompiled: JgsLoopJit.Vectors && JgsPacking.Enabled);
 
     [Fact]
     public void RootRangeBoundsEvaluateExactlyOnce() => AssertParity("""
@@ -445,11 +446,12 @@ public class MatlabLoopJitM98Tests : IDisposable
         fprintf('%.17g|%.17g\n', total, pi);
         """, expectCompiled: true);
 
+    /// <summary>Since ADR 0160 (12d) an indexed write into a double vector compiles; a loop whose only statement is the echoing (walked) assignment still refuses, since it would compile nothing.</summary>
     [Fact]
     public void AnUnsuppressedAssignmentEchoesFromTheWalk() => AssertParity("""
         for k = 1:3
             v = k * 2
         end
         fprintf('%.17g\n', v);
-        """, expectCompiled: false);
+        """, expectCompiled: false); // its only statement walks, so the loop refuses (ADR 0160)
 }

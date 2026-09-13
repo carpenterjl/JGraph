@@ -1,0 +1,39 @@
+CHK|bench_acc|149996.78174094469 |exact
+CHK|bench_v|1.0200003338726071 |exact
+CHK|bench_k|200000 |exact
+CHK|flow|3 6 6.0090029999999999 3 |exact
+CHK|nested|6377.8571428571431 2096.1491201511926 40 40 50 |exact
+CHK|compares|55432 2014808 |exact
+CHK|kernels|2963.2345979707507 |exact
+CHK|elements_row|3ae6d57dcae54354b508083bb84517380099742b6490fa632442038a40d22843|bits
+CHK|elements_col|c526f432b142eb1bc71c5b23113598d7ab84aa55a1414b9ddc18ee4865e03d00|bits
+CHK|elements_sum|NaN |exact
+CHK|elementwise_v|b4e0ad8c0ac17ec9e19ee9ad23a87589c6e94a0eb2895dd535212c629ff48a86|bits
+CHK|elementwise_u|383c587b55deb58063f9bb6a3e99d4eb072d4e67b674ecb67c0a02e60c8d0ce8|bits
+CHK|elementwise_r|7ab8dde0c48ff71f6340c689d680bc88e703cd33e6dbbee0c2d581b9f4f8a540|bits
+CHK|elementwise_sum|NaN |exact
+CHK|orientation_col|476306c14a569c4ec639a020998ebe9911cb91ca9db77721dbafa4b04c6791b6|bits
+CHK|orientation_row|7d188a32e372ebc6107fa71dacbd6c4d58b649445ef485b99d75251fd52ee025|bits
+CHK|leaves_reals|7.9867922243837732 |rel=1e-14
+CHK|leaves_reals_class|0 0 |exact
+CHK|expanded|3 3 3.1230589874905528 |exact
+CHK|inner_product|6.681159560070677 |rel=1e-14
+CHK|grown|28d8de8d87e30434c9124c58cd29e8c952a32b86ba609dd0cefe36267058bb28|bits
+CHK|logical_store|5 4 |exact
+CHK|logical_store_class|double double|div=ADR0160
+CHK|refused_zero_position|1|exact
+CHK|refused_fraction_position|1|exact
+CHK|refused_past_end_read|1|exact
+CHK|refused_nested_zero_step|0|div=ADR0160
+CHK|walked_1|0.5|exact
+CHK|walked_2|2.5|exact
+CHK|walked_3|5|exact
+CHK|walked_4|8|exact
+CHK|walked_5|11.5|exact
+CHK|walked_cell|1,4,9,16,25|exact
+CHK|walked_struct|27.5 12.5 |exact
+CHK|early_return|-1 10 |exact
+CHK|charmatrix|200 40 620240 3100 |exact
+CHK|empty_range_var|1|exact
+CHK|empty_range_new_var|1|div=ADR0160
+CHK|break_var|4 |exact
