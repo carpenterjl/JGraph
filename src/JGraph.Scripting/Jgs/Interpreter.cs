@@ -2091,10 +2091,32 @@ internal sealed partial class Interpreter
     /// </summary>
     private JgsValue EvaluateRange(RangeExpr range, JgsEnvironment env)
     {
-        JgsNumericClass carried = JgsNumericClass.Double;
         JgsValue startValue = Evaluate(range.Start, env);
         JgsValue stepValue = range.Step is null ? JgsValue.Number(1) : Evaluate(range.Step, env);
         JgsValue stopValue = Evaluate(range.Stop, env);
+        return RangeFromValues(range, startValue, stepValue, stopValue);
+    }
+
+    /// <summary>
+    /// The colon's count: how many elements <c>start:step:stop</c> holds, or -1 when it is empty.
+    /// One function so an affine index read (ADR 0159) counts what the materialised range would have.
+    /// </summary>
+    internal static long RangeCountOf(double start, double step, double stop)
+    {
+        double ratio = (stop - start) / step;
+        if (double.IsNaN(ratio) || ratio < 0)
+        {
+            return -1;
+        }
+
+        const double MachineEpsilon = 2.220446049250313e-16;
+        return (long)Math.Floor(ratio * (1 + (4 * MachineEpsilon))) + 1;
+    }
+
+    /// <summary>The range from its three bounds already evaluated (in the order Start, Step, Stop).</summary>
+    private JgsValue RangeFromValues(RangeExpr range, JgsValue startValue, JgsValue stepValue, JgsValue stopValue)
+    {
+        JgsNumericClass carried = JgsNumericClass.Double;
         JgsTimeTag? time = startValue.TimeTag ?? stopValue.TimeTag ?? stepValue.TimeTag;
         double start = RangeBoundValue(startValue, range.Start, "start", ref carried);
         double step = RangeBoundValue(stepValue, range.Step ?? range.Start, "step", ref carried);
@@ -2112,14 +2134,11 @@ internal sealed partial class Interpreter
             throw new JgsRuntimeException(range.Line, range.Column, "A range step must not be zero.");
         }
 
-        double ratio = (stop - start) / step;
-        if (double.IsNaN(ratio) || ratio < 0)
+        long count = RangeCountOf(start, step, stop);
+        if (count < 0)
         {
             return Finish(JgsValue.Array(System.Array.Empty<JgsValue>()));
         }
-
-        const double MachineEpsilon = 2.220446049250313e-16;
-        long count = (long)Math.Floor(ratio * (1 + (4 * MachineEpsilon))) + 1;
 
         // Packed ranges are 8 bytes/element and may spill to disk, so they get a far higher
         // ceiling (2 GB) than boxed ranges (whose ~48 bytes/element would exhaust the heap first).
@@ -4984,6 +5003,17 @@ internal sealed partial class Interpreter
         }
 
         int length = target.Type == JgsType.String ? target.AsString.Length : target.ArrayLength;
+
+        // x(a:s:b) on a packed array is a copy when the run can be proved (ADR 0159); the proof
+        // failing hands the same evaluated bounds to the general gather below.
+        if (JgsAffineIndex.Enabled && target.IsPacked && subscripts[0] is RangeExpr affineRange)
+        {
+            SubscriptSlot slot = EvaluateSlot(affineRange, [length], 0, env);
+            return slot.IsAffine
+                ? AffineGather(target, slot.Selector)
+                : GatherOrIndex(target, slot.Index!, at.Line, at.Column);
+        }
+
         JgsValue? index = EvaluateIndexArgument(subscripts[0], length, env);
         if (index is null)
         {
@@ -5021,13 +5051,25 @@ internal sealed partial class Interpreter
         int cols = JgsMatrix.ColCount(target);
         int[] extents = [rows, cols];
 
-        JgsValue? rowIndex = EvaluateIndexArgument(subscripts[0], extents, 0, env);
-        JgsValue? colIndex = EvaluateIndexArgument(subscripts[1], extents, 1, env);
+        SubscriptSlot rowSlot = EvaluateSlot(subscripts[0], extents, 0, env);
+        SubscriptSlot colSlot = EvaluateSlot(subscripts[1], extents, 1, env);
 
-        bool rowScalar = rowIndex is { Type: not JgsType.Array };
-        bool colScalar = colIndex is { Type: not JgsType.Array };
-        int[] rowPicks = SubscriptPicks(rowIndex, rows, "row", at);
-        int[] colPicks = SubscriptPicks(colIndex, cols, "column", at);
+        // M(k, :), M(:, a:b), M(a:b, c:d) on a packed matrix: a block copy per column when both
+        // slots are proved affine runs (ADR 0159); one element is the element, as below.
+        if (JgsAffineIndex.Enabled && target.IsPacked && rowSlot.IsAffine && colSlot.IsAffine)
+        {
+            if (rowSlot.Selector.Count == 1 && colSlot.Selector.Count == 1)
+            {
+                return JgsMatrix.At(target, rowSlot.Selector.Start, colSlot.Selector.Start);
+            }
+
+            return AffineGather(target, rows, rowSlot.Selector, colSlot.Selector);
+        }
+
+        bool rowScalar = rowSlot.Scalar;
+        bool colScalar = colSlot.Scalar;
+        int[] rowPicks = rowSlot.IsAffine ? rowSlot.Selector.Picks() : SubscriptPicks(rowSlot.Index, rows, "row", at);
+        int[] colPicks = colSlot.IsAffine ? colSlot.Selector.Picks() : SubscriptPicks(colSlot.Index, cols, "column", at);
 
         if (rowScalar && colScalar)
         {
@@ -5490,7 +5532,11 @@ internal sealed partial class Interpreter
     /// Otherwise the result takes the index's shape — except for a logical mask, which always
     /// gathers into a column, since the elements it picked out are scattered rather than laid out.
     /// </summary>
-    private static JgsValue OrientGather(JgsValue result, JgsValue target, JgsValue index)
+    private static JgsValue OrientGather(JgsValue result, JgsValue target, JgsValue index) =>
+        OrientGather(result, target, index.Rows, index.Cols, IsLogicalIndex(index));
+
+    /// <summary>The same rule from the index's shape alone, for a read that never materialised its index (ADR 0159).</summary>
+    private static JgsValue OrientGather(JgsValue result, JgsValue target, int indexRows, int indexCols, bool logicalIndex)
     {
         // == 1 rather than <= 1: an empty gather obeys the same rule as any other, which is what
         // makes v([]) a 0-by-0 (the index's shape) where v(zeros(1, 0)) is a 1-by-0 (the vector's
@@ -5501,7 +5547,7 @@ internal sealed partial class Interpreter
         }
 
         bool targetIsVector = target.Rows == 1 || target.Cols == 1;
-        bool indexIsVector = index.Rows == 1 || index.Cols == 1;
+        bool indexIsVector = indexRows == 1 || indexCols == 1;
 
         if (targetIsVector && indexIsVector)
         {
@@ -5513,15 +5559,15 @@ internal sealed partial class Interpreter
             return result;
         }
 
-        if (!indexIsVector && !IsLogicalIndex(index))
+        if (!indexIsVector && !logicalIndex)
         {
             // A numeric index matrix picks in its own column-major order, which is the order the
             // gather already produced, so the shape can simply be applied.
-            result.Reshape(index.Rows, index.Cols);
+            result.Reshape(indexRows, indexCols);
             return result;
         }
 
-        if (index.Cols == 1 || !indexIsVector)
+        if (indexCols == 1 || !indexIsVector)
         {
             result.Reshape(result.ArrayLength, 1);
         }

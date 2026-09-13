@@ -142,34 +142,54 @@ public sealed class RungeKuttaScheme
     {
         double s = (at - t) / h;
         int n = y.Length;
+        int count = InterpolationStages.Length;
+
+        // The weights depend on s alone, so they are formed once per call rather than once per
+        // component (ADR 0159): the same products in the same order, and the per-component sum
+        // below still adds weight·stage in stage order, so the value is the bit it always was. The
+        // gradient's weights are only formed when a slope is asked for.
+        Span<double> weights = stackalloc double[count];
+        Span<double> gradients = slope is null ? default : stackalloc double[count];
+        for (int j = 0; j < count; j++)
+        {
+            double[] row = Dense[j];
+            double power = s;   // s^(p+1), the weight's own term
+            double lower = 1;   // s^p, one power down, which is what the derivative takes
+            double weight = 0;
+            double gradient = 0;
+            for (int p = 0; p < row.Length; p++)
+            {
+                weight += row[p] * power;
+                gradient += row[p] * (p + 1) * lower;
+                lower = power;
+                power *= s;
+            }
+
+            weights[j] = weight;
+            if (slope is not null)
+            {
+                gradients[j] = gradient;
+            }
+        }
+
         var value = new double[n];
         for (int i = 0; i < n; i++)
         {
             double sum = 0;
-            double rate = 0;
-            for (int j = 0; j < InterpolationStages.Length; j++)
+            for (int j = 0; j < count; j++)
             {
-                double[] row = Dense[j];
-                double stage = stages[j][i];
-                double power = s;   // s^(p+1), the weight's own term
-                double lower = 1;   // s^p, one power down, which is what the derivative takes
-                double weight = 0;
-                double gradient = 0;
-                for (int p = 0; p < row.Length; p++)
-                {
-                    weight += row[p] * power;
-                    gradient += row[p] * (p + 1) * lower;
-                    lower = power;
-                    power *= s;
-                }
-
-                sum += weight * stage;
-                rate += gradient * stage;
+                sum += weights[j] * stages[j][i];
             }
 
             value[i] = y[i] + (h * sum);
             if (slope is not null)
             {
+                double rate = 0;
+                for (int j = 0; j < count; j++)
+                {
+                    rate += gradients[j] * stages[j][i];
+                }
+
                 slope[i] = rate;
             }
         }

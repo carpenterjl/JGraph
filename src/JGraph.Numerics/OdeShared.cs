@@ -362,6 +362,8 @@ internal sealed class OdeOutput
     private readonly OdeResult _result;
     private readonly int _refine;
     private readonly int[]? _selection;
+    private readonly List<double> _times = new();        // one accepted step's reported times, reused
+    private readonly List<double[]> _states = new();     // and their states (ADR 0159)
     private int _next = 1;   // the next named time still to be reported
 
     public OdeOutput(OdeSetup setup, OdeOptions options, int refine, OdeResult result)
@@ -398,8 +400,12 @@ internal sealed class OdeOutput
             return false;
         }
 
-        var times = new List<double>();
-        var states = new List<double[]>();
+        // Nothing below keeps either list: the result clones each state, the output function
+        // gets a fresh array of times and selected copies of the states.
+        List<double> times = _times;
+        List<double[]> states = _states;
+        times.Clear();
+        states.Clear();
         double[] tspan = _setup.Tspan;
         if (tspan.Length > 2)
         {

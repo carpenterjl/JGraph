@@ -1,0 +1,77 @@
+CHK|full|671fb24d4bfe98cf8ee509b777e53c5c86a70c503419814e635c35f47b53dd1f|bits
+CHK|prefix|50ab582a97a5a1b936a8757ff650137053dded660953f9daeae4cf8eba3f23cc|bits
+CHK|inner|f763a3cebd66532d891123d78f9631559932703e1f5b6dfcb8ca40fa04127f61|bits
+CHK|step2|544a2cf046a82eab0016a125c54e6af75233c809264523a2fcc62db68839b2f2|bits
+CHK|step7|4aae39078ca68e3f6f3c952802efcbcc879ae8f164321cde6f295528a97927df|bits
+CHK|desc|5e722238d385d951aec49bbb0b3c4f706810a26f907e58ddd3d95b4259e3ec75|bits
+CHK|desc3|b9629b770212be462ec3cf065fe97e0d19c89079842e3dbe022fe10e6eb97a1c|bits
+CHK|one|b16c3873d925b4fbe6094eb750d02136b6c615fdf17455ec9528a4bd3ecc3b9a|bits
+CHK|signed_zero|b8e7acfe264037c4f8f99212177c42ffc6d30851644d40f256239aa014236545|bits
+CHK|nan_payload|2d15f2046a2682d51bfc3c921158a9cdac0464220eee99739eadf8a54abf93b0|bits
+CHK|col_read|b335176f5fb6273ea8fe35be99ef73936a3401ff0fd77045b6ddfe4dea4c985a|bits
+CHK|matrix_linear|50054b2bc392e08ee03504e4b617d12d7d86415faefa38a502c6b66fce43af49|bits
+CHK|row|91810d18fe29a3a1b6534337c3cc599d0cf69790c9a7489867744f47c62a3258|bits
+CHK|col|47a3a2c3672c9208faa3031b5d9be91fc107d92cf3967d59f7c29b25caea2089|bits
+CHK|colblock|6563d1bbd26d80040d8aae4dbf6333e5be3c7341a1ff078bce35f7a42518ef40|bits
+CHK|rowblock|ca0674f4df972a21d09eac63ad1d4b4f4d22fa9b05d8f556f80863fd3d43c0a9|bits
+CHK|subblock|56216621b4f28e97d31e354c9735d489d0af627a27e21764f27dfe5b65a03a0d|bits
+CHK|stepped_block|2c6964ce8e497f2c4c00a05a3a4574cc0ace8f2c2cc76d170aed69c906327d24|bits
+CHK|scalar_row_range|61f33b29d405c473287606d3c07676bdec19d2936a411f7e7596d4ad119ed2be|bits
+CHK|range_scalar_col|6fc0ca01f843de5018e9b2e875fcd551b8de05d17b44ca80819da601b8f94491|bits
+CHK|one_by_range|d226eb116aae9dc349d96e65dc87743f29171d52ab6194a8f961aabbd5af3def|bits
+CHK|all_all|23717aecb8d362c56038686d724cfde5f7c07f30b3fbf5179e1e3d91427fe225|bits
+CHK|logical_slice|e3b58c3699be17d4375f071fab47150371c04abbcf26a2378b83493d0f947bd6|bits
+CHK|logical_block|7bb237bd318229f136173ae564ffb172b0a559aa012c1039a04bd41c26cb50fd|bits
+CHK|uint8_slice|52bf6eda35320474577ff2ef6cdc98da585eeb532aa0d15b65c7f8dafc2ea28d|bits
+CHK|char_rows|c22653ea0ce44bc0fb11a8434c50aa17244e4d9368959894d1e1451e130ff8f0|bits
+CHK|char_slice|71cee6f95bb686ef55143a6636c7cbc7a9c6b8c4b370a1c84f0f9e15ff580b52|bits
+CHK|shape_full|1 300000|exact
+CHK|shape_step|1 150000|exact
+CHK|shape_desc|1 300000|exact
+CHK|shape_one|1 1|exact
+CHK|shape_col_read|150000 1|exact
+CHK|shape_matrix_linear|1 10000|exact
+CHK|shape_row|1 1000|exact
+CHK|shape_col|400 1|exact
+CHK|shape_subblock|200 200|exact
+CHK|shape_stepped|134 500|exact
+CHK|shape_one_by_range|1 1|exact
+CHK|shape_element|1 1|exact
+CHK|shape_empty_desc|1 0|exact
+CHK|shape_empty_step|1 0|exact
+CHK|shape_empty_col_range|400 0|exact
+CHK|shape_empty_row_range|0 1000|exact
+CHK|shape_empty_both|0 0|exact
+CHK|shape_frac_stop|1 2|exact
+CHK|shape_frac_step|1 1|exact
+CHK|shape_uint8_bounds|1 4|exact
+CHK|shape_int32_step|1 7|exact
+CHK|shape_logical_slice|1 150000|exact
+CHK|shape_char_rows|11 100|exact
+CHK|frac_stop_sum|-0.14589803375031496|exact
+CHK|uint8_bounds_sum|-0.34752415750146981|exact
+CHK|int32_step_sum|-0.063858708756614369|exact
+CHK|single_bound_sum|0.63118960624632559|exact
+CHK|char_class|char|exact
+CHK|char_row_text|MKIGECAYWU|exact
+CHK|logical_class|logical|exact
+CHK|uint8_class|uint8|exact
+CHK|uint8_sum|4166221|exact
+CHK|refused_zero|1|exact
+CHK|refused_high|1|exact
+CHK|refused_negative|1|exact
+CHK|refused_past_end|1|exact
+CHK|refused_block_zero|1|exact
+CHK|refused_block_high|1|exact
+CHK|refused_row_high|1|exact
+CHK|refused_fractional_row|1|exact
+CHK|refused_fractional_step|0|div=ADR0159
+CHK|refused_uint8_saturating|1|div=ADR0159
+CHK|ode23_lorenz20_rows|584|exact
+CHK|ode45_lorenz20_rows|957|exact
+CHK|ode45_orbit10_rows|977|exact
+CHK|ode45_orbit10_energy|-0.49999999952722707|rel=1e-6
+CHK|ode45_orbit_named_rows|21|exact
+CHK|ode45_orbit_named_x_end|-0.83907153185832872|rel=1e-6
+CHK|ode23_orbit_refine8_rows|433|exact
+CHK|ode23_orbit_refine8_x_end|-0.84885781923395731|rel=1e-3
