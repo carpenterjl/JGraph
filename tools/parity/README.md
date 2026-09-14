@@ -13,6 +13,8 @@ each line asks for. Introduced by M124 (ADR 0126) as the gate for the solver and
 | `tests/JGraph.Tests/MatlabParity/expected/matlab_version.txt` | which MATLAB the recordings are of |
 | `tools/parity/record-matlab.ps1` | runs a fixture through `matlab.exe -batch`, keeps the `CHK` lines, writes `expected/` |
 | `tools/parity/compare.py` | the comparison rules, for an ad-hoc diff of two logs |
+| `tools/parity/check-ratchet.py` | holds the recordings' pending states against the ADRs that have landed |
+| `tools/parity/gen-value-isolation.py` | writes the `value_isolation_gen_*` matrix fixtures and their `.owners` (never edit those by hand) |
 | `tests/JGraph.Tests/MatlabParity/MatlabParityFixtureTests.cs` | the xunit theory: one case per fixture, the same rules in C# |
 
 ## The line grammar

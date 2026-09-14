@@ -1,0 +1,228 @@
+CHK|w_paren_sub_plain_rhs_plain|rhs;idx; / double [1 3] [1 9 3]|exact
+CHK|w_paren_sub_plain_rhs_grow|rhs;idx; / double [1 4] [1 9 3 50]|exact
+CHK|w_paren_sub_plain_rhs_shrink|rhs;idx; / double [1 2] [1 9]|exact
+CHK|w_paren_sub_plain_rhs_rebind|rhs;idx; / double [1 4] [7 9 7 7]|exact
+CHK|w_paren_sub_plain_rhs_clear|rhs;idx; / double [1 2] [0 9]|exact|pending V3|rhs;idx; / double [1 3] [1 9 3]
+CHK|w_paren_sub_grow_rhs_plain|rhs;idx; / double [1 4] [1 9 3 50]|exact
+CHK|w_paren_sub_grow_rhs_grow|rhs;idx; / double [1 5] [1 9 3 50 50]|exact
+CHK|w_paren_sub_grow_rhs_shrink|rhs;idx; / double [1 3] [1 9 50]|exact
+CHK|w_paren_sub_grow_rhs_rebind|rhs;idx; / double [1 5] [7 9 7 7 50]|exact
+CHK|w_paren_sub_grow_rhs_clear|rhs;idx; / double [1 2] [50 9]|exact|pending V3|rhs;idx; / double [1 4] [1 9 3 50]
+CHK|w_paren_sub_shrink_rhs_plain|rhs;idx; / double [1 2] [1 9]|exact|pending V3|rhs;idx; / double [1 2] [1 2]
+CHK|w_paren_sub_shrink_rhs_grow|rhs;idx; / double [1 3] [1 9 3]|exact|pending V3|rhs;idx; / double [1 3] [1 2 3]
+CHK|w_paren_sub_shrink_rhs_shrink|rhs;idx; / double [1 2] [1 9]|exact|pending V3|rhs;idx; / double [1 1] 1
+CHK|w_paren_sub_shrink_rhs_rebind|rhs;idx; / double [1 3] [7 9 7]|exact|pending V3|rhs;idx; / double [1 3] [7 7 7]
+CHK|w_paren_sub_shrink_rhs_clear|ERR Array indices must be positive integers or logical values.|exact|pending V3|rhs;idx; / double [1 2] [1 2]
+CHK|w_paren_sub_rebind_rhs_plain|rhs;idx; / double [1 4] [7 9 7 7]|exact|pending V3|rhs;idx; / double [1 4] [7 7 7 7]
+CHK|w_paren_sub_rebind_rhs_grow|rhs;idx; / double [1 4] [7 9 7 7]|exact|pending V3|rhs;idx; / double [1 4] [7 7 7 7]
+CHK|w_paren_sub_rebind_rhs_shrink|rhs;idx; / double [1 4] [7 9 7 7]|exact|pending V3|rhs;idx; / double [1 4] [7 7 7 7]
+CHK|w_paren_sub_rebind_rhs_rebind|rhs;idx; / double [1 4] [7 9 7 7]|exact|pending V3|rhs;idx; / double [1 4] [7 7 7 7]
+CHK|w_paren_sub_rebind_rhs_clear|rhs;idx; / double [1 4] [7 9 7 7]|exact|pending V3|rhs;idx; / double [1 4] [7 7 7 7]
+CHK|w_paren_sub_clear_rhs_plain|rhs;idx; / double [1 2] [0 9]|exact|pending V3|rhs;idx; / double [1 3] [1 9 3]
+CHK|w_paren_sub_clear_rhs_grow|rhs;idx; / double [1 2] [0 9]|exact|pending V3|rhs;idx; / double [1 4] [1 9 3 50]
+CHK|w_paren_sub_clear_rhs_shrink|rhs;idx; / double [1 2] [0 9]|exact|pending V3|rhs;idx; / double [1 2] [1 9]
+CHK|w_paren_sub_clear_rhs_rebind|rhs;idx; / double [1 2] [0 9]|exact|pending V3|rhs;idx; / double [1 4] [7 9 7 7]
+CHK|w_paren_sub_clear_rhs_clear|rhs;idx; / double [1 2] [0 9]|exact|pending V3|rhs;idx; / double [1 3] [1 9 3]
+CHK|w_paren_end_rhs_grow|rhs; / double [1 4] [1 2 3 9]|exact
+CHK|w_paren_end_rhs_shrink|rhs; / double [1 2] [1 9]|exact
+CHK|w_paren_end_rhs_rebind|rhs; / double [1 4] [7 7 7 9]|exact
+CHK|w_paren_end_rhs_clear|ERR Reference to a cleared variable gT.|exact|pending V3|rhs; / double [1 3] [1 2 9]
+CHK|w_paren2d_sub_plain_rhs_plain|rhs;idx; / double [2 3] [1 9 3;4 5 6]|exact
+CHK|w_paren2d_sub_plain_rhs_grow|rhs;idx; / double [2 4] [1 9 3 50;4 5 6 60]|exact
+CHK|w_paren2d_sub_plain_rhs_shrink|rhs;idx; / double [2 2] [1 9;4 5]|exact
+CHK|w_paren2d_sub_plain_rhs_rebind|rhs;idx; / double [2 4] [7 9 7 7;7 7 7 7]|exact
+CHK|w_paren2d_sub_plain_rhs_clear|rhs;idx; / double [1 2] [0 9]|exact|pending V3|rhs;idx; / double [2 3] [1 9 3;4 5 6]
+CHK|w_paren2d_sub_grow_rhs_plain|rhs;idx; / double [2 4] [1 9 3 50;4 5 6 60]|exact
+CHK|w_paren2d_sub_grow_rhs_grow|rhs;idx; / double [2 5] [1 4 .. 60] sum=248|exact
+CHK|w_paren2d_sub_grow_rhs_shrink|rhs;idx; / double [2 3] [1 9 50;4 5 60]|exact
+CHK|w_paren2d_sub_grow_rhs_rebind|rhs;idx; / double [2 5] [7 7 .. 60] sum=168|exact
+CHK|w_paren2d_sub_grow_rhs_clear|rhs;idx; / double [2 2] [50 9;60 0]|exact|pending V3|rhs;idx; / double [2 4] [1 9 3 50;4 5 6 60]
+CHK|w_paren2d_sub_shrink_rhs_plain|rhs;idx; / double [2 2] [1 9;4 5]|exact|pending V3|rhs;idx; / double [2 2] [1 2;4 5]
+CHK|w_paren2d_sub_shrink_rhs_grow|rhs;idx; / double [2 3] [1 9 3;4 5 6]|exact|pending V3|rhs;idx; / double [2 3] [1 2 3;4 5 6]
+CHK|w_paren2d_sub_shrink_rhs_shrink|rhs;idx; / double [2 2] [1 9;4 0]|exact|pending V3|rhs;idx; / double [2 1] [1;4]
+CHK|w_paren2d_sub_shrink_rhs_rebind|rhs;idx; / double [2 3] [7 9 7;7 7 7]|exact|pending V3|rhs;idx; / double [2 3] [7 7 7;7 7 7]
+CHK|w_paren2d_sub_shrink_rhs_clear|ERR Index in position 2 is invalid. Array indices must be positive integers or logical values.|exact|pending V3|rhs;idx; / double [2 2] [1 2;4 5]
+CHK|w_paren2d_sub_rebind_rhs_plain|rhs;idx; / double [2 4] [7 9 7 7;7 7 7 7]|exact|pending V3|rhs;idx; / double [2 4] [7 7 7 7;7 7 7 7]
+CHK|w_paren2d_sub_rebind_rhs_grow|rhs;idx; / double [2 4] [7 9 7 7;7 7 7 7]|exact|pending V3|rhs;idx; / double [2 4] [7 7 7 7;7 7 7 7]
+CHK|w_paren2d_sub_rebind_rhs_shrink|rhs;idx; / double [2 4] [7 9 7 7;7 7 7 7]|exact|pending V3|rhs;idx; / double [2 4] [7 7 7 7;7 7 7 7]
+CHK|w_paren2d_sub_rebind_rhs_rebind|rhs;idx; / double [2 4] [7 9 7 7;7 7 7 7]|exact|pending V3|rhs;idx; / double [2 4] [7 7 7 7;7 7 7 7]
+CHK|w_paren2d_sub_rebind_rhs_clear|rhs;idx; / double [2 4] [7 9 7 7;7 7 7 7]|exact|pending V3|rhs;idx; / double [2 4] [7 7 7 7;7 7 7 7]
+CHK|w_paren2d_sub_clear_rhs_plain|rhs;idx; / double [1 2] [0 9]|exact|pending V3|rhs;idx; / double [2 3] [1 9 3;4 5 6]
+CHK|w_paren2d_sub_clear_rhs_grow|rhs;idx; / double [1 2] [0 9]|exact|pending V3|rhs;idx; / double [2 4] [1 9 3 50;4 5 6 60]
+CHK|w_paren2d_sub_clear_rhs_shrink|rhs;idx; / double [1 2] [0 9]|exact|pending V3|rhs;idx; / double [2 2] [1 9;4 5]
+CHK|w_paren2d_sub_clear_rhs_rebind|rhs;idx; / double [1 2] [0 9]|exact|pending V3|rhs;idx; / double [2 4] [7 9 7 7;7 7 7 7]
+CHK|w_paren2d_sub_clear_rhs_clear|rhs;idx; / double [1 2] [0 9]|exact|pending V3|rhs;idx; / double [2 3] [1 9 3;4 5 6]
+CHK|w_paren2d_end_rhs_grow|rhs; / double [2 4] [1 2 3 9;4 5 6 60]|exact
+CHK|w_paren2d_end_rhs_shrink|rhs; / double [2 2] [1 9;4 5]|exact
+CHK|w_paren2d_end_rhs_rebind|rhs; / double [2 4] [7 7 7 9;7 7 7 7]|exact
+CHK|w_paren2d_end_rhs_clear|ERR Reference to a cleared variable gT.|exact|pending V3|rhs; / double [2 3] [1 2 9;4 5 6]
+CHK|w_brace_sub_plain_rhs_plain|idx;rhs; / cell [1 3] {double [1 1] 1 double [1 1] 9 double [1 1] 3}|exact|pending V3|rhs;idx; / cell [1 3] {double [1 1] 1 double [1 1] 9 double [1 1] 3}
+CHK|w_brace_sub_plain_rhs_grow|idx;rhs; / cell [1 4] {double [1 1] 1 double [1 1] 9 double [1 1] 3 double [1 1] 50}|exact|pending V3|rhs;idx; / cell [1 4] {double [1 1] 1 double [1 1] 9 double [1 1] 3 double [1 1] 50}
+CHK|w_brace_sub_plain_rhs_shrink|idx;rhs; / cell [1 2] {double [1 1] 1 double [1 1] 9}|exact|pending V3|rhs;idx; / cell [1 2] {double [1 1] 1 double [1 1] 9}
+CHK|w_brace_sub_plain_rhs_rebind|idx;rhs; / cell [1 4] {double [1 1] 7 double [1 1] 9 double [1 1] 7 double [1 1] 7}|exact|pending V3|rhs;idx; / cell [1 4] {double [1 1] 7 double [1 1] 9 double [1 1] 7 double [1 1] 7}
+CHK|w_brace_sub_plain_rhs_clear|idx;rhs; / cell [1 2] {double [0 0] [] double [1 1] 9}|exact|pending V3|rhs;idx; / cell [1 3] {double [1 1] 1 double [1 1] 9 double [1 1] 3}
+CHK|w_brace_sub_grow_rhs_plain|idx;rhs; / cell [1 4] {double [1 1] 1 double [1 1] 9 double [1 1] 3 double [1 1] 50}|exact|pending V3|rhs;idx; / cell [1 4] {double [1 1] 1 double [1 1] 2 double [1 1] 3 double [1 1] 50}
+CHK|w_brace_sub_grow_rhs_grow|idx;rhs; / cell [1 5] {double [1 1] 1 double [1 1] 9 double [1 1] 3 double [1 1] 50 double [1 1] 50}|exact|pending V3|rhs;idx; / cell [1 5] {double [1 1] 1 double [1 1] 2 double [1 1] 3 double [1 1] 50 double [1 1] 50}
+CHK|w_brace_sub_grow_rhs_shrink|idx;rhs; / cell [1 3] {double [1 1] 1 double [1 1] 9 double [1 1] 3}|exact|pending V3|rhs;idx; / cell [1 3] {double [1 1] 1 double [1 1] 2 double [1 1] 50}
+CHK|w_brace_sub_grow_rhs_rebind|idx;rhs; / cell [1 4] {double [1 1] 7 double [1 1] 9 double [1 1] 7 double [1 1] 7}|exact|pending V3|rhs;idx; / cell [1 5] {double [1 1] 7 double [1 1] 7 double [1 1] 7 double [1 1] 7 double [1 1] 50}
+CHK|w_brace_sub_grow_rhs_clear|idx;rhs; / cell [1 2] {double [0 0] [] double [1 1] 9}|exact|pending V3|rhs;idx; / cell [1 4] {double [1 1] 1 double [1 1] 2 double [1 1] 3 double [1 1] 50}
+CHK|w_brace_sub_shrink_rhs_plain|idx;rhs; / cell [1 2] {double [1 1] 1 double [1 1] 9}|exact|pending V3|rhs;idx; / cell [1 2] {double [1 1] 1 double [1 1] 2}
+CHK|w_brace_sub_shrink_rhs_grow|idx;rhs; / cell [1 3] {double [1 1] 1 double [1 1] 9 double [1 1] 50}|exact|pending V3|rhs;idx; / cell [1 3] {double [1 1] 1 double [1 1] 2 double [1 1] 3}
+CHK|w_brace_sub_shrink_rhs_shrink|idx;rhs; / cell [1 2] {double [1 1] 1 double [1 1] 9}|exact|pending V3|rhs;idx; / cell [1 1] {double [1 1] 1}
+CHK|w_brace_sub_shrink_rhs_rebind|idx;rhs; / cell [1 4] {double [1 1] 7 double [1 1] 9 double [1 1] 7 double [1 1] 7}|exact|pending V3|rhs;idx; / cell [1 3] {double [1 1] 7 double [1 1] 7 double [1 1] 7}
+CHK|w_brace_sub_shrink_rhs_clear|idx;rhs; / cell [1 2] {double [0 0] [] double [1 1] 9}|exact|pending V3|rhs;idx; / cell [1 2] {double [1 1] 1 double [1 1] 2}
+CHK|w_brace_sub_rebind_rhs_plain|idx;rhs; / cell [1 4] {double [1 1] 7 double [1 1] 9 double [1 1] 7 double [1 1] 7}|exact|pending V3|rhs;idx; / cell [1 4] {double [1 1] 7 double [1 1] 7 double [1 1] 7 double [1 1] 7}
+CHK|w_brace_sub_rebind_rhs_grow|idx;rhs; / cell [1 5] {double [1 1] 7 double [1 1] 9 double [1 1] 7 double [1 1] 7 double [1 1] 50}|exact|pending V3|rhs;idx; / cell [1 4] {double [1 1] 7 double [1 1] 7 double [1 1] 7 double [1 1] 7}
+CHK|w_brace_sub_rebind_rhs_shrink|idx;rhs; / cell [1 3] {double [1 1] 7 double [1 1] 9 double [1 1] 7}|exact|pending V3|rhs;idx; / cell [1 4] {double [1 1] 7 double [1 1] 7 double [1 1] 7 double [1 1] 7}
+CHK|w_brace_sub_rebind_rhs_rebind|idx;rhs; / cell [1 4] {double [1 1] 7 double [1 1] 9 double [1 1] 7 double [1 1] 7}|exact|pending V3|rhs;idx; / cell [1 4] {double [1 1] 7 double [1 1] 7 double [1 1] 7 double [1 1] 7}
+CHK|w_brace_sub_rebind_rhs_clear|idx;rhs; / cell [1 2] {double [0 0] [] double [1 1] 9}|exact|pending V3|rhs;idx; / cell [1 4] {double [1 1] 7 double [1 1] 7 double [1 1] 7 double [1 1] 7}
+CHK|w_brace_sub_clear_rhs_plain|idx;rhs; / cell [1 2] {double [0 0] [] double [1 1] 9}|exact|pending V3|rhs;idx; / cell [1 3] {double [1 1] 1 double [1 1] 9 double [1 1] 3}
+CHK|w_brace_sub_clear_rhs_grow|idx;rhs; / cell [1 2] {double [1 1] 50 double [1 1] 9}|exact|pending V3|rhs;idx; / cell [1 4] {double [1 1] 1 double [1 1] 9 double [1 1] 3 double [1 1] 50}
+CHK|w_brace_sub_clear_rhs_shrink|ERR Array indices must be positive integers or logical values.|exact|pending V3|rhs;idx; / cell [1 2] {double [1 1] 1 double [1 1] 9}
+CHK|w_brace_sub_clear_rhs_rebind|idx;rhs; / cell [1 4] {double [1 1] 7 double [1 1] 9 double [1 1] 7 double [1 1] 7}|exact|pending V3|rhs;idx; / cell [1 4] {double [1 1] 7 double [1 1] 9 double [1 1] 7 double [1 1] 7}
+CHK|w_brace_sub_clear_rhs_clear|idx;rhs; / cell [1 2] {double [0 0] [] double [1 1] 9}|exact|pending V3|rhs;idx; / cell [1 3] {double [1 1] 1 double [1 1] 9 double [1 1] 3}
+CHK|w_brace_end_rhs_grow|rhs; / cell [1 4] {double [1 1] 1 double [1 1] 2 double [1 1] 9 double [1 1] 50}|exact|pending V3|rhs; / cell [1 4] {double [1 1] 1 double [1 1] 2 double [1 1] 3 double [1 1] 9}
+CHK|w_brace_end_rhs_shrink|rhs; / cell [1 3] {double [1 1] 1 double [1 1] 2 double [1 1] 9}|exact|pending V3|rhs; / cell [1 2] {double [1 1] 1 double [1 1] 9}
+CHK|w_brace_end_rhs_rebind|rhs; / cell [1 4] {double [1 1] 7 double [1 1] 7 double [1 1] 9 double [1 1] 7}|exact|pending V3|rhs; / cell [1 4] {double [1 1] 7 double [1 1] 7 double [1 1] 7 double [1 1] 9}
+CHK|w_brace_end_rhs_clear|rhs; / cell [1 3] {double [0 0] [] double [0 0] [] double [1 1] 9}|exact|pending V3|rhs; / cell [1 3] {double [1 1] 1 double [1 1] 2 double [1 1] 9}
+CHK|w_field_paren_sub_plain_rhs_plain|idx;rhs; / double [1 3] [1 9 3]|exact|pending V3|rhs;idx; / double [1 3] [1 9 3]
+CHK|w_field_paren_sub_plain_rhs_grow|idx;rhs; / double [1 4] [1 9 3 50]|exact|pending V3|ERR Assigning past the end of a 3-element array would grow it, which needs a plain variable on the left.
+CHK|w_field_paren_sub_plain_rhs_shrink|idx;rhs; / double [1 2] [1 9]|exact|pending V3|ERR Deleting elements needs a plain variable on the left.
+CHK|w_field_paren_sub_plain_rhs_rebind|idx;rhs; / double [1 4] [7 9 7 7]|exact|pending V3|rhs;idx; / double [1 4] [7 9 7 7]
+CHK|w_field_paren_sub_plain_rhs_clear|idx;rhs; / double [1 2] [0 9]|exact|pending V3|rhs;idx; / double [1 3] [1 9 3]
+CHK|w_field_paren_sub_grow_rhs_plain|idx;rhs; / double [1 4] [1 9 3 50]|exact|pending V3|ERR Assigning past the end of a 3-element array would grow it, which needs a plain variable on the left.
+CHK|w_field_paren_sub_grow_rhs_grow|idx;rhs; / double [1 5] [1 9 3 50 50]|exact|pending V3|ERR Assigning past the end of a 3-element array would grow it, which needs a plain variable on the left.
+CHK|w_field_paren_sub_grow_rhs_shrink|idx;rhs; / double [1 3] [1 9 3]|exact|pending V3|ERR Deleting elements needs a plain variable on the left.
+CHK|w_field_paren_sub_grow_rhs_rebind|idx;rhs; / double [1 4] [7 9 7 7]|exact|pending V3|ERR Assigning past the end of a 4-element array would grow it, which needs a plain variable on the left.
+CHK|w_field_paren_sub_grow_rhs_clear|idx;rhs; / double [1 2] [0 9]|exact|pending V3|ERR Assigning past the end of a 3-element array would grow it, which needs a plain variable on the left.
+CHK|w_field_paren_sub_shrink_rhs_plain|idx;rhs; / double [1 2] [1 9]|exact|pending V3|ERR Deleting elements needs a plain variable on the left.
+CHK|w_field_paren_sub_shrink_rhs_grow|idx;rhs; / double [1 3] [1 9 50]|exact|pending V3|ERR Assigning past the end of a 3-element array would grow it, which needs a plain variable on the left.
+CHK|w_field_paren_sub_shrink_rhs_shrink|idx;rhs; / double [1 2] [1 9]|exact|pending V3|ERR Deleting elements needs a plain variable on the left.
+CHK|w_field_paren_sub_shrink_rhs_rebind|idx;rhs; / double [1 4] [7 9 7 7]|exact|pending V3|ERR Deleting elements needs a plain variable on the left.
+CHK|w_field_paren_sub_shrink_rhs_clear|idx;rhs; / double [1 2] [0 9]|exact|pending V3|ERR Deleting elements needs a plain variable on the left.
+CHK|w_field_paren_sub_rebind_rhs_plain|idx;rhs; / double [1 4] [7 9 7 7]|exact|pending V3|rhs;idx; / double [1 4] [7 7 7 7]
+CHK|w_field_paren_sub_rebind_rhs_grow|idx;rhs; / double [1 5] [7 9 7 7 50]|exact|pending V3|ERR Assigning past the end of a 3-element array would grow it, which needs a plain variable on the left.
+CHK|w_field_paren_sub_rebind_rhs_shrink|idx;rhs; / double [1 3] [7 9 7]|exact|pending V3|ERR Deleting elements needs a plain variable on the left.
+CHK|w_field_paren_sub_rebind_rhs_rebind|idx;rhs; / double [1 4] [7 9 7 7]|exact|pending V3|rhs;idx; / double [1 4] [7 7 7 7]
+CHK|w_field_paren_sub_rebind_rhs_clear|idx;rhs; / double [1 2] [0 9]|exact|pending V3|rhs;idx; / double [1 4] [7 7 7 7]
+CHK|w_field_paren_sub_clear_rhs_plain|idx;rhs; / double [1 2] [0 9]|exact|pending V3|rhs;idx; / double [1 3] [1 9 3]
+CHK|w_field_paren_sub_clear_rhs_grow|ERR Dot indexing is not supported for variables of this type.|exact|pending V3|ERR Assigning past the end of a 3-element array would grow it, which needs a plain variable on the left.
+CHK|w_field_paren_sub_clear_rhs_shrink|ERR Dot indexing is not supported for variables of this type.|exact|pending V3|ERR Deleting elements needs a plain variable on the left.
+CHK|w_field_paren_sub_clear_rhs_rebind|idx;rhs; / double [1 4] [7 9 7 7]|exact|pending V3|rhs;idx; / double [1 4] [7 9 7 7]
+CHK|w_field_paren_sub_clear_rhs_clear|idx;rhs; / double [1 2] [0 9]|exact|pending V3|rhs;idx; / double [1 3] [1 9 3]
+CHK|w_field_paren_end_rhs_grow|rhs; / double [1 4] [1 2 9 50]|exact|pending V3|ERR Assigning past the end of a 3-element array would grow it, which needs a plain variable on the left.
+CHK|w_field_paren_end_rhs_shrink|rhs; / double [1 3] [1 2 9]|exact|pending V3|ERR Deleting elements needs a plain variable on the left.
+CHK|w_field_paren_end_rhs_rebind|rhs; / double [1 4] [7 7 9 7]|exact|pending V3|rhs; / double [1 4] [7 7 7 9]
+CHK|w_field_paren_end_rhs_clear|rhs; / double [1 3] [0 0 9]|exact|pending V3|rhs; / double [1 3] [1 2 9]
+CHK|w_brace_paren_sub_plain_rhs_plain|idx;rhs; / double [1 3] [1 9 3]|exact|pending V3|rhs;idx; / double [1 3] [1 9 3]
+CHK|w_brace_paren_sub_plain_rhs_grow|idx;rhs; / double [1 4] [1 9 3 50]|exact|pending V3|ERR Assigning past the end of a 3-element array would grow it, which needs a plain variable on the left.
+CHK|w_brace_paren_sub_plain_rhs_shrink|idx;rhs; / double [1 2] [1 9]|exact|pending V3|ERR Deleting elements needs a plain variable on the left.
+CHK|w_brace_paren_sub_plain_rhs_rebind|idx;rhs; / double [1 4] [7 9 7 7]|exact|pending V3|rhs;idx; / double [1 4] [7 9 7 7]
+CHK|w_brace_paren_sub_plain_rhs_clear|idx;rhs; / double [1 2] [0 9]|exact|pending V3|rhs;idx; / double [1 3] [1 9 3]
+CHK|w_brace_paren_sub_grow_rhs_plain|idx;rhs; / double [1 4] [1 9 3 50]|exact|pending V3|ERR Assigning past the end of a 3-element array would grow it, which needs a plain variable on the left.
+CHK|w_brace_paren_sub_grow_rhs_grow|idx;rhs; / double [1 5] [1 9 3 50 50]|exact|pending V3|ERR Assigning past the end of a 3-element array would grow it, which needs a plain variable on the left.
+CHK|w_brace_paren_sub_grow_rhs_shrink|idx;rhs; / double [1 3] [1 9 3]|exact|pending V3|ERR Deleting elements needs a plain variable on the left.
+CHK|w_brace_paren_sub_grow_rhs_rebind|idx;rhs; / double [1 4] [7 9 7 7]|exact|pending V3|ERR Assigning past the end of a 4-element array would grow it, which needs a plain variable on the left.
+CHK|w_brace_paren_sub_grow_rhs_clear|idx;rhs; / double [1 2] [0 9]|exact|pending V3|ERR Assigning past the end of a 3-element array would grow it, which needs a plain variable on the left.
+CHK|w_brace_paren_sub_shrink_rhs_plain|idx;rhs; / double [1 2] [1 9]|exact|pending V3|ERR Deleting elements needs a plain variable on the left.
+CHK|w_brace_paren_sub_shrink_rhs_grow|idx;rhs; / double [1 3] [1 9 50]|exact|pending V3|ERR Assigning past the end of a 3-element array would grow it, which needs a plain variable on the left.
+CHK|w_brace_paren_sub_shrink_rhs_shrink|idx;rhs; / double [1 2] [1 9]|exact|pending V3|ERR Deleting elements needs a plain variable on the left.
+CHK|w_brace_paren_sub_shrink_rhs_rebind|idx;rhs; / double [1 4] [7 9 7 7]|exact|pending V3|ERR Deleting elements needs a plain variable on the left.
+CHK|w_brace_paren_sub_shrink_rhs_clear|idx;rhs; / double [1 2] [0 9]|exact|pending V3|ERR Deleting elements needs a plain variable on the left.
+CHK|w_brace_paren_sub_rebind_rhs_plain|idx;rhs; / double [1 4] [7 9 7 7]|exact|pending V3|rhs;idx; / double [1 4] [7 7 7 7]
+CHK|w_brace_paren_sub_rebind_rhs_grow|idx;rhs; / double [1 5] [7 9 7 7 50]|exact|pending V3|ERR Assigning past the end of a 3-element array would grow it, which needs a plain variable on the left.
+CHK|w_brace_paren_sub_rebind_rhs_shrink|idx;rhs; / double [1 3] [7 9 7]|exact|pending V3|ERR Deleting elements needs a plain variable on the left.
+CHK|w_brace_paren_sub_rebind_rhs_rebind|idx;rhs; / double [1 4] [7 9 7 7]|exact|pending V3|rhs;idx; / double [1 4] [7 7 7 7]
+CHK|w_brace_paren_sub_rebind_rhs_clear|idx;rhs; / double [1 2] [0 9]|exact|pending V3|rhs;idx; / double [1 4] [7 7 7 7]
+CHK|w_brace_paren_sub_clear_rhs_plain|idx;rhs; / double [1 2] [0 9]|exact|pending V3|rhs;idx; / double [1 3] [1 9 3]
+CHK|w_brace_paren_sub_clear_rhs_grow|ERR Brace indexing is not supported for variables of this type.|exact|pending V3|ERR Assigning past the end of a 3-element array would grow it, which needs a plain variable on the left.
+CHK|w_brace_paren_sub_clear_rhs_shrink|ERR Brace indexing is not supported for variables of this type.|exact|pending V3|ERR Deleting elements needs a plain variable on the left.
+CHK|w_brace_paren_sub_clear_rhs_rebind|idx;rhs; / double [1 4] [7 9 7 7]|exact|pending V3|rhs;idx; / double [1 4] [7 9 7 7]
+CHK|w_brace_paren_sub_clear_rhs_clear|idx;rhs; / double [1 2] [0 9]|exact|pending V3|rhs;idx; / double [1 3] [1 9 3]
+CHK|w_brace_paren_end_rhs_grow|rhs; / double [1 4] [1 2 9 50]|exact|pending V3|ERR Assigning past the end of a 3-element array would grow it, which needs a plain variable on the left.
+CHK|w_brace_paren_end_rhs_shrink|rhs; / double [1 3] [1 2 9]|exact|pending V3|ERR Deleting elements needs a plain variable on the left.
+CHK|w_brace_paren_end_rhs_rebind|rhs; / double [1 4] [7 7 9 7]|exact|pending V3|rhs; / double [1 4] [7 7 7 9]
+CHK|w_brace_paren_end_rhs_clear|rhs; / double [1 3] [0 0 9]|exact|pending V3|rhs; / double [1 3] [1 2 9]
+CHK|w_paren_field_sub_plain_rhs_plain|idx;rhs; / struct [1 3] [f] {double [1 1] 1 double [1 1] 9 double [1 1] 3}|exact|pending V3|rhs;idx; / struct [1 3] [f] {double [1 1] 1 double [1 1] 9 double [1 1] 3}
+CHK|w_paren_field_sub_plain_rhs_grow|idx;rhs; / struct [1 4] [f] {double [1 1] 1 double [1 1] 9 double [1 1] 3 double [1 1] 50}|exact|pending V3|rhs;idx; / struct [1 4] [f] {double [1 1] 1 double [1 1] 9 double [1 1] 3 double [1 1] 50}
+CHK|w_paren_field_sub_plain_rhs_shrink|idx;rhs; / struct [1 2] [f] {double [1 1] 1 double [1 1] 9}|exact|pending V3|rhs;idx; / struct [1 2] [f] {double [1 1] 1 double [1 1] 9}
+CHK|w_paren_field_sub_plain_rhs_rebind|idx;rhs; / struct [1 4] [f] {double [1 1] 7 double [1 1] 9 double [1 1] 7 double [1 1] 7}|exact|pending V3|rhs;idx; / struct [1 4] [f] {double [1 1] 7 double [1 1] 9 double [1 1] 7 double [1 1] 7}
+CHK|w_paren_field_sub_plain_rhs_clear|idx;rhs; / struct [1 2] [f] {double [0 0] [] double [1 1] 9}|exact|pending V3|rhs;idx; / struct [1 3] [f] {double [1 1] 1 double [1 1] 9 double [1 1] 3}
+CHK|w_paren_field_sub_grow_rhs_plain|idx;rhs; / struct [1 4] [f] {double [1 1] 1 double [1 1] 9 double [1 1] 3 double [1 1] 50}|exact|pending V3|rhs;idx; / struct [1 4] [f] {double [1 1] 1 double [1 1] 9 double [1 1] 3 double [1 1] 50}
+CHK|w_paren_field_sub_grow_rhs_grow|idx;rhs; / struct [1 5] [f] {double [1 1] 1 double [1 1] 9 double [1 1] 3 double [1 1] 50 double [1 1] 50}|exact|pending V3|rhs;idx; / struct [1 5] [f] {double [1 1] 1 double [1 1] 9 double [1 1] 3 double [1 1] 50 double [1 1] 50}
+CHK|w_paren_field_sub_grow_rhs_shrink|idx;rhs; / struct [1 3] [f] {double [1 1] 1 double [1 1] 9 double [1 1] 3}|exact|pending V3|rhs;idx; / struct [1 3] [f] {double [1 1] 1 double [1 1] 9 double [1 1] 50}
+CHK|w_paren_field_sub_grow_rhs_rebind|idx;rhs; / struct [1 4] [f] {double [1 1] 7 double [1 1] 9 double [1 1] 7 double [1 1] 7}|exact|pending V3|rhs;idx; / struct [1 5] [f] {double [1 1] 7 double [1 1] 9 double [1 1] 7 double [1 1] 7 double [1 1] 50}
+CHK|w_paren_field_sub_grow_rhs_clear|idx;rhs; / struct [1 2] [f] {double [0 0] [] double [1 1] 9}|exact|pending V3|rhs;idx; / struct [1 4] [f] {double [1 1] 1 double [1 1] 9 double [1 1] 3 double [1 1] 50}
+CHK|w_paren_field_sub_shrink_rhs_plain|idx;rhs; / struct [1 2] [f] {double [1 1] 1 double [1 1] 9}|exact|pending V3|rhs;idx; / struct [1 2] [f] {double [1 1] 1 double [1 1] 9}
+CHK|w_paren_field_sub_shrink_rhs_grow|idx;rhs; / struct [1 3] [f] {double [1 1] 1 double [1 1] 9 double [1 1] 50}|exact|pending V3|rhs;idx; / struct [1 3] [f] {double [1 1] 1 double [1 1] 9 double [1 1] 3}
+CHK|w_paren_field_sub_shrink_rhs_shrink|idx;rhs; / struct [1 2] [f] {double [1 1] 1 double [1 1] 9}|exact|pending V3|rhs;idx; / struct [1 1] {f=double [1 1] 1}
+CHK|w_paren_field_sub_shrink_rhs_rebind|idx;rhs; / struct [1 4] [f] {double [1 1] 7 double [1 1] 9 double [1 1] 7 double [1 1] 7}|exact|pending V3|rhs;idx; / struct [1 3] [f] {double [1 1] 7 double [1 1] 9 double [1 1] 7}
+CHK|w_paren_field_sub_shrink_rhs_clear|idx;rhs; / struct [1 2] [f] {double [0 0] [] double [1 1] 9}|exact|pending V3|rhs;idx; / struct [1 2] [f] {double [1 1] 1 double [1 1] 9}
+CHK|w_paren_field_sub_rebind_rhs_plain|idx;rhs; / struct [1 4] [f] {double [1 1] 7 double [1 1] 9 double [1 1] 7 double [1 1] 7}|exact|pending V3|rhs;idx; / struct [1 4] [f] {double [1 1] 7 double [1 1] 7 double [1 1] 7 double [1 1] 7}
+CHK|w_paren_field_sub_rebind_rhs_grow|idx;rhs; / struct [1 5] [f] {double [1 1] 7 double [1 1] 9 double [1 1] 7 double [1 1] 7 double [1 1] 50}|exact|pending V3|rhs;idx; / struct [1 4] [f] {double [1 1] 7 double [1 1] 7 double [1 1] 7 double [1 1] 7}
+CHK|w_paren_field_sub_rebind_rhs_shrink|idx;rhs; / struct [1 3] [f] {double [1 1] 7 double [1 1] 9 double [1 1] 7}|exact|pending V3|rhs;idx; / struct [1 4] [f] {double [1 1] 7 double [1 1] 7 double [1 1] 7 double [1 1] 7}
+CHK|w_paren_field_sub_rebind_rhs_rebind|idx;rhs; / struct [1 4] [f] {double [1 1] 7 double [1 1] 9 double [1 1] 7 double [1 1] 7}|exact|pending V3|rhs;idx; / struct [1 4] [f] {double [1 1] 7 double [1 1] 7 double [1 1] 7 double [1 1] 7}
+CHK|w_paren_field_sub_rebind_rhs_clear|idx;rhs; / struct [1 2] [f] {double [0 0] [] double [1 1] 9}|exact|pending V3|rhs;idx; / struct [1 4] [f] {double [1 1] 7 double [1 1] 7 double [1 1] 7 double [1 1] 7}
+CHK|w_paren_field_sub_clear_rhs_plain|idx;rhs; / struct [1 2] [f] {double [0 0] [] double [1 1] 9}|exact|pending V3|rhs;idx; / struct [1 3] [f] {double [1 1] 1 double [1 1] 9 double [1 1] 3}
+CHK|w_paren_field_sub_clear_rhs_grow|idx;rhs; / struct [1 2] [f] {double [1 1] 50 double [1 1] 9}|exact|pending V3|rhs;idx; / struct [1 4] [f] {double [1 1] 1 double [1 1] 9 double [1 1] 3 double [1 1] 50}
+CHK|w_paren_field_sub_clear_rhs_shrink|ERR Array indices must be positive integers or logical values.|exact|pending V3|rhs;idx; / struct [1 2] [f] {double [1 1] 1 double [1 1] 9}
+CHK|w_paren_field_sub_clear_rhs_rebind|idx;rhs; / struct [1 4] [f] {double [1 1] 7 double [1 1] 9 double [1 1] 7 double [1 1] 7}|exact|pending V3|rhs;idx; / struct [1 4] [f] {double [1 1] 7 double [1 1] 9 double [1 1] 7 double [1 1] 7}
+CHK|w_paren_field_sub_clear_rhs_clear|idx;rhs; / struct [1 2] [f] {double [0 0] [] double [1 1] 9}|exact|pending V3|rhs;idx; / struct [1 3] [f] {double [1 1] 1 double [1 1] 9 double [1 1] 3}
+CHK|w_paren_field_end_rhs_grow|rhs; / struct [1 4] [f] {double [1 1] 1 double [1 1] 2 double [1 1] 9 double [1 1] 50}|exact|pending V3|rhs; / struct [1 4] [f] {double [1 1] 1 double [1 1] 2 double [1 1] 3 double [1 1] 9}
+CHK|w_paren_field_end_rhs_shrink|rhs; / struct [1 3] [f] {double [1 1] 1 double [1 1] 2 double [1 1] 9}|exact|pending V3|rhs; / struct [1 2] [f] {double [1 1] 1 double [1 1] 9}
+CHK|w_paren_field_end_rhs_rebind|rhs; / struct [1 4] [f] {double [1 1] 7 double [1 1] 7 double [1 1] 9 double [1 1] 7}|exact|pending V3|rhs; / struct [1 4] [f] {double [1 1] 7 double [1 1] 7 double [1 1] 7 double [1 1] 9}
+CHK|w_paren_field_end_rhs_clear|rhs; / struct [1 3] [f] {double [0 0] [] double [0 0] [] double [1 1] 9}|exact|pending V3|rhs; / struct [1 3] [f] {double [1 1] 1 double [1 1] 2 double [1 1] 9}
+CHK|w_field_field_paren_sub_plain_rhs_plain|idx;rhs; / double [1 3] [1 9 3]|exact|pending V3|rhs;idx; / double [1 3] [1 9 3]
+CHK|w_field_field_paren_sub_plain_rhs_grow|idx;rhs; / double [1 4] [1 9 3 50]|exact|pending V3|ERR Assigning past the end of a 3-element array would grow it, which needs a plain variable on the left.
+CHK|w_field_field_paren_sub_plain_rhs_shrink|idx;rhs; / double [1 2] [1 9]|exact|pending V3|ERR Deleting elements needs a plain variable on the left.
+CHK|w_field_field_paren_sub_plain_rhs_rebind|idx;rhs; / double [1 4] [7 9 7 7]|exact|pending V3|rhs;idx; / double [1 4] [7 9 7 7]
+CHK|w_field_field_paren_sub_plain_rhs_clear|idx;rhs; / double [1 2] [0 9]|exact|pending V3|rhs;idx; / double [1 3] [1 9 3]
+CHK|w_field_field_paren_sub_grow_rhs_plain|idx;rhs; / double [1 4] [1 9 3 50]|exact|pending V3|ERR Assigning past the end of a 3-element array would grow it, which needs a plain variable on the left.
+CHK|w_field_field_paren_sub_grow_rhs_grow|idx;rhs; / double [1 5] [1 9 3 50 50]|exact|pending V3|ERR Assigning past the end of a 3-element array would grow it, which needs a plain variable on the left.
+CHK|w_field_field_paren_sub_grow_rhs_shrink|idx;rhs; / double [1 3] [1 9 3]|exact|pending V3|ERR Deleting elements needs a plain variable on the left.
+CHK|w_field_field_paren_sub_grow_rhs_rebind|idx;rhs; / double [1 4] [7 9 7 7]|exact|pending V3|ERR Assigning past the end of a 4-element array would grow it, which needs a plain variable on the left.
+CHK|w_field_field_paren_sub_grow_rhs_clear|idx;rhs; / double [1 2] [0 9]|exact|pending V3|ERR Assigning past the end of a 3-element array would grow it, which needs a plain variable on the left.
+CHK|w_field_field_paren_sub_shrink_rhs_plain|idx;rhs; / double [1 2] [1 9]|exact|pending V3|ERR Deleting elements needs a plain variable on the left.
+CHK|w_field_field_paren_sub_shrink_rhs_grow|idx;rhs; / double [1 3] [1 9 50]|exact|pending V3|ERR Assigning past the end of a 3-element array would grow it, which needs a plain variable on the left.
+CHK|w_field_field_paren_sub_shrink_rhs_shrink|idx;rhs; / double [1 2] [1 9]|exact|pending V3|ERR Deleting elements needs a plain variable on the left.
+CHK|w_field_field_paren_sub_shrink_rhs_rebind|idx;rhs; / double [1 4] [7 9 7 7]|exact|pending V3|ERR Deleting elements needs a plain variable on the left.
+CHK|w_field_field_paren_sub_shrink_rhs_clear|idx;rhs; / double [1 2] [0 9]|exact|pending V3|ERR Deleting elements needs a plain variable on the left.
+CHK|w_field_field_paren_sub_rebind_rhs_plain|idx;rhs; / double [1 4] [7 9 7 7]|exact|pending V3|rhs;idx; / double [1 4] [7 7 7 7]
+CHK|w_field_field_paren_sub_rebind_rhs_grow|idx;rhs; / double [1 5] [7 9 7 7 50]|exact|pending V3|ERR Assigning past the end of a 3-element array would grow it, which needs a plain variable on the left.
+CHK|w_field_field_paren_sub_rebind_rhs_shrink|idx;rhs; / double [1 3] [7 9 7]|exact|pending V3|ERR Deleting elements needs a plain variable on the left.
+CHK|w_field_field_paren_sub_rebind_rhs_rebind|idx;rhs; / double [1 4] [7 9 7 7]|exact|pending V3|rhs;idx; / double [1 4] [7 7 7 7]
+CHK|w_field_field_paren_sub_rebind_rhs_clear|idx;rhs; / double [1 2] [0 9]|exact|pending V3|rhs;idx; / double [1 4] [7 7 7 7]
+CHK|w_field_field_paren_sub_clear_rhs_plain|idx;rhs; / double [1 2] [0 9]|exact|pending V3|rhs;idx; / double [1 3] [1 9 3]
+CHK|w_field_field_paren_sub_clear_rhs_grow|ERR Dot indexing is not supported for variables of this type.|exact|pending V3|ERR Assigning past the end of a 3-element array would grow it, which needs a plain variable on the left.
+CHK|w_field_field_paren_sub_clear_rhs_shrink|ERR Dot indexing is not supported for variables of this type.|exact|pending V3|ERR Deleting elements needs a plain variable on the left.
+CHK|w_field_field_paren_sub_clear_rhs_rebind|idx;rhs; / double [1 4] [7 9 7 7]|exact|pending V3|rhs;idx; / double [1 4] [7 9 7 7]
+CHK|w_field_field_paren_sub_clear_rhs_clear|idx;rhs; / double [1 2] [0 9]|exact|pending V3|rhs;idx; / double [1 3] [1 9 3]
+CHK|w_field_field_paren_end_rhs_grow|rhs; / double [1 4] [1 2 9 50]|exact|pending V3|ERR Assigning past the end of a 3-element array would grow it, which needs a plain variable on the left.
+CHK|w_field_field_paren_end_rhs_shrink|rhs; / double [1 3] [1 2 9]|exact|pending V3|ERR Deleting elements needs a plain variable on the left.
+CHK|w_field_field_paren_end_rhs_rebind|rhs; / double [1 4] [7 7 9 7]|exact|pending V3|rhs; / double [1 4] [7 7 7 9]
+CHK|w_field_field_paren_end_rhs_clear|rhs; / double [1 3] [0 0 9]|exact|pending V3|rhs; / double [1 3] [1 2 9]
+CHK|w_dynfield_sub_plain_rhs_plain|idx;rhs; / struct [1 1] {f=double [1 1] 1 g=double [1 1] 9}|exact|pending V3|rhs;idx; / struct [1 1] {f=double [1 1] 1 g=double [1 1] 9}
+CHK|w_dynfield_sub_plain_rhs_grow|idx;rhs; / struct [1 1] {f=double [1 1] 1 h=double [1 1] 50 g=double [1 1] 9}|exact|pending V3|rhs;idx; / struct [1 1] {f=double [1 1] 1 h=double [1 1] 50 g=double [1 1] 9}
+CHK|w_dynfield_sub_plain_rhs_shrink|idx;rhs; / struct [1 1] {g=double [1 1] 9}|exact|pending V3|rhs;idx; / struct [1 1] {g=double [1 1] 9}
+CHK|w_dynfield_sub_plain_rhs_rebind|idx;rhs; / struct [1 1] {f=double [1 1] 7 g=double [1 1] 9}|exact|pending V3|rhs;idx; / struct [1 1] {f=double [1 1] 7 g=double [1 1] 9}
+CHK|w_dynfield_sub_plain_rhs_clear|idx;rhs; / struct [1 1] {g=double [1 1] 9}|exact|pending V3|rhs;idx; / struct [1 1] {f=double [1 1] 1 g=double [1 1] 9}
+CHK|w_dynfield_sub_grow_rhs_plain|idx;rhs; / struct [1 1] {f=double [1 1] 1 h=double [1 1] 50 g=double [1 1] 9}|exact|pending V3|rhs;idx; / struct [1 1] {f=double [1 1] 1 h=double [1 1] 50 g=double [1 1] 9}
+CHK|w_dynfield_sub_grow_rhs_grow|idx;rhs; / struct [1 1] {f=double [1 1] 1 h=double [1 1] 50 g=double [1 1] 9}|exact|pending V3|rhs;idx; / struct [1 1] {f=double [1 1] 1 h=double [1 1] 50 g=double [1 1] 9}
+CHK|w_dynfield_sub_grow_rhs_shrink|idx;rhs; / struct [1 1] {h=double [1 1] 50 g=double [1 1] 9}|exact|pending V3|rhs;idx; / struct [1 1] {h=double [1 1] 50 g=double [1 1] 9}
+CHK|w_dynfield_sub_grow_rhs_rebind|idx;rhs; / struct [1 1] {f=double [1 1] 7 g=double [1 1] 9}|exact|pending V3|rhs;idx; / struct [1 1] {f=double [1 1] 7 h=double [1 1] 50 g=double [1 1] 9}
+CHK|w_dynfield_sub_grow_rhs_clear|idx;rhs; / struct [1 1] {g=double [1 1] 9}|exact|pending V3|rhs;idx; / struct [1 1] {f=double [1 1] 1 h=double [1 1] 50 g=double [1 1] 9}
+CHK|w_dynfield_sub_shrink_rhs_plain|idx;rhs; / struct [1 1] {g=double [1 1] 9}|exact|pending V3|rhs;idx; / struct [1 1] {}
+CHK|w_dynfield_sub_shrink_rhs_grow|idx;rhs; / struct [1 1] {h=double [1 1] 50 g=double [1 1] 9}|exact|pending V3|rhs;idx; / struct [1 1] {h=double [1 1] 50}
+CHK|w_dynfield_sub_shrink_rhs_shrink|idx;rhs; / struct [1 1] {g=double [1 1] 9}|exact|pending V3|ERR rmfield: this struct has no field 'f'.
+CHK|w_dynfield_sub_shrink_rhs_rebind|idx;rhs; / struct [1 1] {f=double [1 1] 7 g=double [1 1] 9}|exact|pending V3|rhs;idx; / struct [1 1] {}
+CHK|w_dynfield_sub_shrink_rhs_clear|idx;rhs; / struct [1 1] {g=double [1 1] 9}|exact|pending V3|rhs;idx; / struct [1 1] {}
+CHK|w_dynfield_sub_rebind_rhs_plain|idx;rhs; / struct [1 1] {f=double [1 1] 7 g=double [1 1] 9}|exact|pending V3|rhs;idx; / struct [1 1] {f=double [1 1] 7}
+CHK|w_dynfield_sub_rebind_rhs_grow|idx;rhs; / struct [1 1] {f=double [1 1] 7 h=double [1 1] 50 g=double [1 1] 9}|exact|pending V3|rhs;idx; / struct [1 1] {f=double [1 1] 7}
+CHK|w_dynfield_sub_rebind_rhs_shrink|idx;rhs; / struct [1 1] {g=double [1 1] 9}|exact|pending V3|rhs;idx; / struct [1 1] {f=double [1 1] 7}
+CHK|w_dynfield_sub_rebind_rhs_rebind|idx;rhs; / struct [1 1] {f=double [1 1] 7 g=double [1 1] 9}|exact|pending V3|rhs;idx; / struct [1 1] {f=double [1 1] 7}
+CHK|w_dynfield_sub_rebind_rhs_clear|idx;rhs; / struct [1 1] {g=double [1 1] 9}|exact|pending V3|rhs;idx; / struct [1 1] {f=double [1 1] 7}
+CHK|w_dynfield_sub_clear_rhs_plain|idx;rhs; / struct [1 1] {g=double [1 1] 9}|exact|pending V3|rhs;idx; / struct [1 1] {f=double [1 1] 1 g=double [1 1] 9}
+CHK|w_dynfield_sub_clear_rhs_grow|idx;rhs; / struct [1 1] {h=double [1 1] 50 g=double [1 1] 9}|exact|pending V3|rhs;idx; / struct [1 1] {f=double [1 1] 1 h=double [1 1] 50 g=double [1 1] 9}
+CHK|w_dynfield_sub_clear_rhs_shrink|ERR S must be a structure array.|exact|pending V3|rhs;idx; / struct [1 1] {g=double [1 1] 9}
+CHK|w_dynfield_sub_clear_rhs_rebind|idx;rhs; / struct [1 1] {f=double [1 1] 7 g=double [1 1] 9}|exact|pending V3|rhs;idx; / struct [1 1] {f=double [1 1] 7 g=double [1 1] 9}
+CHK|w_dynfield_sub_clear_rhs_clear|idx;rhs; / struct [1 1] {g=double [1 1] 9}|exact|pending V3|rhs;idx; / struct [1 1] {f=double [1 1] 1 g=double [1 1] 9}

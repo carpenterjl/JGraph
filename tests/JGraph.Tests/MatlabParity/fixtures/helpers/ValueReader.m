@@ -7,5 +7,8 @@ classdef ValueReader
         function r = read(obj, ~)
             r = obj.p;
         end
+        function r = keep(~, x, ~)
+            r = x;
+        end
     end
 end
