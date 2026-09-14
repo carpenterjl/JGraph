@@ -406,12 +406,12 @@ internal static partial class JgsBuiltins
         // The source is either an open file or a piece of text; a number is an id and text is the
         // thing to read, which is the same rule fopen uses.
         JGraphScriptGlobals.FileEntry? entry = null;
-        string body;
+        string body = string.Empty;
         long start = 0;
         if (args[0].Type is JgsType.Number or JgsType.Bool)
         {
             entry = EntryOf(host, "textscan", args, line, col);
-            (body, start) = RemainderOf(entry);
+            start = entry.Stream.Position;
         }
         else
         {
@@ -428,12 +428,41 @@ internal static partial class JgsBuiltins
         }
 
         JgsTextScanner.Options options = TextScanOptions(args, at, line, col);
-        (List<JgsValue> columns, int consumed) = JgsTextScanner.Scan(
-            body, format, repetitions, options, line, col);
-
-        if (entry is not null)
+        List<JgsValue> columns;
+        int consumed;
+        if (entry is null)
         {
-            entry.Stream.Position = start + entry.Encoding.GetByteCount(body[..consumed]);
+            (columns, consumed) = JgsTextScanner.Scan(body, format, repetitions, options, line, col);
+        }
+        else
+        {
+            // A file read a counted number of records at a time decodes a window, as fscanf does
+            // (comments are blanked in place and header lines skipped, so positions in the window are
+            // positions in the file). A refusal inside a partial window may be a field cut at its
+            // edge, so only the refusal the whole remainder gives is reported.
+            int window = repetitions is >= 0 and < int.MaxValue ? ScanWindowBytes : int.MaxValue;
+            while (true)
+            {
+                (body, bool whole) = WindowOf(entry, start, window);
+                try
+                {
+                    (columns, consumed) = JgsTextScanner.Scan(body, format, repetitions, options, line, col);
+                }
+                catch (JgsRuntimeException) when (!whole)
+                {
+                    window = window > int.MaxValue / 2 ? int.MaxValue : window * 2;
+                    continue;
+                }
+
+                if (whole || consumed + ScanWindowMargin <= body.Length)
+                {
+                    break;
+                }
+
+                window = window > int.MaxValue / 2 ? int.MaxValue : window * 2;
+            }
+
+            entry.Stream.Position = start + entry.Encoding.GetByteCount(body.AsSpan(0, consumed));
         }
 
         // A row of columns, which for a format of nothing but skipped fields is the 1-by-0 cell.
@@ -589,14 +618,6 @@ internal static partial class JgsBuiltins
         entry.Stream.Position = start;
         int read = entry.Stream.ReadAtLeast(bytes, size, throwOnEndOfStream: false);
         return (entry.Encoding.GetString(bytes, 0, read), read >= remaining);
-    }
-
-    private static (string Text, long Start) RemainderOf(JGraphScriptGlobals.FileEntry entry)
-    {
-        long start = entry.Stream.Position;
-        var rest = new byte[System.Math.Max(0, entry.Stream.Length - start)];
-        int read = entry.Stream.Read(rest, 0, rest.Length);
-        return (entry.Encoding.GetString(rest, 0, read), start);
     }
 
     // --- the line readers -------------------------------------------------------------------

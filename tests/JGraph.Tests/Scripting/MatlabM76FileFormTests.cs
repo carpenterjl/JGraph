@@ -176,6 +176,35 @@ public class MatlabM76FileFormTests : IDisposable
         assert(isequal(pieces, whole), 'multi-byte text read in pieces equals the whole read');
         """);
 
+    /// <summary>
+    /// A counted textscan decodes only a window of the file too, so records read in pieces, with
+    /// comment lines between them and past the first window, come back as one whole read does.
+    /// </summary>
+    [Fact]
+    public Task ACountedTextscan_ReadInPieces_MatchesOneWholeRead() => RunAsserting("""
+        fid = fopen('table.txt', 'w');
+        for b = 1:400
+            fprintf(fid, '%% block %d\n', b);
+            idx = (b - 1) * 50 + (1:50);
+            fprintf(fid, '%d %.3f\n', [idx; idx / 7]);
+        end
+        fclose(fid);
+
+        fid = fopen('table.txt', 'r');
+        W = textscan(fid, '%f %f', 'CommentStyle', '%');
+        frewind(fid);
+        a = []; v = [];
+        while true
+            C = textscan(fid, '%f %f', 777, 'CommentStyle', '%');
+            if isempty(C{1}), break; end
+            a = [a; C{1}];
+            v = [v; C{2}];
+        end
+        fclose(fid);
+        assert(numel(W{1}) == 20000, 'the whole read sees every record');
+        assert(isequal(a, W{1}) && isequal(v, W{2}), 'records read in pieces equal the whole read');
+        """);
+
     [Fact]
     public Task TextscanReadsATableIntoColumns() => RunAsserting(WriteGrid + """
         fid = fopen('grid.txt', 'r');
