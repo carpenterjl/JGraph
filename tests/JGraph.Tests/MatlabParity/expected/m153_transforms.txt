@@ -172,5 +172,5 @@ CHK|dct_single_c2|0.006278525572270155|rel=1e-5
 CHK|dct_type1_roundtrip|5.5511151231257827e-16|abs=1e-11
 CHK|dct_type4_roundtrip|4.4408920985006262e-16|abs=1e-11
 CHK|dct_type3_is_idct|2.7755575615628914e-16|abs=1e-11
-CHK|dct_scalar|7.0000000000000009|div=ADR0153
-CHK|dct_empty_shape|[0 0]|div=ADR0153
+CHK|dct_scalar|7.0000000000000009|div=ADR0153|diverges|7
+CHK|dct_empty_shape|[0 0]|div=ADR0153|diverges|[0 1]

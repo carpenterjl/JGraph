@@ -1,3 +1,4 @@
+using System.Text;
 using JGraph.Api;
 using JGraph.Scripting;
 using JGraph.Scripting.Jgs;
@@ -17,6 +18,16 @@ namespace JGraph.Tests.MatlabParity;
 /// A fixture with no recording fails rather than passing vacuously; a <c>div=</c> line whose two
 /// values agree fails, because that is a divergence retired without anyone noticing. The fixture and
 /// expected files are copied to the output folder by the test project file.
+/// </para>
+/// <para>
+/// <b>The ratchet.</b> A recording's lines carry states (<see cref="MatlabParityComparer"/>): a line
+/// JGraph is known to fail is <c>pending Vn</c> with its exact baseline, an accepted divergence is
+/// <c>diverges</c> with its exact output, a run known to fail has a <c>RUN</c> line. States are
+/// written by the stamp mode: with <c>JGRAPH_PARITY_STAMP</c> set to the expected folder to write,
+/// each fixture's recording is re-stamped from what JGraph printed, owners taken from the fixture's
+/// <c>.owners</c> sidecar, and the theory fails with a summary so a stamping run is never mistaken
+/// for a green one. <c>tools/parity/check-ratchet.py</c> then holds that no line stays pending on a
+/// stage whose ADR has landed.
 /// </para>
 /// <para>
 /// A fixture runs the way the recorder runs it in MATLAB (<c>cd(fixtures); addpath(helpers); name</c>):
@@ -66,11 +77,44 @@ public class MatlabParityFixtureTests : IDisposable
         string expected = File.ReadAllText(recording);
         Assert.Contains("CHK|", expected);
 
-        string actual = MatlabParityComparer.ResolveBits(RunFixture(script));
-        List<string> problems = MatlabParityComparer.Compare(expected, actual);
+        (string printed, string? runFailure) = RunFixture(script);
+        string actual = MatlabParityComparer.ResolveBits(printed);
+
+        if (Environment.GetEnvironmentVariable("JGRAPH_PARITY_STAMP") is { Length: > 0 } stampFolder)
+        {
+            Stamp(fixture, expected, actual, runFailure, stampFolder);
+            return;
+        }
+
+        List<string> problems = MatlabParityComparer.Compare(expected, actual, runFailure);
         Assert.True(
             problems.Count == 0,
             $"{fixture}: {problems.Count} line(s) disagree with MATLAB\n  - " + string.Join("\n  - ", problems));
+    }
+
+    /// <summary>
+    /// The stamp mode: rewrites the recording's states from this run and fails with what it did, so
+    /// the run reads as a stamping run and never as a gate. A fixture with nothing to stamp and no
+    /// problem passes; one with a line no owner claims fails naming it.
+    /// </summary>
+    private static void Stamp(string fixture, string expected, string actual, string? runFailure, string stampFolder)
+    {
+        string ownersPath = Path.Combine(Root, "fixtures", fixture + ".owners");
+        MatlabParityStamper.Result result = MatlabParityStamper.Stamp(
+            expected, actual, runFailure, MatlabParityStamper.ReadOwners(ownersPath));
+        string target = Path.Combine(stampFolder, fixture + ".txt");
+        if (result.Stamped > 0)
+        {
+            File.WriteAllText(target, result.Text, new UTF8Encoding(false));
+        }
+
+        string summary = $"{fixture}: stamped {result.Stamped} line(s) into {target}";
+        if (result.Unstamped.Count > 0)
+        {
+            summary += $"; {result.Unstamped.Count} could not be stamped\n  - " + string.Join("\n  - ", result.Unstamped);
+        }
+
+        Assert.True(result.Stamped == 0 && result.Unstamped.Count == 0, summary);
     }
 
     [Fact]
@@ -86,7 +130,7 @@ public class MatlabParityFixtureTests : IDisposable
     [Fact]
     public void ComparerPassesAgreeingLines()
     {
-        const string expected = "CHK|a|1.5|exact\nCHK|b|[2 3]|shape\nCHK|c|100|rel=1e-3\nCHK|d|0.5|abs=1e-6\nCHK|e|9.99|div=ADR0001\n";
+        const string expected = "CHK|a|1.5|exact\nCHK|b|[2 3]|shape\nCHK|c|100|rel=1e-3\nCHK|d|0.5|abs=1e-6\nCHK|e|9.99|div=ADR0001|diverges|9.79\n";
         const string actual = "CHK|a|1.5|exact\nCHK|b|[2  3]|shape\nCHK|c|100.05|rel=1e-3\nCHK|d|0.5000005|abs=1e-6\nCHK|e|9.79|div=ADR0001\n";
         Assert.Empty(MatlabParityComparer.Compare(expected, actual));
     }
@@ -102,7 +146,7 @@ public class MatlabParityFixtureTests : IDisposable
     [Fact]
     public void ComparerFailsARetiredDivergence()
     {
-        List<string> problems = MatlabParityComparer.Compare("CHK|a|9.99|div=ADR0123\n", "CHK|a|9.99|div=ADR0123\n");
+        List<string> problems = MatlabParityComparer.Compare("CHK|a|9.99|div=ADR0123|diverges|9.99\n", "CHK|a|9.99|div=ADR0123\n");
         string problem = Assert.Single(problems);
         Assert.Contains("ADR0123 is retired", problem);
     }
@@ -151,7 +195,7 @@ public class MatlabParityFixtureTests : IDisposable
     /// the implicit folder are its own), with the fixtures folder current and <c>helpers\</c> on the
     /// function path. The comparer's inline lines are the comparer's business; this is the fixture's.
     /// </summary>
-    private static string RunFixture(string script)
+    private static (string Printed, string? RunFailure) RunFixture(string script)
     {
         string fixtures = Path.GetDirectoryName(script)!;
         var output = new RecordingScriptOutput();
@@ -159,8 +203,10 @@ public class MatlabParityFixtureTests : IDisposable
         ScriptRunResult result = JgsRunner.Run(
             File.ReadAllText(script), context, default, sourceId: script, hook: null, JgsDialect.Matlab,
             searchFolders: [Path.Combine(fixtures, "helpers")]);
-        Assert.True(result.Success, result.Message + output.ErrorText);
-        return output.NormalText;
+
+        // A run that fails is not an assertion failure here: the recording may say it fails
+        // (RUN|pending), and the comparer holds it to exactly that.
+        return (output.NormalText, result.Success ? null : result.Message ?? "the run failed with no message");
     }
 
     private static string RunMatlabDialect(string code)

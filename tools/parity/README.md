@@ -29,12 +29,53 @@ Doubles are printed with `%.17g`, so a value that round-trips is compared as the
 | `shape` | the same text once whitespace is normalised, e.g. `[19 2]` from `mat2str(size(y))` |
 | `rel=1e-12` | `\|actual - expected\| <= 1e-12 * \|expected\|` (`<= 1e-12` when expected is 0) |
 | `abs=1e-9` | `\|actual - expected\| <= 1e-9` |
-| `div=ADR0123` | the values **differ**. A recorded divergence: if the two engines ever agree the line fails, saying the divergence is retired and must be deleted from the ADR |
+| `div=ADR0123` | a recorded divergence: the recording is stamped `\|diverges\|<output>` and the line passes only on exactly that output, which must **differ** from MATLAB's — if the two engines ever agree the line fails, saying the divergence is retired and must be deleted from the ADR |
 | `bits` | a whole array to the bit: the SHA-256 digests of the two `num2hex` files agree (below) |
 
 A fixture with no recording fails ("not recorded"). A line printed here but absent from the
 recording fails ("re-run record-matlab.ps1"). A rule that differs between the two sides fails, because
 a fixture and its recording are the same script.
+
+### The ratchet: states on a recorded line
+
+A recording's line may carry two more fields after the rule. They are what lets a fixture hold
+lines JGraph does not yet match without letting anything else move:
+
+```
+CHK|name|<MATLAB's value>|<rule>|pending V3|<JGraph's exact output today>
+CHK|name|<MATLAB's value>|div=ADR0160|diverges|<JGraph's exact output>
+RUN|pending V6|<the message the run fails with>
+```
+
+- `pending Vn` — JGraph is known to fail this line until stage Vn of the value-ownership plan lands.
+  The line passes only when JGraph prints the recorded baseline, as text. A **different wrong answer
+  is a regression** and fails; an answer that now agrees with MATLAB fails too, until the owning
+  stage's commit removes the marker (the flip is recorded, never silent); a baseline that changes
+  for a reason is re-stamped in a commit that names the line and why.
+- `diverges` — an accepted divergence (the rule is `div=ADRnnnn`, the ADR's `## Divergences` names
+  the line). It passes on exactly the stamped output and fails on any other, and on agreement.
+  An unstamped `div=` line fails: accepting any output on a divergent line hid regressions.
+- `RUN|pending Vn|message` — the whole run is known to fail with that message (a class file the
+  parser refuses, say). The run must fail with exactly it; the lines it printed are checked; the
+  lines it never reached are excused. A run that succeeds, or fails otherwise, fails the fixture.
+
+Printed lines never carry a state. States are written by the **stamp mode**: set
+`JGRAPH_PARITY_STAMP` to the expected folder to write and run the parity tests; each recording is
+re-stamped from what JGraph printed, and the theory fails with a summary of what it did, so a
+stamping run never reads as a green one. The owner of a failing line comes from the fixture's
+`.owners` sidecar (`name<tab>Vn`, `*<tab>Vn` for the rest, `RUN<tab>Vn` for the run); a line no
+owner claims is reported, not stamped, and a divergence that has come to agree is reported as
+retired. `tools/parity/check-ratchet.py` reads the recordings without an engine: it fails a pending
+line on an unknown stage, or on a stage whose ADR has landed under `docs/adr`, or with a baseline
+that already agrees, and prints the pending count per stage — the ratchet's progress.
+
+```powershell
+$env:JGRAPH_PARITY_STAMP = "$PWD\tests\JGraph.Tests\MatlabParity\expected"
+dotnet test tests/JGraph.Tests --no-build --filter "FullyQualifiedName~MatlabParityFixtureTests"
+Remove-Item Env:JGRAPH_PARITY_STAMP
+python tools/parity/check-ratchet.py
+python -m unittest tools/parity/test_compare.py
+```
 
 ### The `bits` rule
 
@@ -65,8 +106,10 @@ payload and a changed shape, for double and for single.
 
 ## Writing a fixture
 
-- MATLAB dialect only, and only forms both engines accept. A form JGraph refuses is not a fixture
-  line; it is a capability-probe row in `head2head_v2/scripts/d14_capability.m`.
+- MATLAB dialect only. A form JGraph refuses may be a fixture line when a stage of the
+  value-ownership plan owns it: the fixture prints the refusal (`ERR <message>`) inside a `try`,
+  and the line is stamped `pending Vn`. A refusal nobody owns is a capability-probe row in
+  `head2head_v2/scripts/d14_capability.m`, not a fixture line.
 - Print with `fprintf`, never `disp` — display formats differ and are not what is being measured.
 - No `rand`. Deterministic data only: `mod((1:n)*0.618033988749895, 1)` is the house noise.
 - Pin what the algorithm does, not only what it answers: an ODE solver's `nsteps` is `exact`; a

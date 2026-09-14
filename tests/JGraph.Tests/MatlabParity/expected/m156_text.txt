@@ -94,16 +94,16 @@ CHK|cls_uint16|<0 65535>|exact
 CHK|cls_int32|<-2147483648 2147483647>|exact
 CHK|cls_uint32|<0 4294967295>|exact
 CHK|cls_int64_small|<-9007199254740992 123456789012 9007199254740992>|exact
-CHK|cls_int64_max|<9223372036854775807>|div=ADR0156
-CHK|cls_uint64_max|<18446744073709551615>|div=ADR0156
-CHK|cls_single|<3.1415927410126 0.10000000149012 10000000000 16777216 -2.5 9.9999997473788e-06>|div=ADR0156
+CHK|cls_int64_max|<9223372036854775807>|div=ADR0156|diverges|<9.223372036854776e+18>
+CHK|cls_uint64_max|<18446744073709551615>|div=ADR0156|diverges|<1.844674407370955e+19>
+CHK|cls_single|<3.1415927410126 0.10000000149012 10000000000 16777216 -2.5 9.9999997473788e-06>|div=ADR0156|diverges|<3.1416 0.1 10000000000 16777216 -2.5 1e-05>
 CHK|cls_logical|<true false true>|exact
 CHK|sweep_fractions|15ec81832b22f6a8d3ca883e153e92da6e98065fea97f35018baa3b63fa205de|bits
 CHK|sweep_small|e7d2be073aa99affe7125d6f420f0cea2294297c7d6d25d8a5c52d4195098535|bits
 CHK|sweep_billions|e00f94e87ca8182ed78654577be9fd66a8ba7fa0e10163e34cf5c3d7f8a5ad1e|bits
 CHK|sweep_hundred_trillions|df3543b4bb026a21e9f4165a1ed5afa00c5e1de8071d3a89f4d9b205b8211705|bits
-CHK|array_precision|<9016.99437 12345.5 -4.2520535>|div=ADR0156
-CHK|array_precision_small|<-29.14401 -123.25>|div=ADR0156
+CHK|array_precision|<9016.99437 12345.5 -4.2520535>|div=ADR0156|diverges|<9016.9944 12345.5 -4.2521>
+CHK|array_precision_small|<-29.14401 -123.25>|div=ADR0156|diverges|<-29.144 -123.25>
 CHK|sweep_tenths|12206c9bfd01af991a5de388b64f0641fd3bf323f307386024703d9873fe3acc|bits
 CHK|chain_str_str_str|<string[1 1]:ababab>|exact
 CHK|chain_str_str_row|<string[1 2]:ababx,ababy>|exact
@@ -501,11 +501,11 @@ CHK|chain_chr_col_lgc|<string[2 1]:cdptrue,cdqtrue>|exact
 CHK|chain_chr_col_cmx|<string[2 1]:cdpef,cdqgh>|exact
 CHK|chain_chr_col_cel|<string[2 1]:cdpu,cdqv>|exact
 CHK|chain_chr_col_row3|<string[2 3]:cdpx,cdqx,cdpy,cdqy,cdpz,cdqz>|exact
-CHK|chain_chr_chr_str|<string[1 2]:198ab,200ab>|div=ADR0156
-CHK|chain_chr_chr_row|<string[1 2]:198x,200y>|div=ADR0156
-CHK|chain_chr_chr_col|<string[2 2]:198p,198q,200p,200q>|div=ADR0156
-CHK|chain_chr_chr_mis|<string[1 2]:<M>,<M>>|div=ADR0156
-CHK|chain_chr_chr_row3|<ERR>|div=ADR0156
+CHK|chain_chr_chr_str|<string[1 2]:198ab,200ab>|div=ADR0156|diverges|<string[1 1]:cdcdab>
+CHK|chain_chr_chr_row|<string[1 2]:198x,200y>|div=ADR0156|diverges|<string[1 2]:cdcdx,cdcdy>
+CHK|chain_chr_chr_col|<string[2 2]:198p,198q,200p,200q>|div=ADR0156|diverges|<string[2 1]:cdcdp,cdcdq>
+CHK|chain_chr_chr_mis|<string[1 2]:<M>,<M>>|div=ADR0156|diverges|<string[1 1]:<M>>
+CHK|chain_chr_chr_row3|<ERR>|div=ADR0156|diverges|<string[1 3]:cdcdx,cdcdy,cdcdz>
 CHK|chain_chr_mis_str|<string[1 1]:<M>>|exact
 CHK|chain_chr_mis_row|<string[1 2]:<M>,<M>>|exact
 CHK|chain_chr_mis_col|<string[2 1]:<M>,<M>>|exact
@@ -517,31 +517,31 @@ CHK|chain_chr_mis_lgc|<string[1 1]:<M>>|exact
 CHK|chain_chr_mis_cmx|<string[2 1]:<M>,<M>>|exact
 CHK|chain_chr_mis_cel|<string[2 1]:<M>,<M>>|exact
 CHK|chain_chr_mis_row3|<string[1 3]:<M>,<M>,<M>>|exact
-CHK|chain_chr_num_str|<string[1 2]:106ab,107ab>|div=ADR0156
-CHK|chain_chr_num_row|<string[1 2]:106x,107y>|div=ADR0156
-CHK|chain_chr_num_col|<string[2 2]:106p,106q,107p,107q>|div=ADR0156
-CHK|chain_chr_num_mis|<string[1 2]:<M>,<M>>|div=ADR0156
-CHK|chain_chr_num_row3|<ERR>|div=ADR0156
-CHK|chain_chr_nan_str|<string[1 2]:<M>,<M>>|div=ADR0156
-CHK|chain_chr_nan_row|<string[1 2]:<M>,<M>>|div=ADR0156
-CHK|chain_chr_nan_col|<string[2 2]:<M>,<M>,<M>,<M>>|div=ADR0156
-CHK|chain_chr_nan_mis|<string[1 2]:<M>,<M>>|div=ADR0156
-CHK|chain_chr_nan_row3|<ERR>|div=ADR0156
-CHK|chain_chr_lgc_str|<string[1 2]:100ab,101ab>|div=ADR0156
-CHK|chain_chr_lgc_row|<string[1 2]:100x,101y>|div=ADR0156
-CHK|chain_chr_lgc_col|<string[2 2]:100p,100q,101p,101q>|div=ADR0156
-CHK|chain_chr_lgc_mis|<string[1 2]:<M>,<M>>|div=ADR0156
-CHK|chain_chr_lgc_row3|<ERR>|div=ADR0156
-CHK|chain_chr_cmx_str|<string[2 2]:200ab,202ab,202ab,204ab>|div=ADR0156
-CHK|chain_chr_cmx_row|<string[2 2]:200x,202x,202y,204y>|div=ADR0156
-CHK|chain_chr_cmx_col|<string[2 2]:200p,202q,202p,204q>|div=ADR0156
-CHK|chain_chr_cmx_mis|<string[2 2]:<M>,<M>,<M>,<M>>|div=ADR0156
-CHK|chain_chr_cmx_row3|<ERR>|div=ADR0156
-CHK|chain_chr_cel_str|<ERR>|div=ADR0156
-CHK|chain_chr_cel_row|<ERR>|div=ADR0156
-CHK|chain_chr_cel_col|<ERR>|div=ADR0156
-CHK|chain_chr_cel_mis|<ERR>|div=ADR0156
-CHK|chain_chr_cel_row3|<ERR>|div=ADR0156
+CHK|chain_chr_num_str|<string[1 2]:106ab,107ab>|div=ADR0156|diverges|<string[1 1]:cd7ab>
+CHK|chain_chr_num_row|<string[1 2]:106x,107y>|div=ADR0156|diverges|<string[1 2]:cd7x,cd7y>
+CHK|chain_chr_num_col|<string[2 2]:106p,106q,107p,107q>|div=ADR0156|diverges|<string[2 1]:cd7p,cd7q>
+CHK|chain_chr_num_mis|<string[1 2]:<M>,<M>>|div=ADR0156|diverges|<string[1 1]:<M>>
+CHK|chain_chr_num_row3|<ERR>|div=ADR0156|diverges|<string[1 3]:cd7x,cd7y,cd7z>
+CHK|chain_chr_nan_str|<string[1 2]:<M>,<M>>|div=ADR0156|diverges|<string[1 1]:cdNaNab>
+CHK|chain_chr_nan_row|<string[1 2]:<M>,<M>>|div=ADR0156|diverges|<string[1 2]:cdNaNx,cdNaNy>
+CHK|chain_chr_nan_col|<string[2 2]:<M>,<M>,<M>,<M>>|div=ADR0156|diverges|<string[2 1]:cdNaNp,cdNaNq>
+CHK|chain_chr_nan_mis|<string[1 2]:<M>,<M>>|div=ADR0156|diverges|<string[1 1]:<M>>
+CHK|chain_chr_nan_row3|<ERR>|div=ADR0156|diverges|<string[1 3]:cdNaNx,cdNaNy,cdNaNz>
+CHK|chain_chr_lgc_str|<string[1 2]:100ab,101ab>|div=ADR0156|diverges|<string[1 1]:cdtrueab>
+CHK|chain_chr_lgc_row|<string[1 2]:100x,101y>|div=ADR0156|diverges|<string[1 2]:cdtruex,cdtruey>
+CHK|chain_chr_lgc_col|<string[2 2]:100p,100q,101p,101q>|div=ADR0156|diverges|<string[2 1]:cdtruep,cdtrueq>
+CHK|chain_chr_lgc_mis|<string[1 2]:<M>,<M>>|div=ADR0156|diverges|<string[1 1]:<M>>
+CHK|chain_chr_lgc_row3|<ERR>|div=ADR0156|diverges|<string[1 3]:cdtruex,cdtruey,cdtruez>
+CHK|chain_chr_cmx_str|<string[2 2]:200ab,202ab,202ab,204ab>|div=ADR0156|diverges|<string[1 1]:cd[ef; gh]ab>
+CHK|chain_chr_cmx_row|<string[2 2]:200x,202x,202y,204y>|div=ADR0156|diverges|<string[1 2]:cd[ef; gh]x,cd[ef; gh]y>
+CHK|chain_chr_cmx_col|<string[2 2]:200p,202q,202p,204q>|div=ADR0156|diverges|<string[2 1]:cd[ef; gh]p,cd[ef; gh]q>
+CHK|chain_chr_cmx_mis|<string[2 2]:<M>,<M>,<M>,<M>>|div=ADR0156|diverges|<string[1 1]:<M>>
+CHK|chain_chr_cmx_row3|<ERR>|div=ADR0156|diverges|<string[1 3]:cd[ef; gh]x,cd[ef; gh]y,cd[ef; gh]z>
+CHK|chain_chr_cel_str|<ERR>|div=ADR0156|diverges|<string[1 1]:cd{'u', 'v'}ab>
+CHK|chain_chr_cel_row|<ERR>|div=ADR0156|diverges|<string[1 2]:cd{'u', 'v'}x,cd{'u', 'v'}y>
+CHK|chain_chr_cel_col|<ERR>|div=ADR0156|diverges|<string[2 1]:cd{'u', 'v'}p,cd{'u', 'v'}q>
+CHK|chain_chr_cel_mis|<ERR>|div=ADR0156|diverges|<string[1 1]:<M>>
+CHK|chain_chr_cel_row3|<ERR>|div=ADR0156|diverges|<string[1 3]:cd{'u', 'v'}x,cd{'u', 'v'}y,cd{'u', 'v'}z>
 CHK|chain_chr_row3_str|<string[1 3]:cdxab,cdyab,cdzab>|exact
 CHK|chain_chr_row3_row|<ERR>|exact
 CHK|chain_chr_row3_col|<string[2 3]:cdxp,cdxq,cdyp,cdyq,cdzp,cdzq>|exact
@@ -707,11 +707,11 @@ CHK|chain_num_col_lgc|<string[2 1]:7ptrue,7qtrue>|exact
 CHK|chain_num_col_cmx|<string[2 1]:7pef,7qgh>|exact
 CHK|chain_num_col_cel|<string[2 1]:7pu,7qv>|exact
 CHK|chain_num_col_row3|<string[2 3]:7px,7qx,7py,7qy,7pz,7qz>|exact
-CHK|chain_num_chr_str|<string[1 2]:106ab,107ab>|div=ADR0156
-CHK|chain_num_chr_row|<string[1 2]:106x,107y>|div=ADR0156
-CHK|chain_num_chr_col|<string[2 2]:106p,106q,107p,107q>|div=ADR0156
-CHK|chain_num_chr_mis|<string[1 2]:<M>,<M>>|div=ADR0156
-CHK|chain_num_chr_row3|<ERR>|div=ADR0156
+CHK|chain_num_chr_str|<string[1 2]:106ab,107ab>|div=ADR0156|diverges|<string[1 1]:7cdab>
+CHK|chain_num_chr_row|<string[1 2]:106x,107y>|div=ADR0156|diverges|<string[1 2]:7cdx,7cdy>
+CHK|chain_num_chr_col|<string[2 2]:106p,106q,107p,107q>|div=ADR0156|diverges|<string[2 1]:7cdp,7cdq>
+CHK|chain_num_chr_mis|<string[1 2]:<M>,<M>>|div=ADR0156|diverges|<string[1 1]:<M>>
+CHK|chain_num_chr_row3|<ERR>|div=ADR0156|diverges|<string[1 3]:7cdx,7cdy,7cdz>
 CHK|chain_num_mis_str|<string[1 1]:<M>>|exact
 CHK|chain_num_mis_row|<string[1 2]:<M>,<M>>|exact
 CHK|chain_num_mis_col|<string[2 1]:<M>,<M>>|exact
@@ -792,11 +792,11 @@ CHK|chain_nan_col_lgc|<string[2 1]:<M>,<M>>|exact
 CHK|chain_nan_col_cmx|<string[2 1]:<M>,<M>>|exact
 CHK|chain_nan_col_cel|<string[2 1]:<M>,<M>>|exact
 CHK|chain_nan_col_row3|<string[2 3]:<M>,<M>,<M>,<M>,<M>,<M>>|exact
-CHK|chain_nan_chr_str|<string[1 2]:<M>,<M>>|div=ADR0156
-CHK|chain_nan_chr_row|<string[1 2]:<M>,<M>>|div=ADR0156
-CHK|chain_nan_chr_col|<string[2 2]:<M>,<M>,<M>,<M>>|div=ADR0156
-CHK|chain_nan_chr_mis|<string[1 2]:<M>,<M>>|div=ADR0156
-CHK|chain_nan_chr_row3|<ERR>|div=ADR0156
+CHK|chain_nan_chr_str|<string[1 2]:<M>,<M>>|div=ADR0156|diverges|<string[1 1]:NaNcdab>
+CHK|chain_nan_chr_row|<string[1 2]:<M>,<M>>|div=ADR0156|diverges|<string[1 2]:NaNcdx,NaNcdy>
+CHK|chain_nan_chr_col|<string[2 2]:<M>,<M>,<M>,<M>>|div=ADR0156|diverges|<string[2 1]:NaNcdp,NaNcdq>
+CHK|chain_nan_chr_mis|<string[1 2]:<M>,<M>>|div=ADR0156|diverges|<string[1 1]:<M>>
+CHK|chain_nan_chr_row3|<ERR>|div=ADR0156|diverges|<string[1 3]:NaNcdx,NaNcdy,NaNcdz>
 CHK|chain_nan_mis_str|<string[1 1]:<M>>|exact
 CHK|chain_nan_mis_row|<string[1 2]:<M>,<M>>|exact
 CHK|chain_nan_mis_col|<string[2 1]:<M>,<M>>|exact
@@ -877,11 +877,11 @@ CHK|chain_lgc_col_lgc|<string[2 1]:trueptrue,trueqtrue>|exact
 CHK|chain_lgc_col_cmx|<string[2 1]:truepef,trueqgh>|exact
 CHK|chain_lgc_col_cel|<string[2 1]:truepu,trueqv>|exact
 CHK|chain_lgc_col_row3|<string[2 3]:truepx,trueqx,truepy,trueqy,truepz,trueqz>|exact
-CHK|chain_lgc_chr_str|<string[1 2]:100ab,101ab>|div=ADR0156
-CHK|chain_lgc_chr_row|<string[1 2]:100x,101y>|div=ADR0156
-CHK|chain_lgc_chr_col|<string[2 2]:100p,100q,101p,101q>|div=ADR0156
-CHK|chain_lgc_chr_mis|<string[1 2]:<M>,<M>>|div=ADR0156
-CHK|chain_lgc_chr_row3|<ERR>|div=ADR0156
+CHK|chain_lgc_chr_str|<string[1 2]:100ab,101ab>|div=ADR0156|diverges|<string[1 1]:truecdab>
+CHK|chain_lgc_chr_row|<string[1 2]:100x,101y>|div=ADR0156|diverges|<string[1 2]:truecdx,truecdy>
+CHK|chain_lgc_chr_col|<string[2 2]:100p,100q,101p,101q>|div=ADR0156|diverges|<string[2 1]:truecdp,truecdq>
+CHK|chain_lgc_chr_mis|<string[1 2]:<M>,<M>>|div=ADR0156|diverges|<string[1 1]:<M>>
+CHK|chain_lgc_chr_row3|<ERR>|div=ADR0156|diverges|<string[1 3]:truecdx,truecdy,truecdz>
 CHK|chain_lgc_mis_str|<string[1 1]:<M>>|exact
 CHK|chain_lgc_mis_row|<string[1 2]:<M>,<M>>|exact
 CHK|chain_lgc_mis_col|<string[2 1]:<M>,<M>>|exact
@@ -962,11 +962,11 @@ CHK|chain_cmx_col_lgc|<string[2 1]:efptrue,ghqtrue>|exact
 CHK|chain_cmx_col_cmx|<string[2 1]:efpef,ghqgh>|exact
 CHK|chain_cmx_col_cel|<string[2 1]:efpu,ghqv>|exact
 CHK|chain_cmx_col_row3|<string[2 3]:efpx,ghqx,efpy,ghqy,efpz,ghqz>|exact
-CHK|chain_cmx_chr_str|<string[2 2]:200ab,202ab,202ab,204ab>|div=ADR0156
-CHK|chain_cmx_chr_row|<string[2 2]:200x,202x,202y,204y>|div=ADR0156
-CHK|chain_cmx_chr_col|<string[2 2]:200p,202q,202p,204q>|div=ADR0156
-CHK|chain_cmx_chr_mis|<string[2 2]:<M>,<M>,<M>,<M>>|div=ADR0156
-CHK|chain_cmx_chr_row3|<ERR>|div=ADR0156
+CHK|chain_cmx_chr_str|<string[2 2]:200ab,202ab,202ab,204ab>|div=ADR0156|diverges|<string[1 1]:[ef; gh]cdab>
+CHK|chain_cmx_chr_row|<string[2 2]:200x,202x,202y,204y>|div=ADR0156|diverges|<string[1 2]:[ef; gh]cdx,[ef; gh]cdy>
+CHK|chain_cmx_chr_col|<string[2 2]:200p,202q,202p,204q>|div=ADR0156|diverges|<string[2 1]:[ef; gh]cdp,[ef; gh]cdq>
+CHK|chain_cmx_chr_mis|<string[2 2]:<M>,<M>,<M>,<M>>|div=ADR0156|diverges|<string[1 1]:<M>>
+CHK|chain_cmx_chr_row3|<ERR>|div=ADR0156|diverges|<string[1 3]:[ef; gh]cdx,[ef; gh]cdy,[ef; gh]cdz>
 CHK|chain_cmx_mis_str|<string[2 1]:<M>,<M>>|exact
 CHK|chain_cmx_mis_row|<string[2 2]:<M>,<M>,<M>,<M>>|exact
 CHK|chain_cmx_mis_col|<string[2 1]:<M>,<M>>|exact
@@ -1047,11 +1047,11 @@ CHK|chain_cel_col_lgc|<string[2 1]:uptrue,vqtrue>|exact
 CHK|chain_cel_col_cmx|<string[2 1]:upef,vqgh>|exact
 CHK|chain_cel_col_cel|<string[2 1]:upu,vqv>|exact
 CHK|chain_cel_col_row3|<string[2 3]:upx,vqx,upy,vqy,upz,vqz>|exact
-CHK|chain_cel_chr_str|<ERR>|div=ADR0156
-CHK|chain_cel_chr_row|<ERR>|div=ADR0156
-CHK|chain_cel_chr_col|<ERR>|div=ADR0156
-CHK|chain_cel_chr_mis|<ERR>|div=ADR0156
-CHK|chain_cel_chr_row3|<ERR>|div=ADR0156
+CHK|chain_cel_chr_str|<ERR>|div=ADR0156|diverges|<string[1 1]:{'u', 'v'}cdab>
+CHK|chain_cel_chr_row|<ERR>|div=ADR0156|diverges|<string[1 2]:{'u', 'v'}cdx,{'u', 'v'}cdy>
+CHK|chain_cel_chr_col|<ERR>|div=ADR0156|diverges|<string[2 1]:{'u', 'v'}cdp,{'u', 'v'}cdq>
+CHK|chain_cel_chr_mis|<ERR>|div=ADR0156|diverges|<string[1 1]:<M>>
+CHK|chain_cel_chr_row3|<ERR>|div=ADR0156|diverges|<string[1 3]:{'u', 'v'}cdx,{'u', 'v'}cdy,{'u', 'v'}cdz>
 CHK|chain_cel_mis_str|<string[2 1]:<M>,<M>>|exact
 CHK|chain_cel_mis_row|<string[2 2]:<M>,<M>,<M>,<M>>|exact
 CHK|chain_cel_mis_col|<string[2 1]:<M>,<M>>|exact
@@ -1222,29 +1222,29 @@ CHK|chain_row3_row3_cel|<string[2 3]:xxu,xxv,yyu,yyv,zzu,zzv>|exact
 CHK|chain_row3_row3_row3|<string[1 3]:xxx,yyy,zzz>|exact
 CHK|chain4_keys|<string[4 1]:R1-a,R22-b,<M>,R333-d>|exact
 CHK|chain4_numeric_head|<string[1 1]:3a3>|exact
-CHK|chain4_char_head|<string[1 1]:121yz>|div=ADR0156
+CHK|chain4_char_head|<string[1 1]:121yz>|div=ADR0156|diverges|<string[1 1]:x1yz>
 CHK|chain5_cells|<string[2 2]:a-1.7,b-1.7,a-2.7,b-2.7>|exact
 CHK|chain_parens|<string[1 1]:qabq>|exact
 CHK|chain_nested_right|<string[1 1]:abcde>|exact
-CHK|chain_sentinel_text|<string[1 1]:<missing>xy>|div=ADR0156
+CHK|chain_sentinel_text|<string[1 1]:<missing>xy>|div=ADR0156|diverges|<string[1 1]:<M>>
 CHK|err_order_threw|1|exact
 CHK|err_order_touched|0|exact
 CHK|err_throwing_leaf|1|exact
 CHK|char_abc|<[1 3]:65,66,67,>|exact
 CHK|char_frac|<[1 5]:65,65,65,65,66,>|exact
 CHK|char_unicode|<[1 5]:955,8364,20320,65,0,>|exact
-CHK|char_wide|<[1 4]:65535,65535,65535,65535,>|div=ADR0156
-CHK|char_negative|<[1 1]:0,>|div=ADR0156
+CHK|char_wide|<[1 4]:65535,65535,65535,65535,>|div=ADR0156|diverges|<[1 4]:65535,0,1,4464,>
+CHK|char_negative|<[1 1]:0,>|div=ADR0156|diverges|<[1 1]:65535,>
 CHK|char_nan|<[1 2]:65,0,>|exact
-CHK|char_inf|<[1 2]:65,65535,>|div=ADR0156
-CHK|char_huge|<[1 1]:65535,>|div=ADR0156
+CHK|char_inf|<[1 2]:65,65535,>|div=ADR0156|diverges|<[1 2]:65,0,>
+CHK|char_huge|<[1 1]:65535,>|div=ADR0156|diverges|<[1 1]:0,>
 CHK|char_matrix|<[2 3]:72,75,73,76,74,77,>|exact
 CHK|char_column|<[3 1]:65,66,67,>|exact
-CHK|char_empty_0x3|<[0 3]>|div=ADR0156
+CHK|char_empty_0x3|<[0 3]>|div=ADR0156|diverges|<[0 0]>
 CHK|char_empty_3x0|<[3 0]>|exact
 CHK|char_empty|<[0 0]>|exact
-CHK|char_int8|<[1 2]:72,0,>|div=ADR0156
+CHK|char_int8|<[1 2]:72,0,>|div=ADR0156|diverges|<[1 2]:72,65535,>
 CHK|char_uint16|<[1 2]:955,8364,>|exact
 CHK|char_single|<[1 2]:72,73,>|exact
-CHK|char_logical|<ERR>|div=ADR0156
+CHK|char_logical|<ERR>|div=ADR0156|diverges|<[1 2]:1,0,>
 CHK|char_charmatrix_row|<[1 40]:72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,>|exact

@@ -8,7 +8,7 @@ CHK|reversed|-0.33333333333333331|rel=1e-12
 CHK|degenerate|0|exact
 CHK|reltol|0.66666666666666663|rel=1e-8
 CHK|sqrt_sing|1.9999999999999998|rel=1e-8
-CHK|strong_sing|9.9934495538576424|div=ADR0123
+CHK|strong_sing|9.9934495538576424|div=ADR0123|diverges|9.7893715352476676
 CHK|quadgk_value|1.6583475942188741|rel=1e-10
 CHK|quadgk_errbnd_small|1|exact
 CHK|quadgk_inf|1.7724538507803129|rel=1e-10

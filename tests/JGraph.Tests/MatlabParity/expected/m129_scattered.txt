@@ -24,12 +24,12 @@ CHK|griddata_natural_5|0.030673690997131298|rel=1e-10
 CHK|griddata_natural_total|0.3286520440747302|rel=1e-10
 CHK|griddata_cubic_rows|5|exact
 CHK|griddata_cubic_cols|5|exact
-CHK|griddata_cubic_1|-0.025397246374758625|div=ADR0134
-CHK|griddata_cubic_2|-0.15919178515383289|div=ADR0134
-CHK|griddata_cubic_3|0.055114382604848466|div=ADR0134
-CHK|griddata_cubic_4|0.26879122070472966|div=ADR0134
-CHK|griddata_cubic_5|0.044411768759479192|div=ADR0134
-CHK|griddata_cubic_total|0.39638597096908479|div=ADR0134
+CHK|griddata_cubic_1|-0.025397246374758625|div=ADR0134|diverges|-0.025329852455970615
+CHK|griddata_cubic_2|-0.15919178515383289|div=ADR0134|diverges|-0.15918225961897048
+CHK|griddata_cubic_3|0.055114382604848466|div=ADR0134|diverges|0.054862862808529311
+CHK|griddata_cubic_4|0.26879122070472966|div=ADR0134|diverges|0.26937651301161974
+CHK|griddata_cubic_5|0.044411768759479192|div=ADR0134|diverges|0.044243989757805885
+CHK|griddata_cubic_total|0.39638597096908479|div=ADR0134|diverges|0.40066831981120488
 CHK|griddata_v4_rows|5|exact
 CHK|griddata_v4_cols|5|exact
 CHK|griddata_v4_1|-0.03084121118598037|rel=1e-6
@@ -142,7 +142,7 @@ CHK|scattered_natural_extrap|linear|exact
 CHK|scattered_nearest_extrap|nearest|exact
 CHK|scattered_outside_none|1|exact
 CHK|scattered_outside_nearest|0.0020681833941792603|rel=1e-12
-CHK|scattered_outside_linear|-0.059633373211630814|div=ADR0134
+CHK|scattered_outside_linear|-0.059633373211630814|div=ADR0134|diverges|-0.063987332929066415
 CHK|scattered3_points_cols|3|exact
 CHK|scattered3_at_point|1.1102230246251565e-16|abs=1e-12
 CHK|gridded_class|griddedInterpolant|exact
@@ -182,7 +182,7 @@ CHK|gridded2_nearest|5|rel=1e-10
 CHK|gridded2_cubic|6.6900000000000004|rel=1e-10
 CHK|gridded2_spline|6.6899999999999995|rel=1e-10
 CHK|gridded_implied|8|rel=1e-12
-CHK|stl_input_class|triangulation|div=ADR0134
+CHK|stl_input_class|triangulation|div=ADR0134|diverges|struct
 CHK|stl_binary_format|binary|exact
 CHK|stl_text_format|text|exact
 CHK|stl_binary_points|5|exact

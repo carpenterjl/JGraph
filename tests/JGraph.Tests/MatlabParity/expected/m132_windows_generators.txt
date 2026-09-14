@@ -1108,11 +1108,11 @@ CHK|v_marcumq_a_sign|1|abs=1e-11
 CHK|v_marcumq_a_place|1|abs=1e-11
 CHK|v_marcumq_a_last|0.98338367043275599|rel=1e-11
 CHK|marcumq_zero_b|1|exact
-CHK|marcumq_tail_1|7.485699257518042e-24|div=ADR0136
-CHK|marcumq_tail_2|9.155862718767216e-24|div=ADR0136
-CHK|marcumq_tail_3|1.2486782879618878e-23|div=ADR0136
-CHK|marcumq_tail_4|1.6151231675463987e-23|div=ADR0136
-CHK|marcumq_tail_5|2.2596095629436174e-23|div=ADR0136
+CHK|marcumq_tail_1|7.485699257518042e-24|div=ADR0136|diverges|6.4056585402179544e-24
+CHK|marcumq_tail_2|9.155862718767216e-24|div=ADR0136|diverges|8.7240688184573689e-24
+CHK|marcumq_tail_3|1.2486782879618878e-23|div=ADR0136|diverges|1.1900500669737981e-23
+CHK|marcumq_tail_4|1.6151231675463987e-23|div=ADR0136|diverges|1.6287991944056286e-23
+CHK|marcumq_tail_5|2.2596095629436174e-23|div=ADR0136|diverges|2.1555237815979337e-23
 CHK|marcumq_head_1|1|rel=1e-10
 CHK|marcumq_head_2|1|rel=1e-10
 CHK|marcumq_head_3|1|rel=1e-10

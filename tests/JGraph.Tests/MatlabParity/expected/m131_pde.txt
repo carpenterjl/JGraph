@@ -139,7 +139,7 @@ CHK|inline_constant_args|x|exact
 CHK|inline_constant_call|2|exact
 CHK|inline_vectorized|x.^2.*y|exact
 CHK|inline_vectorized_call|18|exact
-CHK|inline_class|inline|div=ADR0131
+CHK|inline_class|inline|div=ADR0131|diverges|function_handle
 CHK|fcnchk_name_class|function_handle|exact
 CHK|fcnchk_name_call|0.47942553860420301|rel=1e-15
 CHK|fcnchk_expr_formula|x^2+y|exact

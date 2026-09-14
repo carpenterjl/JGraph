@@ -81,7 +81,7 @@ public class ParityComparatorTests : IDisposable
             bits('transposed', d, x.');
             """ + Helpers;
 
-        Dictionary<string, (string Value, string Rule)> lines = MatlabParityComparer.Parse(
+        Dictionary<string, ParityLine> lines = MatlabParityComparer.Parse(
             MatlabParityComparer.ResolveBits(RunMatlabDialect(script)));
 
         Assert.All(lines.Values, v => Assert.Equal("bits", v.Rule));

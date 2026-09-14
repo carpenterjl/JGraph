@@ -181,8 +181,8 @@ CHK|ddex2_ndiscont|10|exact
 CHK|ddex2_discontend|616|rel=1e-12
 CHK|ddex2_tfinal|1000|exact
 CHK|ddex2_history|93|exact
-CHK|ddex2_nsteps|597|div=ADR0135
-CHK|ddex2_heartrate|1.4377142366023159|div=ADR0135
+CHK|ddex2_nsteps|597|div=ADR0135|diverges|599
+CHK|ddex2_heartrate|1.4377142366023159|div=ADR0135|diverges|1.4380450974048131
 CHK|ddex3_solver|ddesd|exact
 CHK|ddex3_n|34|exact
 CHK|ddex3_nsteps|33|exact

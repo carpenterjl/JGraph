@@ -20,11 +20,11 @@ CHK|expanded|3 3 3.1230589874905528 |exact
 CHK|inner_product|6.681159560070677 |rel=1e-14
 CHK|grown|28d8de8d87e30434c9124c58cd29e8c952a32b86ba609dd0cefe36267058bb28|bits
 CHK|logical_store|5 4 |exact
-CHK|logical_store_class|double double|div=ADR0160
+CHK|logical_store_class|double double|div=ADR0160|diverges|logical logical
 CHK|refused_zero_position|1|exact
 CHK|refused_fraction_position|1|exact
 CHK|refused_past_end_read|1|exact
-CHK|refused_nested_zero_step|0|div=ADR0160
+CHK|refused_nested_zero_step|0|div=ADR0160|diverges|1
 CHK|walked_1|0.5|exact
 CHK|walked_2|2.5|exact
 CHK|walked_3|5|exact
@@ -35,5 +35,5 @@ CHK|walked_struct|27.5 12.5 |exact
 CHK|early_return|-1 10 |exact
 CHK|charmatrix|200 40 620240 3100 |exact
 CHK|empty_range_var|1|exact
-CHK|empty_range_new_var|1|div=ADR0160
+CHK|empty_range_new_var|1|div=ADR0160|diverges|0
 CHK|break_var|4 |exact

@@ -193,4 +193,4 @@ CHK|ode113_deval_yp|0.41615979171957673|rel=1e-8
 CHK|ode89_deval_yp|-0.14112000790502532|rel=1e-8
 CHK|odeset_stored|8|exact
 CHK|ode45_outputsel_rows|60|exact
-CHK|ode_object|1|div=ADR0127
+CHK|ode_object|1|div=ADR0127|diverges|0

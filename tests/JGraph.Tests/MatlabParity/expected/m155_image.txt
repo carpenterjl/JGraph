@@ -72,9 +72,9 @@ CHK|gen_asymT_valid_r2c3|15.474543512857949|rel=1e-13
 CHK|gen_big_same_shape|[5 6]|exact
 CHK|gen_big_same_mean|0.24887409243079511|rel=1e-13
 CHK|gen_big_valid_shape|[0 0]|exact
-CHK|odd_nan_count|12635|div=ADR0155
-CHK|odd_inf_count|71|div=ADR0155
-CHK|odd_finite_sum|1|div=ADR0155
+CHK|odd_nan_count|12635|div=ADR0155|diverges|8350
+CHK|odd_inf_count|71|div=ADR0155|diverges|856
+CHK|odd_finite_sum|1|div=ADR0155|diverges|2850.5
 CHK|odd_shape|[97 131]|exact
 CHK|odd_dense_nan_count|12610|exact
 CHK|odd_dense_inf_count|96|exact
@@ -84,7 +84,7 @@ CHK|sparse_dens_max|0.49382716049382713|rel=1e-13
 CHK|sparse_clean_frac|0|exact
 CHK|sparse_counts_same|d9e402f098d0e0d4ec0f685e1cd56b79c04d418d2a256a4903bb73ff81a3b1e4|bits
 CHK|sparse_dens_same|e482ecbada7a01a8689e38804c087312742385f29e463382ad2dce8814be5878|bits
-CHK|sparse_odd_nan_count|12706|div=ADR0155
-CHK|sparse_odd_inf_count|0|div=ADR0155
-CHK|sparse_odd_finite_sum|0|div=ADR0155
-CHK|sparse_odd_zero_count|1|div=ADR0155
+CHK|sparse_odd_nan_count|12706|div=ADR0155|diverges|117
+CHK|sparse_odd_inf_count|0|div=ADR0155|diverges|38
+CHK|sparse_odd_finite_sum|0|div=ADR0155|diverges|221
+CHK|sparse_odd_zero_count|1|div=ADR0155|diverges|12445

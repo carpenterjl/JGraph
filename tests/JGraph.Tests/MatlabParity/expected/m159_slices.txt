@@ -65,8 +65,8 @@ CHK|refused_block_zero|1|exact
 CHK|refused_block_high|1|exact
 CHK|refused_row_high|1|exact
 CHK|refused_fractional_row|1|exact
-CHK|refused_fractional_step|0|div=ADR0159
-CHK|refused_uint8_saturating|1|div=ADR0159
+CHK|refused_fractional_step|0|div=ADR0159|diverges|1
+CHK|refused_uint8_saturating|1|div=ADR0159|diverges|0
 CHK|ode23_lorenz20_rows|584|exact
 CHK|ode45_lorenz20_rows|957|exact
 CHK|ode45_orbit10_rows|977|exact

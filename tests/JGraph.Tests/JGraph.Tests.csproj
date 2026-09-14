@@ -33,9 +33,11 @@
     output folder so MatlabParityFixtureTests can read them by path; MATLAB itself is never run.
     fixtures\helpers\ holds the class and function files fixtures share; it rides along too, and
     the harness puts it on the function path rather than enumerating it (it holds no fixtures).
+    A fixture's .owners sidecar names the stage that owns each line JGraph is known to fail; the
+    stamp mode reads it.
   -->
   <ItemGroup>
-    <Content Include="MatlabParity\fixtures\*.m;MatlabParity\fixtures\helpers\*.m;MatlabParity\expected\*.txt"
+    <Content Include="MatlabParity\fixtures\*.m;MatlabParity\fixtures\*.owners;MatlabParity\fixtures\helpers\*.m;MatlabParity\expected\*.txt"
              CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 

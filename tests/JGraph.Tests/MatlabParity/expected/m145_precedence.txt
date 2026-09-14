@@ -35,13 +35,13 @@ CHK|eps_bare|-777|exact
 CHK|eps_double|2.2204460492503131e-16|exact
 CHK|eps_string|-777|exact
 CHK|mean_file|-222|exact
-CHK|exist_mean|2|div=ADR0149
-CHK|exist_mean_builtin|0|div=ADR0149
+CHK|exist_mean|2|div=ADR0149|diverges|5
+CHK|exist_mean_builtin|0|div=ADR0149|diverges|5
 CHK|exist_mean_file|2|exact
-CHK|builtin_mean|error|div=ADR0149
-CHK|table_under_numel|error|div=ADR0149
-CHK|which_all_under_numel|27|div=ADR0149
-CHK|eps_deleted|error|div=ADR0149
+CHK|builtin_mean|error|div=ADR0149|diverges|2
+CHK|table_under_numel|error|div=ADR0149|diverges|table
+CHK|which_all_under_numel|27|div=ADR0149|diverges|2
+CHK|eps_deleted|error|div=ADR0149|diverges|2.2204460492503131e-16
 CHK|ans_method|5|exact
 CHK|ans_file|-999|exact
 CHK|loop_file|-2997|exact
@@ -68,7 +68,7 @@ CHK|bound_foo|bound|exact
 CHK|method_foo_again|method foo|exact
 CHK|private_from_script|1|exact
 CHK|dup_from_script|cur dup|exact
-CHK|private_from_file|private secret|private dup|secret2->private secret|private dup|exact
+CHK|private_from_file|private secret/private dup/secret2->private secret/private dup|exact
 CHK|private_handle_after_cd|private secret|exact
 CHK|local_over_method|local foo|exact
 CHK|local_over_file|local foo|exact
@@ -76,7 +76,7 @@ CHK|local_over_method_double|-5|exact
 CHK|local_through_handle|-5|exact
 CHK|local_through_feval|-5|exact
 CHK|private_over_method|private bar|exact
-CHK|nestcheck|private bar|nested inner|method foo|exact
+CHK|nestcheck|private bar/nested inner/method foo|exact
 CHK|clear_file_bare|[1 1 0]|shape
 CHK|clear_file_named|[1 1]|shape
 CHK|clear_real|0|exact
@@ -91,7 +91,7 @@ CHK|which_loc|1|exact
 CHK|which_nosuch|1|exact
 CHK|which_plain|1|exact
 CHK|which_all_is_column|1|exact
-CHK|which_all_count|27|div=ADR0149
+CHK|which_all_count|27|div=ADR0149|diverges|2
 CHK|which_all_file_first|1|exact
 CHK|which_all_builtin_second|1|exact
 CHK|which_all_either_order|1|exact
@@ -141,5 +141,5 @@ CHK|anon_in_local|-999|exact
 CHK|anon_after_cd_refused|1|exact
 CHK|anon_after_cd_double|5|exact
 CHK|anon_made_elsewhere|-999|exact
-CHK|end_of_path_shadow|error|div=ADR0149
+CHK|end_of_path_shadow|error|div=ADR0149|diverges|-666
 CHK|end_of_path_method|1|exact
