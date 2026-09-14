@@ -271,6 +271,11 @@ internal static partial class JgsBuiltins
 
         Define("dot", (args, line, col) =>
         {
+            if (dialect.IsMatlab)
+            {
+                return MatlabDot(env, args, line, col);
+            }
+
             Arity("dot", args, 2, line, col);
 
             // Two packed real vectors are the overwhelming case, and boxing them into Complex[] to
@@ -324,6 +329,234 @@ internal static partial class JgsBuiltins
             RegisterMatlabConstructorShapes(env, random);
         }
     }
+
+    /// <summary>
+    /// MATLAB's <c>dot</c>, rule for rule as R2025b's dot.m states them (fixture dot_rules): integers
+    /// are refused first; two vectors of either orientation give one scalar product; any other pair
+    /// must be the same size and gives <c>sum(conj(a).*b)</c>, along the first non-singleton dimension
+    /// or along the dimension named, which must be one numeric scalar and is then <c>sum</c>'s to
+    /// judge. The MATLAB dialect used to share the JGS <c>dot</c>, which flattened two matrices into
+    /// one number and took no dimension, so <c>sum(dot(A, B))</c> only happened to be right.
+    /// </summary>
+    private static JgsValue MatlabDot(JgsEnvironment env, IReadOnlyList<JgsValue> args, int line, int col)
+    {
+        ArityRange("dot", args, 2, 3, line, col);
+        JgsValue a = args[0];
+        JgsValue b = args[1];
+        if (!IsDotOperand(a) || !IsDotOperand(b))
+        {
+            throw new JgsRuntimeException(line, col, "MATLAB:math:mustBeNumericCharOrLogical",
+                "Invalid data type. Argument must be numeric, char, or logical.");
+        }
+
+        if (a.NumericClass.IsInteger() || b.NumericClass.IsInteger())
+        {
+            throw new JgsRuntimeException(line, col, "MATLAB:dot:integerClass", "A and B must be single or double.");
+        }
+
+        JgsValue Call(string name, params JgsValue[] operands) => CallBuiltin(env, "dot", name, operands, line, col);
+
+        // Text is its character codes, as everywhere arithmetic meets it.
+        a = a.Type == JgsType.String ? Call("double", a) : a;
+        b = b.Type == JgsType.String ? Call("double", b) : b;
+        int[] sizeA = DotSize(a);
+        int[] sizeB = DotSize(b);
+
+        if (args.Count == 2 && IsVector2D(sizeA) && IsVector2D(sizeB))
+        {
+            int n = sizeA[0] * sizeA[1];
+            if (n != sizeB[0] * sizeB[1])
+            {
+                throw DotSizeMismatch(line, col);
+            }
+
+            // Two packed real vectors are the overwhelming case, and boxing them into Complex[] to
+            // multiply by a zero imaginary part is most of what it used to cost (M92). The left fold
+            // is the JGS dot's; R2025b's is a BLAS dot, so the two agree to rounding, not to the bit.
+            if (IsPlainDouble(a) && IsPlainDouble(b))
+            {
+                NumericBuffer left = a.AsBuffer;
+                NumericBuffer right = b.AsBuffer;
+                double total = 0;
+                ReadOnlySpan<double> xs = left.AsSpan();
+                ReadOnlySpan<double> ys = right.AsSpan();
+                for (int i = 0; i < xs.Length; i++)
+                {
+                    total += xs[i] * ys[i];
+                }
+
+                GC.KeepAlive(left);
+                GC.KeepAlive(right);
+                return JgsValue.Number(total);
+            }
+
+            // The MATLAB sum refuses complex input for now, so a complex pair folds here: the first
+            // operand conjugated, as MATLAB's a'*b does.
+            if (IsComplexData(a) || IsComplexData(b))
+            {
+                Complex[] xs = DotComplexElements(a, line, col);
+                Complex[] ys = DotComplexElements(b, line, col);
+                Complex total = Complex.Zero;
+                for (int i = 0; i < xs.Length; i++)
+                {
+                    total += Complex.Conjugate(xs[i]) * ys[i];
+                }
+
+                return JgsValue.ComplexNum(total);
+            }
+
+            JgsValue count = JgsValue.Number(n);
+            JgsValue one = JgsValue.Number(1);
+            return Call("sum", Call("times", Call("conj", Call("reshape", a, count, one)), Call("reshape", b, count, one)));
+        }
+
+        if (!sizeA.AsSpan().SequenceEqual(sizeB))
+        {
+            throw DotSizeMismatch(line, col);
+        }
+
+        if (args.Count == 3)
+        {
+            JgsValue dim = args[2];
+            if (dim.Type != JgsType.Number)
+            {
+                throw new JgsRuntimeException(line, col, "MATLAB:dot:dimensionMustBePositiveInteger",
+                    "Dimension argument must be a positive integer scalar.");
+            }
+
+            // sum's refusal, in sum's words, checked here: the MATLAB sum accepts a fractional
+            // dimension today, and the complex road below never reaches it.
+            double along = dim.AsNumber;
+            if (!(along >= 1) || double.IsInfinity(along) || along != System.Math.Floor(along))
+            {
+                throw new JgsRuntimeException(line, col, "MATLAB:getdimarg:invalidDim",
+                    "Dimension argument must be a positive integer scalar, a vector of unique positive integers, or 'all'.");
+            }
+
+            if (IsComplexData(a) || IsComplexData(b))
+            {
+                return DotComplexAlong(a, b, sizeA, along > int.MaxValue ? int.MaxValue : (int)along, line, col);
+            }
+
+            return Call("sum", Call("times", Call("conj", a), b), JgsValue.Number(along));
+        }
+
+        // Two real matrices of more than one row, the case zfit's sum(dot(zz, Z)) is: each column's
+        // products summed in index order, which is what sum(a .* b) folds (ReduceKernels.Sum) without
+        // the two whole-array temporaries. R2025b answers the same bits for dot and sum(a .* b).
+        if (IsPlainDouble(a) && IsPlainDouble(b) && sizeA.Length == 2 && sizeA[0] > 1 && sizeA[1] > 0)
+        {
+            int rows = sizeA[0];
+            int cols = sizeA[1];
+            NumericBuffer left = a.AsBuffer;
+            NumericBuffer right = b.AsBuffer;
+            NumericBuffer dest = JgsPacking.Allocate(cols);
+            ReadOnlySpan<double> xs = left.AsSpan();
+            ReadOnlySpan<double> ys = right.AsSpan();
+            Span<double> totals = dest.AsSpan();
+            for (int c = 0; c < cols; c++)
+            {
+                int offset = c * rows;
+                double total = 0;
+                for (int r = 0; r < rows; r++)
+                {
+                    total += xs[offset + r] * ys[offset + r];
+                }
+
+                totals[c] = total;
+            }
+
+            GC.KeepAlive(left);
+            GC.KeepAlive(right);
+            return JgsValue.Shaped(dest, 1, cols);
+        }
+
+        if (IsComplexData(a) || IsComplexData(b))
+        {
+            // sum's own rules for a complex pair: the 0-by-0 reduces whole to 0, anything else along
+            // its first non-singleton dimension.
+            if (sizeA.Length == 2 && sizeA[0] == 0 && sizeA[1] == 0)
+            {
+                return JgsValue.Number(0);
+            }
+
+            int first = System.Array.FindIndex(sizeA, extent => extent != 1);
+            return DotComplexAlong(a, b, sizeA, first < 0 ? 1 : first + 1, line, col);
+        }
+
+        return Call("sum", Call("times", Call("conj", a), b));
+    }
+
+    /// <summary>A value's elements as complex numbers, a scalar being one element.</summary>
+    private static Complex[] DotComplexElements(JgsValue value, int line, int col) =>
+        value.Type is JgsType.Number or JgsType.Complex
+            ? [value.AsComplex]
+            : ComplexArray("dot", [value], 0, line, col);
+
+    /// <summary>
+    /// <c>sum(conj(a) .* b, dim)</c> for a same-size pair of which one is complex: each slice along
+    /// <paramref name="dim"/> summed in index order, the answer shaped with that dimension a
+    /// singleton (a dimension past the last leaves every element its own slice).
+    /// </summary>
+    private static JgsValue DotComplexAlong(JgsValue a, JgsValue b, int[] dims, int dim, int line, int col)
+    {
+        Complex[] xs = DotComplexElements(a, line, col);
+        Complex[] ys = DotComplexElements(b, line, col);
+        int inner = 1;
+        for (int i = 0; i < dim - 1 && i < dims.Length; i++)
+        {
+            inner *= dims[i];
+        }
+
+        int count = dim - 1 < dims.Length ? dims[dim - 1] : 1;
+        int outer = 1;
+        for (int i = dim; i < dims.Length; i++)
+        {
+            outer *= dims[i];
+        }
+
+        int[] shape = (int[])dims.Clone();
+        if (dim - 1 < shape.Length)
+        {
+            shape[dim - 1] = 1;
+        }
+
+        var totals = new JgsValue[inner * outer];
+        for (int o = 0; o < outer; o++)
+        {
+            for (int i = 0; i < inner; i++)
+            {
+                Complex total = Complex.Zero;
+                for (int k = 0; k < count; k++)
+                {
+                    int at = i + (inner * (k + (count * o)));
+                    total += Complex.Conjugate(xs[at]) * ys[at];
+                }
+
+                totals[i + (inner * o)] = JgsValue.ComplexNum(total);
+            }
+        }
+
+        return JgsMatrix.FromElementsDims(totals, shape);
+    }
+
+    /// <summary>Whether <c>dot</c> takes a value at all: numbers, logicals and text, nothing else.</summary>
+    private static bool IsDotOperand(JgsValue value) =>
+        value.Type is JgsType.Number or JgsType.Complex or JgsType.Bool or JgsType.String
+            or JgsType.Array or JgsType.Sparse;
+
+    /// <summary>A packed array of doubles, whose elements can be multiplied straight off the buffer.</summary>
+    private static bool IsPlainDouble(JgsValue value) =>
+        value.Type == JgsType.Array && value.IsPacked && value.NumericClass == JgsNumericClass.Double;
+
+    private static int[] DotSize(JgsValue value) =>
+        value.Type is JgsType.Array or JgsType.Sparse ? value.Dims : [1, 1];
+
+    /// <summary>MATLAB's <c>isvector</c> on a size: two dimensions, one of them 1.</summary>
+    private static bool IsVector2D(int[] size) => size.Length == 2 && (size[0] == 1 || size[1] == 1);
+
+    private static JgsRuntimeException DotSizeMismatch(int line, int col) =>
+        new(line, col, "MATLAB:dot:InputSizeMismatch", "A and B must be same size.");
 
     /// <summary>
     /// In MATLAB, <c>zeros(n)</c>/<c>ones(n)</c>/<c>rand(n)</c>/<c>randn(n)</c> build n-by-n matrices,

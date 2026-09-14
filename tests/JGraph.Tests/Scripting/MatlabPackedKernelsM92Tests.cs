@@ -253,7 +253,7 @@ public class MatlabPackedKernelsM92Tests : IDisposable
     [Fact]
     public void DotStillRefusesMismatchedLengths()
     {
-        Assert.Contains("equal length", RunExpectingFailure("dot([1 2 3], [1 2]);"));
+        Assert.Contains("A and B must be same size.", RunExpectingFailure("dot([1 2 3], [1 2]);"));
     }
 
     [Fact]
