@@ -1,0 +1,4 @@
+# The run stops at the events block (appendix A #106); V6 builds events and listeners, V10 their lifetime.
+RUN	V6
+a107_listener_fn_lifetime	V10
+*	V6

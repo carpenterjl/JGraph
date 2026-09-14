@@ -1,0 +1,27 @@
+CHK|a001_anon_capture|1|exact|pending V2|7
+CHK|a002_map_value|1|exact|pending V2|7
+CHK|a003_ans_brace|1|exact|pending V2|7
+CHK|a004_ans_field|1|exact|pending V2|7
+CHK|a024_nested_capture_write|1|exact|pending V2|7
+CHK|a080_str2func_no_capture|0|exact|pending V2|1
+CHK|a030_struct_array_deal|1 1|exact|pending V6|ERR 'st' is a struct array, so a field write must name an element, like st(1).field = v.
+CHK|g_cell_literal|1|exact
+CHK|g_struct_ctor|1|exact
+CHK|g_deal|1 1 1|exact
+CHK|g_bracket|1|exact
+CHK|g_reshape|1|exact
+CHK|g_anon_return|1|exact
+CHK|g_field_assign|1|exact
+CHK|g_brace_assign|1|exact
+CHK|g_colon_read|1|exact
+CHK|g_double_noop|1|exact
+CHK|g_cellfun_collect|1|exact
+CHK|g_arrayfun_struct_collect|1|exact
+CHK|g_struct_from_cell|1|exact
+CHK|g_cell2struct_store|1|exact
+CHK|g_struct2cell_store|1|exact
+CHK|g_cell_concat_store|1|exact
+CHK|g_cs_list_assign|1|exact
+CHK|g_assignin_caller|1|exact
+CHK|g_anonymous_does_capture|7|exact
+CHK|g_str2func_handle_call|5|exact

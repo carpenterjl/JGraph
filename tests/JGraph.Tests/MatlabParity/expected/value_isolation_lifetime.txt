@@ -1,0 +1,43 @@
+CHK|a029_oncleanup_capture|1;|exact|pending V10|ERR 'onCleanup' is not recognized as a variable or a function.
+CHK|a029_oncleanup_alias_lifetime|kept;done;|exact|pending V10|ERR 'onCleanup' is not recognized as a variable or a function.
+CHK|a088_handle_delete_on_clear_alias|mid;A;|exact|pending V10|mid;
+CHK|a089_handle_delete_on_frame_exit|X;after;|exact|pending V10|after;
+CHK|a093_escaping_nested_cleanup|kept;1;done;|exact|pending V10|ERR 'onCleanup' is not recognized as a variable or a function.
+CHK|a094_clear_cleanup_in_function|done;after;|exact|pending V10|ERR 'onCleanup' is not recognized as a variable or a function.
+CHK|a154_cell_alias_clear_order|kept;done;after;|exact|pending V10|ERR 'onCleanup' is not recognized as a variable or a function.
+CHK|a154_struct_alias_clear_order|kept;done;after;|exact|pending V10|ERR 'onCleanup' is not recognized as a variable or a function.
+CHK|a154_nested_cell_alias|kept;done;after;|exact|pending V10|ERR 'onCleanup' is not recognized as a variable or a function.
+CHK|a154_delete_element_from_one_alias|deleted;done;after;|exact|pending V10|ERR 'onCleanup' is not recognized as a variable or a function.
+CHK|a154_overwrite_container_alias_kept|overwritten;done;after;|exact|pending V10|ERR 'onCleanup' is not recognized as a variable or a function.
+CHK|a154_detach_by_write_other_slot|kept;done;after;|exact|pending V10|ERR 'onCleanup' is not recognized as a variable or a function.
+CHK|a154_cell_of_two_cleanups_order|A;B;after;|exact|pending V10|ERR 'onCleanup' is not recognized as a variable or a function.
+CHK|a109_save_then_write|[1 2 3] [7 2 3]|exact|pending V9|[1 2 3] [1 2 3]
+CHK|a109_save_write_trace|[1 2 3] [7 2 3] [7 2 3] [1 2 3]|exact|pending V9|[1 2 3] [7 2 3] [1 2 3] [1 2 3]
+CHK|g_write_after_exist_trace|1 [7 2 3]|exact
+CHK|g_load_over_alias|[1 5 3] [1 2 3]|exact
+CHK|g_two_loads_independent|[0 2 3] [1 2 3]|exact
+CHK|g_save_cell_detached_children|[1 2] [9 2] [1 0]|exact
+CHK|a110_save_struct_flag|a,b [1 2] x|exact|pending V6|ERR save does not support the option '-struct'.
+CHK|g_load_struct_aliases_independent|[1 2]|exact
+CHK|a111_save_handle_load_is_new|[1 2] 0|exact|pending V6|ERR save: 'h' is a HandleHolder, which cannot be written to a MAT-file.
+CHK|a111_save_handle_aliases_one_identity|5 1|exact|pending V6|ERR save: 'h' is a HandleHolder, which cannot be written to a MAT-file.
+CHK|a111_save_value_object|ValueBox 3|exact|pending V6|ERR save: 'o' is a ValueBox, which cannot be written to a MAT-file.
+CHK|a112_matfile_read_alias|[1 2 3]|exact|pending V6|ERR 'matfile' is not recognized as a variable or a function.
+CHK|a146_matfile_indexed_write|[1 8 3]|exact|pending V6|ERR save writes version 5 MAT-files only; version 7.3 is an HDF5 format that can be read but not written.
+CHK|g_save_append|u,v|exact
+CHK|a113_save_captured_handle|[1 2 3]|exact|pending V6|ERR save: 'f' is a function, which cannot be written to a MAT-file.
+CHK|g_save_complex_alias|1 0|exact
+CHK|g_load_in_function_binds|[4 5] [0 5]|exact
+CHK|g_load_handle_statement|1|exact
+CHK|a144_load_handle_expression|0 1|exact|pending V9|1 1
+CHK|g_load_feval_statement|1|exact
+CHK|a144_load_feval_expression|0 1|exact|pending V9|1 1
+CHK|g_load_anon_expression|0 1|exact
+CHK|a145_load_anon_statement|ERR Attempt to add "v" to a static workspace.|exact|pending V9|0
+CHK|a144_load_cellfun|0 1|exact|pending V9|1 1
+CHK|a105_timer_capture|[1 2 3]|exact|pending V6|ERR 'timer' is not recognized as a variable or a function.
+CHK|a105_timer_userdata_alias|[1 2 3]|exact|pending V6|ERR 'timer' is not recognized as a variable or a function.
+CHK|a105_timer_writes_global_during_pause|[1 2 3] [7 2 3]|exact|pending V6|ERR 'timer' is not recognized as a variable or a function.
+CHK|a105_timer_fixed_rate_count|3|exact|pending V6|ERR 'timer' is not recognized as a variable or a function.
+CHK|a105_timer_callback_order|start;tick;stop;|exact|pending V6|ERR 'timer' is not recognized as a variable or a function.
+CHK|a105_timer_error_fcn||exact|pending V6|ERR 'timer' is not recognized as a variable or a function.

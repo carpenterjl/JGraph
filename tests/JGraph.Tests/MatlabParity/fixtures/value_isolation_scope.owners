@@ -1,0 +1,20 @@
+# The stage of the value-ownership plan that completes each line JGraph fails (appendix A's stage column).
+a005_binary_left_elem	V3
+a006_bracket_elem	V3
+a007_call_arg_elem	V3
+a008_cell_literal_elem	V3
+a009_for_matrix_source	V3
+a010_cellfun_cell_arg	V3
+a011_feval_args	V3
+a012_struct_selection_arg	V1
+a013_cell_literal_child_arg	V3
+a014_value_object_nested	V3
+a015_clear_in_cell_loop	V3
+a016_value_object_global_prop	V4
+a019_method_receiver	V3
+a020_dictionary_insert_source	V3
+a021_dictionary_remove_source	V3
+a022_handle_prop_operand_method_write	V3
+a023_deal_multi_assign	V3
+a057_eval_writes_mid_expression	V3
+a058_evalc_writes_mid_argument	V3

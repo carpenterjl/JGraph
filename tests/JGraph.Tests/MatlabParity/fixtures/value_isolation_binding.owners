@@ -1,0 +1,8 @@
+# The stage of the value-ownership plan that completes each line JGraph fails (appendix A's stage column).
+a001_anon_capture	V2
+a002_map_value	V2
+a003_ans_brace	V2
+a004_ans_field	V2
+a024_nested_capture_write	V2
+a080_str2func_no_capture	V2
+a030_struct_array_deal	V6

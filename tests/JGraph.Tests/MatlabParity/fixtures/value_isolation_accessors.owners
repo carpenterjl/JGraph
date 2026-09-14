@@ -1,0 +1,3 @@
+# The run stops at the first class file with an accessor or a Dependent property (appendix A #27, #28, #147); V6 builds them.
+RUN	V6
+*	V6

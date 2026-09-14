@@ -1,0 +1,89 @@
+CHK|a025_table_alias_brace|1 9|exact|pending V6|ERR Braces assign into a cell array, but 'U' is a table.
+CHK|a026_sparse_alias|1 7|exact|pending V6|ERR Cannot assign by index into a sparse; only arrays support element assignment.
+CHK|a038_table_rownames_dot_write|1 1|exact|pending V6|0 1
+CHK|a039_timetable_rowtimes_dot_write|1 9|exact|pending V6|0 9
+CHK|a052_nd_growth_string|1 1 [1 2 2]|exact|pending V6|0 1 [1 2 2]
+CHK|a053_nd_growth_char|1 1 [1 2 2]|exact|pending V6|ERR Cannot assign by index into a string; only arrays support element assignment.
+CHK|a054_cellfun_errorhandler_identifier_fn|1|exact|pending V6|0
+CHK|a054_arrayfun_errorhandler_identifier_fn|1|exact|pending V6|0
+CHK|a054_cellfun_errorhandler_record_nonuniform|probe:bad#1#Error using value_isolation_forms>failing (line 163) bad 1,probe:bad#2#Error using value_isolation_forms>failing (line 163) bad 2|exact|pending V6|#1#bad 1,#2#bad 2
+CHK|g_cellfun_errorhandler_anon|0|exact
+CHK|g_errorhandler_that_errors|probe:handler|exact
+CHK|a059_mexception_addcause_alias|0 1|exact|pending V6|ERR This struct has no field 'cause'.
+CHK|a066_throw_keeps_cause|1 probe:inner|exact|pending V6|ERR This struct has no field 'cause'.
+CHK|a067_rethrow_keeps_stack_top|thrower|exact|pending V6|ERR Index 1 is out of range for length 0 (indexing is 1-based).
+CHK|g_mexception_rethrow_identity|probe:inner inner|exact
+CHK|a060_sort_cell_alias|a z|exact|pending V6|ERR Assigning into a char row needs a plain variable on the left.
+CHK|a061_complex_promotion_alias|1 [1 0+1i 3]|exact|pending V6|1 [1+0i 0+1i 3+0i]
+CHK|a063_struct_field_delete_alias|[1 2 3] [1 3]|exact|pending V6|ERR Deleting elements needs a plain variable on the left.
+CHK|g_unique_returns_copy|[3 1 2]|exact
+CHK|g_single_conversion_alias|single [1 2 3] [1.5 2 3]|exact
+CHK|a082_auto_create_nested_struct_array|3 1 1|exact|pending V6|ERR 'x' is not recognized as a variable or a function.
+CHK|a083_auto_create_cell_element_struct|3 double struct 1|exact|pending V6|ERR Index 3 is out of range for length 0 (indexing is 1-based).
+CHK|a085_struct_empty_ctor|struct 0 0|exact|pending V6|ERR struct takes name/value pairs.
+CHK|a085_empty_fieldless_struct_growth|ERR Subscripted assignment between dissimilar structures.|exact|pending V6|ERR struct takes name/value pairs.
+CHK|a085_empty_fieldless_growth_gap|ERR Subscripted assignment between dissimilar structures.|exact|pending V6|ERR struct takes name/value pairs.
+CHK|a090_nested_end_cell_growth|[3 4 5]|exact|pending V6|ERR Assigning past the end of a 2-element array would grow it, which needs a plain variable on the left.
+CHK|a091_string_element_char_write|aZc,def|exact|pending V6|ERR Assigning into a char row needs a plain variable on the left.
+CHK|a092_strrep_cellstr_alias|aa,ba Qx,bx|exact|pending V6|ERR Assigning into a char row needs a plain variable on the left.
+CHK|g_tbl_column_read_alias|[1;2]|exact
+CHK|a117_tbl_alias_row_delete|3 2|exact|pending V6|ERR Cannot assign by index into a table; only arrays support element assignment.
+CHK|a119_tbl_cell_var_nested_write|[1 2] [9 2]|exact|pending V6|ERR Assigning into a char row needs a plain variable on the left.
+CHK|a114_tbl_varnames_alias|Var1 a|exact|pending V6|Var1 Var1
+CHK|a114_tbl_varnames_brace_on_original|a|exact|pending V6|Var1
+CHK|a115_tbl_varnames_whole_set_alias|Var1 a|exact|pending V6|ERR Cannot set a field on 'U': it is a table, not a struct.
+CHK|a115_tbl_description_alias|[] [u]|exact|pending V6|ERR Cannot set a field on 'U': it is a table, not a struct.
+CHK|a115_tbl_userdata_alias|[1 2 3]|exact|pending V6|ERR Cannot set a field on 'T': it is a table, not a struct.
+CHK|g_tbl_add_var_alias|1 2|exact
+CHK|a117_tbl_row_append|3 c|exact|pending V6|ERR Cannot assign by index into a table; only arrays support element assignment.
+CHK|a117_tbl_paren_assign_subtable|[9;2]|exact|pending V6|ERR Cannot assign by index into a table; only arrays support element assignment.
+CHK|a117_tbl_row_delete_by_mask|3 1 a|exact|pending V6|ERR Cannot assign by index into a table; only arrays support element assignment.
+CHK|a122_tbl_rowfun_writes_global_operand|[1 2] [7 2]|exact|pending V6|ERR 'rowfun' is not recognized as a variable or a function.
+CHK|a122_tbl_varfun_alias|1 9|exact|pending V6|ERR 'varfun' is not recognized as a variable or a function.
+CHK|a122_tbl_addvars_leaves_source|1 2|exact|pending V6|ERR 'addvars' is not recognized as a variable or a function.
+CHK|a122_tbl_table2array_alias|[1;2]|exact|pending V6|ERR 'table2array' is not recognized as a variable or a function.
+CHK|g_tbl_brace_read_then_write|[1;2]|exact
+CHK|g_tbl_sortrows_leaves_source|[2;1] [1;2]|exact
+CHK|a121_tbl_vertcat_alias|1 4|exact|pending V6|ERR '.Var1' needs a struct, but this is a array.
+CHK|a120_tbl_struct_var_nested_write|1 9|exact|pending V6|ERR table expects an array of numbers, but got a struct.
+CHK|g_tbl_subtable_write|1 9|exact
+CHK|a118_tbl_var_growth|3 [1;2;5]|exact|pending V6|ERR To assign to or create a variable in a table, the number of rows must match the table's (3 given, 2 expected).
+CHK|g_tbl_dot_self_overlap|[3;1;2]|exact
+CHK|a116_tbl_cell_in_container_alias|1 9|exact|pending V6|1 1
+CHK|g_table_direct_var_indexed_write|[1;2;3] [1;9;3]|exact
+CHK|g_dt_alias_elem_write|0 1|exact
+CHK|g_dt_format_alias|dd-MMM-uuuu/yyyy|exact
+CHK|a127_dt_year_property_alias|2020 2021|exact|pending V6|ERR '.Year' cannot be set on a datetime; Format can be, and on a datetime so can TimeZone.
+CHK|a126_dt_indexed_component_write|2 15 1|exact|pending V6|2 2 1
+CHK|a123_dt_growth_fill|5 1|exact|pending V6|5 0
+CHK|a123_dt_growth_fill_value|NaT/1|exact|pending V6|30-Dec-1899/0
+CHK|g_dur_alias_write|[1 2 3] [5 120 180]|exact
+CHK|g_dur_format_alias|h/m|exact
+CHK|g_dt_timezone_alias|UTC/America/New_York/12/7|exact
+CHK|a124_dt_self_overlap|[3 1 2]|exact|pending V3|[1 1 1]
+CHK|g_dt_delete_alias|3 2|exact
+CHK|g_dt_arith_classes|duration datetime calendarDuration duration|exact
+CHK|g_dur_diff_alias|0 1|exact
+CHK|g_dt_cell_hold|0 1|exact
+CHK|a127_dt_struct_component_write|2020 1999|exact|pending V6|ERR year expects a datetime or a serial date number, but got a struct.
+CHK|g_dt_concat_alias|0 6|exact
+CHK|a128_dt_mask_write_alias|0 2|exact|pending V6|ERR Cannot assign 1 values into 2 selected elements.
+CHK|g_dt_plus_rebind_alias|1 2|exact
+CHK|a129_dt_text_assign|2021 2020|exact|pending V6|ERR Unable to perform assignment because the left and right sides have a different number of elements.
+CHK|a125_dt_refused_write_atomic|3|exact|pending V3|5
+CHK|g_dur_minus_in_loop_alias|[1 2 3] [-0.5 0.5 1.5]|exact
+CHK|g_handle_nested_struct_write|[1 9]|exact
+CHK|a137_struct_holding_handle_write|[1 9 3]|exact|pending V6|[1 2 3]
+CHK|a137_struct_copy_nested_write_field_class|HandleHolder HandleHolder|exact|pending V6|struct struct
+CHK|a137_struct_copy_whole_prop_write|[4 5 6]|exact|pending V6|[1 2 3]
+CHK|g_struct_handle_direct_nested_write|[1 9 3]|exact
+CHK|a140_struct_copy_keeps_handle_identity|1|exact|pending V6|ERR 'EqualEqual' is not defined for HandleHolder; give the class a 'eq' method to define it.
+CHK|a138_cell_copy_handle_nested_write|[1 9 3]|exact|pending V6|ERR Cannot set a field on a HandleHolder.
+CHK|a139_struct_handle_method_write|[7 2 3]|exact|pending V6|ERR This struct has no field 'bump'.
+CHK|g_map_struct_value_copy_write|[1 2] [9 2]|exact
+CHK|a136_dictionary_brace_cell_write|[1 2] [9 2]|exact|pending V6|ERR Braces index a cell array, but this is a struct. Use parentheses to index it.
+CHK|g_struct_array_datetime_format|dd-MMM-uuuu/yyyy|exact
+CHK|a135_cell_datetime_format|dd-MMM-uuuu/yyyy|exact|pending V6|ERR Cannot set a field on a datetime.
+CHK|a148_empty_local_field_write|struct 1|exact|pending V6|ERR Cannot set a field on 'x': it is a array, not a struct.
+CHK|a148_empty_global_field_write|struct 1|exact|pending V6|ERR Cannot set a field on 'ge_forms': it is a array, not a struct.
+CHK|a149_dictionary_vector_keys|[10 20] [10 9]|exact|pending V6|ERR The collection has no key [1, 2]. Ask isKey first, or use lookup with a 'FallbackValue'.

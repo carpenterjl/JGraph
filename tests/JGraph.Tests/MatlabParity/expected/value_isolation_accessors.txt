@@ -1,0 +1,13 @@
+RUN|pending V6|'DepBox': the 'properties' attribute 'Dependent' is not supported — this build understands 'Constant' and public access only.
+CHK|a028_dependent_get_read|1 7|exact
+CHK|a027_set_method_store|1|exact
+CHK|a147_acc_end_write|start;get;rhs;get;set;get; / [1 2 9]|exact
+CHK|a147_acc_end_growth|start;get;rhs;get;set;get; / [1 2 3 9]|exact
+CHK|a147_acc_subscript_and_rhs|start;idx;rhs;get;set;get; / [1 9 3]|exact
+CHK|a147_acc_subscript_range_to_end|start;idx;get;rhs;get;set;get; / [1 9 9]|exact
+CHK|a147_acc_handle_indexed_write|start;idx;rhs;get;set;get; / [1 9 3]|exact
+CHK|a147_acc_handle_end_write|start;get;rhs;get;set;get; / [1 2 9]|exact
+CHK|a147_acc_read_end|start;get;get; / 3|exact
+CHK|a147_acc_compound_whole|start;get;rhs;set;get; / [10 11 12]|exact
+CHK|a147_acc_struct_held_handle_end|start;get;rhs;get;set;get; / [1 2 9]|exact
+CHK|a147_acc_cell_held_handle_end|start;get;rhs;get;set;get; / [1 2 9]|exact

@@ -1,0 +1,27 @@
+CHK|a017_persistent_recursive_elem|[2 20 0]|exact|pending V5|[1 10 0]
+CHK|a018_persistent_recursive_rebind|[2 20 0]|exact|pending V5|[1 10 0]
+CHK|a036_nested_three_levels|[11 2]|exact|pending V7|[1 2]
+CHK|a037_loop_bound_rebinds|[1 7 7 7 7]|exact|pending V8|[7 7 7 7 7]
+CHK|a055_disp_asked_for_value|MATLAB:maxlhs|exact|pending V9|no error
+CHK|a055_error_asked_for_value|MATLAB:maxlhs|exact|pending V9|probe:bad
+CHK|a055_anon_error_asked_for_value|MATLAB:maxlhs|exact|pending V9|probe:bad
+CHK|a077_nargout_statement_calls|0;0;0;0;|exact|pending V9|1;1;1;1;
+CHK|g_nargout_value_calls|1;1;1;|exact
+CHK|a078_inputname_multi_output_handle|x 5|exact|pending V9|ERR inputname can only be used inside a function.
+CHK|g_inputname_named_call|x 5|exact
+CHK|a079_inputname_feval|x 5|exact|pending V9|5
+CHK|g_tilde_first_output|[4 5 6]|exact
+CHK|g_tilde_deal|[1 2 3] [9 2 3]|exact
+CHK|g_tilde_nargout_seen|2|exact
+CHK|g_ans_after_zero_output_call|0|exact
+CHK|a081_ans_after_varargout_statement|0|exact|pending V9|1
+CHK|a084_tilde_unassigned_output|ERR Output argument "a" (and possibly others) not assigned a value in the execution with "value_isolation_calls>second_only" function.|exact|pending V9|ERR Function 'second_only' finished without assigning its output 'a'.
+CHK|a084_tilde_unassigned_nargout|ERR Output argument "a" (and possibly others) not assigned a value in the execution with "value_isolation_calls>second_only_count" function.|exact|pending V9|ERR Function 'second_only_count' finished without assigning its output 'a'.
+CHK|g_feval_by_name|5|exact
+CHK|g_nargin_in_nested|0|exact
+CHK|g_handle_recursion_accumulates|3 6|exact
+CHK|g_nested_handle_after_return|0|exact
+CHK|g_clear_functions_inactive_resets|3|exact
+CHK|a072_clear_functions_active_persistent|2|exact|pending V5|1
+CHK|a064_clear_named_in_callback|0 1|exact|pending V7|1 0
+CHK|a065_clear_all_in_callback|0 1|exact|pending V7|1 0

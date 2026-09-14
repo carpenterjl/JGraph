@@ -1,0 +1,21 @@
+# The stage of the value-ownership plan that completes each line JGraph fails (appendix A's stage column).
+a095_gfx_indexed_prop_write	V6
+a095_gfx_indexed_write_then_get	V6
+a096_gfx_operand_scope_prop_write	V6
+a097_gfx_cell_handle_nested_write	V6
+a098_gfx_children_handle_write	V6
+a099_gfx_prop_self_overlap	V6
+a100_gfx_appdata_alias	V2
+a101_gfx_callback_capture	V2
+a102_gfx_guidata_alias	V6
+a103_gfx_xlim_alias	V6
+a104_gfx_delete_alias_isvalid	V6
+a132_axes_xlim_indexed_write	V6
+a132_figure_position_indexed_write	V6
+a133_graphics_prop_growth_write	V6
+a133_graphics_prop_delete_write	V6
+a134_handle_array_cslist_prop_write	V6
+a141_line_width_default	V6
+a141_handle_array_element_prop_write	V6
+a150_global_handle_prop_write	V4
+a153_order_graphics_ydata_end_vs_rhs	V6
