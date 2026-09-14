@@ -13,9 +13,20 @@ namespace JGraph.Tests.MatlabParity;
 /// <c>tools/parity/record-matlab.ps1</c>). MATLAB is never run here.
 /// </summary>
 /// <remarks>
+/// <para>
 /// A fixture with no recording fails rather than passing vacuously; a <c>div=</c> line whose two
 /// values agree fails, because that is a divergence retired without anyone noticing. The fixture and
 /// expected files are copied to the output folder by the test project file.
+/// </para>
+/// <para>
+/// A fixture runs the way the recorder runs it in MATLAB (<c>cd(fixtures); addpath(helpers); name</c>):
+/// from its real path, so <c>mfilename</c> and the implicit folder are the fixture's own, with the
+/// fixtures folder current and <c>fixtures\helpers\</c> on the function path. Only the top-level
+/// <c>.m</c> files are fixtures; <c>helpers\</c> holds the class and function files fixtures share,
+/// which have no recording of their own and are never run by name. Whether a fixture is a script or a
+/// function file is the file's own first token, and both engines run it by that form — a fixture that
+/// needs base-workspace semantics is written as a script.
+/// </para>
 /// </remarks>
 [Collection("JG facade")]
 public class MatlabParityFixtureTests : IDisposable
@@ -55,7 +66,7 @@ public class MatlabParityFixtureTests : IDisposable
         string expected = File.ReadAllText(recording);
         Assert.Contains("CHK|", expected);
 
-        string actual = MatlabParityComparer.ResolveBits(RunMatlabDialect(File.ReadAllText(script)));
+        string actual = MatlabParityComparer.ResolveBits(RunFixture(script));
         List<string> problems = MatlabParityComparer.Compare(expected, actual);
         Assert.True(
             problems.Count == 0,
@@ -119,6 +130,37 @@ public class MatlabParityFixtureTests : IDisposable
         Assert.Empty(MatlabParityComparer.Compare("CHK|a|Inf|exact\nCHK|b|NaN|rel=1e-9\nCHK|c|-Inf|abs=1\n",
                                                   "CHK|a|Inf|exact\nCHK|b|NaN|rel=1e-9\nCHK|c|-Inf|abs=1\n"));
         Assert.Single(MatlabParityComparer.Compare("CHK|a|Inf|exact\n", "CHK|a|1e308|exact\n"));
+    }
+
+    [Fact]
+    public void HelpersAreNotFixtures()
+    {
+        // The helpers folder exists and holds files, and none of them is enumerated as a fixture — a
+        // helper enumerated as a fixture would fail for want of a recording it must never have.
+        string helpers = Path.Combine(Root, "fixtures", "helpers");
+        Assert.True(Directory.Exists(helpers), helpers);
+        Assert.NotEmpty(Directory.GetFiles(helpers, "*.m"));
+        IEnumerable<string> names = Fixtures().Select(row => (string)row[0]);
+        Assert.DoesNotContain("HelperBox", names);
+        Assert.DoesNotContain("helper_twice", names);
+        Assert.Contains("p1_helpers", names);
+    }
+
+    /// <summary>
+    /// Runs a fixture as the recorder runs it in MATLAB: by its real path (so <c>mfilename</c> and
+    /// the implicit folder are its own), with the fixtures folder current and <c>helpers\</c> on the
+    /// function path. The comparer's inline lines are the comparer's business; this is the fixture's.
+    /// </summary>
+    private static string RunFixture(string script)
+    {
+        string fixtures = Path.GetDirectoryName(script)!;
+        var output = new RecordingScriptOutput();
+        var context = new ScriptContext(output, (_, _) => { }, fixtures) { ScriptPath = script };
+        ScriptRunResult result = JgsRunner.Run(
+            File.ReadAllText(script), context, default, sourceId: script, hook: null, JgsDialect.Matlab,
+            searchFolders: [Path.Combine(fixtures, "helpers")]);
+        Assert.True(result.Success, result.Message + output.ErrorText);
+        return output.NormalText;
     }
 
     private static string RunMatlabDialect(string code)

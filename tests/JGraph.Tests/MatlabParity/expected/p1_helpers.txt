@@ -1,0 +1,7 @@
+CHK|mfilename|p1_helpers|exact
+CHK|pwd_tail|fixtures|exact
+CHK|helper_function|8|exact
+CHK|helper_class|HelperBox|exact
+CHK|helper_property|3|exact
+CHK|helper_method|6|exact
+CHK|helper_default|1|exact

@@ -8,6 +8,7 @@ each line asks for. Introduced by M124 (ADR 0126) as the gate for the solver and
 | Path | What it is |
 |---|---|
 | `tests/JGraph.Tests/MatlabParity/fixtures/<mNNN>_<topic>.m` | a MATLAB-dialect script that prints `CHK\|name\|value\|rule` lines |
+| `tests/JGraph.Tests/MatlabParity/fixtures/helpers/*.m` | class and function files fixtures share; on the path, never fixtures |
 | `tests/JGraph.Tests/MatlabParity/expected/<same>.txt` | what MATLAB printed, recorded once, committed |
 | `tests/JGraph.Tests/MatlabParity/expected/matlab_version.txt` | which MATLAB the recordings are of |
 | `tools/parity/record-matlab.ps1` | runs a fixture through `matlab.exe -batch`, keeps the `CHK` lines, writes `expected/` |
@@ -73,6 +74,20 @@ payload and a changed shape, for double and for single.
 - Choose the tolerance the operation promises. An integrator asked for `RelTol` 1e-6 is pinned
   at `rel=1e-6`, not 1e-12.
 - One fixture per milestone and topic; keep each under a few hundred lines so a failure is readable.
+
+### How a fixture runs, and where its helpers live
+
+Both engines run a fixture the same way: the fixtures folder is the current folder, the fixture
+runs by name from its real path (so `mfilename` is its own name and its folder is the implicit
+one), and `fixtures/helpers/` is on the function path — the recorder does `cd(fixtures);
+addpath(helpers); name`, the harness gives `JgsRunner.Run` the fixture's path and the helpers folder
+as a search folder. Only the top-level `.m` files are fixtures. A class or function file that
+fixtures share goes in `helpers/`: beside the fixtures, both enumerations would take it for a
+fixture needing a recording of its own. `p1_helpers.m` proves the arrangement on both engines.
+
+Whether a fixture is a script or a function file is its own first token, and both engines run it by
+that form; a fixture that needs base-workspace semantics (a `clear` inside a callback, a `load`
+into the workspace) is written as a script, as every fixture so far is.
 
 ## Recording and running
 

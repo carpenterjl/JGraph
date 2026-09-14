@@ -18,6 +18,11 @@
     It also writes expected/matlab_version.txt from `version`, so the recording says which MATLAB
     it is a recording of.
 
+    Only the top-level .m files under fixtures/ are fixtures. fixtures/helpers/ holds the class and
+    function files fixtures share; each fixture runs with the fixtures folder current and helpers/
+    on the path (cd; addpath; name), which is exactly how MatlabParityFixtureTests runs it on
+    JGraph, so both engines resolve the same names from the same folders.
+
     This is the ONLY step in the parity suite that needs MATLAB. It is run once per new fixture,
     and again when a fixture changes; its output is committed. The xunit test
     (MatlabParityFixtureTests) never runs MATLAB. MATLAB's first call is 30-70x slower than its warm
@@ -27,7 +32,7 @@
     Fixture names (without .m) to record. Omit to record all of them.
 
 .PARAMETER MatlabExe
-    The MATLAB launcher. Defaults to E:\Matlab\bin\matlab.exe.
+    The MATLAB launcher. Defaults to R2025b's, the release every recording is of.
 
 .EXAMPLE
     powershell -File tools/parity/record-matlab.ps1
@@ -36,12 +41,13 @@
 [CmdletBinding()]
 param(
     [string[]] $Fixtures,
-    [string] $MatlabExe = 'E:\Matlab\bin\matlab.exe'
+    [string] $MatlabExe = 'C:\Program Files\MATLAB\R2025b\bin\matlab.exe'
 )
 
 $ErrorActionPreference = 'Stop'
 $repo = Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
 $fixtureDir = Join-Path $repo 'tests\JGraph.Tests\MatlabParity\fixtures'
+$helpersDir = Join-Path $fixtureDir 'helpers'
 $expectedDir = Join-Path $repo 'tests\JGraph.Tests\MatlabParity\expected'
 
 if (-not (Test-Path -LiteralPath $MatlabExe)) {
@@ -108,6 +114,7 @@ function Resolve-BitsFile {
 }
 
 $fixtureDirMatlab = $fixtureDir -replace "'", "''"
+$helpersDirMatlab = $helpersDir -replace "'", "''"
 $version = Invoke-Matlab -Statement "fprintf('%s\n', version)" -WorkingDirectory $fixtureDir
 $versionLine = ($version.Text -split "`r?`n" | Where-Object { $_ -match '\(R\d{4}[ab]\)' } | Select-Object -First 1)
 if (-not $versionLine) { Write-Error "could not read MATLAB's version: $($version.Text) $($version.Error)" }
@@ -117,7 +124,7 @@ Write-Host "MATLAB: $($versionLine.Trim())"
 
 $failed = 0
 foreach ($name in $all) {
-    $result = Invoke-Matlab -Statement "cd('$fixtureDirMatlab'); $name" -WorkingDirectory $fixtureDir
+    $result = Invoke-Matlab -Statement "cd('$fixtureDirMatlab'); addpath('$helpersDirMatlab'); $name" -WorkingDirectory $fixtureDir
     $lines = @($result.Text -split "`r?`n" | ForEach-Object { $_.TrimEnd() } | Where-Object { $_ -match '^CHK\|' })
 
     # A bits line names a file the fixture wrote; the recording carries the file's SHA-256, never

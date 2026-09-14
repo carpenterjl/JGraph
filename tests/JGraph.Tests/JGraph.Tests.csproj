@@ -31,9 +31,11 @@
   <!--
     MATLAB parity fixtures (M124). The .m scripts and MATLAB's recorded answers ride along to the
     output folder so MatlabParityFixtureTests can read them by path; MATLAB itself is never run.
+    fixtures\helpers\ holds the class and function files fixtures share; it rides along too, and
+    the harness puts it on the function path rather than enumerating it (it holds no fixtures).
   -->
   <ItemGroup>
-    <Content Include="MatlabParity\fixtures\*.m;MatlabParity\expected\*.txt"
+    <Content Include="MatlabParity\fixtures\*.m;MatlabParity\fixtures\helpers\*.m;MatlabParity\expected\*.txt"
              CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 

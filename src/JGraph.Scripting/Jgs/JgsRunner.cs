@@ -21,13 +21,18 @@ internal static class JgsRunner
     /// statements so a debugger can map execution to the right document.</param>
     /// <param name="hook">The debug hook, or null for a plain run.</param>
     /// <param name="dialect">The language variant to run, or null for <see cref="JgsDialect.Jgs"/>.</param>
+    /// <param name="searchFolders">Folders placed on the function path before the script runs, after
+    /// its own folder — what a host would otherwise have to <c>addpath</c> from inside the code. The
+    /// parity harness puts its fixtures' shared helper classes there, the way the recorder does for
+    /// MATLAB, so a fixture and its recording resolve the same names from the same folder.</param>
     public static ScriptRunResult Run(
         string code,
         ScriptContext context,
         CancellationToken cancellationToken,
         string sourceId = "",
         IJgsDebugHook? hook = null,
-        JgsDialect? dialect = null)
+        JgsDialect? dialect = null,
+        IReadOnlyList<string>? searchFolders = null)
     {
         dialect ??= JgsDialect.Jgs;
 
@@ -92,6 +97,13 @@ internal static class JgsRunner
             DefineRunBuiltin(environment, interpreter, globals, dialect);
             JgsBuiltins.RegisterEvalBuiltins(environment, interpreter, globals, dialect);
             JgsBuiltins.RegisterSessionBuiltins(environment, globals);
+            if (searchFolders is { Count: > 0 } && interpreter.FunctionPath is { } path)
+            {
+                foreach (string folder in searchFolders)
+                {
+                    path.Add(folder, atEnd: true);
+                }
+            }
 
             // Capture the pristine builtin bindings so the post-run snapshot lists only what the
             // script itself defined (or rebound). save/load must be declared before the capture, or
