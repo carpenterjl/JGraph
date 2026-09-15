@@ -52,6 +52,63 @@ public static class MatlabParityStamper
         return owners;
     }
 
+    /// <summary>
+    /// The representation overlay a stamped recording implies: every line of <paramref name="stampedText"/>
+    /// that differs from the line of the same name in <paramref name="baseText"/>, and the <c>RUN</c> line
+    /// when it does; empty when nothing differs. The stamp mode run in the boxed lane stamps the merged
+    /// recording (<see cref="MatlabParityComparer.ApplyOverlay"/>) and writes this to
+    /// <c>expected/&lt;fixture&gt;.boxed.txt</c>, so the recording itself stays the packed representation's.
+    /// A run that fails in the recording and succeeds under boxed storage has no spelling in the overlay
+    /// grammar and is refused.
+    /// </summary>
+    public static string Overlay(string baseText, string stampedText)
+    {
+        var baseLines = new Dictionary<string, string>(StringComparer.Ordinal);
+        string? baseRun = null;
+        foreach (string raw in baseText.Split('\n'))
+        {
+            string text = raw.Trim();
+            if (text.StartsWith("RUN|", StringComparison.Ordinal))
+            {
+                baseRun = text;
+            }
+            else if (Line.Match(text) is { Success: true } m)
+            {
+                baseLines[m.Groups[1].Value] = text;
+            }
+        }
+
+        var output = new StringBuilder();
+        bool runSeen = false;
+        foreach (string raw in stampedText.Split('\n'))
+        {
+            string text = raw.Trim();
+            if (text.StartsWith("RUN|", StringComparison.Ordinal))
+            {
+                runSeen = true;
+                if (text != baseRun)
+                {
+                    output.Append(text).Append('\n');
+                }
+
+                continue;
+            }
+
+            Match m = Line.Match(text);
+            if (m.Success && (!baseLines.TryGetValue(m.Groups[1].Value, out string? was) || was != text))
+            {
+                output.Append(text).Append('\n');
+            }
+        }
+
+        if (baseRun is not null && !runSeen)
+        {
+            throw new NotSupportedException("the run fails in the recording and succeeds here: the overlay grammar cannot say so — re-stamp the recording in the packed lane first");
+        }
+
+        return output.ToString();
+    }
+
     /// <summary>Stamps <paramref name="expectedText"/> from <paramref name="actualText"/> and the run's failure, if any.</summary>
     public static Result Stamp(string expectedText, string actualText, string? runFailure, IReadOnlyDictionary<string, string> owners)
     {

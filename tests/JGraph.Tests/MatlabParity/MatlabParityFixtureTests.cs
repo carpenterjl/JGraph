@@ -30,6 +30,14 @@ namespace JGraph.Tests.MatlabParity;
 /// stage whose ADR has landed.
 /// </para>
 /// <para>
+/// <b>The boxed overlay.</b> A recording's states are the packed representation's answers. In the
+/// boxed lane (<c>JGRAPH_JGS_PACKED=0</c>, <see cref="JgsPacking.Enabled"/> off) the same fixture is
+/// held to the recording merged with <c>expected/&lt;fixture&gt;.boxed.txt</c>, which carries only the
+/// lines whose state differs under boxed storage (<see cref="MatlabParityComparer.ApplyOverlay"/>).
+/// The stamp mode run in that lane writes the overlay and leaves the recording alone; run in the
+/// packed lane it writes the recording, as before. <c>check-ratchet.py</c> reads both.
+/// </para>
+/// <para>
 /// A fixture runs the way the recorder runs it in MATLAB (<c>cd(fixtures); addpath(helpers); name</c>):
 /// from its real path, so <c>mfilename</c> and the implicit folder are the fixture's own, with the
 /// fixtures folder current and <c>fixtures\helpers\</c> on the function path. Only the top-level
@@ -74,15 +82,26 @@ public class MatlabParityFixtureTests : IDisposable
             File.Exists(recording),
             $"{fixture}: not recorded — run tools/parity/record-matlab.ps1 -Fixtures {fixture}");
 
-        string expected = File.ReadAllText(recording);
-        Assert.Contains("CHK|", expected);
+        string baseline = File.ReadAllText(recording);
+        Assert.Contains("CHK|", baseline);
+
+        // The boxed lane reads the recording through its overlay; the packed lane reads it as it is.
+        string expected = baseline;
+        string? overlay = JgsPacking.Enabled ? null : Path.Combine(Root, "expected", fixture + ".boxed.txt");
+        if (overlay is not null && File.Exists(overlay))
+        {
+            (expected, List<string> overlayProblems) = MatlabParityComparer.ApplyOverlay(baseline, File.ReadAllText(overlay));
+            Assert.True(
+                overlayProblems.Count == 0,
+                $"{fixture}: the boxed overlay does not fit its recording\n  - " + string.Join("\n  - ", overlayProblems));
+        }
 
         (string printed, string? runFailure) = RunFixture(script);
         string actual = MatlabParityComparer.ResolveBits(printed);
 
         if (Environment.GetEnvironmentVariable("JGRAPH_PARITY_STAMP") is { Length: > 0 } stampFolder)
         {
-            Stamp(fixture, expected, actual, runFailure, stampFolder);
+            Stamp(fixture, baseline, expected, actual, runFailure, stampFolder, boxed: overlay is not null);
             return;
         }
 
@@ -95,17 +114,30 @@ public class MatlabParityFixtureTests : IDisposable
     /// <summary>
     /// The stamp mode: rewrites the recording's states from this run and fails with what it did, so
     /// the run reads as a stamping run and never as a gate. A fixture with nothing to stamp and no
-    /// problem passes; one with a line no owner claims fails naming it.
+    /// problem passes; one with a line no owner claims fails naming it. In the boxed lane the merged
+    /// recording is stamped and only the overlay is written — the lines whose stamped state differs
+    /// from the recording's — or deleted when nothing differs any more.
     /// </summary>
-    private static void Stamp(string fixture, string expected, string actual, string? runFailure, string stampFolder)
+    private static void Stamp(string fixture, string baseline, string expected, string actual, string? runFailure, string stampFolder, bool boxed)
     {
         string ownersPath = Path.Combine(Root, "fixtures", fixture + ".owners");
         MatlabParityStamper.Result result = MatlabParityStamper.Stamp(
             expected, actual, runFailure, MatlabParityStamper.ReadOwners(ownersPath));
-        string target = Path.Combine(stampFolder, fixture + ".txt");
+        string target = Path.Combine(stampFolder, fixture + (boxed ? ".boxed.txt" : ".txt"));
         if (result.Stamped > 0)
         {
-            File.WriteAllText(target, result.Text, new UTF8Encoding(false));
+            if (!boxed)
+            {
+                File.WriteAllText(target, result.Text, new UTF8Encoding(false));
+            }
+            else if (MatlabParityStamper.Overlay(baseline, result.Text) is { Length: > 0 } overlayText)
+            {
+                File.WriteAllText(target, overlayText, new UTF8Encoding(false));
+            }
+            else if (File.Exists(target))
+            {
+                File.Delete(target);
+            }
         }
 
         string summary = $"{fixture}: stamped {result.Stamped} line(s) into {target}";

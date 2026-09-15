@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Compare two CHK logs by the rule and state each line carries — the ad-hoc twin of the xunit comparator.
 
-    python tools/parity/compare.py expected.txt actual.txt
+    python tools/parity/compare.py expected.txt actual.txt [expected.boxed.txt]
 
 The line grammar is CHK|<name>|<value>|<rule>, and in a recording optionally |<state>|<baseline>.
 The rules, and what a pass means:
@@ -25,6 +25,12 @@ regression, and an answer that now agrees with MATLAB fails until the owning sta
 the marker. A recording may open with `RUN|pending Vn|<message>`: the run is known to fail with that
 message, must fail with exactly it, and the lines it never reached are excused. In a log captured
 from the CLI with both streams (`2>&1`), the failure is read off the `jgraph: script failed` line.
+
+A recording's states are the packed representation's answers. `expected/<fixture>.boxed.txt` is
+the boxed overlay: only the lines whose state differs under `JGRAPH_JGS_PACKED=0`, in the same
+grammar, merged over the recording by apply_overlay (a third argument here) before comparing. An
+overlay line changes only a line's state; one naming no line of the recording, changing its value
+or rule, or equal to it, is a problem.
 
 A line on one side with no partner on the other is a problem, as is a line whose rule differs
 between the two sides: a fixture and its recording are the same script, so the rules must match.
@@ -94,6 +100,54 @@ def parse_run(text: str) -> tuple[str, str] | None:
         if m:
             return m.group(1), m.group(2).strip()
     return None
+
+
+def apply_overlay(base_text: str, overlay_text: str) -> tuple[str, list[str]]:
+    """The recording with its overlay's lines in place of its own, and what does not fit."""
+    problems: list[str] = []
+    overrides: dict[str, str] = {}
+    overlay_run: str | None = None
+    for raw in overlay_text.splitlines():
+        text = raw.strip()
+        if not text:
+            continue
+        if RUN_LINE.match(text):
+            overlay_run = text
+            continue
+        m = LINE.match(text)
+        if not m:
+            problems.append(f"overlay: malformed line '{text}'")
+            continue
+        overrides[m.group(1)] = text
+    output: list[str] = []
+    run_placed = False
+    for raw in base_text.splitlines():
+        text = raw.rstrip("\r")
+        trimmed = text.strip()
+        if RUN_LINE.match(trimmed):
+            output.append(overlay_run if overlay_run is not None else text)
+            run_placed = True
+            continue
+        m = LINE.match(trimmed)
+        if not m or m.group(1) not in overrides:
+            output.append(text)
+            continue
+        name = m.group(1)
+        over = overrides.pop(name)
+        o = LINE.match(over)
+        assert o is not None
+        if o.group(2) != m.group(2) or o.group(3) != m.group(3):
+            problems.append(f"overlay: {name}: value or rule differs from the recording's — an overlay line changes only the state")
+            output.append(text)
+            continue
+        if over == trimmed:
+            problems.append(f"overlay: {name}: equal to the recording's line — delete it")
+        output.append(over)
+    if overlay_run is not None and not run_placed:
+        output.insert(0, overlay_run)
+    for name in overrides:
+        problems.append(f"overlay: {name}: not a line of the recording")
+    return "\n".join(output), problems
 
 
 def cli_failure(actual_text: str) -> str | None:
@@ -226,10 +280,17 @@ def compare(expected_text: str, actual_text: str, run_failure: str | None = None
 
 
 def main(argv: list[str]) -> int:
-    if len(argv) != 3:
+    if len(argv) not in (3, 4):
         print(__doc__)
         return 2
     expected = resolve_bits(Path(argv[1]).read_text(encoding="utf-8-sig"))
+    if len(argv) == 4:
+        expected, misfits = apply_overlay(expected, Path(argv[3]).read_text(encoding="utf-8-sig"))
+        if misfits:
+            print(f"{len(misfits)} overlay problem(s)")
+            for p in misfits:
+                print("  -", p)
+            return 1
     actual_raw = Path(argv[2]).read_text(encoding="utf-8-sig")
     actual = resolve_bits(actual_raw)
     problems = compare(expected, actual, cli_failure(actual_raw))

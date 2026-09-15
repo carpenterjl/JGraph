@@ -10,6 +10,7 @@ each line asks for. Introduced by M124 (ADR 0126) as the gate for the solver and
 | `tests/JGraph.Tests/MatlabParity/fixtures/<mNNN>_<topic>.m` | a MATLAB-dialect script that prints `CHK\|name\|value\|rule` lines |
 | `tests/JGraph.Tests/MatlabParity/fixtures/helpers/*.m` | class and function files fixtures share; on the path, never fixtures |
 | `tests/JGraph.Tests/MatlabParity/expected/<same>.txt` | what MATLAB printed, recorded once, committed |
+| `tests/JGraph.Tests/MatlabParity/expected/<same>.boxed.txt` | the boxed overlay: only the lines whose state differs under `JGRAPH_JGS_PACKED=0` |
 | `tests/JGraph.Tests/MatlabParity/expected/matlab_version.txt` | which MATLAB the recordings are of |
 | `tools/parity/record-matlab.ps1` | runs a fixture through `matlab.exe -batch`, keeps the `CHK` lines, writes `expected/` |
 | `tools/parity/compare.py` | the comparison rules, for an ad-hoc diff of two logs |
@@ -78,6 +79,38 @@ Remove-Item Env:JGRAPH_PARITY_STAMP
 python tools/parity/check-ratchet.py
 python -m unittest tools/parity/test_compare.py
 ```
+
+### The boxed overlay: one recording, two representations
+
+A recording's states are one representation's answers — the packed one, the default. The suite
+also runs with `JGRAPH_JGS_PACKED=0` (the boxed lanes of `tools\run-lanes.ps1`), and the boxed
+path answers some pending lines differently: a line that agrees with MATLAB only there, a
+different wrong answer, a defect only boxed storage has. Those lines live in
+`expected/<fixture>.boxed.txt`, the **overlay**: the same grammar, holding only the lines whose
+state differs from the recording's, and a `RUN|pending` line when the run's fate differs. In the
+boxed lane both comparators merge the overlay over the recording before comparing
+(`MatlabParityComparer.ApplyOverlay`, `compare.py`'s third argument); in the packed lane the
+recording is read as it is. An overlay line changes only a line's state and baseline — one naming
+no line of the recording, changing its value or rule, or equal to the recording's line is a
+problem, so an overlay cannot drift from its recording unnoticed.
+
+The overlay is written by the stamp mode run in the boxed lane, which stamps the merged recording
+and writes back only the lines that differ (deleting the overlay when none does); the recording
+itself is written only by a stamp in the packed lane. A stage's commit therefore runs the stamp
+twice, once per representation:
+
+```powershell
+$env:JGRAPH_PARITY_STAMP = "$PWD\tests\JGraph.Tests\MatlabParity\expected"
+dotnet test tests/JGraph.Tests --no-build --filter "FullyQualifiedName~MatlabParityFixtureTests"
+$env:JGRAPH_JGS_PACKED = "0"
+dotnet test tests/JGraph.Tests --no-build --filter "FullyQualifiedName~MatlabParityFixtureTests"
+Remove-Item Env:JGRAPH_PARITY_STAMP, Env:JGRAPH_JGS_PACKED
+```
+
+`check-ratchet.py` reads every overlay too: it fails one that does not fit its recording and holds
+its states to the same rules, and prints the overlay's pending count per stage after the recording's.
+A run that fails in the recording and succeeds under boxed storage has no spelling in the overlay
+and is refused; re-stamp the recording first.
 
 ### The `bits` rule
 

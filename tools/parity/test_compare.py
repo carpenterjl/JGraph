@@ -112,5 +112,32 @@ class Rules(unittest.TestCase):
         self.assertIn("rule is rel=1e-9 here and exact in the recording", p)
 
 
+class Overlays(unittest.TestCase):
+    RECORDING = "CHK|a|1|exact|pending V2|7\nCHK|b|2|exact\nCHK|c|3|exact|pending V6|0\n"
+
+    def test_replaces_only_the_state_of_a_line_it_names(self) -> None:
+        merged, problems = compare.apply_overlay(self.RECORDING, "CHK|a|1|exact\nCHK|b|2|exact|pending V3|9\n")
+        self.assertEqual([], problems)
+        self.assertEqual("CHK|a|1|exact\nCHK|b|2|exact|pending V3|9\nCHK|c|3|exact|pending V6|0", merged)
+        self.assertEqual([], compare.compare(merged, "CHK|a|1|exact\nCHK|b|9|exact\nCHK|c|0|exact\n"))
+        self.assertEqual(1, len(compare.compare(merged, "CHK|a|7|exact\nCHK|b|9|exact\nCHK|c|0|exact\n")))
+
+    def test_one_that_does_not_fit_is_a_problem(self) -> None:
+        merged, problems = compare.apply_overlay(self.RECORDING, "CHK|a|5|exact\nCHK|b|2|exact\nCHK|z|1|exact|pending V3|2\nCHK|bad\n")
+        self.assertEqual(4, len(problems))
+        self.assertTrue(any("a: value or rule differs" in p for p in problems))
+        self.assertTrue(any("b: equal to the recording's line" in p for p in problems))
+        self.assertTrue(any("z: not a line of the recording" in p for p in problems))
+        self.assertTrue(any("malformed line 'CHK|bad'" in p for p in problems))
+        self.assertEqual(self.RECORDING.rstrip("\n"), merged)
+
+    def test_carries_the_run_line(self) -> None:
+        added, none = compare.apply_overlay("CHK|a|1|exact\n", "RUN|pending V6|boom\n")
+        self.assertEqual([], none)
+        self.assertEqual("RUN|pending V6|boom\nCHK|a|1|exact", added)
+        replaced, _ = compare.apply_overlay("RUN|pending V6|boom\nCHK|a|1|exact\n", "RUN|pending V6|bang\n")
+        self.assertEqual("RUN|pending V6|bang\nCHK|a|1|exact", replaced)
+
+
 if __name__ == "__main__":
     unittest.main()

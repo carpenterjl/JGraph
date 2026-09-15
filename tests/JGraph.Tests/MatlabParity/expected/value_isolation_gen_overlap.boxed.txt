@@ -1,0 +1,25 @@
+CHK|o_permute_rhs_fresh_logical_variable|logical [1 3] [true true false]|exact
+CHK|o_permute_rhs_fresh_logical_field|logical [1 3] [true true false]|exact
+CHK|o_permute_rhs_fresh_logical_cellelem|logical [1 3] [true true false]|exact
+CHK|o_permute_rhs_fresh_logical_global|logical [1 3] [true true false]|exact
+CHK|o_permute_rhs_fresh_logical_persistent|logical [1 3] [true true false]|exact
+CHK|o_shift_rhs_fresh_logical_variable|logical [1 3] [true true false]|exact
+CHK|o_shift_rhs_fresh_logical_field|logical [1 3] [true true false]|exact
+CHK|o_shift_rhs_fresh_logical_cellelem|logical [1 3] [true true false]|exact
+CHK|o_shift_rhs_fresh_logical_global|logical [1 3] [true true false]|exact
+CHK|o_shift_rhs_fresh_logical_persistent|logical [1 3] [true true false]|exact
+CHK|o_grow_rhs_same_double_variable|double [1 6] [3 1 2 3 1 2]|exact
+CHK|o_grow_rhs_same_double_global|double [1 6] [3 1 2 3 1 2]|exact
+CHK|o_grow_rhs_same_double_persistent|double [1 6] [3 1 2 3 1 2]|exact
+CHK|o_grow_rhs_same_logical_variable|logical [1 6] [true false true true false true]|exact
+CHK|o_grow_rhs_same_logical_global|logical [1 6] [true false true true false true]|exact
+CHK|o_grow_rhs_same_logical_persistent|logical [1 6] [true false true true false true]|exact
+CHK|o_grow_end_rhs_same_double_variable|double [1 6] [3 1 2 3 1 2]|exact
+CHK|o_grow_end_rhs_same_double_global|double [1 6] [3 1 2 3 1 2]|exact
+CHK|o_grow_end_rhs_same_double_persistent|double [1 6] [3 1 2 3 1 2]|exact
+CHK|o_grow_end_rhs_same_logical_variable|logical [1 6] [true false true true false true]|exact
+CHK|o_grow_end_rhs_same_logical_global|logical [1 6] [true false true true false true]|exact
+CHK|o_grow_end_rhs_same_logical_persistent|logical [1 6] [true false true true false true]|exact
+CHK|o_both_same_grow_double_variable|double [1 6] [3 1 2 1 2 3]|exact
+CHK|o_both_same_grow_double_global|double [1 6] [3 1 2 1 2 3]|exact
+CHK|o_both_same_grow_double_persistent|double [1 6] [3 1 2 1 2 3]|exact

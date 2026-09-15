@@ -1,0 +1,8 @@
+CHK|e_real_anon_grow_orig|v=double [1 6] [1 2 3 4 5 9] entry=double [1 5] [1 2 3 4 5]|exact
+CHK|e_real_map_grow_orig|v=double [1 6] [1 2 3 4 5 9] entry=double [1 5] [1 2 3 4 5]|exact
+CHK|e_single_anon_grow_orig|v=single [1 6] [1 2 3 4 5 9] entry=single [1 5] [1 2 3 4 5]|exact
+CHK|e_single_map_grow_orig|v=single [1 6] [1 2 3 4 5 9] entry=single [1 5] [1 2 3 4 5]|exact
+CHK|e_int32_anon_grow_orig|v=int32 [1 6] [1 2 3 4 5 9] entry=int32 [1 5] [1 2 3 4 5]|exact
+CHK|e_int32_map_grow_orig|v=int32 [1 6] [1 2 3 4 5 9] entry=int32 [1 5] [1 2 3 4 5]|exact
+CHK|e_logical_anon_grow_orig|v=logical [1 6] [false true false true false true] entry=logical [1 5] [false true false true false]|exact
+CHK|e_logical_map_grow_orig|v=logical [1 6] [false true false true false true] entry=logical [1 5] [false true false true false]|exact

@@ -141,6 +141,96 @@ public static class MatlabParityComparer
         return bad;
     }
 
+    /// <summary>
+    /// Merges a representation overlay into a recording. A recording's states are one representation's
+    /// answers (the packed one, the default); <c>expected/&lt;fixture&gt;.boxed.txt</c> holds, in the same
+    /// grammar, only the lines whose state differs under boxed storage (<c>JGRAPH_JGS_PACKED=0</c>). An
+    /// overlay line replaces the recording's line of the same name in place, and may change only the
+    /// state and baseline: a line naming nothing in the recording, a line whose value or rule differs,
+    /// a line equal to the recording's (nothing to override) and a malformed line are problems. A
+    /// <c>RUN|pending</c> line in the overlay replaces, or adds, the recording's. The stamp mode run in
+    /// the boxed lane writes the overlay (<see cref="MatlabParityStamper.Overlay"/>).
+    /// </summary>
+    public static (string Text, List<string> Problems) ApplyOverlay(string baseText, string overlayText)
+    {
+        var problems = new List<string>();
+        var overrides = new Dictionary<string, string>(StringComparer.Ordinal);
+        string? overlayRun = null;
+        foreach (string raw in overlayText.Split('\n'))
+        {
+            string text = raw.Trim();
+            if (text.Length == 0)
+            {
+                continue;
+            }
+
+            if (RunLine.IsMatch(text))
+            {
+                overlayRun = text;
+                continue;
+            }
+
+            Match m = Line.Match(text);
+            if (!m.Success)
+            {
+                problems.Add($"overlay: malformed line '{text}'");
+                continue;
+            }
+
+            overrides[m.Groups[1].Value] = text;
+        }
+
+        var output = new List<string>();
+        bool runPlaced = false;
+        foreach (string raw in baseText.Split('\n'))
+        {
+            string text = raw.TrimEnd('\r');
+            string trimmed = text.Trim();
+            if (RunLine.IsMatch(trimmed))
+            {
+                output.Add(overlayRun ?? text);
+                runPlaced = true;
+                continue;
+            }
+
+            Match m = Line.Match(trimmed);
+            if (!m.Success || !overrides.TryGetValue(m.Groups[1].Value, out string? over))
+            {
+                output.Add(text);
+                continue;
+            }
+
+            string name = m.Groups[1].Value;
+            overrides.Remove(name);
+            Match o = Line.Match(over);
+            if (o.Groups[2].Value != m.Groups[2].Value || o.Groups[3].Value != m.Groups[3].Value)
+            {
+                problems.Add($"overlay: {name}: value or rule differs from the recording's — an overlay line changes only the state");
+                output.Add(text);
+                continue;
+            }
+
+            if (over == trimmed)
+            {
+                problems.Add($"overlay: {name}: equal to the recording's line — delete it");
+            }
+
+            output.Add(over);
+        }
+
+        if (overlayRun is not null && !runPlaced)
+        {
+            output.Insert(0, overlayRun);
+        }
+
+        foreach (string name in overrides.Keys)
+        {
+            problems.Add($"overlay: {name}: not a line of the recording");
+        }
+
+        return (string.Join('\n', output), problems);
+    }
+
     /// <summary>The recording's <c>RUN|pending Vn|message</c> line, or null when the run must succeed.</summary>
     public static (string Stage, string Message)? ParseRun(string text)
     {

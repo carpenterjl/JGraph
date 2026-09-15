@@ -10,6 +10,7 @@ a012_struct_selection_arg	V1
 a013_cell_literal_child_arg	V3
 a014_value_object_nested	V3
 a015_clear_in_cell_loop	V3
+g_arrayfun_array_arg	V3	# agrees under packed storage; boxed storage lets write_gm's write reach the array arrayfun walks (#159)
 a016_value_object_global_prop	V4
 a019_method_receiver	V3
 a020_dictionary_insert_source	V3

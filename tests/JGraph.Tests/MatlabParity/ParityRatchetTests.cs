@@ -204,4 +204,60 @@ public class ParityRatchetTests
 
         Assert.Empty(MatlabParityStamper.ReadOwners(null));
     }
+
+    // The boxed overlay: one recording, a second representation's states on top of it.
+
+    [Fact]
+    public void OverlayReplacesOnlyTheStateOfALineItNames()
+    {
+        const string recording = "CHK|a|1|exact|pending V2|7\nCHK|b|2|exact\nCHK|c|3|exact|pending V6|0\n";
+        const string overlay = "CHK|a|1|exact\nCHK|b|2|exact|pending V3|9\n";
+        (string merged, List<string> problems) = MatlabParityComparer.ApplyOverlay(recording, overlay);
+        Assert.Empty(problems);
+        Assert.Equal("CHK|a|1|exact\nCHK|b|2|exact|pending V3|9\nCHK|c|3|exact|pending V6|0\n", merged);
+
+        // The merged recording is what the boxed lane is held to: a agrees now, b prints 9, c keeps its baseline.
+        Assert.Empty(MatlabParityComparer.Compare(merged, "CHK|a|1|exact\nCHK|b|9|exact\nCHK|c|0|exact\n"));
+        Assert.Single(MatlabParityComparer.Compare(merged, "CHK|a|7|exact\nCHK|b|9|exact\nCHK|c|0|exact\n"));
+    }
+
+    [Fact]
+    public void OverlayThatDoesNotFitItsRecordingIsAProblem()
+    {
+        const string recording = "CHK|a|1|exact|pending V2|7\nCHK|b|2|exact\n";
+        (string merged, List<string> problems) = MatlabParityComparer.ApplyOverlay(
+            recording, "CHK|a|5|exact\nCHK|b|2|exact\nCHK|z|1|exact|pending V3|2\nCHK|bad\n");
+        Assert.Equal(4, problems.Count);
+        Assert.Contains(problems, p => p.Contains("a: value or rule differs"));
+        Assert.Contains(problems, p => p.Contains("b: equal to the recording's line"));
+        Assert.Contains(problems, p => p.Contains("z: not a line of the recording"));
+        Assert.Contains(problems, p => p.Contains("malformed line 'CHK|bad'"));
+        Assert.Equal(recording, merged); // a line that does not fit leaves the recording's own in place
+    }
+
+    [Fact]
+    public void OverlayCarriesTheRunLine()
+    {
+        (string added, List<string> none) = MatlabParityComparer.ApplyOverlay("CHK|a|1|exact\n", "RUN|pending V6|boom\n");
+        Assert.Empty(none);
+        Assert.Equal("RUN|pending V6|boom\nCHK|a|1|exact\n", added);
+
+        (string replaced, _) = MatlabParityComparer.ApplyOverlay("RUN|pending V6|boom\nCHK|a|1|exact\n", "RUN|pending V6|bang\n");
+        Assert.Equal("RUN|pending V6|bang\nCHK|a|1|exact\n", replaced);
+    }
+
+    [Fact]
+    public void StamperDerivesTheOverlayFromWhatDiffers()
+    {
+        const string recording = "CHK|a|1|exact|pending V2|7\nCHK|b|2|exact\nCHK|c|3|exact|pending V6|0\n";
+        const string stampedInBoxedLane = "CHK|a|1|exact\nCHK|b|2|exact|pending V3|9\nCHK|c|3|exact|pending V6|0\n";
+        Assert.Equal("CHK|a|1|exact\nCHK|b|2|exact|pending V3|9\n", MatlabParityStamper.Overlay(recording, stampedInBoxedLane));
+        Assert.Equal("", MatlabParityStamper.Overlay(recording, recording));
+        Assert.Equal("RUN|pending V6|boom\n", MatlabParityStamper.Overlay(recording, "RUN|pending V6|boom\n" + recording));
+        Assert.Throws<NotSupportedException>(() => MatlabParityStamper.Overlay("RUN|pending V6|boom\n" + recording, recording));
+
+        // Stamping the merged recording, then taking the overlay, round-trips: applying it gives the stamped text back.
+        (string merged, _) = MatlabParityComparer.ApplyOverlay(recording, MatlabParityStamper.Overlay(recording, stampedInBoxedLane));
+        Assert.Equal(stampedInBoxedLane, merged);
+    }
 }
