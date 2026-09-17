@@ -15,7 +15,7 @@ CHK|b_orderfields_kept|struct [1 1] {g=double [1 1] 2 f=double [1 1] 1}|exact
 CHK|b_orderfields_failing|struct [1 1] {g=double [1 1] 2 f=double [1 1] 1}|exact
 CHK|b_horzcat_discarded|struct [1 1] {f=double [1 1] 1}|exact
 CHK|b_horzcat_kept|struct [1 1] {f=double [1 1] 1}|exact
-CHK|b_horzcat_failing|struct [1 1] {f=double [1 1] 1}|exact|pending V3|struct [1 1] {f=double [1 1] 1 q=double [1 0] zeros(1,0)}
+CHK|b_horzcat_failing|struct [1 1] {f=double [1 1] 1}|exact|pending V3|struct [1 1] {f=double [1 1] 1 q=double [0 0] []}
 CHK|b_sort_cell_discarded|cell [1 2] {char [1 1] {b} char [1 1] {a}}|exact
 CHK|b_sort_cell_kept|cell [1 2] {char [1 1] {b} char [1 1] {a}}|exact
 CHK|b_sort_cell_failing|cell [1 2] {char [1 1] {b} char [1 1] {a}}|exact

@@ -993,7 +993,10 @@ internal static partial class JgsBuiltins
             for (int i = 0; i < names.Length; i++)
             {
                 JgsValue given = args[(i * 2) + 1];
-                fields[names[i]] = given.Type == JgsType.Cell ? given.AsCell[given.AsCell.Length == 1 ? 0 : e] : given;
+
+                // M2: the field is an entry over the caller's value, so it takes a share of it.
+                fields[names[i]] = JgsValue.Share(
+                    given.Type == JgsType.Cell ? given.AsCell[given.AsCell.Length == 1 ? 0 : e] : given);
             }
 
             elements[e] = fields;

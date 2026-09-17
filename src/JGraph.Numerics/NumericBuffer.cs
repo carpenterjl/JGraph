@@ -27,8 +27,19 @@ public enum BufferKind
 /// </remarks>
 public abstract class NumericBuffer : IDisposable
 {
+    // How many entries hold this buffer (M1, ADR 0162). Zero and one both mean one holder, so a
+    // fresh buffer needs no initialisation; the scripting layer owns the arithmetic.
+    private int _holders;
+
     /// <summary>Number of doubles in the buffer.</summary>
     public int Length { get; protected init; }
+
+    /// <summary>
+    /// The holder count's storage (M1). The engine's ownership model counts holders on payloads,
+    /// and a buffer is one; the count lives here rather than in a side table because this is the
+    /// payload every packed write goes through. Zero means one holder.
+    /// </summary>
+    public ref int HolderSlot => ref _holders;
 
     /// <summary>The backing strategy.</summary>
     public abstract BufferKind Kind { get; }

@@ -3434,6 +3434,14 @@ internal sealed partial class Interpreter
         if (!Dialect.CopyOnAssign
             || value.Type is not (JgsType.Array or JgsType.Cell or JgsType.Struct or JgsType.Object))
         {
+            // M6/M17: a JGS binding keeps the caller's own wrapper — reference semantics, and no
+            // counted holder — so the payload is exposed: the count cannot say who can still read
+            // it, and the disposal walk must leave it alone (#152).
+            if (!Dialect.CopyOnAssign)
+            {
+                value.MarkExposed();
+            }
+
             return value; // scalars, strings and functions are immutable — nothing to copy
         }
 
@@ -3443,7 +3451,14 @@ internal sealed partial class Interpreter
         // it (M68).
         if (value.Type == JgsType.Object)
         {
-            return value.AsObject.Class.IsHandle ? value : JgsValue.Object(value.AsObject.Copy(this));
+            if (value.AsObject.Class.IsHandle)
+            {
+                return value;
+            }
+
+            return JgsOwnership.Enabled
+                ? JgsValue.Share(value)
+                : JgsValue.Object(value.AsObject.Copy(this));
         }
 
         // A handle-class value is a reference, so binding a second name to it must not clone it:
@@ -3455,7 +3470,92 @@ internal sealed partial class Interpreter
             return value;
         }
 
-        return CopyContainer(value);
+        // M2: the binding takes a counted share of the payload rather than a copy of it, and the
+        // first write through either name copies (M3). `JGRAPH_COW=0` puts the eager copy back for
+        // one milestone; the gates run either way, so the switch changes the cost, not the rules.
+        return JgsOwnership.Enabled ? JgsValue.Share(value) : CopyContainer(value);
+    }
+
+    /// <summary>
+    /// Whether this expression's value is storage it made here, held by nobody else (M2).
+    /// </summary>
+    /// <remarks>
+    /// An entry that takes such a value adopts it instead of sharing it. Without the distinction
+    /// every literal bound to a name would leave its payload counted as held by a temporary nobody
+    /// can reach, and the name's first write would copy for no one.
+    /// <para>
+    /// A call is deliberately not on the list. A builtin may hand back a wrapper it was given, or
+    /// one it had stored — <c>getappdata</c> and <c>deal</c> both do — and only V2.1's audit can
+    /// say which. Until then a call's answer is shared, which costs one copy at the name's first
+    /// write and never a wrong answer; today's engine copies at the binding instead, so the count
+    /// of copies is unchanged.
+    /// </para>
+    /// </remarks>
+    private static bool MintsItsValue(Expr expression) => expression is
+        ArrayLiteral or MatrixLiteral or CellLiteral or RangeExpr or NumberLiteral or StringLiteral
+        or BoolLiteral or ComplexLiteral or AnonymousFnExpr or FunctionHandleExpr;
+
+    /// <summary>
+    /// The value a write is aimed at, resolved through its entry rather than read out of it (M16).
+    /// </summary>
+    /// <remarks>
+    /// A read hands back whatever wrapper an entry holds; a write has to reach the entry's own. The
+    /// difference is M3: <c>t = s; s.x(1) = 5</c> shares one struct array between <c>s</c> and
+    /// <c>t</c>, so resolving <c>s.x</c> for a write detaches the array, then the element
+    /// dictionary, and hands back the wrapper that now belongs to <c>s</c> alone — the buffer under
+    /// it still shared, so the element write detaches that too. Reading <c>s.x</c> instead would
+    /// hand back the wrapper both names hold, and the write would land in both.
+    /// <para>
+    /// Only the shapes a write path can take are resolved here; anything else is evaluated as
+    /// usual, which is what an expression that is not an entry — a call, a literal — has to be.
+    /// </para>
+    /// </remarks>
+    private JgsValue EvaluateForWrite(Expr expr, JgsEnvironment env)
+    {
+        switch (expr)
+        {
+            case VariableExpr variable when LookUp(variable.Name, env, out JgsValue bound):
+                return bound; // the entry's own wrapper: the setters detach its payload
+
+            case MemberExpr member:
+            {
+                JgsValue owner = EvaluateForWrite(member.Target, env);
+                string field = FieldName(member, env);
+                if (owner.Type == JgsType.Struct && !owner.IsStructArray
+                    && owner.WritableStruct().TryGetValue(field, out JgsValue? held))
+                {
+                    return held;
+                }
+
+                if (owner.Type == JgsType.Object
+                    && owner.WritableFields().TryGetValue(field, out JgsValue? property))
+                {
+                    return property;
+                }
+
+                break;
+            }
+
+            case BraceIndexExpr { Indices.Count: 1 } brace:
+            {
+                JgsValue owner = EvaluateForWrite(brace.Target, env);
+                if (owner.Type == JgsType.Cell
+                    && EvaluateIndexArgument(brace.Indices[0], owner.ArrayLength, env) is { } index
+                    && index.Type == JgsType.Number)
+                {
+                    int slot = (int)index.AsNumber - Dialect.IndexBase;
+                    JgsValue[] slots = owner.WritableCell();
+                    if (slot >= 0 && slot < slots.Length)
+                    {
+                        return slots[slot];
+                    }
+                }
+
+                break;
+            }
+        }
+
+        return Evaluate(expr, env);
     }
 
     /// <summary>Evaluates one expression in <paramref name="env"/> — the entry point a callable body needs.</summary>
@@ -3647,8 +3747,9 @@ internal sealed partial class Interpreter
                 return EvaluateUnary(unary, env, out owned);
             case TransposeExpr transpose:
                 return EvaluateTranspose(transpose, env, out owned);
+
             default:
-                owned = false;
+                owned = MintsItsValue(value);
                 return Evaluate(value, env);
         }
     }
@@ -3849,7 +3950,7 @@ internal sealed partial class Interpreter
     private JgsValue AssignTwoSubscripts(
         Expr target, IReadOnlyList<Expr> subscripts, TokenType op, JgsValue rhs, Node at, JgsEnvironment env)
     {
-        JgsValue callee = Evaluate(target, env);
+        JgsValue callee = EvaluateForWrite(target, env);
         if (Dialect.IsMatlab && callee.Type == JgsType.String)
         {
             return AssignIntoCharRow(target, callee, subscripts, op, rhs, at, env);
@@ -4266,17 +4367,14 @@ internal sealed partial class Interpreter
         {
             if (value.Type is JgsType.Number or JgsType.Complex)
             {
-                System.Numerics.Complex written = value.AsComplex; // a Number reads as re+0i
-                JgsPackedComplex planes = container.AsPackedComplex;
-                planes.Re.AsSpan()[index] = written.Real;
-                planes.Im.AsSpan()[index] = written.Imaginary;
+                container.SetPackedComplex(index, value.AsComplex); // a Number reads as re+0i
                 return;
             }
 
             container.DemoteToBoxed();
         }
 
-        container.AsArray[index] = value;
+        container.SetSlot(index, value);
     }
 
     /// <summary>
@@ -4288,7 +4386,7 @@ internal sealed partial class Interpreter
     private JgsValue AssignThroughIndex(
         Expr target, IReadOnlyList<Expr> subscripts, TokenType op, JgsValue rhs, Node at, JgsEnvironment env)
     {
-        JgsValue callee = Evaluate(target, env);
+        JgsValue callee = EvaluateForWrite(target, env);
 
         // m(key) = value on a keyed collection writes the entry rather than an element (M64). It
         // writes in place, which is right for both: a Map is shared by every name bound to it, and a
@@ -4401,7 +4499,7 @@ internal sealed partial class Interpreter
             callee.DemoteToBoxed();
         }
 
-        JgsValue[] array = callee.AsArray;
+        JgsValue[] array = callee.WritableArray(); // M7: the write gate, before any slot is touched
 
         // Scalar index: single-element write, no picks array needed.
         if (index is { Type: not JgsType.Array })
@@ -4443,7 +4541,9 @@ internal sealed partial class Interpreter
         }
         else
         {
-            JgsValue[] source = rhs.AsArray;
+            // BoxedElements, not AsArray: under M2 the right-hand side is a wrapper of its own,
+            // so demoting the target no longer demotes it as well — it may still be packed.
+            JgsValue[] source = rhs.BoxedElements();
             if (source.Length != picks.Length)
             {
                 throw new JgsRuntimeException(at.Line, at.Column,
@@ -4508,7 +4608,8 @@ internal sealed partial class Interpreter
             return true;
         }
 
-        NumericBuffer buffer = target.AsBuffer; // compacts growth capacity; bulk writes want it flat
+        // M7: the write gate, then compaction — bulk writes want the buffer flat.
+        NumericBuffer buffer = target.WritableBuffer();
 
         int[] picks = index is null
             ? AllPicks(buffer.Length)
@@ -4595,9 +4696,7 @@ internal sealed partial class Interpreter
             }
 
             int single = ToIndex(index, planes.Length, at.Line, at.Column);
-            System.Numerics.Complex written = rhs.AsComplex;
-            planes.Re.AsSpan()[single] = written.Real;
-            planes.Im.AsSpan()[single] = written.Imaginary;
+            target.SetPackedComplex(single, rhs.AsComplex);
             return true;
         }
 
@@ -4611,6 +4710,7 @@ internal sealed partial class Interpreter
                 $"Cannot assign {rhs.ArrayLength} values into {picks.Length} selected elements.");
         }
 
+        planes = target.WritablePlanes(); // M7: the write gate, before the scatter
         if (rhsScalar)
         {
             System.Numerics.Complex written = rhs.AsComplex;
@@ -5192,7 +5292,7 @@ internal sealed partial class Interpreter
     private JgsValue AssignNSubscripts(
         Expr target, IReadOnlyList<Expr> subscripts, TokenType op, JgsValue rhs, Node at, JgsEnvironment env)
     {
-        JgsValue callee = Evaluate(target, env);
+        JgsValue callee = EvaluateForWrite(target, env);
         if (callee.Type is JgsType.Number or JgsType.Bool)
         {
             callee = OneElementArray(callee);
@@ -6089,7 +6189,13 @@ internal sealed partial class Interpreter
         {
             for (int c = 0; c < cols; c++)
             {
-                elements[r + (c * rows)] = built[r][c];
+                // M2: each slot is an entry, so it holds a wrapper of its own over whatever the
+                // element expression named — `c = {v}` must not follow a later write to `v`. An
+                // element the row minted here is adopted instead, so a literal of literals counts
+                // no holder that does not exist. A row that spread a comma list has more values
+                // than expressions and every one of them is shared, which only over-counts.
+                bool minted = built[r].Length == literal.Rows[r].Count && MintsItsValue(literal.Rows[r][c]);
+                elements[r + (c * rows)] = minted ? built[r][c] : JgsValue.Share(built[r][c]);
             }
         }
 
@@ -6506,7 +6612,7 @@ internal sealed partial class Interpreter
 
         JgsValue container = ResolveStructForWrite(member.Target, env, out JgsStructArray? owner);
         string field = FieldName(member, env);
-        container.AsStruct[field] = value;
+        container.WritableStruct()[field] = value; // M7: the write gate
 
         // Every element of a struct array has every field (M65), so writing S(2).b gives element one
         // a b as well, holding []. The old cell-of-structs could not hold that invariant, which is
@@ -6607,10 +6713,14 @@ internal sealed partial class Interpreter
             case MemberExpr nested:
                 JgsValue parent = ResolveStructForWrite(nested.Target, env, out _);
                 string field = FieldName(nested, env);
-                if (!parent.AsStruct.TryGetValue(field, out JgsValue? child) || child.Type != JgsType.Struct)
+
+                // M3: the write detaches at every level on the way down, and the entry holds this
+                // very dictionary, so the child handed back is the one the write will land in.
+                Dictionary<string, JgsValue> fields = parent.WritableStruct();
+                if (!fields.TryGetValue(field, out JgsValue? child) || child.Type != JgsType.Struct)
                 {
                     child = JgsValue.EmptyStruct();
-                    parent.AsStruct[field] = child;
+                    fields[field] = child;
                 }
 
                 return child;
@@ -6622,6 +6732,17 @@ internal sealed partial class Interpreter
                 return ResolveStructElementForWrite((VariableExpr)call.Callee, call.Arguments[0], call, env, out owner);
             case IndexExpr { Indices.Count: 1 } indexed when indexed.Target is VariableExpr:
                 return ResolveStructElementForWrite((VariableExpr)indexed.Target, indexed.Indices[0], indexed, env, out owner);
+
+            // The same write one level deeper: `c{1}(2).f = v`, `s.inner(2).f = v`. The element
+            // belongs to the array the entry holds, so it is taken writable inside that array —
+            // reading `c{1}(2)` would hand back a selection holding the same dictionary (M2), and
+            // the field write would detach the selection and go nowhere.
+            case CallExpr { Arguments.Count: 1 } deep when TryElementOfEntry(
+                deep.Callee, deep.Arguments[0], env, out JgsValue? elementOfCall, out owner):
+                return elementOfCall!;
+            case IndexExpr { Indices.Count: 1 } deepIndex when TryElementOfEntry(
+                deepIndex.Target, deepIndex.Indices[0], env, out JgsValue? elementOfIndex, out owner):
+                return elementOfIndex!;
 
             default:
                 JgsValue evaluated = Evaluate(expr, env);
@@ -6635,6 +6756,41 @@ internal sealed partial class Interpreter
                         ? "Cannot set one field across a whole struct array — name an element first, like S(1).field = v."
                         : $"Cannot set a field on a {evaluated.TypeName}.");
         }
+    }
+
+    /// <summary>
+    /// One element of a struct array an entry holds, taken writable inside that array (M3/M7).
+    /// Answers false when the path is not a struct array, or when the element is past its end —
+    /// growth needs a name to rebind, which is the plain-variable road's business.
+    /// </summary>
+    private bool TryElementOfEntry(
+        Expr owner, Expr subscript, JgsEnvironment env, out JgsValue? element, out JgsStructArray? array)
+    {
+        element = null;
+        array = null;
+        JgsValue held = EvaluateForWrite(owner, env);
+        if (held.Type != JgsType.Struct)
+        {
+            return false;
+        }
+
+        JgsStructArray payload = held.AsStructArray;
+        JgsValue? index = EvaluateIndexArgument(subscript, payload.Length, env);
+        if (index is not { Type: JgsType.Number } number
+            || number.AsNumber != System.Math.Floor(number.AsNumber))
+        {
+            return false;
+        }
+
+        int slot = (int)number.AsNumber - Dialect.IndexBase;
+        if (slot < 0 || slot >= payload.Length)
+        {
+            return false;
+        }
+
+        array = held.WritableStructArray();
+        element = JgsValue.Struct(array.WritableElement(slot));
+        return true;
     }
 
     /// <summary>
@@ -6689,6 +6845,17 @@ internal sealed partial class Interpreter
             var grown = new Dictionary<string, JgsValue>[slot + 1];
             System.Array.Copy(payload.Elements, grown, payload.Length);
 
+            // M2: growth builds a second array over the same element dictionaries. When another
+            // entry still holds the array being grown, each carried element gains a holder; when
+            // nobody does, the old array dies here and the elements simply move.
+            if (existing.IsShared)
+            {
+                for (int i = 0; i < payload.Length; i++)
+                {
+                    JgsHolders.Share(grown[i]);
+                }
+            }
+
             // The fields come from what is already there, read before the gap exists: a half-filled
             // array has no element zero to ask.
             string[] fields = payload.FieldNames;
@@ -6713,11 +6880,11 @@ internal sealed partial class Interpreter
             Rebind(variable.Name, array, env);
         }
 
-        owner = payload;
-
-        // A JgsValue over the element's own dictionary: the caller's field write lands in the array
-        // because both hold the same dictionary reference.
-        return JgsValue.Struct(payload.Elements[slot]);
+        // M3/M7: the element is detached inside the array it belongs to, so the wrapper handed
+        // back writes where the write was aimed rather than into a copy of its own.
+        Dictionary<string, JgsValue> element = array.WritableStructArray().WritableElement(slot);
+        owner = array.AsStructArray;
+        return JgsValue.Struct(element);
     }
 
     /// <summary>
@@ -6733,7 +6900,7 @@ internal sealed partial class Interpreter
             // A dot-chain target (s.a.b{r, c} = v, M43): the chain's cell is written in place —
             // member reads hand back the stored reference, so the struct sees the write. Growth
             // still needs a rebindable name, so out-of-range writes stay the named form's.
-            target = Evaluate(brace.Target, env);
+            target = EvaluateForWrite(brace.Target, env);
             if (target.Type != JgsType.Cell)
             {
                 throw new JgsRuntimeException(brace.Line, brace.Column,
@@ -6775,7 +6942,7 @@ internal sealed partial class Interpreter
                 $"Braces assign into a cell array, but '{variable?.Name ?? "this"}' is a {target.TypeName}.");
         }
 
-        JgsValue[] elements = target.AsCell;
+        JgsValue[] elements = target.WritableCell(); // M7: the write gate
 
         // C{r, c} writes through the cell's shape, growing it to reach a slot past an edge — to
         // r-by-c rectangle enclosing what was there and what was named, which is MATLAB's rule and

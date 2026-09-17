@@ -77,8 +77,18 @@ MUTATOR_RE = re.compile(r"(?<![\w.])([\w.]+)\.(" + "|".join(MUTATORS) + r")\(")
 
 # The wrapper's own in-place setters: a write into the payload, reached through the wrapper. M7
 # puts the holder check inside these, so the audit lists every caller.
-SETTERS = ["SetPackedNumber", "TryGrowInPlace", "CompactInPlace"]
+SETTERS = ["SetPackedNumber", "TryGrowInPlace", "CompactInPlace", "SetPackedComplex", "SetSlot"]
 SETTER_RE = re.compile(r"(?<![\w.])([\w.]+)\.(" + "|".join(SETTERS) + r")\(")
+
+# V1.2's gated accessors (M7): each detaches the wrapper's payload when another entry holds it
+# and then hands back the entry's own storage, so a store into what one returned is the write the
+# model sanctions. It is neither fresh (the storage may be years old) nor raw (the gate ran), and
+# it is recorded as `write | gated` so the census still lists every road that changes a payload.
+GATED = [
+    "WritableCell", "WritableArray", "WritableBuffer", "WritablePlanes", "WritableStructArray",
+    "WritableStruct", "WritableFields", "WritableElement",
+]
+GATED_RE = re.compile(r"\.(" + "|".join(GATED) + r")\(")
 
 FACTORIES = ["Packed", "Shaped", "PackedComplexArray", "Cell", "StructArray", "Object", "Array"]
 FACTORY_RE = re.compile(r"JgsValue\.(" + "|".join(FACTORIES) + r")\(")
@@ -338,8 +348,12 @@ def provenance(expr: str, holders: dict[str, str], depth: int = 0,
     if not expr:
         return "unknown"
 
-    # Freshness is asked first: `v.AsCell.ToArray()` and `new JgsValue[] { v.AsCell[0] }` allocate
-    # here even though an accessor appears inside them. A bare `v.AsCell` does not.
+    # The gate is asked first: `target.WritableArray()` is the entry's own storage after M7 ran.
+    if GATED_RE.search(expr):
+        return "gated"
+
+    # Freshness next: `v.AsCell.ToArray()` and `new JgsValue[] { v.AsCell[0] }` allocate here even
+    # though an accessor appears inside them. A bare `v.AsCell` does not.
     if FRESH_RE.search(expr) or FRESH_WRAPPER_RE.search(expr):
         return "fresh"
     if fresh:
@@ -453,7 +467,7 @@ def return_contracts(files: list[tuple[str, dict, dict]]) -> set[str]:
                     if not expression:
                         continue
                     verdicts[member].add(provenance(expression, holders, fresh=fresh))
-        settled = {name for name, seen in verdicts.items() if seen == {"fresh"}}
+        settled = {name for name, seen in verdicts.items() if seen == {"fresh"}} - set(GATED)
         if settled == fresh:
             break
         fresh = settled
@@ -482,8 +496,12 @@ def classify(statement: str, holders: dict[str, str], sinks: dict[str, set[int]]
         road = ACCESSOR_RE.search(lvalue)
         root = root_name(lvalue)
         rhs = statement[len(lvalue):].lstrip("= ").strip()
-        if road:
+        if GATED_RE.search(lvalue):
+            out.append(("write", "gated"))
+        elif road:
             out.append(("write", road.group(1)))
+        elif root in holders and holders[root] == "gated":
+            out.append(("write", "gated"))
         elif root in holders and holders[root] in ("borrowed", "parameter"):
             out.append(("write", "local"))
         elif root in holders and holders[root] == "fresh":
@@ -503,7 +521,9 @@ def classify(statement: str, holders: dict[str, str], sinks: dict[str, set[int]]
                 continue
             road = ACCESSOR_RE.search(args[position])
             root = root_name(args[position])
-            if road:
+            if GATED_RE.search(args[position]) or (root in holders and holders[root] == "gated"):
+                out.append(("write", "gated"))
+            elif road:
                 out.append(("write", road.group(1)))
             elif root in holders and holders[root] in ("borrowed", "parameter"):
                 out.append(("write", "local"))
@@ -514,7 +534,9 @@ def classify(statement: str, holders: dict[str, str], sinks: dict[str, set[int]]
         target = args[0] if (args and m.group(1) == "CopyTo") else lvalue_before(statement, m.start())
         road = ACCESSOR_RE.search(target)
         root = root_name(target)
-        if road:
+        if GATED_RE.search(target) or (root in holders and holders[root] == "gated"):
+            out.append(("write", "gated"))
+        elif road:
             out.append(("write", road.group(1)))
         elif root in holders and holders[root] in ("borrowed", "parameter"):
             out.append(("write", "local"))

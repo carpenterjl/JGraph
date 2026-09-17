@@ -58,11 +58,11 @@ CHK|o_permute_rhs_fresh_int8_field|int8 [1 3] [2 3 1]|exact
 CHK|o_permute_rhs_fresh_int8_cellelem|int8 [1 3] [2 3 1]|exact
 CHK|o_permute_rhs_fresh_int8_global|int8 [1 3] [2 3 1]|exact
 CHK|o_permute_rhs_fresh_int8_persistent|int8 [1 3] [2 3 1]|exact
-CHK|o_permute_rhs_fresh_logical_variable|logical [1 3] [true true false]|exact|pending V3|ERR Internal error: InvalidOperationException: A packed array was accessed as boxed elements — this call site must use BoxedElements/ElementAt/ArrayLength.
-CHK|o_permute_rhs_fresh_logical_field|logical [1 3] [true true false]|exact|pending V3|ERR Internal error: InvalidOperationException: A packed array was accessed as boxed elements — this call site must use BoxedElements/ElementAt/ArrayLength.
-CHK|o_permute_rhs_fresh_logical_cellelem|logical [1 3] [true true false]|exact|pending V3|ERR Internal error: InvalidOperationException: A packed array was accessed as boxed elements — this call site must use BoxedElements/ElementAt/ArrayLength.
-CHK|o_permute_rhs_fresh_logical_global|logical [1 3] [true true false]|exact|pending V3|ERR Internal error: InvalidOperationException: A packed array was accessed as boxed elements — this call site must use BoxedElements/ElementAt/ArrayLength.
-CHK|o_permute_rhs_fresh_logical_persistent|logical [1 3] [true true false]|exact|pending V3|ERR Internal error: InvalidOperationException: A packed array was accessed as boxed elements — this call site must use BoxedElements/ElementAt/ArrayLength.
+CHK|o_permute_rhs_fresh_logical_variable|logical [1 3] [true true false]|exact
+CHK|o_permute_rhs_fresh_logical_field|logical [1 3] [true true false]|exact
+CHK|o_permute_rhs_fresh_logical_cellelem|logical [1 3] [true true false]|exact
+CHK|o_permute_rhs_fresh_logical_global|logical [1 3] [true true false]|exact
+CHK|o_permute_rhs_fresh_logical_persistent|logical [1 3] [true true false]|exact
 CHK|o_permute_rhs_fresh_char_variable|char [1 3] {bca}|exact
 CHK|o_permute_rhs_fresh_char_field|char [1 3] {bca}|exact|pending V6|ERR Assigning into a char row needs a plain variable on the left.
 CHK|o_permute_rhs_fresh_char_cellelem|char [1 3] {bca}|exact|pending V6|ERR Assigning into a char row needs a plain variable on the left.
@@ -103,11 +103,11 @@ CHK|o_shift_rhs_fresh_int8_field|int8 [1 3] [3 3 1]|exact
 CHK|o_shift_rhs_fresh_int8_cellelem|int8 [1 3] [3 3 1]|exact
 CHK|o_shift_rhs_fresh_int8_global|int8 [1 3] [3 3 1]|exact
 CHK|o_shift_rhs_fresh_int8_persistent|int8 [1 3] [3 3 1]|exact
-CHK|o_shift_rhs_fresh_logical_variable|logical [1 3] [true true false]|exact|pending V3|ERR Internal error: InvalidOperationException: A packed array was accessed as boxed elements — this call site must use BoxedElements/ElementAt/ArrayLength.
-CHK|o_shift_rhs_fresh_logical_field|logical [1 3] [true true false]|exact|pending V3|ERR Internal error: InvalidOperationException: A packed array was accessed as boxed elements — this call site must use BoxedElements/ElementAt/ArrayLength.
-CHK|o_shift_rhs_fresh_logical_cellelem|logical [1 3] [true true false]|exact|pending V3|ERR Internal error: InvalidOperationException: A packed array was accessed as boxed elements — this call site must use BoxedElements/ElementAt/ArrayLength.
-CHK|o_shift_rhs_fresh_logical_global|logical [1 3] [true true false]|exact|pending V3|ERR Internal error: InvalidOperationException: A packed array was accessed as boxed elements — this call site must use BoxedElements/ElementAt/ArrayLength.
-CHK|o_shift_rhs_fresh_logical_persistent|logical [1 3] [true true false]|exact|pending V3|ERR Internal error: InvalidOperationException: A packed array was accessed as boxed elements — this call site must use BoxedElements/ElementAt/ArrayLength.
+CHK|o_shift_rhs_fresh_logical_variable|logical [1 3] [true true false]|exact
+CHK|o_shift_rhs_fresh_logical_field|logical [1 3] [true true false]|exact
+CHK|o_shift_rhs_fresh_logical_cellelem|logical [1 3] [true true false]|exact
+CHK|o_shift_rhs_fresh_logical_global|logical [1 3] [true true false]|exact
+CHK|o_shift_rhs_fresh_logical_persistent|logical [1 3] [true true false]|exact
 CHK|o_shift_rhs_fresh_char_variable|char [1 3] {cca}|exact
 CHK|o_shift_rhs_fresh_char_field|char [1 3] {cca}|exact|pending V6|ERR Assigning into a char row needs a plain variable on the left.
 CHK|o_shift_rhs_fresh_char_cellelem|char [1 3] {cca}|exact|pending V6|ERR Assigning into a char row needs a plain variable on the left.

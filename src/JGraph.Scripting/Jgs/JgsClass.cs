@@ -279,6 +279,12 @@ internal sealed class JgsClass
 /// </remarks>
 internal sealed class JgsObject(JgsClass definition)
 {
+    // How many entries hold this instance (M1). Zero and one both mean one holder.
+    private int _holders;
+
+    /// <summary>The holder count's storage (M1); zero means one holder.</summary>
+    public ref int HolderSlot => ref _holders;
+
     /// <summary>The class this is an instance of.</summary>
     public JgsClass Class { get; } = definition;
 

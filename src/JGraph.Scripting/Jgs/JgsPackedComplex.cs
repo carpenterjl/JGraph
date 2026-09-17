@@ -11,6 +11,9 @@ namespace JGraph.Scripting.Jgs;
 /// </summary>
 internal sealed class JgsPackedComplex : IDisposable
 {
+    // How many entries hold this payload (M1). Zero and one both mean one holder.
+    private int _holders;
+
     public JgsPackedComplex(NumericBuffer re, NumericBuffer im, bool preserveComplex = false)
     {
         if (re.Length != im.Length)
@@ -22,6 +25,9 @@ internal sealed class JgsPackedComplex : IDisposable
         Im = im;
         PreserveComplex = preserveComplex;
     }
+
+    /// <summary>The holder count's storage (M1); zero means one holder.</summary>
+    public ref int HolderSlot => ref _holders;
 
     /// <summary>The real plane.</summary>
     public NumericBuffer Re { get; }

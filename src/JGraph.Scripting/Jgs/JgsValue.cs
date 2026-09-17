@@ -120,6 +120,12 @@ internal sealed class JgsValue
     // exactly the fold MATLAB defines and only size/ndims/N-subscript indexing consult the truth.
     private int[]? _dims;
 
+    // M6: whether this value's payload was ever stored by a road that did not take a counted share
+    // — a JGS-dialect binding, or a store that keeps the caller's own wrapper. Sticky, and carried
+    // to every payload this wrapper later adopts, because a detach or a growth swaps the payload
+    // without passing the store again. An exposed payload is never freed by the disposal walk.
+    private bool _exposed;
+
     private JgsValue(JgsType type, double number, object? reference, JgsPackedKind packedKind = JgsPackedKind.Number)
     {
         Type = type;
@@ -144,6 +150,30 @@ internal sealed class JgsValue
 
         _rows = rows;
         _cols = cols;
+    }
+
+    /// <summary>
+    /// M2's second wrapper over one payload: the same storage, the same shape and the same tags,
+    /// held by an entry of its own. Only <see cref="Share"/> calls it, and only after counting the
+    /// new holder — a wrapper minted here without the count would be exactly the aliasing the model
+    /// exists to stop.
+    /// </summary>
+    private JgsValue(JgsValue source)
+    {
+        Type = source.Type;
+        _number = source._number;
+        _reference = source._reference;
+        _packedKind = source._packedKind;
+        _rows = source._rows;
+        _cols = source._cols;
+        _strideRows = source._strideRows;
+        _numericClass = source._numericClass;
+        _className = source._className;
+        _isStringArray = source._isStringArray;
+        _isCharMatrix = source._isCharMatrix;
+        _time = source._time;
+        _dims = source._dims; // replaced, never written through, so the two may share the array
+        _exposed = source._exposed;
     }
 
     private static int ElementCount(object? reference) => reference switch
@@ -267,8 +297,183 @@ internal sealed class JgsValue
     public static JgsValue StructArray(Dictionary<string, JgsValue>[] elements) =>
         StructArray(new JgsStructArray(elements), elements.Length == 0 ? 0 : 1, elements.Length);
 
+    /// <summary>
+    /// M2: a wrapper of one's own over the same payload, with the payload's holder count raised.
+    /// This is what binding a name, storing into an entry or opening a scope does in the MATLAB
+    /// dialect instead of copying. A value whose payload is immutable — a number, a string, a
+    /// table, a sparse matrix, a callable — is its own share and is handed back as it is.
+    /// </summary>
+    internal static JgsValue Share(JgsValue value)
+    {
+        switch (value._reference)
+        {
+            case NumericBuffer:
+            case JgsPackedComplex:
+            case JgsValue[]:
+            case JgsStructArray:
+            case JgsObject:
+                JgsHolders.Share(value._reference);
+                return new JgsValue(value);
+            default:
+                return value;
+        }
+    }
+
+    /// <summary>Whether another entry holds this value's payload, so a write here must copy first.</summary>
+    internal bool IsShared => JgsHolders.IsShared(_reference);
+
+    /// <summary>
+    /// M6's sticky mark: this payload was stored somewhere that kept the caller's own wrapper
+    /// rather than taking a counted share, so the count cannot say how many can still read it and
+    /// the disposal walk must leave it to the finalizer.
+    /// </summary>
+    internal void MarkExposed() => _exposed = true;
+
+    /// <summary>Whether this value carries M6's exposed mark.</summary>
+    internal bool IsExposed => _exposed;
+
+    /// <summary>
+    /// M3: before writing into the payload, give this wrapper one nobody else holds. A buffer and a
+    /// complex pair copy their elements; a container copies its slots <em>shallowly</em> and shares
+    /// each child, so a nested write detaches level by level on the way down rather than cloning a
+    /// tree at the top.
+    /// </summary>
+    private void Detach()
+    {
+        object? payload = _reference;
+        if (payload is null || !JgsHolders.IsShared(payload))
+        {
+            return;
+        }
+
+        _reference = PrivateCopy(payload);
+        JgsHolders.Release(payload);
+    }
+
+    private object PrivateCopy(object payload)
+    {
+        switch (payload)
+        {
+            case NumericBuffer buffer:
+            {
+                // The whole storage, slack included, so the growth stride stays meaningful.
+                NumericBuffer copy = JgsPacking.Allocate(buffer.Length);
+                buffer.AsSpan().CopyTo(copy.AsSpan());
+                GC.KeepAlive(buffer);
+                return copy;
+            }
+
+            case JgsPackedComplex complex:
+            {
+                NumericBuffer re = JgsPacking.Allocate(complex.Length);
+                NumericBuffer im = JgsPacking.Allocate(complex.Length);
+                complex.Re.AsSpan().CopyTo(re.AsSpan());
+                complex.Im.AsSpan().CopyTo(im.AsSpan());
+                GC.KeepAlive(complex);
+                return new JgsPackedComplex(re, im, complex.PreserveComplex);
+            }
+
+            case JgsValue[] slots:
+            {
+                var copy = new JgsValue[slots.Length];
+                for (int i = 0; i < slots.Length; i++)
+                {
+                    copy[i] = Share(slots[i]);
+                }
+
+                return copy;
+            }
+
+            case JgsStructArray structs:
+            {
+                var elements = new Dictionary<string, JgsValue>[structs.Length];
+                for (int i = 0; i < elements.Length; i++)
+                {
+                    elements[i] = structs.Elements[i];
+                    JgsHolders.Share(elements[i]); // the element dictionaries are payloads of their own
+                }
+
+                return new JgsStructArray(elements, structs.EmptyFields);
+            }
+
+            case JgsObject instance:
+            {
+                var copy = new JgsObject(instance.Class);
+                foreach ((string name, JgsValue held) in instance.Fields)
+                {
+                    copy.Fields[name] = Share(held);
+                }
+
+                return copy;
+            }
+
+            default:
+                return payload;
+        }
+    }
+
     /// <summary>The cell array's elements (valid only for <see cref="JgsType.Cell"/>).</summary>
     public JgsValue[] AsCell => (JgsValue[])_reference!;
+
+    /// <summary>
+    /// M7: the cell's slots, ready to be written. Detaches first, so a write through this wrapper
+    /// is never seen through another entry's.
+    /// </summary>
+    internal JgsValue[] WritableCell()
+    {
+        Detach();
+        return (JgsValue[])_reference!;
+    }
+
+    /// <summary>M7: the boxed elements, ready to be written (see <see cref="WritableCell"/>).</summary>
+    internal JgsValue[] WritableArray()
+    {
+        Detach();
+        return AsArray;
+    }
+
+    /// <summary>M7: the packed buffer, ready to be written. Detaches, then compacts as usual.</summary>
+    internal NumericBuffer WritableBuffer()
+    {
+        Detach();
+        return AsBuffer;
+    }
+
+    /// <summary>M7: the complex planes, ready to be written.</summary>
+    internal JgsPackedComplex WritablePlanes()
+    {
+        Detach();
+        return (JgsPackedComplex)_reference!;
+    }
+
+    /// <summary>M7: the struct array, ready for an element to be added, removed or replaced.</summary>
+    internal JgsStructArray WritableStructArray()
+    {
+        Detach();
+        return (JgsStructArray)_reference!;
+    }
+
+    /// <summary>
+    /// M7: one struct element's fields, ready to be written. Detaches the array, then the element,
+    /// because M3's shallow copy leaves the element dictionaries shared between the two arrays.
+    /// </summary>
+    internal Dictionary<string, JgsValue> WritableStruct(int index = 0)
+    {
+        JgsStructArray payload = WritableStructArray();
+        if (payload.Length == 0)
+        {
+            return payload.NewElement(); // an empty array has no element to write; the caller's own
+        }
+
+        return payload.WritableElement(index);
+    }
+
+    /// <summary>M7: a value object's properties, ready to be written.</summary>
+    internal Dictionary<string, JgsValue> WritableFields()
+    {
+        Detach();
+        return ((JgsObject)_reference!).Fields;
+    }
 
     /// <summary>The struct payload (valid only for <see cref="JgsType.Struct"/>).</summary>
     public JgsStructArray AsStructArray => (JgsStructArray)_reference!;
@@ -341,7 +546,26 @@ internal sealed class JgsValue
         GC.KeepAlive(strided);
         _reference = compact;
         _strideRows = 0;
-        strided.Dispose();
+        LetGo(strided);
+    }
+
+    /// <summary>
+    /// M6: this wrapper stopped holding <paramref name="payload"/>. It is freed only when nobody
+    /// else holds it and it carries no exposed mark; otherwise the count comes down and the
+    /// storage lives on for whoever can still read it.
+    /// </summary>
+    private void LetGo(IDisposable payload)
+    {
+        if (JgsHolders.IsShared(payload))
+        {
+            JgsHolders.Release(payload);
+            return;
+        }
+
+        if (!_exposed)
+        {
+            payload.Dispose();
+        }
     }
 
     /// <summary>The storage slot of logical column-major element <paramref name="index"/>.</summary>
@@ -355,8 +579,30 @@ internal sealed class JgsValue
     /// </summary>
     internal void SetPackedNumber(int index, double value)
     {
+        Detach(); // M3/M7: the check lives in the setter, so no caller can forget it
         var buffer = (NumericBuffer)_reference!;
         buffer.AsSpan()[StorageSlot(index)] = value;
+    }
+
+    /// <summary>
+    /// Writes logical element <paramref name="index"/> of a packed complex array, both planes at
+    /// once. M7's gate for the complex road: the two plane stores it replaces reached the buffers
+    /// through a local and could not be gated where they were written.
+    /// </summary>
+    internal void SetPackedComplex(int index, Complex value)
+    {
+        Detach();
+        var planes = (JgsPackedComplex)_reference!;
+        planes.Re.AsSpan()[index] = value.Real;
+        planes.Im.AsSpan()[index] = value.Imaginary;
+        GC.KeepAlive(planes);
+    }
+
+    /// <summary>Writes one slot of a boxed element array or a cell (M7's gate for the slot roads).</summary>
+    internal void SetSlot(int index, JgsValue value)
+    {
+        Detach();
+        ((JgsValue[])_reference!)[index] = value;
     }
 
     /// <summary>
@@ -376,7 +622,7 @@ internal sealed class JgsValue
 
         int stride = _strideRows == 0 ? _rows : _strideRows;
         int capCols = stride == 0 ? 0 : buffer.Length / stride;
-        if (_strideRows > 0 && newRows <= stride && newCols <= capCols)
+        if (_strideRows > 0 && newRows <= stride && newCols <= capCols && !JgsHolders.IsShared(buffer))
         {
             // Fits in the slack. The buffer was zero-filled when the capacity was allocated and
             // logical writes never touch the slack, so the newly exposed cells are already zero.
@@ -414,7 +660,7 @@ internal sealed class JgsValue
         _strideRows = capRows == newRows && grown.Length == newRows * newCols ? 0 : capRows;
         _rows = newRows;
         _cols = newCols;
-        buffer.Dispose();
+        LetGo(buffer); // M3: the grown buffer is this entry's own, whoever else held the old one
         return true;
     }
 
@@ -894,12 +1140,12 @@ internal sealed class JgsValue
         {
             _reference = MaterializeBoxed(); // stride-aware, so the boxed copy is exactly logical
             _strideRows = 0;
-            buffer.Dispose();
+            LetGo(buffer);
         }
         else if (_reference is JgsPackedComplex complex)
         {
             _reference = MaterializeBoxed();
-            complex.Dispose();
+            LetGo(complex);
         }
     }
 

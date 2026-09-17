@@ -22,6 +22,31 @@ public sealed class GcMemoryInfo : IMemoryInfo
     public long MemoryLoadBytes => GC.GetGCMemoryInfo().MemoryLoadBytes;
 }
 
+/// <summary>Disk facts the mapped budget reads (M6, ADR 0162). Seam for tests.</summary>
+public interface IDiskInfo
+{
+    /// <summary>Free bytes on the volume holding <paramref name="directory"/>.</summary>
+    long AvailableFreeBytes(string directory);
+}
+
+/// <summary>The real disk source: <see cref="DriveInfo.AvailableFreeSpace"/> of the directory's root.</summary>
+public sealed class DriveDiskInfo : IDiskInfo
+{
+    /// <inheritdoc />
+    public long AvailableFreeBytes(string directory)
+    {
+        try
+        {
+            string? root = Path.GetPathRoot(Path.GetFullPath(directory));
+            return root is null ? long.MaxValue : new DriveInfo(root).AvailableFreeSpace;
+        }
+        catch (Exception e) when (e is ArgumentException or IOException or UnauthorizedAccessException)
+        {
+            return long.MaxValue; // an unreadable volume is not a full one; the file system will say
+        }
+    }
+}
+
 /// <summary>Forces a single backing strategy regardless of size or memory headroom.</summary>
 public enum BufferMode
 {
@@ -45,21 +70,52 @@ public enum BufferMode
 /// on a 16 GB laptop and a 64 GB workstation alike.
 /// </summary>
 /// <remarks>
+/// <para>
+/// Two budgets, not one (M6, ADR 0162). The <b>native</b> budget is RAM headroom, and a request that
+/// does not fit goes mapped, as it always has. The <b>mapped</b> budget is the mapped directory's
+/// free disk space less a reserve, and a ceiling on live backing files — the resources a mapped
+/// buffer holds that no memory figure counts. Only when a request would cross the budget of the
+/// backend it is headed for does the allocator ask the runtime to collect and run finalizers,
+/// <b>once</b>, and re-check that same budget: the ownership model leaves a payload that others may
+/// still read to the finalizer (an exposed one, M6), so a session that allocates and clears large
+/// arrays in a loop reclaims them here, at the moment it needs the room, rather than holding disk
+/// and handles until the managed heap happens to fill. Nothing is ever disposed by the allocator:
+/// a collection frees only what no wrapper can reach. A mapped request still over budget after the
+/// collection is refused with <see cref="OutOfMemoryMessage"/>.
+/// </para>
+/// <para>
 /// Environment overrides (read once, when <see cref="Shared"/> is first used):
 /// <c>JGRAPH_BUFFER_MODE=managed|native|mapped</c> forces a backend;
 /// <c>JGRAPH_BUFFER_MANAGED_MAX</c> (elements) and <c>JGRAPH_BUFFER_NATIVE_FRACTION</c> (0..1)
 /// tune the automatic policy.
+/// </para>
 /// </remarks>
 public sealed class BufferAllocator
 {
     private readonly IMemoryInfo _memory;
+    private readonly IDiskInfo _disk;
     private long _outstandingNativeBytes;
+    private long _outstandingMappedBytes;
+    private int _liveMappedFiles;
+    private long _collections;
+
+    /// <summary>MATLAB's words for a refused allocation.</summary>
+    public const string OutOfMemoryMessage = "Out of memory.";
 
     /// <summary>The process-wide allocator, configured from environment variables.</summary>
     public static BufferAllocator Shared { get; } = CreateFromEnvironment();
 
     /// <summary>Creates an allocator over an explicit memory source (tests inject a fake).</summary>
-    public BufferAllocator(IMemoryInfo memory) => _memory = memory;
+    public BufferAllocator(IMemoryInfo memory) : this(memory, new DriveDiskInfo())
+    {
+    }
+
+    /// <summary>Creates an allocator over explicit memory and disk sources (tests inject fakes).</summary>
+    public BufferAllocator(IMemoryInfo memory, IDiskInfo disk)
+    {
+        _memory = memory;
+        _disk = disk;
+    }
 
     /// <summary>Forced backend, or <see cref="BufferMode.Automatic"/>.</summary>
     public BufferMode Mode { get; init; } = BufferMode.Automatic;
@@ -76,12 +132,27 @@ public sealed class BufferAllocator
     /// <summary>Directory for mapped-buffer temp files.</summary>
     public string MappedDirectory { get; init; } = DefaultMappedDirectory;
 
+    /// <summary>Disk space always left untouched by the mapped policy (default 1 GB).</summary>
+    public long MappedReserveBytes { get; init; } = 1L << 30;
+
+    /// <summary>The most backing files this allocator holds open at once (default 1024).</summary>
+    public int MappedMaxFiles { get; init; } = 1024;
+
     /// <summary>The default mapped-file directory: <c>%TEMP%/JGraph/buffers</c>.</summary>
     public static string DefaultMappedDirectory =>
         Path.Combine(Path.GetTempPath(), "JGraph", "buffers");
 
     /// <summary>Native bytes currently allocated and not yet freed (policy input and diagnostics).</summary>
     public long OutstandingNativeBytes => Interlocked.Read(ref _outstandingNativeBytes);
+
+    /// <summary>Mapped bytes currently backed by a live file (policy input and diagnostics).</summary>
+    public long OutstandingMappedBytes => Interlocked.Read(ref _outstandingMappedBytes);
+
+    /// <summary>Backing files currently open (policy input and diagnostics).</summary>
+    public int LiveMappedFiles => Volatile.Read(ref _liveMappedFiles);
+
+    /// <summary>How many times a request over its budget has asked the runtime to collect (diagnostics).</summary>
+    public long Collections => Interlocked.Read(ref _collections);
 
     /// <summary>Allocates a zero-filled buffer of <paramref name="elementCount"/> doubles.</summary>
     public NumericBuffer Allocate(long elementCount)
@@ -98,7 +169,7 @@ public sealed class BufferAllocator
         {
             BufferMode.Managed => new ManagedBuffer(count),
             BufferMode.Native when count > 0 => AllocateNative(count),
-            BufferMode.Mapped when count > 0 => new MappedBuffer(count, MappedDirectory),
+            BufferMode.Mapped when count > 0 => AllocateMapped(count),
             _ => AllocateAutomatic(count),
         };
     }
@@ -111,11 +182,21 @@ public sealed class BufferAllocator
         }
 
         long bytes = (long)count * sizeof(double);
+        if (!FitsNative(bytes))
+        {
+            // Over the native budget: what is holding it may be payloads nobody can reach any
+            // more, waiting on their finalizers. One collection, then the same question again.
+            CollectOnce();
+        }
+
+        return FitsNative(bytes) ? AllocateNative(count) : AllocateMapped(count);
+    }
+
+    private bool FitsNative(long bytes)
+    {
         long headroom = _memory.TotalPhysicalBytes - _memory.MemoryLoadBytes
                         - MinFreeReserveBytes - OutstandingNativeBytes;
-        return bytes <= NativeHeadroomFraction * headroom
-            ? AllocateNative(count)
-            : new MappedBuffer(count, MappedDirectory);
+        return bytes <= NativeHeadroomFraction * headroom;
     }
 
     private NativeBuffer AllocateNative(int count)
@@ -131,6 +212,54 @@ public sealed class BufferAllocator
             Interlocked.Add(ref _outstandingNativeBytes, -bytes);
             throw;
         }
+    }
+
+    private MappedBuffer AllocateMapped(int count)
+    {
+        long bytes = (long)count * sizeof(double);
+        if (!FitsMapped(bytes))
+        {
+            CollectOnce();
+            if (!FitsMapped(bytes))
+            {
+                throw new OutOfMemoryException(OutOfMemoryMessage);
+            }
+        }
+
+        Interlocked.Add(ref _outstandingMappedBytes, bytes);
+        Interlocked.Increment(ref _liveMappedFiles);
+        try
+        {
+            return new MappedBuffer(count, MappedDirectory, onFreed: () =>
+            {
+                Interlocked.Add(ref _outstandingMappedBytes, -bytes);
+                Interlocked.Decrement(ref _liveMappedFiles);
+            });
+        }
+        catch
+        {
+            Interlocked.Add(ref _outstandingMappedBytes, -bytes);
+            Interlocked.Decrement(ref _liveMappedFiles);
+            throw;
+        }
+    }
+
+    /// <summary>
+    /// The mapped budget: this allocator's outstanding bytes plus the request against the volume's
+    /// free space less the reserve, and the file ceiling. The outstanding count is the process's
+    /// own and the free space is the volume's, so on a real disk a live file is counted on both
+    /// sides — the budget errs towards refusing a request the disk could just have held, never
+    /// towards filling it.
+    /// </summary>
+    private bool FitsMapped(long bytes) =>
+        LiveMappedFiles < MappedMaxFiles
+        && OutstandingMappedBytes + bytes <= _disk.AvailableFreeBytes(MappedDirectory) - MappedReserveBytes;
+
+    private void CollectOnce()
+    {
+        Interlocked.Increment(ref _collections);
+        GC.Collect();
+        GC.WaitForPendingFinalizers();
     }
 
     /// <summary>

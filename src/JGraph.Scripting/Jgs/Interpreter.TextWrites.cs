@@ -362,7 +362,7 @@ internal sealed partial class Interpreter
     private JgsValue AssignCellLinear(
         Expr target, JgsValue callee, Expr subscript, bool deleting, JgsValue rhs, Node at, JgsEnvironment env)
     {
-        JgsValue[] cells = callee.AsCell;
+        JgsValue[] cells = callee.WritableCell(); // M7: the write gate
         JgsValue? index = EvaluateIndexArgument(subscript, cells.Length, env);
         bool column = callee.Cols == 1 && callee.Rows != 1;
 
@@ -432,7 +432,7 @@ internal sealed partial class Interpreter
         int[] extents = [rows, cols];
         JgsValue? rowIndex = EvaluateIndexArgument(subscripts[0], extents, 0, env);
         JgsValue? colIndex = EvaluateIndexArgument(subscripts[1], extents, 1, env);
-        JgsValue[] cells = callee.AsCell;
+        JgsValue[] cells = callee.WritableCell(); // M7: the write gate
 
         if (deleting)
         {

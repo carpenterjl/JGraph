@@ -326,6 +326,12 @@ ENTRY_OWNER_RULES: list[tuple[str, str]] = [
     # brace then paren, a struct array's element field, a struct's field -- are V6's
     ("e_char_objprop_", "V6"), ("e_cell_objprop_bracein_", "V6"),
     ("e_structarr_objprop_elemfieldin_", "V6"), ("e_struct_objprop_*_entry", "V6"),
+    # writing a numeric into a logical array (`o.p(2) = 9`) is a class-coercion defect, not an
+    # aliasing one: V1's detach isolates the property (the `_orig` line proves `v` stays logical),
+    # yet JGraph still converts the property to double, exactly as every other numify entry kind
+    # does. It stays on the axis default (V2) with its eleven siblings rather than being claimed
+    # by the objprop rule below; a matching default-stage rule stops the search without moving it.
+    ("e_logical_objprop_numify_entry", "V2"),
     # any other write through a value object's property lands in the instance's fields in place
     # (Interpreter.Objects.cs:179): V1's object detach (M3)
     ("e_*_objprop_*_entry", "V1"),
@@ -340,8 +346,11 @@ def owners(calls: list[str], default: str, rules: list[tuple[str, str]]) -> str:
     for name in calls:
         for pattern, stage in rules:
             matched = name.startswith(pattern) if "*" not in pattern else fnmatch.fnmatchcase(name, pattern + "*")
-            if matched and stage != default:
-                lines.append(f"{name}\t{stage}")
+            if matched:
+                # A rule claims the line and stops the search. One naming the axis default keeps the
+                # line at the default (no sidecar entry) while shielding it from a broader rule below.
+                if stage != default:
+                    lines.append(f"{name}\t{stage}")
                 break
     return "\n".join(lines) + "\n"
 

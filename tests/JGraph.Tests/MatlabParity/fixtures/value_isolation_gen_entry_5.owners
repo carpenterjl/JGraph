@@ -66,7 +66,6 @@ e_logical_objprop_mask_entry	V1
 e_logical_objprop_colon_entry	V1
 e_logical_objprop_grow_entry	V6
 e_logical_objprop_delete_entry	V6
-e_logical_objprop_numify_entry	V1
 e_logical_objprop_loop_entry	V1
 e_char_cellslot_grow_entry	V6
 e_char_cellslot_delete_entry	V6

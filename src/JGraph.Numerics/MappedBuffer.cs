@@ -11,21 +11,29 @@ namespace JGraph.Numerics;
 /// <remarks>
 /// The file is opened with <see cref="FileOptions.DeleteOnClose"/>, so the OS removes it when the
 /// last handle closes — including when the process crashes. Orphans from power loss are swept by
-/// <see cref="BufferAllocator.SweepOrphans"/> at application startup.
+/// <see cref="BufferAllocator.SweepOrphans"/> at application startup. Like <see cref="NativeBuffer"/>
+/// the buffer registers its size as GC memory pressure (M6, ADR 0162): a mapped file holds disk,
+/// handles and address space that no managed figure counts, and an abandoned one must still make
+/// a collection more likely rather than less.
 /// </remarks>
 public sealed unsafe class MappedBuffer : NumericBuffer
 {
     private readonly FileStream _stream;
     private readonly MemoryMappedFile _mmf;
     private readonly MemoryMappedViewAccessor _accessor;
+    private readonly Action? _onFreed;
     private byte* _base;
     private bool _disposed;
 
     /// <summary>File extension for backing files, used by the orphan sweep.</summary>
     public const string FileExtension = ".jgbuf";
 
-    /// <summary>Creates a zero-filled buffer backed by a fresh temp file in <paramref name="directory"/>.</summary>
-    public MappedBuffer(int length, string directory)
+    /// <summary>
+    /// Creates a zero-filled buffer backed by a fresh temp file in <paramref name="directory"/>.
+    /// <paramref name="onFreed"/> lets the allocator track outstanding mapped bytes and files; it
+    /// runs exactly once, when the file is actually released.
+    /// </summary>
+    public MappedBuffer(int length, string directory, Action? onFreed = null)
     {
         ArgumentOutOfRangeException.ThrowIfNegativeOrZero(length);
         Directory.CreateDirectory(directory);
@@ -52,7 +60,9 @@ public sealed unsafe class MappedBuffer : NumericBuffer
             throw;
         }
 
+        GC.AddMemoryPressure(bytes);
         Length = length;
+        _onFreed = onFreed;
     }
 
     /// <inheritdoc />
@@ -89,6 +99,11 @@ public sealed unsafe class MappedBuffer : NumericBuffer
         }
 
         _disposed = true;
+        if (_accessor is null)
+        {
+            return; // the constructor threw before the mapping existed; the stream disposed itself
+        }
+
         if (_base is not null)
         {
             _base = null;
@@ -124,5 +139,8 @@ public sealed unsafe class MappedBuffer : NumericBuffer
         catch (ObjectDisposedException)
         {
         }
+
+        GC.RemoveMemoryPressure((long)Length * sizeof(double));
+        _onFreed?.Invoke();
     }
 }

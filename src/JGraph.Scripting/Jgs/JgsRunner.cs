@@ -743,11 +743,19 @@ internal static class JgsRunner
         }
     }
 
+    /// <remarks>
+    /// M6: disposal never frees what someone else can see. A payload two entries hold is left
+    /// alone, and a container two entries hold stops the walk, because its children belong to the
+    /// other holder too — a <c>for</c> over a cell shares its source, so a
+    /// <c>clear</c> inside the loop must not free what the loop is still reading. A payload
+    /// carrying M6's exposed mark is left to the finalizer whatever its count says, since the count
+    /// cannot see a reader that never took a counted share.
+    /// </remarks>
     private static void DisposePackedIn(JgsValue value, HashSet<JgsValue> visited)
     {
         if (value.Type == JgsType.Image)
         {
-            if (visited.Add(value))
+            if (visited.Add(value) && Releasable(value, value.AsImage))
             {
                 value.AsImage.Dispose(); // release the image's native/mapped backing buffer
             }
@@ -758,9 +766,12 @@ internal static class JgsRunner
         // Cells and structs can hold arrays, so the walk has to go through them too.
         if (value.Type == JgsType.Cell && visited.Add(value))
         {
-            foreach (JgsValue element in value.AsCell)
+            if (Releasable(value, value.AsCell))
             {
-                DisposePackedIn(element, visited);
+                foreach (JgsValue element in value.AsCell)
+                {
+                    DisposePackedIn(element, visited);
+                }
             }
 
             return;
@@ -768,9 +779,20 @@ internal static class JgsRunner
 
         if (value.Type == JgsType.Struct && visited.Add(value))
         {
-            foreach ((_, JgsValue field) in value.AsStruct)
+            if (Releasable(value, value.AsStructArray))
             {
-                DisposePackedIn(field, visited);
+                foreach (Dictionary<string, JgsValue> element in value.AsStructArray.Elements)
+                {
+                    if (!Releasable(value, element))
+                    {
+                        continue;
+                    }
+
+                    foreach ((_, JgsValue field) in element)
+                    {
+                        DisposePackedIn(field, visited);
+                    }
+                }
             }
 
             return;
@@ -783,13 +805,26 @@ internal static class JgsRunner
 
         if (value.IsPacked)
         {
-            value.AsBuffer.Dispose();
+            if (Releasable(value, value.AsBuffer))
+            {
+                value.AsBuffer.Dispose();
+            }
+
             return;
         }
 
         if (value.IsPackedComplex)
         {
-            value.AsPackedComplex.Dispose();
+            if (Releasable(value, value.AsPackedComplex))
+            {
+                value.AsPackedComplex.Dispose();
+            }
+
+            return;
+        }
+
+        if (!Releasable(value, value.AsArray))
+        {
             return;
         }
 
@@ -797,5 +832,17 @@ internal static class JgsRunner
         {
             DisposePackedIn(element, visited);
         }
+    }
+
+    /// <summary>
+    /// Whether this walk may free <paramref name="payload"/> — or, for a container, descend into
+    /// it: only when nobody else holds it and nothing outside the count can still read it (M6).
+    /// </summary>
+    private static bool Releasable(JgsValue holder, object payload)
+    {
+        // The count is only read here, never moved: a dead wrapper never decrements (M3), so a
+        // count that has drifted high costs a delayed free, and moving it down on a walk that
+        // proves nothing about who is alive would cost a freed payload someone can still read.
+        return !holder.IsExposed && !JgsHolders.IsShared(payload);
     }
 }

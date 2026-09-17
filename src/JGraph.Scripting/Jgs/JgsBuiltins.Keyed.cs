@@ -303,17 +303,17 @@ internal static partial class JgsBuiltins
         }
 
         int at = FindKey(map, key);
+        Dictionary<string, JgsValue> fields = map.WritableStruct(); // M7: a value dictionary copies here
         if (at >= 0)
         {
-            JgsValue[] values = ValueCell(map);
-            values[at] = value;
+            fields["values"].SetSlot(at, value);
             return;
         }
 
         JgsValue storedKey = IsTextScalar(key) ? JgsValue.Str(TextOf(key)) : key;
-        map.AsStruct["keys"] = JgsValue.Cell([.. KeyCell(map), storedKey]);
-        map.AsStruct["values"] = JgsValue.Cell([.. ValueCell(map), value]);
-        map.AsStruct["Count"] = JgsValue.Number(KeyCell(map).Length);
+        fields["keys"] = JgsValue.Cell([.. KeyCell(map), storedKey]);
+        fields["values"] = JgsValue.Cell([.. ValueCell(map), value]);
+        fields["Count"] = JgsValue.Number(KeyCell(map).Length);
     }
 
     private static void RemoveAt(JgsValue map, int index)
@@ -333,9 +333,10 @@ internal static partial class JgsBuiltins
             keptValues.Add(values[i]);
         }
 
-        map.AsStruct["keys"] = JgsValue.Cell([.. keptKeys]);
-        map.AsStruct["values"] = JgsValue.Cell([.. keptValues]);
-        map.AsStruct["Count"] = JgsValue.Number(keptKeys.Count);
+        Dictionary<string, JgsValue> fields = map.WritableStruct(); // M7, as in Put
+        fields["keys"] = JgsValue.Cell([.. keptKeys]);
+        fields["values"] = JgsValue.Cell([.. keptValues]);
+        fields["Count"] = JgsValue.Number(keptKeys.Count);
     }
 
     private static JgsValue[] KeyCell(JgsValue map) => map.AsStruct["keys"].AsCell;

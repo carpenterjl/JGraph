@@ -9,8 +9,8 @@ CHK|a011_feval_args|[2 2 2]|exact|pending V3|[2 2 8]
 CHK|g_arrayfun_array_arg|[1 1 1]|exact
 CHK|g_struct_index_left|3|exact
 CHK|g_index_target_then_sub|1|exact
-CHK|a012_struct_selection_arg|1|exact|pending V1|7
-CHK|a013_cell_literal_child_arg|1|exact|pending V3|7
+CHK|a012_struct_selection_arg|1|exact
+CHK|a013_cell_literal_child_arg|1|exact
 CHK|a014_value_object_nested|1|exact|pending V3|7
 CHK|a016_value_object_global_prop|1 7|exact|pending V4|ERR Cannot set a field on 'gV': it is a ValueBox, not a struct.
 CHK|g_value_object_alias|1|exact

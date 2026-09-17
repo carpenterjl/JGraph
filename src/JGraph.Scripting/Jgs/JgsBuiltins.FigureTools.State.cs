@@ -92,6 +92,9 @@ internal static partial class JgsBuiltins
                 "setappdata takes a handle, a name, and the value to store under it.");
         }
 
+        // M6: appdata keeps the caller's own wrapper rather than taking a counted share, so the
+        // payload is exposed — `clear` must not free what a figure can still hand back (#152).
+        rest[1].MarkExposed();
         entry.AppData[StrOf("setappdata", rest[0], line, col)] = rest[1];
         return JgsValue.Null;
     }

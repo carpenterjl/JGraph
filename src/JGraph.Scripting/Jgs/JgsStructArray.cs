@@ -20,6 +20,12 @@ namespace JGraph.Scripting.Jgs;
 /// </remarks>
 internal sealed class JgsStructArray
 {
+    // How many entries hold this payload (M1). Zero and one both mean one holder.
+    private int _holders;
+
+    /// <summary>The holder count's storage (M1); zero means one holder.</summary>
+    public ref int HolderSlot => ref _holders;
+
     /// <summary>The elements, column-major. Empty for a struct array with no elements.</summary>
     public Dictionary<string, JgsValue>[] Elements;
 
@@ -57,7 +63,7 @@ internal sealed class JgsStructArray
         var element = new Dictionary<string, JgsValue>(StringComparer.Ordinal);
         foreach (string field in FieldNames)
         {
-            element[field] = JgsValue.Array([]);
+            element[field] = JgsEmpty.Zero();
         }
 
         return element;
@@ -80,13 +86,39 @@ internal sealed class JgsStructArray
             return;
         }
 
-        foreach (Dictionary<string, JgsValue> element in Elements)
+        for (int i = 0; i < Elements.Length; i++)
         {
-            if (!element.ContainsKey(field))
+            if (!Elements[i].ContainsKey(field))
             {
-                element[field] = JgsValue.Array([]);
+                WritableElement(i)[field] = JgsEmpty.Zero(); // [] is 0-by-0, as MATLAB writes it
             }
         }
+    }
+
+    /// <summary>
+    /// M3/M7: element <paramref name="index"/>'s fields, ready to be written. An element dictionary
+    /// is a payload of its own, because two struct arrays can hold the same one — a selection
+    /// (<c>S(2:3)</c>) and a shallow detach both leave them shared — so a write into one copies it
+    /// first, shares its values, and puts the copy in this array's slot. The gate lives here rather
+    /// than at the call sites for the reason M7 gives: a caller cannot forget what it cannot see.
+    /// </summary>
+    public Dictionary<string, JgsValue> WritableElement(int index)
+    {
+        Dictionary<string, JgsValue> element = Elements[index];
+        if (!JgsHolders.IsShared(element))
+        {
+            return element;
+        }
+
+        var copy = new Dictionary<string, JgsValue>(StringComparer.Ordinal);
+        foreach ((string name, JgsValue held) in element)
+        {
+            copy[name] = JgsValue.Share(held);
+        }
+
+        Elements[index] = copy;
+        JgsHolders.Release(element);
+        return copy;
     }
 
     /// <summary>Every element's dictionary, deep-copied — the copy a MATLAB value assignment makes.</summary>

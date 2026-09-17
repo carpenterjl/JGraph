@@ -155,11 +155,12 @@ internal sealed partial class Interpreter
                       + "set the property on an instance of it.");
         }
 
-        if (ResolveObjectTarget(member.Target, env) is not { } instance)
+        if (ResolveObjectTarget(member.Target, env) is not { } holder)
         {
             return false;
         }
 
+        JgsObject instance = holder.AsObject;
         string field = FieldName(member, env);
         JgsClass definition = instance.Class;
         if (definition.Property(field) is not { } property)
@@ -176,7 +177,10 @@ internal sealed partial class Interpreter
                 $"{definition.Name}.{field} is Constant, so it belongs to the class and cannot be assigned to.");
         }
 
-        instance.Fields[field] = definition.Check(property, CopyForBinding(value), member.Line, member.Column);
+        // M7: the write gate. The entry holds this very wrapper (M2), so detaching here is what
+        // gives the entry its own instance — nothing has to be written back.
+        holder.WritableFields()[field] = definition.Check(
+            property, CopyForBinding(value), member.Line, member.Column);
         return true;
     }
 
@@ -185,16 +189,22 @@ internal sealed partial class Interpreter
     /// bound variable and a dot off one are considered, for the reason the handle path gives: anywhere
     /// else the target would have to be evaluated on the chance that it is one.
     /// </summary>
-    private JgsObject? ResolveObjectTarget(Expr expr, JgsEnvironment env) => expr switch
+    /// <summary>
+    /// The object a dotted write is aimed at, as the entry's own wrapper rather than the bare
+    /// instance: M7's gate lives on the wrapper, and under M2 the entry holds exactly this wrapper,
+    /// so a detach through it lands in the entry.
+    /// </summary>
+    private JgsValue? ResolveObjectTarget(Expr expr, JgsEnvironment env) => expr switch
     {
         VariableExpr variable when env.TryGet(variable.Name, out JgsValue bound) && bound.Type == JgsType.Object =>
-            bound.AsObject,
+            bound,
 
-        // obj.inner.value = 3 — the object held by a property of another object. Evaluating the inner
-        // dot hands back the instance itself rather than a copy, so the write lands where it was aimed.
+        // obj.inner.value = 3 — the object held by a property of another object. The nested wrapper
+        // is the owner's own entry, so writing through it lands where the write was aimed; the
+        // owner is made writable first, which is M3's detach at every level on the way down.
         MemberExpr inner when ResolveObjectTarget(inner.Target, env) is { } owner
-            && owner.Fields.TryGetValue(FieldName(inner, env), out JgsValue? nested)
-            && nested.Type == JgsType.Object => nested.AsObject,
+            && owner.WritableFields().TryGetValue(FieldName(inner, env), out JgsValue? nested)
+            && nested.Type == JgsType.Object => nested,
 
         _ => null,
     };

@@ -215,7 +215,8 @@ internal static partial class JgsBuiltins
                 throw new JgsRuntimeException(line, col, $"struct2cell expects a struct, but got a {args[0].TypeName}.");
             }
 
-            return JgsValue.Cell(args[0].AsStruct.Values.ToArray());
+            // M2: every slot is an entry over the struct's own field values, so each takes a share.
+            return JgsValue.Cell([.. args[0].AsStruct.Values.Select(JgsValue.Share)]);
         });
 
         Define("cell2struct", (args, line, col) =>
@@ -242,7 +243,10 @@ internal static partial class JgsBuiltins
                     throw new JgsRuntimeException(line, col, $"cell2struct: field name {i + 1} is a {names[i].TypeName}, not a string.");
                 }
 
-                fields[names[i].AsString] = values[i];
+                // Share, not store: the new struct's field and the source cell's slot are two
+                // holders of one payload, so a later `c{1}(1) = 7` detaches instead of leaking
+                // into `st.f` (the sibling struct2cell and the struct(...) ctor do the same).
+                fields[names[i].AsString] = JgsValue.Share(values[i]);
             }
 
             return JgsValue.Struct(fields);

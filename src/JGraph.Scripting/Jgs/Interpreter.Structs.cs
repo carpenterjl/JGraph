@@ -33,7 +33,11 @@ internal sealed partial class Interpreter
             {
                 foreach (int row in rowPicks)
                 {
-                    grid[next++] = payload.Elements[row + (pickedColumn * rows)];
+                    // M2 (appendix A #12): the selection is a second holder of the target's
+                    // own element dictionaries, so a later write through either detaches.
+                    Dictionary<string, JgsValue> picked = payload.Elements[row + (pickedColumn * rows)];
+                    JgsHolders.Share(picked);
+                    grid[next++] = picked;
                 }
             }
 
@@ -53,6 +57,7 @@ internal sealed partial class Interpreter
         for (int i = 0; i < picks.Length; i++)
         {
             chosen[i] = payload.Elements[picks[i]];
+            JgsHolders.Share(chosen[i]); // M2 (#12): the selection is a second holder
         }
 
         // A selection out of a column stays a column, as it does for every other container.
@@ -212,9 +217,27 @@ internal sealed partial class Interpreter
             }
 
             var elements = (Dictionary<string, JgsValue>[])payload.Elements.Clone();
+            var replaced = new bool[elements.Length];
             for (int i = 0; i < picks.Length; i++)
             {
                 elements[picks[i]] = source.Elements[source.Length == 1 ? 0 : i];
+
+                // M2: the right-hand side still holds what was written in, and one element written
+                // into several slots is held by each of them.
+                JgsHolders.Share(elements[picks[i]]);
+                replaced[picks[i]] = true;
+            }
+
+            // The elements that stayed are in two arrays only while the old one is still held.
+            if (existing.IsShared)
+            {
+                for (int i = 0; i < elements.Length; i++)
+                {
+                    if (!replaced[i])
+                    {
+                        JgsHolders.Share(elements[i]);
+                    }
+                }
             }
 
             var rebuilt = new JgsStructArray(elements, payload.EmptyFields);
