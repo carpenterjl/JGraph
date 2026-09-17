@@ -43,10 +43,18 @@ internal sealed class BuiltinFunction : IJgsCallable, IJgsMultiCallable
         // Marking by name reaches both; marking the environment reached the wrapper alone, which is
         // how size("abc") came back 1-by-3 while numel("abc") correctly came back 1.
         KeepsStringArguments = JgsBuiltins.StringAwareBuiltins.Contains(name);
+        MintsAnswer = JgsBuiltins.MintingBuiltins.Contains(name);
     }
 
     /// <inheritdoc />
     public string Name { get; }
+
+    /// <summary>
+    /// Whether a binding may adopt this builtin's answer rather than take a counted share of it
+    /// (V2.2, M2): true only for a name on <see cref="JgsBuiltins.MintingBuiltins"/>, each of which
+    /// the ownership audit has shown returns only wrappers it minted.
+    /// </summary>
+    public bool MintsAnswer { get; }
 
     /// <summary>
     /// Whether a bare call statement binds this built-in's result to <c>ans</c> and echoes it.
@@ -420,7 +428,12 @@ internal sealed class AnonymousFunction : IJgsCallable, IJgsMultiCallable
                 }
                 else
                 {
-                    snapshot.Declare(name, value);
+                    // M2 (appendix A #1, #24, #101): the snapshot is an entry, so it holds a
+                    // wrapper of its own over the captured payload. Without the share the handle
+                    // read the defining workspace's later writes — `f = @() v; v(1) = 7; f()`
+                    // answered 7 — and a nested function writing `v` through the shared workspace
+                    // reached the snapshot the same way.
+                    snapshot.Declare(name, interpreter.CopyForBinding(value));
                 }
             }
         }

@@ -110,14 +110,25 @@ internal sealed class JgsStructArray
             return element;
         }
 
+        Dictionary<string, JgsValue> copy = SharedCopy(element);
+        Elements[index] = copy;
+        JgsHolders.Release(element);
+        return copy;
+    }
+
+    /// <summary>
+    /// A new dictionary holding a counted share of each of <paramref name="element"/>'s values —
+    /// M3's shallow detach of one element, and what a verb that rebuilds a struct from another's
+    /// fields starts from (M2: the rebuilt struct's fields are entries of their own).
+    /// </summary>
+    public static Dictionary<string, JgsValue> SharedCopy(Dictionary<string, JgsValue> element)
+    {
         var copy = new Dictionary<string, JgsValue>(StringComparer.Ordinal);
         foreach ((string name, JgsValue held) in element)
         {
             copy[name] = JgsValue.Share(held);
         }
 
-        Elements[index] = copy;
-        JgsHolders.Release(element);
         return copy;
     }
 

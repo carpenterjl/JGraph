@@ -46,16 +46,20 @@ internal static partial class JgsBuiltins
         && value.ClassName is MapClassName or DictionaryClassName;
 
     /// <summary>Registers <c>containers.Map</c>, <c>dictionary</c> and their verbs.</summary>
-    internal static void RegisterKeyedCollectionBuiltins(JgsEnvironment env)
+    internal static void RegisterKeyedCollectionBuiltins(JgsEnvironment env, JgsDialect dialect)
     {
         void Define(string name, Func<IReadOnlyList<JgsValue>, int, int, JgsValue> body) =>
             env.Builtins.Register(name, JgsValue.Function(new BuiltinFunction(name, body)));
+
+        // M2: a keyed collection's value is an entry, so a store takes what the dialect gives an
+        // entry — a counted share in MATLAB, the caller's own wrapper in JGS (M17).
+        bool shares = dialect.CopyOnAssign;
 
         // containers.Map is a dotted name, so it is a struct with a Map field holding the builtin —
         // the same shape M51 used for graphics.primitive.Line.empty. A bare `containers.Map` with no
         // arguments auto-calls through the member path, so `m = containers.Map;` makes an empty one.
         var mapConstructor = JgsValue.Function(new BuiltinFunction(MapClassName,
-            (args, line, col) => NewKeyed(MapClassName, args, line, col))
+            (args, line, col) => NewKeyed(MapClassName, args, shares, line, col))
         {
             AutoCallsBare = true,
         });
@@ -64,7 +68,7 @@ internal static partial class JgsBuiltins
             new Dictionary<string, JgsValue>(StringComparer.Ordinal) { ["Map"] = mapConstructor }));
 
         env.Builtins.Register("dictionary", JgsValue.Function(new BuiltinFunction(DictionaryClassName,
-            (args, line, col) => NewKeyed(DictionaryClassName, args, line, col))
+            (args, line, col) => NewKeyed(DictionaryClassName, args, shares, line, col))
         {
             AutoCallsBare = true,
         }));
@@ -100,9 +104,11 @@ internal static partial class JgsBuiltins
         {
             ArityRange("values", args, 1, 2, line, col);
             JgsValue map = RequireKeyed("values", args[0], line, col);
+            // M2: the answer's slots are entries of their own over the collection's values, so
+            // each takes a share — `c = values(m); c{1}(1) = 9` must not reach the map.
             if (args.Count == 1)
             {
-                return JgsValue.Cell([.. ValueCell(map)]);
+                return JgsValue.Cell([.. ValueCell(map).Select(JgsValue.Share)]);
             }
 
             // values(m, {'a', 'b'}) picks the ones asked for, in the order asked.
@@ -110,7 +116,7 @@ internal static partial class JgsBuiltins
             var picked = new JgsValue[wanted.Length];
             for (int i = 0; i < wanted.Length; i++)
             {
-                picked[i] = Lookup(map, wanted[i], line, col);
+                picked[i] = JgsValue.Share(Lookup(map, wanted[i], line, col));
             }
 
             return JgsValue.Cell(picked);
@@ -186,7 +192,7 @@ internal static partial class JgsBuiltins
             JgsValue[] given = args[2].Type == JgsType.Cell ? args[2].AsCell : [args[2]];
             for (int i = 0; i < wanted.Length; i++)
             {
-                Put(map, wanted[i], given.Length == 1 ? given[0] : given[i], line, col);
+                Put(map, wanted[i], RetainedForEntry(given.Length == 1 ? given[0] : given[i], shares), line, col);
             }
 
             return map;
@@ -205,10 +211,11 @@ internal static partial class JgsBuiltins
             var rows = new JgsValue[keys.Length];
             for (int i = 0; i < keys.Length; i++)
             {
+                // M2: each row's fields are entries over the collection's own key and value.
                 rows[i] = JgsValue.Struct(new Dictionary<string, JgsValue>(StringComparer.Ordinal)
                 {
-                    ["Key"] = keys[i],
-                    ["Value"] = vals[i],
+                    ["Key"] = JgsValue.Share(keys[i]),
+                    ["Value"] = JgsValue.Share(vals[i]),
                 });
             }
 
@@ -218,7 +225,8 @@ internal static partial class JgsBuiltins
 
     // --- Construction ------------------------------------------------------------------------------
 
-    private static JgsValue NewKeyed(string className, IReadOnlyList<JgsValue> args, int line, int col)
+    private static JgsValue NewKeyed(
+        string className, IReadOnlyList<JgsValue> args, bool sharesOnStore, int line, int col)
     {
         var fields = new Dictionary<string, JgsValue>(StringComparer.Ordinal)
         {
@@ -264,7 +272,7 @@ internal static partial class JgsBuiltins
 
         for (int i = 0; i < keys.Length; i++)
         {
-            Put(map, keys[i], given.Length == 1 ? given[0] : given[i], line, col);
+            Put(map, keys[i], RetainedForEntry(given.Length == 1 ? given[0] : given[i], sharesOnStore), line, col);
         }
 
         if (keys.Length > 0)
@@ -293,6 +301,8 @@ internal static partial class JgsBuiltins
     /// <summary>
     /// Writes <c>m(key) = value</c> in place. In place is right for both collections: a Map is a
     /// handle and its holders share it, and a dictionary was already copied when it was bound.
+    /// The value stored is the caller's business (M2): every road here hands in what the dialect
+    /// gives an entry — <see cref="RetainedForEntry"/> — never the script's own wrapper.
     /// </summary>
     internal static void Put(JgsValue map, JgsValue key, JgsValue value, int line, int col)
     {

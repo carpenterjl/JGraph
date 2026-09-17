@@ -1196,7 +1196,7 @@ internal sealed partial class Interpreter
                 JgsValue called = existing.AsCallable.Call(System.Array.Empty<JgsValue>(), statement.Line, statement.Column);
                 if (BindsAns(existing))
                 {
-                    BindAns(statement, called, env);
+                    BindAns(statement, called, env, owned: MintsAnswer(existing.AsCallable));
                 }
 
                 return;
@@ -1221,7 +1221,7 @@ internal sealed partial class Interpreter
                 _pendingCall = named;
                 if (forwarder.CallAsStatement(given, named.Line, named.Column, out JgsValue forwarded))
                 {
-                    BindAns(statement, forwarded, env);
+                    BindAns(statement, forwarded, env, owned: false);
                 }
 
                 return;
@@ -1238,7 +1238,7 @@ internal sealed partial class Interpreter
             JgsValue answered = resolvedCall.Value.AsCallable.Call(given, named.Line, named.Column);
             if (BindsAns(resolvedCall.Value))
             {
-                BindAns(statement, answered, env);
+                BindAns(statement, answered, env, owned: MintsAnswer(resolvedCall.Value.AsCallable));
             }
 
             return;
@@ -1256,10 +1256,25 @@ internal sealed partial class Interpreter
             case CallExpr call when !BindsAns(CalleeValue(call, env)):
                 break;
             default:
-                BindAns(statement, value, env);
+                BindAns(statement, value, env, owned: MintsItsValue(expression));
                 break;
         }
     }
+
+    /// <summary>
+    /// Whether a binding may adopt this callee's answer as its own wrapper (V2.2, M2): a user
+    /// function's outputs are its frame's own entries, which die with the call, and a builtin on
+    /// <see cref="JgsBuiltins.MintingBuiltins"/> has been shown to return only wrappers it minted.
+    /// Anything else — an anonymous function handing back a capture, a builtin handing back an
+    /// argument or a stored value — is shared at the binding, so its first write copies.
+    /// </summary>
+    private static bool MintsAnswer(IJgsCallable callee) => callee switch
+    {
+        UserFunction => true,
+        BuiltinFunction builtin => builtin.MintsAnswer,
+        NamedHandle named => named.Captured is UserFunction or BuiltinFunction { MintsAnswer: true },
+        _ => false,
+    };
 
     /// <summary>
     /// Invoke mode for a call of a plain name, end to end. Phase one asks the resolver with nothing
@@ -1384,15 +1399,18 @@ internal sealed partial class Interpreter
     /// but inside a function body it is the call frame, which dies with the call — as in MATLAB,
     /// where running a function file leaves the base workspace untouched.
     /// </summary>
-    private void BindAns(Stmt statement, JgsValue value, JgsEnvironment env)
+    private void BindAns(Stmt statement, JgsValue value, JgsEnvironment env, bool owned)
     {
         if (value.Type == JgsType.Null)
         {
             return; // verbs like title(...) return nothing — no ans, no echo
         }
 
-        env.Declare("ans", value);
-        EchoBinding(statement, "ans", value);
+        // M2 (appendix A #3, #4): `ans` is an entry like any other, so it holds a wrapper of its
+        // own — `C{1}; ans(1) = 7` used to write into the cell's slot. A minted answer is adopted.
+        JgsValue bound = owned ? value : CopyForBinding(value);
+        env.Declare("ans", bound);
+        EchoBinding(statement, "ans", bound);
     }
 
     private void EchoVariable(Stmt statement, string name, JgsEnvironment env)
@@ -3748,11 +3766,26 @@ internal sealed partial class Interpreter
             case TransposeExpr transpose:
                 return EvaluateTranspose(transpose, env, out owned);
 
+            // A call of a plain name: adopted when the callee's answer is its own to give (V2.2,
+            // M2). The call road records the answer it may adopt as it returns, and the outermost
+            // call returns last, so the record is this call's — an inner call's answer, or a slot a
+            // bound cell handed back when the name turned out to index rather than call, is not
+            // the same object and is shared as before.
+            case CallExpr { Callee: VariableExpr } call:
+                _adoptableAnswer = null;
+                JgsValue answer = Evaluate(call, env);
+                owned = ReferenceEquals(_adoptableAnswer, answer);
+                _adoptableAnswer = null;
+                return answer;
+
             default:
                 owned = MintsItsValue(value);
                 return Evaluate(value, env);
         }
     }
+
+    /// <summary>The last answer a call road returned from a callee whose answer a binding may adopt.</summary>
+    private JgsValue? _adoptableAnswer;
 
     private JgsValue EvaluateAssign(AssignExpr assign, JgsEnvironment env)
     {
@@ -4399,7 +4432,11 @@ internal sealed partial class Interpreter
                     "A keyed collection is written one key at a time, as m(key) = value.");
             }
 
-            JgsBuiltins.Put(callee, Evaluate(subscripts[0], env), rhs, at.Line, at.Column);
+            // M2 (appendix A #2): the collection's value is an entry, so it takes a counted share
+            // in the MATLAB dialect and the caller's own wrapper in JGS (M17).
+            JgsBuiltins.Put(
+                callee, Evaluate(subscripts[0], env),
+                JgsBuiltins.RetainedForEntry(rhs, Dialect.CopyOnAssign), at.Line, at.Column);
             return rhs;
         }
 
@@ -4865,7 +4902,9 @@ internal sealed partial class Interpreter
             if (TryResolveCall(call, name.Name, env, out Resolution resolved, out JgsValue[] given))
             {
                 _pendingCall = call;
-                return resolved.Value.AsCallable.Call(given, call.Line, call.Column);
+                JgsValue answered = resolved.Value.AsCallable.Call(given, call.Line, call.Column);
+                _adoptableAnswer = MintsAnswer(resolved.Value.AsCallable) ? answered : null;
+                return answered;
             }
 
             callee = resolved.Value;
@@ -4894,11 +4933,13 @@ internal sealed partial class Interpreter
             JgsValue[] elements = callee.AsCell;
             JgsValue? index = EvaluateIndexArgument(
                 Single(call.Arguments, call, "Indexing a cell"), elements.Length, env);
+            // M2: every slot of the selection is an entry of its own over the source's child, so it
+            // takes a share — two slots holding one wrapper would both move when either detached.
             if (index is null)
             {
                 // c(:) is the whole cell, as a column — the same flatten A(:) does for an array,
                 // which this had never followed (M96b).
-                JgsValue whole = JgsValue.Cell((JgsValue[])elements.Clone());
+                JgsValue whole = JgsValue.Cell(System.Array.ConvertAll(elements, JgsValue.Share));
                 if (whole.ArrayLength != 1)
                 {
                     whole.Reshape(whole.ArrayLength, 1);
@@ -4913,7 +4954,7 @@ internal sealed partial class Interpreter
                 var selected = new JgsValue[picks.Length];
                 for (int i = 0; i < picks.Length; i++)
                 {
-                    selected[i] = elements[picks[i]];
+                    selected[i] = JgsValue.Share(elements[picks[i]]);
                 }
 
                 // Same shape rule as any other gather (M96b), so c([]) is a 0-by-0 cell rather than
@@ -4921,7 +4962,7 @@ internal sealed partial class Interpreter
                 return OrientGather(JgsValue.Cell(selected), callee, index);
             }
 
-            return JgsValue.Cell([elements[ToIndex(index, elements.Length, call.Line, call.Column)]]);
+            return JgsValue.Cell([JgsValue.Share(elements[ToIndex(index, elements.Length, call.Line, call.Column)])]);
         }
 
         // A single number is a one-by-one array, so subscripting one is a read out of it: h(1) on a
@@ -7152,7 +7193,8 @@ internal sealed partial class Interpreter
             {
                 for (int c = 0; c < cellCols; c++)
                 {
-                    stood[c + (r * cellCols)] = cells[r + (c * cellRows)];
+                    // M2: the turned cell's slots are entries of their own over the same children.
+                    stood[c + (r * cellCols)] = JgsValue.Share(cells[r + (c * cellRows)]);
                 }
             }
 

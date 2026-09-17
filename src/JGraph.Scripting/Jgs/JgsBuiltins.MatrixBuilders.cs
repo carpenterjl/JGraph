@@ -555,9 +555,11 @@ internal static partial class JgsBuiltins
                 from += sources[d][counter[d]] * strides[d];
             }
 
+            // M2: over a cell each repeated slot is an entry over the source's child, so it takes
+            // a share; an array's elements are fresh numbers, for which a share is the value.
             elements[i] = args[0].Type == JgsType.Array || args[0].Type == JgsType.Cell
-                ? args[0].ElementAt((int)from)
-                : args[0];
+                ? JgsValue.Share(args[0].ElementAt((int)from))
+                : JgsValue.Share(args[0]);
             for (int d = 0; d < rank; d++)
             {
                 if (++counter[d] < grown[d])

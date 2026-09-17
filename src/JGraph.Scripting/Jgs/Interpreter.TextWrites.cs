@@ -508,7 +508,9 @@ internal sealed partial class Interpreter
 
         for (int i = 0; i < slots.Length; i++)
         {
-            cells[slots[i]] = source[source.Length == 1 ? 0 : i];
+            // M2: the written slots are entries over the right-hand cell's children — `c(1:2) = d`
+            // must not put d's own wrappers into c, or a write through either would move both.
+            cells[slots[i]] = JgsValue.Share(source[source.Length == 1 ? 0 : i]);
         }
     }
 

@@ -238,8 +238,11 @@ internal static class JgsWorkspaceIo
             var loaded = new Dictionary<string, JgsValue>(StringComparer.Ordinal);
             foreach ((string name, JgsValue value) in MatFileReader.Read(source, wanted.Count > 0 ? wanted : null))
             {
+                // M2 (appendix A #109, the storage half): the workspace binding adopts the fresh
+                // wrapper and the returned struct's field takes a counted share, so a later write to
+                // either cannot reach the other. Whether the binding happens at all is V9's.
                 environment.Declare(name, value);
-                loaded[name] = value;
+                loaded[name] = JgsValue.Share(value);
             }
 
             // The struct MATLAB's S = load(...) form hands back; a bare load statement discards it.

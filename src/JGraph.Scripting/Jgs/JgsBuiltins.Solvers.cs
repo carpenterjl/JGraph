@@ -277,8 +277,9 @@ internal static partial class JgsBuiltins
 
         for (int i = from; i < args.Count; i += 2)
         {
+            // M2: the options struct's field is an entry over the caller's value.
             fields[OdePropertyNamed("odeset", TextArgument("odeset", args, i, line, col), line, col)]
-                = args[i + 1];
+                = JgsValue.Share(args[i + 1]);
         }
 
         return JgsValue.Struct(fields);

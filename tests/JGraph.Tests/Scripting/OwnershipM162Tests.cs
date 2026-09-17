@@ -79,11 +79,10 @@ public class OwnershipM162Tests : IDisposable
 
         Assert.True(a.SharesStorageWith(Get(session, "b")));
 
-        // Three, not two: `struct(...)` is a call, and a call's answer is shared rather than
-        // adopted, because only V2.1's audit can say which builtins hand back a wrapper they kept.
-        // The extra holder is a temporary nobody can reach; it costs one copy at the first write,
-        // which is the copy today's engine makes at the binding instead.
-        Assert.Equal(3, JgsHolders.Of(Payload(a)));
+        // Two: `struct(...)` is a call, and V1 shared every call's answer (three holders, the
+        // third a temporary nobody could reach); V2.2's audit showed `struct` mints its answer,
+        // so the binding adopts it and only the two names hold the array (ADR 0163).
+        Assert.Equal(2, JgsHolders.Of(Payload(a)));
     }
 
     // ---- M3: a write detaches, and only the writer moves ---------------------------------------
@@ -147,11 +146,11 @@ public class OwnershipM162Tests : IDisposable
 
             long written = JgsPacking.Allocations - before;
 
-            // Two copies, not one: `ones(1, 64)` is a call, so the binding shares its answer and
-            // each name's first write detaches from the count the temporary left behind. Today's
-            // engine copies at the binding instead, so this is the same number of copies as before
-            // V1 — V2's audit of what a builtin hands back is what takes it to one.
-            Assert.Equal(shared + 2, written);
+            // One copy: `ones(1, 64)` mints its answer, so the binding adopts it (V2.2's audit,
+            // ADR 0163) and the two names are the payload's only holders — the first write
+            // detaches one of them, the second writes in place. Under V1 alone this was two, the
+            // temporary the call left behind counting as a third holder.
+            Assert.Equal(shared + 1, written);
         }
     }
 

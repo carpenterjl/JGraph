@@ -326,12 +326,25 @@ ENTRY_OWNER_RULES: list[tuple[str, str]] = [
     # brace then paren, a struct array's element field, a struct's field -- are V6's
     ("e_char_objprop_", "V6"), ("e_cell_objprop_bracein_", "V6"),
     ("e_structarr_objprop_elemfieldin_", "V6"), ("e_struct_objprop_*_entry", "V6"),
-    # writing a numeric into a logical array (`o.p(2) = 9`) is a class-coercion defect, not an
-    # aliasing one: V1's detach isolates the property (the `_orig` line proves `v` stays logical),
-    # yet JGraph still converts the property to double, exactly as every other numify entry kind
-    # does. It stays on the axis default (V2) with its eleven siblings rather than being claimed
-    # by the objprop rule below; a matching default-stage rule stops the search without moving it.
-    ("e_logical_objprop_numify_entry", "V2"),
+    # writing a numeric into a logical array (`v(2) = 9`, through any entry kind or none) converts
+    # the whole array to double where R2025b keeps it logical: a class-coercion defect of the
+    # write road, not an aliasing one, so it is V6's "every rebuild keeps what the value is"
+    # (#52, #53, and appendix A #157 re-owned by V2's audit), whichever entry the array sits in
+    ("e_logical_*_numify_", "V6"), ("e_logical_param_numify", "V6"),
+    # a char row written through a container path (`c{1}(2) = 'z'`, `s.f(:) = 'z'`), and a string
+    # array's element written through braces inside a callee, are V6's refused roads (#90, #91)
+    ("e_char_*_elem_entry", "V6"), ("e_char_*_colon_entry", "V6"), ("e_string_param_bracechar", "V6"),
+    # an indexed write into a scalar reached through a container path (`c{2}(1) = 9` where c{2}
+    # is one number, `s(2).f(1) = 9` where f is) is refused today ("Cannot assign by index into a
+    # number") where R2025b writes: V6's container_path_writes (#82, #83's level-by-level rule)
+    ("e_cell_*_bracein_", "V6"), ("e_cell_param_bracein", "V6"),
+    ("e_structarr_*_elemfieldin_", "V6"), ("e_structarr_param_elemfieldin", "V6"),
+    # a value object's property written through a global is V4 (#16); through a cell slot or a
+    # struct field it is refused or replaced by a struct today, which is V6's write-back rule for
+    # a value held in a container (#137–#139's shape for value classes)
+    ("e_object_global_prop_entry", "V4"),
+    ("e_object_cellslot_prop_entry", "V6"), ("e_object_cellassign_prop_entry", "V6"),
+    ("e_object_field_prop_entry", "V6"),
     # any other write through a value object's property lands in the instance's fields in place
     # (Interpreter.Objects.cs:179): V1's object detach (M3)
     ("e_*_objprop_*_entry", "V1"),

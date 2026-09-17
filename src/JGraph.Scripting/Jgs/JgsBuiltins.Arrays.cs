@@ -125,7 +125,7 @@ internal static partial class JgsBuiltins
                         "arrayfun: the function returned something that is not a number — pass 'UniformOutput', false.");
                 }
 
-                collected[o][k] = answers[o];
+                collected[o][k] = JgsValue.Share(answers[o]); // M2, as cellfun: the slot is an entry
             }
         }
 
@@ -201,7 +201,7 @@ internal static partial class JgsBuiltins
             var mapped = new Dictionary<string, JgsValue>(StringComparer.Ordinal);
             for (int i = 0; i < names.Count; i++)
             {
-                mapped[names[i]] = results[i];
+                mapped[names[i]] = JgsValue.Share(results[i]); // M2, as cellfun: the field is an entry
             }
 
             return JgsValue.Struct(mapped);

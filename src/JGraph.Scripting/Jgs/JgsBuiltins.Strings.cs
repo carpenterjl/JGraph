@@ -446,7 +446,10 @@ internal static partial class JgsBuiltins
 
             for (int o = 0; o < produced; o++)
             {
-                collected[o][k] = answers[o];
+                // M2: a collected answer may be a wrapper the function handed back rather than
+                // minted — `@(x) x` answers its own parameter — and the slot it lands in is an
+                // entry, so it takes a share. For a minted answer that only over-counts.
+                collected[o][k] = JgsValue.Share(answers[o]);
             }
         }
 

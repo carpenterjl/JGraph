@@ -395,15 +395,20 @@ internal static partial class JgsBuiltins
             JgsValue held = args[2];
 
             // setfield answers with a changed copy and leaves its argument alone, which is what
-            // makes it usable in an expression: s = setfield(s, 'a', 1).
+            // makes it usable in an expression: s = setfield(s, 'a', 1). The new field is an entry
+            // over the caller's value, so it takes a share (M2).
             return MapStructElements("setfield", args[0], line, col, element =>
-                new Dictionary<string, JgsValue>(element, StringComparer.Ordinal) { [name] = held });
+                new Dictionary<string, JgsValue>(element, StringComparer.Ordinal) { [name] = JgsValue.Share(held) });
         });
 
         Define("num2cell", (args, line, col) =>
         {
             Arity("num2cell", args, 1, line, col);
-            return JgsValue.Cell(Elements("num2cell", args[0], line, col).ToArray());
+
+            // M2: over a cell the elements are the argument's own children, and each slot of the
+            // answer is an entry, so it takes a share; over an array they are fresh numbers, for
+            // which a share is the value itself.
+            return JgsValue.Cell(Elements("num2cell", args[0], line, col).Select(JgsValue.Share).ToArray());
         });
 
         Define("cell2mat", (args, line, col) =>
@@ -566,7 +571,9 @@ internal static partial class JgsBuiltins
         {
             for (int r = 0; r < height; r++)
             {
-                elements[(c * height) + r] = JgsMatrix.At(source, r % rows, c % cols);
+                // M2: each tile's slot is an entry over the source's child, so it takes a share —
+                // `d = repmat({v}, 1, 2); d{1}(1) = 7` must leave d{2} and v alone.
+                elements[(c * height) + r] = JgsValue.Share(JgsMatrix.At(source, r % rows, c % cols));
             }
         }
 
@@ -1049,7 +1056,10 @@ internal static partial class JgsBuiltins
         var edited = new Dictionary<string, JgsValue>[payload.Length];
         for (int i = 0; i < edited.Length; i++)
         {
-            edited[i] = edit(payload.Elements[i]);
+            // M2: the edit copies the element's fields into the answer's own dictionary, and each
+            // field is an entry, so what it copies is a share per child — never the source's own
+            // wrappers, which a later write through either struct would move for both.
+            edited[i] = edit(JgsStructArray.SharedCopy(payload.Elements[i]));
         }
 
         string[] fields = edited.Length > 0 ? [.. edited[0].Keys] : payload.EmptyFields;

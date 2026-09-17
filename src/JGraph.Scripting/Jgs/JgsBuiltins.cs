@@ -2401,7 +2401,7 @@ internal static partial class JgsBuiltins
 
         // The figure-tooling verbs work on what the verbs above drew rather than drawing themselves.
         RegisterFigureToolBuiltins(env, host);
-        RegisterFigureStateBuiltins(env);
+        RegisterFigureStateBuiltins(env, dialect);
         RegisterMotionBuiltins(env);
 
         // The paper verbs come after them because print takes the name over from the console verb
@@ -2471,7 +2471,7 @@ internal static partial class JgsBuiltins
         RegisterDataOutBuiltins(Define, host);
         RegisterTimeBuiltins(env);
         RegisterTimePartBuiltins(env);
-        RegisterKeyedCollectionBuiltins(env);
+        RegisterKeyedCollectionBuiltins(env, dialect);
         RegisterVideoBuiltins(env, host);
         TimeAwareReductions(env);
 
@@ -4767,6 +4767,7 @@ internal static partial class JgsBuiltins
         return JgsValue.Null;
     }
 
+    // audit: mints — every arm builds its rows here or recurses into one that does (V2.2)
     private static JgsValue Filled(string name, IReadOnlyList<JgsValue> args, double value, int line, int col)
     {
         ArityRange(name, args, 1, 2, line, col);

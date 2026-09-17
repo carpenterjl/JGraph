@@ -97,6 +97,7 @@ FACTORY_RE = re.compile(r"JgsValue\.(" + "|".join(FACTORIES) + r")\(")
 FRESH_RE = re.compile(
     r"\bnew\s+[\w.]+(\s*<[^>]*>)?\s*[\[({]"
     r"|JgsPacking\.Allocate\("
+    r"|JgsStructArray\.SharedCopy\("
     r"|BufferAllocator\.\w+\("
     r"|ManagedBuffer\.Adopt\("
     r"|\.ToArray\(\)"
@@ -153,11 +154,15 @@ ASSIGN_RE = re.compile(
     r"^(?:(?:[\w.<>\[\],? ]+?)\s+)?([A-Za-z_]\w*)\s*=\s*(?![=>])(.+)$")
 FOREACH_RE = re.compile(r"^foreach\s*\(\s*(?:[\w.<>\[\],? ]+\s+)?([A-Za-z_]\w*)\s+in\s+(.+?)\s*$")
 
-CATEGORIES = ["write", "adopt", "mutate", "dispose", "fresh", "read"]
+CATEGORIES = ["write", "adopt", "mutate", "dispose", "store", "handback", "fresh", "read"]
 
 # The categories the record holds. A read and a fresh payload cannot lose a write, and both change
 # with every builtin written, so recording them would make the check fail on ordinary work.
-RECORDED = {"write", "adopt", "mutate", "dispose", "unclear"}
+RECORDED = {"write", "adopt", "mutate", "dispose", "store", "handback", "unclear"}
+
+# The C# list of builtins whose answer the interpreter adopts at a binding instead of sharing (V2.2,
+# M2). Every name on it must be one this audit sees return only minted wrappers.
+MINTING_SOURCE = REPO / "src/JGraph.Scripting/Jgs/JgsBuiltins.Minting.cs"
 
 
 @dataclass
@@ -270,7 +275,9 @@ def members(text: str) -> list[tuple[int, str, set[str]]]:
         open_paren = head.find("(", m.start(1))
         names: set[str] = set()
         if open_paren >= 0:
-            for param in split_params(" ".join(call_args(head, open_paren))):
+            # Each parameter on its own: joining them first and splitting again (as V1.1 did)
+            # collapsed the list to one string and seeded only the last name.
+            for param in call_args(head, open_paren):
                 words = re.findall(r"[A-Za-z_]\w*", param.split("=")[0])
                 if words and PAYLOAD_TYPE_RE.search(param):
                     names.add(words[-1])
@@ -419,9 +426,20 @@ def trim(statement: str) -> str:
     return statement if len(statement) <= 150 else statement[:147] + "..."
 
 
+ANNOTATED_RE = re.compile(
+    r"//\s*audit:\s*mints[^\n]*\n(?:\s*///[^\n]*\n)*\s*(?:\[[^\]]*\]\s*)*"
+    r"(?:public|private|internal|protected)[^\n(]*?\s(\w+)\s*\(")
+
+# Members a comment `// audit: mints` above the declaration vouches for: every return is minted,
+# in a shape the scan cannot settle on its own (a switch expression, a recursion). The comment is
+# the assertion, read by a person, and the ADR lists them.
+ANNOTATED: set[str] = set()
+
+
 def parse(path: Path) -> tuple[str, dict[str, list[tuple[int, str]]], dict[str, set[str]]]:
     """A file's statements grouped by member, with each member's parameter names."""
     text = path.read_text(encoding="utf-8")
+    ANNOTATED.update(ANNOTATED_RE.findall(text))
     marks = members(text)
     groups: dict[str, list[tuple[int, str]]] = defaultdict(list)
     parameters: dict[str, set[str]] = {}
@@ -437,7 +455,410 @@ def holders_of(body: list[tuple[int, str]], parameters: set[str],
     holders = build_holders(body, fresh)
     for name in parameters:
         holders.setdefault(name, "parameter")
+    # A builtin's body is a lambda over `args`, which no member signature declares: the arguments
+    # are the caller's wrappers, so the name is seeded as a parameter everywhere (V2.1).
+    holders.setdefault("args", "parameter")
     return holders
+
+
+# ---------------------------------------------------------------------------------------------
+# V2.1: wrappers, not payloads. M2 says every entry holds a wrapper of its own, so a road that
+# stores a wrapper it did not just compute — an argument, an element read out of someone's cell or
+# struct, a local holding one — into a container it is building is a site the model has to answer
+# for (`store`), and a builtin that hands such a wrapper back is one the interpreter may not adopt
+# at a binding (`handback`). Only the top-level shape of an expression counts: `Foo(args[0])` is a
+# call, whose answer is Foo's business and is settled per helper in two passes.
+# ---------------------------------------------------------------------------------------------
+
+SHARE_WRAPPER_RE = re.compile(r"^(JgsValue\.Share|[\w.]*CopyForBinding|CopyContainer|[\w.]*RetainedForEntry)\(")
+MINT_WRAPPER_RE = re.compile(r"^(new\s|JgsValue\.\w+\(|JgsMatrix\.\w+\(|JgsEmpty\.)")
+ARRAY_TYPE_RE = re.compile(r"^(JgsValue\[\]|List<JgsValue>|IReadOnlyList<JgsValue>|IList<JgsValue>)$")
+DICT_TYPE_RE = re.compile(
+    r"^(Dictionary<string, JgsValue>|IReadOnlyDictionary<string, JgsValue>|IDictionary<string, JgsValue>)$")
+DECL_RE = re.compile(
+    r"^(?:(?:readonly|static|private|public|internal|const)\s+)*"
+    r"([A-Za-z_][\w<>,\[\] ]*?)\s+([A-Za-z_]\w*)\s*=\s*(?![=>])(.+)$")
+WRAPPER_FOREACH_RE = re.compile(
+    r"^foreach\s*\(\s*(?:\(([^)]*)\)|([\w<>\[\],]+)\s+([A-Za-z_]\w*))\s+in\s+(.+?)\s*$")
+# LINQ and array verbs that hand the same wrappers on in a new container.
+PASS_THROUGH_RE = re.compile(
+    r"(\.(ToArray|ToList|Clone|Reverse|Skip|Take|Where|Concat|OrderBy|OrderByDescending|Distinct)\([^()]*\))+$")
+ELEMENT_ACCESSOR_RE = re.compile(r"\.(AsCell|AsArray|BoxedElements\(\))$")
+FIELD_ACCESSOR_RE = re.compile(r"\.(AsStruct|Fields)$|\.Elements\s*\[[^\]]*\]$")
+
+
+def unparen(expression: str) -> str:
+    expression = expression.strip()
+    while expression.startswith("(") and expression.endswith(")"):
+        depth, whole = 0, True
+        for i, c in enumerate(expression):
+            if c == "(":
+                depth += 1
+            elif c == ")":
+                depth -= 1
+                if depth == 0 and i != len(expression) - 1:
+                    whole = False
+                    break
+        if not whole:
+            break
+        expression = expression[1:-1].strip()
+    return expression
+
+
+def split_top(expression: str, separators: tuple[str, ...]) -> list[str]:
+    """Splits at the separators that sit outside every bracket."""
+    out, depth, current, i = [], 0, "", 0
+    while i < len(expression):
+        c = expression[i]
+        if c in "([{":
+            depth += 1
+        elif c in ")]}":
+            depth -= 1
+        if depth == 0:
+            hit = next((s for s in separators if expression.startswith(s, i)), None)
+            if hit is not None:
+                out.append(current)
+                current = ""
+                i += len(hit)
+                continue
+        current += c
+        i += 1
+    out.append(current)
+    return [o.strip() for o in out]
+
+
+def indexed_base(expression: str) -> str | None:
+    """`base` of a top-level `base[...]`, with the brackets balanced."""
+    expression = expression.rstrip()
+    if not expression.endswith("]"):
+        return None
+    depth = 0
+    for i in range(len(expression) - 1, -1, -1):
+        c = expression[i]
+        if c == "]":
+            depth += 1
+        elif c == "[":
+            depth -= 1
+            if depth == 0:
+                base = expression[:i].rstrip()
+                return base if base and not base.endswith(("(", ",")) else None
+    return None
+
+
+class WrapperScope:
+    """Where each local of a member got the wrapper, wrapper array or field dictionary it holds."""
+
+    def __init__(self, borrowing: set[str], fresh: set[str]) -> None:
+        self.wrappers: dict[str, str] = {}
+        self.arrays: dict[str, str] = {}
+        self.dicts: dict[str, str] = {}
+        self.borrowing = borrowing
+        self.fresh = fresh
+
+    def array_of(self, expression: str) -> str | None:
+        expression = unparen(expression)
+        if ".Select(JgsValue.Share)" in expression or "ConvertAll(" in expression and "JgsValue.Share" in expression:
+            return "shared"  # every element passes through Share on its way in
+        stripped = PASS_THROUGH_RE.sub("", expression)
+        if stripped != expression:
+            inner = self.array_of(stripped)
+            return inner
+        if expression.startswith("[.. ") or expression.startswith("[..") and expression.endswith("]"):
+            inner = self.array_of(expression[3:-1] if expression.startswith("[.. ") else expression[3:-1])
+            return inner
+        if ELEMENT_ACCESSOR_RE.search(expression) or re.match(r"^[\w.]+\.(AsStruct|Fields)\.Values$", expression):
+            return "borrowed"
+        if re.match(r"^(args|arguments)$", expression):
+            return "borrowed"
+        m = re.match(r"^(?:[\w.]+\.)?(\w+)\s*\(", expression)
+        if m:
+            return "borrowed" if m.group(1) in self.borrowing else None
+        m = re.match(r"^([A-Za-z_]\w*)$", expression)
+        if m:
+            return self.arrays.get(m.group(1))
+        return None
+
+    def dict_of(self, expression: str) -> str | None:
+        expression = unparen(expression)
+        if FIELD_ACCESSOR_RE.search(expression):
+            return "borrowed"
+        m = re.match(r"^([A-Za-z_]\w*)$", expression)
+        if m:
+            return self.dicts.get(m.group(1))
+        m = re.match(r"^new\s+Dictionary<string, JgsValue>\s*\((.*)\)$", expression)
+        if m:
+            source = split_top(m.group(1), (",",))[0]
+            return "copy" if self.dict_of(source) == "borrowed" else "fresh"
+        return None
+
+    def wrapper(self, expression: str) -> str:
+        """borrowed, shared, fresh or unknown: the provenance of a wrapper-valued expression."""
+        expression = unparen(expression)
+        if not expression:
+            return "unknown"
+        if "?" in expression and not expression.startswith("?"):
+            branches = split_top(expression, ("??",))
+            if len(branches) == 1:
+                branches = split_top(expression, ("?", ":"))
+                branches = branches[1:] if len(branches) >= 3 else [expression]
+            if len(branches) > 1:
+                verdicts = {self.wrapper(b) for b in branches}
+                return "borrowed" if "borrowed" in verdicts else ("fresh" if verdicts == {"fresh"} else "unknown")
+        cast = re.match(r"^\((JgsValue(?:\[\])?|[\w<>,]+)\)\s*(.+)$", expression)
+        if cast and "(" not in cast.group(1):
+            return self.wrapper(cast.group(2))
+        if SHARE_WRAPPER_RE.match(expression):
+            return "shared"
+        if MINT_WRAPPER_RE.match(expression):
+            return "fresh"
+        if re.match(r"^(args|arguments)\s*\[", expression):
+            return "borrowed"
+        base = indexed_base(expression)
+        if base is not None:
+            if self.array_of(base) == "borrowed" or self.dict_of(base) == "borrowed":
+                return "borrowed"
+            if ELEMENT_ACCESSOR_RE.search(base) or FIELD_ACCESSOR_RE.search(base):
+                return "borrowed"
+            # `Helper(args)[0]`: the element of an array a helper built is that helper's business,
+            # and an array is never "fresh" for its elements — only its storage.
+            return "unknown"
+        if re.match(r"^JgsMatrix\.At\(", expression):
+            return "borrowed"
+        m = re.match(r"^([A-Za-z_]\w*)$", expression)
+        if m:
+            return self.wrappers.get(m.group(1), "unknown")
+        m = re.match(r"^(?:[\w.]+\.)?(\w+)\s*\(", expression)
+        if m:
+            if m.group(1) in self.borrowing:
+                return "borrowed"
+            return "fresh" if m.group(1) in self.fresh else "unknown"
+        if re.match(r"^[\w.]+\.(Value|Key)$", expression):
+            root = expression.split(".")[0]
+            return self.wrappers.get(root, "unknown")
+        return "unknown"
+
+    def learn(self, statement: str) -> None:
+        m = WRAPPER_FOREACH_RE.match(statement)
+        if m:
+            source = m.group(4)
+            if m.group(1):
+                names = [p.split()[-1] for p in split_params(m.group(1))]
+                if len(names) == 2 and self.dict_of(source) == "borrowed":
+                    self.wrappers[names[1]] = "borrowed"
+            elif m.group(2) in ("JgsValue", "var"):
+                if self.array_of(source) == "borrowed" or self.dict_of(source) == "borrowed" \
+                        or (source.endswith(".Values") and self.dict_of(source[:-7]) == "borrowed"):
+                    self.wrappers[m.group(3)] = "borrowed"
+            elif m.group(2) == "KeyValuePair<string,JgsValue>" or m.group(2) == "KeyValuePair<string, JgsValue>":
+                if self.dict_of(source) == "borrowed":
+                    self.wrappers[m.group(3)] = "borrowed"
+            return
+        m = DECL_RE.match(statement)
+        if not m:
+            m = re.match(r"^([A-Za-z_]\w*)\s*=\s*(?![=>])(.+)$", statement)
+            if m and m.group(1) in self.wrappers and self.wrappers[m.group(1)] != "borrowed":
+                self.wrappers[m.group(1)] = self.wrapper(m.group(2))
+            return
+        typ, name, rhs = m.group(1).strip(), m.group(2), m.group(3)
+        if typ == "JgsValue" or (typ == "var" and self.wrapper(rhs) in ("borrowed", "shared")):
+            if self.wrappers.get(name) != "borrowed":
+                self.wrappers[name] = self.wrapper(rhs)
+        elif ARRAY_TYPE_RE.match(typ) or (typ == "var" and self.array_of(rhs)):
+            self.arrays[name] = self.array_of(rhs) or ("fresh" if FRESH_RE.search(rhs) else "unknown")
+        elif DICT_TYPE_RE.match(typ) or (typ == "var" and self.dict_of(rhs)):
+            self.dicts[name] = self.dict_of(rhs) or ("fresh" if FRESH_RE.search(rhs) else "unknown")
+
+
+def classify_stores(statement: str, scope: WrapperScope) -> list[tuple[str, str]]:
+    """Every place this statement stores a borrowed wrapper into a container being built."""
+    out: list[tuple[str, str]] = []
+    lvalue = lvalue_of(statement)
+    if lvalue and lvalue.endswith("]"):
+        rhs = statement[len(lvalue):].lstrip("= ").strip()
+        base = indexed_base(lvalue)
+        if lvalue.startswith("["):
+            if scope.wrapper(rhs) == "borrowed":
+                out.append(("store", "init"))
+        elif base is not None:
+            payload_write = GATED_RE.search(base) or ACCESSOR_RE.search(base) \
+                or scope.array_of(base) == "borrowed" or scope.dict_of(base) == "borrowed"
+            if scope.wrapper(rhs) == "borrowed":
+                # A borrowed wrapper stored into someone's payload through the gate is still a
+                # store: the slot written is an entry, and it must not hold another entry's wrapper.
+                out.append(("store", "gated" if payload_write else "slot"))
+    for m in re.finditer(r"\.(Add|AddRange|SetSlot)\(", statement):
+        args = call_args(statement, m.end() - 1)
+        if not args:
+            continue
+        value = args[-1] if m.group(1) == "SetSlot" else args[0]
+        if m.group(1) == "AddRange":
+            if scope.array_of(value) == "borrowed":
+                out.append(("store", "copy"))
+        elif scope.wrapper(value) == "borrowed":
+            out.append(("store", "setslot" if m.group(1) == "SetSlot" else "add"))
+    for m in FACTORY_RE.finditer(statement):
+        args = call_args(statement, m.end() - 1)
+        if not args:
+            continue
+        first = args[0].strip()
+        if first.startswith("[") and first.endswith("]"):
+            for element in split_params(first[1:-1]):
+                element = element.strip()
+                if element.startswith(".."):
+                    if scope.array_of(element[2:]) == "borrowed":
+                        out.append(("store", "copy"))
+                elif element and scope.wrapper(element) == "borrowed":
+                    out.append(("store", "collection"))
+        elif scope.array_of(first) == "borrowed" and PASS_THROUGH_RE.search(first):
+            out.append(("store", "copy"))
+    for m in re.finditer(r"new\s+Dictionary<string, JgsValue>\s*\(", statement):
+        args = call_args(statement, m.end() - 1)
+        if args and scope.dict_of(args[0]) == "borrowed":
+            out.append(("store", "copy"))
+    # Initializer entries inside a `new … { [key] = value, … }` that the splitter kept whole.
+    for m in re.finditer(r"\{\s*(\[[^\]]+\]\s*=\s*[^,}]+(?:,\s*\[[^\]]+\]\s*=\s*[^,}]+)*)\s*\}", statement):
+        for entry in split_top(m.group(1), (",",)):
+            value = entry.split("=", 1)[1].strip() if "=" in entry else ""
+            if value and scope.wrapper(value) == "borrowed":
+                out.append(("store", "init"))
+    return out
+
+
+def borrowing_contracts(files: list[tuple[str, dict, dict]], fresh: set[str]) -> set[str]:
+    """Members that hand back a borrowed wrapper on some return, settled in passes."""
+    borrowing: set[str] = set()
+    for _ in range(3):
+        found: set[str] = set()
+        for _, groups, parameters in files:
+            for member, body in groups.items():
+                scope = WrapperScope(borrowing, fresh)
+                for name in parameters.get(member, set()) | {"args"}:
+                    scope.wrappers.setdefault(name, "borrowed")
+                for _, statement in body:
+                    scope.learn(statement)
+                    m = RETURN_RE.match(statement)
+                    # A member handing back a borrowed wrapper, or an array holding borrowed
+                    # wrappers (`return [.. args]`), makes every call of it a borrow.
+                    if m and (scope.wrapper(m.group(1)) == "borrowed" or scope.array_of(m.group(1)) == "borrowed"):
+                        found.add(member)
+        if found == borrowing:
+            break
+        borrowing = found
+    return borrowing
+
+
+REGISTRATION_RE = re.compile(r"(?:Define\w*|Register|BuiltinFunction)\(\s*\"([\w.]+)\"\s*,")
+HELPER_REGISTRATION_RE = re.compile(r"\b(\w+)\(\s*Define\w*\s*,\s*\"([\w.]+)\"")
+LAMBDA_HEAD_RE = re.compile(r"^\s*\(?\s*\w*\s*\(?\s*(?:args|arguments)\s*,[^)]*\)\s*=>\s*(.*)$", re.S)
+
+
+def registrations(raw: str):
+    """Each builtin registered by a literal name in this file, with its lambda body (comments and
+    string bodies blanked, so the name is read from the raw text and the body from the stripped)."""
+    code = strip_code(raw)
+    seen_direct: set[int] = set()
+    for m in REGISTRATION_RE.finditer(raw):
+        open_paren = code.index("(", m.start())
+        depth, k = 0, open_paren
+        while k < len(code):
+            c = code[k]
+            if c in "([{":
+                depth += 1
+            elif c in ")]}":
+                depth -= 1
+                if depth == 0:
+                    break
+            k += 1
+        body = code[m.end():k]
+        if "new BuiltinFunction(" in body:
+            continue  # the inner BuiltinFunction("name", …) match carries the single-output body
+        yield m.group(1), body, raw.count("\n", 0, m.start()) + 1, None
+    for m in HELPER_REGISTRATION_RE.finditer(raw):
+        yield m.group(2), "", raw.count("\n", 0, m.start()) + 1, m.group(1)
+
+
+def analyze_builtins(files: list[Path], fresh: set[str], borrowing: set[str],
+                     helper_verdicts: dict[str, set[str]]) -> tuple[list[Site], dict[str, set[str]]]:
+    """Every builtin's return provenances, and a site for each return of a borrowed wrapper."""
+    verdicts: dict[str, set[str]] = defaultdict(set)
+    sites: list[Site] = []
+    for path in files:
+        raw = path.read_text(encoding="utf-8")
+        relative = path.relative_to(REPO).as_posix()
+        for name, body, line, helper in registrations(raw):
+            if helper is not None:
+                verdicts[name] |= helper_verdicts.get(helper, {"unknown"})
+                continue
+            scope = WrapperScope(borrowing, fresh)
+            scope.wrappers["args"] = "borrowed"
+            flat = " ".join(body.split())
+            head = LAMBDA_HEAD_RE.match(flat)
+            if head and not head.group(1).startswith("{"):
+                expression = head.group(1)
+                while expression.count(")") > expression.count("(") and expression.endswith(")"):
+                    expression = expression[:-1].rstrip()
+                verdict = scope.wrapper(expression)
+                verdicts[name].add(verdict)
+                if verdict == "borrowed":
+                    sites.append(Site(relative, f"builtin:{name}", "handback", "lambda", trim(expression), line))
+                continue
+            for _, statement in statements(body):
+                scope.learn(statement)
+                m = RETURN_RE.match(statement)
+                if not m:
+                    continue
+                verdict = scope.wrapper(m.group(1))
+                verdicts[name].add(verdict)
+                if verdict == "borrowed":
+                    sites.append(Site(relative, f"builtin:{name}", "handback", "return", trim(statement), line))
+            if not verdicts[name]:
+                verdicts[name].add("none")
+    return sites, verdicts
+
+
+def helper_return_verdicts(files: list[tuple[str, dict, dict]], fresh: set[str],
+                           borrowing: set[str]) -> dict[str, set[str]]:
+    """For a registrar helper (`MathX(Define, "sin", …)`), what the lambdas inside it return."""
+    verdicts: dict[str, set[str]] = defaultdict(set)
+    for _, groups, parameters in files:
+        for member, body in groups.items():
+            scope = WrapperScope(borrowing, fresh)
+            for name in parameters.get(member, set()) | {"args"}:
+                scope.wrappers.setdefault(name, "borrowed")
+            for _, statement in body:
+                scope.learn(statement)
+                m = RETURN_RE.match(statement)
+                expression = m.group(1) if m else None
+                if expression is None and "=>" in statement and "args" in statement:
+                    arrow = LAMBDA_RE.search(statement)
+                    expression = arrow.group(1) if arrow else None
+                    if expression:
+                        while expression.count(")") > expression.count("(") and expression.endswith(")"):
+                            expression = expression[:-1].rstrip()
+                if expression:
+                    verdicts[member].add(scope.wrapper(expression))
+    return verdicts
+
+
+def minting_names() -> list[str]:
+    if not MINTING_SOURCE.exists():
+        return []
+    text = strip_code(MINTING_SOURCE.read_text(encoding="utf-8"))
+    raw = MINTING_SOURCE.read_text(encoding="utf-8")
+    start = raw.find("MintingBuiltins")
+    return re.findall(r"\"([\w.]+)\"", raw[start:]) if start >= 0 else []
+
+
+def check_minting(verdicts: dict[str, set[str]]) -> list[str]:
+    """Every name the interpreter adopts must be one every return of which is minted here."""
+    problems = []
+    for name in minting_names():
+        seen = verdicts.get(name)
+        if seen is None:
+            problems.append(f"{name}: not a builtin this audit can see (registered without a literal name?)")
+        elif seen != {"fresh"}:
+            problems.append(f"{name}: returns {', '.join(sorted(seen))} — only an all-fresh builtin may be adopted")
+    return problems
 
 
 RETURN_RE = re.compile(r"^return\s+(.+)$")
@@ -452,7 +873,7 @@ def return_contracts(files: list[tuple[str, dict, dict]]) -> set[str]:
     a chain of such helpers settle; a name declared more than once anywhere is only counted fresh
     when every one of them is, since the scan matches calls by name.
     """
-    fresh: set[str] = set()
+    fresh: set[str] = set(ANNOTATED)
     for _ in range(3):
         verdicts: dict[str, set[str]] = defaultdict(set)
         for _, groups, parameters in files:
@@ -467,7 +888,7 @@ def return_contracts(files: list[tuple[str, dict, dict]]) -> set[str]:
                     if not expression:
                         continue
                     verdicts[member].add(provenance(expression, holders, fresh=fresh))
-        settled = {name for name, seen in verdicts.items() if seen == {"fresh"}} - set(GATED)
+        settled = ({name for name, seen in verdicts.items() if seen == {"fresh"}} - set(GATED)) | ANNOTATED
         if settled == fresh:
             break
         fresh = settled
@@ -475,12 +896,18 @@ def return_contracts(files: list[tuple[str, dict, dict]]) -> set[str]:
 
 
 def analyze(relative: str, groups: dict, parameters: dict, sinks: dict[str, set[int]],
-            fresh_calls: set[str]) -> list[Site]:
+            fresh_calls: set[str], borrowing: set[str]) -> list[Site]:
     found: list[Site] = []
     for member, body in groups.items():
         holders = holders_of(body, parameters.get(member, set()), fresh_calls)
+        scope = WrapperScope(borrowing, fresh_calls)
+        for name in parameters.get(member, set()) | {"args"}:
+            scope.wrappers.setdefault(name, "borrowed")
         for line, statement in body:
+            scope.learn(statement)
             for category, kind in classify(statement, holders, sinks, fresh_calls):
+                found.append(Site(relative, member, category, kind, trim(statement), line))
+            for category, kind in classify_stores(statement, scope):
                 found.append(Site(relative, member, category, kind, trim(statement), line))
     return found
 
@@ -602,8 +1029,9 @@ def lvalue_before(statement: str, at: int) -> str:
     return m.group(1) if m else ""
 
 
-def scan(sinks: dict[str, set[int]]) -> list[Site]:
+def scan(sinks: dict[str, set[int]]) -> tuple[list[Site], dict[str, set[str]]]:
     files = []
+    paths = []
     for root in ROOTS:
         for path in sorted(root.rglob("*.cs")):
             if "obj" in path.parts or "bin" in path.parts:
@@ -612,11 +1040,17 @@ def scan(sinks: dict[str, set[int]]) -> list[Site]:
             if "JgsValue" not in text and "NumericBuffer" not in text:
                 continue
             files.append(parse(path))
+            paths.append(path)
 
     fresh_calls = return_contracts(files)
+    borrowing = borrowing_contracts(files, fresh_calls)
     found: list[Site] = []
     for relative, groups, parameters in files:
-        found.extend(analyze(relative, groups, parameters, sinks, fresh_calls))
+        found.extend(analyze(relative, groups, parameters, sinks, fresh_calls, borrowing))
+
+    helpers = helper_return_verdicts(files, fresh_calls, borrowing)
+    handbacks, verdicts = analyze_builtins(paths, fresh_calls, borrowing, helpers)
+    found.extend(handbacks)
 
     seen: Counter[tuple] = Counter()
     for site in found:
@@ -625,7 +1059,7 @@ def scan(sinks: dict[str, set[int]]) -> list[Site]:
         key = site.key()[:4]
         seen[key] += 1
         site.ordinal = seen[key] - 1
-    return found
+    return found, verdicts
 
 
 def load_record() -> dict[tuple, Site]:
@@ -679,6 +1113,8 @@ def main() -> int:
     parser.add_argument("--list", metavar="CATEGORY", help="print every site in one category")
     parser.add_argument("--files", action="store_true", help="group the listing by file")
     parser.add_argument("--sinks", action="store_true", help="print the kernels that write into an argument")
+    parser.add_argument("--builtins", action="store_true",
+                        help="print every builtin whose returns are all minted (the candidates for adoption)")
     args = parser.parse_args()
 
     sinks = read_sinks()
@@ -688,8 +1124,22 @@ def main() -> int:
         print(f"{len(sinks)} kernel(s) write into an argument")
         print()
 
-    sites = scan(sinks)
+    sites, verdicts = scan(sinks)
     summarize(sites)
+
+    if args.builtins:
+        minted = sorted(name for name, seen in verdicts.items() if seen == {"fresh"})
+        print(f"{len(minted)} builtin(s) return only minted wrappers, of {len(verdicts)} seen:")
+        print("  " + " ".join(minted))
+        print()
+
+    minting_problems = check_minting(verdicts)
+    if minting_problems:
+        print(f"{len(minting_problems)} minting problem(s) in {MINTING_SOURCE.name}:")
+        for p in minting_problems:
+            print("  -", p)
+        return 1
+    print(f"minting builtins OK ({len(minting_names())} adopted at a binding, each returning only minted wrappers)")
 
     if args.list:
         chosen = [s for s in sites if s.category == args.list]

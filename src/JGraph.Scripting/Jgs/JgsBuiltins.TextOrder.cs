@@ -434,7 +434,8 @@ internal static partial class JgsBuiltins
         {
             for (int c = 0; c < cols; c++)
             {
-                sorted[r + (c * rows)] = cells[order[r] + (c * rows)];
+                // M2: the sorted answer's slots are entries over the source's children.
+                sorted[r + (c * rows)] = JgsValue.Share(cells[order[r] + (c * rows)]);
             }
         }
 

@@ -85,7 +85,9 @@ internal sealed partial class Interpreter
                     $"Cells joined side by side must have the same number of rows, not {rows} and {piece.Rows}.");
             }
 
-            elements.AddRange(held);
+            // M2: the joined cell's slots are entries of their own over the pieces' children, so
+            // `D = [C, C]` holds two counted shares of each — not one wrapper in two slots.
+            elements.AddRange(held.Select(JgsValue.Share));
             cols += piece.Cols;
         }
 
@@ -141,7 +143,10 @@ internal sealed partial class Interpreter
                 JgsValue[] held = block.AsCell;
                 for (int r = 0; r < block.Rows; r++)
                 {
-                    stacked[at_ + r + (column * height)] = held[r + (column * block.Rows)];
+                    // M2, as in JoinCellsAcross: a share per slot. A block that came out of that
+                    // join is already the row's own and its shares move here with it; sharing
+                    // again only over-counts, which costs a copy and never a leak.
+                    stacked[at_ + r + (column * height)] = JgsValue.Share(held[r + (column * block.Rows)]);
                 }
 
                 at_ += block.Rows;

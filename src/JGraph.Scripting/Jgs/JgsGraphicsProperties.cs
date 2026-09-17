@@ -565,9 +565,11 @@ internal static partial class JgsGraphicsProperties
         Put(table, "Tag",
             entry => JgsValue.Str(entry.Target.Tag ?? string.Empty),
             (entry, value, line, col) => entry.Target.Tag = JgsBuiltins.StrOf("Tag", value, line, col));
+        // M2: UserData is an entry, so it holds a counted share of what was set — through the
+        // dotted write, which already shares, and through set(h, 'UserData', v), which did not.
         Put(table, "UserData",
             entry => entry.Target.UserData is JgsValue stored ? stored : JgsValue.Array([]),
-            (entry, value, _, _) => entry.Target.UserData = value);
+            (entry, value, _, _) => entry.Target.UserData = JgsValue.Share(value));
         Put(table, "HandleVisibility",
             entry => OnOff(entry.HandleVisible),
             (entry, value, line, col) => entry.HandleVisible = ToOnOff("HandleVisibility", value, line, col));

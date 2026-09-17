@@ -297,7 +297,9 @@ internal static partial class JgsBuiltins
                 throw new JgsRuntimeException(line, col, $"Attempt to add \"{name}\" to a static workspace.");
             }
 
-            target.Declare(name, args[2]);
+            // M2: the named workspace's binding is an entry of its own, so it takes a counted
+            // share; storing the caller's wrapper would let a later write to either name reach both.
+            target.Declare(name, interpreter.CopyForBinding(args[2]));
             return JgsValue.Null;
         });
 
@@ -329,7 +331,15 @@ internal static partial class JgsBuiltins
             // An @(…) body is a function to build; anything else is the name of one that exists.
             if (text.StartsWith('@'))
             {
-                return interpreter.EvaluateSource(text, interpreter.CurrentFrame, line, col);
+                // A handle str2func builds captures nothing (appendix A #80): R2025b evaluates the
+                // text outside every workspace, so a free name in the body is a function resolved
+                // at the call, never the caller's variable of that name. The text is evaluated in
+                // an empty static workspace over the built-in layer — nothing to capture, and the
+                // handle still carries the caller's file for its local functions.
+                JgsEnvironment defining = interpreter.Dialect.IsMatlab
+                    ? new JgsEnvironment(interpreter.CurrentFrame.Builtins.Root) { IsStaticWorkspace = true }
+                    : interpreter.CurrentFrame;
+                return interpreter.EvaluateSource(text, defining, line, col);
             }
 
             // The same handle @name would make where the call stands (M145).

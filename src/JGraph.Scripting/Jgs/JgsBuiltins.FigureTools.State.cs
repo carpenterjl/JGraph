@@ -20,7 +20,7 @@ namespace JGraph.Scripting.Jgs;
 /// </summary>
 internal static partial class JgsBuiltins
 {
-    private static void RegisterFigureStateBuiltins(JgsEnvironment env)
+    private static void RegisterFigureStateBuiltins(JgsEnvironment env, JgsDialect dialect)
     {
         void Define(string name, Func<IReadOnlyList<JgsValue>, int, int, JgsValue> body) =>
             env.Builtins.Register(name, JgsValue.Function(new BuiltinFunction(name, body)));
@@ -31,7 +31,7 @@ internal static partial class JgsBuiltins
 
         // --- Application data -------------------------------------------------------------------
         Define("getappdata", GetAppData);
-        DefineSilent("setappdata", SetAppData);
+        DefineSilent("setappdata", (args, line, col) => SetAppData(args, dialect.CopyOnAssign, line, col));
         Define("isappdata", IsAppData);
         DefineSilent("rmappdata", RemoveAppData);
 
@@ -83,7 +83,7 @@ internal static partial class JgsBuiltins
         return entry.AppData.TryGetValue(name, out JgsValue? stored) ? stored : JgsValue.Array([]);
     }
 
-    private static JgsValue SetAppData(IReadOnlyList<JgsValue> args, int line, int col)
+    private static JgsValue SetAppData(IReadOnlyList<JgsValue> args, bool sharesOnStore, int line, int col)
     {
         (JgsHandleEntry entry, IReadOnlyList<JgsValue> rest) = PeelEntry("setappdata", args, line, col);
         if (rest.Count != 2)
@@ -92,11 +92,28 @@ internal static partial class JgsBuiltins
                 "setappdata takes a handle, a name, and the value to store under it.");
         }
 
-        // M6: appdata keeps the caller's own wrapper rather than taking a counted share, so the
-        // payload is exposed — `clear` must not free what a figure can still hand back (#152).
-        rest[1].MarkExposed();
-        entry.AppData[StrOf("setappdata", rest[0], line, col)] = rest[1];
+        // M2 (appendix A #100): appdata is an entry, so in the MATLAB dialect it holds a counted
+        // share of its own — `setappdata(f, 'k', v); v(1) = 7` leaves what the figure hands back.
+        // The JGS dialect keeps the caller's own wrapper (M17, reference semantics), and marks the
+        // payload exposed so `clear` cannot free what the figure can still hand back (M6, #152).
+        entry.AppData[StrOf("setappdata", rest[0], line, col)] = RetainedForEntry(rest[1], sharesOnStore);
         return JgsValue.Null;
+    }
+
+    /// <summary>
+    /// The wrapper an entry outside the workspace keeps for <paramref name="value"/>: a counted
+    /// share where the dialect copies on assignment (M2), the caller's own wrapper marked exposed
+    /// where it does not (M17, M6).
+    /// </summary>
+    internal static JgsValue RetainedForEntry(JgsValue value, bool sharesOnStore)
+    {
+        if (sharesOnStore)
+        {
+            return JgsValue.Share(value);
+        }
+
+        value.MarkExposed();
+        return value;
     }
 
     private static JgsValue IsAppData(IReadOnlyList<JgsValue> args, int line, int col)

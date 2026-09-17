@@ -1225,7 +1225,7 @@ internal static partial class JgsBuiltins
             var axes = new JgsValue[rank];
             for (int k = 0; k < rank; k++)
             {
-                axes[k] = AxisOf("griddedInterpolant", args[k], k, line, col);
+                axes[k] = JgsValue.Share(AxisOf("griddedInterpolant", args[k], k, line, col)); // M2: an entry over the argument
             }
 
             vectors = JgsValue.Cell(axes);

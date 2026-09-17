@@ -122,7 +122,8 @@ internal static partial class JgsBuiltins
 
         for (int i = from; i < args.Count; i += 2)
         {
-            fields[OptionNamed(name, names, TextArgument(name, args, i, line, col), line, col)] = args[i + 1];
+            // M2: the options struct's field is an entry over the caller's value.
+            fields[OptionNamed(name, names, TextArgument(name, args, i, line, col), line, col)] = JgsValue.Share(args[i + 1]);
         }
 
         return JgsValue.Struct(fields);
@@ -210,10 +211,9 @@ internal static partial class JgsBuiltins
             JgsValue solution = args[0];
             if (!solution.AsStruct.ContainsKey("solver"))
             {
-                var copied = new Dictionary<string, JgsValue>(solution.AsStruct, StringComparer.Ordinal)
-                {
-                    ["solver"] = JgsValue.Str("bvp4c"),
-                };
+                // M2: the rebuilt solution's fields are entries over the caller's children.
+                Dictionary<string, JgsValue> copied = JgsStructArray.SharedCopy(solution.AsStruct);
+                copied["solver"] = JgsValue.Str("bvp4c");
                 solution = JgsValue.Struct(copied);
             }
 
@@ -226,7 +226,7 @@ internal static partial class JgsBuiltins
                 : [extended, JgsValue.Number(interval[^1]), JgsValue.Str("solution")];
             extended = BvpExtend(second, line, col);
 
-            var trimmed = new Dictionary<string, JgsValue>(extended.AsStruct, StringComparer.Ordinal);
+            Dictionary<string, JgsValue> trimmed = JgsStructArray.SharedCopy(extended.AsStruct); // M2
             string solver = TextOf(extended.AsStruct["solver"]);
             trimmed.Remove("solver");
             trimmed.Remove(solver == "bvp5c" ? "idata" : "yp");
@@ -312,10 +312,10 @@ internal static partial class JgsBuiltins
 
         if (args.Count > 2 && !(args[2].Type == JgsType.Array && args[2].ArrayLength == 0))
         {
-            fields["parameters"] = args[2];
+            fields["parameters"] = JgsValue.Share(args[2]); // M2: an entry over the caller's value
         }
 
-        fields["yinit"] = guess;
+        fields["yinit"] = JgsValue.Share(guess); // M2: an entry over the caller's guess
         return JgsValue.Struct(fields);
     }
 
@@ -333,10 +333,12 @@ internal static partial class JgsBuiltins
                 "bvpxtend expects a solution structure.");
         }
 
-        var fields = new Dictionary<string, JgsValue>(sol.AsStruct, StringComparer.Ordinal);
+        // M2: the extended solution's fields are entries over the source's children, and the
+        // parameters over the caller's value, so each takes a share.
+        Dictionary<string, JgsValue> fields = JgsStructArray.SharedCopy(sol.AsStruct);
         if (args.Count == 4)
         {
-            fields["parameters"] = args[3];
+            fields["parameters"] = JgsValue.Share(args[3]);
         }
 
         double[] x = ToDoubles("bvpxtend", sol.AsStruct["x"], line, col);
@@ -515,11 +517,9 @@ internal static partial class JgsBuiltins
             var newMid = new double[n * midCount];
             Array.Copy(ymid, 0, newMid, offset * n, ymid.Length);
             Array.Copy(midpoint, 0, newMid, (atLeft ? 0 : midCount - 1) * n, n);
-            var idata = new Dictionary<string, JgsValue>(sol.AsStruct["idata"].AsStruct, StringComparer.Ordinal)
-            {
-                ["yp"] = JgsMatrix.FromColumnMajorDims(newYp, [n, joined]),
-                ["ymid"] = JgsMatrix.FromColumnMajorDims(newMid, [n, midCount]),
-            };
+            Dictionary<string, JgsValue> idata = JgsStructArray.SharedCopy(sol.AsStruct["idata"].AsStruct); // M2
+            idata["yp"] = JgsMatrix.FromColumnMajorDims(newYp, [n, joined]);
+            idata["ymid"] = JgsMatrix.FromColumnMajorDims(newMid, [n, midCount]);
             fields["idata"] = JgsValue.Struct(idata);
         }
         else
@@ -1020,7 +1020,7 @@ internal static partial class JgsBuiltins
         }
         else
         {
-            fields["history"] = reportedHistory;
+            fields["history"] = JgsValue.Share(reportedHistory); // M2: an entry over the caller's history
         }
 
         if (solution.Discont is { } discontinuities)

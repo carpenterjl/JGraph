@@ -773,7 +773,9 @@ internal static partial class JgsBuiltins
                 var fields = new Dictionary<string, JgsValue>(StringComparer.Ordinal);
                 foreach (KeyValuePair<string, JgsValue> field in elements.Elements[i])
                 {
-                    fields[field.Key] = ContainedStringsToChars(field.Value);
+                    // M2: a field with nothing to convert comes back as the source's own wrapper,
+                    // and the answer's field is an entry, so it takes a share of it.
+                    fields[field.Key] = JgsValue.Share(ContainedStringsToChars(field.Value));
                 }
 
                 converted[i] = fields;
