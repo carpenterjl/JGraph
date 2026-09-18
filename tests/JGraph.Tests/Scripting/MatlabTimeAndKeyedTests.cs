@@ -374,7 +374,7 @@ public class MatlabTimeAndKeyedTests : IDisposable
         assert(isConfigured(d));
         assert(isstring(keys(d)));
         assert(lookup(d, "zz", 'FallbackValue', -1) == -1);
-        insert(d, "c", 3);
+        d = insert(d, "c", 3);   % a dictionary is a value: insert answers the new one (M8, #20)
         assert(d("c") == 3);
         e = entries(d);
         assert(numel(e) == 3 && strcmp(e{1}.Key, 'a'));

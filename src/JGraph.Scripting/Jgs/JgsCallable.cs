@@ -44,6 +44,7 @@ internal sealed class BuiltinFunction : IJgsCallable, IJgsMultiCallable
         // how size("abc") came back 1-by-3 while numel("abc") correctly came back 1.
         KeepsStringArguments = JgsBuiltins.StringAwareBuiltins.Contains(name);
         MintsAnswer = JgsBuiltins.MintingBuiltins.Contains(name);
+        RunsScript = JgsBuiltins.ScriptRunningBuiltins.Contains(name);
     }
 
     /// <inheritdoc />
@@ -55,6 +56,15 @@ internal sealed class BuiltinFunction : IJgsCallable, IJgsMultiCallable
     /// the ownership audit has shown returns only wrappers it minted.
     /// </summary>
     public bool MintsAnswer { get; }
+
+    /// <summary>
+    /// Whether this builtin's body can run script code — call a callable it was handed, evaluate
+    /// text, or drain queued callbacks (V3, M5). A call of one holds every argument as a counted
+    /// share for the whole call, so a callback's write to a variable leaves the argument the builtin
+    /// is still walking alone. True only for a name on <see cref="JgsBuiltins.ScriptRunningBuiltins"/>,
+    /// which the ownership audit checks against every body that reaches a script entry point.
+    /// </summary>
+    public bool RunsScript { get; }
 
     /// <summary>
     /// Whether a bare call statement binds this built-in's result to <c>ans</c> and echoes it.

@@ -432,6 +432,11 @@ def gen_scope(n: int) -> tuple[str, list[str], str]:
 
 SCOPE_OWNER_RULES: list[tuple[str, str]] = [
     ("s_index_target_dict", "V6"),
+    # V3's loop-source scope isolates the value these loops walk; what is left is the loop itself
+    # — a char row is refused as a loop source, and a string array's elements are bound as char
+    # rows rather than 1-by-1 strings — a missing form, not an aliasing defect (re-owned by V3).
+    ("s_loop_source_char", "V6"),
+    ("s_loop_source_string", "V6"),
 ]
 
 

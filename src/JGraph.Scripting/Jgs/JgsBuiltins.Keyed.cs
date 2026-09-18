@@ -40,6 +40,16 @@ internal static partial class JgsBuiltins
         value.Type == JgsType.Struct
         && value.ClassName is MapClassName or VideoWriterClassName;
 
+    /// <summary>
+    /// M8 (ADR 0164): a builtin never mutates an argument. <c>e = insert(d, 1, 20)</c> and
+    /// <c>remove</c> answer a changed collection, so they start from a wrapper of their own over the
+    /// argument's payload and write through M7's setters, which detach it (#20, #21): <c>d</c> keeps
+    /// its entries, and a failure part-way leaves it as it was. A <c>containers.Map</c> is a handle
+    /// and is changed in place, as in MATLAB. The share is an internal one (M17), so it is taken in
+    /// either dialect.
+    /// </summary>
+    private static JgsValue Private(JgsValue map) => IsHandleClass(map) ? map : JgsValue.Share(map);
+
     /// <summary>Whether this value is one of the two keyed collections.</summary>
     internal static bool IsKeyedCollection(JgsValue value) =>
         value.Type == JgsType.Struct
@@ -125,7 +135,7 @@ internal static partial class JgsBuiltins
         Define("remove", (args, line, col) =>
         {
             Arity("remove", args, 2, line, col);
-            JgsValue map = RequireKeyed("remove", args[0], line, col);
+            JgsValue map = Private(RequireKeyed("remove", args[0], line, col));
             foreach (JgsValue key in KeysAsked(args[1]))
             {
                 int at = FindKey(map, key);
@@ -187,7 +197,7 @@ internal static partial class JgsBuiltins
         Define("insert", (args, line, col) =>
         {
             ArityRange("insert", args, 3, 3, line, col);
-            JgsValue map = RequireKeyed("insert", args[0], line, col);
+            JgsValue map = Private(RequireKeyed("insert", args[0], line, col));
             JgsValue[] wanted = KeysAsked(args[1]);
             JgsValue[] given = args[2].Type == JgsType.Cell ? args[2].AsCell : [args[2]];
             for (int i = 0; i < wanted.Length; i++)

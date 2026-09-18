@@ -1230,12 +1230,22 @@ internal sealed partial class Interpreter
             if (resolvedCall.Value.AsCallable is BuiltinFunction
                 { KnowsWhenDiscarded: true, MultiOutput: not null } knowing)
             {
-                knowing.CallDiscarded(given, named.Line, named.Column);
+                var holds = new ScopeHolds();
+                try
+                {
+                    HoldForWholeCall(knowing, given, ref holds);
+                    knowing.CallDiscarded(given, named.Line, named.Column);
+                }
+                finally
+                {
+                    holds.Release();
+                }
+
                 return;
             }
 
             _pendingCall = named;
-            JgsValue answered = resolvedCall.Value.AsCallable.Call(given, named.Line, named.Column);
+            JgsValue answered = CallHeld(resolvedCall.Value.AsCallable, given, named.Line, named.Column);
             if (BindsAns(resolvedCall.Value))
             {
                 BindAns(statement, answered, env, owned: MintsAnswer(resolvedCall.Value.AsCallable));
@@ -1718,9 +1728,7 @@ internal sealed partial class Interpreter
                 if (TryResolveCall(invocation, name.Name, env, out Resolution resolved, out JgsValue[] given))
                 {
                     _pendingCall = invocation;
-                    return resolved.Value.AsCallable is IJgsMultiCallable several
-                        ? several.CallMultiple(given, wanted, invocation.Line, invocation.Column)
-                        : [resolved.Value.AsCallable.Call(given, invocation.Line, invocation.Column)];
+                    return CallMultipleHeld(resolved.Value.AsCallable, given, wanted, invocation.Line, invocation.Column);
                 }
 
                 callee = resolved.Value;
@@ -1733,13 +1741,7 @@ internal sealed partial class Interpreter
             if (callee.Type == JgsType.Function)
             {
                 JgsValue[] arguments = EvaluateAll(invocation.Arguments, env);
-
-                if (callee.AsCallable is IJgsMultiCallable multi)
-                {
-                    return multi.CallMultiple(arguments, wanted, invocation.Line, invocation.Column);
-                }
-
-                return [callee.AsCallable.Call(arguments, invocation.Line, invocation.Column)];
+                return CallMultipleHeld(callee.AsCallable, arguments, wanted, invocation.Line, invocation.Column);
             }
         }
 
@@ -1829,7 +1831,20 @@ internal sealed partial class Interpreter
             return ExecuteForOverSteps(statement, steppedRange, env);
         }
 
-        return ExecuteForOverArray(statement, Evaluate(statement.Iterable, env), env);
+        // M5's loop-source scope: the loop walks the value its head named, so `for col = gm` with a
+        // body writing gm(1, :) = 7 still binds the columns gm had (#9), and a `clear` in the body
+        // cannot free what the loop has yet to visit (#15). The body is script code, so the source
+        // is always held; the share is given back when the loop ends, however it ends.
+        JgsValue source = Evaluate(statement.Iterable, env);
+        var holds = new ScopeHolds();
+        try
+        {
+            return ExecuteForOverArray(statement, Dialect.CopyOnAssign ? Hold(source, ref holds) : source, env);
+        }
+        finally
+        {
+            holds.Release();
+        }
     }
 
     /// <summary>Runs a <c>for</c> over an already-built value, which is every loop but a stepped one.</summary>
@@ -2266,12 +2281,23 @@ internal sealed partial class Interpreter
     /// </remarks>
     private JgsValue EvaluateMatrix(MatrixLiteral matrix, JgsEnvironment env)
     {
-        var rows = new List<JgsValue[]>(matrix.Rows.Count);
-        foreach (IReadOnlyList<Expr> row in matrix.Rows)
+        // M5: a block is held as a share while a later one runs script code (`[A; f()]`), until
+        // the literal is assembled from them.
+        var holds = new ScopeHolds();
+        try
         {
-            rows.Add(EvaluateAll(row, env));
+            JgsValue assembled = AssembleMatrix(matrix, EvaluateRows(matrix.Rows, env, ref holds));
+            holds.Keep(assembled); // a literal's answer is adopted, so a piece handed back stays counted
+            return assembled;
         }
+        finally
+        {
+            holds.Release();
+        }
+    }
 
+    private JgsValue AssembleMatrix(MatrixLiteral matrix, List<JgsValue[]> rows)
+    {
         // Structs concatenate into a struct array (M65) rather than through the numeric block
         // machinery, which read them as one element apiece and answered with a double.
         if (AnyStruct(rows))
@@ -2408,8 +2434,21 @@ internal sealed partial class Interpreter
     /// </remarks>
     private JgsValue EvaluateArrayLiteral(ArrayLiteral array, JgsEnvironment env)
     {
-        JgsValue[] elements = EvaluateAll(array.Elements, env);
-        JgsValue built = BuildArrayLiteral(array, elements, env);
+        // M5's literal scope (`[gv, bump()]`, #6). The literal's answer is adopted by a binding, so
+        // a piece the join hands back unchanged keeps its count rather than being released.
+        var holds = new ScopeHolds();
+        JgsValue[] elements;
+        JgsValue built;
+        try
+        {
+            elements = EvaluateAll(array.Elements, env, ref holds);
+            built = BuildArrayLiteral(array, elements, env);
+            holds.Keep(built);
+        }
+        finally
+        {
+            holds.Release();
+        }
 
         if (Dialect.ConcatenatesBrackets && elements.Length > 0 && !built.IsTime)
         {
@@ -2956,6 +2995,27 @@ internal sealed partial class Interpreter
         }
 
         JgsValue left = Evaluate(binary.Left, env);
+
+        // M5's operand scope: `gv + bump()` holds its left operand as a share while the right one
+        // runs script code, so bump's write to gv detaches gv and the sum reads what gv was.
+        if (Dialect.CopyOnAssign && IsHoldable(left) && !IsInert(binary.Right, env))
+        {
+            var holds = new ScopeHolds();
+            try
+            {
+                left = Hold(left, ref holds);
+                JgsValue heldRight = Evaluate(binary.Right, env);
+                JgsValue heldAnswer = ApplyBinary(binary.Op, left, heldRight, binary);
+                holds.Keep(heldAnswer); // an operator overload may hand its operand back
+                owned = OwnsFreshResult(heldAnswer, left, heldRight);
+                return heldAnswer;
+            }
+            finally
+            {
+                holds.Release();
+            }
+        }
+
         JgsValue right = Evaluate(binary.Right, env);
         JgsValue answer = ApplyBinary(binary.Op, left, right, binary);
         owned = OwnsFreshResult(answer, left, right);
@@ -2991,34 +3051,65 @@ internal sealed partial class Interpreter
     private JgsValue EvaluatePlusChain(BinaryExpr outer, BinaryExpr spine, JgsEnvironment env, out bool owned)
     {
         JgsBuiltins.StringConcatChain? chain = null;
-        JgsValue? left = FoldPlus(spine, env, ref chain);
-        JgsValue right = Evaluate(outer.Right, env);
-        if (chain is not null)
+        var holds = new ScopeHolds(); // M5: each pair's left side, while its right side runs
+        try
         {
-            if (JoinsAsText(right))
+            JgsValue? left = FoldPlus(spine, env, ref chain, ref holds);
+            if (left is not null)
             {
-                chain.Append(right, outer.Line, outer.Column);
-                owned = false;
-                return chain.Build();
+                left = HoldAcross(left, outer.Right, env, ref holds);
             }
 
-            left = chain.Build();
-        }
+            JgsValue right = Evaluate(outer.Right, env);
+            if (chain is not null)
+            {
+                if (JoinsAsText(right))
+                {
+                    chain.Append(right, outer.Line, outer.Column);
+                    owned = false;
+                    return chain.Build();
+                }
 
-        JgsValue answer = ApplyBinary(outer.Op, left!, right, outer);
-        owned = OwnsFreshResult(answer, left!, right);
-        return answer;
+                left = chain.Build();
+            }
+
+            JgsValue answer = ApplyBinary(outer.Op, left!, right, outer);
+            holds.Keep(answer);
+            owned = OwnsFreshResult(answer, left!, right);
+            return answer;
+        }
+        finally
+        {
+            holds.Release();
+        }
     }
+
+    /// <summary>
+    /// M5: <paramref name="value"/> as a scope holds it while <paramref name="next"/> is evaluated —
+    /// a counted share when <paramref name="next"/> may run script code, the value itself otherwise.
+    /// </summary>
+    private JgsValue HoldAcross(JgsValue value, Expr next, JgsEnvironment env, ref ScopeHolds holds) =>
+        Dialect.CopyOnAssign && IsHoldable(value) && !IsInert(next, env) ? Hold(value, ref holds) : value;
+
+    /// <summary><see cref="HoldAcross"/> for a list of expressions still to be evaluated.</summary>
+    private JgsValue HoldAcrossAll(JgsValue value, IReadOnlyList<Expr> next, JgsEnvironment env, ref ScopeHolds holds) =>
+        Dialect.CopyOnAssign && IsHoldable(value) && !AllInert(next, env) ? Hold(value, ref holds) : value;
 
     /// <summary>
     /// One inner node of a <c>+</c> spine: its answer, or null while a chain is pending in
     /// <paramref name="chain"/>.
     /// </summary>
-    private JgsValue? FoldPlus(BinaryExpr node, JgsEnvironment env, ref JgsBuiltins.StringConcatChain? chain)
+    private JgsValue? FoldPlus(
+        BinaryExpr node, JgsEnvironment env, ref JgsBuiltins.StringConcatChain? chain, ref ScopeHolds holds)
     {
         JgsValue? left = node.Left is BinaryExpr { Op: TokenType.Plus } inner
-            ? FoldPlus(inner, env, ref chain)
+            ? FoldPlus(inner, env, ref chain, ref holds)
             : Evaluate(node.Left, env);
+        if (left is not null)
+        {
+            left = HoldAcross(left, node.Right, env, ref holds);
+        }
+
         JgsValue right = Evaluate(node.Right, env);
 
         if (chain is not null)
@@ -4902,7 +4993,7 @@ internal sealed partial class Interpreter
             if (TryResolveCall(call, name.Name, env, out Resolution resolved, out JgsValue[] given))
             {
                 _pendingCall = call;
-                JgsValue answered = resolved.Value.AsCallable.Call(given, call.Line, call.Column);
+                JgsValue answered = CallHeld(resolved.Value.AsCallable, given, call.Line, call.Column);
                 _adoptableAnswer = MintsAnswer(resolved.Value.AsCallable) ? answered : null;
                 return answered;
             }
@@ -4914,6 +5005,48 @@ internal sealed partial class Interpreter
             callee = EvaluateCallee(call.Callee, env);
         }
 
+        // M5's index-target scope (`G(f())`, #155: the read sees G as it was when the read began)
+        // and receiver scope (`v.read(bump())` on a value object, #19): the subscripts or arguments
+        // may run script code, so the target — or the object a method was read off — is held as a
+        // share until the read or the call is done.
+        if (Dialect.CopyOnAssign && call.Arguments.Count > 0 && IsScopeTarget(callee)
+            && !AllInert(call.Arguments, env))
+        {
+            var holds = new ScopeHolds();
+            try
+            {
+                callee = callee.Type == JgsType.Function
+                    ? JgsValue.Function(((BoundMethod)callee.AsCallable).WithReceiverValue(
+                        Hold(((BoundMethod)callee.AsCallable).Receiver, ref holds)))
+                    : Hold(callee, ref holds);
+                JgsValue read = CallOrIndex(callee, call, env);
+                holds.Keep(read);
+                return read;
+            }
+            finally
+            {
+                holds.Release();
+            }
+        }
+
+        return CallOrIndex(callee, call, env);
+    }
+
+    /// <summary>
+    /// Whether a callee is something M5 holds while a call's arguments run: data being indexed, or a
+    /// method bound to a value object.
+    /// </summary>
+    private static bool IsScopeTarget(JgsValue callee) =>
+        callee.Type == JgsType.Function
+            ? callee.AsCallable is BoundMethod bound && IsHoldable(bound.Receiver)
+            : IsHoldable(callee);
+
+    /// <summary>
+    /// The half of <see cref="EvaluateCall"/> after the callee is known: an index into data, a
+    /// keyed lookup, an interpolant, or a call of a function value.
+    /// </summary>
+    private JgsValue CallOrIndex(JgsValue callee, CallExpr call, JgsEnvironment env)
+    {
         // "Calling" an array, string, or image with subscripts is indexing, identical to the bracket
         // form — a scalar lookup, a bool-mask filter, an index-array/range gather, 'end', or ':'.
         if (callee.Type is JgsType.Array or JgsType.String or JgsType.Image)
@@ -5028,7 +5161,7 @@ internal sealed partial class Interpreter
         // to reach the frame the call creates. Handing over the node itself costs one field write —
         // building a list of names here would cost an allocation on every call in the language.
         _pendingCall = call;
-        return callee.AsCallable.Call(arguments, call.Line, call.Column);
+        return CallHeld(callee.AsCallable, arguments, call.Line, call.Column);
     }
 
     /// <summary>
@@ -6204,16 +6337,24 @@ internal sealed partial class Interpreter
     /// </remarks>
     private JgsValue EvaluateCellLiteral(CellLiteral literal, JgsEnvironment env)
     {
-        int rows = literal.Rows.Count;
-
         // Each row is evaluated before its width is known, because a comma-separated list inside one
         // ({c{:}}) contributes as many entries as it names rather than the one it is written as.
-        var built = new List<JgsValue[]>(rows);
-        foreach (IReadOnlyList<Expr> row in literal.Rows)
+        // M5: an element is held as a share while a later one runs script code; each slot below
+        // takes its own share, and the scope's are given back once the cell is built.
+        var holds = new ScopeHolds();
+        try
         {
-            built.Add(EvaluateAll(row, env));
+            return BuildCellLiteral(literal, EvaluateRows(literal.Rows, env, ref holds));
         }
+        finally
+        {
+            holds.Release();
+        }
+    }
 
+    private JgsValue BuildCellLiteral(CellLiteral literal, List<JgsValue[]> built)
+    {
+        int rows = literal.Rows.Count;
         int cols = rows == 0 ? 0 : built[0].Length;
         for (int r = 1; r < rows; r++)
         {
@@ -6258,6 +6399,27 @@ internal sealed partial class Interpreter
     private JgsValue EvaluateBraceIndex(BraceIndexExpr brace, JgsEnvironment env)
     {
         JgsValue target = Evaluate(brace.Target, env);
+        if (Dialect.CopyOnAssign && IsHoldable(target) && !AllInert(brace.Indices, env))
+        {
+            var holds = new ScopeHolds(); // M5's index-target scope, as for a paren read
+            try
+            {
+                JgsValue read = BraceRead(Hold(target, ref holds), brace, env);
+                holds.Keep(read);
+                return read;
+            }
+            finally
+            {
+                holds.Release();
+            }
+        }
+
+        return BraceRead(target, brace, env);
+    }
+
+    /// <summary><see cref="EvaluateBraceIndex"/> once its target is in hand.</summary>
+    private JgsValue BraceRead(JgsValue target, BraceIndexExpr brace, JgsEnvironment env)
+    {
         if (target.Type == JgsType.Table)
         {
             return IndexTableBrace(target, brace.Indices, brace, env);
@@ -6313,8 +6475,21 @@ internal sealed partial class Interpreter
             JgsValue target = Evaluate(brace.Target, env);
             if (target.Type == JgsType.Cell)
             {
+                // M5's index-target scope: the slots are read out of the cell as it was when the
+                // subscripts began, whatever they do to the variable holding it.
+                var holds = new ScopeHolds();
+                int[] slots;
+                try
+                {
+                    target = HoldAcrossAll(target, brace.Indices, env, ref holds);
+                    slots = BraceSlots(target, brace.Indices, brace, env);
+                }
+                finally
+                {
+                    holds.Release();
+                }
+
                 JgsValue[] elements = target.AsCell;
-                int[] slots = BraceSlots(target, brace.Indices, brace, env);
                 var spread = new JgsValue[slots.Length];
                 for (int i = 0; i < slots.Length; i++)
                 {
@@ -6358,13 +6533,39 @@ internal sealed partial class Interpreter
     /// </summary>
     private JgsValue[] EvaluateAll(IReadOnlyList<Expr> exprs, JgsEnvironment env)
     {
+        // M5's argument-evaluation scope: while a later argument runs script code, every earlier
+        // one is held as a counted share, and the scope ends with the list. What a callee does with
+        // the list after that needs no scope — a user function binds its parameters through a
+        // share of its own, a builtin that runs no script cannot see a write, and one that does is
+        // held for the whole call by CallHeld.
+        var holds = new ScopeHolds();
+        try
+        {
+            return EvaluateAll(exprs, env, ref holds);
+        }
+        finally
+        {
+            holds.Release();
+        }
+    }
+
+    /// <summary><see cref="EvaluateAll(IReadOnlyList{Expr}, JgsEnvironment)"/>, holding into a scope the caller owns.</summary>
+    private JgsValue[] EvaluateAll(IReadOnlyList<Expr> exprs, JgsEnvironment env, ref ScopeHolds holds)
+    {
         // Nothing in the list can spread, which is the overwhelmingly common case: evaluate straight
         // into the array the caller wanted rather than through a list that would be copied out again.
         if (!MightSpread(exprs))
         {
             var plain = new JgsValue[exprs.Count];
+            int held = 0; // plain[..held] are already scope shares, or need none
             for (int i = 0; i < plain.Length; i++)
             {
+                if (i > held && AnyHoldable(plain, held, i) && !IsInert(exprs[i], env))
+                {
+                    HoldAll(plain, held, i, ref holds);
+                    held = i;
+                }
+
                 plain[i] = Evaluate(exprs[i], env);
             }
 
@@ -6372,12 +6573,51 @@ internal sealed partial class Interpreter
         }
 
         var spread = new List<JgsValue>(exprs.Count);
+        int spreadHeld = 0;
         foreach (Expr expr in exprs)
         {
+            if (spread.Count > spreadHeld && AnyHoldable(spread, spreadHeld, spread.Count) && !IsInert(expr, env))
+            {
+                for (int j = spreadHeld; j < spread.Count; j++)
+                {
+                    spread[j] = Hold(spread[j], ref holds);
+                }
+
+                spreadHeld = spread.Count;
+            }
+
             spread.AddRange(EvaluateSpread(expr, env));
         }
 
         return [.. spread];
+    }
+
+    /// <summary>Whether a scope would take a share of any of <c>values[from..to]</c> (M5).</summary>
+    private bool AnyHoldable(IList<JgsValue> values, int from, int to)
+    {
+        if (!Dialect.CopyOnAssign)
+        {
+            return false;
+        }
+
+        for (int i = from; i < to; i++)
+        {
+            if (IsHoldable(values[i]))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /// <summary>Replaces <c>values[from..to]</c> with the shares a scope holds (M5).</summary>
+    private void HoldAll(JgsValue[] values, int from, int to, ref ScopeHolds holds)
+    {
+        for (int i = from; i < to; i++)
+        {
+            values[i] = Hold(values[i], ref holds);
+        }
     }
 
     /// <summary>

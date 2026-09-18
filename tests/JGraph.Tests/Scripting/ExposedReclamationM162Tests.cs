@@ -95,6 +95,13 @@ public class ExposedReclamationM162Tests : IDisposable
     [Fact]
     public async Task AMatlabClearLoopOverNativeBuffersStaysUnderTheNativeBudget()
     {
+        // Packed storage only: in the boxed lane (JGRAPH_JGS_PACKED=0) an array owns no native,
+        // mapped or counted buffer, so there is nothing here to measure.
+        if (!JgsPacking.Enabled)
+        {
+            return;
+        }
+
         BufferAllocator allocator = NativeBudgetOf(4);
         using (JgsPacking.Use(allocator))
         {
@@ -119,6 +126,13 @@ public class ExposedReclamationM162Tests : IDisposable
     [Fact]
     public async Task AJgsBindingClearedByAScriptItRunsStaysUnderTheNativeBudget()
     {
+        // Packed storage only: in the boxed lane (JGRAPH_JGS_PACKED=0) an array owns no native,
+        // mapped or counted buffer, so there is nothing here to measure.
+        if (!JgsPacking.Enabled)
+        {
+            return;
+        }
+
         File.WriteAllText(Path.Combine(_folder, "clear_vars.m"), "clear a\n");
         BufferAllocator allocator = NativeBudgetOf(4);
         using (JgsPacking.Use(allocator))
@@ -146,6 +160,13 @@ public class ExposedReclamationM162Tests : IDisposable
     [Fact]
     public async Task AMatlabClearLoopOverMappedBuffersStaysUnderTheDiskAndFileBudgets()
     {
+        // Packed storage only: in the boxed lane (JGRAPH_JGS_PACKED=0) an array owns no native,
+        // mapped or counted buffer, so there is nothing here to measure.
+        if (!JgsPacking.Enabled)
+        {
+            return;
+        }
+
         BufferAllocator allocator = MappedBudgetOf(4, maxFiles: 3);
         using (JgsPacking.Use(allocator))
         {
@@ -247,6 +268,13 @@ public class ExposedReclamationM162Tests : IDisposable
     [Fact]
     public async Task ARefusedAllocationReachesTheScriptAsMatlabsErrorAndLeavesTheWorkspaceWhole()
     {
+        // Packed storage only: in the boxed lane (JGRAPH_JGS_PACKED=0) an array owns no native,
+        // mapped or counted buffer, so there is nothing here to measure.
+        if (!JgsPacking.Enabled)
+        {
+            return;
+        }
+
         BufferAllocator allocator = MappedBudgetOf(1);
         using (JgsPacking.Use(allocator))
         {

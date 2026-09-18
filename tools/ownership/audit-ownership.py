@@ -470,7 +470,7 @@ def holders_of(body: list[tuple[int, str]], parameters: set[str],
 # call, whose answer is Foo's business and is settled per helper in two passes.
 # ---------------------------------------------------------------------------------------------
 
-SHARE_WRAPPER_RE = re.compile(r"^(JgsValue\.Share|[\w.]*CopyForBinding|CopyContainer|[\w.]*RetainedForEntry)\(")
+SHARE_WRAPPER_RE = re.compile(r"^(JgsValue\.Share|[\w.]*CopyForBinding|CopyContainer|[\w.]*RetainedForEntry|Hold)\(")
 MINT_WRAPPER_RE = re.compile(r"^(new\s|JgsValue\.\w+\(|JgsMatrix\.\w+\(|JgsEmpty\.)")
 ARRAY_TYPE_RE = re.compile(r"^(JgsValue\[\]|List<JgsValue>|IReadOnlyList<JgsValue>|IList<JgsValue>)$")
 DICT_TYPE_RE = re.compile(
@@ -861,6 +861,264 @@ def check_minting(verdicts: dict[str, set[str]]) -> list[str]:
     return problems
 
 
+# ---------------------------------------------------------------------------------------------
+# V3.1: which builtins can run script code. M5's whole-call scope holds every argument of such a
+# builtin as a counted share for the length of the call, so the list the interpreter reads
+# (`JgsBuiltins.ScriptRunningBuiltins`) must name every builtin whose body reaches a script entry
+# point — a callable's `Call`, the interpreter's evaluators, a callback drain — directly or through
+# any helper, and nothing else. The call graph is by member name, so an overload or a name two
+# classes share over-approximates: a builtin it wrongly flags pays a share, never a lost write.
+# ---------------------------------------------------------------------------------------------
+
+SCRIPTING_ROOT = REPO / "src/JGraph.Scripting"
+SCOPES_SOURCE = REPO / "src/JGraph.Scripting/Jgs/JgsBuiltins.Scopes.cs"
+
+# A statement that hands control to script code: a callable invoked, source text or a syntax tree
+# evaluated, a paused session resumed, queued callbacks run.
+SCRIPT_ENTRY_RE = re.compile(
+    r"\.(Call|CallMultiple|CallDiscarded|CallAsStatement|CallAsCallback)\("
+    r"|\b(EvaluateSource|EvaluateSourceIn|EvaluateInContext|EvaluateForOutputsInContext|EvaluateForOutputsIn"
+    r"|EvaluateIn|ExecuteFunctionBody|RunScriptFile|RunWhilePaused)\("
+    r"|\binterpreter\.Evaluate\w*\("
+    r"|\.Drain\("
+)
+# A call the graph follows: an unqualified `Name(` (the member's own class, its partials, a static
+# import), or one qualified by the two receivers the engine's own members are reached through —
+# the builtins class and the interpreter. A call on any other receiver (`list.Add(`,
+# `builder.Build(`) is a library call or a model object's, and following it by name alone joined
+# every builtin to every other through `Add` and `Build`; the members that do reach script through
+# such a receiver are the entry points themselves, which SCRIPT_ENTRY_RE names directly.
+CALLEE_RE = re.compile(
+    r"(?<![\w.])(?<!new )([A-Z]\w*)\s*(?:<[^<>()]*>)?\("
+    r"|\.([A-Z]\w*)\s*(?:<[^<>()]*>)?\("
+)
+# The receivers whose members the graph follows by name: the engine's own classes, reached as a
+# type or through the one instance a builtin holds.
+OWN_RECEIVER_RE = re.compile(
+    r"\b(?:JgsBuiltins|Interpreter|interpreter|_interpreter|this|JgsCallbackDispatcher\.Current\??"
+    r"|dispatcher\??|_dispatcher\??)\s*$")
+
+# Receiver calls by these names are the base library's (collections, text, tasks, spans) or are
+# spelled the same by a dozen model types, and following them by name joined every builtin to
+# every other. A member of the engine's own with one of these names is still reached by an
+# unqualified call from its own class.
+LIBRARY_NAMES = {
+    "Add", "AddRange", "Clear", "Build", "Remove", "RemoveAt", "RemoveAll", "Insert", "Contains",
+    "ContainsKey", "TryGetValue", "TryGet", "TryAdd", "Get", "Set", "GetValueOrDefault", "Parse",
+    "TryParse", "Format", "ToString", "Append", "AppendLine", "Dispose", "Invoke", "Equals",
+    "CompareTo", "Run", "Start", "Stop", "Wait", "Select", "SelectMany", "Where", "Any", "All",
+    "First", "FirstOrDefault", "Last", "LastOrDefault", "Count", "Sum", "Max", "Min", "Sort",
+    "OrderBy", "Reverse", "Split", "Join", "Replace", "Trim", "TrimEnd", "TrimStart", "Substring",
+    "IndexOf", "LastIndexOf", "StartsWith", "EndsWith", "Concat", "CopyTo", "Fill", "Slice",
+    "AsSpan", "AsMemory", "GetValue", "SetValue", "Push", "Pop", "Peek", "Enqueue", "Dequeue",
+    "TryDequeue", "Write", "WriteLine", "Read", "ReadLine", "ReadToEnd", "Close", "Open", "Flush",
+    "Register", "Lookup", "Resolve", "Value", "Values", "Keys", "ToArray", "ToList", "ToDictionary",
+    "GetEnumerator", "MoveNext", "Distinct", "Zip", "Skip", "Take", "Aggregate", "Cast", "OfType",
+    "Exists", "Find", "FindIndex", "ConvertAll", "ForEach", "TrueForAll", "SequenceEqual", "Length",
+    "Create", "Clone", "Copy", "Reset", "Update", "Apply", "Execute", "Handle", "Process", "Load",
+    "Save", "Delete", "Draw", "Render", "Refresh", "Show", "Hide", "Enter", "Exit", "Push", "Emit",
+}
+
+# Members whose road to script code is a user class's method chosen because an argument is an
+# object — an operator or function overload. M5 holds every argument of a call whose arguments
+# include an object for the whole call whatever the builtin, so these are the dynamic rule's, and
+# cutting them keeps `sin`, `plus` and the rest of the numeric surface off the list. `Construct`
+# is a class's constructor, which binds its arguments as parameters — counted shares (M2) — before
+# its body runs, exactly as a user function does, so it needs no whole-call scope either.
+OVERLOAD_DISPATCH = {
+    "TryUnaryOverload", "TryOperatorOverload", "TryObjectDisplay", "Construct",
+}
+
+
+FUNCTION_HEAD_RE = re.compile(
+    r"(?:^|[\s(])(?:[\w<>\[\],.?]+\s+)+([A-Za-z_]\w*)\s*(?:<[\w\s,]*>)?\s*\((.*)\)\s*(?:where\s[^{]*)?$", re.S)
+EXPRESSION_BODIED_RE = re.compile(
+    r"^(?:[\w<>\[\],.?]+\s+)+([A-Za-z_]\w*)\s*(?:<[\w\s,]*>)?\s*\([^=]*\)\s*=>")
+NOT_A_FUNCTION = {"if", "for", "foreach", "while", "switch", "using", "lock", "catch", "fixed", "return",
+                  "new", "else", "when", "throw", "await", "nameof", "typeof", "sizeof", "default", "is", "in"}
+
+
+# Functions whose only road to script code is a `.Call` on another builtin they looked up by name
+# — not a callable an argument supplied — and whose targets run none: `warning` (every numeric
+# warning is printed through it), a text verb's legacy JGS spelling, a reduction's own inner
+# implementation, `CallBuiltin`'s named lookup. Each is a claim about the target, checked by hand
+# when the forward is written: a forward to a builtin that does run script must not be listed.
+FORWARDS_TO_BUILTIN = {
+    "Warn": "warning",
+    "WarnIfRankDeficient": "warning",
+    "TextSearched": "the legacy JGS contains/startsWith/endsWith/count",
+    "IsMissingOf": "the legacy JGS ismissing",
+    "SplitText2": "the legacy JGS split",
+    "Reduce": "the reduction's own inner builtin (sum, prod, mean, …)",
+    "CallBuiltin": "a builtin named by the caller in C# (min, max, …)",
+}
+
+
+def callees(statement: str, local: dict[str, str] | None = None) -> set[str]:
+    """The function names a statement calls, as the script-reach graph follows them; a call of
+    one of this file's local functions names its file-scoped node."""
+    found = set()
+    for m in CALLEE_RE.finditer(statement):
+        if m.group(1):
+            name = m.group(1)
+            found.add(local.get(name, name) if local else name)
+        elif m.group(2) not in LIBRARY_NAMES and OWN_RECEIVER_RE.search(statement[:m.start()]):
+            found.add(m.group(2))
+    return found
+
+
+def function_bodies(raw: str, label: str = "") -> tuple[dict[str, list[str]], dict[str, str]]:
+    """Every method and local function in a file, with the statements inside its braces, and the
+    file's local functions by name.
+
+    A local function (`JgsValue CloseFigures(…) { … }` inside a registrar) is a node of its own:
+    attributing its body to the member around it hid `close`'s `CloseRequestFcn` road behind a
+    name nothing called. It is scoped to its file (`JgsBuiltins.cs::CloseFigures`), because a
+    dozen files each have an `At` or a `Sample` of their own and joining them by name joined
+    `datetime` to a quadrature's integrand. A lambda is not a node; its statements belong to the
+    function it is in. A control statement's head (`if (Foo()) {`) is a statement of its function.
+    """
+    code = strip_code(raw)
+    bodies: dict[str, list[str]] = defaultdict(list)
+    local: dict[str, str] = {}
+    stack: list[tuple[str, int]] = []
+    depth, start = 0, 0
+    paren = 0
+    for i, c in enumerate(code):
+        if c in "([":
+            paren += 1
+        elif c in ")]":
+            paren -= 1
+        elif c == "{" and paren <= 0:
+            head = " ".join(code[start:i].split())
+            m = FUNCTION_HEAD_RE.search(head)
+            depth += 1
+            if m and m.group(1) not in NOT_A_FUNCTION and "=>" not in head and "=" not in head.split("(")[0]:
+                name = m.group(1)
+                if stack:  # declared inside a function: a local function, scoped to the file
+                    name = local.setdefault(m.group(1), f"{label}::{m.group(1)}")
+                stack.append((name, depth))
+            elif head and stack:
+                bodies[stack[-1][0]].append(head)
+            start = i + 1
+        elif c == "}" and paren <= 0:
+            piece = " ".join(code[start:i].split())
+            if piece and stack:
+                bodies[stack[-1][0]].append(piece)
+            if stack and stack[-1][1] == depth:
+                stack.pop()
+            depth -= 1
+            start = i + 1
+        elif c == ";" and paren <= 0:
+            piece = " ".join(code[start:i].split())
+            if piece:
+                m = EXPRESSION_BODIED_RE.match(piece)
+                if m and m.group(1) not in NOT_A_FUNCTION:
+                    name = m.group(1)
+                    if stack:
+                        name = local.setdefault(m.group(1), f"{label}::{m.group(1)}")
+                    bodies[name].append(piece)
+                elif stack:
+                    bodies[stack[-1][0]].append(piece)
+            start = i + 1
+    return bodies, local
+
+
+LOCALS: dict[str, dict[str, str]] = {}
+
+
+def script_reach(files: list[tuple[str, dict, dict]]) -> set[str]:
+    """Every function name whose body, or the body of any function it calls, reaches a script entry."""
+    calls: dict[str, set[str]] = defaultdict(set)
+    reach: set[str] = set()
+    for path in sorted(SCRIPTING_ROOT.rglob("*.cs")):
+        if "obj" in path.parts or "bin" in path.parts:
+            continue
+        bodies, local = function_bodies(path.read_text(encoding="utf-8"), path.name)
+        LOCALS[path.name] = local
+        for member, body in bodies.items():
+            if member in OVERLOAD_DISPATCH or member.split("::")[-1] in FORWARDS_TO_BUILTIN:
+                continue
+            for statement in body:
+                if SCRIPT_ENTRY_RE.search(statement):
+                    reach.add(member)
+                calls[member] |= callees(statement, local)
+    while True:
+        grown = {member for member, callees in calls.items() if member not in reach and callees & reach}
+        if not grown:
+            return reach
+        reach |= grown
+
+
+def script_running_builtins(reach: set[str]) -> dict[str, int]:
+    """Every builtin registered by a literal name whose body reaches script code, with its line."""
+    found: dict[str, int] = {}
+    for path in sorted(SCRIPTING_ROOT.rglob("*.cs")):
+        if "obj" in path.parts or "bin" in path.parts:
+            continue
+        raw = path.read_text(encoding="utf-8")
+        for name, body, line, helper in registrations(raw):
+            if helper is not None:
+                runs = helper in reach
+            else:
+                local = LOCALS.get(path.name, {})
+                runs = any(SCRIPT_ENTRY_RE.search(s) or callees(s, local) & reach for _, s in statements(body))
+            if runs:
+                found.setdefault(name, line)
+    return found
+
+
+def registered_names() -> set[str]:
+    names: set[str] = set()
+    for path in sorted(SCRIPTING_ROOT.rglob("*.cs")):
+        if "obj" in path.parts or "bin" in path.parts:
+            continue
+        names.update(name for name, _, _, _ in registrations(path.read_text(encoding="utf-8")))
+    return names
+
+
+def listed_script_runners() -> list[str]:
+    if not SCOPES_SOURCE.exists():
+        return []
+    raw = SCOPES_SOURCE.read_text(encoding="utf-8")
+    start = raw.find("ScriptRunningBuiltins")
+    return re.findall(r"\"([\w.]+)\"", raw[start:]) if start >= 0 else []
+
+
+ASSERTED_RE = re.compile(r"//\s*audit: runs no script:\s*([\w. ]+?)\s+—")
+
+
+def asserted_script_free() -> set[str]:
+    """Builtins the graph flags that JgsBuiltins.Scopes.cs asserts, each with its reason, run no
+    script — a name two helpers share, or a forward to another builtin. Like `// audit: mints`, a
+    spelled-out claim the audit believes and a reviewer can read."""
+    if not SCOPES_SOURCE.exists():
+        return set()
+    names: set[str] = set()
+    for m in ASSERTED_RE.finditer(SCOPES_SOURCE.read_text(encoding="utf-8")):
+        names.update(m.group(1).split())
+    return names
+
+
+def check_script_runners(computed: dict[str, int]) -> list[str]:
+    """The list must be exactly the builtins this audit sees reach script code, less those
+    asserted script-free; an assertion about a builtin the graph no longer flags is stale."""
+    listed = set(listed_script_runners())
+    asserted = asserted_script_free()
+    flagged = set(computed)
+    problems = [f"{name}: reaches script code but is neither on ScriptRunningBuiltins nor asserted script-free"
+                for name in sorted(flagged - listed - asserted)]
+    known = registered_names()
+    for name in sorted(listed - flagged):
+        problems.append(f"{name}: on ScriptRunningBuiltins but "
+                        + ("reaches no script entry" if name in known else "not a builtin this audit can see"))
+    for name in sorted(asserted - flagged):
+        problems.append(f"{name}: asserted script-free but the graph no longer flags it (stale assertion)")
+    for name in sorted(asserted & listed):
+        problems.append(f"{name}: both listed and asserted script-free")
+    return problems
+
+
 RETURN_RE = re.compile(r"^return\s+(.+)$")
 LAMBDA_RE = re.compile(r"=>\s*(.+)$")
 
@@ -1029,6 +1287,9 @@ def lvalue_before(statement: str, at: int) -> str:
     return m.group(1) if m else ""
 
 
+SCRIPT_FILES: list[tuple[str, dict, dict]] = []
+
+
 def scan(sinks: dict[str, set[int]]) -> tuple[list[Site], dict[str, set[str]]]:
     files = []
     paths = []
@@ -1042,6 +1303,8 @@ def scan(sinks: dict[str, set[int]]) -> tuple[list[Site], dict[str, set[str]]]:
             files.append(parse(path))
             paths.append(path)
 
+    SCRIPT_FILES.extend(parse(path) for path in sorted(SCRIPTING_ROOT.rglob("*.cs"))
+                        if "obj" not in path.parts and "bin" not in path.parts)
     fresh_calls = return_contracts(files)
     borrowing = borrowing_contracts(files, fresh_calls)
     found: list[Site] = []
@@ -1115,6 +1378,8 @@ def main() -> int:
     parser.add_argument("--sinks", action="store_true", help="print the kernels that write into an argument")
     parser.add_argument("--builtins", action="store_true",
                         help="print every builtin whose returns are all minted (the candidates for adoption)")
+    parser.add_argument("--runners", action="store_true",
+                        help="print every builtin whose body reaches script code (ScriptRunningBuiltins)")
     args = parser.parse_args()
 
     sinks = read_sinks()
@@ -1140,6 +1405,20 @@ def main() -> int:
             print("  -", p)
         return 1
     print(f"minting builtins OK ({len(minting_names())} adopted at a binding, each returning only minted wrappers)")
+
+    runners = script_running_builtins(script_reach(SCRIPT_FILES))
+    if args.runners:
+        print(f"{len(runners)} builtin(s) reach script code:")
+        print("  " + " ".join(sorted(runners)))
+        print()
+    runner_problems = check_script_runners(runners)
+    if runner_problems:
+        print(f"{len(runner_problems)} script-running problem(s) in {SCOPES_SOURCE.name}:")
+        for p in runner_problems:
+            print("  -", p)
+        return 1
+    print(f"script-running builtins OK ({len(listed_script_runners())} hold their arguments for the whole call, "
+          f"{len(asserted_script_free())} flagged by name and asserted script-free)")
 
     if args.list:
         chosen = [s for s in sites if s.category == args.list]

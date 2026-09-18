@@ -318,6 +318,12 @@ internal sealed class BoundMethod(IJgsCallable method, JgsValue receiver) : IJgs
     /// <inheritdoc />
     public string Name => method.Name;
 
+    /// <summary>The object the method was read off (M5's receiver scope holds a share of it).</summary>
+    internal JgsValue Receiver => receiver;
+
+    /// <summary>The same method bound to <paramref name="held"/> — a receiver scope's share.</summary>
+    internal BoundMethod WithReceiverValue(JgsValue held) => new(method, held);
+
     /// <inheritdoc />
     public JgsValue Call(IReadOnlyList<JgsValue> arguments, int line, int column) =>
         method.Call(WithReceiver(arguments), line, column);

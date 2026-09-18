@@ -216,6 +216,13 @@ public class ValueIsolationM163Tests : IDisposable
     [Fact]
     public async Task AMintingBuiltinsAnswerIsAdoptedSoTheFirstWriteAllocatesNothing()
     {
+        // Packed storage only: in the boxed lane (JGRAPH_JGS_PACKED=0) an array owns no native,
+        // mapped or counted buffer, so there is nothing here to measure.
+        if (!JgsPacking.Enabled)
+        {
+            return;
+        }
+
         // `zeros` builds its buffer outside the counted allocator, so every allocation the counter
         // sees here is a copy a write made: none when the answer was adopted, one when a second
         // name shares it.
@@ -260,7 +267,7 @@ public class ValueIsolationM163Tests : IDisposable
         JgsValue x = Get(session, "x");
 
         Assert.Equal(7, x.ElementAt(0).AsNumber);
-        Assert.Equal(1, JgsHolders.Of(x.AsBuffer));   // nobody else ever held it
+        Assert.Equal(1, JgsHolders.Of(x.ScopePayload));   // nobody else ever held it
     }
 
     [Fact]

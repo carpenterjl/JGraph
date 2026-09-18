@@ -27,6 +27,9 @@ internal sealed class JgsReplSession : IScriptSession, IGraphicsEventSession, IW
     private Dictionary<string, JgsValue> _pristine = null!;
     private bool _disposed;
 
+    /// <summary>The session's interpreter — for tests that read its counters (M5's scopes).</summary>
+    internal Interpreter Interpreter => _interpreter;
+
     /// <summary>1 while a statement or an event-pump run owns the interpreter (the two must not
     /// overlap — callbacks themselves run nested inside whichever of the two holds this).</summary>
     private int _busy;

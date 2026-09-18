@@ -55,7 +55,7 @@ public class OwnershipM162Tests : IDisposable
 
         Assert.True(a.SharesStorageWith(b));
         Assert.NotSame(a, b); // M2: every entry holds its own wrapper over the one payload
-        Assert.Equal(2, JgsHolders.Of(a.AsBuffer));
+        Assert.Equal(2, JgsHolders.Of(a.ScopePayload));
     }
 
     [Theory]
@@ -97,7 +97,7 @@ public class OwnershipM162Tests : IDisposable
         Assert.False(a.SharesStorageWith(b));
         Assert.Equal(7, a.ElementAt(0).AsNumber);
         Assert.Equal(1, b.ElementAt(0).AsNumber);
-        Assert.Equal(1, JgsHolders.Of(a.AsBuffer));
+        Assert.Equal(1, JgsHolders.Of(a.ScopePayload));
     }
 
     [Fact]
@@ -129,6 +129,13 @@ public class OwnershipM162Tests : IDisposable
     [Fact]
     public async Task BothSidesWrittenAllocatesExactlyOneCopy()
     {
+        // Packed storage only: in the boxed lane (JGRAPH_JGS_PACKED=0) an array owns no native,
+        // mapped or counted buffer, so there is nothing here to measure.
+        if (!JgsPacking.Enabled)
+        {
+            return;
+        }
+
         var allocator = new BufferAllocator(new GcMemoryInfo()) { Mode = BufferMode.Managed };
         using (JgsPacking.Use(allocator))
         {
@@ -178,7 +185,7 @@ public class OwnershipM162Tests : IDisposable
         // Replacing one slot detaches the slot array shallowly: the other slot is one payload with
         // two holders, not two copies.
         Assert.True(c.AsCell[1].SharesStorageWith(d.AsCell[1]));
-        Assert.Equal(2, JgsHolders.Of(c.AsCell[1].AsBuffer));
+        Assert.Equal(2, JgsHolders.Of(c.AsCell[1].ScopePayload));
     }
 
     [Fact]

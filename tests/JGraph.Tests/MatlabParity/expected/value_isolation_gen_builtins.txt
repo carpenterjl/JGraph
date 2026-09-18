@@ -1,9 +1,9 @@
-CHK|b_insert_discarded|dictionary 1 {double [1 1] 1=double [1 1] 10}|exact|pending V3|dictionary 1 {double [1 1] 1=double [1 1] 20}
-CHK|b_insert_kept|dictionary 1 {double [1 1] 1=double [1 1] 10}|exact|pending V3|dictionary 1 {double [1 1] 1=double [1 1] 20}
-CHK|b_insert_failing|dictionary 1 {double [1 1] 1=double [1 1] 10}|exact|pending V3|dictionary 2 {double [1 1] 1=double [1 1] 20 double [1 1] 2=double [1 1] 20}
-CHK|b_remove_discarded|dictionary 2 {double [1 1] 1=double [1 1] 10 double [1 1] 2=double [1 1] 20}|exact|pending V3|dictionary 1 {double [1 1] 1=double [1 1] 10}
-CHK|b_remove_kept|dictionary 2 {double [1 1] 1=double [1 1] 10 double [1 1] 2=double [1 1] 20}|exact|pending V3|dictionary 1 {double [1 1] 1=double [1 1] 10}
-CHK|b_remove_failing|dictionary 2 {double [1 1] 1=double [1 1] 10 double [1 1] 2=double [1 1] 20}|exact|pending V3|dictionary 1 {double [1 1] 2=double [1 1] 20}
+CHK|b_insert_discarded|dictionary 1 {double [1 1] 1=double [1 1] 10}|exact
+CHK|b_insert_kept|dictionary 1 {double [1 1] 1=double [1 1] 10}|exact
+CHK|b_insert_failing|dictionary 1 {double [1 1] 1=double [1 1] 10}|exact
+CHK|b_remove_discarded|dictionary 2 {double [1 1] 1=double [1 1] 10 double [1 1] 2=double [1 1] 20}|exact
+CHK|b_remove_kept|dictionary 2 {double [1 1] 1=double [1 1] 10 double [1 1] 2=double [1 1] 20}|exact
+CHK|b_remove_failing|dictionary 2 {double [1 1] 1=double [1 1] 10 double [1 1] 2=double [1 1] 20}|exact
 CHK|b_setfield_discarded|struct [1 1] {f=double [1 1] 1 g=double [1 1] 2}|exact
 CHK|b_setfield_kept|struct [1 1] {f=double [1 1] 1 g=double [1 1] 2}|exact
 CHK|b_setfield_failing|struct [1 1] {f=double [1 1] 1 g=double [1 1] 2}|exact

@@ -13,6 +13,20 @@ internal abstract class Node
 /// <summary>Base of every expression node.</summary>
 internal abstract class Expr : Node
 {
+    /// <summary><see cref="ScopeShape"/>: every part of the expression is data or an operator.</summary>
+    internal const byte InertShaped = 1;
+
+    /// <summary><see cref="ScopeShape"/>: some part of the expression may run script code.</summary>
+    internal const byte MayRunScript = 2;
+
+    /// <summary>
+    /// M5's syntactic half of "can evaluating this run script code", cached by the interpreter the
+    /// first time a scope asks (0 until then).
+    /// </summary>
+    internal byte ScopeShape;
+
+    /// <summary>The names an inert-shaped expression mentions, checked against their bindings each time.</summary>
+    internal string[]? ScopeNames;
 }
 
 /// <summary>Base of every statement node.</summary>

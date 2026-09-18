@@ -322,6 +322,23 @@ internal sealed class JgsValue
     /// <summary>Whether another entry holds this value's payload, so a write here must copy first.</summary>
     internal bool IsShared => JgsHolders.IsShared(_reference);
 
+    /// <summary>The payload a scope's share was counted against (M5), or null for an immutable value.</summary>
+    internal object? ScopePayload => _reference is NumericBuffer or JgsPackedComplex or JgsValue[]
+        or JgsStructArray or JgsObject ? _reference : null;
+
+    /// <summary>
+    /// M5's release: a scope that held this share lets go of <paramref name="payload"/>. A wrapper
+    /// that has since swapped its storage (a compaction, a growth, a demotion) released the old
+    /// payload when it swapped, so it must not be released twice.
+    /// </summary>
+    internal void ReleaseScopeShare(object payload)
+    {
+        if (ReferenceEquals(_reference, payload))
+        {
+            JgsHolders.Release(payload);
+        }
+    }
+
     /// <summary>
     /// M6's sticky mark: this payload was stored somewhere that kept the caller's own wrapper
     /// rather than taking a counted share, so the count cannot say how many can still read it and
