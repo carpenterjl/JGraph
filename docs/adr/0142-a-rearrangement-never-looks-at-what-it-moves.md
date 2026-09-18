@@ -126,3 +126,5 @@ what answers an internal caller that holds the `BuiltinFunction` rather than the
   alone: `mat2str([1+1i 2])` is `[1+1i 2+0i]` here and `[1+1i 2]` there. It is a difference about
   printing rather than about values, and it predates this work — but it is why the tests in this
   milestone compare `real(v)` and `imag(v)` separately rather than reading one string back.
+  *Withdrawn by ADR 0164 (V3b of the value-ownership plan): `mat2str` prints such an element as the
+  real it is, R2025b's `[1+1i 2]`; a complex scalar keeps both halves.*

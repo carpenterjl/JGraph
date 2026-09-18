@@ -178,18 +178,20 @@ internal sealed partial class Interpreter
     }
 
     /// <summary>
-    /// <c>S(k) = []</c> deletes elements; <c>S(k) = other</c> replaces them with another struct's.
-    /// Both rebuild the element list, so the target has to be a plain name to rebind.
+    /// <c>S(k) = []</c> deletes elements; <c>S(k) = other</c> replaces them with another struct's,
+    /// growing the array to reach a slot past its end. Both rebuild the element list and store it
+    /// back through the target's entry.
     /// </summary>
+    /// <remarks>
+    /// M14 (#76, #86, #87): the struct written in must carry exactly the array's fields, in any
+    /// order — R2025b refuses anything else as <c>MATLAB:heterogeneousStrucAssignment</c> before an
+    /// element is replaced or a field added, and an empty array with fields (<c>struct('a', {})</c>)
+    /// is held to its fields the same way. The count and the fields are checked before the array
+    /// is touched, so a refusal leaves it as it was.
+    /// </remarks>
     private JgsValue AssignIntoStruct(
         Expr target, JgsValue existing, IReadOnlyList<Expr> subscripts, JgsValue rhs, Node at, JgsEnvironment env)
     {
-        if (target is not VariableExpr variable)
-        {
-            throw new JgsRuntimeException(at.Line, at.Column,
-                "Writing an element of a struct array needs a plain variable to write back to.");
-        }
-
         bool deleting = rhs.Type == JgsType.Array && rhs.ArrayLength == 0;
         if (!deleting && rhs.Type != JgsType.Struct)
         {
@@ -205,10 +207,10 @@ internal sealed partial class Interpreter
         else
         {
             JgsStructArray payload = existing.AsStructArray;
-            int[] picks = StructPicks(
+            int[] picks = WritePicks(
                 EvaluateIndexArgument(
                     Single(subscripts, at, "A struct-array index"), payload.Length, env),
-                payload.Length, "struct array", at);
+                payload.Length, at);
             JgsStructArray source = rhs.AsStructArray;
             if (source.Length != 1 && source.Length != picks.Length)
             {
@@ -216,7 +218,20 @@ internal sealed partial class Interpreter
                     $"Writing {picks.Length} elements needs 1 or {picks.Length} on the right, not {source.Length}.");
             }
 
-            var elements = (Dictionary<string, JgsValue>[])payload.Elements.Clone();
+            if (!SameFieldSet(payload.FieldNames, source.FieldNames))
+            {
+                throw new JgsRuntimeException(at.Line, at.Column, "MATLAB:heterogeneousStrucAssignment",
+                    "Subscripted assignment between dissimilar structures.");
+            }
+
+            int needed = Math.Max(payload.Length, Highest(picks) + 1);
+            var elements = new Dictionary<string, JgsValue>[needed];
+            Array.Copy(payload.Elements, elements, payload.Length);
+            for (int i = payload.Length; i < needed; i++)
+            {
+                elements[i] = payload.NewElement(); // growth fills the gap with the array's fields, each []
+            }
+
             var replaced = new bool[elements.Length];
             for (int i = 0; i < picks.Length; i++)
             {
@@ -231,7 +246,7 @@ internal sealed partial class Interpreter
             // The elements that stayed are in two arrays only while the old one is still held.
             if (existing.IsShared)
             {
-                for (int i = 0; i < elements.Length; i++)
+                for (int i = 0; i < payload.Length; i++)
                 {
                     if (!replaced[i])
                     {
@@ -241,16 +256,33 @@ internal sealed partial class Interpreter
             }
 
             var rebuilt = new JgsStructArray(elements, payload.EmptyFields);
-            foreach (string field in source.FieldNames)
-            {
-                rebuilt.EnsureField(field);
-            }
-
-            written = JgsValue.StructArray(rebuilt, existing.Rows, existing.Cols);
+            bool column = existing.Cols == 1 && existing.Rows > 1;
+            written = JgsValue.StructArray(rebuilt,
+                column ? needed : (needed == 0 ? 0 : 1), column ? (needed == 0 ? 0 : 1) : needed);
+            written.SetClassName(existing.ClassName);
         }
 
-        Rebind(variable.Name, written, env);
+        StoreBack(target, written, at, env);
         return rhs;
+    }
+
+    /// <summary>Whether two field lists name the same fields, in any order.</summary>
+    private static bool SameFieldSet(string[] left, string[] right)
+    {
+        if (left.Length != right.Length)
+        {
+            return false;
+        }
+
+        foreach (string field in right)
+        {
+            if (Array.IndexOf(left, field) < 0)
+            {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     /// <summary>Runs a <c>for</c> whose loop expression is a struct array, element by element.</summary>
@@ -332,13 +364,7 @@ internal sealed partial class Interpreter
             }
 
             JgsStructArray payload = piece.AsStructArray;
-            foreach (string field in payload.FieldNames)
-            {
-                if (!fields.Contains(field))
-                {
-                    fields.Add(field);
-                }
-            }
+            JoinFields(fields, payload.FieldNames, at);
 
             // An empty struct array contributes its fields and no shape, the way [] does in a
             // numeric bracket: [S, struct('a', {})] is S.
@@ -378,13 +404,7 @@ internal sealed partial class Interpreter
         foreach (JgsValue row in rows)
         {
             JgsStructArray payload = row.AsStructArray;
-            foreach (string field in payload.FieldNames)
-            {
-                if (!fields.Contains(field))
-                {
-                    fields.Add(field);
-                }
-            }
+            JoinFields(fields, payload.FieldNames, at);
 
             if (payload.Length == 0)
             {
@@ -426,16 +446,63 @@ internal sealed partial class Interpreter
         return BuildStructArray(elements, fields, cols < 0 ? 0 : height, cols < 0 ? 0 : cols);
     }
 
-    /// <summary>The struct array those elements make, with every field present on every one of them.</summary>
+    /// <summary>
+    /// The fields a bracket's next struct piece brings to the join. MATLAB refuses a piece whose
+    /// field set differs from the first's (in any order), and refuses it before anything is built,
+    /// so the pieces are left as they were (M8, <c>b_horzcat_failing</c>); JGS unions the fields.
+    /// </summary>
+    private void JoinFields(List<string> fields, string[] brought, Node at)
+    {
+        if (Dialect.IsMatlab && fields.Count > 0 && !SameFieldSet([.. fields], brought))
+        {
+            throw new JgsRuntimeException(at.Line, at.Column,
+                "Names of fields in structure arrays being concatenated do not match. "
+                + "Concatenation of structure arrays requires that these arrays have the same set of fields.");
+        }
+
+        foreach (string field in brought)
+        {
+            if (!fields.Contains(field))
+            {
+                fields.Add(field);
+            }
+        }
+    }
+
+    /// <summary>
+    /// The struct array those elements make, with every field present on every one of them. The
+    /// pieces' element dictionaries are shared into the answer (M2), and one that lacks a field the
+    /// union has is replaced by a shared copy carrying it, so no piece is changed by being joined.
+    /// </summary>
     private static JgsValue BuildStructArray(
         List<Dictionary<string, JgsValue>> elements, List<string> fields, int rows, int cols)
     {
-        var built = new JgsStructArray([.. elements], [.. fields]);
-        foreach (string field in fields)
+        var joined = new Dictionary<string, JgsValue>[elements.Count];
+        for (int i = 0; i < joined.Length; i++)
         {
-            built.EnsureField(field);
+            Dictionary<string, JgsValue> element = elements[i];
+            bool complete = true;
+            foreach (string field in fields)
+            {
+                complete &= element.ContainsKey(field);
+            }
+
+            if (complete)
+            {
+                JgsHolders.Share(element);
+                joined[i] = element;
+                continue;
+            }
+
+            Dictionary<string, JgsValue> widened = JgsStructArray.SharedCopy(element);
+            foreach (string field in fields)
+            {
+                widened.TryAdd(field, JgsValue.Array([]));
+            }
+
+            joined[i] = widened;
         }
 
-        return JgsValue.StructArray(built, rows, cols);
+        return JgsValue.StructArray(new JgsStructArray(joined, [.. fields]), rows, cols);
     }
 }

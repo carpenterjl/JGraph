@@ -1,8 +1,8 @@
-CHK|r_range_count_variable|refused=1 x=double [1 2] [1 2]|exact|pending V3|refused=1 x=double [1 5] [1 2 0 0 0]
-CHK|r_range_count_alias|refused=1 x=double [1 2] [1 2] y=double [1 2] [1 2]|exact|pending V3|refused=1 x=double [1 5] [1 2 0 0 0] y=double [1 2] [1 2]
+CHK|r_range_count_variable|refused=1 x=double [1 2] [1 2]|exact
+CHK|r_range_count_alias|refused=1 x=double [1 2] [1 2] y=double [1 2] [1 2]|exact
 CHK|r_range_count_field|refused=1 st.v=double [1 2] [1 2] t.v=double [1 2] [1 2]|exact
 CHK|r_range_count_cellelem|refused=1 c{1}=double [1 2] [1 2] d{1}=double [1 2] [1 2]|exact
-CHK|r_range_count_global|refused=1 gR_5=double [1 2] [1 2] y=double [1 2] [1 2]|exact|pending V3|refused=1 gR_5=double [1 5] [1 2 0 0 0] y=double [1 2] [1 2]
+CHK|r_range_count_global|refused=1 gR_5=double [1 2] [1 2] y=double [1 2] [1 2]|exact
 CHK|r_range_subscript_variable|refused=1 x=double [1 2] [1 2]|exact
 CHK|r_range_subscript_alias|refused=1 x=double [1 2] [1 2] y=double [1 2] [1 2]|exact
 CHK|r_range_subscript_field|refused=1 st.v=double [1 2] [1 2] t.v=double [1 2] [1 2]|exact
@@ -13,11 +13,11 @@ CHK|r_range_convert_alias|refused=1 x=double [1 2] [1 2] y=double [1 2] [1 2]|ex
 CHK|r_range_convert_field|refused=1 st.v=double [1 2] [1 2] t.v=double [1 2] [1 2]|exact
 CHK|r_range_convert_cellelem|refused=1 c{1}=double [1 2] [1 2] d{1}=double [1 2] [1 2]|exact
 CHK|r_range_convert_global|refused=1 gR_15=double [1 2] [1 2] y=double [1 2] [1 2]|exact
-CHK|r_range2d_count_variable|refused=1 x=double [2 2] [1 2;3 4]|exact|pending V3|refused=1 x=double [4 2] [1 2;3 4;0 0;0 0]
-CHK|r_range2d_count_alias|refused=1 x=double [2 2] [1 2;3 4] y=double [2 2] [1 2;3 4]|exact|pending V3|refused=1 x=double [4 2] [1 2;3 4;0 0;0 0] y=double [2 2] [1 2;3 4]
+CHK|r_range2d_count_variable|refused=1 x=double [2 2] [1 2;3 4]|exact
+CHK|r_range2d_count_alias|refused=1 x=double [2 2] [1 2;3 4] y=double [2 2] [1 2;3 4]|exact
 CHK|r_range2d_count_field|refused=1 st.v=double [2 2] [1 2;3 4] t.v=double [2 2] [1 2;3 4]|exact
 CHK|r_range2d_count_cellelem|refused=1 c{1}=double [2 2] [1 2;3 4] d{1}=double [2 2] [1 2;3 4]|exact
-CHK|r_range2d_count_global|refused=1 gR_20=double [2 2] [1 2;3 4] y=double [2 2] [1 2;3 4]|exact|pending V3|refused=1 gR_20=double [4 2] [1 2;3 4;0 0;0 0] y=double [2 2] [1 2;3 4]
+CHK|r_range2d_count_global|refused=1 gR_20=double [2 2] [1 2;3 4] y=double [2 2] [1 2;3 4]|exact
 CHK|r_range2d_subscript_variable|refused=1 x=double [2 2] [1 2;3 4]|exact
 CHK|r_range2d_subscript_alias|refused=1 x=double [2 2] [1 2;3 4] y=double [2 2] [1 2;3 4]|exact
 CHK|r_range2d_subscript_field|refused=1 st.v=double [2 2] [1 2;3 4] t.v=double [2 2] [1 2;3 4]|exact
@@ -38,11 +38,11 @@ CHK|r_mask_convert_alias|refused=1 x=double [1 3] [1 2 3] y=double [1 3] [1 2 3]
 CHK|r_mask_convert_field|refused=1 st.v=double [1 3] [1 2 3] t.v=double [1 3] [1 2 3]|exact
 CHK|r_mask_convert_cellelem|refused=1 c{1}=double [1 3] [1 2 3] d{1}=double [1 3] [1 2 3]|exact
 CHK|r_mask_convert_global|refused=1 gR_40=double [1 3] [1 2 3] y=double [1 3] [1 2 3]|exact
-CHK|r_cellparen_count_variable|refused=1 x=cell [1 2] {double [1 1] 1 double [1 1] 2}|exact|pending V3|refused=1 x=cell [1 5] {double [1 1] 1 double [1 1] 2 double [0 0] [] double [0 0] [] double [0 0] []}
-CHK|r_cellparen_count_alias|refused=1 x=cell [1 2] {double [1 1] 1 double [1 1] 2} y=cell [1 2] {double [1 1] 1 double [1 1] 2}|exact|pending V3|refused=1 x=cell [1 5] {double [1 1] 1 double [1 1] 2 double [0 0] [] double [0 0] [] double [0 0] []} y=cell [1 2] {double [1 1] 1 double [1 1] 2}
+CHK|r_cellparen_count_variable|refused=1 x=cell [1 2] {double [1 1] 1 double [1 1] 2}|exact
+CHK|r_cellparen_count_alias|refused=1 x=cell [1 2] {double [1 1] 1 double [1 1] 2} y=cell [1 2] {double [1 1] 1 double [1 1] 2}|exact
 CHK|r_cellparen_count_field|refused=1 st.v=cell [1 2] {double [1 1] 1 double [1 1] 2} t.v=cell [1 2] {double [1 1] 1 double [1 1] 2}|exact
 CHK|r_cellparen_count_cellelem|refused=1 c{1}=cell [1 2] {double [1 1] 1 double [1 1] 2} d{1}=cell [1 2] {double [1 1] 1 double [1 1] 2}|exact
-CHK|r_cellparen_count_global|refused=1 gR_45=cell [1 2] {double [1 1] 1 double [1 1] 2} y=cell [1 2] {double [1 1] 1 double [1 1] 2}|exact|pending V3|refused=1 gR_45=cell [1 5] {double [1 1] 1 double [1 1] 2 double [0 0] [] double [0 0] [] double [0 0] []} y=cell [1 2] {double [1 1] 1 double [1 1] 2}
+CHK|r_cellparen_count_global|refused=1 gR_45=cell [1 2] {double [1 1] 1 double [1 1] 2} y=cell [1 2] {double [1 1] 1 double [1 1] 2}|exact
 CHK|r_cellparen_subscript_variable|refused=1 x=cell [1 2] {double [1 1] 1 double [1 1] 2}|exact
 CHK|r_cellparen_subscript_alias|refused=1 x=cell [1 2] {double [1 1] 1 double [1 1] 2} y=cell [1 2] {double [1 1] 1 double [1 1] 2}|exact
 CHK|r_cellparen_subscript_field|refused=1 st.v=cell [1 2] {double [1 1] 1 double [1 1] 2} t.v=cell [1 2] {double [1 1] 1 double [1 1] 2}|exact
@@ -83,11 +83,11 @@ CHK|r_structelem_convert_alias|refused=1 x=struct [1 2] [a] {double [1 1] 1 doub
 CHK|r_structelem_convert_field|refused=1 st.v=struct [1 2] [a] {double [1 1] 1 double [1 1] 2} t.v=struct [1 2] [a] {double [1 1] 1 double [1 1] 2}|exact
 CHK|r_structelem_convert_cellelem|refused=1 c{1}=struct [1 2] [a] {double [1 1] 1 double [1 1] 2} d{1}=struct [1 2] [a] {double [1 1] 1 double [1 1] 2}|exact
 CHK|r_structelem_convert_global|refused=1 gR_85=struct [1 2] [a] {double [1 1] 1 double [1 1] 2} y=struct [1 2] [a] {double [1 1] 1 double [1 1] 2}|exact
-CHK|r_stringelem_count_variable|refused=1 x=string [1 2] {a b}|exact|pending V3|refused=1 x=string [1 5] {a b   }
-CHK|r_stringelem_count_alias|refused=1 x=string [1 2] {a b} y=string [1 2] {a b}|exact|pending V3|refused=1 x=string [1 5] {a b   } y=string [1 2] {a b}
+CHK|r_stringelem_count_variable|refused=1 x=string [1 2] {a b}|exact
+CHK|r_stringelem_count_alias|refused=1 x=string [1 2] {a b} y=string [1 2] {a b}|exact
 CHK|r_stringelem_count_field|refused=1 st.v=string [1 2] {a b} t.v=string [1 2] {a b}|exact
 CHK|r_stringelem_count_cellelem|refused=1 c{1}=string [1 2] {a b} d{1}=string [1 2] {a b}|exact
-CHK|r_stringelem_count_global|refused=1 gR_90=string [1 2] {a b} y=string [1 2] {a b}|exact|pending V3|refused=1 gR_90=string [1 5] {a b   } y=string [1 2] {a b}
+CHK|r_stringelem_count_global|refused=1 gR_90=string [1 2] {a b} y=string [1 2] {a b}|exact
 CHK|r_stringelem_subscript_variable|refused=1 x=string [1 2] {a b}|exact
 CHK|r_stringelem_subscript_alias|refused=1 x=string [1 2] {a b} y=string [1 2] {a b}|exact
 CHK|r_stringelem_subscript_field|refused=1 st.v=string [1 2] {a b} t.v=string [1 2] {a b}|exact

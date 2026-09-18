@@ -145,7 +145,7 @@ public class OwnershipGateTests
          "scope.Declare(variable.Name, stored);",
          "EvaluateAssign, as above"),
         ("Interpreter.cs",
-         "conjuredScope.Declare(conjuredName, conjured);",
+         "conjuredScope.Declare(conjuredName, EmptyOfKind(rhs));",
          "an empty conjured for a first indexed write"),
         ("Interpreter.cs",
          "scratch.Declare(slot, current);",

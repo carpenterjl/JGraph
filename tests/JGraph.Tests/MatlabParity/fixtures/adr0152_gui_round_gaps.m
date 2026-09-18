@@ -68,7 +68,7 @@ fprintf('CHK|cell_grow_from_empty_row|%s|shape\n', mat2str(size(L)));
 N = {'p'; 'q'}; N{1, 4} = 'i';
 fprintf('CHK|cell_grow_column_widened|%s|shape\n', mat2str(size(N)));
 fprintf('CHK|cell_grow_fill_is_empty|%.17g|exact\n', numel(C{1, 1}));
-fprintf('CHK|cell_grow_fill_shape|%s|div=ADR0152\n', mat2str(size(C{1, 1})));
+fprintf('CHK|cell_grow_fill_shape|%s|shape\n', mat2str(size(C{1, 1})));
 
 % --- 4. the grouped bar layout and bar's name/value form ---------------------------------------
 figure;

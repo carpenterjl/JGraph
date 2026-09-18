@@ -1,55 +1,55 @@
-CHK|a031_overlap_permute_real|[3 1 2]|exact|pending V3|[1 1 1]
+CHK|a031_overlap_permute_real|[3 1 2]|exact
 CHK|g_overlap_repeat_real|[2 1 3 4]|exact
-CHK|a032_overlap_permute_complex|[3 1+1i 2]|exact|pending V3|[1+1i 1+1i 1+1i]
-CHK|a033_overlap_permute_2d|[3 4;1 2]|exact|pending V3|[1 2;1 2]
-CHK|a034_overlap_permute_cell|double double char|exact|pending V3|double double double
+CHK|a032_overlap_permute_complex|[3 1+1i 2]|exact
+CHK|a033_overlap_permute_2d|[3 4;1 2]|exact
+CHK|a034_overlap_permute_cell|double double char|exact
 CHK|g_overlap_shift_real|[1 1 2 3 4 5]|exact
-CHK|a035_multi_assign_deal_order|[1 2 3]|exact|pending V3|[7 2 3]
+CHK|a035_multi_assign_deal_order|[1 2 3]|exact
 CHK|g_multi_assign_cslist_order|[1 2 3]|exact
 CHK|g_multi_assign_varargout_order|[1 2 3]|exact
-CHK|a040_grow_from_self_range|[1 2 3 1 2 3]|exact|pending V3|ERR Cannot assign 6 values into 3 selected elements.
-CHK|a041_grow_from_self_end|[1 2 3 1 2 3]|exact|pending V3|ERR Cannot assign 6 values into 3 selected elements.
-CHK|a042_index_by_self|[1 2 3]|exact|pending V3|[1 3 3]
+CHK|a040_grow_from_self_range|[1 2 3 1 2 3]|exact
+CHK|a041_grow_from_self_end|[1 2 3 1 2 3]|exact
+CHK|a042_index_by_self|[1 2 3]|exact
 CHK|g_mask_from_self|[5 1 1 2]|exact
 CHK|g_colon_from_self_reversed|[5 4 3 2 1]|exact
 CHK|g_cell_contains_self|3 2|exact
 CHK|g_struct_contains_self|0 1|exact
 CHK|g_struct_array_delete_alias|3 2|exact
-CHK|a043_string_array_self_permute|c,a,b|exact|pending V3|a,a,a
+CHK|a043_string_array_self_permute|c,a,b|exact
 CHK|g_char_row_self_permute|cab|exact
-CHK|a044_nd_self_permute|[5 6 7 8 1 2 3 4]|exact|pending V3|[1 2 3 4 1 2 3 4]
-CHK|a045_logical_self_permute|[false true false]|exact|pending V3|[true true true]
+CHK|a044_nd_self_permute|[5 6 7 8 1 2 3 4]|exact
+CHK|a045_logical_self_permute|[false true false]|exact
 CHK|g_int_self_permute|[3 1 2]|exact
 CHK|g_cell_brace_cslist_self|[3 1 2]|exact
-CHK|a046_field_self_permute|[3 1 2]|exact|pending V3|[1 1 1]
-CHK|a047_rejected_growth_linear|[1 2]|exact|pending V3|[1 2 0 0 0]
+CHK|a046_field_self_permute|[3 1 2]|exact
+CHK|a047_rejected_growth_linear|[1 2]|exact
 CHK|g_rejected_growth_linear_alias|[1 2]|exact
-CHK|a048_rejected_growth_2d|[1 2;3 4]|exact|pending V3|[1 2;3 4;0 0;0 0]
-CHK|a049_rejected_growth_cell|2|exact|pending V3|5
-CHK|a050_brace_logical_subscript_row|pick; / 99|exact|pending V3|pick;pick; / 99
-CHK|a051_brace_logical_subscript_col|pick; / 99|exact|pending V3|pick;pick; / 99
+CHK|a048_rejected_growth_2d|[1 2;3 4]|exact
+CHK|a049_rejected_growth_cell|2|exact
+CHK|a050_brace_logical_subscript_row|pick; / 99|exact
+CHK|a051_brace_logical_subscript_col|pick; / 99|exact
 CHK|g_paren_scalar_subscript_once|pick; / [10 5 30]|exact
 CHK|g_end_vs_rhs_growth|[1 2 50 99]|exact
-CHK|a056_subscript_shrinks_target|[1 2 9]|exact|pending V3|[1 2]
-CHK|a062_logical_mask_growth|[1 2 3 9]|exact|pending V3|ERR A mask must match the array length (mask 4, array 3).
-CHK|a062_mask_growth_alias|[1 2 3 9] [1 2 3]|exact|pending V3|ERR A mask must match the array length (mask 4, array 3).
-CHK|a068_mask_short_write|[1 9 3]|exact|pending V3|ERR A mask must match the array length (mask 2, array 3).
-CHK|a069_mask_trailing_false_write|[9 2 3]|exact|pending V3|ERR A mask must match the array length (mask 5, array 3).
-CHK|a070_mask_all_false_write|[1 2 3]|exact|pending V3|ERR A mask must match the array length (mask 5, array 3).
-CHK|a071_mask_growth_2d_rows|[1 2;3 4;9 9]|exact|pending V3|ERR A mask must match the array length (mask 3, array 2).
+CHK|a056_subscript_shrinks_target|[1 2 9]|exact
+CHK|a062_logical_mask_growth|[1 2 3 9]|exact
+CHK|a062_mask_growth_alias|[1 2 3 9] [1 2 3]|exact
+CHK|a068_mask_short_write|[1 9 3]|exact
+CHK|a069_mask_trailing_false_write|[9 2 3]|exact
+CHK|a070_mask_all_false_write|[1 2 3]|exact
+CHK|a071_mask_growth_2d_rows|[1 2;3 4;9 9]|exact
 CHK|g_varargin_write_isolated|[1 2 3] [7 2 3]|exact
-CHK|a073_grow_rows_from_self|[1 2;3 4;1 2;3 4]|exact|pending V3|ERR Cannot assign 8 values into a 2x2 selection.
-CHK|a074_grow_cols_from_self|[1 2 1 2;3 4 3 4]|exact|pending V3|ERR Cannot assign 8 values into a 2x2 selection.
+CHK|a073_grow_rows_from_self|[1 2;3 4;1 2;3 4]|exact
+CHK|a074_grow_cols_from_self|[1 2 1 2;3 4 3 4]|exact
 CHK|g_struct_array_self_element|1 1|exact
-CHK|a075_struct_array_grow_from_self|[1 2 1 2]|exact|pending V3|ERR Index 3 is out of range for length 2 (indexing is 1-based).
+CHK|a075_struct_array_grow_from_self|[1 2 1 2]|exact
 CHK|g_string_plus_alias|x,y|exact
 CHK|g_cell_grow_with_self|2 1|exact
 CHK|g_for_deletes_iterated|[10 20 30] zeros(1,0)|exact
 CHK|g_while_condition_rebound|2|exact
-CHK|a076_struct_element_incompatible|1 0 2|exact|pending V3|0 1 2
+CHK|a076_struct_element_incompatible|1 0 2|exact
 CHK|g_struct_element_field_order|10 30|exact
-CHK|a086_empty_struct_with_fields_mismatch|refused MATLAB:heterogeneousStrucAssignment|exact|pending V3|refused
-CHK|a087_empty_struct_with_fields_match|1 7|exact|pending V3|ERR Index 1 is out of range for length 0 (indexing is 1-based).
+CHK|a086_empty_struct_with_fields_mismatch|refused MATLAB:heterogeneousStrucAssignment|exact
+CHK|a087_empty_struct_with_fields_match|1 7|exact
 CHK|g_empty_double_to_struct|struct 7|exact
 CHK|g_struct_array_growth_fill|3 1 1|exact
 CHK|g_row_delete_alias|[1 2;3 4;5 6] [1 2;5 6]|exact
@@ -62,14 +62,14 @@ CHK|g_order_var_subscript_vs_rhs|rhs;idx; / [1 9 3]|exact
 CHK|g_order_var_paren_2d|rhs;idx; / [1 2;9 4]|exact
 CHK|g_order_dictionary_key_vs_rhs|rhs;key; / [10 9]|exact
 CHK|g_order_var_end_vs_rhs|rhs; / [1 2 3 9]|exact
-CHK|a151_order_one_level_brace|idx;rhs; / [1 9 3]|exact|pending V3|rhs;idx; / [1 9 3]
-CHK|a151_order_field_then_paren|idx;rhs; / [1 9 3]|exact|pending V3|rhs;idx; / [1 9 3]
-CHK|a151_order_brace_then_paren|idx;rhs; / [1 9 3]|exact|pending V3|rhs;idx; / [1 9 3]
-CHK|a151_order_paren_then_field|idx;rhs; / [1 9 3]|exact|pending V3|rhs;idx; / [1 9 3]
-CHK|a151_order_dynamic_field|name;rhs; / 9|exact|pending V3|rhs;name; / 9
-CHK|a151_order_field_field_paren|idx;rhs; / [1 9 3]|exact|pending V3|rhs;idx; / [1 9 3]
-CHK|a153_order_cell_elem_end_vs_rhs|rhs; / [1 2 9 50]|exact|pending V6|ERR Assigning past the end of a 3-element array would grow it, which needs a plain variable on the left.
-CHK|a153_order_struct_field_end_vs_rhs|rhs; / [1 2 9 50]|exact|pending V6|ERR Cannot set a field on 'gs_order': it is a array, not a struct.
+CHK|a151_order_one_level_brace|idx;rhs; / [1 9 3]|exact
+CHK|a151_order_field_then_paren|idx;rhs; / [1 9 3]|exact
+CHK|a151_order_brace_then_paren|idx;rhs; / [1 9 3]|exact
+CHK|a151_order_paren_then_field|idx;rhs; / [1 9 3]|exact
+CHK|a151_order_dynamic_field|name;rhs; / 9|exact
+CHK|a151_order_field_field_paren|idx;rhs; / [1 9 3]|exact
+CHK|a153_order_cell_elem_end_vs_rhs|rhs; / [1 2 9 50]|exact
+CHK|a153_order_struct_field_end_vs_rhs|rhs; / [1 2 9 50]|exact
 CHK|a153_order_table_var_end_vs_rhs|rhs; / [1;2;9]|exact
-CHK|a153_order_table_varnames_sub_vs_rhs|idx;rhs; / Var1,b|exact|pending V6|rhs;idx; / Var1,Var2
-CHK|a153_order_datetime_day_sub_vs_rhs|idx;rhs; / [1 9 3]|exact|pending V6|rhs;idx; / [1 2 3]
+CHK|a153_order_table_varnames_sub_vs_rhs|idx;rhs; / Var1,b|exact|pending V6|idx;rhs; / Var1,Var2
+CHK|a153_order_datetime_day_sub_vs_rhs|idx;rhs; / [1 9 3]|exact|pending V6|idx;rhs; / [1 2 3]

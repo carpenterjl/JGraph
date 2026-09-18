@@ -54,7 +54,7 @@ CHK|cell_grow_both_ways|[3 3]|shape
 CHK|cell_grow_from_empty_row|[1 3]|shape
 CHK|cell_grow_column_widened|[2 4]|shape
 CHK|cell_grow_fill_is_empty|0|exact
-CHK|cell_grow_fill_shape|[0 0]|div=ADR0152|diverges|[1 0]
+CHK|cell_grow_fill_shape|[0 0]|shape
 CHK|bar_group_two_first|[0.85714285714285721 1.8571428571428572 2.8571428571428572]|exact
 CHK|bar_group_two_second|[1.1428571428571428 2.1428571428571428 3.1428571428571428]|exact
 CHK|bar_group_three_first|[0.77777777777777779 1.7777777777777777 2.7777777777777777]|exact

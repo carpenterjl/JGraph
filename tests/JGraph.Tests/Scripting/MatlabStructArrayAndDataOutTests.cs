@@ -160,11 +160,24 @@ public class MatlabStructArrayAndDataOutTests : IDisposable
     }
 
     [Fact]
-    public void ConcatenationUnionsTheFields()
+    public void ConcatenationRefusesDifferentFieldSetsAndLeavesThePieces()
     {
-        Assert.Equal("2 1 1 1\n", RunAndRead("""
+        // R2025b refuses a bracket of structs whose field sets differ (V3b, ADR 0164 — the union
+        // JGraph used to build grafted the missing field onto the pieces themselves); the same
+        // fields in another order join, and the pieces are never changed by being joined.
+        Assert.Contains("same set of fields", Error("""
             U = [struct('a', 1) struct('b', 2)];
-            fprintf('%d %d %d %d\n', numel(U), isfield(U, 'a'), isfield(U, 'b'), isempty(U(1).b));
+            """));
+
+        Assert.Equal("2 1 3 a\n", RunAndRead("""
+            p = struct('a', 1, 'b', 2); q = struct('b', 3, 'a', 4);
+            try
+                r = [p, struct('c', 5)];
+            catch
+            end
+            U = [p, q];
+            names = fieldnames(p);
+            fprintf('%d %d %d %s\n', numel(U), U(1).a, U(2).b, names{1});
             """));
     }
 

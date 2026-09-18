@@ -23,8 +23,8 @@ CHK|a132_figure_position_indexed_write|321|exact|pending V6|300
 CHK|a141_handle_array_element_prop_write|0.5 4|exact|pending V6|1.5 4
 CHK|a134_handle_array_cslist_prop_write|3 3|exact|pending V6|ERR Cannot set a field on 'h': it is a array, not a struct.
 CHK|g_multi_handle_set|[5 5 5] [5 5 5]|exact
-CHK|a133_graphics_prop_growth_write|[1 2 3 4]|exact|pending V6|ERR Assigning past the end of a 3-element array would grow it, which needs a plain variable on the left.
-CHK|a133_graphics_prop_delete_write|[1 3]|exact|pending V6|ERR Deleting elements needs a plain variable on the left.
+CHK|a133_graphics_prop_growth_write|[1 2 3 4]|exact|pending V6|ERR YData has 4 values where the series has 3. Both coordinates are written together — set them in one call, or draw the series again.
+CHK|a133_graphics_prop_delete_write|[1 3]|exact|pending V6|ERR YData has 2 values where the series has 3. Both coordinates are written together — set them in one call, or draw the series again.
 CHK|a141_line_width_default|0.5|exact|pending V6|1.5
 CHK|a150_global_handle_prop_write|[1 2 3 50]|exact|pending V4|ERR Cannot set a field on 'gp_gfx': it is a number, not a struct.
 CHK|a153_order_graphics_ydata_end_vs_rhs|rhs; / [1 2 9 50]|exact|pending V6|ERR Cannot set a field on 'gp_order': it is a number, not a struct.

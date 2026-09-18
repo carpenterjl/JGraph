@@ -254,8 +254,8 @@ public class MatlabM81ComplexDomainTests : IDisposable
     /// <summary>
     /// <c>mat2str</c>'s whole contract is that its text reads back as the same value, and it could not
     /// hold a complex one: a complex scalar came back as the bare text <c>[]</c> and a complex array
-    /// threw. Every element is written with both parts once any of them is complex, because that is
-    /// what makes the text read back as complex.
+    /// threw. An element with no imaginary part is written as the real it is (R2025b's spelling,
+    /// ADR 0164 withdrawing ADR 0142's divergence); the array still reads back complex by the others.
     /// </summary>
     [Fact]
     public async Task Mat2StrWritesAComplexValueTheWayTheLanguageReadsItBack()
@@ -264,7 +264,7 @@ public class MatlabM81ComplexDomainTests : IDisposable
             "a = mat2str(sqrt(-1)); b = mat2str([1i 2]); c = mat2str(3 - 4i); d = mat2str([1 2;3 4]);");
         Succeeded(result);
         Assert.Equal("0+1i", Text(result, "a"));
-        Assert.Equal("[0+1i 2+0i]", Text(result, "b"));
+        Assert.Equal("[0+1i 2]", Text(result, "b"));
         Assert.Equal("3-4i", Text(result, "c"));
         Assert.Equal("[1 2;3 4]", Text(result, "d"));
     }

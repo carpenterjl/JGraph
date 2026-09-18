@@ -27,6 +27,18 @@ internal abstract class Expr : Node
 
     /// <summary>The names an inert-shaped expression mentions, checked against their bindings each time.</summary>
     internal string[]? ScopeNames;
+
+    /// <summary><see cref="EndUse"/>: the expression mentions <c>end</c> somewhere.</summary>
+    internal const byte ReadsEnd = 1;
+
+    /// <summary><see cref="EndUse"/>: the expression mentions no <c>end</c>.</summary>
+    internal const byte NoEnd = 2;
+
+    /// <summary>
+    /// M16's "does this subscript read <c>end</c>", cached by the interpreter the first time a write
+    /// asks (0 until then): only then is the write's container read before the write.
+    /// </summary>
+    internal byte EndUse;
 }
 
 /// <summary>Base of every statement node.</summary>

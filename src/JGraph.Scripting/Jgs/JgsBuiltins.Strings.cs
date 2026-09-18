@@ -949,23 +949,28 @@ internal static partial class JgsBuiltins
     /// <c>mat2str</c> of a value with an imaginary part anywhere in it.
     /// </summary>
     /// <remarks>
-    /// Every element is written <c>re+imi</c>, including the ones that happen to be real, because that
-    /// is what makes the text read back as the same value: <c>[1+0i 0+2i]</c> is a complex array where
-    /// <c>[1 0+2i]</c> would be one too, but only by accident of the second element. MATLAB writes it
-    /// the same way and for the same reason.
+    /// An element of a complex array with no imaginary part is written as the real it is —
+    /// <c>x = [1 2 3]; x(2) = 1i; mat2str(x)</c> is R2025b's <c>[1 0+1i 3]</c>, not
+    /// <c>[1+0i 0+1i 3+0i]</c> (value-ownership plan, #61); the array still reads back complex by
+    /// its other elements. A complex scalar keeps both halves.
     /// </remarks>
     private static string ComplexMatrixText(JgsValue subject, int precision, int line, int col)
     {
-        string One(System.Numerics.Complex z)
+        string One(System.Numerics.Complex z, bool elementOfArray)
         {
             string real = OneNumber(z.Real, precision);
+            if (elementOfArray && z.Imaginary == 0)
+            {
+                return real;
+            }
+
             string imaginary = OneNumber(Math.Abs(z.Imaginary), precision);
             return real + (z.Imaginary < 0 ? "-" : "+") + imaginary + "i";
         }
 
         if (subject.Type is JgsType.Complex or JgsType.Number or JgsType.Bool)
         {
-            return One(subject.AsComplex);
+            return One(subject.AsComplex, elementOfArray: false);
         }
 
         int rows = JgsMatrix.RowCount(subject);
@@ -985,7 +990,7 @@ internal static partial class JgsBuiltins
                         $"mat2str needs numbers, but element ({r}, {c}) was a {element.TypeName}.");
                 }
 
-                cells.Add(One(element.AsComplex));
+                cells.Add(One(element.AsComplex, elementOfArray: rows * cols > 1));
             }
 
             written.Add(string.Join(" ", cells));

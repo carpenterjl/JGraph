@@ -895,7 +895,8 @@ internal sealed class Parser
         {
             switch (_tokens[p].Type)
             {
-                case TokenType.Identifier or TokenType.Number or TokenType.String:
+                // 'global' is a keyword token, and a word of 'clear global g' all the same.
+                case TokenType.Identifier or TokenType.Number or TokenType.String or TokenType.Global:
                     words++;
                     p++;
                     // A file name glues on through its dot: 'load results.mat' is one word as long
@@ -935,7 +936,7 @@ internal sealed class Parser
         Token name = Advance();
         var arguments = new List<Expr>();
         while (Current.Type is TokenType.Identifier or TokenType.Number or TokenType.String
-               or TokenType.Minus)
+               or TokenType.Minus or TokenType.Global)
         {
             Token word = Advance();
             string text = word.Text;

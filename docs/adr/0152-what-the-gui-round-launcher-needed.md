@@ -133,10 +133,12 @@ no builtin name was added, so the four coverage documents are unchanged.
 
 - **A grown cell's new slots are 1-by-0 where MATLAB's are 0-by-0.** `cell(2, 2)`'s own fill has
   read 1-by-0 since long before this, so growth fills the way the constructor does; both are `[]`
-  and both are empty. Recorded as `cell_grow_fill_shape`.
+  and both are empty. Recorded as `cell_grow_fill_shape`. *Withdrawn by ADR 0164 (V3b): growth
+  fills with the 0-by-0 `[]`, and `cell_grow_fill_shape` agrees.*
 - **A cell reached through a field will not grow**, by either brace form, where MATLAB grows it.
   The refusal names the reason. Growth rebinds a name, and a field read hands back the stored cell
-  rather than somewhere to rebind.
+  rather than somewhere to rebind. *Withdrawn by ADR 0164 (V3b): every rebuilding write stores back
+  through its field or cell slot, so the cell grows.*
 - **A field of a struct array returned by a call does not spread** — `{makeStruct().name}` is one
   element — because the path must be rooted in a variable for reading it to be free.
 - **`categorical` has no `'Ordinal'` or `'Protected'` option**, and there is no `categories`,

@@ -396,7 +396,7 @@ internal sealed partial class Interpreter
     {
         switch (expr)
         {
-            case NumberLiteral or StringLiteral or BoolLiteral or ComplexLiteral or EndExpr or AllExpr:
+            case NumberLiteral or StringLiteral or BoolLiteral or ComplexLiteral or EndExpr or AllExpr or PreEvaluated:
                 return true;
             case VariableExpr variable:
                 names.Add(variable.Name);

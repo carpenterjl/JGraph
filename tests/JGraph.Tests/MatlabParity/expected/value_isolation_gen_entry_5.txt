@@ -43,9 +43,9 @@ CHK|e_real_cellslot_mask_entry|v=double [1 5] [1 2 3 4 5] entry=double [1 5] [1 
 CHK|e_real_cellslot_colon_orig|v=double [1 5] [9 9 9 9 9] entry=double [1 5] [1 2 3 4 5]|exact
 CHK|e_real_cellslot_colon_entry|v=double [1 5] [1 2 3 4 5] entry=double [1 5] [9 9 9 9 9]|exact
 CHK|e_real_cellslot_grow_orig|v=double [1 6] [1 2 3 4 5 9] entry=double [1 5] [1 2 3 4 5]|exact
-CHK|e_real_cellslot_grow_entry|v=double [1 5] [1 2 3 4 5] entry=double [1 6] [1 2 3 4 5 9]|exact|pending V6|ERR Assigning past the end of a 5-element array would grow it, which needs a plain variable on the left.
+CHK|e_real_cellslot_grow_entry|v=double [1 5] [1 2 3 4 5] entry=double [1 6] [1 2 3 4 5 9]|exact
 CHK|e_real_cellslot_delete_orig|v=double [1 4] [1 3 4 5] entry=double [1 5] [1 2 3 4 5]|exact
-CHK|e_real_cellslot_delete_entry|v=double [1 5] [1 2 3 4 5] entry=double [1 4] [1 3 4 5]|exact|pending V6|ERR Deleting elements needs a plain variable on the left.
+CHK|e_real_cellslot_delete_entry|v=double [1 5] [1 2 3 4 5] entry=double [1 4] [1 3 4 5]|exact
 CHK|e_real_cellslot_loop_orig|v=double [1 5] [9 9 3 4 5] entry=double [1 5] [1 2 3 4 5]|exact
 CHK|e_real_cellslot_loop_entry|v=double [1 5] [1 2 3 4 5] entry=double [1 5] [9 9 3 4 5]|exact
 CHK|e_real_cellslot_complexify_orig|v=double [1 5] re=[1 0 3 4 5] im=[0 1 0 0 0] entry=double [1 5] [1 2 3 4 5]|exact
@@ -61,9 +61,9 @@ CHK|e_real_cellassign_mask_entry|v=double [1 5] [1 2 3 4 5] entry=double [1 5] [
 CHK|e_real_cellassign_colon_orig|v=double [1 5] [9 9 9 9 9] entry=double [1 5] [1 2 3 4 5]|exact
 CHK|e_real_cellassign_colon_entry|v=double [1 5] [1 2 3 4 5] entry=double [1 5] [9 9 9 9 9]|exact
 CHK|e_real_cellassign_grow_orig|v=double [1 6] [1 2 3 4 5 9] entry=double [1 5] [1 2 3 4 5]|exact
-CHK|e_real_cellassign_grow_entry|v=double [1 5] [1 2 3 4 5] entry=double [1 6] [1 2 3 4 5 9]|exact|pending V6|ERR Assigning past the end of a 5-element array would grow it, which needs a plain variable on the left.
+CHK|e_real_cellassign_grow_entry|v=double [1 5] [1 2 3 4 5] entry=double [1 6] [1 2 3 4 5 9]|exact
 CHK|e_real_cellassign_delete_orig|v=double [1 4] [1 3 4 5] entry=double [1 5] [1 2 3 4 5]|exact
-CHK|e_real_cellassign_delete_entry|v=double [1 5] [1 2 3 4 5] entry=double [1 4] [1 3 4 5]|exact|pending V6|ERR Deleting elements needs a plain variable on the left.
+CHK|e_real_cellassign_delete_entry|v=double [1 5] [1 2 3 4 5] entry=double [1 4] [1 3 4 5]|exact
 CHK|e_real_cellassign_loop_orig|v=double [1 5] [9 9 3 4 5] entry=double [1 5] [1 2 3 4 5]|exact
 CHK|e_real_cellassign_loop_entry|v=double [1 5] [1 2 3 4 5] entry=double [1 5] [9 9 3 4 5]|exact
 CHK|e_real_cellassign_complexify_orig|v=double [1 5] re=[1 0 3 4 5] im=[0 1 0 0 0] entry=double [1 5] [1 2 3 4 5]|exact
@@ -79,9 +79,9 @@ CHK|e_real_field_mask_entry|v=double [1 5] [1 2 3 4 5] entry=double [1 5] [1 9 3
 CHK|e_real_field_colon_orig|v=double [1 5] [9 9 9 9 9] entry=double [1 5] [1 2 3 4 5]|exact
 CHK|e_real_field_colon_entry|v=double [1 5] [1 2 3 4 5] entry=double [1 5] [9 9 9 9 9]|exact
 CHK|e_real_field_grow_orig|v=double [1 6] [1 2 3 4 5 9] entry=double [1 5] [1 2 3 4 5]|exact
-CHK|e_real_field_grow_entry|v=double [1 5] [1 2 3 4 5] entry=double [1 6] [1 2 3 4 5 9]|exact|pending V6|ERR Assigning past the end of a 5-element array would grow it, which needs a plain variable on the left.
+CHK|e_real_field_grow_entry|v=double [1 5] [1 2 3 4 5] entry=double [1 6] [1 2 3 4 5 9]|exact
 CHK|e_real_field_delete_orig|v=double [1 4] [1 3 4 5] entry=double [1 5] [1 2 3 4 5]|exact
-CHK|e_real_field_delete_entry|v=double [1 5] [1 2 3 4 5] entry=double [1 4] [1 3 4 5]|exact|pending V6|ERR Deleting elements needs a plain variable on the left.
+CHK|e_real_field_delete_entry|v=double [1 5] [1 2 3 4 5] entry=double [1 4] [1 3 4 5]|exact
 CHK|e_real_field_loop_orig|v=double [1 5] [9 9 3 4 5] entry=double [1 5] [1 2 3 4 5]|exact
 CHK|e_real_field_loop_entry|v=double [1 5] [1 2 3 4 5] entry=double [1 5] [9 9 3 4 5]|exact
 CHK|e_real_field_complexify_orig|v=double [1 5] re=[1 0 3 4 5] im=[0 1 0 0 0] entry=double [1 5] [1 2 3 4 5]|exact
@@ -97,9 +97,9 @@ CHK|e_real_objprop_mask_entry|v=double [1 5] [1 2 3 4 5] entry=double [1 5] [1 9
 CHK|e_real_objprop_colon_orig|v=double [1 5] [9 9 9 9 9] entry=double [1 5] [1 2 3 4 5]|exact
 CHK|e_real_objprop_colon_entry|v=double [1 5] [1 2 3 4 5] entry=double [1 5] [9 9 9 9 9]|exact
 CHK|e_real_objprop_grow_orig|v=double [1 6] [1 2 3 4 5 9] entry=double [1 5] [1 2 3 4 5]|exact
-CHK|e_real_objprop_grow_entry|v=double [1 5] [1 2 3 4 5] entry=double [1 6] [1 2 3 4 5 9]|exact|pending V6|ERR Assigning past the end of a 5-element array would grow it, which needs a plain variable on the left.
+CHK|e_real_objprop_grow_entry|v=double [1 5] [1 2 3 4 5] entry=double [1 6] [1 2 3 4 5 9]|exact
 CHK|e_real_objprop_delete_orig|v=double [1 4] [1 3 4 5] entry=double [1 5] [1 2 3 4 5]|exact
-CHK|e_real_objprop_delete_entry|v=double [1 5] [1 2 3 4 5] entry=double [1 4] [1 3 4 5]|exact|pending V6|ERR Deleting elements needs a plain variable on the left.
+CHK|e_real_objprop_delete_entry|v=double [1 5] [1 2 3 4 5] entry=double [1 4] [1 3 4 5]|exact
 CHK|e_real_objprop_loop_orig|v=double [1 5] [9 9 3 4 5] entry=double [1 5] [1 2 3 4 5]|exact
 CHK|e_real_objprop_loop_entry|v=double [1 5] [1 2 3 4 5] entry=double [1 5] [9 9 3 4 5]|exact
 CHK|e_real_objprop_complexify_orig|v=double [1 5] re=[1 0 3 4 5] im=[0 1 0 0 0] entry=double [1 5] [1 2 3 4 5]|exact
@@ -170,9 +170,9 @@ CHK|e_complex_cellslot_mask_entry|v=double [1 5] re=[1 2 3 4 5] im=[1 1 1 1 1] e
 CHK|e_complex_cellslot_colon_orig|v=double [1 5] [9 9 9 9 9] entry=double [1 5] re=[1 2 3 4 5] im=[1 1 1 1 1]|exact
 CHK|e_complex_cellslot_colon_entry|v=double [1 5] re=[1 2 3 4 5] im=[1 1 1 1 1] entry=double [1 5] [9 9 9 9 9]|exact
 CHK|e_complex_cellslot_grow_orig|v=double [1 6] re=[1 2 3 4 5 9] im=[1 1 1 1 1 0] entry=double [1 5] re=[1 2 3 4 5] im=[1 1 1 1 1]|exact
-CHK|e_complex_cellslot_grow_entry|v=double [1 5] re=[1 2 3 4 5] im=[1 1 1 1 1] entry=double [1 6] re=[1 2 3 4 5 9] im=[1 1 1 1 1 0]|exact|pending V6|ERR Assigning past the end of a 5-element array would grow it, which needs a plain variable on the left.
+CHK|e_complex_cellslot_grow_entry|v=double [1 5] re=[1 2 3 4 5] im=[1 1 1 1 1] entry=double [1 6] re=[1 2 3 4 5 9] im=[1 1 1 1 1 0]|exact
 CHK|e_complex_cellslot_delete_orig|v=double [1 4] re=[1 3 4 5] im=[1 1 1 1] entry=double [1 5] re=[1 2 3 4 5] im=[1 1 1 1 1]|exact
-CHK|e_complex_cellslot_delete_entry|v=double [1 5] re=[1 2 3 4 5] im=[1 1 1 1 1] entry=double [1 4] re=[1 3 4 5] im=[1 1 1 1]|exact|pending V6|ERR Deleting elements needs a plain variable on the left.
+CHK|e_complex_cellslot_delete_entry|v=double [1 5] re=[1 2 3 4 5] im=[1 1 1 1 1] entry=double [1 4] re=[1 3 4 5] im=[1 1 1 1]|exact
 CHK|e_complex_cellslot_loop_orig|v=double [1 5] re=[9 9 3 4 5] im=[0 0 1 1 1] entry=double [1 5] re=[1 2 3 4 5] im=[1 1 1 1 1]|exact
 CHK|e_complex_cellslot_loop_entry|v=double [1 5] re=[1 2 3 4 5] im=[1 1 1 1 1] entry=double [1 5] re=[9 9 3 4 5] im=[0 0 1 1 1]|exact
 CHK|e_complex_cellassign_elem_orig|v=double [1 5] re=[1 9 3 4 5] im=[1 0 1 1 1] entry=double [1 5] re=[1 2 3 4 5] im=[1 1 1 1 1]|exact
@@ -184,9 +184,9 @@ CHK|e_complex_cellassign_mask_entry|v=double [1 5] re=[1 2 3 4 5] im=[1 1 1 1 1]
 CHK|e_complex_cellassign_colon_orig|v=double [1 5] [9 9 9 9 9] entry=double [1 5] re=[1 2 3 4 5] im=[1 1 1 1 1]|exact
 CHK|e_complex_cellassign_colon_entry|v=double [1 5] re=[1 2 3 4 5] im=[1 1 1 1 1] entry=double [1 5] [9 9 9 9 9]|exact
 CHK|e_complex_cellassign_grow_orig|v=double [1 6] re=[1 2 3 4 5 9] im=[1 1 1 1 1 0] entry=double [1 5] re=[1 2 3 4 5] im=[1 1 1 1 1]|exact
-CHK|e_complex_cellassign_grow_entry|v=double [1 5] re=[1 2 3 4 5] im=[1 1 1 1 1] entry=double [1 6] re=[1 2 3 4 5 9] im=[1 1 1 1 1 0]|exact|pending V6|ERR Assigning past the end of a 5-element array would grow it, which needs a plain variable on the left.
+CHK|e_complex_cellassign_grow_entry|v=double [1 5] re=[1 2 3 4 5] im=[1 1 1 1 1] entry=double [1 6] re=[1 2 3 4 5 9] im=[1 1 1 1 1 0]|exact
 CHK|e_complex_cellassign_delete_orig|v=double [1 4] re=[1 3 4 5] im=[1 1 1 1] entry=double [1 5] re=[1 2 3 4 5] im=[1 1 1 1 1]|exact
-CHK|e_complex_cellassign_delete_entry|v=double [1 5] re=[1 2 3 4 5] im=[1 1 1 1 1] entry=double [1 4] re=[1 3 4 5] im=[1 1 1 1]|exact|pending V6|ERR Deleting elements needs a plain variable on the left.
+CHK|e_complex_cellassign_delete_entry|v=double [1 5] re=[1 2 3 4 5] im=[1 1 1 1 1] entry=double [1 4] re=[1 3 4 5] im=[1 1 1 1]|exact
 CHK|e_complex_cellassign_loop_orig|v=double [1 5] re=[9 9 3 4 5] im=[0 0 1 1 1] entry=double [1 5] re=[1 2 3 4 5] im=[1 1 1 1 1]|exact
 CHK|e_complex_cellassign_loop_entry|v=double [1 5] re=[1 2 3 4 5] im=[1 1 1 1 1] entry=double [1 5] re=[9 9 3 4 5] im=[0 0 1 1 1]|exact
 CHK|e_complex_field_elem_orig|v=double [1 5] re=[1 9 3 4 5] im=[1 0 1 1 1] entry=double [1 5] re=[1 2 3 4 5] im=[1 1 1 1 1]|exact
@@ -198,9 +198,9 @@ CHK|e_complex_field_mask_entry|v=double [1 5] re=[1 2 3 4 5] im=[1 1 1 1 1] entr
 CHK|e_complex_field_colon_orig|v=double [1 5] [9 9 9 9 9] entry=double [1 5] re=[1 2 3 4 5] im=[1 1 1 1 1]|exact
 CHK|e_complex_field_colon_entry|v=double [1 5] re=[1 2 3 4 5] im=[1 1 1 1 1] entry=double [1 5] [9 9 9 9 9]|exact
 CHK|e_complex_field_grow_orig|v=double [1 6] re=[1 2 3 4 5 9] im=[1 1 1 1 1 0] entry=double [1 5] re=[1 2 3 4 5] im=[1 1 1 1 1]|exact
-CHK|e_complex_field_grow_entry|v=double [1 5] re=[1 2 3 4 5] im=[1 1 1 1 1] entry=double [1 6] re=[1 2 3 4 5 9] im=[1 1 1 1 1 0]|exact|pending V6|ERR Assigning past the end of a 5-element array would grow it, which needs a plain variable on the left.
+CHK|e_complex_field_grow_entry|v=double [1 5] re=[1 2 3 4 5] im=[1 1 1 1 1] entry=double [1 6] re=[1 2 3 4 5 9] im=[1 1 1 1 1 0]|exact
 CHK|e_complex_field_delete_orig|v=double [1 4] re=[1 3 4 5] im=[1 1 1 1] entry=double [1 5] re=[1 2 3 4 5] im=[1 1 1 1 1]|exact
-CHK|e_complex_field_delete_entry|v=double [1 5] re=[1 2 3 4 5] im=[1 1 1 1 1] entry=double [1 4] re=[1 3 4 5] im=[1 1 1 1]|exact|pending V6|ERR Deleting elements needs a plain variable on the left.
+CHK|e_complex_field_delete_entry|v=double [1 5] re=[1 2 3 4 5] im=[1 1 1 1 1] entry=double [1 4] re=[1 3 4 5] im=[1 1 1 1]|exact
 CHK|e_complex_field_loop_orig|v=double [1 5] re=[9 9 3 4 5] im=[0 0 1 1 1] entry=double [1 5] re=[1 2 3 4 5] im=[1 1 1 1 1]|exact
 CHK|e_complex_field_loop_entry|v=double [1 5] re=[1 2 3 4 5] im=[1 1 1 1 1] entry=double [1 5] re=[9 9 3 4 5] im=[0 0 1 1 1]|exact
 CHK|e_complex_objprop_elem_orig|v=double [1 5] re=[1 9 3 4 5] im=[1 0 1 1 1] entry=double [1 5] re=[1 2 3 4 5] im=[1 1 1 1 1]|exact
@@ -212,9 +212,9 @@ CHK|e_complex_objprop_mask_entry|v=double [1 5] re=[1 2 3 4 5] im=[1 1 1 1 1] en
 CHK|e_complex_objprop_colon_orig|v=double [1 5] [9 9 9 9 9] entry=double [1 5] re=[1 2 3 4 5] im=[1 1 1 1 1]|exact
 CHK|e_complex_objprop_colon_entry|v=double [1 5] re=[1 2 3 4 5] im=[1 1 1 1 1] entry=double [1 5] [9 9 9 9 9]|exact
 CHK|e_complex_objprop_grow_orig|v=double [1 6] re=[1 2 3 4 5 9] im=[1 1 1 1 1 0] entry=double [1 5] re=[1 2 3 4 5] im=[1 1 1 1 1]|exact
-CHK|e_complex_objprop_grow_entry|v=double [1 5] re=[1 2 3 4 5] im=[1 1 1 1 1] entry=double [1 6] re=[1 2 3 4 5 9] im=[1 1 1 1 1 0]|exact|pending V6|ERR Assigning past the end of a 5-element array would grow it, which needs a plain variable on the left.
+CHK|e_complex_objprop_grow_entry|v=double [1 5] re=[1 2 3 4 5] im=[1 1 1 1 1] entry=double [1 6] re=[1 2 3 4 5 9] im=[1 1 1 1 1 0]|exact
 CHK|e_complex_objprop_delete_orig|v=double [1 4] re=[1 3 4 5] im=[1 1 1 1] entry=double [1 5] re=[1 2 3 4 5] im=[1 1 1 1 1]|exact
-CHK|e_complex_objprop_delete_entry|v=double [1 5] re=[1 2 3 4 5] im=[1 1 1 1 1] entry=double [1 4] re=[1 3 4 5] im=[1 1 1 1]|exact|pending V6|ERR Deleting elements needs a plain variable on the left.
+CHK|e_complex_objprop_delete_entry|v=double [1 5] re=[1 2 3 4 5] im=[1 1 1 1 1] entry=double [1 4] re=[1 3 4 5] im=[1 1 1 1]|exact
 CHK|e_complex_objprop_loop_orig|v=double [1 5] re=[9 9 3 4 5] im=[0 0 1 1 1] entry=double [1 5] re=[1 2 3 4 5] im=[1 1 1 1 1]|exact
 CHK|e_complex_objprop_loop_entry|v=double [1 5] re=[1 2 3 4 5] im=[1 1 1 1 1] entry=double [1 5] re=[9 9 3 4 5] im=[0 0 1 1 1]|exact
 CHK|e_complex_anon_elem_orig|v=double [1 5] re=[1 9 3 4 5] im=[1 0 1 1 1] entry=double [1 5] re=[1 2 3 4 5] im=[1 1 1 1 1]|exact
@@ -279,9 +279,9 @@ CHK|e_single_cellslot_mask_entry|v=single [1 5] [1 2 3 4 5] entry=single [1 5] [
 CHK|e_single_cellslot_colon_orig|v=single [1 5] [9 9 9 9 9] entry=single [1 5] [1 2 3 4 5]|exact
 CHK|e_single_cellslot_colon_entry|v=single [1 5] [1 2 3 4 5] entry=single [1 5] [9 9 9 9 9]|exact
 CHK|e_single_cellslot_grow_orig|v=single [1 6] [1 2 3 4 5 9] entry=single [1 5] [1 2 3 4 5]|exact
-CHK|e_single_cellslot_grow_entry|v=single [1 5] [1 2 3 4 5] entry=single [1 6] [1 2 3 4 5 9]|exact|pending V6|ERR Assigning past the end of a 5-element array would grow it, which needs a plain variable on the left.
+CHK|e_single_cellslot_grow_entry|v=single [1 5] [1 2 3 4 5] entry=single [1 6] [1 2 3 4 5 9]|exact
 CHK|e_single_cellslot_delete_orig|v=single [1 4] [1 3 4 5] entry=single [1 5] [1 2 3 4 5]|exact
-CHK|e_single_cellslot_delete_entry|v=single [1 5] [1 2 3 4 5] entry=single [1 4] [1 3 4 5]|exact|pending V6|ERR Deleting elements needs a plain variable on the left.
+CHK|e_single_cellslot_delete_entry|v=single [1 5] [1 2 3 4 5] entry=single [1 4] [1 3 4 5]|exact
 CHK|e_single_cellslot_loop_orig|v=single [1 5] [9 9 3 4 5] entry=single [1 5] [1 2 3 4 5]|exact
 CHK|e_single_cellslot_loop_entry|v=single [1 5] [1 2 3 4 5] entry=single [1 5] [9 9 3 4 5]|exact
 CHK|e_single_cellslot_complexify_orig|v=single [1 5] re=[1 0 3 4 5] im=[0 1 0 0 0] entry=single [1 5] [1 2 3 4 5]|exact
@@ -295,9 +295,9 @@ CHK|e_single_cellassign_mask_entry|v=single [1 5] [1 2 3 4 5] entry=single [1 5]
 CHK|e_single_cellassign_colon_orig|v=single [1 5] [9 9 9 9 9] entry=single [1 5] [1 2 3 4 5]|exact
 CHK|e_single_cellassign_colon_entry|v=single [1 5] [1 2 3 4 5] entry=single [1 5] [9 9 9 9 9]|exact
 CHK|e_single_cellassign_grow_orig|v=single [1 6] [1 2 3 4 5 9] entry=single [1 5] [1 2 3 4 5]|exact
-CHK|e_single_cellassign_grow_entry|v=single [1 5] [1 2 3 4 5] entry=single [1 6] [1 2 3 4 5 9]|exact|pending V6|ERR Assigning past the end of a 5-element array would grow it, which needs a plain variable on the left.
+CHK|e_single_cellassign_grow_entry|v=single [1 5] [1 2 3 4 5] entry=single [1 6] [1 2 3 4 5 9]|exact
 CHK|e_single_cellassign_delete_orig|v=single [1 4] [1 3 4 5] entry=single [1 5] [1 2 3 4 5]|exact
-CHK|e_single_cellassign_delete_entry|v=single [1 5] [1 2 3 4 5] entry=single [1 4] [1 3 4 5]|exact|pending V6|ERR Deleting elements needs a plain variable on the left.
+CHK|e_single_cellassign_delete_entry|v=single [1 5] [1 2 3 4 5] entry=single [1 4] [1 3 4 5]|exact
 CHK|e_single_cellassign_loop_orig|v=single [1 5] [9 9 3 4 5] entry=single [1 5] [1 2 3 4 5]|exact
 CHK|e_single_cellassign_loop_entry|v=single [1 5] [1 2 3 4 5] entry=single [1 5] [9 9 3 4 5]|exact
 CHK|e_single_cellassign_complexify_orig|v=single [1 5] re=[1 0 3 4 5] im=[0 1 0 0 0] entry=single [1 5] [1 2 3 4 5]|exact
@@ -311,9 +311,9 @@ CHK|e_single_field_mask_entry|v=single [1 5] [1 2 3 4 5] entry=single [1 5] [1 9
 CHK|e_single_field_colon_orig|v=single [1 5] [9 9 9 9 9] entry=single [1 5] [1 2 3 4 5]|exact
 CHK|e_single_field_colon_entry|v=single [1 5] [1 2 3 4 5] entry=single [1 5] [9 9 9 9 9]|exact
 CHK|e_single_field_grow_orig|v=single [1 6] [1 2 3 4 5 9] entry=single [1 5] [1 2 3 4 5]|exact
-CHK|e_single_field_grow_entry|v=single [1 5] [1 2 3 4 5] entry=single [1 6] [1 2 3 4 5 9]|exact|pending V6|ERR Assigning past the end of a 5-element array would grow it, which needs a plain variable on the left.
+CHK|e_single_field_grow_entry|v=single [1 5] [1 2 3 4 5] entry=single [1 6] [1 2 3 4 5 9]|exact
 CHK|e_single_field_delete_orig|v=single [1 4] [1 3 4 5] entry=single [1 5] [1 2 3 4 5]|exact
-CHK|e_single_field_delete_entry|v=single [1 5] [1 2 3 4 5] entry=single [1 4] [1 3 4 5]|exact|pending V6|ERR Deleting elements needs a plain variable on the left.
+CHK|e_single_field_delete_entry|v=single [1 5] [1 2 3 4 5] entry=single [1 4] [1 3 4 5]|exact
 CHK|e_single_field_loop_orig|v=single [1 5] [9 9 3 4 5] entry=single [1 5] [1 2 3 4 5]|exact
 CHK|e_single_field_loop_entry|v=single [1 5] [1 2 3 4 5] entry=single [1 5] [9 9 3 4 5]|exact
 CHK|e_single_field_complexify_orig|v=single [1 5] re=[1 0 3 4 5] im=[0 1 0 0 0] entry=single [1 5] [1 2 3 4 5]|exact
@@ -327,9 +327,9 @@ CHK|e_single_objprop_mask_entry|v=single [1 5] [1 2 3 4 5] entry=single [1 5] [1
 CHK|e_single_objprop_colon_orig|v=single [1 5] [9 9 9 9 9] entry=single [1 5] [1 2 3 4 5]|exact
 CHK|e_single_objprop_colon_entry|v=single [1 5] [1 2 3 4 5] entry=single [1 5] [9 9 9 9 9]|exact
 CHK|e_single_objprop_grow_orig|v=single [1 6] [1 2 3 4 5 9] entry=single [1 5] [1 2 3 4 5]|exact
-CHK|e_single_objprop_grow_entry|v=single [1 5] [1 2 3 4 5] entry=single [1 6] [1 2 3 4 5 9]|exact|pending V6|ERR Assigning past the end of a 5-element array would grow it, which needs a plain variable on the left.
+CHK|e_single_objprop_grow_entry|v=single [1 5] [1 2 3 4 5] entry=single [1 6] [1 2 3 4 5 9]|exact
 CHK|e_single_objprop_delete_orig|v=single [1 4] [1 3 4 5] entry=single [1 5] [1 2 3 4 5]|exact
-CHK|e_single_objprop_delete_entry|v=single [1 5] [1 2 3 4 5] entry=single [1 4] [1 3 4 5]|exact|pending V6|ERR Deleting elements needs a plain variable on the left.
+CHK|e_single_objprop_delete_entry|v=single [1 5] [1 2 3 4 5] entry=single [1 4] [1 3 4 5]|exact
 CHK|e_single_objprop_loop_orig|v=single [1 5] [9 9 3 4 5] entry=single [1 5] [1 2 3 4 5]|exact
 CHK|e_single_objprop_loop_entry|v=single [1 5] [1 2 3 4 5] entry=single [1 5] [9 9 3 4 5]|exact
 CHK|e_single_objprop_complexify_orig|v=single [1 5] re=[1 0 3 4 5] im=[0 1 0 0 0] entry=single [1 5] [1 2 3 4 5]|exact
@@ -395,9 +395,9 @@ CHK|e_int32_cellslot_mask_entry|v=int32 [1 5] [1 2 3 4 5] entry=int32 [1 5] [1 9
 CHK|e_int32_cellslot_colon_orig|v=int32 [1 5] [9 9 9 9 9] entry=int32 [1 5] [1 2 3 4 5]|exact
 CHK|e_int32_cellslot_colon_entry|v=int32 [1 5] [1 2 3 4 5] entry=int32 [1 5] [9 9 9 9 9]|exact
 CHK|e_int32_cellslot_grow_orig|v=int32 [1 6] [1 2 3 4 5 9] entry=int32 [1 5] [1 2 3 4 5]|exact
-CHK|e_int32_cellslot_grow_entry|v=int32 [1 5] [1 2 3 4 5] entry=int32 [1 6] [1 2 3 4 5 9]|exact|pending V6|ERR Assigning past the end of a 5-element array would grow it, which needs a plain variable on the left.
+CHK|e_int32_cellslot_grow_entry|v=int32 [1 5] [1 2 3 4 5] entry=int32 [1 6] [1 2 3 4 5 9]|exact
 CHK|e_int32_cellslot_delete_orig|v=int32 [1 4] [1 3 4 5] entry=int32 [1 5] [1 2 3 4 5]|exact
-CHK|e_int32_cellslot_delete_entry|v=int32 [1 5] [1 2 3 4 5] entry=int32 [1 4] [1 3 4 5]|exact|pending V6|ERR Deleting elements needs a plain variable on the left.
+CHK|e_int32_cellslot_delete_entry|v=int32 [1 5] [1 2 3 4 5] entry=int32 [1 4] [1 3 4 5]|exact
 CHK|e_int32_cellslot_loop_orig|v=int32 [1 5] [9 9 3 4 5] entry=int32 [1 5] [1 2 3 4 5]|exact
 CHK|e_int32_cellslot_loop_entry|v=int32 [1 5] [1 2 3 4 5] entry=int32 [1 5] [9 9 3 4 5]|exact
 CHK|e_int32_cellassign_elem_orig|v=int32 [1 5] [1 9 3 4 5] entry=int32 [1 5] [1 2 3 4 5]|exact
@@ -409,9 +409,9 @@ CHK|e_int32_cellassign_mask_entry|v=int32 [1 5] [1 2 3 4 5] entry=int32 [1 5] [1
 CHK|e_int32_cellassign_colon_orig|v=int32 [1 5] [9 9 9 9 9] entry=int32 [1 5] [1 2 3 4 5]|exact
 CHK|e_int32_cellassign_colon_entry|v=int32 [1 5] [1 2 3 4 5] entry=int32 [1 5] [9 9 9 9 9]|exact
 CHK|e_int32_cellassign_grow_orig|v=int32 [1 6] [1 2 3 4 5 9] entry=int32 [1 5] [1 2 3 4 5]|exact
-CHK|e_int32_cellassign_grow_entry|v=int32 [1 5] [1 2 3 4 5] entry=int32 [1 6] [1 2 3 4 5 9]|exact|pending V6|ERR Assigning past the end of a 5-element array would grow it, which needs a plain variable on the left.
+CHK|e_int32_cellassign_grow_entry|v=int32 [1 5] [1 2 3 4 5] entry=int32 [1 6] [1 2 3 4 5 9]|exact
 CHK|e_int32_cellassign_delete_orig|v=int32 [1 4] [1 3 4 5] entry=int32 [1 5] [1 2 3 4 5]|exact
-CHK|e_int32_cellassign_delete_entry|v=int32 [1 5] [1 2 3 4 5] entry=int32 [1 4] [1 3 4 5]|exact|pending V6|ERR Deleting elements needs a plain variable on the left.
+CHK|e_int32_cellassign_delete_entry|v=int32 [1 5] [1 2 3 4 5] entry=int32 [1 4] [1 3 4 5]|exact
 CHK|e_int32_cellassign_loop_orig|v=int32 [1 5] [9 9 3 4 5] entry=int32 [1 5] [1 2 3 4 5]|exact
 CHK|e_int32_cellassign_loop_entry|v=int32 [1 5] [1 2 3 4 5] entry=int32 [1 5] [9 9 3 4 5]|exact
 CHK|e_int32_field_elem_orig|v=int32 [1 5] [1 9 3 4 5] entry=int32 [1 5] [1 2 3 4 5]|exact
@@ -423,9 +423,9 @@ CHK|e_int32_field_mask_entry|v=int32 [1 5] [1 2 3 4 5] entry=int32 [1 5] [1 9 3 
 CHK|e_int32_field_colon_orig|v=int32 [1 5] [9 9 9 9 9] entry=int32 [1 5] [1 2 3 4 5]|exact
 CHK|e_int32_field_colon_entry|v=int32 [1 5] [1 2 3 4 5] entry=int32 [1 5] [9 9 9 9 9]|exact
 CHK|e_int32_field_grow_orig|v=int32 [1 6] [1 2 3 4 5 9] entry=int32 [1 5] [1 2 3 4 5]|exact
-CHK|e_int32_field_grow_entry|v=int32 [1 5] [1 2 3 4 5] entry=int32 [1 6] [1 2 3 4 5 9]|exact|pending V6|ERR Assigning past the end of a 5-element array would grow it, which needs a plain variable on the left.
+CHK|e_int32_field_grow_entry|v=int32 [1 5] [1 2 3 4 5] entry=int32 [1 6] [1 2 3 4 5 9]|exact
 CHK|e_int32_field_delete_orig|v=int32 [1 4] [1 3 4 5] entry=int32 [1 5] [1 2 3 4 5]|exact
-CHK|e_int32_field_delete_entry|v=int32 [1 5] [1 2 3 4 5] entry=int32 [1 4] [1 3 4 5]|exact|pending V6|ERR Deleting elements needs a plain variable on the left.
+CHK|e_int32_field_delete_entry|v=int32 [1 5] [1 2 3 4 5] entry=int32 [1 4] [1 3 4 5]|exact
 CHK|e_int32_field_loop_orig|v=int32 [1 5] [9 9 3 4 5] entry=int32 [1 5] [1 2 3 4 5]|exact
 CHK|e_int32_field_loop_entry|v=int32 [1 5] [1 2 3 4 5] entry=int32 [1 5] [9 9 3 4 5]|exact
 CHK|e_int32_objprop_elem_orig|v=int32 [1 5] [1 9 3 4 5] entry=int32 [1 5] [1 2 3 4 5]|exact
@@ -437,9 +437,9 @@ CHK|e_int32_objprop_mask_entry|v=int32 [1 5] [1 2 3 4 5] entry=int32 [1 5] [1 9 
 CHK|e_int32_objprop_colon_orig|v=int32 [1 5] [9 9 9 9 9] entry=int32 [1 5] [1 2 3 4 5]|exact
 CHK|e_int32_objprop_colon_entry|v=int32 [1 5] [1 2 3 4 5] entry=int32 [1 5] [9 9 9 9 9]|exact
 CHK|e_int32_objprop_grow_orig|v=int32 [1 6] [1 2 3 4 5 9] entry=int32 [1 5] [1 2 3 4 5]|exact
-CHK|e_int32_objprop_grow_entry|v=int32 [1 5] [1 2 3 4 5] entry=int32 [1 6] [1 2 3 4 5 9]|exact|pending V6|ERR Assigning past the end of a 5-element array would grow it, which needs a plain variable on the left.
+CHK|e_int32_objprop_grow_entry|v=int32 [1 5] [1 2 3 4 5] entry=int32 [1 6] [1 2 3 4 5 9]|exact
 CHK|e_int32_objprop_delete_orig|v=int32 [1 4] [1 3 4 5] entry=int32 [1 5] [1 2 3 4 5]|exact
-CHK|e_int32_objprop_delete_entry|v=int32 [1 5] [1 2 3 4 5] entry=int32 [1 4] [1 3 4 5]|exact|pending V6|ERR Deleting elements needs a plain variable on the left.
+CHK|e_int32_objprop_delete_entry|v=int32 [1 5] [1 2 3 4 5] entry=int32 [1 4] [1 3 4 5]|exact
 CHK|e_int32_objprop_loop_orig|v=int32 [1 5] [9 9 3 4 5] entry=int32 [1 5] [1 2 3 4 5]|exact
 CHK|e_int32_objprop_loop_entry|v=int32 [1 5] [1 2 3 4 5] entry=int32 [1 5] [9 9 3 4 5]|exact
 CHK|e_int32_anon_elem_orig|v=int32 [1 5] [1 9 3 4 5] entry=int32 [1 5] [1 2 3 4 5]|exact
@@ -498,9 +498,9 @@ CHK|e_logical_cellslot_mask_entry|v=logical [1 5] [false true false true false] 
 CHK|e_logical_cellslot_colon_orig|v=logical [1 5] [false false false false false] entry=logical [1 5] [false true false true false]|exact
 CHK|e_logical_cellslot_colon_entry|v=logical [1 5] [false true false true false] entry=logical [1 5] [false false false false false]|exact
 CHK|e_logical_cellslot_grow_orig|v=logical [1 6] [false true false true false true] entry=logical [1 5] [false true false true false]|exact
-CHK|e_logical_cellslot_grow_entry|v=logical [1 5] [false true false true false] entry=logical [1 6] [false true false true false true]|exact|pending V6|ERR Assigning past the end of a 5-element array would grow it, which needs a plain variable on the left.
+CHK|e_logical_cellslot_grow_entry|v=logical [1 5] [false true false true false] entry=logical [1 6] [false true false true false true]|exact
 CHK|e_logical_cellslot_delete_orig|v=logical [1 4] [false false true false] entry=logical [1 5] [false true false true false]|exact
-CHK|e_logical_cellslot_delete_entry|v=logical [1 5] [false true false true false] entry=logical [1 4] [false false true false]|exact|pending V6|ERR Deleting elements needs a plain variable on the left.
+CHK|e_logical_cellslot_delete_entry|v=logical [1 5] [false true false true false] entry=logical [1 4] [false false true false]|exact
 CHK|e_logical_cellslot_numify_orig|v=logical [1 5] [false true false true false] entry=logical [1 5] [false true false true false]|exact|pending V6|v=double [1 5] [0 9 0 1 0] entry=logical [1 5] [false true false true false]
 CHK|e_logical_cellslot_numify_entry|v=logical [1 5] [false true false true false] entry=logical [1 5] [false true false true false]|exact|pending V6|v=logical [1 5] [false true false true false] entry=double [1 5] [0 9 0 1 0]
 CHK|e_logical_cellslot_loop_orig|v=logical [1 5] [false false false true false] entry=logical [1 5] [false true false true false]|exact
@@ -512,9 +512,9 @@ CHK|e_logical_cellassign_mask_entry|v=logical [1 5] [false true false true false
 CHK|e_logical_cellassign_colon_orig|v=logical [1 5] [false false false false false] entry=logical [1 5] [false true false true false]|exact
 CHK|e_logical_cellassign_colon_entry|v=logical [1 5] [false true false true false] entry=logical [1 5] [false false false false false]|exact
 CHK|e_logical_cellassign_grow_orig|v=logical [1 6] [false true false true false true] entry=logical [1 5] [false true false true false]|exact
-CHK|e_logical_cellassign_grow_entry|v=logical [1 5] [false true false true false] entry=logical [1 6] [false true false true false true]|exact|pending V6|ERR Assigning past the end of a 5-element array would grow it, which needs a plain variable on the left.
+CHK|e_logical_cellassign_grow_entry|v=logical [1 5] [false true false true false] entry=logical [1 6] [false true false true false true]|exact
 CHK|e_logical_cellassign_delete_orig|v=logical [1 4] [false false true false] entry=logical [1 5] [false true false true false]|exact
-CHK|e_logical_cellassign_delete_entry|v=logical [1 5] [false true false true false] entry=logical [1 4] [false false true false]|exact|pending V6|ERR Deleting elements needs a plain variable on the left.
+CHK|e_logical_cellassign_delete_entry|v=logical [1 5] [false true false true false] entry=logical [1 4] [false false true false]|exact
 CHK|e_logical_cellassign_numify_orig|v=logical [1 5] [false true false true false] entry=logical [1 5] [false true false true false]|exact|pending V6|v=double [1 5] [0 9 0 1 0] entry=logical [1 5] [false true false true false]
 CHK|e_logical_cellassign_numify_entry|v=logical [1 5] [false true false true false] entry=logical [1 5] [false true false true false]|exact|pending V6|v=logical [1 5] [false true false true false] entry=double [1 5] [0 9 0 1 0]
 CHK|e_logical_cellassign_loop_orig|v=logical [1 5] [false false false true false] entry=logical [1 5] [false true false true false]|exact
@@ -526,9 +526,9 @@ CHK|e_logical_field_mask_entry|v=logical [1 5] [false true false true false] ent
 CHK|e_logical_field_colon_orig|v=logical [1 5] [false false false false false] entry=logical [1 5] [false true false true false]|exact
 CHK|e_logical_field_colon_entry|v=logical [1 5] [false true false true false] entry=logical [1 5] [false false false false false]|exact
 CHK|e_logical_field_grow_orig|v=logical [1 6] [false true false true false true] entry=logical [1 5] [false true false true false]|exact
-CHK|e_logical_field_grow_entry|v=logical [1 5] [false true false true false] entry=logical [1 6] [false true false true false true]|exact|pending V6|ERR Assigning past the end of a 5-element array would grow it, which needs a plain variable on the left.
+CHK|e_logical_field_grow_entry|v=logical [1 5] [false true false true false] entry=logical [1 6] [false true false true false true]|exact
 CHK|e_logical_field_delete_orig|v=logical [1 4] [false false true false] entry=logical [1 5] [false true false true false]|exact
-CHK|e_logical_field_delete_entry|v=logical [1 5] [false true false true false] entry=logical [1 4] [false false true false]|exact|pending V6|ERR Deleting elements needs a plain variable on the left.
+CHK|e_logical_field_delete_entry|v=logical [1 5] [false true false true false] entry=logical [1 4] [false false true false]|exact
 CHK|e_logical_field_numify_orig|v=logical [1 5] [false true false true false] entry=logical [1 5] [false true false true false]|exact|pending V6|v=double [1 5] [0 9 0 1 0] entry=logical [1 5] [false true false true false]
 CHK|e_logical_field_numify_entry|v=logical [1 5] [false true false true false] entry=logical [1 5] [false true false true false]|exact|pending V6|v=logical [1 5] [false true false true false] entry=double [1 5] [0 9 0 1 0]
 CHK|e_logical_field_loop_orig|v=logical [1 5] [false false false true false] entry=logical [1 5] [false true false true false]|exact
@@ -540,9 +540,9 @@ CHK|e_logical_objprop_mask_entry|v=logical [1 5] [false true false true false] e
 CHK|e_logical_objprop_colon_orig|v=logical [1 5] [false false false false false] entry=logical [1 5] [false true false true false]|exact
 CHK|e_logical_objprop_colon_entry|v=logical [1 5] [false true false true false] entry=logical [1 5] [false false false false false]|exact
 CHK|e_logical_objprop_grow_orig|v=logical [1 6] [false true false true false true] entry=logical [1 5] [false true false true false]|exact
-CHK|e_logical_objprop_grow_entry|v=logical [1 5] [false true false true false] entry=logical [1 6] [false true false true false true]|exact|pending V6|ERR Assigning past the end of a 5-element array would grow it, which needs a plain variable on the left.
+CHK|e_logical_objprop_grow_entry|v=logical [1 5] [false true false true false] entry=logical [1 6] [false true false true false true]|exact
 CHK|e_logical_objprop_delete_orig|v=logical [1 4] [false false true false] entry=logical [1 5] [false true false true false]|exact
-CHK|e_logical_objprop_delete_entry|v=logical [1 5] [false true false true false] entry=logical [1 4] [false false true false]|exact|pending V6|ERR Deleting elements needs a plain variable on the left.
+CHK|e_logical_objprop_delete_entry|v=logical [1 5] [false true false true false] entry=logical [1 4] [false false true false]|exact
 CHK|e_logical_objprop_numify_orig|v=logical [1 5] [false true false true false] entry=logical [1 5] [false true false true false]|exact|pending V6|v=double [1 5] [0 9 0 1 0] entry=logical [1 5] [false true false true false]
 CHK|e_logical_objprop_numify_entry|v=logical [1 5] [false true false true false] entry=logical [1 5] [false true false true false]|exact|pending V6|v=logical [1 5] [false true false true false] entry=double [1 5] [0 9 0 1 0]
 CHK|e_logical_objprop_loop_orig|v=logical [1 5] [false false false true false] entry=logical [1 5] [false true false true false]|exact
@@ -585,37 +585,37 @@ CHK|e_char_global_grow_entry|v=char [1 5] {ababa} entry=char [1 6] {ababaz}|exac
 CHK|e_char_global_delete_orig|v=char [1 4] {aaba} entry=char [1 5] {ababa}|exact
 CHK|e_char_global_delete_entry|v=char [1 5] {ababa} entry=char [1 4] {aaba}|exact
 CHK|e_char_cellslot_elem_orig|v=char [1 5] {azaba} entry=char [1 5] {ababa}|exact
-CHK|e_char_cellslot_elem_entry|v=char [1 5] {ababa} entry=char [1 5] {azaba}|exact|pending V6|ERR Assigning into a char row needs a plain variable on the left.
+CHK|e_char_cellslot_elem_entry|v=char [1 5] {ababa} entry=char [1 5] {azaba}|exact
 CHK|e_char_cellslot_colon_orig|v=char [1 5] {zzzzz} entry=char [1 5] {ababa}|exact
-CHK|e_char_cellslot_colon_entry|v=char [1 5] {ababa} entry=char [1 5] {zzzzz}|exact|pending V6|ERR Assigning into a char row needs a plain variable on the left.
+CHK|e_char_cellslot_colon_entry|v=char [1 5] {ababa} entry=char [1 5] {zzzzz}|exact
 CHK|e_char_cellslot_grow_orig|v=char [1 6] {ababaz} entry=char [1 5] {ababa}|exact
-CHK|e_char_cellslot_grow_entry|v=char [1 5] {ababa} entry=char [1 6] {ababaz}|exact|pending V6|ERR Assigning into a char row needs a plain variable on the left.
+CHK|e_char_cellslot_grow_entry|v=char [1 5] {ababa} entry=char [1 6] {ababaz}|exact
 CHK|e_char_cellslot_delete_orig|v=char [1 4] {aaba} entry=char [1 5] {ababa}|exact
-CHK|e_char_cellslot_delete_entry|v=char [1 5] {ababa} entry=char [1 4] {aaba}|exact|pending V6|ERR Assigning into a char row needs a plain variable on the left.
+CHK|e_char_cellslot_delete_entry|v=char [1 5] {ababa} entry=char [1 4] {aaba}|exact
 CHK|e_char_cellassign_elem_orig|v=char [1 5] {azaba} entry=char [1 5] {ababa}|exact
-CHK|e_char_cellassign_elem_entry|v=char [1 5] {ababa} entry=char [1 5] {azaba}|exact|pending V6|ERR Assigning into a char row needs a plain variable on the left.
+CHK|e_char_cellassign_elem_entry|v=char [1 5] {ababa} entry=char [1 5] {azaba}|exact
 CHK|e_char_cellassign_colon_orig|v=char [1 5] {zzzzz} entry=char [1 5] {ababa}|exact
-CHK|e_char_cellassign_colon_entry|v=char [1 5] {ababa} entry=char [1 5] {zzzzz}|exact|pending V6|ERR Assigning into a char row needs a plain variable on the left.
+CHK|e_char_cellassign_colon_entry|v=char [1 5] {ababa} entry=char [1 5] {zzzzz}|exact
 CHK|e_char_cellassign_grow_orig|v=char [1 6] {ababaz} entry=char [1 5] {ababa}|exact
-CHK|e_char_cellassign_grow_entry|v=char [1 5] {ababa} entry=char [1 6] {ababaz}|exact|pending V6|ERR Assigning into a char row needs a plain variable on the left.
+CHK|e_char_cellassign_grow_entry|v=char [1 5] {ababa} entry=char [1 6] {ababaz}|exact
 CHK|e_char_cellassign_delete_orig|v=char [1 4] {aaba} entry=char [1 5] {ababa}|exact
-CHK|e_char_cellassign_delete_entry|v=char [1 5] {ababa} entry=char [1 4] {aaba}|exact|pending V6|ERR Assigning into a char row needs a plain variable on the left.
+CHK|e_char_cellassign_delete_entry|v=char [1 5] {ababa} entry=char [1 4] {aaba}|exact
 CHK|e_char_field_elem_orig|v=char [1 5] {azaba} entry=char [1 5] {ababa}|exact
-CHK|e_char_field_elem_entry|v=char [1 5] {ababa} entry=char [1 5] {azaba}|exact|pending V6|ERR Assigning into a char row needs a plain variable on the left.
+CHK|e_char_field_elem_entry|v=char [1 5] {ababa} entry=char [1 5] {azaba}|exact
 CHK|e_char_field_colon_orig|v=char [1 5] {zzzzz} entry=char [1 5] {ababa}|exact
-CHK|e_char_field_colon_entry|v=char [1 5] {ababa} entry=char [1 5] {zzzzz}|exact|pending V6|ERR Assigning into a char row needs a plain variable on the left.
+CHK|e_char_field_colon_entry|v=char [1 5] {ababa} entry=char [1 5] {zzzzz}|exact
 CHK|e_char_field_grow_orig|v=char [1 6] {ababaz} entry=char [1 5] {ababa}|exact
-CHK|e_char_field_grow_entry|v=char [1 5] {ababa} entry=char [1 6] {ababaz}|exact|pending V6|ERR Assigning into a char row needs a plain variable on the left.
+CHK|e_char_field_grow_entry|v=char [1 5] {ababa} entry=char [1 6] {ababaz}|exact
 CHK|e_char_field_delete_orig|v=char [1 4] {aaba} entry=char [1 5] {ababa}|exact
-CHK|e_char_field_delete_entry|v=char [1 5] {ababa} entry=char [1 4] {aaba}|exact|pending V6|ERR Assigning into a char row needs a plain variable on the left.
+CHK|e_char_field_delete_entry|v=char [1 5] {ababa} entry=char [1 4] {aaba}|exact
 CHK|e_char_objprop_elem_orig|v=char [1 5] {azaba} entry=char [1 5] {ababa}|exact
-CHK|e_char_objprop_elem_entry|v=char [1 5] {ababa} entry=char [1 5] {azaba}|exact|pending V6|ERR Assigning into a char row needs a plain variable on the left.
+CHK|e_char_objprop_elem_entry|v=char [1 5] {ababa} entry=char [1 5] {azaba}|exact
 CHK|e_char_objprop_colon_orig|v=char [1 5] {zzzzz} entry=char [1 5] {ababa}|exact
-CHK|e_char_objprop_colon_entry|v=char [1 5] {ababa} entry=char [1 5] {zzzzz}|exact|pending V6|ERR Assigning into a char row needs a plain variable on the left.
+CHK|e_char_objprop_colon_entry|v=char [1 5] {ababa} entry=char [1 5] {zzzzz}|exact
 CHK|e_char_objprop_grow_orig|v=char [1 6] {ababaz} entry=char [1 5] {ababa}|exact
-CHK|e_char_objprop_grow_entry|v=char [1 5] {ababa} entry=char [1 6] {ababaz}|exact|pending V6|ERR Assigning into a char row needs a plain variable on the left.
+CHK|e_char_objprop_grow_entry|v=char [1 5] {ababa} entry=char [1 6] {ababaz}|exact
 CHK|e_char_objprop_delete_orig|v=char [1 4] {aaba} entry=char [1 5] {ababa}|exact
-CHK|e_char_objprop_delete_entry|v=char [1 5] {ababa} entry=char [1 4] {aaba}|exact|pending V6|ERR Assigning into a char row needs a plain variable on the left.
+CHK|e_char_objprop_delete_entry|v=char [1 5] {ababa} entry=char [1 4] {aaba}|exact
 CHK|e_char_anon_elem_orig|v=char [1 5] {azaba} entry=char [1 5] {ababa}|exact
 CHK|e_char_anon_colon_orig|v=char [1 5] {zzzzz} entry=char [1 5] {ababa}|exact
 CHK|e_char_anon_grow_orig|v=char [1 6] {ababaz} entry=char [1 5] {ababa}|exact
@@ -634,60 +634,60 @@ CHK|e_string_local_grow_orig|v=string [1 6] {s1 s2 s3 s4 s5 z} entry=string [1 5
 CHK|e_string_local_grow_entry|v=string [1 5] {s1 s2 s3 s4 s5} entry=string [1 6] {s1 s2 s3 s4 s5 z}|exact
 CHK|e_string_local_delete_orig|v=string [1 4] {s1 s3 s4 s5} entry=string [1 5] {s1 s2 s3 s4 s5}|exact
 CHK|e_string_local_delete_entry|v=string [1 5] {s1 s2 s3 s4 s5} entry=string [1 4] {s1 s3 s4 s5}|exact
-CHK|e_string_local_bracechar_orig|v=string [1 5] {s1 Q2 s3 s4 s5} entry=string [1 5] {s1 s2 s3 s4 s5}|exact|pending V6|ERR Assigning into a char row needs a plain variable on the left.
-CHK|e_string_local_bracechar_entry|v=string [1 5] {s1 s2 s3 s4 s5} entry=string [1 5] {s1 Q2 s3 s4 s5}|exact|pending V6|ERR Assigning into a char row needs a plain variable on the left.
+CHK|e_string_local_bracechar_orig|v=string [1 5] {s1 Q2 s3 s4 s5} entry=string [1 5] {s1 s2 s3 s4 s5}|exact
+CHK|e_string_local_bracechar_entry|v=string [1 5] {s1 s2 s3 s4 s5} entry=string [1 5] {s1 Q2 s3 s4 s5}|exact
 CHK|e_string_global_elem_orig|v=string [1 5] {s1 z s3 s4 s5} entry=string [1 5] {s1 s2 s3 s4 s5}|exact
 CHK|e_string_global_elem_entry|v=string [1 5] {s1 s2 s3 s4 s5} entry=string [1 5] {s1 z s3 s4 s5}|exact
 CHK|e_string_global_grow_orig|v=string [1 6] {s1 s2 s3 s4 s5 z} entry=string [1 5] {s1 s2 s3 s4 s5}|exact
 CHK|e_string_global_grow_entry|v=string [1 5] {s1 s2 s3 s4 s5} entry=string [1 6] {s1 s2 s3 s4 s5 z}|exact
 CHK|e_string_global_delete_orig|v=string [1 4] {s1 s3 s4 s5} entry=string [1 5] {s1 s2 s3 s4 s5}|exact
 CHK|e_string_global_delete_entry|v=string [1 5] {s1 s2 s3 s4 s5} entry=string [1 4] {s1 s3 s4 s5}|exact
-CHK|e_string_global_bracechar_orig|v=string [1 5] {s1 Q2 s3 s4 s5} entry=string [1 5] {s1 s2 s3 s4 s5}|exact|pending V6|ERR Assigning into a char row needs a plain variable on the left.
-CHK|e_string_global_bracechar_entry|v=string [1 5] {s1 s2 s3 s4 s5} entry=string [1 5] {s1 Q2 s3 s4 s5}|exact|pending V6|ERR Assigning into a char row needs a plain variable on the left.
+CHK|e_string_global_bracechar_orig|v=string [1 5] {s1 Q2 s3 s4 s5} entry=string [1 5] {s1 s2 s3 s4 s5}|exact
+CHK|e_string_global_bracechar_entry|v=string [1 5] {s1 s2 s3 s4 s5} entry=string [1 5] {s1 Q2 s3 s4 s5}|exact
 CHK|e_string_cellslot_elem_orig|v=string [1 5] {s1 z s3 s4 s5} entry=string [1 5] {s1 s2 s3 s4 s5}|exact
 CHK|e_string_cellslot_elem_entry|v=string [1 5] {s1 s2 s3 s4 s5} entry=string [1 5] {s1 z s3 s4 s5}|exact
 CHK|e_string_cellslot_grow_orig|v=string [1 6] {s1 s2 s3 s4 s5 z} entry=string [1 5] {s1 s2 s3 s4 s5}|exact
-CHK|e_string_cellslot_grow_entry|v=string [1 5] {s1 s2 s3 s4 s5} entry=string [1 6] {s1 s2 s3 s4 s5 z}|exact|pending V6|ERR Assigning past the end of a 5-element array would grow it, which needs a plain variable on the left.
+CHK|e_string_cellslot_grow_entry|v=string [1 5] {s1 s2 s3 s4 s5} entry=string [1 6] {s1 s2 s3 s4 s5 z}|exact
 CHK|e_string_cellslot_delete_orig|v=string [1 4] {s1 s3 s4 s5} entry=string [1 5] {s1 s2 s3 s4 s5}|exact
-CHK|e_string_cellslot_delete_entry|v=string [1 5] {s1 s2 s3 s4 s5} entry=string [1 4] {s1 s3 s4 s5}|exact|pending V6|ERR Deleting elements needs a plain variable on the left.
-CHK|e_string_cellslot_bracechar_orig|v=string [1 5] {s1 Q2 s3 s4 s5} entry=string [1 5] {s1 s2 s3 s4 s5}|exact|pending V6|ERR Assigning into a char row needs a plain variable on the left.
-CHK|e_string_cellslot_bracechar_entry|v=string [1 5] {s1 s2 s3 s4 s5} entry=string [1 5] {s1 Q2 s3 s4 s5}|exact|pending V6|ERR Assigning into a char row needs a plain variable on the left.
+CHK|e_string_cellslot_delete_entry|v=string [1 5] {s1 s2 s3 s4 s5} entry=string [1 4] {s1 s3 s4 s5}|exact
+CHK|e_string_cellslot_bracechar_orig|v=string [1 5] {s1 Q2 s3 s4 s5} entry=string [1 5] {s1 s2 s3 s4 s5}|exact
+CHK|e_string_cellslot_bracechar_entry|v=string [1 5] {s1 s2 s3 s4 s5} entry=string [1 5] {s1 Q2 s3 s4 s5}|exact
 CHK|e_string_cellassign_elem_orig|v=string [1 5] {s1 z s3 s4 s5} entry=string [1 5] {s1 s2 s3 s4 s5}|exact
 CHK|e_string_cellassign_elem_entry|v=string [1 5] {s1 s2 s3 s4 s5} entry=string [1 5] {s1 z s3 s4 s5}|exact
 CHK|e_string_cellassign_grow_orig|v=string [1 6] {s1 s2 s3 s4 s5 z} entry=string [1 5] {s1 s2 s3 s4 s5}|exact
-CHK|e_string_cellassign_grow_entry|v=string [1 5] {s1 s2 s3 s4 s5} entry=string [1 6] {s1 s2 s3 s4 s5 z}|exact|pending V6|ERR Assigning past the end of a 5-element array would grow it, which needs a plain variable on the left.
+CHK|e_string_cellassign_grow_entry|v=string [1 5] {s1 s2 s3 s4 s5} entry=string [1 6] {s1 s2 s3 s4 s5 z}|exact
 CHK|e_string_cellassign_delete_orig|v=string [1 4] {s1 s3 s4 s5} entry=string [1 5] {s1 s2 s3 s4 s5}|exact
-CHK|e_string_cellassign_delete_entry|v=string [1 5] {s1 s2 s3 s4 s5} entry=string [1 4] {s1 s3 s4 s5}|exact|pending V6|ERR Deleting elements needs a plain variable on the left.
-CHK|e_string_cellassign_bracechar_orig|v=string [1 5] {s1 Q2 s3 s4 s5} entry=string [1 5] {s1 s2 s3 s4 s5}|exact|pending V6|ERR Assigning into a char row needs a plain variable on the left.
-CHK|e_string_cellassign_bracechar_entry|v=string [1 5] {s1 s2 s3 s4 s5} entry=string [1 5] {s1 Q2 s3 s4 s5}|exact|pending V6|ERR Assigning into a char row needs a plain variable on the left.
+CHK|e_string_cellassign_delete_entry|v=string [1 5] {s1 s2 s3 s4 s5} entry=string [1 4] {s1 s3 s4 s5}|exact
+CHK|e_string_cellassign_bracechar_orig|v=string [1 5] {s1 Q2 s3 s4 s5} entry=string [1 5] {s1 s2 s3 s4 s5}|exact
+CHK|e_string_cellassign_bracechar_entry|v=string [1 5] {s1 s2 s3 s4 s5} entry=string [1 5] {s1 Q2 s3 s4 s5}|exact
 CHK|e_string_field_elem_orig|v=string [1 5] {s1 z s3 s4 s5} entry=string [1 5] {s1 s2 s3 s4 s5}|exact
 CHK|e_string_field_elem_entry|v=string [1 5] {s1 s2 s3 s4 s5} entry=string [1 5] {s1 z s3 s4 s5}|exact
 CHK|e_string_field_grow_orig|v=string [1 6] {s1 s2 s3 s4 s5 z} entry=string [1 5] {s1 s2 s3 s4 s5}|exact
-CHK|e_string_field_grow_entry|v=string [1 5] {s1 s2 s3 s4 s5} entry=string [1 6] {s1 s2 s3 s4 s5 z}|exact|pending V6|ERR Assigning past the end of a 5-element array would grow it, which needs a plain variable on the left.
+CHK|e_string_field_grow_entry|v=string [1 5] {s1 s2 s3 s4 s5} entry=string [1 6] {s1 s2 s3 s4 s5 z}|exact
 CHK|e_string_field_delete_orig|v=string [1 4] {s1 s3 s4 s5} entry=string [1 5] {s1 s2 s3 s4 s5}|exact
-CHK|e_string_field_delete_entry|v=string [1 5] {s1 s2 s3 s4 s5} entry=string [1 4] {s1 s3 s4 s5}|exact|pending V6|ERR Deleting elements needs a plain variable on the left.
-CHK|e_string_field_bracechar_orig|v=string [1 5] {s1 Q2 s3 s4 s5} entry=string [1 5] {s1 s2 s3 s4 s5}|exact|pending V6|ERR Assigning into a char row needs a plain variable on the left.
-CHK|e_string_field_bracechar_entry|v=string [1 5] {s1 s2 s3 s4 s5} entry=string [1 5] {s1 Q2 s3 s4 s5}|exact|pending V6|ERR Assigning into a char row needs a plain variable on the left.
+CHK|e_string_field_delete_entry|v=string [1 5] {s1 s2 s3 s4 s5} entry=string [1 4] {s1 s3 s4 s5}|exact
+CHK|e_string_field_bracechar_orig|v=string [1 5] {s1 Q2 s3 s4 s5} entry=string [1 5] {s1 s2 s3 s4 s5}|exact
+CHK|e_string_field_bracechar_entry|v=string [1 5] {s1 s2 s3 s4 s5} entry=string [1 5] {s1 Q2 s3 s4 s5}|exact
 CHK|e_string_objprop_elem_orig|v=string [1 5] {s1 z s3 s4 s5} entry=string [1 5] {s1 s2 s3 s4 s5}|exact
 CHK|e_string_objprop_elem_entry|v=string [1 5] {s1 s2 s3 s4 s5} entry=string [1 5] {s1 z s3 s4 s5}|exact
 CHK|e_string_objprop_grow_orig|v=string [1 6] {s1 s2 s3 s4 s5 z} entry=string [1 5] {s1 s2 s3 s4 s5}|exact
-CHK|e_string_objprop_grow_entry|v=string [1 5] {s1 s2 s3 s4 s5} entry=string [1 6] {s1 s2 s3 s4 s5 z}|exact|pending V6|ERR Assigning past the end of a 5-element array would grow it, which needs a plain variable on the left.
+CHK|e_string_objprop_grow_entry|v=string [1 5] {s1 s2 s3 s4 s5} entry=string [1 6] {s1 s2 s3 s4 s5 z}|exact
 CHK|e_string_objprop_delete_orig|v=string [1 4] {s1 s3 s4 s5} entry=string [1 5] {s1 s2 s3 s4 s5}|exact
-CHK|e_string_objprop_delete_entry|v=string [1 5] {s1 s2 s3 s4 s5} entry=string [1 4] {s1 s3 s4 s5}|exact|pending V6|ERR Deleting elements needs a plain variable on the left.
-CHK|e_string_objprop_bracechar_orig|v=string [1 5] {s1 Q2 s3 s4 s5} entry=string [1 5] {s1 s2 s3 s4 s5}|exact|pending V6|ERR Assigning into a char row needs a plain variable on the left.
-CHK|e_string_objprop_bracechar_entry|v=string [1 5] {s1 s2 s3 s4 s5} entry=string [1 5] {s1 Q2 s3 s4 s5}|exact|pending V6|ERR Assigning into a char row needs a plain variable on the left.
+CHK|e_string_objprop_delete_entry|v=string [1 5] {s1 s2 s3 s4 s5} entry=string [1 4] {s1 s3 s4 s5}|exact
+CHK|e_string_objprop_bracechar_orig|v=string [1 5] {s1 Q2 s3 s4 s5} entry=string [1 5] {s1 s2 s3 s4 s5}|exact
+CHK|e_string_objprop_bracechar_entry|v=string [1 5] {s1 s2 s3 s4 s5} entry=string [1 5] {s1 Q2 s3 s4 s5}|exact
 CHK|e_string_anon_elem_orig|v=string [1 5] {s1 z s3 s4 s5} entry=string [1 5] {s1 s2 s3 s4 s5}|exact
 CHK|e_string_anon_grow_orig|v=string [1 6] {s1 s2 s3 s4 s5 z} entry=string [1 5] {s1 s2 s3 s4 s5}|exact
 CHK|e_string_anon_delete_orig|v=string [1 4] {s1 s3 s4 s5} entry=string [1 5] {s1 s2 s3 s4 s5}|exact
-CHK|e_string_anon_bracechar_orig|v=string [1 5] {s1 Q2 s3 s4 s5} entry=string [1 5] {s1 s2 s3 s4 s5}|exact|pending V6|ERR Assigning into a char row needs a plain variable on the left.
+CHK|e_string_anon_bracechar_orig|v=string [1 5] {s1 Q2 s3 s4 s5} entry=string [1 5] {s1 s2 s3 s4 s5}|exact
 CHK|e_string_map_elem_orig|v=string [1 5] {s1 z s3 s4 s5} entry=string [1 5] {s1 s2 s3 s4 s5}|exact
 CHK|e_string_map_grow_orig|v=string [1 6] {s1 s2 s3 s4 s5 z} entry=string [1 5] {s1 s2 s3 s4 s5}|exact
 CHK|e_string_map_delete_orig|v=string [1 4] {s1 s3 s4 s5} entry=string [1 5] {s1 s2 s3 s4 s5}|exact
-CHK|e_string_map_bracechar_orig|v=string [1 5] {s1 Q2 s3 s4 s5} entry=string [1 5] {s1 s2 s3 s4 s5}|exact|pending V6|ERR Assigning into a char row needs a plain variable on the left.
+CHK|e_string_map_bracechar_orig|v=string [1 5] {s1 Q2 s3 s4 s5} entry=string [1 5] {s1 s2 s3 s4 s5}|exact
 CHK|e_string_param_elem|v=string [1 5] {s1 s2 s3 s4 s5} entry=string [1 5] {s1 z s3 s4 s5}|exact
 CHK|e_string_param_grow|v=string [1 5] {s1 s2 s3 s4 s5} entry=string [1 6] {s1 s2 s3 s4 s5 z}|exact
 CHK|e_string_param_delete|v=string [1 5] {s1 s2 s3 s4 s5} entry=string [1 4] {s1 s3 s4 s5}|exact
-CHK|e_string_param_bracechar|v=string [1 5] {s1 s2 s3 s4 s5} entry=string [1 5] {s1 Q2 s3 s4 s5}|exact|pending V6|ERR Assigning into a char row needs a plain variable on the left.
+CHK|e_string_param_bracechar|v=string [1 5] {s1 s2 s3 s4 s5} entry=string [1 5] {s1 Q2 s3 s4 s5}|exact
 CHK|e_cell_local_brace_orig|v=cell [1 5] {double [1 1] 1 double [1 1] 9 double [1 1] 3 double [1 1] 4 double [1 1] 5} entry=cell [1 5] {double [1 1] 1 double [1 1] 2 double [1 1] 3 double [1 1] 4 double [1 1] 5}|exact
 CHK|e_cell_local_brace_entry|v=cell [1 5] {double [1 1] 1 double [1 1] 2 double [1 1] 3 double [1 1] 4 double [1 1] 5} entry=cell [1 5] {double [1 1] 1 double [1 1] 9 double [1 1] 3 double [1 1] 4 double [1 1] 5}|exact
 CHK|e_cell_local_bracein_orig|v=cell [1 5] {double [1 1] 1 double [1 1] 9 double [1 1] 3 double [1 1] 4 double [1 1] 5} entry=cell [1 5] {double [1 1] 1 double [1 1] 2 double [1 1] 3 double [1 1] 4 double [1 1] 5}|exact|pending V6|ERR Cannot assign by index into a number; only arrays support element assignment.
@@ -715,9 +715,9 @@ CHK|e_cell_cellslot_bracein_entry|v=cell [1 5] {double [1 1] 1 double [1 1] 2 do
 CHK|e_cell_cellslot_paren_orig|v=cell [1 5] {double [1 1] 1 double [1 1] 9 double [1 1] 3 double [1 1] 4 double [1 1] 5} entry=cell [1 5] {double [1 1] 1 double [1 1] 2 double [1 1] 3 double [1 1] 4 double [1 1] 5}|exact
 CHK|e_cell_cellslot_paren_entry|v=cell [1 5] {double [1 1] 1 double [1 1] 2 double [1 1] 3 double [1 1] 4 double [1 1] 5} entry=cell [1 5] {double [1 1] 1 double [1 1] 9 double [1 1] 3 double [1 1] 4 double [1 1] 5}|exact
 CHK|e_cell_cellslot_delete_orig|v=cell [1 4] {double [1 1] 1 double [1 1] 3 double [1 1] 4 double [1 1] 5} entry=cell [1 5] {double [1 1] 1 double [1 1] 2 double [1 1] 3 double [1 1] 4 double [1 1] 5}|exact
-CHK|e_cell_cellslot_delete_entry|v=cell [1 5] {double [1 1] 1 double [1 1] 2 double [1 1] 3 double [1 1] 4 double [1 1] 5} entry=cell [1 4] {double [1 1] 1 double [1 1] 3 double [1 1] 4 double [1 1] 5}|exact|pending V6|ERR Deleting cells needs a plain variable on the left.
+CHK|e_cell_cellslot_delete_entry|v=cell [1 5] {double [1 1] 1 double [1 1] 2 double [1 1] 3 double [1 1] 4 double [1 1] 5} entry=cell [1 4] {double [1 1] 1 double [1 1] 3 double [1 1] 4 double [1 1] 5}|exact
 CHK|e_cell_cellslot_grow_orig|v=cell [1 6] {double [1 1] 1 double [1 1] 2 double [1 1] 3 double [1 1] 4 double [1 1] 5 double [1 1] 9} entry=cell [1 5] {double [1 1] 1 double [1 1] 2 double [1 1] 3 double [1 1] 4 double [1 1] 5}|exact
-CHK|e_cell_cellslot_grow_entry|v=cell [1 5] {double [1 1] 1 double [1 1] 2 double [1 1] 3 double [1 1] 4 double [1 1] 5} entry=cell [1 6] {double [1 1] 1 double [1 1] 2 double [1 1] 3 double [1 1] 4 double [1 1] 5 double [1 1] 9}|exact|pending V6|ERR A cell reached through a field cannot grow by brace assignment; assign the field a larger cell first.
+CHK|e_cell_cellslot_grow_entry|v=cell [1 5] {double [1 1] 1 double [1 1] 2 double [1 1] 3 double [1 1] 4 double [1 1] 5} entry=cell [1 6] {double [1 1] 1 double [1 1] 2 double [1 1] 3 double [1 1] 4 double [1 1] 5 double [1 1] 9}|exact
 CHK|e_cell_cellassign_brace_orig|v=cell [1 5] {double [1 1] 1 double [1 1] 9 double [1 1] 3 double [1 1] 4 double [1 1] 5} entry=cell [1 5] {double [1 1] 1 double [1 1] 2 double [1 1] 3 double [1 1] 4 double [1 1] 5}|exact
 CHK|e_cell_cellassign_brace_entry|v=cell [1 5] {double [1 1] 1 double [1 1] 2 double [1 1] 3 double [1 1] 4 double [1 1] 5} entry=cell [1 5] {double [1 1] 1 double [1 1] 9 double [1 1] 3 double [1 1] 4 double [1 1] 5}|exact
 CHK|e_cell_cellassign_bracein_orig|v=cell [1 5] {double [1 1] 1 double [1 1] 9 double [1 1] 3 double [1 1] 4 double [1 1] 5} entry=cell [1 5] {double [1 1] 1 double [1 1] 2 double [1 1] 3 double [1 1] 4 double [1 1] 5}|exact|pending V6|ERR Cannot assign by index into a number; only arrays support element assignment.
@@ -725,9 +725,9 @@ CHK|e_cell_cellassign_bracein_entry|v=cell [1 5] {double [1 1] 1 double [1 1] 2 
 CHK|e_cell_cellassign_paren_orig|v=cell [1 5] {double [1 1] 1 double [1 1] 9 double [1 1] 3 double [1 1] 4 double [1 1] 5} entry=cell [1 5] {double [1 1] 1 double [1 1] 2 double [1 1] 3 double [1 1] 4 double [1 1] 5}|exact
 CHK|e_cell_cellassign_paren_entry|v=cell [1 5] {double [1 1] 1 double [1 1] 2 double [1 1] 3 double [1 1] 4 double [1 1] 5} entry=cell [1 5] {double [1 1] 1 double [1 1] 9 double [1 1] 3 double [1 1] 4 double [1 1] 5}|exact
 CHK|e_cell_cellassign_delete_orig|v=cell [1 4] {double [1 1] 1 double [1 1] 3 double [1 1] 4 double [1 1] 5} entry=cell [1 5] {double [1 1] 1 double [1 1] 2 double [1 1] 3 double [1 1] 4 double [1 1] 5}|exact
-CHK|e_cell_cellassign_delete_entry|v=cell [1 5] {double [1 1] 1 double [1 1] 2 double [1 1] 3 double [1 1] 4 double [1 1] 5} entry=cell [1 4] {double [1 1] 1 double [1 1] 3 double [1 1] 4 double [1 1] 5}|exact|pending V6|ERR Deleting cells needs a plain variable on the left.
+CHK|e_cell_cellassign_delete_entry|v=cell [1 5] {double [1 1] 1 double [1 1] 2 double [1 1] 3 double [1 1] 4 double [1 1] 5} entry=cell [1 4] {double [1 1] 1 double [1 1] 3 double [1 1] 4 double [1 1] 5}|exact
 CHK|e_cell_cellassign_grow_orig|v=cell [1 6] {double [1 1] 1 double [1 1] 2 double [1 1] 3 double [1 1] 4 double [1 1] 5 double [1 1] 9} entry=cell [1 5] {double [1 1] 1 double [1 1] 2 double [1 1] 3 double [1 1] 4 double [1 1] 5}|exact
-CHK|e_cell_cellassign_grow_entry|v=cell [1 5] {double [1 1] 1 double [1 1] 2 double [1 1] 3 double [1 1] 4 double [1 1] 5} entry=cell [1 6] {double [1 1] 1 double [1 1] 2 double [1 1] 3 double [1 1] 4 double [1 1] 5 double [1 1] 9}|exact|pending V6|ERR A cell reached through a field cannot grow by brace assignment; assign the field a larger cell first.
+CHK|e_cell_cellassign_grow_entry|v=cell [1 5] {double [1 1] 1 double [1 1] 2 double [1 1] 3 double [1 1] 4 double [1 1] 5} entry=cell [1 6] {double [1 1] 1 double [1 1] 2 double [1 1] 3 double [1 1] 4 double [1 1] 5 double [1 1] 9}|exact
 CHK|e_cell_field_brace_orig|v=cell [1 5] {double [1 1] 1 double [1 1] 9 double [1 1] 3 double [1 1] 4 double [1 1] 5} entry=cell [1 5] {double [1 1] 1 double [1 1] 2 double [1 1] 3 double [1 1] 4 double [1 1] 5}|exact
 CHK|e_cell_field_brace_entry|v=cell [1 5] {double [1 1] 1 double [1 1] 2 double [1 1] 3 double [1 1] 4 double [1 1] 5} entry=cell [1 5] {double [1 1] 1 double [1 1] 9 double [1 1] 3 double [1 1] 4 double [1 1] 5}|exact
 CHK|e_cell_field_bracein_orig|v=cell [1 5] {double [1 1] 1 double [1 1] 9 double [1 1] 3 double [1 1] 4 double [1 1] 5} entry=cell [1 5] {double [1 1] 1 double [1 1] 2 double [1 1] 3 double [1 1] 4 double [1 1] 5}|exact|pending V6|ERR Cannot assign by index into a number; only arrays support element assignment.
@@ -735,9 +735,9 @@ CHK|e_cell_field_bracein_entry|v=cell [1 5] {double [1 1] 1 double [1 1] 2 doubl
 CHK|e_cell_field_paren_orig|v=cell [1 5] {double [1 1] 1 double [1 1] 9 double [1 1] 3 double [1 1] 4 double [1 1] 5} entry=cell [1 5] {double [1 1] 1 double [1 1] 2 double [1 1] 3 double [1 1] 4 double [1 1] 5}|exact
 CHK|e_cell_field_paren_entry|v=cell [1 5] {double [1 1] 1 double [1 1] 2 double [1 1] 3 double [1 1] 4 double [1 1] 5} entry=cell [1 5] {double [1 1] 1 double [1 1] 9 double [1 1] 3 double [1 1] 4 double [1 1] 5}|exact
 CHK|e_cell_field_delete_orig|v=cell [1 4] {double [1 1] 1 double [1 1] 3 double [1 1] 4 double [1 1] 5} entry=cell [1 5] {double [1 1] 1 double [1 1] 2 double [1 1] 3 double [1 1] 4 double [1 1] 5}|exact
-CHK|e_cell_field_delete_entry|v=cell [1 5] {double [1 1] 1 double [1 1] 2 double [1 1] 3 double [1 1] 4 double [1 1] 5} entry=cell [1 4] {double [1 1] 1 double [1 1] 3 double [1 1] 4 double [1 1] 5}|exact|pending V6|ERR Deleting cells needs a plain variable on the left.
+CHK|e_cell_field_delete_entry|v=cell [1 5] {double [1 1] 1 double [1 1] 2 double [1 1] 3 double [1 1] 4 double [1 1] 5} entry=cell [1 4] {double [1 1] 1 double [1 1] 3 double [1 1] 4 double [1 1] 5}|exact
 CHK|e_cell_field_grow_orig|v=cell [1 6] {double [1 1] 1 double [1 1] 2 double [1 1] 3 double [1 1] 4 double [1 1] 5 double [1 1] 9} entry=cell [1 5] {double [1 1] 1 double [1 1] 2 double [1 1] 3 double [1 1] 4 double [1 1] 5}|exact
-CHK|e_cell_field_grow_entry|v=cell [1 5] {double [1 1] 1 double [1 1] 2 double [1 1] 3 double [1 1] 4 double [1 1] 5} entry=cell [1 6] {double [1 1] 1 double [1 1] 2 double [1 1] 3 double [1 1] 4 double [1 1] 5 double [1 1] 9}|exact|pending V6|ERR A cell reached through a field cannot grow by brace assignment; assign the field a larger cell first.
+CHK|e_cell_field_grow_entry|v=cell [1 5] {double [1 1] 1 double [1 1] 2 double [1 1] 3 double [1 1] 4 double [1 1] 5} entry=cell [1 6] {double [1 1] 1 double [1 1] 2 double [1 1] 3 double [1 1] 4 double [1 1] 5 double [1 1] 9}|exact
 CHK|e_cell_objprop_brace_orig|v=cell [1 5] {double [1 1] 1 double [1 1] 9 double [1 1] 3 double [1 1] 4 double [1 1] 5} entry=cell [1 5] {double [1 1] 1 double [1 1] 2 double [1 1] 3 double [1 1] 4 double [1 1] 5}|exact
 CHK|e_cell_objprop_brace_entry|v=cell [1 5] {double [1 1] 1 double [1 1] 2 double [1 1] 3 double [1 1] 4 double [1 1] 5} entry=cell [1 5] {double [1 1] 1 double [1 1] 9 double [1 1] 3 double [1 1] 4 double [1 1] 5}|exact
 CHK|e_cell_objprop_bracein_orig|v=cell [1 5] {double [1 1] 1 double [1 1] 9 double [1 1] 3 double [1 1] 4 double [1 1] 5} entry=cell [1 5] {double [1 1] 1 double [1 1] 2 double [1 1] 3 double [1 1] 4 double [1 1] 5}|exact|pending V6|ERR Cannot assign by index into a number; only arrays support element assignment.
@@ -745,9 +745,9 @@ CHK|e_cell_objprop_bracein_entry|v=cell [1 5] {double [1 1] 1 double [1 1] 2 dou
 CHK|e_cell_objprop_paren_orig|v=cell [1 5] {double [1 1] 1 double [1 1] 9 double [1 1] 3 double [1 1] 4 double [1 1] 5} entry=cell [1 5] {double [1 1] 1 double [1 1] 2 double [1 1] 3 double [1 1] 4 double [1 1] 5}|exact
 CHK|e_cell_objprop_paren_entry|v=cell [1 5] {double [1 1] 1 double [1 1] 2 double [1 1] 3 double [1 1] 4 double [1 1] 5} entry=cell [1 5] {double [1 1] 1 double [1 1] 9 double [1 1] 3 double [1 1] 4 double [1 1] 5}|exact
 CHK|e_cell_objprop_delete_orig|v=cell [1 4] {double [1 1] 1 double [1 1] 3 double [1 1] 4 double [1 1] 5} entry=cell [1 5] {double [1 1] 1 double [1 1] 2 double [1 1] 3 double [1 1] 4 double [1 1] 5}|exact
-CHK|e_cell_objprop_delete_entry|v=cell [1 5] {double [1 1] 1 double [1 1] 2 double [1 1] 3 double [1 1] 4 double [1 1] 5} entry=cell [1 4] {double [1 1] 1 double [1 1] 3 double [1 1] 4 double [1 1] 5}|exact|pending V6|ERR Deleting cells needs a plain variable on the left.
+CHK|e_cell_objprop_delete_entry|v=cell [1 5] {double [1 1] 1 double [1 1] 2 double [1 1] 3 double [1 1] 4 double [1 1] 5} entry=cell [1 4] {double [1 1] 1 double [1 1] 3 double [1 1] 4 double [1 1] 5}|exact
 CHK|e_cell_objprop_grow_orig|v=cell [1 6] {double [1 1] 1 double [1 1] 2 double [1 1] 3 double [1 1] 4 double [1 1] 5 double [1 1] 9} entry=cell [1 5] {double [1 1] 1 double [1 1] 2 double [1 1] 3 double [1 1] 4 double [1 1] 5}|exact
-CHK|e_cell_objprop_grow_entry|v=cell [1 5] {double [1 1] 1 double [1 1] 2 double [1 1] 3 double [1 1] 4 double [1 1] 5} entry=cell [1 6] {double [1 1] 1 double [1 1] 2 double [1 1] 3 double [1 1] 4 double [1 1] 5 double [1 1] 9}|exact|pending V6|ERR A cell reached through a field cannot grow by brace assignment; assign the field a larger cell first.
+CHK|e_cell_objprop_grow_entry|v=cell [1 5] {double [1 1] 1 double [1 1] 2 double [1 1] 3 double [1 1] 4 double [1 1] 5} entry=cell [1 6] {double [1 1] 1 double [1 1] 2 double [1 1] 3 double [1 1] 4 double [1 1] 5 double [1 1] 9}|exact
 CHK|e_cell_anon_brace_orig|v=cell [1 5] {double [1 1] 1 double [1 1] 9 double [1 1] 3 double [1 1] 4 double [1 1] 5} entry=cell [1 5] {double [1 1] 1 double [1 1] 2 double [1 1] 3 double [1 1] 4 double [1 1] 5}|exact
 CHK|e_cell_anon_bracein_orig|v=cell [1 5] {double [1 1] 1 double [1 1] 9 double [1 1] 3 double [1 1] 4 double [1 1] 5} entry=cell [1 5] {double [1 1] 1 double [1 1] 2 double [1 1] 3 double [1 1] 4 double [1 1] 5}|exact|pending V6|ERR Cannot assign by index into a number; only arrays support element assignment.
 CHK|e_cell_anon_paren_orig|v=cell [1 5] {double [1 1] 1 double [1 1] 9 double [1 1] 3 double [1 1] 4 double [1 1] 5} entry=cell [1 5] {double [1 1] 1 double [1 1] 2 double [1 1] 3 double [1 1] 4 double [1 1] 5}|exact
@@ -788,7 +788,7 @@ CHK|e_structarr_cellslot_elemfield_entry|v=struct [1 5] [f] {double [1 1] 1 doub
 CHK|e_structarr_cellslot_elemfieldin_orig|v=struct [1 5] [f] {double [1 1] 1 double [1 1] 9 double [1 1] 3 double [1 1] 4 double [1 1] 5} entry=struct [1 5] [f] {double [1 1] 1 double [1 1] 2 double [1 1] 3 double [1 1] 4 double [1 1] 5}|exact|pending V6|ERR Cannot assign by index into a number; only arrays support element assignment.
 CHK|e_structarr_cellslot_elemfieldin_entry|v=struct [1 5] [f] {double [1 1] 1 double [1 1] 2 double [1 1] 3 double [1 1] 4 double [1 1] 5} entry=struct [1 5] [f] {double [1 1] 1 double [1 1] 9 double [1 1] 3 double [1 1] 4 double [1 1] 5}|exact|pending V6|ERR Cannot assign by index into a number; only arrays support element assignment.
 CHK|e_structarr_cellslot_delete_orig|v=struct [1 4] [f] {double [1 1] 1 double [1 1] 3 double [1 1] 4 double [1 1] 5} entry=struct [1 5] [f] {double [1 1] 1 double [1 1] 2 double [1 1] 3 double [1 1] 4 double [1 1] 5}|exact
-CHK|e_structarr_cellslot_delete_entry|v=struct [1 5] [f] {double [1 1] 1 double [1 1] 2 double [1 1] 3 double [1 1] 4 double [1 1] 5} entry=struct [1 4] [f] {double [1 1] 1 double [1 1] 3 double [1 1] 4 double [1 1] 5}|exact|pending V6|ERR Writing an element of a struct array needs a plain variable to write back to.
+CHK|e_structarr_cellslot_delete_entry|v=struct [1 5] [f] {double [1 1] 1 double [1 1] 2 double [1 1] 3 double [1 1] 4 double [1 1] 5} entry=struct [1 4] [f] {double [1 1] 1 double [1 1] 3 double [1 1] 4 double [1 1] 5}|exact
 CHK|e_structarr_cellslot_grow_orig|v=struct [1 6] [f] {double [1 1] 1 double [1 1] 2 double [1 1] 3 double [1 1] 4 double [1 1] 5 double [1 1] 9} entry=struct [1 5] [f] {double [1 1] 1 double [1 1] 2 double [1 1] 3 double [1 1] 4 double [1 1] 5}|exact
 CHK|e_structarr_cellslot_grow_entry|v=struct [1 5] [f] {double [1 1] 1 double [1 1] 2 double [1 1] 3 double [1 1] 4 double [1 1] 5} entry=struct [1 6] [f] {double [1 1] 1 double [1 1] 2 double [1 1] 3 double [1 1] 4 double [1 1] 5 double [1 1] 9}|exact|pending V6|ERR Index 6 is out of range for length 5 (indexing is 1-based).
 CHK|e_structarr_cellslot_newfield_orig|v=struct [1 5] [f,g] {double [1 1] 1,double [0 0] [] double [1 1] 2,double [1 1] 9 double [1 1] 3,double [0 0] [] double [1 1] 4,double [0 0] [] double [1 1] 5,double [0 0] []} entry=struct [1 5] [f] {double [1 1] 1 double [1 1] 2 double [1 1] 3 double [1 1] 4 double [1 1] 5}|exact
@@ -798,7 +798,7 @@ CHK|e_structarr_cellassign_elemfield_entry|v=struct [1 5] [f] {double [1 1] 1 do
 CHK|e_structarr_cellassign_elemfieldin_orig|v=struct [1 5] [f] {double [1 1] 1 double [1 1] 9 double [1 1] 3 double [1 1] 4 double [1 1] 5} entry=struct [1 5] [f] {double [1 1] 1 double [1 1] 2 double [1 1] 3 double [1 1] 4 double [1 1] 5}|exact|pending V6|ERR Cannot assign by index into a number; only arrays support element assignment.
 CHK|e_structarr_cellassign_elemfieldin_entry|v=struct [1 5] [f] {double [1 1] 1 double [1 1] 2 double [1 1] 3 double [1 1] 4 double [1 1] 5} entry=struct [1 5] [f] {double [1 1] 1 double [1 1] 9 double [1 1] 3 double [1 1] 4 double [1 1] 5}|exact|pending V6|ERR Cannot assign by index into a number; only arrays support element assignment.
 CHK|e_structarr_cellassign_delete_orig|v=struct [1 4] [f] {double [1 1] 1 double [1 1] 3 double [1 1] 4 double [1 1] 5} entry=struct [1 5] [f] {double [1 1] 1 double [1 1] 2 double [1 1] 3 double [1 1] 4 double [1 1] 5}|exact
-CHK|e_structarr_cellassign_delete_entry|v=struct [1 5] [f] {double [1 1] 1 double [1 1] 2 double [1 1] 3 double [1 1] 4 double [1 1] 5} entry=struct [1 4] [f] {double [1 1] 1 double [1 1] 3 double [1 1] 4 double [1 1] 5}|exact|pending V6|ERR Writing an element of a struct array needs a plain variable to write back to.
+CHK|e_structarr_cellassign_delete_entry|v=struct [1 5] [f] {double [1 1] 1 double [1 1] 2 double [1 1] 3 double [1 1] 4 double [1 1] 5} entry=struct [1 4] [f] {double [1 1] 1 double [1 1] 3 double [1 1] 4 double [1 1] 5}|exact
 CHK|e_structarr_cellassign_grow_orig|v=struct [1 6] [f] {double [1 1] 1 double [1 1] 2 double [1 1] 3 double [1 1] 4 double [1 1] 5 double [1 1] 9} entry=struct [1 5] [f] {double [1 1] 1 double [1 1] 2 double [1 1] 3 double [1 1] 4 double [1 1] 5}|exact
 CHK|e_structarr_cellassign_grow_entry|v=struct [1 5] [f] {double [1 1] 1 double [1 1] 2 double [1 1] 3 double [1 1] 4 double [1 1] 5} entry=struct [1 6] [f] {double [1 1] 1 double [1 1] 2 double [1 1] 3 double [1 1] 4 double [1 1] 5 double [1 1] 9}|exact|pending V6|ERR Index 6 is out of range for length 5 (indexing is 1-based).
 CHK|e_structarr_cellassign_newfield_orig|v=struct [1 5] [f,g] {double [1 1] 1,double [0 0] [] double [1 1] 2,double [1 1] 9 double [1 1] 3,double [0 0] [] double [1 1] 4,double [0 0] [] double [1 1] 5,double [0 0] []} entry=struct [1 5] [f] {double [1 1] 1 double [1 1] 2 double [1 1] 3 double [1 1] 4 double [1 1] 5}|exact
@@ -808,7 +808,7 @@ CHK|e_structarr_field_elemfield_entry|v=struct [1 5] [f] {double [1 1] 1 double 
 CHK|e_structarr_field_elemfieldin_orig|v=struct [1 5] [f] {double [1 1] 1 double [1 1] 9 double [1 1] 3 double [1 1] 4 double [1 1] 5} entry=struct [1 5] [f] {double [1 1] 1 double [1 1] 2 double [1 1] 3 double [1 1] 4 double [1 1] 5}|exact|pending V6|ERR Cannot assign by index into a number; only arrays support element assignment.
 CHK|e_structarr_field_elemfieldin_entry|v=struct [1 5] [f] {double [1 1] 1 double [1 1] 2 double [1 1] 3 double [1 1] 4 double [1 1] 5} entry=struct [1 5] [f] {double [1 1] 1 double [1 1] 9 double [1 1] 3 double [1 1] 4 double [1 1] 5}|exact|pending V6|ERR Cannot assign by index into a number; only arrays support element assignment.
 CHK|e_structarr_field_delete_orig|v=struct [1 4] [f] {double [1 1] 1 double [1 1] 3 double [1 1] 4 double [1 1] 5} entry=struct [1 5] [f] {double [1 1] 1 double [1 1] 2 double [1 1] 3 double [1 1] 4 double [1 1] 5}|exact
-CHK|e_structarr_field_delete_entry|v=struct [1 5] [f] {double [1 1] 1 double [1 1] 2 double [1 1] 3 double [1 1] 4 double [1 1] 5} entry=struct [1 4] [f] {double [1 1] 1 double [1 1] 3 double [1 1] 4 double [1 1] 5}|exact|pending V6|ERR Writing an element of a struct array needs a plain variable to write back to.
+CHK|e_structarr_field_delete_entry|v=struct [1 5] [f] {double [1 1] 1 double [1 1] 2 double [1 1] 3 double [1 1] 4 double [1 1] 5} entry=struct [1 4] [f] {double [1 1] 1 double [1 1] 3 double [1 1] 4 double [1 1] 5}|exact
 CHK|e_structarr_field_grow_orig|v=struct [1 6] [f] {double [1 1] 1 double [1 1] 2 double [1 1] 3 double [1 1] 4 double [1 1] 5 double [1 1] 9} entry=struct [1 5] [f] {double [1 1] 1 double [1 1] 2 double [1 1] 3 double [1 1] 4 double [1 1] 5}|exact
 CHK|e_structarr_field_grow_entry|v=struct [1 5] [f] {double [1 1] 1 double [1 1] 2 double [1 1] 3 double [1 1] 4 double [1 1] 5} entry=struct [1 6] [f] {double [1 1] 1 double [1 1] 2 double [1 1] 3 double [1 1] 4 double [1 1] 5 double [1 1] 9}|exact|pending V6|ERR Index 6 is out of range for length 5 (indexing is 1-based).
 CHK|e_structarr_field_newfield_orig|v=struct [1 5] [f,g] {double [1 1] 1,double [0 0] [] double [1 1] 2,double [1 1] 9 double [1 1] 3,double [0 0] [] double [1 1] 4,double [0 0] [] double [1 1] 5,double [0 0] []} entry=struct [1 5] [f] {double [1 1] 1 double [1 1] 2 double [1 1] 3 double [1 1] 4 double [1 1] 5}|exact
@@ -818,7 +818,7 @@ CHK|e_structarr_objprop_elemfield_entry|v=struct [1 5] [f] {double [1 1] 1 doubl
 CHK|e_structarr_objprop_elemfieldin_orig|v=struct [1 5] [f] {double [1 1] 1 double [1 1] 9 double [1 1] 3 double [1 1] 4 double [1 1] 5} entry=struct [1 5] [f] {double [1 1] 1 double [1 1] 2 double [1 1] 3 double [1 1] 4 double [1 1] 5}|exact|pending V6|ERR Cannot assign by index into a number; only arrays support element assignment.
 CHK|e_structarr_objprop_elemfieldin_entry|v=struct [1 5] [f] {double [1 1] 1 double [1 1] 2 double [1 1] 3 double [1 1] 4 double [1 1] 5} entry=struct [1 5] [f] {double [1 1] 1 double [1 1] 9 double [1 1] 3 double [1 1] 4 double [1 1] 5}|exact|pending V6|ERR Cannot assign by index into a number; only arrays support element assignment.
 CHK|e_structarr_objprop_delete_orig|v=struct [1 4] [f] {double [1 1] 1 double [1 1] 3 double [1 1] 4 double [1 1] 5} entry=struct [1 5] [f] {double [1 1] 1 double [1 1] 2 double [1 1] 3 double [1 1] 4 double [1 1] 5}|exact
-CHK|e_structarr_objprop_delete_entry|v=struct [1 5] [f] {double [1 1] 1 double [1 1] 2 double [1 1] 3 double [1 1] 4 double [1 1] 5} entry=struct [1 4] [f] {double [1 1] 1 double [1 1] 3 double [1 1] 4 double [1 1] 5}|exact|pending V6|ERR Writing an element of a struct array needs a plain variable to write back to.
+CHK|e_structarr_objprop_delete_entry|v=struct [1 5] [f] {double [1 1] 1 double [1 1] 2 double [1 1] 3 double [1 1] 4 double [1 1] 5} entry=struct [1 4] [f] {double [1 1] 1 double [1 1] 3 double [1 1] 4 double [1 1] 5}|exact
 CHK|e_structarr_objprop_grow_orig|v=struct [1 6] [f] {double [1 1] 1 double [1 1] 2 double [1 1] 3 double [1 1] 4 double [1 1] 5 double [1 1] 9} entry=struct [1 5] [f] {double [1 1] 1 double [1 1] 2 double [1 1] 3 double [1 1] 4 double [1 1] 5}|exact
 CHK|e_structarr_objprop_grow_entry|v=struct [1 5] [f] {double [1 1] 1 double [1 1] 2 double [1 1] 3 double [1 1] 4 double [1 1] 5} entry=struct [1 6] [f] {double [1 1] 1 double [1 1] 2 double [1 1] 3 double [1 1] 4 double [1 1] 5 double [1 1] 9}|exact|pending V6|ERR Index 6 is out of range for length 5 (indexing is 1-based).
 CHK|e_structarr_objprop_newfield_orig|v=struct [1 5] [f,g] {double [1 1] 1,double [0 0] [] double [1 1] 2,double [1 1] 9 double [1 1] 3,double [0 0] [] double [1 1] 4,double [0 0] [] double [1 1] 5,double [0 0] []} entry=struct [1 5] [f] {double [1 1] 1 double [1 1] 2 double [1 1] 3 double [1 1] 4 double [1 1] 5}|exact

@@ -108,7 +108,7 @@ public class GuiRoundGapsTests : IDisposable
     }
 
     [Fact]
-    public void ACellReachedThroughAField_StillWritesInRangeAndRefusesToGrow()
+    public void ACellReachedThroughAField_WritesInRangeAndGrowsThroughTheField()
     {
         ScriptRunResult inRange = RunMatlab("""
             s.c = {'p', 'q'};
@@ -119,13 +119,16 @@ public class GuiRoundGapsTests : IDisposable
         Assert.True(inRange.Success, inRange.Message + _output.ErrorText);
         Assert.Equal("p r", Printed());
 
+        // V3b (ADR 0164): a write past the end grows the cell and stores it back through the
+        // field, as MATLAB does — 3-by-2 with the gap holding [].
         ScriptRunResult beyond = RunMatlab("""
             s.c = {'p', 'q'};
             s.c{3, 1} = 'r';
+            fprintf('%d %d %s %d\n', size(s.c, 1), size(s.c, 2), s.c{3, 1}, isempty(s.c{2, 1}));
             """);
 
-        Assert.False(beyond.Success);
-        Assert.Contains("cannot grow by brace assignment", beyond.Message);
+        Assert.True(beyond.Success, beyond.Message + _output.ErrorText);
+        Assert.EndsWith("3 2 r 1", Printed());
     }
 
     [Fact]

@@ -1,4 +1,0 @@
-CHK|a040_grow_from_self_range|[1 2 3 1 2 3]|exact
-CHK|a041_grow_from_self_end|[1 2 3 1 2 3]|exact
-CHK|a073_grow_rows_from_self|[1 2;3 4;1 2;3 4]|exact
-CHK|a074_grow_cols_from_self|[1 2 1 2;3 4 3 4]|exact

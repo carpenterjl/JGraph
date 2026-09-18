@@ -328,15 +328,27 @@ internal static partial class JgsBuiltins
         Define("rmfield", (args, line, col) =>
         {
             Arity("rmfield", args, 2, line, col);
+            if (args[0].Type != JgsType.Struct)
+            {
+                throw new JgsRuntimeException(line, col, "S must be a structure array.");
+            }
+
             string[] doomed = FieldNameList("rmfield", args[1], line, col);
             return MapStructElements("rmfield", args[0], line, col, element =>
             {
-                var fields = new Dictionary<string, JgsValue>(element, StringComparer.Ordinal);
-                foreach (string name in doomed)
+                // A field that is not there is simply not removed: R2025b's rmfield answers the
+                // struct unchanged (value-ownership plan, the order matrix's
+                // w_dynfield_sub_shrink_rhs_shrink row, recorded from R2025b).
+
+                // Rebuilt from the kept fields rather than copied and pruned: a Dictionary refills
+                // a removed slot with the next field added, which put a later s.g ahead of the
+                // fields that were there (V3b, the order matrix's dynfield rows).
+                var fields = new Dictionary<string, JgsValue>(StringComparer.Ordinal);
+                foreach ((string name, JgsValue held) in element)
                 {
-                    if (!fields.Remove(name))
+                    if (System.Array.IndexOf(doomed, name) < 0)
                     {
-                        throw new JgsRuntimeException(line, col, $"rmfield: this struct has no field '{name}'.");
+                        fields[name] = held;
                     }
                 }
 

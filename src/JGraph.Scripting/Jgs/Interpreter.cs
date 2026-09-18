@@ -1645,25 +1645,46 @@ internal sealed partial class Interpreter
         List<Expr?> targets = ExpandAssignmentTargets(statement, env);
 
         JgsValue[] outputs = EvaluateForOutputs(statement.Call, targets.Count, env);
-        for (int i = 0; i < targets.Count; i++)
+
+        // M11: every output is held as a counted share before the first target is written, so
+        // [v(1), b] = deal(7, v) binds b to the v the call answered rather than the one v(1) = 7
+        // then wrote (#35). Each binding takes its own share; what is left — an output an error
+        // stopped short of, a '~' — is given back here.
+        var holds = new ScopeHolds();
+        try
         {
-            if (targets[i] is not { } target)
+            if (Dialect.CopyOnAssign)
             {
-                continue; // '~': the output was computed, and is deliberately dropped
+                for (int i = 0; i < outputs.Length; i++)
+                {
+                    outputs[i] = Hold(outputs[i], ref holds);
+                }
             }
 
-            if (i >= outputs.Length)
+            for (int i = 0; i < targets.Count; i++)
             {
-                throw new JgsRuntimeException(statement.Line, statement.Column,
-                    $"This call returns {outputs.Length} value(s), but {targets.Count} were asked for.");
-            }
+                if (targets[i] is not { } target)
+                {
+                    continue; // '~': the output was computed, and is deliberately dropped
+                }
 
-            var assignment = new AssignExpr(target, TokenType.Assign, new PreEvaluated(outputs[i]))
-            {
-                Line = statement.Line,
-                Column = statement.Column,
-            };
-            EvaluateAssign(assignment, env);
+                if (i >= outputs.Length)
+                {
+                    throw new JgsRuntimeException(statement.Line, statement.Column,
+                        $"This call returns {outputs.Length} value(s), but {targets.Count} were asked for.");
+                }
+
+                var assignment = new AssignExpr(target, TokenType.Assign, new PreEvaluated(outputs[i]))
+                {
+                    Line = statement.Line,
+                    Column = statement.Column,
+                };
+                EvaluateAssign(assignment, env);
+            }
+        }
+        finally
+        {
+            holds.Release();
         }
     }
 
@@ -2059,7 +2080,11 @@ internal sealed partial class Interpreter
                 Resolution resolved = _resolver.Value(variable.Name, env);
                 if (!resolved.Found)
                 {
-                    throw new JgsRuntimeException(variable.Line, variable.Column, Undefined(variable.Name));
+                    // A name this frame declared global that the global workspace no longer holds
+                    // was taken by 'clear global' (#158): R2025b says so, rather than "unknown".
+                    throw env.IsGlobal(variable.Name)
+                        ? ClearedVariable(variable.Name, variable)
+                        : new JgsRuntimeException(variable.Line, variable.Column, Undefined(variable.Name));
                 }
 
                 return AutoCallsBare(resolved)
@@ -3880,6 +3905,19 @@ internal sealed partial class Interpreter
 
     private JgsValue EvaluateAssign(AssignExpr assign, JgsEnvironment env)
     {
+        // M16: the target's shape decides the order of the write's parts. A paren index directly on
+        // a variable runs its right-hand side first; every other shape runs its subscripts and
+        // dynamic names first (#151). Only a part that can run script code can tell the orders
+        // apart, so the parts are pre-evaluated — once, M15 — only when one of them is not inert;
+        // the roads then resolve the target after every part has run (Interpreter.Writes.cs).
+        Expr target = assign.Target;
+        bool parenOnVariable = IsParenOnVariable(target);
+        if (target is not VariableExpr && !parenOnVariable
+            && !(IsInert(assign.Value, env) && TargetIsInert(target, env)))
+        {
+            target = PrepareTarget(target, env);
+        }
+
         // A plain assignment may take an operator's freshly minted buffer rather than copy it; every
         // other right-hand side, and every compound assignment, goes through Evaluate as before.
         JgsValue rhs;
@@ -3894,7 +3932,12 @@ internal sealed partial class Interpreter
             owned = false;
         }
 
-        if (assign.Target is VariableExpr variable)
+        if (parenOnVariable && !TargetIsInert(target, env))
+        {
+            target = PrepareTarget(target, env); // after the right-hand side, before the target is read
+        }
+
+        if (target is VariableExpr variable)
         {
             // A name this workspace declared 'global' is written where every scope that declared it
             // can see it.
@@ -3929,7 +3972,7 @@ internal sealed partial class Interpreter
             return stored;
         }
 
-        if (assign.Target is MemberExpr member)
+        if (target is MemberExpr member)
         {
             if (assign.Op != TokenType.Assign)
             {
@@ -3940,7 +3983,7 @@ internal sealed partial class Interpreter
             return AssignToMember(member, owned ? rhs : CopyForBinding(rhs), env);
         }
 
-        if (assign.Target is BraceIndexExpr brace)
+        if (target is BraceIndexExpr brace)
         {
             if (assign.Op != TokenType.Assign)
             {
@@ -3953,11 +3996,19 @@ internal sealed partial class Interpreter
 
         // An index write in either spelling: x(k) = v, x[0:n] = 0, x(mask) = v, x[:] = v. The parser
         // guarantees the only remaining target shapes are these two.
-        (Expr container, IReadOnlyList<Expr> subscripts) = assign.Target switch
+        (Expr container, IReadOnlyList<Expr> subscripts) = target switch
         {
             CallExpr paren => (paren.Callee, paren.Arguments),
-            _ => (((IndexExpr)assign.Target).Target, ((IndexExpr)assign.Target).Indices),
+            _ => (((IndexExpr)target).Target, ((IndexExpr)target).Indices),
         };
+
+        // 'end' reads the container before the write creates anything (M16 step 2): a cleared global
+        // refuses here, a name never bound counts as empty, and a dot or brace on a value that has
+        // neither is refused as the read it is, where the write itself would have created the field.
+        if (AnyMentionsEnd(subscripts))
+        {
+            TryReadContainer(container, env, out _);
+        }
 
         // T.Var(i) = v: a table variable is read out as the array it is, written like any array, and
         // put back — the same rebuild-and-rebind a whole-column write does. Without this the write
@@ -3971,20 +4022,15 @@ internal sealed partial class Interpreter
         // Rebuild indexed image properties through their setter so their render data and
         // cached script value stay in sync, including writes that resize CData.
         if (container is MemberExpr imageProperty
-            && JgsHandleRegistry.TryGet(Evaluate(imageProperty.Target, env), out var imageEntry)
+            && TryResolveHandleTarget(imageProperty.Target, env) is { } imageEntry
             && imageEntry.Target is JGraph.Objects.ImagePlot or JGraph.Objects.SurfacePlot)
         {
             string field = FieldName(imageProperty, env);
             var scratch = new JgsEnvironment(env);
             const string slot = "\u0001imageProperty";
             scratch.Declare(slot, CopyForBinding(JgsGraphicsProperties.Get(imageEntry, field, assign.Line, assign.Column)));
-            var target = new VariableExpr(slot) { Line = assign.Line, Column = assign.Column };
-            JgsValue result = subscripts.Count switch
-            {
-                2 => AssignTwoSubscripts(target, subscripts, assign.Op, rhs, assign, scratch),
-                > 2 => AssignNSubscripts(target, subscripts, assign.Op, rhs, assign, scratch),
-                _ => AssignThroughIndex(target, subscripts, assign.Op, rhs, assign, scratch),
-            };
+            var scratchTarget = new VariableExpr(slot) { Line = assign.Line, Column = assign.Column };
+            JgsValue result = IndexWrite(scratchTarget, subscripts, assign.Op, rhs, assign, scratch);
             scratch.TryGet(slot, out var updated);
             JgsGraphicsProperties.Set(imageEntry, field, updated, assign.Line, assign.Column);
             return result;
@@ -3996,38 +4042,67 @@ internal sealed partial class Interpreter
         // subscript does not leave an empty x behind. Where a first assignment must say 'let', it
         // still must — the typo net a bare plain assignment respects is not defeated by adding a
         // subscript — and a compound op reads before it writes, so x(5) += 1 on no x stays an error.
+        // The conjuring happens here, after the right-hand side and the subscripts have run (M16):
+        // a global one of them cleared is created afresh (#158), and a right-hand side that reads
+        // the name it is written into still finds nothing there, as it should.
         JgsEnvironment? conjuredScope = null;
         string? conjuredName = null;
-        if (assign.Op == TokenType.Assign
-            && !Dialect.RequireLet
-            && container is VariableExpr fresh
-            && !LookUp(fresh.Name, env, out _))
+        if (assign.Op == TokenType.Assign && !Dialect.RequireLet)
         {
-            conjuredScope = env.IsGlobal(fresh.Name) ? _globalWorkspace : env;
-            conjuredName = fresh.Name;
+            if (container is VariableExpr fresh && !LookUp(fresh.Name, env, out _))
+            {
+                conjuredScope = ScopeOf(fresh.Name, env);
+                conjuredName = fresh.Name;
 
-            // What is conjured is an empty of the kind being written: x(1) = "a" with no x is a
-            // string array and c(1) = {5} a cell (measured), where x = []; x(1) = "a" is a double
-            // holding NaN. The empty here is the difference between those two scripts.
-            JgsValue conjured = rhs.IsStringArray ? JgsValue.StringArray(System.Array.Empty<JgsValue>(), 0, 0)
-                : rhs.Type == JgsType.Cell ? JgsValue.Cell(System.Array.Empty<JgsValue>())
-                : JgsMatrix.FromElements(System.Array.Empty<JgsValue>(), 0, 0);
-            conjuredScope.Declare(conjuredName, conjured);
+                // What is conjured is an empty of the kind being written: x(1) = "a" with no x is a
+                // string array and c(1) = {5} a cell (measured), where x = []; x(1) = "a" is a double
+                // holding NaN. The empty here is the difference between those two scripts.
+                conjuredScope.Declare(conjuredName, EmptyOfKind(rhs));
+            }
+            else if (container is MemberExpr { Field: not null } field && IsAbsentField(field, env))
+            {
+                // s.f(3) = 9 with no f: the field is created empty, and the struct on the way to it.
+                AssignToMember(field, EmptyOfKind(rhs), env);
+            }
+            else if (container is BraceIndexExpr slot && IsAbsentSlot(slot, env))
+            {
+                // c{3}(2) = 9 with two cells (or c = []): the cell grows to hold the slot, empty.
+                AssignToBraceIndex(slot, EmptyOfKind(rhs), env);
+            }
         }
 
         try
         {
-            return subscripts.Count switch
-            {
-                2 => AssignTwoSubscripts(container, subscripts, assign.Op, rhs, assign, env),
-                > 2 => AssignNSubscripts(container, subscripts, assign.Op, rhs, assign, env),
-                _ => AssignThroughIndex(container, subscripts, assign.Op, rhs, assign, env),
-            };
+            return IndexWrite(container, subscripts, assign.Op, rhs, assign, env);
         }
         catch when (conjuredScope is not null)
         {
             conjuredScope.Forget(conjuredName!, EmptyPristine);
             throw;
+        }
+    }
+
+    /// <summary>
+    /// The index-write roads by subscript count, under one scope for M10's shares: a right-hand
+    /// side or subscript that is the target's own payload is held for the write's duration and
+    /// given back here, however the write ends.
+    /// </summary>
+    private JgsValue IndexWrite(
+        Expr container, IReadOnlyList<Expr> subscripts, TokenType op, JgsValue rhs, Node at, JgsEnvironment env)
+    {
+        var holds = new ScopeHolds();
+        try
+        {
+            return subscripts.Count switch
+            {
+                2 => AssignTwoSubscripts(container, subscripts, op, rhs, at, env, ref holds),
+                > 2 => AssignNSubscripts(container, subscripts, op, rhs, at, env, ref holds),
+                _ => AssignThroughIndex(container, subscripts, op, rhs, at, env, ref holds),
+            };
+        }
+        finally
+        {
+            holds.Release();
         }
     }
 
@@ -4052,12 +4127,7 @@ internal sealed partial class Interpreter
         var scratch = new JgsEnvironment(env);
         scratch.Declare(slot, current);
         var target = new VariableExpr(slot) { Line = at.Line, Column = at.Column };
-        JgsValue result = subscripts.Count switch
-        {
-            2 => AssignTwoSubscripts(target, subscripts, op, rhs, at, scratch),
-            > 2 => AssignNSubscripts(target, subscripts, op, rhs, at, scratch),
-            _ => AssignThroughIndex(target, subscripts, op, rhs, at, scratch),
-        };
+        JgsValue result = IndexWrite(target, subscripts, op, rhs, at, scratch);
 
         scratch.TryGet(slot, out JgsValue written);
         TableColumn rebuilt = JgsBuiltins.TableColumnFrom("table", field, written, at.Line, at.Column);
@@ -4072,7 +4142,8 @@ internal sealed partial class Interpreter
     /// both of which reallocate, so they need a plain variable to rebind.
     /// </summary>
     private JgsValue AssignTwoSubscripts(
-        Expr target, IReadOnlyList<Expr> subscripts, TokenType op, JgsValue rhs, Node at, JgsEnvironment env)
+        Expr target, IReadOnlyList<Expr> subscripts, TokenType op, JgsValue rhs, Node at, JgsEnvironment env,
+        ref ScopeHolds holds)
     {
         JgsValue callee = EvaluateForWrite(target, env);
         if (Dialect.IsMatlab && callee.Type == JgsType.String)
@@ -4082,7 +4153,7 @@ internal sealed partial class Interpreter
 
         if (callee.Type == JgsType.Cell)
         {
-            return AssignIntoCellParen(target, callee, subscripts, op, rhs, at, env);
+            return AssignIntoCellParen(target, callee, subscripts, op, rhs, at, env, ref holds);
         }
 
         if (callee.Type != JgsType.Array)
@@ -4101,6 +4172,7 @@ internal sealed partial class Interpreter
         int[] extents = [rows, cols];
         JgsValue? rowIndex = EvaluateIndexArgument(subscripts[0], extents, 0, env);
         JgsValue? colIndex = EvaluateIndexArgument(subscripts[1], extents, 1, env);
+        HoldOverlap(callee, ref rhs, rowIndex, colIndex, ref holds); // M10, before anything is rebuilt
 
         if (op == TokenType.Assign && IsDeletion(rhs))
         {
@@ -4114,19 +4186,13 @@ internal sealed partial class Interpreter
         bool shapeless = rows == 0 && cols == 0;
         int[] rowPicks = shapeless && rowIndex is null
             ? AllPicks(rhs.Type == JgsType.Array ? JgsMatrix.RowCount(rhs) : 1)
-            : WritePicks(rowIndex, rows, at);
+            : WritePicks(rowIndex, rows, at, 1);
         int[] colPicks = shapeless && colIndex is null
             ? AllPicks(rhs.Type == JgsType.Array ? JgsMatrix.ColCount(rhs) : 1)
-            : WritePicks(colIndex, cols, at);
+            : WritePicks(colIndex, cols, at, 2);
 
-        int neededRows = Math.Max(rows, Highest(rowPicks) + 1);
-        int neededCols = Math.Max(cols, Highest(colPicks) + 1);
-        if (neededRows > rows || neededCols > cols)
-        {
-            callee = Grow(target, callee, rows, cols, neededRows, neededCols, at, env);
-            rows = neededRows;
-        }
-
+        // M14: the count is held against the selection before the target grows, so a refused
+        // write leaves the target as it was.
         bool scalarRhs = rhs.Type is not JgsType.Array;
         if (!scalarRhs)
         {
@@ -4136,6 +4202,14 @@ internal sealed partial class Interpreter
                 throw new JgsRuntimeException(at.Line, at.Column,
                     $"Cannot assign {rhs.ArrayLength} values into a {rowPicks.Length}x{colPicks.Length} selection.");
             }
+        }
+
+        int neededRows = Math.Max(rows, Highest(rowPicks) + 1);
+        int neededCols = Math.Max(cols, Highest(colPicks) + 1);
+        if (neededRows > rows || neededCols > cols)
+        {
+            callee = Grow(target, callee, rows, cols, neededRows, neededCols, at, env);
+            rows = neededRows;
         }
 
         // A nested matrix stores one array per row rather than one column-major run, so the flat slot
@@ -4184,10 +4258,13 @@ internal sealed partial class Interpreter
 
     /// <summary>
     /// Subscript positions for a write. Unlike a read, an index past the end is not an error — it is
-    /// how a matrix grows — so only the lower bound is checked here. A mask still has to fit, because
-    /// a mask that does not match the dimension is a mistake rather than a request to grow.
+    /// how a matrix grows — so only the lower bound is checked here. A mask names the positions of
+    /// its true entries and may be any length (M14, #62): the extent the write needs is the highest
+    /// of them, so a mask longer than the array grows it and a shorter one writes what it names.
+    /// <paramref name="position"/> is the subscript's 1-based position for the refusal's wording,
+    /// or 0 for a linear subscript.
     /// </summary>
-    private int[] WritePicks(JgsValue? index, int extent, Node at)
+    private int[] WritePicks(JgsValue? index, int extent, Node at, int position = 0)
     {
         if (index is null)
         {
@@ -4196,25 +4273,25 @@ internal sealed partial class Interpreter
 
         if (index.Type != JgsType.Array)
         {
-            return [WriteIndex(index, at)];
+            return [WriteIndex(index, at, position)];
         }
 
         if (IsLogicalIndex(index))
         {
-            return ComputePicks(index, extent, "array", at.Line, at.Column);
+            return MaskPicks(index);
         }
 
         int count = index.ArrayLength;
         var picks = new int[count];
         for (int i = 0; i < count; i++)
         {
-            picks[i] = WriteIndex(index.ElementAt(i), at);
+            picks[i] = WriteIndex(index.ElementAt(i), at, position);
         }
 
         return picks;
     }
 
-    private int WriteIndex(JgsValue position, Node at)
+    private int WriteIndex(JgsValue position, Node at, int slotPosition = 0)
     {
         if (position.Type is not (JgsType.Number or JgsType.Bool))
         {
@@ -4231,34 +4308,27 @@ internal sealed partial class Interpreter
         int slot = (int)raw - Dialect.IndexBase;
         if (slot < 0)
         {
-            throw new JgsRuntimeException(at.Line, at.Column,
-                $"Index {(int)raw} is out of range (indexing is {Dialect.IndexBase}-based).");
+            throw BadWriteIndex((int)raw, slotPosition, at);
         }
 
         return slot;
     }
 
     /// <summary>
-    /// Reallocates a matrix to a larger shape, zero-filling the new cells and rebinding the name.
-    /// Growth has to replace the value, not mutate it, so the target must be a plain variable — the
-    /// same restriction cell growth has had since <c>c{end + 1} = x</c>.
+    /// Reallocates a matrix to a larger shape, zero-filling the new cells, and stores it back
+    /// through the target's entry (<see cref="StoreBack"/>): a variable is rebound, a field or a
+    /// cell element is written.
     /// </summary>
     private JgsValue Grow(
         Expr target, JgsValue current, int rows, int cols, int newRows, int newCols, Node at, JgsEnvironment env)
     {
-        if (target is not VariableExpr variable)
-        {
-            throw new JgsRuntimeException(at.Line, at.Column,
-                $"Assigning outside a {rows}x{cols} matrix would grow it, which needs a plain variable on the left.");
-        }
-
         // MATLAB's copy-on-assign makes the bound wrapper uniquely owned, so a packed matrix can
         // grow in place with amortized capacity — the difference between seconds and hours for a
         // loop that grows one row and column per step. JGS shares wrappers between names, where
         // the rebuild-and-rebind below is the observable behavior scripts rely on.
         if (Dialect.CopyOnAssign && current.TryGrowInPlace(newRows, newCols))
         {
-            return current;
+            return target is VariableExpr ? current : Stored(target, current, at, env);
         }
 
         var elements = new JgsValue[newRows * newCols];
@@ -4272,8 +4342,7 @@ internal sealed partial class Interpreter
         }
 
         JgsValue grown = KeepTextKind(current, KeepNumericClass(current, JgsMatrix.FromElements(elements, newRows, newCols)));
-        Rebind(variable.Name, grown, env);
-        return grown;
+        return Stored(target, grown, at, env);
     }
 
     /// <summary>
@@ -4283,12 +4352,6 @@ internal sealed partial class Interpreter
     private JgsValue DeleteSlice(
         Expr target, JgsValue current, JgsValue? rowIndex, JgsValue? colIndex, int rows, int cols, Node at, JgsEnvironment env)
     {
-        if (target is not VariableExpr variable)
-        {
-            throw new JgsRuntimeException(at.Line, at.Column,
-                "Deleting rows or columns needs a plain variable on the left.");
-        }
-
         bool deletingRows = colIndex is null;
         if (deletingRows == (rowIndex is null))
         {
@@ -4296,6 +4359,7 @@ internal sealed partial class Interpreter
                 "Deleting from a matrix takes a whole row or column: A(i, :) = [] or A(:, j) = [].");
         }
 
+        RefuseNonPositive(deletingRows ? rowIndex! : colIndex!, deletingRows ? 1 : 2, at); // M14
         int[] removed = deletingRows
             ? ComputePicks(AsIndexArray(rowIndex!), rows, "row", at.Line, at.Column)
             : ComputePicks(AsIndexArray(colIndex!), cols, "column", at.Line, at.Column);
@@ -4306,7 +4370,7 @@ internal sealed partial class Interpreter
 
         JgsValue trimmed = CarryValueTags(current, JgsMatrix.BuildValues(keptRows.Length, keptCols.Length,
             (r, c) => JgsMatrix.At(current, keptRows[r], keptCols[c])));
-        Rebind(variable.Name, trimmed, env);
+        StoreBack(target, trimmed, at, env);
         return trimmed;
     }
 
@@ -4340,20 +4404,13 @@ internal sealed partial class Interpreter
     /// </remarks>
     private JgsValue GrowVector(Expr target, JgsValue current, int needed, Node at, JgsEnvironment env)
     {
-        if (target is not VariableExpr variable)
-        {
-            throw new JgsRuntimeException(at.Line, at.Column,
-                $"Assigning past the end of a {current.ArrayLength}-element array would grow it, "
-                + "which needs a plain variable on the left.");
-        }
-
         // Cols == 1 && Rows != 1 rather than Rows > 1: an empty column, zeros(0, 1), is a column
         // and grows downwards, where a 1-by-1 is not one and grows across (M96b).
         bool growsAsColumn = current.Cols == 1 && current.Rows != 1;
         if (Dialect.CopyOnAssign
             && current.TryGrowInPlace(growsAsColumn ? needed : 1, growsAsColumn ? 1 : needed))
         {
-            return current;
+            return target is VariableExpr ? current : Stored(target, current, at, env);
         }
 
         var elements = new JgsValue[needed];
@@ -4365,8 +4422,7 @@ internal sealed partial class Interpreter
 
         JgsValue grown = KeepTextKind(current, KeepNumericClass(current, JgsMatrix.FromElements(
             elements, growsAsColumn ? needed : 1, growsAsColumn ? 1 : needed)));
-        Rebind(variable.Name, grown, env);
-        return grown;
+        return Stored(target, grown, at, env);
     }
 
     /// <summary>
@@ -4395,13 +4451,8 @@ internal sealed partial class Interpreter
     /// </summary>
     private JgsValue DeleteEverything(Expr target, JgsValue current, Node at, JgsEnvironment env)
     {
-        if (target is not VariableExpr variable)
-        {
-            throw new JgsRuntimeException(at.Line, at.Column, "Deleting elements needs a plain variable on the left.");
-        }
-
         JgsValue emptied = CarryValueTags(current, EmptyBracket());
-        Rebind(variable.Name, emptied, env);
+        StoreBack(target, emptied, at, env);
         return emptied;
     }
 
@@ -4411,10 +4462,7 @@ internal sealed partial class Interpreter
     /// </summary>
     private JgsValue DeleteElements(Expr target, JgsValue current, JgsValue index, Node at, JgsEnvironment env)
     {
-        if (target is not VariableExpr variable)
-        {
-            throw new JgsRuntimeException(at.Line, at.Column, "Deleting elements needs a plain variable on the left.");
-        }
+        RefuseNonPositive(index, 0, at); // M14: a bad subscript is refused before anything is rebuilt
 
         // Nothing to remove from something that is already empty, and rebuilding it would cost it
         // its shape: zeros(0, 3) would come back 1-by-0 and [] would stop being 0-by-0 (M96b).
@@ -4437,7 +4485,7 @@ internal sealed partial class Interpreter
         bool wasColumn = current.Cols == 1 && current.Rows != 1;
         JgsValue trimmed = CarryValueTags(current, JgsMatrix.FromElements(
             elements, wasColumn ? elements.Length : 1, wasColumn ? 1 : elements.Length));
-        Rebind(variable.Name, trimmed, env);
+        StoreBack(target, trimmed, at, env);
         return trimmed;
     }
 
@@ -4508,7 +4556,8 @@ internal sealed partial class Interpreter
     /// Compound operators apply per element.
     /// </summary>
     private JgsValue AssignThroughIndex(
-        Expr target, IReadOnlyList<Expr> subscripts, TokenType op, JgsValue rhs, Node at, JgsEnvironment env)
+        Expr target, IReadOnlyList<Expr> subscripts, TokenType op, JgsValue rhs, Node at, JgsEnvironment env,
+        ref ScopeHolds holds)
     {
         JgsValue callee = EvaluateForWrite(target, env);
 
@@ -4547,7 +4596,7 @@ internal sealed partial class Interpreter
 
         if (callee.Type == JgsType.Cell && subscripts.Count is 1 or 2)
         {
-            return AssignIntoCellParen(target, callee, subscripts, op, rhs, at, env);
+            return AssignIntoCellParen(target, callee, subscripts, op, rhs, at, env, ref holds);
         }
 
         if (callee.Type != JgsType.Array)
@@ -4568,9 +4617,11 @@ internal sealed partial class Interpreter
         }
 
         JgsValue? index = EvaluateIndexArgument(subscripts[0], callee.ArrayLength, env);
+        HoldOverlap(callee, ref rhs, index, null, ref holds); // M10, before any growth, demotion or write
 
         // x(idx) = [] removes those elements; x(n) = v past the end grows and zero-fills. Both
-        // replace the value rather than writing into it, so both need a plain variable to rebind.
+        // replace the value rather than writing into it, and store the result back through the
+        // target's entry.
         if (op == TokenType.Assign && IsDeletion(rhs))
         {
             // x(:) = [] removes every element there is, and what is left is the shapeless empty
@@ -4592,10 +4643,41 @@ internal sealed partial class Interpreter
             rhs = JgsNumericClasses.Storable(rhs, storeClass);
         }
 
+        // The positions the write names, computed once for every road below (M14: a write mask's
+        // own rule, M15: the subscript's value read once), and the count held against them before
+        // the target grows, so a refused write leaves the target as it was.
+        int[]? picks = null;
         if (index is not null)
         {
-            int[] wanted = WritePicks(index, callee.ArrayLength, at);
-            int needed = Highest(wanted) + 1;
+            int needed;
+            if (index.Type == JgsType.Array)
+            {
+                picks = WritePicks(index, callee.ArrayLength, at);
+                needed = Highest(picks) + 1;
+                if (op == TokenType.Assign && rhs.Type == JgsType.Array && rhs.ArrayLength != picks.Length)
+                {
+                    throw new JgsRuntimeException(at.Line, at.Column,
+                        $"Cannot assign {rhs.ArrayLength} values into {picks.Length} selected elements.");
+                }
+            }
+            else
+            {
+                needed = WriteIndex(index, at) + 1;
+
+                // One slot takes one value. MATLAB refuses an array of any other length here, where
+                // JGS nests it; storing a 1-by-1 string array whole is what put an array inside a
+                // string array (audit 6.1), so the one element it holds is what goes in.
+                if (Dialect.IsMatlab && op == TokenType.Assign && rhs.Type == JgsType.Array)
+                {
+                    if (rhs.ArrayLength != 1)
+                    {
+                        throw new JgsRuntimeException(at.Line, at.Column, CountMismatch);
+                    }
+
+                    rhs = rhs.ElementAt(0);
+                }
+            }
+
             if (needed > callee.ArrayLength)
             {
                 callee = GrowsByLinearIndex(callee)
@@ -4608,7 +4690,7 @@ internal sealed partial class Interpreter
 
         if (callee.IsPacked)
         {
-            if (TryPackedParenWrite(callee, index, op, rhs, at, out JgsValue packedResult))
+            if (TryPackedParenWrite(callee, index, picks, op, rhs, at, out JgsValue packedResult))
             {
                 return packedResult;
             }
@@ -4619,7 +4701,7 @@ internal sealed partial class Interpreter
         }
         else if (callee.IsPackedComplex)
         {
-            if (TryPackedComplexParenWrite(callee, index, op, rhs, at, out JgsValue complexResult))
+            if (TryPackedComplexParenWrite(callee, index, picks, op, rhs, at, out JgsValue complexResult))
             {
                 return complexResult;
             }
@@ -4633,20 +4715,6 @@ internal sealed partial class Interpreter
         if (index is { Type: not JgsType.Array })
         {
             int single = ToIndex(index, array.Length, at.Line, at.Column);
-
-            // One slot takes one value. MATLAB refuses an array of any other length here, where JGS
-            // nests it; storing a 1-by-1 string array whole is what put an array inside a string
-            // array (audit 6.1), so the one element it holds is what goes in.
-            if (Dialect.IsMatlab && op == TokenType.Assign && rhs.Type == JgsType.Array)
-            {
-                if (rhs.ArrayLength != 1)
-                {
-                    throw new JgsRuntimeException(at.Line, at.Column, CountMismatch);
-                }
-
-                rhs = rhs.ElementAt(0);
-            }
-
             JgsValue stored = op == TokenType.Assign
                 ? rhs
                 : JgsNumericClasses.Storable(ApplyBinary(UnderlyingOp(op), array[single], rhs, at), storeClass);
@@ -4654,9 +4722,7 @@ internal sealed partial class Interpreter
             return stored;
         }
 
-        int[] picks = index is null
-            ? AllPicks(array.Length)
-            : ComputePicks(index, array.Length, "array", at.Line, at.Column);
+        picks ??= AllPicks(array.Length);
 
         if (rhs.Type != JgsType.Array)
         {
@@ -4696,7 +4762,7 @@ internal sealed partial class Interpreter
     /// read-modify-write loop for compound operators so aliasing and repeated picks behave exactly
     /// like the boxed loop). Returns false for shapes the boxed path must handle after demotion.
     /// </summary>
-    private bool TryPackedParenWrite(JgsValue target, JgsValue? index, TokenType op, JgsValue rhs, Node at, out JgsValue result)
+    private bool TryPackedParenWrite(JgsValue target, JgsValue? index, int[]? picks, TokenType op, JgsValue rhs, Node at, out JgsValue result)
     {
         result = rhs;
         if (target.PackedKind != JgsPackedKind.Number)
@@ -4739,9 +4805,7 @@ internal sealed partial class Interpreter
         // M7: the write gate, then compaction — bulk writes want the buffer flat.
         NumericBuffer buffer = target.WritableBuffer();
 
-        int[] picks = index is null
-            ? AllPicks(buffer.Length)
-            : ComputePicks(index, buffer.Length, "array", at.Line, at.Column);
+        picks ??= AllPicks(buffer.Length); // the caller's positions (M14's mask rule), or every one
 
         if (rhsPacked && rhs.ArrayLength != picks.Length)
         {
@@ -4798,7 +4862,7 @@ internal sealed partial class Interpreter
     /// <c>X(1:k) = 0</c> spectral-zeroing idiom without demoting a million-bin spectrum. Compound
     /// operators and other right-hand shapes return false for the demote-and-box fallback.
     /// </summary>
-    private bool TryPackedComplexParenWrite(JgsValue target, JgsValue? index, TokenType op, JgsValue rhs, Node at, out JgsValue result)
+    private bool TryPackedComplexParenWrite(JgsValue target, JgsValue? index, int[]? picks, TokenType op, JgsValue rhs, Node at, out JgsValue result)
     {
         result = rhs;
         if (op != TokenType.Assign)
@@ -4828,9 +4892,7 @@ internal sealed partial class Interpreter
             return true;
         }
 
-        int[] picks = index is null
-            ? AllPicks(planes.Length)
-            : ComputePicks(index, planes.Length, "array", at.Line, at.Column);
+        picks ??= AllPicks(planes.Length);
 
         if (!rhsScalar && rhs.ArrayLength != picks.Length)
         {
@@ -5464,13 +5526,13 @@ internal sealed partial class Interpreter
     /// selection, an array must match its element count. Growth preserves existing coordinates.
     /// </summary>
     private JgsValue AssignNSubscripts(
-        Expr target, IReadOnlyList<Expr> subscripts, TokenType op, JgsValue rhs, Node at, JgsEnvironment env)
+        Expr target, IReadOnlyList<Expr> subscripts, TokenType op, JgsValue rhs, Node at, JgsEnvironment env,
+        ref ScopeHolds holds)
     {
         JgsValue callee = EvaluateForWrite(target, env);
         if (callee.Type is JgsType.Number or JgsType.Bool)
         {
-            callee = OneElementArray(callee);
-            if (target is VariableExpr scalar) Rebind(scalar.Name, callee, env);
+            callee = Stored(target, OneElementArray(callee), at, env);
         }
         if (callee.Type != JgsType.Array)
         {
@@ -5499,8 +5561,9 @@ internal sealed partial class Interpreter
         for (int i = 0; i < count; i++)
         {
             JgsValue? index = EvaluateIndexArgument(subscripts[i], extents, i, env);
+            HoldOverlap(callee, ref rhs, index, null, ref holds); // M10
             picks[i] = index is null && callee.ArrayLength == 0
-                ? AllPicks(rhsExtents[Math.Min(rhsDimension, rhsExtents.Length - 1)]) : WritePicks(index, extents[i], at);
+                ? AllPicks(rhsExtents[Math.Min(rhsDimension, rhsExtents.Length - 1)]) : WritePicks(index, extents[i], at, i + 1);
             if (index is null || picks[i].Length != 1) rhsDimension++;
             grownExtents[i] = Math.Max(extents[i], Highest(picks[i]) + 1);
         }
@@ -5528,8 +5591,6 @@ internal sealed partial class Interpreter
 
         if (!extents.SequenceEqual(grownExtents) && wanted > 0)
         {
-            if (target is not VariableExpr variable)
-                throw new JgsRuntimeException(at.Line, at.Column, "Array growth requires a variable target.");
             var elements = new JgsValue[stride];
             System.Array.Fill(elements, GrowthFill(callee));
             for (int n = 0; n < callee.ArrayLength; n++)
@@ -5544,7 +5605,7 @@ internal sealed partial class Interpreter
             }
             callee = KeepNumericClass(callee, JgsMatrix.FromElements(elements, 1, elements.Length));
             callee.ReshapeDims(grownExtents);
-            Rebind(variable.Name, callee, env);
+            callee = Stored(target, callee, at, env);
         }
 
         var counter = new int[count];
@@ -6972,6 +7033,16 @@ internal sealed partial class Interpreter
             case VariableExpr variable:
                 if (LookUp(variable.Name, env, out JgsValue existing))
                 {
+                    // [] is the empty of every container, a struct included: s = []; s.f = 1 is
+                    // MATLAB's own way of starting one (and what a cleared-then-redeclared global
+                    // holds, #158).
+                    if (existing.Type == JgsType.Array && existing.ArrayLength == 0 && !existing.IsStringArray)
+                    {
+                        JgsValue started = JgsValue.EmptyStruct();
+                        Rebind(variable.Name, started, env);
+                        return started;
+                    }
+
                     if (existing.Type != JgsType.Struct)
                     {
                         throw new JgsRuntimeException(variable.Line, variable.Column,
@@ -7179,27 +7250,23 @@ internal sealed partial class Interpreter
         if (variable is null)
         {
             // A dot-chain target (s.a.b{r, c} = v, M43): the chain's cell is written in place —
-            // member reads hand back the stored reference, so the struct sees the write. Growth
-            // still needs a rebindable name, so out-of-range writes stay the named form's.
+            // member reads hand back the stored reference, so the struct sees the write — and a
+            // write past its end grows it and stores the grown cell back through the chain (V3b).
             target = EvaluateForWrite(brace.Target, env);
-            if (target.Type != JgsType.Cell)
-            {
-                throw new JgsRuntimeException(brace.Line, brace.Column,
-                    $"Braces assign into a cell array, but this is a {target.TypeName}.");
-            }
         }
         else if (!LookUp(variable.Name, env, out target))
         {
             target = JgsValue.Cell(System.Array.Empty<JgsValue>());
             ScopeOf(variable.Name, env).Declare(variable.Name, target);
         }
-        else if (target.Type == JgsType.Array && target.ArrayLength == 0)
+
+        if (target.Type == JgsType.Array && target.ArrayLength == 0)
         {
             // [] is the empty of every container MATLAB has, so a brace write onto one makes a cell.
             // That is the value a 'global c' nobody has assigned holds — the declaration seeds the
             // empty — so without this the accumulation idiom would refuse the name it is written for.
             target = JgsValue.Cell(System.Array.Empty<JgsValue>());
-            Rebind(variable.Name, target, env);
+            StoreBack(brace.Target, target, brace, env);
         }
 
         // w{k} = 'p' on a string array writes the string the char row spells, and only a char row
@@ -7212,9 +7279,7 @@ internal sealed partial class Interpreter
                     "Curly brace assignment into a string expects a character vector.");
             }
 
-            return brace.Indices.Count == 2
-                ? AssignTwoSubscripts(brace.Target, brace.Indices, TokenType.Assign, value, brace, env)
-                : AssignThroughIndex(brace.Target, brace.Indices, TokenType.Assign, value, brace, env);
+            return IndexWrite(brace.Target, brace.Indices, TokenType.Assign, value, brace, env);
         }
 
         if (target.Type != JgsType.Cell)
@@ -7242,18 +7307,12 @@ internal sealed partial class Interpreter
                     return value;
                 }
 
-                if (variable is null)
-                {
-                    throw new JgsRuntimeException(brace.Line, brace.Column,
-                        "A cell reached through a field cannot grow by brace assignment; assign the field a larger cell first.");
-                }
-
                 JgsValue widened = GrownCell(
                     target,
                     System.Math.Max(target.Rows, row + 1),
                     System.Math.Max(target.Cols, column + 1));
                 widened.AsCell[row + (column * widened.Rows)] = value;
-                Rebind(variable.Name, widened, env);
+                StoreBack(brace.Target, widened, brace, env);
                 return value;
             }
 
@@ -7285,12 +7344,6 @@ internal sealed partial class Interpreter
 
         if (position >= elements.Length)
         {
-            if (variable is null)
-            {
-                throw new JgsRuntimeException(brace.Line, brace.Column,
-                    "A cell reached through a field cannot grow by brace assignment; assign the field a larger cell first.");
-            }
-
             // One subscript grows along the dimension the cell already runs in: a column stays a
             // column, a row or an empty becomes a row, and a cell that is neither has no one
             // dimension to grow — which is what MATLAB refuses by name rather than picking for you.
@@ -7305,7 +7358,7 @@ internal sealed partial class Interpreter
                 ? GrownCell(target, System.Math.Max(target.Rows, position + 1), 1)
                 : GrownCell(target, 1, System.Math.Max(elements.Length, position + 1));
             grown.AsCell[position] = value;
-            Rebind(variable.Name, grown, env);
+            StoreBack(brace.Target, grown, brace, env);
             return value;
         }
 
@@ -7358,7 +7411,7 @@ internal sealed partial class Interpreter
         var grown = new JgsValue[rows * cols];
         for (int i = 0; i < grown.Length; i++)
         {
-            grown[i] = JgsValue.Array(System.Array.Empty<JgsValue>());
+            grown[i] = JgsMatrix.FromElements(System.Array.Empty<JgsValue>(), 0, 0); // the 0-by-0 [] MATLAB fills with
         }
 
         for (int c = 0; c < wasCols && c < cols; c++)

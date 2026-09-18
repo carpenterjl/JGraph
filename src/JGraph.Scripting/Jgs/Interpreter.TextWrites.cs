@@ -206,12 +206,6 @@ internal sealed partial class Interpreter
             throw new JgsRuntimeException(at.Line, at.Column, "A char row takes a plain assignment, c(k) = 'x'.");
         }
 
-        if (target is not VariableExpr variable)
-        {
-            throw new JgsRuntimeException(at.Line, at.Column,
-                "Assigning into a char row needs a plain variable on the left.");
-        }
-
         string text = callee.AsString;
         Expr subscript = subscripts[0];
         if (subscripts.Count == 2)
@@ -256,7 +250,7 @@ internal sealed partial class Interpreter
             }
 
             JgsValue shortened = JgsValue.Str(kept);
-            Rebind(variable.Name, shortened, env);
+            StoreBack(target, shortened, at, env);
             return rhs;
         }
 
@@ -281,7 +275,7 @@ internal sealed partial class Interpreter
         }
 
         JgsValue rebuilt = JgsValue.Str(new string(chars));
-        Rebind(variable.Name, rebuilt, env);
+        StoreBack(target, rebuilt, at, env);
         return rhs;
     }
 
@@ -334,7 +328,8 @@ internal sealed partial class Interpreter
     /// end grows the cell with empty <c>[]</c> cells — the <c>c(end + 1) = {v}</c> idiom.
     /// </summary>
     private JgsValue AssignIntoCellParen(
-        Expr target, JgsValue callee, IReadOnlyList<Expr> subscripts, TokenType op, JgsValue rhs, Node at, JgsEnvironment env)
+        Expr target, JgsValue callee, IReadOnlyList<Expr> subscripts, TokenType op, JgsValue rhs, Node at, JgsEnvironment env,
+        ref ScopeHolds holds)
     {
         if (op != TokenType.Assign)
         {
@@ -350,6 +345,7 @@ internal sealed partial class Interpreter
                     $"Conversion to cell from {MatlabClassWord(rhs)} is not possible.");
         }
 
+        HoldOverlap(callee, ref rhs, null, null, ref holds); // M10: c([2 3 1]) = c reads what it read
         return subscripts.Count switch
         {
             1 => AssignCellLinear(target, callee, subscripts[0], deleting, rhs, at, env),
@@ -394,11 +390,12 @@ internal sealed partial class Interpreter
                 emptied = column ? ShapedCell(kept, kept.Count, 1) : ShapedCell(kept, 1, kept.Count);
             }
 
-            RebindOrRefuse(target, emptied, at, env, "Deleting cells needs a plain variable on the left.");
+            StoreBack(target, emptied, at, env);
             return rhs;
         }
 
         int[] picks = WritePicks(index, cells.Length, at);
+        CheckCellCount(picks.Length, rhs.AsCell, at); // M14: before the cell grows
         int needed = Highest(picks) + 1;
         if (needed > cells.Length)
         {
@@ -414,10 +411,8 @@ internal sealed partial class Interpreter
                 grown[i] = EmptyBracket();
             }
 
-            callee = column ? ShapedCell(grown, needed, 1) : ShapedCell(grown, 1, needed);
-            cells = callee.AsCell;
-            RebindOrRefuse(target, callee, at, env,
-                $"Assigning past the end of a {cells.Length}-cell array would grow it, which needs a plain variable on the left.");
+            callee = Stored(target, column ? ShapedCell(grown, needed, 1) : ShapedCell(grown, 1, needed), at, env);
+            cells = callee.WritableCell();
         }
 
         WriteCells(cells, picks, rhs.AsCell, at);
@@ -457,14 +452,14 @@ internal sealed partial class Interpreter
                 }
             }
 
-            RebindOrRefuse(target, ShapedCell(kept, keptRows.Length, keptCols.Length), at, env,
-                "Deleting cells needs a plain variable on the left.");
+            StoreBack(target, ShapedCell(kept, keptRows.Length, keptCols.Length), at, env);
             return rhs;
         }
 
         bool shapeless = rows == 0 && cols == 0;
-        int[] rowPicks = shapeless && rowIndex is null ? AllPicks(rhs.Rows) : WritePicks(rowIndex, rows, at);
-        int[] colPicks = shapeless && colIndex is null ? AllPicks(rhs.Cols) : WritePicks(colIndex, cols, at);
+        int[] rowPicks = shapeless && rowIndex is null ? AllPicks(rhs.Rows) : WritePicks(rowIndex, rows, at, 1);
+        int[] colPicks = shapeless && colIndex is null ? AllPicks(rhs.Cols) : WritePicks(colIndex, cols, at, 2);
+        CheckCellCount(rowPicks.Length * colPicks.Length, rhs.AsCell, at); // M14: before the cell grows
         int neededRows = Math.Max(rows, Highest(rowPicks) + 1);
         int neededCols = Math.Max(cols, Highest(colPicks) + 1);
         if (neededRows > rows || neededCols > cols)
@@ -478,11 +473,9 @@ internal sealed partial class Interpreter
                 }
             }
 
-            callee = ShapedCell(grown, neededRows, neededCols);
-            cells = callee.AsCell;
+            callee = Stored(target, ShapedCell(grown, neededRows, neededCols), at, env);
+            cells = callee.WritableCell();
             rows = neededRows;
-            RebindOrRefuse(target, callee, at, env,
-                "Assigning outside a cell array would grow it, which needs a plain variable on the left.");
         }
 
         var slots = new int[rowPicks.Length * colPicks.Length];
@@ -498,13 +491,19 @@ internal sealed partial class Interpreter
         return rhs;
     }
 
-    /// <summary>Writes the cells of a right-hand side into the chosen slots: one fills all, else one each.</summary>
-    private static void WriteCells(JgsValue[] cells, int[] slots, JgsValue[] source, Node at)
+    /// <summary>M14's count check for a cell write: one cell fills every slot, otherwise one each.</summary>
+    private static void CheckCellCount(int slots, JgsValue[] source, Node at)
     {
-        if (source.Length != 1 && source.Length != slots.Length)
+        if (source.Length != 1 && source.Length != slots)
         {
             throw new JgsRuntimeException(at.Line, at.Column, CountMismatch);
         }
+    }
+
+    /// <summary>Writes the cells of a right-hand side into the chosen slots: one fills all, else one each.</summary>
+    private static void WriteCells(JgsValue[] cells, int[] slots, JgsValue[] source, Node at)
+    {
+        CheckCellCount(slots.Length, source, at);
 
         for (int i = 0; i < slots.Length; i++)
         {
@@ -514,13 +513,4 @@ internal sealed partial class Interpreter
         }
     }
 
-    private void RebindOrRefuse(Expr target, JgsValue value, Node at, JgsEnvironment env, string refusal)
-    {
-        if (target is not VariableExpr variable)
-        {
-            throw new JgsRuntimeException(at.Line, at.Column, refusal);
-        }
-
-        Rebind(variable.Name, value, env);
-    }
 }
