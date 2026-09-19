@@ -888,7 +888,7 @@ CHK|e_object_local_prop_entry|v=ValueBox p=double [1 5] [1 2 3 4 5] entry=ValueB
 CHK|e_object_local_propin_orig|v=ValueBox p=double [1 5] [1 9 3 4 5] entry=ValueBox p=double [1 5] [1 2 3 4 5]|exact
 CHK|e_object_local_propin_entry|v=ValueBox p=double [1 5] [1 2 3 4 5] entry=ValueBox p=double [1 5] [1 9 3 4 5]|exact
 CHK|e_object_global_prop_orig|v=ValueBox p=double [1 1] 9 entry=ValueBox p=double [1 5] [1 2 3 4 5]|exact
-CHK|e_object_global_prop_entry|v=ValueBox p=double [1 5] [1 2 3 4 5] entry=ValueBox p=double [1 1] 9|exact|pending V4|ERR Cannot set a field on 'gE_475': it is a ValueBox, not a struct.
+CHK|e_object_global_prop_entry|v=ValueBox p=double [1 5] [1 2 3 4 5] entry=ValueBox p=double [1 1] 9|exact
 CHK|e_object_global_propin_orig|v=ValueBox p=double [1 5] [1 9 3 4 5] entry=ValueBox p=double [1 5] [1 2 3 4 5]|exact
 CHK|e_object_global_propin_entry|v=ValueBox p=double [1 5] [1 2 3 4 5] entry=ValueBox p=double [1 5] [1 9 3 4 5]|exact
 CHK|e_object_cellslot_prop_orig|v=ValueBox p=double [1 1] 9 entry=ValueBox p=double [1 5] [1 2 3 4 5]|exact

@@ -1,0 +1,43 @@
+CHK|v_global_prop_write|7|exact
+CHK|v_global_prop_write_other_frame|7|exact
+CHK|v_global_prop_write_alias_isolated|1 7|exact
+CHK|v_global_prop_write_local_copy|7 1|exact
+CHK|v_global_prop_dynamic_name|7|exact
+CHK|v_global_prop_elem_write|[1 7 1]|exact
+CHK|v_global_prop_elem_grow|[1 1 1 0 9]|exact
+CHK|v_global_prop_elem_delete|[1 3 4]|exact
+CHK|v_global_prop_elem_alias_isolated|[1 1 1] [1 1 1] [1 7 1]|exact
+CHK|v_global_nested_object_write|7|exact
+CHK|v_global_nested_object_alias_isolated|1 1 7|exact
+CHK|v_global_prop_struct_field_write|7 8|exact|pending V6|ERR Cannot set a field on 'gO_os': it is a ValueBox, not a struct.
+CHK|v_global_prop_cell_slot_write|1 7|exact
+CHK|v_global_unknown_prop_refused|refused 1|exact
+CHK|v_global_write_in_script_scope|7|exact
+CHK|v_global_prop_write_via_anonymous_reader|1 7|exact
+CHK|v_nested_prop_write|7|exact
+CHK|v_nested_prop_elem_write|[1 7 1]|exact
+CHK|v_nested_prop_alias_isolated|1 7|exact
+CHK|v_nested_two_deep_prop_write|7|exact
+CHK|v_persistent_prop_write|4|exact
+CHK|v_persistent_prop_elem_write|[1 7 1]|exact
+CHK|v_persistent_returned_copy_isolated|[50 7 1] [1 7 1]|exact
+CHK|h_global_prop_write|7|exact
+CHK|h_global_prop_write_other_frame|7|exact
+CHK|h_global_prop_write_alias_shared|7 7|exact
+CHK|h_global_prop_elem_write|[1 7 1]|exact
+CHK|h_global_prop_elem_grow|[1 1 1 0 9]|exact
+CHK|h_global_prop_read_then_write|[1 1 1] [1 7 1]|exact
+CHK|h_global_holds_value_object_write|1 7|exact
+CHK|h_global_method_write|[7 1 1]|exact
+CHK|v_global_holds_handle_write|7 7|exact
+CHK|h_nested_prop_write|7|exact
+CHK|h_nested_prop_elem_write|[1 7 1]|exact
+CHK|h_persistent_prop_write|3|exact
+CHK|x_global_gfx_prop_write|[4 5 6]|exact
+CHK|x_global_gfx_prop_write_same_frame|3|exact
+CHK|x_global_gfx_prop_elem_write|[1 7 3]|exact|pending V6|[1 2 3]
+CHK|x_global_gfx_handle_array_elem_write|2 3|exact
+CHK|x_global_gfx_chain_write|[1 0 0]|exact
+CHK|x_global_gfx_read_then_write|[1 2 3] [9 9 9]|exact
+CHK|x_nested_gfx_prop_write|[4 5 6]|exact
+CHK|x_persistent_gfx_prop_write|1|exact

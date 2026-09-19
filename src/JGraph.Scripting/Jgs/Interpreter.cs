@@ -6972,7 +6972,7 @@ internal sealed partial class Interpreter
     {
         switch (expr)
         {
-            case VariableExpr variable when env.TryGet(variable.Name, out JgsValue bound):
+            case VariableExpr variable when LookUp(variable.Name, env, out JgsValue bound):
                 return JgsHandleRegistry.TryGet(bound, out JgsHandleEntry? entry) ? entry : null;
 
             // h(i).Color = c — a handle out of an array of them. A numeric array can hold nothing
@@ -7009,8 +7009,8 @@ internal sealed partial class Interpreter
         }
     }
 
-    private static bool IsHandleArray(VariableExpr variable, JgsEnvironment env) =>
-        env.TryGet(variable.Name, out JgsValue value)
+    private bool IsHandleArray(VariableExpr variable, JgsEnvironment env) =>
+        LookUp(variable.Name, env, out JgsValue value)
         && value.Type == JgsType.Array
         && value.ArrayLength > 0
         && JgsHandleRegistry.TryGet(value.ElementAt(0), out _);

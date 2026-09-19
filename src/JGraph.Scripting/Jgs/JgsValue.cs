@@ -305,6 +305,15 @@ internal sealed class JgsValue
     /// </summary>
     internal static JgsValue Share(JgsValue value)
     {
+        // A handle is a reference: every holder holds the one object, so it is its own share and
+        // no count is taken that a later write gate would read as "copy first" (V4, ADR 0165 — a
+        // value object's copy shared its fields, and the first write through the handle it held
+        // cloned the handle).
+        if (value._reference is JgsObject { Class.IsHandle: true } || JgsBuiltins.IsHandleClass(value))
+        {
+            return value;
+        }
+
         switch (value._reference)
         {
             case NumericBuffer:

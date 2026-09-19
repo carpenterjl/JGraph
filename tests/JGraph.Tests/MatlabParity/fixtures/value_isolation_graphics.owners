@@ -17,5 +17,5 @@ a133_graphics_prop_delete_write	V6
 a134_handle_array_cslist_prop_write	V6
 a141_line_width_default	V6
 a141_handle_array_element_prop_write	V6
-a150_global_handle_prop_write	V4
+a150_global_handle_prop_write	V6	# V4 finds the handle in the global (value_isolation_objscope holds that flip); the write changes YData's length, which is #133's refusal
 a153_order_graphics_ydata_end_vs_rhs	V6

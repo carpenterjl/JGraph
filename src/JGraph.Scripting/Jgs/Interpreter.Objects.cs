@@ -97,7 +97,7 @@ internal sealed partial class Interpreter
     /// </remarks>
     private JgsClass? ClassNamed(string name, JgsEnvironment env)
     {
-        if (env.TryGet(name, out JgsValue bound) && bound.Type != JgsType.Function)
+        if (LookUp(name, env, out JgsValue bound) && bound.Type != JgsType.Function)
         {
             return null; // a variable holding data outranks a class, as it does a function
         }
@@ -185,18 +185,17 @@ internal sealed partial class Interpreter
     }
 
     /// <summary>
-    /// The instance a dotted write is aimed at, or null when the write is not about an object. Only a
-    /// bound variable and a dot off one are considered, for the reason the handle path gives: anywhere
-    /// else the target would have to be evaluated on the chance that it is one.
-    /// </summary>
-    /// <summary>
-    /// The object a dotted write is aimed at, as the entry's own wrapper rather than the bare
-    /// instance: M7's gate lives on the wrapper, and under M2 the entry holds exactly this wrapper,
-    /// so a detach through it lands in the entry.
+    /// The object a dotted write is aimed at, or null when the write is not about an object, as the
+    /// entry's own wrapper rather than the bare instance: M7's gate lives on the wrapper, and under
+    /// M2 the entry holds exactly this wrapper, so a detach through it lands in the entry. Only a
+    /// bound variable and a dot off one are considered, for the reason the handle path gives:
+    /// anywhere else the target would have to be evaluated on the chance that it is one. The name
+    /// is read the way every other write reads it (<see cref="LookUp"/>), so a frame that declared
+    /// it global finds the object in the global workspace (V4, ADR 0165).
     /// </summary>
     private JgsValue? ResolveObjectTarget(Expr expr, JgsEnvironment env) => expr switch
     {
-        VariableExpr variable when env.TryGet(variable.Name, out JgsValue bound) && bound.Type == JgsType.Object =>
+        VariableExpr variable when LookUp(variable.Name, env, out JgsValue bound) && bound.Type == JgsType.Object =>
             bound,
 
         // obj.inner.value = 3 — the object held by a property of another object. The nested wrapper
