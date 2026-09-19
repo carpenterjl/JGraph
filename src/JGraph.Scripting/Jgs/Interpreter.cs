@@ -43,6 +43,10 @@ internal sealed partial class Interpreter
     /// </summary>
     private readonly List<FnStmt> _activeFunctions = [];
 
+    // The line each active function was called from, one for one with _activeFunctions: what the
+    // frames an error did not unwind through - the catching function and its callers - report.
+    private readonly List<int> _activeCallLines = [];
+
     /// <summary>
     /// The script files that are running, innermost last. A script's own functions live with the
     /// script, and R2025b clears none of them while it runs — they are idle on the call stack and
@@ -181,25 +185,39 @@ internal sealed partial class Interpreter
     /// M65). An error raised at the top level unwound through nothing and gets an empty stack, which
     /// is MATLAB's answer too.
     /// </summary>
-    private static JgsValue StackOf(JgsRuntimeException error)
+    /// <remarks>
+    /// V6 (ADR 0167): the stack goes on past the catch. The frames the error unwound through come
+    /// first; after them the function that caught it - at the line of the call it was waiting on -
+    /// and that function's callers, each at the line it called from, as R2025b's stack does.
+    /// <c>throwAsCaller</c> leaves out the frame that called it.
+    /// </remarks>
+    private JgsValue StackOf(JgsRuntimeException error)
     {
-        var frames = new Dictionary<string, JgsValue>[error.Frames.Count];
-        for (int i = 0; i < frames.Length; i++)
+        var listed = new List<(string Name, string File, int Line)>(error.Frames.Count);
+        foreach ((string name, string file, int at) in error.Frames)
         {
-            (string name, string file, int line) = error.Frames[i];
-            frames[i] = new Dictionary<string, JgsValue>(StringComparer.Ordinal)
-            {
-                ["file"] = JgsValue.Str(file),
-                ["name"] = JgsValue.Str(name),
-                ["line"] = JgsValue.Number(line),
-            };
+            listed.Add((name, FileOfFrame(file), at));
         }
 
-        // A column, the shape MATLAB's is.
-        return JgsValue.StructArray(
-            new JgsStructArray(frames, ["file", "name", "line"]),
-            frames.Length, frames.Length == 0 ? 0 : 1);
+        if (error.DropsThrowingFrame && listed.Count > 0)
+        {
+            listed.RemoveAt(0);
+        }
+
+        int line = error.PendingLine;
+        for (int i = _activeFunctions.Count - 1; i >= 0; i--)
+        {
+            listed.Add((_activeFunctions[i].Name, FileOfFrame(_activeFunctions[i].SourceId), line));
+            line = _activeCallLines[i];
+        }
+
+        return JgsBuiltins.StackValue(listed);
     }
+
+    /// <summary>The file this run's own code came from, for the frames whose code carries no source id.</summary>
+    internal string MainScriptPath { get; set; } = string.Empty;
+
+    private string FileOfFrame(string sourceId) => sourceId.Length > 0 ? sourceId : MainScriptPath;
 
     /// <summary>
     /// The environment of the innermost running function, or the globals when the script itself is
@@ -842,6 +860,7 @@ internal sealed partial class Interpreter
         _pendingCall = null;
         _currentFunction = declaration;
         _activeFunctions.Add(declaration);
+        _activeCallLines.Add(callLine);
         SetFile(declaration.SourceId);
 
         // Nested functions hoist like top-level ones do in Run(): a handle taken before the nested
@@ -882,6 +901,7 @@ internal sealed partial class Interpreter
         finally
         {
             _activeFunctions.RemoveAt(_activeFunctions.Count - 1);
+            _activeCallLines.RemoveAt(_activeCallLines.Count - 1);
             CurrentFrame = callerFrame;
             CallerFrame = callersCaller;
             CurrentCall = callerCall;
@@ -1705,8 +1725,12 @@ internal sealed partial class Interpreter
         JgsEnvironment handler = BlockScope(env);
         if (statement.ErrorVariable is { } name)
         {
-            handler.Declare(name, JgsBuiltins.MakeException(
-                error.Identifier, error.Message, StackOf(error)));
+            // V6: a thrown MException arrives whole. rethrow keeps the stack it had; throw and
+            // throwAsCaller take the stack of where they threw from. Anything else is built here.
+            JgsValue caught = error.Carried is JgsValue carried
+                ? JgsBuiltins.CaughtException(carried, error.KeepsStack ? null : StackOf(error))
+                : JgsBuiltins.MakeException(error.Identifier, error.Message, StackOf(error));
+            handler.Declare(name, caught);
         }
 
         return ExecuteBlock(statement.Handler, handler);

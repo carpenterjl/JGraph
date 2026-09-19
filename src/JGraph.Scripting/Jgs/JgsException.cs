@@ -100,4 +100,24 @@ public sealed class JgsRuntimeException : JgsException
         _frames.Add((name, file, _lineForNextFrame < 0 ? Line : _lineForNextFrame));
         _lineForNextFrame = callLine;
     }
+
+    /// <summary>
+    /// The line that was running in the frame the error has reached but not yet left: its own line
+    /// before any frame unwound, and after that the call the last unwound frame was entered from.
+    /// </summary>
+    internal int PendingLine => _lineForNextFrame < 0 ? Line : _lineForNextFrame;
+
+    /// <summary>
+    /// The exception value a script threw (V6, ADR 0167): <c>throw</c>, <c>rethrow</c> and
+    /// <c>throwAsCaller</c> carry the whole MException — its causes with it — so the
+    /// <c>catch</c> that ends the unwind hands back that value rather than one rebuilt from an
+    /// identifier and a message. Null for an error the runtime or <c>error(...)</c> raised.
+    /// </summary>
+    internal object? Carried { get; init; }
+
+    /// <summary><c>rethrow</c>: the carried exception keeps the stack it already has.</summary>
+    internal bool KeepsStack { get; init; }
+
+    /// <summary><c>throwAsCaller</c>: the stack leaves out the frame that called it.</summary>
+    internal bool DropsThrowingFrame { get; init; }
 }

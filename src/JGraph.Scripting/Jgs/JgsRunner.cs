@@ -94,6 +94,10 @@ internal static class JgsRunner
             JgsEnvironment environment = JgsBuiltins.CreateGlobals(globals, cancellationToken, dialect);
             var interpreter = new Interpreter(environment, cancellationToken, hook,
                 echo: line => context.Output.WriteLine(line), dialect);
+
+            // ME.stack names the file a frame ran in (V6). A -batch run hands its code over with no
+            // source id so its diagnostics stay bare; the stack still has the run's file to name.
+            interpreter.MainScriptPath = sourceId.Length > 0 ? sourceId : context.ScriptPath ?? string.Empty;
             DefineRunBuiltin(environment, interpreter, globals, dialect);
             JgsBuiltins.RegisterEvalBuiltins(environment, interpreter, globals, dialect);
             JgsBuiltins.RegisterSessionBuiltins(environment, globals);

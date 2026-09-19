@@ -9,9 +9,9 @@ CHK|a054_arrayfun_errorhandler_identifier_fn|1|exact|pending V6|0
 CHK|a054_cellfun_errorhandler_record_nonuniform|probe:bad#1#Error using value_isolation_forms>failing (line 163) bad 1,probe:bad#2#Error using value_isolation_forms>failing (line 163) bad 2|exact|pending V6|#1#bad 1,#2#bad 2
 CHK|g_cellfun_errorhandler_anon|0|exact
 CHK|g_errorhandler_that_errors|probe:handler|exact
-CHK|a059_mexception_addcause_alias|0 1|exact|pending V6|ERR This struct has no field 'cause'.
-CHK|a066_throw_keeps_cause|1 probe:inner|exact|pending V6|ERR This struct has no field 'cause'.
-CHK|a067_rethrow_keeps_stack_top|thrower|exact|pending V6|ERR Index 1 is out of range for length 0 (indexing is 1-based).
+CHK|a059_mexception_addcause_alias|0 1|exact
+CHK|a066_throw_keeps_cause|1 probe:inner|exact
+CHK|a067_rethrow_keeps_stack_top|thrower|exact
 CHK|g_mexception_rethrow_identity|probe:inner inner|exact
 CHK|a060_sort_cell_alias|a z|exact
 CHK|a061_complex_promotion_alias|1 [1 0+1i 3]|exact

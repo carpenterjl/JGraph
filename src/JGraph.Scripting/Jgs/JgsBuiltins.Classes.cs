@@ -73,16 +73,19 @@ internal static partial class JgsBuiltins
             if (args[1].ClassName != ExceptionClass)
             {
                 throw new JgsRuntimeException(line, col,
-                    $"addCause: the cause must be an MException, but got a {args[1].TypeName}.");
+                    "Invalid input for argument 2 (rhs2): Value must be 'MException scalar'.");
             }
 
             // A new exception rather than a write into the old one: MException is a value here, and a
             // script that writes `ME = addCause(ME, cause)` should not also have changed whatever else
             // was holding the original.
-            JgsValue[] causes = [.. ExistingCauses(args[0]), args[1]];
+            // The causes are entries of the new exception (M2), in the column R2025b keeps them in.
+            JgsValue[] causes = [.. ExistingCauses(args[0]).Select(JgsValue.Share), JgsValue.Share(args[1])];
             JgsValue built = MakeException(
-                identifier, message, Field(args[0], "stack") ?? JgsValue.Cell([]));
-            built.AsStruct["cause"] = JgsValue.Cell(causes);
+                identifier, message, Field(args[0], "stack") is { } stack ? JgsValue.Share(stack) : StackValue([]));
+            JgsValue column = JgsValue.Cell(causes);
+            column.Reshape(causes.Length, 1);
+            built.AsStruct["cause"] = column;
             return built;
         });
     }

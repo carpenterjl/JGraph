@@ -1,0 +1,30 @@
+CHK|m_cause_default|cell [0 0] 0|exact
+CHK|m_addcause_alias|0 1|exact
+CHK|m_addcause_twice|2 [2 1] one e:f|exact
+CHK|m_addcause_is_a_value|0 1 outer|exact
+CHK|m_addcause_refuses_a_struct|ERR Invalid input for argument 2 (rhs2): Value must be 'MException scalar'.|exact
+CHK|m_throw_keeps_cause|1 probe:inner|exact
+CHK|m_throw_keeps_cause_two_deep|p:top>p:mid>p:leaf|exact
+CHK|m_rethrow_keeps_cause|1 probe:outer inner|exact
+CHK|m_cause_after_catch_is_isolated|1 2|exact
+CHK|m_error_records_stack|thrower 1 struct|exact
+CHK|m_stack_fields|file,name,line double|exact
+CHK|m_stack_line_and_file|57 mexception_values.m|exact
+CHK|m_stack_two_frames|thrower middle|exact
+CHK|m_rethrow_keeps_stack_top|thrower|exact
+CHK|m_rethrow_keeps_stack_depth|1 middle|exact
+CHK|m_throw_built_exception_stack|throw_built 0|exact
+CHK|m_built_exception_has_no_stack|struct [0 1] 1|exact
+CHK|m_throwascaller_stack_top|calls_as_caller|exact
+CHK|m_throwascaller_keeps_identifier|probe:bad bad 7|exact
+CHK|m_rethrow_keeps_identifier_message|probe:bad bad 7|exact
+CHK|m_rethrow_error_struct|MException x:y from a struct|exact
+CHK|m_error_of_exception_keeps_cause|MATLAB:error:invalidMessageType 0|exact
+CHK|m_caught_is_mexception|MException 1 1|exact
+CHK|m_message_format|v=5 and text|exact
+CHK|m_stack_through_cellfun|probe:bad thrower|exact
+CHK|m_stack_through_anonymous|thrower 1|exact
+CHK|m_getreport_has_message|1 1|exact
+CHK|m_getreport_basic|outer|exact
+CHK|m_exception_in_cell_alias|0 1|exact
+CHK|m_stack_is_a_value|thrower changed|exact
