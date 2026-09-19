@@ -1,0 +1,40 @@
+CHK|b_scalar_alias|[1 2] [3 4] / [9 2] [3 4]|exact
+CHK|b_by_variable_name|[1 2] [3 4] / [1 2] [3 7]|exact
+CHK|b_by_cell_of_names|[1 8] [3 7]|exact
+CHK|b_row|[1 2] [3 4] / [8 2] [9 4]|exact
+CHK|b_column|[1 2] [3 4] / [5 6] [3 4]|exact
+CHK|b_column_scalar_expands|[1 2] [0 0]|exact
+CHK|b_block|[1 2] [3 4] / [10 30] [20 40]|exact
+CHK|b_block_scalar_expands|[7 7] [7 7]|exact
+CHK|b_mask_rows|[1 2 3] [4 5 6] / [1 0 0] [4 5 6]|exact
+CHK|b_mask_vars|[1 2] [9 4]|exact
+CHK|b_end_both|[1 2] [3 100]|exact
+CHK|b_end_arithmetic|[1 50 3] [4 5 6]|exact
+CHK|b_index_vector_rows|[1 2 3] [40 5 60]|exact
+CHK|b_growth_one_row|3 [1 2 9] [3 4 0] / 2|exact
+CHK|b_growth_gap|5 [1 2 0 0 0] [3 4 0 0 9]|exact
+CHK|b_growth_end_plus_one_row|3 [1 2 7] [3 4 8]|exact
+CHK|b_growth_new_variable|3 Var1,Var2,Var3|exact
+CHK|b_text_var_cell_rhs|a,b / a,z|exact
+CHK|b_text_var_char_rhs|ERR Conversion to cell from char is not possible.|exact
+CHK|b_text_growth_fill|4 double [0 0] 0|exact
+CHK|b_matrix_var_row|[1 2;3 4] / [1 2;30 40]|exact
+CHK|b_convert_into_int8|int8 [4 2]|exact
+CHK|b_convert_into_logical|logical [true true]|exact|pending V6|double [1 5]
+CHK|b_convert_logical_into_double|double [1 2]|exact
+CHK|b_rhs_is_own_column|[1 2] [3 4] / [3 4] [3 4]|exact
+CHK|b_rhs_self_overlap_rows|[3 1 2] [4 5 6]|exact
+CHK|b_row_by_name|[1 2] [1 9] a,b|exact
+CHK|b_timetable|1 [1 2] [1 9] [1 2]|exact
+CHK|b_keeps_properties|[about] m,s [1 2] [0 4]|exact
+CHK|b_in_cell_alias|1 9|exact
+CHK|b_in_struct_field_alias|4 0|exact
+CHK|b_in_function_argument|1 0|exact
+CHK|b_refuse_wrong_count|ERR The value on the right-hand side of the assignment has the wrong width. The assignment requires a value whose width is 2.|exact
+CHK|b_refuse_wrong_count_leaves_table|[1 2] [3 4]|exact
+CHK|b_refuse_one_subscript|ERR Subscripting into a table using one subscript (as in t(i)) is not supported. Specify a row subscript and a variable subscript, as in t(rows,vars). To select variables, use t(:,i) or for one variable t.(i). To select rows, use t(i,:).|exact
+CHK|b_unknown_name_adds_variable|Var1,Var2,Nope|exact
+CHK|b_char_into_number_converts|double [97 2]|exact
+CHK|b_refuse_zero_row|ERR Index in position 1 is invalid. Array indices must be positive integers or logical values.|exact
+CHK|b_delete_is_refused|ERR The value on the right-hand side of the assignment must have 2 columns. If you intended to delete rows or variables by assigning [], use () subscripting instead of {}.|exact
+CHK|g_brace_read_block|[9 3;2 4] [1 2] [3 4]|exact

@@ -1,0 +1,2 @@
+# The stage of the value-ownership plan that completes each line JGraph fails (appendix A's stage column).
+b_convert_into_logical	V6	# a number written into a logical array makes it double on every write road (#157); V6's "every rebuild keeps what the value is"

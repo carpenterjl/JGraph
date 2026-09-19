@@ -1,4 +1,4 @@
-CHK|a025_table_alias_brace|1 9|exact|pending V6|ERR Braces assign into a cell array, but 'U' is a table.
+CHK|a025_table_alias_brace|1 9|exact
 CHK|a026_sparse_alias|1 7|exact|pending V6|ERR Cannot assign by index into a sparse; only arrays support element assignment.
 CHK|a038_table_rownames_dot_write|1 1|exact
 CHK|a039_timetable_rowtimes_dot_write|1 9|exact
@@ -28,7 +28,7 @@ CHK|a091_string_element_char_write|aZc,def|exact
 CHK|a092_strrep_cellstr_alias|aa,ba Qx,bx|exact
 CHK|g_tbl_column_read_alias|[1;2]|exact
 CHK|a117_tbl_alias_row_delete|3 2|exact|pending V6|ERR Cannot assign by index into a table; only arrays support element assignment.
-CHK|a119_tbl_cell_var_nested_write|[1 2] [9 2]|exact|pending V6|'[1, 2]' '	1, 2]'
+CHK|a119_tbl_cell_var_nested_write|[1 2] [9 2]|exact
 CHK|a114_tbl_varnames_alias|Var1 a|exact
 CHK|a114_tbl_varnames_brace_on_original|a|exact
 CHK|a115_tbl_varnames_whole_set_alias|Var1 a|exact
@@ -45,7 +45,7 @@ CHK|a122_tbl_table2array_alias|[1;2]|exact|pending V6|ERR 'table2array' is not r
 CHK|g_tbl_brace_read_then_write|[1;2]|exact
 CHK|g_tbl_sortrows_leaves_source|[2;1] [1;2]|exact
 CHK|a121_tbl_vertcat_alias|1 4|exact|pending V6|ERR '.Var1' needs a struct, but this is a array.
-CHK|a120_tbl_struct_var_nested_write|1 9|exact|pending V6|ERR table expects an array of numbers, but got a struct.
+CHK|a120_tbl_struct_var_nested_write|1 9|exact
 CHK|g_tbl_subtable_write|1 9|exact
 CHK|a118_tbl_var_growth|3 [1;2;5]|exact
 CHK|g_tbl_dot_self_overlap|[3;1;2]|exact

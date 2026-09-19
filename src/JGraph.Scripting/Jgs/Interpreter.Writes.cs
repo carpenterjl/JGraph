@@ -247,6 +247,11 @@ internal sealed partial class Interpreter
             return new int[count];
         }
 
+        if (held.Type == JgsType.Table && count == 2)
+        {
+            return [held.AsTable.RowCount, held.AsTable.ColumnCount]; // T{end, end} = v (V6)
+        }
+
         if (count == 1)
         {
             return [LinearCount(held)];

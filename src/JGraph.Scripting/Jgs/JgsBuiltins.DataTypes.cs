@@ -291,6 +291,10 @@ internal static partial class JgsBuiltins
     {
         if (value.IsDatetime) return new DateTimeColumn(columnName, TimeMs(value).Select(ms => ms / JgsTime.MsPerDay).ToArray());
         if (value.IsDuration) return new JgsTimeColumn(columnName, TimeMs(value), value.TimeTag!);
+
+        // V6: a value the plain kinds would give back as something else — an integer, single or
+        // logical array, a cell that is not all text, a struct array — is held as it is.
+        if (JgsValueColumn.Needs(value)) return new JgsValueColumn(columnName, value);
         if (value.Type == JgsType.Cell || (value.Type == JgsType.Array && HasStringElements(value)))
         {
             JgsValue[] elements = value.Type == JgsType.Cell ? value.AsCell : value.BoxedElements();
@@ -389,6 +393,8 @@ internal static partial class JgsBuiltins
         {
             case JgsTimeColumn time:
                 return time.Grown(rows);
+            case JgsValueColumn held:
+                return held.Grown(rows);
             case NumberMatrixColumn matrix:
             {
                 var values = new double[rows * matrix.Width];
@@ -405,13 +411,17 @@ internal static partial class JgsBuiltins
 
             case TextColumn text:
             {
-                var values = new string?[rows];
+                // A cell of text grows with [] in its new rows (measured: double, 0-by-0), which
+                // makes it a cell that is no longer all text — so it is held as the cell it is.
+                var cells = new JgsValue[rows];
                 for (int r = 0; r < rows; r++)
                 {
-                    values[r] = r < old ? text.GetString(r) : string.Empty;
+                    cells[r] = r < old ? JgsValue.Str(text.GetText(r)) : JgsEmpty.Zero();
                 }
 
-                return new TextColumn(column.Name, values);
+                JgsValue cell = JgsValue.Cell(cells);
+                cell.Reshape(rows, 1);
+                return new JgsValueColumn(column.Name, cell);
             }
 
             default:
@@ -580,6 +590,7 @@ internal static partial class JgsBuiltins
         return column switch
         {
             JgsTimeColumn time => time.Renamed(name),
+            JgsValueColumn held => held.Renamed(name),
             NumberMatrixColumn matrix => new NumberMatrixColumn(name, matrix.Values.ToArray(), matrix.RowCount, matrix.Width),
             NumberColumn numbers => new NumberColumn(name, numbers.Values.ToArray()),
             DateTimeColumn dates => new DateTimeColumn(name, dates.Values.ToArray()),
@@ -603,6 +614,7 @@ internal static partial class JgsBuiltins
         }
 
         if (column is JgsTimeColumn times) return times.ToValue();
+        if (column is JgsValueColumn held) return JgsValue.Share(held.Value); // M2: the reader's own entry
         if (column is NumberMatrixColumn matrix) return JgsMatrix.FromColumnMajorDims((double[])matrix.Values.Clone(), [matrix.RowCount, matrix.Width]);
         if (column.Type == ColumnType.Text)
         {

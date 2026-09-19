@@ -85,12 +85,12 @@ public class TableRebuildM167Tests : IDisposable
         string text = RunAndRead("""
             T = table([1; 2], {'x'; 'y'}, 'RowNames', {'a'; 'b'});
             T.Var1(4) = 5;
-            fprintf('%d %s %s [%s]\n', height(T), mat2str(T.Var1'), strjoin(T.Properties.RowNames', ','), T.Var2{4});
+            fprintf('%d %s %s %d\n', height(T), mat2str(T.Var1'), strjoin(T.Properties.RowNames', ','), isempty(T.Var2{4}));
             TT = timetable(seconds([1; 2]), [1; 2]);
             TT.Var1(3) = 5;
             fprintf('%d %s\n', height(TT), mat2str(seconds(TT.Time)'));
             """);
-        Assert.Equal("4 [1 2 0 5] a,b,Row3,Row4 []\n3 [1 2 NaN]", text.Replace("\r", ""));
+        Assert.Equal("4 [1 2 0 5] a,b,Row3,Row4 1\n3 [1 2 NaN]", text.Replace("\r", ""));
     }
 
     [Fact]

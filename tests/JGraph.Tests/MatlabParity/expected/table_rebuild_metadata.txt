@@ -4,8 +4,8 @@ CHK|rn_dot_new_var|a,b 2 1|exact
 CHK|rn_dot_delete_var|a,b Var2 2|exact
 CHK|rn_dot_text_var_write|a,b x,z x,y|exact
 CHK|rn_dot_growth_extends_names|a,b,Row3,Row4 [1 2 0 5] 2|exact
-CHK|rn_brace_elem_write|a,b [1 9] [1 2]|exact|pending V6|ERR Braces assign into a cell array, but 'U' is a table.
-CHK|rn_brace_growth_extends_names|a,b,Row3 [1 2 9]|exact|pending V6|ERR Braces assign into a cell array, but 'U' is a table.
+CHK|rn_brace_elem_write|a,b [1 9] [1 2]|exact
+CHK|rn_brace_growth_extends_names|a,b,Row3 [1 2 9]|exact
 CHK|rn_paren_row_delete|a,c a,b,c|exact|pending V6|ERR Cannot assign by index into a table; only arrays support element assignment.
 CHK|rn_paren_row_select|c,a [3 1]|exact
 CHK|rn_row_by_name_after_write|9 b|exact

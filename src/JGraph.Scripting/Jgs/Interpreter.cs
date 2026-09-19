@@ -3882,7 +3882,7 @@ internal sealed partial class Interpreter
     /// stops the next path from carrying two of them. Transpose is separate from
     /// <see cref="KeepShape"/> precisely because its shape is deliberately <em>not</em> the source's.
     /// </remarks>
-    private static JgsValue CarryValueTags(JgsValue source, JgsValue copy)
+    internal static JgsValue CarryValueTags(JgsValue source, JgsValue copy)
     {
         copy.SetNumericClass(source.NumericClass);
 

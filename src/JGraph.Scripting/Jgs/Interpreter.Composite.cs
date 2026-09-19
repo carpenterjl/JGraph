@@ -58,6 +58,12 @@ internal sealed partial class Interpreter
             Expr step = chain[k + 1];
             if (IsComputedHolder(held, step, target))
             {
+                if (step is BraceIndexExpr brace)
+                {
+                    result = WriteTableBrace(chain[k], held.AsTable, brace, assign, rhs, env);
+                    return true;
+                }
+
                 // A whole-value set binds the right-hand side (M2); a partial one hands it to the
                 // ordinary roads, which bind what they store.
                 JgsValue given = ReferenceEquals(step, target) && !owned && assign.Op == TokenType.Assign
@@ -86,9 +92,13 @@ internal sealed partial class Interpreter
         _ => null,
     };
 
-    /// <summary>Whether <paramref name="step"/> on <paramref name="holder"/> is a computed level: a table's dot.</summary>
+    /// <summary>
+    /// Whether <paramref name="step"/> on <paramref name="holder"/> is a computed level: a table's
+    /// dot, or its brace when the brace is the whole target (<c>T{r, v} = x</c>).
+    /// </summary>
     private static bool IsComputedHolder(JgsValue holder, Expr step, Expr target) =>
-        holder.Type == JgsType.Table && step is MemberExpr;
+        holder.Type == JgsType.Table
+        && (step is MemberExpr || (step is BraceIndexExpr && ReferenceEquals(step, target)));
 
     /// <summary>What one step reads, where a peek can see it without running anything.</summary>
     private bool TryPeekStep(JgsValue held, Expr step, out JgsValue next)
