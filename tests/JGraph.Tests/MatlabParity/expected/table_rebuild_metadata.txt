@@ -1,0 +1,35 @@
+CHK|rn_dot_elem_write|a,b [9 2] [1 2]|exact
+CHK|rn_dot_whole_write|a,b [5 6] a,b|exact
+CHK|rn_dot_new_var|a,b 2 1|exact
+CHK|rn_dot_delete_var|a,b Var2 2|exact
+CHK|rn_dot_text_var_write|a,b x,z x,y|exact
+CHK|rn_dot_growth_extends_names|a,b,Row3,Row4 [1 2 0 5] 2|exact
+CHK|rn_brace_elem_write|a,b [1 9] [1 2]|exact|pending V6|ERR Braces assign into a cell array, but 'U' is a table.
+CHK|rn_brace_growth_extends_names|a,b,Row3 [1 2 9]|exact|pending V6|ERR Braces assign into a cell array, but 'U' is a table.
+CHK|rn_paren_row_delete|a,c a,b,c|exact|pending V6|ERR Cannot assign by index into a table; only arrays support element assignment.
+CHK|rn_paren_row_select|c,a [3 1]|exact
+CHK|rn_row_by_name_after_write|9 b|exact
+CHK|tt_dot_elem_write|1 1 [9 2] [1 2]|exact
+CHK|tt_dot_whole_write|1 1 [5 6]|exact
+CHK|tt_dot_new_var|1 1 2 1|exact
+CHK|tt_rowtimes_class_after_write|duration duration duration|exact
+CHK|tt_time_read_after_write|[1 2]|exact
+CHK|tt_datetime_rowtimes_after_write|1 datetime 2 1|exact
+CHK|tt_dot_growth_extends_times|4 [1 2 NaN NaN] [1 2 0 5] 2|exact
+CHK|tt_paren_row_delete|1 [1 3] [1 2 3]|exact|pending V6|ERR Cannot assign by index into a table; only arrays support element assignment.
+CHK|pr_description_survives_write|[about] char|exact
+CHK|pr_userdata_survives_write|[1 2 3]|exact
+CHK|pr_units_survive_write|m,s|exact
+CHK|pr_units_extend_with_new_var|3 [m] [s] []|exact
+CHK|pr_units_follow_var_delete|m,kg|exact
+CHK|pr_var_descriptions_survive_write|first,second|exact
+CHK|pr_dimension_names_survive_write|Id,Data|exact
+CHK|pr_dimension_names_default|Row,Variables|exact
+CHK|pr_dimension_names_timetable_default|Time,Variables|exact
+CHK|pr_all_survive_row_select|[about] 7 m,s Id,Data a,c|exact
+CHK|pr_units_follow_column_select|kg,m three,one|exact
+CHK|pr_alias_keeps_its_own|[t] [u] <none> m|exact
+CHK|pr_userdata_is_a_copy|[7 2 3] [1 8 3] [1 2 3]|exact
+CHK|pr_defaults|char/[0 0]/double/[0 0]/cell/[0 0]|exact
+CHK|pr_survive_function_call|[about] a,b [9 2] [1 2]|exact
+CHK|pr_survive_cell_round_trip|[about] a,b [1 2]|exact

@@ -62,7 +62,7 @@ public class MatlabStressM43Tests : IDisposable
     {
         string output = RunAndRead("""
             tt = timetable(seconds(1:3)', [10; 20; 30]);
-            fprintf('%d %d\n', tt.Time(2), tt.Var1(3));
+            fprintf('%d %d\n', seconds(tt.Time(2)), tt.Var1(3)); % V6: the row times stay a duration, as in R2025b
             """);
 
         Assert.Contains("2 30", output, StringComparison.Ordinal);

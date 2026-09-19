@@ -103,7 +103,7 @@ internal sealed partial class Interpreter
 
         int[] rows = rowIndex is null
             ? AllPositions(table.RowCount)
-            : Positions(rowIndex, table.RowCount, "table row", at);
+            : TableRowPositions(table, rowIndex, at);
 
         int[] columns = columnIndex is null
             ? AllPositions(table.ColumnCount)
@@ -127,6 +127,41 @@ internal sealed partial class Interpreter
         index.Type == JgsType.Array
             ? ComputePicks(index, length, what, at.Line, at.Column)
             : [ToIndex(index, length, at.Line, at.Column)];
+
+    /// <summary>A row subscript: positions, a mask, or — on a table with row names — one name or a cell of them.</summary>
+    private int[] TableRowPositions(Table table, JgsValue index, Node at)
+    {
+        bool named = index.Type == JgsType.String
+            || (index.Type == JgsType.Cell && index.AsCell.Length > 0 && index.AsCell.All(e => e.Type == JgsType.String))
+            || (index.Type == JgsType.Array && index.IsStringArray);
+        if (!named)
+        {
+            return Positions(index, table.RowCount, "table row", at);
+        }
+
+        JgsValue[] names = index.Type == JgsType.String ? [index]
+            : index.Type == JgsType.Cell ? index.AsCell : index.BoxedElements();
+        var picks = new int[names.Length];
+        for (int i = 0; i < names.Length; i++)
+        {
+            string name = names[i].AsString;
+            int found = -1;
+            for (int r = 0; table.RowNames is { } rowNames && r < rowNames.Count; r++)
+            {
+                if (string.Equals(rowNames[r], name, StringComparison.Ordinal))
+                {
+                    found = r;
+                    break;
+                }
+            }
+
+            picks[i] = found >= 0
+                ? found
+                : throw new JgsRuntimeException(at.Line, at.Column, $"Unrecognized row name '{name}'.");
+        }
+
+        return picks;
+    }
 
     /// <summary>A variable subscript: positions, a mask, one name, or a cell of names.</summary>
     private int[] TableColumnPositions(Table table, JgsValue index, Node at)

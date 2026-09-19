@@ -1046,7 +1046,7 @@ internal static partial class JgsBuiltins
                 }
             }
 
-            return JgsValue.Table(new Table(columns));
+            return JgsValue.Table(table.WithColumns(columns)); // V6: a rebuild keeps what the table is
         }
 
         if (TextElementsOf(data) is { } elements)

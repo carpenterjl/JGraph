@@ -215,13 +215,15 @@ internal static partial class JgsBuiltins
             // serial date number (M64). A Table column holds doubles, so the row times have to be
             // some number; these are the two a script goes on to plot or compare against, and they
             // are the readings timetable's row times had before the types existed.
-            double[] times = args[0].IsDuration
-                ? System.Array.ConvertAll(TimeMs(args[0]), static ms => ms / JgsTime.MsPerSecond)
-                : args[0].IsDatetime
-                    ? System.Array.ConvertAll(TimeMs(args[0]), JgsTime.ToDatenum)
-                    : ToDoubles("timetable", args[0], line, col);
+            // V6: row times that are a duration or a datetime stay one (JgsTimeColumn), so the
+            // class, the format and the exact values come back out of TT.Time and out of
+            // TT.Properties.RowTimes after any rebuild; the drawing side reads the same seconds
+            // and days through the column's numeric view.
+            TableColumn rowTimes = args[0].IsTime
+                ? new JgsTimeColumn("Time", TimeMs(args[0]), args[0].TimeTag!)
+                : new NumberColumn("Time", ToDoubles("timetable", args[0], line, col));
 
-            return BuildTable("timetable", args.Skip(1).ToArray(), new NumberColumn("Time", times), line, col);
+            return BuildTable("timetable", args.Skip(1).ToArray(), rowTimes, line, col);
         });
     }
 
@@ -288,6 +290,7 @@ internal static partial class JgsBuiltins
     internal static TableColumn TableColumnFrom(string verb, string columnName, JgsValue value, int line, int col)
     {
         if (value.IsDatetime) return new DateTimeColumn(columnName, TimeMs(value).Select(ms => ms / JgsTime.MsPerDay).ToArray());
+        if (value.IsDuration) return new JgsTimeColumn(columnName, TimeMs(value), value.TimeTag!);
         if (value.Type == JgsType.Cell || (value.Type == JgsType.Array && HasStringElements(value)))
         {
             JgsValue[] elements = value.Type == JgsType.Cell ? value.AsCell : value.BoxedElements();
@@ -305,8 +308,22 @@ internal static partial class JgsBuiltins
     /// holds its columns by value, so a write is a rebuild; the row count is the one thing that must
     /// already agree.
     /// </summary>
-    internal static Table WithColumn(Table table, TableColumn column, int line, int col)
+    /// <remarks>
+    /// V6 (ADR 0167): the rebuild keeps what the table is — row names, row times, dimension names,
+    /// units, descriptions, description and user data (<see cref="Table.WithColumns"/>). A write
+    /// that made an existing variable longer grows the table to match, as R2025b does: the other
+    /// variables fill with their kind's default, the row names go on as <c>Row3</c>, <c>Row4</c>,
+    /// and the row times as missing (measured). A new variable must still have the table's height.
+    /// </remarks>
+    internal static Table WithColumn(Table table, TableColumn column, bool grows, int line, int col)
     {
+        // Only a write into part of a variable grows the table; T.Var = column must match.
+        bool replaces = table.Columns.Any(c => string.Equals(c.Name, column.Name, StringComparison.Ordinal));
+        if (grows && column.RowCount > table.RowCount && replaces)
+        {
+            table = GrownTo(table, column.RowCount);
+        }
+
         if (column.RowCount != table.RowCount)
         {
             throw new JgsRuntimeException(line, col,
@@ -333,7 +350,242 @@ internal static partial class JgsBuiltins
             columns.Add(column);
         }
 
-        return new Table(columns);
+        return table.WithColumns(columns);
+    }
+
+    /// <summary><paramref name="table"/> without the variable <paramref name="name"/> — what <c>T.Var = []</c> means.</summary>
+    internal static Table WithoutColumn(Table table, string name) =>
+        table.WithColumns(table.Columns.Where(c => !string.Equals(c.Name, name, StringComparison.Ordinal)).ToArray());
+
+    /// <summary>
+    /// <paramref name="table"/> grown to <paramref name="rows"/> rows: numbers fill with 0, text
+    /// with the empty char, times with the missing one; row names continue as <c>RowN</c>.
+    /// </summary>
+    internal static Table GrownTo(Table table, int rows)
+    {
+        var grown = new TableColumn[table.ColumnCount];
+        for (int i = 0; i < grown.Length; i++)
+        {
+            grown[i] = GrownColumn(table[i], rows);
+        }
+
+        string[]? names = null;
+        if (table.RowNames is { } old)
+        {
+            names = new string[rows];
+            for (int r = 0; r < rows; r++)
+            {
+                names[r] = r < old.Count ? old[r] : $"Row{r + 1}";
+            }
+        }
+
+        return table.WithColumns(grown).WithRowLabels(names, table.RowTimes is null ? null : GrownColumn(table.RowTimes, rows, missing: true));
+    }
+
+    private static TableColumn GrownColumn(TableColumn column, int rows, bool missing = false)
+    {
+        int old = column.RowCount;
+        switch (column)
+        {
+            case JgsTimeColumn time:
+                return time.Grown(rows);
+            case NumberMatrixColumn matrix:
+            {
+                var values = new double[rows * matrix.Width];
+                for (int c = 0; c < matrix.Width; c++)
+                {
+                    for (int r = 0; r < old; r++)
+                    {
+                        values[(c * rows) + r] = matrix.Values[(c * old) + r];
+                    }
+                }
+
+                return new NumberMatrixColumn(column.Name, values, rows, matrix.Width);
+            }
+
+            case TextColumn text:
+            {
+                var values = new string?[rows];
+                for (int r = 0; r < rows; r++)
+                {
+                    values[r] = r < old ? text.GetString(r) : string.Empty;
+                }
+
+                return new TextColumn(column.Name, values);
+            }
+
+            default:
+            {
+                var values = new double[rows];
+                if (missing || column is DateTimeColumn)
+                {
+                    Array.Fill(values, double.NaN);
+                }
+
+                for (int r = 0; r < old; r++)
+                {
+                    values[r] = column.GetNumber(r);
+                }
+
+                return column is DateTimeColumn ? new DateTimeColumn(column.Name, values) : new NumberColumn(column.Name, values);
+            }
+        }
+    }
+
+    /// <summary>The names <c>T.Properties</c> answers to and takes, in R2025b's order for the ones kept here.</summary>
+    private static readonly string[] TablePropertyNames =
+        ["Description", "UserData", "DimensionNames", "VariableNames", "VariableDescriptions", "VariableUnits", "RowNames", "RowTimes"];
+
+    /// <summary><c>T.Properties</c>, a struct of what the table is beyond its variables.</summary>
+    internal static JgsValue TablePropertiesValue(Table table, int line, int col)
+    {
+        JgsValue RowCell(IReadOnlyList<string>? perColumn) => perColumn is null || perColumn.All(string.IsNullOrEmpty)
+            ? EmptyCell()
+            : JgsValue.Cell(perColumn.Select(JgsValue.Str).ToArray());
+
+        var fields = new Dictionary<string, JgsValue>(StringComparer.Ordinal)
+        {
+            ["Description"] = JgsValue.Str(table.Description ?? string.Empty),
+            ["UserData"] = table.UserData is JgsValue data ? JgsValue.Share(data) : JgsMatrix.FromElements([], 0, 0),
+            ["DimensionNames"] = JgsValue.Cell((table.DimensionNames
+                ?? [table.RowTimes?.Name ?? "Row", "Variables"]).Select(JgsValue.Str).ToArray()),
+            ["VariableNames"] = JgsValue.Cell(table.ColumnNames.Select(JgsValue.Str).ToArray()),
+            ["VariableDescriptions"] = RowCell(table.VariableDescriptions),
+            ["VariableUnits"] = RowCell(table.VariableUnits),
+            ["RowNames"] = RowNameCell(table.RowNames),
+            ["RowTimes"] = table.RowTimes is null ? JgsValue.Array([]) : TableColumnValue(new Table([table.RowTimes]), table.RowTimes.Name, line, col),
+        };
+        return JgsValue.Struct(fields);
+    }
+
+    /// <summary>
+    /// <paramref name="table"/> with its properties as <paramref name="properties"/> has them — the
+    /// set half of a write through <c>T.Properties</c> (V6): the struct is read out, written like
+    /// any struct, and put back here, where each property is checked in R2025b's words.
+    /// </summary>
+    internal static Table WithTableProperties(Table table, JgsValue properties, int line, int col)
+    {
+        if (properties.Type != JgsType.Struct || properties.IsStructArray)
+        {
+            throw new JgsRuntimeException(line, col, "A table's Properties must be set to a scalar struct of them.");
+        }
+
+        Dictionary<string, JgsValue> given = properties.AsStruct;
+        foreach (string name in given.Keys)
+        {
+            if (Array.IndexOf(TablePropertyNames, name) < 0)
+            {
+                throw new JgsRuntimeException(line, col, $"Unrecognized table property name '{name}'.");
+            }
+        }
+
+        string[]? PerVariable(string property)
+        {
+            string[] list = NameList(given[property], property, line, col);
+            if (list.Length == 0)
+            {
+                return null;
+            }
+
+            if (list.Length != table.ColumnCount)
+            {
+                throw new JgsRuntimeException(line, col,
+                    $"The {property} property must contain one element for each variable in the table.");
+            }
+
+            return list;
+        }
+
+        string[] variableNames = NameList(given["VariableNames"], "VariableNames", line, col);
+        if (variableNames.Length != table.ColumnCount)
+        {
+            throw new JgsRuntimeException(line, col,
+                "The VariableNames property must contain one name for each variable in the table.");
+        }
+
+        if (variableNames.Distinct(StringComparer.Ordinal).Count() != variableNames.Length)
+        {
+            throw new JgsRuntimeException(line, col, "Duplicate table variable name.");
+        }
+
+        var columns = new TableColumn[table.ColumnCount];
+        for (int i = 0; i < columns.Length; i++)
+        {
+            columns[i] = RenamedColumn(table[i], variableNames[i]);
+        }
+
+        string[] rowNames = NameList(given["RowNames"], "RowNames", line, col);
+        if (rowNames.Length != 0 && (rowNames.Length != table.RowCount || rowNames.Distinct().Count() != rowNames.Length || rowNames.Any(string.IsNullOrEmpty)))
+        {
+            throw new JgsRuntimeException(line, col, "The RowNames property must be a cell array or string array, with each name containing one or more characters and one name for each row.");
+        }
+
+        string[] dimensionNames = NameList(given["DimensionNames"], "DimensionNames", line, col);
+        if (dimensionNames.Length != 2)
+        {
+            throw new JgsRuntimeException(line, col, "The DimensionNames property must be a two-element cell array of character vectors or string array.");
+        }
+
+        TableColumn? rowTimes = table.RowTimes;
+        if (rowTimes is not null && dimensionNames[0] != rowTimes.Name)
+        {
+            rowTimes = RenamedColumn(rowTimes, dimensionNames[0]);
+        }
+
+        JgsValue description = given["Description"];
+        bool defaultDimensions = dimensionNames[0] == (table.RowTimes is null ? "Row" : "Time") && dimensionNames[1] == "Variables"
+            && table.DimensionNames is null;
+        return new Table(columns)
+        {
+            RowNames = rowNames.Length == 0 ? null : rowNames,
+            RowTimes = rowTimes,
+            DimensionNames = defaultDimensions ? null : dimensionNames,
+            VariableUnits = PerVariable("VariableUnits"),
+            VariableDescriptions = PerVariable("VariableDescriptions"),
+            Description = description.Type == JgsType.String || IsStringScalar(description) ? TextOf(description)
+                : description.Type == JgsType.Array && description.ArrayLength == 0 ? null
+                : throw new JgsRuntimeException(line, col, "The Description property must be a character vector or string scalar."),
+            UserData = given["UserData"],
+        };
+    }
+
+    private static string[] NameList(JgsValue value, string property, int line, int col)
+    {
+        if (value.Type == JgsType.String)
+        {
+            return [value.AsString];
+        }
+
+        if (value.Type == JgsType.Cell || (value.Type == JgsType.Array && (value.IsStringArray || value.ArrayLength == 0)))
+        {
+            JgsValue[] elements = value.Type == JgsType.Cell ? value.AsCell : value.BoxedElements();
+            return Array.ConvertAll(elements, element => element.Type == JgsType.String
+                ? element.AsString
+                : throw new JgsRuntimeException(line, col,
+                    $"The {property} property must be a cell array of character vectors or a string array."));
+        }
+
+        throw new JgsRuntimeException(line, col,
+            $"The {property} property must be a cell array of character vectors or a string array.");
+    }
+
+    /// <summary><paramref name="column"/> under another name; the same column when the name is its own.</summary>
+    internal static TableColumn RenamedColumn(TableColumn column, string name)
+    {
+        if (string.Equals(column.Name, name, StringComparison.Ordinal))
+        {
+            return column;
+        }
+
+        return column switch
+        {
+            JgsTimeColumn time => time.Renamed(name),
+            NumberMatrixColumn matrix => new NumberMatrixColumn(name, matrix.Values.ToArray(), matrix.RowCount, matrix.Width),
+            NumberColumn numbers => new NumberColumn(name, numbers.Values.ToArray()),
+            DateTimeColumn dates => new DateTimeColumn(name, dates.Values.ToArray()),
+            TextColumn text => new TextColumn(name, Enumerable.Range(0, text.RowCount).Select(r => text.GetString(r)).ToArray()),
+            _ => throw new InvalidOperationException($"A {column.GetType().Name} cannot be renamed."),
+        };
     }
 
     /// <summary>
@@ -342,11 +594,7 @@ internal static partial class JgsBuiltins
     /// </summary>
     internal static JgsValue TableColumnValue(Table table, string columnName, int line, int col)
     {
-        if (columnName == "Properties") return JgsValue.Struct(new Dictionary<string, JgsValue> {
-            ["VariableNames"] = JgsValue.Cell(table.ColumnNames.Select(JgsValue.Str).ToArray()),
-            ["RowNames"] = RowNameCell(table.RowNames),
-            ["RowTimes"] = table.RowTimes is null ? JgsValue.Array([]) : TableColumnValue(new Table([table.RowTimes]), table.RowTimes.Name, line, col)
-        });
+        if (columnName == "Properties") return TablePropertiesValue(table, line, col);
         if (table.RowTimes is { } time && columnName == time.Name) return TableColumnValue(new Table([time]), columnName, line, col);
         if (!table.TryGetColumn(columnName, out TableColumn column))
         {
@@ -354,6 +602,7 @@ internal static partial class JgsBuiltins
                 $"The table has no variable '{columnName}'. Its variables are: {string.Join(", ", table.ColumnNames)}.");
         }
 
+        if (column is JgsTimeColumn times) return times.ToValue();
         if (column is NumberMatrixColumn matrix) return JgsMatrix.FromColumnMajorDims((double[])matrix.Values.Clone(), [matrix.RowCount, matrix.Width]);
         if (column.Type == ColumnType.Text)
         {

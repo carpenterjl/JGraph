@@ -8,7 +8,11 @@ namespace JGraph.Data;
 /// </summary>
 public abstract class TableColumn
 {
-    private protected TableColumn(string name, int rowCount)
+    /// <summary>
+    /// For a column kind of its owner's own — the scripting layer keeps one that holds a script
+    /// value as it is. Such a kind answers <see cref="TakeRows"/>.
+    /// </summary>
+    protected TableColumn(string name, int rowCount)
     {
         ArgumentNullException.ThrowIfNull(name);
         if (rowCount < 0)
@@ -44,4 +48,10 @@ public abstract class TableColumn
     /// string for a missing value.
     /// </summary>
     public abstract string GetText(int row);
+
+    /// <summary>
+    /// The given rows of this column as a column of the same kind, or null for the kinds
+    /// <see cref="Table.Select"/> knows how to cut itself.
+    /// </summary>
+    public virtual TableColumn? TakeRows(IReadOnlyList<int> rows) => null;
 }

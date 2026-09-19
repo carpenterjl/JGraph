@@ -71,5 +71,5 @@ CHK|a151_order_field_field_paren|idx;rhs; / [1 9 3]|exact
 CHK|a153_order_cell_elem_end_vs_rhs|rhs; / [1 2 9 50]|exact
 CHK|a153_order_struct_field_end_vs_rhs|rhs; / [1 2 9 50]|exact
 CHK|a153_order_table_var_end_vs_rhs|rhs; / [1;2;9]|exact
-CHK|a153_order_table_varnames_sub_vs_rhs|idx;rhs; / Var1,b|exact|pending V6|idx;rhs; / Var1,Var2
+CHK|a153_order_table_varnames_sub_vs_rhs|idx;rhs; / Var1,b|exact
 CHK|a153_order_datetime_day_sub_vs_rhs|idx;rhs; / [1 9 3]|exact|pending V6|idx;rhs; / [1 2 3]

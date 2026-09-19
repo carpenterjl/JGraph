@@ -87,7 +87,7 @@ internal static partial class JgsBuiltins
                     JgsValue result = inner.AsCallable.Call(callArgs, line, col);
                     columns.Add(TableColumnFrom(name, replace ? variable.Name : variable.Name + "_" + name, result, line, col));
                 }
-                return JgsValue.Table(new Table(columns) { RowNames = table.RowNames, RowTimes = table.RowTimes });
+                return JgsValue.Table(table.WithColumns(columns)); // V6: a rebuild keeps what the table is
             });
         }
     }

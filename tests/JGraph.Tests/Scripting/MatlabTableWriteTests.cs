@@ -76,12 +76,13 @@ public class MatlabTableWriteTests : IDisposable
     }
 
     [Fact]
-    public async Task ElementWrite_PastTheEnd_IsRefused_AndLeavesTheTableAlone()
+    public async Task ElementWrite_PastTheEnd_GrowsTheTable()
     {
-        ScriptRunResult result = await Run(Make + "try, t.B(3) = 5; catch e, disp(e.message); end; disp(size(t, 1))");
+        // V6 (ADR 0167, appendix A #118): R2025b grows every variable to the new height, where
+        // this was refused before (value_isolation_forms a118_tbl_var_growth holds the recording).
+        ScriptRunResult result = await Run(Make + "t.B(3) = 5; disp(size(t, 1)); disp(t.B(3))");
         Assert.True(result.Success, result.Message);
-        Assert.Contains("number of rows must match", _output.NormalLines[0]);
-        Assert.Equal("2", _output.NormalLines[^1].Trim());
+        Assert.Equal(new[] { "3", "5" }, _output.NormalLines.Select(l => l.Trim()));
     }
 
     [Fact]

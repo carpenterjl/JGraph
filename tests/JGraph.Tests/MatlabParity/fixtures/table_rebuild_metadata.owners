@@ -1,0 +1,5 @@
+# The stage of the value-ownership plan that completes each line JGraph fails (appendix A's stage column).
+rn_brace_elem_write	V6	# table brace assignment is V6's second sub-stage (#25)
+rn_brace_growth_extends_names	V6	# table brace assignment is V6's second sub-stage (#25)
+rn_paren_row_delete	V6	# table paren row deletion is V6's table-forms sub-stage (#117)
+tt_paren_row_delete	V6	# table paren row deletion is V6's table-forms sub-stage (#117)

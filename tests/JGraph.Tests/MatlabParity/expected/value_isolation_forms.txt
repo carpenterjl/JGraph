@@ -1,7 +1,7 @@
 CHK|a025_table_alias_brace|1 9|exact|pending V6|ERR Braces assign into a cell array, but 'U' is a table.
 CHK|a026_sparse_alias|1 7|exact|pending V6|ERR Cannot assign by index into a sparse; only arrays support element assignment.
-CHK|a038_table_rownames_dot_write|1 1|exact|pending V6|0 1
-CHK|a039_timetable_rowtimes_dot_write|1 9|exact|pending V6|0 9
+CHK|a038_table_rownames_dot_write|1 1|exact
+CHK|a039_timetable_rowtimes_dot_write|1 9|exact
 CHK|a052_nd_growth_string|1 1 [1 2 2]|exact|pending V6|0 1 [1 2 2]
 CHK|a053_nd_growth_char|1 1 [1 2 2]|exact|pending V6|ERR Cannot assign by index into a string; only arrays support element assignment.
 CHK|a054_cellfun_errorhandler_identifier_fn|1|exact|pending V6|0
@@ -28,12 +28,12 @@ CHK|a091_string_element_char_write|aZc,def|exact
 CHK|a092_strrep_cellstr_alias|aa,ba Qx,bx|exact
 CHK|g_tbl_column_read_alias|[1;2]|exact
 CHK|a117_tbl_alias_row_delete|3 2|exact|pending V6|ERR Cannot assign by index into a table; only arrays support element assignment.
-CHK|a119_tbl_cell_var_nested_write|[1 2] [9 2]|exact|pending V6|'[1, 2]' '[1, 2]'
-CHK|a114_tbl_varnames_alias|Var1 a|exact|pending V6|Var1 Var1
-CHK|a114_tbl_varnames_brace_on_original|a|exact|pending V6|Var1
-CHK|a115_tbl_varnames_whole_set_alias|Var1 a|exact|pending V6|ERR Cannot set a field on 'U': it is a table, not a struct.
-CHK|a115_tbl_description_alias|[] [u]|exact|pending V6|ERR Cannot set a field on 'U': it is a table, not a struct.
-CHK|a115_tbl_userdata_alias|[1 2 3]|exact|pending V6|ERR Cannot set a field on 'T': it is a table, not a struct.
+CHK|a119_tbl_cell_var_nested_write|[1 2] [9 2]|exact|pending V6|'[1, 2]' '	1, 2]'
+CHK|a114_tbl_varnames_alias|Var1 a|exact
+CHK|a114_tbl_varnames_brace_on_original|a|exact
+CHK|a115_tbl_varnames_whole_set_alias|Var1 a|exact
+CHK|a115_tbl_description_alias|[] [u]|exact
+CHK|a115_tbl_userdata_alias|[1 2 3]|exact
 CHK|g_tbl_add_var_alias|1 2|exact
 CHK|a117_tbl_row_append|3 c|exact|pending V6|ERR Cannot assign by index into a table; only arrays support element assignment.
 CHK|a117_tbl_paren_assign_subtable|[9;2]|exact|pending V6|ERR Cannot assign by index into a table; only arrays support element assignment.
@@ -47,9 +47,9 @@ CHK|g_tbl_sortrows_leaves_source|[2;1] [1;2]|exact
 CHK|a121_tbl_vertcat_alias|1 4|exact|pending V6|ERR '.Var1' needs a struct, but this is a array.
 CHK|a120_tbl_struct_var_nested_write|1 9|exact|pending V6|ERR table expects an array of numbers, but got a struct.
 CHK|g_tbl_subtable_write|1 9|exact
-CHK|a118_tbl_var_growth|3 [1;2;5]|exact|pending V6|ERR To assign to or create a variable in a table, the number of rows must match the table's (3 given, 2 expected).
+CHK|a118_tbl_var_growth|3 [1;2;5]|exact
 CHK|g_tbl_dot_self_overlap|[3;1;2]|exact
-CHK|a116_tbl_cell_in_container_alias|1 9|exact|pending V6|1 1
+CHK|a116_tbl_cell_in_container_alias|1 9|exact
 CHK|g_table_direct_var_indexed_write|[1;2;3] [1;9;3]|exact
 CHK|g_dt_alias_elem_write|0 1|exact
 CHK|g_dt_format_alias|dd-MMM-uuuu/yyyy|exact

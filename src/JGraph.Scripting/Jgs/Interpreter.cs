@@ -4016,6 +4016,14 @@ internal sealed partial class Interpreter
             target = PrepareTarget(target, env); // after the right-hand side, before the target is read
         }
 
+        // V6: a path through a computed level — a table's variable or its Properties — is get,
+        // modify, set, and the rebuilt holder is stored back where it was read (Interpreter.Composite.cs).
+        if (target is not VariableExpr
+            && TryWriteThroughComputedLevel(target, assign, rhs, owned, env, out JgsValue through))
+        {
+            return through;
+        }
+
         if (target is VariableExpr variable)
         {
             // A name this workspace declared 'global' is written where every scope that declared it
@@ -4087,15 +4095,6 @@ internal sealed partial class Interpreter
         if (AnyMentionsEnd(subscripts))
         {
             TryReadContainer(container, env, out _);
-        }
-
-        // T.Var(i) = v: a table variable is read out as the array it is, written like any array, and
-        // put back — the same rebuild-and-rebind a whole-column write does. Without this the write
-        // landed in the copy T.Var reads out, and the table never changed.
-        if (container is MemberExpr { Target: VariableExpr tableName } tableColumn
-            && LookUp(tableName.Name, env, out JgsValue heldTable) && heldTable.Type == JgsType.Table)
-        {
-            return AssignIntoTableColumn(tableName, tableColumn, heldTable, subscripts, assign.Op, rhs, assign, env);
         }
 
         // Rebuild indexed image properties through their setter so their render data and
@@ -4183,36 +4182,6 @@ internal sealed partial class Interpreter
         {
             holds.Release();
         }
-    }
-
-    /// <summary>
-    /// <c>T.Var(i) = v</c>. The column is bound under a scratch name so the ordinary index writes
-    /// can do everything they do for a variable — grow, delete, scatter — and whatever the scratch
-    /// name holds afterwards becomes the column again. A text column comes out as a cell, so a
-    /// string written into one is wrapped the way MATLAB's own string column would take it.
-    /// </summary>
-    private JgsValue AssignIntoTableColumn(
-        VariableExpr tableName, MemberExpr column, JgsValue table, IReadOnlyList<Expr> subscripts,
-        TokenType op, JgsValue rhs, Node at, JgsEnvironment env)
-    {
-        string field = FieldName(column, env);
-        JgsValue current = JgsBuiltins.TableColumnValue(table.AsTable, field, at.Line, at.Column);
-        if (current.Type == JgsType.Cell && rhs.Type == JgsType.String && op == TokenType.Assign)
-        {
-            rhs = JgsValue.Cell(new[] { rhs });
-        }
-
-        const string slot = "\u0001column"; // no script can spell this, so nothing can collide with it
-        var scratch = new JgsEnvironment(env);
-        scratch.Declare(slot, current);
-        var target = new VariableExpr(slot) { Line = at.Line, Column = at.Column };
-        JgsValue result = IndexWrite(target, subscripts, op, rhs, at, scratch);
-
-        scratch.TryGet(slot, out JgsValue written);
-        TableColumn rebuilt = JgsBuiltins.TableColumnFrom("table", field, written, at.Line, at.Column);
-        Rebind(tableName.Name,
-            JgsValue.Table(JgsBuiltins.WithColumn(table.AsTable, rebuilt, at.Line, at.Column)), env);
-        return result;
     }
 
     /// <summary>
@@ -7024,10 +6993,8 @@ internal sealed partial class Interpreter
         if (member.Target is VariableExpr tableTarget
             && LookUp(tableTarget.Name, env, out JgsValue heldTable) && heldTable.Type == JgsType.Table)
         {
-            TableColumn column = JgsBuiltins.TableColumnFrom(
-                "table", FieldName(member, env), value, member.Line, member.Column);
             Rebind(tableTarget.Name,
-                JgsValue.Table(JgsBuiltins.WithColumn(heldTable.AsTable, column, member.Line, member.Column)), env);
+                JgsValue.Table(SetTableMember(heldTable.AsTable, FieldName(member, env), value, whole: true, member)), env);
             return value;
         }
 

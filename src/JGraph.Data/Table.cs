@@ -56,6 +56,71 @@ public sealed class Table
     /// <summary>Timetable row coordinates, separate from its data variables.</summary>
     public TableColumn? RowTimes { get; init; }
 
+    /// <summary>The names of the row and variable dimensions, or null for the defaults.</summary>
+    public IReadOnlyList<string>? DimensionNames { get; init; }
+
+    /// <summary>One unit per column, in column order, or null when none was ever set.</summary>
+    public IReadOnlyList<string>? VariableUnits { get; init; }
+
+    /// <summary>One description per column, in column order, or null when none was ever set.</summary>
+    public IReadOnlyList<string>? VariableDescriptions { get; init; }
+
+    /// <summary>The table's description, or null when none was set.</summary>
+    public string? Description { get; init; }
+
+    /// <summary>Whatever the owner attached to the table; carried, never read here.</summary>
+    public object? UserData { get; init; }
+
+    /// <summary>
+    /// A table of <paramref name="columns"/> that is otherwise this one: the row names, row times,
+    /// dimension names, description and user data carry over, and the per-variable units and
+    /// descriptions follow their columns by name (a new column has none). The caller answers for
+    /// the row labels matching the new row count — see <see cref="WithRowLabels"/>.
+    /// </summary>
+    public Table WithColumns(IReadOnlyList<TableColumn> columns)
+    {
+        ArgumentNullException.ThrowIfNull(columns);
+        return new Table(columns)
+        {
+            RowNames = RowNames,
+            RowTimes = RowTimes,
+            DimensionNames = DimensionNames,
+            VariableUnits = Follow(VariableUnits, columns),
+            VariableDescriptions = Follow(VariableDescriptions, columns),
+            Description = Description,
+            UserData = UserData,
+        };
+    }
+
+    /// <summary>This table with other row names and row times, everything else kept.</summary>
+    public Table WithRowLabels(IReadOnlyList<string>? rowNames, TableColumn? rowTimes) =>
+        new(_columns)
+        {
+            RowNames = rowNames,
+            RowTimes = rowTimes,
+            DimensionNames = DimensionNames,
+            VariableUnits = VariableUnits,
+            VariableDescriptions = VariableDescriptions,
+            Description = Description,
+            UserData = UserData,
+        };
+
+    private string[]? Follow(IReadOnlyList<string>? perColumn, IReadOnlyList<TableColumn> columns)
+    {
+        if (perColumn is null)
+        {
+            return null;
+        }
+
+        var followed = new string[columns.Count];
+        for (int i = 0; i < followed.Length; i++)
+        {
+            followed[i] = _byName.TryGetValue(columns[i].Name, out int old) && old < perColumn.Count ? perColumn[old] : string.Empty;
+        }
+
+        return followed;
+    }
+
     /// <summary>The number of columns.</summary>
     public int ColumnCount => _columns.Length;
 
@@ -123,11 +188,18 @@ public sealed class Table
             picked[c] = SelectRows(_columns[index], rows, RowCount);
         }
 
-        return new Table(picked) { RowNames = RowNames is null ? null : rows.Select(r => RowNames[r]).ToArray(), RowTimes = RowTimes is null ? null : SelectRows(RowTimes, rows, RowCount) };
+        return WithColumns(picked).WithRowLabels(
+            RowNames is null ? null : rows.Select(r => RowNames[CheckRow(r, RowCount)]).ToArray(),
+            RowTimes is null ? null : SelectRows(RowTimes, rows, RowCount));
     }
 
     private static TableColumn SelectRows(TableColumn column, IReadOnlyList<int> rows, int rowCount)
     {
+        if (column.TakeRows(rows) is { } taken)
+        {
+            return taken;
+        }
+
         switch (column)
         {
             case NumberMatrixColumn matrix:
