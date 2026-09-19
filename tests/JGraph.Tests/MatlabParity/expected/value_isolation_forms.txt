@@ -18,11 +18,11 @@ CHK|a061_complex_promotion_alias|1 [1 0+1i 3]|exact
 CHK|a063_struct_field_delete_alias|[1 2 3] [1 3]|exact
 CHK|g_unique_returns_copy|[3 1 2]|exact
 CHK|g_single_conversion_alias|single [1 2 3] [1.5 2 3]|exact
-CHK|a082_auto_create_nested_struct_array|3 1 1|exact|pending V6|ERR 'x' is not recognized as a variable or a function.
-CHK|a083_auto_create_cell_element_struct|3 double struct 1|exact|pending V6|ERR Index 3 is out of range for length 0 (indexing is 1-based).
-CHK|a085_struct_empty_ctor|struct 0 0|exact|pending V6|ERR struct takes name/value pairs.
-CHK|a085_empty_fieldless_struct_growth|ERR Subscripted assignment between dissimilar structures.|exact|pending V6|ERR struct takes name/value pairs.
-CHK|a085_empty_fieldless_growth_gap|ERR Subscripted assignment between dissimilar structures.|exact|pending V6|ERR struct takes name/value pairs.
+CHK|a082_auto_create_nested_struct_array|3 1 1|exact
+CHK|a083_auto_create_cell_element_struct|3 double struct 1|exact
+CHK|a085_struct_empty_ctor|struct 0 0|exact
+CHK|a085_empty_fieldless_struct_growth|ERR Subscripted assignment between dissimilar structures.|exact
+CHK|a085_empty_fieldless_growth_gap|ERR Subscripted assignment between dissimilar structures.|exact
 CHK|a090_nested_end_cell_growth|[3 4 5]|exact
 CHK|a091_string_element_char_write|aZc,def|exact
 CHK|a092_strrep_cellstr_alias|aa,ba Qx,bx|exact
@@ -86,4 +86,4 @@ CHK|g_struct_array_datetime_format|dd-MMM-uuuu/yyyy|exact
 CHK|a135_cell_datetime_format|dd-MMM-uuuu/yyyy|exact|pending V6|ERR Cannot set a field on a datetime.
 CHK|a148_empty_local_field_write|struct 1|exact
 CHK|a148_empty_global_field_write|struct 1|exact
-CHK|a149_dictionary_vector_keys|[10 20] [10 9]|exact|pending V6|ERR The collection has no key [1, 2]. Ask isKey first, or use lookup with a 'FallbackValue'.
+CHK|a149_dictionary_vector_keys|[10 20] [10 9]|exact

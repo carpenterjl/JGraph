@@ -3828,10 +3828,29 @@ internal sealed partial class Interpreter
 
                 break;
             }
+
+            // s(k) on the way to a field (V6): the element is taken writable inside the array the
+            // entry holds. Read instead, it is a selection over a share of the element, and
+            // s(k).f(i) = v wrote into that and was lost without a word — alias or no alias.
+            case CallExpr { Arguments.Count: 1 } call when IsEntryPath(call.Callee, env)
+                && TryElementOfEntry(call.Callee, call.Arguments[0], env, out JgsValue? ofCall, out _):
+                return ofCall!;
+            case IndexExpr { Indices.Count: 1 } indexed when IsEntryPath(indexed.Target, env)
+                && TryElementOfEntry(indexed.Target, indexed.Indices[0], env, out JgsValue? ofIndex, out _):
+                return ofIndex!;
         }
 
         return Evaluate(expr, env);
     }
+
+    /// <summary>Whether an expression is a path from a bound variable — something a write can resolve, not a call.</summary>
+    private bool IsEntryPath(Expr expr, JgsEnvironment env) => expr switch
+    {
+        VariableExpr variable => LookUp(variable.Name, env, out _),
+        MemberExpr member => IsEntryPath(member.Target, env),
+        BraceIndexExpr brace => IsEntryPath(brace.Target, env),
+        _ => false,
+    };
 
     /// <summary>Evaluates one expression in <paramref name="env"/> — the entry point a callable body needs.</summary>
     public JgsValue EvaluateIn(Expr expression, JgsEnvironment env) => Evaluate(expression, env);
@@ -4300,6 +4319,14 @@ internal sealed partial class Interpreter
             return AssignIntoCellParen(target, callee, subscripts, op, rhs, at, env, ref holds);
         }
 
+        // b(r, c) = s on a struct array, and on the [] one starts from (V6).
+        if (op == TokenType.Assign && rhs.Type == JgsType.Struct && rhs.ClassName is null && !rhs.IsStructArray
+            && ((callee.Type == JgsType.Struct && callee.ClassName is null)
+                || (callee.Type == JgsType.Array && callee.ArrayLength == 0 && !callee.IsStringArray && !callee.IsTime)))
+        {
+            return AssignIntoStructGrid(target, callee, subscripts, rhs, at, env);
+        }
+
         // V6 (#162): a scalar is the one-by-one array it reads as, so q = 1; q(3) = 5 grows it.
         if (callee.Type is JgsType.Number or JgsType.Bool or JgsType.Complex)
         {
@@ -4764,6 +4791,15 @@ internal sealed partial class Interpreter
                 callee, Evaluate(subscripts[0], env),
                 JgsBuiltins.RetainedForEntry(rhs, Dialect.CopyOnAssign), at.Line, at.Column);
             return rhs;
+        }
+
+        // t(2) = s with no t, or with t = []: the empty is the struct array's empty (V6), and it
+        // takes the fields of what is written into it, so the gap it grows across has them too.
+        if (op == TokenType.Assign && rhs.Type == JgsType.Struct && rhs.ClassName is null
+            && callee.Type == JgsType.Array && callee.ArrayLength == 0 && !callee.IsStringArray && !callee.IsTime)
+        {
+            return AssignIntoStruct(target,
+                JgsValue.StructArray(new JgsStructArray([], rhs.AsStructArray.FieldNames), 0, 0), subscripts, rhs, at, env);
         }
 
         // S(k) = [] deletes elements from a struct array (M65); S(k) = otherStruct replaces them.
@@ -5331,6 +5367,11 @@ internal sealed partial class Interpreter
         }
 
         // c(i) on a cell array selects a sub-cell; c{i} (the brace form) takes the contents out.
+        if (callee.Type == JgsType.Cell && call.Arguments.Count > 1)
+        {
+            return IndexCellParenNd(callee, call.Arguments, call, env);
+        }
+
         if (callee.Type == JgsType.Cell)
         {
             JgsValue[] elements = callee.AsCell;
@@ -5760,6 +5801,11 @@ internal sealed partial class Interpreter
         if (rhs.Type == JgsType.Sparse)
         {
             rhs = JgsBuiltins.SparseAsDense(rhs.AsSparse);
+        }
+
+        if (callee.Type == JgsType.Cell)
+        {
+            return AssignIntoCellParen(target, callee, subscripts, op, rhs, at, env, ref holds);
         }
 
         // x = 'ab'; x(1, 2, 2) = 'c' takes the char row into a third dimension (V6, #53).
@@ -7016,6 +7062,11 @@ internal sealed partial class Interpreter
     private int[] BraceSlots(JgsValue cell, IReadOnlyList<Expr> subscripts, Node at, JgsEnvironment env)
     {
         JgsValue[] elements = cell.AsCell;
+        if (subscripts.Count > 2)
+        {
+            return NdSlots(cell.Dims, subscripts, "cell", at, env);
+        }
+
         if (subscripts.Count == 2)
         {
             int rows = cell.Rows;
@@ -7046,6 +7097,73 @@ internal sealed partial class Interpreter
             elements.Length,
             "cell",
             at);
+    }
+
+    /// <summary>
+    /// The storage slots three or more subscripts name over <paramref name="dims"/>, column-major
+    /// (V6): what <c>c{1, 2, 2}</c> and <c>c(1, :, 2)</c> read.
+    /// </summary>
+    private int[] NdSlots(int[] dims, IReadOnlyList<Expr> subscripts, string what, Node at, JgsEnvironment env) =>
+        NdSlots(dims, subscripts, what, at, env, out _);
+
+    private int[] NdSlots(
+        int[] dims, IReadOnlyList<Expr> subscripts, string what, Node at, JgsEnvironment env, out int[] shape)
+    {
+        int count = subscripts.Count;
+        int[] extents = SubscriptExtents(dims, count);
+        var picks = new int[count][];
+        shape = new int[count];
+        int total = 1;
+        for (int i = 0; i < count; i++)
+        {
+            picks[i] = BracePicks(EvaluateIndexArgument(subscripts[i], extents, i, env), extents[i], what, at);
+            shape[i] = picks[i].Length;
+            total = checked(total * picks[i].Length);
+        }
+
+        var slots = new int[total];
+        var counter = new int[count];
+        for (int n = 0; n < total; n++)
+        {
+            int slot = 0, stride = 1;
+            for (int d = 0; d < count; d++)
+            {
+                slot += picks[d][counter[d]] * stride;
+                stride *= extents[d];
+            }
+
+            slots[n] = slot;
+            for (int d = 0; d < count; d++)
+            {
+                if (++counter[d] < picks[d].Length)
+                {
+                    break;
+                }
+
+                counter[d] = 0;
+            }
+        }
+
+        return slots;
+    }
+
+    /// <summary>
+    /// <c>c(i, j)</c> and <c>c(i, j, k)</c> on a cell (V6): the sub-cell the subscripts select, each
+    /// slot a share of the source's child (M2). One subscript keeps the road it always had.
+    /// </summary>
+    private JgsValue IndexCellParenNd(JgsValue cell, IReadOnlyList<Expr> subscripts, Node at, JgsEnvironment env)
+    {
+        int[] slots = NdSlots(cell.Dims, subscripts, "cell", at, env, out int[] shape);
+        JgsValue[] source = cell.AsCell;
+        var picked = new JgsValue[slots.Length];
+        for (int i = 0; i < picked.Length; i++)
+        {
+            picked[i] = JgsValue.Share(source[slots[i]]);
+        }
+
+        JgsValue selected = JgsValue.Cell(picked);
+        selected.ReshapeDims(shape);
+        return selected;
     }
 
     /// <summary>
@@ -7351,14 +7469,16 @@ internal sealed partial class Interpreter
 
                     if (existing.Type != JgsType.Struct)
                     {
-                        throw new JgsRuntimeException(variable.Line, variable.Column,
-                            $"Cannot set a field on '{variable.Name}': it is a {existing.TypeName}, not a struct.");
+                        throw new JgsRuntimeException(variable.Line, variable.Column, RefusesDots(existing)
+                            ? DotNotSupported
+                            : $"Cannot set a field on '{variable.Name}': it is a {existing.TypeName}, not a struct.");
                     }
 
                     if (existing.IsStructArray)
                     {
-                        throw new JgsRuntimeException(variable.Line, variable.Column,
-                            $"'{variable.Name}' is a struct array, so a field write must name an element, like {variable.Name}(1).field = v.");
+                        throw new JgsRuntimeException(variable.Line, variable.Column, Dialect.IsMatlab
+                            ? "Scalar structure required for this assignment."
+                            : $"'{variable.Name}' is a struct array, so a field write must name an element, like {variable.Name}(1).field = v.");
                     }
 
                     return existing;
@@ -7377,8 +7497,20 @@ internal sealed partial class Interpreter
                 Dictionary<string, JgsValue> fields = parent.WritableStruct();
                 if (!fields.TryGetValue(field, out JgsValue? child) || child.Type != JgsType.Struct)
                 {
+                    // V6: a field that holds text, a number or a cell is not a struct to write a
+                    // field onto, and R2025b says so. It was replaced by an empty struct without a
+                    // word - st.t = 'ab'; st.t.f = 1 lost the text.
+                    if (child is not null && RefusesDots(child))
+                    {
+                        throw new JgsRuntimeException(nested.Line, nested.Column, DotNotSupported);
+                    }
+
                     child = JgsValue.EmptyStruct();
                     fields[field] = child;
+                }
+                else if (child.IsStructArray && Dialect.IsMatlab)
+                {
+                    throw new JgsRuntimeException(nested.Line, nested.Column, "Scalar structure required for this assignment.");
                 }
 
                 return child;
@@ -7412,9 +7544,26 @@ internal sealed partial class Interpreter
                 throw new JgsRuntimeException(expr.Line, expr.Column,
                     evaluated.Type == JgsType.Struct
                         ? "Cannot set one field across a whole struct array — name an element first, like S(1).field = v."
+                        : RefusesDots(evaluated) ? DotNotSupported
                         : $"Cannot set a field on a {evaluated.TypeName}.");
         }
     }
+
+    private const string DotNotSupported =
+        "Unable to perform assignment because dot indexing is not supported for variables of this type.";
+
+    private const string BraceNotSupported =
+        "Unable to perform assignment because brace indexing is not supported for variables of this type.";
+
+    /// <summary>
+    /// Whether a field write onto <paramref name="held"/> is R2025b's dot-indexing refusal: text, a
+    /// number, a logical, a cell, or an array that holds something. The empty <c>[]</c> is what a
+    /// struct starts from, and an object, a handle, a table and a time value have dots of their own.
+    /// </summary>
+    private bool RefusesDots(JgsValue held) =>
+        Dialect.IsMatlab && !held.IsTime && !JgsHandleRegistry.TryGet(held, out _)
+        && (held.Type is JgsType.Number or JgsType.Bool or JgsType.Complex or JgsType.String or JgsType.Cell
+            || (held.Type == JgsType.Array && held.ArrayLength > 0));
 
     /// <summary>
     /// One element of a struct array an entry holds, taken writable inside that array (M3/M7).
@@ -7522,7 +7671,7 @@ internal sealed partial class Interpreter
                 var filler = new Dictionary<string, JgsValue>(StringComparer.Ordinal);
                 foreach (string field in fields)
                 {
-                    filler[field] = JgsValue.Array([]);
+                    filler[field] = JgsEmpty.Zero(); // [] is 0-by-0, as the fields of R2025b's gap elements are (V6)
                 }
 
                 grown[i] = filler;
@@ -7591,7 +7740,18 @@ internal sealed partial class Interpreter
         if (target.Type != JgsType.Cell)
         {
             throw new JgsRuntimeException(brace.Line, brace.Column,
-                $"Braces assign into a cell array, but '{variable?.Name ?? "this"}' is a {target.TypeName}.");
+                Dialect.IsMatlab && target.Type is JgsType.Struct or JgsType.Number or JgsType.Bool or JgsType.Complex
+                        or JgsType.String or JgsType.Array
+                    ? BraceNotSupported
+                    : $"Braces assign into a cell array, but '{variable?.Name ?? "this"}' is a {target.TypeName}.");
+        }
+
+        // c{i, j, k} = v is the paren write of the one cell that holds v (V6): the N-subscript road
+        // grows the cell and places the slot.
+        if (brace.Indices.Count > 2)
+        {
+            IndexWrite(brace.Target, brace.Indices, TokenType.Assign, JgsValue.Cell(new[] { value }), brace, env);
+            return value;
         }
 
         JgsValue[] elements = target.WritableCell(); // M7: the write gate

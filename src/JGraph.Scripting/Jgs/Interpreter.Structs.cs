@@ -266,6 +266,69 @@ internal sealed partial class Interpreter
         return rhs;
     }
 
+    /// <summary>
+    /// <c>b(r, c) = s</c> (V6): one struct into the element a row and a column name. A slot past an
+    /// edge grows the array to the rectangle that holds it, the gap filled with elements carrying
+    /// the array's fields, each <c>[]</c>. The fields are held to the array's as on the
+    /// one-subscript road (M14), and an array started from <c>[]</c> takes the fields written in.
+    /// </summary>
+    private JgsValue AssignIntoStructGrid(
+        Expr target, JgsValue existing, IReadOnlyList<Expr> subscripts, JgsValue rhs, Node at, JgsEnvironment env)
+    {
+        JgsStructArray source = rhs.AsStructArray;
+        JgsStructArray payload = existing.Type == JgsType.Struct
+            ? existing.AsStructArray
+            : new JgsStructArray([], source.FieldNames);
+        int rows = existing.Type == JgsType.Struct ? existing.Rows : 0;
+        int cols = existing.Type == JgsType.Struct ? existing.Cols : 0;
+        int[] extents = [rows, cols];
+        if (!TryOneSubscript(subscripts[0], extents, 0, env, out int row)
+            || !TryOneSubscript(subscripts[1], extents, 1, env, out int column))
+        {
+            throw new JgsRuntimeException(at.Line, at.Column,
+                "A struct written by a row and a column names one element; write several with one subscript.");
+        }
+
+        if (!SameFieldSet(payload.FieldNames, source.FieldNames))
+        {
+            throw new JgsRuntimeException(at.Line, at.Column, "MATLAB:heterogeneousStrucAssignment",
+                "Subscripted assignment between dissimilar structures.");
+        }
+
+        int newRows = Math.Max(rows, row + 1);
+        int newCols = Math.Max(cols, column + 1);
+        var elements = new Dictionary<string, JgsValue>[newRows * newCols];
+        bool shared = existing.Type == JgsType.Struct && existing.IsShared;
+        for (int c = 0; c < newCols; c++)
+        {
+            for (int r = 0; r < newRows; r++)
+            {
+                int slot = r + (c * newRows);
+                if (r == row && c == column)
+                {
+                    elements[slot] = source.Elements[0];
+                    JgsHolders.Share(elements[slot]); // M2: the right-hand side still holds it
+                }
+                else if (r < rows && c < cols)
+                {
+                    elements[slot] = payload.Elements[r + (c * rows)];
+                    if (shared)
+                    {
+                        JgsHolders.Share(elements[slot]); // in two arrays while the old one is held
+                    }
+                }
+                else
+                {
+                    elements[slot] = payload.NewElement();
+                }
+            }
+        }
+
+        JgsValue written = JgsValue.StructArray(new JgsStructArray(elements, payload.EmptyFields), newRows, newCols);
+        StoreBack(target, written, at, env);
+        return rhs;
+    }
+
     /// <summary>Whether two field lists name the same fields, in any order.</summary>
     private static bool SameFieldSet(string[] left, string[] right)
     {

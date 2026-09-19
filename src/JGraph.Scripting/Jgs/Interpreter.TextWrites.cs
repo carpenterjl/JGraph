@@ -409,9 +409,95 @@ internal sealed partial class Interpreter
         {
             1 => AssignCellLinear(target, callee, subscripts[0], deleting, rhs, at, env),
             2 => AssignCellTwoSubscripts(target, callee, subscripts, deleting, rhs, at, env),
-            _ => throw new JgsRuntimeException(at.Line, at.Column,
-                "Cell assignment takes one subscript or a row and a column."),
+            _ => AssignCellNd(target, callee, subscripts, deleting, rhs, at, env),
         };
+    }
+
+    /// <summary>
+    /// <c>c(i, j, k) = {v}</c> (V6): the N-subscript array road's growth and scatter over a cell's
+    /// slots - new slots hold <c>[]</c>, the written ones a share of the right-hand cell's children.
+    /// </summary>
+    private JgsValue AssignCellNd(
+        Expr target, JgsValue callee, IReadOnlyList<Expr> subscripts, bool deleting, JgsValue rhs, Node at, JgsEnvironment env)
+    {
+        if (deleting)
+        {
+            throw new JgsRuntimeException(at.Line, at.Column,
+                "Deleting from a cell by three or more subscripts is not supported; delete whole rows or columns.");
+        }
+
+        int count = subscripts.Count;
+        int[] extents = SubscriptExtents(callee.Dims, count);
+        int[] grown = (int[])extents.Clone();
+        var picks = new int[count][];
+        int wanted = 1;
+        for (int i = 0; i < count; i++)
+        {
+            picks[i] = WritePicks(EvaluateIndexArgument(subscripts[i], extents, i, env), extents[i], at, i + 1);
+            grown[i] = Math.Max(extents[i], Highest(picks[i]) + 1);
+            wanted = checked(wanted * picks[i].Length);
+        }
+
+        CheckCellCount(wanted, rhs.AsCell, at); // M14: before the cell grows
+        var strides = new int[count];
+        int total = 1;
+        for (int i = 0; i < count; i++)
+        {
+            strides[i] = total;
+            total = checked(total * grown[i]);
+        }
+
+        JgsValue[] cells = callee.WritableCell(); // M7: the write gate
+        if (!extents.AsSpan().SequenceEqual(grown))
+        {
+            var elements = new JgsValue[total];
+            for (int i = 0; i < elements.Length; i++)
+            {
+                elements[i] = EmptyBracket();
+            }
+
+            for (int n = 0; n < cells.Length; n++)
+            {
+                int left = n, slot = 0;
+                for (int d = 0; d < count; d++)
+                {
+                    slot += (left % extents[d]) * strides[d];
+                    left /= extents[d];
+                }
+
+                elements[slot] = cells[n];
+            }
+
+            JgsValue widened = JgsValue.Cell(elements);
+            widened.ReshapeDims(grown);
+            callee = Stored(target, widened, at, env);
+            cells = callee.WritableCell();
+        }
+
+        var slots = new int[wanted];
+        var counter = new int[count];
+        for (int n = 0; n < wanted; n++)
+        {
+            int slot = 0;
+            for (int d = 0; d < count; d++)
+            {
+                slot += picks[d][counter[d]] * strides[d];
+            }
+
+            slots[n] = slot;
+            for (int d = 0; d < count; d++)
+            {
+                if (++counter[d] < picks[d].Length)
+                {
+                    break;
+                }
+
+                counter[d] = 0;
+            }
+        }
+
+        WriteCells(cells, slots, rhs.AsCell, at);
+        return rhs;
     }
 
     private JgsValue AssignCellLinear(

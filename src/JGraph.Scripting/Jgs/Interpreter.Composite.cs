@@ -48,19 +48,55 @@ internal sealed partial class Interpreter
         }
 
         chain.Reverse();
-        if (chain[0] is not VariableExpr root || !LookUp(root.Name, env, out JgsValue held))
+        if (chain[0] is not VariableExpr root)
         {
             return false;
+        }
+
+        // A level that does not exist yet is created by get, modify, set as well (below); a name
+        // never bound is the first such level. A cleared global keeps the roads it has (#158).
+        bool creates = Dialect.IsMatlab && assign.Op == TokenType.Assign;
+        if (!LookUp(root.Name, env, out JgsValue? held))
+        {
+            if (!creates || env.IsGlobal(root.Name))
+            {
+                return false;
+            }
+
+            held = null;
         }
 
         for (int k = 0; k + 1 < chain.Count; k++)
         {
             Expr step = chain[k + 1];
-            if (IsComputedHolder(held, step, target))
+            if (held is null || creates)
+            {
+                if (chain.Count - (k + 2) == 0 && (held is null || !IsComputedHolder(held, step, target)))
+                {
+                    return false; // a last step on whatever is there is the ordinary roads'
+                }
+
+                if (held is null || !IsComputedHolder(held, step, target))
+                {
+                    switch (ClassifyLevel(held, chain, k + 1, out JgsValue? next, out JgsValue? start))
+                    {
+                        case LevelKind.Continue:
+                            held = next;
+                            continue;
+                        case LevelKind.Create:
+                            result = WriteThroughAbsentLevel(chain, k + 1, held, start, target, assign, rhs, env);
+                            return true;
+                        default:
+                            return false;
+                    }
+                }
+            }
+
+            if (IsComputedHolder(held!, step, target))
             {
                 if (step is BraceIndexExpr brace)
                 {
-                    result = WriteTableBrace(chain[k], held.AsTable, brace, assign, rhs, env);
+                    result = WriteTableBrace(chain[k], held!.AsTable, brace, assign, rhs, env);
                     return true;
                 }
 
@@ -69,17 +105,201 @@ internal sealed partial class Interpreter
                 JgsValue given = ReferenceEquals(step, target) && !owned && assign.Op == TokenType.Assign
                     ? CopyForBinding(rhs)
                     : rhs;
-                result = WriteThroughLevel(chain[k], held, (MemberExpr)step, target, assign, given, env);
+                result = WriteThroughLevel(chain[k], held!, (MemberExpr)step, target, assign, given, env);
                 return true;
             }
 
-            if (k + 2 >= chain.Count || !TryPeekStep(held, step, out held))
+            if (k + 2 >= chain.Count || !TryPeekStep(held!, step, out JgsValue peeked))
             {
                 return false;
             }
+
+            held = peeked;
         }
 
         return false;
+    }
+
+    // ---- levels that do not exist yet (V6, #82, #83) -------------------------------------------------
+
+    private enum LevelKind
+    {
+        /// <summary>The ordinary roads take it from here.</summary>
+        Ordinary,
+
+        /// <summary>The level exists and the walk goes on through it.</summary>
+        Continue,
+
+        /// <summary>The level does not exist, and the ordinary roads cannot create it: get, modify, set.</summary>
+        Create,
+    }
+
+    /// <summary>
+    /// What the walk finds at <c>chain[level]</c> on <paramref name="held"/> (null: nothing there).
+    /// The ordinary roads already create a field path with an optional final paren
+    /// (<c>s.a.b(3) = 9</c>), a cell slot with a final paren (<c>c{3}(2) = 9</c>) and a struct
+    /// array's element with one field (<c>s(3).f = 9</c>); everything past that - <c>x.y(3).z</c>,
+    /// <c>c{3}.f</c>, <c>s.c{2}(3)</c>, <c>c{2}.a(2).b</c> - is created here, one level at a time.
+    /// </summary>
+    private LevelKind ClassifyLevel(JgsValue? held, List<Expr> chain, int level, out JgsValue? next, out JgsValue? start)
+    {
+        next = null;
+        start = null;
+        Expr step = chain[level];
+        int rest = chain.Count - (level + 1);
+        bool nothing = held is null
+            || (held.Type == JgsType.Array && held.ArrayLength == 0 && !held.IsStringArray && !held.IsTime);
+        bool plainStruct = held is { Type: JgsType.Struct, ClassName: null };
+
+        switch (step)
+        {
+            case MemberExpr { Field: { } field }:
+                if (plainStruct && !held!.IsStructArray && held.AsStruct.TryGetValue(field, out JgsValue? child))
+                {
+                    next = child;
+                    return LevelKind.Continue;
+                }
+
+                if (nothing || (plainStruct && !held!.IsStructArray))
+                {
+                    return OrdinaryRoadsCreate(chain, level + 1) ? LevelKind.Ordinary : LevelKind.Create;
+                }
+
+                return LevelKind.Ordinary;
+
+            case BraceIndexExpr brace:
+                if (!nothing && held!.Type != JgsType.Cell)
+                {
+                    return LevelKind.Ordinary;
+                }
+
+                if (!nothing && TryPeekStep(held!, step, out JgsValue slot)
+                    && !(slot.Type == JgsType.Array && slot.ArrayLength == 0 && !slot.IsStringArray))
+                {
+                    next = slot;
+                    return LevelKind.Continue;
+                }
+
+                // c{3}(2) = 9 is the ordinary roads' own conjuring, from a name or a field path.
+                return rest == 1 && chain[^1] is CallExpr or IndexExpr && brace.Indices.Count == 1
+                       && chain[level - 1] is VariableExpr or MemberExpr
+                    ? LevelKind.Ordinary
+                    : LevelKind.Create;
+
+            case CallExpr or IndexExpr:
+            {
+                if (!nothing && !plainStruct)
+                {
+                    return LevelKind.Ordinary;
+                }
+
+                IReadOnlyList<Expr> subscripts = step is CallExpr call ? call.Arguments : ((IndexExpr)step).Indices;
+                if (plainStruct && subscripts.Count == 1 && NamedPosition(subscripts[0]) is int position
+                    && position >= 0 && position < held!.AsStructArray.Length)
+                {
+                    next = JgsValue.Struct(held.AsStructArray.Elements[position]); // a peek, never written through
+                    return LevelKind.Continue;
+                }
+
+                // s(3).f = 9 grows a named struct array on the ordinary road.
+                if (rest == 1 && chain[level + 1] is MemberExpr && subscripts.Count == 1 && chain[level - 1] is VariableExpr)
+                {
+                    return LevelKind.Ordinary;
+                }
+
+                // A new element starts with every field the array has, each holding [].
+                start = plainStruct ? JgsValue.Struct(held!.AsStructArray.NewElement()) : null;
+                return LevelKind.Create;
+            }
+
+            default:
+                return LevelKind.Ordinary;
+        }
+    }
+
+    /// <summary>Whether the steps from <paramref name="from"/> are fields with at most a final paren - what the ordinary roads create.</summary>
+    private static bool OrdinaryRoadsCreate(List<Expr> chain, int from)
+    {
+        for (int i = from; i < chain.Count; i++)
+        {
+            if (chain[i] is MemberExpr { Field: not null })
+            {
+                continue;
+            }
+
+            if (i == chain.Count - 1 && chain[i] is CallExpr or IndexExpr)
+            {
+                continue;
+            }
+
+            return false;
+        }
+
+        return true;
+    }
+
+    /// <summary>The 0-based position a subscript names when it is a whole number already in hand, or null.</summary>
+    private int? NamedPosition(Expr subscript)
+    {
+        double named = subscript switch
+        {
+            PreEvaluated { Value.Type: JgsType.Number } ready => ready.Value.AsNumber,
+            NumberLiteral literal => literal.Value,
+            _ => double.NaN,
+        };
+        return named == Math.Floor(named) ? (int)named - Dialect.IndexBase : null;
+    }
+
+    /// <summary>
+    /// Creates <c>chain[level]</c> by get, modify, set: the rest of the path is written into a
+    /// scratch slot - which starts from nothing, or from a fresh element of the struct array the
+    /// level belongs to - by the ordinary assignment, and the slot is then assigned to the level
+    /// itself, which is one step shorter and so ends on a road that exists. Nothing is stored
+    /// until the inner write has succeeded (M14).
+    /// </summary>
+    private JgsValue WriteThroughAbsentLevel(
+        List<Expr> chain, int level, JgsValue? holder, JgsValue? start, Expr target, AssignExpr assign, JgsValue rhs,
+        JgsEnvironment env)
+    {
+        Expr at = chain[level];
+        var scratch = new JgsEnvironment(env);
+        if (start is not null)
+        {
+            scratch.Declare(LevelSlot, start);
+        }
+
+        var slot = new VariableExpr(LevelSlot) { Line = at.Line, Column = at.Column };
+        var inner = new AssignExpr(ReplaceNode(target, at, slot), TokenType.Assign,
+            new PreEvaluated(rhs) { Line = assign.Value.Line, Column = assign.Value.Column })
+        {
+            Line = assign.Line,
+            Column = assign.Column,
+        };
+        JgsValue result = EvaluateAssign(inner, scratch);
+        if (!scratch.TryGet(LevelSlot, out JgsValue written))
+        {
+            throw new JgsRuntimeException(at.Line, at.Column, "This write names a level it did not create.");
+        }
+
+        // Every element of a struct array has every field: a field the new element gained is
+        // given to the rest before the element goes in, as s(3).w = 1 does on the ordinary road.
+        if (at is CallExpr or IndexExpr && holder is { Type: JgsType.Struct } && written.Type == JgsType.Struct
+            && !written.IsStructArray)
+        {
+            JgsStructArray owner = EvaluateForWrite(chain[level - 1], env).WritableStructArray();
+            foreach (string field in written.AsStruct.Keys)
+            {
+                owner.EnsureField(field);
+            }
+        }
+
+        var outer = new AssignExpr(at, TokenType.Assign, new PreEvaluated(written) { Line = at.Line, Column = at.Column })
+        {
+            Line = assign.Line,
+            Column = assign.Column,
+        };
+        EvaluateAssign(outer, env);
+        return result;
     }
 
     /// <summary>The expression a path node is a step on, or null at the root.</summary>

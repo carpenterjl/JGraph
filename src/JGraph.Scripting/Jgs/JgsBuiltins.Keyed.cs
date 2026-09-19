@@ -298,6 +298,31 @@ internal static partial class JgsBuiltins
     /// <summary>The value <c>m(key)</c> names, or a refusal saying which key was missing.</summary>
     internal static JgsValue Lookup(JgsValue map, JgsValue key, int line, int col)
     {
+        // d(keys) on a dictionary reads every key named, in the keys' shape (V6, #149): its keys
+        // are scalars, so an array of them is several lookups and never one key.
+        if (map.ClassName == DictionaryClassName && key.Type == JgsType.Array && key.ArrayLength > 1)
+        {
+            var values = new JgsValue[key.ArrayLength];
+            JgsValue[] cell = ValueCell(map);
+            for (int i = 0; i < values.Length; i++)
+            {
+                JgsValue one = key.ElementAt(i);
+                int found = FindKey(map, key.IsStringArray ? JgsValue.StringScalar(one.AsString) : one);
+                if (found < 0)
+                {
+                    throw new JgsRuntimeException(line, col, $"Element {i + 1} of the key array not found.");
+                }
+
+                values[i] = cell[found];
+            }
+
+            bool texts = Array.TrueForAll(values, static v => v.IsStringArray && v.ArrayLength == 1);
+            JgsValue gathered = texts
+                ? JgsValue.StringArray(Array.ConvertAll(values, static v => v.ElementAt(0)), key.Rows, key.Cols)
+                : JgsMatrix.FromElements(Array.ConvertAll(values, JgsValue.Share), key.Rows, key.Cols);
+            return gathered;
+        }
+
         int at = FindKey(map, key);
         if (at < 0)
         {

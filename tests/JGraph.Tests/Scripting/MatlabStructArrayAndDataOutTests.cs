@@ -241,8 +241,9 @@ public class MatlabStructArrayAndDataOutTests : IDisposable
     public void AFieldWriteMustNameAnElement()
     {
         // Refused rather than guessed at, because setting one field across many elements has no
-        // meaning that keeps the invariant.
-        Assert.Contains("name an element", Error("""
+        // meaning that keeps the invariant — in R2025b's words since V6 (container_path_writes,
+        // r_field_of_struct_array).
+        Assert.Contains("Scalar structure required for this assignment.", Error("""
             S = struct('a', {1, 2, 3});
             S.a = 5;
             """));

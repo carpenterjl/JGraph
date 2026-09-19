@@ -1,0 +1,56 @@
+CHK|p_cell_char_elem|bat zat|exact
+CHK|p_cell_char_growth|ab [97 98 0 122] char|exact
+CHK|p_cell_char_delete|abcd bd|exact
+CHK|p_cell_numeric_growth_end|[3 4] [3 4 5]|exact
+CHK|p_cell_numeric_delete|[1 2 3] [1 3]|exact
+CHK|p_cell_logical_elem|[true false true] [true true true] logical|exact
+CHK|p_cell_string_elem|a,b a,b,z|exact
+CHK|p_cell_string_brace_char|abc,def aZc,def|exact
+CHK|p_field_char_elem|bat cat|exact
+CHK|p_field_numeric_delete|[1 2 3] [1 3]|exact
+CHK|p_field_numeric_growth_2d|[1 2] [1 2 0;0 0 9]|exact
+CHK|p_field_logical_mask_write|[1 2 3] [1 2 3 9]|exact
+CHK|p_field_string_growth|2 4 1|exact
+CHK|p_structarr_field_elem|[3 4] [9 4]|exact
+CHK|p_structarr_field_growth|[1 2] [1 2 9]|exact
+CHK|p_structarr_field_delete|[4 5 6] [5 6]|exact
+CHK|p_structarr_field_char|cd cz|exact
+CHK|p_nested_cell_in_field|[1 2] ab [1 9] zb|exact
+CHK|p_nested_field_in_cell|[1 2 3] [1 3]|exact
+CHK|p_nested_three_levels|[1 2 3] [1 2 3 4]|exact
+CHK|p_strrep_result_elem|aa,ba Qx,bx|exact
+CHK|n_struct_array_through_field|struct 3 1 1|exact
+CHK|n_struct_array_through_field_existing|5 2 7 [1 2]|exact
+CHK|n_cell_element_struct|3 double struct 1 [1 3]|exact
+CHK|n_cell_element_struct_existing_cell|ERR Unable to perform assignment because dot indexing is not supported for variables of this type.|exact
+CHK|n_field_cell_paren|cell 2 [0 0 1] [0 0]|exact
+CHK|n_cell_struct_array_field|2 struct 2 1 1|exact
+CHK|n_deep_fields|struct struct struct 4|exact
+CHK|n_struct_array_elem_field_array|2 1 [0 0 5]|exact
+CHK|n_cell_in_cell|2 cell 3 x|exact
+CHK|n_fresh_name_brace_paren|cell 2 [0 7]|exact
+CHK|n_fresh_name_paren_field_paren|struct 2 [0 3]|exact
+CHK|n_alias_untouched|k k,n,m|exact
+CHK|r_field_of_number|ERR Unable to perform assignment because dot indexing is not supported for variables of this type.|exact
+CHK|r_field_of_cell|ERR Unable to perform assignment because dot indexing is not supported for variables of this type.|exact
+CHK|r_brace_of_struct|ERR Unable to perform assignment because brace indexing is not supported for variables of this type.|exact
+CHK|r_brace_of_number|ERR Unable to perform assignment because brace indexing is not supported for variables of this type.|exact
+CHK|r_field_of_struct_array|ERR Scalar structure required for this assignment.|exact
+CHK|r_nested_field_of_char|ERR Unable to perform assignment because dot indexing is not supported for variables of this type.|exact
+CHK|r_refused_leaves_value|ab [1 2]|exact
+CHK|e_struct_empty_ctor|struct [0 0] 0|exact
+CHK|e_struct_empty_fields|struct [0 0] a|exact
+CHK|e_struct_empty_growth_by_field|[1 2] 1 5|exact
+CHK|e_struct_empty_assign_struct|ERR Subscripted assignment between dissimilar structures.|exact
+CHK|e_struct_empty_concat|[1 1] 1|exact
+CHK|e_struct_empty_isempty_loop|1 0|exact
+CHK|m_cell_paren_two_subs_read|cell [1 2] bc [2 1] [2 3]|exact
+CHK|m_cell_paren_two_subs_write|4 9 7 8|exact
+CHK|m_cell_three_subs_growth|cell [1 2 2] double 2 2|exact
+CHK|m_cell_brace_three_subs|[1 2 2] [5 6] [0 0]|exact
+CHK|m_struct_two_subs_growth|[2 3] 1 5 2|exact
+CHK|m_struct_two_subs_read|3 [1 2] 2|exact
+CHK|m_struct_two_subs_alias|4 9|exact
+CHK|d_dictionary_vector_keys|[10 20] [10 9]|exact
+CHK|d_dictionary_vector_keys_strings|[3 1] [2 1]|exact
+CHK|d_dictionary_vector_missing_key|ERR Element 2 of the key array not found.|exact

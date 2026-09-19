@@ -282,6 +282,13 @@ internal static partial class JgsBuiltins
 
         Define("struct", (args, line, col) =>
         {
+            // struct([]) is the 0-by-0 struct with no fields (V6, #85): what a script starts an
+            // accumulation from, and what isempty and a loop over numel treat as nothing.
+            if (args.Count == 1 && args[0].Type == JgsType.Array && args[0].ArrayLength == 0 && !args[0].IsStringArray)
+            {
+                return JgsValue.StructArray(new JgsStructArray([]), 0, 0);
+            }
+
             if (args.Count % 2 != 0)
             {
                 throw new JgsRuntimeException(line, col, "struct takes name/value pairs.");

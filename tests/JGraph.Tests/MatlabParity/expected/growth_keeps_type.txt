@@ -7,11 +7,11 @@ CHK|k_uint16|uint16 [1 4] 0; uint16 [2 3] 0; uint16 [1 2 2] 0; uint16 [1 1]; uin
 CHK|k_logical|logical [1 4] false; logical [2 3] false; logical [1 2 2] false; logical [1 1]; logical true,true|exact
 CHK|k_char|char [1 4] c0; char [2 3] c0; char [1 2 2] c0; char [1 1]; char c97,c98|exact
 CHK|k_string|string [1 4] <missing>; string [2 3] <missing>; string [1 2 2] <missing>; string [1 1]; string "a","b"|exact
-CHK|k_cell|cell [1 4] {double [0 0]}; cell [2 3] {double [0 0]}; cell [1 2 2] {double [0 0]}; cell [1 1]; cell {double [1 1]},{char [1 1]}|exact|pending V6|ERR Cannot assign by index into a cell; only arrays support element assignment.
+CHK|k_cell|cell [1 4] {double [0 0]}; cell [2 3] {double [0 0]}; cell [1 2 2] {double [0 0]}; cell [1 1]; cell {double [1 1]},{char [1 1]}|exact
 CHK|k_complex|double [1 4] 0; double [2 3] 0; double [1 2 2] 0; double [1 1]; double 1+2i,3|exact
 CHK|k_datetime|datetime [1 4] NaT; datetime [2 3] NaT; datetime [1 2 2] NaT; datetime [1 1]; datetime 01-Jan-2020,02-Jan-2020|exact
 CHK|k_duration|duration [1 4] 0s; duration [2 3] 0s; duration [1 2 2] 0s; duration [1 1]; duration 1s,2s|exact
-CHK|k_struct|struct [1 4] struct[[0 0]]; struct [2 3] struct[[0 0]]; struct [1 1]; 2|exact|pending V6|ERR Index 2 is out of range for length 1 (indexing is 1-based).
+CHK|k_struct|struct [1 4] struct[[0 0]]; struct [2 3] struct[[0 0]]; struct [1 1]; 2|exact
 CHK|w_double_into_logical|logical [true true true]|exact
 CHK|w_double_into_logical_range|logical [true false true false]|exact
 CHK|w_double_into_logical_2d|logical [true true;false false]|exact

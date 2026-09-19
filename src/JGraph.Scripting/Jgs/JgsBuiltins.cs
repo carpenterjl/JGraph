@@ -5918,7 +5918,7 @@ internal static partial class JgsBuiltins
         // makes size('') answer [0 0] (M96b). MATLAB does keep a 1-by-0 char — blanks(0) is one —
         // but nothing here can tell the two apart, and '' is overwhelmingly the one scripts write.
         JgsType.String => value.AsString.Length == 0 ? [0, 0] : [1, value.AsString.Length],
-        JgsType.Cell => [value.Rows, value.Cols],
+        JgsType.Cell => value.IsNd ? value.Dims : [value.Rows, value.Cols], // a cell grown into a third dimension (V6)
         JgsType.Struct => [value.Rows, value.Cols], // a struct is 1-by-1 and a struct array is its shape (M65)
         JgsType.Sparse => [value.AsSparse.Rows, value.AsSparse.Cols],
         JgsType.Table => [value.AsTable.RowCount, value.AsTable.ColumnCount],
