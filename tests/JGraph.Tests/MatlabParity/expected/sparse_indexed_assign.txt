@@ -1,0 +1,40 @@
+CHK|s_scalar_alias|1 3 [1 0 2;0 3 0] / 1 3 [7 0 2;0 3 0]|exact
+CHK|s_scalar_new_entry|1 4 [1 0 2;5 3 0]|exact
+CHK|s_scalar_overwrite_entry|1 3 [1 0 2;0 -1 0]|exact
+CHK|s_write_zero_drops_entry|1 2 [1 0 2;0 0 0]|exact
+CHK|s_write_zero_where_none|1 3 [1 0 2;0 3 0]|exact
+CHK|s_linear_index|1 3 [1 0 2;0 9 0]|exact
+CHK|s_linear_vector|1 5 [1 0 2;8 3 9]|exact
+CHK|s_linear_scalar_expands|1 5 [4 4 2;4 3 0]|exact
+CHK|s_row_write|1 4 [1 0 2;7 0 9]|exact
+CHK|s_column_write|1 3 [1 5 2;0 0 0]|exact
+CHK|s_block_write|1 5 [10 0 20;30 3 40]|exact
+CHK|s_block_scalar_expands|1 5 [1 6 6;0 6 6]|exact
+CHK|s_colon_all|1 6 [1 3 5;2 4 6]|exact
+CHK|s_mask_write|1 4 [7 0 2;0 8 9]|exact
+CHK|s_mask_from_comparison|1 1 [1 0 0;0 0 0]|exact
+CHK|s_end_subscripts|1 5 [1 6 2;0 3 5]|exact
+CHK|s_growth_two_subscripts|[3 5] 1 4 [1 0 2 0 0;0 3 0 0 0;0 0 0 0 1]|exact
+CHK|s_growth_linear_on_row_vector|[1 6] 1 3 [1 0 2 0 0 3]|exact
+CHK|s_growth_linear_on_matrix_refused|ERR In an assignment  A(I) = B, a matrix A cannot be resized.|exact
+CHK|s_rhs_sparse|1 2 [0 4 0;0 3 0]|exact
+CHK|s_rhs_dense_matrix|1 3 [0 1 0;2 0 3]|exact
+CHK|s_rhs_is_own_rows|1 3 [0 3 0;1 0 2]|exact
+CHK|s_rhs_logical|double 1 4 [1 1 2;0 3 0]|exact
+CHK|s_rhs_complex|1 0 4 0+2i|exact|pending V6|ERR A sparse matrix here holds real values; a complex value cannot be assigned into one.
+CHK|s_delete_row|[1 3] 1 1 [0 3 0]|exact
+CHK|s_delete_column|[2 2] 1 2 [1 2;0 0]|exact
+CHK|s_delete_rows_by_mask|[1 2] 1 1 [0 2]|exact
+CHK|s_delete_linear_on_vector|[1 3] 1 2 [1 0 3]|exact
+CHK|s_delete_alias|1 3 [1 0 2;0 3 0] / 1 2 [0 2;3 0]|exact
+CHK|s_class_and_issparse_after|double 1 1|exact
+CHK|s_dense_target_sparse_rhs|0 [1 0 2;0 0 0]|exact
+CHK|s_in_cell_alias|1 9 1|exact
+CHK|s_in_struct_field_alias|3 2 1|exact
+CHK|s_in_function_argument|3 2|exact
+CHK|s_refuse_count_mismatch|ERR Unable to perform assignment because the indices on the left side are not compatible with the size of the right side.|exact
+CHK|s_refuse_count_mismatch_leaves|1 3 [1 0 2;0 3 0]|exact
+CHK|s_refuse_zero_index|ERR Array indices must be positive integers or logical values.|exact
+CHK|s_refuse_three_subscripts|ERR N-dimensional indexing allowed for full matrices only.|exact
+CHK|s_refuse_cell_rhs|ERR Conversion to double from cell is not possible.|exact
+CHK|s_loop_fill_diagonal|1 4 [1 0 0 0;0 2 0 0;0 0 3 0;0 0 0 4]|exact

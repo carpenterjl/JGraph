@@ -4204,6 +4204,17 @@ internal sealed partial class Interpreter
             return AssignIntoCellParen(target, callee, subscripts, op, rhs, at, env, ref holds);
         }
 
+        if (callee.Type == JgsType.Sparse)
+        {
+            return AssignIntoSparse(target, callee, subscripts, op, rhs, at, env);
+        }
+
+        // A sparse right-hand side written into anything else goes in as the values it stands for.
+        if (rhs.Type == JgsType.Sparse)
+        {
+            rhs = JgsBuiltins.SparseAsDense(rhs.AsSparse);
+        }
+
         if (callee.Type != JgsType.Array)
         {
             throw new JgsRuntimeException(at.Line, at.Column,
@@ -4645,6 +4656,17 @@ internal sealed partial class Interpreter
         if (callee.Type == JgsType.Cell && subscripts.Count is 1 or 2)
         {
             return AssignIntoCellParen(target, callee, subscripts, op, rhs, at, env, ref holds);
+        }
+
+        if (callee.Type == JgsType.Sparse)
+        {
+            return AssignIntoSparse(target, callee, subscripts, op, rhs, at, env);
+        }
+
+        // A sparse right-hand side written into anything else goes in as the values it stands for.
+        if (rhs.Type == JgsType.Sparse)
+        {
+            rhs = JgsBuiltins.SparseAsDense(rhs.AsSparse);
         }
 
         if (callee.Type != JgsType.Array)
@@ -5582,6 +5604,18 @@ internal sealed partial class Interpreter
         {
             callee = Stored(target, OneElementArray(callee), at, env);
         }
+
+        if (callee.Type == JgsType.Sparse)
+        {
+            return AssignIntoSparse(target, callee, subscripts, op, rhs, at, env);
+        }
+
+        // A sparse right-hand side written into anything else goes in as the values it stands for.
+        if (rhs.Type == JgsType.Sparse)
+        {
+            rhs = JgsBuiltins.SparseAsDense(rhs.AsSparse);
+        }
+
         if (callee.Type != JgsType.Array)
         {
             throw new JgsRuntimeException(at.Line, at.Column,

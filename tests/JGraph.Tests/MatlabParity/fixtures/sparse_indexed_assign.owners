@@ -1,0 +1,2 @@
+# The stage of the value-ownership plan that completes each line JGraph fails (appendix A's stage column).
+s_rhs_complex	V6	# a sparse matrix holds real values here (CscMatrix); completes as an accepted divergence named in ADR 0167

@@ -401,8 +401,58 @@ internal static partial class JgsBuiltins
             }
         }
 
-        // Scalar scaling keeps the pattern: s*A, A*s, A/s, A.*s.
+        // A comparison with a scalar is a sparse mask (V6: S(S > 1) = 0 needs one). Where zero
+        // itself compares false only the stored entries can answer true, so the pattern is walked;
+        // where zero compares true the answer is mostly ones and is built over every position.
         JgsValue scalarSide = left.Type == JgsType.Sparse ? right : left;
+        if (scalarSide.Type is JgsType.Number or JgsType.Bool
+            && op is TokenType.Greater or TokenType.GreaterEqual or TokenType.Less or TokenType.LessEqual
+                or TokenType.EqualEqual or TokenType.BangEqual)
+        {
+            CscMatrix matrix = (left.Type == JgsType.Sparse ? left : right).AsSparse;
+            double scalar = scalarSide.Type == JgsType.Bool ? (scalarSide.AsBool ? 1 : 0) : scalarSide.AsNumber;
+            bool sparseOnLeft = left.Type == JgsType.Sparse;
+            bool Holds(double entry)
+            {
+                double a = sparseOnLeft ? entry : scalar, b = sparseOnLeft ? scalar : entry;
+                return op switch
+                {
+                    TokenType.Greater => a > b,
+                    TokenType.GreaterEqual => a >= b,
+                    TokenType.Less => a < b,
+                    TokenType.LessEqual => a <= b,
+                    TokenType.EqualEqual => a == b,
+                    _ => a != b,
+                };
+            }
+
+            if (Holds(0))
+            {
+                double[] flat = matrix.ToColumnMajor();
+                for (int i = 0; i < flat.Length; i++)
+                {
+                    flat[i] = Holds(flat[i]) ? 1 : 0;
+                }
+
+                return JgsValue.Sparse(CscMatrix.FromColumnMajor(flat, matrix.Rows, matrix.Cols));
+            }
+
+            var truths = new List<(int, int, double)>();
+            for (int c = 0; c < matrix.Cols; c++)
+            {
+                for (int k = matrix.ColumnStarts[c]; k < matrix.ColumnStarts[c + 1]; k++)
+                {
+                    if (Holds(matrix.Values[k]))
+                    {
+                        truths.Add((matrix.RowIndices[k], c, 1));
+                    }
+                }
+            }
+
+            return JgsValue.Sparse(CscMatrix.FromTriplets(matrix.Rows, matrix.Cols, truths));
+        }
+
+        // Scalar scaling keeps the pattern: s*A, A*s, A/s, A.*s.
         if (scalarSide.Type is JgsType.Number or JgsType.Bool &&
             op is TokenType.Star or TokenType.DotStar or TokenType.Slash or TokenType.DotSlash)
         {

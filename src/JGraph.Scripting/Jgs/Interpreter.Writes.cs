@@ -252,6 +252,12 @@ internal sealed partial class Interpreter
             return [held.AsTable.RowCount, held.AsTable.ColumnCount]; // T{end, end} = v (V6)
         }
 
+        if (held.Type == JgsType.Sparse && count <= 2)
+        {
+            var sparse = held.AsSparse; // S(end, end) = v, S(end) = v (V6)
+            return count == 1 ? [checked(sparse.Rows * sparse.Cols)] : [sparse.Rows, sparse.Cols];
+        }
+
         if (count == 1)
         {
             return [LinearCount(held)];

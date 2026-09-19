@@ -1,5 +1,5 @@
 CHK|a025_table_alias_brace|1 9|exact
-CHK|a026_sparse_alias|1 7|exact|pending V6|ERR Cannot assign by index into a sparse; only arrays support element assignment.
+CHK|a026_sparse_alias|1 7|exact
 CHK|a038_table_rownames_dot_write|1 1|exact
 CHK|a039_timetable_rowtimes_dot_write|1 9|exact
 CHK|a052_nd_growth_string|1 1 [1 2 2]|exact|pending V6|0 1 [1 2 2]
