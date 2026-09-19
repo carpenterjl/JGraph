@@ -425,6 +425,7 @@ internal static partial class JgsBuiltins
             {
                 try
                 {
+                    RefuseOutputOfError(args[0].AsCallable, line, col);
                     answers = CallForOutputs(args[0].AsCallable, inputs, produced, line, col);
                 }
                 catch (JgsRuntimeException failure) when (handler is { } catcher)
@@ -472,17 +473,44 @@ internal static partial class JgsBuiltins
             : [callable.Call(inputs, line, col)];
 
     /// <summary>
-    /// The struct MATLAB hands an <c>'ErrorHandler'</c>. The identifier is empty because JGraph's
-    /// errors carry a message and a place, not an identifier — <c>error('id:sub', …)</c> reads the
-    /// identifier to tell the two call forms apart and then drops it.
+    /// The struct MATLAB hands an <c>'ErrorHandler'</c> (V6, ADR 0167, #54): the failure's
+    /// identifier, its message under R2025b's "Error using &lt;function&gt; (line N)" header when it
+    /// came out of a function with a name, and the index of the element that failed. The header
+    /// names a function in a file of its own by its name, and a local function as
+    /// <c>file&gt;name</c>. An error the runtime raised itself has no identifier (ADR 0062).
     /// </summary>
-    private static JgsValue FailureRecord(JgsRuntimeException failure, int index) =>
-        JgsValue.Struct(new Dictionary<string, JgsValue>(StringComparer.Ordinal)
+    private static JgsValue FailureRecord(JgsRuntimeException failure, int index)
+    {
+        string message = failure.Message;
+        if (failure.Frames.Count > 0 && !message.StartsWith("Error using ", StringComparison.Ordinal))
         {
-            ["identifier"] = JgsValue.Str(string.Empty),
-            ["message"] = JgsValue.Str(failure.Message),
+            (string name, string file, int at) = failure.Frames[0];
+            string stem = Path.GetFileNameWithoutExtension(file);
+            string shown = stem.Length == 0 || string.Equals(stem, name, StringComparison.Ordinal) ? name : $"{stem}>{name}";
+            message = $"Error using {shown} (line {at})\n{message}";
+        }
+
+        return JgsValue.Struct(new Dictionary<string, JgsValue>(StringComparer.Ordinal)
+        {
+            ["identifier"] = JgsValue.Str(failure.Identifier),
+            ["message"] = JgsValue.Str(message),
             ["index"] = JgsValue.Number(index + 1),
         });
+    }
+
+    /// <summary>
+    /// <c>cellfun</c> and <c>arrayfun</c> ask each call for an output, and <c>error</c> has none
+    /// to give: R2025b refuses <c>@(x) error(...)</c> there as "Too many output arguments" before
+    /// the error it names is ever raised (measured), so a handler sees that and not the identifier
+    /// the body spells.
+    /// </summary>
+    private static void RefuseOutputOfError(IJgsCallable callable, int line, int col)
+    {
+        if (callable is AnonymousFunction { Declaration.Body: CallExpr { Callee: VariableExpr { Name: "error" } } })
+        {
+            throw new JgsRuntimeException(line, col, "MATLAB:TooManyOutputs", "Error using error\nToo many output arguments.");
+        }
+    }
 
     /// <summary>One legacy <c>cellfun</c> question, answered by the builtin that already answers it.</summary>
     private static JgsValue AskOfCell(
@@ -788,6 +816,13 @@ internal static partial class JgsBuiltins
         if (double.IsInfinity(value))
         {
             return value > 0 ? "Inf" : "-Inf";
+        }
+
+        // A negative zero is written as the zero it reads back as (V6, #163): mat2str([0 -0 1]) is
+        // R2025b's [0 0 1], where %g keeps the sign.
+        if (value == 0)
+        {
+            value = 0;
         }
 
         return JgsSprintf.FormatMatlab(

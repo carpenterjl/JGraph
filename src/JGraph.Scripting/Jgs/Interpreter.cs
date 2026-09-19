@@ -894,7 +894,7 @@ internal sealed partial class Interpreter
             // every frame it passed through has already been torn down by the finally below. Each
             // frame records the line that was running in it: this one's own failing line for the
             // innermost, and the call it was waiting on for everything outside.
-            error.PushFrame(declaration.Name, declaration.SourceId, callLine);
+            error.PushFrame(declaration.Name, FileOfFrame(declaration.SourceId), callLine);
             error.AttributeTo(declaration.SourceId);
             throw;
         }

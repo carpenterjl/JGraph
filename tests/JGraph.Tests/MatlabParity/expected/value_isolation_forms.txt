@@ -4,9 +4,9 @@ CHK|a038_table_rownames_dot_write|1 1|exact
 CHK|a039_timetable_rowtimes_dot_write|1 9|exact
 CHK|a052_nd_growth_string|1 1 [1 2 2]|exact
 CHK|a053_nd_growth_char|1 1 [1 2 2]|exact
-CHK|a054_cellfun_errorhandler_identifier_fn|1|exact|pending V6|0
-CHK|a054_arrayfun_errorhandler_identifier_fn|1|exact|pending V6|0
-CHK|a054_cellfun_errorhandler_record_nonuniform|probe:bad#1#Error using value_isolation_forms>failing (line 163) bad 1,probe:bad#2#Error using value_isolation_forms>failing (line 163) bad 2|exact|pending V6|#1#bad 1,#2#bad 2
+CHK|a054_cellfun_errorhandler_identifier_fn|1|exact
+CHK|a054_arrayfun_errorhandler_identifier_fn|1|exact
+CHK|a054_cellfun_errorhandler_record_nonuniform|probe:bad#1#Error using value_isolation_forms>failing (line 163) bad 1,probe:bad#2#Error using value_isolation_forms>failing (line 163) bad 2|exact
 CHK|g_cellfun_errorhandler_anon|0|exact
 CHK|g_errorhandler_that_errors|probe:handler|exact
 CHK|a059_mexception_addcause_alias|0 1|exact

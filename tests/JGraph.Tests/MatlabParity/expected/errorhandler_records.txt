@@ -1,0 +1,24 @@
+CHK|h_cellfun_identifier_fn|1|exact
+CHK|h_arrayfun_identifier_fn|1|exact
+CHK|h_cellfun_identifier_anon|0|exact
+CHK|h_record_fields|identifier,message,index|exact
+CHK|h_message_local_function|Error using errorhandler_records>failing (line 50) bad 1|exact
+CHK|h_message_anonymous_error|Error using error Too many output arguments.|exact
+CHK|h_message_anonymous_calls_local|Error using errorhandler_records>failing (line 50) bad 5|exact
+CHK|h_message_builtin_failure|MATLAB:innerdim#1|exact|pending V6|#0
+CHK|h_message_no_identifier|[]#Error using errorhandler_records>plain_failing (line 55) no identifier here 3|exact
+CHK|h_index_nonuniform|probe:bad#1,probe:bad#2|exact
+CHK|h_index_arrayfun_matrix|[10 -3;30 -4]|exact
+CHK|h_handler_gets_the_inputs|[700 800]|exact
+CHK|h_handler_two_inputs|[11 22]|exact
+CHK|h_handler_two_outputs|[1 200] [-1 2]|exact
+CHK|h_handler_branches_on_identifier|[10 -2 30 -4]|exact
+CHK|h_handler_that_errors|probe:handler handler failed|exact
+CHK|h_handler_rethrows_record|probe:bad 1|exact
+CHK|h_only_failures_reach_the_handler|[10 0 30 0]|exact
+CHK|h_record_is_a_struct|struct|exact
+CHK|z_mat2str_negative_zero|0|exact
+CHK|z_mat2str_negative_zero_array|[0 0 1;0 2 -3]|exact
+CHK|z_mat2str_negative_zero_complex|[0+1i 2]|exact
+CHK|z_mat2str_negative_zero_precision|[0 -0.5]|exact
+CHK|z_mat2str_small_negative|[-9.99988867182683e-321 -0.0001]|exact

@@ -101,6 +101,7 @@ internal static partial class JgsBuiltins
             JgsValue[] answers;
             try
             {
+                RefuseOutputOfError(args[0].AsCallable, line, col);
                 answers = CallForOutputs(args[0].AsCallable, call, produced, line, col);
             }
             catch (JgsRuntimeException failure) when (handler is { } catcher)
