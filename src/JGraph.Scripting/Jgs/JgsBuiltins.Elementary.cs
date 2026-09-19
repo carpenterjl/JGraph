@@ -330,6 +330,11 @@ internal static partial class JgsBuiltins
         Define("logical", (args, line, col) =>
         {
             Arity("logical", args, 1, line, col);
+            if (args[0].Type == JgsType.Array && args[0].ArrayLength == 0 && !args[0].IsStringArray)
+            {
+                return EmptyLogical(args[0].Rows, args[0].Cols); // an empty's kind is all that can say logical (V6)
+            }
+
             return MapToBool("logical", args[0], static x => x != 0, line, col);
         });
 

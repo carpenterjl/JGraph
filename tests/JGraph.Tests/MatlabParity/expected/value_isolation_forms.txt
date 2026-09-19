@@ -2,8 +2,8 @@ CHK|a025_table_alias_brace|1 9|exact
 CHK|a026_sparse_alias|1 7|exact
 CHK|a038_table_rownames_dot_write|1 1|exact
 CHK|a039_timetable_rowtimes_dot_write|1 9|exact
-CHK|a052_nd_growth_string|1 1 [1 2 2]|exact|pending V6|0 1 [1 2 2]
-CHK|a053_nd_growth_char|1 1 [1 2 2]|exact|pending V6|ERR Cannot assign by index into a string; only arrays support element assignment.
+CHK|a052_nd_growth_string|1 1 [1 2 2]|exact
+CHK|a053_nd_growth_char|1 1 [1 2 2]|exact
 CHK|a054_cellfun_errorhandler_identifier_fn|1|exact|pending V6|0
 CHK|a054_arrayfun_errorhandler_identifier_fn|1|exact|pending V6|0
 CHK|a054_cellfun_errorhandler_record_nonuniform|probe:bad#1#Error using value_isolation_forms>failing (line 163) bad 1,probe:bad#2#Error using value_isolation_forms>failing (line 163) bad 2|exact|pending V6|#1#bad 1,#2#bad 2
@@ -55,8 +55,8 @@ CHK|g_dt_alias_elem_write|0 1|exact
 CHK|g_dt_format_alias|dd-MMM-uuuu/yyyy|exact
 CHK|a127_dt_year_property_alias|2020 2021|exact|pending V6|ERR '.Year' cannot be set on a datetime; Format can be, and on a datetime so can TimeZone.
 CHK|a126_dt_indexed_component_write|2 15 1|exact|pending V6|2 2 1
-CHK|a123_dt_growth_fill|5 1|exact|pending V6|5 0
-CHK|a123_dt_growth_fill_value|NaT/1|exact|pending V6|30-Dec-1899/0
+CHK|a123_dt_growth_fill|5 1|exact
+CHK|a123_dt_growth_fill_value|NaT/1|exact
 CHK|g_dur_alias_write|[1 2 3] [5 120 180]|exact
 CHK|g_dur_format_alias|h/m|exact
 CHK|g_dt_timezone_alias|UTC/America/New_York/12/7|exact

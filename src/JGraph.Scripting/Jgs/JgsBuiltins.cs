@@ -5910,7 +5910,9 @@ internal static partial class JgsBuiltins
         // A string array reads its own shape and never the shape of what it holds (M63). Without
         // this, size("abc") answered 1-by-3 — the nested-array reading, which took the one string
         // inside for a row of three things — while numel and length both said 1.
-        _ when value.IsStringArray => [value.Rows, value.Cols],
+        // Its own shape has every dimension it was given: a string array grown into a third one
+        // is 1-by-2-by-2, not the 1-by-4 its folded columns read as (V6, #52).
+        _ when value.IsStringArray => value.IsNd ? value.Dims : [value.Rows, value.Cols],
         JgsType.Array => JgsMatrix.DimsOf(value),
         // A char row with no characters in it is 0-by-0, which is what '' means in MATLAB and what
         // makes size('') answer [0 0] (M96b). MATLAB does keep a 1-by-0 char — blanks(0) is one —

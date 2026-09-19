@@ -262,6 +262,13 @@ internal static partial class JgsBuiltins
                     throw new JgsRuntimeException(line, col, $"{name}: a size cannot be negative.");
                 }
 
+                // With no element to say so, only an empty's kind can say it is logical (V6): a
+                // mask grown from true(1, 0) by x(end + 1) = v stays a mask, as in R2025b.
+                if (rows == 0 || cols == 0)
+                {
+                    return EmptyLogical(rows, cols);
+                }
+
                 JgsValue element = JgsValue.Bool(value);
                 return JgsMatrix.BuildValues(rows, cols, (_, _) => element);
             });

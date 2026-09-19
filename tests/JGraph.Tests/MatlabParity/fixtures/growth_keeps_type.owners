@@ -1,0 +1,3 @@
+# The stage of the value-ownership plan that completes each line JGraph fails (appendix A's stage column).
+k_cell	V6	# a cell grown by three subscripts, and read by two or three; V6's container-path writes
+k_struct	V6	# a struct array grown by two subscripts (b(2, 3).a = 5); V6's container-path writes rework ResolveStructForWrite

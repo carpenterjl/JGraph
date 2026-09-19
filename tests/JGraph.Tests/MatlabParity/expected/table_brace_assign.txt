@@ -20,7 +20,7 @@ CHK|b_text_var_char_rhs|ERR Conversion to cell from char is not possible.|exact
 CHK|b_text_growth_fill|4 double [0 0] 0|exact
 CHK|b_matrix_var_row|[1 2;3 4] / [1 2;30 40]|exact
 CHK|b_convert_into_int8|int8 [4 2]|exact
-CHK|b_convert_into_logical|logical [true true]|exact|pending V6|double [1 5]
+CHK|b_convert_into_logical|logical [true true]|exact
 CHK|b_convert_logical_into_double|double [1 2]|exact
 CHK|b_rhs_is_own_column|[1 2] [3 4] / [3 4] [3 4]|exact
 CHK|b_rhs_self_overlap_rows|[3 1 2] [4 5 6]|exact

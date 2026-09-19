@@ -38,8 +38,7 @@ internal sealed class JgsValueColumn : TableColumn
         _ => false,
     };
 
-    private static bool IsLogical(JgsValue array) =>
-        !array.IsPacked && array.ArrayLength > 0 && array.ElementAt(0).Type == JgsType.Bool;
+    private static bool IsLogical(JgsValue array) => JgsBuiltins.IsLogicalValue(array); // packed or boxed
 
     /// <summary>How many table rows a value fills: its first dimension, and one for a scalar.</summary>
     public static int RowsOf(JgsValue value) => value.Type switch

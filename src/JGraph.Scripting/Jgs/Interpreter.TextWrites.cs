@@ -107,7 +107,46 @@ internal sealed partial class Interpreter
             throw new JgsRuntimeException(at.Line, at.Column, $"Conversion to {kind} from cell is not possible.");
         }
 
+        // V6 (#157): a number written into a logical array is converted into it - nonzero is
+        // true - and the array stays logical (measured; it became a double array of 0, 1 and
+        // the number). NaN has no logical value, in R2025b's words.
+        if (JgsBuiltins.IsLogicalValue(target) && !JgsBuiltins.IsLogicalValue(rhs)
+            && rhs.Type is JgsType.Number or JgsType.Array && !rhs.IsStringArray && !rhs.IsTime)
+        {
+            return AsLogical(rhs, at);
+        }
+
         return rhs;
+    }
+
+    /// <summary>A number or numeric array as the logical it converts to: nonzero is true.</summary>
+    private static JgsValue AsLogical(JgsValue value, Node at)
+    {
+        static JgsValue One(JgsValue element, Node at) => element.Type switch
+        {
+            JgsType.Bool => element,
+            JgsType.Number when double.IsNaN(element.AsNumber) =>
+                throw new JgsRuntimeException(at.Line, at.Column, "NaN's cannot be converted to logicals."),
+            JgsType.Number => JgsValue.Bool(element.AsNumber != 0),
+            JgsType.Complex => throw new JgsRuntimeException(at.Line, at.Column,
+                "Complex values cannot be converted to logicals."),
+            _ => element,
+        };
+
+        if (value.Type != JgsType.Array)
+        {
+            return One(value, at);
+        }
+
+        var flags = new JgsValue[value.ArrayLength];
+        for (int i = 0; i < flags.Length; i++)
+        {
+            flags[i] = One(value.ElementAt(i), at);
+        }
+
+        JgsValue converted = JgsValue.Array(flags);
+        converted.ReshapeDims(value.Dims);
+        return converted;
     }
 
     /// <summary>
@@ -217,15 +256,14 @@ internal sealed partial class Interpreter
             int[] rowPicks = WritePicks(rowIndex, 1, at);
             if (rowPicks.Length != 1 || rowPicks[0] != 0)
             {
-                throw new JgsRuntimeException(at.Line, at.Column,
-                    "Assigning outside the one row of a char row would make a char matrix; build it with char() or [;] instead.");
+                return AssignIntoCharRowAsMatrix(target, text, subscripts, rhs, at, env);
             }
 
             subscript = subscripts[1];
         }
         else if (subscripts.Count != 1)
         {
-            throw new JgsRuntimeException(at.Line, at.Column, "A char row takes one subscript, or a row and a column.");
+            return AssignIntoCharRowAsMatrix(target, text, subscripts, rhs, at, env);
         }
 
         JgsValue? index = EvaluateIndexArgument(subscript, text.Length, env);
@@ -276,6 +314,27 @@ internal sealed partial class Interpreter
 
         JgsValue rebuilt = JgsValue.Str(new string(chars));
         StoreBack(target, rebuilt, at, env);
+        return rhs;
+    }
+
+    /// <summary>
+    /// A write that takes a char row out of its one row (V6, #53): <c>x = 'ab'; x(2, 1) = 'c'</c>
+    /// and <c>x(1, 2, 2) = 'c'</c>. The row is read as the 1-by-n char matrix it is, written by the
+    /// ordinary array roads — which grow it, pad it with <c>char(0)</c> and keep it char — and what
+    /// comes back is stored through the target's entry; a result that is still one row is a char
+    /// row again, since that is the one representation a char row has here.
+    /// </summary>
+    private JgsValue AssignIntoCharRowAsMatrix(
+        Expr target, string text, IReadOnlyList<Expr> subscripts, JgsValue rhs, Node at, JgsEnvironment env)
+    {
+        JgsValue current = JgsValue.CharMatrix([text]);
+        var scratch = new JgsEnvironment(env);
+        scratch.Declare(LevelSlot, current);
+        var slot = new VariableExpr(LevelSlot) { Line = at.Line, Column = at.Column };
+        IndexWrite(slot, subscripts, TokenType.Assign, rhs, at, scratch);
+
+        scratch.TryGet(LevelSlot, out JgsValue written);
+        StoreBack(target, JgsBuiltins.WrapCharMatrix(written), at, env);
         return rhs;
     }
 

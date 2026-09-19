@@ -2635,6 +2635,31 @@ internal sealed partial class Interpreter
             return JgsValue.Str(text.ToString());
         }
 
+        // A number joining char rows is the character it codes for (V6): ['ab' 67] is 'abC',
+        // and the class of the join is char (measured). It was a two-element list of a text
+        // and a number, whose class answered double.
+        if (Dialect.ConcatenatesBrackets && joinable.Length > 1
+            && Array.Exists(joinable, static e => e.Type == JgsType.String)
+            && Array.TrueForAll(joinable, static e => e.Type == JgsType.String || IsPlainNumberRow(e)))
+        {
+            var text = new StringBuilder();
+            foreach (JgsValue piece in joinable)
+            {
+                if (piece.Type == JgsType.String)
+                {
+                    text.Append(piece.AsString);
+                    continue;
+                }
+
+                for (int i = 0; i < (piece.Type == JgsType.Array ? piece.ArrayLength : 1); i++)
+                {
+                    text.Append((char)(int)(piece.Type == JgsType.Array ? piece.ElementAt(i) : piece).AsNumber);
+                }
+            }
+
+            return JgsValue.Str(text.ToString());
+        }
+
         // A single row holding a char matrix joins side by side (M105): [A, A] is 2-by-6 char where A
         // is 2-by-3. The all-char-row join above has already taken the commoner case.
         if (Dialect.ConcatenatesBrackets && joinable.Length > 0 && StacksCharRows([joinable]))
@@ -2678,6 +2703,35 @@ internal sealed partial class Interpreter
     /// <c>"bc"</c> and <c>"3"</c>, which is MATLAB's rule and the reason this cannot reuse the
     /// numeric concatenation machinery below.
     /// </summary>
+    /// <summary>A real number, or a one-row array of them, with no time on it — what joins a char row as characters.</summary>
+    private static bool IsPlainNumberRow(JgsValue value)
+    {
+        if (value.IsTime)
+        {
+            return false;
+        }
+
+        if (value.Type == JgsType.Number)
+        {
+            return true;
+        }
+
+        if (value.Type != JgsType.Array || value.IsStringArray || value.IsCharMatrix || value.Rows != 1 || value.IsNd)
+        {
+            return false;
+        }
+
+        for (int i = 0; i < value.ArrayLength; i++)
+        {
+            if (value.ElementAt(i).Type != JgsType.Number)
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
     /// <summary>Whether any row of a bracket literal holds a string array.</summary>
     private static bool AnyStringArray(List<JgsValue[]> rows)
     {
@@ -3567,6 +3621,14 @@ internal sealed partial class Interpreter
             return ElementwiseLogical(op, left, right, at);
         }
 
+        // A char row compared for equality is Equality's to answer in both storages (V6): against
+        // numbers it compares its codes, which the packed kernel below does not know to do.
+        if (op is TokenType.EqualEqual or TokenType.BangEqual
+            && (left.Type == JgsType.String || right.Type == JgsType.String))
+        {
+            return Equality(left, right, negate: op == TokenType.BangEqual, at);
+        }
+
         // Packed fast paths: SIMD kernels over flat buffers when an operand is packed and the
         // shapes fit; anything else falls through to the boxed code below unchanged. Ordering
         // comparisons check complex operands first so the boxed error still fires.
@@ -3884,6 +3946,14 @@ internal sealed partial class Interpreter
     /// </remarks>
     internal static JgsValue CarryValueTags(JgsValue source, JgsValue copy)
     {
+        // A logical array emptied is an empty logical (V6): with no element left to say so, only
+        // the empty's kind can, and a fresh empty has the default one.
+        if (copy.Type == JgsType.Array && copy.ArrayLength == 0 && source.Type == JgsType.Array
+            && !source.IsStringArray && JgsBuiltins.IsLogicalValue(source))
+        {
+            return JgsBuiltins.EmptyLogical(copy.Rows, copy.Cols);
+        }
+
         copy.SetNumericClass(source.NumericClass);
 
         if (source.IsStringArray)
@@ -3910,6 +3980,32 @@ internal sealed partial class Interpreter
         // with a single row (A(:, 2)' is 1-by-2), and without the collapse it came back as an array no
         // text builtin would take.
         return source.IsCharMatrix ? JgsBuiltins.WrapCharMatrix(copy) : copy;
+    }
+
+    /// <summary>
+    /// <see cref="CarryValueTags"/> for an array about to be given three or more dimensions: the
+    /// same four tags, without the collapse of a one-row char matrix into a char row — the flat
+    /// list the N-D road builds has one row only until it is reshaped.
+    /// </summary>
+    private static JgsValue CarryNdTags(JgsValue source, JgsValue copy)
+    {
+        copy.SetNumericClass(source.NumericClass);
+        if (source.IsStringArray)
+        {
+            copy.MarkStringArray();
+        }
+
+        if (source.IsCharMatrix)
+        {
+            copy.MarkCharMatrix();
+        }
+
+        if (source.TimeTag is JgsTimeTag time)
+        {
+            copy.MarkTime(time);
+        }
+
+        return copy;
     }
 
     /// <summary>
@@ -4204,6 +4300,17 @@ internal sealed partial class Interpreter
             return AssignIntoCellParen(target, callee, subscripts, op, rhs, at, env, ref holds);
         }
 
+        // V6 (#162): a scalar is the one-by-one array it reads as, so q = 1; q(3) = 5 grows it.
+        if (callee.Type is JgsType.Number or JgsType.Bool or JgsType.Complex)
+        {
+            if (target is not VariableExpr)
+            {
+                return AssignIntoScalarEntry(target, callee, subscripts, op, rhs, at, env);
+            }
+
+            callee = Stored(target, OneElementArray(callee), at, env);
+        }
+
         if (callee.Type == JgsType.Sparse)
         {
             return AssignIntoSparse(target, callee, subscripts, op, rhs, at, env);
@@ -4385,7 +4492,8 @@ internal sealed partial class Interpreter
         // grow in place with amortized capacity — the difference between seconds and hours for a
         // loop that grows one row and column per step. JGS shares wrappers between names, where
         // the rebuild-and-rebind below is the observable behavior scripts rely on.
-        if (Dialect.CopyOnAssign && current.TryGrowInPlace(newRows, newCols))
+        // A datetime grows with NaT, which the in-place road's zero fill is not (V6, #123).
+        if (Dialect.CopyOnAssign && !current.IsDatetime && current.TryGrowInPlace(newRows, newCols))
         {
             return target is VariableExpr ? current : Stored(target, current, at, env);
         }
@@ -4466,7 +4574,7 @@ internal sealed partial class Interpreter
         // Cols == 1 && Rows != 1 rather than Rows > 1: an empty column, zeros(0, 1), is a column
         // and grows downwards, where a 1-by-1 is not one and grows across (M96b).
         bool growsAsColumn = current.Cols == 1 && current.Rows != 1;
-        if (Dialect.CopyOnAssign
+        if (Dialect.CopyOnAssign && !current.IsDatetime // NaT, not the in-place road's zero (V6, #123)
             && current.TryGrowInPlace(growsAsColumn ? needed : 1, growsAsColumn ? 1 : needed))
         {
             return target is VariableExpr ? current : Stored(target, current, at, env);
@@ -4488,8 +4596,15 @@ internal sealed partial class Interpreter
     /// What a slot an array grows into holds: zero, or the missing string for a string array
     /// (measured: x = ["a" "b"]; x(4) = "d" is ["a" "b" missing "d"]).
     /// </summary>
-    private static JgsValue GrowthFill(JgsValue current) => current.IsStringArray
-        ? JgsValue.Str(JgsBuiltins.MissingSentinel)
+    /// <remarks>
+    /// V6 (ADR 0167): the fill is the target's own kind's — <c>false</c> in a logical array and
+    /// <c>NaT</c> in a datetime one (it was serial day 0, 30-Dec-1899; #123), where a duration, a
+    /// char and every numeric class fill with zero (measured).
+    /// </remarks>
+    private static JgsValue GrowthFill(JgsValue current) =>
+        current.IsStringArray ? JgsValue.Str(JgsBuiltins.MissingSentinel)
+        : current.IsDatetime ? JgsValue.Number(JgsTime.NotATime)
+        : JgsBuiltins.IsLogicalValue(current) ? JgsValue.Bool(false)
         : JgsValue.Number(0);
 
     /// <summary>
@@ -4501,8 +4616,20 @@ internal sealed partial class Interpreter
         && (!Dialect.IsMatlab || (rhs.Rows == 0 && rhs.Cols == 0));
 
     /// <summary>A grown string array is still a string array; the tag lives on the wrapper a rebuild replaces.</summary>
-    private static JgsValue KeepTextKind(JgsValue source, JgsValue rebuilt) =>
-        source.IsStringArray ? rebuilt.MarkStringArray() : rebuilt;
+    private static JgsValue KeepTextKind(JgsValue source, JgsValue rebuilt)
+    {
+        if (source.TimeTag is { } time)
+        {
+            rebuilt.MarkTime(time); // and a grown datetime or duration is still one (V6)
+        }
+
+        if (source.IsCharMatrix)
+        {
+            rebuilt.MarkCharMatrix(); // the boxed road's rebuild; the packed one grows in place
+        }
+
+        return source.IsStringArray ? rebuilt.MarkStringArray() : rebuilt;
+    }
 
     /// <summary>
     /// <c>x(:) = []</c>: removes every element there is and rebinds (M96b). What is left is the
@@ -4656,6 +4783,17 @@ internal sealed partial class Interpreter
         if (callee.Type == JgsType.Cell && subscripts.Count is 1 or 2)
         {
             return AssignIntoCellParen(target, callee, subscripts, op, rhs, at, env, ref holds);
+        }
+
+        // V6 (#162): a scalar is the one-by-one array it reads as, so q = 1; q(3) = 5 grows it.
+        if (callee.Type is JgsType.Number or JgsType.Bool or JgsType.Complex)
+        {
+            if (target is not VariableExpr)
+            {
+                return AssignIntoScalarEntry(target, callee, subscripts, op, rhs, at, env);
+            }
+
+            callee = Stored(target, OneElementArray(callee), at, env);
         }
 
         if (callee.Type == JgsType.Sparse)
@@ -5305,8 +5443,11 @@ internal sealed partial class Interpreter
     /// The one-by-one array a scalar is, kept in whatever numeric class the scalar was in so that
     /// <c>class(x(1))</c> answers what <c>class(x)</c> does.
     /// </summary>
-    private static JgsValue OneElementArray(JgsValue scalar) =>
-        JgsNumericClasses.Stamp(JgsValue.Array([scalar]), scalar.NumericClass);
+    private static JgsValue OneElementArray(JgsValue scalar)
+    {
+        JgsValue array = JgsNumericClasses.Stamp(JgsValue.Array([scalar]), scalar.NumericClass);
+        return scalar.TimeTag is { } time ? array.MarkTime(time) : array; // a lone datetime grows as one (V6)
+    }
 
     /// <summary>
     /// Whether a value is a lone sample that a subscript reads out of as though it were the
@@ -5600,8 +5741,13 @@ internal sealed partial class Interpreter
         ref ScopeHolds holds)
     {
         JgsValue callee = EvaluateForWrite(target, env);
-        if (callee.Type is JgsType.Number or JgsType.Bool)
+        if (callee.Type is JgsType.Number or JgsType.Bool or JgsType.Complex)
         {
+            if (target is not VariableExpr)
+            {
+                return AssignIntoScalarEntry(target, callee, subscripts, op, rhs, at, env);
+            }
+
             callee = Stored(target, OneElementArray(callee), at, env);
         }
 
@@ -5616,16 +5762,21 @@ internal sealed partial class Interpreter
             rhs = JgsBuiltins.SparseAsDense(rhs.AsSparse);
         }
 
+        // x = 'ab'; x(1, 2, 2) = 'c' takes the char row into a third dimension (V6, #53).
+        if (Dialect.IsMatlab && callee.Type == JgsType.String && op == TokenType.Assign)
+        {
+            return AssignIntoCharRowAsMatrix(target, callee.AsString, subscripts, rhs, at, env);
+        }
+
         if (callee.Type != JgsType.Array)
         {
             throw new JgsRuntimeException(at.Line, at.Column,
                 $"Cannot assign by index into a {callee.TypeName}; only arrays support element assignment.");
         }
 
-        if (op == TokenType.Assign && rhs.Type == JgsType.Array && rhs.ArrayLength == 0)
+        if (op == TokenType.Assign && IsDeletion(rhs))
         {
-            throw new JgsRuntimeException(at.Line, at.Column,
-                "Deleting with three or more subscripts is not supported; delete whole rows or columns instead.");
+            return DeleteNdSlices(target, callee, subscripts, at, env);
         }
 
         if (op == TokenType.Assign)
@@ -5685,7 +5836,9 @@ internal sealed partial class Interpreter
                 }
                 elements[slot] = callee.ElementAt(n);
             }
-            callee = KeepNumericClass(callee, JgsMatrix.FromElements(elements, 1, elements.Length));
+            // V6 (#52): every tag the target wears goes on to the grown array, not its numeric
+            // class alone - a string array grown into a third dimension is still one.
+            callee = CarryNdTags(callee, JgsMatrix.FromElements(elements, 1, elements.Length));
             callee.ReshapeDims(grownExtents);
             callee = Stored(target, callee, at, env);
         }
@@ -5717,6 +5870,79 @@ internal sealed partial class Interpreter
         }
 
         return rhs;
+    }
+
+    /// <summary>
+    /// <c>A(:, :, k) = []</c> (V6): removes whole slices along the one dimension whose subscript is
+    /// not a colon, and keeps every tag the array wears — a uint8 volume with a page deleted is a
+    /// uint8 volume, a string array a string array.
+    /// </summary>
+    private JgsValue DeleteNdSlices(
+        Expr target, JgsValue current, IReadOnlyList<Expr> subscripts, Node at, JgsEnvironment env)
+    {
+        int count = subscripts.Count;
+        int[] extents = SubscriptExtents(JgsMatrix.DimsOf(current), count);
+        int along = -1;
+        int[] drop = [];
+        for (int i = 0; i < count; i++)
+        {
+            JgsValue? index = EvaluateIndexArgument(subscripts[i], extents, i, env);
+            if (index is null)
+            {
+                continue;
+            }
+
+            RefuseNonPositive(index, i + 1, at);
+            if (along >= 0)
+            {
+                throw new JgsRuntimeException(at.Line, at.Column, "A null assignment can have only one non-colon index.");
+            }
+
+            along = i;
+            drop = ComputePicks(AsIndexArray(index), extents[i], "dimension", at.Line, at.Column);
+        }
+
+        if (along < 0)
+        {
+            return DeleteEverything(target, current, at, env);
+        }
+
+        int[] kept = Remaining(extents[along], new HashSet<int>(drop));
+        int[] shrunk = (int[])extents.Clone();
+        shrunk[along] = kept.Length;
+        int total = 1;
+        foreach (int extent in shrunk)
+        {
+            total = checked(total * extent);
+        }
+
+        var elements = new JgsValue[total];
+        var position = new int[count];
+        for (int n = 0; n < total; n++)
+        {
+            int slot = 0, stride = 1;
+            for (int d = 0; d < count; d++)
+            {
+                slot += (d == along ? kept[position[d]] : position[d]) * stride;
+                stride *= extents[d];
+            }
+
+            elements[n] = current.ElementAt(slot);
+            for (int d = 0; d < count; d++)
+            {
+                if (++position[d] < shrunk[d])
+                {
+                    break;
+                }
+
+                position[d] = 0;
+            }
+        }
+
+        JgsValue rebuilt = CarryNdTags(current, JgsMatrix.FromElements(elements, 1, elements.Length));
+        rebuilt.ReshapeDims(shrunk);
+        StoreBack(target, rebuilt, at, env);
+        return rebuilt;
     }
 
     /// <summary>
@@ -7866,6 +8092,55 @@ internal sealed partial class Interpreter
     /// array — so <c>ids == "ABC"</c> yields a mask — and a single bool otherwise. Mismatched element
     /// types compare unequal rather than throwing. Use <c>isequal</c> for whole-value equality.
     /// </summary>
+    /// <summary>A real number, a logical, or an array that is neither text nor time.</summary>
+    private static bool IsNumbers(JgsValue value)
+    {
+        if (value.Type is JgsType.Number or JgsType.Bool)
+        {
+            return true;
+        }
+
+        if (value.Type != JgsType.Array || value.IsStringArray || value.IsCharMatrix || value.ArrayLength == 0)
+        {
+            return false;
+        }
+
+        if (value.IsPacked)
+        {
+            return true;
+        }
+
+        // A JGS list of texts is an array too, and compares text with text as it always did.
+        foreach (JgsValue element in value.BoxedElements())
+        {
+            if (element.Type is not (JgsType.Number or JgsType.Bool))
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /// <summary>Whether a char row and numbers have one element on a side, or as many on both.</summary>
+    private static bool PairsUp(JgsValue left, JgsValue right)
+    {
+        static int CountOf(JgsValue value) => value.Type switch
+        {
+            JgsType.String => value.AsString.Length,
+            JgsType.Array => value.ArrayLength,
+            _ => 1,
+        };
+
+        int a = CountOf(left), b = CountOf(right);
+        return a == 1 || b == 1 || a == b;
+    }
+
+    /// <summary>A char row as the numbers it codes for: one number for one character, a row of them otherwise.</summary>
+    private static JgsValue CodesOf(string text) => text.Length == 1
+        ? JgsValue.Number(text[0])
+        : JgsValue.Array(System.Array.ConvertAll(text.ToCharArray(), static ch => JgsValue.Number(ch)));
+
     private static JgsValue Equality(JgsValue left, JgsValue right, bool negate, Node at)
     {
         // A string array compares its texts, and a missing string is equal to nothing, itself
@@ -7873,6 +8148,20 @@ internal sealed partial class Interpreter
         if (left.IsStringArray || right.IsStringArray)
         {
             return StringEquality(left, right, negate, at);
+        }
+
+        // A char row against numbers compares its character codes, one by one (V6): 'ab' == 97
+        // is [true false], which is also what [1, 'x'] == 1 answers now that the bracket is the
+        // char row R2025b makes of it. Text against text keeps the whole-text comparison.
+        // Only where the sizes let them pair up; otherwise text stays unrelated to numbers, which
+        // is false and never an error — the rule both storages and both dialects already share.
+        if (((left.Type == JgsType.String && IsNumbers(right)) || (right.Type == JgsType.String && IsNumbers(left)))
+            && PairsUp(left, right))
+        {
+            return Equality(
+                left.Type == JgsType.String ? CodesOf(left.AsString) : left,
+                right.Type == JgsType.String ? CodesOf(right.AsString) : right,
+                negate, at);
         }
 
         if (left.Type != JgsType.Array && right.Type != JgsType.Array)

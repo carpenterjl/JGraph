@@ -166,7 +166,7 @@ internal static partial class JgsBuiltins
     /// An empty array that class reports as logical, in the shape asked for — in either storage,
     /// since the boxed one answered a double empty until the boxed lanes were run.
     /// </summary>
-    private static JgsValue EmptyLogical(int rows, int cols) => JgsPacking.Enabled
+    internal static JgsValue EmptyLogical(int rows, int cols) => JgsPacking.Enabled
         ? JgsValue.Shaped(JgsPacking.Allocate(0), rows, cols, JgsPackedKind.Bool)
         : JgsValue.Shaped([], rows, cols, JgsPackedKind.Bool);
 

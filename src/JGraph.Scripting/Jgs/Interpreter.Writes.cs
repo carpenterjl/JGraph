@@ -567,6 +567,27 @@ internal sealed partial class Interpreter
         return target is VariableExpr ? grown : EvaluateForWrite(target, env);
     }
 
+    /// <summary>
+    /// An index write into a scalar an entry holds - <c>s(2).f(3) = 9</c> where <c>f</c> is a
+    /// number (V6, #162). The scalar is the one-by-one array it reads as: it is written in a
+    /// scratch slot by the ordinary roads and stored back through the entry once. Writing in place
+    /// after a store-back would depend on reading the very wrapper back, and a one-element array
+    /// read out of a struct array's element is a selection, not the entry.
+    /// </summary>
+    private JgsValue AssignIntoScalarEntry(
+        Expr target, JgsValue scalar, IReadOnlyList<Expr> subscripts, TokenType op, JgsValue rhs, Node at,
+        JgsEnvironment env)
+    {
+        var scratch = new JgsEnvironment(env);
+        scratch.Declare(LevelSlot, OneElementArray(scalar));
+        var slot = new VariableExpr(LevelSlot) { Line = at.Line, Column = at.Column };
+        JgsValue result = IndexWrite(slot, subscripts, op, rhs, at, scratch);
+
+        scratch.TryGet(LevelSlot, out JgsValue written);
+        StoreBack(target, written, at, env);
+        return result;
+    }
+
     // ---- M10: a right-hand side or subscript that is the target's own storage ---------------------
 
     /// <summary>

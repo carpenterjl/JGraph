@@ -1,2 +1,0 @@
-CHK|a123_dt_growth_fill|5 1|exact|pending V6|ERR isnat expects a datetime.
-CHK|a123_dt_growth_fill_value|NaT/1|exact|pending V6|ERR isnat expects a datetime.
