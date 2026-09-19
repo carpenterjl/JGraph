@@ -1,0 +1,49 @@
+CHK|p_recursive_elem_write|[3 30 0]|exact
+CHK|p_recursive_rebind|[3 30 0]|exact
+CHK|p_recursive_grow|[1 1 0 2 0 1 0 0]|exact
+CHK|p_recursive_end_append|[2 1 0 -1 -2 -3]|exact
+CHK|p_recursive_delete|[4 5 6]|exact
+CHK|p_recursive_cell_slot|2 a 0 1|exact
+CHK|p_recursive_struct_field|3 012|exact
+CHK|p_recursive_nested_struct_elem|[2 0 10]|exact
+CHK|p_recursive_three_deep|[5 21]|exact
+CHK|p_recursive_two_names|[2 104]|exact
+CHK|p_recursive_multi_assign|[22 44]|exact
+CHK|p_recursive_eval_write|22|exact
+CHK|p_recursive_value_object_prop|22|exact
+CHK|p_recursive_inner_reads_outer_write|4|exact
+CHK|p_reentry_through_cellfun|22|exact
+CHK|p_reentry_through_handle|22|exact
+CHK|p_reentry_through_arrayfun_elem|[3 30]|exact
+CHK|p_mutual_recursion|22 1002|exact
+CHK|p_error_after_update_keeps_it|2|exact
+CHK|p_error_in_recursion_keeps_both|[3 0]|exact
+CHK|p_error_mid_elem_write_keeps_earlier|[1 0 0]|exact
+CHK|p_two_functions_one_name|3 102|exact
+CHK|p_global_of_the_same_name|3 502|exact
+CHK|p_nested_sees_parent_slot|4|exact
+CHK|p_nested_writes_parent_slot_recursive|[2 20]|exact
+CHK|p_nested_own_persistent|3|exact
+CHK|g_alias_isolated_from_later_write|[11 2 3;21 2 3]|exact
+CHK|g_returned_copy_isolated|[1 99;3 0]|exact
+CHK|p_returned_copy_isolated_recursive|[1 0;2 0;2 0]|exact
+CHK|g_argument_pass_leaves_slot|[1 2 3;-1 2 3]|exact
+CHK|g_anonymous_capture_is_a_snapshot|[1 3]|exact
+CHK|g_handle_object_is_shared|7|exact
+CHK|g_loop_accumulates_across_calls|10100|exact
+CHK|g_loop_elem_writes_across_calls|[2 4 6 4]|exact
+CHK|p_loop_with_recursion|[2 2 2]|exact
+CHK|g_loop_variable_is_persistent|3|exact
+CHK|g_exist_and_who|[1 1 1]|exact
+CHK|p_first_read_is_empty_double|double [0 0]|exact
+CHK|g_declared_in_a_branch|2|exact
+CHK|p_clear_variable_in_owner|0 1|exact|pending V7|1 3
+CHK|p_clear_name_inactive_resets|1|exact
+CHK|g_clear_functions_inactive_resets|1|exact
+CHK|p_clear_functions_local_function|3|exact
+CHK|p_clear_functions_active_recursive|[3 30]|exact
+CHK|p_clear_name_active|1 2|exact
+CHK|p_clear_functions_from_sibling|1 2|exact
+CHK|p_clear_functions_in_callback|2|exact
+CHK|p_clear_functions_active_then_inactive|[1 10]|exact
+CHK|p_clear_functions_spares_active_resets_others|2 1|exact

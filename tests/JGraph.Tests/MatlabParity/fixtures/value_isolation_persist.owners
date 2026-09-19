@@ -1,0 +1,2 @@
+# The stage of the value-ownership plan that completes each line JGraph fails (appendix A's stage column).
+p_clear_variable_in_owner	V7	# a named clear forgets the name in the registration workspace, not the active frame (#64)

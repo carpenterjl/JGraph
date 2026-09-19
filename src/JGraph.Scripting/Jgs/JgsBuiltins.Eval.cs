@@ -494,7 +494,7 @@ internal static partial class JgsBuiltins
         {
             ArityRange("who", args, 0, 1, line, col);
             var names = new List<JgsValue>();
-            foreach ((string name, JgsValue value) in interpreter.CurrentFrame.Locals)
+            foreach ((string name, JgsValue value) in interpreter.CurrentFrame.Variables)
             {
                 // A workspace listing is variables, not the builtins sitting behind them.
                 if (value.Type != JgsType.Function)

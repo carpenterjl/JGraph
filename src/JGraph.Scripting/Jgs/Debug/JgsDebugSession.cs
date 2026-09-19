@@ -691,7 +691,7 @@ public sealed class JgsDebugSession
         // The built-in layer is not a workspace: its constants (pi, i, newline) are not variables.
         for (JgsEnvironment? scope = environment; scope is not null && !scope.IsBuiltinLayer; scope = scope.Parent)
         {
-            foreach ((string name, JgsValue value) in scope.Locals)
+            foreach ((string name, JgsValue value) in scope.Variables)
             {
                 // Innermost scope wins on shadowing; builtins the script never rebound stay hidden.
                 if (!seen.Add(name) || (value.Type == JgsType.Function && value.AsCallable is BuiltinFunction))

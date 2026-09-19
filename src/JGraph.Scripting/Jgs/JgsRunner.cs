@@ -109,7 +109,7 @@ internal static class JgsRunner
             // script itself defined (or rebound). save/load must be declared before the capture, or
             // they would list themselves as the user's variables.
             Dictionary<string, JgsValue> pristine = null!;
-            JgsWorkspaceIo.DefineSaveLoad(environment, globals, () => interpreter.CurrentFrame.Locals
+            JgsWorkspaceIo.DefineSaveLoad(environment, globals, () => interpreter.CurrentFrame.Variables
                 .Where(p => !pristine.TryGetValue(p.Key, out JgsValue? original) || !ReferenceEquals(original, p.Value))
                 .Select(static p => (p.Key, p.Value)), () => interpreter.CurrentFrame);
             DefineWorkspaceBuiltins(environment, interpreter, context.Output, () => pristine);
@@ -346,7 +346,7 @@ internal static class JgsRunner
         IEnumerable<(string Name, JgsValue Value)> UserVariables()
         {
             IReadOnlyDictionary<string, JgsValue> baseline = pristine();
-            foreach ((string name, JgsValue value) in interpreter.CurrentFrame.Locals)
+            foreach ((string name, JgsValue value) in interpreter.CurrentFrame.Variables)
             {
                 if (!baseline.TryGetValue(name, out JgsValue? original) || !ReferenceEquals(original, value)
                     || (value.Type == JgsType.Function && !environment.IsFunctionBinding(name)))
@@ -420,7 +420,7 @@ internal static class JgsRunner
                     {
                         IReadOnlyDictionary<string, JgsValue> originals = ReferenceEquals(scope, environment)
                             ? baseline : new Dictionary<string, JgsValue>();
-                        foreach ((string name, JgsValue value) in scope.Locals.ToList())
+                        foreach ((string name, JgsValue value) in scope.Variables.ToList())
                         {
                             if (scope.IsFunctionBinding(name)
                                 || (value.Type != JgsType.Function && originals.TryGetValue(name, out JgsValue? original)
@@ -448,8 +448,9 @@ internal static class JgsRunner
 
                 // 'clear all' and 'clear functions' forget every file the path loaded, so the next
                 // call re-reads it, and every persistent — MATLAB's meaning (R2025b: a counter's
-                // persistent is 1 again after 'clear all'). A script's own functions live with the
-                // script and stay callable, as they do in MATLAB, where the file is simply read again.
+                // persistent is 1 again after 'clear all') — sparing the functions that are running
+                // (V5, #72). A script's own functions live with the script and stay callable, as
+                // they do in MATLAB, where the file is simply read again.
                 bool everything = names.Contains("all");
                 if (everything || names.Contains("functions"))
                 {
@@ -483,6 +484,10 @@ internal static class JgsRunner
                 {
                     // No buffer disposal here: in JGS another name may still alias the wrapper.
                     environment.Forget(cleared, baseline);
+
+                    // The name of a function file clears the function: its persistents start over
+                    // and the file is read again, unless it is running (V5, #72).
+                    interpreter.FunctionPath?.Unload(cleared);
                 }
 
                 return JgsValue.Null;

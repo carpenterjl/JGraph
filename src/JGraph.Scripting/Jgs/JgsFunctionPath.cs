@@ -24,7 +24,7 @@ internal sealed class JgsFunctionPath
     /// <summary>A loaded file: what it resolved to, when it was last written, and the callable built from it.</summary>
     private sealed record Loaded(string Path, DateTime Written, JgsValue Value);
 
-    private static readonly StringComparer PathComparer = OperatingSystem.IsWindows()
+    internal static readonly StringComparer PathComparer = OperatingSystem.IsWindows()
         ? StringComparer.OrdinalIgnoreCase
         : StringComparer.Ordinal;
 
@@ -143,15 +143,49 @@ internal sealed class JgsFunctionPath
     }
 
     /// <summary>
-    /// Forgets every loaded file, so the next call of each name re-reads it from disk — what
-    /// <c>clear all</c> and <c>clear functions</c> mean for the path. Function storage a file made
-    /// stays behind for any handle still holding one of its functions; the re-read replaces it.
+    /// Forgets every loaded file that is not running, so the next call of each name re-reads it from
+    /// disk — what <c>clear all</c> and <c>clear functions</c> mean for the path. Function storage a
+    /// file made stays behind for any handle still holding one of its functions; the re-read
+    /// replaces it.
     /// </summary>
+    /// <remarks>
+    /// A file with a function on the call stack stays loaded (V5, #72). A re-read makes new
+    /// declarations, and a function's persistents are keyed by its declaration: unloading a running
+    /// file would hand its next call — the recursive one, or the callback that re-enters it — a
+    /// fresh set, which is the reset R2025b does not make.
+    /// </remarks>
     public void Unload()
     {
-        _loaded.Clear();
-        _private.Clear();
+        foreach ((string name, Loaded loaded) in _loaded.ToList())
+        {
+            if (!_interpreter.IsFileActive(loaded.Path))
+            {
+                _loaded.Remove(name);
+            }
+        }
+
+        foreach ((string path, Loaded _) in _private.ToList())
+        {
+            if (!_interpreter.IsFileActive(path))
+            {
+                _private.Remove(path);
+            }
+        }
+
         _index.Invalidate(null);
+    }
+
+    /// <summary>
+    /// <c>clear name</c> for a function file: forgets the loaded file <paramref name="name"/> answers
+    /// to and the persistents of the functions it defines, unless one of them is running. A name no
+    /// loaded file answers to is left alone — a script's own functions live with the script.
+    /// </summary>
+    public void Unload(string name)
+    {
+        if (_loaded.TryGetValue(name, out Loaded? loaded) && _interpreter.ForgetPersistentsOf(loaded.Path))
+        {
+            _loaded.Remove(name);
+        }
     }
 
     /// <summary>The file <paramref name="name"/> would resolve to, or null when no folder holds one.</summary>

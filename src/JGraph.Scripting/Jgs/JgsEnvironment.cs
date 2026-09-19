@@ -18,6 +18,11 @@ internal sealed class JgsEnvironment
     // write would cost every call for the few that do.
     private HashSet<string>? _globalNames;
 
+    // Names a 'persistent' statement in this scope bound to their function's slots (M9): the name
+    // lives in the owner's slot workspace, one binding for every frame of the function, and this
+    // scope only says where. Null until a 'persistent' runs, for the reason above.
+    private Dictionary<string, JgsEnvironment>? _persistentSlots;
+
     // The built-in layer this scope sits under, inherited from the parent; null for a chain built
     // without one (the interpreter's global-variable workspace, and bare scopes in tests).
     private readonly JgsBuiltinLayer? _layer;
@@ -135,6 +140,12 @@ internal sealed class JgsEnvironment
     /// <summary>Declares (or redeclares) <paramref name="name"/> in this scope with <paramref name="value"/>.</summary>
     public void Declare(string name, JgsValue value)
     {
+        if (_persistentSlots is not null && _persistentSlots.TryGetValue(name, out JgsEnvironment? slots))
+        {
+            slots.Declare(name, value);
+            return;
+        }
+
         ThrowIfSealedLayer(name);
         _values[name] = value;
         _functionBindings.Remove(name);
@@ -231,6 +242,11 @@ internal sealed class JgsEnvironment
     {
         for (JgsEnvironment? scope = this; scope is not null; scope = scope._parent)
         {
+            if (scope._persistentSlots is not null && scope._persistentSlots.ContainsKey(name))
+            {
+                return false;
+            }
+
             if (scope._values.ContainsKey(name))
             {
                 return scope._functionBindings.Contains(name);
@@ -281,6 +297,46 @@ internal sealed class JgsEnvironment
     }
 
     /// <summary>
+    /// Records that a <c>persistent</c> statement in this scope binds <paramref name="name"/> to
+    /// <paramref name="slots"/>, its function's slot workspace (M9, ADR 0166). Every read, write,
+    /// rebinding and removal of the name that reaches this scope goes to the slot from then on, so
+    /// the frames of a recursive or re-entered function — and the nested functions that share
+    /// their workspace — hold one binding between them, not a copy each.
+    /// </summary>
+    /// <remarks>
+    /// A <c>global</c> is redirected by the interpreter, which owns the global workspace; this is
+    /// redirected here, because which slots a name means is a fact about the frame that declared it
+    /// and nothing above the scope has to know. A local the frame already held under the name goes:
+    /// the declaration is the binding now.
+    /// </remarks>
+    public void DeclarePersistent(string name, JgsEnvironment slots)
+    {
+        ThrowIfLayer("the scope of a persistent declaration");
+        (_persistentSlots ??= new Dictionary<string, JgsEnvironment>(StringComparer.Ordinal))[name] = slots;
+        _values.Remove(name);
+        _functionBindings.Remove(name);
+    }
+
+    /// <summary>
+    /// This scope's own variables: <see cref="Locals"/>, and the persistent variables it declared
+    /// with the values their slots hold now — what <c>who</c>, <c>save</c> and the debugger list.
+    /// </summary>
+    public IEnumerable<KeyValuePair<string, JgsValue>> Variables
+    {
+        get
+        {
+            if (_persistentSlots is null)
+            {
+                return _values;
+            }
+
+            return _values.Concat(_persistentSlots
+                .Where(static pair => pair.Value._values.ContainsKey(pair.Key))
+                .Select(static pair => KeyValuePair.Create(pair.Key, pair.Value._values[pair.Key])));
+        }
+    }
+
+    /// <summary>
     /// Removes every binding in this scope except those still holding the exact value recorded in
     /// <paramref name="pristine"/> — restoring it to the state <paramref name="pristine"/> was captured
     /// from. This is what <c>clear</c> means at an interactive prompt: user variables go, the built-ins
@@ -321,6 +377,14 @@ internal sealed class JgsEnvironment
     public void Forget(string name, IReadOnlyDictionary<string, JgsValue> pristine)
     {
         ThrowIfLayer("cleared");
+        if (_persistentSlots is not null && _persistentSlots.Remove(name, out JgsEnvironment? slots))
+        {
+            // R2025b: clearing a persistent takes the variable and what it kept; the next call of
+            // the function starts it from [] again.
+            slots._values.Remove(name);
+            return;
+        }
+
         if (pristine.TryGetValue(name, out JgsValue? original))
         {
             _values[name] = original;
@@ -335,8 +399,7 @@ internal sealed class JgsEnvironment
     }
 
     /// <summary>Whether <paramref name="name"/> resolves in this scope or any enclosing scope.</summary>
-    public bool Contains(string name) =>
-        _values.ContainsKey(name) || (_parent?.Contains(name) ?? false);
+    public bool Contains(string name) => TryGet(name, out _);
 
     /// <summary>
     /// Whether <paramref name="name"/> was declared in this scope itself, without looking outward.
@@ -347,13 +410,21 @@ internal sealed class JgsEnvironment
     /// <c>size</c>, <c>mode</c> — looked bound even when the caller left it out, and its default was
     /// skipped in favour of the builtin's function value.
     /// </remarks>
-    public bool DeclaresLocally(string name) => _values.ContainsKey(name);
+    public bool DeclaresLocally(string name) =>
+        _values.ContainsKey(name)
+        || (_persistentSlots is not null && _persistentSlots.TryGetValue(name, out JgsEnvironment? slots)
+            && slots._values.ContainsKey(name));
 
     /// <summary>Looks up <paramref name="name"/>, walking outward. Returns false when it is not defined.</summary>
     public bool TryGet(string name, out JgsValue value)
     {
         for (JgsEnvironment? scope = this; scope is not null; scope = scope._parent)
         {
+            if (scope._persistentSlots is not null && scope._persistentSlots.TryGetValue(name, out JgsEnvironment? slots))
+            {
+                return slots.TryGet(name, out value); // a cleared persistent is unbound, not the caller's
+            }
+
             if (scope._values.TryGetValue(name, out JgsValue? found))
             {
                 value = found;
@@ -374,6 +445,12 @@ internal sealed class JgsEnvironment
     {
         for (JgsEnvironment? candidate = this; candidate is not null; candidate = candidate._parent)
         {
+            if (candidate._persistentSlots is not null
+                && candidate._persistentSlots.TryGetValue(name, out JgsEnvironment? slots))
+            {
+                return slots.TryGetScope(name, out scope, out value);
+            }
+
             if (candidate._values.TryGetValue(name, out JgsValue? found))
             {
                 scope = candidate;
@@ -402,6 +479,12 @@ internal sealed class JgsEnvironment
             if (scope.IsBuiltinLayer)
             {
                 return false; // a built-in is not a variable; see IsBuiltinLayer
+            }
+
+            if (scope._persistentSlots is not null && scope._persistentSlots.TryGetValue(name, out JgsEnvironment? slots))
+            {
+                slots.Declare(name, value); // the slot is the binding, held or cleared
+                return true;
             }
 
             if (scope._values.ContainsKey(name))

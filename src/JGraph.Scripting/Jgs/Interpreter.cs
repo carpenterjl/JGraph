@@ -31,8 +31,24 @@ internal sealed partial class Interpreter
     /// what <c>persistent</c> keys its storage by.</summary>
     private FnStmt? _currentFunction;
 
-    /// <summary>Each function's persistent variables, surviving across calls for the session's life.</summary>
-    private readonly Dictionary<FnStmt, Dictionary<string, JgsValue>> _persistents = [];
+    /// <summary>
+    /// Each function's persistent variables, surviving across calls for the session's life: a slot
+    /// workspace a function, the one binding every frame of it reads and writes (M9, ADR 0166).
+    /// </summary>
+    private readonly Dictionary<FnStmt, JgsEnvironment> _persistents = [];
+
+    /// <summary>
+    /// The functions with a frame on the call stack, innermost last, once for each frame — what a
+    /// <c>clear functions</c> asks before it resets a function's persistents or unloads its file.
+    /// </summary>
+    private readonly List<FnStmt> _activeFunctions = [];
+
+    /// <summary>
+    /// The script files that are running, innermost last. A script's own functions live with the
+    /// script, and R2025b clears none of them while it runs — they are idle on the call stack and
+    /// still in use.
+    /// </summary>
+    private readonly List<string> _runningScripts = [];
 
     /// <summary>
     /// Names of functions JGS code has defined at the global scope. JGS keeps its lexical closures in
@@ -345,11 +361,74 @@ internal sealed partial class Interpreter
     }
 
     /// <summary>
-    /// Drops every function's persistent variables — what <c>clear all</c> and <c>clear functions</c>
-    /// do beside forgetting the loaded files, so the next call of a function starts its persistents
-    /// empty as MATLAB's does.
+    /// Drops the persistent variables of every function that is not running — what <c>clear all</c>
+    /// and <c>clear functions</c> do beside forgetting the loaded files, so the next call of a
+    /// function starts its persistents empty as MATLAB's does.
     /// </summary>
-    internal void ForgetPersistents() => _persistents.Clear();
+    /// <remarks>
+    /// A function whose file has a frame on the call stack keeps its slots (R2025b, #72): the frames
+    /// hold the binding, not a copy of it, so dropping it under them would unbind a variable
+    /// mid-statement, and MATLAB does not clear a function that is executing. Neither does it clear
+    /// the functions of a script that is running.
+    /// </remarks>
+    internal void ForgetPersistents()
+    {
+        foreach (FnStmt owner in _persistents.Keys.ToList())
+        {
+            if (!IsFileActive(owner.SourceId))
+            {
+                _persistents.Remove(owner);
+            }
+        }
+    }
+
+    /// <summary>
+    /// Drops the persistent variables of the functions <paramref name="file"/> defines, unless one of
+    /// them is running — <c>clear name</c> for a function file. Answers whether the file was idle, so
+    /// the caller knows it may be unloaded.
+    /// </summary>
+    internal bool ForgetPersistentsOf(string file)
+    {
+        if (IsFileActive(file))
+        {
+            return false;
+        }
+
+        foreach (FnStmt owner in _persistents.Keys.ToList())
+        {
+            if (JgsFunctionPath.PathComparer.Equals(owner.SourceId, file))
+            {
+                _persistents.Remove(owner);
+            }
+        }
+
+        return true;
+    }
+
+    /// <summary>
+    /// Whether <paramref name="file"/> is in use: a function it defines has a frame on the call
+    /// stack, or it is a script that is running.
+    /// </summary>
+    internal bool IsFileActive(string file)
+    {
+        foreach (string script in _runningScripts)
+        {
+            if (JgsFunctionPath.PathComparer.Equals(script, file))
+            {
+                return true;
+            }
+        }
+
+        foreach (FnStmt active in _activeFunctions)
+        {
+            if (JgsFunctionPath.PathComparer.Equals(active.SourceId, file))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
 
     private void HoistAll(IReadOnlyList<Stmt> program, string sourceId)
     {
@@ -673,7 +752,17 @@ internal sealed partial class Interpreter
         // The top level runs through the same block executor as everything else, so a debug hook sees
         // top-level statements too. (Reaching a hoisted FnStmt is a no-op; see the statement arm.)
         using FileContext entered = EnterFile(file);
-        Completion completion = ExecuteBlock(program, _globals);
+        Completion completion;
+        _runningScripts.Add(file);
+        try
+        {
+            completion = ExecuteBlock(program, _globals);
+        }
+        finally
+        {
+            _runningScripts.RemoveAt(_runningScripts.Count - 1);
+        }
+
         if (completion.Kind is CompletionKind.Break or CompletionKind.Continue)
         {
             throw new JgsRuntimeException(completion.Line, completion.Column,
@@ -702,6 +791,7 @@ internal sealed partial class Interpreter
         // The workspace stays the caller's; only the file changes.
         using FileContext entered = EnterFile(sourceId);
         Completion completion;
+        _runningScripts.Add(sourceId);
         try
         {
             completion = ExecuteBlock(program, scope);
@@ -710,6 +800,10 @@ internal sealed partial class Interpreter
         {
             error.AttributeTo(sourceId);
             throw;
+        }
+        finally
+        {
+            _runningScripts.RemoveAt(_runningScripts.Count - 1);
         }
 
         if (completion.Kind is CompletionKind.Break or CompletionKind.Continue)
@@ -747,6 +841,7 @@ internal sealed partial class Interpreter
         CurrentCall = _pendingCall;
         _pendingCall = null;
         _currentFunction = declaration;
+        _activeFunctions.Add(declaration);
         SetFile(declaration.SourceId);
 
         // Nested functions hoist like top-level ones do in Run(): a handle taken before the nested
@@ -786,7 +881,7 @@ internal sealed partial class Interpreter
         }
         finally
         {
-            SavePersistents(declaration, local);
+            _activeFunctions.RemoveAt(_activeFunctions.Count - 1);
             CurrentFrame = callerFrame;
             CallerFrame = callersCaller;
             CurrentCall = callerCall;
@@ -859,10 +954,17 @@ internal sealed partial class Interpreter
     }
 
     /// <summary>
-    /// Binds a function's <c>persistent</c> names to their kept values (initially <c>[]</c>).
-    /// Storage is keyed by the function declaration, so every call — and every closure instance of a
-    /// nested function — shares the same slots, the way MATLAB persists per function, not per call.
+    /// Binds a function's <c>persistent</c> names to its slots (initially <c>[]</c>). The slots are
+    /// keyed by the function declaration, so every call — and every closure instance of a nested
+    /// function — shares them, the way MATLAB persists per function, not per call.
     /// </summary>
+    /// <remarks>
+    /// The frame holds no value of its own for the name (M9, ADR 0166): it records where the name
+    /// lives and every read and write goes there at once. Until V5 the frame took the slot's value
+    /// at the declaration and wrote its own back when the call ended, so a recursive or re-entered
+    /// call read the slot as it was before the outer call started, and the outer call's return
+    /// overwrote whatever the inner one had kept (#17, #18).
+    /// </remarks>
     private void ExecutePersistent(PersistentStmt statement, JgsEnvironment env)
     {
         if (_currentFunction is not FnStmt owner)
@@ -871,42 +973,19 @@ internal sealed partial class Interpreter
                 "'persistent' is only valid inside a function.");
         }
 
-        if (!_persistents.TryGetValue(owner, out Dictionary<string, JgsValue>? slots))
+        if (!_persistents.TryGetValue(owner, out JgsEnvironment? slots))
         {
-            _persistents[owner] = slots = new Dictionary<string, JgsValue>(StringComparer.Ordinal);
+            _persistents[owner] = slots = new JgsEnvironment();
         }
 
         foreach (string name in statement.Names)
         {
-            if (!slots.TryGetValue(name, out JgsValue? kept))
+            if (!slots.DeclaresLocally(name))
             {
-                slots[name] = kept = JgsValue.Array(System.Array.Empty<JgsValue>());
+                slots.Declare(name, EmptyBracket());
             }
 
-            env.Declare(name, kept);
-        }
-    }
-
-    /// <summary>
-    /// Writes a frame's persistent variables back to their function's slots when the call ends —
-    /// assignment rebinds the frame's name to a new value, so the slot has to be refreshed from the
-    /// binding rather than sharing it. Runs from the call's finally: a value assigned before a later
-    /// error still persists, as in MATLAB.
-    /// </summary>
-    private void SavePersistents(FnStmt declaration, JgsEnvironment local)
-    {
-        if (!_persistents.TryGetValue(declaration, out Dictionary<string, JgsValue>? slots))
-        {
-            return;
-        }
-
-        foreach (string name in slots.Keys.ToArray())
-        {
-            // The frame's own binding only — a chain walk could find an unrelated outer variable.
-            if (local.Locals.TryGetValue(name, out JgsValue? latest))
-            {
-                slots[name] = latest;
-            }
+            env.DeclarePersistent(name, slots);
         }
     }
 
