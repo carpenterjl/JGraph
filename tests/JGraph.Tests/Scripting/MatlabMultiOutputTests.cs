@@ -193,7 +193,7 @@ public class MatlabMultiOutputTests : IDisposable
         ScriptRunResult result = await Run(session, "[a, b] = sin(1);");
 
         Assert.False(result.Success);
-        Assert.Contains("returns 1 value(s)", _output.ErrorText, StringComparison.Ordinal);
+        Assert.Contains("Insufficient number of outputs from right hand side of equal sign", _output.ErrorText, StringComparison.Ordinal);
     }
 
     [Fact]

@@ -679,6 +679,9 @@ internal static partial class JgsBuiltins
             (args, line, col) => Dealt(args, 1, line, col)[0])
         {
             MultiOutput = Dealt,
+            // V6: deal hands its arguments on as they are, so a string scalar stays a string
+            // (it was read as text, and came out a char row).
+            KeepsStringArguments = true,
         }));
 
         // An animated line's points come back one coordinate per output, and how many there are is

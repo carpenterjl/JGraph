@@ -1,0 +1,35 @@
+CHK|d_deal_one_to_all|5 5|exact
+CHK|d_deal_shares_then_detaches|[7 2 3] [1 9 3] [1 2 3]|exact
+CHK|d_deal_one_each|1 2|exact
+CHK|d_cell_spread|10 20|exact
+CHK|d_spread_extra_values|1 2 2|exact
+CHK|d_spread_too_few|ERR Insufficient number of outputs from right hand side of equal sign to satisfy assignment.|exact
+CHK|d_deal_count_mismatch|ERR The number of outputs should match the number of inputs.|exact
+CHK|d_range_subset|0 20 30|exact
+CHK|d_range_grows|4 [1 2 3 4]|exact
+CHK|d_range_end|[0 7 8]|exact
+CHK|d_logical_mask_subset|[1 0 3]|exact
+CHK|d_new_field|f,g x x|exact
+CHK|d_new_variable|struct [1 2] [1 2]|exact
+CHK|d_2d_struct_array|1 2 3 4 [2 2]|exact
+CHK|d_mixed_targets|1 2 3 4|exact
+CHK|d_tilde_target|2 3|exact
+CHK|d_size_outputs|2 3|exact
+CHK|d_user_function_outputs|5 -5|exact
+CHK|d_nargout_in_callee|[1 2 3]|exact
+CHK|d_dynamic_field|8 8|exact
+CHK|d_nested_path|1 2|exact
+CHK|d_cell_held_struct_array|1 2|exact
+CHK|d_scalar_struct|3 [1 1]|exact
+CHK|d_empty_struct_array|0|exact
+CHK|d_read_back_list|[4 5 6] 3 6|exact
+CHK|d_string_values|string a b|exact
+CHK|d_cell_values|1 9 1 2|exact
+CHK|d_alias_isolation|9 9 0 0|exact
+CHK|d_subscript_evaluates_once|1 [0 9 0]|exact
+CHK|d_single_assign_refused|ERR Scalar structure required for this assignment.|exact
+CHK|d_deal_string_into_cell|string z string 2|exact
+CHK|g_handle_array_one_to_all|3 3|exact
+CHK|g_handle_array_one_each|1 2|exact
+CHK|g_handle_array_subset|1 4 4|exact
+CHK|g_handle_array_read_list|[1 2]|exact

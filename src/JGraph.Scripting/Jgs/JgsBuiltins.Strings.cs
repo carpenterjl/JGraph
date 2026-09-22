@@ -1075,8 +1075,7 @@ internal static partial class JgsBuiltins
 
         if (args.Count != outputs)
         {
-            throw new JgsRuntimeException(line, col,
-                $"deal: {args.Count} value(s) cannot fill {outputs} output(s) — pass one value, or one each.");
+            throw new JgsRuntimeException(line, col, "The number of outputs should match the number of inputs.");
         }
 
         return [.. args];

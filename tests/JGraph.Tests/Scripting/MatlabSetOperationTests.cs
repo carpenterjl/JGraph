@@ -177,7 +177,7 @@ public class MatlabSetOperationTests : IDisposable
         catch err
             caught = err.message;
         end
-        assert(contains(caught, 'one each'));
+        assert(strcmp(caught, 'The number of outputs should match the number of inputs.'));
         """);
 
     [Fact]

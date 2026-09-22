@@ -1773,8 +1773,9 @@ internal sealed partial class Interpreter
 
                 if (i >= outputs.Length)
                 {
-                    throw new JgsRuntimeException(statement.Line, statement.Column,
-                        $"This call returns {outputs.Length} value(s), but {targets.Count} were asked for.");
+                    throw new JgsRuntimeException(statement.Line, statement.Column, Dialect.IsMatlab
+                        ? "Insufficient number of outputs from right hand side of equal sign to satisfy assignment."
+                        : $"This call returns {outputs.Length} value(s), but {targets.Count} were asked for.");
                 }
 
                 var assignment = new AssignExpr(target, TokenType.Assign, new PreEvaluated(outputs[i]))
@@ -1800,6 +1801,14 @@ internal sealed partial class Interpreter
         var expanded = new List<Expr?>(statement.Targets.Count);
         foreach (Expr? target in statement.Targets)
         {
+            // V6: [st.f] = deal(v) - a struct array's field, or a handle array's property, is one
+            // target an element (#30, #134).
+            if (Dialect.IsMatlab && target is MemberExpr member && TryExpandFieldTargets(member, env, out List<Expr> each))
+            {
+                expanded.AddRange(each);
+                continue;
+            }
+
             if (target is not BraceIndexExpr { Indices.Count: 1 } brace)
             {
                 expanded.Add(target);
@@ -1832,6 +1841,136 @@ internal sealed partial class Interpreter
 
         return expanded;
     }
+
+    /// <summary>
+    /// <c>[st.f] = deal(v)</c>: a struct array's field on the left of a multiple assignment stands
+    /// for one target an element - <c>st(1).f</c>, <c>st(2).f</c>, ... in linear order - and so does
+    /// a graphics handle array's property, <c>[h.LineWidth] = deal(3)</c>. The subscript of
+    /// <c>[st(2:3).f]</c> is evaluated once, here, and each target carries its position ready-made
+    /// (M15); a position past the end grows the array, as <c>st(3).f = v</c> would. How many targets
+    /// there are is what the call is asked for.
+    /// </summary>
+    /// <remarks>
+    /// Only a stored path expands: a variable holding a struct array or a handle array, or
+    /// subscripts and fields over a variable holding a struct or a cell, so that reading it to count
+    /// the elements runs nothing. A scalar struct, a new variable named without a subscript and
+    /// anything else keep the single target the ordinary road takes. MATLAB dialect only.
+    /// </remarks>
+    private bool TryExpandFieldTargets(MemberExpr member, JgsEnvironment env, out List<Expr> targets)
+    {
+        targets = [];
+        Expr container = member.Target;
+        Expr? subscript = null;
+        switch (member.Target)
+        {
+            case IndexExpr { Indices.Count: 1 } indexed:
+                container = indexed.Target;
+                subscript = indexed.Indices[0];
+                break;
+            case CallExpr { Arguments.Count: 1 } call:
+                container = call.Callee;
+                subscript = call.Arguments[0];
+                break;
+        }
+
+        if (RootName(container) is not { } root)
+        {
+            return false;
+        }
+
+        bool exists = LookUp(root, env, out JgsValue rootValue);
+        if (exists && rootValue.Type is not (JgsType.Struct or JgsType.Cell) && !IsHandleArrayValue(rootValue))
+        {
+            return false;
+        }
+
+        if (!exists && subscript is null)
+        {
+            return false;
+        }
+
+        int length = 0;
+        if (exists)
+        {
+            JgsValue owner = Evaluate(container, env);
+            if (owner.IsStructArray)
+            {
+                length = owner.AsStructArray.Length;
+            }
+            else if (owner.Type == JgsType.Struct)
+            {
+                length = 1;
+            }
+            else if (IsHandleArrayValue(owner))
+            {
+                length = owner.ArrayLength;
+            }
+            else
+            {
+                return false;
+            }
+
+            if (subscript is null && !owner.IsStructArray && length == 1)
+            {
+                return false; // one scalar struct or one handle: the ordinary road
+            }
+        }
+
+        int[] positions;
+        if (subscript is null)
+        {
+            positions = new int[length];
+            for (int i = 0; i < length; i++)
+            {
+                positions[i] = i;
+            }
+        }
+        else
+        {
+            JgsValue? index = EvaluateIndexArgument(subscript, length, env);
+            if (index is null)
+            {
+                positions = [.. Enumerable.Range(0, length)];
+            }
+            else if (index.Type == JgsType.Number)
+            {
+                positions = [ToIndex(index, Math.Max(length, (int)index.AsNumber), member.Line, member.Column)];
+            }
+            else
+            {
+                // A position past the end grows the array, so the picks are measured against the
+                // farthest one named rather than against the array as it is; a mask's length is
+                // its own.
+                int reach = length;
+                for (int i = 0; i < index.ArrayLength; i++)
+                {
+                    JgsValue named = index.ElementAt(i);
+                    reach = Math.Max(reach, named.Type == JgsType.Number ? (int)named.AsNumber : index.ArrayLength);
+                }
+
+                positions = ComputePicks(index, reach, "struct", member.Line, member.Column);
+            }
+        }
+
+        string field = FieldName(member, env);
+        foreach (int position in positions)
+        {
+            var element = new IndexExpr(container, [new PreEvaluated(JgsValue.Number(position + Dialect.IndexBase))])
+            {
+                Line = member.Line,
+                Column = member.Column,
+            };
+            targets.Add(new MemberExpr(element, field, null) { Line = member.Line, Column = member.Column });
+        }
+
+        return true;
+    }
+
+    /// <summary>Whether <paramref name="value"/> is an array of graphics handles.</summary>
+    private static bool IsHandleArrayValue(JgsValue value) =>
+        value.Type == JgsType.Array
+        && value.ArrayLength > 0
+        && JgsHandleRegistry.TryGet(value.ElementAt(0), out _);
 
     /// <summary>
     /// Evaluates a call that is expected to produce <paramref name="wanted"/> outputs. User functions
@@ -6948,6 +7087,26 @@ internal sealed partial class Interpreter
         // is left out of it, because a property read there is a call in all but spelling.
         // MATLAB dialect only: JGS has answered this with the collected row since M41 and that
         // surface is frozen.
+        // V6: [h.LineWidth] over an array of graphics handles is one property read an element,
+        // the list the assignment form [h.LineWidth] = deal(3) writes (#134).
+        if (Dialect.IsMatlab
+            && expr is MemberExpr over
+            && over.Target is VariableExpr handleName
+            && LookUp(handleName.Name, env, out JgsValue handles)
+            && IsHandleArrayValue(handles)
+            && handles.ArrayLength != 1)
+        {
+            string property = FieldName(over, env);
+            var gathered = new JgsValue[handles.ArrayLength];
+            for (int i = 0; i < gathered.Length; i++)
+            {
+                JgsHandleEntry entry = JgsHandleRegistry.Require(handles.ElementAt(i), over.Line, over.Column);
+                gathered[i] = JgsGraphicsProperties.Get(entry, property, over.Line, over.Column);
+            }
+
+            return gathered;
+        }
+
         if (Dialect.IsMatlab
             && expr is MemberExpr member
             && RootName(member.Target) is { } root
@@ -7458,10 +7617,7 @@ internal sealed partial class Interpreter
     }
 
     private bool IsHandleArray(VariableExpr variable, JgsEnvironment env) =>
-        LookUp(variable.Name, env, out JgsValue value)
-        && value.Type == JgsType.Array
-        && value.ArrayLength > 0
-        && JgsHandleRegistry.TryGet(value.ElementAt(0), out _);
+        LookUp(variable.Name, env, out JgsValue value) && IsHandleArrayValue(value);
 
     /// <summary>
     /// The struct a dotted write lands in.

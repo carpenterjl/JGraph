@@ -4,7 +4,7 @@ CHK|a003_ans_brace|1|exact
 CHK|a004_ans_field|1|exact
 CHK|a024_nested_capture_write|1|exact
 CHK|a080_str2func_no_capture|0|exact
-CHK|a030_struct_array_deal|1 1|exact|pending V6|ERR Scalar structure required for this assignment.
+CHK|a030_struct_array_deal|1 1|exact
 CHK|g_cell_literal|1|exact
 CHK|g_struct_ctor|1|exact
 CHK|g_deal|1 1 1|exact
