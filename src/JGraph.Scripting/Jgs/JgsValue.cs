@@ -1042,6 +1042,24 @@ internal sealed class JgsValue
         return this;
     }
 
+    /// <summary>
+    /// The same time value under another tag, as a wrapper of its own (V6, #135): a share over the
+    /// same payload when the payload is counted, a copy of the wrapper when it is not. The wrapper
+    /// this is called on — which may be one a container holds, shared with every alias of the
+    /// container — is left as it was.
+    /// </summary>
+    internal JgsValue WithTimeTag(JgsTimeTag tag)
+    {
+        JgsValue own = Share(this);
+        if (ReferenceEquals(own, this))
+        {
+            own = new JgsValue(this);
+        }
+
+        own._time = tag;
+        return own;
+    }
+
     /// <summary>Gives this array the shape (2-D or N-D) of <paramref name="source"/>.</summary>
     internal void TakeShapeOf(JgsValue source)
     {

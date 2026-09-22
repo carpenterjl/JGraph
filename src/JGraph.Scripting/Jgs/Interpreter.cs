@@ -4375,23 +4375,6 @@ internal sealed partial class Interpreter
             TryReadContainer(container, env, out _);
         }
 
-        // Rebuild indexed image properties through their setter so their render data and
-        // cached script value stay in sync, including writes that resize CData.
-        if (container is MemberExpr imageProperty
-            && TryResolveHandleTarget(imageProperty.Target, env) is { } imageEntry
-            && imageEntry.Target is JGraph.Objects.ImagePlot or JGraph.Objects.SurfacePlot)
-        {
-            string field = FieldName(imageProperty, env);
-            var scratch = new JgsEnvironment(env);
-            const string slot = "\u0001imageProperty";
-            scratch.Declare(slot, CopyForBinding(JgsGraphicsProperties.Get(imageEntry, field, assign.Line, assign.Column)));
-            var scratchTarget = new VariableExpr(slot) { Line = assign.Line, Column = assign.Column };
-            JgsValue result = IndexWrite(scratchTarget, subscripts, assign.Op, rhs, assign, scratch);
-            scratch.TryGet(slot, out var updated);
-            JgsGraphicsProperties.Set(imageEntry, field, updated, assign.Line, assign.Column);
-            return result;
-        }
-
         // MATLAB conjures the variable an index write names: x(5) = 1 with no x makes [0 0 0 0 1],
         // the same grow-and-zero-fill an existing array gets. The write starts from [] and the growth
         // below does the rest; a write that then fails takes the conjured variable with it, so a bad
@@ -7003,6 +6986,13 @@ internal sealed partial class Interpreter
             return IndexTableBrace(target, brace.Indices, brace, env);
         }
 
+        // d{key} on a dictionary of cell values is the cell's content (V6, #136).
+        if (target.Type == JgsType.Struct && target.ClassName == JgsBuiltins.DictionaryClassName)
+        {
+            JgsValue key = Evaluate(Single(brace.Indices, brace, "A dictionary's brace"), env);
+            return JgsBuiltins.DictionaryBraceContent(JgsBuiltins.Lookup(target, key, brace.Line, brace.Column), brace.Line, brace.Column);
+        }
+
         // s{i} on a string array is the char row inside, where s(i) is the 1-by-1 string around it
         // (M63) — the same distinction braces draw on a cell, which is why MATLAB spells it the same.
         if (target.IsStringArray)
@@ -7669,13 +7659,50 @@ internal sealed partial class Interpreter
                 return created;
 
             case MemberExpr nested:
-                JgsValue parent = ResolveStructForWrite(nested.Target, env, out _);
                 string field = FieldName(nested, env);
+
+                // V6 (#137-#139): o.s.f = v, where the dot before the last is an object's property
+                // holding a struct, lands in that property. The object is the entry's own (a value
+                // object detached on the way, a handle the one object every holder shares); a
+                // property it does not have is a refusal, not a struct conjured in its place.
+                Dictionary<string, JgsValue> fields;
+                JgsValue? child;
+                if (ResolveObjectTarget(nested.Target, env) is { } holderObject)
+                {
+                    fields = holderObject.WritableFields();
+                    if (!fields.TryGetValue(field, out child))
+                    {
+                        throw new JgsRuntimeException(nested.Line, nested.Column,
+                            $"'{holderObject.AsObject.Class.Name}' has no property '{field}'.");
+                    }
+
+                    if (child.Type != JgsType.Struct)
+                    {
+                        if (child.Type == JgsType.Array && child.ArrayLength == 0 && !child.IsStringArray)
+                        {
+                            child = JgsValue.EmptyStruct();
+                            fields[field] = child;
+                            return child;
+                        }
+
+                        throw new JgsRuntimeException(nested.Line, nested.Column,
+                            RefusesDots(child) ? DotNotSupported : $"Cannot set a field on a {child.TypeName}.");
+                    }
+
+                    if (child.IsStructArray && Dialect.IsMatlab)
+                    {
+                        throw new JgsRuntimeException(nested.Line, nested.Column, "Scalar structure required for this assignment.");
+                    }
+
+                    return child;
+                }
+
+                JgsValue parent = ResolveStructForWrite(nested.Target, env, out _);
 
                 // M3: the write detaches at every level on the way down, and the entry holds this
                 // very dictionary, so the child handed back is the one the write will land in.
-                Dictionary<string, JgsValue> fields = parent.WritableStruct();
-                if (!fields.TryGetValue(field, out JgsValue? child) || child.Type != JgsType.Struct)
+                fields = parent.WritableStruct();
+                if (!fields.TryGetValue(field, out child) || child.Type != JgsType.Struct)
                 {
                     // V6: a field that holds text, a number or a cell is not a struct to write a
                     // field onto, and R2025b says so. It was replaced by an empty struct without a

@@ -1,0 +1,2 @@
+# The stage of the value-ownership plan that completes each line JGraph fails (appendix A's stage column).
+g_line_manual_x_growth	V6	# R2025b keeps a YData longer than a chosen XData (and draws nothing); a series here is one pair of equal length, so the write is refused — an ADR 0167 divergence

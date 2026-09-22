@@ -1,9 +1,9 @@
 CHK|g_gfx_ydata_read_alias|[1 2 3]|exact
 CHK|g_gfx_set_then_write_source|[1 2 3]|exact
-CHK|a095_gfx_indexed_prop_write|[1 9 3]|exact|pending V6|[1 2 3]
-CHK|a095_gfx_indexed_write_then_get|[1 9 3] [1 9 3]|exact|pending V6|[1 2 3] [1 2 3]
+CHK|a095_gfx_indexed_prop_write|[1 9 3]|exact
+CHK|a095_gfx_indexed_write_then_get|[1 9 3] [1 9 3]|exact
 CHK|g_gfx_handle_alias_write|[4 5 6]|exact
-CHK|a097_gfx_cell_handle_nested_write|[0 2 3]|exact|pending V6|[1 2 3]
+CHK|a097_gfx_cell_handle_nested_write|[0 2 3]|exact
 CHK|g_gfx_userdata_alias|[1 2 3] [7 2 3]|exact
 CHK|g_gfx_userdata_struct_write|[1 5]|exact
 CHK|a100_gfx_appdata_alias|[1 2 3]|exact
@@ -11,20 +11,20 @@ CHK|a102_gfx_guidata_alias|1|exact|pending V6|ERR 'guidata' is not recognized as
 CHK|a103_gfx_xlim_alias|[0 10]|exact|pending V6|ERR axes: unexpected argument 1; options come after the data (options: 'Position', 'XLim', 'YLim', 'ZLim', 'Color', 'Box', 'Tag', 'Title', 'HandleVisibility').
 CHK|a101_gfx_callback_capture|[1 2 3]|exact
 CHK|a104_gfx_delete_alias_isvalid|0 0|exact|pending V6|ERR 'isvalid' is not recognized as a variable or a function.
-CHK|a096_gfx_operand_scope_prop_write|[1 2 3] [7 2 3]|exact|pending V6|[1 2 3] [1 2 3]
+CHK|a096_gfx_operand_scope_prop_write|[1 2 3] [7 2 3]|exact
 CHK|g_gfx_text_string_alias|ab zb|exact
-CHK|a098_gfx_children_handle_write|[42 2 3]|exact|pending V6|[1 2 3]
-CHK|a099_gfx_prop_self_overlap|[3 1 2]|exact|pending V6|[1 2 3]
+CHK|a098_gfx_children_handle_write|[42 2 3]|exact
+CHK|a099_gfx_prop_self_overlap|[3 1 2]|exact
 CHK|g_gfx_refused_prop_write_atomic|[1 2 3]|exact
 CHK|g_gfx_whole_prop_rebind_after_read|[1 2 3] [4 5 6]|exact
 CHK|g_gfx_set_indexed_via_temp|[1 9 3]|exact
-CHK|a132_axes_xlim_indexed_write|[0 5]|exact|pending V6|[0 10]
-CHK|a132_figure_position_indexed_write|321|exact|pending V6|300
+CHK|a132_axes_xlim_indexed_write|[0 5]|exact
+CHK|a132_figure_position_indexed_write|321|exact
 CHK|a141_handle_array_element_prop_write|0.5 4|exact|pending V6|1.5 4
 CHK|a134_handle_array_cslist_prop_write|3 3|exact
 CHK|g_multi_handle_set|[5 5 5] [5 5 5]|exact
-CHK|a133_graphics_prop_growth_write|[1 2 3 4]|exact|pending V6|ERR YData has 4 values where the series has 3. Both coordinates are written together — set them in one call, or draw the series again.
-CHK|a133_graphics_prop_delete_write|[1 3]|exact|pending V6|ERR YData has 2 values where the series has 3. Both coordinates are written together — set them in one call, or draw the series again.
+CHK|a133_graphics_prop_growth_write|[1 2 3 4]|exact
+CHK|a133_graphics_prop_delete_write|[1 3]|exact
 CHK|a141_line_width_default|0.5|exact|pending V6|1.5
-CHK|a150_global_handle_prop_write|[1 2 3 50]|exact|pending V6|ERR YData has 4 values where the series has 3. Both coordinates are written together — set them in one call, or draw the series again.
-CHK|a153_order_graphics_ydata_end_vs_rhs|rhs; / [1 2 9 50]|exact|pending V6|ERR YData has 4 values where the series has 3. Both coordinates are written together — set them in one call, or draw the series again.
+CHK|a150_global_handle_prop_write|[1 2 3 50]|exact
+CHK|a153_order_graphics_ydata_end_vs_rhs|rhs; / [1 2 9 50]|exact

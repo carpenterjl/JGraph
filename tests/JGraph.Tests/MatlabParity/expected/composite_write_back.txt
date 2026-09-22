@@ -1,0 +1,63 @@
+CHK|g_line_ydata_indexed_write|[1 9 3] [1 9 3]|exact
+CHK|g_line_ydata_two_subscripts|[1 2 7]|exact
+CHK|g_line_ydata_range_write|[8 9 3]|exact
+CHK|g_line_ydata_mask_write|[0 2 0]|exact
+CHK|g_line_ydata_end_write|[1 2 5]|exact
+CHK|g_line_ydata_read_modify_write|[1 12 3]|exact
+CHK|g_line_ydata_growth|[1 2 3 4] [1 2 3 4]|exact
+CHK|g_line_ydata_delete|[1 3] [1 2]|exact
+CHK|g_line_manual_x_growth|[1 2 3 4] [10 20 30]|exact|pending V6|ERR YData has 4 values where the series has 3. Both coordinates are written together — set them in one call, or draw the series again.
+CHK|g_line_ydata_self_overlap|[3 1 2]|exact
+CHK|g_line_ydata_through_callee|[1 2 3] [7 2 3]|exact
+CHK|g_line_ydata_cell_held|[0 2 3]|exact
+CHK|g_line_ydata_struct_held|[0 2 3]|exact
+CHK|g_line_ydata_children_elem|[42 2 3]|exact
+CHK|g_line_ydata_handle_array_elem|[1 2 3] [4 5 60]|exact
+CHK|g_axes_xlim_indexed|[0 5]|exact
+CHK|g_figure_position_indexed|321|exact
+CHK|g_line_color_indexed|[1 0 0]|exact
+CHK|g_line_linewidth_indexed|3|exact
+CHK|g_line_ydata_refused_atomic|[1 2 3]|exact
+CHK|g_line_ydata_global|[1 7 3]|exact
+CHK|g_line_ydata_order_end_vs_rhs|rhs; / [1 2 9 50]|exact
+CHK|g_line_ydata_subscript_once|1 [1 9 3]|exact
+CHK|g_line_ydata_read_before_write|[1 2 3] [1 9 3]|exact
+CHK|g_text_string_indexed|zb|exact
+CHK|g_line_ydata_dynamic_prop|[1 9 3]|exact
+CHK|g_image_cdata_indexed|0 [3 3]|exact
+CHK|d_day_indexed_write|2 15 1|exact
+CHK|d_year_whole_write|2020 2021|exact
+CHK|d_year_each_element|[2021 2022 2023]|exact
+CHK|d_month_rollover|2021 1|exact
+CHK|d_hour_minute_second|5 30 15.5|exact
+CHK|d_second_fraction|12.25 1|exact
+CHK|d_component_read_after_write|[1 15 3] double|exact
+CHK|d_component_count_mismatch|ERR Assignment to the 'Day' property of a datetime array may not change the size of the property.|exact
+CHK|d_component_growth|ERR Assignment to the 'Day' property of a datetime array may not change the size of the property.|exact
+CHK|d_struct_held_component|2020 1999 datetime|exact
+CHK|d_cell_held_format|dd-MMM-uuuu/yyyy|exact
+CHK|d_cell_held_day_indexed|15 2|exact
+CHK|d_format_alias|dd-MMM-uuuu yyyy|exact
+CHK|d_component_order|idx;rhs; / [1 9 3]|exact
+CHK|d_nat_stays_nat|1 5|exact
+CHK|d_zoned_hour|5 UTC|exact
+CHK|d_duration_component_refused|ERR Unrecognized property: 'Day'.|exact
+CHK|o_struct_held_handle_nested_write|[1 9 3]|exact
+CHK|o_struct_copy_keeps_handle_class|HandleHolder HandleHolder|exact
+CHK|o_struct_copy_whole_prop_write|[4 5 6]|exact
+CHK|o_cell_held_handle_nested_write|[1 9 3]|exact
+CHK|o_struct_held_method_call|[7 2 3]|exact
+CHK|o_handle_eq_identity|1 0 0|exact
+CHK|o_value_in_cell_prop_write|[1 2 3 4 5] 9|exact
+CHK|o_value_in_cell_prop_indexed|[1 2 3 4 5] [1 9 3 4 5]|exact
+CHK|o_value_in_struct_prop_write|[1 2 3 4 5] 9 ValueBox|exact
+CHK|o_value_prop_struct_field_write|9 f,g|exact
+CHK|o_value_prop_structarr_grow|6 9|exact
+CHK|o_handle_in_cell_in_struct|[1 9 3]|exact
+CHK|o_handle_prop_holding_handle|[1 7]|exact
+CHK|k_dict_brace_cell_read|[1 2]|exact
+CHK|k_dict_brace_cell_write_alias|[1 2] [9 2]|exact
+CHK|k_dict_paren_read_class|cell [1 1]|exact
+CHK|k_dict_brace_noncell_refused|ERR Using curly braces on a dictionary with 'double' value type is not supported. The dictionary value type must be 'cell'.|exact
+CHK|k_dict_brace_whole_write|[7 8 9] cell|exact
+CHK|k_dict_two_keys_cell_values|1 [2 3]|exact

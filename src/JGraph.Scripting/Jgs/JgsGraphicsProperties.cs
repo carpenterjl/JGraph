@@ -2541,6 +2541,23 @@ internal static partial class JgsGraphicsProperties
         var plot = (XYPlot)entry.Target;
         double[] written = JgsBuiltins.ToDoubles(x ? "XData" : "YData", value, line, col);
         double[] kept = Coordinates(plot, x: !x);
+
+        // Positions the plot counted out for itself (XDataMode 'auto') are counted out again when
+        // YData changes length (V6, #133, #150): p.YData(end + 1) = 4 and p.YData(2) = [] keep the
+        // series drawable, as MATLAB keeps it.
+        if (!x && written.Length != kept.Length && plot.XImplied)
+        {
+            kept = new double[written.Length];
+            for (int i = 0; i < kept.Length; i++)
+            {
+                kept[i] = i + 1;
+            }
+
+            plot.SetData(kept, written);
+            plot.XImplied = true;
+            return;
+        }
+
         if (written.Length != kept.Length)
         {
             throw new JgsRuntimeException(line, col,

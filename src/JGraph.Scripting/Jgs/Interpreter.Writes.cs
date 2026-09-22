@@ -358,7 +358,8 @@ internal sealed partial class Interpreter
                     return false;
                 }
 
-                if (Dialect.IsMatlab && cell.Type is not (JgsType.Cell or JgsType.Table) && !cell.IsStringArray)
+                if (Dialect.IsMatlab && cell.Type is not (JgsType.Cell or JgsType.Table) && !cell.IsStringArray
+                    && cell.ClassName != JgsBuiltins.DictionaryClassName)
                 {
                     throw new JgsRuntimeException(brace.Line, brace.Column,
                         "Brace indexing is not supported for variables of this type.");

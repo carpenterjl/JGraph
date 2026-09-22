@@ -4,12 +4,14 @@ namespace JGraph.Scripting.Jgs;
 
 /// <summary>
 /// V6 (ADR 0167): composite writes store back. A write whose path passes through a <em>computed</em>
-/// level — a table's variable or its <c>Properties</c>, where the value read out is built for the
-/// read and is not the storage — is get, modify, set: the level's value is read into a scratch
-/// slot, the rest of the path is written into the slot by the ordinary roads (so M3, M10, M14 and
-/// M16 apply to it as to any variable), and the slot is put back through the level's setter, once;
-/// the holder the setter rebuilt is then stored back where it was read from — a variable, a field,
-/// a cell element — by <see cref="StoreBack"/>.
+/// level — a table's variable or its <c>Properties</c>, a graphics property, a <c>datetime</c>'s
+/// component or property, a dictionary's cell value under braces: where the value read out is
+/// built for the read and is not the storage — is get, modify, set: the level's value is read into
+/// a scratch slot, the rest of the path is written into the slot by the ordinary roads (so M3, M10,
+/// M14 and M16 apply to it as to any variable), and the slot is put back through the level's
+/// setter, once; a holder the setter rebuilt is then stored back where it was read from — a
+/// variable, a field, a cell element — by <see cref="StoreBack"/>, and a holder that is a
+/// reference (a graphics handle) needs no storing.
 /// </summary>
 /// <remarks>
 /// The walk down to the level reads only what a peek can see without running anything: a bound
@@ -96,7 +98,9 @@ internal sealed partial class Interpreter
             {
                 if (step is BraceIndexExpr brace)
                 {
-                    result = WriteTableBrace(chain[k], held!.AsTable, brace, assign, rhs, env);
+                    result = held!.Type == JgsType.Table
+                        ? WriteTableBrace(chain[k], held.AsTable, brace, assign, rhs, env)
+                        : WriteDictionaryBrace(chain[k], held, brace, target, assign, rhs, env);
                     return true;
                 }
 
@@ -160,6 +164,14 @@ internal sealed partial class Interpreter
                     return LevelKind.Continue;
                 }
 
+                // o.p(6).f = 9: the walk goes on through an object's property (V6), so a level
+                // past it is created here and stored back through the property's setter.
+                if (held is { Type: JgsType.Object } && held.AsObject.Fields.TryGetValue(field, out JgsValue? property))
+                {
+                    next = property;
+                    return LevelKind.Continue;
+                }
+
                 if (nothing || (plainStruct && !held!.IsStructArray))
                 {
                     return OrdinaryRoadsCreate(chain, level + 1) ? LevelKind.Ordinary : LevelKind.Create;
@@ -188,12 +200,20 @@ internal sealed partial class Interpreter
 
             case CallExpr or IndexExpr:
             {
+                IReadOnlyList<Expr> subscripts = step is CallExpr call ? call.Arguments : ((IndexExpr)step).Indices;
+
+                // ch(1).YData(1) = 42: one handle out of an array of them, on the way to a property (V6).
+                if (!nothing && TryPeekHandleElement(held!, subscripts, out JgsValue? handle))
+                {
+                    next = handle;
+                    return LevelKind.Continue;
+                }
+
                 if (!nothing && !plainStruct)
                 {
                     return LevelKind.Ordinary;
                 }
 
-                IReadOnlyList<Expr> subscripts = step is CallExpr call ? call.Arguments : ((IndexExpr)step).Indices;
                 if (plainStruct && subscripts.Count == 1 && NamedPosition(subscripts[0]) is int position
                     && position >= 0 && position < held!.AsStructArray.Length)
                 {
@@ -314,11 +334,63 @@ internal sealed partial class Interpreter
 
     /// <summary>
     /// Whether <paramref name="step"/> on <paramref name="holder"/> is a computed level: a table's
-    /// dot, or its brace when the brace is the whole target (<c>T{r, v} = x</c>).
+    /// dot, or its brace when the brace is the whole target (<c>T{r, v} = x</c>); a graphics
+    /// handle's property when the write goes on past it (<c>p.YData(2) = 9</c> — the whole-value
+    /// set <c>p.YData = y</c> keeps the road it has); a time value's property or component, whole
+    /// or in part (<c>e.Day(2) = 15</c>, <c>c{1}.Format = 'yyyy'</c>); a dictionary's brace
+    /// (<c>d{"k"}(1) = 9</c>).
     /// </summary>
-    private static bool IsComputedHolder(JgsValue holder, Expr step, Expr target) =>
-        holder.Type == JgsType.Table
-        && (step is MemberExpr || (step is BraceIndexExpr && ReferenceEquals(step, target)));
+    private static bool IsComputedHolder(JgsValue holder, Expr step, Expr target)
+    {
+        if (holder.Type == JgsType.Table)
+        {
+            return step is MemberExpr || (step is BraceIndexExpr && ReferenceEquals(step, target));
+        }
+
+        if (step is BraceIndexExpr)
+        {
+            return holder.Type == JgsType.Struct && holder.ClassName == JgsBuiltins.DictionaryClassName;
+        }
+
+        if (step is not MemberExpr)
+        {
+            return false;
+        }
+
+        if (holder.IsTime)
+        {
+            return true;
+        }
+
+        return holder.Type == JgsType.Number && !ReferenceEquals(step, target) && JgsHandleRegistry.TryGet(holder, out _);
+    }
+
+    /// <summary>
+    /// One handle a subscript names out of an array of handles — or the one handle a number is,
+    /// under <c>(1)</c> — when the position is a whole number already in hand.
+    /// </summary>
+    private bool TryPeekHandleElement(JgsValue held, IReadOnlyList<Expr> subscripts, out JgsValue? handle)
+    {
+        handle = null;
+        if (subscripts.Count != 1 || NamedPosition(subscripts[0]) is not int position || position < 0)
+        {
+            return false;
+        }
+
+        if (IsHandleArrayValue(held) && position < held.ArrayLength)
+        {
+            handle = held.ElementAt(position);
+            return true;
+        }
+
+        if (position == 0 && held.Type == JgsType.Number && JgsHandleRegistry.TryGet(held, out _))
+        {
+            handle = held;
+            return true;
+        }
+
+        return false;
+    }
 
     /// <summary>What one step reads, where a peek can see it without running anything.</summary>
     private bool TryPeekStep(JgsValue held, Expr step, out JgsValue next)
@@ -335,6 +407,23 @@ internal sealed partial class Interpreter
                 }
 
                 return false;
+
+            case MemberExpr { Field: { } property } when held.Type == JgsType.Object:
+                if (held.AsObject.Fields.TryGetValue(property, out JgsValue? holds))
+                {
+                    next = holds;
+                    return true;
+                }
+
+                return false;
+
+            case CallExpr { Arguments: var arguments } when TryPeekHandleElement(held, arguments, out JgsValue? ofCall):
+                next = ofCall!;
+                return true;
+
+            case IndexExpr { Indices: var indices } when TryPeekHandleElement(held, indices, out JgsValue? ofIndex):
+                next = ofIndex!;
+                return true;
 
             case BraceIndexExpr { Indices.Count: 1 } brace when held.Type == JgsType.Cell:
             {
@@ -368,6 +457,11 @@ internal sealed partial class Interpreter
         JgsEnvironment env)
     {
         string field = FieldName(level, env);
+        if (holder.Type != JgsType.Table)
+        {
+            return WriteThroughPropertyLevel(holderExpr, holder, field, level, target, assign, rhs, env);
+        }
+
         Table table = holder.AsTable;
 
         // T.Var = v, T.Properties = p: the level is the whole target.
@@ -395,8 +489,87 @@ internal sealed partial class Interpreter
             rhs = JgsValue.Cell(new[] { rhs });
         }
 
+        JgsValue written = WriteIntoSlot(current, level, target, assign, rhs, env, out JgsValue result);
+        StoreBack(holderExpr, JgsValue.Table(SetTableMember(table, field, written, whole: false, level)), assign, env);
+        return result;
+    }
+
+    /// <summary>
+    /// Get, modify, set at a property level (V6, #95-#99, #126, #132-#135): a graphics handle's
+    /// property, read by its getter and written by its setter, the handle being the storage; or a
+    /// time value's property or component, whose set rebuilds the value, stored back where it was
+    /// read. The getter runs once here, after the subscripts (with their <c>end</c>s) and the
+    /// right-hand side have run - <c>get;rhs;get;set</c> - and the setter once, after the inner
+    /// write has succeeded (M14).
+    /// </summary>
+    private JgsValue WriteThroughPropertyLevel(
+        Expr holderExpr, JgsValue holder, string field, MemberExpr level, Expr target, AssignExpr assign, JgsValue rhs,
+        JgsEnvironment env)
+    {
+        JgsHandleEntry? handle = holder.IsTime ? null : JgsHandleRegistry.Require(holder, level.Line, level.Column);
+        JgsValue result;
+        JgsValue written;
+        if (ReferenceEquals(level, target))
+        {
+            // A whole-value set reads nothing (h.Day = 1 on a duration is the setter's refusal, in
+            // its words); a compound one reads the value it combines with.
+            written = assign.Op == TokenType.Assign
+                ? rhs
+                : ApplyBinary(UnderlyingOp(assign.Op), PropertyOf(handle, holder, field, level), rhs, assign);
+            result = written;
+        }
+        else
+        {
+            JgsValue current = PropertyOf(handle, holder, field, level);
+            written = WriteIntoSlot(current, level, target, assign, rhs, env, out result);
+
+            // A property that answered a handle (ax.XAxis.Color(1) = 0.5) is a reference: the inner
+            // write landed on the object it names, and there is nothing to set.
+            if (handle is not null && written.Type == JgsType.Number && current.Type == JgsType.Number
+                && written.AsNumber == current.AsNumber && JgsHandleRegistry.TryGet(current, out _))
+            {
+                return result;
+            }
+
+            // A scalar property read as a one-by-one goes back as the scalar it is (p.LineWidth(1) = 3).
+            if (current.Type is JgsType.Number or JgsType.Bool && written.Type == JgsType.Array && written.ArrayLength == 1
+                && !written.IsStringArray)
+            {
+                written = written.ElementAt(0);
+            }
+        }
+
+        if (handle is not null)
+        {
+            JgsGraphicsProperties.Set(handle, field, written, level.Line, level.Column);
+            return result;
+        }
+
+        StoreBack(holderExpr, JgsBuiltins.SetTimeProperty(holder, field, written, level.Line, level.Column), assign, env);
+        return result;
+    }
+
+    /// <summary>The get half of a property level: the graphics getter, or the time value's property.</summary>
+    private static JgsValue PropertyOf(JgsHandleEntry? handle, JgsValue holder, string field, MemberExpr level) =>
+        handle is not null
+            ? JgsGraphicsProperties.Get(handle, field, level.Line, level.Column)
+            : JgsBuiltins.GetTimeProperty(holder, field, level.Line, level.Column);
+
+    /// <summary>
+    /// The modify half: <paramref name="current"/> goes into the scratch slot, the target is
+    /// rewritten with the slot in the level's place, and the ordinary assignment writes into it.
+    /// Hands back what the slot holds afterwards; <paramref name="result"/> is the assignment's value.
+    /// A value a getter minted is the slot's own; one read out of storage (<paramref name="owned"/>
+    /// false) goes in as a share, so the slot's first write copies it (M3) and the storage - and
+    /// every alias of it - is left as it was until the set.
+    /// </summary>
+    private JgsValue WriteIntoSlot(
+        JgsValue current, Expr level, Expr target, AssignExpr assign, JgsValue rhs, JgsEnvironment env, out JgsValue result,
+        bool owned = true)
+    {
         var scratch = new JgsEnvironment(env);
-        scratch.Declare(LevelSlot, current);
+        JgsValue slotValue = owned ? current : JgsValue.Share(current);
+        scratch.Declare(LevelSlot, slotValue);
         var slot = new VariableExpr(LevelSlot) { Line = level.Line, Column = level.Column };
         var rewritten = new AssignExpr(ReplaceNode(target, level, slot), assign.Op,
             new PreEvaluated(rhs) { Line = assign.Value.Line, Column = assign.Value.Column })
@@ -404,10 +577,50 @@ internal sealed partial class Interpreter
             Line = assign.Line,
             Column = assign.Column,
         };
-        JgsValue result = EvaluateAssign(rewritten, scratch);
-
+        result = EvaluateAssign(rewritten, scratch);
         scratch.TryGet(LevelSlot, out JgsValue written);
-        StoreBack(holderExpr, JgsValue.Table(SetTableMember(table, field, written, whole: false, level)), assign, env);
+        return written;
+    }
+
+    /// <summary>
+    /// <c>d{key} = v</c> and <c>d{key}(i) = v</c> on a dictionary whose values are cells (V6,
+    /// #136): the brace names the cell's content, which is read out, written and put back as the
+    /// one-element cell the entry holds; the rebuilt dictionary is stored back where it was read.
+    /// A key the dictionary does not have yet is added, as MATLAB adds it.
+    /// </summary>
+    private JgsValue WriteDictionaryBrace(
+        Expr holderExpr, JgsValue holder, BraceIndexExpr brace, Expr target, AssignExpr assign, JgsValue rhs,
+        JgsEnvironment env)
+    {
+        if (brace.Indices.Count != 1)
+        {
+            throw new JgsRuntimeException(brace.Line, brace.Column,
+                "A dictionary is indexed by one key, as d{key}.");
+        }
+
+        JgsValue key = Evaluate(brace.Indices[0], env);
+        JgsValue current = JgsBuiltins.TryLookup(holder, key, out JgsValue stored)
+            ? JgsBuiltins.DictionaryBraceContent(stored, brace.Line, brace.Column)
+            : EmptyOfKind(rhs);
+
+        JgsValue result;
+        JgsValue written;
+        if (ReferenceEquals(brace, target))
+        {
+            written = assign.Op == TokenType.Assign ? rhs : ApplyBinary(UnderlyingOp(assign.Op), current, rhs, assign);
+            result = written;
+        }
+        else
+        {
+            written = WriteIntoSlot(current, brace, target, assign, rhs, env, out result, owned: false);
+        }
+
+        // M8: a wrapper of its own over the holder's payload, which Put detaches (M7) - the
+        // original, and every other name on it, keeps its entries.
+        JgsValue rebuilt = JgsValue.Share(holder);
+        JgsBuiltins.Put(rebuilt, key,
+            JgsBuiltins.RetainedForEntry(JgsValue.Cell(new[] { written }), Dialect.CopyOnAssign), brace.Line, brace.Column);
+        StoreBack(holderExpr, rebuilt, assign, env);
         return result;
     }
 

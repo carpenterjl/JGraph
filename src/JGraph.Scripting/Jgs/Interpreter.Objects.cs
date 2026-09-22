@@ -187,26 +187,86 @@ internal sealed partial class Interpreter
     /// <summary>
     /// The object a dotted write is aimed at, or null when the write is not about an object, as the
     /// entry's own wrapper rather than the bare instance: M7's gate lives on the wrapper, and under
-    /// M2 the entry holds exactly this wrapper, so a detach through it lands in the entry. Only a
-    /// bound variable and a dot off one are considered, for the reason the handle path gives:
-    /// anywhere else the target would have to be evaluated on the chance that it is one. The name
-    /// is read the way every other write reads it (<see cref="LookUp"/>), so a frame that declared
-    /// it global finds the object in the global workspace (V4, ADR 0165).
+    /// M2 the entry holds exactly this wrapper, so a detach through it lands in the entry. The
+    /// object is found along any entry path — a bound name, a field, a cell slot, an element of a
+    /// struct array, a property of another object (V6, #137, #138: <c>t.h.data = v</c> and
+    /// <c>c{1}.data = v</c> on a handle held in a container) — each level made writable on the way,
+    /// which is M3's detach at every level; a path that is not an entry is never evaluated on the
+    /// chance that it is one. The name is read the way every other write reads it
+    /// (<see cref="LookUp"/>), so a frame that declared it global finds the object in the global
+    /// workspace (V4, ADR 0165). Nothing is walked until a class has been loaded.
     /// </summary>
-    private JgsValue? ResolveObjectTarget(Expr expr, JgsEnvironment env) => expr switch
+    private JgsValue? ResolveObjectTarget(Expr expr, JgsEnvironment env)
     {
-        VariableExpr variable when LookUp(variable.Name, env, out JgsValue bound) && bound.Type == JgsType.Object =>
-            bound,
+        if (!AnyClasses)
+        {
+            return null;
+        }
 
-        // obj.inner.value = 3 — the object held by a property of another object. The nested wrapper
-        // is the owner's own entry, so writing through it lands where the write was aimed; the
-        // owner is made writable first, which is M3's detach at every level on the way down.
-        MemberExpr inner when ResolveObjectTarget(inner.Target, env) is { } owner
-            && owner.WritableFields().TryGetValue(FieldName(inner, env), out JgsValue? nested)
-            && nested.Type == JgsType.Object => nested,
+        return ResolveEntry(expr, env) is { Type: JgsType.Object } held ? held : null;
+    }
 
-        _ => null,
-    };
+    /// <summary>
+    /// The wrapper an entry path names, made writable at every level on the way (M3), or null
+    /// where the path is not such an entry or names nothing yet.
+    /// </summary>
+    private JgsValue? ResolveEntry(Expr expr, JgsEnvironment env)
+    {
+        switch (expr)
+        {
+            case VariableExpr variable:
+                return LookUp(variable.Name, env, out JgsValue bound) ? bound : null;
+
+            case MemberExpr member:
+            {
+                if (ResolveEntry(member.Target, env) is not { } owner)
+                {
+                    return null;
+                }
+
+                string field = FieldName(member, env);
+                if (owner.Type == JgsType.Object)
+                {
+                    return owner.WritableFields().TryGetValue(field, out JgsValue? property) ? property : null;
+                }
+
+                if (owner.Type == JgsType.Struct && !owner.IsStructArray && owner.ClassName is null)
+                {
+                    return owner.WritableStruct().TryGetValue(field, out JgsValue? held) ? held : null;
+                }
+
+                return null;
+            }
+
+            case BraceIndexExpr { Indices.Count: 1 } brace:
+            {
+                if (ResolveEntry(brace.Target, env) is not { Type: JgsType.Cell } owner)
+                {
+                    return null;
+                }
+
+                if (EvaluateIndexArgument(brace.Indices[0], owner.ArrayLength, env) is not { Type: JgsType.Number } index)
+                {
+                    return null;
+                }
+
+                int slot = (int)index.AsNumber - Dialect.IndexBase;
+                JgsValue[] slots = owner.WritableCell();
+                return slot >= 0 && slot < slots.Length ? slots[slot] : null;
+            }
+
+            case CallExpr { Arguments.Count: 1 } call when IsEntryPath(call.Callee, env)
+                && TryElementOfEntry(call.Callee, call.Arguments[0], env, out JgsValue? ofCall, out _):
+                return ofCall;
+
+            case IndexExpr { Indices.Count: 1 } indexed when IsEntryPath(indexed.Target, env)
+                && TryElementOfEntry(indexed.Target, indexed.Indices[0], env, out JgsValue? ofIndex, out _):
+                return ofIndex;
+
+            default:
+                return null;
+        }
+    }
 
     /// <summary>
     /// The class method a call written <c>name(…, obj, …)</c> reaches on <paramref name="dominant"/>,
@@ -282,6 +342,17 @@ internal sealed partial class Interpreter
         string? wanted = OperatorMethodName(op);
         if (wanted is null || !definition.TryMethod(wanted, out ClassMethod? method) || method.Static)
         {
+            // Two handles are equal when they are the one object (V6, #140): the eq a handle class
+            // has without defining one. A class that defines its own has decided otherwise above.
+            if (wanted is "eq" or "ne"
+                && left.Type == JgsType.Object && right.Type == JgsType.Object
+                && left.AsObject.Class.IsHandle && right.AsObject.Class.IsHandle)
+            {
+                bool same = ReferenceEquals(left.AsObject, right.AsObject);
+                result = JgsValue.Bool(wanted == "eq" ? same : !same);
+                return true;
+            }
+
             throw new JgsRuntimeException(at.Line, at.Column,
                 $"'{OperatorSymbol(op)}' is not defined for {definition.Name}"
                 + (wanted is null ? "." : $"; give the class a '{wanted}' method to define it."));

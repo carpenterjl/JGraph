@@ -199,7 +199,7 @@ internal static partial class JgsBuiltins
             ArityRange("insert", args, 3, 3, line, col);
             JgsValue map = Private(RequireKeyed("insert", args[0], line, col));
             JgsValue[] wanted = KeysAsked(args[1]);
-            JgsValue[] given = args[2].Type == JgsType.Cell ? args[2].AsCell : [args[2]];
+            JgsValue[] given = args[2].Type == JgsType.Cell ? CellValues(map.ClassName!, args[2]) : [args[2]];
             for (int i = 0; i < wanted.Length; i++)
             {
                 Put(map, wanted[i], RetainedForEntry(given.Length == 1 ? given[0] : given[i], shares), line, col);
@@ -270,7 +270,7 @@ internal static partial class JgsBuiltins
         }
 
         JgsValue[] keys = KeysAsked(args[0]);
-        JgsValue[] given = args[1].Type == JgsType.Cell ? args[1].AsCell
+        JgsValue[] given = args[1].Type == JgsType.Cell ? CellValues(className, args[1])
             : args[1].Type == JgsType.Array && !args[1].IsStringArray ? args[1].BoxedElements()
             : [args[1]];
 
@@ -293,7 +293,42 @@ internal static partial class JgsBuiltins
         return map;
     }
 
+    /// <summary>
+    /// The values a cell argument gives, one a key. A <c>containers.Map</c> takes the cell's
+    /// elements as the values; a <c>dictionary</c> given a cell is a dictionary of cell values,
+    /// each entry the one-element cell around a share of its element (M2; V6, #136) - <c>d(k)</c>
+    /// answers the cell and <c>d{k}</c> its content, as in MATLAB.
+    /// </summary>
+    private static JgsValue[] CellValues(string className, JgsValue cell) =>
+        className == DictionaryClassName
+            ? Array.ConvertAll(cell.AsCell, static v => JgsValue.Cell([JgsValue.Share(v)]))
+            : cell.AsCell;
+
     // --- Reading and writing through the subscript --------------------------------------------------
+
+    /// <summary>The value <c>m(key)</c> names, when the collection has the key.</summary>
+    internal static bool TryLookup(JgsValue map, JgsValue key, out JgsValue value)
+    {
+        int at = IsTextScalar(key) || key.Type is JgsType.Number or JgsType.Bool ? FindKey(map, key) : -1;
+        value = at >= 0 ? ValueCell(map)[at] : JgsValue.Null;
+        return at >= 0;
+    }
+
+    /// <summary>
+    /// What <c>d{key}</c> names: the content of the one-element cell a cell-valued dictionary
+    /// holds under the key (V6, #136). Any other value has no braces to open.
+    /// </summary>
+    internal static JgsValue DictionaryBraceContent(JgsValue stored, int line, int col)
+    {
+        if (stored.Type == JgsType.Cell && stored.AsCell.Length == 1)
+        {
+            return stored.AsCell[0];
+        }
+
+        throw new JgsRuntimeException(line, col,
+            $"Using curly braces on a dictionary with '{ClassOf(stored, JgsDialect.Matlab)}' value type is not supported. "
+            + "The dictionary value type must be 'cell'.");
+    }
 
     /// <summary>The value <c>m(key)</c> names, or a refusal saying which key was missing.</summary>
     internal static JgsValue Lookup(JgsValue map, JgsValue key, int line, int col)

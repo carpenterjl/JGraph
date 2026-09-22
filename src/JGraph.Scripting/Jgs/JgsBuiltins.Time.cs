@@ -683,13 +683,17 @@ internal static partial class JgsBuiltins
         JgsTimeTag tag = value.TimeTag!;
         if (field == "Format")
         {
-            return value.MarkTime(tag with { Format = TextOfArgument("Format", written, line, col) });
+            return value.WithTimeTag(tag with { Format = TextOfArgument("Format", written, line, col) });
+        }
+
+        if (value.IsDatetime && field is "Year" or "Month" or "Day" or "Hour" or "Minute" or "Second")
+        {
+            return WithTimeComponent(value, field, written, line, col);
         }
 
         if (field != "TimeZone")
         {
-            throw new JgsRuntimeException(line, col,
-                $"'.{field}' cannot be set on a {TimeClassName(value)}; Format can be, and on a datetime so can TimeZone.");
+            throw new JgsRuntimeException(line, col, $"Unrecognized property: '{field}'.");
         }
 
         if (!value.IsDatetime)
@@ -734,6 +738,55 @@ internal static partial class JgsBuiltins
         }
 
         return TimeLike(value, values, tag with { TimeZone = wanted });
+    }
+
+    /// <summary>
+    /// <c>t.Day = d</c>, <c>t.Year = y</c> (V6, #126): every moment is taken apart on the wall
+    /// clock, the one component replaced — one value for all, or one a moment — and put together
+    /// again, so a month past twelve or a day past the month's end rolls over as
+    /// <c>datetime(y, m, d)</c> rolls it; a NaT stays a NaT.
+    /// </summary>
+    private static JgsValue WithTimeComponent(JgsValue value, string field, JgsValue written, int line, int col)
+    {
+        JgsTimeTag tag = value.TimeTag!;
+        double[] source = TimeMs(value);
+        double[] given = ToDoubles(field, written, line, col);
+        if (given.Length != 1 && given.Length != source.Length)
+        {
+            throw new JgsRuntimeException(line, col,
+                $"Assignment to the '{field}' property of a datetime array may not change the size of the property.");
+        }
+
+        var values = new double[source.Length];
+        for (int i = 0; i < values.Length; i++)
+        {
+            if (double.IsNaN(source[i]))
+            {
+                values[i] = source[i];
+                continue;
+            }
+
+            DateTime wall = JgsTime.WallClock(source[i], tag);
+            double part = given.Length == 1 ? given[0] : given[i];
+            double year = wall.Year, month = wall.Month, day = wall.Day, hour = wall.Hour, minute = wall.Minute;
+            double second = JgsTime.SecondsOf(wall);
+            switch (field)
+            {
+                case "Year": year = part; break;
+                case "Month": month = part; break;
+                case "Day": day = part; break;
+                case "Hour": hour = part; break;
+                case "Minute": minute = part; break;
+                default: second = part; break;
+            }
+
+            double rebuilt = JgsTime.FromComponents(year, month, day, hour, minute, second);
+            values[i] = double.IsNaN(rebuilt) || tag.TimeZone is null
+                ? rebuilt
+                : JgsTime.FromWallClock(JgsTime.ToDateTime(rebuilt), tag);
+        }
+
+        return TimeLike(value, values, tag);
     }
 
     /// <summary>Calls one of the field accessors by name, for the dotted spelling of it.</summary>
