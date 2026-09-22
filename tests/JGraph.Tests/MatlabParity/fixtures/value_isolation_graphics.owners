@@ -15,7 +15,7 @@ a132_figure_position_indexed_write	V6
 a133_graphics_prop_growth_write	V6
 a133_graphics_prop_delete_write	V6
 a134_handle_array_cslist_prop_write	V6
-a141_line_width_default	V6
-a141_handle_array_element_prop_write	V6
+a141_line_width_default	V6	# R2025b's default LineWidth is 0.5 points; JGraph draws 1.5 by design (the model's, the renderer's and the figure file's default) — an ADR 0167 divergence
+a141_handle_array_element_prop_write	V6	# the write itself flipped in V6.9; the first number is the untouched line's default width, #141's divergence
 a150_global_handle_prop_write	V6	# V4 finds the handle in the global (value_isolation_objscope holds that flip); the write changes YData's length, which is #133's refusal
 a153_order_graphics_ydata_end_vs_rhs	V6

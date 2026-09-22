@@ -1,0 +1,2 @@
+# The stage of the value-ownership plan that completes each line JGraph fails (appendix A's stage column).
+h_isvalid_number	V6	# R2025b refuses isvalid on a plain number; a handle here is a number, so a number that names nothing is a dead handle and answers false — an ADR 0167 divergence

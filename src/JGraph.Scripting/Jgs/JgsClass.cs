@@ -292,6 +292,17 @@ internal sealed class JgsObject(JgsClass definition)
     public Dictionary<string, JgsValue> Fields { get; } = new(StringComparer.Ordinal);
 
     /// <summary>
+    /// Whether <c>delete</c> has been called on this handle object (V6, appendix A #104). Every
+    /// alias sees the same instance, so every alias sees it deleted: <c>isvalid</c> answers false and
+    /// a property read or write refuses with MATLAB's "Invalid or deleted object." The fields are
+    /// kept — a destructor that ran has already read them, and nothing else may.
+    /// </summary>
+    public bool Deleted { get; private set; }
+
+    /// <summary>Marks the instance deleted; a second <c>delete</c> is a no-op and runs no destructor.</summary>
+    public void MarkDeleted() => Deleted = true;
+
+    /// <summary>
     /// A copy holding the same property values — what binding a second name to a value-class object
     /// means. The property values themselves are copied by the same rule, so a struct inside a value
     /// object is copied and a handle object inside one is not.

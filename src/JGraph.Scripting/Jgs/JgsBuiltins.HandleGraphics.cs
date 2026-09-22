@@ -142,6 +142,7 @@ internal static partial class JgsBuiltins
         Define("ishandle", (args, line, col) => IsHandle("ishandle", args, line, col));
         Define("ishghandle", (args, line, col) => IsHandle("ishghandle", args, line, col));
         Define("isgraphics", IsGraphics);
+        Define("isvalid", IsValid);
 
         Define("ancestor", Ancestor);
         DefineSilent("copyobj", Copy);
@@ -560,6 +561,66 @@ internal static partial class JgsBuiltins
 
     private static bool IsLiveHandle(double handle) =>
         JgsHandleRegistry.TryGet(JgsValue.Number(handle), out _);
+
+    /// <summary>
+    /// <c>isvalid(h)</c> (V6, appendix A #104): whether a graphics handle still names a live object,
+    /// or whether a handle object has not been deleted. It is a method of the handle class in
+    /// MATLAB, so anything that is neither — a value object, a plain number that is not a handle,
+    /// a char — is refused in MATLAB's words rather than answered false: <c>isvalid(5)</c> is a
+    /// question about nothing, and <c>ishandle</c> is the verb that answers false for it.
+    /// </summary>
+    private static JgsValue IsValid(IReadOnlyList<JgsValue> args, int line, int col)
+    {
+        Arity("isvalid", args, 1, line, col);
+        JgsValue asked = args[0];
+        if (asked.Type == JgsType.Object)
+        {
+            JgsObject instance = asked.AsObject;
+            if (instance.Class.IsHandle)
+            {
+                return JgsValue.Bool(!instance.Deleted);
+            }
+        }
+        else if (asked.Type is JgsType.Number or JgsType.Bool)
+        {
+            return MapToBool("isvalid", asked, IsLiveHandle, line, col);
+        }
+        else if (asked.Type == JgsType.Array)
+        {
+            // A handle array (a deleted object keeps its place in one, and answers false there), or
+            // gobjects(0) — an empty logical of the same shape.
+            return asked.ArrayLength == 0
+                ? EmptyLogical(asked.Rows, asked.Cols)
+                : MapToBool("isvalid", asked, IsLiveHandle, line, col);
+        }
+
+        throw new JgsRuntimeException(line, col,
+            $"Undefined function 'isvalid' for input arguments of type '{ClassOf(asked, JgsDialect.Matlab)}'.");
+    }
+
+    /// <summary>
+    /// <c>delete(obj)</c> on a handle object with no <c>delete</c> method of its own: the object is
+    /// marked deleted, so <c>isvalid</c> answers false through every alias (V6, #104). A value object
+    /// has no lifetime to end and is refused. Answers false for anything that is not an object, so
+    /// the file command can go on to its own complaint.
+    /// </summary>
+    internal static bool TryDeleteObject(JgsValue value, int line, int col)
+    {
+        if (value.Type != JgsType.Object)
+        {
+            return false;
+        }
+
+        JgsObject instance = value.AsObject;
+        if (!instance.Class.IsHandle)
+        {
+            throw new JgsRuntimeException(line, col,
+                $"Undefined function 'delete' for input arguments of type '{instance.Class.Name}'.");
+        }
+
+        instance.MarkDeleted();
+        return true;
+    }
 
     // --- ancestor -------------------------------------------------------------------------------
 

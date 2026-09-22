@@ -34,6 +34,7 @@ internal static partial class JgsBuiltins
         DefineSilent("setappdata", (args, line, col) => SetAppData(args, dialect.CopyOnAssign, line, col));
         Define("isappdata", IsAppData);
         DefineSilent("rmappdata", RemoveAppData);
+        Define("guidata", (args, line, col) => GuiData(args, dialect.CopyOnAssign, line, col));
 
         // --- Keeping objects in step ------------------------------------------------------------
         Define("linkprop", LinkProp);
@@ -97,6 +98,38 @@ internal static partial class JgsBuiltins
         // The JGS dialect keeps the caller's own wrapper (M17, reference semantics), and marks the
         // payload exposed so `clear` cannot free what the figure can still hand back (M6, #152).
         entry.AppData[StrOf("setappdata", rest[0], line, col)] = RetainedForEntry(rest[1], sharesOnStore);
+        return JgsValue.Null;
+    }
+
+    /// <summary>
+    /// <c>guidata(h)</c> reads, and <c>guidata(h, v)</c> stores, the one value a figure keeps for the
+    /// script that built it (V6, appendix A #102). The object named may be the figure or anything in
+    /// it: the value lives on the figure either way, which is what lets a callback on a button find
+    /// what the figure's builder stored. Stored as a counted share (M2), so the caller's later writes
+    /// do not reach it and what is handed back is a copy of its own; nothing stored reads as <c>[]</c>.
+    /// </summary>
+    private static JgsValue GuiData(IReadOnlyList<JgsValue> args, bool sharesOnStore, int line, int col)
+    {
+        if (args.Count is < 1 or > 2)
+        {
+            throw new JgsRuntimeException(line, col,
+                "guidata takes a handle, and the value to store on its figure: guidata(h) or guidata(h, v).");
+        }
+
+        // MATLAB's own words for a dead or a non-handle argument, and for a handle nothing owns.
+        if (!JgsHandleRegistry.TryGet(args[0], out JgsHandleEntry? named)
+            || FigureOf(named.Target) is not { } figure)
+        {
+            throw new JgsRuntimeException(line, col, "Object must be a figure or one of its child objects.");
+        }
+
+        JgsHandleEntry owner = JgsHandleRegistry.EntryFor(figure);
+        if (args.Count == 1)
+        {
+            return owner.GuiData ?? JgsMatrix.FromColumnMajor([], 0, 0);
+        }
+
+        owner.GuiData = RetainedForEntry(args[1], sharesOnStore);
         return JgsValue.Null;
     }
 

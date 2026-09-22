@@ -38,6 +38,7 @@ internal sealed partial class Interpreter
     private JgsValue ObjectMember(JgsValue target, string field, MemberExpr member, bool autoCall)
     {
         JgsObject instance = target.AsObject;
+        RequireLive(instance, member.Line, member.Column);
         if (instance.Fields.TryGetValue(field, out JgsValue? held))
         {
             return held;
@@ -57,7 +58,13 @@ internal sealed partial class Interpreter
                     + $"{instance.Class.Name}.{field}(…).");
             }
 
-            var bound = new BoundMethod(instance.Class.Callable(method), target);
+            IJgsCallable body = instance.Class.Callable(method);
+            if (field == "delete" && instance.Class.IsHandle)
+            {
+                body = new DestructorCall(body, instance); // obj.delete is delete(obj) (V6, #104)
+            }
+
+            var bound = new BoundMethod(body, target);
 
             // A bare `obj.area` means the answer, not the method — the same rule a dotted constant
             // already followed (M64). In callee position autoCall is off, so `obj.area(x)` hands the
@@ -67,8 +74,33 @@ internal sealed partial class Interpreter
                 : JgsValue.Function(bound);
         }
 
+        // Every handle class inherits delete and isvalid from handle; a class that wrote neither
+        // still answers to obj.delete and obj.isvalid (V6, #104).
+        if (instance.Class.IsHandle && field is "delete" or "isvalid")
+        {
+            var inherited = new BoundMethod(new InheritedHandleMethod(field, instance), target);
+            return autoCall ? inherited.Call([], member.Line, member.Column) : JgsValue.Function(inherited);
+        }
+
         throw new JgsRuntimeException(member.Line, member.Column,
             $"'{instance.Class.Name}' has no property or method '{field}'.");
+    }
+
+    /// <summary>The <c>delete</c> and <c>isvalid</c> every handle class has without writing them.</summary>
+    private sealed class InheritedHandleMethod(string name, JgsObject instance) : IJgsCallable
+    {
+        public string Name => name;
+
+        public JgsValue Call(IReadOnlyList<JgsValue> arguments, int line, int column)
+        {
+            if (name == "isvalid")
+            {
+                return JgsValue.Bool(!instance.Deleted);
+            }
+
+            instance.MarkDeleted();
+            return JgsValue.Null;
+        }
     }
 
     /// <summary>
@@ -203,7 +235,27 @@ internal sealed partial class Interpreter
             return null;
         }
 
-        return ResolveEntry(expr, env) is { Type: JgsType.Object } held ? held : null;
+        if (ResolveEntry(expr, env) is not { Type: JgsType.Object } held)
+        {
+            return null;
+        }
+
+        RequireLive(held.AsObject, expr.Line, expr.Column);
+        return held;
+    }
+
+    /// <summary>
+    /// Refuses a dot on a deleted handle object in MATLAB's words (V6, appendix A #104): a read, a
+    /// write and a method call all go through here, so an alias of a deleted object is refused the
+    /// same way the deleted name is. <c>isvalid</c> and <c>delete</c> take the object as an
+    /// argument rather than through a dot, and are the two things still allowed of it.
+    /// </summary>
+    private static void RequireLive(JgsObject instance, int line, int column)
+    {
+        if (instance.Deleted)
+        {
+            throw new JgsRuntimeException(line, column, "Invalid or deleted object.");
+        }
     }
 
     /// <summary>
@@ -291,7 +343,39 @@ internal sealed partial class Interpreter
         }
 
         callable = definition.Callable(method);
+
+        // A handle class's own delete is its destructor: once it has run, the object is deleted for
+        // every alias (V6, #104), and a second delete runs nothing. The mark is made after the body
+        // so the body may still read its own properties.
+        if (name == "delete" && definition.IsHandle)
+        {
+            callable = new DestructorCall(callable, dominant.AsObject);
+        }
+
         return true;
+    }
+
+    /// <summary>A class's <c>delete</c> method, followed by the mark that ends the object.</summary>
+    private sealed class DestructorCall(IJgsCallable body, JgsObject instance) : IJgsCallable
+    {
+        public string Name => body.Name;
+
+        public JgsValue Call(IReadOnlyList<JgsValue> arguments, int line, int column)
+        {
+            if (instance.Deleted)
+            {
+                return JgsValue.Null;
+            }
+
+            try
+            {
+                return body.Call(arguments, line, column);
+            }
+            finally
+            {
+                instance.MarkDeleted();
+            }
+        }
     }
 
     /// <summary>

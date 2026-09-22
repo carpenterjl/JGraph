@@ -120,6 +120,13 @@ internal static partial class JgsBuiltins
                     continue;
                 }
 
+                // A handle object with no delete method of its own comes here (one with a method
+                // reached the method, which marks the object as it finishes — V6, #104).
+                if (TryDeleteObject(args[i], line, col))
+                {
+                    continue;
+                }
+
                 string path = host.Resolve(Str("delete", args, i, line, col));
                 host.NoteFileChanging(path);
                 File.Delete(path);

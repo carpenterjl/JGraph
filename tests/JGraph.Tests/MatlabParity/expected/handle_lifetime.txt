@@ -1,0 +1,34 @@
+CHK|a102_guidata_alias|1|exact
+CHK|h_guidata_roundtrip|1 [1 2 3] a,b|exact
+CHK|h_guidata_read_back_isolated|1 3|exact
+CHK|h_guidata_via_child|5|exact
+CHK|h_guidata_via_axes_read|6|exact
+CHK|h_guidata_empty|[] double|exact
+CHK|h_guidata_overwrite|b|exact
+CHK|h_guidata_nonstruct|[1 2 3]|exact
+CHK|h_guidata_handle_object|[7 2 3]|exact
+CHK|h_guidata_bad_handle|ERR Object must be a figure or one of its child objects.|exact
+CHK|h_guidata_after_close|ERR Object must be a figure or one of its child objects.|exact
+CHK|a103_axes_parent_figure|[0 10] 1|exact
+CHK|h_axes_parent_makes_current|1 0 0|exact
+CHK|h_axes_parent_with_options|[0 5] left 1|exact
+CHK|h_axes_parent_second_axes|2 0 1|exact
+CHK|h_axes_parent_name_value|1 nv|exact
+CHK|h_axes_parent_line_refused|ERR Axes cannot be a child of Line.|exact
+CHK|h_axes_handle_selects|1 2|exact
+CHK|h_isvalid_live_line|1 1|exact
+CHK|a104_isvalid_after_delete|0 0|exact
+CHK|h_isvalid_array|[true false] logical|exact
+CHK|h_isvalid_figure_after_close|0 0|exact
+CHK|h_isvalid_after_clf|0 0 1|exact
+CHK|h_isvalid_struct_held|0|exact
+CHK|h_isvalid_empty|[0 0] logical|exact
+CHK|h_isvalid_handle_object|1 logical|exact
+CHK|h_isvalid_handle_object_deleted|0|exact
+CHK|h_isvalid_handle_alias_deleted|0 0|exact
+CHK|h_isvalid_deleted_object_prop_read|ERR Invalid or deleted object.|exact
+CHK|h_isvalid_deleted_object_prop_write|ERR Invalid or deleted object.|exact
+CHK|h_isvalid_delete_twice|0|exact
+CHK|h_isvalid_delete_runs_destructor|D;after; 0|exact
+CHK|h_isvalid_value_object|ERR Undefined function 'isvalid' for input arguments of type 'ValueBox'.|exact
+CHK|h_isvalid_number|ERR Undefined function 'isvalid' for input arguments of type 'double'.|exact|pending V6|0

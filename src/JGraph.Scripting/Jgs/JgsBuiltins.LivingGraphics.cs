@@ -427,12 +427,33 @@ internal static partial class JgsBuiltins
             return JgsHandleRegistry.For(chosen);
         }
 
-        AxesModel axes = JG.CurrentFigure.AddAxes();
-        JG.MakeCurrent(axes);
+        // axes(parent, ...) and axes('Parent', f, ...) make the axes in that figure (V6, appendix A
+        // #103). A figure that is not current stays so: the axes joins it as its latest, which is
+        // the one gca answers once the figure is made current — MATLAB's CurrentAxes, without a
+        // second bookkeeping of it here. A handle to anything else is refused in MATLAB's words.
+        int start = 0;
+        FigureModel? parent = null;
+        if (args.Count >= 1 && JgsHandleRegistry.TryGet(args[0], out JgsHandleEntry? given))
+        {
+            parent = ParentFigureForAxes(given, line, col);
+            start = 1;
+        }
 
         var spec = new OptionSpec(
-            "axes", [], ["Position", "XLim", "YLim", "ZLim", "Color", "Box", "Tag", "Title", "HandleVisibility"]);
-        ParsedArgs parsed = spec.Parse(args, 0, line, col);
+            "axes", [],
+            ["Parent", "Position", "XLim", "YLim", "ZLim", "Color", "Box", "Tag", "Title", "HandleVisibility"]);
+        ParsedArgs parsed = spec.Parse(args, start, line, col);
+        if (parsed.Named("Parent") is { } namedParent)
+        {
+            parent = ParentFigureForAxes(JgsHandleRegistry.Require(namedParent, line, col), line, col);
+        }
+
+        AxesModel axes = (parent ?? JG.CurrentFigure).AddAxes();
+        if (parent is null || ReferenceEquals(parent, JG.CurrentFigure))
+        {
+            JG.MakeCurrent(axes);
+        }
+
         JgsHandleEntry entry = JgsHandleRegistry.EntryFor(axes);
         foreach (string name in new[]
                  { "Position", "XLim", "YLim", "ZLim", "Color", "Box", "Tag", "Title", "HandleVisibility" })
@@ -444,6 +465,19 @@ internal static partial class JgsBuiltins
         }
 
         return JgsHandleRegistry.For(axes);
+    }
+
+    /// <summary>The figure an axes may be made in, or MATLAB's refusal for any other kind of object.</summary>
+    private static FigureModel ParentFigureForAxes(JgsHandleEntry given, int line, int col)
+    {
+        if (given.Target is FigureModel figure)
+        {
+            return figure;
+        }
+
+        string kind = given.TypeName;
+        throw new JgsRuntimeException(line, col,
+            $"Axes cannot be a child of {char.ToUpperInvariant(kind[0])}{kind[1..]}.");
     }
 
     // --- groups and transforms ----------------------------------------------------------------------

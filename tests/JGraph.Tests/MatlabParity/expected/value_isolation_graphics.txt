@@ -7,10 +7,10 @@ CHK|a097_gfx_cell_handle_nested_write|[0 2 3]|exact
 CHK|g_gfx_userdata_alias|[1 2 3] [7 2 3]|exact
 CHK|g_gfx_userdata_struct_write|[1 5]|exact
 CHK|a100_gfx_appdata_alias|[1 2 3]|exact
-CHK|a102_gfx_guidata_alias|1|exact|pending V6|ERR 'guidata' is not recognized as a variable or a function.
-CHK|a103_gfx_xlim_alias|[0 10]|exact|pending V6|ERR axes: unexpected argument 1; options come after the data (options: 'Position', 'XLim', 'YLim', 'ZLim', 'Color', 'Box', 'Tag', 'Title', 'HandleVisibility').
+CHK|a102_gfx_guidata_alias|1|exact
+CHK|a103_gfx_xlim_alias|[0 10]|exact
 CHK|a101_gfx_callback_capture|[1 2 3]|exact
-CHK|a104_gfx_delete_alias_isvalid|0 0|exact|pending V6|ERR 'isvalid' is not recognized as a variable or a function.
+CHK|a104_gfx_delete_alias_isvalid|0 0|exact
 CHK|a096_gfx_operand_scope_prop_write|[1 2 3] [7 2 3]|exact
 CHK|g_gfx_text_string_alias|ab zb|exact
 CHK|a098_gfx_children_handle_write|[42 2 3]|exact

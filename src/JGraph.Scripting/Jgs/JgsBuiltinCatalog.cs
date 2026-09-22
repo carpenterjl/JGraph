@@ -2162,6 +2162,7 @@ public static class JgsBuiltinCatalog
         Add("ishandle", "Whether each number names a live figure object.", P("h"));
         Add("ishghandle", "Whether each number names a live figure object (the same question as ishandle).", P("h"));
         Add("isgraphics", "Whether each number names a live figure object, optionally of a named kind: isgraphics(h, 'axes').", P("h"), Opt("type"));
+        Add("isvalid", "Whether a handle still names a live figure object, or a handle object has not been deleted: isvalid(h).", P("h"));
         Add("ancestor", "The nearest enclosing object of a named kind: ancestor(p, 'axes'), or 'toplevel' for the outermost one.", P("h"), P("type"), Opt("toplevel"));
         Add("copyobj", "Copies a figure object into another parent and returns a handle on the copy: copyobj(p, otherAxes).", P("h"), P("parent"));
         Add("gobjects", "A block of empty handles to fill in: gobjects(n) or gobjects(rows, cols).", Opt("rows"), Opt("cols"));
@@ -2399,7 +2400,7 @@ public static class JgsBuiltinCatalog
         Add("getpoints", "The points an animated line holds: [x, y] = getpoints(h).", P("h"));
         Add("clearpoints", "Empties an animated line without removing it: clearpoints(h).", P("h"));
         Add("rectangle", "Draws a rectangle in the data's own coordinates: rectangle('Position', [x y w h], 'Curvature', [a b]).", Opt("name"), Opt("value"));
-        Add("axes", "Creates an axes in the current figure and makes it current, or selects an existing one: ax = axes or axes(ax).", Opt("ax"), Opt("name"), Opt("value"));
+        Add("axes", "Creates an axes in the current figure and makes it current, in a named figure (axes(f) or axes('Parent', f)), or selects an existing one: ax = axes or axes(ax).", Opt("ax"), Opt("name"), Opt("value"));
         Add("groot", "The root every figure hangs from: get(groot, 'ScreenSize').");
         Add("reset", "Puts a figure or axes back to its default settings and clears what was drawn: reset(gca).", P("h"));
         Add("waitfor", "Waits until an object is deleted, or a property changes or takes a value, running callbacks meanwhile; with nobody to wait on (a batch), returns at once.", P("h"), Opt("property"), Opt("value"));
@@ -2411,6 +2412,7 @@ public static class JgsBuiltinCatalog
         Add("getappdata", "Reads a value stored with setappdata, or the whole lot as a struct: getappdata(gcf, 'state') or getappdata(gcf).", P("h"), Opt("name"));
         Add("isappdata", "Whether anything is stored under a name: isappdata(gcf, 'state').", P("h"), P("name"));
         Add("rmappdata", "Removes a value stored with setappdata.", P("h"), P("name"));
+        Add("guidata", "Stores one value on the figure an object belongs to, or reads it back: guidata(h, s) and s = guidata(h).", P("h"), Opt("value"));
         Add("linkprop", "Keeps a property the same across several objects: linkprop([ax1 ax2], 'XLim') or linkprop(h, {'Color', 'LineWidth'}).", P("handles"), P("properties"));
         Add("refresh", "Redraws a figure now.", Opt("h"));
         Add("alpha", "Sets how transparent the filled plots in the current axes are: alpha(0.5), alpha('opaque'), alpha('clear').", P("value"));

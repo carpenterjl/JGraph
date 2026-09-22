@@ -183,6 +183,13 @@ internal sealed class JgsHandleEntry
     /// application data cannot outlive the object it was attached to.
     /// </summary>
     public Dictionary<string, JgsValue> AppData { get; } = new(StringComparer.Ordinal);
+
+    /// <summary>
+    /// What <c>guidata</c> stored on this figure (V6, appendix A #102). Only a figure's entry holds
+    /// one: <c>guidata(h, v)</c> on any object stores on the figure the object belongs to, and
+    /// <c>guidata(h)</c> reads from there. Null until something is stored, which reads as <c>[]</c>.
+    /// </summary>
+    public JgsValue? GuiData { get; set; }
 }
 
 /// <summary>
