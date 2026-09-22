@@ -73,7 +73,7 @@ internal static partial class JgsBuiltins
     /// <c>'query'</c> are a switch a headless script may throw as freely as any other.
     /// </summary>
     private static JgsValue Pause(
-        IReadOnlyList<JgsValue> args, CancellationToken cancellationToken, int line, int col)
+        IReadOnlyList<JgsValue> args, CancellationToken cancellationToken, JgsTimerScheduler? timers, int line, int col)
     {
         ArityRange("pause", args, 0, 1, line, col);
 
@@ -120,7 +120,8 @@ internal static partial class JgsBuiltins
         double seconds = Num("pause", args, 0, line, col);
         if (_pausesEnabled && seconds > 0 && !double.IsNaN(seconds))
         {
-            PumpWait(TimeSpan.FromSeconds(System.Math.Min(seconds, 3600)), cancellationToken);
+            // A pause is a drain point for timers as well (V6, #105).
+            PumpWait(TimeSpan.FromSeconds(System.Math.Min(seconds, 3600)), cancellationToken, timers);
         }
 
         return JgsValue.Null;

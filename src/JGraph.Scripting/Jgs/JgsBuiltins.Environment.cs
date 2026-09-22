@@ -127,6 +127,12 @@ internal static partial class JgsBuiltins
                     continue;
                 }
 
+                // A timer is stopped if it was running, then ended for every alias (V6, #105).
+                if (TryDeleteTimer(host, args[i], line, col))
+                {
+                    continue;
+                }
+
                 string path = host.Resolve(Str("delete", args, i, line, col));
                 host.NoteFileChanging(path);
                 File.Delete(path);
@@ -607,7 +613,7 @@ internal static partial class JgsBuiltins
             host.ShowTouchedFigures();
             if (!noCallbacks)
             {
-                PumpEvents();
+                PumpEvents(host);
             }
 
             if (!limitRate || Environment.TickCount64 - _lastRenderFlush >= RenderFlushInterval)

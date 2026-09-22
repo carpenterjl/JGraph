@@ -20,14 +20,14 @@ internal static partial class JgsBuiltins
     internal static readonly HashSet<string> ScriptRunningBuiltins = new(StringComparer.Ordinal)
     {
         "accumarray", "arrayfun", "bootci", "bootstrp", "bsxfun", "bvp4c", "bvp5c", "bvpinit", "cellfun",
-        "close", "dblquad", "dde23", "ddensd", "ddesd", "decic", "designfilt", "drawnow", "eval", "evalc",
+        "close", "dblquad", "dde23", "ddensd", "ddesd", "decic", "delete", "designfilt", "drawnow", "eval", "evalc",
         "evalin", "ezpolar", "fcnchk", "feval", "fminbnd", "fminsearch", "funm", "fzero", "getframe",
         "ginput", "image", "inline", "inlineeval", "innerintegral", "integral", "integral2", "integral3",
         "jackknife", "legend", "loglog", "mhsample", "ode15i", "odephas2", "odephas3", "odeplot",
         "odextend", "pause", "pdepe", "pulstran", "quad", "quad2d", "quadgk", "quadl", "quadv",
         "regexprep", "run", "semilogx", "semilogy", "slice", "slicesample", "spfun", "splitapply",
-        "str2func", "str2num", "structfun", "triplequad", "uicontextmenu", "uimenu", "vectorize",
-        "waitforbuttonpress",
+        "start", "stop", "str2func", "str2num", "structfun", "triplequad", "uicontextmenu", "uimenu",
+        "vectorize", "wait", "waitforbuttonpress",
     };
 
     // The audit's call graph joins functions by name, so a few builtins it flags reach script code

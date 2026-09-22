@@ -323,6 +323,10 @@ internal static partial class JgsBuiltins
                 "numeric" => numericClass is not null,
                 "float" => numericClass is JgsNumericClass.Double or JgsNumericClass.Single,
                 "integer" => numericClass?.IsInteger() == true,
+                // Every handle is a 'handle' (V6): a classdef … < handle instance, and the builtin
+                // handle classes — a timer, a containers.Map, a VideoWriter.
+                "handle" => IsHandleClass(args[0])
+                    || (args[0].Type == JgsType.Object && args[0].AsObject.Class.IsHandle),
                 _ => string.Equals(actual, wanted, StringComparison.Ordinal),
             });
         });

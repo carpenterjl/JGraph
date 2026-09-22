@@ -44,6 +44,13 @@ public sealed class JGraphScriptGlobals
     internal JgsWarningState Warnings { get; } = new();
 
     /// <summary>
+    /// The run's timers (V6, #105), installed by the timer builtins' registrar; null until then and
+    /// in a host with no interpreter. The drain points (<c>pause</c>, <c>drawnow</c>, <c>getframe</c>)
+    /// reach it here, so a callback only ever fires for the run that made its timer.
+    /// </summary>
+    internal JgsTimerScheduler? Timers { get; set; }
+
+    /// <summary>
     /// Starts a new run: figure display is tracked per run, so a script that plots into figures it
     /// already opened in an earlier run displays them again — the MATLAB expectation, where running
     /// a script always leaves its figures on screen. A long-lived console session calls this for

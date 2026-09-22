@@ -38,6 +38,10 @@ internal static partial class JgsBuiltins
         // M68: the class questions need the interpreter, because what classes exist is interpreter
         // state — a class is defined by loading a file, exactly as a function is.
         "addCause", "isobject", "properties", "methods", "metaclass",
+
+        // V6 (#105): a timer's command-string callback is evaluated by the interpreter, in the base
+        // workspace, so the timer verbs are declared here.
+        "timer", "start", "stop", "wait",
     ];
 
     /// <summary>Declares the interpreter-backed builtins into <paramref name="env"/>.</summary>
@@ -62,6 +66,7 @@ internal static partial class JgsBuiltins
         RegisterIntrospection(Define, DefineBare, interpreter, host);
         RegisterLegacyFunctionPlotBuiltins(env, interpreter);
         RegisterClassBuiltins(env, interpreter);
+        RegisterTimerBuiltins(env, interpreter, host, dialect);
 
         // refreshdata belongs with the handle verbs and is registered here only because it is the one
         // of them that reads a workspace, which is a thing only the interpreter knows about.

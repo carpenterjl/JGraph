@@ -82,7 +82,11 @@ internal static partial class JgsBuiltins
 
     /// <summary>Delivers queued graphics events, when a session is running one. This is what makes
     /// a builtin a drain point; where no session exists (a one-shot or batch run) it is a no-op.</summary>
-    internal static void PumpEvents() => JgsCallbackDispatcher.Current?.Drain();
+    internal static void PumpEvents(JGraphScriptGlobals host)
+    {
+        JgsCallbackDispatcher.Current?.Drain();
+        host.Timers?.Drain(); // a due timer fires here too (V6, #105)
+    }
 
     /// <summary>
     /// Waits out <paramref name="duration"/> in slices, delivering queued graphics events between
@@ -92,7 +96,9 @@ internal static partial class JgsBuiltins
     /// <param name="duration">How long to wait in total.</param>
     /// <param name="fallbackToken">The token to wake on when no session dispatcher is installed —
     /// a one-shot run's own token, captured when its globals were built.</param>
-    internal static void PumpWait(TimeSpan duration, CancellationToken fallbackToken)
+    /// <param name="timers">The run's timers, fired between slices as well (V6, #105); null where
+    /// the caller has no run to reach them through.</param>
+    internal static void PumpWait(TimeSpan duration, CancellationToken fallbackToken, JgsTimerScheduler? timers = null)
     {
         JgsCallbackDispatcher? dispatcher = JgsCallbackDispatcher.Current;
         CancellationToken token = dispatcher?.StatementToken ?? fallbackToken;
@@ -110,6 +116,7 @@ internal static partial class JgsBuiltins
                 System.Math.Min(remaining, PumpSlice.TotalMilliseconds)));
             token.ThrowIfCancellationRequested();
             dispatcher?.Drain();
+            timers?.Drain();
         }
     }
 
@@ -584,6 +591,12 @@ internal static partial class JgsBuiltins
         else if (asked.Type is JgsType.Number or JgsType.Bool)
         {
             return MapToBool("isvalid", asked, IsLiveHandle, line, col);
+        }
+        else if (IsHandleClass(asked))
+        {
+            // A builtin handle class: a timer is valid until delete(t) (V6, #105); a containers.Map
+            // and a VideoWriter have no delete and are valid as long as they are held.
+            return JgsValue.Bool(!IsDeletedTimer(asked));
         }
         else if (asked.Type == JgsType.Array)
         {

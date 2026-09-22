@@ -256,7 +256,7 @@ internal static partial class JgsBuiltins
 
         // Four spellings since M87: a number of seconds, a bare wait for a key, and the on/off/query
         // switch. Only the bare one needs a window.
-        Define("pause", (args, line, col) => Pause(args, cancellationToken, line, col));
+        Define("pause", (args, line, col) => Pause(args, cancellationToken, host.Timers, line, col));
         RegisterWaitingBuiltins(env, cancellationToken);
 
         // --- Time & date ---------------------------------------------------------------------

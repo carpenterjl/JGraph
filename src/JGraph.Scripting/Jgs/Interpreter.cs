@@ -266,6 +266,13 @@ internal sealed partial class Interpreter
     /// <summary>The global environment — <c>evalin('base', …)</c>'s workspace.</summary>
     internal JgsEnvironment Globals => _globals;
 
+    /// <summary>
+    /// The run's timers (V6, #105), drained at every statement boundary while one is armed — the
+    /// drain point R2025b has too, where a <c>TimerFcn</c> due during a busy loop runs between two
+    /// iterations. Set by the timer builtins' registrar; null in a run without them.
+    /// </summary>
+    internal JgsTimerScheduler? Timers { get; set; }
+
     /// <summary>The resolver every name goes through; the built-ins that take a name ask it too.</summary>
     internal JgsNameResolver Resolver => _resolver;
 
@@ -7446,6 +7453,13 @@ internal sealed partial class Interpreter
             return JgsBuiltins.GetTimeProperty(target, field, member.Line, member.Column);
         }
 
+        // t.Period on a timer (V6, #105): a field read that refuses on a deleted timer and names an
+        // unknown property in MATLAB's words rather than a struct's.
+        if (JgsBuiltins.IsTimer(target))
+        {
+            return JgsBuiltins.GetTimerProperty(target, field, member.Line, member.Column);
+        }
+
         // S.field on an array reads that field across every element (M65). A 1-by-1 falls through to
         // the ordinary field read below, which is the same expression meaning the same thing.
         if (target.IsStructArray)
@@ -7546,6 +7560,16 @@ internal sealed partial class Interpreter
         {
             Rebind(tableTarget.Name,
                 JgsValue.Table(SetTableMember(heldTable.AsTable, FieldName(member, env), value, whole: true, member)), env);
+            return value;
+        }
+
+        // t.Period = 0.5 on a timer (V6, #105): checked against the property table in MATLAB's words
+        // — read-only names, ranges, callbacks, a running timer's Period. The value is already the
+        // binding's share; a handle's fields are written in place.
+        if (member.Target is VariableExpr timerTarget
+            && LookUp(timerTarget.Name, env, out JgsValue heldTimer) && JgsBuiltins.IsTimer(heldTimer))
+        {
+            JgsBuiltins.SetTimerProperty(heldTimer, FieldName(member, env), value, retain: false, member.Line, member.Column);
             return value;
         }
 
@@ -8894,6 +8918,13 @@ internal sealed partial class Interpreter
         if (++_steps > MaxSteps)
         {
             throw new JgsRuntimeException(0, 0, "Step limit exceeded (the script ran too long — check for an infinite loop).");
+        }
+
+        // A statement boundary is a drain point for timers (V6, #105): a due callback runs here,
+        // between two statements, and never inside one.
+        if (Timers is { Armed: true } timers)
+        {
+            timers.Drain();
         }
     }
 

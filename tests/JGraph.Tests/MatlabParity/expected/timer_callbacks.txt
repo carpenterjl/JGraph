@@ -1,0 +1,53 @@
+CHK|h_timer_start_fcn_order|start;after_start;tick;stop;after_wait;|exact
+CHK|h_timer_startdelay_zero_order|start;tick;stop;after_start;|exact
+CHK|h_timer_stop_fcn_sync|stop;after_stop;|exact
+CHK|h_timer_stop_stopped_runs_stopfcn|[stop;]|exact
+CHK|h_timer_pause_drains|tick;after_pause;|exact
+CHK|h_timer_busy_loop_fires_between_statements|tick;loop_done;|exact
+CHK|h_timer_two_timers_order|b;a;|exact
+CHK|h_timer_event_fields|Type,Data;|exact
+CHK|h_timer_event_data|time:TimerFcn:double:[1 6];|exact
+CHK|h_timer_timerfcn_gets_timer|timer:tg:on;|exact
+CHK|h_timer_string_callback|str;|exact
+CHK|h_timer_cell_callback|cellarg:TimerFcn;|exact
+CHK|h_timer_capture_anon|1;|exact
+CHK|h_timer_single_shot_ignores_tasks|tick; 1|exact
+CHK|h_timer_fixed_rate_stop_after_last|tick;tick;tick;stop;after_wait; 3 off|exact
+CHK|h_timer_fixed_delay_mode|tick;tick; 2|exact
+CHK|h_timer_period_then_start|tick;tick; 0.02|exact
+CHK|h_timer_restart_counts|start;tick;stop;start;tick;stop; 1 1|exact
+CHK|h_timer_tasks_reset_on_restart|1 1 1|exact
+CHK|h_timer_running_states|off on off|exact
+CHK|h_timer_stop_inside_timerfcn|tick;stop; 1 off|exact
+CHK|h_timer_delete_in_timerfcn|stop; 0|exact
+CHK|h_timer_error_stops|start;err;stop; 1 off|exact
+CHK|h_timer_error_no_errorfcn|1 off|exact
+CHK|h_timer_defaults|double 1 0 singleShot Inf drop off timer 0 NaN|exact
+CHK|h_timer_userdata_default|[] double|exact
+CHK|h_timer_alias_write|5|exact
+CHK|h_timer_userdata_share_from_callback|[7 2 3] [1 2 3]|exact
+CHK|h_timer_ctor_case_insensitive|tick; lower|exact
+CHK|h_timer_isvalid_class|1 logical timer 1 1|exact
+CHK|h_timer_wait_not_started|returned|exact
+CHK|h_timer_wait_infinite_refused|ERR2 Can't wait with a timer that has an infinite TasksToExecute.|exact
+CHK|h_timer_start_running|ERR2 Cannot start timer because it is already running.|exact
+CHK|h_timer_start_no_timerfcn|ERR2 Cannot start timer without specifying a 'TimerFcn' callback.|exact
+CHK|h_timer_period_while_running|ERR2 Period cannot be set while Timer is running.|exact
+CHK|h_timer_bad_prop_ctor|ERR The name 'Foo' is not an accessible property for an instance of class 'timer'.|exact
+CHK|h_timer_bad_prop_write|ERR2 Unrecognized property 'Foo' for class 'timer'.|exact
+CHK|h_timer_unknown_read|ERR2 Unrecognized method, property, or field 'Foo' for class 'timer'.|exact
+CHK|h_timer_bad_mode|ERR Error setting property 'ExecutionMode' of class 'timer'. 'sometimes' is invalid. Value must be 'singleShot', 'fixedSpacing', 'fixedDelay', or 'fixedRate'.|exact
+CHK|h_timer_period_negative|ERR Error setting property 'Period' of class 'timer'. Value must be positive.|exact
+CHK|h_timer_startdelay_negative|ERR Error setting property 'StartDelay' of class 'timer'. Value must be nonnegative.|exact
+CHK|h_timer_tasks_zero|ERR Error setting property 'TasksToExecute' of class 'timer'. Value must be positive.|exact
+CHK|h_timer_timerfcn_not_callable|ERR TimerFcn callback must be set to a string scalar, a function handle, or a 1-by-N cell array. The first element of the 1-by-N cell array must be the callback function name or handle.|exact
+CHK|h_timer_tasks_executed_readonly|ERR2 Unable to set the 'TasksExecuted' property of class ''timer'' because it is read-only.|exact
+CHK|h_timer_running_readonly|ERR2 Unable to set the 'Running' property of class ''timer'' because it is read-only.|exact
+CHK|h_timer_delete_running|stop;after_delete; 0|exact
+CHK|h_timer_delete_stopped_no_stopfcn|[] 0|exact
+CHK|h_timer_delete_twice|0|exact
+CHK|h_timer_deleted_prop_read|ERR Invalid or deleted object.|exact
+CHK|h_timer_deleted_prop_write|ERR Invalid or deleted object.|exact
+CHK|h_timer_deleted_start|ERR Invalid timer object. This object has been deleted and should be removed from your workspace using CLEAR.|exact
+CHK|h_timer_deleted_stop|ERR Invalid timer object. This object has been deleted and should be removed from your workspace using CLEAR.|exact
+CHK|h_timer_deleted_wait|ERR Invalid timer object. This object has been deleted and should be removed from your workspace using CLEAR.|exact

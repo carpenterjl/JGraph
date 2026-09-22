@@ -2404,6 +2404,13 @@ public static class JgsBuiltinCatalog
         Add("groot", "The root every figure hangs from: get(groot, 'ScreenSize').");
         Add("reset", "Puts a figure or axes back to its default settings and clears what was drawn: reset(gca).", P("h"));
         Add("waitfor", "Waits until an object is deleted, or a property changes or takes a value, running callbacks meanwhile; with nobody to wait on (a batch), returns at once.", P("h"), Opt("property"), Opt("value"));
+
+        // Timers (V6): callbacks that run on the script thread at the next drain point — a pause, a
+        // drawnow, a wait, or the boundary between two statements.
+        Add("timer", "A timer whose callbacks run at the next pause, drawnow, wait or statement boundary: t = timer('TimerFcn', @(t, e) tick(), 'StartDelay', 0.5, 'ExecutionMode', 'fixedRate', 'Period', 1, 'TasksToExecute', 3). StartFcn, StopFcn, ErrorFcn, UserData, Tag and Name are properties too; Running and TasksExecuted are read.", Opt("name"), Opt("value"));
+        Add("start", "Starts a timer: start(t) runs its StartFcn and arms its TimerFcn.", P("t"));
+        Add("stop", "Stops a timer and runs its StopFcn: stop(t).", P("t"));
+        Add("wait", "Blocks until a timer stops, running its callbacks meanwhile: wait(t). A timer with an infinite TasksToExecute is refused.", P("t"));
         Add("hggroup", "Groups drawn objects so they can be shown, hidden and found together: g = hggroup; set(h, 'Parent', g).", Opt("name"), Opt("value"));
         Add("hgtransform", "A group whose Matrix moves its members: t = hgtransform; set(t, 'Matrix', makehgtform('translate', [1 0 0])).", Opt("name"), Opt("value"));
 

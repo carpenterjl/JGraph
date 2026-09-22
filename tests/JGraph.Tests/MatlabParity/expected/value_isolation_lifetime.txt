@@ -35,9 +35,9 @@ CHK|a144_load_feval_expression|0 1|exact|pending V9|1 1
 CHK|g_load_anon_expression|0 1|exact
 CHK|a145_load_anon_statement|ERR Attempt to add "v" to a static workspace.|exact|pending V9|0
 CHK|a144_load_cellfun|0 1|exact|pending V9|1 1
-CHK|a105_timer_capture|[1 2 3]|exact|pending V6|ERR 'timer' is not recognized as a variable or a function.
-CHK|a105_timer_userdata_alias|[1 2 3]|exact|pending V6|ERR 'timer' is not recognized as a variable or a function.
-CHK|a105_timer_writes_global_during_pause|[1 2 3] [7 2 3]|exact|pending V6|ERR 'timer' is not recognized as a variable or a function.
-CHK|a105_timer_fixed_rate_count|3|exact|pending V6|ERR 'timer' is not recognized as a variable or a function.
-CHK|a105_timer_callback_order|start;tick;stop;|exact|pending V6|ERR 'timer' is not recognized as a variable or a function.
-CHK|a105_timer_error_fcn||exact|pending V6|ERR 'timer' is not recognized as a variable or a function.
+CHK|a105_timer_capture|[1 2 3]|exact
+CHK|a105_timer_userdata_alias|[1 2 3]|exact
+CHK|a105_timer_writes_global_during_pause|[1 2 3] [7 2 3]|exact
+CHK|a105_timer_fixed_rate_count|3|exact
+CHK|a105_timer_callback_order|start;tick;stop;|exact
+CHK|a105_timer_error_fcn||exact|pending V6|probe:bad;

@@ -34,11 +34,12 @@ internal static partial class JgsBuiltins
     /// <summary>
     /// The classes whose values are references rather than copies, so binding one name to another
     /// does not clone it. MATLAB calls these handle classes; today the list holds the one keyed
-    /// collection that is one, and M68's <c>classdef … &lt; handle</c> joins it.
+    /// collection that is one, and M68's <c>classdef … &lt; handle</c> joins it. A <c>VideoWriter</c>
+    /// (M108) and a <c>timer</c> (V6) are the other two builtin handle classes.
     /// </summary>
     internal static bool IsHandleClass(JgsValue value) =>
         value.Type == JgsType.Struct
-        && value.ClassName is MapClassName or VideoWriterClassName;
+        && value.ClassName is MapClassName or VideoWriterClassName or TimerClassName;
 
     /// <summary>
     /// M8 (ADR 0164): a builtin never mutates an argument. <c>e = insert(d, 1, 20)</c> and
