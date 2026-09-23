@@ -1,0 +1,77 @@
+CHK|df_mask_nat|0 2 datetime[01-Jan-2020,NaT,NaT/dd-MMM-uuuu] 1x3|exact
+CHK|df_text_char|2021 2020 datetime[01-Jan-2020,05-May-2021,03-Jan-2020/dd-MMM-uuuu] 1x3|exact
+CHK|df_text_string|datetime[01-Jan-2020,05-May-2021,03-Jan-2020/dd-MMM-uuuu] 1x3|exact
+CHK|df_text_string_array|datetime[01-Jan-2021,02-Jan-2021,03-Jan-2020/dd-MMM-uuuu] 1x3|exact
+CHK|df_text_cell|datetime[01-Jan-2021,02-Jan-2021,03-Jan-2020/dd-MMM-uuuu] 1x3|exact
+CHK|df_text_garbage|ERR Unable to convert the text 'garbage' to a datetime value because its format was not recognized.|exact
+CHK|df_text_slash_form|datetime[01-Jan-2020,05-May-2021,03-Jan-2020/dd-MMM-uuuu] 1x3|exact
+CHK|df_text_with_time|datetime[01-Jan-2020 00:00:00,05-May-2021 10:20:30,03-Jan-2020 00:00:00/dd-MMM-uuuu HH:mm:ss] 1x3|exact
+CHK|df_number|ERR You cannot assign numeric values to a datetime array. Assign to the array's Year, Month, Day, Hour, Minute, or Second properties, or use datetime(x,'ConvertFrom',...) to create datetime values for assignment.|exact
+CHK|df_nan|ERR You cannot assign numeric values to a datetime array. Assign to the array's Year, Month, Day, Hour, Minute, or Second properties, or use datetime(x,'ConvertFrom',...) to create datetime values for assignment.|exact
+CHK|df_delete|3 2 datetime[01-Jan-2020,03-Jan-2020/dd-MMM-uuuu] 1x2|exact
+CHK|df_mask_scalar_dt|datetime[01-Jan-2020,01-Jan-2022,01-Jan-2022/dd-MMM-uuuu] 1x3|exact
+CHK|df_grow_text|datetime[01-Jan-2020,02-Jan-2020,03-Jan-2020,01-Jan-2022/dd-MMM-uuuu] 1x4|exact
+CHK|df_grow_gap_text|datetime[01-Jan-2020,02-Jan-2020,03-Jan-2020,NaT,01-Jan-2022/dd-MMM-uuuu] 1x5|exact
+CHK|df_colon_nat|datetime[NaT,NaT,NaT/dd-MMM-uuuu HH:mm:ss] 1x3|exact
+CHK|df_rhs_other_format|datetime[01-Jan-2020,01-Jan-2022,03-Jan-2020/dd-MMM-uuuu] 1x3|exact
+CHK|df_empty_double_grows|ERR Unable to perform assignment because value of type 'datetime' is not convertible to 'double'.|exact
+CHK|df_double_target|ERR Unable to perform assignment because value of type 'datetime' is not convertible to 'double'.|exact
+CHK|df_two_subs_nat|datetime[NaT,02-Jan-2020,NaT,04-Jan-2020/dd-MMM-uuuu] 2x2|exact
+CHK|df_two_subs_text|datetime[01-Jan-2020,02-Jan-2020,05-May-2021,04-Jan-2020/dd-MMM-uuuu] 2x2|exact
+CHK|df_struct_field_text|2020 datetime[01-Jan-2020,05-May-2021,03-Jan-2020/dd-MMM-uuuu] 1x3|exact
+CHK|df_cell_held_text|2020 datetime[01-Jan-2020,05-May-2021,03-Jan-2020/dd-MMM-uuuu] 1x3|exact
+CHK|df_elem_component|2020 datetime[01-Jan-2020,02-Jan-2000,03-Jan-2020/dd-MMM-uuuu] 1x3|exact
+CHK|df_elem_component_range|datetime[01-Jan-2000,02-Jan-2000,03-Jan-2020/dd-MMM-uuuu] 1x3|exact
+CHK|df_struct_elem_component|2020 datetime[01-Jan-2020,02-Jan-1999,03-Jan-2020/dd-MMM-uuuu] 1x3|exact
+CHK|df_component_elem|datetime[01-Jan-2020,02-Jan-2000,03-Jan-2020/dd-MMM-uuuu] 1x3|exact
+CHK|df_dur_text|duration[  1 hr,0.5 hr,  3 hr/h] 1x3|exact
+CHK|df_dur_number|duration[  1 hr,120 hr,  3 hr/h] 1x3|exact
+CHK|df_dur_mask_scalar|duration[        1 hr,0.0013889 hr,0.0013889 hr/h] 1x3|exact
+CHK|df_dur_nan|duration[  1 hr,NaN hr,  3 hr/h] 1x3|exact
+CHK|df_dur_grow|duration[       1 hr,       2 hr,       3 hr,       0 hr,0.083333 hr/h] 1x5|exact
+CHK|df_dur_into_dt|ERR Right hand side of an assignment must be a datetime array or text representing dates and times.|exact
+CHK|df_dt_into_dur|ERR Right hand side of an assignment must be a duration array, numeric array representing days, or text representing durations in timer formats (e.g. 'hh:mm:ss').|exact
+CHK|df_zoned_text|3 datetime[01-Jan-2020 12:00:00,02-Jan-2020 03:00:00/dd-MMM-uuuu HH:mm:ss]@UTC 1x2|exact
+CHK|df_text_nat|datetime[01-Jan-2020,NaT,03-Jan-2020/dd-MMM-uuuu] 1x3|exact
+CHK|df_empty_char|datetime[01-Jan-2020,NaT,03-Jan-2020/dd-MMM-uuuu] 1x3|exact
+CHK|df_overlap|datetime[03-Jan-2020,02-Jan-2020,01-Jan-2020/dd-MMM-uuuu] 1x3|exact
+CHK|df_char_matrix_one_slot|ERR Right hand side of an assignment must be a datetime array or text representing dates and times.|exact
+CHK|df_char_matrix_rows|ERR Right hand side of an assignment must be a datetime array or text representing dates and times.|exact
+CHK|df_format_driven|datetime[2020/01/01,2021/05/05,2020/01/03/yyyy/MM/dd] 1x3 / datetime[2020/01/01,2021/05/05,2021/06/06/yyyy/MM/dd] 1x3|exact
+CHK|df_compact_text|ERR Unable to convert the text '20210505' to a datetime value because its format was not recognized.|exact
+CHK|df_int8|ERR You cannot assign numeric values to a datetime array. Assign to the array's Year, Month, Day, Hour, Minute, or Second properties, or use datetime(x,'ConvertFrom',...) to create datetime values for assignment.|exact
+CHK|df_cell_of_dt|ERR Right hand side of an assignment must be a datetime array or text representing dates and times.|exact
+CHK|df_struct_rhs|ERR Right hand side of an assignment must be a datetime array or text representing dates and times.|exact
+CHK|df_string_expand|datetime[05-May-2021,05-May-2021,03-Jan-2020/dd-MMM-uuuu] 1x3|exact
+CHK|df_char_target|ERR Unable to perform assignment because the left and right sides have a different number of elements.|exact
+CHK|df_dur_string_array|duration[  1 hr,2.5 hr,  3 hr/h] 1x3|exact
+CHK|df_logical_rhs|ERR Right hand side of an assignment must be a datetime array or text representing dates and times.|exact
+CHK|df_string_missing|datetime[01-Jan-2020,NaT,03-Jan-2020/dd-MMM-uuuu] 1x3|exact
+CHK|df_text_two_into_one|ERR Unable to perform assignment because the left and right sides have a different number of elements.|exact
+CHK|df_mask_text|datetime[01-Jan-2020,05-May-2021,05-May-2021/dd-MMM-uuuu] 1x3|exact
+CHK|df_dur_text_bad|ERR Right hand side of an assignment must be a duration array, numeric array representing days, or text representing durations in timer formats (e.g. 'hh:mm:ss').|exact
+CHK|df_nd_grow|[1 3 2] datetime[01-Jan-2020,02-Jan-2020,03-Jan-2020,NaT,05-May-2021,NaT/dd-MMM-uuuu] 1x6|exact
+CHK|df_end_plus_text_col|datetime[01-Jan-2020,02-Jan-2020,03-Jan-2020,01-Jan-2022/dd-MMM-uuuu] 4x1|exact
+CHK|df_zoned_from_unzoned|ERR Cannot combine or compare a datetime array with a time zone with one without a time zone.|exact
+CHK|df_unzoned_from_zoned|ERR Cannot combine or compare a datetime array with a time zone with one without a time zone.|exact
+CHK|df_dur_compound|duration[  1 hr,2.5 hr,  3 hr/h] 1x3|exact
+CHK|df_text_iso_t|datetime[01-Jan-2020 00:00:00,05-May-2021 10:20:30,03-Jan-2020 00:00:00/dd-MMM-uuuu HH:mm:ss] 1x3|exact
+CHK|df_year_only|ERR Unable to convert the text '2021' to a datetime value because its format was not recognized.|exact
+CHK|df_format_follows_time|dd-MMM-uuuu -> dd-MMM-uuuu HH:mm:ss|exact
+CHK|df_format_falls_back|dd-MMM-uuuu HH:mm:ss -> dd-MMM-uuuu HH:mm:ss -> dd-MMM-uuuu|exact
+CHK|df_format_set_stays|datetime[2020,2020,2020/yyyy] 1x3|exact
+CHK|df_nat_format|dd-MMM-uuuu HH:mm:ss 2|exact
+CHK|df_reshape_keeps_class|datetime [2 2] 4|exact
+CHK|df_char_duration_pad|[2 6] [  1 hr] [0.5 hr]|exact
+CHK|df_alias_after_text|datetime[01-Jan-2020,02-Jan-2020,06-Jun-2022/dd-MMM-uuuu] 1x3 / datetime[05-May-2021,02-Jan-2020,03-Jan-2020/dd-MMM-uuuu] 1x3|exact
+CHK|df_loop_text|datetime[01-Jan-2021,01-Feb-2021,01-Mar-2021/dd-MMM-uuuu] 1x3|exact
+CHK|g_dt_alias_elem_write|0 1|exact
+CHK|g_dt_format_alias|dd-MMM-uuuu/yyyy|exact
+CHK|g_dt_timezone_alias|UTC/America/New_York/12/7|exact
+CHK|g_dt_delete_alias|3 2|exact
+CHK|g_dt_arith_classes|duration datetime calendarDuration duration|exact
+CHK|g_dur_diff_alias|0 1|exact
+CHK|g_dt_cell_hold|0 1|exact
+CHK|g_dt_concat_alias|0 6|exact
+CHK|g_dt_plus_rebind_alias|1 2|exact
+CHK|g_dur_minus_in_loop_alias|[1 2 3] [-0.5 0.5 1.5]|exact

@@ -42,6 +42,13 @@ internal sealed partial class Interpreter
             return rhs;
         }
 
+        // A datetime or a duration takes text, its own kind, and (a duration) a count of days, in
+        // milliseconds (V6, #128, #129; Interpreter.TimeWrites.cs).
+        if (target.IsTime)
+        {
+            return IntoTimeArray(target, rhs, at);
+        }
+
         if (target.IsStringArray)
         {
             return StringElementsFor(rhs, at);
@@ -105,6 +112,15 @@ internal sealed partial class Interpreter
                 : target.IsCharMatrix ? "char"
                 : target.NumericClass.MatlabName();
             throw new JgsRuntimeException(at.Line, at.Column, $"Conversion to {kind} from cell is not possible.");
+        }
+
+        // A datetime or a duration has no place in a numeric array (V6; measured: x = []; x(2) = datetime(...)).
+        if (rhs.IsTime)
+        {
+            string kind = JgsBuiltins.IsLogicalValue(target) ? "logical"
+                : target.IsCharMatrix ? "char"
+                : target.NumericClass.MatlabName();
+            throw NotConvertible(JgsBuiltins.TimeClassName(rhs), kind, at);
         }
 
         // V6 (#157): a number written into a logical array is converted into it - nonzero is
@@ -367,6 +383,12 @@ internal sealed partial class Interpreter
         if (rhs.IsCharMatrix)
         {
             return rhs.CharMatrixText().ToCharArray();
+        }
+
+        // A time has no characters to give; R2025b's refusal is the count mismatch (measured).
+        if (rhs.IsTime)
+        {
+            throw new JgsRuntimeException(at.Line, at.Column, CountMismatch);
         }
 
         if (rhs.Type is JgsType.Number or JgsType.Complex || (rhs.Type == JgsType.Array && !JgsBuiltins.IsLogicalValue(rhs)))

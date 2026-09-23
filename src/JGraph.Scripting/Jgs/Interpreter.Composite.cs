@@ -80,7 +80,7 @@ internal sealed partial class Interpreter
 
                 if (held is null || !IsComputedHolder(held, step, target))
                 {
-                    switch (ClassifyLevel(held, chain, k + 1, out JgsValue? next, out JgsValue? start))
+                    switch (ClassifyLevel(held, chain, k + 1, env, out JgsValue? next, out JgsValue? start))
                     {
                         case LevelKind.Continue:
                             held = next;
@@ -154,7 +154,8 @@ internal sealed partial class Interpreter
     /// array's element with one field (<c>s(3).f = 9</c>); everything past that - <c>x.y(3).z</c>,
     /// <c>c{3}.f</c>, <c>s.c{2}(3)</c>, <c>c{2}.a(2).b</c> - is created here, one level at a time.
     /// </summary>
-    private LevelKind ClassifyLevel(JgsValue? held, List<Expr> chain, int level, out JgsValue? next, out JgsValue? start)
+    private LevelKind ClassifyLevel(
+        JgsValue? held, List<Expr> chain, int level, JgsEnvironment env, out JgsValue? next, out JgsValue? start)
     {
         next = null;
         start = null;
@@ -216,6 +217,15 @@ internal sealed partial class Interpreter
                 {
                     next = handle;
                     return LevelKind.Continue;
+                }
+
+                // d(2).Year = 2000 (V6, #127): the elements are read out as the time they are, the
+                // component is set on that, and the result is written back over the same elements
+                // by the ordinary paren road - get, modify, set on a selection.
+                if (!nothing && held!.IsTime && rest >= 1 && chain[level + 1] is MemberExpr)
+                {
+                    start = IndexInto(held, subscripts, step, env);
+                    return LevelKind.Create;
                 }
 
                 if (!nothing && !plainStruct)

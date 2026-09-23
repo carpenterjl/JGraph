@@ -4456,12 +4456,23 @@ internal sealed partial class Interpreter
         var holds = new ScopeHolds();
         try
         {
-            return subscripts.Count switch
+            JgsValue written = subscripts.Count switch
             {
                 2 => AssignTwoSubscripts(container, subscripts, op, rhs, at, env, ref holds),
                 > 2 => AssignNSubscripts(container, subscripts, op, rhs, at, env, ref holds),
                 _ => AssignThroughIndex(container, subscripts, op, rhs, at, env, ref holds),
             };
+
+            // A datetime's default display follows what it holds (V6, #129): read back through the
+            // same entry the road wrote, which is the grown wrapper when the write grew it.
+            if (Dialect.IsMatlab && op == TokenType.Assign
+                && (rhs.IsTime || rhs.Type is JgsType.String or JgsType.Cell || rhs.IsStringArray)
+                && !IsDeletion(written) && EvaluateForWrite(container, env) is { IsDatetime: true } time)
+            {
+                RefreshDatetimeFormat(time, written);
+            }
+
+            return written;
         }
         finally
         {

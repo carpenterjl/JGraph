@@ -67,9 +67,9 @@ CHK|g_dur_diff_alias|0 1|exact
 CHK|g_dt_cell_hold|0 1|exact
 CHK|a127_dt_struct_component_write|2020 1999|exact
 CHK|g_dt_concat_alias|0 6|exact
-CHK|a128_dt_mask_write_alias|0 2|exact|pending V6|ERR Cannot assign 1 values into 2 selected elements.
+CHK|a128_dt_mask_write_alias|0 2|exact
 CHK|g_dt_plus_rebind_alias|1 2|exact
-CHK|a129_dt_text_assign|2021 2020|exact|pending V6|ERR Unable to perform assignment because the left and right sides have a different number of elements.
+CHK|a129_dt_text_assign|2021 2020|exact
 CHK|a125_dt_refused_write_atomic|3|exact
 CHK|g_dur_minus_in_loop_alias|[1 2 3] [-0.5 0.5 1.5]|exact
 CHK|g_handle_nested_struct_write|[1 9]|exact

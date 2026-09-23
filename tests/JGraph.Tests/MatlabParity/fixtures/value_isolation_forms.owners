@@ -38,8 +38,6 @@ a125_dt_refused_write_atomic	V3
 a126_dt_indexed_component_write	V6
 a127_dt_year_property_alias	V6
 a127_dt_struct_component_write	V6
-a128_dt_mask_write_alias	V6
-a129_dt_text_assign	V6
 a135_cell_datetime_format	V6
 a136_dictionary_brace_cell_write	V6
 a137_struct_holding_handle_write	V6

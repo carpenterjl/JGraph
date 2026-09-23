@@ -171,6 +171,7 @@ internal static partial class JgsBuiltins
     [
         "min", "max", "sort", "median", "mode", "unique", "mean",
         "cummax", "cummin", "sortrows", "fliplr", "flipud", "flip", "circshift", "transpose",
+        "reshape", "permute", "squeeze", "repmat", // V6: a reshaped datetime was a double (measured on the way to #128)
     ];
 
     /// <summary>

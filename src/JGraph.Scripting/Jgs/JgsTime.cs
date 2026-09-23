@@ -766,18 +766,27 @@ internal static class JgsTime
     public static JgsTimeTag DatetimeTag(ReadOnlySpan<double> values, string? timeZone = null)
     {
         var zoned = new JgsTimeTag(JgsTimeKind.Datetime, DefaultDatetimeFormat, timeZone);
+        bool anyMoment = false;
         foreach (double ms in values)
         {
+            if (double.IsNaN(ms))
+            {
+                continue;
+            }
+
             // Midnight is a property of the wall clock, not of the stored instant: a zoned datetime
             // sitting on midnight in its own zone stores an offset instant, and testing the storage
             // would make every zoned date print a time of day it does not have (M82).
-            if (!double.IsNaN(ms) && WallClock(ms, zoned).TimeOfDay != TimeSpan.Zero)
+            anyMoment = true;
+            if (WallClock(ms, zoned).TimeOfDay != TimeSpan.Zero)
             {
                 return zoned;
             }
         }
 
-        return new JgsTimeTag(JgsTimeKind.Datetime, DateOnlyFormat, timeZone);
+        // Only a moment can fall on midnight: an array holding nothing but NaT shows the full
+        // format, as NaT itself does (V6; measured: d(:) = NaT).
+        return anyMoment ? new JgsTimeTag(JgsTimeKind.Datetime, DateOnlyFormat, timeZone) : zoned;
     }
 
     /// <summary>The tag a freshly built duration takes.</summary>

@@ -94,6 +94,17 @@ internal static partial class JgsBuiltins
                         texts[i] = (time.ElementAt(i).AsNumber / divisor).ToString(precision,culture) + suffix;
                     }
                 }
+                if (texts.Length > 1 && time.IsDuration)
+                {
+                    // A duration's rows are right-aligned, as MATLAB displays a column of them
+                    // (measured: char(hours([1 0.5])) is ['  1 hr'; '0.5 hr']; V6).
+                    int widest = texts.Max(static t => t.Length);
+                    for (int i = 0; i < texts.Length; i++)
+                    {
+                        texts[i] = texts[i].PadLeft(widest);
+                    }
+                }
+
                 return texts.Length == 1 ? JgsValue.Str(texts[0]) : PadIntoCharMatrix(texts);
             }
 
