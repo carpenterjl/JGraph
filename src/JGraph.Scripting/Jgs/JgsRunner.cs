@@ -113,7 +113,7 @@ internal static class JgsRunner
             // script itself defined (or rebound). save/load must be declared before the capture, or
             // they would list themselves as the user's variables.
             Dictionary<string, JgsValue> pristine = null!;
-            JgsWorkspaceIo.DefineSaveLoad(environment, globals, () => interpreter.CurrentFrame.Variables
+            JgsWorkspaceIo.DefineSaveLoad(environment, globals, interpreter, () => interpreter.CurrentFrame.Variables
                 .Where(p => !pristine.TryGetValue(p.Key, out JgsValue? original) || !ReferenceEquals(original, p.Value))
                 .Select(static p => (p.Key, p.Value)), () => interpreter.CurrentFrame);
             DefineWorkspaceBuiltins(environment, interpreter, context.Output, () => pristine);
@@ -503,6 +503,11 @@ internal static class JgsRunner
 
         environment.Builtins.Register("whos", JgsValue.Function(new BuiltinFunction("whos", (args, line, column) =>
         {
+            if (args.Count == 1 && JgsBuiltins.IsMatFile(args[0]))
+            {
+                return JgsBuiltins.MatFileWhos(args[0], line, column); // the file's variables, a struct array (V6, #112)
+            }
+
             var selectors = new List<System.Text.RegularExpressions.Regex>();
             bool regexp = false;
             foreach (JgsValue arg in args)

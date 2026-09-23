@@ -10,16 +10,25 @@ namespace JGraph.Scripting.Jgs;
 /// the one-shot runner — because only the owner knows which names the user created, the same reason
 /// <c>clear</c> and <c>whos</c> live there.
 /// </summary>
+/// <remarks>
+/// V6 (ADR 0167, appendix A #110, #111, #113): <c>save -struct</c> writes a scalar struct's fields
+/// as the variables; an instance of a user class and a function handle are saved and loaded through
+/// <see cref="MatWorkspaceBinder"/>, which builds an instance from its class (no constructor runs,
+/// as in R2025b) and re-makes a handle from its text and captured workspace. A loaded handle object
+/// is a new instance — <c>S.h == h</c> is false — and two names saved over one handle load as one.
+/// </remarks>
 internal static class JgsWorkspaceIo
 {
     /// <summary>
     /// Declares <c>save</c> and <c>load</c> into <paramref name="environment"/>.
     /// <paramref name="userVariables"/> yields the user-created names (save's default set);
-    /// <c>load</c> declares what it reads straight into the environment.
+    /// <c>load</c> declares what it reads straight into the environment, and asks
+    /// <paramref name="interpreter"/> for the classes a saved object needs.
     /// </summary>
     public static void DefineSaveLoad(
         JgsEnvironment environment,
         JGraphScriptGlobals host,
+        Interpreter interpreter,
         Func<IEnumerable<(string Name, JgsValue Value)>> userVariables,
         Func<JgsEnvironment>? activeWorkspace = null)
     {
@@ -31,11 +40,14 @@ internal static class JgsWorkspaceIo
             }));
 
         environment.Builtins.Register("load", JgsValue.Function(
-            new BuiltinFunction("load", (args, line, col) => Load(activeWorkspace?.Invoke() ?? environment, host, args, line, col))
+            new BuiltinFunction("load", (args, line, col) => Load(activeWorkspace?.Invoke() ?? environment, host, interpreter, args, line, col))
             {
                 BindsAnsAsStatement = false,
             }));
     }
+
+    private const string StructOptionNeedsName = "The -STRUCT option must be followed by the name of a scalar structure variable.";
+    private const string StructArgumentNotStruct = "The argument to -STRUCT must be the name of a scalar structure variable.";
 
     private static JgsValue Save(
         JGraphScriptGlobals host,
@@ -45,6 +57,8 @@ internal static class JgsWorkspaceIo
         string? path = null;
         bool ascii = false;
         bool append = false;
+        string? structName = null;
+        bool structNamePending = false;
         var names = new List<string>();
         foreach (JgsValue arg in args)
         {
@@ -54,7 +68,22 @@ internal static class JgsWorkspaceIo
             }
 
             string word = arg.AsString;
-            if (word.Equals("-ascii", StringComparison.OrdinalIgnoreCase))
+            if (structNamePending)
+            {
+                // -struct takes the very next word, and an option is not a name (R2025b's words).
+                if (word.StartsWith('-'))
+                {
+                    throw new JgsRuntimeException(line, col, StructOptionNeedsName);
+                }
+
+                structName = word;
+                structNamePending = false;
+            }
+            else if (word.Equals("-struct", StringComparison.OrdinalIgnoreCase))
+            {
+                structNamePending = true;
+            }
+            else if (word.Equals("-ascii", StringComparison.OrdinalIgnoreCase))
             {
                 ascii = true;
             }
@@ -85,15 +114,49 @@ internal static class JgsWorkspaceIo
             }
         }
 
+        if (structNamePending)
+        {
+            throw new JgsRuntimeException(line, col, StructOptionNeedsName);
+        }
+
         path ??= "matlab.mat";
         if (!ascii && !Path.HasExtension(path))
         {
             path += ".mat";
         }
 
-        var all = userVariables().OrderBy(static v => v.Name, StringComparer.Ordinal).ToList();
+        // A function's nargin and nargout are the call's, not the workspace's: save(fn) inside a
+        // function writes the variables, as R2025b does, and not the two counts.
+        var all = userVariables()
+            .Where(static v => v.Name is not ("nargin" or "nargout"))
+            .OrderBy(static v => v.Name, StringComparer.Ordinal)
+            .ToList();
         List<(string Name, JgsValue Value)> selected;
-        if (names.Count == 0)
+        if (structName is not null)
+        {
+            // save(fn, '-struct', 'st', fields…) (V6, #110): the fields of a scalar struct are the
+            // variables, all of them or the ones named, in the struct's own order.
+            int at = all.FindIndex(v => v.Name == structName);
+            if (at < 0 || all[at].Value.Type != JgsType.Struct || all[at].Value.IsStructArray
+                || all[at].Value.ClassName is not null)
+            {
+                throw new JgsRuntimeException(line, col, StructArgumentNotStruct);
+            }
+
+            Dictionary<string, JgsValue> fields = all[at].Value.AsStruct;
+            selected = new List<(string, JgsValue)>();
+            foreach (string field in names.Count == 0 ? [.. fields.Keys] : names)
+            {
+                if (!fields.TryGetValue(field, out JgsValue? held))
+                {
+                    throw new JgsRuntimeException(line, col,
+                        $"The variable '{structName}' does not contain a field named '{field}'.");
+                }
+
+                selected.Add((field, held));
+            }
+        }
+        else if (names.Count == 0)
         {
             selected = all;
         }
@@ -207,7 +270,7 @@ internal static class JgsWorkspaceIo
     }
 
     private static JgsValue Load(
-        JgsEnvironment environment, JGraphScriptGlobals host,
+        JgsEnvironment environment, JGraphScriptGlobals host, Interpreter interpreter,
         IReadOnlyList<JgsValue> args, int line, int col)
     {
         string path = args.Count >= 1 ? StrArg(args[0], line, col) : "matlab.mat";
@@ -236,7 +299,8 @@ internal static class JgsWorkspaceIo
             }
 
             var loaded = new Dictionary<string, JgsValue>(StringComparer.Ordinal);
-            foreach ((string name, JgsValue value) in MatFileReader.Read(source, wanted.Count > 0 ? wanted : null))
+            var binder = new MatWorkspaceBinder(interpreter, host, line, col);
+            foreach ((string name, JgsValue value) in MatFileReader.Read(source, wanted.Count > 0 ? wanted : null, binder))
             {
                 // M2 (appendix A #109, the storage half): the workspace binding adopts the fresh
                 // wrapper and the returned struct's field takes a counted share, so a later write to
@@ -310,4 +374,88 @@ internal static class JgsWorkspaceIo
         value.Type == JgsType.String
             ? value.AsString
             : throw new JgsRuntimeException(line, col, "load expects a file name and variable names as text.");
+}
+
+/// <summary>
+/// The reader's way back into the interpreter (V6, ADR 0167, #111 and #113): an object element is
+/// an instance of its class with every property at its default — no constructor runs, which is
+/// R2025b's order too — then the saved values, each checked against its declaration as a write
+/// would be; a function element is re-made from its text, in a static workspace holding what it
+/// captured, or from its name where the load stands. A class that is not on the path is R2025b's
+/// warning, and the variable comes back as a <c>uint32</c> as it does there.
+/// </summary>
+internal sealed class MatWorkspaceBinder(Interpreter interpreter, JGraphScriptGlobals host, int line, int col) : IMatObjectBinder
+{
+    private const string CannotInstantiate = "MATLAB:load:cannotInstantiateLoadedVariable";
+
+    /// <inheritdoc />
+    public JgsValue NewObject(string className, bool deleted, string variable)
+    {
+        JgsClass? definition = interpreter.ClassForLoad(className);
+        if (definition is null)
+        {
+            JgsBuiltins.Warn(host, CannotInstantiate,
+                $"Variable '{variable}' originally saved as a {className} cannot be instantiated as an object and will be read in as a uint32.");
+            JgsValue stub = JgsValue.Number(0);
+            stub.SetNumericClass(JgsNumericClass.UInt32);
+            return stub;
+        }
+
+        JgsObject instance = definition.NewDefault(line, col);
+        if (deleted)
+        {
+            instance.MarkDeleted();
+        }
+
+        return JgsValue.Object(instance);
+    }
+
+    /// <inheritdoc />
+    public void SetProperties(JgsValue instance, IReadOnlyDictionary<string, JgsValue> properties)
+    {
+        if (instance.Type != JgsType.Object)
+        {
+            return; // the uint32 that stands for an object whose class is gone
+        }
+
+        JgsObject target = instance.AsObject;
+        foreach ((string name, JgsValue value) in properties)
+        {
+            // A property the class no longer declares has nowhere to go and is dropped, as MATLAB
+            // drops it; a Constant belongs to the class.
+            if (target.Class.Property(name) is { Constant: false } property)
+            {
+                target.Fields[name] = target.Class.Check(property, value, line, col);
+            }
+        }
+    }
+
+    /// <inheritdoc />
+    public JgsValue Function(string text, string type, IReadOnlyDictionary<string, JgsValue>? workspace, string variable)
+    {
+        if (type == "anonymous" || text.StartsWith('@'))
+        {
+            // The text is evaluated in a static workspace over the built-in layer holding only what
+            // the handle captured — str2func's road, with the captures put back — so a free name
+            // in the body is a function resolved at the call, and the handle carries the loading
+            // file for its local functions.
+            JgsEnvironment defining = interpreter.Dialect.IsMatlab
+                ? new JgsEnvironment(interpreter.CurrentFrame.Builtins.Root) { IsStaticWorkspace = true }
+                : new JgsEnvironment(interpreter.CurrentFrame);
+            if (workspace is not null)
+            {
+                foreach ((string name, JgsValue value) in workspace)
+                {
+                    defining.Declare(name, value);
+                }
+            }
+
+            return interpreter.EvaluateSource(text, defining, line, col);
+        }
+
+        return interpreter.TryMakeHandle(text, interpreter.CurrentFrame, out JgsValue handle)
+            ? handle
+            : throw new JgsRuntimeException(line, col,
+                $"load: '{variable}' is a handle to '{text}', which is not a function on the path here.");
+    }
 }

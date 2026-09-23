@@ -7466,6 +7466,12 @@ internal sealed partial class Interpreter
             return JgsBuiltins.GetListenerProperty(target, field, member.Line, member.Column);
         }
 
+        // m.v on a matfile (V6, #112): the variable, decoded from the file now.
+        if (JgsBuiltins.IsMatFile(target))
+        {
+            return JgsBuiltins.GetMatFileMember(target, field, member.Line, member.Column);
+        }
+
         // S.field on an array reads that field across every element (M65). A 1-by-1 falls through to
         // the ordinary field read below, which is the same expression meaning the same thing.
         if (target.IsStructArray)

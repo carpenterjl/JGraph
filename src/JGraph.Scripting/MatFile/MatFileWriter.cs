@@ -13,17 +13,37 @@ namespace JGraph.Scripting.MatFile;
 /// little-endian order, which is the order this codebase runs in; the reader takes either.
 /// </summary>
 /// <remarks>
+/// <para>
 /// Version 5 is the only format written, and always will be: v7.3 is HDF5, and a hand-rolled writer
 /// for it would risk producing files MATLAB silently mis-reads. Types v5 has no room for — string
 /// arrays, datetimes, maps — are refused by name rather than flattened into numbers, which is the
 /// failure this wave found and fixed.
+/// </para>
+/// <para>
+/// An instance of a user class and a function handle are written too (V6, ADR 0167, appendix A
+/// #111 and #113), in the format's own object and function elements: an object is its class name
+/// and its properties laid out as a struct's fields; a handle is the struct <c>functions</c>
+/// reports (<c>function</c>, <c>type</c>, <c>file</c>, and for an anonymous function the
+/// <c>workspace</c> it captured). Two names over one handle object share one element id, kept in
+/// the second word of the array flags, so the reader hands back one instance for both; a handle
+/// met a second time is written as its id alone, which is also what stops a cycle. MATLAB keeps
+/// its own objects in an opaque subsystem this does not write, so it reads these elements as
+/// old-style objects at best — the recorded shortfall; JGraph reads them as what they were.
+/// </para>
 /// </remarks>
 internal static class MatFileWriter
 {
+    /// <summary>What one <see cref="Write"/> remembers across its elements: the handle objects met so far, by element id.</summary>
+    private sealed class Session
+    {
+        public readonly Dictionary<JgsObject, int> Handles = new(ReferenceEqualityComparer.Instance);
+    }
+
     /// <summary>Writes <paramref name="variables"/> to <paramref name="path"/>, in order.</summary>
     /// <exception cref="NotSupportedException">A value has no MAT representation.</exception>
     public static void Write(string path, IEnumerable<(string Name, JgsValue Value)> variables)
     {
+        var session = new Session();
         using var stream = new FileStream(path, FileMode.Create, FileAccess.Write);
         using var writer = new BinaryWriter(stream);
 
@@ -42,7 +62,7 @@ internal static class MatFileWriter
 
         foreach ((string name, JgsValue value) in variables)
         {
-            byte[] matrix = MatrixElement(name, value);
+            byte[] matrix = MatrixElement(session, name, value);
             writer.Write(MiMatrix);
             writer.Write(matrix.Length);
             writer.Write(matrix);
@@ -77,7 +97,14 @@ internal static class MatFileWriter
     /// bare no, because "cannot be saved" without the type name sends a script author looking in the
     /// wrong place.
     /// </summary>
-    public static string? WhyNotWritable(JgsValue value)
+    public static string? WhyNotWritable(JgsValue value) =>
+        WhyNotWritable(value, new HashSet<JgsObject>(ReferenceEqualityComparer.Instance));
+
+    /// <summary>
+    /// <see cref="WhyNotWritable(JgsValue)"/> with the handle objects already being asked about:
+    /// a handle whose property holds itself, or two that hold each other, is asked once.
+    /// </summary>
+    private static string? WhyNotWritable(JgsValue value, HashSet<JgsObject> asking)
     {
         if (value.IsStringArray)
         {
@@ -94,9 +121,32 @@ internal static class MatFileWriter
             return "a duration, which a version 5 MAT-file cannot hold — convert it with seconds or string";
         }
 
-        // A class name means the value is standing in for an object — a containers.Map, an MException.
-        // Version 5 has no object element, and the storage underneath is an implementation detail
-        // that would come back as a bare number, so the name is what the refusal should say.
+        // An instance of a user class is written as its properties, so it is refused only for what
+        // one of them holds (V6, #111); a function handle for what it captured, or for being a
+        // kind — a bound method, an inline — that has no text to re-make it from (#113).
+        if (value.Type == JgsType.Object)
+        {
+            return asking.Add(value.AsObject)
+                ? value.AsObject.Fields.Values.Select(held => WhyNotWritable(held, asking)).FirstOrDefault(static why => why is not null)
+                : null;
+        }
+
+        if (value.Type == JgsType.Function)
+        {
+            return value.AsCallable switch
+            {
+                AnonymousFunction anonymous => anonymous.CapturedVariables
+                    .Select(captured => WhyNotWritable(captured.Value, asking))
+                    .FirstOrDefault(static why => why is not null),
+                NamedHandle or UserFunction or BuiltinFunction => null,
+                _ => "a function handle with no name or text to save it by, which cannot be written to a MAT-file",
+            };
+        }
+
+        // A class name means the value is standing in for a built-in object — a containers.Map, an
+        // MException. Version 5 has no element for one, and the storage underneath is an
+        // implementation detail that would come back as a bare number, so the name is what the
+        // refusal should say.
         if (value.ClassName is string className)
         {
             return $"a {className}, which cannot be written to a MAT-file";
@@ -111,18 +161,18 @@ internal static class MatFileWriter
                     ? "a ragged array of text, which has no MAT-file shape"
                     : null;
             case JgsType.Cell:
-                return value.AsCell.Select(WhyNotWritable).FirstOrDefault(static why => why is not null);
+                return value.AsCell.Select(held => WhyNotWritable(held, asking)).FirstOrDefault(static why => why is not null);
             case JgsType.Struct:
                 return value.AsStructArray.Elements
                     .SelectMany(static element => element.Values)
-                    .Select(WhyNotWritable)
+                    .Select(held => WhyNotWritable(held, asking))
                     .FirstOrDefault(static why => why is not null);
             default:
                 return $"a {value.TypeName}, which cannot be written to a MAT-file";
         }
     }
 
-    private static byte[] MatrixElement(string name, JgsValue value)
+    private static byte[] MatrixElement(Session session, string name, JgsValue value)
     {
         using var buffer = new MemoryStream();
         using var w = new BinaryWriter(buffer);
@@ -149,10 +199,16 @@ internal static class MatFileWriter
                 WriteSparse(w, name, value.AsSparse);
                 break;
             case JgsType.Cell:
-                WriteCell(w, name, value);
+                WriteCell(session, w, name, value);
                 break;
             case JgsType.Struct:
-                WriteStruct(w, name, value);
+                WriteStruct(session, w, name, value);
+                break;
+            case JgsType.Object:
+                WriteObject(session, w, name, value.AsObject);
+                break;
+            case JgsType.Function:
+                WriteFunction(session, w, name, value);
                 break;
             default:
                 throw new NotSupportedException($"A {value.TypeName} cannot be saved to a MAT-file.");
@@ -336,7 +392,7 @@ internal static class MatFileWriter
         WriteTypedData(w, matrix.Values.AsSpan(0, matrix.NonZeroCount).ToArray(), MiDouble);
     }
 
-    private static void WriteCell(BinaryWriter w, string name, JgsValue value)
+    private static void WriteCell(Session session, BinaryWriter w, string name, JgsValue value)
     {
         JgsValue[] elements = value.AsCell;
         WriteFlags(w, MxCell);
@@ -344,11 +400,11 @@ internal static class MatFileWriter
         WriteName(w, name);
         foreach (JgsValue element in elements)
         {
-            WriteNested(w, element);
+            WriteNested(session, w, element);
         }
     }
 
-    private static void WriteStruct(BinaryWriter w, string name, JgsValue value)
+    private static void WriteStruct(Session session, BinaryWriter w, string name, JgsValue value)
     {
         JgsStructArray payload = value.AsStructArray;
         string[] names = payload.FieldNames;
@@ -356,8 +412,95 @@ internal static class MatFileWriter
         WriteFlags(w, MxStruct);
         WriteDimensions(w, payload.Length == 0 ? [0, 0] : value.Dims);
         WriteName(w, name);
+        WriteFieldNames(w, names);
 
-        // Field name length (a small element), then the names in fixed 32-byte slots.
+        // Element by element, each element's fields consecutively — the order the reader expects.
+        foreach (Dictionary<string, JgsValue> element in payload.Elements)
+        {
+            WriteFields(session, w, names, element);
+        }
+    }
+
+    /// <summary>
+    /// An instance of a user class (V6, #111): the object element — the class name ahead of the
+    /// fields — with the properties as the fields. A handle object carries an element id in the
+    /// flags' second word, the same id at every mention, so the reader hands back one instance
+    /// for every name and slot that held it; a mention after the first carries the id and no
+    /// fields. A deleted handle is marked, and loads deleted.
+    /// </summary>
+    private static void WriteObject(Session session, BinaryWriter w, string name, JgsObject instance)
+    {
+        bool seen = false;
+        int id = 0;
+        if (instance.Class.IsHandle)
+        {
+            seen = session.Handles.TryGetValue(instance, out id);
+            if (!seen)
+            {
+                id = session.Handles.Count + 1;
+                session.Handles[instance] = id;
+            }
+        }
+
+        WriteFlags(w, MxObject | (instance.Deleted ? FlagDeletedHandle : 0), id);
+        WriteDimensions(w, [1, 1]);
+        WriteName(w, name);
+        WriteDataElement(w, MiInt8, Encoding.ASCII.GetBytes(instance.Class.Name));
+
+        string[] names = seen ? [] : [.. instance.Fields.Keys];
+        WriteFieldNames(w, names);
+        if (!seen)
+        {
+            WriteFields(session, w, names, instance.Fields);
+        }
+    }
+
+    /// <summary>
+    /// A function handle (V6, #113): the function element holding the struct <c>functions</c>
+    /// reports — the text or name, the kind, the file (none: a loaded handle's names come from where
+    /// it is loaded), and an anonymous function's captured workspace, whose values load as fresh
+    /// values the way every saved value does.
+    /// </summary>
+    private static void WriteFunction(Session session, BinaryWriter w, string name, JgsValue value)
+    {
+        var body = new Dictionary<string, JgsValue>(StringComparer.Ordinal);
+        switch (value.AsCallable)
+        {
+            case AnonymousFunction anonymous:
+            {
+                body["function"] = JgsValue.Str(anonymous.Text);
+                body["type"] = JgsValue.Str("anonymous");
+                body["file"] = JgsValue.Str(string.Empty);
+                var captured = new Dictionary<string, JgsValue>(StringComparer.Ordinal);
+                foreach ((string captive, JgsValue held) in anonymous.CapturedVariables)
+                {
+                    captured[captive] = held;
+                }
+
+                body["workspace"] = JgsValue.Struct(captured);
+                break;
+            }
+
+            case NamedHandle or UserFunction or BuiltinFunction:
+                body["function"] = JgsValue.Str(value.AsCallable.Name);
+                body["type"] = JgsValue.Str("simple");
+                body["file"] = JgsValue.Str(string.Empty);
+                break;
+            default:
+                throw new NotSupportedException("A function handle with no name or text to save it by cannot be saved to a MAT-file.");
+        }
+
+        WriteFlags(w, MxFunction);
+        WriteDimensions(w, [1, 1]);
+        WriteName(w, name);
+        string[] names = [.. body.Keys];
+        WriteFieldNames(w, names);
+        WriteFields(session, w, names, body);
+    }
+
+    /// <summary>Field name length (a small element), then the names in fixed 32-byte slots.</summary>
+    private static void WriteFieldNames(BinaryWriter w, string[] names)
+    {
         w.Write((FieldNameLength << 16) | MiInt32);
         w.Write(FieldNameLength);
 
@@ -374,22 +517,21 @@ internal static class MatFileWriter
         }
 
         WriteDataElement(w, MiInt8, slots);
+    }
 
-        // Element by element, each element's fields consecutively — the order the reader expects.
-        foreach (Dictionary<string, JgsValue> element in payload.Elements)
+    private static void WriteFields(Session session, BinaryWriter w, string[] names, IReadOnlyDictionary<string, JgsValue> element)
+    {
+        foreach (string field in names)
         {
-            foreach (string field in names)
-            {
-                WriteNested(w, element.TryGetValue(field, out JgsValue? stored) && stored is not null
-                    ? stored
-                    : JgsValue.Array([]));
-            }
+            WriteNested(session, w, element.TryGetValue(field, out JgsValue? stored) && stored is not null
+                ? stored
+                : JgsValue.Array([]));
         }
     }
 
-    private static void WriteNested(BinaryWriter w, JgsValue value)
+    private static void WriteNested(Session session, BinaryWriter w, JgsValue value)
     {
-        byte[] nested = MatrixElement(string.Empty, value);
+        byte[] nested = MatrixElement(session, string.Empty, value);
         w.Write(MiMatrix);
         w.Write(nested.Length);
         w.Write(nested);
@@ -412,12 +554,13 @@ internal static class MatFileWriter
         _ => (MxDouble, MiDouble, 8),
     };
 
-    private static void WriteFlags(BinaryWriter w, int flags)
+    /// <summary>The array flags: the class and its bits, then the second word — nzmax for a sparse array, an object's element id here, zero otherwise.</summary>
+    private static void WriteFlags(BinaryWriter w, int flags, int second = 0)
     {
         w.Write(MiUInt32);
         w.Write(8);
         w.Write(flags);
-        w.Write(0);
+        w.Write(second);
     }
 
     private static void WriteDimensions(BinaryWriter w, int[] dims)

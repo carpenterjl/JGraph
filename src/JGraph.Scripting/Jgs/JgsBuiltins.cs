@@ -449,6 +449,12 @@ internal static partial class JgsBuiltins
                 throw new JgsRuntimeException(line, col, "size needs a value to measure.");
             }
 
+            // size(m, 'v') on a matfile (V6, #112): the variable's shape from the file's header.
+            if (args.Count == 2 && IsMatFile(args[0]) && IsTextScalar(args[1]))
+            {
+                return Numbers([.. MatFileVariableDims(args[0], TextOf(args[1]), line, col).Select(static d => (double)d)]);
+            }
+
             int[] dims = SizeDims(args[0]);
 
             // Dimensions past the value's rank are 1, exactly as in MATLAB.

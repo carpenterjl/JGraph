@@ -40,7 +40,7 @@ internal static partial class JgsBuiltins
     internal static bool IsHandleClass(JgsValue value) =>
         value.Type == JgsType.Struct
         && value.ClassName is MapClassName or VideoWriterClassName or TimerClassName
-            or ListenerClassName or PropListenerClassName;
+            or ListenerClassName or PropListenerClassName or MatFileClassName;
 
     /// <summary>
     /// M8 (ADR 0164): a builtin never mutates an argument. <c>e = insert(d, 1, 20)</c> and

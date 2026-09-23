@@ -34,11 +34,18 @@ internal static class MatConstants
     public const int MxUInt32 = 13;
     public const int MxInt64 = 14;
     public const int MxUInt64 = 15;
+    public const int MxFunction = 16;
 
     // Array-flag bits.
     public const int FlagComplex = 0x0800;
     public const int FlagGlobal = 0x0400;
     public const int FlagLogical = 0x0200;
+
+    /// <summary>
+    /// JGraph's own bit on an object element (V6, ADR 0167): the handle object was deleted when it
+    /// was saved, so it loads deleted, as R2025b loads one. MATLAB's own flags stop at 0x0800.
+    /// </summary>
+    public const int FlagDeletedHandle = 0x1000;
 
     /// <summary>Struct field names are stored in fixed 32-byte slots (31 chars + terminator).</summary>
     public const int FieldNameLength = 32;

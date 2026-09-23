@@ -2086,8 +2086,9 @@ public static class JgsBuiltinCatalog
         Add("print", "In JGS, writes the values to the console, space-separated. In the MATLAB dialect the paper verb instead: print('plot.png'), print(gcf, 'plot', '-dpdf'), with '-dpng'/'-djpeg'/'-dpdf'/'-dsvg' for the format and '-r300' for the resolution.", P("values"));
         Add("clc", "Clears the console display. Variables and figures are untouched.");
         Add("whos", "Lists the workspace's variables with their size and class.");
-        Add("save", "Writes workspace variables to a version 5 MAT-file (or text with '-ascii'); '-append' adds to one that exists.", Opt("path"), Opt("names..."));
-        Add("load", "Reads variables from a version 5 or 7.3 MAT-file (or a numeric text file) into the workspace.", Opt("path"), Opt("names..."));
+        Add("save", "Writes workspace variables to a version 5 MAT-file (or text with '-ascii'): numbers, text, cells, structs, objects and function handles; '-append' adds to one that exists, and save(fn, '-struct', 'st') writes a struct's fields as the variables.", Opt("path"), Opt("names..."));
+        Add("load", "Reads variables from a version 5 or 7.3 MAT-file (or a numeric text file) into the workspace, or S = load(fn) into a struct; a saved object comes back as a new instance of its class, a handle as a working handle.", Opt("path"), Opt("names..."));
+        Add("matfile", "A handle to a MAT-file whose variables are read at each mention and written back at each set: m = matfile(fn); x = m.v; m = matfile(fn, 'Writable', true); m.v(1, 2) = 8; who(m), whos(m), size(m, 'v'), m.Properties.Writable.", P("name"), Opt("'Writable'"), Opt("tf"));
         Add("fopen", "Opens a file and returns its id (-1 on failure), or tells you about one already open: modes r (default), w, a, r+, w+, a+, A, W, with an optional byte order and encoding.", P("path"), Opt("mode"), Opt("machinefmt"), Opt("encoding"));
         Add("fclose", "Closes a file id, or every open file with fclose('all').", P("fid"));
         Add("fread", "Reads binary values from a file: a count or an [m n] shape, a precision that may name the class read and the class kept, bytes to skip between elements, and a byte order.", P("fid"), Opt("size"), Opt("precision"), Opt("skip"), Opt("machinefmt"));

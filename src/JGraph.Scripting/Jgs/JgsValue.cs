@@ -1363,7 +1363,12 @@ internal sealed class JgsValue
                 continue;
             }
 
-            sb.Append("\n    ").Append(property.Spec.Name).Append(": ").Append(Truncate(held.Display()));
+            // An object inside an object is shown as MATLAB shows it, [1x1 Class], rather than
+            // unfolded: a handle whose property holds itself would otherwise unfold for ever (V6, #111).
+            string shown = held.Type == JgsType.Object
+                ? $"[1x1 {held.AsObject.Class.Name}]"
+                : Truncate(held.Display());
+            sb.Append("\n    ").Append(property.Spec.Name).Append(": ").Append(shown);
         }
 
         return sb.ToString();

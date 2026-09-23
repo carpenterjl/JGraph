@@ -12,13 +12,16 @@ namespace JGraph.Scripting.MatFile;
 /// <summary>
 /// Reads level-5 MAT-files, including MATLAB's own: compressed and uncompressed elements, either
 /// byte order, every integer/float numeric encoding, complex, logical, sparse, char matrices, cell
-/// arrays, N-D shapes, and struct arrays. Anything else — objects above all — reports what it is
-/// rather than mis-reading it.
+/// arrays, N-D shapes, and struct arrays; and, through an <see cref="IMatObjectBinder"/>, the
+/// object and function elements <see cref="MatFileWriter"/> writes (V6, ADR 0167). Anything else
+/// reports what it is rather than mis-reading it.
 /// </summary>
 /// <remarks>
 /// An instance exists for the length of one buffer because byte order is a property of the buffer,
 /// not of a call: a compressed element inflates to a second buffer that inherits the file's order,
-/// so the swap decision has to travel with the bytes rather than be re-derived at each read.
+/// so the swap decision has to travel with the bytes rather than be re-derived at each read. The
+/// handle objects met so far travel with it too, so an alias inside a compressed element finds the
+/// instance an earlier element made.
 /// </remarks>
 internal sealed class MatFileReader
 {
@@ -27,20 +30,28 @@ internal sealed class MatFileReader
     /// <summary>Whether the file's byte order differs from this machine's, so every word needs reversing.</summary>
     private readonly bool _swap;
 
-    private MatFileReader(byte[] bytes, bool swap)
+    private readonly IMatObjectBinder? _binder;
+
+    /// <summary>The handle objects read so far, by the element id the writer gave them.</summary>
+    private readonly Dictionary<int, JgsValue> _handles;
+
+    private MatFileReader(byte[] bytes, bool swap, IMatObjectBinder? binder, Dictionary<int, JgsValue> handles)
     {
         _bytes = bytes;
         _swap = swap;
+        _binder = binder;
+        _handles = handles;
     }
 
     /// <summary>
     /// Reads variables from <paramref name="path"/>, in file order. Naming <paramref name="wanted"/>
     /// reads only those: a variable nobody asked for is stepped over rather than decoded, so one the
-    /// file holds in a form this cannot read never spoils a load that was not about it.
+    /// file holds in a form this cannot read never spoils a load that was not about it. An object
+    /// or a function handle is built by <paramref name="binder"/>; with none, either is refused.
     /// </summary>
     /// <exception cref="InvalidDataException">The file is not a MAT-file, or holds an unsupported type.</exception>
     public static IReadOnlyList<(string Name, JgsValue Value)> Read(
-        string path, IReadOnlySet<string>? wanted = null)
+        string path, IReadOnlySet<string>? wanted = null, IMatObjectBinder? binder = null)
     {
         byte[] bytes = File.ReadAllBytes(path);
         if (bytes.Length < 128)
@@ -56,7 +67,38 @@ internal sealed class MatFileReader
             return MatV73Reader.Read(bytes, wanted);
         }
 
-        // Endian tag at 126: 'IM' means the file is little-endian, 'MI' big-endian.
+        var reader = new MatFileReader(bytes, Swaps(bytes), binder, new Dictionary<int, JgsValue>());
+        return reader.ReadVariables(128, wanted);
+    }
+
+    /// <summary>
+    /// What <paramref name="path"/> holds, by header alone: each variable's name, shape and class,
+    /// read without decoding a value — what <c>whos(m)</c>, <c>who(m)</c> and <c>size(m, 'v')</c>
+    /// on a <c>matfile</c> ask (V6, #112). An object's class is the name it was saved under.
+    /// </summary>
+    /// <exception cref="InvalidDataException">The file is not a MAT-file.</exception>
+    public static IReadOnlyList<(string Name, int[] Dims, string Class)> Describe(string path)
+    {
+        byte[] bytes = File.ReadAllBytes(path);
+        if (bytes.Length < 128)
+        {
+            throw new InvalidDataException("Not a MAT-file: the 128-byte header is missing.");
+        }
+
+        if (Hdf5File.Looks(bytes))
+        {
+            return MatV73Reader.Describe(bytes);
+        }
+
+        var reader = new MatFileReader(bytes, Swaps(bytes), null, new Dictionary<int, JgsValue>());
+        var described = new List<(string, int[], string)>();
+        reader.WalkElements(128, (inner, start, _) => described.Add(inner.HeaderOf(start)));
+        return described;
+    }
+
+    /// <summary>Whether the file's byte order differs from this machine's. Endian tag at 126: 'IM' little-endian, 'MI' big-endian.</summary>
+    private static bool Swaps(byte[] bytes)
+    {
         bool fileIsLittleEndian;
         if (bytes[126] == 'I' && bytes[127] == 'M')
         {
@@ -71,36 +113,43 @@ internal sealed class MatFileReader
             throw new InvalidDataException("Not a level-5 MAT-file (its endian tag is missing).");
         }
 
-        var reader = new MatFileReader(bytes, fileIsLittleEndian != BitConverter.IsLittleEndian);
-        return reader.ReadVariables(128, wanted);
+        return fileIsLittleEndian != BitConverter.IsLittleEndian;
     }
 
     private List<(string Name, JgsValue Value)> ReadVariables(int from, IReadOnlySet<string>? wanted)
     {
         var variables = new List<(string, JgsValue)>();
+        WalkElements(from, (inner, start, size) => inner.Take(start, size, wanted, variables));
+        return variables;
+    }
+
+    /// <summary>
+    /// Visits every top-level matrix element, inflating a compressed one into a reader of its own
+    /// first; <paramref name="visit"/> is handed the reader the element's bytes live in.
+    /// </summary>
+    private void WalkElements(int from, Action<MatFileReader, int, int> visit)
+    {
         int at = from;
         while (at + 8 <= _bytes.Length)
         {
             (int type, int size, int dataStart, int next) = ReadTag(at);
             if (type == MiCompressed)
             {
-                var inner = new MatFileReader(Inflate(dataStart, size), _swap);
+                var inner = new MatFileReader(Inflate(dataStart, size), _swap, _binder, _handles);
                 (int innerType, int innerSize, int innerStart, _) = inner.ReadTag(0);
                 if (innerType == MiMatrix)
                 {
-                    inner.Take(innerStart, innerSize, wanted, variables);
+                    visit(inner, innerStart, innerSize);
                 }
             }
             else if (type == MiMatrix)
             {
-                Take(dataStart, size, wanted, variables);
+                visit(this, dataStart, size);
             }
 
             // Compressed top-level elements are not padded to an eight-byte boundary.
             at = type == MiCompressed ? dataStart + size : next;
         }
-
-        return variables;
     }
 
     private void Take(
@@ -122,6 +171,55 @@ internal sealed class MatFileReader
         (_, _, _, at) = ReadTag(at); // Dimensions.
         (_, int nameSize, int nameStart, _) = ReadTag(at);
         return Encoding.ASCII.GetString(_bytes, nameStart, nameSize);
+    }
+
+    /// <summary>A variable's name, shape and class from its element's header, without decoding the value.</summary>
+    private (string Name, int[] Dims, string Class) HeaderOf(int start)
+    {
+        int at = start;
+        (_, _, int flagsStart, at) = ReadTag(at);
+        int flags = I32(flagsStart);
+        int arrayClass = flags & 0xFF;
+
+        (_, int dimsSize, int dimsStart, at) = ReadTag(at);
+        var dims = new int[dimsSize / 4];
+        for (int i = 0; i < dims.Length; i++)
+        {
+            dims[i] = I32(dimsStart + (4 * i));
+        }
+
+        (_, int nameSize, int nameStart, at) = ReadTag(at);
+        string name = Encoding.ASCII.GetString(_bytes, nameStart, nameSize);
+
+        string className = arrayClass switch
+        {
+            _ when (flags & FlagLogical) != 0 => "logical",
+            MxChar => "char",
+            MxCell => "cell",
+            MxStruct => "struct",
+            MxFunction => "function_handle",
+            MxObject => ReadText(ref at), // the class name element follows the variable's name
+            MxSingle => "single",
+            MxInt8 => "int8",
+            MxUInt8 => "uint8",
+            MxInt16 => "int16",
+            MxUInt16 => "uint16",
+            MxInt32 => "int32",
+            MxUInt32 => "uint32",
+            MxInt64 => "int64",
+            MxUInt64 => "uint64",
+            _ => "double",
+        };
+
+        return (name, dims, className);
+    }
+
+    /// <summary>One text element — a class name — as ASCII, stepping past it.</summary>
+    private string ReadText(ref int at)
+    {
+        (_, int size, int start, int next) = ReadTag(at);
+        at = next;
+        return Encoding.ASCII.GetString(_bytes, start, size);
     }
 
     private byte[] Inflate(int start, int size)
@@ -148,6 +246,7 @@ internal sealed class MatFileReader
         int arrayClass = flags & 0xFF;
         bool isComplex = (flags & FlagComplex) != 0;
         bool isLogical = (flags & FlagLogical) != 0;
+        int second = I32(flagsStart + 4); // nzmax for a sparse array; an object's element id
         at = afterFlags;
 
         (int dimsType, int dimsSize, int dimsStart, int afterDims) = ReadTag(at);
@@ -182,8 +281,8 @@ internal sealed class MatFileReader
             MxCell => ReadCellArray(ref at, end, (int)count, dims),
             MxStruct => ReadStruct(ref at, end, (int)count),
             MxSparse => ReadSparse(ref at, rows, cols, isComplex),
-            MxObject => throw new InvalidDataException(
-                $"MAT-file variable '{name}' holds a class object, which cannot be loaded."),
+            MxObject => ReadObject(ref at, end, name, second, (flags & FlagDeletedHandle) != 0),
+            MxFunction => ReadFunction(ref at, end, name),
             MxDouble or MxSingle or MxInt8 or MxUInt8 or MxInt16 or MxUInt16
                 or MxInt32 or MxUInt32 or MxInt64 or MxUInt64 =>
                 ReadNumeric(ref at, arrayClass, rows, cols, isComplex, isLogical),
@@ -370,6 +469,75 @@ internal sealed class MatFileReader
 
     private JgsValue ReadStruct(ref int at, int end, int count)
     {
+        string[] names = ReadFieldNames(ref at);
+        var elements = new Dictionary<string, JgsValue>[Math.Max(count, 0)];
+        for (int e = 0; e < elements.Length; e++)
+        {
+            elements[e] = ReadFields(ref at, end, names);
+        }
+
+        return count == 1
+            ? JgsValue.Struct(elements[0])
+            : JgsValue.StructArray(new JgsStructArray(elements, names), count == 0 ? 0 : 1, count);
+    }
+
+    /// <summary>
+    /// An object element (V6, #111): the class name, then the properties as a struct's fields. A
+    /// handle's element id names the instance every mention of it shares — the instance is made
+    /// before its properties are read, so a property that holds the object itself finds it — and a
+    /// mention after the first carries no fields and answers the instance already made. Without a
+    /// binder the element is refused by name, as it always was.
+    /// </summary>
+    private JgsValue ReadObject(ref int at, int end, string name, int id, bool deleted)
+    {
+        string className = ReadText(ref at);
+        if (_binder is null)
+        {
+            throw new InvalidDataException(
+                $"MAT-file variable '{name}' holds a class object, which cannot be loaded.");
+        }
+
+        string[] names = ReadFieldNames(ref at);
+        if (id > 0 && _handles.TryGetValue(id, out JgsValue? known))
+        {
+            ReadFields(ref at, end, names); // the writer sends none; stepping past any is harmless
+            return known;
+        }
+
+        JgsValue instance = _binder.NewObject(className, deleted, name);
+        if (id > 0)
+        {
+            _handles[id] = instance;
+        }
+
+        _binder.SetProperties(instance, ReadFields(ref at, end, names));
+        return instance;
+    }
+
+    /// <summary>A function element (V6, #113): the struct <c>functions</c> reports, handed to the binder to re-make.</summary>
+    private JgsValue ReadFunction(ref int at, int end, string name)
+    {
+        if (_binder is null)
+        {
+            throw new InvalidDataException(
+                $"MAT-file variable '{name}' holds a function handle, which cannot be loaded.");
+        }
+
+        Dictionary<string, JgsValue> body = ReadFields(ref at, end, ReadFieldNames(ref at));
+        string text = body.TryGetValue("function", out JgsValue? function) && function.Type == JgsType.String
+            ? function.AsString
+            : throw new InvalidDataException($"MAT-file variable '{name}' is a function handle with no function.");
+        string type = body.TryGetValue("type", out JgsValue? kind) && kind.Type == JgsType.String ? kind.AsString : "simple";
+        IReadOnlyDictionary<string, JgsValue>? workspace =
+            body.TryGetValue("workspace", out JgsValue? captured) && captured.Type == JgsType.Struct && !captured.IsStructArray
+                ? captured.AsStruct
+                : null;
+        return _binder.Function(text, type, workspace, name);
+    }
+
+    /// <summary>The field-name-length element, then the names in their fixed slots.</summary>
+    private string[] ReadFieldNames(ref int at)
+    {
         (_, _, int lengthStart, int afterLength) = ReadTag(at);
         int slot = I32(lengthStart);
         at = afterLength;
@@ -383,35 +551,34 @@ internal sealed class MatFileReader
             names[i] = Encoding.ASCII.GetString(_bytes, namesStart + (i * slot), slot).TrimEnd('\0');
         }
 
-        // Field values run element by element, each element's fields consecutively — so an empty
-        // struct array still declares its fields even though no values follow.
-        var elements = new Dictionary<string, JgsValue>[Math.Max(count, 0)];
-        for (int e = 0; e < elements.Length; e++)
+        return names;
+    }
+
+    /// <summary>
+    /// One element's fields, consecutively, in the order the names were declared — so an empty
+    /// struct array still declares its fields even though no values follow.
+    /// </summary>
+    private Dictionary<string, JgsValue> ReadFields(ref int at, int end, string[] names)
+    {
+        var fields = new Dictionary<string, JgsValue>(StringComparer.Ordinal);
+        foreach (string field in names)
         {
-            var fields = new Dictionary<string, JgsValue>(StringComparer.Ordinal);
-            foreach (string field in names)
+            if (at + 8 > end)
             {
-                if (at + 8 > end)
-                {
-                    throw new InvalidDataException("Malformed MAT-file: a struct array ends mid-element.");
-                }
-
-                (int type, int size, int dataStart, int next) = ReadTag(at);
-                if (type != MiMatrix)
-                {
-                    throw new InvalidDataException("Malformed MAT-file: a struct field is not a matrix.");
-                }
-
-                fields[field] = ReadMatrix(dataStart, size).Value;
-                at = next;
+                throw new InvalidDataException("Malformed MAT-file: a struct array ends mid-element.");
             }
 
-            elements[e] = fields;
+            (int type, int size, int dataStart, int next) = ReadTag(at);
+            if (type != MiMatrix)
+            {
+                throw new InvalidDataException("Malformed MAT-file: a struct field is not a matrix.");
+            }
+
+            fields[field] = ReadMatrix(dataStart, size).Value;
+            at = next;
         }
 
-        return count == 1
-            ? JgsValue.Struct(elements[0])
-            : JgsValue.StructArray(new JgsStructArray(elements, names), count == 0 ? 0 : 1, count);
+        return fields;
     }
 
     /// <summary>Reads one numeric subelement, widening whatever integer encoding it uses to doubles.</summary>

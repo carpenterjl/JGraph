@@ -413,6 +413,25 @@ internal sealed class AnonymousFunction : IJgsCallable, IJgsMultiCallable
 
     private string? _text;
 
+    /// <summary>
+    /// The variables the handle captured when it was made, by name — the snapshot's own entries,
+    /// less the function bindings it took for the body's local names. What <c>save</c> writes as
+    /// the handle's workspace (V6, #113).
+    /// </summary>
+    internal IEnumerable<(string Name, JgsValue Value)> CapturedVariables
+    {
+        get
+        {
+            foreach ((string name, JgsValue value) in _captured.Locals)
+            {
+                if (!_captured.IsFunctionBinding(name))
+                {
+                    yield return (name, value);
+                }
+            }
+        }
+    }
+
     /// <summary>Creates the handle, snapshotting every name its body refers to that is not a parameter.</summary>
     public static AnonymousFunction Create(AnonymousFnExpr declaration, JgsEnvironment defining, Interpreter interpreter)
     {

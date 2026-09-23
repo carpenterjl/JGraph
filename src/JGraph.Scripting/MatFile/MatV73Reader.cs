@@ -42,6 +42,34 @@ internal static class MatV73Reader
         return variables;
     }
 
+    /// <summary>Each variable's name, MATLAB shape and class, from the datasets' headers alone (V6, #112).</summary>
+    public static IReadOnlyList<(string Name, int[] Dims, string Class)> Describe(byte[] bytes)
+    {
+        Hdf5File file = Hdf5File.Open(bytes);
+        var described = new List<(string, int[], string)>();
+        foreach (string name in file.Root.ChildNames)
+        {
+            if (Private.Contains(name, StringComparer.Ordinal))
+            {
+                continue;
+            }
+
+            Hdf5Object? child = file.Root.Child(name);
+            if (child is null)
+            {
+                continue;
+            }
+
+            string matlabClass = child.Attributes.TryGetValue("MATLAB_class", out Hdf5Attribute? tag)
+                ? tag.AsText()
+                : child.IsGroup ? "struct" : "double";
+            bool empty = child.Attributes.TryGetValue("MATLAB_empty", out Hdf5Attribute? flag) && flag.AsNumber() != 0;
+            described.Add((name, empty ? [0, 0] : child.IsGroup ? [1, 1] : Shape(child), matlabClass));
+        }
+
+        return described;
+    }
+
     private static JgsValue ToValue(Hdf5Object node, string name)
     {
         string matlabClass = node.Attributes.TryGetValue("MATLAB_class", out Hdf5Attribute? tag)

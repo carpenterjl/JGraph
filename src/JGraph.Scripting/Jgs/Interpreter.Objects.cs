@@ -144,6 +144,22 @@ internal sealed partial class Interpreter
     }
 
     /// <summary>
+    /// The class a saved object names, loading its file if this is the first mention of it (V6,
+    /// #111): <c>load</c>'s question, asked of the path alone — a variable of the same name does not
+    /// come into it, because the name here came from a file rather than from the script. Null when
+    /// no file on the path defines the class.
+    /// </summary>
+    internal JgsClass? ClassForLoad(string name)
+    {
+        if (!_classes.ContainsKey(name))
+        {
+            _ = TryResolveOnPath(name, out _);
+        }
+
+        return _classes.TryGetValue(name, out JgsClass? definition) ? definition : null;
+    }
+
+    /// <summary>
     /// Reads <c>ClassName.name</c>: a <c>Constant</c> property or a <c>Static</c> method. Answers false
     /// for anything else, so the caller can go on to the other meanings a dot has.
     /// </summary>

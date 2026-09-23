@@ -133,6 +133,11 @@ internal static partial class JgsBuiltins
             return definition.Properties.Select(static p => p.Spec.Name);
         }
 
+        if (IsMatFile(value))
+        {
+            return MatFilePropertyNames(value, line, col); // Properties, then the file's variables (V6, #112)
+        }
+
         if (value.Type == JgsType.Struct)
         {
             return value.AsStructArray.FieldNames;

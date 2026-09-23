@@ -46,6 +46,9 @@ internal static partial class JgsBuiltins
         // V6 (#106, #108): events(name) asks the interpreter which classes exist, and the listener
         // verbs report a failing callback to the run's host.
         "addlistener", "listener", "notify", "events",
+
+        // V6 (#112): a matfile's reads build the objects a file holds, which needs the classes.
+        "matfile",
     ];
 
     /// <summary>Declares the interpreter-backed builtins into <paramref name="env"/>.</summary>
@@ -72,6 +75,7 @@ internal static partial class JgsBuiltins
         RegisterClassBuiltins(env, interpreter);
         RegisterTimerBuiltins(env, interpreter, host, dialect);
         RegisterEventBuiltins(env, interpreter, host);
+        RegisterMatFileBuiltins(env, interpreter, host);
 
         // refreshdata belongs with the handle verbs and is registered here only because it is the one
         // of them that reads a workspace, which is a thing only the interpreter knows about.
@@ -503,6 +507,11 @@ internal static partial class JgsBuiltins
         Define("who", (args, line, col) =>
         {
             ArityRange("who", args, 0, 1, line, col);
+            if (args.Count == 1 && IsMatFile(args[0]))
+            {
+                return MatFileWho(args[0], line, col); // the file's variables (V6, #112)
+            }
+
             var names = new List<JgsValue>();
             foreach ((string name, JgsValue value) in interpreter.CurrentFrame.Variables)
             {

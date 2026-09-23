@@ -362,6 +362,13 @@ internal sealed partial class Interpreter
             return true;
         }
 
+        // A matfile's variable is the file's (V6, #112): m.v = x, m.v(1, 2) = 8 and
+        // m.Properties.Writable = true are all get, modify, set on the file or the settings.
+        if (JgsBuiltins.IsMatFile(holder))
+        {
+            return true;
+        }
+
         // A SetObservable property somebody listens to is get, modify, set when the write goes on
         // past it (o.a(2) = 9, o.s.v(2) = 5): the slot is put back through the property's setter,
         // which raises the one PreSet and PostSet R2025b raises (V6, #108). The whole-value set
@@ -475,6 +482,11 @@ internal sealed partial class Interpreter
             return WriteThroughObservableProperty(holder, field, level, target, assign, rhs, env);
         }
 
+        if (JgsBuiltins.IsMatFile(holder))
+        {
+            return WriteThroughMatFile(holder, field, level, target, assign, rhs, env);
+        }
+
         if (holder.Type != JgsType.Table)
         {
             return WriteThroughPropertyLevel(holderExpr, holder, field, level, target, assign, rhs, env);
@@ -586,6 +598,39 @@ internal sealed partial class Interpreter
 
         JgsValue written = WriteIntoSlot(current, level, target, assign, rhs, env, out JgsValue result, owned: false);
         AssignToMember(level, written, env);
+        return result;
+    }
+
+    /// <summary>
+    /// Get, modify, set at a matfile's variable (V6, #112): a read-only file refuses before anything
+    /// is read (R2025b's order); the variable is decoded from the file, or starts from the empty of
+    /// the right-hand side's kind when the file has none; the ordinary roads write the slot; and
+    /// the slot goes back into the file. <c>Properties</c> is the same road onto the settings,
+    /// whose slot takes a share so a refused value leaves them as they were.
+    /// </summary>
+    private JgsValue WriteThroughMatFile(
+        JgsValue holder, string field, MemberExpr level, Expr target, AssignExpr assign, JgsValue rhs, JgsEnvironment env)
+    {
+        JgsValue written;
+        JgsValue result;
+        if (ReferenceEquals(level, target))
+        {
+            written = assign.Op == TokenType.Assign
+                ? rhs
+                : ApplyBinary(UnderlyingOp(assign.Op), JgsBuiltins.GetMatFileMember(holder, field, level.Line, level.Column), rhs, assign);
+            result = written;
+        }
+        else
+        {
+            JgsBuiltins.RequireMatFileWritable(holder, field, level.Line, level.Column);
+            bool settings = field == "Properties";
+            JgsValue current = settings || JgsBuiltins.MatFileHasVariable(holder, field, level.Line, level.Column)
+                ? JgsBuiltins.GetMatFileMember(holder, field, level.Line, level.Column)
+                : EmptyOfKind(rhs);
+            written = WriteIntoSlot(current, level, target, assign, rhs, env, out result, owned: !settings);
+        }
+
+        JgsBuiltins.WriteMatFileVariable(holder, field, written, level.Line, level.Column);
         return result;
     }
 
