@@ -165,8 +165,15 @@ public class MatlabClassdefTests : IDisposable
     [Fact]
     public void UnsupportedClassBlocksAndSuperclassesAreRefusedByName()
     {
-        Assert.Contains("events", Assert.Throws<JgsSyntaxException>(
-            static () => Parser.Parse("classdef A\n events\n Changed\n end\nend", "A.m", JgsDialect.Matlab)).Message,
+        // An events block parses in any class (V6, #106); that only a handle class may hold one is
+        // the class's own refusal, made when it is defined, in MATLAB's words.
+        Assert.Single(Parser.Parse("classdef A\n events\n Changed\n end\nend", "A.m", JgsDialect.Matlab));
+        WriteClass("ValEv", "classdef ValEv\n events\n Changed\n end\nend\n");
+        Assert.Contains("The class 'ValEv' may not define events because only subclasses of handle may define events.",
+            Error("v = ValEv();"), StringComparison.Ordinal);
+
+        Assert.Contains("enumeration", Assert.Throws<JgsSyntaxException>(
+            static () => Parser.Parse("classdef A\n enumeration\n Red\n end\nend", "A.m", JgsDialect.Matlab)).Message,
             StringComparison.Ordinal);
 
         Assert.Contains("only inherit from 'handle'", Assert.Throws<JgsSyntaxException>(

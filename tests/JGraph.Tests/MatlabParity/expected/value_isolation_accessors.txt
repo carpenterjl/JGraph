@@ -1,13 +1,12 @@
-RUN|pending V6|'DepBox': the 'properties' attribute 'Dependent' is not supported — this build understands 'Constant' and public access only.
-CHK|a028_dependent_get_read|1 7|exact
-CHK|a027_set_method_store|1|exact
-CHK|a147_acc_end_write|start;get;rhs;get;set;get; / [1 2 9]|exact
-CHK|a147_acc_end_growth|start;get;rhs;get;set;get; / [1 2 3 9]|exact
-CHK|a147_acc_subscript_and_rhs|start;idx;rhs;get;set;get; / [1 9 3]|exact
-CHK|a147_acc_subscript_range_to_end|start;idx;get;rhs;get;set;get; / [1 9 9]|exact
-CHK|a147_acc_handle_indexed_write|start;idx;rhs;get;set;get; / [1 9 3]|exact
-CHK|a147_acc_handle_end_write|start;get;rhs;get;set;get; / [1 2 9]|exact
-CHK|a147_acc_read_end|start;get;get; / 3|exact
-CHK|a147_acc_compound_whole|start;get;rhs;set;get; / [10 11 12]|exact
-CHK|a147_acc_struct_held_handle_end|start;get;rhs;get;set;get; / [1 2 9]|exact
-CHK|a147_acc_cell_held_handle_end|start;get;rhs;get;set;get; / [1 2 9]|exact
+CHK|a028_dependent_get_read|1 7|exact|pending V6|ERR Error: File: DepBox.m Line: 6 Column: 17 'DepBox': the 'properties' attribute 'Dependent' is not supported — this build understands 'Constant' or 'SetObservable' and public access only.
+CHK|a027_set_method_store|1|exact|pending V6|ERR Error: File: SetBox.m Line: 8 Column: 27 Expected an expression, but found '.'.
+CHK|a147_acc_end_write|start;get;rhs;get;set;get; / [1 2 9]|exact|pending V6|ERR Error: File: LogBox.m Line: 9 Column: 25 Expected an expression, but found '.'.
+CHK|a147_acc_end_growth|start;get;rhs;get;set;get; / [1 2 3 9]|exact|pending V6|ERR Error: File: LogBox.m Line: 9 Column: 25 Expected an expression, but found '.'.
+CHK|a147_acc_subscript_and_rhs|start;idx;rhs;get;set;get; / [1 9 3]|exact|pending V6|ERR Error: File: LogBox.m Line: 9 Column: 25 Expected an expression, but found '.'.
+CHK|a147_acc_subscript_range_to_end|start;idx;get;rhs;get;set;get; / [1 9 9]|exact|pending V6|ERR Error: File: LogBox.m Line: 9 Column: 25 Expected an expression, but found '.'.
+CHK|a147_acc_handle_indexed_write|start;idx;rhs;get;set;get; / [1 9 3]|exact|pending V6|ERR Error: File: LogHBox.m Line: 7 Column: 25 Expected an expression, but found '.'.
+CHK|a147_acc_handle_end_write|start;get;rhs;get;set;get; / [1 2 9]|exact|pending V6|ERR Error: File: LogHBox.m Line: 7 Column: 25 Expected an expression, but found '.'.
+CHK|a147_acc_read_end|start;get;get; / 3|exact|pending V6|ERR Error: File: LogBox.m Line: 9 Column: 25 Expected an expression, but found '.'.
+CHK|a147_acc_compound_whole|start;get;rhs;set;get; / [10 11 12]|exact|pending V6|ERR Error: File: LogBox.m Line: 9 Column: 25 Expected an expression, but found '.'.
+CHK|a147_acc_struct_held_handle_end|start;get;rhs;get;set;get; / [1 2 9]|exact|pending V6|ERR Error: File: LogHBox.m Line: 7 Column: 25 Expected an expression, but found '.'.
+CHK|a147_acc_cell_held_handle_end|start;get;rhs;get;set;get; / [1 2 9]|exact|pending V6|ERR Error: File: LogHBox.m Line: 7 Column: 25 Expected an expression, but found '.'.

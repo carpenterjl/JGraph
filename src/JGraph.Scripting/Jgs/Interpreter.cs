@@ -7460,6 +7460,12 @@ internal sealed partial class Interpreter
             return JgsBuiltins.GetTimerProperty(target, field, member.Line, member.Column);
         }
 
+        // lh.Enabled on a listener (V6, #106): the same two refusals.
+        if (JgsBuiltins.IsListener(target))
+        {
+            return JgsBuiltins.GetListenerProperty(target, field, member.Line, member.Column);
+        }
+
         // S.field on an array reads that field across every element (M65). A 1-by-1 falls through to
         // the ordinary field read below, which is the same expression meaning the same thing.
         if (target.IsStructArray)
@@ -7570,6 +7576,14 @@ internal sealed partial class Interpreter
             && LookUp(timerTarget.Name, env, out JgsValue heldTimer) && JgsBuiltins.IsTimer(heldTimer))
         {
             JgsBuiltins.SetTimerProperty(heldTimer, FieldName(member, env), value, retain: false, member.Line, member.Column);
+            return value;
+        }
+
+        // lh.Enabled = false on a listener (V6, #106): checked in MATLAB's words, written in place.
+        if (member.Target is VariableExpr listenerTarget
+            && LookUp(listenerTarget.Name, env, out JgsValue heldListener) && JgsBuiltins.IsListener(heldListener))
+        {
+            JgsBuiltins.SetListenerProperty(heldListener, FieldName(member, env), value, member.Line, member.Column);
             return value;
         }
 

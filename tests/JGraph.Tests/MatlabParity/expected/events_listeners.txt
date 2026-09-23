@@ -1,0 +1,77 @@
+CHK|h_ev_notify_order|a;L;b;|exact
+CHK|h_ev_two_listeners_newest_first|two;one;|exact
+CHK|h_ev_other_event_untouched|[]|exact
+CHK|h_ev_evt_fields|event.EventData/Changed/EventPair/1;|exact
+CHK|h_ev_lh_props|event.listener Changed 1 0 function_handle cell 1 1|exact
+CHK|h_ev_custom_data|5/Changed/TickData/EventPair;|exact
+CHK|h_ev_bad_data|ERR Invalid input argument for function 'notify'.|exact
+CHK|h_ev_unknown_event_notify|ERR Event 'Nope' is not defined for class 'EventPair'.|exact
+CHK|h_ev_unknown_event_listen|ERR Event 'Nope' is not defined for class 'EventPair'.|exact
+CHK|h_ev_case_sensitive_notify|ERR Event 'changed' is not defined for class 'EventPair'.|exact
+CHK|h_ev_listen_struct|ERR First argument provided is not valid for addlistener. (Check its type or validity)|exact
+CHK|h_ev_listen_number|ERR Double input must be an HG handle|exact
+CHK|h_ev_callback_error_continues|a;after;b;|exact
+CHK|h_ev_recursive_off|1;|exact
+CHK|h_ev_recursive_on|3;3;3;|exact
+CHK|h_ev_disable_reenable|D; logical|exact
+CHK|h_ev_delete_source_listener_valid|1 0|exact
+CHK|h_ev_delete_lh_twice|0 []|exact
+CHK|h_ev_notify_after_delete_source|ERR Invalid or deleted object.|exact
+CHK|h_ev_events_list|cell Changed,Other,ObjectBeingDestroyed [3 1]|exact
+CHK|h_ev_events_list_name|Changed,Other,ObjectBeingDestroyed|exact
+CHK|h_ev_events_struct|cell [0 1]|exact
+CHK|h_ev_callback_writes_source|99|exact
+CHK|h_ev_count_bump_order|1;2;|exact
+CHK|h_ev_listener_string_callback|ERR Invalid input argument for function 'addlistener'.|exact
+CHK|h_ev_listener_cell_callback|ERR Invalid input argument for function 'addlistener'.|exact
+CHK|h_ev_listener_named|N;|exact
+CHK|h_ev_two_sources|one;|exact
+CHK|h_ev_zero_arg_callback|after;|exact
+CHK|h_ev_listener_fn_then_delete|L; 0|exact
+CHK|h_ev_lh_enabled_bad|ERR Error setting property 'Enabled' of class 'listener': Value must be a scalar.|exact
+CHK|h_ev_lh_enabled_numeric|[] logical 0|exact
+CHK|h_ev_lh_enabled_vector|ERR Error setting property 'Enabled' of class 'listener': Value must be a scalar.|exact
+CHK|h_ev_lh_recursive_text|ERR Error setting property 'Recursive' of class 'listener': Value must be a scalar.|exact
+CHK|h_ev_lh_callback_reassign|two;|exact
+CHK|h_ev_lh_callback_bad|ERR Error setting property 'Callback' of class 'listener': Value must be 'function_handle'.|exact
+CHK|h_ev_lh_unknown_prop|ERR Unrecognized property 'Foo' for class 'event.listener'.|exact
+CHK|h_ev_lh_deleted_prop|ERR Invalid or deleted object.|exact
+CHK|h_ev_lh_deleted_write|ERR Invalid or deleted object.|exact
+CHK|h_ev_notify_bare_class|no error|exact
+CHK|h_ev_destroyed_event|a;ObjectBeingDestroyed/0;b; 0|exact
+CHK|h_ev_destroyed_event_method_delete|gone;|exact
+CHK|h_ev_notify_destroyed_by_hand|ERR Cannot notify listeners of event 'ObjectBeingDestroyed' in class 'handle'.|exact
+CHK|h_ev_listen_deleted_source|ERR Invalid or deleted object.|exact
+CHK|h_ev_notify_too_few|ERR Not enough input arguments.|exact
+CHK|h_ev_notify_string_name|S;|exact
+CHK|h_ev_clear_source_keeps_listener|K;|exact
+CHK|h_ev_lh_predicates|0 0 1|exact
+CHK|h_ev_isa_handle_lh|1 1 1|exact
+CHK|h_ev_addlistener_output_optional|K;|exact
+CHK|h_ev_listener_source_shared|S;|exact
+CHK|h_ev_listener_capture_snapshot|[1 2 3];|exact
+CHK|h_ps_order|a;P;b;|exact
+CHK|h_ps_preset_sees_old|[1 2 3]; 9|exact
+CHK|h_ps_postset_sees_new|9;|exact
+CHK|h_ps_evt_fields|event.PropertyEvent/PostSet/a/matlab.metadata.Property/matlab.metadata.Property/1;|exact
+CHK|h_ps_same_value|[P;]|exact
+CHK|h_ps_indexed_once_each|P;P; [1 9 3 4]|exact
+CHK|h_ps_via_method|7;|exact
+CHK|h_ps_not_observable|ERR While adding a PostSet listener, property 'plain' in class 'ObsPair' is not defined to be SetObservable.|exact
+CHK|h_ps_unknown_prop|ERR The name 'nope' is not an accessible property for an instance of class 'ObsPair'.|exact
+CHK|h_ps_bad_kind|ERR Event 'PostFoo' is not defined for class 'ObsPair'.|exact
+CHK|h_ps_other_prop|B;|exact
+CHK|h_ps_recursive_guard|1;|exact
+CHK|h_ps_lh_class|event.proplistener PostSet cell cell 1|exact
+CHK|h_ps_delete_lh|P;|exact
+CHK|h_ps_cell_props|a;b;|exact
+CHK|h_ps_growth|[1 2 3 0 1];|exact
+CHK|h_ps_preset_error_continues|after; 9|exact
+CHK|h_ps_in_ctor_none|[]|exact
+CHK|h_ps_proplistener_disabled|P;|exact
+CHK|h_ps_proplistener_props|a 1 0 function_handle 1 1|exact
+CHK|h_ps_notify_in_postset|C;|exact
+CHK|h_ps_preset_then_postset_order|pre;post;|exact
+CHK|h_ps_alias_write|[7 8]; [7 8]|exact
+CHK|h_ps_nested_struct_in_prop|[1 5 3];|exact
+CHK|h_ps_nested_struct_whole|[8 9]; [8 9]|exact

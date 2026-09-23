@@ -99,6 +99,7 @@ internal sealed partial class Interpreter
             }
 
             instance.MarkDeleted();
+            JgsBuiltins.FireObjectBeingDestroyed(instance); // after the mark (V6, #106)
             return JgsValue.Null;
         }
     }
@@ -209,10 +210,24 @@ internal sealed partial class Interpreter
                 $"{definition.Name}.{field} is Constant, so it belongs to the class and cannot be assigned to.");
         }
 
+        // A SetObservable property with a listener raises PreSet before the write and PostSet after
+        // it (V6, #108) — inside the statement, whose operands were read before it began (M5). An
+        // object nobody listens to pays one null test.
+        bool observed = property.Observable && instance.HasPropertyListener(field);
+        if (observed)
+        {
+            JgsBuiltins.FirePropertyEvent(holder, field, post: false);
+        }
+
         // M7: the write gate. The entry holds this very wrapper (M2), so detaching here is what
         // gives the entry its own instance — nothing has to be written back.
         holder.WritableFields()[field] = definition.Check(
             property, CopyForBinding(value), member.Line, member.Column);
+        if (observed)
+        {
+            JgsBuiltins.FirePropertyEvent(holder, field, post: true);
+        }
+
         return true;
     }
 
@@ -282,7 +297,11 @@ internal sealed partial class Interpreter
                     return owner.WritableFields().TryGetValue(field, out JgsValue? property) ? property : null;
                 }
 
-                if (owner.Type == JgsType.Struct && !owner.IsStructArray && owner.ClassName is null)
+                // A plain struct, or an event's data (V6, #108): evt.AffectedObject.a = 0 inside a
+                // PostSet reaches the object the event carries. Every other class-named struct is
+                // a value with rules of its own (a dictionary, a map) and is not walked into.
+                if (owner.Type == JgsType.Struct && !owner.IsStructArray
+                    && owner.ClassName is null or JgsBuiltins.EventDataClassName or JgsBuiltins.PropertyEventClassName)
                 {
                     return owner.WritableStruct().TryGetValue(field, out JgsValue? held) ? held : null;
                 }
@@ -374,6 +393,7 @@ internal sealed partial class Interpreter
             finally
             {
                 instance.MarkDeleted();
+                JgsBuiltins.FireObjectBeingDestroyed(instance); // after the mark (V6, #106)
             }
         }
     }

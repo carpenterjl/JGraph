@@ -468,7 +468,9 @@ internal sealed class ArgumentsStmt(IReadOnlyList<ArgumentSpec> arguments) : Stm
 /// <param name="Spec">The name, declared size, class, validators and default.</param>
 /// <param name="Constant">Whether the block said <c>(Constant)</c>: the value belongs to the class
 /// rather than to an instance, and cannot be assigned to.</param>
-internal sealed record ClassProperty(ArgumentSpec Spec, bool Constant);
+/// <param name="Observable">Whether the block said <c>(SetObservable)</c>: a write to the property
+/// raises <c>PreSet</c> and <c>PostSet</c> for the listeners added with <c>addlistener</c> (V6, #108).</param>
+internal sealed record ClassProperty(ArgumentSpec Spec, bool Constant, bool Observable = false);
 
 /// <summary>One method of a class: the function itself, and whether its block said <c>(Static)</c>.</summary>
 /// <param name="Function">The method body, parsed exactly as any other <c>function</c> is.</param>
@@ -486,7 +488,9 @@ internal sealed class ClassdefStmt(
     string name,
     bool isHandle,
     IReadOnlyList<ClassProperty> properties,
-    IReadOnlyList<ClassMethod> methods) : Stmt
+    IReadOnlyList<ClassMethod> methods,
+    IReadOnlyList<string>? events = null,
+    bool isEventData = false) : Stmt
 {
     public string Name { get; } = name;
 
@@ -496,6 +500,16 @@ internal sealed class ClassdefStmt(
     public IReadOnlyList<ClassProperty> Properties { get; } = properties;
 
     public IReadOnlyList<ClassMethod> Methods { get; } = methods;
+
+    /// <summary>The names the <c>events</c> blocks declared, in the order the file wrote them (V6, #106).</summary>
+    public IReadOnlyList<string> Events { get; } = events ?? [];
+
+    /// <summary>
+    /// Whether the header read <c>&lt; event.EventData</c>: an instance is what <c>notify</c> hands
+    /// every listener, and <c>notify</c> fills in its <c>EventName</c> and <c>Source</c>. Such a
+    /// class is a handle class, as MATLAB's is.
+    /// </summary>
+    public bool IsEventData { get; } = isEventData;
 }
 
 /// <summary>A <c>return</c> statement; <see cref="Value"/> is null for a bare <c>return</c>.</summary>

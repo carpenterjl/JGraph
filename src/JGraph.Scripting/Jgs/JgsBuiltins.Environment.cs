@@ -133,6 +133,12 @@ internal static partial class JgsBuiltins
                     continue;
                 }
 
+                // A listener leaves its source and is ended for every alias (V6, #106).
+                if (TryDeleteListener(args[i], line, col))
+                {
+                    continue;
+                }
+
                 string path = host.Resolve(Str("delete", args, i, line, col));
                 host.NoteFileChanging(path);
                 File.Delete(path);

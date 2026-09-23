@@ -327,6 +327,9 @@ internal static partial class JgsBuiltins
                 // handle classes — a timer, a containers.Map, a VideoWriter.
                 "handle" => IsHandleClass(args[0])
                     || (args[0].Type == JgsType.Object && args[0].AsObject.Class.IsHandle),
+                // A class written < event.EventData is one (V6, #106), as the default event is.
+                EventDataClassName => string.Equals(actual, wanted, StringComparison.Ordinal)
+                    || (args[0].Type == JgsType.Object && args[0].AsObject.Class.IsEventData),
                 _ => string.Equals(actual, wanted, StringComparison.Ordinal),
             });
         });

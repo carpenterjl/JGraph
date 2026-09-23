@@ -1,3 +1,2 @@
-RUN|pending V6|'ObsBox': the 'properties' attribute 'SetObservable' is not supported — this build understands 'Constant' and public access only.
 CHK|a108_postset_sees_indexed_write|[1 9 3];|exact
 CHK|a108_postset_value_alias|[1 2 3] [5 2 3]|exact

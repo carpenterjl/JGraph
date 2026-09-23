@@ -42,6 +42,10 @@ internal static partial class JgsBuiltins
         // V6 (#105): a timer's command-string callback is evaluated by the interpreter, in the base
         // workspace, so the timer verbs are declared here.
         "timer", "start", "stop", "wait",
+
+        // V6 (#106, #108): events(name) asks the interpreter which classes exist, and the listener
+        // verbs report a failing callback to the run's host.
+        "addlistener", "listener", "notify", "events",
     ];
 
     /// <summary>Declares the interpreter-backed builtins into <paramref name="env"/>.</summary>
@@ -67,6 +71,7 @@ internal static partial class JgsBuiltins
         RegisterLegacyFunctionPlotBuiltins(env, interpreter);
         RegisterClassBuiltins(env, interpreter);
         RegisterTimerBuiltins(env, interpreter, host, dialect);
+        RegisterEventBuiltins(env, interpreter, host);
 
         // refreshdata belongs with the handle verbs and is registered here only because it is the one
         // of them that reads a workspace, which is a thing only the interpreter knows about.

@@ -372,8 +372,15 @@ internal sealed class JgsFunctionPath
         }
         catch (JgsSyntaxException error)
         {
-            error.AttributeTo(path);
-            throw;
+            // A file on the path that does not parse is a load error of that file, raised where the
+            // name is first used and catchable there (V6, #106: R2025b's "Error: File: … Line: …
+            // Column: …" is what a try around the first construction catches), not a syntax error
+            // of the running script. The location is the file's own; the message names the file
+            // rather than its whole path, so a recorded message reads the same on every machine.
+            var load = new JgsRuntimeException(error.Line, error.Column,
+                $"Error: File: {Path.GetFileName(path)} Line: {error.Line} Column: {error.Column}\n{error.Message}");
+            load.AttributeTo(path);
+            throw load;
         }
 
         // A class file holds one classdef and nothing else, and the name it answers to is the file's.

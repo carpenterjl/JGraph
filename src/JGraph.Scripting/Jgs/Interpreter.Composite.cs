@@ -362,6 +362,19 @@ internal sealed partial class Interpreter
             return true;
         }
 
+        // A SetObservable property somebody listens to is get, modify, set when the write goes on
+        // past it (o.a(2) = 9, o.s.v(2) = 5): the slot is put back through the property's setter,
+        // which raises the one PreSet and PostSet R2025b raises (V6, #108). The whole-value set
+        // o.a = v keeps the road it has, which raises them itself. An unobserved property is the
+        // ordinary roads' as before.
+        if (holder.Type == JgsType.Object)
+        {
+            return !ReferenceEquals(step, target)
+                && step is MemberExpr { Field: { } field }
+                && holder.AsObject.Class.Property(field) is { Observable: true }
+                && holder.AsObject.HasPropertyListener(field);
+        }
+
         return holder.Type == JgsType.Number && !ReferenceEquals(step, target) && JgsHandleRegistry.TryGet(holder, out _);
     }
 
@@ -457,6 +470,11 @@ internal sealed partial class Interpreter
         JgsEnvironment env)
     {
         string field = FieldName(level, env);
+        if (holder.Type == JgsType.Object)
+        {
+            return WriteThroughObservableProperty(holder, field, level, target, assign, rhs, env);
+        }
+
         if (holder.Type != JgsType.Table)
         {
             return WriteThroughPropertyLevel(holderExpr, holder, field, level, target, assign, rhs, env);
@@ -546,6 +564,28 @@ internal sealed partial class Interpreter
         }
 
         StoreBack(holderExpr, JgsBuiltins.SetTimeProperty(holder, field, written, level.Line, level.Column), assign, env);
+        return result;
+    }
+
+    /// <summary>
+    /// Get, modify, set at an observable property of a user object (V6, #108): the property's
+    /// value goes into the slot as a share, so the slot's first write copies it (M3) and the
+    /// object — and every alias of it, the object being a handle — reads as it was until the set;
+    /// the set is the ordinary property write, which checks the value against its declaration and
+    /// raises the one <c>PreSet</c> and <c>PostSet</c>.
+    /// </summary>
+    private JgsValue WriteThroughObservableProperty(
+        JgsValue holder, string field, MemberExpr level, Expr target, AssignExpr assign, JgsValue rhs, JgsEnvironment env)
+    {
+        RequireLive(holder.AsObject, level.Line, level.Column);
+        if (!holder.AsObject.Fields.TryGetValue(field, out JgsValue? current))
+        {
+            throw new JgsRuntimeException(level.Line, level.Column,
+                $"'{holder.AsObject.Class.Name}' has no property '{field}'.");
+        }
+
+        JgsValue written = WriteIntoSlot(current, level, target, assign, rhs, env, out JgsValue result, owned: false);
+        AssignToMember(level, written, env);
         return result;
     }
 

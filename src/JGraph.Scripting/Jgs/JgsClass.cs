@@ -36,6 +36,14 @@ internal sealed class JgsClass
         _scope = scope;
         _interpreter = interpreter;
 
+        // Only a handle class may declare events (V6, #106): R2025b's refusal, made where the class
+        // is defined, which is where a script that constructs it catches it.
+        if (declaration.Events.Count > 0 && !declaration.IsHandle)
+        {
+            throw new JgsRuntimeException(declaration.Line, declaration.Column,
+                $"The class '{declaration.Name}' may not define events because only subclasses of handle may define events.");
+        }
+
         foreach (ClassMethod method in declaration.Methods)
         {
             // A file that defines the same method twice is a mistake worth naming: silently keeping
@@ -72,6 +80,19 @@ internal sealed class JgsClass
 
     /// <summary>Whether the header read <c>&lt; handle</c>.</summary>
     public bool IsHandle => Declaration.IsHandle;
+
+    /// <summary>Whether the header read <c>&lt; event.EventData</c> (V6, #106).</summary>
+    public bool IsEventData => Declaration.IsEventData;
+
+    /// <summary>The name every handle class's <c>delete</c> raises, without declaring it.</summary>
+    public const string ObjectBeingDestroyed = "ObjectBeingDestroyed";
+
+    /// <summary>The events the file declared, in order; a handle class also raises <see cref="ObjectBeingDestroyed"/>.</summary>
+    public IReadOnlyList<string> Events => Declaration.Events;
+
+    /// <summary>Whether <c>notify</c> and <c>addlistener</c> may name this event on the class (V6, #106).</summary>
+    public bool HasEvent(string name) =>
+        Declaration.Events.Contains(name, StringComparer.Ordinal) || (IsHandle && name == ObjectBeingDestroyed);
 
     /// <summary>The declared properties, in the order the file wrote them.</summary>
     public IReadOnlyList<ClassProperty> Properties => Declaration.Properties;
@@ -144,6 +165,13 @@ internal sealed class JgsClass
     public JgsObject NewDefault(int line, int col)
     {
         var instance = new JgsObject(this);
+        if (IsEventData)
+        {
+            // event.EventData's two inherited properties, empty until notify fills them in (V6, #106).
+            instance.Fields[JgsBuiltins.EventNameField] = JgsValue.Str(string.Empty);
+            instance.Fields[JgsBuiltins.EventSourceField] = JgsMatrix.FromColumnMajor([], 0, 0);
+        }
+
         JgsEnvironment defaults = DefaultWorkspace();
         foreach (ClassProperty property in Properties)
         {
@@ -301,6 +329,33 @@ internal sealed class JgsObject(JgsClass definition)
 
     /// <summary>Marks the instance deleted; a second <c>delete</c> is a no-op and runs no destructor.</summary>
     public void MarkDeleted() => Deleted = true;
+
+    /// <summary>
+    /// The listeners <c>addlistener</c> put on this instance, oldest first (V6, #106, #108). They
+    /// live with the source: clearing the name that held one changes nothing, and <c>delete(lh)</c>
+    /// is what ends one. Null until the first is added, so an object that nobody listens to costs
+    /// nothing at a property write.
+    /// </summary>
+    public List<JgsListener>? Listeners { get; set; }
+
+    /// <summary>Whether a live listener on this instance watches the named property's <c>PreSet</c> or <c>PostSet</c>.</summary>
+    public bool HasPropertyListener(string property)
+    {
+        if (Listeners is null)
+        {
+            return false;
+        }
+
+        foreach (JgsListener listener in Listeners)
+        {
+            if (!listener.Deleted && listener.Watches(property))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
 
     /// <summary>
     /// A copy holding the same property values — what binding a second name to a value-class object

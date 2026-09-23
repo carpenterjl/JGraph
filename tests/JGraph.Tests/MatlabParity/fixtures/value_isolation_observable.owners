@@ -1,3 +1,2 @@
-# The run stops at the SetObservable attribute (appendix A #108); V6 builds it.
-RUN	V6
+# V6.12 built SetObservable with PreSet and PostSet (appendix A #108).
 *	V6

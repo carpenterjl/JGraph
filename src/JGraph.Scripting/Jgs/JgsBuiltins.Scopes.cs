@@ -23,7 +23,7 @@ internal static partial class JgsBuiltins
         "close", "dblquad", "dde23", "ddensd", "ddesd", "decic", "delete", "designfilt", "drawnow", "eval", "evalc",
         "evalin", "ezpolar", "fcnchk", "feval", "fminbnd", "fminsearch", "funm", "fzero", "getframe",
         "ginput", "image", "inline", "inlineeval", "innerintegral", "integral", "integral2", "integral3",
-        "jackknife", "legend", "loglog", "mhsample", "ode15i", "odephas2", "odephas3", "odeplot",
+        "jackknife", "legend", "loglog", "mhsample", "notify", "ode15i", "odephas2", "odephas3", "odeplot",
         "odextend", "pause", "pdepe", "pulstran", "quad", "quad2d", "quadgk", "quadl", "quadv",
         "regexprep", "run", "semilogx", "semilogy", "slice", "slicesample", "spfun", "splitapply",
         "start", "stop", "str2func", "str2num", "structfun", "triplequad", "uicontextmenu", "uimenu",
@@ -38,6 +38,7 @@ internal static partial class JgsBuiltins
     // audit: runs no script: colon — BuildRange evaluates a range of PreEvaluated nodes, never script.
     // audit: runs no script: trapz cumtrapz — DataAnalysis' Integrate(name, args, cumulative, …), not the Solvers overload that calls an integrand.
     // audit: runs no script: fitdist makedist metaclass methods properties — reach a Validate/Check pair that shares its name with the arguments-block validator.
+    // audit: runs no script: events — lists a class's declared event names; it joins the graph through NamedClass, the same name-sharing road as properties and methods.
     // audit: runs no script: tdfread xptread — a file reader's FieldName helper, not the interpreter's dynamic-field FieldName.
     // audit: runs no script: load — JgsWorkspaceIo.Load reads a MAT-file; the graph joined it to a path loader's lambda by name.
     // audit: runs no script: reverse — forwards to the legacy JGS reverse builtin.

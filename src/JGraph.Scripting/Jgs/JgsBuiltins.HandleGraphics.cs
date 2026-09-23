@@ -544,6 +544,11 @@ internal static partial class JgsBuiltins
     private static JgsValue IsHandle(string verb, IReadOnlyList<JgsValue> args, int line, int col)
     {
         Arity(verb, args, 1, line, col);
+        if (args[0].Type is JgsType.Struct or JgsType.Object or JgsType.Cell or JgsType.Function)
+        {
+            return JgsValue.Bool(false); // a listener, an object, a cell: not a graphics handle (V6, #106)
+        }
+
         return MapToBool(verb, args[0], IsLiveHandle, line, col);
     }
 
@@ -594,9 +599,10 @@ internal static partial class JgsBuiltins
         }
         else if (IsHandleClass(asked))
         {
-            // A builtin handle class: a timer is valid until delete(t) (V6, #105); a containers.Map
-            // and a VideoWriter have no delete and are valid as long as they are held.
-            return JgsValue.Bool(!IsDeletedTimer(asked));
+            // A builtin handle class: a timer is valid until delete(t) (V6, #105) and a listener
+            // until delete(lh) (#106); a containers.Map and a VideoWriter have no delete and are
+            // valid as long as they are held.
+            return JgsValue.Bool(!IsDeletedTimer(asked) && !IsDeletedListener(asked));
         }
         else if (asked.Type == JgsType.Array)
         {
@@ -632,6 +638,7 @@ internal static partial class JgsBuiltins
         }
 
         instance.MarkDeleted();
+        FireObjectBeingDestroyed(instance); // after the mark: isvalid is already false inside (V6, #106)
         return true;
     }
 

@@ -2411,6 +2411,10 @@ public static class JgsBuiltinCatalog
         Add("start", "Starts a timer: start(t) runs its StartFcn and arms its TimerFcn.", P("t"));
         Add("stop", "Stops a timer and runs its StopFcn: stop(t).", P("t"));
         Add("wait", "Blocks until a timer stops, running its callbacks meanwhile: wait(t). A timer with an infinite TasksToExecute is refused.", P("t"));
+        Add("addlistener", "Puts a listener on a handle object's event, or on a SetObservable property's PreSet or PostSet: lh = addlistener(obj, 'Changed', @(src, evt) react(src)); lh = addlistener(obj, 'data', 'PostSet', @(prop, evt) show(evt.AffectedObject.data)). The listener lives with the object; delete(lh) ends it, lh.Enabled = false silences it.", P("obj"), P("event"), Opt("kind"), P("callback"));
+        Add("listener", "The same listener as addlistener makes: lh = listener(obj, 'Changed', @(src, evt) react(src)).", P("obj"), P("event"), Opt("kind"), P("callback"));
+        Add("notify", "Raises a handle object's event, running every listener before it returns, newest first: notify(obj, 'Changed'), or notify(obj, 'Changed', data) with data an instance of a class written < event.EventData.", P("obj"), P("event"), Opt("data"));
+        Add("events", "The events a class declares, as a cell column, ObjectBeingDestroyed last for a handle class: events(obj) or events('ClassName').", P("obj"));
         Add("hggroup", "Groups drawn objects so they can be shown, hidden and found together: g = hggroup; set(h, 'Parent', g).", Opt("name"), Opt("value"));
         Add("hgtransform", "A group whose Matrix moves its members: t = hgtransform; set(t, 'Matrix', makehgtform('translate', [1 0 0])).", Opt("name"), Opt("value"));
 
