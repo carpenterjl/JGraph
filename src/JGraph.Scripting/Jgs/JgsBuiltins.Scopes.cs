@@ -25,9 +25,9 @@ internal static partial class JgsBuiltins
         "ginput", "image", "inline", "inlineeval", "innerintegral", "integral", "integral2", "integral3",
         "jackknife", "legend", "load", "loglog", "mhsample", "notify", "ode15i", "odephas2", "odephas3", "odeplot",
         "odextend", "pause", "pdepe", "pulstran", "quad", "quad2d", "quadgk", "quadl", "quadv",
-        "regexprep", "run", "semilogx", "semilogy", "slice", "slicesample", "spfun", "splitapply",
+        "regexprep", "rowfun", "run", "semilogx", "semilogy", "slice", "slicesample", "spfun", "splitapply",
         "start", "stop", "str2func", "str2num", "structfun", "triplequad", "uicontextmenu", "uimenu",
-        "vectorize", "wait", "waitforbuttonpress",
+        "varfun", "vectorize", "wait", "waitforbuttonpress",
     };
 
     // The audit's call graph joins functions by name, so a few builtins it flags reach script code

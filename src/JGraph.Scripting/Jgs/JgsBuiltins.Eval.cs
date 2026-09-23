@@ -49,6 +49,10 @@ internal static partial class JgsBuiltins
 
         // V6 (#112): a matfile's reads build the objects a file holds, which needs the classes.
         "matfile",
+
+        // V6 (#121, #122): the table verbs join values by the bracket's rules, addvars reads the
+        // call it was written as, and rowfun and varfun run script code.
+        "table2array", "addvars", "varfun", "rowfun",
     ];
 
     /// <summary>Declares the interpreter-backed builtins into <paramref name="env"/>.</summary>
@@ -76,6 +80,7 @@ internal static partial class JgsBuiltins
         RegisterTimerBuiltins(env, interpreter, host, dialect);
         RegisterEventBuiltins(env, interpreter, host);
         RegisterMatFileBuiltins(env, interpreter, host);
+        RegisterTableFormBuiltins(env, interpreter);
 
         // refreshdata belongs with the handle verbs and is registered here only because it is the one
         // of them that reads a workspace, which is a thing only the interpreter knows about.

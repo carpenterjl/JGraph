@@ -27,7 +27,7 @@ CHK|a090_nested_end_cell_growth|[3 4 5]|exact
 CHK|a091_string_element_char_write|aZc,def|exact
 CHK|a092_strrep_cellstr_alias|aa,ba Qx,bx|exact
 CHK|g_tbl_column_read_alias|[1;2]|exact
-CHK|a117_tbl_alias_row_delete|3 2|exact|pending V6|ERR Cannot assign by index into a table; only arrays support element assignment.
+CHK|a117_tbl_alias_row_delete|3 2|exact
 CHK|a119_tbl_cell_var_nested_write|[1 2] [9 2]|exact
 CHK|a114_tbl_varnames_alias|Var1 a|exact
 CHK|a114_tbl_varnames_brace_on_original|a|exact
@@ -35,16 +35,16 @@ CHK|a115_tbl_varnames_whole_set_alias|Var1 a|exact
 CHK|a115_tbl_description_alias|[] [u]|exact
 CHK|a115_tbl_userdata_alias|[1 2 3]|exact
 CHK|g_tbl_add_var_alias|1 2|exact
-CHK|a117_tbl_row_append|3 c|exact|pending V6|ERR Cannot assign by index into a table; only arrays support element assignment.
-CHK|a117_tbl_paren_assign_subtable|[9;2]|exact|pending V6|ERR Cannot assign by index into a table; only arrays support element assignment.
-CHK|a117_tbl_row_delete_by_mask|3 1 a|exact|pending V6|ERR Cannot assign by index into a table; only arrays support element assignment.
-CHK|a122_tbl_rowfun_writes_global_operand|[1 2] [7 2]|exact|pending V6|ERR 'rowfun' is not recognized as a variable or a function.
-CHK|a122_tbl_varfun_alias|1 9|exact|pending V6|ERR 'varfun' is not recognized as a variable or a function.
-CHK|a122_tbl_addvars_leaves_source|1 2|exact|pending V6|ERR 'addvars' is not recognized as a variable or a function.
-CHK|a122_tbl_table2array_alias|[1;2]|exact|pending V6|ERR 'table2array' is not recognized as a variable or a function.
+CHK|a117_tbl_row_append|3 c|exact
+CHK|a117_tbl_paren_assign_subtable|[9;2]|exact
+CHK|a117_tbl_row_delete_by_mask|3 1 a|exact
+CHK|a122_tbl_rowfun_writes_global_operand|[1 2] [7 2]|exact
+CHK|a122_tbl_varfun_alias|1 9|exact
+CHK|a122_tbl_addvars_leaves_source|1 2|exact
+CHK|a122_tbl_table2array_alias|[1;2]|exact
 CHK|g_tbl_brace_read_then_write|[1;2]|exact
 CHK|g_tbl_sortrows_leaves_source|[2;1] [1;2]|exact
-CHK|a121_tbl_vertcat_alias|1 4|exact|pending V6|ERR '.Var1' needs a struct, but this is a array.
+CHK|a121_tbl_vertcat_alias|1 4|exact
 CHK|a120_tbl_struct_var_nested_write|1 9|exact
 CHK|g_tbl_subtable_write|1 9|exact
 CHK|a118_tbl_var_growth|3 [1;2;5]|exact

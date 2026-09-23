@@ -6,7 +6,7 @@ CHK|rn_dot_text_var_write|a,b x,z x,y|exact
 CHK|rn_dot_growth_extends_names|a,b,Row3,Row4 [1 2 0 5] 2|exact
 CHK|rn_brace_elem_write|a,b [1 9] [1 2]|exact
 CHK|rn_brace_growth_extends_names|a,b,Row3 [1 2 9]|exact
-CHK|rn_paren_row_delete|a,c a,b,c|exact|pending V6|ERR Cannot assign by index into a table; only arrays support element assignment.
+CHK|rn_paren_row_delete|a,c a,b,c|exact
 CHK|rn_paren_row_select|c,a [3 1]|exact
 CHK|rn_row_by_name_after_write|9 b|exact
 CHK|tt_dot_elem_write|1 1 [9 2] [1 2]|exact
@@ -16,7 +16,7 @@ CHK|tt_rowtimes_class_after_write|duration duration duration|exact
 CHK|tt_time_read_after_write|[1 2]|exact
 CHK|tt_datetime_rowtimes_after_write|1 datetime 2 1|exact
 CHK|tt_dot_growth_extends_times|4 [1 2 NaN NaN] [1 2 0 5] 2|exact
-CHK|tt_paren_row_delete|1 [1 3] [1 2 3]|exact|pending V6|ERR Cannot assign by index into a table; only arrays support element assignment.
+CHK|tt_paren_row_delete|1 [1 3] [1 2 3]|exact
 CHK|pr_description_survives_write|[about] char|exact
 CHK|pr_userdata_survives_write|[1 2 3]|exact
 CHK|pr_units_survive_write|m,s|exact

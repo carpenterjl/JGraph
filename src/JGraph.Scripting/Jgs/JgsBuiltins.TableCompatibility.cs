@@ -41,6 +41,9 @@ internal static partial class JgsBuiltins
             return JgsValue.Table(new Table(imported.Columns.Skip(1).ToArray()) { RowTimes = times });
         });
         Define("istimetable", (args, line, col) => { Arity("istimetable", args, 1, line, col); return JgsValue.Bool(args[0].Type == JgsType.Table && args[0].AsTable.RowTimes is not null); });
+
+        // istable is false for a timetable, as in MATLAB (V6: found by the table_forms fixture).
+        Define("istable", (args, line, col) => { Arity("istable", args, 1, line, col); return JgsValue.Bool(args[0].Type == JgsType.Table && args[0].AsTable.RowTimes is null); });
         foreach (string name in new[] { "movmean", "movsum", "movmedian", "movmin", "movmax", "movstd", "movvar", "movprod" })
         {
             if (!env.TryGet(name, out JgsValue inner))

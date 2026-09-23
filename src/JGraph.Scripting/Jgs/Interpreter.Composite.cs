@@ -104,6 +104,15 @@ internal sealed partial class Interpreter
                     return true;
                 }
 
+                // T(rows, vars) = rhs, T(rows, :) = [], T(:, vars) = [] (V6, #117): the paren is
+                // the whole target, and the holder is a table.
+                if (step is CallExpr or IndexExpr)
+                {
+                    IReadOnlyList<Expr> subscripts = step is CallExpr call ? call.Arguments : ((IndexExpr)step).Indices;
+                    result = WriteTableParen(chain[k], held!.AsTable, subscripts, step, assign, rhs, env);
+                    return true;
+                }
+
                 // A whole-value set binds the right-hand side (M2); a partial one hands it to the
                 // ordinary roads, which bind what they store.
                 JgsValue given = ReferenceEquals(step, target) && !owned && assign.Op == TokenType.Assign
@@ -344,7 +353,9 @@ internal sealed partial class Interpreter
     {
         if (holder.Type == JgsType.Table)
         {
-            return step is MemberExpr || (step is BraceIndexExpr && ReferenceEquals(step, target));
+            // A table's dot; its brace or its paren when that is the whole target (T{r, v} = x,
+            // T(r, :) = {…}, T(r, :) = []).
+            return step is MemberExpr || (step is BraceIndexExpr or CallExpr or IndexExpr && ReferenceEquals(step, target));
         }
 
         if (step is BraceIndexExpr)

@@ -600,7 +600,7 @@ internal static partial class JgsBuiltins
         // field can.
         JgsType.Struct => value.ClassName ?? TaggedClassOf(value) ?? "struct",
         JgsType.Function => "function_handle",
-        JgsType.Table => "table",
+        JgsType.Table => value.AsTable.RowTimes is null ? "table" : "timetable", // a timetable is its own class (V6)
         JgsType.Image => dialect.IsMatlab ? value.AsImage.Class.MatlabName() : "image",
         JgsType.Sparse => "double", // MATLAB: sparsity is an attribute, not a class
         // An instance of a user class answers with its own class name (M68). It reads the same

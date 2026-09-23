@@ -33,8 +33,10 @@ internal sealed class JgsValueColumn : TableColumn
         JgsType.Bool => true,
         JgsType.Number => value.NumericClass != JgsNumericClass.Double,
         JgsType.Cell => value.AsCell.Any(element => element.Type != JgsType.String),
-        JgsType.Array => !value.IsStringArray && !value.IsTime
-            && (value.NumericClass != JgsNumericClass.Double || IsLogical(value)),
+
+        // A string array stays a string array (V6, table forms): it read back as a cell of char.
+        JgsType.Array => value.IsStringArray
+            || (!value.IsTime && (value.NumericClass != JgsNumericClass.Double || IsLogical(value))),
         _ => false,
     };
 
@@ -73,10 +75,14 @@ internal sealed class JgsValueColumn : TableColumn
 
     public override string GetText(int row) => Value.Type switch
     {
-        JgsType.Array => Value.ElementAt(row).Display(),
-        JgsType.Cell => Value.AsCell[row].Display(),
+        JgsType.Array => TextOfElement(Value.ElementAt(row)),
+        JgsType.Cell => TextOfElement(Value.AsCell[row]),
         _ => Value.Display(),
     };
+
+    /// <summary>A string element is its text — what a heatmap's labels read — and anything else how it displays.</summary>
+    private static string TextOfElement(JgsValue element) =>
+        element.Type == JgsType.String ? element.AsString : element.Display();
 
     public override TableColumn TakeRows(IReadOnlyList<int> rows) => new JgsValueColumn(Name, RowsOfValue(Value, rows));
 
@@ -164,6 +170,7 @@ internal sealed class JgsValueColumn : TableColumn
                     {
                         picked[(c * count) + r] = rows[r] >= 0 ? value.ElementAt((c * oldRows) + rows[r])
                             : logical ? JgsValue.Bool(false)
+                            : value.IsStringArray ? JgsValue.Str(JgsBuiltins.MissingSentinel)
                             : JgsValue.Number(0);
                     }
                 }

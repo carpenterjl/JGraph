@@ -1,0 +1,121 @@
+CHK|pw_row_table|table 2x1 {Var1} [9;2]/double|exact
+CHK|pw_append_cell|table 3x2 {Var1,Var2} [1;2;3]/double {'a','b','c'}[3x1]|exact
+CHK|pw_delete_row_alias|3 2 table 2x1 {Var1} [1;3]/double|exact
+CHK|pw_delete_mask|table 3x2 {Var1,Var2} [1;2;3]/double {'a','b','c'}[3x1] / table 1x2 {Var1,Var2} 1/double {'a'}[1x1]|exact
+CHK|pw_delete_var_pos|table 2x1 {Var2} {'a','b'}[2x1]|exact
+CHK|pw_delete_var_name|table 2x1 {Var1} [1;2]/double|exact
+CHK|pw_delete_needs_colon|ERR At least one subscript must be ':' when you delete rows or variables by assigning [].|exact
+CHK|pw_numeric_rhs_refused|ERR Right hand side of an assignment into a table must be another table or a cell array.|exact
+CHK|pw_cell_element|table 2x2 {Var1,Var2} [5;2]/double {'a','b'}[2x1]|exact
+CHK|pw_cell_scalar_over_vars|ERR Conversion to cell from double is not possible.|exact
+CHK|pw_table_rhs_two|table 2x2 {Var1,Var2} [9;2]/double {'z','b'}[2x1]|exact
+CHK|pw_table_rhs_names_ignored|table 2x2 {Var1,Var2} [9;2]/double {'z','b'}[2x1]|exact
+CHK|pw_rows_block_table|table 2x2 {Var1,Var2} [7;8]/double {'x','y'}[2x1]|exact
+CHK|pw_cell_column|table 2x2 {Var1,Var2} [7;8]/double {'a','b'}[2x1]|exact
+CHK|pw_cell_scalar_over_rows|table 2x2 {Var1,Var2} [7;7]/double {'a','b'}[2x1]|exact
+CHK|pw_cell_row_over_rows|ERR To assign to or create a variable in a table, the number of rows must match the height of the table.|exact
+CHK|pw_cell_column_over_vars|ERR The number of table variables in an assignment must match.|exact
+CHK|pw_growth_gap|table 4x2 {Var1,Var2} [1;2;0;4]/double {'a','b',[]/double,'d'}[4x1] double|exact
+CHK|pw_rownames_write_delete|table 2x1 {Var1} [9;2]/double rows=a,b / table 1x1 {Var1} 9/double rows=a|exact
+CHK|pw_rhs_subtable_keeps_names|table 2x1 {Var1} [2;2]/double rows=a,b|exact
+CHK|pw_rhs_rownames_into_plain|table 2x1 {Var1} [8;2]/double|exact
+CHK|pw_new_row_by_name|table 3x1 {Var1} [1;2;3]/double rows=a,b,c|exact
+CHK|pw_tt_delete|timetable 2x1 {Var1} [1;3]/double times=dur [1 3] / timetable 3x1 {Var1} [1;2;3]/double times=dur [1 2 3]|exact
+CHK|pw_tt_append|timetable 4x1 {Var1} [1;2;3;5]/double times=dur [1 2 3 NaN]|exact
+CHK|pw_tt_row_write_cell|timetable 3x1 {Var1} [9;2;3]/double times=dur [1 2 3]|exact
+CHK|pw_tt_row_write_table|timetable 3x1 {Var1} [9;2;3]/double times=dur [1 2 3]|exact
+CHK|pw_new_var_by_name|table 2x3 {Var1,Var2,New} [1;2]/double {'a','b'}[2x1] [7;0]/double|exact
+CHK|pw_new_var_by_pos|table 2x3 {Var1,Var2,Var3} [1;2]/double {'a','b'}[2x1] [7;8]/double|exact
+CHK|pw_int8_convert|table 2x1 {Var1} [4;2]/int8|exact
+CHK|pw_table_width_one_expands|table 2x2 {Var1,Var2} [9;2]/double [9;4]/double|exact
+CHK|pw_cell_width_mismatch|ERR The number of table variables in an assignment must match.|exact
+CHK|pw_table_height_mismatch|ERR To assign to or create a variable in a table, the number of rows must match the height of the table.|exact
+CHK|pw_table_two_rows_into_one|ERR To assign to or create a variable in a table, the number of rows must match the height of the table.|exact
+CHK|pw_zero_row|ERR Array indices must be positive integers or logical values.|exact
+CHK|pw_one_subscript|ERR Subscripting into a table using one subscript (as in t(i)) is not supported. Specify a row subscript and a variable subscript, as in t(rows,vars). To select variables, use t(:,i) or for one variable t.(i). To select rows, use t(i,:).|exact
+CHK|pw_delete_only_row|table 0x1 {Var1} zeros(0,1)/double|exact
+CHK|pw_delete_all_rows|table 0x2 {Var1,Var2} zeros(0,1)/double {}[0x1]|exact
+CHK|pw_int8_rhs_into_double|table 2x1 {Var1} [9;2]/double|exact
+CHK|pw_mask_write|table 2x2 {Var1,Var2} [9;2]/double {'q','b'}[2x1]|exact
+CHK|pw_mask_var_delete|table 2x1 {Var2} {'a','b'}[2x1]|exact
+CHK|pw_props_survive_delete|d u,v table 1x2 {Var1,Var2} 1/double {'a'}[1x1]|exact
+CHK|pw_string_into_cellstr|ERR Unable to perform assignment because value of type 'string' is not convertible to 'cell'.|exact
+CHK|pw_matrix_var_delete|table 1x2 {Var1,Var2} [1 2]/double 5/double|exact
+CHK|pw_matrix_var_write|table 2x2 {Var1,Var2} [7 8;3 4]/double [9;6]/double|exact
+CHK|pw_cell_matrix_element|table 2x2 {Var1,Var2} [7 8;3 4]/double [9;6]/double|exact
+CHK|pw_char_into_cellstr|table 2x2 {Var1,Var2} [5;2]/double {'zz','b'}[2x1]|exact
+CHK|pw_end_plus_one_names|table 3x1 {Var1} [1;2;3]/double rows=a,b,Row3|exact
+CHK|pw_alias_untouched|table 2x2 {Var1,Var2} [1;2]/double {'a','b'}[2x1] / table 2x2 {Var1,Var2} [9;2]/double {'z','b'}[2x1]|exact
+CHK|pw_in_struct_field|table 2x2 {Var1,Var2} [9;2]/double {'z','b'}[2x1]|exact
+CHK|pw_in_cell|table 1x2 {Var1,Var2} 1/double {'a'}[1x1]|exact
+CHK|pw_growth_int8_logical_fill|table 4x2 {Var1,Var2} [1;2;0;4]/int8 [true;false;false;true]/logical|exact
+CHK|pw_delete_rows_by_name|table 1x1 {Var1} 2/double rows=b|exact
+CHK|pw_var_whole_by_name|table 2x2 {Var1,Var2} [9;8]/double {'a','b'}[2x1]|exact
+CHK|vc_alias|table 2x1 {Var1} [1;2]/double / table 4x1 {Var1} [9;2;1;2]/double|exact
+CHK|vc_other_names|ERR All tables being vertically concatenated must have the same variable names.|exact
+CHK|vc_reordered|table 3x2 {n,t} [1;2;3]/double {'a','b','c'}[3x1]|exact
+CHK|vc_counts|ERR All tables being vertically concatenated must have the same number of variables.|exact
+CHK|vc_rownames_both|table 4x1 {Var1} [1;2;3;4]/double rows=a,b,c,d|exact
+CHK|vc_rownames_dup|ERR Duplicate table row name: 'a'.|exact
+CHK|vc_rownames_one|table 4x1 {Var1} [1;2;3;4]/double rows=a,b,Row3,Row4 / table 4x1 {Var1} [3;4;1;2]/double rows=Row1,Row2,a,b|exact
+CHK|vc_tt|timetable 4x1 {Var1} [1;2;1;2]/double times=dur [1 2 1 2]|exact
+CHK|vc_tt_table|timetable 4x1 {Var1} [1;2;3;4]/double times=dur [1 2 NaN NaN]|exact
+CHK|vc_empty|table 2x1 {Var1} [1;2]/double / table 2x1 {Var1} [1;2]/double|exact
+CHK|vc_cell|table 3x2 {Var1,Var2} [1;2;3]/double {'a','b','c'}[3x1]|exact
+CHK|vc_number|ERR All input arguments must be tables or cell arrays.|exact
+CHK|vc_text|table 4x1 {Var1} {'a','b','a','b'}[4x1]|exact
+CHK|vc_int8_double|table 4x1 {Var1} [1;2;127;4]/int8|exact
+CHK|vc_num_text|ERR Unable to concatenate the table variable 'Var1' because it is a cell array in one table and not a cell array in another.|exact
+CHK|vc_three|table 6x1 {Var1} [1;2;1;2;1;2]/double|exact
+CHK|vc_first_metadata|[d] [u] table 4x1 {Var1} [1;2;3;4]/double|exact
+CHK|vc_then_write_alias|table 2x2 {Var1,Var2} [1;2]/double {'a','b'}[2x1] / table 3x2 {Var1,Var2} [2;1;2]/double {'b','a','b'}[3x1]|exact
+CHK|vc_hc_functions|table 4x1 {Var1} [1;2;1;2]/double / table 2x2 {Var1,t} [1;2]/double {'a','b'}[2x1]|exact
+CHK|hc_basic|table 2x1 {t} {'a','b'}[2x1] / table 2x2 {Var1,t} [1;2]/double {'z','b'}[2x1]|exact
+CHK|hc_dup|ERR Duplicate table variable name: 'Var1'.|exact
+CHK|hc_height|ERR All tables being horizontally concatenated must have the same number of rows.|exact
+CHK|hc_rownames_one|table 2x2 {Var1,y} [1;2]/double [3;4]/double rows=a,b / table 2x2 {y,Var1} [3;4]/double [1;2]/double rows=a,b|exact
+CHK|hc_rownames_differ|ERR All tables being horizontally concatenated must have the same row names.|exact
+CHK|hc_tt_table|timetable 2x2 {Var1,t} [1;2]/double {'a','b'}[2x1] times=dur [1 2]|exact
+CHK|hc_cell|table 2x2 {Var1,Var2} [1;2]/double [3;4]/double|exact
+CHK|hc_matrix_var|table 2x2 {Var1,v} [1 2;3 4]/double [5;6]/double|exact
+CHK|sv_string_var|string "a"string / table 4x1 {Var1} "a","b","a","b"string / table 2x1 {Var1} "z","b"string / "a"string / "a","b"string|exact
+CHK|sv_string_var_paren|table 2x1 {Var1} "z","b"string / table 1x1 {Var1} "z"string|exact
+CHK|t2a_numbers|[1 3;2 4]/double|exact
+CHK|t2a_text|{'a','b','c','d'}[2x2]|exact
+CHK|t2a_mixed|ERR Unable to concatenate the table variables 'Var1' and 'Var2', because their types are double and cell.|exact
+CHK|t2a_matrix|[1 2 5;3 4 6]/double|exact
+CHK|t2a_tt|[1 3;2 4]/double|exact
+CHK|t2a_int8_double|[1 127;2 4]/int8 / [1 3;0 4]/double|exact
+CHK|t2a_string|"a","b","c","d"string|exact
+CHK|t2a_alias|table 2x1 {Var1} [1;2]/double [9;2]/double|exact
+CHK|av_default|table 2x1 {Var1} [1;2]/double / table 2x2 {Var1,Var2} [1;2]/double [5;6]/double|exact
+CHK|av_named|table 2x2 {Var1,x} [1;2]/double [5;6]/double / table 2x2 {Var1,w} [1;2]/double [5;6]/double|exact
+CHK|av_before_after|table 2x3 {Var1,Var2_1,Var2} [1;2]/double [5;6]/double [3;4]/double / table 2x3 {Var1,Var2_1,Var2} [1;2]/double [5;6]/double [3;4]/double / table 2x3 {Var1_1,Var1,Var2} [5;6]/double [1;2]/double [3;4]/double|exact
+CHK|av_height|ERR To assign to or create a variable in a table, the number of rows must match the height of the table.|exact
+CHK|av_clash|ERR Duplicate table variable name: 'Var1'.|exact
+CHK|av_two|table 2x3 {Var1,n,t} [1;2]/double [5;6]/double {'a','b'}[2x1]|exact
+CHK|av_expr|table 2x3 {Var1,Var2,x} [1;2]/double [10;12]/double [5;6]/double|exact
+CHK|av_tt|timetable 2x2 {Var1,Var2} [1;2]/double [5;6]/double times=dur [1 2]|exact
+CHK|av_leaves_source|table 2x1 {Var1} [1;2]/double / table 2x2 {Var1,x} [1;2]/double [9;6]/double / [5;7]/double|exact
+CHK|vf_anon_alias|table 2x1 {Var1} [1;2]/double / table 2x1 {Fun_Var1} [9;2]/double|exact
+CHK|vf_named|table 1x2 {mean_Var1,mean_Var2} 1.5/double 3.5/double|exact
+CHK|vf_uniform|[1.5 3.5]/double|exact
+CHK|vf_cell|{[2;4]/double,[6;8]/double}[1x2]|exact
+CHK|vf_input|table 1x1 {sum_Var2} 7/double / table 1x2 {sum_Var2,sum_Var1} 7/double 3/double|exact
+CHK|vf_drops_rownames|table 2x1 {Fun_Var1} [2;4]/double [d]|exact
+CHK|vf_text|table 1x1 {numel_Var1} 2/double / table 2x1 {Fun_Var1} {'A','BB'}[2x1]|exact
+CHK|vf_tt|timetable 2x1 {Fun_Var1} [2;4]/double times=dur [1 2] / timetable 1x1 {mean_Var1} 1.5/double times=dur 1|exact
+CHK|rf_default|table 2x1 {Var1} [4;6]/double|exact
+CHK|rf_uniform|[4;6]/double|exact
+CHK|rf_names|table 2x1 {s} [4;6]/double|exact
+CHK|rf_two_outputs|table 2x2 {Var1,Var2} [4;6]/double [3;8]/double / table 2x2 {p,q} [4;6]/double [3;8]/double|exact
+CHK|rf_input|table 2x1 {Var1} [30;40]/double|exact
+CHK|rf_cell|{4/double,6/double}[2x1]|exact
+CHK|rf_text_arg|{'cell:1','cell:1'}[2x1]|exact
+CHK|rf_extract|{'char:1','char:2'}[2x1]|exact
+CHK|rf_separate_false|table 2x1 {Var1} [4;6]/double|exact
+CHK|rf_rownames|table 2x1 {Var1} [4;6]/double rows=a,b|exact
+CHK|rf_order|1,3;2,4; [4 6]|exact
+CHK|rf_matrix_var|[8;13]/double|exact
+CHK|rf_tt|timetable 2x1 {Var1} [4;6]/double times=dur [1 2]|exact
+CHK|rf_global_operand|[1 2] [7 2]|exact

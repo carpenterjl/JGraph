@@ -2570,8 +2570,16 @@ internal sealed partial class Interpreter
         }
     }
 
-    private JgsValue AssembleMatrix(MatrixLiteral matrix, List<JgsValue[]> rows)
+    private JgsValue AssembleMatrix(Node matrix, List<JgsValue[]> rows)
     {
+        // A table joins as a table (V6, #121): [T; U] stacks rows, [T U] puts variables side by
+        // side, and a cell beside or below a table is read as a table first. Asked before every
+        // other kind, because a cell in the bracket would otherwise take it.
+        if (AnyTable(rows))
+        {
+            return ConcatenateTables(rows, matrix);
+        }
+
         // Structs concatenate into a struct array (M65) rather than through the numeric block
         // machinery, which read them as one element apiece and answered with a double.
         if (AnyStruct(rows))
@@ -2754,6 +2762,15 @@ internal sealed partial class Interpreter
         // In JGS a bracket literal is a list, so [[1, 2], [3, 4]] is a matrix by nesting — the
         // spelling its own scripts and guide have always used. Only MATLAB concatenates here.
         concatenating &= Dialect.ConcatenatesBrackets;
+
+        // A bracket holding any table joins tables (V6, #121): [T U] puts the variables side by
+        // side, and a cell beside a table is read as a table. Asked before every other kind, as
+        // the cell join below would otherwise take [T {3; 4}].
+        if (Dialect.ConcatenatesBrackets && joinable.Length > 0
+            && Array.Exists(joinable, static e => e.Type == JgsType.Table))
+        {
+            return ConcatenateTables([joinable], array);
+        }
 
         // A bracket holding any struct concatenates into a struct array (M65). Asked before the
         // string and numeric joins for the same reason they are asked before each other: the type of

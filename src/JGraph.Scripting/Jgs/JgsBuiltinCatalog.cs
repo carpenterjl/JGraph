@@ -544,8 +544,13 @@ public static class JgsBuiltinCatalog
         // --- Data types and conversions (M43) ---------------------------------------------------
         Add("table", "Builds a table from column variables; a trailing 'VariableNames', {…} names them (default Var1…VarN).", P("var1"), Opt("var2"));
         Add("array2table", "Makes one table variable per input matrix column; supports VariableNames and RowNames.", P("A"), Opt("options"));
+        Add("table2array", "A table's variables side by side as one array — numbers, or a cell when they are cells.", P("T"));
+        Add("addvars", "A table with values added as variables, at the end or 'Before'/'After' a variable; 'NewVariableNames' names them.", P("T"), P("var1"), Opt("options"));
+        Add("varfun", "A function applied to each table variable: a table of the answers ('OutputFormat' 'table', 'uniform' or 'cell'); 'InputVariables' picks.", P("func"), P("T"), Opt("options"));
+        Add("rowfun", "A function applied to each table row, the variables as arguments: a table of the answers ('OutputFormat', 'NumOutputs', 'OutputVariableNames', 'InputVariables', 'SeparateInputs', 'ExtractCellContents').", P("func"), P("T"), Opt("options"));
         Add("readtimetable", "Reads a delimited table with date/time row coordinates in its first column.", P("filename"), Opt("options"));
         Add("istimetable", "Whether a value is a table with row time coordinates.", P("value"));
+        Add("istable", "Whether a value is a table (a timetable is not one).", P("value"));
         Add("imtile", "Arranges a cell of images in a grid, with borders, background and thumbnail sizing.", P("images"), Opt("options"));
         Add("timetable", "A table whose first variable is the row times: timetable(rowTimes, var1, …).", P("rowTimes"), P("var1"));
         Add("categorical", "Category labels from a cell or array (represented as the cell of names); a value set and its category names relabel them.", P("x"), Opt("valueset"), Opt("categorynames"));
