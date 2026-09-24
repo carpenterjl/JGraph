@@ -1959,7 +1959,7 @@ internal static partial class JgsBuiltins
                     else if (callback.Type == JgsType.String && callback.AsString.Length > 0)
                     {
                         using var scope = JgsGraphicsCallbackState.Enter(f,null);
-                        if (env.TryGet("evalin",out var eval)) eval.AsCallable.Call([JgsValue.Str("base"),callback],line,col);
+                        if (env.TryGet("evalin",out var eval)) JgsCallbacks.Invoke(eval.AsCallable, [JgsValue.Str("base"),callback],line,col); // a command, asked for nothing (V9.1)
                     }
                 }
                 else graphicsHost.CloseFigure(n);

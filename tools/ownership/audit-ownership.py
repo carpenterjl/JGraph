@@ -873,10 +873,12 @@ def check_minting(verdicts: dict[str, set[str]]) -> list[str]:
 SCRIPTING_ROOT = REPO / "src/JGraph.Scripting"
 SCOPES_SOURCE = REPO / "src/JGraph.Scripting/Jgs/JgsBuiltins.Scopes.cs"
 
-# A statement that hands control to script code: a callable invoked, source text or a syntax tree
-# evaluated, a paused session resumed, queued callbacks run.
+# A statement that hands control to script code: a callable invoked (directly, or as a callback
+# asked for nothing through JgsCallbacks.Invoke - V9), source text or a syntax tree evaluated, a
+# paused session resumed, queued callbacks run.
 SCRIPT_ENTRY_RE = re.compile(
     r"\.(Call|CallMultiple|CallDiscarded|CallAsStatement|CallAsCallback)\("
+    r"|\bJgsCallbacks\.Invoke\("
     r"|\b(EvaluateSource|EvaluateSourceIn|EvaluateInContext|EvaluateForOutputsInContext|EvaluateForOutputsIn"
     r"|EvaluateIn|ExecuteFunctionBody|RunScriptFile|RunWhilePaused)\("
     r"|\binterpreter\.Evaluate\w*\("

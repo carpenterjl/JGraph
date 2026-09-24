@@ -21,9 +21,35 @@ internal interface IJgsMultiCallable
 {
     /// <summary>
     /// Invokes the callable asking for <paramref name="wanted"/> outputs. It may return fewer (the
-    /// caller reports the shortfall) but never more than it can produce.
+    /// caller reports the shortfall) but never more than it can produce. Zero is a statement call
+    /// (V9, ADR 0170): the callee sees <c>nargout</c> 0 and hands back the first output it made
+    /// anyway - a user function's assigned first output, a builtin's value - which the statement
+    /// binds to <c>ans</c>; a callee that made none hands back none, without error.
     /// </summary>
     JgsValue[] CallMultiple(IReadOnlyList<JgsValue> arguments, int wanted, int line, int column);
+}
+
+/// <summary>
+/// How the runtime invokes a callback it holds - a timer's, a listener's, a graphics callback, a
+/// function file run as the program: asked for nothing (V9.1, ADR 0170), as MATLAB invokes one,
+/// so a callback whose body calls a function with no outputs is not refused for an output it was
+/// never asked for. A function argument a builtin evaluates for its value (an integrand, an
+/// objective) is asked for one through <see cref="IJgsCallable.Call"/> as before.
+/// </summary>
+internal static class JgsCallbacks
+{
+    /// <summary>Invokes <paramref name="callback"/> asked for no outputs.</summary>
+    public static void Invoke(IJgsCallable callback, IReadOnlyList<JgsValue> arguments, int line, int column)
+    {
+        if (callback is IJgsMultiCallable several)
+        {
+            several.CallMultiple(arguments, 0, line, column);
+        }
+        else
+        {
+            callback.Call(arguments, line, column);
+        }
+    }
 }
 
 /// <summary>A built-in function implemented in C#, exposed to scripts by name.</summary>
@@ -45,10 +71,53 @@ internal sealed class BuiltinFunction : IJgsCallable, IJgsMultiCallable
         KeepsStringArguments = JgsBuiltins.StringAwareBuiltins.Contains(name);
         MintsAnswer = JgsBuiltins.MintingBuiltins.Contains(name);
         RunsScript = JgsBuiltins.ScriptRunningBuiltins.Contains(name);
+        ForwardsCallSite = name == "feval";
+        if (JgsBuiltinOutputCounts.TryGet(name, out int count, out bool isFile))
+        {
+            MatlabOutputCount = count;
+            IsMatlabFile = isFile;
+        }
     }
 
     /// <inheritdoc />
     public string Name { get; }
+
+    /// <summary>
+    /// R2025b's <c>nargout</c> for the name (<see cref="JgsBuiltinOutputCounts"/>) when it is
+    /// fixed, or null - what <c>nargout('name')</c> answers here (V9.3).
+    /// </summary>
+    public int? MatlabOutputCount { get; }
+
+    /// <summary>
+    /// The most outputs a call may ask of this builtin, or null when unbounded here: the recorded
+    /// count when it is zero, or when this builtin has only its single-output body; a builtin with
+    /// a multi-output body answers for itself, because R2025b's <c>nargout</c> under-reports a
+    /// C built-in's second output (<c>fgets</c> reports 1 and gives two), sees a class constructor
+    /// where a toolbox overload answers two (<c>tf</c> of a digitalFilter), and cannot see what
+    /// this build gives beyond MATLAB's own (<c>triplot</c>'s coordinates) - the stress suite found
+    /// all three. Such a body handing back fewer than asked is the shortfall the multiple
+    /// assignment refuses as <c>MATLAB:maxlhs</c>. A call asking for more than the maximum is
+    /// refused before the body runs (V9.3, ADR 0170).
+    /// </summary>
+    public int? MaxOutputs =>
+        MatlabOutputCount is int count && (count == 0 || MultiOutput is null) ? count : null;
+
+    /// <summary>
+    /// Whether MATLAB keeps this name as a file rather than a built-in, which decides the refusal's
+    /// identifier: a file refuses excess outputs as <c>MATLAB:TooManyOutputs</c>, a built-in as
+    /// <c>MATLAB:maxlhs</c> (measured, V9).
+    /// </summary>
+    public bool IsMatlabFile { get; }
+
+    /// <summary>
+    /// Whether this builtin hands the interpreter's pending call site on to the callable it invokes
+    /// (<c>feval</c> alone: the written <c>feval(f, x)</c> minus <c>f</c>). Every other builtin that
+    /// runs script code (<see cref="RunsScript"/>) has no argument syntax for the callee it calls,
+    /// so the roads clear the site before its body and <c>inputname</c> in the callback answers ''
+    /// (V9.2, ADR 0170; measured for <c>cellfun</c>, <c>arrayfun</c>, <c>structfun</c> and an
+    /// <c>ErrorHandler</c>).
+    /// </summary>
+    public bool ForwardsCallSite { get; }
 
     /// <summary>
     /// Whether a binding may adopt this builtin's answer rather than take a counted share of it
@@ -101,6 +170,16 @@ internal sealed class BuiltinFunction : IJgsCallable, IJgsMultiCallable
     public bool KnowsWhenDiscarded { get; init; }
 
     /// <summary>
+    /// Whether this builtin takes the output count it was asked for through
+    /// <see cref="MultiOutput"/> at every count, zero included, because the count is part of what
+    /// it does (V9.1, ADR 0170): <c>feval</c>, <c>cellfun</c>, <c>arrayfun</c> and <c>structfun</c>
+    /// hand it on to the callable they invoke, and <c>load</c> binds the loaded names into the
+    /// workspace only when asked for none. Unlike <see cref="KnowsWhenDiscarded"/>, a statement
+    /// call of one still binds <c>ans</c> to whatever it handed back - <c>feval(@sin, 0);</c> does.
+    /// </summary>
+    public bool TakesOutputCount { get; init; }
+
+    /// <summary>
     /// Whether this builtin wants its string arguments as they were written (M63). False for nearly
     /// everything, and that is the point: a string scalar arriving at an ordinary builtin is demoted
     /// to the char row it stands for, so <c>title("Speed")</c> and <c>plot(x, y, "LineWidth", 2)</c>
@@ -142,8 +221,14 @@ internal sealed class BuiltinFunction : IJgsCallable, IJgsMultiCallable
         !KeepsStringArguments && IsStringScalar(value) ? value.ElementAt(0) : value;
 
     /// <inheritdoc />
+    /// <remarks>
+    /// The multi-output body answers a call for several, and a call for none when the builtin
+    /// cares about the difference (<see cref="KnowsWhenDiscarded"/>, <see cref="TakesOutputCount"/>);
+    /// every other count is the single-output body, whose value a statement call binds to
+    /// <c>ans</c> as R2025b binds <c>size(1);</c> and <c>h = @sin; h(1);</c> (measured, V9).
+    /// </remarks>
     public JgsValue[] CallMultiple(IReadOnlyList<JgsValue> arguments, int wanted, int line, int column) =>
-        MultiOutput is { } multi && wanted > 1
+        MultiOutput is { } multi && (wanted > 1 || (wanted == 0 && (KnowsWhenDiscarded || TakesOutputCount)))
             ? Guarded(() => multi(DemoteStringScalars(arguments), wanted, line, column), line, column)
             : [Call(arguments, line, column)];
 
@@ -273,6 +358,63 @@ internal sealed class UserFunction : IJgsCallable, IJgsMultiCallable
     /// </summary>
     internal bool IsNested { get; init; }
 
+    /// <summary>The class this function is a method of, or null - what the unassigned-output refusal names it under (V9).</summary>
+    internal string? OwnerClass { get; init; }
+
+    /// <summary>
+    /// The most outputs a call may ask for: the output list's length, or null for a trailing
+    /// <c>varargout</c> and for a JGS <c>fn</c>, whose single value is not a declared output
+    /// (V9.3, ADR 0170).
+    /// </summary>
+    internal int? MaxOutputs
+    {
+        get
+        {
+            IReadOnlyList<string> outputs = _declaration.Outputs;
+            return _interpreter.Dialect.MatlabFunctions && (outputs.Count == 0 || outputs[^1] != "varargout")
+                ? outputs.Count
+                : null;
+        }
+    }
+
+    /// <summary>
+    /// The name R2025b's unassigned-output refusal gives this function: <c>Class/method</c> for a
+    /// method, <c>file&gt;outer/nested</c> for a nested function, <c>file&gt;name</c> for a local
+    /// function, and the bare name for a file's main function (measured, V9).
+    /// </summary>
+    internal string QualifiedName
+    {
+        get
+        {
+            if (OwnerClass is { } owner)
+            {
+                return $"{owner}/{Name}";
+            }
+
+            string stem = Path.GetFileNameWithoutExtension(_interpreter.FileOfCode(_declaration.SourceId));
+            if (!IsNested)
+            {
+                return stem.Length == 0 || string.Equals(stem, Name, StringComparison.Ordinal) ? Name : $"{stem}>{Name}";
+            }
+
+            // The parents outward: each nested frame's closure is the frame of the function it is
+            // written in, which carries that function's declaration.
+            var chain = new List<string> { Name };
+            for (JgsEnvironment? frame = _closure; frame?.Function is { } parent; frame = frame.Parent)
+            {
+                chain.Add(parent.Name);
+                if (!frame.IsInsideCall)
+                {
+                    break;
+                }
+            }
+
+            chain.Reverse();
+            string joined = string.Join('/', chain);
+            return stem.Length == 0 ? joined : $"{stem}>{joined}";
+        }
+    }
+
     /// <inheritdoc />
     public JgsValue Call(IReadOnlyList<JgsValue> arguments, int line, int column)
     {
@@ -349,10 +491,18 @@ internal sealed class UserFunction : IJgsCallable, IJgsMultiCallable
 
         // A trailing 'varargout' is a cell holding as many outputs as the function chose to make, so
         // the count it can answer is not known from the header the way the named outputs are.
+        //
+        // Asked for none (a statement call, V9.1), the function still hands back its first output
+        // when it assigned one - a named output, or varargout{1} - and nothing, without error, when
+        // it did not: R2025b binds `ans` after `two();` and `vo_sets_first();` and leaves it alone
+        // after `named_unassigned();` (measured). Asked for n, every one of the n must exist, and a
+        // missing one is R2025b's refusal by name (#84): a named output, or `varargout{k}` when the
+        // cell is short, or the cell's own name when the function never made it.
         IReadOnlyList<string> outputs = _declaration.Outputs;
         bool variadicOut = outputs[^1] == "varargout";
         int namedCount = variadicOut ? outputs.Count - 1 : outputs.Count;
-        int produced = Math.Max(wanted, 1);
+        bool statement = wanted == 0;
+        int produced = statement ? 1 : wanted;
         if (!variadicOut)
         {
             produced = Math.Min(produced, outputs.Count);
@@ -364,8 +514,12 @@ internal sealed class UserFunction : IJgsCallable, IJgsMultiCallable
             string output = outputs[i];
             if (!local.TryGet(output, out JgsValue value))
             {
-                throw new JgsRuntimeException(line, column,
-                    $"Function '{Name}' finished without assigning its output '{output}'.");
+                if (statement)
+                {
+                    return [];
+                }
+
+                throw Unassigned(output, line, column);
             }
 
             results.Add(value);
@@ -373,20 +527,28 @@ internal sealed class UserFunction : IJgsCallable, IJgsMultiCallable
 
         if (variadicOut && results.Count < produced)
         {
-            // An unassigned varargout is an empty list, not a fault: a function that was asked for
-            // only its named outputs never had reason to fill one.
-            JgsValue[] rest = local.TryGet("varargout", out JgsValue packed) && packed.Type == JgsType.Cell
-                ? packed.AsCell
-                : System.Array.Empty<JgsValue>();
-
+            bool made = local.TryGet("varargout", out JgsValue packed) && packed.Type == JgsType.Cell;
+            JgsValue[] rest = made ? packed.AsCell : System.Array.Empty<JgsValue>();
             for (int i = 0; i < rest.Length && results.Count < produced; i++)
             {
                 results.Add(rest[i]);
+            }
+
+            if (results.Count < produced && !statement)
+            {
+                throw made
+                    ? Unassigned($"varargout{{{results.Count - namedCount + 1}}}", line, column)
+                    : new JgsRuntimeException(line, column, "MATLAB:unassignedOutputs",
+                        "One or more output arguments not assigned during call to \"varargout\".");
             }
         }
 
         return [.. results];
     }
+
+    private JgsRuntimeException Unassigned(string output, int line, int column) =>
+        new(line, column, "MATLAB:unassignedOutputs",
+            $"Output argument \"{output}\" (and possibly others) not assigned a value in the execution with \"{QualifiedName}\" function.");
 }
 
 /// <summary>

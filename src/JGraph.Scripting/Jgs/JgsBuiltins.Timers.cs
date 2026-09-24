@@ -605,14 +605,14 @@ internal static partial class JgsBuiltins
         Interpreter interpreter = state.Scheduler.Interpreter;
         if (callback.Type == JgsType.Function)
         {
-            callback.AsCallable.Call([state.Value, eventData], 0, 0);
+            JgsCallbacks.Invoke(callback.AsCallable, [state.Value, eventData], 0, 0);
             return;
         }
 
         // A command string runs in the base workspace, as MATLAB's does.
         if (IsTextScalar(callback))
         {
-            interpreter.EvaluateSource(TextOf(callback), interpreter.Globals, 0, 0);
+            interpreter.EvaluateSource(TextOf(callback), interpreter.Globals, 0, 0, asStatement: true); // a command, asked for nothing (V9.1)
             return;
         }
 
@@ -625,7 +625,7 @@ internal static partial class JgsBuiltins
         arguments[0] = state.Value;
         arguments[1] = eventData;
         Array.Copy(parts, 1, arguments, 2, parts.Length - 1);
-        head.AsCallable.Call(arguments, 0, 0);
+        JgsCallbacks.Invoke(head.AsCallable, arguments, 0, 0);
     }
 
     /// <summary>The event every timer callback receives: <c>Type</c> and <c>Data</c>, whose

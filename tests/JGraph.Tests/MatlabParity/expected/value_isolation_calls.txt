@@ -2,21 +2,21 @@ CHK|a017_persistent_recursive_elem|[2 20 0]|exact
 CHK|a018_persistent_recursive_rebind|[2 20 0]|exact
 CHK|a036_nested_three_levels|[11 2]|exact
 CHK|a037_loop_bound_rebinds|[1 7 7 7 7]|exact
-CHK|a055_disp_asked_for_value|MATLAB:maxlhs|exact|pending V9|no error
-CHK|a055_error_asked_for_value|MATLAB:maxlhs|exact|pending V9|probe:bad
-CHK|a055_anon_error_asked_for_value|MATLAB:maxlhs|exact|pending V9|probe:bad
-CHK|a077_nargout_statement_calls|0;0;0;0;|exact|pending V9|1;1;1;1;
+CHK|a055_disp_asked_for_value|MATLAB:maxlhs|exact
+CHK|a055_error_asked_for_value|MATLAB:maxlhs|exact
+CHK|a055_anon_error_asked_for_value|MATLAB:maxlhs|exact
+CHK|a077_nargout_statement_calls|0;0;0;0;|exact
 CHK|g_nargout_value_calls|1;1;1;|exact
-CHK|a078_inputname_multi_output_handle|x 5|exact|pending V9|ERR inputname can only be used inside a function.
+CHK|a078_inputname_multi_output_handle|x 5|exact
 CHK|g_inputname_named_call|x 5|exact
-CHK|a079_inputname_feval|x 5|exact|pending V9|5
+CHK|a079_inputname_feval|x 5|exact
 CHK|g_tilde_first_output|[4 5 6]|exact
 CHK|g_tilde_deal|[1 2 3] [9 2 3]|exact
 CHK|g_tilde_nargout_seen|2|exact
 CHK|g_ans_after_zero_output_call|0|exact
-CHK|a081_ans_after_varargout_statement|0|exact|pending V9|1
-CHK|a084_tilde_unassigned_output|ERR Output argument "a" (and possibly others) not assigned a value in the execution with "value_isolation_calls>second_only" function.|exact|pending V9|ERR Function 'second_only' finished without assigning its output 'a'.
-CHK|a084_tilde_unassigned_nargout|ERR Output argument "a" (and possibly others) not assigned a value in the execution with "value_isolation_calls>second_only_count" function.|exact|pending V9|ERR Function 'second_only_count' finished without assigning its output 'a'.
+CHK|a081_ans_after_varargout_statement|0|exact
+CHK|a084_tilde_unassigned_output|ERR Output argument "a" (and possibly others) not assigned a value in the execution with "value_isolation_calls>second_only" function.|exact
+CHK|a084_tilde_unassigned_nargout|ERR Output argument "a" (and possibly others) not assigned a value in the execution with "value_isolation_calls>second_only_count" function.|exact
 CHK|g_feval_by_name|5|exact
 CHK|g_nargin_in_nested|0|exact
 CHK|g_handle_recursion_accumulates|3 6|exact

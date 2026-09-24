@@ -1,0 +1,76 @@
+CHK|np_stmt|0;|exact
+CHK|np_bare|0;|exact
+CHK|np_value|1;|exact
+CHK|np_bare_value|1;|exact
+CHK|handle_stmt|0;|exact
+CHK|handle_value|1;|exact
+CHK|handle_two|2;|exact
+CHK|feval_handle_stmt|0;|exact
+CHK|feval_name_stmt|0;|exact
+CHK|feval_value|1;|exact
+CHK|feval_two|2;|exact
+CHK|anon_stmt|0;|exact
+CHK|anon_value|1;|exact
+CHK|anon_two|2;|exact
+CHK|cellfun_stmt|0;|exact
+CHK|cellfun_nonuniform_stmt|0;|exact
+CHK|cellfun_value|1;|exact
+CHK|cellfun_two|2;|exact
+CHK|arrayfun_stmt|0;|exact
+CHK|arrayfun_value|1;|exact
+CHK|structfun_stmt|0;|exact
+CHK|structfun_value|1;|exact
+CHK|method_stmt|0;|exact
+CHK|method_fn_stmt|0;|exact
+CHK|method_value|1;|exact
+CHK|method_two|2;|exact
+CHK|relay_stmt|relay0;0;|exact
+CHK|relay_value|relay1;1;|exact
+CHK|relay_two|relay2;2;|exact
+CHK|nested_stmt_and_value|nested0;nested1;|exact
+CHK|ctx_if|1;|exact
+CHK|ctx_while|1;|exact
+CHK|ctx_switch|1;|exact
+CHK|ctx_for|1;|exact
+CHK|ctx_bracket|1;1;|exact
+CHK|ctx_brace|1;|exact
+CHK|ctx_plus|1;|exact
+CHK|ctx_field|1;|exact
+CHK|ctx_cellassign|1;|exact
+CHK|ctx_indexassign|1;|exact
+CHK|ctx_tilde|1;|exact
+CHK|ctx_tilde_two|2;|exact
+CHK|ctx_argument|1;|exact
+CHK|eval_stmt|0;|exact
+CHK|evalin_stmt|0;|exact
+CHK|str2func_stmt|0;|exact
+CHK|cellheld_stmt|0;|exact
+CHK|structheld_stmt|0;|exact
+CHK|builtin_feval_stmt|0;|exact
+CHK|builtin_feval_value|1;|exact
+CHK|nargout_query|1 2 0 -1 -1|exact
+CHK|ans_two_stmt|1 1|exact
+CHK|ans_vo_sets_first_stmt|1 5|exact
+CHK|ans_named_unassigned_stmt|0|exact
+CHK|ans_vo_none_stmt|0|exact
+CHK|ans_second_only_stmt|0|exact
+CHK|ans_method_two_stmt|1 1|exact
+CHK|ans_handle_np2_stmt|1 1|exact
+CHK|ans_anon_two_stmt|1 1|exact
+CHK|ans_feval_two_stmt|1 1|exact
+CHK|ans_cellfun_stmt|1 0|exact
+CHK|ans_handle_vo_stmt|1 5|exact
+CHK|ans_sin_handle_stmt|1 0.841470984807897|exact
+CHK|ans_feval_sin_stmt|1 0|exact
+CHK|ans_size_handle_stmt|1 [1 1]|exact
+CHK|ans_size_stmt|1 [1 1]|exact
+CHK|ans_anon_expr_stmt|1 42|exact
+CHK|ans_anon_sin_stmt|1 0.841470984807897|exact
+CHK|unassigned_named|MATLAB:unassignedOutputs Output argument "y" (and possibly others) not assigned a value in the execution with "nargout_propagation>named_unassigned" function.|exact
+CHK|unassigned_vo_none|MATLAB:unassignedOutputs One or more output arguments not assigned during call to "varargout".|exact
+CHK|unassigned_vo_short|MATLAB:unassignedOutputs Output argument "varargout{2}" (and possibly others) not assigned a value in the execution with "nargout_propagation>vo_sets_first" function.|exact
+CHK|unassigned_nested|MATLAB:unassignedOutputs Output argument "y" (and possibly others) not assigned a value in the execution with "nargout_propagation>unassigned_nested/nun" function.|exact
+CHK|unassigned_method|MATLAB:unassignedOutputs Output argument "y" (and possibly others) not assigned a value in the execution with "CallBox/m_unassigned" function.|exact
+CHK|unassigned_file|MATLAB:unassignedOutputs Output argument "a" (and possibly others) not assigned a value in the execution with "cc_second_only_file" function.|exact
+CHK|unassigned_feval|MATLAB:unassignedOutputs Output argument "a" (and possibly others) not assigned a value in the execution with "nargout_propagation>second_only" function.|exact
+CHK|unassigned_tilde|MATLAB:unassignedOutputs Output argument "a" (and possibly others) not assigned a value in the execution with "nargout_propagation>second_only" function.|exact

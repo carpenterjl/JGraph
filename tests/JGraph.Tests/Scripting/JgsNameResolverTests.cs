@@ -402,7 +402,7 @@ public class JgsNameResolverTests : IDisposable
             """);
         WriteFile("boom.m", """
             f = @(x) error('boom:inside', 'inside the handle');
-            c = f(1);
+            f(1);
             """);
         string main = Path.Combine(_folder, "main.m");
         string code = """

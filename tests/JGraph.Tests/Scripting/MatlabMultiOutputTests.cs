@@ -192,8 +192,9 @@ public class MatlabMultiOutputTests : IDisposable
 
         ScriptRunResult result = await Run(session, "[a, b] = sin(1);");
 
+        // R2025b refuses a built-in asked for more than it has before it runs (V9.3, ADR 0170).
         Assert.False(result.Success);
-        Assert.Contains("Insufficient number of outputs from right hand side of equal sign", _output.ErrorText, StringComparison.Ordinal);
+        Assert.Contains("Too many output arguments.", _output.ErrorText, StringComparison.Ordinal);
     }
 
     [Fact]

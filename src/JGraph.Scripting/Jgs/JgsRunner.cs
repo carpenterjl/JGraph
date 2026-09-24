@@ -206,7 +206,7 @@ internal static class JgsRunner
         var main = (FnStmt)program[0];
         if (interpreter.TryGetHoisted(main.SourceId, main.Name, out JgsValue value) && value.Type == JgsType.Function)
         {
-            value.AsCallable.Call(System.Array.Empty<JgsValue>(), main.Line, main.Column);
+            JgsCallbacks.Invoke(value.AsCallable, System.Array.Empty<JgsValue>(), main.Line, main.Column); // run as a statement: nargout 0 (V9.1)
         }
     }
 

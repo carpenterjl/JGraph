@@ -456,7 +456,7 @@ internal static partial class JgsBuiltins
         listener.Depth++;
         try
         {
-            listener.Callback.AsCallable.Call([first, data], 0, 0);
+            JgsCallbacks.Invoke(listener.Callback.AsCallable, [first, data], 0, 0);
         }
         catch (OperationCanceledException)
         {

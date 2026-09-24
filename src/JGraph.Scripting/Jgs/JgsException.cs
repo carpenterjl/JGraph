@@ -118,6 +118,14 @@ public sealed class JgsRuntimeException : JgsException
     /// <summary><c>rethrow</c>: the carried exception keeps the stack it already has.</summary>
     internal bool KeepsStack { get; init; }
 
+    /// <summary>
+    /// The built-in whose call this error refused before it ran (V9, ADR 0170: a call asked for more
+    /// outputs than <c>disp</c> or <c>error</c> has), which unwinds through no frame of its own. An
+    /// <c>ErrorHandler</c>'s record puts it under R2025b's "Error using &lt;name&gt;" header the way
+    /// a frame's name would go; the message itself stays what <c>ME.message</c> reports.
+    /// </summary>
+    internal string? UsingName { get; init; }
+
     /// <summary><c>throwAsCaller</c>: the stack leaves out the frame that called it.</summary>
     internal bool DropsThrowingFrame { get; init; }
 }

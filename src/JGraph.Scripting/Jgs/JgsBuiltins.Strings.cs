@@ -401,6 +401,10 @@ internal static partial class JgsBuiltins
             }
         }
 
+        // Asked for none (a statement, V9.1), each element's function is asked for none too and
+        // cellfun collects the first output it handed back anyway - so `cellfun(@np, {1});` gives
+        // np a nargout of 0 and still binds ans to what np answered (measured), and a function
+        // with nothing to hand back leaves nothing to bind.
         int produced = Math.Max(wanted, 1);
         var collected = new JgsValue[produced][];
         for (int o = 0; o < produced; o++)
@@ -408,6 +412,7 @@ internal static partial class JgsBuiltins
             collected[o] = new JgsValue[count];
         }
 
+        int gathered = wanted == 0 ? -1 : produced;
         for (int k = 0; k < count; k++)
         {
             var inputs = new JgsValue[cells.Count];
@@ -425,27 +430,39 @@ internal static partial class JgsBuiltins
             {
                 try
                 {
-                    RefuseOutputOfError(args[0].AsCallable, line, col);
-                    answers = CallForOutputs(args[0].AsCallable, inputs, produced, line, col);
+                    answers = CallForOutputs(args[0].AsCallable, inputs, wanted, line, col);
                 }
                 catch (JgsRuntimeException failure) when (handler is { } catcher)
                 {
                     // MATLAB hands the handler a record of what went wrong followed by the same
                     // inputs, so a handler can answer for the element rather than only report it.
+                    // Asked for nothing, what the handler answers is not collected (measured: a
+                    // handler answering a struct under the uniform default raises nothing).
                     var handed = new JgsValue[inputs.Length + 1];
                     handed[0] = FailureRecord(failure, k);
                     inputs.CopyTo(handed, 1);
-                    answers = CallForOutputs(catcher.AsCallable, handed, produced, line, col);
+                    answers = CallForOutputs(catcher.AsCallable, handed, wanted, line, col);
+                    if (wanted == 0)
+                    {
+                        answers = [];
+                    }
                 }
             }
 
-            if (answers.Length < produced)
+            if (gathered < 0)
             {
-                throw new JgsRuntimeException(line, col,
-                    $"cellfun: element {k + 1} produced {answers.Length} output(s), but {produced} were asked for.");
+                // Whether the first element handed anything back when nothing was asked decides
+                // whether ans is bound; what it handed back is held to the uniform rule as ever.
+                gathered = Math.Min(answers.Length, 1);
             }
 
-            for (int o = 0; o < produced; o++)
+            if (answers.Length < gathered)
+            {
+                throw new JgsRuntimeException(line, col,
+                    $"cellfun: element {k + 1} produced {answers.Length} output(s), but {Math.Max(gathered, produced)} were asked for.");
+            }
+
+            for (int o = 0; o < gathered; o++)
             {
                 // M2: a collected answer may be a wrapper the function handed back rather than
                 // minted — `@(x) x` answers its own parameter — and the slot it lands in is an
@@ -456,8 +473,8 @@ internal static partial class JgsBuiltins
 
         int rows = JgsMatrix.RowCount(cells[0]);
         int columns = JgsMatrix.ColCount(cells[0]);
-        var outputs = new JgsValue[produced];
-        for (int o = 0; o < produced; o++)
+        var outputs = new JgsValue[Math.Max(gathered, 0)];
+        for (int o = 0; o < outputs.Length; o++)
         {
             outputs[o] = CollectResults("cellfun", collected[o], uniform, rows, columns, line, col);
         }
@@ -465,12 +482,20 @@ internal static partial class JgsBuiltins
         return outputs;
     }
 
-    /// <summary>Calls something for several outputs when it can produce them, and one when it cannot.</summary>
+    /// <summary>
+    /// Calls something asked for <paramref name="wanted"/> outputs - zero included - after holding
+    /// it to its output count (V9.3): <c>r = cellfun(@none_out, …)</c> is refused as R2025b refuses
+    /// it, and an anonymous <c>@(x) error(…)</c> asked for one is refused on its body's own road as
+    /// <c>MATLAB:maxlhs</c> before the error it names is raised (#54).
+    /// </summary>
     private static JgsValue[] CallForOutputs(
-        IJgsCallable callable, IReadOnlyList<JgsValue> inputs, int wanted, int line, int col) =>
-        wanted > 1 && callable is IJgsMultiCallable many
+        IJgsCallable callable, IReadOnlyList<JgsValue> inputs, int wanted, int line, int col)
+    {
+        JgsOutputDemand.Refuse(callable, wanted, line, col);
+        return callable is IJgsMultiCallable many
             ? many.CallMultiple(inputs, wanted, line, col)
             : [callable.Call(inputs, line, col)];
+    }
 
     /// <summary>
     /// The struct MATLAB hands an <c>'ErrorHandler'</c> (V6, ADR 0167, #54): the failure's
@@ -489,6 +514,12 @@ internal static partial class JgsBuiltins
             string shown = stem.Length == 0 || string.Equals(stem, name, StringComparison.Ordinal) ? name : $"{stem}>{name}";
             message = $"Error using {shown} (line {at})\n{message}";
         }
+        else if (failure.UsingName is { } refused && !message.StartsWith("Error using ", StringComparison.Ordinal))
+        {
+            // A built-in refused before it ran (V9.3) has no frame and no line; R2025b heads the
+            // record with its name alone.
+            message = $"Error using {refused}\n{message}";
+        }
 
         return JgsValue.Struct(new Dictionary<string, JgsValue>(StringComparer.Ordinal)
         {
@@ -496,20 +527,6 @@ internal static partial class JgsBuiltins
             ["message"] = JgsValue.Str(message),
             ["index"] = JgsValue.Number(index + 1),
         });
-    }
-
-    /// <summary>
-    /// <c>cellfun</c> and <c>arrayfun</c> ask each call for an output, and <c>error</c> has none
-    /// to give: R2025b refuses <c>@(x) error(...)</c> there as "Too many output arguments" before
-    /// the error it names is ever raised (measured), so a handler sees that and not the identifier
-    /// the body spells.
-    /// </summary>
-    private static void RefuseOutputOfError(IJgsCallable callable, int line, int col)
-    {
-        if (callable is AnonymousFunction { Declaration.Body: CallExpr { Callee: VariableExpr { Name: "error" } } })
-        {
-            throw new JgsRuntimeException(line, col, "MATLAB:TooManyOutputs", "Error using error\nToo many output arguments.");
-        }
     }
 
     /// <summary>One legacy <c>cellfun</c> question, answered by the builtin that already answers it.</summary>

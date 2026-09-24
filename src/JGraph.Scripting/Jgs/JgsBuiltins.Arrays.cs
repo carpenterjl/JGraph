@@ -83,6 +83,8 @@ internal static partial class JgsBuiltins
             }
         }
 
+        // Asked for none, each element is asked for none and the first output it hands back anyway
+        // is collected (V9.1, as cellfun).
         int produced = Math.Max(wanted, 1);
         var collected = new JgsValue[produced][];
         for (int o = 0; o < produced; o++)
@@ -90,6 +92,7 @@ internal static partial class JgsBuiltins
             collected[o] = new JgsValue[length];
         }
 
+        int gathered = wanted == 0 ? -1 : produced;
         for (int k = 0; k < length; k++)
         {
             var call = new JgsValue[inputs.Count];
@@ -101,24 +104,32 @@ internal static partial class JgsBuiltins
             JgsValue[] answers;
             try
             {
-                RefuseOutputOfError(args[0].AsCallable, line, col);
-                answers = CallForOutputs(args[0].AsCallable, call, produced, line, col);
+                answers = CallForOutputs(args[0].AsCallable, call, wanted, line, col);
             }
             catch (JgsRuntimeException failure) when (handler is { } catcher)
             {
                 var handed = new JgsValue[call.Length + 1];
                 handed[0] = FailureRecord(failure, k);
                 call.CopyTo(handed, 1);
-                answers = CallForOutputs(catcher.AsCallable, handed, produced, line, col);
+                answers = CallForOutputs(catcher.AsCallable, handed, wanted, line, col);
+                if (wanted == 0)
+                {
+                    answers = []; // as cellfun: a handler's answer is not collected when nothing was asked
+                }
             }
 
-            if (answers.Length < produced)
+            if (gathered < 0)
+            {
+                gathered = Math.Min(answers.Length, 1);
+            }
+
+            if (answers.Length < gathered)
             {
                 throw new JgsRuntimeException(line, col,
-                    $"arrayfun: element {k + 1} produced {answers.Length} output(s), but {produced} were asked for.");
+                    $"arrayfun: element {k + 1} produced {answers.Length} output(s), but {Math.Max(gathered, produced)} were asked for.");
             }
 
-            for (int o = 0; o < produced; o++)
+            for (int o = 0; o < gathered; o++)
             {
                 if (uniform && answers[o].Type is not (JgsType.Number or JgsType.Bool))
                 {
@@ -130,8 +141,8 @@ internal static partial class JgsBuiltins
             }
         }
 
-        var outputs = new JgsValue[produced];
-        for (int o = 0; o < produced; o++)
+        var outputs = new JgsValue[Math.Max(gathered, 0)];
+        for (int o = 0; o < outputs.Length; o++)
         {
             // The uniform result takes the first array's shape — 2-D or N-D — the way MATLAB's does.
             outputs[o] = uniform
@@ -140,6 +151,67 @@ internal static partial class JgsBuiltins
         }
 
         return outputs;
+    }
+
+    /// <summary>
+    /// <c>structfun</c> over a struct's fields asked for <paramref name="wanted"/> outputs (one at
+    /// most: the uniform result is an array, the non-uniform one a struct with the same field
+    /// names, the one place the family's shape rule differs from cellfun's). Asked for none, each
+    /// field's function is asked for none and its first output, if any, is collected (V9.1).
+    /// </summary>
+    private static JgsValue[] ApplyOverFields(IReadOnlyList<JgsValue> args, int wanted, int line, int col)
+    {
+        if (args.Count < 2 || args[0].Type != JgsType.Function || args[1].Type != JgsType.Struct)
+        {
+            throw new JgsRuntimeException(line, col, "structfun(f, s) applies a function handle to each field.");
+        }
+
+        bool uniform = UniformOutputWanted(args, 2);
+        Dictionary<string, JgsValue> fields = args[1].AsStruct;
+        var results = new List<JgsValue>();
+        var names = new List<string>();
+        bool gathering = wanted > 0;
+        foreach ((string field, JgsValue value) in fields)
+        {
+            JgsValue[] answers = CallForOutputs(args[0].AsCallable, [value], Math.Min(wanted, 1), line, col);
+            if (wanted == 0 && names.Count == 0)
+            {
+                gathering = answers.Length > 0;
+            }
+
+            if (!gathering)
+            {
+                names.Add(field);
+                continue;
+            }
+
+            if (answers.Length == 0)
+            {
+                throw new JgsRuntimeException(line, col,
+                    $"structfun: field '{field}' produced no output, but one was asked for.");
+            }
+
+            names.Add(field);
+            results.Add(answers[0]);
+        }
+
+        if (!gathering)
+        {
+            return [];
+        }
+
+        if (uniform)
+        {
+            return [JgsValue.Array(results.ToArray())];
+        }
+
+        var mapped = new Dictionary<string, JgsValue>(StringComparer.Ordinal);
+        for (int i = 0; i < names.Count; i++)
+        {
+            mapped[names[i]] = JgsValue.Share(results[i]); // M2, as cellfun: the field is an entry
+        }
+
+        return [JgsValue.Struct(mapped)];
     }
 
     private static void RegisterApplication(
@@ -153,6 +225,7 @@ internal static partial class JgsBuiltins
             (args, line, col) => ApplyOverArrays(args, 1, line, col)[0])
         {
             MultiOutput = ApplyOverArrays,
+            TakesOutputCount = true, // a statement asks each element for none (V9.1)
         }));
 
         Define("bsxfun", (args, line, col) =>
@@ -175,38 +248,16 @@ internal static partial class JgsBuiltins
                 (a, b) => f.Call([a, b], line, col));
         });
 
-        Define("structfun", (args, line, col) =>
+        // structfun takes the count like its siblings (V9.1): a statement asks each field's
+        // function for none and collects the first output it hands back anyway; a value call
+        // asks for one.
+        env.Builtins.Register("structfun", JgsValue.Function(new BuiltinFunction(
+            "structfun",
+            (args, line, col) => ApplyOverFields(args, 1, line, col)[0])
         {
-            if (args.Count < 2 || args[0].Type != JgsType.Function || args[1].Type != JgsType.Struct)
-            {
-                throw new JgsRuntimeException(line, col, "structfun(f, s) applies a function handle to each field.");
-            }
-
-            bool uniform = UniformOutputWanted(args, 2);
-            Dictionary<string, JgsValue> fields = args[1].AsStruct;
-            var results = new List<JgsValue>();
-            var names = new List<string>();
-            foreach ((string field, JgsValue value) in fields)
-            {
-                names.Add(field);
-                results.Add(args[0].AsCallable.Call([value], line, col));
-            }
-
-            if (uniform)
-            {
-                return JgsValue.Array(results.ToArray());
-            }
-
-            // Non-uniform structfun hands back a struct with the same field names, not a cell —
-            // the one place the family's shape rule differs from cellfun's.
-            var mapped = new Dictionary<string, JgsValue>(StringComparer.Ordinal);
-            for (int i = 0; i < names.Count; i++)
-            {
-                mapped[names[i]] = JgsValue.Share(results[i]); // M2, as cellfun: the field is an entry
-            }
-
-            return JgsValue.Struct(mapped);
-        });
+            MultiOutput = ApplyOverFields,
+            TakesOutputCount = true,
+        }));
 
         Define("struct2cell", (args, line, col) =>
         {

@@ -256,19 +256,41 @@ internal sealed partial class Interpreter
     /// </summary>
     internal CallExpr? CurrentCall { get; private set; }
 
+    /// <summary>
+    /// The expression the running method was read off when the call was <c>obj.m(x)</c> - the
+    /// receiver, which is the method's first argument and what <c>inputname(1)</c> names (V9.2,
+    /// measured: <c>b.inp(x)</c> answers <c>b</c> then <c>x</c>, as <c>inp(b, x)</c> does).
+    /// </summary>
+    internal Expr? CurrentReceiver { get; private set; }
+
     /// <summary>The call being made right now, handed to the frame it is about to create.</summary>
     private CallExpr? _pendingCall;
+    private Expr? _pendingReceiver;
     internal CallExpr? PendingCall => _pendingCall;
+
+    /// <summary>
+    /// Whether the innermost running code is a script - the main program, or a script file a
+    /// function ran by name - rather than a function's body. <c>inputname</c> refuses there (V9.2).
+    /// </summary>
+    internal bool InScript => _inScript;
+
+    private bool _inScript;
+
+    /// <summary>The file a piece of code came from, or the main script's path for code with no file.</summary>
+    internal string FileOfCode(string sourceId) => FileOfFrame(sourceId);
 
     /// <summary>
     /// Runs <paramref name="body"/> with <paramref name="call"/> as the pending call and puts the
     /// previous one back afterwards — how <c>builtin('table', A, B)</c> hands the <c>table</c>
-    /// wrapper a call site without the selector in it, and how a nested forward sees its own.
+    /// wrapper a call site without the selector in it, how <c>feval(f, x)</c> hands <c>f</c> the
+    /// call minus itself (V9.2), and how a nested forward sees its own.
     /// </summary>
     internal T WithPendingCall<T>(CallExpr? call, Func<T> body)
     {
         CallExpr? previous = _pendingCall;
+        Expr? previousReceiver = _pendingReceiver;
         _pendingCall = call;
+        _pendingReceiver = null;
         try
         {
             return body();
@@ -276,7 +298,23 @@ internal sealed partial class Interpreter
         finally
         {
             _pendingCall = previous;
+            _pendingReceiver = previousReceiver;
         }
+    }
+
+    /// <summary>
+    /// Hands the call site to the frame <paramref name="callee"/> is about to open (V9.2, ADR 0170):
+    /// the written call, with the receiver of a dotted method call beside it, or nothing for a
+    /// builtin that will call script code with no argument syntax of its own (<c>cellfun</c>,
+    /// <c>arrayfun</c>, a callback), so that <c>inputname</c> in the callback answers '' as R2025b's
+    /// does rather than reading the builtin's own arguments. <c>feval</c> forwards its own.
+    /// </summary>
+    private void SetPendingCall(IJgsCallable callee, CallExpr? call, Expr? receiver)
+    {
+        bool cleared = callee is BuiltinFunction { RunsScript: true, ForwardsCallSite: false }
+            or NamedHandle { Captured: BuiltinFunction { RunsScript: true, ForwardsCallSite: false } };
+        _pendingCall = cleared ? null : call;
+        _pendingReceiver = cleared ? null : receiver;
     }
 
     /// <summary>The global environment — <c>evalin('base', …)</c>'s workspace.</summary>
@@ -626,7 +664,17 @@ internal sealed partial class Interpreter
     /// trailing bare expression so <c>x = eval('1+1')</c> is 2. A parse failure becomes a runtime
     /// error at the call site, because from the script's point of view that is where it happened.
     /// </summary>
-    internal JgsValue EvaluateSource(string code, JgsEnvironment env, int line, int column)
+    internal JgsValue EvaluateSource(string code, JgsEnvironment env, int line, int column) =>
+        EvaluateSource(code, env, line, column, asStatement: false);
+
+    /// <summary>
+    /// <see cref="EvaluateSource(string, JgsEnvironment, int, int)"/>, with <paramref name="asStatement"/>
+    /// running the text's last line as the statement it is rather than as an expression whose
+    /// value <c>eval</c> hands back (V9.1): <c>eval('np();')</c> asked for nothing gives <c>np</c>
+    /// a nargout of 0 and binds <c>ans</c> as the written statement would, where
+    /// <c>x = eval('np()')</c> asks the expression for one.
+    /// </summary>
+    internal JgsValue EvaluateSource(string code, JgsEnvironment env, int line, int column, bool asStatement)
     {
         IReadOnlyList<Stmt> program;
         try
@@ -641,7 +689,7 @@ internal sealed partial class Interpreter
         JgsValue result = JgsValue.Null;
         for (int i = 0; i < program.Count; i++)
         {
-            if (i == program.Count - 1 && program[i] is ExprStmt tail && tail.Expression is not AssignExpr)
+            if (!asStatement && i == program.Count - 1 && program[i] is ExprStmt tail && tail.Expression is not AssignExpr)
             {
                 result = Evaluate(tail.Expression, env);
                 continue;
@@ -651,6 +699,21 @@ internal sealed partial class Interpreter
         }
 
         return result;
+    }
+
+    /// <summary><see cref="EvaluateSourceIn"/> as a statement - <c>evalin('caller', 'np();')</c> asked for nothing (V9.1).</summary>
+    internal void ExecuteSourceIn(string code, JgsEnvironment workspace, int line, int column)
+    {
+        JgsEnvironment frame = CurrentFrame;
+        CurrentFrame = workspace;
+        try
+        {
+            EvaluateSource(code, workspace, line, column, asStatement: true);
+        }
+        finally
+        {
+            CurrentFrame = frame;
+        }
     }
 
     /// <summary>
@@ -795,12 +858,15 @@ internal sealed partial class Interpreter
         using FileContext entered = EnterFile(file);
         Completion completion;
         _runningScripts.Add(file);
+        bool wasScript = _inScript;
+        _inScript = true;
         try
         {
             completion = ExecuteBlock(program, _globals);
         }
         finally
         {
+            _inScript = wasScript;
             _runningScripts.RemoveAt(_runningScripts.Count - 1);
         }
 
@@ -833,6 +899,8 @@ internal sealed partial class Interpreter
         using FileContext entered = EnterFile(sourceId);
         Completion completion;
         _runningScripts.Add(sourceId);
+        bool wasScript = _inScript;
+        _inScript = true;
         try
         {
             completion = ExecuteBlock(program, scope);
@@ -844,6 +912,7 @@ internal sealed partial class Interpreter
         }
         finally
         {
+            _inScript = wasScript;
             _runningScripts.RemoveAt(_runningScripts.Count - 1);
         }
 
@@ -874,13 +943,18 @@ internal sealed partial class Interpreter
         JgsEnvironment callerFrame = CurrentFrame;
         JgsEnvironment? callersCaller = CallerFrame;
         CallExpr? callerCall = CurrentCall;
+        Expr? callerReceiver = CurrentReceiver;
+        bool callerInScript = _inScript;
         FnStmt? callerFunction = _currentFunction;
         string callerFile = _currentFile;
         FunctionFile? callerStorage = _currentStorage;
         CurrentFrame = local;
         CallerFrame = callerFrame;
         CurrentCall = _pendingCall;
+        CurrentReceiver = _pendingReceiver;
         _pendingCall = null;
+        _pendingReceiver = null;
+        _inScript = false;
         _currentFunction = declaration;
         _activeFunctions.Add(declaration);
         _activeCallLines.Add(callLine);
@@ -929,6 +1003,8 @@ internal sealed partial class Interpreter
             CurrentFrame = callerFrame;
             CallerFrame = callersCaller;
             CurrentCall = callerCall;
+            CurrentReceiver = callerReceiver;
+            _inScript = callerInScript;
             _currentFunction = callerFunction;
             RestoreFile(callerFile, callerStorage);
             _callDepth--;
@@ -987,13 +1063,14 @@ internal sealed partial class Interpreter
         {
             // A bare name is the call MATLAB writes it as shorthand for; anything else is already
             // a call and is evaluated exactly as written, so mustBeMember(x, {'a','b'}) reads its
-            // own argument out of the frame.
+            // own argument out of the frame. A validator is asked for nothing (V9.1): mustBe…
+            // has no outputs, and asking it for one is the refusal V9.3 makes.
             _ = validator is VariableExpr bare
-                ? EvaluateCall(
+                ? EvaluateForOutputs(
                     new CallExpr(bare, [new PreEvaluated(value)])
                         { Line = validator.Line, Column = validator.Column },
-                    env)
-                : Evaluate(validator, env);
+                    0, env)
+                : EvaluateForOutputs(validator, 0, env);
         }
     }
 
@@ -1284,16 +1361,15 @@ internal sealed partial class Interpreter
     {
         Expr expression = statement.Expression;
 
-        // Value mode for the bare name. A file that answers it — a path file, or a file shadowing a
-        // built-in, `eps` with eps.m present — is left to the expression walk below, which calls it
-        // and binds `ans` as a written call would; the arm here is for what the workspace walk and
-        // the built-in layer hold.
+        // Value mode for the bare name: what the workspace walk, the files and the built-in layer
+        // hold. A function definition from any layer - a file shadowing a built-in, `eps` with
+        // eps.m present, a clear.m run as `clear;` - is called here asked for nothing (V9.1),
+        // which is how a written statement calls it; until V9 a file's was left to the expression
+        // walk, which asks for one and now refuses a file with no outputs.
         if (expression is VariableExpr name
-            && _resolver.Value(name.Name, env) is
-            {
-                Layer: ResolutionLayer.Bound or ResolutionLayer.Nested or ResolutionLayer.Local
-                    or ResolutionLayer.Builtin or ResolutionLayer.BuiltinMethod,
-            } held)
+            && _resolver.Value(name.Name, env) is { Found: true } held
+            && (held.Layer is ResolutionLayer.Bound or ResolutionLayer.Nested or ResolutionLayer.Local
+                or ResolutionLayer.Builtin or ResolutionLayer.BuiltinMethod || held.IsFunctionDefinition))
         {
             JgsValue existing = held.Value;
             if (existing.Type == JgsType.Function && (!Dialect.IsMatlab || held.IsFunctionDefinition))
@@ -1310,13 +1386,15 @@ internal sealed partial class Interpreter
                     return;
                 }
 
-                if (Dialect.IsMatlab && existing.AsCallable is UserFunction user)
-                {
-                    user.CallMultiple([], 0, statement.Line, statement.Column);
-                    return;
-                }
-
-                JgsValue called = existing.AsCallable.Call(System.Array.Empty<JgsValue>(), statement.Line, statement.Column);
+                // A bare name has no argument syntax and asks for nothing (V9.1): the callee sees
+                // nargout 0 and ans takes the first output it made anyway.
+                _pendingCall = null;
+                _pendingReceiver = null;
+                JgsValue called = Dialect.IsMatlab
+                    ? FirstOrNull(existing.AsCallable is IJgsMultiCallable bare
+                        ? bare.CallMultiple([], 0, statement.Line, statement.Column)
+                        : [existing.AsCallable.Call([], statement.Line, statement.Column)])
+                    : existing.AsCallable.Call(System.Array.Empty<JgsValue>(), statement.Line, statement.Column);
                 if (BindsAns(existing))
                 {
                     BindAns(statement, called, env, owned: MintsAnswer(existing.AsCallable));
@@ -1334,12 +1412,24 @@ internal sealed partial class Interpreter
         // numbers when something was — a distinction only the statement can make, and only once the
         // arguments' classes have said which layer answers (M145: `max([1 5 3]);` with max.m present
         // is the built-in's, `max({1});` the file's).
-        if (expression is CallExpr named && named.Callee is VariableExpr calleeName
-            && TryResolveCall(named, calleeName.Name, env, out Resolution resolvedCall, out JgsValue[] given))
+        if (expression is CallExpr named && named.Callee is VariableExpr calleeName)
         {
-            // builtin('ecdf', x); is ecdf(x); — the forwarder runs the target's statement form and
-            // says whether the target would have bound ans (M145, step 7).
-            if (resolvedCall.Value.AsCallable is JgsBuiltinForwarder forwarder)
+            if (!TryResolveCall(named, calleeName.Name, env, wanted: 0, out Resolution resolvedCall, out JgsValue[] given))
+            {
+                // A variable holding a handle, called as a statement - h(x); g(); - asks for zero
+                // outputs like a written call (V9.1); a variable holding data is indexed below.
+                if (Dialect.IsMatlab && resolvedCall.Layer == ResolutionLayer.Bound && resolvedCall.Value.Type == JgsType.Function)
+                {
+                    JgsValue[] outputs = InvokeFunctionValue(resolvedCall.Value, named, env, wanted: 0);
+                    if (outputs.Length > 0 && BindsAns(resolvedCall.Value))
+                    {
+                        BindAns(statement, outputs[0], env, owned: MintsAnswer(resolvedCall.Value.AsCallable));
+                    }
+
+                    return;
+                }
+            }
+            else if (resolvedCall.Value.AsCallable is JgsBuiltinForwarder forwarder)
             {
                 _pendingCall = named;
                 if (forwarder.CallAsStatement(given, named.Line, named.Column, out JgsValue forwarded))
@@ -1349,8 +1439,7 @@ internal sealed partial class Interpreter
 
                 return;
             }
-
-            if (resolvedCall.Value.AsCallable is BuiltinFunction
+            else if (resolvedCall.Value.AsCallable is BuiltinFunction
                 { KnowsWhenDiscarded: true, MultiOutput: not null } knowing)
             {
                 var holds = new ScopeHolds();
@@ -1366,14 +1455,30 @@ internal sealed partial class Interpreter
 
                 return;
             }
-
-            _pendingCall = named;
-            JgsValue answered = CallHeld(resolvedCall.Value.AsCallable, given, named.Line, named.Column);
-            if (BindsAns(resolvedCall.Value))
+            else
             {
-                BindAns(statement, answered, env, owned: MintsAnswer(resolvedCall.Value.AsCallable));
-            }
+                // A statement asks for zero outputs (V9.1, ADR 0170): the callee - a user function,
+                // a handle, feval, cellfun, a method - sees nargout 0, and ans takes the first
+                // output it handed back anyway. JGS keeps its single-value call.
+                IJgsCallable callee = resolvedCall.Value.AsCallable;
+                SetPendingCall(callee, named, receiver: null);
+                JgsValue answered = Dialect.IsMatlab
+                    ? FirstOrNull(CallMultipleHeld(callee, given, 0, named.Line, named.Column))
+                    : CallHeld(callee, given, named.Line, named.Column);
+                if (BindsAns(resolvedCall.Value))
+                {
+                    BindAns(statement, answered, env, owned: MintsAnswer(callee));
+                }
 
+                return;
+            }
+        }
+
+        // A call whose callee is not a plain name - h(x), c{1}(x), s.f(x), obj.m(x) - asks for zero
+        // outputs the same way (V9.1); a callee that turns out to be data is indexed as before.
+        if (Dialect.IsMatlab && expression is CallExpr statementCall && statementCall.Callee is not VariableExpr
+            && TryExecuteCallStatement(statement, statementCall, env))
+        {
             return;
         }
 
@@ -1391,6 +1496,76 @@ internal sealed partial class Interpreter
             default:
                 BindAns(statement, value, env, owned: MintsItsValue(expression));
                 break;
+        }
+    }
+
+    /// <summary>
+    /// The statement form of a call whose callee is written as anything but a plain name: the
+    /// callee is evaluated once; a function value is invoked asked for zero outputs, with the call
+    /// site (and a dotted method's receiver) handed on, and <c>ans</c> takes the first output it
+    /// handed back; anything else is indexed and bound as the expression walk would. False when
+    /// the callee is data, with nothing evaluated twice.
+    /// </summary>
+    private bool TryExecuteCallStatement(ExprStmt statement, CallExpr call, JgsEnvironment env)
+    {
+        _readRanGetter = false;
+        JgsValue callee = EvaluateCallee(call.Callee, env);
+        if (_readRanGetter && call.Callee is MemberExpr && AnyMentionsEnd(call.Arguments))
+        {
+            callee = EvaluateCallee(call.Callee, env); // get;get for x = o.p(end) (V6, #147), as EvaluateCall
+        }
+
+        if (callee.Type == JgsType.Function)
+        {
+            JgsValue[] outputs = InvokeFunctionValue(callee, call, env, wanted: 0);
+            if (outputs.Length > 0 && BindsAns(callee))
+            {
+                BindAns(statement, outputs[0], env, owned: MintsAnswer(callee.AsCallable));
+            }
+
+            return true;
+        }
+
+        BindAns(statement, CallOrIndexHeld(callee, call, env), env, owned: MintsItsValue(call));
+        return true;
+    }
+
+    /// <summary>The first of a call's outputs, or null when it handed back none.</summary>
+    private static JgsValue FirstOrNull(JgsValue[] outputs) => outputs.Length > 0 ? outputs[0] : JgsValue.Null;
+
+    /// <summary>
+    /// Invokes a function value asked for <paramref name="wanted"/> outputs, on the road every
+    /// non-plain callee shares (V9): the receiver of a value object's method is held for the call
+    /// when the arguments may run script code (M5), the arguments are evaluated, the output count
+    /// is held against the callee after them (V9.3, as R2025b does for a handle), and the call site
+    /// - with a dotted call's receiver - goes to the frame (V9.2, #78).
+    /// </summary>
+    private JgsValue[] InvokeFunctionValue(JgsValue callee, CallExpr call, JgsEnvironment env, int wanted)
+    {
+        var holds = new ScopeHolds();
+        try
+        {
+            IJgsCallable target = callee.AsCallable;
+            if (Dialect.CopyOnAssign && call.Arguments.Count > 0 && IsScopeTarget(callee) && !AllInert(call.Arguments, env))
+            {
+                var bound = (BoundMethod)target;
+                target = bound.WithReceiverValue(Hold(bound.Receiver, ref holds));
+            }
+
+            JgsValue[] arguments = EvaluateAll(call.Arguments, env);
+            JgsOutputDemand.Refuse(target, wanted, call.Line, call.Column);
+            SetPendingCall(target, call, receiver: target is BoundMethod && call.Callee is MemberExpr member ? member.Target : null);
+            JgsValue[] answers = CallMultipleHeld(target, arguments, wanted, call.Line, call.Column);
+            foreach (JgsValue answer in answers)
+            {
+                holds.Keep(answer);
+            }
+
+            return answers;
+        }
+        finally
+        {
+            holds.Release();
         }
     }
 
@@ -1421,9 +1596,19 @@ internal sealed partial class Interpreter
     /// is the dialect's undefined-name error, at the callee.
     /// </summary>
     private bool TryResolveCall(
-        CallExpr call, string name, JgsEnvironment env, out Resolution resolved, out JgsValue[] given)
+        CallExpr call, string name, JgsEnvironment env, int wanted, out Resolution resolved, out JgsValue[] given)
     {
         resolved = _resolver.Invoke(name, env);
+
+        // Inside a function body nargin and nargout are the variables the call declared, and
+        // MATLAB still reads `nargout('f')` there as the function of that name - the one name
+        // whose variable and function forms share a spelling by design (V9, measured).
+        if (Dialect.IsMatlab && resolved.Layer == ResolutionLayer.Bound && name is "nargin" or "nargout"
+            && call.Arguments.Count == 1 && _resolver.BuiltinOf(name) is { Type: JgsType.Function } counting)
+        {
+            resolved = new Resolution(ResolutionLayer.Builtin, counting, null);
+        }
+
         if (resolved.Layer == ResolutionLayer.Bound || (resolved.Found && resolved.Value.Type != JgsType.Function))
         {
             given = [];
@@ -1435,6 +1620,14 @@ internal sealed partial class Interpreter
         if (!resolved.Found && !AnyClasses)
         {
             throw new JgsRuntimeException(call.Callee.Line, call.Callee.Column, Undefined(name));
+        }
+
+        // A user function asked for more outputs than it declares is refused here, before its
+        // arguments run - R2025b's order for a direct call (V9.3, measured: `x = none_out(bump())`
+        // never runs bump). A builtin is held to its count after them, on the road.
+        if (wanted > 0 && Dialect.IsMatlab && resolved.Found && resolved.Value.AsCallable is UserFunction declared)
+        {
+            JgsOutputDemand.Refuse(declared, wanted, call.Line, call.Column);
         }
 
         given = EvaluateAll(call.Arguments, env);
@@ -1509,10 +1702,10 @@ internal sealed partial class Interpreter
     private JgsValue CalleeValue(CallExpr call, JgsEnvironment env) =>
         call.Callee is VariableExpr name ? _resolver.Lookup(name.Name, env).Value : JgsValue.Null;
 
-    /// <summary>Whether a bare call of this value should bind and echo <c>ans</c>.</summary>
+    /// <summary>Whether a bare call of this value should bind and echo <c>ans</c> - a handle's target's flag (V9).</summary>
     private static bool BindsAns(JgsValue callee) =>
         callee.Type != JgsType.Function
-        || callee.AsCallable is not BuiltinFunction builtin
+        || (callee.AsCallable is NamedHandle { Captured: var captured } ? captured : callee.AsCallable) is not BuiltinFunction builtin
         || builtin.BindsAnsAsStatement;
 
     /// <summary>The variable name at the root of an assignment target (<c>x</c>, <c>x[i]</c>, <c>x(i)</c>).</summary>
@@ -1781,7 +1974,7 @@ internal sealed partial class Interpreter
         // that has to happen before the call, because it is what the call's output count is.
         List<Expr?> targets = ExpandAssignmentTargets(statement, env);
 
-        JgsValue[] outputs = EvaluateForOutputs(statement.Call, targets.Count, env);
+        JgsValue[] outputs = EvaluateForOutputs(statement.Call, targets.Count, env, out IJgsCallable? callee);
 
         // M11: every output is held as a counted share before the first target is written, so
         // [v(1), b] = deal(7, v) binds b to the v the call answered rather than the one v(1) = 7
@@ -1807,9 +2000,18 @@ internal sealed partial class Interpreter
 
                 if (i >= outputs.Length)
                 {
-                    throw new JgsRuntimeException(statement.Line, statement.Column, Dialect.IsMatlab
-                        ? "Insufficient number of outputs from right hand side of equal sign to satisfy assignment."
-                        : $"This call returns {outputs.Length} value(s), but {targets.Count} were asked for.");
+                    // A builtin that handed back fewer than asked was asked for more than it has
+                    // (V9.3: `[a, b, c] = max(x)` is MATLAB:maxlhs); anything else - a comma list,
+                    // an anonymous body that is not a call - is the shortfall.
+                    bool builtin = callee is BuiltinFunction or NamedHandle { Captured: BuiltinFunction };
+                    throw !Dialect.IsMatlab
+                        ? new JgsRuntimeException(statement.Line, statement.Column,
+                            $"This call returns {outputs.Length} value(s), but {targets.Count} were asked for.")
+                        : builtin
+                            ? new JgsRuntimeException(statement.Line, statement.Column, "MATLAB:maxlhs", "Too many output arguments.")
+                                { UsingName = callee!.Name }
+                            : new JgsRuntimeException(statement.Line, statement.Column, "MATLAB:needMoreRhsOutputs",
+                                "Insufficient number of outputs from right hand side of equal sign to satisfy assignment.");
                 }
 
                 var assignment = new AssignExpr(target, TokenType.Assign, new PreEvaluated(outputs[i]))
@@ -2011,34 +2213,47 @@ internal sealed partial class Interpreter
     /// hand back their named outputs; a builtin that knows how to produce several does so; anything
     /// else produces its single value.
     /// </summary>
-    private JgsValue[] EvaluateForOutputs(Expr call, int wanted, JgsEnvironment env)
+    private JgsValue[] EvaluateForOutputs(Expr call, int wanted, JgsEnvironment env) =>
+        EvaluateForOutputs(call, wanted, env, out _);
+
+    /// <summary>
+    /// <see cref="EvaluateForOutputs(Expr, int, JgsEnvironment)"/>, also naming the callable that
+    /// answered in <paramref name="callee"/> - null for a comma list or an indexed value - so a
+    /// multiple assignment can tell a builtin's shortfall (<c>MATLAB:maxlhs</c>) from the rest.
+    /// </summary>
+    private JgsValue[] EvaluateForOutputs(Expr call, int wanted, JgsEnvironment env, out IJgsCallable? callee)
     {
+        callee = null;
+
         // [a, b] = f(x): Invoke mode for a plain name, the same two phases as the single-output
         // form, so a user method with two outputs, a file that shadows a built-in and the built-in
         // method the table keeps are all reachable here (M68, M145). A bound handle is called; a
         // bound value with data in it is indexed by the walk at the bottom.
         if (call is CallExpr invocation)
         {
-            JgsValue callee;
+            JgsValue held;
             if (invocation.Callee is VariableExpr name)
             {
-                if (TryResolveCall(invocation, name.Name, env, out Resolution resolved, out JgsValue[] given))
+                if (TryResolveCall(invocation, name.Name, env, wanted, out Resolution resolved, out JgsValue[] given))
                 {
-                    _pendingCall = invocation;
-                    return CallMultipleHeld(resolved.Value.AsCallable, given, wanted, invocation.Line, invocation.Column);
+                    IJgsCallable target = resolved.Value.AsCallable;
+                    callee = target;
+                    JgsOutputDemand.Refuse(target, wanted, invocation.Line, invocation.Column); // a builtin, after its arguments (V9.3)
+                    SetPendingCall(target, invocation, receiver: null);
+                    return CallMultipleHeld(target, given, wanted, invocation.Line, invocation.Column);
                 }
 
-                callee = resolved.Value;
+                held = resolved.Value;
             }
             else
             {
-                callee = EvaluateCallee(invocation.Callee, env);
+                held = EvaluateCallee(invocation.Callee, env);
             }
 
-            if (callee.Type == JgsType.Function)
+            if (held.Type == JgsType.Function)
             {
-                JgsValue[] arguments = EvaluateAll(invocation.Arguments, env);
-                return CallMultipleHeld(callee.AsCallable, arguments, wanted, invocation.Line, invocation.Column);
+                callee = held.AsCallable;
+                return InvokeFunctionValue(held, invocation, env, wanted); // the site goes with it (V9.2, #78)
             }
         }
 
@@ -2051,6 +2266,8 @@ internal sealed partial class Interpreter
             && AutoCallsBare(named)
             && named.Value.AsCallable is IJgsMultiCallable zeroArgument)
         {
+            callee = named.Value.AsCallable;
+            JgsOutputDemand.Refuse(callee, wanted, bare.Line, bare.Column);
             return zeroArgument.CallMultiple(System.Array.Empty<JgsValue>(), wanted, bare.Line, bare.Column);
         }
 
@@ -2156,6 +2373,13 @@ internal sealed partial class Interpreter
         if (iterable.Type == JgsType.String)
         {
             return ExecuteForOverChars(statement, iterable.AsString, env);
+        }
+
+        // A lone number is the one-by-one array it stands for: `for k = np()` over a scalar
+        // answer runs one pass (V9's fixture found the walk refusing it; #174).
+        if (IsIndexableScalar(iterable))
+        {
+            iterable = OneElementArray(iterable);
         }
 
         if (iterable.Type != JgsType.Array)
@@ -2486,9 +2710,18 @@ internal sealed partial class Interpreter
                         : new JgsRuntimeException(variable.Line, variable.Column, Undefined(variable.Name));
                 }
 
-                return AutoCallsBare(resolved)
-                    ? resolved.Value.AsCallable.Call(System.Array.Empty<JgsValue>(), variable.Line, variable.Column)
-                    : resolved.Value;
+                if (!AutoCallsBare(resolved))
+                {
+                    return resolved.Value;
+                }
+
+                // `x = none_out` asks the function for one output it does not have (V9.3).
+                if (Dialect.IsMatlab)
+                {
+                    JgsOutputDemand.Refuse(resolved.Value.AsCallable, 1, variable.Line, variable.Column);
+                }
+
+                return resolved.Value.AsCallable.Call(System.Array.Empty<JgsValue>(), variable.Line, variable.Column);
             }
 
             case PreEvaluated ready:
@@ -5648,11 +5881,13 @@ internal sealed partial class Interpreter
         JgsValue callee;
         if (call.Callee is VariableExpr name)
         {
-            if (TryResolveCall(call, name.Name, env, out Resolution resolved, out JgsValue[] given))
+            if (TryResolveCall(call, name.Name, env, wanted: 1, out Resolution resolved, out JgsValue[] given))
             {
-                _pendingCall = call;
-                JgsValue answered = CallHeld(resolved.Value.AsCallable, given, call.Line, call.Column);
-                _adoptableAnswer = MintsAnswer(resolved.Value.AsCallable) ? answered : null;
+                IJgsCallable target = resolved.Value.AsCallable;
+                JgsOutputDemand.Refuse(target, 1, call.Line, call.Column); // a builtin, after its arguments (V9.3)
+                SetPendingCall(target, call, receiver: null);
+                JgsValue answered = CallHeld(target, given, call.Line, call.Column);
+                _adoptableAnswer = MintsAnswer(target) ? answered : null;
                 return answered;
             }
 
@@ -5671,10 +5906,17 @@ internal sealed partial class Interpreter
             }
         }
 
-        // M5's index-target scope (`G(f())`, #155: the read sees G as it was when the read began)
-        // and receiver scope (`v.read(bump())` on a value object, #19): the subscripts or arguments
-        // may run script code, so the target — or the object a method was read off — is held as a
-        // share until the read or the call is done.
+        return CallOrIndexHeld(callee, call, env);
+    }
+
+    /// <summary>
+    /// <see cref="CallOrIndex"/> under M5's scope when the arguments may run script code: the
+    /// index target (`G(f())`, #155: the read sees G as it was when the read began) or the object
+    /// a method was read off (`v.read(bump())` on a value object, #19) is held as a share until
+    /// the read or the call is done.
+    /// </summary>
+    private JgsValue CallOrIndexHeld(JgsValue callee, CallExpr call, JgsEnvironment env)
+    {
         if (Dialect.CopyOnAssign && call.Arguments.Count > 0 && IsScopeTarget(callee)
             && !AllInert(call.Arguments, env))
         {
@@ -5828,11 +6070,19 @@ internal sealed partial class Interpreter
 
         JgsValue[] arguments = EvaluateAll(call.Arguments, env);
 
-        // inputname reports the caller's variable name for an argument, so the call expression has
-        // to reach the frame the call creates. Handing over the node itself costs one field write —
-        // building a list of names here would cost an allocation on every call in the language.
-        _pendingCall = call;
-        return CallHeld(callee.AsCallable, arguments, call.Line, call.Column);
+        // One output is asked for here, and a callee with none refuses after its arguments ran
+        // (V9.3). inputname reports the caller's variable name for an argument, so the call
+        // expression has to reach the frame the call creates. Handing over the node itself costs
+        // one field write — building a list of names here would cost an allocation on every call
+        // in the language.
+        IJgsCallable target = callee.AsCallable;
+        if (Dialect.IsMatlab)
+        {
+            JgsOutputDemand.Refuse(target, 1, call.Line, call.Column);
+        }
+
+        SetPendingCall(target, call, receiver: target is BoundMethod && call.Callee is MemberExpr member ? member.Target : null);
+        return CallHeld(target, arguments, call.Line, call.Column);
     }
 
     /// <summary>

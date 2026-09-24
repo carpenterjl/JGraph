@@ -1,0 +1,34 @@
+CHK|named|[x];|exact
+CHK|named_two|[x][y];|exact
+CHK|multi_named|[x];|exact
+CHK|handle_stmt|[x];|exact
+CHK|handle_value|[x];|exact
+CHK|handle_multi|[x];|exact
+CHK|feval_handle|[x];|exact
+CHK|feval_name|[x];|exact
+CHK|feval_value|[x];|exact
+CHK|feval_multi|[x];|exact
+CHK|feval_expr|[];|exact
+CHK|anon_param|[q];|exact
+CHK|anon_captured|[x];|exact
+CHK|anon_expr|[];|exact
+CHK|cellfun_callback|[];|exact
+CHK|cellfun_nonuniform_callback|[];|exact
+CHK|arrayfun_callback|[];|exact
+CHK|structfun_callback|[];|exact
+CHK|cellfun_anon_param|[q];|exact
+CHK|errorhandler_callback|[][];|exact
+CHK|expr_arg|[];|exact
+CHK|index_arg|[];|exact
+CHK|literal_arg|[];|exact
+CHK|beyond_nargin|[];|exact
+CHK|zero_index|ERR Argument number is not valid.|exact
+CHK|method_dot|[b][x];|exact
+CHK|method_fn|[b][x];|exact
+CHK|nested|[x];|exact
+CHK|nested_handle|[x];|exact
+CHK|eval_stmt|[x];|exact
+CHK|str2func_handle|[x];|exact
+CHK|cellheld|[x];|exact
+CHK|structheld|[x];|exact
+CHK|script_level|ERR Calling inputname from scripts is not supported;|exact

@@ -12,13 +12,6 @@ a154_delete_element_from_one_alias	V10
 a154_overwrite_container_alias_kept	V10
 a154_detach_by_write_other_slot	V10
 a154_cell_of_two_cleanups_order	V10
-a109_save_then_write	V9
-a109_save_write_trace	V9
-a111_save_handle_load_is_new	V9	# the loaded handle is a new instance (V6, #111); what remains is #109's binding of h by S = load(fn), which V9 stops
-a144_load_handle_expression	V9
-a144_load_feval_expression	V9
-a144_load_cellfun	V9
-a145_load_anon_statement	V9
 a105_timer_capture	V6
 a105_timer_userdata_alias	V6
 a105_timer_writes_global_during_pause	V6

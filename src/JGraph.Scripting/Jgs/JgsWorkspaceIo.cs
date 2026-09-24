@@ -39,10 +39,22 @@ internal static class JgsWorkspaceIo
                 BindsAnsAsStatement = false,
             }));
 
+        // Whether load binds the loaded names into the workspace is output demand (V9.1, ADR
+        // 0170; #109, #144, #145): asked for none - a statement, `h = @load; h(fn);`, `feval(@load,
+        // fn);`, `builtin('load', fn);` - it binds them; asked for one - `S = load(fn)`, and the same
+        // through a handle, feval, an anonymous body or cellfun - it binds nothing and answers the
+        // struct (R2025b, borrow_probe28).
         environment.Builtins.Register("load", JgsValue.Function(
-            new BuiltinFunction("load", (args, line, col) => Load(activeWorkspace?.Invoke() ?? environment, host, interpreter, args, line, col))
+            new BuiltinFunction("load", (args, line, col) =>
+                Load(activeWorkspace?.Invoke() ?? environment, host, interpreter, args, bind: false, line, col))
             {
                 BindsAnsAsStatement = false,
+                TakesOutputCount = true,
+                MultiOutput = (args, wanted, line, col) =>
+                {
+                    JgsValue loaded = Load(activeWorkspace?.Invoke() ?? environment, host, interpreter, args, bind: wanted == 0, line, col);
+                    return wanted == 0 ? [] : [loaded];
+                },
             }));
     }
 
@@ -269,9 +281,14 @@ internal static class JgsWorkspaceIo
         }
     }
 
+    /// <summary>
+    /// Reads the file and answers the struct of what it holds; with <paramref name="bind"/>, also
+    /// declares each name into <paramref name="environment"/> - refused for an anonymous function's
+    /// static workspace with R2025b's words (#145).
+    /// </summary>
     private static JgsValue Load(
         JgsEnvironment environment, JGraphScriptGlobals host, Interpreter interpreter,
-        IReadOnlyList<JgsValue> args, int line, int col)
+        IReadOnlyList<JgsValue> args, bool bind, int line, int col)
     {
         string path = args.Count >= 1 ? StrArg(args[0], line, col) : "matlab.mat";
         var wanted = new HashSet<string>(StringComparer.Ordinal);
@@ -295,7 +312,7 @@ internal static class JgsWorkspaceIo
         {
             if (!Path.GetExtension(source).Equals(".mat", StringComparison.OrdinalIgnoreCase))
             {
-                return LoadAscii(environment, source);
+                return LoadAscii(environment, source, bind, line, col);
             }
 
             var loaded = new Dictionary<string, JgsValue>(StringComparer.Ordinal);
@@ -304,9 +321,17 @@ internal static class JgsWorkspaceIo
             {
                 // M2 (appendix A #109, the storage half): the workspace binding adopts the fresh
                 // wrapper and the returned struct's field takes a counted share, so a later write to
-                // either cannot reach the other. Whether the binding happens at all is V9's.
-                environment.Declare(name, value);
-                loaded[name] = JgsValue.Share(value);
+                // either cannot reach the other. Whether the binding happens at all is the demand's
+                // (V9.1): asked for a value, nothing is bound and the struct holds the wrapper.
+                if (bind)
+                {
+                    Bind(environment, name, value, line, col);
+                    loaded[name] = JgsValue.Share(value);
+                }
+                else
+                {
+                    loaded[name] = value;
+                }
             }
 
             // The struct MATLAB's S = load(...) form hands back; a bare load statement discards it.
@@ -322,8 +347,23 @@ internal static class JgsWorkspaceIo
         }
     }
 
-    /// <summary>Loads a whitespace-separated numeric text file as one matrix named after the file.</summary>
-    private static JgsValue LoadAscii(JgsEnvironment environment, string source)
+    /// <summary>Declares a loaded name into the workspace, unless that workspace is an anonymous function's snapshot.</summary>
+    private static void Bind(JgsEnvironment environment, string name, JgsValue value, int line, int col)
+    {
+        if (environment.IsStaticWorkspace && !environment.IsBoundWithinStaticWorkspace(name))
+        {
+            throw new JgsRuntimeException(line, col, "MATLAB:err_static_workspace_violation",
+                $"Attempt to add \"{name}\" to a static workspace.");
+        }
+
+        environment.Declare(name, value);
+    }
+
+    /// <summary>
+    /// Loads a whitespace-separated numeric text file as one matrix named after the file - bound
+    /// under that name when asked for no output, answered when asked for one.
+    /// </summary>
+    private static JgsValue LoadAscii(JgsEnvironment environment, string source, bool bind, int line, int col)
     {
         var rows = new List<JgsValue>();
         foreach (string lineText in File.ReadLines(source))
@@ -349,8 +389,11 @@ internal static class JgsWorkspaceIo
         }
 
         JgsValue value = rows.Count == 1 ? rows[0] : JgsValue.Array(rows.ToArray());
-        string name = SanitizeName(Path.GetFileNameWithoutExtension(source));
-        environment.Declare(name, value);
+        if (bind)
+        {
+            Bind(environment, SanitizeName(Path.GetFileNameWithoutExtension(source)), value, line, col);
+        }
+
         return value;
     }
 

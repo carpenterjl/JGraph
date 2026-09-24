@@ -52,9 +52,12 @@ internal sealed class JgsBuiltinForwarder : IJgsCallable, IJgsMultiCallable
     {
         (IJgsCallable target, JgsValue[] rest, CallExpr? call) = Prepare(arguments, line, column);
         return _interpreter.WithPendingCall(call, () =>
-            target is IJgsMultiCallable several
+        {
+            JgsOutputDemand.Refuse(target, wanted, line, column); // x = builtin('disp', 1) is maxlhs (V9.3)
+            return target is IJgsMultiCallable several
                 ? several.CallMultiple(rest, wanted, line, column)
-                : [target.Call(rest, line, column)]);
+                : [target.Call(rest, line, column)];
+        });
     }
 
     /// <summary>
@@ -77,7 +80,19 @@ internal sealed class JgsBuiltinForwarder : IJgsCallable, IJgsMultiCallable
             return false;
         }
 
-        answer = _interpreter.WithPendingCall(call, () => target.Call(rest, line, column));
+        // A target that takes the count is asked for none, as the interpreter asks the written
+        // statement (V9.1): builtin('load', fn); binds the loaded names, builtin('feval', @f); hands
+        // f a nargout of 0.
+        answer = _interpreter.WithPendingCall(call, () =>
+        {
+            if (target is BuiltinFunction { TakesOutputCount: true } taking)
+            {
+                JgsValue[] outputs = taking.CallMultiple(rest, 0, line, column);
+                return outputs.Length > 0 ? outputs[0] : JgsValue.Null;
+            }
+
+            return target.Call(rest, line, column);
+        });
         return target is not BuiltinFunction builtin || builtin.BindsAnsAsStatement;
     }
 

@@ -222,7 +222,7 @@ internal sealed class JgsCallbackDispatcher
         using IDisposable scope = JgsGraphicsCallbackState.Enter(target, clicked);
         try
         {
-            callback.AsCallable.Call([source, eventData], 0, 0);
+            JgsCallbacks.Invoke(callback.AsCallable, [source, eventData], 0, 0);
         }
         catch (OperationCanceledException)
         {

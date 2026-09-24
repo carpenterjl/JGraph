@@ -247,7 +247,7 @@ public class MatlabCellStructTests : IDisposable
             """);
 
         Assert.False(result.Success);
-        Assert.Contains("without assigning its output 'y'", result.Message!, StringComparison.Ordinal);
+        Assert.Contains("Output argument \"y\" (and possibly others) not assigned a value", result.Message!, StringComparison.Ordinal);
     }
 
     // --- Anonymous functions and handles --------------------------------------------------------

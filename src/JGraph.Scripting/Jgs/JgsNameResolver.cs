@@ -407,6 +407,11 @@ internal sealed class JgsNameResolver
     public JgsValue[] InvokeHandle(NamedHandle handle, IReadOnlyList<JgsValue> arguments, int wanted, int line, int column)
     {
         IJgsCallable target = HandleTarget(handle, arguments);
+
+        // The count is held against the target dispatch chose, after the handle's arguments ran -
+        // which is when R2025b refuses `x = h(bump())` for a handle to a function with no outputs
+        // (V9.3, measured: bump ran).
+        JgsOutputDemand.Refuse(target, wanted, line, column);
         return target is IJgsMultiCallable several
             ? several.CallMultiple(arguments, wanted, line, column)
             : [target.Call(arguments, line, column)];

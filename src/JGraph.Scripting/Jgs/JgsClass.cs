@@ -245,6 +245,7 @@ internal sealed class JgsClass
             AccessorOf = method.AccessorProperty is { } accessed
                 ? (method.IsGetter ? GetterTag(accessed) : SetterTag(accessed))
                 : null,
+            OwnerClass = Name,
         };
 
     /// <summary>
@@ -510,6 +511,9 @@ internal sealed class BoundMethod(IJgsCallable method, JgsValue receiver) : IJgs
 
     /// <summary>The object the method was read off (M5's receiver scope holds a share of it).</summary>
     internal JgsValue Receiver => receiver;
+
+    /// <summary>The method itself, whose output list bounds what a call may ask for (V9.3).</summary>
+    internal IJgsCallable Method => method;
 
     /// <summary>The same method bound to <paramref name="held"/> — a receiver scope's share.</summary>
     internal BoundMethod WithReceiverValue(JgsValue held) => new(method, held);

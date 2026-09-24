@@ -155,24 +155,42 @@ internal static partial class JgsBuiltins
             return JgsValue.Str(full ? withoutExtension : Path.GetFileNameWithoutExtension(path));
         });
 
+        // inputname reads the call site the frame was handed (V9.2, ADR 0170): a script has none
+        // and is refused with R2025b's words; a function called with no argument syntax - a
+        // callback from cellfun, arrayfun, an ErrorHandler - has none either and answers '', as does
+        // an index past the arguments and an argument written as anything but a plain name; index
+        // zero is refused. A dotted method call's receiver is its first argument (measured).
         Define("inputname", (args, line, col) =>
         {
             Arity("inputname", args, 1, line, col);
             int which = Count("inputname", args, 0, line, col);
+            if (interpreter.InScript)
+            {
+                throw new JgsRuntimeException(line, col, "MATLAB:inputname:notSupportedInScript",
+                    "Calling inputname from scripts is not supported");
+            }
+
+            if (which < 1)
+            {
+                throw new JgsRuntimeException(line, col, "MATLAB:inputname:argNumberNotValid", "Argument number is not valid.");
+            }
+
             if (interpreter.CurrentCall is not { } call)
             {
-                throw new JgsRuntimeException(line, col, "inputname can only be used inside a function.");
+                return JgsValue.Str(string.Empty);
             }
 
-            if (which < 1 || which > call.Arguments.Count)
+            Expr? written;
+            if (interpreter.CurrentReceiver is { } receiver)
             {
-                throw new JgsRuntimeException(line, col,
-                    $"inputname: argument {which} does not exist; the call passed {call.Arguments.Count}.");
+                written = which == 1 ? receiver : which - 2 < call.Arguments.Count ? call.Arguments[which - 2] : null;
+            }
+            else
+            {
+                written = which - 1 < call.Arguments.Count ? call.Arguments[which - 1] : null;
             }
 
-            // An argument that was not written as a plain variable has no name to report, and
-            // MATLAB returns the empty string rather than inventing one.
-            return JgsValue.Str(call.Arguments[which - 1] is VariableExpr variable ? variable.Name : string.Empty);
+            return JgsValue.Str(written is VariableExpr variable ? variable.Name : string.Empty);
         });
     }
 
@@ -198,7 +216,10 @@ internal static partial class JgsBuiltins
         Action<string, Func<IReadOnlyList<JgsValue>, int, int, JgsValue>> Define,
         JgsEnvironment env, Interpreter interpreter, JGraphScriptGlobals host)
     {
-        Define("eval", (args, line, col) =>
+        // eval takes the count it was asked for (V9.1): as a statement the text's last line runs as
+        // the statement it is (`eval('np();')` gives np a nargout of 0), as an expression the last
+        // line's value is the answer.
+        JgsValue Eval(IReadOnlyList<JgsValue> args, bool asStatement, int line, int col)
         {
             ArityRange("eval", args, 1, 2, line, col);
 
@@ -208,17 +229,33 @@ internal static partial class JgsBuiltins
             {
                 try
                 {
-                    return interpreter.EvaluateSource(Str("eval", args, 0, line, col), interpreter.CurrentFrame, line, col);
+                    return interpreter.EvaluateSource(Str("eval", args, 0, line, col), interpreter.CurrentFrame, line, col, asStatement);
                 }
                 catch (JgsRuntimeException error)
                 {
                     interpreter.LastError = error.Message;
-                    return interpreter.EvaluateSource(Str("eval", args, 1, line, col), interpreter.CurrentFrame, line, col);
+                    return interpreter.EvaluateSource(Str("eval", args, 1, line, col), interpreter.CurrentFrame, line, col, asStatement);
                 }
             }
 
-            return interpreter.EvaluateSource(Str("eval", args, 0, line, col), interpreter.CurrentFrame, line, col);
-        });
+            return interpreter.EvaluateSource(Str("eval", args, 0, line, col), interpreter.CurrentFrame, line, col, asStatement);
+        }
+
+        env.Builtins.Register("eval", JgsValue.Function(new BuiltinFunction(
+            "eval", (args, line, col) => Eval(args, asStatement: false, line, col))
+        {
+            MultiOutput = (args, wanted, line, col) =>
+            {
+                if (wanted == 0)
+                {
+                    Eval(args, asStatement: true, line, col);
+                    return [];
+                }
+
+                return [Eval(args, asStatement: false, line, col)];
+            },
+            TakesOutputCount = true,
+        }));
 
         // str2num evaluates its text inside brackets, which is exactly what separates it from
         // str2double: '[1 2 3]' is a vector, '1+1' is 2, and '1 2; 3 4' is a matrix because the
@@ -284,7 +321,8 @@ internal static partial class JgsBuiltins
 
             try
             {
-                interpreter.EvaluateSource(Str("evalc", args, 0, line, col), interpreter.CurrentFrame, line, col);
+                // The text runs as statements: evalc answers what they printed, never a value.
+                interpreter.EvaluateSource(Str("evalc", args, 0, line, col), interpreter.CurrentFrame, line, col, asStatement: true);
             }
             finally
             {
@@ -299,12 +337,30 @@ internal static partial class JgsBuiltins
         // The named workspace is installed as the current frame while the text runs, so a function
         // the text calls sees it as its caller (M145); the text's own names still resolve from the
         // file that called evalin, as MATLAB's do.
-        Define("evalin", (args, line, col) =>
+        env.Builtins.Register("evalin", JgsValue.Function(new BuiltinFunction(
+            "evalin", (args, line, col) =>
+            {
+                Arity("evalin", args, 2, line, col);
+                return interpreter.EvaluateSourceIn(
+                    Str("evalin", args, 1, line, col), WorkspaceNamed("evalin", args, 0, interpreter, line, col), line, col);
+            })
         {
-            Arity("evalin", args, 2, line, col);
-            return interpreter.EvaluateSourceIn(
-                Str("evalin", args, 1, line, col), WorkspaceNamed("evalin", args, 0, interpreter, line, col), line, col);
-        });
+            // As a statement the text runs as statements in the named workspace (V9.1).
+            MultiOutput = (args, wanted, line, col) =>
+            {
+                Arity("evalin", args, 2, line, col);
+                if (wanted == 0)
+                {
+                    interpreter.ExecuteSourceIn(
+                        Str("evalin", args, 1, line, col), WorkspaceNamed("evalin", args, 0, interpreter, line, col), line, col);
+                    return [];
+                }
+
+                return [interpreter.EvaluateSourceIn(
+                    Str("evalin", args, 1, line, col), WorkspaceNamed("evalin", args, 0, interpreter, line, col), line, col)];
+            },
+            TakesOutputCount = true,
+        }));
 
         Define("assignin", (args, line, col) =>
         {
@@ -329,20 +385,18 @@ internal static partial class JgsBuiltins
         // halves were missing until M69's form probe ran the documented syntaxes: `feval('sin', x)`
         // is the form MATLAB documents first and this refused it by type, and `[q, r] = feval(@f, x)`
         // silently produced one value because the entry carried no MultiOutput body — a wrong answer
-        // rather than an error, which is the worse of the two failures.
+        // rather than an error, which is the worse of the two failures. It takes the count at every
+        // value (V9.1): `feval(f);` hands f a nargout of 0, and its call site minus itself (V9.2).
         env.Builtins.Register("feval", JgsValue.Function(new BuiltinFunction(
             "feval",
-            (args, line, col) => FevalTarget(interpreter, args, line, col)
-                .Call(args.Skip(1).ToArray(), line, col))
-        {
-            MultiOutput = (args, wanted, line, col) =>
+            (args, line, col) =>
             {
-                IJgsCallable target = FevalTarget(interpreter, args, line, col);
-                IReadOnlyList<JgsValue> rest = args.Skip(1).ToArray();
-                return target is IJgsMultiCallable several
-                    ? several.CallMultiple(rest, wanted, line, col)
-                    : [target.Call(rest, line, col)];
-            },
+                JgsValue[] outputs = Feval(interpreter, args, 1, line, col);
+                return outputs.Length > 0 ? outputs[0] : JgsValue.Null;
+            })
+        {
+            MultiOutput = (args, wanted, line, col) => Feval(interpreter, args, wanted, line, col),
+            TakesOutputCount = true,
         }));
 
         Define("str2func", (args, line, col) =>
@@ -371,6 +425,42 @@ internal static partial class JgsBuiltins
         });
 
         _ = host;
+    }
+
+    /// <summary>
+    /// <c>feval(f, args…)</c> asked for <paramref name="wanted"/> outputs: the target is held to
+    /// its output count after feval's own arguments ran (V9.3, measured: <c>x = feval(@none_out_arg,
+    /// bump())</c> runs bump), and runs under the written call minus <c>f</c> as its call site, so
+    /// <c>inputname</c> in the target names the caller's variables as a written call would (V9.2,
+    /// #79). A pending call that is not this feval — the handle came through another road — hands
+    /// the target no site.
+    /// </summary>
+    private static JgsValue[] Feval(
+        Interpreter interpreter, IReadOnlyList<JgsValue> args, int wanted, int line, int col)
+    {
+        IJgsCallable target = FevalTarget(interpreter, args, line, col);
+        var rest = new JgsValue[args.Count - 1];
+        for (int i = 1; i < args.Count; i++)
+        {
+            rest[i - 1] = args[i];
+        }
+
+        CallExpr? site = interpreter.PendingCall is { Callee: VariableExpr { Name: "feval" } } written
+            && written.Arguments.Count == args.Count
+            ? new CallExpr(written.Arguments[0], written.Arguments.Skip(1).ToArray())
+            {
+                Line = written.Line,
+                Column = written.Column,
+            }
+            : null;
+
+        return interpreter.WithPendingCall(site, () =>
+        {
+            JgsOutputDemand.Refuse(target, wanted, line, col);
+            return target is IJgsMultiCallable several
+                ? several.CallMultiple(rest, wanted, line, col)
+                : [target.Call(rest, line, col)];
+        });
     }
 
     /// <summary>
@@ -717,7 +807,9 @@ internal static partial class JgsBuiltins
                 return inputs ? Counted(anonymous.Declaration.Parameters, true) : -1;
 
             case BuiltinFunction builtin when !inputs:
-                return builtin.MultiOutput is null ? 1 : -1;
+                // R2025b's own count for the name when the audit recorded one (V9.3); otherwise
+                // one for a single-output body and open-ended for a multi-output one.
+                return builtin.MatlabOutputCount ?? (builtin.MultiOutput is null ? 1 : -1);
 
             case JgsBuiltinForwarder:
                 return 1; // what R2025b answers for both, though the forwarder takes and answers any number

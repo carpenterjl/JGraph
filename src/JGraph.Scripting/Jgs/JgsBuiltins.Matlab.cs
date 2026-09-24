@@ -681,7 +681,7 @@ internal static partial class JgsBuiltins
     /// </summary>
     private static void RegisterMultiOutputForms(JgsEnvironment env, JgsDialect dialect)
     {
-        void Wrap(string name, Func<IReadOnlyList<JgsValue>, int, int, int, JgsValue[]> both)
+        void Wrap(string name, Func<IReadOnlyList<JgsValue>, int, int, int, JgsValue[]> both, bool takesCount = false)
         {
             if (!env.TryGet(name, out JgsValue existing) || existing.Type != JgsType.Function)
             {
@@ -690,7 +690,7 @@ internal static partial class JgsBuiltins
 
             IJgsCallable single = existing.AsCallable;
             env.Builtins.Register(name, JgsValue.Function(
-                new BuiltinFunction(name, single.Call) { MultiOutput = both }));
+                new BuiltinFunction(name, single.Call) { MultiOutput = both, TakesOutputCount = takesCount }));
         }
 
         // deal exists only to feed several outputs at once, so it is declared where the several-output
@@ -799,9 +799,10 @@ internal static partial class JgsBuiltins
         Wrap("unique", (args, wanted, line, col) => UniqueParts(args, dialect, wanted, line, col));
 
         // [C, matches] = strsplit(...) reports the delimiters it actually cut on, and
-        // [a, b] = cellfun(...) asks each element's function for that many answers.
+        // [a, b] = cellfun(...) asks each element's function for that many answers - none for a
+        // statement (V9.1).
         Wrap("strsplit", (args, wanted, line, col) => SplitText(args, wanted, line, col));
-        Wrap("cellfun", (args, wanted, line, col) => ApplyOverCells(env, args, wanted, line, col));
+        Wrap("cellfun", (args, wanted, line, col) => ApplyOverCells(env, args, wanted, line, col), takesCount: true);
 
         Wrap("ind2sub", (args, _, line, col) =>
         {
