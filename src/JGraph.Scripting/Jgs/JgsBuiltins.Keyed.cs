@@ -79,10 +79,13 @@ internal static partial class JgsBuiltins
         env.Builtins.RegisterConstant("containers", JgsValue.Struct(
             new Dictionary<string, JgsValue>(StringComparer.Ordinal) { ["Map"] = mapConstructor }));
 
+        // A dictionary keeps a 1-by-1 string it is given as a string: dictionary("a", "x") holds
+        // the string "x", not the char row a builtin is otherwise handed (V6.17, measured).
         env.Builtins.Register("dictionary", JgsValue.Function(new BuiltinFunction(DictionaryClassName,
             (args, line, col) => NewKeyed(DictionaryClassName, args, shares, line, col))
         {
             AutoCallsBare = true,
+            KeepsStringArguments = true,
         }));
 
         Define("isKey", (args, line, col) =>
@@ -104,12 +107,11 @@ internal static partial class JgsBuiltins
             Arity("keys", args, 1, line, col);
             JgsValue map = RequireKeyed("keys", args[0], line, col);
 
-            // A Map answers with a cell, as MATLAB's does; a dictionary answers with an array of the
+            // A Map answers with a cell, as MATLAB's does; a dictionary answers with a column of the
             // keys themselves, which is the newer surface and the reason the two names differ.
-            JgsValue[] stored = KeyCell(map);
             return map.ClassName == MapClassName
-                ? JgsValue.Cell([.. stored])
-                : KeysAsArray(map, stored);
+                ? JgsValue.Cell([.. KeyCell(map)])
+                : DictionaryKeys(map);
         });
 
         Define("values", (args, line, col) =>
@@ -120,7 +122,9 @@ internal static partial class JgsBuiltins
             // each takes a share — `c = values(m); c{1}(1) = 9` must not reach the map.
             if (args.Count == 1)
             {
-                return JgsValue.Cell([.. ValueCell(map).Select(JgsValue.Share)]);
+                return map.ClassName == MapClassName
+                    ? JgsValue.Cell([.. ValueCell(map).Select(JgsValue.Share)])
+                    : DictionaryValues(map);
             }
 
             // values(m, {'a', 'b'}) picks the ones asked for, in the order asked.
@@ -162,11 +166,7 @@ internal static partial class JgsBuiltins
         Define("isConfigured", (args, line, col) =>
         {
             Arity("isConfigured", args, 1, line, col);
-            JgsValue map = RequireKeyed("isConfigured", args[0], line, col);
-
-            // A dictionary is configured once it knows its key and value types, which here is once it
-            // has an entry: the types are read from what was put in rather than declared up front.
-            return JgsValue.Bool(KeyCell(map).Length > 0);
+            return JgsValue.Bool(IsConfigured(RequireKeyed("isConfigured", args[0], line, col)));
         });
 
         Define("lookup", (args, line, col) =>
@@ -196,7 +196,8 @@ internal static partial class JgsBuiltins
             return found.Length == 1 ? found[0] : JgsValue.Cell(found);
         });
 
-        Define("insert", (args, line, col) =>
+        // insert keeps a 1-by-1 string value as a string, as the constructor does.
+        env.Builtins.Register("insert", JgsValue.Function(new BuiltinFunction("insert", (args, line, col) =>
         {
             ArityRange("insert", args, 3, 3, line, col);
             JgsValue map = Private(RequireKeyed("insert", args[0], line, col));
@@ -208,31 +209,39 @@ internal static partial class JgsBuiltins
             }
 
             return map;
-        });
+        })
+        {
+            KeepsStringArguments = true,
+        }));
 
         Define("entries", (args, line, col) =>
         {
             Arity("entries", args, 1, line, col);
-            JgsValue map = RequireKeyed("entries", args[0], line, col);
-            JgsValue[] keys = KeyCell(map);
-            JgsValue[] vals = ValueCell(map);
-
-            // One struct per entry, which is the shape a for-loop over the entries wants. MATLAB
-            // answers with a table; a struct array carries the same two columns and is what this
-            // build has until M65 makes a struct array a real thing.
-            var rows = new JgsValue[keys.Length];
-            for (int i = 0; i < keys.Length; i++)
-            {
-                // M2: each row's fields are entries over the collection's own key and value.
-                rows[i] = JgsValue.Struct(new Dictionary<string, JgsValue>(StringComparer.Ordinal)
-                {
-                    ["Key"] = JgsValue.Share(keys[i]),
-                    ["Value"] = JgsValue.Share(vals[i]),
-                });
-            }
-
-            return JgsValue.Cell(rows);
+            return Entries(RequireKeyed("entries", args[0], line, col));
         });
+    }
+
+    /// <summary>
+    /// One struct per entry, which is the shape a for-loop over the entries wants. MATLAB answers
+    /// with a table; a struct array carries the same two columns and is what this build has until
+    /// M65 makes a struct array a real thing.
+    /// </summary>
+    private static JgsValue Entries(JgsValue map)
+    {
+        JgsValue[] keys = KeyCell(map);
+        JgsValue[] vals = ValueCell(map);
+        var rows = new JgsValue[keys.Length];
+        for (int i = 0; i < keys.Length; i++)
+        {
+            // M2: each row's fields are entries over the collection's own key and value.
+            rows[i] = JgsValue.Struct(new Dictionary<string, JgsValue>(StringComparer.Ordinal)
+            {
+                ["Key"] = JgsValue.Share(keys[i]),
+                ["Value"] = JgsValue.Share(vals[i]),
+            });
+        }
+
+        return JgsValue.Cell(rows);
     }
 
     // --- Construction ------------------------------------------------------------------------------
@@ -246,7 +255,7 @@ internal static partial class JgsBuiltins
             ["values"] = JgsValue.Cell([]),
             ["KeyType"] = JgsValue.Str("char"),
             ["ValueType"] = JgsValue.Str("any"),
-            ["Count"] = JgsValue.Number(0),
+            ["Count"] = CountOf(0),
         };
 
         JgsValue map = JgsValue.Struct(fields);
@@ -272,7 +281,11 @@ internal static partial class JgsBuiltins
         }
 
         JgsValue[] keys = KeysAsked(args[0]);
+        // An array of values is one a key: a numeric array's elements, or a string array's as
+        // 1-by-1 strings (V6.17: dictionary([1 2], ["a" "b"]) holds "a" under 1, measured).
         JgsValue[] given = args[1].Type == JgsType.Cell ? CellValues(className, args[1])
+            : args[1].IsStringArray && args[1].ArrayLength > 1
+                ? System.Array.ConvertAll(args[1].BoxedElements(), static e => JgsValue.StringScalar(e.AsString))
             : args[1].Type == JgsType.Array && !args[1].IsStringArray ? args[1].BoxedElements()
             : [args[1]];
 
@@ -290,10 +303,121 @@ internal static partial class JgsBuiltins
         if (keys.Length > 0)
         {
             fields["KeyType"] = JgsValue.Str(IsTextScalar(keys[0]) ? "char" : "double");
+            if (className == DictionaryClassName)
+            {
+                fields["ValueType"] = JgsValue.Str(ValueKind(ValueCell(map)[0]));
+            }
         }
 
         return map;
     }
+
+    /// <summary>
+    /// The value type a dictionary takes from its first value (V6.17): what <c>values</c> answers
+    /// once every entry is removed still has this kind (measured: a 0-by-1 double).
+    /// </summary>
+    private static string ValueKind(JgsValue value) => ClassOf(value, JgsDialect.Matlab);
+
+    /// <summary>
+    /// A dictionary is configured once it knows its key and value types: once it has an entry, or
+    /// had one - removing every entry leaves it configured (V6.17, measured).
+    /// </summary>
+    private static bool IsConfigured(JgsValue map) =>
+        KeyCell(map).Length > 0 || map.AsStruct["ValueType"].AsString != "any";
+
+    /// <summary>How many entries a collection holds.</summary>
+    internal static int EntryCount(JgsValue map) => KeyCell(map).Length;
+
+    /// <summary>A <c>containers.Map</c>'s Count is a uint64, as MATLAB's (V6.17, measured).</summary>
+    private static JgsValue CountOf(int count) =>
+        JgsNumericClasses.Stamp(JgsValue.Number(count), JgsNumericClass.UInt64);
+
+    /// <summary>A dictionary's keys as a column of their own kind - text or numbers (V6.17, measured).</summary>
+    internal static JgsValue DictionaryKeys(JgsValue map)
+    {
+        JgsValue[] stored = KeyCell(map);
+        if (stored.Length == 0)
+        {
+            return map.AsStruct["KeyType"].AsString == "char"
+                ? JgsValue.StringArray([], 0, 1)
+                : JgsEmpty.Shaped(0, 1);
+        }
+
+        return IsTextScalar(stored[0])
+            ? JgsValue.StringArray(System.Array.ConvertAll(stored, k => JgsValue.Str(TextOf(k))), stored.Length, 1)
+            : JgsMatrix.FromElements([.. stored], stored.Length, 1);
+    }
+
+    /// <summary>
+    /// A dictionary's values as a column of their kind (V6.17, measured): numbers as a numeric
+    /// column, strings as a string column, a cell-valued dictionary's as a cell column of the
+    /// contents, anything else as a cell of shares. M2: each value handed out is a share.
+    /// </summary>
+    internal static JgsValue DictionaryValues(JgsValue map)
+    {
+        JgsValue[] stored = ValueCell(map);
+        int count = stored.Length;
+        if (count == 0)
+        {
+            return map.AsStruct["ValueType"].AsString switch
+            {
+                "string" => JgsValue.StringArray([], 0, 1),
+                "cell" => ShapedCell([], 0, 1),
+                "any" => JgsValue.Array([]),
+                _ => JgsEmpty.Shaped(0, 1),
+            };
+        }
+
+        if (System.Array.TrueForAll(stored, static v => v.Type is JgsType.Number or JgsType.Bool))
+        {
+            // The column is minted here, so it is tagged at mint time (the scalars already hold
+            // values of their class); the audit adopts values because every return is fresh.
+            JgsValue column = JgsMatrix.FromElements(System.Array.ConvertAll(stored, JgsValue.Share), count, 1);
+            JgsNumericClass numericClass = stored[0].NumericClass;
+            if (numericClass != JgsNumericClass.Double)
+            {
+                column.SetNumericClass(numericClass);
+            }
+
+            return column;
+        }
+
+        if (System.Array.TrueForAll(stored, static v => v.IsStringArray && v.ArrayLength == 1))
+        {
+            return JgsValue.StringArray(System.Array.ConvertAll(stored, static v => v.ElementAt(0)), count, 1);
+        }
+
+        if (System.Array.TrueForAll(stored, static v => v.Type == JgsType.Cell && v.AsCell.Length == 1))
+        {
+            return ShapedCell(System.Array.ConvertAll(stored, static v => JgsValue.Share(v.AsCell[0])), count, 1);
+        }
+
+        return ShapedCell(System.Array.ConvertAll(stored, JgsValue.Share), count, 1);
+    }
+
+    private static JgsValue ShapedCell(JgsValue[] elements, int rows, int cols)
+    {
+        JgsValue cell = JgsValue.Cell(elements);
+        cell.Reshape(rows, cols);
+        return cell;
+    }
+
+    /// <summary>
+    /// <c>d.name</c> on a dictionary (V6.17, measured): the verbs that take the dictionary alone -
+    /// <c>d.keys</c>, <c>d.values</c>, <c>d.numEntries</c>, <c>d.entries</c>, <c>d.isConfigured</c> -
+    /// are called with it; any other name, its storage fields included, is refused in MATLAB's
+    /// words, because a dictionary has no properties.
+    /// </summary>
+    internal static JgsValue DictionaryMember(JgsValue map, string field, int line, int col) => field switch
+    {
+        "keys" => DictionaryKeys(map),
+        "values" => DictionaryValues(map),
+        "numEntries" => JgsValue.Number(EntryCount(map)),
+        "entries" => Entries(map),
+        "isConfigured" => JgsValue.Bool(IsConfigured(map)),
+        _ => throw new JgsRuntimeException(line, col,
+            $"Unrecognized method, property, or field '{field}' for class 'dictionary'."),
+    };
 
     /// <summary>
     /// The values a cell argument gives, one a key. A <c>containers.Map</c> takes the cell's
@@ -393,9 +517,31 @@ internal static partial class JgsBuiltins
         }
 
         JgsValue storedKey = IsTextScalar(key) ? JgsValue.Str(TextOf(key)) : key;
+        if (map.ClassName == DictionaryClassName && KeyCell(map).Length == 0 && fields["ValueType"].AsString == "any")
+        {
+            fields["ValueType"] = JgsValue.Str(ValueKind(value)); // the first entry settles the kind
+        }
+
         fields["keys"] = JgsValue.Cell([.. KeyCell(map), storedKey]);
         fields["values"] = JgsValue.Cell([.. ValueCell(map), value]);
-        fields["Count"] = JgsValue.Number(KeyCell(map).Length);
+        fields["Count"] = CountOf(KeyCell(map).Length);
+    }
+
+    /// <summary>
+    /// Removes the entries <paramref name="keys"/> name, in place as <see cref="Put"/> writes -
+    /// <c>d(key) = []</c> (V6.17). A key the collection does not have is nothing to remove
+    /// (measured: <c>d(9) = []</c> leaves the dictionary as it was).
+    /// </summary>
+    internal static void Remove(JgsValue map, JgsValue keys)
+    {
+        foreach (JgsValue key in KeysAsked(keys))
+        {
+            int at = FindKey(map, key);
+            if (at >= 0)
+            {
+                RemoveAt(map, at);
+            }
+        }
     }
 
     private static void RemoveAt(JgsValue map, int index)
@@ -418,7 +564,7 @@ internal static partial class JgsBuiltins
         Dictionary<string, JgsValue> fields = map.WritableStruct(); // M7, as in Put
         fields["keys"] = JgsValue.Cell([.. keptKeys]);
         fields["values"] = JgsValue.Cell([.. keptValues]);
-        fields["Count"] = JgsValue.Number(keptKeys.Count);
+        fields["Count"] = CountOf(keptKeys.Count);
     }
 
     private static JgsValue[] KeyCell(JgsValue map) => map.AsStruct["keys"].AsCell;
@@ -469,22 +615,6 @@ internal static partial class JgsBuiltins
         }
 
         return [value];
-    }
-
-    /// <summary>A dictionary's keys as an array of their own kind — text or numbers.</summary>
-    private static JgsValue KeysAsArray(JgsValue map, JgsValue[] stored)
-    {
-        if (stored.Length == 0)
-        {
-            return JgsValue.Array([]);
-        }
-
-        if (IsTextScalar(stored[0]))
-        {
-            return JgsValue.StringArray(System.Array.ConvertAll(stored, k => JgsValue.Str(TextOf(k))));
-        }
-
-        return JgsValue.Array([.. stored]);
     }
 
     private static string KeyText(JgsValue key) =>

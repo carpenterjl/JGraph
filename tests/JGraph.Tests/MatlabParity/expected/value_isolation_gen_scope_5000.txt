@@ -60,7 +60,7 @@ CHK|s_method_arg_char|held=char [1 5000] {ab..b} global=char [1 5000] {ab..b}|ex
 CHK|s_handle_arg_char|held=char [1 5000] {ab..b} global=char [1 5000] {ab..b}|exact
 CHK|s_feval_arg_char|held=char [1 5000] {ab..b} global=char [1 5000] {ab..b}|exact
 CHK|s_wholecall_cellfun_char|held=char [1 5000] {ab..b} global=char [1 5000] {ab..b}|exact
-CHK|s_loop_source_char|held=cell [1 5000] {char [1 1] {a} char [1 1] {b} .. char [1 1] {b}} global=char [1 5000] {ab..b}|exact|pending V6|ERR 'for' can only iterate over an array or a cell, but got a string.
+CHK|s_loop_source_char|held=cell [1 5000] {char [1 1] {a} char [1 1] {b} .. char [1 1] {b}} global=char [1 5000] {ab..b}|exact
 CHK|s_index_target_char|held=char [1 1] {a} global=char [1 5000] {ab..b}|exact
 CHK|s_bracket_string|held=string [1 5001] {s1 s2 .. 0} global=string [1 5000] {s1 s2 .. s5000}|exact
 CHK|s_cell_literal_string|held=string [1 5000] {s1 s2 .. s5000} global=string [1 5000] {s1 s2 .. s5000}|exact
@@ -70,7 +70,7 @@ CHK|s_method_arg_string|held=string [1 5000] {s1 s2 .. s5000} global=string [1 5
 CHK|s_handle_arg_string|held=string [1 5000] {s1 s2 .. s5000} global=string [1 5000] {s1 s2 .. s5000}|exact
 CHK|s_feval_arg_string|held=string [1 5000] {s1 s2 .. s5000} global=string [1 5000] {s1 s2 .. s5000}|exact
 CHK|s_wholecall_cellfun_string|held=string [1 5000] {s1 s2 .. s5000} global=string [1 5000] {s1 s2 .. s5000}|exact
-CHK|s_loop_source_string|held=cell [1 5000] {string [1 1] {s1} string [1 1] {s2} .. string [1 1] {s5000}} global=string [1 5000] {s1 s2 .. s5000}|exact|pending V6|held=cell [1 5000] {char [1 2] {s1} char [1 2] {s2} .. char [1 5] {s5000}} global=string [1 5000] {s1 s2 .. s5000}
+CHK|s_loop_source_string|held=cell [1 5000] {string [1 1] {s1} string [1 1] {s2} .. string [1 1] {s5000}} global=string [1 5000] {s1 s2 .. s5000}|exact
 CHK|s_index_target_string|held=string [1 1] {s3} global=string [1 5000] {s1 s2 .. s5000}|exact
 CHK|s_cell_literal_cell|held=cell [1 5000] {double [1 1] 1 double [1 1] 2 .. double [1 1] 5000} global=cell [1 5000] {double [1 1] 1 double [1 1] 2 .. double [1 1] 5000}|exact
 CHK|s_builtin_arg_cell|held=cell [1 5000] {double [1 1] 1 double [1 1] 2 .. double [1 1] 5000} global=cell [1 5000] {double [1 1] 1 double [1 1] 2 .. double [1 1] 5000}|exact

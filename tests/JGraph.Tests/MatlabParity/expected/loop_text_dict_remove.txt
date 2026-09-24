@@ -1,0 +1,44 @@
+CHK|lt01_char_row|{char [1 1] a ; char [1 1] b ; char [1 1] z}|exact
+CHK|lt02_char_empty|{} 0|exact
+CHK|lt03_char_matrix|{char [2 1] a/c ; char [2 1] b/d}|exact
+CHK|lt04_string_row|{string [1 1] x ; string [1 1] yy}|exact
+CHK|lt05_string_matrix|{string [2 1] a,c ; string [2 1] b,d}|exact
+CHK|lt06_string_scalar|{string [1 1] abc}|exact
+CHK|lt07_string_empty_row|{} 0|exact
+CHK|lt08_string_no_rows|{string [0 1]  ; string [0 1]  ; string [0 1] } 3|exact
+CHK|lt09_double_no_rows|{double [0 1] zeros(0,1) ; double [0 1] zeros(0,1) ; double [0 1] zeros(0,1)} 3|exact
+CHK|lt10_char_source_held|{char [1 1] a ; char [1 1] b ; char [1 1] c} char [1 3] zbc|exact
+CHK|lt11_char_column|{char [3 1] a/b/c}|exact
+CHK|lt12_char_var_rebound|{char [1 2] ax ; char [1 2] bx}|exact
+CHK|lt13_int8_codes|{int8 [1 1] 97 ; int8 [1 1] 98}|exact
+CHK|lt14_logical|{logical [1 1] true ; logical [1 1] false}|exact
+CHK|lt15_string_source_held|{string [1 1] p ; string [1 1] q ; string [1 1] r} string [1 3] z,q,r|exact
+CHK|lt16_char_break|{char [1 1] a ; char [1 1] b}|exact
+CHK|dr01_remove_one|double [1 2] [1 3] / double [1 2] [10 30] / 2|exact
+CHK|dr02_remove_missing|double [1 3] [1 2 3] / double [1 3] [10 20 30] / 3|exact
+CHK|dr03_remove_several|double [1 1] 2 / double [1 1] 20 / 1|exact
+CHK|dr04_remove_by_empty_variable|ERR Dimensions of the key and value must be the same, or the value must be scalar.|exact
+CHK|dr05_empty_row_rhs|ERR Dimensions of the key and value must be the same, or the value must be scalar.|exact
+CHK|dr06_string_keys|string [1 2] a,c / double [1 2] [1 3] / 2|exact
+CHK|dr07_cell_values|double [1 1] 2 / {char [1 1] x} / 1|exact
+CHK|dr08_cell_values_empty_cell_rhs|ERR Dimensions of the key and value must be the same, or the value must be scalar.|exact
+CHK|dr09_alias_isolated|double [1 2] [1 2] / double [1 2] [10 20] / 2 // double [1 1] 2 / double [1 1] 20 / 1|exact
+CHK|dr10_in_struct_field|double [1 1] 1 / double [1 1] 10 / 1|exact
+CHK|dr11_in_cell_slot|double [1 1] 1 / double [1 1] 10 / 1|exact
+CHK|dr12_global_in_function|double [1 1] 2 / double [1 1] 20 / 1|exact
+CHK|dr13_remove_then_add|double [1 3] [1 3 2] / double [1 3] [10 30 99] / 3|exact
+CHK|dr14_remove_all|double [1 0] zeros(1,0) / double [1 0] zeros(1,0) / 0 1|exact
+CHK|dr15_numentries_class|double|exact
+CHK|dr16_string_values|double [1 1] 2 / string [1 1] b / 1|exact
+CHK|dr17_remove_verb_alias|double [1 2] [1 2] / double [1 2] [10 20] / 2 // double [1 1] 2 / double [1 1] 20 / 1|exact
+CHK|dr18_count_property|ERR Unrecognized method, property, or field 'Count' for class 'dictionary'.|exact
+CHK|dr19_numentries_dot|double [1 1] 2|exact
+CHK|dr20_keys_dot|double [2 1] [1;2]|exact
+CHK|dr21_keytype_dot|ERR Unrecognized method, property, or field 'KeyType' for class 'dictionary'.|exact
+CHK|mc01_count_class|uint64 [1 1] 2|exact
+CHK|mc02_empty_value_stays|uint64 [1 1] 2 double [0 0] []|exact
+CHK|mc03_count_after_remove|uint64 [1 1] 1|exact
+CHK|mc04_empty_map_count|uint64 [1 1] 0|exact
+CHK|mc05_count_arithmetic|uint64 [1 1] 3|exact
+CHK|mc06_length|double [1 1] 2|exact
+CHK|mc07_count_in_range|{uint64 [1 1] 1 ; uint64 [1 1] 2}|exact

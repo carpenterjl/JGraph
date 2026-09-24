@@ -804,6 +804,8 @@ internal static partial class JgsBuiltins
                 JgsType.Array => JgsValue.Number(JgsMatrix.DimsOf(args[0]).Max()),
                 JgsType.Cell => JgsValue.Number(args[0].AsCell.Length),
                 JgsType.String => JgsValue.Number(args[0].AsString.Length),
+                // length(m) on a containers.Map is its Count, as a double (V6.17, measured).
+                JgsType.Struct when args[0].ClassName == MapClassName => JgsValue.Number(EntryCount(args[0])),
                 // A struct is a 1-by-1 struct array (M65), so it has a length like anything else.
                 JgsType.Struct => JgsValue.Number(System.Math.Max(args[0].Rows, args[0].Cols)),
                 // A scalar is 1-by-1, so its longest dimension is 1 — the same answer size(7) gives.

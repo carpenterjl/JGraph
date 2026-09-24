@@ -2148,6 +2148,13 @@ internal sealed partial class Interpreter
             return ExecuteForOverStructs(statement, iterable, env);
         }
 
+        // A char row walks its characters (V6.17): each pass binds a 1-by-1 char, the column a
+        // one-row char array has, so `for c = 'abc'` is the loop over letters a MATLAB script writes.
+        if (iterable.Type == JgsType.String)
+        {
+            return ExecuteForOverChars(statement, iterable.AsString, env);
+        }
+
         if (iterable.Type != JgsType.Array)
         {
             throw new JgsRuntimeException(statement.Line, statement.Column,
@@ -2156,10 +2163,13 @@ internal sealed partial class Interpreter
 
         // MATLAB iterates the COLUMNS of the loop expression: over a matrix the variable is each
         // n-by-1 column in turn, and over a vector (one row, or one column — a single column is a
-        // single pass) that degenerates to the elementwise walk below.
-        bool byColumns = JgsMatrix.IsMatrix(iterable) && JgsMatrix.RowCount(iterable) > 1;
+        // single pass) that degenerates to the elementwise walk below. A 0-by-n source runs n
+        // passes over 0-by-1 empties (V6.17, measured: zeros(0, 3) and strings(0, 3) both run three).
+        int rowCount = JgsMatrix.RowCount(iterable);
+        bool byColumns = (JgsMatrix.IsMatrix(iterable) && rowCount > 1)
+            || (rowCount == 0 && iterable.ArrayLength == 0 && iterable.Cols > 0);
         int iterationCount = byColumns ? JgsMatrix.ColCount(iterable) : iterable.ArrayLength;
-        int columnRows = byColumns ? JgsMatrix.RowCount(iterable) : 0;
+        int columnRows = byColumns ? rowCount : 0;
 
         // The class of what is being walked, read once rather than per pass: an element read out of
         // an array is a bare number, so `for i = int16(1):int16(4)` bound a double i under a value
@@ -2170,8 +2180,8 @@ internal sealed partial class Interpreter
         {
             int column = index; // for the lambda below; 'index' is also the elementwise position
             JgsValue element = byColumns
-                ? JgsMatrix.BuildValues(columnRows, 1, (r, _) => JgsMatrix.At(iterable, r, column))
-                : CopyForBinding(iterable.ElementAt(index));
+                ? ColumnOfLoopSource(iterable, columnRows, column)
+                : ElementOfLoopSource(iterable, index);
             if (walked != JgsNumericClass.Double)
             {
                 element = JgsNumericClasses.Stamp(element, walked);
@@ -2180,6 +2190,67 @@ internal sealed partial class Interpreter
             Tick();
             JgsEnvironment local = BlockScope(env);
             local.Declare(statement.Variable, element);
+            Completion completion = ExecuteBlock(statement.Body, local);
+            if (completion.Kind == CompletionKind.Break)
+            {
+                break;
+            }
+
+            if (completion.Kind == CompletionKind.Return)
+            {
+                return completion;
+            }
+        }
+
+        return Completion.Normal;
+    }
+
+    /// <summary>
+    /// One column of a <c>for</c> loop's source (V6.17): a string array's column is a string array
+    /// and a char matrix's a char matrix, as the loop over <c>["a" "b"; "c" "d"]</c> binds 2-by-1
+    /// strings and the loop over <c>['ab'; 'cd']</c> 2-by-1 chars (measured).
+    /// </summary>
+    private static JgsValue ColumnOfLoopSource(JgsValue source, int rows, int column)
+    {
+        JgsValue built = JgsMatrix.BuildValues(rows, 1, (r, _) => JgsMatrix.At(source, r, column));
+        return source.IsStringArray ? built.MarkStringArray()
+            : source.IsCharMatrix ? built.MarkCharMatrix()
+            : built;
+    }
+
+    /// <summary>
+    /// One element of a <c>for</c> loop's source when it walks elementwise (V6.17): a string array's
+    /// element is bound as the 1-by-1 string around it, not the char row inside (measured), and a
+    /// one-row char matrix's as a 1-by-1 char.
+    /// </summary>
+    private JgsValue ElementOfLoopSource(JgsValue source, int index)
+    {
+        JgsValue element = source.ElementAt(index);
+        if (source.IsStringArray)
+        {
+            return JgsValue.StringScalar(element.AsString);
+        }
+
+        if (source.IsCharMatrix)
+        {
+            return JgsValue.Str(((char)element.AsNumber).ToString());
+        }
+
+        return CopyForBinding(element);
+    }
+
+    /// <summary>Runs a <c>for</c> over a char row, one character a pass (V6.17).</summary>
+    /// <remarks>
+    /// A char row is immutable, so the loop walks the text its head named however the body
+    /// rebinds the variable it came from (M5's loop-source scope needs no hold here).
+    /// </remarks>
+    private Completion ExecuteForOverChars(ForStmt statement, string text, JgsEnvironment env)
+    {
+        for (int index = 0; index < text.Length; index++)
+        {
+            Tick();
+            JgsEnvironment local = BlockScope(env);
+            local.Declare(statement.Variable, JgsValue.Str(text[index].ToString()));
             Completion completion = ExecuteBlock(statement.Body, local);
             if (completion.Kind == CompletionKind.Break)
             {
@@ -4982,10 +5053,31 @@ internal sealed partial class Interpreter
                     "A keyed collection is written one key at a time, as m(key) = value.");
             }
 
+            JgsValue key = Evaluate(subscripts[0], env);
+            if (Dialect.IsMatlab && callee.ClassName == JgsBuiltins.DictionaryClassName)
+            {
+                // d(key) = [] removes a dictionary's entries (V6.17): the bare bracket alone, and a
+                // key the dictionary does not have is nothing to remove (both measured). An empty
+                // held in a variable, or of another shape, is a value, and a dictionary's value is
+                // one element a key - refused in R2025b's words. A Map stores the empty as its value.
+                if (at is AssignExpr { Value: ArrayLiteral { Elements.Count: 0 } })
+                {
+                    JgsBuiltins.Remove(callee, key);
+                    return rhs;
+                }
+
+                if ((rhs.Type == JgsType.Array && rhs.ArrayLength != 1)
+                    || (rhs.Type == JgsType.Cell && rhs.AsCell.Length != 1))
+                {
+                    throw new JgsRuntimeException(at.Line, at.Column,
+                        "Dimensions of the key and value must be the same, or the value must be scalar.");
+                }
+            }
+
             // M2 (appendix A #2): the collection's value is an entry, so it takes a counted share
             // in the MATLAB dialect and the caller's own wrapper in JGS (M17).
             JgsBuiltins.Put(
-                callee, Evaluate(subscripts[0], env),
+                callee, key,
                 JgsBuiltins.RetainedForEntry(rhs, Dialect.CopyOnAssign), at.Line, at.Column);
             return rhs;
         }
@@ -7532,6 +7624,13 @@ internal sealed partial class Interpreter
         if (JgsBuiltins.IsMatFile(target))
         {
             return JgsBuiltins.GetMatFileMember(target, field, member.Line, member.Column);
+        }
+
+        // d.keys, d.numEntries on a dictionary call its verbs; d.Count is refused, because a
+        // dictionary has no properties and its storage fields are not its own (V6.17, measured).
+        if (target.Type == JgsType.Struct && target.ClassName == JgsBuiltins.DictionaryClassName)
+        {
+            return JgsBuiltins.DictionaryMember(target, field, member.Line, member.Column);
         }
 
         // S.field on an array reads that field across every element (M65). A 1-by-1 falls through to

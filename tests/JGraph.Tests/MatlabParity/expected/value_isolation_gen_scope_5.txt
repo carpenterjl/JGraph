@@ -60,7 +60,7 @@ CHK|s_method_arg_char|held=char [1 5] {ababa} global=char [1 5] {abzba}|exact
 CHK|s_handle_arg_char|held=char [1 5] {ababa} global=char [1 5] {abzba}|exact
 CHK|s_feval_arg_char|held=char [1 5] {ababa} global=char [1 5] {abzba}|exact
 CHK|s_wholecall_cellfun_char|held=char [1 5] {ababa} global=char [1 5] {abzba}|exact
-CHK|s_loop_source_char|held=cell [1 5] {char [1 1] {a} char [1 1] {b} char [1 1] {a} char [1 1] {b} char [1 1] {a}} global=char [1 5] {abzba}|exact|pending V6|ERR 'for' can only iterate over an array or a cell, but got a string.
+CHK|s_loop_source_char|held=cell [1 5] {char [1 1] {a} char [1 1] {b} char [1 1] {a} char [1 1] {b} char [1 1] {a}} global=char [1 5] {abzba}|exact
 CHK|s_index_target_char|held=char [1 1] {a} global=char [1 5] {abzba}|exact
 CHK|s_bracket_string|held=string [1 6] {s1 s2 s3 s4 s5 0} global=string [1 5] {s1 s2 z s4 s5}|exact
 CHK|s_cell_literal_string|held=string [1 5] {s1 s2 s3 s4 s5} global=string [1 5] {s1 s2 z s4 s5}|exact
@@ -70,7 +70,7 @@ CHK|s_method_arg_string|held=string [1 5] {s1 s2 s3 s4 s5} global=string [1 5] {
 CHK|s_handle_arg_string|held=string [1 5] {s1 s2 s3 s4 s5} global=string [1 5] {s1 s2 z s4 s5}|exact
 CHK|s_feval_arg_string|held=string [1 5] {s1 s2 s3 s4 s5} global=string [1 5] {s1 s2 z s4 s5}|exact
 CHK|s_wholecall_cellfun_string|held=string [1 5] {s1 s2 s3 s4 s5} global=string [1 5] {s1 s2 z s4 s5}|exact
-CHK|s_loop_source_string|held=cell [1 5] {string [1 1] {s1} string [1 1] {s2} string [1 1] {s3} string [1 1] {s4} string [1 1] {s5}} global=string [1 5] {s1 s2 z s4 s5}|exact|pending V6|held=cell [1 5] {char [1 2] {s1} char [1 2] {s2} char [1 2] {s3} char [1 2] {s4} char [1 2] {s5}} global=string [1 5] {s1 s2 z s4 s5}
+CHK|s_loop_source_string|held=cell [1 5] {string [1 1] {s1} string [1 1] {s2} string [1 1] {s3} string [1 1] {s4} string [1 1] {s5}} global=string [1 5] {s1 s2 z s4 s5}|exact
 CHK|s_index_target_string|held=string [1 1] {s3} global=string [1 5] {s1 s2 z s4 s5}|exact
 CHK|s_cell_literal_cell|held=cell [1 5] {double [1 1] 1 double [1 1] 2 double [1 1] 3 double [1 1] 4 double [1 1] 5} global=cell [1 5] {double [1 1] 1 double [1 1] 2 double [1 1] 9 double [1 1] 4 double [1 1] 5}|exact
 CHK|s_builtin_arg_cell|held=cell [1 5] {double [1 1] 1 double [1 1] 2 double [1 1] 3 double [1 1] 4 double [1 1] 5} global=cell [1 5] {double [1 1] 1 double [1 1] 2 double [1 1] 9 double [1 1] 4 double [1 1] 5}|exact
