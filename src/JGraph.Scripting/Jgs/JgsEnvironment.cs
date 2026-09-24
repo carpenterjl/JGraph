@@ -119,6 +119,13 @@ internal sealed class JgsEnvironment
     public string? AccessorOf { get; init; }
 
     /// <summary>
+    /// The function this scope is a call frame of, or null for every other scope. A nested
+    /// function's frame reads its parents' declarations off this to decide where a write of a
+    /// name nothing binds yet belongs (V7, ADR 0168; see <see cref="TryAssign"/>).
+    /// </summary>
+    internal FnStmt? Function { get; init; }
+
+    /// <summary>
     /// Whether this scope is an anonymous function's workspace: the snapshot taken when the handle
     /// was made, and the frame a call of it binds its parameters in. MATLAB calls that a static
     /// workspace — a captured name can be changed, a new one cannot be added — and
@@ -381,11 +388,14 @@ internal sealed class JgsEnvironment
 
     /// <summary>
     /// Drops <paramref name="name"/> from this scope, reverting it to the binding recorded in
-    /// <paramref name="pristine"/> when it had one — the named form of <c>clear a b</c>.
+    /// <paramref name="pristine"/> when it had one — the named form of <c>clear a b</c>. A
+    /// <c>global</c> link the scope declared goes with it: the name is unbound here afterwards and
+    /// the global keeps its value for every other workspace (R2025b, V7).
     /// </summary>
     public void Forget(string name, IReadOnlyDictionary<string, JgsValue> pristine)
     {
         ThrowIfLayer("cleared");
+        _globalNames?.Remove(name);
         if (_persistentSlots is not null && _persistentSlots.Remove(name, out JgsEnvironment? slots))
         {
             // R2025b: clearing a persistent takes the variable and what it kept; the next call of
@@ -406,6 +416,41 @@ internal sealed class JgsEnvironment
             _functionBindings.Remove(name);
         }
     }
+
+    /// <summary>
+    /// Unbinds <paramref name="name"/> in this scope while leaving what it named alone: a
+    /// persistent's slot keeps its value for the next call, and a global keeps its value in the
+    /// global workspace. What a plain <c>clear</c> inside a function does to the names it cannot
+    /// take with it (R2025b, measured at V7: <c>clear</c> then <c>exist</c> says 0, and the next
+    /// call reads the persistent as it was; <c>clear variables</c> and <c>clear name</c> take the
+    /// value too, which is <see cref="Forget"/>).
+    /// </summary>
+    public void Unlink(string name)
+    {
+        ThrowIfLayer("cleared");
+        _globalNames?.Remove(name);
+        _persistentSlots?.Remove(name);
+        _values.Remove(name);
+        if (_functionBindings.Contains(name)) _functionDefinitions.Remove(name);
+        _functionBindings.Remove(name);
+    }
+
+    /// <summary>Whether a <c>persistent</c> statement in this scope itself bound <paramref name="name"/>.</summary>
+    public bool DeclaresPersistentLocally(string name) =>
+        _persistentSlots is not null && _persistentSlots.ContainsKey(name);
+
+    /// <summary>The names a <c>global</c> statement in this scope itself linked, in no order.</summary>
+    public IEnumerable<string> GlobalLinks => _globalNames ?? Enumerable.Empty<string>();
+
+    /// <summary>
+    /// Whether this scope itself binds <paramref name="name"/> in any way a <c>clear name</c> can
+    /// undo: a local, a persistent it declared, or a global it linked. Looking outward answers a
+    /// different question; <c>clear</c> walks the frames itself.
+    /// </summary>
+    public bool BindsLocally(string name) =>
+        _values.ContainsKey(name)
+        || (_persistentSlots is not null && _persistentSlots.ContainsKey(name))
+        || (_globalNames is not null && _globalNames.Contains(name));
 
     /// <summary>Whether <paramref name="name"/> resolves in this scope or any enclosing scope.</summary>
     public bool Contains(string name) => TryGet(name, out _);
@@ -483,6 +528,14 @@ internal sealed class JgsEnvironment
     /// </remarks>
     public bool TryAssign(string name, JgsValue value)
     {
+        // A nested function's outputs are its own, as its parameters are, whatever its parents
+        // hold under the name (R2025b): the first write declares one here rather than walking out.
+        if (Function is not null && !IsCallBoundary && !_values.ContainsKey(name) && Function.Outputs.Contains(name))
+        {
+            this.Declare(name, value); // a nested function's own output, as the write's frame holds it
+            return true;
+        }
+
         for (JgsEnvironment? scope = this; scope is not null; scope = scope._parent)
         {
             if (scope.IsBuiltinLayer)
@@ -505,10 +558,49 @@ internal sealed class JgsEnvironment
 
             if (scope.IsCallBoundary)
             {
-                return false; // a call's workspace ends here; see IsCallBoundary
+                return TryAssignShared(name, value); // a call's workspace ends here; see IsCallBoundary
             }
         }
 
         return false;
+    }
+
+    /// <summary>
+    /// Where a nested function's write of a name nothing binds yet lands: MATLAB shares a variable
+    /// between a nested function and its parents when both mention it, and it belongs to the
+    /// outermost function that does (V7, ADR 0168) - so the write declares it in the outermost
+    /// enclosing frame, up to the boundary, whose function mentions the name. A name only the
+    /// nested function mentions is its own, and the caller declares it in the frame that wrote it.
+    /// Measured in R2025b: <c>clear v</c> in a nested function, then <c>v = [7 8]</c> there, leaves
+    /// the parent's <c>v</c> at <c>[7 8]</c>.
+    /// </summary>
+    private bool TryAssignShared(string name, JgsValue value)
+    {
+        if (IsCallBoundary || Function is null)
+        {
+            return false; // a function's own frame, or no frame at all: nothing lexical to walk
+        }
+
+        JgsEnvironment? target = null;
+        for (JgsEnvironment? scope = _parent; scope is not null && !scope.IsBuiltinLayer; scope = scope._parent)
+        {
+            if (scope.Function is not null && scope.Function.Mentions(name))
+            {
+                target = scope;
+            }
+
+            if (scope.IsCallBoundary)
+            {
+                break;
+            }
+        }
+
+        if (target is null)
+        {
+            return false;
+        }
+
+        target.Declare(name, value); // the parent's variable, as the write's own frame would hold it
+        return true;
     }
 }

@@ -367,6 +367,12 @@ internal sealed class FnStmt(
 
     /// <summary>The MATLAB output variable names, in order; empty for a JGS <c>fn</c>.</summary>
     public IReadOnlyList<string> Outputs { get; } = outputs ?? NoOutputs;
+
+    /// <summary>
+    /// The names this body mentions as variables, cached by <see cref="NameMentions"/> the first
+    /// time a nested function's write asks where an unbound name belongs (V7, ADR 0168).
+    /// </summary>
+    internal HashSet<string>? MentionedNames;
 }
 
 /// <summary>

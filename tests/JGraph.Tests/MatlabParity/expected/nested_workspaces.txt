@@ -1,0 +1,39 @@
+CHK|n_rebind_two_levels|[11 2]|exact
+CHK|n_rebind_three_levels|[11 2]|exact
+CHK|n_rebind_four_levels|[11 2]|exact
+CHK|n_elem_write_four_levels|[1 102]|exact
+CHK|n_growth_three_levels|[1 2 3]|exact
+CHK|n_delete_three_levels|[1 3]|exact
+CHK|n_field_write_three_levels|[1 9]|exact
+CHK|n_cell_write_three_levels|1 zz|exact
+CHK|n_grandparent_shares_skipping_middle|[1 9]|exact
+CHK|n_middle_and_inner_write|1111|exact
+CHK|n_sibling_shares|22|exact
+CHK|n_sibling_calls_sibling|22|exact
+CHK|n_nested_only_is_local|0|exact
+CHK|n_nested_only_fresh_each_call|1 1|exact
+CHK|n_siblings_without_parent|1 0|exact
+CHK|n_parent_inits_after_nested_writes|1|exact
+CHK|n_parameter_is_local|1|exact
+CHK|n_output_is_local|1 5|exact
+CHK|n_output_written_twice|1 6 6|exact
+CHK|n_global_in_parent_nested_writes|6 6|exact
+CHK|n_global_in_nested_only|7|exact
+CHK|n_persistent_in_parent_nested_writes|1 2|exact
+CHK|n_persistent_in_nested_own|1 2|exact
+CHK|n_persistent_in_nested_own_again|3 4|exact
+CHK|n_escaped_counter|3|exact
+CHK|n_escaped_two_instances|1 3|exact
+CHK|n_escaped_shared_state|2|exact
+CHK|n_escaped_inner_of_inner|12|exact
+CHK|n_nargin_each_level|2 1 0|exact
+CHK|n_nargout_each_level|1 2 1|exact
+CHK|n_local_function_is_boundary|[1 7]|exact
+CHK|n_local_function_sees_nothing|0|exact
+CHK|n_clear_shared_in_nested|0 2|exact
+CHK|n_clear_unshared_in_nested|0|exact
+CHK|n_clear_plain_in_nested|0 0|exact
+CHK|n_clear_plain_keeps_parent_persistent|0 10|exact
+CHK|n_clear_all_in_nested|0 0|exact
+CHK|n_clear_all_takes_parent_persistent|0 5|exact
+CHK|n_clear_then_write_in_nested|[7 8]|exact

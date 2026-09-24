@@ -1,0 +1,25 @@
+CHK|c_named_in_callback|0 1|exact
+CHK|c_plain_in_callback|0 1|exact
+CHK|c_regexp_command_in_callback|10 1 1|exact
+CHK|c_regexp_function_in_callback|0 1 1|exact
+CHK|c_variables_in_callback|0 1|exact
+CHK|c_global_link_in_callback|0 1 9|exact
+CHK|c_two_names_in_callback|100 1 1|exact
+CHK|c_missing_name_in_callback|1 1|exact
+CHK|c_evalin_caller_named|0 1 1|exact
+CHK|c_evalin_caller_plain|0 0 1|exact
+CHK|c_evalin_caller_regexp|1 0 1|exact
+CHK|c_script_named|0 1 1|exact
+CHK|c_script_plain|0 0 1|exact
+CHK|c_script_variables|0 0 1|exact
+CHK|c_evalin_base_named|1 0|exact
+CHK|c_base_after_the_calls|1 1 1 1|exact
+CHK|c_persistent_plain_clear|0 10|exact
+CHK|c_persistent_clear_variables|0 5|exact
+CHK|c_persistent_clear_regexp|0 5|exact
+CHK|c_persistent_clear_all|0 5|exact
+CHK|c_global_in_callback|0 0|exact
+CHK|c_all_in_callback|0 1 0|exact
+CHK|c_script_all|0 0 1|exact
+CHK|c_base_plain_clear|0 0|exact
+CHK|c_base_global_survives_its_link|1|exact

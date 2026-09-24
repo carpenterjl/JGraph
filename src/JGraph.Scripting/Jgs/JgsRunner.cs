@@ -13,6 +13,9 @@ namespace JGraph.Scripting.Jgs;
 /// </summary>
 internal static class JgsRunner
 {
+    /// <summary>A call frame has no pristine bindings to revert a cleared name to.</summary>
+    private static readonly Dictionary<string, JgsValue> NoPristine = new();
+
     /// <summary>Runs <paramref name="code"/> and maps every JGS failure to a diagnostic result.</summary>
     /// <param name="code">The JGS source.</param>
     /// <param name="context">The host services for the run.</param>
@@ -360,6 +363,27 @@ internal static class JgsRunner
             }
         }
 
+        // Every form of clear resolves in the active workspace (V7, ADR 0168): the frame of the
+        // function that ran it and, for a nested function, its parents' frames up to the boundary -
+        // the same frames an assignment can reach. Until V7 the named and plain forms forgot in the
+        // workspace the builtin was registered in, so a 'clear' inside a callback deleted the base
+        // workspace's variable and left the callback's (#64, #65). Only the base workspace has
+        // pristine bindings to revert to; a call frame's cleared name is simply gone.
+        IEnumerable<JgsEnvironment> ActiveFrames()
+        {
+            for (JgsEnvironment? scope = interpreter.CurrentFrame; scope is not null && !scope.IsBuiltinLayer; scope = scope.Parent)
+            {
+                yield return scope;
+                if (scope.IsCallBoundary)
+                {
+                    yield break;
+                }
+            }
+        }
+
+        IReadOnlyDictionary<string, JgsValue> OriginalsOf(JgsEnvironment scope, IReadOnlyDictionary<string, JgsValue> baseline) =>
+            ReferenceEquals(scope, environment) ? baseline : NoPristine;
+
         // clearvars filters the active workspace; clear also supports the older function/all forms.
         void DefineClear(string builtin)
         {
@@ -389,7 +413,6 @@ internal static class JgsRunner
 
                 if (builtin == "clearvars")
                 {
-                    JgsEnvironment frame = interpreter.CurrentFrame;
                     var remove = new List<System.Text.RegularExpressions.Regex>();
                     var keep = new List<System.Text.RegularExpressions.Regex>();
                     bool except = false;
@@ -419,11 +442,9 @@ internal static class JgsRunner
                             pattern, System.Text.RegularExpressions.RegexOptions.CultureInvariant, TimeSpan.FromSeconds(1)));
                     }
 
-                    // The walk ends at the built-in layer: it is not a workspace and is never cleared.
-                    for (JgsEnvironment? scope = frame; scope is not null && !scope.IsBuiltinLayer; scope = scope.Parent)
+                    foreach (JgsEnvironment scope in ActiveFrames())
                     {
-                        IReadOnlyDictionary<string, JgsValue> originals = ReferenceEquals(scope, environment)
-                            ? baseline : new Dictionary<string, JgsValue>();
+                        IReadOnlyDictionary<string, JgsValue> originals = OriginalsOf(scope, baseline);
                         foreach ((string name, JgsValue value) in scope.Variables.ToList())
                         {
                             if (scope.IsFunctionBinding(name)
@@ -440,11 +461,6 @@ internal static class JgsRunner
                                 scope.Forget(name, originals);
                             }
                         }
-
-                        if (scope.IsCallBoundary)
-                        {
-                            break;
-                        }
                     }
 
                     return JgsValue.Null;
@@ -454,7 +470,9 @@ internal static class JgsRunner
                 // call re-reads it, and every persistent — MATLAB's meaning (R2025b: a counter's
                 // persistent is 1 again after 'clear all') — sparing the functions that are running
                 // (V5, #72). A script's own functions live with the script and stay callable, as
-                // they do in MATLAB, where the file is simply read again.
+                // they do in MATLAB, where the file is simply read again. 'clear all' takes the
+                // globals as well (R2025b, measured at V7: a base global is gone after a callback's
+                // 'clear all').
                 bool everything = names.Contains("all");
                 if (everything || names.Contains("functions"))
                 {
@@ -462,32 +480,101 @@ internal static class JgsRunner
                     interpreter.ForgetPersistents();
                 }
 
-                if (names.Count == 0 || everything || names.Contains("variables"))
+                if (everything)
                 {
-                    // Dropping everything at once takes every user wrapper (aliases included), so
-                    // their packed buffers can be released deterministically. MATLAB's plain clear
-                    // drops variables but not the functions a JGS script defined — those need 'clear all'.
-                    var dropped = new List<JgsValue>();
-                    foreach ((string cleared, JgsValue value) in UserVariables().ToList())
-                    {
-                        if (!everything && value.Type == JgsType.Function
-                            && interpreter.ScriptFunctionNames.Contains(cleared))
-                        {
-                            continue;
-                        }
+                    interpreter.ClearGlobals([]);
+                }
 
-                        dropped.Add(value);
-                        environment.Forget(cleared, baseline);
+                int regexpAt = names.IndexOf("-regexp");
+                if (names.Count == 0 || everything || names.Contains("variables") || regexpAt >= 0)
+                {
+                    // 'clear -regexp p1 p2' keeps every name no pattern matches; the other forms
+                    // take every variable of the active frames.
+                    var patterns = new List<System.Text.RegularExpressions.Regex>();
+                    if (regexpAt >= 0)
+                    {
+                        foreach (string pattern in names.Skip(regexpAt + 1))
+                        {
+                            patterns.Add(new System.Text.RegularExpressions.Regex(
+                                pattern, System.Text.RegularExpressions.RegexOptions.CultureInvariant, TimeSpan.FromSeconds(1)));
+                        }
                     }
 
-                    DisposeBuffers(dropped);
+                    // A plain 'clear' unbinds a persistent and a global in the frame and leaves what
+                    // they name where it is; 'clear variables', 'clear all' and the regexp form take
+                    // the persistent's value too (R2025b, measured at V7).
+                    bool unlinkOnly = names.Count == 0;
+
+                    // Dropping everything at once takes every user wrapper (aliases included), so
+                    // their packed buffers can be released deterministically (M6 keeps what another
+                    // holder can still see). MATLAB's plain clear drops variables but not the
+                    // functions a JGS script defined — those need 'clear all'; a nested function
+                    // hoisted into its parent's frame is never a variable.
+                    var dropped = new List<JgsValue>();
+                    foreach (JgsEnvironment scope in ActiveFrames())
+                    {
+                        IReadOnlyDictionary<string, JgsValue> originals = OriginalsOf(scope, baseline);
+                        foreach ((string cleared, JgsValue value) in scope.Variables.ToList())
+                        {
+                            if (scope.DeclaresFunctionLocally(cleared)
+                                && !(everything && interpreter.ScriptFunctionNames.Contains(cleared)))
+                            {
+                                continue;
+                            }
+
+                            if (value.Type != JgsType.Function && originals.TryGetValue(cleared, out JgsValue? original)
+                                && ReferenceEquals(original, value))
+                            {
+                                continue;
+                            }
+
+                            if (patterns.Count > 0 && !patterns.Any(pattern => pattern.IsMatch(cleared)))
+                            {
+                                continue;
+                            }
+
+                            dropped.Add(value);
+                            if (unlinkOnly && scope.DeclaresPersistentLocally(cleared))
+                            {
+                                scope.Unlink(cleared);
+                            }
+                            else
+                            {
+                                scope.Forget(cleared, originals);
+                            }
+                        }
+
+                        foreach (string link in scope.GlobalLinks.ToList())
+                        {
+                            if (patterns.Count == 0 || patterns.Any(pattern => pattern.IsMatch(link)))
+                            {
+                                scope.Unlink(link);
+                            }
+                        }
+                    }
+
+                    if (patterns.Count == 0)
+                    {
+                        DisposeBuffers(dropped);
+                    }
+
                     return JgsValue.Null;
                 }
 
                 foreach (string cleared in names)
                 {
-                    // No buffer disposal here: in JGS another name may still alias the wrapper.
-                    environment.Forget(cleared, baseline);
+                    // The nearest active frame that binds the name - a local, a persistent it
+                    // declared, or a global it linked - forgets it; a nested function's 'clear v'
+                    // reaches its parent's v (R2025b). No buffer disposal here: in JGS another name
+                    // may still alias the wrapper.
+                    foreach (JgsEnvironment scope in ActiveFrames())
+                    {
+                        if (scope.BindsLocally(cleared) || ReferenceEquals(scope, environment))
+                        {
+                            scope.Forget(cleared, OriginalsOf(scope, baseline));
+                            break;
+                        }
+                    }
 
                     // The name of a function file clears the function: its persistents start over
                     // and the file is read again, unless it is running (V5, #72).

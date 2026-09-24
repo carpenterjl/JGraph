@@ -473,9 +473,10 @@ internal static partial class JgsBuiltins
             bool wantFile = kind is null or "file";
             bool wantFolder = kind is null or "file" or "dir";
 
-            // MATLAB's return code is a category, not a boolean: 1 variable, 2 file, 5 builtin.
-            if (wantVariable && interpreter.CurrentFrame.TryGet(name, out JgsValue found)
-                && found.Type != JgsType.Function)
+            // MATLAB's return code is a category, not a boolean: 1 variable, 2 file, 5 builtin. A
+            // global the frame linked is a variable of it while the global workspace holds one
+            // (V7); after 'clear global' the link reads as cleared and answers 0.
+            if (wantVariable && interpreter.VariableExists(name))
             {
                 return JgsValue.Number(1);
             }

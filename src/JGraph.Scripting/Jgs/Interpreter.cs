@@ -888,12 +888,13 @@ internal sealed partial class Interpreter
 
         // Nested functions hoist like top-level ones do in Run(): a handle taken before the nested
         // declaration line (increment = @doInc) must already resolve. Each closes over this call's
-        // frame, which is what shares the parent's workspace with it.
+        // frame, which is what shares the parent's workspace with it, and is marked nested so its
+        // own frame is no boundary however deep it sits (V7, ADR 0168).
         foreach (Stmt statement in declaration.Body)
         {
             if (statement is FnStmt nested)
             {
-                local.DeclareFunction(nested.Name, JgsValue.Function(new UserFunction(nested, local, this)));
+                local.DeclareFunction(nested.Name, JgsValue.Function(new UserFunction(nested, local, this) { IsNested = true }));
             }
         }
 
@@ -1615,6 +1616,16 @@ internal sealed partial class Interpreter
 
         return sb.Append(']').ToString();
     }
+
+    /// <summary>
+    /// Whether <paramref name="name"/> is a variable of the current frame - <c>exist(name, 'var')</c>:
+    /// a bound name that is not a function definition, or a global the frame linked that the
+    /// global workspace still holds (V7).
+    /// </summary>
+    internal bool VariableExists(string name) =>
+        CurrentFrame.IsGlobal(name)
+            ? _globalWorkspace.Contains(name)
+            : CurrentFrame.TryGet(name, out JgsValue found) && found.Type != JgsType.Function;
 
     /// <summary>Reads a name, honouring any <c>global</c> declaration that redirects it.</summary>
     private bool LookUp(string name, JgsEnvironment env, out JgsValue value)

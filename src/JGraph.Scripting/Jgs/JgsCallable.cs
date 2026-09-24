@@ -266,6 +266,13 @@ internal sealed class UserFunction : IJgsCallable, IJgsMultiCallable
     /// <summary>The accessor tag a call's frame carries (<see cref="JgsEnvironment.AccessorOf"/>), or null (V6, #27).</summary>
     internal string? AccessorOf { get; init; }
 
+    /// <summary>
+    /// Whether the declaration is written inside another function's body - a MATLAB nested
+    /// function, whose closure is the frame of the call that hoisted it and whose own frame shares
+    /// that workspace (V7, ADR 0168). Decided by the parser's nesting, never by the closure's flag.
+    /// </summary>
+    internal bool IsNested { get; init; }
+
     /// <inheritdoc />
     public JgsValue Call(IReadOnlyList<JgsValue> arguments, int line, int column)
     {
@@ -294,15 +301,19 @@ internal sealed class UserFunction : IJgsCallable, IJgsMultiCallable
                 $"Function '{Name}' expects {parameters.Count} argument(s) but got {arguments.Count}.");
         }
 
-        // A frame opened outside every other frame is a MATLAB function's own workspace, and an
-        // assignment inside it may not write out to whatever called it; a frame opened inside one
-        // belongs to a nested function, which shares its parent's variables by design. JGS is a
-        // lexically-scoped language whose closures deliberately write to what they captured, and its
-        // surface is frozen — so the boundary is MATLAB's alone.
+        // A MATLAB function's frame is its own workspace, and an assignment inside it may not write
+        // out to whatever called it; a nested function's frame shares its parent's variables by
+        // design, at every depth. The boundary is lexical - a frame is one exactly when its function
+        // is not nested in the function whose frame is its closure (V7, ADR 0168). Until V7 it was
+        // read off the closure's flag, so it alternated with depth: a function nested two deep was
+        // a boundary again and declared a local where R2025b writes the outer variable (#36). JGS is
+        // a lexically-scoped language whose closures deliberately write to what they captured, and
+        // its surface is frozen - so the boundary is MATLAB's alone.
         var local = new JgsEnvironment(_closure)
         {
-            IsCallBoundary = _interpreter.Dialect.MatlabFunctions && !_closure.IsCallBoundary,
+            IsCallBoundary = _interpreter.Dialect.MatlabFunctions && !IsNested,
             AccessorOf = AccessorOf,
+            Function = _declaration,
         };
         for (int i = 0; i < fixedCount && i < arguments.Count; i++)
         {

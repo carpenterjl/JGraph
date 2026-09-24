@@ -1,6 +1,6 @@
 CHK|a017_persistent_recursive_elem|[2 20 0]|exact
 CHK|a018_persistent_recursive_rebind|[2 20 0]|exact
-CHK|a036_nested_three_levels|[11 2]|exact|pending V7|[1 2]
+CHK|a036_nested_three_levels|[11 2]|exact
 CHK|a037_loop_bound_rebinds|[1 7 7 7 7]|exact|pending V8|[7 7 7 7 7]
 CHK|a055_disp_asked_for_value|MATLAB:maxlhs|exact|pending V9|no error
 CHK|a055_error_asked_for_value|MATLAB:maxlhs|exact|pending V9|probe:bad
@@ -23,5 +23,5 @@ CHK|g_handle_recursion_accumulates|3 6|exact
 CHK|g_nested_handle_after_return|0|exact
 CHK|g_clear_functions_inactive_resets|3|exact
 CHK|a072_clear_functions_active_persistent|2|exact
-CHK|a064_clear_named_in_callback|0 1|exact|pending V7|1 0
-CHK|a065_clear_all_in_callback|0 1|exact|pending V7|1 0
+CHK|a064_clear_named_in_callback|0 1|exact
+CHK|a065_clear_all_in_callback|0 1|exact
