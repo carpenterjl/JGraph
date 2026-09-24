@@ -39,6 +39,9 @@ internal static partial class JgsBuiltins
         // state — a class is defined by loading a file, exactly as a function is.
         "addCause", "isobject", "properties", "methods", "metaclass",
 
+        // V6 (#28): isprop asks a user object's class, a built-in object or a graphics handle.
+        "isprop",
+
         // V6 (#105): a timer's command-string callback is evaluated by the interpreter, in the base
         // workspace, so the timer verbs are declared here.
         "timer", "start", "stop", "wait",

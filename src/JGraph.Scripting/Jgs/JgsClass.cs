@@ -26,6 +26,8 @@ internal sealed class JgsClass
     private readonly Interpreter _interpreter;
     private readonly JgsEnvironment _scope;
     private readonly Dictionary<string, ClassMethod> _methods = new(StringComparer.Ordinal);
+    private readonly Dictionary<string, ClassMethod> _getters = new(StringComparer.Ordinal);
+    private readonly Dictionary<string, ClassMethod> _setters = new(StringComparer.Ordinal);
     private readonly JgsValue _constructor;
     private Dictionary<string, JgsValue>? _constants;
 
@@ -46,6 +48,28 @@ internal sealed class JgsClass
 
         foreach (ClassMethod method in declaration.Methods)
         {
+            // get.p and set.p are a property's accessors, not methods (V6, #27): they are kept by
+            // the property, run on its reads and writes, and answer to no bare name. One for a
+            // property the class does not declare is R2025b's refusal, made here where a script
+            // that constructs the class catches it.
+            if (method.AccessorProperty is { } accessed)
+            {
+                if (Property(accessed) is null)
+                {
+                    throw new JgsRuntimeException(declaration.Line, declaration.Column,
+                        $"Cannot specify a {(method.IsGetter ? "get" : "set")} function for property '{accessed}' in class "
+                        + $"'{declaration.Name}', because that property is not defined by that class.");
+                }
+
+                if (!(method.IsGetter ? _getters : _setters).TryAdd(accessed, method))
+                {
+                    throw new JgsRuntimeException(declaration.Line, declaration.Column,
+                        $"Class '{declaration.Name}' defines the method '{method.Function.Name}' twice.");
+                }
+
+                continue;
+            }
+
             // A file that defines the same method twice is a mistake worth naming: silently keeping
             // one of them is how a script comes to call a body nobody can find by reading.
             if (!_methods.TryAdd(method.Function.Name, method))
@@ -61,7 +85,7 @@ internal sealed class JgsClass
         // number belongs to no class.
         _constructor = JgsValue.Function(
             new BuiltinFunction(Name, (args, line, col) => Construct(args, line, col)) { AutoCallsBare = true });
-        foreach (ClassMethod method in declaration.Methods)
+        foreach (ClassMethod method in _methods.Values)
         {
             scope.DeclareFunction(method.Function.Name, JgsValue.Function(Callable(method)));
         }
@@ -97,8 +121,98 @@ internal sealed class JgsClass
     /// <summary>The declared properties, in the order the file wrote them.</summary>
     public IReadOnlyList<ClassProperty> Properties => Declaration.Properties;
 
-    /// <summary>The method names, in the order the file wrote them.</summary>
-    public IEnumerable<string> MethodNames => Declaration.Methods.Select(static m => m.Function.Name);
+    /// <summary>The method names, in the order the file wrote them; a property's accessors are not methods.</summary>
+    public IEnumerable<string> MethodNames =>
+        Declaration.Methods.Where(static m => m.AccessorProperty is null).Select(static m => m.Function.Name);
+
+    /// <summary>The <c>get.name</c> method, or false when the property reads from its storage (V6, #27).</summary>
+    public bool TryGetter(string name, [NotNullWhen(true)] out ClassMethod? getter) => _getters.TryGetValue(name, out getter);
+
+    /// <summary>The <c>set.name</c> method, or false when a write stores (V6, #27).</summary>
+    public bool TrySetter(string name, [NotNullWhen(true)] out ClassMethod? setter) => _setters.TryGetValue(name, out setter);
+
+    /// <summary>
+    /// Whether a read or a write of the property is an accessor's doing rather than the storage's:
+    /// it has a <c>get</c> or a <c>set</c> method, or is <c>Dependent</c> (and so has no storage).
+    /// </summary>
+    public bool HasAccessor(string name) =>
+        _getters.ContainsKey(name) || _setters.ContainsKey(name) || Property(name) is { Dependent: true };
+
+    /// <summary>The tag the frame of <c>get.name</c> carries (<see cref="JgsEnvironment.AccessorOf"/>).</summary>
+    public string GetterTag(string name) => "get:" + Name + "." + name;
+
+    /// <summary>The tag the frame of <c>set.name</c> carries.</summary>
+    public string SetterTag(string name) => "set:" + Name + "." + name;
+
+    /// <summary>
+    /// Runs <c>get.name</c> on <paramref name="receiver"/> and answers what it returned (V6, #27,
+    /// #28). A <c>Dependent</c> property with no get method is R2025b's refusal.
+    /// </summary>
+    public JgsValue CallGetter(string name, JgsValue receiver, int line, int col)
+    {
+        if (!TryGetter(name, out ClassMethod? getter))
+        {
+            throw new JgsRuntimeException(line, col,
+                $"In class '{Name}', no get method is defined for dependent property '{name}'. "
+                + "A dependent property needs a get method to access its value.");
+        }
+
+        JgsValue answer = Callable(getter).Call([receiver], line, col);
+        if (answer.Type == JgsType.Null)
+        {
+            throw new JgsRuntimeException(line, col,
+                $"The get function for property '{name}' in class '{Name}' returned no value.");
+        }
+
+        return answer;
+    }
+
+    /// <summary>
+    /// Runs <c>set.name</c> on <paramref name="receiver"/> with <paramref name="value"/> and answers
+    /// the object the property was set on: the receiver itself for a handle class, whose set method
+    /// writes it in place, and the value class's returned object otherwise, which the caller stores
+    /// where the receiver was read (measured: a value class's set method that returns no object is
+    /// refused, a handle class's may return one, which is ignored).
+    /// </summary>
+    public JgsValue CallSetter(string name, JgsValue receiver, JgsValue value, int line, int col)
+    {
+        if (!TrySetter(name, out ClassMethod? setter))
+        {
+            throw new JgsRuntimeException(line, col,
+                $"In class '{Name}', no set method is defined for dependent property '{name}'. "
+                + "A dependent property needs a set method to assign its value.");
+        }
+
+        JgsValue returned = Callable(setter).Call([receiver, value], line, col);
+        if (IsHandle)
+        {
+            return receiver;
+        }
+
+        if (returned.Type != JgsType.Object || !ReferenceEquals(returned.AsObject.Class, this))
+        {
+            throw new JgsRuntimeException(line, col,
+                $"The set function for property '{name}' must return an instance of class '{Name}'.");
+        }
+
+        return returned;
+    }
+
+    /// <summary>
+    /// What a property shows as in the object's display: the get method's answer where the property
+    /// has one (measured: R2025b's display runs every getter, a <c>Dependent</c> property's included),
+    /// the storage otherwise, and null for a property nothing can answer for.
+    /// </summary>
+    public JgsValue? DisplayValue(JgsObject instance, ClassProperty property)
+    {
+        string name = property.Spec.Name;
+        if (_getters.ContainsKey(name))
+        {
+            return CallGetter(name, JgsValue.Object(instance), Declaration.Line, Declaration.Column);
+        }
+
+        return instance.Fields.TryGetValue(name, out JgsValue? held) ? held : null;
+    }
 
     /// <summary>The constructor: calling it builds an instance. This is the value the class name holds.</summary>
     public JgsValue ConstructorValue => _constructor;
@@ -121,9 +235,17 @@ internal sealed class JgsClass
     public bool TryMethod(string name, [NotNullWhen(true)] out ClassMethod? method) =>
         _methods.TryGetValue(name, out method);
 
-    /// <summary>The callable a method name stands for — a user function over the class's own scope.</summary>
+    /// <summary>
+    /// The callable a method name stands for — a user function over the class's own scope. An
+    /// accessor's frame carries its tag, which is what lets its own body reach the storage.
+    /// </summary>
     public IJgsCallable Callable(ClassMethod method) =>
-        new UserFunction(method.Function, _scope, _interpreter);
+        new UserFunction(method.Function, _scope, _interpreter)
+        {
+            AccessorOf = method.AccessorProperty is { } accessed
+                ? (method.IsGetter ? GetterTag(accessed) : SetterTag(accessed))
+                : null,
+        };
 
     /// <summary>
     /// The value of a <c>Constant</c> property. Constants belong to the class rather than to an
@@ -175,9 +297,11 @@ internal sealed class JgsClass
         JgsEnvironment defaults = DefaultWorkspace();
         foreach (ClassProperty property in Properties)
         {
-            if (property.Constant)
+            if (property.Constant || property.Dependent)
             {
-                continue; // a constant belongs to the class, so an instance does not carry a copy
+                // A constant belongs to the class, so an instance does not carry a copy; a Dependent
+                // property has no storage, and a default written on it is ignored (V6, #28, measured).
+                continue;
             }
 
             JgsValue start = property.Spec.Default is { } expression

@@ -359,7 +359,7 @@ internal sealed partial class Interpreter
     /// or in part (<c>e.Day(2) = 15</c>, <c>c{1}.Format = 'yyyy'</c>); a dictionary's brace
     /// (<c>d{"k"}(1) = 9</c>).
     /// </summary>
-    private static bool IsComputedHolder(JgsValue holder, Expr step, Expr target)
+    private bool IsComputedHolder(JgsValue holder, Expr step, Expr target)
     {
         if (holder.Type == JgsType.Table)
         {
@@ -390,17 +390,30 @@ internal sealed partial class Interpreter
             return true;
         }
 
-        // A SetObservable property somebody listens to is get, modify, set when the write goes on
-        // past it (o.a(2) = 9, o.s.v(2) = 5): the slot is put back through the property's setter,
-        // which raises the one PreSet and PostSet R2025b raises (V6, #108). The whole-value set
-        // o.a = v keeps the road it has, which raises them itself. An unobserved property is the
-        // ordinary roads' as before.
+        // A property with an accessor (V6, #27, #28: a get or a set method, or Dependent) and a
+        // SetObservable property somebody listens to (#108) are get, modify, set when the write goes
+        // on past them (o.p(2) = 9, o.s.v(2) = 5): the value is read by the getter, the slot is put
+        // back through the property's setter, which is the one set and the one PreSet and PostSet
+        // R2025b raises. The whole-value set o.p = v keeps the road it has, which calls the setter
+        // itself. Inside the accessor's own body the property is the storage's, as is an unobserved
+        // property without accessors, and the ordinary roads write it as before.
         if (holder.Type == JgsType.Object)
         {
-            return !ReferenceEquals(step, target)
-                && step is MemberExpr { Field: { } field }
-                && holder.AsObject.Class.Property(field) is { Observable: true }
-                && holder.AsObject.HasPropertyListener(field);
+            if (ReferenceEquals(step, target) || step is not MemberExpr { Field: { } field })
+            {
+                return false;
+            }
+
+            JgsClass definition = holder.AsObject.Class;
+            if (definition.Property(field) is not { } property)
+            {
+                return false;
+            }
+
+            return property.Dependent
+                || (definition.TryGetter(field, out _) && !InAccessor(definition.GetterTag(field)))
+                || (definition.TrySetter(field, out _) && !InAccessor(definition.SetterTag(field)))
+                || (property.Observable && holder.AsObject.HasPropertyListener(field));
         }
 
         return holder.Type == JgsType.Number && !ReferenceEquals(step, target) && JgsHandleRegistry.TryGet(holder, out _);
@@ -500,7 +513,7 @@ internal sealed partial class Interpreter
         string field = FieldName(level, env);
         if (holder.Type == JgsType.Object)
         {
-            return WriteThroughObservableProperty(holder, field, level, target, assign, rhs, env);
+            return WriteThroughObjectProperty(holder, field, level, target, assign, rhs, env);
         }
 
         if (JgsBuiltins.IsMatFile(holder))
@@ -601,23 +614,40 @@ internal sealed partial class Interpreter
     }
 
     /// <summary>
-    /// Get, modify, set at an observable property of a user object (V6, #108): the property's
-    /// value goes into the slot as a share, so the slot's first write copies it (M3) and the
-    /// object — and every alias of it, the object being a handle — reads as it was until the set;
-    /// the set is the ordinary property write, which checks the value against its declaration and
-    /// raises the one <c>PreSet</c> and <c>PostSet</c>.
+    /// Get, modify, set at a property of a user object with an accessor (V6, #27, #28, #147) or an
+    /// observable one (#108). The get half is the property's get method where it has one - after
+    /// the subscripts (each <c>end</c> a fresh get) and the right-hand side have run, so
+    /// <c>o.p(end) = rhs</c> is <c>get;rhs;get;set</c> - whose answer is the slot's own; a property
+    /// read from its storage goes into the slot as a share, so the slot's first write copies it
+    /// (M3) and the object - and every alias of it, the object being a handle - reads as it was
+    /// until the set. The set half is the ordinary property write, which checks the value against
+    /// its declaration, runs the set method once (storing a value class's returned object back
+    /// where the object was read), and raises the one <c>PreSet</c> and <c>PostSet</c>.
     /// </summary>
-    private JgsValue WriteThroughObservableProperty(
+    private JgsValue WriteThroughObjectProperty(
         JgsValue holder, string field, MemberExpr level, Expr target, AssignExpr assign, JgsValue rhs, JgsEnvironment env)
     {
-        RequireLive(holder.AsObject, level.Line, level.Column);
-        if (!holder.AsObject.Fields.TryGetValue(field, out JgsValue? current))
+        JgsObject instance = holder.AsObject;
+        RequireLive(instance, level.Line, level.Column);
+        JgsClass definition = instance.Class;
+        if (definition.Property(field) is not { } property)
         {
-            throw new JgsRuntimeException(level.Line, level.Column,
-                $"'{holder.AsObject.Class.Name}' has no property '{field}'.");
+            throw new JgsRuntimeException(level.Line, level.Column, $"'{definition.Name}' has no property '{field}'.");
         }
 
-        JgsValue written = WriteIntoSlot(current, level, target, assign, rhs, env, out JgsValue result, owned: false);
+        JgsValue? current;
+        bool minted = false;
+        if ((definition.TryGetter(field, out _) && !InAccessor(definition.GetterTag(field))) || property.Dependent)
+        {
+            current = definition.CallGetter(field, holder, level.Line, level.Column);
+            minted = true;
+        }
+        else if (!instance.Fields.TryGetValue(field, out current))
+        {
+            throw new JgsRuntimeException(level.Line, level.Column, $"'{definition.Name}' has no property '{field}'.");
+        }
+
+        JgsValue written = WriteIntoSlot(current, level, target, assign, rhs, env, out JgsValue result, owned: minted);
         AssignToMember(level, written, env);
         return result;
     }

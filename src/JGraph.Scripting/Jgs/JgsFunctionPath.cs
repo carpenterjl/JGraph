@@ -383,10 +383,11 @@ internal sealed class JgsFunctionPath
             throw load;
         }
 
-        // A class file holds one classdef and nothing else, and the name it answers to is the file's.
-        // What the path hands back for it is the constructor, which is what makes `Circle(2)` an
-        // ordinary call: the interpreter never learns a new kind of callee (M68).
-        if (program is [ClassdefStmt classFile])
+        // A class file holds one classdef, followed by nothing but the file's local functions, and
+        // the name it answers to is the file's. What the path hands back for it is the constructor,
+        // which is what makes `Circle(2)` an ordinary call: the interpreter never learns a new kind
+        // of callee (M68).
+        if (program.Count > 0 && program[0] is ClassdefStmt classFile)
         {
             if (!string.Equals(classFile.Name, name, StringComparison.Ordinal))
             {
@@ -397,7 +398,21 @@ internal sealed class JgsFunctionPath
 
             // The class's scope sits under the built-in layer like a file's: a method or a property
             // default reads the class file's names and the built-ins, and no variable of the script.
-            return _interpreter.DefineClass(classFile, _interpreter.NewFileScope()).ConstructorValue;
+            // A local function after the classdef is the class's own (V6): its methods see it by
+            // bare name, as they see each other, and nothing outside the file does.
+            JgsEnvironment scope = _interpreter.NewFileScope();
+            for (int i = 1; i < program.Count; i++)
+            {
+                if (program[i] is not FnStmt local)
+                {
+                    throw new JgsRuntimeException(program[i].Line, program[i].Column,
+                        $"'{Path.GetFileName(path)}': a class file holds one classdef and its local functions, nothing else.");
+                }
+
+                scope.DeclareFunction(local.Name, JgsValue.Function(new UserFunction(local, scope, _interpreter)));
+            }
+
+            return _interpreter.DefineClass(classFile, scope).ConstructorValue;
         }
 
         if (!JgsRunner.IsFunctionFile(program))

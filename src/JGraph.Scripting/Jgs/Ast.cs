@@ -470,13 +470,26 @@ internal sealed class ArgumentsStmt(IReadOnlyList<ArgumentSpec> arguments) : Stm
 /// rather than to an instance, and cannot be assigned to.</param>
 /// <param name="Observable">Whether the block said <c>(SetObservable)</c>: a write to the property
 /// raises <c>PreSet</c> and <c>PostSet</c> for the listeners added with <c>addlistener</c> (V6, #108).</param>
-internal sealed record ClassProperty(ArgumentSpec Spec, bool Constant, bool Observable = false);
+/// <param name="Dependent">Whether the block said <c>(Dependent)</c>: the property has no storage of
+/// its own - a read is its <c>get</c> method's answer and a write is its <c>set</c> method's doing,
+/// and a default written on it is ignored (V6, #28; measured in R2025b).</param>
+internal sealed record ClassProperty(ArgumentSpec Spec, bool Constant, bool Observable = false, bool Dependent = false);
 
 /// <summary>One method of a class: the function itself, and whether its block said <c>(Static)</c>.</summary>
 /// <param name="Function">The method body, parsed exactly as any other <c>function</c> is.</param>
 /// <param name="Static">Whether the method is called on the class rather than on an instance, so its
 /// first parameter is an ordinary argument and not the object.</param>
-internal sealed record ClassMethod(FnStmt Function, bool Static);
+internal sealed record ClassMethod(FnStmt Function, bool Static)
+{
+    /// <summary>The property this method is the <c>get.p</c> or <c>set.p</c> of, or null for an ordinary method (V6, #27).</summary>
+    public string? AccessorProperty =>
+        Function.Name.StartsWith("get.", StringComparison.Ordinal) || Function.Name.StartsWith("set.", StringComparison.Ordinal)
+            ? Function.Name[4..]
+            : null;
+
+    /// <summary>Whether this is a <c>get.p</c> method.</summary>
+    public bool IsGetter => Function.Name.StartsWith("get.", StringComparison.Ordinal);
+}
 
 /// <summary>
 /// A MATLAB <c>classdef … end</c>: the whole content of a class file. The blocks are flattened here —

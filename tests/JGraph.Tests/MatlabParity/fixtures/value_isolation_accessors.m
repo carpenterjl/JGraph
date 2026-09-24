@@ -2,9 +2,9 @@
 % method storing a value later written (#27), and the order R2025b calls getter, setter, subscripts,
 % end and the right-hand side in a composite write through a property with get.p/set.p, on a value
 % class and a handle class, standing alone and held in a struct field or a cell (#147, the order
-% V6's write-back rule follows), and a Dependent property read through get.q (#28). JGraph refuses
-% set.p/get.p and the Dependent attribute in a class file, which stops the whole run at the first
-% construction: the recording carries a RUN line pending V6, and every case is owned by V6.
+% V6's write-back rule follows), and a Dependent property read through get.q (#28). Until V6.16
+% JGraph refused set.p/get.p and the Dependent attribute in a class file, which stopped the whole
+% run at the first construction; every line agrees since.
 
 run_case('a028_dependent_get_read', @a028_dependent_get_read);
 run_case('a027_set_method_store', @a027_set_method_store);

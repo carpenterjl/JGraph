@@ -289,6 +289,24 @@ internal static partial class JgsBuiltins
                 return JgsValue.StructArray(new JgsStructArray([]), 0, 0);
             }
 
+            // struct(obj) is a struct of the object's properties, each read as a dot would read it,
+            // so a property with a get method is its answer (V6, #28, measured: the getters run in
+            // declaration order); a Dependent property nothing can answer for is left out.
+            if (args.Count == 1 && args[0].Type == JgsType.Object)
+            {
+                JgsObject instance = args[0].AsObject;
+                var fields = new Dictionary<string, JgsValue>(StringComparer.Ordinal);
+                foreach (ClassProperty property in instance.Class.Properties)
+                {
+                    if (instance.Class.DisplayValue(instance, property) is { } held)
+                    {
+                        fields[property.Spec.Name] = instance.Class.TryGetter(property.Spec.Name, out _) ? held : JgsValue.Share(held);
+                    }
+                }
+
+                return JgsValue.Struct(fields);
+            }
+
             if (args.Count % 2 != 0)
             {
                 throw new JgsRuntimeException(line, col, "struct takes name/value pairs.");
@@ -302,7 +320,10 @@ internal static partial class JgsBuiltins
             Arity("fieldnames", args, 1, line, col);
 
             // A column, as MATLAB's is (measured): fieldnames(s)' is the row a script compares with.
-            JgsValue names = JgsValue.Cell(StructOf("fieldnames", args[0], line, col).Keys.Select(JgsValue.Str).ToArray());
+            // On an object it is the property names, Dependent ones included, and runs no getter (V6, #28).
+            JgsValue names = args[0].Type == JgsType.Object
+                ? JgsValue.Cell(args[0].AsObject.Class.Properties.Select(static p => JgsValue.Str(p.Spec.Name)).ToArray())
+                : JgsValue.Cell(StructOf("fieldnames", args[0], line, col).Keys.Select(JgsValue.Str).ToArray());
             names.Reshape(names.AsCell.Length, 1);
             return names;
         });

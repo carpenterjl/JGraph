@@ -76,7 +76,7 @@ internal sealed partial class Interpreter
                     target = brace.Target;
                     continue;
                 case CallExpr call:
-                    if (!AllInert(call.Arguments, env))
+                    if (!AllInert(call.Arguments, env) || EndReadsThroughObject(call.Callee, call.Arguments, env))
                     {
                         return false;
                     }
@@ -84,7 +84,7 @@ internal sealed partial class Interpreter
                     target = call.Callee;
                     continue;
                 case IndexExpr index:
-                    if (!AllInert(index.Indices, env))
+                    if (!AllInert(index.Indices, env) || EndReadsThroughObject(index.Target, index.Indices, env))
                     {
                         return false;
                     }
@@ -95,6 +95,27 @@ internal sealed partial class Interpreter
                     return true;
             }
         }
+    }
+
+    /// <summary>
+    /// Whether an <c>end</c> among <paramref name="subscripts"/> reads its container through an
+    /// object's property, whose get method may run script code (V6, #147): <c>o.q(end) = 8</c> is
+    /// then not inert, and its parts run first, the <c>end</c> calling the getter afresh.
+    /// </summary>
+    private bool EndReadsThroughObject(Expr container, IReadOnlyList<Expr> subscripts, JgsEnvironment env)
+    {
+        if (!AnyClasses || container is VariableExpr || !AnyMentionsEnd(subscripts))
+        {
+            return false;
+        }
+
+        Expr root = container;
+        while (InnerOf(root) is { } inner)
+        {
+            root = inner;
+        }
+
+        return root is VariableExpr name && LookUp(name.Name, env, out JgsValue bound) && bound.Type == JgsType.Object;
     }
 
     /// <summary>
@@ -167,8 +188,13 @@ internal sealed partial class Interpreter
             return subscripts;
         }
 
-        int[]? extents = null;
-        var prepared = new Expr[subscripts.Count];
+        // The container is read where an end stands, not before the subscript starts: a subscript
+        // that runs script code before its end runs it first (o.p(idx_l():end) on a property with
+        // a get method is idx;get in R2025b, #147), and every subscript that mentions end reads
+        // the container afresh.
+        int count = subscripts.Count;
+        int[] none = new int[count];
+        var prepared = new Expr[count];
         for (int i = 0; i < prepared.Length; i++)
         {
             Expr subscript = subscripts[i];
@@ -178,12 +204,9 @@ internal sealed partial class Interpreter
                 continue;
             }
 
-            if (extents is null)
-            {
-                extents = MentionsEnd(subscript) ? WriteExtents(container, subscripts.Count, env) : new int[subscripts.Count];
-            }
-
-            JgsValue value = EvaluateIndexArgument(subscript, extents, i, env)!;
+            JgsValue value = MentionsEnd(subscript)
+                ? EvaluateIndexArgument(subscript, () => WriteExtents(container, count, env), i, env)!
+                : EvaluateIndexArgument(subscript, none, i, env)!;
             prepared[i] = new PreEvaluated(value) { Line = subscript.Line, Column = subscript.Column };
         }
 

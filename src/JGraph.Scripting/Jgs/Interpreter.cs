@@ -93,7 +93,23 @@ internal sealed partial class Interpreter
     // 'end' resolves against the top entry: the extents of the value being subscripted, and which
     // subscript slot is being evaluated. Two entries make A(end, end) mean the last row and the last
     // column rather than the last element twice.
-    private readonly List<(int[] Extents, int Slot)> _indexContext = new();
+    private readonly List<IndexContext> _indexContext = new();
+
+    /// <summary>
+    /// One entry of the <c>end</c> stack: the extents of the value being subscripted - or how to
+    /// read them, when the read runs script code and has to happen where <c>end</c> stands in the
+    /// subscript (V6, #147: <c>o.p(idx_l():end)</c> on a property with a get method is
+    /// <c>idx;get</c>, left to right) - and the subscript slot being evaluated.
+    /// </summary>
+    private sealed class IndexContext(int[]? extents, Func<int[]>? compute, int slot)
+    {
+        private int[]? _extents = extents;
+
+        public int Slot => slot;
+
+        /// <summary>The extents, read on the first <c>end</c> when they were given lazily.</summary>
+        public int[] Extents => _extents ??= compute!();
+    }
 
     private readonly Action _cancelCheck; // per-chunk poll inside packed operations
     private long _steps;
@@ -2313,8 +2329,8 @@ internal sealed partial class Interpreter
                 // The stack holds the target's *extents* and which subscript is being evaluated;
                 // 'end' is the last valid *index* along that dimension, which in a 0-based dialect
                 // is one less than the extent and in a 1-based one is the extent itself.
-                (int[] extents, int slot) = _indexContext[^1];
-                return JgsValue.Number(extents[slot] - 1 + Dialect.IndexBase);
+                IndexContext context = _indexContext[^1];
+                return JgsValue.Number(context.Extents[context.Slot] - 1 + Dialect.IndexBase);
 
             case AllExpr:
                 throw new JgsRuntimeException(expression.Line, expression.Column,
@@ -5489,7 +5505,15 @@ internal sealed partial class Interpreter
         }
         else
         {
+            _readRanGetter = false;
             callee = EvaluateCallee(call.Callee, env);
+
+            // x = o.p(end) on a property with a get method: R2025b reads the property once for the
+            // end and once for the value (get;get), and the value is the second reading's (V6, #147).
+            if (_readRanGetter && call.Callee is MemberExpr && AnyMentionsEnd(call.Arguments))
+            {
+                callee = EvaluateCallee(call.Callee, env);
+            }
         }
 
         // M5's index-target scope (`G(f())`, #155: the read sees G as it was when the read began)
@@ -6329,14 +6353,24 @@ internal sealed partial class Interpreter
     /// Evaluates one subscript with <c>end</c> bound to the extent of the slot it occupies.
     /// Returns null for a lone ':' (select everything along this dimension).
     /// </summary>
-    private JgsValue? EvaluateIndexArgument(Expr argument, int[] extents, int slot, JgsEnvironment env)
+    private JgsValue? EvaluateIndexArgument(Expr argument, int[] extents, int slot, JgsEnvironment env) =>
+        EvaluateIndexArgument(argument, new IndexContext(extents, null, slot), env);
+
+    /// <summary>
+    /// Evaluates one subscript with <c>end</c> bound to extents read only when an <c>end</c> is
+    /// reached, in its place among the subscript's other parts (V6, #147).
+    /// </summary>
+    private JgsValue? EvaluateIndexArgument(Expr argument, Func<int[]> extents, int slot, JgsEnvironment env) =>
+        EvaluateIndexArgument(argument, new IndexContext(null, extents, slot), env);
+
+    private JgsValue? EvaluateIndexArgument(Expr argument, IndexContext context, JgsEnvironment env)
     {
         if (argument is AllExpr)
         {
             return null;
         }
 
-        _indexContext.Add((extents, slot));
+        _indexContext.Add(context);
         try
         {
             return Evaluate(argument, env);

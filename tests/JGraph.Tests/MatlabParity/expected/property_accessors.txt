@@ -1,0 +1,54 @@
+CHK|pa01_default_no_set| / |exact
+CHK|pa02_ctor_set|set;get; / 5/double|exact
+CHK|pa03_read|start;get; / [1 2 3]/double|exact
+CHK|pa04_read_in_method|start;get; / [1 2 3]/double|exact
+CHK|pa05_whole_set|start;set;get; / 9/double|exact
+CHK|pa06_indexed_set|start;idx;rhs;get;set;get; / [1 9 3]/double|exact
+CHK|pa07_end_set|start;get;rhs;get;set;get; / [1 2 9]/double|exact
+CHK|pa08_delete_elem|start;get;set;get; / [1 3]/double|exact
+CHK|pa09_dep_read|start;getq;get; / [2 4 6]/double|exact
+CHK|pa10_dep_set|start;setq;set;get; / [4 4 4]/double|exact
+CHK|pa11_dep_indexed_set|start;getq;get;setq;set;get; / [1 4 3]/double|exact
+CHK|pa12_struct_prop_nested|start;rhs;gets;sets;gets; / [1 9 3]/double|exact
+CHK|pa13_struct_prop_field_whole|start;gets;sets;gets; / 5/double|exact
+CHK|pa14_validate_before_set|start;E; / 1/double|exact
+CHK|pa15_validate_class_before_set|start;setn; / 97/double|exact
+CHK|pa16_set_refuses_value_stays|E:negative refused; / [1 2 3]/double|exact
+CHK|pa17_set_refuses_handle_stays|E:negative refused; / [1 2 3]/double|exact
+CHK|pa18_copy_semantics|start;get;set;get;get; / [1 2 3 9 2 3]/double|exact
+CHK|pa19_share_into_set| / [1 1 1]/double|exact
+CHK|pa20_handle_alias|start;get;set;get; / [1 9 3]/double|exact
+CHK|pa21_handle_struct_held_whole|start;set;get; / 7/double|exact
+CHK|pa22_value_in_struct_end|start;get;rhs;get;set;get; / [1 2 9]/double|exact
+CHK|pa23_value_in_cell_indexed|start;idx;rhs;get;set;get; / [1 9 3]/double|exact
+CHK|pa24_get_writes_same_prop|start;get;set; / [1 2 3]/double|exact
+CHK|pa25_set_reads_same_prop|start;set;get;old3;get; / 5/double|exact
+CHK|pa26_bad_value_set|ERR The set function for property 'p' must return an instance of class 'AccBadSet'.|exact
+CHK|pa27_bad_handle_set|start;set; / 5/double|exact
+CHK|pa28_dep_default| / 2/double|exact
+CHK|pa29_dep_no_get_read|ERR In class 'AccDepNoGet', no get method is defined for dependent property 'r'. A dependent property needs a get method to access its value.|exact
+CHK|pa30_dep_no_get_write|ERR In class 'AccDepNoGet', no set method is defined for dependent property 'r'. A dependent property needs a set method to assign its value.|exact
+CHK|pa31_dep_no_set_write|ERR In class 'DepBox', no set method is defined for dependent property 'q'. A dependent property needs a set method to assign its value.|exact
+CHK|pa32_get_no_prop|ERR Cannot specify a get function for property 'zz' in class 'AccGetNoProp', because that property is not defined by that class.|exact
+CHK|pa33_properties_list|p,q|exact
+CHK|pa34_isprop|1 1 0|exact
+CHK|pa35_disp_logs|start;get;gets;getq;get; / |exact
+CHK|pa36_compound|start;get;rhs;set;get; / [10 11 12]/double|exact
+CHK|pa37_growth|start;get;rhs;get;set;get; / [1 2 3 9]/double|exact
+CHK|pa38_read_elem|start;get; / 2/double|exact
+CHK|pa39_read_end|start;get;get; / 3/double|exact
+CHK|pa40_handle_dep_set|start;getq;get;setq;set;get; / [1 4 3]/double|exact
+CHK|pa41_handle_dep_no_set|E:In class 'DepBox', no set method is defined for dependent property 'q'. A dependent property needs a set method to assign its value.; / [1 1 1]/double|exact
+CHK|pa42_handle_hits|start;get;get; / [1 2 3 1 2]/double|exact
+CHK|pa43_struct_prop_read_nested|start;gets; / 2/double|exact
+CHK|pa44_dep_in_script|start;setq;set;getq;get; / [2 4 6]/double|exact
+CHK|pa45_fieldnames|start; / p,s,n,q|exact
+CHK|pa46_struct_of|start;get;gets;getq;get; / p,s,n,q [2 4 6]|exact
+CHK|pa47_set_whole_empty|start;set;get; / [0 0]/double|exact
+CHK|pa48_value_in_cell_whole|start;set;get; / 4/double|exact
+CHK|pa49_set_in_method|start;get;set; / 1/double|exact
+CHK|pa50_dep_end_set|start;getq;get;getq;get;setq;set;get; / [1 2 4]/double|exact
+CHK|pa51_numel|start;get; / 3/double|exact
+CHK|pa52_methods_list|AccBox,peek|exact
+CHK|pa53_handle_in_cell_dep|start;getq;get;setq;set;get; / [10 2 3]/double|exact
+CHK|pa54_two_writes_one_statement_each|start;get;set;get;set;get; / [7 2 8]/double|exact

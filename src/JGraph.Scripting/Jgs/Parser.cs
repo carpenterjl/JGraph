@@ -613,13 +613,14 @@ internal sealed class Parser
     /// </summary>
     private void ParsePropertiesBlock(string className, Token block, List<ClassProperty> into)
     {
-        HashSet<string> attributes = ReadBlockAttributes(className, block, "Constant", "SetObservable");
+        HashSet<string> attributes = ReadBlockAttributes(className, block, "Constant", "SetObservable", "Dependent");
         bool constant = attributes.Contains("Constant");
         bool observable = attributes.Contains("SetObservable");
+        bool dependent = attributes.Contains("Dependent");
         SkipSeparators();
         while (!Check(TokenType.End) && !IsAtEnd)
         {
-            into.Add(new ClassProperty(ParseArgumentSpec(), constant, observable));
+            into.Add(new ClassProperty(ParseArgumentSpec(), constant, observable, dependent));
             SkipSeparators();
         }
 
@@ -655,20 +656,35 @@ internal sealed class Parser
     {
         bool isStatic = ReadBlockAttributes(className, block, "Static").Contains("Static");
         SkipSeparators();
-        while (!Check(TokenType.End) && !IsAtEnd)
+        _inMethodsBlock = true;
+        try
         {
-            Token header = Current;
-            if (!Check(TokenType.Function))
+            while (!Check(TokenType.End) && !IsAtEnd)
             {
-                throw Error(header, "A 'methods' block holds functions and nothing else.");
-            }
+                Token header = Current;
+                if (!Check(TokenType.Function))
+                {
+                    throw Error(header, "A 'methods' block holds functions and nothing else.");
+                }
 
-            into.Add(new ClassMethod((FnStmt)ParseMatlabFunction(header), isStatic));
-            SkipSeparators();
+                into.Add(new ClassMethod((FnStmt)ParseMatlabFunction(header), isStatic));
+                SkipSeparators();
+            }
+        }
+        finally
+        {
+            _inMethodsBlock = false;
         }
 
         Expect(TokenType.End, "'end' to close the methods block");
     }
+
+    /// <summary>
+    /// Whether the function being parsed sits in a <c>methods</c> block, where <c>get.p</c> and
+    /// <c>set.p</c> are the names a property's accessors are written under (V6, #27). Anywhere else
+    /// a dot after a function name is the parse error it always was.
+    /// </summary>
+    private bool _inMethodsBlock;
 
     /// <summary>
     /// Reads the optional <c>(…)</c> attribute list after <c>properties</c>, <c>methods</c> or
@@ -744,6 +760,15 @@ internal sealed class Parser
         {
             outputs.Add(name.Text);
             name = Expect(TokenType.Identifier, "a function name");
+        }
+
+        // 'function v = get.p(obj)' and 'function obj = set.p(obj, v)' in a methods block: the
+        // property's accessors, kept under the dotted name the class model reads them back by.
+        if (_inMethodsBlock && name.Text is "get" or "set" && Check(TokenType.Dot))
+        {
+            Advance();
+            Token property = Expect(TokenType.Identifier, "a property name");
+            name = name with { Text = name.Text + "." + property.Text };
         }
 
         var parameters = new List<string>();

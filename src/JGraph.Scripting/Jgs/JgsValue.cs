@@ -1358,7 +1358,9 @@ internal sealed class JgsValue
         sb.Append(" with properties:");
         foreach (ClassProperty property in instance.Class.Properties)
         {
-            if (!instance.Fields.TryGetValue(property.Spec.Name, out JgsValue? held))
+            // A property with a get method shows as that method's answer, a Dependent one included
+            // (V6, #27, #28: R2025b's display runs every getter).
+            if (instance.Class.DisplayValue(instance, property) is not { } held)
             {
                 continue;
             }

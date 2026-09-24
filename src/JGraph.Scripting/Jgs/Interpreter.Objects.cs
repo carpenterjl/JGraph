@@ -39,6 +39,18 @@ internal sealed partial class Interpreter
     {
         JgsObject instance = target.AsObject;
         RequireLive(instance, member.Line, member.Column);
+
+        // A property with a get method reads as that method's answer (V6, #27, #28) - except inside
+        // the method's own body, where obj.p is the storage - and a Dependent property has nothing
+        // else to read as, so one without a get method is refused in R2025b's words.
+        JgsClass definition = instance.Class;
+        if (definition.Property(field) is { Constant: false } property
+            && ((definition.TryGetter(field, out _) && !InAccessor(definition.GetterTag(field))) || property.Dependent))
+        {
+            _readRanGetter = true;
+            return definition.CallGetter(field, target, member.Line, member.Column);
+        }
+
         if (instance.Fields.TryGetValue(field, out JgsValue? held))
         {
             return held;
@@ -85,6 +97,22 @@ internal sealed partial class Interpreter
         throw new JgsRuntimeException(member.Line, member.Column,
             $"'{instance.Class.Name}' has no property or method '{field}'.");
     }
+
+    /// <summary>
+    /// Whether the innermost running function is the accessor <paramref name="tag"/> names (V6,
+    /// #27): inside <c>get.p</c> a read of <c>obj.p</c> is the storage, and inside <c>set.p</c> a
+    /// write of <c>obj.p</c> is a store. The rule is the accessor's own body's (measured in R2025b:
+    /// a helper it calls goes through the accessor again, so a getter reading through a helper
+    /// recurses), which is why it asks the frame and not the object.
+    /// </summary>
+    private bool InAccessor(string tag) => CurrentFrame.AccessorOf == tag;
+
+    /// <summary>
+    /// Whether the last property read ran a get method - set by <see cref="ObjectMember"/>, read by
+    /// the call road so that <c>x = o.p(end)</c> reads the property once for <c>end</c> and once for
+    /// the value, as R2025b does (<c>get;get</c>).
+    /// </summary>
+    private bool _readRanGetter;
 
     /// <summary>The <c>delete</c> and <c>isvalid</c> every handle class has without writing them.</summary>
     private sealed class InheritedHandleMethod(string name, JgsObject instance) : IJgsCallable
@@ -224,6 +252,29 @@ internal sealed partial class Interpreter
         {
             throw new JgsRuntimeException(member.Line, member.Column,
                 $"{definition.Name}.{field} is Constant, so it belongs to the class and cannot be assigned to.");
+        }
+
+        // A property with a set method is written by that method (V6, #27, #28) - except inside the
+        // method's own body, where obj.p = v is the store - after the declaration's checks, which
+        // R2025b runs first (a refused value never reaches the set method). A handle class's set
+        // method writes the object in place; a value class's returns the object the property was
+        // set on, which goes back where the object was read from, as o = set.p(o, v) would. A
+        // Dependent property with no set method is refused in R2025b's words.
+        if ((definition.TrySetter(field, out _) || property.Dependent) && !InAccessor(definition.SetterTag(field)))
+        {
+            JgsValue verified = definition.Check(property, CopyForBinding(value), member.Line, member.Column);
+            JgsValue set = definition.CallSetter(field, holder, verified, member.Line, member.Column);
+            if (!ReferenceEquals(set, holder))
+            {
+                var outer = new AssignExpr(member.Target, TokenType.Assign, new PreEvaluated(set) { Line = member.Line, Column = member.Column })
+                {
+                    Line = member.Line,
+                    Column = member.Column,
+                };
+                EvaluateAssign(outer, env);
+            }
+
+            return true;
         }
 
         // A SetObservable property with a listener raises PreSet before the write and PostSet after

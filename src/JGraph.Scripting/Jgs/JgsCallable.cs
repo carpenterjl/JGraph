@@ -263,6 +263,9 @@ internal sealed class UserFunction : IJgsCallable, IJgsMultiCallable
     /// function's body when its source file is live-edited.</summary>
     public FnStmt Declaration => _declaration;
 
+    /// <summary>The accessor tag a call's frame carries (<see cref="JgsEnvironment.AccessorOf"/>), or null (V6, #27).</summary>
+    internal string? AccessorOf { get; init; }
+
     /// <inheritdoc />
     public JgsValue Call(IReadOnlyList<JgsValue> arguments, int line, int column)
     {
@@ -299,6 +302,7 @@ internal sealed class UserFunction : IJgsCallable, IJgsMultiCallable
         var local = new JgsEnvironment(_closure)
         {
             IsCallBoundary = _interpreter.Dialect.MatlabFunctions && !_closure.IsCallBoundary,
+            AccessorOf = AccessorOf,
         };
         for (int i = 0; i < fixedCount && i < arguments.Count; i++)
         {

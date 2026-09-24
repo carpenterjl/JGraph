@@ -1,7 +1,6 @@
-classdef LogBox
-    % A value class whose property accessors log every call, to record the order of getter, setter,
-    % subscripts, end and right-hand side in a composite write (appendix A #147;
-    % value_isolation_accessors.m constructs it).
+classdef AccSetReads
+    % set.p reads obj.p, which calls get.p: only the write is the storage's inside a setter
+    % (property_accessors.m).
     properties
         p = [1 2 3]
     end
@@ -12,6 +11,8 @@ classdef LogBox
         end
         function obj = set.p(obj, v)
             vlog('set');
+            old = obj.p;
+            vlog(sprintf('old%d', numel(old)));
             obj.p = v;
         end
     end

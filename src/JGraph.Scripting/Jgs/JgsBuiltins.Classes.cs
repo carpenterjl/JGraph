@@ -52,6 +52,39 @@ internal static partial class JgsBuiltins
             return CellColumn(MethodNames("methods", args[0], interpreter, line, col));
         });
 
+        // isprop(obj, name): whether the object declares the property (V6, #28: a Dependent one
+        // counts), whether a class-named value or a graphics handle answers to it; false otherwise.
+        Define("isprop", (args, line, col) =>
+        {
+            Arity("isprop", args, 2, line, col);
+            string name = TextOf(args[1]);
+            JgsValue target = args[0];
+            if (target.Type == JgsType.Object)
+            {
+                return JgsValue.Bool(target.AsObject.Class.Property(name) is not null);
+            }
+
+            if (target.Type == JgsType.Struct && target.ClassName is not null)
+            {
+                return JgsValue.Bool(!target.IsStructArray && target.AsStruct.ContainsKey(name));
+            }
+
+            if (JgsHandleRegistry.TryGet(target, out JgsHandleEntry? handle))
+            {
+                try
+                {
+                    _ = GetHandleProperty(handle, name, line, col);
+                    return JgsValue.Bool(true);
+                }
+                catch (JgsRuntimeException)
+                {
+                    return JgsValue.Bool(false);
+                }
+            }
+
+            return JgsValue.Bool(false);
+        });
+
         Define("metaclass", (args, line, col) =>
         {
             Arity("metaclass", args, 1, line, col);

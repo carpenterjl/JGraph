@@ -110,6 +110,15 @@ internal sealed class JgsEnvironment
     public bool IsCallBoundary { get; init; }
 
     /// <summary>
+    /// The accessor this frame is the body of - <c>get:Class.p</c> or <c>set:Class.p</c> - or null
+    /// (V6, #27). Inside <c>get.p</c> a read of <c>obj.p</c> is the stored value, and inside
+    /// <c>set.p</c> a write of <c>obj.p</c> is a store, which is MATLAB's rule for the accessor's
+    /// own body alone (measured in R2025b: a helper the body calls goes through the accessor
+    /// again, the getter called from the setter runs, and so does the setter called from the getter).
+    /// </summary>
+    public string? AccessorOf { get; init; }
+
+    /// <summary>
     /// Whether this scope is an anonymous function's workspace: the snapshot taken when the handle
     /// was made, and the frame a call of it binds its parameters in. MATLAB calls that a static
     /// workspace — a captured name can be changed, a new one cannot be added — and

@@ -19,7 +19,7 @@ below is — and that is why an entire folder could sit at nought implemented wi
 
 ## Where it stands
 
-**343 of 377 names implemented**, and
+**344 of 377 names implemented**, and
 **724 of 1036 documented syntax forms accepted**.
 
 | Folder | Names | Forms documented | Forms accepted | Names missing |
@@ -33,7 +33,7 @@ below is — and that is why an entire folder could sit at nought implemented wi
 | `validators` | 28 / 31 | 33 | 20 | 3 |
 | `matfun` | 25 / 25 | 62 | 51 | 0 |
 | `specfun` | 23 / 23 | 38 | 30 | 0 |
-| `datatypes` | 9 / 22 | 40 | 3 | 13 |
+| `datatypes` | 10 / 22 | 40 | 3 | 12 |
 | `elfun` | 19 / 19 | 25 | 19 | 0 |
 | `timefun` | 10 / 12 | 42 | 3 | 2 |
 | `lang` | 3 / 10 | 22 | 2 | 7 |
@@ -56,9 +56,9 @@ command that quite rightly rejects it.
 
 ## Not implemented
 
-### `datatypes` — 13
+### `datatypes` — 12
 
-`celldisp` `cellplot` `formattedDisplayText` `isUnderlyingType` `iscom` `isenum` `isinterface` `ismethod` `isprop` `mat2cell` `methodsview` `substruct` `swapbytes`
+`celldisp` `cellplot` `formattedDisplayText` `isUnderlyingType` `iscom` `isenum` `isinterface` `ismethod` `mat2cell` `methodsview` `substruct` `swapbytes`
 
 ### `lang` — 7
 

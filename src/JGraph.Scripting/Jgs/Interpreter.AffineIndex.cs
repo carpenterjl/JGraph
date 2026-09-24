@@ -121,7 +121,7 @@ internal sealed partial class Interpreter
             JgsValue startValue;
             JgsValue stepValue;
             JgsValue stopValue;
-            _indexContext.Add((extents, slot));
+            _indexContext.Add(new IndexContext(extents, null, slot));
             try
             {
                 startValue = Evaluate(range.Start, env);
