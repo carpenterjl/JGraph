@@ -37,16 +37,21 @@ run_case('h_isvalid_deleted_object_prop_write', @h_isvalid_deleted_object_prop_w
 run_case('h_isvalid_delete_twice', @h_isvalid_delete_twice);
 run_case('h_isvalid_delete_runs_destructor', @h_isvalid_delete_runs_destructor);
 run_case('h_isvalid_value_object', @h_isvalid_value_object);
-run_case('h_isvalid_number', @h_isvalid_number);
+run_case('h_isvalid_number', @h_isvalid_number, 'div=ADR0167');
 close all
 
-function run_case(name, fn)
+function run_case(name, fn, rule)
+% The rule is exact unless a case names its accepted divergence: h_isvalid_number (a handle here
+% is a number, so a number that names nothing is a dead handle and isvalid answers false; ADR 0167).
+if nargin < 3
+    rule = 'exact';
+end
 global vlog_text
 vlog_text = '';
 try
-    fprintf('CHK|%s|%s|exact\n', name, clean(fn()));
+    fprintf('CHK|%s|%s|%s\n', name, clean(fn()), rule);
 catch err
-    fprintf('CHK|%s|ERR %s|exact\n', name, clean(err.message));
+    fprintf('CHK|%s|ERR %s|%s\n', name, clean(err.message), rule);
 end
 end
 

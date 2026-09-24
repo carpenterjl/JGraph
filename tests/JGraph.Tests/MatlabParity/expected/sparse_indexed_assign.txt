@@ -21,7 +21,7 @@ CHK|s_rhs_sparse|1 2 [0 4 0;0 3 0]|exact
 CHK|s_rhs_dense_matrix|1 3 [0 1 0;2 0 3]|exact
 CHK|s_rhs_is_own_rows|1 3 [0 3 0;1 0 2]|exact
 CHK|s_rhs_logical|double 1 4 [1 1 2;0 3 0]|exact
-CHK|s_rhs_complex|1 0 4 0+2i|exact|pending V6|ERR A sparse matrix here holds real values; a complex value cannot be assigned into one.
+CHK|s_rhs_complex|1 0 4 0+2i|div=ADR0167|diverges|ERR A sparse matrix here holds real values; a complex value cannot be assigned into one.
 CHK|s_delete_row|[1 3] 1 1 [0 3 0]|exact
 CHK|s_delete_column|[2 2] 1 2 [1 2;0 0]|exact
 CHK|s_delete_rows_by_mask|[1 2] 1 1 [0 2]|exact

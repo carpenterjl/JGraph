@@ -10,7 +10,7 @@ run_case('h_record_fields', @h_record_fields);
 run_case('h_message_local_function', @h_message_local_function);
 run_case('h_message_anonymous_error', @h_message_anonymous_error);
 run_case('h_message_anonymous_calls_local', @h_message_anonymous_calls_local);
-run_case('h_message_builtin_failure', @h_message_builtin_failure);
+run_case('h_message_builtin_failure', @h_message_builtin_failure, 'div=ADR0167');
 run_case('h_message_no_identifier', @h_message_no_identifier);
 run_case('h_index_nonuniform', @h_index_nonuniform);
 run_case('h_index_arrayfun_matrix', @h_index_arrayfun_matrix);
@@ -28,11 +28,16 @@ run_case('z_mat2str_negative_zero_complex', @z_mat2str_negative_zero_complex);
 run_case('z_mat2str_negative_zero_precision', @z_mat2str_negative_zero_precision);
 run_case('z_mat2str_small_negative', @z_mat2str_small_negative);
 
-function run_case(name, fn)
+function run_case(name, fn, rule)
+% The rule is exact unless a case names its accepted divergence: h_message_builtin_failure (an
+% error the runtime raises itself has no identifier and no "Error using" header; ADR 0062, 0167).
+if nargin < 3
+    rule = 'exact';
+end
 try
-    fprintf('CHK|%s|%s|exact\n', name, clean(fn()));
+    fprintf('CHK|%s|%s|%s\n', name, clean(fn()), rule);
 catch err
-    fprintf('CHK|%s|ERR %s|exact\n', name, clean(err.message));
+    fprintf('CHK|%s|ERR %s|%s\n', name, clean(err.message), rule);
 end
 end
 

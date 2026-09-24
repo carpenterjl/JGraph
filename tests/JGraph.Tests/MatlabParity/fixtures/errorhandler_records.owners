@@ -1,2 +1,0 @@
-# The stage of the value-ownership plan that completes each line JGraph fails (appendix A's stage column).
-h_message_builtin_failure	V6	# an error the runtime raises itself has no identifier or "Error using" header (ADR 0062); completes as an accepted divergence named in ADR 0167

@@ -32,23 +32,28 @@ run_case('g_gfx_whole_prop_rebind_after_read', @g_gfx_whole_prop_rebind_after_re
 run_case('g_gfx_set_indexed_via_temp', @g_gfx_set_indexed_via_temp);
 run_case('a132_axes_xlim_indexed_write', @a132_axes_xlim_indexed_write);
 run_case('a132_figure_position_indexed_write', @a132_figure_position_indexed_write);
-run_case('a141_handle_array_element_prop_write', @a141_handle_array_element_prop_write);
+run_case('a141_handle_array_element_prop_write', @a141_handle_array_element_prop_write, 'div=ADR0167');
 run_case('a134_handle_array_cslist_prop_write', @a134_handle_array_cslist_prop_write);
 run_case('g_multi_handle_set', @g_multi_handle_set);
 run_case('a133_graphics_prop_growth_write', @a133_graphics_prop_growth_write);
 run_case('a133_graphics_prop_delete_write', @a133_graphics_prop_delete_write);
-run_case('a141_line_width_default', @a141_line_width_default);
+run_case('a141_line_width_default', @a141_line_width_default, 'div=ADR0167');
 run_case('a150_global_handle_prop_write', @a150_global_handle_prop_write);
 run_case('a153_order_graphics_ydata_end_vs_rhs', @a153_order_graphics_ydata_end_vs_rhs);
 close all
 
-function run_case(name, fn)
+function run_case(name, fn, rule)
+% The rule is exact unless a case names its accepted divergence: the two a141 cases (R2025b's
+% default LineWidth is 0.5 points; JGraph draws 1.5 by design; ADR 0167).
+if nargin < 3
+    rule = 'exact';
+end
 global vlog_text
 vlog_text = '';
 try
-    fprintf('CHK|%s|%s|exact\n', name, clean(fn()));
+    fprintf('CHK|%s|%s|%s\n', name, clean(fn()), rule);
 catch err
-    fprintf('CHK|%s|ERR %s|exact\n', name, clean(err.message));
+    fprintf('CHK|%s|ERR %s|%s\n', name, clean(err.message), rule);
 end
 end
 

@@ -13,7 +13,7 @@ run_case('g_line_ydata_end_write', @g_line_ydata_end_write);
 run_case('g_line_ydata_read_modify_write', @g_line_ydata_read_modify_write);
 run_case('g_line_ydata_growth', @g_line_ydata_growth);
 run_case('g_line_ydata_delete', @g_line_ydata_delete);
-run_case('g_line_manual_x_growth', @g_line_manual_x_growth);
+run_case('g_line_manual_x_growth', @g_line_manual_x_growth, 'div=ADR0167');
 run_case('g_line_ydata_self_overlap', @g_line_ydata_self_overlap);
 run_case('g_line_ydata_through_callee', @g_line_ydata_through_callee);
 run_case('g_line_ydata_cell_held', @g_line_ydata_cell_held);
@@ -69,11 +69,16 @@ run_case('k_dict_brace_noncell_refused', @k_dict_brace_noncell_refused);
 run_case('k_dict_brace_whole_write', @k_dict_brace_whole_write);
 run_case('k_dict_two_keys_cell_values', @k_dict_two_keys_cell_values);
 
-function run_case(name, fn)
+function run_case(name, fn, rule)
+% The rule is exact unless a case names its accepted divergence: g_line_manual_x_growth (a series
+% here is one pair of equal length, so a YData longer than a chosen XData is refused; ADR 0167).
+if nargin < 3
+    rule = 'exact';
+end
 try
-    fprintf('CHK|%s|%s|exact\n', name, clean(fn()));
+    fprintf('CHK|%s|%s|%s\n', name, clean(fn()), rule);
 catch err
-    fprintf('CHK|%s|ERR %s|exact\n', name, clean(err.message));
+    fprintf('CHK|%s|ERR %s|%s\n', name, clean(err.message), rule);
 end
 end
 

@@ -31,4 +31,4 @@ CHK|h_isvalid_deleted_object_prop_write|ERR Invalid or deleted object.|exact
 CHK|h_isvalid_delete_twice|0|exact
 CHK|h_isvalid_delete_runs_destructor|D;after; 0|exact
 CHK|h_isvalid_value_object|ERR Undefined function 'isvalid' for input arguments of type 'ValueBox'.|exact
-CHK|h_isvalid_number|ERR Undefined function 'isvalid' for input arguments of type 'double'.|exact|pending V6|0
+CHK|h_isvalid_number|ERR Undefined function 'isvalid' for input arguments of type 'double'.|div=ADR0167|diverges|0

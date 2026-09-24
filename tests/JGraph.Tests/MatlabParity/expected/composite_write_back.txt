@@ -6,7 +6,7 @@ CHK|g_line_ydata_end_write|[1 2 5]|exact
 CHK|g_line_ydata_read_modify_write|[1 12 3]|exact
 CHK|g_line_ydata_growth|[1 2 3 4] [1 2 3 4]|exact
 CHK|g_line_ydata_delete|[1 3] [1 2]|exact
-CHK|g_line_manual_x_growth|[1 2 3 4] [10 20 30]|exact|pending V6|ERR YData has 4 values where the series has 3. Both coordinates are written together — set them in one call, or draw the series again.
+CHK|g_line_manual_x_growth|[1 2 3 4] [10 20 30]|div=ADR0167|diverges|ERR YData has 4 values where the series has 3. Both coordinates are written together — set them in one call, or draw the series again.
 CHK|g_line_ydata_self_overlap|[3 1 2]|exact
 CHK|g_line_ydata_through_callee|[1 2 3] [7 2 3]|exact
 CHK|g_line_ydata_cell_held|[0 2 3]|exact

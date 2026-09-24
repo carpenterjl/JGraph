@@ -27,7 +27,7 @@ run_case('s_rhs_sparse', @s_rhs_sparse);
 run_case('s_rhs_dense_matrix', @s_rhs_dense_matrix);
 run_case('s_rhs_is_own_rows', @s_rhs_is_own_rows);
 run_case('s_rhs_logical', @s_rhs_logical);
-run_case('s_rhs_complex', @s_rhs_complex);
+run_case('s_rhs_complex', @s_rhs_complex, 'div=ADR0167');
 run_case('s_delete_row', @s_delete_row);
 run_case('s_delete_column', @s_delete_column);
 run_case('s_delete_rows_by_mask', @s_delete_rows_by_mask);
@@ -45,11 +45,16 @@ run_case('s_refuse_three_subscripts', @s_refuse_three_subscripts);
 run_case('s_refuse_cell_rhs', @s_refuse_cell_rhs);
 run_case('s_loop_fill_diagonal', @s_loop_fill_diagonal);
 
-function run_case(name, fn)
+function run_case(name, fn, rule)
+% The rule is exact unless a case names its accepted divergence: s_rhs_complex (a sparse matrix
+% here holds real values, so a complex value is refused into one; ADR 0167).
+if nargin < 3
+    rule = 'exact';
+end
 try
-    fprintf('CHK|%s|%s|exact\n', name, clean(fn()));
+    fprintf('CHK|%s|%s|%s\n', name, clean(fn()), rule);
 catch err
-    fprintf('CHK|%s|ERR %s|exact\n', name, clean(err.message));
+    fprintf('CHK|%s|ERR %s|%s\n', name, clean(err.message), rule);
 end
 end
 
