@@ -2085,7 +2085,7 @@ internal sealed partial class Interpreter
     {
         // A scalar-double loop compiles once and runs on registers (M98); anything the compiler or
         // the entry check refuses walks below, which is always correct.
-        if (TryExecuteHotLoop(statement, env, out Completion compiled))
+        if (TryExecuteHotLoop(statement, env, steps: null, out Completion compiled))
         {
             return compiled;
         }
@@ -2110,22 +2110,14 @@ internal sealed partial class Interpreter
 
     private Completion ExecuteFor(ForStmt statement, JgsEnvironment env)
     {
-        // A for over a range with a scalar-double body compiles once and runs on registers (M98),
-        // never materializing the range; the compiled road evaluates the same bounds once and
-        // throws the same range errors. Anything refused walks below.
-        if (TryExecuteHotLoop(statement, env, out Completion compiled))
-        {
-            return compiled;
-        }
-
         // A range written out in the loop head is stepped rather than built (M132). MATLAB's two
         // spellings really do differ: `v = 0:0.1:1` computes its second half backwards from the last
         // element, and `for x = 0:0.1:1` adds the step again each pass, so the seventh value of the
-        // array and the seventh pass of the loop are one unit in the last place apart. The compiled
-        // road already stepped; this is the walk agreeing with it, and with MATLAB.
-        if (statement.Iterable is RangeExpr steppedRange)
+        // array and the seventh pass of the loop are one unit in the last place apart. A range is
+        // also the only head the register compiler takes (M98).
+        if (statement.Iterable is RangeExpr range)
         {
-            return ExecuteForOverSteps(statement, steppedRange, env);
+            return ExecuteForOverRange(statement, range, env);
         }
 
         // M5's loop-source scope: the loop walks the value its head named, so `for col = gm` with a
@@ -2181,6 +2173,10 @@ internal sealed partial class Interpreter
             || (rowCount == 0 && iterable.ArrayLength == 0 && iterable.Cols > 0);
         int iterationCount = byColumns ? JgsMatrix.ColCount(iterable) : iterable.ArrayLength;
         int columnRows = byColumns ? rowCount : 0;
+        if (iterationCount == 0)
+        {
+            return BindZeroTripVariable(statement, env);
+        }
 
         // The class of what is being walked, read once rather than per pass: an element read out of
         // an array is a bare number, so `for i = int16(1):int16(4)` bound a double i under a value
@@ -2257,6 +2253,11 @@ internal sealed partial class Interpreter
     /// </remarks>
     private Completion ExecuteForOverChars(ForStmt statement, string text, JgsEnvironment env)
     {
+        if (text.Length == 0)
+        {
+            return BindZeroTripVariable(statement, env);
+        }
+
         for (int index = 0; index < text.Length; index++)
         {
             Tick();
@@ -2286,7 +2287,21 @@ internal sealed partial class Interpreter
     /// and what the compiled loop was already doing. Everything else about the loop, including the
     /// class the bounds carry, is the walk's.
     /// </remarks>
-    private Completion ExecuteForOverSteps(ForStmt statement, RangeExpr range, JgsEnvironment env)
+    /// <summary>
+    /// The three bounds of a stepped range as one evaluation left them: the doubles, the count
+    /// <c>EvaluateRange</c> would have built, and the class the bounds carried (V8, ADR 0169).
+    /// </summary>
+    private readonly record struct RangeSteps(double Start, double Step, double Stop, long Count, JgsNumericClass Carried);
+
+    /// <summary>
+    /// Runs a <c>for</c> whose head is a range (V8, ADR 0169): the bounds run first, once, in the
+    /// order written, and only then does the compiled road load its registers — against the
+    /// environment as the bounds left it, since a bound may rebind, grow, clear or demote a vector
+    /// the body writes, or shadow a builtin it calls (#37). A refused entry walks the very steps the
+    /// bounds produced; nothing evaluates a bound twice, and a bound that throws throws before any
+    /// road is chosen.
+    /// </summary>
+    private Completion ExecuteForOverRange(ForStmt statement, RangeExpr range, JgsEnvironment env)
     {
         JgsNumericClass carried = JgsNumericClass.Double;
         JgsValue startValue = Evaluate(range.Start, env);
@@ -2296,13 +2311,45 @@ internal sealed partial class Interpreter
         {
             // A range of instants is a range of instants whichever spelling reaches it; the walk
             // over the built array is the one that knows how to carry the tag.
-            return ExecuteForOverArray(statement, EvaluateRange(range, env), env);
+            return ExecuteForOverArray(statement, RangeFromValues(range, startValue, stepValue, stopValue), env);
         }
 
         double start = RangeBoundValue(startValue, range.Start, "start", ref carried);
         double step = RangeBoundValue(stepValue, range.Step ?? range.Start, "step", ref carried);
         double stop = RangeBoundValue(stopValue, range.Stop, "stop", ref carried);
-        long count = HotLoopRangeCount(start, step, stop, range.Line, range.Column);
+        var steps = new RangeSteps(start, step, stop, HotLoopRangeCount(start, step, stop, range.Line, range.Column), carried);
+        if (steps.Count == 0)
+        {
+            return BindZeroTripVariable(statement, env); // no road has anything to run
+        }
+
+        // A register is a double and has nowhere to put a class, so a loop over `int16(1):int16(4)`
+        // would bind a double i where the walk binds an int16 — one construct with two answers
+        // depending on a threshold nobody can see. The walk takes it instead.
+        if (carried == JgsNumericClass.Double && TryExecuteHotLoop(statement, env, steps, out Completion compiled))
+        {
+            return compiled;
+        }
+
+        return ExecuteForOverSteps(statement, steps, env);
+    }
+
+    /// <summary>
+    /// A <c>for</c> that ran no pass leaves its variable bound to the 0-by-0 double (V8, ADR 0169).
+    /// Measured: an empty range, an integer range, a descending one, <c>[]</c>, a 1-by-0 double, an
+    /// empty cell, char or string array all leave <c>[]</c> of class double, whatever the variable
+    /// held before; a 0-by-3 source is not a zero-trip loop but three passes over 0-by-1 columns.
+    /// </summary>
+    private Completion BindZeroTripVariable(ForStmt statement, JgsEnvironment env)
+    {
+        BlockScope(env).Declare(statement.Variable, EmptyBracket()); // the [] the dialect writes
+        return Completion.Normal;
+    }
+
+    /// <summary>The walk over a stepped range, from the bounds <see cref="ExecuteForOverRange"/> evaluated.</summary>
+    private Completion ExecuteForOverSteps(ForStmt statement, RangeSteps steps, JgsEnvironment env)
+    {
+        (double start, double step, long count, JgsNumericClass carried) = (steps.Start, steps.Step, steps.Count, steps.Carried);
         for (long index = 0; index < count; index++)
         {
             JgsValue element = JgsValue.Number(start + (index * step));
@@ -2342,6 +2389,11 @@ internal sealed partial class Interpreter
         JgsValue[] elements = iterable.AsCell;
         int rows = System.Math.Max(iterable.Rows, 0);
         int cols = rows == 0 ? 0 : elements.Length / rows;
+        if (cols == 0)
+        {
+            return BindZeroTripVariable(statement, env);
+        }
+
         for (int c = 0; c < cols; c++)
         {
             var column = new JgsValue[rows];

@@ -1,7 +1,7 @@
 CHK|a017_persistent_recursive_elem|[2 20 0]|exact
 CHK|a018_persistent_recursive_rebind|[2 20 0]|exact
 CHK|a036_nested_three_levels|[11 2]|exact
-CHK|a037_loop_bound_rebinds|[1 7 7 7 7]|exact|pending V8|[7 7 7 7 7]
+CHK|a037_loop_bound_rebinds|[1 7 7 7 7]|exact
 CHK|a055_disp_asked_for_value|MATLAB:maxlhs|exact|pending V9|no error
 CHK|a055_error_asked_for_value|MATLAB:maxlhs|exact|pending V9|probe:bad
 CHK|a055_anon_error_asked_for_value|MATLAB:maxlhs|exact|pending V9|probe:bad

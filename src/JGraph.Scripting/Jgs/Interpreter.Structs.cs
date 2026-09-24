@@ -352,6 +352,11 @@ internal sealed partial class Interpreter
     private Completion ExecuteForOverStructs(ForStmt statement, JgsValue iterable, JgsEnvironment env)
     {
         JgsStructArray payload = iterable.AsStructArray;
+        if (payload.Length == 0)
+        {
+            return BindZeroTripVariable(statement, env);
+        }
+
         for (int index = 0; index < payload.Length; index++)
         {
             Tick();

@@ -18,6 +18,19 @@ internal sealed partial class LoopCompiler
     private readonly List<RegOp> _ops = [];
     private readonly List<LoopSlot> _slots = [];
     private readonly Dictionary<string, int> _slotOf = new(StringComparer.Ordinal);
+
+    /// <summary>
+    /// V8 (ADR 0169): the variables of the nested <c>for</c> loops, the ones whose bodies the scan is
+    /// inside, and every name a compiled read reached outside the loop of that name. A nested loop
+    /// that runs no pass leaves its variable <c>[]</c>, which a register cannot hold; the runner
+    /// marks the slot for the spill instead, and that is sound only while no op reads the register —
+    /// so a statement that reads a nested loop's variable anywhere but inside that loop's body is
+    /// refused, which makes it a walked statement (ADR 0160, 12d): the spill declares the empty
+    /// and the walk reads it.
+    /// </summary>
+    private readonly HashSet<string> _nestedLoopVariables = new(StringComparer.Ordinal);
+    private readonly List<string> _openLoops = [];
+    private readonly HashSet<string> _readOutsideLoops = new(StringComparer.Ordinal);
     private readonly List<double> _constValues = [];
     private readonly Dictionary<double, int> _constOf = [];
     private readonly List<Func<double, double>> _unary = [];
@@ -558,8 +571,16 @@ internal sealed partial class LoopCompiler
 
                 ScanExpr(nested.Stop, assigned);
                 DeclareLoopVariable(forStmt.Variable);
+                _nestedLoopVariables.Add(forStmt.Variable);
+                if (_readOutsideLoops.Contains(forStmt.Variable))
+                {
+                    throw Refuse(); // read before this loop, where a zero-trip pass leaves it [] (V8)
+                }
+
                 var body = new HashSet<string>(assigned, StringComparer.Ordinal) { forStmt.Variable };
+                _openLoops.Add(forStmt.Variable);
                 ScanBlock(forStmt.Body, body);
+                _openLoops.RemoveAt(_openLoops.Count - 1);
                 RefuseIfNothingCompiles(forStmt.Body); // a loop of only walked statements walks whole
                 return; // zero iterations are possible, so nothing it assigns is definite after it
             }
@@ -671,6 +692,16 @@ internal sealed partial class LoopCompiler
 
     private void ReadVariable(string name, HashSet<string> assigned)
     {
+        if (!_openLoops.Contains(name))
+        {
+            if (_nestedLoopVariables.Contains(name))
+            {
+                throw Refuse(); // a nested loop's variable read outside its loop may be [] (V8)
+            }
+
+            _readOutsideLoops.Add(name);
+        }
+
         int slot = DeclareVariable(name);
         if (!assigned.Contains(name))
         {
@@ -797,7 +828,7 @@ internal sealed partial class LoopCompiler
         int next = NewLabel();
         int exit = NewLabel();
         MarkLabel(head);
-        EmitJump(LoopOp.ForHead, exit, a: stateBase);
+        EmitJump(LoopOp.ForHead, exit, a: stateBase, dest: _slotOf[loop.Variable]);
         EmitOp(LoopOp.IterTick);
         EmitOp(LoopOp.ForBind, dest: _slotOf[loop.Variable], a: stateBase);
         int body = NewLabel();
@@ -1030,7 +1061,7 @@ internal sealed partial class LoopCompiler
                 int next = NewLabel();
                 int exit = NewLabel();
                 MarkLabel(head);
-                EmitJump(LoopOp.ForHead, exit, a: stateBase);
+                EmitJump(LoopOp.ForHead, exit, a: stateBase, dest: _slotOf[forStmt.Variable]);
                 EmitOp(LoopOp.IterTick);
                 EmitOp(LoopOp.ForBind, dest: _slotOf[forStmt.Variable], a: stateBase);
                 int body = NewLabel();

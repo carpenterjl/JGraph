@@ -35,5 +35,5 @@ CHK|walked_struct|27.5 12.5 |exact
 CHK|early_return|-1 10 |exact
 CHK|charmatrix|200 40 620240 3100 |exact
 CHK|empty_range_var|1|exact
-CHK|empty_range_new_var|1|div=ADR0160|diverges|0
+CHK|empty_range_new_var|1|exact
 CHK|break_var|4 |exact

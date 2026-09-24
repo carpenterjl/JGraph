@@ -1,7 +1,6 @@
 # The stage of the value-ownership plan that completes each line JGraph fails (appendix A's stage column).
 a017_persistent_recursive_elem	V5
 a018_persistent_recursive_rebind	V5
-a037_loop_bound_rebinds	V8
 a055_disp_asked_for_value	V9
 a055_error_asked_for_value	V9
 a055_anon_error_asked_for_value	V9

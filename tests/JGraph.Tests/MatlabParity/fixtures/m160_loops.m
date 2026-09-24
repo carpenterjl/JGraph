@@ -209,7 +209,7 @@ fprintf('CHK|empty_range_var|%d|exact\n', exist('k', 'var'));
 for qq = 5:1
     acc = 0;
 end
-fprintf('CHK|empty_range_new_var|%d|div=ADR0160\n', exist('qq', 'var'));
+fprintf('CHK|empty_range_new_var|%d|exact\n', exist('qq', 'var'));
 for k = 1:10
     if k == 4
         break;

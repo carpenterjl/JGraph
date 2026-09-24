@@ -50,6 +50,15 @@ internal sealed class HotLoopVectors(RegisterProgram program)
     /// <summary>The builtin each unary kernel index names, as resolved at entry.</summary>
     public readonly BuiltinFunction?[] Kernels = new BuiltinFunction?[program.UnaryNames.Length];
 
+    /// <summary>
+    /// V8 (ADR 0169): scalar slot i holds <c>[]</c> — a nested loop's head found no pass to make,
+    /// which binds the loop variable to the 0-by-0 double as the walk does. The spill writes the
+    /// empty, the reload keeps it, and the next bind of the slot clears the mark. The compiler
+    /// refuses a program that reads such a variable outside its own loop, so no op reads the
+    /// register while the mark is set.
+    /// </summary>
+    public readonly bool[] Emptied = new bool[program.Slots.Length];
+
     public readonly int SlotCount = program.VectorSlots.Length;
 }
 
@@ -75,9 +84,13 @@ internal sealed partial class Interpreter
     /// <summary>
     /// Runs <paramref name="loop"/> as a register program when it compiles and its variables qualify.
     /// False means the caller walks the loop as it always has — the compiler refused, a variable is
-    /// not a plain real scalar, a name is shadowed, or the fast path is off.
+    /// not a plain real scalar, a name is shadowed, or the fast path is off. A <c>for</c> arrives
+    /// with its <paramref name="steps"/> already evaluated (V8, ADR 0169): every read this entry
+    /// makes — the compiler's seeding of vector and variable names, the slots' values, the resolved
+    /// builtins, the loop variable's global check — sees the environment as the bounds left it, and
+    /// a refusal hands the caller back to walk the same steps.
     /// </summary>
-    private bool TryExecuteHotLoop(Stmt loop, JgsEnvironment env, out Completion completion)
+    private bool TryExecuteHotLoop(Stmt loop, JgsEnvironment env, RangeSteps? steps, out Completion completion)
     {
         completion = Completion.Normal;
         if (!JgsLoopJit.Enabled || _hook is not null
@@ -116,32 +129,15 @@ internal sealed partial class Interpreter
             return false;
         }
 
-        // The root bounds are evaluated here (once, like the walk's own range evaluation, and
-        // throwing the walk's own errors). There is one refusal left after them, and only one.
-        if (loop is ForStmt forStmt)
+        // The root bounds ran before the entry (ExecuteForOverRange): the walk's evaluation, the
+        // walk's errors, and nothing left to refuse after them.
+        if (steps is { } bounds)
         {
-            var range = (RangeExpr)forStmt.Iterable;
-            JgsNumericClass bound = JgsNumericClass.Double;
-            double start = RangeBound(range.Start, "start", env, ref bound);
-            double step = range.Step is null ? 1 : RangeBound(range.Step, "step", env, ref bound);
-            double stop = RangeBound(range.Stop, "stop", env, ref bound);
-
-            // A register is a double and has nowhere to put a class, so a loop over `int16(1):int16(4)`
-            // would bind a double i where the walk binds an int16 — one construct with two answers
-            // depending on a threshold nobody can see. The walk takes it instead. Re-reading the three
-            // bounds is the price, and it is a small one: reaching here at all takes an explicit
-            // conversion written inside the range, and a conversion has nothing to repeat.
-            if (bound != JgsNumericClass.Double)
-            {
-                return false;
-            }
-
-            long count = HotLoopRangeCount(start, step, stop, range.Line, range.Column);
             int state = program.OuterRegBase;
-            regs[state] = start;
-            regs[state + 1] = step;
-            regs[state + 2] = stop;
-            regs[state + 3] = count;
+            regs[state] = bounds.Start;
+            regs[state + 1] = bounds.Step;
+            regs[state + 2] = bounds.Stop;
+            regs[state + 3] = bounds.Count;
             regs[state + 4] = 0;
         }
 
@@ -313,6 +309,7 @@ internal sealed partial class Interpreter
 
     private static bool Refused(string what, RegisterProgram program)
     {
+        JgsLoopJit.EntryRefusals++;
         JgsLoopJit.Refused("the entry check refused: " + what, program.Root);
         return false;
     }
@@ -418,6 +415,7 @@ internal sealed partial class Interpreter
                         TAccess.At(regs, op.Dest) = TAccess.At(regs, op.A);
                         TAccess.At(written, op.Dest) = true;
                         TAccess.At(logical, op.Dest) = op.B != 0;
+                        TAccess.At(vectors.Emptied, op.Dest) = false;
                         ip++;
                         break;
 
@@ -425,6 +423,7 @@ internal sealed partial class Interpreter
                         TAccess.At(regs, op.Dest) = TAccess.At(regs, op.A);
                         TAccess.At(written, op.Dest) = true;
                         TAccess.At(logical, op.Dest) = TAccess.At(logical, op.A);
+                        TAccess.At(vectors.Emptied, op.Dest) = false;
                         ip++;
                         break;
 
@@ -613,13 +612,28 @@ internal sealed partial class Interpreter
                     }
 
                     case LoopOp.ForHead:
-                        ip = TAccess.At(regs, op.A + 4) >= TAccess.At(regs, op.A + 3) ? op.Arg : ip + 1;
+                        if (TAccess.At(regs, op.A + 4) < TAccess.At(regs, op.A + 3))
+                        {
+                            ip++;
+                            break;
+                        }
+
+                        if (TAccess.At(regs, op.A + 4) == 0)
+                        {
+                            // V8 (ADR 0169): a loop with no pass leaves its variable [] — the walk
+                            // binds it so; the slot carries the mark to the spill.
+                            TAccess.At(vectors.Emptied, op.Dest) = true;
+                            TAccess.At(written, op.Dest) = true;
+                        }
+
+                        ip = op.Arg;
                         break;
 
                     case LoopOp.ForBind:
                         TAccess.At(regs, op.Dest) = TAccess.At(regs, op.A) + (TAccess.At(regs, op.A + 4) * TAccess.At(regs, op.A + 1));
                         TAccess.At(written, op.Dest) = true;
                         TAccess.At(logical, op.Dest) = false;
+                        TAccess.At(vectors.Emptied, op.Dest) = false;
                         ip++;
                         break;
 
@@ -655,6 +669,7 @@ internal sealed partial class Interpreter
                         TAccess.At(regs, op.Dest) = TAccess.At(regs, op.A) + (index * TAccess.At(regs, op.A + 1));
                         TAccess.At(written, op.Dest) = true;
                         TAccess.At(logical, op.Dest) = false;
+                        TAccess.At(vectors.Emptied, op.Dest) = false;
                         ip = op.Arg;
                         break;
                     }
@@ -993,11 +1008,17 @@ internal sealed partial class Interpreter
             {
                 regs[i] = value.AsNumber;
                 logical[i] = false;
+                vectors.Emptied[i] = false;
             }
             else if (value.Type == JgsType.Bool)
             {
                 regs[i] = value.AsNumber;
                 logical[i] = true;
+                vectors.Emptied[i] = false;
+            }
+            else if (vectors.Emptied[i])
+            {
+                continue; // the [] a zero-trip nested loop left, spilled and still there (V8)
             }
             else if (written[i])
             {
@@ -1045,6 +1066,12 @@ internal sealed partial class Interpreter
         {
             if (!written[i])
             {
+                continue;
+            }
+
+            if (vectors.Emptied[i])
+            {
+                env.Declare(slots[i].Name, EmptyBracket()); // a zero-trip nested loop's variable (V8)
                 continue;
             }
 

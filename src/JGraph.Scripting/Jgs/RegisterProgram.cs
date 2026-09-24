@@ -29,6 +29,14 @@ internal static class JgsLoopJit
     internal static long Bails;
 
     /// <summary>
+    /// V8 (ADR 0169): how many times the entry check refused a compiled program in this process.
+    /// The check runs after a <c>for</c> loop's bounds, so a bound that rebinds, demotes or clears
+    /// a vector the body writes, or shadows a builtin it calls, is refused here and the walk runs
+    /// over the evaluated steps — the tests' way of asserting that road was the one taken.
+    /// </summary>
+    internal static long EntryRefusals;
+
+    /// <summary>
     /// ADR 0160 (12b): a comparison that decides a branch is one op (<c>UnlessLt</c> and its
     /// siblings) and a for loop's back edge is one op (<c>ForStep</c>). Off, every comparison is a
     /// value op and a <c>JumpIfFalse</c>, and the back edge is <c>ForNext</c> to the head.

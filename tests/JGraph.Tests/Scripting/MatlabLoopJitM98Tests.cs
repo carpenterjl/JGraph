@@ -175,11 +175,11 @@ public class MatlabLoopJitM98Tests : IDisposable
         """, expectCompiled: true);
 
     [Fact]
-    public void LoopVariableStaysUndefinedAfterAnEmptyRange() => AssertParity("""
+    public void LoopVariableIsEmptyAfterAnEmptyRange() => AssertParity("""
         for q = 5:1
             x = 1;
         end
-        fprintf('%d\n', exist('q'));
+        fprintf('%d %s\n', exist('q'), mat2str(size(q)));
         for k = 10:-2:1
         end
         fprintf('%.17g\n', k);

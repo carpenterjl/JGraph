@@ -234,7 +234,9 @@ each.
 - A zero-step colon in a loop head: JGraph throws `A range step must not be zero.` where R2025b
   runs the loop zero times over a 1-by-0 range (`refused_nested_zero_step`, `div=ADR0160`). The
   compiled `RangeCount` bails to the walk, which throws.
-- The loop variable after an empty range: R2025b binds it to a 0-by-0 double, so
-  `exist('qq', 'var')` is 1 after `for qq = 5:1, end`; JGraph leaves a new variable unbound
-  (`empty_range_new_var`, `div=ADR0160`; the M98 test `LoopVariableStaysUndefinedAfterAnEmptyRange`
-  pins that reading on both roads).
+
+**Retired by V8 (ADR 0169), and deleted from the list above rather than struck through**: *"The
+loop variable after an empty range: R2025b binds it to a 0-by-0 double, so `exist('qq', 'var')` is
+1 after `for qq = 5:1, end`; JGraph leaves a new variable unbound"* (`empty_range_new_var`). A loop
+that runs no pass now binds its variable to `[]` on both roads, the line is `exact`, and the M98
+test is `LoopVariableIsEmptyAfterAnEmptyRange`.

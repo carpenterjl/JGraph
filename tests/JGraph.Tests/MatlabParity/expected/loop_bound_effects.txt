@@ -1,0 +1,21 @@
+CHK|lb_rebinds_vector|[1 7 7 7 7]|exact
+CHK|lb_grows_vector|[1 2 3 4]|exact
+CHK|lb_clears_vector|[10 20 30]|exact
+CHK|lb_demotes_vector|[10 20 30]|exact
+CHK|lb_step_rebinds_vector|[1 7 3 7]|exact
+CHK|lb_stop_grows_after_start_read|[1 20 30]|exact
+CHK|lb_rebinds_scalar|30 5|exact
+CHK|lb_clears_scalar|20 10|exact
+CHK|lb_promotes_scalar|6 [1 2 3]|exact
+CHK|lb_demotes_vector_body_reads|15 5|exact
+CHK|lb_start_step_stop_order|sde 6|exact
+CHK|lb_bounds_run_once_zero_trip|sz 0|exact
+CHK|lb_bound_throws|s/the stop threw/[0 0 0]|exact
+CHK|lb_stop_reads_prior_loop_variable|10 4|exact
+CHK|lb_bound_rebinds_loop_variable|6 3|exact
+CHK|lb_zero_trip_loop_variable|1 [0 0] []|exact
+CHK|lb_zero_trip_over_empties|double[0x0] double[0x0] double[0x0] double[0x0] double[0x0] double[0x0] double[0x0]|exact
+CHK|lb_zero_trip_over_zero_rows|3 double[0x1]|exact
+CHK|lb_inner_bound_effect_each_pass|4 2|exact
+CHK|lb_shadows_builtin_in_script|[4 5 6]|exact
+CHK|lb_shadow_ignored_in_function|[1 2 3]|div=ADR0169|diverges|[4 5 6]

@@ -133,7 +133,9 @@ internal static class LoopProgramValidator
 
                 case LoopOp.ForHead:
                 case LoopOp.ForNext:
+                    // ForHead's Dest is the loop variable's slot: a zero-trip head marks it (V8).
                     if (!ForState(op.A, registers) || !OpIndex(op.Arg, count)) return false;
+                    if (op.Code == LoopOp.ForHead && !Reg(op.Dest, slots)) return false;
                     fallsThrough = op.Code == LoopOp.ForHead;
                     break;
 
