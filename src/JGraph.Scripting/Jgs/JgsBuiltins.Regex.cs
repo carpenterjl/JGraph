@@ -126,7 +126,7 @@ internal static partial class JgsBuiltins
 
     // --- registration -----------------------------------------------------------------------------
 
-    private static void RegisterRegexBuiltins(JgsEnvironment env, JgsDialect dialect)
+    private static void RegisterRegexBuiltins(JgsEnvironment env, JgsRunningDialect dialect)
     {
         void Search(string name, RegexOptions options) =>
             env.Builtins.Register(name, JgsValue.Function(new BuiltinFunction(

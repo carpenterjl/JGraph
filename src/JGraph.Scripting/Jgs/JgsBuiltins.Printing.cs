@@ -65,17 +65,14 @@ internal static partial class JgsBuiltins
         ["graph"] = ".graph",
     };
 
-    private static void RegisterPrinting(JgsEnvironment env, JGraphScriptGlobals host, JgsDialect dialect)
+    private static void RegisterPrinting(JgsEnvironment env, JGraphScriptGlobals host, JgsRunningDialect dialect)
     {
-        // saveas is new in both dialects; print replaces the console verb only under MATLAB.
+        // saveas is new in both dialects; print is the console verb for JGS code and the paper verb
+        // for MATLAB code, decided at the call by the calling code's dialect (V11, ADR 0172).
         env.Builtins.Register("saveas", JgsValue.Function(new BuiltinFunction(
             "saveas", (args, line, col) => SaveAs(host, args, line, col))));
-
-        if (dialect.IsMatlab)
-        {
-            env.Builtins.Register("print", JgsValue.Function(new BuiltinFunction(
-                "print", (args, line, col) => Print(host, args, line, col))));
-        }
+        RegisterMatlabFormOver(env, dialect, "print", new BuiltinFunction(
+            "print", (args, line, col) => Print(host, args, line, col)));
     }
 
     /// <summary>

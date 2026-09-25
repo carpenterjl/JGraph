@@ -50,6 +50,13 @@ internal sealed class JgsBuiltinLayer
     /// <summary>Whether registration has closed; see <see cref="Seal"/>.</summary>
     public bool IsSealed { get; private set; }
 
+    /// <summary>
+    /// The running dialect the built-ins of this layer read (V11, ADR 0172): set by
+    /// <c>CreateGlobals</c> before the registrars run, shared with the interpreter that runs over
+    /// the workspace, and null for a bare layer nothing was registered into.
+    /// </summary>
+    public JgsRunningDialect? Dialect { get; set; }
+
     /// <summary>The built-ins by name, as registered (constants included).</summary>
     public IReadOnlyDictionary<string, JgsValue> Entries => _root.Locals;
 

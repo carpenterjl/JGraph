@@ -26,7 +26,7 @@ namespace JGraph.Scripting.Jgs;
 internal static partial class JgsBuiltins
 {
     /// <summary>Registers the text-aware wrappers over the numeric definitions already declared.</summary>
-    internal static void RegisterTextOrderBuiltins(JgsEnvironment env, JgsDialect dialect)
+    internal static void RegisterTextOrderBuiltins(JgsEnvironment env, JgsRunningDialect dialect)
     {
         void Wrap(string name, Func<BuiltinFunction, IReadOnlyList<JgsValue>, int, int, int, JgsValue[]?> body)
         {

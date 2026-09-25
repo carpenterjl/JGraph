@@ -253,6 +253,7 @@ internal sealed class Parser
             _ => ParseAssignmentOrExpression(start),
         };
         statement.SourceId = _sourceId; // every statement (nested ones included) flows through here
+        statement.Dialect = Dialect; // and carries the dialect it was parsed in (V11, ADR 0172)
         return statement;
     }
 
@@ -317,7 +318,7 @@ internal sealed class Parser
             Expect(TokenType.End, "'end'");
         }
 
-        return new FnStmt(name.Text, parameters, body) { Line = start.Line, Column = start.Column };
+        return new FnStmt(name.Text, parameters, body) { Line = start.Line, Column = start.Column, Dialect = Dialect };
     }
 
     private Stmt ParseIf(Token start)
@@ -370,6 +371,7 @@ internal sealed class Parser
             Expr armCondition = ParseExpression();
             Stmt nested = ParseMatlabIfChain(arm, armCondition);
             nested.SourceId = _sourceId; // built directly, not via ParseStatement
+            nested.Dialect = Dialect;
             elseBranch = new[] { nested };
         }
         else if (Match(TokenType.Else))
@@ -814,7 +816,9 @@ internal sealed class Parser
             Match(TokenType.End); // present in the modern style, absent in a classic function file
         }
 
-        return new FnStmt(name.Text, parameters, body, outputs) { Line = start.Line, Column = start.Column };
+        // A class method is built here and never flows through ParseStatement, so it is stamped
+        // here: a method runs in the class file's dialect however it is called (V11, ADR 0172).
+        return new FnStmt(name.Text, parameters, body, outputs) { Line = start.Line, Column = start.Column, Dialect = Dialect };
     }
 
     private Stmt ParseSwitch(Token start)
@@ -1587,7 +1591,7 @@ internal sealed class Parser
 
         Expect(TokenType.RParen, "')'");
         Expr body = ParseExpression();
-        return new AnonymousFnExpr(parameters, body) { Line = start.Line, Column = start.Column };
+        return new AnonymousFnExpr(parameters, body) { Line = start.Line, Column = start.Column, Dialect = Dialect };
     }
 
     // --- Token helpers ------------------------------------------------------------------------

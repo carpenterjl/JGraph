@@ -26,7 +26,7 @@ namespace JGraph.Scripting.Jgs;
 /// </remarks>
 internal static partial class JgsBuiltins
 {
-    private static void RegisterSparseOrderingBuiltins(JgsEnvironment env, JgsDialect dialect)
+    private static void RegisterSparseOrderingBuiltins(JgsEnvironment env, JgsRunningDialect dialect)
     {
         void Define(string name, Func<IReadOnlyList<JgsValue>, int, int, JgsValue> body,
             Func<IReadOnlyList<JgsValue>, int, int, int, JgsValue[]>? multi = null) =>

@@ -130,7 +130,7 @@ internal static partial class JgsBuiltins
     /// <summary>Declares <c>error</c>, <c>MException</c>, and the three throwing verbs.</summary>
     private static void RegisterErrorObjects(
         Action<string, Func<IReadOnlyList<JgsValue>, int, int, JgsValue>> Define, Interpreter interpreter,
-        JgsEnvironment env, JGraphScriptGlobals host, JgsDialect dialect)
+        JgsEnvironment env, JGraphScriptGlobals host, JgsRunningDialect dialect)
     {
         // error is re-declared here rather than edited where it was: the identifier-carrying form and
         // the MException form both need the shape this file defines, and one implementation of

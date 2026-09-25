@@ -74,7 +74,7 @@ internal static partial class JgsBuiltins
         Names: ["SamplePoints", "SmoothingFactor", "degree"]);
 
     /// <summary>Registers the preprocessing family.</summary>
-    private static void RegisterPreprocessingBuiltins(JgsEnvironment env, JgsDialect dialect)
+    private static void RegisterPreprocessingBuiltins(JgsEnvironment env, JgsRunningDialect dialect)
     {
         void Define(string name, Func<IReadOnlyList<JgsValue>, int, int, JgsValue> body,
             Func<IReadOnlyList<JgsValue>, int, int, int, JgsValue[]>? multi = null) =>

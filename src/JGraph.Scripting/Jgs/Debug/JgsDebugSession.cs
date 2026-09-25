@@ -51,11 +51,16 @@ public sealed class JgsDebugSession
 
     private readonly JgsDialect _dialect;
 
+    // The dialect of the code the run is paused in (V11, ADR 0172): the running dialect at the
+    // pause, which a .m function reached from JGS makes MATLAB. The prompt parses in it.
+    private JgsDialect _pausedDialect;
+
     /// <summary>Creates a session. Obtain one from an engine's <c>CreateDebugSession</c>.</summary>
     /// <param name="dialect">The language variant to debug, or null for <see cref="JgsDialect.Jgs"/>.</param>
     internal JgsDebugSession(JgsDialect? dialect = null)
     {
         _dialect = dialect ?? JgsDialect.Jgs;
+        _pausedDialect = _dialect;
         _hook = new Hook(this);
     }
 
@@ -161,10 +166,16 @@ public sealed class JgsDebugSession
     /// The statement that writes <paramref name="text"/> into one Data Viewer cell of a paused
     /// frame's <paramref name="variable"/>, for <see cref="EvaluateAsync"/> to run in that frame —
     /// the debugger's twin of <see cref="IWorkspaceCellEditor.ComposeCellAssignment"/>. Null when
-    /// that cell cannot be edited.
+    /// that cell cannot be edited. Composed in the dialect of the selected frame's code (V11, ADR
+    /// 0172): a cell of a <c>.m</c> function's variable is written 1-based whatever the run started as.
     /// </summary>
-    public string? ComposeCellAssignment(ScriptVariable variable, int row, int column, string text) =>
-        JgsCellAssignment.Compose(variable, row, column, text, _dialect);
+    /// <param name="variable">The variable as the Data Viewer shows it.</param>
+    /// <param name="row">The edited cell's row in the viewer's grid.</param>
+    /// <param name="column">The edited cell's column in the viewer's grid.</param>
+    /// <param name="text">What was typed into the cell.</param>
+    /// <param name="frameIndex">The frame the variable was read from (0 = innermost), as for <see cref="GetVariables"/>.</param>
+    public string? ComposeCellAssignment(ScriptVariable variable, int row, int column, string text, int frameIndex = 0) =>
+        JgsCellAssignment.Compose(variable, row, column, text, DialectOf(frameIndex));
 
     /// <summary>
     /// Runs <paramref name="code"/> in the given paused frame — the <c>K&gt;&gt;</c> prompt. The
@@ -174,7 +185,8 @@ public sealed class JgsDebugSession
     /// fire — the debugger stands aside while it runs. The result's variables are the frame's after
     /// the statement.
     /// </summary>
-    /// <param name="code">One or more statements in the run's dialect.</param>
+    /// <param name="code">One or more statements in the dialect of the selected frame's code (V11, ADR
+    /// 0172): MATLAB inside a <c>.m</c> function reached from JGS, JGS in the outer frame that called it.</param>
     /// <param name="frameIndex">The frame to evaluate in (0 = innermost), as for <see cref="GetVariables"/>.</param>
     /// <param name="cancellationToken">Interrupts the statement without ending the run.</param>
     /// <exception cref="InvalidOperationException">The session is not paused, or a statement is already running.</exception>
@@ -184,6 +196,7 @@ public sealed class JgsDebugSession
         ArgumentNullException.ThrowIfNull(code);
         JgsEnvironment environment;
         string file;
+        JgsDialect dialect;
         lock (_stateLock)
         {
             EnsurePaused();
@@ -194,6 +207,7 @@ public sealed class JgsDebugSession
 
             environment = EnvironmentOf(frameIndex);
             file = FileOf(frameIndex);
+            dialect = DialectOf(frameIndex);
             _evaluating = true;
             _evaluationDone.Reset();
         }
@@ -205,7 +219,7 @@ public sealed class JgsDebugSession
         {
             try
             {
-                return Evaluate(code, environment, file, linked.Token);
+                return Evaluate(code, environment, file, dialect, linked.Token);
             }
             finally
             {
@@ -217,13 +231,13 @@ public sealed class JgsDebugSession
     }
 
     private ScriptRunResult Evaluate(
-        string code, JgsEnvironment environment, string file, CancellationToken cancellationToken)
+        string code, JgsEnvironment environment, string file, JgsDialect dialect, CancellationToken cancellationToken)
     {
         Interpreter interpreter = _interpreter!;
         try
         {
-            IReadOnlyList<Stmt> program = Parser.Parse(code, sourceId: "", _dialect);
-            interpreter.RunWhilePaused(program, environment, file, cancellationToken);
+            IReadOnlyList<Stmt> program = Parser.Parse(code, sourceId: "", dialect);
+            interpreter.RunWhilePaused(program, environment, file, dialect, cancellationToken);
             return ScriptRunResult.Ok(0, Project(environment));
         }
         catch (JgsException ex)
@@ -344,6 +358,24 @@ public sealed class JgsDebugSession
         frameIndex == 0 ? _pausedFile : _frames[_pausedDepth - frameIndex].CallerFile;
 
     /// <summary>
+    /// The dialect a paused frame's code was written in (V11, ADR 0172): the running dialect at the
+    /// pause for frame 0, and for every other frame the dialect its record says the call was made
+    /// under - the third of the triple with <see cref="EnvironmentOf"/> and <see cref="FileOf"/>,
+    /// installed together for the prompt, the cell edit and the paused execution. Before the first
+    /// pause, and past the stack, the run's own.
+    /// </summary>
+    private JgsDialect DialectOf(int frameIndex)
+    {
+        if (frameIndex == 0 || !_isPaused)
+        {
+            return _pausedDialect;
+        }
+
+        int record = _pausedDepth - frameIndex;
+        return record >= 0 && record < _frames.Count ? _frames[record].CallerDialect : _dialect;
+    }
+
+    /// <summary>
     /// Moves the execution point of the paused script to the statement on <paramref name="line"/> of
     /// the block it is paused in — skipped statements simply never run; re-targeted ones run (again).
     /// On success the session re-pauses at the target (reason <see cref="PauseReason.EntryJump"/>),
@@ -423,10 +455,12 @@ public sealed class JgsDebugSession
         EnsurePaused();
         EnsureNotEvaluating();
 
+        // The edited file's own dialect (V11, ADR 0172): a .m file is MATLAB whatever the run
+        // started as, and any other file speaks the run's dialect - the rule run() parses by.
         IReadOnlyList<Stmt> newProgram;
         try
         {
-            newProgram = Parser.Parse(newCode, sourceId, _dialect);
+            newProgram = Parser.Parse(newCode, sourceId, JgsRunner.DialectOfFile(sourceId, _dialect));
         }
         catch (JgsException ex)
         {
@@ -557,7 +591,7 @@ public sealed class JgsDebugSession
             // The file's storage is asked by source id: a function lives with its file (M145).
             UserFunction? existing =
                 _interpreter is Interpreter live
-                && live.TryGetHoisted(sourceId, fn.Name, out JgsValue bound)
+                && live.TryGetHoisted(sourceId, fn.Name, fn.Dialect, out JgsValue bound)
                 && bound.Type == JgsType.Function
                 && bound.AsCallable is UserFunction user
                 && SourceIdComparer.Equals(user.Declaration.SourceId, sourceId)
@@ -779,6 +813,7 @@ public sealed class JgsDebugSession
             _pausedLocation = location;
             _pausedEnvironment = env;
             _pausedFile = _interpreter!.CurrentFile;
+            _pausedDialect = _interpreter.Dialect;
             _pausedDepth = callDepth;
             _pausedCallStack = BuildCallStack(location, callDepth);
             args = new JgsPausedEventArgs(location, _pausedCallStack, reason.Value);
@@ -884,8 +919,10 @@ public sealed class JgsDebugSession
         }
 
         // The call site lives in the statement the interpreter last announced; the caller's
-        // workspace and file are what the interpreter handed over, not a reconstruction.
-        _frames.Add(new FrameEntry(declaration.Name, _currentSourceId, callLine, local, callerFrame, callerFile));
+        // workspace and file are what the interpreter handed over, not a reconstruction, and the
+        // caller's dialect is the one still running - the callee enters its own after this (V11).
+        _frames.Add(new FrameEntry(
+            declaration.Name, _currentSourceId, callLine, local, callerFrame, callerFile, _interpreter!.Dialect));
         _pendingFunction = declaration; // the next EnterBlock is this function's body
     }
 
@@ -911,7 +948,8 @@ public sealed class JgsDebugSession
         // A context is a frame like a call's, entered from the statement last announced. Its own
         // calls are made from its file: a function it calls records that as its call site, the way
         // one called from a function's statement records the function's file.
-        _frames.Add(new FrameEntry(name, _currentSourceId, callLine, local, callerFrame, callerFile));
+        _frames.Add(new FrameEntry(
+            name, _currentSourceId, callLine, local, callerFrame, callerFile, _interpreter!.Dialect));
         _currentSourceId = file;
     }
 
@@ -920,10 +958,10 @@ public sealed class JgsDebugSession
     private string _currentSourceId = "";
     private string _pausedFile = "";
 
-    /// <summary>One user-function call on the stack: the frame it runs in, and the (workspace, file) pair it was called from.</summary>
+    /// <summary>One user-function call on the stack: the frame it runs in, and the (workspace, file, dialect) triple it was called from.</summary>
     private sealed record FrameEntry(
         string Name, string CallSiteSourceId, int CallLine, JgsEnvironment Local,
-        JgsEnvironment CallerFrame, string CallerFile);
+        JgsEnvironment CallerFrame, string CallerFile, JgsDialect CallerDialect);
 
     /// <summary>One block on the execution stack: which statement list, where in it execution is, and
     /// how it hangs off its surroundings (the live-edit path back to a program root).</summary>

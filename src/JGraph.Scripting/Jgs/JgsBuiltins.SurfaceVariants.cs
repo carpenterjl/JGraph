@@ -20,7 +20,7 @@ internal static partial class JgsBuiltins
     /// rearrangement of geometry the object model already draws — a padded grid, a polygon per row,
     /// a two-column parametric strip — rather than a new kind of drawing.
     /// </summary>
-    private static void RegisterSurfaceVariantBuiltins(JgsEnvironment env, JgsDialect dialect)
+    private static void RegisterSurfaceVariantBuiltins(JgsEnvironment env, JgsRunningDialect dialect)
     {
         void Define(string name, Func<IReadOnlyList<JgsValue>, int, int, JgsValue> body) =>
             env.Builtins.Register(name, JgsValue.Function(new BuiltinFunction(name, body)));

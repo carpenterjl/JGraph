@@ -116,7 +116,7 @@ internal static partial class JgsBuiltins
     /// a quoted word is an array of characters — where a JGS string is one value whose transpose is
     /// itself.
     /// </param>
-    private static void Rearrange(JgsEnvironment env, JgsDialect dialect)
+    private static void Rearrange(JgsEnvironment env, JgsRunningDialect dialect)
     {
         foreach (string name in CharRowShapeBuiltins)
         {
@@ -127,7 +127,6 @@ internal static partial class JgsBuiltins
                 continue;
             }
 
-            bool promotesCharRows = dialect.IsMatlab;
             bool gathersPositions = Array.IndexOf(PositionRearrangingBuiltins, name) >= 0;
             bool gathersComplex = Array.IndexOf(ComplexRearrangingBuiltins, name) >= 0;
             bool keepsComplexFlag = Array.IndexOf(ComplexNarrowingBuiltins, name) < 0;
@@ -135,7 +134,9 @@ internal static partial class JgsBuiltins
 
             env.Builtins.Register(name, JgsValue.Function(new BuiltinFunction(name, (args, line, col) =>
             {
-                if (promotesCharRows && IsCharRow(args))
+                // The promotion is a rule about MATLAB's char type, so it is the calling code's
+                // dialect that decides, at the call (V11, ADR 0172).
+                if (dialect.IsMatlab && IsCharRow(args))
                 {
                     return WrapCharMatrix(inner.Call(WithFirst(args, CharRowOf(args[0])), line, col));
                 }
@@ -172,7 +173,7 @@ internal static partial class JgsBuiltins
                     // Only the first output is a rearrangement of the input. shiftdim's second is how
                     // many dimensions it moved and sort's is where each element came from, and those
                     // are numbers whatever the first output holds.
-                    if (promotesCharRows && IsCharRow(args))
+                    if (dialect.IsMatlab && IsCharRow(args))
                     {
                         JgsValue[] outputs = inner.MultiOutput(
                             WithFirst(args, CharRowOf(args[0])), wanted, line, col);

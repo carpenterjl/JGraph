@@ -42,7 +42,7 @@ internal static partial class JgsBuiltins
         ["BorderSize", "PadPartialBlocks", "PadMethod", "TrimBorder", "UseParallel", "DisplayWaitbar"]);
 
     private static void DefineFilteringBuiltins(
-        Action<string, Func<IReadOnlyList<JgsValue>, int, int, JgsValue>> define, JgsDialect dialect)
+        Action<string, Func<IReadOnlyList<JgsValue>, int, int, JgsValue>> define, JgsRunningDialect dialect)
     {
         // --- Padding -------------------------------------------------------------------------
         define("padarray", (args, line, col) =>

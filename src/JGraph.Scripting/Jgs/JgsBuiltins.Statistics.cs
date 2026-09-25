@@ -20,7 +20,7 @@ internal static partial class JgsBuiltins
 {
     /// <summary>Registers the Statistics Toolbox builtins.</summary>
     private static void RegisterStatisticsBuiltins(
-        JgsEnvironment env, JGraphScriptGlobals host, Random random, JgsDialect dialect)
+        JgsEnvironment env, JGraphScriptGlobals host, Random random, JgsRunningDialect dialect)
     {
         void Define(string name, Func<IReadOnlyList<JgsValue>, int, int, JgsValue> body,
             Func<IReadOnlyList<JgsValue>, int, int, int, JgsValue[]>? multi = null) =>
@@ -50,13 +50,11 @@ internal static partial class JgsBuiltins
         DefineBoth("zscore", StandardScores);
 
         // MATLAB's range(X) is max - min. JGS has meant range(start, stop, step) since M12 and its
-        // surface is frozen, so the statistic replaces the sequence builder in the MATLAB dialect
-        // only — the one place in the toolbox where the two dialects answer the same call differently.
-        if (dialect.IsMatlab)
-        {
-            Define("range", (args, line, col) =>
-                SimpleMean("range", args, DescriptiveStatistics.Range, nanFlag: false, line, col));
-        }
+        // surface is frozen, so the statistic answers MATLAB code and the sequence builder JGS code,
+        // decided at the call by the calling code's dialect (V11, ADR 0172) — the one place in the
+        // toolbox where the two dialects answer the same call differently.
+        RegisterMatlabFormOver(env, dialect, "range", new BuiltinFunction("range", (args, line, col) =>
+            SimpleMean("range", args, DescriptiveStatistics.Range, nanFlag: false, line, col)));
 
         DefineBoth("tiedrank", TiedRanks);
         Define("tabulate", FrequencyTable);

@@ -10,7 +10,7 @@ namespace JGraph.Scripting.Jgs;
 internal static partial class JgsBuiltins
 {
     /// <summary>Registers the array and moving-statistics builtins (M38), and <c>rng</c> (M52).</summary>
-    private static void RegisterArrayBuiltins(JgsEnvironment env, JgsRandomSource random, JgsDialect dialect)
+    private static void RegisterArrayBuiltins(JgsEnvironment env, JgsRandomSource random, JgsRunningDialect dialect)
     {
         void Define(string name, Func<IReadOnlyList<JgsValue>, int, int, JgsValue> body) =>
             env.Builtins.Register(name, JgsValue.Function(new BuiltinFunction(name, body)));

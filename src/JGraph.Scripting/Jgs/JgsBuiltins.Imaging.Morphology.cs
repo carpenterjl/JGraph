@@ -36,7 +36,7 @@ internal static partial class JgsBuiltins
         "bwulterode", ["euclidean", "cityblock", "chessboard", "quasi-euclidean"], []);
 
     private static void DefineMorphologyBuiltins(
-        Action<string, Func<IReadOnlyList<JgsValue>, int, int, JgsValue>> define, JgsDialect dialect)
+        Action<string, Func<IReadOnlyList<JgsValue>, int, int, JgsValue>> define, JgsRunningDialect dialect)
     {
         // --- Structuring elements ----------------------------------------------------------------
         define("strel", (args, line, col) =>

@@ -34,7 +34,7 @@ internal static partial class JgsBuiltins
     /// <param name="dialect">The dialect, which decides whether a permutation is 0- or 1-based.</param>
     /// <param name="random">The session's stream, so <c>sprandn</c> answers to <c>rng</c>.</param>
     internal static void RegisterSparseKrylovBuiltins(
-        JgsEnvironment env, JGraphScriptGlobals host, JgsDialect dialect, Random random)
+        JgsEnvironment env, JGraphScriptGlobals host, JgsRunningDialect dialect, Random random)
     {
         void Define(string name, Func<IReadOnlyList<JgsValue>, int, int, JgsValue> body,
             Func<IReadOnlyList<JgsValue>, int, int, int, JgsValue[]>? multi = null) =>

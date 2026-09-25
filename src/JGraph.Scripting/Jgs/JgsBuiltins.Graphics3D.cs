@@ -46,7 +46,7 @@ internal static partial class JgsBuiltins
         ColormapGenerators.Select(static generator => generator.Name).ToArray();
 
     /// <summary>Registers the M45.B color and lighting control verbs.</summary>
-    private static void RegisterColorControlBuiltins(JgsEnvironment env, JgsDialect dialect)
+    private static void RegisterColorControlBuiltins(JgsEnvironment env, JgsRunningDialect dialect)
     {
         void Define(string name, Func<IReadOnlyList<JgsValue>, int, int, JgsValue> body,
             Func<IReadOnlyList<JgsValue>, int, int, int, JgsValue[]>? multi = null) =>

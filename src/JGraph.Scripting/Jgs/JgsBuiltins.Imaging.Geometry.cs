@@ -34,7 +34,7 @@ internal static partial class JgsBuiltins
         "affineOutputView", [], ["BoundsStyle"]);
 
     private static void DefineGeometryBuiltins(
-        Action<string, Func<IReadOnlyList<JgsValue>, int, int, JgsValue>> define, JgsDialect dialect)
+        Action<string, Func<IReadOnlyList<JgsValue>, int, int, JgsValue>> define, JgsRunningDialect dialect)
     {
         // --- The transform objects, as tagged structs ------------------------------------------
         define("affine2d", (args, line, col) =>

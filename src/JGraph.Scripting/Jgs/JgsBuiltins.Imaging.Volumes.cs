@@ -63,7 +63,7 @@ internal static partial class JgsBuiltins
     private static readonly OptionSpec BwMorph3Spec = new("bwmorph3", [], [], StringPositionals: 2);
 
     private static void DefineVolumeBuiltins(
-        Action<string, Func<IReadOnlyList<JgsValue>, int, int, JgsValue>> define, JgsDialect dialect)
+        Action<string, Func<IReadOnlyList<JgsValue>, int, int, JgsValue>> define, JgsRunningDialect dialect)
     {
         define("medfilt3", (args, line, col) =>
         {

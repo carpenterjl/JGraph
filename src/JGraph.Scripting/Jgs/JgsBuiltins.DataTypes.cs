@@ -17,7 +17,7 @@ internal static partial class JgsBuiltins
     internal const string MissingSentinel = "<missing>";
 
     /// <summary>Registers the data-type builtins into <paramref name="env"/>.</summary>
-    private static void RegisterDataTypeBuiltins(JgsEnvironment env, JgsDialect? dialect)
+    private static void RegisterDataTypeBuiltins(JgsEnvironment env, JgsRunningDialect? dialect)
     {
         void Define(string name, Func<IReadOnlyList<JgsValue>, int, int, JgsValue> body) =>
             env.Builtins.Register(name, JgsValue.Function(new BuiltinFunction(name, body)));
@@ -139,7 +139,7 @@ internal static partial class JgsBuiltins
 
         // compose(format, A1, ..., An) is declared in JgsBuiltins.Compose.cs.
         env.Builtins.Register("compose", JgsValue.Function(new BuiltinFunction("compose",
-            (args, line, col) => Composed(args, dialect, line, col))
+            (args, line, col) => Composed(args, dialect?.Current, line, col))
         { KeepsStringArguments = true }));
 
         // A categorical is its cell of category names; class() will say cell, and summary counts.

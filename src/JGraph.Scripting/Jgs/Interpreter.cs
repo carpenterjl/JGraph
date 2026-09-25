@@ -149,7 +149,29 @@ internal sealed partial class Interpreter
         _cancellationToken = cancellationToken;
         _hook = hook;
         _echo = echo;
-        Dialect = dialect ?? JgsDialect.Jgs;
+
+        // The running dialect is one slot shared with the built-ins registered into the workspace's
+        // layer (V11, ADR 0172): CreateGlobals made it, and a bare layer gets one here. A workspace
+        // built for one dialect cannot be run under another - the registrars already read theirs.
+        JgsBuiltinLayer? layer = globals.HasBuiltinLayer ? globals.Builtins : null;
+        if (layer?.Dialect is { } shared)
+        {
+            if (dialect is not null && dialect != shared.Session)
+            {
+                throw new InvalidOperationException(
+                    $"The workspace was built for the {shared.Session.Name} dialect and cannot run {dialect.Name}.");
+            }
+
+            _running = shared;
+        }
+        else
+        {
+            _running = new JgsRunningDialect(dialect ?? JgsDialect.Jgs);
+            if (layer is not null)
+            {
+                layer.Dialect = _running;
+            }
+        }
 
         // Packed operations run in ~4M-element chunks and poll this between chunks, so Stop
         // interrupts a 100M-element elementwise statement mid-flight instead of after it.
@@ -161,28 +183,45 @@ internal sealed partial class Interpreter
         JgsBuiltins.RegisterOperatorFunctions(globals, this);
     }
 
-    /// <summary>The language variant this run speaks; every JGS/MATLAB difference reads from it.</summary>
-    public JgsDialect Dialect { get; private set; }
+    private readonly JgsRunningDialect _running;
 
     /// <summary>
-    /// Runs <paramref name="action"/> with <paramref name="dialect"/> active, restoring the caller's
-    /// dialect after — how <c>run('file.m')</c> from a JGS script executes with MATLAB semantics
-    /// (index base, auto-declaration, bracket concatenation) and not just MATLAB parsing. Known
-    /// limit: a function the include defines runs its body under whatever dialect is active when it
-    /// is called later, not the dialect it was written in.
+    /// The dialect of the code that is running; every JGS/MATLAB difference reads from it. Code
+    /// carries its dialect (V11, ADR 0172): a function, an anonymous function, a script and a class
+    /// method enter the dialect they were parsed in for their body, whoever calls them, so a
+    /// <c>.m</c> function called from JGS indexes 1-based, binds its parameters by value and
+    /// concatenates its brackets, and a JGS closure called from MATLAB code keeps JGS's meaning.
     /// </summary>
-    internal void RunInDialect(JgsDialect dialect, Action action)
+    public JgsDialect Dialect => _running.Current;
+
+    /// <summary>
+    /// The dialect the session was built with - the host's, which the prompt parses in and the
+    /// shadowing warning reads; never what the running code means by an index or a bracket.
+    /// </summary>
+    internal JgsDialect SessionDialect => _running.Session;
+
+    /// <summary>The slot the built-ins read the running dialect from; the interpreter-backed registrars capture it.</summary>
+    internal JgsRunningDialect RunningDialect => _running;
+
+    /// <summary>
+    /// Makes <paramref name="dialect"/> the running one until the returned token is disposed, which
+    /// puts the caller's back - a <c>using</c> at every entry into a body of code, so an exception
+    /// or a cancellation unwinds it. The entries: a function body and its parameter binding, an
+    /// anonymous body, a script run as the program or by name, a class default and validator, a
+    /// constructor, and the paused debugger's prompt.
+    /// </summary>
+    internal DialectContext EnterDialect(JgsDialect dialect)
     {
-        JgsDialect previous = Dialect;
-        Dialect = dialect;
-        try
-        {
-            action();
-        }
-        finally
-        {
-            Dialect = previous;
-        }
+        JgsDialect previous = _running.Current;
+        _running.Current = dialect;
+        return new DialectContext(this, previous);
+    }
+
+    /// <summary>The token <see cref="EnterDialect"/> hands out; disposing it restores the caller's dialect.</summary>
+    internal readonly struct DialectContext(Interpreter interpreter, JgsDialect previous) : IDisposable
+    {
+        /// <inheritdoc />
+        public void Dispose() => interpreter._running.Current = previous;
     }
 
     /// <summary>
@@ -466,7 +505,9 @@ internal sealed partial class Interpreter
     /// </summary>
     internal void Hoist(FnStmt fn, string sourceId)
     {
-        if (Dialect.IsMatlab)
+        // Where a declaration lives is the declaring code's rule, not the running code's: the
+        // debugger's live edit hoists a .m file's function while the run is paused in JGS.
+        if (fn.Dialect.IsMatlab)
         {
             FunctionFile file = FileFor(sourceId);
             file.Declare(fn.Name, JgsValue.Function(new UserFunction(fn, file.Scope, this)));
@@ -611,11 +652,12 @@ internal sealed partial class Interpreter
     /// <summary>
     /// What <paramref name="sourceId"/> hoisted under <paramref name="name"/>, read by file rather
     /// than through the current one: the runner's call of a function file's main function and the
-    /// debugger's live edit ask this. JGS answers from the workspace.
+    /// debugger's live edit ask this. <paramref name="dialect"/> is the file's own: a MATLAB file's
+    /// functions live in its storage, a JGS file's in the workspace.
     /// </summary>
-    internal bool TryGetHoisted(string sourceId, string name, out JgsValue value)
+    internal bool TryGetHoisted(string sourceId, string name, JgsDialect dialect, out JgsValue value)
     {
-        if (Dialect.IsMatlab)
+        if (dialect.IsMatlab)
         {
             if (_files.TryGetValue(sourceId, out FunctionFile? file) && file.TryGet(name, out value))
             {
@@ -679,9 +721,12 @@ internal sealed partial class Interpreter
     /// <param name="file">The file the context's names come from.</param>
     /// <param name="name">What the debugger shows the context as — the default's owner, the handle's text.</param>
     /// <param name="callLine">The line the context was entered from, for the debugger's stack.</param>
-    internal JgsValue EvaluateInContext(Expr expression, JgsEnvironment env, string file, string name, int callLine)
+    /// <param name="dialect">The dialect the expression was written in, entered for its evaluation (V11).</param>
+    internal JgsValue EvaluateInContext(
+        Expr expression, JgsEnvironment env, string file, string name, int callLine, JgsDialect dialect)
     {
         using ContextScope context = EnterContext(env, file, name, callLine);
+        using DialectContext code = EnterDialect(dialect); // after the hook: the frame it records is the caller's
         return Evaluate(expression, env);
     }
 
@@ -692,9 +737,10 @@ internal sealed partial class Interpreter
     /// handle was made in, which is where the body's names come from.
     /// </summary>
     internal JgsValue[] EvaluateForOutputsInContext(
-        Expr expression, int wanted, JgsEnvironment env, string file, string name, int callLine)
+        Expr expression, int wanted, JgsEnvironment env, string file, string name, int callLine, JgsDialect dialect)
     {
         using ContextScope context = EnterContext(env, file, name, callLine);
+        using DialectContext code = EnterDialect(dialect);
         return EvaluateForOutputs(expression, wanted, env);
     }
 
@@ -836,9 +882,12 @@ internal sealed partial class Interpreter
     /// <param name="program">The parsed statements.</param>
     /// <param name="env">The paused frame's environment to read and write.</param>
     /// <param name="file">The file the selected frame's code came from, for its names.</param>
+    /// <param name="dialect">The dialect the selected frame's code was written in, which the typed
+    /// statement was parsed in and runs under (V11): a pause inside a <c>.m</c> function reached
+    /// from JGS evaluates 1-based, and an outer JGS frame selected from it evaluates as JGS.</param>
     /// <param name="cancellationToken">Interrupts the typed statement alone.</param>
     internal void RunWhilePaused(
-        IReadOnlyList<Stmt> program, JgsEnvironment env, string file, CancellationToken cancellationToken)
+        IReadOnlyList<Stmt> program, JgsEnvironment env, string file, JgsDialect dialect, CancellationToken cancellationToken)
     {
         CancellationToken runToken = _cancellationToken;
         long runSteps = _steps;
@@ -849,6 +898,7 @@ internal sealed partial class Interpreter
         _steps = 0;
         CurrentFrame = env;
         SetFile(file);
+        using DialectContext code = EnterDialect(dialect);
         try
         {
             foreach (Stmt statement in program)
@@ -890,6 +940,10 @@ internal sealed partial class Interpreter
     public void Run(IReadOnlyList<Stmt> program)
     {
         string file = FileOf(program);
+
+        // The program runs in the dialect it was parsed in (V11, ADR 0172): a .m file reached by
+        // run() from JGS indexes 1-based and auto-declares, and its functions hoist into its file.
+        using DialectContext code = EnterDialect(DialectOf(program));
         HoistAll(program, file);
 
         // The top level runs through the same block executor as everything else, so a debug hook sees
@@ -924,6 +978,9 @@ internal sealed partial class Interpreter
     /// <summary>The file a parsed program came from — the parser stamps every statement with it.</summary>
     private static string FileOf(IReadOnlyList<Stmt> program) => program.Count > 0 ? program[0].SourceId : "";
 
+    /// <summary>The dialect a parsed program was written in - stamped on its statements; an empty program keeps the caller's.</summary>
+    private JgsDialect DialectOf(IReadOnlyList<Stmt> program) => program.Count > 0 ? program[0].Dialect : Dialect;
+
     /// <summary>
     /// Runs a script file's statements in <paramref name="scope"/> — how a script named on the search
     /// path runs. MATLAB's rule is that a script shares the workspace of whatever called it, so this
@@ -935,6 +992,7 @@ internal sealed partial class Interpreter
     /// </summary>
     internal void RunScriptFile(IReadOnlyList<Stmt> program, JgsEnvironment scope, string sourceId)
     {
+        using DialectContext code = EnterDialect(DialectOf(program)); // the file's own dialect (V11)
         HoistAll(program, sourceId);
 
         // The workspace stays the caller's; only the file changes.
@@ -1019,6 +1077,11 @@ internal sealed partial class Interpreter
         }
 
         _hook?.EnterFunction(declaration, callLine, local, callerFrame, callerFile);
+
+        // The body runs in the dialect the function was written in (V11, ADR 0172) - entered after
+        // the hook, which records the caller's frame under the caller's dialect. The caller bound
+        // the parameters under this dialect already (UserFunction.CallMultiple).
+        using DialectContext code = EnterDialect(declaration.Dialect);
         try
         {
             Completion completion = ExecuteBlock(declaration.Body, local);
@@ -1356,7 +1419,7 @@ internal sealed partial class Interpreter
                 // file before the first statement ran and is a no-op here; anything else is a nested
                 // function, declared into the frame of the function that holds it — one closure per
                 // invocation, sharing that invocation's variables, visible to no other function.
-                if (Dialect.IsMatlab && FileFor(fn.SourceId).Holds(fn))
+                if (fn.Dialect.IsMatlab && FileFor(fn.SourceId).Holds(fn))
                 {
                     return Completion.Normal;
                 }
@@ -1778,10 +1841,12 @@ internal sealed partial class Interpreter
     /// Loads <paramref name="name"/> from the MATLAB search path, ignoring the workspace. Not a
     /// resolution — the resolver owns the order — but the way a class file is loaded on the first
     /// mention of its name in a dotted expression, where evaluating the name would build an instance.
+    /// JGS code asks too (V11, ADR 0172): a <c>.m</c> class file beside a JGS script answers a
+    /// dotted mention of its name, and runs as MATLAB.
     /// </summary>
     private bool TryResolveOnPath(string name, out JgsValue value)
     {
-        if (Dialect.IsMatlab && FunctionPath is { } path)
+        if (FunctionPath is { } path)
         {
             return path.TryResolve(name, out value);
         }

@@ -134,7 +134,12 @@ internal sealed class JgsNameResolver
     {
         if (!_interpreter.Dialect.IsMatlab)
         {
-            return Lookup(name, env);
+            // JGS's order is the walk, and then the folders (V11, ADR 0172): a name nothing in the
+            // walk holds is looked for as a .m file beside the script and on the added folders, and
+            // what the file defines runs as MATLAB. The folders come last, so no JGS built-in is
+            // ever shadowed by a file, and a name the walk answers never touches the index.
+            Resolution walked = Lookup(name, env);
+            return walked.Found ? walked : FromFile(name);
         }
 
         if (env.IsGlobal(name) && _globalWorkspace.TryGetScope(name, out JgsEnvironment? global, out JgsValue shared))

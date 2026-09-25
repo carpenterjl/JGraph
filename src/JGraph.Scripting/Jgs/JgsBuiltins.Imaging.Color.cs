@@ -38,7 +38,7 @@ internal static partial class JgsBuiltins
         "imcolordiff", [], ["Standard", "isInputLab", "kL", "K1", "K2"]);
 
     private static void DefineColorBuiltins(
-        Action<string, Func<IReadOnlyList<JgsValue>, int, int, JgsValue>> define, Random random, JgsDialect dialect)
+        Action<string, Func<IReadOnlyList<JgsValue>, int, int, JgsValue>> define, Random random, JgsRunningDialect dialect)
     {
         // --- Hue, saturation, value ------------------------------------------------------------
         define("rgb2hsv", (args, line, col) =>

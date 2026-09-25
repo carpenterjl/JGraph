@@ -12,7 +12,7 @@ namespace JGraph.Scripting.Jgs;
 internal static partial class JgsBuiltins
 {
     /// <summary>Registers the generation/shape builtins into <paramref name="env"/>.</summary>
-    private static void RegisterShapeBuiltins(JgsEnvironment env, Random random, JgsDialect dialect)
+    private static void RegisterShapeBuiltins(JgsEnvironment env, Random random, JgsRunningDialect dialect)
     {
         void Define(string name, Func<IReadOnlyList<JgsValue>, int, int, JgsValue> body) =>
             env.Builtins.Register(name, JgsValue.Function(new BuiltinFunction(name, body)));
@@ -324,10 +324,7 @@ internal static partial class JgsBuiltins
         });
 
         // --- MATLAB shapes for the random and filled constructors -------------------------------
-        if (dialect.IsMatlab)
-        {
-            RegisterMatlabConstructorShapes(env, random);
-        }
+        RegisterMatlabConstructorShapes(env, random, dialect);
     }
 
     /// <summary>
@@ -560,20 +557,21 @@ internal static partial class JgsBuiltins
 
     /// <summary>
     /// In MATLAB, <c>zeros(n)</c>/<c>ones(n)</c>/<c>rand(n)</c>/<c>randn(n)</c> build n-by-n matrices,
-    /// a single size never a length. JGS keeps its documented flat forms, so these re-registrations
-    /// only happen for the MATLAB dialect.
+    /// a single size never a length. JGS keeps its documented flat forms, so each name dispatches on
+    /// the calling code's dialect (V11, ADR 0172): the shapes for MATLAB code, the flat forms for JGS.
     /// </summary>
-    private static void RegisterMatlabConstructorShapes(JgsEnvironment env, Random random)
+    private static void RegisterMatlabConstructorShapes(JgsEnvironment env, Random random, JgsRunningDialect dialect)
     {
         void Redefine(string name, Func<IReadOnlyList<JgsValue>, int, int, JgsValue> body) =>
-            env.Builtins.Register(name, JgsValue.Function(new BuiltinFunction(name, body)));
+            RegisterMatlabFormOver(env, dialect, name, new BuiltinFunction(name, body));
 
         // rand and randn are questions as well as constructors: MATLAB's `x = rand` is one number,
         // and `@(t) t + randn` is how a proposal distribution is written. Without the bare call the
         // name evaluates to the function itself and the addition fails, which is how stess_25 found
-        // this. zeros and ones stay as they are — nobody writes a bare `zeros`.
+        // this. zeros and ones stay as they are — nobody writes a bare `zeros`. (Whether a bare
+        // mention calls is read on the JGS road alone; MATLAB code calls every function it mentions.)
         void RedefineAutoCalling(string name, Func<IReadOnlyList<JgsValue>, int, int, JgsValue> body) =>
-            env.Builtins.Register(name, JgsValue.Function(new BuiltinFunction(name, body) { AutoCallsBare = true }));
+            RegisterMatlabFormOver(env, dialect, name, new BuiltinFunction(name, body) { AutoCallsBare = true });
 
         Redefine("zeros", (args, line, col) => NdConstructorValue("zeros", args, line, col, static () => 0.0));
         Redefine("ones", (args, line, col) => NdConstructorValue("ones", args, line, col, static () => 1.0));
@@ -1008,34 +1006,34 @@ internal static partial class JgsBuiltins
     /// value. Vectors behave exactly as before, so the JGS dialect (which never calls this) and every
     /// existing vector script are untouched.
     /// </summary>
-    private static void RegisterMatlabReductions(JgsEnvironment env, JgsDialect dialect)
+    private static void RegisterMatlabReductions(JgsEnvironment env, JgsRunningDialect dialect)
     {
         // One row per name, and every difference between one reduction and another lives here rather
         // than in the wrapper's body. Before M52 the only such difference was a bool for diff, and
         // std(x, 1) paid for it: the weight landed in the slot the wrapper reads as the dimension, so
         // asking for the population standard deviation silently reduced along dimension 1 instead.
         WrapColumnwise(env, "sum",
-            new(Words: TailWords.Nan | TailWords.Outtype, Identity: 0, Vecdim: true));
+            new(Words: TailWords.Nan | TailWords.Outtype, Identity: 0, Vecdim: true), dialect);
         WrapColumnwise(env, "prod",
-            new(Words: TailWords.Nan | TailWords.Outtype, Identity: 1, Vecdim: true));
-        WrapColumnwise(env, "mean", new(Words: TailWords.Nan | TailWords.Outtype));
-        WrapColumnwise(env, "median", new(Words: TailWords.Nan));
-        WrapColumnwise(env, "mode", new());
-        WrapColumnwise(env, "rms", new(Words: TailWords.Nan));
+            new(Words: TailWords.Nan | TailWords.Outtype, Identity: 1, Vecdim: true), dialect);
+        WrapColumnwise(env, "mean", new(Words: TailWords.Nan | TailWords.Outtype), dialect);
+        WrapColumnwise(env, "median", new(Words: TailWords.Nan), dialect);
+        WrapColumnwise(env, "mode", new(), dialect);
+        WrapColumnwise(env, "rms", new(Words: TailWords.Nan), dialect);
 
         // std(X, w, dim) and var(X, w, dim): the weight sits where every other reduction keeps the
         // dimension, so the dimension moves along one.
         foreach (string spread in new[] { "std", "variance", "var" })
         {
-            WrapColumnwise(env, spread, new(LeadingArgs: 1, Words: TailWords.Nan));
+            WrapColumnwise(env, spread, new(LeadingArgs: 1, Words: TailWords.Nan), dialect);
         }
 
         // any and all take no 'omitnan': MATLAB counts NaN as nonzero, so there is nothing to omit.
-        WrapColumnwise(env, "any", new(Vecdim: true));
-        WrapColumnwise(env, "all", new(Vecdim: true));
+        WrapColumnwise(env, "any", new(Vecdim: true), dialect);
+        WrapColumnwise(env, "all", new(Vecdim: true), dialect);
 
-        WrapColumnwise(env, "cumsum", new(KeepShape: true, Words: TailWords.Nan | TailWords.Reverse, Identity: 0));
-        WrapColumnwise(env, "cumprod", new(KeepShape: true, Words: TailWords.Nan | TailWords.Reverse, Identity: 1));
+        WrapColumnwise(env, "cumsum", new(KeepShape: true, Words: TailWords.Nan | TailWords.Reverse, Identity: 0), dialect);
+        WrapColumnwise(env, "cumprod", new(KeepShape: true, Words: TailWords.Nan | TailWords.Reverse, Identity: 1), dialect);
         WrapColumnwise(env, "sort", new(KeepShape: true), dialect);
 
         // cummax and cummin are cumulative reductions like the two above them, and until M70 they
@@ -1046,17 +1044,17 @@ internal static partial class JgsBuiltins
         // of the comparison; MATLAB ignores NaN here by default, unlike cumsum.
         WrapColumnwise(env, "cummax", new(
             KeepShape: true, Words: TailWords.Nan | TailWords.Reverse,
-            Identity: double.NegativeInfinity, OmitsNanByDefault: true));
+            Identity: double.NegativeInfinity, OmitsNanByDefault: true), dialect);
         WrapColumnwise(env, "cummin", new(
             KeepShape: true, Words: TailWords.Nan | TailWords.Reverse,
-            Identity: double.PositiveInfinity, OmitsNanByDefault: true));
+            Identity: double.PositiveInfinity, OmitsNanByDefault: true), dialect);
 
         // vecnorm(A, p, dim): p sits where the dimension does for everything else, so the dimension
         // moves along one — the same shape std and var have, and the same reason.
-        WrapColumnwise(env, "vecnorm", new(LeadingArgs: 1));
+        WrapColumnwise(env, "vecnorm", new(LeadingArgs: 1), dialect);
 
         // diff(X, n, dim): n is how many times to difference, not the dimension.
-        WrapColumnwise(env, "diff", new(KeepShape: true, LeadingArgs: 1, RepeatsInner: true));
+        WrapColumnwise(env, "diff", new(KeepShape: true, LeadingArgs: 1, RepeatsInner: true), dialect);
 
         WrapExtreme(env, "max", dialect, takeMin: false);
         WrapExtreme(env, "min", dialect, takeMin: true);
@@ -1131,9 +1129,8 @@ internal static partial class JgsBuiltins
     /// index base. Every other reduction answers values alone and has no use for it.
     /// </remarks>
     private static void WrapColumnwise(
-        JgsEnvironment env, string name, ReductionSpec spec, JgsDialect? dialect = null)
+        JgsEnvironment env, string name, ReductionSpec spec, JgsRunningDialect dialect)
     {
-        int indexBase = dialect?.IndexBase ?? 1;
         if (!env.TryGet(name, out JgsValue existing) || existing.Type != JgsType.Function)
         {
             return;
@@ -1467,6 +1464,9 @@ internal static partial class JgsBuiltins
 
         JgsValue Single(IReadOnlyList<JgsValue> args, int line, int col)
         {
+            // The dimension forms are MATLAB's: JGS code reaches the builtin underneath as it
+            // always did, decided at the call by the calling code's dialect (V11, ADR 0172).
+            if (!dialect.IsMatlab) return inner.Call(args, line, col);
             if (name == "median") return MedianReduction(args, line, col);
             var normalized = args.ToArray();
             bool sparse = args.Count > 0 && args[0].Type == JgsType.Sparse;
@@ -1512,7 +1512,7 @@ internal static partial class JgsBuiltins
 
             // sort is not a fold, so the reduction kernels above pass it by; its own kernels put
             // the storage in order where it lies rather than boxing a comparison per element (M95).
-            if (PackedSortOps.TryOrder(name, subject, dim, all, extra, 1, indexBase, out JgsValue[] put))
+            if (PackedSortOps.TryOrder(name, subject, dim, all, extra, 1, dialect.IndexBase, out JgsValue[] put))
             {
                 return put[0];
             }
@@ -1539,6 +1539,13 @@ internal static partial class JgsBuiltins
 
         JgsValue[] Multi(IReadOnlyList<JgsValue> args, int wanted, int line, int col)
         {
+            if (!dialect.IsMatlab)
+            {
+                return inner is IJgsMultiCallable underneath
+                    ? underneath.CallMultiple(args, wanted, line, col)
+                    : [inner.Call(args, line, col)];
+            }
+
             // diff has no second output, and its repeated form is a chain of single-output calls, so
             // the whole decision stays in Single rather than being mirrored here.
             if (spec.RepeatsInner)
@@ -1563,7 +1570,7 @@ internal static partial class JgsBuiltins
             // Both of sort's outputs from one pass. The boxed second output recovered the
             // positions afterwards, by searching the input for each sorted value in turn — which
             // is quadratic, and was the slowest thing left in the engine (M95).
-            if (PackedSortOps.TryOrder(name, subject, dim, all, extra, wanted, indexBase, out JgsValue[] put))
+            if (PackedSortOps.TryOrder(name, subject, dim, all, extra, wanted, dialect.IndexBase, out JgsValue[] put))
             {
                 return put;
             }
@@ -1614,7 +1621,7 @@ internal static partial class JgsBuiltins
             return outputs;
         }
 
-        env.Builtins.Register(name, JgsValue.Function(new BuiltinFunction(name, Single) { MultiOutput = Multi }));
+        env.Builtins.Register(name, JgsValue.Function(Wrapping(name, inner, Single, Multi)));
     }
 
     /// <summary>
@@ -1705,7 +1712,7 @@ internal static partial class JgsBuiltins
     /// what limited this to two dimensions: an N-D array read as rows is its pages laid side by side,
     /// so <c>max(A, [], 3)</c> quietly reduced along the fold instead of along the pages.
     /// </remarks>
-    private static void WrapExtreme(JgsEnvironment env, string name, JgsDialect dialect, bool takeMin)
+    private static void WrapExtreme(JgsEnvironment env, string name, JgsRunningDialect dialect, bool takeMin)
     {
         if (!env.TryGet(name, out JgsValue existing) || existing.Type != JgsType.Function)
         {
@@ -1925,6 +1932,7 @@ internal static partial class JgsBuiltins
 
         JgsValue Single(IReadOnlyList<JgsValue> args, int line, int col)
         {
+            if (!dialect.IsMatlab) return inner.Call(args, line, col); // JGS code keeps its max/min (V11)
             (bool omitNan, bool linear, IReadOnlyList<JgsValue> rest) = TakeWords(args, line, col);
             if (NeedsRankedExtreme(args)) return RankedExtreme(args, 1, Multi, line, col)[0];
             if (Reduces(rest))
@@ -1942,6 +1950,13 @@ internal static partial class JgsBuiltins
 
         JgsValue[] Multi(IReadOnlyList<JgsValue> args, int wanted, int line, int col)
         {
+            if (!dialect.IsMatlab)
+            {
+                return inner is IJgsMultiCallable underneath
+                    ? underneath.CallMultiple(args, wanted, line, col)
+                    : [inner.Call(args, line, col)];
+            }
+
             (bool omitNan, bool linear, IReadOnlyList<JgsValue> rest) = TakeWords(args, line, col);
             if (NeedsRankedExtreme(args)) return RankedExtreme(args, wanted, Multi, line, col);
             if (Reduces(rest))
@@ -1954,7 +1969,7 @@ internal static partial class JgsBuiltins
                 : [Single(args, line, col)];
         }
 
-        env.Builtins.Register(name, JgsValue.Function(new BuiltinFunction(name, Single) { MultiOutput = Multi }));
+        env.Builtins.Register(name, JgsValue.Function(Wrapping(name, inner, Single, Multi)));
     }
 
     /// <summary>

@@ -16,7 +16,7 @@ namespace JGraph.Scripting.Jgs;
 internal static partial class JgsBuiltins
 {
     /// <summary>Registers the set operations and the fuller <c>ismember</c> into <paramref name="env"/>.</summary>
-    private static void RegisterSetOperations(JgsEnvironment env, JgsDialect dialect)
+    private static void RegisterSetOperations(JgsEnvironment env, JgsRunningDialect dialect)
     {
         void DefineBoth(string name, Func<IReadOnlyList<JgsValue>, int, int, int, JgsValue[]> both) =>
             env.Builtins.Register(name, JgsValue.Function(

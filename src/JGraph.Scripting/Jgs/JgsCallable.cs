@@ -377,7 +377,7 @@ internal sealed class UserFunction : IJgsCallable, IJgsMultiCallable
         get
         {
             IReadOnlyList<string> outputs = _declaration.Outputs;
-            return _interpreter.Dialect.MatlabFunctions && (outputs.Count == 0 || outputs[^1] != "varargout")
+            return _declaration.Dialect.MatlabFunctions && (outputs.Count == 0 || outputs[^1] != "varargout")
                 ? outputs.Count
                 : null;
         }
@@ -441,9 +441,13 @@ internal sealed class UserFunction : IJgsCallable, IJgsMultiCallable
                 $"Function '{Name}' expects {parameters.Count} argument(s) but got {arguments.Count}.");
         }
 
+        // The function's own dialect decides everything about its frame (V11, ADR 0172): what it was
+        // written in, not what the caller is running - a .m function called from JGS is MATLAB here.
+        JgsDialect code = _declaration.Dialect;
+
         // MATLAB lets a caller pass fewer arguments than the header names and reports how many arrived
         // through nargin; JGS requires an exact match.
-        if (arguments.Count < fixedCount && !_interpreter.Dialect.MatlabFunctions)
+        if (arguments.Count < fixedCount && !code.MatlabFunctions)
         {
             throw new JgsRuntimeException(line, column,
                 $"Function '{Name}' expects {parameters.Count} argument(s) but got {arguments.Count}.");
@@ -459,28 +463,35 @@ internal sealed class UserFunction : IJgsCallable, IJgsMultiCallable
         // its surface is frozen - so the boundary is MATLAB's alone.
         var local = new JgsEnvironment(_closure)
         {
-            IsCallBoundary = _interpreter.Dialect.MatlabFunctions && !IsNested,
+            IsCallBoundary = code.MatlabFunctions && !IsNested,
             AccessorOf = AccessorOf,
             Function = _declaration,
         };
-        for (int i = 0; i < fixedCount && i < arguments.Count; i++)
-        {
-            // Arguments are values in MATLAB: writing to a parameter must not reach the caller's array.
-            local.Declare(parameters[i], _interpreter.CopyForBinding(arguments[i]));
-        }
 
-        if (variadic)
+        // The parameters bind under the function's dialect (V11): a MATLAB function's parameter is
+        // a value - M2's share, whoever handed the argument over - so its write never reaches a JGS
+        // caller's array; a JGS fn's parameter is the reference it always was.
+        using (_interpreter.EnterDialect(code))
         {
-            var rest = new JgsValue[Math.Max(0, arguments.Count - fixedCount)];
-            for (int i = 0; i < rest.Length; i++)
+            for (int i = 0; i < fixedCount && i < arguments.Count; i++)
             {
-                rest[i] = _interpreter.CopyForBinding(arguments[fixedCount + i]);
+                // Arguments are values in MATLAB: writing to a parameter must not reach the caller's array.
+                local.Declare(parameters[i], _interpreter.CopyForBinding(arguments[i]));
             }
 
-            local.Declare("varargin", JgsValue.Cell(rest));
+            if (variadic)
+            {
+                var rest = new JgsValue[Math.Max(0, arguments.Count - fixedCount)];
+                for (int i = 0; i < rest.Length; i++)
+                {
+                    rest[i] = _interpreter.CopyForBinding(arguments[fixedCount + i]);
+                }
+
+                local.Declare("varargin", JgsValue.Cell(rest));
+            }
         }
 
-        if (_interpreter.Dialect.MatlabFunctions)
+        if (code.MatlabFunctions)
         {
             local.Declare("nargin", JgsValue.Number(arguments.Count));
             local.Declare("nargout", JgsValue.Number(wanted));
@@ -644,7 +655,7 @@ internal sealed class AnonymousFunction : IJgsCallable, IJgsMultiCallable
                 // layer when the handle is called, and the folders are asked then — R2025b answers
                 // `@() max({1})` with the max.m of the current folder at the call, not at the
                 // creation (M145). Capturing it here would make it a local function of the body.
-                if (scope.IsBuiltinLayer && interpreter.Dialect.IsMatlab)
+                if (scope.IsBuiltinLayer && declaration.Dialect.IsMatlab)
                 {
                     continue;
                 }
@@ -700,26 +711,32 @@ internal sealed class AnonymousFunction : IJgsCallable, IJgsMultiCallable
                 $"This anonymous function expects {parameters.Count} argument(s) but got {arguments.Count}.");
         }
 
+        // The handle's own dialect binds its parameters and runs its body (V11, ADR 0172): `@(x) x(1)`
+        // made by a .m script and called from JGS answers the first element.
+        JgsDialect code = _declaration.Dialect;
         var local = new JgsEnvironment(_captured) { IsStaticWorkspace = true };
-        for (int i = 0; i < fixedCount; i++)
+        using (_interpreter.EnterDialect(code))
         {
-            local.Declare(parameters[i], _interpreter.CopyForBinding(arguments[i]));
-        }
-
-        if (variadic)
-        {
-            var rest = new JgsValue[arguments.Count - fixedCount];
-            for (int i = 0; i < rest.Length; i++)
+            for (int i = 0; i < fixedCount; i++)
             {
-                rest[i] = _interpreter.CopyForBinding(arguments[fixedCount + i]);
+                local.Declare(parameters[i], _interpreter.CopyForBinding(arguments[i]));
             }
 
-            local.Declare("varargin", JgsValue.Cell(rest));
+            if (variadic)
+            {
+                var rest = new JgsValue[arguments.Count - fixedCount];
+                for (int i = 0; i < rest.Length; i++)
+                {
+                    rest[i] = _interpreter.CopyForBinding(arguments[fixedCount + i]);
+                }
+
+                local.Declare("varargin", JgsValue.Cell(rest));
+            }
         }
 
         // MATLAB answers an anonymous function's own arity from inside its body, in preference to the
         // nargin of whatever function defined it.
-        if (_interpreter.Dialect.MatlabFunctions)
+        if (code.MatlabFunctions)
         {
             local.Declare("nargin", JgsValue.Number(arguments.Count));
         }
@@ -730,7 +747,7 @@ internal sealed class AnonymousFunction : IJgsCallable, IJgsMultiCallable
         // frame (V10), at the invoker's next statement boundary.
         try
         {
-            return _interpreter.EvaluateForOutputsInContext(_declaration.Body, wanted, local, _file, Text, line);
+            return _interpreter.EvaluateForOutputsInContext(_declaration.Body, wanted, local, _file, Text, line, code);
         }
         finally
         {

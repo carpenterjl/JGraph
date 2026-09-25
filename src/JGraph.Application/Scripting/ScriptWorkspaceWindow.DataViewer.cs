@@ -127,7 +127,9 @@ public partial class ScriptWorkspaceWindow
     {
         if (_debugSession is { IsPaused: true } debug)
         {
-            return debug.ComposeCellAssignment(variable, row, column, text);
+            // The frame the viewed variables came from, whose code dialect the write is composed in
+            // (V11): the K>> prompt evaluates the statement in that same frame.
+            return debug.ComposeCellAssignment(variable, row, column, text, _selectedFrame);
         }
 
         return _variablesLanguage is { } language && _sessions.TryGetValue(language, out IScriptSession? session)

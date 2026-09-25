@@ -22,7 +22,7 @@ internal static partial class JgsBuiltins
         Action<string, Func<IReadOnlyList<JgsValue>, int, int, JgsValue>> define,
         JGraphScriptGlobals host,
         Random random,
-        JgsDialect dialect)
+        JgsRunningDialect dialect)
     {
         define("imtile", TileImages);
         // --- File IO -------------------------------------------------------------------------
@@ -1012,7 +1012,7 @@ internal static partial class JgsBuiltins
         };
 
     private static void DefineImagingWaveB(
-        Action<string, Func<IReadOnlyList<JgsValue>, int, int, JgsValue>> define, JgsDialect dialect)
+        Action<string, Func<IReadOnlyList<JgsValue>, int, int, JgsValue>> define, JgsRunningDialect dialect)
     {
         // --- Edge detection ------------------------------------------------------------------
         define("edge", (args, line, col) => EdgeOutputs(args, 1, line, col)[0]);

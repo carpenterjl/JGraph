@@ -46,7 +46,7 @@ internal static partial class JgsBuiltins
     };
 
     /// <summary>Registers the editing family and applies the elementwise retrofit.</summary>
-    internal static void RegisterStringEditingBuiltins(JgsEnvironment env, JgsDialect dialect)
+    internal static void RegisterStringEditingBuiltins(JgsEnvironment env, JgsRunningDialect dialect)
     {
         void Define(string name, Func<IReadOnlyList<JgsValue>, int, int, JgsValue> body) =>
             env.Builtins.Register(name, JgsValue.Function(new BuiltinFunction(name, body)));

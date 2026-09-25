@@ -53,7 +53,7 @@ internal static partial class JgsBuiltins
         "fibermetric", [], ["StructureSensitivity", "ObjectPolarity"]);
 
     private static void DefineEnhancementBuiltins(
-        Action<string, Func<IReadOnlyList<JgsValue>, int, int, JgsValue>> define, JgsDialect dialect)
+        Action<string, Func<IReadOnlyList<JgsValue>, int, int, JgsValue>> define, JgsRunningDialect dialect)
     {
         // --- Histogram-based enhancement -----------------------------------------------------
         define("adapthisteq", (args, line, col) =>

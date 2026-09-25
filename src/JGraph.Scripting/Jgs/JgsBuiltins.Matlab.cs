@@ -33,7 +33,7 @@ internal static partial class JgsBuiltins
 
     /// <summary>Registers the MATLAB-facing builtins into <paramref name="env"/>.</summary>
     private static void RegisterMatlabBuiltins(
-        JgsEnvironment env, JGraphScriptGlobals host, Random random, JgsDialect dialect)
+        JgsEnvironment env, JGraphScriptGlobals host, Random random, JgsRunningDialect dialect)
     {
         void Define(string name, Func<IReadOnlyList<JgsValue>, int, int, JgsValue> body) =>
             env.Builtins.Register(name, JgsValue.Function(new BuiltinFunction(name, body)));
@@ -520,11 +520,7 @@ internal static partial class JgsBuiltins
             ]);
         });
 
-        if (dialect.IsMatlab)
-        {
-            WrapFormatters(env, host);
-        }
-
+        WrapFormatters(env, host, dialect);
         RegisterMultiOutputForms(env, dialect);
     }
 
@@ -625,7 +621,9 @@ internal static partial class JgsBuiltins
     /// <summary>
     /// MATLAB's quotes do not decode escapes, but its formatting functions do: <c>fprintf('a\n')</c>
     /// prints a line break even though the literal holds a backslash and an 'n'. JGS decodes escapes in
-    /// the literal itself, so only the MATLAB side needs this pass — and only on the format string.
+    /// the literal itself, so only a MATLAB call needs this pass — and only on the format string.
+    /// Which it is, is the calling code's dialect, read at the call (V11, ADR 0172): a <c>.m</c>
+    /// script run from a JGS session prints its newline.
     /// </summary>
     /// <remarks>
     /// An escape MATLAB does not recognise ends the format string there rather than passing through:
@@ -633,7 +631,7 @@ internal static partial class JgsBuiltins
     /// works from — which is also what makes the truncation repeat correctly, since MATLAB stops each
     /// pass over a cycling format at the same place (ADR 0148).
     /// </remarks>
-    private static void WrapFormatters(JgsEnvironment env, JGraphScriptGlobals host)
+    private static void WrapFormatters(JgsEnvironment env, JGraphScriptGlobals host, JgsRunningDialect dialect)
     {
         foreach (string name in new[] { "sprintf", "fprintf" })
         {
@@ -643,8 +641,13 @@ internal static partial class JgsBuiltins
             }
 
             IJgsCallable inner = existing.AsCallable;
-            env.Builtins.Register(name, JgsValue.Function(new BuiltinFunction(name, (args, line, col) =>
+            env.Builtins.Register(name, JgsValue.Function(Wrapping(name, inner, (args, line, col) =>
             {
+                if (!dialect.IsMatlab)
+                {
+                    return inner.Call(args, line, col); // JGS decoded its escapes in the literal
+                }
+
                 // The format is normally first; fprintf(fid, fmt, …) shifts it one slot right.
                 int at = args.Count > 0 && args[0].Type == JgsType.String
                     ? 0
@@ -679,7 +682,7 @@ internal static partial class JgsBuiltins
     /// <c>[v, i] = max(x)</c>, <c>[s, i] = sort(x)</c> — so that form works while the single-value form
     /// keeps behaving exactly as it did.
     /// </summary>
-    private static void RegisterMultiOutputForms(JgsEnvironment env, JgsDialect dialect)
+    private static void RegisterMultiOutputForms(JgsEnvironment env, JgsRunningDialect dialect)
     {
         void Wrap(string name, Func<IReadOnlyList<JgsValue>, int, int, int, JgsValue[]> both, bool takesCount = false)
         {
@@ -823,9 +826,14 @@ internal static partial class JgsBuiltins
             }
 
             IJgsCallable setForm = grid.AsCallable;
-            Func<IReadOnlyList<JgsValue>, int, int, JgsValue> single = dialect.IsMatlab
-                ? (args, line, col) => setForm.Call(args, line, col).ElementAt(0)
-                : setForm.Call;
+
+            // The one-output form is decided by the calling code's dialect at the call (V11, ADR
+            // 0172): X alone for MATLAB code, the whole set for JGS's destructuring.
+            Func<IReadOnlyList<JgsValue>, int, int, JgsValue> single = (args, line, col) =>
+            {
+                JgsValue set = setForm.Call(args, line, col);
+                return dialect.IsMatlab ? set.ElementAt(0) : set;
+            };
             env.Builtins.Register(name, JgsValue.Function(new BuiltinFunction(name, single)
             {
                 MultiOutput = (args, wanted, line, col) =>
@@ -930,7 +938,7 @@ internal static partial class JgsBuiltins
     }
 
     private static JgsValue[] ExtremeWithIndex(
-        JgsEnvironment env, string name, IReadOnlyList<JgsValue> args, JgsDialect dialect, int line, int col)
+        JgsEnvironment env, string name, IReadOnlyList<JgsValue> args, JgsRunningDialect dialect, int line, int col)
     {
         JgsValue best = SingleOf(env, name, args, line, col);
         if (args.Count != 1 || args[0].Type != JgsType.Array)
@@ -1141,7 +1149,7 @@ internal static partial class JgsBuiltins
     /// </para>
     /// </remarks>
     private static string FormatMessage(
-        JgsEnvironment env, JGraphScriptGlobals host, JgsDialect dialect, string name,
+        JgsEnvironment env, JGraphScriptGlobals host, JgsRunningDialect dialect, string name,
         IReadOnlyList<JgsValue> args, int start, bool identified, int line, int col)
     {
         string format = Str(name, args, start, line, col);
@@ -1183,7 +1191,7 @@ internal static partial class JgsBuiltins
     /// a statement, which is when a query prints and a state change says nothing.
     /// </summary>
     private static JgsValue[] Warning(
-        JgsEnvironment env, JGraphScriptGlobals host, JgsDialect dialect,
+        JgsEnvironment env, JGraphScriptGlobals host, JgsRunningDialect dialect,
         IReadOnlyList<JgsValue> args, int wanted, int line, int col)
     {
         JgsWarningState state = host.Warnings;

@@ -1,0 +1,88 @@
+# dialect_crossing.jgs -- V11 of the value-ownership plan (ADR 0172): code carries its dialect.
+# A JGraph-only fixture: R2025b cannot run JGS, so expected/dialect_crossing.txt is written from
+# the rule - a .m file means what it means in MATLAB, however it was reached, and JGS code keeps
+# JGS's meaning however it was called - and the MATLAB half of every case is what
+# dialect_crossing_matlab.m measures in R2025b from the same helpers. Each helper is a .m file in
+# helpers/, reached from here as a function on the path or through run().
+
+# --- a MATLAB function file called from JGS (c1-c5) ------------------------------------------
+let a = [1, 2, 3];
+let r = dc_write_param(a);
+print("CHK|dc_param_write_result|" + r + "|exact");
+print("CHK|dc_param_write_caller_kept|" + a + "|exact");
+print("CHK|dc_first_is_one_based|" + dc_first(a) + "|exact");
+let r3 = dc_local_alias(a);
+print("CHK|dc_local_alias_result|" + r3 + "|exact");
+print("CHK|dc_local_alias_caller_kept|" + a + "|exact");
+let p = dc_persist();
+p[0] = 99;
+print("CHK|dc_persistent_copy_written|" + p + "|exact");
+print("CHK|dc_persistent_slot_kept|" + dc_persist() + "|exact");
+let c = dc_concat([1, 2], [3, 4]);
+print("CHK|dc_brackets_concatenate|" + c + "|exact");
+print("CHK|dc_brackets_concatenate_numel|" + length(c) + "|exact");
+
+# --- a MATLAB script run from JGS (c6, c7, c10, c11) -------------------------------------------
+run("helpers/dc_script_alias.m");
+run("helpers/dc_make_alias.m");
+q[0] = 9;
+print("CHK|dc_jgs_writes_shared_payload_q|" + q + "|exact");
+print("CHK|dc_jgs_writes_shared_payload_w_kept|" + w + "|exact");
+let a2 = [1, 2, 3];
+let b2 = a2;
+a = a2;
+run("helpers/dc_write_a.m");
+print("CHK|dc_matlab_writes_jgs_reference_a|" + a + "|exact");
+print("CHK|dc_matlab_writes_jgs_reference_alias_sees_it|" + b2 + "|exact");
+run("helpers/dc_make_handles.m");
+print("CHK|dc_matlab_handle_indexes_one_based|" + first([1, 2, 3]) + "|exact");
+print("CHK|dc_matlab_handle_brackets_join|" + length(twice([1, 2])) + "|exact");
+
+# --- the nested crossing (round 11): a MATLAB function detaches a struct's child ---------------
+run("helpers/dc_make_struct_alias.m");
+r = dc_write_field(q);
+run("helpers/dc_show_struct_alias.m");
+
+# --- the lexical built-ins: find, unique, sprintf, fprintf -------------------------------------
+print("CHK|dc_jgs_find_is_zero_based|" + find([0, 1, 1]) + "|exact");
+print("CHK|dc_jgs_find_second_arg_is_origin|" + find([0, 1, 1], 1) + "|exact");
+run("helpers/dc_find.m");
+print("CHK|dc_fn_lexical|" + dc_lexical_fn([0, 1, 1]) + "|exact");
+print("CHK|dc_jgs_find_after_crossing|" + find([0, 1, 1]) + "|exact");
+print("CHK|dc_jgs_sprintf_after_crossing|" + sprintf("%d-%d", 1, 2) + "|exact");
+
+# --- JGS functions called from a MATLAB script, and errors across the crossing -----------------
+fn jgs_first(x) { return x[0] }
+fn jgs_fail(x) { return no_such_name_anywhere + x }
+run("helpers/dc_call_closure.m");
+print("CHK|dc_jgs_find_after_script_error|" + find([0, 1, 1]) + "|exact");
+print("CHK|dc_fn_recovers_from_own_error|" + dc_fail_and_recover() + "|exact");
+
+# --- a compiled MATLAB loop inside a function called from JGS ---------------------------------
+print("CHK|dc_compiled_loop|" + dc_loop(1000) + "|exact");
+
+# --- scope escape and release across the crossing (V10's lifetimes) ---------------------------
+dc_log_reset();
+dc_temp_holder();
+print("CHK|dc_release_at_frame_exit|" + dc_log() + "|exact");
+dc_log_reset();
+let h = dc_make_holder("H");
+print("CHK|dc_escaped_holder_alive|" + dc_log() + "|exact");
+h = 0;
+print("CHK|dc_escaped_holder_released_by_jgs_rebind|" + dc_log() + "|exact");
+
+# --- a MATLAB rebinding leaves a JGS alias and appdata whole (c15, c16; Z2b's guards) ---------
+let a15 = [1, 1, 1];
+let b15 = a15;
+a = a15;
+run("helpers/dc_rebind_minus.m");
+print("CHK|dc_matlab_rebind_a|" + a + "|exact");
+print("CHK|dc_matlab_rebind_jgs_alias_kept|" + b15 + "|exact");
+let f = figure();
+let a16 = [1, 1, 1];
+setappdata(f, "k", a16);
+a = a16;
+run("helpers/dc_rebind_minus.m");
+let v = getappdata(gcf(), "k");
+print("CHK|dc_matlab_rebind_appdata_kept|" + v + "|exact");
+print("CHK|dc_matlab_rebind_a_again|" + a + "|exact");

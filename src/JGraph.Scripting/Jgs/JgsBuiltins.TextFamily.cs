@@ -40,7 +40,7 @@ internal static partial class JgsBuiltins
     internal static bool IsMissingText(string text) => text == MissingSentinel;
 
     /// <summary>Registers the family. Runs after every other text define so it holds each name.</summary>
-    internal static void RegisterTextFamilyBuiltins(JgsEnvironment env, JgsDialect dialect)
+    internal static void RegisterTextFamilyBuiltins(JgsEnvironment env, JgsRunningDialect dialect)
     {
         BuiltinFunction? Inner(string name) =>
             env.TryGet(name, out JgsValue declared) && declared.Type == JgsType.Function

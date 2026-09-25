@@ -13,7 +13,7 @@ namespace JGraph.Scripting.Jgs;
 /// </summary>
 internal static partial class JgsBuiltins
 {
-    private static void RegisterPolarBuiltins(JgsEnvironment env, JgsDialect dialect)
+    private static void RegisterPolarBuiltins(JgsEnvironment env, JgsRunningDialect dialect)
     {
         void DefineSilent(string name, Func<IReadOnlyList<JgsValue>, int, int, JgsValue> body) =>
             env.Builtins.Register(name, JgsValue.Function(

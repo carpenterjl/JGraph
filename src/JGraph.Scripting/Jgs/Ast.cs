@@ -57,6 +57,13 @@ internal abstract class Stmt : Node
     /// parser — statement-level only; expressions never need file identity.
     /// </summary>
     public string SourceId { get; set; } = "";
+
+    /// <summary>
+    /// The dialect the statement was parsed in (V11, ADR 0172): what a function, a script and a
+    /// class method enter for their body, whoever calls them. Stamped by the parser beside
+    /// <see cref="SourceId"/>; a statement built by hand speaks JGS.
+    /// </summary>
+    public JgsDialect Dialect { get; set; } = JgsDialect.Jgs;
 }
 
 // --- Expressions ----------------------------------------------------------------------------------
@@ -257,6 +264,12 @@ internal sealed class AnonymousFnExpr(IReadOnlyList<string> parameters, Expr bod
     public IReadOnlyList<string> Parameters { get; } = parameters;
 
     public Expr Body { get; } = body;
+
+    /// <summary>
+    /// The dialect the handle was written in (V11, ADR 0172): what its body runs under and what its
+    /// parameters bind by, wherever the handle is called from. Stamped by the parser.
+    /// </summary>
+    public JgsDialect Dialect { get; set; } = JgsDialect.Jgs;
 }
 
 /// <summary>A MATLAB function handle <c>@name</c>, naming a user function or a builtin.</summary>

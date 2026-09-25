@@ -279,6 +279,7 @@ internal sealed class JgsClass
         {
             verified = JgsBuiltins.CheckArgument(property.Spec, value, line, col, _interpreter.Globals);
             using Interpreter.FileContext classFile = _interpreter.EnterFile(Declaration.SourceId);
+            using Interpreter.DialectContext classCode = _interpreter.EnterDialect(Declaration.Dialect); // V11
             _interpreter.RunValidators(property.Spec.Validators, verified, _scope);
         }
         catch (JgsRuntimeException failure)
@@ -313,7 +314,8 @@ internal sealed class JgsClass
 
             JgsValue start = property.Spec.Default is { } expression
                 ? _interpreter.EvaluateInContext(
-                    expression, defaults, Declaration.SourceId, $"{Name}.{property.Spec.Name} default", line)
+                    expression, defaults, Declaration.SourceId, $"{Name}.{property.Spec.Name} default", line,
+                    Declaration.Dialect)
                 : JgsValue.Array([]);
             instance.Fields[property.Spec.Name] = Check(property, start, line, col);
         }
@@ -359,20 +361,24 @@ internal sealed class JgsClass
                 $"'{Name}' takes {fixedCount} argument(s) but got {arguments.Count}.");
         }
 
-        for (int i = 0; i < fixedCount && i < arguments.Count; i++)
+        // The constructor's parameters bind under the class file's dialect (V11), as a function's do.
+        using (_interpreter.EnterDialect(declaration.Dialect))
         {
-            local.Declare(parameters[i], _interpreter.CopyForBinding(arguments[i]));
-        }
-
-        if (variadic)
-        {
-            var rest = new JgsValue[Math.Max(0, arguments.Count - fixedCount)];
-            for (int i = 0; i < rest.Length; i++)
+            for (int i = 0; i < fixedCount && i < arguments.Count; i++)
             {
-                rest[i] = _interpreter.CopyForBinding(arguments[fixedCount + i]);
+                local.Declare(parameters[i], _interpreter.CopyForBinding(arguments[i]));
             }
 
-            local.Declare("varargin", JgsValue.Cell(rest));
+            if (variadic)
+            {
+                var rest = new JgsValue[Math.Max(0, arguments.Count - fixedCount)];
+                for (int i = 0; i < rest.Length; i++)
+                {
+                    rest[i] = _interpreter.CopyForBinding(arguments[fixedCount + i]);
+                }
+
+                local.Declare("varargin", JgsValue.Cell(rest));
+            }
         }
 
         local.Declare("nargin", JgsValue.Number(arguments.Count));
@@ -418,7 +424,7 @@ internal sealed class JgsClass
                 property,
                 _interpreter.EvaluateInContext(
                     expression, DefaultWorkspace(), Declaration.SourceId, $"{Name}.{property.Spec.Name} default",
-                    Declaration.Line),
+                    Declaration.Line, Declaration.Dialect),
                 Declaration.Line,
                 Declaration.Column);
         }

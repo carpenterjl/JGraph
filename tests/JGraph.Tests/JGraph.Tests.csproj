@@ -37,7 +37,7 @@
     stamp mode reads it.
   -->
   <ItemGroup>
-    <Content Include="MatlabParity\fixtures\*.m;MatlabParity\fixtures\*.owners;MatlabParity\fixtures\helpers\*.m;MatlabParity\expected\*.txt"
+    <Content Include="MatlabParity\fixtures\*.m;MatlabParity\fixtures\*.jgs;MatlabParity\fixtures\*.owners;MatlabParity\fixtures\helpers\*.m;MatlabParity\expected\*.txt"
              CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 

@@ -26,7 +26,7 @@ internal static partial class JgsBuiltins
 {
     /// <summary>Registers the data-analysis builtins, replacing three earlier registrations.</summary>
     private static void RegisterDataAnalysisBuiltins(
-        JgsEnvironment env, JgsDialect dialect, JGraphScriptGlobals host)
+        JgsEnvironment env, JgsRunningDialect dialect, JGraphScriptGlobals host)
     {
         void Define(string name, Func<IReadOnlyList<JgsValue>, int, int, JgsValue> body,
             Func<IReadOnlyList<JgsValue>, int, int, int, JgsValue[]>? multi = null) =>

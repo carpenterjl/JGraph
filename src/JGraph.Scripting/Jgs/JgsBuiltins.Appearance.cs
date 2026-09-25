@@ -17,7 +17,7 @@ internal static partial class JgsBuiltins
     /// <c>flag(8)</c> the same map without a second definition to keep in step.
     /// </para>
     /// </summary>
-    private static void RegisterLegacyAppearanceBuiltins(JgsEnvironment env, JgsDialect dialect)
+    private static void RegisterLegacyAppearanceBuiltins(JgsEnvironment env, JgsRunningDialect dialect)
     {
         void Define(string name, Func<IReadOnlyList<JgsValue>, int, int, JgsValue> body) =>
             env.Builtins.Register(name, JgsValue.Function(new BuiltinFunction(name, body)));

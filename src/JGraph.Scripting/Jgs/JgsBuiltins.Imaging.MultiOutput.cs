@@ -19,15 +19,12 @@ namespace JGraph.Scripting.Jgs;
 internal static partial class JgsBuiltins
 {
     private static void RegisterImagingMultiOutputForms(
-        JgsEnvironment env, JGraphScriptGlobals host, Random random, JgsDialect dialect)
+        JgsEnvironment env, JGraphScriptGlobals host, Random random, JgsRunningDialect dialect)
     {
-        if (!dialect.IsMatlab)
-        {
-            return;
-        }
-
         // Under MATLAB the single-output call must yield output one alone, so `single` is replaced
-        // rather than kept: returning the whole array is the bug this exists to fix.
+        // rather than kept: returning the whole array is the bug this exists to fix. Which code is
+        // calling decides at the call (V11, ADR 0172): JGS keeps the array its scripts destructure,
+        // and a .m function run from a JGS session gets MATLAB's first output.
         void Wrap(string name, Func<IReadOnlyList<JgsValue>, int, int, int, JgsValue[]> outputs)
         {
             if (!env.TryGet(name, out JgsValue existing) || existing.Type != JgsType.Function)
@@ -35,12 +32,12 @@ internal static partial class JgsBuiltins
                 return;
             }
 
-            env.Builtins.Register(name, JgsValue.Function(new BuiltinFunction(
+            IJgsCallable jgs = existing.AsCallable;
+            env.Builtins.Register(name, JgsValue.Function(Wrapping(
                 name,
-                (args, line, col) => outputs(args, 1, line, col)[0])
-            {
-                MultiOutput = outputs,
-            }));
+                jgs,
+                (args, line, col) => dialect.IsMatlab ? outputs(args, 1, line, col)[0] : jgs.Call(args, line, col),
+                outputs)));
         }
 
         // Builtins that already return a JGS array: unpack it into real outputs.

@@ -46,6 +46,12 @@ namespace JGraph.Tests.MatlabParity;
 /// function file is the file's own first token, and both engines run it by that form — a fixture that
 /// needs base-workspace semantics is written as a script.
 /// </para>
+/// <para>
+/// <b>JGraph-only fixtures.</b> A <c>.jgs</c> fixture runs in the JGS dialect (V11, ADR 0172: the
+/// dialect crossing, which R2025b cannot run). Its recording is written by hand from the rule and
+/// carries no state; the MATLAB half of each of its cases is a <c>.m</c> fixture recorded from
+/// R2025b over the same helpers, so what a helper means in MATLAB is measured, never assumed.
+/// </para>
 /// </remarks>
 [Collection("JG facade")]
 public class MatlabParityFixtureTests : IDisposable
@@ -65,17 +71,26 @@ public class MatlabParityFixtureTests : IDisposable
             yield break;
         }
 
-        foreach (string path in Directory.GetFiles(folder, "*.m").OrderBy(p => p, StringComparer.Ordinal))
+        foreach (string path in Directory.GetFiles(folder)
+                     .Where(static p => Path.GetExtension(p) is ".m" or ".jgs")
+                     .OrderBy(p => p, StringComparer.Ordinal))
         {
             yield return new object[] { Path.GetFileNameWithoutExtension(path) };
         }
+    }
+
+    /// <summary>The fixture's script: the <c>.m</c> file of that name, or the <c>.jgs</c> one of a JGraph-only fixture.</summary>
+    private static string ScriptOf(string fixture)
+    {
+        string matlab = Path.Combine(Root, "fixtures", fixture + ".m");
+        return File.Exists(matlab) ? matlab : Path.Combine(Root, "fixtures", fixture + ".jgs");
     }
 
     [Theory]
     [MemberData(nameof(Fixtures))]
     public void FixtureAgreesWithMatlabByItsRules(string fixture)
     {
-        string script = Path.Combine(Root, "fixtures", fixture + ".m");
+        string script = ScriptOf(fixture);
         string recording = Path.Combine(Root, "expected", fixture + ".txt");
         Assert.True(File.Exists(script), $"{fixture}: fixture not found at {script}");
         Assert.True(
@@ -225,15 +240,17 @@ public class MatlabParityFixtureTests : IDisposable
     /// <summary>
     /// Runs a fixture as the recorder runs it in MATLAB: by its real path (so <c>mfilename</c> and
     /// the implicit folder are its own), with the fixtures folder current and <c>helpers\</c> on the
-    /// function path. The comparer's inline lines are the comparer's business; this is the fixture's.
+    /// function path. A <c>.jgs</c> fixture runs the same way in the JGS dialect. The comparer's
+    /// inline lines are the comparer's business; this is the fixture's.
     /// </summary>
     private static (string Printed, string? RunFailure) RunFixture(string script)
     {
         string fixtures = Path.GetDirectoryName(script)!;
         var output = new RecordingScriptOutput();
         var context = new ScriptContext(output, (_, _) => { }, fixtures) { ScriptPath = script };
+        JgsDialect dialect = Path.GetExtension(script) == ".jgs" ? JgsDialect.Jgs : JgsDialect.Matlab;
         ScriptRunResult result = JgsRunner.Run(
-            File.ReadAllText(script), context, default, sourceId: script, hook: null, JgsDialect.Matlab,
+            File.ReadAllText(script), context, default, sourceId: script, hook: null, dialect,
             searchFolders: [Path.Combine(fixtures, "helpers")]);
 
         // A run that fails is not an assertion failure here: the recording may say it fails

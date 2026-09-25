@@ -13,7 +13,7 @@ namespace JGraph.Scripting.Jgs;
 internal static partial class JgsBuiltins
 {
     /// <summary>Registers the linear algebra builtins into <paramref name="env"/>.</summary>
-    private static void RegisterLinearAlgebraBuiltins(JgsEnvironment env, JgsDialect dialect)
+    private static void RegisterLinearAlgebraBuiltins(JgsEnvironment env, JgsRunningDialect dialect)
     {
         void Define(string name, Func<IReadOnlyList<JgsValue>, int, int, JgsValue> body,
             Func<IReadOnlyList<JgsValue>, int, int, int, JgsValue[]>? multi = null) =>

@@ -35,7 +35,7 @@ internal static partial class JgsBuiltins
         "bootci", [], ["alpha", "type", "Weights", "Options", "nbootstd", "stderr"]);
 
     /// <summary>Registers the sampling and resampling builtins.</summary>
-    private static void RegisterSamplingBuiltins(JgsEnvironment env, Random random, JgsDialect dialect)
+    private static void RegisterSamplingBuiltins(JgsEnvironment env, Random random, JgsRunningDialect dialect)
     {
         void Define(string name, Func<IReadOnlyList<JgsValue>, int, int, JgsValue> body,
             Func<IReadOnlyList<JgsValue>, int, int, int, JgsValue[]>? multi = null) =>

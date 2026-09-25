@@ -29,14 +29,17 @@ namespace JGraph.Scripting.Jgs;
 /// </remarks>
 internal static partial class JgsBuiltins
 {
-    /// <summary>Declares MATLAB's volume <c>slice</c> over the JGS array slicer.</summary>
-    private static void RegisterVolumeSlice(JgsEnvironment env)
+    /// <summary>
+    /// Declares MATLAB's volume <c>slice</c> over the JGS array slicer: the name dispatches on the
+    /// calling code's dialect (V11, ADR 0172), so each keeps its own meaning in every session.
+    /// </summary>
+    private static void RegisterVolumeSlice(JgsEnvironment env, JgsRunningDialect dialect)
     {
-        env.Builtins.Register("slice", JgsValue.Function(
+        RegisterMatlabFormOver(env, dialect, "slice",
             new BuiltinFunction("slice", OnNamedAxes((args, line, col) => Slice(args, line, col)))
             {
                 BindsAnsAsStatement = false,
-            }));
+            });
     }
 
     private static JgsValue Slice(IReadOnlyList<JgsValue> args, int line, int col)

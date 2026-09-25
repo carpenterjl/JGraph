@@ -73,7 +73,9 @@ internal sealed class JgsFunctionPath
     /// </summary>
     private bool WarnShadowing(string name)
     {
-        if (!_interpreter.Dialect.IsMatlab)
+        // The session's dialect, not the running code's (V11, ADR 0172): the warning is about the
+        // folders a session scans, and a JGS session never raises it, whatever code moved the folder.
+        if (!_interpreter.SessionDialect.IsMatlab)
         {
             return false;
         }
@@ -428,8 +430,9 @@ internal sealed class JgsFunctionPath
                         $"'{name}' is a script file, not a function, so it takes no arguments.");
                 }
 
-                _interpreter.RunInDialect(JgsDialect.Matlab,
-                    () => _interpreter.RunScriptFile(program, _interpreter.CurrentFrame, path));
+                // The script's statements carry the MATLAB dialect they were parsed in, and the run
+                // enters it (V11, ADR 0172) - whoever named the script.
+                _interpreter.RunScriptFile(program, _interpreter.CurrentFrame, path);
                 return JgsValue.Null;
             }));
         }

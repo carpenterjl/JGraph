@@ -73,7 +73,7 @@ internal static partial class JgsBuiltins
         };
 
     private static void DefineMetricBuiltins(
-        Action<string, Func<IReadOnlyList<JgsValue>, int, int, JgsValue>> define, JgsDialect dialect)
+        Action<string, Func<IReadOnlyList<JgsValue>, int, int, JgsValue>> define, JgsRunningDialect dialect)
     {
         // --- Whole-picture statistics ------------------------------------------------------------
         define("mean2", (args, line, col) =>

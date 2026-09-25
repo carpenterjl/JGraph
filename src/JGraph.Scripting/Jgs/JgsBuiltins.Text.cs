@@ -12,7 +12,7 @@ namespace JGraph.Scripting.Jgs;
 internal static partial class JgsBuiltins
 {
     /// <summary>Registers the string and regular-expression builtins (M38).</summary>
-    private static void RegisterTextBuiltins(JgsEnvironment env, JGraphScriptGlobals host, JgsDialect dialect)
+    private static void RegisterTextBuiltins(JgsEnvironment env, JGraphScriptGlobals host, JgsRunningDialect dialect)
     {
         void Define(string name, Func<IReadOnlyList<JgsValue>, int, int, JgsValue> body,
             Func<IReadOnlyList<JgsValue>, int, int, int, JgsValue[]>? multi = null) =>
@@ -31,7 +31,7 @@ internal static partial class JgsBuiltins
     private static void RegisterStringSearch(
         Action<string, Func<IReadOnlyList<JgsValue>, int, int, JgsValue>,
             Func<IReadOnlyList<JgsValue>, int, int, int, JgsValue[]>?> Define,
-        JgsDialect dialect)
+        JgsRunningDialect dialect)
     {
         // strfind, strncmp, strncmpi, count, matches and strlength are declared in
         // JgsBuiltins.TextFamily.cs, over the containers MATLAB hands them.
@@ -386,7 +386,7 @@ internal static partial class JgsBuiltins
     private static void RegisterScanning(
         Action<string, Func<IReadOnlyList<JgsValue>, int, int, JgsValue>,
             Func<IReadOnlyList<JgsValue>, int, int, int, JgsValue[]>?> Define,
-        JgsEnvironment env, JGraphScriptGlobals host, JgsDialect dialect)
+        JgsEnvironment env, JGraphScriptGlobals host, JgsRunningDialect dialect)
     {
         Define("sscanf", (args, line, col) => ScanText(args, 1, env, host, dialect, line, col)[0],
             (args, wanted, line, col) => ScanText(args, wanted, env, host, dialect, line, col));
@@ -397,7 +397,7 @@ internal static partial class JgsBuiltins
     /// format, bounded by a count or an <c>[m n]</c> shape.
     /// </summary>
     private static JgsValue[] ScanText(IReadOnlyList<JgsValue> args, int wanted, JgsEnvironment env,
-        JGraphScriptGlobals host, JgsDialect dialect, int line, int col)
+        JGraphScriptGlobals host, JgsRunningDialect dialect, int line, int col)
     {
         ArityRange("sscanf", args, 2, 3, line, col);
         string text = Str("sscanf", args, 0, line, col);

@@ -72,7 +72,7 @@ internal static partial class JgsBuiltins
 
     /// <summary>Registers <c>timer</c>, <c>start</c>, <c>stop</c> and <c>wait</c>, and gives the run its scheduler.</summary>
     internal static void RegisterTimerBuiltins(
-        JgsEnvironment env, Interpreter interpreter, JGraphScriptGlobals host, JgsDialect dialect)
+        JgsEnvironment env, Interpreter interpreter, JGraphScriptGlobals host, JgsRunningDialect dialect)
     {
         ArgumentNullException.ThrowIfNull(env);
         ArgumentNullException.ThrowIfNull(interpreter);
@@ -81,11 +81,11 @@ internal static partial class JgsBuiltins
         var scheduler = new JgsTimerScheduler(interpreter, host);
         host.Timers = scheduler;
         interpreter.Timers = scheduler;
-        bool shares = dialect.CopyOnAssign;
 
-        // `t = timer;` auto-calls the bare name, as containers.Map does.
+        // `t = timer;` auto-calls the bare name, as containers.Map does. What a property store takes
+        // is the storing code's dialect's rule, read at the call (V11, ADR 0172).
         env.Builtins.Register(TimerClassName, JgsValue.Function(new BuiltinFunction(TimerClassName,
-            (args, line, col) => NewTimer(scheduler, args, shares, line, col))
+            (args, line, col) => NewTimer(scheduler, args, dialect.CopyOnAssign, line, col))
         {
             AutoCallsBare = true,
         }));

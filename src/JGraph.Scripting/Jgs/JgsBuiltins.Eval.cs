@@ -63,8 +63,11 @@ internal static partial class JgsBuiltins
 
     /// <summary>Declares the interpreter-backed builtins into <paramref name="env"/>.</summary>
     internal static void RegisterEvalBuiltins(
-        JgsEnvironment env, Interpreter interpreter, JGraphScriptGlobals host, JgsDialect dialect)
+        JgsEnvironment env, Interpreter interpreter, JGraphScriptGlobals host)
     {
+        // The interpreter's running dialect (V11, ADR 0172): the registrars below that read a dialect
+        // read the calling code's at the call, as CreateGlobals's do.
+        JgsRunningDialect dialect = interpreter.RunningDialect;
         void Define(string name, Func<IReadOnlyList<JgsValue>, int, int, JgsValue> body) =>
             env.Builtins.Register(name, JgsValue.Function(new BuiltinFunction(name, body)));
 
@@ -94,7 +97,6 @@ internal static partial class JgsBuiltins
         env.Builtins.Register("refreshdata", JgsValue.Function(new BuiltinFunction(
             "refreshdata", (args, line, col) => RefreshData(args, interpreter, line, col))
         { BindsAnsAsStatement = false, AutoCallsBare = true }));
-        _ = dialect;
     }
 
     // --- Introspection ----------------------------------------------------------------------------

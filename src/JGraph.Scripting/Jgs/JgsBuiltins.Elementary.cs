@@ -20,7 +20,7 @@ internal static partial class JgsBuiltins
     private const float SingleEps = 1.1920929e-07f;
 
     /// <summary>Registers the constants, limits, predicates, and trigonometry (M37).</summary>
-    private static void RegisterElementaryBuiltins(JgsEnvironment env, JgsDialect dialect)
+    private static void RegisterElementaryBuiltins(JgsEnvironment env, JgsRunningDialect dialect)
     {
         void Define(string name, Func<IReadOnlyList<JgsValue>, int, int, JgsValue> body) =>
             env.Builtins.Register(name, JgsValue.Function(new BuiltinFunction(name, body)));
@@ -40,7 +40,7 @@ internal static partial class JgsBuiltins
 
     private static void RegisterLimits(
         JgsEnvironment env, Action<string, Func<IReadOnlyList<JgsValue>, int, int, JgsValue>> Constant,
-        JgsDialect dialect)
+        JgsRunningDialect dialect)
     {
         // MATLAB spells these with capitals; JGS has always had the lowercase pair. Both stay: they
         // are the same value, and a MATLAB script writing Inf must not have to know about JGS.
@@ -54,8 +54,10 @@ internal static partial class JgsBuiltins
         // borrow it rather than growing a second shape reader beside it; only the fill differs, and
         // only the class tail is narrower, because an integer class holds neither value. Made bare
         // by AutoCallsBare, so a mention with no parentheses is still the plain scalar it always was.
-        // JGS keeps its value bindings: nobody writes Inf(2, 2) there.
-        if (dialect.IsMatlab)
+        // JGS keeps its value bindings: nobody writes Inf(2, 2) there. A JGS session keeps them even
+        // for the .m code it runs (V11, ADR 0172): a value binding cannot dispatch on the caller, and
+        // replacing it with a function would change what JGS's own `inf` is.
+        if (dialect.Session.IsMatlab)
         {
             Spreadable("Inf", double.PositiveInfinity);
             Spreadable("inf", double.PositiveInfinity);
@@ -172,7 +174,7 @@ internal static partial class JgsBuiltins
     private static void RegisterTypePredicates(
         JgsEnvironment env,
         Action<string, Func<IReadOnlyList<JgsValue>, int, int, JgsValue>> Define,
-        JgsDialect dialect)
+        JgsRunningDialect dialect)
     {
         void Predicate(string name, Func<JgsValue, bool> test) =>
             Define(name, (args, line, col) => { Arity(name, args, 1, line, col); return JgsValue.Bool(test(args[0])); });

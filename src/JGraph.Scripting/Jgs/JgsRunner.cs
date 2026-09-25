@@ -102,8 +102,8 @@ internal static class JgsRunner
             // source id so its diagnostics stay bare; the stack still has the run's file to name.
             interpreter.MainScriptPath = sourceId.Length > 0 ? sourceId : context.ScriptPath ?? string.Empty;
             interpreter.Host = globals;
-            DefineRunBuiltin(environment, interpreter, globals, dialect);
-            JgsBuiltins.RegisterEvalBuiltins(environment, interpreter, globals, dialect);
+            DefineRunBuiltin(environment, interpreter, globals);
+            JgsBuiltins.RegisterEvalBuiltins(environment, interpreter, globals);
             JgsBuiltins.RegisterSessionBuiltins(environment, globals);
             if (searchFolders is { Count: > 0 } && interpreter.FunctionPath is { } path)
             {
@@ -214,7 +214,7 @@ internal static class JgsRunner
         }
 
         var main = (FnStmt)program[0];
-        if (interpreter.TryGetHoisted(main.SourceId, main.Name, out JgsValue value) && value.Type == JgsType.Function)
+        if (interpreter.TryGetHoisted(main.SourceId, main.Name, main.Dialect, out JgsValue value) && value.Type == JgsType.Function)
         {
             JgsCallbacks.Invoke(value.AsCallable, System.Array.Empty<JgsValue>(), main.Line, main.Column); // run as a statement: nargout 0 (V9.1)
         }
@@ -243,7 +243,7 @@ internal static class JgsRunner
     /// named with or without its extension, since MATLAB names a script by its stem.
     /// </summary>
     internal static void DefineRunBuiltin(
-        JgsEnvironment environment, Interpreter interpreter, JGraphScriptGlobals globals, JgsDialect dialect)
+        JgsEnvironment environment, Interpreter interpreter, JGraphScriptGlobals globals)
     {
         var including = new HashSet<string>(OperatingSystem.IsWindows()
             ? StringComparer.OrdinalIgnoreCase
@@ -287,8 +287,10 @@ internal static class JgsRunner
             {
                 // Stamp the included file's statements with its resolved path so breakpoints hit and
                 // step-in lands in the right editor tab. The include runs under its own dialect, not
-                // just parses in it — a .m reached from JGS must still index 1-based and auto-declare.
-                JgsDialect included = DialectForInclude(fullPath, dialect);
+                // just parses in it — a .m reached from JGS must still index 1-based and auto-declare
+                // - and its statements carry that dialect, so the run enters it (V11, ADR 0172). A
+                // file that is not a .m is parsed in the dialect of the code that ran it.
+                JgsDialect included = DialectOfFile(fullPath, interpreter.Dialect);
 
                 // A MATLAB script runs in its own folder (R2025b: pwd inside run('other/s.m') is
                 // other, and the caller is back where it was after — an error included — unless the
@@ -302,12 +304,9 @@ internal static class JgsRunner
                 // that opens with `function f` calls f), which is what a legacy script that wraps
                 // itself in a function expects; the batch launcher and the console have always done
                 // this, and run() had only hoisted the functions and returned.
-                interpreter.RunInDialect(included, () =>
-                {
-                    IReadOnlyList<Stmt> program = Parser.Parse(source, fullPath, included);
-                    interpreter.Run(program);
-                    InvokeMainIfFunctionFile(program, interpreter);
-                });
+                IReadOnlyList<Stmt> program = Parser.Parse(source, fullPath, included);
+                interpreter.Run(program);
+                InvokeMainIfFunctionFile(program, interpreter);
             }
             finally
             {
@@ -319,10 +318,11 @@ internal static class JgsRunner
     }
 
     /// <summary>
-    /// The dialect an included file is parsed in: MATLAB for a <c>.m</c> file, otherwise the including
-    /// script's own. A <c>.m</c> file has to mean the same thing however it was reached.
+    /// The dialect a file is parsed in: MATLAB for a <c>.m</c> file, otherwise <paramref name="caller"/>
+    /// - the including code's for <c>run</c>, the session's for the debugger's live edit. A <c>.m</c>
+    /// file has to mean the same thing however it was reached.
     /// </summary>
-    private static JgsDialect DialectForInclude(string path, JgsDialect caller) =>
+    internal static JgsDialect DialectOfFile(string path, JgsDialect caller) =>
         Path.GetExtension(path).Equals(".m", StringComparison.OrdinalIgnoreCase) ? JgsDialect.Matlab : caller;
 
     /// <summary>

@@ -30,7 +30,7 @@ internal static partial class JgsBuiltins
         StringPositionals: 0);
 
     private static void DefineTransformBuiltins(
-        Action<string, Func<IReadOnlyList<JgsValue>, int, int, JgsValue>> define, JgsDialect dialect)
+        Action<string, Func<IReadOnlyList<JgsValue>, int, int, JgsValue>> define, JgsRunningDialect dialect)
     {
         // --- The cosine transform ----------------------------------------------------------------
         define("dctmtx", (args, line, col) =>

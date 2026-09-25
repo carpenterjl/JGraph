@@ -61,7 +61,7 @@ internal static partial class JgsBuiltins
     private static void DefineRegionBuiltins(
         Action<string, Func<IReadOnlyList<JgsValue>, int, int, JgsValue>> define,
         Random random,
-        JgsDialect dialect)
+        JgsRunningDialect dialect)
     {
         // --- Measurement --------------------------------------------------------------------------
         define("regionprops", (args, line, col) => RegionPropsValue(args, line, col, dialect));

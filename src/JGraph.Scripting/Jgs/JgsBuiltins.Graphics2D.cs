@@ -20,7 +20,7 @@ namespace JGraph.Scripting.Jgs;
 /// </summary>
 internal static partial class JgsBuiltins
 {
-    private static void RegisterGraphics2DBuiltins(JgsEnvironment env, JgsDialect dialect)
+    private static void RegisterGraphics2DBuiltins(JgsEnvironment env, JgsRunningDialect dialect)
     {
         void DefineSilent(string name, Func<IReadOnlyList<JgsValue>, int, int, JgsValue> body) =>
             env.Builtins.Register(name, JgsValue.Function(

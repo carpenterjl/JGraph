@@ -25,22 +25,92 @@ namespace JGraph.Scripting.Jgs;
 /// </summary>
 internal static partial class JgsBuiltins
 {
+    /// <summary>
+    /// Registers <paramref name="name"/> to dispatch on the calling code's dialect (V11, ADR 0172):
+    /// MATLAB code reaches <paramref name="matlab"/> and JGS code the form already registered under the
+    /// name - for the few names the two dialects give different meanings (<c>print</c>, <c>range</c>,
+    /// <c>slice</c>, the constructors' shapes). Each road's flags come from that road's form: whether a
+    /// bare mention calls is JGS's question, whether a statement binds <c>ans</c> and the
+    /// several-output body are MATLAB's.
+    /// </summary>
+    private static void RegisterMatlabFormOver(
+        JgsEnvironment env, JgsRunningDialect dialect, string name, BuiltinFunction matlab)
+    {
+        RegisterByDialect(env, dialect, name, matlab, RegisteredForm(env, name));
+    }
+
+    /// <summary>
+    /// The converse of <see cref="RegisterMatlabFormOver"/>: the form already registered under
+    /// <paramref name="name"/> is MATLAB's, and <paramref name="jgs"/> is what JGS code reaches
+    /// (<c>seconds</c>, <c>datetime</c>).
+    /// </summary>
+    private static void RegisterJgsFormOver(
+        JgsEnvironment env, JgsRunningDialect dialect, string name, BuiltinFunction jgs)
+    {
+        RegisterByDialect(env, dialect, name, RegisteredForm(env, name), jgs);
+    }
+
+    /// <summary>
+    /// A wrapper over <paramref name="inner"/> that stands where the inner stood, flags included: a
+    /// wrapper that dropped them made <c>fprintf(...)</c> as a JGS statement bind and echo <c>ans</c>
+    /// once the formatters were wrapped in every session (V11). <paramref name="multi"/> replaces
+    /// the inner's several-output body when the wrapper has one of its own.
+    /// </summary>
+    private static BuiltinFunction Wrapping(
+        string name, IJgsCallable inner, Func<IReadOnlyList<JgsValue>, int, int, JgsValue> body,
+        Func<IReadOnlyList<JgsValue>, int, int, int, JgsValue[]>? multi = null) =>
+        inner is BuiltinFunction flags
+            ? new BuiltinFunction(name, body)
+            {
+                BindsAnsAsStatement = flags.BindsAnsAsStatement,
+                AutoCallsBare = flags.AutoCallsBare,
+                KnowsWhenDiscarded = flags.KnowsWhenDiscarded,
+                TakesOutputCount = flags.TakesOutputCount,
+                MultiOutput = multi ?? flags.MultiOutput,
+            }
+            : new BuiltinFunction(name, body) { MultiOutput = multi };
+
+    private static BuiltinFunction RegisteredForm(JgsEnvironment env, string name) =>
+        env.TryGet(name, out JgsValue existing) && existing.Type == JgsType.Function
+        && existing.AsCallable is BuiltinFunction registered
+            ? registered
+            : throw new InvalidOperationException($"'{name}' has no built-in registered to dispatch to.");
+
+    private static void RegisterByDialect(
+        JgsEnvironment env, JgsRunningDialect dialect, string name, BuiltinFunction matlab, BuiltinFunction jgs)
+    {
+        env.Builtins.Register(name, JgsValue.Function(new BuiltinFunction(
+            name,
+            (args, line, col) => dialect.IsMatlab ? matlab.Call(args, line, col) : jgs.Call(args, line, col))
+        {
+            AutoCallsBare = jgs.AutoCallsBare,
+            BindsAnsAsStatement = matlab.BindsAnsAsStatement,
+            MultiOutput = matlab.MultiOutput,
+            TakesOutputCount = matlab.TakesOutputCount,
+        }));
+    }
+
     /// <summary>Creates the global scope over the run's <paramref name="host"/> helpers, seeded with every built-in.</summary>
     /// <param name="host">The run's host services.</param>
     /// <param name="cancellationToken">The run's cancellation token, so <c>pause(seconds)</c> stays interruptible.</param>
-    /// <param name="dialect">The run's language variant, or null for <see cref="JgsDialect.Jgs"/>. Builtins that
-    /// hand back indices (<c>find</c> and friends) report them in this dialect's index base.</param>
+    /// <param name="sessionDialect">The session's language variant, or null for <see cref="JgsDialect.Jgs"/>.
+    /// What a built-in does with an index, a format or a binding is decided at the call by the dialect
+    /// of the code calling it (V11, ADR 0172), which starts as this one.</param>
     public static JgsEnvironment CreateGlobals(
-        JGraphScriptGlobals host, CancellationToken cancellationToken = default, JgsDialect? dialect = null)
+        JGraphScriptGlobals host, CancellationToken cancellationToken = default, JgsDialect? sessionDialect = null)
     {
         ArgumentNullException.ThrowIfNull(host);
 
-        dialect ??= JgsDialect.Jgs;
+        // The running dialect (V11, ADR 0172): one slot every registrar below captures, so a built-in
+        // reads at the call the dialect of the code calling it - `find` from a .m function called
+        // out of a JGS script answers 1-based - rather than the one the session was built with. The
+        // interpreter that runs over this workspace swaps the slot at every body entry.
+        var dialect = new JgsRunningDialect(sessionDialect ?? JgsDialect.Jgs);
 
         // Every built-in is registered into the layer; the scope handed back is the base workspace
         // sitting on it. `env` here is that workspace: the registrars below declare through its
         // layer and, where a body reads the environment (feval, exist, which), read the workspace.
-        var layer = new JgsBuiltinLayer();
+        var layer = new JgsBuiltinLayer { Dialect = dialect };
         JgsEnvironment env = layer.Base;
 
         // One stream for the whole run, so `rng(7)` makes every later draw repeatable rather than
@@ -2453,15 +2523,18 @@ internal static partial class JgsBuiltins
 
         // After every imaging define, since these wrap builtins declared above.
         RegisterImagingMultiOutputForms(env, host, random, dialect);
-        if (dialect.IsMatlab)
-        {
-            RegisterMatlabReductions(env, dialect);
-            RegisterGraphicsNamespace(env);
 
-            // MATLAB's slice cuts a volume; JGS's slice takes a piece of a list. Both keep their own
-            // name, which they can only do by the volume one being declared here, over the other, and
-            // only for the dialect that means it.
-            RegisterVolumeSlice(env);
+        // The MATLAB reductions' dimension forms and max/min's are registered for every session (V11,
+        // ADR 0172): the wrappers read the calling code's dialect at the call and hand a JGS call to
+        // the form underneath, so a .m function called from a JGS session has MATLAB's sum(A, 2) and
+        // JGS code keeps its own. MATLAB's slice cuts a volume where JGS's takes a piece of a list, so
+        // that name dispatches. The graphics namespace is a constant - a name, not a behaviour that
+        // could dispatch - and stays the MATLAB session's alone, as the spreadable Inf/NaN forms do.
+        RegisterMatlabReductions(env, dialect);
+        RegisterVolumeSlice(env, dialect);
+        if (dialect.Session.IsMatlab)
+        {
+            RegisterGraphicsNamespace(env);
         }
 
         // Last of all: the distribution objects put a check in front of nine names declared above,
@@ -2483,25 +2556,23 @@ internal static partial class JgsBuiltins
         RegisterVideoBuiltins(env, host);
         TimeAwareReductions(env);
 
-        // The two that are NOT new are put back as they were for JGS. `seconds` answered with its own
-        // argument (M43's stand-in: a duration was its count of seconds) and `datetime` answered with
-        // a char row of the current moment. A JGS script that called either got that, and the freeze
-        // says it must go on getting it — so the gate is on the two names whose meaning moved, not on
-        // the milestone.
-        if (!dialect.IsMatlab)
+        // The two that are NOT new keep their JGS meaning for JGS code. `seconds` answered with its
+        // own argument (M43's stand-in: a duration was its count of seconds) and `datetime` answered
+        // with a char row of the current moment. A JGS script that called either got that, and the
+        // freeze says it must go on getting it — so the two names dispatch on the calling code's
+        // dialect (V11, ADR 0172): a .m function run from a JGS session gets the duration and the
+        // datetime, and JGS code what it always got.
+        RegisterJgsFormOver(env, dialect, "seconds", new BuiltinFunction("seconds", (args, line, col) =>
         {
-            env.Builtins.Register("seconds", JgsValue.Function(new BuiltinFunction("seconds", (args, line, col) =>
-            {
-                Arity("seconds", args, 1, line, col);
-                return MapNumeric("seconds", args[0], static x => x, line, col);
-            })));
+            Arity("seconds", args, 1, line, col);
+            return MapNumeric("seconds", args[0], static x => x, line, col);
+        }));
 
-            env.Builtins.Register("datetime", JgsValue.Function(new BuiltinFunction("datetime", (args, line, col) =>
-            {
-                Arity("datetime", args, 0, line, col);
-                return JgsValue.Str(DateTime.Now.ToString("dd-MMM-yyyy HH:mm:ss", CultureInfo.InvariantCulture));
-            })));
-        }
+        RegisterJgsFormOver(env, dialect, "datetime", new BuiltinFunction("datetime", (args, line, col) =>
+        {
+            Arity("datetime", args, 0, line, col);
+            return JgsValue.Str(DateTime.Now.ToString("dd-MMM-yyyy HH:mm:ss", CultureInfo.InvariantCulture));
+        }));
 
         RegisterSolverBuiltins(env);
         RegisterOdeSolutionBuiltins(env);

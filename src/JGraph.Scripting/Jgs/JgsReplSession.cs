@@ -269,8 +269,8 @@ internal sealed class JgsReplSession : IScriptSession, IGraphicsEventSession, IW
         _interpreter = new Interpreter(_environment, CancellationToken.None, hook: null,
             echo: line => _context.Output.WriteLine(line), _dialect);
         _interpreter.Host = _globals;
-        JgsRunner.DefineRunBuiltin(_environment, _interpreter, _globals, _dialect);
-        JgsBuiltins.RegisterEvalBuiltins(_environment, _interpreter, _globals, _dialect);
+        JgsRunner.DefineRunBuiltin(_environment, _interpreter, _globals);
+        JgsBuiltins.RegisterEvalBuiltins(_environment, _interpreter, _globals);
         JgsBuiltins.RegisterSessionBuiltins(_environment, _globals);
         JgsWorkspaceIo.DefineSaveLoad(_environment, _globals, _interpreter,
             () => ReferenceEquals(_interpreter.CurrentFrame, _environment) ? UserVariables() : _interpreter.CurrentFrame.Variables.Where(p => !_interpreter.CurrentFrame.IsFunctionBinding(p.Key)).Select(p => (p.Key,p.Value)),

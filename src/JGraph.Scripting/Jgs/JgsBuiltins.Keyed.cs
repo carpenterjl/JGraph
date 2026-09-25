@@ -58,20 +58,20 @@ internal static partial class JgsBuiltins
         && value.ClassName is MapClassName or DictionaryClassName;
 
     /// <summary>Registers <c>containers.Map</c>, <c>dictionary</c> and their verbs.</summary>
-    internal static void RegisterKeyedCollectionBuiltins(JgsEnvironment env, JgsDialect dialect)
+    internal static void RegisterKeyedCollectionBuiltins(JgsEnvironment env, JgsRunningDialect dialect)
     {
         void Define(string name, Func<IReadOnlyList<JgsValue>, int, int, JgsValue> body) =>
             env.Builtins.Register(name, JgsValue.Function(new BuiltinFunction(name, body)));
 
         // M2: a keyed collection's value is an entry, so a store takes what the dialect gives an
-        // entry — a counted share in MATLAB, the caller's own wrapper in JGS (M17).
-        bool shares = dialect.CopyOnAssign;
+        // entry — a counted share in MATLAB, the caller's own wrapper in JGS (M17). The dialect is
+        // the storing code's, read at the call (V11, ADR 0172).
 
         // containers.Map is a dotted name, so it is a struct with a Map field holding the builtin —
         // the same shape M51 used for graphics.primitive.Line.empty. A bare `containers.Map` with no
         // arguments auto-calls through the member path, so `m = containers.Map;` makes an empty one.
         var mapConstructor = JgsValue.Function(new BuiltinFunction(MapClassName,
-            (args, line, col) => NewKeyed(MapClassName, args, shares, line, col))
+            (args, line, col) => NewKeyed(MapClassName, args, dialect.CopyOnAssign, line, col))
         {
             AutoCallsBare = true,
         });
@@ -82,7 +82,7 @@ internal static partial class JgsBuiltins
         // A dictionary keeps a 1-by-1 string it is given as a string: dictionary("a", "x") holds
         // the string "x", not the char row a builtin is otherwise handed (V6.17, measured).
         env.Builtins.Register("dictionary", JgsValue.Function(new BuiltinFunction(DictionaryClassName,
-            (args, line, col) => NewKeyed(DictionaryClassName, args, shares, line, col))
+            (args, line, col) => NewKeyed(DictionaryClassName, args, dialect.CopyOnAssign, line, col))
         {
             AutoCallsBare = true,
             KeepsStringArguments = true,
@@ -205,7 +205,7 @@ internal static partial class JgsBuiltins
             JgsValue[] given = args[2].Type == JgsType.Cell ? CellValues(map.ClassName!, args[2]) : [args[2]];
             for (int i = 0; i < wanted.Length; i++)
             {
-                Put(map, wanted[i], RetainedForEntry(given.Length == 1 ? given[0] : given[i], shares), line, col);
+                Put(map, wanted[i], RetainedForEntry(given.Length == 1 ? given[0] : given[i], dialect.CopyOnAssign), line, col);
             }
 
             return map;
