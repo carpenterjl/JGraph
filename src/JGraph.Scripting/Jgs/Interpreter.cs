@@ -142,6 +142,9 @@ internal sealed partial class Interpreter
     {
         _globals = globals;
         CurrentFrame = globals;
+        Lifetimes = new JgsLifetime(this);
+        globals.InstallLifetimes(Lifetimes);
+        _globalWorkspace.Lifetimes = Lifetimes;
         _resolver = new JgsNameResolver(this, _globalWorkspace);
         _cancellationToken = cancellationToken;
         _hook = hook;
@@ -319,6 +322,42 @@ internal sealed partial class Interpreter
 
     /// <summary>The global environment — <c>evalin('base', …)</c>'s workspace.</summary>
     internal JgsEnvironment Globals => _globals;
+
+    /// <summary>The exact-lifetime tracker of this run (V10, ADR 0171): what destroys a handle when its last holder goes.</summary>
+    internal JgsLifetime Lifetimes { get; }
+
+    /// <summary>
+    /// How deep in nested blocks the running statement is — the depth a queued lifetime check is
+    /// keyed by, so a temporary of a statement that is still running (a loop over a literal, a
+    /// call's argument) is examined only once that statement has completed.
+    /// </summary>
+    internal int BlockDepth => _blockDepth;
+
+    /// <summary>The run's host, where a destructor's failure is reported as a warning (V10); null in a bare interpreter.</summary>
+    internal JGraphScriptGlobals? Host { get; set; }
+
+    // The entry wrappers a write walked through on its way to the slot it wrote (V10): a tracked
+    // value stored at the end of c{1}{2} makes c{1} tracked, and this is how c learns of it.
+    private readonly List<JgsValue> _writeOwners = new();
+
+    /// <summary>
+    /// A store through the gate put something with an exact lifetime into a container reached
+    /// through others: each owner on the way is scanned, so the outermost's death reaches it.
+    /// </summary>
+    private void NoteTrackedStore(JgsValue value)
+    {
+        if (_writeOwners.Count == 0 || !JgsLifetime.MayTrack(value))
+        {
+            return;
+        }
+
+        foreach (JgsValue owner in _writeOwners)
+        {
+            JgsLifetime.OwnerOfTrackedStore(owner, value);
+        }
+
+        _writeOwners.Clear();
+    }
 
     /// <summary>
     /// The run's timers (V6, #105), drained at every statement boundary while one is armed — the
@@ -860,12 +899,15 @@ internal sealed partial class Interpreter
         _runningScripts.Add(file);
         bool wasScript = _inScript;
         _inScript = true;
+        JgsLifetime? outerLifetimes = JgsLifetime.Current;
+        JgsLifetime.Current = Lifetimes;
         try
         {
             completion = ExecuteBlock(program, _globals);
         }
         finally
         {
+            JgsLifetime.Current = outerLifetimes;
             _inScript = wasScript;
             _runningScripts.RemoveAt(_runningScripts.Count - 1);
         }
@@ -901,6 +943,8 @@ internal sealed partial class Interpreter
         _runningScripts.Add(sourceId);
         bool wasScript = _inScript;
         _inScript = true;
+        JgsLifetime? outerLifetimes = JgsLifetime.Current;
+        JgsLifetime.Current = Lifetimes;
         try
         {
             completion = ExecuteBlock(program, scope);
@@ -912,6 +956,7 @@ internal sealed partial class Interpreter
         }
         finally
         {
+            JgsLifetime.Current = outerLifetimes;
             _inScript = wasScript;
             _runningScripts.RemoveAt(_runningScripts.Count - 1);
         }
@@ -959,6 +1004,7 @@ internal sealed partial class Interpreter
         _activeFunctions.Add(declaration);
         _activeCallLines.Add(callLine);
         SetFile(declaration.SourceId);
+        JgsLifetime.Current ??= Lifetimes; // a function file run as the program enters here first (V10)
 
         // Nested functions hoist like top-level ones do in Run(): a handle taken before the nested
         // declaration line (increment = @doInc) must already resolve. Each closes over this call's
@@ -1009,8 +1055,58 @@ internal sealed partial class Interpreter
             RestoreFile(callerFile, callerStorage);
             _callDepth--;
             _hook?.ExitFunction();
+
+            // The frame's variables are released at the caller's next statement boundary (V10,
+            // ADR 0171) - the outputs it kept are bound by then - unless a nested function's
+            // handle escaped, when the workspace lives on with the handle.
+            Lifetimes.FrameExited(local);
         }
     }
+
+    /// <summary>
+    /// Runs a handle's destructor because its last holder went (V10, ADR 0171): the class's own
+    /// <c>delete</c>, asked for nothing, then the mark and <c>ObjectBeingDestroyed</c>, as an
+    /// explicit <c>delete(obj)</c> does them. A destructor that fails is a warning in R2025b's
+    /// words (<c>MATLAB:class:DestructorError</c>), and the object is deleted all the same.
+    /// </summary>
+    internal void RunDestructor(JgsObject instance)
+    {
+        if (instance.Deleted)
+        {
+            return;
+        }
+
+        if (!instance.Class.TryMethod("delete", out ClassMethod? method) || method.Static)
+        {
+            instance.MarkDeleted();
+            JgsBuiltins.FireObjectBeingDestroyed(instance);
+            return;
+        }
+
+        var destructor = new DestructorCall(instance.Class.Callable(method), instance);
+        try
+        {
+            JgsCallbacks.Invoke(destructor, [JgsValue.Object(instance)], 0, 0);
+        }
+        catch (OperationCanceledException)
+        {
+            throw;
+        }
+        catch (Exception failure) when (failure is JgsException || ScriptExitException.Unwrap(failure) is null)
+        {
+            string text = $"The following error was caught while executing '{instance.Class.Name}' class destructor:\n{failure.Message}";
+            if (Host is { } host)
+            {
+                host.Warnings.Record(DestructorWarningId, text);
+                if (host.Warnings.IsOn(DestructorWarningId))
+                {
+                    host.WriteErr("Warning: " + text);
+                }
+            }
+        }
+    }
+
+    private const string DestructorWarningId = "MATLAB:class:DestructorError";
 
     /// <summary>
     /// Applies an <c>arguments</c> block to the frame the call has already bound: fills in defaults
@@ -1096,7 +1192,7 @@ internal sealed partial class Interpreter
 
         if (!_persistents.TryGetValue(owner, out JgsEnvironment? slots))
         {
-            _persistents[owner] = slots = new JgsEnvironment();
+            _persistents[owner] = slots = new JgsEnvironment { Lifetimes = Lifetimes };
         }
 
         foreach (string name in statement.Names)
@@ -2309,7 +2405,7 @@ internal sealed partial class Interpreter
 
         while (Evaluate(statement.Condition, env).IsTruthy)
         {
-            Tick();
+            IterationTick();
             Completion completion = ExecuteBlock(statement.Body, BlockScope(env));
             if (completion.Kind == CompletionKind.Break)
             {
@@ -2418,7 +2514,7 @@ internal sealed partial class Interpreter
                 element = JgsNumericClasses.Stamp(element, walked);
             }
 
-            Tick();
+            IterationTick();
             JgsEnvironment local = BlockScope(env);
             local.Declare(statement.Variable, element);
             Completion completion = ExecuteBlock(statement.Body, local);
@@ -2484,7 +2580,7 @@ internal sealed partial class Interpreter
 
         for (int index = 0; index < text.Length; index++)
         {
-            Tick();
+            IterationTick();
             JgsEnvironment local = BlockScope(env);
             local.Declare(statement.Variable, JgsValue.Str(text[index].ToString()));
             Completion completion = ExecuteBlock(statement.Body, local);
@@ -2582,7 +2678,7 @@ internal sealed partial class Interpreter
                 element = JgsNumericClasses.Stamp(element, carried);
             }
 
-            Tick();
+            IterationTick();
             JgsEnvironment local = BlockScope(env);
             local.Declare(statement.Variable, element);
             Completion completion = ExecuteBlock(statement.Body, local);
@@ -2628,7 +2724,7 @@ internal sealed partial class Interpreter
 
             JgsValue element = JgsValue.Cell(column);
             element.Reshape(rows, 1);
-            Tick();
+            IterationTick();
             JgsEnvironment local = BlockScope(env);
             local.Declare(statement.Variable, element);
             Completion completion = ExecuteBlock(statement.Body, local);
@@ -4369,12 +4465,14 @@ internal sealed partial class Interpreter
                 if (owner.Type == JgsType.Struct && !owner.IsStructArray
                     && owner.WritableStruct().TryGetValue(field, out JgsValue? held))
                 {
+                    _writeOwners.Add(owner); // V10: a tracked store below makes the owner tracked too
                     return held;
                 }
 
                 if (owner.Type == JgsType.Object
                     && owner.WritableFields().TryGetValue(field, out JgsValue? property))
                 {
+                    _writeOwners.Add(owner);
                     return property;
                 }
 
@@ -4392,6 +4490,7 @@ internal sealed partial class Interpreter
                     JgsValue[] slots = owner.WritableCell();
                     if (slot >= 0 && slot < slots.Length)
                     {
+                        _writeOwners.Add(owner);
                         return slots[slot];
                     }
                 }
@@ -5547,7 +5646,8 @@ internal sealed partial class Interpreter
             JgsValue stored = op == TokenType.Assign
                 ? rhs
                 : JgsNumericClasses.Storable(ApplyBinary(UnderlyingOp(op), array[single], rhs, at), storeClass);
-            array[single] = stored;
+            callee.SetSlot(single, stored); // V10: an object array's slot has a lifetime
+            NoteTrackedStore(stored);
             return stored;
         }
 
@@ -5557,10 +5657,13 @@ internal sealed partial class Interpreter
         {
             foreach (int pick in picks)
             {
-                array[pick] = op == TokenType.Assign
+                JgsValue stored = op == TokenType.Assign
                     ? rhs
                     : JgsNumericClasses.Storable(ApplyBinary(UnderlyingOp(op), array[pick], rhs, at), storeClass);
+                callee.SetSlot(pick, stored);
             }
+
+            NoteTrackedStore(rhs);
         }
         else
         {
@@ -5575,10 +5678,12 @@ internal sealed partial class Interpreter
 
             for (int i = 0; i < picks.Length; i++)
             {
-                array[picks[i]] = op == TokenType.Assign
+                JgsValue stored = op == TokenType.Assign
                     ? source[i]
                     : JgsNumericClasses.Storable(
                         ApplyBinary(UnderlyingOp(op), array[picks[i]], source[i], at), storeClass);
+                callee.SetSlot(picks[i], stored);
+                NoteTrackedStore(stored);
             }
         }
 
@@ -8069,7 +8174,24 @@ internal sealed partial class Interpreter
 
         JgsValue container = ResolveStructForWrite(member.Target, env, out JgsStructArray? owner);
         string field = FieldName(member, env);
-        container.WritableStruct()[field] = value; // M7: the write gate
+        Dictionary<string, JgsValue> fields = container.WritableStruct(); // M7: the write gate
+        fields.TryGetValue(field, out JgsValue? replaced);
+        fields[field] = value;
+
+        // V10 (ADR 0171): the exact lifetime of what was there and what is now moves with the
+        // write - counted for the entry's own array when the element was reached through a
+        // temporary wrapper (s(k).f = v), for the container's wrapper otherwise - and the
+        // containers on the way learn they hold something tracked.
+        if (owner is not null)
+        {
+            JgsLifetime.StoredInto(owner, replaced, value);
+        }
+        else
+        {
+            JgsLifetime.Stored(container, replaced, value);
+        }
+
+        NoteTrackedStore(value);
 
         // Every element of a struct array has every field (M65), so writing S(2).b gives element one
         // a b as well, holding []. The old cell-of-structs could not hold that invariant, which is
@@ -8494,7 +8616,8 @@ internal sealed partial class Interpreter
             {
                 if (row < target.Rows && column < target.Cols)
                 {
-                    elements[row + (column * target.Rows)] = value;
+                    target.SetSlot(row + (column * target.Rows), value); // V10: the slot's lifetime moves with the write
+                    NoteTrackedStore(value);
                     return value;
                 }
 
@@ -8502,8 +8625,9 @@ internal sealed partial class Interpreter
                     target,
                     System.Math.Max(target.Rows, row + 1),
                     System.Math.Max(target.Cols, column + 1));
-                widened.AsCell[row + (column * widened.Rows)] = value;
+                widened.SetSlot(row + (column * widened.Rows), value);
                 StoreBack(brace.Target, widened, brace, env);
+                NoteTrackedStore(value);
                 return value;
             }
 
@@ -8548,12 +8672,14 @@ internal sealed partial class Interpreter
             JgsValue grown = column
                 ? GrownCell(target, System.Math.Max(target.Rows, position + 1), 1)
                 : GrownCell(target, 1, System.Math.Max(elements.Length, position + 1));
-            grown.AsCell[position] = value;
+            grown.SetSlot(position, value); // V10: the slot's lifetime moves with the write
             StoreBack(brace.Target, grown, brace, env);
+            NoteTrackedStore(value);
             return value;
         }
 
-        elements[position] = value;
+        target.SetSlot(position, value);
+        NoteTrackedStore(value);
         return value;
     }
 
@@ -9419,6 +9545,36 @@ internal sealed partial class Interpreter
         if (Timers is { Armed: true } timers)
         {
             timers.Drain();
+        }
+
+        // And for destructors (V10, ADR 0171): what the statement before dropped the last holder
+        // of, or made and never bound, is destroyed here — after that statement, before this one.
+        if (Lifetimes.HasPending)
+        {
+            Lifetimes.Drain(_blockDepth);
+        }
+
+        if (_writeOwners.Count > 0)
+        {
+            _writeOwners.Clear();
+        }
+    }
+
+    /// <summary>
+    /// The boundary between two passes of a loop the walker runs: the same drain points as
+    /// <see cref="Tick"/>, at the body's depth — the loop statement itself is still running, and
+    /// what it made and holds (a cell literal it walks) must not be destroyed under it (V10).
+    /// </summary>
+    private void IterationTick()
+    {
+        _blockDepth++;
+        try
+        {
+            Tick();
+        }
+        finally
+        {
+            _blockDepth--;
         }
     }
 

@@ -52,12 +52,6 @@ public class OwnershipGateTests
     /// <summary>The lines allowed to write raw, each with the reason the model is not broken by it.</summary>
     private static readonly (string File, string Line, string Why)[] Allowed =
     [
-        ("Interpreter.cs",
-         "widened.AsCell[row + (column * widened.Rows)] = value;",
-         "the widened cell was allocated two statements above; nobody else holds it"),
-        ("Interpreter.cs",
-         "grown.AsCell[position] = value;",
-         "the grown cell was allocated here, as the growth it is named for"),
         ("JgsValue.cs",
          "planes.Re.AsSpan()[index] = value.Real;",
          "inside SetPackedComplex, after Detach: this is M7's gate, not a road past it"),

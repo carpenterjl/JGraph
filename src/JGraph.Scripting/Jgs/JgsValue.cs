@@ -126,6 +126,16 @@ internal sealed class JgsValue
     // without passing the store again. An exposed payload is never freed by the disposal walk.
     private bool _exposed;
 
+    // V10 (ADR 0171): whether a cell's or boxed array's slots hold something with an exact
+    // lifetime — a handle, a scanned container, a tracked handle — so the slots carry an exact
+    // count and are walked when it reaches zero. Set by the factory scan, a store through the
+    // gate, or the shallow detach, and carried by Share; never set on a numeric array.
+    private bool _tracked;
+
+    // V10: whether this wrapper is an entry's own — bound to a name or held in a slot — so a
+    // detach through it moves the old payload's exact count, where a transient share's does not.
+    private bool _counted;
+
     private JgsValue(JgsType type, double number, object? reference, JgsPackedKind packedKind = JgsPackedKind.Number)
     {
         Type = type;
@@ -174,6 +184,7 @@ internal sealed class JgsValue
         _time = source._time;
         _dims = source._dims; // replaced, never written through, so the two may share the array
         _exposed = source._exposed;
+        _tracked = source._tracked;
     }
 
     private static int ElementCount(object? reference) => reference switch
@@ -206,7 +217,18 @@ internal sealed class JgsValue
     public static JgsValue Str(string value) => new(JgsType.String, 0, value);
 
     /// <summary>Wraps an array (the array is used directly, not copied).</summary>
-    public static JgsValue Array(JgsValue[] elements) => new(JgsType.Array, 0, elements);
+    public static JgsValue Array(JgsValue[] elements) => Minted(new(JgsType.Array, 0, elements));
+
+    /// <summary>
+    /// V10: a container a factory just built is scanned for what has an exact lifetime — a handle
+    /// object always (its holders are exact from birth), anything else only while something with a
+    /// destructor is alive.
+    /// </summary>
+    private static JgsValue Minted(JgsValue built)
+    {
+        JgsLifetime.Minted(built);
+        return built;
+    }
 
     /// <summary>
     /// Wraps a packed numeric buffer as an array value. The buffer must be freshly created for this
@@ -238,7 +260,7 @@ internal sealed class JgsValue
     /// element that could say it — and is what every boxed element already says otherwise.
     /// </summary>
     public static JgsValue Shaped(JgsValue[] elements, int rows, int cols, JgsPackedKind kind = JgsPackedKind.Number) =>
-        new(JgsType.Array, elements, kind, rows, cols);
+        Minted(new(JgsType.Array, elements, kind, rows, cols));
 
     /// <summary>Wraps a packed planar complex payload as a column-major matrix.</summary>
     public static JgsValue ShapedComplex(JgsPackedComplex payload, int rows, int cols) =>
@@ -270,17 +292,17 @@ internal sealed class JgsValue
     /// Wraps a cell array (the array is used directly, not copied). Like an ordinary array it is
     /// mutable in place, so aliases in JGS see each other's writes; MATLAB copies on assignment.
     /// </summary>
-    public static JgsValue Cell(JgsValue[] elements) => new(JgsType.Cell, 0, elements);
+    public static JgsValue Cell(JgsValue[] elements) => Minted(new(JgsType.Cell, 0, elements));
 
     /// <summary>Wraps a struct's fields (the dictionary is used directly, not copied).</summary>
     public static JgsValue Struct(Dictionary<string, JgsValue> fields) =>
-        new(JgsType.Struct, new JgsStructArray([fields]), JgsPackedKind.Number, 1, 1);
+        Minted(new(JgsType.Struct, new JgsStructArray([fields]), JgsPackedKind.Number, 1, 1));
 
     /// <summary>An empty struct, ready for fields to be assigned.</summary>
     public static JgsValue EmptyStruct() => Struct(new Dictionary<string, JgsValue>(StringComparer.Ordinal));
 
     /// <summary>Wraps an instance of a user class (M68). The instance is held, not copied.</summary>
-    public static JgsValue Object(JgsObject instance) => new(JgsType.Object, 0, instance);
+    public static JgsValue Object(JgsObject instance) => Minted(new(JgsType.Object, 0, instance));
 
     /// <summary>The object payload (valid only for <see cref="JgsType.Object"/>).</summary>
     public JgsObject AsObject => (JgsObject)_reference!;
@@ -291,7 +313,7 @@ internal sealed class JgsValue
     /// sees the write — the reference semantics <c>S(k).f = v</c> depends on.
     /// </summary>
     public static JgsValue StructArray(JgsStructArray elements, int rows, int cols) =>
-        new(JgsType.Struct, elements, JgsPackedKind.Number, rows, cols);
+        Minted(new(JgsType.Struct, elements, JgsPackedKind.Number, rows, cols));
 
     /// <summary>A struct array of the given elements, as a row.</summary>
     public static JgsValue StructArray(Dictionary<string, JgsValue>[] elements) =>
@@ -358,6 +380,23 @@ internal sealed class JgsValue
     /// <summary>Whether this value carries M6's exposed mark.</summary>
     internal bool IsExposed => _exposed;
 
+    /// <summary>V10: whether a cell's or boxed array's slots hold something with an exact lifetime (see <see cref="JgsLifetime"/>).</summary>
+    internal bool Tracked
+    {
+        get => _tracked;
+        set => _tracked = value;
+    }
+
+    /// <summary>V10: whether this wrapper is an entry's own (bound to a name, or held in a slot).</summary>
+    internal bool Counted
+    {
+        get => _counted;
+        set => _counted = value;
+    }
+
+    /// <summary>The slots of a cell or a boxed array, as they are (V10's walk; valid for those two).</summary>
+    internal JgsValue[] Slots => (JgsValue[])_reference!;
+
     /// <summary>
     /// M3: before writing into the payload, give this wrapper one nobody else holds. A buffer and a
     /// complex pair copy their elements; a container copies its slots <em>shallowly</em> and shares
@@ -374,6 +413,10 @@ internal sealed class JgsValue
 
         _reference = PrivateCopy(payload);
         JgsHolders.Release(payload);
+        if (_tracked || payload is JgsStructArray or JgsObject)
+        {
+            JgsLifetime.Detached(this, payload, _reference); // V10: the exact counts follow the copy
+        }
     }
 
     private object PrivateCopy(object payload)
@@ -624,11 +667,17 @@ internal sealed class JgsValue
         GC.KeepAlive(planes);
     }
 
-    /// <summary>Writes one slot of a boxed element array or a cell (M7's gate for the slot roads).</summary>
+    /// <summary>
+    /// Writes one slot of a boxed element array or a cell (M7's gate for the slot roads). The
+    /// exact lifetime of what was there and what is now (V10) moves with the write.
+    /// </summary>
     internal void SetSlot(int index, JgsValue value)
     {
         Detach();
-        ((JgsValue[])_reference!)[index] = value;
+        var slots = (JgsValue[])_reference!;
+        JgsValue old = slots[index];
+        slots[index] = value;
+        JgsLifetime.Stored(this, old, value);
     }
 
     /// <summary>

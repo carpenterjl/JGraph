@@ -26,6 +26,21 @@ internal sealed class JgsStructArray
     /// <summary>The holder count's storage (M1); zero means one holder.</summary>
     public ref int HolderSlot => ref _holders;
 
+    /// <summary>V10 (ADR 0171): how many entries hold this array exactly, kept once it is <see cref="Scanned"/>.</summary>
+    public int Exact;
+
+    /// <summary>V10: whether every element value's hold was counted for this array, so its death releases them.</summary>
+    public bool Scanned;
+
+    /// <summary>V10: whether the array's death has released its element values — once.</summary>
+    public bool Released;
+
+    /// <summary>
+    /// V10: a builtin handle whose lifetime is outside the model — a timer, an addlistener
+    /// listener, a MAT-file, a VideoWriter — whose contents are never released by a count.
+    /// </summary>
+    public bool External;
+
     /// <summary>The elements, column-major. Empty for a struct array with no elements.</summary>
     public Dictionary<string, JgsValue>[] Elements;
 

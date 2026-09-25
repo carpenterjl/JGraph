@@ -128,6 +128,7 @@ internal sealed partial class Interpreter
 
             instance.MarkDeleted();
             JgsBuiltins.FireObjectBeingDestroyed(instance); // after the mark (V6, #106)
+            JgsLifetime.ObjectDeleted(instance); // V10: the properties' contents go with the object
             return JgsValue.Null;
         }
     }
@@ -288,8 +289,12 @@ internal sealed partial class Interpreter
 
         // M7: the write gate. The entry holds this very wrapper (M2), so detaching here is what
         // gives the entry its own instance — nothing has to be written back.
-        holder.WritableFields()[field] = definition.Check(
-            property, CopyForBinding(value), member.Line, member.Column);
+        Dictionary<string, JgsValue> fields = holder.WritableFields();
+        JgsValue stored = definition.Check(property, CopyForBinding(value), member.Line, member.Column);
+        fields.TryGetValue(field, out JgsValue? replaced);
+        fields[field] = stored;
+        JgsLifetime.Stored(holder, replaced, stored); // V10: the property's lifetime moves with the write
+        NoteTrackedStore(stored);
         if (observed)
         {
             JgsBuiltins.FirePropertyEvent(holder, field, post: true);
@@ -336,7 +341,7 @@ internal sealed partial class Interpreter
     {
         if (instance.Deleted)
         {
-            throw new JgsRuntimeException(line, column, "Invalid or deleted object.");
+            throw new JgsRuntimeException(line, column, "MATLAB:class:InvalidHandle", "Invalid or deleted object.");
         }
     }
 
@@ -442,25 +447,34 @@ internal sealed partial class Interpreter
     }
 
     /// <summary>A class's <c>delete</c> method, followed by the mark that ends the object.</summary>
-    private sealed class DestructorCall(IJgsCallable body, JgsObject instance) : IJgsCallable
+    private sealed class DestructorCall(IJgsCallable body, JgsObject instance) : IJgsCallable, IJgsMultiCallable
     {
         public string Name => body.Name;
 
         public JgsValue Call(IReadOnlyList<JgsValue> arguments, int line, int column)
         {
+            JgsValue[] answers = CallMultiple(arguments, 1, line, column);
+            return answers.Length > 0 ? answers[0] : JgsValue.Null;
+        }
+
+        public JgsValue[] CallMultiple(IReadOnlyList<JgsValue> arguments, int wanted, int line, int column)
+        {
             if (instance.Deleted)
             {
-                return JgsValue.Null;
+                return [];
             }
 
             try
             {
-                return body.Call(arguments, line, column);
+                return body is IJgsMultiCallable several
+                    ? several.CallMultiple(arguments, wanted, line, column)
+                    : [body.Call(arguments, line, column)];
             }
             finally
             {
                 instance.MarkDeleted();
                 JgsBuiltins.FireObjectBeingDestroyed(instance); // after the mark (V6, #106)
+                JgsLifetime.ObjectDeleted(instance); // V10: the properties' contents go with the object
             }
         }
     }

@@ -1188,6 +1188,7 @@ public static class JgsBuiltinCatalog
         // accepts the matrix, which is what scripts written before this wave hand over.
         Add("strel", "Builds a structuring element: 'square', 'rectangle', 'disk', 'diamond', 'octagon', 'line', 'cube', 'cuboid', 'sphere', or a 0/1 neighbourhood matrix.", P("shape"), Opt("size"), Opt("angle"));
         Add("offsetstrel", "Builds a non-flat structuring element: 'ball' (radius, height) or 'offset' (a height matrix, -Inf outside).", P("shape"), Opt("radius"), Opt("height"));
+        Add("onCleanup", "A handle whose destructor runs the task when its last holder goes - at the function's exit, at clear, at an error's unwinding: c = onCleanup(@() fclose(fid)).", P("task"));
         Add("conndef", "The default connectivity neighbourhood for a rank: 'minimal' (4 or 6) or 'maximal' (8 or 26).", P("rank"), Opt("type"));
         Add("iptcheckconn", "Errors unless the value is a valid connectivity — 1, 4, 8, 6, 18, 26, or a symmetric odd-sized 0/1 array.", P("conn"), Opt("caller"), Opt("variable"), Opt("position"));
         Add("imerode", "Morphological erosion (local minimum) over a structuring element (default 3×3 square).", P("image"), Opt("element"));

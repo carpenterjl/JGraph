@@ -1,16 +1,16 @@
-CHK|a029_oncleanup_capture|1;|exact|pending V10|ERR 'onCleanup' is not recognized as a variable or a function.
-CHK|a029_oncleanup_alias_lifetime|kept;done;|exact|pending V10|ERR 'onCleanup' is not recognized as a variable or a function.
-CHK|a088_handle_delete_on_clear_alias|mid;A;|exact|pending V10|mid;
-CHK|a089_handle_delete_on_frame_exit|X;after;|exact|pending V10|after;
-CHK|a093_escaping_nested_cleanup|kept;1;done;|exact|pending V10|ERR 'onCleanup' is not recognized as a variable or a function.
-CHK|a094_clear_cleanup_in_function|done;after;|exact|pending V10|ERR 'onCleanup' is not recognized as a variable or a function.
-CHK|a154_cell_alias_clear_order|kept;done;after;|exact|pending V10|ERR 'onCleanup' is not recognized as a variable or a function.
-CHK|a154_struct_alias_clear_order|kept;done;after;|exact|pending V10|ERR 'onCleanup' is not recognized as a variable or a function.
-CHK|a154_nested_cell_alias|kept;done;after;|exact|pending V10|ERR 'onCleanup' is not recognized as a variable or a function.
-CHK|a154_delete_element_from_one_alias|deleted;done;after;|exact|pending V10|ERR 'onCleanup' is not recognized as a variable or a function.
-CHK|a154_overwrite_container_alias_kept|overwritten;done;after;|exact|pending V10|ERR 'onCleanup' is not recognized as a variable or a function.
-CHK|a154_detach_by_write_other_slot|kept;done;after;|exact|pending V10|ERR 'onCleanup' is not recognized as a variable or a function.
-CHK|a154_cell_of_two_cleanups_order|A;B;after;|exact|pending V10|ERR 'onCleanup' is not recognized as a variable or a function.
+CHK|a029_oncleanup_capture|1;|exact
+CHK|a029_oncleanup_alias_lifetime|kept;done;|exact
+CHK|a088_handle_delete_on_clear_alias|mid;A;|exact
+CHK|a089_handle_delete_on_frame_exit|X;after;|exact
+CHK|a093_escaping_nested_cleanup|kept;1;done;|exact
+CHK|a094_clear_cleanup_in_function|done;after;|exact
+CHK|a154_cell_alias_clear_order|kept;done;after;|exact
+CHK|a154_struct_alias_clear_order|kept;done;after;|exact
+CHK|a154_nested_cell_alias|kept;done;after;|exact
+CHK|a154_delete_element_from_one_alias|deleted;done;after;|exact
+CHK|a154_overwrite_container_alias_kept|overwritten;done;after;|exact
+CHK|a154_detach_by_write_other_slot|kept;done;after;|exact
+CHK|a154_cell_of_two_cleanups_order|A;B;after;|exact
 CHK|a109_save_then_write|[1 2 3] [7 2 3]|exact
 CHK|a109_save_write_trace|[1 2 3] [7 2 3] [7 2 3] [1 2 3]|exact
 CHK|g_write_after_exist_trace|1 [7 2 3]|exact

@@ -1,17 +1,4 @@
 # The stage of the value-ownership plan that completes each line JGraph fails (appendix A's stage column).
-a029_oncleanup_capture	V10
-a029_oncleanup_alias_lifetime	V10
-a088_handle_delete_on_clear_alias	V10
-a089_handle_delete_on_frame_exit	V10
-a093_escaping_nested_cleanup	V10
-a094_clear_cleanup_in_function	V10
-a154_cell_alias_clear_order	V10
-a154_struct_alias_clear_order	V10
-a154_nested_cell_alias	V10
-a154_delete_element_from_one_alias	V10
-a154_overwrite_container_alias_kept	V10
-a154_detach_by_write_other_slot	V10
-a154_cell_of_two_cleanups_order	V10
 a105_timer_capture	V6
 a105_timer_userdata_alias	V6
 a105_timer_writes_global_during_pause	V6

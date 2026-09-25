@@ -223,6 +223,14 @@ internal static partial class JgsBuiltins
             };
         }
 
+        // V10 (#107): a listener's struct is not a container the count releases - its Source must
+        // not keep the source alive - but one made by listener() is counted (Scanned is what makes
+        // a struct's holders count), so its last handle's going ends it.
+        JgsLifetime.Unscan(listener);
+        listener.AsStructArray.External = true;
+        state.FromListenerFunction = verb == "listener";
+        listener.AsStructArray.Scanned = state.FromListenerFunction;
+        JgsLifetime.Pin(callback); // the listener holds its callback for as long as it lives
         ListenerStates.Add(listener.AsStructArray, state);
         (source.Listeners ??= new List<JgsListener>()).Add(state);
         return listener;
@@ -525,8 +533,33 @@ internal static partial class JgsBuiltins
     // --- the listener's properties ---------------------------------------------------------------
 
     /// <summary>One property written through M7's gate; a listener is a handle, so the gate never copies.</summary>
-    private static void SetListenerField(JgsListener state, string name, JgsValue value) =>
+    private static void SetListenerField(JgsListener state, string name, JgsValue value)
+    {
+        JgsLifetime.Pin(value); // V10: the source holds the listener, and it holds this, for as long as it likes
         state.Value.WritableStruct()[name] = value;
+    }
+
+    /// <summary>
+    /// The last handle to a listener went (V10, #107): one made by <c>listener</c> ends there -
+    /// it leaves its source and is deleted, as R2025b's does (measured: <c>clear lh; b.fire()</c>
+    /// runs nothing) - while one made by <c>addlistener</c> lives with its source. Answers
+    /// whether <paramref name="payload"/> was a listener at all.
+    /// </summary>
+    internal static bool OnListenerUnreferenced(JgsStructArray payload)
+    {
+        if (!ListenerStates.TryGetValue(payload, out JgsListener? state))
+        {
+            return false;
+        }
+
+        if (state.FromListenerFunction && !state.Deleted)
+        {
+            state.Deleted = true;
+            state.Source.Listeners?.Remove(state);
+        }
+
+        return true;
+    }
 
     /// <summary><c>lh.Enabled</c>: a field read that refuses on a deleted listener and names an unknown property.</summary>
     internal static JgsValue GetListenerProperty(JgsValue listener, string field, int line, int col)

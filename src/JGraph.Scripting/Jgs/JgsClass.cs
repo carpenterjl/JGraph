@@ -105,6 +105,12 @@ internal sealed class JgsClass
     /// <summary>Whether the header read <c>&lt; handle</c>.</summary>
     public bool IsHandle => Declaration.IsHandle;
 
+    /// <summary>Whether a handle class wrote its own <c>delete</c> — a destructor V10 runs when the last holder goes.</summary>
+    public bool HasDestructor => IsHandle && _methods.ContainsKey("delete");
+
+    /// <summary>The interpreter this class was built by, which runs its destructors (V10).</summary>
+    internal Interpreter Interpreter => _interpreter;
+
     /// <summary>Whether the header read <c>&lt; event.EventData</c> (V6, #106).</summary>
     public bool IsEventData => Declaration.IsEventData;
 
@@ -430,16 +436,38 @@ internal sealed class JgsClass
 /// <c>containers.Map</c> against <c>dictionary</c>. Nothing else in the object model knows which kind
 /// it is holding.
 /// </remarks>
-internal sealed class JgsObject(JgsClass definition)
+internal sealed class JgsObject
 {
     // How many entries hold this instance (M1). Zero and one both mean one holder.
     private int _holders;
 
+    /// <summary>Creates an instance of <paramref name="definition"/>; one with a destructor counts as alive from here (V10).</summary>
+    public JgsObject(JgsClass definition)
+    {
+        Class = definition;
+        JgsLifetime.Register(this);
+    }
+
     /// <summary>The holder count's storage (M1); zero means one holder.</summary>
     public ref int HolderSlot => ref _holders;
 
+    /// <summary>V10 (ADR 0171): how many entries hold this instance, exactly — counted from birth for a handle, once scanned for a value.</summary>
+    public int Exact;
+
+    /// <summary>V10: whether every property value's hold was counted for this instance, so its death releases them.</summary>
+    public bool Scanned;
+
+    /// <summary>V10: whether the first wrapper over this instance has been made (the birth check is queued once).</summary>
+    public bool Wrapped;
+
+    /// <summary>V10: whether the properties' contents have been released — at <c>delete</c>, or at the last holder's going.</summary>
+    public bool FieldsReleased;
+
+    /// <summary>V10: whether this instance has left the count of live destructor-bearing objects.</summary>
+    public bool DiedCounted;
+
     /// <summary>The class this is an instance of.</summary>
-    public JgsClass Class { get; } = definition;
+    public JgsClass Class { get; }
 
     /// <summary>What the instance's properties hold, keyed by name.</summary>
     public Dictionary<string, JgsValue> Fields { get; } = new(StringComparer.Ordinal);

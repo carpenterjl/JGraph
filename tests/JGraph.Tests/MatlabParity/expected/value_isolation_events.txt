@@ -1,7 +1,7 @@
 CHK|a106_listener_capture|[1 2 3]|exact
 CHK|a106_listener_writes_global_operand|[1 2 3] [7 2 3]|exact
 CHK|a106_listener_event_name|Changed|exact
-CHK|a107_listener_fn_lifetime|L;|exact|pending V10|L;L;
+CHK|a107_listener_fn_lifetime|L;|exact
 CHK|a106_addlistener_survives_clear|A;|exact
 CHK|a106_listener_disabled|[]|exact
 CHK|a106_listener_delete_isvalid|0|exact

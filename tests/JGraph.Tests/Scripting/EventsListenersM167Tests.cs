@@ -287,7 +287,7 @@ public class EventsListenersM167Tests : IDisposable
     [Fact]
     public void TheListenerFunctionMakesTheSameObject()
     {
-        // Its exact lifetime - ending with the last handle - is V10's (#107); until then it lives with the source.
+        // Its exact lifetime - ending with the last handle - is V10's (#107, DestructorLifetimeM171Tests).
         Assert.Equal("L; 0 event.listener", RunAndRead(Log + """
             b = EventPair();
             lh = listener(b, 'Changed', @(~, ~) vlog('L'));

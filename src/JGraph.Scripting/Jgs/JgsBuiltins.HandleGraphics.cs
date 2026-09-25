@@ -639,6 +639,7 @@ internal static partial class JgsBuiltins
 
         instance.MarkDeleted();
         FireObjectBeingDestroyed(instance); // after the mark: isvalid is already false inside (V6, #106)
+        JgsLifetime.ObjectDeleted(instance); // V10: the properties' contents go with the object
         return true;
     }
 

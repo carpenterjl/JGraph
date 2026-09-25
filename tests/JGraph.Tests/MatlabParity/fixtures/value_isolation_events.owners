@@ -1,3 +1,2 @@
-# V6.12 built events and listeners (appendix A #106); a listener object's lifetime is V10's (#107).
-a107_listener_fn_lifetime	V10	# a listener made by listener() lives with its source here, not with its last handle
+# V6.12 built events and listeners (appendix A #106); a listener's exact lifetime (#107) is V10's, built.
 *	V6

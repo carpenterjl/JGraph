@@ -50,6 +50,9 @@ internal static partial class JgsBuiltins
         // verbs report a failing callback to the run's host.
         "addlistener", "listener", "notify", "events",
 
+        // V10 (#29): onCleanup is a class the interpreter defines from source on first use.
+        "onCleanup",
+
         // V6 (#112): a matfile's reads build the objects a file holds, which needs the classes.
         "matfile",
 
@@ -80,6 +83,7 @@ internal static partial class JgsBuiltins
         RegisterIntrospection(Define, DefineBare, interpreter, host);
         RegisterLegacyFunctionPlotBuiltins(env, interpreter);
         RegisterClassBuiltins(env, interpreter);
+        RegisterCleanupBuiltins(env, interpreter);
         RegisterTimerBuiltins(env, interpreter, host, dialect);
         RegisterEventBuiltins(env, interpreter, host);
         RegisterMatFileBuiltins(env, interpreter, host);

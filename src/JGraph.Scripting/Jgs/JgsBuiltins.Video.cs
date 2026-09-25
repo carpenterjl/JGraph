@@ -218,6 +218,7 @@ internal static partial class JgsBuiltins
 
         JgsValue writer = JgsValue.Struct(fields);
         writer.SetClassName(VideoWriterClassName);
+        writer.AsStructArray.External = true; // V10: a file, not a container the count releases
         VideoWriterStates.Add(writer.AsStructArray, new VideoWriterState { Profile = profile.Name });
         return writer;
     }

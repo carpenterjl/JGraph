@@ -101,6 +101,7 @@ internal static class JgsRunner
             // ME.stack names the file a frame ran in (V6). A -batch run hands its code over with no
             // source id so its diagnostics stay bare; the stack still has the run's file to name.
             interpreter.MainScriptPath = sourceId.Length > 0 ? sourceId : context.ScriptPath ?? string.Empty;
+            interpreter.Host = globals;
             DefineRunBuiltin(environment, interpreter, globals, dialect);
             JgsBuiltins.RegisterEvalBuiltins(environment, interpreter, globals, dialect);
             JgsBuiltins.RegisterSessionBuiltins(environment, globals);
@@ -131,6 +132,15 @@ internal static class JgsRunner
 
             interpreter.Run(program);
             InvokeMainIfFunctionFile(program, interpreter);
+
+            // The run's workspace dies with the run (V10, ADR 0171): what the last statement
+            // dropped is destroyed, then the base workspace's own handles, by name - as R2025b's
+            // -batch exit destroys them. A debugged run keeps its workspace for the session.
+            if (hook is null)
+            {
+                interpreter.Lifetimes.RunEnded(environment, pristine);
+            }
+
             globals.ShowTouchedFigures(); // MATLAB expectation: created figures appear without show()
             ScriptRunResult ok = ScriptRunResult.Ok(globals.FiguresShown, SnapshotGlobals(environment, pristine));
             RegisterCompletedRun(environment, hook);

@@ -130,6 +130,7 @@ internal static partial class JgsBuiltins
             [PropertiesField] = PropertiesOf(source, writable),
         });
         matfile.SetClassName(MatFileClassName);
+        matfile.AsStructArray.External = true; // V10: a file, not a container the count releases
         MatFileStates.Add(matfile.AsStructArray, new JgsMatFileState { Interpreter = interpreter, Host = host });
         return matfile;
     }

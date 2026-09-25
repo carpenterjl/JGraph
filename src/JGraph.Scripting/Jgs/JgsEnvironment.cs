@@ -27,11 +27,118 @@ internal sealed class JgsEnvironment
     // without one (the interpreter's global-variable workspace, and bare scopes in tests).
     private readonly JgsBuiltinLayer? _layer;
 
+    // V10 (ADR 0171): the exact-lifetime tracker of the run this scope belongs to, inherited from
+    // the parent and installed on the roots by the interpreter; null for a bare scope, whose
+    // bindings then count nothing.
+    private JgsLifetime? _lifetimes;
+
     /// <summary>Creates a scope nested inside <paramref name="parent"/> (null for the global scope).</summary>
     public JgsEnvironment(JgsEnvironment? parent = null)
     {
         _parent = parent;
         _layer = parent?._layer;
+        _lifetimes = parent?._lifetimes;
+    }
+
+    /// <summary>The exact-lifetime tracker this scope's bindings count with (V10), or null.</summary>
+    internal JgsLifetime? Lifetimes
+    {
+        get => _lifetimes;
+        set => _lifetimes = value;
+    }
+
+    /// <summary>Installs <paramref name="tracker"/> on this scope and every scope above it (V10).</summary>
+    internal void InstallLifetimes(JgsLifetime tracker)
+    {
+        for (JgsEnvironment? scope = this; scope is not null; scope = scope._parent)
+        {
+            scope._lifetimes = tracker;
+        }
+    }
+
+    /// <summary>V10: how many handles to this workspace's nested functions are held outside it.</summary>
+    internal int Escapes;
+
+    /// <summary>V10: whether the call this workspace was the frame of has returned.</summary>
+    internal bool Exited;
+
+    /// <summary>V10: whether this workspace's variables have been released — once.</summary>
+    internal bool Destroyed;
+
+    /// <summary>
+    /// V10: whether a binding here ever held something with an exact lifetime, so the frame's
+    /// exit must release its variables even when nothing with a destructor is alive any more.
+    /// </summary>
+    internal bool NeedsRelease;
+
+    /// <summary>
+    /// Whether this scope is <paramref name="workspace"/> or sits inside it — a nested function's
+    /// frame, a block of the same call — and not a snapshot taken from it, which is a holder of
+    /// its own (V10: a nested handle bound inside its workspace is no escape).
+    /// </summary>
+    internal bool IsWithin(JgsEnvironment workspace)
+    {
+        for (JgsEnvironment? scope = this; scope is not null; scope = scope._parent)
+        {
+            if (ReferenceEquals(scope, workspace))
+            {
+                return true;
+            }
+
+            if (scope.IsStaticWorkspace)
+            {
+                return false;
+            }
+        }
+
+        return false;
+    }
+
+    /// <summary>
+    /// Every store into <see cref="_values"/> goes through here (V10): the new value is counted as
+    /// held by this scope and the one it replaces released, when the run counts at all.
+    /// </summary>
+    private void Store(string name, JgsValue value)
+    {
+        if (_lifetimes is null)
+        {
+            _values[name] = value;
+            return;
+        }
+
+        _values.TryGetValue(name, out JgsValue? old);
+        _values[name] = value;
+        if (ReferenceEquals(old, value))
+        {
+            return;
+        }
+
+        if (JgsLifetime.MayTrack(value))
+        {
+            NeedsRelease = true;
+            _lifetimes.Retain(value, this);
+        }
+
+        if (old is not null && JgsLifetime.MayTrack(old))
+        {
+            _lifetimes.Release(old, this);
+        }
+    }
+
+    /// <summary>Every removal from <see cref="_values"/> goes through here (V10): the value is released.</summary>
+    private bool Drop(string name)
+    {
+        if (!_values.Remove(name, out JgsValue? old))
+        {
+            return false;
+        }
+
+        if (_lifetimes is not null && JgsLifetime.MayTrack(old))
+        {
+            _lifetimes.Release(old, this);
+        }
+
+        return true;
     }
 
     /// <summary>Creates the root scope of <paramref name="layer"/>, the one holding the built-ins.</summary>
@@ -163,7 +270,7 @@ internal sealed class JgsEnvironment
         }
 
         ThrowIfSealedLayer(name);
-        _values[name] = value;
+        Store(name, value);
         _functionBindings.Remove(name);
     }
 
@@ -171,7 +278,7 @@ internal sealed class JgsEnvironment
     public void DeclareFunction(string name, JgsValue value)
     {
         ThrowIfSealedLayer(name);
-        _values[name] = value;
+        Store(name, value);
         _functionBindings.Add(name);
         _functionDefinitions[name] = value;
     }
@@ -329,7 +436,7 @@ internal sealed class JgsEnvironment
     {
         ThrowIfLayer("the scope of a persistent declaration");
         (_persistentSlots ??= new Dictionary<string, JgsEnvironment>(StringComparer.Ordinal))[name] = slots;
-        _values.Remove(name);
+        Drop(name);
         _functionBindings.Remove(name);
     }
 
@@ -367,13 +474,13 @@ internal sealed class JgsEnvironment
         {
             if (!pristine.TryGetValue(name, out JgsValue? original))
             {
-                _values.Remove(name);
+                Drop(name);
                 _functionDefinitions.Remove(name);
                 _functionBindings.Remove(name);
             }
             else if (!ReferenceEquals(original, _values[name]))
             {
-                _values[name] = original;
+                Store(name, original);
                 if (original.Type == JgsType.Function) _functionBindings.Add(name);
             }
         }
@@ -381,7 +488,11 @@ internal sealed class JgsEnvironment
         // A built-in the user deleted outright (possible via clear in a nested call) comes back too.
         foreach ((string name, JgsValue value) in pristine)
         {
-            _values.TryAdd(name, value);
+            if (!_values.ContainsKey(name))
+            {
+                Store(name, value);
+            }
+
             if (value.Type == JgsType.Function) _functionBindings.Add(name);
         }
     }
@@ -400,18 +511,18 @@ internal sealed class JgsEnvironment
         {
             // R2025b: clearing a persistent takes the variable and what it kept; the next call of
             // the function starts it from [] again.
-            slots._values.Remove(name);
+            slots.Drop(name);
             return;
         }
 
         if (pristine.TryGetValue(name, out JgsValue? original))
         {
-            _values[name] = original;
+            Store(name, original);
             if (original.Type == JgsType.Function) _functionBindings.Add(name);
         }
         else
         {
-            _values.Remove(name);
+            Drop(name);
             if (_functionBindings.Contains(name)) _functionDefinitions.Remove(name);
             _functionBindings.Remove(name);
         }
@@ -430,7 +541,7 @@ internal sealed class JgsEnvironment
         ThrowIfLayer("cleared");
         _globalNames?.Remove(name);
         _persistentSlots?.Remove(name);
-        _values.Remove(name);
+        Drop(name);
         if (_functionBindings.Contains(name)) _functionDefinitions.Remove(name);
         _functionBindings.Remove(name);
     }
@@ -551,7 +662,7 @@ internal sealed class JgsEnvironment
 
             if (scope._values.ContainsKey(name))
             {
-                scope._values[name] = value;
+                scope.Store(name, value);
                 scope._functionBindings.Remove(name);
                 return true;
             }

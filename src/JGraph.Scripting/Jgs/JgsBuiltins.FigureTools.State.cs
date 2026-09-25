@@ -97,7 +97,9 @@ internal static partial class JgsBuiltins
         // share of its own — `setappdata(f, 'k', v); v(1) = 7` leaves what the figure hands back.
         // The JGS dialect keeps the caller's own wrapper (M17, reference semantics), and marks the
         // payload exposed so `clear` cannot free what the figure can still hand back (M6, #152).
-        entry.AppData[StrOf("setappdata", rest[0], line, col)] = RetainedForEntry(rest[1], sharesOnStore);
+        JgsValue kept = RetainedForEntry(rest[1], sharesOnStore);
+        JgsLifetime.Pin(kept); // V10: the figure holds it for as long as it likes
+        entry.AppData[StrOf("setappdata", rest[0], line, col)] = kept;
         return JgsValue.Null;
     }
 
@@ -129,7 +131,9 @@ internal static partial class JgsBuiltins
             return owner.GuiData ?? JgsMatrix.FromColumnMajor([], 0, 0);
         }
 
-        owner.GuiData = RetainedForEntry(args[1], sharesOnStore);
+        JgsValue kept = RetainedForEntry(args[1], sharesOnStore);
+        JgsLifetime.Pin(kept); // V10: the figure holds it for as long as it likes
+        owner.GuiData = kept;
         return JgsValue.Null;
     }
 

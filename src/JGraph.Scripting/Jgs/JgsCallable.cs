@@ -361,6 +361,12 @@ internal sealed class UserFunction : IJgsCallable, IJgsMultiCallable
     /// <summary>The class this function is a method of, or null - what the unassigned-output refusal names it under (V9).</summary>
     internal string? OwnerClass { get; init; }
 
+    /// <summary>The environment the function closes over: for a nested function, the workspace its handle keeps alive (V10).</summary>
+    internal JgsEnvironment Closure => _closure;
+
+    /// <summary>The interpreter the function runs under.</summary>
+    internal Interpreter Interpreter => _interpreter;
+
     /// <summary>
     /// The most outputs a call may ask for: the output list's length, or null for a trailing
     /// <c>varargout</c> and for a JGS <c>fn</c>, whose single value is not a declared output
@@ -590,6 +596,21 @@ internal sealed class AnonymousFunction : IJgsCallable, IJgsMultiCallable
 
     private string? _text;
 
+    /// <summary>The snapshot the handle captured — the workspace its body runs over (V10 releases it with the last holder).</summary>
+    internal JgsEnvironment Captured => _captured;
+
+    /// <summary>The interpreter the handle runs under.</summary>
+    internal Interpreter Interpreter => _interpreter;
+
+    /// <summary>V10 (ADR 0171): how many entries hold this handle, exactly, when its snapshot holds something tracked.</summary>
+    internal int Exact;
+
+    /// <summary>V10: whether the snapshot captured something with an exact lifetime, so this handle's holders are counted.</summary>
+    internal bool Tracked { get; private set; }
+
+    /// <summary>V10: whether the snapshot's holds have been released — once, with the last holder.</summary>
+    internal bool Released;
+
     /// <summary>
     /// The variables the handle captured when it was made, by name — the snapshot's own entries,
     /// less the function bindings it took for the body's local names. What <c>save</c> writes as
@@ -644,7 +665,12 @@ internal sealed class AnonymousFunction : IJgsCallable, IJgsMultiCallable
             }
         }
 
-        return new AnonymousFunction(declaration, snapshot, interpreter, interpreter.CurrentFile);
+        // V10: a snapshot holding a handle, a tracked container or another such handle keeps it
+        // alive for as long as this handle is held, so the handle's own holders are counted.
+        return new AnonymousFunction(declaration, snapshot, interpreter, interpreter.CurrentFile)
+        {
+            Tracked = snapshot.NeedsRelease,
+        };
     }
 
     /// <inheritdoc />
@@ -700,8 +726,16 @@ internal sealed class AnonymousFunction : IJgsCallable, IJgsMultiCallable
 
         // The body runs as a context of its own — its workspace as the current frame, so a function
         // it calls sees that workspace as its caller, and its file as the current file — and the
-        // invoker's pair comes back afterwards.
-        return _interpreter.EvaluateForOutputsInContext(_declaration.Body, wanted, local, _file, Text, line);
+        // invoker's pair comes back afterwards. The parameters it bound are released with the
+        // frame (V10), at the invoker's next statement boundary.
+        try
+        {
+            return _interpreter.EvaluateForOutputsInContext(_declaration.Body, wanted, local, _file, Text, line);
+        }
+        finally
+        {
+            _interpreter.Lifetimes.FrameExited(local);
+        }
     }
 
     /// <summary>Every identifier the body mentions apart from the parameters.</summary>

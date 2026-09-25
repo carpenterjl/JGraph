@@ -523,8 +523,20 @@ internal static partial class JgsBuiltins
         }
 
         fields["keys"] = JgsValue.Cell([.. KeyCell(map), storedKey]);
-        fields["values"] = JgsValue.Cell([.. ValueCell(map), value]);
+        ReplaceValueCell(map, fields, JgsValue.Cell([.. ValueCell(map), value]));
         fields["Count"] = CountOf(KeyCell(map).Length);
+    }
+
+    /// <summary>
+    /// Puts a rebuilt value cell into the collection (V10, ADR 0171): the old cell's hold on its
+    /// values goes, the new one's is counted, so the entries live exactly as long as the
+    /// collection does (measured: <c>clear m</c> runs a Map entry's destructor).
+    /// </summary>
+    private static void ReplaceValueCell(JgsValue map, Dictionary<string, JgsValue> fields, JgsValue rebuilt)
+    {
+        fields.TryGetValue("values", out JgsValue? old);
+        fields["values"] = rebuilt;
+        JgsLifetime.Stored(map, old, rebuilt);
     }
 
     /// <summary>
@@ -563,7 +575,7 @@ internal static partial class JgsBuiltins
 
         Dictionary<string, JgsValue> fields = map.WritableStruct(); // M7, as in Put
         fields["keys"] = JgsValue.Cell([.. keptKeys]);
-        fields["values"] = JgsValue.Cell([.. keptValues]);
+        ReplaceValueCell(map, fields, JgsValue.Cell([.. keptValues]));
         fields["Count"] = CountOf(keptKeys.Count);
     }
 

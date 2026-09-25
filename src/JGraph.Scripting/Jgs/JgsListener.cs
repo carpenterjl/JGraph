@@ -48,6 +48,12 @@ internal sealed class JgsListener
     /// <summary><c>delete(lh)</c> has run: every property read or write refuses, and the source skips it.</summary>
     public bool Deleted { get; set; }
 
+    /// <summary>
+    /// Whether <c>listener</c> made this rather than <c>addlistener</c> (V10, #107): such a
+    /// listener ends when the last handle to it is released, as R2025b's does.
+    /// </summary>
+    public bool FromListenerFunction { get; set; }
+
     /// <summary>How many of this listener's callbacks are on the stack, for <see cref="Recursive"/>.</summary>
     public int Depth { get; set; }
 

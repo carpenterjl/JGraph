@@ -268,6 +268,7 @@ internal sealed class JgsReplSession : IScriptSession, IGraphicsEventSession, IW
         // constructed with only covers the (impossible) window before the first statement.
         _interpreter = new Interpreter(_environment, CancellationToken.None, hook: null,
             echo: line => _context.Output.WriteLine(line), _dialect);
+        _interpreter.Host = _globals;
         JgsRunner.DefineRunBuiltin(_environment, _interpreter, _globals, _dialect);
         JgsBuiltins.RegisterEvalBuiltins(_environment, _interpreter, _globals, _dialect);
         JgsBuiltins.RegisterSessionBuiltins(_environment, _globals);

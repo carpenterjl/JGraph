@@ -160,6 +160,7 @@ internal static partial class JgsBuiltins
 
         JgsValue timer = JgsValue.Struct(fields);
         timer.SetClassName(TimerClassName);
+        timer.AsStructArray.External = true; // V10: the timer manager's, not a container the count releases
         var state = new JgsTimerState { Value = timer, Scheduler = scheduler, Name = name };
         TimerStates.Add(timer.AsStructArray, state);
 
@@ -202,8 +203,11 @@ internal static partial class JgsBuiltins
     /// share of its struct (<see cref="JgsValue.Share"/> hands a handle back as it is) and the gate
     /// never copies: every alias reads the write.
     /// </summary>
-    private static void SetTimerField(JgsTimerState state, string name, JgsValue value) =>
+    private static void SetTimerField(JgsTimerState state, string name, JgsValue value)
+    {
+        JgsLifetime.Pin(value); // V10: the timer manager holds the timer, and it holds this, for as long as it likes
         state.Value.WritableStruct()[name] = value;
+    }
 
     // --- properties -----------------------------------------------------------------------------
 
